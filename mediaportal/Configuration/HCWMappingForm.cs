@@ -26,6 +26,8 @@ namespace MediaPortal.Configuration
                                               "{RIGHT}", "{SCROLLLOCK}", "{TAB}", "{UP}", "{F1}", "{F2}", "{F3}", "{F4}", "{F5}", "{F6}",
                                               "{F7}", "{F8}", "{F9}", "{F10}", "{F11}", "{F12}", "{F13}", "{F14}", "{F15}", "{F16}",
                                               "{ADD}", "{SUBTRACT}", "{MULTIPLY}", "{DIVIDE}"};
+    string[] processList    = new string[] {"Close", "Kill"};
+
     string inputClassName;
 
     class Data
@@ -79,6 +81,7 @@ namespace MediaPortal.Configuration
     private System.Windows.Forms.Button buttonRemove;
     private System.Windows.Forms.Button buttonDefault;
     private System.Windows.Forms.GroupBox groupBoxLayer;
+    private System.Windows.Forms.RadioButton radioButtonProcess;
     /// <summary>
     /// Required designer variable.
     /// </summary>
@@ -149,6 +152,7 @@ namespace MediaPortal.Configuration
       this.buttonNew = new System.Windows.Forms.Button();
       this.buttonRemove = new System.Windows.Forms.Button();
       this.buttonDefault = new System.Windows.Forms.Button();
+      this.radioButtonProcess = new System.Windows.Forms.RadioButton();
       this.groupBoxCondition.SuspendLayout();
       this.groupBoxAction.SuspendLayout();
       this.groupBoxLayer.SuspendLayout();
@@ -293,14 +297,15 @@ namespace MediaPortal.Configuration
       this.radioButtonPower.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.radioButtonPower.Location = new System.Drawing.Point(24, 72);
       this.radioButtonPower.Name = "radioButtonPower";
-      this.radioButtonPower.Size = new System.Drawing.Size(112, 16);
+      this.radioButtonPower.Size = new System.Drawing.Size(80, 16);
       this.radioButtonPower.TabIndex = 18;
-      this.radioButtonPower.Text = "Powerdown Action";
+      this.radioButtonPower.Text = "Powerdown";
       this.radioButtonPower.Click += new System.EventHandler(this.radioButtonPower_Click);
       // 
       // groupBoxAction
       // 
       this.groupBoxAction.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxAction.Controls.Add(this.radioButtonProcess);
       this.groupBoxAction.Controls.Add(this.labelSound);
       this.groupBoxAction.Controls.Add(this.comboBoxSound);
       this.groupBoxAction.Controls.Add(this.radioButtonAction);
@@ -478,6 +483,15 @@ namespace MediaPortal.Configuration
       this.buttonDefault.Text = "Default";
       this.buttonDefault.Click += new System.EventHandler(this.buttonReset_Click);
       // 
+      // radioButtonProcess
+      // 
+      this.radioButtonProcess.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.radioButtonProcess.Location = new System.Drawing.Point(112, 72);
+      this.radioButtonProcess.Name = "radioButtonProcess";
+      this.radioButtonProcess.Size = new System.Drawing.Size(80, 16);
+      this.radioButtonProcess.TabIndex = 21;
+      this.radioButtonProcess.Text = "Process";
+      // 
       // HCWMappingForm
       // 
       this.AcceptButton = this.okButton;
@@ -628,6 +642,12 @@ namespace MediaPortal.Configuration
                   commandString = "Hibernate Windows";
                   break;
               }
+                break;
+              case "KILLPROCESS":
+                commandString = "Kill";
+                break;
+              case "CLOSEPROCESS":
+                commandString = "Close";
                 break;
             }
 
