@@ -107,6 +107,9 @@ namespace MediaPortal.TV.Database
 		{
 			int currentVersion=2;
 			int versionNr=0;
+			
+			AddTable("tblversion"     ,"CREATE TABLE tblversion( idVersion integer)");
+			
 			SQLiteResultSet results;
 			results = m_db.Execute("SELECT * FROM tblversion");
 			if (results.Rows.Count>=1)
@@ -269,7 +272,6 @@ namespace MediaPortal.TV.Database
 				//following table specifies which channels can be received by which card
 				AddTable("tblChannelCard" ,"CREATE TABLE tblChannelCard( idChannelCard integer primary key, idChannel integer, card integer);\n");
 				AddTable("tblNotifies"    ,"CREATE TABLE tblNotifies( idNotify integer primary key, idProgram integer)");
-				AddTable("tblversion"     ,"CREATE TABLE tblversion( idVersion integer)");
 				return true;
 			}
 		}
