@@ -577,7 +577,7 @@ namespace MediaPortal
                 presentParams.BackBufferWidth = ourRenderTarget.ClientRectangle.Right - ourRenderTarget.ClientRectangle.Left;
                 presentParams.BackBufferHeight = ourRenderTarget.ClientRectangle.Bottom - ourRenderTarget.ClientRectangle.Top;
                 presentParams.BackBufferFormat = graphicsSettings.BackBufferFormat;
-                presentParams.PresentationInterval = PresentInterval.Default;
+                presentParams.PresentationInterval = PresentInterval.Immediate;
                 presentParams.FullScreenRefreshRateInHz = 0;
                 presentParams.SwapEffect = Direct3D.SwapEffect.Discard;
                 presentParams.PresentFlag = PresentFlag.Video;//|PresentFlag.LockableBackBuffer;
