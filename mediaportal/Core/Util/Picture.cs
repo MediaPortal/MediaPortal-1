@@ -929,13 +929,6 @@ namespace MediaPortal.Util
       {
         Log.Write("Picture.CreateThumbnail exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
       }
-      finally
-      {
-        if (theImage!=null)
-        {
-          theImage.Dispose();
-        }
-      }
     }//static public void CreateThumbnail(string strFile, string strThumb, int iMaxWidth, int iMaxHeight, int iRotate)
 
 		static public void DrawLine(int x1,int y1,int x2, int y2, long color)
