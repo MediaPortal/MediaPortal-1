@@ -283,35 +283,22 @@ namespace MediaPortal.TV.Recording
 				//
 				TVProgram tv=new TVProgram();
 
-				if(data.isMHWEvent==false)
+				System.DateTime datestart;
+				try
 				{
-					System.DateTime datestart;
-					try
-					{
-						datestart=new DateTime(data.starttime_y,data.starttime_m,data.starttime_d,data.starttime_hh,data.starttime_mm,data.starttime_ss);
-					}
-					catch
-					{
-						return 0;
-					}
-					DateTime dateend = datestart.AddSeconds(data.duration_ss);
-					dateend = dateend.AddMinutes(data.duration_mm);
-					dateend = dateend.AddHours(data.duration_hh);
-					tv.Start=Util.Utils.datetolong(datestart);
-					tv.End=Util.Utils.datetolong(dateend);
-					dateProgramEnd=dateend;
+					datestart=new DateTime(data.starttime_y,data.starttime_m,data.starttime_d,data.starttime_hh,data.starttime_mm,data.starttime_ss);
 				}
-				else
+				catch
 				{
-					DateTime datestart=data.mhwStartTime;
-					DateTime dateend = datestart.AddSeconds(data.duration_ss);
-					dateend = dateend.AddMinutes(data.duration_mm);
-					dateend = dateend.AddHours(data.duration_hh);
-					
-					tv.Start=Util.Utils.datetolong(datestart);
-					tv.End=Util.Utils.datetolong(dateend);
-					dateProgramEnd=dateend;
+					return 0;
 				}
+				DateTime dateend = datestart.AddSeconds(data.duration_ss);
+				dateend = dateend.AddMinutes(data.duration_mm);
+				dateend = dateend.AddHours(data.duration_hh);
+				tv.Start=Util.Utils.datetolong(datestart);
+				tv.End=Util.Utils.datetolong(dateend);
+				dateProgramEnd=dateend;
+
 				tv.Channel=channelName;
 				tv.Genre=data.genere_text;
 
