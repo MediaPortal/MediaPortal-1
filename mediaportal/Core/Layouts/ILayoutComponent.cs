@@ -25,6 +25,12 @@ namespace MediaPortal.Layouts
 			get;
 		}
 
+		Dock Dock
+		{
+			get;
+			set;
+		}
+
 		#endregion Properties
 	}
 }

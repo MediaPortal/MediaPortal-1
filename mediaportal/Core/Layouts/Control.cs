@@ -29,6 +29,12 @@ namespace MediaPortal.Layouts
 
 		#region Properties
 
+		Dock ILayoutComponent.Dock
+		{
+			get { return _dock; }
+			set { _dock = value; }
+		}
+
 		public abstract Size Size
 		{
 			get;
@@ -44,6 +50,8 @@ namespace MediaPortal.Layouts
 		#endregion Properties
 
 		#region Fields
+
+		Dock						_dock = Dock.None;
 
 //		protected Size				_size = Size.Empty;
 //		protected Point				_location = Point.Empty;

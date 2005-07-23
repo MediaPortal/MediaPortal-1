@@ -10,11 +10,12 @@ namespace MediaPortal.Layouts
 
 		public StackLayout()
 		{
+			_spacing = new Size(0, 0);
 		}
 
-		public StackLayout(int gap)
+		public StackLayout(int spacing)
 		{
-			_spacing.Width = gap;
+			_spacing = new Size(0, Math.Max(0, spacing));
 		}
 
 		#endregion Constructors
