@@ -984,7 +984,7 @@ namespace MediaPortal.TV.Database
 					int iChannelId=GetChannelId(prog.Channel);
 					if (iChannelId<0) return -1;
           
-					strSQL=String.Format("insert into tblPrograms (idProgram,idChannel,idGenre,strTitle,iStartTime,iEndTime,strDescription,strEpisodeName,strRepeat) values ( NULL, {0}, {1}, '{2}', {3}, '{4}', '{5}', '{6}', '{7}')", 
+					strSQL=String.Format("insert into tblPrograms (idProgram,idChannel,idGenre,strTitle,iStartTime,iEndTime,strDescription,strEpisodeName,strRepeat) values ( NULL, {0}, {1}, {2}, '{3}', '{4}', '{5}', '{6}', '{7}')", 
 						iChannelId,iGenreId,strTitle,prog.Start.ToString(),
 						prog.End.ToString(), strDescription,strEpisode,strRepeat);
 					m_db.Execute(strSQL);
@@ -1064,7 +1064,7 @@ namespace MediaPortal.TV.Database
 						}
 
 					// then add the new shows
-					strSQL=String.Format("insert into tblPrograms (idProgram,idChannel,idGenre,strTitle,iStartTime,iEndTime,strDescription,strEpisodeName,strRepeat,strSeriesNum,strEpisodeNum,strEpisodePart,strDate,strStarRating,strClassification) values ( NULL, {0}, {1}, '{2}', {3}, '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}', '{11}', '{12}', '{13}')", 
+					strSQL=String.Format("insert into tblPrograms (idProgram,idChannel,idGenre,strTitle,iStartTime,iEndTime,strDescription,strEpisodeName,strRepeat,strSeriesNum,strEpisodeNum,strEpisodePart,strDate,strStarRating,strClassification) values ( NULL, {0}, {1}, {2}, '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}', '{11}', '{12}', '{13}')", 
 						iChannelId,iGenreId,strTitle,prog.Start.ToString(),
 						prog.End.ToString(), strDescription, strEpisode, strRepeat,strSeriesNum,strEpisodeNum,strEpisodePart,strDate,strStarRating,strClassification);
 					m_db.Execute(strSQL);

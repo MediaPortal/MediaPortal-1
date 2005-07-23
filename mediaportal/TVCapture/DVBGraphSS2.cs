@@ -1552,6 +1552,8 @@ namespace MediaPortal.TV.Recording
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:StartViewing() channel not found");
 				return false;
 			}
+			GUIMessage msg =new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED,0,0,0,1,0,null);
+			GUIWindowManager.SendMessage(msg);
 			AddPreferredCodecs(true,true);
 			
 			if (Vmr9!=null)
@@ -1819,6 +1821,9 @@ namespace MediaPortal.TV.Recording
 			}
 			m_graphState = State.Created;
 			DeleteGraph();
+			GUIMessage msg =new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED,0,0,0,0,0,null);
+			GUIWindowManager.SendMessage(msg);
+
 			return true;
 		}
 

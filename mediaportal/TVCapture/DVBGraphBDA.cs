@@ -1195,6 +1195,8 @@ namespace MediaPortal.TV.Recording
 			
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:StartViewing()");
 
+			GUIMessage msg =new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED,0,0,0,1,0,null);
+			GUIWindowManager.SendMessage(msg);
 			m_bOverlayVisible=true;
 			// add VMR9 renderer to graph
 			if (Vmr9!=null)
@@ -1359,6 +1361,8 @@ namespace MediaPortal.TV.Recording
 			graphRunning=false;
 			m_graphState = State.Created;
 			DeleteGraph();
+			GUIMessage msg =new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED,0,0,0,0,0,null);
+			GUIWindowManager.SendMessage(msg);
 			return true;
 		}
 				
