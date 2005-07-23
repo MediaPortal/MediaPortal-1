@@ -683,6 +683,8 @@ namespace MediaPortal.Configuration
           if (layerAllNode.Nodes.Count > 0) buttonNode.Nodes.Add(layerAllNode);
         }
         treeMapping.Nodes.Add(remoteNode);
+        if (listRemotes.Count == 1)
+          remoteNode.Expand();
       }
     }
 
