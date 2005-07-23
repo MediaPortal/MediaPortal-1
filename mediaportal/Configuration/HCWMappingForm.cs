@@ -26,7 +26,7 @@ namespace MediaPortal.Configuration
                                               "{RIGHT}", "{SCROLLLOCK}", "{TAB}", "{UP}", "{F1}", "{F2}", "{F3}", "{F4}", "{F5}", "{F6}",
                                               "{F7}", "{F8}", "{F9}", "{F10}", "{F11}", "{F12}", "{F13}", "{F14}", "{F15}", "{F16}",
                                               "{ADD}", "{SUBTRACT}", "{MULTIPLY}", "{DIVIDE}"};
-    string[] processList    = new string[] {"Close", "Kill"};
+    string[] processList    = new string[] {"CLOSE", "KILL"};
 
     string inputClassName;
 
@@ -491,6 +491,7 @@ namespace MediaPortal.Configuration
       this.radioButtonProcess.Size = new System.Drawing.Size(80, 16);
       this.radioButtonProcess.TabIndex = 21;
       this.radioButtonProcess.Text = "Process";
+      this.radioButtonProcess.Click += new System.EventHandler(this.radioButtonProcess_Click);
       // 
       // HCWMappingForm
       // 
@@ -643,11 +644,16 @@ namespace MediaPortal.Configuration
                   break;
               }
                 break;
-              case "KILLPROCESS":
-                commandString = "Kill";
-                break;
-              case "CLOSEPROCESS":
-                commandString = "Close";
+              case "PROCESS":
+              switch (cmdProperty)
+              {
+                case "CLOSE":
+                  commandString = "Close Process";
+                  break;
+                case "KILL":
+                  commandString = "Kill Process";
+                  break;
+              }
                 break;
             }
 
@@ -969,6 +975,13 @@ namespace MediaPortal.Configuration
                   comboBoxCmdProperty.Enabled = true;
                   UpdateCombo(ref comboBoxCmdProperty, powerList, data.Value);
                   break;
+                case "PROCESS":
+                  comboBoxCmdProperty.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+                  radioButtonProcess.Checked = true;
+                  comboBoxSound.Enabled = true;
+                  comboBoxCmdProperty.Enabled = true;
+                  UpdateCombo(ref comboBoxCmdProperty, processList, data.Value);
+                  break;
               }
                 break;
             }
@@ -1104,6 +1117,26 @@ namespace MediaPortal.Configuration
       UpdateCombo(ref comboBoxCmdProperty, powerList, data.Value);
     }
 
+    private void radioButtonProcess_Click(object sender, System.EventArgs e)
+    {
+      comboBoxCmdProperty.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      comboBoxSound.Enabled = true;
+      comboBoxCmdProperty.Enabled = true;
+      TreeNode node = getNode("COMMAND");
+      Data data = new Data("COMMAND", "PROCESS", "CLOSE");
+      node.Tag = data;
+      switch (data.Value)
+      {
+        case "CLOSE":
+          node.Text = "Close Process";
+          break;
+        case "KILL":
+          node.Text = "Kill Process";
+          break;
+      }
+      UpdateCombo(ref comboBoxCmdProperty, processList, data.Value);
+    }
+
     private void okButton_Click(object sender, System.EventArgs e)
     {
       SaveMapping(inputClassName + ".xml");
@@ -1160,6 +1193,21 @@ namespace MediaPortal.Configuration
               break;
             case "HIBERNATE":
               node.Text = "Hibernate Windows";
+              break;
+          }
+          break;
+        }
+        case "PROCESS":
+        {
+          switch ((string)comboBoxCmdProperty.SelectedItem)
+          {
+            case "CLOSE":
+              node.Tag = new Data("COMMAND", "PROCESS", "CLOSE");
+              node.Text = "Close Process";
+              break;
+            case "KILL":
+              node.Tag = new Data("COMMAND", "PROCESS", "KILL");
+              node.Text = "Kill Process";
               break;
           }
           break;
@@ -1344,7 +1392,6 @@ namespace MediaPortal.Configuration
     {
       LoadMapping(inputClassName + ".xml", true);
     }
-
 
 
 

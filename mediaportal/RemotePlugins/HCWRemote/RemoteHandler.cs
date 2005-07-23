@@ -271,22 +271,22 @@ namespace MediaPortal
           }
         }
           break;
-        case "KILLPROCESS":
+        case "PROCESS":
         {
-          if (param1 <= 0) return false;
           Process proc = Process.GetProcessById(param1);
-          if (null == proc) return false;
-          proc.Kill();
-          break;
-        }
-        case "CLOSEPROCESS":
-        {
           if (param1 <= 0) return false;
-          Process proc = Process.GetProcessById(param1);
           if (null == proc) return false;
-          proc.CloseMainWindow();
-          break;
+          switch (map.CmdProperty)
+          {
+            case "CLOSE":
+              proc.CloseMainWindow();
+              break;
+            case "KILL":
+              proc.Kill();
+              break;
+          }
         }
+          break;
       }
       return true;
     }

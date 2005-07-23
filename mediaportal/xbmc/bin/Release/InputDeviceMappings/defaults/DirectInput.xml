@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <mappings version="2">
-	<remote family="DirectInput Joystick / Gamepads">
+	<remote family="DirectInput Joystick / Gamepad">
 		<button name="axisX Up" code="3000">
 			<action layer="0" condition="*" conproperty="-1" command="KEY" cmdproperty="{RIGHT}" sound="" />
 		</button>
@@ -94,14 +94,11 @@
 		</button>
 		<button name="Button 20" code="3049">
 		</button>
-		
 		<button name="ComboKillProcess" code="4000">
-			<action layer="0" condition="*" conproperty="-1" command="KILLPROCESS" cmdproperty="-1" sound="" />
+			<action layer="0" condition="*" conproperty="-1" command="PROCESS" cmdproperty="KILL" sound="" />
 		</button>
-
 		<button name="ComboCloseProcess" code="4001">
-			<action layer="0" condition="*" conproperty="-1" command="CLOSEPROCESS" cmdproperty="-1" sound="" />
+			<action layer="0" condition="*" conproperty="-1" command="PROCESS" cmdproperty="CLOSE" sound="" />
 		</button>
-		
 	</remote>
 </mappings>
