@@ -199,6 +199,7 @@ namespace MediaPortal.Database
 			if (results.ColumnIndices.ContainsKey(strColum))
 			{
 				iCol=(int)results.ColumnIndices[strColum];
+				if (arr[iCol]==null) return String.Empty;
 				string strLine = ((string)arr[iCol]).Trim();
 				strLine = strLine.Replace("''","'");
 				return strLine;
@@ -209,6 +210,7 @@ namespace MediaPortal.Database
 			if (results.ColumnIndices.ContainsKey(strColum))
 			{
 				iCol=(int)results.ColumnIndices[strColum];
+				if (arr[iCol]==null) return String.Empty;
 				string strLine = ((string)arr[iCol]).Trim();
 				strLine = strLine.Replace("''","'");
 				return strLine;

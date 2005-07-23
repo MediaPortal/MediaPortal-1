@@ -564,7 +564,7 @@ namespace MediaPortal
         public void BuildPresentParamsFromSettings()
         {
             presentParams.Windowed = graphicsSettings.IsWindowed;
-            presentParams.BackBufferCount = 1;
+            presentParams.BackBufferCount = 2;
             presentParams.EnableAutoDepthStencil = false;
             presentParams.ForceNoMultiThreadedFlag = false;
 
@@ -2325,7 +2325,13 @@ namespace MediaPortal
 									}
 								}
 								FrameMove();
-								if (GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.Vmr9FPS<1f) counter=0;
+								if (GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.Vmr9FPS<1f) 
+								{
+									if (VMR9Util.g_vmr9!=null)
+									{
+										VMR9Util.g_vmr9.Process();
+									}
+								}
 								if (GUIGraphicsContext.IsFullScreenVideo==false||g_Player.Speed!=1) counter=0;
 								if (counter==0)
 								{

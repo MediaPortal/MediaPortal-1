@@ -178,8 +178,8 @@ namespace SQLite.NET
 			lock (typeof(SQLiteClient))
 			{
 				//Log.Write("dbs:{0} sql:{1}", databaseName,query);
-				if (query==null) return null;
-				if (query.Length==0) return null;
+				if (query==null) return set1;
+				if (query.Length==0) return set1;
 				IntPtr errMsg = IntPtr.Zero; 
 				//string msg = "";
 
