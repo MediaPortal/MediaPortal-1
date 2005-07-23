@@ -1448,9 +1448,9 @@ namespace MediaPortal.TV.Database
 					string strOrder=" order by iStartTime";
 					strSQL=String.Format("select * from channel,tblPrograms,genre where genre.idGenre=tblPrograms.idGenre and tblPrograms.idChannel=channel.idChannel and channel.strChannel like '{0}' ",
 						strChannel);
-					string where =String.Format(" and ( (tblPrograms.iEndTime>={0} and tblPrograms.iEndTime <={1}) ", iStartTime,iEndTime);
-					where+=String.Format(" or (tblPrograms.iStartTime>={0} and tblPrograms.iStartTime <= {1} ) ", iStartTime,iEndTime);
-					where+=String.Format(" or (tblPrograms.iStartTime<={0} and tblPrograms.iEndTime >= {1}) )", iStartTime,iEndTime);
+					string where =String.Format(" and ( (tblPrograms.iEndTime>='{0}' and tblPrograms.iEndTime <='{1}') ", iStartTime,iEndTime);
+					where+=String.Format(" or (tblPrograms.iStartTime>='{0}' and tblPrograms.iStartTime <= '{1}' ) ", iStartTime,iEndTime);
+					where+=String.Format(" or (tblPrograms.iStartTime<='{0}' and tblPrograms.iEndTime >= '{1}') )", iStartTime,iEndTime);
 					strSQL+=where;
 					strSQL+=strOrder;
 
@@ -1511,9 +1511,9 @@ namespace MediaPortal.TV.Database
 					if (null==m_db) return false;
 
 					SQLiteResultSet results;
-					string where =String.Format(" and ( (tblPrograms.iEndTime>={0} and tblPrograms.iEndTime <={1}) ", iStartTime,iEndTime);
-					where+=String.Format(" or (tblPrograms.iStartTime>={0} and tblPrograms.iStartTime <= {1} ) ", iStartTime,iEndTime);
-					where+=String.Format(" or (tblPrograms.iStartTime<={0} and tblPrograms.iEndTime >= {1}) )", iStartTime,iEndTime);
+					string where =String.Format(" and ( (tblPrograms.iEndTime>='{0}' and tblPrograms.iEndTime <='{1}') ", iStartTime,iEndTime);
+					where+=String.Format(" or (tblPrograms.iStartTime>='{0}' and tblPrograms.iStartTime <= '{1}' ) ", iStartTime,iEndTime);
+					where+=String.Format(" or (tblPrograms.iStartTime<='{0}' and tblPrograms.iEndTime >= '{1}') )", iStartTime,iEndTime);
 					strSQL+=where;
 					strSQL+=strOrder;
 					results=m_db.Execute(strSQL);
@@ -1560,9 +1560,9 @@ namespace MediaPortal.TV.Database
 					if (null==m_db) return false;
 
 					SQLiteResultSet results;
-					string where =String.Format(" and ( (tblPrograms.iEndTime>={0} and tblPrograms.iEndTime <={1}) ", iStartTime,iEndTime);
-					where+=String.Format(" or (tblPrograms.iStartTime>={0} and tblPrograms.iStartTime <= {1} ) ", iStartTime,iEndTime);
-					where+=String.Format(" or (tblPrograms.iStartTime<={0} and tblPrograms.iEndTime >= {1}) )", iStartTime,iEndTime);
+					string where =String.Format(" and ( (tblPrograms.iEndTime>='{0}' and tblPrograms.iEndTime <='{1}') ", iStartTime,iEndTime);
+					where+=String.Format(" or (tblPrograms.iStartTime>='{0}' and tblPrograms.iStartTime <= '{1}' ) ", iStartTime,iEndTime);
+					where+=String.Format(" or (tblPrograms.iStartTime<='{0}' and tblPrograms.iEndTime >= '{1}') )", iStartTime,iEndTime);
 					strSQL+=where;
 					strSQL+=strOrder;
 					results=m_db.Execute(strSQL);
