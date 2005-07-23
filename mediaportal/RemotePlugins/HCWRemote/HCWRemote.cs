@@ -24,7 +24,6 @@ namespace MediaPortal
     int repeatDelay;                // Repeat delay
     bool restartIRApp     = false;  // Restart Haupp. IR-app. after MP quit
     IntPtr handlerIR;               // Window handler
-    bool appActive        = true;   // Focus
     DateTime lastTime;              // Timestamp of last execution
     int lastCommand;                // Last executed command
     HCWHandler hcwHandler;
@@ -35,7 +34,12 @@ namespace MediaPortal
 
     const int WM_TIMER               = 0x0113;
     const int WM_ACTIVATEAPP         = 0x001C;
+    const int WM_ACTIVATE            = 0x0006;
     const int WM_POWERBROADCAST      = 0x0218;
+    const int WA_INACTIVE            = 0;
+    const int WA_ACTIVE              = 1;
+    const int WA_CLICKACTIVE         = 2;
+      
     const int PBT_APMRESUMEAUTOMATIC = 0x0012;
     const int PBT_APMRESUMECRITICAL  = 0x0006;
 
@@ -150,19 +154,35 @@ namespace MediaPortal
           if (logVerbose) Log.Write("HCW Exception: SetDllDirectory: " + e.Message);
         }
       }
-    }
-
-    
-    /// <summary>
-    /// Stop IR.exe and initiate HCW start
-    /// </summary>
-    public void Init()
-    {
       try
       {
         if (Process.GetProcessesByName("Ir").Length != 0)
         {
           restartIRApp = true;
+        }
+      }
+      catch
+      {
+      }
+    }
+    
+    public void Init(IntPtr hwnd)
+    {
+      Init();
+    }
+
+    /// <summary>
+    /// Stop IR.exe and initiate HCW start
+    /// </summary>
+    public void Init()
+    {
+      if (!controlEnabled)
+        return;
+
+      try
+      {
+        if (Process.GetProcessesByName("Ir").Length != 0)
+        {
           int i = 0;
           while ((Process.GetProcessesByName("Ir").Length != 0) && (i < 15))
           {
@@ -288,16 +308,31 @@ namespace MediaPortal
             StartHCW();
           break;
 
-        case WM_ACTIVATEAPP:
-          if (((int)msg.WParam != 0) && allowExternal && !keepControl)
+        case WM_ACTIVATE:
+          if (allowExternal && !keepControl)
           {
-            appActive = !appActive;
-            if (appActive)
-              Init();
-            else
-              DeInit();
+            switch ((int)msg.WParam)
+            {
+              case WA_INACTIVE:
+                DeInit();
+                break;
+              case WA_ACTIVE:
+              case WA_CLICKACTIVE:
+                Init();
+                break;
+            }
           }
           break;
+
+//          if (((int)msg.WParam != 0) && allowExternal && !keepControl)
+//          {
+//            appActive = !appActive;
+//            if (appActive)
+//              Init();
+//            else
+//              DeInit();
+//          }
+//          break;
 
         case WM_TIMER:
           IntPtr repeatCount = new IntPtr();

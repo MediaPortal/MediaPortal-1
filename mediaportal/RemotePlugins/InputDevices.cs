@@ -21,13 +21,7 @@ namespace MediaPortal.Remotes
 		{
 			MCE2005Remote.Init(GUIGraphicsContext.ActiveForm);
 			FireDTVRemote.Init(GUIGraphicsContext.ActiveForm);
-
-			HCWRemote = new HCWRemote();
-			if (HCWRemote.Enabled)
-			{
-//				if (splashScreen != null) splashScreen.SetInformation("Initializing Hauppauge remote...");
-				HCWRemote.Init();
-			}
+  		HCWRemote.Init(GUIGraphicsContext.ActiveForm);
 		}
 
 		public static void Stop()
@@ -52,7 +46,7 @@ namespace MediaPortal.Remotes
 			if(MCE2005Remote.WndProc(ref msg, out action, out key, out keyCode))
 				return true;
 
-		    if(FireDTVRemote.WndProc(ref msg, out action, out  key, out keyCode))
+		  if(FireDTVRemote.WndProc(ref msg, out action, out  key, out keyCode))
 				return true;
 
 			return false;
