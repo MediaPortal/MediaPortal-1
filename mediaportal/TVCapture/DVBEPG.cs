@@ -1029,6 +1029,12 @@ namespace MediaPortal.TV.Recording
 					eit.isMHWEvent=true;
 					eit.shortEventUseable=true;
 					eit.mhwStartTime=prg.Time;
+					eit.starttime_y=prg.Time.Year;
+					eit.starttime_m=prg.Time.Month;
+					eit.starttime_d=prg.Time.Day;
+					eit.starttime_hh=prg.Time.Hour;
+					eit.starttime_mm=prg.Time.Minute;
+					eit.starttime_ss=prg.Time.Second;
 
 					DateTime dateProgramEnd;
 					int result=SetEITToDatabase(eit,channelName,0, out dateProgramEnd);
