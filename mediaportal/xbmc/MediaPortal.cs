@@ -715,7 +715,7 @@ public class MediaPortalApp : D3DApp, IRender
         case PBT_APMRESUMESUSPEND:
         case PBT_APMRESUMESTANDBY:
         case PBT_APMRESUMEAUTOMATIC:
-          InitializeEnvironment();
+          // TODO: Insert some handling to fix bad performance after resume here
           break;
       }
     }
