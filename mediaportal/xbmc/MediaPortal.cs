@@ -75,8 +75,20 @@ public class MediaPortalApp : D3DApp, IRender
 	const int WM_CLOSE               = 0x0010;
   const int WM_POWERBROADCAST      = 0x0218;
 
-  const int PBT_APMRESUMEAUTOMATIC = 0x0012;
-  const int PBT_APMRESUMECRITICAL  = 0x0006;
+  const int PBT_APMQUERYSUSPEND        = 0x0000;
+  const int PBT_APMQUERYSTANDBY        = 0x0001;
+  const int PBT_APMQUERYSUSPENDFAILED  = 0x0002;
+  const int PBT_APMQUERYSTANDBYFAILED  = 0x0003;
+  const int PBT_APMSUSPEND             = 0x0004;
+  const int PBT_APMSTANDBY             = 0x0005;
+  const int PBT_APMRESUMECRITICAL      = 0x0006;
+  const int PBT_APMRESUMESUSPEND       = 0x0007;
+  const int PBT_APMRESUMESTANDBY       = 0x0008;
+  const int PBTF_APMRESUMEFROMFAILURE  = 0x00000001;
+  const int PBT_APMBATTERYLOW          = 0x0009;
+  const int PBT_APMPOWERSTATUSCHANGE   = 0x000A;
+  const int PBT_APMOEMEVENT            = 0x000B;
+  const int PBT_APMRESUMEAUTOMATIC     = 0x0012;
 
   const int SC_SCREENSAVE          = 0xF140;
   const int SW_RESTORE             = 9;
@@ -688,12 +700,18 @@ public class MediaPortalApp : D3DApp, IRender
 			}
 		}
 
-    if (msg.Msg == WM_POWERBROADCAST && (msg.WParam.ToInt32() == PBT_APMRESUMEAUTOMATIC) || (msg.WParam.ToInt32() == PBT_APMRESUMECRITICAL))
+    if (msg.Msg == WM_POWERBROADCAST)
     {
-      Log.Write("WM_POWERBROADCAST: Reset GUI");
-      
-      // Insert some wakeup-handling here
-
+      Log.Write("WM_POWERBROADCAST: {0}", msg.WParam.ToInt32());
+      switch (msg.WParam.ToInt32())
+      {
+        case PBT_APMQUERYSUSPEND:
+        case PBT_APMQUERYSTANDBY:
+          // Stop all media before suspending or hibernating
+          g_Player.Stop();
+          GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
+          break;
+      }
     }
 
 		//if (msg.Msg==WM_KEYDOWN) Debug.WriteLine("msg keydown");
