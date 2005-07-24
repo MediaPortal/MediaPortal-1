@@ -7,7 +7,13 @@ namespace ProgramsDatabase
   /// </summary>
   public class appFilesEdit: AppItem
   {
-    public appFilesEdit(SQLiteClient initSqlDB): base(initSqlDB){}
+    public appFilesEdit(SQLiteClient initSqlDB): base(initSqlDB)
+    {
+      // some nice defaults...
+      UseShellExecute = true;
+      UseQuotes = true;
+      Startupdir = "%FILEDIR%";
+    }
 
   }
 
