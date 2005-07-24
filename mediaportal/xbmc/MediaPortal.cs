@@ -711,6 +711,12 @@ public class MediaPortalApp : D3DApp, IRender
           g_Player.Stop();
           GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
           break;
+        case PBT_APMRESUMECRITICAL:
+        case PBT_APMRESUMESUSPEND:
+        case PBT_APMRESUMESTANDBY:
+        case PBT_APMRESUMEAUTOMATIC:
+          InitializeEnvironment();
+          break;
       }
     }
 
