@@ -1652,55 +1652,13 @@ namespace MediaPortal
     {
       Initialize();
       OnStartup();
-
     }
+
 
     private void D3DApp_Closing(object sender, System.ComponentModel.CancelEventArgs e)
     {
       GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STOPPING;
       g_Player.Stop();
-    }
-
-    private void D3DApp_Resize(object sender, System.EventArgs e)
-    {
-//      if (g_Player.Playing || Recorder.IsRecording())
-//      {
-//        Log.Write("Form resized: stop media");
-//        m_bRestore = true;
-//        m_bWasPlaying = g_Player.Playing;
-//        m_dCurrentPos = g_Player.CurrentPosition;
-//        m_currentPlayList = PlayListPlayer.CurrentPlaylist;
-//        m_strCurrentFile = PlayListPlayer.Get(PlayListPlayer.CurrentSong);
-//        m_iActiveWindow = GUIWindowManager.ActiveWindow;
-//        g_Player.Stop();
-//      }
-    }
-
-
-
-    protected override void OnPaintBackground(PaintEventArgs e)
-    {
-    }
-
-    protected override void OnPaint(PaintEventArgs e)
-    {
-      /*
-            if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
-             return;
-            try
-            {
-              FrameMove();
-        
-              FullRender();
-              int SleepingTime=GetSleepingTime();
-              DoSleep(SleepingTime);
-
-              HandleCursor();
-            }
-            catch(Exception)
-            {
-            }
-            this.Invalidate();*/
     }
 
 
@@ -1709,6 +1667,7 @@ namespace MediaPortal
       if (System.Windows.Forms.Form.ActiveForm != this) return;
       mouseclick(e);
     }
+
 
     private void D3DApp_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
     {
@@ -2003,7 +1962,6 @@ namespace MediaPortal
       this.MinimumSize = new System.Drawing.Size(100, 100);
       this.Name = "D3DApp";
       this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDown);
-      this.Resize += new System.EventHandler(this.D3DApp_Resize);
       this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.D3DApp_Click);
       this.Closing += new System.ComponentModel.CancelEventHandler(this.D3DApp_Closing);
       this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.OnKeyPress);
@@ -2011,12 +1969,6 @@ namespace MediaPortal
       this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.D3DApp_MouseMove);
 
     }
-
-
-
-
-
-
 
 
     /// <summary>
