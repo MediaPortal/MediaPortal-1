@@ -1,0 +1,35 @@
+
+
+                #
+                # Finnish channels
+                #
+                
+                 'tv1000.viasat.fi' =>
+                 [ "TV 1000 Finland", \&get_data_viasat_tv1000,
+                   "www.tv1000.fi", "fi", 1, 0],
+
+                 'plus-1.tv1000.viasat.fi' =>
+                 [ "TV 1000 Finland (delayed one hour)", 
+                   \&get_data_viasat_tv1000,
+                   "www.tv1000.fi", "fi", 1, 1],
+
+                 'plus-2.tv1000.viasat.fi' =>
+                 [ "TV 1000 Finland (delayed two hours)", 
+                   \&get_data_viasat_tv1000,
+                   "www.tv1000.fi", "fi", 1, 2],
+
+                 'cinema.viasat.fi' =>
+                 [ "Viasat Cinema Finland", \&get_data_viasat_tv1000,
+                   "www.tv1000.fi", "fi", 3, 0],
+
+                 'plus-1.cinema.viasat.fi' =>
+                 [ "Viasat Cinema Finland (delayed one hour)", 
+                   \&get_data_viasat_tv1000,
+                   "www.tv1000.fi", "fi", 3, 1],
+
+                 'plus-2.cinema.viasat.fi' =>
+                 [ "Viasat Cinema Finland (delayd two hours)", 
+                   \&get_data_viasat_tv1000,
+                   "www.tv1000.fi", "fi", 3, 2],
+
+                 );

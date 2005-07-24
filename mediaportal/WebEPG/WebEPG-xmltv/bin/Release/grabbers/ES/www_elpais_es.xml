@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<profile>
+  <section name="ChannelList">
+
+  </section>
+  <section name="Listing">
+    <entry name="BaseURL">http://www.elpais.es/parrillatv/</entry>
+    <entry name="SearchURL">resultados.html?franja=&&amp;tipo=&&amp;canal=#ID&amp;dia=#YYYY#MM#DD</entry>
+
+<!-- Unique Listing Start string -->
+    <entry name="Start">Programa</entry>
+
+<!-- Unique Listing End string -->
+    <entry name="End">&#60;!-- BANNER_RIGHT</entry>
+
+<!-- Template of the Listing information -->
+    <entry name="Template">
+	&#60;tr&#62;&#60;td&#62;&#60;/td&#62;&#60;/tr&#62;
+	&#60;tr&#62;&#60;td&#62;&#60;#START&#62;&#60;/td&#62;
+		&#60;td&#62;&#60;#TITLE&#62;&#60;/td&#62;
+		&#60;td&#62;Canal&#60;/td&#62;
+		&#60;td&#62;Tipo&#60;/td&#62;
+	&#60;/tr&#62;
+	&#60;tr&#62;&#60;td&#62;&#60;#DESCRIPTION&#62;&#60;/td&#62;&#60;/tr&#62;
+    </entry>
+  </section>
+  <section name="DateTime">
+    <entry name="Months">no</entry>
+  </section>
+</profile>

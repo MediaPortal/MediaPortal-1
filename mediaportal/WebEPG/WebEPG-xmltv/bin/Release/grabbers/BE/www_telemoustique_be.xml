@@ -1,0 +1,96 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<!-- www_telemousique_be.xml  Version 1.1 -->
+
+<profile>
+  <section name="ChannelList">
+
+<!-- National - Francophone -->
+    <entry name="1@rtbf.be">LA%20UNE</entry>				<!-- La Une -->
+    <entry name="2@rtbf.be">La%20Deux</entry>				<!-- La Deux -->
+    <entry name="tvi@rtl.be">RTL%20TVI</entry>				<!-- RTL-TVI -->
+    <entry name="club@rtl.be">Club%20RTL</entry>			<!-- ClubRTL -->
+    <entry name="ab3@rtl.be">AB3</entry>				<!-- AB 3 -->
+    <entry name="ab4@rtl.be">AB4</entry>				<!-- AB 4 -->
+
+    <entry name="plug@rtl.be">PLUGTV</entry>				<!-- PLUG-TV -->
+    <entry name="1@betv.be">BE1</entry>					<!-- Be1 -->
+    <entry name="cine1@betv.be">BE%20CINE1</entry>			<!-- Be Ciné 1 -->
+    <entry name="cine2@betv.be">BE%20CINE2</entry>			<!-- Be Ciné 2 -->
+    <entry name="sport1@betv.be">BE%20SPORT1</entry>			<!-- Be Sport 1 -->
+    <entry name="sport2@betv.be">BE%20SPORT2</entry>			<!-- Be Sport 2 -->
+    <entry name="mcm.be">MCM</entry>					<!-- MCM 100% belge -->
+
+<!-- National - Vlaams -->
+    <entry name="1@vrt.be">TV1</entry>					<!-- één -->
+    <entry name="ketnet@vrt.be">Ketnet</entry>				<!-- Ketnet -->
+    <entry name="canvas@vrt.be">Canvas</entry>				<!-- Canvas -->
+    <entry name="sporza@vrt.be">SPORZA</entry>				<!-- Sporza -->
+    <entry name="vtm.be">VTM</entry>					<!-- VTM -->
+    <entry name="vt4.be">VT4</entry>					<!-- VT4 -->
+
+<!-- European -->
+    <entry name="tf1.fr">TF1</entry>					<!-- TF1 -->
+    <entry name="france2.fr">France2</entry>				<!-- France 2 -->
+    <entry name="france3.fr">France3</entry>				<!-- France 3 -->
+    <entry name="arte.fr">ARTE</entry>					<!-- ARTE -->
+    <entry name="france5.fr">La%20CINQ</entry>				<!-- France 5 -->
+    <entry name="f@tv5.fr">TV5</entry>					<!-- TV5 -->
+    <entry name="m6.fr">M6</entry>					<!-- M6 -->
+    <entry name="1@bbc.co.uk">BBC1</entry>				<!-- BBC1 -->
+    <entry name="2@bbc.co.uk">BBC2</entry>				<!-- BBC2 -->
+    <entry name="world@bbc.co.uk">BBC%20World</entry>			<!-- BBC World -->
+    <entry name="euronews.net">EuroNews</entry>				<!-- EuroNews -->
+    <entry name="1@tros.nl">Hollande1</entry>				<!-- Hollande 1 -->
+    <entry name="2@tros.nl">Hollande2</entry>				<!-- Hollande 2 -->
+    <entry name="3@tros.nl">Hollande3</entry>				<!-- Hollande 3 -->
+    <entry name="ard.de">ALL1</entry>					<!-- ARD - Allemagne 1 -->
+    <entry name="zdf.de">ALL2</entry>					<!-- ZDF - Allemagne 2 -->
+    <entry name="wdr.de">ALL3%20WDR</entry>				<!-- WDR - Allemagne 3 -->
+    <entry name="sw.de">ALL3%20SW</entry>				<!-- SWF - Allemagne 3 -->
+    <entry name="rtl.de">RTL%20Allemagne</entry>			<!-- RTL Allemagne -->
+    <entry name="raiuno.rai.it">RAI</entry>				<!-- Rai Uno -->
+    <entry name="tve.es">TVE</entry>					<!-- TVE -->
+    <entry name="international@rtp.pt">RTP%20International</entry>	<!-- RTPi -->
+
+<!-- International -->
+    <entry name="emea.cnni@cnn.com">CNN</entry>				<!-- CNN International - EMEA -->
+    <entry name="cnbc.com">CNBC</entry>					<!-- CNBC -->
+    <entry name="mtv.com">MTV</entry>					<!-- MTV -->
+  </section>
+
+<!-- Formating of Listing -->
+  <section name="Listing">
+    <entry name="LoadFirstURL">http://www.telemoustique.be/FS_index.htm</entry>
+    <entry name="BaseURL">http://www.telemoustique.be/fr/</entry>
+    <entry name="SearchURL">zender.asp?move=full&amp;channel=#ID&amp;dag=#_M/#_D/#YYYY</entry>
+
+<!-- Unique Listing Start string -->
+    <entry name="Start">Complet</entry>
+
+<!-- Unique Listing End string -->
+    <entry name="End">&#60;/body&#62;</entry>
+
+<!-- Template of the Listing information -->
+    <entry name="Template">
+	&#60;tr&#62;
+	&#60;td&#62;&#60;/td&#62;
+	&#60;td&#62;&#60;#START&#62;&#60;/td&#62;
+	&#60;td&#62;&#60;#END&#62;&#60;/td&#62;
+	&#60;td&#62;&#60;#TITLE&#62;&#60;/td&#62;
+	&#60;td&#62;&#60;/td&#62;
+	&#60;td&#62;&#60;/td&#62;
+	&#60;/tr&#62;
+	&#60;tr&#62;
+	&#60;td&#62;&#60;/td&#62;
+	&#60;td&#62;&#60;/td&#62;
+	&#60;td&#62;&#60;#DESCRIPTION&#62;&#60;/td&#62;
+	&#60;td&#62;&#60;/td&#62;
+	&#60;/tr&#62;</entry>
+  </section>
+  <section name="Info">
+    <entry name="GuideDays">3</entry>
+    <entry name="Language">fr</entry>
+    <entry name="SiteDescription">...</entry>
+  </section>
+</profile>

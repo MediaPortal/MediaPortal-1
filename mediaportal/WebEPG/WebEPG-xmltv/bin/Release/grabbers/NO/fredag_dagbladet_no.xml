@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The grabber xml file describes how to get the program listing infomation from the page. -->
+<!-- It has the following format: -->
+<profile>
+
+<!-- Channel section lists all the channels available from this website. -->
+
+  <section name="ChannelList">
+
+<!-- Norske -->
+    	<entry name="nrk1@nrk.no">1</entry>			<!-- NRK 1 -->
+	<entry name="nrk2@nrk.no">2</entry>			<!-- NRK 2 -->
+	<entry name="tv2.no">3</entry>				<!-- TV2 -->
+	<entry name="tv3.no">4</entry>				<!-- TV3 -->
+	<entry name="tvnorge.no">5</entry>			<!-- TV Norge -->
+	<entry name="ztv.no">63</entry>				<!-- ZTV Norge -->
+
+<!-- Nordiske -->
+	<entry name="svt1@svt.se">6</entry>			<!-- SVT 1 -->	
+	<entry name="svt2@svt.se">7</entry>			<!-- SVT 2 -->		
+	<entry name="dr1@dr.dk">12</entry>			<!-- DR 1 -->
+	<entry name="tv2@tv2.dk">13</entry>			<!-- Dansk TV 2 -->	
+	<entry name="tv6.at">28</entry>				<!-- TV 6 -->
+	<entry name="ztv.se">30</entry>				<!-- ZTV Sverige -->	
+	<entry name="tv3.dk">35</entry>				<!-- TV3 Danmark -->
+	<entry name="tv3.se">36</entry>				<!-- TV3 Sverige -->
+	<entry name="tv4@tv4.se">37</entry>			<!-- TV 4 -->
+	<entry name="kanal5.se">47</entry>			<!-- Kanal 5 -->
+	<entry name="dr2@dr.dk">58</entry>			<!-- DR 2 -->
+	<entry name="3plus.dk">68</entry>			<!-- 3+ Danmark -->
+
+<!-- Film og serier -->
+	<entry name="tcm.com">31</entry>			<!-- TCM -->
+	<entry name="TCM_CARTOONNETWORK">32</entry>		<!-- TCM & Cartoon Network -->
+	<entry name="tv1000@tv1000.no">34</entry>		<!-- TV 1000 -->
+	<entry name="canalplus@canalplus.no">39</entry>		<!-- CANAL+ -->
+	<entry name="cinema@canaldigital.no">42</entry>		<!-- Cinema -->	
+	<entry name="hallmarkchannel.com">59</entry>		<!-- Hallmark -->
+	<entry name="realitychannel.tv">61</entry>		<!-- Reality TV -->
+	<entry name="film1@canalplus.no">69</entry>		<!-- Canal+ Film 1 -->
+	<entry name="film2@canalplus.no">70</entry>		<!-- Canal+ Film 2 -->
+	<entry name="cmorefilm@canalplus.no">71</entry>		<!-- C More Film -->
+
+
+
+<!-- Barn -->
+
+	<entry name="nickelodeon.no">20</entry>			<!-- Nickelodeon -->	
+	<entry name="cartoonnetwork.no">41</entry>		<!-- Cartoon Network -->
+	<entry name="disneychannel.no">67</entry>		<!-- Disney Channel -->
+
+
+<!-- Sport -->
+	<entry name="dsf.de">11</entry>				<!-- DSF -->	
+	<entry name="extremesports.tv">49</entry>		<!-- Extreme Sport -->
+	<entry name="sport@viasatsport.no">55</entry>		<!-- Viasat Sport 1 -->
+	<entry name="sport@canalplus.no">72</entry>		<!-- Canal+ Sport -->
+	<entry name="sport2@viasatsport.no">73</entry>		<!-- Viasat Sport 2 -->
+	<entry name="sport3@viasatsport.no">74</entry>		<!-- Viasat Sport 3 -->
+	<entry name="tv2xtra.no">75</entry>			<!-- TV2 Xtra -->
+	<entry name="eurosport@eurosport.com">15</entry>	<!-- Eurosport -->
+
+<!-- Musikk -->
+	<entry name="mtv@mtve.com">17</entry>			<!-- MTV -->
+	<entry name="vh1.com">29</entry>			<!-- VH-1 -->
+
+<!-- Reise -->
+	<entry name="travelchannel.com">33</entry>		<!-- Travel -->
+	<entry name="travel_adventure@discovery.com">53</entry>	<!-- Discovery Travel & Adventure -->
+
+
+<!-- Natur og vitenskap -->
+	<entry name="animalplanet.com">10</entry>		<!-- Animal Planet -->
+	<entry name="CNBC_NGC">18</entry>			<!-- CNBC & National Geographic Channel -->	
+	<entry name="tv8.se">46</entry>				<!-- TV 8 -->
+	<entry name="discovery@discovery.com">44</entry>	<!-- Discovery Channel -->
+	<entry name="civilisation@discovery.com">51</entry>	<!-- Discovery Civilisation -->
+	<entry name="sci_trek@discovery.com">52</entry>		<!-- Discovery Sci-Trek -->
+
+
+<!-- Nyheter -->
+	<entry name="skynews@sky.com">25</entry>		<!-- Sky News -->
+	<entry name="SKYNEWS_NGC">26</entry>			<!-- Sky News & NGC -->
+	<entry name="dw-world.de">14</entry>			<!-- Deutche Welle -->	
+	<entry name="bbcworld.com">38</entry>			<!-- BBC World -->
+	<entry name="cnn.com">43</entry>			<!-- CNN -->
+	<entry name="cnbc@msn.com">62</entry>			<!-- CNBC -->
+
+<!-- Tysk og Fransk -->	
+	<entry name="3sat.de">9</entry>				<!-- 3 SAT -->
+	<entry name="prosieben.de">21</entry>			<!-- PRO 7 -->	
+	<entry name="rtl.de">22</entry>				<!-- RTL 1 -->
+	<entry name="rtl2.de">23</entry>			<!-- RTL 2 -->
+	<entry name="sat1.de">24</entry>			<!-- SAT 1 -->		
+	<entry name="tv5.org">27</entry>			<!-- TV 5 -->			
+
+<!-- Andre -->
+	<entry name="bbcprime.com">19</entry>			<!-- BBC Prime -->		
+	<entry name="club">50</entry>				<!-- Club -->
+	<entry name="star">77</entry>				<!-- Star -->
+
+  </section>
+
+<!-- Formating of Listing -->
+  <section name="Listing">
+	<entry name="BaseURL">http://fredag.dagbladet.no/tv/</entry>
+	<entry name="SearchURL">index.html?kategori_id=&amp;kanal_id=#ID&amp;dag=#DAY_OFFSET&amp;fra_tid=0&amp;til_tid=24</entry>
+
+<!-- Unique Listing Start string -->
+    <entry name="Start">&lt;!-- hovedtabell --></entry>
+
+<!-- Unique Listing End string -->
+    <entry name="End">&lt;!-- /hovedtabell --></entry>
+
+
+<!-- Template of the Listing information -->
+    <entry name="Template">
+	&lt;tr>&lt;td>&lt;/td>&lt;/tr>
+	&lt;td>&lt;#START>&lt;br>(&lt;#END>)&lt;/td>
+	&lt;td>&lt;#TITLE>&lt;br>&lt;#DESCRIPTION>&lt;br>&lt;br>&lt;/td>&lt;/tr>
+    </entry>
+  </section>
+  <section name="Info">
+    <entry name="GuideDays">7</entry>
+    <entry name="Lang">no</entry>
+    <entry name="SiteDescription">fredag.dagbladet.no is a good grabber, but currently lack genre-grabbing. The server is a bit unstable, and suffers by the workload generated by the XMLTV-grabber for Norway.</entry>
+  </section>
+</profile>

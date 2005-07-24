@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--   Version 1.0 -->
+
+<profile>
+  <section name="ChannelList">
+    <entry name="WAP9@ninemsn.com.au">free.Perth.9</entry>	<!-- Nine Metro Perth -->
+
+  </section>
+<!-- Formating of Listing -->
+  <section name="Listing"> 
+    <entry name="BaseURL">http://www.d1.com.au/D1XMLTV.asmx/</entry>
+    <entry name="SearchURL">GetPrograms?channelid=#ID&amp;date=#MM-#DD-#YYYY</entry>
+
+    <entry name="ListingType">XML</entry>
+
+    <entry name="XPath">//Programs</entry>
+
+    <entry name="StartEntry">Start</entry>
+    <entry name="EndEntry">Stop</entry>
+    <entry name="TitleEntry">Title</entry>
+    <entry name="SubtitleEntry">Subtitle</entry>
+    <entry name="DescEntry">Description</entry>
+    <entry name="GenreEntry">Category</entry>
+  </section>
+</profile>

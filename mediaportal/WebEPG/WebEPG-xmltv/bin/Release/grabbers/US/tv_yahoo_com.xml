@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<profile>
+
+<!-- Channel section lists all the channels available from this website. -->
+
+  <section name="ChannelList">
+
+    	<entry name="nbc.com">us_KJRH</entry>		<!-- NBC2 (KJRH) -->
+
+
+  </section>
+
+<!-- Formating of Listing -->
+  <section name="Listing">
+	<entry name="BaseURL">http://tv.yahoo.com/</entry>
+	<entry name="SearchURL">tvpdb?d=tvs&amp;id=166030587&amp;lineup=us_DMA671&amp;channels=#ID&amp;.intl=us&amp;startdate=#EPOCH_TIME</entry>
+
+<!-- Unique Listing Start string -->
+    <entry name="Start">TV Listings</entry>
+
+<!-- Template of the Listing information -->
+    <entry name="Template">
+	&#60;tr&#62;
+	&#60;td&#62;&#60;#START&#62;&#60;/td&#62;
+        &#60;td&#62;&#60;#TITLE&#62;&#60;/td&#62;
+	&#60;/tr&#62;
+    </entry>
+  </section>
+  <section name="Info">
+    <entry name="GuideDays">14</entry>
+    <entry name="Lang">en</entry>
+  </section>
+</profile>

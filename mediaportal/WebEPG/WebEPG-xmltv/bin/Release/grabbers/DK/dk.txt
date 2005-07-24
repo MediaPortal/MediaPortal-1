@@ -1,0 +1,60 @@
+                 #
+                 # Danish channels
+                 #
+
+                 '3plus.dk' =>
+                 [ "3+ Denmark", \&get_data_viasat,
+                   "www.3plus.dk", "dk" ],				 
+				 
+                 'sport1.viasat.dk' =>
+                 [ "Viasat Sport 1 Denmark", \&get_data_viasat,
+                   "www.sport.viasat.dk", "dk" ],
+
+                 'sport2.viasat.dk' =>
+                 [ "Viasat Sport 2 Denmark", \&get_data_viasat,
+                   "www.sport.viasat.dk", "dk", 76 ],
+
+                 'sport3.viasat.dk' =>
+                 [ "Viasat Sport 3 Denmark", \&get_data_viasat,
+                   "www.sport.viasat.dk", "dk", 77 ],
+
+                 'action.viasat.dk' =>
+                 [ "Viasat Nature Action Denmark", \&get_data_viasat,
+                   "www.action.viasat.dk", "dk" ],
+
+                 'explorer.viasat.dk' =>
+                 [ "Viasat Explorer Denmark", \&get_data_viasat,
+                   "explorer.viasat.dk", "dk" ],
+
+                 'tv1000.viasat.dk' =>
+                 [ "TV 1000 Denmark", \&get_data_viasat_tv1000,
+                   "www.tv1000.dk", "dk", 1, 0],
+
+                 'plus-1.tv1000.viasat.dk' =>
+                 [ "TV 1000 Denmark (delayed one hour)", \
+                   &get_data_viasat_tv1000,
+                   "www.tv1000.dk", "dk", 1, 1],
+
+                 'plus-2.tv1000.viasat.dk' =>
+                 [ "TV 1000 Denmark (delayed two hours)", 
+                   \&get_data_viasat_tv1000,
+                   "www.tv1000.dk", "dk", 1, 2],
+
+                 'cinema.viasat.dk' =>
+                 [ "Viasat Cinema Denmark", \&get_data_viasat_tv1000,
+                   "www.tv1000.dk", "dk", 3, 0],
+
+                 'plus-1.cinema.viasat.dk' =>
+                 [ "Viasat Cinema Denmark (delayed one hour)", 
+                   \&get_data_viasat_tv1000,
+                   "www.tv1000.dk", "dk", 3, 1],
+
+                 'plus-2.cinema.viasat.dk' =>
+                 [ "Viasat Cinema Denmark (delayed two hours)", 
+                   \&get_data_viasat_tv1000,
+                   "www.tv1000.dk", "dk", 3, 2],
+
+                
+                 'tv3.dk' =>
+                 [ "TV 3 Denmark", \&get_data_viasat,
+                   "www.tv3.dk", "dk" ],

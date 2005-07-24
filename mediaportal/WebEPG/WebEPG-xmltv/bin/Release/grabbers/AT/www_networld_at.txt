@@ -1,0 +1,42 @@
+
+
+http://www.networld.at/index.html?/nw1/dyn/mixed/tvprogramm/index.php?tag=3&stunde=ganzer&sparte=alle&ch=47
+
+
+
+<option value="28" selected>ORF 1
+					<option value="29">ORF 2
+					<option value="2">ARD
+					<option value="48">ZDF
+					<option value="49">3SAT
+					<option value="31">RTL
+					<option value="33">SAT.1
+					<option value="30">PRO 7
+					<option value="32">RTL 2
+					<option value="19">KABEL 1
+					<option value="46">VOX
+					<option value="34">SUPER RTL
+					<option value="20">KINDER KANAL
+					<option value="3">ARTE
+					<option value="37">Neunlive
+					<option value="53">BAYERN
+					<option value="25">NORD 3
+					<option value="21">MDR
+					<option value="54">PREMIERE
+					<option value="8">SF1
+					<option value="40">TV 5
+					<option value="24">NBC
+					<option value="39">TRT
+					<option value="1">SWR
+					<option value="16">HESSEN
+					<option value="27">ORB
+					<option value="10">EUROSPORT
+					<option value="9">DSF
+					<option value="22">MTV
+					<option value="43">MTV2
+					<option value="44">VIVA
+					<option value="45">VIVA 2
+					<option value="23">N-TV
+					<option value="11">EURONEWS
+					<option value="5">CNN
+					<option value="55">PHOENIX
