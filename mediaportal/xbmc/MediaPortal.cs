@@ -70,11 +70,17 @@ public class MediaPortalApp : D3DApp, IRender
 	private System.Timers.Timer tMouseClickTimer = null;
 	private bool bMouseClickFired = false;
 
-	const int WM_KEYDOWN = 0x0100;
-	const int WM_SYSCOMMAND = 0x0112;
-	const int SC_SCREENSAVE = 0xF140;
-	const int SW_RESTORE = 9;
-	const int WM_CLOSE = 0x0010;
+	const int WM_KEYDOWN             = 0x0100;
+	const int WM_SYSCOMMAND          = 0x0112;
+	const int WM_CLOSE               = 0x0010;
+  const int WM_POWERBROADCAST      = 0x0218;
+
+  const int PBT_APMRESUMEAUTOMATIC = 0x0012;
+  const int PBT_APMRESUMECRITICAL  = 0x0006;
+
+  const int SC_SCREENSAVE          = 0xF140;
+  const int SW_RESTORE             = 9;
+
 	bool supportsFiltering = false;
 	bool bSupportsAlphaBlend = false;
 	int g_nAnisotropy;
@@ -681,6 +687,15 @@ public class MediaPortalApp : D3DApp, IRender
 				return;
 			}
 		}
+
+    if (msg.Msg == WM_POWERBROADCAST && (msg.WParam.ToInt32() == PBT_APMRESUMEAUTOMATIC) || (msg.WParam.ToInt32() == PBT_APMRESUMECRITICAL))
+    {
+      Log.Write("WM_POWERBROADCAST: Reset GUI");
+      
+      // Insert some wakeup-handling here
+
+    }
+
 		//if (msg.Msg==WM_KEYDOWN) Debug.WriteLine("msg keydown");
 		g_Player.WndProc(ref msg);
 		base.WndProc(ref msg);

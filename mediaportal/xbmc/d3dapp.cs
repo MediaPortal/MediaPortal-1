@@ -55,7 +55,7 @@ namespace MediaPortal
 			public static extern IntPtr GetParent(HandleRef hWnd);
  
 
-			public static HandleRef NullHandleRef;
+//      public static HandleRef NullHandleRef;
 
 
 			[StructLayout(LayoutKind.Sequential)]
