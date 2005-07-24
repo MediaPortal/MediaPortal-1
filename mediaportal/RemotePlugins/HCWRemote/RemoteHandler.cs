@@ -240,13 +240,8 @@ namespace MediaPortal
           if ((map.CmdProperty == "STANDBY") || (map.CmdProperty == "HIBERNATE"))
           {
             // Stop all media before suspending or hibernating
-//            Recorder.StopViewing();
-//            Recorder.Stop();
             g_Player.Stop();
             GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
-//            GUIWindowManager.Dispose();
-//            GUITextureManager.Dispose();
-//            GUIFontManager.Dispose();
           }
           switch (map.CmdProperty)
           {
