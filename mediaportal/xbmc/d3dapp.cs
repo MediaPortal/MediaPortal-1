@@ -1663,17 +1663,17 @@ namespace MediaPortal
 
     private void D3DApp_Resize(object sender, System.EventArgs e)
     {
-      if (g_Player.Playing)
-      {
-        Log.Write("Form resized: stop media");
-        m_bRestore = true;
-        m_bWasPlaying = g_Player.Playing;
-        m_dCurrentPos = g_Player.CurrentPosition;
-        m_currentPlayList = PlayListPlayer.CurrentPlaylist;
-        m_strCurrentFile = PlayListPlayer.Get(PlayListPlayer.CurrentSong);
-        m_iActiveWindow = GUIWindowManager.ActiveWindow;
-        g_Player.Stop();
-      }
+//      if (g_Player.Playing || Recorder.IsRecording())
+//      {
+//        Log.Write("Form resized: stop media");
+//        m_bRestore = true;
+//        m_bWasPlaying = g_Player.Playing;
+//        m_dCurrentPos = g_Player.CurrentPosition;
+//        m_currentPlayList = PlayListPlayer.CurrentPlaylist;
+//        m_strCurrentFile = PlayListPlayer.Get(PlayListPlayer.CurrentSong);
+//        m_iActiveWindow = GUIWindowManager.ActiveWindow;
+//        g_Player.Stop();
+//      }
     }
 
 
@@ -1720,16 +1720,24 @@ namespace MediaPortal
     protected void ToggleFullWindowed()
     {
       Log.Write("App.ToggleFullWindowed()");
-      if (g_Player.Playing)
+      bool m_bRestoreTmp = false;
+      if (g_Player.Playing || Recorder.IsRecording())
       {
         Log.Write("App.ToggleFullWindowed() stop media");
-        m_bRestore = true;
+        m_bRestore = false;
+        m_bRestoreTmp = true;
         m_bWasPlaying = g_Player.Playing;
         m_dCurrentPos = g_Player.CurrentPosition;
         m_currentPlayList = PlayListPlayer.CurrentPlaylist;
         m_strCurrentFile = PlayListPlayer.Get(PlayListPlayer.CurrentSong);
         m_iActiveWindow = GUIWindowManager.ActiveWindow;
-        g_Player.Stop();
+        try
+        {
+          g_Player.Stop();
+        }
+        catch
+        {
+        }
       }
 
       isMaximized = !isMaximized;
@@ -1783,6 +1791,8 @@ namespace MediaPortal
       }
       GUIGraphicsContext.DX9Device.DeviceReset += new System.EventHandler(this.OnDeviceReset);
       OnDeviceReset(null, null);
+      if (m_bRestoreTmp)
+        m_bRestore = true;
     }
 
     /// <summary>
@@ -2044,6 +2054,26 @@ namespace MediaPortal
     /// </summary>
     protected override void OnResize(System.EventArgs e)
     {
+      bool m_bRestoreTmp = false;
+      if (g_Player.Playing || Recorder.IsRecording())
+      {
+        Log.Write("Form resized: stop media");
+        m_bRestore = false;
+        m_bRestoreTmp = true;
+        m_bWasPlaying = g_Player.Playing;
+        m_dCurrentPos = g_Player.CurrentPosition;
+        m_currentPlayList = PlayListPlayer.CurrentPlaylist;
+        m_strCurrentFile = PlayListPlayer.Get(PlayListPlayer.CurrentSong);
+        m_iActiveWindow = GUIWindowManager.ActiveWindow;
+        try
+        {
+          g_Player.Stop();
+        }
+        catch
+        {
+        }
+      }
+
       if (notifyIcon1 != null)
       {
         if (notifyIcon1.Visible == false && this.WindowState == FormWindowState.Minimized)
@@ -2060,6 +2090,8 @@ namespace MediaPortal
 
       active = !(this.WindowState == System.Windows.Forms.FormWindowState.Minimized);
       base.OnResize(e);
+      if (m_bRestoreTmp)
+        m_bRestore = true;
     }
 
 
