@@ -30,6 +30,48 @@ namespace MediaPortal
   /// </summary>
   public class D3DApp : System.Windows.Forms.Form
   {
+		class NativeGameLoop
+		{
+			public const int PMRemove=1;
+			[DllImport("user32.dll", CharSet=CharSet.Auto)]
+			public static extern bool PeekMessage([In, Out] ref NativeGameLoop.MSG msg, IntPtr hwnd, int msgMin, int msgMax, int remove);
+ 
+			[DllImport("user32.dll", CharSet=CharSet.Unicode, ExactSpelling=true)]
+			public static extern bool GetMessageW([In, Out] ref NativeGameLoop.MSG msg, IntPtr hWnd, int uMsgFilterMin, int uMsgFilterMax);
+ 
+			[DllImport("user32.dll", CharSet=CharSet.Ansi, ExactSpelling=true)]
+			public static extern bool GetMessageA([In, Out] ref NativeGameLoop.MSG msg, IntPtr hWnd, int uMsgFilterMin, int uMsgFilterMax);
+ 
+			[DllImport("user32.dll", CharSet=CharSet.Auto, ExactSpelling=true)]
+			public static extern bool TranslateMessage([In, Out] ref NativeGameLoop.MSG msg);
+ 
+			[DllImport("user32.dll", CharSet=CharSet.Unicode, ExactSpelling=true)]
+			public static extern IntPtr DispatchMessageW([In] ref NativeGameLoop.MSG msg);
+
+			[DllImport("user32.dll", CharSet=CharSet.Ansi, ExactSpelling=true)]
+			public static extern IntPtr DispatchMessageA([In] ref NativeGameLoop.MSG msg);
+
+			[DllImport("user32.dll", CharSet=CharSet.Auto, ExactSpelling=true)]
+			public static extern IntPtr GetParent(HandleRef hWnd);
+ 
+
+			public static HandleRef NullHandleRef;
+
+
+			[StructLayout(LayoutKind.Sequential)]
+				public struct MSG
+			{
+				public IntPtr hwnd;
+				public int message;
+				public IntPtr wParam;
+				public IntPtr lParam;
+				public int time;
+				public int pt_x;
+				public int pt_y;
+			}
+
+		}
+
     const int MILLI_SECONDS_TIMER = 1;
     protected string m_strSkin = "mce";
     protected string m_strLanguage = "english";
@@ -2199,22 +2241,35 @@ namespace MediaPortal
       System.Diagnostics.Process.Start("configuration.exe", @"/wizard /section=wizards\dvd.xml");
     }
 
-    public void HandleMessage()
-    {
-      try
-      {
-        System.Windows.Forms.Application.DoEvents();//SLOW
-      }
+		public void HandleMessage()
+		{
+			try
+			{
+				NativeGameLoop.MSG msg1;
+				msg1 = new NativeGameLoop.MSG();
+
+				if (!NativeGameLoop.PeekMessage(ref msg1, IntPtr.Zero, 0, 0, 0))
+				{
+					return;
+				}
+				if (!NativeGameLoop.GetMessageA(ref msg1, IntPtr.Zero, 0, 0))
+				{
+					return;
+				}
+				NativeGameLoop.TranslateMessage(ref msg1);
+				NativeGameLoop.DispatchMessageA(ref msg1);
+				//	System.Windows.Forms.Application.DoEvents();//SLOW
+			}
 #if DEBUG
       catch (Exception ex)
       {
           Log.Write("exception:{0}",ex.ToString());
 #else
-      catch (Exception)
-      {
+			catch (Exception)
+			{
 #endif
-      }
-    }
+			}
+		}
 
     void StartFrameClock()
     {
