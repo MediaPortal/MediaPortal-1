@@ -463,6 +463,17 @@ namespace MediaPortal.TV.Recording
 		/// </remarks>
 		static private int FindFreeCardForRecording(string recordingChannel,bool stopRecordingsWithLowerPriority, int recordingPrio)
 		{
+			if (m_iCurrentCard>=0 && m_iCurrentCard< m_tvcards.Count)
+			{
+				TVCaptureDevice dev=(TVCaptureDevice )m_tvcards[m_iCurrentCard];
+				if (dev.View && !dev.IsRecording)
+				{
+					if (dev.TVChannel==recordingChannel)
+					{
+						if (dev.UseForRecording) return m_iCurrentCard;
+					}
+				}
+			}
 			int cardNo=0;
 			int highestPrio=-1;
 			int highestCard=-1;
