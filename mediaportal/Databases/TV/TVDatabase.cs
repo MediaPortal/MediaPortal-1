@@ -121,7 +121,7 @@ namespace MediaPortal.TV.Database
 			{
 				m_db.Execute(String.Format("insert into tblversion (idVersion) values({0})",currentVersion));
 			}
-			if (versionNr<=2)
+			if (versionNr<2)
 			{
 				//version 1->2 : changed start/ending times from text->int in version 2
 				m_db.Execute("drop table tblPrograms");
