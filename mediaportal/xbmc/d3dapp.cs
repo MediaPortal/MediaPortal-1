@@ -1621,6 +1621,17 @@ namespace MediaPortal
 
     private void D3DApp_Resize(object sender, System.EventArgs e)
     {
+      if (g_Player.Playing)
+      {
+        Log.Write("Form resized: stop media");
+        m_bRestore = true;
+        m_bWasPlaying = g_Player.Playing;
+        m_dCurrentPos = g_Player.CurrentPosition;
+        m_currentPlayList = PlayListPlayer.CurrentPlaylist;
+        m_strCurrentFile = PlayListPlayer.Get(PlayListPlayer.CurrentSong);
+        m_iActiveWindow = GUIWindowManager.ActiveWindow;
+        g_Player.Stop();
+      }
     }
 
 
@@ -1663,45 +1674,6 @@ namespace MediaPortal
       mousemove(e);
     }
 
-
-
-    protected void ToggleFullWindowed(bool checkPlaying)
-    {
-      if (checkPlaying)
-      {
-        if (Recorder.IsRecording())
-        {
-          GUIDialogYesNo dialogYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
-          if (null!=dialogYesNo)
-          {
-            dialogYesNo.SetHeading(GUILocalizeStrings.Get(1023));
-            dialogYesNo.SetLine(1, GUILocalizeStrings.Get(1025));
-            dialogYesNo.SetLine(2, GUILocalizeStrings.Get(1026));
-            dialogYesNo.SetLine(3, "");
-            dialogYesNo.DoModal(GUIWindowManager.ActiveWindow);
-            if (!dialogYesNo.IsConfirmed)
-              return;
-          }
-        }
-        else if (g_Player.Playing)
-        {
-          GUIDialogYesNo dialogYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
-          if (null!=dialogYesNo)
-          {
-            dialogYesNo.SetHeading(GUILocalizeStrings.Get(1023));
-            dialogYesNo.SetLine(1, GUILocalizeStrings.Get(1024));
-            dialogYesNo.SetLine(2, GUILocalizeStrings.Get(1026));
-            dialogYesNo.SetLine(3, "");
-            dialogYesNo.DoModal(GUIWindowManager.ActiveWindow);
-            if (!dialogYesNo.IsConfirmed)
-              return;
-            else
-              Recorder.Stop();
-          }
-        }
-      }
-      ToggleFullWindowed();
-    }
 
     protected void ToggleFullWindowed()
     {
@@ -1780,7 +1752,7 @@ namespace MediaPortal
 
       if (e.Control == false && e.Alt == true && (e.KeyCode == System.Windows.Forms.Keys.Return))
       {
-        ToggleFullWindowed(true);
+        ToggleFullWindowed();
         e.Handled = true;
         return;
 
@@ -2395,7 +2367,7 @@ namespace MediaPortal
 
     private void menuItemFullscreen_Click(object sender, System.EventArgs e)
     {
-      ToggleFullWindowed(true);
+      ToggleFullWindowed();
 
       GUIDialogNotify dialogNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
       if (dialogNotify != null)
