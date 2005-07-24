@@ -1045,7 +1045,7 @@ namespace MediaPortal.TV.Database
 					if (iChannelId<0) return -1;
 					
 					//check if program is already in database
-					strSQL=String.Format("SELECT * FROM tblPrograms WHERE idChannel={0} AND idGenre={1} AND strTitle='{2}' AND iStartTime={3} AND iEndTime={4} AND strDescription='{5}'", 
+					strSQL=String.Format("SELECT * FROM tblPrograms WHERE idChannel={0} AND idGenre={1} AND strTitle='{2}' AND iStartTime='{3}' AND iEndTime='{4}' AND strDescription='{5}'", 
 						iChannelId,iGenreId,strTitle,prog.Start.ToString(),
 						prog.End.ToString(), strDescription);
 					SQLiteResultSet results;
@@ -1056,7 +1056,7 @@ namespace MediaPortal.TV.Database
 						return -1; //exit if the same program exists
 					}
 					//check if other programs exist between the start - finish time of this program
-					strSQL=String.Format("SELECT strTitle,iStartTime,iEndTime FROM tblPrograms WHERE idChannel={0} AND iStartTime>={1} AND iEndTime<={2}", 
+					strSQL=String.Format("SELECT strTitle,iStartTime,iEndTime FROM tblPrograms WHERE idChannel={0} AND iStartTime>='{1}' AND iEndTime<='{2}'", 
 						iChannelId,prog.Start.ToString(),prog.End.ToString());
 					SQLiteResultSet results2;
 					results2=m_db.Execute(strSQL);
@@ -1066,7 +1066,7 @@ namespace MediaPortal.TV.Database
 							long iStart=DatabaseUtility.GetAsInt64(results2,i,"iStartTime");
 							long iEnd=DatabaseUtility.GetAsInt64(results2,i,"iEndTime");
 							//							Log.WriteFile(Log.LogType.Log,true,"Removing Program:{0} {1} {2}", DatabaseUtility.Get(results2,i,"strTitle"),iStart.ToString(),iEnd.ToString());
-							strSQL=String.Format("DELETE FROM tblPrograms WHERE idChannel={0} AND iStartTime={1} AND iEndTime={2}",
+							strSQL=String.Format("DELETE FROM tblPrograms WHERE idChannel={0} AND iStartTime='{1}' AND iEndTime='{2}'",
 								iChannelId,iStart,iEnd);
 							m_db.Execute(strSQL);
 						}
@@ -2377,9 +2377,9 @@ namespace MediaPortal.TV.Database
 					string strSQL;
 					System.DateTime yesterday = System.DateTime.Today.AddDays(-1);
 					long longYesterday = Utils.datetolong(yesterday);
-					strSQL=String.Format("DELETE FROM tblPrograms WHERE iEndTime < {0}",longYesterday);
+					strSQL=String.Format("DELETE FROM tblPrograms WHERE iEndTime < '{0}'",longYesterday);
 					m_db.Execute(strSQL);
-					strSQL=String.Format("DELETE FROM canceledseries where iCancelTime < {0}",longYesterday);
+					strSQL=String.Format("DELETE FROM canceledseries where iCancelTime < '{0}'",longYesterday);
 					m_db.Execute(strSQL);
 				}
 				catch(Exception ex)
