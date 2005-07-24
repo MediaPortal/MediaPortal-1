@@ -101,6 +101,13 @@ namespace MediaPortal.Playlists
 					}
 				}
 					break;
+				case GUIMessage.MessageType.GUI_MSG_SEEK_POSITION:
+				{
+					Log.Write("Playlistplayer.SeekPosition({0})",message.Param1);
+					g_Player.SeekAbsolute(message.Param1);
+					Log.Write("Playlistplayer.SeekPosition({0}) done",message.Param1);
+				}
+					break;
       }
     }
 

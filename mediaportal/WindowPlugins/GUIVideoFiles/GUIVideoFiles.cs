@@ -1757,7 +1757,9 @@ namespace MediaPortal.GUI.Video
 				}
 				else
 				{
-					g_Player.SeekAbsolute(timeMovieStopped);
+					GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SEEK_POSITION,0,0,0,0,0,null);
+					msg.Param1=(int)timeMovieStopped;
+					GUIGraphicsContext.SendMessage(msg);
 				}
       }
     }

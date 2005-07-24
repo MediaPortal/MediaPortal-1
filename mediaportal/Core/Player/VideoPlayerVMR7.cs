@@ -179,6 +179,12 @@ namespace MediaPortal.Player
 
     public override void SetVideoWindow()
     {
+			if (GUIGraphicsContext.Vmr9Active) 
+			{
+				m_bUpdateNeeded=false;
+				m_bStarted=true;
+				return;
+			}
       if (GUIGraphicsContext.IsFullScreenVideo!= m_bFullScreen)
       {
         m_bFullScreen=GUIGraphicsContext.IsFullScreenVideo;
@@ -293,6 +299,7 @@ namespace MediaPortal.Player
     {
       if ( !Playing) return;
       if ( !m_bStarted) return;
+			if (GUIGraphicsContext.InVmr9Render) return;
 			TimeSpan ts=DateTime.Now-updateTimer;
 			if (ts.TotalMilliseconds>=800 || m_speedRate!=1) 
 			{
@@ -651,7 +658,9 @@ namespace MediaPortal.Player
           if (dTime<0.0d) dTime=0.0d;
           if (dTime < Duration)
           {
-            mediaPos.put_CurrentPosition(dTime);
+						Log.Write("seekabs:{0}",dTime);
+						mediaPos.put_CurrentPosition(dTime);
+						Log.Write("seekabs:{0} done",dTime);
           }
         }
       }

@@ -1407,7 +1407,8 @@ namespace MediaPortal.Player
     public override void Process()
     {
       if ( !Playing) return;
-      if (!m_bStarted) return;
+			if (!m_bStarted) return;
+			if (GUIGraphicsContext.InVmr9Render) return;
       OnProcess();
 			HandleMouseMessages();
       

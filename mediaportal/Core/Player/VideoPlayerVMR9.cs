@@ -261,7 +261,7 @@ namespace MediaPortal.Player
 					while((hr=Marshal.ReleaseComObject( vobSub ))>0); 
 					vobSub = null;
 				}
-				DsUtils.RemoveFilters(graphBuilder);
+			//	DsUtils.RemoveFilters(graphBuilder);
 
         if( rotCookie != 0 )
           DsROT.RemoveGraphFromRot( ref rotCookie );

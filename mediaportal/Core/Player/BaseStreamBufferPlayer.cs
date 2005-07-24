@@ -365,6 +365,7 @@ namespace MediaPortal.Player
 		{
 			if ( !Playing) return;
 			if ( !m_bStarted) return;
+			if (GUIGraphicsContext.InVmr9Render) return;
 			TimeSpan ts=DateTime.Now-updateTimer;
 			if (ts.TotalMilliseconds>=800 || iSpeed!=1) 
 			{

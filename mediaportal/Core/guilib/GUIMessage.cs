@@ -86,6 +86,7 @@ namespace MediaPortal.GUI.Library
 				GUI_MSG_NOTIFY_TV_PROGRAM,
 				GUI_MSG_RESTART_REMOTE_CONTROLS,
 				GetList,
+				GUI_MSG_SEEK_POSITION
 		};
 
 		private string 				m_strLabel="";
