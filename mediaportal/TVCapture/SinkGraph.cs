@@ -1299,6 +1299,8 @@ namespace MediaPortal.TV.Recording
 			string filename=String.Format(@"database\card_{0}.xml",mCard.FriendlyName);
 			using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml(filename))
 			{	
+				bool enabled=xmlreader.GetValueAsBool("quality","enabled",false);
+				if (!enabled) return;
 
 				int portableMinKbps=xmlreader.GetValueAsInt("quality", "portLow", 100);
 				int portableMaxKbps=xmlreader.GetValueAsInt("quality", "portMax", 300);
