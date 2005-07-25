@@ -1552,14 +1552,14 @@ namespace MediaPortal.TV.Recording
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:StartViewing() channel not found");
 				return false;
 			}
-			GUIMessage msg =new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED,0,0,0,1,0,null);
-			GUIWindowManager.SendMessage(msg);
 			AddPreferredCodecs(true,true);
 			
 			if (Vmr9!=null)
 			{
 				if (Vmr9.UseVMR9inMYTV)
 				{
+					GUIMessage msg =new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED,0,0,0,1,0,null);
+					GUIWindowManager.SendMessage(msg);
 					Vmr9.AddVMR9(m_graphBuilder);
 					if (Vmr9.VMR9Filter==null)
 					{
