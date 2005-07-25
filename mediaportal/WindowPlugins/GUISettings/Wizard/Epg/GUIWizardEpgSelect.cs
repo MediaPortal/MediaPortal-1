@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Xml;
 using MediaPortal.Util;
 using MediaPortal.GUI.Library;
 using MediaPortal.GUI.Settings.Wizard;
@@ -11,6 +12,7 @@ namespace WindowPlugins.GUISettings.Epg
 	public class GUIWizardEpgSelect : GUIWindow
 	{
 		[SkinControlAttribute(24)]			protected GUIListControl listGrabbers=null;
+		bool epgGrabberSelected=false;
 		public GUIWizardEpgSelect()
 		{
 			
@@ -29,11 +31,11 @@ namespace WindowPlugins.GUISettings.Epg
 		}
 		void LoadGrabbers()
 		{
+			epgGrabberSelected=false;
 			listGrabbers.Clear();
 			string[] folders = System.IO.Directory.GetDirectories(@"webepg\grabbers");			
 			foreach (string folder in folders)
 			{
-				Log.Write("{0}", folder);
 				if (folder.IndexOf("..")>=0) continue;
 				string[] files = System.IO.Directory.GetFiles(folder);
 				foreach (string file in files)
@@ -43,8 +45,9 @@ namespace WindowPlugins.GUISettings.Epg
 					{
 						GUIListItem item = new GUIListItem();
 						item.Label=System.IO.Path.GetFileNameWithoutExtension(folder);
-						item.Path=String.Format(@"{0}\{1}",folder,file);
+						item.Path=file;
 						listGrabbers.Add( item );
+						break;
 					}
 				}
 			}
@@ -60,6 +63,11 @@ namespace WindowPlugins.GUISettings.Epg
 
 		void OnGrabberSelected(GUIListItem item)
 		{
+			if (epgGrabberSelected) 
+			{
+				OnMap();
+				return;
+			}
 			if (item==null) return;
 			GUIPropertyManager.SetProperty("#WizardGrabber",item.Path);
 
@@ -71,10 +79,36 @@ namespace WindowPlugins.GUISettings.Epg
 			}
 			catch(Exception){}
 
+			listGrabbers.Clear();
+			XmlDocument doc = new XmlDocument();
+			doc.Load(@"webepg\WebEPG.xml");
+			XmlNodeList sections=doc.DocumentElement.SelectNodes("/profile/section");
+			foreach (XmlNode section in sections)
+			{
+				if (section.Attributes==null) return;
+				XmlNode nodeName=section.Attributes.GetNamedItem("name");
+				if (nodeName==null) continue;
+				if (nodeName.Value==null) continue;
+				if (nodeName.Value!="ChannelList") continue; 
+				XmlNodeList entries = section.SelectNodes("entry");
+				foreach (XmlNode entry in entries)
+				{
+					nodeName=entry.Attributes.GetNamedItem("name");
+					if (nodeName==null) continue;
+					if (nodeName.Value==null) continue;
+					GUIListItem ch = new GUIListItem();
+					ch.Label=nodeName.Value;
+					listGrabbers.Add(ch);
+				}
+			}
 
+
+			epgGrabberSelected=true;
+		}
+		void OnMap()
+		{
 			GUIPropertyManager.SetProperty("#Wizard.EPG.Done","yes");
-
-			GUIWizardCardsDetected.ScanNextCardType();
+		  GUIWizardCardsDetected.ScanNextCardType();
 		}
 	}
 }
