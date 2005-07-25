@@ -211,6 +211,7 @@ namespace MediaPortal.GUI.Settings.Wizard
 				GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_REMOTE);
 				return;
 			}
+			
 			Log.Write("ScanNextCardType:goto finished");
 			GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_FINISHED);
 		

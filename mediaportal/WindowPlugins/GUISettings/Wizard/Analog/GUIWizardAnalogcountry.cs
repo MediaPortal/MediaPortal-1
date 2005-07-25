@@ -37,9 +37,11 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 			foreach (XmlNode nodeCountry in countries)
 			{
 				XmlNode nodeCountryName = nodeCountry.Attributes.GetNamedItem("name");
+				XmlNode nodeCountryCode = nodeCountry.Attributes.GetNamedItem("code");
 				GUIListItem item = new GUIListItem();
 				item.IsFolder=false;
 				item.Label=nodeCountryName.Value;
+				item.ItemId=Int32.Parse(nodeCountryCode.Value);
 				listCountries.Add(item);
 			}
 			listCountries.Sort(this);
@@ -49,7 +51,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 			if (control==listCountries)
 			{
 				GUIListItem item=listCountries.SelectedListItem;
-				DoScan(item.Label);
+				DoScan(item);
 				GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_ANALOG_CITY);
 				return;
 			}
@@ -60,9 +62,14 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 			base.OnClicked (controlId, control, actionType);
 		}
 
-		void DoScan(string country)
+		void DoScan(GUIListItem item)
 		{
-			GUIPropertyManager.SetProperty("#WizardCountry",country);
+			using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			{
+				xmlwriter.SetValue("capture", "countryname", item.Label);
+				xmlwriter.SetValue("capture", "country", item.ItemId.ToString());
+			}			
+			GUIPropertyManager.SetProperty("#WizardCountry",item.Label);
 		}
 
 		public int Compare(object x, object y)
