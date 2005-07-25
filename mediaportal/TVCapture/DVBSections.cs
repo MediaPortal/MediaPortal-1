@@ -444,6 +444,104 @@ namespace MediaPortal.TV.Recording
 		#endregion
 		//
 		//
+		public ChannelInfo GetChannelInfo(IntPtr data)
+		{
+			byte[] da=new byte[600];
+			Marshal.Copy(data,da,0,570);
+			ChannelInfo ch=new ChannelInfo();
+			ch.transportStreamID=Marshal.ReadInt32(data,0);
+			ch.program_number=Marshal.ReadInt32(data,4);
+			ch.network_pmt_PID=Marshal.ReadInt32(data,8);
+			ch.pcr_pid=Marshal.ReadInt32(data,12);
+			ch.serviceID=ch.program_number;
+			ch.pid_list=new ArrayList();
+			PMTData pmt=new PMTData();
+			// video
+			pmt.elementary_PID=Marshal.ReadInt16(data,16);
+			pmt.isVideo=true;
+			pmt.stream_type=1;
+			pmt.data="";
+			ch.pid_list.Add(pmt);
+			pmt=new PMTData();			
+			// audio 1
+			pmt.elementary_PID=Marshal.ReadInt16(data,18);
+			pmt.isAudio=true;
+			pmt.stream_type=3;
+			pmt.data=""+(char)Marshal.ReadByte(data,20)+(char)Marshal.ReadByte(data,21)+(char)Marshal.ReadByte(data,22);
+			ch.pid_list.Add(pmt);
+			pmt=new PMTData();			
+			// audio 2
+			pmt.elementary_PID=Marshal.ReadInt16(data,24);
+			pmt.isAudio=true;
+			pmt.stream_type=3;
+			pmt.data=""+(char)Marshal.ReadByte(data,26)+(char)Marshal.ReadByte(data,27)+(char)Marshal.ReadByte(data,28);
+			ch.pid_list.Add(pmt);
+			pmt=new PMTData();			
+			// audio 3
+			pmt.elementary_PID=Marshal.ReadInt16(data,30);
+			pmt.isAudio=true;
+			pmt.stream_type=3;
+			pmt.data=""+(char)Marshal.ReadByte(data,32)+(char)Marshal.ReadByte(data,33)+(char)Marshal.ReadByte(data,34);
+			ch.pid_list.Add(pmt);
+			pmt=new PMTData();			
+			// ac3
+			pmt.elementary_PID=Marshal.ReadInt16(data,36);
+			pmt.isAC3Audio=true;
+			pmt.stream_type=0;
+			pmt.data="";
+			ch.pid_list.Add(pmt);
+			pmt=new PMTData();			
+			// teletext
+			pmt.elementary_PID=Marshal.ReadInt16(data,38);
+			pmt.isTeletext=true;
+			pmt.stream_type=0;
+			pmt.data="";
+			ch.pid_list.Add(pmt);
+			pmt=new PMTData();			
+			// sub
+			pmt.elementary_PID=Marshal.ReadInt16(data,40);
+			pmt.isDVBSubtitle=true;
+			pmt.stream_type=0;
+			pmt.data="";
+			ch.pid_list.Add(pmt);
+			pmt=new PMTData();			
+			// 48 -
+			/*
+		ULONG TransportStreamID;// 0-3
+		ULONG ProgrammNumber;// 4-7
+		ULONG ProgrammPMTPID;// 8-11
+		ULONG PCRPid;// 12-15
+		WORD VideoPid;//16-17
+		WORD AudioPid1;//18-19
+		char Lang1[3];//20-22
+		WORD AudioPid2;//23-24
+		char Lang2[3];//25-27
+        WORD AudioPid3;//28-29
+		char Lang3[3];//30-32
+		WORD AC3;//33-34
+		WORD Teletext;//35-36
+		WORD Subtitles;//37-38
+		BYTE ServiceName[255];// 39-293
+		BYTE ProviderName[255];// 294-548
+		WORD EITPreFollow;// 549-550
+		WORD EITSchedule;// 551-552
+		WORD Scrambled;// 553-554
+		WORD ServiceType;// 555-556
+		BYTE PMTReady;// 557-557
+		BYTE SDTReady;// 558-558			
+		*/
+			byte[] d=new byte[255];
+			Marshal.Copy((IntPtr)(((int)data)+42),d,0,255);
+			ch.service_name=System.Text.Encoding.ASCII.GetString(d);
+			Marshal.Copy((IntPtr)(((int)data)+297),d,0,255);
+			ch.service_provider_name=System.Text.Encoding.ASCII.GetString(d);
+			ch.eitPreFollow=(Marshal.ReadInt16(data,552))==1?true:false;
+			ch.eitSchedule=(Marshal.ReadInt16(data,554))==1?true:false;
+			ch.scrambled=(Marshal.ReadInt16(data,556))==1?true:false;
+			ch.serviceType=Marshal.ReadInt16(data,558);
+			ch.networkID=Marshal.ReadInt32(data,560);
+			return ch;
+		}
 		public bool SetPidsForTechnisat
 		{
 			get{return m_setPid;}
