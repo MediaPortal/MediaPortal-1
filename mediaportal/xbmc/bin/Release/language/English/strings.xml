@@ -3561,4 +3561,9 @@
 <string><id>107700</id><value>My TV/Teletext</value></string>
 <string><id>107701</id><value>My TV/Teletext</value></string>
 
+
+<string><id>200000</id><value>Please select your EPG grabber. Note if your country is</value></string>
+<string><id>200001</id><value>not listed then you will need to supply the EPG manually</value></string>
+<string><id>200002</id><value>You can now map the EPG channels to your TV channels</value></string>
+<string><id>200003</id><value>select a channel and press enter to change the mapping</value></string>
 </strings>

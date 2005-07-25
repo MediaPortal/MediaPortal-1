@@ -1,4 +1,4 @@
-﻿<window>
+<window>
    <id>635</id>
    <defaultcontrol>24</defaultcontrol>
    <allowoverlay>yes</allowoverlay>
@@ -15,33 +15,46 @@
          <type>button</type>
          <description>Back</description>
          <id>25</id>
-         <posX>560</posX>
+         <posX>448</posX>
          <posY>504</posY>
          <onleft>23</onleft>
-         <onright>25</onright>
+         <onright>5</onright>
          <onup>24</onup>
          <ondown>25</ondown>
-         <hyperlink>616</hyperlink>
          <label>&lt;Back</label>
+         <width>96</width>
+         <height>32</height>
+      </control>
+      <control>
+         <type>button</type>
+         <description>Next</description>
+         <id>5</id>
+         <posX>560</posX>
+         <posY>504</posY>
+         <onleft>25</onleft>
+         <onright>5</onright>
+         <onup>5</onup>
+         <ondown>5</ondown>
+         <label>Next&gt;</label>
          <width>96</width>
          <height>32</height>
       </control>
       <control>
          <type>label</type>
          <description>Welcome to MediaPortal. </description>
-         <id>1</id>
+         <id>2</id>
          <posX>32</posX>
-         <posY>176</posY>
-         <label>not listed then you will need to ???</label>
+         <posY>152</posY>
+         <label>200000</label>
          <font>font12</font>
       </control>
       <control>
          <type>label</type>
          <description>Welcome to MediaPortal. </description>
-         <id>1</id>
+         <id>3</id>
          <posX>32</posX>
-         <posY>152</posY>
-         <label>Please select your EPG grabber. Note if your country is </label>
+         <posY>176</posY>
+         <label>200001</label>
          <font>font12</font>
       </control>
       <control>
@@ -76,10 +89,10 @@
          <posY>232</posY>
          <width>592</width>
          <height>220</height>
-         <onleft>23</onleft>
-         <onright>23</onright>
-         <onup>23</onup>
-         <ondown>23</ondown>
+         <onleft>5</onleft>
+         <onright>5</onright>
+         <onup>5</onup>
+         <ondown>5</ondown>
          <textXOff>5</textXOff>
          <downloadColor>ff80ff80</downloadColor>
          <textcolor2>ffffffff</textcolor2>
