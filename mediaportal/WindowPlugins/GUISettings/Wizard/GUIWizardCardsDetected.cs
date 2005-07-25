@@ -212,6 +212,12 @@ namespace MediaPortal.GUI.Settings.Wizard
 				return;
 			}
 			
+			if (GUIPropertyManager.GetProperty("#Wizard.EPG.Done") != "yes")
+			{	
+				GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_EPG_SELECT);
+				return;
+			}
+			
 			Log.Write("ScanNextCardType:goto finished");
 			GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_FINISHED);
 		
