@@ -461,48 +461,61 @@ namespace MediaPortal.TV.Recording
 			pmt.isVideo=true;
 			pmt.stream_type=1;
 			pmt.data="";
+			RemoveInvalidChars(ref pmt.data);
 			ch.pid_list.Add(pmt);
 			pmt=new PMTData();			
+			
 			// audio 1
 			pmt.elementary_PID=Marshal.ReadInt16(data,18);
 			pmt.isAudio=true;
 			pmt.stream_type=3;
 			pmt.data=""+(char)Marshal.ReadByte(data,20)+(char)Marshal.ReadByte(data,21)+(char)Marshal.ReadByte(data,22);
+			RemoveInvalidChars(ref pmt.data);
 			ch.pid_list.Add(pmt);
 			pmt=new PMTData();			
+			
 			// audio 2
 			pmt.elementary_PID=Marshal.ReadInt16(data,24);
 			pmt.isAudio=true;
 			pmt.stream_type=3;
 			pmt.data=""+(char)Marshal.ReadByte(data,26)+(char)Marshal.ReadByte(data,27)+(char)Marshal.ReadByte(data,28);
+			RemoveInvalidChars(ref pmt.data);
 			ch.pid_list.Add(pmt);
 			pmt=new PMTData();			
+			
 			// audio 3
 			pmt.elementary_PID=Marshal.ReadInt16(data,30);
 			pmt.isAudio=true;
 			pmt.stream_type=3;
 			pmt.data=""+(char)Marshal.ReadByte(data,32)+(char)Marshal.ReadByte(data,33)+(char)Marshal.ReadByte(data,34);
+			RemoveInvalidChars(ref pmt.data);
 			ch.pid_list.Add(pmt);
 			pmt=new PMTData();			
+			
 			// ac3
 			pmt.elementary_PID=Marshal.ReadInt16(data,36);
 			pmt.isAC3Audio=true;
 			pmt.stream_type=0;
 			pmt.data="";
+			RemoveInvalidChars(ref pmt.data);
 			ch.pid_list.Add(pmt);
 			pmt=new PMTData();			
+			
 			// teletext
 			pmt.elementary_PID=Marshal.ReadInt16(data,38);
 			pmt.isTeletext=true;
 			pmt.stream_type=0;
 			pmt.data="";
+			RemoveInvalidChars(ref pmt.data);
 			ch.pid_list.Add(pmt);
 			pmt=new PMTData();			
+
 			// sub
 			pmt.elementary_PID=Marshal.ReadInt16(data,40);
 			pmt.isDVBSubtitle=true;
 			pmt.stream_type=0;
 			pmt.data="";
+			RemoveInvalidChars(ref pmt.data);
 			ch.pid_list.Add(pmt);
 			pmt=new PMTData();			
 			// 48 -
