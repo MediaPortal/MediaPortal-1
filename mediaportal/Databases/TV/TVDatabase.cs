@@ -388,6 +388,10 @@ namespace MediaPortal.TV.Database
 						al3=(al3==null?"":al3.Trim());
 						provider=(provider==null?"":provider.Trim());
 						service=(service==null?"":service.Trim());
+						DatabaseUtility.RemoveInvalidChars(ref al);
+						DatabaseUtility.RemoveInvalidChars(ref al1);
+						DatabaseUtility.RemoveInvalidChars(ref al2);
+						DatabaseUtility.RemoveInvalidChars(ref al3);
 
 						strSQL=String.Format("insert into tblDVBSMapping (idChannel,sFreq,sSymbrate,sFEC,sLNBKhz,sDiseqc,sProgramNumber,sServiceType,sProviderName,sChannelName,sEitSched,sEitPreFol,sAudioPid,sVideoPid,sAC3Pid,sAudio1Pid,sAudio2Pid,sAudio3Pid,sTeletextPid,sScrambled,sPol,sLNBFreq,sNetworkID,sTSID,sPCRPid,sAudioLang,sAudioLang1,sAudioLang2,sAudioLang3,sECMPid,sPMTPid) values ( {0}, {1}, {2}, {3}, {4}, {5},{6}, {7}, '{8}' ,'{9}', {10}, {11}, {12}, {13}, {14},{15}, {16}, {17},{18}, {19}, {20},{21}, {22},{23},{24},'{25}','{26}','{27}','{28}',{29},{30})", 
 							ch.ID,ch.Frequency,ch.Symbolrate,ch.FEC,ch.LNBKHz,ch.DiSEqC,
