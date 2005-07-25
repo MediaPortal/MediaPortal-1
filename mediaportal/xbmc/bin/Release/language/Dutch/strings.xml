@@ -1087,7 +1087,7 @@
 	</string>
 	<string>
 		<id>342</id>
-		<value>Bestanden</value>
+		<value>Films</value>
 	</string>
 	<string>
 		<id>343</id>
@@ -4068,11 +4068,11 @@
 	</string>
 	<string>
 		<id>100005</id>
-		<value>Mijn Muziek/Bestanden</value>
+		<value>Mijn Muziek</value>
 	</string>
 	<string>
 		<id>100006</id>
-		<value>Mijn Films/Bestanden</value>
+		<value>Mijn Films</value>
 	</string>
 	<string>
 		<id>100007</id>
