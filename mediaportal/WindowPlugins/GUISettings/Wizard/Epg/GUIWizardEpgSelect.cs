@@ -97,7 +97,7 @@ namespace WindowPlugins.GUISettings.Epg
 					if (nodeName==null) continue;
 					if (nodeName.Value==null) continue;
 					GUIListItem ch = new GUIListItem();
-					ch.Label=nodeName.Value;
+					ch.Label=String.Format("{0}. ",listGrabbers.Count+1, nodeName.Value);
 					listGrabbers.Add(ch);
 				}
 			}
