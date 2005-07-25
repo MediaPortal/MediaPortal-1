@@ -1,7 +1,8 @@
 using System;
 using System.IO;
+using MediaPortal.Util;
 using MediaPortal.GUI.Library;
-
+using MediaPortal.GUI.Settings.Wizard;
 namespace WindowPlugins.GUISettings.Epg
 {
 	/// <summary>
@@ -47,6 +48,33 @@ namespace WindowPlugins.GUISettings.Epg
 					}
 				}
 			}
+		}
+		protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
+		{
+			if (control==listGrabbers)
+			{
+				OnGrabberSelected(listGrabbers.SelectedListItem);
+			}
+			base.OnClicked (controlId, control, actionType);
+		}
+
+		void OnGrabberSelected(GUIListItem item)
+		{
+			if (item==null) return;
+			GUIPropertyManager.SetProperty("#WizardGrabber",item.Path);
+
+			//setup and import epg...
+			try
+			{
+				Utils.FileDelete(@"webepg\WebEPG.xml");
+				System.IO.File.Copy(item.Path,@"webepg\WebEPG.xml");
+			}
+			catch(Exception){}
+
+
+			GUIPropertyManager.SetProperty("#Wizard.EPG.Done","yes");
+
+			GUIWizardCardsDetected.ScanNextCardType();
 		}
 	}
 }

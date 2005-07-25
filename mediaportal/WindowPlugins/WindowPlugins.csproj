@@ -1199,6 +1199,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "GUISettings\Wizard\Epg\GUIWizardEpgSelect.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "GUISettings\Wizard\Remotes\GUIWizardRemote.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
