@@ -540,7 +540,38 @@ namespace MediaPortal.TV.Recording
 			ch.scrambled=(Marshal.ReadInt16(data,556))==1?true:false;
 			ch.serviceType=Marshal.ReadInt16(data,558);
 			ch.networkID=Marshal.ReadInt32(data,560);
+
+			RemoveInvalidChars(ref ch.service_name);
+			RemoveInvalidChars(ref ch.service_provider_name);
 			return ch;
+		}
+		void RemoveInvalidChars(ref string strTxt)
+		{
+			if (strTxt==null) 
+			{
+				strTxt=String.Empty;
+				return;
+			}
+			if (strTxt.Length==0) 
+			{
+				strTxt=String.Empty;
+				return;
+			}
+			string strReturn = String.Empty;
+			for (int i = 0; i < (int)strTxt.Length; ++i)
+			{
+				char k = strTxt[i];
+				if (k == '\'') 
+				{
+					strReturn += "'";
+				}
+				if((byte)k==0)// remove 0-bytes from the string
+					k=(char)32;
+
+				strReturn += k;
+			}
+			strReturn=strReturn.Trim();
+			strTxt = strReturn;
 		}
 		public bool SetPidsForTechnisat
 		{
