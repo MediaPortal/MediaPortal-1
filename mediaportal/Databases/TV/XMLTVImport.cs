@@ -189,7 +189,19 @@ namespace MediaPortal.TV.Database
 							  chan.Name=htmlUtil.ConvertHTMLToAnsi(nodeName.InnerText);
 							  chan.Number=channelNo;
 							  chan.Frequency=0;
-							  TVDatabase.AddChannel(chan);
+
+								int		 idTvChannel;
+								string strTvChannel;
+								if (TVDatabase.GetEPGMapping(nodeId.InnerText, out idTvChannel, out strTvChannel))
+								{
+									chan.ID=idTvChannel;
+									chan.Name=strTvChannel;
+								}
+								else
+								{
+									TVDatabase.AddChannel(chan);
+									TVDatabase.MapEPGChannel(chan.ID,chan.Name,nodeId.InnerText);
+								}
 
 							  ChannelPrograms newProgChan = new ChannelPrograms();
 							  newProgChan.strName=htmlUtil.ConvertHTMLToAnsi(chan.Name);

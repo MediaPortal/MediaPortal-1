@@ -272,6 +272,10 @@ namespace MediaPortal.TV.Database
 				//following table specifies which channels can be received by which card
 				AddTable("tblChannelCard" ,"CREATE TABLE tblChannelCard( idChannelCard integer primary key, idChannel integer, card integer);\n");
 				AddTable("tblNotifies"    ,"CREATE TABLE tblNotifies( idNotify integer primary key, idProgram integer)");
+
+				//xmltv->tv channel mapping
+				AddTable("tblEPGMapping" ,"CREATE TABLE tblEPGMapping ( idChannel integer primary key, strChannel text, xmltvid text);\n");
+
 				return true;
 			}
 		}
@@ -1306,6 +1310,8 @@ namespace MediaPortal.TV.Database
 					strSQL = String.Format("delete from tblATSCMapping where iLCN={0}",iChannelId);
 					m_db.Execute(strSQL);
 					strSQL = String.Format("delete from tblChannelCard where idChannel={0}",iChannelId);
+					m_db.Execute(strSQL);
+					strSQL = String.Format("delete from tblEPGMapping where idChannel={0}",iChannelId);
 					m_db.Execute(strSQL);
 				}
 				catch(Exception ex)
@@ -2528,6 +2534,99 @@ namespace MediaPortal.TV.Database
 					Open();
 				}
 			}
+		}
+		static public void DeleteEPGMappings()
+		{
+			if (null==m_db) return ;
+			m_db.Execute("delete from tblEPGMapping" );
+		}
+		static public void MapEPGChannel(int idChannel, string channelName, string xmlTvId )
+		{
+			lock (typeof(TVDatabase))
+			{
+				if (null==m_db) return ;
+				string strSQL;
+				try
+				{
+					string strChannel=channelName;
+					string epgId=xmlTvId;
+					DatabaseUtility.RemoveInvalidChars(ref channelName);
+					DatabaseUtility.RemoveInvalidChars(ref epgId);
+					strSQL=String.Format( "select * from tblEPGMapping where idChannel like {0}", idChannel);
+					SQLiteResultSet results;
+					results=m_db.Execute(strSQL);
+					if (results.Rows.Count==0) 
+					{
+						strSQL=String.Format("insert into tblEPGMapping (idChannel, strChannel ,xmltvid) Values( {0}, '{1}', '{2}')",idChannel,strChannel,epgId);
+						m_db.Execute(strSQL);;
+						return ;
+					}
+					else
+					{
+						strSQL=String.Format( "update tblEPGMapping set strChannel='{0}', xmltvid='{1}' where idChannel like '{2}'", 
+							strChannel,epgId,idChannel);
+						m_db.Execute(strSQL);
+						return ;
+					}
+				} 
+				catch (Exception ex) 
+				{
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
+				}
+
+				return ;
+			}
+		}
+		static public bool IsChannelMappedToEPG(int idChannel)
+		{
+			if (m_db == null) return false;
+			lock (typeof(TVDatabase))
+			{
+				try
+				{
+					string strSQL;
+					strSQL = String.Format("select * from tblEPGMapping where idChannel={0}",idChannel);
+					SQLiteResultSet results;
+					results = m_db.Execute(strSQL);
+					if (results.Rows.Count >0) return true;
+				}
+				catch(Exception ex)
+				{
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
+				}
+			}
+			return false;
+		}
+		
+		static public bool GetEPGMapping(string xmlTvId,out int idChannel, out string strChannel) 
+		{
+			strChannel=String.Empty;
+			idChannel=-1;
+			if (m_db == null) return false;
+			lock (typeof(TVDatabase))
+			{
+				try
+				{
+					string epgId=xmlTvId;
+					DatabaseUtility.RemoveInvalidChars(ref epgId);
+					string strSQL;
+					strSQL = String.Format("select * from tblEPGMapping where xmltvid like '{0}'",epgId);
+					SQLiteResultSet results;
+					results = m_db.Execute(strSQL);
+					if (results.Rows.Count != 1) return false;
+					idChannel=DatabaseUtility.GetAsInt(results,0,"idChannel");
+					strChannel=DatabaseUtility.Get(results,0,"strChannel");
+					return true;
+				}
+				catch(Exception ex)
+				{
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
+				}
+			}
+			return false;
 		}
 
 		static public int MapDVBTChannel(string channelName, string providerName,int idChannel, int frequency, int ONID, int TSID, int SID, int audioPid, int videoPid, int teletextPid, int pmtPid, int bandWidth, int audio1,int audio2, int audio3,int ac3Pid, int pcrPid,string audioLanguage, string audioLanguage1, string audioLanguage2, string audioLanguage3, bool HasEITPresentFollow , bool HasEITSchedule )

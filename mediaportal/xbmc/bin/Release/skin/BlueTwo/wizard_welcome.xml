@@ -13,56 +13,56 @@
       </control>
       <control>
          <type>label</type>
-         <description>description 1</description>
+         <description>MediaPortal turns your PC in a very advanced Multi-Media Center / HTPC.</description>
          <id>1</id>
          <posX>32</posX>
          <posY>164</posY>
-         <label>MediaPortal turns your PC in a very advanced Multi-Media Center / HTPC.</label>
+         <label>200010</label>
          <font>font12</font>
       </control>
       <control>
          <type>label</type>
-         <description>description 2. </description>
+         <description>With MediaPortal you can enjoy your favorite music, radio</description>
          <id>1</id>
          <posX>32</posX>
          <posY>180</posY>
-         <label>With MediaPortal you can enjoy your favorite music, radio</label>
+         <label>200011</label>
          <font>font12</font>
       </control>
       <control>
          <type>label</type>
-         <description>decription 3. </description>
+         <description>It allows you to listen to your favorite music &amp; radio, watch your video's and DVD's</description>
          <id>1</id>
          <posX>32</posX>
          <posY>196</posY>
-         <label>It allows you to listen to your favorite music &amp; radio, watch your video's and DVD's</label>
+         <label>200013</label>
          <font>font12</font>
       </control>
       <control>
          <type>label</type>
-         <description>description 4. </description>
+         <description>photos, videos and view/record live TV and much more.</description>
          <id>1</id>
          <posX>32</posX>
          <posY>212</posY>
-         <label>photos, videos and view/record live TV and much more.</label>
+         <label>200014</label>
          <font>font12</font>
       </control>
       <control>
          <type>label</type>
-         <description>Description4</description>
+         <description>This wizard will help you to setup Mediaportal fast and easy. Please follow the steps through this </description>
          <id>1</id>
          <posX>32</posX>
          <posY>280</posY>
-         <label>This wizard will help you to setup Mediaportal fast and easy. Please follow the steps through this </label>
+         <label>200015</label>
          <font>font12</font>
       </control>
       <control>
          <type>label</type>
-         <description>Welcome to MediaPortal. </description>
+         <description>Press the Next button to begin</description>
          <id>1</id>
          <posX>32</posX>
          <posY>312</posY>
-         <label>Press the Next button to begin</label>
+         <label>200016</label>
          <font>font12</font>
       </control>
       <control>
@@ -86,7 +86,7 @@
          <id>1</id>
          <posX>32</posX>
          <posY>120</posY>
-         <label>Welcome to MediaPortal. </label>
+         <label>200017</label>
          <font>font18</font>
       </control>
       <control>
@@ -100,7 +100,7 @@
          <onup>5</onup>
          <ondown>5</ondown>
          <hyperlink>634</hyperlink>
-         <label>Next&gt;</label>
+         <label>200009</label>
          <width>96</width>
          <height>32</height>
       </control>

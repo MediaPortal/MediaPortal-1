@@ -3566,4 +3566,24 @@
 <string><id>200001</id><value>not listed then you will need to supply the EPG manually</value></string>
 <string><id>200002</id><value>You can now map the EPG channels to your TV channels</value></string>
 <string><id>200003</id><value>select a channel and press enter to change the mapping</value></string>
+<string><id>200004</id><value>Manual supplied tvguide.xml</value></string>
+<string><id>200005</id><value>Please specify the remote control you use:</value></string>
+<string><id>200006</id><value>Press Next to continue the setup:</value></string>
+<string><id>200007</id><value>&lt;Back</value></string>
+<string><id>200008</id><value>Setup - Remote control</value></string>
+<string><id>200009</id><value>Next&gt;</value></string>
+<string><id>200010</id><value>MediaPortal turns your PC in a very advanced Multi-Media Center / HTPC.</value></string>
+<string><id>200011</id><value>With MediaPortal you can enjoy your favorite music, radio</value></string>
+<string><id>200013</id><value>It allows you to listen to your favorite music &amp; radio, watch your video's and DVD's</value></string>
+<string><id>200014</id><value>photos, videos and view/record live TV and much more.</value></string>
+<string><id>200015</id><value>This wizard will help you to setup Mediaportal fast and easy. Please follow the steps through this </value></string>
+<string><id>200016</id><value>Press the Next button to begin</value></string>
+<string><id>200017</id><value>Welcome to MediaPortal. </value></string>
+<string><id>200018</id><value>Congratulations. Mediaportal is now setup and ready to use</value></string>
+<string><id>200019</id><value>Press the Finish button to close this wizard</value></string>
+<string><id>200020</id><value>Finish</value></string>
+<string><id>200021</id><value>TV Setup - EPG</value></string>
+<string><id>200022</id><value>MediaPortal has found the following tv-cards:</value></string>
+<string><id>200023</id><value>Press the Next button to configure these cards</value></string>
+<string><id>200024</id><value>TV Setup</value></string>
 </strings>

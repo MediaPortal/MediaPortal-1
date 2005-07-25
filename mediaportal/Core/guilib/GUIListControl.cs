@@ -1570,6 +1570,10 @@ namespace MediaPortal.GUI.Library
         m_upDown.OnAction(action);
         if (!m_upDown.Focus)
         {
+					if (base.m_dwControlRight!=GetID)
+					{
+						base.OnAction(action);
+					}
           m_iSelect = ListType.CONTROL_LIST;
         }
       }

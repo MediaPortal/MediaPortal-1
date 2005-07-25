@@ -13,20 +13,20 @@
       </control>
       <control>
          <type>label</type>
-         <description>description 1</description>
+         <description>Congratulations. Mediaportal is now setup and ready to use</description>
          <id>1</id>
          <posX>32</posX>
          <posY>164</posY>
-         <label>Congratulations. Mediaportal is now setup and ready to use</label>
+         <label>200018</label>
          <font>font12</font>
       </control>
       <control>
          <type>label</type>
-         <description>Welcome to MediaPortal. </description>
+         <description>Press the Finish button to close this wizard</description>
          <id>1</id>
          <posX>32</posX>
          <posY>312</posY>
-         <label>Press the Finish button to close this wizard</label>
+         <label>200019</label>
          <font>font12</font>
       </control>
       <control>
@@ -50,7 +50,7 @@
          <id>1</id>
          <posX>32</posX>
          <posY>120</posY>
-         <label>Welcome to MediaPortal. </label>
+         <label>200017</label>
          <font>font18</font>
       </control>
       <control>
@@ -64,7 +64,7 @@
          <onup>5</onup>
          <ondown>5</ondown>
          <hyperlink>0</hyperlink>
-         <label>Finish</label>
+         <label>200020</label>
          <width>96</width>
          <height>32</height>
       </control>

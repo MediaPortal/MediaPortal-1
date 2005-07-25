@@ -21,7 +21,7 @@
          <onright>5</onright>
          <onup>24</onup>
          <ondown>25</ondown>
-         <label>&lt;Back</label>
+         <label>200007</label>
          <width>96</width>
          <height>32</height>
       </control>
@@ -33,15 +33,15 @@
          <posY>504</posY>
          <onleft>25</onleft>
          <onright>5</onright>
-         <onup>5</onup>
+         <onup>24</onup>
          <ondown>5</ondown>
-         <label>Next&gt;</label>
+         <label>200009</label>
          <width>96</width>
          <height>32</height>
       </control>
       <control>
          <type>label</type>
-         <description>Welcome to MediaPortal. </description>
+         <description>Please select your EPG grabber. Note if your country is</description>
          <id>2</id>
          <posX>32</posX>
          <posY>152</posY>
@@ -50,7 +50,7 @@
       </control>
       <control>
          <type>label</type>
-         <description>Welcome to MediaPortal. </description>
+         <description>not listed then you will need to supply the EPG manually</description>
          <id>3</id>
          <posX>32</posX>
          <posY>176</posY>
@@ -74,11 +74,11 @@
       </control>
       <control>
          <type>label</type>
-         <description>Setup Epg</description>
+         <description>TV Setup - EPG</description>
          <id>1</id>
          <posX>32</posX>
          <posY>120</posY>
-         <label>TV Setup - EPG</label>
+         <label>200021</label>
          <font>font18</font>
       </control>
       <control>

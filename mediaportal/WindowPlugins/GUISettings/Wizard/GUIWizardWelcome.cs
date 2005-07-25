@@ -26,6 +26,7 @@ namespace MediaPortal.GUI.Settings
 			GUIPropertyManager.SetProperty("#Wizard.ATSC.Done","no");
 			GUIPropertyManager.SetProperty("#Wizard.Analog.Done","no");
 			GUIPropertyManager.SetProperty("#Wizard.Remote.Done","no");
+			GUIPropertyManager.SetProperty("#Wizard.EPG.Done","no");
 			GUIPropertyManager.SetProperty("#WizardCard","0");
 				
 			base.OnPageLoad ();

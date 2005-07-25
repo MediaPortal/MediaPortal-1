@@ -184,7 +184,7 @@ namespace MediaPortal.Dialogs
       {
         GUIWindowManager.Process();
 				if (!GUIGraphicsContext.Vmr9Active)
-					System.Threading.Thread.Sleep(100);
+					System.Threading.Thread.Sleep(50);
       }
     }
     #endregion

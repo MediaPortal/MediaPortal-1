@@ -22,26 +22,26 @@
          <onup>25</onup>
          <ondown>25</ondown>
          <hyperlink>615</hyperlink>
-         <label>&lt;Back</label>
+         <label>200007</label>
          <width>96</width>
          <height>32</height>
       </control>
       <control>
          <type>label</type>
-         <description>Welcome to MediaPortal. </description>
+         <description>Press the Next button to configure these cards</description>
          <id>1</id>
          <posX>32</posX>
          <posY>312</posY>
-         <label>Press the Next button to configure these cards</label>
+         <label>200023</label>
          <font>font12</font>
       </control>
       <control>
          <type>label</type>
-         <description>Welcome to MediaPortal. </description>
+         <description>MediaPortal has found the following tv-cards:</description>
          <id>1</id>
          <posX>32</posX>
          <posY>152</posY>
-         <label>MediaPortal has found the following tv-cards:</label>
+         <label>200022</label>
          <font>font12</font>
       </control>
       <control>
@@ -65,7 +65,7 @@
          <id>1</id>
          <posX>32</posX>
          <posY>120</posY>
-         <label>TV Setup</label>
+         <label>200024</label>
          <font>font18</font>
       </control>
       <control>
@@ -78,7 +78,7 @@
          <onright>5</onright>
          <onup>5</onup>
          <ondown>5</ondown>
-         <label>Next&gt;</label>
+         <label>200009</label>
          <width>96</width>
          <height>32</height>
       </control>
