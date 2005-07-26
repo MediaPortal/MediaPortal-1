@@ -558,10 +558,10 @@ namespace MediaPortal.TV.Recording
 			ch.serviceType=Marshal.ReadInt16(data,558);
 			ch.networkID=Marshal.ReadInt32(data,560);
 
-			ch.majorChannel=Marshal.ReadInt16(data,567);
-			ch.minorChannel=Marshal.ReadInt16(data,569);
-			ch.modulation=Marshal.ReadInt16(data,571);
-			ch.freq=Marshal.ReadInt32(data,573);
+			ch.majorChannel=Marshal.ReadInt16(data,568);
+			ch.minorChannel=Marshal.ReadInt16(data,570);
+			ch.modulation=Marshal.ReadInt16(data,572);
+			ch.freq=Marshal.ReadInt32(data,574);
 
 			RemoveInvalidChars(ref ch.service_name);
 			RemoveInvalidChars(ref ch.service_provider_name);

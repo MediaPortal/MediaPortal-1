@@ -52,20 +52,20 @@ public:
 	{
 		WORD VideoPid;//16-17
 		WORD AudioPid1;//18-19
-		BYTE Lang1_1;//20-22
-		BYTE Lang1_2;//20-22
-		BYTE Lang1_3;//20-22
-		WORD AudioPid2;//23-24
-		BYTE Lang2_1;//20-22
-		BYTE Lang2_2;//20-22
-		BYTE Lang2_3;//20-22
-        WORD AudioPid3;//28-29
-		BYTE Lang3_1;//20-22
-		BYTE Lang3_2;//20-22
-		BYTE Lang3_3;//20-22
-		WORD AC3;//33-34
-		WORD Teletext;//35-36
-		WORD Subtitles;//37-38
+		BYTE Lang1_1;//20
+		BYTE Lang1_2;//21
+		BYTE Lang1_3;//22
+		WORD AudioPid2;//24-25
+		BYTE Lang2_1;//26
+		BYTE Lang2_2;//27
+		BYTE Lang2_3;//28
+        WORD AudioPid3;//30-31
+		BYTE Lang3_1;//32
+		BYTE Lang3_2;//33
+		BYTE Lang3_3;//34
+		WORD AC3;//36-37
+		WORD Teletext;//38-39
+		WORD Subtitles;//40-41
 	};
 	typedef pidData PidTable;
 	//
@@ -76,21 +76,21 @@ public:
 		ULONG ProgrammNumber;// 4-7
 		ULONG ProgrammPMTPID;// 8-11
 		ULONG PCRPid;// 12-15
-		PidTable Pids;// 16-38
-		BYTE ServiceName[255];// 39-293
-		BYTE ProviderName[255];// 294-548
-		WORD EITPreFollow;// 549-550
-		WORD EITSchedule;// 551-552
-		WORD Scrambled;// 553-554
-		WORD ServiceType;// 555-556
-		ULONG NetworkID;
-		BYTE PMTReady;// 557-557
-		BYTE SDTReady;// 558-558
-		BYTE PhysicalChannel;//559
-		WORD MajorChannel;//560-561
-		WORD MinorChannel;//562-563
-		WORD Modulation;//564-565
-		ULONG Frequency;//566-569
+		PidTable Pids;// 16-41
+		BYTE ServiceName[255];// 42-296
+		BYTE ProviderName[255];// 297-551
+		WORD EITPreFollow;// 552-553
+		WORD EITSchedule;// 554-555
+		WORD Scrambled;// 556-567
+		WORD ServiceType;// 568-569
+		ULONG NetworkID;// 560-563
+		BYTE PMTReady;// 564
+		BYTE SDTReady;// 565
+		BYTE PhysicalChannel;//566
+		WORD MajorChannel;//568-569
+		WORD MinorChannel;//570-571
+		WORD Modulation;//572-573
+		ULONG Frequency;//574-578
 	};
 	typedef chInfo ChannelInfo;
 	//
