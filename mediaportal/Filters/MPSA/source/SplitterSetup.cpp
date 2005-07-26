@@ -118,6 +118,16 @@ HRESULT SplitterSetup::SetupPins(IPin *pPin)
 	if(FAILED(hr))
 		return 4;
 
+	pid = (ULONG)0xc8;// ATSC
+	hr=pMap->MapPID(1,&pid,MEDIA_MPEG2_PSI); 
+	if(FAILED(hr))
+		return 4;
+
+	pid = (ULONG)0xc9;// ATSC
+	hr=pMap->MapPID(1,&pid,MEDIA_MPEG2_PSI); 
+	if(FAILED(hr))
+		return 4;
+
 	pMap->Release();
 	return S_OK;
 }

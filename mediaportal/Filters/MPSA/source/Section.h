@@ -59,6 +59,11 @@ public:
 		ULONG NetworkID;
 		BYTE PMTReady;// 557-557
 		BYTE SDTReady;// 558-558
+		BYTE PhysicalChannel;//559
+		WORD MajorChannel;//560-561
+		WORD MinorChannel;//562-563
+		WORD Modulation;//564-565
+		ULONG Frequency;//566-569
 	};
 	typedef chInfo ChannelInfo;
 	//
@@ -125,6 +130,14 @@ public:
 	void DVB_GetService(BYTE *b,ServiceData *sd);
 	void getString468A(BYTE *b, int l1,char *text);
 	WORD CISize();
+
+	//ATSC
+	void ATSCDecodeChannelTable(BYTE *buf,ChannelInfo *ch, int* channelsFound);
+	void Sections::DecodeServiceLocationDescriptor( byte* buf,int start,ChannelInfo* channelInfo);
+	void DecodeExtendedChannelNameDescriptor( byte* buf,int start,ChannelInfo* channelInfo);
+	char* DecodeString(byte* buf, int offset, int compression_type, int mode, int number_of_bytes);
+	char* DecodeMultipleStrings(byte* buf, int offset);
+
 };
 
 #endif

@@ -447,3 +447,183 @@ cont:
 
 }
 
+
+void Sections::ATSCDecodeChannelTable(BYTE *buf,ChannelInfo *ch, int* channelsFound)
+{
+	*channelsFound=0;
+	int table_id = buf[0];
+	int section_syntax_indicator = (buf[1]>>7) & 1;
+	int private_indicator = (buf[1]>>6) & 1;
+	int section_length = ((buf[1]& 0xF)<<8) + buf[2];
+	int transport_stream_id = (buf[3]<<8)+buf[4];
+	int version_number = ((buf[5]>>1)&0x1F);
+	int current_next_indicator = buf[5] & 1;
+	int section_number = buf[6];
+	int last_section_number = buf[7];
+	int protocol_version = buf[8];
+	int num_channels_in_section = buf[9];
+	int start=10;
+	for (int i=0; i < num_channels_in_section;i++)
+	{
+		char shortName[127];
+		strcpy(shortName,"unknown");
+		try
+		{
+			//shortname 7*16 bits (14 bytes) in UTF-16
+			for (int count=0; count < 7; count++)
+			{
+				shortName[count] = buf[start+count*2];
+				shortName[count+1]=0; 
+			}
+		}
+		catch(...)
+		{
+		}
+
+		start+= 7*2;
+		// 4---10-- ------10 -------- 8------- 32------ -------- -------- -------- 16------ -------- 16------ -------- 2-111113 --6----- 16------ -------- 6-----10 --------
+		// 76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210
+		//    112      113      114       115      116    117      118       119     120     121       123      124      125      126      127      128      129      130
+		//     0        1        2         3        4      5        6         7       8       9        10       11       12       13       14       15       16       17 
+		
+		int major_channel    		 =((buf[start  ]&0xf)<<8) + buf[start+1];
+		int minor_channel    		 =((buf[start+1]&0xf)<<8) + buf[start+2];
+		int modulation_mode  		 = buf[start+3];
+		int carrier_frequency		 = (buf[start+4]<<24) + (buf[start+5]<<16) + (buf[start+6]<<8) + (buf[start+7]);
+		int channel_TSID         = ((buf[start+8]&0xf)<<8) + buf[start+9];
+		int program_number			 = ((buf[start+10]&0xf)<<8) + buf[start+11];
+		int ETM_location				 = ((buf[start+12]>>6)&0x3);
+		int access_controlled		 = ((buf[start+12]>>4)&0x1);
+		int hidden          		 = ((buf[start+12]>>3)&0x1);
+		int path_select     		 = ((buf[start+12]>>2)&0x1);
+		int out_of_band     		 = ((buf[start+12]>>1)&0x1);
+		int hide_guide     		   = ((buf[start+12]   )&0x1);
+		int service_type         = ((buf[start+13]   )&0x3f);
+		int source_id						 = ((buf[start+14])<<8) + buf[start+15];
+		int descriptors_length	 = ((buf[start+16]&0x3)<<8) + buf[start+17];
+
+		
+		ChannelInfo* channelInfo = &ch[*channelsFound];
+		strcpy((char*)channelInfo->ServiceName,shortName);
+		channelInfo->MinorChannel = minor_channel;
+		channelInfo->MajorChannel = major_channel;
+		channelInfo->Modulation   = modulation_mode;
+		channelInfo->Frequency    = carrier_frequency;
+		channelInfo->ProgrammNumber= program_number;
+		channelInfo->PMTReady	  = 1;
+		channelInfo->SDTReady	  = 1;
+		if (service_type==0 || service_type==1|| service_type==2)
+				channelInfo->ProgrammNumber   = 1;
+		else if (service_type==3)
+			channelInfo->ProgrammNumber   = 2;
+		else 
+			channelInfo->ProgrammNumber  =3;
+		channelInfo->TransportStreamID = channel_TSID;
+		channelInfo->ProgrammNumber = major_channel*1000+minor_channel;
+
+		start += 18;
+		int len=0;
+		while (len < descriptors_length)
+		{
+			int descriptor_tag = buf[start+len];
+			int descriptor_len = buf[start+len+1];
+			switch (descriptor_tag)
+			{
+				case 0xa1:
+					DecodeServiceLocationDescriptor( buf,start+len, channelInfo);
+				break;
+				case 0xa0:
+					DecodeExtendedChannelNameDescriptor( buf,start+len,channelInfo);
+				break;
+			}
+			len += (descriptor_len+2);
+		}
+		start += descriptors_length;
+		*channelsFound=*channelsFound+1;
+	}
+}
+
+void Sections::DecodeServiceLocationDescriptor( byte* buf,int start,ChannelInfo* channelInfo)
+{
+
+	//  8------ 8------- 3--13--- -------- 8-------       
+	// 76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210
+	//    0        1        2         3        4       5       6         7        8       9     
+	int pcr_pid = ((buf[start+2]&0x1f)<<8) + buf[start+3];
+	int number_of_elements = buf[start+4];
+	int off=start+5;
+	channelInfo->PCRPid=pcr_pid;
+	for (int i=0; i < number_of_elements;++i)
+	{
+		//  8------ 3--13--- -------- 24------ -------- --------
+		// 76543210|76543210|76543210|76543210|76543210|76543210|
+		//    0        1        2         3        4       5     
+		int streamtype			  = buf[off];
+		int elementary_pid		  = ((buf[off+1]&0x1f)<<8) + buf[off+2];
+		int ISO_639_language_code =	(buf[off+3]<<16) +(buf[off+4]<<8) + (buf[off+5]);
+		off+=6;
+		//pmtData.data=ISO_639_language_code;
+		switch (streamtype)
+		{
+			case 0x2: // video
+				channelInfo->Pids.VideoPid=elementary_pid;
+				break;
+			case 0x81: // audio
+				channelInfo->Pids.AudioPid1=elementary_pid;
+				break;
+			default:
+				break;
+		}
+	}
+}
+void Sections::DecodeExtendedChannelNameDescriptor( byte* buf,int start,ChannelInfo* channelInfo)
+{
+	// tid   
+	//  8       8------- 8-------
+	// 76543210|76543210|76543210
+	//    0        1        2    
+	int descriptor_tag = buf[start+0];
+	int descriptor_len = buf[start+1];
+	char* label = DecodeMultipleStrings(buf,start+2);
+	if (label==NULL) return ;
+	strcpy((char*)channelInfo->ServiceName,label);
+	delete [] label;
+}
+char* Sections::DecodeString(byte* buf, int offset, int compression_type, int mode, int number_of_bytes)
+{
+
+	if (compression_type==0 && mode==0)
+	{
+		char* label = new char[number_of_bytes];
+		memcpy(label,&buf[offset],number_of_bytes);
+		return (char*)label;
+	}
+	//string data="";
+	//for (int i=0; i < number_of_bytes;++i)
+	//	data += String.Format(" {0:X}", buf[offset+i]);
+	return NULL;
+}
+
+char* Sections::DecodeMultipleStrings(byte* buf, int offset)
+{
+	int number_of_strings = buf[offset];
+	
+
+	for (int i=0; i < number_of_strings;++i)
+	{
+		int ISO_639_language_code = (buf[offset+1]<<16)+(buf[offset+2]<<8)+(buf[offset+3]);
+		int number_of_segments=buf[offset+4];
+		int start=offset+5;
+		for (int k=0; k < number_of_segments;++k)
+		{
+			int compression_type = buf[start];
+			int mode             = buf[start+1];
+			int number_bytes     = buf[start+2];
+			//decode text....
+			char *label=DecodeString(buf, start+3, compression_type,mode,number_bytes);
+			start += (number_bytes+3);
+			if (label!=NULL) return label;
+		}
+	}
+	return NULL;
+}

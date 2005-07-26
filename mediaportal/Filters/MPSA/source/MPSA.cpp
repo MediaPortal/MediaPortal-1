@@ -402,6 +402,11 @@ HRESULT CDump::Process(BYTE *pbData,long len)
 	{
 		pesPacket=true;
 	}
+	if (pbData[0]==0xc8 || pbData[0]==0xc9)
+	{
+		//decode ATSC: Virtual Channel Table (pid 0xc8 / 0xc9)
+		m_pSections->ATSCDecodeChannelTable(pbData,m_patTable, &m_patChannelsCount);
+	}
 	
 	if(pbData[0]==0x02)// pmt
 	{
