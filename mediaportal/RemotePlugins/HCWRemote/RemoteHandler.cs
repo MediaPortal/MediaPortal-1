@@ -303,45 +303,46 @@ namespace MediaPortal
           button = btn;
           break;
         }
-      foreach (Mapping map in button.Mapping)
-        if ((map.Layer == 0) || (map.Layer == currentLayer))
-        {
-          switch (map.Condition)
+      if (button != null)
+        foreach (Mapping map in button.Mapping)
+          if ((map.Layer == 0) || (map.Layer == currentLayer))
           {
-            case "*": // wildcard, no further condition
-              found = map;
-              break;
-            case "WINDOW":  // Window-ID = x
-              if (GUIWindowManager.ActiveWindow == Convert.ToInt32(map.ConProperty))
-                found = map;
-              break;
-            case "FULLSCREEN":  // Fullscreen = true/false
-              if (GUIGraphicsContext.IsFullScreenVideo == Convert.ToBoolean(map.ConProperty))
-                found = map;
-              break;
-            case "PLAYER":  // Playing TV/DVD/general
-            switch (map.ConProperty)
+            switch (map.Condition)
             {
-              case "TV":
-                if (g_Player.IsTV)
+              case "*": // wildcard, no further condition
+                found = map;
+                break;
+              case "WINDOW":  // Window-ID = x
+                if (GUIWindowManager.ActiveWindow == Convert.ToInt32(map.ConProperty))
                   found = map;
                 break;
-              case "DVD":
-                if (g_Player.IsDVD)
+              case "FULLSCREEN":  // Fullscreen = true/false
+                if (GUIGraphicsContext.IsFullScreenVideo == Convert.ToBoolean(map.ConProperty))
                   found = map;
                 break;
-              case "MEDIA":
-                if (g_Player.Playing)
-                  found = map;
+              case "PLAYER":  // Playing TV/DVD/general
+              switch (map.ConProperty)
+              {
+                case "TV":
+                  if (g_Player.IsTV)
+                    found = map;
+                  break;
+                case "DVD":
+                  if (g_Player.IsDVD)
+                    found = map;
+                  break;
+                case "MEDIA":
+                  if (g_Player.Playing)
+                    found = map;
+                  break;
+              }
                 break;
             }
-              break;
+            if (found != null)
+            {
+              return found;
+            }
           }
-          if (found != null)
-          {
-            return found;
-          }
-        }
       Log.Write("MAP: No suitable mappings found for button {0}", btnCode);
       return null;
     }

@@ -30,6 +30,6 @@ namespace MediaPortal.GUI.Library
 		/// This method will be called by mediaportal to send system messages to your process plugin,
 		/// if the plugin implements WndProc (optional) / added by mPod
 		/// </summary>
-		void WndProc(ref System.Windows.Forms.Message msg);
+		bool WndProc(ref System.Windows.Forms.Message msg);
 	}
 }

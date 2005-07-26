@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<mappings version="2">
+	<remote family="MAME Keyboard Device">
+		<button name="Button 1" code="17">
+			<action layer="0" condition="*" conproperty="-1" command="KEY" cmdproperty="{ENTER}" sound="" />
+		</button>
+		<button name="Button 2" code="18">
+			<action layer="0" condition="*" conproperty="-1" command="KEY" cmdproperty="{ESC}" sound="" />
+		</button>
+		<button name="Button 4" code="16">
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="13" sound="click.wav" />
+		</button>
+	</remote>
+</mappings>
