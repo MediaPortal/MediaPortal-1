@@ -8,7 +8,6 @@
 			<action layer="0" condition="*" conproperty="-1" command="KEY" cmdproperty="{ESC}" sound="" />
 		</button>
 		<button name="P1_BUTTON3" code="32">
-			<action layer="0" condition="*" conproperty="-1" command="KEY" cmdproperty="{SPACE}" sound="" />
 		</button>
 		<button name="P1_BUTTON4" code="16">
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="13" sound="click.wav" />
