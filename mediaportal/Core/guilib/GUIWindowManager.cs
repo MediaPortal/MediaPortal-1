@@ -432,6 +432,13 @@ namespace MediaPortal.GUI.Library
 				{
 					OnPostRenderAction(null,null,false);
 				}
+				if (m_pRouteWindow!=null)
+				{
+					GUIMessage msgDlg =new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_pRouteWindow.GetID,0,0,iWindowID,0,null);
+					m_pRouteWindow.OnMessage(msgDlg);
+					m_pRouteWindow=null;
+				}
+
         GUIMessage msg;
         GUIWindow pWindow;  
 				int iActiveWindow=m_iActiveWindow;
