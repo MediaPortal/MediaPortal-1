@@ -18,7 +18,6 @@ namespace MediaPortal.GUI.TV
     enum Controls
     {
 			CONTROL_BTNSORTBY=3,
-      CONTROL_BTNSORTASC=4,
       CONTROL_BTNVIEW=5,
       CONTROL_BTNCLEANUP=6,
 			CONTROL_ALBUM=10,
@@ -38,8 +37,7 @@ namespace MediaPortal.GUI.TV
     bool              m_bSortAscending=true;
     bool              showRoot=true;
     string            currentChannel=String.Empty;
-		[SkinControlAttribute(3)]				protected GUIButtonControl btnSortBy=null;
-		[SkinControlAttribute(4)]				protected GUIToggleButtonControl btnSortAsc=null;
+		[SkinControlAttribute(3)]				protected GUISortButtonControl btnSortBy=null;
 		[SkinControlAttribute(5)]				protected GUIButtonControl btnView=null;
 		[SkinControlAttribute(6)]				protected GUIButtonControl btnCleanup=null;
 
@@ -195,6 +193,9 @@ namespace MediaPortal.GUI.TV
 			GUIMessage msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_RESUME_TV, (int)GUIWindow.Window.WINDOW_TV,GetID,0,0,0,null);
 			msg.SendToTargetWindow=true;
 			GUIWindowManager.SendThreadMessage(msg);
+
+			btnSortBy.SortChanged += new SortEventHandler(SortChanged);			
+
 			return ;
 		}
 
@@ -231,11 +232,6 @@ namespace MediaPortal.GUI.TV
 		protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
 		{
 			base.OnClicked (controlId, control, actionType);
-			if (control==btnSortAsc)
-			{
-				m_bSortAscending=!m_bSortAscending;
-				OnSort();
-			}
 			if (control==btnSortBy)
 			{
 				switch (currentSortMethod)
@@ -427,10 +423,7 @@ namespace MediaPortal.GUI.TV
 
       GUIControl.SetControlLabel(GetID,(int)Controls.CONTROL_BTNSORTBY,strLine);
 
-      if (m_bSortAscending)
-        btnSortAsc.Selected=false;
-      else
-        btnSortAsc.Selected=true;
+		btnSortBy.IsAscending = m_bSortAscending;
     }
     GUIListItem GetSelectedItem()
     {
@@ -843,5 +836,10 @@ namespace MediaPortal.GUI.TV
     
     }
 
+	  void SortChanged(object sender, SortEventArgs e)
+	  {
+		  m_bSortAscending = e.Order != System.Windows.Forms.SortOrder.Descending;
+		  OnSort();
+	  }
   }
 }

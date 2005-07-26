@@ -105,7 +105,6 @@
   	<ondown>8</ondown>
 	</control>
 	<control>
-		<description>Sort Asc</description>
 		<type>togglebutton</type>
 		<id>4</id>
 		<posX>200</posX>

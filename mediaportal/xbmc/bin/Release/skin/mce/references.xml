@@ -23,6 +23,7 @@
 			<change date="18-3-2005">added FileMenu dialog window DialogFile.xml</change>
 			<change date="15-4-2005">added Subtitle box in myTVFullscreen.xml (in B2)</change>
 			<change date="16-6-2005">updated mytvcompressmain.xml</change>
+			<change date="26-7-2005">added sortbutton style</change>
 		</changelog>
 	</skin>
 	<control>
@@ -102,6 +103,29 @@
 		<textcolor>ffffffff</textcolor>
 		<colordiffuse>ffffffff</colordiffuse>
 		<disabledcolor>60ffffff</disabledcolor>
+	</control>
+	<control>
+		<type>sortbutton</type>
+		<id>3</id>
+		<width>190</width>
+		<height>32</height>
+		<textXOff>10</textXOff>
+		<textYOff>5</textYOff>
+		<textureFocus>menu_list_focus.png</textureFocus>
+		<textureNoFocus>menu_list_nofocus.png</textureNoFocus>
+		<textureAscending>arrow_round_up_nofocus.png</textureAscending>
+		<textureAscendingFocused>arrow_round_up_focus.png</textureAscendingFocused>
+		<textureDescending>arrow_round_down_nofocus.png</textureDescending>
+		<textureDescendingFocused>arrow_round_down_focus.png</textureDescendingFocused>
+		<offsetSortButtonX>165</offsetSortButtonX>
+		<offsetSortButtonY>8</offsetSortButtonY>
+		<offsetSortButtonWidth>16</offsetSortButtonWidth>
+		<offsetSortButtonHeight>16</offsetSortButtonHeight>
+		<font>font13</font>
+		<textcolor>White</textcolor>
+		<colordiffuse>White</colordiffuse>
+		<disabledcolor>60ffffff</disabledcolor>
+		<label>103</label>
 	</control>
 	<control>
 		<description>default listcontrol</description>

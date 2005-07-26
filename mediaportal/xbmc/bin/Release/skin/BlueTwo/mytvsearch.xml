@@ -59,28 +59,15 @@
 			<description>group element</description>
 			<animation>FlyInFromLeft</animation>
 			<control>
-				<description>Sort-by button</description>
-				<type>button</type>
+				<type>sortbutton</type>
 				<id>2</id>
 				<posX>60</posX>
 				<posY>97</posY>
 				<label>620</label>
 				<onleft>10</onleft>
-				<onright>3</onright>
+				<onright>10</onright>
 				<onup>17</onup>
 				<ondown>4</ondown>
-			</control>
-			<control>
-				<description>Sort Asc</description>
-				<type>togglebutton</type>
-				<id>3</id>
-				<posX>225</posX>
-				<posY>105</posY>
-				<label>-</label>
-				<onleft>2</onleft>
-				<onright>10</onright>
-				<onup>2</onup>
-				<ondown>2</ondown>
 			</control>
 	
 			<control>

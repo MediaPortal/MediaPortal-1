@@ -78,8 +78,7 @@ namespace MediaPortal.GUI.Pictures
     }
 
 		[SkinControlAttribute(2)]		protected GUIButtonControl btnViewAs=null;
-		[SkinControlAttribute(3)]		protected GUIButtonControl btnSortBy=null;
-		[SkinControlAttribute(4)]		protected GUIToggleButtonControl btnSortAsc=null;
+		[SkinControlAttribute(3)]		protected GUISortButtonControl btnSortBy=null;
 		[SkinControlAttribute(6)]		protected GUIButtonControl btnSlideShow=null;
 		[SkinControlAttribute(7)]		protected GUIButtonControl btnSlideShowRecursive=null;
 		[SkinControlAttribute(8)]		protected GUIButtonControl btnCreateThumbs=null;
@@ -248,6 +247,8 @@ namespace MediaPortal.GUI.Pictures
 			{
 				GUIControl.SelectItemControl(GetID,facadeView.GetID,selectedItemIndex);
 			}
+
+			btnSortBy.SortChanged += new SortEventHandler(SortChanged);
 		}
 		protected override void OnPageDestroy(int newWindowId)
 		{
@@ -282,12 +283,6 @@ namespace MediaPortal.GUI.Pictures
 					 break;
 				}
 				ShowThumbPanel();
-				GUIControl.FocusControl(GetID,control.GetID);
-			}
-			if (control==btnSortAsc)
-			{
-				mapSettings.SortAscending=!mapSettings.SortAscending;
-				OnSort();
 				GUIControl.FocusControl(GetID,control.GetID);
 			}
 			if (control==btnSortBy) // sort by
@@ -557,11 +552,7 @@ namespace MediaPortal.GUI.Pictures
           break;
       }
       GUIControl.SetControlLabel(GetID,btnSortBy.GetID,textLine);
-
-      if (sortAsc)
-				btnSortAsc.Selected=false;
-			else
-				btnSortAsc.Selected=true;
+      btnSortBy.IsAscending = sortAsc;
     }
 
     void ShowThumbPanel()
@@ -1402,6 +1393,15 @@ namespace MediaPortal.GUI.Pictures
 			// TODO:  Add GUIPictures.ShowPlugin implementation
 		}
 
-    #endregion
+	  #endregion
+
+	  private void SortChanged(object sender, SortEventArgs e)
+	  {
+		  mapSettings.SortAscending = e.Order != System.Windows.Forms.SortOrder.Descending;
+
+		  OnSort();
+
+		  GUIControl.FocusControl(GetID, ((GUIControl)sender).GetID);
+	  }
   }
 }

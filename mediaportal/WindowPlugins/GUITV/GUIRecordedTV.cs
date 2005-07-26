@@ -48,8 +48,7 @@ namespace MediaPortal.GUI.TV
 		string            currentShow=String.Empty;
 		
 		[SkinControlAttribute(2)]			  protected GUIButtonControl btnViewAs=null;
-		[SkinControlAttribute(3)]				protected GUIButtonControl btnSortBy=null;
-		[SkinControlAttribute(4)]				protected GUIToggleButtonControl btnSortAsc=null;
+		[SkinControlAttribute(3)]				protected GUISortButtonControl btnSortBy=null;
 		[SkinControlAttribute(5)]				protected GUIButtonControl btnView=null;
 		[SkinControlAttribute(6)]				protected GUIButtonControl btnCleanup=null;
 
@@ -225,17 +224,12 @@ namespace MediaPortal.GUI.TV
 			GUIControl.SelectItemControl(GetID,listViews.GetID,m_iSelectedItem);
 			GUIControl.SelectItemControl(GetID,listAlbums.GetID,m_iSelectedItem);
 
+			btnSortBy.SortChanged += new SortEventHandler(SortChanged);
 		}
-
 
 		protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
 		{
 			base.OnClicked (controlId, control, actionType);
-			if (control==btnSortAsc)
-			{
-				m_bSortAscending=!m_bSortAscending;
-				OnSort();
-			}
 			if (control==btnView)
 			{
 				ShowViews();
@@ -514,10 +508,7 @@ namespace MediaPortal.GUI.TV
 			GUIControl.SetControlLabel(GetID,btnViewAs.GetID,strLine);
 
 
-			if (m_bSortAscending)
-				btnSortAsc.Selected=false;
-			else
-				btnSortAsc.Selected=true;
+			btnSortBy.IsAscending = m_bSortAscending;
 
 			if (currentViewMethod==ViewAs.List)
 			{
@@ -966,6 +957,12 @@ namespace MediaPortal.GUI.TV
       VideoDatabase.AddMovieFile(filename);
     }
 
-		#endregion
+	  #endregion
+
+	  void SortChanged(object sender, SortEventArgs e)
+	  {
+			m_bSortAscending = e.Order != System.Windows.Forms.SortOrder.Descending;
+			OnSort();
+	  }
   }
 }

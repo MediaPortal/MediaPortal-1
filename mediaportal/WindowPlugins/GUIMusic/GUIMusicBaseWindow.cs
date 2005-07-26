@@ -45,8 +45,7 @@ namespace MediaPortal.GUI.Music
 		protected MusicDatabase		      m_database = new MusicDatabase();
 		[SkinControlAttribute(50)]		protected GUIFacadeControl facadeView=null;
 		[SkinControlAttribute(2)]			protected GUIButtonControl btnViewAs=null;
-		[SkinControlAttribute(3)]			protected GUIButtonControl btnSortBy=null;
-		[SkinControlAttribute(4)]			protected GUIToggleButtonControl btnSortAsc=null;
+		[SkinControlAttribute(3)]			protected GUISortButtonControl btnSortBy=null;
 		[SkinControlAttribute(6)]			protected GUIButtonControl btnViews=null;
 
 		public GUIMusicBaseWindow()
@@ -205,14 +204,6 @@ namespace MediaPortal.GUI.Music
 				return;
 			}//if (control == btnViewAs)
 
-			if (control==btnSortAsc)
-			{
-				CurrentSortAsc=!CurrentSortAsc;
-				OnSort();
-				UpdateButtonStates();
-				GUIControl.FocusControl(GetID,control.GetID);
-			}//if (iControl==btnSortAsc)
-
 			if (control==btnSortBy)
 			{
 				bool shouldContinue=false;
@@ -364,16 +355,9 @@ namespace MediaPortal.GUI.Music
 					strLine=GUILocalizeStrings.Get(367);
 					break;
 			}
+
 			if (btnSortBy!=null)
 				btnSortBy.Label=strLine;
-		
-			if (btnSortAsc!=null)
-			{
-				if (CurrentSortAsc)
-					btnSortAsc.Selected=false;
-				else
-					btnSortAsc.Selected=true;
-			}
 		}
 
 		protected virtual void OnClick(int item)
@@ -430,10 +414,14 @@ namespace MediaPortal.GUI.Music
 				}
 			}
 		}
+
 		protected override void OnPageLoad()
 		{
 			LoadSettings();
+
+			btnSortBy.SortChanged += new SortEventHandler(SortChanged);
 		}
+
 		protected override void OnPageDestroy(int newWindowId)
 		{
 			SaveSettings();
@@ -1178,6 +1166,16 @@ namespace MediaPortal.GUI.Music
 			if (song.songId<0) return;
 			song.Favorite=true;
 			m_database.SetFavorite(song);
+		}
+
+		void SortChanged(object sender, SortEventArgs args)
+		{
+			this.CurrentSortAsc = args.Order != System.Windows.Forms.SortOrder.Descending;
+
+			OnSort();
+			UpdateButtonStates();
+
+//			GUIControl.FocusControl(GetID, control.GetID);
 		}
 	}
 }

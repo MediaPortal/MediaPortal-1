@@ -104,28 +104,15 @@
 				<ondown>3</ondown>
 			</control>
 			<control>
-				<description>Sort-by button</description>
-				<type>button</type>
+				<type>sortbutton</type>
 				<id>3</id>
 				<posX>60</posX>
 				<posY>131</posY>
 				<label>620</label>
 				<onleft>2</onleft>
-				<onright>4</onright>
+				<onright>10</onright>
 				<onup>2</onup>
 				<ondown>4</ondown>
-			</control>
-			<control>
-				<description>Sort Asc</description>
-				<type>togglebutton</type>
-				<id>4</id>
-				<posX>225</posX>
-				<posY>134</posY>
-				<label>-</label>
-				<onleft>2</onleft>
-				<onright>10</onright>
-				<onup>3</onup>
-				<ondown>5</ondown>
 			</control>
 			<control>
 				<description>All,Genre,Channel button</description>

@@ -24,8 +24,7 @@ namespace MediaPortal.GUI.TV
       Type=3,
       Status=4,
     }
-		[SkinControlAttribute(2)]				protected GUIButtonControl btnSortBy=null;
-		[SkinControlAttribute(4)]				protected GUIToggleButtonControl btnSortAsc=null;
+		[SkinControlAttribute(3)]				protected GUISortButtonControl btnSortBy=null;
 		[SkinControlAttribute(6)]				protected GUIButtonControl btnNew=null;
 		[SkinControlAttribute(7)]				protected GUIButtonControl btnCleanup=null;
 		[SkinControlAttribute(10)]			protected GUIListControl listSchedules=null;
@@ -153,6 +152,7 @@ namespace MediaPortal.GUI.TV
 			while (m_iSelectedItem>=GetItemCount() && m_iSelectedItem>0) m_iSelectedItem--;
 			GUIControl.SelectItemControl(GetID,listSchedules.GetID,m_iSelectedItem);
 
+			btnSortBy.SortChanged += new SortEventHandler(SortChanged);
 		}
 		protected override void OnPageDestroy(int newWindowId)
 		{
@@ -540,12 +540,9 @@ namespace MediaPortal.GUI.TV
 					strLine=GUILocalizeStrings.Get(685);// Sort by: Status
 					break;
 			}
-			GUIControl.SetControlLabel(GetID,btnSortBy.GetID,strLine);
 
-			if (m_bSortAscending)
-				btnSortAsc.Selected=false;
-			else
-				btnSortAsc.Selected=true;
+			GUIControl.SetControlLabel(GetID,btnSortBy.GetID,strLine);
+			btnSortBy.IsAscending = m_bSortAscending;
 		}
 
     void SetLabels()
@@ -1141,5 +1138,11 @@ namespace MediaPortal.GUI.TV
 			}
 		}
 
+		void SortChanged(object sender, SortEventArgs e)
+		{
+			m_bSortAscending = e.Order != System.Windows.Forms.SortOrder.Descending;
+			
+			OnSort();
+		}
 	}
 }

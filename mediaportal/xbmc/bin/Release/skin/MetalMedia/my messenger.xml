@@ -54,31 +54,19 @@
 		</control>
 		<control>
 			<description>Sort-by button</description>
-			<type>button</type>
+			<type>sortbutton</type>
 			<id>3</id>
 			<posX>55</posX>
 			<posY>143</posY>
 			<label>103</label>
 			<onleft>3</onleft>
-			<onright>4</onright>
+			<onright>50</onright>
 			<onup>2</onup>
 			<ondown>5</ondown>
 			<subitems>
 				<subitem>103</subitem>
 				<subitem>126</subitem>
 			</subitems>
-		</control>
-		<control>
-			<description>Sort Asc</description>
-			<type>togglebutton</type>
-   		<id>4</id>
-			<posX>200</posX>
-			<posY>149</posY>
-			<label>-</label>
-			<onleft>3</onleft>
-			<onright>50</onright>
-			<onup>4</onup>
-			<ondown>4</ondown>
 		</control>
 		<control>
 			<description>Panel Split</description>

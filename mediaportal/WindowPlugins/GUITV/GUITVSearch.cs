@@ -14,8 +14,7 @@ namespace MediaPortal.GUI.TV
 	/// </summary>
 	public class GUITVSearch:GUIWindow, IComparer
 	{
-		[SkinControlAttribute(2)]				protected GUIButtonControl btnSortyBy=null;
-		[SkinControlAttribute(3)]				protected GUIToggleButtonControl btnSortAsc=null;
+		[SkinControlAttribute(3)]				protected GUISortButtonControl btnSortBy=null;
 		[SkinControlAttribute(4)]				protected GUIToggleButtonControl btnSearchByGenre=null;
 		[SkinControlAttribute(5)]				protected GUIToggleButtonControl btnSearchByTitle=null;
 		[SkinControlAttribute(6)]				protected GUIToggleButtonControl btnSearchByDescription=null;
@@ -157,6 +156,8 @@ namespace MediaPortal.GUI.TV
 				btnLetter.AddSubItem(k.ToString());
 			}
 			Update();
+
+			btnSortBy.SortChanged += new SortEventHandler(SortChanged);
 		}
 
 		protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
@@ -204,14 +205,8 @@ namespace MediaPortal.GUI.TV
 				Update();
 				GUIControl.FocusControl(GetID,btnSearchByDescription.GetID);
 			}
-			if (control==btnSortAsc)
-			{
-				sortAscending=!sortAscending;
-				Update();
-				GUIControl.FocusControl(GetID, btnSortAsc.GetID);
-			}
           
-			if (control==btnSortyBy)
+			if (control==btnSortBy)
 			{
 				switch ( currentSortMethod)
 				{
@@ -226,7 +221,7 @@ namespace MediaPortal.GUI.TV
 						break;
 				}
 				Update();
-				GUIControl.FocusControl(GetID, btnSortyBy.GetID);
+				GUIControl.FocusControl(GetID, btnSortBy.GetID);
 			}
 
 			if (control==listView || control==titleView)
@@ -695,12 +690,8 @@ namespace MediaPortal.GUI.TV
           strLine = GUILocalizeStrings.Get(621);
           break;
       }
-			btnSortyBy.Label=strLine;
-
-      if (sortAscending)
-        btnSortAsc.Selected=false;
-			else
-				btnSortAsc.Selected=true;
+			btnSortBy.Label=strLine;
+			btnSortBy.IsAscending = sortAscending;
 
 			UpdateButtonStates();
 			RestoreHistory();
@@ -1103,6 +1094,14 @@ namespace MediaPortal.GUI.TV
 			if (currentSearchMode==SearchMode.Genre)
 				btnSearchByGenre.Selected=true;
 					
+		}
+
+		void SortChanged(object sender, SortEventArgs e)
+		{
+			sortAscending = e.Order != System.Windows.Forms.SortOrder.Descending;
+
+			Update();
+			GUIControl.FocusControl(GetID, ((GUIControl)sender).GetID);
 		}
 	}
 }
