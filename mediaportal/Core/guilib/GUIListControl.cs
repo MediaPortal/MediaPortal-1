@@ -2526,5 +2526,22 @@ namespace MediaPortal.GUI.Library
       m_bRefresh = true;
       OnSelectionChanged();
     }
+
+	  public System.Drawing.Rectangle SelectedRectangle
+	  {
+		  get
+		  {
+			  int selectedIndex = m_iCursorY + m_iOffset;
+
+			  if(selectedIndex == -1 || selectedIndex >= m_vecItems.Count)
+				  return System.Drawing.Rectangle.Empty;
+
+			  System.Drawing.Rectangle rect = new System.Drawing.Rectangle(m_dwPosX, m_dwPosY, m_dwWidth, m_iItemHeight);
+
+			  rect.Y += m_iCursorY * (m_iItemHeight + m_iSpaceBetweenItems);
+
+			  return rect;
+		  }
+	  }
   }
 }
