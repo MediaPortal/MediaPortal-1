@@ -1241,8 +1241,8 @@ namespace MediaPortal.Player
 								cStreams_Audio++;
 							}
 							else
-							//SUBTITLE
-							if (sPDWGroup==2 && cStreams_Sub<MAX_SUBSTREAMS && sName.LastIndexOf("off")==-1  && sName.LastIndexOf("No ")==-1&& sName.LastIndexOf("Miscellaneous ")==-1)
+								//SUBTITLE
+								if (sPDWGroup==2 && cStreams_Sub<MAX_SUBSTREAMS && sName.LastIndexOf("off")==-1  && sName.LastIndexOf("No ")==-1&& sName.LastIndexOf("Miscellaneous ")==-1)
 							{
 								sStreams_Sub[cStreams_Sub].Name=sName;
 								sStreams_Sub[cStreams_Sub].Id=istream;
@@ -1256,14 +1256,15 @@ namespace MediaPortal.Player
 								}
 								cStreams_Sub++;
 							}
-						else 
-							//NO SUBTITILE TAG
-							if (sPDWGroup==2 && cStreams_Sub<MAX_SUBSTREAMS && (sName.LastIndexOf("off")!=-1 || sName.LastIndexOf("No ")!=-1))
-						{
-							sStreams_Sub_No_Subtitle.Id=istream;
-							sStreams_Sub_No_Subtitle.Current=false;
-							sStreams_Sub_No_Subtitle.Filter=filter;
-							sStreams_Sub_No_Subtitle.Name=sName;
+							else 
+								//NO SUBTITILE TAG
+								if (sPDWGroup==2 && cStreams_Sub<MAX_SUBSTREAMS && (sName.LastIndexOf("off")!=-1 || sName.LastIndexOf("No ")!=-1))
+							{
+								sStreams_Sub_No_Subtitle.Id=istream;
+								sStreams_Sub_No_Subtitle.Current=false;
+								sStreams_Sub_No_Subtitle.Filter=filter;
+								sStreams_Sub_No_Subtitle.Name=sName;
+							}
 						}
 						Marshal.ReleaseComObject(foundfilter);   
 					}   
@@ -1281,7 +1282,7 @@ namespace MediaPortal.Player
 			try
 			{
 				if (Filter.Length<10)return false;
-				IBaseFilter foundfilter=GetFilterByName(Filter);
+				IBaseFilter foundfilter=DirectShowUtil.GetFilterByName(graphBuilder,Filter);
 				if (foundfilter!=null)
 				{
 					IAMStreamSelect pStrm = (IAMStreamSelect)foundfilter;
@@ -1296,7 +1297,7 @@ namespace MediaPortal.Player
 			return true;
 		}
 		//ENDS
-
+		#endregion
     #region IDisposable Members
 
     public override void Release()
