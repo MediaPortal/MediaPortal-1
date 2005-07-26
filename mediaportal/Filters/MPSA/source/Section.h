@@ -12,6 +12,33 @@ class Sections
 public:
 	//
 	//
+
+	  
+	struct audioHeader
+    {
+      //AudioHeader
+		int ID;
+        int Emphasis;
+        int Layer;
+        int ProtectionBit;
+        int Bitrate;
+        int SamplingFreq;
+        int PaddingBit;
+        int PrivateBit;
+        int Mode;
+        int ModeExtension;
+        int Bound;
+        int Channel;
+        int Copyright;
+        int Original;
+        int TimeLength;
+        int Size;
+        int SizeBase;
+	};
+
+	typedef audioHeader AudioHeader;
+	//
+	//
 	struct serviceData
 	{
 		char Provider[255];
@@ -138,6 +165,9 @@ public:
 	char* DecodeString(byte* buf, int offset, int compression_type, int mode, int number_of_bytes);
 	char* DecodeMultipleStrings(byte* buf, int offset);
 
+	//pes
+	void GetPES(BYTE *data,ULONG len,BYTE *pes);
+	HRESULT ParseAudioHeader(BYTE *data,AudioHeader *header);
 };
 
 #endif

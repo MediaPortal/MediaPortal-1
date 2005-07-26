@@ -627,3 +627,115 @@ char* Sections::DecodeMultipleStrings(byte* buf, int offset)
 	}
 	return NULL;
 }
+//
+//
+// pes
+void Sections::GetPES(BYTE *data,ULONG len,BYTE *pes)
+{
+	int ptr = 0; 
+	int offset = 0; 
+	bool isMPEG1=false;
+
+	int i = 0;
+	for (;i<len;)
+	{
+		ptr = (0xFF & data[i + 4]) << 8 | (0xFF & data[i + 5]);
+		isMPEG1 = (0x80 & data[i + 6]) == 0 ? true : false;
+		offset = i + 6 + (!isMPEG1 ? 3 + (0xFF & data[i + 8]) : 0);
+		memcpy(pes,data+offset,len-offset);
+		i += 6 + ptr;
+	}
+
+}
+
+HRESULT Sections::ParseAudioHeader(BYTE *data,AudioHeader *head)
+{
+    AudioHeader header;
+	int limit = 32;
+
+	if ((data[0] & 0xFF) != 0xFF || (data[1] & 0xF0) != 0xF0)
+		return S_FALSE;
+
+	header.ID = ((data[1] >> 3) &0x01) ;
+	header.Emphasis = data[3] & 0x03;
+
+	if (header.ID == 1 && header.Emphasis == 2)
+		header.ID = 2;
+	header.Layer = ((data[1] >>1) &0x03);
+
+	if (header.Layer < 1)
+		return S_FALSE;
+
+	header.ProtectionBit = (data[1] & 0x01) ^ 1;
+	header.Bitrate = AudioBitrates[header.ID][header.Layer-1][((data[2] >>4)& 0x0F)];
+	if (header.Bitrate < 1)
+		return S_FALSE;
+	header.SamplingFreq = AudioFrequencies[header.ID][((data[2] >>2)& 0x03)];
+	if (header.SamplingFreq == 0)
+		return S_FALSE;
+
+	header.PaddingBit = ((data[2] >>1)& 0x01) ;
+	header.PrivateBit = data[2] & 0x01;
+
+	header.Mode = ((data[3] >>6)& 0x03) & 0x03;
+	header.ModeExtension = ((data[3] >>4)& 0x03) ;
+	if (header.Mode == 0)
+		header.ModeExtension = 0;
+
+	header.Bound = (header.Mode == 1) ? ((header.ModeExtension + 1) << 2) : limit;
+	header.Channel = (header.Mode == 3) ? 1 : 2;
+	header.Copyright = ((data[3]>>3) & 0x01);
+	header.Original = ((data[3] >>2)& 0x01) ;
+	header.TimeLength = (int)(AudioTimes[header.Layer] / header.SamplingFreq);
+
+	if (header.ID == 1 && header.Layer == 2)
+	{	
+
+		if (header.Bitrate / header.Channel < 32000)
+			return S_FALSE;
+		if (header.Bitrate / header.Channel > 192000)
+			return S_FALSE;
+
+		if (header.Bitrate < 56000)
+		{
+			if (header.SamplingFreq == 32000)
+				limit = 12;
+			else
+				limit = 8;
+		}
+		else 
+			if (header.Bitrate < 96000)
+                    limit = 27;
+			else
+			{
+				if (header.SamplingFreq == 48000)
+					limit = 27;
+				else
+					limit = 30;
+			}
+			if (header.Bound > limit)
+				header.Bound = limit;
+	}
+	else 
+	if (header.Layer == 2)  // MPEG-2
+	{
+		limit = 30;
+	}
+
+	if (header.Layer < 3)
+	{
+		if (header.Bound > limit)
+			header.Bound = limit;
+		header.Size = (header.SizeBase = 144 * header.Bitrate / header.SamplingFreq) + header.PaddingBit;
+		memcpy(head,&header,sizeof(struct AudioHeader));
+		return S_OK;
+	}
+	else
+	{
+		limit = 32;
+		header.Size = (header.SizeBase = (12 * header.Bitrate / header.SamplingFreq) * 4) + (4 * header.PaddingBit);
+		memcpy(head,&header,sizeof(struct AudioHeader));
+		return S_OK;
+	}
+
+}

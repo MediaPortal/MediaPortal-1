@@ -400,7 +400,16 @@ HRESULT CDump::Process(BYTE *pbData,long len)
 	bool pesPacket=false;
 	if(pbData[0]==0x00 && pbData[1]==0x00 && pbData[2]==0x01)
 	{
+		Sections::AudioHeader audio;
 		pesPacket=true;
+		BYTE *d=new BYTE[len];
+		m_pSections->GetPES(pbData,len,d);
+		if(m_pSections->ParseAudioHeader(d,&audio)==S_OK)
+		{
+			// we can check audio
+			int a=0;
+		}
+		delete d;
 	}
 	if (pbData[0]==0xc8 || pbData[0]==0xc9)
 	{
@@ -416,12 +425,12 @@ HRESULT CDump::Process(BYTE *pbData,long len)
 			if(m_patTable[n].ProgrammNumber==prgNumber && m_patTable[n].PMTReady==false)
 			{
 				m_pSections->decodePMT(pbData,&m_patTable[n]);
-				//if(m_patTable[n].Pids.AudioPid1>0)
-				//	m_pDemuxer->MapAdditionalPayloadPID(m_patTable[n].Pids.AudioPid1);
-				//if(m_patTable[n].Pids.AudioPid2>0)
-				//	m_pDemuxer->MapAdditionalPayloadPID(m_patTable[n].Pids.AudioPid2);
-				//if(m_patTable[n].Pids.AudioPid3>0)
-				//	m_pDemuxer->MapAdditionalPayloadPID(m_patTable[n].Pids.AudioPid3);
+				if(m_patTable[n].Pids.AudioPid1>0)
+					m_pDemuxer->MapAdditionalPayloadPID(m_patTable[n].Pids.AudioPid1);
+				if(m_patTable[n].Pids.AudioPid2>0)
+					m_pDemuxer->MapAdditionalPayloadPID(m_patTable[n].Pids.AudioPid2);
+				if(m_patTable[n].Pids.AudioPid3>0)
+					m_pDemuxer->MapAdditionalPayloadPID(m_patTable[n].Pids.AudioPid3);
 			}
 		}
 		if(m_pmtGrabProgNum==prgNumber && len<=4096)
