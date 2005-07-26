@@ -90,10 +90,10 @@ namespace MediaPortal.Player
 		protected int cStreams_Audio=0;
 		protected int cStreams_Video=0;
 		protected int cStreams_Sub=0;   
-		protected int StopSubId=0;   
 		protected FilterStreamInfos[] sStreams_Audio;
 		protected FilterStreamInfos[] sStreams_Video;
 		protected FilterStreamInfos[] sStreams_Sub;
+		protected FilterStreamInfos   sStreams_Sub_No_Subtitle; //Haali use a stream to disable subtitles
 
     public VideoPlayerVMR7()
     {
@@ -1050,13 +1050,14 @@ namespace MediaPortal.Player
 		{
 			get
 			{
+				//DVD
 				if (this.vobSub != null)
 				{
 						int ret;
 					vobSub.get_LanguageCount(out ret);
 					return ret;
 				}
-				else
+				//AVI & MKV
 					return cStreams_Sub;
 			}
 		}
@@ -1065,14 +1066,30 @@ namespace MediaPortal.Player
 		{
 			get
 			{
-				if (vobSub!=null){int ret=0;vobSub.get_SelectedLanguage(out ret);return ret;}
-				for (int i=0;i<cStreams_Sub;i++)if (sStreams_Sub[i].Current)return i;
+				//DVD
+				if (vobSub!=null)
+				{
+					int ret=0;
+					vobSub.get_SelectedLanguage(out ret);
+					return ret;
+				}
+				//AVI & MKV
+				for (int i=0;i<cStreams_Sub;i++)
+					if (sStreams_Sub[i].Current)
+						return i;
 				return 0;
 			}
 			set
 			{
-				if (vobSub!=null){vobSub.put_SelectedLanguage(value);return;}
-				for (int i=0;i<cStreams_Sub;i++)sStreams_Sub[i].Current=false;
+				//DVD
+				if (vobSub!=null)
+				{
+					vobSub.put_SelectedLanguage(value);
+					return;
+				}
+				//AVI & MKV
+				for (int i=0;i<cStreams_Sub;i++)
+					sStreams_Sub[i].Current=false;
 				sStreams_Sub[value].Current=true;
 				EnableStream(sStreams_Sub[value].Id,0,sStreams_Sub[value].Filter);
 				EnableStream(sStreams_Sub[value].Id,AMStreamSelectEnableFlags.Enable,sStreams_Sub[value].Filter);
@@ -1112,7 +1129,7 @@ namespace MediaPortal.Player
 				}
 				else
 				{
-					for (int i=0;i<cStreams_Sub;i++)if (sStreams_Sub[i].Current)return true;
+					return !sStreams_Sub_No_Subtitle.Current;
 				}
 				return ret;
 			}
@@ -1125,16 +1142,17 @@ namespace MediaPortal.Player
 				}          
 				else
 				{
-					int CurrentSub=0;
-					for (int i=0;i<cStreams_Sub;i++)if (sStreams_Sub[i].Current)CurrentSub=i;
-             
-					if (CurrentSub>=0)
+					int CurrentSub=CurrentSubtitleStream;
+
+					if (CurrentSub>=0 && cStreams_Sub>=1)
 					{
-						EnableStream(StopSubId,0,sStreams_Sub[CurrentSub].Filter);              EnableStream(sStreams_Sub[CurrentSub].Id,0,sStreams_Sub[CurrentSub].Filter);
+						sStreams_Sub_No_Subtitle.Current=!value;
+						EnableStream(sStreams_Sub_No_Subtitle.Id,0,sStreams_Sub_No_Subtitle.Filter);
+						EnableStream(sStreams_Sub[CurrentSub].Id,0,sStreams_Sub[CurrentSub].Filter);
 						if (value)
 							EnableStream(sStreams_Sub[CurrentSub].Id,AMStreamSelectEnableFlags.Enable,sStreams_Sub[CurrentSub].Filter);
 						else
-							EnableStream(StopSubId,AMStreamSelectEnableFlags.Enable,sStreams_Sub[CurrentSub].Filter);
+							EnableStream(sStreams_Sub_No_Subtitle.Id,AMStreamSelectEnableFlags.Enable,sStreams_Sub_No_Subtitle.Filter);
 					}
 				}
 			}
@@ -1142,6 +1160,8 @@ namespace MediaPortal.Player
 
 		bool AnalyseStreams()
 		{
+			sStreams_Sub_No_Subtitle.Id=0;
+			sStreams_Sub_No_Subtitle.Filter="";
 			cStreams_Audio=0;
 			cStreams_Video=0;
 			cStreams_Sub=0;
@@ -1183,6 +1203,7 @@ namespace MediaPortal.Player
 					if (pStrm!=null)
 					{
 						pStrm.Count(out cStreams);
+					//GET STREAMS
 						for (int istream=0;istream<cStreams;istream++)
 						{
 							AMMediaType sType;AMStreamSelectInfoFlags sFlag;
@@ -1220,7 +1241,8 @@ namespace MediaPortal.Player
 								cStreams_Audio++;
 							}
 							else
-								if (sPDWGroup==2 && cStreams_Sub<MAX_SUBSTREAMS && sName.LastIndexOf("off")==-1  && sName.LastIndexOf("No ")==-1)
+							//SUBTITLE
+							if (sPDWGroup==2 && cStreams_Sub<MAX_SUBSTREAMS && sName.LastIndexOf("off")==-1  && sName.LastIndexOf("No ")==-1&& sName.LastIndexOf("Miscellaneous ")==-1)
 							{
 								sStreams_Sub[cStreams_Sub].Name=sName;
 								sStreams_Sub[cStreams_Sub].Id=istream;
@@ -1234,8 +1256,14 @@ namespace MediaPortal.Player
 								}
 								cStreams_Sub++;
 							}
-							else if (sPDWGroup==2 && cStreams_Sub<MAX_SUBSTREAMS && (sName.LastIndexOf("off")!=-1 || sName.LastIndexOf("No ")!=-1))
-								StopSubId=istream;
+						else 
+							//NO SUBTITILE TAG
+							if (sPDWGroup==2 && cStreams_Sub<MAX_SUBSTREAMS && (sName.LastIndexOf("off")!=-1 || sName.LastIndexOf("No ")!=-1))
+						{
+							sStreams_Sub_No_Subtitle.Id=istream;
+							sStreams_Sub_No_Subtitle.Current=false;
+							sStreams_Sub_No_Subtitle.Filter=filter;
+							sStreams_Sub_No_Subtitle.Name=sName;
 						}
 						Marshal.ReleaseComObject(foundfilter);   
 					}   
@@ -1248,20 +1276,27 @@ namespace MediaPortal.Player
 				Marshal.ReleaseComObject(foundfilter);
 			return true;
 		}
-		bool EnableStream(int Id,AMStreamSelectEnableFlags dwFlags,string Filter)
+		public bool EnableStream(int Id,AMStreamSelectEnableFlags dwFlags,string Filter)
 		{
-
-			IBaseFilter foundfilter=DirectShowUtil.GetFilterByName(graphBuilder,Filter);
-			if (foundfilter!=null)
+			try
 			{
-				IAMStreamSelect pStrm = (IAMStreamSelect)foundfilter;
-				pStrm.Enable(Id,dwFlags);
-				pStrm=null;
-				Marshal.ReleaseComObject(foundfilter);
+				if (Filter.Length<10)return false;
+				IBaseFilter foundfilter=GetFilterByName(Filter);
+				if (foundfilter!=null)
+				{
+					IAMStreamSelect pStrm = (IAMStreamSelect)foundfilter;
+					pStrm.Enable(Id,dwFlags);
+					pStrm=null;
+					Marshal.ReleaseComObject(foundfilter);
+				}
+			}
+			catch
+			{
 			}
 			return true;
-		} 
-		#endregion
+		}
+		//ENDS
+
     #region IDisposable Members
 
     public override void Release()
