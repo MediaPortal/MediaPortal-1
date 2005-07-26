@@ -133,6 +133,8 @@ namespace MediaPortal.Dialogs
 			{
 				case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
 				{
+					m_pParentWindow=null;
+					m_bRunning=false;
 					GUIGraphicsContext.Overlay=m_bPrevOverlay;		
 					FreeResources();
 					DeInitControls();
