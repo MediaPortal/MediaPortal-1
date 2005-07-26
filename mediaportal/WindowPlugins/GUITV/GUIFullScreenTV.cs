@@ -756,6 +756,14 @@ namespace MediaPortal.GUI.TV
 						}
 					}
 
+					if (VMR7Util.g_vmr7!=null)
+					{	
+						VMR7Util.g_vmr7.SaveBitmap(null,false,false,0.8f);
+					}
+					if (VMR9Util.g_vmr9!=null)
+					{	
+						VMR9Util.g_vmr9.SaveBitmap(null,false,false,0.8f);
+					}
 					return true;
 				}
 

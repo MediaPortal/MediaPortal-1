@@ -694,9 +694,14 @@ namespace MediaPortal.GUI.Video
 							m_msnWindow.OnMessage(msg);	// Send a de-init msg to the OSD
 						}
 						m_bMSNChatVisible=false;
+						
 						if (VMR7Util.g_vmr7!=null)
-						{
+						{	
 							VMR7Util.g_vmr7.SaveBitmap(null,false,false,0.8f);
+						}
+						if (VMR9Util.g_vmr9!=null)
+						{	
+							VMR9Util.g_vmr9.SaveBitmap(null,false,false,0.8f);
 						}
 						base.OnMessage(message);
             

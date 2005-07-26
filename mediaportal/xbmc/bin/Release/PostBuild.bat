@@ -16,7 +16,12 @@ del /F /Q plugins\subtitle\*.*
 del /F /Q plugins\ExternalPlayers\*.*
 del /F /Q plugins\process\*.*
 del *.dll
+del *.ax
 
+copy ..\..\..\MPSA.ax .
+copy ..\..\..\MPTS.ax .
+regsvr32 /s MPSA.ax
+regsvr32 /s MPTS.ax
 copy ..\..\..\core\directshowhelper\directshowhelper\release\directshowhelper.dll .
 regsvr32 /s directshowhelper.dll
 copy ..\..\..\core\fontengine\fontengine\release\fontengine.dll .

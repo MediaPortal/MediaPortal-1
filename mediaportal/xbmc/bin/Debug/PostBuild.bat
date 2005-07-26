@@ -16,6 +16,12 @@ del /F /Q plugins\subtitle\*.*
 del /F /Q plugins\ExternalPlayers\*.*
 del /F /Q plugins\process\*.*
 del *.dll
+del *.ax
+
+copy ..\..\..\MPSA.ax .
+copy ..\..\..\MPTS.ax .
+regsvr32 /s MPSA.ax
+regsvr32 /s MPTS.ax
 
 copy ..\..\..\core\directshowhelper\directshowhelper\debug\directshowhelper.dll .
 copy ..\..\..\core\directshowhelper\directshowhelper\debug\directshowhelper.pdb .
