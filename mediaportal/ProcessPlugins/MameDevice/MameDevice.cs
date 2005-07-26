@@ -59,11 +59,14 @@ namespace MediaPortal.MameDevice
 
     public bool HasSetup()
     {
-      return false;
+      return true;
     }
 
     public void ShowPlugin()
     {
+      MappingForm dlg = new MappingForm("MameDevice");
+      dlg.Show();
+//      dlg.ShowDialog(this);
     }
 
     #endregion

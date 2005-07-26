@@ -393,6 +393,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "MameDevice\MappingForm.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "MameDevice\MappingForm.resx"
+                    DependentUpon = "MappingForm.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "MPExTuneCmd\MPExTuneCmd.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
