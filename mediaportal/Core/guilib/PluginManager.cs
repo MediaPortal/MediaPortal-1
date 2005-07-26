@@ -384,14 +384,14 @@ namespace MediaPortal.GUI.Library
 			} 
 		}
 
-		static public void ReceiveMsg(System.Windows.Forms.Message msg)	// Receive window messages from core / added by mPod/waeberd
+		static public void WndProc(ref System.Windows.Forms.Message msg)	// Receive window messages from core / added by mPod/waeberd
 		{
 			foreach (IPlugin plugin in _NonGUIPlugins)
 			{
 				if (plugin is IPluginReceiver)
 				{
 					IPluginReceiver pluginRev = plugin as IPluginReceiver;
-					pluginRev.ReceiveMsg(msg);
+					pluginRev.WndProc(ref msg);
 				}
 			}
 		}
