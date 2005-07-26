@@ -3436,8 +3436,7 @@ namespace MediaPortal.TV.Recording
 			}
 			timeResendPid=DateTime.Now;
 			m_analyzerInterface.ResetParser();
-			int res=m_analyzerInterface.SetPMTProgramNumber(currentTuningObject.ProgramNumber);
-			int a=0;
+			m_analyzerInterface.SetPMTProgramNumber(currentTuningObject.ProgramNumber);
 		}//public void TuneChannel(AnalogVideoStandard standard,int iChannel,int country)
 
 
