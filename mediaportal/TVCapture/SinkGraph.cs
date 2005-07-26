@@ -881,6 +881,7 @@ namespace MediaPortal.TV.Recording
       int iVideoWidth,iVideoHeight;
 			m_mpeg2Demux.GetVideoSize( out iVideoWidth, out iVideoHeight );
 			m_mpeg2Demux.GetPreferredAspectRatio(out aspectX, out aspectY);
+			GUIGraphicsContext.VideoSize=new Size(iVideoWidth, iVideoHeight );
 			if (GUIGraphicsContext.IsFullScreenVideo|| false==GUIGraphicsContext.ShowBackground)
 			{
 				float x=GUIGraphicsContext.OverScanLeft;

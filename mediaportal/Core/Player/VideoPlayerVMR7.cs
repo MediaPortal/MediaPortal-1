@@ -228,6 +228,8 @@ namespace MediaPortal.Player
 				m_aspectX=aspectX;
 				m_aspectY=aspectY;
 
+				
+				GUIGraphicsContext.VideoSize=new Size(m_iVideoWidth, m_iVideoHeight);
 
         System.Drawing.Rectangle rSource,rDest;
         MediaPortal.GUI.Library.Geometry m_geometry=new MediaPortal.GUI.Library.Geometry();

@@ -755,6 +755,7 @@ namespace MediaPortal.TV.Recording
 				m_basicVideo.GetPreferredAspectRatio(out aspectX, out aspectY);
 			}
 			
+			GUIGraphicsContext.VideoSize=new Size(iVideoWidth, iVideoHeight );
 			m_iVideoWidth=iVideoWidth;
 			m_iVideoHeight=iVideoHeight;
 			m_aspectX=aspectX;

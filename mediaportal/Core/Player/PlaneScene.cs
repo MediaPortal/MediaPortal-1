@@ -224,6 +224,7 @@ namespace MediaPortal.Player
 		{
 			try
 			{
+				GUIGraphicsContext.VideoSize=videoSize;
 				// get the window where the video/tv should be shown
 				float x  = GUIGraphicsContext.VideoWindow.X;
 				float y  = GUIGraphicsContext.VideoWindow.Y;

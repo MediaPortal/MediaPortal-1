@@ -805,8 +805,19 @@ namespace MediaPortal.GUI.Library
           GUIGraphicsContext.graphics.SmoothingMode=System.Drawing.Drawing2D.SmoothingMode.HighQuality;
 
           try
-          {
-            GUIGraphicsContext.graphics.DrawImage(m_image,m_destRect);
+          {/*
+						float xoff = GUIGraphicsContext.VideoSize.Width/GUIGraphicsContext.Width;
+						if (xoff>=1f) xoff=1f;
+						float yoff = GUIGraphicsContext.VideoSize.Height/GUIGraphicsContext.Height;
+						if (yoff>=1f) yoff=1f;
+
+						Rectangle rect = m_destRect;
+						rect.X = (int)Math.Floor( ((float)rect.X) * xoff);
+						rect.Y = (int)Math.Floor( ((float)rect.Y) * xoff);
+						rect.Width = (int)Math.Floor( ((float)rect.Width) * xoff);
+						rect.Height = (int)Math.Floor( ((float)rect.Height) * xoff);
+            GUIGraphicsContext.graphics.DrawImage(m_image,rect);*/
+						GUIGraphicsContext.graphics.DrawImage(m_image,m_destRect);
           }
           catch(Exception)
           {

@@ -988,7 +988,7 @@ namespace MediaPortal.TV.Recording
 				Overlay=true;
 			}
 			m_basicVideo.GetVideoSize(out iVideoWidth, out iVideoHeight);
-			
+			GUIGraphicsContext.VideoSize=new Size(iVideoWidth, iVideoHeight );
       if (GUIGraphicsContext.IsFullScreenVideo)
       {
         float x = GUIGraphicsContext.OverScanLeft;

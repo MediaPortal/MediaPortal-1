@@ -99,7 +99,7 @@ namespace MediaPortal.GUI.Library
 		static bool											blankScreen=false;
 		static PresentParameters				presentParameters;
 		static bool											vmr9Allowed=true;
-
+		static Size                     videoSize;
 		// singleton. Dont allow any instance of this class
 		private GUIGraphicsContext()
 		{
@@ -877,6 +877,11 @@ namespace MediaPortal.GUI.Library
 		{
 			get { return vmr9Allowed;}
 			set { vmr9Allowed=value;}
+		}
+		static public Size VideoSize
+		{
+			get { return videoSize;}
+			set { videoSize=value;}
 		}
 
   }

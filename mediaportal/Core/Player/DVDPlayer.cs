@@ -1525,6 +1525,7 @@ namespace MediaPortal.Player
 				{
 					basicVideo.GetPreferredAspectRatio(out aspectX, out aspectY);
 				}
+				GUIGraphicsContext.VideoSize=new Size(m_iVideoWidth, m_iVideoHeight);
 
         MediaPortal.GUI.Library.Geometry m_geometry=new MediaPortal.GUI.Library.Geometry();
         m_geometry.ImageWidth  =m_iVideoWidth;

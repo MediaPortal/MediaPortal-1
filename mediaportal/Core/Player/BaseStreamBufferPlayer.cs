@@ -156,6 +156,7 @@ namespace MediaPortal.Player
         }
         Log.Write("StreamBufferPlayer:VideoSize:{0}x{1}",m_iVideoWidth,m_iVideoHeight);	
 			}
+			GUIGraphicsContext.VideoSize=new Size(m_iVideoWidth, m_iVideoHeight);
         
 			if (mediaCtrl==null)
 			{
@@ -281,6 +282,7 @@ namespace MediaPortal.Player
 			{
 				basicVideo.GetPreferredAspectRatio(out aspectX, out aspectY);
 			}
+			GUIGraphicsContext.VideoSize=new Size(m_iVideoWidth, m_iVideoHeight);
 			m_aspectX=aspectX;
 			m_aspectY=aspectY;
 			MediaPortal.GUI.Library.Geometry m_geometry=new MediaPortal.GUI.Library.Geometry();
