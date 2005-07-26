@@ -90,7 +90,7 @@ namespace MediaPortal.GUI.Library
 			if(_sortImages[3].XPosition != x || _sortImages[3].YPosition != y)
 				_sortImages[3].SetPosition(x, y);	
 
-			int sortImageIndex = _isAscending ? _isSortImageHot ? 3 : 2 : _isSortImageHot ? 1 : 0;
+			int sortImageIndex = _isAscending ? isFocused && _isSortImageHot ? 3 : 2 : isFocused && _isSortImageHot ? 1 : 0;
 
 			_sortImages[sortImageIndex].Render(timePassed);
 
@@ -141,10 +141,15 @@ namespace MediaPortal.GUI.Library
 				_isSortImageHot = false;
 				return;
 			}
-			else if(action.wID == Action.ActionType.ACTION_MOVE_RIGHT && _isSortImageHot == false)
+			else if(action.wID == Action.ActionType.ACTION_MOVE_RIGHT)
 			{
-				_isSortImageHot = true;
-				return;
+				if(_isSortImageHot == false)
+				{
+					_isSortImageHot = true;
+					return;
+				}
+
+				_isSortImageHot = false;
 			}
 
 			base.OnAction(action);
