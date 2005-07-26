@@ -481,6 +481,8 @@ namespace MediaPortal.GUI.Library
 					return typeof (GUIFilmstripControl);
 				case ("smsinput"):
 					return typeof (GUISMSInputControl);
+				case ("sortbutton"):
+					return typeof (GUISortButtonControl);
 				default:
 					Type t = (Type)m_hashCustomControls[xmlTypeName];
 
