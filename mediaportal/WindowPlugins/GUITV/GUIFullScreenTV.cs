@@ -739,7 +739,33 @@ namespace MediaPortal.GUI.TV
 						GUIMessage msg= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,m_msnWindow.GetID,0,0,GetID,0,null);
 						m_msnWindow.OnMessage(msg);	// Send a de-init msg to the OSD
 					}
-					isMsnChatVisible=false;
+
+					isOsdVisible=false;
+					m_bShowInput=false;
+					m_timeKeyPressed=DateTime.Now;
+					m_strChannel="";
+					isOsdVisible=false;
+					m_UpdateTimer=DateTime.Now;
+					m_bShowInfo=false;
+					m_bShowStep=false;
+					m_bShowStatus=false;
+					m_bShowGroup=false;
+					NotifyDialogVisible=false;
+					bottomMenuVisible=false;
+					m_dwTimeStatusShowTime=DateTime.Now;
+
+					screenState.ContextMenuVisible=false;
+					screenState.MsgBoxVisible=false;
+					screenState.MsnVisible=false;
+					screenState.OsdVisible=false;
+					screenState.Paused=false;
+					screenState.ShowGroup=false;
+					screenState.ShowInput=false;
+					screenState.ShowStatusLine=false;
+					screenState.ShowTime=false;
+					screenState.ZapOsdVisible=false;
+					needToClearScreen=false;
+
 
 					base.OnMessage(message);
 					GUIGraphicsContext.IsFullScreenVideo=false;
@@ -1368,6 +1394,7 @@ namespace MediaPortal.GUI.TV
 
 		public override void Render(float timePassed)
 		{
+			if (GUIWindowManager.IsSwitchingToNewWindow) return;
 			if (VMR7Util.g_vmr7!=null )
 			{
 				if (!GUIWindowManager.IsRouted)
