@@ -473,6 +473,9 @@ namespace MediaPortal.TV.Recording
 			ch.minorChannel=-1;
 			ch.majorChannel=-1;
 			ch.modulation=-1;
+			ch.majorChannel=-1;
+			ch.minorChannel=-1;
+
 		
 			ch.transportStreamID=Marshal.ReadInt32(data,0);
 			ch.program_number=Marshal.ReadInt32(data,4);
@@ -543,31 +546,7 @@ namespace MediaPortal.TV.Recording
 			RemoveInvalidChars(ref pmt.data);
 			ch.pid_list.Add(pmt);
 			pmt=new PMTData();			
-			// 48 -
-			/*
-		ULONG TransportStreamID;// 0-3
-		ULONG ProgrammNumber;// 4-7
-		ULONG ProgrammPMTPID;// 8-11
-		ULONG PCRPid;// 12-15
-		WORD VideoPid;//16-17
-		WORD AudioPid1;//18-19
-		char Lang1[3];//20-22
-		WORD AudioPid2;//23-24
-		char Lang2[3];//25-27
-        WORD AudioPid3;//28-29
-		char Lang3[3];//30-32
-		WORD AC3;//33-34
-		WORD Teletext;//35-36
-		WORD Subtitles;//37-38
-		BYTE ServiceName[255];// 39-293
-		BYTE ProviderName[255];// 294-548
-		WORD EITPreFollow;// 549-550
-		WORD EITSchedule;// 551-552
-		WORD Scrambled;// 553-554
-		WORD ServiceType;// 555-556
-		BYTE PMTReady;// 557-557
-		BYTE SDTReady;// 558-558			
-		*/
+
 			byte[] d=new byte[255];
 			Marshal.Copy((IntPtr)(((int)data)+42),d,0,255);
 			ch.service_name=System.Text.Encoding.ASCII.GetString(d);
@@ -578,6 +557,11 @@ namespace MediaPortal.TV.Recording
 			ch.scrambled=(Marshal.ReadInt16(data,556))==1?true:false;
 			ch.serviceType=Marshal.ReadInt16(data,558);
 			ch.networkID=Marshal.ReadInt32(data,560);
+
+			ch.majorChannel=Marshal.ReadInt16(data,567);
+			ch.minorChannel=Marshal.ReadInt16(data,569);
+			ch.modulation=Marshal.ReadInt16(data,571);
+			ch.freq=Marshal.ReadInt32(data,573);
 
 			RemoveInvalidChars(ref ch.service_name);
 			RemoveInvalidChars(ref ch.service_provider_name);

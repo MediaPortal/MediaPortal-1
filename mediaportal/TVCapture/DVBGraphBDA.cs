@@ -3768,43 +3768,37 @@ namespace MediaPortal.TV.Recording
 			transp.channels=null;
 			m_analyzerInterface.ResetParser();
 
-			if (Network() == NetworkType.ATSC)
+			using (DVBSections sections = new DVBSections())
 			{
-				ATSCSections atscSections = new ATSCSections(m_streamDemuxer);
-				atscSections.Timeout=8000;
-				//transp = atscSections.Scan(m_SectionsTables);
-			}
-			else
-			{
-				using (DVBSections sections = new DVBSections())
+				ushort count=0;
+				sections.DemuxerObject=m_streamDemuxer;
+				sections.Timeout=2500;
+				sections.GetTablesUsingMicrosoft=true;
+				System.Threading.Thread.Sleep(2500);
+				m_analyzerInterface.GetChannelCount(ref count);
+				if(count>0)
 				{
-					ushort count=0;
-					sections.DemuxerObject=m_streamDemuxer;
-					sections.Timeout=2500;
-					sections.GetTablesUsingMicrosoft=true;
-					System.Threading.Thread.Sleep(2500);
-					m_analyzerInterface.GetChannelCount(ref count);
-					if(count>0)
-					{
-						transp.channels=new ArrayList();
-						for(int t=0;t<count-1;t++)
-							if(m_analyzerInterface.IsChannelReady(t)==0)
+					transp.channels=new ArrayList();
+					for(int t=0;t<count-1;t++)
+						if(m_analyzerInterface.IsChannelReady(t)==0)
+						{
+							DVBSections.ChannelInfo chi=new MediaPortal.TV.Recording.DVBSections.ChannelInfo();
+							UInt16 len=0;
+							int hr=0;
+							hr=m_analyzerInterface.GetCISize(ref len);					
+							IntPtr mmch=Marshal.AllocCoTaskMem(len);
+							hr=m_analyzerInterface.GetChannel((UInt16)t,mmch);
+							//byte[] ch=new byte[len];
+							//Marshal.Copy(mmch,ch,0,len);
+							chi=sections.GetChannelInfo(mmch);
+							chi.fec=currentTuningObject.FEC;
+							if (Network() != NetworkType.ATSC)
 							{
-								DVBSections.ChannelInfo chi=new MediaPortal.TV.Recording.DVBSections.ChannelInfo();
-								UInt16 len=0;
-								int hr=0;
-								hr=m_analyzerInterface.GetCISize(ref len);					
-								IntPtr mmch=Marshal.AllocCoTaskMem(len);
-								hr=m_analyzerInterface.GetChannel((UInt16)t,mmch);
-								//byte[] ch=new byte[len];
-								//Marshal.Copy(mmch,ch,0,len);
-								chi=sections.GetChannelInfo(mmch);
-								chi.fec=currentTuningObject.FEC;
 								chi.freq=currentTuningObject.Frequency;
-								Marshal.FreeCoTaskMem(mmch);
-								transp.channels.Add(chi);
 							}
-					}
+							Marshal.FreeCoTaskMem(mmch);
+							transp.channels.Add(chi);
+						}
 				}
 			}
 			if (transp.channels==null)
