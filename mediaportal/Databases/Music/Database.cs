@@ -675,7 +675,7 @@ namespace MediaPortal.Music.Database
 					}
 					catch (Exception ) 
 					{
-						Log.Write ("MusicDatabaseReorg: Executing query failed");
+						Log.WriteFile(Log.LogType.Error,true,"MusicDatabaseReorg: Executing query failed");
 					}
 				} //End if
 
@@ -2085,7 +2085,7 @@ namespace MediaPortal.Music.Database
 			}
 			catch(Exception ex)
 			{
-				Log.WriteFile(Log.LogType.Error,"music-scan{0} {1} {2}",
+				Log.WriteFile(Log.LogType.Error,true,"music-scan{0} {1} {2}",
 														ex.Message,ex.Source,ex.StackTrace);
 			}
 			finally
@@ -2130,7 +2130,7 @@ namespace MediaPortal.Music.Database
 		  }
 		  catch (Exception)
 		  {
-			  Log.Write("Musicdatabasereorg: query for tag update could not be executed.");
+			  Log.WriteFile(Log.LogType.Error,true,"Musicdatabasereorg: query for tag update could not be executed.");
 			  //m_db.Execute("rollback");
 			  return (int)Errors.ERROR_REORG_SONGS;
 		  }
@@ -2172,7 +2172,7 @@ namespace MediaPortal.Music.Database
 				  }
 				  catch (Exception )
 				  {
-					  Log.Write("Musicdatabasereorg: failed Tag update 3 for existing file {0} ", strFileName);
+					  Log.WriteFile(Log.LogType.Error,true,"Musicdatabasereorg: failed Tag update 3 for existing file {0} ", strFileName);
 				  }
 
 				  //Log.Write("Musicdatabasereorg: starting Tag update 4 for existing file {0} ", strFileName);
@@ -2182,7 +2182,7 @@ namespace MediaPortal.Music.Database
 				  }
 				  catch (Exception )
 				  {
-					  Log.Write("Musicdatabasereorg: failed Tag update 4 for existing file {0} ", strFileName);
+					  Log.WriteFile(Log.LogType.Error,true,"Musicdatabasereorg: failed Tag update 4 for existing file {0} ", strFileName);
 				  }
 				  
 				  //Log.Write("Musicdatabasereorg: starting Tag update 5 for existing file {0} ", strFileName);
@@ -2192,7 +2192,7 @@ namespace MediaPortal.Music.Database
 				  }
 				  catch (Exception )
 				  {
-					  Log.Write("Musicdatabasereorg: failed Tag update 5 for existing file {0} ", strFileName);
+					  Log.WriteFile(Log.LogType.Error,true,"Musicdatabasereorg: failed Tag update 5 for existing file {0} ", strFileName);
 				  }
 
 				  
@@ -2203,7 +2203,7 @@ namespace MediaPortal.Music.Database
 				  }
 				  catch (Exception )
 				  {
-					  Log.Write("Musicdatabasereorg: failed Tag update 7 for existing file {0} ", strFileName);
+					  Log.WriteFile(Log.LogType.Error,true,"Musicdatabasereorg: failed Tag update 7 for existing file {0} ", strFileName);
 				  }
 
 
@@ -2235,107 +2235,114 @@ namespace MediaPortal.Music.Database
 		  return (int)Errors.ERROR_OK;
 	  }
 
-      bool UpdateSong(string  strPathSong, int idSong, ref int idAlbum, ref int idArtist, ref int idGenre, ref int idPath)
+    bool UpdateSong(string  strPathSong, int idSong, ref int idAlbum, ref int idArtist, ref int idGenre, ref int idPath)
 	  {
-		  MusicTag tag;
-      byte[] imageBytes = null;
-      tag = TagReader.TagReader.ReadTag(strPathSong, ref imageBytes);									
-		  if (tag!=null)
-		  {
-			  //Log.Write ("Musicdatabasereorg: We are gonna update the tags for {0}", strPathSong);
-			  Song song		= new Song();
-			  song.Title		= tag.Title;
-			  song.Genre		= tag.Genre;
-			  song.FileName	= strPathSong;
-			  song.Artist		= tag.Artist;
-			  song.Album		= tag.Album;
-			  song.Year		= tag.Year;
-			  song.Track		= tag.Track;
-			  song.Duration	= tag.Duration;
+			try
+			{
+				MusicTag tag;
+				byte[] imageBytes = null;
+				tag = TagReader.TagReader.ReadTag(strPathSong, ref imageBytes);									
+				if (tag!=null)
+				{
+					//Log.Write ("Musicdatabasereorg: We are gonna update the tags for {0}", strPathSong);
+					Song song		= new Song();
+					song.Title		= tag.Title;
+					song.Genre		= tag.Genre;
+					song.FileName	= strPathSong;
+					song.Artist		= tag.Artist;
+					song.Album		= tag.Album;
+					song.Year		= tag.Year;
+					song.Track		= tag.Track;
+					song.Duration	= tag.Duration;
 
-        //extract embedded coverart from file
-        if (imageBytes != null)
-        {
-					try
+					//extract embedded coverart from file
+					if (imageBytes != null)
 					{
-						using (MemoryStream memoryStream = new MemoryStream(imageBytes))
+						try
 						{
-							using (System.Drawing.Image image = System.Drawing.Image.FromStream(memoryStream))
+							using (MemoryStream memoryStream = new MemoryStream(imageBytes))
 							{
-								string strSmallThumb = Utils.GetCoverArtName(Thumbs.MusicAlbum, tag.Album);
-								string strLargeThumb = Utils.GetLargeCoverArtName(Thumbs.MusicAlbum, tag.Album);
-								MediaPortal.Util.Picture.CreateThumbnail(image, strSmallThumb, 128, 128, 0);
-								MediaPortal.Util.Picture.CreateThumbnail(image, strLargeThumb, 512, 512, 0);
-								string folderThumb=Utils.GetFolderThumb(strPathSong);
-								if (!System.IO.File.Exists(folderThumb))
+								using (System.Drawing.Image image = System.Drawing.Image.FromStream(memoryStream))
 								{
-									try
+									string strSmallThumb = Utils.GetCoverArtName(Thumbs.MusicAlbum, tag.Album);
+									string strLargeThumb = Utils.GetLargeCoverArtName(Thumbs.MusicAlbum, tag.Album);
+									MediaPortal.Util.Picture.CreateThumbnail(image, strSmallThumb, 128, 128, 0);
+									MediaPortal.Util.Picture.CreateThumbnail(image, strLargeThumb, 512, 512, 0);
+									string folderThumb=Utils.GetFolderThumb(strPathSong);
+									if (!System.IO.File.Exists(folderThumb))
 									{
-										System.IO.File.Copy(strSmallThumb,folderThumb,true);
+										try
+										{
+											System.IO.File.Copy(strSmallThumb,folderThumb,true);
+										}
+										catch(Exception){}
 									}
-									catch(Exception){}
 								}
 							}
 						}
+						catch(Exception){}
 					}
-					catch(Exception){}
-        }
-			  string strPath, strFileName;
-			  DatabaseUtility.Split(song.FileName, out strPath, out strFileName); 
+					string strPath, strFileName;
+					DatabaseUtility.Split(song.FileName, out strPath, out strFileName); 
 
-			  string strTmp;
-			  strTmp=song.Album;DatabaseUtility.RemoveInvalidChars(ref strTmp);song.Album=strTmp;
-			  strTmp=song.Genre;DatabaseUtility.RemoveInvalidChars(ref strTmp);song.Genre=strTmp;
-			  strTmp=song.Artist;DatabaseUtility.RemoveInvalidChars(ref strTmp);song.Artist=strTmp;
-			  strTmp=song.Title;DatabaseUtility.RemoveInvalidChars(ref strTmp);song.Title=strTmp;
+					string strTmp;
+					strTmp=song.Album;DatabaseUtility.RemoveInvalidChars(ref strTmp);song.Album=strTmp;
+					strTmp=song.Genre;DatabaseUtility.RemoveInvalidChars(ref strTmp);song.Genre=strTmp;
+					strTmp=song.Artist;DatabaseUtility.RemoveInvalidChars(ref strTmp);song.Artist=strTmp;
+					strTmp=song.Title;DatabaseUtility.RemoveInvalidChars(ref strTmp);song.Title=strTmp;
 
-			  DatabaseUtility.RemoveInvalidChars(ref strFileName);
+					DatabaseUtility.RemoveInvalidChars(ref strFileName);
 
-			  /// PDW 25 may 2005
-			  /// Adding these items starts a select and insert query for each. 
-			  /// Maybe we should check if anything has changed in the tags
-			  /// if not, no need to add and invoke query's.
-			  /// here we are gonna (try to) add the tags
-				
-			  idGenre  = AddGenre(tag.Genre);
-			  //Log.Write ("Tag.genre = {0}",tag.Genre);
-			  idArtist = AddArtist(tag.Artist);
-			  //Log.Write ("Tag.Artist = {0}",tag.Artist);
-			  idPath   = AddPath(strPath);
-			  //Log.Write ("strPath= {0}",strPath);
-			  idAlbum  = AddAlbum(tag.Album,idArtist);
-			  //Log.Write ("Tag.Album = {0}",tag.Album);
+					/// PDW 25 may 2005
+					/// Adding these items starts a select and insert query for each. 
+					/// Maybe we should check if anything has changed in the tags
+					/// if not, no need to add and invoke query's.
+					/// here we are gonna (try to) add the tags
+					
+					idGenre  = AddGenre(tag.Genre);
+					//Log.Write ("Tag.genre = {0}",tag.Genre);
+					idArtist = AddArtist(tag.Artist);
+					//Log.Write ("Tag.Artist = {0}",tag.Artist);
+					idPath   = AddPath(strPath);
+					//Log.Write ("strPath= {0}",strPath);
+					idAlbum  = AddAlbum(tag.Album,idArtist);
+					//Log.Write ("Tag.Album = {0}",tag.Album);
 
-			  ulong dwCRC=0;
-			  CRCTool crc= new CRCTool();
-			  crc.Init(CRCTool.CRCCode.CRC32);
-			  dwCRC=crc.calc(strFileName);
-			  //SQLiteResultSet results;
+					ulong dwCRC=0;
+					CRCTool crc= new CRCTool();
+					crc.Init(CRCTool.CRCCode.CRC32);
+					dwCRC=crc.calc(strFileName);
+					//SQLiteResultSet results;
 
-			  //Log.Write ("Song {0} will be updated with CRC={1}",song.FileName,dwCRC);
+					//Log.Write ("Song {0} will be updated with CRC={1}",song.FileName,dwCRC);
 
-			  string strSQL;
-			  strSQL=String.Format("update song set idArtist={0},idAlbum={1},idGenre={2},idPath={3},strTitle='{4}',iTrack={5},iDuration={6},iYear={7},dwFileNameCRC='{8}',strFileName='{9}' where idSong={10}",
-				  idArtist,idAlbum,idGenre,idPath,
-				  song.Title,
-				  song.Track,song.Duration,song.Year,
-				  dwCRC,
-				  strFileName, idSong);
-			  //Log.Write (strSQL);
-			  try
-			  {
-				  m_db.Execute(strSQL);
-			  }
-			  catch(Exception)
-			  {
-				  Log.Write ("Musicdatabasereorg: Update tags for {0} failed because of DB exception", strPathSong);
-				  return false;
-			  }
-		  }
-		  else
-		  {
-			  Log.Write ("Musicdatabasereorg: Update for {0} failed because of a NULL tag", strPathSong);
-		  }
+					string strSQL;
+					strSQL=String.Format("update song set idArtist={0},idAlbum={1},idGenre={2},idPath={3},strTitle='{4}',iTrack={5},iDuration={6},iYear={7},dwFileNameCRC='{8}',strFileName='{9}' where idSong={10}",
+						idArtist,idAlbum,idGenre,idPath,
+						song.Title,
+						song.Track,song.Duration,song.Year,
+						dwCRC,
+						strFileName, idSong);
+					//Log.Write (strSQL);
+					try
+					{
+						m_db.Execute(strSQL);
+					}
+					catch(Exception)
+					{
+						Log.WriteFile(Log.LogType.Error,true,"Musicdatabasereorg: Update tags for {0} failed because of DB exception", strPathSong);
+						return false;
+					}
+				}
+				else
+				{
+					Log.Write ("Musicdatabasereorg: cannot get tag for {0} ", strPathSong);
+				}
+			}
+			catch(Exception ex)
+			{
+				Log.WriteFile (Log.LogType.Error,true,"Musicdatabasereorg: {0} {1} {2}",ex.Message,ex.Source,ex.StackTrace);
+			}
 		  //Log.Write ("Musicdatabasereorg: Update for {0} success", strPathSong);
 		  return true;
 	  }
@@ -2355,7 +2362,7 @@ namespace MediaPortal.Music.Database
 		  }
 		  catch (Exception)
 		  {
-			  //MusicDatabase.DBHandle.Execute("rollback");
+			  Log.WriteFile(Log.LogType.Error,true,"DeleteNonExistingSongs() to get songs from database");
 			  return (int)Errors.ERROR_REORG_SONGS;
 		  }
 			int removed=0;
@@ -2401,7 +2408,7 @@ namespace MediaPortal.Music.Database
 		  }
 		  catch (Exception)
 		  {
-			  Log.Write ("Musicdatabasereorg: ExamineAndDeleteArtistids failed");
+			  Log.WriteFile(Log.LogType.Error,true,"Musicdatabasereorg: ExamineAndDeleteArtistids failed");
 			  //m_db.Execute("rollback");
 			  return (int)Errors.ERROR_REORG_ARTIST;
 		  }
@@ -2421,7 +2428,7 @@ namespace MediaPortal.Music.Database
 		  }
 		  catch (Exception)
 		  {
-			  Log.Write ("Musicdatabasereorg: ExamineAndDeleteGenreids failed");
+			  Log.WriteFile(Log.LogType.Error,true,"Musicdatabasereorg: ExamineAndDeleteGenreids failed");
 			  //m_db.Execute("rollback");
 			  return (int)Errors.ERROR_REORG_GENRE;
 		  }
@@ -2433,7 +2440,7 @@ namespace MediaPortal.Music.Database
 		  }
 		  catch (Exception)
 		  {
-			  Log.Write ("Musicdatabasereorg: ExamineAndDeleteGenreids failed");
+			  Log.WriteFile(Log.LogType.Error,true,"Musicdatabasereorg: ExamineAndDeleteGenreids failed");
 			  //m_db.Execute("rollback");
 			  return (int)Errors.ERROR_REORG_GENRE;
 
@@ -2456,7 +2463,7 @@ namespace MediaPortal.Music.Database
 		  }
 		  catch (Exception)
 		  {
-			  Log.Write ("Musicdatabasereorg: ExamineAndDeletePathids failed");
+			  Log.WriteFile(Log.LogType.Error,true,"Musicdatabasereorg: ExamineAndDeletePathids failed");
 			  //m_db.Execute("rollback");
 			  return (int)Errors.ERROR_REORG_PATH;
 		  }
@@ -2476,6 +2483,7 @@ namespace MediaPortal.Music.Database
 		  catch (Exception)
 		  {
 			  //m_db.Execute("rollback");
+				Log.WriteFile(Log.LogType.Error,true,"MusicDatabasereorg: ExamineAndDeleteAlbumids() unable to delete old albums");
 			  return (int)Errors.ERROR_REORG_ALBUM;
 		  }
 		  /// Now all the albums without songs will be deleted.
@@ -2487,7 +2495,7 @@ namespace MediaPortal.Music.Database
 		  }
 		  catch (Exception)
 		  {
-			  Log.Write ("Musicdatabasereorg: ExamineAndDeleteAlbumids failed");
+			  Log.WriteFile(Log.LogType.Error,true,"Musicdatabasereorg: ExamineAndDeleteAlbumids failed");
 			  //m_db.Execute("rollback");
 			  return (int)Errors.ERROR_REORG_ALBUM;
 		  }
@@ -2503,6 +2511,7 @@ namespace MediaPortal.Music.Database
 		  }
 		  catch(Exception)
 		  {
+				Log.WriteFile(Log.LogType.Error,true,"Musicdatabasereorg: vacuum failed");
 			  return (int)Errors.ERROR_COMPRESSING;
 		  }
 		  Log.Write ("Musicdatabasereorg: Compress completed");
@@ -2565,6 +2574,7 @@ namespace MediaPortal.Music.Database
 		  }
 		  catch (Exception)
 		  {
+				Log.WriteFile(Log.LogType.Error,true,"Musicdatabasereorg:DeleteSongsOldMusicFolders() failed");
 			  //MusicDatabase.DBHandle.Execute("rollback");
 			  return (int)Errors.ERROR_REORG_SONGS;
 		  }
@@ -2599,6 +2609,7 @@ namespace MediaPortal.Music.Database
 				  catch (Exception)
 				  {
 					  //MusicDatabase.DBHandle.Execute("rollback");
+						Log.WriteFile(Log.LogType.Error,true,"Musicdatabasereorg: DeleteSongsOldMusicFolders failed");
 					  return (int)Errors.ERROR_REORG_SONGS;
 				  }
 
@@ -2683,7 +2694,7 @@ namespace MediaPortal.Music.Database
 			  }
 			  catch (Exception)
 			  {
-				  Log.Write ("Musicdatabasereorg: AddMissingFiles finished with error (exception for select)");
+				  Log.WriteFile(Log.LogType.Error,true,"Musicdatabasereorg: AddMissingFiles finished with error (exception for select)");
 				  //m_db.Execute("rollback");
 				  return (int)Errors.ERROR_REORG_SONGS;
 			  }
@@ -2758,7 +2769,7 @@ namespace MediaPortal.Music.Database
 		  }
 		  catch (Exception)
 		  {
-			  Log.Write ("Musicdatabasereorg: Insert of song {0}{1} failed",MusicFilePath,MusicFileName);
+			  Log.WriteFile(Log.LogType.Error,true,"Musicdatabasereorg: Insert of song {0}{1} failed",MusicFilePath,MusicFileName);
 			  //m_db.Execute("rollback");
 			  return (int)Errors.ERROR_REORG_SONGS;
 		  }
