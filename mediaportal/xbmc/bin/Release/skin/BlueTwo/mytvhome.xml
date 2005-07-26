@@ -7,28 +7,7 @@
 	<define>#header.hover:hover_my tv.png</define>
 	<controls>
 		<include>common.window.xml</include>
-		<control>
-			<description>Date</description>
-			<type>label</type>
-			<id>1</id>
-			<posX>690</posX>
-			<posY>30</posY>
-			<label>#date</label>
-			<align>right</align>
-			<font>font13</font>
-			<textcolor>#ffa9d0f7</textcolor>
-		</control>
-		<control>
-			<description>Time</description>
-			<type>label</type>
-			<id>1</id>
-			<posX>690</posX>
-			<posY>50</posY>
-			<label>#time</label>
-			<align>right</align>
-			<font>font13</font>
-			<textcolor>#ffa9d0f7</textcolor>
-		</control>
+		<include>common.time.xml</include>
 		<control>
 			<type>group</type>
 			<layout>StackLayout</layout>
