@@ -2340,9 +2340,17 @@ namespace MediaPortal.Configuration
 						tbMedMax.Text=xmlreader.GetValueAsInt("quality", "MedMax", 4000).ToString();
 						cbMedVBR.Checked=xmlreader.GetValueAsBool("quality", "MedVBR", true);
 
-						
-						tbHighMin.Text=xmlreader.GetValueAsInt("quality", "HighLow", 4000).ToString();
-						tbHighMax.Text=xmlreader.GetValueAsInt("quality", "HighMax", 8000).ToString();
+						tbHighMin.Text=xmlreader.GetValueAsInt("quality", "HighLow", 8000).ToString();
+						tbHighMax.Text=xmlreader.GetValueAsInt("quality", "HighMax", 12000).ToString();
+						if (CaptureCard!=null)
+						{
+							string comName=CaptureCard.CommercialName.ToLower();
+							if (comName.IndexOf("usb")>=0)
+							{
+								tbHighMin.Text=xmlreader.GetValueAsInt("quality", "HighLow", 768).ToString();
+								tbHighMax.Text=xmlreader.GetValueAsInt("quality", "HighMax", 4000).ToString();
+							}
+						}
 						cbHighVBR.Checked=xmlreader.GetValueAsBool("quality", "HighVBR", true);
 					}
 				}

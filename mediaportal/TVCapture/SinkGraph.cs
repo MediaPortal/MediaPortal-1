@@ -1316,10 +1316,16 @@ namespace MediaPortal.TV.Recording
 				int mediumMaxKbps=xmlreader.GetValueAsInt("quality", "MedMax", 4000);
 				bool mediumVBR=xmlreader.GetValueAsBool("quality", "MedVBR", false);
 
-				int highMinKbps=xmlreader.GetValueAsInt("quality", "HighLow", 4000);
-				int highMaxKbps=xmlreader.GetValueAsInt("quality", "HighMax", 8000);
+				int highMinKbps=xmlreader.GetValueAsInt("quality", "HighLow", 8000);
+				int highMaxKbps=xmlreader.GetValueAsInt("quality", "HighMax", 12000);
 				bool highVBR=xmlreader.GetValueAsBool("quality", "HighVBR", true);
 
+				string comName=this.mCard.CommercialName;
+				if (comName.IndexOf("usb")>=0)
+				{
+					highMinKbps=xmlreader.GetValueAsInt("quality", "HighLow", 768);
+					highMaxKbps=xmlreader.GetValueAsInt("quality", "HighMax", 4000);
+				}
 
 
 				VideoCaptureProperties props = new VideoCaptureProperties(m_captureFilter);
