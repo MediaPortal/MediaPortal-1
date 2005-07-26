@@ -1,0 +1,176 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// Deutsch (Deutschland) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEU)
+#ifdef _WIN32
+LANGUAGE LANG_GERMAN, SUBLANG_GERMAN
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_DIALOG1 DIALOGEX 0, 0, 269, 209
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD
+FONT 8, "MS Shell Dlg", 0, 0, 0x0
+BEGIN
+    GROUPBOX        "Channels on this Transponder",IDC_STATIC,7,3,257,160
+    LISTBOX         IDC_MEDIALIST,12,12,164,142,LBS_NOINTEGRALHEIGHT | 
+                    WS_VSCROLL | WS_HSCROLL | WS_TABSTOP
+    PUSHBUTTON      "Reset Parser",IDC_BUTTON1,199,144,54,11
+    LTEXT           "Audio",IDC_STATIC,181,17,37,10
+    LTEXT           "Video",IDC_STATIC,181,30,23,8
+    LTEXT           "Teletext",IDC_STATIC,181,43,34,9
+    EDITTEXT        IDC_EDIT1,211,15,43,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT2,211,28,43,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT3,211,41,43,12,ES_AUTOHSCROLL
+    LTEXT           "TSID",IDC_STATIC,181,57,31,10
+    LTEXT           "ONID",IDC_STATIC,181,70,23,8
+    LTEXT           "PCR",IDC_STATIC,180,83,34,9
+    EDITTEXT        IDC_EDIT4,211,55,43,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT5,211,68,43,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT6,211,81,43,12,ES_AUTOHSCROLL
+    LTEXT           "PMT",IDC_STATIC,181,96,37,10
+    LTEXT           "Provider",IDC_STATIC,181,109,32,8
+    EDITTEXT        IDC_EDIT7,211,94,43,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT8,211,107,43,12,ES_AUTOHSCROLL
+    CTEXT           "http://mediaportal.sourceforge.net/",IDC_STATIC,10,192,
+                    246,14,SS_CENTERIMAGE | SS_SUNKEN
+END
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 9,0,0,0
+ PRODUCTVERSION 9,0,0,0
+ FILEFLAGSMASK 0x30003fL
+#ifdef _DEBUG
+ FILEFLAGS 0xbL
+#else
+ FILEFLAGS 0xaL
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x2L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904e4"
+        BEGIN
+            VALUE "ActiveMovie", "Filter dll"
+            VALUE "Comment", "DirectShow Sample"
+            VALUE "CompanyName", "Microsoft Corporation"
+            VALUE "FileDescription", "MPDST Filter"
+            VALUE "FileVersion", "9.00"
+            VALUE "InternalName", "MPDST.ax"
+            VALUE "LegalCopyright", "Copyright (C) 1992-2002 Microsoft Corporation"
+            VALUE "OLESelfRegister", "AM20"
+            VALUE "OriginalFilename", "MPDST.ax"
+            VALUE "ProductName", "DirectX 9.0 Sample"
+            VALUE "ProductVersion", "9.00"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1252
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_DIALOG1, DIALOG
+    BEGIN
+        LEFTMARGIN, 3
+        BOTTOMMARGIN, 174
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    IDS_PREFORMAT           "Format:  "
+    IDS_PREMAJOR            "Major Type:  "
+    IDS_PRESUB              "Sub Type:  "
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_NOTYPE              "(none)"
+    IDS_ANYTYPE             "Any Media Type/Sub Type"
+    IDS_TITLE               "MP StreamAnalyzer"
+END
+
+#endif    // Deutsch (Deutschland) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+
