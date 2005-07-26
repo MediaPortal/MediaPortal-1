@@ -243,6 +243,9 @@ namespace MediaPortal.TV.Recording
 			chan.Frequency=tmp[0];
 			chan.Bandwidth=tmp[1];
 			chan.Frequency+=offset;
+			chan.NetworkID=-1;
+			chan.TransportStreamID=-1;
+			chan.ProgramNumber=-1;
 
 			float frequency =((float)chan.Frequency) / 1000f;
 			string description=String.Format("frequency:{0:###.##} MHz. Bandwidth:{1} MHz", frequency, tmp[1]);
