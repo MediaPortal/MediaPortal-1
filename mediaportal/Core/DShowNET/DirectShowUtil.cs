@@ -957,5 +957,48 @@ namespace DShowNET
       ResetHardware(pHardware);
     }
 
+		static public IBaseFilter GetFilterByName(IGraphBuilder graphBuilder,string name)
+		{
+			int hr=0;
+			IEnumFilters ienumFilt=null;
+			IBaseFilter foundfilter;
+			uint iFetched=0;
+			try
+			{
+				hr=graphBuilder.EnumFilters(out ienumFilt);
+				if (hr==0 && ienumFilt!=null)
+				{
+					ienumFilt.Reset();
+					do
+					{
+						hr=ienumFilt.Next(1,out foundfilter,out iFetched);
+						if (hr==0 && iFetched==1)
+						{
+							FilterInfo filter_infos=new FilterInfo();
+							foundfilter.QueryFilterInfo(filter_infos);
+            
+							if (filter_infos.achName.LastIndexOf(name)!=-1)
+							{
+								Marshal.ReleaseComObject(ienumFilt);ienumFilt=null;
+								return foundfilter;
+							}
+							Marshal.ReleaseComObject(foundfilter);
+						}
+					} while (iFetched==1 && hr==0);
+					if (ienumFilt!=null)
+						Marshal.ReleaseComObject(ienumFilt);
+					ienumFilt=null;
+				}
+			}
+			catch(Exception)
+			{
+			}
+			finally
+			{
+				if (ienumFilt!=null)
+					Marshal.ReleaseComObject(ienumFilt);
+			}
+			return null;
+		} 
 	}
 }

@@ -1592,5 +1592,45 @@ public interface IMediaSample
 		[PreserveSig]
 		int GetAlphaBitmapParameters(VMRAlphaBitmap bitmap);
 	};
+	[Flags]
+	public enum AMStreamSelectInfoFlags
+	{
+		Enabled = 0x01,
+		Exclusive = 0x02
+	}
 
+	/// <summary>
+	/// From _AMSTREAMSELECTENABLEFLAGS
+	/// </summary>
+	[Flags]
+	public enum AMStreamSelectEnableFlags
+	{
+		Enable = 0x01,
+		EnableAll = 0x02
+	}
+	[Guid("c1960960-17f5-11d1-abe1-00a0c905f375"),
+	InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+	public interface IAMStreamSelect
+	{
+		[PreserveSig]
+		int Count([Out] out int pcStreams);
+
+		[PreserveSig]
+		int Info(
+			[In] int lIndex,
+			[Out] out AMMediaType ppmt,
+			[Out] out AMStreamSelectInfoFlags pdwFlags,
+			[Out] out int plcid,
+			[Out] out int pdwGroup,
+			[Out, MarshalAs(UnmanagedType.LPWStr)] out string ppszName,
+			[Out, MarshalAs(UnmanagedType.IUnknown)] out object ppObject,
+			[Out, MarshalAs(UnmanagedType.IUnknown)] out object ppUnk
+			);
+
+		[PreserveSig]
+		int Enable(
+			[In] int lIndex,
+			[In] AMStreamSelectEnableFlags dwFlags
+			);
+	} 
 } // namespace DShowNET
