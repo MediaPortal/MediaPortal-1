@@ -171,6 +171,7 @@ namespace MediaPortal.TV.Recording
 		private static Guid CLSID_Mpeg2VideoStreamAnalyzer	= new Guid(0x6cfad761, 0x735d, 0x4aa5, 0x8a, 0xfc, 0xaf, 0x91, 0xa7, 0xd6, 0x1e, 0xba);
 		private static Guid CLSID_StreamBufferConfig				= new Guid(0xfa8a68b2, 0xc864, 0x4ba2, 0xad, 0x53, 0xd3, 0x87, 0x6a, 0x87, 0x49, 0x4b);
 
+		int						m_lastPMTVersion;
 		int                     m_cardID								= -1;
 		int                     m_iCurrentChannel				= 28;
 		int											m_rotCookie							= 0;			// Cookie into the Running Object Table
@@ -882,7 +883,7 @@ namespace MediaPortal.TV.Recording
 
 
 				//m_streamDemuxer.OnAudioFormatChanged+=new MediaPortal.TV.Recording.DVBDemuxer.OnAudioChanged(m_streamDemuxer_OnAudioFormatChanged);
-				m_streamDemuxer.OnPMTIsChanged+=new MediaPortal.TV.Recording.DVBDemuxer.OnPMTChanged(m_streamDemuxer_OnPMTIsChanged);
+				//m_streamDemuxer.OnPMTIsChanged+=new MediaPortal.TV.Recording.DVBDemuxer.OnPMTChanged(m_streamDemuxer_OnPMTIsChanged);
 				m_streamDemuxer.SetCardType((int)DVBEPG.EPGCard.BDACards, Network());
 				//m_streamDemuxer.OnGotTable+=new MediaPortal.TV.Recording.DVBDemuxer.OnTableReceived(m_streamDemuxer_OnGotTable);
 
@@ -3073,6 +3074,25 @@ namespace MediaPortal.TV.Recording
 				m_streamDemuxer.Process();
 			TimeSpan ts=DateTime.Now-updateTimer;
 			bool reTune=false;
+			IntPtr pmtMem=Marshal.AllocCoTaskMem(4096);// max. size for pmt
+			if(pmtMem!=IntPtr.Zero)
+			{
+				int res=m_analyzerInterface.GetPMTData(pmtMem);
+				if(res!=-1)
+				{
+					byte[] pmt=new byte[res];
+					int version=-1;
+					Marshal.Copy(pmtMem,pmt,0,res);
+					version=((pmt[5]>>1)&0x1F);
+					int pmtProgramNumber=(pmt[3]<<8)+pmt[4];
+					if(m_lastPMTVersion!=version && pmtProgramNumber==currentTuningObject.ProgramNumber)
+					{
+						m_lastPMTVersion=version;
+						m_streamDemuxer_OnPMTIsChanged(pmt);
+					}
+				}
+				Marshal.FreeCoTaskMem(pmtMem);
+			}
 			if (ts.TotalMilliseconds>800)
 			{
 				if(!GUIGraphicsContext.Vmr9Active && !g_Player.Playing)
@@ -3149,6 +3169,7 @@ namespace MediaPortal.TV.Recording
 		public void TuneChannel(TVChannel channel)
 		{
 			if (m_NetworkProvider==null) return;
+			m_lastPMTVersion=-1;
 			try
 			{
 				if (Vmr9!=null) Vmr9.Enable(false);
@@ -3417,6 +3438,8 @@ namespace MediaPortal.TV.Recording
 				if (Vmr9!=null) Vmr9.Enable(true);
 			}
 			timeResendPid=DateTime.Now;
+			m_analyzerInterface.ResetParser();
+			m_analyzerInterface.SetPMTProgramNumber(currentTuningObject.ProgramNumber);
 		}//public void TuneChannel(AnalogVideoStandard standard,int iChannel,int country)
 
 
@@ -3761,7 +3784,6 @@ namespace MediaPortal.TV.Recording
 					sections.GetTablesUsingMicrosoft=true;
 					System.Threading.Thread.Sleep(2500);
 					m_analyzerInterface.GetChannelCount(ref count);
-					int count1=0;
 					if(count>0)
 					{
 						transp.channels=new ArrayList();
@@ -3781,7 +3803,6 @@ namespace MediaPortal.TV.Recording
 								chi.freq=currentTuningObject.Frequency;
 								Marshal.FreeCoTaskMem(mmch);
 								transp.channels.Add(chi);
-								count1++;
 							}
 					}
 				}
