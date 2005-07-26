@@ -1,14 +1,45 @@
 ﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <mappings version="2">
 	<remote family="MAME Keyboard Device">
-		<button name="Button 1" code="17">
+		<button name="P1_BUTTON1" code="17">
 			<action layer="0" condition="*" conproperty="-1" command="KEY" cmdproperty="{ENTER}" sound="" />
 		</button>
-		<button name="Button 2" code="18">
+		<button name="P1_BUTTON2" code="18">
 			<action layer="0" condition="*" conproperty="-1" command="KEY" cmdproperty="{ESC}" sound="" />
 		</button>
-		<button name="Button 4" code="16">
+		<button name="P1_BUTTON3" code="32">
+			<action layer="0" condition="*" conproperty="-1" command="KEY" cmdproperty="{SPACE}" sound="" />
+		</button>
+		<button name="P1_BUTTON4" code="16">
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="13" sound="click.wav" />
+		</button>
+		<button name="P1_BUTTON5" code="122">
+		</button>
+		<button name="P1_BUTTON6" code="120">
+		</button>
+		<button name="P1_BUTTON7" code="99">
+		</button>
+		<button name="P1_BUTTON8" code="118">
+		</button>
+		<button name="P1_BUTTON9" code="98">
+		</button>
+		<button name="P1_BUTTON10" code="110">
+		</button>
+		<button name="P1_JOYSTICK_UP" code="38">
+			<action layer="0" condition="*" conproperty="-1" command="KEY" cmdproperty="{UP}" sound="" />
+		</button>
+		<button name="P1_JOYSTICK_DOWN" code="40">
+			<action layer="0" condition="*" conproperty="-1" command="KEY" cmdproperty="{DOWN}" sound="" />
+		</button>
+		<button name="P1_JOYSTICK_LEFT" code="37">
+			<action layer="0" condition="*" conproperty="-1" command="KEY" cmdproperty="{LEFT}" sound="" />
+		</button>
+		<button name="P1_JOYSTICK_RIGHT" code="39">
+			<action layer="0" condition="*" conproperty="-1" command="KEY" cmdproperty="{RIGHT}" sound="" />
+		</button>
+		<button name="P1_START" code="49">
+		</button>
+		<button name="P1_SELECT" code="53">
 		</button>
 	</remote>
 </mappings>
