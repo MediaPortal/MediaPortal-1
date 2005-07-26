@@ -37,6 +37,7 @@ namespace MediaPortal.TV.Recording
 		public  static Guid MEDIATYPE_MPEG2_SECTIONS = new Guid( 0x455f176c, 0x4b06, 0x47ce, 0x9a, 0xef, 0x8c, 0xae, 0xf7, 0x3d, 0xf7, 0xb5);
 		public  static Guid MEDIASUBTYPE_MPEG2_DATA = new Guid( 0xc892e55b, 0x252d, 0x42b5, 0xa3, 0x16, 0xd9, 0x97, 0xe7, 0xa5, 0xd9, 0x95);
 		public  static Guid MEDIASUBTYPE_DVB_SI= new Guid( 0xe9dd31a3, 0x221d, 0x4adb, 0x85, 0x32, 0x9a, 0xf3, 0x9, 0xc1, 0xa4, 0x8);
+		public  static Guid MEDIASUBTYPE_ATSC_SI= new Guid( 0xb3c7397c, 0xd303, 0x414d, 0xb3, 0x3c, 0x4e, 0xd2, 0xc9, 0xd2, 0x97, 0x33);
 		enum MediaSampleContent :int 
 		{
 			TransportPacket,
@@ -170,7 +171,6 @@ namespace MediaPortal.TV.Recording
 		private static Guid CLSID_Mpeg2VideoStreamAnalyzer	= new Guid(0x6cfad761, 0x735d, 0x4aa5, 0x8a, 0xfc, 0xaf, 0x91, 0xa7, 0xd6, 0x1e, 0xba);
 		private static Guid CLSID_StreamBufferConfig				= new Guid(0xfa8a68b2, 0xc864, 0x4ba2, 0xad, 0x53, 0xd3, 0x87, 0x6a, 0x87, 0x49, 0x4b);
 
-		int						m_lastPMTVersion;
 		int                     m_cardID								= -1;
 		int                     m_iCurrentChannel				= 28;
 		int											m_rotCookie							= 0;			// Cookie into the Running Object Table
@@ -800,6 +800,8 @@ namespace MediaPortal.TV.Recording
 				AMMediaType tifType=new AMMediaType();
 				tifType.majorType=MEDIATYPE_MPEG2_SECTIONS;
 				tifType.subType=MEDIASUBTYPE_DVB_SI;
+				if (Network()==NetworkType.ATSC)
+					tifType.subType=MEDIASUBTYPE_ATSC_SI;
 
 				IPin tifOut, tifIn;
 				hr=demuxer.CreateOutputPin(ref tifType,"TIF",out tifOut);
@@ -880,7 +882,7 @@ namespace MediaPortal.TV.Recording
 
 
 				//m_streamDemuxer.OnAudioFormatChanged+=new MediaPortal.TV.Recording.DVBDemuxer.OnAudioChanged(m_streamDemuxer_OnAudioFormatChanged);
-				//m_streamDemuxer.OnPMTIsChanged+=new MediaPortal.TV.Recording.DVBDemuxer.OnPMTChanged(m_streamDemuxer_OnPMTIsChanged);
+				m_streamDemuxer.OnPMTIsChanged+=new MediaPortal.TV.Recording.DVBDemuxer.OnPMTChanged(m_streamDemuxer_OnPMTIsChanged);
 				m_streamDemuxer.SetCardType((int)DVBEPG.EPGCard.BDACards, Network());
 				//m_streamDemuxer.OnGotTable+=new MediaPortal.TV.Recording.DVBDemuxer.OnTableReceived(m_streamDemuxer_OnGotTable);
 
@@ -1309,8 +1311,8 @@ namespace MediaPortal.TV.Recording
 			{
 				if (Vmr9.UseVMR9inMYTV)
 				{
-					GUIMessage msg =new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED,0,0,0,1,0,null);
-					GUIWindowManager.SendMessage(msg);
+					//GUIMessage msg =new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED,0,0,0,1,0,null);
+					//GUIWindowManager.SendMessage(msg);
 					Vmr9.AddVMR9(m_graphBuilder);
 					if (Vmr9.VMR9Filter==null)
 					{
@@ -1596,7 +1598,7 @@ namespace MediaPortal.TV.Recording
 			int aspectX, aspectY;
 			m_basicVideo.GetVideoSize(out iVideoWidth, out iVideoHeight);
 			m_basicVideo.GetPreferredAspectRatio(out aspectX, out aspectY);
-			GUIGraphicsContext.VideoSize=new Size(iVideoWidth, iVideoHeight );
+			
 			m_iVideoWidth=iVideoWidth;
 			m_iVideoHeight=iVideoHeight;
 			m_aspectX=aspectX;
@@ -3071,25 +3073,6 @@ namespace MediaPortal.TV.Recording
 				m_streamDemuxer.Process();
 			TimeSpan ts=DateTime.Now-updateTimer;
 			bool reTune=false;
-			IntPtr pmtMem=Marshal.AllocCoTaskMem(4096);// max. size for pmt
-			if(pmtMem!=IntPtr.Zero)
-			{
-				int res=m_analyzerInterface.GetPMTData(pmtMem);
-				if(res!=-1)
-				{
-					byte[] pmt=new byte[res];
-					int version=-1;
-					Marshal.Copy(pmtMem,pmt,0,res);
-					version=((pmt[5]>>1)&0x1F);
-					int pmtProgramNumber=(pmt[3]<<8)+pmt[4];
-					if(m_lastPMTVersion!=version && pmtProgramNumber==currentTuningObject.ProgramNumber)
-					{
-						m_lastPMTVersion=version;
-						m_streamDemuxer_OnPMTIsChanged(pmt);
-					}
-				}
-				Marshal.FreeCoTaskMem(pmtMem);
-			}
 			if (ts.TotalMilliseconds>800)
 			{
 				if(!GUIGraphicsContext.Vmr9Active && !g_Player.Playing)
@@ -3166,7 +3149,6 @@ namespace MediaPortal.TV.Recording
 		public void TuneChannel(TVChannel channel)
 		{
 			if (m_NetworkProvider==null) return;
-			m_lastPMTVersion=-1;
 			try
 			{
 				if (Vmr9!=null) Vmr9.Enable(false);
@@ -3435,8 +3417,6 @@ namespace MediaPortal.TV.Recording
 				if (Vmr9!=null) Vmr9.Enable(true);
 			}
 			timeResendPid=DateTime.Now;
-			m_analyzerInterface.ResetParser();
-			m_analyzerInterface.SetPMTProgramNumber(currentTuningObject.ProgramNumber);
 		}//public void TuneChannel(AnalogVideoStandard standard,int iChannel,int country)
 
 
@@ -3777,10 +3757,11 @@ namespace MediaPortal.TV.Recording
 				{
 					ushort count=0;
 					sections.DemuxerObject=m_streamDemuxer;
-					sections.Timeout=8000;
+					sections.Timeout=2500;
 					sections.GetTablesUsingMicrosoft=true;
 					System.Threading.Thread.Sleep(2500);
 					m_analyzerInterface.GetChannelCount(ref count);
+					int count1=0;
 					if(count>0)
 					{
 						transp.channels=new ArrayList();
@@ -3793,11 +3774,14 @@ namespace MediaPortal.TV.Recording
 								hr=m_analyzerInterface.GetCISize(ref len);					
 								IntPtr mmch=Marshal.AllocCoTaskMem(len);
 								hr=m_analyzerInterface.GetChannel((UInt16)t,mmch);
+								//byte[] ch=new byte[len];
+								//Marshal.Copy(mmch,ch,0,len);
 								chi=sections.GetChannelInfo(mmch);
 								chi.fec=currentTuningObject.FEC;
 								chi.freq=currentTuningObject.Frequency;
 								Marshal.FreeCoTaskMem(mmch);
 								transp.channels.Add(chi);
+								count1++;
 							}
 					}
 				}
@@ -3926,7 +3910,7 @@ namespace MediaPortal.TV.Recording
 																						info.serviceType);
 					continue;
 				}
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Found provider:{0} service:{1} scrambled:{2} frequency:{3} KHz networkid:{4} transportid:{5} serviceid:{6} tv:{7} radio:{8} audiopid:0x{9:X} videopid:0x{10:X} teletextpid:0x{11:X} program:{12} pcr pid:0x{13:X}", 
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Found provider:{0} service:{1} scrambled:{2} frequency:{3} KHz networkid:{4} transportid:{5} serviceid:{6} tv:{7} radio:{8} audiopid:0x{9:X} videopid:0x{10:X} teletextpid:0x{11:X} program:{12} pcr pid:0x{13:X} ac3 pid:0x{14:X}", 
 																						info.service_provider_name,
 																						info.service_name,
 																						info.scrambled,
@@ -3937,7 +3921,7 @@ namespace MediaPortal.TV.Recording
 																						hasVideo, ((!hasVideo) && hasAudio),
 																						currentTuningObject.AudioPid,currentTuningObject.VideoPid,currentTuningObject.TeletextPid,
 																						info.program_number,
-																						info.pcr_pid);
+																						info.pcr_pid, currentTuningObject.AC3Pid);
 
 				if (info.serviceID==0) 
 				{

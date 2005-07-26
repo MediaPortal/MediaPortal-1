@@ -640,26 +640,35 @@ namespace MediaPortal.GUI.TV
 
 			if (isOsdVisible)
 			{ 
+				bool sendMsg=true;
 				switch (message.Message)
 				{
 					case GUIMessage.MessageType.GUI_MSG_SETFOCUS:
-						goto case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT;
+						m_dwOSDTimeOut=DateTime.Now;
+						return m_osdWindow.OnMessage(message);	// route messages to OSD window
           
 					case GUIMessage.MessageType.GUI_MSG_LOSTFOCUS:
-						goto case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT;
+						m_dwOSDTimeOut=DateTime.Now;
+						return m_osdWindow.OnMessage(message);	// route messages to OSD window
 
 					case GUIMessage.MessageType.GUI_MSG_CLICKED:
-						goto case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT;
+						m_dwOSDTimeOut=DateTime.Now;
+						return m_osdWindow.OnMessage(message);	// route messages to OSD window
 
 					case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
-						goto case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT;
+						m_dwOSDTimeOut=DateTime.Now;
+						return m_osdWindow.OnMessage(message);	// route messages to OSD window
 
 					case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
 						m_dwOSDTimeOut=DateTime.Now;
+						if (message.Param1!=GetID)
+						{
+							sendMsg=false;
+						}
 						break;
 				}
-				return m_osdWindow.OnMessage(message);	// route messages to OSD window
-        
+				if (sendMsg)
+					return m_osdWindow.OnMessage(message);	// route messages to OSD window
 			}
 
 			switch ( message.Message )
