@@ -2536,11 +2536,9 @@ namespace MediaPortal.GUI.Library
 			  if(selectedIndex == -1 || selectedIndex >= m_vecItems.Count)
 				  return System.Drawing.Rectangle.Empty;
 
-			  System.Drawing.Rectangle rect = new System.Drawing.Rectangle(m_dwPosX, m_dwPosY, m_dwWidth, m_iItemHeight);
+			  GUIControl btn = m_imgButton[m_iCursorY] as GUIControl;
 
-			  rect.Y += m_iCursorY * (m_iItemHeight + m_iSpaceBetweenItems);
-
-			  return rect;
+			  return new System.Drawing.Rectangle(btn.XPosition, btn.YPosition, btn.Width, btn.Height);
 		  }
 	  }
   }
