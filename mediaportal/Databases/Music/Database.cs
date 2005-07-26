@@ -2616,15 +2616,7 @@ namespace MediaPortal.Music.Database
 
 	  #endregion
 
-	  private string[] Extensions
-	  {
-		  get { return extensions; }
-		  set { extensions = value; }
-	  }
-	  string[] extensions = new string[] { ".mp3" };
-	  
-	  /// Todo: add other filetypes because only mp3 is not enough
-	  /// WMV if with video (haha, that might me awsome!)
+	  ArrayList Extensions = Utils.AudioExtensions;
 	  
 	  ArrayList availableFiles;
 
