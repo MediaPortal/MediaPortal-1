@@ -2083,6 +2083,11 @@ namespace MediaPortal.Music.Database
 				OnDatabaseReorgChanged(MyArgs);
 				ExamineAndDeleteAlbumids();
 			}
+			catch(Exception ex)
+			{
+				Log.WriteFile(Log.LogType.Error,"music-scan{0} {1} {2}",
+														ex.Message,ex.Source,ex.StackTrace);
+			}
 			finally
 			{
 				CommitTransaction();
