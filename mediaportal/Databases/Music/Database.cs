@@ -1976,21 +1976,14 @@ namespace MediaPortal.Music.Database
     {
       Log.Write ("Commit will effect {0} rows",m_db.ChangedRows());
 			SQLiteResultSet CommitResults;
-			if (m_db.ChangedRows() == 0) 
+			try
 			{
-				Log.Write ("MusicDatabase: Commit not necessary, there are no changes.");
+				CommitResults = m_db.Execute("commit");
 			}
-			else
+			catch (Exception ex)
 			{
-				try
-				{
-					CommitResults = m_db.Execute("commit");
-				}
-				catch (Exception ex)
-				{
-					Log.WriteFile(Log.LogType.Log,true,"musicdatabase commit failed exception err:{0} ", ex.Message);
-					Open();
-				}
+				Log.WriteFile(Log.LogType.Log,true,"musicdatabase commit failed exception err:{0} ", ex.Message);
+				Open();
 			}
     }
     
