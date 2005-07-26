@@ -3071,23 +3071,25 @@ namespace MediaPortal.TV.Recording
 				m_streamDemuxer.Process();
 			TimeSpan ts=DateTime.Now-updateTimer;
 			bool reTune=false;
-			IntPtr pmtMem=Marshal.AllocCoTaskMem(4096);
-			int res=m_analyzerInterface.GetPMTData(pmtMem);
-			if(res!=-1)
+			IntPtr pmtMem=Marshal.AllocCoTaskMem(4096);// max. size for pmt
+			if(pmtMem!=IntPtr.Zero)
 			{
-				byte[] pmt=new byte[res];
-				int version=-1;
-				Marshal.Copy(pmtMem,pmt,0,res);
-				version=((pmt[5]>>1)&0x1F);
-				int pmtProgramNumber=(pmt[3]<<8)+pmt[4];
-				if(m_lastPMTVersion!=version && pmtProgramNumber==currentTuningObject.ProgramNumber)
+				int res=m_analyzerInterface.GetPMTData(pmtMem);
+				if(res!=-1)
 				{
-					m_lastPMTVersion=version;
-					m_streamDemuxer_OnPMTIsChanged(pmt);
+					byte[] pmt=new byte[res];
+					int version=-1;
+					Marshal.Copy(pmtMem,pmt,0,res);
+					version=((pmt[5]>>1)&0x1F);
+					int pmtProgramNumber=(pmt[3]<<8)+pmt[4];
+					if(m_lastPMTVersion!=version && pmtProgramNumber==currentTuningObject.ProgramNumber)
+					{
+						m_lastPMTVersion=version;
+						m_streamDemuxer_OnPMTIsChanged(pmt);
+					}
 				}
+				Marshal.FreeCoTaskMem(pmtMem);
 			}
-			Marshal.FreeCoTaskMem(pmtMem);
-
 			if (ts.TotalMilliseconds>800)
 			{
 				if(!GUIGraphicsContext.Vmr9Active && !g_Player.Playing)
