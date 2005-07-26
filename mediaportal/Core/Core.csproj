@@ -684,6 +684,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "guilib\GUISortButtonControl.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "guilib\GUISpinControl.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -805,6 +810,16 @@
                 />
                 <File
                     RelPath = "guilib\SkinControlAttribute.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "guilib\SortEventArgs.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "guilib\SortEventHandler.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
