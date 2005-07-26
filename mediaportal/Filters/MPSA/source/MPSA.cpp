@@ -397,10 +397,10 @@ STDMETHODIMP CDump::ResetPids()
 HRESULT CDump::Process(BYTE *pbData,long len)
 {
 	//CAutoLock lock(&m_Lock);
-
+	bool pesPacket=false;
 	if(pbData[0]==0x00 && pbData[1]==0x00 && pbData[2]==0x01)
 	{
-		int a=0;
+		pesPacket=true;
 	}
 	
 	if(pbData[0]==0x02)// pmt
@@ -427,7 +427,7 @@ HRESULT CDump::Process(BYTE *pbData,long len)
 		}
 				
 	}
-	if(pbData[0]==0x00 && m_patChannelsCount==0)// pat
+	if(pbData[0]==0x00 && m_patChannelsCount==0 && pesPacket==false)// pat
 	{
 		m_pDemuxer->UnMapAllPIDs();
 		m_pSections->decodePAT(pbData,m_patTable,&m_patChannelsCount);
