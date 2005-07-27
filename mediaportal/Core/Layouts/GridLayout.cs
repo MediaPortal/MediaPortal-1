@@ -39,6 +39,13 @@ namespace MediaPortal.Layouts
 			_spacing.Height = Math.Max(0, verticalSpacing);
 		}
 
+		// int orientation is temp, should be an enum
+		public GridLayout(int columns, int rows, int horizontalSpacing, int verticalSpacing, int orientation) : this(columns, rows, horizontalSpacing, verticalSpacing)
+		{
+			if(orientation != 0)
+				_isVertical = true;
+		}
+
 		#endregion Constructors
 
 		#region Methods
@@ -67,24 +74,22 @@ namespace MediaPortal.Layouts
 
 				for(int col = 0; col < cols; col++)
 				{
-					int index = row * cols + col;
+					int index = _isVertical ? col * rows + row : row * cols + col;
 
 					if(index < composite.Children.Count)
 					{
-						// ugly
+						ILayoutComponent component = null;
+
 						if(composite.Children is GUIControlCollection)
-						{
-							ILayoutComponent component = ((GUIControlCollection)composite.Children)[index];
+							component = ((GUIControlCollection)composite.Children)[index];
 
-							component.Arrange(new Rectangle((int)x, (int)y, (int)w, (int)h));
-						}
-						
 						if(composite.Children is ILayoutComponentCollection)
-						{
-							ILayoutComponent component = ((ILayoutComponentCollection)composite.Children)[index];
+							component = ((ILayoutComponentCollection)composite.Children)[index];
 
-							component.Arrange(new Rectangle((int)x, (int)y, (int)w, (int)h));
-						}
+						if(component.Visible == false)
+							continue;
+
+						component.Arrange(new Rectangle((int)x, (int)y, (int)w, (int)h));
 					}
 
 					x += w + _spacing.Width;
@@ -107,11 +112,14 @@ namespace MediaPortal.Layouts
 			else
 				rows = (composite.Children.Count + cols - 1) / cols;
 
-			foreach(ILayoutComponent child in composite.Children)
+			foreach(ILayoutComponent component in composite.Children)
 			{
-				child.Measure();
+				if(component.Visible == false)
+					continue;
 
-				Size s = child.Size;
+				component.Measure();
+
+				Size s = component.Size;
 
 				w = Math.Max(w, s.Width);
 				h = Math.Max(h, s.Height);
@@ -156,6 +164,7 @@ namespace MediaPortal.Layouts
 		#region Fields
 
 		int							_cols;
+		bool						_isVertical = false;
 		int							_rows;
 		Size						_size = Size.Empty;
 		Size						_spacing = Size.Empty;
