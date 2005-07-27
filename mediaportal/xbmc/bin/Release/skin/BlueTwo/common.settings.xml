@@ -6,6 +6,8 @@
 			<id>1</id>
 			<posX>0</posX>
 			<posY>0</posY>
+			<width>720</width>
+			<height>576</height>
 			<texture>background.png</texture>
 		</control>
 		<control>
