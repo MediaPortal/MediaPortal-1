@@ -1,142 +1,63 @@
 <window>
-   <id>700</id>
-   <defaultcontrol>24</defaultcontrol>
-   <allowoverlay>yes</allowoverlay>
-   <controls>
-      <control>
-         <type>image</type>
-         <description>BG</description>
-         <id>1</id>
-         <posX>0</posX>
-         <posY>0</posY>
-         <texture>background.png</texture>
-      </control>
-      <control>
-         <type>image</type>
-         <id>1</id>
-         <posX>48</posX>
-         <posY>390</posY>
-         <texture>hover_my tv.png</texture>
-      </control>
-      <control>
-         <type>image</type>
-         <description>MP Logo</description>
-         <id>1</id>
-         <posX>32</posX>
-         <posY>24</posY>
-         <texture>mplogo.png</texture>
-      </control>
-      <control>
-         <type>label</type>
-         <description>Setup TV</description>
-         <id>1</id>
-         <posX>32</posX>
-         <posY>96</posY>
-         <label>TV Setup</label>
-         <font>font18</font>
-      </control>
-      <control>
-         <type>button</type>
-         <id>24</id>
-         <posX>56</posX>
-         <posY>151</posY>
-         <label>Video Codec</label>
-         <ondown>25</ondown>
-         <onup>24</onup>
-         <onleft>24</onleft>
-         <onright>30</onright>
-      </control>
-      
-      <control>
-         <type>button</type>
-         <id>30</id>
-         <posX>300</posX>
-         <posY>151</posY>
-         <label>Auto turn on TV</label>
-         <ondown>31</ondown>
-         <onup>30</onup>
-         <onleft>24</onleft>
-         <onright>30</onright>
-      </control>
-      <control>
-         <type>button</type>
-         <id>31</id>
-         <posX>300</posX>
-         <posY>185</posY>
-         <label>Recording options</label>
-         <ondown>32</ondown>
-         <onup>30</onup>
-         <onleft>25</onleft>
-         <onright>31</onright>
-         <hyperlink>701</hyperlink>
-      </control>
-      <control>
-         <type>button</type>
-         <id>32</id>
-         <posX>300</posX>
-         <posY>219</posY>
-         <label>Channel sorting</label>
-         <ondown>32</ondown>
-         <onup>31</onup>
-         <onleft>26</onleft>
-         <onright>32</onright>
-         <hyperlink>702</hyperlink>
-      </control>
-      
-      <control>
-         <type>button</type>
-         <id>25</id>
-         <posX>56</posX>
-         <posY>192</posY>
-         <label>Audio Codec</label>
-         <ondown>26</ondown>
-         <onup>24</onup>
-         <onleft>25</onleft>
-         <onright>31</onright>
-      </control>
-      <control>
-         <type>button</type>
-         <id>26</id>
-         <posX>56</posX>
-         <posY>232</posY>
-         <label>Video Renderer</label>
-         <ondown>27</ondown>
-         <onup>25</onup>
-         <onleft>26</onleft>
-         <onright>32</onright>
-      </control>
-      <control>
-         <type>button</type>
-         <id>27</id>
-         <posX>56</posX>
-         <posY>272</posY>
-         <label>Deinterlacing</label>
-         <ondown>28</ondown>
-         <onup>26</onup>
-         <onleft>27</onleft>
-         <onright>30</onright>
-      </control>
-      <control>
-         <type>button</type>
-         <id>28</id>
-         <posX>56</posX>
-         <posY>312</posY>
-         <label>Aspect ratio</label>
-         <ondown>29</ondown>
-         <onup>27</onup>
-         <onleft>28</onleft>
-         <onright>30</onright>
-      </control>
-      <control>
-         <type>button</type>
-         <id>29</id>
-         <posX>56</posX>
-         <posY>352</posY>
-         <label>Timeshift buffer</label>
-         <ondown>29</ondown>
-         <onup>28</onup>
-         <onleft>29</onleft>
-         <onright>30</onright>
-      </control>
-   </controls>
+	<id>700</id>
+	<defaultcontrol>24</defaultcontrol>
+	<allowoverlay>yes</allowoverlay>
+	<define>#header.label:TV Setup</define>
+	<define>#header.hover:hover_my tv.png</define>
+	<controls>
+		<import>common.settings.xml</import>
+		<control>
+			<type>group</type>
+			<layout>GridLayout(0, 6, 52, 8)</layout>
+			<posX>56</posX>
+			<posY>151</posY>
+			<control>
+				<type>button</type>
+				<id>24</id>
+				<label>Video Codec</label>
+			</control>
+			<control>
+				<type>button</type>
+				<id>30</id>
+				<label>Auto turn on TV</label>
+			</control>
+			<control>
+				<type>button</type>
+				<id>31</id>
+				<label>Recording options</label>
+				<hyperlink>701</hyperlink>
+			</control>
+			<control>
+				<type>button</type>
+				<id>32</id>
+				<label>Channel sorting</label>
+				<hyperlink>702</hyperlink>
+			</control>
+			<control>
+				<type>button</type>
+				<id>25</id>
+				<label>Audio Codec</label>
+			</control>
+			<control>
+				<type>button</type>
+				<id>26</id>
+				<label>Video Renderer</label>
+			</control>
+			<control>
+				<type>button</type>
+				<id>27</id>
+				<label>Deinterlacing</label>
+			</control>
+			<control>
+				<type>button</type>
+				<id>28</id>
+				<label>Aspect ratio</label>
+			</control>
+			<control>
+				<type>button</type>
+				<id>29</id>
+				<label>Timeshift buffer</label>
+			</control>
+		</control>
+	</controls>
 </window>
