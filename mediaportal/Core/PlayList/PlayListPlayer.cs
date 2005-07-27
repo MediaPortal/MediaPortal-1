@@ -144,6 +144,11 @@ namespace MediaPortal.Playlists
       PlayList playlist = GetPlaylist(m_iCurrentPlayList);
       if (playlist == null) return null;
 
+			if (m_iCurrentSong<0 || m_iCurrentSong>=playlist.Count)
+				m_iCurrentSong=0;
+
+			if (m_iCurrentSong>=playlist.Count) return null;
+
       return playlist[m_iCurrentSong];
     }
 
