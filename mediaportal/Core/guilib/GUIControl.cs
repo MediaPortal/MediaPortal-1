@@ -99,10 +99,10 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public virtual void FinalizeConstruction()
 		{
-			if (m_dwControlUp == 0) m_dwControlUp		= m_dwControlID - 1; 
-			if (m_dwControlDown == 0) m_dwControlDown	= m_dwControlID + 1; 
-			if (m_dwControlLeft == 0) m_dwControlLeft	= m_dwControlID; 
-			if (m_dwControlRight == 0) m_dwControlRight = m_dwControlID; 
+//			if (m_dwControlUp == 0) m_dwControlUp		= m_dwControlID - 1; 
+//			if (m_dwControlDown == 0) m_dwControlDown	= m_dwControlID + 1; 
+//			if (m_dwControlLeft == 0) m_dwControlLeft	= m_dwControlID; 
+//			if (m_dwControlRight == 0) m_dwControlRight = m_dwControlID; 
 		}
 			
 		/// <summary>
@@ -139,60 +139,165 @@ namespace MediaPortal.GUI.Library
 		/// <param name="action">action : contains the action</param>
 		public virtual void OnAction(Action action)
 		{
-			switch (action.wID)
+			if(Focus == false)
+				return;
+
+			switch(action.wID)
 			{
-					// Move down action
-				case Action.ActionType.ACTION_MOVE_DOWN : 
+				case Action.ActionType.ACTION_MOVE_DOWN:
+				case Action.ActionType.ACTION_MOVE_UP: 
+				case Action.ActionType.ACTION_MOVE_LEFT: 
+				case Action.ActionType.ACTION_MOVE_RIGHT: 
 				{
-					// Set the focus on the down control.
-					if (Focus)
-					{
-						Focus = false;
-						GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, WindowId, GetID, m_dwControlDown, (int)action.wID, 0, null);
-						GUIWindow window=GUIWindowManager.GetWindow(WindowId);
-						if (window!=null) window.OnMessage(msg);
-					}
-				}
-					break;
+					int controlId = 0;
 
-					// Set the focus on the up control.
-				case Action.ActionType.ACTION_MOVE_UP : 
-				{
-					if (Focus)
+					switch(action.wID)
 					{
-						Focus = false;
-						GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, WindowId, GetID, m_dwControlUp, (int)action.wID, 0, null);
-						GUIWindow window=GUIWindowManager.GetWindow(WindowId);
-						if (window!=null) window.OnMessage(msg);
+						case Action.ActionType.ACTION_MOVE_DOWN:
+							controlId = m_dwControlDown;
+							break;
+						case Action.ActionType.ACTION_MOVE_UP:
+							controlId = m_dwControlUp;
+							break;
+						case Action.ActionType.ACTION_MOVE_LEFT:
+							controlId = m_dwControlLeft;
+							break;
+						case Action.ActionType.ACTION_MOVE_RIGHT:
+							controlId = m_dwControlRight;
+							break;
 					}
-				}
-					break;
-		    
-					// Set the focus on the left control.
-				case Action.ActionType.ACTION_MOVE_LEFT : 
-				{
-					if (Focus)
-					{
-						Focus = false;
-						GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, WindowId, GetID, m_dwControlLeft, (int)action.wID, 0, null);
-						GUIWindow window=GUIWindowManager.GetWindow(WindowId);
-						if (window!=null) window.OnMessage(msg);
-					}
-				}
-					break;
 
-					// Set the focus on the right control.
-				case Action.ActionType.ACTION_MOVE_RIGHT : 
-				{
-					if (Focus)
-					{
-						Focus = false;
-						GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, WindowId, GetID, m_dwControlRight, (int)action.wID, 0, null);
-						GUIWindow window=GUIWindowManager.GetWindow(WindowId);
-						if (window!=null) window.OnMessage(msg);
-					}
-				}
+					if(controlId == 0)
+						controlId = Navigate((Direction)action.wID);
+
+					if(controlId != -1 && controlId != GetID)
+						FocusControl(WindowId, controlId);
+
 					break;
+				}
+			}
+		}
+
+		int Navigate(Direction direction)
+		{
+			int currentX = this.XPosition;
+			int currentY = this.YPosition;
+
+			if(this is GUIListControl)
+			{
+				Rectangle rect = ((GUIListControl)this).SelectedRectangle;
+
+				currentX = rect.X;
+				currentY = rect.Y;
+			}
+
+			int nearestIndex = -1;
+			double distanceMin = 10000;
+			double bearingMin = 10000;
+
+			foreach(GUIControl control in FlattenHierarchy(GUIWindowManager.GetWindow(WindowId).GUIControls))
+			{
+				if(control.GetID == GetID)
+					continue;
+
+				if(control.CanFocus() == false)
+					continue;
+
+				double bearing = CalcBearing(new Point(currentX, currentY), new Point(control.XPosition, control.YPosition));
+
+				if(direction == Direction.Left && (bearing < 215 || bearing > 325))
+					continue;
+
+				if(direction == Direction.Right && (bearing < -145 || bearing > -35))
+					continue;
+
+				if(direction == Direction.Up && (bearing < -45 || bearing > 45))
+					continue;
+
+				if(direction == Direction.Down && !(bearing <= -135 || bearing >= 135))
+					continue;
+		
+				double distance = CalcDistance(new Point(currentX, currentY), new Point(control.XPosition, control.YPosition));
+
+				if(!(distance <= distanceMin && bearing <= bearingMin))
+					continue;
+
+				bearingMin = bearing;
+				distanceMin = distance;
+				nearestIndex = control.GetID;
+			}
+
+			return nearestIndex == -1 ? GetID : nearestIndex;
+		}
+		
+		static double CalcBearing(Point p1, Point p2)
+		{
+			int horzDelta = p2.X - p1.X;
+			int vertDelta = p2.Y - p1.Y;
+
+			// arctan gives us the bearing, just need to convert -pi..+pi to 0..360 deg
+			double bearing = Math.Round(90 - Math.Atan2(vertDelta, horzDelta) / Math.PI * 180 + 360) % 360;
+
+			// normalize
+			bearing = bearing > 180 ? ((bearing + 180) % 360) - 180 : bearing < -180 ? ((bearing - 180) % 360) + 180 : bearing;
+
+			return bearing >= 0 ? bearing - 180 : 180 - bearing;
+		}
+
+		static double CalcDistance(Point p2, Point p1)
+		{
+			int horzDelta = p2.X - p1.X;
+			int vertDelta = p2.Y - p1.Y;
+
+			return Math.Round(Math.Sqrt((horzDelta * horzDelta) + (vertDelta * vertDelta)));
+		}
+
+		ArrayList FlattenHierarchy(ArrayList controlList)
+		{
+			ArrayList targetList = new ArrayList();
+
+			FlattenHierarchy(controlList, targetList);
+
+			return targetList;
+		}
+
+		void FlattenHierarchy(ICollection collection, ArrayList targetList)
+		{
+			foreach(GUIControl control in collection)
+			{
+				if(control.GetID == 1)
+					continue;
+
+				if(control is ILayoutComposite)
+				{
+					FlattenHierarchy(((ILayoutComposite)control).Children, targetList);
+					continue;
+				}
+
+				if(control is GUIFacadeControl)
+				{
+					GUIFacadeControl facade = (GUIFacadeControl)control;
+
+					switch(facade.View)
+					{
+						case GUIFacadeControl.ViewMode.AlbumView:
+							targetList.Add(facade.AlbumListView);
+							break;
+						case GUIFacadeControl.ViewMode.Filmstrip:
+							targetList.Add(facade.FilmstripView);
+							break;
+						case GUIFacadeControl.ViewMode.List:
+							targetList.Add(facade.ListView);
+							break;
+						default:
+							targetList.Add(facade.ThumbnailView);
+							break;
+					}
+
+					continue;
+				}
+
+				targetList.Add(control);
 			}
 		}
 
@@ -210,22 +315,37 @@ namespace MediaPortal.GUI.Library
 				switch (message.Message)
 				{
 					case GUIMessage.MessageType.GUI_MSG_SETFOCUS : 
+
 						// if control is disabled then move 2 the next control
 						if (Disabled || !IsVisible || !CanFocus())
 						{
-							int dwControl = 0;
-							if (message.Param1 == (int)Action.ActionType.ACTION_MOVE_DOWN) dwControl = m_dwControlDown;
-							if (message.Param1 == (int)Action.ActionType.ACTION_MOVE_UP) dwControl = m_dwControlUp;
-							if (message.Param1 == (int)Action.ActionType.ACTION_MOVE_LEFT) dwControl = m_dwControlLeft;
-							if (message.Param1 == (int)Action.ActionType.ACTION_MOVE_RIGHT) dwControl = m_dwControlRight;
-							if (dwControl!=GetID)
+							int controlId = 0;
+
+							switch((Action.ActionType)message.Message)
 							{
-								GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, WindowId, GetID, dwControl, message.Param1, 0, null);
-								GUIWindow window=GUIWindowManager.GetWindow(WindowId);
-								if (window!=null) window.OnMessage(msg);
+								case Action.ActionType.ACTION_MOVE_DOWN:
+									controlId = m_dwControlDown;
+									break;
+								case Action.ActionType.ACTION_MOVE_UP: 
+									controlId = m_dwControlUp;
+									break;
+								case Action.ActionType.ACTION_MOVE_LEFT: 
+									controlId = m_dwControlLeft;
+									break;
+								case Action.ActionType.ACTION_MOVE_RIGHT: 
+									controlId = m_dwControlRight;
+									break;
 							}
+
+							if(controlId == 0)
+								controlId = Navigate((Direction)message.Message);
+
+							if(controlId != -1 && controlId != GetID)
+								FocusControl(WindowId, controlId);
+
 							return true;
 						}
+
 						Focus = true;
 						return true;
 					
@@ -1014,7 +1134,20 @@ namespace MediaPortal.GUI.Library
 		}
 
 		/////////////////////////////////////////////
-	  
+
+		#region Enums
+
+		public enum Direction
+		{
+			None = 0,
+			Up = Action.ActionType.ACTION_MOVE_UP,
+			Down = Action.ActionType.ACTION_MOVE_DOWN,
+			Left = Action.ActionType.ACTION_MOVE_LEFT,
+			Right = Action.ActionType.ACTION_MOVE_RIGHT,
+		}
+
+		#endregion Enums
+
 		#region Methods
 
 		protected override void ArrangeCore(Rectangle rect)
@@ -1043,6 +1176,12 @@ namespace MediaPortal.GUI.Library
 		{
 			get { return new Point(m_dwPosX, m_dwPosY); }
 			set { m_dwPosX = value.X; m_dwPosY = value.Y; }
+		}
+
+		public override bool Visible
+		{
+			get { return m_bVisible; }
+			set { m_bVisible = value; }
 		}
 
 		#endregion Properties
