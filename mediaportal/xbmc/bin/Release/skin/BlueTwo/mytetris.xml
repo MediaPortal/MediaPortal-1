@@ -11,12 +11,13 @@
 			<type>group</type>
 			<description>group element</description>
 			<animation>FlyInFromLeft</animation>
+			<layout>StackLayout</layout>
+			<posX>60</posX>
+			<posY>97</posY>
 			<control>
 				<description>New Game</description>
 				<type>button</type>
 				<id>2</id>
-				<posX>60</posX>
-				<posY>97</posY>
 				<label>19002</label>
 				<onleft>2</onleft>
 				<onright>10</onright>
@@ -27,20 +28,21 @@
 				<description>Sounds</description>
 				<type>togglebutton</type>
 				<id>4</id>
-				<posX>60</posX>
-				<posY>131</posY>
-				<width>190</width>
-				<height>32</height>
 				<label>19004</label>
 				<onleft>4</onleft>
 				<onright>10</onright>
 				<onup>2</onup>
 				<ondown>2</ondown>
+				<width>190</width>
+				<height>32</height>
 				<AltTextureFocus>togglebutton-off-focus.png</AltTextureFocus>
 				<AltTextureNoFocus>togglebutton-off-nofocus.png</AltTextureNoFocus>
 				<textureFocus>togglebutton-on-focus.png</textureFocus>
 				<textureNoFocus>togglebutton-on-nofocus.png</textureNoFocus>
 			</control>
+		</control>
+		<control>
+			<type>group</type>
 			<control>
 				<description>Scoreboard background</description>
 				<type>image</type>

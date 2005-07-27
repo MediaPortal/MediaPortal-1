@@ -2,44 +2,11 @@
 	<id>760</id>
 	<defaultcontrol>2</defaultcontrol>
 	<allowoverlay>yes</allowoverlay>
+	<define>#header.label:#burner_title</define>
+	<define>#header.image:burn_logo.png</define>
+	<define>#header.hover:hover_my burner.png</define>
 	<controls>
-		<control>
-			<description>BG</description>
-			<type>image</type>
-			<id>1</id>
-			<posX>0</posX>
-			<posY>0</posY>
-			<width>720</width>
-			<height>576</height>
-			<texture>background.png</texture>
-			<colorkey>0</colorkey>
-			<colordiffuse>ffffffff</colordiffuse>
-		</control>
-		<control>
-			<type>image</type>
-			<id>1</id>
-			<posX>75</posX>
-			<posY>370</posY>
-			<texture>hover_my burner.png</texture>
-		</control>
-		<control>
-			<type>image</type>
-			<id>1</id>
-			<posX>60</posX>
-			<posY>20</posY>
-			<texture>burn_logo.png</texture>
-		</control>				
-		<control>
-			<description>My burner text label</description>
-			<type>label</type>
-			<id>1</id>
-			<posX>250</posX>
-			<posY>70</posY>
-			<label>#burner_title</label>
-			<font>font16</font>
-			<align>left</align>
-			<textcolor>ffffffff</textcolor>
-		</control>
+		<import>common.window.xml</import>
 		<control>
 			<description>My burner File Size label</description>
 			<type>label</type>
@@ -109,12 +76,13 @@
 			<type>group</type>
 			<description>group element</description>
 			<animation>FlyInFromLeft</animation>
+			<posX>60</posX>
+			<posY>97</posY>
+			<layout>StackLayout</layout>
 			<control>
 				<description>Video</description>
 				<type>button</type>
 				<id>2</id>
-				<posX>60</posX>
-				<posY>97</posY>
 				<label>2101</label>
 				<onleft>2</onleft>
 				<onright>20</onright>
@@ -125,8 +93,6 @@
 				<description>Audio</description>
 				<type>button</type>
 				<id>3</id>
-				<posX>60</posX>
-				<posY>131</posY>
 				<label>2102</label>
 				<onleft>3</onleft>
 				<onright>20</onright>
@@ -137,8 +103,6 @@
 				<description>Data</description>
 				<type>button</type>
 				<id>4</id>
-				<posX>60</posX>
-				<posY>165</posY>
 				<label>2103</label>
 				<onleft>4</onleft>
 				<onright>20</onright>
@@ -149,8 +113,6 @@
 				<description>cd info</description>
 				<type>button</type>
 				<id>5</id>
-				<posX>60</posX>
-				<posY>199</posY>
 				<label>2123</label>
 				<onleft>5</onleft>
 				<onright>20</onright>
@@ -161,8 +123,6 @@
 				<description>rw format</description>
 				<type>button</type>
 				<id>6</id>
-				<posX>60</posX>
-				<posY>233</posY>
 				<label>2114</label>
 				<onleft>6</onleft>
 				<onright>20</onright>
@@ -173,8 +133,6 @@
 				<description>cd eject</description>
 				<type>button</type>
 				<id>7</id>
-				<posX>60</posX>
-				<posY>267</posY>
 				<label>2126</label>
 				<onleft>7</onleft>
 				<onright>20</onright>
