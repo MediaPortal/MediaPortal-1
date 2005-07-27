@@ -7,10 +7,10 @@
 		<description>rec logo</description> 
 		<type>image</type> 
 		<id>4</id> 
-		<posX>557</posX> 
-		<posY>25</posY> 
+		<posX>600</posX> 
+		<posY>20</posY> 
 		<texture>rec.png</texture> 
-		<colordiffuse>50ffffff</colordiffuse>
+		<colordiffuse>ffffffff</colordiffuse>
 	</control>
   </controls>
 </window>
