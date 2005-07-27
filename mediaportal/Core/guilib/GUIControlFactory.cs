@@ -521,6 +521,9 @@ namespace MediaPortal.GUI.Library
 
 			if(layoutClass.ToLower() == "gridlayout")
 			{
+				if(valueParameters.Length >= 5)
+					return new GridLayout(valueParameters[0], valueParameters[1], valueParameters[2], valueParameters[3], valueParameters[4]);
+
 				if(valueParameters.Length >= 4)
 					return new GridLayout(valueParameters[0], valueParameters[1], valueParameters[2], valueParameters[3]);
 
