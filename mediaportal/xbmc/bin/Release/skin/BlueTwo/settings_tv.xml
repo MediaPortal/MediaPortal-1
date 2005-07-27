@@ -8,7 +8,7 @@
 		<import>common.settings.xml</import>
 		<control>
 			<type>group</type>
-			<layout>GridLayout(0, 7, 52, 8, 1)</layout>
+			<layout>GridLayout(0, 6, 52, 8, 1)</layout>
 			<posX>56</posX>
 			<posY>151</posY>
 			<control>
@@ -18,30 +18,13 @@
 			</control>
 			<control>
 				<type>button</type>
-				<id>30</id>
-				<label>Auto turn on TV</label>
-			</control>
-			<control>
-				<type>button</type>
 				<id>25</id>
 				<label>Audio Codec</label>
 			</control>
 			<control>
 				<type>button</type>
-				<id>31</id>
-				<label>Recording options</label>
-				<hyperlink>701</hyperlink>
-			</control>
-			<control>
-				<type>button</type>
 				<id>26</id>
 				<label>Video Renderer</label>
-			</control>
-			<control>
-				<type>button</type>
-				<id>32</id>
-				<label>Channel sorting</label>
-				<hyperlink>702</hyperlink>
 			</control>
 			<control>
 				<type>button</type>
@@ -57,6 +40,23 @@
 				<type>button</type>
 				<id>29</id>
 				<label>Timeshift buffer</label>
+			</control>
+			<control>
+				<type>button</type>
+				<id>30</id>
+				<label>Auto turn on TV</label>
+			</control>
+			<control>
+				<type>button</type>
+				<id>31</id>
+				<label>Recording options</label>
+				<hyperlink>701</hyperlink>
+			</control>
+			<control>
+				<type>button</type>
+				<id>32</id>
+				<label>Channel sorting</label>
+				<hyperlink>702</hyperlink>
 			</control>
 		</control>
 	</controls>
