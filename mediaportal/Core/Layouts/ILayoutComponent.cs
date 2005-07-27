@@ -31,6 +31,11 @@ namespace MediaPortal.Layouts
 			set;
 		}
 
+		bool Visible
+		{
+			get;
+		}
+
 		#endregion Properties
 	}
 }

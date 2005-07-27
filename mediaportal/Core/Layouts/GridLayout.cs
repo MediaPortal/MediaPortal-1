@@ -78,7 +78,8 @@ namespace MediaPortal.Layouts
 
 							component.Arrange(new Rectangle((int)x, (int)y, (int)w, (int)h));
 						}
-						else if(composite.Children is ILayoutComponentCollection)
+						
+						if(composite.Children is ILayoutComponentCollection)
 						{
 							ILayoutComponent component = ((ILayoutComponentCollection)composite.Children)[index];
 

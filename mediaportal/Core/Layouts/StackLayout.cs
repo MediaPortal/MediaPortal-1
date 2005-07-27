@@ -36,6 +36,9 @@ namespace MediaPortal.Layouts
 
 			foreach(ILayoutComponent child in composite.Children)
 			{
+				if(child.Visible == false)
+					continue;
+
 				child.Arrange(new Rectangle(x, y, w, h = child.Size.Height));
 				y += h + _spacing.Height;
 			}
@@ -48,6 +51,9 @@ namespace MediaPortal.Layouts
 
 			foreach(ILayoutComponent child in composite.Children)
 			{
+				if(child.Visible == false)
+					continue;
+
 				child.Measure();
 
 				Size s = child.Size;
