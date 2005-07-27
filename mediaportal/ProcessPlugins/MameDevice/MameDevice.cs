@@ -75,10 +75,14 @@ namespace MediaPortal.MameDevice
 
     public bool WndProc(ref System.Windows.Forms.Message msg)
     {
+			if (MameMapper==null) return false;
       if ((msg.Msg == WM_KEYDOWN) || (msg.Msg == WM_SYSKEYDOWN))
       {
-        Log.Write("WM_KEYDOWN: wParam {0}", (int)msg.WParam);
-        return MameMapper.MapAction((int)msg.WParam);
+				//disabled: following code produces a stack overflow exception
+				//when i start MP and simply press the cursor up arrow
+
+        //Log.Write("WM_KEYDOWN: wParam {0}", (int)msg.WParam);
+        //return MameMapper.MapAction((int)msg.WParam);
       }
       return false;
     }
