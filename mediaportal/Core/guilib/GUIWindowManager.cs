@@ -249,7 +249,17 @@ namespace MediaPortal.GUI.Library
 					{
 						if (OnPostRenderAction!=null)
 						{
-							OnPostRenderAction(null,null,true);
+							OnPostRenderAction(action,null,true);
+						}
+					}
+				}
+				if (action.wID == Action.ActionType.ACTION_MOVE_DOWN)
+				{
+					if (pWindow.GetFocusControlId()<0)
+					{
+						if (OnPostRenderAction!=null)
+						{
+							OnPostRenderAction(action,null,true);
 						}
 					}
 				}

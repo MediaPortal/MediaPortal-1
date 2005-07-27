@@ -88,11 +88,11 @@ namespace MediaPortal.GUI.Library
 					}
 				}
 			}
-			if (action==null&&msg==null)
+			if (focus&&msg==null)
 			{
 				if (DoesPostRender())
 				{
-					if (focus)
+					if (ShouldFocus(action))
 					{
 						Focused=true;
 						return true;
@@ -100,6 +100,10 @@ namespace MediaPortal.GUI.Library
 				}
 				Focused=false;
 			}
+			return false;
+		}
+		protected virtual bool ShouldFocus(Action action)
+		{
 			return false;
 		}
 	}

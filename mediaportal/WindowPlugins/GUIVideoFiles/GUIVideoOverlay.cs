@@ -12,13 +12,14 @@ namespace MediaPortal.GUI.Video
 	/// </summary>
 	public class GUIVideoOverlay : GUIOverlayWindow
 	{
-    
+		bool m_bFocused=false; 
     string m_strFile = "";
 		string m_strProgram = "";
     enum Controls
     {
 			CONTROL_VIDEO_RECTANGLE = 0
-      ,CONTROL_PLAYTIME = 2
+			,CONTROL_VIDEO_WINDOW=1
+		,CONTROL_PLAYTIME = 2
       , CONTROL_PLAY_LOGO = 3
       , CONTROL_PAUSE_LOGO = 4
       , CONTROL_INFO = 5
@@ -267,5 +268,42 @@ namespace MediaPortal.GUI.Video
 		 }
 		 m_strThumb=GUIPropertyManager.GetProperty("#thumb");
     }
+		public override bool Focused
+		{
+			get 
+			{ 
+				return m_bFocused;
+			}
+			set 
+			{
+				m_bFocused=value;
+				if (m_bFocused)
+				{
+					GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS,GetID, 0,(int)Controls.CONTROL_VIDEO_WINDOW,0,0,null);
+					OnMessage(msg);
+				}
+        else
+        {
+          foreach (GUIControl control in controlList)
+          {
+            control.Focus=false;
+          }
+        }
+			}
+		}
+		protected override bool ShouldFocus(Action action)
+		{
+			return (action.wID==Action.ActionType.ACTION_MOVE_DOWN);
+		}
+
+		public override void OnAction(Action action)
+		{
+			
+			base.OnAction (action);
+			if (action.wID==Action.ActionType.ACTION_MOVE_UP)
+			{
+				Focused=false;
+			}
+		}
 	}
 }

@@ -181,7 +181,10 @@ namespace MediaPortal.Topbar
         }
       }
     }
-
+		protected override bool ShouldFocus(Action action)
+		{
+			return (action.wID==Action.ActionType.ACTION_MOVE_UP);
+		}
     public override bool Focused
     {
       get { 
