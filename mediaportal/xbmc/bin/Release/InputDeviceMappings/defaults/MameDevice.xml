@@ -24,18 +24,6 @@
 		</button>
 		<button name="P1_BUTTON10" code="110">
 		</button>
-		<button name="P1_JOYSTICK_UP" code="38">
-			<action layer="0" condition="*" conproperty="-1" command="KEY" cmdproperty="{UP}" sound="" />
-		</button>
-		<button name="P1_JOYSTICK_DOWN" code="40">
-			<action layer="0" condition="*" conproperty="-1" command="KEY" cmdproperty="{DOWN}" sound="" />
-		</button>
-		<button name="P1_JOYSTICK_LEFT" code="37">
-			<action layer="0" condition="*" conproperty="-1" command="KEY" cmdproperty="{LEFT}" sound="" />
-		</button>
-		<button name="P1_JOYSTICK_RIGHT" code="39">
-			<action layer="0" condition="*" conproperty="-1" command="KEY" cmdproperty="{RIGHT}" sound="" />
-		</button>
 		<button name="P1_START" code="49">
 		</button>
 		<button name="P1_SELECT" code="53">
