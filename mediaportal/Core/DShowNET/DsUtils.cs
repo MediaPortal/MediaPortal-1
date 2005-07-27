@@ -538,22 +538,6 @@ namespace DShowNET
 									}//for (int iIn=0; iIn < iInputPinCount; iIn++)
 								}//for (int iOut=0; iOut < iOutputPinCount; ++iOut)
 							}//if (crossbar!=null)
-							else
-							{
-								DirectShowUtil.DebugWrite("  no more crossbars");
-								
-								if (o!=null) 
-								{
-									Marshal.ReleaseComObject(o);
-									o=null;
-								}
-								break;
-							}
-							if (o!=null) 
-							{
-								Marshal.ReleaseComObject(o);
-								o=null;
-							}
 						}//if (hr ==0 && o != null)
 						else
 						{
