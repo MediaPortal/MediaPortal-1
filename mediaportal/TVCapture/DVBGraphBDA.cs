@@ -702,12 +702,10 @@ namespace MediaPortal.TV.Recording
 				}
 
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph() connect demuxer->Stream analyzer");
-				if(!ConnectFilters(ref m_MPEG2Demultiplexer,ref m_dvbAnalyzer))
-				{
-					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to connect mpeg2 demultiplexer->Stream Analyzer");
-					return false;
-				}
 
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph() find audio/video pins");
+				bool connected=false;
+				IPin pinAnalyzerIn=DirectShowUtil.FindPinNr(m_dvbAnalyzer,PinDirection.Input,0);
 				IEnumPins pinEnum;
 				m_MPEG2Demultiplexer.EnumPins(out pinEnum);
 				pinEnum.Reset();
@@ -736,9 +734,35 @@ namespace MediaPortal.TV.Recording
 									m_DemuxVideoPin=pin[0];
 									break;
 								}
+								if (pinMediaType.majorType==MEDIATYPE_MPEG2_SECTIONS && !connected)
+								{
+									IPin pinConnectedTo=null;
+									pin[0].ConnectedTo(out pinConnectedTo);
+									if (pinConnectedTo==null)
+									{
+										Log.Write("DVBGraphBDA:connect mpeg2 demux->stream analyzer");
+										hr=m_graphBuilder.Connect(pin[0],pinAnalyzerIn);
+										if (hr==0)
+										{
+											connected=true;
+											Log.Write("DVBGraphBDA:connected mpeg2 demux->stream analyzer");
+										}
+										else
+										{
+											Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to connect mpeg2 demux->stream analyzer");
+										}
+									}
+									if (pinConnectedTo!=null)
+									{
+										Marshal.ReleaseComObject(pinConnectedTo);
+										pinConnectedTo=null;
+									}
+
+								}
 							}
 						}
 						Marshal.ReleaseComObject(enumMedia); enumMedia=null;
+						if (m_DemuxAudioPin!=null && m_DemuxVideoPin!=null) break;
 					}
 				}
 				Marshal.ReleaseComObject(pinEnum); pinEnum=null;
@@ -757,6 +781,7 @@ namespace MediaPortal.TV.Recording
 					return false;
 				}
 
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph() create ac3/mpg1 pins");
 				if (demuxer!=null)
 				{
 					AMMediaType mpegVideoOut = new AMMediaType();
