@@ -274,6 +274,7 @@ CDump::CDump(LPUNKNOWN pUnk, HRESULT *phr) :
 	m_patChannelsCount(0),m_pmtGrabProgNum(0),
 	m_currentPMTLen(0)
 {
+	m_bDecodeATSC=false;
     ASSERT(phr);
     memset(m_pmtGrabData,0,4096);
 	m_pSections=new Sections();
@@ -411,48 +412,53 @@ HRESULT CDump::Process(BYTE *pbData,long len)
 		}
 		delete d;
 	}
-	if (pbData[0]==0xc8 || pbData[0]==0xc9)
+	if (m_bDecodeATSC)
 	{
-		//decode ATSC: Virtual Channel Table (pid 0xc8 / 0xc9)
-		m_pSections->ATSCDecodeChannelTable(pbData,m_patTable, &m_patChannelsCount);
-	}
-	
-	if(pbData[0]==0x02)// pmt
-	{
-		ULONG prgNumber=(pbData[3]<<8)+pbData[4];
-		for(int n=0;n<m_patChannelsCount;n++)
+		if (pbData[0]==0xc8 || pbData[0]==0xc9)
 		{
-			if(m_patTable[n].ProgrammNumber==prgNumber && m_patTable[n].PMTReady==false)
+			//decode ATSC: Virtual Channel Table (pid 0xc8 / 0xc9)
+			m_pSections->ATSCDecodeChannelTable(pbData,m_patTable, &m_patChannelsCount);
+		}
+	}
+	else
+	{
+		if(pbData[0]==0x02)// pmt
+		{
+			ULONG prgNumber=(pbData[3]<<8)+pbData[4];
+			for(int n=0;n<m_patChannelsCount;n++)
 			{
-				m_pSections->decodePMT(pbData,&m_patTable[n]);
-				if(m_patTable[n].Pids.AudioPid1>0)
-					m_pDemuxer->MapAdditionalPayloadPID(m_patTable[n].Pids.AudioPid1);
-				if(m_patTable[n].Pids.AudioPid2>0)
-					m_pDemuxer->MapAdditionalPayloadPID(m_patTable[n].Pids.AudioPid2);
-				if(m_patTable[n].Pids.AudioPid3>0)
-					m_pDemuxer->MapAdditionalPayloadPID(m_patTable[n].Pids.AudioPid3);
+				if(m_patTable[n].ProgrammNumber==prgNumber && m_patTable[n].PMTReady==false)
+				{
+					m_pSections->decodePMT(pbData,&m_patTable[n]);
+					if(m_patTable[n].Pids.AudioPid1>0)
+						m_pDemuxer->MapAdditionalPayloadPID(m_patTable[n].Pids.AudioPid1);
+					if(m_patTable[n].Pids.AudioPid2>0)
+						m_pDemuxer->MapAdditionalPayloadPID(m_patTable[n].Pids.AudioPid2);
+					if(m_patTable[n].Pids.AudioPid3>0)
+						m_pDemuxer->MapAdditionalPayloadPID(m_patTable[n].Pids.AudioPid3);
+				}
+			}
+			if(m_pmtGrabProgNum==prgNumber && len<=4096)
+			{
+				memset(m_pmtGrabData,0,4096);
+				memcpy(m_pmtGrabData,pbData,len);// save the pmt in the buffer
+				m_currentPMTLen=len;
+			}
+					
+		}
+		if(pbData[0]==0x00 && m_patChannelsCount==0 && pesPacket==false)// pat
+		{
+			m_pDemuxer->UnMapAllPIDs();
+			m_pSections->decodePAT(pbData,m_patTable,&m_patChannelsCount);
+			for(int n=0;n<m_patChannelsCount;n++)
+			{
+				m_pDemuxer->MapAdditionalPID(m_patTable[n].ProgrammPMTPID);
 			}
 		}
-		if(m_pmtGrabProgNum==prgNumber && len<=4096)
+		if(pbData[0]==0x42)// sdt
 		{
-			memset(m_pmtGrabData,0,4096);
-			memcpy(m_pmtGrabData,pbData,len);// save the pmt in the buffer
-			m_currentPMTLen=len;
+			m_pSections->decodeSDT(pbData,m_patTable,m_patChannelsCount);
 		}
-				
-	}
-	if(pbData[0]==0x00 && m_patChannelsCount==0 && pesPacket==false)// pat
-	{
-		m_pDemuxer->UnMapAllPIDs();
-		m_pSections->decodePAT(pbData,m_patTable,&m_patChannelsCount);
-		for(int n=0;n<m_patChannelsCount;n++)
-		{
-			m_pDemuxer->MapAdditionalPID(m_patTable[n].ProgrammPMTPID);
-		}
-	}
-	if(pbData[0]==0x42)// sdt
-	{
-		m_pSections->decodeSDT(pbData,m_patTable,m_patChannelsCount);
 	}
 	return S_OK;
 }
@@ -520,6 +526,13 @@ STDMETHODIMP CDump::SetPMTProgramNumber(ULONG prgNum)
 	m_pmtGrabProgNum=prgNum;
 	return S_OK;
 }
+
+STDMETHODIMP CDump::UseATSC(BOOL yesNo)
+{
+	m_bDecodeATSC=yesNo;
+	return S_OK;
+}
+
 STDMETHODIMP CDump::GetPMTData(BYTE *data)
 {
 	BYTE *buf=m_pmtGrabData;
