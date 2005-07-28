@@ -657,7 +657,7 @@ namespace MediaPortal.TV.Recording
 
 
 				// Add the Demux to the graph
-				//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph() add mpeg2 demuxer to graph");
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph() add mpeg2 demuxer to graph");
 				m_graphBuilder.AddFilter(m_MPEG2Demultiplexer, "MPEG-2 Demultiplexer");
 
 				
@@ -670,6 +670,7 @@ namespace MediaPortal.TV.Recording
 				AMMediaType tifType=new AMMediaType();
 				tifType.majorType=MEDIATYPE_MPEG2_SECTIONS;
 				tifType.subType=MEDIASUBTYPE_DVB_SI;
+				tifType.formatType = FormatType.None;
 				if (Network()==NetworkType.ATSC)
 				{
 					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: create TIF for ATSC");
