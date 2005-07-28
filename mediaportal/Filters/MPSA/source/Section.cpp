@@ -474,9 +474,10 @@ cont:
 
 void Sections::ATSCDecodeChannelTable(BYTE *buf,ChannelInfo *ch, int* channelsFound)
 {
+	int table_id = buf[0];
+	if (table_id!=0xc8 && table_id != 0xc9) return;
 	*channelsFound=0;
 	Log("ATSCDecodeChannelTable()");
-	int table_id = buf[0];
 	int section_syntax_indicator = (buf[1]>>7) & 1;
 	int private_indicator = (buf[1]>>6) & 1;
 	int section_length = ((buf[1]& 0xF)<<8) + buf[2];
