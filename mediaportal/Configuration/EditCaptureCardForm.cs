@@ -2129,7 +2129,8 @@ namespace MediaPortal.Configuration
 					{
 						if (capture.Network!=NetworkType.DVBC &&
 							capture.Network!=NetworkType.DVBS &&
-							capture.Network!=NetworkType.DVBT)
+							capture.Network!=NetworkType.DVBT &&
+							capture.Network!=NetworkType.ATSC)
 						{
 							btnRadio.Visible=true;
 						}
@@ -2980,7 +2981,8 @@ namespace MediaPortal.Configuration
 			{
 				if (dev.Network==NetworkType.DVBC ||
 					dev.Network==NetworkType.DVBS ||
-					dev.Network==NetworkType.DVBT) return;
+					dev.Network==NetworkType.DVBT ||
+					capture.Network==NetworkType.ATSC) return;
 				dev.DeleteGraph();
 			}
 
