@@ -8,14 +8,18 @@ namespace MediaPortal.Layouts
 	{
 		#region Constructors
 
-		public StackLayout()
+		public StackLayout() : this(0, Orientation.Vertical)
 		{
-			_spacing = new Size(0, 0);
 		}
 
-		public StackLayout(int spacing)
+		public StackLayout(int spacing) : this(spacing, Orientation.Vertical)
 		{
-			_spacing = new Size(0, Math.Max(0, spacing));
+		}
+
+		public StackLayout(int spacing, Orientation orientation)
+		{
+			_spacing = new Size(Math.Max(0, spacing), Math.Max(0, spacing));
+			_orientation = orientation;
 		}
 
 		#endregion Constructors
@@ -31,16 +35,25 @@ namespace MediaPortal.Layouts
 
 			int x = l.X + m.Left;
 			int y = l.Y + m.Top;
-			int w = composite.Size.Width - m.Right;
-			int h = 0;
+			int w = _orientation != Orientation.Horizontal ? composite.Size.Width - m.Right : 0;
+			int h = _orientation == Orientation.Horizontal ? composite.Size.Height - m.Bottom : 0;
 
 			foreach(ILayoutComponent child in composite.Children)
 			{
 				if(child.Visible == false)
 					continue;
 
-				child.Arrange(new Rectangle(x, y, w, h = child.Size.Height));
-				y += h + _spacing.Height;
+				if(_orientation != Orientation.Horizontal)
+				{
+					child.Arrange(new Rectangle(x, y, w, h = child.Size.Height));
+					y += h + _spacing.Height;
+				}
+
+				if(_orientation == Orientation.Horizontal)
+				{
+					child.Arrange(new Rectangle(x, y, w = child.Size.Width, h));
+					x += w + _spacing.Width;
+				}
 			}
 		}
 
@@ -58,8 +71,8 @@ namespace MediaPortal.Layouts
 
 				Size s = child.Size;
 
-				w = Math.Max(w, s.Width);
-				h = h + s.Height + _spacing.Height;
+				w = _orientation != Orientation.Horizontal ? Math.Max(w, s.Width) : w + s.Width + _spacing.Width;
+				h = _orientation == Orientation.Horizontal ? Math.Max(h, s.Height) : h + s.Height + _spacing.Height;
 			}
 
 			Margins margins = composite.Margins;
@@ -88,6 +101,7 @@ namespace MediaPortal.Layouts
 
 		#region Fields
 
+		Orientation					_orientation = Orientation.Vertical;
 		Size						_spacing = Size.Empty;
 		Size						_size = Size.Empty;
 

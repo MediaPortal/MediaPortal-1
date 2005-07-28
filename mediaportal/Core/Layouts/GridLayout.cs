@@ -40,10 +40,9 @@ namespace MediaPortal.Layouts
 		}
 
 		// int orientation is temp, should be an enum
-		public GridLayout(int columns, int rows, int horizontalSpacing, int verticalSpacing, int orientation) : this(columns, rows, horizontalSpacing, verticalSpacing)
+		public GridLayout(int columns, int rows, int horizontalSpacing, int verticalSpacing, Orientation orientation) : this(columns, rows, horizontalSpacing, verticalSpacing)
 		{
-			if(orientation != 0)
-				_isVertical = true;
+			_orientation = orientation;
 		}
 
 		#endregion Constructors
@@ -74,7 +73,7 @@ namespace MediaPortal.Layouts
 
 				for(int col = 0; col < cols; col++)
 				{
-					int index = _isVertical ? col * rows + row : row * cols + col;
+					int index = _orientation == Orientation.Vertical ? col * rows + row : row * cols + col;
 
 					if(index < composite.Children.Count)
 					{
@@ -164,7 +163,7 @@ namespace MediaPortal.Layouts
 		#region Fields
 
 		int							_cols;
-		bool						_isVertical = false;
+		Orientation					_orientation = Orientation.Horizontal;
 		int							_rows;
 		Size						_size = Size.Empty;
 		Size						_spacing = Size.Empty;
