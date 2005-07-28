@@ -2982,7 +2982,7 @@ namespace MediaPortal.Configuration
 				if (dev.Network==NetworkType.DVBC ||
 					dev.Network==NetworkType.DVBS ||
 					dev.Network==NetworkType.DVBT ||
-					capture.Network==NetworkType.ATSC) return;
+					dev.Network==NetworkType.ATSC) return;
 				dev.DeleteGraph();
 			}
 
