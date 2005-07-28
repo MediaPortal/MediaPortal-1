@@ -664,6 +664,48 @@ namespace MediaPortal.TV.Recording
 
 
 				IMpeg2Demultiplexer   demuxer=m_MPEG2Demultiplexer as IMpeg2Demultiplexer;
+
+
+				//create TIF pin on demuxer and connect it to the TIF
+				AMMediaType tifType=new AMMediaType();
+				tifType.majorType=MEDIATYPE_MPEG2_SECTIONS;
+				tifType.subType=MEDIASUBTYPE_DVB_SI;
+				if (Network()==NetworkType.ATSC)
+				{
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: create TIF for ATSC");
+					tifType.subType=MEDIASUBTYPE_ATSC_SI;
+				}
+				else
+				{
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: create TIF for DVB");
+				}
+
+				IPin tifOut, tifIn;
+				hr=demuxer.CreateOutputPin(ref tifType,"TIF",out tifOut);
+				if (hr!=0)
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: FAILED to create TIF pin on demuxer 0x{0:X}",hr);
+					return false;
+				}
+				tifIn=DirectShowUtil.FindPinNr(m_TIF,PinDirection.Input,0);
+				if (tifIn==null)
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: FAILED to get input pin of TIF");
+					Marshal.ReleaseComObject(tifOut);tifOut=null;
+					return false;
+				}
+				hr=m_graphBuilder.Connect(tifOut,tifIn);
+				if(hr!=0)
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"dvbgrapBDA: FAILED to connect demux<->tif 0x{0:X}",hr);
+					Marshal.ReleaseComObject(tifIn);tifIn=null;;
+					Marshal.ReleaseComObject(tifOut);tifOut=null;
+					return false;
+				}
+
+				Marshal.ReleaseComObject(tifIn);tifIn=null;
+				Marshal.ReleaseComObject(tifOut);tifOut=null;
+
 				if (demuxer!=null)
 				{
 					AMMediaType mpegVideoOut = new AMMediaType();
@@ -796,45 +838,6 @@ namespace MediaPortal.TV.Recording
 				Marshal.ReleaseComObject(mpsaPin);mpsaPin=null;
 				Marshal.ReleaseComObject(mpsaIn);mpsaIn=null;
 
-				
-
-				AMMediaType tifType=new AMMediaType();
-				tifType.majorType=MEDIATYPE_MPEG2_SECTIONS;
-				tifType.subType=MEDIASUBTYPE_DVB_SI;
-				if (Network()==NetworkType.ATSC)
-				{
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: create TIF for ATSC");
-					tifType.subType=MEDIASUBTYPE_ATSC_SI;
-				}
-				else
-				{
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: create TIF for DVB");
-				}
-				IPin tifOut, tifIn;
-				hr=demuxer.CreateOutputPin(ref tifType,"TIF",out tifOut);
-				if (hr!=0)
-				{
-					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: FAILED to create TIF pin on demuxer 0x{0:X}",hr);
-					return false;
-				}
-				tifIn=DirectShowUtil.FindPinNr(m_TIF,PinDirection.Input,0);
-				if (tifIn==null)
-				{
-					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: FAILED to get input pin of TIF");
-					Marshal.ReleaseComObject(tifOut);tifOut=null;
-					return false;
-				}
-				hr=m_graphBuilder.Connect(tifOut,tifIn);
-				if(hr!=0)
-				{
-					Log.WriteFile(Log.LogType.Capture,true,"dvbgrapBDA: FAILED to connect demux<->tif 0x{0:X}",hr);
-					Marshal.ReleaseComObject(tifIn);tifIn=null;;
-					Marshal.ReleaseComObject(tifOut);tifOut=null;
-					return false;
-				}
-
-				Marshal.ReleaseComObject(tifIn);tifIn=null;
-				Marshal.ReleaseComObject(tifOut);tifOut=null;
 
 				
 				if (GUIGraphicsContext.DX9Device!=null)
