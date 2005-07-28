@@ -447,7 +447,7 @@ namespace MediaPortal.TV.Recording
 		public ChannelInfo GetChannelInfo(IntPtr data)
 		{
 			byte[] da=new byte[600];
-			Marshal.Copy(data,da,0,570);
+			Marshal.Copy(data,da,0,578);
 			ChannelInfo ch=new ChannelInfo();
 			ch.program_number=-1;
 			ch.network_pmt_PID=-1;

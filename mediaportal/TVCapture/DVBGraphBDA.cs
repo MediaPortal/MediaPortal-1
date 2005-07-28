@@ -3504,8 +3504,8 @@ namespace MediaPortal.TV.Recording
 							return ;
 						}
 						//set the properties on the new tuning request
-						//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:SubmitTuneRequest() set tuning properties. Freq:{0} physical channel:{1} major:{2} minor:{3} SR:{4}",
-						//																	ch.Frequency,ch.PhysicalChannel,ch.MajorChannel,ch.MinorChannel,ch.Symbolrate);
+						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:SubmitTuneRequest() set tuning properties. Freq:{0} physical channel:{1} major:{2} minor:{3} SR:{4}",
+																							ch.Frequency,ch.PhysicalChannel,ch.MajorChannel,ch.MinorChannel,ch.Symbolrate);
 						myLocator.CarrierFrequency		= ch.Frequency;
 						myLocator.PhysicalChannel			= ch.PhysicalChannel;
 						myLocator.SymbolRate				  = ch.Symbolrate;

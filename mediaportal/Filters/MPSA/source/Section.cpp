@@ -497,6 +497,8 @@ void Sections::ATSCDecodeChannelTable(BYTE *buf,ChannelInfo *ch, int* channelsFo
 	Log(" min:%d", (p1-ps));
 	p1= (byte*)( &(tmpI->Modulation));
 	Log(" mod:%d", (p1-ps));
+	p1= (byte*)( &(tmpI->Frequency));
+	Log(" freq:%d", (p1-ps));
 	
 	Log("  table id:0x%x section length:%d channels:%d", table_id,section_length,num_channels_in_section);
 	int start=10;
@@ -649,7 +651,7 @@ char* Sections::DecodeString(byte* buf, int offset, int compression_type, int mo
 	Log("DecodeString() compression type:%d numberofbytes:%d",compression_type, mode);
 	if (compression_type==0 && mode==0)
 	{
-		char* label = new char[number_of_bytes];
+		char* label = new char[number_of_bytes+1];
 		memcpy(label,&buf[offset],number_of_bytes);
 		label[number_of_bytes]=0;
 		return (char*)label;
