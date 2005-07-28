@@ -9,6 +9,7 @@
 
 // Setup data
 
+extern void Log(const char *fmt, ...) ;
 const AMOVIESETUP_MEDIATYPE sudPinTypes[2] =
 {
 	{&MEDIATYPE_MPEG2_SECTIONS, &MEDIASUBTYPE_DVB_SI},         // Minor type
@@ -274,6 +275,7 @@ CDump::CDump(LPUNKNOWN pUnk, HRESULT *phr) :
 	m_patChannelsCount(0),m_pmtGrabProgNum(0),
 	m_currentPMTLen(0)
 {
+	Log("Initialize MPSA");
 	m_bDecodeATSC=false;
     ASSERT(phr);
     memset(m_pmtGrabData,0,4096);
@@ -412,6 +414,10 @@ HRESULT CDump::Process(BYTE *pbData,long len)
 		}
 		delete d;
 	}
+		
+	if (pbData[0]==0xc8 || pbData[0]==0xc9)
+		Log("got pid:%x",pbData[0]);
+	
 	if (m_bDecodeATSC)
 	{
 		if (pbData[0]==0xc8 || pbData[0]==0xc9)
@@ -530,6 +536,10 @@ STDMETHODIMP CDump::SetPMTProgramNumber(ULONG prgNum)
 STDMETHODIMP CDump::UseATSC(BOOL yesNo)
 {
 	m_bDecodeATSC=yesNo;
+	if (m_bDecodeATSC)
+		Log("use ATSC:yes");
+	else
+		Log("use ATSC:no");
 	return S_OK;
 }
 

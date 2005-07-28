@@ -8,6 +8,7 @@
 #include <bdaiface.h>
 #include "SplitterSetup.h"
 #include <commctrl.h>
+extern void Log(const char *fmt, ...) ;
 
 SplitterSetup::SplitterSetup(Sections *pSections) :
 m_demuxSetupComplete(FALSE),m_pSectionsPin(NULL)
@@ -84,6 +85,9 @@ HRESULT SplitterSetup::SetupPins(IPin *pPin)
 	
 	HRESULT hr=0;
 
+	
+			
+	Log("Setup pins");
 
 	// video
 
@@ -97,7 +101,8 @@ HRESULT SplitterSetup::SetupPins(IPin *pPin)
 	hr=pMap->EnumPIDMap(&pPidEnum);
 	if(FAILED(hr) || pPidEnum==NULL)
 		return 7;
-		// enum and unmap the pids
+		
+	// enum and unmap the pids
 	while(pPidEnum->Next(1,&pm,&count)== S_OK)
 	{
 		if (count!=1) break;
@@ -105,24 +110,37 @@ HRESULT SplitterSetup::SetupPins(IPin *pPin)
 		umPid=pm.ulPID;
 		hr=pMap->UnmapPID(1,&umPid);
 		if(FAILED(hr))
+		{	
+			Log("failed to unmap pids");
 			return 8;
+		}
 	}
 	pPidEnum->Release();
+	
+	Log("map pid 0x0");
 	pid = (ULONG)0;// pat
 	hr=pMap->MapPID(1,&pid,MEDIA_MPEG2_PSI); // tv
 	if(FAILED(hr))
+	{
+		Log("failed to map pid 0x0");
 		return 4;
-
+	}
+	Log("map pid 0x11");
 	pid = (ULONG)0x11;// sdt
 	hr=pMap->MapPID(1,&pid,MEDIA_MPEG2_PSI); // tv
 	if(FAILED(hr))
+	{
+		Log("failed to map pid 0x11");
 		return 4;
-
+	}
+	Log("map pid 0x1ffb");
 	pid = (ULONG)0x1ffb;// ATSC
 	hr=pMap->MapPID(1,&pid,MEDIA_MPEG2_PSI); 
 	if(FAILED(hr))
+	{	
+		Log("failed to map pid 0x1ffb");
 		return 4;
-
+	}
 	pMap->Release();
 	return S_OK;
 }
