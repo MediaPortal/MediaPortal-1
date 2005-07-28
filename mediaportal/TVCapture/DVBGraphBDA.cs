@@ -903,7 +903,10 @@ namespace MediaPortal.TV.Recording
 					m_sampleInterface.SetBufferSamples(false);
 				}
 
-				m_analyzerInterface.UseATSC(Network()==NetworkType.ATSC);
+				if (Network()==NetworkType.ATSC)
+					m_analyzerInterface.UseATSC(1);
+				else
+					m_analyzerInterface.UseATSC(0);
 					
 			
 				return true;

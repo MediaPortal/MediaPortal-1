@@ -56,7 +56,7 @@ namespace DShowNET
 		int IsChannelReady(int chNum);
 
 		[PreserveSig]
-		int UseATSC(bool yesNo);
+		int UseATSC(byte yesNo);
 
 	}
 
