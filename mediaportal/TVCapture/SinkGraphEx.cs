@@ -252,10 +252,12 @@ namespace MediaPortal.TV.Recording
 						if (sinkPin!=null) Marshal.ReleaseComObject(sinkPin); sinkPin=null;
 						if (sourceFilter.DSFilter!=null) 
 						{
+							Log.WriteFile(Log.LogType.Capture,"SinkGraphEx: remove {0}",sourceFilter.FriendlyName);
 							m_graphBuilder.RemoveFilter(sourceFilter.DSFilter);							
 							Marshal.ReleaseComObject(sourceFilter.DSFilter); sourceFilter.DSFilter=null;
 						}
 						RetryOtherInstances(i);
+						Log.WriteFile(Log.LogType.Capture,"SinkGraphEx: RetryOtherInstances done");
 					}//if (hr != 0)
 				}//for (int i = 0; i < mCard.TvConnectionDefinitions.Count; i++)
 
@@ -362,6 +364,7 @@ namespace MediaPortal.TV.Recording
 					for (int filterInstance=0; filterInstance < al.Count;++filterInstance)
 					{
 						filter    = (Filter)al[filterInstance];
+						Log.WriteFile(Log.LogType.Capture,true,"SinkGraphEx: try instance :{0} {1}",filterInstance,filter.MonikerString);
 						sourceFilter.MonikerDisplayName=filter.MonikerString;
 						sourceFilter.DSFilter  = Marshal.BindToMoniker(sinkFilter.MonikerDisplayName) as IBaseFilter;
 						hr = m_graphBuilder.AddFilter(sourceFilter.DSFilter, sourceFilter.FriendlyName);
