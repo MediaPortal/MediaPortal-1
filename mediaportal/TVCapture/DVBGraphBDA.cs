@@ -1809,6 +1809,7 @@ namespace MediaPortal.TV.Recording
 			bool isTunerLocked		= false;
 			bool isSignalPresent	= false;
 			long signalQuality=0;
+			
 
 			for (int i = 0; i < m_TunerStatistics.Count; i++) 
 			{

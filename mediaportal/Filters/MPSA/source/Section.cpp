@@ -6,6 +6,7 @@
 
 
 #include <streams.h>
+#include <bdatypes.h>
 #include "Section.h"
 #include "mpsa.h"
 #include "crc.h"
@@ -543,8 +544,7 @@ void Sections::ATSCDecodeChannelTable(BYTE *buf,ChannelInfo *ch, int* channelsFo
 		strcpy((char*)channelInfo->ServiceName,shortName);
 		channelInfo->MinorChannel = minor_channel;
 		channelInfo->MajorChannel = major_channel;
-		channelInfo->Modulation   = modulation_mode;
-		channelInfo->Frequency    = carrier_frequency;
+		channelInfo->Frequency    = -1;
 		channelInfo->ProgrammNumber= program_number;
 		channelInfo->TransportStreamID = channel_TSID;		
 		channelInfo->Pids.Teletext=-1;
@@ -559,6 +559,31 @@ void Sections::ATSCDecodeChannelTable(BYTE *buf,ChannelInfo *ch, int* channelsFo
 		channelInfo->SDTReady	  = 1;
 		if (service_type==1||service_type==2) channelInfo->ServiceType=1;//ATSC video
 		if (service_type==3) channelInfo->ServiceType=2;//ATSC audio
+		switch (modulation_mode)
+		{
+			case 0: //reserved
+				channelInfo->Modulation   = BDA_MOD_NOT_SET;
+			break;
+			case 1: //analog
+				channelInfo->Modulation   = BDA_MOD_ANALOG_FREQUENCY;
+			break;
+			case 2: //QAM64
+				channelInfo->Modulation   = BDA_MOD_64QAM;
+			break;
+			case 3: //QAM256
+				channelInfo->Modulation   = BDA_MOD_256QAM;
+			break;
+			case 4: //8 VSB
+				channelInfo->Modulation   = BDA_MOD_8VSB;
+			break;
+			case 5: //16 VSB
+				channelInfo->Modulation   = BDA_MOD_16VSB;
+			break;
+			default: //
+				channelInfo->Modulation   = BDA_MOD_NOT_SET;
+			break;
+
+		}
 
 		start += 18;
 		int len=0;
