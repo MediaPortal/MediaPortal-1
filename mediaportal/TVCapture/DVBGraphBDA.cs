@@ -766,7 +766,7 @@ namespace MediaPortal.TV.Recording
 					}
 				}
 				Marshal.ReleaseComObject(pinEnum); pinEnum=null;
-				
+				if (pinAnalyzerIn!=null) Marshal.ReleaseComObject(pinAnalyzerIn);pinAnalyzerIn=null;
 				//get the video/audio output pins of the mpeg2 demultiplexer
 				if (m_DemuxVideoPin==null)
 				{
