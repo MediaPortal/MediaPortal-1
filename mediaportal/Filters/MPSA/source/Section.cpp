@@ -12,7 +12,31 @@
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
+void Log(const char *fmt, ...) 
+{
+#ifdef DEBUG
+	va_list ap;
+	va_start(ap,fmt);
 
+	char buffer[1000]; 
+	int tmp;
+	va_start(ap,fmt);
+	tmp=vsprintf(buffer, fmt, ap);
+	va_end(ap); 
+
+	FILE* fp = fopen("MPSA.log","a+");
+	if (fp!=NULL)
+	{
+		SYSTEMTIME systemTime;
+		GetSystemTime(&systemTime);
+		fprintf(fp,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d %s\n",
+			systemTime.wDay, systemTime.wMonth, systemTime.wYear,
+			systemTime.wHour,systemTime.wMinute,systemTime.wSecond,
+			buffer);
+		fclose(fp);
+	}
+#endif
+};
 Sections::Sections()
 {
 }
@@ -451,6 +475,7 @@ cont:
 void Sections::ATSCDecodeChannelTable(BYTE *buf,ChannelInfo *ch, int* channelsFound)
 {
 	*channelsFound=0;
+	Log("ATSCDecodeChannelTable()");
 	int table_id = buf[0];
 	int section_syntax_indicator = (buf[1]>>7) & 1;
 	int private_indicator = (buf[1]>>6) & 1;
@@ -462,9 +487,13 @@ void Sections::ATSCDecodeChannelTable(BYTE *buf,ChannelInfo *ch, int* channelsFo
 	int last_section_number = buf[7];
 	int protocol_version = buf[8];
 	int num_channels_in_section = buf[9];
+
+	
+	Log("  table id:0x%x section length:%d channels:%d", table_id,section_length,num_channels_in_section);
 	int start=10;
 	for (int i=0; i < num_channels_in_section;i++)
 	{
+		Log("  decode channel:%d", i);
 		char shortName[127];
 		strcpy(shortName,"unknown");
 		try
@@ -479,6 +508,8 @@ void Sections::ATSCDecodeChannelTable(BYTE *buf,ChannelInfo *ch, int* channelsFo
 		catch(...)
 		{
 		}
+		
+		Log("  channel:%d shortname:%s", i,shortName);
 
 		start+= 7*2;
 		// 4---10-- ------10 -------- 8------- 32------ -------- -------- -------- 16------ -------- 16------ -------- 2-111113 --6----- 16------ -------- 6-----10 --------
@@ -502,7 +533,8 @@ void Sections::ATSCDecodeChannelTable(BYTE *buf,ChannelInfo *ch, int* channelsFo
 		int source_id						 = ((buf[start+14])<<8) + buf[start+15];
 		int descriptors_length	 = ((buf[start+16]&0x3)<<8) + buf[start+17];
 
-		
+		Log("  channel:%d major:%d minor:%d modulation:%d frequency:%d tsid:%d program:%d servicetype:%d descriptor len:%d", 
+						i,major_channel,minor_channel,modulation_mode,carrier_frequency, channel_TSID, service_type, descriptors_length);
 		ChannelInfo* channelInfo = &ch[*channelsFound];
 		strcpy((char*)channelInfo->ServiceName,shortName);
 		channelInfo->MinorChannel = minor_channel;
@@ -527,6 +559,8 @@ void Sections::ATSCDecodeChannelTable(BYTE *buf,ChannelInfo *ch, int* channelsFo
 		{
 			int descriptor_tag = buf[start+len];
 			int descriptor_len = buf[start+len+1];
+			
+			Log("    decode descriptor start:%d len:%d tag:%x", start, descriptor_len, descriptor_tag);
 			switch (descriptor_tag)
 			{
 				case 0xa1:
@@ -541,11 +575,13 @@ void Sections::ATSCDecodeChannelTable(BYTE *buf,ChannelInfo *ch, int* channelsFo
 		start += descriptors_length;
 		*channelsFound=*channelsFound+1;
 	}
+	Log("ATSCDecodeChannelTable() done, found %d channels", (*channelsFound));
 }
 
 void Sections::DecodeServiceLocationDescriptor( byte* buf,int start,ChannelInfo* channelInfo)
 {
 
+	Log("DecodeServiceLocationDescriptor()");
 	//  8------ 8------- 3--13--- -------- 8-------       
 	// 76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210
 	//    0        1        2         3        4       5       6         7        8       9     
@@ -553,6 +589,8 @@ void Sections::DecodeServiceLocationDescriptor( byte* buf,int start,ChannelInfo*
 	int number_of_elements = buf[start+4];
 	int off=start+5;
 	channelInfo->PCRPid=pcr_pid;
+
+	Log(" pcr pid:%x elements:%d", pcr_pid, number_of_elements);
 	for (int i=0; i < number_of_elements;++i)
 	{
 		//  8------ 3--13--- -------- 24------ -------- --------
@@ -561,6 +599,8 @@ void Sections::DecodeServiceLocationDescriptor( byte* buf,int start,ChannelInfo*
 		int streamtype			  = buf[off];
 		int elementary_pid		  = ((buf[off+1]&0x1f)<<8) + buf[off+2];
 		int ISO_639_language_code =	(buf[off+3]<<16) +(buf[off+4]<<8) + (buf[off+5]);
+
+		Log(" element:%d type:%d pid:%x", i,streamtype, elementary_pid);
 		off+=6;
 		//pmtData.data=ISO_639_language_code;
 		switch (streamtype)
@@ -575,23 +615,29 @@ void Sections::DecodeServiceLocationDescriptor( byte* buf,int start,ChannelInfo*
 				break;
 		}
 	}
+	Log("DecodeServiceLocationDescriptor() done");
 }
 void Sections::DecodeExtendedChannelNameDescriptor( byte* buf,int start,ChannelInfo* channelInfo)
 {
+	Log("DecodeExtendedChannelNameDescriptor() ");
 	// tid   
 	//  8       8------- 8-------
 	// 76543210|76543210|76543210
 	//    0        1        2    
 	int descriptor_tag = buf[start+0];
 	int descriptor_len = buf[start+1];
+	Log(" tag:%x len:%d", descriptor_tag, descriptor_len);
 	char* label = DecodeMultipleStrings(buf,start+2);
 	if (label==NULL) return ;
 	strcpy((char*)channelInfo->ServiceName,label);
+
+	Log(" label:%s", label);
 	delete [] label;
+	Log("DecodeExtendedChannelNameDescriptor() done");
 }
 char* Sections::DecodeString(byte* buf, int offset, int compression_type, int mode, int number_of_bytes)
 {
-
+	Log("DecodeString() compression type:%d numberofbytes:%d",compression_type, mode);
 	if (compression_type==0 && mode==0)
 	{
 		char* label = new char[number_of_bytes];
@@ -601,21 +647,26 @@ char* Sections::DecodeString(byte* buf, int offset, int compression_type, int mo
 	//string data="";
 	//for (int i=0; i < number_of_bytes;++i)
 	//	data += String.Format(" {0:X}", buf[offset+i]);
+	Log("DecodeString() unknown type or mode");
 	return NULL;
 }
 
 char* Sections::DecodeMultipleStrings(byte* buf, int offset)
 {
 	int number_of_strings = buf[offset];
+	Log("DecodeMultipleStrings() number_of_strings:%d",number_of_strings);
 	
 
 	for (int i=0; i < number_of_strings;++i)
 	{
+		Log("  string:%d", i);
 		int ISO_639_language_code = (buf[offset+1]<<16)+(buf[offset+2]<<8)+(buf[offset+3]);
 		int number_of_segments=buf[offset+4];
 		int start=offset+5;
+		Log("  segments:%d", number_of_segments);
 		for (int k=0; k < number_of_segments;++k)
 		{
+			Log("  decode segment:%d", k);
 			int compression_type = buf[start];
 			int mode             = buf[start+1];
 			int number_bytes     = buf[start+2];
