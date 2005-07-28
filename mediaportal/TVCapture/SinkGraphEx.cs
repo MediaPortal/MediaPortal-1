@@ -356,7 +356,7 @@ namespace MediaPortal.TV.Recording
 				Filter    filter;
 				ArrayList al = AvailableFilters.Filters[key] as System.Collections.ArrayList;
 				filter    = (Filter)al[0];
-				if (!filter.Name.Equals(sourceFilter.FriendlyName))
+				if (filter.Name.Equals(sourceFilter.FriendlyName))
 				{
 					Log.WriteFile(Log.LogType.Capture,true,"SinkGraphEx: found :{0} instances",al.Count);
 					for (int filterInstance=0; filterInstance < al.Count;++filterInstance)
