@@ -1853,7 +1853,7 @@ namespace MediaPortal.TV.Recording
 
 			if (Network()==NetworkType.ATSC)
 			{
-				if (isTunerLocked || isSignalPresent ) return true;
+				if (isSignalPresent ) return true;
 				return false;
 			}
 			if (isTunerLocked || isSignalPresent || (signalQuality>0) )
@@ -3917,7 +3917,7 @@ namespace MediaPortal.TV.Recording
 
 				if (info.serviceType!=1 && info.serviceType!=2) 
 				{
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:unknown service type: provider:{0} service:{1} scrambled:{2} frequency:{3} KHz networkid:{4} transportid:{5} serviceid:{6} tv:{7} radio:{8} audiopid:0x{9:X} videopid:0x{10:X} teletextpid:0x{11:X} program:{12} pcr pid:0x{13:X} service type:{14}", 
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:unknown service type: provider:{0} service:{1} scrambled:{2} frequency:{3} KHz networkid:{4} transportid:{5} serviceid:{6} tv:{7} radio:{8} audiopid:0x{9:X} videopid:0x{10:X} teletextpid:0x{11:X} program:{12} pcr pid:0x{13:X} service type:{14} major:{15} minor:{16}", 
 																						info.service_provider_name,
 																						info.service_name,
 																						info.scrambled,
@@ -3929,10 +3929,10 @@ namespace MediaPortal.TV.Recording
 																						currentTuningObject.AudioPid,currentTuningObject.VideoPid,currentTuningObject.TeletextPid,
 																						info.program_number,
 																						info.pcr_pid,
-																						info.serviceType);
+																						info.serviceType,info.majorChannel,info.minorChannel);
 					continue;
 				}
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Found provider:{0} service:{1} scrambled:{2} frequency:{3} KHz networkid:{4} transportid:{5} serviceid:{6} tv:{7} radio:{8} audiopid:0x{9:X} videopid:0x{10:X} teletextpid:0x{11:X} program:{12} pcr pid:0x{13:X} ac3 pid:0x{14:X}", 
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Found provider:{0} service:{1} scrambled:{2} frequency:{3} KHz networkid:{4} transportid:{5} serviceid:{6} tv:{7} radio:{8} audiopid:0x{9:X} videopid:0x{10:X} teletextpid:0x{11:X} program:{12} pcr pid:0x{13:X} ac3 pid:0x{14:X} major:{15} minor:{16}", 
 																						info.service_provider_name,
 																						info.service_name,
 																						info.scrambled,
@@ -3943,7 +3943,7 @@ namespace MediaPortal.TV.Recording
 																						hasVideo, ((!hasVideo) && hasAudio),
 																						currentTuningObject.AudioPid,currentTuningObject.VideoPid,currentTuningObject.TeletextPid,
 																						info.program_number,
-																						info.pcr_pid, currentTuningObject.AC3Pid);
+																						info.pcr_pid, currentTuningObject.AC3Pid,info.majorChannel,info.minorChannel);
 
 				if (info.serviceID==0) 
 				{

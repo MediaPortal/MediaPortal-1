@@ -488,21 +488,9 @@ void Sections::ATSCDecodeChannelTable(BYTE *buf,ChannelInfo *ch, int* channelsFo
 	int last_section_number = buf[7];
 	int protocol_version = buf[8];
 	int num_channels_in_section = buf[9];
-
 	if (num_channels_in_section <= 0) return;
 
-	ChannelInfo* tmpI = &ch[0];
-	byte* ps= (byte*)( &(tmpI->TransportStreamID));
-	byte* p1= (byte*)( &(tmpI->MajorChannel));
-	Log(" maj:%d", (p1-ps));
-	p1= (byte*)( &(tmpI->MinorChannel));
-	Log(" min:%d", (p1-ps));
-	p1= (byte*)( &(tmpI->Modulation));
-	Log(" mod:%d", (p1-ps));
-	p1= (byte*)( &(tmpI->Frequency));
-	Log(" freq:%d", (p1-ps));
-	
-	Log("  table id:0x%x section length:%d channels:%d", table_id,section_length,num_channels_in_section);
+	Log("  table id:0x%x section length:%d channels:%d (%d)", table_id,section_length,num_channels_in_section, (*channelsFound));
 	int start=10;
 	for (int i=0; i < num_channels_in_section;i++)
 	{
@@ -547,24 +535,23 @@ void Sections::ATSCDecodeChannelTable(BYTE *buf,ChannelInfo *ch, int* channelsFo
 		int descriptors_length	 = ((buf[start+16]&0x3)<<8) + buf[start+17];
 
 		Log("  channel:%d major:%d minor:%d modulation:%d frequency:%d tsid:%d program:%d servicetype:%d descriptor len:%d", 
-						i,major_channel,minor_channel,modulation_mode,carrier_frequency, channel_TSID, service_type, descriptors_length);
+						i,major_channel,minor_channel,modulation_mode,carrier_frequency, channel_TSID, program_number,service_type, descriptors_length);
 		ChannelInfo* channelInfo = &ch[*channelsFound];
+		memset(channelInfo->ProviderName,0,255);
+		memset(channelInfo->ServiceName,0,255);
+		strcpy((char*)channelInfo->ProviderName,"unknown");
 		strcpy((char*)channelInfo->ServiceName,shortName);
 		channelInfo->MinorChannel = minor_channel;
 		channelInfo->MajorChannel = major_channel;
 		channelInfo->Modulation   = modulation_mode;
 		channelInfo->Frequency    = carrier_frequency;
 		channelInfo->ProgrammNumber= program_number;
+		channelInfo->TransportStreamID = channel_TSID;		
+		channelInfo->NetworkID    =-1;
 		channelInfo->PMTReady	  = 1;
 		channelInfo->SDTReady	  = 1;
-		if (service_type==0 || service_type==1|| service_type==2)
-				channelInfo->ProgrammNumber   = 1;
-		else if (service_type==3)
-			channelInfo->ProgrammNumber   = 2;
-		else 
-			channelInfo->ProgrammNumber  =3;
-		channelInfo->TransportStreamID = channel_TSID;
-		channelInfo->ProgrammNumber = major_channel*1000+minor_channel;
+		if (service_type==1||service_type==2) channelInfo->ServiceType=1;//ATSC video
+		if (service_type==3) channelInfo->ServiceType=2;//ATSC audio
 
 		start += 18;
 		int len=0;
