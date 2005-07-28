@@ -6,8 +6,8 @@
 	<define>#header.label:605</define>
 	<define>#header.hover:hover_my tv.png</define>
 	<controls>
-		<include>common.window.xml</include>
-		<include>common.time.xml</include>
+		<import>common.window.xml</import>
+		<import>common.time.xml</import>
 		<control>
 			<type>group</type>
 			<layout>StackLayout</layout>
