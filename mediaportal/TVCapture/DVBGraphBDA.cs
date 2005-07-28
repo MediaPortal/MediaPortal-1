@@ -808,7 +808,7 @@ namespace MediaPortal.TV.Recording
 				hr=demuxer.CreateOutputPin(ref tifType,"TIF",out tifOut);
 				if (hr!=0)
 				{
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: FAILED to create TIF pin on demuxer");
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: FAILED to create TIF pin on demuxer 0x{%x}",hr);
 					return false;
 				}
 				tifIn=DirectShowUtil.FindPinNr(m_TIF,PinDirection.Input,0);
@@ -821,7 +821,7 @@ namespace MediaPortal.TV.Recording
 				hr=m_graphBuilder.Connect(tifOut,tifIn);
 				if(hr!=0)
 				{
-					Log.WriteFile(Log.LogType.Capture,"dvbgrapBDA: FAILED to connect demux<->tif");
+					Log.WriteFile(Log.LogType.Capture,"dvbgrapBDA: FAILED to connect demux<->tif 0x{%x}",hr);
 					Marshal.ReleaseComObject(tifIn);tifIn=null;;
 					Marshal.ReleaseComObject(tifOut);tifOut=null;
 					return false;

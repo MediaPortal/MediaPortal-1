@@ -393,22 +393,9 @@ namespace MediaPortal.Player
 				UpdateDuration();
 				updateTimer=DateTime.Now;
 			}
-			double dBackingFileLength = backingFileDuration;	// each backing file is 10 min
-			double dMaxDuration       = maxBackingFiles * dBackingFileLength; // max. 10 backing files
 
 			if (IsTimeShifting)
 			{
-				if (Paused && Duration >= (dMaxDuration-60d) && CurrentPosition <= (2*dBackingFileLength) )
-				{
-					Log.Write("BaseStreambufferPlayer: unpause since timeshiftbuffer gets rolled over");
-					Pause();
-				}
-
-				if (Speed<0 && Duration >= (dMaxDuration-60d) && CurrentPosition <= (2*dBackingFileLength) )
-				{
-					Log.Write("BaseStreambufferPlayer: stop RWD since timeshiftbuffer gets rolled over");
-					Speed=1;
-				}
 				if (Speed>1 && CurrentPosition+5d >=Duration) 
 				{
 					Log.Write("BaseStreambufferPlayer: stop FFWD since end of timeshiftbuffer reached");
@@ -806,8 +793,11 @@ namespace MediaPortal.Player
 		void UpdateDuration()
 		{
 			//GetDuration(): Returns (content start – content stop). 
-			//content start:The time of the earliest available content. For live content, the value starts at zero and increases whenever the Stream Buffer Engine deletes an old file. 				
-			//content stop :The time of the latest available content. For live content, this value starts at zero and increases continuously.
+			//content start: The time of the earliest available content. 
+			//               For live content, the value starts at zero and increases whenever the 
+			//               Stream Buffer Engine deletes an old file. 				
+			//content stop : The time of the latest available content. For live content, this value starts at zero 
+			//               and increases continuously.
 			
 			long lDuration;
 			m_mediaSeeking.GetDuration(out lDuration); 
@@ -1127,6 +1117,14 @@ namespace MediaPortal.Player
 								{
 									Log.Write("StreamBufferPlayer:  seek to:{0}", newpos.ToString("f2"));
 									SeekAbsolute(1d+newpos);
+								}
+							}
+							if (code==DsEvCode.StreamBufferContentBecomingStale)
+							{
+								if (Paused)
+								{
+									Log.Write("StreamBufferPlayer:  unpause");
+									Pause();
 								}
 							}
 						}
