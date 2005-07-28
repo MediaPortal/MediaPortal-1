@@ -1158,8 +1158,9 @@ namespace MediaPortal.GUI.Library
 			m_dwHeight = rect.Height;
 		}
 
-		protected override void MeasureCore()
+		protected override Size MeasureCore()
 		{
+			return this.Size;
 		}
 
 		#endregion Methods

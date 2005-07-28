@@ -10,7 +10,7 @@ namespace MediaPortal.Layouts
 		#region Methods
 
 		void Arrange(ILayoutComposite composite);
-		void Measure(ILayoutComposite composite, Size availableSize);
+		Size Measure(ILayoutComposite composite, Size availableSize);
 
 		#endregion Methods
 

@@ -264,9 +264,7 @@ namespace MediaPortal.GUI.Library
 			if(_layout == null)
 				return;
 
-			_layout.Measure(this, this.Size);
-
-			this.Size = _layout.Size;
+			this.Size = _layout.Measure(this, this.Size);
 
 			_layout.Arrange(this);
 		}
@@ -293,14 +291,14 @@ namespace MediaPortal.GUI.Library
 				Arrange();
 		}
 
-		protected override void MeasureCore()
+		protected override Size MeasureCore()
 		{
 			if(_layout == null)
-				return;
+				return Size.Empty;
 
 			_layout.Measure(this, this.Size);
 
-			this.Size = _layout.Size;
+			return this.Size = _layout.Size;
 		}
 
 		#endregion Methods

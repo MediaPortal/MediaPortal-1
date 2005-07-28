@@ -32,28 +32,20 @@ namespace MediaPortal.Layouts
 
 			foreach(ILayoutComponent child in composite.Children)
 			{
-				switch(child.Dock)
-				{
-					case Dock.Left:
-						l = child;
-						break;
+				if(child.Dock == Dock.Left)
+					l = child;
 
-					case Dock.Top:
-						t = child;
-						break;
+				if(child.Dock == Dock.Top)
+					t = child;
 
-					case Dock.Right:
-						r = child;
-						break;
+				if(child.Dock == Dock.Right)
+					r = child;
 
-					case Dock.Bottom:
-						b = child;
-						break;
-							
-					case Dock.Fill:
-						f = child;
-						break;
-				}
+				if(child.Dock == Dock.Bottom)
+					b = child;
+
+				if(child.Dock == Dock.Fill)
+					f = child;
 			}
 
 			Margins m = composite.Margins;
@@ -105,7 +97,7 @@ namespace MediaPortal.Layouts
 				f.Arrange(new Rectangle(left, top, right - left, bottom - top));
 		}
 	
-		public void Measure(ILayoutComposite composite, Size availableSize)
+		public Size Measure(ILayoutComposite composite, Size availableSize)
 		{
 			ILayoutComponent l = null;
 			ILayoutComponent t = null;
@@ -115,88 +107,68 @@ namespace MediaPortal.Layouts
 
 			foreach(ILayoutComponent child in composite.Children)
 			{
-				switch(child.Dock)
-				{
-					case Dock.Left:
-						l = child;
-						break;
+				if(child.Dock == Dock.Left)
+					l = child;
 
-					case Dock.Top:
-						t = child;
-						break;
+				if(child.Dock == Dock.Top)
+					t = child;
 
-					case Dock.Right:
-						r = child;
-						break;
+				if(child.Dock == Dock.Right)
+					r = child;
 
-					case Dock.Bottom:
-						b = child;
-						break;
-							
-					case Dock.Fill:
-						f = child;
-						break;
-				}
+				if(child.Dock == Dock.Bottom)
+					b = child;
+
+				if(child.Dock == Dock.Fill)
+					f = child;
 			}
 
 			int w = 0;
 			int h = 0;
 
+			Size s = Size.Empty;
+
 			if(r != null)
 			{
-				r.Measure();
-
-				Size s = r.Size;
-
+				s = r.Measure();
 				w = s.Width + _spacing.Width;
 				h = Math.Max(h, s.Height);
 			}
 
 			if(l != null)
 			{
-				l.Measure();
-
-				Size s = l.Size;
-
+				s = l.Measure();
 				w = s.Width + _spacing.Width;
 				h = Math.Max(h, s.Height);
 			}
 
 			if(f != null)
 			{
-				f.Measure();
-
-				Size s = f.Size;
-
+				s = f.Measure();
 				w = w + s.Width;
 				h = Math.Max(h, s.Height);
 			}
 
 			if(t != null)
 			{
-				t.Measure();
-
-				Size s = t.Size;
-
+				s = t.Measure();
 				w = Math.Max(w, s.Width);
 				h = h + s.Height + _spacing.Height;
 			}
 
 			if(b != null)
 			{
-				b.Measure();
-
-				Size s = b.Size;
-
+				s = b.Measure();
 				w = Math.Max(w, s.Width);
 				h = h + s.Height + _spacing.Height;
 			}
 
 			Margins m = composite.Margins;
 
-			_size = new Size(w, h);
-			_size.Width += m.Width;
-			_size.Height += m.Height;
+			_size.Width = w + m.Width;
+			_size.Height = h + m.Height;
+
+			return _size;
 		}
 
 		#endregion Methods

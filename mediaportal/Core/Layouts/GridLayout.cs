@@ -98,7 +98,7 @@ namespace MediaPortal.Layouts
 			}
 		}
 
-		public void Measure(ILayoutComposite composite, Size availableSize)
+		public Size Measure(ILayoutComposite composite, Size availableSize)
 		{
 			int w = 0;
 			int h = 0;
@@ -116,9 +116,7 @@ namespace MediaPortal.Layouts
 				if(component.Visible == false)
 					continue;
 
-				component.Measure();
-
-				Size s = component.Size;
+				Size s = component.Measure();
 
 				w = Math.Max(w, s.Width);
 				h = Math.Max(h, s.Height);
@@ -126,9 +124,10 @@ namespace MediaPortal.Layouts
 
 			Margins margins = composite.Margins;
 
-			_size = new Size(w * cols + _spacing.Width * (cols - 1), h * rows + _spacing.Height * (rows - 1));
-			_size.Width += margins.Width;
-			_size.Height += margins.Height;
+			_size.Width = (w * cols + _spacing.Width * (cols - 1)) + margins.Width;
+			_size.Height = (h * rows + _spacing.Height * (rows - 1)) + margins.Height;
+
+			return _size;
 		}
 
 		#endregion Methods

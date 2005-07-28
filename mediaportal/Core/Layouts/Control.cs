@@ -16,13 +16,14 @@ namespace MediaPortal.Layouts
 		{
 		}
 
-		void ILayoutComponent.Measure()
+		Size ILayoutComponent.Measure()
 		{
-			MeasureCore();
+			return MeasureCore();
 		}
 
-		protected virtual void MeasureCore()
+		protected virtual Size MeasureCore()
 		{
+			return Size.Empty;
 		}
 
 		#endregion Methods

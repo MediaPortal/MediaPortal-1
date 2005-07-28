@@ -9,7 +9,7 @@ namespace MediaPortal.Layouts
 		#region Methods
 
 		void Arrange(Rectangle rect);
-		void Measure();
+		Size Measure();
 
 		#endregion Methods
 
