@@ -93,7 +93,10 @@ namespace MediaPortal.Player
 					
 					uint max,maxnon;
 					hr=streamConfig2.GetFFTransitionRates(out max,out maxnon);	
-					//Log.Write("get FFTransitionRates:{0} {1} {2:X}",max,maxnon,hr);
+
+					streamConfig2.GetBackingFileCount(out minBackingFiles, out maxBackingFiles);
+					streamConfig2.GetBackingFileDuration(out backingFileDuration);
+
 				}
 				//Log.Write("StreamBufferPlayer9: add sbe");
 

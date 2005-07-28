@@ -79,6 +79,7 @@ namespace MediaPortal.Player
 
 		/// <summary> audio interface used to control volume. </summary>
 		protected IBasicAudio								basicAudio=null;
+		protected uint minBackingFiles, maxBackingFiles,backingFileDuration;
 		VMR7Util  vmr7 = null;
 		DateTime  elapsedTimer=DateTime.Now;
 
@@ -106,6 +107,17 @@ namespace MediaPortal.Player
       {
         m_bLive=true;
       }
+
+			minBackingFiles=6;
+			maxBackingFiles=8;
+			int iTimeShiftBuffer=30;
+			using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			{
+				iTimeShiftBuffer= xmlreader.GetValueAsInt("capture", "timeshiftbuffer", 30);
+				if (iTimeShiftBuffer<5) iTimeShiftBuffer=5;
+			}
+			iTimeShiftBuffer*=60; //in seconds
+			backingFileDuration = (uint)(iTimeShiftBuffer/6);
 
 			m_bIsVisible=false;
       m_bWindowVisible=false;
@@ -381,8 +393,8 @@ namespace MediaPortal.Player
 				UpdateDuration();
 				updateTimer=DateTime.Now;
 			}
-			double dBackingFileLength = 10d * 60d;					      // each backing file is 10 min
-			double dMaxDuration       = 10d * dBackingFileLength; // max. 10 backing files
+			double dBackingFileLength = backingFileDuration;	// each backing file is 10 min
+			double dMaxDuration       = maxBackingFiles * dBackingFileLength; // max. 10 backing files
 
 			if (IsTimeShifting)
 			{
@@ -891,7 +903,11 @@ namespace MediaPortal.Player
 					uint max,maxnon;
 					hr=streamConfig2.GetFFTransitionRates(out max,out maxnon);	
 					//Log.Write("get FFTransitionRates:{0} {1} {2:X}",max,maxnon,hr);
+					streamConfig2.GetBackingFileCount(out minBackingFiles, out maxBackingFiles);
+					streamConfig2.GetBackingFileDuration(out backingFileDuration);
+
 				}
+
 
 		
 				IBaseFilter filter = (IBaseFilter) bufferSource;
