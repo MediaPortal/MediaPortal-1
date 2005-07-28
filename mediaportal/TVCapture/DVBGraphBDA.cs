@@ -3522,12 +3522,14 @@ namespace MediaPortal.TV.Recording
 							return ;
 						}
 						//set the properties on the new tuning request
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:SubmitTuneRequest() set tuning properties. Freq:{0} physical channel:{1} major:{2} minor:{3} SR:{4}",
-																							ch.Frequency,ch.PhysicalChannel,ch.MajorChannel,ch.MinorChannel,ch.Symbolrate);
+						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:SubmitTuneRequest(ATSC) set tuning properties. Freq:{0} physical channel:{1} major:{2} minor:{3} SR:{4} mod:{5} tsid:{6}",
+																							ch.Frequency,ch.PhysicalChannel,ch.MajorChannel,ch.MinorChannel,ch.Symbolrate,ch.Modulation, ch.TransportStreamID);
 						myLocator.CarrierFrequency		= ch.Frequency;
 						myLocator.PhysicalChannel			= ch.PhysicalChannel;
-						myLocator.SymbolRate				  = ch.Symbolrate;
-						myLocator.InnerFEC						= (TunerLib.FECMethod)ch.FEC;
+						myLocator.SymbolRate				  = -1;
+						myLocator.TSID								= ch.TransportStreamID;
+
+						myLocator.InnerFEC						= TunerLib.FECMethod.BDA_FEC_METHOD_NOT_SET;
 						myLocator.Modulation					= (TunerLib.ModulationType)ch.Modulation;
 						myATSCTuneRequest.MinorChannel= ch.MinorChannel;
 						myATSCTuneRequest.Channel		  = ch.MajorChannel;
