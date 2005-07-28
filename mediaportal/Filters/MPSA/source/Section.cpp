@@ -535,6 +535,16 @@ void Sections::ATSCDecodeChannelTable(BYTE *buf,ChannelInfo *ch, int* channelsFo
 		int source_id						 = ((buf[start+14])<<8) + buf[start+15];
 		int descriptors_length	 = ((buf[start+16]&0x3)<<8) + buf[start+17];
 
+		if (major_channel==0 && minor_channel==0 && channel_TSID==0 && service_type==0 )
+		{
+			*channelsFound=0;
+			return;
+		}
+		if (modulation_mode < 0 || modulation_mode > 5)
+		{
+			*channelsFound=0;
+			return;
+		}
 		Log("  channel:%d major:%d minor:%d modulation:%d frequency:%d tsid:%d program:%d servicetype:%d descriptor len:%d", 
 						i,major_channel,minor_channel,modulation_mode,carrier_frequency, channel_TSID, program_number,service_type, descriptors_length);
 		ChannelInfo* channelInfo = &ch[*channelsFound];
@@ -587,11 +597,20 @@ void Sections::ATSCDecodeChannelTable(BYTE *buf,ChannelInfo *ch, int* channelsFo
 
 		start += 18;
 		int len=0;
+		if (descriptors_length<=0)
+		{
+			*channelsFound=0;
+			return;
+		}
 		while (len < descriptors_length)
 		{
 			int descriptor_tag = buf[start+len];
 			int descriptor_len = buf[start+len+1];
-			
+			if (descriptor_len==0 || descriptor_len+start > section_length)
+			{
+				*channelsFound=0;
+				return;
+			}			
 			Log("    decode descriptor start:%d len:%d tag:%x", start, descriptor_len, descriptor_tag);
 			switch (descriptor_tag)
 			{
@@ -622,9 +641,11 @@ void Sections::DecodeServiceLocationDescriptor( byte* buf,int start,ChannelInfo*
 	int off=start+5;
 	channelInfo->PCRPid=pcr_pid;
 
+	if (number_of_elements==0) return;
 	Log(" pcr pid:%x elements:%d", pcr_pid, number_of_elements);
 	for (int i=0; i < number_of_elements;++i)
 	{
+
 		//  8------ 3--13--- -------- 24------ -------- --------
 		// 76543210|76543210|76543210|76543210|76543210|76543210|
 		//    0        1        2         3        4       5     
