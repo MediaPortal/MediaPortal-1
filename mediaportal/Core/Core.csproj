@@ -939,6 +939,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Layouts\RingLayout.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Layouts\Scrollable.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
