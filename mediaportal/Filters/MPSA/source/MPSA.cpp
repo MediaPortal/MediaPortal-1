@@ -415,15 +415,16 @@ HRESULT CDump::Process(BYTE *pbData,long len)
 		delete d;
 	}
 		
-	if (pbData[0]==0xc8 || pbData[0]==0xc9)
-		Log("got pid:%x",pbData[0]);
 	
 	if (m_bDecodeATSC)
 	{
-		if (pbData[0]==0xc8 || pbData[0]==0xc9)
+		if (m_patChannelsCount==0)
 		{
-			//decode ATSC: Virtual Channel Table (pid 0xc8 / 0xc9)
-			m_pSections->ATSCDecodeChannelTable(pbData,m_patTable, &m_patChannelsCount);
+			if (pbData[0]==0xc8 || pbData[0]==0xc9)
+			{
+				//decode ATSC: Virtual Channel Table (pid 0xc8 / 0xc9)
+				m_pSections->ATSCDecodeChannelTable(pbData,m_patTable, &m_patChannelsCount);
+			}
 		}
 	}
 	else

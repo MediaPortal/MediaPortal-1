@@ -489,6 +489,14 @@ void Sections::ATSCDecodeChannelTable(BYTE *buf,ChannelInfo *ch, int* channelsFo
 	int protocol_version = buf[8];
 	int num_channels_in_section = buf[9];
 
+	ChannelInfo* tmpI = &ch[0];
+	byte* ps= (byte*)( &(tmpI->TransportStreamID));
+	byte* p1= (byte*)( &(tmpI->MajorChannel));
+	Log(" maj:%d", (p1-ps));
+	p1= (byte*)( &(tmpI->MinorChannel));
+	Log(" min:%d", (p1-ps));
+	p1= (byte*)( &(tmpI->Modulation));
+	Log(" mod:%d", (p1-ps));
 	
 	Log("  table id:0x%x section length:%d channels:%d", table_id,section_length,num_channels_in_section);
 	int start=10;
@@ -502,7 +510,7 @@ void Sections::ATSCDecodeChannelTable(BYTE *buf,ChannelInfo *ch, int* channelsFo
 			//shortname 7*16 bits (14 bytes) in UTF-16
 			for (int count=0; count < 7; count++)
 			{
-				shortName[count] = buf[start+count*2];
+				shortName[count] = buf[1+start+count*2];
 				shortName[count+1]=0; 
 			}
 		}
@@ -643,6 +651,7 @@ char* Sections::DecodeString(byte* buf, int offset, int compression_type, int mo
 	{
 		char* label = new char[number_of_bytes];
 		memcpy(label,&buf[offset],number_of_bytes);
+		label[number_of_bytes]=0;
 		return (char*)label;
 	}
 	//string data="";
