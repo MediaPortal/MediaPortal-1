@@ -489,6 +489,8 @@ void Sections::ATSCDecodeChannelTable(BYTE *buf,ChannelInfo *ch, int* channelsFo
 	int protocol_version = buf[8];
 	int num_channels_in_section = buf[9];
 
+	if (num_channels_in_section <= 0) return;
+
 	ChannelInfo* tmpI = &ch[0];
 	byte* ps= (byte*)( &(tmpI->TransportStreamID));
 	byte* p1= (byte*)( &(tmpI->MajorChannel));

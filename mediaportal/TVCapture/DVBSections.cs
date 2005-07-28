@@ -447,7 +447,7 @@ namespace MediaPortal.TV.Recording
 		public ChannelInfo GetChannelInfo(IntPtr data)
 		{
 			byte[] da=new byte[600];
-			Marshal.Copy(data,da,0,578);
+			Marshal.Copy(data,da,0,580);
 			ChannelInfo ch=new ChannelInfo();
 			ch.program_number=-1;
 			ch.network_pmt_PID=-1;
@@ -561,7 +561,7 @@ namespace MediaPortal.TV.Recording
 			ch.majorChannel=Marshal.ReadInt16(data,568);
 			ch.minorChannel=Marshal.ReadInt16(data,570);
 			ch.modulation=Marshal.ReadInt16(data,572);
-			ch.freq=Marshal.ReadInt32(data,574);
+			ch.freq=Marshal.ReadInt32(data,576);
 
 			RemoveInvalidChars(ref ch.service_name);
 			RemoveInvalidChars(ref ch.service_provider_name);

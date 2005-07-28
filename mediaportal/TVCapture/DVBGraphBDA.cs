@@ -1851,6 +1851,11 @@ namespace MediaPortal.TV.Recording
 			//so we just look if any variables returns true
 			//	Log.WriteFile(Log.LogType.Capture,"  locked:{0} present:{1} quality:{2}",isTunerLocked ,isSignalPresent ,signalQuality); 
 
+			if (Network()==NetworkType.ATSC)
+			{
+				if (isTunerLocked || isSignalPresent ) return true;
+				return false;
+			}
 			if (isTunerLocked || isSignalPresent || (signalQuality>0) )
 			{
 				return true;

@@ -350,8 +350,8 @@ CUnknown * WINAPI CDump::CreateInstance(LPUNKNOWN punk, HRESULT *phr)
 
 STDMETHODIMP CDump::ResetParser()
 {
-	HRESULT hr;
-	hr=m_pDemuxer->UnMapAllPIDs();
+	Log("ResetParser");
+	HRESULT hr=m_pDemuxer->UnMapAllPIDs();
 	m_patChannelsCount=0;
 	return hr;
 }
