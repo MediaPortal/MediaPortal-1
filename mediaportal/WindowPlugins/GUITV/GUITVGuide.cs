@@ -1976,6 +1976,20 @@ namespace MediaPortal.GUI.TV
 		}
 		static void StartImportXML()
 		{
+			try
+			{
+				//check if file can be opened for reading....
+				Encoding fileEncoding = Encoding.Default;				
+				FileStream streamIn = File.Open(m_strTVGuideFile,FileMode.Open,FileAccess.Read,FileShare.Read);
+				StreamReader fileIn = new StreamReader(streamIn, fileEncoding, true);
+				fileIn.Close();
+				streamIn.Close();
+			}
+			catch(Exception)
+			{
+				return;
+			}
+
 			m_watcher.EnableRaisingEvents = false;
 			Thread workerThread =new Thread( new ThreadStart(ThreadFunctionImportTVGuide)); 
 			workerThread.Priority=ThreadPriority.BelowNormal;
