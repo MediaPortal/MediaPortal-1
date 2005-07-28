@@ -3821,7 +3821,7 @@ namespace MediaPortal.TV.Recording
 							}
 							else
 							{
-								currentTuningObject.Frequency=chi.freq;
+								currentTuningObject.Frequency=0;
 								currentTuningObject.Modulation=chi.modulation;
 							}
 							Marshal.FreeCoTaskMem(mmch);
