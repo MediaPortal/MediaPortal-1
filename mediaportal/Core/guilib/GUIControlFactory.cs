@@ -522,7 +522,7 @@ namespace MediaPortal.GUI.Library
 			if(layoutClass.ToLower() == "gridlayout")
 			{
 				if(valueParameters.Length >= 5)
-					return new GridLayout(valueParameters[0], valueParameters[1], valueParameters[2], valueParameters[3], valueParameters[4]);
+					return new GridLayout(valueParameters[0], valueParameters[1], valueParameters[2], valueParameters[3], (Orientation)valueParameters[4]);
 
 				if(valueParameters.Length >= 4)
 					return new GridLayout(valueParameters[0], valueParameters[1], valueParameters[2], valueParameters[3]);
@@ -541,6 +541,9 @@ namespace MediaPortal.GUI.Library
 
 			if(layoutClass.ToLower() == "stacklayout")
 			{
+				if(valueParameters.Length >= 2)
+					return new StackLayout(valueParameters[0], (Orientation)valueParameters[1]);
+
 				if(valueParameters.Length >= 1)
 					return new StackLayout(valueParameters[0]);
 
@@ -569,7 +572,18 @@ namespace MediaPortal.GUI.Library
 					if(token == string.Empty)
 						continue;
 
-					valuesTemp.Add(int.Parse(token));	
+					if(string.Compare(token, "Horizontal") == 0)
+					{
+						valuesTemp.Add((int)Orientation.Horizontal);
+					}
+					else if(string.Compare(token, "Vertical") == 0)
+					{
+						valuesTemp.Add((int)Orientation.Vertical);
+					}
+					else
+					{
+						valuesTemp.Add(int.Parse(token));	
+					}
 				}
 
 				int[] values = new int[valuesTemp.Count];
