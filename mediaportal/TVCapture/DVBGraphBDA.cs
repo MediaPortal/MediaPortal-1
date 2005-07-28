@@ -3786,7 +3786,7 @@ namespace MediaPortal.TV.Recording
 				if(count>0)
 				{
 					transp.channels=new ArrayList();
-					for(int t=0;t<count-1;t++)
+					for(int t=0;t<count;t++)
 						if(m_analyzerInterface.IsChannelReady(t)==0)
 						{
 							DVBSections.ChannelInfo chi=new MediaPortal.TV.Recording.DVBSections.ChannelInfo();

@@ -547,6 +547,13 @@ void Sections::ATSCDecodeChannelTable(BYTE *buf,ChannelInfo *ch, int* channelsFo
 		channelInfo->Frequency    = carrier_frequency;
 		channelInfo->ProgrammNumber= program_number;
 		channelInfo->TransportStreamID = channel_TSID;		
+		channelInfo->Pids.Teletext=-1;
+		channelInfo->Pids.AudioPid1=-1;
+		channelInfo->Pids.AudioPid2=-1;
+		channelInfo->Pids.AudioPid3=-1;
+		channelInfo->Pids.AC3=-1;
+		channelInfo->Pids.Subtitles=-1;
+		channelInfo->Pids.VideoPid=-1;
 		channelInfo->NetworkID    =-1;
 		channelInfo->PMTReady	  = 1;
 		channelInfo->SDTReady	  = 1;
