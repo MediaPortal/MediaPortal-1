@@ -171,7 +171,7 @@ namespace MediaPortal.GUI.Library
 						controlId = Navigate((Direction)action.wID);
 
 					if(controlId != -1 && controlId != GetID)
-						FocusControl(WindowId, controlId);
+						FocusControl(WindowId, controlId, (Direction)action.wID);
 
 					break;
 				}
@@ -321,7 +321,7 @@ namespace MediaPortal.GUI.Library
 						{
 							int controlId = 0;
 
-							switch((Action.ActionType)message.Message)
+							switch((Action.ActionType)message.Param1)
 							{
 								case Action.ActionType.ACTION_MOVE_DOWN:
 									controlId = m_dwControlDown;
@@ -338,10 +338,10 @@ namespace MediaPortal.GUI.Library
 							}
 
 							if(controlId == 0)
-								controlId = Navigate((Direction)message.Message);
+								controlId = Navigate((Direction)message.Param1);
 
 							if(controlId != -1 && controlId != GetID)
-								FocusControl(WindowId, controlId);
+								FocusControl(WindowId, controlId, (Direction)message.Param1);
 
 							return true;
 						}
@@ -739,6 +739,13 @@ namespace MediaPortal.GUI.Library
 			GUIWindow window=GUIWindowManager.GetWindow(iWindowId);
 			if (window!=null) window.OnMessage(msg);
 
+		}
+
+		public static void FocusControl(int iWindowId, int iControlId, Direction direction)
+		{
+			GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, iWindowId, 0, iControlId, (int)direction, 0, null);
+			GUIWindow window=GUIWindowManager.GetWindow(iWindowId);
+			if (window!=null) window.OnMessage(msg);
 		}
 
 		/// <summary>
@@ -1170,13 +1177,13 @@ namespace MediaPortal.GUI.Library
 		public override Size Size
 		{
 			get { return new Size(m_dwWidth, m_dwHeight); }
-			set { m_dwWidth = value.Width; m_dwHeight = value.Height; }
+			set { m_dwWidth = value.Width; m_dwHeight = value.Height; Update(); }
 		}
 
 		public override Point Location
 		{
 			get { return new Point(m_dwPosX, m_dwPosY); }
-			set { m_dwPosX = value.X; m_dwPosY = value.Y; }
+			set { m_dwPosX = value.X; m_dwPosY = value.Y; Update(); }
 		}
 
 		public override bool Visible
