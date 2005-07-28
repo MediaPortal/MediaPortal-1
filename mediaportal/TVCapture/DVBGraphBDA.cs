@@ -3818,6 +3818,11 @@ namespace MediaPortal.TV.Recording
 							{
 								chi.freq=currentTuningObject.Frequency;
 							}
+							else
+							{
+								currentTuningObject.Frequency=chi.freq;
+								currentTuningObject.Modulation=chi.modulation;
+							}
 							Marshal.FreeCoTaskMem(mmch);
 							transp.channels.Add(chi);
 						}

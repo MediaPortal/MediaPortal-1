@@ -554,7 +554,7 @@ void Sections::ATSCDecodeChannelTable(BYTE *buf,ChannelInfo *ch, int* channelsFo
 		strcpy((char*)channelInfo->ServiceName,shortName);
 		channelInfo->MinorChannel = minor_channel;
 		channelInfo->MajorChannel = major_channel;
-		channelInfo->Frequency    = -1;
+		channelInfo->Frequency    = carrier_frequency;
 		channelInfo->ProgrammNumber= program_number;
 		channelInfo->TransportStreamID = channel_TSID;		
 		channelInfo->Pids.Teletext=-1;
