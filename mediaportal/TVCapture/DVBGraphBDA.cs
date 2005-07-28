@@ -701,7 +701,6 @@ namespace MediaPortal.TV.Recording
 					return false;
 				}
 
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph() connect demuxer->Stream analyzer");
 
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph() find audio/video pins");
 				bool connected=false;
@@ -726,11 +725,13 @@ namespace MediaPortal.TV.Recording
 							{
 								if (pinMediaType.majorType==MediaType.Audio)
 								{
+									Log.Write("DVBGraphBDA: found audio pin");
 									m_DemuxAudioPin=pin[0];
 									break;
 								}
 								if (pinMediaType.majorType==MediaType.Video)
 								{
+									Log.Write("DVBGraphBDA: found video pin");
 									m_DemuxVideoPin=pin[0];
 									break;
 								}
@@ -757,12 +758,10 @@ namespace MediaPortal.TV.Recording
 										Marshal.ReleaseComObject(pinConnectedTo);
 										pinConnectedTo=null;
 									}
-
 								}
 							}
 						}
 						Marshal.ReleaseComObject(enumMedia); enumMedia=null;
-						if (m_DemuxAudioPin!=null && m_DemuxVideoPin!=null) break;
 					}
 				}
 				Marshal.ReleaseComObject(pinEnum); pinEnum=null;
@@ -2788,6 +2787,7 @@ namespace MediaPortal.TV.Recording
 					(int)Network());
 				if (!System.IO.File.Exists(pmtName))
 				{
+					m_lastPMTVersion=-1;
 					return false;
 				}
 						
@@ -3093,6 +3093,7 @@ namespace MediaPortal.TV.Recording
 			IntPtr pmtMem=Marshal.AllocCoTaskMem(4096);// max. size for pmt
 			if(pmtMem!=IntPtr.Zero)
 			{
+				m_analyzerInterface.SetPMTProgramNumber(currentTuningObject.ProgramNumber);
 				int res=m_analyzerInterface.GetPMTData(pmtMem);
 				if(res!=-1)
 				{
@@ -3144,7 +3145,9 @@ namespace MediaPortal.TV.Recording
 			}
 
 			if (!reTune) return;
-			Log.Write("DVBGraphBDA: no video->retune.. strength:{0} quality:{1}", SignalStrength(), SignalQuality());
+			ushort count=0;
+			m_analyzerInterface.GetChannelCount(ref count);
+			Log.Write("DVBGraphBDA: no video->retune.. strength:{0} quality:{1} channels:{2}", SignalStrength(), SignalQuality(), count);
 			SubmitTuneRequest(currentTuningObject);
 			if (m_streamDemuxer != null)
 			{
