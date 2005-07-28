@@ -625,6 +625,23 @@ namespace MediaPortal.TV.Recording
 						return false;
 					}
 				}
+
+				//=========================================================================================================
+				// add the MPEG-2 Demultiplexer 
+				//=========================================================================================================
+				// Use CLSID_Mpeg2Demultiplexer to create the filter
+				m_MPEG2Demultiplexer = (IBaseFilter) Activator.CreateInstance(Type.GetTypeFromCLSID(Clsid.Mpeg2Demultiplexer, true));
+				if(m_MPEG2Demultiplexer== null) 
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to create Mpeg2 Demultiplexer");
+					return false;
+				}
+
+
+				// Add the Demux to the graph
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph() add mpeg2 demuxer to graph");
+				m_graphBuilder.AddFilter(m_MPEG2Demultiplexer, "MPEG-2 Demultiplexer");
+
 				//=========================================================================================================
 				// add the TIF 
 				//=========================================================================================================
@@ -644,68 +661,101 @@ namespace MediaPortal.TV.Recording
 				}
 				m_graphBuilder.AddFilter(m_TIF, "BDA MPEG2 Transport Information Filter");
 
-				//=========================================================================================================
-				// add the MPEG-2 Demultiplexer 
-				//=========================================================================================================
-				// Use CLSID_Mpeg2Demultiplexer to create the filter
-				m_MPEG2Demultiplexer = (IBaseFilter) Activator.CreateInstance(Type.GetTypeFromCLSID(Clsid.Mpeg2Demultiplexer, true));
-				if(m_MPEG2Demultiplexer== null) 
+
+
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph() connect grabber->demuxer");
+				if (GUIGraphicsContext.DX9Device!=null)
 				{
-					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to create Mpeg2 Demultiplexer");
-					return false;
-				}
-
-
-				// Add the Demux to the graph
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph() add mpeg2 demuxer to graph");
-				m_graphBuilder.AddFilter(m_MPEG2Demultiplexer, "MPEG-2 Demultiplexer");
-
-				
-
-
-				IMpeg2Demultiplexer   demuxer=m_MPEG2Demultiplexer as IMpeg2Demultiplexer;
-
-
-				//create TIF pin on demuxer and connect it to the TIF
-				AMMediaType tifType=new AMMediaType();
-				tifType.majorType=MEDIATYPE_MPEG2_SECTIONS;
-				tifType.subType=MEDIASUBTYPE_DVB_SI;
-				tifType.formatType = FormatType.None;
-				if (Network()==NetworkType.ATSC)
-				{
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: create TIF for ATSC");
-					tifType.subType=MEDIASUBTYPE_ATSC_SI;
+					if(!ConnectFilters(ref m_sampleGrabber, ref m_MPEG2Demultiplexer)) 
+					{
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to connect samplegrabber filter->mpeg2 demultiplexer");
+						return false;
+					}
 				}
 				else
 				{
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: create TIF for DVB");
-				}
+					if(!ConnectFilters(ref lastFilter.DSFilter, ref m_MPEG2Demultiplexer)) 
+					{
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to connect samplegrabber filter->mpeg2 demultiplexer");
+						return false;
+					}
+				}				
 
-				IPin tifOut, tifIn;
-				hr=demuxer.CreateOutputPin(ref tifType,"TIF",out tifOut);
-				if (hr!=0)
+
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph() connect demuxer->tif");
+				if(!ConnectFilters(ref m_MPEG2Demultiplexer,ref m_TIF))
 				{
-					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: FAILED to create TIF pin on demuxer 0x{0:X}",hr);
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to connect mpeg2 demultiplexer->TIF");
 					return false;
 				}
-				tifIn=DirectShowUtil.FindPinNr(m_TIF,PinDirection.Input,0);
-				if (tifIn==null)
-				{
-					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: FAILED to get input pin of TIF");
-					Marshal.ReleaseComObject(tifOut);tifOut=null;
-					return false;
-				}
-				hr=m_graphBuilder.Connect(tifOut,tifIn);
+				IMpeg2Demultiplexer   demuxer=m_MPEG2Demultiplexer as IMpeg2Demultiplexer;
+
+
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph() add stream analyzer");
+				m_dvbAnalyzer=(IBaseFilter) Activator.CreateInstance( Type.GetTypeFromCLSID( Clsid.MPStreamAnalyzer, true ) );
+				m_analyzerInterface=(IStreamAnalyzer)m_dvbAnalyzer;
+				hr=m_graphBuilder.AddFilter(m_dvbAnalyzer,"Stream-Analyzer");
 				if(hr!=0)
 				{
-					Log.WriteFile(Log.LogType.Capture,true,"dvbgrapBDA: FAILED to connect demux<->tif 0x{0:X}",hr);
-					Marshal.ReleaseComObject(tifIn);tifIn=null;;
-					Marshal.ReleaseComObject(tifOut);tifOut=null;
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: FAILED to add SectionsFilter 0x{0:X}",hr);
 					return false;
 				}
 
-				Marshal.ReleaseComObject(tifIn);tifIn=null;
-				Marshal.ReleaseComObject(tifOut);tifOut=null;
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph() connect demuxer->Stream analyzer");
+				if(!ConnectFilters(ref m_MPEG2Demultiplexer,ref m_dvbAnalyzer))
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to connect mpeg2 demultiplexer->Stream Analyzer");
+					return false;
+				}
+
+				IEnumPins pinEnum;
+				m_MPEG2Demultiplexer.EnumPins(out pinEnum);
+				pinEnum.Reset();
+				IPin[] pin= new IPin[1];
+				int fetched=0;
+				while (pinEnum.Next(1,pin,out fetched)==0)
+				{
+					if (fetched==1)
+					{
+						IEnumMediaTypes enumMedia;
+						pin[0].EnumMediaTypes(out enumMedia);
+						enumMedia.Reset();
+						AMMediaTypeClass pinMediaType;
+						uint fetchedm=0;
+						while (enumMedia.Next(1,out pinMediaType,out fetchedm)==0)
+						{
+							if (fetchedm==1)
+							{
+								if (pinMediaType.majorType==MediaType.Audio)
+								{
+									m_DemuxAudioPin=pin[0];
+									break;
+								}
+								if (pinMediaType.majorType==MediaType.Video)
+								{
+									m_DemuxVideoPin=pin[0];
+									break;
+								}
+							}
+						}
+						Marshal.ReleaseComObject(enumMedia); enumMedia=null;
+					}
+				}
+				Marshal.ReleaseComObject(pinEnum); pinEnum=null;
+				
+				//get the video/audio output pins of the mpeg2 demultiplexer
+				if (m_DemuxVideoPin==null)
+				{
+					//video pin not found
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to get pin '{0}' (video out) from MPEG-2 Demultiplexer",m_DemuxVideoPin);
+					return false;
+				}
+				if (m_DemuxAudioPin==null)
+				{
+					//audio pin not found
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to get pin '{0}' (audio out)  from MPEG-2 Demultiplexer",m_DemuxAudioPin);
+					return false;
+				}
 
 				if (demuxer!=null)
 				{
@@ -790,86 +840,6 @@ namespace MediaPortal.TV.Recording
 				}
 				else
 					Log.WriteFile(Log.LogType.Capture,true,"mpeg2:mapped IMPEG2Demultiplexer not found");
-
-				m_dvbAnalyzer=(IBaseFilter) Activator.CreateInstance( Type.GetTypeFromCLSID( Clsid.MPStreamAnalyzer, true ) );
-				m_analyzerInterface=(IStreamAnalyzer)m_dvbAnalyzer;
-				hr=m_graphBuilder.AddFilter(m_dvbAnalyzer,"Stream-Analyzer");
-				if(hr!=0)
-				{
-					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: FAILED to add SectionsFilter 0x{0:X}",hr);
-					return false;
-				}
-				AMMediaType mtype=new AMMediaType();
-				mtype.majorType=MEDIATYPE_MPEG2_SECTIONS;
-				mtype.subType=MEDIASUBTYPE_MPEG2_DATA;
-
-				IPin mpsaIn;
-				IPin mpsaPin;
-				hr=DsUtils.GetPin(m_dvbAnalyzer,PinDirection.Input,0,out mpsaPin);
-				if(mpsaPin==null)
-				{
-					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: input pin for mpeg2data not found 0x{0:X}",hr);
-					return false;
-				}
-
-				hr=demuxer.CreateOutputPin(ref mtype,"MPEG2Sections",out m_demuxSectionsPin);
-				if (hr!=0)
-				{
-					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: FAILED to create mpeg2-sections pin on demuxer 0x{0:X}",hr);
-					Marshal.ReleaseComObject(mpsaPin);mpsaPin=null;
-					return false;
-				}
-
-				hr=demuxer.CreateOutputPin(ref mtype,"DVB-Sections",out mpsaIn);
-				if (hr!=0)
-				{
-					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: FAILED to create mpeg2-sections pin on demuxer 0x{0:X}",hr);
-					Marshal.ReleaseComObject(mpsaPin);mpsaPin=null;
-					return false;
-				}
-				hr=m_graphBuilder.Connect(mpsaIn,mpsaPin);
-				if(hr!=0)
-				{
-					Log.WriteFile(Log.LogType.Capture,true,"dvbgrapBDA: FAILED to connect demux<->mpeg2data 0x{0:X}",hr);
-					Marshal.ReleaseComObject(mpsaPin);mpsaPin=null;;
-					Marshal.ReleaseComObject(mpsaIn);mpsaIn=null;
-					return false;
-				}
-
-				Marshal.ReleaseComObject(mpsaPin);mpsaPin=null;
-				Marshal.ReleaseComObject(mpsaIn);mpsaIn=null;
-
-
-				
-				if (GUIGraphicsContext.DX9Device!=null)
-				{
-					if(!ConnectFilters(ref m_sampleGrabber, ref m_MPEG2Demultiplexer)) 
-					{
-						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to connect samplegrabber filter->mpeg2 demultiplexer");
-						return false;
-					}
-				}
-				else
-				{
-					if(!ConnectFilters(ref lastFilter.DSFilter, ref m_MPEG2Demultiplexer)) 
-					{
-						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to connect samplegrabber filter->mpeg2 demultiplexer");
-						return false;
-					}
-				}
-				//get the video/audio output pins of the mpeg2 demultiplexer
-				if (m_DemuxVideoPin==null)
-				{
-					//video pin not found
-					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to get pin '{0}' (video out) from MPEG-2 Demultiplexer",m_DemuxVideoPin);
-					return false;
-				}
-				if (m_DemuxAudioPin==null)
-				{
-					//audio pin not found
-					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to get pin '{0}' (audio out)  from MPEG-2 Demultiplexer",m_DemuxAudioPin);
-					return false;
-				}
 
 				//=========================================================================================================
 				// Create the streambuffer engine and mpeg2 video analyzer components since we need them for
