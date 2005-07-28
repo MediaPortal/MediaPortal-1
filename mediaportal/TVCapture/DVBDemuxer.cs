@@ -858,7 +858,7 @@ namespace MediaPortal.TV.Recording
 					m_packetHeader=m_tsHelper.GetHeader((IntPtr)ptr);
 					if (m_packetHeader.Pid==2222 ||
 						m_packetHeader.Pid==2220 ||
-						m_packetHeader.Pid==0)
+						m_packetHeader.Pid==0 || true)
 					{
 						byte[] byData=new byte[188];
 						Marshal.Copy((IntPtr)ptr,byData,0,188);
@@ -867,7 +867,7 @@ namespace MediaPortal.TV.Recording
 					}
 
 					//limit to 100MB
-					if (fileLen > 1024L*1024L*100L)
+					if (fileLen > 1024L*1024L*50L)
 					{
 						writer.Close();
 						stream.Close();

@@ -155,11 +155,6 @@
                     HintPath = "..\Setup\postsetup\wmppia.dll"
                 />
                 <Reference
-                    Name = "Interop.TunerLib"
-                    AssemblyName = "Interop.TunerLib"
-                    HintPath = "..\Interop.TunerLib.dll"
-                />
-                <Reference
                     Name = "Microsoft.DirectX"
                     AssemblyName = "Microsoft.DirectX"
                     HintPath = "..\Microsoft.DirectX.dll"
@@ -198,6 +193,11 @@
                     Name = "Interop.DirectShowHelperLib"
                     AssemblyName = "Interop.DirectShowHelperLib"
                     HintPath = "..\Interop.DirectShowHelperLib.dll"
+                />
+                <Reference
+                    Name = "Interop.TunerLib"
+                    AssemblyName = "Interop.TunerLib"
+                    HintPath = "..\Interop.TunerLib.dll"
                 />
             </References>
         </Build>
