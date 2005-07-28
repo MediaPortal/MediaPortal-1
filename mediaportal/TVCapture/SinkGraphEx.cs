@@ -349,21 +349,22 @@ namespace MediaPortal.TV.Recording
 				return;
 			}
 
+			Log.WriteFile(Log.LogType.Capture,true,"SinkGraphEx: find instances of :{0} instances",sourceFilter.FriendlyName);
 			foreach (string key in AvailableFilters.Filters.Keys)
 			{
 				int hr;
 				Filter    filter;
 				ArrayList al = AvailableFilters.Filters[key] as System.Collections.ArrayList;
 				filter    = (Filter)al[0];
-				if (!filter.Name.Equals(sinkFilter.FriendlyName))
+				if (!filter.Name.Equals(sourceFilter.FriendlyName))
 				{
 					Log.WriteFile(Log.LogType.Capture,true,"SinkGraphEx: found :{0} instances",al.Count);
 					for (int filterInstance=0; filterInstance < al.Count;++filterInstance)
 					{
 						filter    = (Filter)al[filterInstance];
-						sinkFilter.MonikerDisplayName=filter.MonikerString;
-						sinkFilter.DSFilter  = Marshal.BindToMoniker(sinkFilter.MonikerDisplayName) as IBaseFilter;
-						hr = m_graphBuilder.AddFilter(sinkFilter.DSFilter, sinkFilter.FriendlyName);
+						sourceFilter.MonikerDisplayName=filter.MonikerString;
+						sourceFilter.DSFilter  = Marshal.BindToMoniker(sinkFilter.MonikerDisplayName) as IBaseFilter;
+						hr = m_graphBuilder.AddFilter(sourceFilter.DSFilter, sourceFilter.FriendlyName);
 						sourcePin    = DirectShowUtil.FindPin(sourceFilter.DSFilter, PinDirection.Output, ((ConnectionDefinition)mCard.TvConnectionDefinitions[instance]).SourcePinName);
 						if (sourcePin == null)
 						{
