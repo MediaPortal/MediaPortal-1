@@ -1525,7 +1525,7 @@ namespace MediaPortal.TV.Recording
 
 			if (card < 0) 
 			{
-				Log.WriteFile(Log.LogType.Recorder,"Recorder:  No free card which can receive channel {0}", channel);
+				Log.WriteFile(Log.LogType.Recorder,"Recorder:  No free card which can receive channel [{0}]", channel);
 				return; // no card available
 			}
 

@@ -6,6 +6,7 @@
  */
 
 using System;
+using System.Collections;
 using System.Drawing;
 using System.Runtime.InteropServices; 
 using DShowNET;
@@ -174,12 +175,12 @@ namespace MediaPortal.TV.Recording
 					sinkFilter   = mCard.TvFilterDefinitions[((ConnectionDefinition)mCard.TvConnectionDefinitions[i]).SinkCategory] as FilterDefinition;
 					if (sourceFilter==null)
 					{
-						Log.WriteFile(Log.LogType.Capture,true,"Cannot find source filter for connection:{0}",i);
+						Log.WriteFile(Log.LogType.Capture,true,"SinkGraphEx: Cannot find source filter for connection:{0}",i);
 						continue;
 					}
 					if (sinkFilter==null)
 					{
-						Log.WriteFile(Log.LogType.Capture,true,"Cannot find sink filter for connection:{0}",i);
+						Log.WriteFile(Log.LogType.Capture,true,"SinkGraphEx: Cannot find sink filter for connection:{0}",i);
 						continue;
 					}
 					Log.WriteFile(Log.LogType.Capture,"SinkGraphEx:  Connecting <{0}>:{1} with <{2}>:{3}", 
@@ -247,8 +248,16 @@ namespace MediaPortal.TV.Recording
 							Log.WriteFile(Log.LogType.Capture,"SinkGraphEx:   -- Cannot connect: {0} or {1}", sourcePin.ToString(), sinkPin.ToString());
 						}
 
-					}
-				}
+						if (sourcePin!=null) Marshal.ReleaseComObject(sourcePin); sourcePin=null;
+						if (sinkPin!=null) Marshal.ReleaseComObject(sinkPin); sinkPin=null;
+						if (sourceFilter.DSFilter!=null) 
+						{
+							m_graphBuilder.RemoveFilter(sourceFilter.DSFilter);							
+							Marshal.ReleaseComObject(sourceFilter.DSFilter); sourceFilter.DSFilter=null;
+						}
+						RetryOtherInstances(i);
+					}//if (hr != 0)
+				}//for (int i = 0; i < mCard.TvConnectionDefinitions.Count; i++)
 
 				if (sinkPin!=null)
 					Marshal.ReleaseComObject(sinkPin);
@@ -317,6 +326,123 @@ namespace MediaPortal.TV.Recording
 				return false;
 			}
 		}
+
+		void RetryOtherInstances(int instance)
+		{
+
+			Log.WriteFile(Log.LogType.Capture,true,"SinkGraphEx: RetryOtherInstances:{0}",instance);
+			FilterDefinition sourceFilter;
+			FilterDefinition sinkFilter;
+			IPin sourcePin=null;
+			IPin sinkPin=null;
+
+			sourceFilter = mCard.TvFilterDefinitions[((ConnectionDefinition)mCard.TvConnectionDefinitions[instance]).SourceCategory] as FilterDefinition;
+			sinkFilter   = mCard.TvFilterDefinitions[((ConnectionDefinition)mCard.TvConnectionDefinitions[instance]).SinkCategory] as FilterDefinition;
+			if (sourceFilter==null)
+			{
+				Log.WriteFile(Log.LogType.Capture,true,"SinkGraphEx: Cannot find source filter for connection:{0}",instance);
+				return;
+			}
+			if (sinkFilter==null)
+			{
+				Log.WriteFile(Log.LogType.Capture,true,"SinkGraphEx: Cannot find sink filter for connection:{0}",instance);
+				return;
+			}
+
+			foreach (string key in AvailableFilters.Filters.Keys)
+			{
+				int hr;
+				Filter    filter;
+				ArrayList al = AvailableFilters.Filters[key] as System.Collections.ArrayList;
+				filter    = (Filter)al[0];
+				if (!filter.Name.Equals(sinkFilter.FriendlyName))
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"SinkGraphEx: found :{0} instances",al.Count);
+					for (int filterInstance=0; filterInstance < al.Count;++filterInstance)
+					{
+						filter    = (Filter)al[filterInstance];
+						sinkFilter.MonikerDisplayName=filter.MonikerString;
+						sinkFilter.DSFilter  = Marshal.BindToMoniker(sinkFilter.MonikerDisplayName) as IBaseFilter;
+						hr = m_graphBuilder.AddFilter(sinkFilter.DSFilter, sinkFilter.FriendlyName);
+						sourcePin    = DirectShowUtil.FindPin(sourceFilter.DSFilter, PinDirection.Output, ((ConnectionDefinition)mCard.TvConnectionDefinitions[instance]).SourcePinName);
+						if (sourcePin == null)
+						{
+							String strPinName = ((ConnectionDefinition)mCard.TvConnectionDefinitions[instance]).SourcePinName;
+							if ((strPinName.Length == 1) && (Char.IsDigit(strPinName, 0)))
+							{
+								sourcePin = DirectShowUtil.FindPinNr(sourceFilter.DSFilter, PinDirection.Output, Convert.ToInt32(strPinName));
+								if (sourcePin==null)
+									Log.WriteFile(Log.LogType.Capture,"SinkGraphEx:   Unable to find sourcePin: <{0}>", strPinName);
+								else
+									Log.WriteFile(Log.LogType.Capture,"SinkGraphEx:   Found sourcePin: <{0}> <{1}>", strPinName, sourcePin.ToString());
+							}
+						}
+						else
+							Log.WriteFile(Log.LogType.Capture,"SinkGraphEx:   Found sourcePin: <{0}> ", ((ConnectionDefinition)mCard.TvConnectionDefinitions[instance]).SourcePinName);
+						
+						sinkPin      = DirectShowUtil.FindPin(sinkFilter.DSFilter, PinDirection.Input, ((ConnectionDefinition)mCard.TvConnectionDefinitions[instance]).SinkPinName);
+						if (sinkPin == null)
+						{
+							String strPinName = ((ConnectionDefinition)mCard.TvConnectionDefinitions[instance]).SinkPinName;
+							if ((strPinName.Length == 1) && (Char.IsDigit(strPinName, 0)))
+							{
+								sinkPin = DirectShowUtil.FindPinNr(sinkFilter.DSFilter, PinDirection.Input, Convert.ToInt32(strPinName));
+								if (sinkPin==null)
+									Log.WriteFile(Log.LogType.Capture,"SinkGraphEx:   Unable to find sinkPin: <{0}>", strPinName);
+								else
+									Log.WriteFile(Log.LogType.Capture,"SinkGraphEx:   Found sinkPin: <{0}> <{1}>", strPinName, sinkPin.ToString());
+							}
+						}
+						else
+							Log.WriteFile(Log.LogType.Capture,"SinkGraphEx:   Found sinkPin: <{0}> ", ((ConnectionDefinition)mCard.TvConnectionDefinitions[instance]).SinkPinName);
+
+						if (sourcePin!=null && sinkPin!=null)
+						{
+							IPin conPin;
+							hr      = sourcePin.ConnectedTo(out conPin);
+							if (hr != 0)
+								hr = m_graphBuilder.Connect(sourcePin, sinkPin);
+							if (hr == 0)
+								Log.WriteFile(Log.LogType.Capture,"SinkGraphEx:   Pins connected...");
+
+							// Give warning and release pin...
+							if (conPin != null)
+							{
+								Log.WriteFile(Log.LogType.Capture,"SinkGraphEx:   (Pin was already connected...)");
+								Marshal.ReleaseComObject(conPin as Object);
+								conPin = null;
+								hr     = 0;
+							}
+						}
+
+						if (hr != 0)
+						{
+							Log.WriteFile(Log.LogType.Capture,"SinkGraphEx:  Error: Unable to connect Pins 0x{0:X}", hr);
+
+							if (sourcePin!=null) Marshal.ReleaseComObject(sourcePin); sourcePin=null;
+							if (sinkPin!=null) Marshal.ReleaseComObject(sinkPin); sinkPin=null;
+							if (sourceFilter.DSFilter!=null) 
+							{
+								m_graphBuilder.RemoveFilter(sourceFilter.DSFilter);
+								Marshal.ReleaseComObject(sourceFilter.DSFilter); 
+								sourceFilter.DSFilter=null;
+							}
+						}//if (hr != 0)
+						else
+						{
+							if (sinkPin!=null)
+								Marshal.ReleaseComObject(sinkPin);
+							sinkPin=null;
+				
+							if (sourcePin!=null)
+								Marshal.ReleaseComObject(sourcePin);
+							sourcePin=null;
+							return;
+						}
+					}//for (int filterInstance=0; filterInstance < al.Count;++filterInstance)
+				}//if (filter.Name.Equals(sinkFilter.FriendlyName))
+			}//foreach (string key in AvailableFilters.Filters.Keys)
+		}//void RetryOtherInstances(int instance)
 
 		public override void DeleteGraph()
 		{

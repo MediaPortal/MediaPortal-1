@@ -374,7 +374,7 @@ namespace MediaPortal.TV.Recording
 					hr = m_graphBuilder.AddFilter(dsFilter.DSFilter, dsFilter.FriendlyName);
 					if (hr == 0)
 					{
-						//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:  Added filter <{0}> with moniker <{1}>", dsFilter.FriendlyName, dsFilter.MonikerDisplayName);
+						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:  Added filter <{0}> with moniker <{1}>", dsFilter.FriendlyName, dsFilter.MonikerDisplayName);
 					}
 					else
 					{
@@ -433,14 +433,14 @@ namespace MediaPortal.TV.Recording
 				//
 				// The code assumes method 1 is used. If that fails, method 2 is tried...
 
-				//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: Adding configured pin connections...");
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: Adding configured pin connections...");
 				for (int i = 0; i < m_Card.TvConnectionDefinitions.Count; i++)
 				{
 					//get the source filter for the connection
 					sourceFilter = m_Card.TvFilterDefinitions[((ConnectionDefinition)m_Card.TvConnectionDefinitions[i]).SourceCategory] as FilterDefinition;
 					if (sourceFilter==null)
 					{
-						Log.WriteFile(Log.LogType.Capture,true,"Cannot find source filter for connection:{0}",i);
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: Cannot find source filter for connection:{0}",i);
 						continue;
 					}
 
@@ -448,13 +448,13 @@ namespace MediaPortal.TV.Recording
 					sinkFilter   = m_Card.TvFilterDefinitions[((ConnectionDefinition)m_Card.TvConnectionDefinitions[i]).SinkCategory] as FilterDefinition;
 					if (sinkFilter==null)
 					{
-						Log.WriteFile(Log.LogType.Capture,true,"Cannot find sink filter for connection:{0}",i);
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: Cannot find sink filter for connection:{0}",i);
 						continue;
 					}
 
-					//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:  Connecting <{0}>:{1} with <{2}>:{3}", 
-					//	sourceFilter.FriendlyName, ((ConnectionDefinition)m_Card.TvConnectionDefinitions[i]).SourcePinName,
-					//	sinkFilter.FriendlyName, ((ConnectionDefinition)m_Card.TvConnectionDefinitions[i]).SinkPinName);
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:  Connecting <{0}>:{1} with <{2}>:{3}", 
+						sourceFilter.FriendlyName, ((ConnectionDefinition)m_Card.TvConnectionDefinitions[i]).SourcePinName,
+						sinkFilter.FriendlyName, ((ConnectionDefinition)m_Card.TvConnectionDefinitions[i]).SinkPinName);
 					
 					//find the pin of the source filter
 					sourcePin    = DirectShowUtil.FindPin(sourceFilter.DSFilter, PinDirection.Output, ((ConnectionDefinition)m_Card.TvConnectionDefinitions[i]).SourcePinName);
@@ -696,14 +696,14 @@ namespace MediaPortal.TV.Recording
 					hr = demuxer.CreateOutputPin(ref mpegAudioOut, "audio", out m_DemuxAudioPin);
 					if (hr != 0)
 					{
-						Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2:StartViewing() FAILED to create audio output pin on demuxer");
+						Log.WriteFile(Log.LogType.Capture,true, "DVBGraphSS2:StartViewing() FAILED to create audio output pin on demuxer");
 						return false;
 					}
 
 					hr=demuxer.CreateOutputPin(ref mpegVideoOut/*vidOut*/, "video", out m_DemuxVideoPin);
 					if (hr!=0)
 					{
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:StartViewing() FAILED to create video output pin on demuxer");
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphSS2:StartViewing() FAILED to create video output pin on demuxer");
 						return  false;
 					}
 
@@ -746,14 +746,14 @@ namespace MediaPortal.TV.Recording
 					}
 				}
 				else
-					Log.WriteFile(Log.LogType.Capture,"mpeg2:mapped IMPEG2Demultiplexer not found");
+					Log.WriteFile(Log.LogType.Capture,true,"mpeg2:mapped IMPEG2Demultiplexer not found");
 
 				m_dvbAnalyzer=(IBaseFilter) Activator.CreateInstance( Type.GetTypeFromCLSID( Clsid.MPStreamAnalyzer, true ) );
 				m_analyzerInterface=(IStreamAnalyzer)m_dvbAnalyzer;
 				hr=m_graphBuilder.AddFilter(m_dvbAnalyzer,"Stream-Analyzer");
 				if(hr!=0)
 				{
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: FAILED to add SectionsFilter 0x{0:X}",hr);
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: FAILED to add SectionsFilter 0x{0:X}",hr);
 					return false;
 				}
 				AMMediaType mtype=new AMMediaType();
@@ -765,14 +765,14 @@ namespace MediaPortal.TV.Recording
 				hr=DsUtils.GetPin(m_dvbAnalyzer,PinDirection.Input,0,out mpsaPin);
 				if(mpsaPin==null)
 				{
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: input pin for mpeg2data not found 0x{0:X}",hr);
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: input pin for mpeg2data not found 0x{0:X}",hr);
 					return false;
 				}
 
 				hr=demuxer.CreateOutputPin(ref mtype,"MPEG2Sections",out m_demuxSectionsPin);
 				if (hr!=0)
 				{
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: FAILED to create mpeg2-sections pin on demuxer 0x{0:X}",hr);
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: FAILED to create mpeg2-sections pin on demuxer 0x{0:X}",hr);
 					Marshal.ReleaseComObject(mpsaPin);mpsaPin=null;
 					return false;
 				}
@@ -780,14 +780,14 @@ namespace MediaPortal.TV.Recording
 				hr=demuxer.CreateOutputPin(ref mtype,"DVB-Sections",out mpsaIn);
 				if (hr!=0)
 				{
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: FAILED to create mpeg2-sections pin on demuxer 0x{0:X}",hr);
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: FAILED to create mpeg2-sections pin on demuxer 0x{0:X}",hr);
 					Marshal.ReleaseComObject(mpsaPin);mpsaPin=null;
 					return false;
 				}
 				hr=m_graphBuilder.Connect(mpsaIn,mpsaPin);
 				if(hr!=0)
 				{
-					Log.WriteFile(Log.LogType.Capture,"dvbgrapBDA: FAILED to connect demux<->mpeg2data 0x{0:X}",hr);
+					Log.WriteFile(Log.LogType.Capture,true,"dvbgrapBDA: FAILED to connect demux<->mpeg2data 0x{0:X}",hr);
 					Marshal.ReleaseComObject(mpsaPin);mpsaPin=null;;
 					Marshal.ReleaseComObject(mpsaIn);mpsaIn=null;
 					return false;
@@ -802,26 +802,32 @@ namespace MediaPortal.TV.Recording
 				tifType.majorType=MEDIATYPE_MPEG2_SECTIONS;
 				tifType.subType=MEDIASUBTYPE_DVB_SI;
 				if (Network()==NetworkType.ATSC)
+				{
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: create TIF for ATSC");
 					tifType.subType=MEDIASUBTYPE_ATSC_SI;
-
+				}
+				else
+				{
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: create TIF for DVB");
+				}
 				IPin tifOut, tifIn;
 				hr=demuxer.CreateOutputPin(ref tifType,"TIF",out tifOut);
 				if (hr!=0)
 				{
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: FAILED to create TIF pin on demuxer 0x{0:X}",hr);
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: FAILED to create TIF pin on demuxer 0x{0:X}",hr);
 					return false;
 				}
 				tifIn=DirectShowUtil.FindPinNr(m_TIF,PinDirection.Input,0);
 				if (tifIn==null)
 				{
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: FAILED to get input pin of TIF");
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: FAILED to get input pin of TIF");
 					Marshal.ReleaseComObject(tifOut);tifOut=null;
 					return false;
 				}
 				hr=m_graphBuilder.Connect(tifOut,tifIn);
 				if(hr!=0)
 				{
-					Log.WriteFile(Log.LogType.Capture,"dvbgrapBDA: FAILED to connect demux<->tif 0x{0:X}",hr);
+					Log.WriteFile(Log.LogType.Capture,true,"dvbgrapBDA: FAILED to connect demux<->tif 0x{0:X}",hr);
 					Marshal.ReleaseComObject(tifIn);tifIn=null;;
 					Marshal.ReleaseComObject(tifOut);tifOut=null;
 					return false;
@@ -1398,7 +1404,7 @@ namespace MediaPortal.TV.Recording
 				// and set it up
 				hr = m_videoWindow.put_Owner(GUIGraphicsContext.form.Handle);
 				if (hr != 0) 
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: FAILED:set Video window:0x{0:X}",hr);
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: FAILED:set Video window:0x{0:X}",hr);
 
 				hr = m_videoWindow.put_WindowStyle(WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS);
 				if (hr != 0) 
@@ -1705,7 +1711,7 @@ namespace MediaPortal.TV.Recording
 				}
 				if(hr!=0)
 				{
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: SetupDemuxer FAILED: errorcode {0}",hr.ToString());
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: SetupDemuxer FAILED: errorcode {0}",hr.ToString());
 					return;
 				}
 				else
@@ -2036,7 +2042,7 @@ namespace MediaPortal.TV.Recording
 			IBDA_Topology topology = m_TunerDevice as IBDA_Topology;
 			if (topology==null)
 			{
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: could not get IBDA_Topology from tuner");
+				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: could not get IBDA_Topology from tuner");
 				return ;
 			}
 
