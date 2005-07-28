@@ -9,10 +9,10 @@
 
 // Setup data
 
-const AMOVIESETUP_MEDIATYPE sudPinTypes =
+const AMOVIESETUP_MEDIATYPE sudPinTypes[2] =
 {
-    &MEDIATYPE_MPEG2_SECTIONS,            // Major type
-    &MEDIASUBTYPE_DVB_SI          // Minor type
+	{&MEDIATYPE_MPEG2_SECTIONS, &MEDIASUBTYPE_DVB_SI},         // Minor type
+	{&MEDIATYPE_MPEG2_SECTIONS, &MEDIASUBTYPE_ATSC_SI}         // Minor type
 };
 
 const AMOVIESETUP_PIN sudPins =
@@ -24,8 +24,8 @@ const AMOVIESETUP_PIN sudPins =
     FALSE,                      // Likewise many
     &CLSID_NULL,                // Connects to filter
     L"Output",                  // Connects to pin
-    1,                          // Number of types
-    &sudPinTypes                // Pin information
+    2,                          // Number of types
+    &sudPinTypes[0]             // Pin information
 };
 
 const AMOVIESETUP_FILTER sudDump =
