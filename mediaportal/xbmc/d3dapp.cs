@@ -1679,26 +1679,6 @@ namespace MediaPortal
     protected void ToggleFullWindowed()
     {
       Log.Write("App.ToggleFullWindowed()");
-      bool m_bRestoreTmp = false;
-      if (g_Player.Playing || Recorder.IsRecording())
-      {
-        Log.Write("App.ToggleFullWindowed() stop media");
-        m_bRestore = false;
-        m_bRestoreTmp = true;
-        m_bWasPlaying = g_Player.Playing;
-        m_dCurrentPos = g_Player.CurrentPosition;
-        m_currentPlayList = PlayListPlayer.CurrentPlaylist;
-        m_strCurrentFile = PlayListPlayer.Get(PlayListPlayer.CurrentSong);
-        m_iActiveWindow = GUIWindowManager.ActiveWindow;
-        try
-        {
-          g_Player.Stop();
-        }
-        catch
-        {
-        }
-      }
-
       isMaximized = !isMaximized;
       GUIGraphicsContext.DX9Device.DeviceReset -= new System.EventHandler(this.OnDeviceReset);
       if (isMaximized)
@@ -1750,8 +1730,6 @@ namespace MediaPortal
       }
       GUIGraphicsContext.DX9Device.DeviceReset += new System.EventHandler(this.OnDeviceReset);
       OnDeviceReset(null, null);
-      if (m_bRestoreTmp)
-        m_bRestore = true;
     }
 
     /// <summary>
@@ -1994,20 +1972,9 @@ namespace MediaPortal
     /// </summary>
     protected override void OnSizeChanged(System.EventArgs e)
     {
-      this.OnResize(e);
-      base.OnSizeChanged(e);
-    }
-
-
-
-
-    /// <summary>
-    /// Handle resize events
-    /// </summary>
-    protected override void OnResize(System.EventArgs e)
-    {
       bool m_bRestoreTmp = false;
-      if (g_Player.Playing || Recorder.IsRecording())
+
+      if (g_Player.Playing && (g_Player.IsTV || g_Player.IsVideo || g_Player.IsDVD))
       {
         Log.Write("Form resized: stop media");
         m_bRestore = false;
@@ -2026,6 +1993,21 @@ namespace MediaPortal
         }
       }
 
+      this.OnResize(e);
+      base.OnSizeChanged(e);
+      
+      if (m_bRestoreTmp)
+        m_bRestore = true;
+    }
+
+
+
+
+    /// <summary>
+    /// Handle resize events
+    /// </summary>
+    protected override void OnResize(System.EventArgs e)
+    {
       if (notifyIcon1 != null)
       {
         if (notifyIcon1.Visible == false && this.WindowState == FormWindowState.Minimized)
@@ -2042,8 +2024,6 @@ namespace MediaPortal
 
       active = !(this.WindowState == System.Windows.Forms.FormWindowState.Minimized);
       base.OnResize(e);
-      if (m_bRestoreTmp)
-        m_bRestore = true;
     }
 
 
