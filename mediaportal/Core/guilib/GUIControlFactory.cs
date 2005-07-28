@@ -120,67 +120,159 @@ namespace MediaPortal.GUI.Library
 
 		private static object ConvertXmlStringToObject(string valueName, string valueText, Type type)
 		{
-			try
-			{
-				try
-				{
+//			try
+//			{
+//				try
+//				{
 					if(type == typeof (string))
 						return valueText;
+//				}
+//				catch (Exception) 
+//				{ 
+//					return String.Empty;
+//				}
+
+//				try
+//				{
+					if (type == typeof (bool))
+					{
+						if(string.Compare(valueText, "off", true) == 0 ||
+							string.Compare(valueText, "no", true) == 0 ||
+							string.Compare(valueText, "disabled", true) == 0)
+						{
+							return false;
+						}
+
+						return true;
+					}
+//				}
+//				catch(Exception)
+//				{
+//					return false;
+//				}
+
+				try
+				{
+					if (type == typeof (GUIControl.Alignment))
+					{
+						if(string.Compare(valueText, "right", true) == 0)
+							return GUIControl.Alignment.ALIGN_RIGHT;
+
+						if(string.Compare(valueText, "center", true) == 0)
+							return GUIControl.Alignment.ALIGN_CENTER;
+
+						return GUIControl.Alignment.ALIGN_LEFT;
+					}
 				}
-				catch (Exception) 
-				{ 
-					return String.Empty;
+				catch(Exception)
+				{
+					return GUIControl.Alignment.ALIGN_LEFT;
 				}
+
+//				try
+//				{
+					if (type == typeof (GUIControl.eOrientation))
+					{
+						if(string.Compare(valueText, "vertical", true) == 0)
+							return GUIControl.eOrientation.Vertical;
+
+						return GUIControl.eOrientation.Horizontal;
+					}
+//				}
+//				catch(Exception)
+//				{
+//					return GUIControl.Alignment.ALIGN_LEFT;
+//				}
+
+//				try
+//				{
+					if (type == typeof (Animator.AnimationType))
+					{
+						if(string.Compare(valueText, "flyinfromleft", true) == 0)
+							return Animator.AnimationType.FlyInFromLeft;
+
+						if(string.Compare(valueText, "flyinfromright", true) == 0)
+							return Animator.AnimationType.FlyInFromRight;
+
+						if(string.Compare(valueText, "flyinfromtop", true) == 0)
+							return Animator.AnimationType.FlyInFromTop;
+
+						if(string.Compare(valueText, "flyinfrombottom", true) == 0)
+							return Animator.AnimationType.FlyInFromBottom;
+
+						if(string.Compare(valueText, "zoominfrommiddle", true) == 0)
+							return Animator.AnimationType.ZoomInFromMiddle;
+					}
+//				}
+//				catch(Exception)
+//				{
+//					return Animator.AnimationType.FlyInFromLeft;
+//				}
+
+//				try
+//				{
+					if (type == typeof(GUISpinControl.SpinType))
+					{
+						if(string.Compare(valueText, "int", true) == 0)
+								return GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT;
+
+						if(string.Compare(valueText, "float", true) == 0)
+							return GUISpinControl.SpinType.SPIN_CONTROL_TYPE_FLOAT;
+
+						return GUISpinControl.SpinType.SPIN_CONTROL_TYPE_TEXT;
+					}
+//				}
+//				catch(Exception)
+//				{
+//					return GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT;
+//				}
 
 				try
 				{
 					if(type == typeof(int) || type == typeof(long))
 					{
-						switch(valueName.ToLower())
+						if(string.Compare(valueName, "textcolor", true) == 0 || 
+							string.Compare(valueName, "colorkey", true) == 0 || 
+							string.Compare(valueName, "colordiffuse", true) == 0)
 						{
-							case "textcolor":
-							case "colorkey":
-							case "colordiffuse":
-								if(valueText.Length > 0)
+							if(valueText.Length > 0)
+							{
+								bool isNamedColor = false;
+
+								foreach(char ch in valueText)
 								{
-									bool isNamedColor = false;
+									if(ch >= '0' && ch <= '9' || ch >= 'A' && ch <= 'F' || ch >= 'a' && ch <= 'f')
+										continue;
 
-									foreach(char ch in valueText)
-									{
-										if(ch >= '0' && ch <= '9' || ch >= 'A' && ch <= 'F' || ch >= 'a' && ch <= 'f')
-											continue;
-
-										isNamedColor = true;
-										break;
-									}
-
-									if(isNamedColor)
-									{
-										int index = valueText.IndexOf(':');
-
-										if(index != -1)
-										{
-											Color color = ColorTranslator.FromHtml(valueText.Substring(0, index));
-											int alpha = 255;
-
-											if(index < valueText.Length)
-											{
-												if(valueText[index + 1] == '#')
-													alpha = int.Parse(valueText.Substring(index + 2), NumberStyles.HexNumber);
-												else
-													alpha = int.Parse(valueText.Substring(index + 1));
-											}
-
-											return Color.FromArgb(alpha, color).ToArgb();
-										}
-
-										return Color.FromName(valueText).ToArgb();
-									}
-
-									return ColorTranslator.FromHtml('#' + valueText).ToArgb();
+									isNamedColor = true;
+									break;
 								}
 
-								break;
+								if(isNamedColor)
+								{
+									int index = valueText.IndexOf(':');
+
+									if(index != -1)
+									{
+										Color color = ColorTranslator.FromHtml(valueText.Substring(0, index));
+										int alpha = 255;
+
+										if(index < valueText.Length)
+										{
+											if(valueText[index + 1] == '#')
+												alpha = int.Parse(valueText.Substring(index + 2), NumberStyles.HexNumber);
+											else
+												alpha = int.Parse(valueText.Substring(index + 1));
+										}
+
+										return Color.FromArgb(alpha, color).ToArgb();
+									}
+
+									return Color.FromName(valueText).ToArgb();
+								}
+
+								return ColorTranslator.FromHtml('#' + valueText).ToArgb();
+							}
 						}
 					}
 
@@ -193,111 +285,16 @@ namespace MediaPortal.GUI.Library
 				{
 					return 0;
 				}
-				try
-				{
-					if (type == typeof (bool))
-						if (valueText == "off" || valueText == "no" || valueText == "disabled") 
-							return false;
-						else 
-							return true;
-				}
-				catch(Exception)
-				{
-					return false;
-				}
-				try
-				{
-					if (type == typeof (GUIControl.Alignment))
-					{
-						switch (valueText)
-						{
-							case "right" :
-								return GUIControl.Alignment.ALIGN_RIGHT;
-							case "center" :
-								return GUIControl.Alignment.ALIGN_CENTER;
-							default:
-								return GUIControl.Alignment.ALIGN_LEFT;
-						}
-					}
-				}
-				catch(Exception)
-				{
-					return GUIControl.Alignment.ALIGN_LEFT;
-				}
-
-				try
-				{
-					if (type == typeof (GUIControl.eOrientation))
-					{
-						switch (valueText)
-						{
-							case "horizontal" :
-								return GUIControl.eOrientation.Horizontal;
-							case "vertical" :
-								return GUIControl.eOrientation.Vertical;
-							default:
-								return GUIControl.eOrientation.Horizontal;
-						}
-					}
-				}
-				catch(Exception)
-				{
-					return GUIControl.Alignment.ALIGN_LEFT;
-				}
-
-
-				try
-				{
-					if (type == typeof (Animator.AnimationType))
-					{
-						switch (valueText.ToLower())
-						{
-							case "flyinfromleft":
-								return Animator.AnimationType.FlyInFromLeft;
-							case "flyinfromright":
-								return Animator.AnimationType.FlyInFromRight;
-							case "flyinfromtop":
-								return Animator.AnimationType.FlyInFromTop;
-							case "flyinfrombottom":
-								return Animator.AnimationType.FlyInFromBottom;
-							case "zoominfrommiddle":
-								return Animator.AnimationType.ZoomInFromMiddle;
-						}
-					}
-				}
-				catch(Exception)
-				{
-					return Animator.AnimationType.FlyInFromLeft;
-				}
-				try
-				{
-					if (type == typeof(GUISpinControl.SpinType))
-					{
-						switch (valueText.ToLower())
-						{
-							case "int": 
-								return GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT;
-							case "float":
-								return GUISpinControl.SpinType.SPIN_CONTROL_TYPE_FLOAT;
-							default: 
-								return GUISpinControl.SpinType.SPIN_CONTROL_TYPE_TEXT;
-						}
-					}
-				}
-				catch(Exception)
-				{
-					return GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT;
-				}
 
 				if(type == typeof(ILayout))
 					return ParseLayout(valueText);
 			
 				return null;
-			}
-			catch (Exception)
-			{
-				return null;
-			}
+//			}
+//			catch (Exception)
+//			{
+//				return null;
+//			}
 		}
 
 		public static GUIControl Create(int dwParentId, XmlNode pControlNode, IDictionary defines)
@@ -382,7 +379,7 @@ namespace MediaPortal.GUI.Library
 				{
 					string text = element.InnerText;
 
-					if(defines.Contains(text))
+					if(text.Length > 0 && text[0] == '#' && defines.Contains(text))
 						text = (string)defines[text];
 
 					object newValue = ConvertXmlStringToObject(element.Name, text,
@@ -505,8 +502,7 @@ namespace MediaPortal.GUI.Library
 		{
 			int openingBracket = valueText.IndexOf('(');
 			int[] valueParameters = null;
-
-			string layoutClass = string.Empty;
+			string layoutClass = null;
 
 			if(openingBracket != -1)
 			{
@@ -519,7 +515,7 @@ namespace MediaPortal.GUI.Library
 				valueParameters = new int[0];
 			}
 
-			if(layoutClass.ToLower() == "gridlayout")
+			if(string.Compare(layoutClass, "GridLayout", true) == 0)
 			{
 				if(valueParameters.Length >= 5)
 					return new GridLayout(valueParameters[0], valueParameters[1], valueParameters[2], valueParameters[3], (Orientation)valueParameters[4]);
@@ -539,7 +535,7 @@ namespace MediaPortal.GUI.Library
 				return null;
 			}
 
-			if(layoutClass.ToLower() == "stacklayout")
+			if(string.Compare(layoutClass, "StackLayout", true) == 0)
 			{
 				if(valueParameters.Length >= 2)
 					return new StackLayout(valueParameters[0], (Orientation)valueParameters[1]);
@@ -549,6 +545,20 @@ namespace MediaPortal.GUI.Library
 
 				if(valueParameters.Length == 0)
 					return new StackLayout();
+
+				return null;
+			}
+
+			if(string.Compare(layoutClass, "RingLayout", true) == 0)
+			{
+				if(valueParameters.Length >= 2)
+					return new RingLayout(valueParameters[0], valueParameters[1]);
+
+				if(valueParameters.Length >= 1)
+					return new RingLayout(valueParameters[0]);
+
+				if(valueParameters.Length == 0)
+					return new RingLayout();
 
 				return null;
 			}
