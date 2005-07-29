@@ -2791,6 +2791,7 @@ namespace MediaPortal.TV.Recording
 				if (!System.IO.File.Exists(pmtName))
 				{
 					m_lastPMTVersion=-1;
+					refreshPmtTable=true;
 					return false;
 				}
 						
@@ -2805,12 +2806,27 @@ namespace MediaPortal.TV.Recording
 						stream.Close();
 					}
 				}
-				if (pmt==null) return false;
-				if (pmt.Length<6) return false;
+				if (pmt==null)
+				{
+					m_lastPMTVersion=-1;
+					refreshPmtTable=true;
+					return false;
+				}
+				if (pmt.Length<6) 
+				{
+					m_lastPMTVersion=-1;
+					refreshPmtTable=true;
+					return false;
+				}
 
 				DVBSections sections = new DVBSections();
 				DVBSections.ChannelInfo info = new DVBSections.ChannelInfo();
-				if (!sections.GetChannelInfoFromPMT(pmt, ref info)) return false;
+				if (!sections.GetChannelInfoFromPMT(pmt, ref info)) 
+				{
+					m_lastPMTVersion=-1;
+					refreshPmtTable=true;
+					return false;
+				}
 				if (info.pid_list!=null)
 				{
 					
@@ -3122,8 +3138,11 @@ namespace MediaPortal.TV.Recording
 				updateTimer=DateTime.Now;
 			}
 
-			if (refreshPmtTable)
+			if (refreshPmtTable && Network()!=NetworkType.ATSC)
 			{
+				bool gotPMT=false;
+				refreshPmtTable	= false;
+				Log.Write("DVBGRAPHBDA:Get PMT");
 				IntPtr pmtMem=Marshal.AllocCoTaskMem(4096);// max. size for pmt
 				if(pmtMem!=IntPtr.Zero)
 				{
@@ -3136,17 +3155,38 @@ namespace MediaPortal.TV.Recording
 						Marshal.Copy(pmtMem,pmt,0,res);
 						version=((pmt[5]>>1)&0x1F);
 						int pmtProgramNumber=(pmt[3]<<8)+pmt[4];
-						if(m_lastPMTVersion!=version && pmtProgramNumber==currentTuningObject.ProgramNumber)
+						if (pmtProgramNumber==currentTuningObject.ProgramNumber)
 						{
-							m_lastPMTVersion=version;
-							m_streamDemuxer_OnPMTIsChanged(pmt);
+							gotPMT=true;
+							if(m_lastPMTVersion!=version)
+							{
+								Log.Write("DVBGRAPHBDA:Got PMT version:{0}",version);
+								m_lastPMTVersion=version;
+								m_streamDemuxer_OnPMTIsChanged(pmt);
+							}
+							else 
+							{
+								//Log.Write("DVBGRAPHBDA:Got old PMT version:{0} {1}",m_lastPMTVersion,version);
+							}
+						}
+						else 
+						{
+							//Log.Write("DVBGRAPHBDA:Got wrong PMT:{0} {1}",pmtProgramNumber,currentTuningObject.ProgramNumber);
 						}
 						pmt=null;
+					}
+					else 
+					{
+						//Log.Write("DVBGRAPHBDA:could not get PMT");
 					}
 					Marshal.FreeCoTaskMem(pmtMem);
 				}
 
-				refreshPmtTable	= false;
+				if (!gotPMT)
+				{
+					refreshPmtTable=true;
+					return;
+				}
 				SendPMT();
 				return;
 			}
@@ -3458,9 +3498,10 @@ namespace MediaPortal.TV.Recording
 				DirectShowUtil.EnableDeInterlace(m_graphBuilder);
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() done");
 
-				timeResendPid=DateTime.Now;
-				refreshPmtTable	= false;
-				SendPMT();
+				m_analyzerInterface.ResetParser();
+
+				refreshPmtTable	= true;
+				Process();//gets the PMT
 
 				if(m_pluginsEnabled==true)
 					ExecTuner();
@@ -3469,9 +3510,6 @@ namespace MediaPortal.TV.Recording
 			{
 				if (Vmr9!=null) Vmr9.Enable(true);
 			}
-			timeResendPid=DateTime.Now;
-			m_analyzerInterface.ResetParser();
-			m_analyzerInterface.SetPMTProgramNumber(currentTuningObject.ProgramNumber);
 		}//public void TuneChannel(AnalogVideoStandard standard,int iChannel,int country)
 
 

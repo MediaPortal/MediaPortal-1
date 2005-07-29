@@ -2381,12 +2381,13 @@ namespace MediaPortal.TV.Database
 		/// </summary>
 		static public void RemoveOldPrograms()
 		{
+			if (m_db==null) return;
 			lock (typeof(TVDatabase))
 			{
 				//delete programs from database that are more than 1 day old
+				string strSQL=String.Empty;
 				try
 				{ 
-					string strSQL;
 					System.DateTime yesterday = System.DateTime.Today.AddDays(-1);
 					long longYesterday = Utils.datetolong(yesterday);
 					strSQL=String.Format("DELETE FROM tblPrograms WHERE iEndTime < '{0}'",longYesterday);
@@ -2396,7 +2397,7 @@ namespace MediaPortal.TV.Database
 				}
 				catch(Exception ex)
 				{
-					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1} {2}", ex.Message,ex.StackTrace, strSQL);
 					Open();
 				}
 				return;
