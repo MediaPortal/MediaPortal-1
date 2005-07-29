@@ -219,7 +219,6 @@ namespace MediaPortal.TV.Recording
 		TSHelperTools								transportHelper=new TSHelperTools();
 		bool												refreshPmtTable=false;
 		protected bool							m_pluginsEnabled=false;
-		DateTime										timeResendPid=DateTime.Now;
 		DateTime										updateTimer=DateTime.Now;
 		DVBDemuxer									m_streamDemuxer = new DVBDemuxer();
 
@@ -1540,6 +1539,9 @@ namespace MediaPortal.TV.Recording
 			}
 			TuneChannel(channel);
 
+			timeRetune=DateTime.Now;
+			refreshPmtTable=true;
+			Process();
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:timeshifting started");			
 			return true;
 		}//public bool StartTimeShifting(int country,AnalogVideoStandard standard, int iChannel, string strFileName)
@@ -3125,16 +3127,16 @@ namespace MediaPortal.TV.Recording
 				{
 					if (GUIGraphicsContext.Vmr9FPS < 1f)
 					{
-						ts = DateTime.Now-timeResendPid;
+						ts = DateTime.Now-timeRetune;
 						if (ts.TotalSeconds>5)
 						{
 							reTune=true;
-							timeResendPid=DateTime.Now;
+							timeRetune=DateTime.Now;
 						}
 					}
-					else timeResendPid=DateTime.Now;
+					else timeRetune=DateTime.Now;
 				}
-				else timeResendPid=DateTime.Now;
+				else timeRetune=DateTime.Now;
 				updateTimer=DateTime.Now;
 			}
 
@@ -3500,6 +3502,7 @@ namespace MediaPortal.TV.Recording
 
 				m_analyzerInterface.ResetParser();
 
+				timeRetune=DateTime.Now;
 				refreshPmtTable	= true;
 				Process();//gets the PMT
 
@@ -3774,8 +3777,6 @@ namespace MediaPortal.TV.Recording
 				}
 				SetPids();
 				//	Log.Write("DVBGraphBDA: signal strength:{0} signal quality:{1}",SignalStrength(), SignalQuality() );
-				timeResendPid=DateTime.Now;
-				refreshPmtTable=false;
 			}
 			catch(Exception ex)
 			{
@@ -4444,13 +4445,14 @@ namespace MediaPortal.TV.Recording
 				}
 
 
-				SendPMT();
+				timeRetune=DateTime.Now;
+				refreshPmtTable=true;
+				Process();
 				if(m_pluginsEnabled==true)
 					ExecTuner();
 			}
 			finally
 			{
-				refreshPmtTable=false;
 			}
 		}//public void TuneRadioChannel(AnalogVideoStandard standard,int iChannel,int country)
 
