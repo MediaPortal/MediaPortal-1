@@ -3132,7 +3132,7 @@
 	<!-- End of My Recipie Strings -->
 	
 	<!-- My Burner Strings -->
-	<string><id>2100</id><value>Burn</value></string>
+	<string><id>2100</id><value>My Burner</value></string>
 	<string><id>2101</id><value>Copy CD/DVD</value></string>
 	<string><id>2102</id><value>Create Audio-CD</value></string>
 	<string><id>2103</id><value>Create Video-CD</value></string>
@@ -3180,7 +3180,7 @@
 	
 
 	<!-- My Explorer Strings -->
-	<string><id>2200</id><value>Explorer</value></string>
+	<string><id>2200</id><value>My Explorer</value></string>
 	<string><id>2201</id><value>Select source</value></string>
 	<string><id>2202</id><value>Select destination</value></string>
 	<string><id>2203</id><value>Copy data</value></string>
@@ -3531,7 +3531,7 @@
 <string><id>100757</id><value>My Status preferences</value></string>
 <string><id>100758</id><value>File dialog</value></string>
 <string><id>100760</id><value>My Burner</value></string>
-<string><id>100770</id><value>Explorer</value></string>
+<string><id>100770</id><value>My Explorer</value></string>
 <string><id>101000</id><value>keyboard</value></string>
 <string><id>102000</id><value>Select dialog</value></string>
 <string><id>102001</id><value>My Music/info</value></string>
