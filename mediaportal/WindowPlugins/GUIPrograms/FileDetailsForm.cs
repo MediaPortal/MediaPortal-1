@@ -547,7 +547,9 @@ namespace WindowPlugins.GUIPrograms
       // 
       // FileDetailsForm
       // 
+      this.AcceptButton = this.btnOk;
       this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+      this.CancelButton = this.btnCancel;
       this.ClientSize = new System.Drawing.Size(498, 504);
       this.Controls.Add(this.tcFileItemData);
       this.Controls.Add(this.btnOk);
@@ -607,6 +609,10 @@ namespace WindowPlugins.GUIPrograms
       if (openFileDialog1.ShowDialog(null) == DialogResult.OK)
       {
         txtFilename.Text = openFileDialog1.FileName;
+        if ((txtTitle.Text == "") && (txtFilename.Text != "") && (File.Exists(txtFilename.Text)))
+        {
+          txtTitle.Text = Path.GetFileNameWithoutExtension(txtFilename.Text);
+        }
       }
     }
 
