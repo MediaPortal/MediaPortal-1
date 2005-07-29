@@ -81,8 +81,17 @@ namespace MediaPortal.MameDevice
 				//disabled: following code produces a stack overflow exception
 				//when i start MP and simply press the cursor up arrow
 
-        //Log.Write("WM_KEYDOWN: wParam {0}", (int)msg.WParam);
-        //return MameMapper.MapAction((int)msg.WParam);
+        Log.Write("WM_KEYDOWN: wParam {0}", (int)msg.WParam);
+        bool res = MameMapper.MapAction((int)msg.WParam);
+        if (res)
+        {
+          msg.Result = IntPtr.Zero;
+          return true;
+        }
+        else
+        {
+          return false;
+        }
       }
       return false;
     }

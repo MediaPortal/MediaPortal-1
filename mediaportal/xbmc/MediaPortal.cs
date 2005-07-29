@@ -637,8 +637,8 @@ public class MediaPortalApp : D3DApp, IRender
 
 	protected override void WndProc(ref Message msg)
 	{
-		PluginManager.WndProc(ref msg);	// Send received messages to PluginManager / added by mPod
-
+    if (!PluginManager.WndProc(ref msg))	// Send received messages to PluginManager / added by mPod
+    {
 		Action action;
 		char key;
 		Keys keyCode;
@@ -677,6 +677,7 @@ public class MediaPortalApp : D3DApp, IRender
 			}
 			return;
 		}
+    }
 		// plugins menu clicked?
 		if (msg.Msg == 0x111)
 		{
