@@ -3142,7 +3142,7 @@ namespace MediaPortal.TV.Recording
 			{
 				bool gotPMT=false;
 				refreshPmtTable	= false;
-				Log.Write("DVBGRAPHBDA:Get PMT");
+				//Log.Write("DVBGRAPHBDA:Get PMT");
 				IntPtr pmtMem=Marshal.AllocCoTaskMem(4096);// max. size for pmt
 				if(pmtMem!=IntPtr.Zero)
 				{
