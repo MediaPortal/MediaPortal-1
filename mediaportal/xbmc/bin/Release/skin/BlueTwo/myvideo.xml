@@ -45,7 +45,7 @@
 				<type>button</type>
 				<id>6</id>
 				<label>341</label>
-				<ondown>2</ondown>
+				<ondown>99</ondown>
 			</control>
 		</control>
 		<import>common.facade.xml</import>

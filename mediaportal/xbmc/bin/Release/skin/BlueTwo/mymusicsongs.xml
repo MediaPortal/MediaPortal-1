@@ -1,4 +1,4 @@
-﻿<window>
+<window>
 	<id>501</id>
 	<defaultcontrol>2</defaultcontrol>
 	<allowoverlay>yes</allowoverlay>
@@ -72,7 +72,7 @@
 			    <onleft>10</onleft>
 			    <onright>50</onright>
 			    <onup>9</onup>
-					<ondown>2</ondown>
+				<ondown>99</ondown>
 		    </control>
 		</control>
 		<import>common.facade.xml</import>

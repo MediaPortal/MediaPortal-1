@@ -62,7 +62,7 @@
 				<onleft>7</onleft>
 				<onright>50</onright>
 				<onup>6</onup>
-				<ondown>2</ondown>
+				<ondown>99</ondown>
 				<action>14</action>
 			</control>
 		</control>

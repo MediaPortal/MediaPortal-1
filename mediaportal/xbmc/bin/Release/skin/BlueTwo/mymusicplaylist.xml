@@ -169,7 +169,7 @@
 				<textureFocus>togglebutton-on-focus.png</textureFocus>
 				<textureNoFocus>togglebutton-on-nofocus.png</textureNoFocus>
 				<onup>25</onup>
-				<ondown>2</ondown>
+				<ondown>99</ondown>
 				<onleft>26</onleft>
 				<onright>50</onright>
 			</control>
