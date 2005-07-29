@@ -206,6 +206,16 @@ namespace MediaPortal.GUI.Library
 							return;
 					}
 					delegates=null;
+					if (m_iActiveWindow >= 0 && m_iActiveWindow < windowCount) 
+					{
+						GUIWindow pCurrentWindow=m_vecWindows[m_iActiveWindow];
+						
+						if (pCurrentWindow.GetFocusControlId()<0)
+						{	
+							GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, pCurrentWindow.GetID, 0, pCurrentWindow.PreviousFocusedId, 0, 0, null);
+							pCurrentWindow.OnMessage(msg);
+						}
+					}
 				}
 			}
 
@@ -247,9 +257,20 @@ namespace MediaPortal.GUI.Library
 				{
 					if (pWindow.GetFocusControlId()<0)
 					{
-						if (OnPostRenderAction!=null)
+						bool focused=false;
+						System.Delegate[] delegates=OnPostRenderAction.GetInvocationList();
+						for (int i=0; i < delegates.Length;++i)
 						{
-							OnPostRenderAction(action,null,true);
+							int iActiveWindow=ActiveWindow;
+							focused=(bool)delegates[i].DynamicInvoke(new object[] {action,null,true} );
+							if (focused || iActiveWindow!=ActiveWindow)
+								break;
+						}
+						delegates=null;
+						if (!focused)
+						{	
+							GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, pWindow.GetID, 0, pWindow.PreviousFocusedId, 0, 0, null);
+							pWindow.OnMessage(msg);
 						}
 					}
 				}
@@ -259,7 +280,21 @@ namespace MediaPortal.GUI.Library
 					{
 						if (OnPostRenderAction!=null)
 						{
-							OnPostRenderAction(action,null,true);
+							bool focused=false;
+							System.Delegate[] delegates=OnPostRenderAction.GetInvocationList();
+							for (int i=0; i < delegates.Length;++i)
+							{
+								int iActiveWindow=ActiveWindow;
+								focused=(bool)delegates[i].DynamicInvoke(new object[] {action,null,true} );
+								if (focused || iActiveWindow!=ActiveWindow)
+									break;
+							}
+							delegates=null;
+							if (!focused)
+							{	
+								GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, pWindow.GetID, 0, pWindow.PreviousFocusedId, 0, 0, null);
+								pWindow.OnMessage(msg);
+							}
 						}
 					}
 				}

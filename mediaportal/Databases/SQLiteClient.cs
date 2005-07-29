@@ -178,8 +178,16 @@ namespace SQLite.NET
 			lock (typeof(SQLiteClient))
 			{
 				//Log.Write("dbs:{0} sql:{1}", databaseName,query);
-				if (query==null) return set1;
-				if (query.Length==0) return set1;
+				if (query==null) 
+				{
+					Log.WriteFile(Log.LogType.Error,"database:query==null");
+					return set1;
+				}
+				if (query.Length==0) 
+				{
+					Log.WriteFile(Log.LogType.Error,"database:query==''");
+					return set1;
+				}
 				IntPtr errMsg = IntPtr.Zero; 
 				//string msg = "";
 
@@ -200,6 +208,7 @@ namespace SQLite.NET
 				}
 				if (err != SqliteError.OK) 
 				{
+					Log.WriteFile(Log.LogType.Error,"database:query returned {0} {1}",err.ToString(),query);
 					ThrowError("sqlite3_finalize",query,err);
 				}
 			}

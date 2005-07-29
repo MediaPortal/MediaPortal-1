@@ -163,6 +163,7 @@ namespace MediaPortal.GUI.Library
 		#region variables
 		private int windowId = -1; 
 		private int previousWindowId = -1;
+		private int previousFocusedControlId=-1;
 		protected int defaultControlId = 0;
 		protected ArrayList m_vecPositions = new ArrayList();
 		protected ArrayList controlList = new ArrayList();
@@ -216,6 +217,13 @@ namespace MediaPortal.GUI.Library
     {
       get { return controlList;}
     }
+		public int PreviousFocusedId
+		{
+			get
+			{
+				return previousFocusedControlId;
+			}
+		}
 
 		/// <summary>
 		/// add a new control to this window
@@ -829,7 +837,11 @@ namespace MediaPortal.GUI.Library
 				if (grp!=null)
 				{
 					int iFocusedControlId=grp.GetFocusControlId();
-					if (iFocusedControlId>=0) return iFocusedControlId;
+					if (iFocusedControlId>=0) 
+					{
+						previousFocusedControlId=iFocusedControlId;
+						return iFocusedControlId;
+					}
 				}
 				else
 				{
@@ -930,6 +942,7 @@ namespace MediaPortal.GUI.Library
 		public virtual void OnAction(Action action)
 		{
 			if (action==null) return ;
+			int id;
       //lock (this)
       {
 				if (action.wID == Action.ActionType.ACTION_CONTEXT_MENU)
@@ -950,12 +963,16 @@ namespace MediaPortal.GUI.Library
 					if (action.wID == Action.ActionType.ACTION_MOUSE_MOVE)
 					{
 						OnMouseMove((int)action.fAmount1, (int)action.fAmount2,action);
+						id=GetFocusControlId();
+						if (id>=0) previousFocusedControlId=id;
 						return;
 					}
 					// mouse clicked if there is a hit pass the action
 					if (action.wID == Action.ActionType.ACTION_MOUSE_CLICK)
 					{
 						OnMouseClick((int)action.fAmount1, (int)action.fAmount2,action);
+						id=GetFocusControlId();
+						if (id>=0) previousFocusedControlId=id;
 						return;
 					}
 	  			
@@ -964,6 +981,9 @@ namespace MediaPortal.GUI.Library
 					if (cntlFoc!=null)
 					{
 						cntlFoc.OnAction(action);
+						id=GetFocusControlId();
+						if (id>=0) previousFocusedControlId=id;
+
 						return;
 					}
 
@@ -972,6 +992,8 @@ namespace MediaPortal.GUI.Library
 					msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, defaultControlId, 0, 0, null);
 					OnMessage(msg);
 					msg=null;
+					id=GetFocusControlId();
+					if (id>=0) previousFocusedControlId=id;
 
 				}
 				catch(Exception ex)
@@ -998,6 +1020,7 @@ namespace MediaPortal.GUI.Library
 		{
 			if (message==null) return true;
       //lock (this)
+			int id;
       {
 				try
 				{
@@ -1070,6 +1093,8 @@ namespace MediaPortal.GUI.Library
 							Log.Write( "window:{0} init", this.ToString());
 						}
 							OnPageLoad();
+							id=GetFocusControlId();
+							if (id>=0) previousFocusedControlId=id;
 							return true;
 							// TODO BUG ! Check if this return needs to be in the case and if there needs to be a break statement after each case.
 	      
@@ -1116,6 +1141,8 @@ namespace MediaPortal.GUI.Library
 								}
 								cntTarget=null;
 							}
+							id=GetFocusControlId();
+							if (id>=0) previousFocusedControlId=id;
 							return true;
 						}
 					}
@@ -1125,6 +1152,8 @@ namespace MediaPortal.GUI.Library
 					{
 						return cntlTarget.OnMessage(message);
 					}
+					id=GetFocusControlId();
+					if (id>=0) previousFocusedControlId=id;
 
 				}
 				catch(Exception ex)

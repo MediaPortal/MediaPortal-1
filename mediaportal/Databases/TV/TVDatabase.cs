@@ -1446,6 +1446,8 @@ namespace MediaPortal.TV.Database
 		{
 			lock (typeof(TVDatabase))
 			{
+
+				string strSQL=String.Empty;
 				progs.Clear();
 				try
 				{
@@ -1454,7 +1456,6 @@ namespace MediaPortal.TV.Database
 					string strChannel=strChannel1;
 					DatabaseUtility.RemoveInvalidChars(ref strChannel);
 
-					string strSQL;
 					string strOrder=" order by iStartTime";
 					strSQL=String.Format("select * from channel,tblPrograms,genre where genre.idGenre=tblPrograms.idGenre and tblPrograms.idChannel=channel.idChannel and channel.strChannel like '{0}' ",
 						strChannel);
@@ -1467,6 +1468,7 @@ namespace MediaPortal.TV.Database
 					
 					SQLiteResultSet results;
 					results=m_db.Execute(strSQL);
+					if (results==null) return false;
 					if (results.Rows.Count== 0) return false;
 					for (int i=0; i < results.Rows.Count;++i)
 					{
@@ -1504,7 +1506,7 @@ namespace MediaPortal.TV.Database
 				}
 				catch(Exception ex)
 				{
-					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1} {2}", ex.Message,ex.StackTrace,strSQL);
 					Open();
 				}
 				return false;
