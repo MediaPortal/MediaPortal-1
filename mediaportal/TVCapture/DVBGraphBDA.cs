@@ -357,7 +357,9 @@ namespace MediaPortal.TV.Recording
 
 
 				//dont use samplegrabber in configuration.exe
-				if (GUIGraphicsContext.DX9Device!=null)
+				m_sampleGrabber=null;
+				m_sampleInterface=null;
+				if (false==true && GUIGraphicsContext.DX9Device!=null)
 				{
 					m_sampleGrabber=(IBaseFilter) Activator.CreateInstance( Type.GetTypeFromCLSID( Clsid.SampleGrabber, true ) );
 					m_sampleInterface=(ISampleGrabber) m_sampleGrabber;
@@ -617,7 +619,7 @@ namespace MediaPortal.TV.Recording
 					return false;
 				}
 				//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph() connect interface pin->sample grabber");
-				if (GUIGraphicsContext.DX9Device!=null)
+				if (GUIGraphicsContext.DX9Device!=null && m_sampleInterface!=null)
 				{
 					if (!ConnectFilters(ref lastFilter.DSFilter,ref m_sampleGrabber))
 					{
@@ -664,7 +666,7 @@ namespace MediaPortal.TV.Recording
 
 
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph() connect grabber->demuxer");
-				if (GUIGraphicsContext.DX9Device!=null)
+				if (GUIGraphicsContext.DX9Device!=null &&m_sampleInterface!=null)
 				{
 					if(!ConnectFilters(ref m_sampleGrabber, ref m_MPEG2Demultiplexer)) 
 					{

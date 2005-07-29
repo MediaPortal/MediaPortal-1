@@ -548,10 +548,10 @@ namespace MediaPortal.TV.Recording
 			pmt=new PMTData();			
 
 			byte[] d=new byte[255];
-			Marshal.Copy((IntPtr)(((int)data)+42),d,0,255);
-			ch.service_name=System.Text.Encoding.ASCII.GetString(d);
-			Marshal.Copy((IntPtr)(((int)data)+297),d,0,255);
-			ch.service_provider_name=System.Text.Encoding.ASCII.GetString(d);
+			//Marshal.Copy((IntPtr)(((int)data)+42),d,0,255);
+			ch.service_name=Marshal.PtrToStringAnsi( (IntPtr)(((int)data)+42) );
+			//Marshal.Copy((IntPtr)(((int)data)+297),d,0,255);
+			ch.service_provider_name=Marshal.PtrToStringAnsi( (IntPtr)(((int)data)+297) );
 			ch.eitPreFollow=(Marshal.ReadInt16(data,552))==1?true:false;
 			ch.eitSchedule=(Marshal.ReadInt16(data,554))==1?true:false;
 			ch.scrambled=(Marshal.ReadInt16(data,556))==1?true:false;

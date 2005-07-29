@@ -427,15 +427,15 @@ void Sections::getString468A(BYTE *b, int l1,char *text)
 	do
 	{
 		c = (char)b[i];
-		if(c=='Ü')
+	/*	if(c=='Ü')
 		{
 			int a=0;
-		}
-		if (c >= 0x80 & c <= 0x9F)
+		}*/
+		if ( ((BYTE)c) >= 0x80 & ((BYTE)c) <= 0x9F)
 		{
 			goto cont;
 		}
-		if (i==0 & c < 0x20)
+		if (i==0 & ((BYTE)c) < 0x20)
 		{
 			goto cont;
 		}
@@ -451,19 +451,21 @@ void Sections::getString468A(BYTE *b, int l1,char *text)
 			goto cont;
 		}
 				
-		if (c == 0x84)
+		if ( ((BYTE)c) == 0x84)
 		{
 			text[num] = '\r';
+			text[num+1]=0;
 			num++;
 			goto cont;
 		}
 				
-		if (c < 0x20)
+		if (((BYTE)c) < 0x20)
 		{
 			goto cont;
 		}
 				
 		text[num] = c;
+		text[num+1]=0;
 		num++;
 cont:
 		l1 -= 1;
