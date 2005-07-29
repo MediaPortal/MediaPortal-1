@@ -3121,12 +3121,12 @@ namespace MediaPortal.TV.Recording
 				{
 					Vmr7.Process();
 				}
-				if(GUIGraphicsContext.Vmr9Active && Vmr9!=null)
+				if(GUIGraphicsContext.Vmr9Active)
 				{
 					if (GUIGraphicsContext.Vmr9FPS < 1f)
 					{
 						ts = DateTime.Now-timeRetune;
-						if (ts.TotalSeconds>5)
+						if (ts.TotalSeconds>=5)
 						{
 							reTune=true;
 							timeRetune=DateTime.Now;
@@ -3134,7 +3134,6 @@ namespace MediaPortal.TV.Recording
 					}
 					else timeRetune=DateTime.Now;
 				}
-				else timeRetune=DateTime.Now;
 				updateTimer=DateTime.Now;
 			}
 
@@ -3166,18 +3165,30 @@ namespace MediaPortal.TV.Recording
 							}
 							else 
 							{
-								//Log.Write("DVBGRAPHBDA:Got old PMT version:{0} {1}",m_lastPMTVersion,version);
+							//	Log.Write("DVBGRAPHBDA:Got old PMT version:{0} {1}",m_lastPMTVersion,version);
 							}
 						}
 						else 
 						{
 							//Log.Write("DVBGRAPHBDA:Got wrong PMT:{0} {1}",pmtProgramNumber,currentTuningObject.ProgramNumber);
+							ts = DateTime.Now-timeRetune;
+							if (ts.TotalSeconds>5)
+							{
+								reTune=true;
+								timeRetune=DateTime.Now;
+							}
 						}
 						pmt=null;
 					}
 					else 
 					{
 						//Log.Write("DVBGRAPHBDA:could not get PMT");
+						ts = DateTime.Now-timeRetune;
+						if (ts.TotalSeconds>=5)
+						{
+							reTune=true;
+							timeRetune=DateTime.Now;
+						}
 					}
 					Marshal.FreeCoTaskMem(pmtMem);
 				}
@@ -3185,10 +3196,12 @@ namespace MediaPortal.TV.Recording
 				if (!gotPMT)
 				{
 					refreshPmtTable=true;
+				}
+				else
+				{
+					SendPMT();
 					return;
 				}
-				SendPMT();
-				return;
 			}
 
 			if (!reTune) return;
@@ -3215,13 +3228,7 @@ namespace MediaPortal.TV.Recording
 				}
 			}
 
-			refreshPmtTable	= false;
-			SendPMT();
-
-			if(m_pluginsEnabled==true)
-				ExecTuner();
-
-			refreshPmtTable=false;
+			refreshPmtTable =true;
 		}//public void Process()
 
 		#endregion
