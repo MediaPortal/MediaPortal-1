@@ -543,6 +543,11 @@ STDMETHODIMP CDump::UseATSC(BOOL yesNo)
 		Log("use ATSC:no");
 	return S_OK;
 }
+STDMETHODIMP CDump::IsATSCUsed(BOOL* yesNo)
+{
+	*yesNo=m_bDecodeATSC;
+	return S_OK;
+}
 
 STDMETHODIMP CDump::GetPMTData(BYTE *data)
 {

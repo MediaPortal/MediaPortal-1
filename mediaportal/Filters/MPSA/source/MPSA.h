@@ -68,7 +68,7 @@ DECLARE_INTERFACE_(IStreamAnalyzer, IUnknown)
 	STDMETHOD(IsChannelReady) (THIS_ ULONG chNum)PURE;
 
 	STDMETHOD(UseATSC) (THIS_ BOOL yesNo)PURE;
-
+	STDMETHOD(IsATSCUsed) (THIS_ BOOL* yesNo)PURE;
 };
 
 // Main filter object
@@ -172,6 +172,7 @@ public:
 	STDMETHODIMP GetPages(CAUUID *pPages);
 	STDMETHODIMP IsChannelReady(ULONG channel);
 	STDMETHODIMP UseATSC(BOOL yesNo);
+	STDMETHODIMP IsATSCUsed(BOOL* yesNo);
 
 public:
 
@@ -180,7 +181,7 @@ public:
 	ULONG m_pmtGrabProgNum;
 	BYTE m_pmtGrabData[4096];
 	long m_currentPMTLen;
-	bool m_bDecodeATSC;
+	BOOL m_bDecodeATSC;
 
 private:
 
