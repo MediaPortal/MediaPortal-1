@@ -1186,7 +1186,15 @@ namespace MediaPortal.Player
 							IAMStreamSelect pStrm = foundfilter as IAMStreamSelect;
 							if (pStrm!=null)
 							{
-								break;
+								if ( (foundfilter as IDirectVobSub) !=null)
+								{
+									//ignore vobsub
+									pStrm=null;
+								}
+								else
+								{
+									break;
+								}
 							}
 							Marshal.ReleaseComObject(foundfilter);
 						}
