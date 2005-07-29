@@ -412,7 +412,7 @@ HRESULT CDump::Process(BYTE *pbData,long len)
 			// we can check audio
 			int a=0;
 		}
-		delete d;
+		delete [] d;
 	}
 		
 	

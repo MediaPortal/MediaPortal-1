@@ -3090,29 +3090,11 @@ namespace MediaPortal.TV.Recording
 			if (m_graphState==State.None || m_graphState==State.Created) return;
 
 			if (m_streamDemuxer!=null)
-				m_streamDemuxer.Process();
+			m_streamDemuxer.Process();
+		
 			TimeSpan ts=DateTime.Now-updateTimer;
 			bool reTune=false;
-			IntPtr pmtMem=Marshal.AllocCoTaskMem(4096);// max. size for pmt
-			if(pmtMem!=IntPtr.Zero)
-			{
-				m_analyzerInterface.SetPMTProgramNumber(currentTuningObject.ProgramNumber);
-				int res=m_analyzerInterface.GetPMTData(pmtMem);
-				if(res!=-1)
-				{
-					byte[] pmt=new byte[res];
-					int version=-1;
-					Marshal.Copy(pmtMem,pmt,0,res);
-					version=((pmt[5]>>1)&0x1F);
-					int pmtProgramNumber=(pmt[3]<<8)+pmt[4];
-					if(m_lastPMTVersion!=version && pmtProgramNumber==currentTuningObject.ProgramNumber)
-					{
-						m_lastPMTVersion=version;
-						m_streamDemuxer_OnPMTIsChanged(pmt);
-					}
-				}
-				Marshal.FreeCoTaskMem(pmtMem);
-			}
+
 			if (ts.TotalMilliseconds>800)
 			{
 				if(!GUIGraphicsContext.Vmr9Active && !g_Player.Playing)
@@ -3142,6 +3124,28 @@ namespace MediaPortal.TV.Recording
 
 			if (refreshPmtTable)
 			{
+				IntPtr pmtMem=Marshal.AllocCoTaskMem(4096);// max. size for pmt
+				if(pmtMem!=IntPtr.Zero)
+				{
+					m_analyzerInterface.SetPMTProgramNumber(currentTuningObject.ProgramNumber);
+					int res=m_analyzerInterface.GetPMTData(pmtMem);
+					if(res!=-1)
+					{
+						byte[] pmt=new byte[res];
+						int version=-1;
+						Marshal.Copy(pmtMem,pmt,0,res);
+						version=((pmt[5]>>1)&0x1F);
+						int pmtProgramNumber=(pmt[3]<<8)+pmt[4];
+						if(m_lastPMTVersion!=version && pmtProgramNumber==currentTuningObject.ProgramNumber)
+						{
+							m_lastPMTVersion=version;
+							m_streamDemuxer_OnPMTIsChanged(pmt);
+						}
+						pmt=null;
+					}
+					Marshal.FreeCoTaskMem(pmtMem);
+				}
+
 				refreshPmtTable	= false;
 				SendPMT();
 				return;
