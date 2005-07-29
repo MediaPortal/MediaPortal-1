@@ -34,13 +34,19 @@ namespace MediaPortal.Mixer
 
 		public void Open()
 		{
-			Open(0);
+			Open(0, false);
 		}
 
-		public void Open(int mixerIndex)
+		public void Open(int mixerIndex, bool isSpeakers)
 		{
 			lock(this)
 			{
+				if(isSpeakers == false)
+				{
+					MediaPortal.GUI.Library.Log.Write("Using digital");
+					_componentType = MixerComponentType.DestinationDigital;
+				}
+
 				if(_mixerEventListener == null)
 				{
 					_mixerEventListener = new MixerEventListener();
@@ -70,8 +76,8 @@ namespace MediaPortal.Mixer
 					throw new InvalidOperationException();
 
 				_handle = handle;
-				_isMuted = (int)GetValue(MixerComponentType.DestinationSpeakers, MixerControlType.Mute) == 1;
-				_volume = (int)GetValue(MixerComponentType.DestinationSpeakers, MixerControlType.Volume);
+				_isMuted = (int)GetValue(_componentType, MixerControlType.Mute) == 1;
+				_volume = (int)GetValue(_componentType, MixerControlType.Volume);
 			}
 		}
 
@@ -148,8 +154,8 @@ namespace MediaPortal.Mixer
 		
 		void OnControlChanged(object sender, MixerEventArgs e)
 		{
-			_isMuted = (int)GetValue(MixerComponentType.DestinationSpeakers, MixerControlType.Mute) == 1;
-			_volume = (int)GetValue(MixerComponentType.DestinationSpeakers, MixerControlType.Volume);
+			_isMuted = (int)GetValue(_componentType, MixerControlType.Mute) == 1;
+			_volume = (int)GetValue(_componentType, MixerControlType.Volume);
 
 			if(ControlChanged != null)
 				ControlChanged(sender, e);
@@ -162,7 +168,7 @@ namespace MediaPortal.Mixer
 		public bool IsMuted
 		{
 			get { lock(this) return _isMuted; }
-			set { lock(this) _isMuted = value; SetValue(MixerComponentType.DestinationSpeakers, MixerControlType.Mute, _isMuted); }
+			set { lock(this) _isMuted = value; SetValue(_componentType, MixerControlType.Mute, _isMuted); }
 		}
 
 		public IntPtr Handle
@@ -173,7 +179,7 @@ namespace MediaPortal.Mixer
 		public int Volume
 		{
 			get { lock(this) return _volume; }
-			set { lock(this) _volume = Math.Max(this.VolumeMinimum, Math.Min(this.VolumeMaximum, value)); SetValue(MixerComponentType.DestinationSpeakers, MixerControlType.Volume, _volume); }
+			set { lock(this) _volume = Math.Max(this.VolumeMinimum, Math.Min(this.VolumeMaximum, value)); SetValue(_componentType, MixerControlType.Volume, _volume); }
 		}
 
 		public int VolumeMaximum
@@ -190,6 +196,7 @@ namespace MediaPortal.Mixer
 
 		#region Fields
 
+		MixerComponentType			_componentType = MixerComponentType.DestinationSpeakers;
 		IntPtr						_handle;
 		bool						_isMuted;
 		static MixerEventListener	_mixerEventListener;

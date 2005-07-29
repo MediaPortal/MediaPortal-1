@@ -16,9 +16,7 @@ namespace MediaPortal.Player
 
 		public VolumeHandler(int[] volumeTable)
 		{
-			_mixer = new Mixer.Mixer();
-			_mixer.Open();
-			_volumeTable = volumeTable;
+			bool isSpeakers = true;
 
 			using(MediaPortal.Profile.Xml reader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
@@ -32,7 +30,13 @@ namespace MediaPortal.Player
 
 				if(levelStyle == 2)
 					_startupVolume = Math.Max(0, Math.Min(65535, reader.GetValueAsInt("volume", "startuplevel", 52428)));
+
+				isSpeakers = !reader.GetValueAsBool("volume", "digital", false);
 			}
+
+			_mixer = new Mixer.Mixer();
+			_mixer.Open(0, isSpeakers);
+			_volumeTable = volumeTable;
 		}
 
 		#endregion Constructors
