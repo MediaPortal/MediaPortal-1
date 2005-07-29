@@ -220,6 +220,7 @@ namespace MediaPortal.TV.Recording
 		bool												refreshPmtTable=false;
 		protected bool							m_pluginsEnabled=false;
 		DateTime										updateTimer=DateTime.Now;
+		DateTime										timeRetune=DateTime.Now;
 		DVBDemuxer									m_streamDemuxer = new DVBDemuxer();
 
 		
@@ -1539,9 +1540,6 @@ namespace MediaPortal.TV.Recording
 			}
 			TuneChannel(channel);
 
-			timeRetune=DateTime.Now;
-			refreshPmtTable=true;
-			Process();
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:timeshifting started");			
 			return true;
 		}//public bool StartTimeShifting(int country,AnalogVideoStandard standard, int iChannel, string strFileName)
