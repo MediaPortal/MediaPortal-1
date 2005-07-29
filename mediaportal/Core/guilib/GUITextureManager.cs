@@ -655,5 +655,15 @@ namespace MediaPortal.GUI.Library
 		{
 			return _packer.Get(strFileName,out uoff,out voff,out umax,out vmax,out textureWidth, out textureHeight,out tex,out _packedTextureNo);
 		}
+
+	  static public void Clear()
+	  {
+		  _packer.Dispose();
+		  _packer = new TexturePacker();
+		  _packer.PackSkinGraphics(GUIGraphicsContext.Skin);
+
+		  m_cache.Clear();
+		  _DownloadCache.Clear();
+	  }
 	}
 }
