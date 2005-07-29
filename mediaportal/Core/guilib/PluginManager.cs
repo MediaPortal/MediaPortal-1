@@ -186,12 +186,17 @@ namespace MediaPortal.GUI.Library
 										if (newObj==null)
 											newObj=(object)Activator.CreateInstance(t);
 										ISetupForm  setup=(ISetupForm)newObj;
-	                  
-										if (IsPluginNameEnabled(setup.PluginName()))
-										{
-											_SetupForms.Add(setup);
-											_NonGUIPlugins.Add(plugin);
-										}
+                    // waeberd:
+                    // don't activate plugins that have NO entry at all in 
+                    // MediaPortal.xml
+                    if (PluginEntryExists(setup.PluginName()))
+                    {
+                      if (IsPluginNameEnabled(setup.PluginName()))
+                      {
+                        _SetupForms.Add(setup);
+                        _NonGUIPlugins.Add(plugin);
+                      }
+                    }
 									}
 								}
 								catch( Exception iSetupFormException )
@@ -209,7 +214,7 @@ namespace MediaPortal.GUI.Library
 										if (newObj==null)
 											newObj=(object)Activator.CreateInstance(t);
 										IWakeable  setup=(IWakeable)newObj;
-										if (IsPluginNameEnabled(setup.PluginName()))
+                    if (IsPluginNameEnabled(setup.PluginName()))
 										{
 											_Wakeables.Add(setup);
 										}
@@ -294,7 +299,7 @@ namespace MediaPortal.GUI.Library
 										if (newObj==null)
 											newObj=(object)Activator.CreateInstance(t);
 										ISetupForm  setup=(ISetupForm)newObj;
-										if (IsPluginNameEnabled(setup.PluginName()))
+                    if (IsPluginNameEnabled(setup.PluginName()))
 										{
 											_SetupForms.Add(setup);
 										}
@@ -316,7 +321,7 @@ namespace MediaPortal.GUI.Library
 										if (newObj==null)
 											newObj=(object)Activator.CreateInstance(t);
 										IWakeable  setup=(IWakeable)newObj;
-										if (IsPluginNameEnabled(setup.PluginName()))
+                    if (IsPluginNameEnabled(setup.PluginName()))
 										{
 											_Wakeables.Add(setup);
 										}
@@ -373,16 +378,25 @@ namespace MediaPortal.GUI.Library
         
 			} 
 		}
-		static public bool IsPluginNameEnabled(string strPluginName)
-		{
+    static public bool IsPluginNameEnabled(string strPluginName)
+    {
 
-			using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
-			{
-				bool bEnabled=xmlreader.GetValueAsBool("plugins",strPluginName,true);
-				return bEnabled;
+      using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      {
+        bool bEnabled=xmlreader.GetValueAsBool("plugins",strPluginName,true);
+        return bEnabled;
         
-			} 
-		}
+      } 
+    }
+
+    static public bool PluginEntryExists(string strPluginName)
+    {
+      using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      {
+        string val = xmlreader.GetValueAsString("plugins", strPluginName, "");
+        return (val != "");
+      } 
+    }
 
 		static public void WndProc(ref System.Windows.Forms.Message msg)	// Receive window messages from core / added by mPod/waeberd
 		{
