@@ -45,7 +45,7 @@ private:
 	HWND		m_checkATSC;
 	HWND		m_editMajor;
 	HWND		m_editMinor;
-
+	HWND        m_editProg;
     int         m_nIndex ;       // Index of the selected media type
     IPin        *m_pPin ;        // The upstream output pin connected to us
     IStreamAnalyzer   *m_pIMPDST;    // Null In Place property interface

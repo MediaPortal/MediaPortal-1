@@ -525,23 +525,23 @@ void Sections::ATSCDecodeChannelTable(BYTE *buf,ChannelInfo *ch, int* channelsFo
 		// 76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210
 		//    112      113      114       115      116    117      118       119     120     121       123      124      125      126      127      128      129      130
 		//     0        1        2         3        4      5        6         7       8       9        10       11       12       13       14       15       16       17 
-		// XXXX---- ------++ ++++++++
+		//  ++++++++ ++++++++ --+-++-	
 		// 76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210
 		int major_channel    		 =((buf[start  ]&0xf)<<8) + (buf[start+1]>>2);
 		int minor_channel    		 =((buf[start+1]&0x3)<<8) + buf[start+2];
 		int modulation_mode  		 = buf[start+3];
 		int carrier_frequency		 = (buf[start+4]<<24) + (buf[start+5]<<16) + (buf[start+6]<<8) + (buf[start+7]);
-		int channel_TSID         = ((buf[start+8]&0xf)<<8) + buf[start+9];
-		int program_number			 = ((buf[start+10]&0xf)<<8) + buf[start+11];
-		int ETM_location				 = ((buf[start+12]>>6)&0x3);
+		int channel_TSID			 = ((buf[start+8])<<8) + buf[start+9];
+		int program_number			 = ((buf[start+10])<<8) + buf[start+11];
+		int ETM_location			 = ((buf[start+12]>>6)&0x3);
 		int access_controlled		 = ((buf[start+12]>>4)&0x1);
 		int hidden          		 = ((buf[start+12]>>3)&0x1);
 		int path_select     		 = ((buf[start+12]>>2)&0x1);
 		int out_of_band     		 = ((buf[start+12]>>1)&0x1);
-		int hide_guide     		   = ((buf[start+12]   )&0x1);
-		int service_type         = ((buf[start+13]   )&0x3f);
-		int source_id						 = ((buf[start+14])<<8) + buf[start+15];
-		int descriptors_length	 = ((buf[start+16]&0x3)<<8) + buf[start+17];
+		int hide_guide     		     = ((buf[start+12]   )&0x1);
+		int service_type             = ((buf[start+13]   )&0x3f);
+		int source_id				 = ((buf[start+14])<<8) + buf[start+15];
+		int descriptors_length		 = ((buf[start+16]&0x3)<<8) + buf[start+17];
 
 		if (major_channel==0 && minor_channel==0 && channel_TSID==0 && service_type==0 )
 		{

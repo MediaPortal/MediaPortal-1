@@ -26,8 +26,9 @@
 #define IDC_EDIT8                       1010
 #define IDC_CHECK1                      1011
 #define IDC_EDITMAJOR                   1012
-#define IDC_EDIT10                      1013
 #define IDC_EDITMINOR                   1013
+#define IDC_EDITMINOR2                  1014
+#define IDC_EDITPROG                    1014
 #define VERSION_RES_LANGUAGE            0x409
 #define VERSION_RES_CHARSET             1252
 

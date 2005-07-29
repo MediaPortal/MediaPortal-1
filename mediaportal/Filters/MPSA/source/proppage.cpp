@@ -108,6 +108,7 @@ BOOL MPDSTProperties::OnReceiveMessage(HWND hwnd,
 			m_checkATSC=GetDlgItem(hwnd,IDC_CHECK1);
 			m_editMajor=GetDlgItem(hwnd,IDC_EDITMAJOR);
 			m_editMinor=GetDlgItem(hwnd,IDC_EDITMINOR);
+			m_editProg=GetDlgItem(hwnd,IDC_EDITPROG);
             FillListBox();
 
             return (LRESULT) 1;
@@ -302,6 +303,12 @@ HRESULT MPDSTProperties::OnApplyChanges()
 	_i64toa((__int64)ch.MinorChannel,buffer,10);
 	SendMessage( m_editMinor, EM_SETSEL, 0, MAKELONG(-1,-1) ); 
 	SendMessage( m_editMinor, EM_REPLACESEL, 0, (LPARAM) buffer );
+
+	_i64toa((__int64)ch.ProgrammNumber,buffer,10);
+	SendMessage( m_editProg, EM_SETSEL, 0, MAKELONG(-1,-1) ); 
+	SendMessage( m_editProg, EM_REPLACESEL, 0, (LPARAM) buffer );
+
+	
 	}
 
 
