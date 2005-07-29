@@ -565,7 +565,7 @@ namespace WindowPlugins.GUIPrograms
 
     public override void OnAction(Action action)
     {
-      if (action.wID == Action.ActionType.ACTION_PARENT_DIR)
+      if (action.wID == Action.ActionType.ACTION_PARENT_DIR  || action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
       {
         // <U> keypress
         BackItemClicked();
@@ -573,9 +573,9 @@ namespace WindowPlugins.GUIPrograms
         return;
       }
 
-      if (action.wID == Action.ActionType.ACTION_CLOSE_DIALOG || action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
+      //      if (action.wID == Action.ActionType.ACTION_CLOSE_DIALOG || action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
+      if (action.wID == Action.ActionType.ACTION_CLOSE_DIALOG)
       {
-        // <ESC> keypress in some myProgram Menu => jump to main menu
         SaveFolderSettings("");
         GUIWindowManager.ShowPreviousWindow();
         return;
