@@ -565,9 +565,9 @@ STDMETHODIMP CDump::GetChannel(WORD channel,BYTE *ch)
 	
 	if(channel>=0 && channel<=m_patChannelsCount-1 && m_patChannelsCount>0)
 	{
+		memcpy(ch,&m_patTable[channel],m_pSections->CISize());
 		if(m_patTable[channel].SDTReady==false || m_patTable[channel].PMTReady==false)
 			return S_FALSE;
-		memcpy(ch,&m_patTable[channel],m_pSections->CISize());
 		return S_OK;
 	}
 	return S_FALSE;

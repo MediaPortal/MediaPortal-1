@@ -149,9 +149,9 @@ int Sections::decodePMT(BYTE *buf,ChannelInfo *ch)
 	int last_section_number = buf[7];
 	int pcr_pid=((buf[8]& 0x1F)<<8)+buf[9];
 	int program_info_length = ((buf[10] & 0xF)<<8)+buf[11];
-	int len1 = section_length - 4;
 	int len2 = program_info_length;
 	int pointer = 12;
+	int len1 = section_length - pointer;
 	int x;
 	
 	// loop 1

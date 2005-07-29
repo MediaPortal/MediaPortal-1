@@ -342,6 +342,12 @@ void MPDSTProperties::FillListBox()
     SendMessage (m_hwndLB, LB_SETCURSEL, m_nIndex, 0) ;
     ASSERT(m_pIMPDST);
 
+	BOOL bYesNo;
+	m_pIMPDST->IsATSCUsed(&bYesNo);
+	if (bYesNo)
+		SendMessage(m_checkATSC,BM_SETCHECK,BST_CHECKED,0);
+	else
+		SendMessage(m_checkATSC,BM_SETCHECK,BST_UNCHECKED,0);
     //
     // if the filter is in a running state, disable the list box and allow
     // no input.
