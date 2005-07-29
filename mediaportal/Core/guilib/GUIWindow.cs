@@ -980,6 +980,8 @@ namespace MediaPortal.GUI.Library
 					GUIControl cntlFoc = GetControl(GetFocusControlId() );
 					if (cntlFoc!=null)
 					{
+						id=GetFocusControlId();
+						if (id>=0) previousFocusedControlId=id;
 						cntlFoc.OnAction(action);
 						id=GetFocusControlId();
 						if (id>=0) previousFocusedControlId=id;
