@@ -13,7 +13,7 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// Deutsch (Deutschland) resources
+// German (Germany) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEU)
 #ifdef _WIN32
@@ -26,14 +26,14 @@ LANGUAGE LANG_GERMAN, SUBLANG_GERMAN
 // Dialog
 //
 
-IDD_DIALOG1 DIALOGEX 0, 0, 269, 209
+IDD_DIALOG1 DIALOGEX 0, 0, 269, 236
 STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD
 FONT 8, "MS Shell Dlg", 0, 0, 0x0
 BEGIN
-    GROUPBOX        "Channels on this Transponder",IDC_STATIC,7,3,257,160
-    LISTBOX         IDC_MEDIALIST,12,12,164,142,LBS_NOINTEGRALHEIGHT | 
+    GROUPBOX        "Channels on this Transponder",IDC_STATIC,7,3,257,202
+    LISTBOX         IDC_MEDIALIST,12,12,164,187,LBS_NOINTEGRALHEIGHT | 
                     WS_VSCROLL | WS_HSCROLL | WS_TABSTOP
-    PUSHBUTTON      "Reset Parser",IDC_BUTTON1,199,144,54,11
+    PUSHBUTTON      "Reset Parser",IDC_BUTTON1,199,187,54,11
     LTEXT           "Audio",IDC_STATIC,181,17,37,10
     LTEXT           "Video",IDC_STATIC,181,30,23,8
     LTEXT           "Teletext",IDC_STATIC,181,43,34,9
@@ -42,7 +42,7 @@ BEGIN
     EDITTEXT        IDC_EDIT3,211,41,43,12,ES_AUTOHSCROLL
     LTEXT           "TSID",IDC_STATIC,181,57,31,10
     LTEXT           "ONID",IDC_STATIC,181,70,23,8
-    LTEXT           "PCR",IDC_STATIC,180,83,34,9
+    LTEXT           "PCR",IDC_STATIC,181,83,34,9
     EDITTEXT        IDC_EDIT4,211,55,43,12,ES_AUTOHSCROLL
     EDITTEXT        IDC_EDIT5,211,68,43,12,ES_AUTOHSCROLL
     EDITTEXT        IDC_EDIT6,211,81,43,12,ES_AUTOHSCROLL
@@ -50,10 +50,14 @@ BEGIN
     LTEXT           "Provider",IDC_STATIC,181,109,32,8
     EDITTEXT        IDC_EDIT7,211,94,43,12,ES_AUTOHSCROLL
     EDITTEXT        IDC_EDIT8,211,107,43,12,ES_AUTOHSCROLL
-    CTEXT           "http://mediaportal.sourceforge.net/",IDC_STATIC,10,192,
+    CTEXT           "http://mediaportal.sourceforge.net/",IDC_STATIC,10,210,
                     246,14,SS_CENTERIMAGE | SS_SUNKEN
     CONTROL         "Use ATSC Decode",IDC_CHECK1,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,183,126,70,10
+                    WS_TABSTOP,183,169,70,10
+    LTEXT           "Major:",IDC_STATIC,181,122,24,10
+    LTEXT           "Minor:",IDC_STATIC,181,134,26,10
+    EDITTEXT        IDC_EDITMAJOR,211,120,43,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDITMINOR,211,133,43,12,ES_AUTOHSCROLL
 END
 
 
@@ -136,7 +140,7 @@ BEGIN
     IDD_DIALOG1, DIALOG
     BEGIN
         LEFTMARGIN, 3
-        BOTTOMMARGIN, 174
+        BOTTOMMARGIN, 229
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -161,7 +165,7 @@ BEGIN
     IDS_TITLE               "MP StreamAnalyzer"
 END
 
-#endif    // Deutsch (Deutschland) resources
+#endif    // German (Germany) resources
 /////////////////////////////////////////////////////////////////////////////
 
 

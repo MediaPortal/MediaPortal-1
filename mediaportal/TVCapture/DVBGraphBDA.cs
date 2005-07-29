@@ -1354,6 +1354,7 @@ namespace MediaPortal.TV.Recording
 					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to render audio out pin MPEG-2 Demultiplexer");
 					return false;
 				}
+
 			}
 			else
 			{
@@ -1447,6 +1448,8 @@ namespace MediaPortal.TV.Recording
 			if (channel.Number>=0)
 				TuneChannel(channel);
 
+				
+			SetupDemuxer(m_DemuxVideoPin,currentTuningObject.VideoPid,m_DemuxAudioPin,currentTuningObject.Audio1,m_pinAC3Out,currentTuningObject.AC3Pid);
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Viewing..");
 			return true;
 		}//public bool StartViewing(AnalogVideoStandard standard, int iChannel,int country)
@@ -3151,10 +3154,10 @@ namespace MediaPortal.TV.Recording
 			SubmitTuneRequest(currentTuningObject);
 			if (m_streamDemuxer != null)
 			{
+				m_streamDemuxer.ResetGrabber();
+				m_streamDemuxer.SetChannelData(currentTuningObject.AudioPid, currentTuningObject.VideoPid, currentTuningObject.TeletextPid, currentTuningObject.Audio3, currentTuningObject.ServiceName,currentTuningObject.PMTPid,currentTuningObject.ProgramNumber);
 				if (Network()!=NetworkType.ATSC)
 				{
-					m_streamDemuxer.ResetGrabber();
-					m_streamDemuxer.SetChannelData(currentTuningObject.AudioPid, currentTuningObject.VideoPid, currentTuningObject.TeletextPid, currentTuningObject.Audio3, currentTuningObject.ServiceName,currentTuningObject.PMTPid,currentTuningObject.ProgramNumber);
 					if(currentTuningObject.HasEITSchedule==true)
 					{
 						Log.Write("DVBGraphBDA:start EPG grabber for program number:{0}",currentTuningObject.ProgramNumber);
@@ -3431,10 +3434,10 @@ namespace MediaPortal.TV.Recording
 			
 				if (m_streamDemuxer != null)
 				{
+					m_streamDemuxer.ResetGrabber();
+					m_streamDemuxer.SetChannelData(currentTuningObject.AudioPid, currentTuningObject.VideoPid, currentTuningObject.TeletextPid, currentTuningObject.Audio3, currentTuningObject.ServiceName,currentTuningObject.PMTPid,currentTuningObject.ProgramNumber);
 					if (Network()!=NetworkType.ATSC)
 					{
-						m_streamDemuxer.ResetGrabber();
-						m_streamDemuxer.SetChannelData(currentTuningObject.AudioPid, currentTuningObject.VideoPid, currentTuningObject.TeletextPid, currentTuningObject.Audio3, currentTuningObject.ServiceName,currentTuningObject.PMTPid,currentTuningObject.ProgramNumber);
 						if(currentTuningObject.HasEITSchedule==true)
 						{
 							Log.Write("DVBGraphBDA:start EPG grabber for program number:{0}",currentTuningObject.ProgramNumber);

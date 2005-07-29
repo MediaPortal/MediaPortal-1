@@ -477,6 +477,7 @@ void Sections::ATSCDecodeChannelTable(BYTE *buf,ChannelInfo *ch, int* channelsFo
 {
 	int table_id = buf[0];
 	if (table_id!=0xc8 && table_id != 0xc9) return;
+	//dump table!
 	*channelsFound=0;
 	Log("ATSCDecodeChannelTable()");
 	int section_syntax_indicator = (buf[1]>>7) & 1;
@@ -490,7 +491,13 @@ void Sections::ATSCDecodeChannelTable(BYTE *buf,ChannelInfo *ch, int* channelsFo
 	int protocol_version = buf[8];
 	int num_channels_in_section = buf[9];
 	if (num_channels_in_section <= 0) return;
-
+/*
+	FILE* fp = fopen("table.dat","wb+");
+	if (fp!=NULL)
+	{
+		fwrite(buf,1,section_length,fp);
+		fclose(fp);
+	}*/
 	Log("  table id:0x%x section length:%d channels:%d (%d)", table_id,section_length,num_channels_in_section, (*channelsFound));
 	int start=10;
 	for (int i=0; i < num_channels_in_section;i++)
@@ -518,9 +525,10 @@ void Sections::ATSCDecodeChannelTable(BYTE *buf,ChannelInfo *ch, int* channelsFo
 		// 76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210
 		//    112      113      114       115      116    117      118       119     120     121       123      124      125      126      127      128      129      130
 		//     0        1        2         3        4      5        6         7       8       9        10       11       12       13       14       15       16       17 
-		
-		int major_channel    		 =((buf[start  ]&0xf)<<8) + buf[start+1];
-		int minor_channel    		 =((buf[start+1]&0xf)<<8) + buf[start+2];
+		// XXXX---- ------++ ++++++++
+		// 76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210
+		int major_channel    		 =((buf[start  ]&0xf)<<8) + (buf[start+1]>>2);
+		int minor_channel    		 =((buf[start+1]&0x3)<<8) + buf[start+2];
 		int modulation_mode  		 = buf[start+3];
 		int carrier_frequency		 = (buf[start+4]<<24) + (buf[start+5]<<16) + (buf[start+6]<<8) + (buf[start+7]);
 		int channel_TSID         = ((buf[start+8]&0xf)<<8) + buf[start+9];
