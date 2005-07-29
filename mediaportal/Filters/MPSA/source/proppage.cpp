@@ -217,6 +217,7 @@ HRESULT MPDSTProperties::OnDisconnect()
 HRESULT MPDSTProperties::OnActivate()
 {
     SendMessage (m_hwndLB, LB_SETCURSEL, m_nIndex, 0);
+	OnApplyChanges();
     return NOERROR;
 
 } // Activate
@@ -242,15 +243,23 @@ HRESULT MPDSTProperties::OnApplyChanges()
 	Sections::ChannelInfo ch;
 
 	HRESULT hr;
+	
+	// set atsc checkbox
+	BOOL isATSCUsed=FALSE;
+	m_pIMPDST->IsATSCUsed(&isATSCUsed);
+	SendMessage(m_checkATSC,BM_SETCHECK,isATSCUsed,0);
+	
+	// build listbox
 	hr=m_pIMPDST->GetChannel(iIndex,(BYTE*)&ch);
-	if(hr==S_OK)
+	if(hr==S_OK || hr==S_FALSE)
 	{
 		m_bDirty = FALSE;            // the page is now clean
 		m_nIndex = iIndex;
-
 		char buffer[255];
-
-
+		memset(buffer,0,255);
+		if(hr==S_FALSE)
+			memset((BYTE*)&ch,0,sizeof(struct Sections::chInfo));
+	
 	// audio
 	_i64toa((__int64)ch.Pids.AudioPid1,buffer,10);
 	SendMessage( m_editA, EM_SETSEL, 0, MAKELONG(-1,-1) ); 
@@ -326,16 +335,13 @@ void MPDSTProperties::FillListBox()
 	BYTE *chh=new BYTE[len];
     for(int n=0;n<count-1;n++)
 	{
-			if(m_pIMPDST->GetChannel(n,chh)==S_OK)
-			{
-				
-				memcpy(&ch,chh,len);
-				strcpy(szBuffer,(char*)&ch.ServiceName[0]);
-				GetTextExtentPoint (hdc, szBuffer, lstrlen(szBuffer), &extent) ;
-				if (extent.cx > wextent)
-					wextent = extent.cx ;
-				SendMessage (m_hwndLB, LB_ADDSTRING, 0, (LPARAM)szBuffer) ;
-			}
+			m_pIMPDST->GetChannel(n,chh);
+			memcpy(&ch,chh,len);
+			strcpy(szBuffer,(char*)&ch.ServiceName[0]);
+			GetTextExtentPoint (hdc, szBuffer, lstrlen(szBuffer), &extent) ;
+			if (extent.cx > wextent)
+				wextent = extent.cx ;
+			SendMessage (m_hwndLB, LB_ADDSTRING, 0, (LPARAM)szBuffer) ;
 	}
 
     SendMessage (m_hwndLB, LB_SETHORIZONTALEXTENT, wextent, 0) ;
