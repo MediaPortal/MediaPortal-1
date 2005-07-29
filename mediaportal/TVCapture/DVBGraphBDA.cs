@@ -359,7 +359,7 @@ namespace MediaPortal.TV.Recording
 				//dont use samplegrabber in configuration.exe
 				m_sampleGrabber=null;
 				m_sampleInterface=null;
-				if (false==true && GUIGraphicsContext.DX9Device!=null)
+				if (GUIGraphicsContext.DX9Device!=null)
 				{
 					m_sampleGrabber=(IBaseFilter) Activator.CreateInstance( Type.GetTypeFromCLSID( Clsid.SampleGrabber, true ) );
 					m_sampleInterface=(ISampleGrabber) m_sampleGrabber;
