@@ -42,6 +42,7 @@ private:
 	HWND		m_editPCR;
 	HWND		m_editPMT;
 	HWND		m_editPROV;
+	HWND		m_checkATSC;
 
     int         m_nIndex ;       // Index of the selected media type
     IPin        *m_pPin ;        // The upstream output pin connected to us

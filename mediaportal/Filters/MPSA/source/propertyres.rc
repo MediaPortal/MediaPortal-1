@@ -52,6 +52,8 @@ BEGIN
     EDITTEXT        IDC_EDIT8,211,107,43,12,ES_AUTOHSCROLL
     CTEXT           "http://mediaportal.sourceforge.net/",IDC_STATIC,10,192,
                     246,14,SS_CENTERIMAGE | SS_SUNKEN
+    CONTROL         "Use ATSC Decode",IDC_CHECK1,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,183,126,70,10
 END
 
 

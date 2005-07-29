@@ -105,7 +105,7 @@ BOOL MPDSTProperties::OnReceiveMessage(HWND hwnd,
 			m_editPCR= GetDlgItem (hwnd, IDC_EDIT6) ;
 			m_editPMT= GetDlgItem (hwnd, IDC_EDIT7) ;
 			m_editPROV= GetDlgItem (hwnd, IDC_EDIT8) ;
-
+			m_checkATSC=GetDlgItem(hwnd,IDC_CHECK1);
 
             FillListBox();
 
@@ -120,6 +120,15 @@ BOOL MPDSTProperties::OnReceiveMessage(HWND hwnd,
 		   
 			if (HIWORD(wParam) == LBN_SELCHANGE)
                 SetDirty();
+
+			if(loparam==IDC_CHECK1)
+			{
+				int res=SendMessage(m_checkATSC,BM_GETCHECK,0,0);
+				if(res)
+					m_pIMPDST->UseATSC(TRUE);
+				else
+					m_pIMPDST->UseATSC(FALSE);
+			}
 
 			if(loparam==IDC_MEDIALIST)
 			{
@@ -240,6 +249,7 @@ HRESULT MPDSTProperties::OnApplyChanges()
 		m_nIndex = iIndex;
 
 		char buffer[255];
+
 
 	// audio
 	_i64toa((__int64)ch.Pids.AudioPid1,buffer,10);
