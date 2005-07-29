@@ -3151,17 +3151,20 @@ namespace MediaPortal.TV.Recording
 			SubmitTuneRequest(currentTuningObject);
 			if (m_streamDemuxer != null)
 			{
-				m_streamDemuxer.ResetGrabber();
-				m_streamDemuxer.SetChannelData(currentTuningObject.AudioPid, currentTuningObject.VideoPid, currentTuningObject.TeletextPid, currentTuningObject.Audio3, currentTuningObject.ServiceName,currentTuningObject.PMTPid,currentTuningObject.ProgramNumber);
-				if(currentTuningObject.HasEITSchedule==true)
+				if (Network()!=NetworkType.ATSC)
 				{
-					Log.Write("DVBGraphBDA:start EPG grabber for program number:{0}",currentTuningObject.ProgramNumber);
-					m_streamDemuxer.GetEPGSchedule(0x50,currentTuningObject.ProgramNumber);
-				}
-				else
-				{
-					Log.Write("DVBGraphBDA:start MHW EPG grabber for program number:{0}",currentTuningObject.ProgramNumber);
-					m_streamDemuxer.GetMHWEPG();
+					m_streamDemuxer.ResetGrabber();
+					m_streamDemuxer.SetChannelData(currentTuningObject.AudioPid, currentTuningObject.VideoPid, currentTuningObject.TeletextPid, currentTuningObject.Audio3, currentTuningObject.ServiceName,currentTuningObject.PMTPid,currentTuningObject.ProgramNumber);
+					if(currentTuningObject.HasEITSchedule==true)
+					{
+						Log.Write("DVBGraphBDA:start EPG grabber for program number:{0}",currentTuningObject.ProgramNumber);
+						m_streamDemuxer.GetEPGSchedule(0x50,currentTuningObject.ProgramNumber);
+					}
+					else
+					{
+						Log.Write("DVBGraphBDA:start MHW EPG grabber for program number:{0}",currentTuningObject.ProgramNumber);
+						m_streamDemuxer.GetMHWEPG();
+					}
 				}
 			}
 
@@ -3215,10 +3218,10 @@ namespace MediaPortal.TV.Recording
 						int symbolrate=0,innerFec=0,modulation=0,physicalChannel=0;
 						int minorChannel=0,majorChannel=0;
 						TVDatabase.GetATSCTuneRequest(channel.ID,out physicalChannel,out providerName,out frequency, out symbolrate, out innerFec, out modulation,out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out audio1,out audio2,out audio3,out ac3Pid, out audioLanguage, out audioLanguage1,out audioLanguage2,out audioLanguage3, out minorChannel,out majorChannel,out HasEITPresentFollow,out HasEITSchedule,out pcrPid);
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:  tuning details: frequency:{0} KHz physicalChannel:{1} major channel:{2} minor channel:{3} modulation:{4} ONID:{5} TSID:{6} SID:{7} provider:{8}", 
-							frequency,physicalChannel,minorChannel, majorChannel, modulation, ONID, TSID, SID,providerName);
-
-
+						frequency=0;
+						symbolrate=0;
+						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:  tuning details: frequency:{0} KHz physicalChannel:{1} major channel:{2} minor channel:{3} modulation:{4} ONID:{5} TSID:{6} SID:{7} provider:{8} video:0x{9:X} audio:0x{10:X} pcr:0x{11:X}", 
+							frequency,physicalChannel,minorChannel, majorChannel, modulation, ONID, TSID, SID,providerName,videoPid,audioPid,pcrPid);
 						
 						currentTuningObject=new DVBChannel();
 						currentTuningObject.PhysicalChannel=physicalChannel;
@@ -3428,17 +3431,20 @@ namespace MediaPortal.TV.Recording
 			
 				if (m_streamDemuxer != null)
 				{
-					m_streamDemuxer.ResetGrabber();
-					m_streamDemuxer.SetChannelData(currentTuningObject.AudioPid, currentTuningObject.VideoPid, currentTuningObject.TeletextPid, currentTuningObject.Audio3, currentTuningObject.ServiceName,currentTuningObject.PMTPid,currentTuningObject.ProgramNumber);
-					if(currentTuningObject.HasEITSchedule==true)
+					if (Network()!=NetworkType.ATSC)
 					{
-						Log.Write("DVBGraphBDA:start EPG grabber for program number:{0}",currentTuningObject.ProgramNumber);
-						m_streamDemuxer.GetEPGSchedule(0x50,currentTuningObject.ProgramNumber);
-					}
-					else
-					{
-						Log.Write("DVBGraphBDA:start MHW EPG grabber for program number:{0}",currentTuningObject.ProgramNumber);
-						m_streamDemuxer.GetMHWEPG();
+						m_streamDemuxer.ResetGrabber();
+						m_streamDemuxer.SetChannelData(currentTuningObject.AudioPid, currentTuningObject.VideoPid, currentTuningObject.TeletextPid, currentTuningObject.Audio3, currentTuningObject.ServiceName,currentTuningObject.PMTPid,currentTuningObject.ProgramNumber);
+						if(currentTuningObject.HasEITSchedule==true)
+						{
+							Log.Write("DVBGraphBDA:start EPG grabber for program number:{0}",currentTuningObject.ProgramNumber);
+							m_streamDemuxer.GetEPGSchedule(0x50,currentTuningObject.ProgramNumber);
+						}
+						else
+						{
+							Log.Write("DVBGraphBDA:start MHW EPG grabber for program number:{0}",currentTuningObject.ProgramNumber);
+							m_streamDemuxer.GetMHWEPG();
+						}
 					}
 				}
 
@@ -3521,7 +3527,7 @@ namespace MediaPortal.TV.Recording
 							return ;
 						}
 						//set the properties on the new tuning request
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:SubmitTuneRequest(ATSC) set tuning properties. Freq:{0} physical channel:{1} major:{2} minor:{3} SR:{4} mod:{5} tsid:{6}",
+						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:SubmitTuneRequest(ATSC) set tuning properties. Freq:{0} physical:{1} major:{2} minor:{3} SR:{4} mod:{5} tsid:{6}",
 																							ch.Frequency,ch.PhysicalChannel,ch.MajorChannel,ch.MinorChannel,ch.Symbolrate,ch.Modulation, ch.TransportStreamID);
 						myLocator.CarrierFrequency		= ch.Frequency;
 						myLocator.PhysicalChannel			= ch.PhysicalChannel;
