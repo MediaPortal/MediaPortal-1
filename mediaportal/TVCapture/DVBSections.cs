@@ -1148,12 +1148,12 @@ namespace MediaPortal.TV.Recording
 
 			pat.pcr_pid = pcr_pid;
 			string pidText="";
-			//
-			int len1 = section_length - 4;
-			int len2 = program_info_length;
-			//len1=
+
 			int pointer = 12;
 			int x;
+			int len1 = section_length - pointer;
+			int len2 = program_info_length;
+
 			while (len2 > 0)
 			{
 				int indicator=buf[pointer];
@@ -1182,6 +1182,7 @@ namespace MediaPortal.TV.Recording
 			PMTData pmt;
 			while (len1 > 4)
 			{
+				if (pointer+5 >section_length) break;
 				pmt=new PMTData();
 				//System.Array.Copy(buf, pointer, b, 0, 5);
 				try
