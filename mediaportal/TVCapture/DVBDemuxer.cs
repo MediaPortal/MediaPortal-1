@@ -311,6 +311,7 @@ namespace MediaPortal.TV.Recording
 		}
 		public void SetChannelData(int audio, int video, int teletext, int subtitle, string channelName,int pmtPid, int programnumber)
 		{
+			ClearSectionsGrabber();
 			m_secTimer.Stop();
 			m_packetsReceived=false;
 			epgRegrabTime= DateTime.MinValue;
@@ -494,12 +495,10 @@ namespace MediaPortal.TV.Recording
 				if(m_eitScheduleLastTable>currentTable)
 				{
 					int table=currentTable+1;
-					Log.Write("additional grab table id {0}",table);
+					//Log.Write("additional grab table id {0}",table);
 					GetEPGSchedule(table,0);
 				}
 			}
-			GC.Collect();
-			GC.Collect();
 		}
 
 		void ClearSectionsGrabber()
@@ -1015,7 +1014,7 @@ namespace MediaPortal.TV.Recording
 				}
 
 				#endregion
-
+#if GRABPPMT
 				#region pmt handling
 				if(m_pmtPid >0 && m_packetHeader.Pid==m_pmtPid)
 				{
@@ -1077,13 +1076,24 @@ namespace MediaPortal.TV.Recording
 				}
 			
 				#endregion
-
+#endif
 				#region sections
 
 				if(m_sectionPid!=-1 && m_packetHeader.Pid==m_sectionPid)
 				{
 					try
 					{
+						//
+						// start copy data for every section on its table-id-byte
+						if(m_bufferPositionSec==0 && m_sectionTableID!=Marshal.ReadByte((IntPtr)(ptr+4+offset)))
+						{
+							//Log.Write("ignore sectiontableid wrong");
+							continue;
+						}
+						if(m_bufferPositionSec==0 && m_packetHeader.ContinuityCounter!=0)
+						{
+							continue;
+						}
 /*						Log.Write("pid:0x{0:X} pos:{1} cont:{2} adapt:{3} payloadunitstart:{4} len:{5}",
 												m_packetHeader.Pid,
 												m_bufferPositionSec,
@@ -1121,13 +1131,7 @@ namespace MediaPortal.TV.Recording
 							offset=m_packetHeader.AdaptionField+1;
 						else if(m_packetHeader.PayloadUnitStart==true)
 							offset=1;
-						//
-						// start copy data for every section on its table-id-byte
-						if(m_bufferPositionSec==0 && m_sectionTableID!=Marshal.ReadByte((IntPtr)(ptr+4+offset)))
-						{
-							//Log.Write("ignore sectiontableid wrong");
-							continue;
-						}
+						
 						//
 						// copy data
 						if(m_bufferPositionSec+(184-offset)<=SECTIONS_BUFFER_WIDTH)
