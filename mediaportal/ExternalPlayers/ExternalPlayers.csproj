@@ -154,10 +154,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "mp.ico"
-                    BuildAction = "Content"
-                />
-                <File
                     RelPath = "Foobar\FoobarConfigForm.cs"
                     SubType = "Form"
                     BuildAction = "Compile"
