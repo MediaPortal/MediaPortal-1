@@ -24,7 +24,7 @@ namespace MediaPortal.GUI.TV
       Type=3,
       Status=4,
     }
-		[SkinControlAttribute(3)]				protected GUISortButtonControl btnSortBy=null;
+		[SkinControlAttribute(2)]				protected GUISortButtonControl btnSortBy=null;
 		[SkinControlAttribute(6)]				protected GUIButtonControl btnNew=null;
 		[SkinControlAttribute(7)]				protected GUIButtonControl btnCleanup=null;
 		[SkinControlAttribute(10)]			protected GUIListControl listSchedules=null;

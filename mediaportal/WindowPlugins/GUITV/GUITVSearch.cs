@@ -14,7 +14,7 @@ namespace MediaPortal.GUI.TV
 	/// </summary>
 	public class GUITVSearch:GUIWindow, IComparer
 	{
-		[SkinControlAttribute(3)]				protected GUISortButtonControl btnSortBy=null;
+		[SkinControlAttribute(2)]				protected GUISortButtonControl btnSortBy=null;
 		[SkinControlAttribute(4)]				protected GUIToggleButtonControl btnSearchByGenre=null;
 		[SkinControlAttribute(5)]				protected GUIToggleButtonControl btnSearchByTitle=null;
 		[SkinControlAttribute(6)]				protected GUIToggleButtonControl btnSearchByDescription=null;
