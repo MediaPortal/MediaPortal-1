@@ -657,70 +657,70 @@ public class MediaPortalApp : D3DApp, IRender
 	}
 
 	protected override void WndProc(ref Message msg)
-	{
-    if (!PluginManager.WndProc(ref msg))	// Send received messages to PluginManager / added by mPod
+  {
+    if (!PluginManager.WndProc(ref msg))
     {
-		Action action;
-		char key;
-		Keys keyCode;
+      Action action;
+      char key;
+      Keys keyCode;
 
-		if(InputDevices.WndProc(ref msg, out action, out  key, out keyCode))
-		{
-			if(msg.Result.ToInt32() != 1)
-				msg.Result = new IntPtr(0);
+      if(InputDevices.WndProc(ref msg, out action, out  key, out keyCode))
+      {
+        if(msg.Result.ToInt32() != 1)
+          msg.Result = new IntPtr(0);
 
-			if (action != null && action.wID != Action.ActionType.ACTION_INVALID)
-			{
-				Log.Write("action:{0} ", action.wID);
-				if (ActionTranslator.GetActionDetail(GUIWindowManager.ActiveWindowEx, action))
-				{
-					if (action.SoundFileName.Length > 0)
-						Utils.PlaySound(action.SoundFileName, false, true);
-				}
-				GUIGraphicsContext.OnAction(action);
-				screenSaverTimer=DateTime.Now;
-				GUIGraphicsContext.BlankScreen=false;
-			}
+        if (action != null && action.wID != Action.ActionType.ACTION_INVALID)
+        {
+          Log.Write("action:{0} ", action.wID);
+          if (ActionTranslator.GetActionDetail(GUIWindowManager.ActiveWindowEx, action))
+          {
+            if (action.SoundFileName.Length > 0)
+              Utils.PlaySound(action.SoundFileName, false, true);
+          }
+          GUIGraphicsContext.OnAction(action);
+          screenSaverTimer=DateTime.Now;
+          GUIGraphicsContext.BlankScreen=false;
+        }
 
-			if (keyCode != Keys.A)
-			{
-				Log.Write("keycode:{0} ", keyCode.ToString());
-				System.Windows.Forms.KeyEventArgs ke = new KeyEventArgs(keyCode);
-				keydown(ke);
-				return;
-			}
-			if (((int)key) != 0)
-			{
-				Log.Write("key:{0} {1}", key, (char)key);
-				System.Windows.Forms.KeyPressEventArgs e = new KeyPressEventArgs(key);
-				keypressed(e);
-				return;
-			}
-			return;
-		}
+        if (keyCode != Keys.A)
+        {
+          Log.Write("keycode:{0} ", keyCode.ToString());
+          System.Windows.Forms.KeyEventArgs ke = new KeyEventArgs(keyCode);
+          keydown(ke);
+          return;
+        }
+        if (((int)key) != 0)
+        {
+          Log.Write("key:{0} {1}", key, (char)key);
+          System.Windows.Forms.KeyPressEventArgs e = new KeyPressEventArgs(key);
+          keypressed(e);
+          return;
+        }
+        return;
+      }
     }
-		// plugins menu clicked?
-		if (msg.Msg == 0x111)
-		{
-			bool tmpPluginsFlag = false;
-			using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
-			{
-				tmpPluginsFlag = xmlreader.GetValueAsBool("dvb_ts_cards", "enablePlugins", false);
-			}
-			if (tmpPluginsFlag == true)
-				DVBGraphSS2.MenuItemClick(msg.WParam.ToInt32());
-		}
+    // plugins menu clicked?
+    if (msg.Msg == 0x111)
+    {
+      bool tmpPluginsFlag = false;
+      using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      {
+        tmpPluginsFlag = xmlreader.GetValueAsBool("dvb_ts_cards", "enablePlugins", false);
+      }
+      if (tmpPluginsFlag == true)
+        DVBGraphSS2.MenuItemClick(msg.WParam.ToInt32());
+    }
 
-		if (msg.Msg == WM_SYSCOMMAND && msg.WParam.ToInt32() == SC_SCREENSAVE)
-		{
-			// windows wants to activate the screensaver
-			if (GUIGraphicsContext.IsFullScreenVideo || GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_SLIDESHOW)
-			{
-				//disable it when we're watching tv/movies/...
-				msg.Result = new IntPtr(0);
-				return;
-			}
-		}
+    if (msg.Msg == WM_SYSCOMMAND && msg.WParam.ToInt32() == SC_SCREENSAVE)
+    {
+      // windows wants to activate the screensaver
+      if (GUIGraphicsContext.IsFullScreenVideo || GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_SLIDESHOW)
+      {
+        //disable it when we're watching tv/movies/...
+        msg.Result = new IntPtr(0);
+        return;
+      }
+    }
 
     if (msg.Msg == WM_POWERBROADCAST)
     {
@@ -730,7 +730,10 @@ public class MediaPortalApp : D3DApp, IRender
         case PBT_APMQUERYSUSPEND:
         case PBT_APMQUERYSTANDBY:
           // Stop all media before suspending or hibernating
+          Log.Write("Suspend/standby requested!");
           g_Player.Stop();
+          Recorder.StopViewing();
+          Recorder.Stop();
           GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
           break;
         case PBT_APMRESUMECRITICAL:
@@ -742,9 +745,9 @@ public class MediaPortalApp : D3DApp, IRender
       }
     }
 
-		//if (msg.Msg==WM_KEYDOWN) Debug.WriteLine("msg keydown");
-		g_Player.WndProc(ref msg);
-		base.WndProc(ref msg);
+    //if (msg.Msg==WM_KEYDOWN) Debug.WriteLine("msg keydown");
+    g_Player.WndProc(ref msg);
+    base.WndProc(ref msg);
 	}
 	#endregion
 
