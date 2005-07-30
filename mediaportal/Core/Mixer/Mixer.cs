@@ -57,15 +57,12 @@ namespace MediaPortal.Mixer
 			Open(0, false);
 		}
 
-		public void Open(int mixerIndex, bool isSpeakers)
+		public void Open(int mixerIndex, bool isDigital)
 		{
 			lock(this)
 			{
-				if(isSpeakers == false)
-				{
-					MediaPortal.GUI.Library.Log.Write("Using digital");
-					_componentType = MixerComponentType.DestinationDigital;
-				}
+				if(isDigital)
+					_componentType = MixerComponentType.SourceWave;
 
 				if(_mixerEventListener == null)
 				{
