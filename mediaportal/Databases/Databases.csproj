@@ -144,6 +144,11 @@
         <Files>
             <Include>
                 <File
+                    RelPath = "AssemblyInfo.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "DatabaseUtility.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -185,11 +190,6 @@
                 />
                 <File
                     RelPath = "Music\ArtistInfo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Music\AssemblyInfo.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
