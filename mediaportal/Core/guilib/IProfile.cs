@@ -1,33 +1,23 @@
-/**
- * AMS.Profile Class Library
- * 
- * Written by Alvaro Mendez
- * Copyright (c) 2004. All Rights Reserved.
- * 
- * The AMS.Profile namespace contains interfaces and classes that 
- * allow reading and writing of user-profile data.
- * This file contains the interfaces.
- * 
- * The code is thoroughly documented, however, if you have any questions, 
- * feel free to email me at alvaromendez@consultant.com.  Also, if you 
- * decide to this in a commercial application I would appreciate an email 
- * message letting me know.
+/* 
+ *	Copyright (C) 2005 Media Portal
+ *	http://mediaportal.sourceforge.net
  *
- * This code may be used in compiled form in any way you desire. This
- * file may be redistributed unmodified by any means providing it is 
- * not sold for profit without the authors written consent, and 
- * providing that this notice and the authors name and all copyright 
- * notices remains intact. This file and the accompanying source code 
- * may not be hosted on a website or bulletin board without the author's 
- * written permission.
- * 
- * This file is provided "as is" with no expressed or implied warranty.
- * The author accepts no liability for any damage/loss of business that
- * this product may cause.
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *   
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *   
+ *  You should have received a copy of the GNU General Public License
+ *  along with GNU Make; see the file COPYING.  If not, write to
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  http://www.gnu.org/copyleft/gpl.html
  *
- * Last Updated: Mar. 15, 2004
  */
-
  
 using System;
 using System.Data;

@@ -1,5 +1,6 @@
 /* 
- *	OpenHTPC.  Copyright (C) 2003 Weisoft Inc.
+ *	Copyright (C) 2005 Media Portal
+ *	http://mediaportal.sourceforge.net
  *
  *  This Program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by

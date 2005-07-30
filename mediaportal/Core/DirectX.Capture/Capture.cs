@@ -1,25 +1,23 @@
-// ------------------------------------------------------------------
-// DirectX.Capture
-//
-// History:
-//	2003-Jan-24		BL		- created
-//
-// Future Improvements
-//
-//  - IAMStreamConfig: doesnt work!
-//
-// 	- Notify unusual events (disk full, quick logoff) using IMediaEventEx (see AMCap line 1624)
-// 	- Capture stats: IAMDroppedFrames, IQualProp.get_AvgFrameRate
-// 	- Show preview while cued: ICaptureGraphBuilder2.ControlStream lets you stop capture but continue preview
-// 	- Pre-alloc space with ICaptureGraphBuilder2.AllocCapFile(), copy data using ICaptureGraphBuilder2.CopyCaptureFile()
-// 	- Audio preview (why doesn't VirtualDub do audio preview?)
-// 	- Hardware Deinterlacing: "Setting Deinterlace Preferences", or IVMRDeinterlaceControl9
-// 	- Time limit (and TimeRemaining) -> AmCap manually handles ivatime limit
-//  - Don't destory filter graph when changing compressors, just remove compressor and add new one
-//  - Change VideoFormat (NTSC/PAL), I think you need to use IAMVideoDecoder (WDM only)
-//
-// Copyright (c) 2003 Brian Low
-// ------------------------------------------------------------------
+/* 
+ *	Copyright (C) 2005 Media Portal
+ *	http://mediaportal.sourceforge.net
+ *
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *   
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *   
+ *  You should have received a copy of the GNU General Public License
+ *  along with GNU Make; see the file COPYING.  If not, write to
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  http://www.gnu.org/copyleft/gpl.html
+ *
+ */
 
 using System;
 using System.Diagnostics;
