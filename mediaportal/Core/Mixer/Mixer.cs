@@ -87,9 +87,7 @@ namespace MediaPortal.Mixer
 			
 				IntPtr handle = IntPtr.Zero;
 
-				MixerError error = MixerNativeMethods.mixerOpen(ref handle, mixerIndex, _mixerEventListener.Handle, 0, MixerFlags.CallbackWindow);
-				
-				if(error != MixerError.None)
+				if(MixerNativeMethods.mixerOpen(ref handle, mixerIndex, _mixerEventListener.Handle, 0, MixerFlags.CallbackWindow) != MixerError.None)
 					throw new InvalidOperationException();
 
 				_handle = handle;
