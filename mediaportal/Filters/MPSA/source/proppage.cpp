@@ -145,11 +145,11 @@ BOOL MPDSTProperties::OnReceiveMessage(HWND hwnd,
 			{
 				OnApplyChanges();
 			}
-			if(uMsg==273 && wParam==1002)
+			if(loparam==IDC_BUTTON1)
 			{
 				ASSERT(m_pIMPDST);
 				m_pIMPDST->ResetParser();
-				FillListBox();
+				SendMessage(m_hwndLB,LB_RESETCONTENT,0,0);
 			}
             return (LRESULT) 1;
         }
