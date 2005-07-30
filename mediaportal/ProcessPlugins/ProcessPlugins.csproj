@@ -189,6 +189,11 @@
         <Files>
             <Include>
                 <File
+                    RelPath = "AssemblyInfo.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "mp.ico"
                     BuildAction = "Content"
                 />
@@ -426,11 +431,6 @@
                     RelPath = "MPExTuneCmd\MPExTunerCmdForm.resx"
                     DependentUpon = "MPExTunerCmdForm.cs"
                     BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "NVPPowerScheduler\AssemblyInfo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
                 />
                 <File
                     RelPath = "NVPPowerScheduler\NVPPowerScheduler.cs"
