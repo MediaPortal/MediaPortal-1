@@ -180,5 +180,10 @@ namespace MediaPortal.GUI.Library
 			{
 			}
 		}
+
+		public static void Clear()
+		{
+			m_mapStrings.Clear();
+		}
 	}
 }
