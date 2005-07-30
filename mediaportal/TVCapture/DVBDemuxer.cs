@@ -203,8 +203,13 @@ namespace MediaPortal.TV.Recording
 		System.Timers.Timer m_secTimer=new System.Timers.Timer();
 		int m_eitScheduleLastTable=0x50;
 		int m_lastContinuityCounter=0;
+#if GRABPPMT
 		// pmt
 		int m_currentPMTVersion=-1;
+		// for pmt pid
+		byte[] m_tableBufferPMT=new byte[4096];
+int m_bufferPositionPMT=0;
+#endif
 		int m_programNumber=-1;
 		DateTime packetTimer=DateTime.MinValue;
 		bool     receivingPackets=false;
@@ -212,9 +217,6 @@ namespace MediaPortal.TV.Recording
 		// card
 		static int m_currentDVBCard=0;
 		static NetworkType m_currentNetworkType;
-		// for pmt pid
-		byte[] m_tableBufferPMT=new byte[4096];
-		int m_bufferPositionPMT=0;
 		bool m_packetsReceived=false;
 		DVBSectionHeader m_sectionHeader=new DVBSectionHeader();
 
@@ -237,16 +239,18 @@ namespace MediaPortal.TV.Recording
         #endregion
 
         #region Delegates/Events
-		// audio format
-		public delegate bool OnAudioChanged(AudioHeader audioFormat);
-        public event OnAudioChanged OnAudioFormatChanged; 
-		// pmt handling
-		public delegate void OnPMTChanged(byte[] pmtTable);
-		public event OnPMTChanged OnPMTIsChanged;
-	    // grab table
-		public delegate void OnTableReceived(int pid,int tableID,ArrayList tableList);
-		public event OnTableReceived OnGotTable;
-		#endregion
+				// audio format
+				public delegate bool OnAudioChanged(AudioHeader audioFormat);
+				public event OnAudioChanged OnAudioFormatChanged; 
+#if GRABPPMT
+				// pmt handling
+				public delegate void OnPMTChanged(byte[] pmtTable);
+				public event OnPMTChanged OnPMTIsChanged;
+#endif
+				// grab table
+				public delegate void OnTableReceived(int pid,int tableID,ArrayList tableList);
+				public event OnTableReceived OnGotTable;
+				#endregion
 
         #region public functions
 		public void GetEPGSchedule(int tableID,int programID)
@@ -335,8 +339,10 @@ namespace MediaPortal.TV.Recording
 			m_secTimer.Stop();
 			m_packetsReceived=false;
 			epgRegrabTime= DateTime.MinValue;
+#if GRABPPMT
 			m_currentPMTVersion=-1;
 			m_bufferPositionPMT=0;
+#endif
 			m_programNumber=-1;
 			if (programnumber>0)
 				m_programNumber=programnumber;
