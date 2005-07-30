@@ -1083,39 +1083,6 @@ namespace MediaPortal.TV.Recording
 				{
 					try
 					{
-						//
-						// start copy data for every section on its table-id-byte
-						if(m_bufferPositionSec==0 && m_sectionTableID!=Marshal.ReadByte((IntPtr)(ptr+4+offset)))
-						{
-							//Log.Write("ignore sectiontableid wrong");
-							continue;
-						}
-						if(m_bufferPositionSec==0 && m_packetHeader.ContinuityCounter!=0)
-						{
-							continue;
-						}
-/*						Log.Write("pid:0x{0:X} pos:{1} cont:{2} adapt:{3} payloadunitstart:{4} len:{5}",
-												m_packetHeader.Pid,
-												m_bufferPositionSec,
-												m_packetHeader.ContinuityCounter,
-												m_packetHeader.AdaptionFieldControl,
-												m_packetHeader.PayloadUnitStart,
-												m_packetHeader.SectionLen);*/
-						int offset=0;
-						//
-						// 
-						// check continuity counter
-						if(m_bufferPositionSec>0)
-						{
-							int counter=m_lastContinuityCounter;
-							if(counter==15)
-								counter=-1;
-							if(counter+1!=m_packetHeader.ContinuityCounter)
-							{
-								//Log.Write("dvb-demuxer: continuity counter dont match for pid {0}!={1}",counter+1,m_packetHeader.ContinuityCounter);
-								m_bufferPositionSec=0;
-							}
-						}
 						// calc offset
 						if(m_packetHeader.AdaptionFieldControl==2)
 						{
@@ -1127,10 +1094,34 @@ namespace MediaPortal.TV.Recording
 							//Log.Write("ignore adapt=3");
 							continue;
 						}
+						if(m_bufferPositionSec==0 && m_packetHeader.ContinuityCounter!=0)
+						{
+							continue;
+						}
+						int offset=0;
 						if(m_packetHeader.PayloadUnitStart==true && m_bufferPositionSec==0)
 							offset=m_packetHeader.AdaptionField+1;
 						else if(m_packetHeader.PayloadUnitStart==true)
 							offset=1;
+
+						//
+						// start copy data for every section on its table-id-byte
+						if(m_bufferPositionSec==0 && m_sectionTableID!=Marshal.ReadByte((IntPtr)(ptr+4+offset)))
+						{
+							//Log.Write("ignore sectiontableid wrong");
+							continue;
+						}
+						if(m_bufferPositionSec>0)
+						{
+							int counter=m_lastContinuityCounter;
+							if(counter==15)
+								counter=-1;
+							if(counter+1!=m_packetHeader.ContinuityCounter)
+							{
+								//Log.Write("dvb-demuxer: continuity counter dont match for pid {0}!={1}",counter+1,m_packetHeader.ContinuityCounter);
+								m_bufferPositionSec=0;
+							}
+						}
 						
 						//
 						// copy data
