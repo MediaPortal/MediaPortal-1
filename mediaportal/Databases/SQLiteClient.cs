@@ -264,11 +264,10 @@ namespace SQLite.NET
 				{
 					string colData = "";
 					IntPtr pName=sqlite3_column_text16 (pVm, i);
-					if (pName==IntPtr.Zero)
+					if (pName!=IntPtr.Zero)
 					{
-						ThrowError(String.Format("SqlClient:sqlite3_column_text16() returned null {0}/{1}",i,pN),query,res);
+						colData = Marshal.PtrToStringUni (pName);
 					}
-					colData = Marshal.PtrToStringUni (pName);
 					row.Add(colData);
 				}
 				set1.Rows.Add(row);
