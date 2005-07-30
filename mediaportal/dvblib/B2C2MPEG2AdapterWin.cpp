@@ -1,20 +1,24 @@
-// Copyright (c) 1998-2002 B2C2, Incorporated.  All Rights Reserved.
-//
-// THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF B2C2, INCORPORATED.
-// The copyright notice above does not evidence any
-// actual or intended publication of such source code.
-//
-// This file is proprietary source code of B2C2, Incorporated. and is released pursuant to and
-// subject to the restrictions of the non-disclosure agreement and license contract entered
-// into by the parties.
-//
-//
-// File: B2C2MPEG2AdapterWin.cpp
-//
-//
-// Windows version of the class B2C2MPEG2Adapter implementation
-//
-//
+/* 
+ *	Copyright (C) 2005 Media Portal
+ *  Author: Agree
+ *	http://mediaportal.sourceforge.net
+ *
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *   
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *   
+ *  You should have received a copy of the GNU General Public License
+ *  along with GNU Make; see the file COPYING.  If not, write to
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  http://www.gnu.org/copyleft/gpl.html
+ *
+ */
 #include "stdafx.h"
 #include <stdio.h>
 

@@ -93,7 +93,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="C:\DXSDK\Samples\C++\DirectShow\BaseClasses,C:\DXSDK\Include"
+				AdditionalIncludeDirectories="C:\temp\Extras\DirectShow\Samples\C++\DirectShow\BaseClasses;C:\temp\Extras\DirectShow\Include;"
 				PreprocessorDefinitions="DBG=1;DEBUG;_DEBUG;INC_OLE2;STRICT;_WIN32_WINNT=0x0400;WIN32;_WIN32;_MT;_DLL;_X86_=1;WINVER=0x0400"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -110,12 +110,12 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="&quot;C:\DXSDK\Samples\C++\DirectShow\BaseClasses\Debug\strmbasd.lib&quot; quartz.lib winmm.lib msvcrtd.lib"
+				AdditionalDependencies="&quot;C:\temp\Extras\DirectShow\Samples\C++\DirectShow\BaseClasses\Debug\strmbasd.lib&quot; quartz.lib winmm.lib msvcrtd.lib"
 				OutputFile="Debug/MPSA.ax"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="C:\DXSDK\Lib"
-				IgnoreAllDefaultLibraries="TRUE"
+				IgnoreAllDefaultLibraries="FALSE"
 				ModuleDefinitionFile=".\source\MPSA.def"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile=".\Debug/MPSA.pdb"

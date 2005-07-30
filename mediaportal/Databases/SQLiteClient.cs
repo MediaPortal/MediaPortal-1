@@ -155,7 +155,7 @@ namespace SQLite.NET
 		{
 			if (this.dbHandle!=IntPtr.Zero)
 			{	
-			//Log.Write("dbs:close:{0}",databaseName);
+			  Log.Write("dbs:close:{0}",databaseName);
 				sqlite3_close(this.dbHandle);
 				this.dbHandle=IntPtr.Zero;
 				databaseName=String.Empty;
@@ -201,6 +201,11 @@ namespace SQLite.NET
 					err = sqlite3_prepare16 (dbHandle, query, query.Length, out pVm, out pzTail);
 					if (err == SqliteError.OK)
 						ReadpVm(query,set1, pVm);
+
+					if (pVm==IntPtr.Zero)
+					{
+						ThrowError("sqlite3_prepare16:pvm=null",query,err);
+					}
 					err = sqlite3_finalize (pVm, out errMsg);
 				}
 				finally
@@ -219,8 +224,12 @@ namespace SQLite.NET
 			int pN = 0;
 			IntPtr pazValue = IntPtr.Zero;
 			IntPtr pazColName = IntPtr.Zero;
-			SqliteError res;
+			SqliteError res=SqliteError.ERROR;
 
+			if (pVm==IntPtr.Zero)
+			{
+				ThrowError("SqlClient:pvm=null",query,res);
+			}
 			while (true) 
 			{
 				res = sqlite3_step (pVm);
@@ -240,6 +249,10 @@ namespace SQLite.NET
 					{
 						string colName = "";
 						IntPtr pName=sqlite3_column_name16 (pVm, i);
+						if (pName==IntPtr.Zero)
+						{
+							ThrowError(String.Format("SqlClient:sqlite3_column_name16() returned null {0}/{1}",i,pN),query,res);
+						}
 						colName = Marshal.PtrToStringUni (pName);
 						set1.columnNames.Add(colName);
 						set1.ColumnIndices[colName]=i;
@@ -250,7 +263,12 @@ namespace SQLite.NET
 				for (int i = 0; i < pN; i++) 
 				{
 					string colData = "";
-					colData = Marshal.PtrToStringUni (sqlite3_column_text16 (pVm, i));
+					IntPtr pName=sqlite3_column_text16 (pVm, i);
+					if (pName==IntPtr.Zero)
+					{
+						ThrowError(String.Format("SqlClient:sqlite3_column_text16() returned null {0}/{1}",i,pN),query,res);
+					}
+					colData = Marshal.PtrToStringUni (pName);
 					row.Add(colData);
 				}
 				set1.Rows.Add(row);
