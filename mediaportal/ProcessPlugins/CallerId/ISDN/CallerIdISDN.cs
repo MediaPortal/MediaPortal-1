@@ -8,6 +8,8 @@ using System.Reflection;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
+using MediaPortal.Dialogs;
+using MediaPortal.Player;
 
 namespace ProcessPlugins.CallerId
 {
@@ -320,28 +322,40 @@ namespace ProcessPlugins.CallerId
 
 
         // Notify window popup
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_NOTIFY, 0, 0, 0, 0, 0, 0);
-        msg.Label = "Incoming call";
-        if (country != Strings.Unknown)
+        GUIDialogNotify dialogNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+        if (dialogNotify != null)
         {
-          msg.Label = msg.Label + " from " + location + ", " + (string)CountryTranslator[country];
-          if (caller.Name != null)
+          string notifyHeading = "";
+          string notifyText = "";
+          string notifyImage = "";
+          notifyHeading = GUILocalizeStrings.Get(1023); // 1023 Incoming call
+          if (country != Strings.Unknown)
           {
-            msg.Label2 = caller.Name + "\n\n(" + caller.Type + ")";
-            if (caller.HasPicture)
-              msg.Label3 = Thumbs.Yac + @"\ContactPicture.jpg";
+            notifyHeading = notifyHeading + " " + GUILocalizeStrings.Get(1024) + " " + location + ", " + (string)CountryTranslator[country]; // 1024 from
+            if (caller.Name != null)
+            {
+              notifyText = caller.Name + "\n\n(" + caller.Type + ")";
+              if (caller.HasPicture)
+                notifyImage = Thumbs.Yac + @"\ContactPicture.jpg";
+              else
+                notifyImage = Thumbs.Yac + @"\text-message.jpg";
+            }
             else
-              msg.Label3 = Thumbs.Yac + @"\text-message.jpg";
+              notifyText = outlookQuery;
           }
           else
           {
-            msg.Label2 = outlookQuery;
+            notifyText = callerId + "\n\n" + GUILocalizeStrings.Get(1025) + "\n" + GUILocalizeStrings.Get(1026); // 1025 An error occurred. 1026 See the log files for details.
           }
+
+          if (g_Player.Playing && !g_Player.Paused)
+            g_Player.Pause();
+
+          dialogNotify.SetHeading(notifyHeading);
+          dialogNotify.SetText(notifyText);
+          dialogNotify.SetImage(notifyImage);
+          dialogNotify.DoModal(-1);
         }
-        else
-          msg.Label2 = callerId + "\n\nAn error occurred.\nSee the log file for details.";
-        
-        GUIGraphicsContext.SendMessage(msg);
       }
     }
   }
