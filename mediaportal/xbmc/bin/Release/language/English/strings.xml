@@ -3001,6 +3001,23 @@
 </string>
 
 <string>
+	<id>1023</id>
+	<value>Incoming call</value>
+</string>
+<string>
+	<id>1024</id>
+	<value>from</value>
+</string>
+<string>
+	<id>1025</id>
+	<value>An error occurred.</value>
+</string>
+<string>
+	<id>1026</id>
+	<value>See the log files for details.</value>
+</string>
+
+<string>
 	<id>1027</id>
 	<value>My DVD</value>
 </string>
