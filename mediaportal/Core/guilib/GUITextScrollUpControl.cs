@@ -381,6 +381,7 @@ namespace MediaPortal.GUI.Library
 
     void SetText(string strText)
     {
+
       m_vecItems.Clear();
       // start wordwrapping
       // Set a flag so we can determine initial justification effects
@@ -469,6 +470,9 @@ namespace MediaPortal.GUI.Library
       {
         m_vecItems.RemoveRange(istart, m_vecItems.Count - istart);
       }
+
+		// Set timeElapsed to be 0 so we delay scrolling again
+		timeElapsed = 0.0f; 
     }
 
 
