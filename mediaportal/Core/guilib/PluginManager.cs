@@ -418,7 +418,7 @@ namespace MediaPortal.GUI.Library
       } 
     }
 
-    static public bool WndProc(ref System.Windows.Forms.Message msg)	// Receive window messages from core / added by mPod/waeberd
+    static public bool WndProc(ref System.Windows.Forms.Message msg)
     {
       bool res = false;
       foreach (IPlugin plugin in _NonGUIPlugins)
