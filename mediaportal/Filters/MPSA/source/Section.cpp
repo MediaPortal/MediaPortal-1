@@ -902,6 +902,7 @@ void Sections::DecodeEPG(byte* buf,int len)
 	time_t timespan=currentTime-m_epgTimeout;
 	if (timespan>10)
 	{
+		Log("EPG:timeout");
 		m_bParseEPG=false;
 		m_bEpgDone=true;
 	}
@@ -937,6 +938,7 @@ void Sections::DecodeEPG(byte* buf,int len)
 		newChannel.allSectionsReceived=false;
 		m_mapEPG[key]=newChannel;
 		it=m_mapEPG.find(key);
+		Log("add new channel onid:%x tsid:%x sid:%d",network_id,transport_id,service_id);
 	}
 	EPGChannel& channel=it->second;
 	if (channel.allSectionsReceived) return;
@@ -945,12 +947,12 @@ void Sections::DecodeEPG(byte* buf,int len)
 	EPGChannel::imapSectionsReceived itSec=channel.mapSectionsReceived.find(section_number);
 	if (itSec!=channel.mapSectionsReceived.end()) return; //yes
 	channel.mapSectionsReceived[section_number]=true;
-/*
+
 	Log("EPG tid:%x len:%d %d (%d/%d) sid:%d tsid:%d onid:%d slsn:%d last table id:%x cn:%d version:%d", 
 		buf[0],len,section_length,section_number,last_section_number, 
 		service_id,transport_id,network_id,segment_last_section_number,last_table_id,
 		current_next_indicator,version_number);
-*/
+
 	m_epgTimeout=time(NULL);
 	int start=14;
 	while (start+11 < len)
@@ -1182,6 +1184,7 @@ void Sections::DecodeContentDescription(byte* buf,EPGEvent& event)
 
 void Sections::Reset()
 {
+	Log("Reset");
 	m_mapEPG.clear();
 	m_bParseEPG=false;
 	m_bEpgDone=false;
@@ -1190,6 +1193,8 @@ void Sections::Reset()
 
 void Sections::GrabEPG()
 {
+	Log("GrabEPG");
+	m_mapEPG.clear();
 	m_bParseEPG=true;
 	m_bEpgDone=false;
 	m_epgTimeout=time(NULL);

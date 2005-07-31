@@ -668,6 +668,7 @@ STDMETHODIMP CStreamAnalyzer::IsATSCUsed(BOOL* yesNo)
 }
 STDMETHODIMP CStreamAnalyzer::GrabEPG()
 {
+	Log("StreamAnalyzer:GrabEPG");
 	m_pSections->GrabEPG();
 	return S_OK;
 }
