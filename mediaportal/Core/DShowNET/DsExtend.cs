@@ -72,6 +72,23 @@ namespace DShowNET
 		[PreserveSig]
 		int UseATSC(byte yesNo);
 
+		[PreserveSig]
+		int GrabEPG();
+
+		[PreserveSig]
+		int IsEPGReady(out bool yesNo);
+
+		[PreserveSig]
+		int GetEPGChannelCount(ref ulong channelCount);
+
+		[PreserveSig]
+		int GetEPGEventCount(ulong channel, ref ulong eventCount);
+
+		[PreserveSig]
+		int GetEPGChannel( ulong channel,  ref int networkId,  ref int transportid, ref int service_id  );
+
+		[PreserveSig]
+		int GetEPGEvent( ulong channel,  ulong eventid, ref ulong date, ref ulong time, ref ulong duration, [Out, MarshalAs(UnmanagedType.LPStr)] out string eventstr,  [Out, MarshalAs(UnmanagedType.LPStr)] out string  text, [Out, MarshalAs(UnmanagedType.LPStr)] out string  genre    );
 	}
 
 
