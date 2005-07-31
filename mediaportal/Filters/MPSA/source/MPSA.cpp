@@ -28,6 +28,8 @@
 #include "MPSA.h"
 #include "SplitterSetup.h"
 #include "proppage.h"
+#include "mhwinputpin1.h"
+#include "mhwinputpin2.h"
 
 // Setup data
 
@@ -37,18 +39,48 @@ const AMOVIESETUP_MEDIATYPE sudPinTypes[2] =
 	{&MEDIATYPE_MPEG2_SECTIONS, &MEDIASUBTYPE_DVB_SI},         // Minor type
 	{&MEDIATYPE_MPEG2_SECTIONS, &MEDIASUBTYPE_ATSC_SI}         // Minor type
 };
-
-const AMOVIESETUP_PIN sudPins =
+const AMOVIESETUP_MEDIATYPE sudPinTypesMHW =
 {
-    L"Input",                   // Pin string name
-    FALSE,                      // Is it rendered
-    FALSE,                      // Is it an output
-    FALSE,                      // Allowed none
-    FALSE,                      // Likewise many
-    &CLSID_NULL,                // Connects to filter
-    L"Output",                  // Connects to pin
-    2,                          // Number of types
-    &sudPinTypes[0]             // Pin information
+	&MEDIATYPE_Stream, &MEDIASUBTYPE_MPEG2_TRANSPORT,         // Minor type
+};
+
+const AMOVIESETUP_PIN sudPins[3] =
+{
+	{
+		L"Input",                   // Pin string name
+		FALSE,                      // Is it rendered
+		FALSE,                      // Is it an output
+		FALSE,                      // Allowed none
+		FALSE,                      // Likewise many
+		&CLSID_NULL,                // Connects to filter
+		L"Output",                  // Connects to pin
+		2,                          // Number of types
+		&sudPinTypes[0]             // Pin information
+	},
+		
+	{
+		L"MHWd2",                   // Pin string name
+		FALSE,                      // Is it rendered
+		FALSE,                      // Is it an output
+		FALSE,                      // Allowed none
+		FALSE,                      // Likewise many
+		&CLSID_NULL,                // Connects to filter
+		L"Output",                  // Connects to pin
+		1,                          // Number of types
+		&sudPinTypesMHW             // Pin information
+	},
+		
+	{
+		L"MHWd3",                   // Pin string name
+		FALSE,                      // Is it rendered
+		FALSE,                      // Is it an output
+		FALSE,                      // Allowed none
+		FALSE,                      // Likewise many
+		&CLSID_NULL,                // Connects to filter
+		L"Output",                  // Connects to pin
+		1,                          // Number of types
+		&sudPinTypesMHW             // Pin information
+	},
 };
 
 const AMOVIESETUP_FILTER sudDump =
@@ -56,8 +88,8 @@ const AMOVIESETUP_FILTER sudDump =
     &CLSID_MPDSA,          // Filter CLSID
     L"MediaPortal Stream Analyzer",   // String name
     MERIT_DO_NOT_USE,           // Filter merit
-    1,                          // Number pins
-    &sudPins                    // Pin details
+    3,                          // Number pins
+    sudPins                    // Pin details
 };
 
 
@@ -102,9 +134,13 @@ STDMETHODIMP CDump::GetPages(CAUUID *pPages)
 //
 CBasePin * CDumpFilter::GetPin(int n)
 {
-    if (n == 0) {
-        return m_pDump->m_pPin;
-    } else {
+    if (n ==0) 
+	    return m_pDump->m_pPin;
+    else if (n ==1) 
+		return m_pDump->m_pMHWPin1;
+    else if (n ==2) 
+		return m_pDump->m_pMHWPin2;
+	else {
         return NULL;
     }
 }
@@ -115,7 +151,7 @@ CBasePin * CDumpFilter::GetPin(int n)
 //
 int CDumpFilter::GetPinCount()
 {
-    return 1;
+    return 3;
 }
 
 
@@ -140,9 +176,6 @@ STDMETHODIMP CDumpFilter::Pause()
 {
     CAutoLock cObjectLock(m_pLock);
 
-    if (m_pDump)
-    {
-    }
 
     return CBaseFilter::Pause();
 }
@@ -210,7 +243,7 @@ HRESULT CDumpInputPin::BreakConnect()
 HRESULT CDumpInputPin::CompleteConnect(IPin *pPin)
 {
 	HRESULT hr=CBasePin::CompleteConnect(pPin);
-	m_pDump->OnConnect();
+	m_pDump->OnConnectSections();
 	return hr;
 }
 
@@ -335,7 +368,26 @@ CDump::CDump(LPUNKNOWN pUnk, HRESULT *phr) :
         return;
     }
 
-
+	m_pMHWPin1 = new CMHWInputPin1(this,GetOwner(),
+                               m_pFilter,
+                               &m_Lock,
+                               &m_ReceiveLock,
+                               phr);
+    if (m_pMHWPin1 == NULL) {
+        if (phr)
+            *phr = E_OUTOFMEMORY;
+        return;
+    }
+	m_pMHWPin2 = new CMHWInputPin2(this,GetOwner(),
+                               m_pFilter,
+                               &m_Lock,
+                               &m_ReceiveLock,
+                               phr);
+    if (m_pMHWPin2 == NULL) {
+        if (phr)
+            *phr = E_OUTOFMEMORY;
+        return;
+    }
 }
 
 
@@ -375,6 +427,7 @@ STDMETHODIMP CDump::ResetParser()
 	Log("ResetParser");
 	HRESULT hr=m_pDemuxer->UnMapAllPIDs();
 	m_patChannelsCount=0;
+	m_pSections->Reset();
 	return hr;
 }
 //
@@ -405,20 +458,56 @@ STDMETHODIMP CDump::NonDelegatingQueryInterface(REFIID riid, void ** ppv)
 
 } // NonDelegatingQueryInterface
 
-HRESULT CDump::OnConnect()
+HRESULT CDump::OnConnectSections()
 {
+	Log("OnConnectSections");
 	m_pDemuxer->SetDemuxPins(m_pFilter->GetFilterGraph());
 	IPin *pin;
 	m_pPin->ConnectedTo(&pin);
 	if(pin!=NULL)
-		m_pDemuxer->SetPin(pin);
-
+	{
+		m_pDemuxer->SetSectionsPin(pin);
+		pin->Release();
+		pin=NULL;
+	}	
 	return S_OK;
 }
+
+HRESULT CDump::OnConnectMHW1()
+{
+	Log("OnConnectMHW1");
+	m_pDemuxer->SetDemuxPins(m_pFilter->GetFilterGraph());
+	IPin *pin;
+	m_pMHWPin1->ConnectedTo(&pin);
+	if(pin!=NULL)
+	{
+		m_pDemuxer->SetMHW1Pin(pin);
+		pin->Release();
+		pin=NULL;
+	}
+	return S_OK;
+}
+HRESULT CDump::OnConnectMHW2()
+{
+	Log("OnConnectMHW2");
+
+	m_pDemuxer->SetDemuxPins(m_pFilter->GetFilterGraph());
+	IPin *pin;
+	m_pMHWPin2->ConnectedTo(&pin);
+	if(pin!=NULL)
+	{
+		m_pDemuxer->SetMHW2Pin(pin);
+		pin->Release();
+		pin=NULL;
+	}
+	return S_OK;
+}
+
 STDMETHODIMP CDump::ResetPids()
 {
         return NOERROR;
 }
+
 HRESULT CDump::Process(BYTE *pbData,long len)
 {
 	//CAutoLock lock(&m_Lock);
@@ -451,6 +540,11 @@ HRESULT CDump::Process(BYTE *pbData,long len)
 	}
 	else
 	{
+		
+		if (pbData[0]>=0x50 && pbData[0] <= 0x6f) //EPG
+		{
+			m_pSections->DecodeEPG(pbData,len);
+		}
 		if(pbData[0]==0x02)// pmt
 		{
 			ULONG prgNumber=(pbData[3]<<8)+pbData[4];
@@ -458,7 +552,7 @@ HRESULT CDump::Process(BYTE *pbData,long len)
 			{
 				if(m_patTable[n].ProgrammNumber==prgNumber && m_patTable[n].PMTReady==false)
 				{
-					m_pSections->decodePMT(pbData,&m_patTable[n]);
+					m_pSections->decodePMT(pbData,&m_patTable[n],len);
 					if(m_patTable[n].Pids.AudioPid1>0)
 						m_pDemuxer->MapAdditionalPayloadPID(m_patTable[n].Pids.AudioPid1);
 					if(m_patTable[n].Pids.AudioPid2>0)
@@ -478,7 +572,7 @@ HRESULT CDump::Process(BYTE *pbData,long len)
 		if(pbData[0]==0x00 && m_patChannelsCount==0 && pesPacket==false)// pat
 		{
 			m_pDemuxer->UnMapAllPIDs();
-			m_pSections->decodePAT(pbData,m_patTable,&m_patChannelsCount);
+			m_pSections->decodePAT(pbData,m_patTable,&m_patChannelsCount,len);
 			for(int n=0;n<m_patChannelsCount;n++)
 			{
 				m_pDemuxer->MapAdditionalPID(m_patTable[n].ProgrammPMTPID);
@@ -486,17 +580,17 @@ HRESULT CDump::Process(BYTE *pbData,long len)
 		}
 		if(pbData[0]==0x42)// sdt
 		{
-			m_pSections->decodeSDT(pbData,m_patTable,m_patChannelsCount);
+			m_pSections->decodeSDT(pbData,m_patTable,m_patChannelsCount,len);
 		}
 	}
 	return S_OK;
 }
 STDMETHODIMP CDump::IsChannelReady(ULONG channel)
 {
-	if(channel<0 || channel>m_patChannelsCount-1)
+	if(channel<0 || channel>(ULONG)m_patChannelsCount-1)
 		return S_FALSE;
 
-	if(m_patTable[channel].SDTReady==true && m_patTable[channel].PMTReady==true)
+	if((bool)m_patTable[channel].SDTReady==true && (bool)m_patTable[channel].PMTReady==true)
 		return S_OK;
 
 	return S_FALSE;

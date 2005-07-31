@@ -8,6 +8,7 @@
 
 #ifndef __PROPPAGE_
 #define __PROPPAGE_
+#pragma warning(disable: 4511 4512 4995)
 
 #include "mpsa.h"
 

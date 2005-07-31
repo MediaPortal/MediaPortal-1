@@ -29,6 +29,8 @@ extern void Log(const char *fmt, ...) ;
 SplitterSetup::SplitterSetup(Sections *pSections) :
 m_demuxSetupComplete(FALSE),m_pSectionsPin(NULL)
 {
+	m_pMHW1Pin=NULL;
+	m_pMHW2Pin=NULL;
 	m_pSections = pSections;
 }
 
@@ -36,7 +38,17 @@ SplitterSetup::~SplitterSetup()
 {
 	if(m_pSectionsPin!=NULL)
 		m_pSectionsPin->Release();
+	m_pSectionsPin=NULL;
+
+	if(m_pMHW1Pin!=NULL)
+		m_pMHW1Pin->Release();
+	m_pMHW1Pin=NULL;
+
+	if(m_pMHW2Pin!=NULL)
+		m_pMHW2Pin->Release();
+	m_pMHW2Pin=NULL;
 }
+
 HRESULT SplitterSetup::SetDemuxPins(IFilterGraph *pGraph)
 {
 
@@ -89,7 +101,16 @@ HRESULT SplitterSetup::SetupDemuxer(IBaseFilter *demuxFilter)
 	return S_OK;
 }
 
-HRESULT SplitterSetup::SetupPins(IPin *pPin)
+HRESULT SplitterSetup::SetupDefaultMapping()
+{
+	Log("SetupDefaultMapping()");
+
+	SetSectionMapping();
+	SetMHW1Mapping();
+	SetMHW2Mapping();
+	return 0;
+}
+HRESULT SplitterSetup::SetMHW1Mapping()
 {
 	IMPEG2PIDMap	*pMap=NULL;
 	IEnumPIDMap		*pPidEnum=NULL;
@@ -97,20 +118,17 @@ HRESULT SplitterSetup::SetupPins(IPin *pPin)
 	PID_MAP			pm;
 	ULONG			count;
 	ULONG			umPid;
-	int				maxCounter;
 	
 	HRESULT hr=0;
-
-	
 			
-	Log("Setup pins");
+	Log("Setup MHW1");
 
 	// video
 
-	if(pPin==NULL)
+	if(m_pMHW1Pin==NULL)
 		return S_FALSE;
 
-	hr=pPin->QueryInterface(IID_IMPEG2PIDMap,(void**)&pMap);
+	hr=m_pMHW1Pin->QueryInterface(IID_IMPEG2PIDMap,(void**)&pMap);
 	if(FAILED(hr) || pMap==NULL)
 		return 3;
 		// 
@@ -133,6 +151,121 @@ HRESULT SplitterSetup::SetupPins(IPin *pPin)
 	}
 	pPidEnum->Release();
 	
+	Log("map pid 0xd2");
+	pid = (ULONG)0xd2;
+	hr=pMap->MapPID(1,&pid,MEDIA_TRANSPORT_PACKET); // tv
+	if(FAILED(hr))
+	{
+		Log("failed to map pid 0x0");
+		return 4;
+	}
+	pMap->Release();
+	return S_OK;
+
+}
+HRESULT SplitterSetup::SetMHW2Mapping()
+{
+	IMPEG2PIDMap	*pMap=NULL;
+	IEnumPIDMap		*pPidEnum=NULL;
+	ULONG			pid;
+	PID_MAP			pm;
+	ULONG			count;
+	ULONG			umPid;
+	
+	HRESULT hr=0;
+			
+	Log("Setup MHW2");
+
+	// video
+
+	if(m_pMHW2Pin==NULL)
+		return S_FALSE;
+
+	hr=m_pMHW2Pin->QueryInterface(IID_IMPEG2PIDMap,(void**)&pMap);
+	if(FAILED(hr) || pMap==NULL)
+		return 3;
+		// 
+	hr=pMap->EnumPIDMap(&pPidEnum);
+	if(FAILED(hr) || pPidEnum==NULL)
+		return 7;
+		
+	// enum and unmap the pids
+	while(pPidEnum->Next(1,&pm,&count)== S_OK)
+	{
+		if (count!=1) break;
+			
+		umPid=pm.ulPID;
+		hr=pMap->UnmapPID(1,&umPid);
+		if(FAILED(hr))
+		{	
+			Log("failed to unmap pids");
+			return 8;
+		}
+	}
+	pPidEnum->Release();
+	
+	Log("map pid 0xd3");
+	pid = (ULONG)0xd3;
+	hr=pMap->MapPID(1,&pid,MEDIA_TRANSPORT_PACKET); // tv
+	if(FAILED(hr))
+	{
+		Log("failed to map pid 0x0");
+		return 4;
+	}
+	pMap->Release();
+	return S_OK;
+}
+
+HRESULT SplitterSetup::SetSectionMapping()
+{
+	IMPEG2PIDMap	*pMap=NULL;
+	IEnumPIDMap		*pPidEnum=NULL;
+	ULONG			pid;
+	PID_MAP			pm;
+	ULONG			count;
+	ULONG			umPid;
+	
+	HRESULT hr=0;
+			
+	Log("Setup DVBSections");
+
+	// video
+
+	if(m_pSectionsPin==NULL)
+		return S_FALSE;
+
+	hr=m_pSectionsPin->QueryInterface(IID_IMPEG2PIDMap,(void**)&pMap);
+	if(FAILED(hr) || pMap==NULL)
+		return 3;
+		// 
+	hr=pMap->EnumPIDMap(&pPidEnum);
+	if(FAILED(hr) || pPidEnum==NULL)
+		return 7;
+		
+	// enum and unmap the pids
+	while(pPidEnum->Next(1,&pm,&count)== S_OK)
+	{
+		if (count!=1) break;
+			
+		umPid=pm.ulPID;
+		hr=pMap->UnmapPID(1,&umPid);
+		if(FAILED(hr))
+		{	
+			Log("failed to unmap pids");
+			return 8;
+		}
+	}
+	pPidEnum->Release();
+
+	Log("map pid x12");
+	pid = (ULONG)0x12;// EIT
+	hr=pMap->MapPID(1,&pid,MEDIA_MPEG2_PSI); // tv
+	if(FAILED(hr))
+	{
+		Log("failed to map pid 0x0");
+		return 4;
+	}
+
 	Log("map pid 0x0");
 	pid = (ULONG)0;// pat
 	hr=pMap->MapPID(1,&pid,MEDIA_MPEG2_PSI); // tv
@@ -204,24 +337,34 @@ bool SplitterSetup::PinIsNULL()
 {
 	return (m_pSectionsPin==NULL);
 }
-HRESULT SplitterSetup::SetPin(IPin *ppin)
+HRESULT SplitterSetup::SetSectionsPin(IPin *ppin)
 {
 	if(m_pSectionsPin==NULL)
 		m_pSectionsPin=ppin;
 	return S_OK;
 }
-HRESULT SplitterSetup::UnMapAllPIDs()
-{
-	if(m_pSectionsPin==NULL)
-	{
-		return S_FALSE;
-	}
 
-	SetupPins(m_pSectionsPin);
+HRESULT SplitterSetup::SetMHW1Pin(IPin *ppin)
+{
+	if(m_pMHW1Pin==NULL)
+		m_pMHW1Pin=ppin;
 	return S_OK;
 }
-HRESULT SplitterSetup::GetPSIMedia(AM_MEDIA_TYPE *pintype)
+HRESULT SplitterSetup::SetMHW2Pin(IPin *ppin)
+{
+	if(m_pMHW2Pin==NULL)
+		m_pMHW2Pin=ppin;
+	return S_OK;
+}
 
+HRESULT SplitterSetup::UnMapAllPIDs()
+{
+	Log("UnMapAllPIDs()");
+	SetupDefaultMapping();
+	return S_OK;
+}
+
+HRESULT SplitterSetup::GetPSIMedia(AM_MEDIA_TYPE *pintype)
 {
 	HRESULT hr = E_INVALIDARG;
 
@@ -230,6 +373,5 @@ HRESULT SplitterSetup::GetPSIMedia(AM_MEDIA_TYPE *pintype)
 	ZeroMemory(pintype, sizeof(AM_MEDIA_TYPE));
 	pintype->majortype = MEDIATYPE_MPEG2_SECTIONS;
 	pintype->subtype = MEDIASUBTYPE_DVB_SI;
-
 	return S_OK;
 }

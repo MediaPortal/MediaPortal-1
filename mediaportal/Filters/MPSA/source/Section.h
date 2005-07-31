@@ -6,14 +6,36 @@
 
 #ifndef __Sections_
 #define __Sections_
+#include <map>
+#include <string>
+using namespace std;
 
+#pragma warning(disable: 4511 4512 4995)
 class Sections
 {
 public:
-	//
-	//
+	struct EPGEvent
+	{
+		unsigned int eventid;
+		unsigned long date;
+		unsigned long time;
+		unsigned long duration;
+		unsigned int running_status;
+		unsigned int free_CA_mode;
+		string event;
+		string text;
+		string genre;
+	};
 
-	  
+	struct EPGChannel
+	{
+		int original_network_id;
+		int transport_id;
+		int service_id;
+		map<unsigned int,EPGEvent> mapEvents;
+		typedef map<unsigned int,EPGEvent>::iterator imapEvents;
+	};
+
 	struct audioHeader
     {
       //AudioHeader
@@ -140,9 +162,9 @@ public:
 
 private:
 public:
-
 	Sections();
 	virtual ~Sections();
+	void Reset();
 	ULONG GetCRC32(BYTE *pData,WORD len);
 	HRESULT GetTSHeader(BYTE *data,TSHeader *header);
 	HRESULT GetPESHeader(BYTE *data,PESHeader *header);
@@ -151,9 +173,9 @@ public:
 	void GetPTS(BYTE *data,ULONGLONG *pts);
 	void PTSToPTSTime(ULONGLONG pts,PTSTime* ptsTime);
 	HRESULT CurrentPTS(BYTE *pData,ULONGLONG *ptsValue,int *streamType);
-	int decodePMT(BYTE *pData,ChannelInfo *ch);
-	void decodePAT(BYTE *pData,ChannelInfo *,int *);
-	int decodeSDT(BYTE *buf,ChannelInfo *,int);
+	int decodePMT(BYTE *pData,ChannelInfo *ch, int len);
+	void decodePAT(BYTE *pData,ChannelInfo *,int *, int len);
+	int decodeSDT(BYTE *buf,ChannelInfo *,int, int len);
 	void DVB_GetService(BYTE *b,ServiceData *sd);
 	void getString468A(BYTE *b, int l1,char *text);
 	WORD CISize();
@@ -168,6 +190,12 @@ public:
 	//pes
 	void GetPES(BYTE *data,ULONG len,BYTE *pes);
 	HRESULT ParseAudioHeader(BYTE *data,AudioHeader *header);
+	void DecodeEPG(byte* pbData,int len);
+	void DecodeShortEventDescriptor(byte* buf,EPGEvent& event);
+	void DecodeContentDescription(byte* buf,EPGEvent& event);
+
+	map<unsigned long,EPGChannel> m_mapEPG;
+	typedef map<unsigned long,EPGChannel>::iterator imapEPG;
 };
 
 #endif

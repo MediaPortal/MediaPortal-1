@@ -7,6 +7,7 @@
 //------------------------------------------------------------------------------
 #ifndef __MPSA_
 #define __MPSA_
+#pragma warning(disable: 4511 4512 4995)
 
 #include "Section.h"
 #include "SplitterSetup.h"
@@ -14,6 +15,8 @@
 class CDumpInputPin;
 class CDump;
 class CDumpFilter;
+class CMHWInputPin1;
+class CMHWInputPin2;
 
 // {B4F1F9BF-9ECA-41b8-883B-9C7FC0DD7047}
 DEFINE_GUID(CLSID_StreamAnalyzerPropPage, 
@@ -143,6 +146,8 @@ class CDump : public CUnknown, public IStreamAnalyzer,public ISpecifyPropertyPag
 
     CDumpFilter   *m_pFilter;       // Methods for filter interfaces
     CDumpInputPin *m_pPin;          // A simple rendered input pin
+	CMHWInputPin1 *m_pMHWPin1;          // A simple rendered input pin
+    CMHWInputPin2 *m_pMHWPin2;          // A simple rendered input pin
 
     CCritSec m_Lock;                // Main renderer critical section
     CCritSec m_ReceiveLock;         // Sublock for received samples
@@ -155,7 +160,9 @@ public:
     static CUnknown * WINAPI CreateInstance(LPUNKNOWN punk, HRESULT *phr);
 
 	HRESULT Process(BYTE *pbData,long len);
-	HRESULT OnConnect();
+	HRESULT OnConnectSections();
+	HRESULT OnConnectMHW1();
+	HRESULT OnConnectMHW2();
 	STDMETHODIMP ResetPids();
 	Sections *m_pSections;
 	SplitterSetup *m_pDemuxer;

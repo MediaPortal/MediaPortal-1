@@ -53,6 +53,21 @@ void Log(const char *fmt, ...)
 	}
 #endif
 };
+
+ULONG GetSectionCRCValue(byte* data,int ptr)
+{
+	return (ULONG)((data[ptr]<<24)+(data[ptr+1]<<16)+(data[ptr+2]<<8)+data[ptr+3]);
+}
+ULONG Sections::GetCRC32(BYTE *pData,WORD len)
+{
+	// returns in crc the dvb-crc32 checksum for sections etc.
+	ULONG crc = 0xffffffff;
+	for (ULONG i=0;i<len;i++) 
+	{
+		crc = (crc << 8) ^ CRC32Data[((crc >> 24) ^ pData[i]) & 0xff];
+	}
+	return crc;
+}
 Sections::Sections()
 {
 }
@@ -150,7 +165,7 @@ HRESULT Sections::CurrentPTS(BYTE *pData,ULONGLONG *ptsValue,int *streamType)
 	}
 	return hr;
 }
-int Sections::decodePMT(BYTE *buf,ChannelInfo *ch)
+int Sections::decodePMT(BYTE *buf,ChannelInfo *ch, int len)
 {
 	// pmt should now in the pmtData array
 
@@ -279,8 +294,9 @@ int Sections::decodePMT(BYTE *buf,ChannelInfo *ch)
 		return -1;
 
 }
-int Sections::decodeSDT(BYTE *buf,ChannelInfo ch[],int channels)
+int Sections::decodeSDT(BYTE *buf,ChannelInfo ch[],int channels, int len)
 {	
+
 	int table_id = buf[0];
 	int section_syntax_indicator = (buf[1]>>7) & 1;
 	int section_length = ((buf[1]& 0xF)<<8) + buf[2];
@@ -384,8 +400,10 @@ void Sections::DVB_GetService(BYTE *b,ServiceData *serviceData)
 	pointer += 1;
 	getString468A(b+pointer, service_name_length,serviceData->Name);
 }
-void Sections::decodePAT(BYTE *pData,ChannelInfo chInfo[],int *channelCount)
+void Sections::decodePAT(BYTE *pData,ChannelInfo chInfo[],int *channelCount, int len)
 {
+
+
 	int table_id = pData[0];
 	int section_syntax_indicator = (pData[1]>>7) & 1;
 	int section_length = ((pData[1]& 0xF)<<8) + pData[2];
@@ -421,16 +439,7 @@ void Sections::decodePAT(BYTE *pData,ChannelInfo chInfo[],int *channelCount)
 			break;
 	}
 }
-ULONG Sections::GetCRC32(BYTE *pData,WORD len)
-{
-	// returns in crc the dvb-crc32 checksum for sections etc.
-	ULONG crc = 0xffffffff;
-	for (ULONG i=0;i<len;i++) 
-	{
-		crc = (crc << 8) ^ CRC32Data[((crc >> 24) ^ pData[i]) & 0xff];
-	}
-	return crc;
-}
+
 void Sections::getString468A(BYTE *b, int l1,char *text)
 {
 	int i = 0;
@@ -446,11 +455,11 @@ void Sections::getString468A(BYTE *b, int l1,char *text)
 		{
 			int a=0;
 		}*/
-		if ( ((BYTE)c) >= 0x80 & ((BYTE)c) <= 0x9F)
+		if ( (((BYTE)c) >= 0x80) && (((BYTE)c) <= 0x9F))
 		{
 			goto cont;
 		}
-		if (i==0 & ((BYTE)c) < 0x20)
+		if (i==0 && ((BYTE)c) < 0x20)
 		{
 			goto cont;
 		}
@@ -778,7 +787,7 @@ void Sections::GetPES(BYTE *data,ULONG len,BYTE *pes)
 	int offset = 0; 
 	bool isMPEG1=false;
 
-	int i = 0;
+	ULONG i = 0;
 	for (;i<len;)
 	{
 		ptr = (0xFF & data[i + 4]) << 8 | (0xFF & data[i + 5]);
@@ -880,4 +889,269 @@ HRESULT Sections::ParseAudioHeader(BYTE *data,AudioHeader *head)
 		return S_OK;
 	}
 
+}
+
+void Sections::DecodeEPG(byte* buf,int len)
+{
+	if (len<=14) return;
+	int tableid = buf[0];
+	if (tableid < 0x50 || tableid > 0x6f) return;
+	int section_length = ((buf[1]& 0xF)<<8) + buf[2];
+
+	int service_id = (buf[3]<<8)+buf[4];
+	int version_number = (buf[5]>>1) & 0x1f;
+	int current_next_indicator = buf[5]&1;
+	int section_number=buf[6];
+	int last_section_number=buf[7];
+	int transport_id=(buf[8]<<8)+buf[9];
+	int network_id=(buf[10]<<8)+buf[11];
+	int segment_last_section_number=buf[12];
+	int last_table_id=buf[13];
+
+	unsigned long key=(network_id<<32)+(transport_id<<16)+service_id;
+	imapEPG it=m_mapEPG.find(key);
+	if (it==m_mapEPG.end())
+	{
+		EPGChannel newChannel ;
+		newChannel.original_network_id=network_id;
+		newChannel.service_id=service_id;
+		newChannel.transport_id=transport_id;
+		m_mapEPG[key]=newChannel;
+		it=m_mapEPG.find(key);
+	}
+	EPGChannel& channel=it->second;
+	
+//	Log("EPG tid:%x len:%d %d (%d/%d) sid:%d tsid:%d onid:%d slsn:%d last table id:%x cn:%d version:%d", 
+//		buf[0],len,section_length,section_number,last_section_number, 
+//		service_id,transport_id,network_id,segment_last_section_number,last_table_id,
+//		current_next_indicator,version_number);
+	int start=14;
+	while (start+11 < len)
+	{
+		unsigned int event_id=(buf[start]<<8)+buf[start+1];
+		unsigned long date=(buf[start+2]<<8)+buf[start+3];
+		unsigned long time=(buf[start+4]<<16)+(buf[start+5]<<8)+buf[6];
+		unsigned long duration=(buf[start+7]<<16)+(buf[start+8]<<8)+buf[9];
+		unsigned int running_status=buf[start+10]>>5;
+		unsigned int free_CA_mode=(buf[start+10]>>4) & 0x1;
+		unsigned int descriptors_len=((buf[start+10]&0xf)<<8) + buf[start+11];
+		EPGChannel::imapEvents itEvent=channel.mapEvents.find(event_id);
+		if (itEvent==channel.mapEvents.end())
+		{
+			EPGEvent newEvent;
+			newEvent.eventid=event_id;
+			newEvent.date=date;
+			newEvent.time=time;
+			newEvent.duration=duration;
+			newEvent.running_status=running_status;
+			newEvent.free_CA_mode=free_CA_mode;
+			channel.mapEvents[event_id]=newEvent;
+			itEvent=channel.mapEvents.find(event_id);
+		}
+		EPGEvent& epgEvent=itEvent->second;
+		
+		start=start+12;
+		unsigned int off=0;
+//		Log(" event:%x date:%x time:%x duration:%x running:%d free:%d", event_id,date,time,duration,running_status,free_CA_mode);
+		while (off < descriptors_len)
+		{
+			int descriptor_tag = buf[start+off];
+			int descriptor_len = buf[start+off+1];
+			if (descriptor_len==0) return;
+			//Log("  descriptor:%x len:%d",descriptor_tag,descriptor_len);
+			if (descriptor_tag ==0x4d)
+			{
+				DecodeShortEventDescriptor( &buf[start+off],epgEvent);
+			}
+			if (descriptor_tag ==0x54)
+			{
+				DecodeContentDescription( &buf[start+off],epgEvent);
+			}
+			off   +=(descriptor_len+2);
+			start +=(descriptor_len+2);
+		}
+	}
+}
+void Sections::DecodeShortEventDescriptor(byte* buf, EPGEvent& event)
+{
+	char buffer[1028];
+	int descriptor_tag = buf[0];
+	int descriptor_len = buf[1];
+	if(descriptor_tag!=0x4d) return;
+	unsigned long ISO_639_language_code=(buf[2]<<16)+(buf[3]<<8)+buf[4];
+	int event_len = buf[5];
+	
+	if (event_len >0)
+	{
+		getString468A(&buf[6],event_len,buffer);
+		event.event=buffer;
+//		Log("  event:%s",buffer);
+	}
+	int off=6+event_len;
+	int text_len = buf[off];
+	if (text_len >0)
+	{
+		getString468A(&buf[off+1],text_len,buffer);
+		event.text=buffer;
+//		Log("  text:%s",buffer);
+	}
+}
+void Sections::DecodeContentDescription(byte* buf,EPGEvent& event)
+{
+	int      descriptor_tag;
+	int      descriptor_length;		
+	int      content_nibble_level_1;
+	int      content_nibble_level_2;
+	int      user_nibble_1;
+	int      user_nibble_2;
+	int nibble=0;
+	char genreText[1024];
+	int           len;
+
+	strcpy(genreText,"");
+	descriptor_tag		 = buf[0];
+	descriptor_length    = buf[1];
+	if(descriptor_tag!=0x54) return;
+
+	len = descriptor_length;
+	int pointer=  2;
+	while ( len > 0) 
+	{
+		content_nibble_level_1	 = (buf[pointer+0]>>4) & 0xF;
+		content_nibble_level_2	 = buf[pointer+0] & 0xF;
+		user_nibble_1		 = (buf[pointer+1]>>4) & 0xF;
+		user_nibble_2		 = buf[pointer+1] & 0xF;
+
+		pointer   += 2;
+		len -= 2;
+		strcpy(genreText,"");
+		nibble=(content_nibble_level_1 << 8) | content_nibble_level_2;
+		switch(nibble)
+		{
+			case 0x0100: strcpy(genreText,"movie/drama (general)" );break;
+			case 0x0101: strcpy(genreText,"detective/thriller" );break;
+			case 0x0102: strcpy(genreText,"adventure/western/war" );break;
+			case 0x0103: strcpy(genreText,"science fiction/fantasy/horror" );break;
+			case 0x0104: strcpy(genreText,"comedy" );break;
+			case 0x0105: strcpy(genreText,"soap/melodram/folkloric" );break;
+			case 0x0106: strcpy(genreText,"romance" );break;
+			case 0x0107: strcpy(genreText,"serious/classical/religious/historical movie/drama" );break;
+			case 0x0108: strcpy(genreText,"adult movie/drama" );break;
+
+			case 0x010E: strcpy(genreText,"reserved" );break;
+			case 0x010F: strcpy(genreText,"user defined" );break;
+
+				// News Current Affairs
+			case 0x0200: strcpy(genreText,"news/current affairs (general)" );break;
+			case 0x0201: strcpy(genreText,"news/weather report" );break;
+			case 0x0202: strcpy(genreText,"news magazine" );break;
+			case 0x0203: strcpy(genreText,"documentary" );break;
+			case 0x0204: strcpy(genreText,"discussion/interview/debate" );break;
+			case 0x020E: strcpy(genreText,"reserved" );break;
+			case 0x020F: strcpy(genreText,"user defined" );break;
+
+				// Show Games show
+			case 0x0300: strcpy(genreText,"show/game show (general)" );break;
+			case 0x0301: strcpy(genreText,"game show/quiz/contest" );break;
+			case 0x0302: strcpy(genreText,"variety show" );break;
+			case 0x0303: strcpy(genreText,"talk show" );break;
+			case 0x030E: strcpy(genreText,"reserved" );break;
+			case 0x030F: strcpy(genreText,"user defined" );break;
+
+				// Sports
+			case 0x0400: strcpy(genreText,"sports (general)" );break;
+			case 0x0401: strcpy(genreText,"special events" );break;
+			case 0x0402: strcpy(genreText,"sports magazine" );break;
+			case 0x0403: strcpy(genreText,"football/soccer" );break;
+			case 0x0404: strcpy(genreText,"tennis/squash" );break;
+			case 0x0405: strcpy(genreText,"team sports" );break;
+			case 0x0406: strcpy(genreText,"athletics" );break;
+			case 0x0407: strcpy(genreText,"motor sport" );break;
+			case 0x0408: strcpy(genreText,"water sport" );break;
+			case 0x0409: strcpy(genreText,"winter sport" );break;
+			case 0x040A: strcpy(genreText,"equestrian" );break;
+			case 0x040B: strcpy(genreText,"martial sports" );break;
+			case 0x040E: strcpy(genreText,"reserved" );break;
+			case 0x040F: strcpy(genreText,"user defined" );break;
+
+				// Children/Youth
+			case 0x0500: strcpy(genreText,"childrens's/youth program (general)" );break;
+			case 0x0501: strcpy(genreText,"pre-school children's program" );break;
+			case 0x0502: strcpy(genreText,"entertainment (6-14 year old)" );break;
+			case 0x0503: strcpy(genreText,"entertainment (10-16 year old)" );break;
+			case 0x0504: strcpy(genreText,"information/education/school program" );break;
+			case 0x0505: strcpy(genreText,"cartoon/puppets" );break;
+			case 0x050E: strcpy(genreText,"reserved" );break;
+			case 0x050F: strcpy(genreText,"user defined" );break;
+
+			case 0x0600: strcpy(genreText,"music/ballet/dance (general)" );break;
+			case 0x0601: strcpy(genreText,"rock/pop" );break;
+			case 0x0602: strcpy(genreText,"serious music/classic music" );break;
+			case 0x0603: strcpy(genreText,"folk/traditional music" );break;
+			case 0x0604: strcpy(genreText,"jazz" );break;
+			case 0x0605: strcpy(genreText,"musical/opera" );break;
+			case 0x0606: strcpy(genreText,"ballet" );break;
+			case 0x060E: strcpy(genreText,"reserved" );break;
+			case 0x060F: strcpy(genreText,"user defined" );break;
+
+			case 0x0700: strcpy(genreText,"arts/culture (without music, general)" );break;
+			case 0x0701: strcpy(genreText,"performing arts" );break;
+			case 0x0702: strcpy(genreText,"fine arts" );break;
+			case 0x0703: strcpy(genreText,"religion" );break;
+			case 0x0704: strcpy(genreText,"popular culture/traditional arts" );break;
+			case 0x0705: strcpy(genreText,"literature" );break;
+			case 0x0706: strcpy(genreText,"film/cinema" );break;
+			case 0x0707: strcpy(genreText,"experimental film/video" );break;
+			case 0x0708: strcpy(genreText,"broadcasting/press" );break;
+			case 0x0709: strcpy(genreText,"new media" );break;
+			case 0x070A: strcpy(genreText,"arts/culture magazine" );break;
+			case 0x070B: strcpy(genreText,"fashion" );break;
+			case 0x070E: strcpy(genreText,"reserved" );break;
+			case 0x070F: strcpy(genreText,"user defined" );break;
+
+			case 0x0800: strcpy(genreText,"social/political issues/economics (general)" );break;
+			case 0x0801: strcpy(genreText,"magazines/reports/documentary" );break;
+			case 0x0802: strcpy(genreText,"economics/social advisory" );break;
+			case 0x0803: strcpy(genreText,"remarkable people" );break;
+			case 0x080E: strcpy(genreText,"reserved" );break;
+			case 0x080F: strcpy(genreText,"user defined" );break;
+
+			case 0x0900: strcpy(genreText,"education/science/factual topics (general)" );break;
+			case 0x0901: strcpy(genreText,"nature/animals/environment" );break;
+			case 0x0902: strcpy(genreText,"technology/natural science" );break;
+			case 0x0903: strcpy(genreText,"medicine/physiology/psychology" );break;
+			case 0x0904: strcpy(genreText,"foreign countries/expeditions" );break;
+			case 0x0905: strcpy(genreText,"social/spiritual science" );break;
+			case 0x0906: strcpy(genreText,"further education" );break;
+			case 0x0907: strcpy(genreText,"languages" );break;
+			case 0x090E: strcpy(genreText,"reserved" );break;
+			case 0x090F: strcpy(genreText,"user defined" );break;
+			case 0x0A00: strcpy(genreText,"leisure hobbies (general)" );break;
+			case 0x0A01: strcpy(genreText,"tourism/travel" );break;
+			case 0x0A02: strcpy(genreText,"handicraft" );break;
+			case 0x0A03: strcpy(genreText,"motoring" );break;
+			case 0x0A04: strcpy(genreText,"fitness & health" );break;
+			case 0x0A05: strcpy(genreText,"cooking" );break;
+			case 0x0A06: strcpy(genreText,"advertisement/shopping" );break;
+			case 0x0A07: strcpy(genreText,"gardening" );break;
+			case 0x0A0E: strcpy(genreText,"reserved" );break;
+			case 0x0A0F: strcpy(genreText,"user defined" );break;
+
+			case 0x0B00: strcpy(genreText,"original language" );break;
+			case 0x0B01: strcpy(genreText,"black & white" );break;
+			case 0x0B02: strcpy(genreText,"unpublished" );break;
+			case 0x0B03: strcpy(genreText,"live broadcast" );break;
+			case 0x0B0E: strcpy(genreText,"reserved" );break;
+			case 0x0B0F: strcpy(genreText,"user defined" );break;
+
+			case 0x0E0F: strcpy(genreText,"reserved" );break;
+			case 0x0F0F: strcpy(genreText,"user defined" );break;					
+		}
+//		Log("genre:%s", genreText);
+		event.genre=genreText;
+	}
+}
+void Sections::Reset()
+{
+	m_mapEPG.clear();
 }
