@@ -77,22 +77,29 @@ namespace MediaPortal.GUI.Library
 
 		static public void Update(IQualProp quality)
 		{
-			if (quality!=null)
-			{
-				int framesDrawn=0,avgFrameRate=0,avgSyncOffset=0,avgDevSyncOffset=0,framesDropped=0,jitter=0;
-				quality.get_AvgFrameRate(out avgFrameRate);
-				quality.get_AvgSyncOffset(out avgSyncOffset);
-				quality.get_DevSyncOffset(out avgDevSyncOffset);
-				quality.get_FramesDrawn(out framesDrawn);
-				quality.get_FramesDroppedInRenderer(out framesDropped);
-				quality.get_Jitter(out jitter);
-				VideoRendererStatistics.AverageFrameRate = ((float)avgFrameRate)/100.0f;
-				VideoRendererStatistics.AverageSyncOffset=avgSyncOffset;
-				VideoRendererStatistics.AverageDeviationSyncOffset=avgDevSyncOffset;
-				VideoRendererStatistics.FramesDrawn=framesDrawn;
-				VideoRendererStatistics.FramesDropped=framesDropped;
-				VideoRendererStatistics.Jitter=jitter;
-			}
+      try // QI for get_AvgFrameRate crashes in GUIDialogNotify.cs when Video is being played,
+          // that's why we're working around it for now: NEEDS FURTHER INVESTIGATION!
+      {
+        if (quality!=null)
+        {
+          int framesDrawn=0,avgFrameRate=0,avgSyncOffset=0,avgDevSyncOffset=0,framesDropped=0,jitter=0;
+          quality.get_AvgFrameRate(out avgFrameRate);
+          quality.get_AvgSyncOffset(out avgSyncOffset);
+          quality.get_DevSyncOffset(out avgDevSyncOffset);
+          quality.get_FramesDrawn(out framesDrawn);
+          quality.get_FramesDroppedInRenderer(out framesDropped);
+          quality.get_Jitter(out jitter);
+          VideoRendererStatistics.AverageFrameRate = ((float)avgFrameRate)/100.0f;
+          VideoRendererStatistics.AverageSyncOffset=avgSyncOffset;
+          VideoRendererStatistics.AverageDeviationSyncOffset=avgDevSyncOffset;
+          VideoRendererStatistics.FramesDrawn=framesDrawn;
+          VideoRendererStatistics.FramesDropped=framesDropped;
+          VideoRendererStatistics.Jitter=jitter;
+        }
+      }
+      catch
+      {
+      }
 		}
 	}
 }
