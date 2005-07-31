@@ -12,9 +12,9 @@
 #include "Section.h"
 #include "SplitterSetup.h"
 
-class CDumpInputPin;
-class CDump;
-class CDumpFilter;
+class CStreamAnalyzerSectionsPin;
+class CStreamAnalyzer;
+class CStreamAnalyzerFilter;
 class CMHWInputPin1;
 class CMHWInputPin2;
 
@@ -76,14 +76,14 @@ DECLARE_INTERFACE_(IStreamAnalyzer, IUnknown)
 
 // Main filter object
 
-class CDumpFilter : public CBaseFilter
+class CStreamAnalyzerFilter : public CBaseFilter
 {
-    CDump * const m_pDump;
+    CStreamAnalyzer * const m_pDump;
 
 public:
 
     // Constructor
-    CDumpFilter(CDump *pDump,
+    CStreamAnalyzerFilter(CStreamAnalyzer *pDump,
                 LPUNKNOWN pUnk,
                 CCritSec *pLock,
                 HRESULT *phr);
@@ -101,15 +101,15 @@ public:
 
 //  Pin object
 
-class CDumpInputPin : public CRenderedInputPin
+class CStreamAnalyzerSectionsPin : public CRenderedInputPin
 {
-    CDump    * const m_pDump;           // Main renderer object
+    CStreamAnalyzer    * const m_pDump;           // Main renderer object
     CCritSec * const m_pReceiveLock;    // Sample critical section
     REFERENCE_TIME m_tLast;             // Last sample receive time
 
 public:
 
-    CDumpInputPin(CDump *pDump,
+    CStreamAnalyzerSectionsPin(CStreamAnalyzer *pDump,
                   LPUNKNOWN pUnk,
                   CBaseFilter *pFilter,
                   CCritSec *pLock,
@@ -137,15 +137,15 @@ public:
 };
 
 
-//  CDump object which has filter and pin members
+//  CStreamAnalyzer object which has filter and pin members
 
-class CDump : public CUnknown, public IStreamAnalyzer,public ISpecifyPropertyPages
+class CStreamAnalyzer : public CUnknown, public IStreamAnalyzer,public ISpecifyPropertyPages
 {
-    friend class CDumpFilter;
-    friend class CDumpInputPin;
+    friend class CStreamAnalyzerFilter;
+    friend class CStreamAnalyzerSectionsPin;
 
-    CDumpFilter   *m_pFilter;       // Methods for filter interfaces
-    CDumpInputPin *m_pPin;          // A simple rendered input pin
+    CStreamAnalyzerFilter   *m_pFilter;       // Methods for filter interfaces
+    CStreamAnalyzerSectionsPin *m_pPin;          // A simple rendered input pin
 	CMHWInputPin1 *m_pMHWPin1;          // A simple rendered input pin
     CMHWInputPin2 *m_pMHWPin2;          // A simple rendered input pin
 
@@ -155,8 +155,8 @@ class CDump : public CUnknown, public IStreamAnalyzer,public ISpecifyPropertyPag
 public:
 
     DECLARE_IUNKNOWN
-    CDump(LPUNKNOWN pUnk, HRESULT *phr);
-    ~CDump();
+    CStreamAnalyzer(LPUNKNOWN pUnk, HRESULT *phr);
+    ~CStreamAnalyzer();
     static CUnknown * WINAPI CreateInstance(LPUNKNOWN punk, HRESULT *phr);
 
 	HRESULT Process(BYTE *pbData,long len);

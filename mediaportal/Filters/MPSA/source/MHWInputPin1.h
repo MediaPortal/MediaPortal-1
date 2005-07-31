@@ -7,14 +7,14 @@ class CMHWInputPin1 :
 	public CRenderedInputPin
 {
 private:
-    CDump    * const m_pDump;           // Main renderer object
+    CStreamAnalyzer    * const m_pDump;           // Main renderer object
     CCritSec * const m_pReceiveLock;    // Sample critical section
     REFERENCE_TIME m_tLast;             // Last sample receive time
 
 public:
 	CMHWInputPin1(void);
 
-    CMHWInputPin1(CDump *pDump,
+    CMHWInputPin1(CStreamAnalyzer *pDump,
                   LPUNKNOWN pUnk,
                   CBaseFilter *pFilter,
                   CCritSec *pLock,

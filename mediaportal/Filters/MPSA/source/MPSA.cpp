@@ -97,14 +97,14 @@ const AMOVIESETUP_FILTER sudDump =
 //  Object creation stuff
 //
 CFactoryTemplate g_Templates[]= {
-	{L"MediaPortal Stream Analyzer", &CLSID_MPDSA, CDump::CreateInstance, NULL, &sudDump},
+	{L"MediaPortal Stream Analyzer", &CLSID_MPDSA, CStreamAnalyzer::CreateInstance, NULL, &sudDump},
 	{ L"MP StreamAnalyzer PropPage",&CLSID_StreamAnalyzerPropPage, MPDSTProperties::CreateInstance }};
 int g_cTemplates = 2;
 
 
 // Constructor
 
-CDumpFilter::CDumpFilter(CDump *pDump,
+CStreamAnalyzerFilter::CStreamAnalyzerFilter(CStreamAnalyzer *pDump,
                          LPUNKNOWN pUnk,
                          CCritSec *pLock,
                          HRESULT *phr) :
@@ -113,7 +113,7 @@ CDumpFilter::CDumpFilter(CDump *pDump,
 {
 }
 
-STDMETHODIMP CDump::GetPages(CAUUID *pPages) 
+STDMETHODIMP CStreamAnalyzer::GetPages(CAUUID *pPages) 
 {
     CheckPointer(pPages,E_POINTER);
 
@@ -132,7 +132,7 @@ STDMETHODIMP CDump::GetPages(CAUUID *pPages)
 //
 // GetPin
 //
-CBasePin * CDumpFilter::GetPin(int n)
+CBasePin * CStreamAnalyzerFilter::GetPin(int n)
 {
     if (n ==0) 
 	    return m_pDump->m_pPin;
@@ -149,7 +149,7 @@ CBasePin * CDumpFilter::GetPin(int n)
 //
 // GetPinCount
 //
-int CDumpFilter::GetPinCount()
+int CStreamAnalyzerFilter::GetPinCount()
 {
     return 3;
 }
@@ -160,7 +160,7 @@ int CDumpFilter::GetPinCount()
 //
 // Overriden to close the dump file
 //
-STDMETHODIMP CDumpFilter::Stop()
+STDMETHODIMP CStreamAnalyzerFilter::Stop()
 {
     CAutoLock cObjectLock(m_pLock);
 	
@@ -172,7 +172,7 @@ STDMETHODIMP CDumpFilter::Stop()
 //
 // Overriden to open the dump file
 //
-STDMETHODIMP CDumpFilter::Pause()
+STDMETHODIMP CStreamAnalyzerFilter::Pause()
 {
     CAutoLock cObjectLock(m_pLock);
 
@@ -186,7 +186,7 @@ STDMETHODIMP CDumpFilter::Pause()
 //
 // Overriden to open the dump file
 //
-STDMETHODIMP CDumpFilter::Run(REFERENCE_TIME tStart)
+STDMETHODIMP CStreamAnalyzerFilter::Run(REFERENCE_TIME tStart)
 {
     CAutoLock cObjectLock(m_pLock);
 
@@ -196,16 +196,16 @@ STDMETHODIMP CDumpFilter::Run(REFERENCE_TIME tStart)
 
 
 //
-//  Definition of CDumpInputPin
+//  Definition of CStreamAnalyzerSectionsPin
 //
-CDumpInputPin::CDumpInputPin(CDump *pDump,
+CStreamAnalyzerSectionsPin::CStreamAnalyzerSectionsPin(CStreamAnalyzer *pDump,
                              LPUNKNOWN pUnk,
                              CBaseFilter *pFilter,
                              CCritSec *pLock,
                              CCritSec *pReceiveLock,
                              HRESULT *phr) :
 
-    CRenderedInputPin(NAME("CDumpInputPin"),
+    CRenderedInputPin(NAME("CStreamAnalyzerSectionsPin"),
                   pFilter,                   // Filter
                   pLock,                     // Locking
                   phr,                       // Return code
@@ -223,7 +223,7 @@ CDumpInputPin::CDumpInputPin(CDump *pDump,
 //
 // Check if the pin can support this specific proposed type and format
 //
-HRESULT CDumpInputPin::CheckMediaType(const CMediaType *pmt)
+HRESULT CStreamAnalyzerSectionsPin::CheckMediaType(const CMediaType *pmt)
 {
 	if(pmt->majortype==MEDIATYPE_MPEG2_SECTIONS)
 		return S_OK;
@@ -235,12 +235,12 @@ HRESULT CDumpInputPin::CheckMediaType(const CMediaType *pmt)
 //
 // Break a connection
 //
-HRESULT CDumpInputPin::BreakConnect()
+HRESULT CStreamAnalyzerSectionsPin::BreakConnect()
 {
     return CRenderedInputPin::BreakConnect();
 }
 
-HRESULT CDumpInputPin::CompleteConnect(IPin *pPin)
+HRESULT CStreamAnalyzerSectionsPin::CompleteConnect(IPin *pPin)
 {
 	HRESULT hr=CBasePin::CompleteConnect(pPin);
 	m_pDump->OnConnectSections();
@@ -252,7 +252,7 @@ HRESULT CDumpInputPin::CompleteConnect(IPin *pPin)
 //
 // We don't hold up source threads on Receive
 //
-STDMETHODIMP CDumpInputPin::ReceiveCanBlock()
+STDMETHODIMP CStreamAnalyzerSectionsPin::ReceiveCanBlock()
 {
     return S_FALSE;
 }
@@ -263,7 +263,7 @@ STDMETHODIMP CDumpInputPin::ReceiveCanBlock()
 //
 // Do something with this media sample
 //
-STDMETHODIMP CDumpInputPin::Receive(IMediaSample *pSample)
+STDMETHODIMP CStreamAnalyzerSectionsPin::Receive(IMediaSample *pSample)
 {
     CheckPointer(pSample,E_POINTER);
 
@@ -290,14 +290,14 @@ STDMETHODIMP CDumpInputPin::Receive(IMediaSample *pSample)
 
     return NOERROR;
 }
-void CDumpInputPin::ResetPids()
+void CStreamAnalyzerSectionsPin::ResetPids()
 {
 }
 
 //
 // EndOfStream
 //
-STDMETHODIMP CDumpInputPin::EndOfStream(void)
+STDMETHODIMP CStreamAnalyzerSectionsPin::EndOfStream(void)
 {
     CAutoLock lock(m_pReceiveLock);
     return CRenderedInputPin::EndOfStream();
@@ -310,7 +310,7 @@ STDMETHODIMP CDumpInputPin::EndOfStream(void)
 //
 // Called when we are seeked
 //
-STDMETHODIMP CDumpInputPin::NewSegment(REFERENCE_TIME tStart,
+STDMETHODIMP CStreamAnalyzerSectionsPin::NewSegment(REFERENCE_TIME tStart,
                                        REFERENCE_TIME tStop,
                                        double dRate)
 {
@@ -321,10 +321,10 @@ STDMETHODIMP CDumpInputPin::NewSegment(REFERENCE_TIME tStart,
 
 
 //
-//  CDump class
+//  CStreamAnalyzer class
 //
-CDump::CDump(LPUNKNOWN pUnk, HRESULT *phr) :
-    CUnknown(NAME("CDump"), pUnk),
+CStreamAnalyzer::CStreamAnalyzer(LPUNKNOWN pUnk, HRESULT *phr) :
+    CUnknown(NAME("CStreamAnalyzer"), pUnk),
     m_pFilter(NULL),
     m_pPin(NULL),m_pSections(NULL),m_pDemuxer(NULL),
 	m_patChannelsCount(0),m_pmtGrabProgNum(0),
@@ -350,14 +350,14 @@ CDump::CDump(LPUNKNOWN pUnk, HRESULT *phr) :
         return;
     }
 
-    m_pFilter = new CDumpFilter(this, GetOwner(), &m_Lock, phr);
+    m_pFilter = new CStreamAnalyzerFilter(this, GetOwner(), &m_Lock, phr);
     if (m_pFilter == NULL) {
         if (phr)
             *phr = E_OUTOFMEMORY;
         return;
     }
 
-    m_pPin = new CDumpInputPin(this,GetOwner(),
+    m_pPin = new CStreamAnalyzerSectionsPin(this,GetOwner(),
                                m_pFilter,
                                &m_Lock,
                                &m_ReceiveLock,
@@ -394,7 +394,7 @@ CDump::CDump(LPUNKNOWN pUnk, HRESULT *phr) :
 
 // Destructor
 
-CDump::~CDump()
+CStreamAnalyzer::~CStreamAnalyzer()
 {
 	delete m_pDemuxer;
 	delete m_pSections;
@@ -409,11 +409,11 @@ CDump::~CDump()
 //
 // Provide the way for COM to create a dump filter
 //
-CUnknown * WINAPI CDump::CreateInstance(LPUNKNOWN punk, HRESULT *phr)
+CUnknown * WINAPI CStreamAnalyzer::CreateInstance(LPUNKNOWN punk, HRESULT *phr)
 {
     ASSERT(phr);
     
-    CDump *pNewObject = new CDump(punk, phr);
+    CStreamAnalyzer *pNewObject = new CStreamAnalyzer(punk, phr);
     if (pNewObject == NULL) {
         if (phr)
             *phr = E_OUTOFMEMORY;
@@ -422,7 +422,7 @@ CUnknown * WINAPI CDump::CreateInstance(LPUNKNOWN punk, HRESULT *phr)
 
 } // CreateInstance
 
-STDMETHODIMP CDump::ResetParser()
+STDMETHODIMP CStreamAnalyzer::ResetParser()
 {
 	Log("ResetParser");
 	HRESULT hr=m_pDemuxer->UnMapAllPIDs();
@@ -435,7 +435,7 @@ STDMETHODIMP CDump::ResetParser()
 //
 // Override this to say what interfaces we support where
 //
-STDMETHODIMP CDump::NonDelegatingQueryInterface(REFIID riid, void ** ppv)
+STDMETHODIMP CStreamAnalyzer::NonDelegatingQueryInterface(REFIID riid, void ** ppv)
 {
     CheckPointer(ppv,E_POINTER);
     CAutoLock lock(&m_Lock);
@@ -458,7 +458,7 @@ STDMETHODIMP CDump::NonDelegatingQueryInterface(REFIID riid, void ** ppv)
 
 } // NonDelegatingQueryInterface
 
-HRESULT CDump::OnConnectSections()
+HRESULT CStreamAnalyzer::OnConnectSections()
 {
 	Log("OnConnectSections");
 	m_pDemuxer->SetDemuxPins(m_pFilter->GetFilterGraph());
@@ -473,7 +473,7 @@ HRESULT CDump::OnConnectSections()
 	return S_OK;
 }
 
-HRESULT CDump::OnConnectMHW1()
+HRESULT CStreamAnalyzer::OnConnectMHW1()
 {
 	Log("OnConnectMHW1");
 	m_pDemuxer->SetDemuxPins(m_pFilter->GetFilterGraph());
@@ -487,7 +487,7 @@ HRESULT CDump::OnConnectMHW1()
 	}
 	return S_OK;
 }
-HRESULT CDump::OnConnectMHW2()
+HRESULT CStreamAnalyzer::OnConnectMHW2()
 {
 	Log("OnConnectMHW2");
 
@@ -503,12 +503,12 @@ HRESULT CDump::OnConnectMHW2()
 	return S_OK;
 }
 
-STDMETHODIMP CDump::ResetPids()
+STDMETHODIMP CStreamAnalyzer::ResetPids()
 {
         return NOERROR;
 }
 
-HRESULT CDump::Process(BYTE *pbData,long len)
+HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 {
 	//CAutoLock lock(&m_Lock);
 	bool pesPacket=false;
@@ -585,7 +585,7 @@ HRESULT CDump::Process(BYTE *pbData,long len)
 	}
 	return S_OK;
 }
-STDMETHODIMP CDump::IsChannelReady(ULONG channel)
+STDMETHODIMP CStreamAnalyzer::IsChannelReady(ULONG channel)
 {
 	if(channel<0 || channel>(ULONG)m_patChannelsCount-1)
 		return S_FALSE;
@@ -595,7 +595,7 @@ STDMETHODIMP CDump::IsChannelReady(ULONG channel)
 
 	return S_FALSE;
 }
-STDMETHODIMP CDump::get_IPin (IPin **ppPin)
+STDMETHODIMP CStreamAnalyzer::get_IPin (IPin **ppPin)
 {
     *ppPin = m_pPin->GetConnected ();
 	if(*ppPin!=NULL)
@@ -609,7 +609,7 @@ STDMETHODIMP CDump::get_IPin (IPin **ppPin)
 //
 // INull method.
 //
-STDMETHODIMP CDump::put_MediaType(CMediaType *pmt)
+STDMETHODIMP CStreamAnalyzer::put_MediaType(CMediaType *pmt)
 {
      return NOERROR;
 } // put_MediaType
@@ -621,7 +621,7 @@ STDMETHODIMP CDump::put_MediaType(CMediaType *pmt)
 // INull method.
 // Set *pmt to the current preferred media type.
 //
-STDMETHODIMP CDump::get_MediaType(CMediaType **pmt)
+STDMETHODIMP CStreamAnalyzer::get_MediaType(CMediaType **pmt)
 {
     return NOERROR;
 } // get_MediaType
@@ -633,24 +633,24 @@ STDMETHODIMP CDump::get_MediaType(CMediaType **pmt)
 // INull method
 // Set *state to the current state of the filter (State_Stopped etc)
 //
-STDMETHODIMP CDump::get_State(FILTER_STATE *pState)
+STDMETHODIMP CStreamAnalyzer::get_State(FILTER_STATE *pState)
 {
     return NOERROR;
 
 } // get_State
 
-STDMETHODIMP CDump::GetChannelCount(WORD *count)
+STDMETHODIMP CStreamAnalyzer::GetChannelCount(WORD *count)
 {
 	*count=m_patChannelsCount;
 	return S_OK;
 }
-STDMETHODIMP CDump::SetPMTProgramNumber(ULONG prgNum)
+STDMETHODIMP CStreamAnalyzer::SetPMTProgramNumber(ULONG prgNum)
 {
 	m_pmtGrabProgNum=prgNum;
 	return S_OK;
 }
 
-STDMETHODIMP CDump::UseATSC(BOOL yesNo)
+STDMETHODIMP CStreamAnalyzer::UseATSC(BOOL yesNo)
 {
 	m_bDecodeATSC=yesNo;
 	if (m_bDecodeATSC)
@@ -659,13 +659,13 @@ STDMETHODIMP CDump::UseATSC(BOOL yesNo)
 		Log("use ATSC:no");
 	return S_OK;
 }
-STDMETHODIMP CDump::IsATSCUsed(BOOL* yesNo)
+STDMETHODIMP CStreamAnalyzer::IsATSCUsed(BOOL* yesNo)
 {
 	*yesNo=m_bDecodeATSC;
 	return S_OK;
 }
 
-STDMETHODIMP CDump::GetPMTData(BYTE *data)
+STDMETHODIMP CStreamAnalyzer::GetPMTData(BYTE *data)
 {
 	BYTE *buf=m_pmtGrabData;
 	if(m_currentPMTLen>0 && m_pmtGrabProgNum>0)
@@ -676,7 +676,7 @@ STDMETHODIMP CDump::GetPMTData(BYTE *data)
 	return -1;
 }
 
-STDMETHODIMP CDump::GetChannel(WORD channel,BYTE *ch)
+STDMETHODIMP CStreamAnalyzer::GetChannel(WORD channel,BYTE *ch)
 {
 	
 	if(channel>=0 && channel<=m_patChannelsCount-1 && m_patChannelsCount>0)
@@ -688,7 +688,7 @@ STDMETHODIMP CDump::GetChannel(WORD channel,BYTE *ch)
 	}
 	return S_FALSE;
 }
-STDMETHODIMP CDump::GetCISize(WORD *size)
+STDMETHODIMP CStreamAnalyzer::GetCISize(WORD *size)
 {
 	*size=m_pSections->CISize();
 	return S_OK;

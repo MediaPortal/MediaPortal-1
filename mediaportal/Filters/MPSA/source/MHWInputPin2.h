@@ -8,13 +8,13 @@ class CMHWInputPin2 :
 {
 
 private:
-    CDump    * const m_pDump;           // Main renderer object
+    CStreamAnalyzer    * const m_pDump;           // Main renderer object
     CCritSec * const m_pReceiveLock;    // Sample critical section
     REFERENCE_TIME m_tLast;             // Last sample receive time
 
 public:
 
-    CMHWInputPin2(CDump *pDump,
+    CMHWInputPin2(CStreamAnalyzer *pDump,
                   LPUNKNOWN pUnk,
                   CBaseFilter *pFilter,
                   CCritSec *pLock,

@@ -32,7 +32,7 @@
 
 
 
-CMHWInputPin2::CMHWInputPin2(CDump *pDump,
+CMHWInputPin2::CMHWInputPin2(CStreamAnalyzer *pDump,
                              LPUNKNOWN pUnk,
                              CBaseFilter *pFilter,
                              CCritSec *pLock,

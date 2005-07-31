@@ -31,7 +31,7 @@
 #include "mhwinputpin1.h"
 
 
-CMHWInputPin1::CMHWInputPin1(CDump *pDump,
+CMHWInputPin1::CMHWInputPin1(CStreamAnalyzer *pDump,
                              LPUNKNOWN pUnk,
                              CBaseFilter *pFilter,
                              CCritSec *pLock,
