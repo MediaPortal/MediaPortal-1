@@ -664,6 +664,17 @@ STDMETHODIMP CStreamAnalyzer::IsATSCUsed(BOOL* yesNo)
 	*yesNo=m_bDecodeATSC;
 	return S_OK;
 }
+STDMETHODIMP CStreamAnalyzer::GrabEPG()
+{
+	m_pSections->GrabEPG();
+	return S_OK;
+}
+STDMETHODIMP CStreamAnalyzer::IsEPGReady(BOOL* yesNo)
+{
+	*yesNo=m_pSections->IsEPGReady();
+	return S_OK;
+}
+
 
 STDMETHODIMP CStreamAnalyzer::GetPMTData(BYTE *data)
 {

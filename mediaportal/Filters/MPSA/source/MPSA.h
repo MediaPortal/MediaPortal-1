@@ -72,6 +72,10 @@ DECLARE_INTERFACE_(IStreamAnalyzer, IUnknown)
 
 	STDMETHOD(UseATSC) (THIS_ BOOL yesNo)PURE;
 	STDMETHOD(IsATSCUsed) (THIS_ BOOL* yesNo)PURE;
+
+	STDMETHOD(GrabEPG) ()PURE;
+	STDMETHOD(IsEPGReady) (THIS_ BOOL* yesNo)PURE;
+
 };
 
 // Main filter object
@@ -144,28 +148,24 @@ class CStreamAnalyzer : public CUnknown, public IStreamAnalyzer,public ISpecifyP
     friend class CStreamAnalyzerFilter;
     friend class CStreamAnalyzerSectionsPin;
 
-    CStreamAnalyzerFilter   *m_pFilter;       // Methods for filter interfaces
-    CStreamAnalyzerSectionsPin *m_pPin;          // A simple rendered input pin
-	CMHWInputPin1 *m_pMHWPin1;          // A simple rendered input pin
-    CMHWInputPin2 *m_pMHWPin2;          // A simple rendered input pin
-
-    CCritSec m_Lock;                // Main renderer critical section
-    CCritSec m_ReceiveLock;         // Sublock for received samples
+    CStreamAnalyzerFilter*		m_pFilter;       // Methods for filter interfaces
+    CStreamAnalyzerSectionsPin*	m_pPin;          // A simple rendered input pin
+	CMHWInputPin1*				m_pMHWPin1;          // A simple rendered input pin
+    CMHWInputPin2*				m_pMHWPin2;          // A simple rendered input pin
+    CCritSec					m_Lock;                // Main renderer critical section
+    CCritSec					m_ReceiveLock;         // Sublock for received samples
 
 public:
-
     DECLARE_IUNKNOWN
     CStreamAnalyzer(LPUNKNOWN pUnk, HRESULT *phr);
     ~CStreamAnalyzer();
     static CUnknown * WINAPI CreateInstance(LPUNKNOWN punk, HRESULT *phr);
 
-	HRESULT Process(BYTE *pbData,long len);
-	HRESULT OnConnectSections();
-	HRESULT OnConnectMHW1();
-	HRESULT OnConnectMHW2();
+	HRESULT 	 Process(BYTE *pbData,long len);
+	HRESULT 	 OnConnectSections();
+	HRESULT 	 OnConnectMHW1();
+	HRESULT 	 OnConnectMHW2();
 	STDMETHODIMP ResetPids();
-	Sections *m_pSections;
-	SplitterSetup *m_pDemuxer;
     STDMETHODIMP get_IPin (IPin **ppPin) ;
     STDMETHODIMP put_MediaType(CMediaType *pmt);
     STDMETHODIMP get_MediaType(CMediaType **pmt);
@@ -180,18 +180,20 @@ public:
 	STDMETHODIMP IsChannelReady(ULONG channel);
 	STDMETHODIMP UseATSC(BOOL yesNo);
 	STDMETHODIMP IsATSCUsed(BOOL* yesNo);
+	STDMETHODIMP GrabEPG();
+	STDMETHODIMP IsEPGReady(BOOL* yesNo);
 
 public:
-
+	Sections*				m_pSections;
+	SplitterSetup*			m_pDemuxer;
 	Sections::ChannelInfo	m_patTable[255];
 	int						m_patChannelsCount;
-	ULONG m_pmtGrabProgNum;
-	BYTE m_pmtGrabData[4096];
-	long m_currentPMTLen;
-	BOOL m_bDecodeATSC;
+	ULONG					m_pmtGrabProgNum;
+	BYTE					m_pmtGrabData[4096];
+	long					m_currentPMTLen;
+	BOOL					m_bDecodeATSC;
 
 private:
-
     // Overriden to say what interfaces we support where
     STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void ** ppv);
 
