@@ -1294,25 +1294,25 @@ namespace MediaPortal.Player
       return true;
     }
 
-		public bool EnableStream(int Id,AMStreamSelectEnableFlags dwFlags,string Filter)
-		{
-			try
-			{
-				if (Filter.Length<10)return false;
-				IBaseFilter foundfilter=DirectShowUtil.GetFilterByName(graphBuilder,Filter);
-				if (foundfilter!=null)
-				{
-					IAMStreamSelect pStrm = (IAMStreamSelect)foundfilter;
-					pStrm.Enable(Id,dwFlags);
-					pStrm=null;
-					Marshal.ReleaseComObject(foundfilter);
-				}
-			}
-			catch
-			{
-			}
-			return true;
-		}
+    public bool EnableStream(int Id,AMStreamSelectEnableFlags dwFlags,string Filter)
+    {
+      try
+      {
+        IBaseFilter foundfilter=DirectShowUtil.GetFilterByName(graphBuilder,Filter);
+        if (foundfilter!=null)
+        {
+          IAMStreamSelect pStrm = foundfilter as IAMStreamSelect;
+          if (pStrm!=null)pStrm.Enable(Id,dwFlags);
+          pStrm=null;
+          Marshal.ReleaseComObject(foundfilter);
+        }
+      }
+      catch
+      {
+      }
+      return true;
+    }
+
 		//ENDS
 		#endregion
     #region IDisposable Members
