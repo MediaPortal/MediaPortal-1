@@ -27,6 +27,7 @@ public:
 	HRESULT SetSectionsPin(IPin *ppin);
 	HRESULT SetMHW1Pin(IPin *ppin);
 	HRESULT SetMHW2Pin(IPin *ppin);
+	HRESULT SetEPGPin(IPin *ppin);
 	bool PinIsNULL();
 	HRESULT SetEPGMapping();
 protected:
@@ -42,7 +43,7 @@ protected:
 	IPin *m_pSectionsPin;
 	IPin *m_pMHW1Pin;
 	IPin *m_pMHW2Pin;
-	
+	IPin *m_pEPGPin;	
 
 };
 

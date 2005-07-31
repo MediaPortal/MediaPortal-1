@@ -29,6 +29,7 @@ extern void Log(const char *fmt, ...) ;
 SplitterSetup::SplitterSetup(Sections *pSections) :
 m_demuxSetupComplete(FALSE),m_pSectionsPin(NULL)
 {
+	m_pEPGPin=NULL;
 	m_pMHW1Pin=NULL;
 	m_pMHW2Pin=NULL;
 	m_pSections = pSections;
@@ -108,6 +109,7 @@ HRESULT SplitterSetup::SetupDefaultMapping()
 	SetSectionMapping();
 	SetMHW1Mapping();
 	SetMHW2Mapping();
+	SetEPGMapping();
 	return 0;
 }
 HRESULT SplitterSetup::SetMHW1Mapping()
@@ -342,6 +344,12 @@ HRESULT SplitterSetup::SetMHW1Pin(IPin *ppin)
 		m_pMHW1Pin=ppin;
 	return S_OK;
 }
+HRESULT SplitterSetup::SetEPGPin(IPin *ppin)
+{
+	if(m_pEPGPin==NULL)
+		m_pEPGPin=ppin;
+	return S_OK;
+}
 HRESULT SplitterSetup::SetMHW2Pin(IPin *ppin)
 {
 	if(m_pMHW2Pin==NULL)
@@ -364,10 +372,10 @@ HRESULT SplitterSetup::SetEPGMapping()
 
 	// video
 
-	if(m_pSectionsPin==NULL)
+	if(m_pEPGPin==NULL)
 		return S_FALSE;
 
-	hr=m_pSectionsPin->QueryInterface(IID_IMPEG2PIDMap,(void**)&pMap);
+	hr=m_pEPGPin->QueryInterface(IID_IMPEG2PIDMap,(void**)&pMap);
 	if(FAILED(hr) || pMap==NULL)
 		return 3;
 		// 

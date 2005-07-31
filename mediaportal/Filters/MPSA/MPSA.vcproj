@@ -162,6 +162,9 @@
 			Name="Source Files"
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat">
 			<File
+				RelativePath=".\source\EPGInputPin.cpp">
+			</File>
+			<File
 				RelativePath=".\source\MHWInputPin1.cpp">
 			</File>
 			<File
@@ -191,6 +194,9 @@
 			Filter="h;hpp;hxx;hm;inl">
 			<File
 				RelativePath=".\source\crc.h">
+			</File>
+			<File
+				RelativePath=".\source\EPGInputPin.h">
 			</File>
 			<File
 				RelativePath=".\source\MHWInputPin1.h">

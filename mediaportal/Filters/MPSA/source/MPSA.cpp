@@ -30,6 +30,7 @@
 #include "proppage.h"
 #include "mhwinputpin1.h"
 #include "mhwinputpin2.h"
+#include "epginputpin.h"
 
 // Setup data
 
@@ -44,7 +45,12 @@ const AMOVIESETUP_MEDIATYPE sudPinTypesMHW =
 	&MEDIATYPE_Stream, &MEDIASUBTYPE_MPEG2_TRANSPORT,         // Minor type
 };
 
-const AMOVIESETUP_PIN sudPins[3] =
+const AMOVIESETUP_MEDIATYPE sudPinTypesEPG =
+{
+	&MEDIATYPE_MPEG2_SECTIONS, &MEDIASUBTYPE_DVB_SI 
+};
+
+const AMOVIESETUP_PIN sudPins[4] =
 {
 	{
 		L"Input",                   // Pin string name
@@ -81,6 +87,18 @@ const AMOVIESETUP_PIN sudPins[3] =
 		1,                          // Number of types
 		&sudPinTypesMHW             // Pin information
 	},
+		
+	{
+		L"EPG",                   // Pin string name
+		FALSE,                      // Is it rendered
+		FALSE,                      // Is it an output
+		FALSE,                      // Allowed none
+		FALSE,                      // Likewise many
+		&CLSID_NULL,                // Connects to filter
+		L"EPG",                  // Connects to pin
+		1,                          // Number of types
+		&sudPinTypesEPG             // Pin information
+	},
 };
 
 const AMOVIESETUP_FILTER sudDump =
@@ -88,7 +106,7 @@ const AMOVIESETUP_FILTER sudDump =
     &CLSID_MPDSA,          // Filter CLSID
     L"MediaPortal Stream Analyzer",   // String name
     MERIT_DO_NOT_USE,           // Filter merit
-    3,                          // Number pins
+    4,                          // Number pins
     sudPins                    // Pin details
 };
 
@@ -140,6 +158,8 @@ CBasePin * CStreamAnalyzerFilter::GetPin(int n)
 		return m_pDump->m_pMHWPin1;
     else if (n ==2) 
 		return m_pDump->m_pMHWPin2;
+	else if (n ==3)
+		return m_pDump->m_pEPGPin;
 	else {
         return NULL;
     }
@@ -151,7 +171,7 @@ CBasePin * CStreamAnalyzerFilter::GetPin(int n)
 //
 int CStreamAnalyzerFilter::GetPinCount()
 {
-    return 3;
+    return 4;
 }
 
 
@@ -388,6 +408,16 @@ CStreamAnalyzer::CStreamAnalyzer(LPUNKNOWN pUnk, HRESULT *phr) :
             *phr = E_OUTOFMEMORY;
         return;
     }
+	m_pEPGPin = new CEPGInputPin(this,GetOwner(),
+                               m_pFilter,
+                               &m_Lock,
+                               &m_ReceiveLock,
+                               phr);
+    if (m_pEPGPin == NULL) {
+        if (phr)
+            *phr = E_OUTOFMEMORY;
+        return;
+    }
 }
 
 
@@ -401,6 +431,7 @@ CStreamAnalyzer::~CStreamAnalyzer()
 	delete m_pPin;
 	delete m_pMHWPin1;
 	delete m_pMHWPin2;
+	delete m_pEPGPin;
 	delete m_pFilter;
 
 }
@@ -475,6 +506,20 @@ HRESULT CStreamAnalyzer::OnConnectSections()
 	return S_OK;
 }
 
+HRESULT CStreamAnalyzer::OnConnectEPG()
+{
+	Log("OnConnectEPG");
+	m_pDemuxer->SetDemuxPins(m_pFilter->GetFilterGraph());
+	IPin *pin;
+	m_pEPGPin->ConnectedTo(&pin);
+	if(pin!=NULL)
+	{
+		m_pDemuxer->SetEPGPin(pin);
+		pin->Release();
+		pin=NULL;
+	}
+	return S_OK;
+}
 HRESULT CStreamAnalyzer::OnConnectMHW1()
 {
 	Log("OnConnectMHW1");
@@ -509,7 +554,17 @@ STDMETHODIMP CStreamAnalyzer::ResetPids()
 {
         return NOERROR;
 }
-
+HRESULT CStreamAnalyzer::ProcessEPG(BYTE *pbData,long len)
+{
+	if (m_pSections->IsEPGGrabbing())
+	{
+		if (pbData[0]>=0x50 && pbData[0] <= 0x6f) //EPG
+		{
+			m_pSections->DecodeEPG(pbData,len);
+		}
+		return S_OK;
+	}
+}
 HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 {
 	//CAutoLock lock(&m_Lock);
@@ -543,14 +598,6 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 	else
 	{
 		
-		if (m_pSections->IsEPGGrabbing())
-		{
-			if (pbData[0]>=0x50 && pbData[0] <= 0x6f) //EPG
-			{
-				m_pSections->DecodeEPG(pbData,len);
-			}
-			return S_OK;
-		}
 		if(pbData[0]==0x02)// pmt
 		{
 			ULONG prgNumber=(pbData[3]<<8)+pbData[4];
@@ -673,17 +720,12 @@ STDMETHODIMP CStreamAnalyzer::IsATSCUsed(BOOL* yesNo)
 STDMETHODIMP CStreamAnalyzer::GrabEPG()
 {
 	Log("StreamAnalyzer:GrabEPG");
-	m_pDemuxer->SetEPGMapping();
 	m_pSections->GrabEPG();
 	return S_OK;
 }
 STDMETHODIMP CStreamAnalyzer::IsEPGReady(BOOL* yesNo)
 {
 	*yesNo=m_pSections->IsEPGReady();
-	if (m_pSections->IsEPGReady())
-	{
-		m_pDemuxer->SetupDefaultMapping();
-	}
 	return S_OK;
 }
 STDMETHODIMP CStreamAnalyzer::GetEPGChannelCount( ULONG* channelCount)
