@@ -29,11 +29,16 @@ public:
 
 	struct EPGChannel
 	{
+		bool allSectionsReceived;
+		int last_section_number;
 		int original_network_id;
 		int transport_id;
 		int service_id;
 		map<unsigned int,EPGEvent> mapEvents;
 		typedef map<unsigned int,EPGEvent>::iterator imapEvents;
+
+		map<int,bool> mapSectionsReceived;
+		typedef map<int,bool>::iterator imapSectionsReceived;
 	};
 
 	struct audioHeader
@@ -161,10 +166,15 @@ public:
 	typedef timedata PTSTime;
 
 private:
+	bool	m_bParseEPG;
+	bool	m_bEpgDone;
+	time_t  m_epgTimeout;
 public:
 	Sections();
 	virtual ~Sections();
-	void Reset();
+	void	Reset();
+	void	GrabEPG();
+	bool	IsEPGReady();
 	ULONG GetCRC32(BYTE *pData,WORD len);
 	HRESULT GetTSHeader(BYTE *data,TSHeader *header);
 	HRESULT GetPESHeader(BYTE *data,PESHeader *header);

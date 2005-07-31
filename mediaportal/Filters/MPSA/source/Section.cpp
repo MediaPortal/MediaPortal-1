@@ -22,6 +22,7 @@
 
 #include <streams.h>
 #include <bdatypes.h>
+#include <time.h>
 #include "Section.h"
 #include "mpsa.h"
 #include "crc.h"
@@ -70,7 +71,9 @@ ULONG Sections::GetCRC32(BYTE *pData,WORD len)
 }
 Sections::Sections()
 {
-}
+	m_bParseEPG=false;
+	m_bEpgDone=false;
+	m_epgTimeout=time(NULL)+60;}
 
 Sections::~Sections()
 {
@@ -778,6 +781,7 @@ char* Sections::DecodeMultipleStrings(byte* buf, int offset)
 	}
 	return NULL;
 }
+
 //
 //
 // pes
@@ -893,6 +897,14 @@ HRESULT Sections::ParseAudioHeader(BYTE *data,AudioHeader *head)
 
 void Sections::DecodeEPG(byte* buf,int len)
 {
+	if (!m_bParseEPG) return;
+	time_t currentTime=time(NULL);
+	time_t timespan=currentTime-m_epgTimeout;
+	if (timespan>10)
+	{
+		m_bParseEPG=false;
+		m_bEpgDone=true;
+	}
 	if (len<=14) return;
 	int tableid = buf[0];
 	if (tableid < 0x50 || tableid > 0x6f) return;
@@ -907,7 +919,8 @@ void Sections::DecodeEPG(byte* buf,int len)
 	int network_id=(buf[10]<<8)+buf[11];
 	int segment_last_section_number=buf[12];
 	int last_table_id=buf[13];
-
+	//if (tableid!=0x5e) return;
+	//if (service_id!=0x1a93) return;
 	unsigned long key=(network_id<<32)+(transport_id<<16)+service_id;
 	imapEPG it=m_mapEPG.find(key);
 	if (it==m_mapEPG.end())
@@ -916,15 +929,24 @@ void Sections::DecodeEPG(byte* buf,int len)
 		newChannel.original_network_id=network_id;
 		newChannel.service_id=service_id;
 		newChannel.transport_id=transport_id;
+		newChannel.allSectionsReceived=false;
 		m_mapEPG[key]=newChannel;
 		it=m_mapEPG.find(key);
 	}
 	EPGChannel& channel=it->second;
+	if (channel.allSectionsReceived) return;
 	
-//	Log("EPG tid:%x len:%d %d (%d/%d) sid:%d tsid:%d onid:%d slsn:%d last table id:%x cn:%d version:%d", 
-//		buf[0],len,section_length,section_number,last_section_number, 
-//		service_id,transport_id,network_id,segment_last_section_number,last_table_id,
-//		current_next_indicator,version_number);
+	//did we already receive this section ?
+	EPGChannel::imapSectionsReceived itSec=channel.mapSectionsReceived.find(section_number);
+	if (itSec!=channel.mapSectionsReceived.end()) return; //yes
+	channel.mapSectionsReceived[section_number]=true;
+/*
+	Log("EPG tid:%x len:%d %d (%d/%d) sid:%d tsid:%d onid:%d slsn:%d last table id:%x cn:%d version:%d", 
+		buf[0],len,section_length,section_number,last_section_number, 
+		service_id,transport_id,network_id,segment_last_section_number,last_table_id,
+		current_next_indicator,version_number);
+*/
+	m_epgTimeout=time(NULL);
 	int start=14;
 	while (start+11 < len)
 	{
@@ -1151,7 +1173,23 @@ void Sections::DecodeContentDescription(byte* buf,EPGEvent& event)
 		event.genre=genreText;
 	}
 }
+
+
 void Sections::Reset()
 {
 	m_mapEPG.clear();
+	m_bParseEPG=false;
+	m_bEpgDone=false;
+	m_epgTimeout=time(NULL)+60;
+}
+
+void Sections::GrabEPG()
+{
+	m_bParseEPG=true;
+	m_bEpgDone=false;
+	m_epgTimeout=time(NULL);
+}
+bool Sections::IsEPGReady()
+{
+	return m_bEpgDone;
 }
