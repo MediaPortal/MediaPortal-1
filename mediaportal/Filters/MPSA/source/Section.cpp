@@ -960,8 +960,8 @@ void Sections::DecodeEPG(byte* buf,int len)
 	while (start+11 < len)
 	{
 		unsigned int event_id=(buf[start]<<8)+buf[start+1];
-		unsigned long date=(buf[start+2]<<8)+buf[start+3];
-		unsigned long time=(buf[start+4]<<16)+(buf[start+5]<<8)+buf[6];
+		unsigned long dateMJD=(buf[start+2]<<8)+buf[start+3];
+		unsigned long timeUTC=(buf[start+4]<<16)+(buf[start+5]<<8)+buf[6];
 		unsigned long duration=(buf[start+7]<<16)+(buf[start+8]<<8)+buf[9];
 		unsigned int running_status=buf[start+10]>>5;
 		unsigned int free_CA_mode=(buf[start+10]>>4) & 0x1;
@@ -971,8 +971,8 @@ void Sections::DecodeEPG(byte* buf,int len)
 		{
 			EPGEvent newEvent;
 			newEvent.eventid=event_id;
-			newEvent.date=date;
-			newEvent.time=time;
+			newEvent.dateMJD=dateMJD;
+			newEvent.timeUTC=timeUTC;
 			newEvent.duration=duration;
 			newEvent.running_status=running_status;
 			newEvent.free_CA_mode=free_CA_mode;
@@ -983,7 +983,7 @@ void Sections::DecodeEPG(byte* buf,int len)
 		
 		start=start+12;
 		unsigned int off=0;
-//		Log(" event:%x date:%x time:%x duration:%x running:%d free:%d", event_id,date,time,duration,running_status,free_CA_mode);
+		//Log(" event:%x date:%x time:%x duration:%x running:%d free:%d %d len:%d", event_id,dateMJD,timeUTC,duration,running_status,free_CA_mode,start,descriptors_len);
 		while (off < descriptors_len)
 		{
 			int descriptor_tag = buf[start+off];
@@ -1255,10 +1255,10 @@ void Sections::GetEPGChannel( ULONG channel,  WORD* networkId,  WORD* transporti
 	*service_id=epgChannel.service_id;
 //	Log("GetEPGChannel:%d done",channel);
 }
-void Sections::GetEPGEvent( ULONG channel,  ULONG eventid, ULONG* date, ULONG* time, ULONG* duration, char**event,  char** text, char** genre    )
+void Sections::GetEPGEvent( ULONG channel,  ULONG eventid, ULONG* dateMJD, ULONG* timeUTC, ULONG* duration, char**event,  char** text, char** genre    )
 {
-	*date=0;
-	*time=0;
+	*dateMJD=0;
+	*timeUTC=0;
 	*duration=0;
 	
 	if (channel>=m_mapEPG.size()) return;
@@ -1272,8 +1272,8 @@ void Sections::GetEPGEvent( ULONG channel,  ULONG eventid, ULONG* date, ULONG* t
 	EPGChannel::imapEvents itEvent=epgChannel.mapEvents.begin();
 	while (count < eventid) { itEvent++; count++;}
 	EPGEvent& epgEvent=itEvent->second;
-	*date=epgEvent.date;
-	*time=epgEvent.time;
+	*dateMJD=epgEvent.dateMJD;
+	*timeUTC=epgEvent.timeUTC;
 	*duration=epgEvent.duration;
 	*event=(char*)epgEvent.event.c_str(); 
 	*text=(char*)epgEvent.text.c_str() ;

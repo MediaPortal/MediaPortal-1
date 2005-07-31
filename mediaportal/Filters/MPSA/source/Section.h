@@ -17,8 +17,8 @@ public:
 	struct EPGEvent
 	{
 		unsigned int eventid;
-		unsigned long date;
-		unsigned long time;
+		unsigned long dateMJD;
+		unsigned long timeUTC;
 		unsigned long duration;
 		unsigned int running_status;
 		unsigned int free_CA_mode;
@@ -179,7 +179,7 @@ public:
 	ULONG GetEPGChannelCount( );
 	ULONG  GetEPGEventCount( ULONG channel);
 	void GetEPGChannel( ULONG channel,  WORD* networkId,  WORD* transportid, WORD* service_id  );
-	void GetEPGEvent( ULONG channel,  ULONG event, ULONG* date, ULONG* time, ULONG* duration, char** strevent,  char** strtext, char** strgenre    );
+	void GetEPGEvent( ULONG channel,  ULONG event, ULONG* dateMJD, ULONG* timeUTC, ULONG* duration, char** strevent,  char** strtext, char** strgenre    );
 
 	ULONG GetCRC32(BYTE *pData,WORD len);
 	HRESULT GetTSHeader(BYTE *data,TSHeader *header);

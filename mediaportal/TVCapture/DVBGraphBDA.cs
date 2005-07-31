@@ -3122,6 +3122,37 @@ namespace MediaPortal.TV.Recording
 				GUIGraphicsContext_OnVideoWindowChanged();
 			}
 		}
+		#region EPG
+		void GrabEPG()
+		{
+			if (m_streamDemuxer != null)
+			{
+				m_streamDemuxer.ResetGrabber();
+				m_streamDemuxer.SetChannelData(currentTuningObject.AudioPid, currentTuningObject.VideoPid, currentTuningObject.TeletextPid, currentTuningObject.Audio3, currentTuningObject.ServiceName,currentTuningObject.PMTPid,currentTuningObject.ProgramNumber);
+				if (Network()!=NetworkType.ATSC)
+				{
+					if(currentTuningObject.HasEITSchedule==true)
+					{
+						Log.Write("DVBGraphBDA:start EPG grabber for program number:{0}",currentTuningObject.ProgramNumber);
+						m_analyzerInterface.GrabEPG();
+					}
+					else
+					{
+						Log.Write("DVBGraphBDA:start MHW EPG grabber for program number:{0}",currentTuningObject.ProgramNumber);
+						m_streamDemuxer.GetMHWEPG();
+					}
+				}
+			}
+		}
+		
+		int getUTC(int val)
+		{
+			if ((val&0xF0)>=0xA0)
+				return 0;
+			if ((val&0xF)>=0xA)
+				return 0;
+			return ((val&0xF0)>>4)*10+(val&0xF);
+		}
 
 		void ParseEPG()
 		{
@@ -3140,20 +3171,54 @@ namespace MediaPortal.TV.Recording
 				Log.Write("channel:{0} onid:{1} tsid:{2} sid:{3} events:{4}", i,networkid,transportid,serviceid,eventCount);
 				for (uint x=0; x < eventCount;++x)
 				{
-					uint date=0,time=0,duration=0;
+					uint start_time_MJD=0,start_time_UTC=0,duration=0;
 					string title,description,genre;
 					IntPtr ptrTitle=IntPtr.Zero;
 					IntPtr ptrDesc=IntPtr.Zero;
 					IntPtr ptrGenre=IntPtr.Zero;
-					m_analyzerInterface.GetEPGEvent(i,x,out date, out time, out duration,out ptrTitle,out ptrDesc, out ptrGenre);
+					m_analyzerInterface.GetEPGEvent(i,x,out start_time_MJD, out start_time_UTC, out duration,out ptrTitle,out ptrDesc, out ptrGenre);
 					title=Marshal.PtrToStringAnsi(ptrTitle);
 					description=Marshal.PtrToStringAnsi(ptrDesc);
 					genre=Marshal.PtrToStringAnsi(ptrGenre);
-					Log.Write("  event:{0} date:{1:X} time:{2:X} duration:{3:X} title:{4:X} desc:{5:X} genre:{6:X}",
-											x,date,time,duration,title,description,genre);
+
+					int duration_hh = getUTC((int) ((duration >> 16) )& 255);
+					int duration_mm = getUTC((int) ((duration >> 8) )& 255);
+					int duration_ss = getUTC((int) (duration )& 255);
+					int starttime_hh = getUTC((int) ((start_time_UTC >> 16) )& 255);
+					int starttime_mm =getUTC((int) ((start_time_UTC >> 8) )& 255);
+					int starttime_ss =getUTC((int) (start_time_UTC )& 255);
+
+
+					// convert the julian date
+					int year = (int) ((start_time_MJD - 15078.2) / 365.25);
+					int month = (int) ((start_time_MJD - 14956.1 - (int)(year * 365.25)) / 30.6001);
+					int day = (int) (start_time_MJD - 14956 - (int)(year * 365.25) - (int)(month * 30.6001));
+					int k = (month == 14 || month == 15) ? 1 : 0;
+					year += 1900+ k; // start from year 1900, so add that here
+					month = month - 1 - k * 12;
+					int starttime_y=year;
+					int starttime_m=month;
+					int starttime_d=day;
+
+					try
+					{
+						DateTime dtUTC = new DateTime(starttime_y,starttime_m,starttime_d,starttime_hh,starttime_mm,starttime_ss,0);
+						DateTime dtLocal=dtUTC.ToLocalTime();
+
+
+						Log.Write("  event:{0} date:{1} duration:{2}:{3}:{4} title:{5:X} desc:{6:X} genre:{7:X}",
+							x,dtLocal.ToString(),duration_hh,duration_mm,duration_ss,title,description,genre);
+					}
+					catch(Exception)
+					{
+						Log.Write("invalid date: year:{0} month:{1}, day:{2} {3}:{4}:{5}", year,month,day,starttime_hh,starttime_mm,starttime_ss);
+						Log.Write("{0:X} {1:X}", start_time_MJD,start_time_UTC);
+					}
 				}
 			}
 		}
+		#endregion
+
 		public void Process()
 		{
 			if (m_graphState==State.None || m_graphState==State.Created) return;
@@ -3272,20 +3337,7 @@ namespace MediaPortal.TV.Recording
 			{
 				m_streamDemuxer.ResetGrabber();
 				m_streamDemuxer.SetChannelData(currentTuningObject.AudioPid, currentTuningObject.VideoPid, currentTuningObject.TeletextPid, currentTuningObject.Audio3, currentTuningObject.ServiceName,currentTuningObject.PMTPid,currentTuningObject.ProgramNumber);
-				if (Network()!=NetworkType.ATSC)
-				{
-					if(currentTuningObject.HasEITSchedule==true)
-					{
-						Log.Write("DVBGraphBDA:start EPG grabber for program number:{0}",currentTuningObject.ProgramNumber);
-						//m_streamDemuxer.GetEPGSchedule(0x50,currentTuningObject.ProgramNumber);
-						m_analyzerInterface.GrabEPG();
-					}
-					else
-					{
-						Log.Write("DVBGraphBDA:start MHW EPG grabber for program number:{0}",currentTuningObject.ProgramNumber);
-						m_streamDemuxer.GetMHWEPG();
-					}
-				}
+				GrabEPG();
 			}
 
 			refreshPmtTable =true;
@@ -3544,25 +3596,6 @@ namespace MediaPortal.TV.Recording
 				//submit tune request to the tuner
 			
 				m_analyzerInterface.ResetParser();
-				if (m_streamDemuxer != null)
-				{
-					m_streamDemuxer.ResetGrabber();
-					m_streamDemuxer.SetChannelData(currentTuningObject.AudioPid, currentTuningObject.VideoPid, currentTuningObject.TeletextPid, currentTuningObject.Audio3, currentTuningObject.ServiceName,currentTuningObject.PMTPid,currentTuningObject.ProgramNumber);
-					if (Network()!=NetworkType.ATSC)
-					{
-						if(currentTuningObject.HasEITSchedule==true)
-						{
-							Log.Write("DVBGraphBDA:start EPG grabber for program number:{0}",currentTuningObject.ProgramNumber);
-							//m_streamDemuxer.GetEPGSchedule(0x50,currentTuningObject.ProgramNumber);
-							m_analyzerInterface.GrabEPG();
-						}
-						else
-						{
-							Log.Write("DVBGraphBDA:start MHW EPG grabber for program number:{0}",currentTuningObject.ProgramNumber);
-							m_streamDemuxer.GetMHWEPG();
-						}
-					}
-				}
 
 				DirectShowUtil.EnableDeInterlace(m_graphBuilder);
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() done");
@@ -4726,25 +4759,13 @@ namespace MediaPortal.TV.Recording
 					stream.Close();
 				}
 				refreshPmtTable=true;
+				GrabEPG();
 			}
 			catch(Exception ex)
 			{
 				Log.WriteFile(Log.LogType.Log,true,"ERROR: exception while creating pmt {0} {1} {2}",
 					ex.Message,ex.Source,ex.StackTrace);
 			}
-		}
-		private void m_streamDemuxer_OnGotSection(int pid, int tableID, byte[] sectionData)
-		{
-		}
-
-		private void m_streamDemuxer_OnGotTable(int pid, int tableID, ArrayList tableList)
-		{
-			if(tableList==null)
-				return;
-			if(tableList.Count<1)
-				return;
-
-			//	Log.Write("pid:{0:X} table:{1:X}", pid,tableID);
 		}
 
 		void SetPids()
