@@ -919,6 +919,11 @@ void Sections::DecodeEPG(byte* buf,int len)
 	int network_id=(buf[10]<<8)+buf[11];
 	int segment_last_section_number=buf[12];
 	int last_table_id=buf[13];
+
+	if (last_table_id<0x50||last_table_id>0x6f) return;
+	if (section_number>last_section_number) return;
+	if (section_length>len) return;
+
 	//if (tableid!=0x5e) return;
 	//if (service_id!=0x1a93) return;
 	unsigned long key=(network_id<<32)+(transport_id<<16)+service_id;
