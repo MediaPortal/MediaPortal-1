@@ -178,7 +178,7 @@ public:
 
 	ULONG GetEPGChannelCount( );
 	ULONG  GetEPGEventCount( ULONG channel);
-	void GetEPGChannel( ULONG channel,  int* networkId,  int* transportid, int* service_id  );
+	void GetEPGChannel( ULONG channel,  WORD* networkId,  WORD* transportid, WORD* service_id  );
 	void GetEPGEvent( ULONG channel,  ULONG event, ULONG* date, ULONG* time, ULONG* duration, char* strevent,  char* strtext, char* strgenre    );
 
 	ULONG GetCRC32(BYTE *pData,WORD len);

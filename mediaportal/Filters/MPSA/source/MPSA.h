@@ -76,9 +76,9 @@ DECLARE_INTERFACE_(IStreamAnalyzer, IUnknown)
 	STDMETHOD(GrabEPG)()PURE;
 	STDMETHOD(IsEPGReady) (THIS_ BOOL* yesNo)PURE;
 	STDMETHOD(GetEPGChannelCount) (THIS_ ULONG* channelCount)PURE;
-	STDMETHOD(GetEPGEventCount) (THIS_ ULONG channel, THIS_ ULONG* eventCount)PURE;
-	STDMETHOD(GetEPGChannel) (THIS_ ULONG channel, THIS_ int* networkId, THIS_ int* transportid,THIS_ int* service_id  )PURE;
-	STDMETHOD(GetEPGEvent) (THIS_ ULONG channel, THIS_ ULONG eventid,THIS_ ULONG* date,THIS_ ULONG* time,THIS_ ULONG* duration,THIS_ char*event, THIS_ char* text,THIS_ char* genre    )PURE;
+	STDMETHOD(GetEPGEventCount) (THIS_ ULONG channel, ULONG* eventCount)PURE;
+	STDMETHOD(GetEPGChannel) (THIS_ ULONG channel, WORD* networkId, WORD* transportid,WORD* service_id  )PURE;
+	STDMETHOD(GetEPGEvent) (THIS_ ULONG channel, ULONG eventid,ULONG* date,ULONG* time,ULONG* duration,char*event, char* text,char* genre    )PURE;
 
 
 };
@@ -189,7 +189,7 @@ public:
 	STDMETHODIMP IsEPGReady(BOOL* yesNo);
 	STDMETHODIMP GetEPGChannelCount( ULONG* channelCount);
 	STDMETHODIMP GetEPGEventCount( ULONG channel,  ULONG* eventCount);
-	STDMETHODIMP GetEPGChannel( ULONG channel,  int* networkId,  int* transportid, int* service_id  );
+	STDMETHODIMP GetEPGChannel( ULONG channel,  WORD* networkId,  WORD* transportid, WORD* service_id  );
 	STDMETHODIMP GetEPGEvent( ULONG channel,  ULONG eventid, ULONG* date, ULONG* time, ULONG* duration, char*event,  char* text, char* genre    );
 
 

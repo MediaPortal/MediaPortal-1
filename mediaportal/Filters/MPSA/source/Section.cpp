@@ -921,9 +921,11 @@ void Sections::DecodeEPG(byte* buf,int len)
 	int segment_last_section_number=buf[12];
 	int last_table_id=buf[13];
 
+	if (last_table_id<tableid) return;
 	if (last_table_id<0x50||last_table_id>0x6f) return;
 	if (section_number>last_section_number) return;
 	if (section_length>len) return;
+	//if (last_section_number>88) return;
 
 	//if (tableid!=0x5e) return;
 	//if (service_id!=0x1a93) return;
@@ -938,7 +940,7 @@ void Sections::DecodeEPG(byte* buf,int len)
 		newChannel.allSectionsReceived=false;
 		m_mapEPG[key]=newChannel;
 		it=m_mapEPG.find(key);
-		Log("add new channel onid:%x tsid:%x sid:%d",network_id,transport_id,service_id);
+		Log("add new channel table:%x onid:%x tsid:%x sid:%d",tableid,network_id,transport_id,service_id);
 	}
 	EPGChannel& channel=it->second;
 	if (channel.allSectionsReceived) return;
@@ -947,12 +949,12 @@ void Sections::DecodeEPG(byte* buf,int len)
 	EPGChannel::imapSectionsReceived itSec=channel.mapSectionsReceived.find(section_number);
 	if (itSec!=channel.mapSectionsReceived.end()) return; //yes
 	channel.mapSectionsReceived[section_number]=true;
-
+/*
 	Log("EPG tid:%x len:%d %d (%d/%d) sid:%d tsid:%d onid:%d slsn:%d last table id:%x cn:%d version:%d", 
 		buf[0],len,section_length,section_number,last_section_number, 
 		service_id,transport_id,network_id,segment_last_section_number,last_table_id,
 		current_next_indicator,version_number);
-
+*/
 	m_epgTimeout=time(NULL);
 	int start=14;
 	while (start+11 < len)
@@ -1201,10 +1203,13 @@ void Sections::GrabEPG()
 }
 bool Sections::IsEPGReady()
 {
-	return m_bEpgDone;
+	bool ready=m_bEpgDone;
+	if (ready) m_bEpgDone=false;
+	return ready;
 }
 ULONG Sections::GetEPGChannelCount( )
 {
+	Log("GetEPGChannelCount:%d",m_mapEPG.size());
 	return m_mapEPG.size();
 }
 ULONG  Sections::GetEPGEventCount( ULONG channel)
@@ -1214,22 +1219,32 @@ ULONG  Sections::GetEPGEventCount( ULONG channel)
 	imapEPG it =m_mapEPG.begin();
 	while (count < channel) { it++; count++;}
 	EPGChannel& epgChannel=it->second;
+
+	
+	Log("GetEPGEventCount:%d %d",channel,epgChannel.mapEvents.size());
 	return epgChannel.mapEvents.size();
 }
-void Sections::GetEPGChannel( ULONG channel,  int* networkId,  int* transportid, int* service_id  )
+void Sections::GetEPGChannel( ULONG channel,  WORD* networkId,  WORD* transportid, WORD* service_id  )
 {
-	*networkId=-1;
-	*transportid=-1;
-	*service_id=-1;
+	Log("GetEPGChannel#%d",channel);
 
 	if (channel>=m_mapEPG.size()) return;
-	int count=0;
+	ULONG count=0;
 	imapEPG it =m_mapEPG.begin();
-	while (count < channel) { it++; count++;}
+	while (count < channel && it!=m_mapEPG.end()) { it++; count++;}
+	Log("count:%d",count);
+	if (it==m_mapEPG.end())
+	{
+		Log("GetEPGChannel #%d not found",channel);
+	}
 	EPGChannel& epgChannel=it->second;
+
+	Log("  onid:%x tsid:%x sid:%x", epgChannel.original_network_id,epgChannel.transport_id,epgChannel.service_id);
+
 	*networkId=epgChannel.original_network_id;
 	*transportid=epgChannel.transport_id;
 	*service_id=epgChannel.service_id;
+	Log("GetEPGChannel:%d done",channel);
 }
 void Sections::GetEPGEvent( ULONG channel,  ULONG eventid, ULONG* date, ULONG* time, ULONG* duration, char*event,  char* text, char* genre    )
 {

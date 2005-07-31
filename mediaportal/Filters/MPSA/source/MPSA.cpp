@@ -429,7 +429,7 @@ STDMETHODIMP CStreamAnalyzer::ResetParser()
 	Log("ResetParser");
 	HRESULT hr=m_pDemuxer->UnMapAllPIDs();
 	m_patChannelsCount=0;
-	m_pSections->Reset();
+	//m_pSections->Reset();
 	return hr;
 }
 //
@@ -687,7 +687,7 @@ STDMETHODIMP CStreamAnalyzer::GetEPGEventCount( ULONG channel,  ULONG* eventCoun
 	*eventCount=m_pSections->GetEPGEventCount( channel);
 	return S_OK;
 }
-STDMETHODIMP CStreamAnalyzer::GetEPGChannel( ULONG channel,  int* networkId,  int* transportid, int* service_id  )
+STDMETHODIMP CStreamAnalyzer::GetEPGChannel( ULONG channel,  WORD* networkId,  WORD* transportid, WORD* service_id  )
 {
 	m_pSections->GetEPGChannel( channel,  networkId,  transportid, service_id  );
 	return S_OK;
