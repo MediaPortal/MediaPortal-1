@@ -3123,13 +3123,50 @@ namespace MediaPortal.TV.Recording
 			}
 		}
 
+		void ParseEPG()
+		{
+			uint channelCount=0;
+			Log.Write("EPG ready");
+			m_analyzerInterface.GetEPGChannelCount(out channelCount);
+			Log.Write("Channels:{0}", channelCount);
+			for (uint i=0; i < channelCount;++i)
+			{
+				ushort networkid=0;
+				ushort transportid=0;
+				ushort serviceid=0;
+				uint eventCount=0;
+				m_analyzerInterface.GetEPGChannel(i,ref networkid, ref transportid, ref serviceid);
+				m_analyzerInterface.GetEPGEventCount(i,out eventCount);
+				Log.Write("channel:{0} onid:{1} tsid:{2} sid:{3} events:{4}", i,networkid,transportid,serviceid,eventCount);
+				for (uint x=0; x < eventCount;++x)
+				{
+					uint date=0,time=0,duration=0;
+					string title,description,genre;
+					IntPtr ptrTitle=IntPtr.Zero;
+					IntPtr ptrDesc=IntPtr.Zero;
+					IntPtr ptrGenre=IntPtr.Zero;
+					m_analyzerInterface.GetEPGEvent(i,x,out date, out time, out duration,out ptrTitle,out ptrDesc, out ptrGenre);
+					title=Marshal.PtrToStringAnsi(ptrTitle);
+					description=Marshal.PtrToStringAnsi(ptrDesc);
+					genre=Marshal.PtrToStringAnsi(ptrGenre);
+					Log.Write("  event:{0} date:{1:X} time:{2:X} duration:{3:X} title:{4:X} desc:{5:X} genre:{6:X}",
+											x,date,time,duration,title,description,genre);
+				}
+			}
+		}
 		public void Process()
 		{
 			if (m_graphState==State.None || m_graphState==State.Created) return;
 
 			if (m_streamDemuxer!=null)
-			m_streamDemuxer.Process();
+				m_streamDemuxer.Process();
 		
+			bool ready=false;
+			m_analyzerInterface.IsEPGReady(out ready);
+			if (ready)
+			{
+				ParseEPG();
+			}
 			TimeSpan ts=DateTime.Now-updateTimer;
 			bool reTune=false;
 
@@ -3240,7 +3277,8 @@ namespace MediaPortal.TV.Recording
 					if(currentTuningObject.HasEITSchedule==true)
 					{
 						Log.Write("DVBGraphBDA:start EPG grabber for program number:{0}",currentTuningObject.ProgramNumber);
-						m_streamDemuxer.GetEPGSchedule(0x50,currentTuningObject.ProgramNumber);
+						//m_streamDemuxer.GetEPGSchedule(0x50,currentTuningObject.ProgramNumber);
+						m_analyzerInterface.GrabEPG();
 					}
 					else
 					{
@@ -3514,7 +3552,8 @@ namespace MediaPortal.TV.Recording
 						if(currentTuningObject.HasEITSchedule==true)
 						{
 							Log.Write("DVBGraphBDA:start EPG grabber for program number:{0}",currentTuningObject.ProgramNumber);
-							m_streamDemuxer.GetEPGSchedule(0x50,currentTuningObject.ProgramNumber);
+							//m_streamDemuxer.GetEPGSchedule(0x50,currentTuningObject.ProgramNumber);
+							m_analyzerInterface.GrabEPG();
 						}
 						else
 						{

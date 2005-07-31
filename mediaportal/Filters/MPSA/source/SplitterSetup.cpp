@@ -257,14 +257,6 @@ HRESULT SplitterSetup::SetSectionMapping()
 	}
 	pPidEnum->Release();
 
-	Log("map pid x12");
-	pid = (ULONG)0x12;// EIT
-	hr=pMap->MapPID(1,&pid,MEDIA_MPEG2_PSI); // tv
-	if(FAILED(hr))
-	{
-		Log("failed to map pid 0x0");
-		return 4;
-	}
 
 	Log("map pid 0x0");
 	pid = (ULONG)0;// pat
@@ -354,6 +346,60 @@ HRESULT SplitterSetup::SetMHW2Pin(IPin *ppin)
 {
 	if(m_pMHW2Pin==NULL)
 		m_pMHW2Pin=ppin;
+	return S_OK;
+}
+
+HRESULT SplitterSetup::SetEPGMapping()
+{
+	IMPEG2PIDMap	*pMap=NULL;
+	IEnumPIDMap		*pPidEnum=NULL;
+	ULONG			pid;
+	PID_MAP			pm;
+	ULONG			count;
+	ULONG			umPid;
+	
+	HRESULT hr=0;
+			
+	Log("Setup EPG mapping");
+
+	// video
+
+	if(m_pSectionsPin==NULL)
+		return S_FALSE;
+
+	hr=m_pSectionsPin->QueryInterface(IID_IMPEG2PIDMap,(void**)&pMap);
+	if(FAILED(hr) || pMap==NULL)
+		return 3;
+		// 
+	hr=pMap->EnumPIDMap(&pPidEnum);
+	if(FAILED(hr) || pPidEnum==NULL)
+		return 7;
+		
+	// enum and unmap the pids
+	while(pPidEnum->Next(1,&pm,&count)== S_OK)
+	{
+		if (count!=1) break;
+			
+		umPid=pm.ulPID;
+		hr=pMap->UnmapPID(1,&umPid);
+		if(FAILED(hr))
+		{	
+			Log("failed to unmap pids");
+			return 8;
+		}
+	}
+	pPidEnum->Release();
+
+	Log("map pid x12");
+	pid = (ULONG)0x12;// EIT
+	hr=pMap->MapPID(1,&pid,MEDIA_MPEG2_PSI); // tv
+	if(FAILED(hr))
+	{
+		Log("failed to map pid 0x0");
+		return 4;
+	}
+	pMap->Release();
+
 	return S_OK;
 }
 

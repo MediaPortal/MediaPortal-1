@@ -669,12 +669,17 @@ STDMETHODIMP CStreamAnalyzer::IsATSCUsed(BOOL* yesNo)
 STDMETHODIMP CStreamAnalyzer::GrabEPG()
 {
 	Log("StreamAnalyzer:GrabEPG");
+	m_pDemuxer->SetupDefaultMapping();
 	m_pSections->GrabEPG();
 	return S_OK;
 }
 STDMETHODIMP CStreamAnalyzer::IsEPGReady(BOOL* yesNo)
 {
 	*yesNo=m_pSections->IsEPGReady();
+	if (*yesNo)
+	{
+		m_pDemuxer->UnMapAllPIDs();
+	}
 	return S_OK;
 }
 STDMETHODIMP CStreamAnalyzer::GetEPGChannelCount( ULONG* channelCount)

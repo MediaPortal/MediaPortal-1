@@ -28,7 +28,7 @@ public:
 	HRESULT SetMHW1Pin(IPin *ppin);
 	HRESULT SetMHW2Pin(IPin *ppin);
 	bool PinIsNULL();
-
+	HRESULT SetEPGMapping();
 protected:
 	HRESULT SetupDemuxer(IBaseFilter *p);
 	HRESULT GetPSIMedia(AM_MEDIA_TYPE *pintype);
