@@ -3192,10 +3192,10 @@ namespace MediaPortal.TV.Recording
 
 					int duration_hh = getUTC((int) ((duration >> 16) )& 255);
 					int duration_mm = getUTC((int) ((duration >> 8) )& 255);
-					int duration_ss = getUTC((int) (duration )& 255);
+					int duration_ss = 0;//getUTC((int) (duration )& 255);
 					int starttime_hh = getUTC((int) ((start_time_UTC >> 16) )& 255);
 					int starttime_mm =getUTC((int) ((start_time_UTC >> 8) )& 255);
-					int starttime_ss =getUTC((int) (start_time_UTC )& 255);
+					int starttime_ss =0;//getUTC((int) (start_time_UTC )& 255);
 
 					if (starttime_hh>23) starttime_hh=23;
 					if (starttime_mm>59) starttime_mm=59;
