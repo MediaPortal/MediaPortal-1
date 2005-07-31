@@ -1198,3 +1198,56 @@ bool Sections::IsEPGReady()
 {
 	return m_bEpgDone;
 }
+ULONG Sections::GetEPGChannelCount( )
+{
+	return m_mapEPG.size();
+}
+ULONG  Sections::GetEPGEventCount( ULONG channel)
+{
+	if (channel>=m_mapEPG.size()) return 0;
+	int count=0;
+	imapEPG it =m_mapEPG.begin();
+	while (count < channel) { it++; count++;}
+	EPGChannel& epgChannel=it->second;
+	return epgChannel.mapEvents.size();
+}
+void Sections::GetEPGChannel( ULONG channel,  int* networkId,  int* transportid, int* service_id  )
+{
+	*networkId=-1;
+	*transportid=-1;
+	*service_id=-1;
+
+	if (channel>=m_mapEPG.size()) return;
+	int count=0;
+	imapEPG it =m_mapEPG.begin();
+	while (count < channel) { it++; count++;}
+	EPGChannel& epgChannel=it->second;
+	*networkId=epgChannel.original_network_id;
+	*transportid=epgChannel.transport_id;
+	*service_id=epgChannel.service_id;
+}
+void Sections::GetEPGEvent( ULONG channel,  ULONG eventid, ULONG* date, ULONG* time, ULONG* duration, char*event,  char* text, char* genre    )
+{
+	*date=0;
+	*time=0;
+	*duration=0;
+	
+	if (channel>=m_mapEPG.size()) return;
+	int count=0;
+	imapEPG it =m_mapEPG.begin();
+	while (count < channel) { it++; count++;}
+	EPGChannel& epgChannel=it->second;
+
+	if (eventid >= epgChannel.mapEvents.size()) return;
+	count=0;
+	EPGChannel::imapEvents itEvent=epgChannel.mapEvents.begin();
+	while (count < eventid) { itEvent++; count++;}
+	EPGEvent& epgEvent=it->second;
+	*date=epgEvent.date;
+	*time=epgEvent.time;
+	*duration=epgEvent.duration;
+	event=epgEvent.event.c_str();
+	text=epgEvent.text.c_str();
+	genre=epgEvent.genre.c_str();
+
+}

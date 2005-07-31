@@ -175,6 +175,12 @@ public:
 	void	Reset();
 	void	GrabEPG();
 	bool	IsEPGReady();
+
+	ULONG GetEPGChannelCount( );
+	ULONG  GetEPGEventCount( ULONG channel);
+	void GetEPGChannel( ULONG channel,  int* networkId,  int* transportid, int* service_id  );
+	void GetEPGEvent( ULONG channel,  ULONG event, ULONG* date, ULONG* time, ULONG* duration, char* strevent,  char* strtext, char* strgenre    );
+
 	ULONG GetCRC32(BYTE *pData,WORD len);
 	HRESULT GetTSHeader(BYTE *data,TSHeader *header);
 	HRESULT GetPESHeader(BYTE *data,PESHeader *header);

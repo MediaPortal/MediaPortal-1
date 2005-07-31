@@ -674,6 +674,26 @@ STDMETHODIMP CStreamAnalyzer::IsEPGReady(BOOL* yesNo)
 	*yesNo=m_pSections->IsEPGReady();
 	return S_OK;
 }
+STDMETHODIMP CStreamAnalyzer::GetEPGChannelCount( ULONG* channelCount)
+{
+	*channelCount=m_pSections->GetEPGChannelCount( );
+	return S_OK;
+}
+STDMETHODIMP CStreamAnalyzer::GetEPGEventCount( ULONG channel,  ULONG* eventCount)
+{
+	*eventCount=m_pSections->GetEPGEventCount( channel);
+	return S_OK;
+}
+STDMETHODIMP CStreamAnalyzer::GetEPGChannel( ULONG channel,  int* networkId,  int* transportid, int* service_id  )
+{
+	m_pSections->GetEPGChannel( channel,  networkId,  transportid, service_id  );
+	return S_OK;
+}
+STDMETHODIMP CStreamAnalyzer::GetEPGEvent( ULONG channel,  ULONG eventid, ULONG* date, ULONG* time, ULONG* duration, char*event,  char* text, char* genre    )
+{
+	m_pSections->GetEPGEvent( channel,  eventid, date, time, duration, event,  text, genre    );
+	return S_OK;
+}
 
 
 STDMETHODIMP CStreamAnalyzer::GetPMTData(BYTE *data)
