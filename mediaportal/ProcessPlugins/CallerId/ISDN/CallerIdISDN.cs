@@ -375,7 +375,10 @@ namespace ProcessPlugins.CallerId
           dialogNotify.SetHeading(notifyHeading);
           dialogNotify.SetText(notifyText);
           dialogNotify.SetImage(notifyImage);
-          dialogNotify.DoModal(-1);
+          dialogNotify.DoModal(GUIWindowManager.ActiveWindow);
+          
+          if (g_Player.Playing && g_Player.Paused)
+            g_Player.Pause();
         }
       }
     }
