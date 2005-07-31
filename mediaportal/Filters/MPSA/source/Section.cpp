@@ -1246,7 +1246,7 @@ void Sections::GetEPGChannel( ULONG channel,  WORD* networkId,  WORD* transporti
 	*service_id=epgChannel.service_id;
 //	Log("GetEPGChannel:%d done",channel);
 }
-void Sections::GetEPGEvent( ULONG channel,  ULONG eventid, ULONG* date, ULONG* time, ULONG* duration, char*event,  char* text, char* genre    )
+void Sections::GetEPGEvent( ULONG channel,  ULONG eventid, ULONG* date, ULONG* time, ULONG* duration, char**event,  char** text, char** genre    )
 {
 	*date=0;
 	*time=0;
@@ -1266,8 +1266,7 @@ void Sections::GetEPGEvent( ULONG channel,  ULONG eventid, ULONG* date, ULONG* t
 	*date=epgEvent.date;
 	*time=epgEvent.time;
 	*duration=epgEvent.duration;
-	strcpy(event,(char*)epgEvent.event.c_str() );
-	strcpy(text,(char*)epgEvent.text.c_str() );
-	strcpy(genre,(char*)epgEvent.genre.c_str() );
-
+	*event=(char*)epgEvent.event.c_str(); 
+	*text=(char*)epgEvent.text.c_str() ;
+	*genre=(char*)epgEvent.genre.c_str() ;
 }

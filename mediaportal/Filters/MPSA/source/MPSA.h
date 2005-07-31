@@ -78,7 +78,7 @@ DECLARE_INTERFACE_(IStreamAnalyzer, IUnknown)
 	STDMETHOD(GetEPGChannelCount) (THIS_ ULONG* channelCount)PURE;
 	STDMETHOD(GetEPGEventCount) (THIS_ ULONG channel, ULONG* eventCount)PURE;
 	STDMETHOD(GetEPGChannel) (THIS_ ULONG channel, WORD* networkId, WORD* transportid,WORD* service_id  )PURE;
-	STDMETHOD(GetEPGEvent) (THIS_ ULONG channel, ULONG eventid,ULONG* date,ULONG* time,ULONG* duration,char*event, char* text,char* genre    )PURE;
+	STDMETHOD(GetEPGEvent) (THIS_ ULONG channel, ULONG eventid,ULONG* date,ULONG* time,ULONG* duration,char** event, char** text,char** genre    )PURE;
 
 
 };
@@ -190,7 +190,7 @@ public:
 	STDMETHODIMP GetEPGChannelCount( ULONG* channelCount);
 	STDMETHODIMP GetEPGEventCount( ULONG channel,  ULONG* eventCount);
 	STDMETHODIMP GetEPGChannel( ULONG channel,  WORD* networkId,  WORD* transportid, WORD* service_id  );
-	STDMETHODIMP GetEPGEvent( ULONG channel,  ULONG eventid, ULONG* date, ULONG* time, ULONG* duration, char*event,  char* text, char* genre    );
+	STDMETHODIMP GetEPGEvent( ULONG channel,  ULONG eventid, ULONG* date, ULONG* time, ULONG* duration, char** event,  char** text, char** genre    );
 
 
 public:

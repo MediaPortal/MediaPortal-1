@@ -692,7 +692,7 @@ STDMETHODIMP CStreamAnalyzer::GetEPGChannel( ULONG channel,  WORD* networkId,  W
 	m_pSections->GetEPGChannel( channel,  networkId,  transportid, service_id  );
 	return S_OK;
 }
-STDMETHODIMP CStreamAnalyzer::GetEPGEvent( ULONG channel,  ULONG eventid, ULONG* date, ULONG* time, ULONG* duration, char*event,  char* text, char* genre    )
+STDMETHODIMP CStreamAnalyzer::GetEPGEvent( ULONG channel,  ULONG eventid, ULONG* date, ULONG* time, ULONG* duration, char**event,  char** text, char** genre    )
 {
 	m_pSections->GetEPGEvent( channel,  eventid, date, time, duration, event,  text, genre    );
 	return S_OK;
