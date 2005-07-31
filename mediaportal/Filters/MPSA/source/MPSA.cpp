@@ -543,9 +543,13 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 	else
 	{
 		
-		if (pbData[0]>=0x50 && pbData[0] <= 0x6f) //EPG
+		if (m_pSections->IsEPGGrabbing())
 		{
-			m_pSections->DecodeEPG(pbData,len);
+			if (pbData[0]>=0x50 && pbData[0] <= 0x6f) //EPG
+			{
+				m_pSections->DecodeEPG(pbData,len);
+			}
+			return S_OK;
 		}
 		if(pbData[0]==0x02)// pmt
 		{
@@ -669,16 +673,16 @@ STDMETHODIMP CStreamAnalyzer::IsATSCUsed(BOOL* yesNo)
 STDMETHODIMP CStreamAnalyzer::GrabEPG()
 {
 	Log("StreamAnalyzer:GrabEPG");
-	m_pDemuxer->SetupDefaultMapping();
+	m_pDemuxer->SetEPGMapping();
 	m_pSections->GrabEPG();
 	return S_OK;
 }
 STDMETHODIMP CStreamAnalyzer::IsEPGReady(BOOL* yesNo)
 {
 	*yesNo=m_pSections->IsEPGReady();
-	if (*yesNo)
+	if (m_pSections->IsEPGReady())
 	{
-		m_pDemuxer->UnMapAllPIDs();
+		m_pDemuxer->SetupDefaultMapping();
 	}
 	return S_OK;
 }

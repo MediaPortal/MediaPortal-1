@@ -3543,6 +3543,7 @@ namespace MediaPortal.TV.Recording
 				}	//switch (m_NetworkType)
 				//submit tune request to the tuner
 			
+				m_analyzerInterface.ResetParser();
 				if (m_streamDemuxer != null)
 				{
 					m_streamDemuxer.ResetGrabber();
@@ -3566,7 +3567,6 @@ namespace MediaPortal.TV.Recording
 				DirectShowUtil.EnableDeInterlace(m_graphBuilder);
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() done");
 
-				m_analyzerInterface.ResetParser();
 
 				timeRetune=DateTime.Now;
 				refreshPmtTable	= true;

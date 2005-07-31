@@ -1201,10 +1201,19 @@ void Sections::GrabEPG()
 	m_bEpgDone=false;
 	m_epgTimeout=time(NULL);
 }
+bool Sections::IsEPGGrabbing()
+{
+	return m_bParseEPG;
+}
 bool Sections::IsEPGReady()
 {
 	bool ready=m_bEpgDone;
-	if (ready) m_bEpgDone=false;
+	if (ready) 
+	{
+		Log("EPG done");
+		m_bParseEPG=false;
+		m_bEpgDone=false;
+	}
 	return ready;
 }
 ULONG Sections::GetEPGChannelCount( )

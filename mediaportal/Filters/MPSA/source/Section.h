@@ -175,7 +175,7 @@ public:
 	void	Reset();
 	void	GrabEPG();
 	bool	IsEPGReady();
-
+	bool	IsEPGGrabbing();
 	ULONG GetEPGChannelCount( );
 	ULONG  GetEPGEventCount( ULONG channel);
 	void GetEPGChannel( ULONG channel,  WORD* networkId,  WORD* transportid, WORD* service_id  );
