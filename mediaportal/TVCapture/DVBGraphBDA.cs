@@ -3133,12 +3133,12 @@ namespace MediaPortal.TV.Recording
 				{
 					if(currentTuningObject.HasEITSchedule==true)
 					{
-						Log.Write("DVBGraphBDA:start EPG grabber for program number:{0}",currentTuningObject.ProgramNumber);
+						Log.WriteFile(Log.LogType.EPG,"epg-grab: start EPG grabber for program number:{0}",currentTuningObject.ProgramNumber);
 						m_analyzerInterface.GrabEPG();
 					}
 					else
 					{
-						Log.Write("DVBGraphBDA:start MHW EPG grabber for program number:{0}",currentTuningObject.ProgramNumber);
+						Log.WriteFile(Log.LogType.EPG,"epg-grab: start MHW EPG grabber for program number:{0}",currentTuningObject.ProgramNumber);
 						m_streamDemuxer.GetMHWEPG();
 					}
 				}
@@ -3154,12 +3154,13 @@ namespace MediaPortal.TV.Recording
 			return ((val&0xF0)>>4)*10+(val&0xF);
 		}
 
+
 		void ParseEPG()
 		{
 			uint channelCount=0;
-			Log.Write("EPG ready");
+			Log.WriteFile(Log.LogType.EPG,"epg-grab: EPG ready");
 			m_analyzerInterface.GetEPGChannelCount(out channelCount);
-			Log.Write("Channels:{0}", channelCount);
+			Log.WriteFile(Log.LogType.EPG,"epg-grab: received epg for {0} channels", channelCount);
 			for (uint i=0; i < channelCount;++i)
 			{
 				ushort networkid=0;
@@ -3167,8 +3168,16 @@ namespace MediaPortal.TV.Recording
 				ushort serviceid=0;
 				uint eventCount=0;
 				m_analyzerInterface.GetEPGChannel(i,ref networkid, ref transportid, ref serviceid);
+				TVChannel channel=TVDatabase.GetTVChannelByStream(Network()==NetworkType.ATSC,Network()==NetworkType.DVBT,Network()==NetworkType.DVBC,Network()==NetworkType.DVBS,networkid,transportid,serviceid);
+				if (channel==null) 
+				{
+					Log.WriteFile(Log.LogType.EPG,"epg-grab: Unknown channel NetworkId:{0} transportid:{1} serviceid:{2}",networkid,transportid,serviceid);
+					continue;
+				}
+				Log.WriteFile(Log.LogType.EPG,"epg-grab: Channel:{0}",channel.Name);
+				
 				m_analyzerInterface.GetEPGEventCount(i,out eventCount);
-				Log.Write("channel:{0} onid:{1} tsid:{2} sid:{3} events:{4}", i,networkid,transportid,serviceid,eventCount);
+				//Log.Write("epg-grab: channel:{0} onid:{1} tsid:{2} sid:{3} events:{4}", i,networkid,transportid,serviceid,eventCount);
 				for (uint x=0; x < eventCount;++x)
 				{
 					uint start_time_MJD=0,start_time_UTC=0,duration=0;
@@ -3188,6 +3197,13 @@ namespace MediaPortal.TV.Recording
 					int starttime_mm =getUTC((int) ((start_time_UTC >> 8) )& 255);
 					int starttime_ss =getUTC((int) (start_time_UTC )& 255);
 
+					if (starttime_hh>23) starttime_hh=23;
+					if (starttime_mm>59) starttime_mm=59;
+					if (starttime_ss>59) starttime_ss=59;
+
+					if (duration_hh>23) duration_hh=23;
+					if (duration_mm>59) duration_mm=59;
+					if (duration_ss>59) duration_ss=59;
 
 					// convert the julian date
 					int year = (int) ((start_time_MJD - 15078.2) / 365.25);
@@ -3203,19 +3219,51 @@ namespace MediaPortal.TV.Recording
 					try
 					{
 						DateTime dtUTC = new DateTime(starttime_y,starttime_m,starttime_d,starttime_hh,starttime_mm,starttime_ss,0);
-						DateTime dtLocal=dtUTC.ToLocalTime();
+						DateTime dtStart=dtUTC.ToLocalTime();
+						DateTime dtEnd=dtStart.AddHours(duration_hh);
+						dtEnd=dtEnd.AddMinutes(duration_mm);
+						dtEnd=dtEnd.AddSeconds(duration_ss);
 
+						TVProgram tv=new TVProgram();
+						tv.Start=Util.Utils.datetolong(dtStart);
+						tv.End=Util.Utils.datetolong(dtEnd);
+						tv.Channel=channel.Name;
+						tv.Genre=genre;
+						tv.Title=title;
+						tv.Description=description;
+						if(tv.Title==null)
+							tv.Title=String.Empty;
 
-						Log.Write("  event:{0} date:{1} duration:{2}:{3}:{4} title:{5:X} desc:{6:X} genre:{7:X}",
-							x,dtLocal.ToString(),duration_hh,duration_mm,duration_ss,title,description,genre);
+						if(tv.Description==null)
+							tv.Description=String.Empty;
+
+						if(tv.Description==String.Empty)
+							tv.Description=title;
+
+						if(tv.Title==String.Empty)
+							tv.Title=title;
+
+						if(tv.Title==String.Empty || tv.Title=="n.a.") 
+						{
+							continue;
+						}
+
+						Log.WriteFile(Log.LogType.EPG,"epg-grab: {0} {1}-{2} {3}", tv.Channel,tv.Start,tv.End,tv.Title);
+						ArrayList programsInDatabase = new ArrayList();
+						TVDatabase.GetProgramsPerChannel(tv.Channel,tv.Start+1,tv.End-1,ref programsInDatabase);
+						if(programsInDatabase.Count==0)
+						{
+							TVDatabase.AddProgram(tv);
+						}
 					}
 					catch(Exception)
 					{
-						Log.Write("invalid date: year:{0} month:{1}, day:{2} {3}:{4}:{5}", year,month,day,starttime_hh,starttime_mm,starttime_ss);
+						Log.Write("epg-grab: invalid date: year:{0} month:{1}, day:{2} {3}:{4}:{5}", year,month,day,starttime_hh,starttime_mm,starttime_ss);
 						Log.Write("{0:X} {1:X}", start_time_MJD,start_time_UTC);
 					}
 				}
 			}
+			Log.WriteFile(Log.LogType.EPG,"epg-grab: EPG done");
 		}
 		#endregion
 

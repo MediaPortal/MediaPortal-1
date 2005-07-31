@@ -3720,6 +3720,38 @@ namespace MediaPortal.TV.Database
 				}
 			}
 		}
+		static public TVChannel GetTVChannelByStream(bool atsc, bool dvbt, bool dvbc, bool dvbs,int networkid, int transportid, int serviceid)
+		{
+			int freq, symbolrate,innerFec,modulation, ONID, TSID, SID;
+			int audioPid, videoPid, teletextPid, pmtPid,bandWidth;
+			int audio1, audio2, audio3, ac3Pid,pcrPid;
+			string audioLanguage,  audioLanguage1, audioLanguage2, audioLanguage3;
+			bool HasEITPresentFollow,HasEITSchedule;
+			string provider="";
 
+			DVBChannel ch=new DVBChannel();
+			ArrayList channels = new ArrayList();
+			TVDatabase.GetChannels(ref channels);
+			foreach (TVChannel chan in channels)
+			{
+				if (dvbc)
+				{
+					TVDatabase.GetDVBCTuneRequest(chan.ID,out provider,out freq, out symbolrate,out innerFec,out modulation, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out audio1,out audio2,out audio3,out ac3Pid, out audioLanguage, out audioLanguage1,out audioLanguage2,out audioLanguage3,out HasEITPresentFollow,out HasEITSchedule,out pcrPid);
+					if (serviceid==SID && transportid==TSID) return chan;
+				}
+				if (dvbs)
+				{
+					TVDatabase.GetSatChannel(chan.ID,1,ref ch);
+					if (ch.TransportStreamID==transportid && ch.ProgramNumber==serviceid) return chan;
+				}
+
+				if (dvbt)
+				{
+						TVDatabase.GetDVBTTuneRequest(chan.ID,out provider,out freq, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out bandWidth, out audio1,out audio2,out audio3,out ac3Pid, out audioLanguage, out audioLanguage1,out audioLanguage2,out audioLanguage3,out HasEITPresentFollow,out HasEITSchedule,out pcrPid);
+						if (serviceid==SID && transportid==TSID) return chan;
+				}
+			}
+			return null;
+		}
 	}//public class TVDatabase
 }//namespace MediaPortal.TV.Database
