@@ -1242,12 +1242,12 @@ void Sections::GetEPGEvent( ULONG channel,  ULONG eventid, ULONG* date, ULONG* t
 	count=0;
 	EPGChannel::imapEvents itEvent=epgChannel.mapEvents.begin();
 	while (count < eventid) { itEvent++; count++;}
-	EPGEvent& epgEvent=it->second;
+	EPGEvent& epgEvent=itEvent->second;
 	*date=epgEvent.date;
 	*time=epgEvent.time;
 	*duration=epgEvent.duration;
-	event=epgEvent.event.c_str();
-	text=epgEvent.text.c_str();
-	genre=epgEvent.genre.c_str();
+	event=(char*)epgEvent.event.c_str();
+	text=(char*)epgEvent.text.c_str();
+	genre=(char*)epgEvent.genre.c_str();
 
 }
