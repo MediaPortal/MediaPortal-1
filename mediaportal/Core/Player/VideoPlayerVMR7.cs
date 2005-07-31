@@ -1178,133 +1178,122 @@ namespace MediaPortal.Player
 			}
 		} 
 
-		bool AnalyseStreams()
-		{
-			sStreams_Sub_No_Subtitle.Id=0;
-			sStreams_Sub_No_Subtitle.Filter="";
-			cStreams_Audio=0;
-			cStreams_Video=0;
-			cStreams_Sub=0;
-			sStreams_Audio=new FilterStreamInfos[MAX_AUDIOSTREAMS];
-			sStreams_Video=new FilterStreamInfos[MAX_VIDEOSTREAMS];
-			sStreams_Sub=new FilterStreamInfos[MAX_SUBSTREAMS];   
+    public bool AnalyseStreams()
+    {
+      try
+      {
+        //INITIALIZE
+        sStreams_Sub_No_Subtitle.Id=0;
+        sStreams_Sub_No_Subtitle.Filter="";
+        cStreams_Audio=0;
+        cStreams_Video=0;
+        cStreams_Sub=0;
+        sStreams_Audio=new FilterStreamInfos[MAX_AUDIOSTREAMS];
+        sStreams_Video=new FilterStreamInfos[MAX_VIDEOSTREAMS];
+        sStreams_Sub=new FilterStreamInfos[MAX_SUBSTREAMS];   
 
-			IBaseFilter foundfilter=DirectShowUtil.GetFilterByName(graphBuilder,"Ogg Splitter");
-			string filter="Ogg Splitter";
-			if (foundfilter==null)
-			{
-				uint fetched=0;
-				IEnumFilters enumFilters;
-				graphBuilder.EnumFilters(out enumFilters);
-				if (enumFilters!=null)
-				{
-					enumFilters.Reset();
-					while (enumFilters.Next(1,out foundfilter,out fetched)==0)
-					{
-						if (foundfilter!=null && fetched==1)
-						{
-							IAMStreamSelect pStrm = foundfilter as IAMStreamSelect;
-							if (pStrm!=null)
-							{
-								if ( (foundfilter as IDirectVobSub) !=null)
-								{
-									//ignore vobsub
-									pStrm=null;
-								}
-								else
-								{
-									break;
-								}
-							}
-							Marshal.ReleaseComObject(foundfilter);
-						}
-					}
-					Marshal.ReleaseComObject(enumFilters);
-				}
-			}
-			try
-			{
-				if (foundfilter!=null)
-				{
-					int cStreams=0;
-					IAMStreamSelect pStrm = foundfilter as IAMStreamSelect;
-					if (pStrm!=null)
-					{
-						pStrm.Count(out cStreams);
-					//GET STREAMS
-						for (int istream=0;istream<cStreams;istream++)
-						{
-							AMMediaType sType;AMStreamSelectInfoFlags sFlag;
-							int sPDWGroup,sPLCid;string sName;
-							object pppunk,ppobject;
-							pStrm.Info(istream,out sType,out sFlag,out sPLCid,
-								out sPDWGroup,out sName,out pppunk,out ppobject);
-							if (sPDWGroup==0 && cStreams_Video<MAX_VIDEOSTREAMS)
-							{
-								sStreams_Video[cStreams_Video].Name=sName;
-								sStreams_Video[cStreams_Video].Id=istream;
-								sStreams_Video[cStreams_Video].Filter=filter;
-								sStreams_Video[cStreams_Video].Current=false;
-								if (cStreams_Video==0)
-								{
-									sStreams_Video[cStreams_Video].Current=true;
-									pStrm.Enable(istream,0);
-									pStrm.Enable(istream,AMStreamSelectEnableFlags.Enable);
-								}
-								cStreams_Video++;
-							}
-							else
-								if (sPDWGroup==1 && cStreams_Audio<MAX_AUDIOSTREAMS)
-							{
-								sStreams_Audio[cStreams_Audio].Name=sName;
-								sStreams_Audio[cStreams_Audio].Id=istream;
-								sStreams_Audio[cStreams_Audio].Filter=filter;
-								sStreams_Audio[cStreams_Audio].Current=false;
-								if (cStreams_Audio==0)
-								{
-									sStreams_Audio[cStreams_Audio].Current=true;
-									pStrm.Enable(istream,0);
-									pStrm.Enable(istream,AMStreamSelectEnableFlags.Enable);
-								}
-								cStreams_Audio++;
-							}
-							else
-								//SUBTITLE
-								if (sPDWGroup==2 && cStreams_Sub<MAX_SUBSTREAMS && sName.LastIndexOf("off")==-1  && sName.LastIndexOf("No ")==-1&& sName.LastIndexOf("Miscellaneous ")==-1)
-							{
-								sStreams_Sub[cStreams_Sub].Name=sName;
-								sStreams_Sub[cStreams_Sub].Id=istream;
-								sStreams_Sub[cStreams_Sub].Filter=filter;
-								sStreams_Sub[cStreams_Sub].Current=false;
-								if (cStreams_Sub==0)
-								{
-									sStreams_Sub[cStreams_Sub].Current=true;
-									pStrm.Enable(istream,0);
-									pStrm.Enable(istream,AMStreamSelectEnableFlags.Enable);
-								}
-								cStreams_Sub++;
-							}
-							else 
-								//NO SUBTITILE TAG
-								if (sPDWGroup==2 && cStreams_Sub<MAX_SUBSTREAMS && (sName.LastIndexOf("off")!=-1 || sName.LastIndexOf("No ")!=-1))
-							{
-								sStreams_Sub_No_Subtitle.Id=istream;
-								sStreams_Sub_No_Subtitle.Current=false;
-								sStreams_Sub_No_Subtitle.Filter=filter;
-								sStreams_Sub_No_Subtitle.Name=sName;
-							}
-						}
-						Marshal.ReleaseComObject(foundfilter);   
-					}   
-				}
-			}
-			catch(Exception)
-			{
-			}
-			if (foundfilter!=null)
-				Marshal.ReleaseComObject(foundfilter);
-			return true;
-		}
+        //RETRIEVING THE CURRENT SPLITTER
+        string filter;
+        IBaseFilter foundfilter=null;
+
+        uint fetched=0;
+        IEnumFilters enumFilters;
+        graphBuilder.EnumFilters(out enumFilters);
+        if (enumFilters!=null)
+        {
+          enumFilters.Reset();
+          while (enumFilters.Next(1,out foundfilter,out fetched)==0)
+          {
+            if (foundfilter!=null && fetched==1)
+            {
+              IAMStreamSelect pStrm = foundfilter as IAMStreamSelect;
+              if (pStrm!=null)
+              {
+                FilterInfo foundfilterinfos=new FilterInfo();
+                foundfilter.QueryFilterInfo(foundfilterinfos);
+                filter=foundfilterinfos.achName;
+                int cStreams=0;
+                pStrm.Count(out cStreams);
+                //GET STREAMS
+                for (int istream=0;istream<cStreams;istream++)
+                {
+                  AMMediaType sType;AMStreamSelectInfoFlags sFlag;
+                  int sPDWGroup,sPLCid;string sName;
+                  object pppunk,ppobject;
+                  //STREAM INFO
+                  pStrm.Info(istream,out sType,out sFlag,out sPLCid,
+                    out sPDWGroup,out sName,out pppunk,out ppobject);
+
+                  //VIDEO
+                  if (sPDWGroup==0 && cStreams_Video<MAX_VIDEOSTREAMS)
+                  {
+                    sStreams_Video[cStreams_Video].Name=sName;
+                    sStreams_Video[cStreams_Video].Id=istream;
+                    sStreams_Video[cStreams_Video].Filter=filter;
+                    sStreams_Video[cStreams_Video].Current=false;
+                    if (cStreams_Video==0)
+                    {
+                      sStreams_Video[cStreams_Video].Current=true;
+                      pStrm.Enable(istream,0);
+                      pStrm.Enable(istream,AMStreamSelectEnableFlags.Enable);
+                    }
+                    cStreams_Video++;
+                  }
+                  else
+                    //AUDIO
+                    if (sPDWGroup==1 && cStreams_Audio<MAX_AUDIOSTREAMS)
+                  {
+                    sStreams_Audio[cStreams_Audio].Name=sName;
+                    sStreams_Audio[cStreams_Audio].Id=istream;
+                    sStreams_Audio[cStreams_Audio].Filter=filter;
+                    sStreams_Audio[cStreams_Audio].Current=false;
+                    if (cStreams_Audio==0)
+                    {
+                      sStreams_Audio[cStreams_Audio].Current=true;
+                      pStrm.Enable(istream,0);
+                      pStrm.Enable(istream,AMStreamSelectEnableFlags.Enable);
+                    }
+                    cStreams_Audio++;
+                  }
+                  else
+                    //SUBTITLE
+                    if (sPDWGroup==2 && cStreams_Sub<MAX_SUBSTREAMS && sName.LastIndexOf("off")==-1  && sName.LastIndexOf("No ")==-1&& sName.LastIndexOf("Miscellaneous ")==-1)
+                  {
+                    sStreams_Sub[cStreams_Sub].Name=sName;
+                    sStreams_Sub[cStreams_Sub].Id=istream;
+                    sStreams_Sub[cStreams_Sub].Filter=filter;
+                    sStreams_Sub[cStreams_Sub].Current=false;
+                    if (cStreams_Sub==0)
+                    {
+                      sStreams_Sub[cStreams_Sub].Current=true;
+                      pStrm.Enable(istream,0);
+                      pStrm.Enable(istream,AMStreamSelectEnableFlags.Enable);
+                    }
+                    cStreams_Sub++;
+                  }
+                  else
+                    //NO SUBTITILE TAG
+                    if (sPDWGroup==2 && cStreams_Sub<MAX_SUBSTREAMS && (sName.LastIndexOf("off")!=-1 || sName.LastIndexOf("No ")!=-1))
+                  {
+                    sStreams_Sub_No_Subtitle.Id=istream;
+                    sStreams_Sub_No_Subtitle.Current=false;
+                    sStreams_Sub_No_Subtitle.Filter=filter;
+                    sStreams_Sub_No_Subtitle.Name=sName;
+                  }
+                }
+              }
+              Marshal.ReleaseComObject(foundfilter);
+            }
+          }
+          Marshal.ReleaseComObject(enumFilters);
+        }
+      }
+      catch
+      {
+      }
+      return true;
+    }
+
 		public bool EnableStream(int Id,AMStreamSelectEnableFlags dwFlags,string Filter)
 		{
 			try
