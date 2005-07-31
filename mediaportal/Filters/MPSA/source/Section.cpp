@@ -1209,7 +1209,7 @@ bool Sections::IsEPGReady()
 }
 ULONG Sections::GetEPGChannelCount( )
 {
-	Log("GetEPGChannelCount:%d",m_mapEPG.size());
+//	Log("GetEPGChannelCount:%d",m_mapEPG.size());
 	return m_mapEPG.size();
 }
 ULONG  Sections::GetEPGEventCount( ULONG channel)
@@ -1221,30 +1221,30 @@ ULONG  Sections::GetEPGEventCount( ULONG channel)
 	EPGChannel& epgChannel=it->second;
 
 	
-	Log("GetEPGEventCount:%d %d",channel,epgChannel.mapEvents.size());
+//	Log("GetEPGEventCount:%d %d",channel,epgChannel.mapEvents.size());
 	return epgChannel.mapEvents.size();
 }
 void Sections::GetEPGChannel( ULONG channel,  WORD* networkId,  WORD* transportid, WORD* service_id  )
 {
-	Log("GetEPGChannel#%d",channel);
+//	Log("GetEPGChannel#%d",channel);
 
 	if (channel>=m_mapEPG.size()) return;
 	ULONG count=0;
 	imapEPG it =m_mapEPG.begin();
 	while (count < channel && it!=m_mapEPG.end()) { it++; count++;}
-	Log("count:%d",count);
+//	Log("count:%d",count);
 	if (it==m_mapEPG.end())
 	{
-		Log("GetEPGChannel #%d not found",channel);
+//		Log("GetEPGChannel #%d not found",channel);
 	}
 	EPGChannel& epgChannel=it->second;
 
-	Log("  onid:%x tsid:%x sid:%x", epgChannel.original_network_id,epgChannel.transport_id,epgChannel.service_id);
+//	Log("  onid:%x tsid:%x sid:%x", epgChannel.original_network_id,epgChannel.transport_id,epgChannel.service_id);
 
 	*networkId=epgChannel.original_network_id;
 	*transportid=epgChannel.transport_id;
 	*service_id=epgChannel.service_id;
-	Log("GetEPGChannel:%d done",channel);
+//	Log("GetEPGChannel:%d done",channel);
 }
 void Sections::GetEPGEvent( ULONG channel,  ULONG eventid, ULONG* date, ULONG* time, ULONG* duration, char*event,  char* text, char* genre    )
 {
@@ -1266,8 +1266,8 @@ void Sections::GetEPGEvent( ULONG channel,  ULONG eventid, ULONG* date, ULONG* t
 	*date=epgEvent.date;
 	*time=epgEvent.time;
 	*duration=epgEvent.duration;
-	event=(char*)epgEvent.event.c_str();
-	text=(char*)epgEvent.text.c_str();
-	genre=(char*)epgEvent.genre.c_str();
+	strcpy(event,(char*)epgEvent.event.c_str() );
+	strcpy(text,(char*)epgEvent.text.c_str() );
+	strcpy(genre,(char*)epgEvent.genre.c_str() );
 
 }
