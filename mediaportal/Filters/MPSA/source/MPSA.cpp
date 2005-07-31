@@ -399,9 +399,9 @@ CStreamAnalyzer::~CStreamAnalyzer()
 	delete m_pDemuxer;
 	delete m_pSections;
 	delete m_pPin;
-	delete m_pFilter;
 	delete m_pMHWPin1;
 	delete m_pMHWPin2;
+	delete m_pFilter;
 
 }
 
