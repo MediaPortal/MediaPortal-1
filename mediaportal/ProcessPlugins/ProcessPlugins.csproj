@@ -389,6 +389,26 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "HCWBlaster\HCWBlaster.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "HCWBlaster\HCWBlasterSetupForm.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "HCWBlaster\HCWBlasterSetupForm.resx"
+                    DependentUpon = "HCWBlasterSetupForm.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "HCWBlaster\HCWIRBlaster.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "MameDevice\MameDevice.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
