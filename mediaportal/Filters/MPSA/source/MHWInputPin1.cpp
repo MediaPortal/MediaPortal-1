@@ -139,6 +139,10 @@ STDMETHODIMP CMHWInputPin1::Receive(IMediaSample *pSample)
 			if (m_tableGrabber.IsSectionGrabbed())
 			{
 				//parse titles
+				for (int i=0; i < m_tableGrabber.Count();++i)
+				{
+					m_MHWParser.ParseTitles(m_tableGrabber.GetTable(i), m_tableGrabber.GetTableLen(i));
+				}
 			}
 		}
 		if (!m_tableGrabber90.IsSectionGrabbed())
@@ -148,6 +152,10 @@ STDMETHODIMP CMHWInputPin1::Receive(IMediaSample *pSample)
 			if (m_tableGrabber90.IsSectionGrabbed())
 			{
 				//parse summaries
+				for (int i=0; i < m_tableGrabber90.Count();++i)
+				{
+					m_MHWParser.ParseSummaries(m_tableGrabber90.GetTable(i), m_tableGrabber90.GetTableLen(i));
+				}
 			}
 		}
 		if (!m_tableGrabber91.IsSectionGrabbed())
@@ -170,6 +178,10 @@ STDMETHODIMP CMHWInputPin1::Receive(IMediaSample *pSample)
 			if (m_tableGrabber92.IsSectionGrabbed())
 			{
 				//parse themes
+				for (int i=0; i < m_tableGrabber92.Count();++i)
+				{
+					m_MHWParser.ParseThemes(m_tableGrabber92.GetTable(i), m_tableGrabber92.GetTableLen(i));
+				}
 			}
 		}
 	}

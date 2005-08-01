@@ -1287,7 +1287,7 @@ ULONG  Sections::GetEPGEventCount( ULONG channel)
 	if (channel>=m_mapEPG.size()) return 0;
 	int count=0;
 	imapEPG it =m_mapEPG.begin();
-	while (count < channel) { it++; count++;}
+	while (count < (int)channel) { it++; count++;}
 	EPGChannel& epgChannel=it->second;
 
 	
@@ -1301,7 +1301,7 @@ void Sections::GetEPGChannel( ULONG channel,  WORD* networkId,  WORD* transporti
 	if (channel>=m_mapEPG.size()) return;
 	ULONG count=0;
 	imapEPG it =m_mapEPG.begin();
-	while (count < channel && it!=m_mapEPG.end()) { it++; count++;}
+	while (count < (int)channel && it!=m_mapEPG.end()) { it++; count++;}
 //	Log("count:%d",count);
 	if (it==m_mapEPG.end())
 	{
@@ -1325,13 +1325,13 @@ void Sections::GetEPGEvent( ULONG channel,  ULONG eventid,ULONG* language, ULONG
 	if (channel>=m_mapEPG.size()) return;
 	int count=0;
 	imapEPG it =m_mapEPG.begin();
-	while (count < channel) { it++; count++;}
+	while (count < (int)channel) { it++; count++;}
 	EPGChannel& epgChannel=it->second;
 
 	if (eventid >= epgChannel.mapEvents.size()) return;
 	count=0;
 	EPGChannel::imapEvents itEvent=epgChannel.mapEvents.begin();
-	while (count < eventid) { itEvent++; count++;}
+	while (count < (int)eventid) { itEvent++; count++;}
 	EPGEvent& epgEvent=itEvent->second;
 	*dateMJD=epgEvent.dateMJD;
 	*timeUTC=epgEvent.timeUTC;

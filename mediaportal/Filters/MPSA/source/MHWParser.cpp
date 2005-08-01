@@ -15,7 +15,7 @@ void CMHWParser::ParseChannels(byte* data, int dataLen)
 	if (dataLen<0) return;
 	for(int n=4;n<dataLen;n+=22)
 	{
-		if(m_vecChannels.size()>=((dataLen-3)/22))
+		if( ((int)m_vecChannels.size())>=((dataLen-3)/22))
 			break;
 		MHWChannel ch;
 		ch.NetworkID=(data[n]<<8)+data[n+1];
@@ -24,4 +24,13 @@ void CMHWParser::ParseChannels(byte* data, int dataLen)
 		ch.ChannelName=(char*)(&data[n+6]);
 		m_vecChannels.push_back(ch);
 	}// for(int n=0
+}
+void CMHWParser::ParseSummaries(byte* data, int dataLen)
+{
+}
+void CMHWParser::ParseTitles(byte* data, int dataLen)
+{
+}
+void CMHWParser::ParseThemes(byte* data, int dataLen)
+{
 }
