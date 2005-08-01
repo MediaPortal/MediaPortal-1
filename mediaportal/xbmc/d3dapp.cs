@@ -2269,15 +2269,16 @@ namespace MediaPortal
       // sleep as long as there are ticks left for this frame
       NativeMethods.QueryPerformanceCounter(ref endFrame);
       timeElapsed = endFrame - startFrame;
-      while(timeElapsed < GUIGraphicsContext.DesiredFrameTime)
+      if (timeElapsed < GUIGraphicsContext.DesiredFrameTime)
       {
         milliSecondsLeft =(((GUIGraphicsContext.DesiredFrameTime - timeElapsed)*1000) / DXUtil.TicksPerSecond);
-        if(milliSecondsLeft > 2) 
-          DoSleep(1);
-        NativeMethods.QueryPerformanceCounter(ref endFrame);
-        timeElapsed = endFrame - startFrame;
+        if(milliSecondsLeft > 2)
+        {
+          DoSleep((int)milliSecondsLeft);
+        }
       }
     }
+
     /// <summary>
     /// Run the simulation
     /// </summary>
