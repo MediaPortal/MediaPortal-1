@@ -245,7 +245,8 @@ CStreamAnalyzerSectionsPin::CStreamAnalyzerSectionsPin(CStreamAnalyzer *pDump,
 //
 HRESULT CStreamAnalyzerSectionsPin::CheckMediaType(const CMediaType *pmt)
 {
-	if(pmt->majortype==MEDIATYPE_MPEG2_SECTIONS)
+	if(pmt->majortype==MEDIATYPE_MPEG2_SECTIONS &&
+		(pmt->subtype==MEDIASUBTYPE_DVB_SI || pmt->subtype==MEDIASUBTYPE_ATSC_SI) )
 		return S_OK;
 	return S_FALSE;
 }
