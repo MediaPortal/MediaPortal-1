@@ -923,6 +923,8 @@ namespace MediaPortal.GUI.Library
 					{
 						((GUIControl)controlList[x]).Render(timePassed);
 					}
+
+					GUIWaitCursor.Instance.Render(timePassed);
 				}
 				catch(Exception ex)
 				{
