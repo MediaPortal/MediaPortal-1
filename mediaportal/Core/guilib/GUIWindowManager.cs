@@ -437,6 +437,8 @@ namespace MediaPortal.GUI.Library
 						window.GetType().ToString(), ex.ToString());
 				}
 			}
+
+			GUIWaitCursor.Init();
 		}
 
 		/// <summary>
