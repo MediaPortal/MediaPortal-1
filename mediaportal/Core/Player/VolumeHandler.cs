@@ -51,7 +51,7 @@ namespace MediaPortal.Player
 				if(levelStyle == 2)
 					_startupVolume = Math.Max(0, Math.Min(65535, reader.GetValueAsInt("volume", "startuplevel", 52428)));
 
-				isDigital = reader.GetValueAsBool("volume", "spdif", false);
+				isDigital = reader.GetValueAsBool("volume", "digital", false);
 			}
 
 			_mixer = new Mixer.Mixer();
