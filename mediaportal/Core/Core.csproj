@@ -749,6 +749,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "guilib\GUIWaitCursor.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "guilib\GUIWindow.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -845,6 +850,11 @@
                 />
                 <File
                     RelPath = "guilib\ViewDefinition.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "guilib\WaitCursor.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
