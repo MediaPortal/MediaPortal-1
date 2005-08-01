@@ -71,6 +71,11 @@ namespace MediaPortal.Configuration.Sections
 				_useSystemCurrent.Checked = startupStyle == 1;
 				_useCustomLevel.Checked = startupStyle == 2;
 				_customLevel = reader.GetValueAsInt("volume", "startuplevel", 52428);
+
+				bool isDigital = reader.GetValueAsBool("volume", "digital", false);
+
+				_useMasterVolume.Checked = !isDigital;
+				_useWave.Checked = isDigital;
 			}
 
 			if(_customText == string.Empty)
@@ -102,7 +107,8 @@ namespace MediaPortal.Configuration.Sections
 					writer.SetValue("volume", "startupstyle", 1);
 				else if(_useCustomLevel.Checked)
 					writer.SetValue("volume", "startupstyle", 2);
-				
+
+				writer.SetValue("volume", "digital", _useWave.Checked ? "yes" : "no");
 				writer.SetValue("volume", "table", _customText);
 				writer.SetValue("volume", "startuplevel", _customLevel);
 			}
@@ -208,8 +214,12 @@ namespace MediaPortal.Configuration.Sections
 			this._useCustomLevel = new System.Windows.Forms.RadioButton();
 			this._useSystemCurrent = new System.Windows.Forms.RadioButton();
 			this._useLastKnownLevel = new System.Windows.Forms.RadioButton();
+			this.groupBox3 = new System.Windows.Forms.GroupBox();
+			this._useMasterVolume = new System.Windows.Forms.RadioButton();
+			this._useWave = new System.Windows.Forms.RadioButton();
 			this.groupBox1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
+			this.groupBox3.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// groupBox1
@@ -337,14 +347,47 @@ namespace MediaPortal.Configuration.Sections
 			this._useLastKnownLevel.Text = "Last known volume level";
 			this._useLastKnownLevel.CheckedChanged += new System.EventHandler(this.OnCheckChanged);
 			// 
+			// groupBox3
+			// 
+			this.groupBox3.Controls.Add(this._useWave);
+			this.groupBox3.Controls.Add(this._useMasterVolume);
+			this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.groupBox3.Location = new System.Drawing.Point(0, 256);
+			this.groupBox3.Name = "groupBox3";
+			this.groupBox3.Size = new System.Drawing.Size(472, 88);
+			this.groupBox3.TabIndex = 2;
+			this.groupBox3.TabStop = false;
+			this.groupBox3.Text = "Control";
+			// 
+			// _useMasterVolume
+			// 
+			this._useMasterVolume.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this._useMasterVolume.Location = new System.Drawing.Point(16, 24);
+			this._useMasterVolume.Name = "_useMasterVolume";
+			this._useMasterVolume.Size = new System.Drawing.Size(120, 24);
+			this._useMasterVolume.TabIndex = 0;
+			this._useMasterVolume.Text = "&Master Volume";
+			this._useMasterVolume.CheckedChanged += new System.EventHandler(this._useMasterVolume_CheckedChanged);
+			// 
+			// _useWave
+			// 
+			this._useWave.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this._useWave.Location = new System.Drawing.Point(16, 56);
+			this._useWave.Name = "_useWave";
+			this._useWave.Size = new System.Drawing.Size(88, 24);
+			this._useWave.TabIndex = 1;
+			this._useWave.Text = "&Wave";
+			// 
 			// Volume
 			// 
+			this.Controls.Add(this.groupBox3);
 			this.Controls.Add(this.groupBox2);
 			this.Controls.Add(this.groupBox1);
 			this.Name = "Volume";
 			this.Size = new System.Drawing.Size(472, 408);
 			this.groupBox1.ResumeLayout(false);
 			this.groupBox2.ResumeLayout(false);
+			this.groupBox3.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -365,8 +408,16 @@ namespace MediaPortal.Configuration.Sections
 		RadioButton					_useWindowsHandler;
 		RadioButton					_useLastKnownLevel;
 		RadioButton					_useLogarithmicHandler;
+		private System.Windows.Forms.GroupBox groupBox3;
+		private System.Windows.Forms.RadioButton _useMasterVolume;
+		private System.Windows.Forms.RadioButton _useWave;
 		RadioButton					_useSystemCurrent;
 
 		#endregion Fields
+
+		private void _useMasterVolume_CheckedChanged(object sender, System.EventArgs e)
+		{
+		
+		}
 	}
 }
