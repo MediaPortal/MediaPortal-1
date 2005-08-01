@@ -59,7 +59,7 @@ CEPGInputPin::CEPGInputPin(CStreamAnalyzer *pDump,
 HRESULT CEPGInputPin::CheckMediaType(const CMediaType *pmt)
 {
 	Log("epgpin:CheckMediaType()");
-	if(pmt->majortype==MEDIATYPE_MPEG2_SECTIONS && pmt->subtype==MEDIASUBTYPE_DVB_SI )
+	if(pmt->majortype==MEDIATYPE_MPEG2_SECTIONS  )
 		return S_OK;
 	return S_FALSE;
 }
