@@ -910,7 +910,7 @@ void Sections::DecodeEPG(byte* buf,int len)
 	}
 	if (len<=14) return;
 	int tableid = buf[0];
-	if (tableid < 0x50 || tableid > 0x5f) return;
+	if (tableid < 0x50 || tableid > 0x6f) return;
 	int section_length = ((buf[1]& 0xF)<<8) + buf[2];
 
 	int service_id = (buf[3]<<8)+buf[4];
