@@ -3216,12 +3216,12 @@ namespace MediaPortal.TV.Recording
 				//Log.Write("epg-grab: channel:{0} onid:{1} tsid:{2} sid:{3} events:{4}", i,networkid,transportid,serviceid,eventCount);
 				for (uint x=0; x < eventCount;++x)
 				{
-					uint start_time_MJD=0,start_time_UTC=0,duration=0;
+					uint start_time_MJD=0,start_time_UTC=0,duration=0,language=0;
 					string title,description,genre;
 					IntPtr ptrTitle=IntPtr.Zero;
 					IntPtr ptrDesc=IntPtr.Zero;
 					IntPtr ptrGenre=IntPtr.Zero;
-					m_epgGrabberInterface.GetEPGEvent(i,x,out start_time_MJD, out start_time_UTC, out duration,out ptrTitle,out ptrDesc, out ptrGenre);
+					m_epgGrabberInterface.GetEPGEvent(i,x,out language,out start_time_MJD, out start_time_UTC, out duration,out ptrTitle,out ptrDesc, out ptrGenre);
 					title=Marshal.PtrToStringAnsi(ptrTitle);
 					description=Marshal.PtrToStringAnsi(ptrDesc);
 					genre=Marshal.PtrToStringAnsi(ptrGenre);

@@ -96,7 +96,7 @@ namespace DShowNET
 		int GetEPGChannel( [In] uint channel,  [In,Out] ref UInt16 networkId,  [In,Out] ref UInt16 transportid, [In,Out] ref UInt16 service_id  );
 
 		[PreserveSig]
-		int GetEPGEvent( [In] uint channel,  [In] uint eventid, [Out] out uint date, [Out] out uint time, [Out] out uint duration,  out   IntPtr eventstr,  out   IntPtr text, out IntPtr genre    );
+		int GetEPGEvent( [In] uint channel,  [In] uint eventid, [Out] out uint language, [Out] out uint date, [Out] out uint time, [Out] out uint duration,  out   IntPtr eventstr,  out   IntPtr text, out IntPtr genre    );
 	}
 
 

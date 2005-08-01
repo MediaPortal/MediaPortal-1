@@ -1012,6 +1012,7 @@ void Sections::DecodeShortEventDescriptor(byte* buf, EPGEvent& event)
 	int descriptor_len = buf[1];
 	if(descriptor_tag!=0x4d) return;
 	unsigned long ISO_639_language_code=(buf[2]<<16)+(buf[3]<<8)+buf[4];
+	event.language=ISO_639_language_code;
 	int event_len = buf[5];
 	
 	if (event_len >0)
@@ -1258,7 +1259,7 @@ void Sections::GetEPGChannel( ULONG channel,  WORD* networkId,  WORD* transporti
 	*service_id=epgChannel.service_id;
 //	Log("GetEPGChannel:%d done",channel);
 }
-void Sections::GetEPGEvent( ULONG channel,  ULONG eventid, ULONG* dateMJD, ULONG* timeUTC, ULONG* duration, char**event,  char** text, char** genre    )
+void Sections::GetEPGEvent( ULONG channel,  ULONG eventid,ULONG* language, ULONG* dateMJD, ULONG* timeUTC, ULONG* duration, char**event,  char** text, char** genre    )
 {
 	*dateMJD=0;
 	*timeUTC=0;
@@ -1278,6 +1279,7 @@ void Sections::GetEPGEvent( ULONG channel,  ULONG eventid, ULONG* dateMJD, ULONG
 	*dateMJD=epgEvent.dateMJD;
 	*timeUTC=epgEvent.timeUTC;
 	*duration=epgEvent.duration;
+	*language=epgEvent.language;
 	*event=(char*)epgEvent.event.c_str(); 
 	*text=(char*)epgEvent.text.c_str() ;
 	*genre=(char*)epgEvent.genre.c_str() ;
