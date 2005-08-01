@@ -24,6 +24,7 @@ public:
 	HRESULT MapAdditionalPID(ULONG pid);
 	HRESULT MapAdditionalPayloadPID(ULONG pid);
 	HRESULT UnMapAllPIDs();
+	HRESULT UnMapSectionPIDs();
 	HRESULT SetSectionsPin(IPin *ppin);
 	HRESULT SetMHW1Pin(IPin *ppin);
 	HRESULT SetMHW2Pin(IPin *ppin);

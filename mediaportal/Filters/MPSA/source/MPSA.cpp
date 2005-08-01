@@ -257,6 +257,7 @@ HRESULT CStreamAnalyzerSectionsPin::CheckMediaType(const CMediaType *pmt)
 //
 HRESULT CStreamAnalyzerSectionsPin::BreakConnect()
 {
+	Log("Section:BreakConnect");
     return CRenderedInputPin::BreakConnect();
 }
 
@@ -426,6 +427,7 @@ CStreamAnalyzer::CStreamAnalyzer(LPUNKNOWN pUnk, HRESULT *phr) :
 
 CStreamAnalyzer::~CStreamAnalyzer()
 {
+	Log("~CStreamAnalyzer()");
 	delete m_pDemuxer;
 	delete m_pSections;
 	delete m_pPin;
@@ -500,9 +502,8 @@ HRESULT CStreamAnalyzer::OnConnectSections()
 	if(pin!=NULL)
 	{
 		m_pDemuxer->SetSectionsPin(pin);
-		pin->Release();
-		pin=NULL;
 	}	
+	Log("OnConnectSections done");
 	return S_OK;
 }
 
@@ -515,9 +516,8 @@ HRESULT CStreamAnalyzer::OnConnectEPG()
 	if(pin!=NULL)
 	{
 		m_pDemuxer->SetEPGPin(pin);
-		pin->Release();
-		pin=NULL;
 	}
+	Log("OnConnectEPG done");
 	return S_OK;
 }
 HRESULT CStreamAnalyzer::OnConnectMHW1()
@@ -529,9 +529,8 @@ HRESULT CStreamAnalyzer::OnConnectMHW1()
 	if(pin!=NULL)
 	{
 		m_pDemuxer->SetMHW1Pin(pin);
-		pin->Release();
-		pin=NULL;
 	}
+	Log("OnConnectMHW1 done");
 	return S_OK;
 }
 HRESULT CStreamAnalyzer::OnConnectMHW2()
@@ -544,26 +543,26 @@ HRESULT CStreamAnalyzer::OnConnectMHW2()
 	if(pin!=NULL)
 	{
 		m_pDemuxer->SetMHW2Pin(pin);
-		pin->Release();
-		pin=NULL;
 	}
+	Log("OnConnectMHW2 done");
 	return S_OK;
 }
-
+	
 STDMETHODIMP CStreamAnalyzer::ResetPids()
 {
         return NOERROR;
 }
 HRESULT CStreamAnalyzer::ProcessEPG(BYTE *pbData,long len)
 {
+	return S_OK;
 	if (m_pSections->IsEPGGrabbing())
 	{
 		if (pbData[0]>=0x50 && pbData[0] <= 0x6f) //EPG
 		{
 			m_pSections->DecodeEPG(pbData,len);
 		}
-		return S_OK;
 	}
+	return S_OK;
 }
 HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 {
@@ -624,7 +623,7 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 		}
 		if(pbData[0]==0x00 && m_patChannelsCount==0 && pesPacket==false)// pat
 		{
-			m_pDemuxer->UnMapAllPIDs();
+			m_pDemuxer->UnMapSectionPIDs();
 			m_pSections->decodePAT(pbData,m_patTable,&m_patChannelsCount,len);
 			for(int n=0;n<m_patChannelsCount;n++)
 			{

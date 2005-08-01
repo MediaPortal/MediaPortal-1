@@ -12,8 +12,6 @@ private:
     REFERENCE_TIME m_tLast;             // Last sample receive time
 
 public:
-	CEPGInputPin(void);
-
     CEPGInputPin(CStreamAnalyzer *pDump,
                   LPUNKNOWN pUnk,
                   CBaseFilter *pFilter,

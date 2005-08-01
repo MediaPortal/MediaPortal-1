@@ -48,22 +48,27 @@ SplitterSetup::~SplitterSetup()
 	if(m_pMHW2Pin!=NULL)
 		m_pMHW2Pin->Release();
 	m_pMHW2Pin=NULL;
+
+	if(m_pEPGPin!=NULL)
+		m_pEPGPin->Release();
+	m_pEPGPin=NULL;
 }
 
 HRESULT SplitterSetup::SetDemuxPins(IFilterGraph *pGraph)
 {
-
 	if(m_demuxSetupComplete==TRUE)
 		return S_FALSE;
 
 	if(pGraph==NULL)
 		return S_FALSE;
 
+	Log("SetDemuxPins");
 	HRESULT hr;
 	IGraphBuilder *pGB=NULL;
 
 	if(FAILED(pGraph->QueryInterface(IID_IGraphBuilder, (void **) &pGB)))
 	{
+		Log("SetDemuxPins failed 1");
 		return S_FALSE;
 	}
 
@@ -71,6 +76,7 @@ HRESULT SplitterSetup::SetDemuxPins(IFilterGraph *pGraph)
 	hr=pGB->FindFilterByName(L"MPEG-2 Demultiplexer",&pDemuxer);
 	if(FAILED(hr))
 	{
+		Log("SetDemuxPins failed 2");
 		pGB->Release();
 		return hr;
 	}
@@ -79,6 +85,7 @@ HRESULT SplitterSetup::SetDemuxPins(IFilterGraph *pGraph)
 	pGB->Release();
 	pDemuxer->Release();
 
+	Log("SetDemuxPinsDone");
 	return NOERROR;
 }
 HRESULT SplitterSetup::SetupDemuxer(IBaseFilter *demuxFilter)
@@ -87,6 +94,7 @@ HRESULT SplitterSetup::SetupDemuxer(IBaseFilter *demuxFilter)
 	IEnumPIDMap		*pPidEnum=NULL;
 	HRESULT hr=0;
 
+	Log("SetupDemuxer()");
 	if(demuxFilter==NULL)
 		return S_FALSE;
 
@@ -96,9 +104,10 @@ HRESULT SplitterSetup::SetupDemuxer(IBaseFilter *demuxFilter)
 	if(FAILED(hr))
 		return hr;
 
-	m_pSectionsPin=NULL;
+	//m_pSectionsPin=NULL;
 	m_demuxSetupComplete=true;
 	demuxer->Release();
+	Log("SetupDemuxer() done");
 	return S_OK;
 }
 
@@ -110,6 +119,7 @@ HRESULT SplitterSetup::SetupDefaultMapping()
 	SetMHW1Mapping();
 	SetMHW2Mapping();
 	SetEPGMapping();
+	Log("SetupDefaultMapping() done");
 	return 0;
 }
 HRESULT SplitterSetup::SetMHW1Mapping()
@@ -158,7 +168,7 @@ HRESULT SplitterSetup::SetMHW1Mapping()
 	hr=pMap->MapPID(1,&pid,MEDIA_TRANSPORT_PACKET); // tv
 	if(FAILED(hr))
 	{
-		Log("failed to map pid 0x0");
+		Log("failed to map pid 0xd2");
 		return 4;
 	}
 	pMap->Release();
@@ -211,7 +221,7 @@ HRESULT SplitterSetup::SetMHW2Mapping()
 	hr=pMap->MapPID(1,&pid,MEDIA_TRANSPORT_PACKET); // tv
 	if(FAILED(hr))
 	{
-		Log("failed to map pid 0x0");
+		Log("failed to map pid 0xd3");
 		return 4;
 	}
 	pMap->Release();
@@ -234,21 +244,30 @@ HRESULT SplitterSetup::SetSectionMapping()
 	// video
 
 	if(m_pSectionsPin==NULL)
+	{
+		Log("Setup DVBSections:pin=NULL");
 		return S_FALSE;
-
+	}
+	Log("Setup DVBSections:get map");
 	hr=m_pSectionsPin->QueryInterface(IID_IMPEG2PIDMap,(void**)&pMap);
 	if(FAILED(hr) || pMap==NULL)
+	{
+		Log("Setup DVBSections:cannot get map:0x%x",hr);
 		return 3;
-		// 
+	}	// 
+	Log("Setup DVBSections:get enummap");
 	hr=pMap->EnumPIDMap(&pPidEnum);
 	if(FAILED(hr) || pPidEnum==NULL)
+	{
+		Log("Setup DVBSections:cannot get ienummap:0x%x",hr);
 		return 7;
-		
+	}	
+	Log("Setup DVBSections:unmap pins");
 	// enum and unmap the pids
 	while(pPidEnum->Next(1,&pm,&count)== S_OK)
 	{
 		if (count!=1) break;
-			
+		Log("Setup DVBSections:cannot ummap pid:0x%x",pm.ulPID);	
 		umPid=pm.ulPID;
 		hr=pMap->UnmapPID(1,&umPid);
 		if(FAILED(hr))
@@ -257,7 +276,10 @@ HRESULT SplitterSetup::SetSectionMapping()
 			return 8;
 		}
 	}
+	
+	Log("Setup DVBSections:pids unmapped");
 	pPidEnum->Release();
+
 
 
 	Log("map pid 0x0");
@@ -291,6 +313,7 @@ HRESULT SplitterSetup::MapAdditionalPID(ULONG pid)
 {
 	IMPEG2PIDMap	*pMap=NULL;
 	
+	Log ("MapAdditionalPID:%x", pid);
 	HRESULT hr=0;
 
 	if(m_pSectionsPin==NULL)
@@ -305,6 +328,8 @@ HRESULT SplitterSetup::MapAdditionalPID(ULONG pid)
 		return 4;
 
 	pMap->Release();
+
+	Log ("MapAdditionalPID:%x done", pid);
 	return S_OK;
 }
 HRESULT SplitterSetup::MapAdditionalPayloadPID(ULONG pid)
@@ -368,7 +393,7 @@ HRESULT SplitterSetup::SetEPGMapping()
 	
 	HRESULT hr=0;
 			
-	Log("Setup EPG mapping");
+	Log("Setup EPG mapping:%x",m_pEPGPin);
 
 	// video
 
@@ -398,12 +423,12 @@ HRESULT SplitterSetup::SetEPGMapping()
 	}
 	pPidEnum->Release();
 
-	Log("map pid x12");
+	Log("map pid 0x12");
 	pid = (ULONG)0x12;// EIT
 	hr=pMap->MapPID(1,&pid,MEDIA_MPEG2_PSI); // tv
 	if(FAILED(hr))
 	{
-		Log("failed to map pid 0x0");
+		Log("failed to map pid 0x12");
 		return 4;
 	}
 	pMap->Release();
@@ -411,10 +436,19 @@ HRESULT SplitterSetup::SetEPGMapping()
 	return S_OK;
 }
 
+HRESULT SplitterSetup::UnMapSectionPIDs()
+{
+	Log("UnMapSectionPIDs()");
+	SetSectionMapping();
+	Log("UnMapSectionPIDs() done");
+	return S_OK;
+
+}
 HRESULT SplitterSetup::UnMapAllPIDs()
 {
 	Log("UnMapAllPIDs()");
 	SetupDefaultMapping();
+	Log("UnMapAllPIDs() done");
 	return S_OK;
 }
 
