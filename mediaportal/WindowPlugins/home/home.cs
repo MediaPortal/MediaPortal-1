@@ -81,7 +81,7 @@ namespace MediaPortal.GUI.Home
 		private int   m_iOffset2=0;
 		private int   m_iMiddle=0;
 		const int			MAX_FRAMES=9;
-		bool          m_bTopBar=false;
+		
 		bool					fixedScroll=false;
 		bool					backButtons=false;
 		bool					useTopBarSub=false;
@@ -410,21 +410,21 @@ namespace MediaPortal.GUI.Home
 				int y=(int)action.fAmount2;
 				if (x < m_iStartXoff  || x > m_iStartXoff+m_iMaxWidth)
 				{
-					m_bTopBar=true;
+					
 					return;
 				}
 				if (y < m_iStartYoff  || y > m_iStartYoff+m_iMaxHeight)
 				{
 					GUIControl cntl=GetControl(base.GetFocusControlId());
 					if (cntl!=null) cntl.Focus=false;
-					m_bTopBar=true;
+					
 					return;
 				}
-				if (m_bTopBar)
+				if (IsTopBarActive())
 				{
 					GUIControl cntl=GetControl(base.GetFocusControlId());
 					if (cntl!=null) cntl.Focus=false;
-					m_bTopBar=false;
+					
 				}
 
 				if (m_bAllowScroll)
@@ -487,7 +487,7 @@ namespace MediaPortal.GUI.Home
 			{
 				//FOCUS TOPBAR
 				action.wID=Action.ActionType.ACTION_MOVE_UP;
-				m_bTopBar=true;
+				
 				GUIControl cntl=GetControl(base.GetFocusControlId());
 				if (cntl!=null) cntl.Focus=false;
 				return;
@@ -495,9 +495,9 @@ namespace MediaPortal.GUI.Home
 
 			if (action.wID==Action.ActionType.ACTION_MOVE_DOWN)
 			{	
-				if (m_bTopBar)
+				if (IsTopBarActive())
 				{
-					m_bTopBar=false;
+					
 					FocusControl(GetID,m_iButtonIds[m_iOffset+m_iMiddle]);
 					return;
 				}
@@ -530,9 +530,9 @@ namespace MediaPortal.GUI.Home
 
 			if (action.wID==Action.ActionType.ACTION_MOVE_UP)
 			{
-				if (m_bTopBar)
+				if (IsTopBarActive())
 				{
-					m_bTopBar=false;
+					
 					FocusControl(GetID,m_iButtonIds[m_iOffset+m_iMiddle]);
 					return;
 				}
@@ -961,7 +961,7 @@ namespace MediaPortal.GUI.Home
 					}
 					LayoutButtons(0);
 
-					if (m_bTopBar) m_keepState=State.Idle;
+					if (IsTopBarActive()) m_keepState=State.Idle;
 					m_eState = m_keepState;
 					m_iFrame = 0;
 				}
@@ -1611,20 +1611,20 @@ namespace MediaPortal.GUI.Home
 		/// <returns>Id of the control that currently has focus, -1 if the top-bar has focus.</returns>
 		public override int GetFocusControlId()
 		{
-			if (!m_bTopBar) 
+			if (!IsTopBarActive()) 
 				return base.GetFocusControlId();
 			return -1;
 		}
 
 		protected void FocusControl(int iWindowID, int iControlId)
 		{
-			if (m_bTopBar) return;
+			if (IsTopBarActive()) return;
 			GUIControl.FocusControl(iWindowID,iControlId);
 		}
 
 		protected void UnFocusControl(int iWindowID, int iControlId)
 		{
-			if (m_bTopBar) return;
+			if (IsTopBarActive()) return;
 			GUIControl.UnfocusControl(iWindowID,iControlId);
 		}
 
@@ -1649,7 +1649,7 @@ namespace MediaPortal.GUI.Home
 			m_iStartYoff    = GetControl( (int)Controls.TemplatePanel).YPosition;
 			m_iButtonHeight = GetControl( (int)Controls.TemplateButton).Height;
 
-			m_bTopBar=false;
+			
 			// make controls 101-120 invisible... (these are the subpictures shown for each button)
 			for (int iControl=102; iControl < 160; iControl++)
 			{
@@ -1841,6 +1841,11 @@ namespace MediaPortal.GUI.Home
 				currentDate=strDate;
 			}
 			return currentDate;
+		}
+		bool IsTopBarActive()
+		{
+			GUIWindow window=GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TOPBARHOME);
+			return (window.Focused);
 		}
 		#endregion
 
