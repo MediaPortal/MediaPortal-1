@@ -23,27 +23,49 @@ void TableGrabber::SetTableId(int pid,int tableId)
 	m_sectionTableID=tableId;
 	m_pid=pid;
 }
-byte* TableGrabber::GetTable()
+int   TableGrabber::Count()
 {
-	return m_tableBuffer;
+	return m_mapSections.size();
 }
-int  TableGrabber::GetTableLen()
+byte* TableGrabber::GetTable(int section)
 {
-	return m_bufferPosition;
+	if (section<0 || section>=(int)m_mapSections.size()) return NULL;
+	imapSections it=m_mapSections.begin();
+	int count=0;
+	while (count < section) { it++; count++;}
+	return it->second.byData;
+}
+
+int  TableGrabber::GetTableLen(int section)
+{
+	if (section<0 || section>=(int)m_mapSections.size()) return 0;
+	imapSections it=m_mapSections.begin();
+	int count=0;
+	while (count < section) { it++; count++;};
+	return it->second.iSize;
 }
 
 
 void TableGrabber::Reset()
 {
+	m_mapSections.clear();
 	memset(m_tableBuffer,0,sizeof(m_tableBuffer));
 	m_bufferPosition=0;
 	m_bSectionGrabbed=false;
 	m_lastContinuityCounter=0;
+	timeoutTimer=time(NULL);
 }
 
 void TableGrabber::OnPacket(byte* pbData,long lDataLen)
 {
 	if (m_bSectionGrabbed) return;
+	int secsTimeOut=time(NULL)-timeoutTimer;
+	if (secsTimeOut>30) 
+	{
+		m_bSectionGrabbed=true;
+		return;
+	}
+
 	for (long ptr = 0; ptr < lDataLen; ptr += 188)//main loop
 	{
 		Sections::TSHeader packetHeader;
@@ -102,7 +124,7 @@ void TableGrabber::OnPacket(byte* pbData,long lDataLen)
 		}
 		else
 		{
-				ParseSection();
+			ParseSection();
 		}
 	}
 }
@@ -116,11 +138,15 @@ void TableGrabber::ParseSection()
 		header.SectionLength+=3;
 		if(header.SectionLength<1) return;
 		if(header.SectionLength>65535) return;
-		ULONG crc1=m_sectionUtils.GetCRC32(m_tableBuffer,header.SectionLength);
-		ULONG crc2=m_sectionUtils.GetSectionCRCValue(m_tableBuffer,header.SectionLength-4);
-		if(crc1==crc2)
+		
+		imapSections it=m_mapSections.find(header.SectionNumber);
+		if (it==m_mapSections.end())
 		{
-			int x=1;
+			TableSection newSection;
+			memcpy(newSection.byData, m_tableBuffer,m_bufferPosition);
+			newSection.iSize=m_bufferPosition;
+			m_mapSections[header.SectionNumber]=newSection;
+			timeoutTimer=time(NULL);
 		}
 	}
 	m_bufferPosition=0;

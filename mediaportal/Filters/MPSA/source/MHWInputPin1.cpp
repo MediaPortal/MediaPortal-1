@@ -157,7 +157,10 @@ STDMETHODIMP CMHWInputPin1::Receive(IMediaSample *pSample)
 			if (m_tableGrabber91.IsSectionGrabbed())
 			{	
 				//parse channels
-				m_MHWParser.ParseChannels(m_tableGrabber91.GetTable(), m_tableGrabber91.GetTableLen());
+				for (int i=0; i < m_tableGrabber91.Count();++i)
+				{
+					m_MHWParser.ParseChannels(m_tableGrabber91.GetTable(i), m_tableGrabber91.GetTableLen(i));
+				}
 			}
 		}
 		if (!m_tableGrabber92.IsSectionGrabbed())

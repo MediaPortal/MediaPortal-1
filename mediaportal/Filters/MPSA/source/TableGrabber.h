@@ -1,6 +1,8 @@
 #pragma once
 #pragma warning(disable: 4511 4512 4995)
 #include "section.h"
+#include <map>
+using namespace std;
 
 class TableGrabber
 {
@@ -20,6 +22,12 @@ private:
 		 int HeaderExtB12;
 		 int HeaderExtB13;
 	};
+	struct TableSection
+	{
+		int  iSize;
+		byte byData[70000];
+	};
+
 public:
 	TableGrabber(void);
 	~TableGrabber(void);
@@ -27,8 +35,10 @@ public:
 	bool	IsSectionGrabbed();
 	void	Reset();
 	void	SetTableId(int pid,int tableId);
-	int		GetTableLen();
-	byte*	GetTable();
+	int		GetTableLen(int section);
+	byte*	GetTable(int section);
+	int     Count();
+
 private:
 	void		GetSectionHeader(byte* data,int offset, DVBSectionHeader& header);
 	void		ParseSection();
@@ -39,4 +49,7 @@ private:
 	int			m_lastContinuityCounter;
 	int			m_sectionTableID;
 	int			m_pid;
+	time_t      timeoutTimer;
+	map<int, TableSection> m_mapSections;
+	typedef map<int, TableSection>::iterator imapSections;
 };

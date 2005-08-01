@@ -11,6 +11,8 @@ CMHWParser::~CMHWParser(void)
 
 void CMHWParser::ParseChannels(byte* data, int dataLen)
 {
+	if (data==NULL) return;
+	if (dataLen<0) return;
 	for(int n=4;n<dataLen;n+=22)
 	{
 		if(m_vecChannels.size()>=((dataLen-3)/22))
