@@ -902,7 +902,7 @@ namespace MediaPortal.TV.Recording
 
 					Log.Write("DVBGraphBDA:Get EPG pin of analyzer");
 					//connect EPG->analyzer
-					IPin pinEPGIn=DirectShowUtil.FindPinNr(m_dvbAnalyzer,PinDirection.Input,3);
+					IPin pinEPGIn=DirectShowUtil.FindPinNr(m_dvbAnalyzer,PinDirection.Input,2);
 					if (pinEPGIn==null)
 					{
 						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to get EPG pin on MSPA");
