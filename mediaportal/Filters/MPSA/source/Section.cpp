@@ -433,6 +433,7 @@ void Sections::decodePAT(BYTE *pData,ChannelInfo chInfo[],int *channelCount, int
 		ch.ProgrammNumber=(pData[offset]<<8)+pData[offset+1];
 		ch.TransportStreamID=transport_stream_id;
 		ch.PMTReady=false;
+		Log("loop:%d prog:%d tsid:%x pid:%x", loop,ch.ProgrammNumber,ch.TransportStreamID,ch.ProgrammPMTPID);
 		if(ch.ProgrammPMTPID>0x12)
 		{
 			chInfo[pmtcount]=ch;
@@ -441,6 +442,7 @@ void Sections::decodePAT(BYTE *pData,ChannelInfo chInfo[],int *channelCount, int
 		if(i>254)
 			break;
 	}
+	*channelCount=pmtcount;
 }
 
 void Sections::getString468A(BYTE *b, int l1,char *text)
