@@ -479,13 +479,15 @@ STDMETHODIMP CStreamAnalyzer::NonDelegatingQueryInterface(REFIID riid, void ** p
 	{
 		return GetInterface((IStreamAnalyzer*)this, ppv);
 	}
-    else 
-	if (riid == IID_IBaseFilter || riid == IID_IMediaFilter || riid == IID_IPersist)
+	else if (riid == IID_IEPGGrabber)
+	{
+		return GetInterface((IEPGGrabber*)this, ppv);
+	}
+    else if (riid == IID_IBaseFilter || riid == IID_IMediaFilter || riid == IID_IPersist)
 	{
         return m_pFilter->NonDelegatingQueryInterface(riid, ppv);
     } 
-	else
-	if (riid == IID_ISpecifyPropertyPages) 
+	else if (riid == IID_ISpecifyPropertyPages) 
 	{
         return GetInterface((ISpecifyPropertyPages *) this, ppv);
 	}

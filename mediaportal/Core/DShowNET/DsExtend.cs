@@ -74,7 +74,12 @@ namespace DShowNET
 		
 		[PreserveSig]
 		int IsATSCUsed(out bool yesNo);
-
+	}
+	[ComVisible(true), ComImport,
+	Guid("6301D1B8-6C92-4c6e-8CC2-CD1B05C6B545"),
+	InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
+	public interface IEPGGrabber
+	{
 		[PreserveSig]
 		int GrabEPG();
 

@@ -20,16 +20,13 @@ class CMHWInputPin2;
 class CEPGInputPin;
 
 // {B4F1F9BF-9ECA-41b8-883B-9C7FC0DD7047}
-DEFINE_GUID(CLSID_StreamAnalyzerPropPage, 
-0xb4f1f9bf, 0x9eca, 0x41b8, 0x88, 0x3b, 0x9c, 0x7f, 0xc0, 0xdd, 0x70, 0x47);
+DEFINE_GUID(CLSID_StreamAnalyzerPropPage, 0xb4f1f9bf, 0x9eca, 0x41b8, 0x88, 0x3b, 0x9c, 0x7f, 0xc0, 0xdd, 0x70, 0x47);
 
 // {BAAC8911-1BA2-4ec2-96BA-6FFE42B62F72}
-DEFINE_GUID(CLSID_MPDSA, 
-0xbaac8911, 0x1ba2, 0x4ec2, 0x96, 0xba, 0x6f, 0xfe, 0x42, 0xb6, 0x2f, 0x72);
+DEFINE_GUID(CLSID_MPDSA, 0xbaac8911, 0x1ba2, 0x4ec2, 0x96, 0xba, 0x6f, 0xfe, 0x42, 0xb6, 0x2f, 0x72);
 
 // {FB1EF498-2C7D-4fed-B2AA-B8F9E199F074}
-DEFINE_GUID(IID_IStreamAnalyzer, 
-0xfb1ef498, 0x2c7d, 0x4fed, 0xb2, 0xaa, 0xb8, 0xf9, 0xe1, 0x99, 0xf0, 0x74);
+DEFINE_GUID(IID_IStreamAnalyzer, 0xfb1ef498, 0x2c7d, 0x4fed, 0xb2, 0xaa, 0xb8, 0xf9, 0xe1, 0x99, 0xf0, 0x74);
 // interface
 DECLARE_INTERFACE_(IStreamAnalyzer, IUnknown)
 {
@@ -74,16 +71,19 @@ DECLARE_INTERFACE_(IStreamAnalyzer, IUnknown)
 	STDMETHOD(UseATSC) (THIS_ BOOL yesNo)PURE;
 	STDMETHOD(IsATSCUsed) (THIS_ BOOL* yesNo)PURE;
 
+};
+
+// {6301D1B8-6C92-4c6e-8CC2-CD1B05C6B545}
+DEFINE_GUID(IID_IEPGGrabber, 0x6301d1b8, 0x6c92, 0x4c6e, 0x8c, 0xc2, 0xcd, 0x1b, 0x5, 0xc6, 0xb5, 0x45);
+DECLARE_INTERFACE_(IEPGGrabber, IUnknown)
+{
 	STDMETHOD(GrabEPG)()PURE;
 	STDMETHOD(IsEPGReady) (THIS_ BOOL* yesNo)PURE;
 	STDMETHOD(GetEPGChannelCount) (THIS_ ULONG* channelCount)PURE;
 	STDMETHOD(GetEPGEventCount) (THIS_ ULONG channel, ULONG* eventCount)PURE;
 	STDMETHOD(GetEPGChannel) (THIS_ ULONG channel, WORD* networkId, WORD* transportid,WORD* service_id  )PURE;
 	STDMETHOD(GetEPGEvent) (THIS_ ULONG channel, ULONG eventid,ULONG* dateMJD,ULONG* timeUTC,ULONG* duration,char** event, char** text,char** genre    )PURE;
-
-
 };
-
 // Main filter object
 
 class CStreamAnalyzerFilter : public CBaseFilter
@@ -149,7 +149,7 @@ public:
 
 //  CStreamAnalyzer object which has filter and pin members
 
-class CStreamAnalyzer : public CUnknown, public IStreamAnalyzer,public ISpecifyPropertyPages
+class CStreamAnalyzer : public CUnknown, public IStreamAnalyzer,public ISpecifyPropertyPages, public IEPGGrabber
 {
     friend class CStreamAnalyzerFilter;
     friend class CStreamAnalyzerSectionsPin;

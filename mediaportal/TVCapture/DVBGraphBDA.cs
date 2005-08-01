@@ -213,7 +213,8 @@ namespace MediaPortal.TV.Recording
 		IBaseFilter             m_TunerDevice						= null;			// BDA Digital Tuner Device
 		IBaseFilter							m_CaptureDevice					= null;			// BDA Digital Capture Device
 		IBaseFilter							m_MPEG2Demultiplexer		= null;			// Mpeg2 Demultiplexer that connects to Preview pin on Smart Tee (must connect before capture)
-		IStreamAnalyzer					m_analyzerInterface=null;
+		IStreamAnalyzer					m_analyzerInterface			= null;
+		IEPGGrabber							m_epgGrabberInterface		= null;
 		IBaseFilter							m_dvbAnalyzer=null;
 		VideoAnalyzer						m_mpeg2Analyzer					= null;
 		IGraphBuilder           m_graphBuilder					= null;
@@ -716,6 +717,7 @@ namespace MediaPortal.TV.Recording
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph() add stream analyzer");
 				m_dvbAnalyzer=(IBaseFilter) Activator.CreateInstance( Type.GetTypeFromCLSID( Clsid.MPStreamAnalyzer, true ) );
 				m_analyzerInterface=(IStreamAnalyzer)m_dvbAnalyzer;
+				m_epgGrabberInterface=(IEPGGrabber)m_dvbAnalyzer;
 				hr=m_graphBuilder.AddFilter(m_dvbAnalyzer,"Stream-Analyzer");
 				if(hr!=0)
 				{
@@ -1047,6 +1049,7 @@ namespace MediaPortal.TV.Recording
 				graphRunning=false;
 				m_basicVideo = null;
 				m_analyzerInterface=null;
+				m_epgGrabberInterface=null;
 
 				Log.Write("free pins");
 				if (m_demuxSectionsPin!=null)
@@ -3167,7 +3170,7 @@ namespace MediaPortal.TV.Recording
 					if(currentTuningObject.HasEITSchedule==true)
 					{
 						Log.WriteFile(Log.LogType.EPG,"epg-grab: start EPG grabber for program number:{0}",currentTuningObject.ProgramNumber);
-						m_analyzerInterface.GrabEPG();
+						m_epgGrabberInterface.GrabEPG();
 					}
 					else
 					{
@@ -3192,7 +3195,7 @@ namespace MediaPortal.TV.Recording
 		{
 			uint channelCount=0;
 			Log.WriteFile(Log.LogType.EPG,"epg-grab: EPG ready");
-			m_analyzerInterface.GetEPGChannelCount(out channelCount);
+			m_epgGrabberInterface.GetEPGChannelCount(out channelCount);
 			Log.WriteFile(Log.LogType.EPG,"epg-grab: received epg for {0} channels", channelCount);
 			for (uint i=0; i < channelCount;++i)
 			{
@@ -3200,7 +3203,7 @@ namespace MediaPortal.TV.Recording
 				ushort transportid=0;
 				ushort serviceid=0;
 				uint eventCount=0;
-				m_analyzerInterface.GetEPGChannel(i,ref networkid, ref transportid, ref serviceid);
+				m_epgGrabberInterface.GetEPGChannel(i,ref networkid, ref transportid, ref serviceid);
 				TVChannel channel=TVDatabase.GetTVChannelByStream(Network()==NetworkType.ATSC,Network()==NetworkType.DVBT,Network()==NetworkType.DVBC,Network()==NetworkType.DVBS,networkid,transportid,serviceid);
 				if (channel==null) 
 				{
@@ -3209,7 +3212,7 @@ namespace MediaPortal.TV.Recording
 				}
 				Log.WriteFile(Log.LogType.EPG,"epg-grab: Channel:{0}",channel.Name);
 				
-				m_analyzerInterface.GetEPGEventCount(i,out eventCount);
+				m_epgGrabberInterface.GetEPGEventCount(i,out eventCount);
 				//Log.Write("epg-grab: channel:{0} onid:{1} tsid:{2} sid:{3} events:{4}", i,networkid,transportid,serviceid,eventCount);
 				for (uint x=0; x < eventCount;++x)
 				{
@@ -3218,7 +3221,7 @@ namespace MediaPortal.TV.Recording
 					IntPtr ptrTitle=IntPtr.Zero;
 					IntPtr ptrDesc=IntPtr.Zero;
 					IntPtr ptrGenre=IntPtr.Zero;
-					m_analyzerInterface.GetEPGEvent(i,x,out start_time_MJD, out start_time_UTC, out duration,out ptrTitle,out ptrDesc, out ptrGenre);
+					m_epgGrabberInterface.GetEPGEvent(i,x,out start_time_MJD, out start_time_UTC, out duration,out ptrTitle,out ptrDesc, out ptrGenre);
 					title=Marshal.PtrToStringAnsi(ptrTitle);
 					description=Marshal.PtrToStringAnsi(ptrDesc);
 					genre=Marshal.PtrToStringAnsi(ptrGenre);
@@ -3308,7 +3311,7 @@ namespace MediaPortal.TV.Recording
 				m_streamDemuxer.Process();
 		
 			bool ready=false;
-			m_analyzerInterface.IsEPGReady(out ready);
+			m_epgGrabberInterface.IsEPGReady(out ready);
 			if (ready)
 			{
 				ParseEPG();
