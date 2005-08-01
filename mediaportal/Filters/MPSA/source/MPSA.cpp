@@ -196,7 +196,7 @@ STDMETHODIMP CStreamAnalyzerFilter::Run(REFERENCE_TIME tStart)
     CAutoLock cObjectLock(m_pLock);
 
 	m_pDump->ResetParser();
-    return CBaseFilter::Run(tStart);
+	return CBaseFilter::Run(tStart);
 }
 
 
@@ -436,7 +436,8 @@ STDMETHODIMP CStreamAnalyzer::ResetParser()
 	Log("ResetParser");
 	HRESULT hr=m_pDemuxer->UnMapAllPIDs();
 	m_patChannelsCount=0;
-	//m_pSections->Reset();
+	m_pMHWPin1->ResetPids();
+	m_pSections->Reset();
 	return hr;
 }
 //

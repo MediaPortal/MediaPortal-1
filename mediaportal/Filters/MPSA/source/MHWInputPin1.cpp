@@ -189,6 +189,17 @@ STDMETHODIMP CMHWInputPin1::Receive(IMediaSample *pSample)
 }
 void CMHWInputPin1::ResetPids()
 {
+	m_tableGrabber.Reset();
+	m_tableGrabber.SetTableId(0xd2,0x90);
+
+	m_tableGrabber90.Reset();
+	m_tableGrabber90.SetTableId(0xd3,0x90);
+	
+	m_tableGrabber91.Reset();
+	m_tableGrabber91.SetTableId(0xd3,0x91);
+	
+	m_tableGrabber92.Reset();
+	m_tableGrabber92.SetTableId(0xd3,0x92);
 }
 
 //
