@@ -226,7 +226,7 @@ namespace MediaPortal.GUI.Library
 							return;
 					}
 					delegates=null;
-					if (m_iActiveWindow >= 0 && m_iActiveWindow < windowCount) 
+					if (!GUIGraphicsContext.IsFullScreenVideo&&  m_iActiveWindow >= 0 && m_iActiveWindow < windowCount) 
 					{
 						GUIWindow pCurrentWindow=m_vecWindows[m_iActiveWindow];
 						
