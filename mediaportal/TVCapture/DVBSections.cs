@@ -2414,14 +2414,17 @@ namespace MediaPortal.TV.Recording
 			
 				while (len1 > 0)
 				{
-					item_description_length = data[pointer];
-					string testText=getString468A(&data[pointer+1], item_description_length);
+					System.Array.Copy(buf, pointer, b, 0, lenB - pointer);
+					item_description_length = b[0];
 					pointer += 1 + item_description_length;
+					System.Array.Copy(buf, pointer, b, 0, lenB - pointer);
+					string testText=getString468A(b, item_description_length);
 					if (testText==null)
 						testText="-not avail.-";
-
-					item_length = data[pointer];
-					item = getString468A(&data[pointer+1], item_length);
+					//Log.WriteFile(Log.LogType.Capture,"dvbsections: item-description={0}",testText);
+					item_length = b[0];
+					System.Array.Copy(buf, pointer + 1, b, 0, item_length);
+					item = getString468A(b, item_length);
 					pointer += 1 + item_length;
 					len1 -= (2 + item_description_length + item_length);
 					lenB -= (2 + item_description_length + item_length);
