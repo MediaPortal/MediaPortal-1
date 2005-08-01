@@ -1183,6 +1183,8 @@ namespace MediaPortal.GUI.Library
 			m_dwPosY = rect.Y;
 			m_dwWidth = rect.Width;
 			m_dwHeight = rect.Height;
+
+			Update();
 		}
 
 		protected override Size MeasureCore()
