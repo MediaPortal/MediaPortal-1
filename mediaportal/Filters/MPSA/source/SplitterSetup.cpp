@@ -314,6 +314,7 @@ HRESULT SplitterSetup::MapAdditionalPID(ULONG pid)
 	IMPEG2PIDMap	*pMap=NULL;
 	
 	Log ("MapAdditionalPID:%x", pid);
+	if (pid>=0x1fff) return;
 	HRESULT hr=0;
 
 	if(m_pSectionsPin==NULL)

@@ -129,6 +129,7 @@ STDMETHODIMP CEPGInputPin::Receive(IMediaSample *pSample)
 	//Log("epgpin:Receive() done");
     return NOERROR;
 }
+
 void CEPGInputPin::ResetPids()
 {
 }

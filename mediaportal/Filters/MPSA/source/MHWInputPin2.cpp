@@ -31,7 +31,7 @@
 #include "mhwinputpin2.h"
 
 
-
+extern void Log(const char *fmt, ...) ;
 CMHWInputPin2::CMHWInputPin2(CStreamAnalyzer *pDump,
                              LPUNKNOWN pUnk,
                              CBaseFilter *pFilter,
@@ -70,11 +70,13 @@ HRESULT CMHWInputPin2::CheckMediaType(const CMediaType *pmt)
 //
 HRESULT CMHWInputPin2::BreakConnect()
 {
+	Log("mhwpin2:BreakConnect()");
     return CRenderedInputPin::BreakConnect();
 }
 
 HRESULT CMHWInputPin2::CompleteConnect(IPin *pPin)
 {
+	Log("mhwpin2:CompleteConnect()");
 	HRESULT hr=CBasePin::CompleteConnect(pPin);
 	m_pDump->OnConnectMHW2();
 

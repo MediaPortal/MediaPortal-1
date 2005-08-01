@@ -30,7 +30,7 @@
 #include "proppage.h"
 #include "mhwinputpin1.h"
 
-
+extern void Log(const char *fmt, ...) ;
 CMHWInputPin1::CMHWInputPin1(CStreamAnalyzer *pDump,
                              LPUNKNOWN pUnk,
                              CBaseFilter *pFilter,
@@ -69,11 +69,13 @@ HRESULT CMHWInputPin1::CheckMediaType(const CMediaType *pmt)
 //
 HRESULT CMHWInputPin1::BreakConnect()
 {
+	Log("mhwpin1:CompleteConnect()");
     return CRenderedInputPin::BreakConnect();
 }
 
 HRESULT CMHWInputPin1::CompleteConnect(IPin *pPin)
 {
+	Log("mhwpin1:CompleteConnect()");
 	HRESULT hr=CBasePin::CompleteConnect(pPin);
 	m_pDump->OnConnectMHW1();
 	return hr;

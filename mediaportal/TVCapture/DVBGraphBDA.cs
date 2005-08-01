@@ -835,14 +835,14 @@ namespace MediaPortal.TV.Recording
 					hr = demuxer.CreateOutputPin(ref mpegAudioOut, "audio", out m_DemuxAudioPin);
 					if (hr != 0)
 					{
-						Log.WriteFile(Log.LogType.Capture,true, "DVBGraphSS2:StartViewing() FAILED to create audio output pin on demuxer");
+						Log.WriteFile(Log.LogType.Capture,true, "DVBGraphBDA: FAILED to create audio output pin on demuxer");
 						return false;
 					}
 
 					hr=demuxer.CreateOutputPin(ref mpegVideoOut/*vidOut*/, "video", out m_DemuxVideoPin);
 					if (hr!=0)
 					{
-						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphSS2:StartViewing() FAILED to create video output pin on demuxer");
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: FAILED to create video output pin on demuxer");
 						return  false;
 					}
 
@@ -862,10 +862,10 @@ namespace MediaPortal.TV.Recording
 					hr=demuxer.CreateOutputPin(ref mediaAC3/*vidOut*/, "AC3", out m_pinAC3Out);
 					if (hr!=0 || m_pinAC3Out==null)
 					{
-						Log.WriteFile(Log.LogType.Capture,true,"mpeg2:FAILED to create AC3 pin:0x{0:X}",hr);
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to create AC3 pin:0x{0:X}",hr);
 					}
 
-					Log.WriteFile(Log.LogType.Capture,false,"mpeg2: create mpg1 audio pin");
+					Log.WriteFile(Log.LogType.Capture,false,"DVBGraphBDA: create mpg1 audio pin");
 					AMMediaType mediaMPG1 = new AMMediaType();
 					mediaMPG1.majorType = MediaType.Audio;
 					mediaMPG1.subType = MediaSubType.MPEG1AudioPayload;
@@ -881,11 +881,44 @@ namespace MediaPortal.TV.Recording
 					hr=demuxer.CreateOutputPin(ref mediaMPG1/*vidOut*/, "audioMpg1", out m_pinMPG1Out);
 					if (hr!=0 || m_pinMPG1Out==null)
 					{
-						Log.WriteFile(Log.LogType.Capture,true,"mpeg2:FAILED to create MPG1 pin:0x{0:X}",hr);
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to create MPG1 pin:0x{0:X}",hr);
 					}
+
+					//create EPG pin
+					Log.Write("DVBGraphBDA:Create EPG pin");
+					AMMediaType mtEPG = new AMMediaType();
+					mtEPG.majorType=MEDIATYPE_MPEG2_SECTIONS;
+					mtEPG.subType=MediaSubType.None;
+					mtEPG.formatType=FormatType.None;
+					IPin pinEPGout;
+					hr=demuxer.CreateOutputPin(ref mtEPG, "EPG", out pinEPGout);
+					if (hr!=0 || pinEPGout==null)
+					{
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to create EPG pin:0x{0:X}",hr);
+						return false;
+					}
+
+					Log.Write("DVBGraphBDA:Get EPG pin of analyzer");
+					//connect EPG->analyzer
+					IPin pinEPGIn=DirectShowUtil.FindPinNr(m_dvbAnalyzer,PinDirection.Input,3);
+					if (pinEPGIn==null)
+					{
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to get EPG pin on MSPA");
+						return false;
+					}
+					Log.Write("DVBGraphBDA:Connect epg pins");
+					hr=m_graphBuilder.Connect(pinEPGout,pinEPGIn);
+					if (hr!=0)
+					{
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to connect EPG pin:0x{0:X}",hr);
+						return false;
+					}
+					m_analyzerInterface.ResetParser();
+					Log.Write("DVBGraphBDA:Demuxer is setup");
+
 				}
 				else
-					Log.WriteFile(Log.LogType.Capture,true,"mpeg2:mapped IMPEG2Demultiplexer not found");
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:mapped IMPEG2Demultiplexer not found");
 
 				//=========================================================================================================
 				// Create the streambuffer engine and mpeg2 video analyzer components since we need them for

@@ -554,85 +554,99 @@ STDMETHODIMP CStreamAnalyzer::ResetPids()
 }
 HRESULT CStreamAnalyzer::ProcessEPG(BYTE *pbData,long len)
 {
-	if (m_pSections->IsEPGGrabbing())
+	try
 	{
-		if (pbData[0]>=0x50 && pbData[0] <= 0x6f) //EPG
+		if (m_pSections->IsEPGGrabbing())
 		{
-			m_pSections->DecodeEPG(pbData,len);
+			if (pbData[0]>=0x50 && pbData[0] <= 0x6f) //EPG
+			{
+				m_pSections->DecodeEPG(pbData,len);
+			}
 		}
+	}
+	catch(...)
+	{
+		Log("ProcessEPG exception");
 	}
 	return S_OK;
 }
 HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 {
-	//CAutoLock lock(&m_Lock);
-	bool pesPacket=false;
-	if(pbData[0]==0x00 && pbData[1]==0x00 && pbData[2]==0x01)
+	try
 	{
-		Sections::AudioHeader audio;
-		pesPacket=true;
-		BYTE *d=new BYTE[len];
-		m_pSections->GetPES(pbData,len,d);
-		if(m_pSections->ParseAudioHeader(d,&audio)==S_OK)
+		//CAutoLock lock(&m_Lock);
+		bool pesPacket=false;
+		if(pbData[0]==0x00 && pbData[1]==0x00 && pbData[2]==0x01)
 		{
-			// we can check audio
-			int a=0;
-		}
-		delete [] d;
-	}
-		
-	
-	if (m_bDecodeATSC)
-	{
-		if (m_patChannelsCount==0)
-		{
-			if (pbData[0]==0xc8 || pbData[0]==0xc9)
+			Sections::AudioHeader audio;
+			pesPacket=true;
+			BYTE *d=new BYTE[len];
+			m_pSections->GetPES(pbData,len,d);
+			if(m_pSections->ParseAudioHeader(d,&audio)==S_OK)
 			{
-				//decode ATSC: Virtual Channel Table (pid 0xc8 / 0xc9)
-				m_pSections->ATSCDecodeChannelTable(pbData,m_patTable, &m_patChannelsCount);
+				// we can check audio
+				int a=0;
 			}
+			delete [] d;
 		}
-	}
-	else
-	{
+			
 		
-		if(pbData[0]==0x02)// pmt
+		if (m_bDecodeATSC)
 		{
-			ULONG prgNumber=(pbData[3]<<8)+pbData[4];
-			for(int n=0;n<m_patChannelsCount;n++)
+			if (m_patChannelsCount==0)
 			{
-				if(m_patTable[n].ProgrammNumber==prgNumber && m_patTable[n].PMTReady==false)
+				if (pbData[0]==0xc8 || pbData[0]==0xc9)
 				{
-					m_pSections->decodePMT(pbData,&m_patTable[n],len);
-					if(m_patTable[n].Pids.AudioPid1>0)
-						m_pDemuxer->MapAdditionalPayloadPID(m_patTable[n].Pids.AudioPid1);
-					if(m_patTable[n].Pids.AudioPid2>0)
-						m_pDemuxer->MapAdditionalPayloadPID(m_patTable[n].Pids.AudioPid2);
-					if(m_patTable[n].Pids.AudioPid3>0)
-						m_pDemuxer->MapAdditionalPayloadPID(m_patTable[n].Pids.AudioPid3);
+					//decode ATSC: Virtual Channel Table (pid 0xc8 / 0xc9)
+					m_pSections->ATSCDecodeChannelTable(pbData,m_patTable, &m_patChannelsCount);
 				}
 			}
-			if(m_pmtGrabProgNum==prgNumber && len<=4096)
-			{
-				memset(m_pmtGrabData,0,4096);
-				memcpy(m_pmtGrabData,pbData,len);// save the pmt in the buffer
-				m_currentPMTLen=len;
-			}
-					
 		}
-		if(pbData[0]==0x00 && m_patChannelsCount==0 && pesPacket==false)// pat
+		else
 		{
-			m_pDemuxer->UnMapSectionPIDs();
-			m_pSections->decodePAT(pbData,m_patTable,&m_patChannelsCount,len);
-			for(int n=0;n<m_patChannelsCount;n++)
+			
+			if(pbData[0]==0x02)// pmt
 			{
-				m_pDemuxer->MapAdditionalPID(m_patTable[n].ProgrammPMTPID);
+				ULONG prgNumber=(pbData[3]<<8)+pbData[4];
+				for(int n=0;n<m_patChannelsCount;n++)
+				{
+					if(m_patTable[n].ProgrammNumber==prgNumber && m_patTable[n].PMTReady==false)
+					{
+						m_pSections->decodePMT(pbData,&m_patTable[n],len);
+						if(m_patTable[n].Pids.AudioPid1>0)
+							m_pDemuxer->MapAdditionalPayloadPID(m_patTable[n].Pids.AudioPid1);
+						if(m_patTable[n].Pids.AudioPid2>0)
+							m_pDemuxer->MapAdditionalPayloadPID(m_patTable[n].Pids.AudioPid2);
+						if(m_patTable[n].Pids.AudioPid3>0)
+							m_pDemuxer->MapAdditionalPayloadPID(m_patTable[n].Pids.AudioPid3);
+					}
+				}
+				if(m_pmtGrabProgNum==prgNumber && len<=4096)
+				{
+					memset(m_pmtGrabData,0,4096);
+					memcpy(m_pmtGrabData,pbData,len);// save the pmt in the buffer
+					m_currentPMTLen=len;
+				}
+						
+			}
+			if(pbData[0]==0x00 && m_patChannelsCount==0 && pesPacket==false)// pat
+			{
+				m_pDemuxer->UnMapSectionPIDs();
+				m_pSections->decodePAT(pbData,m_patTable,&m_patChannelsCount,len);
+				for(int n=0;n<m_patChannelsCount;n++)
+				{
+					m_pDemuxer->MapAdditionalPID(m_patTable[n].ProgrammPMTPID);
+				}
+			}
+			if(pbData[0]==0x42)// sdt
+			{
+				m_pSections->decodeSDT(pbData,m_patTable,m_patChannelsCount,len);
 			}
 		}
-		if(pbData[0]==0x42)// sdt
-		{
-			m_pSections->decodeSDT(pbData,m_patTable,m_patChannelsCount,len);
-		}
+	}
+	catch(...)
+	{
+		Log("Section:process() exception");
 	}
 	return S_OK;
 }
