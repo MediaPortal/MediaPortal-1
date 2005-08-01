@@ -3193,6 +3193,11 @@ namespace MediaPortal.TV.Recording
 
 		void ParseEPG()
 		{
+			string m_languagesToGrab=String.Empty;
+			using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			{
+				m_languagesToGrab=xmlreader.GetValueAsString("epg-grabbing","grabLanguages","");
+			}
 			uint channelCount=0;
 			Log.WriteFile(Log.LogType.EPG,"epg-grab: EPG ready");
 			m_epgGrabberInterface.GetEPGChannelCount(out channelCount);
@@ -3216,15 +3221,33 @@ namespace MediaPortal.TV.Recording
 				//Log.Write("epg-grab: channel:{0} onid:{1} tsid:{2} sid:{3} events:{4}", i,networkid,transportid,serviceid,eventCount);
 				for (uint x=0; x < eventCount;++x)
 				{
-					uint start_time_MJD=0,start_time_UTC=0,duration=0,language=0;
+					uint start_time_MJD=0,start_time_UTC=0,duration=0,languageId=0;
 					string title,description,genre;
 					IntPtr ptrTitle=IntPtr.Zero;
 					IntPtr ptrDesc=IntPtr.Zero;
 					IntPtr ptrGenre=IntPtr.Zero;
-					m_epgGrabberInterface.GetEPGEvent(i,x,out language,out start_time_MJD, out start_time_UTC, out duration,out ptrTitle,out ptrDesc, out ptrGenre);
+					m_epgGrabberInterface.GetEPGEvent(i,x,out languageId,out start_time_MJD, out start_time_UTC, out duration,out ptrTitle,out ptrDesc, out ptrGenre);
 					title=Marshal.PtrToStringAnsi(ptrTitle);
 					description=Marshal.PtrToStringAnsi(ptrDesc);
 					genre=Marshal.PtrToStringAnsi(ptrGenre);
+					string language  = String.Empty;
+					language += (char)((languageId>>16)&0xff);
+					language += (char)((languageId>>8)&0xff);
+					language += (char)((languageId)&0xff);
+					bool grabLanguage=false;
+					if(m_languagesToGrab!="")
+					{
+						string[] langs=m_languagesToGrab.Split(new char[]{'/'});
+						foreach(string lang in langs)
+						{
+							if(lang==String.Empty) continue;
+							if (language==lang) grabLanguage=true;
+							if (language==String.Empty) grabLanguage=true;
+						}
+					}
+					else grabLanguage=true;
+
+					if (!grabLanguage) continue;
 
 					int duration_hh = getUTC((int) ((duration >> 16) )& 255);
 					int duration_mm = getUTC((int) ((duration >> 8) )& 255);
@@ -3284,7 +3307,7 @@ namespace MediaPortal.TV.Recording
 							continue;
 						}
 
-						Log.WriteFile(Log.LogType.EPG,"epg-grab: {0} {1}-{2} {3}", tv.Channel,tv.Start,tv.End,tv.Title);
+						Log.WriteFile(Log.LogType.EPG,"epg-grab: {0} {1}-{2} {3} {4}", tv.Channel,tv.Start,tv.End,tv.Title,language);
 						ArrayList programsInDatabase = new ArrayList();
 						TVDatabase.GetProgramsPerChannel(tv.Channel,tv.Start+1,tv.End-1,ref programsInDatabase);
 						if(programsInDatabase.Count==0)
