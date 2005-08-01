@@ -554,7 +554,6 @@ STDMETHODIMP CStreamAnalyzer::ResetPids()
 }
 HRESULT CStreamAnalyzer::ProcessEPG(BYTE *pbData,long len)
 {
-	return S_OK;
 	if (m_pSections->IsEPGGrabbing())
 	{
 		if (pbData[0]>=0x50 && pbData[0] <= 0x6f) //EPG

@@ -58,7 +58,7 @@ CMHWInputPin2::CMHWInputPin2(CStreamAnalyzer *pDump,
 //
 HRESULT CMHWInputPin2::CheckMediaType(const CMediaType *pmt)
 {
-	if(pmt->majortype==MEDIATYPE_Stream)
+	if(pmt->majortype==MEDIATYPE_Stream && pmt->subtype==MEDIASUBTYPE_MPEG2_TRANSPORT)
 		return S_OK;
 	return S_FALSE;
 }
