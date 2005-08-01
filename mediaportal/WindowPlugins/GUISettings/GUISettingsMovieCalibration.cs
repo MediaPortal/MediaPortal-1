@@ -468,5 +468,10 @@ namespace MediaPortal.GUI.Settings
         window.Render(timePassed);
       }
     }
+		public override int GetFocusControlId()
+		{
+			return 1;
+		}
+
 	}
 }

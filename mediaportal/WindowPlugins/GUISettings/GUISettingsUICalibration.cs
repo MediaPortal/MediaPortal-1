@@ -26,6 +26,11 @@ namespace MediaPortal.GUI.Settings
       return Load (GUIGraphicsContext.Skin+@"\settingsUICalibration.xml");
     }
 
+		public override int GetFocusControlId()
+		{
+			return 1;
+		}
+
     public override void OnAction(Action action)
     {
       if ((DateTime.Now.Ticks/10000)-m_dwLastTime > 500)
