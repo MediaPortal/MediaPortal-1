@@ -132,23 +132,43 @@ STDMETHODIMP CMHWInputPin1::Receive(IMediaSample *pSample)
 	// decode
 	if(lDataLen>5)
 	{
-		m_tableGrabber.OnPacket(pbData,lDataLen);
-		m_tableGrabber90.OnPacket(pbData,lDataLen);
-		m_tableGrabber91.OnPacket(pbData,lDataLen);
-		m_tableGrabber92.OnPacket(pbData,lDataLen);
-	}
-
-	if (m_tableGrabber.IsSectionGrabbed())
-	{
-	}
-	if (m_tableGrabber90.IsSectionGrabbed())
-	{
-	}
-	if (m_tableGrabber91.IsSectionGrabbed())
-	{
-	}
-	if (m_tableGrabber92.IsSectionGrabbed())
-	{
+		if (!m_tableGrabber.IsSectionGrabbed())
+		{
+			m_tableGrabber.OnPacket(pbData,lDataLen);
+			
+			if (m_tableGrabber.IsSectionGrabbed())
+			{
+				//parse titles
+			}
+		}
+		if (!m_tableGrabber90.IsSectionGrabbed())
+		{
+			m_tableGrabber90.OnPacket(pbData,lDataLen);
+			
+			if (m_tableGrabber90.IsSectionGrabbed())
+			{
+				//parse summaries
+			}
+		}
+		if (!m_tableGrabber91.IsSectionGrabbed())
+		{
+			m_tableGrabber91.OnPacket(pbData,lDataLen);
+			
+			if (m_tableGrabber91.IsSectionGrabbed())
+			{	
+				//parse channels
+				m_MHWParser.ParseChannels(m_tableGrabber91.GetTable(), m_tableGrabber91.GetTableLen());
+			}
+		}
+		if (!m_tableGrabber92.IsSectionGrabbed())
+		{
+			m_tableGrabber92.OnPacket(pbData,lDataLen);
+			
+			if (m_tableGrabber92.IsSectionGrabbed())
+			{
+				//parse themes
+			}
+		}
 	}
     return NOERROR;
 }

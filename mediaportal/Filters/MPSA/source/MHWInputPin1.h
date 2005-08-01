@@ -3,6 +3,7 @@
 #include "Section.h"
 #include "SplitterSetup.h"
 #include "Tablegrabber.h"
+#include "MHWParser.h"
 
 class CMHWInputPin1 :
 	public CRenderedInputPin
@@ -44,4 +45,5 @@ public:
 	TableGrabber m_tableGrabber90;
 	TableGrabber m_tableGrabber91;
 	TableGrabber m_tableGrabber92;
+	CMHWParser   m_MHWParser;
 };

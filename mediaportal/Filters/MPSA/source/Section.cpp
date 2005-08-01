@@ -55,7 +55,7 @@ void Log(const char *fmt, ...)
 #endif
 };
 
-ULONG GetSectionCRCValue(byte* data,int ptr)
+ULONG Sections::GetSectionCRCValue(byte* data,int ptr)
 {
 	return (ULONG)((data[ptr]<<24)+(data[ptr+1]<<16)+(data[ptr+2]<<8)+data[ptr+3]);
 }

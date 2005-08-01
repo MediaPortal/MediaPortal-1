@@ -181,6 +181,7 @@ public:
 	void GetEPGChannel( ULONG channel,  WORD* networkId,  WORD* transportid, WORD* service_id  );
 	void GetEPGEvent( ULONG channel,  ULONG event, ULONG* dateMJD, ULONG* timeUTC, ULONG* duration, char** strevent,  char** strtext, char** strgenre    );
 
+	ULONG GetSectionCRCValue(byte* data,int ptr);
 	ULONG GetCRC32(BYTE *pData,WORD len);
 	HRESULT GetTSHeader(BYTE *data,TSHeader *header);
 	HRESULT GetPESHeader(BYTE *data,PESHeader *header);
