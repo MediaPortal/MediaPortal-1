@@ -211,6 +211,7 @@ public:
 	void DecodeEPG(byte* pbData,int len);
 	void DecodeShortEventDescriptor(byte* buf,EPGEvent& event);
 	void DecodeContentDescription(byte* buf,EPGEvent& event);
+	void DecodeExtendedEvent(byte* buf, EPGEvent& event);
 
 	map<unsigned long,EPGChannel> m_mapEPG;
 	typedef map<unsigned long,EPGChannel>::iterator imapEPG;

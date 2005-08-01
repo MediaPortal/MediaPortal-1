@@ -1000,11 +1000,68 @@ void Sections::DecodeEPG(byte* buf,int len)
 			{
 				DecodeContentDescription( &buf[start+off],epgEvent);
 			}
+			if (descriptor_tag ==0x4e)
+			{
+				DecodeExtendedEvent(&buf[start+off],epgEvent);
+			}
 			off   +=(descriptor_len+2);
 		}
 		start +=descriptors_len;
 	}
 }
+void Sections::DecodeExtendedEvent(byte* data, EPGEvent& event)
+{
+	int descriptor_tag;
+	int descriptor_length;
+	int descriptor_number;
+	int last_descriptor_number;
+	int text_length;
+	int length_of_items;
+
+	string text = "";
+	int pointer = 0;
+	int lenB;
+	int len1;
+	int item_description_length;
+	int item_length;
+	string item = "";
+
+	descriptor_tag = data[0];
+	descriptor_length = data[1];
+	descriptor_number = (data[1]>>4) & 0xF;
+	last_descriptor_number = data[1] & 0xF;
+	event.language=(data[3]<<16)+(data[4]<<8)+data[5];
+	length_of_items = data[6];
+	pointer += 7;
+	lenB = descriptor_length - 5;
+	len1 = length_of_items;
+
+	char buffer[4096];
+	while (len1 > 0)
+	{
+		item_description_length = data[pointer];
+		getString468A(&data[pointer+1], item_description_length,buffer);
+		string testText=buffer;
+		pointer += 1 + item_description_length;
+		if (testText.size()==0)
+			testText="-not avail.-";
+		item_length = data[pointer];
+		getString468A(&data[pointer+1], item_length,buffer);
+		item = buffer;
+		pointer += 1 + item_length;
+		len1 -= (2 + item_description_length + item_length);
+		lenB -= (2 + item_description_length + item_length);
+	};
+	text_length = data[pointer];
+	pointer += 1;
+	lenB -= 1;
+	getString468A(&data[pointer], text_length,buffer);
+	text = buffer;
+
+	event.event=item;
+	event.text=text;
+}
+
 void Sections::DecodeShortEventDescriptor(byte* buf, EPGEvent& event)
 {
 	char buffer[1028];
