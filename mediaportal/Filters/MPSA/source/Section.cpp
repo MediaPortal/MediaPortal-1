@@ -910,6 +910,10 @@ void Sections::DecodeEPG(byte* buf,int len)
 	}
 	if (len<=14) return;
 	int tableid = buf[0];
+	if (tableid>=0x60)
+	{
+		int xx=9;
+	}
 	if (tableid < 0x50 || tableid > 0x6f) return;
 	int section_length = ((buf[1]& 0xF)<<8) + buf[2];
 
@@ -1249,7 +1253,7 @@ void Sections::Reset()
 {
 	Log("Reset");
 	m_mapEPG.clear();
-	m_bParseEPG=false;
+	m_bParseEPG=true;
 	m_bEpgDone=false;
 	m_epgTimeout=time(NULL)+60;
 }
