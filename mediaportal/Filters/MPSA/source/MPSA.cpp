@@ -29,7 +29,6 @@
 #include "SplitterSetup.h"
 #include "proppage.h"
 #include "mhwinputpin1.h"
-#include "mhwinputpin2.h"
 #include "epginputpin.h"
 
 // Setup data
@@ -75,19 +74,7 @@ const AMOVIESETUP_PIN sudPins[4] =
 		1,                          // Number of types
 		&sudPinTypesMHW             // Pin information
 	},
-		
-	{
-		L"MHWd3",                   // Pin string name
-		FALSE,                      // Is it rendered
-		FALSE,                      // Is it an output
-		FALSE,                      // Allowed none
-		FALSE,                      // Likewise many
-		&CLSID_NULL,                // Connects to filter
-		L"Output",                  // Connects to pin
-		1,                          // Number of types
-		&sudPinTypesMHW             // Pin information
-	},
-		
+			
 	{
 		L"EPG",                   // Pin string name
 		FALSE,                      // Is it rendered
@@ -106,7 +93,7 @@ const AMOVIESETUP_FILTER sudDump =
     &CLSID_MPDSA,          // Filter CLSID
     L"MediaPortal Stream Analyzer",   // String name
     MERIT_DO_NOT_USE,           // Filter merit
-    4,                          // Number pins
+    3,                          // Number pins
     sudPins                    // Pin details
 };
 
@@ -156,9 +143,7 @@ CBasePin * CStreamAnalyzerFilter::GetPin(int n)
 	    return m_pDump->m_pPin;
     else if (n ==1) 
 		return m_pDump->m_pMHWPin1;
-    else if (n ==2) 
-		return m_pDump->m_pMHWPin2;
-	else if (n ==3)
+	else if (n ==2)
 		return m_pDump->m_pEPGPin;
 	else {
         return NULL;
@@ -171,7 +156,7 @@ CBasePin * CStreamAnalyzerFilter::GetPin(int n)
 //
 int CStreamAnalyzerFilter::GetPinCount()
 {
-    return 4;
+    return 3;
 }
 
 
@@ -399,16 +384,6 @@ CStreamAnalyzer::CStreamAnalyzer(LPUNKNOWN pUnk, HRESULT *phr) :
             *phr = E_OUTOFMEMORY;
         return;
     }
-	m_pMHWPin2 = new CMHWInputPin2(this,GetOwner(),
-                               m_pFilter,
-                               &m_Lock,
-                               &m_ReceiveLock,
-                               phr);
-    if (m_pMHWPin2 == NULL) {
-        if (phr)
-            *phr = E_OUTOFMEMORY;
-        return;
-    }
 	m_pEPGPin = new CEPGInputPin(this,GetOwner(),
                                m_pFilter,
                                &m_Lock,
@@ -432,7 +407,6 @@ CStreamAnalyzer::~CStreamAnalyzer()
 	delete m_pSections;
 	delete m_pPin;
 	delete m_pMHWPin1;
-	delete m_pMHWPin2;
 	delete m_pEPGPin;
 	delete m_pFilter;
 
@@ -533,20 +507,6 @@ HRESULT CStreamAnalyzer::OnConnectMHW1()
 		m_pDemuxer->SetMHW1Pin(pin);
 	}
 	Log("OnConnectMHW1 done");
-	return S_OK;
-}
-HRESULT CStreamAnalyzer::OnConnectMHW2()
-{
-	Log("OnConnectMHW2");
-
-	m_pDemuxer->SetDemuxPins(m_pFilter->GetFilterGraph());
-	IPin *pin;
-	m_pMHWPin2->ConnectedTo(&pin);
-	if(pin!=NULL)
-	{
-		m_pDemuxer->SetMHW2Pin(pin);
-	}
-	Log("OnConnectMHW2 done");
 	return S_OK;
 }
 	

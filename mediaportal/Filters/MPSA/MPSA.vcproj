@@ -168,9 +168,6 @@
 				RelativePath=".\source\MHWInputPin1.cpp">
 			</File>
 			<File
-				RelativePath=".\source\MHWInputPin2.cpp">
-			</File>
-			<File
 				RelativePath=".\source\MPSA.cpp">
 			</File>
 			<File
@@ -188,6 +185,9 @@
 			<File
 				RelativePath=".\source\SplitterSetup.cpp">
 			</File>
+			<File
+				RelativePath=".\source\TableGrabber.cpp">
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -200,9 +200,6 @@
 			</File>
 			<File
 				RelativePath=".\source\MHWInputPin1.h">
-			</File>
-			<File
-				RelativePath=".\source\MHWInputPin2.h">
 			</File>
 			<File
 				RelativePath=".\source\MPSA.h">
@@ -218,6 +215,9 @@
 			</File>
 			<File
 				RelativePath=".\source\SplitterSetup.h">
+			</File>
+			<File
+				RelativePath=".\source\TableGrabber.h">
 			</File>
 		</Filter>
 	</Files>

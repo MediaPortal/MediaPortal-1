@@ -31,7 +31,6 @@ m_demuxSetupComplete(FALSE),m_pSectionsPin(NULL)
 {
 	m_pEPGPin=NULL;
 	m_pMHW1Pin=NULL;
-	m_pMHW2Pin=NULL;
 	m_pSections = pSections;
 }
 
@@ -45,9 +44,6 @@ SplitterSetup::~SplitterSetup()
 		m_pMHW1Pin->Release();
 	m_pMHW1Pin=NULL;
 
-	if(m_pMHW2Pin!=NULL)
-		m_pMHW2Pin->Release();
-	m_pMHW2Pin=NULL;
 
 	if(m_pEPGPin!=NULL)
 		m_pEPGPin->Release();
@@ -117,7 +113,6 @@ HRESULT SplitterSetup::SetupDefaultMapping()
 
 	SetSectionMapping();
 	SetMHW1Mapping();
-	SetMHW2Mapping();
 	SetEPGMapping();
 	Log("SetupDefaultMapping() done");
 	return 0;
@@ -171,50 +166,6 @@ HRESULT SplitterSetup::SetMHW1Mapping()
 		Log("failed to map pid 0xd2");
 		return 4;
 	}
-	pMap->Release();
-	return S_OK;
-
-}
-HRESULT SplitterSetup::SetMHW2Mapping()
-{
-	IMPEG2PIDMap	*pMap=NULL;
-	IEnumPIDMap		*pPidEnum=NULL;
-	ULONG			pid;
-	PID_MAP			pm;
-	ULONG			count;
-	ULONG			umPid;
-	
-	HRESULT hr=0;
-			
-	Log("Setup MHW2");
-
-	// video
-
-	if(m_pMHW2Pin==NULL)
-		return S_FALSE;
-
-	hr=m_pMHW2Pin->QueryInterface(IID_IMPEG2PIDMap,(void**)&pMap);
-	if(FAILED(hr) || pMap==NULL)
-		return 3;
-		// 
-	hr=pMap->EnumPIDMap(&pPidEnum);
-	if(FAILED(hr) || pPidEnum==NULL)
-		return 7;
-		
-	// enum and unmap the pids
-	while(pPidEnum->Next(1,&pm,&count)== S_OK)
-	{
-		if (count!=1) break;
-			
-		umPid=pm.ulPID;
-		hr=pMap->UnmapPID(1,&umPid);
-		if(FAILED(hr))
-		{	
-			Log("failed to unmap pids");
-			return 8;
-		}
-	}
-	pPidEnum->Release();
 	
 	Log("map pid 0xd3");
 	pid = (ULONG)0xd3;
@@ -226,6 +177,7 @@ HRESULT SplitterSetup::SetMHW2Mapping()
 	}
 	pMap->Release();
 	return S_OK;
+
 }
 
 HRESULT SplitterSetup::SetSectionMapping()
@@ -376,12 +328,7 @@ HRESULT SplitterSetup::SetEPGPin(IPin *ppin)
 		m_pEPGPin=ppin;
 	return S_OK;
 }
-HRESULT SplitterSetup::SetMHW2Pin(IPin *ppin)
-{
-	if(m_pMHW2Pin==NULL)
-		m_pMHW2Pin=ppin;
-	return S_OK;
-}
+
 
 HRESULT SplitterSetup::SetEPGMapping()
 {

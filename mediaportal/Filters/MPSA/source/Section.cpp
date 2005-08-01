@@ -71,7 +71,7 @@ ULONG Sections::GetCRC32(BYTE *pData,WORD len)
 }
 Sections::Sections()
 {
-	m_bParseEPG=false;
+	m_bParseEPG=true;
 	m_bEpgDone=false;
 	m_epgTimeout=time(NULL)+60;}
 
@@ -910,7 +910,7 @@ void Sections::DecodeEPG(byte* buf,int len)
 	}
 	if (len<=14) return;
 	int tableid = buf[0];
-	if (tableid < 0x50 || tableid > 0x6f) return;
+	if (tableid < 0x50 || tableid > 0x5f) return;
 	int section_length = ((buf[1]& 0xF)<<8) + buf[2];
 
 	int service_id = (buf[3]<<8)+buf[4];
@@ -942,7 +942,7 @@ void Sections::DecodeEPG(byte* buf,int len)
 		newChannel.allSectionsReceived=false;
 		m_mapEPG[key]=newChannel;
 		it=m_mapEPG.find(key);
-		Log("add new channel table:%x onid:%x tsid:%x sid:%d",tableid,network_id,transport_id,service_id);
+//		Log("add new channel table:%x onid:%x tsid:%x sid:%d",tableid,network_id,transport_id,service_id);
 	}
 	EPGChannel& channel=it->second;
 	if (channel.allSectionsReceived) return;
@@ -951,12 +951,12 @@ void Sections::DecodeEPG(byte* buf,int len)
 	EPGChannel::imapSectionsReceived itSec=channel.mapSectionsReceived.find(section_number);
 	if (itSec!=channel.mapSectionsReceived.end()) return; //yes
 	channel.mapSectionsReceived[section_number]=true;
-/*
-	Log("EPG tid:%x len:%d %d (%d/%d) sid:%d tsid:%d onid:%d slsn:%d last table id:%x cn:%d version:%d", 
-		buf[0],len,section_length,section_number,last_section_number, 
-		service_id,transport_id,network_id,segment_last_section_number,last_table_id,
-		current_next_indicator,version_number);
-*/
+
+//	Log("EPG tid:%x len:%d %d (%d/%d) sid:%d tsid:%d onid:%d slsn:%d last table id:%x cn:%d version:%d", 
+//		buf[0],len,section_length,section_number,last_section_number, 
+//		service_id,transport_id,network_id,segment_last_section_number,last_table_id,
+//		current_next_indicator,version_number);
+
 	m_epgTimeout=time(NULL);
 	int start=14;
 	while (start+11 < len)
@@ -985,20 +985,20 @@ void Sections::DecodeEPG(byte* buf,int len)
 		
 		start=start+12;
 		unsigned int off=0;
-		//Log(" event:%x date:%x time:%x duration:%x running:%d free:%d %d len:%d", event_id,dateMJD,timeUTC,duration,running_status,free_CA_mode,start,descriptors_len);
+//		Log(" event:%x date:%x time:%x duration:%x running:%d free:%d %d len:%d", event_id,dateMJD,timeUTC,duration,running_status,free_CA_mode,start,descriptors_len);
 		while (off < descriptors_len)
 		{
 			int descriptor_tag = buf[start+off];
 			int descriptor_len = buf[start+off+1];
 			if (descriptor_len==0) return;
-			//Log("  descriptor:%x len:%d",descriptor_tag,descriptor_len);
+//			Log("  descriptor:%x len:%d",descriptor_tag,descriptor_len);
 			if (descriptor_tag ==0x4d)
 			{
 				DecodeShortEventDescriptor( &buf[start+off],epgEvent);
 			}
 			if (descriptor_tag ==0x54)
 			{
-				DecodeContentDescription( &buf[start+off],epgEvent);
+//				DecodeContentDescription( &buf[start+off],epgEvent);
 			}
 			off   +=(descriptor_len+2);
 			start +=(descriptor_len+2);
@@ -1018,7 +1018,7 @@ void Sections::DecodeShortEventDescriptor(byte* buf, EPGEvent& event)
 	{
 		getString468A(&buf[6],event_len,buffer);
 		event.event=buffer;
-//		Log("  event:%s",buffer);
+		Log("  event:%s",buffer);
 	}
 	int off=6+event_len;
 	int text_len = buf[off];
@@ -1026,7 +1026,7 @@ void Sections::DecodeShortEventDescriptor(byte* buf, EPGEvent& event)
 	{
 		getString468A(&buf[off+1],text_len,buffer);
 		event.text=buffer;
-//		Log("  text:%s",buffer);
+		Log("  text:%s",buffer);
 	}
 }
 void Sections::DecodeContentDescription(byte* buf,EPGEvent& event)
@@ -1180,8 +1180,9 @@ void Sections::DecodeContentDescription(byte* buf,EPGEvent& event)
 			case 0x0E0F: strcpy(genreText,"reserved" );break;
 			case 0x0F0F: strcpy(genreText,"user defined" );break;					
 		}
-//		Log("genre:%s", genreText);
-		event.genre=genreText;
+		//Log("genre:%s", genreText);
+		if (event.genre.size()==0)
+			event.genre=genreText;
 	}
 }
 

@@ -47,7 +47,17 @@ CMHWInputPin1::CMHWInputPin1(CStreamAnalyzer *pDump,
     m_pDump(pDump),
     m_tLast(0)
 {
+	m_tableGrabber.Reset();
+	m_tableGrabber.SetTableId(0xd2,0x90);
 
+	m_tableGrabber90.Reset();
+	m_tableGrabber90.SetTableId(0xd3,0x90);
+	
+	m_tableGrabber91.Reset();
+	m_tableGrabber91.SetTableId(0xd3,0x91);
+	
+	m_tableGrabber92.Reset();
+	m_tableGrabber92.SetTableId(0xd3,0x92);
 }
 
 //
@@ -118,10 +128,28 @@ STDMETHODIMP CMHWInputPin1::Receive(IMediaSample *pSample)
     }
 	
 	lDataLen=pSample->GetActualDataLength();
-	// decode
-//	if(lDataLen>5)
-//		m_pDump->Process(pbData,lDataLen);
 
+	// decode
+	if(lDataLen>5)
+	{
+		m_tableGrabber.OnPacket(pbData,lDataLen);
+		m_tableGrabber90.OnPacket(pbData,lDataLen);
+		m_tableGrabber91.OnPacket(pbData,lDataLen);
+		m_tableGrabber92.OnPacket(pbData,lDataLen);
+	}
+
+	if (m_tableGrabber.IsSectionGrabbed())
+	{
+	}
+	if (m_tableGrabber90.IsSectionGrabbed())
+	{
+	}
+	if (m_tableGrabber91.IsSectionGrabbed())
+	{
+	}
+	if (m_tableGrabber92.IsSectionGrabbed())
+	{
+	}
     return NOERROR;
 }
 void CMHWInputPin1::ResetPids()

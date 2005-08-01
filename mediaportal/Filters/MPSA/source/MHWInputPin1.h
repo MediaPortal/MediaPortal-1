@@ -2,6 +2,7 @@
 #pragma warning(disable: 4511 4512 4995)
 #include "Section.h"
 #include "SplitterSetup.h"
+#include "Tablegrabber.h"
 
 class CMHWInputPin1 :
 	public CRenderedInputPin
@@ -39,4 +40,8 @@ public:
     STDMETHODIMP NewSegment(REFERENCE_TIME tStart,REFERENCE_TIME tStop,double dRate);
 	void ResetPids();
 
+	TableGrabber m_tableGrabber;
+	TableGrabber m_tableGrabber90;
+	TableGrabber m_tableGrabber91;
+	TableGrabber m_tableGrabber92;
 };
