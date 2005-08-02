@@ -541,10 +541,10 @@ namespace MediaPortal.TV.Recording
 					//	hr=1;
 					if (hr != 0)
 					{
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:   unable to connect pins");
+						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:   unable to connect pins:0x{0:X}",hr);
 						if (sourceFilter.Category =="tunerdevice" && sinkFilter.Category=="capture")
 						{
-							//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:   try other instances");
+							Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:   try other instances");
 							if (sinkPin!=null)
 								Marshal.ReleaseComObject(sinkPin);
 							sinkPin=null;
@@ -563,11 +563,11 @@ namespace MediaPortal.TV.Recording
 								filter    = (Filter)al[0];
 								if (filter.Name.Equals(sinkFilter.FriendlyName))
 								{
-									//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:   found {0} instances",al.Count);
+									Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:   found {0} instances",al.Count);
 									for (int filterInstance=0; filterInstance < al.Count;++filterInstance)
 									{
 										filter    = (Filter)al[filterInstance];
-										//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:   try:{0}",filter.MonikerString);
+										Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:   try:{0}",filter.MonikerString);
 										sinkFilter.MonikerDisplayName=filter.MonikerString;
 										sinkFilter.DSFilter  = Marshal.BindToMoniker(sinkFilter.MonikerDisplayName) as IBaseFilter;
 										hr = m_graphBuilder.AddFilter(sinkFilter.DSFilter, sinkFilter.FriendlyName);
@@ -581,8 +581,8 @@ namespace MediaPortal.TV.Recording
 												sinkPin = DirectShowUtil.FindPinNr(sinkFilter.DSFilter, PinDirection.Input, Convert.ToInt32(strPinName));
 												if (sinkPin==null)
 													Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:   Unable to find sinkPin: <{0}>", strPinName);
-												//else
-												//	Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:   Found sinkPin: <{0}> <{1}>", strPinName, sinkPin.ToString());
+												else
+													Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:   Found sinkPin: <{0}> <{1}>", strPinName, sinkPin.ToString());
 											}
 										}
 										if (sinkPin!=null)
@@ -590,13 +590,13 @@ namespace MediaPortal.TV.Recording
 											hr = m_graphBuilder.Connect(sourcePin, sinkPin);
 											if (hr == 0)
 											{
-												//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:   Pins connected...");
+												Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:   Pins connected...");
 												m_CaptureDevice	= sinkFilter.DSFilter;
 												break;
 											}
 											else
 											{
-												Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:   cannot connect pins.");
+												Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:   cannot connect pins:0x{0:X}",hr);
 												if (sinkPin!=null)
 													Marshal.ReleaseComObject(sinkPin);
 												sinkPin=null;
@@ -2537,7 +2537,7 @@ namespace MediaPortal.TV.Recording
 		{
 			//int hr = 0;
 
-			//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: setupTuningSpace()");
+			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: setupTuningSpace()");
 			if(m_NetworkProvider == null) 
 			{
 				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: FAILED:network provider is null ");
@@ -2610,14 +2610,14 @@ namespace MediaPortal.TV.Recording
 				} break;
 			}//switch (m_NetworkType) 
 
-			//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: check available tuningspaces");
+			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: check available tuningspaces");
 			TunerLib.ITuner myTuner = m_NetworkProvider as TunerLib.ITuner;
 
 			int Count = 0;
 			Count = myTuningSpaces.Count;
 			if(Count > 0)
 			{
-				//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: found {0} tuning spaces", Count);
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: found {0} tuning spaces", Count);
 				TunerLib.IEnumTuningSpaces TuneEnum = myTuningSpaces.EnumTuningSpaces;
 				if (TuneEnum !=null)
 				{
@@ -2633,7 +2633,7 @@ namespace MediaPortal.TV.Recording
 							if (tuningSpaceFound.UniqueName==uniqueName)
 							{
 								myTuner.TuningSpace = tuningSpaceFound;
-								//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: used tuningspace:{0} {1} {2}", counter, tuningSpaceFound.UniqueName,tuningSpaceFound.FriendlyName);
+								Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: used tuningspace:{0} {1} {2}", counter, tuningSpaceFound.UniqueName,tuningSpaceFound.FriendlyName);
 								if (myTuningSpaces!=null)
 									Marshal.ReleaseComObject(myTuningSpaces);
 								if (TuningSpaceContainer!=null)
@@ -2648,7 +2648,7 @@ namespace MediaPortal.TV.Recording
 			}//if(Count > 0)
 
 			TunerLib.ITuningSpace TuningSpace ;
-			//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: create new tuningspace");
+			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: create new tuningspace");
 			switch (m_NetworkType) 
 			{
 				case NetworkType.ATSC: 
