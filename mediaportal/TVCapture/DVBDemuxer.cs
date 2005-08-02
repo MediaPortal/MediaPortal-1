@@ -255,7 +255,7 @@ int m_bufferPositionPMT=0;
         #region public functions
 		public void GetEPGSchedule(int tableID,int programID)
 		{
-			
+#if GRABEPG
 			if(tableID<0x50 || tableID>0x6f)
 				return;
 			if(m_sectionPid!=-1)
@@ -265,9 +265,11 @@ int m_bufferPositionPMT=0;
 			m_secTimer.Interval=10000;
 			GetTable(0x12,tableID);// timeout 10 sec
 			Log.Write("start getting epg for table 0x{0:X}",tableID);
+#endif
 		}
 		public void GetMHWEPG()
 		{
+#if GRABMHW
 			if(m_sectionPid!=-1)
 			{
 				Log.WriteFile(Log.LogType.EPG,"MHWEPG: section pid already set to {0:X}",m_sectionPid);
@@ -277,7 +279,8 @@ int m_bufferPositionPMT=0;
 			m_tableBufferD3=new byte[66000];
 			m_mhwGrabbing=true;
 			m_secTimer.Interval=30000;// grab for 30 sec.
-			m_secTimer.Start();
+			m_seTimer.Start();
+#endif
 		}
 		public void ResetGrabber()
 		{
@@ -504,7 +507,9 @@ int m_bufferPositionPMT=0;
 			if(currentTable>=0x50 && currentTable<=0x6f && currentPid==0x12)
 			{
 				m_sectionPid=-1;
+#if GRABEPG
 				ProcessEPGData();
+#endif
 			}
 			else if(OnGotTable!=null)
 			{			
@@ -515,7 +520,7 @@ int m_bufferPositionPMT=0;
 
 			
 			ClearSectionsGrabber();
-
+#if GRABEPG
 			if(currentTable>=0x50 && currentTable<=0x6f && currentPid==0x12)
 			{
 				if(m_eitScheduleLastTable>currentTable)
@@ -525,6 +530,7 @@ int m_bufferPositionPMT=0;
 					GetEPGSchedule(table,0);
 				}
 			}
+#endif
 		}
 
 		void ClearSectionsGrabber()
@@ -806,9 +812,10 @@ int m_bufferPositionPMT=0;
 			else
 			{
 				// delete buffers and save epg-data
-				Log.WriteFile(Log.LogType.EPG,"MHW-EPG grabbing stop");
 				m_secTimer.Stop();
 				m_mhwGrabbing=false;
+#if GRABMHW
+				Log.WriteFile(Log.LogType.EPG,"MHW-EPG grabbing stop");
 				m_epgClass.GetMHWBuffer(ref m_mhwChannels,ref m_mhwTitles,ref m_mhwSummaries,ref m_mhwThemes);
 				if (m_mhwChannels!=null)
 					Log.WriteFile(Log.LogType.EPG,"mhw:channels:{0}", m_mhwChannels.Count);
@@ -833,7 +840,7 @@ int m_bufferPositionPMT=0;
 				ProcessEPGData();
 				m_tableBufferD2=new byte[0];
 				m_tableBufferD3=new byte[0];
-
+#endif
 			}
 		}
 
@@ -991,7 +998,7 @@ int m_bufferPositionPMT=0;
 				}
 				*/
 				#endregion
-
+#if GRABMHW
 				#region mhw grabbing
 				if(m_mhwGrabbing==true)// only grab from epg-grabber
 				{
@@ -1040,6 +1047,8 @@ int m_bufferPositionPMT=0;
 				}
 
 				#endregion
+#endif
+
 #if GRABPPMT
 				#region pmt handling
 				if(m_pmtPid >0 && m_packetHeader.Pid==m_pmtPid)
