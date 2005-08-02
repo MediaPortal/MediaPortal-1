@@ -5,6 +5,7 @@
 	<define>#header.label:8</define>
 	<define>#header.image:weather_logo.png</define>
 	<define>#header.hover:-</define>
+	<define>#selecteditem:-</define>
 	<controls>
 		<import>common.window.xml</import>
 		<control>
@@ -59,7 +60,7 @@
 			<posY>150</posY>
 			<label>Temp</label>
 			<font>font13</font>
-			<textcolor>ffffffff</textcolor>
+			<textcolor>White</textcolor>
 		</control>
 		<control>
 			<description>current feels like static label</description>
@@ -69,7 +70,7 @@
 			<posY>175</posY>
 			<label>-</label>
 			<font>font13</font>
-			<textcolor>ffffffff</textcolor>
+			<textcolor>White</textcolor>
 		</control> 
 		<control>
 			<description>current UV Index static label</description>
@@ -79,7 +80,7 @@
 			<posY>200</posY>
 			<label>-</label>
 			<font>font13</font>
-			<textcolor>ffffffff</textcolor>
+			<textcolor>White</textcolor>
 		</control> 
 		<control>
 			<description>current wind static label</description>
@@ -89,7 +90,7 @@
 			<posY>225</posY>
 			<label>-</label>
 			<font>font13</font>
-			<textcolor>ffffffff</textcolor>
+			<textcolor>White</textcolor>
 		</control> 
 		<control>
 			<description>current dew static label</description>
@@ -99,7 +100,7 @@
 			<posY>250</posY>
 			<label>-</label>
 			<font>font13</font>
-			<textcolor>ffffffff</textcolor>
+			<textcolor>White</textcolor>
 		</control> 
 		<control>
 			<description>current humidity static label</description>
@@ -109,7 +110,7 @@
 			<posY>275</posY>
 			<label>-</label>
 			<font>font13</font>
-			<textcolor>ffffffff</textcolor>
+			<textcolor>White</textcolor>
 		</control>
 		<control>
 			<description>sun rise label</description>
@@ -119,7 +120,7 @@
 			<posY>300</posY>
 			<label>-</label>
 			<font>font13</font>
-			<textcolor>ffffffff</textcolor>
+			<textcolor>White</textcolor>
 		</control>
 		<control>
 			<description>sun rise static label</description>
@@ -129,7 +130,7 @@
 			<posY>300</posY>
 			<label>-</label>
 			<font>font13</font>
-			<textcolor>ffffffff</textcolor>
+			<textcolor>White</textcolor>
 		</control>
 		<control>
 			<description>sun set label</description>
@@ -139,7 +140,7 @@
 			<posY>325</posY>
 			<label>-</label>
 			<font>font13</font>
-			<textcolor>ffffffff</textcolor>
+			<textcolor>White</textcolor>
 		</control>
 		<control>
 			<description>sun set static label</description>
@@ -149,7 +150,7 @@
 			<posY>325</posY>
 			<label>-</label>
 			<font>font13</font>
-			<textcolor>ffffffff</textcolor>
+			<textcolor>White</textcolor>
 		</control>
 		<control>
 			<description>location label</description>
@@ -160,7 +161,7 @@
 			<label>-</label>
 			<font>font13</font>
 			<align>right</align>
-			<textcolor>ffffffff</textcolor>
+			<textcolor>White</textcolor>
 		</control>
 		<control>
 			<description>update time label</description>
@@ -170,7 +171,7 @@
 			<posY>115</posY>
 			<label>-</label>
 			<font>font13</font>
-			<textcolor>ffffffff</textcolor>
+			<textcolor>White</textcolor>
 		</control>
 		<control>		
 			<description>current weather icon</description>
@@ -180,7 +181,7 @@
 			<posY>130</posY>
 			<texture>-</texture>
 			<colorkey>FFFF00FF</colorkey>
-			<colordiffuse>20FFFFFF</colordiffuse>
+			<colordiffuse>White:#20</colordiffuse>
 		</control>
 		<control>
 			<description>current condition label</description>
@@ -190,7 +191,7 @@
 			<posY>275</posY>
 			<label>-</label>
 			<font>font13</font>
-			<textcolor>ffffffff</textcolor>
+			<textcolor>White</textcolor>
 		</control>
 		<control>
 			<description>current temp label</description>
@@ -200,7 +201,7 @@
 			<posY>150</posY>
 			<label>-</label>
 			<font>font13</font>
-			<textcolor>ffffffff</textcolor>
+			<textcolor>White</textcolor>
 		</control>
 		<control>
 			<description>current feels like label</description>
@@ -210,7 +211,7 @@
 			<posY>175</posY>
 			<label>-</label>
 			<font>font13</font>
-			<textcolor>ffffffff</textcolor>
+			<textcolor>White</textcolor>
 		</control>
 		<control>
 			<description>current UV Index label</description>
@@ -220,7 +221,7 @@
 			<posY>200</posY>
 			<label>-</label>
 			<font>font13</font>
-			<textcolor>ffffffff</textcolor>
+			<textcolor>White</textcolor>
 		</control> 
 		<control>
 			<description>current wind label</description>
@@ -230,7 +231,7 @@
 			<posY>225</posY>
 			<label>-</label>
 			<font>font13</font>
-			<textcolor>ffffffff</textcolor>
+			<textcolor>White</textcolor>
 		</control> 
 		<control>
 			<description>current dew label</description>
@@ -240,7 +241,7 @@
 			<posY>250</posY>
 			<label>-</label>
 			<font>font13</font>
-			<textcolor>ffffffff</textcolor>
+			<textcolor>White</textcolor>
 		</control> 
 		<control>
 			<description>current humidity label</description>
@@ -250,7 +251,7 @@
 			<posY>275</posY>
 			<label>-</label>
 			<font>font13</font>
-			<textcolor>ffffffff</textcolor>
+			<textcolor>White</textcolor>
 		</control> 
 		<control>
 			<description>day 0 label</description>
@@ -260,7 +261,7 @@
 			<posY>330</posY>
 			<label>-</label>
 			<font>font13</font>
-			<textcolor>ffffffff</textcolor>
+			<textcolor>White</textcolor>
 		</control> 
 		<control>
 			<description>day 0 Hi label</description>
@@ -270,7 +271,7 @@
 			<posY>355</posY>
 			<label>-</label>
 			<font>font13</font>
-			<textcolor>ffffffff</textcolor>
+			<textcolor>White</textcolor>
 		</control> 
 		<control>
 			<description>day 0 low label</description>
@@ -280,7 +281,7 @@
 			<posY>380</posY>
 			<label>-</label>
 			<font>font13</font>
-			<textcolor>ffffffff</textcolor>
+			<textcolor>White</textcolor>
 		</control> 
 		<control>
 			<description>day 0 general weather label</description>
@@ -290,7 +291,7 @@
 			<posY>480</posY>
 			<label>-</label>
 			<font>font13</font>
-			<textcolor>ffffffff</textcolor>
+			<textcolor>White</textcolor>
 		</control> 
 		<control>		
 			<description>day 0 icon</description>
@@ -300,7 +301,7 @@
 			<posY>405</posY>
 			<texture>-</texture>
 			<colorkey>FFFF00FF</colorkey>
-			<colordiffuse>20FFFFFF</colordiffuse>
+			<colordiffuse>White:#20</colordiffuse>
 		</control>
 		<control>
 			<description>day 1 label</description>
@@ -310,7 +311,7 @@
 			<posY>330</posY>
 			<label>-</label>
 			<font>font13</font>
-			<textcolor>ffffffff</textcolor>
+			<textcolor>White</textcolor>
 		</control> 
 		<control>
 			<description>day 1 Hi label</description>
@@ -320,7 +321,7 @@
 			<posY>355</posY>
 			<label>-</label>
 			<font>font13</font>
-			<textcolor>ffffffff</textcolor>
+			<textcolor>White</textcolor>
 		</control> 
 		<control>
 			<description>day 1 low label</description>
@@ -330,7 +331,7 @@
 			<posY>380</posY>
 			<label>-</label>
 			<font>font13</font>
-			<textcolor>ffffffff</textcolor>
+			<textcolor>White</textcolor>
 		</control> 
 		<control>
 			<description>day 1 general weather label</description>
@@ -340,7 +341,7 @@
 			<posY>480</posY>
 			<label>-</label>
 			<font>font13</font>
-			<textcolor>ffffffff</textcolor>
+			<textcolor>White</textcolor>
 		</control> 
 		<control>		
 			<description>day 1 icon</description>
@@ -350,7 +351,7 @@
 			<posY>405</posY>
 			<texture>-</texture>
 			<colorkey>FFFF00FF</colorkey>
-			<colordiffuse>20FFFFFF</colordiffuse>
+			<colordiffuse>White:#20</colordiffuse>
 		</control>
 		<control>
 			<description>day 2 label</description>
@@ -360,7 +361,7 @@
 			<posY>330</posY>
 			<label>-</label>
 			<font>font13</font>
-			<textcolor>ffffffff</textcolor>
+			<textcolor>White</textcolor>
 		</control> 
 		<control>
 			<description>day 2 Hi label</description>
@@ -370,7 +371,7 @@
 			<posY>355</posY>
 			<label>-</label>
 			<font>font13</font>
-			<textcolor>ffffffff</textcolor>
+			<textcolor>White</textcolor>
 		</control> 
 		<control>
 			<description>day 2 low label</description>
@@ -380,7 +381,7 @@
 			<posY>380</posY>
 			<label>-</label>
 			<font>font13</font>
-			<textcolor>ffffffff</textcolor>
+			<textcolor>White</textcolor>
 		</control> 
 		<control>
 			<description>day 2 general weather label</description>
@@ -390,7 +391,7 @@
 			<posY>480</posY>
 			<label>-</label>
 			<font>font13</font>
-			<textcolor>ffffffff</textcolor>
+			<textcolor>White</textcolor>
 		</control>
 		<control>		
 			<description>day 2 icon</description>
@@ -400,7 +401,7 @@
 			<posY>405</posY>
 			<texture>-</texture>
 			<colorkey>FFFF00FF</colorkey>
-			<colordiffuse>20FFFFFF</colordiffuse>
+			<colordiffuse>White:#20</colordiffuse>
 		</control>
 		<control>
 			<description>day 3 label</description>
@@ -410,7 +411,7 @@
 			<posY>330</posY>
 			<label>-</label>
 			<font>font13</font>
-			<textcolor>ffffffff</textcolor>
+			<textcolor>White</textcolor>
 		</control> 
 		<control>
 			<description>day 3 Hi label</description>
@@ -420,7 +421,7 @@
 			<posY>355</posY>
 			<label>-</label>
 			<font>font13</font>
-			<textcolor>ffffffff</textcolor>
+			<textcolor>White</textcolor>
 		</control> 
 		<control>
 			<description>day 3 low label</description>
@@ -430,7 +431,7 @@
 			<posY>380</posY>
 			<label>-</label>
 			<font>font13</font>
-			<textcolor>ffffffff</textcolor>
+			<textcolor>White</textcolor>
 		</control> 
 		<control>
 			<description>day 3 general weather label</description>
@@ -440,7 +441,7 @@
 			<posY>480</posY>
 			<label>-</label>
 			<font>font13</font>
-			<textcolor>ffffffff</textcolor>
+			<textcolor>White</textcolor>
 		</control>
 		<control>		
 			<description>day 3 icon</description>
@@ -450,7 +451,7 @@
 			<posY>405</posY>
 			<texture>-</texture>
 			<colorkey>FFFF00FF</colorkey>
-			<colordiffuse>20FFFFFF</colordiffuse>
+			<colordiffuse>White:#20</colordiffuse>
 		</control>
 		<control>		
 			<description>Satellite image</description>
@@ -463,7 +464,7 @@
 			<texture></texture>
 			<visible>no</visible>
 			<colorkey>00000000</colorkey>
-			<colordiffuse>FFFFFFFF</colordiffuse>
+			<colordiffuse>White</colordiffuse>
 			<filtered>yes</filtered>
 			<centered>yes</centered>
 			<keepaspectratio>yes</keepaspectratio>
