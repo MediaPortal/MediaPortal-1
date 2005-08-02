@@ -84,6 +84,15 @@ DECLARE_INTERFACE_(IEPGGrabber, IUnknown)
 	STDMETHOD(GetEPGChannel) (THIS_ ULONG channel, WORD* networkId, WORD* transportid,WORD* service_id  )PURE;
 	STDMETHOD(GetEPGEvent) (THIS_ ULONG channel, ULONG eventid,ULONG* language,ULONG* dateMJD,ULONG* timeUTC,ULONG* duration,char** event, char** text,char** genre    )PURE;
 };
+
+// {6F78D59C-1066-4e1b-8258-717F33C51F67}
+DEFINE_GUID(IID_IMHWGrabber, 0x6f78d59c, 0x1066, 0x4e1b, 0x82, 0x58, 0x71, 0x7f, 0x33, 0xc5, 0x1f, 0x67);
+DECLARE_INTERFACE_(IMHWGrabber, IUnknown)
+{
+	STDMETHOD(GrabMHW)()PURE;
+	STDMETHOD(IsMHWReady) (THIS_ BOOL* yesNo)PURE;
+	
+};
 // Main filter object
 
 class CStreamAnalyzerFilter : public CBaseFilter
@@ -149,7 +158,7 @@ public:
 
 //  CStreamAnalyzer object which has filter and pin members
 
-class CStreamAnalyzer : public CUnknown, public IStreamAnalyzer,public ISpecifyPropertyPages, public IEPGGrabber
+class CStreamAnalyzer : public CUnknown, public IStreamAnalyzer,public ISpecifyPropertyPages, public IEPGGrabber, public IMHWGrabber
 {
     friend class CStreamAnalyzerFilter;
     friend class CStreamAnalyzerSectionsPin;
@@ -187,8 +196,12 @@ public:
 	STDMETHODIMP GetPMTData(BYTE *pmtData);
 	STDMETHODIMP GetPages(CAUUID *pPages);
 	STDMETHODIMP IsChannelReady(ULONG channel);
+
+	//ATSC
 	STDMETHODIMP UseATSC(BOOL yesNo);
 	STDMETHODIMP IsATSCUsed(BOOL* yesNo);
+
+	//EPG
 	STDMETHODIMP GrabEPG();
 	STDMETHODIMP IsEPGReady(BOOL* yesNo);
 	STDMETHODIMP GetEPGChannelCount( ULONG* channelCount);
@@ -196,6 +209,9 @@ public:
 	STDMETHODIMP GetEPGChannel( ULONG channel,  WORD* networkId,  WORD* transportid, WORD* service_id  );
 	STDMETHODIMP GetEPGEvent( ULONG channel,  ULONG eventid,ULONG* language, ULONG* dateMJD, ULONG* timeUTC, ULONG* duration, char** event,  char** text, char** genre    );
 
+	//MHW
+	STDMETHODIMP GrabMHW();
+	STDMETHODIMP IsMHWReady(BOOL* yesNo);
 
 public:
 	Sections*				m_pSections;

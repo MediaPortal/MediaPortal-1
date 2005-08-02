@@ -486,6 +486,10 @@ STDMETHODIMP CStreamAnalyzer::NonDelegatingQueryInterface(REFIID riid, void ** p
 	{
 		return GetInterface((IEPGGrabber*)this, ppv);
 	}
+	else if (riid == IID_IMHWGrabber)
+	{
+		return GetInterface((IMHWGrabber*)this, ppv);
+	}
     else if (riid == IID_IBaseFilter || riid == IID_IMediaFilter || riid == IID_IPersist)
 	{
         return m_pFilter->NonDelegatingQueryInterface(riid, ppv);
@@ -762,6 +766,19 @@ STDMETHODIMP CStreamAnalyzer::GetEPGChannel( ULONG channel,  WORD* networkId,  W
 STDMETHODIMP CStreamAnalyzer::GetEPGEvent( ULONG channel,  ULONG eventid,ULONG* language, ULONG* dateMJD, ULONG* timeUTC, ULONG* duration, char**event,  char** text, char** genre    )
 {
 	m_pSections->GetEPGEvent( channel,  eventid, language,dateMJD, timeUTC, duration, event,  text, genre    );
+	return S_OK;
+}
+
+
+STDMETHODIMP CStreamAnalyzer::GrabMHW()
+{
+	m_pMHWPin1->ResetPids();
+	m_pMHWPin2->ResetPids();
+	return S_OK;
+}
+STDMETHODIMP CStreamAnalyzer::IsMHWReady(BOOL* yesNo)
+{
+	*yesNo=(m_pMHWPin1->IsReady() && m_pMHWPin2->IsReady() );
 	return S_OK;
 }
 

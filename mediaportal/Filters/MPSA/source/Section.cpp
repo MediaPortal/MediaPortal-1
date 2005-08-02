@@ -1041,7 +1041,7 @@ void Sections::DecodeExtendedEvent(byte* data, EPGEvent& event)
 	lenB = descriptor_length - 5;
 	len1 = length_of_items;
 
-	char buffer[4096];
+	char buffer[70000];
 	while (len1 > 0)
 	{
 		item_description_length = data[pointer];
@@ -1063,8 +1063,10 @@ void Sections::DecodeExtendedEvent(byte* data, EPGEvent& event)
 	getString468A(&data[pointer], text_length,buffer);
 	text = buffer;
 
-	event.event=item;
-	event.text=text;
+	if (item.size()>0)
+		event.event=item;
+	if (text.size()>0)
+		event.text=text;
 }
 
 void Sections::DecodeShortEventDescriptor(byte* buf, EPGEvent& event)

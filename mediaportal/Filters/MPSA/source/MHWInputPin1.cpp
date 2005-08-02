@@ -127,14 +127,6 @@ STDMETHODIMP CMHWInputPin1::Receive(IMediaSample *pSample)
 		if (!m_tableGrabber.IsSectionGrabbed())
 		{
 			m_tableGrabber.OnPacket(pbData,lDataLen);
-			
-			if (m_tableGrabber.IsSectionGrabbed())
-			{
-				for (int i=0; i < m_tableGrabber.Count();++i)
-				{
-					m_MHWParser.ParseTitles(m_tableGrabber.GetTable(i), m_tableGrabber.GetTableLen(i));
-				}
-			}
 		}
 	}
     return S_OK;
@@ -143,10 +135,6 @@ STDMETHODIMP CMHWInputPin1::Receive(IMediaSample *pSample)
 
 void CMHWInputPin1::ResetPids()
 {
-	for (int i=0; i < m_tableGrabber.Count();++i)
-	{
-		m_MHWParser.ParseTitles(m_tableGrabber.GetTable(i), m_tableGrabber.GetTableLen(i));
-	}
 	m_MHWParser.Reset();
 	m_tableGrabber.Reset();
 	m_tableGrabber.SetTableId(0xd2,0x90);
@@ -178,3 +166,16 @@ STDMETHODIMP CMHWInputPin1::NewSegment(REFERENCE_TIME tStart,
 
 } // NewSegment
 
+bool CMHWInputPin1::IsReady()
+{
+	if (m_tableGrabber.IsSectionGrabbed() ) return true;
+	return false;
+}
+void CMHWInputPin1::Parse()
+{
+	//parse summaries
+	for (int i=0; i < m_tableGrabber.Count();++i)
+	{
+		m_MHWParser.ParseSummaries(m_tableGrabber.GetTable(i), m_tableGrabber.GetTableLen(i));
+	}
+}

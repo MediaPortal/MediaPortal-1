@@ -40,8 +40,9 @@ public:
     // Track NewSegment
     STDMETHODIMP NewSegment(REFERENCE_TIME tStart,REFERENCE_TIME tStop,double dRate);
 	void ResetPids();
-	
+	bool IsReady();
 private:
+	void Parse();
 	TableGrabber m_tableGrabber;
 	CMHWParser   m_MHWParser;
 		
