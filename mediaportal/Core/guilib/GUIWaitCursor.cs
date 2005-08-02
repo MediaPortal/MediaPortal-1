@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using System.IO;
 
 namespace MediaPortal.GUI.Library
 {
@@ -29,15 +31,18 @@ namespace MediaPortal.GUI.Library
 		{
 			base.FinalizeConstruction();
 
-			string format = GUIGraphicsContext.Skin + @"\media\common.waiting.{0}.png";
+			ArrayList array = new ArrayList();
+
+			foreach(string filename in System.IO.Directory.GetFiles(GUIGraphicsContext.Skin + @"\media\", "common.waiting.*.png"))
+				array.Add(filename);
 
 			int x = (GUIGraphicsContext.Width / 2) - 24;
 			int y = (GUIGraphicsContext.Height / 2) - 24;
 
-			_images = new GUIImage[8];
+			_images = new GUIImage[array.Count];
 
 			for(int index = 0; index < _images.Length; index++)
-				_images[index] = new GUIImage(this.ParentID, 200001 + index, x, y, 48, 48, string.Format(format, index + 1), 0xFFFFFFFF);
+				_images[index] = new GUIImage(this.ParentID, 200001 + index, x, y, 48, 48, (string)array[index], 0xFFFFFFFF);
 		}
 
 		public override void AllocResources()
