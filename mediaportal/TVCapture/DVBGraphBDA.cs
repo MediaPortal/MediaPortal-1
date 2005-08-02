@@ -215,6 +215,7 @@ namespace MediaPortal.TV.Recording
 		IBaseFilter							m_MPEG2Demultiplexer		= null;			// Mpeg2 Demultiplexer that connects to Preview pin on Smart Tee (must connect before capture)
 		IStreamAnalyzer					m_analyzerInterface			= null;
 		IEPGGrabber							m_epgGrabberInterface		= null;
+		IMHWGrabber							m_mhwGrabberInterface		= null;
 		IBaseFilter							m_dvbAnalyzer=null;
 		VideoAnalyzer						m_mpeg2Analyzer					= null;
 		IGraphBuilder           m_graphBuilder					= null;
@@ -717,7 +718,8 @@ namespace MediaPortal.TV.Recording
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph() add stream analyzer");
 				m_dvbAnalyzer=(IBaseFilter) Activator.CreateInstance( Type.GetTypeFromCLSID( Clsid.MPStreamAnalyzer, true ) );
 				m_analyzerInterface=(IStreamAnalyzer)m_dvbAnalyzer;
-				m_epgGrabberInterface=(IEPGGrabber)m_dvbAnalyzer;
+				m_epgGrabberInterface=m_dvbAnalyzer as IEPGGrabber;
+				m_mhwGrabberInterface=m_dvbAnalyzer as IMHWGrabber;
 				hr=m_graphBuilder.AddFilter(m_dvbAnalyzer,"Stream-Analyzer");
 				if(hr!=0)
 				{
@@ -886,28 +888,53 @@ namespace MediaPortal.TV.Recording
 						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to create MPG1 pin:0x{0:X}",hr);
 					}
 
-					//create EPG pin
+					//create EPG pins
 					Log.Write("DVBGraphBDA:Create EPG pin");
 					AMMediaType mtEPG = new AMMediaType();
 					mtEPG.majorType=MEDIATYPE_MPEG2_SECTIONS;
 					mtEPG.subType=MediaSubType.None;
 					mtEPG.formatType=FormatType.None;
-					IPin pinEPGout;
+
+					IPin pinEPGout, pinMHW1Out,pinMHW2Out;
 					hr=demuxer.CreateOutputPin(ref mtEPG, "EPG", out pinEPGout);
 					if (hr!=0 || pinEPGout==null)
 					{
 						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to create EPG pin:0x{0:X}",hr);
 						return false;
 					}
+					hr=demuxer.CreateOutputPin(ref mtEPG, "MHW1", out pinMHW1Out);
+					if (hr!=0 || pinMHW1Out==null)
+					{
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to create MHW1 pin:0x{0:X}",hr);
+						return false;
+					}
+					hr=demuxer.CreateOutputPin(ref mtEPG, "MHW2", out pinMHW2Out);
+					if (hr!=0 || pinMHW2Out==null)
+					{
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to create MHW2 pin:0x{0:X}",hr);
+						return false;
+					}
 
-					Log.Write("DVBGraphBDA:Get EPG pin of analyzer");
-					//connect EPG->analyzer
-					IPin pinEPGIn=DirectShowUtil.FindPinNr(m_dvbAnalyzer,PinDirection.Input,2);
+					Log.Write("DVBGraphBDA:Get EPGs pin of analyzer");
+					IPin pinMHW1In=DirectShowUtil.FindPinNr(m_dvbAnalyzer,PinDirection.Input,1);
+					if (pinMHW1In==null)
+					{
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to get MHW1 pin on MSPA");
+						return false;
+					}
+					IPin pinMHW2In=DirectShowUtil.FindPinNr(m_dvbAnalyzer,PinDirection.Input,2);
+					if (pinMHW2In==null)
+					{
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to get MHW2 pin on MSPA");
+						return false;
+					}
+					IPin pinEPGIn=DirectShowUtil.FindPinNr(m_dvbAnalyzer,PinDirection.Input,3);
 					if (pinEPGIn==null)
 					{
 						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to get EPG pin on MSPA");
 						return false;
 					}
+
 					Log.Write("DVBGraphBDA:Connect epg pins");
 					hr=m_graphBuilder.Connect(pinEPGout,pinEPGIn);
 					if (hr!=0)
@@ -915,7 +942,19 @@ namespace MediaPortal.TV.Recording
 						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to connect EPG pin:0x{0:X}",hr);
 						return false;
 					}
-					m_analyzerInterface.ResetParser();
+					hr=m_graphBuilder.Connect(pinMHW1Out,pinMHW1In);
+					if (hr!=0)
+					{
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to connect MHW1 pin:0x{0:X}",hr);
+						return false;
+					}
+					hr=m_graphBuilder.Connect(pinMHW2Out,pinMHW2In);
+					if (hr!=0)
+					{
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to connect MHW2 pin:0x{0:X}",hr);
+						return false;
+					}
+
 					Log.Write("DVBGraphBDA:Demuxer is setup");
 
 				}
@@ -1050,6 +1089,7 @@ namespace MediaPortal.TV.Recording
 				m_basicVideo = null;
 				m_analyzerInterface=null;
 				m_epgGrabberInterface=null;
+				m_mhwGrabberInterface=null;
 
 				Log.Write("free pins");
 				if (m_demuxSectionsPin!=null)
@@ -3170,12 +3210,14 @@ namespace MediaPortal.TV.Recording
 					if(currentTuningObject.HasEITSchedule==true)
 					{
 						Log.WriteFile(Log.LogType.EPG,"epg-grab: start EPG grabber for program number:{0}",currentTuningObject.ProgramNumber);
-						m_epgGrabberInterface.GrabEPG();
+						if (m_epgGrabberInterface!=null)
+							m_epgGrabberInterface.GrabEPG();
 					}
 					else
 					{
 						Log.WriteFile(Log.LogType.EPG,"epg-grab: start MHW EPG grabber for program number:{0}",currentTuningObject.ProgramNumber);
-						m_streamDemuxer.GetMHWEPG();
+						if (m_mhwGrabberInterface!=null)
+							m_mhwGrabberInterface.GrabMHW();
 					}
 				}
 			}
@@ -3190,6 +3232,10 @@ namespace MediaPortal.TV.Recording
 			return ((val&0xF0)>>4)*10+(val&0xF);
 		}
 
+
+		void ParseMHW()
+		{
+		}
 
 		void ParseEPG()
 		{
@@ -3334,10 +3380,21 @@ namespace MediaPortal.TV.Recording
 				m_streamDemuxer.Process();
 		
 			bool ready=false;
-			m_epgGrabberInterface.IsEPGReady(out ready);
-			if (ready)
+			if (m_epgGrabberInterface!=null)
 			{
-				ParseEPG();
+				m_epgGrabberInterface.IsEPGReady(out ready);
+				if (ready)
+				{
+					ParseEPG();
+				}
+			}
+			if (m_mhwGrabberInterface!=null)
+			{
+				m_mhwGrabberInterface.IsMHWReady(out ready);
+				if (ready)
+				{
+					ParseMHW();
+				}
 			}
 			TimeSpan ts=DateTime.Now-updateTimer;
 			bool reTune=false;

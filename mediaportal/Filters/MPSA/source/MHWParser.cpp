@@ -99,6 +99,9 @@ void CMHWParser::ParseTitles(byte* data, int dataLen)
 	else
 		d1= (d1==6) ? 0 : d1+1;
 
+	prg.timeStart=(h1<<16)+(m);
+	prg.dateStart=(d1);
+
 	//prg.Time=new DateTime(System.DateTime.Now.Ticks);
 	//DateTime dayStart=new DateTime(System.DateTime.Now.Ticks);
 	//dayStart=dayStart.Subtract(new TimeSpan(1,dayStart.Hour,dayStart.Minute,dayStart.Second,dayStart.Millisecond));
@@ -153,7 +156,7 @@ int CMHWParser::GetTitleCount()
 	return m_mapTitles.size();
 }
 
-void CMHWParser::GetTitle(int program, WORD* id, WORD* transportId, WORD* networkId, WORD* channelId, WORD* programId, WORD* themeId, WORD* PPV, BYTE* Summaries, WORD* duration, char** title,char** programName)
+void CMHWParser::GetTitle(int program, WORD* id, WORD* transportId, WORD* networkId, WORD* channelId, WORD* programId, WORD* themeId, WORD* PPV, BYTE* Summaries, WORD* duration, ULONG* dateStart, ULONG* timeStart,char** title,char** programName)
 {
 	*id = 0;
 	*transportId=0;
@@ -164,6 +167,8 @@ void CMHWParser::GetTitle(int program, WORD* id, WORD* transportId, WORD* networ
 	*PPV=0;
 	*Summaries=0;
 	*duration=0;
+	*dateStart=0;
+	*timeStart=0;
 	*title="";
 	*programName="";
 
@@ -180,6 +185,8 @@ void CMHWParser::GetTitle(int program, WORD* id, WORD* transportId, WORD* networ
 	*PPV=it->second.PPV;
 	*Summaries=it->second.Summaries;
 	*duration=it->second.Duration;
+	*dateStart=it->second.dateStart;
+	*timeStart=it->second.timeStart;
 	*title=(char*)it->second.Title.c_str();
 	*programName=(char*)it->second.ProgrammName.c_str();
 }
