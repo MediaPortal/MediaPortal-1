@@ -408,6 +408,7 @@ namespace MediaPortal.GUI.Video
 				}
 					break;
     		
+        case Action.ActionType.ACTION_MOVE_LEFT:
 				case Action.ActionType.ACTION_STEP_BACK:
 				{
 					if (g_Player.CanSeek)
@@ -423,6 +424,7 @@ namespace MediaPortal.GUI.Video
 				}
 					break;
 
+        case Action.ActionType.ACTION_MOVE_RIGHT:
 				case Action.ActionType.ACTION_STEP_FORWARD:
 				{    
 					if (g_Player.CanSeek)
@@ -439,6 +441,7 @@ namespace MediaPortal.GUI.Video
 				} 
 					break;
 
+        case Action.ActionType.ACTION_MOVE_DOWN:
 				case Action.ActionType.ACTION_BIG_STEP_BACK:
 				{ 
 					double currentpos=g_Player.CurrentPosition;
@@ -451,6 +454,7 @@ namespace MediaPortal.GUI.Video
 				}
 					//break;
 
+        case Action.ActionType.ACTION_MOVE_UP:
 				case Action.ActionType.ACTION_BIG_STEP_FORWARD:
 				{
             
