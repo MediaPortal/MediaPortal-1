@@ -998,7 +998,7 @@ namespace MediaPortal.TV.Recording
 					held_mosaic  = 32;
 				
 					for(int loop1=0;loop1<40;loop1++)
-						if(pageChars[(row*40)+loop1]==12)
+						if(pageChars[(row*40)+loop1]==(int)Attributes.StartBox)
 						{
 							flag=true;
 							break;
@@ -1435,10 +1435,10 @@ namespace MediaPortal.TV.Recording
 					{
 						graph.FillRectangle(backBrush,x,y+mosaicY[y1],w1,mosaicY[y1+1] - mosaicY[y1]);
 						if((chr& 1)>0)
-							graph.FillRectangle(backBrush,x+1,y+mosaicY[y1]+1,w1-2,mosaicY[y1+1] - mosaicY[y1]-2);
+							graph.FillRectangle(foreBrush,x+1,y+mosaicY[y1]+1,w1-2,mosaicY[y1+1] - mosaicY[y1]-2);
 						graph.FillRectangle(backBrush,x+w1,y+mosaicY[y1],w2,mosaicY[y1+1] - mosaicY[y1]);
 						if((chr& 2)>0)
-							graph.FillRectangle(backBrush,x+w1+1,y+mosaicY[y1]+1,w2-2,mosaicY[y1+1] - mosaicY[y1]-2);
+							graph.FillRectangle(foreBrush,x+w1+1,y+mosaicY[y1]+1,w2-2,mosaicY[y1+1] - mosaicY[y1]-2);
 						chr >>= 2;
 					}
 				else
@@ -1500,8 +1500,8 @@ namespace MediaPortal.TV.Recording
 					chr2 = m_charTableD[m_txtLanguage,chr-0x7B];
 					break;
 				case 0x7F:
-					graph.FillRectangle(backBrush,x, y+factor*4, w, factor*(h-4));
-					graph.FillRectangle(foreBrush,x, y, w, factor*4);
+					graph.FillRectangle(backBrush,x, y, w, factor*h);
+					graph.FillRectangle(foreBrush,x+(w/12), y+factor*(h*5/20), w*10/12, factor*(h*11/20));
 					x+= w;
 					charReady=true;
 					break;
