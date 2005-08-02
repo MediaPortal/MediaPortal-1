@@ -44,6 +44,7 @@ namespace WindowPlugins.GUIPrograms
     private void ShowProgressDialog()
     {
       pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+      pDlgProgress.ShowWaitCursor = true;
       pDlgProgress.SetHeading("importing gamebase file");
       pDlgProgress.SetLine(0, "importing gamebase file"); //todo: localize it!
       pDlgProgress.SetLine(1, "");

@@ -138,6 +138,7 @@ namespace ProgramsDatabase
     void ShowProgressDialog()
     {
       pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+      pDlgProgress.ShowWaitCursor = true;
       pDlgProgress.SetHeading("importing MAME roms");
       pDlgProgress.SetLine(0, "importing MAME roms"); //"importing *.my file
       pDlgProgress.SetLine(1, "");

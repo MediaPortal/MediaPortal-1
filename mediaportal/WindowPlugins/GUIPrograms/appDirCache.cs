@@ -42,6 +42,7 @@ namespace ProgramsDatabase
     private void ShowProgressDialog()
     {
       progressDialog = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+      progressDialog.ShowWaitCursor = true;
       progressDialog.SetHeading("scanning directory");
       progressDialog.SetLine(0, "scanning directory"); //todo: localize! 13004...
       progressDialog.SetLine(1, "");

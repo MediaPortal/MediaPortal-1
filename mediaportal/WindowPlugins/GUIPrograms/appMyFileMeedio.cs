@@ -43,6 +43,7 @@ namespace ProgramsDatabase
     private void ShowProgressDialog()
     {
       pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+      pDlgProgress.ShowWaitCursor = true;
       pDlgProgress.SetHeading(13003);
       pDlgProgress.SetLine(0, 13003); //"importing *.mlf file
       pDlgProgress.SetLine(1, "");
