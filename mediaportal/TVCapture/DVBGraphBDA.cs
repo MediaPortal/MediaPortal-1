@@ -3235,6 +3235,61 @@ namespace MediaPortal.TV.Recording
 
 		void ParseMHW()
 		{
+			try
+			{
+				short titleCount;
+				m_mhwGrabberInterface.GetMHWTitleCount(out titleCount);
+				if (titleCount<=0) return;
+				for (short i=0; i < titleCount; ++i)
+				{
+					short id=0,transportid=0, networkid=0, channelid=0, programid=0, themeid=0, PPV=0,duration=0;
+					byte summaries=0;
+					uint datestart=0,timestart=0; 
+					IntPtr ptrTitle,ptrProgramName;
+					IntPtr ptrChannelName,ptrSummary, ptrTheme;
+					m_mhwGrabberInterface.GetMHWTitle(i,ref id, ref transportid, ref networkid, ref channelid, ref programid, ref themeid, ref PPV, ref summaries, ref duration, ref datestart,ref timestart, out ptrTitle,out ptrProgramName);
+					m_mhwGrabberInterface.GetMHWChannel(channelid,ref networkid, ref transportid,out ptrChannelName);
+					m_mhwGrabberInterface.GetMHWSummary(programid, out ptrSummary);
+					m_mhwGrabberInterface.GetMHWTheme(themeid, out ptrTheme);
+
+					string channelName,title,programName,summary,theme;
+					channelName=Marshal.PtrToStringAnsi(ptrChannelName);
+					title=Marshal.PtrToStringAnsi(ptrTitle);
+					programName=Marshal.PtrToStringAnsi(ptrProgramName);
+					summary=Marshal.PtrToStringAnsi(ptrSummary);
+					theme=Marshal.PtrToStringAnsi(ptrTheme);
+
+					if (channelName==null) channelName="";
+					if (title==null) title="";
+					if (programName==null) programName="";
+					if (summary==null) summary="";
+					if (theme==null) theme="";
+
+					uint d1=datestart;
+					uint m=timestart&0xff;
+					uint h1=(timestart>>16)&0xff;
+					DateTime programStartTime=new DateTime(System.DateTime.Now.Ticks);
+					DateTime dayStart=new DateTime(System.DateTime.Now.Ticks);
+					dayStart=dayStart.Subtract(new TimeSpan(1,dayStart.Hour,dayStart.Minute,dayStart.Second,dayStart.Millisecond));
+					int day=(int)dayStart.DayOfWeek;
+				
+					programStartTime=dayStart;
+					int minVal=(int)((d1-day)*86400+h1*3600+m*60);
+					if(minVal<21600)
+						minVal+=604800;
+
+					programStartTime=programStartTime.AddSeconds(minVal);
+					Log.WriteFile( Log.LogType.EPG,"channel:{0} time:{1} {2} duration:{3} program:{4} title:{5} theme:{6} summary:{7} onid:{8} tsid:{9}",
+								channelName,programStartTime.ToShortTimeString(),programStartTime.ToShortTimeString(),
+								programName,title,theme,summary, networkid, transportid);
+
+				}
+			}
+			catch(Exception ex)
+			{
+				Log.WriteFile(Log.LogType.Error,true,"Exception while parsing MHW:{0} {1} {2}",
+											ex.Message,ex.Source,ex.StackTrace);
+			}
 		}
 
 		void ParseEPG()
