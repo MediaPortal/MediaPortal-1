@@ -60,6 +60,7 @@ namespace MediaPortal.Util
 		bool option_no_image = true;    /* don't show [Image] */
 		bool option_no_alt   = true;    /* don't show [alt text] for <IMG ALT="alt text" */
 		bool stripMultipleBlankLines = true; // Strip multiple blank lines
+		bool removeLinesWithOnlyLinks = true;
 
 		// Dynamic align added by autophile@starband.net 29 Mar 2002
 		Stack align = new Stack();
@@ -285,14 +286,6 @@ namespace MediaPortal.Util
 			else if ( CMP("/SCRIPT", str) ) { end_nooutput(); }
 			else if ( CMP("STYLE", str) )   { start_nooutput(); }
 			else if ( CMP("/STYLE", str) )  { end_nooutput(); }
-			else if ( CMP("A", str) )   { href(); word_plus_ch('[');} //if ( !option_links) start_nooutput();}
-			else if ( CMP("/A", str) )        
-			{
-				if ( word.Length > 0 && word[word.Length-1] != '[' )
-					word_plus_ch(']');
-				else if ( word.Length > 0 )
-					word = word.Remove( word.Length - 1, 1 );
-			}
 			else if ( CMP("TITLE", str) )
 			{
 				if (option_title)
@@ -333,6 +326,18 @@ namespace MediaPortal.Util
 					// xml default charset is utf-8
 					//				set_iconv_charset("utf-8");
 					//				find_encoding();
+				}
+				else if ( CMP("A", str) )   { href(); word_plus_ch('[');} //if ( !option_links) start_nooutput();}
+				else if ( CMP("/A", str) )        
+				{
+					if ( word.Length > 0 && word[word.Length-1] != '[' )
+						word_plus_ch(']');
+					else if ( word.Length > 0 )
+					{
+						word = word.Remove( word.Length - 1, 1 );
+						word_len --;
+						word_pos --;
+					}
 				}
 					// Linebreak
 				else if ( CMP("BR", str) )  { line_break(); }
@@ -1179,6 +1184,10 @@ namespace MediaPortal.Util
 
 			// fprintf(stderr, "nrBlankLines %d shrink_lines %d line_len %d line_len_old %d noleadingblanks %d nooutput %d printline %d line %ls \n", nrBlankLines, shrink_lines, line_len, line_len_old, noleadingblanks, nooutput, printline, line);
 
+			// Check whether to remove lines with just links in
+			if ( !nooutput && removeLinesWithOnlyLinks )
+				printline = !doesLineContainOnlyLinks( line );
+
 			if (printline)
 			{
 				if (get_align()==LEFT)   {}
@@ -1186,13 +1195,54 @@ namespace MediaPortal.Util
 				if (get_align()==RIGHT)  { right_line(); }
 
 				if (!nooutput) { output_string(line); }
-
-
-				line_len_old=line_len;
-				clear_line();
 			}
+			line_len_old=line_len;
+			clear_line();
 
 		} // end print_line
+
+		// ------------------------------------------------
+
+		string nonchars = "|/*#^%$£\"!()-";
+		bool doesLineContainOnlyLinks( string line )
+		{
+			bool inLink = false;
+			bool linksOnly = true;
+			int open = 0;
+			int close = 0;
+
+			if ( line.Trim().Equals( "" ) )
+				return false;
+
+			// Check to see if we have a mismatch of []
+			foreach( char c in line )
+			{
+				if ( c == '[' )
+				{
+					inLink = true;
+					open ++;
+				}
+				else if ( c == ']' )
+				{
+					inLink = false;
+					close ++;
+				}
+				else if ( !inLink )
+				{
+					if ( !Char.IsWhiteSpace( c ) && nonchars.IndexOf( c ) == -1 )
+					{
+						linksOnly = false;
+					}
+				}
+			}
+
+			// If we had didn't have only links or we had a mismatch of square brackets
+			// return false (line doesn't contain links only
+			if ( linksOnly &&(open == close) )
+				return true;
+			else
+				return false;
+		}
 
 		// ------------------------------------------------
 
@@ -1212,11 +1262,11 @@ namespace MediaPortal.Util
 
 		void line_plus_word(string s, int wl, int wp)
 		{
-			if (wl>=wp) return;
 			int i=line_pos,
 				j=0;
 
 			while (i<line_pos+wp) { line += s[j]; j++; i++; }
+
 			line_len += wl; line_pos += wp;
 		} // end line_plus_word
 
@@ -1262,9 +1312,6 @@ namespace MediaPortal.Util
 		void word_end()
 		{
 			int i=0;
-
-			if ( word_len != word_pos )
-				Console.WriteLine( "FUCK ME!" );
 
 			if (word_len > 0)
 			{
