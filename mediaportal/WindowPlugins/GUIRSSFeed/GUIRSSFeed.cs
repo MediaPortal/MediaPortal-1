@@ -60,6 +60,7 @@ namespace MediaPortal.GUI.RSS
 		struct feed_details
 		{
 			public string		m_site;
+			public string		m_link;
 			public string		m_title;
 			public string		m_description;
 		};
@@ -176,7 +177,19 @@ namespace MediaPortal.GUI.RSS
 
 					if (iControl==(int)Controls.CONTROL_LIST)
 					{
-						UpdateDetails();
+						String story = DownloadMainStory();
+
+						if ( story != null )
+						{
+							GUIDialogText dlg=(GUIDialogText)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_TEXT);
+							if (dlg != null)
+							{      
+								dlg.Reset();
+								dlg.SetHeading("Story");
+								dlg.SetText( story );
+								dlg.DoModal( GetID);
+							}
+						}
 					}
 
 					if (iControl==(int)Controls.CONTROL_BTNCHANNEL)
@@ -481,6 +494,7 @@ namespace MediaPortal.GUI.RSS
 					m_feed_details[i].m_site = channel.Title;
 					m_feed_details[i].m_title = item.Title;
 					m_feed_details[i].m_description = item.Description;
+					m_feed_details[i].m_link = item.Link.ToString();
 
 					// Make sure that everything is "decoded" like &amp; becomes &
 					m_feed_details[i].m_title = HttpUtility.HtmlDecode(m_feed_details[i].m_title);
@@ -559,5 +573,59 @@ namespace MediaPortal.GUI.RSS
 			GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_STORYTEXT, feed.m_description);
 		}
 
+		string DownloadMainStory()
+		{
+			// Get the selected item
+			GUIListItem item = GetSelectedItem();
+			if (item==null) 
+				return null;
+
+			feed_details feed = (feed_details)item.MusicTag;
+
+			// Download the story
+			string text = null;
+			try
+			{
+				HttpWebRequest request = (HttpWebRequest)WebRequest.Create(feed.m_link);
+
+				HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+				Stream stream = response.GetResponseStream();
+				Encoding enc;
+				try 
+				{
+					enc=Encoding.GetEncoding(response.ContentEncoding);
+				}
+				catch 
+				{
+					// Default to Codepage 1252
+					enc = Encoding.GetEncoding(1252);
+				}
+				StreamReader r = new StreamReader( stream, enc );
+				string data = r.ReadToEnd();
+
+				// Convert html to text
+				HtmlToText html = new HtmlToText( data );
+				text = html.ToString().Trim();
+			}
+			catch ( Exception ex )
+			{
+				GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SHOW_WARNING,0,0,0,0,0,0);
+				msg.Param1=9;//my news
+				msg.Param2=912;//Unable to download latest news
+				msg.Param3=0;
+
+				string errtxt = ex.Message;
+				int pos = errtxt.IndexOf( ":" );
+				if ( pos != -1 )
+					errtxt = errtxt.Substring( pos + 1 );
+				msg.Label3=String.Format( "{0}\n\n({1})", m_strSiteURL, errtxt );
+				GUIWindowManager.SendMessage(msg);
+
+				// Log exception
+				Log.Write("ex:{0} {1} {2}", ex.Message,ex.Source,ex.StackTrace);
+			}
+
+			return text;
+		}
 	}
 }

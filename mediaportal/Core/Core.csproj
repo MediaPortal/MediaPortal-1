@@ -1604,6 +1604,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Util\HtmlToText.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Util\HTMLUtil.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
