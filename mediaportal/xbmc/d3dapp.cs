@@ -2272,7 +2272,7 @@ namespace MediaPortal
       if (timeElapsed < GUIGraphicsContext.DesiredFrameTime)
       {
         milliSecondsLeft =(((GUIGraphicsContext.DesiredFrameTime - timeElapsed)*1000) / DXUtil.TicksPerSecond);
-        if(milliSecondsLeft > 2)
+        if(milliSecondsLeft > 0)
         {
           DoSleep((int)milliSecondsLeft);
         }
