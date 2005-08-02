@@ -62,7 +62,6 @@ namespace MediaPortal.GUI.TV
 		{
 			return Load (GUIGraphicsContext.Skin+@"\myfsteletext.xml");
 		}
-		
     
 		#region Serialisation
 		void LoadSettings()
@@ -89,6 +88,37 @@ namespace MediaPortal.GUI.TV
 						OnKeyPressed((char)action.m_key.KeyChar);
 					break;
 
+        case Action.ActionType.REMOTE_0:
+          OnKeyPressed((char)'0');
+          break;
+        case Action.ActionType.REMOTE_1:
+          OnKeyPressed((char)'1');
+          break;
+        case Action.ActionType.REMOTE_2:
+          OnKeyPressed((char)'2');
+          break;
+        case Action.ActionType.REMOTE_3:
+          OnKeyPressed((char)'3');
+          break;
+        case Action.ActionType.REMOTE_4:
+          OnKeyPressed((char)'4');
+          break;
+        case Action.ActionType.REMOTE_5:
+          OnKeyPressed((char)'5');
+          break;
+        case Action.ActionType.REMOTE_6:
+          OnKeyPressed((char)'6');
+          break;
+        case Action.ActionType.REMOTE_7:
+          OnKeyPressed((char)'7');
+          break;
+        case Action.ActionType.REMOTE_8:
+          OnKeyPressed((char)'8');
+          break;
+        case Action.ActionType.REMOTE_9:
+          OnKeyPressed((char)'9');
+          break;
+
 				case Action.ActionType.ACTION_SELECT_ITEM:
 					break;
 				case Action.ActionType.ACTION_REMOTE_RED_BUTTON:
@@ -109,12 +139,10 @@ namespace MediaPortal.GUI.TV
 				case Action.ActionType.ACTION_REMOTE_SUBPAGE_DOWN:
 					SubpageDown();
 					break;
-
-
 			}
 			base.OnAction(action);
-			
 		}
+
 		protected override void OnPageDestroy(int newWindowId)
 		{
 			if ( !GUITVHome.IsTVWindow(newWindowId) )
