@@ -29,6 +29,9 @@ using System.Xml;
 using MediaPortal.Util;
 using MediaPortal.Dialogs;
 
+using System.ComponentModel;
+using System.Threading;
+
 namespace MediaPortal.GUI.Weather
 {
 	public class GUIWindowWeather : GUIWindow, ISetupForm
@@ -226,11 +229,8 @@ namespace MediaPortal.GUI.Weather
 
 					TimeSpan ts=DateTime.Now-m_lRefreshTime;
 					if( ts.TotalMinutes >= m_iWeatherRefresh && m_strLocation!=String.Empty )
-					{
-						m_lRefreshTime=DateTime.Now;
-						RefreshMe(false);	//do an autoUpdate refresh
-						m_lRefreshTime=DateTime.Now;
-					}
+						BackgroundUpdate(false);
+
 					return true;
 				}
         
@@ -247,7 +247,7 @@ namespace MediaPortal.GUI.Weather
 					{
 						m_iDayNum = -2;
 						m_strSelectedDayName="All";
-						RefreshMe(false);	//refresh clicked so do a complete update (not an autoUpdate)
+						BackgroundUpdate(false);
 					}
 					if (iControl == (int)Controls.CONTROL_BTNVIEW)
 					{
@@ -259,42 +259,42 @@ namespace MediaPortal.GUI.Weather
 								{
 									m_ImageView = ImageView.Temperature;
 									UpdateButtons();
-									RefreshMe(true);
+									BackgroundUpdate(true);
 									break;
 								}
 								case ImageView.Temperature:
 								{
 									m_ImageView = ImageView.UVIndex;
 									UpdateButtons();
-									RefreshMe(true);
+									BackgroundUpdate(true);
 									break;
 								}
 								case ImageView.UVIndex:
 								{
 									m_ImageView = ImageView.Winds;
 									UpdateButtons();
-									RefreshMe(true);
+									BackgroundUpdate(true);
 									break;
 								}
 								case ImageView.Winds:
 								{
 									m_ImageView = ImageView.Humidity;
 									UpdateButtons();
-									RefreshMe(true);
+									BackgroundUpdate(true);
 									break;
 								}
 								case ImageView.Humidity:
 								{
 									m_ImageView = ImageView.Precipitation;
 									UpdateButtons();
-									RefreshMe(true);
+									BackgroundUpdate(true);
 									break;
 								}
 								case ImageView.Precipitation:
 								{
 									m_ImageView = ImageView.Satellite;
 									UpdateButtons();
-									RefreshMe(true);
+									BackgroundUpdate(true);
 									break;
 								}
 							}
@@ -418,7 +418,9 @@ namespace MediaPortal.GUI.Weather
 								}
 								m_iDayNum = -2;
 								m_strSelectedDayName="All";
-								RefreshMe(false);	//refresh clicked so do a complete update (not an autoUpdate)
+
+								//refresh clicked so do a complete update (not an autoUpdate)
+								BackgroundUpdate(false);
 							}
 						}
 					}
@@ -733,22 +735,60 @@ namespace MediaPortal.GUI.Weather
 				else
 					GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTNVIEW, m_strSelectedDayName);
 			}
+
+			// Update sattelite image
+			GUIImage img=GetControl((int)Controls.CONTROL_IMAGE_SAT) as GUIImage;
+			if (img!=null)
+			{
+				switch (m_ImageView)
+				{
+					case ImageView.Satellite:
+					{
+						m_strViewImageURL=m_strSatelliteURL;
+						break;
+					}
+					case ImageView.Temperature:
+					{
+						m_strViewImageURL=m_strTemperatureURL;
+						break;
+					}
+					case ImageView.UVIndex:
+					{
+						m_strViewImageURL=m_strUVIndexURL;
+						break;
+					}
+					case ImageView.Winds:
+					{
+						m_strViewImageURL=m_strWindsURL;
+						break;
+					}
+					case ImageView.Humidity:
+					{
+						m_strViewImageURL=m_strHumidityURL;
+						break;
+					}
+					case ImageView.Precipitation:
+					{
+						m_strViewImageURL=m_strPrecipitationURL;
+						break;
+					}
+				}
+				img.SetFileName(m_strViewImageURL);
+				//reallocate & load then new image
+				img.FreeResources();
+				img.AllocResources();
+			}	
 		}
     		
-		public override void Render(float timePassed)
-		{
-      
-			base.Render(timePassed);
-		}
-
-
-		bool Download(string strWeatherFile,GUIDialogProgress	pDlgProgress)
+		bool Download(string strWeatherFile)
 		{
 			string			strURL;
 
 			if (!Util.Win32API.IsConnectedToInternet())
 			{
 				if (System.IO.File.Exists(strWeatherFile)) return true;
+
+				Log.Write("MyWeather.Download: No internet connection");
 				return false;
 			}
 
@@ -761,27 +801,11 @@ namespace MediaPortal.GUI.Weather
 			strURL=String.Format("http://xoap.weather.com/weather/local/{0}?cc=*&unit={1}&dayf=4&prod=xoap&par={2}&key={3}",
 				m_strLocation, c_units.ToString(), PARTNER_ID, PARTNER_KEY);
 			
-			if (pDlgProgress!=null)
-			{
-				pDlgProgress.SetPercentage(10);
-				pDlgProgress.Progress();
-			}
 			using (WebClient client = new WebClient())
 			{
 				try
 				{
-					
-					if (pDlgProgress!=null)
-					{
-						pDlgProgress.SetPercentage(15);
-						pDlgProgress.Progress();
-					}
 					client.DownloadFile(strURL, strWeatherFile);
-					if (pDlgProgress!=null)
-					{
-						pDlgProgress.SetPercentage(40);
-						pDlgProgress.Progress();
-					}
 					return true;
 				} 
 				catch(Exception ex)
@@ -834,7 +858,7 @@ namespace MediaPortal.GUI.Weather
 					strLocWord = GUILocalizeStrings.Get(372);
 				else if(String.Compare(szTokenSplit, "Sunny",true) == 0)
 					strLocWord = GUILocalizeStrings.Get(373);
-				else if(String.Compare(szTokenSplit, "Cloudy",true) == 0)
+				else if(String.Compare(szTokenSplit, "Cloudy",true) == 0 || String.Compare(szTokenSplit, "Clouds",true) == 0)
 					strLocWord = GUILocalizeStrings.Get(374);
 				else if(String.Compare(szTokenSplit, "Snow",true) == 0)
 					strLocWord = GUILocalizeStrings.Get(375);
@@ -906,121 +930,42 @@ namespace MediaPortal.GUI.Weather
 		//Do a complete download, parse and update
 		void RefreshMe(bool autoUpdate)
 		{
-			//message strings for refresh of images
-			string strWeatherFile = @"weather\curWeather.xml";
-
-			GUIDialogProgress	pDlgProgress	= (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
-			GUIDialogOK 			pDlgOK				= (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
-			bool dlRes = false, ldRes = false;
-
-			//progress dialog for download
-			if(pDlgProgress!=null && !autoUpdate) //dont display progress dialog on autoupdate or it crashes! :|
+			using(WaitCursor cursor = new WaitCursor())
+			lock(this)
 			{
-				pDlgProgress.SetHeading(410);						//"Accessing Weather.com"
-				pDlgProgress.SetLine(1, 411);						//"Getting Weather For:"
-				pDlgProgress.SetLine(2, m_strLocation);	//Area code
-				pDlgProgress.SetPercentage(0);
-				if(m_szLocation.Length > 1)							//got the location string yet?
-					pDlgProgress.SetLine(2, m_szLocation);
-				//else
-				//	pDlgProgress.SetLine(3, String.Empty);
-				pDlgProgress.StartModal(GetID);
-				pDlgProgress.ShowProgressBar(true);
-				pDlgProgress.Progress();
-			}	
+				//message strings for refresh of images
+				string strWeatherFile = @"weather\curWeather.xml";
 
-			//Do The Download
-			dlRes = Download(strWeatherFile,pDlgProgress);		
+				GUIDialogOK 			pDlgOK				= (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+				bool dlRes = false, ldRes = false;
 
-			if(dlRes)	//dont load if download failed
-				ldRes = LoadWeather(strWeatherFile,pDlgProgress);	//parse
+				//Do The Download
+				dlRes = Download(strWeatherFile);		
 
-			if((!dlRes || !ldRes) && null!=pDlgOK && !autoUpdate) //this will probably crash on an autoupdate as well, but not tested
-			{
-				pDlgProgress.Close();
-				pDlgProgress=null;
-			}
+				if(dlRes)	//dont load if download failed
+					ldRes = LoadWeather(strWeatherFile);	//parse
 
-			//if the download or load failed, display an error message
-			if((!dlRes || !ldRes) && null!=pDlgOK && !autoUpdate) //this will probably crash on an autoupdate as well, but not tested
-			{
-				// show failed dialog...
-				pDlgOK.SetHeading(412);	//"Unable to get weather data"
-				pDlgOK.SetLine(1, m_szLocation);
-				pDlgOK.SetLine(2, String.Empty);
-				pDlgOK.SetLine(3, String.Empty);
-				pDlgOK.DoModal(GetID);
-			} 
-			else if(dlRes && ldRes)	//download and load went ok so update
-			{
-				UpdateButtons();
-
-				//Send the refresh messages
-				//				OnMessage(msgDe);
-				//			OnMessage(msgRe);
-			}
-			if (pDlgProgress!=null)
-			{
-				pDlgProgress.SetPercentage(80);
-				pDlgProgress.Progress();
-			}
-
-
-			// Update sattelite image
-			GUIImage img=GetControl((int)Controls.CONTROL_IMAGE_SAT) as GUIImage;
-			if (img!=null)
-			{
-				switch (m_ImageView)
+				//if the download or load failed, display an error message
+				if((!dlRes || !ldRes)) //this will probably crash on an autoupdate as well, but not tested
 				{
-					case ImageView.Satellite:
-					{
-						m_strViewImageURL=m_strSatelliteURL;
-						break;
-					}
-					case ImageView.Temperature:
-					{
-						m_strViewImageURL=m_strTemperatureURL;
-						break;
-					}
-					case ImageView.UVIndex:
-					{
-						m_strViewImageURL=m_strUVIndexURL;
-						break;
-					}
-					case ImageView.Winds:
-					{
-						m_strViewImageURL=m_strWindsURL;
-						break;
-					}
-					case ImageView.Humidity:
-					{
-						m_strViewImageURL=m_strHumidityURL;
-						break;
-					}
-					case ImageView.Precipitation:
-					{
-						m_strViewImageURL=m_strPrecipitationURL;
-						break;
-					}
+					// show failed dialog...
+					pDlgOK.SetHeading(412);	//"Unable to get weather data"
+					pDlgOK.SetLine(1, m_szLocation);
+					pDlgOK.SetLine(2, String.Empty);
+					pDlgOK.SetLine(3, String.Empty);
+					pDlgOK.DoModal(GetID);
+				} 
+				else if(dlRes && ldRes)	//download and load went ok so update
+				{
+					UpdateButtons();
 				}
-				img.SetFileName(m_strViewImageURL);
-				//reallocate & load then new image
-				img.FreeResources();
-				img.AllocResources();
-			}
-			m_lRefreshTime = DateTime.Now;
-			m_iDayNum = -2;
-			
-			if (pDlgProgress!=null)
-			{
-				pDlgProgress.SetPercentage(100);
-				pDlgProgress.Progress();
-				pDlgProgress.Close();
+
+				m_lRefreshTime = DateTime.Now;
+				m_iDayNum = -2;
 			}
 		}
 
-
-		bool LoadWeather(string strWeatherFile, GUIDialogProgress pDlgProgress)
+		bool LoadWeather(string strWeatherFile)
 		{
 			int			iTmpInt=0;
 			string	iTmpStr=String.Empty;
@@ -1031,18 +976,16 @@ namespace MediaPortal.GUI.Weather
 			// load the xml file
 			XmlDocument doc= new XmlDocument();
 			doc.Load(strWeatherFile);
-			if (doc.DocumentElement==null) return false;
-			if (pDlgProgress!=null)
-			{
-				pDlgProgress.SetPercentage(50);
-				pDlgProgress.Progress();
-			}
+			
+			if(doc.DocumentElement == null)
+				return false;
 
 			string strRoot=doc.DocumentElement.Name;
 			XmlNode pRootElement=doc.DocumentElement;
 			if (strRoot=="error")
 			{
 				string szCheckError;
+
 				GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow(2002);
 
 				GetString(pRootElement, "err", out szCheckError, "Unknown Error");	//grab the error string
@@ -1123,11 +1066,6 @@ namespace MediaPortal.GUI.Weather
 				m_szNowDewp=String.Format( "{0}{1}{2}", iTmpInt, DEGREE_CHARACTER, szUnitTemp);
 
 			}
-			if (pDlgProgress!=null)
-			{
-				pDlgProgress.SetPercentage(60);
-				pDlgProgress.Progress();
-			}
 
 			//future forcast
 			pElement = pRootElement.SelectSingleNode("dayf");
@@ -1203,11 +1141,11 @@ namespace MediaPortal.GUI.Weather
 				}
 			}
 
-			if (pDlgProgress!=null)
-			{
-				pDlgProgress.SetPercentage(70);
-				pDlgProgress.Progress();
-			}
+//			if (pDlgProgress!=null)
+//			{
+//				pDlgProgress.SetPercentage(70);
+//				pDlgProgress.Progress();
+//			}
 			return true;
 		}
 
@@ -1239,7 +1177,9 @@ namespace MediaPortal.GUI.Weather
 				m_lRefreshTime=DateTime.Now;
 				m_strSelectedDayName="All";
 				m_iDayNum=-2;
-				RefreshMe(true);	//refresh clicked so do a complete update (not an autoUpdate)
+
+				//refresh clicked so do a complete update (not an autoUpdate)
+				BackgroundUpdate(true);
 				
 				m_lRefreshTime=DateTime.Now;
 			}
@@ -1315,6 +1255,32 @@ namespace MediaPortal.GUI.Weather
 		}
 
 		#endregion
+
+		///////////////////////////////////////////
+
+		void BackgroundUpdate(bool isAuto)
+		{
+			BackgroundWorker worker = new BackgroundWorker();
+
+			worker.DoWork += new DoWorkEventHandler(DownloadWorker);
+			worker.RunWorkerAsync(isAuto);
+
+			while(_workerCompleted == false)
+				GUIWindowManager.Process();
+		}
+
+		void DownloadWorker(object sender, DoWorkEventArgs e)
+		{
+			_workerCompleted = false;
+
+			m_lRefreshTime=DateTime.Now;
+			RefreshMe((bool)e.Argument);	//do an autoUpdate refresh
+			m_lRefreshTime=DateTime.Now;
+
+			_workerCompleted = true;
+		}
+
+		bool _workerCompleted = false;
 	}
 
 }
