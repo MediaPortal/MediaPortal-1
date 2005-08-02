@@ -20,6 +20,7 @@
  */
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using MediaPortal.GUI.Library;
 using Programs.Utils;
@@ -100,21 +101,97 @@ namespace ProgramsDatabase
     }
 
 
+    string ConvertSQLiteV2V3(string inFile)
+    {
+      string strPath = System.IO.Directory.GetCurrentDirectory();
+      string sqlite2Exe = strPath + "\\database\\convert\\sqlite.exe";
+      string sqlite3Exe = strPath + "\\database\\convert\\sqlite3.exe";
+      string outFile = Path.ChangeExtension(inFile, ".ml3");
+      string line;
+      try
+      {
+        // sqlite.exe ..\FolderDatabase2.db .dump | sqlite3.exe ..\FolderDatabase2.db3
+        // string execute = String.Format("{0} {1} .dump | {2} {3}", sqlite2Exe, inFile, sqlite3Exe, outFile);
+
+        if (File.Exists(sqlite2Exe) && File.Exists(sqlite3Exe))
+        {
+          Process myProcessRead = new Process();
+          ProcessStartInfo myPIRead = new ProcessStartInfo(sqlite2Exe);
+          myPIRead.Arguments = inFile + " .dump";
+          myPIRead.UseShellExecute = false;
+          myPIRead.RedirectStandardOutput = true;
+          myPIRead.WindowStyle = System.Diagnostics.ProcessWindowStyle.Minimized;
+          myPIRead.CreateNoWindow = true;
+          myProcessRead.StartInfo = myPIRead;
+          myProcessRead.Start();
+
+          Process myProcessWrite = new Process();
+
+          ProcessStartInfo myPIWrite = new ProcessStartInfo(sqlite3Exe);
+          myPIWrite.Arguments = outFile;
+          myPIWrite.UseShellExecute = false;
+          myPIWrite.RedirectStandardInput = true;
+          myPIWrite.WindowStyle = System.Diagnostics.ProcessWindowStyle.Minimized;
+          myPIWrite.CreateNoWindow = true;
+          myProcessWrite.StartInfo = myPIWrite;
+          myProcessWrite.Start();
+
+          StreamReader myStreamReader = myProcessRead.StandardOutput;
+          StreamWriter myStreamWriter = myProcessWrite.StandardInput;
+          myStreamWriter.AutoFlush = true;
+
+          while (true)
+          {
+            line = myStreamReader.ReadLine();
+            if (line == null)
+            {
+              break;
+            }
+            else
+            {
+              myStreamWriter.WriteLine(line);
+            }
+          }
+
+          myProcessRead.WaitForExit();
+          myProcessRead.Close();
+          myProcessWrite.Close();
+        }
+      }
+      catch(Exception ex)
+      {
+        Log.Write("myPrograms exception (ConvertSQLitev2v3) {0}", ex.Message.ToString());
+      }
+
+      if (File.Exists(outFile))
+      {
+        return outFile;
+      }
+      else
+      {
+        return "";
+      }
+    }
+
 
     public void Start()
     {
       try
       {
-        SQLiteClient dbMyFile = new SQLiteClient(m_App.Source);
-        SQLiteResultSet resMyFile;
-
-        resMyFile = dbMyFile.Execute(
-          "select item_name, item_location, item_image, tag_1 || tag_2 || tag_3 || tag_4 || tag_5, tag_7, tag_8, tag_9, tag_10, tag_11, tag_12 from items order by item_name");
-        if (resMyFile.Rows.Count == 0)
-          return ;
-        for (int iRow = 0; iRow < resMyFile.Rows.Count; iRow++)
+        string sqliteV3File = ConvertSQLiteV2V3(m_App.Source);
+        if (sqliteV3File != "")
         {
-          DBImportMeedioItem(resMyFile, iRow);
+          SQLiteClient dbMyFile = new SQLiteClient(sqliteV3File);
+          SQLiteResultSet resMyFile;
+
+          resMyFile = dbMyFile.Execute(
+            "select item_name, item_location, item_image, tag_1 || tag_2 || tag_3 || tag_4 || tag_5, tag_7, tag_8, tag_9, tag_10, tag_11, tag_12 from items order by item_name");
+          if (resMyFile.Rows.Count == 0)
+            return ;
+          for (int iRow = 0; iRow < resMyFile.Rows.Count; iRow++)
+          {
+            DBImportMeedioItem(resMyFile, iRow);
+          }
         }
       }
       catch (SQLiteException ex)
