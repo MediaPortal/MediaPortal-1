@@ -781,6 +781,31 @@ STDMETHODIMP CStreamAnalyzer::IsMHWReady(BOOL* yesNo)
 	*yesNo=(m_pMHWPin1->IsReady() && m_pMHWPin2->IsReady() );
 	return S_OK;
 }
+STDMETHODIMP CStreamAnalyzer::GetMHWTitleCount(WORD* count)
+{
+	*count=m_pMHWPin1->m_MHWParser.GetTitleCount();
+	return S_OK;
+}
+STDMETHODIMP CStreamAnalyzer::GetMHWTitle(WORD program, WORD* id, WORD* transportId, WORD* networkId, WORD* channelId, WORD* programId, WORD* themeId, WORD* PPV, BYTE* Summaries, WORD* duration, char** title,char** programName)
+{	
+	m_pMHWPin2->m_MHWParser.GetTitle(program, id, transportId, networkId, channelId, programId, themeId, PPV, Summaries, duration, title,programName);
+	return S_OK;
+}
+STDMETHODIMP CStreamAnalyzer::GetMHWChannel(WORD channelId, WORD* networkId, WORD* transportId, char** channelName)
+{
+	m_pMHWPin2->m_MHWParser.GetChannel(channelId, networkId, transportId, channelName);
+	return S_OK;
+}
+STDMETHODIMP CStreamAnalyzer::GetMHWSummary(WORD programId, char** summary)
+{
+	m_pMHWPin2->m_MHWParser.GetSummary(programId, summary);
+	return S_OK;
+}
+STDMETHODIMP CStreamAnalyzer::GetMHWTheme(WORD themeId, char** theme)
+{
+	m_pMHWPin2->m_MHWParser.GetTheme(themeId, theme);
+	return S_OK;
+}
 
 
 STDMETHODIMP CStreamAnalyzer::GetPMTData(BYTE *data)

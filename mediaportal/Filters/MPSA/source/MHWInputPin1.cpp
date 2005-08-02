@@ -182,6 +182,6 @@ void CMHWInputPin1::Parse()
 	//parse summaries
 	for (int i=0; i < m_tableGrabber.Count();++i)
 	{
-		m_MHWParser.ParseSummaries(m_tableGrabber.GetTable(i), m_tableGrabber.GetTableLen(i));
+		m_MHWParser.ParseTitles(m_tableGrabber.GetTable(i), m_tableGrabber.GetTableLen(i));
 	}
 }

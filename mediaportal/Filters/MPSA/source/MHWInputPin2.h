@@ -41,13 +41,13 @@ public:
     STDMETHODIMP NewSegment(REFERENCE_TIME tStart,REFERENCE_TIME tStop,double dRate);
 	void ResetPids();
 	bool IsReady();
+	CMHWParser   m_MHWParser;
 private:
 	void Parse();
 
 	TableGrabber m_tableGrabber90;
 	TableGrabber m_tableGrabber91;
 	TableGrabber m_tableGrabber92;
-	CMHWParser   m_MHWParser;
 	bool         m_bParsed;
 	
 };

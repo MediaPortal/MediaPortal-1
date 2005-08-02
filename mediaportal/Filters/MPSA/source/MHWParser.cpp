@@ -147,3 +147,82 @@ void CMHWParser::ParseThemes(byte* data, int dataLen)
 		themesNames+=15;
 	}
 }
+
+int CMHWParser::GetTitleCount()
+{
+	return m_mapTitles.size();
+}
+
+void CMHWParser::GetTitle(int program, WORD* id, WORD* transportId, WORD* networkId, WORD* channelId, WORD* programId, WORD* themeId, WORD* PPV, BYTE* Summaries, WORD* duration, char** title,char** programName)
+{
+	*id = 0;
+	*transportId=0;
+	*networkId=0;
+	*channelId=0;
+	*programId=0;
+	*themeId=0;
+	*PPV=0;
+	*Summaries=0;
+	*duration=0;
+	*title="";
+	*programName="";
+
+	if (program >=(int)m_mapTitles.size()) return;
+	imapTitles it=m_mapTitles.begin();
+	WORD count=0;
+	while (count < program) { count++; it++;}
+	*id = it->second.ID;
+	*transportId=it->second.TransportStreamID;
+	*networkId=it->second.NetworkID;
+	*channelId=it->second.ChannelID;
+	*programId=it->second.ProgrammID;
+	*themeId=it->second.ThemeID;
+	*PPV=it->second.PPV;
+	*Summaries=it->second.Summaries;
+	*duration=it->second.Duration;
+	*title=(char*)it->second.Title.c_str();
+	*programName=(char*)it->second.ProgrammName.c_str();
+}
+
+void CMHWParser::GetChannel(WORD channelId, WORD* networkId, WORD* transportId, char** channelName)
+{
+	*networkId=0;
+	*transportId=0;
+	*channelName="";
+	imapChannels it=m_vecChannels.begin();
+	while (it!=m_vecChannels.end())
+	{
+		if (it->ChannelID==channelId)
+		{
+			*networkId=it->NetworkID;
+			*transportId=it->TransponderID;
+			*channelName=(char*)it->ChannelName.c_str();
+			return;
+		}
+		++it;
+	}
+}
+
+void CMHWParser::GetSummary(WORD programId, char** summary)
+{
+	*summary="";
+	imapSummaries it=m_mapSummaries.find(programId);
+	if (it!=m_mapSummaries.end())
+	{
+		*summary=(char*)it->second.Description.c_str();
+	}
+}
+void CMHWParser::GetTheme(WORD themeId, char** theme)
+{
+	*theme="";
+	ivecThemes it =m_vecThemes.begin();
+	while (it != m_vecThemes.end())
+	{
+		if (it->ThemeIndex==(int)themeId)
+		{
+			*theme=(char*)it->ThemeText.c_str();
+			return;
+		}
+		++it;
+	}
+}

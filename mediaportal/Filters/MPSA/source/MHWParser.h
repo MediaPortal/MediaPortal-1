@@ -48,8 +48,17 @@ public:
 	void ParseSummaries(byte* data, int dataLen);
 	void ParseTitles(byte* data, int dataLen);
 	void ParseThemes(byte* data, int dataLen);
+
+	int GetTitleCount();
+	void GetTitle(int program, WORD* id, WORD* transportId, WORD* networkId, WORD* channelId, WORD* programId, WORD* themeId, WORD* PPV, BYTE* Summaries, WORD* duration, char** title,char** programName);
+	void GetChannel(WORD channelId, WORD* networkId, WORD* transportId, char** channelName);
+	void GetSummary(WORD programId, char** summary);
+	void GetTheme(WORD themeId, char** theme);
+
 private:
 	vector<MHWChannel> m_vecChannels;
+	typedef vector<MHWChannel>::iterator imapChannels;
+
 	map<int,MHWSummary> m_mapSummaries;
 	typedef map<int,MHWSummary> ::iterator imapSummaries;
 
@@ -57,4 +66,5 @@ private:
 	typedef map<int,MHWProgramm> ::iterator imapTitles;
 
 	vector<MHWTheme> m_vecThemes;
+	typedef vector<MHWTheme> ::iterator ivecThemes;
 };
