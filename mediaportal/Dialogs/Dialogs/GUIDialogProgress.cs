@@ -64,7 +64,7 @@ namespace MediaPortal.Dialogs
 
     public bool ShowWaitCursor
     {
-      get { return m_bShowWaitCursor = false; }
+      get { return m_bShowWaitCursor; }
       set { m_bShowWaitCursor = value;}
     }
 
