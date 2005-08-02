@@ -213,9 +213,13 @@ namespace MediaPortal.TV.Recording
 		//
 		protected IBaseFilter			m_sampleGrabber=null;
 		protected ISampleGrabber		m_sampleInterface=null;
+		IEPGGrabber							m_epgGrabberInterface		= null;
+		IMHWGrabber							m_mhwGrabberInterface		= null;
+		IBaseFilter							m_dvbAnalyzer=null;
+		IStreamAnalyzer					m_analyzerInterface			= null;
+		EpgGrabber							m_epgGrabber = new EpgGrabber();
 
 		protected IMpeg2Demultiplexer	m_demuxInterface=null;
-		protected IBaseFilter			m_mpeg2Data=null; 
 		protected IBasicVideo2			m_basicVideo=null;
 		protected IVideoWindow			m_videoWindow=null;
 		protected State                 m_graphState=State.None;
@@ -396,6 +400,7 @@ namespace MediaPortal.TV.Recording
 
 		public bool CreateGraph(int Quality)
 		{
+			int hr;
 			if (m_graphState != State.None) return false;
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:creategraph()");
 			m_myCookie=0;
@@ -416,11 +421,24 @@ namespace MediaPortal.TV.Recording
 				m_sinkFilter=(IBaseFilter)Activator.CreateInstance( Type.GetTypeFromCLSID( DVBSkyStar2Helper.CLSID_StreamBufferSink, false ) );
 				m_mpeg2Analyzer=(IBaseFilter) Activator.CreateInstance( Type.GetTypeFromCLSID( DVBSkyStar2Helper.CLSID_Mpeg2VideoStreamAnalyzer, true ) );
 				m_sinkInterface=(IStreamBufferSink)m_sinkFilter;
-				m_mpeg2Data=(IBaseFilter) Activator.CreateInstance( Type.GetTypeFromCLSID( DVBSkyStar2Helper.CLSID_Mpeg2Data, true ) );
+
 				m_demux=(IBaseFilter) Activator.CreateInstance( Type.GetTypeFromCLSID( Clsid.Mpeg2Demultiplexer, true ) );
 				m_demuxInterface=(IMpeg2Demultiplexer) m_demux;
 				m_sampleGrabber=(IBaseFilter) Activator.CreateInstance( Type.GetTypeFromCLSID( Clsid.SampleGrabber, true ) );
 				m_sampleInterface=(ISampleGrabber) m_sampleGrabber;
+
+
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:CreateGraph() add stream analyzer");
+				m_dvbAnalyzer=(IBaseFilter) Activator.CreateInstance( Type.GetTypeFromCLSID( Clsid.MPStreamAnalyzer, true ) );
+				m_analyzerInterface=(IStreamAnalyzer)m_dvbAnalyzer;
+				m_epgGrabberInterface=m_dvbAnalyzer as IEPGGrabber;
+				m_mhwGrabberInterface=m_dvbAnalyzer as IMHWGrabber;
+				hr=m_graphBuilder.AddFilter(m_dvbAnalyzer,"Stream-Analyzer");
+				if(hr!=0)
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphSS2: FAILED to add SectionsFilter 0x{0:X}",hr);
+					return false;
+				}
 			}
 			
 			catch(Exception ex)
@@ -449,13 +467,6 @@ namespace MediaPortal.TV.Recording
 				if(n!=0)
 				{
 					Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: FAILED to add SampleGrabber");
-					return false;
-				}
-				
-				n=m_graphBuilder.AddFilter(m_mpeg2Data,"SectionsFilter");
-				if(n!=0)
-				{
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: FAILED to add SectionsFilter");
 					return false;
 				}
 
@@ -507,37 +518,76 @@ namespace MediaPortal.TV.Recording
 					return false;
 				}
 
-				if(m_mpeg2Data!=null && m_demuxInterface!=null)
-				{
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: connect demux<->mpeg2data");
-					int hr=0;
-					IPin mpeg2DataIn=null;
-					hr=DsUtils.GetPin(m_mpeg2Data,PinDirection.Input,0,out mpeg2DataIn);
-					if(mpeg2DataIn==null)
-					{
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: input pin for mpeg2data not found");
-						return false;
-					}
-					AMMediaType mt=new AMMediaType();
-					mt.majorType=MEDIATYPE_MPEG2_SECTIONS;
-					mt.subType=MEDIASUBTYPE_MPEG2_DATA;
+				//create EPG pins
+				Log.Write("DVBGraphSS2:Create EPG pin");
+				AMMediaType mtEPG = new AMMediaType();
+				mtEPG.majorType=MEDIATYPE_MPEG2_SECTIONS;
+				mtEPG.subType=MediaSubType.None;
+				mtEPG.formatType=FormatType.None;
 
-					hr=m_demuxInterface.CreateOutputPin(ref mt,"MPEG2Sections",out m_demuxSectionsPin);
-					if (hr!=0)
-					{
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: FAILED to create mpeg2-sections pin on demuxer");
-						return false;
-					}
-					hr=m_graphBuilder.Connect(m_demuxSectionsPin,mpeg2DataIn);
-					if(hr!=0)
-					{
-						Log.WriteFile(Log.LogType.Capture,"dvbgrapgss2: FAILED to connect demux<->mpeg2data");
-						return false;
-					}
-					Log.WriteFile(Log.LogType.Capture,"dvbgraphss2: successfully connected demux<->mpeg2data");
+
+				IPin pinEPGout, pinMHW1Out,pinMHW2Out;
+				hr=m_demuxInterface.CreateOutputPin(ref mtEPG, "EPG", out pinEPGout);
+				if (hr!=0 || pinEPGout==null)
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphSS2:FAILED to create EPG pin:0x{0:X}",hr);
+					return false;
 				}
-				else
-					Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: mpeg2data or demuxer=null");
+				hr=m_demuxInterface.CreateOutputPin(ref mtEPG, "MHW1", out pinMHW1Out);
+				if (hr!=0 || pinMHW1Out==null)
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphSS2:FAILED to create MHW1 pin:0x{0:X}",hr);
+					return false;
+				}
+				hr=m_demuxInterface.CreateOutputPin(ref mtEPG, "MHW2", out pinMHW2Out);
+				if (hr!=0 || pinMHW2Out==null)
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphSS2:FAILED to create MHW2 pin:0x{0:X}",hr);
+					return false;
+				}
+
+				Log.Write("DVBGraphSS2:Get EPGs pin of analyzer");
+				IPin pinMHW1In=DirectShowUtil.FindPinNr(m_dvbAnalyzer,PinDirection.Input,1);
+				if (pinMHW1In==null)
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphSS2:FAILED to get MHW1 pin on MSPA");
+					return false;
+				}
+				IPin pinMHW2In=DirectShowUtil.FindPinNr(m_dvbAnalyzer,PinDirection.Input,2);
+				if (pinMHW2In==null)
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphSS2:FAILED to get MHW2 pin on MSPA");
+					return false;
+				}
+				IPin pinEPGIn=DirectShowUtil.FindPinNr(m_dvbAnalyzer,PinDirection.Input,3);
+				if (pinEPGIn==null)
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphSS2:FAILED to get EPG pin on MSPA");
+					return false;
+				}
+
+				Log.Write("DVBGraphSS2:Connect epg pins");
+				hr=m_graphBuilder.Connect(pinEPGout,pinEPGIn);
+				if (hr!=0)
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphSS2:FAILED to connect EPG pin:0x{0:X}",hr);
+					return false;
+				}
+				hr=m_graphBuilder.Connect(pinMHW1Out,pinMHW1In);
+				if (hr!=0)
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphSS2:FAILED to connect MHW1 pin:0x{0:X}",hr);
+					return false;
+				}
+				hr=m_graphBuilder.Connect(pinMHW2Out,pinMHW2In);
+				if (hr!=0)
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphSS2:FAILED to connect MHW2 pin:0x{0:X}",hr);
+					return false;
+				}
+
+				Log.Write("DVBGraphSS2:Demuxer is setup");
+
 
 				if(m_sampleInterface!=null)
 				{
@@ -553,6 +603,10 @@ namespace MediaPortal.TV.Recording
 				else
 					Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:creategraph() SampleGrabber-Interface not found");
 					
+
+				m_epgGrabber.EPGInterface=m_epgGrabberInterface;
+				m_epgGrabber.MHWInterface=m_mhwGrabberInterface;
+				m_epgGrabber.Network=Network();
 
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: graph created");
 			}
@@ -868,13 +922,13 @@ namespace MediaPortal.TV.Recording
 			}
 			if (Vmr7!=null)
 			{
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: free vmr7");
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: free vmr7");
 				Vmr7.RemoveVMR7();
 				Vmr7=null;
 			}
 			if (m_recorder!=null) 
 			{
-				//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: free recorder");
+				//Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: free recorder");
 				try
 				{
 					m_recorder.Stop();
@@ -904,6 +958,19 @@ namespace MediaPortal.TV.Recording
 			m_avCtrl=null;
 			m_dataCtrl=null;
 			m_config=null;
+			m_analyzerInterface=null;
+			m_epgGrabberInterface=null;
+			m_mhwGrabberInterface=null;
+
+			
+
+			if(m_dvbAnalyzer!=null)
+			{
+				Log.Write("free dvbanalyzer");
+				hr=Marshal.ReleaseComObject(m_dvbAnalyzer);
+				if (hr!=0) Log.Write("ReleaseComObject(m_dvbAnalyzer):{0}",hr);
+				m_dvbAnalyzer=null;
+			}
 
 			if (m_videoWindow != null)
 			{
@@ -929,12 +996,6 @@ namespace MediaPortal.TV.Recording
 				while ((hr=Marshal.ReleaseComObject(m_demux))>0);
 				if (hr!=0) Log.Write("ReleaseComObject(m_demux):{0}",hr);
 				m_demux=null;
-			}			
-			if(m_mpeg2Data!=null)
-			{
-				while ((hr=Marshal.ReleaseComObject(m_mpeg2Data))>0);
-				if (hr!=0) Log.Write("ReleaseComObject(m_mpeg2Data):{0}",hr);
-				m_mpeg2Data=null;
 			}			
 
 			if(m_mpeg2Analyzer!=null)
@@ -1434,15 +1495,9 @@ namespace MediaPortal.TV.Recording
 
 					//SetMediaType();
 					//m_gotAudioFormat=false;
+					m_analyzerInterface.ResetParser();
 					m_StartTime=DateTime.Now;
-					if(m_streamDemuxer!=null)
-					{
-						if(ch.HasEITSchedule==true)
-							m_streamDemuxer.GetEPGSchedule(0x50,ch.ProgramNumber);
-						else
-							m_streamDemuxer.GetMHWEPG();
-					}
-
+					m_epgGrabber.GrabEPG();
 				}
 			}
 			finally
@@ -1927,6 +1982,8 @@ namespace MediaPortal.TV.Recording
 				Vmr7.Process();
 			}
 			CheckVideoResolutionChanges();
+			m_epgGrabber.Process();
+
 		}
 		
 		public PropertyPageCollection PropertyPages()
@@ -1950,11 +2007,10 @@ namespace MediaPortal.TV.Recording
 		//
 		public void Tune(object tuningObject, int disecqNo)
 		{
-			
 			DVBChannel ch=(DVBChannel)tuningObject;
 			ch=LoadDiseqcSettings(ch,disecqNo);
 			m_currentTuningObject=new DVBChannel();
-			if(m_mpeg2Data==null)
+			if(m_dvbAnalyzer==null)
 				return;
 			try
 			{
@@ -1977,14 +2033,14 @@ namespace MediaPortal.TV.Recording
 				m_lastTuneError=false;
 				Log.WriteFile(Log.LogType.Capture,"called Tune(object)");
 			}
-				m_currentTuningObject=ch;
-
+			m_currentTuningObject=ch;
+			m_analyzerInterface.ResetParser();
 		}
 		//
 		public void StoreChannels(int ID,bool radio, bool tv, ref int newChannels, ref int updatedChannels,ref int newRadioChannels, ref int updatedRadioChannels)
 		{
 			Log.WriteFile(Log.LogType.Capture,"called StoreChannels()");
-			if (m_mpeg2Data==null) return;
+			if (m_dvbAnalyzer==null) return;
 
 
 			//get list of current tv channels present in the database
@@ -1996,16 +2052,49 @@ namespace MediaPortal.TV.Recording
 			SetPidToPin(m_dataCtrl,0,16);
 			SetPidToPin(m_dataCtrl,0,17);
 			Log.WriteFile(Log.LogType.Capture,"auto-tune ss2: StoreChannels()");
-			DVBSections.Transponder transp ;
+			DVBSections.Transponder transp;
+			transp.channels=null;
+			m_analyzerInterface.ResetParser();
+
 			using (DVBSections sections = new DVBSections())
 			{
-				sections.SetPidsForTechnisat=true;
-				sections.DataControl=m_dataCtrl;
-				sections.Timeout=5000;
-				sections.GetTablesUsingMicrosoft=true;
+				ushort count=0;
 				sections.DemuxerObject=m_streamDemuxer;
-				transp = sections.Scan(m_mpeg2Data);
+				sections.Timeout=2500;
+				sections.GetTablesUsingMicrosoft=true;
+				System.Threading.Thread.Sleep(2500);
+				m_analyzerInterface.GetChannelCount(ref count);
+				if(count>0)
+				{
+					transp.channels=new ArrayList();
+					for(int t=0;t<count;t++)
+						if(m_analyzerInterface.IsChannelReady(t)==0)
+						{
+							DVBSections.ChannelInfo chi=new MediaPortal.TV.Recording.DVBSections.ChannelInfo();
+							UInt16 len=0;
+							int hr=0;
+							hr=m_analyzerInterface.GetCISize(ref len);					
+							IntPtr mmch=Marshal.AllocCoTaskMem(len);
+							hr=m_analyzerInterface.GetChannel((UInt16)t,mmch);
+							//byte[] ch=new byte[len];
+							//Marshal.Copy(mmch,ch,0,len);
+							chi=sections.GetChannelInfo(mmch);
+							chi.fec=m_currentTuningObject.FEC;
+							if (Network() != NetworkType.ATSC)
+							{
+								chi.freq=m_currentTuningObject.Frequency;
+							}
+							else
+							{
+								m_currentTuningObject.Frequency=0;
+								m_currentTuningObject.Modulation=chi.modulation;
+							}
+							Marshal.FreeCoTaskMem(mmch);
+							transp.channels.Add(chi);
+						}
+				}
 			}
+
 			if (transp.channels==null)
 			{
 				Log.WriteFile(Log.LogType.Capture,"auto-tune ss2: found no channels", transp.channels);
@@ -2303,7 +2392,7 @@ namespace MediaPortal.TV.Recording
 
 		public IBaseFilter Mpeg2DataFilter()
 		{
-			return m_mpeg2Data;
+			return null;
 		}
 
 		DVBChannel LoadDiseqcSettings(DVBChannel ch,int disNo)
