@@ -45,5 +45,6 @@ private:
 	void Parse();
 	TableGrabber m_tableGrabber;
 	CMHWParser   m_MHWParser;
+	bool         m_bParsed;
 		
 };

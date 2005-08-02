@@ -48,5 +48,6 @@ private:
 	TableGrabber m_tableGrabber91;
 	TableGrabber m_tableGrabber92;
 	CMHWParser   m_MHWParser;
+	bool         m_bParsed;
 	
 };
