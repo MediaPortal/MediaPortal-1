@@ -586,23 +586,27 @@ namespace MediaPortal.GUI.RSS
 			string text = null;
 			try
 			{
+				string data=String.Empty;
 				HttpWebRequest request = (HttpWebRequest)WebRequest.Create(feed.m_link);
 
 				HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-				Stream stream = response.GetResponseStream();
-				Encoding enc;
-				try 
+				using (Stream stream = response.GetResponseStream())
 				{
-					enc=Encoding.GetEncoding(response.ContentEncoding);
+					Encoding enc;
+					try 
+					{
+						enc=Encoding.GetEncoding(response.ContentEncoding);
+					}
+					catch 
+					{
+						// Default to Codepage 1252
+						enc = Encoding.GetEncoding(1252);
+					}
+					using (StreamReader r = new StreamReader( stream, enc ))
+					{
+						data = r.ReadToEnd();
+					}
 				}
-				catch 
-				{
-					// Default to Codepage 1252
-					enc = Encoding.GetEncoding(1252);
-				}
-				StreamReader r = new StreamReader( stream, enc );
-				string data = r.ReadToEnd();
-
 				// Convert html to text
 				HtmlToText html = new HtmlToText( data );
 				text = html.ToString().Trim();

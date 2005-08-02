@@ -3655,7 +3655,7 @@ namespace MediaPortal.TV.Recording
 						TVDatabase.GetDVBTTuneRequest(channel.ID,out providerName,out frequency, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out bandWidth, out audio1,out audio2,out audio3,out ac3Pid, out audioLanguage, out audioLanguage1,out audioLanguage2,out audioLanguage3,out HasEITPresentFollow,out HasEITSchedule,out pcrPid);
 						if (frequency<=0) 
 						{
-							Log.WriteFile(Log.LogType.Capture,"true,DVBGraphBDA:database invalid tuning details for channel:{0}", channel.ID);
+							Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:database invalid tuning details for channel:{0}", channel.ID);
 							return;
 						}
 						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:  tuning details: frequency:{0} KHz ONID:{1} TSID:{2} SID:{3} provider:{4}", frequency, ONID, TSID, SID,providerName);
@@ -3730,6 +3730,7 @@ namespace MediaPortal.TV.Recording
 		#region TuneRequest
 		void SubmitTuneRequest(DVBChannel ch)
 		{
+			if (ch==null) return;
 			try
 			{
 				if (m_NetworkProvider==null) return;
