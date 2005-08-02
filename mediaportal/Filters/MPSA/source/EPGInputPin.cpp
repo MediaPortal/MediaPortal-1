@@ -104,7 +104,7 @@ STDMETHODIMP CEPGInputPin::Receive(IMediaSample *pSample)
 	//Log("epgpin:Receive()");
     CheckPointer(pSample,E_POINTER);
 
-    CAutoLock lock(m_pReceiveLock);
+//    CAutoLock lock(m_pReceiveLock);
     PBYTE pbData;
 
     // Has the filter been stopped yet?
@@ -127,7 +127,7 @@ STDMETHODIMP CEPGInputPin::Receive(IMediaSample *pSample)
 		m_pDump->ProcessEPG(pbData,lDataLen);
 
 	//Log("epgpin:Receive() done");
-    return NOERROR;
+    return S_OK;
 }
 
 void CEPGInputPin::ResetPids()

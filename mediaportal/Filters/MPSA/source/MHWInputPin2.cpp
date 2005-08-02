@@ -48,6 +48,14 @@ CMHWInputPin2::CMHWInputPin2(CStreamAnalyzer *pDump,
     m_pDump(pDump),
     m_tLast(0)
 {
+	m_tableGrabber90.Reset();
+	m_tableGrabber90.SetTableId(0xd3,0x90);
+	
+	m_tableGrabber91.Reset();
+	m_tableGrabber91.SetTableId(0xd3,0x91);
+	
+	m_tableGrabber92.Reset();
+	m_tableGrabber92.SetTableId(0xd3,0x92);
 
 }
 
@@ -58,7 +66,7 @@ CMHWInputPin2::CMHWInputPin2(CStreamAnalyzer *pDump,
 //
 HRESULT CMHWInputPin2::CheckMediaType(const CMediaType *pmt)
 {
-	if(pmt->majortype==MEDIATYPE_Stream && pmt->subtype==MEDIASUBTYPE_MPEG2_TRANSPORT)
+	if(pmt->majortype==MEDIATYPE_MPEG2_SECTIONS)
 		return S_OK;
 	return S_FALSE;
 }
@@ -103,7 +111,7 @@ STDMETHODIMP CMHWInputPin2::Receive(IMediaSample *pSample)
 {
     CheckPointer(pSample,E_POINTER);
 
-    CAutoLock lock(m_pReceiveLock);
+//    CAutoLock lock(m_pReceiveLock);
     PBYTE pbData;
 
     // Has the filter been stopped yet?
@@ -121,13 +129,83 @@ STDMETHODIMP CMHWInputPin2::Receive(IMediaSample *pSample)
 	
 	lDataLen=pSample->GetActualDataLength();
 	// decode
-//	if(lDataLen>5)
-//		m_pDump->Process(pbData,lDataLen);
+	// decode
+	if(lDataLen>5)
+	{
+		if (!m_tableGrabber90.IsSectionGrabbed())
+		{
+			m_tableGrabber90.OnPacket(pbData,lDataLen);
+			
+			if (m_tableGrabber90.IsSectionGrabbed())
+			{
+				//parse summaries
+				for (int i=0; i < m_tableGrabber90.Count();++i)
+				{
+					m_MHWParser.ParseSummaries(m_tableGrabber90.GetTable(i), m_tableGrabber90.GetTableLen(i));
+				}
+			}
+		}
 
-    return NOERROR;
+		if (!m_tableGrabber91.IsSectionGrabbed())
+		{
+			m_tableGrabber91.OnPacket(pbData,lDataLen);
+			
+			if (m_tableGrabber91.IsSectionGrabbed())
+			{	
+				//parse channels
+				for (int i=0; i < m_tableGrabber91.Count();++i)
+				{
+					m_MHWParser.ParseChannels(m_tableGrabber91.GetTable(i), m_tableGrabber91.GetTableLen(i));
+				}
+			}
+		}
+		if (!m_tableGrabber92.IsSectionGrabbed())
+		{
+			m_tableGrabber92.OnPacket(pbData,lDataLen);
+			
+			if (m_tableGrabber92.IsSectionGrabbed())
+			{
+				//parse themes
+				for (int i=0; i < m_tableGrabber92.Count();++i)
+				{
+					m_MHWParser.ParseThemes(m_tableGrabber92.GetTable(i), m_tableGrabber92.GetTableLen(i));
+				}
+			}
+		}
+	}
+
+    return S_OK;
 }
+
 void CMHWInputPin2::ResetPids()
 {
+	//parse summaries
+	for (int i=0; i < m_tableGrabber90.Count();++i)
+	{
+		m_MHWParser.ParseSummaries(m_tableGrabber90.GetTable(i), m_tableGrabber90.GetTableLen(i));
+	}
+
+	//parse channels
+	for (int i=0; i < m_tableGrabber91.Count();++i)
+	{
+		m_MHWParser.ParseChannels(m_tableGrabber91.GetTable(i), m_tableGrabber91.GetTableLen(i));
+	}
+
+	//parse themes
+	for (int i=0; i < m_tableGrabber92.Count();++i)
+	{
+		m_MHWParser.ParseThemes(m_tableGrabber92.GetTable(i), m_tableGrabber92.GetTableLen(i));
+	}
+	m_MHWParser.Reset();
+
+	m_tableGrabber90.Reset();
+	m_tableGrabber90.SetTableId(0xd3,0x90);
+	
+	m_tableGrabber91.Reset();
+	m_tableGrabber91.SetTableId(0xd3,0x91);
+	
+	m_tableGrabber92.Reset();
+	m_tableGrabber92.SetTableId(0xd3,0x92);
 }
 
 //
@@ -136,6 +214,7 @@ void CMHWInputPin2::ResetPids()
 STDMETHODIMP CMHWInputPin2::EndOfStream(void)
 {
     CAutoLock lock(m_pReceiveLock);
+	ResetPids();
     return CRenderedInputPin::EndOfStream();
 
 } // EndOfStream

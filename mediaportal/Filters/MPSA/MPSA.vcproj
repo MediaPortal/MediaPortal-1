@@ -168,6 +168,9 @@
 				RelativePath=".\source\MHWInputPin1.cpp">
 			</File>
 			<File
+				RelativePath=".\source\MHWInputPin2.cpp">
+			</File>
+			<File
 				RelativePath=".\source\MHWParser.cpp">
 			</File>
 			<File
@@ -203,6 +206,9 @@
 			</File>
 			<File
 				RelativePath=".\source\MHWInputPin1.h">
+			</File>
+			<File
+				RelativePath=".\source\MHWInputPin2.h">
 			</File>
 			<File
 				RelativePath=".\source\MHWParser.h">

@@ -50,14 +50,6 @@ CMHWInputPin1::CMHWInputPin1(CStreamAnalyzer *pDump,
 	m_tableGrabber.Reset();
 	m_tableGrabber.SetTableId(0xd2,0x90);
 
-	m_tableGrabber90.Reset();
-	m_tableGrabber90.SetTableId(0xd3,0x90);
-	
-	m_tableGrabber91.Reset();
-	m_tableGrabber91.SetTableId(0xd3,0x91);
-	
-	m_tableGrabber92.Reset();
-	m_tableGrabber92.SetTableId(0xd3,0x92);
 }
 
 //
@@ -67,7 +59,7 @@ CMHWInputPin1::CMHWInputPin1(CStreamAnalyzer *pDump,
 //
 HRESULT CMHWInputPin1::CheckMediaType(const CMediaType *pmt)
 {
-	if(pmt->majortype==MEDIATYPE_Stream)
+	if(pmt->majortype==MEDIATYPE_MPEG2_SECTIONS)
 		return S_OK;
 	return S_FALSE;
 }
@@ -111,7 +103,7 @@ STDMETHODIMP CMHWInputPin1::Receive(IMediaSample *pSample)
 {
     CheckPointer(pSample,E_POINTER);
 
-    CAutoLock lock(m_pReceiveLock);
+    //CAutoLock lock(m_pReceiveLock);
     PBYTE pbData;
 
     // Has the filter been stopped yet?
@@ -138,68 +130,26 @@ STDMETHODIMP CMHWInputPin1::Receive(IMediaSample *pSample)
 			
 			if (m_tableGrabber.IsSectionGrabbed())
 			{
-				//parse titles
 				for (int i=0; i < m_tableGrabber.Count();++i)
 				{
 					m_MHWParser.ParseTitles(m_tableGrabber.GetTable(i), m_tableGrabber.GetTableLen(i));
 				}
 			}
 		}
-		if (!m_tableGrabber90.IsSectionGrabbed())
-		{
-			m_tableGrabber90.OnPacket(pbData,lDataLen);
-			
-			if (m_tableGrabber90.IsSectionGrabbed())
-			{
-				//parse summaries
-				for (int i=0; i < m_tableGrabber90.Count();++i)
-				{
-					m_MHWParser.ParseSummaries(m_tableGrabber90.GetTable(i), m_tableGrabber90.GetTableLen(i));
-				}
-			}
-		}
-		if (!m_tableGrabber91.IsSectionGrabbed())
-		{
-			m_tableGrabber91.OnPacket(pbData,lDataLen);
-			
-			if (m_tableGrabber91.IsSectionGrabbed())
-			{	
-				//parse channels
-				for (int i=0; i < m_tableGrabber91.Count();++i)
-				{
-					m_MHWParser.ParseChannels(m_tableGrabber91.GetTable(i), m_tableGrabber91.GetTableLen(i));
-				}
-			}
-		}
-		if (!m_tableGrabber92.IsSectionGrabbed())
-		{
-			m_tableGrabber92.OnPacket(pbData,lDataLen);
-			
-			if (m_tableGrabber92.IsSectionGrabbed())
-			{
-				//parse themes
-				for (int i=0; i < m_tableGrabber92.Count();++i)
-				{
-					m_MHWParser.ParseThemes(m_tableGrabber92.GetTable(i), m_tableGrabber92.GetTableLen(i));
-				}
-			}
-		}
 	}
-    return NOERROR;
+    return S_OK;
 }
+
+
 void CMHWInputPin1::ResetPids()
 {
+	for (int i=0; i < m_tableGrabber.Count();++i)
+	{
+		m_MHWParser.ParseTitles(m_tableGrabber.GetTable(i), m_tableGrabber.GetTableLen(i));
+	}
+	m_MHWParser.Reset();
 	m_tableGrabber.Reset();
 	m_tableGrabber.SetTableId(0xd2,0x90);
-
-	m_tableGrabber90.Reset();
-	m_tableGrabber90.SetTableId(0xd3,0x90);
-	
-	m_tableGrabber91.Reset();
-	m_tableGrabber91.SetTableId(0xd3,0x91);
-	
-	m_tableGrabber92.Reset();
-	m_tableGrabber92.SetTableId(0xd3,0x92);
 }
 
 //
@@ -208,6 +158,7 @@ void CMHWInputPin1::ResetPids()
 STDMETHODIMP CMHWInputPin1::EndOfStream(void)
 {
     CAutoLock lock(m_pReceiveLock);
+	ResetPids();
     return CRenderedInputPin::EndOfStream();
 
 } // EndOfStream

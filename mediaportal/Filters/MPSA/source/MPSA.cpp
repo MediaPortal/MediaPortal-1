@@ -29,6 +29,7 @@
 #include "SplitterSetup.h"
 #include "proppage.h"
 #include "mhwinputpin1.h"
+#include "mhwinputpin2.h"
 #include "epginputpin.h"
 
 // Setup data
@@ -41,7 +42,7 @@ const AMOVIESETUP_MEDIATYPE sudPinTypes[2] =
 };
 const AMOVIESETUP_MEDIATYPE sudPinTypesMHW =
 {
-	&MEDIATYPE_Stream, &MEDIASUBTYPE_MPEG2_TRANSPORT,         // Minor type
+	&MEDIATYPE_MPEG2_SECTIONS, &MEDIASUBTYPE_DVB_SI,         // Minor type
 };
 
 const AMOVIESETUP_MEDIATYPE sudPinTypesEPG =
@@ -74,6 +75,18 @@ const AMOVIESETUP_PIN sudPins[4] =
 		1,                          // Number of types
 		&sudPinTypesMHW             // Pin information
 	},
+		
+	{
+		L"MHWd3",                   // Pin string name
+		FALSE,                      // Is it rendered
+		FALSE,                      // Is it an output
+		FALSE,                      // Allowed none
+		FALSE,                      // Likewise many
+		&CLSID_NULL,                // Connects to filter
+		L"Output",                  // Connects to pin
+		1,                          // Number of types
+		&sudPinTypesMHW             // Pin information
+	},
 			
 	{
 		L"EPG",                   // Pin string name
@@ -93,7 +106,7 @@ const AMOVIESETUP_FILTER sudDump =
     &CLSID_MPDSA,          // Filter CLSID
     L"MediaPortal Stream Analyzer",   // String name
     MERIT_DO_NOT_USE,           // Filter merit
-    3,                          // Number pins
+    4,                          // Number pins
     sudPins                    // Pin details
 };
 
@@ -143,7 +156,9 @@ CBasePin * CStreamAnalyzerFilter::GetPin(int n)
 	    return m_pDump->m_pPin;
     else if (n ==1) 
 		return m_pDump->m_pMHWPin1;
-	else if (n ==2)
+    else if (n ==2) 
+		return m_pDump->m_pMHWPin2;
+	else if (n ==3)
 		return m_pDump->m_pEPGPin;
 	else {
         return NULL;
@@ -156,7 +171,7 @@ CBasePin * CStreamAnalyzerFilter::GetPin(int n)
 //
 int CStreamAnalyzerFilter::GetPinCount()
 {
-    return 3;
+    return 4;
 }
 
 
@@ -273,7 +288,7 @@ STDMETHODIMP CStreamAnalyzerSectionsPin::Receive(IMediaSample *pSample)
 {
     CheckPointer(pSample,E_POINTER);
 
-    CAutoLock lock(m_pReceiveLock);
+    //CAutoLock lock(m_pReceiveLock);
     PBYTE pbData;
 
     // Has the filter been stopped yet?
@@ -294,7 +309,7 @@ STDMETHODIMP CStreamAnalyzerSectionsPin::Receive(IMediaSample *pSample)
 	if(lDataLen>5)
 		m_pDump->Process(pbData,lDataLen);
 
-    return NOERROR;
+    return S_OK;
 }
 void CStreamAnalyzerSectionsPin::ResetPids()
 {
@@ -384,6 +399,17 @@ CStreamAnalyzer::CStreamAnalyzer(LPUNKNOWN pUnk, HRESULT *phr) :
             *phr = E_OUTOFMEMORY;
         return;
     }
+
+	m_pMHWPin2 = new CMHWInputPin2(this,GetOwner(),
+                               m_pFilter,
+                               &m_Lock,
+                               &m_ReceiveLock,
+                               phr);
+    if (m_pMHWPin2 == NULL) {
+        if (phr)
+            *phr = E_OUTOFMEMORY;
+        return;
+    }
 	m_pEPGPin = new CEPGInputPin(this,GetOwner(),
                                m_pFilter,
                                &m_Lock,
@@ -407,6 +433,7 @@ CStreamAnalyzer::~CStreamAnalyzer()
 	delete m_pSections;
 	delete m_pPin;
 	delete m_pMHWPin1;
+	delete m_pMHWPin2;
 	delete m_pEPGPin;
 	delete m_pFilter;
 
@@ -437,6 +464,7 @@ STDMETHODIMP CStreamAnalyzer::ResetParser()
 	HRESULT hr=m_pDemuxer->UnMapAllPIDs();
 	m_patChannelsCount=0;
 	m_pMHWPin1->ResetPids();
+	m_pMHWPin2->ResetPids();
 	m_pSections->Reset();
 	return hr;
 }
@@ -508,6 +536,19 @@ HRESULT CStreamAnalyzer::OnConnectMHW1()
 		m_pDemuxer->SetMHW1Pin(pin);
 	}
 	Log("OnConnectMHW1 done");
+	return S_OK;
+}
+HRESULT CStreamAnalyzer::OnConnectMHW2()
+{
+	Log("OnConnectMHW2");
+	m_pDemuxer->SetDemuxPins(m_pFilter->GetFilterGraph());
+	IPin *pin;
+	m_pMHWPin2->ConnectedTo(&pin);
+	if(pin!=NULL)
+	{
+		m_pDemuxer->SetMHW2Pin(pin);
+	}
+	Log("OnConnectMHW2 done");
 	return S_OK;
 }
 	
@@ -594,7 +635,7 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 			}
 			if(pbData[0]==0x00 && m_patChannelsCount==0 && pesPacket==false)// pat
 			{
-				m_pDemuxer->UnMapSectionPIDs();
+				//m_pDemuxer->UnMapSectionPIDs();
 				m_pSections->decodePAT(pbData,m_patTable,&m_patChannelsCount,len);
 				for(int n=0;n<m_patChannelsCount;n++)
 				{

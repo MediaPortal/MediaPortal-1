@@ -2,6 +2,8 @@
 #pragma warning(disable: 4511 4512 4995)
 #include "Section.h"
 #include "SplitterSetup.h"
+#include "Tablegrabber.h"
+#include "MHWParser.h"
 
 class CMHWInputPin2 :
 	public CRenderedInputPin
@@ -38,5 +40,11 @@ public:
     // Track NewSegment
     STDMETHODIMP NewSegment(REFERENCE_TIME tStart,REFERENCE_TIME tStop,double dRate);
 	void ResetPids();
+private:
 
+	TableGrabber m_tableGrabber90;
+	TableGrabber m_tableGrabber91;
+	TableGrabber m_tableGrabber92;
+	CMHWParser   m_MHWParser;
+	
 };

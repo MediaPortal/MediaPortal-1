@@ -363,6 +363,7 @@ int Sections::decodeSDT(BYTE *buf,ChannelInfo ch[],int channels, int len)
 				ch[channel].EITSchedule=EIT_schedule_flag;
 				ch[channel].SDTReady=true;
 				ch[channel].NetworkID=original_network_id;
+				//Log("%s %s onid:%x", ch[channel].ProviderName,ch[channel].ServiceName,ch[channel].NetworkID);
 				//
 				//
 			}
@@ -433,7 +434,7 @@ void Sections::decodePAT(BYTE *pData,ChannelInfo chInfo[],int *channelCount, int
 		ch.ProgrammNumber=(pData[offset]<<8)+pData[offset+1];
 		ch.TransportStreamID=transport_stream_id;
 		ch.PMTReady=false;
-		Log("loop:%d prog:%d tsid:%x pid:%x", loop,ch.ProgrammNumber,ch.TransportStreamID,ch.ProgrammPMTPID);
+		//Log("loop:%d prog:%d tsid:%x pid:%x", loop,ch.ProgrammNumber,ch.TransportStreamID,ch.ProgrammPMTPID);
 		if(ch.ProgrammPMTPID>0x12)
 		{
 			chInfo[pmtcount]=ch;

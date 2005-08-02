@@ -16,6 +16,7 @@ class CStreamAnalyzerSectionsPin;
 class CStreamAnalyzer;
 class CStreamAnalyzerFilter;
 class CMHWInputPin1;
+class CMHWInputPin2;
 class CEPGInputPin;
 
 // {B4F1F9BF-9ECA-41b8-883B-9C7FC0DD7047}
@@ -156,6 +157,7 @@ class CStreamAnalyzer : public CUnknown, public IStreamAnalyzer,public ISpecifyP
     CStreamAnalyzerFilter*		m_pFilter;       // Methods for filter interfaces
     CStreamAnalyzerSectionsPin*	m_pPin;          // A simple rendered input pin
 	CMHWInputPin1*				m_pMHWPin1;          // A simple rendered input pin
+	CMHWInputPin2*				m_pMHWPin2;
 	CEPGInputPin*				m_pEPGPin;	
     CCritSec					m_Lock;                // Main renderer critical section
     CCritSec					m_ReceiveLock;         // Sublock for received samples
@@ -170,6 +172,7 @@ public:
 	HRESULT 	 ProcessEPG(BYTE *pbData,long len);
 	HRESULT 	 OnConnectSections();
 	HRESULT 	 OnConnectMHW1();
+	HRESULT 	 OnConnectMHW2();
 	HRESULT 	 OnConnectEPG();
 	STDMETHODIMP ResetPids();
     STDMETHODIMP get_IPin (IPin **ppPin) ;

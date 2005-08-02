@@ -41,12 +41,8 @@ public:
 
 private:
 	void		GetSectionHeader(byte* data,int offset, DVBSectionHeader& header);
-	void		ParseSection();
-	Sections	m_sectionUtils;
-	int			m_bufferPosition;
-	byte		m_tableBuffer[70000];
+	void		ParseSection(byte* pData, long lDataLen);
 	bool		m_bSectionGrabbed;
-	int			m_lastContinuityCounter;
 	int			m_sectionTableID;
 	int			m_pid;
 	time_t      timeoutTimer;
