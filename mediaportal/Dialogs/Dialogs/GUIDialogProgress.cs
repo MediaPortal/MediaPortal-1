@@ -39,6 +39,9 @@ namespace MediaPortal.Dialogs
     
     bool m_bCanceled=false;
     bool m_bOverlay=false;
+    bool m_bShowWaitCursor=false;
+    WaitCursor cursor = null;
+
     
     public GUIDialogProgress()
     {
@@ -54,8 +57,15 @@ namespace MediaPortal.Dialogs
     {
       get { return true;}
     }    
+
     public override void PreInit()
     {
+    }
+
+    public bool ShowWaitCursor
+    {
+      get { return m_bShowWaitCursor = false; }
+      set { m_bShowWaitCursor = value;}
     }
 
 
@@ -96,7 +106,12 @@ namespace MediaPortal.Dialogs
 				m_pParentWindow=null;
 				m_bRunning=false;
 				GUIGraphicsContext.Overlay=m_bOverlay;
-			}
+        if (m_bShowWaitCursor && (null != cursor))
+        {
+          cursor.Dispose();
+          cursor = null;
+        }
+      }
 			GUIWindowManager.IsSwitchingToNewWindow=false;
     }
     
@@ -121,6 +136,11 @@ namespace MediaPortal.Dialogs
       SetPercentage(0);
 			m_bRunning=true;
 			GUIWindowManager.IsSwitchingToNewWindow=false;
+      if (m_bShowWaitCursor)
+      {
+        cursor = new WaitCursor();
+        GUIWindowManager.Process();
+      }
     }
 
 		public void ContinueModal()
