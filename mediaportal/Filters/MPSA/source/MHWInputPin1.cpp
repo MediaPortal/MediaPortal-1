@@ -123,10 +123,8 @@ STDMETHODIMP CMHWInputPin1::Receive(IMediaSample *pSample)
 	// decode
 	if(lDataLen>5)
 	{
-		if (!m_tableGrabber.IsSectionGrabbed())
-		{
-			m_tableGrabber.OnPacket(pbData,lDataLen);
-		}
+		Log("mhwpin1: packet:(%x)", pbData[0]);
+		m_tableGrabber.OnPacket(pbData,lDataLen);
 	}
     return S_OK;
 }
@@ -134,6 +132,7 @@ STDMETHODIMP CMHWInputPin1::Receive(IMediaSample *pSample)
 
 void CMHWInputPin1::ResetPids()
 {
+	Log("mhwpin1: ResetPids()");
 	m_bParsed=false;
 	m_MHWParser.Reset();
 	m_tableGrabber.Reset();
@@ -145,6 +144,7 @@ void CMHWInputPin1::ResetPids()
 //
 STDMETHODIMP CMHWInputPin1::EndOfStream(void)
 {
+	Log("mhwpin1: EndOfStream()");
     CAutoLock lock(m_pReceiveLock);
 	ResetPids();
     return CRenderedInputPin::EndOfStream();
@@ -177,11 +177,14 @@ bool CMHWInputPin1::IsReady()
 		Parse();
 		return true;
 	}
+	Log("mhwpin1: IsReady():%d",m_tableGrabber.IsSectionGrabbed());
 	return false;
 }
 void CMHWInputPin1::Parse()
 {
 	if (m_bParsed) return;
+		
+	Log("mhwpin1: parse()");
 	m_bParsed=true;
 	//parse summaries
 	for (int i=0; i < m_tableGrabber.Count();++i)
