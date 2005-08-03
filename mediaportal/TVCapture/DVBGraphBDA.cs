@@ -1551,7 +1551,7 @@ namespace MediaPortal.TV.Recording
 				TuneChannel(channel);
 
 				
-			SetupDemuxer(m_DemuxVideoPin,currentTuningObject.VideoPid,m_DemuxAudioPin,currentTuningObject.Audio1,m_pinAC3Out,currentTuningObject.AC3Pid);
+			//SetupDemuxer(m_DemuxVideoPin,currentTuningObject.VideoPid,m_DemuxAudioPin,currentTuningObject.Audio1,m_pinAC3Out,currentTuningObject.AC3Pid);
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Viewing..");
 			return true;
 		}//public bool StartViewing(AnalogVideoStandard standard, int iChannel,int country)
@@ -3004,14 +3004,14 @@ namespace MediaPortal.TV.Recording
 					{
 						if (m_graphState==State.Radio && (currentTuningObject.PCRPid<=0||currentTuningObject.PCRPid>=0x1fff))
 						{
-							Log.Write("DVBGraphBDA:SendPMT() audio pid:{0:X} AC3 pid:{1:X} pcrpid:{2:X}",currentTuningObject.AudioPid,currentTuningObject.AC3Pid,currentTuningObject.PCRPid);
+							Log.Write("DVBGraphBDA:SendPMT() setup demux:audio pid:{0:X} AC3 pid:{1:X} pcrpid:{2:X}",currentTuningObject.AudioPid,currentTuningObject.AC3Pid,currentTuningObject.PCRPid);
 							SetupDemuxer(m_DemuxVideoPin,0,m_DemuxAudioPin,0,m_pinAC3Out,0);
 							SetupDemuxerPin(m_pinMPG1Out,currentTuningObject.AudioPid,(int)MediaSampleContent.TransportPayload,true);
 							SetupDemuxerPin(m_pinMPG1Out,currentTuningObject.PCRPid,(int)MediaSampleContent.TransportPacket,false);
 						}
 						else
 						{
-							Log.Write("DVBGraphBDA:SendPMT() video pid:{0:X} audio pid:{1:X} AC3 pid:{2:X}",currentTuningObject.VideoPid,currentTuningObject.AudioPid,currentTuningObject.AC3Pid);
+							Log.Write("DVBGraphBDA:SendPMT() set demux: video pid:{0:X} audio pid:{1:X} AC3 pid:{2:X}",currentTuningObject.VideoPid,currentTuningObject.AudioPid,currentTuningObject.AC3Pid);
 							SetupDemuxer(m_DemuxVideoPin,currentTuningObject.VideoPid,m_DemuxAudioPin,currentTuningObject.AudioPid, m_pinAC3Out,currentTuningObject.AC3Pid);
 						}
 					}
