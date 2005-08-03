@@ -35,6 +35,75 @@ namespace MediaPortal.Player
 {
   public class VideoPlayerVMR7 : IPlayer
   {
+		protected const int MAX_STREAMS = 100;
+
+		protected struct  FilterStreamInfos
+		{
+			public int		Id;
+			public string		Name;
+			public bool		Current;
+			public string		Filter;
+			public int		Type; // 0=video 1=audio 2=subtitle 3=hide subtitle 4=show subtitle
+		};
+		protected class  FilterStreams
+		{
+			public FilterStreams()
+			{
+				cStreams=0;
+				Streams=new FilterStreamInfos[MAX_STREAMS];
+			}
+			public FilterStreamInfos GetStreamInfos(int Type,int Id)
+			{
+				FilterStreamInfos empty=new FilterStreamInfos();
+				for (int i=0;i<cStreams;i++)
+				{
+					if (Type==Streams[i].Type)
+					{
+						if (Id==0)return Streams[i];
+						Id--;
+					}
+				}
+				return empty;
+			}
+			public int GetStreamCount(int Type)
+			{
+				int ret=0;
+				for (int i=0;i<cStreams;i++)
+				{
+					if (Type==Streams[i].Type)
+					{
+						ret++;
+					}
+				}
+				return ret;
+			}
+			public bool AddStreamInfos(FilterStreamInfos StreamInfos)
+			{
+				if (cStreams==MAX_STREAMS)return false;
+				Streams[cStreams]=StreamInfos;
+				cStreams++;
+				return true;
+			}
+			public bool SetCurrentValue(int Type,int Id,bool Value)
+			{
+				for (int i=0;i<cStreams;i++)
+				{
+					if (Type==Streams[i].Type)
+					{
+						if (Id==0){Streams[i].Current=Value;return true;}
+						Id--;
+					}
+				}
+				return false;
+			}
+			public void DeleteAllStreams()
+			{
+				cStreams=0;
+			}
+			private FilterStreamInfos[] Streams;
+			private int cStreams;
+		};
+
     public enum PlayState
     {
       Init,
@@ -96,24 +165,8 @@ namespace MediaPortal.Player
     protected const int WS_CLIPSIBLINGS	= 0x04000000;
     protected bool        m_bVisible=false;
 		protected DateTime    updateTimer;
+		protected FilterStreams FStreams=null;
 		VMR7Util  vmr7 = null;
-		protected struct  FilterStreamInfos
-		{
-			public int      Id;
-			public string   Name;
-			public bool      Current;
-			public string   Filter;
-		};
-		protected const int MAX_VIDEOSTREAMS = 20;
-		protected const int MAX_AUDIOSTREAMS = 20;
-		protected const int MAX_SUBSTREAMS = 20;
-		protected int cStreams_Audio=0;
-		protected int cStreams_Video=0;
-		protected int cStreams_Sub=0;   
-		protected FilterStreamInfos[] sStreams_Audio;
-		protected FilterStreamInfos[] sStreams_Video;
-		protected FilterStreamInfos[] sStreams_Sub;
-		protected FilterStreamInfos   sStreams_Sub_No_Subtitle; //Haali use a stream to disable subtitles
 
     public VideoPlayerVMR7()
     {
@@ -1040,245 +1093,227 @@ namespace MediaPortal.Player
 		}
 
 		#region subtitle/audio stream selection
-		public override int AudioStreams
-		{
-			get { return cStreams_Audio;}
-		}
-		public override int CurrentAudioStream
-		{
-			get
-			{
-				for (int i=0;i<cStreams_Audio;i++)if (sStreams_Audio[i].Current)return i;
-				return 0;
-			}
-			set
-			{
-				for (int i=0;i<cStreams_Audio;i++)if (sStreams_Audio[i].Current)sStreams_Audio[i].Current=false;
-				sStreams_Audio[value].Current=true;
-				EnableStream(sStreams_Audio[value].Id,0,sStreams_Audio[value].Filter);
-				EnableStream(sStreams_Audio[value].Id,AMStreamSelectEnableFlags.Enable,sStreams_Audio[value].Filter);
-				return;
-			}
-		}
-		public override string AudioLanguage(int iStream)
-		{
-			return sStreams_Audio[iStream].Name;
-		}
+	  public override int AudioStreams
+	  {
+		  get { return FStreams.GetStreamCount(1);}
+	  }
+	  public override int CurrentAudioStream
+	  {
+		  get 
+		  { 
+			  for (int i=0;i<FStreams.GetStreamCount(1);i++)if (FStreams.GetStreamInfos(1,i).Current)return i;
+			  return 0;
+		  }
+		  set 
+		  {
+			  for (int i=0;i<FStreams.GetStreamCount(1);i++)
+				  if (FStreams.GetStreamInfos(1,i).Current)
+					  FStreams.SetCurrentValue(1,i,false);
+			  FStreams.SetCurrentValue(1,value,true);
+			  EnableStream(FStreams.GetStreamInfos(1,value).Id,0,FStreams.GetStreamInfos(1,value).Filter);
+			  EnableStream(FStreams.GetStreamInfos(1,value).Id,AMStreamSelectEnableFlags.Enable,FStreams.GetStreamInfos(1,value).Filter);
+			  return;
+		  }
+	  }
+	  public override string AudioLanguage(int iStream)
+	  {
+		  return FStreams.GetStreamInfos(1,iStream).Name;
+	  }
 
-   
-		public override int SubtitleStreams
-		{
-			get
-			{
-				//DVD
-				if (this.vobSub != null)
-				{
-						int ret;
-					vobSub.get_LanguageCount(out ret);
-					return ret;
-				}
-				//AVI & MKV
-					return cStreams_Sub;
-			}
-		}
+	
+	  //SUBTITLES
+	  public override int SubtitleStreams
+	  {
+		  get 
+		  {
+			  //DVD
+			  if (this.vobSub != null)
+			  {   int ret;
+				  vobSub.get_LanguageCount(out ret);
+				  return ret;
+			  }
+			  //AVI & MKV
+			  return FStreams.GetStreamCount(2);
+		  }
+	  }
 
-		public override int CurrentSubtitleStream
-		{
-			get
-			{
-				//DVD
-				if (vobSub!=null)
-				{
-					int ret=0;
-					vobSub.get_SelectedLanguage(out ret);
-					return ret;
-				}
-				//AVI & MKV
-				for (int i=0;i<cStreams_Sub;i++)
-					if (sStreams_Sub[i].Current)
-						return i;
-				return 0;
-			}
-			set
-			{
-				//DVD
-				if (vobSub!=null)
-				{
-					vobSub.put_SelectedLanguage(value);
-					return;
-				}
-				//AVI & MKV
-				for (int i=0;i<cStreams_Sub;i++)
-					sStreams_Sub[i].Current=false;
-				sStreams_Sub[value].Current=true;
-				EnableStream(sStreams_Sub[value].Id,0,sStreams_Sub[value].Filter);
-				EnableStream(sStreams_Sub[value].Id,AMStreamSelectEnableFlags.Enable,sStreams_Sub[value].Filter);
-				return;
-			}
-		}
+	  public override int CurrentSubtitleStream
+	  {
+		  get 
+		  { 
+			  //DVD
+			  if (vobSub!=null)
+			  {
+				  int ret=0;
+				  vobSub.get_SelectedLanguage(out ret);
+				  return ret;
+			  }
+			  //AVI & MKV
+			  for (int i=0;i<FStreams.GetStreamCount(2);i++)
+				  if (FStreams.GetStreamInfos(2,i).Current)
+					  return i;
+			  return 0;
+		  }
+		  set 
+		  {
+			  //DVD
+			  if (vobSub!=null){
+				  vobSub.put_SelectedLanguage(value);
+				  return;
+			  }
+			  //AVI & MKV
+			  for (int i=0;i<FStreams.GetStreamCount(2);i++)
+				  FStreams.SetCurrentValue(2,i,false);
+			  FStreams.SetCurrentValue(2,value,true);
+			  EnableStream(FStreams.GetStreamInfos(2,value).Id,0,FStreams.GetStreamInfos(2,value).Filter);
+			  EnableStream(FStreams.GetStreamInfos(2,value).Id,AMStreamSelectEnableFlags.Enable,FStreams.GetStreamInfos(2,value).Filter);
+			  return;
+		  }
+	  }
 
-		public override string SubtitleLanguage(int iStream)
-		{
-			if (vobSub != null)
-			{   
-				string ret = Strings.Unknown;
-				IntPtr curNamePtr;
-				vobSub.get_LanguageName(iStream, out curNamePtr);
-				if (curNamePtr != IntPtr.Zero)
-				{
-					ret = Marshal.PtrToStringUni(curNamePtr);
-					Marshal.FreeCoTaskMem(curNamePtr);
-				}
-				return ret;
-			}
-			return sStreams_Sub[iStream].Name;
-		}
-		public override bool EnableSubtitle
-		{
-			get
-			{
+	  public override string SubtitleLanguage(int iStream)
+	  {
+		  //DVD
+		  if (vobSub != null)
+		  {	
+			  string ret = Strings.Unknown;
+			  IntPtr curNamePtr;
+			  vobSub.get_LanguageName(iStream, out curNamePtr);
+			  if (curNamePtr != IntPtr.Zero)
+			  {
+				  ret = Marshal.PtrToStringUni(curNamePtr);
+				  Marshal.FreeCoTaskMem(curNamePtr);
+			  }
+			  return ret;
+		  }
+		  //AVI & MKV
+		  return FStreams.GetStreamInfos(2,iStream).Name;
+	  }
 
-				bool ret = false;
-				if (this.vobSub != null)
-				{
-					int hr = vobSub.get_HideSubtitles(out ret);
-					if (hr == 0)
-					{
-						ret = !ret;
-					}
-				}
-				else
-				{
-					return !sStreams_Sub_No_Subtitle.Current;
-				}
-				return ret;
-			}
-			set
-			{
-				if (this.vobSub != null)
-				{
-					bool hide = !value;
-					int hr = vobSub.put_HideSubtitles(hide);
-				}          
-				else
-				{
-					int CurrentSub=CurrentSubtitleStream;
 
-					if (CurrentSub>=0 && cStreams_Sub>=1)
-					{
-						sStreams_Sub_No_Subtitle.Current=!value;
-						EnableStream(sStreams_Sub_No_Subtitle.Id,0,sStreams_Sub_No_Subtitle.Filter);
-						EnableStream(sStreams_Sub[CurrentSub].Id,0,sStreams_Sub[CurrentSub].Filter);
-						if (value)
-							EnableStream(sStreams_Sub[CurrentSub].Id,AMStreamSelectEnableFlags.Enable,sStreams_Sub[CurrentSub].Filter);
-						else
-							EnableStream(sStreams_Sub_No_Subtitle.Id,AMStreamSelectEnableFlags.Enable,sStreams_Sub_No_Subtitle.Filter);
-					}
-				}
-			}
-		} 
+	  public override bool EnableSubtitle
+	  {
+		  get 
+		  {
+
+			  bool ret = false;
+			  if (this.vobSub != null)
+			  {
+				  int hr = vobSub.get_HideSubtitles(out ret);
+				  if (hr == 0)
+				  {
+					  ret = !ret;
+				  }
+			  }
+			  else
+			  {
+				return !FStreams.GetStreamInfos(3,0).Current;
+			  }
+			  return ret;
+		  }
+		  set 
+		  {
+			  if (this.vobSub != null)
+			  {
+				  bool hide = !value;
+				  int hr = vobSub.put_HideSubtitles(hide);
+			  }			  
+			  else
+			  {
+				  int CurrentSub=CurrentSubtitleStream;
+
+				  if (CurrentSub>=0 && FStreams.GetStreamCount(2)>=1)
+				  {
+					  FStreams.SetCurrentValue(3,0,!value);
+
+					  for (int i=0;i<FStreams.GetStreamCount(3);i++)
+						  EnableStream(FStreams.GetStreamInfos(3,i).Id,(value)?0:AMStreamSelectEnableFlags.Enable,FStreams.GetStreamInfos(3,i).Filter);
+					 
+					  EnableStream(FStreams.GetStreamInfos(2,CurrentSub).Id,(value)?AMStreamSelectEnableFlags.Enable:0,FStreams.GetStreamInfos(2,CurrentSub).Filter);
+					  
+					  if (FStreams.GetStreamCount(4)>0)
+						EnableStream(FStreams.GetStreamInfos(4,0).Id,(value)?AMStreamSelectEnableFlags.Enable:0,FStreams.GetStreamInfos(4,0).Filter);
+				  }
+			  }
+		  }
+	  }
 
     public bool AnalyseStreams()
     {
-      try
-      {
-        //INITIALIZE
-        sStreams_Sub_No_Subtitle.Id=0;
-        sStreams_Sub_No_Subtitle.Filter="";
-        cStreams_Audio=0;
-        cStreams_Video=0;
-        cStreams_Sub=0;
-        sStreams_Audio=new FilterStreamInfos[MAX_AUDIOSTREAMS];
-        sStreams_Video=new FilterStreamInfos[MAX_VIDEOSTREAMS];
-        sStreams_Sub=new FilterStreamInfos[MAX_SUBSTREAMS];   
+		  try
+		  {
+			if (FStreams==null)FStreams=new FilterStreams();
+			FStreams.DeleteAllStreams();
+ 
+			//RETRIEVING THE CURRENT SPLITTER
+			string filter;
+			IBaseFilter foundfilter=null;
 
-        //RETRIEVING THE CURRENT SPLITTER
-        string filter;
-        IBaseFilter foundfilter=null;
+			uint fetched=0;
+			IEnumFilters enumFilters;
+			graphBuilder.EnumFilters(out enumFilters);
+			if (enumFilters!=null)
+			{
+				enumFilters.Reset();
+				while (enumFilters.Next(1,out foundfilter,out fetched)==0)
+				{
+					if (foundfilter!=null && fetched==1)
+					{
+						IAMStreamSelect pStrm = foundfilter as IAMStreamSelect;
+						if (pStrm!=null)
+						{
+							FilterInfo foundfilterinfos=new FilterInfo();
+							foundfilter.QueryFilterInfo(foundfilterinfos);
+							filter=foundfilterinfos.achName;
+							int cStreams=0;
+							pStrm.Count(out cStreams);
+							//GET STREAMS
+							for (int istream=0;istream<cStreams;istream++)
+							{
+								AMMediaType sType;AMStreamSelectInfoFlags sFlag;
+								int sPDWGroup,sPLCid;string sName;
+								object pppunk,ppobject;
+								//STREAM INFO
+								pStrm.Info(istream,out sType,out sFlag,out sPLCid,
+									out sPDWGroup,out sName,out pppunk,out ppobject);
 
-        uint fetched=0;
-        IEnumFilters enumFilters;
-        graphBuilder.EnumFilters(out enumFilters);
-        if (enumFilters!=null)
-        {
-          enumFilters.Reset();
-          while (enumFilters.Next(1,out foundfilter,out fetched)==0)
-          {
-            if (foundfilter!=null && fetched==1)
-            {
-              IAMStreamSelect pStrm = foundfilter as IAMStreamSelect;
-              if (pStrm!=null)
-              {
-                FilterInfo foundfilterinfos=new FilterInfo();
-                foundfilter.QueryFilterInfo(foundfilterinfos);
-                filter=foundfilterinfos.achName;
-                int cStreams=0;
-                pStrm.Count(out cStreams);
-                //GET STREAMS
-                for (int istream=0;istream<cStreams;istream++)
-                {
-                  AMMediaType sType;AMStreamSelectInfoFlags sFlag;
-                  int sPDWGroup,sPLCid;string sName;
-                  object pppunk,ppobject;
-                  //STREAM INFO
-                  pStrm.Info(istream,out sType,out sFlag,out sPLCid,
-                    out sPDWGroup,out sName,out pppunk,out ppobject);
+								FilterStreamInfos FSInfos=new FilterStreamInfos();
+								FSInfos.Current=false;
+								FSInfos.Filter=filter;
+								FSInfos.Name=sName;
+								FSInfos.Id=istream;
+								FSInfos.Type=-1;
 
-                  //VIDEO
-                  if (sPDWGroup==0 && cStreams_Video<MAX_VIDEOSTREAMS)
-                  {
-                    sStreams_Video[cStreams_Video].Name=sName;
-                    sStreams_Video[cStreams_Video].Id=istream;
-                    sStreams_Video[cStreams_Video].Filter=filter;
-                    sStreams_Video[cStreams_Video].Current=false;
-                    if (cStreams_Video==0)
-                    {
-                      sStreams_Video[cStreams_Video].Current=true;
-                      pStrm.Enable(istream,0);
-                      pStrm.Enable(istream,AMStreamSelectEnableFlags.Enable);
-                    }
-                    cStreams_Video++;
-                  }
-                  else
-                    //AUDIO
-                    if (sPDWGroup==1 && cStreams_Audio<MAX_AUDIOSTREAMS)
-                  {
-                    sStreams_Audio[cStreams_Audio].Name=sName;
-                    sStreams_Audio[cStreams_Audio].Id=istream;
-                    sStreams_Audio[cStreams_Audio].Filter=filter;
-                    sStreams_Audio[cStreams_Audio].Current=false;
-                    if (cStreams_Audio==0)
-                    {
-                      sStreams_Audio[cStreams_Audio].Current=true;
-                      pStrm.Enable(istream,0);
-                      pStrm.Enable(istream,AMStreamSelectEnableFlags.Enable);
-                    }
-                    cStreams_Audio++;
-                  }
-                  else
-                    //SUBTITLE
-                    if (sPDWGroup==2 && cStreams_Sub<MAX_SUBSTREAMS && sName.LastIndexOf("off")==-1  && sName.LastIndexOf("No ")==-1&& sName.LastIndexOf("Miscellaneous ")==-1)
-                  {
-                    sStreams_Sub[cStreams_Sub].Name=sName;
-                    sStreams_Sub[cStreams_Sub].Id=istream;
-                    sStreams_Sub[cStreams_Sub].Filter=filter;
-                    sStreams_Sub[cStreams_Sub].Current=false;
-                    if (cStreams_Sub==0)
-                    {
-                      sStreams_Sub[cStreams_Sub].Current=true;
-                      pStrm.Enable(istream,0);
-                      pStrm.Enable(istream,AMStreamSelectEnableFlags.Enable);
-                    }
-                    cStreams_Sub++;
-                  }
-                  else
-                    //NO SUBTITILE TAG
-                    if (sPDWGroup==2 && cStreams_Sub<MAX_SUBSTREAMS && (sName.LastIndexOf("off")!=-1 || sName.LastIndexOf("No ")!=-1))
-                  {
-                    sStreams_Sub_No_Subtitle.Id=istream;
-                    sStreams_Sub_No_Subtitle.Current=false;
-                    sStreams_Sub_No_Subtitle.Filter=filter;
-                    sStreams_Sub_No_Subtitle.Name=sName;
+
+								//VIDEO
+								if (sPDWGroup==0)
+									FSInfos.Type=0;
+								else
+								//AUDIO
+								if (sPDWGroup==1)
+									FSInfos.Type=1;
+								else
+								//SUBTITLE
+								if (sPDWGroup==2 && sName.LastIndexOf("off")==-1 && sName.LastIndexOf("Hide ")==-1  && sName.LastIndexOf("No ")==-1&& sName.LastIndexOf("Miscellaneous ")==-1)
+									FSInfos.Type=2;
+								else 
+									//NO SUBTITILE TAG
+								if ((sPDWGroup==2 && (sName.LastIndexOf("off")!=-1 || sName.LastIndexOf("No ")!=-1 )) || (sPDWGroup==6590033 && sName.LastIndexOf("Hide ")!=-1))
+									FSInfos.Type=3;
+								else 
+									//DirectVobSub SHOW SUBTITLE TAG
+								if (sPDWGroup==6590033 && sName.LastIndexOf("Show ")!=-1)
+									FSInfos.Type=4;
+
+								if (FSInfos.Type!=-1)
+								{
+									if (FSInfos.Type<3 && FStreams.GetStreamCount(FSInfos.Type)==0)
+									{
+										FSInfos.Current=true;
+										pStrm.Enable(FSInfos.Id,0);
+										pStrm.Enable(FSInfos.Id,AMStreamSelectEnableFlags.Enable);
+									}
+									FStreams.AddStreamInfos(FSInfos);
                   }
                 }
               }
@@ -1302,7 +1337,8 @@ namespace MediaPortal.Player
         if (foundfilter!=null)
         {
           IAMStreamSelect pStrm = foundfilter as IAMStreamSelect;
-          if (pStrm!=null)pStrm.Enable(Id,dwFlags);
+				  if (pStrm!=null)
+					  pStrm.Enable(Id,dwFlags);
           pStrm=null;
           Marshal.ReleaseComObject(foundfilter);
         }
