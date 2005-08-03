@@ -3577,7 +3577,6 @@ namespace MediaPortal.TV.Recording
 				}	//switch (m_NetworkType)
 				//submit tune request to the tuner
 			
-				m_analyzerInterface.ResetParser();
 
 				DirectShowUtil.EnableDeInterlace(m_graphBuilder);
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() done freq:{0} ONID:{1} TSID:{2} prog:{3} audio:{4:X} video:{5:X} pmt:{6:X} ac3:{7:X} txt:{8:X}",
@@ -3593,6 +3592,7 @@ namespace MediaPortal.TV.Recording
 
 				if(m_pluginsEnabled==true)
 					ExecTuner();
+				m_analyzerInterface.ResetParser();
 			}	
 			finally
 			{
