@@ -778,7 +778,19 @@ STDMETHODIMP CStreamAnalyzer::GrabMHW()
 }
 STDMETHODIMP CStreamAnalyzer::IsMHWReady(BOOL* yesNo)
 {
-	*yesNo=(m_pMHWPin1->IsReady() && m_pMHWPin2->IsReady() );
+	if (m_pMHWPin1->IsReady() && m_pMHWPin2->IsReady() )
+	{
+		if (m_pMHWPin1->IsParsed() && m_pMHWPin2->IsParsed())
+		{
+			*yesNo=FALSE;
+			return S_OK;
+		}
+		*yesNo=TRUE;
+		return S_OK;
+		
+	}
+	*yesNo=FALSE;
+	return S_OK;
 	return S_OK;
 }
 STDMETHODIMP CStreamAnalyzer::GetMHWTitleCount(WORD* count)

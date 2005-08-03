@@ -185,6 +185,11 @@ bool CMHWInputPin2::IsReady()
 	}
 	return false;
 }
+
+bool CMHWInputPin2::IsParsed()
+{
+	return m_bParsed;
+}
 void CMHWInputPin2::Parse()
 {
 	if (m_bParsed) return;

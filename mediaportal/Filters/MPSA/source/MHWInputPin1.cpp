@@ -166,6 +166,10 @@ STDMETHODIMP CMHWInputPin1::NewSegment(REFERENCE_TIME tStart,
 
 } // NewSegment
 
+bool CMHWInputPin1::IsParsed()
+{
+	return m_bParsed;
+}
 bool CMHWInputPin1::IsReady()
 {
 	if (m_tableGrabber.IsSectionGrabbed() ) 
