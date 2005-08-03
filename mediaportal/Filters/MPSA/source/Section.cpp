@@ -31,7 +31,7 @@
 //////////////////////////////////////////////////////////////////////
 void Log(const char *fmt, ...) 
 {
-#ifdef DEBUG
+//#ifdef DEBUG
 	va_list ap;
 	va_start(ap,fmt);
 
@@ -52,7 +52,7 @@ void Log(const char *fmt, ...)
 			buffer);
 		fclose(fp);
 	}
-#endif
+//#endif
 };
 
 ULONG Sections::GetSectionCRCValue(byte* data,int ptr)

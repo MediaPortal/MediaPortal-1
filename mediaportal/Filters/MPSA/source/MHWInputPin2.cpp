@@ -125,7 +125,7 @@ STDMETHODIMP CMHWInputPin2::Receive(IMediaSample *pSample)
 	if(lDataLen>5)
 	{
 		
-		Log("mhwpin2: packet:(%x)", pbData[0]);
+//		Log("mhwpin2: packet:(%x)", pbData[0]);
 		m_tableGrabber90.OnPacket(pbData,lDataLen);
 		m_tableGrabber91.OnPacket(pbData,lDataLen);
 		m_tableGrabber92.OnPacket(pbData,lDataLen);
@@ -187,7 +187,7 @@ bool CMHWInputPin2::IsReady()
 		Parse();
 		return true;
 	}
-	Log("mhwpin2: t90:%d t91:%d t92:%d",m_tableGrabber90.IsSectionGrabbed(),m_tableGrabber91.IsSectionGrabbed(),m_tableGrabber92.IsSectionGrabbed());
+//	Log("mhwpin2: t90:%d t91:%d t92:%d",m_tableGrabber90.IsSectionGrabbed(),m_tableGrabber91.IsSectionGrabbed(),m_tableGrabber92.IsSectionGrabbed());
 	return false;
 }
 

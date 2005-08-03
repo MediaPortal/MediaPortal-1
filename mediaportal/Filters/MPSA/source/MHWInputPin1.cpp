@@ -123,7 +123,7 @@ STDMETHODIMP CMHWInputPin1::Receive(IMediaSample *pSample)
 	// decode
 	if(lDataLen>5)
 	{
-		Log("mhwpin1: packet:(%x)", pbData[0]);
+	//	Log("mhwpin1: packet:(%x)", pbData[0]);
 		m_tableGrabber.OnPacket(pbData,lDataLen);
 	}
     return S_OK;
@@ -177,7 +177,7 @@ bool CMHWInputPin1::IsReady()
 		Parse();
 		return true;
 	}
-	Log("mhwpin1: IsReady():%d",m_tableGrabber.IsSectionGrabbed());
+	//Log("mhwpin1: IsReady():%d",m_tableGrabber.IsSectionGrabbed());
 	return false;
 }
 void CMHWInputPin1::Parse()
