@@ -3004,16 +3004,14 @@ namespace MediaPortal.TV.Recording
 					{
 						if (m_graphState==State.Radio && (currentTuningObject.PCRPid<=0||currentTuningObject.PCRPid>=0x1fff))
 						{
-							Log.Write("DVBGraphBDA:SendPMT() audio pid:{0:X} AC3 pid:{1:X} pcrpid:{2:X}",
-								currentTuningObject.AudioPid,currentTuningObject.AC3Pid,currentTuningObject.PCRPid);
+							Log.Write("DVBGraphBDA:SendPMT() audio pid:{0:X} AC3 pid:{1:X} pcrpid:{2:X}",currentTuningObject.AudioPid,currentTuningObject.AC3Pid,currentTuningObject.PCRPid);
 							SetupDemuxer(m_DemuxVideoPin,0,m_DemuxAudioPin,0,m_pinAC3Out,0);
 							SetupDemuxerPin(m_pinMPG1Out,currentTuningObject.AudioPid,(int)MediaSampleContent.TransportPayload,true);
 							SetupDemuxerPin(m_pinMPG1Out,currentTuningObject.PCRPid,(int)MediaSampleContent.TransportPacket,false);
 						}
 						else
 						{
-							Log.Write("DVBGraphBDA:SendPMT() video pid:{0:X} audio pid:{1:X} AC3 pid:{2:X}",
-								currentTuningObject.VideoPid,currentTuningObject.AudioPid,currentTuningObject.AC3Pid);
+							Log.Write("DVBGraphBDA:SendPMT() video pid:{0:X} audio pid:{1:X} AC3 pid:{2:X}",currentTuningObject.VideoPid,currentTuningObject.AudioPid,currentTuningObject.AC3Pid);
 							SetupDemuxer(m_DemuxVideoPin,currentTuningObject.VideoPid,m_DemuxAudioPin,currentTuningObject.AudioPid, m_pinAC3Out,currentTuningObject.AC3Pid);
 						}
 					}
@@ -3022,23 +3020,26 @@ namespace MediaPortal.TV.Recording
 					}
 				}//if (info.pid_list!=null)
 
+				refreshPmtTable=false;
 				VideoCaptureProperties props = new VideoCaptureProperties(m_TunerDevice);
 				if (!props.IsCISupported()) return true;
 				int pmtVersion = ((pmt[5]>>1)&0x1F);
 
 				// send the PMT table to the device
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Process() send PMT version {0} to device",pmtVersion);	
-
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Process() send PMT version {0} to device",pmtVersion);
 				if(props.SendPMT(currentTuningObject.VideoPid,currentTuningObject.AudioPid, pmt, (int)pmt.Length))
 				{
 					Log.Write("DVBGraphBDA:SendPMT() signal strength:{0} signal quality:{1}",SignalStrength(), SignalQuality() );
 					return true;
 				}
+				else
+				{
+					refreshPmtTable=true;
+				}
 			}
 			catch(Exception ex)
 			{
-				Log.WriteFile(Log.LogType.Log,true,"ERROR: exception while sending pmt {0} {1} {2}",
-					ex.Message,ex.Source,ex.StackTrace);
+				Log.WriteFile(Log.LogType.Log,true,"ERROR: exception while sending pmt {0} {1} {2}",ex.Message,ex.Source,ex.StackTrace);
 			}
 			Log.Write("DVBGraphBDA:SendPMT() signal strength:{0} signal quality:{1}",SignalStrength(), SignalQuality() );
 			return false;
