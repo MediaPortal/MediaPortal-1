@@ -4754,7 +4754,7 @@ namespace MediaPortal.TV.Recording
 					stream.Close();
 				}
 				refreshPmtTable=true;
-				m_epgGrabber.GrabEPG();
+				m_epgGrabber.GrabEPG(currentTuningObject.HasEITSchedule==true);
 			}
 			catch(Exception ex)
 			{

@@ -1497,7 +1497,7 @@ namespace MediaPortal.TV.Recording
 					//m_gotAudioFormat=false;
 					m_analyzerInterface.ResetParser();
 					m_StartTime=DateTime.Now;
-					m_epgGrabber.GrabEPG();
+					m_epgGrabber.GrabEPG(m_currentTuningObject.HasEITSchedule==true);
 				}
 			}
 			finally

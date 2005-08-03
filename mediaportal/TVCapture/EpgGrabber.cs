@@ -16,6 +16,7 @@ namespace MediaPortal.TV.Recording
 		IEPGGrabber epgInterface=null;
 		IMHWGrabber mhwInterface=null;
 		NetworkType networkType;
+		bool        grabEPG=false;
 		#endregion
 
 		#region properties
@@ -38,19 +39,26 @@ namespace MediaPortal.TV.Recording
 
 		#region public methods
 		
-		public void GrabEPG()
+		public void GrabEPG(bool epg)
 		{
-			Log.WriteFile(Log.LogType.EPG,"epg-grab: start EPG grabber");
-			if (EPGInterface!=null)
-				EPGInterface.GrabEPG();
-
-			if (MHWInterface!=null)
-				MHWInterface.GrabMHW();
+			grabEPG=epg;
+			if (grabEPG)
+			{
+				Log.WriteFile(Log.LogType.EPG,"epg-grab: start EPG grabber");
+				if (EPGInterface!=null)
+					EPGInterface.GrabEPG();
+			}
+			else
+			{
+				Log.WriteFile(Log.LogType.EPG,"epg-grab: start MHW grabber");
+				if (MHWInterface!=null)
+					MHWInterface.GrabMHW();
+			}
 		}
 		public void Process()
 		{
 			bool ready=false;
-			if (EPGInterface!=null)
+			if (EPGInterface!=null && grabEPG)
 			{
 				EPGInterface.IsEPGReady(out ready);
 				if (ready)
@@ -58,13 +66,14 @@ namespace MediaPortal.TV.Recording
 					ParseEPG();
 				
 				}
-				if (MHWInterface!=null)
+			}
+			
+			if (MHWInterface!=null && !grabEPG)
+			{
+				MHWInterface.IsMHWReady(out ready);
+				if (ready)
 				{
-					MHWInterface.IsMHWReady(out ready);
-					if (ready)
-					{
-						ParseMHW();
-					}
+					ParseMHW();
 				}
 			}
 		}
