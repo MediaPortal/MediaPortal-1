@@ -611,6 +611,7 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 		}
 		
 		bool pesPacket=false;
+		/*
 		if(pbData[0]==0x00 && pbData[1]==0x00 && pbData[2]==0x01)
 		{
 			AudioHeader audio;
@@ -623,7 +624,7 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 				int a=0;
 			}
 			delete [] d;
-		}
+		}*/
 			
 			
 		if(pbData[0]==0x02)// pmt
@@ -634,12 +635,12 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 				if(m_patTable[n].ProgrammNumber==prgNumber && m_patTable[n].PMTReady==false)
 				{
 					m_pSections->decodePMT(pbData,&m_patTable[n],len);
-					if(m_patTable[n].Pids.AudioPid1>0)
-						m_pDemuxer->MapAdditionalPayloadPID(m_patTable[n].Pids.AudioPid1);
-					if(m_patTable[n].Pids.AudioPid2>0)
-						m_pDemuxer->MapAdditionalPayloadPID(m_patTable[n].Pids.AudioPid2);
-					if(m_patTable[n].Pids.AudioPid3>0)
-						m_pDemuxer->MapAdditionalPayloadPID(m_patTable[n].Pids.AudioPid3);
+					//if(m_patTable[n].Pids.AudioPid1>0)
+					//	m_pDemuxer->MapAdditionalPayloadPID(m_patTable[n].Pids.AudioPid1);
+					//if(m_patTable[n].Pids.AudioPid2>0)
+					//	m_pDemuxer->MapAdditionalPayloadPID(m_patTable[n].Pids.AudioPid2);
+					//if(m_patTable[n].Pids.AudioPid3>0)
+					//	m_pDemuxer->MapAdditionalPayloadPID(m_patTable[n].Pids.AudioPid3);
 				}
 			}
 			if(m_pmtGrabProgNum==prgNumber && len<=4096)
@@ -647,8 +648,7 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 				memset(m_pmtGrabData,0,4096);
 				memcpy(m_pmtGrabData,pbData,len);// save the pmt in the buffer
 				m_currentPMTLen=len;
-			}
-					
+			}		
 		}
 		if(pbData[0]==0x00 && pesPacket==false)// pat
 		{
@@ -680,6 +680,7 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 	}
 	return S_OK;
 }
+
 STDMETHODIMP CStreamAnalyzer::IsChannelReady(ULONG channel)
 {
 	if(channel<0 || channel>(ULONG)m_patChannelsCount-1)

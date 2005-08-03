@@ -31,7 +31,7 @@
 //////////////////////////////////////////////////////////////////////
 void Log(const char *fmt, ...) 
 {
-#ifdef DEBUG
+//#ifdef DEBUG
 	va_list ap;
 	va_start(ap,fmt);
 
@@ -52,7 +52,7 @@ void Log(const char *fmt, ...)
 			buffer);
 		fclose(fp);
 	}
-#endif
+//#endif
 };
 
 ULONG Sections::GetSectionCRCValue(byte* data,int ptr)
@@ -175,6 +175,7 @@ HRESULT Sections::CurrentPTS(BYTE *pData,ULONGLONG *ptsValue,int *streamType)
 int Sections::decodePMT(BYTE *buf,ChannelInfo *ch, int len)
 {
 	// pmt should now in the pmtData array
+	if (len <12) return -1;
 
 	int table_id = buf[0];
 	int section_syntax_indicator = (buf[1]>>7) & 1;
@@ -194,6 +195,7 @@ int Sections::decodePMT(BYTE *buf,ChannelInfo *ch, int len)
 	// loop 1
 	while (len2 > 0)
 	{
+		if (pointer+1>=len) return -1;
 		int indicator=buf[pointer];
 		x = 0;
 		x = buf[pointer + 1] + 2;
@@ -209,6 +211,7 @@ int Sections::decodePMT(BYTE *buf,ChannelInfo *ch, int len)
 
 	while (len1 > 4)
 	{
+		if (pointer+4>=len) return -1;
 		stream_type = buf[pointer];
 		elementary_PID = ((buf[pointer+1]&0x1F)<<8)+buf[pointer+2];
 		ES_info_length = ((buf[pointer+3] & 0xF)<<8)+buf[pointer+4];
@@ -254,6 +257,7 @@ int Sections::decodePMT(BYTE *buf,ChannelInfo *ch, int len)
 		len2 = ES_info_length;
 		while (len2 > 0)
 		{
+			if (pointer+1>=len) return -1;
 			x = 0;
 			int indicator=buf[pointer];
 			x = buf[pointer + 1] + 2;
@@ -261,6 +265,8 @@ int Sections::decodePMT(BYTE *buf,ChannelInfo *ch, int len)
 				ch->Pids.AC3=elementary_PID;
 			if(indicator==0x0A)
 			{
+				
+				if (pointer+4>=len) return -1;
 				BYTE d[3];
 				d[0]=buf[pointer+2];
 				d[1]=buf[pointer+3];
@@ -299,7 +305,6 @@ int Sections::decodePMT(BYTE *buf,ChannelInfo *ch, int len)
 		return section_number+1;
 	else
 		return -1;
-
 }
 int Sections::decodeSDT(BYTE *buf,ChannelInfo ch[],int channels, int len)
 {	
