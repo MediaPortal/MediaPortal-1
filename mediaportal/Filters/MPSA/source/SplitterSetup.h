@@ -29,8 +29,9 @@ public:
 	HRESULT SetMHW1Pin(IPin *ppin);
 	HRESULT SetMHW2Pin(IPin *ppin);
 	HRESULT SetEPGPin(IPin *ppin);
-	bool PinIsNULL();
+	bool	PinIsNULL();
 	HRESULT SetEPGMapping();
+	void	UseATSC(bool yesNo);
 protected:
 	HRESULT SetupDemuxer(IBaseFilter *p);
 	HRESULT GetPSIMedia(AM_MEDIA_TYPE *pintype);
@@ -39,12 +40,13 @@ protected:
 	HRESULT SetMHW2Mapping();
 
 protected:
-	Sections *m_pSections;
-	BOOL m_demuxSetupComplete;
-	IPin *m_pSectionsPin;
-	IPin *m_pMHW1Pin;
-	IPin *m_pMHW2Pin;
-	IPin *m_pEPGPin;	
+	bool		m_bUseATSC;
+	Sections*	m_pSections;
+	BOOL		m_demuxSetupComplete;
+	IPin*		m_pSectionsPin;
+	IPin*		m_pMHW1Pin;
+	IPin*		m_pMHW2Pin;
+	IPin*		m_pEPGPin;	
 
 };
 

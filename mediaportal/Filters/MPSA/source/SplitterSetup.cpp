@@ -29,6 +29,7 @@ extern void Log(const char *fmt, ...) ;
 SplitterSetup::SplitterSetup(Sections *pSections) :
 m_demuxSetupComplete(FALSE),m_pSectionsPin(NULL)
 {
+	m_bUseATSC=false;
 	m_pEPGPin=NULL;
 	m_pMHW1Pin=NULL;
 	m_pMHW2Pin=NULL;
@@ -53,6 +54,11 @@ SplitterSetup::~SplitterSetup()
 	if(m_pEPGPin!=NULL)
 		m_pEPGPin->Release();
 	m_pEPGPin=NULL;
+}
+
+void SplitterSetup::UseATSC(bool yesNo)
+{
+	m_bUseATSC=yesNo;
 }
 
 HRESULT SplitterSetup::SetDemuxPins(IFilterGraph *pGraph)
@@ -163,17 +169,18 @@ HRESULT SplitterSetup::SetMHW1Mapping()
 		}
 	}
 	pPidEnum->Release();
-	
-	Log("map pid 0xd2");
-	pid = (ULONG)0xd2;
-	hr=pMap->MapPID(1,&pid,MEDIA_MPEG2_PSI); // tv
-	if(FAILED(hr))
+
+	if (!m_bUseATSC) 
 	{
-		Log("failed to map pid 0xd2");
-		return 4;
-	}
-	
-	
+		Log("map pid 0xd2");
+		pid = (ULONG)0xd2;
+		hr=pMap->MapPID(1,&pid,MEDIA_MPEG2_PSI); // tv
+		if(FAILED(hr))
+		{
+			Log("failed to map pid 0xd2");
+			return 4;
+		}
+	}	
 	pMap->Release();
 	return S_OK;
 
@@ -219,13 +226,16 @@ HRESULT SplitterSetup::SetMHW2Mapping()
 	}
 	pPidEnum->Release();
 	
-	Log("map pid 0xd3");
-	pid = (ULONG)0xd3;
-	hr=pMap->MapPID(1,&pid,MEDIA_MPEG2_PSI); // tv
-	if(FAILED(hr))
+	if (!m_bUseATSC) 
 	{
-		Log("failed to map pid 0xd3");
-		return 4;
+		Log("map pid 0xd3");
+		pid = (ULONG)0xd3;
+		hr=pMap->MapPID(1,&pid,MEDIA_MPEG2_PSI); // tv
+		if(FAILED(hr))
+		{
+			Log("failed to map pid 0xd3");
+			return 4;
+		}
 	}
 	pMap->Release();
 	return S_OK;
@@ -285,30 +295,35 @@ HRESULT SplitterSetup::SetSectionMapping()
 	pPidEnum->Release();
 
 
-
-	Log("map pid 0x0");
-	pid = (ULONG)0;// pat
-	hr=pMap->MapPID(1,&pid,MEDIA_MPEG2_PSI); // tv
-	if(FAILED(hr))
+	if (!m_bUseATSC)
 	{
-		Log("failed to map pid 0x0");
-		return 4;
+		Log("map pid 0x0");
+		pid = (ULONG)0;// pat
+		hr=pMap->MapPID(1,&pid,MEDIA_MPEG2_PSI); // tv
+		if(FAILED(hr))
+		{
+			Log("failed to map pid 0x0");
+			return 4;
+		}
+		Log("map pid 0x11");
+		pid = (ULONG)0x11;// sdt
+		hr=pMap->MapPID(1,&pid,MEDIA_MPEG2_PSI); // tv
+		if(FAILED(hr))
+		{
+			Log("failed to map pid 0x11");
+			return 4;
+		}
 	}
-	Log("map pid 0x11");
-	pid = (ULONG)0x11;// sdt
-	hr=pMap->MapPID(1,&pid,MEDIA_MPEG2_PSI); // tv
-	if(FAILED(hr))
+	else
 	{
-		Log("failed to map pid 0x11");
-		return 4;
-	}
-	Log("map pid 0x1ffb");
-	pid = (ULONG)0x1ffb;// ATSC
-	hr=pMap->MapPID(1,&pid,MEDIA_MPEG2_PSI); 
-	if(FAILED(hr))
-	{	
-		Log("failed to map pid 0x1ffb");
-		return 4;
+		Log("map pid 0x1ffb");
+		pid = (ULONG)0x1ffb;// ATSC
+		hr=pMap->MapPID(1,&pid,MEDIA_MPEG2_PSI); 
+		if(FAILED(hr))
+		{	
+			Log("failed to map pid 0x1ffb");
+			return 4;
+		}
 	}
 	pMap->Release();
 	return S_OK;
@@ -317,6 +332,7 @@ HRESULT SplitterSetup::MapAdditionalPID(ULONG pid)
 {
 	IMPEG2PIDMap	*pMap=NULL;
 	
+	if (m_bUseATSC) return S_OK;
 	Log ("MapAdditionalPID:%x", pid);
 	if (pid>=0x1fff) return S_FALSE;
 	HRESULT hr=0;
@@ -343,6 +359,7 @@ HRESULT SplitterSetup::MapAdditionalPayloadPID(ULONG pid)
 	
 	HRESULT hr=0;
 
+	if (m_bUseATSC) return S_OK;
 	if(m_pSectionsPin==NULL)
 		return S_FALSE;
 
@@ -429,13 +446,16 @@ HRESULT SplitterSetup::SetEPGMapping()
 	}
 	pPidEnum->Release();
 
-	Log("map pid 0x12");
-	pid = (ULONG)0x12;// EIT
-	hr=pMap->MapPID(1,&pid,MEDIA_MPEG2_PSI); // tv
-	if(FAILED(hr))
+	if (!m_bUseATSC)
 	{
-		Log("failed to map pid 0x12");
-		return 4;
+		Log("map pid 0x12");
+		pid = (ULONG)0x12;// EIT
+		hr=pMap->MapPID(1,&pid,MEDIA_MPEG2_PSI); // tv
+		if(FAILED(hr))
+		{
+			Log("failed to map pid 0x12");
+			return 4;
+		}
 	}
 	pMap->Release();
 

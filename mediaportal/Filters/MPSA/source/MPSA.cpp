@@ -564,6 +564,7 @@ HRESULT CStreamAnalyzer::ProcessEPG(BYTE *pbData,long len)
 {
 	try
 	{
+		if (m_bDecodeATSC) return S_OK;
 		if (m_pSections->IsEPGGrabbing())
 		{
 			if (pbData[0]>=0x50 && pbData[0] <= 0x6f) //EPG
@@ -735,10 +736,12 @@ STDMETHODIMP CStreamAnalyzer::SetPMTProgramNumber(ULONG prgNum)
 STDMETHODIMP CStreamAnalyzer::UseATSC(BOOL yesNo)
 {
 	m_bDecodeATSC=yesNo;
+	m_pDemuxer->UseATSC(yesNo);
 	if (m_bDecodeATSC)
 		Log("use ATSC:yes");
 	else
 		Log("use ATSC:no");
+	
 	return S_OK;
 }
 STDMETHODIMP CStreamAnalyzer::IsATSCUsed(BOOL* yesNo)

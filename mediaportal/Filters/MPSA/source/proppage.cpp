@@ -359,7 +359,7 @@ void MPDSTProperties::FillListBox()
 	WORD len;
 	m_pIMPDST->GetCISize(&len);
 	BYTE *chh=new BYTE[len];
-    for(int n=0;n<count-1;n++)
+    for(int n=0;n<count;n++)
 	{
 			m_pIMPDST->GetChannel(n,chh);
 			memcpy(&ch,chh,len);
