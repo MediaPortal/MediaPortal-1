@@ -639,6 +639,10 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 			}
 			if(pbData[0]==0x00 && pesPacket==false)// pat
 			{
+				// we need to check if we received a new PAT
+				// reason, after submitting a tune request (zap to another channel) we might still
+				// receive the old PAT for a couple of msec until the tuner has
+				// finished tuning to the new channel
 				if (m_pSections->IsNewPat(pbData,len))
 				{
 					Log("Found new PAT, decode channels");
