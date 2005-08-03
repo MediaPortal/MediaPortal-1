@@ -119,6 +119,11 @@ namespace MediaPortal.TV.Recording
 					if (programName==null) programName="";
 					if (summary==null) summary="";
 					if (theme==null) theme="";
+					channelName=channelName.Trim();
+					title=title.Trim();
+					programName=programName.Trim();
+					summary=summary.Trim();
+					theme=theme.Trim();
 
 					uint d1=datestart;
 					uint m=timestart&0xff;
