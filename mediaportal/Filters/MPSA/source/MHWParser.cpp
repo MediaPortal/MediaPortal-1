@@ -184,7 +184,7 @@ void CMHWParser::GetTitle(int program, WORD* id, WORD* transportId, WORD* networ
 	*transportId=it->second.TransportStreamID;
 	*networkId=it->second.NetworkID;
 	*channelId=it->second.ChannelID;
-	*programId=it->second.ProgrammID;
+	*programId=it->second.ID;
 	*themeId=it->second.ThemeID;
 	*PPV=it->second.PPV;
 	*Summaries=it->second.Summaries;
@@ -192,16 +192,13 @@ void CMHWParser::GetTitle(int program, WORD* id, WORD* transportId, WORD* networ
 	*dateStart=it->second.dateStart;
 	*timeStart=it->second.timeStart;
 	*title=(char*)it->second.Title.c_str();
-	*programName=(char*)it->second.ProgrammName.c_str();
-	Log("MHW:GetTitle(%d) size:%d chanid:%d progid:%d %s %s", 
+	Log("MHW:GetTitle(%d) size:%d chanid:%d progid:%d '%s'", 
 		program,m_mapTitles.size(),
-		*channelId, *programId, *title,*programName);
+		*channelId, *programId, *title);
 }
 
 void CMHWParser::GetChannel(WORD channelId, WORD* networkId, WORD* transportId, char** channelName)
 {
-	*networkId=0;
-	*transportId=0;
 	*channelName="";
 	imapChannels it=m_vecChannels.begin();
 	while (it!=m_vecChannels.end())

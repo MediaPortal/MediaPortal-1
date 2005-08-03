@@ -36,8 +36,6 @@ class CMHWParser
 		bool	Summaries;
 		int		Duration;
 		string	Title;
-		int		ProgrammID;
-		string	ProgrammName;
 		int		TransportStreamID;
 		int		NetworkID;
 	};
