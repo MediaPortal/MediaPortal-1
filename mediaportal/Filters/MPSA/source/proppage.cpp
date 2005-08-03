@@ -251,7 +251,7 @@ HRESULT MPDSTProperties::OnApplyChanges()
     if (iIndex <= 0)
         iIndex =0 ;
 
-	Sections::ChannelInfo ch;
+	ChannelInfo ch;
 
 	HRESULT hr;
 	
@@ -269,7 +269,7 @@ HRESULT MPDSTProperties::OnApplyChanges()
 		char buffer[255];
 		memset(buffer,0,255);
 		if(hr==S_FALSE)
-			memset((BYTE*)&ch,0,sizeof(struct Sections::chInfo));
+			memset((BYTE*)&ch,0,sizeof(struct chInfo));
 	
 	// audio
 	_i64toa((__int64)ch.Pids.AudioPid1,buffer,10);
@@ -354,7 +354,7 @@ void MPDSTProperties::FillListBox()
     //
     HDC hdc = GetDC (m_hwndLB) ;
 	WORD count;
-	Sections::ChannelInfo ch;
+	ChannelInfo ch;
 	HRESULT hr=m_pIMPDST->GetChannelCount(&count);
 	WORD len;
 	m_pIMPDST->GetCISize(&len);

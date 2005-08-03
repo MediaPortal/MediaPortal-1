@@ -162,6 +162,9 @@
 			Name="Source Files"
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat">
 			<File
+				RelativePath=".\source\ATSCParser.cpp">
+			</File>
+			<File
 				RelativePath=".\source\EPGInputPin.cpp">
 			</File>
 			<File
@@ -198,6 +201,9 @@
 		<Filter
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl">
+			<File
+				RelativePath=".\source\ATSCParser.h">
+			</File>
 			<File
 				RelativePath=".\source\crc.h">
 			</File>

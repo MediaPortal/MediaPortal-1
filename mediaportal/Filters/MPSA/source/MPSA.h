@@ -11,6 +11,7 @@
 
 #include "Section.h"
 #include "SplitterSetup.h"
+#include "atscparser.h"
 
 class CStreamAnalyzerSectionsPin;
 class CStreamAnalyzer;
@@ -227,13 +228,13 @@ public:
 public:
 	Sections*				m_pSections;
 	SplitterSetup*			m_pDemuxer;
-	Sections::ChannelInfo	m_patTable[255];
+	ChannelInfo				m_patTable[255];
 	int						m_patChannelsCount;
 	ULONG					m_pmtGrabProgNum;
 	BYTE					m_pmtGrabData[4096];
 	long					m_currentPMTLen;
 	BOOL					m_bDecodeATSC;
-
+	ATSCParser				m_atscParser;
 private:
     // Overriden to say what interfaces we support where
     STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void ** ppv);

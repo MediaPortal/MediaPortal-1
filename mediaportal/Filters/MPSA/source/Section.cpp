@@ -395,7 +395,7 @@ void Sections::DVB_GetService(BYTE *b,ServiceData *serviceData)
 	int service_provider_name_length;
 	int service_name_length;
 	int pointer = 0;
-	memset(serviceData,0,sizeof(struct ServiceData));
+	memset(serviceData,0,sizeof(struct stserviceData));
 	descriptor_tag = b[0];
 	descriptor_length = b[1];
 	serviceData->ServiceType = b[2];
@@ -436,7 +436,7 @@ void Sections::decodePAT(BYTE *pData,ChannelInfo chInfo[],int *channelCount, int
 
 	*channelCount=loop;
 	ChannelInfo ch;
-	memset(&ch,0,sizeof(struct ChannelInfo));
+	memset(&ch,0,sizeof(struct chInfo));
 	if(table_id!=0 || section_number>last_section_number)
 	{
 		*channelCount=0;
@@ -520,286 +520,6 @@ cont:
 
 }
 
-
-void Sections::ATSCDecodeChannelTable(BYTE *buf,ChannelInfo *ch, int* channelsFound)
-{
-	int table_id = buf[0];
-	if (table_id!=0xc8 && table_id != 0xc9) return;
-	//dump table!
-	*channelsFound=0;
-	Log("ATSCDecodeChannelTable()");
-	int section_syntax_indicator = (buf[1]>>7) & 1;
-	int private_indicator = (buf[1]>>6) & 1;
-	int section_length = ((buf[1]& 0xF)<<8) + buf[2];
-	int transport_stream_id = (buf[3]<<8)+buf[4];
-	int version_number = ((buf[5]>>1)&0x1F);
-	int current_next_indicator = buf[5] & 1;
-	int section_number = buf[6];
-	int last_section_number = buf[7];
-	int protocol_version = buf[8];
-	int num_channels_in_section = buf[9];
-	if (num_channels_in_section <= 0) return;
-/*
-	FILE* fp = fopen("table.dat","wb+");
-	if (fp!=NULL)
-	{
-		fwrite(buf,1,section_length,fp);
-		fclose(fp);
-	}*/
-	Log("  table id:0x%x section length:%d channels:%d (%d)", table_id,section_length,num_channels_in_section, (*channelsFound));
-	int start=10;
-	for (int i=0; i < num_channels_in_section;i++)
-	{
-		Log("  decode channel:%d", i);
-		char shortName[127];
-		strcpy(shortName,"unknown");
-		try
-		{
-			//shortname 7*16 bits (14 bytes) in UTF-16
-			for (int count=0; count < 7; count++)
-			{
-				shortName[count] = buf[1+start+count*2];
-				shortName[count+1]=0; 
-			}
-		}
-		catch(...)
-		{
-		}
-		
-		Log("  channel:%d shortname:%s", i,shortName);
-
-		start+= 7*2;
-		// 4---10-- ------10 -------- 8------- 32------ -------- -------- -------- 16------ -------- 16------ -------- 2-111113 --6----- 16------ -------- 6-----10 --------
-		// 76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210
-		//    112      113      114       115      116    117      118       119     120     121       123      124      125      126      127      128      129      130
-		//     0        1        2         3        4      5        6         7       8       9        10       11       12       13       14       15       16       17 
-		//  ++++++++ ++++++++ --+-++-	
-		// 76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210
-		int major_channel    		 =((buf[start  ]&0xf)<<8) + (buf[start+1]>>2);
-		int minor_channel    		 =((buf[start+1]&0x3)<<8) + buf[start+2];
-		int modulation_mode  		 = buf[start+3];
-		int carrier_frequency		 = (buf[start+4]<<24) + (buf[start+5]<<16) + (buf[start+6]<<8) + (buf[start+7]);
-		int channel_TSID			 = ((buf[start+8])<<8) + buf[start+9];
-		int program_number			 = ((buf[start+10])<<8) + buf[start+11];
-		int ETM_location			 = ((buf[start+12]>>6)&0x3);
-		int access_controlled		 = ((buf[start+12]>>4)&0x1);
-		int hidden          		 = ((buf[start+12]>>3)&0x1);
-		int path_select     		 = ((buf[start+12]>>2)&0x1);
-		int out_of_band     		 = ((buf[start+12]>>1)&0x1);
-		int hide_guide     		     = ((buf[start+12]   )&0x1);
-		int service_type             = ((buf[start+13]   )&0x3f);
-		int source_id				 = ((buf[start+14])<<8) + buf[start+15];
-		int descriptors_length		 = ((buf[start+16]&0x3)<<8) + buf[start+17];
-
-		if (major_channel==0 && minor_channel==0 && channel_TSID==0 && service_type==0 )
-		{
-			*channelsFound=0;
-			return;
-		}
-		if (modulation_mode < 0 || modulation_mode > 5)
-		{
-			*channelsFound=0;
-			return;
-		}
-		Log("  channel:%d major:%d minor:%d modulation:%d frequency:%d tsid:%d program:%d servicetype:%d descriptor len:%d", 
-						i,major_channel,minor_channel,modulation_mode,carrier_frequency, channel_TSID, program_number,service_type, descriptors_length);
-		ChannelInfo* channelInfo = &ch[*channelsFound];
-		memset(channelInfo->ProviderName,0,255);
-		memset(channelInfo->ServiceName,0,255);
-		strcpy((char*)channelInfo->ProviderName,"unknown");
-		strcpy((char*)channelInfo->ServiceName,shortName);
-		channelInfo->MinorChannel = minor_channel;
-		channelInfo->MajorChannel = major_channel;
-		channelInfo->Frequency    = carrier_frequency;
-		channelInfo->ProgrammNumber= program_number;
-		channelInfo->TransportStreamID = channel_TSID;		
-		channelInfo->Pids.Teletext=-1;
-		channelInfo->Pids.AudioPid1=-1;
-		channelInfo->Pids.AudioPid2=-1;
-		channelInfo->Pids.AudioPid3=-1;
-		channelInfo->Pids.AC3=-1;
-		channelInfo->Pids.Subtitles=-1;
-		channelInfo->Pids.VideoPid=-1;
-		channelInfo->Pids.Lang1_1=0;
-		channelInfo->Pids.Lang1_2=0;
-		channelInfo->Pids.Lang1_3=0;
-		channelInfo->Pids.Lang2_1=0;
-		channelInfo->Pids.Lang2_2=0;
-		channelInfo->Pids.Lang2_3=0;
-		channelInfo->Pids.Lang3_1=0;
-		channelInfo->Pids.Lang3_2=0;
-		channelInfo->Pids.Lang3_3=0;
-		channelInfo->EITPreFollow=0;
-		channelInfo->EITSchedule=0;
-		channelInfo->ProgrammPMTPID=-1;
-		channelInfo->NetworkID    =-1;
-		channelInfo->PMTReady	  = 1;
-		channelInfo->SDTReady	  = 1;
-		if (service_type==1||service_type==2) channelInfo->ServiceType=1;//ATSC video
-		if (service_type==3) channelInfo->ServiceType=2;//ATSC audio
-		switch (modulation_mode)
-		{
-			case 0: //reserved
-				channelInfo->Modulation   = BDA_MOD_NOT_SET;
-			break;
-			case 1: //analog
-				channelInfo->Modulation   = BDA_MOD_ANALOG_FREQUENCY;
-			break;
-			case 2: //QAM64
-				channelInfo->Modulation   = BDA_MOD_64QAM;
-			break;
-			case 3: //QAM256
-				channelInfo->Modulation   = BDA_MOD_256QAM;
-			break;
-			case 4: //8 VSB
-				channelInfo->Modulation   = BDA_MOD_8VSB;
-			break;
-			case 5: //16 VSB
-				channelInfo->Modulation   = BDA_MOD_16VSB;
-			break;
-			default: //
-				channelInfo->Modulation   = BDA_MOD_NOT_SET;
-			break;
-
-		}
-
-		start += 18;
-		int len=0;
-		if (descriptors_length<=0)
-		{
-			*channelsFound=0;
-			return;
-		}
-		while (len < descriptors_length)
-		{
-			int descriptor_tag = buf[start+len];
-			int descriptor_len = buf[start+len+1];
-			if (descriptor_len==0 || descriptor_len+start > section_length)
-			{
-				*channelsFound=0;
-				return;
-			}			
-			Log("    decode descriptor start:%d len:%d tag:%x", start, descriptor_len, descriptor_tag);
-			switch (descriptor_tag)
-			{
-				case 0xa1:
-					DecodeServiceLocationDescriptor( buf,start+len, channelInfo);
-				break;
-				case 0xa0:
-					DecodeExtendedChannelNameDescriptor( buf,start+len,channelInfo);
-				break;
-			}
-			len += (descriptor_len+2);
-		}
-		start += descriptors_length;
-		*channelsFound=*channelsFound+1;
-	}
-	Log("ATSCDecodeChannelTable() done, found %d channels", (*channelsFound));
-}
-
-void Sections::DecodeServiceLocationDescriptor( byte* buf,int start,ChannelInfo* channelInfo)
-{
-
-	Log("DecodeServiceLocationDescriptor()");
-	//  8------ 8------- 3--13--- -------- 8-------       
-	// 76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210
-	//    0        1        2         3        4       5       6         7        8       9     
-	int pcr_pid = ((buf[start+2]&0x1f)<<8) + buf[start+3];
-	int number_of_elements = buf[start+4];
-	int off=start+5;
-	channelInfo->PCRPid=pcr_pid;
-
-	if (number_of_elements==0) return;
-	Log(" pcr pid:%x elements:%d", pcr_pid, number_of_elements);
-	for (int i=0; i < number_of_elements;++i)
-	{
-
-		//  8------ 3--13--- -------- 24------ -------- --------
-		// 76543210|76543210|76543210|76543210|76543210|76543210|
-		//    0        1        2         3        4       5     
-		int streamtype			  = buf[off];
-		int elementary_pid		  = ((buf[off+1]&0x1f)<<8) + buf[off+2];
-		int ISO_639_language_code =	(buf[off+3]<<16) +(buf[off+4]<<8) + (buf[off+5]);
-
-		Log(" element:%d type:%d pid:%x", i,streamtype, elementary_pid);
-		off+=6;
-		//pmtData.data=ISO_639_language_code;
-		switch (streamtype)
-		{
-			case 0x2: // video
-				channelInfo->Pids.VideoPid=elementary_pid;
-				break;
-			case 0x81: // audio
-				channelInfo->Pids.AudioPid1=elementary_pid;
-				break;
-			default:
-				break;
-		}
-	}
-	Log("DecodeServiceLocationDescriptor() done");
-}
-void Sections::DecodeExtendedChannelNameDescriptor( byte* buf,int start,ChannelInfo* channelInfo)
-{
-	Log("DecodeExtendedChannelNameDescriptor() ");
-	// tid   
-	//  8       8------- 8-------
-	// 76543210|76543210|76543210
-	//    0        1        2    
-	int descriptor_tag = buf[start+0];
-	int descriptor_len = buf[start+1];
-	Log(" tag:%x len:%d", descriptor_tag, descriptor_len);
-	char* label = DecodeMultipleStrings(buf,start+2);
-	if (label==NULL) return ;
-	strcpy((char*)channelInfo->ServiceName,label);
-
-	Log(" label:%s", label);
-	delete [] label;
-	Log("DecodeExtendedChannelNameDescriptor() done");
-}
-char* Sections::DecodeString(byte* buf, int offset, int compression_type, int mode, int number_of_bytes)
-{
-	Log("DecodeString() compression type:%d numberofbytes:%d",compression_type, mode);
-	if (compression_type==0 && mode==0)
-	{
-		char* label = new char[number_of_bytes+1];
-		memcpy(label,&buf[offset],number_of_bytes);
-		label[number_of_bytes]=0;
-		return (char*)label;
-	}
-	//string data="";
-	//for (int i=0; i < number_of_bytes;++i)
-	//	data += String.Format(" {0:X}", buf[offset+i]);
-	Log("DecodeString() unknown type or mode");
-	return NULL;
-}
-
-char* Sections::DecodeMultipleStrings(byte* buf, int offset)
-{
-	int number_of_strings = buf[offset];
-	Log("DecodeMultipleStrings() number_of_strings:%d",number_of_strings);
-	
-
-	for (int i=0; i < number_of_strings;++i)
-	{
-		Log("  string:%d", i);
-		int ISO_639_language_code = (buf[offset+1]<<16)+(buf[offset+2]<<8)+(buf[offset+3]);
-		int number_of_segments=buf[offset+4];
-		int start=offset+5;
-		Log("  segments:%d", number_of_segments);
-		for (int k=0; k < number_of_segments;++k)
-		{
-			Log("  decode segment:%d", k);
-			int compression_type = buf[start];
-			int mode             = buf[start+1];
-			int number_bytes     = buf[start+2];
-			//decode text....
-			char *label=DecodeString(buf, start+3, compression_type,mode,number_bytes);
-			start += (number_bytes+3);
-			if (label!=NULL) return label;
-		}
-	}
-	return NULL;
-}
 
 //
 //
@@ -901,14 +621,14 @@ HRESULT Sections::ParseAudioHeader(BYTE *data,AudioHeader *head)
 		if (header.Bound > limit)
 			header.Bound = limit;
 		header.Size = (header.SizeBase = 144 * header.Bitrate / header.SamplingFreq) + header.PaddingBit;
-		memcpy(head,&header,sizeof(struct AudioHeader));
+		memcpy(head,&header,sizeof(struct staudioHeader));
 		return S_OK;
 	}
 	else
 	{
 		limit = 32;
 		header.Size = (header.SizeBase = (12 * header.Bitrate / header.SamplingFreq) * 4) + (4 * header.PaddingBit);
-		memcpy(head,&header,sizeof(struct AudioHeader));
+		memcpy(head,&header,sizeof(struct staudioHeader));
 		return S_OK;
 	}
 

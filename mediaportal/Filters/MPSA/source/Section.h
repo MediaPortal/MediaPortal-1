@@ -9,118 +9,116 @@
 #include <map>
 #include <string>
 using namespace std;
+typedef struct stEPGEvent
+{
+	unsigned int eventid;
+	unsigned long dateMJD;
+	unsigned long timeUTC;
+	unsigned long duration;
+	unsigned long language;
+	unsigned int running_status;
+	unsigned int free_CA_mode;
+	string event;
+	string text;
+	string genre;
+}EPGEvent;
+
+typedef struct stEPGChannel
+{
+	bool allSectionsReceived;
+	int last_section_number;
+	int original_network_id;
+	int transport_id;
+	int service_id;
+	map<unsigned int,EPGEvent> mapEvents;
+	typedef map<unsigned int,EPGEvent>::iterator imapEvents;
+
+	map<int,bool> mapSectionsReceived;
+	typedef map<int,bool>::iterator imapSectionsReceived;
+}EPGChannel;
+
+typedef struct staudioHeader
+{
+    //AudioHeader
+	int ID;
+    int Emphasis;
+    int Layer;
+    int ProtectionBit;
+    int Bitrate;
+    int SamplingFreq;
+    int PaddingBit;
+    int PrivateBit;
+    int Mode;
+    int ModeExtension;
+    int Bound;
+    int Channel;
+    int Copyright;
+    int Original;
+    int TimeLength;
+    int Size;
+    int SizeBase;
+}AudioHeader;
+
+//
+//
+typedef struct stserviceData
+{
+	char Provider[255];
+	char Name[255];
+	WORD ServiceType;
+}ServiceData;
+
+//
+//
+typedef struct stpidData
+{
+	WORD VideoPid;//16-17
+	WORD AudioPid1;//18-19
+	BYTE Lang1_1;//20
+	BYTE Lang1_2;//21
+	BYTE Lang1_3;//22
+	WORD AudioPid2;//24-25
+	BYTE Lang2_1;//26
+	BYTE Lang2_2;//27
+	BYTE Lang2_3;//28
+    WORD AudioPid3;//30-31
+	BYTE Lang3_1;//32
+	BYTE Lang3_2;//33
+	BYTE Lang3_3;//34
+	WORD AC3;//36-37
+	WORD Teletext;//38-39
+	WORD Subtitles;//40-41
+}PidTable;
+//
+//
+typedef struct chInfo
+{
+	ULONG TransportStreamID;// 0-3
+	ULONG ProgrammNumber;// 4-7
+	ULONG ProgrammPMTPID;// 8-11
+	ULONG PCRPid;// 12-15
+	PidTable Pids;// 16-41
+	BYTE ServiceName[255];// 42-296
+	BYTE ProviderName[255];// 297-551
+	WORD EITPreFollow;// 552-553
+	WORD EITSchedule;// 554-555
+	WORD Scrambled;// 556-567
+	WORD ServiceType;// 568-569
+	ULONG NetworkID;// 560-563
+	BYTE PMTReady;// 564
+	BYTE SDTReady;// 565
+	BYTE PhysicalChannel;//566
+	WORD MajorChannel;//568-569
+	WORD MinorChannel;//570-571
+	WORD Modulation;//572-573
+	ULONG Frequency;//574-578
+}ChannelInfo;
 
 #pragma warning(disable: 4511 4512 4995)
 class Sections
 {
 public:
-	struct EPGEvent
-	{
-		unsigned int eventid;
-		unsigned long dateMJD;
-		unsigned long timeUTC;
-		unsigned long duration;
-		unsigned long language;
-		unsigned int running_status;
-		unsigned int free_CA_mode;
-		string event;
-		string text;
-		string genre;
-	};
 
-	struct EPGChannel
-	{
-		bool allSectionsReceived;
-		int last_section_number;
-		int original_network_id;
-		int transport_id;
-		int service_id;
-		map<unsigned int,EPGEvent> mapEvents;
-		typedef map<unsigned int,EPGEvent>::iterator imapEvents;
-
-		map<int,bool> mapSectionsReceived;
-		typedef map<int,bool>::iterator imapSectionsReceived;
-	};
-
-	struct audioHeader
-    {
-      //AudioHeader
-		int ID;
-        int Emphasis;
-        int Layer;
-        int ProtectionBit;
-        int Bitrate;
-        int SamplingFreq;
-        int PaddingBit;
-        int PrivateBit;
-        int Mode;
-        int ModeExtension;
-        int Bound;
-        int Channel;
-        int Copyright;
-        int Original;
-        int TimeLength;
-        int Size;
-        int SizeBase;
-	};
-
-	typedef audioHeader AudioHeader;
-	//
-	//
-	struct serviceData
-	{
-		char Provider[255];
-		char Name[255];
-		WORD ServiceType;
-	};
-	typedef serviceData ServiceData;
-	//
-	//
-	struct pidData
-	{
-		WORD VideoPid;//16-17
-		WORD AudioPid1;//18-19
-		BYTE Lang1_1;//20
-		BYTE Lang1_2;//21
-		BYTE Lang1_3;//22
-		WORD AudioPid2;//24-25
-		BYTE Lang2_1;//26
-		BYTE Lang2_2;//27
-		BYTE Lang2_3;//28
-        WORD AudioPid3;//30-31
-		BYTE Lang3_1;//32
-		BYTE Lang3_2;//33
-		BYTE Lang3_3;//34
-		WORD AC3;//36-37
-		WORD Teletext;//38-39
-		WORD Subtitles;//40-41
-	};
-	typedef pidData PidTable;
-	//
-	//
-	struct chInfo
-	{
-		ULONG TransportStreamID;// 0-3
-		ULONG ProgrammNumber;// 4-7
-		ULONG ProgrammPMTPID;// 8-11
-		ULONG PCRPid;// 12-15
-		PidTable Pids;// 16-41
-		BYTE ServiceName[255];// 42-296
-		BYTE ProviderName[255];// 297-551
-		WORD EITPreFollow;// 552-553
-		WORD EITSchedule;// 554-555
-		WORD Scrambled;// 556-567
-		WORD ServiceType;// 568-569
-		ULONG NetworkID;// 560-563
-		BYTE PMTReady;// 564
-		BYTE SDTReady;// 565
-		BYTE PhysicalChannel;//566
-		WORD MajorChannel;//568-569
-		WORD MinorChannel;//570-571
-		WORD Modulation;//572-573
-		ULONG Frequency;//574-578
-	};
-	typedef chInfo ChannelInfo;
 	//
 	//
 	struct tsheader
@@ -173,6 +171,7 @@ private:
 	int     m_patTableVersion;
 	int     m_patTSID;
 	int     m_patSectionLen;
+
 public:
 	Sections();
 	virtual ~Sections();
@@ -202,12 +201,6 @@ public:
 	void getString468A(BYTE *b, int l1,char *text);
 	WORD CISize();
 
-	//ATSC
-	void ATSCDecodeChannelTable(BYTE *buf,ChannelInfo *ch, int* channelsFound);
-	void Sections::DecodeServiceLocationDescriptor( byte* buf,int start,ChannelInfo* channelInfo);
-	void DecodeExtendedChannelNameDescriptor( byte* buf,int start,ChannelInfo* channelInfo);
-	char* DecodeString(byte* buf, int offset, int compression_type, int mode, int number_of_bytes);
-	char* DecodeMultipleStrings(byte* buf, int offset);
 
 	//pes
 	void GetPES(BYTE *data,ULONG len,BYTE *pes);

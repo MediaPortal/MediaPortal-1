@@ -31,7 +31,7 @@
 #include "mhwinputpin1.h"
 #include "mhwinputpin2.h"
 #include "epginputpin.h"
-
+#include "atscparser.h"
 // Setup data
 
 extern void Log(const char *fmt, ...) ;
@@ -364,6 +364,7 @@ CStreamAnalyzer::CStreamAnalyzer(LPUNKNOWN pUnk, HRESULT *phr) :
     }
 
 	m_pDemuxer=new SplitterSetup(m_pSections);
+
 	if(m_pDemuxer==NULL)
 	{
         if (phr)
@@ -420,6 +421,7 @@ CStreamAnalyzer::CStreamAnalyzer(LPUNKNOWN pUnk, HRESULT *phr) :
             *phr = E_OUTOFMEMORY;
         return;
     }
+	m_atscParser.SetDemuxer(m_pDemuxer);
 }
 
 
@@ -466,6 +468,7 @@ STDMETHODIMP CStreamAnalyzer::ResetParser()
 	m_pMHWPin1->ResetPids();
 	m_pMHWPin2->ResetPids();
 	m_pSections->Reset();
+	m_atscParser.Reset();
 	return hr;
 }
 //
@@ -587,7 +590,7 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 		bool pesPacket=false;
 		if(pbData[0]==0x00 && pbData[1]==0x00 && pbData[2]==0x01)
 		{
-			Sections::AudioHeader audio;
+			AudioHeader audio;
 			pesPacket=true;
 			BYTE *d=new BYTE[len];
 			m_pSections->GetPES(pbData,len,d);
@@ -602,64 +605,66 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 		
 		if (m_bDecodeATSC)
 		{
+			m_atscParser.ATSCDecodeMasterGuideTable(pbData,len,&m_patChannelsCount);
 			if (m_patChannelsCount==0)
 			{
 				if (pbData[0]==0xc8 || pbData[0]==0xc9)
 				{
 					//decode ATSC: Virtual Channel Table (pid 0xc8 / 0xc9)
-					m_pSections->ATSCDecodeChannelTable(pbData,m_patTable, &m_patChannelsCount);
+					m_atscParser.ATSCDecodeChannelTable(pbData,m_patTable, &m_patChannelsCount);
+				}
+			}
+
+			//decode ATSC: EPG
+			m_atscParser.ATSCDecodeEPG(pbData,len);
+			return S_OK;
+		}
+			
+		if(pbData[0]==0x02)// pmt
+		{
+			ULONG prgNumber=(pbData[3]<<8)+pbData[4];
+			for(int n=0;n<m_patChannelsCount;n++)
+			{
+				if(m_patTable[n].ProgrammNumber==prgNumber && m_patTable[n].PMTReady==false)
+				{
+					m_pSections->decodePMT(pbData,&m_patTable[n],len);
+					if(m_patTable[n].Pids.AudioPid1>0)
+						m_pDemuxer->MapAdditionalPayloadPID(m_patTable[n].Pids.AudioPid1);
+					if(m_patTable[n].Pids.AudioPid2>0)
+						m_pDemuxer->MapAdditionalPayloadPID(m_patTable[n].Pids.AudioPid2);
+					if(m_patTable[n].Pids.AudioPid3>0)
+						m_pDemuxer->MapAdditionalPayloadPID(m_patTable[n].Pids.AudioPid3);
+				}
+			}
+			if(m_pmtGrabProgNum==prgNumber && len<=4096)
+			{
+				memset(m_pmtGrabData,0,4096);
+				memcpy(m_pmtGrabData,pbData,len);// save the pmt in the buffer
+				m_currentPMTLen=len;
+			}
+					
+		}
+		if(pbData[0]==0x00 && pesPacket==false)// pat
+		{
+			// we need to check if we received a new PAT
+			// reason, after submitting a tune request (zap to another channel) we might still
+			// receive the old PAT for a couple of msec until the tuner has
+			// finished tuning to the new channel
+			if (m_pSections->IsNewPat(pbData,len))
+			{
+				Log("Found new PAT, decode channels");
+				ResetParser();
+				//m_pDemuxer->UnMapSectionPIDs();
+				m_pSections->decodePAT(pbData,m_patTable,&m_patChannelsCount,len);
+				for(int n=0;n<m_patChannelsCount;n++)
+				{
+					m_pDemuxer->MapAdditionalPID(m_patTable[n].ProgrammPMTPID);
 				}
 			}
 		}
-		else
+		if(pbData[0]==0x42)// sdt
 		{
-			
-			if(pbData[0]==0x02)// pmt
-			{
-				ULONG prgNumber=(pbData[3]<<8)+pbData[4];
-				for(int n=0;n<m_patChannelsCount;n++)
-				{
-					if(m_patTable[n].ProgrammNumber==prgNumber && m_patTable[n].PMTReady==false)
-					{
-						m_pSections->decodePMT(pbData,&m_patTable[n],len);
-						if(m_patTable[n].Pids.AudioPid1>0)
-							m_pDemuxer->MapAdditionalPayloadPID(m_patTable[n].Pids.AudioPid1);
-						if(m_patTable[n].Pids.AudioPid2>0)
-							m_pDemuxer->MapAdditionalPayloadPID(m_patTable[n].Pids.AudioPid2);
-						if(m_patTable[n].Pids.AudioPid3>0)
-							m_pDemuxer->MapAdditionalPayloadPID(m_patTable[n].Pids.AudioPid3);
-					}
-				}
-				if(m_pmtGrabProgNum==prgNumber && len<=4096)
-				{
-					memset(m_pmtGrabData,0,4096);
-					memcpy(m_pmtGrabData,pbData,len);// save the pmt in the buffer
-					m_currentPMTLen=len;
-				}
-						
-			}
-			if(pbData[0]==0x00 && pesPacket==false)// pat
-			{
-				// we need to check if we received a new PAT
-				// reason, after submitting a tune request (zap to another channel) we might still
-				// receive the old PAT for a couple of msec until the tuner has
-				// finished tuning to the new channel
-				if (m_pSections->IsNewPat(pbData,len))
-				{
-					Log("Found new PAT, decode channels");
-					ResetParser();
-					//m_pDemuxer->UnMapSectionPIDs();
-					m_pSections->decodePAT(pbData,m_patTable,&m_patChannelsCount,len);
-					for(int n=0;n<m_patChannelsCount;n++)
-					{
-						m_pDemuxer->MapAdditionalPID(m_patTable[n].ProgrammPMTPID);
-					}
-				}
-			}
-			if(pbData[0]==0x42)// sdt
-			{
-				m_pSections->decodeSDT(pbData,m_patTable,m_patChannelsCount,len);
-			}
+			m_pSections->decodeSDT(pbData,m_patTable,m_patChannelsCount,len);
 		}
 	}
 	catch(...)
