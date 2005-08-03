@@ -641,6 +641,7 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 			{
 				if (m_pSections->IsNewPat(pbData,len))
 				{
+					Log("Found new PAT, decode channels");
 					ResetParser();
 					//m_pDemuxer->UnMapSectionPIDs();
 					m_pSections->decodePAT(pbData,m_patTable,&m_patChannelsCount,len);

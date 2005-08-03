@@ -171,6 +171,8 @@ private:
 	bool	m_bEpgDone;
 	time_t  m_epgTimeout;
 	int     m_patTableVersion;
+	int     m_patTSID;
+	int     m_patSectionLen;
 public:
 	Sections();
 	virtual ~Sections();

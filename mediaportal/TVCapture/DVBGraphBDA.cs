@@ -3309,7 +3309,7 @@ namespace MediaPortal.TV.Recording
 					return;
 				}
 			}
-
+/*
 			if (!reTune) return;
 			ushort count=0;
 			m_analyzerInterface.GetChannelCount(ref count);
@@ -3323,7 +3323,7 @@ namespace MediaPortal.TV.Recording
 			m_lastPMTVersion=-1;
 			m_analyzerInterface.ResetParser();
 
-			refreshPmtTable =true;
+			refreshPmtTable =true;*/
 		}//public void Process()
 
 		#endregion
