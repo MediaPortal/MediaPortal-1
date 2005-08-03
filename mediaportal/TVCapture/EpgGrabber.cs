@@ -17,6 +17,7 @@ namespace MediaPortal.TV.Recording
 		IMHWGrabber mhwInterface=null;
 		NetworkType networkType;
 		bool        grabEPG=false;
+		bool        isGrabbing=false;
 		#endregion
 
 		#region properties
@@ -54,9 +55,11 @@ namespace MediaPortal.TV.Recording
 				if (MHWInterface!=null)
 					MHWInterface.GrabMHW();
 			}
+			isGrabbing=true;
 		}
 		public void Process()
 		{
+			if (!isGrabbing) return;
 			bool ready=false;
 			if (EPGInterface!=null && grabEPG)
 			{
@@ -64,7 +67,7 @@ namespace MediaPortal.TV.Recording
 				if (ready)
 				{
 					ParseEPG();
-				
+					isGrabbing=false;
 				}
 			}
 			
@@ -74,6 +77,7 @@ namespace MediaPortal.TV.Recording
 				if (ready)
 				{
 					ParseMHW();
+					isGrabbing=false;
 				}
 			}
 		}

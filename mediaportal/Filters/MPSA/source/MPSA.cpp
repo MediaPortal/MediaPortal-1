@@ -824,7 +824,7 @@ STDMETHODIMP CStreamAnalyzer::GetMHWTitleCount(WORD* count)
 }
 STDMETHODIMP CStreamAnalyzer::GetMHWTitle(WORD program, WORD* id, WORD* transportId, WORD* networkId, WORD* channelId, WORD* programId, WORD* themeId, WORD* PPV, BYTE* Summaries, WORD* duration, ULONG* dateStart, ULONG* timeStart,char** title,char** programName)
 {	
-	m_pMHWPin2->m_MHWParser.GetTitle(program, id, transportId, networkId, channelId, programId, themeId, PPV, Summaries, duration, dateStart,timeStart,title,programName);
+	m_pMHWPin1->m_MHWParser.GetTitle(program, id, transportId, networkId, channelId, programId, themeId, PPV, Summaries, duration, dateStart,timeStart,title,programName);
 	return S_OK;
 }
 STDMETHODIMP CStreamAnalyzer::GetMHWChannel(WORD channelId, WORD* networkId, WORD* transportId, char** channelName)
