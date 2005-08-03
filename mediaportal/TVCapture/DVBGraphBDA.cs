@@ -3274,9 +3274,9 @@ namespace MediaPortal.TV.Recording
 						}
 						else 
 						{
-							//ushort chcount=0;
-							//m_analyzerInterface.GetChannelCount(ref chcount);
-							//Log.Write("DVBGRAPHBDA:Got wrong PMT:{0} {1} channels:{2}",pmtProgramNumber,currentTuningObject.ProgramNumber, chcount);
+							ushort chcount=0;
+							m_analyzerInterface.GetChannelCount(ref chcount);
+							Log.Write("DVBGRAPHBDA:Got wrong PMT:{0} {1} channels:{2}",pmtProgramNumber,currentTuningObject.ProgramNumber, chcount);
 							ts = DateTime.Now-timeRetune;
 							if (ts.TotalSeconds>5)
 							{
@@ -3320,6 +3320,7 @@ namespace MediaPortal.TV.Recording
 				m_streamDemuxer.ResetGrabber();
 				m_streamDemuxer.SetChannelData(currentTuningObject.AudioPid, currentTuningObject.VideoPid, currentTuningObject.TeletextPid, currentTuningObject.Audio3, currentTuningObject.ServiceName,currentTuningObject.PMTPid,currentTuningObject.ProgramNumber);
 			}
+			m_lastPMTVersion=-1;
 			m_analyzerInterface.ResetParser();
 
 			refreshPmtTable =true;
@@ -3592,6 +3593,7 @@ namespace MediaPortal.TV.Recording
 
 				if(m_pluginsEnabled==true)
 					ExecTuner();
+				m_lastPMTVersion=-1;
 				m_analyzerInterface.ResetParser();
 			}	
 			finally
