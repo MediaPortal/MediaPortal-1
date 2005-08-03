@@ -535,7 +535,7 @@ namespace MediaPortal.TV.Recording
 				hr=m_demuxInterface.CreateOutputPin(ref mtSections, "sections", out pinSectionsOut);
 				if (hr!=0 || pinSectionsOut==null)
 				{
-					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphSS2:FAILED to create EPG pin:0x{0:X}",hr);
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphSS2:FAILED to create sections pin:0x{0:X}",hr);
 					return false;
 				}
 				hr=m_demuxInterface.CreateOutputPin(ref mtEPG, "EPG", out pinEPGout);
