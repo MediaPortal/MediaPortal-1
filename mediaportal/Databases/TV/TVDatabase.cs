@@ -144,7 +144,11 @@ namespace MediaPortal.TV.Database
 			if (versionNr<2)
 			{
 				//version 1->2 : changed start/ending times from text->int in version 2
-				m_db.Execute("drop table tblPrograms");
+				try 
+				{
+					m_db.Execute("drop table tblPrograms");
+				}
+				catch(Exception){}
 			}
 			CreateTables();
 
