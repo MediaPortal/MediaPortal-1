@@ -637,13 +637,17 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 				}
 						
 			}
-			if(pbData[0]==0x00 && m_patChannelsCount==0 && pesPacket==false)// pat
+			if(pbData[0]==0x00 && pesPacket==false)// pat
 			{
-				//m_pDemuxer->UnMapSectionPIDs();
-				m_pSections->decodePAT(pbData,m_patTable,&m_patChannelsCount,len);
-				for(int n=0;n<m_patChannelsCount;n++)
+				if (m_pSections->IsNewPat(pbData,len))
 				{
-					m_pDemuxer->MapAdditionalPID(m_patTable[n].ProgrammPMTPID);
+					ResetParser();
+					//m_pDemuxer->UnMapSectionPIDs();
+					m_pSections->decodePAT(pbData,m_patTable,&m_patChannelsCount,len);
+					for(int n=0;n<m_patChannelsCount;n++)
+					{
+						m_pDemuxer->MapAdditionalPID(m_patTable[n].ProgrammPMTPID);
+					}
 				}
 			}
 			if(pbData[0]==0x42)// sdt

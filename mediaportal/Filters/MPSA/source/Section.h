@@ -170,6 +170,7 @@ private:
 	bool	m_bParseEPG;
 	bool	m_bEpgDone;
 	time_t  m_epgTimeout;
+	int     m_patTableVersion;
 public:
 	Sections();
 	virtual ~Sections();
@@ -192,6 +193,7 @@ public:
 	void PTSToPTSTime(ULONGLONG pts,PTSTime* ptsTime);
 	HRESULT CurrentPTS(BYTE *pData,ULONGLONG *ptsValue,int *streamType);
 	int decodePMT(BYTE *pData,ChannelInfo *ch, int len);
+	bool IsNewPat(BYTE *pData, int len);
 	void decodePAT(BYTE *pData,ChannelInfo *,int *, int len);
 	int decodeSDT(BYTE *buf,ChannelInfo *,int, int len);
 	void DVB_GetService(BYTE *b,ServiceData *sd);

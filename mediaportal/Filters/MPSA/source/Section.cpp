@@ -71,6 +71,7 @@ ULONG Sections::GetCRC32(BYTE *pData,WORD len)
 }
 Sections::Sections()
 {
+	m_patTableVersion=-1;
 	m_bParseEPG=true;
 	m_bEpgDone=false;
 	m_epgTimeout=time(NULL)+60;}
@@ -404,15 +405,22 @@ void Sections::DVB_GetService(BYTE *b,ServiceData *serviceData)
 	pointer += 1;
 	getString468A(b+pointer, service_name_length,serviceData->Name);
 }
+bool Sections::IsNewPat(BYTE *pData, int len)
+{
+	int table_id = pData[0];
+	if (table_id!=0) return false;
+	int version_number = ((pData[5]>>1)&0x1F);
+	if (version_number==m_patTableVersion) return false;
+	return true;
+}
 void Sections::decodePAT(BYTE *pData,ChannelInfo chInfo[],int *channelCount, int len)
 {
-
-
 	int table_id = pData[0];
 	int section_syntax_indicator = (pData[1]>>7) & 1;
 	int section_length = ((pData[1]& 0xF)<<8) + pData[2];
 	int transport_stream_id = (pData[3]<<8)+pData[4];
 	int version_number = ((pData[5]>>1)&0x1F);
+	m_patTableVersion=version_number;
 	int current_next_indicator = pData[5] & 1;
 	int section_number = pData[6];
 	int last_section_number = pData[7];
@@ -1255,6 +1263,7 @@ void Sections::DecodeContentDescription(byte* buf,EPGEvent& event)
 void Sections::Reset()
 {
 	Log("Reset");
+	m_patTableVersion=-1;
 	m_mapEPG.clear();
 	m_bParseEPG=true;
 	m_bEpgDone=false;
