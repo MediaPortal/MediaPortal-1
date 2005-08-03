@@ -3045,8 +3045,9 @@ namespace MediaPortal.TV.Recording
 			return false;
 		}//SendPMT()
 
-		void LoadLNBSettings(ref DVBChannel ch, int disNo, out int lowOsc, out int hiOsc)
+		void LoadLNBSettings( ref DVBChannel ch, out int lowOsc, out int hiOsc, out int diseqcUsed)
 		{
+			diseqcUsed=0;
 			lowOsc=9750;
 			hiOsc=10600;
 			try
@@ -3070,7 +3071,7 @@ namespace MediaPortal.TV.Recording
 					lnbswMHZ=xmlreader.GetValueAsInt("dvbs","Switch",11700);
 					cbandMHZ=xmlreader.GetValueAsInt("dvbs","CBand",5150);
 					circularMHZ=xmlreader.GetValueAsInt("dvbs","Circular",10750);
-					switch(disNo)
+					switch(ch.DiSEqC)
 					{
 						case 1:
 							// config a
@@ -3106,7 +3107,6 @@ namespace MediaPortal.TV.Recording
 				}//using(MediaPortal.Profile.Xml xmlreader=new MediaPortal.Profile.Xml(m_cardFilename))
 
 				// set values to dvbchannel-object
-				ch.DiSEqC=diseqc;
 				// set the lnb parameter 
 				if(ch.Frequency>=lnbswMHZ*1000)
 				{
@@ -3120,6 +3120,7 @@ namespace MediaPortal.TV.Recording
 				}
 				lowOsc=lnb0MHZ;
 				hiOsc=lnb1MHZ;
+				diseqcUsed=diseqc;
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: LNB Settings: freq={0} lnbKhz={1} lnbFreq={2} diseqc={3}",ch.Frequency,ch.LNBKHz,ch.LNBFrequency,ch.DiSEqC); 
 			}
 			catch(Exception)
@@ -3127,18 +3128,21 @@ namespace MediaPortal.TV.Recording
 			}
 		} //void LoadLNBSettings(TunerLib.IDVBTuneRequest tuneRequest)
 		
-		void SetLNBSettings(DVBChannel ch,TunerLib.IDVBSTuningSpace dvbSpace)
+		void SetLNBSettings(int disEqcUsed,TunerLib.IDVBSTuningSpace dvbSpace)
 		{
 			try
 			{
 				if (dvbSpace==null) return;
 				//
-				//LOWORD -> LOBYTE -> Bit0 for Position (0-A,1-B)
-				//HIWORD -> LOBYTE -> Bit0 for Option   (0-A,1-B)
-				//LOWORD -> HIBYTE -> Bit0 for 22Khz    (0-Off,1-On)
-				//HIWORD -> HIBYTE -> Bit0 for Burst    (0-Off,1-On)
+				// A:LOWORD -> LOBYTE -> Bit0 for Position (0-A,1-B)
+				// B:LOWORD -> HIBYTE -> Bit0 for 22Khz    (0-Off,1-On)
+				// C:HIWORD -> LOBYTE -> Bit0 for Option   (0-A,1-B)
+				// D:HIWORD -> HIBYTE -> Bit0 for Burst    (0-Off,1-On)
+				// hi         low        hi        low
+				// 87654321 | 87654321 | 87654321 | 87654321 | 
+				//        D          C          B          A
 				long inputRange=0;
-				switch (ch.DiSEqC)
+				switch (disEqcUsed)
 				{
 					case 0: //none
 						Log.Write("DVBGraphBDA: disEqc:none");
@@ -3155,11 +3159,11 @@ namespace MediaPortal.TV.Recording
 						break;
 					case 4: //Level 1 B/A
 						Log.Write("DVBGraphBDA: disEqc:level 1 B/A");
-						inputRange=1;
+						inputRange=1<<16;
 						break;
 					case 5: //Level 1 A/B
 						Log.Write("DVBGraphBDA: disEqc:level 1 A/B");
-						inputRange=1<<16;
+						inputRange=1;
 						break;
 					case 6: //Level 1 B/B
 						Log.Write("DVBGraphBDA: disEqc:level 1 B/B");
@@ -3172,7 +3176,7 @@ namespace MediaPortal.TV.Recording
 				if (currentTuningObject.LNBKHz==1) // 22khz 
 					inputRange |= (1<<8);
 
-				Log.Write("DVBGraphBDA: Set inputrange to:{0}",inputRange);
+				Log.Write("DVBGraphBDA: Set inputrange to:{0:X}",inputRange);
 				dvbSpace.InputRange=inputRange.ToString();
 			}
 			catch(Exception)
@@ -3748,10 +3752,11 @@ namespace MediaPortal.TV.Recording
 					case NetworkType.DVBS:
 					{
 						//get the IDVBSLocator interface
-						int lowOsc,hiOsc;
+						int lowOsc,hiOsc,diseqcUsed;
 						if (ch.DiSEqC<1) ch.DiSEqC=1;
 						if (ch.DiSEqC>4) ch.DiSEqC=4;
-						LoadLNBSettings(ref ch,ch.DiSEqC, out lowOsc, out hiOsc);
+
+						LoadLNBSettings(ref ch,out lowOsc, out hiOsc, out diseqcUsed);
 						TunerLib.IDVBSTuningSpace dvbSpace =myTuner.TuningSpace as TunerLib.IDVBSTuningSpace;
 						if (dvbSpace==null)
 						{
@@ -3759,13 +3764,13 @@ namespace MediaPortal.TV.Recording
 							return;
 						}
 
-						Log.WriteFile(Log.LogType.Capture,false,"DVBGraphBDA: set LNBSwitch to {0} Khz lowOsc={1} MHz hiOsc={2} Mhz disecq:{3}",ch.LNBKHz, lowOsc, hiOsc, ch.DiSEqC);
+						Log.WriteFile(Log.LogType.Capture,false,"DVBGraphBDA: set LNBSwitch to {0} Khz lowOsc={1} MHz hiOsc={2} Mhz disecq:{3}",ch.LNBKHz, lowOsc, hiOsc, diseqcUsed);
 						dvbSpace.LNBSwitch=ch.LNBKHz;
 						dvbSpace.SpectralInversion=TunerLib.SpectralInversion.BDA_SPECTRAL_INVERSION_AUTOMATIC;
 						dvbSpace.LowOscillator=lowOsc*1000;
 						dvbSpace.HighOscillator=hiOsc*1000;
 						
-						SetLNBSettings(ch,dvbSpace);
+						SetLNBSettings(diseqcUsed,dvbSpace);
 
 						newTuneRequest = dvbSpace.CreateTuneRequest();
 						if (newTuneRequest ==null)
@@ -3795,6 +3800,7 @@ namespace MediaPortal.TV.Recording
 							myLocator.SignalPolarisation	= TunerLib.Polarisation.BDA_POLARISATION_LINEAR_H;
 						else
 							myLocator.SignalPolarisation	= TunerLib.Polarisation.BDA_POLARISATION_LINEAR_V;
+						
 						myLocator.SymbolRate					= ch.Symbolrate;
 						myTuneRequest.ONID						= ch.NetworkID;	//original network id
 						myTuneRequest.TSID						= ch.TransportStreamID;	//transport stream id
