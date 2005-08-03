@@ -121,6 +121,10 @@
 		<value>December</value>
 	</string>
 	<string>
+ 		<id>50</id> 
+  		<value>My DVDs</value> 
+  	</string>
+	<string>
 		<id>100</id>
 		<value>View: Icons</value>
 	</string>
