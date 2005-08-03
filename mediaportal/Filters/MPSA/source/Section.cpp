@@ -31,7 +31,7 @@
 //////////////////////////////////////////////////////////////////////
 void Log(const char *fmt, ...) 
 {
-//#ifdef DEBUG
+#ifdef DEBUG
 	va_list ap;
 	va_start(ap,fmt);
 
@@ -52,7 +52,7 @@ void Log(const char *fmt, ...)
 			buffer);
 		fclose(fp);
 	}
-//#endif
+#endif
 };
 
 ULONG Sections::GetSectionCRCValue(byte* data,int ptr)
@@ -76,6 +76,7 @@ Sections::Sections()
 	m_patTableVersion=-1;
 	m_bParseEPG=true;
 	m_bEpgDone=false;
+	m_bDecodeSDT=false;
 	m_epgTimeout=time(NULL)+60;}
 
 Sections::~Sections()
@@ -303,6 +304,9 @@ int Sections::decodePMT(BYTE *buf,ChannelInfo *ch, int len)
 int Sections::decodeSDT(BYTE *buf,ChannelInfo ch[],int channels, int len)
 {	
 
+	if (len < 10) return 0;
+	if (channels<=0) return 0;
+	if (!m_bDecodeSDT) return 0;
 	int table_id = buf[0];
 	int section_syntax_indicator = (buf[1]>>7) & 1;
 	int section_length = ((buf[1]& 0xF)<<8) + buf[2];
@@ -323,10 +327,14 @@ int Sections::decodeSDT(BYTE *buf,ChannelInfo ch[],int channels, int len)
 	int pointer = 11;
 	int x = 0;
 	int channel;	 
+	if (table_id!=0x42) return 0;
+
+	m_bDecodeSDT=false;
 	//Log.Write("decodeSDTTable len={0}/{1} section no:{2} last section no:{3}", buf.Length,section_length,section_number,last_section_number);
 
 	while (len1 > 0)
 	{
+		if (pointer+4 >=len) return 0;
 		service_id = (buf[pointer]<<8)+buf[pointer+1];
 		EIT_schedule_flag = (buf[pointer+2]>>1) & 1;
 		EIT_present_following_flag = buf[pointer+2] & 1;
@@ -350,6 +358,8 @@ int Sections::decodeSDT(BYTE *buf,ChannelInfo ch[],int channels, int len)
 		if(channel!=-1)
 		while (len2 > 0)
 		{
+		
+			if (pointer+1 >=len) return 0;
 			int indicator=buf[pointer];
 			x = 0;
 			x = buf[pointer + 1] + 2;
@@ -386,7 +396,6 @@ int Sections::decodeSDT(BYTE *buf,ChannelInfo ch[],int channels, int len)
 		return section_number+1;
 	else
 		return -1;
-
 }
 void Sections::DVB_GetService(BYTE *b,ServiceData *serviceData)
 {
@@ -411,15 +420,30 @@ bool Sections::IsNewPat(BYTE *pData, int len)
 {
 	int table_id = pData[0];
 	if (table_id!=0) return false;
-	int version_number = ((pData[5]>>1)&0x1F);
-	int transport_stream_id = (pData[3]<<8)+pData[4];
+	if (len<9) return false;
+	int section_syntax_indicator = (pData[1]>>7) & 1;
 	int section_length = ((pData[1]& 0xF)<<8) + pData[2];
-	if (version_number==m_patTableVersion && transport_stream_id==m_patTSID && section_length==m_patSectionLen) return false;
+	int transport_stream_id = (pData[3]<<8)+pData[4];
+	int version_number = ((pData[5]>>1)&0x1F);
+	int current_next_indicator = pData[5] & 1;
+	int section_number = pData[6];
+	int last_section_number = pData[7];
+
+	if (version_number==m_patTableVersion && 
+		transport_stream_id==m_patTSID && 
+		section_length==m_patSectionLen) return false;
+	if(table_id!=0 || section_number!=0||last_section_number!=0) return false;
+	Log("%x==%x %x==%x %x==%x",
+		version_number,m_patTableVersion, 
+		transport_stream_id,m_patTSID,
+		section_length,m_patSectionLen);
 	return true;
 }
 void Sections::decodePAT(BYTE *pData,ChannelInfo chInfo[],int *channelCount, int len)
 {
 	int table_id = pData[0];
+	if (table_id!=0) return;
+	if (len<9) return;
 	int section_syntax_indicator = (pData[1]>>7) & 1;
 	int section_length = ((pData[1]& 0xF)<<8) + pData[2];
 	int transport_stream_id = (pData[3]<<8)+pData[4];
@@ -429,19 +453,21 @@ void Sections::decodePAT(BYTE *pData,ChannelInfo chInfo[],int *channelCount, int
 	int last_section_number = pData[7];
 	int loop =(section_length - 9) / 4;
 	int offset=0;
-
+	if(table_id!=0 || section_number!=0||last_section_number!=0)
+	{
+		return;
+	}
 	m_patTableVersion=version_number;
 	m_patTSID=transport_stream_id;
 	m_patSectionLen=section_length;
 
+	Log("Decode pat:%x len:%x tsid:%x version%x (%d/%d)",
+		table_id,section_length,transport_stream_id,version_number,section_number,last_section_number);
 	*channelCount=loop;
 	ChannelInfo ch;
+	m_bDecodeSDT=true;
 	memset(&ch,0,sizeof(struct chInfo));
-	if(table_id!=0 || section_number>last_section_number)
-	{
-		*channelCount=0;
-		return;
-	}
+
 	int pmtcount=0;
 	for(int i=0;i<loop;i++)
 	{
@@ -450,7 +476,7 @@ void Sections::decodePAT(BYTE *pData,ChannelInfo chInfo[],int *channelCount, int
 		ch.ProgrammNumber=(pData[offset]<<8)+pData[offset+1];
 		ch.TransportStreamID=transport_stream_id;
 		ch.PMTReady=false;
-		//Log("loop:%d prog:%d tsid:%x pid:%x", loop,ch.ProgrammNumber,ch.TransportStreamID,ch.ProgrammPMTPID);
+		Log("ch:%d prog:%d tsid:%x pmtpid:%x", i,ch.ProgrammNumber,ch.TransportStreamID,ch.ProgrammPMTPID);
 		if(ch.ProgrammPMTPID>0x12)
 		{
 			chInfo[pmtcount]=ch;
@@ -990,13 +1016,14 @@ void Sections::DecodeContentDescription(byte* buf,EPGEvent& event)
 
 void Sections::Reset()
 {
-	Log("Reset");
+	Log("sections::Reset");
 	m_patTSID=-1;
 	m_patSectionLen=-1;
 	m_patTableVersion=-1;
 	m_mapEPG.clear();
 	m_bParseEPG=true;
 	m_bEpgDone=false;
+	m_bDecodeSDT=false;
 	m_epgTimeout=time(NULL)+60;
 }
 

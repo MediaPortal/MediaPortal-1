@@ -171,7 +171,7 @@ private:
 	int     m_patTableVersion;
 	int     m_patTSID;
 	int     m_patSectionLen;
-
+	bool    m_bDecodeSDT;
 public:
 	Sections();
 	virtual ~Sections();
