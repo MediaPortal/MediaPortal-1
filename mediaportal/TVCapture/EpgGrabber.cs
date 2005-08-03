@@ -139,9 +139,9 @@ namespace MediaPortal.TV.Recording
 						minVal+=604800;
 
 					programStartTime=programStartTime.AddSeconds(minVal);
-					Log.WriteFile( Log.LogType.EPG,"mhw-epg: channel:{0} time:{1} {2} duration:{3} program:{4} title:{5} theme:{6} summary:{7} onid:{8} tsid:{9}",
+					Log.WriteFile( Log.LogType.EPG,"mhw-epg: channel:{0} time:{1} {2} duration:{3} program:{4} title:{5} theme:{6} summary:{7} onid:{8} tsid:{9} progid:{10} chanid:{11}",
 						channelName,programStartTime.ToShortTimeString(),programStartTime.ToShortDateString(),
-						duration,programName,title,theme,summary, networkid, transportid);
+						duration,programName,title,theme,summary, networkid, transportid,programid,channelid);
 
 				}
 			}
