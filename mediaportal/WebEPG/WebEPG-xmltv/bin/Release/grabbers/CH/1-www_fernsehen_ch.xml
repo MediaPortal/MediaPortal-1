@@ -6,12 +6,12 @@
   <section name="ChannelList">
 
 <!-- Schweiz - Haupt -->
-    <entry name="1@sfdrs.ch">DRS</entry>		<!-- SF 1 -->
-    <entry name="2@sfdrs.ch">CH4</entry>		<!-- SF 2 -->
-    <entry name="1@tsr.ch">TSR</entry>			<!-- TSR 1 -->
-    <entry name="2@tsr.ch">TR2</entry>			<!-- TSR 2 -->
-    <entry name="1@rtsi.ch">TSR</entry>			<!-- TSI 1 -->
-    <entry name="2@rtsi.ch">TSI</entry>			<!-- TSI 2 -->
+    <entry name="sf1@sfdrs.ch">DRS</entry>		<!-- SF 1 -->
+    <entry name="sf2@sfdrs.ch">CH4</entry>		<!-- SF 2 -->
+    <entry name="tsr1@tsr.ch">TSR</entry>		<!-- TSR 1 -->
+    <entry name="tsr2@tsr.ch">TR2</entry>		<!-- TSR 2 -->
+    <entry name="tsi1@rtsi.ch">TSR</entry>		<!-- TSI 1 -->
+    <entry name="tsi2@rtsi.ch">TSI</entry>		<!-- TSI 2 -->
 
 <!-- Schweiz - Regional -->
     <entry name="startv.ch">TI2</entry>			<!-- *Star TV -->
@@ -28,8 +28,8 @@
     <entry name="star@teleclub.ch">TCS</entry>		<!-- Teleclub Star -->
 
 <!-- Oesterreich -->
-    <entry name="1@orf.at">FS1</entry>			<!-- ORF 1 -->
-    <entry name="2@orf.at">FS2</entry>			<!-- ORF 2 -->
+    <entry name="orf1@orf.at">FS1</entry>		<!-- ORF 1 -->
+    <entry name="orf2@orf.at">FS2</entry>		<!-- ORF 2 -->
 
 <!-- BE -->
     <entry name="tvi@rtl.be">TVI</entry>		<!-- RTL TVI -->
@@ -39,7 +39,7 @@
     <entry name="pro-sieben.de">PR7</entry>		<!-- Pro 7 -->
     <entry name="3sat.de">3SA</entry> 			<!-- 3sat -->
     <entry name="sat1.de">SA1</entry> 			<!-- Sat.1 -->
-    <entry name="arte.de">ART</entry> 			<!-- arte -->
+    <entry name="arte-tv.com">ART</entry> 			<!-- arte -->
     <entry name="rtl.de">RTL</entry>			<!-- RTL -->
     <entry name="rtl2.de">RT2</entry>			<!-- RTL 2 -->
     <entry name="super-rtl.de">SRT</entry>		<!-- SuperRTL -->
@@ -106,11 +106,11 @@
     <entry name="bbcprime.com">BBC</entry>		<!-- BBC Prime -->
 
 <!-- Europa --> 
-    <entry name="eurosport.com">EUR</entry> 		<!-- EuroSport -->
+    <entry name="eurosport@eurosport.com">EUR</entry> 	<!-- EuroSport -->
     <entry name="euronews.net">ENW</entry> 		<!-- EuroNews -->
 
 <!-- International -->
-    <entry name="emea.cnni@cnn.com">CNN</entry>		<!-- CNN International - EMEA -->
+    <entry name="cnni-emea@cnn.com">CNN</entry>		<!-- CNN International - EMEA -->
   </section>
 
 <!-- Formating of Listing -->

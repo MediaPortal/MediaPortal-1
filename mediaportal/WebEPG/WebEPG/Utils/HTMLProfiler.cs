@@ -1,3 +1,24 @@
+/* 
+ *	Copyright (C) 2005 Media Portal
+ *	http://mediaportal.sourceforge.net
+ *
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *   
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *   
+ *  You should have received a copy of the GNU General Public License
+ *  along with GNU Make; see the file COPYING.  If not, write to
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  http://www.gnu.org/copyleft/gpl.html
+ *
+ */
+
 using System;
 //using System.Collections.Generic;
 using System.Text;
@@ -213,9 +234,18 @@ namespace MediaPortal.EPG
 			int sourceStart = this.m_arrayTagPos[startTag,0];
 			int sourceLength = this.m_arrayTagPos[startTag+endTag,1] - sourceStart + 1;
 
-			Regex searchRegex = new Regex(regex);
-			Match result = searchRegex.Match(m_strSource, sourceStart, sourceLength);
-
+			Match result = null;
+			try
+			{
+				Regex searchRegex = new Regex(regex);
+				result = searchRegex.Match(m_strSource.ToLower(), sourceStart, sourceLength);
+			}
+			catch(System.ArgumentException ex)
+			{
+				Log.WriteFile(Log.LogType.Log, true, "WebEPG: Regex error: {0} {1}", regex, ex.ToString());
+				return "";
+			}
+			
 			if(result.Success)
 			{
 				if(remove)
@@ -233,23 +263,40 @@ namespace MediaPortal.EPG
 
 		public string GetHyperLink(int profileIndex, string match)
 		{
-			string source = this.GetSource(profileIndex);
 
-			int pos=0;
+			string regex = "<a href=[^\"]*\".*" + match.ToLower() + "[^\"]*\"";
+
+			string result = SearchRegex(profileIndex, regex, false);
+//			string source = this.GetSource(profileIndex);
+//
+//			int pos=0;
 			string strLinkURL="";
-			while((pos = source.IndexOf("<a href=", pos))!=-1)
-			{
-				pos+=9;
-				int endIndex = source.IndexOf("\"", pos);
-				if(endIndex != -1)
-				{
-					strLinkURL = source.Substring(pos, endIndex-pos);
-					if(strLinkURL.IndexOf(match) != -1)
-						break;
-				}
-				strLinkURL="";
 
+			if(result != "")
+			{
+				int start = -1;
+				int end = -1;
+				start = result.IndexOf("\"");
+				if(start != -1)
+					end = result.IndexOf("\"", ++start);
+				if(end != -1)
+					strLinkURL = result.Substring(start, end-start);
 			}
+			
+//
+//			while((pos = source.ToLower().IndexOf("<a href=", pos))!=-1)
+//			{
+//				pos+=9;
+//				int endIndex = source.IndexOf("\"", pos);
+//				if(endIndex != -1)
+//				{
+//					strLinkURL = source.Substring(pos, endIndex-pos);
+//					if(strLinkURL.IndexOf(match) != -1)
+//						break;
+//				}
+//				strLinkURL="";
+//
+//			}
 
 			return strLinkURL;
 //

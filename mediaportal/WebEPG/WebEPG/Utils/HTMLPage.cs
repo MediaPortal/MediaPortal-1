@@ -1,3 +1,23 @@
+/* 
+ *	Copyright (C) 2005 Media Portal
+ *	http://mediaportal.sourceforge.net
+ *
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *   
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *   
+ *  You should have received a copy of the GNU General Public License
+ *  along with GNU Make; see the file COPYING.  If not, write to
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  http://www.gnu.org/copyleft/gpl.html
+ *
+ */
 using System;
 using System.Text;
 using System.IO;
@@ -31,32 +51,20 @@ namespace MediaPortal.Util
 
         private void LoadPage(string strURL, bool isHTML)
         {
-            //m_strPageSource = new string();
 			Encoding encode;
-			//StreamReader sr;
-			//string tag;
-			//bool readingTag = false;
-			//int b;
 			byte[] buffer;
 			byte[] Block;
 			byte[] LastBlock = new byte[]{};
 			int size;
-			//int c;
 			int i;
 
             try
             {
                 // Make the Webrequest
-				//Uri URL = new Uri(strURL);
-				// HttpWebRequest req = (HttpWebRequest) WebRequest.Create(strURL);
                 HttpWebRequest req = (HttpWebRequest) WebRequest.Create(strURL);
 				req.UserAgent = "Mozilla/4.0 (compatible; MSIE 6.0;  WindowsNT 5.0; .NET CLR 1 .1.4322)";
                 WebResponse result = req.GetResponse();
-				//bool test = URL.Equals(result.ResponseUri);
                 Stream ReceiveStream = result.GetResponseStream();
-//				encode = System.Text.Encoding.GetEncoding(m_strEncode);
-//				StreamReader sr = new StreamReader(ReceiveStream, encode, true);
-//				string test = sr.ReadToEnd();
 
 				Block = new byte[32000];
 
@@ -110,7 +118,6 @@ namespace MediaPortal.Util
 
         public string GetPage() //string strURL, string strEncode)
         {
-            //LoadPage(strURL, strEncode);
             return m_strPageSource;
         }
 

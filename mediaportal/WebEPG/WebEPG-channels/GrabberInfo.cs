@@ -20,32 +20,20 @@
  */
 
 using System;
-using System.IO;
-using System.Net;
-using System.Web;
-using System.Text;
-//using System.Collections.Generic;
-using System.Windows.Forms;
-using MediaPortal.Util;
-using MediaPortal.EPG;
-using MediaPortal.GUI.Library;
-using MediaPortal.TV.Database;
+using System.Collections;
 
-namespace MediaPortal.EPG.TestWebEPG
+namespace WebEPG_conf
 {
-    public class Program
-    {
-        /// <summary>
-        /// The main entry point for the application.
-        /// </summary>
-        [STAThread]
-
-        static void Main()
-        {
-			System.Diagnostics.Process.GetCurrentProcess().PriorityClass = System.Diagnostics.ProcessPriorityClass.BelowNormal;
-            WebEPG epg = new WebEPG();
-            epg.Import();
-
-        }
-    }
+	/// <summary>
+	/// Summary description for ChannelInfo.
+	/// </summary>
+	public class GrabberInfo
+	{
+		public string GrabberID;
+		public string GrabberName;
+		public int GrabDays;
+		public string SiteDesc;
+		public bool Linked;
+		public string Country;
+	}
 }

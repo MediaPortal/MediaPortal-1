@@ -6,8 +6,8 @@
   <section name="ChannelList">
 
 <!-- National - Francophone -->
-    <entry name="1@rtbf.be">LA%20UNE</entry>				<!-- La Une -->
-    <entry name="2@rtbf.be">La%20Deux</entry>				<!-- La Deux -->
+    <entry name="la1.be">LA%20UNE</entry>				<!-- La Une -->
+    <entry name="ladeux.be">La%20Deux</entry>				<!-- La Deux -->
     <entry name="tvi@rtl.be">RTL%20TVI</entry>				<!-- RTL-TVI -->
     <entry name="club@rtl.be">Club%20RTL</entry>			<!-- ClubRTL -->
     <entry name="ab3@rtl.be">AB3</entry>				<!-- AB 3 -->
@@ -22,10 +22,10 @@
     <entry name="mcm.be">MCM</entry>					<!-- MCM 100% belge -->
 
 <!-- National - Vlaams -->
-    <entry name="1@vrt.be">TV1</entry>					<!-- één -->
-    <entry name="ketnet@vrt.be">Ketnet</entry>				<!-- Ketnet -->
-    <entry name="canvas@vrt.be">Canvas</entry>				<!-- Canvas -->
-    <entry name="sporza@vrt.be">SPORZA</entry>				<!-- Sporza -->
+    <entry name="een.be">TV1</entry>					<!-- één -->
+    <entry name="ketnet.be">Ketnet</entry>				<!-- Ketnet -->
+    <entry name="canvas.be">Canvas</entry>				<!-- Canvas -->
+    <entry name="sporza.be">SPORZA</entry>				<!-- Sporza -->
     <entry name="vtm.be">VTM</entry>					<!-- VTM -->
     <entry name="vt4.be">VT4</entry>					<!-- VT4 -->
 
@@ -33,17 +33,17 @@
     <entry name="tf1.fr">TF1</entry>					<!-- TF1 -->
     <entry name="france2.fr">France2</entry>				<!-- France 2 -->
     <entry name="france3.fr">France3</entry>				<!-- France 3 -->
-    <entry name="arte.fr">ARTE</entry>					<!-- ARTE -->
+    <entry name="arte-tv.com">ARTE</entry>					<!-- ARTE -->
     <entry name="france5.fr">La%20CINQ</entry>				<!-- France 5 -->
     <entry name="f@tv5.fr">TV5</entry>					<!-- TV5 -->
     <entry name="m6.fr">M6</entry>					<!-- M6 -->
-    <entry name="1@bbc.co.uk">BBC1</entry>				<!-- BBC1 -->
-    <entry name="2@bbc.co.uk">BBC2</entry>				<!-- BBC2 -->
-    <entry name="world@bbc.co.uk">BBC%20World</entry>			<!-- BBC World -->
+    <entry name="bbc1@bbc.co.uk">BBC1</entry>				<!-- BBC1 -->
+    <entry name="bbc2@bbc.co.uk">BBC2</entry>				<!-- BBC2 -->
+    <entry name="bbcworld.com">BBC%20World</entry>			<!-- BBC World -->
     <entry name="euronews.net">EuroNews</entry>				<!-- EuroNews -->
-    <entry name="1@tros.nl">Hollande1</entry>				<!-- Hollande 1 -->
-    <entry name="2@tros.nl">Hollande2</entry>				<!-- Hollande 2 -->
-    <entry name="3@tros.nl">Hollande3</entry>				<!-- Hollande 3 -->
+    <entry name="ned1@omroep.nl">Hollande1</entry>			<!-- Hollande 1 -->
+    <entry name="ned2@omroep.nl">Hollande2</entry>			<!-- Hollande 2 -->
+    <entry name="ned3@omroep.nl">Hollande3</entry>			<!-- Hollande 3 -->
     <entry name="ard.de">ALL1</entry>					<!-- ARD - Allemagne 1 -->
     <entry name="zdf.de">ALL2</entry>					<!-- ZDF - Allemagne 2 -->
     <entry name="wdr.de">ALL3%20WDR</entry>				<!-- WDR - Allemagne 3 -->
@@ -54,14 +54,13 @@
     <entry name="international@rtp.pt">RTP%20International</entry>	<!-- RTPi -->
 
 <!-- International -->
-    <entry name="emea.cnni@cnn.com">CNN</entry>				<!-- CNN International - EMEA -->
+    <entry name="cnni-emea@cnn.com">CNN</entry>				<!-- CNN International - EMEA -->
     <entry name="cnbc.com">CNBC</entry>					<!-- CNBC -->
     <entry name="mtv.com">MTV</entry>					<!-- MTV -->
   </section>
 
 <!-- Formating of Listing -->
   <section name="Listing">
-    <entry name="LoadFirstURL">http://www.telemoustique.be/FS_index.htm</entry>
     <entry name="BaseURL">http://www.telemoustique.be/fr/</entry>
     <entry name="SearchURL">zender.asp?move=full&amp;channel=#ID&amp;dag=#_M/#_D/#YYYY</entry>
 

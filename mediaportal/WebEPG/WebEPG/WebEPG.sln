@@ -5,13 +5,16 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebEPG", "WebEPG.csproj", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebEPG-xmltv", "..\WebEPG-xmltv\WebEPG-xmltv.csproj", "{67D44FEB-AC41-4B93-AC1D-876318CDD16B}"
 	ProjectSection(ProjectDependencies) = postProject
-		{47B8906A-5EC9-4641-811E-8BC0EAF97DDD} = {47B8906A-5EC9-4641-811E-8BC0EAF97DDD}
 		{F7CB2A9F-004E-4667-BEAF-782F1C28E2D3} = {F7CB2A9F-004E-4667-BEAF-782F1C28E2D3}
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebEPG-conf", "..\WebEPG-conf\WebEPG-conf.csproj", "{47B8906A-5EC9-4641-811E-8BC0EAF97DDD}"
 	ProjectSection(ProjectDependencies) = postProject
 		{F7CB2A9F-004E-4667-BEAF-782F1C28E2D3} = {F7CB2A9F-004E-4667-BEAF-782F1C28E2D3}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebEPG-channels", "..\WebEPG-channels\WebEPG-channels.csproj", "{21F2FA6E-4B52-442E-A5A8-64573061D571}"
+	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
 Global
@@ -32,6 +35,10 @@ Global
 		{47B8906A-5EC9-4641-811E-8BC0EAF97DDD}.Debug.Build.0 = Debug|.NET
 		{47B8906A-5EC9-4641-811E-8BC0EAF97DDD}.Release.ActiveCfg = Release|.NET
 		{47B8906A-5EC9-4641-811E-8BC0EAF97DDD}.Release.Build.0 = Release|.NET
+		{21F2FA6E-4B52-442E-A5A8-64573061D571}.Debug.ActiveCfg = Debug|.NET
+		{21F2FA6E-4B52-442E-A5A8-64573061D571}.Debug.Build.0 = Debug|.NET
+		{21F2FA6E-4B52-442E-A5A8-64573061D571}.Release.ActiveCfg = Release|.NET
+		{21F2FA6E-4B52-442E-A5A8-64573061D571}.Release.Build.0 = Release|.NET
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection

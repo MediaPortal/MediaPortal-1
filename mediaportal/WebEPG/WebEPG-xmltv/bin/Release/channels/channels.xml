@@ -1,0 +1,3849 @@
+<?xml version="1.0" encoding="utf-8"?>
+<profile>
+  <section name="ChannelInfo">
+    <entry name="TotalChannels">724</entry>
+  </section>
+  <section name="0">
+    <entry name="ChannelID">1@betv.be</entry>
+    <entry name="FullName">Be1</entry>
+  </section>
+  <section name="1">
+    <entry name="ChannelID">10-digi-vic-metro@ten.com.au</entry>
+    <entry name="FullName">10 Digital VIC Metro</entry>
+  </section>
+  <section name="2">
+    <entry name="ChannelID">10-HD-vic-metro@ten.com.au</entry>
+    <entry name="FullName">10 HD Digital VIC Metro</entry>
+  </section>
+  <section name="3">
+    <entry name="ChannelID">13thstreet.de</entry>
+    <entry name="FullName">13th Street</entry>
+  </section>
+  <section name="4">
+    <entry name="ChannelID">2@god.tv</entry>
+    <entry name="FullName">God 2</entry>
+  </section>
+  <section name="5">
+    <entry name="ChannelID">2@ibuy.tv</entry>
+    <entry name="FullName">iBuy TV 2</entry>
+  </section>
+  <section name="6">
+    <entry name="ChannelID">2@livingtv.co.uk</entry>
+    <entry name="FullName">LIVINGtv 2</entry>
+  </section>
+  <section name="7">
+    <entry name="ChannelID">2@mtv.co.uk</entry>
+    <entry name="FullName">MTV2</entry>
+  </section>
+  <section name="8">
+    <entry name="ChannelID">2@vh1.co.uk</entry>
+    <entry name="FullName">VH2</entry>
+  </section>
+  <section name="9">
+    <entry name="ChannelID">2@vrt.be</entry>
+    <entry name="FullName">Kanaal 2</entry>
+  </section>
+  <section name="10">
+    <entry name="ChannelID">24@svt.se</entry>
+    <entry name="FullName">24@svt.se</entry>
+  </section>
+  <section name="11">
+    <entry name="ChannelID">3plus.dk</entry>
+    <entry name="FullName">3+ Danmark</entry>
+  </section>
+  <section name="12">
+    <entry name="ChannelID">3sat.de</entry>
+    <entry name="FullName">3sat</entry>
+  </section>
+  <section name="13">
+    <entry name="ChannelID">4@rtl.nl</entry>
+    <entry name="FullName">4@rtl.nl</entry>
+  </section>
+  <section name="14">
+    <entry name="ChannelID">5@rtl.nl</entry>
+    <entry name="FullName">5@rtl.nl</entry>
+  </section>
+  <section name="15">
+    <entry name="ChannelID">7-digi-vic-metro@seven.com.au</entry>
+    <entry name="FullName">7 Digital VIC Metro</entry>
+  </section>
+  <section name="16">
+    <entry name="ChannelID">7-HD-vic-metro@seven.com.au</entry>
+    <entry name="FullName">7 HD Digital VIC Metro</entry>
+  </section>
+  <section name="17">
+    <entry name="ChannelID">9-digi-vic-metro@ninemsn.com.au</entry>
+    <entry name="FullName">9 Digital VIC Metro</entry>
+  </section>
+  <section name="18">
+    <entry name="ChannelID">9-HD-vic-metro@ninemsn.com.au</entry>
+    <entry name="FullName">9 HD Digital VIC Metro</entry>
+  </section>
+  <section name="19">
+    <entry name="ChannelID">a1@nationalgeographic.co.uk</entry>
+    <entry name="FullName">Adventure One</entry>
+  </section>
+  <section name="20">
+    <entry name="ChannelID">ab3@rtl.be</entry>
+    <entry name="FullName">AB 3</entry>
+  </section>
+  <section name="21">
+    <entry name="ChannelID">ab4@rtl.be</entry>
+    <entry name="FullName">AB 4</entry>
+  </section>
+  <section name="22">
+    <entry name="ChannelID">abc1@disney.co.uk</entry>
+    <entry name="FullName">ABC1</entry>
+  </section>
+  <section name="23">
+    <entry name="ChannelID">abc2-digi-vic-metro@abc.com.au</entry>
+    <entry name="FullName">abc2 Digital VIC Metro</entry>
+  </section>
+  <section name="24">
+    <entry name="ChannelID">abc-digi-vic-metro@abc.com.au</entry>
+    <entry name="FullName">abc Digital VIC Metro</entry>
+  </section>
+  <section name="25">
+    <entry name="ChannelID">abc-HD-vic-metro@abc.com.au</entry>
+    <entry name="FullName">abc HD Digital VIC Metro</entry>
+  </section>
+  <section name="26">
+    <entry name="ChannelID">action@tv1000.no</entry>
+    <entry name="FullName">TV1000 Action</entry>
+  </section>
+  <section name="27">
+    <entry name="ChannelID">action@tv1000.se</entry>
+    <entry name="FullName">action@tv1000.se</entry>
+  </section>
+  <section name="28">
+    <entry name="ChannelID">action@viasat.se</entry>
+    <entry name="FullName">action@viasat.se</entry>
+  </section>
+  <section name="29">
+    <entry name="ChannelID">actuatv-be</entry>
+    <entry name="FullName">Actua-TV</entry>
+  </section>
+  <section name="30">
+    <entry name="ChannelID">alpha@br-online.de</entry>
+    <entry name="FullName">BR Alpha</entry>
+  </section>
+  <section name="31">
+    <entry name="ChannelID">alphatv.gr</entry>
+    <entry name="FullName">ALPHA</entry>
+  </section>
+  <section name="32">
+    <entry name="ChannelID">alter.gr</entry>
+    <entry name="FullName">ALTER</entry>
+  </section>
+  <section name="33">
+    <entry name="ChannelID">an@bravo.co.uk</entry>
+    <entry name="FullName">Bravo Analogue</entry>
+  </section>
+  <section name="34">
+    <entry name="ChannelID">an@challengetv.co.uk</entry>
+    <entry name="FullName">Challenge Analogue</entry>
+  </section>
+  <section name="35">
+    <entry name="ChannelID">an@discoverychannel.co.uk</entry>
+    <entry name="FullName">Discovery Analogue</entry>
+  </section>
+  <section name="36">
+    <entry name="ChannelID">an@god.tv</entry>
+    <entry name="FullName">God Channel Analogue</entry>
+  </section>
+  <section name="37">
+    <entry name="ChannelID">an@jetix.co.uk</entry>
+    <entry name="FullName">Jetix Analogue</entry>
+  </section>
+  <section name="38">
+    <entry name="ChannelID">an@nationalgeographic.co.uk</entry>
+    <entry name="FullName">National Geographic Analogue</entry>
+  </section>
+  <section name="39">
+    <entry name="ChannelID">an@nick.co.uk</entry>
+    <entry name="FullName">Nickelodeon Analogue</entry>
+  </section>
+  <section name="40">
+    <entry name="ChannelID">an@televisionx.co.uk</entry>
+    <entry name="FullName">television:x 1 Analogue</entry>
+  </section>
+  <section name="41">
+    <entry name="ChannelID">an@thehistorychannel.co.uk</entry>
+    <entry name="FullName">History Channel Analogue</entry>
+  </section>
+  <section name="42">
+    <entry name="ChannelID">ana@paramountcomedy.com</entry>
+    <entry name="FullName">Paramount Comedy Channel Analogue</entry>
+  </section>
+  <section name="43">
+    <entry name="ChannelID">animal@discovery.com</entry>
+    <entry name="FullName">Animal Planet</entry>
+  </section>
+  <section name="44">
+    <entry name="ChannelID">animalan@discovery.com</entry>
+    <entry name="FullName">animalan@discovery.com</entry>
+  </section>
+  <section name="45">
+    <entry name="ChannelID">animalp1@discovery.com</entry>
+    <entry name="FullName">Animal Planet Plus 1</entry>
+  </section>
+  <section name="46">
+    <entry name="ChannelID">animalplanet.com</entry>
+    <entry name="FullName">Animal Planet</entry>
+  </section>
+  <section name="47">
+    <entry name="ChannelID">animalplanet.de</entry>
+    <entry name="FullName">animalplanet.de</entry>
+  </section>
+  <section name="48">
+    <entry name="ChannelID">animalplanet.nl</entry>
+    <entry name="FullName">animalplanet.nl</entry>
+  </section>
+  <section name="49">
+    <entry name="ChannelID">antena3tv.es</entry>
+    <entry name="FullName">Antena 3</entry>
+  </section>
+  <section name="50">
+    <entry name="ChannelID">antenna.gr</entry>
+    <entry name="FullName">ANT1</entry>
+  </section>
+  <section name="51">
+    <entry name="ChannelID">ard.de</entry>
+    <entry name="FullName">ARD</entry>
+  </section>
+  <section name="52">
+    <entry name="ChannelID">ard-digital.de</entry>
+    <entry name="FullName">ard-digital.de</entry>
+  </section>
+  <section name="53">
+    <entry name="ChannelID">arte-tv.com</entry>
+    <entry name="FullName">arte</entry>
+  </section>
+  <section name="54">
+    <entry name="ChannelID">artsworld.com</entry>
+    <entry name="FullName">Artsworld</entry>
+  </section>
+  <section name="55">
+    <entry name="ChannelID">arydigital.tv</entry>
+    <entry name="FullName">ARY Digital</entry>
+  </section>
+  <section name="56">
+    <entry name="ChannelID">at@premiere.de</entry>
+    <entry name="FullName">at@premiere.de</entry>
+  </section>
+  <section name="57">
+    <entry name="ChannelID">at5.nl</entry>
+    <entry name="FullName">at5.nl</entry>
+  </section>
+  <section name="58">
+    <entry name="ChannelID">attheraces.co.uk</entry>
+    <entry name="FullName">At The Races</entry>
+  </section>
+  <section name="59">
+    <entry name="ChannelID">atv.be</entry>
+    <entry name="FullName">ATV</entry>
+  </section>
+  <section name="60">
+    <entry name="ChannelID">avante</entry>
+    <entry name="FullName">avante</entry>
+  </section>
+  <section name="61">
+    <entry name="ChannelID">avs.be</entry>
+    <entry name="FullName">AVS</entry>
+  </section>
+  <section name="62">
+    <entry name="ChannelID">b4utv.com</entry>
+    <entry name="FullName">B4</entry>
+  </section>
+  <section name="63">
+    <entry name="ChannelID">barnkanalen@svt.se</entry>
+    <entry name="FullName">barnkanalen@svt.se</entry>
+  </section>
+  <section name="64">
+    <entry name="ChannelID">base@mtv.co.uk</entry>
+    <entry name="FullName">MTV Base</entry>
+  </section>
+  <section name="65">
+    <entry name="ChannelID">bbc1@bbc.co.uk</entry>
+    <entry name="FullName">BBC 1</entry>
+  </section>
+  <section name="66">
+    <entry name="ChannelID">bbc1ea@bbc.co.uk</entry>
+    <entry name="FullName">BBC 1 East</entry>
+  </section>
+  <section name="67">
+    <entry name="ChannelID">bbc1lo@bbc.co.uk</entry>
+    <entry name="FullName">BBC 1 London</entry>
+  </section>
+  <section name="68">
+    <entry name="ChannelID">bbc1mi@bbc.co.uk</entry>
+    <entry name="FullName">BBC 1 Midlands</entry>
+  </section>
+  <section name="69">
+    <entry name="ChannelID">bbc1ne@bbc.co.uk</entry>
+    <entry name="FullName">BBC 1 North East</entry>
+  </section>
+  <section name="70">
+    <entry name="ChannelID">bbc1ni@bbc.co.uk</entry>
+    <entry name="FullName">BBC 1 Northern Ireland</entry>
+  </section>
+  <section name="71">
+    <entry name="ChannelID">bbc1no@bbc.co.uk</entry>
+    <entry name="FullName">BBC 1 North</entry>
+  </section>
+  <section name="72">
+    <entry name="ChannelID">bbc1nw@bbc.co.uk</entry>
+    <entry name="FullName">BBC 1 North West</entry>
+  </section>
+  <section name="73">
+    <entry name="ChannelID">bbc1sc@bbc.co.uk</entry>
+    <entry name="FullName">BBC 1 Scotland</entry>
+  </section>
+  <section name="74">
+    <entry name="ChannelID">bbc1se@bbc.co.uk</entry>
+    <entry name="FullName">BBC 1 South East</entry>
+  </section>
+  <section name="75">
+    <entry name="ChannelID">bbc1so@bbc.co.uk</entry>
+    <entry name="FullName">BBC 1 South</entry>
+  </section>
+  <section name="76">
+    <entry name="ChannelID">bbc1sw@bbc.co.uk</entry>
+    <entry name="FullName">BBC 1 South West</entry>
+  </section>
+  <section name="77">
+    <entry name="ChannelID">bbc1wa@bbc.co.uk</entry>
+    <entry name="FullName">BBC 1 Wales</entry>
+  </section>
+  <section name="78">
+    <entry name="ChannelID">bbc1we@bbc.co.uk</entry>
+    <entry name="FullName">BBC 1 West</entry>
+  </section>
+  <section name="79">
+    <entry name="ChannelID">bbc2@bbc.co.uk</entry>
+    <entry name="FullName">BBC 2</entry>
+  </section>
+  <section name="80">
+    <entry name="ChannelID">bbc2ea@bbc.co.uk</entry>
+    <entry name="FullName">BBC 2 East</entry>
+  </section>
+  <section name="81">
+    <entry name="ChannelID">bbc2lo@bbc.co.uk</entry>
+    <entry name="FullName">BBC 2 London</entry>
+  </section>
+  <section name="82">
+    <entry name="ChannelID">bbc2mi@bbc.co.uk</entry>
+    <entry name="FullName">BBC 2 Midlands</entry>
+  </section>
+  <section name="83">
+    <entry name="ChannelID">bbc2ne@bbc.co.uk</entry>
+    <entry name="FullName">BBC 2 North East</entry>
+  </section>
+  <section name="84">
+    <entry name="ChannelID">bbc2ni@bbc.co.uk</entry>
+    <entry name="FullName">BBC 2 Northern Ireland</entry>
+  </section>
+  <section name="85">
+    <entry name="ChannelID">bbc2nid@bbc.co.uk</entry>
+    <entry name="FullName">BBC 2 Northern Ireland (Digital)</entry>
+  </section>
+  <section name="86">
+    <entry name="ChannelID">bbc2no@bbc.co.uk</entry>
+    <entry name="FullName">BBC 2 North</entry>
+  </section>
+  <section name="87">
+    <entry name="ChannelID">bbc2nw@bbc.co.uk</entry>
+    <entry name="FullName">BBC 2 North West</entry>
+  </section>
+  <section name="88">
+    <entry name="ChannelID">bbc2sc@bbc.co.uk</entry>
+    <entry name="FullName">BBC 2 Scotland</entry>
+  </section>
+  <section name="89">
+    <entry name="ChannelID">bbc2scd@bbc.co.uk</entry>
+    <entry name="FullName">BBC 2 Scotland (Digital)</entry>
+  </section>
+  <section name="90">
+    <entry name="ChannelID">bbc2se@bbc.co.uk</entry>
+    <entry name="FullName">BBC 2 South East</entry>
+  </section>
+  <section name="91">
+    <entry name="ChannelID">bbc2so@bbc.co.uk</entry>
+    <entry name="FullName">BBC 2 South</entry>
+  </section>
+  <section name="92">
+    <entry name="ChannelID">bbc2sw@bbc.co.uk</entry>
+    <entry name="FullName">BBC 2 South West</entry>
+  </section>
+  <section name="93">
+    <entry name="ChannelID">bbc2wa@bbc.co.uk</entry>
+    <entry name="FullName">BBC 2 Wales</entry>
+  </section>
+  <section name="94">
+    <entry name="ChannelID">bbc2wad@bbc.co.uk</entry>
+    <entry name="FullName">BBC 2 Wales (Digital)</entry>
+  </section>
+  <section name="95">
+    <entry name="ChannelID">bbc2we@bbc.co.uk</entry>
+    <entry name="FullName">BBC 2 West</entry>
+  </section>
+  <section name="96">
+    <entry name="ChannelID">bbc3@bbc.co.uk</entry>
+    <entry name="FullName">BBC 3</entry>
+  </section>
+  <section name="97">
+    <entry name="ChannelID">bbc4@bbc.co.uk</entry>
+    <entry name="FullName">BBC 4</entry>
+  </section>
+  <section name="98">
+    <entry name="ChannelID">bbc4d@bbc.co.uk</entry>
+    <entry name="FullName">BBC 4 (Digital)</entry>
+  </section>
+  <section name="99">
+    <entry name="ChannelID">bbca@bbc.co.uk</entry>
+    <entry name="FullName">BBC America</entry>
+  </section>
+  <section name="100">
+    <entry name="ChannelID">bbcfood.com</entry>
+    <entry name="FullName">bbcfood.com</entry>
+  </section>
+  <section name="101">
+    <entry name="ChannelID">bbcn@bbc.co.uk</entry>
+    <entry name="FullName">BBC News 24</entry>
+  </section>
+  <section name="102">
+    <entry name="ChannelID">bbcpar@bbc.co.uk</entry>
+    <entry name="FullName">BBC Parliament</entry>
+  </section>
+  <section name="103">
+    <entry name="ChannelID">bbcprime.com</entry>
+    <entry name="FullName">BBC Prime</entry>
+  </section>
+  <section name="104">
+    <entry name="ChannelID">bbcworld.com</entry>
+    <entry name="FullName">BBC World</entry>
+  </section>
+  <section name="105">
+    <entry name="ChannelID">beate-uhse.tv</entry>
+    <entry name="FullName">beate-uhse.tv</entry>
+  </section>
+  <section name="106">
+    <entry name="ChannelID">bid.tv</entry>
+    <entry name="FullName">bid tv</entry>
+  </section>
+  <section name="107">
+    <entry name="ChannelID">blauw@canal+.be</entry>
+    <entry name="FullName">Canal+ Blauw</entry>
+  </section>
+  <section name="108">
+    <entry name="ChannelID">blauw@canalplus.nl</entry>
+    <entry name="FullName">blauw@canalplus.nl</entry>
+  </section>
+  <section name="109">
+    <entry name="ChannelID">bloomberg.co.uk</entry>
+    <entry name="FullName">Bloomberg TV</entry>
+  </section>
+  <section name="110">
+    <entry name="ChannelID">boom@cartoon-network.co.uk</entry>
+    <entry name="FullName">Boomerang</entry>
+  </section>
+  <section name="111">
+    <entry name="ChannelID">boomtt@cartoon-network.co.uk</entry>
+    <entry name="FullName">Boomerang (TopUpTV)</entry>
+  </section>
+  <section name="112">
+    <entry name="ChannelID">bravo.co.uk</entry>
+    <entry name="FullName">Bravo</entry>
+  </section>
+  <section name="113">
+    <entry name="ChannelID">br-online.de</entry>
+    <entry name="FullName">BR</entry>
+  </section>
+  <section name="114">
+    <entry name="ChannelID">bvn.nl</entry>
+    <entry name="FullName">bvn.nl</entry>
+  </section>
+  <section name="115">
+    <entry name="ChannelID">bvn-tv.nl</entry>
+    <entry name="FullName">bvn-tv.nl</entry>
+  </section>
+  <section name="116">
+    <entry name="ChannelID">canal33-es</entry>
+    <entry name="FullName">canal33-es</entry>
+  </section>
+  <section name="117">
+    <entry name="ChannelID">Canal7</entry>
+    <entry name="FullName">Canal7</entry>
+  </section>
+  <section name="118">
+    <entry name="ChannelID">canale5.com</entry>
+    <entry name="FullName">canale5.com</entry>
+  </section>
+  <section name="119">
+    <entry name="ChannelID">canalplus@canalplus.no</entry>
+    <entry name="FullName">Canal+</entry>
+  </section>
+  <section name="120">
+    <entry name="ChannelID">canalplus@canalplus.se</entry>
+    <entry name="FullName">canalplus@canalplus.se</entry>
+  </section>
+  <section name="121">
+    <entry name="ChannelID">Canalplus@plus.es</entry>
+    <entry name="FullName">Canal+</entry>
+  </section>
+  <section name="122">
+    <entry name="ChannelID">canalsur@canalsur.es</entry>
+    <entry name="FullName">Canal Sur</entry>
+  </section>
+  <section name="123">
+    <entry name="ChannelID">canalsur2@canalsur.es</entry>
+    <entry name="FullName">Canal Sur 2</entry>
+  </section>
+  <section name="124">
+    <entry name="ChannelID">canvas.be</entry>
+    <entry name="FullName">Canvas</entry>
+  </section>
+  <section name="125">
+    <entry name="ChannelID">cartoon-network.co.uk</entry>
+    <entry name="FullName">Cartoon Network</entry>
+  </section>
+  <section name="126">
+    <entry name="ChannelID">cartoonnetwork.com</entry>
+    <entry name="FullName">cartoonnetwork.com</entry>
+  </section>
+  <section name="127">
+    <entry name="ChannelID">cartoonnetwork.nl</entry>
+    <entry name="FullName">cartoonnetwork.nl</entry>
+  </section>
+  <section name="128">
+    <entry name="ChannelID">cartoonnetwork.no</entry>
+    <entry name="FullName">Cartoon Network</entry>
+  </section>
+  <section name="129">
+    <entry name="ChannelID">cartoonnetwork.se</entry>
+    <entry name="FullName">cartoonnetwork.se</entry>
+  </section>
+  <section name="130">
+    <entry name="ChannelID">cartoonnetworkeurope.com</entry>
+    <entry name="FullName">cartoonnetworkeurope.com</entry>
+  </section>
+  <section name="131">
+    <entry name="ChannelID">cbbc@bbc.co.uk</entry>
+    <entry name="FullName">CBBC</entry>
+  </section>
+  <section name="132">
+    <entry name="ChannelID">cbeeb@bbc.co.uk</entry>
+    <entry name="FullName">CBeebies</entry>
+  </section>
+  <section name="133">
+    <entry name="ChannelID">challengetv.co.uk</entry>
+    <entry name="FullName">Challenge</entry>
+  </section>
+  <section name="134">
+    <entry name="ChannelID">channel4.com</entry>
+    <entry name="FullName">Channel 4</entry>
+  </section>
+  <section name="135">
+    <entry name="ChannelID">channeltv.co.uk</entry>
+    <entry name="FullName">Channel</entry>
+  </section>
+  <section name="136">
+    <entry name="ChannelID">chartshow.tv</entry>
+    <entry name="FullName">Chart Show TV</entry>
+  </section>
+  <section name="137">
+    <entry name="ChannelID">cine@cablecom.ch</entry>
+    <entry name="FullName">Cablecom Cinema</entry>
+  </section>
+  <section name="138">
+    <entry name="ChannelID">cine@teleclub.ch</entry>
+    <entry name="FullName">Teleclub Cinema</entry>
+  </section>
+  <section name="139">
+    <entry name="ChannelID">cine1@betv.be</entry>
+    <entry name="FullName">Be Ciné 1</entry>
+  </section>
+  <section name="140">
+    <entry name="ChannelID">cine2@betv.be</entry>
+    <entry name="FullName">Be Ciné 2</entry>
+  </section>
+  <section name="141">
+    <entry name="ChannelID">cinema@canaldigital.no</entry>
+    <entry name="FullName">Cinema</entry>
+  </section>
+  <section name="142">
+    <entry name="ChannelID">cinema@zeetv.co.uk</entry>
+    <entry name="FullName">Zee Cinema</entry>
+  </section>
+  <section name="143">
+    <entry name="ChannelID">civil@discoverychannel.co.uk</entry>
+    <entry name="FullName">Discovery Civilisations</entry>
+  </section>
+  <section name="144">
+    <entry name="ChannelID">civilisation@discovery.com</entry>
+    <entry name="FullName">Discovery Civilisation</entry>
+  </section>
+  <section name="145">
+    <entry name="ChannelID">classic@premiere.de</entry>
+    <entry name="FullName">Premiere Classic</entry>
+  </section>
+  <section name="146">
+    <entry name="ChannelID">classic@tv1000.no</entry>
+    <entry name="FullName">TV1000 Classic</entry>
+  </section>
+  <section name="147">
+    <entry name="ChannelID">classic@tv1000.se</entry>
+    <entry name="FullName">classic@tv1000.se</entry>
+  </section>
+  <section name="148">
+    <entry name="ChannelID">classic@vh1.co.uk</entry>
+    <entry name="FullName">VH1 Classic</entry>
+  </section>
+  <section name="149">
+    <entry name="ChannelID">club</entry>
+    <entry name="FullName">Club</entry>
+  </section>
+  <section name="150">
+    <entry name="ChannelID">club@rtl.be</entry>
+    <entry name="FullName">Club RTL</entry>
+  </section>
+  <section name="151">
+    <entry name="ChannelID">cmorefilm@canalplus.no</entry>
+    <entry name="FullName">CmoreFilm</entry>
+  </section>
+  <section name="152">
+    <entry name="ChannelID">cmorefilm@canalplus.se</entry>
+    <entry name="FullName">cmorefilm@canalplus.se</entry>
+  </section>
+  <section name="153">
+    <entry name="ChannelID">cnbc.com</entry>
+    <entry name="FullName">cnbc.com</entry>
+  </section>
+  <section name="154">
+    <entry name="ChannelID">cnbc@msn.com</entry>
+    <entry name="FullName">CNBC</entry>
+  </section>
+  <section name="155">
+    <entry name="ChannelID">CNBC_NGC</entry>
+    <entry name="FullName">CNBC &amp; National Geographic</entry>
+  </section>
+  <section name="156">
+    <entry name="ChannelID">cnbceurope.com</entry>
+    <entry name="FullName">CNBC</entry>
+  </section>
+  <section name="157">
+    <entry name="ChannelID">cnn.com</entry>
+    <entry name="FullName">CNN</entry>
+  </section>
+  <section name="158">
+    <entry name="ChannelID">cnni-emea@cnn.com</entry>
+    <entry name="FullName">CNN International - Europe, Midle East &amp; Africa</entry>
+  </section>
+  <section name="159">
+    <entry name="ChannelID">communitychannel.org</entry>
+    <entry name="FullName">Community Channel</entry>
+  </section>
+  <section name="160">
+    <entry name="ChannelID">crtvg.es</entry>
+    <entry name="FullName">crtvg.es</entry>
+  </section>
+  <section name="161">
+    <entry name="ChannelID">dance@mtv.co.uk</entry>
+    <entry name="FullName">MTV Dance</entry>
+  </section>
+  <section name="162">
+    <entry name="ChannelID">digitalplus@plus.es</entry>
+    <entry name="FullName">digitalplus@plus.es</entry>
+  </section>
+  <section name="163">
+    <entry name="ChannelID">dir1@premiere.de</entry>
+    <entry name="FullName">Premiere Direct 1</entry>
+  </section>
+  <section name="164">
+    <entry name="ChannelID">dir2@premiere.de</entry>
+    <entry name="FullName">Premiere Direct 2</entry>
+  </section>
+  <section name="165">
+    <entry name="ChannelID">dir3@premiere.de</entry>
+    <entry name="FullName">Premiere Direct 3</entry>
+  </section>
+  <section name="166">
+    <entry name="ChannelID">dir4@premiere.de</entry>
+    <entry name="FullName">Premiere Direct 4</entry>
+  </section>
+  <section name="167">
+    <entry name="ChannelID">discovery.de</entry>
+    <entry name="FullName">discovery.de</entry>
+  </section>
+  <section name="168">
+    <entry name="ChannelID">discovery@discovery.com</entry>
+    <entry name="FullName">Discovery</entry>
+  </section>
+  <section name="169">
+    <entry name="ChannelID">discoverychannel.co.uk</entry>
+    <entry name="FullName">Discovery</entry>
+  </section>
+  <section name="170">
+    <entry name="ChannelID">discoverychannel.nl</entry>
+    <entry name="FullName">discoverychannel.nl</entry>
+  </section>
+  <section name="171">
+    <entry name="ChannelID">discovery-kids.co.uk</entry>
+    <entry name="FullName">Discovery Kids</entry>
+  </section>
+  <section name="172">
+    <entry name="ChannelID">disney.de</entry>
+    <entry name="FullName">disney.de</entry>
+  </section>
+  <section name="173">
+    <entry name="ChannelID">disneychannel.co.uk</entry>
+    <entry name="FullName">Disney</entry>
+  </section>
+  <section name="174">
+    <entry name="ChannelID">disneychannel.no</entry>
+    <entry name="FullName">Disney Channel</entry>
+  </section>
+  <section name="175">
+    <entry name="ChannelID">disneychannel.se</entry>
+    <entry name="FullName">disneychannel.se</entry>
+  </section>
+  <section name="176">
+    <entry name="ChannelID">doku@zdf.de</entry>
+    <entry name="FullName">doku@zdf.de</entry>
+  </section>
+  <section name="177">
+    <entry name="ChannelID">dr1@dr.dk</entry>
+    <entry name="FullName">DR1</entry>
+  </section>
+  <section name="178">
+    <entry name="ChannelID">dr2@dr.dk</entry>
+    <entry name="FullName">DR2</entry>
+  </section>
+  <section name="179">
+    <entry name="ChannelID">dsf.de</entry>
+    <entry name="FullName">DSF</entry>
+  </section>
+  <section name="180">
+    <entry name="ChannelID">dt@communitychannel.org</entry>
+    <entry name="FullName">Community Channel (Digital)</entry>
+  </section>
+  <section name="181">
+    <entry name="ChannelID">dt@ibuy.tv</entry>
+    <entry name="FullName">iBuy TV (Digital Terrestrial)</entry>
+  </section>
+  <section name="182">
+    <entry name="ChannelID">dt@teachers.tv</entry>
+    <entry name="FullName">Teachers TV (Digital Terrestrial)</entry>
+  </section>
+  <section name="183">
+    <entry name="ChannelID">dw-world.de</entry>
+    <entry name="FullName">Deutche Welle</entry>
+  </section>
+  <section name="184">
+    <entry name="ChannelID">e4@channel4.com</entry>
+    <entry name="FullName">E4</entry>
+  </section>
+  <section name="185">
+    <entry name="ChannelID">e4p1@channel4.com</entry>
+    <entry name="FullName">E4 Plus 1</entry>
+  </section>
+  <section name="186">
+    <entry name="ChannelID">e4tu@channel4.com</entry>
+    <entry name="FullName">E4 (TopUpTV)</entry>
+  </section>
+  <section name="187">
+    <entry name="ChannelID">eeacute@tvgids.nl</entry>
+    <entry name="FullName">eeacute@tvgids.nl</entry>
+  </section>
+  <section name="188">
+    <entry name="ChannelID">een.be</entry>
+    <entry name="FullName">één</entry>
+  </section>
+  <section name="189">
+    <entry name="ChannelID">eonline.com</entry>
+    <entry name="FullName">E!</entry>
+  </section>
+  <section name="190">
+    <entry name="ChannelID">erot1@premiere.de</entry>
+    <entry name="FullName">Premiere Erotic 1</entry>
+  </section>
+  <section name="191">
+    <entry name="ChannelID">erot2@premiere.de</entry>
+    <entry name="FullName">Premiere Erotic 2</entry>
+  </section>
+  <section name="192">
+    <entry name="ChannelID">erot3@premiere.de</entry>
+    <entry name="FullName">Premiere Erotic 3</entry>
+  </section>
+  <section name="193">
+    <entry name="ChannelID">espn.com</entry>
+    <entry name="FullName">espn.com</entry>
+  </section>
+  <section name="194">
+    <entry name="ChannelID">et1@ert.gr</entry>
+    <entry name="FullName">ET1</entry>
+  </section>
+  <section name="195">
+    <entry name="ChannelID">et3@ert.gr</entry>
+    <entry name="FullName">ET3</entry>
+  </section>
+  <section name="196">
+    <entry name="ChannelID">etb1@eitb.com</entry>
+    <entry name="FullName">etb1@eitb.com</entry>
+  </section>
+  <section name="197">
+    <entry name="ChannelID">etb2@eitb.com</entry>
+    <entry name="FullName">etb2@eitb.com</entry>
+  </section>
+  <section name="198">
+    <entry name="ChannelID">etv.nl</entry>
+    <entry name="FullName">etv.nl</entry>
+  </section>
+  <section name="199">
+    <entry name="ChannelID">euronews.net</entry>
+    <entry name="FullName">Euronews</entry>
+  </section>
+  <section name="200">
+    <entry name="ChannelID">europa@svt.se</entry>
+    <entry name="FullName">europa@svt.se</entry>
+  </section>
+  <section name="201">
+    <entry name="ChannelID">eurosport@eurosport.com</entry>
+    <entry name="FullName">Eurosport</entry>
+  </section>
+  <section name="202">
+    <entry name="ChannelID">eurosport2@eurosport.com</entry>
+    <entry name="FullName">eurosport2@eurosport.com</entry>
+  </section>
+  <section name="203">
+    <entry name="ChannelID">explorer@viasat.no</entry>
+    <entry name="FullName">Viasat Explorer</entry>
+  </section>
+  <section name="204">
+    <entry name="ChannelID">explorer@viasat.se</entry>
+    <entry name="FullName">explorer@viasat.se</entry>
+  </section>
+  <section name="205">
+    <entry name="ChannelID">expressen.se</entry>
+    <entry name="FullName">expressen.se</entry>
+  </section>
+  <section name="206">
+    <entry name="ChannelID">exrta@ard-digital.de</entry>
+    <entry name="FullName">exrta@ard-digital.de</entry>
+  </section>
+  <section name="207">
+    <entry name="ChannelID">extra-tv-gr</entry>
+    <entry name="FullName">Extra</entry>
+  </section>
+  <section name="208">
+    <entry name="ChannelID">extremesports.tv</entry>
+    <entry name="FullName">Extreme Sports</entry>
+  </section>
+  <section name="209">
+    <entry name="ChannelID">f@tv5.fr</entry>
+    <entry name="FullName">TV5 francophone</entry>
+  </section>
+  <section name="210">
+    <entry name="ChannelID">fab.de</entry>
+    <entry name="FullName">FAB Fernsehen aus Berlin</entry>
+  </section>
+  <section name="211">
+    <entry name="ChannelID">family@tv1000.no</entry>
+    <entry name="FullName">TV1000 Family</entry>
+  </section>
+  <section name="212">
+    <entry name="ChannelID">family@tv1000.se</entry>
+    <entry name="FullName">family@tv1000.se</entry>
+  </section>
+  <section name="213">
+    <entry name="ChannelID">fest@ard-digital.de</entry>
+    <entry name="FullName">fest@ard-digital.de</entry>
+  </section>
+  <section name="214">
+    <entry name="ChannelID">fezztival.be</entry>
+    <entry name="FullName">Fezztival</entry>
+  </section>
+  <section name="215">
+    <entry name="ChannelID">film@tv4.se</entry>
+    <entry name="FullName">film@tv4.se</entry>
+  </section>
+  <section name="216">
+    <entry name="ChannelID">film1@canalplus.no</entry>
+    <entry name="FullName">Canal+ Film1</entry>
+  </section>
+  <section name="217">
+    <entry name="ChannelID">film1@canalplus.se</entry>
+    <entry name="FullName">film1@canalplus.se</entry>
+  </section>
+  <section name="218">
+    <entry name="ChannelID">film2@canalplus.no</entry>
+    <entry name="FullName">Canal+ Film2</entry>
+  </section>
+  <section name="219">
+    <entry name="ChannelID">film2@canalplus.se</entry>
+    <entry name="FullName">film2@canalplus.se</entry>
+  </section>
+  <section name="220">
+    <entry name="ChannelID">film4@channel4.com</entry>
+    <entry name="FullName">FilmFour</entry>
+  </section>
+  <section name="221">
+    <entry name="ChannelID">film4p1@channel4.com</entry>
+    <entry name="FullName">FilmFour Plus 1</entry>
+  </section>
+  <section name="222">
+    <entry name="ChannelID">film4w@channel4.com</entry>
+    <entry name="FullName">FilmFour Weekly</entry>
+  </section>
+  <section name="223">
+    <entry name="ChannelID">five</entry>
+    <entry name="FullName">five</entry>
+  </section>
+  <section name="224">
+    <entry name="ChannelID">flaunt.tv</entry>
+    <entry name="FullName">Flaunt</entry>
+  </section>
+  <section name="225">
+    <entry name="ChannelID">focus.be</entry>
+    <entry name="FullName">focus.be</entry>
+  </section>
+  <section name="226">
+    <entry name="ChannelID">Focus.be</entry>
+    <entry name="FullName">Focus</entry>
+  </section>
+  <section name="227">
+    <entry name="ChannelID">foxkids.de</entry>
+    <entry name="FullName">foxkids.de</entry>
+  </section>
+  <section name="228">
+    <entry name="ChannelID">foxkids.nl</entry>
+    <entry name="FullName">foxkids.nl</entry>
+  </section>
+  <section name="229">
+    <entry name="ChannelID">france2.fr</entry>
+    <entry name="FullName">france 2</entry>
+  </section>
+  <section name="230">
+    <entry name="ChannelID">france3.fr</entry>
+    <entry name="FullName">france 3</entry>
+  </section>
+  <section name="231">
+    <entry name="ChannelID">france5.fr</entry>
+    <entry name="FullName">france 5</entry>
+  </section>
+  <section name="232">
+    <entry name="ChannelID">fst@yle.fi</entry>
+    <entry name="FullName">fst@yle.fi</entry>
+  </section>
+  <section name="233">
+    <entry name="ChannelID">ftn.tv</entry>
+    <entry name="FullName">f tn</entry>
+  </section>
+  <section name="234">
+    <entry name="ChannelID">ftv.com</entry>
+    <entry name="FullName">ftv.com</entry>
+  </section>
+  <section name="235">
+    <entry name="ChannelID">fxuk.tv</entry>
+    <entry name="FullName">FX</entry>
+  </section>
+  <section name="236">
+    <entry name="ChannelID">gaydatetv.co.uk</entry>
+    <entry name="FullName">GayDateTV</entry>
+  </section>
+  <section name="237">
+    <entry name="ChannelID">geel@canalplus.nl</entry>
+    <entry name="FullName">geel@canalplus.nl</entry>
+  </section>
+  <section name="238">
+    <entry name="ChannelID">giga.de</entry>
+    <entry name="FullName">NBC/CNBC/Giga</entry>
+  </section>
+  <section name="239">
+    <entry name="ChannelID">god.tv</entry>
+    <entry name="FullName">God Channel</entry>
+  </section>
+  <section name="240">
+    <entry name="ChannelID">godnetwork.com</entry>
+    <entry name="FullName">godnetwork.com</entry>
+  </section>
+  <section name="241">
+    <entry name="ChannelID">goldstar-tv.de</entry>
+    <entry name="FullName">goldstar-tv.de</entry>
+  </section>
+  <section name="242">
+    <entry name="ChannelID">grampiantv.co.uk</entry>
+    <entry name="FullName">Grampian</entry>
+  </section>
+  <section name="243">
+    <entry name="ChannelID">guj@zeetelevision.com</entry>
+    <entry name="FullName">Zee Gujarati</entry>
+  </section>
+  <section name="244">
+    <entry name="ChannelID">hallmarkchannel.co.uk</entry>
+    <entry name="FullName">Hallmark</entry>
+  </section>
+  <section name="245">
+    <entry name="ChannelID">hallmarkchannel.com</entry>
+    <entry name="FullName">Hallmark</entry>
+  </section>
+  <section name="246">
+    <entry name="ChannelID">hamburg1.de</entry>
+    <entry name="FullName">Hamburg 1</entry>
+  </section>
+  <section name="247">
+    <entry name="ChannelID">heimatkanal.de</entry>
+    <entry name="FullName">heimatkanal.de</entry>
+  </section>
+  <section name="248">
+    <entry name="ChannelID">history@viasat.no</entry>
+    <entry name="FullName">history@viasat.no</entry>
+  </section>
+  <section name="249">
+    <entry name="ChannelID">history@viasat.se</entry>
+    <entry name="FullName">history@viasat.se</entry>
+  </section>
+  <section name="250">
+    <entry name="ChannelID">hit24.tv</entry>
+    <entry name="FullName">hit24.tv</entry>
+  </section>
+  <section name="251">
+    <entry name="ChannelID">hits@kerrang.com</entry>
+    <entry name="FullName">The Hits!</entry>
+  </section>
+  <section name="252">
+    <entry name="ChannelID">hits@mtv.co.uk</entry>
+    <entry name="FullName">MTV Hits</entry>
+  </section>
+  <section name="253">
+    <entry name="ChannelID">home@discoverychannel.co.uk</entry>
+    <entry name="FullName">Discovery Home and Health</entry>
+  </section>
+  <section name="254">
+    <entry name="ChannelID">horrorchannel.com</entry>
+    <entry name="FullName">The Horror Channel</entry>
+  </section>
+  <section name="255">
+    <entry name="ChannelID">hr-online.de</entry>
+    <entry name="FullName">HR Hessen 3</entry>
+  </section>
+  <section name="256">
+    <entry name="ChannelID">hrt1@hrt.hr</entry>
+    <entry name="FullName">hrt1@hrt.hr</entry>
+  </section>
+  <section name="257">
+    <entry name="ChannelID">ibuy.tv</entry>
+    <entry name="FullName">iBuy TV</entry>
+  </section>
+  <section name="258">
+    <entry name="ChannelID">idealworld.tv</entry>
+    <entry name="FullName">Ideal World</entry>
+  </section>
+  <section name="259">
+    <entry name="ChannelID">ie@mtv.co.uk</entry>
+    <entry name="FullName">MTV Ireland</entry>
+  </section>
+  <section name="260">
+    <entry name="ChannelID">ie@setanta.com</entry>
+    <entry name="FullName">Setanta Sports Ireland</entry>
+  </section>
+  <section name="261">
+    <entry name="ChannelID">info@zdf.de</entry>
+    <entry name="FullName">info@zdf.de</entry>
+  </section>
+  <section name="262">
+    <entry name="ChannelID">int@ort.ru</entry>
+    <entry name="FullName">int@ort.ru</entry>
+  </section>
+  <section name="263">
+    <entry name="ChannelID">int@trt.net.tr</entry>
+    <entry name="FullName">int@trt.net.tr</entry>
+  </section>
+  <section name="264">
+    <entry name="ChannelID">international@rtp.pt</entry>
+    <entry name="FullName">international@rtp.pt</entry>
+  </section>
+  <section name="265">
+    <entry name="ChannelID">itv1an@itv.com</entry>
+    <entry name="FullName">ITV1 Anglia</entry>
+  </section>
+  <section name="266">
+    <entry name="ChannelID">itv1be@itv.com</entry>
+    <entry name="FullName">ITV1 Border (English)</entry>
+  </section>
+  <section name="267">
+    <entry name="ChannelID">itv1bs@itv.com</entry>
+    <entry name="FullName">ITV1 Border (Scottish)</entry>
+  </section>
+  <section name="268">
+    <entry name="ChannelID">itv1ce@itv.com</entry>
+    <entry name="FullName">ITV1 Central</entry>
+  </section>
+  <section name="269">
+    <entry name="ChannelID">itv1gr@itv.com</entry>
+    <entry name="FullName">ITV1 Granada</entry>
+  </section>
+  <section name="270">
+    <entry name="ChannelID">itv1lo@itv.com</entry>
+    <entry name="FullName">ITV1 London</entry>
+  </section>
+  <section name="271">
+    <entry name="ChannelID">itv1me@itv.com</entry>
+    <entry name="FullName">ITV1 Meridian</entry>
+  </section>
+  <section name="272">
+    <entry name="ChannelID">itv1tt@itv.com</entry>
+    <entry name="FullName">ITV1 Tyne Tees</entry>
+  </section>
+  <section name="273">
+    <entry name="ChannelID">itv1wa@itv.com</entry>
+    <entry name="FullName">ITV1 Wales</entry>
+  </section>
+  <section name="274">
+    <entry name="ChannelID">itv1wc@itv.com</entry>
+    <entry name="FullName">ITV1 West Country</entry>
+  </section>
+  <section name="275">
+    <entry name="ChannelID">itv1we@itv.com</entry>
+    <entry name="FullName">ITV1 West</entry>
+  </section>
+  <section name="276">
+    <entry name="ChannelID">itv1yo@itv.com</entry>
+    <entry name="FullName">ITV1 Yorkshire</entry>
+  </section>
+  <section name="277">
+    <entry name="ChannelID">itv2@itv.com</entry>
+    <entry name="FullName">ITV2</entry>
+  </section>
+  <section name="278">
+    <entry name="ChannelID">itv3@itv.com</entry>
+    <entry name="FullName">ITV3</entry>
+  </section>
+  <section name="279">
+    <entry name="ChannelID">itvnca@itv.com</entry>
+    <entry name="FullName">ITV News Channel (Cable)</entry>
+  </section>
+  <section name="280">
+    <entry name="ChannelID">itvnds@itv.com</entry>
+    <entry name="FullName">ITV News Channel (Digital Satellite)</entry>
+  </section>
+  <section name="281">
+    <entry name="ChannelID">itvndt@itv.com</entry>
+    <entry name="FullName">ITV News Channel (Digital Terrestrial)</entry>
+  </section>
+  <section name="282">
+    <entry name="ChannelID">jetix.co.uk</entry>
+    <entry name="FullName">Jetix</entry>
+  </section>
+  <section name="283">
+    <entry name="ChannelID">jetix.no</entry>
+    <entry name="FullName">Jetix</entry>
+  </section>
+  <section name="284">
+    <entry name="ChannelID">jetix.se</entry>
+    <entry name="FullName">jetix.se</entry>
+  </section>
+  <section name="285">
+    <entry name="ChannelID">jim.be</entry>
+    <entry name="FullName">JIM</entry>
+  </section>
+  <section name="286">
+    <entry name="ChannelID">jr@nick.co.uk</entry>
+    <entry name="FullName">Nick Junior</entry>
+  </section>
+  <section name="287">
+    <entry name="ChannelID">jran@nick.co.uk</entry>
+    <entry name="FullName">Nick Junior Analogue</entry>
+  </section>
+  <section name="288">
+    <entry name="ChannelID">junior.tv</entry>
+    <entry name="FullName">junior.tv</entry>
+  </section>
+  <section name="289">
+    <entry name="ChannelID">k3-es</entry>
+    <entry name="FullName">k3-es</entry>
+  </section>
+  <section name="290">
+    <entry name="ChannelID">kabel1.de</entry>
+    <entry name="FullName">Kabel1</entry>
+  </section>
+  <section name="291">
+    <entry name="ChannelID">kanaal3.be</entry>
+    <entry name="FullName">Kanaal3</entry>
+  </section>
+  <section name="292">
+    <entry name="ChannelID">kanaaltwee.be</entry>
+    <entry name="FullName">kanaaltwee.be</entry>
+  </section>
+  <section name="293">
+    <entry name="ChannelID">kanaalz.be</entry>
+    <entry name="FullName">Kanaal Z</entry>
+  </section>
+  <section name="294">
+    <entry name="ChannelID">kanal5.se</entry>
+    <entry name="FullName">Kanal 5</entry>
+  </section>
+  <section name="295">
+    <entry name="ChannelID">ketnet.be</entry>
+    <entry name="FullName">ketnet</entry>
+  </section>
+  <section name="296">
+    <entry name="ChannelID">kika.de</entry>
+    <entry name="FullName">KiKA</entry>
+  </section>
+  <section name="297">
+    <entry name="ChannelID">krimi@premiere.de</entry>
+    <entry name="FullName">krimi@premiere.de</entry>
+  </section>
+  <section name="298">
+    <entry name="ChannelID">kunskapskanalen@svt.se</entry>
+    <entry name="FullName">kunskapskanalen@svt.se</entry>
+  </section>
+  <section name="299">
+    <entry name="ChannelID">l1.nl</entry>
+    <entry name="FullName">l1.nl</entry>
+  </section>
+  <section name="300">
+    <entry name="ChannelID">la1.be</entry>
+    <entry name="FullName">La Une</entry>
+  </section>
+  <section name="301">
+    <entry name="ChannelID">ladeux.be</entry>
+    <entry name="FullName">La Deux</entry>
+  </section>
+  <section name="302">
+    <entry name="ChannelID">libertytv.be</entry>
+    <entry name="FullName">LibertyTV</entry>
+  </section>
+  <section name="303">
+    <entry name="ChannelID">livingtv.co.uk</entry>
+    <entry name="FullName">LIVINGtv</entry>
+  </section>
+  <section name="304">
+    <entry name="ChannelID">londontv@golondon.com</entry>
+    <entry name="FullName">London TV</entry>
+  </section>
+  <section name="305">
+    <entry name="ChannelID">m6.fr</entry>
+    <entry name="FullName">M6</entry>
+  </section>
+  <section name="306">
+    <entry name="ChannelID">mad-tv-gr</entry>
+    <entry name="FullName">MAD</entry>
+  </section>
+  <section name="307">
+    <entry name="ChannelID">magic@kerrang.com</entry>
+    <entry name="FullName">Magic</entry>
+  </section>
+  <section name="308">
+    <entry name="ChannelID">manutd.com</entry>
+    <entry name="FullName">manutd.com</entry>
+  </section>
+  <section name="309">
+    <entry name="ChannelID">mbc.co.kr</entry>
+    <entry name="FullName">mbc.co.kr</entry>
+  </section>
+  <section name="310">
+    <entry name="ChannelID">mcm.be</entry>
+    <entry name="FullName">MCM</entry>
+  </section>
+  <section name="311">
+    <entry name="ChannelID">mdr.de</entry>
+    <entry name="FullName">MDR</entry>
+  </section>
+  <section name="312">
+    <entry name="ChannelID">mega-tv-gr</entry>
+    <entry name="FullName">Mega</entry>
+  </section>
+  <section name="313">
+    <entry name="ChannelID">menmoa@itv.com</entry>
+    <entry name="FullName">Men + Motors Analogue</entry>
+  </section>
+  <section name="314">
+    <entry name="ChannelID">menmod@itv.com</entry>
+    <entry name="FullName">Men + Motors (Digital Terrestrial)</entry>
+  </section>
+  <section name="315">
+    <entry name="ChannelID">menmot@itv.com</entry>
+    <entry name="FullName">Men + Motors</entry>
+  </section>
+  <section name="316">
+    <entry name="ChannelID">meridiantv.co.uk</entry>
+    <entry name="FullName">meridiantv.co.uk</entry>
+  </section>
+  <section name="317">
+    <entry name="ChannelID">mezzo.nl</entry>
+    <entry name="FullName">mezzo.nl</entry>
+  </section>
+  <section name="318">
+    <entry name="ChannelID">mezzo.tv</entry>
+    <entry name="FullName">mezzo.tv</entry>
+  </section>
+  <section name="319">
+    <entry name="ChannelID">mgm.com</entry>
+    <entry name="FullName">mgm.com</entry>
+  </section>
+  <section name="320">
+    <entry name="ChannelID">motorstv.com</entry>
+    <entry name="FullName">Motors TV</entry>
+  </section>
+  <section name="321">
+    <entry name="ChannelID">movies@b4utv.com</entry>
+    <entry name="FullName">B4U Movies</entry>
+  </section>
+  <section name="322">
+    <entry name="ChannelID">mtv.co.uk</entry>
+    <entry name="FullName">MTV UK</entry>
+  </section>
+  <section name="323">
+    <entry name="ChannelID">mtv.com</entry>
+    <entry name="FullName">mtv.com</entry>
+  </section>
+  <section name="324">
+    <entry name="ChannelID">mtv.de</entry>
+    <entry name="FullName">MTV Deutsch</entry>
+  </section>
+  <section name="325">
+    <entry name="ChannelID">mtv.nl</entry>
+    <entry name="FullName">MTV NL</entry>
+  </section>
+  <section name="326">
+    <entry name="ChannelID">mtv@mtve.com</entry>
+    <entry name="FullName">MTV</entry>
+  </section>
+  <section name="327">
+    <entry name="ChannelID">MTV@mtve.com</entry>
+    <entry name="FullName">MTV@mtve.com</entry>
+  </section>
+  <section name="328">
+    <entry name="ChannelID">mtv2.de</entry>
+    <entry name="FullName">MTV2 Deutsch</entry>
+  </section>
+  <section name="329">
+    <entry name="ChannelID">MTV2@mtve.com</entry>
+    <entry name="FullName">MTV2@mtve.com</entry>
+  </section>
+  <section name="330">
+    <entry name="ChannelID">mtv3.fi</entry>
+    <entry name="FullName">mtv3.fi</entry>
+  </section>
+  <section name="331">
+    <entry name="ChannelID">music@b4utv.com</entry>
+    <entry name="FullName">B4U Music</entry>
+  </section>
+  <section name="332">
+    <entry name="ChannelID">music@zeetv.co.uk</entry>
+    <entry name="FullName">Zee Music</entry>
+  </section>
+  <section name="333">
+    <entry name="ChannelID">musicianschannel.tv</entry>
+    <entry name="FullName">Musicians Channel</entry>
+  </section>
+  <section name="334">
+    <entry name="ChannelID">mutv@manutd.com</entry>
+    <entry name="FullName">MUTV</entry>
+  </section>
+  <section name="335">
+    <entry name="ChannelID">muxx@ard-digital.de</entry>
+    <entry name="FullName">muxx@ard-digital.de</entry>
+  </section>
+  <section name="336">
+    <entry name="ChannelID">n@tv5.fr</entry>
+    <entry name="FullName">TV5 non-francophone</entry>
+  </section>
+  <section name="337">
+    <entry name="ChannelID">n24.de</entry>
+    <entry name="FullName">N24</entry>
+  </section>
+  <section name="338">
+    <entry name="ChannelID">nasn.com</entry>
+    <entry name="FullName">NASN</entry>
+  </section>
+  <section name="339">
+    <entry name="ChannelID">nationalgeographic.co.uk</entry>
+    <entry name="FullName">National Geographic</entry>
+  </section>
+  <section name="340">
+    <entry name="ChannelID">nationalgeographic.com</entry>
+    <entry name="FullName">National Geographic Channel</entry>
+  </section>
+  <section name="341">
+    <entry name="ChannelID">nationalgeographic.nl</entry>
+    <entry name="FullName">nationalgeographic.nl</entry>
+  </section>
+  <section name="342">
+    <entry name="ChannelID">nbc.com</entry>
+    <entry name="FullName">nbc.com</entry>
+  </section>
+  <section name="343">
+    <entry name="ChannelID">nbc-ngc.com</entry>
+    <entry name="FullName">NBC &amp; National Geographic</entry>
+  </section>
+  <section name="344">
+    <entry name="ChannelID">ndrtv.de</entry>
+    <entry name="FullName">NDR</entry>
+  </section>
+  <section name="345">
+    <entry name="ChannelID">ned1@omroep.nl</entry>
+    <entry name="FullName">NED1</entry>
+  </section>
+  <section name="346">
+    <entry name="ChannelID">ned2@omroep.nl</entry>
+    <entry name="FullName">NED2</entry>
+  </section>
+  <section name="347">
+    <entry name="ChannelID">ned3@omroep.nl</entry>
+    <entry name="FullName">NED3</entry>
+  </section>
+  <section name="348">
+    <entry name="ChannelID">nelonen.fi</entry>
+    <entry name="FullName">nelonen.fi</entry>
+  </section>
+  <section name="349">
+    <entry name="ChannelID">net@ert.gr</entry>
+    <entry name="FullName">NET</entry>
+  </section>
+  <section name="350">
+    <entry name="ChannelID">net5.nl</entry>
+    <entry name="FullName">net5</entry>
+  </section>
+  <section name="351">
+    <entry name="ChannelID">net5.sbs.nl</entry>
+    <entry name="FullName">net5</entry>
+  </section>
+  <section name="352">
+    <entry name="ChannelID">neunlive.de</entry>
+    <entry name="FullName">Neun Live</entry>
+  </section>
+  <section name="353">
+    <entry name="ChannelID">news@uk.startv.com</entry>
+    <entry name="FullName">Star News</entry>
+  </section>
+  <section name="354">
+    <entry name="ChannelID">nick.co.uk</entry>
+    <entry name="FullName">Nickelodeon</entry>
+  </section>
+  <section name="355">
+    <entry name="ChannelID">nickelodeon.be</entry>
+    <entry name="FullName">Nickelodeon</entry>
+  </section>
+  <section name="356">
+    <entry name="ChannelID">nickelodeon.nl</entry>
+    <entry name="FullName">nickelodeon.nl</entry>
+  </section>
+  <section name="357">
+    <entry name="ChannelID">nickelodeon.no</entry>
+    <entry name="FullName">Nickelodeon</entry>
+  </section>
+  <section name="358">
+    <entry name="ChannelID">nickelodeon.se</entry>
+    <entry name="FullName">nickelodeon.se</entry>
+  </section>
+  <section name="359">
+    <entry name="ChannelID">nordic@tv1000.no</entry>
+    <entry name="FullName">TV1000 Nordic</entry>
+  </section>
+  <section name="360">
+    <entry name="ChannelID">nordic@tv1000.se</entry>
+    <entry name="FullName">nordic@tv1000.se</entry>
+  </section>
+  <section name="361">
+    <entry name="ChannelID">nost@premiere.de</entry>
+    <entry name="FullName">nost@premiere.de</entry>
+  </section>
+  <section name="362">
+    <entry name="ChannelID">nrk1@nrk.no</entry>
+    <entry name="FullName">NRK1</entry>
+  </section>
+  <section name="363">
+    <entry name="ChannelID">nrk2@nrk.no</entry>
+    <entry name="FullName">NRK2</entry>
+  </section>
+  <section name="364">
+    <entry name="ChannelID">n-tv.de</entry>
+    <entry name="FullName">n-tv</entry>
+  </section>
+  <section name="365">
+    <entry name="ChannelID">omroepbrabant.nl</entry>
+    <entry name="FullName">omroepbrabant.nl</entry>
+  </section>
+  <section name="366">
+    <entry name="ChannelID">omroepflevoland.nl</entry>
+    <entry name="FullName">omroepflevoland.nl</entry>
+  </section>
+  <section name="367">
+    <entry name="ChannelID">omroepgelderland.nl</entry>
+    <entry name="FullName">omroepgelderland.nl</entry>
+  </section>
+  <section name="368">
+    <entry name="ChannelID">omroepzeeland.nl</entry>
+    <entry name="FullName">omroepzeeland.nl</entry>
+  </section>
+  <section name="369">
+    <entry name="ChannelID">omropfryslan.nl</entry>
+    <entry name="FullName">omropfryslan.nl</entry>
+  </section>
+  <section name="370">
+    <entry name="ChannelID">onyxtv.de</entry>
+    <entry name="FullName">ONYX</entry>
+  </section>
+  <section name="371">
+    <entry name="ChannelID">orf1@orf.at</entry>
+    <entry name="FullName">ORF1</entry>
+  </section>
+  <section name="372">
+    <entry name="ChannelID">orf2@orf.at</entry>
+    <entry name="FullName">ORF2</entry>
+  </section>
+  <section name="373">
+    <entry name="ChannelID">p1@bravo.co.uk</entry>
+    <entry name="FullName">Bravo Plus 1</entry>
+  </section>
+  <section name="374">
+    <entry name="ChannelID">p1@cartoon-network.co.uk</entry>
+    <entry name="FullName">Cartoon Network Plus 1</entry>
+  </section>
+  <section name="375">
+    <entry name="ChannelID">p1@challengetv.co.uk</entry>
+    <entry name="FullName">Challenge Plus 1</entry>
+  </section>
+  <section name="376">
+    <entry name="ChannelID">p1@discoverychannel.co.uk</entry>
+    <entry name="FullName">Discovery Plus 1</entry>
+  </section>
+  <section name="377">
+    <entry name="ChannelID">p1@disneychannel.co.uk</entry>
+    <entry name="FullName">Disney Plus 1</entry>
+  </section>
+  <section name="378">
+    <entry name="ChannelID">p1@jetix.co.uk</entry>
+    <entry name="FullName">Jetix Plus 1</entry>
+  </section>
+  <section name="379">
+    <entry name="ChannelID">p1@livingtv.co.uk</entry>
+    <entry name="FullName">LIVINGtv Plus 1</entry>
+  </section>
+  <section name="380">
+    <entry name="ChannelID">p1@nationalgeographic.co.uk</entry>
+    <entry name="FullName">National Geographic Channel Plus 1</entry>
+  </section>
+  <section name="381">
+    <entry name="ChannelID">p1@realitytv.co.uk</entry>
+    <entry name="FullName">Reality TV Plus 1</entry>
+  </section>
+  <section name="382">
+    <entry name="ChannelID">p1@thehistorychannel.co.uk</entry>
+    <entry name="FullName">History Channel Plus 1</entry>
+  </section>
+  <section name="383">
+    <entry name="ChannelID">p1@travelchannel.co.uk</entry>
+    <entry name="FullName">Travel Channel Plus 1</entry>
+  </section>
+  <section name="384">
+    <entry name="ChannelID">pa2@paramountcomedy.com</entry>
+    <entry name="FullName">Paramount 2</entry>
+  </section>
+  <section name="385">
+    <entry name="ChannelID">paramountcomedy.com</entry>
+    <entry name="FullName">Paramount Comedy Channel</entry>
+  </section>
+  <section name="386">
+    <entry name="ChannelID">performance-channel.com</entry>
+    <entry name="FullName">Performance Channel</entry>
+  </section>
+  <section name="387">
+    <entry name="ChannelID">ph@disneychannel.co.uk</entry>
+    <entry name="FullName">Playhouse Disney</entry>
+  </section>
+  <section name="388">
+    <entry name="ChannelID">phoenix.de</entry>
+    <entry name="FullName">Phoenix</entry>
+  </section>
+  <section name="389">
+    <entry name="ChannelID">phoenixcne.com</entry>
+    <entry name="FullName">Phoenix CNE</entry>
+  </section>
+  <section name="390">
+    <entry name="ChannelID">playboytv.co.uk</entry>
+    <entry name="FullName">Playboy TV</entry>
+  </section>
+  <section name="391">
+    <entry name="ChannelID">plug@rtl.be</entry>
+    <entry name="FullName">PLUG-TV</entry>
+  </section>
+  <section name="392">
+    <entry name="ChannelID">plus@tv4.se</entry>
+    <entry name="FullName">plus@tv4.se</entry>
+  </section>
+  <section name="393">
+    <entry name="ChannelID">plus@uk.startv.com</entry>
+    <entry name="FullName">Star Plus</entry>
+  </section>
+  <section name="394">
+    <entry name="ChannelID">plusone@tv1000.se</entry>
+    <entry name="FullName">plusone@tv1000.se</entry>
+  </section>
+  <section name="395">
+    <entry name="ChannelID">prem1@premiere.de</entry>
+    <entry name="FullName">Premiere 1</entry>
+  </section>
+  <section name="396">
+    <entry name="ChannelID">prem2@premiere.de</entry>
+    <entry name="FullName">Premiere 2</entry>
+  </section>
+  <section name="397">
+    <entry name="ChannelID">prem3@premiere.de</entry>
+    <entry name="FullName">Premiere 3</entry>
+  </section>
+  <section name="398">
+    <entry name="ChannelID">prem4@premiere.de</entry>
+    <entry name="FullName">Premiere 4</entry>
+  </section>
+  <section name="399">
+    <entry name="ChannelID">prem5@premiere.de</entry>
+    <entry name="FullName">Premiere 5</entry>
+  </section>
+  <section name="400">
+    <entry name="ChannelID">prem6@premiere.de</entry>
+    <entry name="FullName">Premiere 6</entry>
+  </section>
+  <section name="401">
+    <entry name="ChannelID">prem7@premiere.de</entry>
+    <entry name="FullName">Premiere 7</entry>
+  </section>
+  <section name="402">
+    <entry name="ChannelID">premextr@sky.com</entry>
+    <entry name="FullName">Premiership Extra Sky</entry>
+  </section>
+  <section name="403">
+    <entry name="ChannelID">premiere.de</entry>
+    <entry name="FullName">Premiere</entry>
+  </section>
+  <section name="404">
+    <entry name="ChannelID">premplus@sky.com</entry>
+    <entry name="FullName">Premiership Plus Sky</entry>
+  </section>
+  <section name="405">
+    <entry name="ChannelID">price-drop.tv</entry>
+    <entry name="FullName">price-drop tv</entry>
+  </section>
+  <section name="406">
+    <entry name="ChannelID">privategold</entry>
+    <entry name="FullName">Private Gold</entry>
+  </section>
+  <section name="407">
+    <entry name="ChannelID">pro-sieben.de</entry>
+    <entry name="FullName">Pro7</entry>
+  </section>
+  <section name="408">
+    <entry name="ChannelID">pun@zeetelevision.com</entry>
+    <entry name="FullName">Zee ETC Punjabi</entry>
+  </section>
+  <section name="409">
+    <entry name="ChannelID">punt2-es</entry>
+    <entry name="FullName">punt2-es</entry>
+  </section>
+  <section name="410">
+    <entry name="ChannelID">qvcuk.com</entry>
+    <entry name="FullName">QVC</entry>
+  </section>
+  <section name="411">
+    <entry name="ChannelID">raidue.rai.it</entry>
+    <entry name="FullName">Rai Due</entry>
+  </section>
+  <section name="412">
+    <entry name="ChannelID">raiuno.rai.it</entry>
+    <entry name="FullName">Rai Uno</entry>
+  </section>
+  <section name="413">
+    <entry name="ChannelID">rbb-online.de</entry>
+    <entry name="FullName">RBB Rundfunk Berlin-Brandenburg</entry>
+  </section>
+  <section name="414">
+    <entry name="ChannelID">real@discoverychannel.co.uk</entry>
+    <entry name="FullName">Discovery Real Time</entry>
+  </section>
+  <section name="415">
+    <entry name="ChannelID">realan@discoverychannel.co.uk</entry>
+    <entry name="FullName">Discovery Real Time Analogue</entry>
+  </section>
+  <section name="416">
+    <entry name="ChannelID">realitychannel.tv</entry>
+    <entry name="FullName">Reality TV</entry>
+  </section>
+  <section name="417">
+    <entry name="ChannelID">realitytv.co.uk</entry>
+    <entry name="FullName">Reality TV</entry>
+  </section>
+  <section name="418">
+    <entry name="ChannelID">realp1@discoverychannel.co.uk</entry>
+    <entry name="FullName">Discovery Real Time Plus 1</entry>
+  </section>
+  <section name="419">
+    <entry name="ChannelID">realtt@discoverychannel.co.uk</entry>
+    <entry name="FullName">Discovery Real Time (TopUpTV)</entry>
+  </section>
+  <section name="420">
+    <entry name="ChannelID">replay@nick.co.uk</entry>
+    <entry name="FullName">Nick Replay</entry>
+  </section>
+  <section name="421">
+    <entry name="ChannelID">ringtv.be</entry>
+    <entry name="FullName">RingTV</entry>
+  </section>
+  <section name="422">
+    <entry name="ChannelID">robtv.be</entry>
+    <entry name="FullName">ROb TV</entry>
+  </section>
+  <section name="423">
+    <entry name="ChannelID">rood@canal+.be</entry>
+    <entry name="FullName">Canal+ Rood</entry>
+  </section>
+  <section name="424">
+    <entry name="ChannelID">rood@canalplus.nl</entry>
+    <entry name="FullName">rood@canalplus.nl</entry>
+  </section>
+  <section name="425">
+    <entry name="ChannelID">rte1@rte.ie</entry>
+    <entry name="FullName">RTE 1</entry>
+  </section>
+  <section name="426">
+    <entry name="ChannelID">rte2@rte.ie</entry>
+    <entry name="FullName">RTE 2</entry>
+  </section>
+  <section name="427">
+    <entry name="ChannelID">rtl.de</entry>
+    <entry name="FullName">RTL</entry>
+  </section>
+  <section name="428">
+    <entry name="ChannelID">rtl2.de</entry>
+    <entry name="FullName">RTL II</entry>
+  </section>
+  <section name="429">
+    <entry name="ChannelID">rtl4.nl</entry>
+    <entry name="FullName">rtl4.nl</entry>
+  </section>
+  <section name="430">
+    <entry name="ChannelID">rtl5.nl</entry>
+    <entry name="FullName">rtl5.nl</entry>
+  </section>
+  <section name="431">
+    <entry name="ChannelID">rtl9.com</entry>
+    <entry name="FullName">rtl9.com</entry>
+  </section>
+  <section name="432">
+    <entry name="ChannelID">rtp.pt</entry>
+    <entry name="FullName">rtp.pt</entry>
+  </section>
+  <section name="433">
+    <entry name="ChannelID">rtv.be</entry>
+    <entry name="FullName">RTV</entry>
+  </section>
+  <section name="434">
+    <entry name="ChannelID">rtvcanal9.com</entry>
+    <entry name="FullName">rtvcanal9.com</entry>
+  </section>
+  <section name="435">
+    <entry name="ChannelID">rtvcm.es</entry>
+    <entry name="FullName">rtvcm.es</entry>
+  </section>
+  <section name="436">
+    <entry name="ChannelID">rtvdrenthe.nl</entry>
+    <entry name="FullName">rtvdrenthe.nl</entry>
+  </section>
+  <section name="437">
+    <entry name="ChannelID">rtve.es</entry>
+    <entry name="FullName">rtve.es</entry>
+  </section>
+  <section name="438">
+    <entry name="ChannelID">rtvnh.nl</entry>
+    <entry name="FullName">rtvnh.nl</entry>
+  </section>
+  <section name="439">
+    <entry name="ChannelID">rtvnoord.nl</entry>
+    <entry name="FullName">rtvnoord.nl</entry>
+  </section>
+  <section name="440">
+    <entry name="ChannelID">rtvoost.nl</entry>
+    <entry name="FullName">rtvoost.nl</entry>
+  </section>
+  <section name="441">
+    <entry name="ChannelID">rtvpink.com</entry>
+    <entry name="FullName">rtvpink.com</entry>
+  </section>
+  <section name="442">
+    <entry name="ChannelID">rtv-rijnmond.nl</entry>
+    <entry name="FullName">rtv-rijnmond.nl</entry>
+  </section>
+  <section name="443">
+    <entry name="ChannelID">rtvutrecht.nl</entry>
+    <entry name="FullName">rtvutrecht.nl</entry>
+  </section>
+  <section name="444">
+    <entry name="ChannelID">rtvwest.nl</entry>
+    <entry name="FullName">rtvwest.nl</entry>
+  </section>
+  <section name="445">
+    <entry name="ChannelID">s4c.co.uk</entry>
+    <entry name="FullName">S4C</entry>
+  </section>
+  <section name="446">
+    <entry name="ChannelID">s4c2@s4c.co.uk</entry>
+    <entry name="FullName">S4C-2</entry>
+  </section>
+  <section name="447">
+    <entry name="ChannelID">s4cd@s4c.co.uk</entry>
+    <entry name="FullName">S4C Digital</entry>
+  </section>
+  <section name="448">
+    <entry name="ChannelID">saartv.de</entry>
+    <entry name="FullName">Saar TV</entry>
+  </section>
+  <section name="449">
+    <entry name="ChannelID">sat1.de</entry>
+    <entry name="FullName">SAT.1</entry>
+  </section>
+  <section name="450">
+    <entry name="ChannelID">sbs2-digi-vic-metro@sbs.com.au</entry>
+    <entry name="FullName">sbs Digital VIC Metro</entry>
+  </section>
+  <section name="451">
+    <entry name="ChannelID">sbs6.sbs.nl</entry>
+    <entry name="FullName">sbs6.sbs.nl</entry>
+  </section>
+  <section name="452">
+    <entry name="ChannelID">sbs-digi-vic-metro@sbs.com.au</entry>
+    <entry name="FullName">sbs Digital VIC Metro</entry>
+  </section>
+  <section name="453">
+    <entry name="ChannelID">sbs-HD-vic-metro@sbs.com.au</entry>
+    <entry name="FullName">sbs HD Digital VIC Metro</entry>
+  </section>
+  <section name="454">
+    <entry name="ChannelID">sci_trek@discovery.com</entry>
+    <entry name="FullName">Discovery Sci-Trek</entry>
+  </section>
+  <section name="455">
+    <entry name="ChannelID">Science@discovery.com</entry>
+    <entry name="FullName">Science@discovery.com</entry>
+  </section>
+  <section name="456">
+    <entry name="ChannelID">science@discoverychannel.co.uk</entry>
+    <entry name="FullName">Discovery Science</entry>
+  </section>
+  <section name="457">
+    <entry name="ChannelID">scifi.com</entry>
+    <entry name="FullName">SCI FI</entry>
+  </section>
+  <section name="458">
+    <entry name="ChannelID">scifi@premiere.de</entry>
+    <entry name="FullName">Premiere Scifi</entry>
+  </section>
+  <section name="459">
+    <entry name="ChannelID">scottishtv.co.uk</entry>
+    <entry name="FullName">Scottish</entry>
+  </section>
+  <section name="460">
+    <entry name="ChannelID">screenshop.co.uk</entry>
+    <entry name="FullName">Screenshop</entry>
+  </section>
+  <section name="461">
+    <entry name="ChannelID">scuzz.tv</entry>
+    <entry name="FullName">Scuzz</entry>
+  </section>
+  <section name="462">
+    <entry name="ChannelID">serie@premiere.de</entry>
+    <entry name="FullName">serie@premiere.de</entry>
+  </section>
+  <section name="463">
+    <entry name="ChannelID">sf1@sfdrs.ch</entry>
+    <entry name="FullName">SF1</entry>
+  </section>
+  <section name="464">
+    <entry name="ChannelID">sf2@sfdrs.ch</entry>
+    <entry name="FullName">SF2</entry>
+  </section>
+  <section name="465">
+    <entry name="ChannelID">sfi@sfdrs.ch</entry>
+    <entry name="FullName">SFi</entry>
+  </section>
+  <section name="466">
+    <entry name="ChannelID">Showtime</entry>
+    <entry name="FullName">Showtime</entry>
+  </section>
+  <section name="467">
+    <entry name="ChannelID">showtime@canaldigital.se</entry>
+    <entry name="FullName">showtime@canaldigital.se</entry>
+  </section>
+  <section name="468">
+    <entry name="ChannelID">skyboxoff01@sky.com</entry>
+    <entry name="FullName">Sky Box Office 01</entry>
+  </section>
+  <section name="469">
+    <entry name="ChannelID">skyboxoff02@sky.com</entry>
+    <entry name="FullName">Sky Box Office 02</entry>
+  </section>
+  <section name="470">
+    <entry name="ChannelID">skyboxoff03@sky.com</entry>
+    <entry name="FullName">Sky Box Office 03</entry>
+  </section>
+  <section name="471">
+    <entry name="ChannelID">skyboxoff04@sky.com</entry>
+    <entry name="FullName">Sky Box Office 04</entry>
+  </section>
+  <section name="472">
+    <entry name="ChannelID">skyboxoff05@sky.com</entry>
+    <entry name="FullName">Sky Box Office 05</entry>
+  </section>
+  <section name="473">
+    <entry name="ChannelID">skyboxoff06@sky.com</entry>
+    <entry name="FullName">Sky Box Office 06</entry>
+  </section>
+  <section name="474">
+    <entry name="ChannelID">skyboxoff07@sky.com</entry>
+    <entry name="FullName">Sky Box Office 07</entry>
+  </section>
+  <section name="475">
+    <entry name="ChannelID">skyboxoff08@sky.com</entry>
+    <entry name="FullName">Sky Box Office 08</entry>
+  </section>
+  <section name="476">
+    <entry name="ChannelID">skyboxoff09@sky.com</entry>
+    <entry name="FullName">Sky Box Office 09</entry>
+  </section>
+  <section name="477">
+    <entry name="ChannelID">skyboxoff10@sky.com</entry>
+    <entry name="FullName">Sky Box Office 10</entry>
+  </section>
+  <section name="478">
+    <entry name="ChannelID">skyboxoff11@sky.com</entry>
+    <entry name="FullName">Sky Box Office 11</entry>
+  </section>
+  <section name="479">
+    <entry name="ChannelID">skyboxoff12@sky.com</entry>
+    <entry name="FullName">Sky Box Office 12</entry>
+  </section>
+  <section name="480">
+    <entry name="ChannelID">skyboxoff13@sky.com</entry>
+    <entry name="FullName">Sky Box Office 13</entry>
+  </section>
+  <section name="481">
+    <entry name="ChannelID">skyboxoff14@sky.com</entry>
+    <entry name="FullName">Sky Box Office 14</entry>
+  </section>
+  <section name="482">
+    <entry name="ChannelID">skyboxoff15@sky.com</entry>
+    <entry name="FullName">Sky Box Office 15</entry>
+  </section>
+  <section name="483">
+    <entry name="ChannelID">skyboxoff16@sky.com</entry>
+    <entry name="FullName">Sky Box Office 16</entry>
+  </section>
+  <section name="484">
+    <entry name="ChannelID">skyboxoff17@sky.com</entry>
+    <entry name="FullName">Sky Box Office 17</entry>
+  </section>
+  <section name="485">
+    <entry name="ChannelID">skyboxoff18@sky.com</entry>
+    <entry name="FullName">Sky Box Office 18</entry>
+  </section>
+  <section name="486">
+    <entry name="ChannelID">skyboxoff19@sky.com</entry>
+    <entry name="FullName">Sky Box Office 19</entry>
+  </section>
+  <section name="487">
+    <entry name="ChannelID">skyboxoff20@sky.com</entry>
+    <entry name="FullName">Sky Box Office 20</entry>
+  </section>
+  <section name="488">
+    <entry name="ChannelID">skyboxoff21@sky.com</entry>
+    <entry name="FullName">Sky Box Office 21</entry>
+  </section>
+  <section name="489">
+    <entry name="ChannelID">skyboxoff22@sky.com</entry>
+    <entry name="FullName">Sky Box Office 22</entry>
+  </section>
+  <section name="490">
+    <entry name="ChannelID">skyboxoff23@sky.com</entry>
+    <entry name="FullName">Sky Box Office 23</entry>
+  </section>
+  <section name="491">
+    <entry name="ChannelID">skyboxoff24@sky.com</entry>
+    <entry name="FullName">Sky Box Office 24</entry>
+  </section>
+  <section name="492">
+    <entry name="ChannelID">skyboxoff25@sky.com</entry>
+    <entry name="FullName">Sky Box Office 25</entry>
+  </section>
+  <section name="493">
+    <entry name="ChannelID">skyboxoff26@sky.com</entry>
+    <entry name="FullName">Sky Box Office 26</entry>
+  </section>
+  <section name="494">
+    <entry name="ChannelID">skyboxoff27@sky.com</entry>
+    <entry name="FullName">Sky Box Office 27</entry>
+  </section>
+  <section name="495">
+    <entry name="ChannelID">skyboxoff28@sky.com</entry>
+    <entry name="FullName">Sky Box Office 28</entry>
+  </section>
+  <section name="496">
+    <entry name="ChannelID">skyboxoff29@sky.com</entry>
+    <entry name="FullName">Sky Box Office 29</entry>
+  </section>
+  <section name="497">
+    <entry name="ChannelID">skyboxoff30@sky.com</entry>
+    <entry name="FullName">Sky Box Office 30</entry>
+  </section>
+  <section name="498">
+    <entry name="ChannelID">skyboxoff31@sky.com</entry>
+    <entry name="FullName">Sky Box Office 31</entry>
+  </section>
+  <section name="499">
+    <entry name="ChannelID">skyboxoff32@sky.com</entry>
+    <entry name="FullName">Sky Box Office 32</entry>
+  </section>
+  <section name="500">
+    <entry name="ChannelID">skyboxoff33@sky.com</entry>
+    <entry name="FullName">Sky Box Office 33</entry>
+  </section>
+  <section name="501">
+    <entry name="ChannelID">skyboxoff34@sky.com</entry>
+    <entry name="FullName">Sky Box Office 34</entry>
+  </section>
+  <section name="502">
+    <entry name="ChannelID">skyboxoff35@sky.com</entry>
+    <entry name="FullName">Sky Box Office 35</entry>
+  </section>
+  <section name="503">
+    <entry name="ChannelID">skyboxoff36@sky.com</entry>
+    <entry name="FullName">Sky Box Office 36</entry>
+  </section>
+  <section name="504">
+    <entry name="ChannelID">skyboxoff37@sky.com</entry>
+    <entry name="FullName">Sky Box Office 37</entry>
+  </section>
+  <section name="505">
+    <entry name="ChannelID">skyboxoff38@sky.com</entry>
+    <entry name="FullName">Sky Box Office 38</entry>
+  </section>
+  <section name="506">
+    <entry name="ChannelID">skyboxoff39@sky.com</entry>
+    <entry name="FullName">Sky Box Office 39</entry>
+  </section>
+  <section name="507">
+    <entry name="ChannelID">skyboxoff40@sky.com</entry>
+    <entry name="FullName">Sky Box Office 40</entry>
+  </section>
+  <section name="508">
+    <entry name="ChannelID">skyboxoff41@sky.com</entry>
+    <entry name="FullName">Sky Box Office 41</entry>
+  </section>
+  <section name="509">
+    <entry name="ChannelID">skyboxoff42@sky.com</entry>
+    <entry name="FullName">Sky Box Office 42</entry>
+  </section>
+  <section name="510">
+    <entry name="ChannelID">skyboxoff43@sky.com</entry>
+    <entry name="FullName">Sky Box Office 43</entry>
+  </section>
+  <section name="511">
+    <entry name="ChannelID">skyboxoff44@sky.com</entry>
+    <entry name="FullName">Sky Box Office 44</entry>
+  </section>
+  <section name="512">
+    <entry name="ChannelID">skyboxoff45@sky.com</entry>
+    <entry name="FullName">Sky Box Office 45</entry>
+  </section>
+  <section name="513">
+    <entry name="ChannelID">skyboxoff46@sky.com</entry>
+    <entry name="FullName">Sky Box Office 46</entry>
+  </section>
+  <section name="514">
+    <entry name="ChannelID">skyboxoff47@sky.com</entry>
+    <entry name="FullName">Sky Box Office 47</entry>
+  </section>
+  <section name="515">
+    <entry name="ChannelID">skyboxoff48@sky.com</entry>
+    <entry name="FullName">Sky Box Office 48</entry>
+  </section>
+  <section name="516">
+    <entry name="ChannelID">skyboxoff49@sky.com</entry>
+    <entry name="FullName">Sky Box Office 49</entry>
+  </section>
+  <section name="517">
+    <entry name="ChannelID">skyboxoff50@sky.com</entry>
+    <entry name="FullName">Sky Box Office 50</entry>
+  </section>
+  <section name="518">
+    <entry name="ChannelID">skyboxoff51@sky.com</entry>
+    <entry name="FullName">Sky Box Office 51</entry>
+  </section>
+  <section name="519">
+    <entry name="ChannelID">skyboxoff52@sky.com</entry>
+    <entry name="FullName">Sky Box Office 52</entry>
+  </section>
+  <section name="520">
+    <entry name="ChannelID">skyboxoff53@sky.com</entry>
+    <entry name="FullName">Sky Box Office 53</entry>
+  </section>
+  <section name="521">
+    <entry name="ChannelID">skyboxoff54@sky.com</entry>
+    <entry name="FullName">Sky Box Office 54</entry>
+  </section>
+  <section name="522">
+    <entry name="ChannelID">skyboxoff55@sky.com</entry>
+    <entry name="FullName">Sky Box Office 55</entry>
+  </section>
+  <section name="523">
+    <entry name="ChannelID">skyboxoff56@sky.com</entry>
+    <entry name="FullName">Sky Box Office 56</entry>
+  </section>
+  <section name="524">
+    <entry name="ChannelID">skyboxoff57@sky.com</entry>
+    <entry name="FullName">Sky Box Office 57</entry>
+  </section>
+  <section name="525">
+    <entry name="ChannelID">skyboxoff58@sky.com</entry>
+    <entry name="FullName">Sky Box Office 58</entry>
+  </section>
+  <section name="526">
+    <entry name="ChannelID">skyboxoff59@sky.com</entry>
+    <entry name="FullName">Sky Box Office 59</entry>
+  </section>
+  <section name="527">
+    <entry name="ChannelID">skyboxoff60@sky.com</entry>
+    <entry name="FullName">Sky Box Office 60</entry>
+  </section>
+  <section name="528">
+    <entry name="ChannelID">skyboxoffev@sky.com</entry>
+    <entry name="FullName">Sky Box Office Events</entry>
+  </section>
+  <section name="529">
+    <entry name="ChannelID">skycinema1@sky.com</entry>
+    <entry name="FullName">Sky Cinema 1</entry>
+  </section>
+  <section name="530">
+    <entry name="ChannelID">skycinema2@sky.com</entry>
+    <entry name="FullName">Sky Cinema 2</entry>
+  </section>
+  <section name="531">
+    <entry name="ChannelID">skycinemaa@sky.com</entry>
+    <entry name="FullName">Sky Cinema Analogue</entry>
+  </section>
+  <section name="532">
+    <entry name="ChannelID">skymovies1@sky.com</entry>
+    <entry name="FullName">Sky Movies 1</entry>
+  </section>
+  <section name="533">
+    <entry name="ChannelID">skymovies1a@sky.com</entry>
+    <entry name="FullName">Sky Movies 1 Analogue</entry>
+  </section>
+  <section name="534">
+    <entry name="ChannelID">skymovies2@sky.com</entry>
+    <entry name="FullName">Sky Movies 2</entry>
+  </section>
+  <section name="535">
+    <entry name="ChannelID">skymovies2a@sky.com</entry>
+    <entry name="FullName">Sky Movies 2 Analogue</entry>
+  </section>
+  <section name="536">
+    <entry name="ChannelID">skymovies3@sky.com</entry>
+    <entry name="FullName">Sky Movies 3</entry>
+  </section>
+  <section name="537">
+    <entry name="ChannelID">skymovies4@sky.com</entry>
+    <entry name="FullName">Sky Movies 4</entry>
+  </section>
+  <section name="538">
+    <entry name="ChannelID">skymovies5@sky.com</entry>
+    <entry name="FullName">Sky Movies 5</entry>
+  </section>
+  <section name="539">
+    <entry name="ChannelID">skymovies6@sky.com</entry>
+    <entry name="FullName">Sky Movies 6</entry>
+  </section>
+  <section name="540">
+    <entry name="ChannelID">skymovies7@sky.com</entry>
+    <entry name="FullName">Sky Movies 7</entry>
+  </section>
+  <section name="541">
+    <entry name="ChannelID">skymovies8@sky.com</entry>
+    <entry name="FullName">Sky Movies 8</entry>
+  </section>
+  <section name="542">
+    <entry name="ChannelID">skymovies9@sky.com</entry>
+    <entry name="FullName">Sky Movies 9</entry>
+  </section>
+  <section name="543">
+    <entry name="ChannelID">skynews@sky.com</entry>
+    <entry name="FullName">Sky News</entry>
+  </section>
+  <section name="544">
+    <entry name="ChannelID">SKYNEWS_NGC</entry>
+    <entry name="FullName">SKY News &amp; National Geographic</entry>
+  </section>
+  <section name="545">
+    <entry name="ChannelID">skynewsire@sky.com</entry>
+    <entry name="FullName">Sky News Ireland</entry>
+  </section>
+  <section name="546">
+    <entry name="ChannelID">skyone@sky.com</entry>
+    <entry name="FullName">Sky One</entry>
+  </section>
+  <section name="547">
+    <entry name="ChannelID">skyonemix@sky.com</entry>
+    <entry name="FullName">Sky One Mix</entry>
+  </section>
+  <section name="548">
+    <entry name="ChannelID">skysports1@sky.com</entry>
+    <entry name="FullName">Sky Sports 1</entry>
+  </section>
+  <section name="549">
+    <entry name="ChannelID">skysports2@sky.com</entry>
+    <entry name="FullName">Sky Sports 2</entry>
+  </section>
+  <section name="550">
+    <entry name="ChannelID">skysports3@sky.com</entry>
+    <entry name="FullName">Sky Sports 3</entry>
+  </section>
+  <section name="551">
+    <entry name="ChannelID">skysportsne@sky.com</entry>
+    <entry name="FullName">Sky Sports News</entry>
+  </section>
+  <section name="552">
+    <entry name="ChannelID">skysportsx@sky.com</entry>
+    <entry name="FullName">Sky Sports Xtra</entry>
+  </section>
+  <section name="553">
+    <entry name="ChannelID">skytravel@sky.com</entry>
+    <entry name="FullName">Sky Travel</entry>
+  </section>
+  <section name="554">
+    <entry name="ChannelID">skytravelex@sky.com</entry>
+    <entry name="FullName">Sky Travel Extra</entry>
+  </section>
+  <section name="555">
+    <entry name="ChannelID">skytravelp1@sky.com</entry>
+    <entry name="FullName">Sky Travel Plus 1</entry>
+  </section>
+  <section name="556">
+    <entry name="ChannelID">spiceplatinum.nl</entry>
+    <entry name="FullName">spiceplatinum.nl</entry>
+  </section>
+  <section name="557">
+    <entry name="ChannelID">spiceuk.tv</entry>
+    <entry name="FullName">Spice</entry>
+  </section>
+  <section name="558">
+    <entry name="ChannelID">sport@canalplus.no</entry>
+    <entry name="FullName">Canal+ Sport</entry>
+  </section>
+  <section name="559">
+    <entry name="ChannelID">sport@canalplus.se</entry>
+    <entry name="FullName">sport@canalplus.se</entry>
+  </section>
+  <section name="560">
+    <entry name="ChannelID">sport@viasatsport.no</entry>
+    <entry name="FullName">Viasat Sport 1</entry>
+  </section>
+  <section name="561">
+    <entry name="ChannelID">sport@viasatsport.se</entry>
+    <entry name="FullName">sport@viasatsport.se</entry>
+  </section>
+  <section name="562">
+    <entry name="ChannelID">sport1@betv.be</entry>
+    <entry name="FullName">Be Sport 1</entry>
+  </section>
+  <section name="563">
+    <entry name="ChannelID">sport1@premiere.de</entry>
+    <entry name="FullName">Premiere Sport 1</entry>
+  </section>
+  <section name="564">
+    <entry name="ChannelID">sport2@betv.be</entry>
+    <entry name="FullName">Be Sport 2</entry>
+  </section>
+  <section name="565">
+    <entry name="ChannelID">sport2@premiere.de</entry>
+    <entry name="FullName">Premiere Sport 2</entry>
+  </section>
+  <section name="566">
+    <entry name="ChannelID">sport2@viasatsport.no</entry>
+    <entry name="FullName">Viasat Sport 2</entry>
+  </section>
+  <section name="567">
+    <entry name="ChannelID">sport2@viasatsport.se</entry>
+    <entry name="FullName">sport2@viasatsport.se</entry>
+  </section>
+  <section name="568">
+    <entry name="ChannelID">sport3@viasatsport.no</entry>
+    <entry name="FullName">Viasat Sport 3</entry>
+  </section>
+  <section name="569">
+    <entry name="ChannelID">sport3@viasatsport.se</entry>
+    <entry name="FullName">sport3@viasatsport.se</entry>
+  </section>
+  <section name="570">
+    <entry name="ChannelID">sports@extreme.com</entry>
+    <entry name="FullName">Extreme Sports Channel</entry>
+  </section>
+  <section name="571">
+    <entry name="ChannelID">sporza.be</entry>
+    <entry name="FullName">Sporza</entry>
+  </section>
+  <section name="572">
+    <entry name="ChannelID">star</entry>
+    <entry name="FullName">Star</entry>
+  </section>
+  <section name="573">
+    <entry name="ChannelID">star.gr</entry>
+    <entry name="FullName">STAR</entry>
+  </section>
+  <section name="574">
+    <entry name="ChannelID">star@teleclub.ch</entry>
+    <entry name="FullName">Teleclub Star</entry>
+  </section>
+  <section name="575">
+    <entry name="ChannelID">startv.ch</entry>
+    <entry name="FullName">*StarTV</entry>
+  </section>
+  <section name="576">
+    <entry name="ChannelID">super-rtl.de</entry>
+    <entry name="FullName">SuperRTL</entry>
+  </section>
+  <section name="577">
+    <entry name="ChannelID">svt1@svt.se</entry>
+    <entry name="FullName">SVT1</entry>
+  </section>
+  <section name="578">
+    <entry name="ChannelID">svt2@svt.se</entry>
+    <entry name="FullName">SVT2</entry>
+  </section>
+  <section name="579">
+    <entry name="ChannelID">sw.de</entry>
+    <entry name="FullName">sw.de</entry>
+  </section>
+  <section name="580">
+    <entry name="ChannelID">swr.de</entry>
+    <entry name="FullName">SW</entry>
+  </section>
+  <section name="581">
+    <entry name="ChannelID">tcm.com</entry>
+    <entry name="FullName">TCM</entry>
+  </section>
+  <section name="582">
+    <entry name="ChannelID">tcm.nl</entry>
+    <entry name="FullName">TCM</entry>
+  </section>
+  <section name="583">
+    <entry name="ChannelID">tcm.tv</entry>
+    <entry name="FullName">tcm.tv</entry>
+  </section>
+  <section name="584">
+    <entry name="ChannelID">TCM_CARTOONNETWORK</entry>
+    <entry name="FullName">TCM og Cartoon Network</entry>
+  </section>
+  <section name="585">
+    <entry name="ChannelID">tcmonline.co.uk</entry>
+    <entry name="FullName">TCM</entry>
+  </section>
+  <section name="586">
+    <entry name="ChannelID">teachers.tv</entry>
+    <entry name="FullName">Teachers TV</entry>
+  </section>
+  <section name="587">
+    <entry name="ChannelID">tele5.de</entry>
+    <entry name="FullName">tele5.de</entry>
+  </section>
+  <section name="588">
+    <entry name="ChannelID">telebaselonline.ch</entry>
+    <entry name="FullName">Tele Basel</entry>
+  </section>
+  <section name="589">
+    <entry name="ChannelID">telecinco.es</entry>
+    <entry name="FullName">telecinco.es</entry>
+  </section>
+  <section name="590">
+    <entry name="ChannelID">teleclub.ch</entry>
+    <entry name="FullName">Teleclub</entry>
+  </section>
+  <section name="591">
+    <entry name="ChannelID">teleg.co.uk</entry>
+    <entry name="FullName">Teleg</entry>
+  </section>
+  <section name="592">
+    <entry name="ChannelID">tele-m1.ch</entry>
+    <entry name="FullName">Tele M1</entry>
+  </section>
+  <section name="593">
+    <entry name="ChannelID">telemadrid.es</entry>
+    <entry name="FullName">telemadrid.es</entry>
+  </section>
+  <section name="594">
+    <entry name="ChannelID">teleostschweiz.ch</entry>
+    <entry name="FullName">Tele Ostschweiz</entry>
+  </section>
+  <section name="595">
+    <entry name="ChannelID">tele-suedostschweiz.ch</entry>
+    <entry name="FullName">Tele Südostschweiz</entry>
+  </section>
+  <section name="596">
+    <entry name="ChannelID">teletell.ch</entry>
+    <entry name="FullName">Tele Tell</entry>
+  </section>
+  <section name="597">
+    <entry name="ChannelID">televisionx.co.uk</entry>
+    <entry name="FullName">television:x 1</entry>
+  </section>
+  <section name="598">
+    <entry name="ChannelID">tf1.fr</entry>
+    <entry name="FullName">TF1</entry>
+  </section>
+  <section name="599">
+    <entry name="ChannelID">tg4.ie</entry>
+    <entry name="FullName">TG4</entry>
+  </section>
+  <section name="600">
+    <entry name="ChannelID">THE_STUDIO</entry>
+    <entry name="FullName">The Studio</entry>
+  </section>
+  <section name="601">
+    <entry name="ChannelID">theadultchannel.co.uk</entry>
+    <entry name="FullName">The Adult Channel</entry>
+  </section>
+  <section name="602">
+    <entry name="ChannelID">theamp.tv</entry>
+    <entry name="FullName">The Amp</entry>
+  </section>
+  <section name="603">
+    <entry name="ChannelID">theater@zdf.de</entry>
+    <entry name="FullName">theater@zdf.de</entry>
+  </section>
+  <section name="604">
+    <entry name="ChannelID">thebiographychannel.co.uk</entry>
+    <entry name="FullName">Biography Channel</entry>
+  </section>
+  <section name="605">
+    <entry name="ChannelID">thebox.co.uk</entry>
+    <entry name="FullName">The Box</entry>
+  </section>
+  <section name="606">
+    <entry name="ChannelID">thebox.nl</entry>
+    <entry name="FullName">thebox.nl</entry>
+  </section>
+  <section name="607">
+    <entry name="ChannelID">thedatingchannel.com</entry>
+    <entry name="FullName">The Dating Channel</entry>
+  </section>
+  <section name="608">
+    <entry name="ChannelID">thehistorychannel.co.uk</entry>
+    <entry name="FullName">History Channel</entry>
+  </section>
+  <section name="609">
+    <entry name="ChannelID">thevoice.no</entry>
+    <entry name="FullName">The Voice</entry>
+  </section>
+  <section name="610">
+    <entry name="ChannelID">tmf.be</entry>
+    <entry name="FullName">TMF</entry>
+  </section>
+  <section name="611">
+    <entry name="ChannelID">tmf.nl</entry>
+    <entry name="FullName">TMF</entry>
+  </section>
+  <section name="612">
+    <entry name="ChannelID">tmf@mtv.co.uk</entry>
+    <entry name="FullName">The Music Factory</entry>
+  </section>
+  <section name="613">
+    <entry name="ChannelID">toon@disneychannel.co.uk</entry>
+    <entry name="FullName">Toon Disney</entry>
+  </section>
+  <section name="614">
+    <entry name="ChannelID">toonami.co.uk</entry>
+    <entry name="FullName">Toonami</entry>
+  </section>
+  <section name="615">
+    <entry name="ChannelID">toons@nick.co.uk</entry>
+    <entry name="FullName">Nick Toons</entry>
+  </section>
+  <section name="616">
+    <entry name="ChannelID">travel@discoverychannel.co.uk</entry>
+    <entry name="FullName">Discovery Travel and Living</entry>
+  </section>
+  <section name="617">
+    <entry name="ChannelID">travel_adventure@discovery.com</entry>
+    <entry name="FullName">Discovery Travel &amp; Adventure</entry>
+  </section>
+  <section name="618">
+    <entry name="ChannelID">travel_living@discovery.com</entry>
+    <entry name="FullName">travel_living@discovery.com</entry>
+  </section>
+  <section name="619">
+    <entry name="ChannelID">travelchannel.co.uk</entry>
+    <entry name="FullName">Travel Channel</entry>
+  </section>
+  <section name="620">
+    <entry name="ChannelID">travelchannel.com</entry>
+    <entry name="FullName">Travel</entry>
+  </section>
+  <section name="621">
+    <entry name="ChannelID">traveldealsdirect.com</entry>
+    <entry name="FullName">Travel Deals Direct</entry>
+  </section>
+  <section name="622">
+    <entry name="ChannelID">trouble@uktv.co.uk</entry>
+    <entry name="FullName">Trouble</entry>
+  </section>
+  <section name="623">
+    <entry name="ChannelID">troublean@uktv.co.uk</entry>
+    <entry name="FullName">Trouble Analogue</entry>
+  </section>
+  <section name="624">
+    <entry name="ChannelID">troublere@uktv.co.uk</entry>
+    <entry name="FullName">Trouble Reload</entry>
+  </section>
+  <section name="625">
+    <entry name="ChannelID">trt.net.tr</entry>
+    <entry name="FullName">TRT</entry>
+  </section>
+  <section name="626">
+    <entry name="ChannelID">tsi1@rtsi.ch</entry>
+    <entry name="FullName">TSI1</entry>
+  </section>
+  <section name="627">
+    <entry name="ChannelID">tsi2@rtsi.ch</entry>
+    <entry name="FullName">TSI2</entry>
+  </section>
+  <section name="628">
+    <entry name="ChannelID">tsr1@tsr.ch</entry>
+    <entry name="FullName">TSR1</entry>
+  </section>
+  <section name="629">
+    <entry name="ChannelID">tsr2@tsr.ch</entry>
+    <entry name="FullName">TSR2</entry>
+  </section>
+  <section name="630">
+    <entry name="ChannelID">tt@bloomberg.co.uk</entry>
+    <entry name="FullName">Bloomberg TV (TopUpTV)</entry>
+  </section>
+  <section name="631">
+    <entry name="ChannelID">tt@cartoon-network.co.uk</entry>
+    <entry name="FullName">Cartoon Network (TopUpTV)</entry>
+  </section>
+  <section name="632">
+    <entry name="ChannelID">tt@discoverychannel.co.uk</entry>
+    <entry name="FullName">Discovery (TopUpTV)</entry>
+  </section>
+  <section name="633">
+    <entry name="ChannelID">tt@tcmonline.co.uk</entry>
+    <entry name="FullName">TCM (TopUpTV)</entry>
+  </section>
+  <section name="634">
+    <entry name="ChannelID">turnerclassicmovies.com</entry>
+    <entry name="FullName">turnerclassicmovies.com</entry>
+  </section>
+  <section name="635">
+    <entry name="ChannelID">tv@celticfc.co.uk</entry>
+    <entry name="FullName">Celtic TV</entry>
+  </section>
+  <section name="636">
+    <entry name="ChannelID">tv@chealseafc.com</entry>
+    <entry name="FullName">Chelsea TV</entry>
+  </section>
+  <section name="637">
+    <entry name="ChannelID">tv@classicfm.com</entry>
+    <entry name="FullName">Classic FM TV</entry>
+  </section>
+  <section name="638">
+    <entry name="ChannelID">tv@kerrang.com</entry>
+    <entry name="FullName">Kerrang!</entry>
+  </section>
+  <section name="639">
+    <entry name="ChannelID">tv@kiss100.com</entry>
+    <entry name="FullName">Kiss TV</entry>
+  </section>
+  <section name="640">
+    <entry name="ChannelID">tv@q4music.com</entry>
+    <entry name="FullName">Q</entry>
+  </section>
+  <section name="641">
+    <entry name="ChannelID">tv@rangers.co.uk</entry>
+    <entry name="FullName">Rangers TV</entry>
+  </section>
+  <section name="642">
+    <entry name="ChannelID">tv@smashhits.net</entry>
+    <entry name="FullName">Smash Hits!</entry>
+  </section>
+  <section name="643">
+    <entry name="ChannelID">tv1@yle.fi</entry>
+    <entry name="FullName">tv1@yle.fi</entry>
+  </section>
+  <section name="644">
+    <entry name="ChannelID">tv1000@tv1000.no</entry>
+    <entry name="FullName">TV 1000</entry>
+  </section>
+  <section name="645">
+    <entry name="ChannelID">tv1000@tv1000.se</entry>
+    <entry name="FullName">TV 1000</entry>
+  </section>
+  <section name="646">
+    <entry name="ChannelID">tv1-fi</entry>
+    <entry name="FullName">tv1-fi</entry>
+  </section>
+  <section name="647">
+    <entry name="ChannelID">tv2.no</entry>
+    <entry name="FullName">TV2</entry>
+  </section>
+  <section name="648">
+    <entry name="ChannelID">tv2@tv2.dk</entry>
+    <entry name="FullName">Dansk TV2</entry>
+  </section>
+  <section name="649">
+    <entry name="ChannelID">tv2@yle.fi</entry>
+    <entry name="FullName">tv2@yle.fi</entry>
+  </section>
+  <section name="650">
+    <entry name="ChannelID">tv2xtra.no</entry>
+    <entry name="FullName">TV2 Xtra</entry>
+  </section>
+  <section name="651">
+    <entry name="ChannelID">tv2zulu@tv2.dk</entry>
+    <entry name="FullName">tv2zulu@tv2.dk</entry>
+  </section>
+  <section name="652">
+    <entry name="ChannelID">tv3.dk</entry>
+    <entry name="FullName">Dansk TV3</entry>
+  </section>
+  <section name="653">
+    <entry name="ChannelID">tv3.ie</entry>
+    <entry name="FullName">TV3</entry>
+  </section>
+  <section name="654">
+    <entry name="ChannelID">tv3.no</entry>
+    <entry name="FullName">TV3</entry>
+  </section>
+  <section name="655">
+    <entry name="ChannelID">tv3.se</entry>
+    <entry name="FullName">Svensk TV3</entry>
+  </section>
+  <section name="656">
+    <entry name="ChannelID">tv4@tv4.se</entry>
+    <entry name="FullName">TV 4</entry>
+  </section>
+  <section name="657">
+    <entry name="ChannelID">tv400.tv</entry>
+    <entry name="FullName">tv400.tv</entry>
+  </section>
+  <section name="658">
+    <entry name="ChannelID">tv5.ie</entry>
+    <entry name="FullName">TV5</entry>
+  </section>
+  <section name="659">
+    <entry name="ChannelID">tv5.org</entry>
+    <entry name="FullName">TV5</entry>
+  </section>
+  <section name="660">
+    <entry name="ChannelID">tv6.at</entry>
+    <entry name="FullName">TV6</entry>
+  </section>
+  <section name="661">
+    <entry name="ChannelID">tv8.se</entry>
+    <entry name="FullName">TV8</entry>
+  </section>
+  <section name="662">
+    <entry name="ChannelID">tvbrussel.be</entry>
+    <entry name="FullName">TV Brussel</entry>
+  </section>
+  <section name="663">
+    <entry name="ChannelID">tvcanaria.tv</entry>
+    <entry name="FullName">tvcanaria.tv</entry>
+  </section>
+  <section name="664">
+    <entry name="ChannelID">tvcatalunya.com</entry>
+    <entry name="FullName">tvcatalunya.com</entry>
+  </section>
+  <section name="665">
+    <entry name="ChannelID">tvchile.cl</entry>
+    <entry name="FullName">tvchile.cl</entry>
+  </section>
+  <section name="666">
+    <entry name="ChannelID">tvdanmark1@tvdanmark.dk</entry>
+    <entry name="FullName">tvdanmark1@tvdanmark.dk</entry>
+  </section>
+  <section name="667">
+    <entry name="ChannelID">tvdanmark2@tvdanmark.dk</entry>
+    <entry name="FullName">tvdanmark2@tvdanmark.dk</entry>
+  </section>
+  <section name="668">
+    <entry name="ChannelID">tve.es</entry>
+    <entry name="FullName">TVE</entry>
+  </section>
+  <section name="669">
+    <entry name="ChannelID">tve1@tve.es</entry>
+    <entry name="FullName">TVE 1</entry>
+  </section>
+  <section name="670">
+    <entry name="ChannelID">tvela2@tve.es</entry>
+    <entry name="FullName">TVE La 2</entry>
+  </section>
+  <section name="671">
+    <entry name="ChannelID">tvfinland@yle.fi</entry>
+    <entry name="FullName">tvfinland@yle.fi</entry>
+  </section>
+  <section name="672">
+    <entry name="ChannelID">tvi@rtl.be</entry>
+    <entry name="FullName">RTL TVI</entry>
+  </section>
+  <section name="673">
+    <entry name="ChannelID">tvlimburg.be</entry>
+    <entry name="FullName">TV Limburg</entry>
+  </section>
+  <section name="674">
+    <entry name="ChannelID">tvm.de</entry>
+    <entry name="FullName">tvm.de</entry>
+  </section>
+  <section name="675">
+    <entry name="ChannelID">tvmak-gr</entry>
+    <entry name="FullName">TVMAK</entry>
+  </section>
+  <section name="676">
+    <entry name="ChannelID">tvnorge.no</entry>
+    <entry name="FullName">TV Norge</entry>
+  </section>
+  <section name="677">
+    <entry name="ChannelID">tvnrw.com</entry>
+    <entry name="FullName">tvnrw.com</entry>
+  </section>
+  <section name="678">
+    <entry name="ChannelID">tvp.pl</entry>
+    <entry name="FullName">tvp.pl</entry>
+  </section>
+  <section name="679">
+    <entry name="ChannelID">u.tv</entry>
+    <entry name="FullName">UTV</entry>
+  </section>
+  <section name="680">
+    <entry name="ChannelID">uk@setanta.com</entry>
+    <entry name="FullName">Setanta Sports UK</entry>
+  </section>
+  <section name="681">
+    <entry name="ChannelID">uktvbrighti@uktv.co.uk</entry>
+    <entry name="FullName">UKTV Bright Ideas</entry>
+  </section>
+  <section name="682">
+    <entry name="ChannelID">uktvdoc@uktv.co.uk</entry>
+    <entry name="FullName">UKTV Documentary</entry>
+  </section>
+  <section name="683">
+    <entry name="ChannelID">uktvdocp1@uktv.co.uk</entry>
+    <entry name="FullName">UKTV Documentary Plus 1</entry>
+  </section>
+  <section name="684">
+    <entry name="ChannelID">uktvdrama@uktv.co.uk</entry>
+    <entry name="FullName">UKTV Drama</entry>
+  </section>
+  <section name="685">
+    <entry name="ChannelID">uktvfood@uktv.co.uk</entry>
+    <entry name="FullName">UKTV Food</entry>
+  </section>
+  <section name="686">
+    <entry name="ChannelID">uktvfoodp1@uktv.co.uk</entry>
+    <entry name="FullName">UKTV Food Plus 1</entry>
+  </section>
+  <section name="687">
+    <entry name="ChannelID">uktvfoodtt@uktv.co.uk</entry>
+    <entry name="FullName">UKTV Food (TopUpTV)</entry>
+  </section>
+  <section name="688">
+    <entry name="ChannelID">uktvg2@uktv.co.uk</entry>
+    <entry name="FullName">UKTV G2</entry>
+  </section>
+  <section name="689">
+    <entry name="ChannelID">uktvg2p1@uktv.co.uk</entry>
+    <entry name="FullName">UKTV G2 Plus 1</entry>
+  </section>
+  <section name="690">
+    <entry name="ChannelID">uktvgold@uktv.co.uk</entry>
+    <entry name="FullName">UKTV Gold</entry>
+  </section>
+  <section name="691">
+    <entry name="ChannelID">uktvgoldp1@uktv.co.uk</entry>
+    <entry name="FullName">UKTV Gold Plus 1</entry>
+  </section>
+  <section name="692">
+    <entry name="ChannelID">uktvgoldtt@uktv.co.uk</entry>
+    <entry name="FullName">UKTV Gold (TopUpTV)</entry>
+  </section>
+  <section name="693">
+    <entry name="ChannelID">uktvhist@uktv.co.uk</entry>
+    <entry name="FullName">UKTV History</entry>
+  </section>
+  <section name="694">
+    <entry name="ChannelID">uktvhistp1@uktv.co.uk</entry>
+    <entry name="FullName">UKTV History Plus 1</entry>
+  </section>
+  <section name="695">
+    <entry name="ChannelID">uktvpeople@uktv.co.uk</entry>
+    <entry name="FullName">UKTV People</entry>
+  </section>
+  <section name="696">
+    <entry name="ChannelID">uktvpeoplep1@uktv.co.uk</entry>
+    <entry name="FullName">UKTV People Plus 1</entry>
+  </section>
+  <section name="697">
+    <entry name="ChannelID">uktvstyle@uktv.co.uk</entry>
+    <entry name="FullName">UKTV Style</entry>
+  </section>
+  <section name="698">
+    <entry name="ChannelID">uktvstylega@uktv.co.uk</entry>
+    <entry name="FullName">UKTV Style Gardens</entry>
+  </section>
+  <section name="699">
+    <entry name="ChannelID">uktvstylep1@uktv.co.uk</entry>
+    <entry name="FullName">UKTV Style Plus 1</entry>
+  </section>
+  <section name="700">
+    <entry name="ChannelID">uktvstylett@uktv.co.uk</entry>
+    <entry name="FullName">UKTV Style (TopUpTV)</entry>
+  </section>
+  <section name="701">
+    <entry name="ChannelID">vault@chartshow.tv</entry>
+    <entry name="FullName">The Vault</entry>
+  </section>
+  <section name="702">
+    <entry name="ChannelID">vh1.co.uk</entry>
+    <entry name="FullName">VH1 UK</entry>
+  </section>
+  <section name="703">
+    <entry name="ChannelID">vh1.com</entry>
+    <entry name="FullName">VH1</entry>
+  </section>
+  <section name="704">
+    <entry name="ChannelID">vijftv.be</entry>
+    <entry name="FullName">VijfTV</entry>
+  </section>
+  <section name="705">
+    <entry name="ChannelID">vitaya.be</entry>
+    <entry name="FullName">Vitaya</entry>
+  </section>
+  <section name="706">
+    <entry name="ChannelID">viva.tv</entry>
+    <entry name="FullName">VIVA</entry>
+  </section>
+  <section name="707">
+    <entry name="ChannelID">vivaplus.tv</entry>
+    <entry name="FullName">VIVA Plus</entry>
+  </section>
+  <section name="708">
+    <entry name="ChannelID">vox.de</entry>
+    <entry name="FullName">VOX</entry>
+  </section>
+  <section name="709">
+    <entry name="ChannelID">VT 4</entry>
+    <entry name="FullName">VT 4</entry>
+  </section>
+  <section name="710">
+    <entry name="ChannelID">vt4.be</entry>
+    <entry name="FullName">VT4</entry>
+  </section>
+  <section name="711">
+    <entry name="ChannelID">vtm.be</entry>
+    <entry name="FullName">VTM</entry>
+  </section>
+  <section name="712">
+    <entry name="ChannelID">wdr.de</entry>
+    <entry name="FullName">WDR</entry>
+  </section>
+  <section name="713">
+    <entry name="ChannelID">wings@discoverychannel.co.uk</entry>
+    <entry name="FullName">Discovery Wings</entry>
+  </section>
+  <section name="714">
+    <entry name="ChannelID">wtv.be</entry>
+    <entry name="FullName">WTV</entry>
+  </section>
+  <section name="715">
+    <entry name="ChannelID">xtraview.co.uk</entry>
+    <entry name="FullName">Xtraview</entry>
+  </section>
+  <section name="716">
+    <entry name="ChannelID">xxp.tv</entry>
+    <entry name="FullName">XXP</entry>
+  </section>
+  <section name="717">
+    <entry name="ChannelID">yle24@yle.fi</entry>
+    <entry name="FullName">yle24@yle.fi</entry>
+  </section>
+  <section name="718">
+    <entry name="ChannelID">yleteema@yle.fi</entry>
+    <entry name="FullName">yleteema@yle.fi</entry>
+  </section>
+  <section name="719">
+    <entry name="ChannelID">yorin.nl</entry>
+    <entry name="FullName">yorin.nl</entry>
+  </section>
+  <section name="720">
+    <entry name="ChannelID">zdf.de</entry>
+    <entry name="FullName">ZDF</entry>
+  </section>
+  <section name="721">
+    <entry name="ChannelID">zeetv.co.uk</entry>
+    <entry name="FullName">Zee TV</entry>
+  </section>
+  <section name="722">
+    <entry name="ChannelID">ztv.no</entry>
+    <entry name="FullName">ZTV</entry>
+  </section>
+  <section name="723">
+    <entry name="ChannelID">ztv.se</entry>
+    <entry name="FullName">ZTV Sverige</entry>
+  </section>
+  <section name="AU">
+    <entry name="TotalChannels">12</entry>
+    <entry name="0">1</entry>
+    <entry name="1">2</entry>
+    <entry name="2">15</entry>
+    <entry name="3">16</entry>
+    <entry name="4">17</entry>
+    <entry name="5">18</entry>
+    <entry name="6">23</entry>
+    <entry name="7">24</entry>
+    <entry name="8">25</entry>
+    <entry name="9">450</entry>
+    <entry name="10">452</entry>
+    <entry name="11">453</entry>
+  </section>
+  <section name="BE">
+    <entry name="TotalChannels">81</entry>
+    <entry name="0">0</entry>
+    <entry name="1">9</entry>
+    <entry name="2">13</entry>
+    <entry name="3">14</entry>
+    <entry name="4">20</entry>
+    <entry name="5">21</entry>
+    <entry name="6">29</entry>
+    <entry name="7">51</entry>
+    <entry name="8">53</entry>
+    <entry name="9">59</entry>
+    <entry name="10">61</entry>
+    <entry name="11">65</entry>
+    <entry name="12">79</entry>
+    <entry name="13">104</entry>
+    <entry name="14">107</entry>
+    <entry name="15">115</entry>
+    <entry name="16">124</entry>
+    <entry name="17">126</entry>
+    <entry name="18">139</entry>
+    <entry name="19">140</entry>
+    <entry name="20">150</entry>
+    <entry name="21">153</entry>
+    <entry name="22">158</entry>
+    <entry name="23">170</entry>
+    <entry name="24">188</entry>
+    <entry name="25">193</entry>
+    <entry name="26">199</entry>
+    <entry name="27">201</entry>
+    <entry name="28">209</entry>
+    <entry name="29">214</entry>
+    <entry name="30">225</entry>
+    <entry name="31">229</entry>
+    <entry name="32">230</entry>
+    <entry name="33">231</entry>
+    <entry name="34">264</entry>
+    <entry name="35">285</entry>
+    <entry name="36">291</entry>
+    <entry name="37">293</entry>
+    <entry name="38">295</entry>
+    <entry name="39">300</entry>
+    <entry name="40">301</entry>
+    <entry name="41">302</entry>
+    <entry name="42">305</entry>
+    <entry name="43">310</entry>
+    <entry name="44">316</entry>
+    <entry name="45">323</entry>
+    <entry name="46">325</entry>
+    <entry name="47">343</entry>
+    <entry name="48">345</entry>
+    <entry name="49">346</entry>
+    <entry name="50">347</entry>
+    <entry name="51">351</entry>
+    <entry name="52">355</entry>
+    <entry name="53">391</entry>
+    <entry name="54">412</entry>
+    <entry name="55">421</entry>
+    <entry name="56">422</entry>
+    <entry name="57">423</entry>
+    <entry name="58">427</entry>
+    <entry name="59">433</entry>
+    <entry name="60">451</entry>
+    <entry name="61">562</entry>
+    <entry name="62">564</entry>
+    <entry name="63">571</entry>
+    <entry name="64">579</entry>
+    <entry name="65">582</entry>
+    <entry name="66">598</entry>
+    <entry name="67">610</entry>
+    <entry name="68">625</entry>
+    <entry name="69">662</entry>
+    <entry name="70">668</entry>
+    <entry name="71">672</entry>
+    <entry name="72">673</entry>
+    <entry name="73">704</entry>
+    <entry name="74">705</entry>
+    <entry name="75">710</entry>
+    <entry name="76">711</entry>
+    <entry name="77">712</entry>
+    <entry name="78">714</entry>
+    <entry name="79">719</entry>
+    <entry name="80">720</entry>
+  </section>
+  <section name="CH">
+    <entry name="TotalChannels">78</entry>
+    <entry name="0">3</entry>
+    <entry name="1">12</entry>
+    <entry name="2">30</entry>
+    <entry name="3">51</entry>
+    <entry name="4">53</entry>
+    <entry name="5">103</entry>
+    <entry name="6">113</entry>
+    <entry name="7">130</entry>
+    <entry name="8">137</entry>
+    <entry name="9">138</entry>
+    <entry name="10">158</entry>
+    <entry name="11">167</entry>
+    <entry name="12">172</entry>
+    <entry name="13">179</entry>
+    <entry name="14">199</entry>
+    <entry name="15">201</entry>
+    <entry name="16">209</entry>
+    <entry name="17">210</entry>
+    <entry name="18">227</entry>
+    <entry name="19">229</entry>
+    <entry name="20">230</entry>
+    <entry name="21">238</entry>
+    <entry name="22">246</entry>
+    <entry name="23">255</entry>
+    <entry name="24">288</entry>
+    <entry name="25">290</entry>
+    <entry name="26">296</entry>
+    <entry name="27">297</entry>
+    <entry name="28">305</entry>
+    <entry name="29">311</entry>
+    <entry name="30">324</entry>
+    <entry name="31">328</entry>
+    <entry name="32">336</entry>
+    <entry name="33">337</entry>
+    <entry name="34">344</entry>
+    <entry name="35">352</entry>
+    <entry name="36">364</entry>
+    <entry name="37">370</entry>
+    <entry name="38">371</entry>
+    <entry name="39">372</entry>
+    <entry name="40">388</entry>
+    <entry name="41">407</entry>
+    <entry name="42">411</entry>
+    <entry name="43">412</entry>
+    <entry name="44">413</entry>
+    <entry name="45">427</entry>
+    <entry name="46">428</entry>
+    <entry name="47">431</entry>
+    <entry name="48">448</entry>
+    <entry name="49">449</entry>
+    <entry name="50">463</entry>
+    <entry name="51">464</entry>
+    <entry name="52">465</entry>
+    <entry name="53">563</entry>
+    <entry name="54">565</entry>
+    <entry name="55">574</entry>
+    <entry name="56">575</entry>
+    <entry name="57">576</entry>
+    <entry name="58">580</entry>
+    <entry name="59">588</entry>
+    <entry name="60">590</entry>
+    <entry name="61">592</entry>
+    <entry name="62">594</entry>
+    <entry name="63">595</entry>
+    <entry name="64">596</entry>
+    <entry name="65">598</entry>
+    <entry name="66">626</entry>
+    <entry name="67">627</entry>
+    <entry name="68">628</entry>
+    <entry name="69">629</entry>
+    <entry name="70">668</entry>
+    <entry name="71">672</entry>
+    <entry name="72">674</entry>
+    <entry name="73">706</entry>
+    <entry name="74">707</entry>
+    <entry name="75">708</entry>
+    <entry name="76">712</entry>
+    <entry name="77">720</entry>
+  </section>
+  <section name="DE">
+    <entry name="TotalChannels">93</entry>
+    <entry name="0">3</entry>
+    <entry name="1">12</entry>
+    <entry name="2">47</entry>
+    <entry name="3">51</entry>
+    <entry name="4">53</entry>
+    <entry name="5">56</entry>
+    <entry name="6">104</entry>
+    <entry name="7">105</entry>
+    <entry name="8">113</entry>
+    <entry name="9">145</entry>
+    <entry name="10">158</entry>
+    <entry name="11">163</entry>
+    <entry name="12">164</entry>
+    <entry name="13">165</entry>
+    <entry name="14">166</entry>
+    <entry name="15">167</entry>
+    <entry name="16">172</entry>
+    <entry name="17">176</entry>
+    <entry name="18">177</entry>
+    <entry name="19">178</entry>
+    <entry name="20">179</entry>
+    <entry name="21">190</entry>
+    <entry name="22">191</entry>
+    <entry name="23">192</entry>
+    <entry name="24">199</entry>
+    <entry name="25">201</entry>
+    <entry name="26">206</entry>
+    <entry name="27">209</entry>
+    <entry name="28">210</entry>
+    <entry name="29">213</entry>
+    <entry name="30">227</entry>
+    <entry name="31">229</entry>
+    <entry name="32">230</entry>
+    <entry name="33">238</entry>
+    <entry name="34">241</entry>
+    <entry name="35">246</entry>
+    <entry name="36">247</entry>
+    <entry name="37">250</entry>
+    <entry name="38">255</entry>
+    <entry name="39">261</entry>
+    <entry name="40">288</entry>
+    <entry name="41">290</entry>
+    <entry name="42">296</entry>
+    <entry name="43">297</entry>
+    <entry name="44">311</entry>
+    <entry name="45">319</entry>
+    <entry name="46">324</entry>
+    <entry name="47">328</entry>
+    <entry name="48">335</entry>
+    <entry name="49">337</entry>
+    <entry name="50">344</entry>
+    <entry name="51">345</entry>
+    <entry name="52">346</entry>
+    <entry name="53">347</entry>
+    <entry name="54">352</entry>
+    <entry name="55">361</entry>
+    <entry name="56">364</entry>
+    <entry name="57">371</entry>
+    <entry name="58">372</entry>
+    <entry name="59">388</entry>
+    <entry name="60">395</entry>
+    <entry name="61">396</entry>
+    <entry name="62">397</entry>
+    <entry name="63">398</entry>
+    <entry name="64">399</entry>
+    <entry name="65">400</entry>
+    <entry name="66">401</entry>
+    <entry name="67">403</entry>
+    <entry name="68">407</entry>
+    <entry name="69">413</entry>
+    <entry name="70">427</entry>
+    <entry name="71">428</entry>
+    <entry name="72">449</entry>
+    <entry name="73">458</entry>
+    <entry name="74">462</entry>
+    <entry name="75">463</entry>
+    <entry name="76">464</entry>
+    <entry name="77">563</entry>
+    <entry name="78">565</entry>
+    <entry name="79">576</entry>
+    <entry name="80">580</entry>
+    <entry name="81">587</entry>
+    <entry name="82">598</entry>
+    <entry name="83">603</entry>
+    <entry name="84">625</entry>
+    <entry name="85">674</entry>
+    <entry name="86">677</entry>
+    <entry name="87">706</entry>
+    <entry name="88">707</entry>
+    <entry name="89">708</entry>
+    <entry name="90">712</entry>
+    <entry name="91">716</entry>
+    <entry name="92">720</entry>
+  </section>
+  <section name="ES">
+    <entry name="TotalChannels">19</entry>
+    <entry name="0">49</entry>
+    <entry name="1">116</entry>
+    <entry name="2">121</entry>
+    <entry name="3">122</entry>
+    <entry name="4">123</entry>
+    <entry name="5">160</entry>
+    <entry name="6">162</entry>
+    <entry name="7">196</entry>
+    <entry name="8">197</entry>
+    <entry name="9">289</entry>
+    <entry name="10">409</entry>
+    <entry name="11">434</entry>
+    <entry name="12">435</entry>
+    <entry name="13">589</entry>
+    <entry name="14">593</entry>
+    <entry name="15">663</entry>
+    <entry name="16">664</entry>
+    <entry name="17">669</entry>
+    <entry name="18">670</entry>
+  </section>
+  <section name="FI">
+    <entry name="TotalChannels">1</entry>
+    <entry name="0">646</entry>
+  </section>
+  <section name="FR">
+    <entry name="TotalChannels">1</entry>
+    <entry name="0">598</entry>
+  </section>
+  <section name="GR">
+    <entry name="TotalChannels">11</entry>
+    <entry name="0">31</entry>
+    <entry name="1">32</entry>
+    <entry name="2">50</entry>
+    <entry name="3">194</entry>
+    <entry name="4">195</entry>
+    <entry name="5">207</entry>
+    <entry name="6">306</entry>
+    <entry name="7">312</entry>
+    <entry name="8">349</entry>
+    <entry name="9">573</entry>
+    <entry name="10">675</entry>
+  </section>
+  <section name="IT">
+    <entry name="TotalChannels">1</entry>
+    <entry name="0">118</entry>
+  </section>
+  <section name="NL">
+    <entry name="TotalChannels">65</entry>
+    <entry name="0">12</entry>
+    <entry name="1">48</entry>
+    <entry name="2">51</entry>
+    <entry name="3">53</entry>
+    <entry name="4">57</entry>
+    <entry name="5">65</entry>
+    <entry name="6">79</entry>
+    <entry name="7">103</entry>
+    <entry name="8">104</entry>
+    <entry name="9">108</entry>
+    <entry name="10">114</entry>
+    <entry name="11">127</entry>
+    <entry name="12">158</entry>
+    <entry name="13">170</entry>
+    <entry name="14">187</entry>
+    <entry name="15">198</entry>
+    <entry name="16">201</entry>
+    <entry name="17">209</entry>
+    <entry name="18">228</entry>
+    <entry name="19">237</entry>
+    <entry name="20">263</entry>
+    <entry name="21">292</entry>
+    <entry name="22">295</entry>
+    <entry name="23">299</entry>
+    <entry name="24">300</entry>
+    <entry name="25">301</entry>
+    <entry name="26">317</entry>
+    <entry name="27">325</entry>
+    <entry name="28">341</entry>
+    <entry name="29">344</entry>
+    <entry name="30">345</entry>
+    <entry name="31">346</entry>
+    <entry name="32">347</entry>
+    <entry name="33">351</entry>
+    <entry name="34">356</entry>
+    <entry name="35">365</entry>
+    <entry name="36">366</entry>
+    <entry name="37">367</entry>
+    <entry name="38">368</entry>
+    <entry name="39">369</entry>
+    <entry name="40">407</entry>
+    <entry name="41">412</entry>
+    <entry name="42">424</entry>
+    <entry name="43">427</entry>
+    <entry name="44">429</entry>
+    <entry name="45">430</entry>
+    <entry name="46">436</entry>
+    <entry name="47">438</entry>
+    <entry name="48">439</entry>
+    <entry name="49">440</entry>
+    <entry name="50">442</entry>
+    <entry name="51">443</entry>
+    <entry name="52">444</entry>
+    <entry name="53">449</entry>
+    <entry name="54">451</entry>
+    <entry name="55">556</entry>
+    <entry name="56">580</entry>
+    <entry name="57">606</entry>
+    <entry name="58">611</entry>
+    <entry name="59">634</entry>
+    <entry name="60">709</entry>
+    <entry name="61">711</entry>
+    <entry name="62">712</entry>
+    <entry name="63">719</entry>
+    <entry name="64">720</entry>
+  </section>
+  <section name="NO">
+    <entry name="TotalChannels">76</entry>
+    <entry name="0">11</entry>
+    <entry name="1">12</entry>
+    <entry name="2">26</entry>
+    <entry name="3">46</entry>
+    <entry name="4">103</entry>
+    <entry name="5">104</entry>
+    <entry name="6">119</entry>
+    <entry name="7">128</entry>
+    <entry name="8">141</entry>
+    <entry name="9">144</entry>
+    <entry name="10">146</entry>
+    <entry name="11">149</entry>
+    <entry name="12">151</entry>
+    <entry name="13">154</entry>
+    <entry name="14">155</entry>
+    <entry name="15">158</entry>
+    <entry name="16">168</entry>
+    <entry name="17">174</entry>
+    <entry name="18">177</entry>
+    <entry name="19">178</entry>
+    <entry name="20">179</entry>
+    <entry name="21">183</entry>
+    <entry name="22">189</entry>
+    <entry name="23">201</entry>
+    <entry name="24">203</entry>
+    <entry name="25">208</entry>
+    <entry name="26">211</entry>
+    <entry name="27">216</entry>
+    <entry name="28">218</entry>
+    <entry name="29">245</entry>
+    <entry name="30">248</entry>
+    <entry name="31">283</entry>
+    <entry name="32">294</entry>
+    <entry name="33">326</entry>
+    <entry name="34">340</entry>
+    <entry name="35">357</entry>
+    <entry name="36">359</entry>
+    <entry name="37">362</entry>
+    <entry name="38">363</entry>
+    <entry name="39">407</entry>
+    <entry name="40">416</entry>
+    <entry name="41">427</entry>
+    <entry name="42">428</entry>
+    <entry name="43">449</entry>
+    <entry name="44">454</entry>
+    <entry name="45">466</entry>
+    <entry name="46">543</entry>
+    <entry name="47">544</entry>
+    <entry name="48">558</entry>
+    <entry name="49">560</entry>
+    <entry name="50">566</entry>
+    <entry name="51">568</entry>
+    <entry name="52">572</entry>
+    <entry name="53">577</entry>
+    <entry name="54">578</entry>
+    <entry name="55">581</entry>
+    <entry name="56">584</entry>
+    <entry name="57">600</entry>
+    <entry name="58">609</entry>
+    <entry name="59">617</entry>
+    <entry name="60">620</entry>
+    <entry name="61">644</entry>
+    <entry name="62">647</entry>
+    <entry name="63">648</entry>
+    <entry name="64">650</entry>
+    <entry name="65">652</entry>
+    <entry name="66">654</entry>
+    <entry name="67">655</entry>
+    <entry name="68">656</entry>
+    <entry name="69">659</entry>
+    <entry name="70">660</entry>
+    <entry name="71">661</entry>
+    <entry name="72">676</entry>
+    <entry name="73">703</entry>
+    <entry name="74">722</entry>
+    <entry name="75">723</entry>
+  </section>
+  <section name="PT">
+    <entry name="TotalChannels">1</entry>
+    <entry name="0">432</entry>
+  </section>
+  <section name="SE">
+    <entry name="TotalChannels">119</entry>
+    <entry name="0">10</entry>
+    <entry name="1">11</entry>
+    <entry name="2">12</entry>
+    <entry name="3">27</entry>
+    <entry name="4">28</entry>
+    <entry name="5">46</entry>
+    <entry name="6">52</entry>
+    <entry name="7">53</entry>
+    <entry name="8">60</entry>
+    <entry name="9">63</entry>
+    <entry name="10">100</entry>
+    <entry name="11">103</entry>
+    <entry name="12">104</entry>
+    <entry name="13">117</entry>
+    <entry name="14">120</entry>
+    <entry name="15">129</entry>
+    <entry name="16">144</entry>
+    <entry name="17">147</entry>
+    <entry name="18">149</entry>
+    <entry name="19">152</entry>
+    <entry name="20">154</entry>
+    <entry name="21">158</entry>
+    <entry name="22">168</entry>
+    <entry name="23">175</entry>
+    <entry name="24">177</entry>
+    <entry name="25">178</entry>
+    <entry name="26">179</entry>
+    <entry name="27">183</entry>
+    <entry name="28">193</entry>
+    <entry name="29">199</entry>
+    <entry name="30">200</entry>
+    <entry name="31">201</entry>
+    <entry name="32">202</entry>
+    <entry name="33">204</entry>
+    <entry name="34">205</entry>
+    <entry name="35">208</entry>
+    <entry name="36">212</entry>
+    <entry name="37">215</entry>
+    <entry name="38">217</entry>
+    <entry name="39">219</entry>
+    <entry name="40">232</entry>
+    <entry name="41">234</entry>
+    <entry name="42">240</entry>
+    <entry name="43">245</entry>
+    <entry name="44">249</entry>
+    <entry name="45">256</entry>
+    <entry name="46">262</entry>
+    <entry name="47">284</entry>
+    <entry name="48">290</entry>
+    <entry name="49">294</entry>
+    <entry name="50">298</entry>
+    <entry name="51">308</entry>
+    <entry name="52">309</entry>
+    <entry name="53">311</entry>
+    <entry name="54">318</entry>
+    <entry name="55">327</entry>
+    <entry name="56">329</entry>
+    <entry name="57">330</entry>
+    <entry name="58">340</entry>
+    <entry name="59">348</entry>
+    <entry name="60">358</entry>
+    <entry name="61">360</entry>
+    <entry name="62">362</entry>
+    <entry name="63">363</entry>
+    <entry name="64">390</entry>
+    <entry name="65">392</entry>
+    <entry name="66">394</entry>
+    <entry name="67">406</entry>
+    <entry name="68">407</entry>
+    <entry name="69">411</entry>
+    <entry name="70">412</entry>
+    <entry name="71">416</entry>
+    <entry name="72">427</entry>
+    <entry name="73">428</entry>
+    <entry name="74">437</entry>
+    <entry name="75">441</entry>
+    <entry name="76">449</entry>
+    <entry name="77">455</entry>
+    <entry name="78">467</entry>
+    <entry name="79">543</entry>
+    <entry name="80">556</entry>
+    <entry name="81">559</entry>
+    <entry name="82">561</entry>
+    <entry name="83">567</entry>
+    <entry name="84">569</entry>
+    <entry name="85">572</entry>
+    <entry name="86">577</entry>
+    <entry name="87">578</entry>
+    <entry name="88">583</entry>
+    <entry name="89">618</entry>
+    <entry name="90">620</entry>
+    <entry name="91">643</entry>
+    <entry name="92">645</entry>
+    <entry name="93">647</entry>
+    <entry name="94">648</entry>
+    <entry name="95">649</entry>
+    <entry name="96">651</entry>
+    <entry name="97">652</entry>
+    <entry name="98">654</entry>
+    <entry name="99">655</entry>
+    <entry name="100">656</entry>
+    <entry name="101">657</entry>
+    <entry name="102">659</entry>
+    <entry name="103">661</entry>
+    <entry name="104">665</entry>
+    <entry name="105">666</entry>
+    <entry name="106">667</entry>
+    <entry name="107">671</entry>
+    <entry name="108">676</entry>
+    <entry name="109">678</entry>
+    <entry name="110">703</entry>
+    <entry name="111">706</entry>
+    <entry name="112">707</entry>
+    <entry name="113">708</entry>
+    <entry name="114">717</entry>
+    <entry name="115">718</entry>
+    <entry name="116">720</entry>
+    <entry name="117">722</entry>
+    <entry name="118">723</entry>
+  </section>
+  <section name="UK">
+    <entry name="TotalChannels">343</entry>
+    <entry name="0">4</entry>
+    <entry name="1">5</entry>
+    <entry name="2">6</entry>
+    <entry name="3">7</entry>
+    <entry name="4">8</entry>
+    <entry name="5">19</entry>
+    <entry name="6">22</entry>
+    <entry name="7">33</entry>
+    <entry name="8">34</entry>
+    <entry name="9">35</entry>
+    <entry name="10">36</entry>
+    <entry name="11">37</entry>
+    <entry name="12">38</entry>
+    <entry name="13">39</entry>
+    <entry name="14">40</entry>
+    <entry name="15">41</entry>
+    <entry name="16">42</entry>
+    <entry name="17">43</entry>
+    <entry name="18">44</entry>
+    <entry name="19">45</entry>
+    <entry name="20">54</entry>
+    <entry name="21">55</entry>
+    <entry name="22">58</entry>
+    <entry name="23">62</entry>
+    <entry name="24">64</entry>
+    <entry name="25">65</entry>
+    <entry name="26">66</entry>
+    <entry name="27">67</entry>
+    <entry name="28">68</entry>
+    <entry name="29">69</entry>
+    <entry name="30">70</entry>
+    <entry name="31">71</entry>
+    <entry name="32">72</entry>
+    <entry name="33">73</entry>
+    <entry name="34">74</entry>
+    <entry name="35">75</entry>
+    <entry name="36">76</entry>
+    <entry name="37">77</entry>
+    <entry name="38">78</entry>
+    <entry name="39">79</entry>
+    <entry name="40">80</entry>
+    <entry name="41">81</entry>
+    <entry name="42">82</entry>
+    <entry name="43">83</entry>
+    <entry name="44">84</entry>
+    <entry name="45">85</entry>
+    <entry name="46">86</entry>
+    <entry name="47">87</entry>
+    <entry name="48">88</entry>
+    <entry name="49">89</entry>
+    <entry name="50">90</entry>
+    <entry name="51">91</entry>
+    <entry name="52">92</entry>
+    <entry name="53">93</entry>
+    <entry name="54">94</entry>
+    <entry name="55">95</entry>
+    <entry name="56">96</entry>
+    <entry name="57">97</entry>
+    <entry name="58">98</entry>
+    <entry name="59">99</entry>
+    <entry name="60">101</entry>
+    <entry name="61">102</entry>
+    <entry name="62">103</entry>
+    <entry name="63">104</entry>
+    <entry name="64">106</entry>
+    <entry name="65">109</entry>
+    <entry name="66">110</entry>
+    <entry name="67">111</entry>
+    <entry name="68">112</entry>
+    <entry name="69">125</entry>
+    <entry name="70">131</entry>
+    <entry name="71">132</entry>
+    <entry name="72">133</entry>
+    <entry name="73">134</entry>
+    <entry name="74">135</entry>
+    <entry name="75">136</entry>
+    <entry name="76">142</entry>
+    <entry name="77">143</entry>
+    <entry name="78">148</entry>
+    <entry name="79">156</entry>
+    <entry name="80">158</entry>
+    <entry name="81">159</entry>
+    <entry name="82">161</entry>
+    <entry name="83">169</entry>
+    <entry name="84">171</entry>
+    <entry name="85">173</entry>
+    <entry name="86">180</entry>
+    <entry name="87">181</entry>
+    <entry name="88">182</entry>
+    <entry name="89">184</entry>
+    <entry name="90">185</entry>
+    <entry name="91">186</entry>
+    <entry name="92">189</entry>
+    <entry name="93">199</entry>
+    <entry name="94">201</entry>
+    <entry name="95">202</entry>
+    <entry name="96">220</entry>
+    <entry name="97">221</entry>
+    <entry name="98">222</entry>
+    <entry name="99">223</entry>
+    <entry name="100">224</entry>
+    <entry name="101">233</entry>
+    <entry name="102">235</entry>
+    <entry name="103">236</entry>
+    <entry name="104">239</entry>
+    <entry name="105">242</entry>
+    <entry name="106">243</entry>
+    <entry name="107">244</entry>
+    <entry name="108">251</entry>
+    <entry name="109">252</entry>
+    <entry name="110">253</entry>
+    <entry name="111">254</entry>
+    <entry name="112">257</entry>
+    <entry name="113">258</entry>
+    <entry name="114">259</entry>
+    <entry name="115">260</entry>
+    <entry name="116">265</entry>
+    <entry name="117">266</entry>
+    <entry name="118">267</entry>
+    <entry name="119">268</entry>
+    <entry name="120">269</entry>
+    <entry name="121">270</entry>
+    <entry name="122">271</entry>
+    <entry name="123">272</entry>
+    <entry name="124">273</entry>
+    <entry name="125">274</entry>
+    <entry name="126">275</entry>
+    <entry name="127">276</entry>
+    <entry name="128">277</entry>
+    <entry name="129">278</entry>
+    <entry name="130">279</entry>
+    <entry name="131">280</entry>
+    <entry name="132">281</entry>
+    <entry name="133">282</entry>
+    <entry name="134">286</entry>
+    <entry name="135">287</entry>
+    <entry name="136">303</entry>
+    <entry name="137">304</entry>
+    <entry name="138">307</entry>
+    <entry name="139">313</entry>
+    <entry name="140">314</entry>
+    <entry name="141">315</entry>
+    <entry name="142">320</entry>
+    <entry name="143">321</entry>
+    <entry name="144">322</entry>
+    <entry name="145">331</entry>
+    <entry name="146">332</entry>
+    <entry name="147">333</entry>
+    <entry name="148">334</entry>
+    <entry name="149">338</entry>
+    <entry name="150">339</entry>
+    <entry name="151">353</entry>
+    <entry name="152">354</entry>
+    <entry name="153">373</entry>
+    <entry name="154">374</entry>
+    <entry name="155">375</entry>
+    <entry name="156">376</entry>
+    <entry name="157">377</entry>
+    <entry name="158">378</entry>
+    <entry name="159">379</entry>
+    <entry name="160">380</entry>
+    <entry name="161">381</entry>
+    <entry name="162">382</entry>
+    <entry name="163">383</entry>
+    <entry name="164">384</entry>
+    <entry name="165">385</entry>
+    <entry name="166">386</entry>
+    <entry name="167">387</entry>
+    <entry name="168">389</entry>
+    <entry name="169">390</entry>
+    <entry name="170">393</entry>
+    <entry name="171">402</entry>
+    <entry name="172">404</entry>
+    <entry name="173">405</entry>
+    <entry name="174">408</entry>
+    <entry name="175">410</entry>
+    <entry name="176">414</entry>
+    <entry name="177">415</entry>
+    <entry name="178">417</entry>
+    <entry name="179">418</entry>
+    <entry name="180">419</entry>
+    <entry name="181">420</entry>
+    <entry name="182">425</entry>
+    <entry name="183">426</entry>
+    <entry name="184">445</entry>
+    <entry name="185">446</entry>
+    <entry name="186">447</entry>
+    <entry name="187">456</entry>
+    <entry name="188">457</entry>
+    <entry name="189">459</entry>
+    <entry name="190">460</entry>
+    <entry name="191">461</entry>
+    <entry name="192">468</entry>
+    <entry name="193">469</entry>
+    <entry name="194">470</entry>
+    <entry name="195">471</entry>
+    <entry name="196">472</entry>
+    <entry name="197">473</entry>
+    <entry name="198">474</entry>
+    <entry name="199">475</entry>
+    <entry name="200">476</entry>
+    <entry name="201">477</entry>
+    <entry name="202">478</entry>
+    <entry name="203">479</entry>
+    <entry name="204">480</entry>
+    <entry name="205">481</entry>
+    <entry name="206">482</entry>
+    <entry name="207">483</entry>
+    <entry name="208">484</entry>
+    <entry name="209">485</entry>
+    <entry name="210">486</entry>
+    <entry name="211">487</entry>
+    <entry name="212">488</entry>
+    <entry name="213">489</entry>
+    <entry name="214">490</entry>
+    <entry name="215">491</entry>
+    <entry name="216">492</entry>
+    <entry name="217">493</entry>
+    <entry name="218">494</entry>
+    <entry name="219">495</entry>
+    <entry name="220">496</entry>
+    <entry name="221">497</entry>
+    <entry name="222">498</entry>
+    <entry name="223">499</entry>
+    <entry name="224">500</entry>
+    <entry name="225">501</entry>
+    <entry name="226">502</entry>
+    <entry name="227">503</entry>
+    <entry name="228">504</entry>
+    <entry name="229">505</entry>
+    <entry name="230">506</entry>
+    <entry name="231">507</entry>
+    <entry name="232">508</entry>
+    <entry name="233">509</entry>
+    <entry name="234">510</entry>
+    <entry name="235">511</entry>
+    <entry name="236">512</entry>
+    <entry name="237">513</entry>
+    <entry name="238">514</entry>
+    <entry name="239">515</entry>
+    <entry name="240">516</entry>
+    <entry name="241">517</entry>
+    <entry name="242">518</entry>
+    <entry name="243">519</entry>
+    <entry name="244">520</entry>
+    <entry name="245">521</entry>
+    <entry name="246">522</entry>
+    <entry name="247">523</entry>
+    <entry name="248">524</entry>
+    <entry name="249">525</entry>
+    <entry name="250">526</entry>
+    <entry name="251">527</entry>
+    <entry name="252">528</entry>
+    <entry name="253">529</entry>
+    <entry name="254">530</entry>
+    <entry name="255">531</entry>
+    <entry name="256">532</entry>
+    <entry name="257">533</entry>
+    <entry name="258">534</entry>
+    <entry name="259">535</entry>
+    <entry name="260">536</entry>
+    <entry name="261">537</entry>
+    <entry name="262">538</entry>
+    <entry name="263">539</entry>
+    <entry name="264">540</entry>
+    <entry name="265">541</entry>
+    <entry name="266">542</entry>
+    <entry name="267">543</entry>
+    <entry name="268">545</entry>
+    <entry name="269">546</entry>
+    <entry name="270">547</entry>
+    <entry name="271">548</entry>
+    <entry name="272">549</entry>
+    <entry name="273">550</entry>
+    <entry name="274">551</entry>
+    <entry name="275">552</entry>
+    <entry name="276">553</entry>
+    <entry name="277">554</entry>
+    <entry name="278">555</entry>
+    <entry name="279">557</entry>
+    <entry name="280">570</entry>
+    <entry name="281">585</entry>
+    <entry name="282">586</entry>
+    <entry name="283">591</entry>
+    <entry name="284">597</entry>
+    <entry name="285">599</entry>
+    <entry name="286">601</entry>
+    <entry name="287">602</entry>
+    <entry name="288">604</entry>
+    <entry name="289">605</entry>
+    <entry name="290">607</entry>
+    <entry name="291">608</entry>
+    <entry name="292">612</entry>
+    <entry name="293">613</entry>
+    <entry name="294">614</entry>
+    <entry name="295">615</entry>
+    <entry name="296">616</entry>
+    <entry name="297">619</entry>
+    <entry name="298">621</entry>
+    <entry name="299">622</entry>
+    <entry name="300">623</entry>
+    <entry name="301">624</entry>
+    <entry name="302">630</entry>
+    <entry name="303">631</entry>
+    <entry name="304">632</entry>
+    <entry name="305">633</entry>
+    <entry name="306">635</entry>
+    <entry name="307">636</entry>
+    <entry name="308">637</entry>
+    <entry name="309">638</entry>
+    <entry name="310">639</entry>
+    <entry name="311">640</entry>
+    <entry name="312">641</entry>
+    <entry name="313">642</entry>
+    <entry name="314">653</entry>
+    <entry name="315">659</entry>
+    <entry name="316">679</entry>
+    <entry name="317">680</entry>
+    <entry name="318">681</entry>
+    <entry name="319">682</entry>
+    <entry name="320">683</entry>
+    <entry name="321">684</entry>
+    <entry name="322">685</entry>
+    <entry name="323">686</entry>
+    <entry name="324">687</entry>
+    <entry name="325">688</entry>
+    <entry name="326">689</entry>
+    <entry name="327">690</entry>
+    <entry name="328">691</entry>
+    <entry name="329">692</entry>
+    <entry name="330">693</entry>
+    <entry name="331">694</entry>
+    <entry name="332">695</entry>
+    <entry name="333">696</entry>
+    <entry name="334">697</entry>
+    <entry name="335">698</entry>
+    <entry name="336">699</entry>
+    <entry name="337">700</entry>
+    <entry name="338">701</entry>
+    <entry name="339">702</entry>
+    <entry name="340">713</entry>
+    <entry name="341">715</entry>
+    <entry name="342">721</entry>
+  </section>
+  <section name="US">
+    <entry name="TotalChannels">1</entry>
+    <entry name="0">342</entry>
+  </section>
+</profile>

@@ -1,3 +1,24 @@
+/* 
+ *	Copyright (C) 2005 Media Portal
+ *	http://mediaportal.sourceforge.net
+ *
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *   
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *   
+ *  You should have received a copy of the GNU General Public License
+ *  along with GNU Make; see the file COPYING.  If not, write to
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  http://www.gnu.org/copyleft/gpl.html
+ *
+ */
+
 using System;
 using System.IO;
 using System.Net;
@@ -25,6 +46,9 @@ namespace MediaPortal.EPG
             string m_strBaseDir = "";
 			string m_SubListingLink;
 			string m_strRepeat;
+			string m_strSubtitles;
+			string m_strEpNum;
+			string m_strEpTotal;
 			bool m_grabLinked;
             bool m_monthLookup;
 			bool m_searchRegex;
@@ -73,7 +97,7 @@ namespace MediaPortal.EPG
                 }
 
                 m_strURLsearch = m_xmlreader.GetValueAsString("Listing", "SearchURL", "");
-				m_grabDelay = m_xmlreader.GetValueAsInt("Listing", "GrabDelay", 300);
+				m_grabDelay = m_xmlreader.GetValueAsInt("Listing", "GrabDelay", 1000);
                 m_maxListingCount = m_xmlreader.GetValueAsInt("Listing", "MaxCount", 0);
 				m_offsetStart = m_xmlreader.GetValueAsInt("Listing", "OffsetStart", 0);
 
@@ -122,6 +146,9 @@ namespace MediaPortal.EPG
 						{
 							m_searchRemove = m_xmlreader.GetValueAsBool("Listing", "SearchRemove", false);
 							m_strRepeat = m_xmlreader.GetValueAsString("Listing", "SearchRepeat", "");
+							m_strSubtitles = m_xmlreader.GetValueAsString("Listing", "SearchSubtitles", "");
+							m_strEpNum = m_xmlreader.GetValueAsString("Listing", "SearchEpNum", "");
+							m_strEpTotal = m_xmlreader.GetValueAsString("Listing", "SearchEpTotal", "");
 						}
 
 						m_SubListingLink = m_xmlreader.GetValueAsString("Listing", "SubListingLink", "");
@@ -202,6 +229,9 @@ namespace MediaPortal.EPG
 					if(m_searchRegex)
 					{
 						string repeat = htmlProf.SearchRegex(index, m_strRepeat, m_searchRemove);
+						string subtitles = htmlProf.SearchRegex(index, m_strSubtitles, m_searchRemove);
+						string epNum = htmlProf.SearchRegex(index, m_strEpNum, m_searchRemove);
+						string epTotal  = htmlProf.SearchRegex(index, m_strEpTotal, m_searchRemove);
 					}
 				}
 				ProgramData guideData =	guideProfile.GetProgramData(index); //m_templateParser.GetProgram(Listing);
@@ -292,7 +322,8 @@ namespace MediaPortal.EPG
 							link = strLinkURL;
 						else
 							link += strLinkURL;
-						Log.WriteFile(Log.LogType.Log, false, "WebEPG: Reading {0}{1}", m_strURLbase, strLinkURL);
+						Log.WriteFile(Log.LogType.Log, false, "WebEPG: Reading {0}", link);
+						Thread.Sleep(m_grabDelay);
 						Profiler SubProfile = m_templateSubProfile.GetPageProfiler(link); 
 						int Count = SubProfile.subProfileCount(); 
 

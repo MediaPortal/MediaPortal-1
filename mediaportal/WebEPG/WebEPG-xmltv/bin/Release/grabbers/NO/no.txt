@@ -1,62 +1,6 @@
-
-
-                 #
-                 # Norwegian channels
-                 #
-
-                 'tv3.no' =>
-                 [ "TV 3 Norge", \&get_data_viasat,
-                   "www.tv3.no", "no" ],
-
-                 'ztv.no' =>
-                 [ "ZTV Norge", \&get_data_viasat,
-                   "www.ztv.no", "no" ],
-
-                 'sport1.viasat.no' =>
-                 [ "Viasat Sport 1 Norway", \&get_data_viasat,
-                   "www.sport.viasat.no", "no" ],
-
-                 'sport2.viasat.no' =>
-                 [ "Viasat Sport 2 Norway", \&get_data_viasat,
-                   "www.sport.viasat.no", "no", "&override_section=76" ],
-
-                 'sport3.viasat.no' =>
-                 [ "Viasat Sport 3 Norway", \&get_data_viasat,
-                   "www.sport.viasat.no", "no", "&override_section=77" ],
-
-                 'action.viasat.no' =>
-                 [ "Viasat Nature Action Norway", \&get_data_viasat,
-                   "www.action.viasat.no", "no" ],
-
-                 'explorer.viasat.no' =>
-                 [ "Viasat Explorer Norway", \&get_data_viasat,
-                   "explorer.viasat.no", "no" ],
-
-                 'tv1000.viasat.no' =>
-                 [ "TV 1000 Norway", \&get_data_viasat_tv1000,
-                   "www.tv1000.no", "no", 1, 0],
-
-                 'plus-1.tv1000.viasat.no' =>
-                 [ "TV 1000 Norway (delayed one hour)", 
-                   \&get_data_viasat_tv1000,
-                   "www.tv1000.no", "no", 1, 1],
-
-                 'plus-2.tv1000.viasat.no' =>
-                 [ "TV 1000 Norway (delayed two hours)", 
-                   \&get_data_viasat_tv1000,
-                   "www.tv1000.no", "no", 1, 2],
-
-                 'cinema.viasat.no' =>
-                 [ "Viasat Cinema Norway", \&get_data_viasat_tv1000,
-                   "www.tv1000.no", "no", 3, 0],
-
-                 'plus-1.cinema.viasat.no' =>
-                 [ "Viasat Cinema Norway (delayed one hour)", 
-                   \&get_data_viasat_tv1000,
-                   "www.tv1000.no", "no", 3, 1],
-
-                 'plus-2.cinema.viasat.no' =>
-                 [ "Viasat Cinema Norway (delayed two hours)", 
-                   \&get_data_viasat_tv1000,
-                   "www.tv1000.no", "no", 3, 2],
-
+www.tv3.no
+www.ztv.no
+www.sport.viasat.no
+www.action.viasat.no
+explorer.viasat.no"
+www.tv1000.no

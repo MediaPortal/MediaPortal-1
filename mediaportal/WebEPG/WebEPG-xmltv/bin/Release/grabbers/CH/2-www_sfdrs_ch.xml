@@ -4,7 +4,7 @@
 
 <profile>
   <section name="ChannelList">
-    <entry name="i@sfdrs.ch">3</entry>		<!-- SFi -->
+    <entry name="sfi@sfdrs.ch">3</entry>		<!-- SFi -->
   </section>
 <!-- Formating of Listing -->
   <section name="Listing"> 

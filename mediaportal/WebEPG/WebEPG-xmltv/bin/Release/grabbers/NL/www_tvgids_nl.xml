@@ -66,7 +66,7 @@
 	<entry name="bbc2@bbc.co.uk">8</entry>			<!-- BBC 2 -->
 	<entry name="bbcprime.com">104</entry>			<!-- BBC Prime -->
 	<entry name="bbcworld.com">86</entry>			<!-- BBC World -->
-	<entry name="emea.cnni@cnn.com">26</entry>		<!-- CNN International - EMEA -->
+	<entry name="cnni-emea@cnn.com">26</entry>		<!-- CNN International - EMEA -->
 
 <!-- Turkish -->
 	<entry name="int@trt.net.tr">32</entry>			<!-- TRT Int. -->
@@ -82,15 +82,15 @@
 	<entry name="zdf.de">10</entry>				<!-- ZDF -->
 	<entry name="rtl.de">11</entry>				<!-- RTL -->
 	<entry name="wdr.de">12</entry>				<!-- WDR Fernsehen -->
-	<entry name="ndr.de">13</entry>				<!-- NDR Fernsehen -->
+	<entry name="ndrtv.de">13</entry>			<!-- NDR Fernsehen -->
 	<entry name="swr.de">14</entry>				<!-- Sudwest Fernsehen -->
 	<entry name="sat1.de">28</entry>			<!-- Sat 1 -->
-	<entry name="arte.de">38</entry>			<!-- ARTE -->
+	<entry name="arte-tv.com">38</entry>			<!-- ARTE -->
 	<entry name="3sat.de">50</entry>			<!-- 3Sat -->
 	<entry name="pro-sieben.de">58</entry>			<!-- Pro 7 -->
 
 <!-- Europe -->
-	<entry name="eurosport.com">19</entry>			<!-- Eurosport -->
+	<entry name="eurosport@eurosport.com">19</entry>	<!-- Eurosport -->
 
   </section>
 
@@ -138,8 +138,7 @@
   <section name="Info">
     <entry name="GuideDays">3</entry>
     <entry name="Language">nl</entry>
-    <entry name="Description">LINK</entry>
-    <entry name="Genre">LINK</entry>
+    <entry name="SiteDescription">Main page: Title only, Linked page: Description &amp; Genre</entry>
   </section>
   <section name="GenreMap">
    <entry name="Amusement" >Amusement</entry>

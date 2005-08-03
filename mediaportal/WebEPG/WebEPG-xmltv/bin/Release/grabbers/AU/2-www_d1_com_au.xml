@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--   Version 1.0 -->
+
+<profile>
+  <section name="ChannelList">
+    
+	<entry name="abc-digi-vic-metro@abc.com.au">freehd.Melbourne.2</entry>		<!-- ABC Metro VIC -->
+	<entry name="abc2-digi-vic-metro@abc.com.au">freehd.Melbourne.2-2</entry>	<!-- ABC2 Metro VIC -->
+	<entry name="abc-HD-vic-metro@abc.com.au">freehd.Melbourne.2-HD</entry>		<!-- ABC HD Metro VIC -->
+	<entry name="7-digi-vic-metro@seven.com.au">freehd.Melbourne.7</entry>		<!-- Seven Metro VIC -->
+	<entry name="7-HD-vic-metro@seven.com.au">freehd.Melbourne.7-HD</entry>		<!-- Seven HD Metro VIC -->
+	<entry name="9-digi-vic-metro@ninemsn.com.au">freehd.Melbourne.9</entry>	<!-- Nine Metro VIC -->
+	<entry name="9-HD-vic-metro@ninemsn.com.au">freehd.Melbourne.9-HD</entry>	<!-- Nine HD Metro VIC -->
+	<entry name="10-digi-vic-metro@ten.com.au">freehd.Melbourne.10</entry>		<!-- Ten Metro VIC -->
+	<entry name="10-HD-vic-metro@ten.com.au">freehd.Melbourne.10-HD</entry>		<!-- Ten HD Metro VIC -->
+	<entry name="sbs-digi-vic-metro@sbs.com.au">freehd.Melbourne.SBS</entry>	<!-- SBS Metro VIC -->
+	<entry name="sbs2-digi-vic-metro@sbs.com.au">freehd.Melbourne.SBS-2</entry>	<!-- SBS 2 Metro VIC -->
+	<entry name="sbs-HD-vic-metro@sbs.com.au">freehd.Melbourne.SBS-HD</entry>	<!-- SBS HD Metro VIC -->
+
+  </section>
+<!-- Formating of Listing -->
+  <section name="Listing"> 
+    <entry name="BaseURL">http://www.d1.com.au/D1XMLTV.asmx/</entry>
+    <entry name="SearchURL">GetPrograms?channelid=#ID&amp;date=#MM-#DD-#YYYY</entry>
+
+    <entry name="ListingType">XML</entry>
+
+    <entry name="XPath">//Programs</entry>
+
+    <entry name="StartEntry">Start</entry>
+    <entry name="EndEntry">Stop</entry>
+    <entry name="TitleEntry">Title</entry>
+    <entry name="SubtitleEntry">Subtitle</entry>
+    <entry name="DescEntry">Description</entry>
+    <entry name="GenreEntry">Category</entry>
+  </section>
+</profile>

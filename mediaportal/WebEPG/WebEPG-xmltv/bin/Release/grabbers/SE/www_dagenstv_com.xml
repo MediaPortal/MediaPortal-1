@@ -10,8 +10,8 @@
   <section name="ChannelList">
 
 
-	<entry name="SVT1@svt.se">21</entry>			<!-- SVT 1 -->
-	<entry name="SVT2@svt.se">22</entry>			<!-- SVT 2 -->
+	<entry name="svt1@svt.se">21</entry>			<!-- SVT 1 -->
+	<entry name="svt2@svt.se">22</entry>			<!-- SVT 2 -->
 	<entry name="tv3.se">26</entry>				<!-- TV3 -->	
 	<entry name="tv4@tv4.se">27</entry>			<!-- TV4 -->
 	<entry name="kanal5.se">10</entry>			<!-- Kanal 5 -->
@@ -44,7 +44,7 @@
 	<entry name="sport3@viasatsport.se">198</entry>		<!-- Viasat Sport 3 -->
 	<entry name="extremesports.tv">67</entry>		<!-- Extreme Sports -->
 	<entry name="manutd.com">193</entry>			<!-- Manchester United TV -->
-	<entry name="cnn.com">5</entry>				<!-- CNN -->
+	<entry name="cnni-emea@cnn.com">5</entry>		<!-- CNN -->
 	<entry name="skynews@sky.com">18</entry>		<!-- Sky News -->
 	<entry name="cnbc@msn.com">56</entry>			<!-- CNBC -->
 	<entry name="24@svt.se">101</entry>			<!-- 24 -->
@@ -75,7 +75,7 @@
     	<entry name="godnetwork.com">111</entry>		<!-- God Channel -->
     	<entry name="rtvpink.com">109</entry>			<!-- Pink Plus -->
     	<entry name="playboytv.co.uk">223</entry>		<!-- Playboy -->
-    	<entry name="Euronews.com">104</entry>			<!-- EuroNews -->
+    	<entry name="euronews.net">104</entry>			<!-- EuroNews -->
     	<entry name="espn.com">196</entry>			<!-- ESPN Classic Sport -->
     	<entry name="privategold">175</entry>			<!-- Private Gold -->
     	<entry name="hrt1@hrt.hr">50</entry>			<!-- HRT1 -->
@@ -107,7 +107,7 @@
 	<entry name="mbc.co.kr">88</entry>			<!-- MBC -->
 	<entry name="arte-tv.com">84</entry>			<!-- Arte -->
 	<entry name="mdr.de">91</entry>				<!-- MDR Fernsehen -->
-	<entry name="prosieben.de">98</entry>			<!-- PRO 7 -->
+	<entry name="pro-sieben.de">98</entry>			<!-- PRO 7 -->
 	<entry name="rtl.de">16</entry>				<!-- RTL -->
 	<entry name="rtl2.de">15</entry>			<!-- RTL2 -->
 	<entry name="viva.tv">106</entry>			<!-- Viva -->
@@ -124,8 +124,8 @@
 	<entry name="tv5.org">40</entry>			<!-- TV5 -->
 	<entry name="tvp.pl">66</entry>				<!-- TV Polonia -->
 	<entry name="mezzo.tv">46</entry>			<!-- Mezzo -->
-	<entry name="raiuno@rai.it">64</entry>			<!-- Rai Uno -->
-	<entry name="raidue@rai.it">65</entry>			<!-- Rai Due -->
+	<entry name="raiuno.rai.it">64</entry>			<!-- Rai Uno -->
+	<entry name="raidue.rai.it">65</entry>			<!-- Rai Due -->
 	<entry name="rtve.es">41</entry>			<!-- TVE -->
 	<entry name="Canal7">80</entry>				<!-- Canal 7 -->
 	<entry name="spiceplatinum.nl">222</entry>		<!-- Spice Platinum -->

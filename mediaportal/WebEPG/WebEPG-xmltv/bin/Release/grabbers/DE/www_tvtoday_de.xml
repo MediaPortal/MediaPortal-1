@@ -10,7 +10,7 @@
     <entry name="pro-sieben.de">PRO+7</entry>		<!-- Pro 7 -->
     <entry name="3sat.de">3SAT</entry> 			<!-- 3sat -->
     <entry name="sat1.de">SAT.1</entry> 		<!-- Sat.1 -->
-    <entry name="arte.de">ARTE</entry> 			<!-- arte -->
+    <entry name="arte-tv.com">ARTE</entry> 			<!-- arte -->
     <entry name="rtl.de">RTL</entry>			<!-- RTL -->
     <entry name="rtl2.de">RTL+2</entry>			<!-- RTL 2 -->
     <entry name="super-rtl.de">SUPER+RTL</entry>	<!-- SuperRTL -->
@@ -44,7 +44,7 @@
     <entry name="mtv.de">MTV</entry>			<!-- MTV Deutsch -->
     <entry name="mtv2.de">MTV2</entry>			<!-- MTV 2 Deutsch -->
     <entry name="tele5.de">TELE5</entry> 		<!-- TELE5 -->
-    <entry name="XXP">XXP</entry> 			<!-- XXP -->
+    <entry name="xxp.tv">XXP</entry> 			<!-- XXP -->
 
 <!-- Deutschland - Digital -->
     <entry name="premiere.de">PREMIERE</entry>		<!-- Premiere Start -->
@@ -53,13 +53,13 @@
     <entry name="nost@premiere.de">premnostalgie</entry><!-- Premiere Nostalgie -->
     <entry name="scifi@premiere.de">premscifi</entry>	<!-- Premiere SCI FI -->
     <entry name="at@premiere.de">premaustria</entry>	<!-- Premiere AUSTRIA -->
-    <entry name="1@premiere.de">prem1</entry>		<!-- Premiere 1 -->
-    <entry name="2@premiere.de">prem2</entry>		<!-- Premiere 2 -->
-    <entry name="3@premiere.de">prem3</entry>		<!-- Premiere 3 -->
-    <entry name="4@premiere.de">prem4</entry>		<!-- Premiere 4 -->
-    <entry name="5@premiere.de">prem5</entry>		<!-- Premiere 5 -->
-    <entry name="6@premiere.de">prem6</entry>		<!-- Premiere 6 -->
-    <entry name="7@premiere.de">prem7</entry>		<!-- Premiere 7 -->
+    <entry name="prem1@premiere.de">prem1</entry>	<!-- Premiere 1 -->
+    <entry name="prem2@premiere.de">prem2</entry>	<!-- Premiere 2 -->
+    <entry name="prem3@premiere.de">prem3</entry>	<!-- Premiere 3 -->
+    <entry name="prem4@premiere.de">prem4</entry>	<!-- Premiere 4 -->
+    <entry name="prem5@premiere.de">prem5</entry>	<!-- Premiere 5 -->
+    <entry name="prem6@premiere.de">prem6</entry>	<!-- Premiere 6 -->
+    <entry name="prem7@premiere.de">prem7</entry>	<!-- Premiere 7 -->
     <entry name="dir1@premiere.de">premdirekt1</entry>	<!-- Premiere Direkt1 -->
     <entry name="dir2@premiere.de">premdirekt2</entry>	<!-- Premiere Direkt2 -->
     <entry name="dir3@premiere.de">premdirekt3</entry>	<!-- Premiere Direkt3 -->
@@ -89,12 +89,12 @@
     <entry name="theater@zdf.de">theater</entry>	<!-- ZDF Theater -->
 
 <!-- Schweiz -->
-    <entry name="1@sfdrs.ch">SF1</entry>		<!-- SF 1 -->
-    <entry name="2@sfdrs.ch">SF2</entry>		<!-- SF 2 -->
+    <entry name="sf1@sfdrs.ch">SF1</entry>		<!-- SF 1 -->
+    <entry name="sf2@sfdrs.ch">SF2</entry>		<!-- SF 2 -->
 
 <!-- Oesterreich -->
-    <entry name="1@orf.at">ORF+1</entry>		<!-- ORF 1 -->
-    <entry name="2@orf.at">ORF+2</entry>		<!-- ORF 2 -->
+    <entry name="orf1@orf.at">ORF+1</entry>		<!-- ORF 1 -->
+    <entry name="orf2@orf.at">ORF+2</entry>		<!-- ORF 2 -->
 
 <!-- Frankreich -->
     <entry name="tf1.fr">TF 1</entry>			<!-- TF 1 -->
@@ -103,8 +103,8 @@
     <entry name="f@tv5.fr">TV+5</entry>			<!-- TV5 francophone -->
 
 <!-- Daenemark -->
-    <entry name="1@dr.dk">D%C4NEMARK+1</entry>		<!-- DR1 -->
-    <entry name="2@dr.dk">D%C4NEMARK+2</entry>		<!-- DR2 -->
+    <entry name="dr1@dr.dk">D%C4NEMARK+1</entry>	<!-- DR1 -->
+    <entry name="dr2@dr.dk">D%C4NEMARK+2</entry>	<!-- DR2 -->
 
 <!-- Holland -->
     <entry name="ned1@omroep.nl">HOLLAND+1</entry>	<!-- Nederland 1 -->
@@ -118,11 +118,11 @@
     <entry name="trt.net.tr">TRT</entry>		<!-- TRT -->
 
 <!-- Europa -->
-    <entry name="eurosport.com">EUROSPORT</entry> 	<!-- EuroSport -->
+    <entry name="eurosport@eurosport.com">EUROSPORT</entry> 	<!-- EuroSport -->
     <entry name="euronews.net">EURONEWS</entry> 	<!-- EuroNews -->
 
 <!-- International -->
-    <entry name="emea.cnni@cnn.com">CNN</entry>		<!-- CNN International - EMEA -->
+    <entry name="cnni-emea@cnn.com">CNN</entry>		<!-- CNN International - EMEA -->
   </section>
 
 <!-- Formating of Listing -->
