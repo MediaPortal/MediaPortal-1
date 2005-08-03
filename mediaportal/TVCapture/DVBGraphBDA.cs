@@ -3581,7 +3581,6 @@ namespace MediaPortal.TV.Recording
 
 				timeRetune=DateTime.Now;
 				refreshPmtTable	= true;
-				Process();//gets the PMT
 
 				if(m_pluginsEnabled==true)
 					ExecTuner();
@@ -4525,7 +4524,7 @@ namespace MediaPortal.TV.Recording
 
 				timeRetune=DateTime.Now;
 				refreshPmtTable=true;
-				Process();
+				
 				if(m_pluginsEnabled==true)
 					ExecTuner();
 			}
