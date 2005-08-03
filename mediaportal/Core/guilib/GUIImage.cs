@@ -104,7 +104,13 @@ namespace MediaPortal.GUI.Library
 		public GUIImage (int dwParentID) : base(dwParentID)
 		{
 		}
-		/// <summary>
+		
+		public GUIImage(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight, string strTexture, Color color)
+			: this(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight, strTexture, color.ToArgb())
+		{
+		}
+
+			/// <summary>
 		/// The constructor of the GUIImage class.
 		/// </summary>
 		/// <param name="dwParentID">The parent of this GUIImage control.</param>
