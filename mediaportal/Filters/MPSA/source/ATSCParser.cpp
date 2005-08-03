@@ -53,6 +53,7 @@ void ATSCParser::ATSCDecodeMasterGuideTable(byte* buf, int len,int* channelsFoun
 		}
 	}
 			
+	Log("ATSCDecodeMasterGuideTable()");
 	if (m_demuxer!=NULL) m_demuxer->UnMapSectionPIDs();
 	mgLastSectionNumber=last_section_number;
 	mgSectionNumber=section_number;
@@ -141,15 +142,19 @@ void ATSCParser::ATSCDecodeMasterGuideTable(byte* buf, int len,int* channelsFoun
 
 void ATSCParser::ATSCDecodeEIT(byte* buf, int len)
 {
+	Log("ATSCDecodeEIT() %x",buf[0]);
 }
 void ATSCParser::ATSCDecodeETT(byte* buf, int len)
 {
+	Log("ATSCDecodeETT() %x",buf[0]);
 }
 void ATSCParser::ATSCDecodeRTT(byte* buf, int len)
 {
+	Log("ATSCDecodeRTT() %x",buf[0]);
 }
 void ATSCParser::ATSCDecodeChannelEIT(byte* buf, int len)
 {
+	Log("ATSCDecodeChannelEIT() %x",buf[0]);
 }
 void ATSCParser::ATSCDecodeEPG(byte* buf, int len)
 {

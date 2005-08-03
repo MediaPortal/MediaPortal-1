@@ -321,6 +321,7 @@ void CStreamAnalyzerSectionsPin::ResetPids()
 STDMETHODIMP CStreamAnalyzerSectionsPin::EndOfStream(void)
 {
     CAutoLock lock(m_pReceiveLock);
+	Log("Sections:end of stream");
     return CRenderedInputPin::EndOfStream();
 
 } // EndOfStream
@@ -587,6 +588,28 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 	try
 	{
 		//CAutoLock lock(&m_Lock);
+		
+		if (m_bDecodeATSC)
+		{
+			if (pbData[0]==0xc7)
+			{
+				m_atscParser.ATSCDecodeMasterGuideTable(pbData,len,&m_patChannelsCount);
+			}
+			if (pbData[0]==0xc8 || pbData[0]==0xc9)
+			{
+				if (m_patChannelsCount==0)
+				{
+					//decode ATSC: Virtual Channel Table (pid 0xc8 / 0xc9)
+					m_atscParser.ATSCDecodeChannelTable(pbData,m_patTable, &m_patChannelsCount);
+				}
+			}
+
+			//decode ATSC: EPG
+			if (m_patChannelsCount>0)
+				m_atscParser.ATSCDecodeEPG(pbData,len);
+			return S_OK;
+		}
+		
 		bool pesPacket=false;
 		if(pbData[0]==0x00 && pbData[1]==0x00 && pbData[2]==0x01)
 		{
@@ -602,23 +625,6 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 			delete [] d;
 		}
 			
-		
-		if (m_bDecodeATSC)
-		{
-			m_atscParser.ATSCDecodeMasterGuideTable(pbData,len,&m_patChannelsCount);
-			if (m_patChannelsCount==0)
-			{
-				if (pbData[0]==0xc8 || pbData[0]==0xc9)
-				{
-					//decode ATSC: Virtual Channel Table (pid 0xc8 / 0xc9)
-					m_atscParser.ATSCDecodeChannelTable(pbData,m_patTable, &m_patChannelsCount);
-				}
-			}
-
-			//decode ATSC: EPG
-			m_atscParser.ATSCDecodeEPG(pbData,len);
-			return S_OK;
-		}
 			
 		if(pbData[0]==0x02)// pmt
 		{
