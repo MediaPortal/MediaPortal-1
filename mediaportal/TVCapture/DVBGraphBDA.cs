@@ -3274,7 +3274,9 @@ namespace MediaPortal.TV.Recording
 						}
 						else 
 						{
-							//Log.Write("DVBGRAPHBDA:Got wrong PMT:{0} {1}",pmtProgramNumber,currentTuningObject.ProgramNumber);
+							//ushort chcount=0;
+							//m_analyzerInterface.GetChannelCount(ref chcount);
+							//Log.Write("DVBGRAPHBDA:Got wrong PMT:{0} {1} channels:{2}",pmtProgramNumber,currentTuningObject.ProgramNumber, chcount);
 							ts = DateTime.Now-timeRetune;
 							if (ts.TotalSeconds>5)
 							{
@@ -3318,6 +3320,7 @@ namespace MediaPortal.TV.Recording
 				m_streamDemuxer.ResetGrabber();
 				m_streamDemuxer.SetChannelData(currentTuningObject.AudioPid, currentTuningObject.VideoPid, currentTuningObject.TeletextPid, currentTuningObject.Audio3, currentTuningObject.ServiceName,currentTuningObject.PMTPid,currentTuningObject.ProgramNumber);
 			}
+			m_analyzerInterface.ResetParser();
 
 			refreshPmtTable =true;
 		}//public void Process()
@@ -3577,7 +3580,12 @@ namespace MediaPortal.TV.Recording
 				m_analyzerInterface.ResetParser();
 
 				DirectShowUtil.EnableDeInterlace(m_graphBuilder);
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() done");
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() done freq:{0} ONID:{1} TSID:{2} prog:{3} audio:{4:X} video:{5:X} pmt:{6:X} ac3:{7:X} txt:{8:X}",
+																						currentTuningObject.Frequency,
+																						currentTuningObject.NetworkID,currentTuningObject.TransportStreamID,
+																						currentTuningObject.ProgramNumber,currentTuningObject.Audio1,
+																					  currentTuningObject.VideoPid,currentTuningObject.PMTPid,
+																						currentTuningObject.AC3Pid,currentTuningObject.TeletextPid);
 
 
 				timeRetune=DateTime.Now;
