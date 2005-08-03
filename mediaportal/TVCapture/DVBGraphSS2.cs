@@ -525,8 +525,19 @@ namespace MediaPortal.TV.Recording
 				mtEPG.subType=MediaSubType.None;
 				mtEPG.formatType=FormatType.None;
 
+				AMMediaType mtSections = new AMMediaType();
+				mtSections.majorType=MEDIATYPE_MPEG2_SECTIONS;
+				mtSections.subType=MediaSubType.None;
+				mtSections.formatType=FormatType.None;
 
-				IPin pinEPGout, pinMHW1Out,pinMHW2Out;
+
+				IPin pinEPGout, pinMHW1Out,pinMHW2Out, pinSectionsOut;
+				hr=m_demuxInterface.CreateOutputPin(ref mtSections, "sections", out pinSectionsOut);
+				if (hr!=0 || pinSectionsOut==null)
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphSS2:FAILED to create EPG pin:0x{0:X}",hr);
+					return false;
+				}
 				hr=m_demuxInterface.CreateOutputPin(ref mtEPG, "EPG", out pinEPGout);
 				if (hr!=0 || pinEPGout==null)
 				{
@@ -547,6 +558,13 @@ namespace MediaPortal.TV.Recording
 				}
 
 				Log.Write("DVBGraphSS2:Get EPGs pin of analyzer");
+				IPin pinSectionsIn=DirectShowUtil.FindPinNr(m_dvbAnalyzer,PinDirection.Input,0);
+				if (pinSectionsIn==null)
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphSS2:FAILED to get sections pin on MSPA");
+					return false;
+				}
+
 				IPin pinMHW1In=DirectShowUtil.FindPinNr(m_dvbAnalyzer,PinDirection.Input,1);
 				if (pinMHW1In==null)
 				{
@@ -567,6 +585,12 @@ namespace MediaPortal.TV.Recording
 				}
 
 				Log.Write("DVBGraphSS2:Connect epg pins");
+				hr=m_graphBuilder.Connect(pinSectionsOut,pinSectionsIn);
+				if (hr!=0)
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphSS2:FAILED to connect sections pin:0x{0:X}",hr);
+					return false;
+				}
 				hr=m_graphBuilder.Connect(pinEPGout,pinEPGIn);
 				if (hr!=0)
 				{
