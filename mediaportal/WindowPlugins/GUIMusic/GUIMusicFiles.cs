@@ -305,7 +305,7 @@ namespace MediaPortal.GUI.Music
 				{
 					if ((Utils.GetDriveType(c+":") & 5)==5)
 					{
-						OnPlayCD(c+":");
+						OnPlayCD(c+":",false);
 						break;
 					}
 				}
@@ -331,7 +331,17 @@ namespace MediaPortal.GUI.Music
 			switch (message.Message)
 			{
         case GUIMessage.MessageType.GUI_MSG_PLAY_AUDIO_CD:
-          OnPlayCD(message.Label);
+				if (message.Label2 == "Ask")
+				{
+					Log.Write ("OnPlayCD (false), vragen dus.");
+					OnPlayCD(message.Label,false);
+				}
+				else
+				{
+					Log.Write ("OnPlayCD (true), niet vragen dus");
+					OnPlayCD(message.Label,true);
+				}
+		
           break;
 
         case GUIMessage.MessageType.GUI_MSG_CD_REMOVED:
@@ -351,7 +361,7 @@ namespace MediaPortal.GUI.Music
           break;
 
 				case GUIMessage.MessageType.GUI_MSG_AUTOPLAY_VOLUME:
-					OnPlayCD(message.Label);
+					OnPlayCD(message.Label,false);
 					break;
 
         case GUIMessage.MessageType.GUI_MSG_FILE_DOWNLOADING:
@@ -435,8 +445,11 @@ namespace MediaPortal.GUI.Music
           break;
 
         case 208: // play
-          if (Utils.getDriveType(item.Path) != 5) OnClick(itemNo);	
-          else OnPlayCD(item.Path);
+          if (Utils.getDriveType(item.Path) != 5) 
+			  OnClick(itemNo);	
+          else
+			  //Playing the CD from the context menu
+			  OnPlayCD(item.Path,false);
           break;
 					
         case 926: // add to playlist
@@ -643,7 +656,7 @@ namespace MediaPortal.GUI.Music
     
 		#endregion    
     
-		void OnPlayCD(string strDriveLetter)
+		void OnPlayCD(string strDriveLetter,bool AskForAlbum)
 		{
 			// start playing current CD        
 			PlayList list=PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC_TEMP);
@@ -655,7 +668,9 @@ namespace MediaPortal.GUI.Music
 			GUIListItem pItem=new GUIListItem();
 			pItem.Path=strDriveLetter;
 			pItem.IsFolder=true;
+			m_bScan=AskForAlbum;
 			AddItemToPlayList(pItem) ;
+			m_bScan=false;
       if (PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC).Count > 0)
       {
         // waeberd: mantis #470

@@ -42,7 +42,10 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.Label label2;
     private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox2;
-    private MediaPortal.UserInterface.Controls.MPCheckBox autoPlayCheckBox;
+		private System.Windows.Forms.ComboBox autoPlayCheckBox;
+		private System.Windows.Forms.Label label3;
+		private System.Windows.Forms.Label label5;
+		private System.Windows.Forms.Label label6;
 		private System.ComponentModel.IContainer components = null;
 
 		public Music() : this("Music")
@@ -83,7 +86,7 @@ namespace MediaPortal.Configuration.Sections
 				playlistFolderTextBox.Text = xmlreader.GetValueAsString("music", "playlists", playListFolder);
 
 				audioPlayerComboBox.Text = xmlreader.GetValueAsString("audioplayer", "player", "Windows Media Player 9");
-			      autoPlayCheckBox.Checked=xmlreader.GetValueAsBool("audioplayer", "autoplay", true);
+			    autoPlayCheckBox.Text=xmlreader.GetValueAsString("audioplayer", "autoplay", "Yes");
       }
 		}
 
@@ -98,7 +101,7 @@ namespace MediaPortal.Configuration.Sections
 				xmlwriter.SetValue("music", "playlists", playlistFolderTextBox.Text);
 
 				xmlwriter.SetValue("audioplayer", "player", audioPlayerComboBox.Text);
-        xmlwriter.SetValueAsBool("audioplayer", "autoplay", autoPlayCheckBox.Checked);
+				xmlwriter.SetValue("audioplayer", "autoplay", autoPlayCheckBox.Text);
 
 			}
 		}
@@ -138,7 +141,10 @@ namespace MediaPortal.Configuration.Sections
       this.audioPlayerComboBox = new System.Windows.Forms.ComboBox();
       this.label4 = new System.Windows.Forms.Label();
       this.mpGroupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.autoPlayCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
+			this.label3 = new System.Windows.Forms.Label();
+			this.autoPlayCheckBox = new System.Windows.Forms.ComboBox();
+			this.label5 = new System.Windows.Forms.Label();
+			this.label6 = new System.Windows.Forms.Label();
       this.groupBox1.SuspendLayout();
       this.mpGroupBox1.SuspendLayout();
       this.mpGroupBox2.SuspendLayout();
@@ -261,26 +267,53 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.mpGroupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
+			this.mpGroupBox2.Controls.Add(this.label3);
       this.mpGroupBox2.Controls.Add(this.autoPlayCheckBox);
       this.mpGroupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.mpGroupBox2.Location = new System.Drawing.Point(0, 216);
       this.mpGroupBox2.Name = "mpGroupBox2";
-      this.mpGroupBox2.Size = new System.Drawing.Size(472, 56);
+			this.mpGroupBox2.Size = new System.Drawing.Size(472, 72);
       this.mpGroupBox2.TabIndex = 2;
       this.mpGroupBox2.TabStop = false;
       this.mpGroupBox2.Text = "Autoplay";
       // 
-      // autoPlayCheckBox
+			this.label3.Location = new System.Drawing.Point(160, 16);
+			this.label3.Name = "label3";
+			this.label3.Size = new System.Drawing.Size(272, 23);
+			this.label3.TabIndex = 1;
+			this.label3.Text = "No = Don\'t even ask";
+			this.label3.Click += new System.EventHandler(this.label3_Click);
+			// 
+			// autoPlayCheckBox
+			// 
+			this.autoPlayCheckBox.Items.AddRange(new object[] {
+																  "Yes",
+																  "No",
+																  "Ask"});
+			this.autoPlayCheckBox.Location = new System.Drawing.Point(16, 16);
+			this.autoPlayCheckBox.Name = "autoPlayCheckBox";
+			this.autoPlayCheckBox.Size = new System.Drawing.Size(121, 21);
+			this.autoPlayCheckBox.TabIndex = 0;
+			this.autoPlayCheckBox.Text = "autoPlayCheckBox";
       // 
-      this.autoPlayCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.autoPlayCheckBox.Location = new System.Drawing.Point(16, 24);
-      this.autoPlayCheckBox.Name = "autoPlayCheckBox";
-      this.autoPlayCheckBox.Size = new System.Drawing.Size(264, 16);
-      this.autoPlayCheckBox.TabIndex = 0;
-      this.autoPlayCheckBox.Text = "Autoplay audio CDs when audio-cd is inserted";
-      // 
-      // Music
-      // 
+			this.label5.Location = new System.Drawing.Point(160, 248);
+			this.label5.Name = "label5";
+			this.label5.Size = new System.Drawing.Size(272, 16);
+			this.label5.TabIndex = 2;
+			this.label5.Text = "Yes = Don\'t ask, just play";
+			// 
+			// label6
+			// 
+			this.label6.Location = new System.Drawing.Point(160, 264);
+			this.label6.Name = "label6";
+			this.label6.Size = new System.Drawing.Size(272, 16);
+			this.label6.TabIndex = 3;
+			this.label6.Text = "Ask = Ask me if I want to play";
+			// 
+			// Music
+			// 
+			this.Controls.Add(this.label5);
+			this.Controls.Add(this.label6);
       this.Controls.Add(this.mpGroupBox2);
       this.Controls.Add(this.mpGroupBox1);
       this.Controls.Add(this.groupBox1);
@@ -319,6 +352,16 @@ namespace MediaPortal.Configuration.Sections
     {
     
     }
+		private void Yestext_Click(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void label3_Click(object sender, System.EventArgs e)
+		{
+		
+		}
+
 	}
 }
 

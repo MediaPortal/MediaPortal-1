@@ -39,7 +39,7 @@ namespace MediaPortal.Ripper
     static Ripper.CDDrive [] m_drives=null;
 		static RemovableDrive m_removables=null;
     static bool m_dvd=false;
-    static bool m_audiocd=false;
+    static string m_audiocd="No";
 
     enum MediaType
     {
@@ -67,7 +67,7 @@ namespace MediaPortal.Ripper
 		{
 			m_vecList   = new ArrayList();
 			m_dvd=false;
-			m_audiocd=false;
+			m_audiocd="No";
 
 			// Start removable drive event handlers
 			m_removables = new Ripper.RemovableDrive();
@@ -124,8 +124,8 @@ namespace MediaPortal.Ripper
         using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
         {
           m_dvd=xmlreader.GetValueAsBool("dvdplayer","autoplay",true);
-          m_audiocd=xmlreader.GetValueAsBool("audioplayer","autoplay",true);
-          if (m_dvd==false && m_audiocd==false) return;
+          m_audiocd=xmlreader.GetValueAsString("audioplayer","autoplay","No");
+          if (m_dvd==false && m_audiocd=="No") return;
 
           for (int i=0; i < 20; i++)
           {
@@ -295,6 +295,7 @@ namespace MediaPortal.Ripper
 
     static bool ShouldWeAutoPlay(MediaType iMedia)
     {
+      Log.Write ("Check if we want to autoplay a {0}",iMedia);
       if (GUIWindowManager.IsRouted) return false;
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ASKYESNO,0,0,0,0,0,null);
       msg.Param1=713;      
@@ -356,18 +357,27 @@ namespace MediaPortal.Ripper
 
         case MediaType.AUDIO_CD:
           Log.Write("Audio CD inserted into drive {0}",strDrive);
-          if (m_audiocd)
+		  bool PlayAudioCd = false;
+			if (m_audiocd=="Yes") 
           {
-            if (ShouldWeAutoPlay(MediaType.AUDIO_CD)) 
-            {
+				PlayAudioCd = true;
+				Log.Write ("Autoplay = auto");
+			}
+			else if ((m_audiocd=="Ask") && (ShouldWeAutoPlay(MediaType.AUDIO_CD)))
+			{
+				PlayAudioCd = true;
+			}
+			if (PlayAudioCd)				  
+			{
               if (g_Player.Playing) g_Player.Stop();
               msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAY_AUDIO_CD,
                 (int)GUIWindow.Window.WINDOW_MUSIC_FILES,
                 GUIWindowManager.ActiveWindow,0,0,0,0);
               msg.Label=strDrive;
               msg.SendToTargetWindow=true;
-              GUIWindowManager.SendThreadMessage(msg);
-            }
+				msg.Label2 = m_audiocd;
+				Log.Write ("Autoplay = {0}",m_audiocd);
+				GUIWindowManager.SendThreadMessage(msg);
           }
           break;                 
 

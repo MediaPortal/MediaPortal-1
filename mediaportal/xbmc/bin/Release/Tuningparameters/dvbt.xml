@@ -243,15 +243,15 @@
 		<carrier frequency="858000" bandwidth="8" />
 	</country>
 	<country name="Finland - All Regions" offset="125">
-		<carrier frequency="77500" bandwidth="7" />
-		<carrier frequency="84500" bandwidth="7" />
-		<carrier frequency="91500" bandwidth="7" />
-		<carrier frequency="98500" bandwidth="7" />
-		<carrier frequency="05500" bandwidth="7" />
-		<carrier frequency="12500" bandwidth="7" />
-		<carrier frequency="19500" bandwidth="7" />
-		<carrier frequency="26500" bandwidth="7" />
-		<carrier frequency="74000" bandwidth="8" />
+		<carrier frequency="177500" bandwidth="7" />
+		<carrier frequency="184500" bandwidth="7" />
+		<carrier frequency="191500" bandwidth="7" />
+		<carrier frequency="198500" bandwidth="7" />
+		<carrier frequency="205500" bandwidth="7" />
+		<carrier frequency="212500" bandwidth="7" />
+		<carrier frequency="219500" bandwidth="7" />
+		<carrier frequency="226500" bandwidth="7" />
+		<carrier frequency="474000" bandwidth="8" />
 		<carrier frequency="482000" bandwidth="8" />
 		<carrier frequency="490000" bandwidth="8" />
 		<carrier frequency="498000" bandwidth="8" />
