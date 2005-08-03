@@ -1,4 +1,5 @@
 using System;
+using System.Drawing;
 using System.Collections;
 using System.IO;
 
@@ -22,49 +23,39 @@ namespace MediaPortal.GUI.Library
 		{
 			GUIWaitCursor cursor = GUIWaitCursor.Instance;
 
-			cursor.FinalizeConstruction();
-			cursor.PreAllocResources();
-			cursor.AllocResources();
+			cursor.Initialize();
 		}
 
-		public override void FinalizeConstruction()
+		public void Initialize()
 		{
-			base.FinalizeConstruction();
-
 			ArrayList array = new ArrayList();
 
 			foreach(string filename in System.IO.Directory.GetFiles(GUIGraphicsContext.Skin + @"\media\", "common.waiting.*.png"))
 				array.Add(filename);
 
-			int x = (GUIGraphicsContext.Width / 2) - 24;
-			int y = (GUIGraphicsContext.Height / 2) - 24;
+			int x = 0;
+			int y = 0;
+			int w = 0;
+			int h = 0;
 
 			_images = new GUIImage[array.Count];
 
 			for(int index = 0; index < _images.Length; index++)
-				_images[index] = new GUIImage(this.ParentID, 200001 + index, x, y, 48, 48, (string)array[index], 0xFFFFFFFF);
-		}
-
-		public override void AllocResources()
-		{
-			base.AllocResources();
-
-			if(_images == null)
-				return;
-
-			for(int index = 0; index < _images.Length; index++)
+			{
+				_images[index] = new GUIImage(this.ParentID, 200001 + index, x, y, w, h, (string)array[index], Color.White);
 				_images[index].AllocResources();
-		}
 
-		public override void PreAllocResources()
-		{
-			base.PreAllocResources();
+				if(index != 0)
+					continue;
 
-			if(_images == null)
-				return;
+				w = _images[index].Width;
+				h = _images[index].Height;
 
-			for(int index = 0; index < _images.Length; index++)
-				_images[index].PreAllocResources();
+				x = (GUIGraphicsContext.Width - w) / 2;
+				y = (GUIGraphicsContext.Height - h) / 2;
+
+				_images[index].SetPosition(x, y);
+			}
 		}
 
 		float _tickStart = 0;
