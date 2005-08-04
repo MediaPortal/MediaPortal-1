@@ -722,77 +722,11 @@ namespace MediaPortal.TV.Recording
 			
 			if(AudioPID!=-1 && VideoPID!=-1)
 			{
-				if(m_pluginsEnabled==false)
-				{
-					DeleteAllPIDs(m_dataCtrl,0);
-					SetPidToPin(m_dataCtrl,0,0);
-					SetPidToPin(m_dataCtrl,0,1);
-					SetPidToPin(m_dataCtrl,0,16);
-					SetPidToPin(m_dataCtrl,0,17);
-					SetPidToPin(m_dataCtrl,0,18);
-					SetPidToPin(m_dataCtrl,0,ttxtPID);
-					SetPidToPin(m_dataCtrl,0,AudioPID);
-					SetPidToPin(m_dataCtrl,0,m_currentChannel.Audio1);
-					SetPidToPin(m_dataCtrl,0,m_currentChannel.Audio2);
-					SetPidToPin(m_dataCtrl,0,m_currentChannel.AC3Pid);
-					SetPidToPin(m_dataCtrl,0,VideoPID);
-					SetPidToPin(m_dataCtrl,0,pmtPID);
-					SetPidToPin(m_dataCtrl,0,dvbsubPID);
-					SetPidToPin(m_dataCtrl,0,0xD3);
-					SetPidToPin(m_dataCtrl,0,0xD2);
-
-					if(pcrPID!=VideoPID)
-						SetPidToPin(m_dataCtrl,0,pcrPID);
-
-				}
-				else
-				{
-					int epid=0;
-
-					int eid=0;
-					DeleteAllPIDs(m_dataCtrl,0);
-
-					int count=0;
-					for(int t=1;t<11;t++)
-					{
-						epid=GetPidNumber(pidText,t);
-						eid=GetPidID(pidText,t);
-						if(epid>0)
-						{
-							if(count<3)
-							{
-								m_ecmPids[count]=epid;
-								m_ecmIDs[count]=eid;
-								count++;
-							}
-							SetPidToPin(m_dataCtrl,0,epid);
-						}
-					}
-
-					SetPidToPin(m_dataCtrl,0,0);
-					SetPidToPin(m_dataCtrl,0,1);
-					SetPidToPin(m_dataCtrl,0,16);
-					SetPidToPin(m_dataCtrl,0,17);
-					SetPidToPin(m_dataCtrl,0,18);
-					SetPidToPin(m_dataCtrl,0,ecmPID);
-					SetPidToPin(m_dataCtrl,0,0xD3);
-					SetPidToPin(m_dataCtrl,0,0xD2);
-
-					SetPidToPin(m_dataCtrl,0,ttxtPID);
-					SetPidToPin(m_dataCtrl,0,AudioPID);
-					SetPidToPin(m_dataCtrl,0,m_currentChannel.Audio1);
-					SetPidToPin(m_dataCtrl,0,m_currentChannel.Audio2);
-					SetPidToPin(m_dataCtrl,0,m_currentChannel.AC3Pid);
-
-					SetPidToPin(m_dataCtrl,0,VideoPID);
-					SetPidToPin(m_dataCtrl,0,dvbsubPID);
-					SetPidToPin(m_dataCtrl,0,pmtPID);
-					if(pcrPID!=VideoPID)
-						SetPidToPin(m_dataCtrl,0,pcrPID);
-				}
-
-
+				DeleteAllPIDs(m_dataCtrl,0);
+				SetPidToPin(m_dataCtrl,0,0x2000);
 			}
+
+
 			return true;
 		}
 		//
