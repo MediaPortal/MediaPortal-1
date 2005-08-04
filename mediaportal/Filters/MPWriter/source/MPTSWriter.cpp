@@ -220,6 +220,12 @@ HRESULT CDumpInputPin::SetPMTPid(int pmtPid)
 	m_pmtPid=pmtPid;
 	return S_OK;
 }
+HRESULT CDumpInputPin::SetPCRPid(int pcrPid)
+{
+	m_pcrPid=pcrPid;
+	return S_OK;
+}
+
 int CDumpInputPin::GetVideoPid()
 {
 	return m_videoPid;
@@ -247,6 +253,10 @@ int CDumpInputPin::GetSubtitlePid()
 int CDumpInputPin::GetPMTPid()
 {
 	return m_pmtPid;
+}
+int CDumpInputPin::GetPCRPid()
+{
+	return m_pcrPid;
 }
 
 //
@@ -332,12 +342,13 @@ STDMETHODIMP CDumpInputPin::Receive(IMediaSample *pSample)
 }
 void CDumpInputPin::ResetPids()
 {
-	m_videoPid=m_audio1Pid=m_audio2Pid=m_ac3Pid=m_ttxtPid=m_subtitlePid=m_pmtPid=-1;
+	m_videoPid=m_audio1Pid=m_audio2Pid=m_ac3Pid=m_ttxtPid=m_subtitlePid=m_pmtPid=m_pcrPid=-1;
 }
 bool CDumpInputPin::IsPidValid(int pid)
 {
 	if(pid==0 || pid==1 || pid==m_videoPid || pid==m_audio1Pid ||
-		pid==m_audio2Pid || pid==m_ac3Pid || pid==m_ttxtPid || pid==m_subtitlePid || pid==m_pmtPid)
+		pid==m_audio2Pid || pid==m_ac3Pid || pid==m_ttxtPid || pid==m_subtitlePid || 
+		pid==m_pmtPid|| pid==m_pcrPid)
 		return true;
 	return false;
 }
@@ -599,6 +610,12 @@ STDMETHODIMP CDump::SetPMTPid(int pid)
 	Log((__int64)pid,true);
 	return m_pPin->SetPMTPid(pid);
 }
+STDMETHODIMP CDump::SetPCRPid(int pid)
+{
+	Log(TEXT("SetPCRPid ="),false);
+	Log((__int64)pid,true);
+	return m_pPin->SetPCRPid(pid);
+}
 
 STDMETHODIMP CDump::ResetPids()
 {
@@ -813,6 +830,7 @@ HRESULT CDump::UpdateInfoFile()
 	pid=m_pPin->GetTeletextPid();WriteFile(m_hInfoFile, &pid, sizeof(pid), &written, NULL);
 	pid=m_pPin->GetPMTPid();WriteFile(m_hInfoFile, &pid, sizeof(pid), &written, NULL);
 	pid=m_pPin->GetSubtitlePid();WriteFile(m_hInfoFile, &pid, sizeof(pid), &written, NULL);
+	pid=m_pPin->GetPCRPid();WriteFile(m_hInfoFile, &pid, sizeof(pid), &written, NULL);
 	
 	//UnlockFile(m_hInfoFile,0,0,8+7*sizeof(int),0);
 	return S_OK;

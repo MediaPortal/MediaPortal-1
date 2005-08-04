@@ -46,6 +46,7 @@ HRESULT Sections::ParseFromFile()
 		ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&ttxPid, sizeof(int), &dwReadBytes, NULL);
 		ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&pids.PMTPid, sizeof(int), &dwReadBytes, NULL);
 		ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&subtitlePid, sizeof(int), &dwReadBytes, NULL);
+		ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&pids.PCRPid, sizeof(int), &dwReadBytes, NULL);
 		
 		UnlockFile(m_pFileReader->m_hInfoFile,0,0,8+7*sizeof(int),0);
 		pids.Duration=600000000;

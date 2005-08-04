@@ -2378,6 +2378,8 @@ namespace MediaPortal.TV.Recording
 				m_tsWriterInterface.SetTeletextPid((ushort)currentTuningObject.TeletextPid);
 			if (currentTuningObject.VideoPid>0)
 				m_tsWriterInterface.SetVideoPid((ushort)currentTuningObject.VideoPid);
+			if (currentTuningObject.PCRPid>0)
+				m_tsWriterInterface.SetPCRPid((ushort)currentTuningObject.PCRPid);
 			m_tsWriterInterface.SetPMTPid((ushort)currentTuningObject.PMTPid);
 
 

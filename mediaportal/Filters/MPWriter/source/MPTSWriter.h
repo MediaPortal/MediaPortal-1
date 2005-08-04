@@ -29,6 +29,7 @@ DECLARE_INTERFACE_(IMPTSWriter, IUnknown)
 	STDMETHOD(SetTeletextPid)(THIS_ int ttxtPid)PURE;
 	STDMETHOD(SetSubtitlePid)(THIS_ int subtitlePid)PURE;
 	STDMETHOD(SetPMTPid)(THIS_ int pmtPid)PURE;
+	STDMETHOD(SetPCRPid)(THIS_ int pcrPid)PURE;
 
 };
 
@@ -96,6 +97,7 @@ public:
 	HRESULT SetTeletextPid(int ttxtPid);
 	HRESULT SetSubtitlePid(int subtitlePid);
 	HRESULT SetPMTPid(int pmtPid);
+	HRESULT SetPCRPid(int pcrPid);
 	int GetVideoPid();
 	int GetAudioPid();
 	int GetAudioPid2();
@@ -103,6 +105,7 @@ public:
 	int GetTeletextPid();
 	int GetSubtitlePid();
 	int GetPMTPid();
+	int GetPCRPid();
 
 	void ResetPids();
 
@@ -114,6 +117,7 @@ private:
 	int m_ttxtPid;
 	int m_subtitlePid;
 	int m_pmtPid;
+	int m_pcrPid;
 
 private:
 	bool IsPidValid(int pid);
@@ -175,6 +179,7 @@ public:
 	STDMETHODIMP SetTeletextPid(int ttxtPid);
 	STDMETHODIMP SetSubtitlePid(int subtitlePid);
 	STDMETHODIMP SetPMTPid(int pmtPid);
+	STDMETHODIMP SetPCRPid(int pcrPid);
 private:
 
     // Overriden to say what interfaces we support where

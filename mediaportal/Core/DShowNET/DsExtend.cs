@@ -165,6 +165,8 @@ namespace DShowNET
 		int SetSubtitlePid( ushort subtitlePid);
 		[PreserveSig]
 		int SetPMTPid( ushort pmtPid);
+		[PreserveSig]
+		int SetPCRPid( ushort pcrPid);
 	}
 
   [ComVisible(true), ComImport,
