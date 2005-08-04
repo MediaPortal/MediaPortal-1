@@ -245,9 +245,8 @@ namespace MediaPortal.Util
 			if (strPath==null) return false;
 			try
 			{
-				//We will need to change this if we are going to support .ts timeshifing
-				string strExtFile=System.IO.Path.GetExtension(strPath).ToLower();
-				if (strExtFile.ToLower().Equals(".tv") ) return true;
+				if (strPath.ToLower().IndexOf("live.tv")>=0 ) return true;
+				if (strPath.ToLower().IndexOf("live.ts")>=0 ) return true;
 			}
 			catch(Exception){}
 			return false;
@@ -930,7 +929,8 @@ namespace MediaPortal.Util
 			try
 			{
 				string strExt=System.IO.Path.GetExtension(strFile).ToLower();
-				if (strExt.Equals(".tv")) return false;
+				if (strFile.ToLower().IndexOf("live.ts")>=0) return false;
+				if (strFile.ToLower().IndexOf("live.tv")>=0) return false;
 				if (strExt.Equals(".sbe")) return false;
 				if (strExt.Equals(".dvr-ms")) return false;
 				if (strExt.Equals(".radio")) return false;

@@ -163,7 +163,7 @@ namespace MediaPortal.Player
       IPlayer newPlayer=null;
 
       string strExt=System.IO.Path.GetExtension(strFileName).ToLower();
-			if (  strExt!=".tv" &&   strExt!=".sbe" &&   strExt!=".dvr-ms" )
+			if (  strExt!=".tv" &&   strExt!=".sbe" &&   strExt!=".dvr-ms" && strFileName.ToLower().IndexOf("live.ts")<0)
 			{
 				newPlayer = GetExternalPlayer(strFileName);
 				if(newPlayer != null)

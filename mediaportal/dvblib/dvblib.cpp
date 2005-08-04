@@ -491,7 +491,7 @@ HRESULT SetupDemuxerPin(IPin *pVideo,int videoPID, int elementary_stream, bool u
 			}
 			pPidEnum->Release();
 		}
-		if (videoPID>0)
+		if (videoPID>=0)
 		{
 			// map new pid
 			pid = (ULONG)videoPID;

@@ -973,7 +973,7 @@ namespace MediaPortal.TV.Recording
 					Log.Write("DVBGraphBDA:Create MPTS output");
 					AMMediaType mtMTS = new AMMediaType();
 					mtMTS.majorType=MediaType.Stream;
-					mtMTS.subType=MediaSubType.None;
+					mtMTS.subType=MediaSubType.MPEG2Transport;
 					mtMTS.formatType=FormatType.None;
 
 					hr=demuxer.CreateOutputPin(ref mtMTS, "MTS", out m_pinMTS);
@@ -1659,6 +1659,7 @@ namespace MediaPortal.TV.Recording
 			}
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:StartTimeShifting()");
 
+			TuneChannel(channel);
 			isUsingAC3=TVDatabase.DoesChannelHaveAC3(channel, Network()==NetworkType.DVBC, Network()==NetworkType.DVBT, Network()==NetworkType.DVBS, Network()==NetworkType.ATSC);
 			if(CreateSinkSource(strFileName,isUsingAC3))
 			{
@@ -1681,7 +1682,6 @@ namespace MediaPortal.TV.Recording
 				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Unable to create sinksource()");
 				return false;
 			}
-			TuneChannel(channel);
 
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:timeshifting started");			
 			return true;
@@ -2301,6 +2301,9 @@ namespace MediaPortal.TV.Recording
 		void SetupMTSDemuxerPin()
 		{
 #if USEMTSWRITER
+
+			Log.Write("DVBGraphBDA:map ac3:{0:X} audio:{1:X} video:{2:X} pmt:{3:X}",
+										currentTuningObject.AC3Pid,currentTuningObject.AudioPid,currentTuningObject.VideoPid,currentTuningObject.PMTPid);
 			SetupDemuxerPin(m_pinMTS,currentTuningObject.AC3Pid,(int)MediaSampleContent.TransportPacket,true);
 			SetupDemuxerPin(m_pinMTS,currentTuningObject.AudioPid,(int)MediaSampleContent.TransportPacket,false);
 			SetupDemuxerPin(m_pinMTS,currentTuningObject.Audio1,(int)MediaSampleContent.TransportPacket,false);
@@ -2309,6 +2312,9 @@ namespace MediaPortal.TV.Recording
 			SetupDemuxerPin(m_pinMTS,currentTuningObject.TeletextPid,(int)MediaSampleContent.TransportPacket,false);
 			SetupDemuxerPin(m_pinMTS,currentTuningObject.VideoPid,(int)MediaSampleContent.TransportPacket,false);
 			SetupDemuxerPin(m_pinMTS,currentTuningObject.PMTPid,(int)MediaSampleContent.TransportPacket,false);
+			SetupDemuxerPin(m_pinMTS,0,(int)MediaSampleContent.TransportPacket,false);//PAT
+			SetupDemuxerPin(m_pinMTS,0x11,(int)MediaSampleContent.TransportPacket,false);//SDT
+			SetupDemuxerPin(m_pinMTS,currentTuningObject.PCRPid,(int)MediaSampleContent.TransportPacket,false);
 #endif
 		}
 
@@ -2318,27 +2324,27 @@ namespace MediaPortal.TV.Recording
 				return false;
 
 #if USEMTSWRITER
+			SetupMTSDemuxerPin();
+
 			int hr=m_graphBuilder.AddFilter((IBaseFilter)m_tsWriter,"MPTS Writer");
 			if(hr!=0)
 			{
 				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot add MPTS Writer:{0:X}",hr);
 				return false;
 			}			
-			m_tsWriterInterface.ResetPids();
-			if (currentTuningObject.AC3Pid>0)
-				m_tsWriterInterface.SetAC3Pid((ushort)currentTuningObject.AC3Pid);
-			if (currentTuningObject.AudioPid>0)
-				m_tsWriterInterface.SetAudioPid((ushort)currentTuningObject.AudioPid);
-			if (currentTuningObject.Audio1>0)
-				m_tsWriterInterface.SetAudioPid((ushort)currentTuningObject.Audio1);
-			if (currentTuningObject.Audio2>0)
-				m_tsWriterInterface.SetAudioPid2((ushort)currentTuningObject.Audio2);
-			//m_tsWriterInterface.SetSubtitlePid((ushort)currentTuningObject.SubtitlePid);
-			if (currentTuningObject.TeletextPid>0)
-				m_tsWriterInterface.SetTeletextPid((ushort)currentTuningObject.TeletextPid);
-			if (currentTuningObject.VideoPid>0)
-				m_tsWriterInterface.SetVideoPid((ushort)currentTuningObject.VideoPid);
-			m_tsWriterInterface.SetPMTPid((ushort)currentTuningObject.PMTPid);
+
+			IFileSinkFilter fileWriter=m_tsWriter as IFileSinkFilter;
+			AMMediaType mt = new AMMediaType();
+			mt.majorType=MediaType.Stream;
+			mt.subType=MediaSubType.None;
+			mt.formatType=FormatType.None;
+			hr=fileWriter.SetFileName(fileName, ref mt);
+			if (hr!=0)
+			{
+				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot set filename on MPTS writer:0x{0:X}",hr);
+				return false;
+			}
+
 
 			// connect demuxer->mpts writer
 			IPin mptsIn =DirectShowUtil.FindPinNr(m_tsWriter,PinDirection.Input,0);
@@ -2358,17 +2364,23 @@ namespace MediaPortal.TV.Recording
 			Marshal.ReleaseComObject(mptsIn);
 			mptsIn=null;
 
-			IFileSinkFilter fileWriter=m_tsWriter as IFileSinkFilter;
-			AMMediaType mt = new AMMediaType();
-			mt.majorType=MediaType.Stream;
-			mt.subType=MediaSubType.None;
-			mt.formatType=FormatType.None;
-			hr=fileWriter.SetFileName(fileName, ref mt);
-			if (hr!=0)
-			{
-				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot set filename on MPTS writer:0x{0:X}",hr);
-				return false;
-			}
+			m_tsWriterInterface.ResetPids();
+			if (currentTuningObject.AC3Pid>0)
+				m_tsWriterInterface.SetAC3Pid((ushort)currentTuningObject.AC3Pid);
+			if (currentTuningObject.AudioPid>0)
+				m_tsWriterInterface.SetAudioPid((ushort)currentTuningObject.AudioPid);
+			if (currentTuningObject.Audio1>0)
+				m_tsWriterInterface.SetAudioPid((ushort)currentTuningObject.Audio1);
+			if (currentTuningObject.Audio2>0)
+				m_tsWriterInterface.SetAudioPid2((ushort)currentTuningObject.Audio2);
+			//m_tsWriterInterface.SetSubtitlePid((ushort)currentTuningObject.SubtitlePid);
+			if (currentTuningObject.TeletextPid>0)
+				m_tsWriterInterface.SetTeletextPid((ushort)currentTuningObject.TeletextPid);
+			if (currentTuningObject.VideoPid>0)
+				m_tsWriterInterface.SetVideoPid((ushort)currentTuningObject.VideoPid);
+			m_tsWriterInterface.SetPMTPid((ushort)currentTuningObject.PMTPid);
+
+
 			return true;
 #else
 			int		hr				= 0;
@@ -3109,6 +3121,16 @@ namespace MediaPortal.TV.Recording
 					}//for (int pids =0; pids < info.pid_list.Count;pids++)
 
 					currentTuningObject.PCRPid=info.pcr_pid;
+
+					if (currentTuningObject.AC3Pid <=0) currentTuningObject.AC3Pid=-1;
+					if (currentTuningObject.AudioPid <=0) currentTuningObject.AudioPid=-1;
+					if (currentTuningObject.Audio1 <=0) currentTuningObject.Audio1=-1;
+					if (currentTuningObject.Audio2 <=0) currentTuningObject.Audio2=-1;
+					if (currentTuningObject.Audio2 <=0) currentTuningObject.Audio2=-1;
+					//if (currentTuningObject.SubtitlePid <=0) currentTuningObject.SubtitlePid=-1;
+					if (currentTuningObject.TeletextPid <=0) currentTuningObject.TeletextPid=-1;
+					if (currentTuningObject.VideoPid <=0) currentTuningObject.VideoPid=-1;
+					if (currentTuningObject.VideoPid <=0) currentTuningObject.PMTPid=-1;
 					try
 					{
 						if (m_graphState==State.Radio && (currentTuningObject.PCRPid<=0||currentTuningObject.PCRPid>=0x1fff))
@@ -3695,7 +3717,16 @@ namespace MediaPortal.TV.Recording
 					} break;
 				}	//switch (m_NetworkType)
 				//submit tune request to the tuner
-			
+
+				if (currentTuningObject.AC3Pid <=0) currentTuningObject.AC3Pid=-1;
+				if (currentTuningObject.AudioPid <=0) currentTuningObject.AudioPid=-1;
+				if (currentTuningObject.Audio1 <=0) currentTuningObject.Audio1=-1;
+				if (currentTuningObject.Audio2 <=0) currentTuningObject.Audio2=-1;
+				if (currentTuningObject.Audio2 <=0) currentTuningObject.Audio2=-1;
+				//if (currentTuningObject.SubtitlePid <=0) currentTuningObject.SubtitlePid=-1;
+				if (currentTuningObject.TeletextPid <=0) currentTuningObject.TeletextPid=-1;
+				if (currentTuningObject.VideoPid <=0) currentTuningObject.VideoPid=-1;
+				if (currentTuningObject.VideoPid <=0) currentTuningObject.PMTPid=-1;			
 
 				DirectShowUtil.EnableDeInterlace(m_graphBuilder);
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() done freq:{0} ONID:{1} TSID:{2} prog:{3} audio:{4:X} video:{5:X} pmt:{6:X} ac3:{7:X} txt:{8:X}",

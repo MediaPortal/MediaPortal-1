@@ -285,7 +285,7 @@ STDMETHODIMP CDumpInputPin::Receive(IMediaSample *pSample)
 			m_pDump->Log((__int64)t,false);
 			m_pDump->Log(TEXT(", pid="),false);
 			m_pDump->Log((__int64)pid,true);
-			if(IsPidValid(pid)==true)
+			if(true||IsPidValid(pid)==true)
 			{
 				hr=m_pDump->Write(pbData+t,188);
 				m_pDump->Log(TEXT("Receive: hr="),false);

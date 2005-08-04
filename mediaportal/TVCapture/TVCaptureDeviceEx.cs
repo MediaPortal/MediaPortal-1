@@ -18,6 +18,7 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+//#define USEMTSWRITER
 #if (UseCaptureCardDefinitions)
 
 using System;
@@ -1879,7 +1880,13 @@ namespace MediaPortal.TV.Recording
 		public string TimeShiftFileName
 		{
 			//we should get this from the cardx.xml when we will be supporting .ts streams
-			get { return "live.tv";}
+			get { 
+#if USEMTSWRITER
+				return "live.ts";
+#else
+				return "live.tv";
+#endif
+			}
 		}
   }
 }  
