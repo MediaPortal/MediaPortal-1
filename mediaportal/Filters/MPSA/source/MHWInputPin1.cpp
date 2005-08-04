@@ -132,8 +132,8 @@ STDMETHODIMP CMHWInputPin1::Receive(IMediaSample *pSample)
 
 void CMHWInputPin1::ResetPids()
 {
-	Log("mhwpin1: ResetPids()");
-//	Parse();//test
+//	Log("mhwpin1: ResetPids()");
+	Parse();//test
 	m_bParsed=false;
 	m_MHWParser.Reset();
 	m_tableGrabber.Reset();

@@ -75,20 +75,33 @@ void TableGrabber::ParseSection(byte* pData, long lDataLen)
 	{
 		header.SectionLength+=3;
 		if(header.SectionLength<1) return;
-		if(header.SectionLength>65535) return;
-		
-		imapSections it=m_mapSections.find(header.SectionNumber);
-		if (it==m_mapSections.end())
+		if(header.SectionLength>4999) return;
+		imapSections it;
+		if (m_pid==0xd2)
 		{
-			TableSection newSection;
-			memcpy(newSection.byData, pData,lDataLen);
-			newSection.iSize=lDataLen;
-			m_mapSections[header.SectionNumber]=newSection;
-			timeoutTimer=time(NULL);
-
-
-			//Log("mhw:add pid:%x tid:%x section:%i len:%d",m_pid,header.TableID,header.SectionNumber,header.SectionLength);
-			
+			ULONG prgid=(pData[38]<<24)+(pData[39]<<16)+(pData[40]<<8)+pData[41];
+			//int channelID=(pData[3])-1;
+			it=m_mapSections.find(prgid);
+			if (it==m_mapSections.end())
+			{
+				TableSection newSection;
+				memcpy(newSection.byData, pData,lDataLen);
+				newSection.iSize=lDataLen;
+				m_mapSections[prgid]=newSection;
+				timeoutTimer=time(NULL);
+			}
+		}
+		else
+		{
+			it=m_mapSections.find(header.SectionNumber);
+			if (it==m_mapSections.end())
+			{
+				TableSection newSection;
+				memcpy(newSection.byData, pData,lDataLen);
+				newSection.iSize=lDataLen;
+				m_mapSections[header.SectionNumber]=newSection;
+				timeoutTimer=time(NULL);
+			}			
 		}
 	}
 }

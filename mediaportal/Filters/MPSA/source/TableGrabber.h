@@ -25,7 +25,7 @@ private:
 	struct TableSection
 	{
 		int  iSize;
-		byte byData[70000];
+		byte byData[5000];
 	};
 
 public:
@@ -46,6 +46,6 @@ private:
 	int			m_sectionTableID;
 	int			m_pid;
 	time_t      timeoutTimer;
-	map<int, TableSection> m_mapSections;
-	typedef map<int, TableSection>::iterator imapSections;
+	map<ULONG, TableSection> m_mapSections;
+	typedef map<ULONG, TableSection>::iterator imapSections;
 };
