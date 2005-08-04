@@ -144,6 +144,29 @@ namespace DShowNET
 		int GetATSCTitle(Int16 no, out Int16 source_id, out uint starttime, out Int16 length_in_mins,out IntPtr title,out IntPtr description);
 	}
 
+	[ComVisible(true), ComImport,
+	Guid("236D0A77-D105-43fd-A203-578859AB7948"),
+	InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
+	public interface IMPTSWriter
+	{
+		[PreserveSig]
+		int ResetPids();
+		[PreserveSig]
+		int SetVideoPid( ushort videoPid);
+		[PreserveSig]
+		int SetAudioPid( ushort audioPid);
+		[PreserveSig]
+		int SetAudioPid2( ushort audioPid);
+		[PreserveSig]
+		int SetAC3Pid( ushort ac3Pid);
+		[PreserveSig]
+		int SetTeletextPid( ushort ttxtPid);
+		[PreserveSig]
+		int SetSubtitlePid( ushort subtitlePid);
+		[PreserveSig]
+		int SetPMTPid( ushort pmtPid);
+	}
+
   [ComVisible(true), ComImport,
   Guid("93E5A4E0-2D50-11d2-ABFA-00A0C9C6E38D"),
   InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]

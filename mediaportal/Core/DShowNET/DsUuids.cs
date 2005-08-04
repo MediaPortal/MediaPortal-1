@@ -160,8 +160,8 @@ public class FilterCategory		// uuids.h  :  CLSID_*
 	public static readonly Guid SmartTee = new Guid( 0xcc58e280, 0x8aa1, 0x11d1, 0xb3, 0xf1, 0x0, 0xaa, 0x0, 0x37, 0x61, 0xc5 );
 
   public static readonly Guid Mpeg2Demultiplexer = new Guid(0xafb6c280, 0x2c41, 0x11d3, 0x8a, 0x60, 0x00, 0x00, 0xf8, 0x1e, 0x0e, 0x4a);
-		public static readonly Guid MPTSWriter = new Guid("8943BEB7-E0BC-453b-9EA5-EB93899FA51C");
-		public static readonly Guid MPStreamAnalyzer = new Guid("BAAC8911-1BA2-4ec2-96BA-6FFE42B62F72");
+	public static readonly Guid MPTSWriter = new Guid("8943BEB7-E0BC-453b-9EA5-EB93899FA51C");
+	public static readonly Guid MPStreamAnalyzer = new Guid("BAAC8911-1BA2-4ec2-96BA-6FFE42B62F72");
 
 }
 

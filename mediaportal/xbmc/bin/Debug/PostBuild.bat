@@ -20,8 +20,10 @@ del *.ax
 
 copy ..\..\..\MPSA.ax .
 copy ..\..\..\MPTS.ax .
+copy ..\..\..\MPTSWriter.ax .
 regsvr32 /s MPSA.ax
 regsvr32 /s MPTS.ax
+regsvr32 /s MPTSWriter.ax
 
 copy ..\..\..\core\directshowhelper\directshowhelper\debug\directshowhelper.dll .
 copy ..\..\..\core\directshowhelper\directshowhelper\debug\directshowhelper.pdb .
