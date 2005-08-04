@@ -4043,7 +4043,7 @@
     </tv>
   </capturecard>
   
-  <capturecard commercialname="AVerMedia A169" capturename="AVerMedia Capture" devid="ven_1131&amp;dev_7134&amp;subsys_63601461&amp;rev_01">
+  <capturecard commercialname="AVerMedia A169 Tuner 1" capturename="AVerMedia Capture" devid="ven_1131&amp;dev_7134&amp;subsys_63601461&amp;rev_01">
     <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
@@ -4066,7 +4066,7 @@
     </tv>
   </capturecard>
   
-  <capturecard commercialname="AVerMedia A169" capturename="AVerMedia Capture" devid="ven_1131&amp;dev_7134&amp;subsys_73601461&amp;rev_01">
+  <capturecard commercialname="AVerMedia A169 Tuner 2" capturename="AVerMedia Capture" devid="ven_1131&amp;dev_7134&amp;subsys_73601461&amp;rev_01">
     <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
@@ -6215,6 +6215,125 @@
       <connections>
 	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
 	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+<!-- Post 0.1.3.0 release --->
+
+  <capturecard commercialname="Hauppauge HVR-1300 Digital" capturename="Hauppauge WinTV 88x TS Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_96000070&amp;rev_05">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"            checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="Hauppauge WinTV 88x DVB-T Tuner/Demod"      checkdevice="true"></filter>
+        <filter cat="capture"         name="Hauppauge WinTV 88x TS Capture"             checkdevice="true"></filter>
+      </filters>
+      <connections>
+	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Hauppauge HVR-1300 Analogue" capturename="Hauppauge WinTV 88x Video Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_96000070&amp;rev_05">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"  name="Hauppauge WinTV 88x Tuner"			checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="Hauppauge WinTV 88x TvAudio"		checkdevice="true"></filter>
+        <filter cat="crossbar" name="Hauppauge WinTV 88x Crossbar"		checkdevice="true"></filter>
+        <filter cat="capture"  name="Hauppauge WinTV 88x Video Capture" checkdevice="true"></filter>
+		<filter cat="encoder"  name="Hauppauge WinTV 88x MPEG Encoder"	checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="1"></connection>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="7"></connection>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"  sinkpin="1"></connection>
+        <connection sourcefilter="capture"	sourcepin="3" sinkfilter="encoder"  sinkpin="0"></connection>
+        <connection sourcefilter="capture"	sourcepin="4" sinkfilter="encoder"  sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+ <capturecard commercialname="Hauppauge HVR-1300 Digital" capturename="Hauppauge WinTV 88x TS Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_96010070&amp;rev_05">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"            checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="Hauppauge WinTV 88x DVB-T Tuner/Demod"      checkdevice="true"></filter>
+        <filter cat="capture"         name="Hauppauge WinTV 88x TS Capture"             checkdevice="true"></filter>
+      </filters>
+      <connections>
+	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Hauppauge HVR-1300 Analogue" capturename="Hauppauge WinTV 88x Video Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_96010070&amp;rev_05">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"  name="Hauppauge WinTV 88x Tuner"			checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="Hauppauge WinTV 88x TvAudio"		checkdevice="true"></filter>
+        <filter cat="crossbar" name="Hauppauge WinTV 88x Crossbar"		checkdevice="true"></filter>
+        <filter cat="capture"  name="Hauppauge WinTV 88x Video Capture" checkdevice="true"></filter>
+		<filter cat="encoder"  name="Hauppauge WinTV 88x MPEG Encoder"	checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="1"></connection>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="7"></connection>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"  sinkpin="1"></connection>
+        <connection sourcefilter="capture"	sourcepin="3" sinkfilter="encoder"  sinkpin="0"></connection>
+        <connection sourcefilter="capture"	sourcepin="4" sinkfilter="encoder"  sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+ <capturecard commercialname="Hauppauge HVR-1300 Digital" capturename="Hauppauge WinTV 88x TS Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_96020070&amp;rev_05">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"            checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="Hauppauge WinTV 88x DVB-T Tuner/Demod"      checkdevice="true"></filter>
+        <filter cat="capture"         name="Hauppauge WinTV 88x TS Capture"             checkdevice="true"></filter>
+      </filters>
+      <connections>
+	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Hauppauge HVR-1300 Analogue" capturename="Hauppauge WinTV 88x Video Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_96020070&amp;rev_05">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"  name="Hauppauge WinTV 88x Tuner"			checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="Hauppauge WinTV 88x TvAudio"		checkdevice="true"></filter>
+        <filter cat="crossbar" name="Hauppauge WinTV 88x Crossbar"		checkdevice="true"></filter>
+        <filter cat="capture"  name="Hauppauge WinTV 88x Video Capture" checkdevice="true"></filter>
+		<filter cat="encoder"  name="Hauppauge WinTV 88x MPEG Encoder"	checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="1"></connection>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="7"></connection>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"  sinkpin="1"></connection>
+        <connection sourcefilter="capture"	sourcepin="3" sinkfilter="encoder"  sinkpin="0"></connection>
+        <connection sourcefilter="capture"	sourcepin="4" sinkfilter="encoder"  sinkpin="1"></connection>
       </connections>
     </tv>
   </capturecard>
