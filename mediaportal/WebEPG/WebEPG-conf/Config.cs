@@ -1,3 +1,24 @@
+/* 
+ *	Copyright (C) 2005 Media Portal
+ *	http://mediaportal.sourceforge.net
+ *
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *   
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *   
+ *  You should have received a copy of the GNU General Public License
+ *  along with GNU Make; see the file COPYING.  If not, write to
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  http://www.gnu.org/copyleft/gpl.html
+ *
+ */
+
 using System;
 using System.Xml;
 using System.Drawing;
@@ -17,6 +38,7 @@ namespace WebEPG_conf
 		private Form selection;
 		private TreeNode tChannels;
 		private TreeNode tGrabbers;
+		private SortedList CountryList;
 		private SortedList ChannelList;
 		private Hashtable hChannelInfo;
 		private Hashtable hGrabberInfo;
@@ -83,72 +105,8 @@ namespace WebEPG_conf
 
 			startDirectory = Environment.CurrentDirectory;
 
-			Log.WriteFile(Log.LogType.Log, false, "WebEPG Config: Loading Channels");
-			hChannelInfo = new Hashtable();
-			tChannels = new TreeNode("Channels");
-			if(System.IO.Directory.Exists(startDirectory + "\\Channels"))
-				GetTreeChannels(ref tChannels, startDirectory + "\\Channels");
-			else
-				Log.WriteFile(Log.LogType.Log, true, "WebEPG Config: Cannot find channels directory");
+			LoadConfig();
 
-			
-			Log.WriteFile(Log.LogType.Log, false, "WebEPG Config: Loading Grabbers");
-			hGrabberInfo = new Hashtable();
-			tGrabbers = new TreeNode("Web Sites");
-			if(System.IO.Directory.Exists(startDirectory + "\\Grabbers"))
-				GetTreeGrabbers(ref tGrabbers, startDirectory + "\\Grabbers");
-			else
-				Log.WriteFile(Log.LogType.Log, true, "WebEPG Config: Cannot find grabbers directory");
-
-			//
-			// TODO: Add any constructor code after InitializeComponent call
-			//
-
-			ChannelList = new SortedList();
-
-			if(System.IO.File.Exists(startDirectory + "\\WebEPG.xml"))
-			{
-				Log.WriteFile(Log.LogType.Log, false, "WebEPG Config: Loading Existing WebEPG.xml");
-				MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml(startDirectory + "\\WebEPG.xml");
-				nMaxGrab.Value = xmlreader.GetValueAsInt("General", "MaxDays", 1);
-				int channelCount = xmlreader.GetValueAsInt("ChannelMap", "Count", 0);	
-
-				for (int i = 1; i <= channelCount; i++)
-				{
-					ChannelInfo channel = new ChannelInfo();
-					channel.ChannelID = xmlreader.GetValueAsString(i.ToString(), "ChannelID", "");
-					channel.DisplayName = xmlreader.GetValueAsString(i.ToString(), "DisplayName", "");
-
-					if(ChannelList[channel.DisplayName] == null)
-					{
-
-						ChannelInfo info = (ChannelInfo) hChannelInfo[channel.ChannelID];
-						channel.FullName = "(Unknown)";
-						if(info != null)
-							channel.FullName = info.FullName;
-
-						string GrabberID = xmlreader.GetValueAsString(i.ToString(), "Grabber1", "");
-						if(GrabberID != "")
-						{
-							int start = GrabberID.IndexOf("\\") + 1;
-							int end =  GrabberID.LastIndexOf(".");
-							
-							string GrabberSite = GrabberID.Substring(start, end-start);
-							GrabberSite = GrabberSite.Replace("_", ".");
-							channel.PrimaryGrabberName = GrabberSite;
-							channel.PrimaryGrabberID = GrabberID;
-							channel.Linked = xmlreader.GetValueAsBool(i.ToString(), "Grabber1-Linked", false);
-							if(channel.Linked)
-							{
-								channel.linkStart = xmlreader.GetValueAsInt(i.ToString(), "Grabber1-Start", 18);
-								channel.linkEnd = xmlreader.GetValueAsInt(i.ToString(), "Grabber1-End", 23);
-							}
-
-							ChannelList.Add(channel.DisplayName, channel);
-						}
-					}
-				}
-			}
 			UpdateList("", -1);
 		}
 
@@ -626,19 +584,21 @@ namespace WebEPG_conf
 						tbChannelName.Text = info.FullName;
 						Log.WriteFile(Log.LogType.Log, false, "WebEPG Config: Selection: {0}", info.FullName);
 
-						tbGrabSite.Text = id[1];
-						tbGrabSite.Tag = (string) info.GrabberList[id[1]];
-
-						GrabberInfo gInfo = (GrabberInfo) hGrabberInfo[(string) info.GrabberList[id[1]]];
+						GrabberInfo gInfo = (GrabberInfo) info.GrabberList[id[1]];
 						if(gInfo != null)
 						{
+							tbGrabSite.Text = gInfo.GrabberName;
+							tbGrabSite.Tag = gInfo.GrabberID;
 							tbGrabDays.Text = gInfo.GrabDays.ToString();
 							tbSiteDescription.Text = gInfo.SiteDesc;
 							gbLinked.Visible = gInfo.Linked;
 							if(!gInfo.Linked)
 								cbLinked.Checked = gInfo.Linked;
+
+							UpdateCurrent();
 						}
-						UpdateCurrent();
+						else
+							tbGrabSite.Text = "(Unknown)";
 					}
 				}
 			}
@@ -947,9 +907,10 @@ namespace WebEPG_conf
 		{
 			System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo(Location); 
 			Log.WriteFile(Log.LogType.Log, false, "WebEPG Config: Directory: {0}", Location);
-			GrabberInfo gInfo = new GrabberInfo();
+			GrabberInfo gInfo;
 			foreach (System.IO.FileInfo file in dir.GetFiles("*.xml"))
 			{
+				gInfo = new GrabberInfo();
 				XmlDocument xml=new XmlDocument();
 				XmlNodeList channelList;
 				try 
@@ -980,7 +941,11 @@ namespace WebEPG_conf
 
 				gInfo.GrabberID=file.Directory.Name + "\\" + file.Name;
 				gInfo.GrabberName = GrabberSite;
+				gInfo.Country = file.Directory.Name;
 				hGrabberInfo.Add(gInfo.GrabberID, gInfo);
+
+				if(CountryList[file.Directory.Name] == null)
+					CountryList.Add(file.Directory.Name, new SortedList());
 
 				TreeNode gNode = new TreeNode(GrabberSite);
 				Main.Nodes.Add(gNode);
@@ -1002,7 +967,27 @@ namespace WebEPG_conf
 								TreeNode tNode = new TreeNode(info.FullName);
 								string [] tag = new string[2];
 								tag[0] = info.ChannelID;
-								tag[1] = GrabberSite;
+								tag[1] = gInfo.GrabberID;
+								tNode.Tag = tag;
+								gNode.Nodes.Add(tNode);
+								if(info.GrabberList == null)
+									info.GrabberList = new SortedList();
+								if(info.GrabberList[gInfo.GrabberID] == null)
+									info.GrabberList.Add(gInfo.GrabberID, gInfo);
+							}
+							else
+							{
+								info = new ChannelInfo();
+								info.ChannelID = id.InnerXml;
+								info.FullName = info.ChannelID;
+								info.GrabberList = new SortedList();
+								info.GrabberList.Add(gInfo.GrabberID, gInfo);
+								hChannelInfo.Add(info.ChannelID, info);
+
+								TreeNode tNode = new TreeNode(info.FullName);
+								string [] tag = new string[2];
+								tag[0] = info.ChannelID;
+								tag[1] = gInfo.GrabberID;
 								tNode.Tag = tag;
 								gNode.Nodes.Add(tNode);
 							}
@@ -1012,7 +997,7 @@ namespace WebEPG_conf
 			}
 		}
 
-		private void GetTreeChannels(ref TreeNode Main, string Location)
+		private void GetTreeChannels(string Location) //ref TreeNode Main, string Location)
 		{
 			System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo(Location);
 			if(dir.Exists) 
@@ -1024,21 +1009,21 @@ namespace WebEPG_conf
 					{     
 						//LOAD FOLDERS
 						System.IO.DirectoryInfo g = dirList[i];
-						TreeNode MainNext = new TreeNode(g.Name); //
-						GetTreeChannels(ref MainNext, g.FullName);
-						Main.Nodes.Add(MainNext);
+						//TreeNode MainNext = new TreeNode(g.Name); //
+						GetTreeChannels(g.FullName); //ref MainNext, g.FullName);
+						//Main.Nodes.Add(MainNext);
 						//MainNext.Tag = (g.FullName); 
 					}
 				}
 				else
 				{
-					GetChannels(ref Main, Location);
+					GetChannels(Location); //ref Main, Location);
 				}
 			}
 		}
 
 
-		private void GetChannels(ref TreeNode Main, string Location)
+		private void GetChannels(string Location) //ref TreeNode Main, string Location)
 		{
 			System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo(Location); 
 			Log.WriteFile(Log.LogType.Log, false, "WebEPG Config: Directory: {0}", Location);
@@ -1048,8 +1033,8 @@ namespace WebEPG_conf
 				ChannelInfo info = GetChannelInfo(file.FullName);
 				if(info != null)
 				{
-					TreeNode cNode = new TreeNode(info.FullName);
-					Main.Nodes.Add(cNode);
+					//TreeNode cNode = new TreeNode(info.FullName);
+					//Main.Nodes.Add(cNode);
 
 					if(info.GrabberList.Count != 0)
 					{
@@ -1058,12 +1043,12 @@ namespace WebEPG_conf
 
 						while (Enumerator.MoveNext())
 						{
-							TreeNode tNode = new TreeNode((string) Enumerator.Key);
-							string [] tag = new string[2];
-							tag[0] = info.ChannelID;
-							tag[1] = (string) Enumerator.Key;
-							tNode.Tag = tag;
-							cNode.Nodes.Add(tNode);
+							//TreeNode tNode = new TreeNode((string) Enumerator.Key);
+							//string [] tag = new string[2];
+							//tag[0] = info.ChannelID;
+							//tag[1] = (string) Enumerator.Key;
+							//tNode.Tag = tag;
+							//cNode.Nodes.Add(tNode);
 							if(hChannelInfo[info.ChannelID] == null)
 								hChannelInfo.Add(info.ChannelID, info);
 						}
@@ -1096,24 +1081,24 @@ namespace WebEPG_conf
 				return null;
 			}
 
-			info.GrabberList = new Hashtable();
-			for(int i=0; i < GrabberCount; i++)
-			{
-				string GrabberNumb = "Grabber" + (i+1).ToString();
-				string GrabberID = xmlreader.GetValueAsString("ChannelInfo", GrabberNumb, "");
-				if(GrabberID == "")
-				{
-					Log.WriteFile(Log.LogType.Log, false, "WebEPG Config: File error: {0} not found", GrabberNumb);
-					return null;
-				}
-				
-				int start = GrabberID.IndexOf("\\") + 1;
-				int end =  GrabberID.LastIndexOf(".");
-							
-				string GrabberSite = GrabberID.Substring(start, end-start);
-				GrabberSite = GrabberSite.Replace("_", ".");
-				info.GrabberList.Add(GrabberSite, GrabberID); 
-			}
+			info.GrabberList = new SortedList();
+//			for(int i=0; i < GrabberCount; i++)
+//			{
+//				string GrabberNumb = "Grabber" + (i+1).ToString();
+//				string GrabberID = xmlreader.GetValueAsString("ChannelInfo", GrabberNumb, "");
+//				if(GrabberID == "")
+//				{
+//					Log.WriteFile(Log.LogType.Log, false, "WebEPG Config: File error: {0} not found", GrabberNumb);
+//					return null;
+//				}
+//				
+//				int start = GrabberID.IndexOf("\\") + 1;
+//				int end =  GrabberID.LastIndexOf(".");
+//							
+//				string GrabberSite = GrabberID.Substring(start, end-start);
+//				GrabberSite = GrabberSite.Replace("_", ".");
+//				info.GrabberList.Add(GrabberSite, GrabberID); 
+//			}
 
 			return info;
 		}
@@ -1145,6 +1130,137 @@ namespace WebEPG_conf
 			}
 
 			bUpdate.Visible=false;
+		}
+
+		private void LoadConfig()
+		{
+			Log.WriteFile(Log.LogType.Log, false, "WebEPG Config: Loading Channels");
+			hChannelInfo = new Hashtable();
+
+			if(System.IO.File.Exists(startDirectory + "\\channels\\channels.xml"))
+			{
+				Log.WriteFile(Log.LogType.Log, false, "WebEPG Config: Loading Existing channels.xml");
+				MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml(startDirectory + "\\channels\\channels.xml");
+				int channelCount = xmlreader.GetValueAsInt("ChannelInfo", "TotalChannels", 0);	
+
+				for (int i = 0; i < channelCount; i++)
+				{
+					ChannelInfo channel = new ChannelInfo();
+					channel.ChannelID = xmlreader.GetValueAsString(i.ToString(), "ChannelID", "");
+					channel.FullName = xmlreader.GetValueAsString(i.ToString(), "FullName", "");
+					hChannelInfo.Add(channel.ChannelID, channel);
+				}
+			}
+
+			Log.WriteFile(Log.LogType.Log, false, "WebEPG Config: Loading Grabbers");
+			hGrabberInfo = new Hashtable();
+			CountryList = new SortedList();
+			tGrabbers = new TreeNode("Web Sites");
+			if(System.IO.Directory.Exists(startDirectory + "\\Grabbers"))
+				GetTreeGrabbers(ref tGrabbers, startDirectory + "\\Grabbers");
+			else
+				Log.WriteFile(Log.LogType.Log, true, "WebEPG Config: Cannot find grabbers directory");
+
+
+			IDictionaryEnumerator Enumerator = hChannelInfo.GetEnumerator();
+			while (Enumerator.MoveNext())
+			{
+				ChannelInfo info = (ChannelInfo) Enumerator.Value;
+				if(info.ChannelID != null && info.FullName != null)
+				{
+					if(info.GrabberList != null)
+					{
+						IDictionaryEnumerator grabEnum = info.GrabberList.GetEnumerator();
+						while (grabEnum.MoveNext())
+						{
+							GrabberInfo gInfo = (GrabberInfo) grabEnum.Value;
+							SortedList chList = (SortedList) CountryList[gInfo.Country];
+							if(chList[info.ChannelID] == null)
+							{
+								chList.Add(info.ChannelID, gInfo.GrabberID);
+								//CountryList.Remove(gInfo.Country);
+								//CountryList.Add(gInfo.Country, chList);
+							}
+						}
+					}
+				}
+			}
+
+			tChannels = new TreeNode("Channels");
+			IDictionaryEnumerator countryEnum = CountryList.GetEnumerator();
+			while (countryEnum.MoveNext())
+			{
+				SortedList chList = (SortedList) countryEnum.Value;
+				TreeNode cNode = new TreeNode();
+				cNode.Text = (string) countryEnum.Key;
+
+				IDictionaryEnumerator chEnum = chList.GetEnumerator();
+				while (chEnum.MoveNext())
+				{
+					TreeNode chNode = new TreeNode();
+
+					ChannelInfo info = (ChannelInfo) hChannelInfo[chEnum.Key];
+					chNode.Text = info.FullName;
+					string [] tag = new string[2];
+					tag[0] = info.ChannelID;
+					tag[1] = (string) chEnum.Value;
+					chNode.Tag = tag;
+
+					cNode.Nodes.Add(chNode);
+				}
+
+				tChannels.Nodes.Add(cNode);
+			}
+
+			//
+			// TODO: Add any constructor code after InitializeComponent call
+			//
+
+			ChannelList = new SortedList();
+
+			if(System.IO.File.Exists(startDirectory + "\\WebEPG.xml"))
+			{
+				Log.WriteFile(Log.LogType.Log, false, "WebEPG Config: Loading Existing WebEPG.xml");
+				MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml(startDirectory + "\\WebEPG.xml");
+				nMaxGrab.Value = xmlreader.GetValueAsInt("General", "MaxDays", 1);
+				int channelCount = xmlreader.GetValueAsInt("ChannelMap", "Count", 0);	
+
+				for (int i = 1; i <= channelCount; i++)
+				{
+					ChannelInfo channel = new ChannelInfo();
+					channel.ChannelID = xmlreader.GetValueAsString(i.ToString(), "ChannelID", "");
+					channel.DisplayName = xmlreader.GetValueAsString(i.ToString(), "DisplayName", "");
+
+					if(ChannelList[channel.DisplayName] == null)
+					{
+
+						ChannelInfo info = (ChannelInfo) hChannelInfo[channel.ChannelID];
+						channel.FullName = "(Unknown)";
+						if(info != null)
+							channel.FullName = info.FullName;
+
+						string GrabberID = xmlreader.GetValueAsString(i.ToString(), "Grabber1", "");
+						if(GrabberID != "")
+						{
+							int start = GrabberID.IndexOf("\\") + 1;
+							int end =  GrabberID.LastIndexOf(".");
+							
+							string GrabberSite = GrabberID.Substring(start, end-start);
+							GrabberSite = GrabberSite.Replace("_", ".");
+							channel.PrimaryGrabberName = GrabberSite;
+							channel.PrimaryGrabberID = GrabberID;
+							channel.Linked = xmlreader.GetValueAsBool(i.ToString(), "Grabber1-Linked", false);
+							if(channel.Linked)
+							{
+								channel.linkStart = xmlreader.GetValueAsInt(i.ToString(), "Grabber1-Start", 18);
+								channel.linkEnd = xmlreader.GetValueAsInt(i.ToString(), "Grabber1-End", 23);
+							}
+
+							ChannelList.Add(channel.DisplayName, channel);
+						}
+					}
+				}
+			}
 		}
 	}
 }
