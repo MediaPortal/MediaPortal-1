@@ -2009,6 +2009,7 @@ namespace MediaPortal.TV.Recording
 			transp.channels=null;
 			m_analyzerInterface.ResetParser();
 
+			Log.WriteFile(Log.LogType.Capture,"auto-tune ss2: get channels()");
 			using (DVBSections sections = new DVBSections())
 			{
 				ushort count=0;
