@@ -831,9 +831,9 @@ STDMETHODIMP CStreamAnalyzer::GetMHWTitle(WORD program, WORD* id, WORD* transpor
 	m_pMHWPin1->m_MHWParser.GetTitle(program, id, transportId, networkId, channelId, programId, themeId, PPV, Summaries, duration, dateStart,timeStart,title,programName);
 	return S_OK;
 }
-STDMETHODIMP CStreamAnalyzer::GetMHWChannel(WORD channelId, WORD* networkId, WORD* transportId, char** channelName)
+STDMETHODIMP CStreamAnalyzer::GetMHWChannel(WORD channelNr, WORD* channelId,WORD* networkId, WORD* transportId, char** channelName)
 {
-	m_pMHWPin2->m_MHWParser.GetChannel(channelId, networkId, transportId, channelName);
+	m_pMHWPin2->m_MHWParser.GetChannel(channelNr,channelId, networkId, transportId, channelName);
 	return S_OK;
 }
 STDMETHODIMP CStreamAnalyzer::GetMHWSummary(WORD programId, char** summary)

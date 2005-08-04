@@ -197,19 +197,20 @@ void CMHWParser::GetTitle(int program, WORD* id, WORD* transportId, WORD* networ
 		*channelId, *programId, *title);
 }
 
-void CMHWParser::GetChannel(WORD channelId, WORD* networkId, WORD* transportId, char** channelName)
+void CMHWParser::GetChannel(WORD channelNr, WORD* channelId, WORD* networkId, WORD* transportId, char** channelName)
 {
 	*channelName="";
 	
-	if (channelId>=m_vecChannels.size()) return;
+	if (channelNr>=m_vecChannels.size()) return;
 
 	imapChannels it=m_vecChannels.begin();
 	int count=0;
-	while (count < channelId) { ++it; ++count;}
+	while (count < channelNr) { ++it; ++count;}
 	*networkId=it->NetworkID;
 	*transportId=it->TransponderID;
+	*channelId=it->ChannelID;
 	*channelName=(char*)it->ChannelName.c_str();
-	Log("MHW:GetChannel(%d) size:%d onid:%x tsid:%x name:%s", channelId,m_vecChannels.size(),*networkId,*transportId,*channelName);
+	Log("MHW:GetChannel(%d) size:%d cid:%x onid:%x tsid:%x name:%s", channelNr,m_vecChannels.size(),*channelId,*networkId,*transportId,*channelName);
 	return;
 }
 

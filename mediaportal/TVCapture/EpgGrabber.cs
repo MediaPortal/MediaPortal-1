@@ -208,7 +208,7 @@ namespace MediaPortal.TV.Recording
 							continue;
 						}
 
-						Log.WriteFile(Log.LogType.EPG,"atsc-grab: {0} {1}-{2} {3} {4}", tv.Channel,tv.Start,tv.End,tv.Title);
+						Log.WriteFile(Log.LogType.EPG,"atsc-grab: {0} {1}-{2} {3}", tv.Channel,tv.Start,tv.End,tv.Title);
 						ArrayList programsInDatabase = new ArrayList();
 						TVDatabase.GetProgramsPerChannel(tv.Channel,tv.Start+1,tv.End-1,ref programsInDatabase);
 						if(programsInDatabase.Count==0)
@@ -239,13 +239,13 @@ namespace MediaPortal.TV.Recording
 				if (titleCount<=0) return;
 				for (short i=0; i < titleCount; ++i)
 				{
-					short id=0,transportid=0, networkid=0, channelid=0, programid=0, themeid=0, PPV=0,duration=0;
+					short id=0,transportid=0, networkid=0, channelnr=0, channelid=0, programid=0, themeid=0, PPV=0,duration=0;
 					byte summaries=0;
 					uint datestart=0,timestart=0; 
 					IntPtr ptrTitle,ptrProgramName;
 					IntPtr ptrChannelName,ptrSummary, ptrTheme;
-					MHWInterface.GetMHWTitle(i,ref id, ref transportid, ref networkid, ref channelid, ref programid, ref themeid, ref PPV, ref summaries, ref duration, ref datestart,ref timestart, out ptrTitle,out ptrProgramName);
-					MHWInterface.GetMHWChannel(channelid,ref networkid, ref transportid,out ptrChannelName);
+					MHWInterface.GetMHWTitle(i,ref id, ref transportid, ref networkid, ref channelnr, ref programid, ref themeid, ref PPV, ref summaries, ref duration, ref datestart,ref timestart, out ptrTitle,out ptrProgramName);
+					MHWInterface.GetMHWChannel(channelnr,ref channelid,ref networkid, ref transportid,out ptrChannelName);
 					MHWInterface.GetMHWSummary(programid, out ptrSummary);
 					MHWInterface.GetMHWTheme(themeid, out ptrTheme);
 
@@ -285,7 +285,7 @@ namespace MediaPortal.TV.Recording
 
 					if (Network==NetworkType.DVBS)
 					{
-							channelName=TVDatabase.GetSatChannelName(channelid,transportid);
+							channelName=TVDatabase.GetSatChannelName(channelid,networkid);
 					}
 					else
 					{
@@ -303,7 +303,7 @@ namespace MediaPortal.TV.Recording
 							{
 								case NetworkType.DVBC:
 									TVDatabase.GetDVBCTuneRequest(chan.ID,out provider,out freq, out symbolrate,out innerFec,out modulation, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out audio1,out audio2,out audio3,out ac3Pid, out audioLanguage, out audioLanguage1,out audioLanguage2,out audioLanguage3,out HasEITPresentFollow,out HasEITSchedule,out pcrPid);
-									if (channelid==SID && TSID==transportid)
+									if (channelid==SID && TSID==networkid)
 									{
 										channelName=chan.Name;
 									}
@@ -313,7 +313,7 @@ namespace MediaPortal.TV.Recording
 									break;
 								case NetworkType.DVBT:
 									TVDatabase.GetDVBTTuneRequest(chan.ID,out provider,out freq, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out bandWidth, out audio1,out audio2,out audio3,out ac3Pid, out audioLanguage, out audioLanguage1,out audioLanguage2,out audioLanguage3,out HasEITPresentFollow,out HasEITSchedule,out pcrPid);
-									if (channelid==SID && TSID==transportid)
+									if (channelid==SID && TSID==networkid)
 									{
 										channelName=chan.Name;
 									}
@@ -323,7 +323,11 @@ namespace MediaPortal.TV.Recording
 						}//foreach (TVChannel chan in channels)
 					}
 
-					if (channelName==String.Empty) continue;
+					if (channelName==String.Empty) 
+					{
+						Log.WriteFile(Log.LogType.EPG,"mhw-epg: unknown channel cid:{0:X} tsid:{1:X} ONID:{2:X}",channelid,transportid,networkid);
+						continue;
+					}
 
 					TVProgram tv=new TVProgram();
 					tv.Start=Util.Utils.datetolong(programStartTime);

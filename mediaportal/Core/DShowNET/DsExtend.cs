@@ -93,7 +93,7 @@ namespace DShowNET
 		int GetMHWTitle(Int16 program, ref Int16 id, ref Int16 transportId, ref Int16 networkId, ref Int16 channelId, ref Int16 programId, ref Int16 themeId, ref Int16 PPV, ref byte Summaries, ref Int16 duration, ref uint dateStart, ref uint timeStart,out IntPtr title,out IntPtr programName);
 		
 		[PreserveSig]
-		int GetMHWChannel(Int16 channelId, ref Int16 networkId, ref Int16 transportId, out IntPtr channelName);
+		int GetMHWChannel(Int16 channelNr, ref Int16 channelId, ref Int16 networkId, ref Int16 transportId, out IntPtr channelName);
 		
 		[PreserveSig]
 		int GetMHWSummary(Int16 programId, out IntPtr summary);
