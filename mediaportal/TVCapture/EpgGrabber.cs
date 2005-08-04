@@ -139,10 +139,81 @@ namespace MediaPortal.TV.Recording
 						minVal+=604800;
 
 					programStartTime=programStartTime.AddSeconds(minVal);
-					Log.WriteFile( Log.LogType.EPG,"mhw-epg: channel:{0} time:{1} {2} duration:{3} program:{4} title:{5} theme:{6} summary:{7} onid:{8} tsid:{9} progid:{10} chanid:{11}",
-						channelName,programStartTime.ToShortTimeString(),programStartTime.ToShortDateString(),
-						duration,programName,title,theme,summary, networkid, transportid,programid,channelid);
 
+
+					if (Network==NetworkType.DVBS)
+					{
+							channelName=TVDatabase.GetSatChannelName(channelid,transportid);
+					}
+					else
+					{
+						ArrayList channels = new ArrayList();
+						TVDatabase.GetChannels(ref channels);
+						int freq, symbolrate,innerFec,modulation, ONID, TSID, SID,pcrPid;
+						int audioPid, videoPid, teletextPid, pmtPid,bandWidth;
+						int audio1, audio2, audio3, ac3Pid;
+						string audioLanguage,  audioLanguage1, audioLanguage2, audioLanguage3;
+						bool HasEITPresentFollow,HasEITSchedule;
+						string provider="";
+						foreach (TVChannel chan in channels)
+						{
+							switch (Network)
+							{
+								case NetworkType.DVBC:
+									TVDatabase.GetDVBCTuneRequest(chan.ID,out provider,out freq, out symbolrate,out innerFec,out modulation, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out audio1,out audio2,out audio3,out ac3Pid, out audioLanguage, out audioLanguage1,out audioLanguage2,out audioLanguage3,out HasEITPresentFollow,out HasEITSchedule,out pcrPid);
+									if (channelid==SID && TSID==transportid)
+									{
+										channelName=chan.Name;
+									}
+									break;
+								case NetworkType.DVBS:
+									channelName=TVDatabase.GetSatChannelName(channelid,transportid);
+									break;
+								case NetworkType.DVBT:
+									TVDatabase.GetDVBTTuneRequest(chan.ID,out provider,out freq, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out bandWidth, out audio1,out audio2,out audio3,out ac3Pid, out audioLanguage, out audioLanguage1,out audioLanguage2,out audioLanguage3,out HasEITPresentFollow,out HasEITSchedule,out pcrPid);
+									if (channelid==SID && TSID==transportid)
+									{
+										channelName=chan.Name;
+									}
+									break;
+							}
+							if (channelName!=String.Empty) break;
+						}//foreach (TVChannel chan in channels)
+					}
+
+					if (channelName==String.Empty) continue;
+
+					TVProgram tv=new TVProgram();
+					tv.Start=Util.Utils.datetolong(programStartTime);
+					tv.End=Util.Utils.datetolong(programStartTime.AddMinutes(duration));
+					tv.Channel=channelName;
+					tv.Genre=theme;
+					tv.Title=title;
+					tv.Description=summary;
+					if(tv.Title==null)
+						tv.Title=String.Empty;
+
+					if(tv.Description==null)
+						tv.Description=String.Empty;
+
+					if(tv.Description==String.Empty)
+						tv.Description=title;
+
+					if(tv.Title==String.Empty)
+						tv.Title=title;
+
+					if(tv.Title==String.Empty || tv.Title=="n.a.") 
+					{
+						continue;
+					}
+
+					Log.WriteFile(Log.LogType.EPG,"mhw-grab: {0} {1}-{2} {3} {4}", tv.Channel,tv.Start,tv.End,tv.Title);
+					ArrayList programsInDatabase = new ArrayList();
+					TVDatabase.GetProgramsPerChannel(tv.Channel,tv.Start+1,tv.End-1,ref programsInDatabase);
+					if(programsInDatabase.Count==0)
+					{
+						TVDatabase.AddProgram(tv);
+					}
 				}
 			}
 			catch(Exception ex)
