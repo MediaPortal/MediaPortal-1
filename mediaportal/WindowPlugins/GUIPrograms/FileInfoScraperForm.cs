@@ -138,6 +138,7 @@ namespace WindowPlugins.GUIPrograms
       this.components = new System.ComponentModel.Container();
       System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(FileInfoScraperForm));
       this.bottomPanel = new System.Windows.Forms.Panel();
+      this.label2 = new System.Windows.Forms.Label();
       this.progressPanel = new System.Windows.Forms.Panel();
       this.cancelButton = new System.Windows.Forms.Button();
       this.progressStatusLabel = new System.Windows.Forms.Label();
@@ -175,7 +176,6 @@ namespace WindowPlugins.GUIPrograms
       this.menuItem4 = new System.Windows.Forms.MenuItem();
       this.menuData = new System.Windows.Forms.MenuItem();
       this.menuImages = new System.Windows.Forms.MenuItem();
-      this.label2 = new System.Windows.Forms.Label();
       this.bottomPanel.SuspendLayout();
       this.progressPanel.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.MinRelevanceNum)).BeginInit();
@@ -203,6 +203,16 @@ namespace WindowPlugins.GUIPrograms
       this.bottomPanel.Name = "bottomPanel";
       this.bottomPanel.Size = new System.Drawing.Size(752, 112);
       this.bottomPanel.TabIndex = 0;
+      // 
+      // label2
+      // 
+      this.label2.Location = new System.Drawing.Point(520, 8);
+      this.label2.Name = "label2";
+      this.label2.Size = new System.Drawing.Size(224, 40);
+      this.label2.TabIndex = 28;
+      this.label2.Text = "Warning: Don\'t overuse the allgame scraper! Do lookups with small sets of games (" +
+        "max. 20 games).";
+      this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
       // 
       // progressPanel
       // 
@@ -568,16 +578,6 @@ namespace WindowPlugins.GUIPrograms
       this.menuImages.Text = "Download images only";
       this.menuImages.Click += new System.EventHandler(this.menuImages_Click);
       // 
-      // label2
-      // 
-      this.label2.Location = new System.Drawing.Point(520, 8);
-      this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(224, 40);
-      this.label2.TabIndex = 28;
-      this.label2.Text = "Warning: Don\'t overuse the allgame scraper! Do lookups with small sets of games (" +
-        "max. 20 games).";
-      this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-      // 
       // FileInfoScraperForm
       // 
       this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
@@ -649,7 +649,14 @@ namespace WindowPlugins.GUIPrograms
     {
       progressPanel.Enabled = true;
       progressBar.Value = 0;
-      progressBar.Maximum = FileList.CheckedItems.Count - 1;
+      if (FileList.CheckedItems.Count - 1 > 0)
+      {
+        progressBar.Maximum = FileList.CheckedItems.Count - 1;
+      }
+      else
+      {
+        progressBar.Maximum = 1;
+      }
       progressBar.Step = 1;
       progressStatusLabel.Text = msg;
       mStartTime = (int)(DateTime.Now.Ticks / 10000); // reset timer!
@@ -1021,6 +1028,11 @@ namespace WindowPlugins.GUIPrograms
 
     private void FileList_MouseUp(object sender, MouseEventArgs e)
     {
+      SyncButtons();
+    }
+     
+    void SyncButtons()
+    {
       btnStartSearch.Enabled = (FileList.CheckedItems.Count > 0);
       if (!btnStartSearch.Enabled)
       {
@@ -1100,7 +1112,6 @@ namespace WindowPlugins.GUIPrograms
     {
       SaveSearch(ScraperSaveType.Images);
     }
-
 
   }
 }
