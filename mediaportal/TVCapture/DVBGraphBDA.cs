@@ -1008,6 +1008,7 @@ namespace MediaPortal.TV.Recording
 				m_epgGrabber.EPGInterface=m_epgGrabberInterface;
 				m_epgGrabber.MHWInterface=m_mhwGrabberInterface;
 				m_epgGrabber.ATSCInterface=m_atscGrabberInterface;
+				m_epgGrabber.AnalyzerInterface=m_analyzerInterface;
 				m_epgGrabber.Network=Network();
 			
 				return true;

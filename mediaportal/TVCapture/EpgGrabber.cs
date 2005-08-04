@@ -16,6 +16,7 @@ namespace MediaPortal.TV.Recording
 		IEPGGrabber		epgInterface=null;
 		IATSCGrabber	atscInterface=null;
 		IMHWGrabber		mhwInterface=null;
+		IStreamAnalyzer analyzerInterface=null;
 		NetworkType networkType;
 		bool        grabEPG=false;
 		bool        isGrabbing=false;
@@ -26,6 +27,11 @@ namespace MediaPortal.TV.Recording
 		{
 			get { return epgInterface;}
 			set { epgInterface=value;}
+		}
+		public IStreamAnalyzer AnalyzerInterface
+		{
+			get { return analyzerInterface;}
+			set { analyzerInterface=value;}
 		}
 		public IMHWGrabber MHWInterface
 		{
@@ -120,6 +126,7 @@ namespace MediaPortal.TV.Recording
 		#region ATSC
 		void ParseATSC()
 		{
+			if (AnalyzerInterface==null) return;
 			try
 			{
 				Log.WriteFile(Log.LogType.EPG,"atsc-epg: atsc ready");
@@ -142,20 +149,20 @@ namespace MediaPortal.TV.Recording
 					description=description.Trim();
 
 					if (title.Length==0) continue;
-					IStreamAnalyzer	analyzer = ATSCInterface as IStreamAnalyzer;
-					if (analyzer==null) continue;
 
+					// get channel info
 					DVBSections.ChannelInfo chi=new MediaPortal.TV.Recording.DVBSections.ChannelInfo();
 					DVBSections sections = new DVBSections();
 					UInt16 len=0;
 					int hr=0;
-					hr=analyzer.GetCISize(ref len);					
+					hr=AnalyzerInterface.GetCISize(ref len);					
 					IntPtr mmch=Marshal.AllocCoTaskMem(len);
-					hr=analyzer.GetChannel((UInt16)source_id,mmch);
+					hr=AnalyzerInterface.GetChannel((UInt16)source_id,mmch);
 					chi=sections.GetChannelInfo(mmch);
 					Marshal.FreeCoTaskMem(mmch);
 
 
+					// find channel in tvdatabase
 					ArrayList channels = new ArrayList();
 					TVDatabase.GetChannels(ref channels);
 					foreach (TVChannel chan in channels)
@@ -171,11 +178,12 @@ namespace MediaPortal.TV.Recording
 						TVDatabase.GetATSCTuneRequest(chan.ID,out physicalChannel,out providerName,out frequency, out symbolrate, out innerFec, out modulation,out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out audio1,out audio2,out audio3,out ac3Pid, out audioLanguage, out audioLanguage1,out audioLanguage2,out audioLanguage3, out minorChannel,out majorChannel,out HasEITPresentFollow,out HasEITSchedule,out pcrPid);
 						if (minorChannel!=chi.minorChannel || majorChannel!=chi.majorChannel) continue;
 						
+						//got tv channel, now calculate start time
 						DateTime programStartTimeUTC = new DateTime(1980,1,6,0,0,0,0);
 						programStartTimeUTC.AddSeconds(starttime);
-
 						DateTime programStartTime=programStartTimeUTC.ToLocalTime();
 
+						//add epg event to database
 						TVProgram tv=new TVProgram();
 						tv.Start=Util.Utils.datetolong(programStartTime);
 						tv.End=Util.Utils.datetolong(programStartTime.AddMinutes(length_in_mins));
@@ -216,7 +224,6 @@ namespace MediaPortal.TV.Recording
 				Log.WriteFile(Log.LogType.Error,true,"atsc-epg: Exception while parsing atsc:{0} {1} {2}",
 					ex.Message,ex.Source,ex.StackTrace);
 			}
-
 		}
 		#endregion
 
