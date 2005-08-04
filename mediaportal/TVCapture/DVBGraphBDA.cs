@@ -20,6 +20,7 @@
  */
 //#define HW_PID_FILTERING
 //#define DUMP
+//#define USEMTSWRITER
 #if (UseCaptureCardDefinitions)
 using System;
 using System.Collections;
@@ -218,6 +219,10 @@ namespace MediaPortal.TV.Recording
 		IMHWGrabber							m_mhwGrabberInterface		= null;
 		IATSCGrabber						m_atscGrabberInterface	= null;
 		IBaseFilter							m_dvbAnalyzer=null;
+		IBaseFilter						  m_tsWriter=null;
+		IMPTSWriter							m_tsWriterInterface=null;
+		IPin										m_pinMTS=null;
+
 		VideoAnalyzer						m_mpeg2Analyzer					= null;
 		IGraphBuilder           m_graphBuilder					= null;
 		ICaptureGraphBuilder2   m_captureGraphBuilder		= null;
@@ -717,6 +722,12 @@ namespace MediaPortal.TV.Recording
 				IMpeg2Demultiplexer   demuxer=m_MPEG2Demultiplexer as IMpeg2Demultiplexer;
 
 
+#if USEMTSWRITER
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph() add MPTSWriter");
+				m_tsWriter=(IBaseFilter) Activator.CreateInstance( Type.GetTypeFromCLSID( Clsid.MPTSWriter, true ) );
+				m_tsWriterInterface = m_tsWriter as IMPTSWriter;
+#endif
+
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph() add stream analyzer");
 				m_dvbAnalyzer=(IBaseFilter) Activator.CreateInstance( Type.GetTypeFromCLSID( Clsid.MPStreamAnalyzer, true ) );
 				m_analyzerInterface=(IStreamAnalyzer)m_dvbAnalyzer;
@@ -958,6 +969,20 @@ namespace MediaPortal.TV.Recording
 						return false;
 					}
 
+#if USEMTSWRITER
+					Log.Write("DVBGraphBDA:Create MPTS output");
+					AMMediaType mtMTS = new AMMediaType();
+					mtMTS.majorType=MediaType.Stream;
+					mtMTS.subType=MediaSubType.None;
+					mtMTS.formatType=FormatType.None;
+
+					hr=demuxer.CreateOutputPin(ref mtMTS, "MTS", out m_pinMTS);
+					if (hr!=0 || m_pinMTS==null)
+					{
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to create MTS pin:0x{0:X}",hr);
+						return false;
+					}
+#endif
 					Log.Write("DVBGraphBDA:Demuxer is setup");
 
 				}
@@ -1098,8 +1123,13 @@ namespace MediaPortal.TV.Recording
 				m_analyzerInterface=null;
 				m_epgGrabberInterface=null;
 				m_mhwGrabberInterface=null;
+				m_tsWriterInterface=null;
 
 				Log.Write("free pins");
+				if (m_pinMTS!=null)
+					Marshal.ReleaseComObject(m_pinMTS);
+				m_pinMTS				= null;
+
 				if (m_demuxSectionsPin!=null)
 					Marshal.ReleaseComObject(m_demuxSectionsPin);
 				m_demuxSectionsPin				= null;
@@ -1134,6 +1164,14 @@ namespace MediaPortal.TV.Recording
 					hr=Marshal.ReleaseComObject(m_dvbAnalyzer);
 					if (hr!=0) Log.Write("ReleaseComObject(m_dvbAnalyzer):{0}",hr);
 					m_dvbAnalyzer=null;
+				}
+
+				if (m_tsWriter!=null)
+				{
+					Log.Write("free MPTSWriter");
+					hr=Marshal.ReleaseComObject(m_tsWriter);
+					if (hr!=0) Log.Write("ReleaseComObject(m_tsWriter):{0}",hr);
+					m_tsWriter=null;
 				}
 							
 				if (m_videoWindow != null)
@@ -1555,7 +1593,6 @@ namespace MediaPortal.TV.Recording
 				TuneChannel(channel);
 
 				
-			//SetupDemuxer(m_DemuxVideoPin,currentTuningObject.VideoPid,m_DemuxAudioPin,currentTuningObject.Audio1,m_pinAC3Out,currentTuningObject.AC3Pid);
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Viewing..");
 			return true;
 		}//public bool StartViewing(AnalogVideoStandard standard, int iChannel,int country)
@@ -2261,12 +2298,79 @@ namespace MediaPortal.TV.Recording
 			return signal;
 		}//IBDA_LNBInfo[] GetBDALNBInfoInterface()
 
+		void SetupMTSDemuxerPin()
+		{
+#if USEMTSWRITER
+			SetupDemuxerPin(m_pinMTS,currentTuningObject.AC3Pid,(int)MediaSampleContent.TransportPacket,true);
+			SetupDemuxerPin(m_pinMTS,currentTuningObject.AudioPid,(int)MediaSampleContent.TransportPacket,false);
+			SetupDemuxerPin(m_pinMTS,currentTuningObject.Audio1,(int)MediaSampleContent.TransportPacket,false);
+			SetupDemuxerPin(m_pinMTS,currentTuningObject.Audio2,(int)MediaSampleContent.TransportPacket,false);
+			//SetupDemuxerPin(m_pinMTS,currentTuningObject.SubtitlePid,(int)MediaSampleContent.TransportPacket,false);
+			SetupDemuxerPin(m_pinMTS,currentTuningObject.TeletextPid,(int)MediaSampleContent.TransportPacket,false);
+			SetupDemuxerPin(m_pinMTS,currentTuningObject.VideoPid,(int)MediaSampleContent.TransportPacket,false);
+			SetupDemuxerPin(m_pinMTS,currentTuningObject.PMTPid,(int)MediaSampleContent.TransportPacket,false);
+#endif
+		}
 
 		private bool CreateSinkSource(string fileName, bool useAC3)
 		{
 			if(m_graphState!=State.Created)
 				return false;
-			
+
+#if USEMTSWRITER
+			int hr=m_graphBuilder.AddFilter((IBaseFilter)m_tsWriter,"MPTS Writer");
+			if(hr!=0)
+			{
+				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot add MPTS Writer:{0:X}",hr);
+				return false;
+			}			
+			m_tsWriterInterface.ResetPids();
+			if (currentTuningObject.AC3Pid>0)
+				m_tsWriterInterface.SetAC3Pid((ushort)currentTuningObject.AC3Pid);
+			if (currentTuningObject.AudioPid>0)
+				m_tsWriterInterface.SetAudioPid((ushort)currentTuningObject.AudioPid);
+			if (currentTuningObject.Audio1>0)
+				m_tsWriterInterface.SetAudioPid((ushort)currentTuningObject.Audio1);
+			if (currentTuningObject.Audio2>0)
+				m_tsWriterInterface.SetAudioPid2((ushort)currentTuningObject.Audio2);
+			//m_tsWriterInterface.SetSubtitlePid((ushort)currentTuningObject.SubtitlePid);
+			if (currentTuningObject.TeletextPid>0)
+				m_tsWriterInterface.SetTeletextPid((ushort)currentTuningObject.TeletextPid);
+			if (currentTuningObject.VideoPid>0)
+				m_tsWriterInterface.SetVideoPid((ushort)currentTuningObject.VideoPid);
+			m_tsWriterInterface.SetPMTPid((ushort)currentTuningObject.PMTPid);
+
+			// connect demuxer->mpts writer
+			IPin mptsIn =DirectShowUtil.FindPinNr(m_tsWriter,PinDirection.Input,0);
+			if (mptsIn==null)
+			{
+				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot find MPTS input pin");
+				return false;
+			}
+			hr=m_graphBuilder.Connect(m_pinMTS,mptsIn);
+			if (hr!=0)
+			{
+				Marshal.ReleaseComObject(mptsIn);
+				mptsIn=null;
+				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot demuxer->MPTS writer:0x{0:X}",hr);
+				return false;
+			}
+			Marshal.ReleaseComObject(mptsIn);
+			mptsIn=null;
+
+			IFileSinkFilter fileWriter=m_tsWriter as IFileSinkFilter;
+			AMMediaType mt = new AMMediaType();
+			mt.majorType=MediaType.Stream;
+			mt.subType=MediaSubType.None;
+			mt.formatType=FormatType.None;
+			hr=fileWriter.SetFileName(fileName, ref mt);
+			if (hr!=0)
+			{
+				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot set filename on MPTS writer:0x{0:X}",hr);
+				return false;
+			}
+			return true;
+#else
 			int		hr				= 0;
 			IPin	pinObj0		= null;
 			IPin	pinObj1		= null;
@@ -2459,6 +2563,7 @@ namespace MediaPortal.TV.Recording
 			}
 			//			(m_graphBuilder as IMediaFilter).SetSyncSource(m_MPEG2Demultiplexer as IReferenceClock);
 			return true;
+#endif			
 		}//private bool CreateSinkSource(string fileName)
 
 		/// <summary>
@@ -3012,11 +3117,16 @@ namespace MediaPortal.TV.Recording
 							SetupDemuxer(m_DemuxVideoPin,0,m_DemuxAudioPin,0,m_pinAC3Out,0);
 							SetupDemuxerPin(m_pinMPG1Out,currentTuningObject.AudioPid,(int)MediaSampleContent.TransportPayload,true);
 							SetupDemuxerPin(m_pinMPG1Out,currentTuningObject.PCRPid,(int)MediaSampleContent.TransportPacket,false);
+							
+							//setup demuxer MTS pin 
+							SetupMTSDemuxerPin();
 						}
 						else
 						{
 							Log.Write("DVBGraphBDA:SendPMT() set demux: video pid:{0:X} audio pid:{1:X} AC3 pid:{2:X}",currentTuningObject.VideoPid,currentTuningObject.AudioPid,currentTuningObject.AC3Pid);
 							SetupDemuxer(m_DemuxVideoPin,currentTuningObject.VideoPid,m_DemuxAudioPin,currentTuningObject.AudioPid, m_pinAC3Out,currentTuningObject.AC3Pid);
+							//setup demuxer MTS pin 
+							SetupMTSDemuxerPin();
 						}
 					}
 					catch(Exception)
@@ -4585,6 +4695,8 @@ namespace MediaPortal.TV.Recording
 					SetupDemuxer(m_DemuxVideoPin,0,m_DemuxAudioPin,0,m_pinAC3Out,0);
 					SetupDemuxerPin(m_pinMPG1Out,currentTuningObject.AudioPid,(int)MediaSampleContent.TransportPayload,true);
 					SetupDemuxerPin(m_pinMPG1Out,currentTuningObject.PCRPid,(int)MediaSampleContent.TransportPacket,false);
+					//setup demuxer MTS pin
+					SetupMTSDemuxerPin();
 
 					IMpeg2Demultiplexer mpeg2Demuxer= m_MPEG2Demultiplexer as IMpeg2Demultiplexer ;
 					if (mpeg2Demuxer!=null)
