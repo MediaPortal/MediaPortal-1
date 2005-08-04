@@ -6219,8 +6219,6 @@
     </tv>
   </capturecard>
 
-<!-- Post 0.1.3.0 release --->
-
   <capturecard commercialname="Hauppauge HVR-1300 Digital" capturename="Hauppauge WinTV 88x TS Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_96000070&amp;rev_05">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
