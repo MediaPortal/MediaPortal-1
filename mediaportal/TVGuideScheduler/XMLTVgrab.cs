@@ -32,7 +32,7 @@ namespace MediaPortal.TVGuideScheduler
 {
 	class XMLTVgrab
 	{
-		public static void BuildThreads(string[] daysToGrab,string grabber, string conf, string exe, string op, string args)
+		public static void BuildThreads(string[] daysToGrab,string grabber, string conf, string exe, string op, string args,bool runLowPrio)
 		{
 			//grab a single day per thread in multiple threads(much faster with tv_grab_uk_rt and others)
 			int i =0;
@@ -41,6 +41,8 @@ namespace MediaPortal.TVGuideScheduler
 			foreach (string s in daysToGrab) 
 			{	//start the threads
 				RunMutliGrabber helper = new RunMutliGrabber( System.Convert.ToInt32(s),grabber,conf,exe,op,args );      
+				if (runLowPrio)
+					grabThreads[i].Priority=ThreadPriority.Lowest;
 				grabThreads[i]= new Thread(new ThreadStart( helper.RunThread )) ;
 				grabThreads[i].Name = s;
 				grabThreads[i].Start();
@@ -92,7 +94,7 @@ namespace MediaPortal.TVGuideScheduler
 		}
 
 
-		public static bool RunGrabber(string grabber,string confFile,string path, string opFile,int days,int offset,string args)
+		public static bool RunGrabber(string grabber,string confFile,string path, string opFile,int days,int offset,string args, bool lowPrio)
 		{	//start an xmltv process to grab multiple days
 			string xmltvpath = path + "\\xmltv.exe";
 			string WorkingDir=xmltvpath.Substring(0, xmltvpath.Length - 9 );
@@ -106,7 +108,8 @@ namespace MediaPortal.TVGuideScheduler
 				xmltvgrabber.StartInfo.UseShellExecute = false;
 				xmltvgrabber.StartInfo.WorkingDirectory = WorkingDir;
 				xmltvgrabber.Start();
-                xmltvgrabber.PriorityClass = ProcessPriorityClass.BelowNormal;
+        if (lowPrio)        
+					xmltvgrabber.PriorityClass = ProcessPriorityClass.BelowNormal;
 					
 				int i = 0;
 				while (!xmltvgrabber.HasExited)
@@ -127,7 +130,7 @@ namespace MediaPortal.TVGuideScheduler
 			}
 		}
 
-    public static bool RunGrabber(string grabber,string path, string opFile,int days,int offset)
+    public static bool RunGrabber(string grabber,string path, string opFile,int days,int offset, bool lowPrio)
     //overload for nl_wolf grabber
     {	//start an xmltv process to grab multiple days
       string xmltvpath = path + "\\xmltv.exe";
@@ -142,7 +145,8 @@ namespace MediaPortal.TVGuideScheduler
         xmltvgrabber.StartInfo.UseShellExecute = false;
         xmltvgrabber.StartInfo.WorkingDirectory = WorkingDir;
         xmltvgrabber.Start();
-		xmltvgrabber.PriorityClass = ProcessPriorityClass.BelowNormal;
+				if (lowPrio)
+					xmltvgrabber.PriorityClass = ProcessPriorityClass.BelowNormal;
 					
         int i = 0;
         while (!xmltvgrabber.HasExited)
