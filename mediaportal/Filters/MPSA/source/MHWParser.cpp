@@ -34,15 +34,15 @@ void CMHWParser::ParseChannels(byte* data, int dataLen)
 		buffer[16]=0;
 		ch.ChannelName=(char*)buffer;
 		
-//		Log("mhw-epg: channel '%s' with id 0x%x onid:0x%x tsid:0x%x found",ch.ChannelName.c_str(),ch.ChannelID,ch.NetworkID,ch.TransponderID);
+		Log("mhw-epg: channel '%s' with id 0x%x onid:0x%x tsid:0x%x found",ch.ChannelName.c_str(),ch.ChannelID,ch.NetworkID,ch.TransponderID);
 		m_vecChannels.push_back(ch);
 	}// for(int n=0
-	Log("mhw-epg: channels:%d", m_vecChannels.size()); 
+//	Log("mhw-epg: channels:%d", m_vecChannels.size()); 
 }
 void CMHWParser::ParseSummaries(byte* data, int dataLen)
 {
 	if (data==NULL) return;
-	if (dataLen<=2) return;
+	if (dataLen<=7) return;
 	dataLen=((data[1]-0x70)<<8)+data[2];
 	int n=0;
 	MHWSummary sum;
@@ -61,11 +61,11 @@ void CMHWParser::ParseSummaries(byte* data, int dataLen)
 		imapSummaries it=m_mapSummaries.find(sum.ProgramID);
 		if (it==m_mapSummaries.end())
 		{
-//			Log("mhw-epg: summary '%s' with id 0x%x found",sum.Description.c_str(),sum.ProgramID);
+			Log("mhw-epg: summary '%s' with id 0x%x found",sum.Description.c_str(),sum.ProgramID);
 			m_mapSummaries[sum.ProgramID]=sum;
 		}
 	}//if(m_summaryBuffer.Contains(sum)==false)
-	Log("mhw-epg: summaries:%d", m_mapSummaries.size());
+//	Log("mhw-epg: summaries:%d", m_mapSummaries.size());
 }
 void CMHWParser::ParseTitles(byte* data, int dataLen)
 {
@@ -119,7 +119,7 @@ void CMHWParser::ParseTitles(byte* data, int dataLen)
 	imapTitles it=m_mapTitles.find(prg.ID);
 	if (it==m_mapTitles.end())
 	{
-		//Log("mhw-epg: title %s with id %x found",prg.Title.c_str(),prg.ID);
+		Log("mhw-epg: title %s with id %x found",prg.Title.c_str(),prg.ID);
 		m_mapTitles[prg.ID]=prg;
 	}
 	Log("mhw-epg: titles:%d", m_mapTitles.size());
