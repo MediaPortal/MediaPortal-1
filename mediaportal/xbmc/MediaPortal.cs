@@ -81,6 +81,7 @@ public class MediaPortalApp : D3DApp, IRender
 	private RedEye redeyedevice;//PB00//
 	DateTime screenSaverTimer=DateTime.Now;
 	bool     useScreenSaver=true;
+  bool     restoreTopMost=false;
 #if AUTOUPDATE
     string m_strNewVersion = "";
     bool m_bNewVersionAvailable = false;
@@ -475,6 +476,8 @@ public class MediaPortalApp : D3DApp, IRender
 		GUIWindowManager.Receivers += new SendMessageHandler(OnMessage);
 		GUIWindowManager.Callbacks += new GUIWindowManager.OnCallBackHandler(this.Process);
 		GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STARTING;
+    Utils.OnStartExternal += new Utils.UtilEventHandler(OnStartExternal);
+    Utils.OnStopExternal += new Utils.UtilEventHandler(OnStopExternal);
 
 		// load keymapping from keymap.xml
 		ActionTranslator.Load();
@@ -2073,6 +2076,27 @@ public class MediaPortalApp : D3DApp, IRender
 		}
 	}
 	#endregion
+
+  #region External process start / stop handling
+  public void OnStartExternal(Process proc, bool waitForExit)
+  {
+    if (this.TopMost && waitForExit)
+    {
+      TopMost = false;
+      restoreTopMost = true;
+    }
+  }
+
+  public void OnStopExternal(Process proc, bool waitForExit)
+  {
+    if (restoreTopMost)
+    {
+      TopMost = true;
+      restoreTopMost = false;
+    }
+  }
+
+  #endregion
 
 	#region helper funcs
 	void CreateStateBlock()
