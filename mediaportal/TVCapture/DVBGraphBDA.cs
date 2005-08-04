@@ -216,6 +216,7 @@ namespace MediaPortal.TV.Recording
 		IStreamAnalyzer					m_analyzerInterface			= null;
 		IEPGGrabber							m_epgGrabberInterface		= null;
 		IMHWGrabber							m_mhwGrabberInterface		= null;
+		IATSCGrabber						m_atscGrabberInterface	= null;
 		IBaseFilter							m_dvbAnalyzer=null;
 		VideoAnalyzer						m_mpeg2Analyzer					= null;
 		IGraphBuilder           m_graphBuilder					= null;
@@ -721,6 +722,7 @@ namespace MediaPortal.TV.Recording
 				m_analyzerInterface=(IStreamAnalyzer)m_dvbAnalyzer;
 				m_epgGrabberInterface=m_dvbAnalyzer as IEPGGrabber;
 				m_mhwGrabberInterface=m_dvbAnalyzer as IMHWGrabber;
+				m_atscGrabberInterface=m_dvbAnalyzer as IATSCGrabber;
 				hr=m_graphBuilder.AddFilter(m_dvbAnalyzer,"Stream-Analyzer");
 				if(hr!=0)
 				{
@@ -1005,6 +1007,7 @@ namespace MediaPortal.TV.Recording
 					
 				m_epgGrabber.EPGInterface=m_epgGrabberInterface;
 				m_epgGrabber.MHWInterface=m_mhwGrabberInterface;
+				m_epgGrabber.ATSCInterface=m_atscGrabberInterface;
 				m_epgGrabber.Network=Network();
 			
 				return true;
@@ -3599,6 +3602,8 @@ namespace MediaPortal.TV.Recording
 					ExecTuner();
 				m_lastPMTVersion=-1;
 				m_analyzerInterface.ResetParser();
+				if (Network()==NetworkType.ATSC)
+					m_epgGrabber.GrabEPG(false);
 			}	
 			finally
 			{

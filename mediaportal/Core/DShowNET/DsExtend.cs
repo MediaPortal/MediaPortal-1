@@ -126,6 +126,23 @@ namespace DShowNET
 		int GetEPGEvent( [In] uint channel,  [In] uint eventid, [Out] out uint language, [Out] out uint date, [Out] out uint time, [Out] out uint duration,  out   IntPtr eventstr,  out   IntPtr text, out IntPtr genre    );
 	}
 
+	[ComVisible(true), ComImport,
+	Guid("3921427B-72AC-4e4d-AF4F-518AFE1D0780"),
+	InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
+	public interface IATSCGrabber
+	{
+		[PreserveSig]
+		int GrabATSC();
+
+		[PreserveSig]
+		int IsATSCReady(out bool yesNo);
+
+		[PreserveSig]
+		int GetATSCTitleCount([Out] out UInt16 channelCount);
+
+		[PreserveSig]
+		int GetATSCTitle(Int16 no, out Int16 source_id, out uint starttime, out Int16 length_in_mins,out IntPtr title,out IntPtr description);
+	}
 
   [ComVisible(true), ComImport,
   Guid("93E5A4E0-2D50-11d2-ABFA-00A0C9C6E38D"),

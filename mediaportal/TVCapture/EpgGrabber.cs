@@ -13,8 +13,9 @@ namespace MediaPortal.TV.Recording
 	public class EpgGrabber
 	{
 		#region variables
-		IEPGGrabber epgInterface=null;
-		IMHWGrabber mhwInterface=null;
+		IEPGGrabber		epgInterface=null;
+		IATSCGrabber	atscInterface=null;
+		IMHWGrabber		mhwInterface=null;
 		NetworkType networkType;
 		bool        grabEPG=false;
 		bool        isGrabbing=false;
@@ -31,6 +32,11 @@ namespace MediaPortal.TV.Recording
 			get { return mhwInterface;}
 			set { mhwInterface=value;}
 		}
+		public IATSCGrabber ATSCInterface
+		{
+			get { return atscInterface;}
+			set { atscInterface=value;}
+		}
 		public NetworkType Network
 		{
 			get { return networkType;}
@@ -43,17 +49,28 @@ namespace MediaPortal.TV.Recording
 		public void GrabEPG(bool epg)
 		{
 			grabEPG=epg;
-			if (grabEPG)
+			if (Network==NetworkType.ATSC)
 			{
-				Log.WriteFile(Log.LogType.EPG,"epg-grab: start EPG grabber");
-				if (EPGInterface!=null)
-					EPGInterface.GrabEPG();
+				if (ATSCInterface!=null)
+				{
+					Log.WriteFile(Log.LogType.EPG,"epg-grab: start ATSC grabber");
+					ATSCInterface.GrabATSC();
+				}
 			}
 			else
 			{
-				Log.WriteFile(Log.LogType.EPG,"epg-grab: start MHW grabber");
-				if (MHWInterface!=null)
-					MHWInterface.GrabMHW();
+				if (grabEPG)
+				{
+					Log.WriteFile(Log.LogType.EPG,"epg-grab: start EPG grabber");
+					if (EPGInterface!=null)
+						EPGInterface.GrabEPG();
+				}
+				else
+				{
+					Log.WriteFile(Log.LogType.EPG,"epg-grab: start MHW grabber");
+					if (MHWInterface!=null)
+						MHWInterface.GrabMHW();
+				}
 			}
 			isGrabbing=true;
 		}
@@ -61,29 +78,147 @@ namespace MediaPortal.TV.Recording
 		{
 			if (!isGrabbing) return;
 			bool ready=false;
-			if (EPGInterface!=null && grabEPG)
+			if (Network==NetworkType.ATSC)
 			{
-				EPGInterface.IsEPGReady(out ready);
-				if (ready)
+				if (ATSCInterface!=null && grabEPG)
 				{
-					ParseEPG();
-					isGrabbing=false;
+					ATSCInterface.IsATSCReady(out ready);
+					if (ready)
+					{
+						ParseATSC();
+						isGrabbing=false;
+					}
 				}
 			}
-			
-			if (MHWInterface!=null && !grabEPG)
+			else
 			{
-				MHWInterface.IsMHWReady(out ready);
-				if (ready)
+				if (EPGInterface!=null && grabEPG)
 				{
-					ParseMHW();
-					isGrabbing=false;
+					EPGInterface.IsEPGReady(out ready);
+					if (ready)
+					{
+						ParseEPG();
+						isGrabbing=false;
+					}
+				}
+				
+				if (MHWInterface!=null && !grabEPG)
+				{
+					MHWInterface.IsMHWReady(out ready);
+					if (ready)
+					{
+						ParseMHW();
+						isGrabbing=false;
+					}
 				}
 			}
 		}
 		#endregion
 
 		#region private methods
+
+		#region ATSC
+		void ParseATSC()
+		{
+			try
+			{
+				Log.WriteFile(Log.LogType.EPG,"atsc-epg: atsc ready");
+				ushort titleCount;
+				ATSCInterface.GetATSCTitleCount(out titleCount);
+				Log.WriteFile(Log.LogType.EPG,"atsc-epg: atsc titles:{0}",titleCount);
+				if (titleCount<=0) return;
+				for (short i=0; i < titleCount; ++i)
+				{
+					Int16 source_id, length_in_mins;
+					uint starttime;
+					IntPtr ptrTitle,ptrDescription;
+					ATSCInterface.GetATSCTitle(i,out source_id, out starttime,out length_in_mins, out ptrTitle,out ptrDescription);
+					string title,description;
+					title=Marshal.PtrToStringAnsi(ptrTitle);
+					description=Marshal.PtrToStringAnsi(ptrDescription);
+					if (title==null) title="";
+					if (description==null) description="";
+					title=title.Trim();
+					description=description.Trim();
+
+					if (title.Length==0) continue;
+					IStreamAnalyzer	analyzer = ATSCInterface as IStreamAnalyzer;
+					if (analyzer==null) continue;
+
+					DVBSections.ChannelInfo chi=new MediaPortal.TV.Recording.DVBSections.ChannelInfo();
+					DVBSections sections = new DVBSections();
+					UInt16 len=0;
+					int hr=0;
+					hr=analyzer.GetCISize(ref len);					
+					IntPtr mmch=Marshal.AllocCoTaskMem(len);
+					hr=analyzer.GetChannel((UInt16)source_id,mmch);
+					chi=sections.GetChannelInfo(mmch);
+					Marshal.FreeCoTaskMem(mmch);
+
+
+					ArrayList channels = new ArrayList();
+					TVDatabase.GetChannels(ref channels);
+					foreach (TVChannel chan in channels)
+					{
+						int symbolrate=0,innerFec=0,modulation=0,physicalChannel=0;
+						int minorChannel=0,majorChannel=0; 
+						int frequency=-1,ONID=-1,TSID=-1,SID=-1;
+						int audioPid=-1, videoPid=-1, teletextPid=-1, pmtPid=-1, pcrPid=-1;
+						string providerName;
+						int audio1,audio2,audio3,ac3Pid;
+						string audioLanguage,audioLanguage1,audioLanguage2,audioLanguage3;
+						bool HasEITPresentFollow,HasEITSchedule;
+						TVDatabase.GetATSCTuneRequest(chan.ID,out physicalChannel,out providerName,out frequency, out symbolrate, out innerFec, out modulation,out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out audio1,out audio2,out audio3,out ac3Pid, out audioLanguage, out audioLanguage1,out audioLanguage2,out audioLanguage3, out minorChannel,out majorChannel,out HasEITPresentFollow,out HasEITSchedule,out pcrPid);
+						if (minorChannel!=chi.minorChannel || majorChannel!=chi.majorChannel) continue;
+						
+						DateTime programStartTimeUTC = new DateTime(1980,1,6,0,0,0,0);
+						programStartTimeUTC.AddSeconds(starttime);
+
+						DateTime programStartTime=programStartTimeUTC.ToLocalTime();
+
+						TVProgram tv=new TVProgram();
+						tv.Start=Util.Utils.datetolong(programStartTime);
+						tv.End=Util.Utils.datetolong(programStartTime.AddMinutes(length_in_mins));
+						tv.Channel=chan.Name;
+						tv.Genre=String.Empty;
+						tv.Title=title;
+						tv.Description=description;
+						if(tv.Title==null)
+							tv.Title=String.Empty;
+
+						if(tv.Description==null)
+							tv.Description=String.Empty;
+
+						if(tv.Description==String.Empty)
+							tv.Description=title;
+
+						if(tv.Title==String.Empty)
+							tv.Title=title;
+
+						if(tv.Title==String.Empty || tv.Title=="n.a.") 
+						{
+							continue;
+						}
+
+						Log.WriteFile(Log.LogType.EPG,"atsc-grab: {0} {1}-{2} {3} {4}", tv.Channel,tv.Start,tv.End,tv.Title);
+						ArrayList programsInDatabase = new ArrayList();
+						TVDatabase.GetProgramsPerChannel(tv.Channel,tv.Start+1,tv.End-1,ref programsInDatabase);
+						if(programsInDatabase.Count==0)
+						{
+							TVDatabase.AddProgram(tv);
+						}
+					}
+				}
+				Log.WriteFile(Log.LogType.EPG,"atsc-epg: atsc done");
+			}
+			catch(Exception ex)
+			{
+				Log.WriteFile(Log.LogType.Error,true,"atsc-epg: Exception while parsing atsc:{0} {1} {2}",
+					ex.Message,ex.Source,ex.StackTrace);
+			}
+
+		}
+		#endregion
 
 		#region MHW
 		void ParseMHW()
