@@ -71,7 +71,7 @@ void TableGrabber::ParseSection(byte* pData, long lDataLen)
 	DVBSectionHeader header;
 	GetSectionHeader(pData,0,header);
 	
-	if (header.TableID==m_sectionTableID)
+	if (header.TableID==m_sectionTableID && (pData[1] >=0x70 && pData[1] <=0x7f) )
 	{
 		header.SectionLength+=3;
 		if(header.SectionLength<1) return;
@@ -79,6 +79,8 @@ void TableGrabber::ParseSection(byte* pData, long lDataLen)
 		imapSections it;
 		if (m_pid==0xd2)
 		{
+			if (pData[3]==0xff) return;
+			if (header.SectionLength<42) return;
 			ULONG prgid=(pData[38]<<24)+(pData[39]<<16)+(pData[40]<<8)+pData[41];
 			//int channelID=(pData[3])-1;
 			it=m_mapSections.find(prgid);
