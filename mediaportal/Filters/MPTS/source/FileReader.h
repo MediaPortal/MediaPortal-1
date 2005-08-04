@@ -26,6 +26,7 @@ public:
 	__int64 get_FileSize(void);
 	HRESULT Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes);
 	HRESULT Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes, __int64 llDistanceToMove, DWORD dwMoveMethod);
+	HANDLE   m_hInfoFile;               // Handle to Infofile for filesize
 
 protected:
 	HANDLE   m_hFile;               // Handle to file for streaming
@@ -33,7 +34,6 @@ protected:
 	BOOL     m_bReadOnly;
 	BOOL     m_bDelay;
 	__int64 m_fileSize;
-	HANDLE   m_hInfoFile;               // Handle to Infofile for filesize
 };
 
 #endif

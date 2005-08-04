@@ -24,6 +24,8 @@ Sections::~Sections()
 
 HRESULT Sections::ParseFromFile()
 {
+
+	
 	__int64 filePointer=0;
 	HRESULT hr = S_OK;
 	__int64 len;

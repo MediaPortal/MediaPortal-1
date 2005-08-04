@@ -260,19 +260,45 @@ STDMETHODIMP CMPTSFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt)
 #endif
 	logFilePos=0;
 
-	__int64	fileSize = 0;
-	DWORD count=0;
-	while(true)
+	if (m_pFileReader->m_hInfoFile==INVALID_HANDLE_VALUE)
 	{
-		m_pFileReader->GetFileSize(&fileSize);
-		if(fileSize>=2000000 || count>=250)
-			break;
-		Sleep(80);
-		count++;
+		
+		Log(TEXT("wait till file > 200KB: "),false);
+		__int64	fileSize = 0;
+		DWORD count=0;
+		while(true)
+		{
+			m_pFileReader->GetFileSize(&fileSize);
+			if(fileSize>=2000000 || count>=250)
+				break;
+			Sleep(80);
+			count++;
+		}
+		RefreshPids();
+	}
+	else  
+	{
+		Log(TEXT("using .info:"),true);
+	
+		DWORD dwReadBytes;
+		LARGE_INTEGER li,writepos;
+		li.QuadPart = 0;
+		int ttxPid,subtitlePid;
+		::SetFilePointer(m_pFileReader->m_hInfoFile, li.LowPart, &li.HighPart, FILE_BEGIN);
+		ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&writepos, 8, &dwReadBytes, NULL);
+		ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&m_pSections->pids.AC3, sizeof(int), &dwReadBytes, NULL);
+		ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&m_pSections->pids.AudioPid, sizeof(int), &dwReadBytes, NULL);
+		ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&m_pSections->pids.AudioPid2, sizeof(int), &dwReadBytes, NULL);
+		ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&m_pSections->pids.VideoPid, sizeof(int), &dwReadBytes, NULL);
+		ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&ttxPid, sizeof(int), &dwReadBytes, NULL);
+		ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&m_pSections->pids.PMTPid, sizeof(int), &dwReadBytes, NULL);
+		ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&subtitlePid, sizeof(int), &dwReadBytes, NULL);
+		m_pSections->pids.Duration=600000000;
+		__int64 filePointer=0;
+		m_pFileReader->SetFilePointer(filePointer,FILE_BEGIN);
 	}
 	//If this a file start then return null.
 
-	RefreshPids();
 	RefreshDuration();
 	Log(TEXT("found audio-pid 1: "),false);
 	Log((__int64)m_pSections->pids.AudioPid,true);
