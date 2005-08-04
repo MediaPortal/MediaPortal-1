@@ -81,27 +81,29 @@ void TableGrabber::ParseSection(byte* pData, long lDataLen)
 		{
 			if (pData[3]==0xff) return;
 			if (header.SectionLength<42) return;
-			ULONG prgid=(pData[38]<<24)+(pData[39]<<16)+(pData[40]<<8)+pData[41];
+			ULONG key=(header.SectionNumber<<16)+header.TableIDExtension;
 			//int channelID=(pData[3])-1;
-			it=m_mapSections.find(prgid);
+			it=m_mapSections.find(key);
 			if (it==m_mapSections.end())
 			{
 				TableSection newSection;
 				memcpy(newSection.byData, pData,lDataLen);
 				newSection.iSize=lDataLen;
-				m_mapSections[prgid]=newSection;
+				m_mapSections[key]=newSection;
 				timeoutTimer=time(NULL);
 			}
 		}
 		else
 		{
-			it=m_mapSections.find(header.SectionNumber);
+			ULONG key=(header.SectionNumber<<16)+header.TableIDExtension;
+			//int channelID=(pData[3])-1;
+			it=m_mapSections.find(key);
 			if (it==m_mapSections.end())
 			{
 				TableSection newSection;
 				memcpy(newSection.byData, pData,lDataLen);
 				newSection.iSize=lDataLen;
-				m_mapSections[header.SectionNumber]=newSection;
+				m_mapSections[key]=newSection;
 				timeoutTimer=time(NULL);
 			}			
 		}
