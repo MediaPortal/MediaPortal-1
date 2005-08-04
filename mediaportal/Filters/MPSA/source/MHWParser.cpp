@@ -40,23 +40,20 @@ void CMHWParser::ParseChannels(byte* data, int dataLen)
 	}// for(int n=0
 //	Log("mhw-epg: channels:%d", m_vecChannels.size()); 
 }
-void CMHWParser::ParseSummaries(byte* data, int dataLen)
+void CMHWParser::ParseSummaries(byte* data, int maxLen)
 {
 	if (data==NULL) return;
-	if (dataLen<=7) return;
-	dataLen=((data[1]-0x70)<<8)+data[2];
+	if (maxLen<=7) return;
+	int dataLen=((data[1]-0x70)<<8)+data[2];
 	int n=0;
 	MHWSummary sum;
 	sum.ProgramID=(data[n+3]<<24)+(data[n+4]<<16)+(data[n+5]<<8)+data[n+6];
 	sum.Description="";
 	n+=11+(data[n+10]*7);
 
-	if (n+(dataLen-n) > dataLen) return;
-	char buffer[70000];
-	memcpy(buffer,&data[n],dataLen-n);
-
-	buffer[dataLen-n]=0;
-	sum.Description=(char*)buffer;
+	if (n+(dataLen-n) > maxLen) return;
+	data[n+(dataLen-n)]=0;
+	sum.Description=(char*)&data[n];
 
 	if(sum.ProgramID!=-1)
 	{
