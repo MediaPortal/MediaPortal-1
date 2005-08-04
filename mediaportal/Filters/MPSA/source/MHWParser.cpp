@@ -72,7 +72,7 @@ void CMHWParser::ParseTitles(byte* data, int dataLen)
 	if (dataLen<42) return;
 	if(data[3]==0xff) return;
 
-	char buffer[70000];
+	char buffer[30];
 	MHWProgramm prg;
 	prg.ChannelID=(data[3])-1;
 	prg.ThemeID=data[4];
