@@ -2313,8 +2313,12 @@ namespace MediaPortal.TV.Recording
 			SetupDemuxerPin(m_pinMTS,currentTuningObject.VideoPid,(int)MediaSampleContent.TransportPacket,false);
 			SetupDemuxerPin(m_pinMTS,currentTuningObject.PMTPid,(int)MediaSampleContent.TransportPacket,false);
 			SetupDemuxerPin(m_pinMTS,0,(int)MediaSampleContent.TransportPacket,false);//PAT
+			SetupDemuxerPin(m_pinMTS,1,(int)MediaSampleContent.TransportPacket,false);//CAT
 			SetupDemuxerPin(m_pinMTS,0x11,(int)MediaSampleContent.TransportPacket,false);//SDT
-			SetupDemuxerPin(m_pinMTS,currentTuningObject.PCRPid,(int)MediaSampleContent.TransportPacket,false);
+			int pid=currentTuningObject.PCRPid;
+			if (pid<=0)
+				pid=currentTuningObject.VideoPid;
+			SetupDemuxerPin(m_pinMTS,pid,(int)MediaSampleContent.TransportPacket,false);
 #endif
 		}
 

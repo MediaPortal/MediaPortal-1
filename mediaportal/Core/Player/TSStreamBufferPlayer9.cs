@@ -35,6 +35,8 @@ namespace MediaPortal.Player
   public class TStreamBufferPlayer9 : BaseTStreamBufferPlayer
   {
 
+		[ComImport, Guid("AFB6C280-2C41-11D3-8A60-0000F81E0E4A")]
+			class MPEG2Demultiplexer {}
 		VMR9Util Vmr9 = null;
     public TStreamBufferPlayer9()
     {
@@ -92,13 +94,37 @@ namespace MediaPortal.Player
 				Vmr9= new VMR9Util("mytv");
 				Vmr9.AddVMR9(graphBuilder);			
 				Vmr9.Enable(false);	
+				int hr;
+/*
+				MPEG2Demultiplexer m_MPEG2Demuxer=null;
+				IBaseFilter m_mpeg2Multiplexer=null;
+				Log.WriteFile(Log.LogType.Capture,"mpeg2:add new MPEG2 Demultiplexer to graph");
+				try
+				{
+					m_MPEG2Demuxer=new MPEG2Demultiplexer();
+					m_mpeg2Multiplexer = (IBaseFilter) m_MPEG2Demuxer;
+				}
+				catch(Exception){}
+				//m_mpeg2Multiplexer = DirectShowUtil.AddFilterToGraph(m_graphBuilder,"MPEG-2 Demultiplexer");
+				if (m_mpeg2Multiplexer==null) 
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"mpeg2:FAILED to create mpeg2 demuxer");
+					return false;
+				}
+				 hr=graphBuilder.AddFilter(m_mpeg2Multiplexer,"MPEG-2 Demultiplexer");
+				if (hr!=0)
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"mpeg2:FAILED to add mpeg2 demuxer to graph:0x{0:X}",hr);
+					return false;
+				}
+*/
 
 				bufferSource = new MPTransportStreamReader();
 				IBaseFilter filter = (IBaseFilter) bufferSource;
 				graphBuilder.AddFilter(filter, "MP TS Reader");
 		
 				IFileSourceFilter fileSource = (IFileSourceFilter) bufferSource;
-				int hr = fileSource.Load(filename, IntPtr.Zero);
+				 hr = fileSource.Load(filename, IntPtr.Zero);
 				// add preferred video & audio codecs
 				string strVideoCodec="";
         string strAudioCodec="";

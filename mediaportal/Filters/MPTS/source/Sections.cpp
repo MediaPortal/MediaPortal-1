@@ -48,6 +48,7 @@ HRESULT Sections::ParseFromFile()
 		ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&subtitlePid, sizeof(int), &dwReadBytes, NULL);
 		ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&pids.PCRPid, sizeof(int), &dwReadBytes, NULL);
 		
+		if (pids.PCRPid==0) pids.PCRPid=pids.VideoPid;
 		UnlockFile(m_pFileReader->m_hInfoFile,0,0,8+7*sizeof(int),0);
 		pids.Duration=600000000;
 		__int64 filePointer=0;

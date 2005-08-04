@@ -820,7 +820,7 @@ HRESULT CDump::UpdateInfoFile()
 	LARGE_INTEGER li;
 	DWORD written = 0;
 	li.QuadPart = 0;
-	//LockFile(m_hInfoFile,0,0,8+7*sizeof(int),0);
+	//LockFile(m_hInfoFile,0,0,8+8*sizeof(int),0);
 	SetFilePointer(m_hInfoFile,li.LowPart,&li.HighPart,FILE_BEGIN);
 	WriteFile(m_hInfoFile, &currentPosition, sizeof(currentPosition), &written, NULL);
 	int pid=m_pPin->GetAC3Pid();WriteFile(m_hInfoFile, &pid, sizeof(pid), &written, NULL);
@@ -832,7 +832,7 @@ HRESULT CDump::UpdateInfoFile()
 	pid=m_pPin->GetSubtitlePid();WriteFile(m_hInfoFile, &pid, sizeof(pid), &written, NULL);
 	pid=m_pPin->GetPCRPid();WriteFile(m_hInfoFile, &pid, sizeof(pid), &written, NULL);
 	
-	//UnlockFile(m_hInfoFile,0,0,8+7*sizeof(int),0);
+	//UnlockFile(m_hInfoFile,0,0,8+8*sizeof(int),0);
 	return S_OK;
 }
 
