@@ -100,6 +100,18 @@ DECLARE_INTERFACE_(IMHWGrabber, IUnknown)
 	STDMETHOD(GetMHWTheme)(THIS_ WORD themeId, char** theme)PURE;
 
 };
+
+// {3921427B-72AC-4e4d-AF4F-518AFE1D0780}
+DEFINE_GUID(IID_ATSCGrabber,0x3921427b, 0x72ac, 0x4e4d, 0xaf, 0x4f, 0x51, 0x8a, 0xfe, 0x1d, 0x7, 0x80);
+DECLARE_INTERFACE_(IATSCGrabber, IUnknown)
+{
+	STDMETHOD(GrabATSC)()PURE;
+	STDMETHOD(IsATSCReady) (THIS_ BOOL* yesNo)PURE;
+
+	STDMETHOD(GetATSCTitleCount)(THIS_ WORD* count)PURE;
+	STDMETHOD(GetATSCTitle)(THIS_ WORD no, WORD* source_id, ULONG* starttime, WORD* length_in_secs, char** title, char** description)PURE;
+};
+
 // Main filter object
 
 class CStreamAnalyzerFilter : public CBaseFilter
@@ -165,7 +177,7 @@ public:
 
 //  CStreamAnalyzer object which has filter and pin members
 
-class CStreamAnalyzer : public CUnknown, public IStreamAnalyzer,public ISpecifyPropertyPages, public IEPGGrabber, public IMHWGrabber
+class CStreamAnalyzer : public CUnknown, public IStreamAnalyzer,public ISpecifyPropertyPages, public IEPGGrabber, public IMHWGrabber, public IATSCGrabber
 {
     friend class CStreamAnalyzerFilter;
     friend class CStreamAnalyzerSectionsPin;
@@ -225,6 +237,13 @@ public:
 	STDMETHODIMP GetMHWChannel(WORD channelId, WORD* networkId, WORD* transportId, char** channelName);
 	STDMETHODIMP GetMHWSummary(WORD programId, char** summary);
 	STDMETHODIMP GetMHWTheme(WORD themeId, char** theme);
+
+	//ATSC
+	STDMETHODIMP GrabATSC();
+	STDMETHODIMP IsATSCReady (BOOL* yesNo);
+	STDMETHODIMP GetATSCTitleCount(WORD* count);
+	STDMETHODIMP GetATSCTitle(WORD no, WORD* source_id, ULONG* starttime, WORD* length_in_secs, char** title, char** description);
+
 public:
 	Sections*				m_pSections;
 	SplitterSetup*			m_pDemuxer;

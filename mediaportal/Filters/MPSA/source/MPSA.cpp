@@ -494,6 +494,10 @@ STDMETHODIMP CStreamAnalyzer::NonDelegatingQueryInterface(REFIID riid, void ** p
 	{
 		return GetInterface((IMHWGrabber*)this, ppv);
 	}
+	else if (riid == IID_ATSCGrabber)
+	{
+		return GetInterface((IATSCGrabber*)this, ppv);
+	}
     else if (riid == IID_IBaseFilter || riid == IID_IMediaFilter || riid == IID_IPersist)
 	{
         return m_pFilter->NonDelegatingQueryInterface(riid, ppv);
@@ -840,6 +844,26 @@ STDMETHODIMP CStreamAnalyzer::GetMHWSummary(WORD programId, char** summary)
 STDMETHODIMP CStreamAnalyzer::GetMHWTheme(WORD themeId, char** theme)
 {
 	m_pMHWPin2->m_MHWParser.GetTheme(themeId, theme);
+	return S_OK;
+}
+STDMETHODIMP CStreamAnalyzer::GrabATSC()
+{
+	m_atscParser.Reset();
+	return S_OK;
+}
+STDMETHODIMP CStreamAnalyzer::IsATSCReady (BOOL* yesNo)
+{
+	*yesNo = m_atscParser.IsReady();
+	return S_OK;
+}
+STDMETHODIMP CStreamAnalyzer::GetATSCTitleCount(WORD* count)
+{
+	*count=m_atscParser.GetEPGCount();
+	return S_OK;
+}
+STDMETHODIMP CStreamAnalyzer::GetATSCTitle(WORD no, WORD* source_id, ULONG* starttime, WORD* length_in_secs, char** title, char** description)
+{
+	m_atscParser.GetEPGTitle(no, source_id, starttime, length_in_secs, title, description);
 	return S_OK;
 }
 

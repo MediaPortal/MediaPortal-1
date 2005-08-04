@@ -39,9 +39,9 @@ public:
 	void ATSCDecodeEPG(byte* buf, int len);
 	void Reset();
 	bool IsReady();
-private:
 	int GetEPGCount();
 	void GetEPGTitle(WORD no, WORD* source_id, ULONG* starttime, WORD* length_in_secs, char** title, char** description);
+private:
 	void DecodeServiceLocationDescriptor( byte* buf,int start,ChannelInfo* channelInfo);
 	void DecodeExtendedChannelNameDescriptor( byte* buf,int start,ChannelInfo* channelInfo, int maxLen);
 	char* DecodeString(byte* buf, int offset, int compression_type, int mode, int number_of_bytes);
