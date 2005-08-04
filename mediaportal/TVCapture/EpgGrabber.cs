@@ -349,7 +349,7 @@ namespace MediaPortal.TV.Recording
 						continue;
 					}
 
-					Log.WriteFile(Log.LogType.EPG,"mhw-grab: {0} {1}-{2} {3} {4}", tv.Channel,tv.Start,tv.End,tv.Title);
+					Log.WriteFile(Log.LogType.EPG,"mhw-grab: {0} {1}-{2} {3}", tv.Channel,tv.Start,tv.End,tv.Title);
 					ArrayList programsInDatabase = new ArrayList();
 					TVDatabase.GetProgramsPerChannel(tv.Channel,tv.Start+1,tv.End-1,ref programsInDatabase);
 					if(programsInDatabase.Count==0)
