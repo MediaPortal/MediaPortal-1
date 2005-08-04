@@ -44,6 +44,7 @@ namespace MediaPortal.TVGuideScheduler
       string path;
 			string[] grabberSingleDays=null;
 			bool LoadFromFile=false;
+			bool runGrabberLowPriority=false;
 			string FileToImport=null;
 			bool RunConfig=false;
 			
@@ -53,6 +54,7 @@ namespace MediaPortal.TVGuideScheduler
 				multiGrab=xmlreader.GetValueAsString("xmltv", "advanced","yes");
 				dayString=xmlreader.GetValueAsString("xmltv", "days","1,2,3,5,10");
         path=xmlreader.GetValueAsString("xmltv", "folder","xmltv");
+				runGrabberLowPriority = xmlreader.GetValueAsBool("xmltv", "lowpriority", false);
       }
 			//check any command line arguments:
 			// /file (filename) - import xmltv data from file, and don't run grabber
@@ -133,7 +135,7 @@ namespace MediaPortal.TVGuideScheduler
             if (multiGrab == "yes")
             {
               grabberSingleDays = dayString.Split(new Char[] {','});
-              XMLTVgrab.BuildThreads(grabberSingleDays,grab.GrabberName,grab.ConfigFile,strEXEpath,grab.Output,grab.Options);
+              XMLTVgrab.BuildThreads(grabberSingleDays,grab.GrabberName,grab.ConfigFile,strEXEpath,grab.Output,grab.Options,runGrabberLowPriority);
               // check file is not empty then import single day files into database
               foreach (string s in grabberSingleDays)
               {
@@ -181,11 +183,11 @@ namespace MediaPortal.TVGuideScheduler
 
               if (grab.GrabberName == "tv_grab_nl_wolf")
               {
-                XMLTVgrab.RunGrabber(grab.GrabberName,strEXEpath,grab.Output,grabberDays,offset);
+                XMLTVgrab.RunGrabber(grab.GrabberName,strEXEpath,grab.Output,grabberDays,offset,runGrabberLowPriority);
               }
               else
               {
-                XMLTVgrab.RunGrabber(grab.GrabberName,grab.ConfigFile,strEXEpath,grab.Output,grabberDays,offset,grab.Options);
+                XMLTVgrab.RunGrabber(grab.GrabberName,grab.ConfigFile,strEXEpath,grab.Output,grabberDays,offset,grab.Options,runGrabberLowPriority);
               }
               //check file is not empty then import multi day file into database
               FileInfo file = new FileInfo(grab.Output+ "\\TVguide.xml");

@@ -106,6 +106,7 @@ namespace MediaPortal.TVGuideScheduler
 				xmltvgrabber.StartInfo.UseShellExecute = false;
 				xmltvgrabber.StartInfo.WorkingDirectory = WorkingDir;
 				xmltvgrabber.Start();
+                xmltvgrabber.PriorityClass = ProcessPriorityClass.BelowNormal;
 					
 				int i = 0;
 				while (!xmltvgrabber.HasExited)
@@ -141,6 +142,7 @@ namespace MediaPortal.TVGuideScheduler
         xmltvgrabber.StartInfo.UseShellExecute = false;
         xmltvgrabber.StartInfo.WorkingDirectory = WorkingDir;
         xmltvgrabber.Start();
+		xmltvgrabber.PriorityClass = ProcessPriorityClass.BelowNormal;
 					
         int i = 0;
         while (!xmltvgrabber.HasExited)
@@ -195,6 +197,7 @@ namespace MediaPortal.TVGuideScheduler
 					grabThread.StartInfo.UseShellExecute = false;
 					grabThread.StartInfo.WorkingDirectory = WorkingDir;
 					grabThread.Start();
+					grabThread.PriorityClass = ProcessPriorityClass.BelowNormal;
 					int i = 0;
 					while (!grabThread.HasExited)
 					{
