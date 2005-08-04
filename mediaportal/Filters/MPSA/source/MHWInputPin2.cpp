@@ -202,20 +202,44 @@ void CMHWInputPin2::Parse()
 	Log("mhwpin2: parse()");
 	m_bParsed=true;
 	//parse summaries
+	Log("MHW2: parse summaries:%d",m_tableGrabber90.Count());
 	for (int i=0; i < m_tableGrabber90.Count();++i)
 	{
-		m_MHWParser.ParseSummaries(m_tableGrabber90.GetTable(i), m_tableGrabber90.GetTableLen(i));
+		try
+		{
+			m_MHWParser.ParseSummaries(m_tableGrabber90.GetTable(i), m_tableGrabber90.GetTableLen(i));
+		}
+		catch(...)
+		{
+			Log("MHW:exception MHW2 ParseSummaries table:%d", i);
+		}
 	}
 
 	//parse channels
+	Log("MHW2: parse channels:%d",m_tableGrabber91.Count());
 	for (int i=0; i < m_tableGrabber91.Count();++i)
 	{
-		m_MHWParser.ParseChannels(m_tableGrabber91.GetTable(i), m_tableGrabber91.GetTableLen(i));
+		try
+		{
+			m_MHWParser.ParseChannels(m_tableGrabber91.GetTable(i), m_tableGrabber91.GetTableLen(i));
+		}
+		catch(...)
+		{
+			Log("MHW:exception MHW2 ParseChannels table:%d", i);
+		}
 	}
 
 	//parse themes
+	Log("MHW2: parse themes:%d",m_tableGrabber92.Count());
 	for (int i=0; i < m_tableGrabber92.Count();++i)
 	{
-		m_MHWParser.ParseThemes(m_tableGrabber92.GetTable(i), m_tableGrabber92.GetTableLen(i));
+		try
+		{
+			m_MHWParser.ParseThemes(m_tableGrabber92.GetTable(i), m_tableGrabber92.GetTableLen(i));
+		}
+		catch(...)
+		{
+			Log("MHW:exception MHW2 ParseThemes table:%d", i);
+		}
 	}
 }

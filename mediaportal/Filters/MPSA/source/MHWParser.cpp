@@ -26,6 +26,7 @@ void CMHWParser::ParseChannels(byte* data, int dataLen)
 	{
 		if( ((int)m_vecChannels.size())>=((dataLen-3)/22))
 			break;
+		if (n+6+16> dataLen) return;
 		MHWChannel ch;
 		ch.NetworkID=(data[n]<<8)+data[n+1];
 		ch.TransponderID=(data[n+2]<<8)+data[n+3];
@@ -50,6 +51,7 @@ void CMHWParser::ParseSummaries(byte* data, int dataLen)
 	sum.Description="";
 	n+=11+(data[n+10]*7);
 
+	if (n+(dataLen-n) > dataLen) return;
 	char buffer[70000];
 	memcpy(buffer,&data[n],dataLen-n);
 
@@ -136,11 +138,14 @@ void CMHWParser::ParseThemes(byte* data, int dataLen)
 	int count = (dataLen-19)/15;
 	for (int i=0; i<count; i++)
 	{
+		if (themesIndex+theme>dataLen) return;
 		if (data[themesIndex+theme] == i)	/* New theme */
 		{
 			val = (val+15) & 0xF0;
 			theme++;
 		}
+		
+		if (themesNames+15>dataLen) return;
 		char buffer[20];
 		memcpy(buffer,&data[themesNames],15);
 		buffer[15]=0;

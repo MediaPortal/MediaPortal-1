@@ -188,8 +188,16 @@ void CMHWInputPin1::Parse()
 	Log("mhwpin1: parse()");
 	m_bParsed=true;
 	//parse summaries
+	Log("MHW2: parse summaries:%d",m_tableGrabber.Count());
 	for (int i=0; i < m_tableGrabber.Count();++i)
 	{
-		m_MHWParser.ParseTitles(m_tableGrabber.GetTable(i), m_tableGrabber.GetTableLen(i));
+		try
+		{
+			m_MHWParser.ParseTitles(m_tableGrabber.GetTable(i), m_tableGrabber.GetTableLen(i));
+		}
+		catch(...)
+		{
+			Log("MHW:exception MHW1 parse title table:%d", i);
+		}
 	}
 }
