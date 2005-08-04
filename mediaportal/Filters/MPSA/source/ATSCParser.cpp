@@ -15,6 +15,9 @@ ATSCParser::~ATSCParser(void)
 }
 void ATSCParser::Reset()
 {
+	m_epgTimeout=time(NULL);
+	m_mapEvents.clear();
+	m_mapEtm.clear();
 	masterGuideTableDecoded=false;
 	if (m_demuxer!=NULL) 
 	{
@@ -142,11 +145,109 @@ void ATSCParser::ATSCDecodeMasterGuideTable(byte* buf, int len,int* channelsFoun
 
 void ATSCParser::ATSCDecodeEIT(byte* buf, int len)
 {
-	Log("ATSCDecodeEIT() %x",buf[0]);
+	// -------- +-++---- -------- ++++++++ ++++++++ --+++++- -------- ++++++++ -------- ++++++++
+	// 76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|
+	//    0        1        2         3        4       5       6         7        8       9        10
+	int table_id = buf[0];
+	if (table_id!=0xcb) return;
+	if (len < 10) return;
+
+	int section_syntax_indicator = (buf[1]>>7) & 1;
+	int private_indicator = (buf[1]>>6) & 1;
+	int section_length = ((buf[1]& 0xF)<<8) + buf[2];
+	int source_id=(buf[3]<<8)+buf[4];
+	int version=(buf[5]>>1)&0x1f;
+	int current_next_indicator=buf[5]&0x1;
+	int section_number=buf[6];
+	int last_section_number=buf[7];
+	int protocol_version=buf[8];
+	int num_events=buf[9];
+	int off=10;
+	for (int i=0; i < num_events;++i)
+	{
+		if (off+10 >=len) return;
+		// ++------ --------  +++++++ ++++++++ ++++++++ ++++++++ --++---- -------- -------- ++++++++ ----    
+		// 76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|
+		//    0        1        2         3        4       5       6         7        8       9        10
+		int event_id=((buf[off] &0x3f)<<8) + buf[off+1];
+		ULONG start_time = (buf[off+2]<<24) +(buf[off+3]<<16)+(buf[off+4]<<8)+(buf[off+5]);
+		int ETM_location = (buf[off+6]>>4)&0x3;
+		int length_in_secs=((buf[off+6]&0xf)<<16) + (buf[off+7]<<8) + buf[off+8];
+		int title_len=buf[off+9];
+		char title[4096];
+		off+=10;
+		char *pTitle=DecodeMultipleStrings(buf,off,len);
+		strcpy(title, pTitle);
+		off+=title_len;
+		int descriptor_len = ((buf[off]&0xf)<<8) + buf[off+1];
+		off+=2;
+		int lenDesc=0;
+		while (lenDesc < descriptor_len)
+		{
+			int descriptor_tag = buf[off+lenDesc];
+			int descriptor_len = buf[off+lenDesc+1];
+			lenDesc += (2+descriptor_len);
+		}
+		off +=descriptor_len;
+			
+		ULONG key=(source_id<<16)+event_id;
+		imapEvents it=m_mapEvents.find(key);
+		if (it==m_mapEvents.end())
+		{
+			ATSCEvent newEvent;
+			newEvent.ETM_location=ETM_location;
+			newEvent.source_id = source_id;
+			newEvent.event_id = event_id;
+			newEvent.start_time=start_time;
+			newEvent.length_in_secs=length_in_secs;
+			newEvent.title=title;
+
+			m_mapEvents[key] = newEvent;
+			Log("ATSC:EIT: chan:%d event:%x start:%x duration:%x etm:%x title:'%s'",
+				source_id,event_id,start_time,length_in_secs,ETM_location,title);
+			m_epgTimeout=time(NULL);
+		}
+	}
+
 }
 void ATSCParser::ATSCDecodeETT(byte* buf, int len)
 {
-	Log("ATSCDecodeETT() %x",buf[0]);
+	// -------- +-++---- -------- ++++++++ ++++++++ --+++++- ++++++++ -------- ++++++++  
+	// 76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|
+	//    0        1        2         3        4       5       6         7        8       9        10
+	int table_id = buf[0];
+	if (table_id!=0xcc) return;
+	if (len < 12) return;
+
+	int section_syntax_indicator = (buf[1]>>7) & 1;
+	int private_indicator = (buf[1]>>6) & 1;
+	int section_length = ((buf[1]& 0xF)<<8) + buf[2];
+	int EIT_table_id_extension=(buf[3]<<8)+(buf[4]);
+	int version=(buf[5]>>1)&0x1f;
+	int current_next_indicator=buf[5]&0x1;
+	int section_number=buf[6];
+	int last_section_number=buf[7];
+	int protocol_version=buf[8];
+	ULONG ETM_id=(buf[9]<<24)+(buf[10]<<16)+(buf[11]<<8)+(buf[12]);
+	char *pDescription=DecodeMultipleStrings(buf,13,len);
+
+	imapEtm it=m_mapEtm.find(ETM_id);
+	if (it==m_mapEtm.end())
+	{
+		//TODO:store description
+		ETMEvent newEvent;
+		newEvent.description=pDescription;
+		newEvent.ETM_id=ETM_id;
+		int source_id=(ETM_id>>16);
+		int event_id=((ETM_id &0xffff) >>2);
+		int type=ETM_id&3;
+		newEvent.source_id=source_id;
+		newEvent.event_id=event_id;
+		newEvent.type=type;
+		m_mapEtm[ETM_id]=newEvent;
+		Log("ATSC:ETT: chan:%d event:%x type:%x description:'%s'",source_id,event_id,type,pDescription);
+		m_epgTimeout=time(NULL);
+	}
 }
 void ATSCParser::ATSCDecodeRTT(byte* buf, int len)
 {
@@ -159,28 +260,23 @@ void ATSCParser::ATSCDecodeChannelEIT(byte* buf, int len)
 void ATSCParser::ATSCDecodeEPG(byte* buf, int len)
 {
 	int table_id = buf[0];
-	if (table_id >=0x100 && table_id <=0x17f)
+	if (table_id ==0xcb)
 	{
 		//Decode EIT-0 - EIT-127
 		ATSCDecodeEIT(buf,len);
 	}
-	else if (table_id >=0x200 && table_id <=0x27f)
+	else if (table_id ==0xcc)
 	{
 		//Decode ETT-0 - ETT-127
 		ATSCDecodeETT(buf,len);
 	}
-	else if (table_id >=0x300 && table_id <=0x3ff)
+	else if (table_id ==0xca)
 	{
 		//Decode RTT with region 1-255
 		ATSCDecodeRTT(buf,len);
 	}
-	else if (table_id==0x04)
-	{
-		//decode Channel ETT
-		ATSCDecodeChannelEIT(buf,len);
-	}
 }
-void ATSCParser::ATSCDecodeChannelTable(BYTE *buf,ChannelInfo *ch, int* channelsFound)
+void ATSCParser::ATSCDecodeChannelTable(BYTE *buf,ChannelInfo *ch, int* channelsFound, int maxLen)
 {
 	int table_id = buf[0];
 	if (table_id!=0xc8 && table_id != 0xc9) return;
@@ -345,7 +441,7 @@ void ATSCParser::ATSCDecodeChannelTable(BYTE *buf,ChannelInfo *ch, int* channels
 					DecodeServiceLocationDescriptor( buf,start+len, channelInfo);
 				break;
 				case 0xa0:
-					DecodeExtendedChannelNameDescriptor( buf,start+len,channelInfo);
+					DecodeExtendedChannelNameDescriptor( buf,start+len,channelInfo, maxLen);
 				break;
 			}
 			len += (descriptor_len+2);
@@ -397,7 +493,7 @@ void ATSCParser::DecodeServiceLocationDescriptor( byte* buf,int start,ChannelInf
 	}
 	Log("DecodeServiceLocationDescriptor() done");
 }
-void ATSCParser::DecodeExtendedChannelNameDescriptor( byte* buf,int start,ChannelInfo* channelInfo)
+void ATSCParser::DecodeExtendedChannelNameDescriptor( byte* buf,int start,ChannelInfo* channelInfo, int maxLen)
 {
 	Log("DecodeExtendedChannelNameDescriptor() ");
 	// tid   
@@ -407,7 +503,7 @@ void ATSCParser::DecodeExtendedChannelNameDescriptor( byte* buf,int start,Channe
 	int descriptor_tag = buf[start+0];
 	int descriptor_len = buf[start+1];
 	Log(" tag:%x len:%d", descriptor_tag, descriptor_len);
-	char* label = DecodeMultipleStrings(buf,start+2);
+	char* label = DecodeMultipleStrings(buf,start+2,maxLen);
 	if (label==NULL) return ;
 	strcpy((char*)channelInfo->ServiceName,label);
 
@@ -417,7 +513,7 @@ void ATSCParser::DecodeExtendedChannelNameDescriptor( byte* buf,int start,Channe
 }
 char* ATSCParser::DecodeString(byte* buf, int offset, int compression_type, int mode, int number_of_bytes)
 {
-	Log("DecodeString() compression type:%d numberofbytes:%d",compression_type, mode);
+	//Log("DecodeString() compression type:%d numberofbytes:%d",compression_type, mode);
 	if (compression_type==0 && mode==0)
 	{
 		char* label = new char[number_of_bytes+1];
@@ -432,22 +528,30 @@ char* ATSCParser::DecodeString(byte* buf, int offset, int compression_type, int 
 	return NULL;
 }
 
-char* ATSCParser::DecodeMultipleStrings(byte* buf, int offset)
+char* ATSCParser::DecodeMultipleStrings(byte* buf, int offset, int maxLen)
 {
 	int number_of_strings = buf[offset];
-	Log("DecodeMultipleStrings() number_of_strings:%d",number_of_strings);
+	//Log("DecodeMultipleStrings() number_of_strings:%d",number_of_strings);
 	
 
 	for (int i=0; i < number_of_strings;++i)
 	{
-		Log("  string:%d", i);
+		//Log("  string:%d", i);
+		if (offset+4>=maxLen)
+		{
+			return "";
+		}
 		int ISO_639_language_code = (buf[offset+1]<<16)+(buf[offset+2]<<8)+(buf[offset+3]);
 		int number_of_segments=buf[offset+4];
 		int start=offset+5;
-		Log("  segments:%d", number_of_segments);
+		//Log("  segments:%d", number_of_segments);
 		for (int k=0; k < number_of_segments;++k)
 		{
-			Log("  decode segment:%d", k);
+			if (start+2>=maxLen)
+			{
+				return "";
+			}
+			//Log("  decode segment:%d", k);
 			int compression_type = buf[start];
 			int mode             = buf[start+1];
 			int number_bytes     = buf[start+2];
@@ -458,4 +562,47 @@ char* ATSCParser::DecodeMultipleStrings(byte* buf, int offset)
 		}
 	}
 	return NULL;
+}
+
+
+bool ATSCParser::IsReady()
+{
+	int secondsPassed= time(NULL)-m_epgTimeout;
+	if (secondsPassed >=30)
+	{
+		return true;
+	}
+	return false;
+}
+int ATSCParser::GetEPGCount()
+{
+	return m_mapEvents.size();
+}
+void ATSCParser::GetEPGTitle(WORD no, WORD* source_id, ULONG* starttime, WORD* length_in_secs, char** title, char** description)
+{
+	if (no >= m_mapEvents.size()) return;
+	imapEvents it=m_mapEvents.begin();
+	int count=0;
+	while (count < no) { ++it; ++count;}
+	*source_id=it->second.source_id;
+	*starttime=it->second.start_time;
+	*length_in_secs=(it->second.length_in_secs/60);
+	*title=(char*)it->second.title.c_str();
+	int event_id=it->second.event_id;
+	*description="";
+	if (it->second.ETM_location!=0)
+	{
+		ETMEvent etmEvent;
+		imapEtm itEtm=m_mapEtm.begin();
+		while (itEtm != m_mapEtm.end())
+		{
+			if (itEtm->second.source_id==(*source_id) &&
+				itEtm->second.event_id ==event_id)
+			{
+				*description=(char*)itEtm->second.description.c_str();
+				return;
+			}
+			++itEtm;
+		}
+	}
 }

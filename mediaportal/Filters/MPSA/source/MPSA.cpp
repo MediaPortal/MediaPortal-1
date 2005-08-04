@@ -600,7 +600,7 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 				if (m_patChannelsCount==0)
 				{
 					//decode ATSC: Virtual Channel Table (pid 0xc8 / 0xc9)
-					m_atscParser.ATSCDecodeChannelTable(pbData,m_patTable, &m_patChannelsCount);
+					m_atscParser.ATSCDecodeChannelTable(pbData,m_patTable, &m_patChannelsCount,len);
 				}
 			}
 
