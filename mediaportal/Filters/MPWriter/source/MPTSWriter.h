@@ -96,6 +96,14 @@ public:
 	HRESULT SetTeletextPid(int ttxtPid);
 	HRESULT SetSubtitlePid(int subtitlePid);
 	HRESULT SetPMTPid(int pmtPid);
+	int GetVideoPid();
+	int GetAudioPid();
+	int GetAudioPid2();
+	int GetAC3Pid();
+	int GetTeletextPid();
+	int GetSubtitlePid();
+	int GetPMTPid();
+
 	void ResetPids();
 
 private:

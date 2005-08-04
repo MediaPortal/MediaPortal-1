@@ -220,6 +220,34 @@ HRESULT CDumpInputPin::SetPMTPid(int pmtPid)
 	m_pmtPid=pmtPid;
 	return S_OK;
 }
+int CDumpInputPin::GetVideoPid()
+{
+	return m_videoPid;
+}
+int CDumpInputPin::GetAudioPid()
+{
+	return m_audio1Pid;
+}
+int CDumpInputPin::GetAudioPid2()
+{
+	return m_audio2Pid;
+}
+int CDumpInputPin::GetAC3Pid()
+{
+	return m_ac3Pid;
+}
+int CDumpInputPin::GetTeletextPid()
+{
+	return m_ttxtPid;
+}
+int CDumpInputPin::GetSubtitlePid()
+{
+	return m_subtitlePid;
+}
+int CDumpInputPin::GetPMTPid()
+{
+	return m_pmtPid;
+}
 
 //
 // BreakConnect
@@ -775,10 +803,18 @@ HRESULT CDump::UpdateInfoFile()
 	LARGE_INTEGER li;
 	DWORD written = 0;
 	li.QuadPart = 0;
-	LockFile(m_hInfoFile,0,0,8,0);
+	LockFile(m_hInfoFile,0,0,8+7*sizeof(int),0);
 	SetFilePointer(m_hInfoFile,li.LowPart,&li.HighPart,FILE_BEGIN);
 	WriteFile(m_hInfoFile, &currentPosition, sizeof(currentPosition), &written, NULL);
-	UnlockFile(m_hInfoFile,0,0,8,0);
+	int pid=m_pPin->GetAC3Pid();WriteFile(m_hInfoFile, &pid, sizeof(pid), &written, NULL);
+	pid=m_pPin->GetAudioPid();WriteFile(m_hInfoFile, &pid, sizeof(pid), &written, NULL);
+	pid=m_pPin->GetAudioPid2();WriteFile(m_hInfoFile, &pid, sizeof(pid), &written, NULL);
+	pid=m_pPin->GetVideoPid();WriteFile(m_hInfoFile, &pid, sizeof(pid), &written, NULL);
+	pid=m_pPin->GetTeletextPid();WriteFile(m_hInfoFile, &pid, sizeof(pid), &written, NULL);
+	pid=m_pPin->GetPMTPid();WriteFile(m_hInfoFile, &pid, sizeof(pid), &written, NULL);
+	pid=m_pPin->GetSubtitlePid();WriteFile(m_hInfoFile, &pid, sizeof(pid), &written, NULL);
+	
+	UnlockFile(m_hInfoFile,0,0,8+7*sizeof(int),0);
 	return S_OK;
 }
 
