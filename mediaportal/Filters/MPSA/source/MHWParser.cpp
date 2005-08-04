@@ -203,7 +203,7 @@ void CMHWParser::GetChannel(WORD channelId, WORD* networkId, WORD* transportId, 
 	imapChannels it=m_vecChannels.begin();
 	while (it!=m_vecChannels.end())
 	{
-		if (it->ChannelID==channelId)
+		if ((WORD)(it->ChannelID)==channelId)
 		{
 			*networkId=it->NetworkID;
 			*transportId=it->TransponderID;
@@ -219,7 +219,7 @@ void CMHWParser::GetChannel(WORD channelId, WORD* networkId, WORD* transportId, 
 void CMHWParser::GetSummary(WORD programId, char** summary)
 {
 	*summary="";
-	imapSummaries it=m_mapSummaries.find(programId);
+	imapSummaries it=m_mapSummaries.find((int)programId);
 	if (it!=m_mapSummaries.end())
 	{
 		*summary=(char*)it->second.Description.c_str();		
