@@ -652,66 +652,66 @@ namespace MediaPortal.TV.Recording
 
 			m_lastTuneError=false;
 			// clear epg
-				if(Frequency>13000)
-					Frequency/=1000;
+			if(Frequency>13000)
+				Frequency/=1000;
 
-				if(m_tunerCtrl==null || m_dataCtrl==null || m_b2c2Adapter==null || m_avCtrl==null)
-					return false;
+			if(m_tunerCtrl==null || m_dataCtrl==null || m_b2c2Adapter==null || m_avCtrl==null)
+				return false;
 
-				// skystar
-				if(m_cardType=="" || m_cardType=="skystar")
+			// skystar
+			if(m_cardType=="" || m_cardType=="skystar")
+			{
+				hr = m_tunerCtrl.SetFrequency(Frequency);
+				if (hr!=0)
 				{
-					hr = m_tunerCtrl.SetFrequency(Frequency);
-					if (hr!=0)
-					{
-						Log.WriteFile(Log.LogType.Capture,"Tune for SkyStar2 FAILED: on SetFrequency");
-						return false;	// *** FUNCTION EXIT POINT
-					}
-					hr = m_tunerCtrl.SetSymbolRate(SymbolRate);
-					if (hr!=0)
-					{
-						Log.WriteFile(Log.LogType.Capture,"Tune for SkyStar2 FAILED: on SetSymbolRate");
-						return false;	// *** FUNCTION EXIT POINT
-					}
-					hr = m_tunerCtrl.SetLnbFrequency(LNBFreq);
-					if (hr!=0)
-					{
-						Log.WriteFile(Log.LogType.Capture,"Tune for SkyStar2 FAILED: on SetLnbFrequency");
-						return false;	// *** FUNCTION EXIT POINT
-					}
-					hr = m_tunerCtrl.SetFec(FEC);
-					if (hr!=0)
-					{
-						Log.WriteFile(Log.LogType.Capture,"Tune for SkyStar2 FAILED: on SetFec");
-						return false;	// *** FUNCTION EXIT POINT
-					}
-					hr = m_tunerCtrl.SetPolarity(POL);
-					if (hr!=0)
-					{
-						Log.WriteFile(Log.LogType.Capture,"Tune for SkyStar2 FAILED: on SetPolarity");
-						return false;	// *** FUNCTION EXIT POINT
-					}
-					hr = m_tunerCtrl.SetLnbKHz(LNBKhz);
-					if (hr!=0)
-					{
-						Log.WriteFile(Log.LogType.Capture,"Tune for SkyStar2 FAILED: on SetLnbKHz");
-						return false;	// *** FUNCTION EXIT POINT
-					}
-					hr = m_tunerCtrl.SetDiseqc(Diseq);
-					if (hr!=0)
-					{
-						Log.WriteFile(Log.LogType.Capture,"Tune for SkyStar2 FAILED: on SetDiseqc");
-						return false;	// *** FUNCTION EXIT POINT
-					}
+					Log.WriteFile(Log.LogType.Capture,"Tune for SkyStar2 FAILED: on SetFrequency");
+					return false;	// *** FUNCTION EXIT POINT
 				}
-				// cablestar
+				hr = m_tunerCtrl.SetSymbolRate(SymbolRate);
+				if (hr!=0)
+				{
+					Log.WriteFile(Log.LogType.Capture,"Tune for SkyStar2 FAILED: on SetSymbolRate");
+					return false;	// *** FUNCTION EXIT POINT
+				}
+				hr = m_tunerCtrl.SetLnbFrequency(LNBFreq);
+				if (hr!=0)
+				{
+					Log.WriteFile(Log.LogType.Capture,"Tune for SkyStar2 FAILED: on SetLnbFrequency");
+					return false;	// *** FUNCTION EXIT POINT
+				}
+				hr = m_tunerCtrl.SetFec(FEC);
+				if (hr!=0)
+				{
+					Log.WriteFile(Log.LogType.Capture,"Tune for SkyStar2 FAILED: on SetFec");
+					return false;	// *** FUNCTION EXIT POINT
+				}
+				hr = m_tunerCtrl.SetPolarity(POL);
+				if (hr!=0)
+				{
+					Log.WriteFile(Log.LogType.Capture,"Tune for SkyStar2 FAILED: on SetPolarity");
+					return false;	// *** FUNCTION EXIT POINT
+				}
+				hr = m_tunerCtrl.SetLnbKHz(LNBKhz);
+				if (hr!=0)
+				{
+					Log.WriteFile(Log.LogType.Capture,"Tune for SkyStar2 FAILED: on SetLnbKHz");
+					return false;	// *** FUNCTION EXIT POINT
+				}
+				hr = m_tunerCtrl.SetDiseqc(Diseq);
+				if (hr!=0)
+				{
+					Log.WriteFile(Log.LogType.Capture,"Tune for SkyStar2 FAILED: on SetDiseqc");
+					return false;	// *** FUNCTION EXIT POINT
+				}
+			}
+			// cablestar
 			
 			
 			
-				// airstar
+			// airstar
 
-				// final
-				hr = m_tunerCtrl.SetTunerStatus();
+			// final
+			hr = m_tunerCtrl.SetTunerStatus();
 			if (hr!=0)	
 			{
 				Log.WriteFile(Log.LogType.Capture,"Tune for SkyStar2 FAILED: on SetTunerStatus");
@@ -719,13 +719,8 @@ namespace MediaPortal.TV.Recording
 				//
 			}
 			
-			
-			if(AudioPID!=-1 && VideoPID!=-1)
-			{
-				DeleteAllPIDs(m_dataCtrl,0);
-				SetPidToPin(m_dataCtrl,0,0x2000);
-			}
-
+			DeleteAllPIDs(m_dataCtrl,0);
+			SetPidToPin(m_dataCtrl,0,0x2000);
 
 			return true;
 		}
