@@ -25,6 +25,35 @@ Sections::~Sections()
 HRESULT Sections::ParseFromFile()
 {
 
+	if (m_pFileReader->m_hInfoFile!=INVALID_HANDLE_VALUE)
+	{
+		DWORD dwReadBytes;
+		LARGE_INTEGER li,writepos;
+		li.QuadPart = 0;
+		int ttxPid,subtitlePid;
+		for (int i=0; i < 20; ++i)
+		{
+			bool success=LockFile(m_pFileReader->m_hInfoFile,0,0,8+7*sizeof(int),0);
+			if (success) break;
+			Sleep(10);
+		}
+		::SetFilePointer(m_pFileReader->m_hInfoFile, li.LowPart, &li.HighPart, FILE_BEGIN);
+		ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&writepos, 8, &dwReadBytes, NULL);
+		ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&pids.AC3, sizeof(int), &dwReadBytes, NULL);
+		ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&pids.AudioPid, sizeof(int), &dwReadBytes, NULL);
+		ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&pids.AudioPid2, sizeof(int), &dwReadBytes, NULL);
+		ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&pids.VideoPid, sizeof(int), &dwReadBytes, NULL);
+		ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&ttxPid, sizeof(int), &dwReadBytes, NULL);
+		ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&pids.PMTPid, sizeof(int), &dwReadBytes, NULL);
+		ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&subtitlePid, sizeof(int), &dwReadBytes, NULL);
+		
+		UnlockFile(m_pFileReader->m_hInfoFile,0,0,8+7*sizeof(int),0);
+		pids.Duration=600000000;
+		__int64 filePointer=0;
+		m_pFileReader->SetFilePointer(filePointer,FILE_BEGIN);
+		return S_OK;
+	}
+
 	
 	__int64 filePointer=0;
 	HRESULT hr = S_OK;
