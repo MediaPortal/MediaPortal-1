@@ -268,4 +268,6 @@ void CFilterOutPin::ResetBuffers()
 {
 	if (m_pBuffers==NULL) return;
 	m_pBuffers->Clear();
+	m_rtDuration = m_rtStop = m_pSections->pids.Duration;
+	m_bDiscontinuity=true;
 }

@@ -2305,22 +2305,43 @@ namespace MediaPortal.TV.Recording
 		{
 #if USEMTSWRITER
 			if (m_tsWriterInterface== null || m_tsWriterInterface==null || currentTuningObject==null) return;
-			m_tsWriterInterface.ResetPids();
+			//m_tsWriterInterface.ResetPids();
 			if (currentTuningObject.AC3Pid>0)
 				m_tsWriterInterface.SetAC3Pid((ushort)currentTuningObject.AC3Pid);
+			else
+				m_tsWriterInterface.SetAC3Pid(0);
+
 			if (currentTuningObject.AudioPid>0)
 				m_tsWriterInterface.SetAudioPid((ushort)currentTuningObject.AudioPid);
-			if (currentTuningObject.Audio1>0)
-				m_tsWriterInterface.SetAudioPid((ushort)currentTuningObject.Audio1);
+			else
+			{
+				if (currentTuningObject.Audio1>0)
+					m_tsWriterInterface.SetAudioPid((ushort)currentTuningObject.Audio1);
+				else
+					m_tsWriterInterface.SetAudioPid(0);
+			}
+			
 			if (currentTuningObject.Audio2>0)
 				m_tsWriterInterface.SetAudioPid2((ushort)currentTuningObject.Audio2);
+			else
+				m_tsWriterInterface.SetAudioPid2(0);
+
 			//m_tsWriterInterface.SetSubtitlePid((ushort)currentTuningObject.SubtitlePid);
 			if (currentTuningObject.TeletextPid>0)
 				m_tsWriterInterface.SetTeletextPid((ushort)currentTuningObject.TeletextPid);
+			else
+				m_tsWriterInterface.SetTeletextPid(0);
+
 			if (currentTuningObject.VideoPid>0)
 				m_tsWriterInterface.SetVideoPid((ushort)currentTuningObject.VideoPid);
+			else
+				m_tsWriterInterface.SetVideoPid(0);
+
 			if (currentTuningObject.PCRPid>0)
 				m_tsWriterInterface.SetPCRPid((ushort)currentTuningObject.PCRPid);
+			else
+				m_tsWriterInterface.SetPCRPid(0);
+
 			m_tsWriterInterface.SetPMTPid((ushort)currentTuningObject.PMTPid);
 #endif
 		}

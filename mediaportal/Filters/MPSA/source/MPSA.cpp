@@ -611,7 +611,6 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 			delete [] d;
 			return S_OK;
 		}
-
 		if (m_bDecodeATSC)
 		{
 			if (pbData[0]==0xc7)
@@ -633,7 +632,6 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 			return S_OK;
 		}
 		
-			
 			
 		if(pbData[0]==0x02)// pmt
 		{

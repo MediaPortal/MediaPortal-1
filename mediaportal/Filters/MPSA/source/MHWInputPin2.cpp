@@ -124,11 +124,13 @@ STDMETHODIMP CMHWInputPin2::Receive(IMediaSample *pSample)
 	// decode
 	if(lDataLen>5)
 	{
-		
-//		Log("mhwpin2: packet:(%x)", pbData[0]);
+
+		//DISABLED
+/*
 		m_tableGrabber90.OnPacket(pbData,lDataLen);
 		m_tableGrabber91.OnPacket(pbData,lDataLen);
 		m_tableGrabber92.OnPacket(pbData,lDataLen);
+*/
 	}
 
     return S_OK;
@@ -201,6 +203,8 @@ void CMHWInputPin2::Parse()
 	if (m_bParsed) return;
 	Log("mhwpin2: parse()");
 	m_bParsed=true;
+	//DISABLED
+	return;
 	//parse summaries
 	Log("MHW2: parse summaries:%d",m_tableGrabber90.Count());
 	for (int i=0; i < m_tableGrabber90.Count();++i)
