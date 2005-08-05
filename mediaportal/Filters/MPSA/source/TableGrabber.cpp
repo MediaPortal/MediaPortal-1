@@ -73,9 +73,17 @@ void TableGrabber::ParseSection(byte* pData, long lDataLen)
 	
 	if (header.TableID==m_sectionTableID && (pData[1] >=0x70 && pData[1] <=0x7f) )
 	{
+		if(pData[0]==0x00 && pData[1]==0x00 && pData[2]==0x01)
+		{
+			return; // PES PACKET
+		}
 		header.SectionLength+=3;
 		if(header.SectionLength<1) return;
-		if(header.SectionLength>4999) return;
+		if(header.SectionLength>4999)
+		{
+			Log("MHW:Section length:%d", header.SectionLength);
+			return;
+		}
 		imapSections it;
 		if (m_pid==0xd2)
 		{

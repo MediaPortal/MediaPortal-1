@@ -575,6 +575,11 @@ HRESULT CStreamAnalyzer::ProcessEPG(BYTE *pbData,long len)
 		if (m_bDecodeATSC) return S_OK;
 		if (m_pSections->IsEPGGrabbing())
 		{
+			if(pbData[0]==0x00 && pbData[1]==0x00 && pbData[2]==0x01)
+			{
+				//PES PACKET
+				return S_OK;
+			}
 			if (pbData[0]>=0x50 && pbData[0] <= 0x6f) //EPG
 			{
 				m_pSections->DecodeEPG(pbData,len);
@@ -592,7 +597,21 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 	try
 	{
 		//CAutoLock lock(&m_Lock);
-		
+		if(pbData[0]==0x00 && pbData[1]==0x00 && pbData[2]==0x01)
+		{
+			//pes packet
+			AudioHeader audio;
+			BYTE *d=new BYTE[len];
+			m_pSections->GetPES(pbData,len,d);
+			if(m_pSections->ParseAudioHeader(d,&audio)==S_OK)
+			{
+				// we can check audio
+				int a=0;
+			}
+			delete [] d;
+			return S_OK;
+		}
+
 		if (m_bDecodeATSC)
 		{
 			if (pbData[0]==0xc7)
@@ -614,21 +633,6 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 			return S_OK;
 		}
 		
-		bool pesPacket=false;
-		/*
-		if(pbData[0]==0x00 && pbData[1]==0x00 && pbData[2]==0x01)
-		{
-			AudioHeader audio;
-			pesPacket=true;
-			BYTE *d=new BYTE[len];
-			m_pSections->GetPES(pbData,len,d);
-			if(m_pSections->ParseAudioHeader(d,&audio)==S_OK)
-			{
-				// we can check audio
-				int a=0;
-			}
-			delete [] d;
-		}*/
 			
 			
 		if(pbData[0]==0x02)// pmt
@@ -654,7 +658,7 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 				m_currentPMTLen=len;
 			}		
 		}
-		if(pbData[0]==0x00 && pesPacket==false)// pat
+		if(pbData[0]==0x00)// pat
 		{
 			// we need to check if we received a new PAT
 			// reason, after submitting a tune request (zap to another channel) we might still

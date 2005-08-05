@@ -438,10 +438,10 @@ bool Sections::IsNewPat(BYTE *pData, int len)
 		transport_stream_id==m_patTSID && 
 		section_length==m_patSectionLen) return false;
 	if(table_id!=0 || section_number!=0||last_section_number!=0) return false;
-	Log("%x==%x %x==%x %x==%x",
-		version_number,m_patTableVersion, 
-		transport_stream_id,m_patTSID,
-		section_length,m_patSectionLen);
+	//Log("%x==%x %x==%x %x==%x",
+	//	version_number,m_patTableVersion, 
+	//	transport_stream_id,m_patTSID,
+	//	section_length,m_patSectionLen);
 	return true;
 }
 void Sections::decodePAT(BYTE *pData,ChannelInfo chInfo[],int *channelCount, int len)

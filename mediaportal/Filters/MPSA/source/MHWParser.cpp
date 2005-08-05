@@ -154,7 +154,7 @@ void CMHWParser::ParseThemes(byte* data, int dataLen)
 		val++;
 		themesNames+=15;
 	}
-	Log("mhw-epg: themes:%d", m_vecThemes.size());
+	//Log("mhw-epg: themes:%d", m_vecThemes.size());
 }
 
 int CMHWParser::GetTitleCount()
@@ -223,7 +223,7 @@ void CMHWParser::GetSummary(WORD programId, char** summary)
 	if (it!=m_mapSummaries.end())
 	{
 		*summary=(char*)it->second.Description.c_str();		
-		Log("MHW:GetSummary(%x) size:%d found ", programId,m_mapSummaries.size());
+		//Log("MHW:GetSummary(%x) size:%d found ", programId,m_mapSummaries.size());
 	}
 	else
 		Log("MHW:GetSummary(%x) size:%d not found", programId,m_mapSummaries.size());
