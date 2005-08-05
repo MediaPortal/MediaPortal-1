@@ -170,7 +170,7 @@ CDumpInputPin::CDumpInputPin(CDump *pDump,
     m_pDump(pDump),
     m_tLast(0)
 {
-	m_videoPid=m_audio1Pid=m_audio2Pid=m_ac3Pid=m_ttxtPid=m_subtitlePid=m_pmtPid=-1;
+	ResetPids();
 
 }
 
@@ -323,7 +323,7 @@ STDMETHODIMP CDumpInputPin::Receive(IMediaSample *pSample)
 			m_pDump->Log((__int64)t,false);
 			m_pDump->Log(TEXT(", pid="),false);
 			m_pDump->Log((__int64)pid,true);
-			if(true||IsPidValid(pid)==true)
+			if(IsPidValid(pid)==true)
 			{
 				hr=m_pDump->Write(pbData+t,188);
 				m_pDump->Log(TEXT("Receive: hr="),false);
@@ -346,7 +346,7 @@ void CDumpInputPin::ResetPids()
 }
 bool CDumpInputPin::IsPidValid(int pid)
 {
-	if(pid==0 || pid==1 || pid==m_videoPid || pid==m_audio1Pid ||
+	if(pid==0 || pid==1 || pid==0x11||pid==m_videoPid || pid==m_audio1Pid ||
 		pid==m_audio2Pid || pid==m_ac3Pid || pid==m_ttxtPid || pid==m_subtitlePid || 
 		pid==m_pmtPid|| pid==m_pcrPid)
 		return true;
