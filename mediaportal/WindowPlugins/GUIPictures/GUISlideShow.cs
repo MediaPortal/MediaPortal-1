@@ -1903,7 +1903,7 @@ namespace MediaPortal.GUI.Pictures
 
 		void StartBackgroundMusic(string path)
 		{
-			if(g_Player.Playing)
+			if(g_Player.IsMusic || g_Player.IsRadio || g_Player.IsTV || g_Player.IsVideo)
 				return;
 
 			if(_musicFileExtensions == null)
