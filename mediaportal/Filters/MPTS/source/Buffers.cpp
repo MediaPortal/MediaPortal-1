@@ -11,6 +11,8 @@
 #include "Sections.h"
 #include <crtdbg.h>
 
+extern void LogDebug(const char *fmt, ...) ;
+
 CBuffers::CBuffers(FileReader *pFileReader, StreamPids *pPids)
 {
 	m_pFileReader = pFileReader;

@@ -14,6 +14,8 @@ SplitterSetup::SplitterSetup(Sections *pSections) :
 m_demuxSetupComplete(FALSE)
 {
 	m_pSections = pSections;
+	m_pAudio=NULL;
+	m_pVideo=NULL;
 }
 
 SplitterSetup::~SplitterSetup()
@@ -58,8 +60,6 @@ HRESULT SplitterSetup::SetupDemuxer(IBaseFilter *demuxFilter)
 	ULONG			count;
 	ULONG			umPid;
 	int				maxCounter;
-	IPin			*pAudio=NULL;
-	IPin			*pVideo=NULL;
 	HRESULT hr=0;
 
 	if(demuxFilter==NULL)
@@ -79,13 +79,55 @@ HRESULT SplitterSetup::SetupDemuxer(IBaseFilter *demuxFilter)
 	{
 		ZeroMemory(&type, sizeof(AM_MEDIA_TYPE));
 		GetVideoMedia(&type);
-		hr=demuxer->CreateOutputPin(&type, L"Video",&pVideo);
+		hr=demuxer->CreateOutputPin(&type, L"Video",&m_pVideo);
 	}
+	int audioToUse=(m_pSections->pids.AudioPid>0?m_pSections->pids.AudioPid:m_pSections->pids.AC3);
+	if(audioToUse>0)
+	{
+		ZeroMemory(&type, sizeof(AM_MEDIA_TYPE));
+		if(m_pSections->pids.VideoPid>0)
+		{
+			if(audioToUse==m_pSections->pids.AudioPid)
+				GetMP2Media(&type);// tv
+			else 
+				GetAC3Media(&type);
+		}
+		else
+		{
+			if(m_pSections->pids.PCRPid==0 || m_pSections->pids.PCRPid>=0x1FFF)
+			{
+				GetAudioPayload(&type);// radio
+			}
+			else
+			{
+				GetMP2Media(&type); // radio
+			}	
+		}
+		hr=demuxer->CreateOutputPin(&type,L"Audio" ,&m_pAudio);
+	}
+
+	SetupPids();
+
+	m_demuxSetupComplete=true;
+	demuxer->Release();
+	return S_OK;
+}
+
+HRESULT SplitterSetup::SetupPids()
+{
 	// video
-	if (pVideo!=NULL && m_pSections->pids.VideoPid>0)
+	IMPEG2PIDMap	*pMap=NULL;
+	IEnumPIDMap		*pPidEnum=NULL;
+	ULONG			pid;
+	PID_MAP			pm;
+	ULONG			count;
+	ULONG			umPid;
+	int				maxCounter;
+	HRESULT hr=0;
+	if (m_pVideo!=NULL && m_pSections->pids.VideoPid>0)
 	{
 
-		hr=pVideo->QueryInterface(IID_IMPEG2PIDMap,(void**)&pMap);
+		hr=m_pVideo->QueryInterface(IID_IMPEG2PIDMap,(void**)&pMap);
 		if(FAILED(hr) || pMap==NULL)
 			return 1;
 		// 
@@ -111,37 +153,14 @@ HRESULT SplitterSetup::SetupDemuxer(IBaseFilter *demuxFilter)
 		if(FAILED(hr))
 			return 2;
 		pMap->Release();
-		pVideo->Release();
 	}
-	int audioToUse=(m_pSections->pids.AudioPid>0?m_pSections->pids.AudioPid:m_pSections->pids.AC3);
-	if(audioToUse>0)
-	{
-		ZeroMemory(&type, sizeof(AM_MEDIA_TYPE));
-		if(m_pSections->pids.VideoPid>0)
-		{
-			if(audioToUse==m_pSections->pids.AudioPid)
-				GetMP2Media(&type);// tv
-			else 
-				GetAC3Media(&type);
-		}
-		else
-		{
-			if(m_pSections->pids.PCRPid==0 || m_pSections->pids.PCRPid>=0x1FFF)
-			{
-				GetAudioPayload(&type);// radio
-			}
-			else
-			{
-				GetMP2Media(&type); // radio
-			}	
-		}
-		hr=demuxer->CreateOutputPin(&type,L"Audio" ,&pAudio);
-	}
+	
 	// audio 
-	if (pAudio!=NULL)
+	int audioToUse=(m_pSections->pids.AudioPid>0?m_pSections->pids.AudioPid:m_pSections->pids.AC3);
+	if (m_pAudio!=NULL)
 	{
 
-		hr=pAudio->QueryInterface(IID_IMPEG2PIDMap,(void**)&pMap);
+		hr=m_pAudio->QueryInterface(IID_IMPEG2PIDMap,(void**)&pMap);
 		if(FAILED(hr) || pMap==NULL)
 			return 3;
 		// 
@@ -181,10 +200,7 @@ HRESULT SplitterSetup::SetupDemuxer(IBaseFilter *demuxFilter)
 			return 4;
 
 		pMap->Release();
-		pAudio->Release();
 	}
-	m_demuxSetupComplete=true;
-	demuxer->Release();
 	return S_OK;
 
 }

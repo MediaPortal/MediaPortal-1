@@ -11,7 +11,7 @@
 #include "bdamedia.h"
 #include "MPTSFilter.h"
 
-extern void Log(const char *fmt, ...) ;
+extern void LogDebug(const char *fmt, ...) ;
 
 CUnknown * WINAPI CMPTSFilter::CreateInstance(LPUNKNOWN punk, HRESULT *phr)
 {
@@ -328,9 +328,21 @@ STDMETHODIMP CMPTSFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt)
 
 void CMPTSFilter::UpdatePids()
 {
-	if (m_pFileReader==NULL) return;
-	if (m_pSections==NULL) return;
-	if (m_pFileReader->m_hInfoFile==INVALID_HANDLE_VALUE) return;
+	if (m_pFileReader==NULL) 
+	{
+		LogDebug("UpdatePids() filereader=null");
+		return;
+	}
+	if (m_pSections==NULL) 
+	{
+		LogDebug("UpdatePids() sections=null");
+		return;
+	}
+	if (m_pFileReader->m_hInfoFile==INVALID_HANDLE_VALUE) 
+	{
+		LogDebug("UpdatePids() info file not opened");
+		return;
+	}
 	DWORD dwReadBytes;
 	LARGE_INTEGER li,writepos;
 	li.QuadPart = 0;
@@ -338,27 +350,64 @@ void CMPTSFilter::UpdatePids()
 	DWORD dwPos=::SetFilePointer(m_pFileReader->m_hInfoFile, li.LowPart, &li.HighPart, FILE_BEGIN);
 	if (dwPos != 0)
 	{
+		LogDebug("UpdatePids:SetFilePointer failed:%d", GetLastError());
 		return;
 	}
 
 	if (!::ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&writepos, 8, &dwReadBytes, NULL)) return;
-	if (dwReadBytes!=8) return;
+	if (dwReadBytes!=8)
+	{
+		LogDebug("UpdatePids:readfile failed:%d", GetLastError());
+		return;
+	}
 	if (!::ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&ac3pid, sizeof(int), &dwReadBytes, NULL)) return;
-	if (dwReadBytes!=sizeof(int)) return;
+	if (dwReadBytes!=sizeof(int))
+	{
+		LogDebug("UpdatePids:readfile failed:%d", GetLastError());
+		return;
+	}
 	if (!::ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&audiopid, sizeof(int), &dwReadBytes, NULL)) return;
-	if (dwReadBytes!=sizeof(int)) return;
+	if (dwReadBytes!=sizeof(int))
+	{
+		LogDebug("UpdatePids:readfile failed:%d", GetLastError());
+		return;
+	}
 	if (!::ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&audiopid2, sizeof(int), &dwReadBytes, NULL)) return;
-	if (dwReadBytes!=sizeof(int)) return;
+	if (dwReadBytes!=sizeof(int))
+	{
+		LogDebug("UpdatePids:readfile failed:%d", GetLastError());
+		return;
+	}
 	if (!::ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&videopid, sizeof(int), &dwReadBytes, NULL)) return;
-	if (dwReadBytes!=sizeof(int)) return;
+	if (dwReadBytes!=sizeof(int))
+	{
+		LogDebug("UpdatePids:readfile failed:%d", GetLastError());
+		return;
+	}
 	if (!::ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&ttxPid, sizeof(int), &dwReadBytes, NULL)) return;
-	if (dwReadBytes!=sizeof(int)) return;
+	if (dwReadBytes!=sizeof(int))
+	{
+		LogDebug("UpdatePids:readfile failed:%d", GetLastError());
+		return;
+	}
 	if (!::ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&pmtpid, sizeof(int), &dwReadBytes, NULL)) return;
-	if (dwReadBytes!=sizeof(int)) return;
+	if (dwReadBytes!=sizeof(int))
+	{
+		LogDebug("UpdatePids:readfile failed:%d", GetLastError());
+		return;
+	}
 	if (!::ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&subtitlePid, sizeof(int), &dwReadBytes, NULL)) return;
-	if (dwReadBytes!=sizeof(int)) return;
+	if (dwReadBytes!=sizeof(int))
+	{
+		LogDebug("UpdatePids:readfile failed:%d", GetLastError());
+		return;
+	}
 	if (!::ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&pcrpid, sizeof(int), &dwReadBytes, NULL)) return;
-	if (dwReadBytes!=sizeof(int)) return;
+	if (dwReadBytes!=sizeof(int))
+	{
+		LogDebug("UpdatePids:readfile failed:%d", GetLastError());
+		return;
+	}
 	if (pcrpid==0) pcrpid=videopid;
 	if (ac3pid	 !=m_pSections->pids.AC3 ||
 		audiopid !=m_pSections->pids.AudioPid ||
@@ -367,7 +416,9 @@ void CMPTSFilter::UpdatePids()
 		pmtpid   !=m_pSections->pids.PMTPid ||
 		pcrpid   !=m_pSections->pids.PCRPid)
 	{
-		Log(TEXT("filter: PIDS changed"),true);
+		LogDebug("filter: PIDS changed");
+		LogDebug("got pids ac3:%x audio:%x audio2:%x video:%x pmt:%x pcr:%x",
+					ac3pid,audiopid,audiopid2,videopid,pmtpid,pcrpid);
 		m_pSections->pids.AC3=ac3pid;
 		m_pSections->pids.AudioPid=audiopid;
 		m_pSections->pids.AudioPid2=audiopid2;
@@ -379,6 +430,7 @@ void CMPTSFilter::UpdatePids()
 		m_pFileReader->SetFilePointer(filePointer,FILE_BEGIN);
 		m_pPin->ResetBuffers();
 		//setup demuxer?
+		m_pDemux->SetupPids();
 	}
 }
 

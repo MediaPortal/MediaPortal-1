@@ -69,7 +69,7 @@ public:
 	void GetPTS(BYTE *data,ULONGLONG *pts);
 	void PTSToPTSTime(ULONGLONG pts,PTSTime* ptsTime);
 	HRESULT CurrentPTS(BYTE *pData,ULONGLONG *ptsValue,int *streamType);
-	
+	void ResetBuffers();
 public:
 
 	StreamPids pids;

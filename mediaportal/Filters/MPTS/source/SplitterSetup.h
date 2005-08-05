@@ -144,6 +144,7 @@ public:
 	SplitterSetup(Sections *pSections);
 	virtual ~SplitterSetup();
 	STDMETHODIMP SetDemuxPins(IFilterGraph *pGraph);
+	HRESULT SetupPids();
 
 
 protected:
@@ -157,6 +158,8 @@ protected:
 protected:
 	Sections *m_pSections;
 	BOOL m_demuxSetupComplete;
+	IPin* m_pAudio;
+	IPin* m_pVideo;
 
 };
 

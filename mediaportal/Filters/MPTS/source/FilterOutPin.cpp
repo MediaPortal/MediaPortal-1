@@ -9,6 +9,7 @@
 #include "MPTSFilter.h"
 //#include "Mmsystem.h"
 class CFilterOutPin;
+extern void LogDebug(const char *fmt, ...) ;
 
 CFilterOutPin::CFilterOutPin(LPUNKNOWN pUnk, CMPTSFilter *pFilter, FileReader *pFileReader, Sections *pSections, HRESULT *phr) :
 	CSourceStream(NAME("PinObject"), phr, pFilter, L"Out"),
@@ -108,58 +109,61 @@ STDMETHODIMP CFilterOutPin::SetPositions(LONGLONG *pCurrent,DWORD CurrentFlags,L
 }
 HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 {
+	//LogDebug("FillBuffer");
 	CheckPointer(pSample, E_POINTER);
-	CAutoLock cAutoLockShared(&m_cSharedState);
-
-	PBYTE pData;
-	LONG lDataLength;
-	HRESULT hr = pSample->GetPointer(&pData);
-	if (FAILED(hr))
-	{
-		m_pMPTSFilter->Log((char*)"pin: FillBuffer() error on getting pointer for sample",true);
-		return hr;
-	}
-	lDataLength = pSample->GetActualDataLength();
-
-
 	m_pMPTSFilter->UpdatePids();
-	hr = m_pBuffers->Require(lDataLength);
-	if (FAILED(hr))
 	{
-		m_pMPTSFilter->Log((char*)"pin: FillBuffer() error in fillbuffer",true);
-		m_pMPTSFilter->Refresh();
-		//return S_FALSE; // cant read = end of stream
-	}
+		CAutoLock cAutoLockShared(&m_cSharedState);
 
-	m_pBuffers->DequeFromBuffer(pData, lDataLength);
-
-	ULONGLONG pts=0;
-	Sections::PTSTime time;
-	int stream;
-	for(int i=0;i<18800;i+=188)
-	{
-		if(m_pSections->CurrentPTS(pData+i,&pts,&stream)==S_OK)
+		PBYTE pData;
+		LONG lDataLength;
+		HRESULT hr = pSample->GetPointer(&pData);
+		if (FAILED(hr))
 		{
-				// correct our clock
-			ULONGLONG millis = pts / 90; // Systemclock (27MHz) / 300
-			m_dwStartTime = (DWORD)(timeGetTime() - millis);
-			break; // first pts
+			LogDebug("GetPointer() failed:%x",hr);
+			m_pMPTSFilter->Log((char*)"pin: FillBuffer() error on getting pointer for sample",true);
+			return hr;
+		}
+		lDataLength = pSample->GetActualDataLength();
+
+
+		hr = m_pBuffers->Require(lDataLength);
+		if (FAILED(hr))
+		{
+			m_pMPTSFilter->Log((char*)"pin: FillBuffer() error in fillbuffer",true);
+			m_pMPTSFilter->Refresh();
+			//return S_FALSE; // cant read = end of stream
 		}
 
-	}
-	CRefTime rt((LONG)(timeGetTime() - m_dwStartTime));
-	REFERENCE_TIME rtStart = static_cast<REFERENCE_TIME>(rt / m_dRateSeeking);
-	REFERENCE_TIME rtStop  = static_cast<REFERENCE_TIME>(m_rtStop / m_dRateSeeking);
-	pSample->SetTime(&rtStart, &rtStop); 
-	pSample->SetSyncPoint(TRUE);
+		m_pBuffers->DequeFromBuffer(pData, lDataLength);
 
-	if(m_bDiscontinuity) 
-    {
-		m_pMPTSFilter->Log((char*)"pin: FillBuffer() SetDiscontinuity",true);
-		pSample->SetDiscontinuity(TRUE);
-		m_bDiscontinuity = FALSE;
-	}
+		ULONGLONG pts=0;
+		Sections::PTSTime time;
+		int stream;
+		for(int i=0;i<18800;i+=188)
+		{
+			if(m_pSections->CurrentPTS(pData+i,&pts,&stream)==S_OK)
+			{
+					// correct our clock
+				ULONGLONG millis = pts / 90; // Systemclock (27MHz) / 300
+				m_dwStartTime = (DWORD)(timeGetTime() - millis);
+				break; // first pts
+			}
 
+		}
+		CRefTime rt((LONG)(timeGetTime() - m_dwStartTime));
+		REFERENCE_TIME rtStart = static_cast<REFERENCE_TIME>(rt / m_dRateSeeking);
+		REFERENCE_TIME rtStop  = static_cast<REFERENCE_TIME>(m_rtStop / m_dRateSeeking);
+		pSample->SetTime(&rtStart, &rtStop); 
+		pSample->SetSyncPoint(TRUE);
+
+		if(m_bDiscontinuity) 
+		{
+			m_pMPTSFilter->Log((char*)"pin: FillBuffer() SetDiscontinuity",true);
+			pSample->SetDiscontinuity(TRUE);
+			m_bDiscontinuity = FALSE;
+		}
+	}
 	return NOERROR;
 }
 STDMETHODIMP CFilterOutPin::GetDuration(LONGLONG *pDuration)

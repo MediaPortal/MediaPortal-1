@@ -6,7 +6,7 @@
 
 #include <streams.h>
 #include "FileReader.h"
-extern void Log(const char *fmt, ...) ;
+extern void LogDebug(const char *fmt, ...) ;
 FileReader::FileReader() :
 	m_hFile(INVALID_HANDLE_VALUE),
 	m_pFileName(0),
@@ -69,11 +69,11 @@ HRESULT FileReader::OpenFile()
 		return NOERROR;
 	}
 
-	Log("FileReader::OpenFile()");
+	LogDebug("FileReader::OpenFile()");
 	// Has a filename been set yet
 	if (m_pFileName == NULL) 
 	{
-		Log("FileReader::OpenFile() invalid filename");
+		LogDebug("FileReader::OpenFile() invalid filename");
 		return ERROR_INVALID_NAME;
 	}
 
@@ -104,7 +104,7 @@ HRESULT FileReader::OpenFile()
 	if (m_hFile == INVALID_HANDLE_VALUE) {
 
 		DWORD dwErr = GetLastError();
-		Log("FileReader::OpenFile() unable to open file:%x, try again",dwErr);
+		LogDebug("FileReader::OpenFile() unable to open file:%x, try again",dwErr);
 		//Test incase file is being recorded to
 		m_hFile = CreateFile((LPCTSTR) pFileName,		// The filename
 							GENERIC_READ,				// File access
@@ -118,7 +118,7 @@ HRESULT FileReader::OpenFile()
 
 		if (m_hFile == INVALID_HANDLE_VALUE)
 		{
-			Log("FileReader::OpenFile() unable to open file:%x",dwErr);
+			LogDebug("FileReader::OpenFile() unable to open file:%x",dwErr);
 			return HRESULT_FROM_WIN32(dwErr);
 		}
 
@@ -138,7 +138,7 @@ HRESULT FileReader::OpenFile()
 			FILE_ATTRIBUTE_NORMAL, // |	FILE_FLAG_RANDOM_ACCESS, // More flags
 			NULL);
 
-	Log("FileReader::OpenFile() file opened");
+	LogDebug("FileReader::OpenFile() file opened");
 
 	return S_OK;
 
@@ -151,7 +151,7 @@ HRESULT FileReader::CloseFile()
 		return S_OK;
 	}
 
-	Log("FileReader::CloseFile()");
+	LogDebug("FileReader::CloseFile()");
 	CloseHandle(m_hFile);
 	m_hFile = INVALID_HANDLE_VALUE; 
 
@@ -176,7 +176,7 @@ HRESULT FileReader::GetFileSize(HANDLE handle,__int64 *lpllsize)
 	li.LowPart= ::GetFileSize(handle, (LPDWORD)&li.HighPart);
 	if ((li.LowPart == 0xFFFFFFFF) && (GetLastError() != NO_ERROR ))
 	{
-		Log("FileReader:GetFileSize failed with %x", GetLastError() );
+		LogDebug("FileReader:GetFileSize failed with %x", GetLastError() );
 
 		return E_FAIL;
 	}
@@ -192,7 +192,7 @@ HRESULT FileReader::GetFileSize(__int64 *lpllsize)
 	li.LowPart= ::GetFileSize(m_hFile, (LPDWORD)&li.HighPart);
 	if ((li.LowPart == 0xFFFFFFFF) && (GetLastError() != NO_ERROR ))
 	{
-		Log("FileReader:GetFileSize failed with %x", GetLastError() );
+		LogDebug("FileReader:GetFileSize failed with %x", GetLastError() );
 
 		return E_FAIL;
 	}
@@ -220,18 +220,18 @@ DWORD FileReader::SetFilePointer(__int64 llDistanceToMove, DWORD dwMoveMethod)
 		length  = (__int64)((__int64)length + (__int64)llDistanceToMove);
 		li.QuadPart = length;
 		dwMoveMethod = FILE_BEGIN;
-		//Log("FileReader:SetFilePointer %x %x (%x)", li.HighPart,li.LowPart, dwMoveMethod);
+		//LogDebug("FileReader:SetFilePointer %x %x (%x)", li.HighPart,li.LowPart, dwMoveMethod);
 	}
 	else
 	{
 		li.QuadPart = llDistanceToMove;
-		//Log("FileReader:SetFilePointer %x %x (%x)", li.HighPart,li.LowPart, dwMoveMethod);
+		//LogDebug("FileReader:SetFilePointer %x %x (%x)", li.HighPart,li.LowPart, dwMoveMethod);
 	}
 
 	DWORD dwErr=::SetFilePointer(m_hFile, li.LowPart, &li.HighPart, dwMoveMethod);
 	if (FAILED(dwErr))
 	{
-		Log("FileReader:SetFilePointer failed:%d", dwErr);
+		LogDebug("FileReader:SetFilePointer failed:%d", dwErr);
 	}
 	return dwErr;
 }
@@ -250,11 +250,11 @@ HRESULT FileReader::Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes)
 
 	if (m_hFile == INVALID_HANDLE_VALUE)
 	{
-		Log("FileReader:Read file is not open");
+		LogDebug("FileReader:Read file is not open");
 		return S_FALSE;
 	}
 		
-	//Log("FileReader:Read %x ", lDataLength);
+	//LogDebug("FileReader:Read %x ", lDataLength);
 	__int64 m_filecurrent = GetFilePointer();
 
 	__int64 length = 0;
@@ -267,11 +267,11 @@ HRESULT FileReader::Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes)
 
 	if (hr<=0)
 	{
-		Log("FileReader:ReadFile failed with %d", GetLastError());
+		LogDebug("FileReader:ReadFile failed with %d", GetLastError());
 		return hr;
 	}
 
-	Log("FileReader:ReadFile read %x/%x bytes size:%x pos:%x", (*dwReadBytes),lDataLength, length,m_filecurrent);
+	//LogDebug("FileReader:ReadFile read %x/%x bytes size:%x pos:%x", (*dwReadBytes),lDataLength, length,m_filecurrent);
 	if (*dwReadBytes < (ULONG)lDataLength)
 	{
 		return S_OK;
