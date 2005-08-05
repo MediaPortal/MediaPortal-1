@@ -907,7 +907,7 @@ namespace MediaPortal.GUI.Pictures
       
       SlideShow.Reset();
       AddDir(SlideShow, currentFolder);
-      SlideShow.StartSlideShow();
+      SlideShow.StartSlideShow(currentFolder);
       GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SLIDESHOW);
     }
 
@@ -940,7 +940,7 @@ namespace MediaPortal.GUI.Pictures
       }
       while (i != iStartItem);
 
-      SlideShow.StartSlideShow();
+      SlideShow.StartSlideShow(currentFolder);
       GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SLIDESHOW);
     }
 
