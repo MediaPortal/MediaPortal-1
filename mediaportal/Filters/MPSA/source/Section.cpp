@@ -808,18 +808,22 @@ void Sections::DecodeExtendedEvent(byte* data, EPGEvent& event)
 	lenB = descriptor_length - 5;
 	len1 = length_of_items;
 
-	char buffer[70000];
 	while (len1 > 0)
 	{
 		item_description_length = data[pointer];
+		char* buffer= new char[item_description_length+10];
 		getString468A(&data[pointer+1], item_description_length,buffer);
+		delete[] buffer;
+
 		string testText=buffer;
 		pointer += 1 + item_description_length;
 		if (testText.size()==0)
 			testText="-not avail.-";
 		item_length = data[pointer];
+		buffer= new char[item_length+10];
 		getString468A(&data[pointer+1], item_length,buffer);
 		item = buffer;
+		delete[] buffer;
 		pointer += 1 + item_length;
 		len1 -= (2 + item_description_length + item_length);
 		lenB -= (2 + item_description_length + item_length);
@@ -827,8 +831,10 @@ void Sections::DecodeExtendedEvent(byte* data, EPGEvent& event)
 	text_length = data[pointer];
 	pointer += 1;
 	lenB -= 1;
+	char* buffer= new char[item_length+10];
 	getString468A(&data[pointer], text_length,buffer);
 	text = buffer;
+		delete[] buffer;
 
 	if (item.size()>0)
 		event.event=item;
