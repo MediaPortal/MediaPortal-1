@@ -2303,6 +2303,26 @@ namespace MediaPortal.TV.Recording
 
 		void SetupMTSDemuxerPin()
 		{
+#if USEMTSWRITER
+			if (m_tsWriterInterface== null || m_tsWriterInterface==null || currentTuningObject==null) return;
+			m_tsWriterInterface.ResetPids();
+			if (currentTuningObject.AC3Pid>0)
+				m_tsWriterInterface.SetAC3Pid((ushort)currentTuningObject.AC3Pid);
+			if (currentTuningObject.AudioPid>0)
+				m_tsWriterInterface.SetAudioPid((ushort)currentTuningObject.AudioPid);
+			if (currentTuningObject.Audio1>0)
+				m_tsWriterInterface.SetAudioPid((ushort)currentTuningObject.Audio1);
+			if (currentTuningObject.Audio2>0)
+				m_tsWriterInterface.SetAudioPid2((ushort)currentTuningObject.Audio2);
+			//m_tsWriterInterface.SetSubtitlePid((ushort)currentTuningObject.SubtitlePid);
+			if (currentTuningObject.TeletextPid>0)
+				m_tsWriterInterface.SetTeletextPid((ushort)currentTuningObject.TeletextPid);
+			if (currentTuningObject.VideoPid>0)
+				m_tsWriterInterface.SetVideoPid((ushort)currentTuningObject.VideoPid);
+			if (currentTuningObject.PCRPid>0)
+				m_tsWriterInterface.SetPCRPid((ushort)currentTuningObject.PCRPid);
+			m_tsWriterInterface.SetPMTPid((ushort)currentTuningObject.PMTPid);
+#endif
 		}
 
 		private bool CreateSinkSource(string fileName, bool useAC3)
@@ -2315,7 +2335,6 @@ namespace MediaPortal.TV.Recording
 				m_tsWriter=(IBaseFilter) Activator.CreateInstance( Type.GetTypeFromCLSID( Clsid.MPTSWriter, true ) );
 				m_tsWriterInterface = m_tsWriter as IMPTSWriter;
 
-			SetupMTSDemuxerPin();
 
 			int hr=m_graphBuilder.AddFilter((IBaseFilter)m_tsWriter,"MPTS Writer");
 			if(hr!=0)
@@ -2344,23 +2363,7 @@ namespace MediaPortal.TV.Recording
 				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot demuxer->MPTS writer:0x{0:X}",hr);
 				return false;
 			}
-			m_tsWriterInterface.ResetPids();
-			if (currentTuningObject.AC3Pid>0)
-				m_tsWriterInterface.SetAC3Pid((ushort)currentTuningObject.AC3Pid);
-			if (currentTuningObject.AudioPid>0)
-				m_tsWriterInterface.SetAudioPid((ushort)currentTuningObject.AudioPid);
-			if (currentTuningObject.Audio1>0)
-				m_tsWriterInterface.SetAudioPid((ushort)currentTuningObject.Audio1);
-			if (currentTuningObject.Audio2>0)
-				m_tsWriterInterface.SetAudioPid2((ushort)currentTuningObject.Audio2);
-			//m_tsWriterInterface.SetSubtitlePid((ushort)currentTuningObject.SubtitlePid);
-			if (currentTuningObject.TeletextPid>0)
-				m_tsWriterInterface.SetTeletextPid((ushort)currentTuningObject.TeletextPid);
-			if (currentTuningObject.VideoPid>0)
-				m_tsWriterInterface.SetVideoPid((ushort)currentTuningObject.VideoPid);
-			if (currentTuningObject.PCRPid>0)
-				m_tsWriterInterface.SetPCRPid((ushort)currentTuningObject.PCRPid);
-			m_tsWriterInterface.SetPMTPid((ushort)currentTuningObject.PMTPid);
+			SetupMTSDemuxerPin();
 
 
 			return true;
@@ -3728,6 +3731,7 @@ namespace MediaPortal.TV.Recording
 				m_analyzerInterface.ResetParser();
 				if (Network()==NetworkType.ATSC)
 					m_epgGrabber.GrabEPG(false);
+				SetupMTSDemuxerPin();
 			}	
 			finally
 			{
