@@ -21,9 +21,11 @@ public:
 	HRESULT CloseFile();
 	BOOL IsFileInvalid();
 	HRESULT GetFileSize(__int64 *lpllsize);
+	HRESULT GetFileSize(HANDLE handle,__int64 *lpllsize);
 	DWORD SetFilePointer(__int64 llDistanceToMove, DWORD dwMoveMethod);
 	__int64 GetFilePointer();
 	__int64 get_FileSize(void);
+
 	HRESULT Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes);
 	HRESULT Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes, __int64 llDistanceToMove, DWORD dwMoveMethod);
 	HANDLE   m_hInfoFile;               // Handle to Infofile for filesize

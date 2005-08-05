@@ -121,6 +121,8 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 	}
 	lDataLength = pSample->GetActualDataLength();
 
+
+	m_pMPTSFilter->UpdatePids();
 	hr = m_pBuffers->Require(lDataLength);
 	if (FAILED(hr))
 	{
@@ -257,4 +259,9 @@ HRESULT CFilterOutPin::GetReferenceClock(IReferenceClock **pClock)
 		}
 	}
 	return E_FAIL;
+}
+void CFilterOutPin::ResetBuffers()
+{
+	if (m_pBuffers==NULL) return;
+	m_pBuffers->Clear();
 }

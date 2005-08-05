@@ -120,7 +120,7 @@ HRESULT Sections::CheckStream(void)
 	while(finished!=true)
 	{
 		hr=m_pFileReader->Read(pData,188,&countBytesRead);
-		if(hr!=S_OK)
+		if(hr!=S_OK || countBytesRead!=188)
 			finished==true;
 
 		m_pFileReader->SetFilePointer(countBytesRead,FILE_CURRENT);
@@ -273,7 +273,7 @@ void Sections::decodePMT()
 	while(finished!=true)
 	{
 		hr=m_pFileReader->Read(pData,188,&countBytesRead);
-		if(hr!=S_OK)
+		if(hr!=S_OK|| countBytesRead!=188)
 			finished=true;
 		//m_pFileReader->SetFilePointer(countBytesRead,FILE_CURRENT);
 		if(hr==S_OK)
@@ -332,7 +332,7 @@ void Sections::decodePMT()
 		while(finished!=true)
 		{
 			hr=m_pFileReader->Read(pData,188,&countBytesRead);
-			if(hr!=S_OK)
+			if(hr!=S_OK|| countBytesRead!=188)
 				finished=true;
 			m_pFileReader->SetFilePointer(countBytesRead,FILE_CURRENT);
 			if(hr==S_OK)
@@ -380,7 +380,7 @@ void Sections::decodePMT()
 	while(pmtSectionLen>0)
 	{
 		hr=m_pFileReader->Read(pData,188,&countBytesRead);
-		if(hr!=S_OK)
+		if(hr!=S_OK|| countBytesRead!=188)
 			finished=true;
 		m_pFileReader->SetFilePointer(countBytesRead,FILE_CURRENT);
 		if(hr==S_OK)

@@ -169,6 +169,21 @@ BOOL FileReader::IsFileInvalid()
 	return m_hFile == INVALID_HANDLE_VALUE?true:false;
 }
 
+HRESULT FileReader::GetFileSize(HANDLE handle,__int64 *lpllsize)
+{
+	LARGE_INTEGER li;
+	li.QuadPart=0;
+	li.LowPart= ::GetFileSize(handle, (LPDWORD)&li.HighPart);
+	if ((li.LowPart == 0xFFFFFFFF) && (GetLastError() != NO_ERROR ))
+	{
+		Log("FileReader:GetFileSize failed with %x", GetLastError() );
+
+		return E_FAIL;
+	}
+
+	*lpllsize = li.QuadPart;
+	return S_OK;
+}
 
 HRESULT FileReader::GetFileSize(__int64 *lpllsize)
 {
@@ -205,12 +220,12 @@ DWORD FileReader::SetFilePointer(__int64 llDistanceToMove, DWORD dwMoveMethod)
 		length  = (__int64)((__int64)length + (__int64)llDistanceToMove);
 		li.QuadPart = length;
 		dwMoveMethod = FILE_BEGIN;
-		Log("FileReader:SetFilePointer %x %x (%x)", li.HighPart,li.LowPart, dwMoveMethod);
+		//Log("FileReader:SetFilePointer %x %x (%x)", li.HighPart,li.LowPart, dwMoveMethod);
 	}
 	else
 	{
 		li.QuadPart = llDistanceToMove;
-		Log("FileReader:SetFilePointer %x %x (%x)", li.HighPart,li.LowPart, dwMoveMethod);
+		//Log("FileReader:SetFilePointer %x %x (%x)", li.HighPart,li.LowPart, dwMoveMethod);
 	}
 
 	DWORD dwErr=::SetFilePointer(m_hFile, li.LowPart, &li.HighPart, dwMoveMethod);
@@ -256,10 +271,10 @@ HRESULT FileReader::Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes)
 		return hr;
 	}
 
+	Log("FileReader:ReadFile read %x/%x bytes size:%x pos:%x", (*dwReadBytes),lDataLength, length,m_filecurrent);
 	if (*dwReadBytes < (ULONG)lDataLength)
 	{
-		Log("FileReader:ReadFile read %x/%x bytes size:%x pos:%x", (*dwReadBytes),lDataLength, length,m_filecurrent);
-		return S_FALSE;
+		return S_OK;
 	}
 	return S_OK;
 }

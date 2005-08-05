@@ -62,6 +62,7 @@ public:
 	STDMETHODIMP Log(char* text,bool crlf);
 	STDMETHODIMP Log(__int64 value,bool crlf);
 	HRESULT SetFilePosition(REFERENCE_TIME seek);
+	void UpdatePids();
 protected:
 	// IFileSourceFilter
 	STDMETHODIMP Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt);

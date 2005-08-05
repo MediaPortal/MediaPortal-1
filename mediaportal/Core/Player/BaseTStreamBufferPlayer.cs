@@ -114,8 +114,8 @@ namespace MediaPortal.Player
 			m_bLive=false;
       m_dDuration=-1d;
       string strExt=System.IO.Path.GetExtension(strFile).ToLower();
-			//We will need to change this if we are going to support .ts timeshifing
-      if (strExt.Equals(".tv"))
+			
+      if (strFile.ToLower().IndexOf("live.ts")>=0)
       {
         m_bLive=true;
       }

@@ -57,28 +57,25 @@ HRESULT CBuffers::Require(long nBytes)
 	{
 		BYTE *newItem = new BYTE[m_lBuffersItemSize];
 		ULONG ulBytesRead = 0;
+		ULONG dwPos=0;
 
 		__int64 currPosition = m_pFileReader->GetFilePointer();
-		HRESULT hr = m_pFileReader->Read(newItem, m_lBuffersItemSize, &ulBytesRead);
-		if (FAILED(hr))
-			return hr;
-
-		if (ulBytesRead < m_lBuffersItemSize) 
+		while (dwPos < m_lBuffersItemSize) 
 		{
-			while (ulBytesRead < m_lBuffersItemSize) 
+
+			ULONG dwBytesRead = 0;				
+			HRESULT hr = m_pFileReader->Read(&newItem[dwPos], m_lBuffersItemSize-dwPos, &dwBytesRead);
+			if (FAILED(hr))
+			{	
+				m_pFileReader->SetFilePointer(currPosition, FILE_BEGIN);
+				delete [] newItem;
+				return hr;
+			}
+
+			dwPos += dwBytesRead;
+			if (dwPos < m_lBuffersItemSize)
 			{
 				Sleep(100);
-
-				ULONG ulNextBytesRead = 0;				
-				m_pFileReader->SetFilePointer(currPosition, FILE_BEGIN);
-				HRESULT hr = m_pFileReader->Read(newItem, m_lBuffersItemSize, &ulNextBytesRead);
-				if (FAILED(hr))
-					return hr;
-
-				if ((ulNextBytesRead == 0) || (ulNextBytesRead == ulBytesRead))
-					return E_FAIL;
-
-				ulBytesRead = ulNextBytesRead;
 			}
 		}
 

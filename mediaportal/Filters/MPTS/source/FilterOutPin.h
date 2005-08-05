@@ -38,7 +38,7 @@ public:
 	void UpdateFromSeek();
 	//STDMETHODIMP GetCurrentPosition(LONGLONG *pCurrent);
 	HRESULT SetDuration(REFERENCE_TIME duration);
-
+	void ResetBuffers();
 protected:
 	HRESULT GetReferenceClock(IReferenceClock **pClock);
 

@@ -279,6 +279,16 @@ STDMETHODIMP CMPTSFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt)
 	else  
 	{
 		Log(TEXT("using .info:"),true);
+		__int64	fileSize = 0;
+		DWORD count=0;
+		while(true)
+		{
+			m_pFileReader->GetFileSize(m_pFileReader->m_hInfoFile,&fileSize);
+			if(fileSize>8)
+				break;
+			Sleep(80);
+			count++;
+		}
 	}
 	//If this a file start then return null.
 	RefreshPids();
@@ -315,6 +325,62 @@ STDMETHODIMP CMPTSFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt)
 	return hr;
 }
 
+
+void CMPTSFilter::UpdatePids()
+{
+	if (m_pFileReader==NULL) return;
+	if (m_pSections==NULL) return;
+	if (m_pFileReader->m_hInfoFile==INVALID_HANDLE_VALUE) return;
+	DWORD dwReadBytes;
+	LARGE_INTEGER li,writepos;
+	li.QuadPart = 0;
+	int ttxPid,subtitlePid,videopid,audiopid,audiopid2,ac3pid,pmtpid,pcrpid;
+	DWORD dwPos=::SetFilePointer(m_pFileReader->m_hInfoFile, li.LowPart, &li.HighPart, FILE_BEGIN);
+	if (dwPos != 0)
+	{
+		return;
+	}
+
+	if (!::ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&writepos, 8, &dwReadBytes, NULL)) return;
+	if (dwReadBytes!=8) return;
+	if (!::ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&ac3pid, sizeof(int), &dwReadBytes, NULL)) return;
+	if (dwReadBytes!=sizeof(int)) return;
+	if (!::ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&audiopid, sizeof(int), &dwReadBytes, NULL)) return;
+	if (dwReadBytes!=sizeof(int)) return;
+	if (!::ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&audiopid2, sizeof(int), &dwReadBytes, NULL)) return;
+	if (dwReadBytes!=sizeof(int)) return;
+	if (!::ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&videopid, sizeof(int), &dwReadBytes, NULL)) return;
+	if (dwReadBytes!=sizeof(int)) return;
+	if (!::ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&ttxPid, sizeof(int), &dwReadBytes, NULL)) return;
+	if (dwReadBytes!=sizeof(int)) return;
+	if (!::ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&pmtpid, sizeof(int), &dwReadBytes, NULL)) return;
+	if (dwReadBytes!=sizeof(int)) return;
+	if (!::ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&subtitlePid, sizeof(int), &dwReadBytes, NULL)) return;
+	if (dwReadBytes!=sizeof(int)) return;
+	if (!::ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&pcrpid, sizeof(int), &dwReadBytes, NULL)) return;
+	if (dwReadBytes!=sizeof(int)) return;
+	if (pcrpid==0) pcrpid=videopid;
+	if (ac3pid	 !=m_pSections->pids.AC3 ||
+		audiopid !=m_pSections->pids.AudioPid ||
+		audiopid2!=m_pSections->pids.AudioPid2 ||
+		videopid !=m_pSections->pids.VideoPid ||
+		pmtpid   !=m_pSections->pids.PMTPid ||
+		pcrpid   !=m_pSections->pids.PCRPid)
+	{
+		Log(TEXT("filter: PIDS changed"),true);
+		m_pSections->pids.AC3=ac3pid;
+		m_pSections->pids.AudioPid=audiopid;
+		m_pSections->pids.AudioPid2=audiopid2;
+		m_pSections->pids.VideoPid=videopid;
+		m_pSections->pids.PMTPid=pmtpid;
+		m_pSections->pids.PCRPid=pcrpid;
+		m_pSections->pids.Duration=600000000;
+		__int64 filePointer=0;
+		m_pFileReader->SetFilePointer(filePointer,FILE_BEGIN);
+		m_pPin->ResetBuffers();
+		//setup demuxer?
+	}
+}
 
 HRESULT CMPTSFilter::RefreshPids()
 {
