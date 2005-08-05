@@ -165,7 +165,7 @@ public:
 
     // Write raw data stream to a file
     HRESULT Write(PBYTE pbData, LONG lDataLength);
-	HRESULT UpdateInfoFile();
+	HRESULT UpdateInfoFile(bool pids);
 
     // Implements the IFileSinkFilter interface
     STDMETHODIMP SetFileName(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt);

@@ -11,6 +11,7 @@
 #include "bdamedia.h"
 #include "MPTSFilter.h"
 
+extern void Log(const char *fmt, ...) ;
 
 CUnknown * WINAPI CMPTSFilter::CreateInstance(LPUNKNOWN punk, HRESULT *phr)
 {
@@ -277,17 +278,6 @@ STDMETHODIMP CMPTSFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt)
 	}
 	else  
 	{
-		Log(TEXT("wait till file > 10KB: "),true);
-		__int64	fileSize = 0;
-		DWORD count=0;
-		while(true)
-		{
-			m_pFileReader->GetFileSize(&fileSize);
-			if(fileSize>=10000 || count>=250)
-				break;
-			Sleep(80);
-			count++;
-		}
 		Log(TEXT("using .info:"),true);
 	}
 	//If this a file start then return null.
@@ -392,12 +382,14 @@ HRESULT CMPTSFilter::GetFileSize(__int64 *pfilesize)
 
 STDMETHODIMP CMPTSFilter::Refresh(void)
 {
+	if (m_pFileReader->IsFileInvalid())
+		return S_OK;
 	__int64	fileSize = 0;
 	DWORD count=0;
 	while(true)
 	{
 		m_pFileReader->GetFileSize(&fileSize);
-		if(fileSize>=2000000 || count>=250)
+		if(fileSize>=200000 )
 			break;
 		Sleep(80);
 		count++;

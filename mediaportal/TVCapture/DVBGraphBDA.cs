@@ -221,7 +221,7 @@ namespace MediaPortal.TV.Recording
 		IBaseFilter							m_dvbAnalyzer=null;
 		IBaseFilter						  m_tsWriter=null;
 		IMPTSWriter							m_tsWriterInterface=null;
-		IPin										m_pinMTS=null;
+		IBaseFilter							m_smartTee= null;			// Transport Information Filter
 
 		VideoAnalyzer						m_mpeg2Analyzer					= null;
 		IGraphBuilder           m_graphBuilder					= null;
@@ -647,6 +647,26 @@ namespace MediaPortal.TV.Recording
 					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:CreateGraph() FAILED interface filter not found");
 					return false;
 				}
+
+#if USEMTSWRITER
+				m_smartTee = (IBaseFilter) Activator.CreateInstance(Type.GetTypeFromCLSID(Clsid.SmartTee, true));
+				if(m_smartTee== null) 
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to create SmartTee filter");
+					return false;
+				}
+				m_graphBuilder.AddFilter(m_smartTee, "Smart Tee Filter");
+				if (!ConnectFilters(ref lastFilter.DSFilter,ref m_smartTee))
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to connect capture->smart tee");
+					return false;
+				}
+				if (!ConnectFilters(ref m_smartTee,ref m_sampleGrabber))
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to connect smart tee->grabber");
+					return false;
+				}
+#else
 				//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph() connect interface pin->sample grabber");
 				if (GUIGraphicsContext.DX9Device!=null && m_sampleInterface!=null)
 				{
@@ -656,7 +676,7 @@ namespace MediaPortal.TV.Recording
 						return false;
 					}
 				}
-
+#endif
 				//=========================================================================================================
 				// add the MPEG-2 Demultiplexer 
 				//=========================================================================================================
@@ -722,11 +742,6 @@ namespace MediaPortal.TV.Recording
 				IMpeg2Demultiplexer   demuxer=m_MPEG2Demultiplexer as IMpeg2Demultiplexer;
 
 
-#if USEMTSWRITER
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph() add MPTSWriter");
-				m_tsWriter=(IBaseFilter) Activator.CreateInstance( Type.GetTypeFromCLSID( Clsid.MPTSWriter, true ) );
-				m_tsWriterInterface = m_tsWriter as IMPTSWriter;
-#endif
 
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph() add stream analyzer");
 				m_dvbAnalyzer=(IBaseFilter) Activator.CreateInstance( Type.GetTypeFromCLSID( Clsid.MPStreamAnalyzer, true ) );
@@ -968,21 +983,6 @@ namespace MediaPortal.TV.Recording
 						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to connect MHW2 pin:0x{0:X}",hr);
 						return false;
 					}
-
-#if USEMTSWRITER
-					Log.Write("DVBGraphBDA:Create MPTS output");
-					AMMediaType mtMTS = new AMMediaType();
-					mtMTS.majorType=MediaType.Stream;
-					mtMTS.subType=MediaSubType.MPEG2Transport;
-					mtMTS.formatType=FormatType.None;
-
-					hr=demuxer.CreateOutputPin(ref mtMTS, "MTS", out m_pinMTS);
-					if (hr!=0 || m_pinMTS==null)
-					{
-						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to create MTS pin:0x{0:X}",hr);
-						return false;
-					}
-#endif
 					Log.Write("DVBGraphBDA:Demuxer is setup");
 
 				}
@@ -1126,9 +1126,6 @@ namespace MediaPortal.TV.Recording
 				m_tsWriterInterface=null;
 
 				Log.Write("free pins");
-				if (m_pinMTS!=null)
-					Marshal.ReleaseComObject(m_pinMTS);
-				m_pinMTS				= null;
 
 				if (m_demuxSectionsPin!=null)
 					Marshal.ReleaseComObject(m_demuxSectionsPin);
@@ -1172,6 +1169,12 @@ namespace MediaPortal.TV.Recording
 					hr=Marshal.ReleaseComObject(m_tsWriter);
 					if (hr!=0) Log.Write("ReleaseComObject(m_tsWriter):{0}",hr);
 					m_tsWriter=null;
+				}
+				if (m_smartTee != null)
+				{
+					while ((hr=Marshal.ReleaseComObject(m_smartTee))>0); 
+					if (hr!=0) Log.Write("DVBGraphBDA:ReleaseComObject(m_smartTee):{0}",hr);
+					m_smartTee = null;
 				}
 							
 				if (m_videoWindow != null)
@@ -2300,26 +2303,6 @@ namespace MediaPortal.TV.Recording
 
 		void SetupMTSDemuxerPin()
 		{
-#if USEMTSWRITER
-
-			Log.Write("DVBGraphBDA:map ac3:{0:X} audio:{1:X} video:{2:X} pmt:{3:X}",
-										currentTuningObject.AC3Pid,currentTuningObject.AudioPid,currentTuningObject.VideoPid,currentTuningObject.PMTPid);
-			SetupDemuxerPin(m_pinMTS,currentTuningObject.AC3Pid,(int)MediaSampleContent.TransportPacket,true);
-			SetupDemuxerPin(m_pinMTS,currentTuningObject.AudioPid,(int)MediaSampleContent.TransportPacket,false);
-			SetupDemuxerPin(m_pinMTS,currentTuningObject.Audio1,(int)MediaSampleContent.TransportPacket,false);
-			SetupDemuxerPin(m_pinMTS,currentTuningObject.Audio2,(int)MediaSampleContent.TransportPacket,false);
-			//SetupDemuxerPin(m_pinMTS,currentTuningObject.SubtitlePid,(int)MediaSampleContent.TransportPacket,false);
-			SetupDemuxerPin(m_pinMTS,currentTuningObject.TeletextPid,(int)MediaSampleContent.TransportPacket,false);
-			SetupDemuxerPin(m_pinMTS,currentTuningObject.VideoPid,(int)MediaSampleContent.TransportPacket,false);
-			SetupDemuxerPin(m_pinMTS,currentTuningObject.PMTPid,(int)MediaSampleContent.TransportPacket,false);
-			SetupDemuxerPin(m_pinMTS,0,(int)MediaSampleContent.TransportPacket,false);//PAT
-			SetupDemuxerPin(m_pinMTS,1,(int)MediaSampleContent.TransportPacket,false);//CAT
-			SetupDemuxerPin(m_pinMTS,0x11,(int)MediaSampleContent.TransportPacket,false);//SDT
-			int pid=currentTuningObject.PCRPid;
-			if (pid<=0)
-				pid=currentTuningObject.VideoPid;
-			SetupDemuxerPin(m_pinMTS,pid,(int)MediaSampleContent.TransportPacket,false);
-#endif
 		}
 
 		private bool CreateSinkSource(string fileName, bool useAC3)
@@ -2328,6 +2311,10 @@ namespace MediaPortal.TV.Recording
 				return false;
 
 #if USEMTSWRITER
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph() add MPTSWriter");
+				m_tsWriter=(IBaseFilter) Activator.CreateInstance( Type.GetTypeFromCLSID( Clsid.MPTSWriter, true ) );
+				m_tsWriterInterface = m_tsWriter as IMPTSWriter;
+
 			SetupMTSDemuxerPin();
 
 			int hr=m_graphBuilder.AddFilter((IBaseFilter)m_tsWriter,"MPTS Writer");
@@ -2351,23 +2338,12 @@ namespace MediaPortal.TV.Recording
 
 
 			// connect demuxer->mpts writer
-			IPin mptsIn =DirectShowUtil.FindPinNr(m_tsWriter,PinDirection.Input,0);
-			if (mptsIn==null)
+			
+			if (!ConnectFilters(ref m_smartTee, ref m_tsWriter))
 			{
-				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot find MPTS input pin");
-				return false;
-			}
-			hr=m_graphBuilder.Connect(m_pinMTS,mptsIn);
-			if (hr!=0)
-			{
-				Marshal.ReleaseComObject(mptsIn);
-				mptsIn=null;
 				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot demuxer->MPTS writer:0x{0:X}",hr);
 				return false;
 			}
-			Marshal.ReleaseComObject(mptsIn);
-			mptsIn=null;
-
 			m_tsWriterInterface.ResetPids();
 			if (currentTuningObject.AC3Pid>0)
 				m_tsWriterInterface.SetAC3Pid((ushort)currentTuningObject.AC3Pid);

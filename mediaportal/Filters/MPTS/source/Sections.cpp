@@ -7,6 +7,31 @@
 
 #include <streams.h>
 #include "Sections.h"
+void Log(const char *fmt, ...) 
+{
+#ifdef DEBUG
+	va_list ap;
+	va_start(ap,fmt);
+
+	char buffer[1000]; 
+	int tmp;
+	va_start(ap,fmt);
+	tmp=vsprintf(buffer, fmt, ap);
+	va_end(ap); 
+
+	FILE* fp = fopen("MPTS.log","a+");
+	if (fp!=NULL)
+	{
+		SYSTEMTIME systemTime;
+		GetSystemTime(&systemTime);
+		fprintf(fp,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d %s\n",
+			systemTime.wDay, systemTime.wMonth, systemTime.wYear,
+			systemTime.wHour,systemTime.wMinute,systemTime.wSecond,
+			buffer);
+		fclose(fp);
+	}
+#endif
+};
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -27,29 +52,31 @@ HRESULT Sections::ParseFromFile()
 
 	if (m_pFileReader->m_hInfoFile!=INVALID_HANDLE_VALUE)
 	{
+		Log("Get pids from info file");
 		DWORD dwReadBytes;
 		LARGE_INTEGER li,writepos;
 		li.QuadPart = 0;
 		int ttxPid,subtitlePid;
-		for (int i=0; i < 20; ++i)
-		{
-			bool success=LockFile(m_pFileReader->m_hInfoFile,0,0,8+7*sizeof(int),0);
-			if (success) break;
-			Sleep(10);
-		}
 		::SetFilePointer(m_pFileReader->m_hInfoFile, li.LowPart, &li.HighPart, FILE_BEGIN);
-		ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&writepos, 8, &dwReadBytes, NULL);
-		ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&pids.AC3, sizeof(int), &dwReadBytes, NULL);
-		ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&pids.AudioPid, sizeof(int), &dwReadBytes, NULL);
-		ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&pids.AudioPid2, sizeof(int), &dwReadBytes, NULL);
-		ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&pids.VideoPid, sizeof(int), &dwReadBytes, NULL);
-		ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&ttxPid, sizeof(int), &dwReadBytes, NULL);
-		ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&pids.PMTPid, sizeof(int), &dwReadBytes, NULL);
-		ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&subtitlePid, sizeof(int), &dwReadBytes, NULL);
-		ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&pids.PCRPid, sizeof(int), &dwReadBytes, NULL);
-		
+		::ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&writepos, 8, &dwReadBytes, NULL);
+		Log("Read:%x err:%d", dwReadBytes,GetLastError());
+		::ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&pids.AC3, sizeof(int), &dwReadBytes, NULL);
+		Log("Read:%x err:%d", dwReadBytes,GetLastError());
+		::ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&pids.AudioPid, sizeof(int), &dwReadBytes, NULL);
+		Log("Read:%x err:%d", dwReadBytes,GetLastError());
+		::ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&pids.AudioPid2, sizeof(int), &dwReadBytes, NULL);
+		Log("Read:%x err:%d", dwReadBytes,GetLastError());
+		::ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&pids.VideoPid, sizeof(int), &dwReadBytes, NULL);
+		Log("Read:%x err:%d", dwReadBytes,GetLastError());
+		::ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&ttxPid, sizeof(int), &dwReadBytes, NULL);
+		Log("Read:%x err:%d", dwReadBytes,GetLastError());
+		::ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&pids.PMTPid, sizeof(int), &dwReadBytes, NULL);
+		Log("Read:%x err:%d", dwReadBytes,GetLastError());
+		::ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&subtitlePid, sizeof(int), &dwReadBytes, NULL);
+		Log("Read:%x err:%d", dwReadBytes,GetLastError());
+		::ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&pids.PCRPid, sizeof(int), &dwReadBytes, NULL);
+		Log("Read:%x err:%d", dwReadBytes,GetLastError());
 		if (pids.PCRPid==0) pids.PCRPid=pids.VideoPid;
-		UnlockFile(m_pFileReader->m_hInfoFile,0,0,8+7*sizeof(int),0);
 		pids.Duration=600000000;
 		__int64 filePointer=0;
 		m_pFileReader->SetFilePointer(filePointer,FILE_BEGIN);
@@ -71,6 +98,7 @@ HRESULT Sections::ParseFromFile()
 }
 HRESULT Sections::CheckStream(void)
 {
+	Log("Sections::CheckStream()");
 	__int64 fileSize;
 	m_pFileReader->GetFileSize(&fileSize);
 	__int64 fileEndOffset=fileSize-((fileSize*20)/100);
@@ -117,6 +145,7 @@ HRESULT Sections::CheckStream(void)
 							GetPTS(&pData[offset+9],&pts);
 							if(pids.StartPTS==0)
 							{
+								Log("Sections::CheckStream() got PTS");
 								pids.StartPTS=(__int64)pts; // first pts
 								m_pFileReader->SetFilePointer(fileEndOffset,FILE_BEGIN);// sets to file-end - 20%
 							}
@@ -139,7 +168,7 @@ HRESULT Sections::CheckStream(void)
 	PTSToPTSTime(pids.Duration,&time);
 	pids.Duration=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
 	//
-	hr=m_pFileReader->CloseFile();
+	m_pFileReader->SetFilePointer(0,FILE_BEGIN);// sets to file-end - 20%
 	return S_OK;
 }
 
@@ -225,6 +254,8 @@ void Sections::decodePMT()
 {
 	if(m_pFileReader->OpenFile()==S_FALSE)
 		return;
+
+	Log("Sections::decodePMT()");
 	HRESULT hr;
 	BYTE pData[188];
 	bool finished=false;
@@ -244,7 +275,7 @@ void Sections::decodePMT()
 		hr=m_pFileReader->Read(pData,188,&countBytesRead);
 		if(hr!=S_OK)
 			finished=true;
-		m_pFileReader->SetFilePointer(countBytesRead,FILE_CURRENT);
+		//m_pFileReader->SetFilePointer(countBytesRead,FILE_CURRENT);
 		if(hr==S_OK)
 		{
 			GetTSHeader(pData,&header);
@@ -254,6 +285,7 @@ void Sections::decodePMT()
 					offset=4+pData[4]+1;
 				else
 					offset=4;
+				if(pData[offset]==0x00 && pData[offset+1]==0x00 && pData[offset+2]==0x01) continue;//PES
 				int table_id = pData[offset+0];
 				int section_syntax_indicator = (pData[offset+1]>>7) & 1;
 				int section_length = ((pData[offset+1]& 0xF)<<8) + pData[offset+2];
@@ -262,6 +294,12 @@ void Sections::decodePMT()
 				int current_next_indicator = pData[offset+5] & 1;
 				int section_number = pData[offset+6];
 				int last_section_number = pData[offset+7];
+
+				Log("Sections::decodePMT() pid:0x%x tsid:0x%x %d/%d len:%d", header.Pid,transport_stream_id,section_number,last_section_number, section_length);
+				//if (section_number!=0||last_section_number!=0) continue;
+				
+	
+				Log("Sections::decodePMT() found PAT");
 				int loop =(section_length - 9) / 4;
 				int offset1=0;
 				pmtcount=loop;
@@ -269,6 +307,7 @@ void Sections::decodePMT()
 				{
 					offset1=offset+(8 +(i * 4));
 					pmt[i]=((pData[offset1+2] & 0x1F)<<8)+pData[offset1+3];
+					Log("Sections::decodePMT() PMT:%i pid:%x",i,pmt[i]);
 				}
 				finished=true;
 			}
@@ -276,9 +315,12 @@ void Sections::decodePMT()
 	}
 	if(pmtcount==0)
 	{
+		Log("Sections::decodePMT() no PAT found");
 		pids.Clear();
 		return;
 	}
+	
+	Log("Sections::decodePMT() Get PMT");
 	// get pcr, audio, video, etc.
 	for(int i=0;i<pmtcount;i++)
 	{
@@ -310,6 +352,7 @@ void Sections::decodePMT()
 						pmtSectionLen=((pData[offset+1]& 0xF)<<8) + pData[offset+2];
 						finished=true;
 						ready=true;
+						Log("Sections::decodePMT() found PMT:%x pcr:%x",pids.PCRPid,pids.PMTPid);
 					}
 
 				}
@@ -319,9 +362,12 @@ void Sections::decodePMT()
 	// decode the pmt
 	if(pids.PMTPid==0)
 	{
+		Log("Sections::decodePMT() no PMT found");
 		pids.Clear(); // invaild file
 		return;
 	}
+	
+	Log("Sections::decodePMT() get PMT");
 	int contCounter=header.ContinuityCounter;
 	if(pmtSectionLen<183)
 		pmtSectionLen=183;
@@ -353,10 +399,15 @@ void Sections::decodePMT()
 				pmtSectionLen-=len;
 				contCounter=header.ContinuityCounter;
 				if(pmtSectionLen<1)
+				{
+					Log("Sections::decodePMT() got PMT");
 					finished=true;
+				}
 			}
 		}
 	}
+					
+	Log("Sections::decodePMT() decode PMT");
 	// pmt should now in the pmtData array
 	int table_id = buf[0];
 	int section_syntax_indicator = (buf[1]>>7) & 1;
@@ -367,9 +418,9 @@ void Sections::decodePMT()
 	int section_number = buf[6];
 	int last_section_number = buf[7];
 	int program_info_length = ((buf[10] & 0xF)<<8)+buf[11];
-	int len1 = section_length - 4;
 	int len2 = program_info_length;
 	int pointer = 12;
+	int len1 = section_length - pointer;
 	int x;
 	// loop 1
 	while (len2 > 0)
@@ -395,18 +446,30 @@ void Sections::decodePMT()
 		if(stream_type==1 || stream_type==2)
 		{
 			pids.VideoPid=elementary_PID;
+			if (pids.PCRPid<=0)
+				pids.PCRPid=pids.VideoPid;
+			Log("Sections::decodePMT() videopid:0x%x",pids.VideoPid);
 		}
 		if(stream_type==3 || stream_type==4)
 		{
 			if(pids.AudioPid==0)
+			{
 				pids.AudioPid=elementary_PID;
+				Log("Sections::decodePMT() AudioPid:0x%x",pids.AudioPid);
+			}
 			else
+			{
 				pids.AudioPid2=elementary_PID;
+				Log("Sections::decodePMT() AudioPid2:0x%x",pids.AudioPid2);
+			}
 		}
 		if(stream_type==0x81 || stream_type==6)
 		{
 			if(pids.AC3==0)
+			{
 				pids.AC3=elementary_PID;
+				Log("Sections::decodePMT() AC3Pid:0x%x",pids.AC3);
+			}
 		}
 		pointer += 5;
 		len1 -= 5;
