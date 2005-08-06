@@ -71,6 +71,9 @@ ULONG Sections::GetCRC32(BYTE *pData,WORD len)
 }
 Sections::Sections()
 {
+#ifdef DEBUG
+	DeleteFile("MPSA.log");
+#endif
 	m_patTSID=-1;
 	m_patSectionLen=-1;
 	m_patTableVersion=-1;
