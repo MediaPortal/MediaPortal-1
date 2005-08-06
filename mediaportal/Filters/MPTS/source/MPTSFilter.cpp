@@ -109,7 +109,6 @@ STDMETHODIMP CMPTSFilter::SetSyncClock(void)
 	IFilterGraph *pGraph=GetFilterGraph();
 	IBaseFilter *pFilter=NULL;
 	IMediaFilter *pMF=NULL;
-	ULONG		count;
 	hr=pGraph->QueryInterface(IID_IMediaFilter,(void**)&pMF);
 	hr=pGraph->FindFilterByName(L"Default DirectSound Device",&pFilter);
 	if(pFilter==NULL)
@@ -339,12 +338,12 @@ void CMPTSFilter::UpdatePids()
 		return;
 	}
 
+	ULONGLONG ptsStart;
+	ULONGLONG ptsNow;
 	if (!::ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&writepos, 8, &dwReadBytes, NULL)) return;
-	if (dwReadBytes!=8)
-	{
-		LogDebug("UpdatePids:readfile failed:%d", GetLastError());
-		return;
-	}
+	if (!::ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&ptsStart, sizeof(ptsStart), &dwReadBytes, NULL)) return;
+	if (!::ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&ptsNow, sizeof(ptsNow), &dwReadBytes, NULL)) return;
+
 	if (!::ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&ac3pid, sizeof(int), &dwReadBytes, NULL)) return;
 	if (dwReadBytes!=sizeof(int))
 	{
@@ -410,7 +409,14 @@ void CMPTSFilter::UpdatePids()
 		m_pSections->pids.VideoPid=videopid;
 		m_pSections->pids.PMTPid=pmtpid;
 		m_pSections->pids.PCRPid=pcrpid;
-		m_pSections->pids.Duration=600000000;
+
+		m_pSections->pids.StartPTS=(__int64)ptsStart;
+		m_pSections->pids.EndPTS=(__int64)ptsNow;
+		Sections::PTSTime time;
+		m_pSections->pids.Duration=(ptsNow-ptsStart);
+		m_pSections->PTSToPTSTime(m_pSections->pids.Duration,&time);
+		m_pSections->pids.Duration=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
+
 		__int64 filePointer=0;
 		m_pFileReader->SetFilePointer(filePointer,FILE_BEGIN);
 		m_pPin->ResetBuffers();

@@ -53,31 +53,33 @@ HRESULT Sections::ParseFromFile()
 	if (m_pFileReader->m_hInfoFile!=INVALID_HANDLE_VALUE)
 	{
 		LogDebug("Get pids from info file");
-		DWORD dwReadBytes;
-		LARGE_INTEGER li,writepos;
+		DWORD			dwReadBytes;
+		ULONGLONG		ptsStart;
+		ULONGLONG		ptsNow;
+		LARGE_INTEGER	li,writepos;
 		li.QuadPart = 0;
 		int ttxPid,subtitlePid;
 		::SetFilePointer(m_pFileReader->m_hInfoFile, li.LowPart, &li.HighPart, FILE_BEGIN);
 		::ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&writepos, 8, &dwReadBytes, NULL);
-		LogDebug("Read:%x err:%d", dwReadBytes,GetLastError());
+		::ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&ptsStart, sizeof(ptsStart), &dwReadBytes, NULL) ;
+		::ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&ptsNow, sizeof(ptsNow), &dwReadBytes, NULL) ;
 		::ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&pids.AC3, sizeof(int), &dwReadBytes, NULL);
-		LogDebug("Read:%x err:%d", dwReadBytes,GetLastError());
 		::ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&pids.AudioPid, sizeof(int), &dwReadBytes, NULL);
-		LogDebug("Read:%x err:%d", dwReadBytes,GetLastError());
 		::ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&pids.AudioPid2, sizeof(int), &dwReadBytes, NULL);
-		LogDebug("Read:%x err:%d", dwReadBytes,GetLastError());
 		::ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&pids.VideoPid, sizeof(int), &dwReadBytes, NULL);
-		LogDebug("Read:%x err:%d", dwReadBytes,GetLastError());
 		::ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&ttxPid, sizeof(int), &dwReadBytes, NULL);
-		LogDebug("Read:%x err:%d", dwReadBytes,GetLastError());
 		::ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&pids.PMTPid, sizeof(int), &dwReadBytes, NULL);
-		LogDebug("Read:%x err:%d", dwReadBytes,GetLastError());
 		::ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&subtitlePid, sizeof(int), &dwReadBytes, NULL);
-		LogDebug("Read:%x err:%d", dwReadBytes,GetLastError());
 		::ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&pids.PCRPid, sizeof(int), &dwReadBytes, NULL);
-		LogDebug("Read:%x err:%d", dwReadBytes,GetLastError());
 		if (pids.PCRPid==0) pids.PCRPid=pids.VideoPid;
-		pids.Duration=600000000;
+
+		pids.StartPTS=(__int64)ptsStart;
+		pids.EndPTS=(__int64)ptsNow;
+		Sections::PTSTime time;
+		pids.Duration=ptsNow-ptsStart;
+		PTSToPTSTime(pids.Duration,&time);
+		pids.Duration=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
+
 		__int64 filePointer=0;
 		m_pFileReader->SetFilePointer(filePointer,FILE_BEGIN);
 		return S_OK;
