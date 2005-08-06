@@ -130,47 +130,18 @@ namespace ProgramsDatabase
       catch (SQLiteException ex)
       {
         Log.Write("programdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        return false;
       }
       return true;
     }
 
 
-/*
- *     static void DoV2_V3Migration()
-    {
-      try
-      {
-        Log.Write("programdatabase migration: started");
-        sqlDB.Execute("attach database \"database\\ProgramDatabaseV2.db\" as progV2;\n");
-        Log.Write("programdatabase migration: attached v2 database");
-        sqlDB.Execute(
-          "insert into application (appid, fatherid, title, shorttitle, filename, arguments, windowstyle, startupdir, useshellexecute, usequotes, source_type, source, imagefile, filedirectory, imagedirectory, validextensions, importvalidimagesonly, position, enableGUIRefresh,GUIRefreshPossible,pincode,enabled) select appid, fatherid,title, shorttitle, filename, arguments, windowstyle, startupdir, useshellexecute, usequotes, source_type, source, imagefile, filedirectory, imagedirectory, validextensions, importvalidimagesonly, position, enableGUIRefresh,GUIRefreshPossible,pincode,enabled from progV2.application;\n");
-        Log.Write("programdatabase migration: table APPLICATION migrated");
-        sqlDB.Execute(
-          "insert into file (fileid, appid, title, filename, filepath,imagefile, genre, country, manufacturer, year, rating, overview, system, import_flag,manualfilename, lastTimeLaunched, launchcount, isfolder, external_id,uppertitle) select fileid, appid, title, filename, filepath,imagefile, genre, country, manufacturer, year, rating, overview, system, import_flag,manualfilename, lastTimeLaunched, launchcount, isfolder, external_id,uppertitle from progV2.file;");
-        Log.Write("programdatabase migration: table FILE migrated");
-        sqlDB.Execute(
-          "insert into filteritem (appid, grouperAppID, fileID, filename, tag) select appid, grouperAppID, fileID, filename, tag from progV2.filteritem;");
-        Log.Write("programdatabase migration: table FILTERITEM migrated");
-        sqlDB.Execute("insert into setting (settingid, key, value) select settingid, key, value from progV2.setting;");
-        Log.Write("programdatabase migration: table SETTING migrated");
-        sqlDB.Execute("detach database progV2;\n");
-        Log.Write("programdatabase migration: detached v2 database.");
-        sqlDB.Execute("update application set waitforexit = 'T' where waitforexit IS NULL;");
-        Log.Write("programdatabase migration: complete");
-      }
-      catch (SQLiteException ex)
-      {
-        Log.Write("programdatabase migration exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
-      }
-    }
-*/
     static bool CreateObjects()
     {
+      bool skipPrePostPatch = false;
       if (sqlDB == null)
         return false;
-      AddObject("application", "table", 
-        "CREATE TABLE application (appid integer primary key, fatherID integer, title text, shorttitle text, filename text, arguments text, windowstyle text, startupdir text, useshellexecute text, usequotes text, source_type text, source text, imagefile text, filedirectory text, imagedirectory text, validextensions text, enabled text, importvalidimagesonly text, position integer, enableGUIRefresh text, GUIRefreshPossible text, contentID integer, systemdefault text, waitforexit text, pincode integer);\n");
+      skipPrePostPatch = AddObject("application", "table", "CREATE TABLE application (appid integer primary key, fatherID integer, title text, shorttitle text, filename text, arguments text, windowstyle text, startupdir text, useshellexecute text, usequotes text, source_type text, source text, imagefile text, filedirectory text, imagedirectory text, validextensions text, enabled text, importvalidimagesonly text, position integer, enableGUIRefresh text, GUIRefreshPossible text, contentID integer, systemdefault text, waitforexit text, pincode integer, preLaunch text, postLaunch text);\n");
       AddObject("file", "table", 
         "CREATE TABLE file (fileid integer primary key, appid integer, title text, filename text, filepath text, imagefile text, genre text, genre2 text, genre3 text, genre4 text, genre5 text, country text, manufacturer text, year integer, rating integer, overview text, system text, import_flag integer, manualfilename text, lastTimeLaunched text, launchcount integer, isfolder text, external_id integer, uppertitle text, tagdata text, categorydata text);\n");
       AddObject("filterItem", "table", "CREATE TABLE filterItem (appid integer, grouperAppID integer, fileID integer, filename text, tag integer);\n");
@@ -179,8 +150,12 @@ namespace ProgramsDatabase
       AddObject("idxFile2", "index", "CREATE INDEX idxFile2 ON file(filepath, uppertitle);\n");
       AddObject("idxApp1", "index", "CREATE INDEX idxApp1 ON application(fatherID);\n");
       AddObject("idxFilterItem1", "index", "CREATE UNIQUE INDEX idxFilterItem1 ON filterItem(appID, fileID, grouperAppID);\n");
-//      AddObject("td_application", "trigger", 
-//        "CREATE TRIGGER td_application BEFORE DELETE ON application \n  BEGIN\n    DELETE FROM filterItem WHERE appID = old.appID OR grouperAppID = old.appID;\n    DELETE FROM file WHERE appID = old.appID;\n  END;\n");
+      if (skipPrePostPatch)
+      {
+        // don't need to add prelaunch / postlaunch anymore if table was created above
+        ProgramSettings.WriteSetting(ProgramUtils.cPREPOST_PATCH, "DONE") ;
+      }
+
       return true;
     }
 
