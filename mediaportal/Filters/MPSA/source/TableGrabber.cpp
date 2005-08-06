@@ -32,7 +32,8 @@ byte* TableGrabber::GetTable(int section)
 	if (section<0 || section>=(int)m_mapSections.size()) return NULL;
 	imapSections it=m_mapSections.begin();
 	int count=0;
-	while (count < section) { it++; count++;}
+	while (count < section && it!=m_mapSections.end()) { it++; count++;}
+	if (it==m_mapSections.end()) return NULL;
 	return it->second.byData;
 }
 
@@ -41,7 +42,8 @@ int  TableGrabber::GetTableLen(int section)
 	if (section<0 || section>=(int)m_mapSections.size()) return 0;
 	imapSections it=m_mapSections.begin();
 	int count=0;
-	while (count < section) { it++; count++;};
+	while (count < section && it!=m_mapSections.end()) { it++; count++;};
+	if (it==m_mapSections.end()) return 0;
 	return it->second.iSize;
 }
 
@@ -59,7 +61,7 @@ void TableGrabber::OnPacket(byte* pbData,long lDataLen)
 	int secsTimeOut=time(NULL)-timeoutTimer;
 	if (secsTimeOut>30) 
 	{
-		Log("epg:timeout for pid:%x",m_pid);
+		Log("mhw-epg: timeout for pid:%x",m_pid);
 		m_bSectionGrabbed=true;
 		return;
 	}
@@ -68,6 +70,7 @@ void TableGrabber::OnPacket(byte* pbData,long lDataLen)
 
 void TableGrabber::ParseSection(byte* pData, long lDataLen)
 {
+	if (lDataLen<14 || pData==NULL) return;
 	DVBSectionHeader header;
 	GetSectionHeader(pData,0,header);
 	
@@ -79,9 +82,10 @@ void TableGrabber::ParseSection(byte* pData, long lDataLen)
 		}
 		header.SectionLength+=3;
 		if(header.SectionLength<1) return;
+		if (header.SectionLength>lDataLen) return;
 		if(header.SectionLength>4999)
 		{
-			Log("MHW:Section length:%d", header.SectionLength);
+			Log("mhw-epg: Section length:%d", header.SectionLength);
 			return;
 		}
 		imapSections it;

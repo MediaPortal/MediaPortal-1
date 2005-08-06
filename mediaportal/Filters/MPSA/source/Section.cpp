@@ -668,6 +668,8 @@ HRESULT Sections::ParseAudioHeader(BYTE *data,AudioHeader *head)
 void Sections::DecodeEPG(byte* buf,int len)
 {
 	if (!m_bParseEPG) return;
+	if (buf==NULL) return;
+
 	time_t currentTime=time(NULL);
 	time_t timespan=currentTime-m_epgTimeout;
 	if (timespan>10)
@@ -760,6 +762,7 @@ void Sections::DecodeEPG(byte* buf,int len)
 	//	Log(" event:%x date:%x time:%x duration:%x running:%d free:%d %d len:%d", event_id,dateMJD,timeUTC,duration,running_status,free_CA_mode,start,descriptors_len);
 		while (off < descriptors_len)
 		{
+			if (start+off+1>len) return;
 			int descriptor_tag = buf[start+off];
 			int descriptor_len = buf[start+off+1];
 			if (descriptor_len==0) return;
@@ -811,6 +814,8 @@ void Sections::DecodeExtendedEvent(byte* data, EPGEvent& event)
 	while (len1 > 0)
 	{
 		item_description_length = data[pointer];
+		if (pointer+item_description_length>descriptor_length) return;
+
 		char* buffer= new char[item_description_length+10];
 		getString468A(&data[pointer+1], item_description_length,buffer);
 		delete[] buffer;
@@ -819,11 +824,14 @@ void Sections::DecodeExtendedEvent(byte* data, EPGEvent& event)
 		pointer += 1 + item_description_length;
 		if (testText.size()==0)
 			testText="-not avail.-";
+
 		item_length = data[pointer];
+		if (pointer+item_length>descriptor_length) return;
 		buffer= new char[item_length+10];
 		getString468A(&data[pointer+1], item_length,buffer);
 		item = buffer;
 		delete[] buffer;
+		
 		pointer += 1 + item_length;
 		len1 -= (2 + item_description_length + item_length);
 		lenB -= (2 + item_description_length + item_length);
@@ -831,10 +839,11 @@ void Sections::DecodeExtendedEvent(byte* data, EPGEvent& event)
 	text_length = data[pointer];
 	pointer += 1;
 	lenB -= 1;
+	if (pointer+text_length>descriptor_length) return;
 	char* buffer= new char[item_length+10];
 	getString468A(&data[pointer], text_length,buffer);
 	text = buffer;
-		delete[] buffer;
+	delete[] buffer;
 
 	if (item.size()>0)
 		event.event=item;
@@ -844,26 +853,34 @@ void Sections::DecodeExtendedEvent(byte* data, EPGEvent& event)
 
 void Sections::DecodeShortEventDescriptor(byte* buf, EPGEvent& event)
 {
-	char buffer[1028];
+	char* buffer;
 	int descriptor_tag = buf[0];
 	int descriptor_len = buf[1];
 	if(descriptor_tag!=0x4d) return;
+	if (descriptor_len<6) return;
+
 	unsigned long ISO_639_language_code=(buf[2]<<16)+(buf[3]<<8)+buf[4];
 	event.language=ISO_639_language_code;
 	int event_len = buf[5];
 	
 	if (event_len >0)
 	{
+		if (6+event_len > descriptor_len) return;
+		buffer = new char[event_len];
 		getString468A(&buf[6],event_len,buffer);
 		event.event=buffer;
+		delete [] buffer;
 		//Log("  event:%s",buffer);
 	}
 	int off=6+event_len;
 	int text_len = buf[off];
 	if (text_len >0)
 	{
+		if (off+text_len > descriptor_len) return;
+		buffer = new char[text_len];
 		getString468A(&buf[off+1],text_len,buffer);
 		event.text=buffer;
+		delete [] buffer;
 		//Log("  text:%s",buffer);
 	}
 }
@@ -888,6 +905,7 @@ void Sections::DecodeContentDescription(byte* buf,EPGEvent& event)
 	int pointer=  2;
 	while ( len > 0) 
 	{
+		if (pointer+1>descriptor_length) return;
 		content_nibble_level_1	 = (buf[pointer+0]>>4) & 0xF;
 		content_nibble_level_2	 = buf[pointer+0] & 0xF;
 		user_nibble_1		 = (buf[pointer+1]>>4) & 0xF;

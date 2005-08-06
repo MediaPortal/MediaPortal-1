@@ -127,6 +127,7 @@ void CMHWParser::ParseThemes(byte* data, int dataLen)
 {
 	if(m_vecThemes.size()>0)
 		return; // already got channles table
+    if (data==NULL) return;
 
 	int themesIndex = 3;
 	int themesNames = 19;
@@ -194,7 +195,7 @@ void CMHWParser::GetTitle(int program, WORD* id, WORD* transportId, WORD* networ
 	*dateStart=it->second.dateStart;
 	*timeStart=it->second.timeStart;
 	*title=(char*)it->second.Title.c_str();
-	Log("MHW:GetTitle(%d) size:%d chan:%d progid:%x '%s'", 
+	Log("mhw-epg: GetTitle(%d) size:%d chan:%d progid:%x '%s'", 
 		program,m_mapTitles.size(),
 		*channelId, *programId, *title);
 }
@@ -212,7 +213,7 @@ void CMHWParser::GetChannel(WORD channelNr, WORD* channelId, WORD* networkId, WO
 	*transportId=it->TransponderID;
 	*channelId=it->ChannelID;
 	*channelName=(char*)it->ChannelName.c_str();
-	Log("MHW:GetChannel(%d) size:%d cid:%x onid:%x tsid:%x name:%s", channelNr,m_vecChannels.size(),*channelId,*networkId,*transportId,*channelName);
+	Log("mhw-epg: GetChannel(%d) size:%d cid:%x onid:%x tsid:%x name:%s", channelNr,m_vecChannels.size(),*channelId,*networkId,*transportId,*channelName);
 	return;
 }
 
@@ -223,10 +224,10 @@ void CMHWParser::GetSummary(WORD programId, char** summary)
 	if (it!=m_mapSummaries.end())
 	{
 		*summary=(char*)it->second.Description.c_str();		
-		//Log("MHW:GetSummary(%x) size:%d found ", programId,m_mapSummaries.size());
+		//Log("mhw-epg: GetSummary(%x) size:%d found ", programId,m_mapSummaries.size());
 	}
 	else
-		Log("MHW:GetSummary(%x) size:%d not found", programId,m_mapSummaries.size());
+		Log("mhw-epg: GetSummary(%x) size:%d not found", programId,m_mapSummaries.size());
 }
 void CMHWParser::GetTheme(WORD themeId, char** theme)
 {

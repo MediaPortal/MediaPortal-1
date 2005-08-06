@@ -58,7 +58,7 @@ CEPGInputPin::CEPGInputPin(CStreamAnalyzer *pDump,
 //
 HRESULT CEPGInputPin::CheckMediaType(const CMediaType *pmt)
 {
-	Log("epgpin:CheckMediaType()");
+	Log("epg:CheckMediaType()");
 	if(pmt->majortype==MEDIATYPE_MPEG2_SECTIONS  )
 		return S_OK;
 	return S_FALSE;
@@ -71,13 +71,13 @@ HRESULT CEPGInputPin::CheckMediaType(const CMediaType *pmt)
 //
 HRESULT CEPGInputPin::BreakConnect()
 {
-	Log("epgpin:BreakConnect()");
+	Log("epg:BreakConnect()");
     return CRenderedInputPin::BreakConnect();
 }
 
 HRESULT CEPGInputPin::CompleteConnect(IPin *pPin)
 {
-	Log("epgpin:CompleteConnect()");
+	Log("epg:CompleteConnect()");
 	HRESULT hr=CBasePin::CompleteConnect(pPin);
 	m_pDump->OnConnectEPG();
 	return hr;
@@ -101,7 +101,7 @@ STDMETHODIMP CEPGInputPin::ReceiveCanBlock()
 //
 STDMETHODIMP CEPGInputPin::Receive(IMediaSample *pSample)
 {
-	//Log("epgpin:Receive()");
+	//Log("epg:Receive()");
     CheckPointer(pSample,E_POINTER);
 
 //    CAutoLock lock(m_pReceiveLock);
@@ -117,7 +117,7 @@ STDMETHODIMP CEPGInputPin::Receive(IMediaSample *pSample)
 
     HRESULT hr = pSample->GetPointer(&pbData);
     if (FAILED(hr)) {
-		Log("epgpin:Receive() err");
+		Log("epg:Receive() err");
         return hr;
     }
 	
@@ -139,7 +139,7 @@ void CEPGInputPin::ResetPids()
 //
 STDMETHODIMP CEPGInputPin::EndOfStream(void)
 {
-	Log("epgpin:EndOfStream()");
+	Log("epg:EndOfStream()");
     CAutoLock lock(m_pReceiveLock);
     return CRenderedInputPin::EndOfStream();
 
@@ -155,7 +155,7 @@ STDMETHODIMP CEPGInputPin::NewSegment(REFERENCE_TIME tStart,
                                        REFERENCE_TIME tStop,
                                        double dRate)
 {
-	Log("epgpin:NewSegment()");
+	Log("epg:NewSegment()");
     m_tLast = 0;
     return S_OK;
 
