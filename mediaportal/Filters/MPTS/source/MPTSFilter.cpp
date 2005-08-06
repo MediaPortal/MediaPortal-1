@@ -261,22 +261,7 @@ STDMETHODIMP CMPTSFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt)
 #endif
 	logFilePos=0;
 
-	if (m_pFileReader->m_hInfoFile==INVALID_HANDLE_VALUE)
-	{
-		
-		Log(TEXT("wait till file > 200KB: "),true);
-		__int64	fileSize = 0;
-		DWORD count=0;
-		while(true)
-		{
-			m_pFileReader->GetFileSize(&fileSize);
-			if(fileSize>=2000000 || count>=250)
-				break;
-			Sleep(80);
-			count++;
-		}
-	}
-	else  
+	if (m_pFileReader->m_hInfoFile!=INVALID_HANDLE_VALUE)
 	{
 		Log(TEXT("using .info:"),true);
 		__int64	fileSize = 0;

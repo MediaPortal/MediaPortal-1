@@ -328,22 +328,20 @@ void Sections::decodePMT()
 	
 	LogDebug("Sections::decodePMT() Get PMT");
 	// get pcr, audio, video, etc.
-	for(int i=0;i<pmtcount;i++)
+	m_pFileReader->SetFilePointer(0,FILE_BEGIN);
+	finished=false;
+	while(finished!=true)
 	{
-		if(ready)
-			break;
-		m_pFileReader->SetFilePointer(0,FILE_BEGIN);
-		actPid=pmt[i];
-		finished=false;
-		while(finished!=true)
+		hr=m_pFileReader->Read(pData,188,&countBytesRead);
+		if(hr!=S_OK|| countBytesRead!=188)
+			finished=true;
+		m_pFileReader->SetFilePointer(countBytesRead,FILE_CURRENT);
+		if(hr==S_OK)
 		{
-			hr=m_pFileReader->Read(pData,188,&countBytesRead);
-			if(hr!=S_OK|| countBytesRead!=188)
-				finished=true;
-			m_pFileReader->SetFilePointer(countBytesRead,FILE_CURRENT);
-			if(hr==S_OK)
+			GetTSHeader(pData,&header);
+			for(int i=0;i<pmtcount;i++)
 			{
-				GetTSHeader(pData,&header);
+				actPid=pmt[i];
 				if(header.Pid==actPid && header.Pid>0x11)
 				{
 					if(header.PayloadUnitStart==true)
@@ -359,8 +357,8 @@ void Sections::decodePMT()
 						finished=true;
 						ready=true;
 						LogDebug("Sections::decodePMT() found PMT:%x pcr:%x",pids.PCRPid,pids.PMTPid);
+						break;
 					}
-
 				}
 			}
 		}
