@@ -2016,7 +2016,26 @@ namespace MediaPortal.TV.Recording
 				sections.DemuxerObject=m_streamDemuxer;
 				sections.Timeout=2500;
 				sections.GetTablesUsingMicrosoft=true;
-				System.Threading.Thread.Sleep(5000);
+				
+				for (int i=0; i < 100; ++i)
+				{
+					bool allFound=true;
+					m_analyzerInterface.GetChannelCount(ref count);
+					if(count>0)
+					{
+						for(int t=0;t<count;t++)
+						{
+							if(m_analyzerInterface.IsChannelReady(t)!=0)
+							{
+								allFound=false;
+								break;
+							}
+						}
+					}
+					else allFound=false;
+					if (!allFound) System.Threading.Thread.Sleep(50);
+				}
+
 				m_analyzerInterface.GetChannelCount(ref count);
 				if(count>0)
 				{
