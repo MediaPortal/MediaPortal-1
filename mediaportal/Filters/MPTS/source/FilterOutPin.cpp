@@ -130,6 +130,10 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 		hr = m_pBuffers->Require(lDataLength);
 		if (FAILED(hr))
 		{
+			if (m_pMPTSFilter->m_pFileReader->m_hInfoFile==INVALID_HANDLE_VALUE)
+			{
+				return S_FALSE;//end of stream
+			}
 			m_pMPTSFilter->Log((char*)"pin: FillBuffer() error in fillbuffer",true);
 			m_pMPTSFilter->Refresh();
 			//return S_FALSE; // cant read = end of stream

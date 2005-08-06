@@ -63,6 +63,7 @@ public:
 	STDMETHODIMP Log(__int64 value,bool crlf);
 	HRESULT SetFilePosition(REFERENCE_TIME seek);
 	void UpdatePids();
+	FileReader *m_pFileReader;
 protected:
 	// IFileSourceFilter
 	STDMETHODIMP Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt);
@@ -73,7 +74,6 @@ protected:
 	__int64 logFilePos; 
 	HANDLE  m_logFileHandle;
 	Sections *m_pSections;
-	FileReader *m_pFileReader;
 	SplitterSetup *m_pDemux;
 	CCritSec m_Lock;
 	BOOL m_setPosition;

@@ -105,7 +105,7 @@ STDMETHODIMP CEPGInputPin::Receive(IMediaSample *pSample)
     CheckPointer(pSample,E_POINTER);
 
 //    CAutoLock lock(m_pReceiveLock);
-    PBYTE pbData;
+    PBYTE pbData=NULL;
 
     // Has the filter been stopped yet?
 

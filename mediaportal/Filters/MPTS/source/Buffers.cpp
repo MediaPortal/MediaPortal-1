@@ -77,6 +77,11 @@ HRESULT CBuffers::Require(long nBytes)
 			dwPos += dwBytesRead;
 			if (dwPos < m_lBuffersItemSize)
 			{
+				if (m_pFileReader->m_hInfoFile==INVALID_HANDLE_VALUE)
+				{
+					delete [] newItem;
+					return E_FAIL;
+				}
 				Sleep(100);
 			}
 		}

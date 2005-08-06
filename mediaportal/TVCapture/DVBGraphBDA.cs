@@ -4065,6 +4065,7 @@ namespace MediaPortal.TV.Recording
 				graphRunning=true;
 			}
 
+			m_analyzerInterface.ResetParser();
 			currentTuningObject=(DVBChannel)tuningObject;
 			currentTuningObject.DiSEqC=disecqNo;
 			SubmitTuneRequest(currentTuningObject);

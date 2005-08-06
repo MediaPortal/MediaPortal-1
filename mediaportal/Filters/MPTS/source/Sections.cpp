@@ -120,9 +120,15 @@ HRESULT Sections::CheckStream(void)
 	while(finished!=true)
 	{
 		hr=m_pFileReader->Read(pData,188,&countBytesRead);
-		if(hr!=S_OK || countBytesRead!=188)
-			finished==true;
-
+		if (countBytesRead==0) 
+		{
+			finished=true;
+			hr=E_FAIL;
+		}
+		if (hr!=S_OK) 
+		{
+			finished=true;
+		}
 		m_pFileReader->SetFilePointer(countBytesRead,FILE_CURRENT);
 		
 		GetTSHeader(pData,&header);
@@ -209,7 +215,7 @@ void Sections::GetPTS(BYTE *data,ULONGLONG *pts)
 void Sections::PTSToPTSTime(ULONGLONG pts,PTSTime* ptsTime)
 {
 	PTSTime time;
-	ULONG  _90khz = pts/90;
+	ULONG  _90khz = (ULONG)(pts/90);
 	time.h=(_90khz/(1000*60*60));
 	time.m=(_90khz/(1000*60))-(time.h*60);
 	time.s=(_90khz/1000)-(time.h*3600)-(time.m*60);
