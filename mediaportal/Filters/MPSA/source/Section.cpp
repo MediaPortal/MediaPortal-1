@@ -79,7 +79,7 @@ Sections::Sections()
 	m_patTableVersion=-1;
 	m_bParseEPG=true;
 	m_bEpgDone=false;
-	m_bDecodeSDT=false;
+	
 	m_epgTimeout=time(NULL)+60;}
 
 Sections::~Sections()
@@ -317,7 +317,7 @@ int Sections::decodeSDT(BYTE *buf,ChannelInfo ch[],int channels, int len)
 
 	if (len < 10) return 0;
 	if (channels<=0) return 0;
-	if (!m_bDecodeSDT) return 0;
+	
 	int table_id = buf[0];
 	int section_syntax_indicator = (buf[1]>>7) & 1;
 	int section_length = ((buf[1]& 0xF)<<8) + buf[2];
@@ -340,7 +340,7 @@ int Sections::decodeSDT(BYTE *buf,ChannelInfo ch[],int channels, int len)
 	int channel;	 
 	if (table_id!=0x42) return 0;
 
-	m_bDecodeSDT=false;
+	
 	//Log.Write("decodeSDTTable len={0}/{1} section no:{2} last section no:{3}", buf.Length,section_length,section_number,last_section_number);
 
 	while (len1 > 0)
@@ -366,10 +366,13 @@ int Sections::decodeSDT(BYTE *buf,ChannelInfo ch[],int channels, int len)
 			}
 		}
 		//
-		if(channel!=-1)
+		if(channel==-1)
+		{
+			Log("sdt: channel not found for program:%d", service_id);
+		}
+
 		while (len2 > 0)
 		{
-		
 			if (pointer+1 >=len) return 0;
 			int indicator=buf[pointer];
 			x = 0;
@@ -377,19 +380,20 @@ int Sections::decodeSDT(BYTE *buf,ChannelInfo ch[],int channels, int len)
 			//Log.Write("indicator = {0:X}",indicator);
 			if (indicator == 0x48)
 			{
-				ServiceData serviceData;							
-				DVB_GetService(buf+pointer,&serviceData);
-				ch[channel].ServiceType=serviceData.ServiceType;
-				strcpy((char*)ch[channel].ProviderName,serviceData.Provider);
-				strcpy((char*)ch[channel].ServiceName,serviceData.Name);
-				ch[channel].Scrambled=free_CA_mode;
-				ch[channel].EITPreFollow=EIT_present_following_flag;
-				ch[channel].EITSchedule=EIT_schedule_flag;
-				ch[channel].SDTReady=true;
-				ch[channel].NetworkID=original_network_id;
-				Log("sdt: provider:'%s' channel:'%s' onid:0x%x tsid:0x%x", ch[channel].ProviderName,ch[channel].ServiceName,ch[channel].NetworkID, transport_stream_id);
-				//
-				//
+				if (ch[channel].SDTReady==false)
+				{
+					ServiceData serviceData;							
+					DVB_GetService(buf+pointer,&serviceData);
+					ch[channel].ServiceType=serviceData.ServiceType;
+					strcpy((char*)ch[channel].ProviderName,serviceData.Provider);
+					strcpy((char*)ch[channel].ServiceName,serviceData.Name);
+					ch[channel].Scrambled=free_CA_mode;
+					ch[channel].EITPreFollow=EIT_present_following_flag;
+					ch[channel].EITSchedule=EIT_schedule_flag;
+					ch[channel].SDTReady=true;
+					ch[channel].NetworkID=original_network_id;
+					Log("sdt: pmt:0x%x provider:'%s' channel:'%s' onid:0x%x tsid:0x%x", ch[channel].ProgrammPMTPID,ch[channel].ProviderName,ch[channel].ServiceName,ch[channel].NetworkID, transport_stream_id);
+				}
 			}
 			else
 			{
@@ -444,10 +448,10 @@ bool Sections::IsNewPat(BYTE *pData, int len)
 		transport_stream_id==m_patTSID && 
 		section_length==m_patSectionLen) return false;
 	if(table_id!=0 /*|| section_number!=0||last_section_number!=0*/) return false;
-	//Log("%x==%x %x==%x %x==%x",
-	//	version_number,m_patTableVersion, 
-	//	transport_stream_id,m_patTSID,
-	//	section_length,m_patSectionLen);
+	Log("Found new PAT: version:%x==%x tsid:%x==%x len:%x==%x",
+		version_number,m_patTableVersion, 
+		transport_stream_id,m_patTSID,
+		section_length,m_patSectionLen);
 	return true;
 }
 void Sections::decodePAT(BYTE *pData,ChannelInfo chInfo[],int *channelCount, int len)
@@ -476,7 +480,7 @@ void Sections::decodePAT(BYTE *pData,ChannelInfo chInfo[],int *channelCount, int
 	Log("Decode pat:%x len:%x tsid:0x%x version:%x (%d/%d) channels:%d",
 		table_id,section_length,transport_stream_id,version_number,section_number,last_section_number,(*channelCount));
 	ChannelInfo ch;
-	m_bDecodeSDT=true;
+	
 	memset(&ch,0,sizeof(struct chInfo));
 
 	int pmtcount=0;
@@ -1059,7 +1063,7 @@ void Sections::Reset()
 	m_mapEPG.clear();
 	m_bParseEPG=true;
 	m_bEpgDone=false;
-	m_bDecodeSDT=false;
+	
 	m_epgTimeout=time(NULL)+60;
 }
 

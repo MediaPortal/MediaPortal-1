@@ -463,7 +463,7 @@ CUnknown * WINAPI CStreamAnalyzer::CreateInstance(LPUNKNOWN punk, HRESULT *phr)
 
 STDMETHODIMP CStreamAnalyzer::ResetParser()
 {
-//	Log("ResetParser");
+	Log("ResetParser");
 	HRESULT hr=m_pDemuxer->UnMapAllPIDs();
 	m_patChannelsCount=0;
 	m_pMHWPin1->ResetPids();
@@ -670,9 +670,11 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 			// finished tuning to the new channel
 			if (m_pSections->IsNewPat(pbData,len))
 			{
-//				Log("Found new PAT, decode channels");
 				if (m_patChannelsCount>0) 
+				{
+					Log("Found new PAT, decode channels");
 					ResetParser();
+				}
 				//m_pDemuxer->UnMapSectionPIDs();
 				m_pSections->decodePAT(pbData,m_patTable,&m_patChannelsCount,len);
 //				Log("PAT decoded and found %d channels, map pids", m_patChannelsCount);
@@ -686,7 +688,10 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 		if(pbData[0]==0x42)// sdt
 		{
 //			Log("decode SDT");
-			m_pSections->decodeSDT(pbData,m_patTable,m_patChannelsCount,len);
+			if (m_patChannelsCount>0)
+			{
+				m_pSections->decodeSDT(pbData,m_patTable,m_patChannelsCount,len);
+			}
 //			Log("SDT decoded");
 		}
 	}
@@ -894,11 +899,17 @@ STDMETHODIMP CStreamAnalyzer::GetPMTData(BYTE *data)
 STDMETHODIMP CStreamAnalyzer::GetChannel(WORD channel,BYTE *ch)
 {
 	
-	if(channel>=0 && channel<=m_patChannelsCount-1 && m_patChannelsCount>0)
+	if(channel>=0 && channel < m_patChannelsCount && m_patChannelsCount>0)
 	{
 		memcpy(ch,&m_patTable[channel],m_pSections->CISize());
 		if(m_patTable[channel].SDTReady==false || m_patTable[channel].PMTReady==false)
+		{
+			if (m_patTable[channel].SDTReady==false)
+				Log("GetChannel(%d) SDT not found");
+			if (m_patTable[channel].PMTReady==false)
+				Log("GetChannel(%d) PMT not found");
 			return S_FALSE;
+		}
 		return S_OK;
 	}
 	return S_FALSE;
