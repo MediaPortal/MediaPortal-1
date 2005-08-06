@@ -62,7 +62,7 @@ HRESULT CBuffers::Require(long nBytes)
 		ULONG dwPos=0;
 
 		__int64 currPosition = m_pFileReader->GetFilePointer();
-		while (dwPos < m_lBuffersItemSize) 
+		while (dwPos < (LONG)m_lBuffersItemSize) 
 		{
 
 			ULONG dwBytesRead = 0;				
@@ -75,7 +75,7 @@ HRESULT CBuffers::Require(long nBytes)
 			}
 
 			dwPos += dwBytesRead;
-			if (dwPos < m_lBuffersItemSize)
+			if (dwPos < (LONG)m_lBuffersItemSize)
 			{
 				if (m_pFileReader->m_hInfoFile==INVALID_HANDLE_VALUE)
 				{

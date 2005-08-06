@@ -77,6 +77,7 @@ HRESULT Sections::ParseFromFile()
 		pids.EndPTS=(__int64)ptsNow;
 		Sections::PTSTime time;
 		pids.Duration=ptsNow-ptsStart;
+		pids.DurTime=pids.Duration;
 		PTSToPTSTime(pids.Duration,&time);
 		pids.Duration=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
 
@@ -117,7 +118,6 @@ HRESULT Sections::CheckStream(void)
 	unsigned long offset=0;
 	ULONGLONG filePosCounter=0;
 	ULONGLONG pts=0;
-	__int64 actFilePointer;
 	int pidToCheck=(pids.AudioPid!=0?pids.AudioPid:pids.AC3);
 	while(finished!=true)
 	{
@@ -399,7 +399,7 @@ void Sections::decodePMT()
 				else
 					offset=4;
 				len=188-offset;
-				if(len>pmtSectionLen)
+				if(len>(DWORD)pmtSectionLen)
 					len=pmtSectionLen;
 				memcpy(buf,pData+offset,len);
 				pmtSectionLen-=len;

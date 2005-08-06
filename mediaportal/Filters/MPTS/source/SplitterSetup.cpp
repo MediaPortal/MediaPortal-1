@@ -55,11 +55,6 @@ HRESULT SplitterSetup::SetupDemuxer(IBaseFilter *demuxFilter)
 {
 	IMPEG2PIDMap	*pMap=NULL;
 	IEnumPIDMap		*pPidEnum=NULL;
-	ULONG			pid;
-	PID_MAP			pm;
-	ULONG			count;
-	ULONG			umPid;
-	int				maxCounter;
 	HRESULT hr=0;
 
 	if(demuxFilter==NULL)

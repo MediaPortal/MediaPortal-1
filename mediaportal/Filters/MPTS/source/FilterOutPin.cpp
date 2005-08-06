@@ -142,7 +142,6 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 		m_pBuffers->DequeFromBuffer(pData, lDataLength);
 
 		ULONGLONG pts=0;
-		Sections::PTSTime time;
 		int stream;
 		for(int i=0;i<18800;i+=188)
 		{
