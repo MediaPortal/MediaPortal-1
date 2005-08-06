@@ -69,6 +69,7 @@ namespace WindowPlugins.GUIPrograms
     private System.Windows.Forms.TextBox txtFiles;
     private System.Windows.Forms.Label label2;
     private System.Windows.Forms.LinkLabel gamebaseLink;
+    private System.Windows.Forms.Button btnPrePost;
 		/// <summary> 
 		/// Required designer variable.
 		/// </summary>
@@ -140,6 +141,7 @@ namespace WindowPlugins.GUIPrograms
       this.txtFiles = new System.Windows.Forms.TextBox();
       this.label2 = new System.Windows.Forms.Label();
       this.gamebaseLink = new System.Windows.Forms.LinkLabel();
+      this.btnPrePost = new System.Windows.Forms.Button();
       this.SuspendLayout();
       // 
       // chkbWaitForExit
@@ -438,8 +440,19 @@ namespace WindowPlugins.GUIPrograms
       this.gamebaseLink.TextAlign = System.Drawing.ContentAlignment.TopRight;
       this.gamebaseLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.gamebaseLink_LinkClicked);
       // 
+      // btnPrePost
+      // 
+      this.btnPrePost.Image = ((System.Drawing.Image)(resources.GetObject("btnPrePost.Image")));
+      this.btnPrePost.Location = new System.Drawing.Point(376, 90);
+      this.btnPrePost.Name = "btnPrePost";
+      this.btnPrePost.Size = new System.Drawing.Size(20, 20);
+      this.btnPrePost.TabIndex = 68;
+      this.toolTip.SetToolTip(this.btnPrePost, "Edit Pre / Postlaunch options");
+      this.btnPrePost.Click += new System.EventHandler(this.btnPrePost_Click);
+      // 
       // AppSettingsGamebase
       // 
+      this.Controls.Add(this.btnPrePost);
       this.Controls.Add(this.gamebaseLink);
       this.Controls.Add(this.buttonFileDirectory);
       this.Controls.Add(this.txtFiles);
@@ -546,6 +559,7 @@ namespace WindowPlugins.GUIPrograms
 
     public override bool AppObj2Form(AppItem curApp)
     {
+      base.AppObj2Form(curApp);
       this.chkbEnabled.Checked = curApp.Enabled;
       this.txtTitle.Text = curApp.Title;
       this.txtFilename.Text = curApp.Filename;
@@ -575,6 +589,7 @@ namespace WindowPlugins.GUIPrograms
 
     public override void Form2AppObj(AppItem curApp)
     {
+      base.Form2AppObj(curApp);
       curApp.Enabled = this.chkbEnabled.Checked;
       curApp.Title = this.txtTitle.Text;
       curApp.Filename = this.txtFilename.Text;
@@ -809,6 +824,11 @@ namespace WindowPlugins.GUIPrograms
         ProcessStartInfo sInfo = new ProcessStartInfo(gamebaseLink.Text);
         Process.Start(sInfo);
       }
+    }
+
+    private void btnPrePost_Click(object sender, System.EventArgs e)
+    {
+      PrePostLaunchClick(txtTitle.Text);
     }
 
 

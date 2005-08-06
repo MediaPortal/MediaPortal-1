@@ -599,6 +599,16 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "GUIPrograms\AppSettingsPrePost.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUIPrograms\AppSettingsPrePost.resx"
+                    DependentUpon = "AppSettingsPrePost.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "GUIPrograms\AppSettingsRoot.cs"
                     SubType = "UserControl"
                     BuildAction = "Compile"

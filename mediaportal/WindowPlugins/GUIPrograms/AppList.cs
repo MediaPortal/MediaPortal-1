@@ -73,6 +73,8 @@ namespace ProgramsDatabase
       newApp.SystemDefault = ProgramUtils.Get(results, recordIndex, "systemdefault");
       newApp.WaitForExit = ProgramUtils.GetBool(results, recordIndex, "waitforexit");
       newApp.Pincode = ProgramUtils.GetIntDef(results, recordIndex, "pincode",  - 1);
+      newApp.PreLaunch = ProgramUtils.Get(results, recordIndex, "preLaunch");
+      newApp.PostLaunch = ProgramUtils.Get(results, recordIndex, "postLaunch");
       return newApp;
     }
 

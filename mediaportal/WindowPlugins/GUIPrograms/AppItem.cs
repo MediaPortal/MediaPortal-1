@@ -71,8 +71,12 @@ namespace ProgramsDatabase
     int contentID;
     string systemDefault;
     bool waitForExit;
+    string preLaunch;
+    string postLaunch;
+
 
     string launchErrorMsg;
+
 
     // two magic image-slideshow counters
     int thumbIndex = 0;
@@ -131,6 +135,8 @@ namespace ProgramsDatabase
       systemDefault = "";
       waitForExit = true;
       filesAreLoaded = false;
+      preLaunch = "";
+      postLaunch = "";
     }
 
     public SQLiteClient db
@@ -301,6 +307,7 @@ namespace ProgramsDatabase
       this.LaunchErrorMsg = "";
       try
       {
+        DoPreLaunch();
         if (useGenericPlayer)
         {
           // use generic player
@@ -347,6 +354,75 @@ namespace ProgramsDatabase
         Log.Write(ErrorString);
         this.LaunchErrorMsg = ErrorString;
       }
+      finally
+      {
+        DoPostLaunch();
+      }
+    }
+
+    protected void DoPreLaunch()
+    {
+      if (waitForExit && (preLaunch != ""))
+      {
+        LaunchCmd(preLaunch);
+      }
+    }
+
+    protected void DoPostLaunch()
+    {
+      if (waitForExit && (preLaunch != ""))
+      {
+        LaunchCmd(postLaunch);
+      }
+    }
+
+    protected void LaunchCmd(string commands)
+    {
+      string results = "";
+      string errors = "";
+      string[] script;
+      string curLine;
+      Process p = new Process();
+      StreamWriter sw;
+      StreamReader sr;
+      StreamReader err;
+
+      script = commands.Split('\r');
+      if (script.Length > 0)
+      {
+        ProcessStartInfo psI = new ProcessStartInfo("cmd");
+        psI.UseShellExecute = false;
+        psI.RedirectStandardInput = true;
+        psI.RedirectStandardOutput = true;
+        psI.RedirectStandardError = true;
+        psI.CreateNoWindow = true;
+        p.StartInfo = psI;
+
+        p.Start();
+        sw = p.StandardInput;
+        sr = p.StandardOutput;
+        err = p.StandardError;
+
+        sw.AutoFlush = true;
+
+        for (int i = 0; i < script.Length; i++)
+        {
+          curLine = script[i].Trim();
+          curLine = curLine.TrimStart('\n');
+          if (curLine != "")
+            sw.WriteLine(curLine);
+        }
+        sw.Close();
+
+        results += sr.ReadToEnd();
+        errors += err.ReadToEnd();
+
+        if (errors.Trim() != "")
+        {
+          Log.Write("AppItem PrePost errors: {0}", errors);
+        }
+      }
+      
     }
 
     public virtual void LaunchFile(GUIListItem item)
@@ -736,6 +812,18 @@ namespace ProgramsDatabase
       set { launchErrorMsg = value; }
     }
 
+    public string PreLaunch
+    {
+      get { return preLaunch;}
+      set { preLaunch = value;}
+    }
+
+    public string PostLaunch
+    {
+      get { return postLaunch;}
+      set { postLaunch = value;}
+    }
+
 
     public Filelist Files
     {
@@ -798,13 +886,13 @@ namespace ProgramsDatabase
             ContentID = 100;
           }
           AppID = GetNewAppID(); // important to avoid subsequent inserts!
-          string sql = String.Format("insert into application (appid, fatherID, title, shorttitle, filename, arguments, windowstyle, startupdir, useshellexecute, usequotes, source_type, source, imagefile, filedirectory, imagedirectory, validextensions, importvalidimagesonly, position, enabled, enableGUIRefresh, GUIRefreshPossible, pincode, contentID, systemDefault, WaitForExit) values('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}', '{11}', '{12}', '{13}', '{14}', '{15}', '{16}', '{17}', '{18}', '{19}', '{20}', '{21}', '{22}', '{23}', '{24}')",
+          string sql = String.Format("insert into application (appid, fatherID, title, shorttitle, filename, arguments, windowstyle, startupdir, useshellexecute, usequotes, source_type, source, imagefile, filedirectory, imagedirectory, validextensions, importvalidimagesonly, position, enabled, enableGUIRefresh, GUIRefreshPossible, pincode, contentID, systemDefault, WaitForExit, preLaunch, postLaunch) values('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}', '{11}', '{12}', '{13}', '{14}', '{15}', '{16}', '{17}', '{18}', '{19}', '{20}', '{21}', '{22}', '{23}', '{24}', '{25}', '{26}')",
                                         AppID, FatherID, ProgramUtils.Encode(Title), ProgramUtils.Encode(ShortTitle), ProgramUtils.Encode(Filename), ProgramUtils.Encode(Arguments),
                                         ProgramUtils.WindowStyleToStr(WindowStyle), ProgramUtils.Encode(Startupdir), ProgramUtils.BooleanToStr(UseShellExecute),
                                         ProgramUtils.BooleanToStr(UseQuotes), ProgramUtils.SourceTypeToStr(SourceType), ProgramUtils.Encode(Source), ProgramUtils.Encode(Imagefile),
                                         ProgramUtils.Encode(FileDirectory), ProgramUtils.Encode(ImageDirectory), ProgramUtils.Encode(ValidExtensions), ProgramUtils.BooleanToStr(importValidImagesOnly), Position,
                                         ProgramUtils.BooleanToStr(Enabled), ProgramUtils.BooleanToStr(EnableGUIRefresh), ProgramUtils.BooleanToStr(GUIRefreshPossible), Pincode,
-                                        ContentID, ProgramUtils.Encode(SystemDefault), ProgramUtils.BooleanToStr(WaitForExit)
+                                        ContentID, ProgramUtils.Encode(SystemDefault), ProgramUtils.BooleanToStr(WaitForExit), ProgramUtils.Encode(PreLaunch), ProgramUtils.Encode(PostLaunch)
             );
           sqlDB.Execute(sql);
         }
@@ -826,13 +914,13 @@ namespace ProgramsDatabase
         }
         try
         {
-          sql = String.Format("update application set title = '{0}', shorttitle = '{1}', filename = '{2}', arguments = '{3}', windowstyle = '{4}', startupdir = '{5}', useshellexecute = '{6}', usequotes = '{7}', source_type = '{8}', source = '{9}', imagefile = '{10}',filedirectory = '{11}',imagedirectory = '{12}',validextensions = '{13}',importvalidimagesonly = '{14}',position = {15}, enabled = '{16}', fatherID = '{17}', enableGUIRefresh = '{18}', GUIRefreshPossible = '{19}', pincode = '{20}', contentID = '{21}', systemDefault = '{22}', WaitForExit = '{23}' where appID = {24}",
+          sql = String.Format("update application set title = '{0}', shorttitle = '{1}', filename = '{2}', arguments = '{3}', windowstyle = '{4}', startupdir = '{5}', useshellexecute = '{6}', usequotes = '{7}', source_type = '{8}', source = '{9}', imagefile = '{10}',filedirectory = '{11}',imagedirectory = '{12}',validextensions = '{13}',importvalidimagesonly = '{14}',position = {15}, enabled = '{16}', fatherID = '{17}', enableGUIRefresh = '{18}', GUIRefreshPossible = '{19}', pincode = '{20}', contentID = '{21}', systemDefault = '{22}', WaitForExit = '{23}', preLaunch = '{24}', postLaunch = '{25}' where appID = {26}",
                                  ProgramUtils.Encode(Title), ProgramUtils.Encode(ShortTitle), ProgramUtils.Encode(Filename), ProgramUtils.Encode(Arguments),
                                  ProgramUtils.WindowStyleToStr(WindowStyle), ProgramUtils.Encode(Startupdir), ProgramUtils.BooleanToStr(UseShellExecute),
                                  ProgramUtils.BooleanToStr(UseQuotes), ProgramUtils.SourceTypeToStr(SourceType), ProgramUtils.Encode(Source), ProgramUtils.Encode(Imagefile),
                                  ProgramUtils.Encode(FileDirectory), ProgramUtils.Encode(ImageDirectory), ProgramUtils.Encode(ValidExtensions), ProgramUtils.BooleanToStr(importValidImagesOnly), Position,
                                  ProgramUtils.BooleanToStr(Enabled), FatherID, ProgramUtils.BooleanToStr(EnableGUIRefresh), ProgramUtils.BooleanToStr(GUIRefreshPossible),
-                                 Pincode, ContentID, ProgramUtils.Encode(SystemDefault), ProgramUtils.BooleanToStr(WaitForExit),
+                                 Pincode, ContentID, ProgramUtils.Encode(SystemDefault), ProgramUtils.BooleanToStr(WaitForExit), ProgramUtils.Encode(PreLaunch), ProgramUtils.Encode(PostLaunch),
                                  AppID);
           sqlDB.Execute(sql);
         }
@@ -1037,6 +1125,8 @@ namespace ProgramsDatabase
       this.EnableGUIRefresh = sourceApp.EnableGUIRefresh;
       this.Pincode = sourceApp.Pincode;
       this.WaitForExit = sourceApp.WaitForExit;
+      this.PreLaunch = sourceApp.PreLaunch;
+      this.PostLaunch = sourceApp.PostLaunch;
       this.SystemDefault = sourceApp.SystemDefault;
       this.ContentID = sourceApp.ContentID;
     }

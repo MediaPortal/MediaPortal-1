@@ -194,6 +194,7 @@ namespace WindowPlugins.GUIPrograms
 
     public override bool AppObj2Form(AppItem curApp)
     {
+      base.AppObj2Form(curApp);
       this.chkbEnabled.Checked = curApp.Enabled;
       this.txtTitle.Text = curApp.Title;
       this.txtImageFile.Text = curApp.Imagefile;
@@ -210,6 +211,7 @@ namespace WindowPlugins.GUIPrograms
 
     public override void Form2AppObj(AppItem curApp)
     {
+      base.Form2AppObj(curApp);
       curApp.Enabled = this.chkbEnabled.Checked;
       curApp.Title = this.txtTitle.Text;
       curApp.SourceType = myProgSourceType.GROUPER;

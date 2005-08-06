@@ -68,6 +68,8 @@ namespace ProgramsDatabase
         PatchGenreValues();
         // remove trigger
         PatchAppTrigger();
+        // add PreLaunch / PostLaunch fields
+        PatchPrePostLaunch();
         // dirty hack: propagate the sqlDB to the singleton objects...
         ProgramSettings.sqlDB = sqlDB;
       }
@@ -228,6 +230,27 @@ namespace ProgramsDatabase
         }
       }
     }
+
+    static void PatchPrePostLaunch()
+    {
+      if (sqlDB == null)
+        return;
+      if (!ProgramSettings.KeyExists(ProgramUtils.cPREPOST_PATCH))
+      {
+        try
+        {
+        Log.Write("myPrograms: adding preLaunch / postLaunch fields");
+        sqlDB.Execute("alter table application add column preLaunch text;");
+        sqlDB.Execute("alter table application add column postLaunch text;");
+        ProgramSettings.WriteSetting(ProgramUtils.cPREPOST_PATCH, "DONE") ;
+        }
+        catch (SQLiteException ex)
+        {
+          Log.Write("programdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        }
+      }
+    }
+
 
 
 

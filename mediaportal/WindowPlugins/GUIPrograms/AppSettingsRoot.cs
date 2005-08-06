@@ -127,6 +127,7 @@ namespace WindowPlugins.GUIPrograms
 
     public override bool AppObj2Form(AppItem curApp)
     {
+      base.AppObj2Form(curApp);
       PluginTitle.Text = ProgramSettings.ReadSetting(ProgramUtils.cPLUGINTITLE);
       if (PluginTitle.Text == "")
       {

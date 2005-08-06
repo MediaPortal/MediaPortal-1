@@ -61,6 +61,7 @@ namespace WindowPlugins.GUIPrograms
     private Button buttonGetExtensions;
     private CheckBox chkbWaitForExit;
     private ComboBox cbFilename;
+    private System.Windows.Forms.Button btnPrePost;
     private IContainer components = null;
 
     public AppSettingsDirBrowse()
@@ -124,6 +125,7 @@ namespace WindowPlugins.GUIPrograms
       this.buttonGetExtensions = new System.Windows.Forms.Button();
       this.chkbWaitForExit = new System.Windows.Forms.CheckBox();
       this.cbFilename = new System.Windows.Forms.ComboBox();
+      this.btnPrePost = new System.Windows.Forms.Button();
       this.SuspendLayout();
       // 
       // chkbUseShellExecute
@@ -400,8 +402,19 @@ namespace WindowPlugins.GUIPrograms
       this.cbFilename.Size = new System.Drawing.Size(250, 21);
       this.cbFilename.TabIndex = 38;
       // 
+      // btnPrePost
+      // 
+      this.btnPrePost.Image = ((System.Drawing.Image)(resources.GetObject("btnPrePost.Image")));
+      this.btnPrePost.Location = new System.Drawing.Point(376, 90);
+      this.btnPrePost.Name = "btnPrePost";
+      this.btnPrePost.Size = new System.Drawing.Size(20, 20);
+      this.btnPrePost.TabIndex = 39;
+      this.toolTip.SetToolTip(this.btnPrePost, "Edit Pre / Postlaunch options");
+      this.btnPrePost.Click += new System.EventHandler(this.btnPrePost_Click);
+      // 
       // AppSettingsDirBrowse
       // 
+      this.Controls.Add(this.btnPrePost);
       this.Controls.Add(this.cbFilename);
       this.Controls.Add(this.chkbWaitForExit);
       this.Controls.Add(this.buttonGetExtensions);
@@ -443,6 +456,7 @@ namespace WindowPlugins.GUIPrograms
 
     public override bool AppObj2Form(AppItem curApp)
     {
+      base.AppObj2Form(curApp);
       this.chkbEnabled.Checked = curApp.Enabled;
       this.txtTitle.Text = curApp.Title;
       this.cbFilename.Text = curApp.Filename;
@@ -471,6 +485,7 @@ namespace WindowPlugins.GUIPrograms
 
     public override void Form2AppObj(AppItem curApp)
     {
+      base.Form2AppObj(curApp);
       curApp.Enabled = this.chkbEnabled.Checked;
       curApp.Title = this.txtTitle.Text;
       curApp.Filename = this.cbFilename.Text;
@@ -663,6 +678,11 @@ namespace WindowPlugins.GUIPrograms
       {
         this.txtExtensions.Text = tempApp.ValidExtensions;
       }
+    }
+
+    private void btnPrePost_Click(object sender, System.EventArgs e)
+    {
+      PrePostLaunchClick(txtTitle.Text);
     }
 
 

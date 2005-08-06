@@ -40,6 +40,9 @@ namespace WindowPlugins.GUIPrograms
     public event EventHandler OnUpClick;
     public event EventHandler OnDownClick;
 
+    string postLaunch = "";
+    string preLaunch = "";
+
 
     public AppSettings()
     {
@@ -84,9 +87,25 @@ namespace WindowPlugins.GUIPrograms
     }
     #endregion 
 
+    public string PreLaunch
+    {
+      get { return preLaunch;}
+      set { preLaunch = value;}
+    }
+
+    public string PostLaunch
+    {
+      get { return postLaunch;}
+      set { postLaunch = value;}
+    }
+
     public virtual bool AppObj2Form(AppItem curApp)
     {
-      // virtual!
+      if (curApp != null)
+      {
+        preLaunch = curApp.PreLaunch;
+        postLaunch = curApp.PostLaunch;
+      }
       return true;
     }
 
@@ -99,7 +118,11 @@ namespace WindowPlugins.GUIPrograms
 
     public virtual void Form2AppObj(AppItem curApp)
     {
-      // virtual!
+      if (curApp != null)
+      {
+        curApp.PreLaunch = preLaunch;
+        curApp.PostLaunch = postLaunch;
+      }
     }
 
     public virtual bool EntriesOK(AppItem curApp)
@@ -125,6 +148,20 @@ namespace WindowPlugins.GUIPrograms
       if (this.OnDownClick != null)
       {
         OnDownClick(this, null);
+      }
+    }
+
+    protected void PrePostLaunchClick(string Title)
+    {
+      AppSettingsPrePost frmAppPrePost = new AppSettingsPrePost();
+      frmAppPrePost.Title = Title;
+      frmAppPrePost.PreLaunch = this.preLaunch;
+      frmAppPrePost.PostLaunch = this.postLaunch;
+      DialogResult dialogResult = frmAppPrePost.ShowDialog(this);
+      if (dialogResult == DialogResult.OK)
+      {
+        this.preLaunch = frmAppPrePost.PreLaunch;
+        this.postLaunch = frmAppPrePost.PostLaunch;
       }
     }
 

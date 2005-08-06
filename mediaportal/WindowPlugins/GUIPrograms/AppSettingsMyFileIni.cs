@@ -63,6 +63,7 @@ namespace WindowPlugins.GUIPrograms
     private ComboBox cbContentProfile;
     private CheckBox chkbWaitForExit;
     private ComboBox cbFilename;
+    private System.Windows.Forms.Button btnPrePost;
     private IContainer components = null;
 
     public AppSettingsMyFileIni()
@@ -137,6 +138,7 @@ namespace WindowPlugins.GUIPrograms
       this.lblContent = new System.Windows.Forms.Label();
       this.cbContentProfile = new System.Windows.Forms.ComboBox();
       this.cbFilename = new System.Windows.Forms.ComboBox();
+      this.btnPrePost = new System.Windows.Forms.Button();
       this.SuspendLayout();
       // 
       // label3
@@ -420,8 +422,19 @@ namespace WindowPlugins.GUIPrograms
       this.cbFilename.Size = new System.Drawing.Size(250, 21);
       this.cbFilename.TabIndex = 36;
       // 
+      // btnPrePost
+      // 
+      this.btnPrePost.Image = ((System.Drawing.Image)(resources.GetObject("btnPrePost.Image")));
+      this.btnPrePost.Location = new System.Drawing.Point(376, 90);
+      this.btnPrePost.Name = "btnPrePost";
+      this.btnPrePost.Size = new System.Drawing.Size(20, 20);
+      this.btnPrePost.TabIndex = 37;
+      this.toolTip.SetToolTip(this.btnPrePost, "Edit Pre / Postlaunch options");
+      this.btnPrePost.Click += new System.EventHandler(this.btnPrePost_Click);
+      // 
       // AppSettingsMyFileIni
       // 
+      this.Controls.Add(this.btnPrePost);
       this.Controls.Add(this.cbFilename);
       this.Controls.Add(this.cbContentProfile);
       this.Controls.Add(this.lblContent);
@@ -526,6 +539,7 @@ namespace WindowPlugins.GUIPrograms
 
     public override bool AppObj2Form(AppItem curApp)
     {
+      base.AppObj2Form(curApp);
       this.chkbEnabled.Checked = curApp.Enabled;
       this.txtTitle.Text = curApp.Title;
       this.cbFilename.Text = curApp.Filename;
@@ -555,6 +569,7 @@ namespace WindowPlugins.GUIPrograms
 
     public override void Form2AppObj(AppItem curApp)
     {
+      base.Form2AppObj(curApp);
       curApp.Enabled = this.chkbEnabled.Checked;
       curApp.Title = this.txtTitle.Text;
       curApp.Filename = this.cbFilename.Text;
@@ -679,6 +694,11 @@ namespace WindowPlugins.GUIPrograms
       this.chkbUseQuotes.Checked = (tempApp.UseQuotes);
       this.chkbWaitForExit.Checked = (tempApp.WaitForExit);
       this.cbContentProfile.SelectedIndex = ProgramContentManager.GetIndexOfID(tempApp.ContentID);
+    }
+
+    private void btnPrePost_Click(object sender, System.EventArgs e)
+    {
+      PrePostLaunchClick(txtTitle.Text);
     }
 
   }

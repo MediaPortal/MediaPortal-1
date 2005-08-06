@@ -55,6 +55,7 @@ namespace WindowPlugins.GUIPrograms
     private System.Windows.Forms.Label lblImgDirectories;
     private System.Windows.Forms.TextBox txtImageDirs;
     private System.Windows.Forms.Button btnImageDirs;
+    private System.Windows.Forms.Button btnPrePost;
     private IContainer components = null;
 
 
@@ -113,6 +114,7 @@ namespace WindowPlugins.GUIPrograms
       this.lblImgDirectories = new System.Windows.Forms.Label();
       this.txtImageDirs = new System.Windows.Forms.TextBox();
       this.btnImageDirs = new System.Windows.Forms.Button();
+      this.btnPrePost = new System.Windows.Forms.Button();
       this.SuspendLayout();
       // 
       // label3
@@ -338,8 +340,19 @@ namespace WindowPlugins.GUIPrograms
       this.btnImageDirs.TabIndex = 41;
       this.btnImageDirs.Click += new System.EventHandler(this.btnImageDirs_Click);
       // 
+      // btnPrePost
+      // 
+      this.btnPrePost.Image = ((System.Drawing.Image)(resources.GetObject("btnPrePost.Image")));
+      this.btnPrePost.Location = new System.Drawing.Point(376, 89);
+      this.btnPrePost.Name = "btnPrePost";
+      this.btnPrePost.Size = new System.Drawing.Size(20, 20);
+      this.btnPrePost.TabIndex = 42;
+      this.toolTip.SetToolTip(this.btnPrePost, "Edit Pre / Postlaunch options");
+      this.btnPrePost.Click += new System.EventHandler(this.btnPrePost_Click);
+      // 
       // AppSettingsFilelauncher
       // 
+      this.Controls.Add(this.btnPrePost);
       this.Controls.Add(this.lblImgDirectories);
       this.Controls.Add(this.txtImageDirs);
       this.Controls.Add(this.btnImageDirs);
@@ -433,6 +446,7 @@ namespace WindowPlugins.GUIPrograms
 
     public override bool AppObj2Form(AppItem curApp)
     {
+      base.AppObj2Form(curApp);
       this.chkbEnabled.Checked = curApp.Enabled;
       this.txtTitle.Text = curApp.Title;
       this.cbFilename.Text = curApp.Filename;
@@ -458,6 +472,7 @@ namespace WindowPlugins.GUIPrograms
 
     public override void Form2AppObj(AppItem curApp)
     {
+      base.Form2AppObj(curApp);
       curApp.Enabled = this.chkbEnabled.Checked;
       curApp.Title = this.txtTitle.Text;
       curApp.Filename = this.cbFilename.Text;
@@ -553,6 +568,11 @@ namespace WindowPlugins.GUIPrograms
         }
         txtImageDirs.Text = txtImageDirs.Text + strSep + dialogFolder.SelectedPath;
       }
+    }
+
+    private void btnPrePost_Click(object sender, System.EventArgs e)
+    {
+      PrePostLaunchClick(txtTitle.Text);
     }
 
   }

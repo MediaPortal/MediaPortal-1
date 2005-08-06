@@ -76,6 +76,7 @@ namespace Programs.Utils
     public const string cPLUGINTITLE = "PLUGINTITLE";
     public const string cCONTENT_PATCH = "CONTENTPATCH";
     public const string cGENRE_PATCH = "GENREPATCH";
+    public const string cPREPOST_PATCH = "PREPOSTPATCH";
 
     // singleton. Dont allow any instance of this class
     private ProgramUtils(){}
