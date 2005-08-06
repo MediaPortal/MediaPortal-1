@@ -1960,5 +1960,10 @@ namespace MediaPortal.GUI.Pictures
 
 			GUIWindowManager.ShowPreviousWindow();
 		}
+		public override int GetFocusControlId()
+		{
+			return 1;
+		}
+
 	}
 }
