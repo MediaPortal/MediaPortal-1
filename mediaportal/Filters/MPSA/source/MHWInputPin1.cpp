@@ -70,13 +70,13 @@ HRESULT CMHWInputPin1::CheckMediaType(const CMediaType *pmt)
 //
 HRESULT CMHWInputPin1::BreakConnect()
 {
-	Log("mhwpin1:CompleteConnect()");
+//	Log("mhwpin1:CompleteConnect()");
     return CRenderedInputPin::BreakConnect();
 }
 
 HRESULT CMHWInputPin1::CompleteConnect(IPin *pPin)
 {
-	Log("mhwpin1:CompleteConnect()");
+//	Log("mhwpin1:CompleteConnect()");
 	HRESULT hr=CBasePin::CompleteConnect(pPin);
 	m_pDump->OnConnectMHW1();
 	return hr;
@@ -132,7 +132,7 @@ STDMETHODIMP CMHWInputPin1::Receive(IMediaSample *pSample)
 void CMHWInputPin1::ResetPids()
 {
 //	Log("mhwpin1: ResetPids()");
-//	Parse();//test
+	//Parse();//test
 	m_bParsed=false;
 	m_MHWParser.Reset();
 	m_tableGrabber.Reset();
@@ -144,7 +144,7 @@ void CMHWInputPin1::ResetPids()
 //
 STDMETHODIMP CMHWInputPin1::EndOfStream(void)
 {
-	Log("mhwpin1: EndOfStream()");
+//	Log("mhwpin1: EndOfStream()");
     CAutoLock lock(m_pReceiveLock);
 	ResetPids();
     return CRenderedInputPin::EndOfStream();
@@ -185,9 +185,9 @@ void CMHWInputPin1::Parse()
 	if (m_bParsed) return;
 		
 	m_bParsed=true;
-	Log("mhwpin1: parse()");
+//	Log("mhwpin1: parse()");
 	//parse summaries
-	Log("MHW2: parse titles:%d",m_tableGrabber.Count());
+//	Log("MHW2: parse titles:%d",m_tableGrabber.Count());
 	for (int i=0; i < m_tableGrabber.Count();++i)
 	{
 		try

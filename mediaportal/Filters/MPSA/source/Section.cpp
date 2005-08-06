@@ -177,6 +177,7 @@ int Sections::decodePMT(BYTE *buf,ChannelInfo *ch, int len)
 	// pmt should now in the pmtData array
 	if (len <12) return -1;
 
+	
 	int table_id = buf[0];
 	int section_syntax_indicator = (buf[1]>>7) & 1;
 	int section_length = ((buf[1]& 0xF)<<8) + buf[2];
@@ -300,6 +301,8 @@ int Sections::decodePMT(BYTE *buf,ChannelInfo *ch, int len)
 
 		}
 	}
+	Log("DecodePMT pid:0x%x pcrpid:0x%x videopid:0x%x audiopid:0x%x ac3pid:0x%x",
+		ch->ProgrammPMTPID, ch->PCRPid,ch->Pids.VideoPid,ch->Pids.AudioPid1,ch->Pids.AC3);
 	ch->PMTReady=true;
 	if(last_section_number>section_number)
 		return section_number+1;
@@ -381,7 +384,7 @@ int Sections::decodeSDT(BYTE *buf,ChannelInfo ch[],int channels, int len)
 				ch[channel].EITSchedule=EIT_schedule_flag;
 				ch[channel].SDTReady=true;
 				ch[channel].NetworkID=original_network_id;
-				//Log("%s %s onid:%x", ch[channel].ProviderName,ch[channel].ServiceName,ch[channel].NetworkID);
+				Log("sdt: provider:'%s' channel:'%s' onid:0x%x tsid:0x%x", ch[channel].ProviderName,ch[channel].ServiceName,ch[channel].NetworkID, transport_stream_id);
 				//
 				//
 			}
@@ -394,14 +397,14 @@ int Sections::decodeSDT(BYTE *buf,ChannelInfo ch[],int channels, int len)
 			len2 -= x;
 			pointer += x;
 			len1 -= x;
-		}
-				
+		}		
 	}
 	if(last_section_number>section_number)
 		return section_number+1;
 	else
 		return -1;
 }
+
 void Sections::DVB_GetService(BYTE *b,ServiceData *serviceData)
 {
 	int descriptor_tag;
@@ -465,10 +468,10 @@ void Sections::decodePAT(BYTE *pData,ChannelInfo chInfo[],int *channelCount, int
 	m_patTableVersion=version_number;
 	m_patTSID=transport_stream_id;
 	m_patSectionLen=section_length;
-
-	Log("Decode pat:%x len:%x tsid:%x version%x (%d/%d)",
-		table_id,section_length,transport_stream_id,version_number,section_number,last_section_number);
 	*channelCount=loop;
+
+	Log("Decode pat:%x len:%x tsid:0x%x version:%x (%d/%d) channels:%d",
+		table_id,section_length,transport_stream_id,version_number,section_number,last_section_number,(*channelCount));
 	ChannelInfo ch;
 	m_bDecodeSDT=true;
 	memset(&ch,0,sizeof(struct chInfo));
@@ -481,7 +484,7 @@ void Sections::decodePAT(BYTE *pData,ChannelInfo chInfo[],int *channelCount, int
 		ch.ProgrammNumber=(pData[offset]<<8)+pData[offset+1];
 		ch.TransportStreamID=transport_stream_id;
 		ch.PMTReady=false;
-		Log("ch:%d prog:%d tsid:%x pmtpid:%x", i,ch.ProgrammNumber,ch.TransportStreamID,ch.ProgrammPMTPID);
+		Log("  ch:%d prog:%d tsid:0x%x pmtpid:0x%x", i,ch.ProgrammNumber,ch.TransportStreamID,ch.ProgrammPMTPID);
 		if(ch.ProgrammPMTPID>0x12)
 		{
 			chInfo[pmtcount]=ch;
@@ -674,7 +677,7 @@ void Sections::DecodeEPG(byte* buf,int len)
 	time_t timespan=currentTime-m_epgTimeout;
 	if (timespan>10)
 	{
-		Log("EPG:timeout");
+		//Log("EPG:timeout");
 		m_bParseEPG=false;
 		m_bEpgDone=true;
 	}
@@ -716,7 +719,7 @@ void Sections::DecodeEPG(byte* buf,int len)
 		newChannel.allSectionsReceived=false;
 		m_mapEPG[key]=newChannel;
 		it=m_mapEPG.find(key);
-		Log("epg:add new channel table:%x onid:%x tsid:%x sid:%d",tableid,network_id,transport_id,service_id);
+		//Log("epg:add new channel table:%x onid:%x tsid:%x sid:%d",tableid,network_id,transport_id,service_id);
 	}
 	EPGChannel& channel=it->second;
 	if (channel.allSectionsReceived) return;
@@ -726,16 +729,16 @@ void Sections::DecodeEPG(byte* buf,int len)
 	if (itSec!=channel.mapSectionsReceived.end()) return; //yes
 	channel.mapSectionsReceived[section_number]=true;
 
-	Log("epg: tid:%x len:%d %d (%d/%d) sid:%d tsid:%d onid:%d slsn:%d last table id:%x cn:%d version:%d", 
-		buf[0],len,section_length,section_number,last_section_number, 
-		service_id,transport_id,network_id,segment_last_section_number,last_table_id,
-		current_next_indicator,version_number);
+	//Log("epg: tid:%x len:%d %d (%d/%d) sid:%d tsid:%d onid:%d slsn:%d last table id:%x cn:%d version:%d", 
+	//	buf[0],len,section_length,section_number,last_section_number, 
+	//	service_id,transport_id,network_id,segment_last_section_number,last_table_id,
+	//	current_next_indicator,version_number);
 
 	m_epgTimeout=time(NULL);
 	int start=14;
 	while (start+11 < len)
 	{
-		Log("epg:   %d/%d", start,len);
+		//Log("epg:   %d/%d", start,len);
 		unsigned int event_id=(buf[start]<<8)+buf[start+1];
 		unsigned long dateMJD=(buf[start+2]<<8)+buf[start+3];
 		unsigned long timeUTC=(buf[start+4]<<16)+(buf[start+5]<<8)+buf[6];
@@ -760,14 +763,14 @@ void Sections::DecodeEPG(byte* buf,int len)
 		
 		start=start+12;
 		unsigned int off=0;
-		Log("epg:   event:%x date:%x time:%x duration:%x running:%d free:%d %d len:%d", event_id,dateMJD,timeUTC,duration,running_status,free_CA_mode,start,descriptors_len);
+		//Log("epg:   event:%x date:%x time:%x duration:%x running:%d free:%d %d len:%d", event_id,dateMJD,timeUTC,duration,running_status,free_CA_mode,start,descriptors_len);
 		while (off < descriptors_len)
 		{
 			if (start+off+1>len) return;
 			int descriptor_tag = buf[start+off];
 			int descriptor_len = buf[start+off+1];
 			if (descriptor_len==0) return;
-			Log("epg:     descriptor:%x len:%d",descriptor_tag,descriptor_len);
+			//Log("epg:     descriptor:%x len:%d",descriptor_tag,descriptor_len);
 			if (descriptor_tag ==0x4d)
 			{
 				DecodeShortEventDescriptor( &buf[start+off],epgEvent);

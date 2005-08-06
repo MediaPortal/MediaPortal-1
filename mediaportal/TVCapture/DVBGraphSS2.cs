@@ -2016,12 +2016,13 @@ namespace MediaPortal.TV.Recording
 				sections.DemuxerObject=m_streamDemuxer;
 				sections.Timeout=2500;
 				sections.GetTablesUsingMicrosoft=true;
-				System.Threading.Thread.Sleep(2500);
+				System.Threading.Thread.Sleep(5000);
 				m_analyzerInterface.GetChannelCount(ref count);
 				if(count>0)
 				{
 					transp.channels=new ArrayList();
 					for(int t=0;t<count;t++)
+					{
 						if(m_analyzerInterface.IsChannelReady(t)==0)
 						{
 							DVBSections.ChannelInfo chi=new MediaPortal.TV.Recording.DVBSections.ChannelInfo();
@@ -2046,6 +2047,8 @@ namespace MediaPortal.TV.Recording
 							Marshal.FreeCoTaskMem(mmch);
 							transp.channels.Add(chi);
 						}
+						else Log.Write("DVBGraphSS2:channel {0} is not ready!!!",t);
+					}
 				}
 			}
 

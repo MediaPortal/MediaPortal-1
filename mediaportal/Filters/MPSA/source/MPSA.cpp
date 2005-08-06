@@ -257,7 +257,7 @@ HRESULT CStreamAnalyzerSectionsPin::CheckMediaType(const CMediaType *pmt)
 //
 HRESULT CStreamAnalyzerSectionsPin::BreakConnect()
 {
-	Log("Section:BreakConnect");
+//	Log("Section:BreakConnect");
     return CRenderedInputPin::BreakConnect();
 }
 
@@ -321,7 +321,7 @@ void CStreamAnalyzerSectionsPin::ResetPids()
 STDMETHODIMP CStreamAnalyzerSectionsPin::EndOfStream(void)
 {
     CAutoLock lock(m_pReceiveLock);
-	Log("Sections:end of stream");
+//	Log("Sections:end of stream");
     return CRenderedInputPin::EndOfStream();
 
 } // EndOfStream
@@ -431,7 +431,7 @@ CStreamAnalyzer::CStreamAnalyzer(LPUNKNOWN pUnk, HRESULT *phr) :
 
 CStreamAnalyzer::~CStreamAnalyzer()
 {
-	Log("~CStreamAnalyzer()");
+//	Log("~CStreamAnalyzer()");
 	delete m_pDemuxer;
 	delete m_pSections;
 	delete m_pPin;
@@ -463,7 +463,7 @@ CUnknown * WINAPI CStreamAnalyzer::CreateInstance(LPUNKNOWN punk, HRESULT *phr)
 
 STDMETHODIMP CStreamAnalyzer::ResetParser()
 {
-	Log("ResetParser");
+//	Log("ResetParser");
 	HRESULT hr=m_pDemuxer->UnMapAllPIDs();
 	m_patChannelsCount=0;
 	m_pMHWPin1->ResetPids();
@@ -512,7 +512,7 @@ STDMETHODIMP CStreamAnalyzer::NonDelegatingQueryInterface(REFIID riid, void ** p
 
 HRESULT CStreamAnalyzer::OnConnectSections()
 {
-	Log("OnConnectSections");
+//	Log("OnConnectSections");
 	m_pDemuxer->SetDemuxPins(m_pFilter->GetFilterGraph());
 	IPin *pin;
 	m_pPin->ConnectedTo(&pin);
@@ -520,13 +520,13 @@ HRESULT CStreamAnalyzer::OnConnectSections()
 	{
 		m_pDemuxer->SetSectionsPin(pin);
 	}	
-	Log("OnConnectSections done");
+//	Log("OnConnectSections done");
 	return S_OK;
 }
 
 HRESULT CStreamAnalyzer::OnConnectEPG()
 {
-	Log("OnConnectEPG");
+//	Log("OnConnectEPG");
 	m_pDemuxer->SetDemuxPins(m_pFilter->GetFilterGraph());
 	IPin *pin;
 	m_pEPGPin->ConnectedTo(&pin);
@@ -534,12 +534,12 @@ HRESULT CStreamAnalyzer::OnConnectEPG()
 	{
 		m_pDemuxer->SetEPGPin(pin);
 	}
-	Log("OnConnectEPG done");
+//	Log("OnConnectEPG done");
 	return S_OK;
 }
 HRESULT CStreamAnalyzer::OnConnectMHW1()
 {
-	Log("OnConnectMHW1");
+//	Log("OnConnectMHW1");
 	m_pDemuxer->SetDemuxPins(m_pFilter->GetFilterGraph());
 	IPin *pin;
 	m_pMHWPin1->ConnectedTo(&pin);
@@ -547,12 +547,12 @@ HRESULT CStreamAnalyzer::OnConnectMHW1()
 	{
 		m_pDemuxer->SetMHW1Pin(pin);
 	}
-	Log("OnConnectMHW1 done");
+//	Log("OnConnectMHW1 done");
 	return S_OK;
 }
 HRESULT CStreamAnalyzer::OnConnectMHW2()
 {
-	Log("OnConnectMHW2");
+//	Log("OnConnectMHW2");
 	m_pDemuxer->SetDemuxPins(m_pFilter->GetFilterGraph());
 	IPin *pin;
 	m_pMHWPin2->ConnectedTo(&pin);
@@ -560,7 +560,7 @@ HRESULT CStreamAnalyzer::OnConnectMHW2()
 	{
 		m_pDemuxer->SetMHW2Pin(pin);
 	}
-	Log("OnConnectMHW2 done");
+//	Log("OnConnectMHW2 done");
 	return S_OK;
 }
 	
@@ -584,9 +584,9 @@ HRESULT CStreamAnalyzer::ProcessEPG(BYTE *pbData,long len)
 			}
 			if (pbData[0]>=0x50 && pbData[0] <= 0x6f) //EPG
 			{
-				Log("decode EPG");
+//				Log("decode EPG");
 				m_pSections->DecodeEPG(pbData,len);
-				Log("decode EPG done");
+//				Log("decode EPG done");
 			}
 		}
 	}
@@ -644,9 +644,9 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 			{
 				if(m_patTable[n].ProgrammNumber==prgNumber && m_patTable[n].PMTReady==false)
 				{
-					Log("decode PMT");
+//					Log("decode PMT");
 					m_pSections->decodePMT(pbData,&m_patTable[n],len);
-					Log("PMT decoded");
+//					Log("PMT decoded");
 					//if(m_patTable[n].Pids.AudioPid1>0)
 					//	m_pDemuxer->MapAdditionalPayloadPID(m_patTable[n].Pids.AudioPid1);
 					//if(m_patTable[n].Pids.AudioPid2>0)
@@ -670,24 +670,24 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 			// finished tuning to the new channel
 			if (m_pSections->IsNewPat(pbData,len))
 			{
-				Log("Found new PAT, decode channels");
+//				Log("Found new PAT, decode channels");
 				if (m_patChannelsCount>0) 
 					ResetParser();
 				//m_pDemuxer->UnMapSectionPIDs();
 				m_pSections->decodePAT(pbData,m_patTable,&m_patChannelsCount,len);
-				Log("PAT decoded and found %d channels, map pids", m_patChannelsCount);
+//				Log("PAT decoded and found %d channels, map pids", m_patChannelsCount);
 				for(int n=0;n<m_patChannelsCount;n++)
 				{
 					m_pDemuxer->MapAdditionalPID(m_patTable[n].ProgrammPMTPID);
 				}
-				Log("PAT decoded and pids mapped");
+//				Log("PAT decoded and pids mapped");
 			}
 		}
 		if(pbData[0]==0x42)// sdt
 		{
-			Log("decode SDT");
+//			Log("decode SDT");
 			m_pSections->decodeSDT(pbData,m_patTable,m_patChannelsCount,len);
-			Log("SDT decoded");
+//			Log("SDT decoded");
 		}
 	}
 	catch(...)
@@ -780,7 +780,7 @@ STDMETHODIMP CStreamAnalyzer::IsATSCUsed(BOOL* yesNo)
 }
 STDMETHODIMP CStreamAnalyzer::GrabEPG()
 {
-	Log("StreamAnalyzer:GrabEPG");
+//	Log("StreamAnalyzer:GrabEPG");
 	m_pSections->GrabEPG();
 	return S_OK;
 }

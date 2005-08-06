@@ -4103,6 +4103,7 @@ namespace MediaPortal.TV.Recording
 				{
 					transp.channels=new ArrayList();
 					for(int t=0;t<count;t++)
+					{
 						if(m_analyzerInterface.IsChannelReady(t)==0)
 						{
 							DVBSections.ChannelInfo chi=new MediaPortal.TV.Recording.DVBSections.ChannelInfo();
@@ -4127,6 +4128,8 @@ namespace MediaPortal.TV.Recording
 							Marshal.FreeCoTaskMem(mmch);
 							transp.channels.Add(chi);
 						}
+						else Log.Write("DVBGraphBDA:channel {0} is not ready!!!",t);
+					}
 				}
 			}
 			if (transp.channels==null)
