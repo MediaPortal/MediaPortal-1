@@ -250,7 +250,7 @@ HRESULT Sections::CurrentPTS(BYTE *pData,ULONGLONG *ptsValue,int *streamType)
 		{
 			if(pes.PTSFlags==0x02)
 			{
-			// audio pes found
+				// audio pes found
 				GetPTS(&pData[offset+9],ptsValue);
 				hr=S_OK;
 			}
