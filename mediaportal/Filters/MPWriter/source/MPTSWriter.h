@@ -6,6 +6,37 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 //------------------------------------------------------------------------------
 
+struct stTSHEADER
+{
+	BYTE SyncByte			;
+	bool TransportError		;
+	bool PayloadUnitStart	;
+	bool TransportPriority	;
+	unsigned short Pid		;
+	BYTE TScrambling		;
+	BYTE AdaptionControl	;
+	BYTE ContinuityCounter	;
+};
+typedef stTSHEADER TSHeader;
+
+struct stPESHeader
+{
+	BYTE     Reserved				;
+	BYTE     ScramblingControl		;
+	BYTE     Priority 				;
+	BYTE     dataAlignmentIndicator	;
+	BYTE     Copyright				;
+	BYTE     Original				;
+	BYTE     PTSFlags				;
+	BYTE     ESCRFlag				;
+	BYTE     ESRateFlag				;
+	BYTE     DSMTrickModeFlag		;
+	BYTE     AdditionalCopyInfoFlag	;
+	BYTE     PESCRCFlag				;
+	BYTE     PESExtensionFlag		;
+	BYTE     PESHeaderDataLength	;
+};
+typedef stPESHeader PESHeader;
 
 class CDumpInputPin;
 class CDump;
@@ -190,4 +221,9 @@ private:
     HRESULT CloseFile();
     HRESULT HandleWriteFailure();
 //	HRESULT CreateNewFileMapping();
+	void GetPTS(BYTE *data,ULONGLONG *pts);
+	void GetPESHeader(BYTE *data,PESHeader *header);
+	void GetTSHeader(BYTE *data,TSHeader *header);
+	ULONGLONG m_pesStart;
+	ULONGLONG m_pesNow;
 };

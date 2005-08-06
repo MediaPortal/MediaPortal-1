@@ -1,5 +1,7 @@
 #include <windows.h>
 #include <commdlg.h>
+#include <bdatypes.h>
+#include <time.h>
 #include <streams.h>
 #include <initguid.h>
 #include "MPTSWriter.h"
@@ -441,6 +443,8 @@ CDump::CDump(LPUNKNOWN pUnk, HRESULT *phr) :
         return;
     }
 
+	m_pesStart=0LL;
+	m_pesNow=0LL;
 
 }
 
@@ -878,7 +882,66 @@ HRESULT CDump::Write(PBYTE pbData, LONG lDataLength)
 		currentPosition=0;
 	}
 
+	//update PES
+	TSHeader header;
+	GetTSHeader(pbData,&header);
+
+	int offset=4;
+	if(header.AdaptionControl==1 || header.AdaptionControl==3)
+		offset+=pbData[4];
+	
+	if(header.SyncByte==0x47 && pbData[offset]==0 && pbData[offset+1]==0 && pbData[offset+2]==1)
+	{
+		PESHeader pes;
+		GetPESHeader(&pbData[offset+6],&pes);
+		BYTE pesHeaderLen=pbData[offset+8];
+			int pidToCheck = ( m_pPin->GetAudioPid()>0 ? m_pPin->GetAudioPid():m_pPin->GetAC3Pid() );
+		if(pes.Reserved==0x02 && pidToCheck==header.Pid) // valid header
+		{
+			if(pes.PTSFlags==0x02)
+			{
+				// audio pes found
+				ULONGLONG ptsValue =0;
+				GetPTS(&pbData[offset+9],&ptsValue);
+				m_pesNow=ptsValue;
+				if (m_pesStart==NULL) m_pesStart=ptsValue;
+			}	
+		}
+	}
 	return S_OK;
+}
+void CDump::GetPTS(BYTE *data,ULONGLONG *pts)
+{
+	*pts= 0xFFFFFFFFL & ( (6&data[0])<<29 | (255&data[1])<<22 | (254&data[2])<<14 | (255&data[3])<<7 | (((254&data[4])>>1)& 0x7F));
+}
+void CDump::GetTSHeader(BYTE *data,TSHeader *header)
+{
+	header->SyncByte=data[0];
+	header->TransportError=(data[1] & 0x80)>0?true:false;
+	header->PayloadUnitStart=(data[1] & 0x40)>0?true:false;
+	header->TransportPriority=(data[1] & 0x20)>0?true:false;
+	header->Pid=((data[1] & 0x1F) <<8)+data[2];
+	header->TScrambling=data[3] & 0xC0;
+	header->AdaptionControl=(data[3]>>4) & 0x3;
+	header->ContinuityCounter=data[3] & 0x0F;
+}
+
+void CDump::GetPESHeader(BYTE *data,PESHeader *header)
+{
+	header->Reserved=(data[0] & 0xC0)>>6;
+	header->ScramblingControl=(data[0] &0x30)>>4;
+	header->Priority=(data[0] & 0x08)>>3;
+	header->dataAlignmentIndicator=(data[0] & 0x04)>>2;
+	header->Copyright=(data[0] & 0x02)>>1;
+	header->Original=data[0] & 0x01;
+	header->PTSFlags=(data[1] & 0xC0)>>6;
+	header->ESCRFlag=(data[1] & 0x20)>>5;
+	header->ESRateFlag=(data[1] & 0x10)>>4;
+	header->DSMTrickModeFlag=(data[1] & 0x08)>>3;
+	header->AdditionalCopyInfoFlag=(data[1] & 0x04)>>2;
+	header->PESCRCFlag=(data[1] & 0x02)>>1;
+	header->PESExtensionFlag=data[1] & 0x01;
+	header->PESHeaderDataLength=data[2];
 }
 
 HRESULT CDump::UpdateInfoFile(bool pids)
@@ -895,6 +958,8 @@ HRESULT CDump::UpdateInfoFile(bool pids)
 	//LockFile(m_hInfoFile,0,0,8+8*sizeof(int),0);
 	SetFilePointer(m_hInfoFile,li.LowPart,&li.HighPart,FILE_BEGIN);
 	WriteFile(m_hInfoFile, &currentPosition, sizeof(currentPosition), &written, NULL);
+	WriteFile(m_hInfoFile, &m_pesStart, sizeof(m_pesStart), &written, NULL);
+	WriteFile(m_hInfoFile, &m_pesNow, sizeof(m_pesNow), &written, NULL);
 	if (pids)
 	{
 		LogDebug("UpdatePids()");
@@ -906,7 +971,6 @@ HRESULT CDump::UpdateInfoFile(bool pids)
 		pid=m_pPin->GetPMTPid();WriteFile(m_hInfoFile, &pid, sizeof(pid), &written, NULL);
 		pid=m_pPin->GetSubtitlePid();WriteFile(m_hInfoFile, &pid, sizeof(pid), &written, NULL);
 		pid=m_pPin->GetPCRPid();WriteFile(m_hInfoFile, &pid, sizeof(pid), &written, NULL);
-
 		currentPosition=0;
 	}
 	//UnlockFile(m_hInfoFile,0,0,8+8*sizeof(int),0);
