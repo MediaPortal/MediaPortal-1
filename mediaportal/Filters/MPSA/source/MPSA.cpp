@@ -570,6 +570,8 @@ STDMETHODIMP CStreamAnalyzer::ResetPids()
 }
 HRESULT CStreamAnalyzer::ProcessEPG(BYTE *pbData,long len)
 {
+	if (pbData==NULL) return S_OK;
+	if (len <=3) return S_OK;
 	try
 	{
 		if (m_bDecodeATSC) return S_OK;
@@ -582,7 +584,9 @@ HRESULT CStreamAnalyzer::ProcessEPG(BYTE *pbData,long len)
 			}
 			if (pbData[0]>=0x50 && pbData[0] <= 0x6f) //EPG
 			{
+				Log("decode EPG");
 				m_pSections->DecodeEPG(pbData,len);
+				Log("decode EPG done");
 			}
 		}
 	}
@@ -640,7 +644,9 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 			{
 				if(m_patTable[n].ProgrammNumber==prgNumber && m_patTable[n].PMTReady==false)
 				{
+					Log("decode PMT");
 					m_pSections->decodePMT(pbData,&m_patTable[n],len);
+					Log("PMT decoded");
 					//if(m_patTable[n].Pids.AudioPid1>0)
 					//	m_pDemuxer->MapAdditionalPayloadPID(m_patTable[n].Pids.AudioPid1);
 					//if(m_patTable[n].Pids.AudioPid2>0)
@@ -669,15 +675,19 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 					ResetParser();
 				//m_pDemuxer->UnMapSectionPIDs();
 				m_pSections->decodePAT(pbData,m_patTable,&m_patChannelsCount,len);
+				Log("PAT decoded and found %d channels, map pids", m_patChannelsCount);
 				for(int n=0;n<m_patChannelsCount;n++)
 				{
 					m_pDemuxer->MapAdditionalPID(m_patTable[n].ProgrammPMTPID);
 				}
+				Log("PAT decoded and pids mapped");
 			}
 		}
 		if(pbData[0]==0x42)// sdt
 		{
+			Log("decode SDT");
 			m_pSections->decodeSDT(pbData,m_patTable,m_patChannelsCount,len);
+			Log("SDT decoded");
 		}
 	}
 	catch(...)

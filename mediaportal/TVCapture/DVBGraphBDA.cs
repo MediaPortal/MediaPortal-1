@@ -667,7 +667,7 @@ namespace MediaPortal.TV.Recording
 					return false;
 				}
 #else
-				//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph() connect interface pin->sample grabber");
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph() connect interface pin->sample grabber");
 				if (GUIGraphicsContext.DX9Device!=null && m_sampleInterface!=null)
 				{
 					if (!ConnectFilters(ref lastFilter.DSFilter,ref m_sampleGrabber))
@@ -681,6 +681,7 @@ namespace MediaPortal.TV.Recording
 				// add the MPEG-2 Demultiplexer 
 				//=========================================================================================================
 				// Use CLSID_Mpeg2Demultiplexer to create the filter
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph() create MPEG2-Demultiplexer");
 				m_MPEG2Demultiplexer = (IBaseFilter) Activator.CreateInstance(Type.GetTypeFromCLSID(Clsid.Mpeg2Demultiplexer, true));
 				if(m_MPEG2Demultiplexer== null) 
 				{

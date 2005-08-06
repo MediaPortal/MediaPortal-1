@@ -184,10 +184,8 @@ void CMHWInputPin1::Parse()
 {
 	if (m_bParsed) return;
 		
-	Log("mhwpin1: parse()");
 	m_bParsed=true;
-	
-	return;
+	Log("mhwpin1: parse()");
 	//parse summaries
 	Log("MHW2: parse titles:%d",m_tableGrabber.Count());
 	for (int i=0; i < m_tableGrabber.Count();++i)

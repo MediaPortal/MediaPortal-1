@@ -437,7 +437,7 @@ bool Sections::IsNewPat(BYTE *pData, int len)
 	if (version_number==m_patTableVersion && 
 		transport_stream_id==m_patTSID && 
 		section_length==m_patSectionLen) return false;
-	if(table_id!=0 || section_number!=0||last_section_number!=0) return false;
+	if(table_id!=0 /*|| section_number!=0||last_section_number!=0*/) return false;
 	//Log("%x==%x %x==%x %x==%x",
 	//	version_number,m_patTableVersion, 
 	//	transport_stream_id,m_patTSID,
@@ -458,7 +458,7 @@ void Sections::decodePAT(BYTE *pData,ChannelInfo chInfo[],int *channelCount, int
 	int last_section_number = pData[7];
 	int loop =(section_length - 9) / 4;
 	int offset=0;
-	if(table_id!=0 || section_number!=0||last_section_number!=0)
+	if(table_id!=0 /*|| section_number!=0||last_section_number!=0*/)
 	{
 		return;
 	}
@@ -716,7 +716,7 @@ void Sections::DecodeEPG(byte* buf,int len)
 		newChannel.allSectionsReceived=false;
 		m_mapEPG[key]=newChannel;
 		it=m_mapEPG.find(key);
-//		Log("add new channel table:%x onid:%x tsid:%x sid:%d",tableid,network_id,transport_id,service_id);
+		Log("epg:add new channel table:%x onid:%x tsid:%x sid:%d",tableid,network_id,transport_id,service_id);
 	}
 	EPGChannel& channel=it->second;
 	if (channel.allSectionsReceived) return;
@@ -725,16 +725,17 @@ void Sections::DecodeEPG(byte* buf,int len)
 	EPGChannel::imapSectionsReceived itSec=channel.mapSectionsReceived.find(section_number);
 	if (itSec!=channel.mapSectionsReceived.end()) return; //yes
 	channel.mapSectionsReceived[section_number]=true;
-/*
-	Log("EPG tid:%x len:%d %d (%d/%d) sid:%d tsid:%d onid:%d slsn:%d last table id:%x cn:%d version:%d", 
+
+	Log("epg: tid:%x len:%d %d (%d/%d) sid:%d tsid:%d onid:%d slsn:%d last table id:%x cn:%d version:%d", 
 		buf[0],len,section_length,section_number,last_section_number, 
 		service_id,transport_id,network_id,segment_last_section_number,last_table_id,
 		current_next_indicator,version_number);
-*/
+
 	m_epgTimeout=time(NULL);
 	int start=14;
 	while (start+11 < len)
 	{
+		Log("epg:   %d/%d", start,len);
 		unsigned int event_id=(buf[start]<<8)+buf[start+1];
 		unsigned long dateMJD=(buf[start+2]<<8)+buf[start+3];
 		unsigned long timeUTC=(buf[start+4]<<16)+(buf[start+5]<<8)+buf[6];
@@ -759,14 +760,14 @@ void Sections::DecodeEPG(byte* buf,int len)
 		
 		start=start+12;
 		unsigned int off=0;
-	//	Log(" event:%x date:%x time:%x duration:%x running:%d free:%d %d len:%d", event_id,dateMJD,timeUTC,duration,running_status,free_CA_mode,start,descriptors_len);
+		Log("epg:   event:%x date:%x time:%x duration:%x running:%d free:%d %d len:%d", event_id,dateMJD,timeUTC,duration,running_status,free_CA_mode,start,descriptors_len);
 		while (off < descriptors_len)
 		{
 			if (start+off+1>len) return;
 			int descriptor_tag = buf[start+off];
 			int descriptor_len = buf[start+off+1];
 			if (descriptor_len==0) return;
-		//	Log("  descriptor:%x len:%d",descriptor_tag,descriptor_len);
+			Log("epg:     descriptor:%x len:%d",descriptor_tag,descriptor_len);
 			if (descriptor_tag ==0x4d)
 			{
 				DecodeShortEventDescriptor( &buf[start+off],epgEvent);
@@ -866,7 +867,7 @@ void Sections::DecodeShortEventDescriptor(byte* buf, EPGEvent& event)
 	if (event_len >0)
 	{
 		if (6+event_len > descriptor_len) return;
-		buffer = new char[event_len];
+		buffer = new char[event_len+10];
 		getString468A(&buf[6],event_len,buffer);
 		event.event=buffer;
 		delete [] buffer;
@@ -877,7 +878,7 @@ void Sections::DecodeShortEventDescriptor(byte* buf, EPGEvent& event)
 	if (text_len >0)
 	{
 		if (off+text_len > descriptor_len) return;
-		buffer = new char[text_len];
+		buffer = new char[text_len+10];
 		getString468A(&buf[off+1],text_len,buffer);
 		event.text=buffer;
 		delete [] buffer;
