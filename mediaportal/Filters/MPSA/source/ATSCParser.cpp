@@ -14,7 +14,8 @@ ATSCParser::~ATSCParser(void)
 {
 }
 void ATSCParser::Reset()
-{
+{	
+	CAutoLock lock(&m_Lock);
 	m_epgTimeout=time(NULL);
 	m_mapEvents.clear();
 	m_mapEtm.clear();
@@ -34,6 +35,7 @@ void ATSCParser::ATSCDecodeMasterGuideTable(byte* buf, int len,int* channelsFoun
 {	
 	int table_id = buf[0];
 	if (table_id!=0xc7) return;
+	CAutoLock lock(&m_Lock);
 
 	int section_syntax_indicator = (buf[1]>>7) & 1;
 	int private_indicator = (buf[1]>>6) & 1;
@@ -151,6 +153,7 @@ void ATSCParser::ATSCDecodeEIT(byte* buf, int len)
 	int table_id = buf[0];
 	if (table_id!=0xcb) return;
 	if (len < 10) return;
+	CAutoLock lock(&m_Lock);
 
 	int section_syntax_indicator = (buf[1]>>7) & 1;
 	int private_indicator = (buf[1]>>6) & 1;
@@ -218,6 +221,7 @@ void ATSCParser::ATSCDecodeETT(byte* buf, int len)
 	int table_id = buf[0];
 	if (table_id!=0xcc) return;
 	if (len < 12) return;
+	CAutoLock lock(&m_Lock);
 
 	int section_syntax_indicator = (buf[1]>>7) & 1;
 	int private_indicator = (buf[1]>>6) & 1;
@@ -259,6 +263,8 @@ void ATSCParser::ATSCDecodeChannelEIT(byte* buf, int len)
 }
 void ATSCParser::ATSCDecodeEPG(byte* buf, int len)
 {
+	CAutoLock lock(&m_Lock);
+
 	int table_id = buf[0];
 	if (table_id ==0xcb)
 	{
@@ -278,6 +284,8 @@ void ATSCParser::ATSCDecodeEPG(byte* buf, int len)
 }
 void ATSCParser::ATSCDecodeChannelTable(BYTE *buf,ChannelInfo *ch, int* channelsFound, int maxLen)
 {
+	CAutoLock lock(&m_Lock);
+
 	int table_id = buf[0];
 	if (table_id!=0xc8 && table_id != 0xc9) return;
 	//dump table!
@@ -454,6 +462,7 @@ void ATSCParser::ATSCDecodeChannelTable(BYTE *buf,ChannelInfo *ch, int* channels
 
 void ATSCParser::DecodeServiceLocationDescriptor( byte* buf,int start,ChannelInfo* channelInfo)
 {
+	CAutoLock lock(&m_Lock);
 
 	Log("DecodeServiceLocationDescriptor()");
 	//  8------ 8------- 3--13--- -------- 8-------       
@@ -495,6 +504,8 @@ void ATSCParser::DecodeServiceLocationDescriptor( byte* buf,int start,ChannelInf
 }
 void ATSCParser::DecodeExtendedChannelNameDescriptor( byte* buf,int start,ChannelInfo* channelInfo, int maxLen)
 {
+	CAutoLock lock(&m_Lock);
+
 	Log("DecodeExtendedChannelNameDescriptor() ");
 	// tid   
 	//  8       8------- 8-------
@@ -580,6 +591,8 @@ int ATSCParser::GetEPGCount()
 }
 void ATSCParser::GetEPGTitle(WORD no, WORD* source_id, ULONG* starttime, WORD* length_in_secs, char** title, char** description)
 {
+	CAutoLock lock(&m_Lock);
+
 	if (no >= m_mapEvents.size()) return;
 	imapEvents it=m_mapEvents.begin();
 	int count=0;

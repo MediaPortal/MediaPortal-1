@@ -24,11 +24,13 @@ void TableGrabber::SetTableId(int pid,int tableId)
 	m_pid=pid;
 }
 int   TableGrabber::Count()
-{
+{	
+	
 	return m_mapSections.size();
 }
 byte* TableGrabber::GetTable(int section)
 {
+	
 	if (section<0 || section>=(int)m_mapSections.size()) return NULL;
 	imapSections it=m_mapSections.begin();
 	int count=0;
@@ -39,6 +41,7 @@ byte* TableGrabber::GetTable(int section)
 
 int  TableGrabber::GetTableLen(int section)
 {
+	
 	if (section<0 || section>=(int)m_mapSections.size()) return 0;
 	imapSections it=m_mapSections.begin();
 	int count=0;
@@ -50,6 +53,7 @@ int  TableGrabber::GetTableLen(int section)
 
 void TableGrabber::Reset()
 {
+	
 	m_mapSections.clear();
 	m_bSectionGrabbed=false;
 	timeoutTimer=time(NULL);
@@ -57,6 +61,7 @@ void TableGrabber::Reset()
 
 void TableGrabber::OnPacket(byte* pbData,long lDataLen)
 {
+	
 	if (m_bSectionGrabbed) return;
 	int secsTimeOut=time(NULL)-timeoutTimer;
 	if (secsTimeOut>30) 
@@ -70,6 +75,7 @@ void TableGrabber::OnPacket(byte* pbData,long lDataLen)
 
 void TableGrabber::ParseSection(byte* pData, long lDataLen)
 {
+	
 	if (lDataLen<14 || pData==NULL) return;
 	DVBSectionHeader header;
 	GetSectionHeader(pData,0,header);

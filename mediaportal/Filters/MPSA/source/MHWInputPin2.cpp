@@ -125,9 +125,11 @@ STDMETHODIMP CMHWInputPin2::Receive(IMediaSample *pSample)
 	if(lDataLen>5)
 	{
 
+		Log("mhw2:OnPacket()");
 		m_tableGrabber90.OnPacket(pbData,lDataLen);
 		m_tableGrabber91.OnPacket(pbData,lDataLen);
 		m_tableGrabber92.OnPacket(pbData,lDataLen);
+		Log("mhw2:OnPacket() done");
 	}
 
     return S_OK;
@@ -135,6 +137,7 @@ STDMETHODIMP CMHWInputPin2::Receive(IMediaSample *pSample)
 
 void CMHWInputPin2::ResetPids()
 {
+	CAutoLock lock(&m_Lock);
 	//Parse();//test
 //	Log("mhwpin2:ResetPids()");
 	m_bParsed=false;
@@ -198,10 +201,11 @@ bool CMHWInputPin2::IsParsed()
 void CMHWInputPin2::Parse()
 {
 	if (m_bParsed) return;
-//	Log("mhwpin2: parse()");
+	Log("mhwpin2: parse()");
+	CAutoLock lock(&m_Lock);
 	m_bParsed=true;
 	//parse summaries
-//	Log("MHW2: parse summaries:%d",m_tableGrabber90.Count());
+	Log("MHW2: parse summaries:%d",m_tableGrabber90.Count());
 	for (int i=0; i < m_tableGrabber90.Count();++i)
 	{
 		try
@@ -215,7 +219,7 @@ void CMHWInputPin2::Parse()
 	}
 
 	//parse channels
-//	Log("MHW2: parse channels:%d",m_tableGrabber91.Count());
+	Log("MHW2: parse channels:%d",m_tableGrabber91.Count());
 	for (int i=0; i < m_tableGrabber91.Count();++i)
 	{
 		try
@@ -229,7 +233,7 @@ void CMHWInputPin2::Parse()
 	}
 
 	//parse themes
-//	Log("MHW2: parse themes:%d",m_tableGrabber92.Count());
+	Log("MHW2: parse themes:%d",m_tableGrabber92.Count());
 	for (int i=0; i < m_tableGrabber92.Count();++i)
 	{
 		try
@@ -241,4 +245,5 @@ void CMHWInputPin2::Parse()
 			Log("MHW:exception MHW2 ParseThemes table:%d", i);
 		}
 	}
+	Log("MHW2:parse done()");
 }

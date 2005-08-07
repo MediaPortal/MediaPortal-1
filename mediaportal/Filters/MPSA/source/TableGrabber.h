@@ -40,6 +40,7 @@ public:
 	int     Count();
 
 private:
+    
 	void		GetSectionHeader(byte* data,int offset, DVBSectionHeader& header);
 	void		ParseSection(byte* pData, long lDataLen);
 	bool		m_bSectionGrabbed;

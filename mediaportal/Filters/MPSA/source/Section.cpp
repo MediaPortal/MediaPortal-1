@@ -29,16 +29,21 @@
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
+
+#ifdef DEBUG
+char *logbuffer=NULL; 
 void Log(const char *fmt, ...) 
 {
-#ifdef DEBUG
+	if (logbuffer==NULL)
+	{
+		logbuffer=new char[100000];
+	}
 	va_list ap;
 	va_start(ap,fmt);
 
-	char buffer[1000]; 
 	int tmp;
 	va_start(ap,fmt);
-	tmp=vsprintf(buffer, fmt, ap);
+	tmp=vsprintf(logbuffer, fmt, ap);
 	va_end(ap); 
 
 	FILE* fp = fopen("MPSA.log","a+");
@@ -49,11 +54,15 @@ void Log(const char *fmt, ...)
 		fprintf(fp,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d %s\n",
 			systemTime.wDay, systemTime.wMonth, systemTime.wYear,
 			systemTime.wHour,systemTime.wMinute,systemTime.wSecond,
-			buffer);
+			logbuffer);
 		fclose(fp);
 	}
-#endif
 };
+#else
+void Log(const char *fmt, ...) 
+{
+}
+#endif
 
 ULONG Sections::GetSectionCRCValue(byte* data,int ptr)
 {
@@ -71,9 +80,7 @@ ULONG Sections::GetCRC32(BYTE *pData,WORD len)
 }
 Sections::Sections()
 {
-#ifdef DEBUG
 	DeleteFile("MPSA.log");
-#endif
 	m_patTSID=-1;
 	m_patSectionLen=-1;
 	m_patTableVersion=-1;
@@ -84,6 +91,7 @@ Sections::Sections()
 
 Sections::~Sections()
 {
+	CAutoLock lock(&m_Lock);
 	//delete m_pFileReader;
 }
 
@@ -177,6 +185,7 @@ HRESULT Sections::CurrentPTS(BYTE *pData,ULONGLONG *ptsValue,int *streamType)
 }
 int Sections::decodePMT(BYTE *buf,ChannelInfo *ch, int len)
 {
+	CAutoLock lock(&m_Lock);
 	// pmt should now in the pmtData array
 	if (len <12) return -1;
 
@@ -315,6 +324,7 @@ int Sections::decodePMT(BYTE *buf,ChannelInfo *ch, int len)
 int Sections::decodeSDT(BYTE *buf,ChannelInfo ch[],int channels, int len)
 {	
 
+	CAutoLock lock(&m_Lock);
 	if (len < 10) return 0;
 	if (channels<=0) return 0;
 	
@@ -414,6 +424,7 @@ int Sections::decodeSDT(BYTE *buf,ChannelInfo ch[],int channels, int len)
 
 void Sections::DVB_GetService(BYTE *b,ServiceData *serviceData)
 {
+	CAutoLock lock(&m_Lock);
 	int descriptor_tag;
 	int descriptor_length;
 	int service_provider_name_length;
@@ -433,6 +444,7 @@ void Sections::DVB_GetService(BYTE *b,ServiceData *serviceData)
 }
 bool Sections::IsNewPat(BYTE *pData, int len)
 {
+	CAutoLock lock(&m_Lock);
 	int table_id = pData[0];
 	if (table_id!=0) return false;
 	if (len<9) return false;
@@ -456,6 +468,7 @@ bool Sections::IsNewPat(BYTE *pData, int len)
 }
 void Sections::decodePAT(BYTE *pData,ChannelInfo chInfo[],int *channelCount, int len)
 {
+	CAutoLock lock(&m_Lock);
 	int table_id = pData[0];
 	if (table_id!=0) return;
 	if (len<9) return;
@@ -505,6 +518,7 @@ void Sections::decodePAT(BYTE *pData,ChannelInfo chInfo[],int *channelCount, int
 
 void Sections::getString468A(BYTE *b, int l1,char *text)
 {
+	CAutoLock lock(&m_Lock);
 	int i = 0;
 	int num=0;
 	unsigned char c;
@@ -567,6 +581,7 @@ cont:
 // pes
 void Sections::GetPES(BYTE *data,ULONG len,BYTE *pes)
 {
+	CAutoLock lock(&m_Lock);
 	int ptr = 0; 
 	int offset = 0; 
 	bool isMPEG1=false;
@@ -574,11 +589,13 @@ void Sections::GetPES(BYTE *data,ULONG len,BYTE *pes)
 	ULONG i = 0;
 	for (;i<len;)
 	{
-		if (i+9>len) return;
+		if (i+9>len) 
+			return;
 		ptr = (0xFF & data[i + 4]) << 8 | (0xFF & data[i + 5]);
 		isMPEG1 = (0x80 & data[i + 6]) == 0 ? true : false;
 		offset = i + 6 + (!isMPEG1 ? 3 + (0xFF & data[i + 8]) : 0);
-		if (offset+(len-offset) >=len) return;
+		if (offset+(len-offset) >=len) 
+			return;
 		memcpy(pes,data+offset,len-offset);
 		i += 6 + ptr;
 	}
@@ -586,6 +603,7 @@ void Sections::GetPES(BYTE *data,ULONG len,BYTE *pes)
 
 HRESULT Sections::ParseAudioHeader(BYTE *data,AudioHeader *head)
 {
+	CAutoLock lock(&m_Lock);
     AudioHeader header;
 	int limit = 32;
 
@@ -678,6 +696,8 @@ HRESULT Sections::ParseAudioHeader(BYTE *data,AudioHeader *head)
 
 void Sections::DecodeEPG(byte* buf,int len)
 {
+	CAutoLock lock(&m_Lock);
+	Log("DecodeEPG():%d",len);
 	if (!m_bParseEPG) return;
 	if (buf==NULL) return;
 
@@ -691,10 +711,7 @@ void Sections::DecodeEPG(byte* buf,int len)
 	}
 	if (len<=14) return;
 	int tableid = buf[0];
-	if (tableid>=0x60)
-	{
-		int xx=9;
-	}
+	
 	if (tableid < 0x50 || tableid > 0x6f) return;
 	int section_length = ((buf[1]& 0xF)<<8) + buf[2];
 
@@ -712,14 +729,14 @@ void Sections::DecodeEPG(byte* buf,int len)
 	if (last_table_id<0x50||last_table_id>0x6f) return;
 	if (section_number>last_section_number) return;
 	if (section_length>len) return;
-	//if (last_section_number>88) return;
 
-	//if (tableid!=0x5e) return;
-	//if (service_id!=0x1a93) return;
+
 	unsigned long key=(network_id<<32)+(transport_id<<16)+service_id;
+	Log("DecodeEPG():key %x",key);
 	imapEPG it=m_mapEPG.find(key);
 	if (it==m_mapEPG.end())
 	{
+		Log("DecodeEPG():new channel");
 		EPGChannel newChannel ;
 		newChannel.original_network_id=network_id;
 		newChannel.service_id=service_id;
@@ -727,26 +744,30 @@ void Sections::DecodeEPG(byte* buf,int len)
 		newChannel.allSectionsReceived=false;
 		m_mapEPG[key]=newChannel;
 		it=m_mapEPG.find(key);
-		//Log("epg:add new channel table:%x onid:%x tsid:%x sid:%d",tableid,network_id,transport_id,service_id);
+		Log("epg:add new channel table:%x onid:%x tsid:%x sid:%d",tableid,network_id,transport_id,service_id);
 	}
+	if (it==m_mapEPG.end()) return;
 	EPGChannel& channel=it->second;
 	if (channel.allSectionsReceived) return;
-	
+
+	Log("DecodeEPG() check section");
 	//did we already receive this section ?
 	EPGChannel::imapSectionsReceived itSec=channel.mapSectionsReceived.find(section_number);
 	if (itSec!=channel.mapSectionsReceived.end()) return; //yes
 	channel.mapSectionsReceived[section_number]=true;
 
-	//Log("epg: tid:%x len:%d %d (%d/%d) sid:%d tsid:%d onid:%d slsn:%d last table id:%x cn:%d version:%d", 
-	//	buf[0],len,section_length,section_number,last_section_number, 
-	//	service_id,transport_id,network_id,segment_last_section_number,last_table_id,
-	//	current_next_indicator,version_number);
+
+
+	Log("epg: tid:%x len:%d %d (%d/%d) sid:%d tsid:%d onid:%d slsn:%d last table id:%x cn:%d version:%d", 
+		buf[0],len,section_length,section_number,last_section_number, 
+		service_id,transport_id,network_id,segment_last_section_number,last_table_id,
+		current_next_indicator,version_number);
 
 	m_epgTimeout=time(NULL);
 	int start=14;
 	while (start+11 < len)
 	{
-		//Log("epg:   %d/%d", start,len);
+		Log("epg:   %d/%d", start,len);
 		unsigned int event_id=(buf[start]<<8)+buf[start+1];
 		unsigned long dateMJD=(buf[start+2]<<8)+buf[start+3];
 		unsigned long timeUTC=(buf[start+4]<<16)+(buf[start+5]<<8)+buf[6];
@@ -771,14 +792,15 @@ void Sections::DecodeEPG(byte* buf,int len)
 		
 		start=start+12;
 		unsigned int off=0;
-		//Log("epg:   event:%x date:%x time:%x duration:%x running:%d free:%d %d len:%d", event_id,dateMJD,timeUTC,duration,running_status,free_CA_mode,start,descriptors_len);
+		Log("epg:   event:%x date:%x time:%x duration:%x running:%d free:%d %d len:%d", event_id,dateMJD,timeUTC,duration,running_status,free_CA_mode,start,descriptors_len);
 		while (off < descriptors_len)
 		{
 			if (start+off+1>len) return;
 			int descriptor_tag = buf[start+off];
 			int descriptor_len = buf[start+off+1];
 			if (descriptor_len==0) return;
-			//Log("epg:     descriptor:%x len:%d",descriptor_tag,descriptor_len);
+			if (start+off+descriptor_tag>len) return;
+			Log("epg:     descriptor:%x len:%d",descriptor_tag,descriptor_len);
 			if (descriptor_tag ==0x4d)
 			{
 				DecodeShortEventDescriptor( &buf[start+off],epgEvent);
@@ -796,8 +818,10 @@ void Sections::DecodeEPG(byte* buf,int len)
 		start +=descriptors_len;
 	}
 }
+
 void Sections::DecodeExtendedEvent(byte* data, EPGEvent& event)
 {
+	CAutoLock lock(&m_Lock);
 	int descriptor_tag;
 	int descriptor_length;
 	int descriptor_number;
@@ -865,6 +889,7 @@ void Sections::DecodeExtendedEvent(byte* data, EPGEvent& event)
 
 void Sections::DecodeShortEventDescriptor(byte* buf, EPGEvent& event)
 {
+	CAutoLock lock(&m_Lock);
 	char* buffer;
 	int descriptor_tag = buf[0];
 	int descriptor_len = buf[1];
@@ -882,7 +907,7 @@ void Sections::DecodeShortEventDescriptor(byte* buf, EPGEvent& event)
 		getString468A(&buf[6],event_len,buffer);
 		event.event=buffer;
 		delete [] buffer;
-		//Log("  event:%s",buffer);
+		Log("  event:%s",event.event.c_str());
 	}
 	int off=6+event_len;
 	int text_len = buf[off];
@@ -893,11 +918,12 @@ void Sections::DecodeShortEventDescriptor(byte* buf, EPGEvent& event)
 		getString468A(&buf[off+1],text_len,buffer);
 		event.text=buffer;
 		delete [] buffer;
-		//Log("  text:%s",buffer);
+		Log("  text:%s",event.text.c_str());
 	}
 }
 void Sections::DecodeContentDescription(byte* buf,EPGEvent& event)
 {
+	CAutoLock lock(&m_Lock);
 	int      descriptor_tag;
 	int      descriptor_length;		
 	int      content_nibble_level_1;
@@ -1048,7 +1074,7 @@ void Sections::DecodeContentDescription(byte* buf,EPGEvent& event)
 			case 0x0E0F: strcpy(genreText,"reserved" );break;
 			case 0x0F0F: strcpy(genreText,"user defined" );break;					
 		}
-		//Log("genre:%s", genreText);
+		Log("genre:%s", genreText);
 		if (event.genre.size()==0)
 			event.genre=genreText;
 	}
@@ -1057,6 +1083,7 @@ void Sections::DecodeContentDescription(byte* buf,EPGEvent& event)
 
 void Sections::Reset()
 {
+	CAutoLock lock(&m_Lock);
 	Log("sections::Reset");
 	m_patTSID=-1;
 	m_patSectionLen=-1;
@@ -1070,6 +1097,7 @@ void Sections::Reset()
 
 void Sections::GrabEPG()
 {
+	CAutoLock lock(&m_Lock);
 	Log("GrabEPG");
 	m_mapEPG.clear();
 	m_bParseEPG=true;
@@ -1093,11 +1121,13 @@ bool Sections::IsEPGReady()
 }
 ULONG Sections::GetEPGChannelCount( )
 {
+	CAutoLock lock(&m_Lock);
 //	Log("GetEPGChannelCount:%d",m_mapEPG.size());
 	return m_mapEPG.size();
 }
 ULONG  Sections::GetEPGEventCount( ULONG channel)
 {
+	CAutoLock lock(&m_Lock);
 	if (channel>=m_mapEPG.size()) return 0;
 	int count=0;
 	imapEPG it =m_mapEPG.begin();
@@ -1110,6 +1140,7 @@ ULONG  Sections::GetEPGEventCount( ULONG channel)
 }
 void Sections::GetEPGChannel( ULONG channel,  WORD* networkId,  WORD* transportid, WORD* service_id  )
 {
+	CAutoLock lock(&m_Lock);
 //	Log("GetEPGChannel#%d",channel);
 
 	if (channel>=m_mapEPG.size()) return;
@@ -1132,6 +1163,7 @@ void Sections::GetEPGChannel( ULONG channel,  WORD* networkId,  WORD* transporti
 }
 void Sections::GetEPGEvent( ULONG channel,  ULONG eventid,ULONG* language, ULONG* dateMJD, ULONG* timeUTC, ULONG* duration, char**event,  char** text, char** genre    )
 {
+	CAutoLock lock(&m_Lock);
 	*dateMJD=0;
 	*timeUTC=0;
 	*duration=0;

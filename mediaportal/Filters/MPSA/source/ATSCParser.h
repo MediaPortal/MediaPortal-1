@@ -57,6 +57,7 @@ private:
 	int  			mgLastSectionNumber;
 	SplitterSetup*	m_demuxer;
 	time_t			m_epgTimeout;
+	CCritSec m_Lock;
 
 	map<ULONG,ATSCEvent> m_mapEvents;
 	typedef map<ULONG,ATSCEvent>::iterator imapEvents;

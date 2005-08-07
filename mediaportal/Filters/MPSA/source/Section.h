@@ -171,7 +171,8 @@ private:
 	int     m_patTableVersion;
 	int     m_patTSID;
 	int     m_patSectionLen;
-	
+
+    CCritSec					m_Lock;                // Main renderer critical section	
 public:
 	Sections();
 	virtual ~Sections();

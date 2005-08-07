@@ -44,6 +44,7 @@ public:
 	bool IsParsed();
 	CMHWParser   m_MHWParser;
 private:
+	CCritSec m_Lock;
 	void Parse();
 
 	TableGrabber m_tableGrabber90;
