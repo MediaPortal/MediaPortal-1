@@ -2225,12 +2225,11 @@ namespace MediaPortal
       System.Diagnostics.Process.Start("configuration.exe", @"/wizard /section=wizards\dvd.xml");
     }
 
+		NativeGameLoop.MSG msg1=new NativeGameLoop.MSG();
 		public void HandleMessage()
 		{
 			try
 			{
-				NativeGameLoop.MSG msg1;
-				msg1 = new NativeGameLoop.MSG();
 
 				if (!NativeGameLoop.PeekMessage(ref msg1, IntPtr.Zero, 0, 0, 0))
 				{
