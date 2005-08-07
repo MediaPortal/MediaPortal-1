@@ -40,6 +40,10 @@ void LogDebug(const char *fmt, ...)
 Sections::Sections(FileReader *pFileReader)
 {
 	m_pFileReader=pFileReader;
+	pids.StartPTS=0;
+	pids.EndPTS=0;
+	pids.Duration=0;
+	pids.DurTime=0;
 }
 
 Sections::~Sections()
@@ -235,19 +239,19 @@ HRESULT Sections::CurrentPTS(BYTE *pData,ULONGLONG *ptsValue,int *streamType)
 	int offset=4;
 	bool found=false;
 
-	if(header.Pid!=pids.AudioPid)
+	if (header.Pid<0x11) return S_FALSE;
+	if (header.SyncByte!=0x47) return S_FALSE;
+	if(header.Pid!=pids.AudioPid && header.Pid != pids.AudioPid2 && header.Pid != pids.AC3 && header.Pid != pids.VideoPid)
 		return S_FALSE;
 
 	if(header.AdaptionControl==1 || header.AdaptionControl==3)
 		offset+=pData[4];
-	
+	if (offset< 0 || offset+14>=188) return S_FALSE;
 	if(header.SyncByte==0x47 && pData[offset]==0 && pData[offset+1]==0 && pData[offset+2]==1)
 	{
 		*streamType=(int)((pData[offset+3]>>5) & 0x07);
-		WORD pesLen=(pData[offset+4]<<8)+pData[offset+5];
 		GetPESHeader(&pData[offset+6],&pes);
-		BYTE pesHeaderLen=pData[offset+8];
-		if(pes.Reserved==0x02 && pids.AudioPid==header.Pid) // valid header
+		if(pes.Reserved==0x02) // valid header
 		{
 			if(pes.PTSFlags==0x02)
 			{

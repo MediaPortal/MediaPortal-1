@@ -21,6 +21,7 @@ public:
 	STDMETHODIMP NonDelegatingQueryInterface( REFIID riid, void ** ppv );
 	STDMETHODIMP SetPositions(LONGLONG *pCurrent,DWORD CurrentFlags,LONGLONG *pStop,DWORD StopFlags);
 	STDMETHODIMP GetDuration(LONGLONG *pDuration);
+	STDMETHODIMP  GetAvailable( LONGLONG * pEarliest, LONGLONG * pLatest );
 
 	//CSourceStream
 	HRESULT GetMediaType(CMediaType *pMediaType);
@@ -50,10 +51,6 @@ protected:
 	
 	CCritSec m_cSharedState;
 
-	REFERENCE_TIME m_AvgTimePerFrame;
-	REFERENCE_TIME m_rtStreamTime, m_rtSourceTime;
-	REFERENCE_TIME m_rtFrameLength;
-	REFERENCE_TIME m_timeStart;
 	double m_dTimeInc;
 	ULONGLONG m_StartTime;
 	BOOL m_bDiscontinuity, m_bFlushing;
@@ -61,7 +58,7 @@ protected:
 	long m_lTSPacketDeliverySize;
 	DWORD m_dwStartTime;
 	bool m_positionToSet;
-
+	ULONGLONG m_lastPTS;
 };
 
 #endif

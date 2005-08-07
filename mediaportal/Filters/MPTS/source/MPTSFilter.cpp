@@ -354,6 +354,17 @@ void CMPTSFilter::UpdatePids()
 	if (!::ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&ptsStart, sizeof(ptsStart), &dwReadBytes, NULL)) return;
 	if (!::ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&ptsNow, sizeof(ptsNow), &dwReadBytes, NULL)) return;
 
+	m_pSections->pids.StartPTS=(__int64)ptsStart;
+	m_pSections->pids.EndPTS=(__int64)ptsNow;
+	Sections::PTSTime time;
+	m_pSections->pids.Duration=(ptsNow-ptsStart);
+	m_pSections->pids.DurTime=m_pSections->pids.Duration;
+	m_pSections->PTSToPTSTime(m_pSections->pids.Duration,&time);
+	m_pSections->pids.Duration=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
+
+
+
+
 	if (!::ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&ac3pid, sizeof(int), &dwReadBytes, NULL)) return;
 	if (dwReadBytes!=sizeof(int))
 	{
@@ -419,14 +430,6 @@ void CMPTSFilter::UpdatePids()
 		m_pSections->pids.VideoPid=videopid;
 		m_pSections->pids.PMTPid=pmtpid;
 		m_pSections->pids.PCRPid=pcrpid;
-
-		m_pSections->pids.StartPTS=(__int64)ptsStart;
-		m_pSections->pids.EndPTS=(__int64)ptsNow;
-		Sections::PTSTime time;
-		m_pSections->pids.Duration=(ptsNow-ptsStart);
-		m_pSections->pids.DurTime=m_pSections->pids.Duration;
-		m_pSections->PTSToPTSTime(m_pSections->pids.Duration,&time);
-		m_pSections->pids.Duration=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
 
 
 		__int64 filePointer=0;

@@ -104,6 +104,7 @@ HRESULT CBuffers::Require(long nBytesRequired)
 			Sleep(100);
 		}
 	}
+	
 	return S_OK;
 }
 
@@ -117,15 +118,19 @@ HRESULT CBuffers::DequeFromBuffer(BYTE *pbData, long lDataLength)
 		return E_FAIL;
 	}
 
+	
+//	LogDebug("buffers:DequeFromBuffer() get:%d/%d",lDataLength,Count());
 	long bytesWritten = 0;
 	while (bytesWritten < lDataLength)
 	{
 		BUFFER& buffer= m_Array.at(0);
 
 		long copyLen = buffer.iDataLen-buffer.pos;
+		
 		if (bytesWritten+copyLen > lDataLength)
 			copyLen=(lDataLength-bytesWritten);
 
+//		LogDebug("buffers: pos:%d datalen:%d copy:%d written:%d", buffer.pos,buffer.iDataLen,copyLen,bytesWritten);
 		memcpy(pbData + bytesWritten, &buffer.pData[buffer.pos], copyLen);
 
 		bytesWritten += copyLen;
@@ -134,10 +139,13 @@ HRESULT CBuffers::DequeFromBuffer(BYTE *pbData, long lDataLength)
 
 		if (buffer.pos>=buffer.iDataLen)
 		{
-			delete buffer.pData;
+			
+//			LogDebug("buffers: delete buffer");
+			delete[] buffer.pData;
 			m_Array.erase(m_Array.begin());
 		}
 	}
+	
 
 	return S_OK;
 }
