@@ -220,18 +220,22 @@ DWORD FileReader::SetFilePointer(__int64 llDistanceToMove, DWORD dwMoveMethod)
 		length  = (__int64)((__int64)length + (__int64)llDistanceToMove);
 		li.QuadPart = length;
 		dwMoveMethod = FILE_BEGIN;
-		//LogDebug("FileReader:SetFilePointer %x %x (%x)", li.HighPart,li.LowPart, dwMoveMethod);
+		LogDebug("FileReader:SetFilePointer %x %x (%x)", li.HighPart,li.LowPart, dwMoveMethod);
 	}
 	else
 	{
 		li.QuadPart = llDistanceToMove;
-		//LogDebug("FileReader:SetFilePointer %x %x (%x)", li.HighPart,li.LowPart, dwMoveMethod);
+		LogDebug("FileReader:SetFilePointer %x %x (%x)", li.HighPart,li.LowPart, dwMoveMethod);
 	}
 
 	DWORD dwErr=::SetFilePointer(m_hFile, li.LowPart, &li.HighPart, dwMoveMethod);
-	if (FAILED(dwErr))
+	if (dwErr==INVALID_SET_FILE_POINTER)
 	{
-		LogDebug("FileReader:SetFilePointer failed:%d", dwErr);
+		DWORD dwErr=GetLastError();
+		if (dwErr!=NO_ERROR)
+		{
+			LogDebug("FileReader:SetFilePointer failed:%d", dwErr);
+		}
 	}
 	return dwErr;
 }
@@ -239,8 +243,16 @@ DWORD FileReader::SetFilePointer(__int64 llDistanceToMove, DWORD dwMoveMethod)
 __int64 FileReader::GetFilePointer()
 {
 	LARGE_INTEGER li;
-	li.QuadPart = 0;
+	li.QuadPart = 0LL;
 	li.LowPart = ::SetFilePointer(m_hFile, 0, &li.HighPart, FILE_CURRENT);
+	if (li.LowPart==INVALID_SET_FILE_POINTER)
+	{
+		DWORD dwErr=GetLastError();
+		if (dwErr!=NO_ERROR)
+		{
+			LogDebug("FileReader:GetFilePointer failed:%d", dwErr);
+		}
+	}
 	return li.QuadPart;
 }
 
@@ -282,7 +294,7 @@ HRESULT FileReader::Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes)
 
 HRESULT FileReader::Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes, __int64 llDistanceToMove, DWORD dwMoveMethod)
 {
-
+	LogDebug("FileReader read from pos:%x move method:%x", llDistanceToMove,dwMoveMethod);
 	if (dwMoveMethod == FILE_END)
 		llDistanceToMove = 0 - llDistanceToMove - lDataLength;
 

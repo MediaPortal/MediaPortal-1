@@ -348,25 +348,17 @@ STDMETHODIMP CDumpInputPin::Receive(IMediaSample *pSample)
 		if(pbData[t]==0x47)
 		{
 			int pid=((pbData[t+1] & 0x1F) <<8)+pbData[t+2];
-			m_pDump->Log(TEXT("Receive: t="),false);
-			m_pDump->Log((__int64)t,false);
-			m_pDump->Log(TEXT(", pid="),false);
-			m_pDump->Log((__int64)pid,true);
 			if(IsPidValid(pid)==true)
 			{
 				hr=m_pDump->Write(pbData+t,188);
-				m_pDump->Log(TEXT("Receive: hr="),false);
-				m_pDump->Log((__int64)hr,true);
 				if(FAILED(hr))
 					break;
 			}
-			else
-				m_pDump->Log(TEXT("Receive: ignored pid"),true);
 
 		}
 	}
 	m_pDump->UpdateInfoFile(false);
-
+	m_pDump->Flush();
     return NOERROR;
 }
 void CDumpInputPin::ResetPids()
@@ -865,13 +857,6 @@ HRESULT CDump::Write(PBYTE pbData, LONG lDataLength)
 	}
 
     //write to live.ts file
-	Log(TEXT("write pointer="),false);
-	Log((__int64)pbData,false);
-	Log(TEXT(", len="),false);
-	Log(lDataLength,false);
-	Log(TEXT(", current position="),false);
-	Log(currentPosition,true);
-
     if (m_hFile == INVALID_HANDLE_VALUE)
 	{
         Log(TEXT("Write: m_hFile is invalid"),true);
@@ -968,6 +953,7 @@ HRESULT CDump::UpdateInfoFile(bool pids)
 		LogDebug("UpdatePids() filehandle=closed");
 		return S_OK;
 	}
+    
 	//update the info file
 	LARGE_INTEGER li;
 	DWORD written = 0;
@@ -979,7 +965,10 @@ HRESULT CDump::UpdateInfoFile(bool pids)
 	WriteFile(m_hInfoFile, &m_pesNow, sizeof(m_pesNow), &written, NULL);
 	if (pids)
 	{
-		LogDebug("UpdatePids()");
+		LogDebug("UpdatePids() ac3:0x%x audio:0x%x audio2:0x%x video:0x%x ttx:0x%x pmt:0x%x subtitle:0x%x pcr:0x%x",
+			m_pPin->GetAC3Pid(),m_pPin->GetAudioPid(),m_pPin->GetAudioPid2(),m_pPin->GetVideoPid(),
+			m_pPin->GetTeletextPid(),m_pPin->GetPMTPid(),m_pPin->GetSubtitlePid(),m_pPin->GetPCRPid());
+
 		int pid=m_pPin->GetAC3Pid();WriteFile(m_hInfoFile, &pid, sizeof(pid), &written, NULL);
 		pid=m_pPin->GetAudioPid();WriteFile(m_hInfoFile, &pid, sizeof(pid), &written, NULL);
 		pid=m_pPin->GetAudioPid2();WriteFile(m_hInfoFile, &pid, sizeof(pid), &written, NULL);
@@ -989,9 +978,21 @@ HRESULT CDump::UpdateInfoFile(bool pids)
 		pid=m_pPin->GetSubtitlePid();WriteFile(m_hInfoFile, &pid, sizeof(pid), &written, NULL);
 		pid=m_pPin->GetPCRPid();WriteFile(m_hInfoFile, &pid, sizeof(pid), &written, NULL);
 		currentPosition=0;
+		LARGE_INTEGER li;
+		li.QuadPart = 0;
+		SetFilePointer(m_hFile,li.LowPart,&li.HighPart,FILE_BEGIN);
+		SetEndOfFile(m_hFile);
 	}
 	//UnlockFile(m_hInfoFile,0,0,8+8*sizeof(int),0);
 	return S_OK;
+}
+void CDump::Flush()
+{
+/*	if (m_hFile!=INVALID_HANDLE_VALUE)
+		FlushFileBuffers(m_hFile);
+	
+	if (m_hInfoFile!=INVALID_HANDLE_VALUE)
+		FlushFileBuffers(m_hInfoFile);*/
 }
 
 

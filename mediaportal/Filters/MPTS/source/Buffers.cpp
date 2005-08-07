@@ -11,14 +11,16 @@
 #include "Sections.h"
 #include <crtdbg.h>
 
+#define MAX_FILE_LENGTH (2000LL*1024LL*1024LL)  // 2 gigabyte
 extern void LogDebug(const char *fmt, ...) ;
 
-CBuffers::CBuffers(FileReader *pFileReader, StreamPids *pPids)
+CBuffers::CBuffers(FileReader *pFileReader, StreamPids *pPids, long bufferSize)
 {
 	m_pFileReader = pFileReader;
 	m_pPids = pPids;
-	m_lItemOffset = 0;
-	m_lBuffersItemSize = 188000;
+	
+	m_lBytesInBuffer=0;
+	m_lBuffersItemSize = bufferSize;
 }
 
 CBuffers::~CBuffers()
@@ -28,66 +30,79 @@ CBuffers::~CBuffers()
 
 void CBuffers::Clear()
 {
-	std::vector<BYTE *>::iterator it = m_Array.begin();
+	itArray it = m_Array.begin();
 	for ( ; it != m_Array.end() ; it++ )
 	{
-		delete *it;
+		if (it->pData!=NULL)
+			delete [] it->pData;
 	}
 	m_Array.clear();
-	m_lItemOffset = 0;
+	
+	m_lBytesInBuffer=0;
 }
 
 long CBuffers::Count()
 {
-	long bytesAvailable = 0;
-	long itemCount = m_Array.size();
-
-	if (itemCount > 0)
-	{
-		bytesAvailable += m_lBuffersItemSize - m_lItemOffset;
-		bytesAvailable += m_lBuffersItemSize * (itemCount - 1);
-	}
-	return bytesAvailable;
+	return m_lBytesInBuffer;
 }
 
-HRESULT CBuffers::Require(long nBytes)
+HRESULT CBuffers::Require(long nBytesRequired)
 {
+	if (nBytesRequired < Count()) return S_OK;
 
-	long bytesAvailable = Count();
+	BUFFER newBuffer;
+	newBuffer.iDataLen=0;
+	newBuffer.pos=0;
+	newBuffer.pData= new BYTE[m_lBuffersItemSize];
+	ULONG ulBytesRead = 0;
 
-	while (nBytes > bytesAvailable)
+	__int64 fileSize     = 0;
+	__int64 currPosition = m_pFileReader->GetFilePointer();
+	m_pFileReader->GetFileSize(&fileSize);
+//	LogDebug("buffers: read from:%x", (DWORD)currPosition);
+
+	ULONG dwBytesRead = 0;				
+	HRESULT hr = m_pFileReader->Read(newBuffer.pData, m_lBuffersItemSize, &dwBytesRead);
+	if (FAILED(hr))
+	{	
+		LogDebug("buffers: failed to read %d bytes hr:%x", m_lBuffersItemSize,hr);
+		m_pFileReader->SetFilePointer(currPosition, FILE_BEGIN);
+		delete newBuffer.pData;
+		return hr;
+	}
+	if (dwBytesRead==0)
 	{
-		BYTE *newItem = new BYTE[m_lBuffersItemSize];
-		ULONG ulBytesRead = 0;
-		ULONG dwPos=0;
-
-		__int64 currPosition = m_pFileReader->GetFilePointer();
-		while (dwPos < (LONG)m_lBuffersItemSize) 
+		if (m_pFileReader->m_hInfoFile==INVALID_HANDLE_VALUE)
 		{
-
-			ULONG dwBytesRead = 0;				
-			HRESULT hr = m_pFileReader->Read(&newItem[dwPos], m_lBuffersItemSize-dwPos, &dwBytesRead);
-			if (FAILED(hr))
-			{	
-				m_pFileReader->SetFilePointer(currPosition, FILE_BEGIN);
-				delete [] newItem;
-				return hr;
-			}
-
-			dwPos += dwBytesRead;
-			if (dwPos < (LONG)m_lBuffersItemSize)
-			{
-				if (m_pFileReader->m_hInfoFile==INVALID_HANDLE_VALUE)
-				{
-					delete [] newItem;
-					return E_FAIL;
-				}
-				Sleep(100);
-			}
+			LogDebug("buffers: end of file reached");
+			delete newBuffer.pData;
+			return E_FAIL;
 		}
 
-		m_Array.push_back(newItem);
-		bytesAvailable += m_lBuffersItemSize;
+		if (fileSize>=MAX_FILE_LENGTH)
+		{
+			delete newBuffer.pData;
+			currPosition=0;
+			LogDebug("buffers: end of file reached, seek to begin");
+			m_pFileReader->SetFilePointer(currPosition, FILE_BEGIN);
+		}
+	}
+	if (dwBytesRead>0)
+	{
+		newBuffer.iDataLen=dwBytesRead;
+		m_Array.push_back(newBuffer);
+		m_lBytesInBuffer += dwBytesRead;
+	}
+
+	if (m_pFileReader->m_hInfoFile!=INVALID_HANDLE_VALUE)
+	{
+		if (Count() < nBytesRequired) 
+		{
+			//currPosition = m_pFileReader->GetFilePointer();
+			//LogDebug("buffers: read %d bytes buffer:%d/%d pos:%x filesize:%x",
+			//	dwBytesRead,m_lBytesInBuffer,nBytesRequired,(DWORD)currPosition,(DWORD)fileSize);
+			Sleep(100);
+		}
 	}
 	return S_OK;
 }
@@ -95,58 +110,33 @@ HRESULT CBuffers::Require(long nBytes)
 
 HRESULT CBuffers::DequeFromBuffer(BYTE *pbData, long lDataLength)
 {
-	HRESULT hr = Require(lDataLength);
-	if (FAILED(hr))
-		return hr;
 
-	long bytesWritten = 0;
-	while (bytesWritten < lDataLength)
+	if (Count() < lDataLength) 
 	{
-		BYTE *item = m_Array.at(0);
-
-		long copyLength = min(m_lBuffersItemSize-m_lItemOffset, lDataLength-bytesWritten);
-		memcpy(pbData + bytesWritten, item + m_lItemOffset, copyLength);
-
-		bytesWritten += copyLength;
-		m_lItemOffset += copyLength;
-
-		if (m_lItemOffset >= m_lBuffersItemSize)
-		{
-			m_Array.erase(m_Array.begin());
-			delete[] item;
-			m_lItemOffset -= m_lBuffersItemSize;	//should result in zero
-		}
+		LogDebug("buffers:DequeFromBuffer() not enough data available:%d/%d",lDataLength,Count());
+		return E_FAIL;
 	}
 
-	return S_OK;
-}
-
-HRESULT CBuffers::ReadFromBuffer(BYTE *pbData, long lDataLength, long lOffset)
-{
-	HRESULT hr = Require(lOffset + lDataLength);
-	if (FAILED(hr))
-		return hr;
-
 	long bytesWritten = 0;
-	long itemIndex = 0;
-	lOffset += m_lItemOffset;
-
 	while (bytesWritten < lDataLength)
 	{
-		while (lOffset >= m_lBuffersItemSize)
+		BUFFER& buffer= m_Array.at(0);
+
+		long copyLen = buffer.iDataLen-buffer.pos;
+		if (bytesWritten+copyLen > lDataLength)
+			copyLen=(lDataLength-bytesWritten);
+
+		memcpy(pbData + bytesWritten, &buffer.pData[buffer.pos], copyLen);
+
+		bytesWritten += copyLen;
+		buffer.pos += copyLen;
+		m_lBytesInBuffer -= copyLen;
+
+		if (buffer.pos>=buffer.iDataLen)
 		{
-			itemIndex++;
-			lOffset -= m_lBuffersItemSize;
+			delete buffer.pData;
+			m_Array.erase(m_Array.begin());
 		}
-
-
-		BYTE *item = m_Array.at(itemIndex);
-
-		long copyLength = min(m_lBuffersItemSize-lOffset, lDataLength-bytesWritten);
-		memcpy(pbData + bytesWritten, item + lOffset, copyLength);
-
-		bytesWritten += copyLength;
-		lOffset += copyLength;
 	}
 
 	return S_OK;

@@ -20,7 +20,7 @@
  */
 //#define HW_PID_FILTERING
 //#define DUMP
-//#define USEMTSWRITER
+#define USEMTSWRITER
 #if (UseCaptureCardDefinitions)
 using System;
 using System.Collections;

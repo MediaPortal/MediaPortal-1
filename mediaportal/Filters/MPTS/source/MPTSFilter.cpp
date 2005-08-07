@@ -185,14 +185,14 @@ HRESULT CMPTSFilter::SetFilePosition(REFERENCE_TIME seek)
 		return S_FALSE;
 	}
 
-	//Log((char*)"filter: SetFilePosition() seek= ",false);
-	//Log(seek,true);
+	
 
 	if(position<1)
 		position=0;
 
 	if(position>0) position=(position/188)*188;
 
+	LogDebug("filter: Seek to pos:%x",position);
 	hr=m_pFileReader->SetFilePointer(position,FILE_BEGIN);
 	//
 	//Log((char*)"Filter: SetFilePosition() position=",false);
@@ -273,6 +273,15 @@ STDMETHODIMP CMPTSFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt)
 			Sleep(80);
 			count++;
 		}
+
+		while(true)
+		{
+			m_pFileReader->GetFileSize(&fileSize);
+			if(fileSize>=200000 ||count>=50)
+				break;
+			Sleep(100);
+			count++;
+		}
 	}
 	//If this a file start then return null.
 	RefreshPids();
@@ -302,6 +311,11 @@ STDMETHODIMP CMPTSFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt)
 	Log(time.s,false);
 	Log(TEXT("."),false);
 	Log(time.u,true);
+
+	m_pSections->pids.DurTime=0;
+	m_pSections->pids.Duration=600000000;
+	m_pSections->pids.EndPTS=0;
+	m_pSections->pids.StartPTS=0;
 
 	CAutoLock lock(&m_Lock);
 	m_pFileReader->CloseFile();
@@ -418,11 +432,23 @@ void CMPTSFilter::UpdatePids()
 		m_pSections->PTSToPTSTime(m_pSections->pids.Duration,&time);
 		m_pSections->pids.Duration=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
 
+		m_pSections->pids.DurTime=0;
+		m_pSections->pids.Duration=600000000;
+		m_pSections->pids.EndPTS=0;
+		m_pSections->pids.StartPTS=0;
+
 		__int64 filePointer=0;
+		LogDebug("filter: reset filepointer");
 		m_pFileReader->SetFilePointer(filePointer,FILE_BEGIN);
+		m_pFileReader->GetFilePointer();	
+		LogDebug("filter: filepointer at 0x%x", (DWORD) filePointer);
+		LogDebug("filter: reset buffers");
 		m_pPin->ResetBuffers();
 		//setup demuxer?
+		
+		LogDebug("filter: setup demuxer");
 		m_pDemux->SetupPids();
+		LogDebug("filter: reconfigured");
 	}
 }
 
@@ -499,9 +525,9 @@ STDMETHODIMP CMPTSFilter::Refresh(void)
 	while(true)
 	{
 		m_pFileReader->GetFileSize(&fileSize);
-		if(fileSize>=200000 )
+		if(fileSize>=200000 ||count>=50)
 			break;
-		Sleep(80);
+		Sleep(50);
 		count++;
 	}
 	RefreshPids();

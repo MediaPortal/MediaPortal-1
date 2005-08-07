@@ -27,8 +27,8 @@ CFilterOutPin::CFilterOutPin(LPUNKNOWN pUnk, CMPTSFilter *pFilter, FileReader *p
 	__int64 size;
 	m_pFileReader->GetFileSize(&size);
 	m_rtDuration = m_rtStop = m_pSections->pids.Duration;
-	m_lTSPacketDeliverySize = 188000;
-	m_pBuffers = new CBuffers(m_pFileReader, &m_pSections->pids);
+	m_lTSPacketDeliverySize = 188*100;
+	m_pBuffers = new CBuffers(m_pFileReader, &m_pSections->pids,m_lTSPacketDeliverySize);
 	m_dTimeInc=0;
 	m_timeStart=0;
 }
@@ -105,13 +105,13 @@ HRESULT CFilterOutPin::CompleteConnect(IPin *pReceivePin)
 }
 STDMETHODIMP CFilterOutPin::SetPositions(LONGLONG *pCurrent,DWORD CurrentFlags,LONGLONG *pStop,DWORD StopFlags)
 {
+	LogDebug("pin:SetPositions: current:%x stop:%x", *pCurrent, *pStop);
 	return CSourceSeeking::SetPositions(pCurrent,CurrentFlags,pStop,StopFlags);
 }
 HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 {
 	//LogDebug("FillBuffer");
 	CheckPointer(pSample, E_POINTER);
-	m_pMPTSFilter->UpdatePids();
 	{
 		CAutoLock cAutoLockShared(&m_cSharedState);
 
@@ -127,15 +127,22 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 		lDataLength = pSample->GetActualDataLength();
 
 
-		hr = m_pBuffers->Require(lDataLength);
+		do
+		{
+			m_pMPTSFilter->UpdatePids();
+			hr = m_pBuffers->Require(lDataLength);
+		} while (hr==S_OK && m_pBuffers->Count() < lDataLength);
+
 		if (FAILED(hr))
 		{
 			if (m_pMPTSFilter->m_pFileReader->m_hInfoFile==INVALID_HANDLE_VALUE)
 			{
+				LogDebug("outpin:end of file detected");
 				return S_FALSE;//end of stream
 			}
-			m_pMPTSFilter->Log((char*)"pin: FillBuffer() error in fillbuffer",true);
-			m_pMPTSFilter->Refresh();
+				
+			LogDebug("outpin: Require(%d) failed:0x%x",lDataLength,hr);
+			//m_pMPTSFilter->Refresh();
 			//return S_FALSE; // cant read = end of stream
 		}
 
@@ -143,7 +150,7 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 
 		ULONGLONG pts=0;
 		int stream;
-		for(int i=0;i<18800;i+=188)
+		for(int i=0;i<lDataLength;i+=188)
 		{
 			if(m_pSections->CurrentPTS(pData+i,&pts,&stream)==S_OK)
 			{
@@ -162,7 +169,7 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 
 		if(m_bDiscontinuity) 
 		{
-			m_pMPTSFilter->Log((char*)"pin: FillBuffer() SetDiscontinuity",true);
+			LogDebug("pin: FillBuffer() SetDiscontinuity");
 			pSample->SetDiscontinuity(TRUE);
 			m_bDiscontinuity = FALSE;
 		}
@@ -227,7 +234,7 @@ void CFilterOutPin::UpdateFromSeek(void)
 {
 	if (ThreadExists())
 	{
-		m_pMPTSFilter->Log((char*)"pin: UpdateFromSeek()",true);
+		LogDebug("pin:UpdateFromSeek()");
 		DeliverBeginFlush();
 		Stop();
 		DeliverEndFlush();
@@ -271,6 +278,5 @@ void CFilterOutPin::ResetBuffers()
 {
 	if (m_pBuffers==NULL) return;
 	m_pBuffers->Clear();
-	m_rtDuration = m_rtStop = m_pSections->pids.Duration;
 	m_bDiscontinuity=true;
 }

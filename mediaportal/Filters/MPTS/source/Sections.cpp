@@ -52,6 +52,7 @@ HRESULT Sections::ParseFromFile()
 
 	if (m_pFileReader->m_hInfoFile!=INVALID_HANDLE_VALUE)
 	{
+
 		LogDebug("Get pids from info file");
 		DWORD			dwReadBytes;
 		ULONGLONG		ptsStart;
@@ -80,6 +81,11 @@ HRESULT Sections::ParseFromFile()
 		pids.DurTime=pids.Duration;
 		PTSToPTSTime(pids.Duration,&time);
 		pids.Duration=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
+
+		pids.DurTime=0;
+		pids.Duration=600000000;
+		pids.EndPTS=0;
+		pids.StartPTS=0;
 
 		__int64 filePointer=0;
 		m_pFileReader->SetFilePointer(filePointer,FILE_BEGIN);

@@ -18,7 +18,7 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-//#define USEMTSWRITER
+#define USEMTSWRITER
 #if (UseCaptureCardDefinitions)
 
 using System;
@@ -1065,6 +1065,7 @@ namespace MediaPortal.TV.Recording
 						}
 						currentGraph.TuneChannel(channel);
 						lastChannelChange=DateTime.Now;
+#if !USEMTSWRITER
 						if (IsTimeShifting && !View)
 						{
 							if (g_Player.Playing && g_Player.CurrentFile == Recorder.GetTimeShiftFileName(ID-1))
@@ -1078,6 +1079,7 @@ namespace MediaPortal.TV.Recording
 								}
 							}
 						}
+#endif
 					}
 				}
 			}
