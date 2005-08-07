@@ -309,8 +309,14 @@ namespace WindowPlugins.GUIPrograms
       if (curApp != null)
       {
         mCurApp = curApp;
-        mCurApp.Files.Load(mCurApp.AppID, "");
-        mCurApp.Filelinks.Load(mCurApp.AppID, "");
+        if (!mCurApp.filesAreLoaded)
+        {
+          mCurApp.LoadFiles();
+        }
+        if (!mCurApp.linksAreLoaded)
+        {
+          mCurApp.LoadFileLinks();
+        }
         SyncListView();
       }
     }

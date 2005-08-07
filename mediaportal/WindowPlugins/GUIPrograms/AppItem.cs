@@ -84,10 +84,10 @@ namespace ProgramsDatabase
 
     string lastFilepath = ""; // cached path
 
-    protected bool filesAreLoaded = false; // load on demand....
+    public bool filesAreLoaded = false; // load on demand....
     protected Filelist fileList = null;
 
-    protected bool linksAreLoaded = false;
+    public bool linksAreLoaded = false;
     protected FilelinkList fileLinks = null;
 
     // event: read new file
@@ -1021,7 +1021,7 @@ namespace ProgramsDatabase
       }
     }
 
-    protected virtual void LoadFileLinks()
+    public virtual void LoadFileLinks()
     {
       if (sqlDB != null)
       {

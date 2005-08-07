@@ -21,6 +21,7 @@
 
 using System;
 using System.Collections;
+//using System.Diagnostics;
 using MediaPortal.GUI.Library;
 using Programs.Utils;
 using SQLite.NET;
@@ -144,6 +145,7 @@ namespace ProgramsDatabase
 
     public void Load(int appID, string pathSubfolders)
     {
+      //Debugger.Launch();
       if (sqlDB == null)
         return ;
       if (ProgramSettings.viewHandler == null)
@@ -173,6 +175,7 @@ namespace ProgramsDatabase
             Add(curFile);
           }
         }
+
       }
       catch (SQLiteException ex)
       {
