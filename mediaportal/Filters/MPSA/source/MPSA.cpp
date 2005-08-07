@@ -601,6 +601,7 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 	try
 	{
 		//CAutoLock lock(&m_Lock);
+
 		if(pbData[0]==0x00 && pbData[1]==0x00 && pbData[2]==0x01)
 		{
 			//pes packet
@@ -615,6 +616,7 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 			delete [] d;
 			return S_OK;
 		}
+
 		if (m_bDecodeATSC)
 		{
 			if (pbData[0]==0xc7)

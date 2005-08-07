@@ -156,7 +156,7 @@ HRESULT Sections::CurrentPTS(BYTE *pData,ULONGLONG *ptsValue,int *streamType)
 
 	if(header.AdaptionControl==1 || header.AdaptionControl==3)
 		offset+=pData[4];
-	
+	if (offset>=188) return S_FALSE;
 	if(header.SyncByte==0x47 && pData[offset]==0 && pData[offset+1]==0 && pData[offset+2]==1)
 	{
 		*streamType=(int)((pData[offset+3]>>5) & 0x07);
@@ -574,13 +574,14 @@ void Sections::GetPES(BYTE *data,ULONG len,BYTE *pes)
 	ULONG i = 0;
 	for (;i<len;)
 	{
+		if (i+9>len) return;
 		ptr = (0xFF & data[i + 4]) << 8 | (0xFF & data[i + 5]);
 		isMPEG1 = (0x80 & data[i + 6]) == 0 ? true : false;
 		offset = i + 6 + (!isMPEG1 ? 3 + (0xFF & data[i + 8]) : 0);
+		if (offset+(len-offset) >=len) return;
 		memcpy(pes,data+offset,len-offset);
 		i += 6 + ptr;
 	}
-
 }
 
 HRESULT Sections::ParseAudioHeader(BYTE *data,AudioHeader *head)
