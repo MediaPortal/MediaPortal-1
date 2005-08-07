@@ -386,6 +386,7 @@ namespace MediaPortal.Player
 					
 				UpdateDuration();
 				updateTimer=DateTime.Now;
+			//	Log.Write("pos:{0} duration:{1}", m_dCurrentPos,m_dDuration);
 			}
 			double dBackingFileLength = 10d * 60d;					      // each backing file is 10 min
 			double dMaxDuration       = 10d * dBackingFileLength; // max. 10 backing files
@@ -769,19 +770,22 @@ namespace MediaPortal.Player
 #endif
     void UpdateCurrentPosition()
     {
+			int hr;
       if (m_mediaSeeking==null) return;
       //GetCurrentPosition(): Returns stream position. 
       //Stream position:The current playback position, relative to the content start
       long lStreamPos;
       double fCurrentPos;
-      m_mediaSeeking.GetCurrentPosition(out lStreamPos); // stream position
+      hr=m_mediaSeeking.GetCurrentPosition(out lStreamPos); // stream position
+	//		Log.Write("GetCurrentPosition() pos:{0} hr:0x{1:X}", lStreamPos,hr);
       fCurrentPos=lStreamPos;
       fCurrentPos/=10000000d;
 
       long lContentStart,lContentEnd;
       double fContentStart,fContentEnd;
-      m_mediaSeeking.GetAvailable(out lContentStart, out lContentEnd);
-      fContentStart=lContentStart;
+      hr=m_mediaSeeking.GetAvailable(out lContentStart, out lContentEnd);
+			Log.Write("GetAvailable() start:{0} end:{1} hr:0x{2:X}", lContentStart,lContentEnd,hr);
+			fContentStart=lContentStart;
       fContentEnd=lContentEnd;
       fContentStart/=10000000d;
       fContentEnd/=10000000d;
@@ -812,7 +816,8 @@ namespace MediaPortal.Player
 			//content stop :The time of the latest available content. For live content, this value starts at zero and increases continuously.
 			
 			long lDuration;
-			m_mediaSeeking.GetDuration(out lDuration); 
+			int hr=m_mediaSeeking.GetDuration(out lDuration); 
+//			Log.Write("GetDuration() duration:{0} hr:0x{1:X}", lDuration,hr);
 			m_dDuration=lDuration;
 			m_dDuration/=10000000d;
 		}
