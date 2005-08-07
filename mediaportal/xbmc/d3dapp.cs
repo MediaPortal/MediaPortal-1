@@ -310,6 +310,7 @@ namespace MediaPortal
     /// <returns>true if a good device was found, false otherwise</returns>
     public bool CreateGraphicsSample()
     {
+
       enumerationSettings.ConfirmDeviceCallback = new D3DEnumeration.ConfirmDeviceCallbackType(this.ConfirmDevice);
       enumerationSettings.Enumerate();
 
@@ -1670,6 +1671,7 @@ namespace MediaPortal
 
     private void D3DApp_Load(object sender, System.EventArgs e)
     {
+			Application.Idle+=new EventHandler(Application_Idle);
       Initialize();
       OnStartup();
     }
@@ -2258,6 +2260,17 @@ namespace MediaPortal
     {
       NativeMethods.QueryPerformanceCounter(ref startFrame);
     }
+		bool ShouldWaitForFrameClock()
+		{
+			long timeElapsed = 0;
+			NativeMethods.QueryPerformanceCounter(ref endFrame);
+			timeElapsed = endFrame - startFrame;
+			if (timeElapsed < GUIGraphicsContext.DesiredFrameTime)
+			{
+				return true;
+			}
+			return false;
+		}
 
     void WaitForFrameClock()
     {
@@ -2277,7 +2290,7 @@ namespace MediaPortal
         }
       }
     }
-
+/*
     /// <summary>
     /// Run the simulation
     /// </summary>
@@ -2309,58 +2322,67 @@ namespace MediaPortal
           break;
         try
         {
-          useFrameClock=false;
+					if (g_Player.Playing) 
+					{
+						System.Threading.Thread.Sleep(100);
+					//	HandleMessage();
+						
+					}
+					else
+					{
+						useFrameClock=false;
 							
-          if (ShouldUseSleepingTime())
-          {
-            if (GUIGraphicsContext.IsFullScreenVideo&&  g_Player.Playing && g_Player.IsMusic && g_Player.HasVideo)
-            {
-              //dont sleep
-            }
-            else 
-            {
-              // Do some sleep....
-              useFrameClock=true;
-            }
-          }
-          else
-          {
-            if (GUIGraphicsContext.IsFullScreenVideo && g_Player.Playing && g_Player.IsMusic && g_Player.HasVideo)
-            {
-              //dont sleep
-            }
-            else
-            {
-              GUIGraphicsContext.CurrentFPS = 0f;
-              DoSleep(50);
-            }
-          }
-          FrameMove();
-          if (GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.Vmr9FPS<1f) 
-          {
-            if (VMR9Util.g_vmr9!=null)
-            {
-              VMR9Util.g_vmr9.Process();
-            }
-          }
-          if (GUIGraphicsContext.IsFullScreenVideo==false||g_Player.Speed!=1) counter=0;
-          if (counter==0)
-          {
-            OnProcess();
-            if (useFrameClock)
-              StartFrameClock();
-            FullRender();
-            if (useFrameClock)
-              WaitForFrameClock();
-          }
-          else if (counter==5 || counter==10 || counter==15||counter==20)
-          {
-            if (VMR7Util.g_vmr7!=null)
-              FullRender();
-          }
-          HandleMessage();
-          counter++;
-          if (counter>25) counter=0;
+						if (ShouldUseSleepingTime())
+						{
+							if (GUIGraphicsContext.IsFullScreenVideo&&  g_Player.Playing && g_Player.IsMusic && g_Player.HasVideo)
+							{
+								//dont sleep
+							}
+							else 
+							{
+								// Do some sleep....
+								useFrameClock=true;
+							}
+						}
+						else
+						{
+							if (GUIGraphicsContext.IsFullScreenVideo && g_Player.Playing && g_Player.IsMusic && g_Player.HasVideo)
+							{
+								//dont sleep
+							}
+							else
+							{
+								GUIGraphicsContext.CurrentFPS = 0f;
+								DoSleep(50);
+							}
+						}
+						FrameMove();
+						if (GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.Vmr9FPS<1f) 
+						{
+							if (VMR9Util.g_vmr9!=null)
+							{
+								VMR9Util.g_vmr9.Process();
+							}
+						}
+						if (GUIGraphicsContext.IsFullScreenVideo==false||g_Player.Speed!=1) counter=0;
+						if (counter==0)
+						{
+							OnProcess();
+							if (useFrameClock)
+								StartFrameClock();
+							FullRender();
+							if (useFrameClock)
+								WaitForFrameClock();
+						}
+						else if (counter==5 || counter==10 || counter==15||counter==20)
+						{
+							if (VMR7Util.g_vmr7!=null)
+								FullRender();
+						}
+						HandleMessage();
+						counter++;
+						if (counter>25) counter=0;
+					}
         }
         catch (Exception ex)
         {
@@ -2381,6 +2403,7 @@ namespace MediaPortal
       UseMillisecondTiming = false;
     }
 
+*/
     private void contextMenu1_Popup(object sender, System.EventArgs e)
     {
 
@@ -2417,8 +2440,25 @@ namespace MediaPortal
         dialogNotify.SetImage(String.Format(@"{0}\media\{1}", GUIGraphicsContext.Skin, "dialog_information.png"));
         dialogNotify.DoModal(GUIWindowManager.ActiveWindow);
       }
-    }
-  }
+		}
+		
+		private bool AppStillIdle()
+		{
+				return !NativeGameLoop.PeekMessage(ref msg1, IntPtr.Zero, 0, 0, 0);
+		}
+		private void Application_Idle(object sender, EventArgs e)
+		{
+			while (AppStillIdle())
+			{
+				OnProcess();
+				FrameMove();
+				StartFrameClock();
+				FullRender();
+				WaitForFrameClock();
+				if (g_Player.Playing) return;
+			} 
+		}
+	}
 
   #region Enums for D3D Applications
   /// <summary>
@@ -2937,4 +2977,4 @@ namespace MediaPortal
   }
 
   #endregion
-};
+}

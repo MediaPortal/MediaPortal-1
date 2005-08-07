@@ -348,9 +348,7 @@ public class MediaPortalApp : D3DApp, IRender
 				try
 				{
 					GUIGraphicsContext.BlankScreen=false;
-					app.Run();
-
-					//Application.Run(app);
+					Application.Run(app);
 				}
 				catch (Exception ex)
 				{
@@ -652,12 +650,6 @@ public class MediaPortalApp : D3DApp, IRender
 	#endregion
 
 	#region PreProcessMessage() and WndProc()
-	public override bool PreProcessMessage(ref Message msg)
-	{
-		//if (msg.Msg==WM_KEYDOWN) Debug.WriteLine("pre keydown");
-
-		return base.PreProcessMessage(ref msg);
-	}
 
 	protected override void WndProc(ref Message msg)
   {
@@ -750,7 +742,7 @@ public class MediaPortalApp : D3DApp, IRender
 
     //if (msg.Msg==WM_KEYDOWN) Debug.WriteLine("msg keydown");
     g_Player.WndProc(ref msg);
-    base.WndProc(ref msg);
+  	base.WndProc(ref msg);
 	}
 	#endregion
 
