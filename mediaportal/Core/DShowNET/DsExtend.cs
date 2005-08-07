@@ -169,6 +169,21 @@ namespace DShowNET
 		int SetPCRPid( ushort pcrPid);
 	}
 
+	[ComVisible(true), ComImport,
+	Guid("3E05D715-0AE2-4d6a-8EE9-51DB5FBAB72B"),
+	InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
+	public interface IMPTSRecord
+	{
+		[PreserveSig]
+		int SetRecordingFileName([In, MarshalAs(UnmanagedType.LPStr)]			string	strFile);
+		[PreserveSig]
+		int StartRecord( Int64 startTime);
+		[PreserveSig]
+		int StopRecord( Int64 startTime);
+	}
+
+
+
   [ComVisible(true), ComImport,
   Guid("93E5A4E0-2D50-11d2-ABFA-00A0C9C6E38D"),
   InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]

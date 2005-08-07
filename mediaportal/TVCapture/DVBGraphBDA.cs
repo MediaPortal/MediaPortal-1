@@ -221,6 +221,7 @@ namespace MediaPortal.TV.Recording
 		IBaseFilter							m_dvbAnalyzer=null;
 		IBaseFilter						  m_tsWriter=null;
 		IMPTSWriter							m_tsWriterInterface=null;
+		IMPTSRecord						  m_tsRecordInterface=null;
 		IBaseFilter							m_smartTee= null;			// Transport Information Filter
 
 		VideoAnalyzer						m_mpeg2Analyzer					= null;
@@ -1125,7 +1126,7 @@ namespace MediaPortal.TV.Recording
 				m_epgGrabberInterface=null;
 				m_mhwGrabberInterface=null;
 				m_tsWriterInterface=null;
-
+				m_tsRecordInterface=null;
 				Log.Write("free pins");
 
 				if (m_demuxSectionsPin!=null)
@@ -1347,6 +1348,22 @@ namespace MediaPortal.TV.Recording
 				Vmr7=null;
 			}
 
+#if USEMTSWRITER
+			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:StartRecording()");
+			strFileName=System.IO.Path.ChangeExtension(strFileName,".ts");
+			int hr=m_tsRecordInterface.SetRecordingFileName(strFileName);
+			if (hr!=0)
+			{
+				Log.Write("DVBGraphBDA:unable to set filename:%x", hr);
+				return false;
+			}
+			hr=m_tsRecordInterface.StartRecord(0);
+			if (hr!=0)
+			{
+				Log.Write("DVBGraphBDA:unable to start recording:%x", hr);
+				return false;
+			}
+#else
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:StartRecording()");
 			uint iRecordingType=0;
 			if (bContentRecording) 
@@ -1416,6 +1433,7 @@ namespace MediaPortal.TV.Recording
 			finally
 			{
 			}
+#endif
 			m_graphState = State.Recording;
 			return true;
 		}//public bool StartRecording(int country,AnalogVideoStandard standard,int iChannelNr, ref string strFileName, bool bContentRecording, DateTime timeProgStart)
@@ -1440,6 +1458,10 @@ namespace MediaPortal.TV.Recording
 				}
 				catch(Exception){}
 				m_recorder=null;
+			}
+			if (m_tsRecordInterface!=null)
+			{
+				m_tsRecordInterface.StopRecord(0);
 			}
 
 
@@ -2356,7 +2378,7 @@ namespace MediaPortal.TV.Recording
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph() add MPTSWriter");
 				m_tsWriter=(IBaseFilter) Activator.CreateInstance( Type.GetTypeFromCLSID( Clsid.MPTSWriter, true ) );
 				m_tsWriterInterface = m_tsWriter as IMPTSWriter;
-
+				m_tsRecordInterface = m_tsWriter as IMPTSRecord;
 
 			int hr=m_graphBuilder.AddFilter((IBaseFilter)m_tsWriter,"MPTS Writer");
 			if(hr!=0)

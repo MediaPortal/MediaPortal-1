@@ -61,9 +61,18 @@ DECLARE_INTERFACE_(IMPTSWriter, IUnknown)
 	STDMETHOD(SetSubtitlePid)(THIS_ int subtitlePid)PURE;
 	STDMETHOD(SetPMTPid)(THIS_ int pmtPid)PURE;
 	STDMETHOD(SetPCRPid)(THIS_ int pcrPid)PURE;
-
 };
 
+// {3E05D715-0AE2-4d6a-8EE9-51DB5FBAB72B}
+DEFINE_GUID(IID_IMPTSRecord,0x3e05d715, 0xae2, 0x4d6a, 0x8e, 0xe9, 0x51, 0xdb, 0x5f, 0xba, 0xb7, 0x2b);
+
+// interface
+DECLARE_INTERFACE_(IMPTSRecord, IUnknown)
+{
+    STDMETHOD(SetRecordingFileName)(THIS_ char* pszFileName)PURE;
+    STDMETHOD(StartRecord)(THIS_ ULONGLONG startTime)PURE;
+    STDMETHOD(StopRecord)(THIS_ ULONGLONG startTime)PURE;
+};
 // Main filter object
 
 class CDumpFilter : public CBaseFilter
@@ -158,7 +167,7 @@ private:
 
 //  CDump object which has filter and pin members
 
-class CDump : public CUnknown, public IFileSinkFilter, public IMPTSWriter
+class CDump : public CUnknown, public IFileSinkFilter, public IMPTSWriter, public IMPTSRecord
 {
     friend class CDumpFilter;
     friend class CDumpInputPin;
@@ -174,7 +183,7 @@ class CDump : public CUnknown, public IFileSinkFilter, public IMPTSWriter
     HANDLE   m_hFile;               // Handle to file for dumping
 	HANDLE   m_hInfoFile;           // Handle to file for dumping
 	HANDLE	 m_logFileHandle;
-
+	HANDLE	 m_recHandle;
     LPOLESTR m_pFileName;           // The filename where we dump
     BOOL     m_fWriteError;
 
@@ -211,6 +220,12 @@ public:
 	STDMETHODIMP SetSubtitlePid(int subtitlePid);
 	STDMETHODIMP SetPMTPid(int pmtPid);
 	STDMETHODIMP SetPCRPid(int pcrPid);
+
+	//record
+
+    STDMETHODIMP SetRecordingFileName(char* pszFileName);
+    STDMETHODIMP StartRecord( ULONGLONG startTime);
+    STDMETHODIMP StopRecord( ULONGLONG startTime);
 private:
 
     // Overriden to say what interfaces we support where
@@ -226,4 +241,5 @@ private:
 	void GetTSHeader(BYTE *data,TSHeader *header);
 	ULONGLONG m_pesStart;
 	ULONGLONG m_pesNow;
+	char m_strRecordingFileName[1024];
 };

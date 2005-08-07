@@ -421,6 +421,7 @@ CDump::CDump(LPUNKNOWN pUnk, HRESULT *phr) :
 	currentPosition(0),
 	currentFileLength(0)
 {
+	DeleteFile("MPTSWriter.log");
     ASSERT(phr);
 	m_logFileHandle=INVALID_HANDLE_VALUE;
 	m_hInfoFile=INVALID_HANDLE_VALUE;
@@ -445,6 +446,8 @@ CDump::CDump(LPUNKNOWN pUnk, HRESULT *phr) :
 
 	m_pesStart=0LL;
 	m_pesNow=0LL;
+	strcpy(m_strRecordingFileName,"");
+	m_recHandle=INVALID_HANDLE_VALUE;
 
 }
 
@@ -567,7 +570,10 @@ STDMETHODIMP CDump::NonDelegatingQueryInterface(REFIID riid, void ** ppv)
 	{
 		return GetInterface((IMPTSWriter*)this, ppv);
 	}
-
+	if (riid == IID_IMPTSRecord)
+	{
+		return GetInterface((IMPTSRecord*)this, ppv);
+	}
     if (riid == IID_IFileSinkFilter) {
         return GetInterface((IFileSinkFilter *) this, ppv);
     } 
@@ -816,6 +822,11 @@ HRESULT CDump::CloseFile()
 		CloseHandle(m_hInfoFile);
 		m_hInfoFile = INVALID_HANDLE_VALUE;
 	}
+	if (m_recHandle != INVALID_HANDLE_VALUE)
+	{
+		CloseHandle(m_recHandle);
+		m_recHandle = INVALID_HANDLE_VALUE;
+	}
 
 
 	TCHAR *pFileName = NULL;
@@ -846,7 +857,14 @@ HRESULT CDump::CloseFile()
 //
 HRESULT CDump::Write(PBYTE pbData, LONG lDataLength)
 {
-    // If the file has already been closed, don't continue
+	//write to recording file
+	DWORD written = 0;
+	if (m_recHandle!=INVALID_HANDLE_VALUE)
+	{
+		WriteFile(m_recHandle, pbData, lDataLength, &written, NULL);
+	}
+
+    //write to live.ts file
 	Log(TEXT("write pointer="),false);
 	Log((__int64)pbData,false);
 	Log(TEXT(", len="),false);
@@ -860,7 +878,6 @@ HRESULT CDump::Write(PBYTE pbData, LONG lDataLength)
 		return S_FALSE;
     }
 	HRESULT hr = S_OK;
-	DWORD written = 0;
 	LARGE_INTEGER li,listart;
 	li.QuadPart = currentPosition;
 	listart.QuadPart = currentPosition;
@@ -1066,5 +1083,45 @@ STDMETHODIMP CDump::Log(char* text,bool crlf)
 		WriteFile(m_logFileHandle, _crlf, 2, &written, NULL);
 		logFilePos+=(__int64)written;
 	}
+	return S_OK;
+}
+
+
+STDMETHODIMP CDump::SetRecordingFileName(char* pszFileName)
+{
+	strcpy(m_strRecordingFileName,pszFileName);
+	return S_OK;
+}
+
+STDMETHODIMP CDump::StartRecord( ULONGLONG startTime)
+{
+	if (m_recHandle!=INVALID_HANDLE_VALUE) return E_FAIL;
+	if (strlen(m_strRecordingFileName)==0) return E_FAIL;
+
+	LogDebug("Start Recording:'%s'",m_strRecordingFileName);
+	m_recHandle = CreateFile((LPCTSTR) m_strRecordingFileName,
+								GENERIC_READ | GENERIC_WRITE,
+								FILE_SHARE_READ | FILE_SHARE_WRITE,
+								NULL,
+								CREATE_ALWAYS,
+								FILE_ATTRIBUTE_NORMAL | FILE_FLAG_RANDOM_ACCESS,
+								NULL);
+
+	if (m_recHandle==INVALID_HANDLE_VALUE) 
+	{
+		LogDebug("Start Record unable to create file:%d",GetLastError());
+		return E_FAIL;
+	}
+	return S_OK;
+
+}
+STDMETHODIMP CDump::StopRecord( ULONGLONG startTime)
+{
+	if (m_recHandle==INVALID_HANDLE_VALUE) return S_OK;
+
+	LogDebug("Stop Recording:'%s'",m_strRecordingFileName);
+	CloseHandle(m_recHandle);
+	m_recHandle = INVALID_HANDLE_VALUE;
+	strcpy(m_strRecordingFileName,"");
 	return S_OK;
 }
