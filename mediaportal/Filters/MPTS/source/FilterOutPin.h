@@ -20,7 +20,6 @@ public:
 
 	STDMETHODIMP NonDelegatingQueryInterface( REFIID riid, void ** ppv );
 	STDMETHODIMP SetPositions(LONGLONG *pCurrent,DWORD CurrentFlags,LONGLONG *pStop,DWORD StopFlags);
-	//STDMETHODIMP GetPositions(LONGLONG *pCurrent,LONGLONG *pStop);
 	STDMETHODIMP GetDuration(LONGLONG *pDuration);
 
 	//CSourceStream
