@@ -312,10 +312,6 @@ STDMETHODIMP CMPTSFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt)
 	Log(TEXT("."),false);
 	Log(time.u,true);
 
-	m_pSections->pids.DurTime=0;
-	m_pSections->pids.Duration=600000000;
-	m_pSections->pids.EndPTS=0;
-	m_pSections->pids.StartPTS=0;
 
 	CAutoLock lock(&m_Lock);
 	m_pFileReader->CloseFile();
@@ -432,10 +428,6 @@ void CMPTSFilter::UpdatePids()
 		m_pSections->PTSToPTSTime(m_pSections->pids.Duration,&time);
 		m_pSections->pids.Duration=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
 
-		m_pSections->pids.DurTime=0;
-		m_pSections->pids.Duration=600000000;
-		m_pSections->pids.EndPTS=0;
-		m_pSections->pids.StartPTS=0;
 
 		__int64 filePointer=0;
 		LogDebug("filter: reset filepointer");
