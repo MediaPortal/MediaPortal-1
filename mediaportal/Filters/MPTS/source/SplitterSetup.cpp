@@ -72,33 +72,85 @@ HRESULT SplitterSetup::SetupDemuxer(IBaseFilter *demuxFilter)
 	// video 
 	if (m_pSections->pids.VideoPid>0)
 	{
-		ZeroMemory(&type, sizeof(AM_MEDIA_TYPE));
-		GetVideoMedia(&type);
-		hr=demuxer->CreateOutputPin(&type, L"Video",&m_pVideo);
+		if (m_pVideo==NULL)
+		{
+			ZeroMemory(&type, sizeof(AM_MEDIA_TYPE));
+			GetVideoMedia(&type);
+			hr=demuxer->CreateOutputPin(&type, L"Video",&m_pVideo);
+			if (hr==VFW_E_DUPLICATE_NAME)
+			{
+				//pin already exists!
+				IEnumPins* enumPins;
+				demuxFilter->EnumPins(&enumPins);
+				enumPins->Reset();
+				IPin* pins[2];
+				ULONG fetched;
+				while (enumPins->Next(1, &pins[0],&fetched)==0)
+				{
+					if (fetched==1)
+					{
+						PIN_INFO pinInfo;
+						pins[0]->QueryPinInfo(&pinInfo);
+						if (wcscmp(pinInfo.achName,L"Video")==0)
+						{
+							m_pVideo=pins[0];
+						}
+						pins[0]->Release();
+					}
+				}
+				enumPins->Release();
+			}
+		}
 	}
 	int audioToUse=(m_pSections->pids.AudioPid>0?m_pSections->pids.AudioPid:m_pSections->pids.AC3);
 	if(audioToUse>0)
 	{
-		ZeroMemory(&type, sizeof(AM_MEDIA_TYPE));
-		if(m_pSections->pids.VideoPid>0)
+		if (m_pAudio==NULL)
 		{
-			if(audioToUse==m_pSections->pids.AudioPid)
-				GetMP2Media(&type);// tv
-			else 
-				GetAC3Media(&type);
-		}
-		else
-		{
-			if(m_pSections->pids.PCRPid==0 || m_pSections->pids.PCRPid>=0x1FFF)
+			ZeroMemory(&type, sizeof(AM_MEDIA_TYPE));
+			if(m_pSections->pids.VideoPid>0)
 			{
-				GetAudioPayload(&type);// radio
+				if(audioToUse==m_pSections->pids.AudioPid)
+					GetMP2Media(&type);// tv
+				else 
+					GetAC3Media(&type);
 			}
 			else
 			{
-				GetMP2Media(&type); // radio
-			}	
+				if(m_pSections->pids.PCRPid==0 || m_pSections->pids.PCRPid>=0x1FFF)
+				{
+					GetAudioPayload(&type);// radio
+				}
+				else
+				{
+					GetMP2Media(&type); // radio
+				}	
+			}
+			hr=demuxer->CreateOutputPin(&type,L"Audio" ,&m_pAudio);
+			if (hr==VFW_E_DUPLICATE_NAME)
+			{
+				//pin already exists!
+				IEnumPins* enumPins;
+				demuxFilter->EnumPins(&enumPins);
+				enumPins->Reset();
+				IPin* pins[2];
+				ULONG fetched;
+				while (enumPins->Next(1, &pins[0],&fetched)==0)
+				{
+					if (fetched==1)
+					{
+						PIN_INFO pinInfo;
+						pins[0]->QueryPinInfo(&pinInfo);
+						if (wcscmp(pinInfo.achName,L"Audio")==0)
+						{
+							m_pAudio=pins[0];
+						}
+						pins[0]->Release();
+					}
+				}
+				enumPins->Release();
+			}
 		}
-		hr=demuxer->CreateOutputPin(&type,L"Audio" ,&m_pAudio);
 	}
 
 	SetupPids();

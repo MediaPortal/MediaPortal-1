@@ -349,7 +349,7 @@ void Sections::decodePMT()
 			for(int i=0;i<pmtcount;i++)
 			{
 				actPid=pmt[i];
-				if(header.Pid==actPid && header.Pid>0x11)
+				if(header.Pid==actPid && header.Pid>0)
 				{
 					if(header.PayloadUnitStart==true)
 						offset=4+pData[4]+1;
