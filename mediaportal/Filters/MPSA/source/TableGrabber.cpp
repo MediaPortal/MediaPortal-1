@@ -64,7 +64,7 @@ void TableGrabber::OnPacket(byte* pbData,long lDataLen)
 	
 	if (m_bSectionGrabbed) return;
 	int secsTimeOut=time(NULL)-timeoutTimer;
-	if (secsTimeOut>30) 
+	if (secsTimeOut>120) 
 	{
 		Log("mhw-epg: timeout for pid:%x",m_pid);
 		m_bSectionGrabbed=true;
@@ -76,7 +76,8 @@ void TableGrabber::OnPacket(byte* pbData,long lDataLen)
 void TableGrabber::ParseSection(byte* pData, long lDataLen)
 {
 	
-	if (lDataLen<14 || pData==NULL) return;
+	if (lDataLen<14 || pData==NULL) 
+		return;
 	DVBSectionHeader header;
 	GetSectionHeader(pData,0,header);
 	
@@ -87,8 +88,10 @@ void TableGrabber::ParseSection(byte* pData, long lDataLen)
 			return; // PES PACKET
 		}
 		header.SectionLength+=3;
-		if(header.SectionLength<1) return;
-		if (header.SectionLength>lDataLen) return;
+		if(header.SectionLength<1) 
+			return;
+		if (header.SectionLength>lDataLen) 
+			return;
 		if(header.SectionLength>4999)
 		{
 			Log("mhw-epg: Section length:%d", header.SectionLength);
@@ -97,10 +100,11 @@ void TableGrabber::ParseSection(byte* pData, long lDataLen)
 		imapSections it;
 		if (m_pid==0xd2)
 		{
-			if (pData[3]==0xff) return;
-			if (header.SectionLength<42) return;
+			if (pData[3]==0xff) 
+				return;
+			if (header.SectionLength<42) 
+				return;
 			ULONG key=(header.SectionNumber<<16)+header.TableIDExtension;
-			//int channelID=(pData[3])-1;
 			it=m_mapSections.find(key);
 			if (it==m_mapSections.end())
 			{
@@ -114,7 +118,6 @@ void TableGrabber::ParseSection(byte* pData, long lDataLen)
 		else
 		{
 			ULONG key=(header.SectionNumber<<16)+header.TableIDExtension;
-			//int channelID=(pData[3])-1;
 			it=m_mapSections.find(key);
 			if (it==m_mapSections.end())
 			{
@@ -125,6 +128,10 @@ void TableGrabber::ParseSection(byte* pData, long lDataLen)
 				timeoutTimer=time(NULL);
 			}			
 		}
+	}
+	else 	if (header.TableID==m_sectionTableID )
+	{
+		int y=1;
 	}
 }
 

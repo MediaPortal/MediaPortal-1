@@ -111,7 +111,7 @@ STDMETHODIMP CMHWInputPin1::Receive(IMediaSample *pSample)
 		m_tableGrabber.Reset();
 		m_tableGrabber.SetTableId(0xd2,0x90);
 	}
-	if (!m_bGrabMHW) return S_OK;
+	if (!m_bGrabMHW) return S_OK; //test
     CheckPointer(pSample,E_POINTER);
 
     //CAutoLock lock(m_pReceiveLock);
@@ -146,6 +146,7 @@ STDMETHODIMP CMHWInputPin1::Receive(IMediaSample *pSample)
 void CMHWInputPin1::ResetPids()
 {
 	m_bReset=true;
+	//Parse();//test
 }
 
 //

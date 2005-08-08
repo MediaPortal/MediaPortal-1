@@ -374,7 +374,7 @@ int Sections::decodeSDT(BYTE *buf,ChannelInfo ch[],int channels, int len)
 		//
 		if(channel==-1)
 		{
-			Log("sdt: channel not found for program:%d", service_id);
+			Log("sdt: channel not found for program:%x", service_id);
 		}
 
 		while (len2 > 0)
@@ -386,19 +386,22 @@ int Sections::decodeSDT(BYTE *buf,ChannelInfo ch[],int channels, int len)
 			//Log.Write("indicator = {0:X}",indicator);
 			if (indicator == 0x48)
 			{
-				if (ch[channel].SDTReady==false)
+				if (channel>=0)
 				{
-					ServiceData serviceData;							
-					DVB_GetService(buf+pointer,&serviceData);
-					ch[channel].ServiceType=serviceData.ServiceType;
-					strcpy((char*)ch[channel].ProviderName,serviceData.Provider);
-					strcpy((char*)ch[channel].ServiceName,serviceData.Name);
-					ch[channel].Scrambled=free_CA_mode;
-					ch[channel].EITPreFollow=EIT_present_following_flag;
-					ch[channel].EITSchedule=EIT_schedule_flag;
-					ch[channel].SDTReady=true;
-					ch[channel].NetworkID=original_network_id;
-					Log("sdt: pmt:0x%x provider:'%s' channel:'%s' onid:0x%x tsid:0x%x", ch[channel].ProgrammPMTPID,ch[channel].ProviderName,ch[channel].ServiceName,ch[channel].NetworkID, transport_stream_id);
+					if (ch[channel].SDTReady==false)
+					{
+						ServiceData serviceData;							
+						DVB_GetService(buf+pointer,&serviceData);
+						ch[channel].ServiceType=serviceData.ServiceType;
+						strcpy((char*)ch[channel].ProviderName,serviceData.Provider);
+						strcpy((char*)ch[channel].ServiceName,serviceData.Name);
+						ch[channel].Scrambled=free_CA_mode;
+						ch[channel].EITPreFollow=EIT_present_following_flag;
+						ch[channel].EITSchedule=EIT_schedule_flag;
+						ch[channel].SDTReady=true;
+						ch[channel].NetworkID=original_network_id;
+						Log("sdt: pmt:0x%x provider:'%s' channel:'%s' onid:0x%x tsid:0x%x", ch[channel].ProgrammPMTPID,ch[channel].ProviderName,ch[channel].ServiceName,ch[channel].NetworkID, transport_stream_id);
+					}
 				}
 			}
 			else
@@ -692,9 +695,9 @@ void Sections::DecodeEPG(byte* buf,int len)
 
 	time_t currentTime=time(NULL);
 	time_t timespan=currentTime-m_epgTimeout;
-	if (timespan>10)
+	if (timespan>60)
 	{
-		//Log("EPG:timeout");
+		Log("EPG:timeout");
 		m_bParseEPG=false;
 		m_bEpgDone=true;
 	}

@@ -239,7 +239,6 @@ HRESULT SplitterSetup::SetMHW2Mapping()
 	}
 	pMap->Release();
 	return S_OK;
-
 }
 
 HRESULT SplitterSetup::SetSectionMapping()

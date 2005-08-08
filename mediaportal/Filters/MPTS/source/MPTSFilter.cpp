@@ -177,14 +177,17 @@ HRESULT CMPTSFilter::SetFilePosition(REFERENCE_TIME seek)
 	if(m_pSections->pids.Duration<1)
 		return S_FALSE;
 
-	Sections::PTSTime time;
+	__int64 position=0;
+	if (seek>0)
+	{
+		Sections::PTSTime time;
 
-	ULONGLONG duration=m_pSections->pids.EndPTS-m_pSections->pids.StartPTS;
-	m_pSections->PTSToPTSTime(duration,&time);
-	duration=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
+		ULONGLONG duration=m_pSections->pids.EndPTS-m_pSections->pids.StartPTS;
+		m_pSections->PTSToPTSTime(duration,&time);
+		duration=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
 
-	__int64 position=(fileSize/100LL)* ( (seek*100LL)/ duration);
-
+		position=(fileSize/100LL)* ( (seek*100LL)/ duration);
+	}
 	if(position>fileSize || position<0)
 	{
 		Log((char*)"SetFilePosition() error",false);

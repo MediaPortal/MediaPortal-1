@@ -61,8 +61,8 @@ private:
 	map<int,MHWSummary> m_mapSummaries;
 	typedef map<int,MHWSummary> ::iterator imapSummaries;
 
-	map<int,MHWProgramm> m_mapTitles;
-	typedef map<int,MHWProgramm> ::iterator imapTitles;
+	vector<MHWProgramm> m_mapTitles;
+	typedef vector<MHWProgramm> ::iterator imapTitles;
 
 	vector<MHWTheme> m_vecThemes;
 	typedef vector<MHWTheme> ::iterator ivecThemes;
