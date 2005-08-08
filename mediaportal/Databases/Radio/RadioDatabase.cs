@@ -606,7 +606,7 @@ namespace MediaPortal.Radio.Database
 					if (results.Rows.Count==0) 
 					{
 						// doesnt exists, add it
-						strSQL=String.Format("insert into tblDVBCMapping (idChannel, strChannel,strProvider,frequency,symbolrate,innerFec,modulation,ONID,TSID,SID,audioPid,pmtPid,Visible,pcrPid) Values( {0}, '{1}', '{2}', '{3}',{4},{5},{6},{7},{8},{9},{10},{11},1,{12},pcrPid)"
+						strSQL=String.Format("insert into tblDVBCMapping (idChannel, strChannel,strProvider,frequency,symbolrate,innerFec,modulation,ONID,TSID,SID,audioPid,pmtPid,Visible,pcrPid) Values( {0}, '{1}', '{2}', '{3}',{4},{5},{6},{7},{8},{9},{10},{11},1,{12})"
 							,idChannel,strChannel,strProvider,frequency,symbolrate,innerFec,modulation,ONID,TSID,SID,audioPid,pmtPid,pcrPid);
 						//Log.WriteFile(Log.LogType.Log,true,"sql:{0}", strSQL);
 						m_db.Execute(strSQL);
