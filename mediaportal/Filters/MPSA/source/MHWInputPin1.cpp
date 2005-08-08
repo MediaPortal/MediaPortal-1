@@ -49,6 +49,8 @@ CMHWInputPin1::CMHWInputPin1(CStreamAnalyzer *pDump,
 {
 
 	ResetPids();
+		
+	m_bGrabMHW=false;
 }
 
 //
@@ -105,7 +107,6 @@ STDMETHODIMP CMHWInputPin1::Receive(IMediaSample *pSample)
 		Log("mhw1:reset");
 		m_bReset=false;
 		m_bParsed=false;
-		m_bGrabMHW=false;
 		m_MHWParser.Reset();
 		m_tableGrabber.Reset();
 		m_tableGrabber.SetTableId(0xd2,0x90);
