@@ -695,7 +695,7 @@ void Sections::DecodeEPG(byte* buf,int len)
 
 	time_t currentTime=time(NULL);
 	time_t timespan=currentTime-m_epgTimeout;
-	if (timespan>60)
+	if (timespan>10)
 	{
 		Log("EPG:timeout");
 		m_bParseEPG=false;
