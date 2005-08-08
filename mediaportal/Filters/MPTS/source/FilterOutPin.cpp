@@ -101,8 +101,8 @@ HRESULT CFilterOutPin::CompleteConnect(IPin *pReceivePin)
 	if (SUCCEEDED(hr))
 	{
 		m_pMPTSFilter->OnConnect();
-		m_rtDuration = m_pSections->pids.Duration;
-		m_rtStop = m_rtDuration;
+		ULONGLONG startPts=0, endPts=0;
+		UpdatePositions(startPts,endPts);
 	}
 	return S_OK;
 }
@@ -191,39 +191,7 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 			}
 			LogDebug("%d done", i);
 		}
-		LogDebug("got pts.");
-		LogDebug("calc.");
-		Sections::PTSTime time;
-		m_rtStart=m_pSections->pids.StartPTS;
-		m_rtStop=m_pSections->pids.EndPTS;
-		m_rtDuration=m_pSections->pids.EndPTS-m_pSections->pids.StartPTS;
-		
-		
-		if (ptsStart==0) ptsStart=m_lastPTS;
-		if (ptsEnd==0) ptsEnd=m_lastPTS;
-
-		m_lastPTS=ptsEnd;
-
-		ptsStart -=m_rtStart;
-		ptsEnd   -=m_rtStart;
-
-		m_pSections->PTSToPTSTime(ptsStart,&time);
-		ptsStart=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
-
-		m_pSections->PTSToPTSTime(ptsEnd,&time);
-		ptsEnd=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
-
-		m_pSections->PTSToPTSTime(m_rtStart,&time);
-		m_rtStart=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
-
-
-		m_pSections->PTSToPTSTime(m_rtStop,&time);
-		m_rtStop=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
-
-		m_pSections->PTSToPTSTime(m_rtDuration,&time);
-		m_rtDuration=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
-
-		LogDebug("calc done.");
+		UpdatePositions(ptsStart,ptsEnd);
 
 		REFERENCE_TIME rtStart = static_cast<REFERENCE_TIME>(ptsStart / m_dRateSeeking);
 		REFERENCE_TIME rtStop  = static_cast<REFERENCE_TIME>(ptsEnd / m_dRateSeeking);
@@ -356,4 +324,36 @@ STDMETHODIMP  CFilterOutPin::GetAvailable( LONGLONG * pEarliest, LONGLONG * pLat
 		*pLatest = m_pSections->pids.EndPTS;
 	}
 	return S_OK;
+}
+void CFilterOutPin::UpdatePositions(ULONGLONG& ptsStart, ULONGLONG& ptsEnd)
+{
+	Sections::PTSTime time;
+	m_rtStart=m_pSections->pids.StartPTS;
+	m_rtStop=m_pSections->pids.EndPTS;
+	m_rtDuration=m_pSections->pids.EndPTS-m_pSections->pids.StartPTS;
+	
+	
+	if (ptsStart==0) ptsStart=m_lastPTS;
+	if (ptsEnd==0) ptsEnd=m_lastPTS;
+
+	m_lastPTS=ptsEnd;
+
+	ptsStart -=m_rtStart;
+	ptsEnd   -=m_rtStart;
+
+	m_pSections->PTSToPTSTime(ptsStart,&time);
+	ptsStart=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
+
+	m_pSections->PTSToPTSTime(ptsEnd,&time);
+	ptsEnd=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
+
+	m_pSections->PTSToPTSTime(m_rtStart,&time);
+	m_rtStart=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
+
+
+	m_pSections->PTSToPTSTime(m_rtStop,&time);
+	m_rtStop=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
+
+	m_pSections->PTSToPTSTime(m_rtDuration,&time);
+	m_rtDuration=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
 }

@@ -43,6 +43,7 @@ protected:
 	HRESULT GetReferenceClock(IReferenceClock **pClock);
 
 protected:
+	void UpdatePositions(ULONGLONG& startPts, ULONGLONG& endPts);
 	CMPTSFilter * const m_pMPTSFilter;
 	FileReader * const m_pFileReader;
 	Sections * const m_pSections;
