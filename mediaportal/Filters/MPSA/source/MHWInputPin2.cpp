@@ -103,8 +103,10 @@ STDMETHODIMP CMHWInputPin2::Receive(IMediaSample *pSample)
 {
 	if (m_bReset)
 	{
+		Log("mhw2:reset");
 		m_bReset=false;
 		m_bParsed=false;
+		m_bGrabMHW=false;
 		m_MHWParser.Reset();
 
 		m_tableGrabber90.Reset();
@@ -116,6 +118,7 @@ STDMETHODIMP CMHWInputPin2::Receive(IMediaSample *pSample)
 		m_tableGrabber92.Reset();
 		m_tableGrabber92.SetTableId(0xd3,0x92);
 	}
+	if (!m_bGrabMHW) return S_OK;
     CheckPointer(pSample,E_POINTER);
 
 //    CAutoLock lock(m_pReceiveLock);
@@ -140,11 +143,11 @@ STDMETHODIMP CMHWInputPin2::Receive(IMediaSample *pSample)
 	if(lDataLen>5)
 	{
 
-		Log("mhw2:OnPacket()");
+		//Log("mhw2:OnPacket()");
 		m_tableGrabber90.OnPacket(pbData,lDataLen);
 		m_tableGrabber91.OnPacket(pbData,lDataLen);
 		m_tableGrabber92.OnPacket(pbData,lDataLen);
-		Log("mhw2:OnPacket() done");
+		//Log("mhw2:OnPacket() done");
 	}
 
     return S_OK;
@@ -153,6 +156,7 @@ STDMETHODIMP CMHWInputPin2::Receive(IMediaSample *pSample)
 void CMHWInputPin2::ResetPids()
 {
 	m_bReset=true;
+	m_bGrabMHW=false;
 }
 
 //
@@ -203,11 +207,12 @@ bool CMHWInputPin2::IsParsed()
 void CMHWInputPin2::Parse()
 {
 	if (m_bParsed) return;
-	Log("mhwpin2: parse()");
+	//Log("mhwpin2: parse()");
 	CAutoLock lock(&m_Lock);
 	m_bParsed=true;
+	m_bGrabMHW=false;
 	//parse summaries
-	Log("MHW2: parse summaries:%d",m_tableGrabber90.Count());
+	//Log("MHW2: parse summaries:%d",m_tableGrabber90.Count());
 	for (int i=0; i < m_tableGrabber90.Count();++i)
 	{
 		try
@@ -221,7 +226,7 @@ void CMHWInputPin2::Parse()
 	}
 
 	//parse channels
-	Log("MHW2: parse channels:%d",m_tableGrabber91.Count());
+	//Log("MHW2: parse channels:%d",m_tableGrabber91.Count());
 	for (int i=0; i < m_tableGrabber91.Count();++i)
 	{
 		try
@@ -235,7 +240,7 @@ void CMHWInputPin2::Parse()
 	}
 
 	//parse themes
-	Log("MHW2: parse themes:%d",m_tableGrabber92.Count());
+	//Log("MHW2: parse themes:%d",m_tableGrabber92.Count());
 	for (int i=0; i < m_tableGrabber92.Count();++i)
 	{
 		try
@@ -247,5 +252,11 @@ void CMHWInputPin2::Parse()
 			Log("MHW:exception MHW2 ParseThemes table:%d", i);
 		}
 	}
-	Log("MHW2:parse done()");
+	//Log("MHW2:parse done()");
+}
+
+void CMHWInputPin2::GrabMHW()
+{
+	m_bGrabMHW=true;
+	ResetPids();
 }

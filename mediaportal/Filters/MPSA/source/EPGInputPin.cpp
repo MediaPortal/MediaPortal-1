@@ -103,6 +103,7 @@ STDMETHODIMP CEPGInputPin::Receive(IMediaSample *pSample)
 {
 	if (m_bReset)
 	{
+		Log("epg:reset");
 		m_bReset=false;
 		m_pDump->m_pSections->ResetEPG();
 	}

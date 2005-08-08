@@ -42,6 +42,7 @@ public:
 	void ResetPids();
 	bool IsReady();
 	bool IsParsed();
+	void GrabMHW();
 	CMHWParser   m_MHWParser;
 private:
 	CCritSec m_Lock;
@@ -52,4 +53,5 @@ private:
 	TableGrabber m_tableGrabber92;
 	bool         m_bParsed;
 	bool		 m_bReset;	
+	bool		 m_bGrabMHW;
 };

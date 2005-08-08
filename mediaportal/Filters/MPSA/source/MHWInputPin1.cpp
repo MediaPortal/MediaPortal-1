@@ -102,12 +102,15 @@ STDMETHODIMP CMHWInputPin1::Receive(IMediaSample *pSample)
 {
 	if (m_bReset)
 	{
+		Log("mhw1:reset");
 		m_bReset=false;
 		m_bParsed=false;
+		m_bGrabMHW=false;
 		m_MHWParser.Reset();
 		m_tableGrabber.Reset();
 		m_tableGrabber.SetTableId(0xd2,0x90);
 	}
+	if (!m_bGrabMHW) return S_OK;
     CheckPointer(pSample,E_POINTER);
 
     //CAutoLock lock(m_pReceiveLock);
@@ -131,9 +134,9 @@ STDMETHODIMP CMHWInputPin1::Receive(IMediaSample *pSample)
 	// decode
 	if(lDataLen>5)
 	{
-		Log("mhw1:OnPacket()");
+		//Log("mhw1:OnPacket()");
 		m_tableGrabber.OnPacket(pbData,lDataLen);
-		Log("mhw1:OnPacket() done");
+		//Log("mhw1:OnPacket() done");
 	}
     return S_OK;
 }
@@ -191,8 +194,9 @@ void CMHWInputPin1::Parse()
 		
 	CAutoLock lock(&m_Lock);
 	m_bParsed=true;
+	m_bGrabMHW=false;
 	//parse summaries
-	Log("MHW1: parse titles:%d",m_tableGrabber.Count());
+	//Log("MHW1: parse titles:%d",m_tableGrabber.Count());
 	for (int i=0; i < m_tableGrabber.Count();++i)
 	{
 		try
@@ -204,5 +208,10 @@ void CMHWInputPin1::Parse()
 			Log("MHW:exception MHW1 parse title table:%d", i);
 		}
 	}
-	Log("MHW1: parse done");
+	//Log("MHW1: parse done");
+}
+void CMHWInputPin1::GrabMHW()
+{
+	m_bGrabMHW=true;
+	ResetPids();
 }

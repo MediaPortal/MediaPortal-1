@@ -35,7 +35,7 @@ void CMHWParser::ParseChannels(byte* data, int dataLen)
 		buffer[16]=0;
 		ch.ChannelName=(char*)buffer;
 		
-		Log("mhw-epg: added channel '%s' prog:%d onid:0x%x tsid:0x%x",ch.ChannelName.c_str(),ch.ChannelID,ch.NetworkID,ch.TransponderID);
+		//Log("mhw-epg: added channel '%s' prog:%d onid:0x%x tsid:0x%x",ch.ChannelName.c_str(),ch.ChannelID,ch.NetworkID,ch.TransponderID);
 		m_vecChannels.push_back(ch);
 	}// for(int n=0
 //	Log("mhw-epg: channels:%d", m_vecChannels.size()); 
@@ -60,7 +60,7 @@ void CMHWParser::ParseSummaries(byte* data, int maxLen)
 		imapSummaries it=m_mapSummaries.find(sum.ProgramID);
 		if (it==m_mapSummaries.end())
 		{
-			Log("mhw-epg: added summary with id 0x%x ",sum.ProgramID);
+			//Log("mhw-epg: added summary with id 0x%x ",sum.ProgramID);
 			m_mapSummaries[sum.ProgramID]=sum;
 		}
 	}//if(m_summaryBuffer.Contains(sum)==false)
@@ -118,7 +118,7 @@ void CMHWParser::ParseTitles(byte* data, int dataLen)
 	imapTitles it=m_mapTitles.find(prg.ID);
 	if (it==m_mapTitles.end())
 	{
-		Log("mhw-epg: added title %s id:%x chan:%d theme:%i sum:%d",prg.Title.c_str(),prg.ID,prg.ChannelID,prg.ThemeID,prg.Summaries);
+		//Log("mhw-epg: added title %s id:%x chan:%d theme:%i sum:%d",prg.Title.c_str(),prg.ID,prg.ChannelID,prg.ThemeID,prg.Summaries);
 		m_mapTitles[prg.ID]=prg;
 	}
 //	Log("mhw-epg: titles:%d", m_mapTitles.size());
@@ -195,9 +195,9 @@ void CMHWParser::GetTitle(int program, WORD* id, WORD* transportId, WORD* networ
 	*dateStart=it->second.dateStart;
 	*timeStart=it->second.timeStart;
 	*title=(char*)it->second.Title.c_str();
-	Log("mhw-epg: GetTitle(%d) size:%d chan:%d progid:%x '%s'", 
-		program,m_mapTitles.size(),
-		*channelId, *programId, *title);
+	//Log("mhw-epg: GetTitle(%d) size:%d chan:%d progid:%x '%s'", 
+	//	program,m_mapTitles.size(),
+	//	*channelId, *programId, *title);
 }
 
 void CMHWParser::GetChannel(WORD channelNr, WORD* channelId, WORD* networkId, WORD* transportId, char** channelName)
@@ -213,7 +213,7 @@ void CMHWParser::GetChannel(WORD channelNr, WORD* channelId, WORD* networkId, WO
 	*transportId=it->TransponderID;
 	*channelId=it->ChannelID;
 	*channelName=(char*)it->ChannelName.c_str();
-	Log("mhw-epg: GetChannel(%d) size:%d cid:%x onid:%x tsid:%x name:%s", channelNr,m_vecChannels.size(),*channelId,*networkId,*transportId,*channelName);
+	//Log("mhw-epg: GetChannel(%d) size:%d cid:%x onid:%x tsid:%x name:%s", channelNr,m_vecChannels.size(),*channelId,*networkId,*transportId,*channelName);
 	return;
 }
 
