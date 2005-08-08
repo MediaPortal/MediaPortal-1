@@ -1154,6 +1154,10 @@ public class MediaPortalApp : D3DApp, IRender
 	#region FrameMove()
 	protected override void FrameMove()
 	{
+		if (GUIGraphicsContext.CurrentState==GUIGraphicsContext.State.STOPPING)
+		{
+			this.Close();
+		}
 		try
 		{
 			GUIWindowManager.DispatchThreadMessages();

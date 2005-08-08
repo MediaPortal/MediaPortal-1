@@ -2456,6 +2456,7 @@ namespace MediaPortal
 				FullRender();
 				WaitForFrameClock();
 				if (g_Player.Playing) return;
+				if (GUIGraphicsContext.CurrentState==GUIGraphicsContext.State.STOPPING) return;
 			} 
 		}
 	}
