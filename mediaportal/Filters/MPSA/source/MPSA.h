@@ -144,7 +144,6 @@ class CStreamAnalyzerSectionsPin : public CRenderedInputPin
     CStreamAnalyzer    * const m_pDump;           // Main renderer object
     CCritSec * const m_pReceiveLock;    // Sample critical section
     REFERENCE_TIME m_tLast;             // Last sample receive time
-	bool		   m_bReset;
 public:
 
     CStreamAnalyzerSectionsPin(CStreamAnalyzer *pDump,
@@ -257,6 +256,7 @@ public:
 private:
     // Overriden to say what interfaces we support where
     STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void ** ppv);
+	bool		   m_bReset;
 
     // Open and write to the file
 };

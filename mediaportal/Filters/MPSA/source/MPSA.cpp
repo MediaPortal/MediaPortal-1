@@ -234,7 +234,6 @@ CStreamAnalyzerSectionsPin::CStreamAnalyzerSectionsPin(CStreamAnalyzer *pDump,
     m_pDump(pDump),
     m_tLast(0)
 {
-	m_bReset=false;
 }
 
 
@@ -286,13 +285,7 @@ STDMETHODIMP CStreamAnalyzerSectionsPin::ReceiveCanBlock()
 //
 STDMETHODIMP CStreamAnalyzerSectionsPin::Receive(IMediaSample *pSample)
 {
-	if (m_bReset)
-	{
-		m_bReset=false;
-		m_pDump->m_patChannelsCount=0;
-		m_pDump->m_pSections->Reset();
-		m_pDump->m_atscParser.Reset();
-	}
+	
     CheckPointer(pSample,E_POINTER);
 
     //CAutoLock lock(m_pReceiveLock);
@@ -320,7 +313,7 @@ STDMETHODIMP CStreamAnalyzerSectionsPin::Receive(IMediaSample *pSample)
 }
 void CStreamAnalyzerSectionsPin::ResetPids()
 {
-	m_bReset=true;
+	m_pDump->ResetPids();
 }
 
 //
@@ -362,6 +355,7 @@ CStreamAnalyzer::CStreamAnalyzer(LPUNKNOWN pUnk, HRESULT *phr) :
 {
 	Log("Initialize MPSA");
 	m_bDecodeATSC=false;
+	m_bReset=true;
     ASSERT(phr);
     memset(m_pmtGrabData,0,4096);
 	m_pSections=new Sections();
@@ -573,7 +567,8 @@ HRESULT CStreamAnalyzer::OnConnectMHW2()
 	
 STDMETHODIMP CStreamAnalyzer::ResetPids()
 {
-        return NOERROR;
+	m_bReset=true;
+    return NOERROR;
 }
 HRESULT CStreamAnalyzer::ProcessEPG(BYTE *pbData,long len)
 {
@@ -607,7 +602,13 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 {
 	try
 	{
-		
+		if (m_bReset)
+		{
+			m_bReset=false;
+			m_patChannelsCount=0;
+			m_pSections->Reset();
+			m_atscParser.Reset();
+		}		
 		//CAutoLock lock(&m_Lock);
 /*
 		if(pbData[0]==0x00 && pbData[1]==0x00 && pbData[2]==0x01)
@@ -769,7 +770,10 @@ STDMETHODIMP CStreamAnalyzer::get_State(FILTER_STATE *pState)
 
 STDMETHODIMP CStreamAnalyzer::GetChannelCount(WORD *count)
 {
-	*count=m_patChannelsCount;
+	if (m_bReset) 
+		*count=0;
+	else
+		*count=m_patChannelsCount;
 	return S_OK;
 }
 STDMETHODIMP CStreamAnalyzer::SetPMTProgramNumber(ULONG prgNum)
