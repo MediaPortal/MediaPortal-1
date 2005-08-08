@@ -1197,7 +1197,7 @@ namespace MediaPortal.Configuration.Sections
 			//Current version number of this exporter (change when needed)
 			int CURRENT_VERSION = 1;  //<--- Make sure this same number is given to Import_from_XML
 			
-			using(MediaPortal.Profile.Xml channels = new MediaPortal.Profile.Xml(fileStr))
+			using(MediaPortal.Profile.Xml channels = new MediaPortal.Profile.Xml(fileStr, false))
 			{
 				//Channel Data
 				//channels.Clear();
