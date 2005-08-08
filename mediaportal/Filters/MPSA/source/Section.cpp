@@ -91,7 +91,6 @@ Sections::Sections()
 
 Sections::~Sections()
 {
-	CAutoLock lock(&m_Lock);
 	//delete m_pFileReader;
 }
 
@@ -185,7 +184,6 @@ HRESULT Sections::CurrentPTS(BYTE *pData,ULONGLONG *ptsValue,int *streamType)
 }
 int Sections::decodePMT(BYTE *buf,ChannelInfo *ch, int len)
 {
-	CAutoLock lock(&m_Lock);
 	// pmt should now in the pmtData array
 	if (len <12) return -1;
 
@@ -324,7 +322,6 @@ int Sections::decodePMT(BYTE *buf,ChannelInfo *ch, int len)
 int Sections::decodeSDT(BYTE *buf,ChannelInfo ch[],int channels, int len)
 {	
 
-	CAutoLock lock(&m_Lock);
 	if (len < 10) return 0;
 	if (channels<=0) return 0;
 	
@@ -424,7 +421,6 @@ int Sections::decodeSDT(BYTE *buf,ChannelInfo ch[],int channels, int len)
 
 void Sections::DVB_GetService(BYTE *b,ServiceData *serviceData)
 {
-	CAutoLock lock(&m_Lock);
 	int descriptor_tag;
 	int descriptor_length;
 	int service_provider_name_length;
@@ -444,7 +440,6 @@ void Sections::DVB_GetService(BYTE *b,ServiceData *serviceData)
 }
 bool Sections::IsNewPat(BYTE *pData, int len)
 {
-	CAutoLock lock(&m_Lock);
 	int table_id = pData[0];
 	if (table_id!=0) return false;
 	if (len<9) return false;
@@ -468,7 +463,6 @@ bool Sections::IsNewPat(BYTE *pData, int len)
 }
 void Sections::decodePAT(BYTE *pData,ChannelInfo chInfo[],int *channelCount, int len)
 {
-	CAutoLock lock(&m_Lock);
 	int table_id = pData[0];
 	if (table_id!=0) return;
 	if (len<9) return;
@@ -518,7 +512,6 @@ void Sections::decodePAT(BYTE *pData,ChannelInfo chInfo[],int *channelCount, int
 
 void Sections::getString468A(BYTE *b, int l1,char *text)
 {
-	CAutoLock lock(&m_Lock);
 	int i = 0;
 	int num=0;
 	unsigned char c;
@@ -581,7 +574,6 @@ cont:
 // pes
 void Sections::GetPES(BYTE *data,ULONG len,BYTE *pes)
 {
-	CAutoLock lock(&m_Lock);
 	int ptr = 0; 
 	int offset = 0; 
 	bool isMPEG1=false;
@@ -603,7 +595,6 @@ void Sections::GetPES(BYTE *data,ULONG len,BYTE *pes)
 
 HRESULT Sections::ParseAudioHeader(BYTE *data,AudioHeader *head)
 {
-	CAutoLock lock(&m_Lock);
     AudioHeader header;
 	int limit = 32;
 
@@ -696,7 +687,6 @@ HRESULT Sections::ParseAudioHeader(BYTE *data,AudioHeader *head)
 
 void Sections::DecodeEPG(byte* buf,int len)
 {
-	CAutoLock lock(&m_Lock);
 	Log("DecodeEPG():%d",len);
 	if (!m_bParseEPG) return;
 	if (buf==NULL) return;
@@ -821,7 +811,6 @@ void Sections::DecodeEPG(byte* buf,int len)
 
 void Sections::DecodeExtendedEvent(byte* data, EPGEvent& event)
 {
-	CAutoLock lock(&m_Lock);
 	int descriptor_tag;
 	int descriptor_length;
 	int descriptor_number;
@@ -889,7 +878,6 @@ void Sections::DecodeExtendedEvent(byte* data, EPGEvent& event)
 
 void Sections::DecodeShortEventDescriptor(byte* buf, EPGEvent& event)
 {
-	CAutoLock lock(&m_Lock);
 	char* buffer;
 	int descriptor_tag = buf[0];
 	int descriptor_len = buf[1];
@@ -923,7 +911,6 @@ void Sections::DecodeShortEventDescriptor(byte* buf, EPGEvent& event)
 }
 void Sections::DecodeContentDescription(byte* buf,EPGEvent& event)
 {
-	CAutoLock lock(&m_Lock);
 	int      descriptor_tag;
 	int      descriptor_length;		
 	int      content_nibble_level_1;
@@ -1080,24 +1067,24 @@ void Sections::DecodeContentDescription(byte* buf,EPGEvent& event)
 	}
 }
 
-
-void Sections::Reset()
+void Sections::ResetEPG()
 {
-	CAutoLock lock(&m_Lock);
-	Log("sections::Reset");
-	m_patTSID=-1;
-	m_patSectionLen=-1;
-	m_patTableVersion=-1;
 	m_mapEPG.clear();
 	m_bParseEPG=true;
 	m_bEpgDone=false;
 	
 	m_epgTimeout=time(NULL)+60;
 }
+void Sections::Reset()
+{
+	Log("sections::Reset");
+	m_patTSID=-1;
+	m_patSectionLen=-1;
+	m_patTableVersion=-1;
+}
 
 void Sections::GrabEPG()
 {
-	CAutoLock lock(&m_Lock);
 	Log("GrabEPG");
 	m_mapEPG.clear();
 	m_bParseEPG=true;
@@ -1121,13 +1108,11 @@ bool Sections::IsEPGReady()
 }
 ULONG Sections::GetEPGChannelCount( )
 {
-	CAutoLock lock(&m_Lock);
 //	Log("GetEPGChannelCount:%d",m_mapEPG.size());
 	return m_mapEPG.size();
 }
 ULONG  Sections::GetEPGEventCount( ULONG channel)
 {
-	CAutoLock lock(&m_Lock);
 	if (channel>=m_mapEPG.size()) return 0;
 	int count=0;
 	imapEPG it =m_mapEPG.begin();
@@ -1140,7 +1125,6 @@ ULONG  Sections::GetEPGEventCount( ULONG channel)
 }
 void Sections::GetEPGChannel( ULONG channel,  WORD* networkId,  WORD* transportid, WORD* service_id  )
 {
-	CAutoLock lock(&m_Lock);
 //	Log("GetEPGChannel#%d",channel);
 
 	if (channel>=m_mapEPG.size()) return;
@@ -1163,7 +1147,6 @@ void Sections::GetEPGChannel( ULONG channel,  WORD* networkId,  WORD* transporti
 }
 void Sections::GetEPGEvent( ULONG channel,  ULONG eventid,ULONG* language, ULONG* dateMJD, ULONG* timeUTC, ULONG* duration, char**event,  char** text, char** genre    )
 {
-	CAutoLock lock(&m_Lock);
 	*dateMJD=0;
 	*timeUTC=0;
 	*duration=0;

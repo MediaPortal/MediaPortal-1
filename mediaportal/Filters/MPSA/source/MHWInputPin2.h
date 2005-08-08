@@ -51,5 +51,5 @@ private:
 	TableGrabber m_tableGrabber91;
 	TableGrabber m_tableGrabber92;
 	bool         m_bParsed;
-	
+	bool		 m_bReset;	
 };

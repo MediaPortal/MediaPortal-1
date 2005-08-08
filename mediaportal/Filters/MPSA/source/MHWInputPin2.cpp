@@ -101,6 +101,21 @@ STDMETHODIMP CMHWInputPin2::ReceiveCanBlock()
 //
 STDMETHODIMP CMHWInputPin2::Receive(IMediaSample *pSample)
 {
+	if (m_bReset)
+	{
+		m_bReset=false;
+		m_bParsed=false;
+		m_MHWParser.Reset();
+
+		m_tableGrabber90.Reset();
+		m_tableGrabber90.SetTableId(0xd3,0x90);
+		
+		m_tableGrabber91.Reset();
+		m_tableGrabber91.SetTableId(0xd3,0x91);
+		
+		m_tableGrabber92.Reset();
+		m_tableGrabber92.SetTableId(0xd3,0x92);
+	}
     CheckPointer(pSample,E_POINTER);
 
 //    CAutoLock lock(m_pReceiveLock);
@@ -137,20 +152,7 @@ STDMETHODIMP CMHWInputPin2::Receive(IMediaSample *pSample)
 
 void CMHWInputPin2::ResetPids()
 {
-	CAutoLock lock(&m_Lock);
-	//Parse();//test
-//	Log("mhwpin2:ResetPids()");
-	m_bParsed=false;
-	m_MHWParser.Reset();
-
-	m_tableGrabber90.Reset();
-	m_tableGrabber90.SetTableId(0xd3,0x90);
-	
-	m_tableGrabber91.Reset();
-	m_tableGrabber91.SetTableId(0xd3,0x91);
-	
-	m_tableGrabber92.Reset();
-	m_tableGrabber92.SetTableId(0xd3,0x92);
+	m_bReset=true;
 }
 
 //

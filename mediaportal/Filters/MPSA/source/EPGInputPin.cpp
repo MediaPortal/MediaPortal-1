@@ -48,7 +48,7 @@ CEPGInputPin::CEPGInputPin(CStreamAnalyzer *pDump,
     m_pDump(pDump),
     m_tLast(0)
 {
-
+	ResetPids();
 }
 
 //
@@ -101,6 +101,11 @@ STDMETHODIMP CEPGInputPin::ReceiveCanBlock()
 //
 STDMETHODIMP CEPGInputPin::Receive(IMediaSample *pSample)
 {
+	if (m_bReset)
+	{
+		m_bReset=false;
+		m_pDump->m_pSections->ResetEPG();
+	}
 	//Log("epg:Receive()");
     CheckPointer(pSample,E_POINTER);
 
@@ -132,6 +137,7 @@ STDMETHODIMP CEPGInputPin::Receive(IMediaSample *pSample)
 
 void CEPGInputPin::ResetPids()
 {
+	m_bReset=true;
 }
 
 //

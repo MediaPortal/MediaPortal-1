@@ -177,6 +177,7 @@ public:
 	Sections();
 	virtual ~Sections();
 	void	Reset();
+	void	ResetEPG();
 	void	GrabEPG();
 	bool	IsEPGReady();
 	bool	IsEPGGrabbing();

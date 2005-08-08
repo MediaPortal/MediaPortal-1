@@ -48,5 +48,6 @@ private:
 	void Parse();
 	TableGrabber m_tableGrabber;
 	bool         m_bParsed;
+	bool		 m_bReset;
 		
 };

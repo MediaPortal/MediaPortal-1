@@ -234,7 +234,7 @@ CStreamAnalyzerSectionsPin::CStreamAnalyzerSectionsPin(CStreamAnalyzer *pDump,
     m_pDump(pDump),
     m_tLast(0)
 {
-
+	m_bReset=false;
 }
 
 
@@ -286,6 +286,13 @@ STDMETHODIMP CStreamAnalyzerSectionsPin::ReceiveCanBlock()
 //
 STDMETHODIMP CStreamAnalyzerSectionsPin::Receive(IMediaSample *pSample)
 {
+	if (m_bReset)
+	{
+		m_bReset=false;
+		m_pDump->m_patChannelsCount=0;
+		m_pDump->m_pSections->Reset();
+		m_pDump->m_atscParser.Reset();
+	}
     CheckPointer(pSample,E_POINTER);
 
     //CAutoLock lock(m_pReceiveLock);
@@ -313,6 +320,7 @@ STDMETHODIMP CStreamAnalyzerSectionsPin::Receive(IMediaSample *pSample)
 }
 void CStreamAnalyzerSectionsPin::ResetPids()
 {
+	m_bReset=true;
 }
 
 //
@@ -465,11 +473,10 @@ STDMETHODIMP CStreamAnalyzer::ResetParser()
 {
 	Log("ResetParser");
 	HRESULT hr=m_pDemuxer->UnMapAllPIDs();
-	m_patChannelsCount=0;
+	m_pPin->ResetPids();
 	m_pMHWPin1->ResetPids();
 	m_pMHWPin2->ResetPids();
-	m_pSections->Reset();
-	m_atscParser.Reset();
+	m_pEPGPin->ResetPids();
 	return hr;
 }
 //
@@ -600,6 +607,7 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 {
 	try
 	{
+		
 		//CAutoLock lock(&m_Lock);
 /*
 		if(pbData[0]==0x00 && pbData[1]==0x00 && pbData[2]==0x01)
