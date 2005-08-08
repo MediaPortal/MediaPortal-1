@@ -5,6 +5,8 @@
 //
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 //------------------------------------------------------------------------------
+#include <map>
+using namespace std;
 
 struct stTSHEADER
 {
@@ -159,7 +161,6 @@ private:
 	int m_pmtPid;
 	int m_pcrPid;
 
-private:
 	bool IsPidValid(int pid);
 
 };
@@ -187,7 +188,7 @@ class CDump : public CUnknown, public IFileSinkFilter, public IMPTSWriter, publi
     LPOLESTR m_pFileName;           // The filename where we dump
     BOOL     m_fWriteError;
 
-	__int64 currentPosition;
+	__int64 m_currentFilePosition;
 	__int64 currentFileLength;
 	__int64 logFilePos;
 
@@ -206,7 +207,8 @@ public:
     // Write raw data stream to a file
     HRESULT Write(PBYTE pbData, LONG lDataLength);
 	HRESULT UpdateInfoFile(bool pids);
-	void Flush();
+	void	Flush();
+
     // Implements the IFileSinkFilter interface
     STDMETHODIMP SetFileName(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt);
     STDMETHODIMP GetCurFile(LPOLESTR * ppszFileName,AM_MEDIA_TYPE *pmt);
@@ -222,7 +224,6 @@ public:
 	STDMETHODIMP SetPCRPid(int pcrPid);
 
 	//record
-
     STDMETHODIMP SetRecordingFileName(char* pszFileName);
     STDMETHODIMP StartRecord( ULONGLONG startTime);
     STDMETHODIMP StopRecord( ULONGLONG startTime);
@@ -242,4 +243,7 @@ private:
 	ULONGLONG m_pesStart;
 	ULONGLONG m_pesNow;
 	char m_strRecordingFileName[1024];
+
+	map<__int64, __int64> m_mapPES;
+	typedef map<__int64, __int64> ::iterator imapPES;
 };

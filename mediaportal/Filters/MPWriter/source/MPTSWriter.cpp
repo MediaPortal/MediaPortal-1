@@ -357,6 +357,7 @@ STDMETHODIMP CDumpInputPin::Receive(IMediaSample *pSample)
 
 		}
 	}
+
 	m_pDump->UpdateInfoFile(false);
 	m_pDump->Flush();
     return NOERROR;
@@ -410,8 +411,7 @@ CDump::CDump(LPUNKNOWN pUnk, HRESULT *phr) :
     m_hFile(INVALID_HANDLE_VALUE),
     m_pFileName(0),
     m_fWriteError(0),
-	currentPosition(0),
-	currentFileLength(0)
+	m_currentFilePosition(0)
 {
 	DeleteFile("MPTSWriter.log");
     ASSERT(phr);
@@ -690,7 +690,7 @@ STDMETHODIMP CDump::ResetPids()
 	m_pFilter->Stop();
 	LONG val;
 	m_pPin->ResetPids();
-	currentPosition=0;
+	m_currentFilePosition=0;
 	SetFilePointer(m_hFile,0,&val,FILE_BEGIN);
 	SetEndOfFile(m_hFile);
 	OpenFile();
@@ -797,14 +797,13 @@ HRESULT CDump::CloseFile()
 
 	Log(TEXT("CloseFile called"),true);
 	LARGE_INTEGER li;
-	li.QuadPart = currentPosition;
+	li.QuadPart = m_currentFilePosition;
 
 	SetFilePointer(m_hFile,li.LowPart,&li.HighPart,FILE_BEGIN);
 
 	SetEndOfFile(m_hFile);
 
-	currentPosition = 0;
-	currentFileLength = 0;
+	m_currentFilePosition= 0;
     CloseHandle(m_hFile);
 
     m_hFile = INVALID_HANDLE_VALUE; // Invalidate the file 
@@ -864,24 +863,24 @@ HRESULT CDump::Write(PBYTE pbData, LONG lDataLength)
     }
 	HRESULT hr = S_OK;
 	LARGE_INTEGER li,listart;
-	li.QuadPart = currentPosition;
-	listart.QuadPart = currentPosition;
+	li.QuadPart = m_currentFilePosition;
+	listart.QuadPart = m_currentFilePosition;
 
 //	hr=LockFile(m_hFile,listart.LowPart,listart.HighPart,lDataLength,0);
-//	if (FAILED(hr)) LogDebug("failed to lock file at %x size:%x", currentPosition,lDataLength);
+//	if (FAILED(hr)) LogDebug("failed to lock file at %x size:%x", m_currentFilePosition,lDataLength);
 	hr=SetFilePointer(m_hFile,li.LowPart,&li.HighPart,FILE_BEGIN);
-	if (FAILED(hr)) LogDebug("failed to set filepointer at %x size:%x", currentPosition,lDataLength);
+	if (FAILED(hr)) LogDebug("failed to set filepointer at %x size:%x", m_currentFilePosition,lDataLength);
 	hr=WriteFile(m_hFile, pbData, lDataLength, &written, NULL);
-	if (FAILED(hr)) LogDebug("failed to write %x size:%x", currentPosition,lDataLength);
+	if (FAILED(hr)) LogDebug("failed to write %x size:%x", m_currentFilePosition,lDataLength);
 //	hr=UnlockFile(m_hFile,listart.LowPart,listart.HighPart,lDataLength,0);
-//	if (FAILED(hr)) LogDebug("failed to unlock file at %x size:%x", currentPosition,lDataLength);
+//	if (FAILED(hr)) LogDebug("failed to unlock file at %x size:%x", m_currentFilePosition,lDataLength);
 
 	if (written!=lDataLength) LogDebug("only wrote %x of %x bytes", written,lDataLength);
-	currentPosition+=written;
+	m_currentFilePosition+=written;
 
-	if (currentPosition > MAX_FILE_LENGTH)
+	if (m_currentFilePosition> MAX_FILE_LENGTH)
 	{
-		currentPosition=0;
+		m_currentFilePosition=0;
 	}
 
 	//update PES
@@ -956,14 +955,20 @@ HRESULT CDump::UpdateInfoFile(bool pids)
 		LogDebug("UpdatePids() filehandle=closed");
 		return S_OK;
 	}
-    
+
+	__int64 key = (m_currentFilePosition/188) / 100;
+	key++;
+	imapPES it= m_mapPES.find(key);
+	if (it != m_mapPES.end())
+		m_pesStart = it->second;
+
 	//update the info file
 	LARGE_INTEGER li;
 	DWORD written = 0;
 	li.QuadPart = 0;
 	//LockFile(m_hInfoFile,0,0,8+8*sizeof(int),0);
 	SetFilePointer(m_hInfoFile,li.LowPart,&li.HighPart,FILE_BEGIN);
-	WriteFile(m_hInfoFile, &currentPosition, sizeof(currentPosition), &written, NULL);
+	WriteFile(m_hInfoFile, &m_currentFilePosition, sizeof(m_currentFilePosition), &written, NULL);
 	WriteFile(m_hInfoFile, &m_pesStart, sizeof(m_pesStart), &written, NULL);
 	WriteFile(m_hInfoFile, &m_pesNow, sizeof(m_pesNow), &written, NULL);
 	if (pids)
@@ -980,17 +985,25 @@ HRESULT CDump::UpdateInfoFile(bool pids)
 		pid=m_pPin->GetPMTPid();WriteFile(m_hInfoFile, &pid, sizeof(pid), &written, NULL);
 		pid=m_pPin->GetSubtitlePid();WriteFile(m_hInfoFile, &pid, sizeof(pid), &written, NULL);
 		pid=m_pPin->GetPCRPid();WriteFile(m_hInfoFile, &pid, sizeof(pid), &written, NULL);
-		currentPosition=0;
+		m_currentFilePosition=0;
 		LARGE_INTEGER li;
 		li.QuadPart = 0;
 		SetFilePointer(m_hFile,li.LowPart,&li.HighPart,FILE_BEGIN);
 		SetEndOfFile(m_hFile);
+		m_pesStart=m_pesNow=0;
 	}
 	//UnlockFile(m_hInfoFile,0,0,8+8*sizeof(int),0);
 	return S_OK;
 }
+
+
+
 void CDump::Flush()
 {
+	__int64 key;
+	key = (m_currentFilePosition/188) / 100;
+	m_mapPES[key] = m_pesNow;
+
 /*	if (m_hFile!=INVALID_HANDLE_VALUE)
 		FlushFileBuffers(m_hFile);
 	
