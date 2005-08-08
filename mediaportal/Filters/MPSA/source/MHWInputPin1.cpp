@@ -197,7 +197,7 @@ void CMHWInputPin1::Parse()
 	m_bParsed=true;
 	m_bGrabMHW=false;
 	//parse summaries
-	//Log("MHW1: parse titles:%d",m_tableGrabber.Count());
+	Log("MHW1: parse titles:%d",m_tableGrabber.Count());
 	for (int i=0; i < m_tableGrabber.Count();++i)
 	{
 		try
@@ -213,6 +213,7 @@ void CMHWInputPin1::Parse()
 }
 void CMHWInputPin1::GrabMHW()
 {
+	Log("MHW1:Grab");
 	m_bGrabMHW=true;
 	ResetPids();
 }

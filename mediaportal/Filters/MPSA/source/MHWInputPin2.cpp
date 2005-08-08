@@ -156,7 +156,6 @@ STDMETHODIMP CMHWInputPin2::Receive(IMediaSample *pSample)
 void CMHWInputPin2::ResetPids()
 {
 	m_bReset=true;
-	m_bGrabMHW=false;
 }
 
 //
@@ -207,7 +206,7 @@ bool CMHWInputPin2::IsParsed()
 void CMHWInputPin2::Parse()
 {
 	if (m_bParsed) return;
-	//Log("mhwpin2: parse()");
+	Log("mhwpin2: parse()");
 	CAutoLock lock(&m_Lock);
 	m_bParsed=true;
 	m_bGrabMHW=false;
@@ -257,6 +256,7 @@ void CMHWInputPin2::Parse()
 
 void CMHWInputPin2::GrabMHW()
 {
+	Log("MHW2:Grab");
 	m_bGrabMHW=true;
 	ResetPids();
 }
