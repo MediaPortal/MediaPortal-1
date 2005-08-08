@@ -163,13 +163,15 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 		ULONGLONG pts=0;
 		ULONGLONG ptsStart=0;
 		ULONGLONG ptsEnd=0;
-		int stream;
+		
+		BOOL bSyncPoint=FALSE;
+		int pid;
 		for(int i=0;i<lDataLength;i+=188)
 		{
-			LogDebug("%d", i);
-			if(m_pSections->CurrentPTS(&pData[i],&pts,&stream)==S_OK)
+			if(m_pSections->CurrentPTS(&pData[i],&pts,&pid)==S_OK)
 			{
-				LogDebug("%d got pts", i);
+				if (pid==m_pSections->pids.VideoPid) 
+					bSyncPoint=TRUE;
 				if (pts>0)
 				{
 					if (ptsStart==0) 
@@ -189,7 +191,6 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 				}
 		
 			}
-			LogDebug("%d done", i);
 		}
 		UpdatePositions(ptsStart,ptsEnd);
 
@@ -197,7 +198,7 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 		REFERENCE_TIME rtStop  = static_cast<REFERENCE_TIME>(ptsEnd / m_dRateSeeking);
 //		LogDebug("%12.12d %12.12d", (DWORD)rtStart, (DWORD)rtStop);
 		pSample->SetTime(&rtStart, &rtStop); 
-		pSample->SetSyncPoint(TRUE);
+		pSample->SetSyncPoint(bSyncPoint);
 
 		LogDebug("psample set");
 		if(m_bDiscontinuity) 

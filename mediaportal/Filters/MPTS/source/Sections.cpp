@@ -229,7 +229,7 @@ void Sections::PTSToPTSTime(ULONGLONG pts,PTSTime* ptsTime)
 	time.u=_90khz-(time.h*1000*60*60)-(time.m*1000*60)-(time.s*1000);
 	*ptsTime=time;
 }
-HRESULT Sections::CurrentPTS(BYTE *pData,ULONGLONG *ptsValue,int *streamType)
+HRESULT Sections::CurrentPTS(BYTE *pData,ULONGLONG *ptsValue,int* pid)
 {
 	HRESULT hr=S_FALSE;
 	*ptsValue=-1;
@@ -239,7 +239,8 @@ HRESULT Sections::CurrentPTS(BYTE *pData,ULONGLONG *ptsValue,int *streamType)
 	int offset=4;
 	bool found=false;
 
-	if (header.Pid<0x11) return S_FALSE;
+	*pid=header.Pid;
+	if (header.Pid<1) return S_FALSE;
 	if (header.SyncByte!=0x47) return S_FALSE;
 	if(header.Pid!=pids.AudioPid && header.Pid != pids.AudioPid2 && header.Pid != pids.AC3 && header.Pid != pids.VideoPid)
 		return S_FALSE;
@@ -249,7 +250,6 @@ HRESULT Sections::CurrentPTS(BYTE *pData,ULONGLONG *ptsValue,int *streamType)
 	if (offset< 0 || offset+14>=188) return S_FALSE;
 	if(header.SyncByte==0x47 && pData[offset]==0 && pData[offset+1]==0 && pData[offset+2]==1)
 	{
-		*streamType=(int)((pData[offset+3]>>5) & 0x07);
 		GetPESHeader(&pData[offset+6],&pes);
 		if(pes.Reserved==0x02) // valid header
 		{

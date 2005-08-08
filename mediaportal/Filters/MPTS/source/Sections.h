@@ -68,7 +68,7 @@ public:
 	HRESULT ParseFromFile(void);
 	void GetPTS(BYTE *data,ULONGLONG *pts);
 	void PTSToPTSTime(ULONGLONG pts,PTSTime* ptsTime);
-	HRESULT CurrentPTS(BYTE *pData,ULONGLONG *ptsValue,int *streamType);
+	HRESULT CurrentPTS(BYTE *pData,ULONGLONG *ptsValue,int* pid);
 	void ResetBuffers();
 public:
 
