@@ -158,6 +158,7 @@ public class FilterCategory		// uuids.h  :  CLSID_*
 
 	/// <summary> CLSID_SmartTee, create a preview stream when device only provides a capture stream. </summary>
 	public static readonly Guid SmartTee = new Guid( 0xcc58e280, 0x8aa1, 0x11d1, 0xb3, 0xf1, 0x0, 0xaa, 0x0, 0x37, 0x61, 0xc5 );
+	public static readonly Guid InfTee = new Guid( 0xf8388a40, 0xd5bb, 0x11d0, 0xbe, 0x5a, 0x0, 0x80, 0xc7, 0x6, 0x56, 0x8e);
 
   public static readonly Guid Mpeg2Demultiplexer = new Guid(0xafb6c280, 0x2c41, 0x11d3, 0x8a, 0x60, 0x00, 0x00, 0xf8, 0x1e, 0x0e, 0x4a);
 	public static readonly Guid MPTSWriter = new Guid("8943BEB7-E0BC-453b-9EA5-EB93899FA51C");

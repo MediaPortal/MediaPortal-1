@@ -222,8 +222,8 @@ namespace MediaPortal.TV.Recording
 		IBaseFilter						  m_tsWriter=null;
 		IMPTSWriter							m_tsWriterInterface=null;
 		IMPTSRecord						  m_tsRecordInterface=null;
-		IBaseFilter							m_smartTee= null;			// Transport Information Filter
-
+		IBaseFilter							m_smartTee= null;			
+		
 		VideoAnalyzer						m_mpeg2Analyzer					= null;
 		IGraphBuilder           m_graphBuilder					= null;
 		ICaptureGraphBuilder2   m_captureGraphBuilder		= null;
@@ -656,18 +656,40 @@ namespace MediaPortal.TV.Recording
 					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to create SmartTee filter");
 					return false;
 				}
+				bool tryInfTee=false;
 				m_graphBuilder.AddFilter(m_smartTee, "Smart Tee Filter");
 				if (!ConnectFilters(ref lastFilter.DSFilter,ref m_smartTee))
 				{
-					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to connect capture->smart tee");
-					return false;
+					tryInfTee=true;
 				}
-				if (GUIGraphicsContext.DX9Device!=null && m_sampleInterface!=null)
+				if (!tryInfTee)
 				{
-					if (!ConnectFilters(ref m_smartTee,ref m_sampleGrabber))
+					if (GUIGraphicsContext.DX9Device!=null && m_sampleInterface!=null)
 					{
-						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to connect smart tee->grabber");
+						if (!ConnectFilters(ref m_smartTee,ref m_sampleGrabber))
+						{
+							tryInfTee=true;
+						}
+					}
+				}
+				if (tryInfTee)
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Add InfTee");
+					m_graphBuilder.RemoveFilter(m_smartTee);
+					Marshal.ReleaseComObject(m_smartTee);
+					m_smartTee = (IBaseFilter) Activator.CreateInstance(Type.GetTypeFromCLSID(Clsid.InfTee, true));
+					if (!ConnectFilters(ref lastFilter.DSFilter,ref m_smartTee))
+					{
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to connect capture->smart tee");
 						return false;
+					}
+					if (GUIGraphicsContext.DX9Device!=null && m_sampleInterface!=null)
+					{
+						if (!ConnectFilters(ref m_smartTee,ref m_sampleGrabber))
+						{
+							Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to connect smart tee->grabber");
+							return false;
+						}
 					}
 				}
 #else
