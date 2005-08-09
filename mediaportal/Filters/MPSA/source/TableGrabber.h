@@ -2,6 +2,7 @@
 #pragma warning(disable: 4511 4512 4995)
 #include "section.h"
 #include <map>
+#include <vector>
 using namespace std;
 
 class TableGrabber
@@ -47,6 +48,8 @@ private:
 	int			m_sectionTableID;
 	int			m_pid;
 	time_t      timeoutTimer;
-	map<ULONG, TableSection> m_mapSections;
-	typedef map<ULONG, TableSection>::iterator imapSections;
+	map<ULONG, int> m_mapSections;
+	typedef map<ULONG, int>::iterator imapSections;
+	vector<TableSection> m_vecSections;
+	typedef vector<TableSection> ::iterator ivecSections;
 };

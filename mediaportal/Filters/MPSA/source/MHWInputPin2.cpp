@@ -21,6 +21,7 @@
  */
 
 #include <windows.h>
+#include <time.h>
 #include <commdlg.h>
 #include <streams.h>
 #include <initguid.h>
@@ -50,6 +51,7 @@ CMHWInputPin2::CMHWInputPin2(CStreamAnalyzer *pDump,
 {
 	ResetPids();
 	m_bGrabMHW=false;
+	timeoutTimer=time(NULL);
 
 }
 
@@ -109,15 +111,7 @@ STDMETHODIMP CMHWInputPin2::Receive(IMediaSample *pSample)
 		m_bReset=false;
 		m_bParsed=false;
 		m_MHWParser.Reset();
-
-		m_tableGrabber90.Reset();
-		m_tableGrabber90.SetTableId(0xd3,0x90);
-		
-		m_tableGrabber91.Reset();
-		m_tableGrabber91.SetTableId(0xd3,0x91);
-		
-		m_tableGrabber92.Reset();
-		m_tableGrabber92.SetTableId(0xd3,0x92);
+		timeoutTimer=time(NULL);
 	}
 	if (!m_bGrabMHW) return S_OK; //test
     CheckPointer(pSample,E_POINTER);
@@ -143,20 +137,38 @@ STDMETHODIMP CMHWInputPin2::Receive(IMediaSample *pSample)
 	// decode
 	if(lDataLen>5)
 	{
-
-		//Log("mhw2:OnPacket()");
-		m_tableGrabber90.OnPacket(pbData,lDataLen);
-		m_tableGrabber91.OnPacket(pbData,lDataLen);
-		m_tableGrabber92.OnPacket(pbData,lDataLen);
-		//Log("mhw2:OnPacket() done");
+		if (pbData[0]==0x90)
+		{
+			if (m_MHWParser.ParseSummaries(pbData,lDataLen))
+			{
+				timeoutTimer=time(NULL);
+			}
+		}
+		if (pbData[0]==0x91)
+		{
+			if (m_MHWParser.ParseChannels(pbData,lDataLen))
+			{
+				timeoutTimer=time(NULL);
+			}
+		}
+		if (pbData[0]==0x92)
+		{
+			if (m_MHWParser.ParseThemes(pbData,lDataLen))
+			{
+				timeoutTimer=time(NULL);
+			}
+		}
 	}
-
+	int passed=time(NULL)-timeoutTimer;
+	if (passed>30)
+	{
+		Parse();
+	}
     return S_OK;
 }
 
 void CMHWInputPin2::ResetPids()
 {
-	//Parse();//test
 	m_bReset=true;
 }
 
@@ -190,70 +202,13 @@ STDMETHODIMP CMHWInputPin2::NewSegment(REFERENCE_TIME tStart,
 
 bool CMHWInputPin2::IsReady()
 {
-	if (m_tableGrabber90.IsSectionGrabbed() && 
-		m_tableGrabber91.IsSectionGrabbed() && 
-		m_tableGrabber92.IsSectionGrabbed() ) 
-	{
-		Parse();
-		return true;
-	}
-//	Log("mhwpin2: t90:%d t91:%d t92:%d",m_tableGrabber90.IsSectionGrabbed(),m_tableGrabber91.IsSectionGrabbed(),m_tableGrabber92.IsSectionGrabbed());
-	return false;
-}
-
-bool CMHWInputPin2::IsParsed()
-{
 	return m_bParsed;
 }
+
 void CMHWInputPin2::Parse()
 {
-	if (m_bParsed) return;
-	Log("mhwpin2: parse()");
-	CAutoLock lock(&m_Lock);
 	m_bParsed=true;
 	m_bGrabMHW=false;
-	//parse summaries
-	Log("MHW2: parse summaries:%d",m_tableGrabber90.Count());
-	for (int i=0; i < m_tableGrabber90.Count();++i)
-	{
-		try
-		{
-			m_MHWParser.ParseSummaries(m_tableGrabber90.GetTable(i), m_tableGrabber90.GetTableLen(i));
-		}
-		catch(...)
-		{
-			Log("MHW:exception MHW2 ParseSummaries table:%d", i);
-		}
-	}
-
-	//parse channels
-	Log("MHW2: parse channels:%d",m_tableGrabber91.Count());
-	for (int i=0; i < m_tableGrabber91.Count();++i)
-	{
-		try
-		{
-			m_MHWParser.ParseChannels(m_tableGrabber91.GetTable(i), m_tableGrabber91.GetTableLen(i));
-		}
-		catch(...)
-		{
-			Log("MHW:exception MHW2 ParseChannels table:%d", i);
-		}
-	}
-
-	//parse themes
-	Log("MHW2: parse themes:%d",m_tableGrabber92.Count());
-	for (int i=0; i < m_tableGrabber92.Count();++i)
-	{
-		try
-		{
-			m_MHWParser.ParseThemes(m_tableGrabber92.GetTable(i), m_tableGrabber92.GetTableLen(i));
-		}
-		catch(...)
-		{
-			Log("MHW:exception MHW2 ParseThemes table:%d", i);
-		}
-	}
-	//Log("MHW2:parse done()");
 }
 
 void CMHWInputPin2::GrabMHW()

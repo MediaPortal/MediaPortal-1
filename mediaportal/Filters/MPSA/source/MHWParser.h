@@ -43,10 +43,10 @@ public:
 	CMHWParser(void);
 	~CMHWParser(void);
 	void Reset();
-	void ParseChannels(byte* byData, int nLen);
-	void ParseSummaries(byte* data, int dataLen);
-	void ParseTitles(byte* data, int dataLen);
-	void ParseThemes(byte* data, int dataLen);
+	bool ParseChannels(byte* byData, int nLen);
+	bool ParseSummaries(byte* data, int dataLen);
+	bool ParseTitles(byte* data, int dataLen);
+	bool ParseThemes(byte* data, int dataLen);
 
 	int GetTitleCount();
 	void GetTitle(int program, WORD* id, WORD* transportId, WORD* networkId, WORD* channelId, WORD* programId, WORD* themeId, WORD* PPV, BYTE* Summaries, WORD* duration, ULONG* dateStart, ULONG* timeStart,char** title,char** programName);
@@ -61,8 +61,11 @@ private:
 	map<int,MHWSummary> m_mapSummaries;
 	typedef map<int,MHWSummary> ::iterator imapSummaries;
 
-	vector<MHWProgramm> m_mapTitles;
-	typedef vector<MHWProgramm> ::iterator imapTitles;
+	vector<MHWProgramm> m_vecTitles;
+	typedef vector<MHWProgramm> ::iterator ivecTitles;
+
+	map<ULONG,int> m_mapTitles;
+	typedef map<ULONG,int> ::iterator imapTitles;
 
 	vector<MHWTheme> m_vecThemes;
 	typedef vector<MHWTheme> ::iterator ivecThemes;

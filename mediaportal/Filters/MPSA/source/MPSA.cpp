@@ -465,6 +465,7 @@ CUnknown * WINAPI CStreamAnalyzer::CreateInstance(LPUNKNOWN punk, HRESULT *phr)
 
 STDMETHODIMP CStreamAnalyzer::ResetParser()
 {
+	
 	Log("ResetParser");
 	HRESULT hr=m_pDemuxer->UnMapAllPIDs();
 	m_pPin->ResetPids();
@@ -600,6 +601,7 @@ HRESULT CStreamAnalyzer::ProcessEPG(BYTE *pbData,long len)
 }
 HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 {
+	
 	try
 	{
 		if (m_bReset)
@@ -842,14 +844,8 @@ STDMETHODIMP CStreamAnalyzer::IsMHWReady(BOOL* yesNo)
 {
 	if (m_pMHWPin1->IsReady() && m_pMHWPin2->IsReady() )
 	{
-		if (m_pMHWPin1->IsParsed() && m_pMHWPin2->IsParsed())
-		{
-			*yesNo=TRUE;
-			return S_OK;
-		}
-		*yesNo=FALSE;
+		*yesNo=TRUE;
 		return S_OK;
-		
 	}
 	*yesNo=FALSE;
 	return S_OK;

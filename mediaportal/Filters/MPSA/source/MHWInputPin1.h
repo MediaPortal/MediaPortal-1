@@ -41,15 +41,14 @@ public:
     STDMETHODIMP NewSegment(REFERENCE_TIME tStart,REFERENCE_TIME tStop,double dRate);
 	void ResetPids();
 	bool IsReady();
-	bool IsParsed();
 	void GrabMHW();
 	CMHWParser   m_MHWParser;
 private:
-	CCritSec m_Lock;
-	void Parse();
-	TableGrabber m_tableGrabber;
+	CCritSec	 m_Lock;
+	void		 Parse();
 	bool         m_bParsed;
 	bool		 m_bReset;
 	bool		 m_bGrabMHW;
+	time_t       timeoutTimer;
 		
 };

@@ -10,9 +10,9 @@ class CMHWInputPin2 :
 {
 
 private:
-    CStreamAnalyzer    * const m_pDump;           // Main renderer object
-    CCritSec * const m_pReceiveLock;    // Sample critical section
-    REFERENCE_TIME m_tLast;             // Last sample receive time
+    CStreamAnalyzer* const  m_pDump; // Main renderer object
+    CCritSec* const			m_pReceiveLock;    // Sample critical section
+    REFERENCE_TIME			m_tLast;             // Last sample receive time
 
 public:
 
@@ -41,17 +41,14 @@ public:
     STDMETHODIMP NewSegment(REFERENCE_TIME tStart,REFERENCE_TIME tStop,double dRate);
 	void ResetPids();
 	bool IsReady();
-	bool IsParsed();
 	void GrabMHW();
 	CMHWParser   m_MHWParser;
 private:
 	CCritSec m_Lock;
 	void Parse();
 
-	TableGrabber m_tableGrabber90;
-	TableGrabber m_tableGrabber91;
-	TableGrabber m_tableGrabber92;
 	bool         m_bParsed;
 	bool		 m_bReset;	
 	bool		 m_bGrabMHW;
+	time_t       timeoutTimer;
 };

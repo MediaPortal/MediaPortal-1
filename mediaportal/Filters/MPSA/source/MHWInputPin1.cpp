@@ -21,6 +21,7 @@
  */
 
 #include <windows.h>
+#include <time.h>
 #include <commdlg.h>
 #include <streams.h>
 #include <initguid.h>
@@ -47,6 +48,8 @@ CMHWInputPin1::CMHWInputPin1(CStreamAnalyzer *pDump,
     m_pDump(pDump),
     m_tLast(0)
 {
+		
+	timeoutTimer=time(NULL);
 
 	ResetPids();
 		
@@ -108,8 +111,7 @@ STDMETHODIMP CMHWInputPin1::Receive(IMediaSample *pSample)
 		m_bReset=false;
 		m_bParsed=false;
 		m_MHWParser.Reset();
-		m_tableGrabber.Reset();
-		m_tableGrabber.SetTableId(0xd2,0x90);
+		timeoutTimer=time(NULL);
 	}
 	if (!m_bGrabMHW) return S_OK; //test
     CheckPointer(pSample,E_POINTER);
@@ -133,11 +135,21 @@ STDMETHODIMP CMHWInputPin1::Receive(IMediaSample *pSample)
 	lDataLen=pSample->GetActualDataLength();
 
 	// decode
-	if(lDataLen>5)
+	if(lDataLen>11)
 	{
-		//Log("mhw1:OnPacket()");
-		m_tableGrabber.OnPacket(pbData,lDataLen);
-		//Log("mhw1:OnPacket() done");
+		if (pbData[0]==0x90 && (pbData[1] >=0x70 && pbData[1] <=0x7f) )
+		{
+			if ( m_MHWParser.ParseTitles(pbData,lDataLen))
+			{
+				timeoutTimer=time(NULL);
+			}
+		}
+	}
+	
+	int passed=time(NULL)-timeoutTimer;
+	if (passed>30)
+	{
+		Parse();
 	}
     return S_OK;
 }
@@ -146,7 +158,6 @@ STDMETHODIMP CMHWInputPin1::Receive(IMediaSample *pSample)
 void CMHWInputPin1::ResetPids()
 {
 	m_bReset=true;
-	//Parse();//test
 }
 
 //
@@ -176,41 +187,14 @@ STDMETHODIMP CMHWInputPin1::NewSegment(REFERENCE_TIME tStart,
 
 } // NewSegment
 
-bool CMHWInputPin1::IsParsed()
-{
-	return m_bParsed;
-}
 bool CMHWInputPin1::IsReady()
-{
-	if (m_tableGrabber.IsSectionGrabbed() ) 
-	{
-		Parse();
-		return true;
-	}
-	//Log("mhwpin1: IsReady():%d",m_tableGrabber.IsSectionGrabbed());
-	return false;
+{	
+	return m_bParsed;
 }
 void CMHWInputPin1::Parse()
 {
-	if (m_bParsed) return;
-		
-	CAutoLock lock(&m_Lock);
 	m_bParsed=true;
 	m_bGrabMHW=false;
-	//parse summaries
-	Log("MHW1: parse titles:%d",m_tableGrabber.Count());
-	for (int i=0; i < m_tableGrabber.Count();++i)
-	{
-		try
-		{
-			m_MHWParser.ParseTitles(m_tableGrabber.GetTable(i), m_tableGrabber.GetTableLen(i));
-		}
-		catch(...)
-		{
-			Log("MHW:exception MHW1 parse title table:%d", i);
-		}
-	}
-	//Log("MHW1: parse done");
 }
 void CMHWInputPin1::GrabMHW()
 {

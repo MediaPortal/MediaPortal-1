@@ -29,25 +29,17 @@ int   TableGrabber::Count()
 	return m_mapSections.size();
 }
 byte* TableGrabber::GetTable(int section)
-{
-	
+{	
 	if (section<0 || section>=(int)m_mapSections.size()) return NULL;
-	imapSections it=m_mapSections.begin();
-	int count=0;
-	while (count < section && it!=m_mapSections.end()) { it++; count++;}
-	if (it==m_mapSections.end()) return NULL;
-	return it->second.byData;
+	TableSection& sec =m_vecSections[section];
+	return sec.byData;
 }
 
 int  TableGrabber::GetTableLen(int section)
 {
-	
-	if (section<0 || section>=(int)m_mapSections.size()) return 0;
-	imapSections it=m_mapSections.begin();
-	int count=0;
-	while (count < section && it!=m_mapSections.end()) { it++; count++;};
-	if (it==m_mapSections.end()) return 0;
-	return it->second.iSize;
+	if (section<0 || section>=(int)m_mapSections.size()) return NULL;
+	TableSection& sec =m_vecSections[section];
+	return sec.iSize;
 }
 
 
@@ -102,36 +94,34 @@ void TableGrabber::ParseSection(byte* pData, long lDataLen)
 		{
 			if (pData[3]==0xff) 
 				return;
-			if (header.SectionLength<42) 
-				return;
-			ULONG key=(header.SectionNumber<<16)+header.TableIDExtension;
+//			if (header.SectionLength<42) 
+//				return;
+			ULONG key=(pData[5]<<24)+(header.SectionNumber<<16)+(header.TableIDExtension);
 			it=m_mapSections.find(key);
 			if (it==m_mapSections.end())
 			{
 				TableSection newSection;
 				memcpy(newSection.byData, pData,lDataLen);
 				newSection.iSize=lDataLen;
-				m_mapSections[key]=newSection;
+				m_mapSections[key]=lDataLen;
+				m_vecSections.push_back(newSection);
 				timeoutTimer=time(NULL);
 			}
 		}
 		else
 		{
-			ULONG key=(header.SectionNumber<<16)+header.TableIDExtension;
+			ULONG key=(pData[5]<<24)+(header.SectionNumber<<16)+(header.TableIDExtension);
 			it=m_mapSections.find(key);
 			if (it==m_mapSections.end())
 			{
 				TableSection newSection;
 				memcpy(newSection.byData, pData,lDataLen);
 				newSection.iSize=lDataLen;
-				m_mapSections[key]=newSection;
+				m_mapSections[key]=lDataLen;
+				m_vecSections.push_back(newSection);
 				timeoutTimer=time(NULL);
 			}			
 		}
-	}
-	else 	if (header.TableID==m_sectionTableID )
-	{
-		int y=1;
 	}
 }
 
@@ -151,4 +141,4 @@ void TableGrabber::GetSectionHeader(byte* data,int offset, DVBSectionHeader& hea
 	header.HeaderExtB10B11 = (data[offset+10]<<8)+data[offset+11];
 	header.HeaderExtB12 = data[offset+12];
 	header.HeaderExtB13 = data[offset+13];
-}
+} 

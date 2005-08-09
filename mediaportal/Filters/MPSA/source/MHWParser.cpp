@@ -11,22 +11,24 @@ CMHWParser::~CMHWParser(void)
 }
 void CMHWParser::Reset()
 {
+	m_mapTitles.clear();
 	m_vecChannels.clear();
 	m_mapSummaries.clear();
-	m_mapTitles.clear();
+	m_vecTitles.clear();
 	m_vecThemes.clear();
 }
 
-void CMHWParser::ParseChannels(byte* data, int dataLen)
+bool CMHWParser::ParseChannels(byte* data, int dataLen)
 {
-	if (data==NULL) return;
-	if (dataLen<4) return;
+	if (data==NULL) return false;
+	if (dataLen<4) return false;
+	if (m_vecChannels.size()>0) return false;
 	char buffer[1024];
 	for(int n=4;n<dataLen;n+=22)
 	{
 		if( ((int)m_vecChannels.size())>=((dataLen-3)/22))
 			break;
-		if (n+6+16> dataLen) return;
+		if (n+6+16> dataLen) return false;
 		MHWChannel ch;
 		ch.NetworkID=(data[n]<<8)+data[n+1];
 		ch.TransponderID=(data[n+2]<<8)+data[n+3];
@@ -38,14 +40,15 @@ void CMHWParser::ParseChannels(byte* data, int dataLen)
 		Log("mhw-epg: added channel '%s' prog:%d onid:0x%x tsid:0x%x",ch.ChannelName.c_str(),ch.ChannelID,ch.NetworkID,ch.TransponderID);
 		m_vecChannels.push_back(ch);
 	}// for(int n=0
-//	Log("mhw-epg: channels:%d", m_vecChannels.size()); 
+	Log("mhw-epg: channels:%d", m_vecChannels.size()); 
+	return true;
 }
-void CMHWParser::ParseSummaries(byte* data, int maxLen)
+bool CMHWParser::ParseSummaries(byte* data, int maxLen)
 {
-	if (data==NULL) return;
+	if (data==NULL) return false;
 
-	if (maxLen < 12 || data[7] != 0xFF || data[8] != 0xFF || data[9] !=0xFF || data[10] >= 10) 
-		return;	/* Invalid Data */
+	if (maxLen < 12 /*|| data[7] != 0xFF || data[8] != 0xFF || data[9] !=0xFF || data[10] >= 10*/) 
+		return false;	/* Invalid Data */
 
 	int dataLen=((data[1]-0x70)<<8)+data[2];
 	int n=0;
@@ -54,11 +57,11 @@ void CMHWParser::ParseSummaries(byte* data, int maxLen)
 	sum.Description="";
 	n+=11+(data[n+10]*7);
 
-	if (n+(dataLen-n) >= maxLen || n>=dataLen || dataLen<=0) 
-		return;
-	char* buffer=new char[n+(dataLen-n)+10];
-	strncpy(buffer,(const char*)&data[n],(dataLen-n));
-	buffer[(dataLen-n)]=0;
+	if (n >= maxLen ) 
+		return false;
+	char* buffer=new char[(maxLen-n)+10];
+	strncpy(buffer,(const char*)&data[n],(maxLen-n));
+	buffer[(maxLen-n)]=0;
 	sum.Description=buffer;
 	delete[] buffer;
 
@@ -69,18 +72,25 @@ void CMHWParser::ParseSummaries(byte* data, int maxLen)
 		{
 			Log("mhw-epg: added summary with id 0x%x '%s'",sum.ProgramID,sum.Description.c_str());
 			m_mapSummaries[sum.ProgramID]=sum;
+			return true;
 		}
 	}//if(m_summaryBuffer.Contains(sum)==false)
-//	Log("mhw-epg: summaries:%d", m_mapSummaries.size());
+	return false;
 }
-void CMHWParser::ParseTitles(byte* data, int dataLen)
+
+bool CMHWParser::ParseTitles(byte* data, int dataLen)
 {
 	if (data==NULL) 
-		return;
+		return false;
 	if (dataLen<42) 
-		return;
-	if(data[3]==0xff) 
-		return;
+		return false;
+//	if(data[3]==0xff) 
+//		return;
+
+	ULONG progId=(data[38]<<24)+(data[39]<<16)+(data[40]<<8)+data[41];
+	imapTitles it = m_mapTitles.find(progId);
+	if (it!=m_mapTitles.end()) return false;
+	m_mapTitles[progId]=1;
 
 	char buffer[30];
 	MHWProgramm prg;
@@ -97,7 +107,7 @@ void CMHWParser::ParseTitles(byte* data, int dataLen)
 
 	prg.Title=(char*)buffer;
 	prg.PPV=(data[34]<<24)+(data[35]<<16)+(data[36]<<8)+data[37];
-	prg.ID=(data[38]<<24)+(data[39]<<16)+(data[40]<<8)+data[41];
+	prg.ID=progId;
 	// get time
 	int d1=d;
 	int h1=h;
@@ -129,14 +139,14 @@ void CMHWParser::ParseTitles(byte* data, int dataLen)
 		prg.Title.c_str(),prg.ID,prg.ChannelID,prg.ThemeID,prg.Summaries,prg.dateStart,
 		h1,m,
 		(prg.Duration/60),(prg.Duration%60));
-	m_mapTitles.push_back(prg);
-//	Log("mhw-epg: titles:%d", m_mapTitles.size());
+	m_vecTitles.push_back(prg);
+	return true;
 }
-void CMHWParser::ParseThemes(byte* data, int dataLen)
+bool CMHWParser::ParseThemes(byte* data, int dataLen)
 {
 	if(m_vecThemes.size()>0)
-		return; // already got channles table
-    if (data==NULL) return;
+		return false; // already got channles table
+    if (data==NULL) return false;
 
 	int themesIndex = 3;
 	int themesNames = 19;
@@ -145,14 +155,14 @@ void CMHWParser::ParseThemes(byte* data, int dataLen)
 	int count = (dataLen-19)/15;
 	for (int i=0; i<count; i++)
 	{
-		if (themesIndex+theme>dataLen) return;
+		if (themesIndex+theme>dataLen) return false;
 		if (data[themesIndex+theme] == i)	/* New theme */
 		{
 			val = (val+15) & 0xF0;
 			theme++;
 		}
 		
-		if (themesNames+15>dataLen) return;
+		if (themesNames+15>dataLen) return false;
 		char buffer[20];
 		memcpy(buffer,&data[themesNames],15);
 		buffer[15]=0;
@@ -164,12 +174,13 @@ void CMHWParser::ParseThemes(byte* data, int dataLen)
 		val++;
 		themesNames+=15;
 	}
-	//Log("mhw-epg: themes:%d", m_vecThemes.size());
+	Log("mhw-epg: themes:%d", m_vecThemes.size());
+	return true;
 }
 
 int CMHWParser::GetTitleCount()
 {
-	return m_mapTitles.size();
+	return m_vecTitles.size();
 }
 
 void CMHWParser::GetTitle(int program, WORD* id, WORD* transportId, WORD* networkId, WORD* channelId, WORD* programId, WORD* themeId, WORD* PPV, BYTE* Summaries, WORD* duration, ULONG* dateStart, ULONG* timeStart,char** title,char** programName)
@@ -188,8 +199,8 @@ void CMHWParser::GetTitle(int program, WORD* id, WORD* transportId, WORD* networ
 	*title="";
 	*programName="";
 
-	if (program >=(int)m_mapTitles.size()) return;
-	MHWProgramm& prog=m_mapTitles[program];
+	if (program >=(int)m_vecTitles.size()) return;
+	MHWProgramm& prog=m_vecTitles[program];
 	*id = prog.ID;
 	*transportId=prog.TransportStreamID;
 	*networkId=prog.NetworkID;
@@ -203,7 +214,7 @@ void CMHWParser::GetTitle(int program, WORD* id, WORD* transportId, WORD* networ
 	*timeStart=prog.timeStart;
 	*title=(char*)prog.Title.c_str();
 	//Log("mhw-epg: GetTitle(%d) size:%d chan:%d progid:%x '%s'", 
-	//	program,m_mapTitles.size(),
+	//	program,m_vecTitles.size(),
 	//	*channelId, *programId, *title);
 }
 
