@@ -2364,6 +2364,30 @@ namespace MediaPortal.TV.Recording
 					}
 				}
 			}//for (int i=0; i < transp.channels.Count;++i)
+			SetLCN();
+		}
+
+		void SetLCN()
+		{
+			Int16 count=0;
+			while (true)
+			{
+				Int16 networkId, transportId, serviceID, LCN;
+				m_analyzerInterface.GetLCN(count,out  networkId, out transportId, out serviceID, out LCN);
+				if (networkId>0 && transportId>0 && serviceID>=0 && LCN>0)
+				{
+					TVChannel channel=TVDatabase.GetTVChannelByStream(Network()==NetworkType.ATSC,Network()==NetworkType.DVBT,Network()==NetworkType.DVBC,Network()==NetworkType.DVBS,networkId,transportId,serviceID);
+					if (channel!=null) 
+					{
+						TVDatabase.SetChannelSort(channel.Name,LCN);
+					}
+				}
+				else 
+				{
+					return;
+				}
+				count++;
+			}
 		}
 
 		public IBaseFilter Mpeg2DataFilter()
