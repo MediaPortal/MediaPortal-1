@@ -86,6 +86,7 @@ Sections::Sections()
 	m_patTableVersion=-1;
 	m_bParseEPG=false;
 	m_bEpgDone=false;
+	
 	m_epgTimeout=time(NULL)+60;}
 
 Sections::~Sections()
@@ -332,7 +333,7 @@ int Sections::decodeSDT(BYTE *buf,ChannelInfo ch[],int channels, int len)
 	int current_next_indicator = buf[5] & 1;
 	int section_number = buf[6];
 	int last_section_number = buf[7];
-	int original_network_id = ((buf[8]& 0x1F)<<8)+buf[9];
+	int original_network_id = ((buf[8])<<8)+buf[9];
 	int len1 = section_length - 11 - 4;
 	int descriptors_loop_length;
 	int len2;
@@ -1079,10 +1080,11 @@ void Sections::ResetEPG()
 }
 void Sections::Reset()
 {
-	//Log("sections::Reset");
+	Log("sections::Reset");
 	m_patTSID=-1;
 	m_patSectionLen=-1;
 	m_patTableVersion=-1;
+	
 }
 
 void Sections::GrabEPG()
@@ -1171,4 +1173,410 @@ void Sections::GetEPGEvent( ULONG channel,  ULONG eventid,ULONG* language, ULONG
 	*event=(char*)epgEvent.event.c_str(); 
 	*text=(char*)epgEvent.text.c_str() ;
 	*genre=(char*)epgEvent.genre.c_str() ;
+}
+
+void  Sections::decodeNITTable(byte* buf,ChannelInfo *channels, int channelCount)
+{
+	int table_id;
+	int section_syntax_indicator;
+	int section_length;
+	int network_id;
+	int version_number;
+	int current_next_indicator;
+	int section_number;
+	int last_section_number;
+	int network_descriptor_length;
+	int transport_stream_loop_length;
+	int transport_stream_id;
+	int original_network_id;
+
+	int transport_descriptor_length=0;
+	//
+	int pointer=0;
+	int l1=0;
+	int l2=0;
+
+	//  0        1         2        3        4         5       6      7         8         9       10
+	//76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|
+	//++++++++ -+--++++ ++++++++ -------- -------- ++-----+ -------- ++++++++ ----++++ ++++++++
+	table_id = buf[0];
+	if (table_id!=0x40) return;
+	
+	
+	section_syntax_indicator = buf[1] &0x80;
+	section_length = ((buf[1] &0xF)<<8)+buf[2];
+	network_id = (buf[3]<<8)+buf[4];
+	version_number = (buf[5]>>1) &0x1F;
+	current_next_indicator = buf[5]&1;
+	section_number = buf[6];
+	last_section_number = buf[7];
+	network_descriptor_length = ((buf[8]&0xF)<<8)+buf[9];
+
+
+	l1 = network_descriptor_length;
+	pointer = 10;
+	int x = 0;
+
+	while (l1 > 0)
+	{
+		int indicator=buf[pointer];
+		x = buf[pointer + 1] + 2;
+		if(indicator==0x40)
+		{
+			char *networkName = new char[x+10];
+			strncpy(networkName ,(char*)&buf[pointer+2],x-2);
+			networkName[x-2]=0;
+			m_nit.NetworkName=networkName;
+			delete[] networkName;
+		}
+		l1 -= x;
+		pointer += x;
+	}
+	pointer=10+network_descriptor_length;
+
+	//Log("NIT: decode() network:'%s'", m_nit.NetworkName);
+	
+	transport_stream_loop_length = ((buf[pointer] &0xF)<<8)+buf[pointer+1];
+	l1 = transport_stream_loop_length;
+	pointer += 2;
+	while (l1 > 0)
+	{
+		transport_stream_id = (buf[pointer]<<8)+buf[pointer+1];
+		original_network_id = (buf[pointer+2]<<8)+buf[pointer+3];
+		transport_descriptor_length = ((buf[pointer+4] & 0xF)<<8)+buf[pointer+5];
+		pointer += 6;
+		l1 -= 6;
+		l2 = transport_descriptor_length;
+		while (l2 > 0)
+		{
+			int indicator=buf[pointer];
+			x = buf[pointer + 1]+2 ;
+			
+			if(indicator==0x43) // sat
+			{
+				DVB_GetSatDelivSys(&buf[pointer],x);
+			}
+			if(indicator==0x44) // cable
+			{
+				DVB_GetCableDelivSys(&buf[pointer],x);
+			}
+			if(indicator==0x5A) // terrestrial
+			{
+				DVB_GetTerrestrialDelivSys(&buf[pointer],x);
+			}
+			
+			if(indicator==0x83) // lcn
+			{
+				DVB_GetLogicalChannelNumber(original_network_id,transport_stream_id,&buf[pointer], channels,channelCount);
+			}
+			//
+			pointer += x;
+			l2 -= x;
+			l1 -= x;
+		}
+	}
+	
+	//Log("NIT: terrestial:%d satellite:%d cable:%d (%d)",
+	//	m_nit.terrestialNIT.size(),m_nit.satteliteNIT.size(),m_nit.cableNIT.size());
+}
+
+void Sections::DVB_GetLogicalChannelNumber(int original_network_id,int transport_stream_id,byte* buf,ChannelInfo *channels, int channelCount)
+{
+	// 32 bits per record
+	int n = buf[1] / 4;
+	if (n < 1)
+		return;
+
+	// desc id, desc len, (service id, service number)
+	int pointer=2;
+	int ServiceID, LCN;
+	for (int i = 0; i < n; i++) 
+	{
+		ServiceID = 0;
+		LCN = 0;
+		ServiceID = (buf[pointer+0]<<8)|(buf[pointer+1]&0xff);
+		LCN		  = (buf[pointer+2]&0x03<<8)|(buf[pointer+3]&0xff);
+		//Log("  LCN:%d network:0x%x tsid:0x%x sid:%i", LCN,original_network_id,transport_stream_id,ServiceID);
+		pointer+=4;
+		bool alreadyAdded=false;
+		for (int j=0; j < m_nit.lcnNIT.size();++j)
+		{
+			NITLCN& lcn = m_nit.lcnNIT[j];
+			if (lcn.LCN==LCN && lcn.network_id==original_network_id && lcn.transport_id==transport_stream_id && lcn.service_id==ServiceID)
+			{
+				alreadyAdded=true;
+				break;
+			}
+		}
+		if (!alreadyAdded)
+		{
+			NITLCN lcn;
+			lcn.LCN=LCN;
+			lcn.network_id=original_network_id;
+			lcn.transport_id=transport_stream_id;
+			lcn.service_id=ServiceID;
+			m_nit.lcnNIT.push_back(lcn);
+		}
+	}
+}
+
+void Sections::DVB_GetSatDelivSys(byte* b,int maxLen)
+{
+	if(b[0]==0x43 && maxLen>=13)
+	{
+		int descriptor_tag = b[0];
+		int descriptor_length = b[1];
+		
+		NITSatDescriptor satteliteNIT;
+		satteliteNIT.Frequency= (b[2]<<24)+(b[3]<<16)+(b[4]<<8)+b[5];
+		satteliteNIT.OrbitalPosition = (b[6]<<8)+b[7];
+		satteliteNIT.WestEastFlag = (b[8] & 0x80)>>7;
+		satteliteNIT.Polarisation = (b[8]& 0x60)>>5;
+		if(satteliteNIT.Polarisation>1)
+			satteliteNIT.Polarisation-=2;
+		// polarisation
+		// 0 - horizontal/left (linear/circluar)
+		// 1 - vertical/right (linear/circluar)
+		satteliteNIT.Modulation = (b[8] & 0x1F);
+		satteliteNIT.Symbolrate = (b[9]<<24)+(b[10]<<16)+(b[11]<<8)+(b[12]>>4);
+		satteliteNIT.FECInner = (b[12] & 0xF);
+		
+		// change hex to int for freq & symbolrate
+		int newValue;
+		char buffer[20];
+		sprintf(buffer,"%x",satteliteNIT.Frequency);
+		sscanf(buffer,"%d",&newValue);
+		satteliteNIT.Frequency=newValue;
+
+		sprintf(buffer,"%x",satteliteNIT.Symbolrate);
+		sscanf(buffer,"%d",&newValue);
+		satteliteNIT.Symbolrate=newValue;
+		
+		bool alreadyAdded=false;
+		for (int i=0; i < m_nit.satteliteNIT.size();++i)
+		{
+			NITSatDescriptor& nit=m_nit.satteliteNIT[i];
+			if (nit.Frequency==satteliteNIT.Frequency)
+			{
+				alreadyAdded=true;
+				break;
+			}
+		}
+		if (!alreadyAdded)
+		{
+			m_nit.satteliteNIT.push_back(satteliteNIT);
+		}
+	}	
+}
+void Sections::DVB_GetTerrestrialDelivSys(byte*b , int maxLen)
+{
+	if(b[0]==0x5A)
+	{
+		int descriptor_tag = b[0];
+		int descriptor_length = b[1];
+		NITTerrestrialDescriptor terrestialNIT;
+		terrestialNIT.CentreFrequency= (b[2]<<24)+(b[3]<<16)+(b[4]<<8)+b[5];
+		terrestialNIT.Bandwidth = (b[6]>>5);
+		// bandwith
+		// 0- 8 MHz
+		// 1- 7 MHz
+		// 2- 6 MHz
+		if (terrestialNIT.Bandwidth==0) terrestialNIT.Bandwidth=8;
+		else if (terrestialNIT.Bandwidth==1) terrestialNIT.Bandwidth=7;
+		else if (terrestialNIT.Bandwidth==2) terrestialNIT.Bandwidth=6;
+		else terrestialNIT.Bandwidth=8;
+
+		
+
+		terrestialNIT.Constellation=(b[7]>>6);
+		// constellation
+		// 0- QPSK
+		// 1- 16-QAM
+		// 2- 64-QAM
+		if (terrestialNIT.Constellation==0) terrestialNIT.Constellation=BDA_MOD_QPSK ;
+		else if (terrestialNIT.Constellation==1) terrestialNIT.Constellation=BDA_MOD_16QAM ;
+		else if (terrestialNIT.Constellation==2) terrestialNIT.Constellation=BDA_MOD_64QAM ;
+		else  terrestialNIT.Constellation=BDA_MOD_NOT_SET;
+
+		terrestialNIT.HierarchyInformation=(b[7]>>3)& 7;
+		// 0- non-hierarchical
+		// 1- a == 1
+		// 2- a == 2
+		// 3- a == 4
+		switch (terrestialNIT.HierarchyInformation)
+		{
+			case 0:	terrestialNIT.HierarchyInformation=BDA_HALPHA_NOT_DEFINED ;break;
+			case 1:	terrestialNIT.HierarchyInformation=BDA_HALPHA_1 ;break;
+			case 2:	terrestialNIT.HierarchyInformation=BDA_HALPHA_2 ;break;
+			case 3:	terrestialNIT.HierarchyInformation=BDA_HALPHA_4 ;break;
+			default:terrestialNIT.HierarchyInformation=BDA_GUARD_NOT_SET; break;
+		}
+		terrestialNIT.CoderateHPStream=(b[7] & 7);
+		terrestialNIT.CoderateLPStream=(b[8]>>5);
+		// coderate (fec)
+		// 0- 1/2
+		// 1- 2/3
+		// 2- 3/4
+		// 3- 5/6
+		// 4- 7/8
+		// Coderate: The code_rate is a 3-bit field specifying the inner FEC scheme used according to table 43. Non-hierarchical
+		// channel coding and modulation requires signalling of one code rate. In this case, 3 bits specifying code_rate according
+		// to table 44 are followed by another 3 bits of value '000". Two different code rates may be applied to two different levels
+		// of modulation with the aim of achieving hierarchy. Transmission then starts with the code rate for the HP level of the
+		// modulation and ends with the one for the LP level.
+		switch (terrestialNIT.CoderateHPStream)
+		{
+			case 0:terrestialNIT.CoderateHPStream=BDA_BCC_RATE_1_2;break;
+			case 1:terrestialNIT.CoderateHPStream=BDA_BCC_RATE_2_3;break;
+			case 2:terrestialNIT.CoderateHPStream=BDA_BCC_RATE_3_4;break;
+			case 3:terrestialNIT.CoderateHPStream=BDA_BCC_RATE_5_6;break;
+			case 4:terrestialNIT.CoderateHPStream=BDA_BCC_RATE_7_8;break;
+			default:terrestialNIT.CoderateHPStream=BDA_BCC_RATE_NOT_SET; break;
+		}
+		switch (terrestialNIT.CoderateLPStream)
+		{
+			case 0:terrestialNIT.CoderateLPStream=BDA_BCC_RATE_1_2;break;
+			case 1:terrestialNIT.CoderateLPStream=BDA_BCC_RATE_2_3;break;
+			case 2:terrestialNIT.CoderateLPStream=BDA_BCC_RATE_3_4;break;
+			case 3:terrestialNIT.CoderateLPStream=BDA_BCC_RATE_5_6;break;
+			case 4:terrestialNIT.CoderateLPStream=BDA_BCC_RATE_7_8;break;
+			default:terrestialNIT.CoderateLPStream=BDA_BCC_RATE_NOT_SET; break;
+		}
+		terrestialNIT.GuardInterval=(b[8]>>3) & 3;
+		// 0 - 1/32
+		// 1 - 1/16
+		// 2 - 1/8
+		// 3 - 1/4
+		//
+		switch (terrestialNIT.GuardInterval)
+		{
+			case 0: terrestialNIT.GuardInterval=BDA_GUARD_1_32;break;
+			case 1: terrestialNIT.GuardInterval=BDA_GUARD_1_16;break;
+			case 2: terrestialNIT.GuardInterval=BDA_GUARD_1_8;break;
+			case 3: terrestialNIT.GuardInterval=BDA_GUARD_1_4;break;
+			default:terrestialNIT.GuardInterval=BDA_GUARD_NOT_SET;break;
+		}
+		terrestialNIT.TransmissionMode=(b[8]>>1) & 3;
+		// 0 - 2k Mode
+		// 1 - 8k Mode
+		if (terrestialNIT.TransmissionMode==0) terrestialNIT.TransmissionMode=BDA_XMIT_MODE_2K;
+		else if (terrestialNIT.TransmissionMode==0) terrestialNIT.TransmissionMode=BDA_XMIT_MODE_8K;
+		else terrestialNIT.TransmissionMode=BDA_XMIT_MODE_NOT_SET;
+		
+		terrestialNIT.OtherFrequencyFlag=(b[8] & 3);
+		// 0 - no other frequency in use
+		bool alreadyAdded=false;
+		for (int i=0; i < m_nit.terrestialNIT.size();++i)
+		{
+			NITTerrestrialDescriptor& nit=m_nit.terrestialNIT[i];
+			if (nit.CentreFrequency==terrestialNIT.CentreFrequency)
+			{
+				alreadyAdded=true;
+				break;
+			}
+		}
+		if (!alreadyAdded)
+		{
+			Log("NIT: terrestial frequency=%d bandwidth=%d other freqs:%d", terrestialNIT.CentreFrequency,terrestialNIT.Bandwidth,terrestialNIT.OtherFrequencyFlag);
+			m_nit.terrestialNIT.push_back(terrestialNIT);
+		}
+	}
+}		
+
+
+void Sections::DVB_GetCableDelivSys(byte* b, int maxLen)
+{
+	if(b[0]==0x44 && maxLen>=13)
+	{
+		int descriptor_tag = b[0];
+		int descriptor_length = b[1];
+		NITCableDescriptor cableNIT;
+		cableNIT.Frequency= (b[2]<<24)+(b[3]<<16)+(b[4]<<8)+b[5];
+		//
+		cableNIT.FECOuter = (b[7] & 0xF);
+		// fec-outer
+		// 0- not defined
+		// 1- no outer FEC coding
+		// 2- RS(204/188)
+		// other reserved
+		switch (cableNIT.FECOuter)
+		{
+			case 0:cableNIT.FECOuter=BDA_FEC_METHOD_NOT_SET;break;
+			case 1:cableNIT.FECOuter=BDA_FEC_METHOD_NOT_DEFINED;break;
+			case 2:cableNIT.FECOuter=BDA_FEC_RS_204_188;break;
+			default:cableNIT.FECOuter=BDA_FEC_METHOD_NOT_SET;break;
+		}
+		cableNIT.Modulation = b[8];
+		// modulation
+		// 0x00 not defined
+		// 0x01 16-QAM
+		// 0x02 32-QAM
+		// 0x03 64-QAM
+		// 0x04 128-QAM
+		// 0x05 256-QAM
+		switch(cableNIT.Modulation)
+		{
+			case 0: cableNIT.Modulation=BDA_MOD_NOT_DEFINED; break;
+			case 1: cableNIT.Modulation=BDA_MOD_16QAM; break;
+			case 2: cableNIT.Modulation=BDA_MOD_32QAM; break;
+			case 3: cableNIT.Modulation=BDA_MOD_64QAM; break;
+			case 4: cableNIT.Modulation=BDA_MOD_128QAM; break;
+			case 5: cableNIT.Modulation=BDA_MOD_256QAM; break;
+			default: cableNIT.Modulation=BDA_MOD_NOT_SET; break;
+		}
+		cableNIT.Symbolrate = (b[9]<<24)+(b[10]<<16)+(b[11]<<8)+(b[12]>>4);
+		//
+		cableNIT.FECInner = (b[12] & 0xF);
+		// fec inner
+		// 0- not defined
+		// 1- 1/2 conv. code rate
+		// 2- 2/3 conv. code rate
+		// 3- 3/4 conv. code rate
+		// 4- 5/6 conv. code rate
+		// 5- 7/8 conv. code rate
+		// 6- 8/9 conv. code rate
+		// 15- No conv. coding
+		switch (cableNIT.FECInner)
+		{
+			case 0:cableNIT.FECInner=BDA_BCC_RATE_NOT_DEFINED;break;
+			case 1:cableNIT.FECInner=BDA_BCC_RATE_1_2;break;
+			case 2:cableNIT.FECInner=BDA_BCC_RATE_2_3;break;
+			case 3:cableNIT.FECInner=BDA_BCC_RATE_3_4;break;
+			case 4:cableNIT.FECInner=BDA_BCC_RATE_5_6;break;
+			case 5:cableNIT.FECInner=BDA_BCC_RATE_7_8;break;
+			case 6:cableNIT.FECInner=BDA_BCC_RATE_NOT_DEFINED;break;
+			case 15:cableNIT.FECInner=BDA_BCC_RATE_NOT_DEFINED;break;
+			default:cableNIT.FECInner=BDA_BCC_RATE_NOT_SET;break;
+		}
+		bool alreadyAdded=false;
+		for (int i=0; i < m_nit.cableNIT.size();++i)
+		{
+			NITCableDescriptor& nit=m_nit.cableNIT[i];
+			if (nit.Frequency==cableNIT.Frequency)
+			{
+				alreadyAdded=true;
+				break;
+			}
+		}
+		if (!alreadyAdded)
+		{
+			m_nit.cableNIT.push_back(cableNIT);
+		}
+	}
+}
+
+HRESULT Sections::GetLCN(WORD channel,WORD* networkId, WORD* transportId, WORD* serviceID, WORD* LCN)
+{
+	*LCN=0;
+	*networkId=0;
+	*transportId=0;
+	*serviceID=0;
+	if (channel >=m_nit.lcnNIT.size()) return S_OK;
+	
+	NITLCN& lcn = m_nit.lcnNIT[channel];
+	*networkId=lcn.network_id;
+	*transportId=lcn.transport_id;
+	*serviceID=lcn.service_id;
+	*LCN=lcn.LCN;
+	return S_OK;
 }

@@ -72,6 +72,7 @@ DECLARE_INTERFACE_(IStreamAnalyzer, IUnknown)
 	STDMETHOD(UseATSC) (THIS_ BOOL yesNo)PURE;
 	STDMETHOD(IsATSCUsed) (THIS_ BOOL* yesNo)PURE;
 
+	STDMETHOD(GetLCN) (THIS_ WORD channel, WORD* networkId, WORD* transportId, WORD* serviceID, WORD* LCN)PURE;
 };
 
 // {6301D1B8-6C92-4c6e-8CC2-CD1B05C6B545}
@@ -214,6 +215,7 @@ public:
 	STDMETHODIMP GetPMTData(BYTE *pmtData);
 	STDMETHODIMP GetPages(CAUUID *pPages);
 	STDMETHODIMP IsChannelReady(ULONG channel);
+	STDMETHODIMP GetLCN(WORD channel,WORD* networkId, WORD* transportId, WORD* serviceID, WORD* LCN);
 
 	//ATSC
 	STDMETHODIMP UseATSC(BOOL yesNo);

@@ -443,6 +443,7 @@ namespace MediaPortal.TV.Recording
 			public int      majorChannel;
 			public int      modulation;
 			public CaPMT	caPMT;
+			public int      LCN;
 		}
 		//
 		//
@@ -582,7 +583,7 @@ namespace MediaPortal.TV.Recording
 			ch.minorChannel=Marshal.ReadInt16(data,570);
 			ch.modulation=Marshal.ReadInt16(data,572);
 			ch.freq=Marshal.ReadInt32(data,576);
-
+			ch.LCN=Marshal.ReadInt32(data,580);
 			RemoveInvalidChars(ref ch.service_name);
 			RemoveInvalidChars(ref ch.service_provider_name);
 			return ch;

@@ -74,7 +74,11 @@ namespace DShowNET
 		
 		[PreserveSig]
 		int IsATSCUsed(out bool yesNo);
+
+		[PreserveSig]
+		int GetLCN(Int16 channel,out Int16 networkId, out Int16 transportId, out Int16 serviceID, out Int16 LCN);
 	}
+
 	[ComVisible(true), ComImport,
 	Guid("6F78D59C-1066-4e1b-8258-717F33C51F67"),
 	InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]

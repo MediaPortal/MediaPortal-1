@@ -7,8 +7,67 @@
 #ifndef __Sections_
 #define __Sections_
 #include <map>
+#include <vector>
 #include <string>
 using namespace std;
+
+//
+// nit structs
+typedef  struct stNITLCN
+{
+	int network_id;
+	int transport_id;
+	int service_id;
+	int LCN;
+}NITLCN;
+
+typedef  struct stNITSatDescriptor
+{
+	int Frequency;
+	float OrbitalPosition;
+	int WestEastFlag;
+	int Polarisation;
+	int Modulation;
+	int Symbolrate;
+	int FECInner;
+	string NetworkName;
+}NITSatDescriptor;
+//
+typedef  struct stNITCableDescriptor
+{
+	int Frequency;
+	int FECOuter;
+	int Modulation;
+	int Symbolrate;
+	int FECInner;
+	string NetworkName;
+}NITCableDescriptor;
+
+//
+typedef struct stNITTerrestrialDescriptor
+{
+	int CentreFrequency;
+	int Bandwidth;
+	int Constellation;
+	int HierarchyInformation;
+	int CoderateHPStream;
+	int CoderateLPStream;
+	int GuardInterval;
+	int TransmissionMode; 
+	int OtherFrequencyFlag;
+	string NetworkName;
+}NITTerrestrialDescriptor;
+
+typedef struct stDVBNetworkInfo
+{
+	vector<NITSatDescriptor>		  satteliteNIT;
+	vector<NITCableDescriptor>		  cableNIT;
+	vector<NITTerrestrialDescriptor>  terrestialNIT;
+	vector<NITLCN>					  lcnNIT;
+	string							  NetworkName;
+
+}DVBNetworkInfo;
+
 typedef struct stEPGEvent
 {
 	unsigned int eventid;
@@ -112,6 +171,7 @@ typedef struct chInfo
 	WORD MinorChannel;//570-571
 	WORD Modulation;//572-573
 	ULONG Frequency;//574-578
+	WORD LCN;//580-581
 }ChannelInfo;
 
 #pragma warning(disable: 4511 4512 4995)
@@ -164,56 +224,69 @@ public:
 	};
 	typedef timedata PTSTime;
 
+public:
+	Sections();
+	virtual ~Sections();
+
+	//reset
+	void	Reset();
+
+	//epg
+	void	ResetEPG();
+	void	GrabEPG();
+	bool	IsEPGReady();
+	bool	IsEPGGrabbing();
+	ULONG	GetEPGChannelCount( );
+	ULONG	GetEPGEventCount( ULONG channel);
+	void	GetEPGChannel( ULONG channel,  WORD* networkId,  WORD* transportid, WORD* service_id  );
+	void	GetEPGEvent( ULONG channel,  ULONG event,ULONG* language, ULONG* dateMJD, ULONG* timeUTC, ULONG* duration, char** strevent,  char** strtext, char** strgenre    );
+	void	DecodeEPG(byte* pbData,int len);
+
+	//decode
+	bool	IsNewPat(BYTE *pData, int len);
+	void	decodePAT(BYTE *pData,ChannelInfo *,int *, int len);
+	int		decodePMT(BYTE *pData,ChannelInfo *ch, int len);
+	int		decodeSDT(BYTE *buf,ChannelInfo *,int, int len);
+	void	decodeNITTable(byte* buf,ChannelInfo *channels, int channelCount);
+	HRESULT ParseAudioHeader(BYTE *data,AudioHeader *header);
+	HRESULT GetLCN(WORD channel,WORD* networkId, WORD* transportId, WORD* serviceID, WORD* LCN);
+
+	//helper
+	HRESULT GetTSHeader(BYTE *data,TSHeader *header);
+	HRESULT GetPESHeader(BYTE *data,PESHeader *header);
+	WORD	CISize();
+	ULONG	GetSectionCRCValue(byte* data,int ptr);
+	ULONG	GetCRC32(BYTE *pData,WORD len);
+	HRESULT CheckStream(void);
+	HRESULT ParseFromFile(void);
+	void	GetPTS(BYTE *data,ULONGLONG *pts);
+	void	PTSToPTSTime(ULONGLONG pts,PTSTime* ptsTime);
+	HRESULT CurrentPTS(BYTE *pData,ULONGLONG *ptsValue,int *streamType);
+	void	DVB_GetService(BYTE *b,ServiceData *sd);
+	void	getString468A(BYTE *b, int l1,char *text);
+	void	DVB_GetLogicalChannelNumber(int original_network_id,int transport_stream_id,byte* b,ChannelInfo *channels, int channelCount);
+	void	DVB_GetSatDelivSys(byte* b, int maxLen);
+	void	DVB_GetTerrestrialDelivSys(byte*b , int maxLen);
+	void	DVB_GetCableDelivSys(byte* b, int maxLen);
+	//pes
+	void GetPES(BYTE *data,ULONG len,BYTE *pes);
+	void DecodeShortEventDescriptor(byte* buf,EPGEvent& event);
+	void DecodeContentDescription(byte* buf,EPGEvent& event);
+	void DecodeExtendedEvent(byte* buf, EPGEvent& event);
+
 private:
+	map<unsigned long,EPGChannel> m_mapEPG;
+	typedef map<unsigned long,EPGChannel>::iterator imapEPG;
 	bool	m_bParseEPG;
 	bool	m_bEpgDone;
 	time_t  m_epgTimeout;
 	int     m_patTableVersion;
 	int     m_patTSID;
 	int     m_patSectionLen;
+	
+	DVBNetworkInfo m_nit;
 
     CCritSec					m_Lock;                // Main renderer critical section	
-public:
-	Sections();
-	virtual ~Sections();
-	void	Reset();
-	void	ResetEPG();
-	void	GrabEPG();
-	bool	IsEPGReady();
-	bool	IsEPGGrabbing();
-	ULONG GetEPGChannelCount( );
-	ULONG  GetEPGEventCount( ULONG channel);
-	void GetEPGChannel( ULONG channel,  WORD* networkId,  WORD* transportid, WORD* service_id  );
-	void GetEPGEvent( ULONG channel,  ULONG event,ULONG* language, ULONG* dateMJD, ULONG* timeUTC, ULONG* duration, char** strevent,  char** strtext, char** strgenre    );
-
-	ULONG GetSectionCRCValue(byte* data,int ptr);
-	ULONG GetCRC32(BYTE *pData,WORD len);
-	HRESULT GetTSHeader(BYTE *data,TSHeader *header);
-	HRESULT GetPESHeader(BYTE *data,PESHeader *header);
-	HRESULT CheckStream(void);
-	HRESULT ParseFromFile(void);
-	void GetPTS(BYTE *data,ULONGLONG *pts);
-	void PTSToPTSTime(ULONGLONG pts,PTSTime* ptsTime);
-	HRESULT CurrentPTS(BYTE *pData,ULONGLONG *ptsValue,int *streamType);
-	int decodePMT(BYTE *pData,ChannelInfo *ch, int len);
-	bool IsNewPat(BYTE *pData, int len);
-	void decodePAT(BYTE *pData,ChannelInfo *,int *, int len);
-	int decodeSDT(BYTE *buf,ChannelInfo *,int, int len);
-	void DVB_GetService(BYTE *b,ServiceData *sd);
-	void getString468A(BYTE *b, int l1,char *text);
-	WORD CISize();
-
-
-	//pes
-	void GetPES(BYTE *data,ULONG len,BYTE *pes);
-	HRESULT ParseAudioHeader(BYTE *data,AudioHeader *header);
-	void DecodeEPG(byte* pbData,int len);
-	void DecodeShortEventDescriptor(byte* buf,EPGEvent& event);
-	void DecodeContentDescription(byte* buf,EPGEvent& event);
-	void DecodeExtendedEvent(byte* buf, EPGEvent& event);
-
-	map<unsigned long,EPGChannel> m_mapEPG;
-	typedef map<unsigned long,EPGChannel>::iterator imapEPG;
 };
 
 #endif

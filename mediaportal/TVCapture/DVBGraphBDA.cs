@@ -4296,7 +4296,7 @@ namespace MediaPortal.TV.Recording
 																						info.serviceType,info.majorChannel,info.minorChannel);
 					continue;
 				}
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Found provider:{0} service:{1} scrambled:{2} frequency:{3} KHz networkid:{4} transportid:{5} serviceid:{6} tv:{7} radio:{8} audiopid:0x{9:X} videopid:0x{10:X} teletextpid:0x{11:X} program:{12} pcr pid:0x{13:X} ac3 pid:0x{14:X} major:{15} minor:{16}", 
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Found provider:{0} service:{1} scrambled:{2} frequency:{3} KHz networkid:{4} transportid:{5} serviceid:{6} tv:{7} radio:{8} audiopid:0x{9:X} videopid:0x{10:X} teletextpid:0x{11:X} program:{12} pcr pid:0x{13:X} ac3 pid:0x{14:X} major:{15} minor:{16} LCN:{17}", 
 																						info.service_provider_name,
 																						info.service_name,
 																						info.scrambled,
@@ -4307,7 +4307,7 @@ namespace MediaPortal.TV.Recording
 																						hasVideo, ((!hasVideo) && hasAudio),
 																						currentTuningObject.AudioPid,currentTuningObject.VideoPid,currentTuningObject.TeletextPid,
 																						info.program_number,
-																						info.pcr_pid, currentTuningObject.AC3Pid,info.majorChannel,info.minorChannel);
+																						info.pcr_pid, currentTuningObject.AC3Pid,info.majorChannel,info.minorChannel,info.LCN);
 
 				if (info.serviceID==0) 
 				{
@@ -4579,7 +4579,32 @@ namespace MediaPortal.TV.Recording
 					RadioDatabase.MapChannelToCard(channelId,ID);
 				}
 			}//for (int i=0; i < transp.channels.Count;++i)
+
+			SetLCN();
 		}//public void StoreChannels(bool radio, bool tv)
+
+		void SetLCN()
+		{
+			Int16 count=0;
+			while (true)
+			{
+				Int16 networkId, transportId, serviceID, LCN;
+				m_analyzerInterface.GetLCN(count,out  networkId, out transportId, out serviceID, out LCN);
+				if (networkId>0 && transportId>0 && serviceID>=0 && LCN>0)
+				{
+					TVChannel channel=TVDatabase.GetTVChannelByStream(Network()==NetworkType.ATSC,Network()==NetworkType.DVBT,Network()==NetworkType.DVBC,Network()==NetworkType.DVBS,networkId,transportId,serviceID);
+					if (channel!=null) 
+					{
+						TVDatabase.SetChannelSort(channel.Name,LCN);
+					}
+				}
+				else 
+				{
+					return;
+				}
+				count++;
+			}
+		}
 		#endregion
 
 		#endregion

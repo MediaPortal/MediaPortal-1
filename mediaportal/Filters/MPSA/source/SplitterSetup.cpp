@@ -304,6 +304,14 @@ HRESULT SplitterSetup::SetSectionMapping()
 			Log("failed to map pid 0x0");
 			return 4;
 		}
+//		Log("map pid 0x10");
+		pid = (ULONG)0x10;// NIT
+		hr=pMap->MapPID(1,&pid,MEDIA_MPEG2_PSI); // tv
+		if(FAILED(hr))
+		{
+			Log("failed to map pid 0x10");
+			return 4;
+		}
 //		Log("map pid 0x11");
 		pid = (ULONG)0x11;// sdt
 		hr=pMap->MapPID(1,&pid,MEDIA_MPEG2_PSI); // tv

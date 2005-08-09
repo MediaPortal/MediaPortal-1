@@ -709,11 +709,25 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 			}
 			//Log("SDT decoded");
 		}
+		if (pbData[0]==0x40) //NIT
+		{
+			if (m_patChannelsCount>0)
+			{
+				m_pSections->decodeNITTable(pbData,m_patTable,m_patChannelsCount);
+			}
+		}
 	}
 	catch(...)
 	{
 		Log("Section:process() exception");
 	}
+	return S_OK;
+}
+
+
+STDMETHODIMP CStreamAnalyzer::GetLCN(WORD channel, WORD* networkId, WORD* transportId, WORD* serviceID, WORD* LCN)
+{
+	m_pSections->GetLCN(channel,networkId, transportId, serviceID, LCN);
 	return S_OK;
 }
 
