@@ -741,63 +741,6 @@
     </tv>
   </capturecard>
   
-   <capturecard commercialname="Dvico FusionHDTV DVB-T Plus (Analog)" capturename="FusionHDTV, WDM Video Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_db1018ac&amp;rev_05">
-    <capabilities tv="true" radio="false" mpeg2="false" mce="false" sw="true" bda="false"></capabilities>
-    <tv>
-      <interface cat="capture" video="0" audio="" mpeg2=""></interface>
-      <filters>
-        <filter cat="tvtuner"  		name="FusionHDTV, NTSC/ATSC WDM TvTuner"  checkdevice="true"></filter>
-        <filter cat="tvaudio"  		name="FusionHDTV, TvAudio"                checkdevice="true"></filter>
-        <filter cat="crossbar" 		name="FusionHDTV, Crossbar"               checkdevice="true"></filter>
-        <filter cat="capture"  		name="FusionHDTV, WDM Video Capture"      checkdevice="true"></filter>
-      </filters>
-      <connections>
-        <connection sourcefilter="tvtuner"  	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
-        <connection sourcefilter="tvtuner"  	sourcepin="0" sinkfilter="crossbar" 	sinkpin="1"></connection>
-        <connection sourcefilter="tvaudio"  	sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
-        <connection sourcefilter="crossbar" 	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
-      </connections>
-    </tv>
-  </capturecard>
-
-   <capturecard commercialname="Dvico FusionHDTV DVB-T (Analog)" capturename="FusionHDTV, WDM Video Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_db0018ac&amp;rev_05">
-    <capabilities tv="true" radio="false" mpeg2="false" mce="false" sw="true" bda="false"></capabilities>
-    <tv>
-      <interface cat="capture" video="0" audio="" mpeg2=""></interface>
-      <filters>
-        <filter cat="tvtuner"  		name="FusionHDTV, NTSC/ATSC WDM TvTuner"  checkdevice="true"></filter>
-        <filter cat="tvaudio"  		name="FusionHDTV, TvAudio"                checkdevice="true"></filter>
-        <filter cat="crossbar" 		name="FusionHDTV, Crossbar"               checkdevice="true"></filter>
-        <filter cat="capture"  		name="FusionHDTV, WDM Video Capture"      checkdevice="true"></filter>
-      </filters>
-      <connections>
-        <connection sourcefilter="tvtuner"  	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
-        <connection sourcefilter="tvtuner"  	sourcepin="0" sinkfilter="crossbar" 	sinkpin="1"></connection>
-        <connection sourcefilter="tvaudio"  	sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
-        <connection sourcefilter="crossbar" 	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
-      </connections>
-    </tv>
-  </capturecard>
-
-   <capturecard commercialname="Dvico FusionHDTV DVB-T (Analog)" capturename="FusionHDTV, WDM Video Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_db0018ac&amp;rev_03">
-    <capabilities tv="true" radio="false" mpeg2="false" mce="false" sw="true" bda="false"></capabilities>
-    <tv>
-      <interface cat="capture" video="0" audio="" mpeg2=""></interface>
-      <filters>
-        <filter cat="tvtuner"  		name="FusionHDTV, NTSC/ATSC WDM TvTuner"  checkdevice="true"></filter>
-        <filter cat="tvaudio"  		name="FusionHDTV, TvAudio"                checkdevice="true"></filter>
-        <filter cat="crossbar" 		name="FusionHDTV, Crossbar"               checkdevice="true"></filter>
-        <filter cat="capture"  		name="FusionHDTV, WDM Video Capture"      checkdevice="true"></filter>
-      </filters>
-      <connections>
-        <connection sourcefilter="tvtuner"  	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
-        <connection sourcefilter="tvtuner"  	sourcepin="0" sinkfilter="crossbar" 	sinkpin="1"></connection>
-        <connection sourcefilter="tvaudio"  	sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
-        <connection sourcefilter="crossbar" 	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
-      </connections>
-    </tv>
-  </capturecard>
-
   <capturecard commercialname="Dvico FusionHDTV DVB-T Lite" capturename="FusionHDTV, Transport Stream Capture" devid="ven_109e&amp;dev_0878&amp;subsys_db1018ac&amp;rev_11">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
@@ -1050,26 +993,6 @@
     </tv>
   </capturecard> 
 
-  <capturecard commercialname="Pinnacle 300i Analog" capturename="Pinnacle PCTV 300i PAL Stereo BDA Analog Capture" devid="ven_1131&amp;dev_7134&amp;subsys_002d11bd&amp;rev_01">
-    <capabilities tv="true" radio="true" mpeg2="false" mce="false" sw="true" bda="false"></capabilities>
-    <tv>
-      <interface cat="capture" video="0" audio="3" mpeg2=""></interface>
-      <filters>
-        <filter cat="tvtuner"  name="Pinnacle PCTV 300i PAL Stereo BDA Analog TV Tuner"	checkdevice="true"></filter>
-        <filter cat="tvaudio"  name="Pinnacle PCTV 300i PAL Stereo BDA Analog TV Audio"	checkdevice="true"></filter>
-        <filter cat="crossbar" name="Pinnacle PCTV 300i PAL Stereo BDA Analog Xbar"		checkdevice="true"></filter>
-        <filter cat="capture"  name="Pinnacle PCTV 300i PAL Stereo BDA Analog Capture"	checkdevice="true"></filter>
-      </filters>
-      <connections>
-        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
-        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
-        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="3"></connection>
-        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
-        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"  sinkpin="1"></connection>
-      </connections>
-    </tv>
-  </capturecard>
-
   <capturecard commercialname="Conexant DVB-T/Leadtek LR6650" capturename="Conexant 2388x Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_018714f1&amp;rev_05">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
@@ -1263,44 +1186,6 @@
         <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection> 
       </connections> 
     </tv> 
-  </capturecard>
-
-  <capturecard commercialname="Vstream Xpert TV PVR 883(NTSC)" capturename="Conexant 2388x Video Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_00000000&amp;rev_05">
-    <capabilities tv="true" radio="false" mpeg2="false" mce="false" sw="true" bda="false"></capabilities>
-    <tv>
-      <interface cat="capture" video="0" audio="" mpeg2=""></interface>
-      <filters>
-        <filter cat="tvtuner"  name="Conexant 2388x Tuner"   		checkdevice="true"></filter>
-        <filter cat="tvaudio"  name="Conexant 2388x TvAudio"   		checkdevice="true"></filter>
-        <filter cat="crossbar" name="Conexant 2388x Crossbar"  		checkdevice="true"></filter>
-        <filter cat="capture"  name="Conexant 2388x Video Capture"  checkdevice="true"></filter>
-      </filters>
-      <connections>
-        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="1"></connection>
-        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
-        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="4"></connection>
-        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
-      </connections>
-    </tv>
-  </capturecard>
-
-  <capturecard commercialname="Vstream Xpert TV PVR 883(PAL)" capturename="Conexant 2388x Video Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_088217de&amp;rev_05">
-    <capabilities tv="true" radio="false" mpeg2="false" mce="false" sw="true" bda="false"></capabilities>
-    <tv>
-      <interface cat="capture" video="0" audio="" mpeg2=""></interface>
-      <filters>
-        <filter cat="tvtuner"  name="Conexant 2388x Tuner"   		checkdevice="true"></filter>
-        <filter cat="tvaudio"  name="Conexant 2388x TvAudio"   		checkdevice="true"></filter>
-        <filter cat="crossbar" name="Conexant 2388x Crossbar"  		checkdevice="true"></filter>
-        <filter cat="capture"  name="Conexant 2388x Video Capture"  checkdevice="true"></filter>
-      </filters>
-      <connections>
-        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="1"></connection>
-        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
-        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="4"></connection>
-        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
-      </connections>
-    </tv>
   </capturecard>
 
   <capturecard commercialname="Sony MPEG RealTime Encoder" capturename="SMRT Capture" devid="ven_4444&amp;dev_0016&amp;subsys_813d104d&amp;rev_01">
@@ -2274,21 +2159,6 @@
       </connections>
     </tv>
   </capturecard>
-
-  <capturecard commercialname="Leadtek LR6650 Analog" capturename="DVBT 2388x Video Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_018714f1&amp;rev_05">
-    <capabilities tv="true" radio="false" mpeg2="false" mce="false" sw="true" bda="false"></capabilities>
-    <tv>
-      <interface cat="capture" video="0" audio="3" mpeg2=""></interface>
-      <filters>
-        <filter cat="crossbar"  name="Conexant 2388x Crossbar"	checkdevice="true"></filter>
-        <filter cat="capture"   name="DVBT 2388x Video Capture"	checkdevice="true"></filter>
-      </filters>
-      <connections>
-		<connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture" sinkpin="0"></connection>
-		<connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture" sinkpin="1"></connection>
-      </connections>
-    </tv>
-  </capturecard> 
 
   <capturecard commercialname="AVerMedia DVB-T USB2" capturename="AVerMedia DVB-T BDA Video Capture(A800)" devid="vid_07ca&amp;pid_a800">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
@@ -3929,25 +3799,6 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="AVerTV USB 2.0 Plus" capturename="AVerTV USB 2.0 Plus Video Capture" devid="vid_07ca&amp;pid_0036&amp;mi_00">
-    <capabilities tv="true" radio="true" mpeg2="false" mce="false" sw="true" bda="false"></capabilities>
-    <tv>
-      <interface cat="capture" video="0" audio="" mpeg2=""></interface>
-      <filters>
-        <filter cat="tvtuner"  		name="AVerTV USB 2.0 Plus TvTuner"  		checkdevice="true"></filter>
-        <filter cat="tvaudio"  		name="AVerTV USB 2.0 Plus TvAudio"  		checkdevice="true"></filter>
-        <filter cat="crossbar" 		name="AVerTV USB 2.0 Plus CrossBar"      	checkdevice="true"></filter>
-        <filter cat="capture"  		name="AVerTV USB 2.0 Plus Video Capture"   	checkdevice="true"></filter>
-      </filters>
-      <connections>
-        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
-        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
-        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar" 	sinkpin="3"></connection>
-        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
-      </connections>
-    </tv>
-  </capturecard>
-
   <capturecard commercialname="OnAir USB HDTV" capturename="OnAir USB HDTV WDM Encoder" devid="vid_11ba&amp;pid_1001">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
     <tv>
@@ -4001,44 +3852,6 @@
       <connections>
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
 		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
-      </connections>
-    </tv>
-  </capturecard>
-  
-  <capturecard commercialname="ATI HDTV Wonder (Analog)" capturename="ATI DTV Wonder Analog AV Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_a1031002&amp;rev_05">
-    <capabilities tv="true" radio="false" mpeg2="false" mce="false" sw="true" bda="false"></capabilities>
-    <tv>
-      <interface cat="capture" video="0" audio="" mpeg2=""></interface>
-      <filters>
-        <filter cat="tvtuner"  		name="ATI DTV Wonder Analog TV Tuner"		checkdevice="true"></filter>
-        <filter cat="tvaudio"  		name="ATI DTV Wonder Analog Audio Capture"	checkdevice="true"></filter>
-        <filter cat="crossbar" 		name="ATI DTV Wonder Analog AV Crossbar"	checkdevice="true"></filter>
-        <filter cat="capture"  		name="ATI DTV Wonder Analog AV Capture"		checkdevice="true"></filter>
-      </filters>
-      <connections>
-        <connection sourcefilter="tvtuner"  	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
-        <connection sourcefilter="tvtuner"  	sourcepin="0" sinkfilter="crossbar" 	sinkpin="1"></connection>
-        <connection sourcefilter="tvaudio"  	sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
-        <connection sourcefilter="crossbar" 	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
-      </connections>
-    </tv>
-  </capturecard>
-
-  <capturecard commercialname="ATI HDTV Wonder (Analog)" capturename="ATI DTV Wonder Analog AV Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_a1011002&amp;rev_05">
-    <capabilities tv="true" radio="false" mpeg2="false" mce="false" sw="true" bda="false"></capabilities>
-    <tv>
-      <interface cat="capture" video="0" audio="" mpeg2=""></interface>
-      <filters>
-        <filter cat="tvtuner"  		name="ATI DTV Wonder Analog TV Tuner"		checkdevice="true"></filter>
-        <filter cat="tvaudio"  		name="ATI DTV Wonder Analog Audio Capture"	checkdevice="true"></filter>
-        <filter cat="crossbar" 		name="ATI DTV Wonder Analog AV Crossbar"	checkdevice="true"></filter>
-        <filter cat="capture"  		name="ATI DTV Wonder Analog AV Capture"		checkdevice="true"></filter>
-      </filters>
-      <connections>
-        <connection sourcefilter="tvtuner"  	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
-        <connection sourcefilter="tvtuner"  	sourcepin="0" sinkfilter="crossbar" 	sinkpin="1"></connection>
-        <connection sourcefilter="tvaudio"  	sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
-        <connection sourcefilter="crossbar" 	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -4906,26 +4719,6 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="Medion MD95700 Analog" capturename="USB Hybrid Video Capture" devid="vid_1660&amp;pid_0932">
-    <capabilities tv="true" radio="true" mpeg2="false" mce="false" sw="true" bda="false"></capabilities>
-    <tv>
-      <interface cat="capture" video="0" audio="1" mpeg2=""></interface>
-      <filters>
-        <filter cat="tvtuner"  name="USB Hybrid Tuner"			checkdevice="true"></filter>
-        <filter cat="tvaudio"  name="USB Hybrid TvAudio"		checkdevice="true"></filter>
-        <filter cat="crossbar" name="USB Hybrid Crossbar"		checkdevice="true"></filter>
-        <filter cat="capture"  name="USB Hybrid Video Capture"	checkdevice="true"></filter>
-      </filters>
-      <connections>
-        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
-        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
-        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="3"></connection>
-        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
-        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"  sinkpin="1"></connection>
-      </connections>
-    </tv>
-  </capturecard>
-
   <capturecard commercialname="TechnoTrend DVB-T USB 2.0" capturename="TTUSB2BDA - TechnoTrend DVB-T USB 2.0 BDA Device" devid="vid_0b48&amp;pid_3003">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
@@ -5473,25 +5266,6 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="Vstream Xpert TV PVR 883" capturename="Conexant 2388x Video Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_00000000&amp;rev_11">
-    <capabilities tv="true" radio="false" mpeg2="false" mce="false" sw="true" bda="false"></capabilities>
-    <tv>
-      <interface cat="capture" video="0" audio="" mpeg2=""></interface>
-      <filters>
-        <filter cat="tvtuner"  name="Conexant 2388x Tuner"   		checkdevice="true"></filter>
-        <filter cat="tvaudio"  name="Conexant 2388x TvAudio"   		checkdevice="true"></filter>
-        <filter cat="crossbar" name="Conexant 2388x Crossbar"  		checkdevice="true"></filter>
-        <filter cat="capture"  name="Conexant 2388x Video Capture"  checkdevice="true"></filter>
-      </filters>
-      <connections>
-        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="1"></connection>
-        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
-        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="4"></connection>
-        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
-      </connections>
-    </tv>
-  </capturecard>
-
 <!--  Requires 0.1.2.0 or later  -->
 <!--  For Catalyst 5.4 WDM_NSP drivers only -->
 
@@ -5641,25 +5415,6 @@
       <connections>
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
 		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
-      </connections>
-    </tv>
-  </capturecard>
-
-  <capturecard commercialname="MSI TV@nywhere Master" capturename="Conexant 2388x Video Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_86061462&amp;rev_05">
-    <capabilities tv="true" radio="true" mpeg2="false" mce="false" sw="true" bda="false"></capabilities>
-    <tv>
-      <interface cat="capture" video="0" audio="" mpeg2=""></interface>
-      <filters>
-        <filter cat="tvtuner"  	name="MSI 8606 Tuner"				checkdevice="true"></filter>
-        <filter cat="tvaudio"  	name="MSI 8606 TV Audio"			checkdevice="true"></filter>
-        <filter cat="crossbar" 	name="MSI 8606 Crossbar"			checkdevice="true"></filter>
-        <filter cat="capture"  	name="Conexant 2388x Video Capture"	checkdevice="true"></filter>
-      </filters>
-      <connections>
-        <connection sourcefilter="tvtuner"  	sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
-        <connection sourcefilter="tvtuner"  	sourcepin="0" sinkfilter="crossbar" 	sinkpin="1"></connection>
-        <connection sourcefilter="tvaudio"  	sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
-        <connection sourcefilter="crossbar" 	sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
