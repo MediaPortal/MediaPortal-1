@@ -662,10 +662,13 @@ namespace MediaPortal.TV.Recording
 					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to connect capture->smart tee");
 					return false;
 				}
-				if (!ConnectFilters(ref m_smartTee,ref m_sampleGrabber))
+				if (GUIGraphicsContext.DX9Device!=null && m_sampleInterface!=null)
 				{
-					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to connect smart tee->grabber");
-					return false;
+					if (!ConnectFilters(ref m_smartTee,ref m_sampleGrabber))
+					{
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to connect smart tee->grabber");
+						return false;
+					}
 				}
 #else
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph() connect interface pin->sample grabber");
@@ -715,10 +718,11 @@ namespace MediaPortal.TV.Recording
 				m_graphBuilder.AddFilter(m_TIF, "BDA MPEG2 Transport Information Filter");
 
 
-
-				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph() connect grabber->demuxer");
+#if USEMTSWRITER
 				if (GUIGraphicsContext.DX9Device!=null &&m_sampleInterface!=null)
 				{
+					
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph() connect grabber->demuxer");
 					if(!ConnectFilters(ref m_sampleGrabber, ref m_MPEG2Demultiplexer)) 
 					{
 						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to connect samplegrabber filter->mpeg2 demultiplexer");
@@ -727,6 +731,28 @@ namespace MediaPortal.TV.Recording
 				}
 				else
 				{
+					
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph() connect smarttee->demuxer");
+					if(!ConnectFilters(ref m_smartTee, ref m_MPEG2Demultiplexer)) 
+					{
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to connect samplegrabber filter->mpeg2 demultiplexer");
+						return false;
+					}
+				}			
+#else
+
+				if (GUIGraphicsContext.DX9Device!=null &&m_sampleInterface!=null)
+				{
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph() connect grabber->demuxer");
+					if(!ConnectFilters(ref m_sampleGrabber, ref m_MPEG2Demultiplexer)) 
+					{
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to connect samplegrabber filter->mpeg2 demultiplexer");
+						return false;
+					}
+				}
+				else
+				{
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph() connect capture->demuxer");
 					if(!ConnectFilters(ref lastFilter.DSFilter, ref m_MPEG2Demultiplexer)) 
 					{
 						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to connect samplegrabber filter->mpeg2 demultiplexer");
@@ -734,7 +760,7 @@ namespace MediaPortal.TV.Recording
 					}
 				}				
 
-
+#endif
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph() connect demuxer->tif");
 				if(!ConnectFilters(ref m_MPEG2Demultiplexer,ref m_TIF))
 				{
