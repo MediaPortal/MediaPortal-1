@@ -188,6 +188,14 @@ HRESULT CMPTSFilter::SetFilePosition(REFERENCE_TIME seek)
 
 		position=(fileSize/100LL)* ( (seek*100LL)/ duration);
 	}
+	
+	if (m_pFileReader->m_hInfoFile != INVALID_HANDLE_VALUE)
+	{
+		position += m_writePos;
+		if(position>fileSize)
+			position -= fileSize;
+	}
+
 	if(position>fileSize || position<0)
 	{
 		Log((char*)"SetFilePosition() error",false);
@@ -367,6 +375,7 @@ void CMPTSFilter::UpdatePids()
 	m_pSections->PTSToPTSTime(m_pSections->pids.Duration,&time);
 	m_pSections->pids.Duration=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
 
+	m_writePos=writepos.QuadPart;
 
 
 

@@ -77,6 +77,7 @@ protected:
 	SplitterSetup *m_pDemux;
 	CCritSec m_Lock;
 	BOOL m_setPosition;
+	__int64 m_writePos;
 
 
 };
