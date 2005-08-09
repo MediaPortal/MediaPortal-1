@@ -220,9 +220,12 @@ namespace WindowPlugins.GUISettings.TV
 				TVDatabase.UnmapChannelFromGroup(currentGroup,ch);
 			}
 			currentGroup.tvChannels.Sort(this);
+			int count=1;
 			foreach (TVChannel ch in currentGroup.tvChannels)
 			{
+				ch.Sort=count;
 				TVDatabase.MapChannelToGroup(currentGroup,ch);
+				count++;
 			}
 		}
 		#region IComparer Members

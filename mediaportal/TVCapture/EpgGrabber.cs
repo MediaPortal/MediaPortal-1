@@ -398,8 +398,9 @@ namespace MediaPortal.TV.Recording
 				ushort transportid=0;
 				ushort serviceid=0;
 				uint eventCount=0;
+				string provider;
 				EPGInterface.GetEPGChannel(i,ref networkid, ref transportid, ref serviceid);
-				TVChannel channel=TVDatabase.GetTVChannelByStream(Network==NetworkType.ATSC,Network==NetworkType.DVBT,Network==NetworkType.DVBC,Network==NetworkType.DVBS,networkid,transportid,serviceid);
+				TVChannel channel=TVDatabase.GetTVChannelByStream(Network==NetworkType.ATSC,Network==NetworkType.DVBT,Network==NetworkType.DVBC,Network==NetworkType.DVBS,networkid,transportid,serviceid, out provider);
 				if (channel==null) 
 				{
 					Log.WriteFile(Log.LogType.EPG,"epg-grab: Unknown channel NetworkId:{0} transportid:{1} serviceid:{2}",networkid,transportid,serviceid);

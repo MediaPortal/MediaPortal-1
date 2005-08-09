@@ -125,7 +125,7 @@ namespace MediaPortal.TV.Database
 
 		static public void UpdateFromPreviousVersion()
 		{
-			int currentVersion=2;
+			int currentVersion=3;
 			int versionNr=0;
 			
 			AddTable("tblversion"     ,"CREATE TABLE tblversion( idVersion integer)");
@@ -163,6 +163,12 @@ namespace MediaPortal.TV.Database
 				m_db.Execute("ALTER TABLE tblDVBCMapping ADD COLUMN pcrPid Integer");
 				m_db.Execute("ALTER TABLE tblATSCMapping ADD COLUMN pcrPid Integer");
 				m_db.Execute("ALTER TABLE tblDVBTMapping ADD COLUMN pcrPid Integer");
+			}
+			if (versionNr<3) 
+			{
+				//version 2->3 : added iSort to tblGroupMapping
+				m_db.Execute("ALTER TABLE tblGroupMapping ADD COLUMN iSort Integer");
+				
 			}
 			m_db.Execute(String.Format("update tblversion set idVersion={0}",currentVersion));
 		}
@@ -3059,7 +3065,7 @@ namespace MediaPortal.TV.Database
 
 					if (null==m_db) return ;
 					SQLiteResultSet results;
-					strSQL=String.Format( "select * from tblGroupMapping,tblGroups where tblGroups.idGroup=tblGroupMapping.idGroup and tblGroupMapping.idGroup={0}", group.ID);
+					strSQL=String.Format( "select * from tblGroupMapping,tblGroups where tblGroups.idGroup=tblGroupMapping.idGroup and tblGroupMapping.idGroup={0} order by tblGroupMapping.iSort", group.ID);
 					results=m_db.Execute(strSQL);
 					if (results.Rows.Count== 0) return ;
 					for (int i=0; i < results.Rows.Count;++i)
@@ -3253,8 +3259,13 @@ namespace MediaPortal.TV.Database
 					if (results.Rows.Count==0) 
 					{
 						// doesnt exists, add it
-						strSQL=String.Format("insert into tblGroupMapping (idGroupMapping, idGroup,idChannel) values ( NULL, {0}, {1})", 
-																		group.ID,channel.ID);
+						strSQL=String.Format("insert into tblGroupMapping (idGroupMapping, idGroup,idChannel,iSort) values ( NULL, {0}, {1}, {2})", group.ID,channel.ID,channel.Sort);
+						m_db.Execute(strSQL);
+					}
+					else
+					{
+						strSQL=String.Format("update tblGroupMapping set iSort={0} where idGroup={1} and idChannel={2}", 
+										channel.Sort,group.ID,channel.ID);
 						m_db.Execute(strSQL);
 					}
 				} 
@@ -3724,14 +3735,14 @@ namespace MediaPortal.TV.Database
 				}
 			}
 		}
-		static public TVChannel GetTVChannelByStream(bool atsc, bool dvbt, bool dvbc, bool dvbs,int networkid, int transportid, int serviceid)
+		static public TVChannel GetTVChannelByStream(bool atsc, bool dvbt, bool dvbc, bool dvbs,int networkid, int transportid, int serviceid, out string provider)
 		{
 			int freq, symbolrate,innerFec,modulation, ONID, TSID, SID;
 			int audioPid, videoPid, teletextPid, pmtPid,bandWidth;
 			int audio1, audio2, audio3, ac3Pid,pcrPid;
 			string audioLanguage,  audioLanguage1, audioLanguage2, audioLanguage3;
 			bool HasEITPresentFollow,HasEITSchedule;
-			string provider="";
+			provider="";
 
 			DVBChannel ch=new DVBChannel();
 			ArrayList channels = new ArrayList();
@@ -3755,6 +3766,7 @@ namespace MediaPortal.TV.Database
 						if (serviceid==SID && transportid==TSID) return chan;
 				}
 			}
+			provider="";
 			return null;
 		}
 	}//public class TVDatabase

@@ -2373,13 +2373,33 @@ namespace MediaPortal.TV.Recording
 			while (true)
 			{
 				Int16 networkId, transportId, serviceID, LCN;
+				string provider;
 				m_analyzerInterface.GetLCN(count,out  networkId, out transportId, out serviceID, out LCN);
 				if (networkId>0 && transportId>0 && serviceID>=0 && LCN>0)
 				{
-					TVChannel channel=TVDatabase.GetTVChannelByStream(Network()==NetworkType.ATSC,Network()==NetworkType.DVBT,Network()==NetworkType.DVBC,Network()==NetworkType.DVBS,networkId,transportId,serviceID);
+					TVChannel channel=TVDatabase.GetTVChannelByStream(Network()==NetworkType.ATSC,Network()==NetworkType.DVBT,Network()==NetworkType.DVBC,Network()==NetworkType.DVBS,networkId,transportId,serviceID, out provider);
 					if (channel!=null) 
 					{
 						TVDatabase.SetChannelSort(channel.Name,LCN);
+						TVGroup group = new TVGroup();
+						if (channel.Scrambled)
+						{
+							group.GroupName="Scrambled";
+						}
+						else
+						{
+							group.GroupName="Unscrambled";
+						}
+						int groupid=TVDatabase.AddGroup(group);
+						group.ID=groupid;
+						TVDatabase.MapChannelToGroup(group,channel);
+						
+						group = new TVGroup();
+						group.GroupName=provider;
+						groupid=TVDatabase.AddGroup(group);
+						group.ID=groupid;
+						TVDatabase.MapChannelToGroup(group,channel);
+
 					}
 				}
 				else 

@@ -194,6 +194,24 @@ namespace MediaPortal.TV.Database
 		private TVProgram nextProgram=null;
 
 		AnalogVideoStandard _TVStandard;
+
+		public TVChannel Clone()
+		{
+			TVChannel newChan=new TVChannel();
+			newChan.Name=m_strName;
+			newChan.Number=m_iNumber;
+			newChan.ID=m_iID;
+			newChan.Frequency=m_lFrequency;
+			newChan.XMLId=m_strXMLId;
+			newChan.External=m_bExternal;
+			newChan.ExternalTunerChannel=m_strExternalTunerChannel;
+			newChan.VisibleInGuide=m_bVisibleInGuide;
+			newChan.Country=m_iCountry;
+			newChan.ProviderName=m_strProviderName;
+			newChan.Scrambled=m_scrambled;
+			newChan.Sort=m_iSort;
+			return newChan;
+		}
 		/// <summary> 
 		/// Property to indicate if this channel is scrambled or not
 		/// </summary>

@@ -847,7 +847,9 @@ namespace MediaPortal.Configuration.Sections
 				group.tvChannels.Clear();
 				ListViewItem listItem = listViewTVGroupChannels.Items[index];
 				group.tvChannels.Add (listItem.Tag);
-				TVDatabase.MapChannelToGroup(group, (TVChannel)listItem.Tag);
+				TVChannel ch=((TVChannel)listItem.Tag).Clone();
+				ch.Sort=index;
+				TVDatabase.MapChannelToGroup(group, ch);
 			}
 		}
 
