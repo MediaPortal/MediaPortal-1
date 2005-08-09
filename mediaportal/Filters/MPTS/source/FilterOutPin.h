@@ -10,9 +10,10 @@
 #include "MPTSFilter.h"
 #include "Sections.h"
 #include "Buffers.h"
+#include "TimeShiftSeeking.h"
 
 
-class CFilterOutPin : public CSourceStream,public CSourceSeeking
+class CFilterOutPin : public CSourceStream,public CTimeShiftSeeking
 {
 public:
 	CFilterOutPin(LPUNKNOWN pUnk, CMPTSFilter *pFilter, FileReader *pFileReader, Sections *pSections, HRESULT *phr);
@@ -20,8 +21,6 @@ public:
 
 	STDMETHODIMP NonDelegatingQueryInterface( REFIID riid, void ** ppv );
 	STDMETHODIMP SetPositions(LONGLONG *pCurrent,DWORD CurrentFlags,LONGLONG *pStop,DWORD StopFlags);
-	STDMETHODIMP GetDuration(LONGLONG *pDuration);
-	STDMETHODIMP  GetAvailable( LONGLONG * pEarliest, LONGLONG * pLatest );
 
 	//CSourceStream
 	HRESULT GetMediaType(CMediaType *pMediaType);

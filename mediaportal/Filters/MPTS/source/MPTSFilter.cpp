@@ -339,7 +339,7 @@ void CMPTSFilter::UpdatePids()
 	}
 	if (m_pFileReader->m_hInfoFile==INVALID_HANDLE_VALUE) 
 	{
-		LogDebug("UpdatePids() info file not opened");
+		//LogDebug("UpdatePids() info file not opened");
 		return;
 	}
 	DWORD dwReadBytes;

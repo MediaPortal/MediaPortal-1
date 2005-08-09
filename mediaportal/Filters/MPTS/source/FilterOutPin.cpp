@@ -13,7 +13,7 @@ extern void LogDebug(const char *fmt, ...) ;
 
 CFilterOutPin::CFilterOutPin(LPUNKNOWN pUnk, CMPTSFilter *pFilter, FileReader *pFileReader, Sections *pSections, HRESULT *phr) :
 	CSourceStream(NAME("PinObject"), phr, pFilter, L"Out"),
-	CSourceSeeking(NAME("MediaSeekingObject"), pUnk, phr, &m_cSharedState),
+	CTimeShiftSeeking(NAME("MediaSeekingObject"), pUnk, phr, &m_cSharedState),
 	m_pMPTSFilter(pFilter),
 	m_pFileReader(pFileReader),
 	m_pSections(pSections),m_bDiscontinuity(FALSE), m_bFlushing(FALSE)
@@ -45,7 +45,7 @@ STDMETHODIMP CFilterOutPin::NonDelegatingQueryInterface( REFIID riid, void ** pp
 {
     if (riid == IID_IMediaSeeking)
     {
-        return CSourceSeeking::NonDelegatingQueryInterface( riid, ppv );
+        return CTimeShiftSeeking::NonDelegatingQueryInterface( riid, ppv );
     }
     return CSourceStream::NonDelegatingQueryInterface(riid, ppv);
 }
@@ -109,11 +109,11 @@ HRESULT CFilterOutPin::CompleteConnect(IPin *pReceivePin)
 STDMETHODIMP CFilterOutPin::SetPositions(LONGLONG *pCurrent,DWORD CurrentFlags,LONGLONG *pStop,DWORD StopFlags)
 {
 	LogDebug("pin:SetPositions: current:%x stop:%x", *pCurrent, *pStop);
-	return CSourceSeeking::SetPositions(pCurrent,CurrentFlags,pStop,StopFlags);
+	return CTimeShiftSeeking::SetPositions(pCurrent,CurrentFlags,pStop,StopFlags);
 }
 HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 {
-	LogDebug("FillBuffer");
+	
 	if (m_lastPTS==0) 
 		m_lastPTS=m_pSections->pids.StartPTS;
 	CheckPointer(pSample, E_POINTER);
@@ -132,14 +132,14 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 		lDataLength = pSample->GetActualDataLength();
 
 
-		LogDebug("getbuffer");
+		
 
 		do
 		{
 			m_pMPTSFilter->UpdatePids();
 			hr = m_pBuffers->Require(lDataLength);
 		} while (hr==S_OK && m_pBuffers->Count() < lDataLength);
-		LogDebug("got %x/%x bytes",m_pBuffers->Count() , lDataLength);
+		
 
 		if (FAILED(hr))
 		{
@@ -154,12 +154,8 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 			//return S_FALSE; // cant read = end of stream
 		}
 
-		LogDebug("dequeue");
 		m_pBuffers->DequeFromBuffer(pData, lDataLength);
 
-		LogDebug("dequeue done.");
-
-		LogDebug("get pts.");
 		ULONGLONG pts=0;
 		ULONGLONG ptsStart=0;
 		ULONGLONG ptsEnd=0;
@@ -196,11 +192,11 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 
 		REFERENCE_TIME rtStart = static_cast<REFERENCE_TIME>(ptsStart / m_dRateSeeking);
 		REFERENCE_TIME rtStop  = static_cast<REFERENCE_TIME>(ptsEnd / m_dRateSeeking);
-//		LogDebug("%12.12d %12.12d", (DWORD)rtStart, (DWORD)rtStop);
+
 		pSample->SetTime(&rtStart, &rtStop); 
 		pSample->SetSyncPoint(bSyncPoint);
 
-		LogDebug("psample set");
+		
 		if(m_bDiscontinuity) 
 		{
 			LogDebug("pin: FillBuffer() SetDiscontinuity");
@@ -208,19 +204,14 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 			m_bDiscontinuity = FALSE;
 		}
 	}
-		LogDebug("all done");
+		
 	return NOERROR;
-}
-STDMETHODIMP CFilterOutPin::GetDuration(LONGLONG *pDuration)
-{
-	HRESULT hr = CSourceSeeking::GetDuration(pDuration);
-	return S_OK;
 }
 
 HRESULT CFilterOutPin::OnThreadCreate( )
 {
     CAutoLock cAutoLockShared(&m_cSharedState);
-	if(m_pFileReader->IsFileInvalid()==true)
+	if(m_pFileReader->IsFileInvalid()==TRUE)
 	{
 		m_pFileReader->OpenFile();
 	}
@@ -255,7 +246,7 @@ HRESULT CFilterOutPin::ChangeStop()
 HRESULT CFilterOutPin::ChangeRate()
 {
     {   // Scope for critical section lock.
-        CAutoLock cAutoLockSeeking(CSourceSeeking::m_pLock);
+        CAutoLock cAutoLockSeeking(CTimeShiftSeeking::m_pLock);
         if( m_dRateSeeking <= 0 ) {
             m_dRateSeeking = 1.0;  // Reset to a reasonable value.
             return E_FAIL;
@@ -280,7 +271,7 @@ void CFilterOutPin::UpdateFromSeek(void)
 HRESULT CFilterOutPin::SetDuration(REFERENCE_TIME duration)
 {
 	
-	CAutoLock lock(CSourceSeeking::m_pLock);
+	CAutoLock lock(CTimeShiftSeeking::m_pLock);
 	m_rtDuration = duration;
 	m_rtStop = m_rtDuration;
     return S_OK;
@@ -316,22 +307,14 @@ void CFilterOutPin::ResetBuffers()
 	m_bDiscontinuity=true;
 }
 
-STDMETHODIMP  CFilterOutPin::GetAvailable( LONGLONG * pEarliest, LONGLONG * pLatest )
-{
-	if(pEarliest) {
-		*pEarliest = m_pSections->pids.StartPTS;
-	}
-	if(pLatest) {
-		*pLatest = m_pSections->pids.EndPTS;
-	}
-	return S_OK;
-}
 void CFilterOutPin::UpdatePositions(ULONGLONG& ptsStart, ULONGLONG& ptsEnd)
 {
+	CRefTime rtStart,rtStop,rtDuration;
+
 	Sections::PTSTime time;
-	m_rtStart=m_pSections->pids.StartPTS;
-	m_rtStop=m_pSections->pids.EndPTS;
-	m_rtDuration=m_pSections->pids.EndPTS-m_pSections->pids.StartPTS;
+	rtStart=m_pSections->pids.StartPTS;
+	rtStop=m_pSections->pids.EndPTS;
+	rtDuration=m_pSections->pids.EndPTS-m_pSections->pids.StartPTS;
 	
 	
 	if (ptsStart==0) ptsStart=m_lastPTS;
@@ -339,8 +322,8 @@ void CFilterOutPin::UpdatePositions(ULONGLONG& ptsStart, ULONGLONG& ptsEnd)
 
 	m_lastPTS=ptsEnd;
 
-	ptsStart -=m_rtStart;
-	ptsEnd   -=m_rtStart;
+	ptsStart -=rtStart;
+	ptsEnd   -=rtStart;
 
 	m_pSections->PTSToPTSTime(ptsStart,&time);
 	ptsStart=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
@@ -348,13 +331,17 @@ void CFilterOutPin::UpdatePositions(ULONGLONG& ptsStart, ULONGLONG& ptsEnd)
 	m_pSections->PTSToPTSTime(ptsEnd,&time);
 	ptsEnd=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
 
-	m_pSections->PTSToPTSTime(m_rtStart,&time);
-	m_rtStart=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
+	m_pSections->PTSToPTSTime(rtStart,&time);
+	rtStart=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
 
 
-	m_pSections->PTSToPTSTime(m_rtStop,&time);
-	m_rtStop=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
+	m_pSections->PTSToPTSTime(rtStop,&time);
+	rtStop=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
 
-	m_pSections->PTSToPTSTime(m_rtDuration,&time);
-	m_rtDuration=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
+	//m_pSections->PTSToPTSTime(rtDuration,&time);
+	//m_rtDuration=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
+
+	m_rtStart=rtStart;
+	m_rtStop=rtStop;
+	m_rtDuration=rtStop-rtStart;
 }

@@ -109,7 +109,7 @@ HRESULT Sections::CheckStream(void)
 	LogDebug("Sections::CheckStream()");
 	__int64 fileSize;
 	m_pFileReader->GetFileSize(&fileSize);
-	__int64 fileEndOffset=fileSize-((fileSize*20)/100);
+	__int64 fileEndOffset=fileSize-(1024LL*1024LL);
 	fileEndOffset=(fileEndOffset/188)*188;
 	if(m_pFileReader->OpenFile()==S_FALSE)
 		return S_FALSE;
@@ -160,7 +160,7 @@ HRESULT Sections::CheckStream(void)
 							{
 								LogDebug("Sections::CheckStream() got PTS");
 								pids.StartPTS=(__int64)pts; // first pts
-								m_pFileReader->SetFilePointer(fileEndOffset,FILE_BEGIN);// sets to file-end - 20%
+								m_pFileReader->SetFilePointer(fileEndOffset,FILE_BEGIN);// sets to file-end - 1MB
 							}
 							
 						}
@@ -181,7 +181,7 @@ HRESULT Sections::CheckStream(void)
 	PTSToPTSTime(pids.Duration,&time);
 	pids.Duration=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
 	//
-	m_pFileReader->SetFilePointer(0,FILE_BEGIN);// sets to file-end - 20%
+	m_pFileReader->SetFilePointer(0,FILE_BEGIN);// sets to file begin
 	return S_OK;
 }
 

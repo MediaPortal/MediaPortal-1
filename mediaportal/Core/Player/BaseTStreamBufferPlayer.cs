@@ -223,18 +223,7 @@ namespace MediaPortal.Player
 			else
 			{
 				//seek to end of file
-				long lTime=5*60*60;
-				lTime*=10000000;
-				long pStop=0;
-				hr=m_mediaSeeking.SetPositions(ref lTime, (int)SeekingFlags.AbsolutePositioning,ref pStop, SeekingFlags.NoPositioning);
-				if (hr==0)
-				{
-					long lStreamPos;
-					m_mediaSeeking.GetCurrentPosition(out lStreamPos); // stream position
-					m_dDuration=lStreamPos;
-					m_dDuration/=10000000d;
-					SeekAsolutePercentage(0);
-				}
+				UpdateDuration();
 			}
 
 			Log.Write("TStreamBufferPlayer:playing duration:{0}",Utils.SecondsToHMSString( (int)m_dDuration) );
@@ -741,13 +730,15 @@ namespace MediaPortal.Player
           //Log.Write("seekabs: {0} duration:{1} current pos:{2}", dTime,Duration, CurrentPosition);
           dTime*=10000000d;
 					long pStop=0;
-          long lContentStart,lContentEnd;
-          double fContentStart,fContentEnd;
-          m_mediaSeeking.GetAvailable(out lContentStart, out lContentEnd);
-          fContentStart=lContentStart;
-          fContentEnd=lContentEnd;
 
-          dTime+=fContentStart;
+					//long lContentStart,lContentEnd,dmp;
+					//double fContentStart,fContentEnd;
+					//m_mediaSeeking.GetAvailable(out lContentStart, out dmp);
+					//m_mediaSeeking.GetPositions(out dmp, out lContentEnd);
+          //fContentStart=lContentStart;
+          //fContentEnd=lContentEnd;
+
+          //dTime+=fContentStart;
           long lTime=(long)dTime;
           
 					int hr=m_mediaSeeking.SetPositions(ref lTime, ((int)SeekingFlags.AbsolutePositioning+(int)SeekingFlags.SeekToKeyFrame),ref pStop, SeekingFlags.NoPositioning);
@@ -777,20 +768,22 @@ namespace MediaPortal.Player
       long lStreamPos;
       double fCurrentPos;
       hr=m_mediaSeeking.GetCurrentPosition(out lStreamPos); // stream position
-	//		Log.Write("GetCurrentPosition() pos:{0} hr:0x{1:X}", lStreamPos,hr);
+//			Log.Write("GetCurrentPosition() pos:{0} hr:0x{1:X}", lStreamPos,hr);
       fCurrentPos=lStreamPos;
       fCurrentPos/=10000000d;
 
-      long lContentStart,lContentEnd;
+
+      long lContentStart,lContentEnd,dmp;
       double fContentStart,fContentEnd;
-      hr=m_mediaSeeking.GetAvailable(out lContentStart, out lContentEnd);
-			Log.Write("GetAvailable() start:{0} end:{1} hr:0x{2:X}", lContentStart,lContentEnd,hr);
+			hr=m_mediaSeeking.GetAvailable(out lContentStart, out dmp);
+      hr=m_mediaSeeking.GetPositions(out dmp, out lContentEnd);
+//			Log.Write("GetPositions() start:{0} end:{1} hr:0x{2:X}", lContentStart,lContentEnd,hr);
 			fContentStart=lContentStart;
       fContentEnd=lContentEnd;
       fContentStart/=10000000d;
       fContentEnd/=10000000d;
-      double fPos=m_dCurrentPos;
-      fCurrentPos-=fContentStart;
+      //double fPos=m_dCurrentPos;
+      //fCurrentPos-=fContentStart;
       m_dCurrentPos=fCurrentPos;
       m_dContentStart=fContentStart;
 #if DEBUG
@@ -1224,11 +1217,16 @@ namespace MediaPortal.Player
 				return;
 			TimeSpan ts=DateTime.Now-elapsedTimer;
 			if (ts.TotalMilliseconds<100) return;
-			long earliest, latest, current,  stop, rewind, pStop;
+			long earliest, latest, current,  stop, rewind, pStop,duration;
 		
-			m_mediaSeeking.GetAvailable(out earliest, out latest);
-			m_mediaSeeking.GetPositions(out current, out stop);
-
+			//m_mediaSeeking.GetPositions(out earliest, out latest);
+			//m_mediaSeeking.GetPositions(out current, out stop);
+			m_mediaSeeking.GetCurrentPosition(out current);
+			m_mediaSeeking.GetDuration(out duration);
+			earliest=0;
+			latest=duration;
+			stop=duration;
+			
 			// Log.Write("earliest:{0} latest:{1} current:{2} stop:{3} speed:{4}, total:{5}",
 			//         earliest/10000000,latest/10000000,current/10000000,stop/10000000,m_speedRate, (latest-earliest)/10000000);
       
