@@ -114,7 +114,13 @@ namespace MediaPortal.Playlists
 					strLeft=strLeft.ToLower();
 					if (strLeft.StartsWith("file"))
 					{	
-						if (strFileName.Length!=0)
+						if(strValue.Length > 0 && strValue[0] == '#')
+						{
+							szLine=file.ReadLine();
+							continue;
+						}
+
+						if(strFileName.Length!=0)
 						{
 							PlayListItem newItem=new PlayListItem(strInfo,strFileName,0);
 							Add(newItem);
@@ -123,7 +129,6 @@ namespace MediaPortal.Playlists
 							strDuration="";
 						}
 						strFileName=strValue;
-
 					}
 					if (strLeft.StartsWith("title"))
 					{	
@@ -146,12 +151,13 @@ namespace MediaPortal.Playlists
 					{
 						int lDuration=System.Int32.Parse(strDuration);
 						lDuration*=1000;
+
             string strTmp=strFileName.ToLower();
             PlayListItem newItem=new PlayListItem(strInfo,strFileName,lDuration);
 						if (strTmp.IndexOf("http:")<0 && strTmp.IndexOf("mms:")<0 && strTmp.IndexOf("rtp:")<0)
 						{
 							Utils.GetQualifiedFilename(strBasePath,ref strFileName);
-              newItem.Type = PlayListItem.PlayListItemType.AudioStream;
+							newItem.Type = PlayListItem.PlayListItemType.AudioStream;
 						}
 						Add(newItem);
 						strFileName="";
