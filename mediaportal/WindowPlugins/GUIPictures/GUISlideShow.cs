@@ -134,6 +134,8 @@ namespace MediaPortal.GUI.Pictures
 		bool					_isBackgroundMusicEnabled = false;
 		bool					_isBackgroundMusicPlaying = false;
 		string[]				_musicFileExtensions;
+		int						_lastSegmentIndex;
+		public static readonly string  SegmentIndicator = "#segment";
  
 		public GUISlideShow()
 		{
@@ -237,11 +239,14 @@ namespace MediaPortal.GUI.Pictures
 			m_strCurrentSlide="";
 			m_lSlideTime=0;
 			m_fUserZoomLevel=1.0f;
+			_lastSegmentIndex = -1;
+
 			if (null!=m_pTextureBackGround)
 			{
 				m_pTextureBackGround.Dispose();
 				m_pTextureBackGround=null;
 			}
+
 			if (null!=m_pTextureCurrent)
 			{
 				m_pTextureCurrent.Dispose();
@@ -252,58 +257,98 @@ namespace MediaPortal.GUI.Pictures
 				g_Player.Stop();
 		}
 
-		void  ShowNext()
+		void ShowNext()
+		{
+			ShowNext(false);
+		}
+
+		void ShowNext(bool jump)
 		{
 			if (!m_bSlideShow)
 				m_bUpdate=true;
 
-			// Check image transition
+			// check image transition
 			if (m_pTextureCurrent != null)
 				return;
 
-			// Reset slide time
-			m_lSlideTime=(int)(DateTime.Now.Ticks/10000);
-
-			// Get next picture
 			m_iCurrentSlide++;
-			if ( m_iCurrentSlide >= m_slides.Count ) 
+
+			if(jump)
 			{
-				if ( m_bAutoRepeat )
+				while(m_iCurrentSlide < m_slides.Count && object.ReferenceEquals(m_slides[++m_iCurrentSlide], SegmentIndicator) == false);
+
+				m_iCurrentSlide++;
+			}
+			else if(_lastSegmentIndex != -1)
+			{
+				if(object.ReferenceEquals(m_slides[m_iCurrentSlide], SegmentIndicator))
+					m_iCurrentSlide++;
+			}
+
+			if(m_iCurrentSlide >= m_slides.Count)
+			{
+				if(m_bAutoRepeat)
 				{
 					m_iCurrentSlide=0;
-					if ( m_bAutoShuffle )
+
+					if(m_bAutoShuffle)
 						Shuffle();
 				}
 				else
 					ShowPreviousWindow();
 			}
+
+			// Reset slide time
+			m_lSlideTime=(int)(DateTime.Now.Ticks/10000);
 		}
 
-		void  ShowPrevious()
+		void ShowPrevious()
+		{
+			ShowPrevious(false);
+		}
+
+		void ShowPrevious(bool jump)
 		{
 			if (!m_bSlideShow)
 				m_bUpdate=true;
 
-			// Check image transition
+			// check image transition
 			if (m_pTextureCurrent != null)
 				return;
-      
+
+			m_iCurrentSlide--;
+
+			if(jump)
+			{
+				while(m_iCurrentSlide >= 0 && object.ReferenceEquals(m_slides[m_iCurrentSlide], SegmentIndicator) == false)
+					m_iCurrentSlide--;
+
+				m_iCurrentSlide++;
+			}
+			else if(_lastSegmentIndex != -1)
+			{
+				if(m_iCurrentSlide > 0 && object.ReferenceEquals(m_slides[m_iCurrentSlide], SegmentIndicator))
+					m_iCurrentSlide--;
+			}
+
+			if(m_iCurrentSlide < 0)
+				m_iCurrentSlide = m_slides.Count - 1;
+
 			// Reset slide time
 			m_lSlideTime=(int)(DateTime.Now.Ticks/10000);
-
-			// Get previous picture
-			m_iCurrentSlide--;
-			if ( m_iCurrentSlide < 0 ) 
-			{
-				m_iCurrentSlide=m_slides.Count-1;
-			}
 		}
 
-		public void Add(string strPicture)
+		public void Add(string filename)
 		{
-			if (Utils.IsPicture(strPicture))
+			if(string.Compare(filename, SegmentIndicator) == 0)
 			{
-				m_slides.Add(strPicture);
+				if(m_slides.Count - _lastSegmentIndex > 1)
+					_lastSegmentIndex = m_slides.Add(filename);
+			}
+			else if(Utils.IsPicture(filename))
+			{
+				_lastSegmentIndex = -1;
+				m_slides.Add(filename);
 			}
 		}
 
@@ -348,7 +393,7 @@ namespace MediaPortal.GUI.Pictures
 			}
 		}
 
-		void StartSlideShow()
+		public void StartSlideShow()
 		{
 			_isBackgroundMusicPlaying = false;
 
@@ -1347,6 +1392,11 @@ namespace MediaPortal.GUI.Pictures
 					OnDelete();				
 					break;
 
+				case Action.ActionType.ACTION_PREV_ITEM:
+					if(_lastSegmentIndex != -1)
+						ShowPrevious(true);
+
+					break;
 				case Action.ActionType.ACTION_PREV_PICTURE:
 					if (!m_bPictureZoomed) 
 					{
@@ -1359,6 +1409,11 @@ namespace MediaPortal.GUI.Pictures
 						if (m_fZoomLeftBackGround < 0) m_fZoomLeftBackGround = 0;
 						m_lSlideTime=(int)(DateTime.Now.Ticks/10000);
 					}
+					break;
+				case Action.ActionType.ACTION_NEXT_ITEM:
+					if(_lastSegmentIndex != -1)
+						ShowNext(true);
+
 					break;
 				case Action.ActionType.ACTION_NEXT_PICTURE:
 					if (!m_bPictureZoomed)
@@ -1932,15 +1987,7 @@ namespace MediaPortal.GUI.Pictures
 					playlistItem.Type = Playlists.PlayList.PlayListItem.PlayListItemType.Audio;
 					playlistItem.FileName = filename;
 					PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC_TEMP).Add(playlistItem);
-
-					if(PlayListFactory.IsPlayList(filename))
-					{
-						PlayListPlayer.Play(filename);
-					}
-					else
-					{
-						PlayListPlayer.Play(0);
-					}
+					PlayListPlayer.Play(0);
 					
 					_isBackgroundMusicPlaying = true;
 				}
