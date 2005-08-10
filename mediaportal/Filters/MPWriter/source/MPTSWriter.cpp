@@ -8,8 +8,9 @@
 
 //maxium timeshifting length
 #define MAX_FILE_LENGTH (2000LL*1024LL*1024LL)  // 2 gigabyte
-// Setup data
+//#define MAX_FILE_LENGTH (10LL*1024LL*1024LL)  // 50MB
 
+// Setup data
 const AMOVIESETUP_MEDIATYPE sudPinTypes =
 {
     &MEDIATYPE_NULL,            // Major type
@@ -880,6 +881,7 @@ HRESULT CDump::Write(PBYTE pbData, LONG lDataLength)
 
 	if (m_currentFilePosition> MAX_FILE_LENGTH)
 	{
+		LogDebug("end of file reached, back to 0");
 		m_currentFilePosition=0;
 	}
 

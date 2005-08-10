@@ -375,11 +375,11 @@ namespace MediaPortal.Player
 					
 				UpdateDuration();
 				updateTimer=DateTime.Now;
-			//	Log.Write("pos:{0} duration:{1}", m_dCurrentPos,m_dDuration);
+				Log.Write("pos:{0} duration:{1}", m_dCurrentPos,m_dDuration);
 			}
 			double dBackingFileLength = 10d * 60d;					      // each backing file is 10 min
 			double dMaxDuration       = 10d * dBackingFileLength; // max. 10 backing files
-
+/*
 			if (IsTimeShifting)
 			{
 				if (Paused && Duration >= (dMaxDuration-60d) && CurrentPosition <= (2*dBackingFileLength) )
@@ -404,13 +404,8 @@ namespace MediaPortal.Player
 					Log.Write("BaseTTStreamBufferPlayer: stop RWD since begin of timeshiftbuffer reached");
 					Speed=1;
 					SeekAsolutePercentage(0);
-				}/*
-				if (Speed<0 && CurrentPosition > m_dLastPosition)
-				{
-					Speed=1;
-					SeekAsolutePercentage(0);
-				}*/
-			}
+				}
+			}*/
 			m_dLastPosition=CurrentPosition;
 							
 			if (hasVideo) 

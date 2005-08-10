@@ -137,7 +137,31 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 		do
 		{
 			m_pMPTSFilter->UpdatePids();
-			hr = m_pBuffers->Require(lDataLength);
+			bool endOfFile=false;
+			hr = m_pBuffers->Require(lDataLength,endOfFile);
+			if (endOfFile)
+			{
+				if (m_pMPTSFilter->m_pFileReader->m_hInfoFile!=INVALID_HANDLE_VALUE)
+				{
+					__int64 fileSize;
+					m_pMPTSFilter->m_pFileReader->GetFileSize(&fileSize);
+					int count=0;
+					while (true)
+					{
+						m_pMPTSFilter->UpdatePids();
+						if (m_pSections->pids.fileStartPosition >= fileSize-(1024*1024) ||
+							m_pSections->pids.fileStartPosition < lDataLength) 
+						{
+							count++;
+							if (count >20) break;
+							Sleep(50);
+						}
+						else break;
+					}
+					LogDebug("end of file, writepos:%x slept:%i", m_pSections->pids.fileStartPosition,count);
+				}
+			}
+
 		} while (hr==S_OK && m_pBuffers->Count() < lDataLength);
 		
 

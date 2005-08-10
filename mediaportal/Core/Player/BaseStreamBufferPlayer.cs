@@ -403,14 +403,9 @@ namespace MediaPortal.Player
 			TimeSpan ts=DateTime.Now-updateTimer;
 			if (ts.TotalMilliseconds>=800 || iSpeed!=1) 
 			{
-				double pos=CurrentPosition;
 				UpdateCurrentPosition();
-				if (pos == CurrentPosition)
-				{
-				//	Log.Write("--- stopped at :{0}", pos);
-				}
+				UpdateDuration();	
 					
-				UpdateDuration();
 				updateTimer=DateTime.Now;
 			}
 

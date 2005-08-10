@@ -11,7 +11,8 @@
 #include "Sections.h"
 #include <crtdbg.h>
 
-#define MAX_FILE_LENGTH (2000LL*1024LL*1024LL)  // 2 gigabyte
+
+
 extern void LogDebug(const char *fmt, ...) ;
 
 CBuffers::CBuffers(FileReader *pFileReader, StreamPids *pPids, long bufferSize)
@@ -46,8 +47,9 @@ long CBuffers::Count()
 	return m_lBytesInBuffer;
 }
 
-HRESULT CBuffers::Require(long nBytesRequired)
+HRESULT CBuffers::Require(long nBytesRequired, bool& endOfFile)
 {
+	endOfFile=false;
 	if (nBytesRequired < Count()) return S_OK;
 
 	BUFFER newBuffer;
@@ -59,7 +61,7 @@ HRESULT CBuffers::Require(long nBytesRequired)
 	__int64 fileSize     = 0;
 	__int64 currPosition = m_pFileReader->GetFilePointer();
 	m_pFileReader->GetFileSize(&fileSize);
-//	LogDebug("buffers: read from:%x", (DWORD)currPosition);
+	//LogDebug("buffers: read from:%x", (DWORD)currPosition);
 
 	ULONG dwBytesRead = 0;				
 	HRESULT hr = m_pFileReader->Read(newBuffer.pData, m_lBuffersItemSize, &dwBytesRead);
@@ -74,13 +76,15 @@ HRESULT CBuffers::Require(long nBytesRequired)
 	{
 		if (m_pFileReader->m_hInfoFile==INVALID_HANDLE_VALUE)
 		{
+			endOfFile=true;
 			LogDebug("buffers: end of file reached");
 			delete newBuffer.pData;
 			return E_FAIL;
 		}
 
-		if (fileSize>=MAX_FILE_LENGTH)
+		if (fileSize> MAX_FILE_LENGTH)
 		{
+			endOfFile=true;
 			delete newBuffer.pData;
 			currPosition=0;
 			LogDebug("buffers: end of file reached, seek to begin");
@@ -99,11 +103,11 @@ HRESULT CBuffers::Require(long nBytesRequired)
 		if (Count() < nBytesRequired) 
 		{
 			//currPosition = m_pFileReader->GetFilePointer();
-			//LogDebug("buffers: read %d bytes buffer:%d/%d pos:%x filesize:%x",
-			//	dwBytesRead,m_lBytesInBuffer,nBytesRequired,(DWORD)currPosition,(DWORD)fileSize);
 			Sleep(100);
 		}
 	}
+	//currPosition = m_pFileReader->GetFilePointer();
+	//LogDebug("buffers: read %d bytes buffer:%d/%d pos:%x filesize:%x",dwBytesRead,m_lBytesInBuffer,nBytesRequired,(DWORD)currPosition,(DWORD)fileSize);
 	
 	return S_OK;
 }
