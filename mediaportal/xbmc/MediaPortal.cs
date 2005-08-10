@@ -55,6 +55,7 @@ using MediaPortal.Ripper;
 using MediaPortal.TV.Database;
 using MediaPortal.Core.Transcoding;
 using MediaPortal.Remotes;
+using MediaPortal.Dispatcher;
 #endregion
 
 
@@ -154,7 +155,6 @@ public class MediaPortalApp : D3DApp, IRender
 	[STAThread]
 	public static void Main()
 	{
-
 		Log.Write("Mediaportal is starting up");
 
 		//Set current directory
@@ -831,6 +831,8 @@ public class MediaPortalApp : D3DApp, IRender
 
 		GUIPropertyManager.SetProperty("#date", GetDate());
 		GUIPropertyManager.SetProperty("#time", GetTime());
+
+		JobDispatcher.Init();
 	}
 
 
@@ -839,6 +841,8 @@ public class MediaPortalApp : D3DApp, IRender
 	/// </summary>
 	protected override void OnExit()
 	{
+		JobDispatcher.Term();
+
 		Log.Write("Mediaportal.OnExit()");
 		if (usbuirtdevice != null)
 			usbuirtdevice.Close();
