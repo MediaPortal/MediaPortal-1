@@ -129,7 +129,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="VA2000" capturename="NVTV" devid="ven_123f&amp;dev_8120&amp;subsys_01e310de&amp;rev_b1">
+  <capturecard commercialname="Aopen VA2000N" capturename="NVTV" devid="ven_123f&amp;dev_8120&amp;subsys_01e310de&amp;rev_b1">
     <capabilities tv="true" radio="false" mpeg2="true" mce="true" sw="false" bda="false"></capabilities>
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
@@ -6094,7 +6094,7 @@
   </capturecard>
 
   <capturecard commercialname="Hauppauge PVR150MCE LP" capturename="Hauppauge WinTV PVR PCI II Capture" devid="ven_4444&amp;dev_0016&amp;subsys_c8010070&amp;rev_01">
-    <capabilities tv="true" radio="false" mpeg2="true" mce="true" sw="false" bda="false"></capabilities>
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"></capabilities>
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
       <filters>
@@ -6110,6 +6110,27 @@
         <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="1"></connection>
         <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
         <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"  sinkpin="1"></connection>
+        <connection sourcefilter="capture"  sourcepin="3" sinkfilter="encoder"  sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Aopen VA2000" capturename="AOpen VA2000 Capture" devid="ven_4444&amp;dev_0016&amp;subsys_ff5f0000&amp;rev_01">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"  name="AOpen VA2000 TV Tuner"		checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="AOpen VA2000 TV Audio"		checkdevice="true"></filter>
+        <filter cat="crossbar" name="AOpen VA2000 Crossbar"		checkdevice="true"></filter>
+        <filter cat="capture"  name="AOpen VA2000 Capture"		checkdevice="true"></filter>
+        <filter cat="encoder"  name="AOpen VA2000 Video Encoder"	checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="1"></connection>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
         <connection sourcefilter="capture"  sourcepin="3" sinkfilter="encoder"  sinkpin="0"></connection>
       </connections>
     </tv>
