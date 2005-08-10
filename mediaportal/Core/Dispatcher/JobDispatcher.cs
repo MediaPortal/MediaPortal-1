@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
 using System.Threading;
-using System.Diagnostics;
+using MediaPortal.GUI.Library;
 using Microsoft.Win32;
 
 namespace MediaPortal.Dispatcher
@@ -53,11 +53,11 @@ namespace MediaPortal.Dispatcher
 			}
 			catch(ThreadInterruptedException)
 			{
-//				Log.Write("JobDispatcher.Dispatch: ThreadInterruptException");
+				Log.Write("JobDispatcher.Dispatch: ThreadInterruptException");
 			}
 			catch(Exception e)
 			{
-//				Log.Write("JobDispatcher.Dispatch: {0}", e.Message);
+				Log.Write("JobDispatcher.Dispatch: {0}", e.Message);
 			}
 
 			_isRunning = false;

@@ -4,7 +4,7 @@ namespace MediaPortal.Animations
 {
 	public enum AnimationType
 	{
-		Unknown,
+		None,
 		To,
 		From,
 		FromTo,

@@ -8,25 +8,25 @@ namespace MediaPortal.Animations
 
 		public DoubleAnimation()
 		{
-			_type = AnimationType.Unknown;
+//			_type = AnimationType.None;
 		}
 
 		public DoubleAnimation(double from)
 		{
-			_type = AnimationType.From;
+//			_type = AnimationType.From;
 			_from = from;
 		}
 
 		public DoubleAnimation(double from, double to)
 		{
-			_type = AnimationType.FromTo;
+//			_type = AnimationType.FromTo;
 			_from = from;
 			_to = to;
 		}
 
 		public DoubleAnimation(double from, double to, Duration duration)
 		{
-			_type = AnimationType.FromTo;
+//			_type = AnimationType.FromTo;
 			_from = from;
 			_to = to;
 
@@ -64,7 +64,7 @@ namespace MediaPortal.Animations
 
 		#region Fields
 
-		AnimationType				_type;
+//		AnimationType				_type = AnimationType.None;
 		double						_from;
 		double						_to;
 

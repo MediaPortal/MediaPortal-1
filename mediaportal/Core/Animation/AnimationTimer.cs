@@ -29,7 +29,7 @@ namespace MediaPortal.Animations
 				if(NativeMethods.QueryPerformanceCounter(ref tick) == false)
 					throw new NotSupportedException("Hi-res timer");
 
-				return (int)((1000 * (tick / _tickFrequency)) + ((1000 * (tick % _tickFrequency)) / _tickFrequency));
+				return TweenHelper.Tick = (int)((1000 * (tick / _tickFrequency)) + ((1000 * (tick % _tickFrequency)) / _tickFrequency));
 			}
 		}
 

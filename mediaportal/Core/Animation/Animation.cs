@@ -16,16 +16,16 @@ namespace MediaPortal.Animations
 		public event EventHandler Ended;
 
 		/// <summary>Occurs when this timeline, its ancestors, or any of its active child timelines becomes paused.</summary>
-		public event EventHandler Paused;
+//		public event EventHandler Paused;
 
 		/// <summary>Occurs whenever this timeline repeats its simple duration.</summary>
 		public event EventHandler Repeated;
 
 		/// <summary>Occurs when this timeline resumes playing after being paused.</summary>
-		public event EventHandler Resumed;
+//		public event EventHandler Resumed;
 
 		/// <summary>Occurs when this timeline reverses direction.</summary>
-		public event EventHandler Reversed;
+//		public event EventHandler Reversed;
 
 		/// <summary>Occurs when this timeline's progress or simple time changes as a result of a .</summary>
 //		public event EventHandler Seeked;
@@ -203,7 +203,7 @@ namespace MediaPortal.Animations
 		ClockController				_interactiveController;
 		bool						_isReversed;
 		int							_iterationCount = 0;
-		bool						_isPaused;
+		bool						_isPaused = false;
 		Easing						_easingStyle;
 
 		#endregion Fields
