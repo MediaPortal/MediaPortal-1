@@ -440,7 +440,8 @@ namespace MediaPortal.GUI.Music
 		{
 			LoadSettings();
 
-			btnSortBy.SortChanged += new SortEventHandler(SortChanged);
+			if(btnSortBy != null)
+				btnSortBy.SortChanged += new SortEventHandler(SortChanged);
 		}
 
 		protected override void OnPageDestroy(int newWindowId)
