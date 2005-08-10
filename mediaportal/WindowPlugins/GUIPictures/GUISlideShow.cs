@@ -31,6 +31,7 @@ using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.Picture.Database;
 using MediaPortal.Dialogs;
+using MediaPortal.Animations;
 
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
@@ -134,7 +135,7 @@ namespace MediaPortal.GUI.Pictures
 		bool					_isBackgroundMusicEnabled = false;
 		bool					_isBackgroundMusicPlaying = false;
 		string[]				_musicFileExtensions;
-		int						_lastSegmentIndex;
+		int						_lastSegmentIndex = -1;
 		public static readonly string  SegmentIndicator = "#segment";
  
 		public GUISlideShow()
@@ -347,7 +348,6 @@ namespace MediaPortal.GUI.Pictures
 			}
 			else if(Utils.IsPicture(filename))
 			{
-				_lastSegmentIndex = -1;
 				m_slides.Add(filename);
 			}
 		}
@@ -481,6 +481,7 @@ namespace MediaPortal.GUI.Pictures
 					else 
 					{
 						m_iTransistionMethod=9;
+//						m_iTransistionMethod=1;
 					}
 
 					//g_application.ResetScreenSaver();
@@ -1973,8 +1974,6 @@ namespace MediaPortal.GUI.Pictures
 
 				if(File.Exists(filename) == false)
 					continue;
-
-				Log.Write("Filename: {0}", filename);
 
 				try
 				{
