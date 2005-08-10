@@ -2251,4 +2251,9 @@ public class MediaPortalApp : D3DApp, IRender
 	#endregion
 
 	#endregion
+
+	private void job_DoWork(object sender, DoWorkEventArgs e)
+	{
+		Log.Write("Job: {0}", DateTime.Now.TimeOfDay);
+	}
 }
