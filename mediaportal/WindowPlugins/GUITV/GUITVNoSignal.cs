@@ -23,7 +23,7 @@ namespace WindowPlugins.GUITV
 		public override void Process()
 		{
 			if (VideoRendererStatistics.IsVideoFound)
-				GUIWindowManager.ActiveWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+				GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN,true);
 			progressControl.Percentage=Recorder.SignalStrength;
 			progressControl.IsVisible=true;
 		}
