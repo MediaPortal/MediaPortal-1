@@ -39,10 +39,9 @@ public:
 protected:
 	FileReader *m_pFileReader;
 	StreamPids *m_pPids;
-	vector<BUFFER> m_Array;
-	typedef vector<BUFFER>::iterator itArray;
-	long m_lBuffersItemSize;
-	long m_lBytesInBuffer;
+	//vector<BUFFER> m_Array;
+	//typedef vector<BUFFER>::iterator itArray;
+	BUFFER m_buffer;
 };
 
 #endif

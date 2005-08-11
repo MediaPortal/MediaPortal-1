@@ -17,45 +17,35 @@ extern void LogDebug(const char *fmt, ...) ;
 
 CBuffers::CBuffers(FileReader *pFileReader, StreamPids *pPids, long bufferSize)
 {
-	m_pFileReader = pFileReader;
-	m_pPids = pPids;
-	
-	m_lBytesInBuffer=0;
-	m_lBuffersItemSize = bufferSize;
+	m_buffer.iDataLen = 0;
+	m_buffer.pos      = 0;
+	m_buffer.pData    = new byte[200000];
+	m_pFileReader	  = pFileReader;
+	m_pPids			  = pPids;
 }
 
 CBuffers::~CBuffers()
 {
-	Clear();
+	delete[] m_buffer.pData;
 }
 
 void CBuffers::Clear()
-{
-	itArray it = m_Array.begin();
-	for ( ; it != m_Array.end() ; it++ )
-	{
-		if (it->pData!=NULL)
-			delete [] it->pData;
-	}
-	m_Array.clear();
-	
-	m_lBytesInBuffer=0;
+{	
+	m_buffer.pos=0;
+	m_buffer.iDataLen=0;
 }
 
 long CBuffers::Count()
 {
-	return m_lBytesInBuffer;
+	return (m_buffer.iDataLen-m_buffer.pos);
 }
 
 HRESULT CBuffers::Require(long nBytesRequired, bool& endOfFile)
 {
+	
 	endOfFile=false;
 	if (nBytesRequired < Count()) return S_OK;
 
-	BUFFER newBuffer;
-	newBuffer.iDataLen=0;
-	newBuffer.pos=0;
-	newBuffer.pData= new BYTE[m_lBuffersItemSize];
 	ULONG ulBytesRead = 0;
 
 	__int64 fileSize     = 0;
@@ -64,12 +54,11 @@ HRESULT CBuffers::Require(long nBytesRequired, bool& endOfFile)
 	//LogDebug("buffers: read from:%x", (DWORD)currPosition);
 
 	ULONG dwBytesRead = 0;				
-	HRESULT hr = m_pFileReader->Read(newBuffer.pData, m_lBuffersItemSize, &dwBytesRead);
+	HRESULT hr = m_pFileReader->Read(&m_buffer.pData[m_buffer.iDataLen], nBytesRequired, &dwBytesRead);
 	if (FAILED(hr))
 	{	
-		LogDebug("buffers: failed to read %d bytes hr:%x", m_lBuffersItemSize,hr);
+		LogDebug("buffers: failed to read %d bytes hr:%x", nBytesRequired,hr);
 		m_pFileReader->SetFilePointer(currPosition, FILE_BEGIN);
-		delete[] newBuffer.pData;
 		return hr;
 	}
 	if (dwBytesRead==0)
@@ -78,14 +67,12 @@ HRESULT CBuffers::Require(long nBytesRequired, bool& endOfFile)
 		{
 			endOfFile=true;
 			LogDebug("buffers: end of file reached");
-			delete[] newBuffer.pData;
 			return E_FAIL;
 		}
 
 		if (fileSize> MAX_FILE_LENGTH)
 		{
 			endOfFile=true;
-			delete[] newBuffer.pData;
 			currPosition=0;
 			LogDebug("buffers: end of file reached, seek to begin");
 			m_pFileReader->SetFilePointer(currPosition, FILE_BEGIN);
@@ -93,9 +80,7 @@ HRESULT CBuffers::Require(long nBytesRequired, bool& endOfFile)
 	}
 	if (dwBytesRead>0)
 	{
-		newBuffer.iDataLen=dwBytesRead;
-		m_Array.push_back(newBuffer);
-		m_lBytesInBuffer += dwBytesRead;
+		m_buffer.iDataLen+=dwBytesRead;
 	}
 
 	if (m_pFileReader->m_hInfoFile!=INVALID_HANDLE_VALUE)
@@ -115,7 +100,6 @@ HRESULT CBuffers::Require(long nBytesRequired, bool& endOfFile)
 
 HRESULT CBuffers::DequeFromBuffer(BYTE *pbData, long lDataLength)
 {
-
 	if (Count() < lDataLength) 
 	{
 		LogDebug("buffers:DequeFromBuffer() not enough data available:%d/%d",lDataLength,Count());
@@ -127,30 +111,26 @@ HRESULT CBuffers::DequeFromBuffer(BYTE *pbData, long lDataLength)
 	long bytesWritten = 0;
 	while (bytesWritten < lDataLength)
 	{
-		BUFFER& buffer= m_Array.at(0);
-
-		long copyLen = buffer.iDataLen-buffer.pos;
+		long copyLen = m_buffer.iDataLen-m_buffer.pos;
 		
 		if (bytesWritten+copyLen > lDataLength)
 			copyLen=(lDataLength-bytesWritten);
 
 //		LogDebug("buffers: pos:%d datalen:%d copy:%d written:%d", buffer.pos,buffer.iDataLen,copyLen,bytesWritten);
-		memcpy(pbData + bytesWritten, &buffer.pData[buffer.pos], copyLen);
+		memcpy(pbData + bytesWritten, &m_buffer.pData[m_buffer.pos], copyLen);
 
 		bytesWritten += copyLen;
-		buffer.pos += copyLen;
-		m_lBytesInBuffer -= copyLen;
+		m_buffer.pos += copyLen;
 
-		if (buffer.pos>=buffer.iDataLen)
+		if (m_buffer.pos>=m_buffer.iDataLen)
 		{
 			
 //			LogDebug("buffers: delete buffer");
-			delete[] buffer.pData;
-			m_Array.erase(m_Array.begin());
+			m_buffer.pos=0;
+			m_buffer.iDataLen=0;
 		}
 	}
 	
-
 	return S_OK;
 }
 
