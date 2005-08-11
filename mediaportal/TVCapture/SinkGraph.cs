@@ -1171,6 +1171,11 @@ namespace MediaPortal.TV.Recording
 			bool isViewing=Recorder.IsCardViewing(m_cardID);
 			if (!isViewing) return;
 
+			if (!SignalPresent())
+			{
+				VideoRendererStatistics.VideoState=VideoRendererStatistics.State.NoSignal;
+				return;
+			}
 			if(GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.Vmr9FPS < 1f)
 			{
 				if  ( (g_Player.Playing && !g_Player.Paused) || (!g_Player.Playing) )
