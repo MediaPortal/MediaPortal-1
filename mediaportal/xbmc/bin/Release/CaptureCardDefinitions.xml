@@ -1009,22 +1009,6 @@
     </tv>
   </capturecard> 
 
-  <capturecard commercialname="DNTV Live DVB-T" capturename="DNTV Live! Transport Stream Capture Tuner" devid="ven_14f1&amp;dev_8802&amp;subsys_a8a617de&amp;rev_05">
-    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
-    <tv>
-      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
-      <filters>
-        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"				checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="DNTV Live! BDA DVB-T Tuner/Demod Tuner"		checkdevice="true"></filter>
-        <filter cat="capture"         name="DNTV Live! Transport Stream Capture Tuner"	checkdevice="true"></filter>
-      </filters>
-      <connections>
-		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
-		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
-      </connections>
-    </tv>
-  </capturecard>  
-
   <capturecard commercialname="DNTV Live DVB-T (Tuner 1)" capturename="DNTV Live! Transport Stream Capture Tuner 1" devid="ven_14f1&amp;dev_8802&amp;subsys_a8a617de&amp;rev_05">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
@@ -6116,6 +6100,36 @@
         <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="1"></connection>
         <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
         <connection sourcefilter="capture"  sourcepin="3" sinkfilter="encoder"  sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="AVerMedia A16A DVB-T" capturename="AVerMedia BDA Digital Capture" devid="ven_1131&amp;dev_7134&amp;subsys_2c001461&amp;rev_01"> 
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities> 
+    <tv> 
+      <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface> 
+      <filters> 
+        <filter cat="networkprovider" 	name="Microsoft DVBT Network Provider" 	checkdevice="false"></filter> 
+        <filter cat="tunerdevice" 	name="AVerMedia BDA DVBT Tuner" 	checkdevice="true"></filter> 
+        <filter cat="capture" 		name="AVerMedia BDA Digital Capture" 	checkdevice="true"></filter> 
+      </filters> 
+    <connections> 
+      <connection sourcefilter="networkprovider"	sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"></connection> 
+      <connection sourcefilter="tunerdevice"		sourcepin="0" sinkfilter="capture"		sinkpin="0"></connection> 
+    </connections> 
+    </tv> 
+  </capturecard>
+
+  <capturecard commercialname="DNTV Live! Tiny USB2 BDA" capturename="DNTV Live! Tiny USB2 BDA" devid="vid_13d3&amp;pid_3223">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="tunerdevice" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"  checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="DNTV Live! Tiny USB2 BDA"      checkdevice="true"></filter>
+      </filters>
+      <connections>
+	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
