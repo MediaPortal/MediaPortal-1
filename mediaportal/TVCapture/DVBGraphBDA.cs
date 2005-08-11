@@ -4014,6 +4014,7 @@ namespace MediaPortal.TV.Recording
 						myLocator.SymbolRate				  = ch.Symbolrate;
 						myLocator.InnerFEC						= (TunerLib.FECMethod)ch.FEC;
 						myLocator.Modulation					= (TunerLib.ModulationType)ch.Modulation;
+						
 						myTuneRequest.ONID	= ch.NetworkID;					//original network id
 						myTuneRequest.TSID	= ch.TransportStreamID;					//transport stream id
 						myTuneRequest.SID		= ch.ProgramNumber;					//service id
