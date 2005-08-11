@@ -438,7 +438,6 @@ namespace MediaPortal.TV.Recording
 					}
 					else grabLanguage=true;
 
-					if (!grabLanguage) continue;
 
 					int duration_hh = getUTC((int) ((duration >> 16) )& 255);
 					int duration_mm = getUTC((int) ((duration >> 8) )& 255);
@@ -498,12 +497,21 @@ namespace MediaPortal.TV.Recording
 							continue;
 						}
 
-						Log.WriteFile(Log.LogType.EPG,"epg-grab: {0} {1}-{2} {3} {4}", tv.Channel,tv.Start,tv.End,tv.Title,language);
+						if (!grabLanguage) 
+						{
+							Log.WriteFile(Log.LogType.EPG,"epg-grab: disregard language: {0} {1}-{2} {3} {4}", tv.Channel,tv.Start,tv.End,tv.Title,language);
+							continue;
+						}
 						ArrayList programsInDatabase = new ArrayList();
 						TVDatabase.GetProgramsPerChannel(tv.Channel,tv.Start+1,tv.End-1,ref programsInDatabase);
 						if(programsInDatabase.Count==0)
 						{
+							Log.WriteFile(Log.LogType.EPG,"epg-grab: add: {0} {1}-{2} {3} {4}", tv.Channel,tv.Start,tv.End,tv.Title,language);
 							TVDatabase.AddProgram(tv);
+						}
+						else
+						{
+								Log.WriteFile(Log.LogType.EPG,"epg-grab: disregard {0} {1}-{2} {3} {4}", tv.Channel,tv.Start,tv.End,tv.Title,language);
 						}
 					}
 					catch(Exception)

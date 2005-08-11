@@ -737,24 +737,24 @@ void Sections::DecodeEPG(byte* buf,int len)
 		newChannel.allSectionsReceived=false;
 		m_mapEPG[key]=newChannel;
 		it=m_mapEPG.find(key);
-		//Log("epg:add new channel table:%x onid:%x tsid:%x sid:%d",tableid,network_id,transport_id,service_id);
+//		Log("epg:add new channel table:%x onid:%x tsid:%x sid:%d",tableid,network_id,transport_id,service_id);
 	}
 	if (it==m_mapEPG.end()) return;
 	EPGChannel& channel=it->second;
 	if (channel.allSectionsReceived) return;
 
-	//Log("DecodeEPG() check section");
 	//did we already receive this section ?
-	EPGChannel::imapSectionsReceived itSec=channel.mapSectionsReceived.find(section_number);
+	key=(section_number<<8)+service_id;
+//	Log("DecodeEPG() check section %x (%02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x)",
+//										key, buf[0],buf[1],buf[2],buf[3],buf[4],buf[5]);
+	EPGChannel::imapSectionsReceived itSec=channel.mapSectionsReceived.find(key);
 	if (itSec!=channel.mapSectionsReceived.end()) return; //yes
-	channel.mapSectionsReceived[section_number]=true;
+	channel.mapSectionsReceived[key]=true;
 
-
-
-	//Log("epg: tid:%x len:%d %d (%d/%d) sid:%d tsid:%d onid:%d slsn:%d last table id:%x cn:%d version:%d", 
-	//	buf[0],len,section_length,section_number,last_section_number, 
-	//	service_id,transport_id,network_id,segment_last_section_number,last_table_id,
-	//	current_next_indicator,version_number);
+//	Log("epg: tid:%x len:%d %d (%d/%d) sid:%d tsid:%d onid:%d slsn:%d last table id:%x cn:%d version:%d", 
+//		buf[0],len,section_length,section_number,last_section_number, 
+//		service_id,transport_id,network_id,segment_last_section_number,last_table_id,
+//		current_next_indicator,version_number);
 
 	m_epgTimeout=time(NULL);
 	int start=14;
@@ -785,15 +785,19 @@ void Sections::DecodeEPG(byte* buf,int len)
 		
 		start=start+12;
 		int off=0;
-		//Log("epg:   event:%x date:%x time:%x duration:%x running:%d free:%d %d len:%d", event_id,dateMJD,timeUTC,duration,running_status,free_CA_mode,start,descriptors_len);
+		//Log("epg:   event:%x date:%x time:%x duration:%x running:%d free:%d start:%d desclen:%d", event_id,dateMJD,timeUTC,duration,running_status,free_CA_mode,start,descriptors_len);
 		while (off < descriptors_len)
 		{
 			if (start+off+1>len) return;
 			int descriptor_tag = buf[start+off];
 			int descriptor_len = buf[start+off+1];
 			if (descriptor_len==0) return;
-			if (start+off+descriptor_tag>len) return;
-			//Log("epg:     descriptor:%x len:%d",descriptor_tag,descriptor_len);
+			if (start+off+descriptor_len+2>len) 
+			{
+				Log("epg:     DecodeEPG check1 %d %d %d %d",start,off,descriptor_len,len);
+				return;
+			}
+			//Log("epg:     descriptor:%x len:%d start:%d",descriptor_tag,descriptor_len,start+off);
 			if (descriptor_tag ==0x4d)
 			{
 				DecodeShortEventDescriptor( &buf[start+off],epgEvent);
@@ -842,7 +846,11 @@ void Sections::DecodeExtendedEvent(byte* data, EPGEvent& event)
 	while (len1 > 0)
 	{
 		item_description_length = data[pointer];
-		if (pointer+item_description_length>descriptor_length) return;
+		if (pointer+item_description_length>descriptor_length+2) 
+		{
+			Log("epg:DecodeExtendedEvent check 1");
+			return;
+		}
 
 		char* buffer= new char[item_description_length+10];
 		getString468A(&data[pointer+1], item_description_length,buffer);
@@ -854,7 +862,11 @@ void Sections::DecodeExtendedEvent(byte* data, EPGEvent& event)
 			testText="-not avail.-";
 
 		item_length = data[pointer];
-		if (pointer+item_length>descriptor_length) return;
+		if (pointer+item_length>descriptor_length+2) 
+		{
+			Log("epg:DecodeExtendedEvent check 2");
+			return;
+		}
 		buffer= new char[item_length+10];
 		getString468A(&data[pointer+1], item_length,buffer);
 		item = buffer;
@@ -867,7 +879,11 @@ void Sections::DecodeExtendedEvent(byte* data, EPGEvent& event)
 	text_length = data[pointer];
 	pointer += 1;
 	lenB -= 1;
-	if (pointer+text_length>descriptor_length) return;
+	if (pointer+text_length>descriptor_length+2) 
+	{
+		Log("epg:DecodeExtendedEvent check 3");
+		return;
+	}
 	char* buffer= new char[item_length+10];
 	getString468A(&data[pointer], text_length,buffer);
 	text = buffer;
@@ -884,27 +900,45 @@ void Sections::DecodeShortEventDescriptor(byte* buf, EPGEvent& event)
 	char* buffer;
 	int descriptor_tag = buf[0];
 	int descriptor_len = buf[1];
-	if(descriptor_tag!=0x4d) return;
-	if (descriptor_len<6) return;
+	if(descriptor_tag!=0x4d) 
+	{
+		Log("DecodeShortEventDescriptor: tag !=0x4d");
+		return;
+	}
+	if (descriptor_len<6) 
+	{
+		Log("DecodeShortEventDescriptor: len <6");
+		return;
+	}
 
 	unsigned long ISO_639_language_code=(buf[2]<<16)+(buf[3]<<8)+buf[4];
 	event.language=ISO_639_language_code;
 	int event_len = buf[5];
 	
+	//Log("DecodeShortEventDescriptor: Lang:%x eventlen:%x",ISO_639_language_code,event_len);
 	if (event_len >0)
 	{
-		if (6+event_len > descriptor_len) return;
+		if (6+event_len > descriptor_len+2)
+		{
+			Log("DecodeShortEventDescriptor: check1: %d %d",event_len,descriptor_len);
+			return;
+		}
 		buffer = new char[event_len+10];
 		getString468A(&buf[6],event_len,buffer);
 		event.event=buffer;
 		delete [] buffer;
-		//Log("  event:%s",event.event.c_str());
+	//	Log("  event:%s",event.event.c_str());
 	}
 	int off=6+event_len;
 	int text_len = buf[off];
+	//Log("DecodeShortEventDescriptor: text_len:%x",text_len);
 	if (text_len >0)
 	{
-		if (off+text_len > descriptor_len) return;
+		if (off+text_len > descriptor_len+2) 
+		{
+			Log("DecodeShortEventDescriptor: check2: %d %d",event_len,descriptor_len);
+			return;
+		}
 		buffer = new char[text_len+10];
 		getString468A(&buf[off+1],text_len,buffer);
 		event.text=buffer;
@@ -927,13 +961,22 @@ void Sections::DecodeContentDescription(byte* buf,EPGEvent& event)
 	strcpy(genreText,"");
 	descriptor_tag		 = buf[0];
 	descriptor_length    = buf[1];
-	if(descriptor_tag!=0x54) return;
+	if(descriptor_tag!=0x54) 
+	{
+		Log("epg:DecodeContentDescription tag!=0x54");
+		return;
+	}
 
 	len = descriptor_length;
 	int pointer=  2;
 	while ( len > 0) 
 	{
-		if (pointer+1>descriptor_length) return;
+		if (pointer+1>descriptor_length+2) 
+		{
+			Log("epg:DecodeContentDescription check1");
+			return;
+		}
+
 		content_nibble_level_1	 = (buf[pointer+0]>>4) & 0xF;
 		content_nibble_level_2	 = buf[pointer+0] & 0xF;
 		user_nibble_1		 = (buf[pointer+1]>>4) & 0xF;
