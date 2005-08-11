@@ -9,7 +9,7 @@
 #include "Sections.h"
 void LogDebug(const char *fmt, ...) 
 {
-#ifdef DEBUG
+#ifndef DEBUG
 	va_list ap;
 	va_start(ap,fmt);
 
@@ -97,7 +97,7 @@ HRESULT Sections::ParseFromFile()
 	__int64 len;
 	m_pFileReader->GetFileSize(&len);
 	filePointer=m_pFileReader->GetFilePointer(); // to restore after reading
-	decodePMT();
+	FindPATPMT();
 	CheckStream();
 	if(pids.Duration<600000000)
 		pids.Duration=600000000;
@@ -263,12 +263,12 @@ HRESULT Sections::CurrentPTS(BYTE *pData,ULONGLONG *ptsValue,int* pid)
 	}
 	return hr;
 }
-void Sections::decodePMT()
+void Sections::FindPATPMT()
 {
 	if(m_pFileReader->OpenFile()==S_FALSE)
 		return;
 
-	LogDebug("Sections::decodePMT()");
+	LogDebug("Sections::FindPATPMT()");
 	HRESULT hr;
 	BYTE pData[188];
 	bool finished=false;
@@ -308,7 +308,7 @@ void Sections::decodePMT()
 				int section_number = pData[offset+6];
 				int last_section_number = pData[offset+7];
 
-				LogDebug("Sections::decodePMT() pid:0x%x tsid:0x%x %d/%d len:%d", header.Pid,transport_stream_id,section_number,last_section_number, section_length);
+				LogDebug("Sections::FindPATPMT() pid:0x%x tsid:0x%x %d/%d len:%d", header.Pid,transport_stream_id,section_number,last_section_number, section_length);
 				//if (section_number!=0||last_section_number!=0) continue;
 				
 	
@@ -320,7 +320,7 @@ void Sections::decodePMT()
 				{
 					offset1=offset+(8 +(i * 4));
 					pmt[i]=((pData[offset1+2] & 0x1F)<<8)+pData[offset1+3];
-					LogDebug("Sections::decodePMT() PMT:%i pid:%x",i,pmt[i]);
+					LogDebug("Sections::FindPATPMT() PMT:%i pid:%x",i,pmt[i]);
 				}
 				finished=true;
 			}
@@ -328,21 +328,24 @@ void Sections::decodePMT()
 	}
 	if(pmtcount==0)
 	{
-		LogDebug("Sections::decodePMT() no PAT found");
+		LogDebug("Sections::FindPATPMT() no PAT found");
 		pids.Clear();
 		return;
 	}
 	
-	LogDebug("Sections::decodePMT() Get PMT");
-	// get pcr, audio, video, etc.
+	LogDebug("Sections::FindPATPMT() Get PMT");
+	
+	// get PMT
 	m_pFileReader->SetFilePointer(0,FILE_BEGIN);
 	finished=false;
+	ULONG fpos=0;
 	while(finished!=true)
 	{
+		m_pFileReader->SetFilePointer(fpos,FILE_CURRENT);
 		hr=m_pFileReader->Read(pData,188,&countBytesRead);
 		if(hr!=S_OK|| countBytesRead!=188)
 			finished=true;
-		m_pFileReader->SetFilePointer(countBytesRead,FILE_CURRENT);
+		fpos+=countBytesRead;
 		if(hr==S_OK)
 		{
 			GetTSHeader(pData,&header);
@@ -360,34 +363,48 @@ void Sections::decodePMT()
 						pids.PCRPid=((pData[offset+8]& 0x1F)<<8)+pData[offset+9];
 						pids.PMTPid=actPid;
 						pids.ProgramNumber=(pData[offset+3]<<8)+pData[offset+4];
-						pmtSectionLen=((pData[offset+1]& 0xF)<<8) + pData[offset+2];
-						finished=true;
-						ready=true;
-						LogDebug("Sections::decodePMT() found PMT:%x pcr:%x",pids.PCRPid,pids.PMTPid);
-						break;
+						LogDebug("Sections::FindPATPMT() found PMT:%x pcr:%x",pids.PCRPid,pids.PMTPid);
+						__int64 fpos=m_pFileReader->GetFilePointer();
+						if (DecodePMT(&pData[offset]) )
+						{
+							if (pids.VideoPid!=0) 
+							{
+								if (FindVideo())
+								{
+									finished=true;
+									ready=true;
+									break;
+								}
+							}
+							else
+							{
+								//radio
+								break;
+							}
+						}
 					}
 				}
 			}
 		}
 	}
-	// decode the pmt
-	if(pids.PMTPid==0)
-	{
-		LogDebug("Sections::decodePMT() no PMT found");
-		pids.Clear(); // invaild file
-		return;
-	}
-	
-	LogDebug("Sections::decodePMT() get PMT");
-	int contCounter=header.ContinuityCounter;
-	if(pmtSectionLen<183)
-		pmtSectionLen=183;
-
-	BYTE *buf=new BYTE[pmtSectionLen];
+}
+bool Sections::DecodePMT(byte* PMT)
+{
+	bool finished;
+	int hr;
+	ULONG countBytesRead;
+	int pmtSectionLen=((PMT[1]& 0xF)<<8) + PMT[2];
+	LogDebug("Sections::decodePMT() decode PMT");
+	BYTE buf[200];
+	byte pData[200];
 	memset(buf,0,pmtSectionLen);
-	memcpy(buf,pData+offset,188-offset);
-	pmtSectionLen-=188-offset;
+	memcpy(buf,PMT,188);
+	pmtSectionLen-=188;
 	DWORD len=0;
+	TSHeader header;
+	GetTSHeader(PMT,&header);
+	int contCounter=header.ContinuityCounter;
+	int offset=0;
 	while(pmtSectionLen>0)
 	{
 		hr=m_pFileReader->Read(pData,188,&countBytesRead);
@@ -498,5 +515,34 @@ void Sections::decodePMT()
 
 		}
 	}
-	delete buf;
+	return true;
+}
+bool Sections::FindVideo()
+{
+	byte pData[200];
+	m_pFileReader->SetFilePointer(0,FILE_BEGIN);
+	bool finished=false;
+	while(finished!=true)
+	{
+		ULONG countBytesRead;
+		int hr=m_pFileReader->Read(pData,188,&countBytesRead);
+		if(hr!=S_OK|| countBytesRead!=188)
+			finished=true;
+		if (m_pFileReader->GetFilePointer() > (2LL*1024LL*1024LL)) return false;
+		
+		TSHeader header;
+		GetTSHeader(pData,&header);
+		if (header.SyncByte==0x47 || header.Pid==pids.VideoPid) 
+		{
+			int offset=0;
+			if(header.AdaptionControl==1 || header.AdaptionControl==3)
+				offset+=pData[4];
+			if (offset>= 0 & offset <188) 
+			{
+				if(pData[offset]==0 && pData[offset+1]==0 && pData[offset+2]==1)
+					return true;
+			}
+		}
+	}
+	return false;
 }

@@ -117,7 +117,7 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 	if (m_lastPTS==0) 
 		m_lastPTS=m_pSections->pids.StartPTS;
 	CheckPointer(pSample, E_POINTER);
-	CAutoLock cAutoLockShared(&m_cSharedState);
+	//CAutoLock cAutoLockShared(&m_cSharedState);
 	{
 
 		PBYTE pData;
@@ -144,12 +144,14 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 			{
 				if (m_pMPTSFilter->m_pFileReader->m_hInfoFile!=INVALID_HANDLE_VALUE)
 				{
+					LogDebug("output pin:EOF");
 					__int64 fileSize;
 					m_pMPTSFilter->m_pFileReader->GetFileSize(&fileSize);
 					int count=0;
 					while (true)
 					{
 						m_pMPTSFilter->UpdatePids();
+						LogDebug("output pin pos:%x size:%x", m_pSections->pids.fileStartPosition,fileSize);
 						if (m_pSections->pids.fileStartPosition >= fileSize-(1024*1024) ||
 							m_pSections->pids.fileStartPosition < lDataLength) 
 						{
@@ -159,7 +161,7 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 						}
 						else break;
 					}
-					LogDebug("end of file, writepos:%x slept:%i", m_pSections->pids.fileStartPosition,count);
+					LogDebug("outputpin:end of file, writepos:%x slept:%i", m_pSections->pids.fileStartPosition,count);
 				}
 			}
 

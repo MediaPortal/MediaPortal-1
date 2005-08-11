@@ -57,7 +57,9 @@ public:
 	};
 
 private:
-	void decodePMT();
+	void FindPATPMT();
+	bool DecodePMT(byte *pData);
+	bool FindVideo();
 public:
 
 	Sections(FileReader *fileReader);
