@@ -1131,6 +1131,8 @@ namespace MediaPortal.GUI.TV
 			}
 
 			GUIGraphicsContext.IsFullScreenVideo=true;
+			if (!VideoRendererStatistics.IsVideoFound)
+				GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TV_NO_SIGNAL,false);
 		}
 
 		public bool ScreenStateChanged()

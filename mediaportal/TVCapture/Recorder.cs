@@ -72,7 +72,7 @@ namespace MediaPortal.TV.Recording
 		static int           m_preRecordingWarningTime=2;
 		static VMR9OSD			 m_osd = new VMR9OSD();
 		static bool          m_useVMR9Zap=false;
-		static bool					 m_bSignalOSDVisible=false;
+		
 		#endregion
 
 		#region delegates and events
@@ -1619,47 +1619,6 @@ namespace MediaPortal.TV.Recording
 				}
 			}
 		}
-		static void ProcessSignal()
-		{/*
-			if (!IsViewing()) return;
-			if (VideoRendererStatistics.IsVideoFound) 
-			{
-				if (m_bSignalOSDVisible)
-				{
-					m_osd.HideBitmap();
-					m_bSignalOSDVisible=false;
-					return;
-				}
-			}
-			if (m_bSignalOSDVisible==true) return;
-			//render osd
-			if(m_osd!=null )
-			{
-				if (m_iCurrentCard<0 || m_iCurrentCard >= m_tvcards.Count) return ;
-				TVCaptureDevice dev= (TVCaptureDevice)m_tvcards[m_iCurrentCard];
-				int level=dev.SignalStrength;
-				int quality=dev.SignalQuality;
-				string text="";
-				if (VideoRendererStatistics.VideoState==VideoRendererStatistics.State.NoSignal)
-					text=GUILocalizeStrings.Get(1034);
-				else if (VideoRendererStatistics.VideoState==VideoRendererStatistics.State.Scrambled)
-					text=GUILocalizeStrings.Get(1035);
-				else if (VideoRendererStatistics.VideoState==VideoRendererStatistics.State.Signal)
-					text=GUILocalizeStrings.Get(1036);
-				TVChannel channel=null;
-				foreach (TVChannel chan in m_TVChannels)
-				{
-					if (chan.Name==dev.TVChannel)
-					{
-						channel=chan;
-						break;
-					}
-				}
-				if (channel==null) return;
-				m_osd.RenderNotifyOSD(channel,quality,level,text);
-				m_bSignalOSDVisible=true;
-			}*/
-		}
 		/// <summary>
 		/// Scheduler main loop. This function needs to get called on a regular basis.
 		/// It will handle all scheduler tasks
@@ -1669,7 +1628,6 @@ namespace MediaPortal.TV.Recording
 			if (m_eState!=State.Initialized) return;
 			if (GUIGraphicsContext.InVmr9Render) return;
 			ProcessCards();
-			ProcessSignal();
 			
 			TimeSpan ts=DateTime.Now-m_dtProgresBar;
 			if (ts.TotalMilliseconds>10000)
