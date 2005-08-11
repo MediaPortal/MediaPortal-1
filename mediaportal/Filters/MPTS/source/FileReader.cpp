@@ -272,7 +272,7 @@ __int64 FileReader::GetFilePointer()
 
 HRESULT FileReader::Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes)
 {
-	BOOL hr;
+	BOOL result;
 
 	if (m_hFile == INVALID_HANDLE_VALUE)
 	{
@@ -283,18 +283,14 @@ HRESULT FileReader::Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes)
 	//LogDebug("FileReader:Read %x ", lDataLength);
 	__int64 m_filecurrent = GetFilePointer();
 
-	__int64 length = 0;
-	GetFileSize(&length);
-	
-	if (length < (__int64)(m_filecurrent + (__int64)lDataLength))
-		hr = ::ReadFile(m_hFile, (PVOID)pbData, (DWORD)(length - m_filecurrent), dwReadBytes, NULL);
-	else
-		hr = ::ReadFile(m_hFile, (PVOID)pbData, (DWORD)lDataLength, dwReadBytes, NULL);
+	result = ::ReadFile(m_hFile, (PVOID)pbData, (DWORD)lDataLength, dwReadBytes, NULL);
 
-	if (hr==FALSE)
+	if (result==FALSE)
 	{
 		DWORD dwErr=GetLastError();
-		LogDebug("FileReader:ReadFile failed with %d", dwErr);
+		__int64 filesize;
+		GetFileSize(&filesize);
+		LogDebug("FileReader:ReadFile failed with err:%d len:%d pos:%x/%x",dwErr, lDataLength,(DWORD)m_filecurrent, (DWORD)filesize);
 		return E_FAIL;
 	}
 
