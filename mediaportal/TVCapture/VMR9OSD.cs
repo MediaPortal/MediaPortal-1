@@ -707,6 +707,216 @@ namespace MediaPortal.TV.Recording
 				SaveBitmap(null,false,true,m_renderOSDAlpha);
 			}
 		}
+		public void RenderNotifyOSD(TVChannel channel,int signalQuality,int signalLevel, string notify)
+		{
+			try
+			{
+				int gWidth=GUIGraphicsContext.Width;
+				int gHeight=GUIGraphicsContext.Height;
+				Bitmap bm=new Bitmap(gWidth,gHeight);//m_mediaPath+@"bgimage.png");
+				Graphics gr=Graphics.FromImage(bm);
+				int x=140;
+				int y=0;
+				if(bm==null || gr==null || channel==null)
+				{
+					Log.Write("end rendering zaposd: no bitmap (memory problem?)");
+					return ;
+				}
+				m_osdRendered=OSD.ZapOSD;
+				m_timeout=0;
+				m_actualChannel=channel;
+				m_channelSNR=signalQuality;
+				m_channelLevel=signalLevel;
+				// set the tvchannel data
+				string serviceName=channel.Name;
+				TVProgram tvNext=null;
+				TVProgram tvNow=channel.GetProgramAt(DateTime.Now);
+				string nowStart="";
+				string nowDur="";
+				string nowDescr="";
+				string nowTitle="";
+				string nextTitle="";
+				string nextStart="";
+				string nextDur="";
+				double done=0;
+				double signalQual=(double)signalQuality;
+				double signalLev=(double)signalLevel;
+
+
+				if(tvNow!=null)
+				{
+					tvNext=channel.GetProgramAt(tvNow.EndTime.AddMinutes(1));		
+					nowStart=tvNow.StartTime.ToShortTimeString();
+					nowDur=tvNow.Duration.ToString();
+					double nowDone=tvNow.EndTime.Subtract(DateTime.Now).TotalMinutes;
+					double nowTotal=tvNow.EndTime.Subtract(tvNow.StartTime).TotalMinutes;
+					done=(nowDone*100)/nowTotal;
+					nowTitle=tvNow.Title;
+					nowDescr=tvNow.Description;
+				}
+				if(tvNext!=null)
+				{
+					nextStart=tvNext.StartTime.ToShortTimeString();
+					nextTitle=tvNext.Title;
+					nextDur=tvNext.Duration.ToString();
+				}
+			
+				// first graphic elements and pictures
+				// rects
+				string skinPath=GUIGraphicsContext.Skin+@"\media\";
+				// bg 2 draw?
+
+				int width=gWidth;
+				int height=210;
+
+				int xpos=0;
+				int ypos=y+5;
+				int timeX=0;
+				int timeY=0;
+				int logoW=0;
+				int logoH=0;
+				Log.Write("rendering background...");
+
+				if(System.IO.File.Exists(skinPath+"background.png")==true &&
+					System.IO.File.Exists(skinPath+"icon_empty_focus.png")==true)
+
+				{
+					Bitmap osd=new Bitmap(skinPath+"background.png");
+					xpos=(gWidth-width)/2;
+					ypos=gHeight-height;
+					y=ypos+10;
+					gr.DrawImage(osd,new Rectangle(xpos,ypos,width,height),0,0,osd.Width,osd.Height,GraphicsUnit.Pixel);
+					gr.DrawImage(osd,new Rectangle(x,y,width-(x+10),height-20),x,y,width-(x+10),height-20,GraphicsUnit.Pixel);
+					osd=new Bitmap(skinPath+"icon_empty_focus.png");
+					logoW=osd.Width;
+					logoH=osd.Height;
+					int w=width-(x+10);
+					xpos=20;
+					ypos+=10;
+					gr.DrawImage(osd,xpos,ypos,osd.Width,osd.Height);
+					timeX=xpos;
+					timeY=ypos+osd.Height+10;
+					if(nowStart!="")
+						gr.FillRectangle(new SolidBrush(Color.DarkBlue),x,y+30,w,60);
+					osd.Dispose();
+				}
+
+				x+=5;
+				// text always gets an x-offset 40 pix.
+				// tv channel logo
+				ypos=y;
+				string tvlogo=Utils.GetCoverArt(Thumbs.TVChannel,serviceName);				
+				Log.Write("rendering tv-logo...");
+				if(System.IO.File.Exists(tvlogo))
+				{
+					logoW=logoW<64?64:logoW;
+					logoH=logoH<64?64:logoH;
+					Bitmap logo=new Bitmap(tvlogo);
+					Util.BitmapResize.Resize(ref logo,64,64,true,true);
+					gr.DrawImage(logo,xpos+((logoW-64)/2),ypos+((logoH-64)/2),64,64);
+					logo.Dispose();
+				}
+				//channel name (chName)
+				gr.DrawString(serviceName,new System.Drawing.Font("Arial",16),new SolidBrush(Color.White),x,y,StringFormat.GenericTypographic);
+				y+=35;
+				//now on tv (chNow)
+
+				Font drawFont=new System.Drawing.Font("Arial",14);
+				Brush drawBrush=new SolidBrush(Color.White);
+				SizeF xEnd=gr.MeasureString(nowDur,drawFont);
+				int xPosEnd=(gWidth-90)-((int)xEnd.Width);
+				gr.DrawString(nowDur,drawFont,drawBrush,xPosEnd,y,StringFormat.GenericTypographic);
+				gr.DrawString(nowStart+"  "+nowTitle,drawFont,drawBrush,new RectangleF(x,y,xPosEnd-x-5,xEnd.Height),StringFormat.GenericTypographic);
+				// now prog
+				Log.Write("rendering tv-now indicator...");
+				if(nowStart!="" && 
+					System.IO.File.Exists(skinPath+"osd_progress_mid_orange.png")==true &&
+					System.IO.File.Exists(skinPath+"osd_progress_background.png")==true)
+				{
+					Bitmap prog=new Bitmap(skinPath+"osd_progress_background.png");
+					gr.DrawImage(prog,new Rectangle(x,y+26,200,prog.Height),0,0,200,prog.Height,GraphicsUnit.Pixel);
+					prog=new Bitmap(skinPath+"osd_progress_mid_orange.png");
+					gr.DrawImage(prog,new Rectangle(x+1,y+28,200-((int)((done/100)*200))-2,prog.Height),0,0,200-((int)((done/100)*200))-2,prog.Height,GraphicsUnit.Pixel);
+					prog.Dispose();
+					y+=65;
+				}
+				//next on tv (chNow)
+
+				xPosEnd=(gWidth-90)-((int)xEnd.Width);
+				gr.DrawString(nextDur,drawFont,drawBrush,xPosEnd,y,StringFormat.GenericTypographic);
+				gr.DrawString(nextStart+"  "+nextTitle,drawFont,drawBrush,new RectangleF(x,y,xPosEnd-x-5,xEnd.Height),StringFormat.GenericTypographic);
+
+				y+=35;
+
+				// quality and level
+				xEnd.Width=100;
+				Log.Write("rendering signal quality indicator...");
+
+				if(signalQuality>2 && 
+					System.IO.File.Exists(skinPath+"osd_progress_background.png")==true &&
+					System.IO.File.Exists(skinPath+"osd_progress_mid.png")==true &&
+					System.IO.File.Exists(skinPath+"osd_progress_mid_red.png")==true)
+				{
+					gr.DrawString("Quality:",drawFont,drawBrush,x,y);
+					Bitmap prog=new Bitmap(skinPath+"osd_progress_background.png");
+					gr.DrawImage(prog,new Rectangle(x+((int)xEnd.Width),y,200,prog.Height),0,0,200,prog.Height,GraphicsUnit.Pixel);
+					if(signalQuality>50)
+						prog=new Bitmap(skinPath+"osd_progress_mid.png");
+					else
+						prog=new Bitmap(skinPath+"osd_progress_mid_red.png");
+
+					int val=((int)((signalQual/100)*200))-2;
+					if(val<0) val=0;
+					if(val>200) val=200;
+					
+					gr.DrawImage(prog,new Rectangle(x+((int)xEnd.Width)+1,y+2,val,prog.Height),0,0,val,prog.Height,GraphicsUnit.Pixel);
+					prog.Dispose();
+					y+=25;
+				}
+				Log.Write("rendering signal level indicator...");
+				
+				if(signalLevel>2 &&
+					System.IO.File.Exists(skinPath+"osd_progress_background.png")==true	&&
+					System.IO.File.Exists(skinPath+"osd_progress_mid.png")==true &&
+					System.IO.File.Exists(skinPath+"osd_progress_mid_red.png")==true)
+					
+				{
+					gr.DrawString("Level:",drawFont,drawBrush,x,y);
+					Bitmap prog=new Bitmap(skinPath+"osd_progress_background.png");
+					gr.DrawImage(prog,new Rectangle(x+((int)xEnd.Width),y,200,prog.Height),0,0,200,prog.Height,GraphicsUnit.Pixel);
+					if(signalLevel>50)
+						prog=new Bitmap(skinPath+"osd_progress_mid.png");
+					else
+						prog=new Bitmap(skinPath+"osd_progress_mid_red.png");
+					int val=((int)((signalLev/100)*200))-2;
+					if(val<0) val=0;
+					if(val>200) val=200;
+					gr.DrawImage(prog,new Rectangle(x+((int)xEnd.Width)+1,y+2,val,prog.Height),0,0,val,prog.Height,GraphicsUnit.Pixel);
+					prog.Dispose();
+				}
+
+				gr.DrawString(DateTime.Now.ToShortTimeString(),drawFont,drawBrush,timeX,timeY);
+				//render notify
+
+				Log.Write("rendering notify:{0}",notify);
+				y=gHeight/2;
+				x=100;
+				gr.DrawString(notify,new System.Drawing.Font("Arial",16),new SolidBrush(Color.White),x,y,StringFormat.GenericTypographic);
+
+				drawFont.Dispose();
+				drawBrush.Dispose();
+				m_bitmapIsVisible=true;
+				Log.Write("show bitmap");
+				SaveBitmap(bm,true,true,m_renderOSDAlpha);
+				Log.Write("rendering done");
+			}
+			catch(Exception ex)
+			{
+				Log.Write("exception in render-osd:{0}, {1}, {2}",ex.Message,ex.Source,ex.StackTrace);
+				SaveBitmap(null,false,true,m_renderOSDAlpha);
+			}
+		}
+
 		#endregion
 
 		#region private helper functions

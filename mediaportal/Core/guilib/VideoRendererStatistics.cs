@@ -30,15 +30,23 @@ namespace MediaPortal.GUI.Library
 	{
 		public enum State
 		{
+			NotUsed,
 			NoSignal,			// no (or bad) signal found
 			Signal,				// signal found, but no video detected
 			Scrambled,		// video is scrambled
 			VideoPresent  // video present
 		}
-		static State videoState;
+		static State videoState=State.NotUsed;
 		static int   framesDrawn=0,avgSyncOffset=0,avgDevSyncOffset=0,framesDropped=0,jitter=0;
 		static float avgFrameRate=0f;
 
+		static public bool IsVideoFound
+		{
+			get 
+			{
+				return (videoState==State.NotUsed || videoState==State.VideoPresent);
+			}
+		}
 		static public State VideoState
 		{
 			get { return videoState;}

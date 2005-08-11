@@ -3431,7 +3431,7 @@ namespace MediaPortal.TV.Recording
 			if (!isViewing) return;
 
 			// do we receive any packets?
-			if (!m_streamDemuxer.RecevingPackets)
+			if (!m_streamDemuxer.RecevingPackets || !SignalPresent() )
 			{
 				//no, then state = no signal
 				VideoRendererStatistics.VideoState=VideoRendererStatistics.State.NoSignal;
