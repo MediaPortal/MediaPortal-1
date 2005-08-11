@@ -17,7 +17,6 @@ del /F /Q plugins\ExternalPlayers\*.*
 del /F /Q plugins\process\*.*
 del *.dll
 del *.ax
-
 copy ..\..\..\MPSA.ax .
 copy ..\..\..\MPTS.ax .
 copy ..\..\..\MPTSWriter.ax .
@@ -25,9 +24,7 @@ regsvr32 /s MPSA.ax
 regsvr32 /s MPTS.ax
 regsvr32 /s MPTSWriter.ax
 
-copy ..\..\..\core\directshowhelper\directshowhelper\debug\directshowhelper.dll .
-copy ..\..\..\core\directshowhelper\directshowhelper\debug\directshowhelper.pdb .
-regsvr32 /s directshowhelper.dll
+copy ..\..\..\core\directshowhelper\directshowhelper\release\dshowhelper.dll .
 copy ..\..\..\core\fontengine\fontengine\debug\fontengine.dll .
 copy ..\..\..\core\fontengine\fontengine\debug\fontengine.pdb .
 copy ..\..\..\Interop.DirectShowHelperLib.dll .

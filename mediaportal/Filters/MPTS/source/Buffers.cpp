@@ -69,7 +69,7 @@ HRESULT CBuffers::Require(long nBytesRequired, bool& endOfFile)
 	{	
 		LogDebug("buffers: failed to read %d bytes hr:%x", m_lBuffersItemSize,hr);
 		m_pFileReader->SetFilePointer(currPosition, FILE_BEGIN);
-		delete newBuffer.pData;
+		delete[] newBuffer.pData;
 		return hr;
 	}
 	if (dwBytesRead==0)
@@ -78,14 +78,14 @@ HRESULT CBuffers::Require(long nBytesRequired, bool& endOfFile)
 		{
 			endOfFile=true;
 			LogDebug("buffers: end of file reached");
-			delete newBuffer.pData;
+			delete[] newBuffer.pData;
 			return E_FAIL;
 		}
 
 		if (fileSize> MAX_FILE_LENGTH)
 		{
 			endOfFile=true;
-			delete newBuffer.pData;
+			delete[] newBuffer.pData;
 			currPosition=0;
 			LogDebug("buffers: end of file reached, seek to begin");
 			m_pFileReader->SetFilePointer(currPosition, FILE_BEGIN);

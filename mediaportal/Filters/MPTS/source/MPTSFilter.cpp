@@ -15,6 +15,8 @@ extern void LogDebug(const char *fmt, ...) ;
 
 CUnknown * WINAPI CMPTSFilter::CreateInstance(LPUNKNOWN punk, HRESULT *phr)
 {
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF|_CRTDBG_CHECK_ALWAYS_DF|_CRTDBG_CHECK_CRT_DF|_CRTDBG_LEAK_CHECK_DF);
+
 	ASSERT(phr);
 	CMPTSFilter *pNewObject = new CMPTSFilter(punk, phr);
 
@@ -31,6 +33,7 @@ CMPTSFilter::CMPTSFilter(IUnknown *pUnk, HRESULT *phr) :
 	CSource(NAME("CMPTSFilter"), pUnk, CLSID_MPTSFilter),
 	m_pPin(NULL),m_logFileHandle(NULL)
 {
+
 	ASSERT(phr);
 
 	m_pFileReader = new FileReader();
@@ -59,7 +62,6 @@ CMPTSFilter::~CMPTSFilter()
 	{
 		CloseHandle(m_logFileHandle);
 	}
-	
 
 }
 

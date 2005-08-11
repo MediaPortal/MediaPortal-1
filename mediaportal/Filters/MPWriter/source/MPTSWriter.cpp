@@ -369,6 +369,7 @@ void CDumpInputPin::ResetPids()
 }
 bool CDumpInputPin::IsPidValid(int pid)
 {
+	return true;//test
 	if(pid==0 || pid==1 || pid==0x11||pid==m_videoPid || pid==m_audio1Pid ||
 		pid==m_audio2Pid || pid==m_ac3Pid || pid==m_ttxtPid || pid==m_subtitlePid || 
 		pid==m_pmtPid|| pid==m_pcrPid)

@@ -1,6 +1,6 @@
 /* 
  *	Copyright (C) 2005 Media Portal
- *  Author: Frodo
+ *  Author: Agree
  *	http://mediaportal.sourceforge.net
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -22,12 +22,52 @@
 
 
 #include "stdafx.h"
-#include "VMR9Helper.h"
-#include ".\vmr9helper.h"
-#include <dvdmedia.h>
+#include "dshowhelper.h"
+#include "DX9AllocatorPresenter.h"
+#include <map>
+#include <comutil.h>
+using namespace std;
 
+BOOL APIENTRY DllMain( HANDLE hModule, 
+                       DWORD  ul_reason_for_call, 
+                       LPVOID lpReserved
+					 )
+{
+	switch (ul_reason_for_call)
+	{
+	case DLL_PROCESS_ATTACH:
+	case DLL_THREAD_ATTACH:
+	case DLL_THREAD_DETACH:
+	case DLL_PROCESS_DETACH:
+		break;
+	}
+    return TRUE;
+}
 
-// CVMR9Helper
+// This is an example of an exported variable
+DSHOWHELPER_API int ndshowhelper=0;
+
+// This is an example of an exported function.
+DSHOWHELPER_API int fndshowhelper(void)
+{
+	return 42;
+}
+
+// This is the constructor of a class that has been exported.
+// see dshowhelper.h for the class definition
+Cdshowhelper::Cdshowhelper()
+{ 
+	return; 
+}
+
+LPDIRECT3DDEVICE9			m_pDevice=NULL;
+CVMR9AllocatorPresenter*	vmr9Presenter=NULL;
+IBaseFilter*				m_pVMR9Filter=NULL;
+IVMRSurfaceAllocator9*		g_allocator=NULL;
+LONG						m_iRecordingId=0;
+
+map<int,IStreamBufferRecordControl*> m_mapRecordControl;
+typedef map<int,IStreamBufferRecordControl*>::iterator imapRecordControl;
 #define MY_USER_ID 0x6ABE51
 #define IsInterlaced(x) ((x) & AMINTERLACE_IsInterlaced)
 #define IsSingleField(x) ((x) & AMINTERLACE_1FieldPerSample)
@@ -88,99 +128,69 @@ VMR9_SampleFormat ConvertInterlaceFlags(DWORD dwInterlaceFlags)
     }
 }
 
-STDMETHODIMP CVMR9Helper::Init(IVMR9Callback* callback, DWORD dwD3DDevice, IBaseFilter* vmr9Filter,DWORD monitor)
-{	
-	Log("Vmr9:Init()");
+
+BOOL Vmr9Init(IVMR9Callback* callback, DWORD dwD3DDevice, IBaseFilter* vmr9Filter,DWORD monitor)
+{
 	HRESULT hr;
 	m_pDevice = (LPDIRECT3DDEVICE9)(dwD3DDevice);
-	m_pVMR9Filter.Attach(vmr9Filter);
+	m_pVMR9Filter=vmr9Filter;
 	
 	CComQIPtr<IVMRFilterConfig9> pConfig = m_pVMR9Filter;
 	if(!pConfig)
-		return E_FAIL;
+		return FALSE;
 
 	if(FAILED(hr = pConfig->SetRenderingMode(VMR9Mode_Renderless)))
 	{
 		Log("Vmr9:Init() SetRenderingMode() failed 0x:%x",hr);
-		return E_FAIL;
+		return FALSE;
 	}
 	if(FAILED(hr = pConfig->SetNumberOfStreams(1)))
 	{
 		Log("Vmr9:Init() SetNumberOfStreams() failed 0x:%x",hr);
-		return E_FAIL;
+		return FALSE;
 	}
 
 	CComQIPtr<IVMRSurfaceAllocatorNotify9> pSAN = m_pVMR9Filter;
 	if(!pSAN)
-		return E_FAIL;
+		return FALSE;
 
-	 vmr9AllocPresenter = new CVMR9AllocatorPresenter( m_pDevice, callback,(HMONITOR)monitor) ;
-    g_allocator.Attach(vmr9AllocPresenter);
+	vmr9Presenter = new CVMR9AllocatorPresenter( m_pDevice, callback,(HMONITOR)monitor) ;
+	vmr9Presenter->QueryInterface(IID_IVMRSurfaceAllocator9,(void**)&g_allocator);
 
 	if(FAILED(hr = pSAN->AdviseSurfaceAllocator(MY_USER_ID, g_allocator)))
 	{
 		Log("Vmr9:Init() AdviseSurfaceAllocator() failed 0x:%x",hr);
-		return E_FAIL;
+		return FALSE;
 	}
 	if (FAILED(hr = g_allocator->AdviseNotify(pSAN)))
 	{
 		Log("Vmr9:Init() AdviseNotify() failed 0x:%x",hr);
-		return E_FAIL;
+		return FALSE;
 	}
-
-/*	
-	Log("Vmr9:Init() set YUV mixing mode");
-	CComQIPtr<IVMRMixerControl9> pMixControl = m_pVMR9Filter;
-	DWORD dwPrefs;
-	pMixControl->GetMixingPrefs(&dwPrefs); 
-	Log("Vmr9:Init() current mixing preferences:%x",dwPrefs); 
-
-	// Remove the current render target flag.
-	dwPrefs &= ~MixerPref_RenderTargetMask; 
-
-	// Add the render target flag that we want.
-	dwPrefs |= MixerPref_RenderTargetYUV;
-
-	// Set the new flags.
-	if (FAILED(hr = pMixControl->SetMixingPrefs(dwPrefs)))
-	{
-		Log("Vmr9:Init() cannot use YUV mixing mode 0x:%x",hr);
-	}
-*/
-	return S_OK;
+	return TRUE;
 }
-	
-STDMETHODIMP CVMR9Helper::Deinit(void)
+void Vmr9Deinit()
 {
-	if (vmr9AllocPresenter!=NULL)
-		vmr9AllocPresenter->ReleaseCallBack();
-	m_pDevice=NULL;
-	vmr9AllocPresenter=NULL;
-	return S_OK;
-}
-STDMETHODIMP CVMR9Helper::SetDeinterlacePrefs(DWORD dwMethod)
-{
+
 	int hr;
-	CComQIPtr<IVMRDeinterlaceControl9> pDeint=m_pVMR9Filter;
-	switch (dwMethod)
+	if (g_allocator!=NULL)
 	{
-		case 1:
-			Log("vmr9:SetDeinterlace() preference to BOB");
-			hr=pDeint->SetDeinterlacePrefs(DeinterlacePref9_BOB);
-		break;
-		case 2:
-			Log("vmr9:SetDeinterlace() preference to Weave");
-			hr=pDeint->SetDeinterlacePrefs(DeinterlacePref9_Weave);
-		break;
-		case 3:
-			Log("vmr9:SetDeinterlace() preference to NextBest");
-			hr=pDeint->SetDeinterlacePrefs(DeinterlacePref9_NextBest );
-		break;
+		hr=g_allocator->Release();
+		g_allocator=NULL;
+		Log("Vmr9Deinit:allocator release:%d", hr);
 	}
-	return S_OK;
-}
+	if (vmr9Presenter!=NULL)
+	{
+		delete vmr9Presenter;
+		Log("Vmr9Deinit:vmr9Presenter release:%d", hr);
+	}
+	vmr9Presenter=NULL;
 
-STDMETHODIMP CVMR9Helper::SetDeinterlaceMode(int mode)
+	m_pDevice=NULL;
+	m_pVMR9Filter=NULL;
+
+}
+void Vmr9SetDeinterlaceMode(int mode)
 {
 	//0=None
 	//1=Bob
@@ -202,7 +212,7 @@ STDMETHODIMP CVMR9Helper::SetDeinterlaceMode(int mode)
 		Log("vmr9:SetDeinterlace() deinterlace mode OFF: 0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x",
 				deintMode.Data1,deintMode.Data2,deintMode.Data3, deintMode.Data4[0], deintMode.Data4[1], deintMode.Data4[2], deintMode.Data4[3], deintMode.Data4[4], deintMode.Data4[5], deintMode.Data4[6], deintMode.Data4[7]);
 
-		return S_OK;
+		return ;
 	}
 	if (mode==1)
 	{
@@ -215,7 +225,7 @@ STDMETHODIMP CVMR9Helper::SetDeinterlaceMode(int mode)
 		Log("vmr9:SetDeinterlace() deinterlace mode BOB: 0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x",
 				deintMode.Data1,deintMode.Data2,deintMode.Data3, deintMode.Data4[0], deintMode.Data4[1], deintMode.Data4[2], deintMode.Data4[3], deintMode.Data4[4], deintMode.Data4[5], deintMode.Data4[6], deintMode.Data4[7]);
 
-		return S_OK;
+		return ;
 	}
 	if (mode==2)
 	{
@@ -226,7 +236,8 @@ STDMETHODIMP CVMR9Helper::SetDeinterlaceMode(int mode)
 		if (!SUCCEEDED(hr)) Log("vmr9:GetDeinterlaceMode() failed hr:0x%x",hr);
 		Log("vmr9:SetDeinterlace() deinterlace mode WEAVE: 0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x-0x%x",
 				deintMode.Data1,deintMode.Data2,deintMode.Data3, deintMode.Data4[0], deintMode.Data4[1], deintMode.Data4[2], deintMode.Data4[3], deintMode.Data4[4], deintMode.Data4[5], deintMode.Data4[6], deintMode.Data4[7]);
-		return S_OK;
+		
+		return ;
 	}
 
 	AM_MEDIA_TYPE pmt;
@@ -243,12 +254,13 @@ STDMETHODIMP CVMR9Helper::SetDeinterlaceMode(int mode)
 	if (vidInfo2==NULL)
 	{
 		Log("vmr9:SetDeinterlace() VMR9 not connected");
-		return S_OK;
+		return ;
 	}
 	if ((pmt.formattype != FORMAT_VideoInfo2) || (pmt.cbFormat< sizeof(VIDEOINFOHEADER2)))
 	{
 		Log("vmr9:SetDeinterlace() not using VIDEOINFOHEADER2");
-		return S_OK;
+		
+		return ;
 	}
 
 	Log("vmr9:SetDeinterlace() resolution:%dx%d planes:%d bitcount:%d fmt:%d %c%c%c%c",
@@ -389,8 +401,154 @@ STDMETHODIMP CVMR9Helper::SetDeinterlaceMode(int mode)
 			delete [] pModes;
 		}
 	}
+}
+void Vmr9SetDeinterlacePrefs(DWORD dwMethod)
+{
+	int hr;
+	CComQIPtr<IVMRDeinterlaceControl9> pDeint=m_pVMR9Filter;
+	switch (dwMethod)
+	{
+		case 1:
+			Log("vmr9:SetDeinterlace() preference to BOB");
+			hr=pDeint->SetDeinterlacePrefs(DeinterlacePref9_BOB);
+		break;
+		case 2:
+			Log("vmr9:SetDeinterlace() preference to Weave");
+			hr=pDeint->SetDeinterlacePrefs(DeinterlacePref9_Weave);
+		break;
+		case 3:
+			Log("vmr9:SetDeinterlace() preference to NextBest");
+			hr=pDeint->SetDeinterlacePrefs(DeinterlacePref9_NextBest );
+		break;
+	}
+
+}
 
 
+bool DvrMsCreate(LONG *id, IBaseFilter* streamBufferSink, LPCWSTR strPath, DWORD dwRecordingType)
+{
+	*id=-1;
+	try
+	{
 
-	return S_OK;
+		Log("CStreamBufferRecorder::Create() Record");
+		int hr;
+		IUnknown* pRecUnk;
+		CComQIPtr<IStreamBufferSink> sink=streamBufferSink;
+		if (!sink)
+		{
+			Log("cannot get IStreamBufferSink:%x");
+			return false;
+		}
+		hr=sink->CreateRecorder( strPath,dwRecordingType,&pRecUnk);
+		if (!SUCCEEDED(hr))
+		{
+			Log("CStreamBufferRecorder::Create() create recorder failed:%x", hr);
+			return false;
+		}
+
+		if (pRecUnk==NULL)
+		{
+			Log("CStreamBufferRecorder::Create() cannot get recorder failed");
+			return false;
+		}
+		IStreamBufferRecordControl* pRecord;
+		pRecUnk->QueryInterface(IID_IStreamBufferRecordControl,(void**)&pRecord);
+		if (pRecord==NULL)
+		{
+			Log("CStreamBufferRecorder::Create() cannot get IStreamBufferRecordControl");
+			return false;
+		}
+		*id=m_iRecordingId;
+		Log("CStreamBufferRecorder::Create() recorder created id:%d", *id);
+		m_mapRecordControl[m_iRecordingId]=pRecord;
+		m_iRecordingId++;
+
+		Log("CStreamBufferRecorder::Create() done %x",pRecord);	
+	}
+	catch(...)
+	{
+		Log("CStreamBufferRecorder::Create() done exception");	
+	}
+	return TRUE;
+}
+void DvrMsStart(LONG id, LONG startTime)
+{
+	imapRecordControl it = m_mapRecordControl.find(id);
+	if (it==m_mapRecordControl.end()) return;
+
+	try
+	{
+		Log("CStreamBufferRecorder::Start():%d id:%d", startTime,id);
+		if (it->second==NULL)
+		{
+			Log("CStreamBufferRecorder::Start() recorded=null");
+			return ;
+		}
+		Log("CStreamBufferRecorder::Start(1) %x",m_mapRecordControl[id]);
+		REFERENCE_TIME timeStart=startTime;
+		int hr=it->second->Start(&timeStart);
+		if (!SUCCEEDED(hr))
+		{
+			Log("CStreamBufferRecorder::Start() start failed:%X", hr);
+			if (startTime!=0)
+			{
+				timeStart=0;
+				int hr=it->second->Start(&timeStart);
+				if (!SUCCEEDED(hr))
+				{
+					Log("CStreamBufferRecorder::Start() start failed:%x", hr);
+					return ;
+				}
+			}
+		}
+		
+		Log("CStreamBufferRecorder::Start(2)");
+		HRESULT hrOut;
+		BOOL started,stopped;
+		it->second->GetRecordingStatus(&hrOut,&started,&stopped);
+		Log("CStreamBufferRecorder::Start() start status:%x started:%d stopped:%d", hrOut,started,stopped);
+		Log("CStreamBufferRecorder::Start() done");
+	}
+	catch(...)
+	{
+		Log("CStreamBufferRecorder::Start()  exception");
+	}
+}
+
+void DvrMsStop(LONG id)
+{
+	imapRecordControl it = m_mapRecordControl.find(id);
+	if (it==m_mapRecordControl.end()) return;
+	try
+	{
+		Log("CStreamBufferRecorder::Stop()");
+		if (it->second!=NULL)
+		{
+			int hr=it->second->Stop(0);
+			if (!SUCCEEDED(hr))
+			{
+				Log("CStreamBufferRecorder::Stop() failed:%x", hr);
+				return ;
+			}
+			for (int x=0; x < 10;++x)
+			{
+				HRESULT hrOut;
+				BOOL started,stopped;
+				it->second->GetRecordingStatus(&hrOut,&started,&stopped);
+				Log("CStreamBufferRecorder::Stop() status:%d %x started:%d stopped:%d",x, hrOut,started,stopped);
+				if (stopped!=0) break;
+				Sleep(100);
+			}
+			while (it->second->Release() >0);
+			m_mapRecordControl.erase(it);
+
+		}
+		Log("CStreamBufferRecorder::Stop() done");
+	}
+	catch(...)
+	{
+		Log("CStreamBufferRecorder::Stop() exception");
+	}
+
 }

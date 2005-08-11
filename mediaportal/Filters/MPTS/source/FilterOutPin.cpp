@@ -117,8 +117,8 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 	if (m_lastPTS==0) 
 		m_lastPTS=m_pSections->pids.StartPTS;
 	CheckPointer(pSample, E_POINTER);
+	CAutoLock cAutoLockShared(&m_cSharedState);
 	{
-		CAutoLock cAutoLockShared(&m_cSharedState);
 
 		PBYTE pData;
 		LONG lDataLength;
@@ -127,6 +127,7 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 		{
 			LogDebug("GetPointer() failed:%x",hr);
 			m_pMPTSFilter->Log((char*)"pin: FillBuffer() error on getting pointer for sample",true);
+		
 			return hr;
 		}
 		lDataLength = pSample->GetActualDataLength();
@@ -228,6 +229,8 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 			m_bDiscontinuity = FALSE;
 		}
 	}
+		
+	
 		
 	return NOERROR;
 }

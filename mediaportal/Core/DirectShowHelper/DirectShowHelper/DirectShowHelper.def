@@ -1,9 +1,0 @@
-; DirectShowHelper.def : Declares the module parameters.
-
-LIBRARY      "DirectShowHelper.DLL"
-
-EXPORTS
-	DllCanUnloadNow		PRIVATE
-	DllGetClassObject	PRIVATE
-	DllRegisterServer	PRIVATE
-	DllUnregisterServer	PRIVATE

@@ -1,0 +1,13 @@
+; dvblib.def : Deklariert die Modulparameter für die DLL.
+
+LIBRARY      "dshowhelper"
+
+EXPORTS
+    ; Explizite Exporte können hier eingefügt werden
+Vmr9Init					@1
+Vmr9Deinit					@2
+Vmr9SetDeinterlaceMode		@3
+Vmr9SetDeinterlacePrefs		@4
+DvrMsCreate					@5
+DvrMsStart					@6
+DvrMsStop					@7
