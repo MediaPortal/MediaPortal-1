@@ -18,7 +18,7 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-#define USEMTSWRITER
+//#define USEMTSWRITER
 #if (UseCaptureCardDefinitions)
 
 using System;
