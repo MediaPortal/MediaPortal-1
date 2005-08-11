@@ -791,30 +791,29 @@ HRESULT CDump::CloseFile()
     // closing the file while still receiving data in Receive()
     CAutoLock lock(&m_Lock);
 
-    if (m_hFile == INVALID_HANDLE_VALUE)
+    if (m_hFile != INVALID_HANDLE_VALUE)
 	{
-        return NOERROR;
-    }
-	LogDebug("CloseFile()");
+		LogDebug("CloseFile()");
 
-	Log(TEXT("CloseFile called"),true);
-	LARGE_INTEGER li;
-	li.QuadPart = m_currentFilePosition;
+		Log(TEXT("CloseFile called"),true);
+		LARGE_INTEGER li;
+		li.QuadPart = m_currentFilePosition;
 
-	SetFilePointer(m_hFile,li.LowPart,&li.HighPart,FILE_BEGIN);
+		SetFilePointer(m_hFile,li.LowPart,&li.HighPart,FILE_BEGIN);
 
-	SetEndOfFile(m_hFile);
+		SetEndOfFile(m_hFile);
 
-	m_currentFilePosition= 0;
-    CloseHandle(m_hFile);
-
-    m_hFile = INVALID_HANDLE_VALUE; // Invalidate the file 
+		m_currentFilePosition= 0;
+		CloseHandle(m_hFile);
+		m_hFile = INVALID_HANDLE_VALUE; // Invalidate the file 
+	}
 
     if (m_hInfoFile != INVALID_HANDLE_VALUE)
 	{
 		CloseHandle(m_hInfoFile);
 		m_hInfoFile = INVALID_HANDLE_VALUE;
 	}
+
 	if (m_recHandle != INVALID_HANDLE_VALUE)
 	{
 		CloseHandle(m_recHandle);
@@ -1006,12 +1005,6 @@ void CDump::Flush()
 	__int64 key;
 	key = (m_currentFilePosition/188) / 100;
 	m_mapPES[key] = m_pesNow;
-
-/*	if (m_hFile!=INVALID_HANDLE_VALUE)
-		FlushFileBuffers(m_hFile);
-	
-	if (m_hInfoFile!=INVALID_HANDLE_VALUE)
-		FlushFileBuffers(m_hInfoFile);*/
 }
 
 
