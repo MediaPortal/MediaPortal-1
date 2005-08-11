@@ -1455,6 +1455,7 @@ namespace MediaPortal.TV.Recording
 					m_analyzerInterface.ResetParser();
 					m_StartTime=DateTime.Now;
 					m_epgGrabber.GrabEPG(ch.HasEITSchedule==true);
+					VideoRendererStatistics.VideoState=VideoRendererStatistics.State.Signal;;
 				}
 			}
 			finally
@@ -1930,6 +1931,38 @@ namespace MediaPortal.TV.Recording
 			}
 
 		}
+		void UpdateVideoState()
+		{
+			//check if this card is used for watching tv
+			bool isViewing=Recorder.IsCardViewing(m_cardID);
+			if (!isViewing) return;
+
+			// do we receive any packets?
+			if (!m_streamDemuxer.RecevingPackets || !SignalPresent() )
+			{
+				//no, then state = no signal
+				VideoRendererStatistics.VideoState=VideoRendererStatistics.State.NoSignal;
+			}
+			else
+			{	
+				// we receive packets
+				// is channel scrambled ?
+				if(GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.Vmr9FPS < 1f)
+				{
+					if  ( (g_Player.Playing && !g_Player.Paused) || (!g_Player.Playing) )
+					{
+						VideoRendererStatistics.VideoState=VideoRendererStatistics.State.Scrambled;
+					}
+					else
+					{
+						// todo: check for vmr7 is we are receiving video 
+						VideoRendererStatistics.VideoState=VideoRendererStatistics.State.VideoPresent;
+					}
+				}
+				else
+					VideoRendererStatistics.VideoState=VideoRendererStatistics.State.VideoPresent;
+			}
+		}
 
 		public void Process()
 		{
@@ -1940,6 +1973,7 @@ namespace MediaPortal.TV.Recording
 			}
 			CheckVideoResolutionChanges();
 			m_epgGrabber.Process();
+			UpdateVideoState();
 
 		}
 		
