@@ -402,6 +402,10 @@ int m_bufferPositionPMT=0;
 				channelName,m_audioPid, m_videoPid, m_teletextPid, m_pmtPid,m_subtitlePid,m_programNumber);
 		
 		}
+		public bool RecevingPackets
+		{
+			get { return receivingPackets;}
+		}
 		public void Process()
 		{
 			TimeSpan ts = DateTime.Now-packetTimer;

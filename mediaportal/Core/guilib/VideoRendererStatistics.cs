@@ -28,8 +28,22 @@ namespace MediaPortal.GUI.Library
 	/// </summary>
 	public class VideoRendererStatistics
 	{
+		public enum State
+		{
+			NoSignal,			// no (or bad) signal found
+			Signal,				// signal found, but no video detected
+			Scrambled,		// video is scrambled
+			VideoPresent  // video present
+		}
+		static State videoState;
 		static int   framesDrawn=0,avgSyncOffset=0,avgDevSyncOffset=0,framesDropped=0,jitter=0;
 		static float avgFrameRate=0f;
+
+		static public State VideoState
+		{
+			get { return videoState;}
+			set { videoState=value;}
+		}
 
 		static public float AverageFrameRate
 		{

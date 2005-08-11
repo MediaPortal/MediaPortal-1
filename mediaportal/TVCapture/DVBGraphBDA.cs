@@ -200,7 +200,7 @@ namespace MediaPortal.TV.Recording
 		private static Guid CLSID_Mpeg2VideoStreamAnalyzer	= new Guid(0x6cfad761, 0x735d, 0x4aa5, 0x8a, 0xfc, 0xaf, 0x91, 0xa7, 0xd6, 0x1e, 0xba);
 		private static Guid CLSID_StreamBufferConfig				= new Guid(0xfa8a68b2, 0xc864, 0x4ba2, 0xad, 0x53, 0xd3, 0x87, 0x6a, 0x87, 0x49, 0x4b);
 
-		int						m_lastPMTVersion;
+		int											m_lastPMTVersion				= -1;
 		int                     m_cardID								= -1;
 		int                     m_iCurrentChannel				= 28;
 		int											m_rotCookie							= 0;			// Cookie into the Running Object Table
@@ -1349,6 +1349,7 @@ namespace MediaPortal.TV.Recording
 #endif
 				GC.Collect();GC.Collect();GC.Collect();
 				m_graphState = State.None;
+				VideoRendererStatistics.VideoState=VideoRendererStatistics.State.NoSignal;
 				//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: delete graph done");
 			}
 			catch(Exception ex)
@@ -1533,7 +1534,7 @@ namespace MediaPortal.TV.Recording
 		public bool StartViewing(TVChannel channel)
 		{
 			if (m_graphState != State.Created) return false;
-			
+			VideoRendererStatistics.VideoState=VideoRendererStatistics.State.NoSignal;
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:StartViewing()");
 
 			m_bOverlayVisible=true;
@@ -3423,13 +3424,58 @@ namespace MediaPortal.TV.Recording
 				GUIGraphicsContext_OnVideoWindowChanged();
 			}
 		}
+		void UpdateVideoState()
+		{
+			//check if this card is used for watching tv
+			bool isViewing=Recorder.IsCardViewing(m_cardID);
+			if (!isViewing) return;
+
+			// do we receive any packets?
+			if (!m_streamDemuxer.RecevingPackets)
+			{
+				//no, then state = no signal
+				VideoRendererStatistics.VideoState=VideoRendererStatistics.State.NoSignal;
+			}
+			else
+			{
+				// we do receive packets. 
+				// did we receive a PMT ?
+				if (m_lastPMTVersion==-1)
+				{
+					//no, then state = signal, but no video
+					VideoRendererStatistics.VideoState=VideoRendererStatistics.State.Signal;
+				}
+				else
+				{
+					// we receive packets, got a PMT.
+					// is channel scrambled ?
+					if(GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.Vmr9FPS < 1f)
+					{
+						if  ( (g_Player.Playing && !g_Player.Paused) || (!g_Player.Playing) )
+						{
+							VideoRendererStatistics.VideoState=VideoRendererStatistics.State.Scrambled;
+						}
+						else
+						{
+							// todo: check for vmr7 is we are receiving video 
+							VideoRendererStatistics.VideoState=VideoRendererStatistics.State.VideoPresent;
+						}
+					}
+					else
+						VideoRendererStatistics.VideoState=VideoRendererStatistics.State.VideoPresent;
+				}
+			}
+		}
+
 		public void Process()
 		{
 			if (m_graphState==State.None || m_graphState==State.Created) return;
 
 			if (m_streamDemuxer!=null)
 				m_streamDemuxer.Process();
-		
+
+			UpdateVideoState();
+
 			m_epgGrabber.Process();
 
 			TimeSpan ts=DateTime.Now-updateTimer;
@@ -3827,6 +3873,8 @@ namespace MediaPortal.TV.Recording
 				if (Network()==NetworkType.ATSC)
 					m_epgGrabber.GrabEPG(false);
 				SetupMTSDemuxerPin();
+
+				VideoRendererStatistics.VideoState=VideoRendererStatistics.State.NoSignal;
 			}	
 			finally
 			{

@@ -1165,7 +1165,28 @@ namespace MediaPortal.TV.Recording
       }
     }
 		
-		
+		void UpdateVideoState()
+		{
+			//check if this card is used for watching tv
+			bool isViewing=Recorder.IsCardViewing(m_cardID);
+			if (!isViewing) return;
+
+			if(GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.Vmr9FPS < 1f)
+			{
+				if  ( (g_Player.Playing && !g_Player.Paused) || (!g_Player.Playing) )
+				{
+					VideoRendererStatistics.VideoState=VideoRendererStatistics.State.NoSignal;
+				}
+				else
+				{
+					// todo: check for vmr7 is we are receiving video 
+					VideoRendererStatistics.VideoState=VideoRendererStatistics.State.VideoPresent;
+				}
+			}
+			else
+				VideoRendererStatistics.VideoState=VideoRendererStatistics.State.VideoPresent;
+		}
+
 		public void Process()
 		{
 			if (!GUIGraphicsContext.VMR9Allowed) return;
@@ -1176,6 +1197,8 @@ namespace MediaPortal.TV.Recording
 			{
 				Vmr7.Process();
 			}
+
+			UpdateVideoState();
 		}
 		
 		public PropertyPageCollection PropertyPages()
