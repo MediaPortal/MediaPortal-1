@@ -3049,6 +3049,18 @@
 	<id>1033</id>
 	<value>Shows are being recorded right now</value>
 </string>
+<string>
+	<id>1034</id>
+	<value>No signal detected!</value>
+</string>
+<string>
+	<id>1035</id>
+	<value>TV Channel is scrambled!</value>
+</string>
+<string>
+	<id>1036</id>
+	<value>No video found</value>
+</string>
 
 <string>
 	<id>1440</id>
