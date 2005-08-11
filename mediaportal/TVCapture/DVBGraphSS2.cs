@@ -1302,7 +1302,7 @@ namespace MediaPortal.TV.Recording
 				if (bContentRecording) iRecordingType=0;
 				else iRecordingType=1;										
 			 
-				bool success=DvrMsCreate(out m_recorderId,(IBaseFilter)m_sinkInterface,strFilename,iRecordingType);
+				bool success=DvrMsCreate(out m_recorderId,(IBaseFilter)m_sinkFilter,strFilename,iRecordingType);
 				if (!success)
 				{
 					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphSS2:StartRecording() FAILED to create recording");
