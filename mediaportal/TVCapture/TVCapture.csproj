@@ -179,11 +179,6 @@
                     Project = "{396C5208-5D46-4A11-92C1-FD0F2F42D7DD}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
-                <Reference
-                    Name = "Interop.DirectShowHelperLib"
-                    AssemblyName = "Interop.DirectShowHelperLib"
-                    HintPath = "..\Interop.DirectShowHelperLib.dll"
-                />
             </References>
         </Build>
         <Files>

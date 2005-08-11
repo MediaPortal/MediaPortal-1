@@ -191,11 +191,6 @@
                     HintPath = "C:\WINDOWS\Microsoft.NET\DirectX for Managed Code\1.0.2902.0\Microsoft.DirectX.dll"
                     AssemblyFolderKey = "hklm\dn\dx_1.0.2902.0"
                 />
-                <Reference
-                    Name = "Interop.DirectShowHelperLib"
-                    AssemblyName = "Interop.DirectShowHelperLib"
-                    HintPath = "..\Interop.DirectShowHelperLib.dll"
-                />
             </References>
         </Build>
         <Files>

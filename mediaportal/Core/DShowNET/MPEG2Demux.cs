@@ -86,8 +86,17 @@ namespace DShowNET
     IBasicVideo2          m_basicVideo=null;
     Size                  m_FrameSize;
     bool                  m_bOverlayVisible=false;
+		int										m_recorderId=-1;
 		
-		DirectShowHelperLib.StreamBufferRecorderClass m_recorder=null;
+		#region Imports
+		[DllImport("dshowhelper.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
+		unsafe private static extern bool DvrMsCreate(out int id, IBaseFilter streamBufferSink, [In, MarshalAs(UnmanagedType.LPWStr)]string strPath, uint dwRecordingType);
+		[DllImport("dshowhelper.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
+		unsafe private static extern void DvrMsStart(int id, uint startTime);
+		[DllImport("dshowhelper.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
+		unsafe private static extern void DvrMsStop(int id);
+		#endregion
+
     /// @@@TODO : capture width/height = hardcoded to 720x576
     /// @@@TODO : capture framerate = hardcoded to 25 fps
     static byte[] Mpeg2ProgramVideo = 
@@ -832,9 +841,12 @@ namespace DShowNET
 			if (bContentRecording) iRecordingType=0;
 			else iRecordingType=1;										
       
-			m_recorder = new DirectShowHelperLib.StreamBufferRecorderClass();
-			m_recorder.Create(m_bSink as DirectShowHelperLib.IBaseFilter,strFilename,iRecordingType);
-
+			bool success=DvrMsCreate(out m_recorderId,(IBaseFilter)m_bSink,strFilename,iRecordingType);
+			if (!success)
+			{
+				Log.WriteFile(Log.LogType.Capture,true,"mpeg2:StartRecording() FAILED to create recording");
+				return ;
+			}
       long lStartTime=0;
 
       // if we're making a reference recording
@@ -884,21 +896,17 @@ namespace DShowNET
 				catch(Exception){}
 			}
 */
-			m_recorder.Start((int)lStartTime);
+			DvrMsStart(m_recorderId,(uint)lStartTime);
     }
 
     public void StopRecording()
     {
       Log.WriteFile(Log.LogType.Capture,"mpeg2: stop recording");
-      if (m_recorder!=null) 
+			if (m_recorderId>=0) 
 			{
-				try
-				{
-					m_recorder.Stop();
-				}
-				catch(Exception){}
-				m_recorder=null;
-				
+				DvrMsStop(m_recorderId);
+				m_recorderId=-1;
+
 			}
     }
 
@@ -907,14 +915,11 @@ namespace DShowNET
       int hr=0;
       Log.WriteFile(Log.LogType.Capture,"mpeg2: close interfaces");
       
-			if (m_recorder!=null) 
+			if (m_recorderId>=0) 
 			{
-				try{
-				m_recorder.Stop();					
-				}
-				catch(Exception){}
-				m_recorder=null;
-				
+				DvrMsStop(m_recorderId);
+				m_recorderId=-1;
+
 			}
 			if (m_mediaControl!=null)
 			{

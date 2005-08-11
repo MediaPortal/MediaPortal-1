@@ -161,7 +161,14 @@ namespace MediaPortal.TV.Recording
 		} 
 		#endregion
 
-		#region Imports 
+		#region Imports
+		[DllImport("dshowhelper.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
+		unsafe private static extern bool DvrMsCreate(out int id, IBaseFilter streamBufferSink, [In, MarshalAs(UnmanagedType.LPWStr)]string strPath, uint dwRecordingType);
+		[DllImport("dshowhelper.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
+		unsafe private static extern void DvrMsStart(int id, uint startTime);
+		[DllImport("dshowhelper.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
+		unsafe private static extern void DvrMsStop(int id);
+
 		[DllImport("SoftCSA.dll",  CallingConvention=CallingConvention.StdCall)]
 		public static extern bool EventMsg(int eventType,[In] IntPtr data);
 		[DllImport("SoftCSA.dll",  CallingConvention=CallingConvention.StdCall)]
@@ -266,7 +273,7 @@ namespace MediaPortal.TV.Recording
 		string							m_cardType="";
 		string							m_cardFilename="";
 		DVBChannel						m_currentTuningObject;
-		DirectShowHelperLib.StreamBufferRecorderClass m_recorder=null;
+		int													m_recorderId=-1;
 		int								m_selectedAudioPid=0;
 		int m_iVideoWidth=1;
 		int m_iVideoHeight=1;
@@ -879,15 +886,10 @@ namespace MediaPortal.TV.Recording
 				Vmr7.RemoveVMR7();
 				Vmr7=null;
 			}
-			if (m_recorder!=null) 
+			if (m_recorderId>=0) 
 			{
-				//Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: free recorder");
-				try
-				{
-					m_recorder.Stop();
-				}
-				catch(Exception){}
-				m_recorder=null;
+				DvrMsStop(m_recorderId);
+				m_recorderId=-1;
 			}
 				
 			
@@ -1300,8 +1302,12 @@ namespace MediaPortal.TV.Recording
 				if (bContentRecording) iRecordingType=0;
 				else iRecordingType=1;										
 			 
-				m_recorder = new DirectShowHelperLib.StreamBufferRecorderClass();
-				m_recorder.Create(m_sinkInterface as DirectShowHelperLib.IBaseFilter,strFilename,iRecordingType);
+				bool success=DvrMsCreate(out m_recorderId,(IBaseFilter)m_sinkInterface,strFilename,iRecordingType);
+				if (!success)
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphSS2:StartRecording() FAILED to create recording");
+					return false;
+				}
 				long lStartTime=0;
 
 				// if we're making a reference recording
@@ -1349,7 +1355,7 @@ namespace MediaPortal.TV.Recording
 					}
 					catch(Exception){}
 				}*/
-				m_recorder.Start((int)lStartTime);
+				DvrMsStart(m_recorderId,(uint)lStartTime);
 			}
 			catch(Exception ex)
 			{
@@ -1374,13 +1380,11 @@ namespace MediaPortal.TV.Recording
 				return ;
 			
 
-			if (m_recorder!=null) 
+			if (m_recorderId>=0) 
 			{
-				try{
-				m_recorder.Stop();
-				}
-				catch(Exception){}
-				m_recorder=null;
+				DvrMsStop(m_recorderId);
+				m_recorderId=-1;
+
 			}
 
 			m_graphState=State.TimeShifting;

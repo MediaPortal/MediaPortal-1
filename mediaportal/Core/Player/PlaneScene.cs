@@ -47,7 +47,7 @@ namespace MediaPortal.Player
 	/// scene.Stop();
 	/// scene.DeInit();
 	/// </summary>
-	public class PlaneScene :DirectShowHelperLib.VMR9Callback
+	public class PlaneScene :IVMR9PresentCallback
 	{
 		[DllImport("fontEngine.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
 		unsafe private static extern void FontEngineRemoveTexture(int textureNo);
@@ -384,7 +384,7 @@ namespace MediaPortal.Player
 		#region IVMR9Callback Members
 
 		
-		public void PresentImage(int width,int height,int arWidth, int arHeight, uint pTex)
+		public int PresentImage(Int16 width,Int16 height,Int16 arWidth, Int16 arHeight, uint pTex)
 		{
 			try
 			{
@@ -399,13 +399,13 @@ namespace MediaPortal.Player
 					m_vmr9Util.VideoAspectRatioY=0;
 					arVideoWidth=0;
 					arVideoHeight=0;
-					return;
+					return 0;
 				}
-				if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING) return;
+				if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING) return 0;
 				if (!drawVideoAllowed  || !isEnabled)
 				{
 					m_vmr9Util.FrameCounter++;
-					return;
+					return 0;
 				}
 				m_vmr9Util.FrameCounter++;
 				//			Log.Write("vmr9:present image()");
@@ -415,8 +415,9 @@ namespace MediaPortal.Player
 			catch(Exception)
 			{
 			}
+			return 0;
 		}
-		public void PresentSurface(int width,int height,int arWidth, int arHeight,uint pSurface)
+		public int PresentSurface(Int16 width,Int16 height,Int16 arWidth, Int16 arHeight,uint pSurface)
 		{
 			try
 			{
@@ -431,13 +432,13 @@ namespace MediaPortal.Player
 					m_vmr9Util.VideoAspectRatioY=0;
 					arVideoWidth=0;
 					arVideoHeight=0;
-					return;
+					return 0;
 				}
-				if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING) return;
+				if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING) return 0;
 				if (!drawVideoAllowed  || !isEnabled)
 				{
 					m_vmr9Util.FrameCounter++;
-					return;
+					return 0;
 				}
 				m_vmr9Util.FrameCounter++;
 				InternalPresentSurface(width,height,arWidth, arHeight, false);
@@ -445,6 +446,7 @@ namespace MediaPortal.Player
 			catch(Exception)
 			{
 			}
+			return 0;
 		}
 
 		private void InternalPresentImage(int width,int height,int arWidth, int arHeight, bool isRepaint)

@@ -45,8 +45,32 @@ namespace MediaPortal.Player
   ///                           IVMRSurfaceAllocator9 and IVMRImagePresenter9
   ///  PlaneScene.cs          : class which draws the video texture onscreen and mixes it with the GUI, OSD,...                          
   /// </summary>
+	/// // {324FAA1F-7DA6-4778-833B-3993D8FF4151}
+
+	[ComVisible(true), ComImport,
+	Guid("324FAA1F-7DA6-4778-833B-3993D8FF4151"),
+	InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
+	public interface IVMR9PresentCallback
+	{
+		[PreserveSig]
+		int PresentImage(Int16 cx, Int16 cy, Int16 arx, Int16 ary, uint dwImg);
+		[PreserveSig]
+		int PresentSurface(Int16 cx, Int16 cy, Int16 arx, Int16 ary, uint dwImg);
+	}
   public class VMR9Util
   {
+		
+		#region imports
+		[DllImport("dshowhelper.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
+		unsafe private static extern bool Vmr9Init(IVMR9PresentCallback callback, uint dwD3DDevice, IBaseFilter vmr9Filter,uint monitor);
+		[DllImport("dshowhelper.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
+		unsafe private static extern void Vmr9Deinit();
+		[DllImport("dshowhelper.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
+		unsafe private static extern void Vmr9SetDeinterlaceMode(Int16 mode);
+		[DllImport("dshowhelper.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
+		unsafe private static extern void Vmr9SetDeinterlacePrefs(uint dwMethod);
+		#endregion
+
 		static public VMR9Util g_vmr9=null;
 		static int instanceCounter = 0;
 
@@ -57,7 +81,7 @@ namespace MediaPortal.Player
     public int textureCount = 0;
 		int videoHeight, videoWidth;
 		int videoAspectRatioX, videoAspectRatioY;
-    DirectShowHelperLib.VMR9HelperClass vmr9Helper = null;
+    
 		IQualProp quality=null;
     int frameCounter = 0;
     DateTime repaintTimer = DateTime.Now;
@@ -135,19 +159,17 @@ namespace MediaPortal.Player
 
       m_scene = new PlaneScene(m_renderFrame, this);
       m_scene.Init();
-      vmr9Helper = new DirectShowHelperLib.VMR9HelperClass();
-      DirectShowHelperLib.IBaseFilter baseFilter = VMR9Filter as DirectShowHelperLib.IBaseFilter;
-
-      vmr9Helper.Init(m_scene, (uint)upDevice.ToInt32(), baseFilter, (uint)hMonitor.ToInt32());
+      
+      Vmr9Init(m_scene, (uint)upDevice.ToInt32(), VMR9Filter, (uint)hMonitor.ToInt32());
 
       int hr = graphBuilder.AddFilter(VMR9Filter, "Video Mixing Renderer 9");
       if (hr != 0)
       {
-				vmr9Helper.Deinit();
+				Vmr9Deinit();
 				m_scene.Stop();
 				m_scene.Deinit();
 				m_scene=null;
-				vmr9Helper=null;
+				
 				Marshal.ReleaseComObject(VMR9Filter);
 				VMR9Filter=null;
         Error.SetError("Unable to play movie", "Unable to initialize VMR9");
@@ -156,7 +178,7 @@ namespace MediaPortal.Player
       }
 
 			quality = VMR9Filter as IQualProp ;
-			m_mixerBitmap=baseFilter as IVMRMixerBitmap9;
+			m_mixerBitmap=VMR9Filter as IVMRMixerBitmap9;
 			m_graphBuilder=graphBuilder;			
 			instanceCounter++;
 			GUIGraphicsContext.Vmr9Active = true;
@@ -178,47 +200,48 @@ namespace MediaPortal.Player
 			if (vmr9Initialized)
 			{
 				Log.Write("VMR9Helper:RemoveVMR9");
-				if (vmr9Helper != null)
-				{
-					Log.Write("VMR9Helper:stop vmr9 helper");
-					vmr9Helper.Deinit();
-					vmr9Helper = null;
-				}
-
-				if (m_scene != null)
-				{
-					Log.Write("VMR9Helper:stop planescene");
-					m_scene.Stop();
-					instanceCounter--;
-					m_scene.Deinit();
-					m_scene = null;
-					GUIGraphicsContext.Vmr9Active = false;
-					GUIGraphicsContext.Vmr9FPS=0f;
-					GUIGraphicsContext.InVmr9Render=false;
-					currentVmr9State = Vmr9PlayState.Playing;
-				}
-				int result;
-				
-				//if (m_mixerBitmap!= null)
-				//	while ( (result=Marshal.ReleaseComObject(m_mixerBitmap))>0); 
-				m_mixerBitmap = null;
-
-//				if (quality != null)
-//					while ( (result=Marshal.ReleaseComObject(quality))>0); 
-				quality = null;
-					
+				Log.Write("VMR9Helper:stop vmr9 helper");
 				if (VMR9Filter != null)
 				{
+				
+					if (m_scene != null)
+					{
+						Log.Write("VMR9Helper:stop planescene");
+						m_scene.Stop();
+						instanceCounter--;
+						m_scene.Deinit();
+						GUIGraphicsContext.Vmr9Active = false;
+						GUIGraphicsContext.Vmr9FPS=0f;
+						GUIGraphicsContext.InVmr9Render=false;
+						currentVmr9State = Vmr9PlayState.Playing;
+					}
+					int result;
+					
+					//if (m_mixerBitmap!= null)
+					//	while ( (result=Marshal.ReleaseComObject(m_mixerBitmap))>0); 
+					//result=Marshal.ReleaseComObject(m_mixerBitmap);
+					m_mixerBitmap = null;
+
+	//				if (quality != null)
+	//					while ( (result=Marshal.ReleaseComObject(quality))>0); 
+					//Marshal.ReleaseComObject(quality);
+					quality = null;
+					
 					try
 					{
 						result=m_graphBuilder.RemoveFilter(VMR9Filter);
 						if (result!=0) Log.Write("VMR9:RemoveFilter():{0}",result);
 					}
-					catch(Exception){}
-					while ( (result=Marshal.ReleaseComObject(VMR9Filter))>0); 
+					catch(Exception ex)
+					{
+						int x=1;
+					}
+					Vmr9Deinit();
+					result=Marshal.ReleaseComObject(VMR9Filter);
 					if (result!=0) Log.Write("VMR9:ReleaseComObject():{0}",result);
 					VMR9Filter = null;
 					m_graphBuilder=null;
+					m_scene = null;
 				}
 				g_vmr9=null;
 			}
@@ -406,7 +429,6 @@ namespace MediaPortal.Player
     public void SetDeinterlacePrefs()
 		{
 			if (!vmr9Initialized) return;
-      if (vmr9Helper == null) return;
       int DeInterlaceMode = 3;
       using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
       {
@@ -416,12 +438,11 @@ namespace MediaPortal.Player
         //Best
         DeInterlaceMode = xmlreader.GetValueAsInt("mytv", "deinterlace", 3);
       }
-      vmr9Helper.SetDeinterlacePrefs((uint)DeInterlaceMode);
+      Vmr9SetDeinterlacePrefs((uint)DeInterlaceMode);
     }
     public void SetDeinterlaceMode()
 		{
 			if (!vmr9Initialized) return;
-			if (vmr9Helper == null) return;
 			int DeInterlaceMode = 3;
 			using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
@@ -431,7 +452,7 @@ namespace MediaPortal.Player
 				//Best
 				DeInterlaceMode = xmlreader.GetValueAsInt("mytv", "deinterlace", 3);
 			}
-			vmr9Helper.SetDeinterlaceMode(DeInterlaceMode);
+			Vmr9SetDeinterlaceMode((short)DeInterlaceMode);
     }
     public void Enable(bool onOff)
 		{

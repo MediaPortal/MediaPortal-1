@@ -190,11 +190,6 @@
                     HintPath = "..\edtftpnet-1.1.8.dll"
                 />
                 <Reference
-                    Name = "Interop.DirectShowHelperLib"
-                    AssemblyName = "Interop.DirectShowHelperLib"
-                    HintPath = "..\Interop.DirectShowHelperLib.dll"
-                />
-                <Reference
                     Name = "Interop.TunerLib"
                     AssemblyName = "Interop.TunerLib"
                     HintPath = "..\Interop.TunerLib.dll"
