@@ -148,10 +148,27 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 
 
 		
-
+		__int64 fileSize;
 		do
 		{
-			m_pMPTSFilter->UpdatePids();
+			int count=0;
+			if (m_pMPTSFilter->m_pFileReader->m_hInfoFile!=INVALID_HANDLE_VALUE)
+			{
+				while (true)
+				{	
+					m_pMPTSFilter->UpdatePids();
+					if ( m_pFileReader->GetFilePointer() <= m_pSections->pids.fileStartPosition &&
+						m_pFileReader->GetFilePointer() + lDataLength>=m_pSections->pids.fileStartPosition )
+					{
+						LogDebug("pin:Wait %x/%x (%d)", (DWORD)m_pFileReader->GetFilePointer(),(DWORD)m_pSections->pids.fileStartPosition,count);
+						count++;
+						if (count >20) break;
+						Sleep(50);
+					}
+					else break;
+				}
+			}
+
 			bool endOfFile=false;
 			hr = m_pBuffers->Require(lDataLength,endOfFile);
 			if (endOfFile)
@@ -159,16 +176,15 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 				if (m_pMPTSFilter->m_pFileReader->m_hInfoFile!=INVALID_HANDLE_VALUE)
 				{
 					LogDebug("output pin:EOF");
-					__int64 fileSize;
 					m_pMPTSFilter->m_pFileReader->GetFileSize(&fileSize);
-					int count=0;
+					count=0;
 					while (true)
 					{
 						m_pMPTSFilter->UpdatePids();
-						LogDebug("output pin pos:%x size:%x", m_pSections->pids.fileStartPosition,fileSize);
 						if (m_pSections->pids.fileStartPosition >= fileSize-(1024*1024) ||
 							m_pSections->pids.fileStartPosition < lDataLength) 
 						{
+							LogDebug("waiteof pos:%x size:%x (%d)", m_pSections->pids.fileStartPosition,fileSize,count);
 							count++;
 							if (count >20) break;
 							Sleep(50);
