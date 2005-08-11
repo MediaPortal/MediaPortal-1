@@ -118,6 +118,7 @@ namespace MediaPortal.GUI.Library
       m_properties["#TV.RecordedTV.Description"]=String.Empty;        
       m_properties["#TV.RecordedTV.thumb"]=String.Empty;              
       m_properties["#TV.RecordedTV.Genre"]=String.Empty;  
+			m_properties["#TV.Signal.Quality"]=String.Empty;  
       
 			m_properties["#TV.Scheduled.Title"]=String.Empty;              
 			m_properties["#TV.Scheduled.Time"]=String.Empty;               

@@ -9,6 +9,7 @@ namespace WindowPlugins.GUITV
 	public class GUITVNoSignal : GUIWindow
 	{
 		[SkinControlAttribute(102)]			  protected GUILabelControl lblNotify=null;
+		[SkinControlAttribute(1)]			  protected GUIProgressControl progressControl=null;
 		string notify=String.Empty;
 		public GUITVNoSignal()
 		{
@@ -22,9 +23,9 @@ namespace WindowPlugins.GUITV
 		public override void Process()
 		{
 			if (VideoRendererStatistics.IsVideoFound)
-				GUIWindowManager.ShowPreviousWindow();
-			int quality=Recorder.SignalQuality;
-			GUIPropertyManager.SetProperty("#TV.Signal.Quality",quality.ToString());;
+				GUIWindowManager.ActiveWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+			progressControl.Percentage=Recorder.SignalStrength;
+			progressControl.IsVisible=true;
 		}
 		public string Notify
 		{
@@ -48,6 +49,7 @@ namespace WindowPlugins.GUITV
 					notify=GUILocalizeStrings.Get(1036);
 					break;
 			}
+			lblNotify.Label=notify;
 		}
 	}
 }

@@ -1,6 +1,6 @@
 <window>
    <id>749</id>
-   <defaultcontrol>13</defaultcontrol>
+   <defaultcontrol>1</defaultcontrol>
    <allowoverlay>no</allowoverlay>
    <controls>
       <control>
@@ -24,7 +24,7 @@
          <righttexture>osd_progress_right.png</righttexture>
          <lefttexture>osd_progress_left.png</lefttexture>
          <texturebg>osd_progress_back.png</texturebg>
-         <label>#TV.Signal.Quality</label>
+         <label></label>
          <midtexture>osd_progress_mid.png</midtexture>
       </control>
       <control>
@@ -33,7 +33,7 @@
          <id>101</id>
          <posX>128</posX>
          <posY>472</posY>
-         <label>998</label>
+         <label>988</label>
          <align>left</align>
       </control>
       <control>
@@ -44,5 +44,19 @@
          <posY>448</posY>
          <label>-</label>
       </control>
+
+	<control>
+		<description>TV Logo</description> 
+		<type>image</type> 
+		<id>10</id> 
+		<posX>520</posX> 
+		<posY>455</posY>
+		<width>70</width>
+		<height>70</height>
+		<texture>#TV.View.thumb</texture>		
+		<visible>yes</visible>
+		<centered>yes</centered>
+		<keepaspectratio>yes</keepaspectratio> 
+	</control>      
    </controls>
 </window>
