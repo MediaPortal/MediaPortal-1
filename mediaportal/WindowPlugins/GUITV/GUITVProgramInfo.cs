@@ -78,10 +78,12 @@ namespace MediaPortal.GUI.TV
 			if (bRecording)
 			{
 				btnRecord.Label=GUILocalizeStrings.Get(1039);//dont record
+				btnAdvancedRecord.Disabled=true;
 			}
 			else
 			{
 				btnRecord.Label=GUILocalizeStrings.Get(264);//record
+				btnAdvancedRecord.Disabled=false;
 			}
 		}
 
