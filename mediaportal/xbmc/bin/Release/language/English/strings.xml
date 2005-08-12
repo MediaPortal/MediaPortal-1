@@ -3061,6 +3061,18 @@
 	<id>1036</id>
 	<value>No video found</value>
 </string>
+<string>
+	<id>1037</id>
+	<value>My TV - Program information</value>
+</string>
+<string>
+	<id>1038</id>
+	<value>Advanced record</value>
+</string>
+<string>
+	<id>1039</id>
+	<value>Don't record</value>
+</string>
 
 <string>
 	<id>1440</id>
