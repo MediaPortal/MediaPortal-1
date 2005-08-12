@@ -408,6 +408,7 @@ namespace MediaPortal.TV.Recording
 							foundChannel=true;
 							channelName=ch.chan.Name;
 							lastProgramDate=ch.lastProgramTime;
+							break;
 						}
 					}
 					if (!foundChannel) 
