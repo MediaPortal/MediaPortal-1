@@ -1443,6 +1443,7 @@ namespace MediaPortal.TV.Recording
 			
 			Log.WriteFile(Log.LogType.Recorder,"Recorder:  Turn tv on channel:{0}", channel);
 
+			int cardNo=-1;
 			// tv should be turned on
 			// check if any card is already tuned to this channel...
 			for (int i=0; i < m_tvcards.Count;++i)
@@ -1457,68 +1458,78 @@ namespace MediaPortal.TV.Recording
 						// is it not recording ? or is it recording the channel we want to watch ?
 						if (!dev.IsRecording || (dev.IsRecording&& dev.TVChannel==channel ))
 						{
-							Log.WriteFile(Log.LogType.Recorder,"Recorder:  Found card:{0}", dev.ID);
-							
-							//stop viewing on any other card
-							TurnTvOff(i);
-
-							m_iCurrentCard=i;
-							TVChannelName=channel;
-
-							// do we want timeshifting?
-							if  (timeshift || dev.IsRecording)
+							if (dev.IsRecording)
 							{
-								//yes
-								strTimeShiftFileName=GetTimeShiftFileName(m_iCurrentCard);
-								if (g_Player.CurrentFile!=strTimeShiftFileName)
-								{
-									g_Player.Stop();
-								}
-								if (dev.TVChannel!=channel)
-								{
-									TuneExternalChannel(channel,true);
-									dev.TVChannel=channel;
-								}
-								if (!dev.IsRecording  && !dev.IsTimeShifting && dev.SupportsTimeShifting)
-								{
-									Log.WriteFile(Log.LogType.Recorder,"Recorder:  start timeshifting on card:{0}", dev.ID);
-									dev.StartTimeShifting();
-								}
-
-								//yes, check if we're already playing/watching it
-								strTimeShiftFileName=GetTimeShiftFileName(m_iCurrentCard);
-								if (g_Player.CurrentFile!=strTimeShiftFileName)
-								{
-									Log.WriteFile(Log.LogType.Recorder,"Recorder:  start viewing timeshift file of card {0}", dev.ID);
-									g_Player.Play(strTimeShiftFileName);
-								}
-								m_dtStart=new DateTime(1971,6,11,0,0,0,0);
-								return;
-							}//if  (timeshift || dev.IsRecording)
-							else
-							{
-								//we dont want timeshifting
-								strTimeShiftFileName=GetTimeShiftFileName(m_iCurrentCard);
-								if (g_Player.CurrentFile==strTimeShiftFileName)
-									g_Player.Stop();
-								if (dev.IsTimeShifting)
-								{
-									Log.WriteFile(Log.LogType.Recorder,"Recorder:  stop timeshifting on card:{0}", dev.ID);
-									dev.StopTimeShifting();
-								}
-								if (dev.TVChannel!=channel)
-								{
-									TuneExternalChannel(channel,true);
-									dev.TVChannel=channel;
-								}
-								dev.View=true;
-								m_dtStart=new DateTime(1971,6,11,0,0,0,0);
-								return;
+								cardNo=i;
+								break;
 							}
-						}//if (!dev.IsRecording || (dev.IsRecording&& dev.TVChannel==channel ))
-					}//if (TVDatabase.CanCardViewTVChannel(channel,dev.ID) )
-				}//if ( (dev.IsTimeShifting||dev.View) && dev.TVChannel == channel)
-			}//for (int i=0; i < m_tvcards.Count;++i)
+							cardNo=i;
+						}
+					}
+				}
+			}
+			if (cardNo>=0)
+			{
+				dev = (TVCaptureDevice)m_tvcards[cardNo];
+				Log.WriteFile(Log.LogType.Recorder,"Recorder:  Found card:{0}", dev.ID);
+						
+				//stop viewing on any other card
+				TurnTvOff(cardNo);
+
+				m_iCurrentCard=cardNo;
+				TVChannelName=channel;
+
+				// do we want timeshifting?
+				if  (timeshift || dev.IsRecording)
+				{
+					//yes
+					strTimeShiftFileName=GetTimeShiftFileName(m_iCurrentCard);
+					if (g_Player.CurrentFile!=strTimeShiftFileName)
+					{
+						g_Player.Stop();
+					}
+					if (dev.TVChannel!=channel)
+					{
+						TuneExternalChannel(channel,true);
+						dev.TVChannel=channel;
+					}
+					if (!dev.IsRecording  && !dev.IsTimeShifting && dev.SupportsTimeShifting)
+					{
+						Log.WriteFile(Log.LogType.Recorder,"Recorder:  start timeshifting on card:{0}", dev.ID);
+						dev.StartTimeShifting();
+					}
+
+					//yes, check if we're already playing/watching it
+					strTimeShiftFileName=GetTimeShiftFileName(m_iCurrentCard);
+					if (g_Player.CurrentFile!=strTimeShiftFileName)
+					{
+						Log.WriteFile(Log.LogType.Recorder,"Recorder:  start viewing timeshift file of card {0}", dev.ID);
+						g_Player.Play(strTimeShiftFileName);
+					}
+					m_dtStart=new DateTime(1971,6,11,0,0,0,0);
+					return;
+				}//if  (timeshift || dev.IsRecording)
+				else
+				{
+					//we dont want timeshifting
+					strTimeShiftFileName=GetTimeShiftFileName(m_iCurrentCard);
+					if (g_Player.CurrentFile==strTimeShiftFileName)
+						g_Player.Stop();
+					if (dev.IsTimeShifting)
+					{
+						Log.WriteFile(Log.LogType.Recorder,"Recorder:  stop timeshifting on card:{0}", dev.ID);
+						dev.StopTimeShifting();
+					}
+					if (dev.TVChannel!=channel)
+					{
+						TuneExternalChannel(channel,true);
+						dev.TVChannel=channel;
+					}
+					dev.View=true;
+					m_dtStart=new DateTime(1971,6,11,0,0,0,0);
+					return;
+				}
+			}//if (cardNo>=0)
 
 			Log.WriteFile(Log.LogType.Recorder,"Recorder:  find free card");
 
