@@ -318,6 +318,7 @@ namespace MediaPortal.TV.Recording
 										cachedCh.chan=chan;
 										cachedCh.lastProgramTime=lastProg.End;
 										mhwChannelCache.Add(cachedCh);
+										Log.Write("cache {0} onid:{1} tsid:{2} sid:{3}",chan.Name,ch.NetworkID,ch.TransportStreamID,ch.ProgramNumber);
 									}
 								}
 								break;

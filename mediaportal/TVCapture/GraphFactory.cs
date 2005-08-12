@@ -72,7 +72,7 @@ namespace MediaPortal.TV.Recording
 
 			if (card.ToString() == "B2C2 MPEG-2 Source")
 			{
-				return new DVBGraphSS2(countryCode,isCableInput,card.VideoDevice,card.AudioDevice,card.VideoCompressor,card.AudioCompressor,card.FrameSize,card.FrameRate,card.AudioInputPin,card.RecordingLevel);
+				return new DVBGraphSS2(card.ID,countryCode,isCableInput,card.VideoDevice,card.AudioDevice,card.VideoCompressor,card.AudioCompressor,card.FrameSize,card.FrameRate,card.AudioInputPin,card.RecordingLevel);
 			}
 
 			// Special graph building for the ATI AIW cards
