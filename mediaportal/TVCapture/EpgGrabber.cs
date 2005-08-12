@@ -12,6 +12,13 @@ namespace MediaPortal.TV.Recording
 	/// </summary>
 	public class EpgGrabber
 	{
+		class CachedChannel
+		{
+			public TVChannel chan;
+			public int			 serviceId;
+			public int			 transportId;
+			public long			 lastProgramTime;
+		}
 		enum State
 		{
 			Idle,
@@ -27,7 +34,9 @@ namespace MediaPortal.TV.Recording
 		bool						grabEPG=false;
 		
 		int							epgChannel=0;
+		uint						mhwEvent=0;
 		State						currentState=State.Idle;
+		ArrayList       mhwChannelCache;
 		#endregion
 
 		#region properties
@@ -84,6 +93,8 @@ namespace MediaPortal.TV.Recording
 				}
 				else
 				{
+					mhwEvent=0;
+					mhwChannelCache=new ArrayList();
 					currentState=State.Grabbing;
 					Log.WriteFile(Log.LogType.EPG,"epg-grab: start MHW grabber");
 					if (MHWInterface!=null)
@@ -127,13 +138,11 @@ namespace MediaPortal.TV.Recording
 					}
 					else if (grabEPG)
 					{
-							ParseEPG();
+						ParseEPG();
 					}
 					else
 					{
 						ParseMHW();
-						Log.WriteFile(Log.LogType.EPG,"epg-grab: MHW done");
-						currentState=State.Idle;
 					}
 				break;
 			}
@@ -251,23 +260,105 @@ namespace MediaPortal.TV.Recording
 		{
 			try
 			{
-				Log.WriteFile(Log.LogType.EPG,"mhw-epg: mhw ready");
 				short titleCount;
 				MHWInterface.GetMHWTitleCount(out titleCount);
-				Log.WriteFile(Log.LogType.EPG,"mhw-epg: mhw titles:{0}",titleCount);
-				if (titleCount<=0) return;
-				for (short i=0; i < titleCount; ++i)
+				if (mhwEvent==0)
 				{
+					Log.WriteFile(Log.LogType.EPG,"mhw-epg: mhw ready");
+					Log.WriteFile(Log.LogType.EPG,"mhw-epg: mhw titles:{0}",titleCount);
+
+					if (titleCount<=0) 
+					{
+						mhwChannelCache=null;
+						currentState=State.Idle;
+						return;
+					}
+
+					//cache all channels...
+					ArrayList channels = new ArrayList();
+					TVDatabase.GetChannels(ref channels);
+					int freq, symbolrate,innerFec,modulation, ONID, TSID, SID,pcrPid;
+					int audioPid, videoPid, teletextPid, pmtPid,bandWidth;
+					int audio1, audio2, audio3, ac3Pid;
+					string audioLanguage,  audioLanguage1, audioLanguage2, audioLanguage3;
+					bool HasEITPresentFollow,HasEITSchedule;
+					string provider="";
+					foreach (TVChannel chan in channels)
+					{
+						switch (Network)
+						{
+							case NetworkType.DVBC:
+								TVDatabase.GetDVBCTuneRequest(chan.ID,out provider,out freq, out symbolrate,out innerFec,out modulation, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out audio1,out audio2,out audio3,out ac3Pid, out audioLanguage, out audioLanguage1,out audioLanguage2,out audioLanguage3,out HasEITPresentFollow,out HasEITSchedule,out pcrPid);
+								if (SID>=0 && TSID>=0)
+								{
+									TVProgram lastProg=TVDatabase.GetLastProgramForChannel(chan);
+									CachedChannel cachedCh = new CachedChannel();
+									cachedCh.serviceId=SID;
+									cachedCh.transportId=TSID;
+									cachedCh.chan=chan;
+									cachedCh.lastProgramTime=lastProg.End;
+									mhwChannelCache.Add(cachedCh);
+								}
+								break;
+								case NetworkType.DVBS:
+								{
+									DVBChannel ch=new DVBChannel();
+									if(TVDatabase.GetSatChannel(chan.ID,1,ref ch)==false)//only television
+									{
+										TVProgram lastProg=TVDatabase.GetLastProgramForChannel(chan);
+										CachedChannel cachedCh = new CachedChannel();
+										cachedCh.serviceId=ch.ProgramNumber;
+										cachedCh.transportId=ch.TransportStreamID;
+										cachedCh.chan=chan;
+										cachedCh.lastProgramTime=lastProg.End;
+										mhwChannelCache.Add(cachedCh);
+									}
+								}
+								break;
+							case NetworkType.DVBT:
+								TVDatabase.GetDVBTTuneRequest(chan.ID,out provider,out freq, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out bandWidth, out audio1,out audio2,out audio3,out ac3Pid, out audioLanguage, out audioLanguage1,out audioLanguage2,out audioLanguage3,out HasEITPresentFollow,out HasEITSchedule,out pcrPid);
+								if (SID>=0 && TSID>=0)
+								{
+									TVProgram lastProg=TVDatabase.GetLastProgramForChannel(chan);
+									CachedChannel cachedCh = new CachedChannel();
+									cachedCh.serviceId=SID;
+									cachedCh.transportId=TSID;
+									cachedCh.chan=chan;
+									cachedCh.lastProgramTime=lastProg.End;
+									mhwChannelCache.Add(cachedCh);
+								}
+								break;
+						}
+					}//foreach (TVChannel chan in channels)
+				}
+
+				if (titleCount<=0) 
+				{
+					mhwChannelCache=null;
+					currentState=State.Idle;
+					return;
+				}
+
+				for (short i=0; i < 100; ++i)
+				{
+					if (mhwEvent>=titleCount)
+					{
+						Log.WriteFile(Log.LogType.EPG,"epg-grab: MHW done");
+						currentState=State.Idle;
+						mhwChannelCache=null;
+						return;
+					}
 					short id=0,transportid=0, networkid=0, channelnr=0, channelid=0, programid=0, themeid=0, PPV=0,duration=0;
 					byte summaries=0;
 					uint datestart=0,timestart=0; 
 					IntPtr ptrTitle,ptrProgramName;
 					IntPtr ptrChannelName,ptrSummary, ptrTheme;
-					MHWInterface.GetMHWTitle(i,ref id, ref transportid, ref networkid, ref channelnr, ref programid, ref themeid, ref PPV, ref summaries, ref duration, ref datestart,ref timestart, out ptrTitle,out ptrProgramName);
+					MHWInterface.GetMHWTitle((short)mhwEvent,ref id, ref transportid, ref networkid, ref channelnr, ref programid, ref themeid, ref PPV, ref summaries, ref duration, ref datestart,ref timestart, out ptrTitle,out ptrProgramName);
 					MHWInterface.GetMHWChannel(channelnr,ref channelid,ref networkid, ref transportid,out ptrChannelName);
 					MHWInterface.GetMHWSummary(programid, out ptrSummary);
 					MHWInterface.GetMHWTheme(themeid, out ptrTheme);
 
+					mhwEvent++;
 					string channelName,title,programName,summary,theme;
 					channelName=Marshal.PtrToStringAnsi(ptrChannelName);
 					title=Marshal.PtrToStringAnsi(ptrTitle);
@@ -300,49 +391,19 @@ namespace MediaPortal.TV.Recording
 						minVal+=604800;
 
 					programStartTime=programStartTime.AddSeconds(minVal);
-
-
-					if (Network==NetworkType.DVBS)
+					
+					bool foundChannel=false;
+					long lastProgramDate=0;
+					foreach (CachedChannel ch in mhwChannelCache)
 					{
-							channelName=TVDatabase.GetSatChannelName(channelid,networkid);
-					}
-					else
-					{
-						ArrayList channels = new ArrayList();
-						TVDatabase.GetChannels(ref channels);
-						int freq, symbolrate,innerFec,modulation, ONID, TSID, SID,pcrPid;
-						int audioPid, videoPid, teletextPid, pmtPid,bandWidth;
-						int audio1, audio2, audio3, ac3Pid;
-						string audioLanguage,  audioLanguage1, audioLanguage2, audioLanguage3;
-						bool HasEITPresentFollow,HasEITSchedule;
-						string provider="";
-						foreach (TVChannel chan in channels)
+						if (ch.serviceId==channelid && ch.transportId==networkid)
 						{
-							switch (Network)
-							{
-								case NetworkType.DVBC:
-									TVDatabase.GetDVBCTuneRequest(chan.ID,out provider,out freq, out symbolrate,out innerFec,out modulation, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out audio1,out audio2,out audio3,out ac3Pid, out audioLanguage, out audioLanguage1,out audioLanguage2,out audioLanguage3,out HasEITPresentFollow,out HasEITSchedule,out pcrPid);
-									if (channelid==SID && TSID==networkid)
-									{
-										channelName=chan.Name;
-									}
-									break;
-								case NetworkType.DVBS:
-									channelName=TVDatabase.GetSatChannelName(channelid,transportid);
-									break;
-								case NetworkType.DVBT:
-									TVDatabase.GetDVBTTuneRequest(chan.ID,out provider,out freq, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out bandWidth, out audio1,out audio2,out audio3,out ac3Pid, out audioLanguage, out audioLanguage1,out audioLanguage2,out audioLanguage3,out HasEITPresentFollow,out HasEITSchedule,out pcrPid);
-									if (channelid==SID && TSID==networkid)
-									{
-										channelName=chan.Name;
-									}
-									break;
-							}
-							if (channelName!=String.Empty) break;
-						}//foreach (TVChannel chan in channels)
+							foundChannel=true;
+							channelName=ch.chan.Name;
+							lastProgramDate=ch.lastProgramTime;
+						}
 					}
-
-					if (channelName==String.Empty) 
+					if (!foundChannel) 
 					{
 						Log.WriteFile(Log.LogType.EPG,"mhw-epg: unknown channel cid:{0:X} tsid:{1:X} ONID:{2:X}",channelid,transportid,networkid);
 						continue;
@@ -372,11 +433,9 @@ namespace MediaPortal.TV.Recording
 						continue;
 					}
 
-					Log.WriteFile(Log.LogType.EPG,"mhw-grab: {0} {1}-{2} {3}", tv.Channel,tv.Start,tv.End,tv.Title);
-					ArrayList programsInDatabase = new ArrayList();
-					TVDatabase.GetProgramsPerChannel(tv.Channel,tv.Start+1,tv.End-1,ref programsInDatabase);
-					if(programsInDatabase.Count==0)
+					if(lastProgramDate <= tv.Start)
 					{
+						Log.WriteFile(Log.LogType.EPG,"mhw-grab: {0} {1}-{2} {3}", tv.Channel,tv.Start,tv.End,tv.Title);
 						TVDatabase.AddProgram(tv);
 					}
 				}
