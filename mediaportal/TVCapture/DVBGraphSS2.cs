@@ -2201,7 +2201,7 @@ namespace MediaPortal.TV.Recording
 			bool isViewing=Recorder.IsCardViewing(m_cardID);
 			if (!isViewing) return;
 
-			Log.Write("demuxer:{0} signal:{1} fps:{2}",m_streamDemuxer.RecevingPackets,SignalPresent() ,GUIGraphicsContext.Vmr9FPS);
+//			Log.Write("demuxer:{0} signal:{1} fps:{2}",m_streamDemuxer.RecevingPackets,SignalPresent() ,GUIGraphicsContext.Vmr9FPS);
 
 			// do we receive any packets?
 			if (!m_streamDemuxer.RecevingPackets || !SignalPresent() )
@@ -2237,6 +2237,8 @@ namespace MediaPortal.TV.Recording
 			{
 				Vmr7.Process();
 			}
+
+			if (m_streamDemuxer!=null) m_streamDemuxer.Process();
 			CheckVideoResolutionChanges();
 			m_epgGrabber.Process();
 			UpdateVideoState();

@@ -318,7 +318,7 @@ namespace MediaPortal.TV.Recording
 										cachedCh.chan=chan;
 										cachedCh.lastProgramTime=lastProg.End;
 										mhwChannelCache.Add(cachedCh);
-										Log.Write("cache {0} onid:{1} tsid:{2} sid:{3}",chan.Name,ch.NetworkID,ch.TransportStreamID,ch.ProgramNumber);
+
 									}
 								}
 								break;
@@ -403,7 +403,7 @@ namespace MediaPortal.TV.Recording
 					long lastProgramDate=0;
 					foreach (CachedChannel ch in mhwChannelCache)
 					{
-						if (ch.serviceId==channelid && ch.transportId==networkid)
+						if (ch.serviceId==channelid && ch.transportId==transportid)
 						{
 							foundChannel=true;
 							channelName=ch.chan.Name;
