@@ -1108,7 +1108,7 @@ void Sections::DecodeContentDescription(byte* buf,EPGEvent& event)
 			case 0x0F0F: strcpy(genreText,"user defined" );break;					
 		}
 		//Log("genre:%s", genreText);
-		if (event.genre.size()==0)
+		if (event.genre.size()==0 && strlen(genreText)>0)
 			event.genre=genreText;
 	}
 }

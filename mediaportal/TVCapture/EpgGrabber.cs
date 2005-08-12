@@ -601,7 +601,7 @@ namespace MediaPortal.TV.Recording
 						}
 						if (lastProgram.End <=tv.Start)
 						{
-							Log.WriteFile(Log.LogType.EPG,"epg-grab: add: {0} {1}-{2} {3} {4}", tv.Channel,tv.Start,tv.End,tv.Title,language);
+							Log.WriteFile(Log.LogType.EPG,"epg-grab: add: {0} {1}-{2} {3} {4} {5}", tv.Channel,tv.Start,tv.End,tv.Title,language,tv.Genre);
 							TVDatabase.AddProgram(tv);
 						}
 					}
