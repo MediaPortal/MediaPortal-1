@@ -744,7 +744,7 @@ void Sections::DecodeEPG(byte* buf,int len)
 	if (channel.allSectionsReceived) return;
 
 	//did we already receive this section ?
-	key=(section_number<<8)+service_id;
+	key=(section_number);
 //	Log("DecodeEPG() check section %x (%02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x)",
 //										key, buf[0],buf[1],buf[2],buf[3],buf[4],buf[5]);
 	EPGChannel::imapSectionsReceived itSec=channel.mapSectionsReceived.find(key);

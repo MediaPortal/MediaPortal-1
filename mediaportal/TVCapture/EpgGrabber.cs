@@ -413,7 +413,7 @@ namespace MediaPortal.TV.Recording
 					}
 					if (!foundChannel) 
 					{
-						Log.WriteFile(Log.LogType.EPG,"mhw-epg: unknown channel cid:{0:X} tsid:{1:X} ONID:{2:X}",channelid,transportid,networkid);
+						Log.WriteFile(Log.LogType.EPG,"mhw-epg: unknown channel prog:{0} tsid:{1} ONID:{2}",channelid,transportid,networkid);
 						continue;
 					}
 
