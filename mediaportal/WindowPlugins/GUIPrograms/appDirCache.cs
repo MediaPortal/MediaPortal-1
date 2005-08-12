@@ -43,8 +43,8 @@ namespace ProgramsDatabase
     {
       progressDialog = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
       progressDialog.ShowWaitCursor = true;
-      progressDialog.SetHeading("scanning directory");
-      progressDialog.SetLine(0, "scanning directory"); //todo: localize! 13004...
+      progressDialog.SetHeading(GUILocalizeStrings.Get(13014));
+      progressDialog.SetLine(0, GUILocalizeStrings.Get(13014)); 
       progressDialog.SetLine(1, "");
       progressDialog.SetLine(2, "");
       progressDialog.StartModal(GetID);

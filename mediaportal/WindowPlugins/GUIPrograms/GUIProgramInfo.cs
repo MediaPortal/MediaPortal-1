@@ -112,6 +112,7 @@ namespace WindowPlugins.GUIPrograms
     string programOverview = "";
 
     ProgramInfoAction modalResult = ProgramInfoAction.None;
+    int selectedFileID = -1;
 
     #endregion 
 
@@ -120,6 +121,24 @@ namespace WindowPlugins.GUIPrograms
     {
       get {return modalResult;}
       set {modalResult = value;}
+    }
+
+    public int SelectedFileID
+    {
+      get 
+      { return selectedFileID;}
+    }
+
+    void SyncFileID()
+    {
+      if (null != curFile)
+      {
+        selectedFileID = curFile.FileID;
+      }
+      else
+      {
+        selectedFileID = -1;
+      }
     }
 
     #endregion
@@ -140,6 +159,7 @@ namespace WindowPlugins.GUIPrograms
       set
       {
         curFile = value;
+        SyncFileID();
       }
     }
 
@@ -216,12 +236,14 @@ namespace WindowPlugins.GUIPrograms
       if (control == btnPrev)
       {
         curFile = curApp.PrevFile(curFile);
+        SyncFileID();
         curApp.ResetThumbs();
         Refresh();
       }
       else if (control == btnNext)
       {
         curFile = curApp.NextFile(curFile);
+        SyncFileID();
         curApp.ResetThumbs();
         Refresh();
       }
@@ -250,12 +272,11 @@ namespace WindowPlugins.GUIPrograms
 
     public override void OnAction(Action action)
     {
-      if ((action.wID == Action.ActionType.ACTION_PREVIOUS_MENU) || (action.wID == Action.ActionType.ACTION_PARENT_DIR))
+      if (action.wID == Action.ActionType.ACTION_CLOSE_DIALOG || action.wID == Action.ActionType.ACTION_PARENT_DIR  || action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
       {
         Close(ProgramInfoAction.None);
         return ;
       }
-
       base.OnAction(action);
     }
 
@@ -377,75 +398,6 @@ namespace WindowPlugins.GUIPrograms
       RefreshPicture();
       Update();
     }
-
-/*    void RefreshData()
-    {
-      int minRelevance = 30;
-      ScraperSaveType saveType = ScraperSaveType.DataAndImages;
-      GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
-      GUIDialogProgress dlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
-      dlgProgress.ShowWaitCursor = true;
-      dlgProgress.SetHeading("Lookup Gameinfo");
-      dlgProgress.SetLine(1, curFile.Title);
-      dlgProgress.SetLine(2, curFile.System_);
-      dlgProgress.SetLine(3, "");
-      dlgProgress.StartModal(GetID);
-      bool bSuccess = curFile.FindFileInfo(myProgScraperType.ALLGAME);
-      dlgProgress.Close();
-      if (bSuccess && curFile.FileInfoList.Count > 0)
-      {
-        GUIDialogSelect pDlg = (GUIDialogSelect)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_SELECT);
-        if (null != pDlg)
-        {
-          pDlg.Reset();
-          pDlg.SetHeading("Select Title");
-          foreach (FileInfo item in curFile.FileInfoList)
-          {
-            if (item.RelevanceNorm >= minRelevance)
-            {
-              pDlg.Add(String.Format("{0} ({1})", item.Title, item.Platform));
-            }
-          }
-          pDlg.DoModal(GetID);
-
-          // and wait till user selects one
-          int iSelectedGame = pDlg.SelectedLabel;
-          if (iSelectedGame < 0) return;
-
-          dlgProgress.StartModal(GetID);
-          curFile.FileInfoFavourite = (FileInfo)curFile.FileInfoList[iSelectedGame];
-
-          curFile.FindFileInfoDetail(curApp, curFile.FileInfoFavourite, myProgScraperType.ALLGAME, saveType);
-          if ((saveType == ScraperSaveType.DataAndImages) || (saveType == ScraperSaveType.Data))
-          {
-            curFile.SaveFromFileInfoFavourite();
-          }
-          dlgProgress.Close();
-        }
-      }
-      else
-      {
-        string strMsg = "";
-        if (!bSuccess)
-        {
-          strMsg = "Connection failed";
-          Log.Write("myPrograms: RefreshData failed");
-        }
-        else
-        {
-          strMsg = String.Format("No match for '{0}'", curFile.Title);
-          Log.Write("myPrograms: No data found for '{0}'", curFile.Title);
-        }
-        if (null != dlgOk)
-        {
-          dlgOk.SetHeading(187);
-          dlgOk.SetLine(1, strMsg);
-          dlgOk.SetLine(2, String.Empty);
-          dlgOk.DoModal(GetID);
-        }
-      }
-    }
-*/
 
 
     void Update()

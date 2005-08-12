@@ -261,7 +261,7 @@ namespace ProgramsDatabase
 
     }
 
-    override public void OnInfo(GUIListItem item, ref bool isOverviewVisible, ref ProgramInfoAction modalResult)
+    override public void OnInfo(GUIListItem item, ref bool isOverviewVisible, ref ProgramInfoAction modalResult, ref int selectedFileID)
     {
       // no info screen for directory items
     }

@@ -72,13 +72,13 @@ namespace WindowPlugins.GUIPrograms
           strLine = GUILocalizeStrings.Get(103);
           break;
         case SortMethod.SORT_LAUNCHES:
-          strLine = "Sort by: Launches"; // todo: localize
+          strLine = GUILocalizeStrings.Get(13016); 
           break;
         case SortMethod.SORT_RECENT:
-          strLine = "Sort by: Recent"; // todo: localize
+          strLine = GUILocalizeStrings.Get(13017);
           break;
         case SortMethod.SORT_RATING:
-          strLine = "Sort by: Rating"; // todo: localize
+          strLine = GUILocalizeStrings.Get(13018);
           break;
       }
       return strLine;

@@ -303,16 +303,16 @@ namespace WindowPlugins.GUIPrograms
 
 
     // Buttons
-    [SkinControlAttribute(2)] protected GUIButtonControl btnViewAs = null;
-    [SkinControlAttribute(3)] protected GUIButtonControl btnRefresh = null;
-    [SkinControlAttribute(4)] protected GUIButtonControl btnViews = null;
+    [SkinControl(2)] protected GUIButtonControl btnViewAs = null;
+    [SkinControl(3)] protected GUIButtonControl btnRefresh = null;
+    [SkinControl(4)] protected GUIButtonControl btnViews = null;
 
     //Images                     
-    [SkinControlAttribute(6)] protected GUIImage screenShotImage = null;
+    [SkinControl(6)] protected GUIImage screenShotImage = null;
 
     // FacadeView
     const int cFacadeID = 50;
-    [SkinControlAttribute(cFacadeID)] protected GUIFacadeControl facadeView = null;
+    [SkinControl(cFacadeID)] protected GUIFacadeControl facadeView = null;
 
     #endregion 
 
@@ -473,10 +473,20 @@ namespace WindowPlugins.GUIPrograms
           // show file info but only if the selected item is not the back button
           bool ovVisible = mapSettings.OverviewVisible;
           ProgramInfoAction modalResult = ProgramInfoAction.LookupFileInfo;
-          lastApp.OnInfo(item, ref ovVisible, ref modalResult); 
-          if (modalResult == ProgramInfoAction.LookupFileInfo)
+          int selectedFileID = -1;
+          lastApp.OnInfo(item, ref ovVisible, ref modalResult, ref selectedFileID); 
+          if ((null != curFile) && (modalResult == ProgramInfoAction.LookupFileInfo))
           {
-            ScrapeFileInfo(curFile);
+            FileItem scrapeFile = lastApp.Files.GetFileByID(selectedFileID);
+            if (null != scrapeFile)
+            {
+              int scrapeIndex = lastApp.Files.IndexOf(scrapeFile);
+              if (-1 != scrapeIndex)
+              {
+                GUIControl.SelectItemControl(GetID, facadeView.GetID, scrapeIndex + 1);
+              }
+              ScrapeFileInfo(scrapeFile);
+            }
           }
           mapSettings.OverviewVisible = ovVisible;
           UpdateListControl();
@@ -487,20 +497,23 @@ namespace WindowPlugins.GUIPrograms
     void ScrapeFileInfo(FileItem curFile)
     {
       int minRelevance = 30;
+      bool bSuccess = false;
       ScraperSaveType saveType = ScraperSaveType.DataAndImages;
-      GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
-      GUIDialogProgress dlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
-      dlgProgress.ShowWaitCursor = true;
+      GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
+      GUIDialogProgress dlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_PROGRESS);
+      dlgProgress.ShowWaitCursor = false;
+      dlgProgress.ShowProgressBar(false);
       dlgProgress.SetHeading("Lookup Gameinfo");
       dlgProgress.SetLine(1, curFile.Title);
       dlgProgress.SetLine(2, curFile.System_);
       dlgProgress.SetLine(3, "");
       dlgProgress.StartModal(GetID);
-      bool bSuccess = curFile.FindFileInfo(myProgScraperType.ALLGAME);
-      dlgProgress.Close();
-      if (bSuccess && curFile.FileInfoList.Count > 0)
+//      dlgProgress.SetPercentage(60);
+      dlgProgress.Progress();
+      bSuccess = curFile.FindFileInfo(myProgScraperType.ALLGAME);
+      if ((bSuccess && curFile.FileInfoList.Count > 0) && ((FileInfo)(curFile.FileInfoList[0])).RelevanceNorm >= minRelevance)
       {
-        GUIDialogSelect pDlg = (GUIDialogSelect)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_SELECT);
+        GUIDialogSelect pDlg = (GUIDialogSelect)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_SELECT);
         if (null != pDlg)
         {
           pDlg.Reset();
@@ -519,14 +532,21 @@ namespace WindowPlugins.GUIPrograms
           if (iSelectedGame < 0) return;
 
           dlgProgress.StartModal(GetID);
+          dlgProgress.Progress();
+          dlgProgress.ShowProgressBar(false);
           curFile.FileInfoFavourite = (FileInfo)curFile.FileInfoList[iSelectedGame];
 
           curFile.FindFileInfoDetail(lastApp, curFile.FileInfoFavourite, myProgScraperType.ALLGAME, saveType);
           if ((saveType == ScraperSaveType.DataAndImages) || (saveType == ScraperSaveType.Data))
           {
+//            dlgProgress.SetPercentage(60);
+            dlgProgress.Progress();
             curFile.SaveFromFileInfoFavourite();
           }
+//          dlgProgress.SetPercentage(100);
+          dlgProgress.Progress();
           dlgProgress.Close();
+          dlgProgress=null;
         }
         OnInfo();
       }
@@ -555,7 +575,7 @@ namespace WindowPlugins.GUIPrograms
 
     protected void OnShowViews()
     {
-      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_DIALOG_MENU);
+      GUIDialogMenu dlg = (GUIDialogMenu) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_MENU);
       if (dlg == null) return;
       dlg.Reset();
       dlg.SetHeading(924); // menu
@@ -582,7 +602,7 @@ namespace WindowPlugins.GUIPrograms
         ViewDefinition selectedView = (ViewDefinition) ProgramSettings.viewHandler.Views[dlg.SelectedLabel - 1];
         ProgramSettings.viewHandler.CurrentView = selectedView.Name;
         ProgramState.View = selectedView.Name;
-        int nNewWindow = (int) GUIWindow.Window.WINDOW_FILES;
+        int nNewWindow = (int) Window.WINDOW_FILES;
         if (GetID != nNewWindow)
         {
           ProgramState.StartWindow = nNewWindow;
@@ -608,7 +628,7 @@ namespace WindowPlugins.GUIPrograms
     }
 
 
-    protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
+    protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
       base.OnClicked(controlId, control, actionType);
       if (control == btnViewAs)
@@ -837,11 +857,11 @@ namespace WindowPlugins.GUIPrograms
         }
       }
       string thumbFilename = appWithImg.GetCurThumb(item); // some modes look for thumbs differently
-      if (System.IO.File.Exists(thumbFilename))
+      if (File.Exists(thumbFilename))
       {
         curTexture = Picture.Load(thumbFilename, 0, 512, 512, true, false, out textureWidth, out textureHeight);
       }
-      else if(System.IO.File.Exists(appWithImg.Imagefile))
+      else if(File.Exists(appWithImg.Imagefile))
       {
         curTexture = Picture.Load(appWithImg.Imagefile, 0, 512, 512, true, false, out textureWidth, out textureHeight);
       }
