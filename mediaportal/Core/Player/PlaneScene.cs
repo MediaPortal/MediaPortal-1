@@ -225,7 +225,8 @@ namespace MediaPortal.Player
 					windowId== (int)GUIWindow.Window.WINDOW_TV_COMPRESS_COMPRESS ||
 					windowId== (int)GUIWindow.Window.WINDOW_TV_COMPRESS_COMPRESS_STATUS ||
 					windowId== (int)GUIWindow.Window.WINDOW_TV_COMPRESS_SETTINGS ||
-					windowId== (int)GUIWindow.Window.WINDOW_TV_NO_SIGNAL)
+					windowId== (int)GUIWindow.Window.WINDOW_TV_NO_SIGNAL  ||
+					windowId== (int)GUIWindow.Window.WINDOW_TV_PROGRAM_INFO)
 					return true;
 				return false;
 			}

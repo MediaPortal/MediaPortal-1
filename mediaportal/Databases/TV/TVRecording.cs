@@ -796,6 +796,19 @@ namespace MediaPortal.TV.Database
 			get { return m_canceledSeries;}
 		}
 		
+		public void UnCancelSerie(DateTime datetime)
+		{
+			long dtProgram=Utils.datetolong(datetime);
+			foreach (long dtCanceled in m_canceledSeries)
+			{
+				if (dtCanceled==dtProgram) 
+				{
+					m_canceledSeries.Remove(dtCanceled);
+					return;
+				}
+			}
+			return ;
+		}
 		public bool IsSerieIsCanceled(DateTime datetime)
 		{
 			long dtProgram=Utils.datetolong(datetime);

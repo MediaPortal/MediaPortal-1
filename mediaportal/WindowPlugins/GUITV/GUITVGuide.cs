@@ -259,7 +259,7 @@ namespace MediaPortal.GUI.TV
             }
             else
             {
-              OnRecord();
+              OnRecord(true);
             }
           }
 					break;
@@ -652,7 +652,7 @@ namespace MediaPortal.GUI.TV
 					}
 					if (iControl>=100)
 					{
-						OnRecord();
+						OnRecord(true);
 						Update(false);
 						SetFocus();
 					}
@@ -2172,7 +2172,7 @@ namespace MediaPortal.GUI.TV
 						break;
 					
 					case 264: // record
-						OnRecord();
+						OnRecord(false);
 						break;
 				}
 			}
@@ -2199,9 +2199,50 @@ namespace MediaPortal.GUI.TV
 			Update(true);
 			SetFocus();
 		}
-		void OnRecord()
+		void ShowProgramInfo()
+		{
+			  if (m_currentProgram==null) return;
+				GUITVProgramInfo.CurrentProgram=m_currentProgram;
+				GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TV_PROGRAM_INFO);
+		}
+		void OnRecord(bool isItemSelected)
 		{
 			if (m_currentProgram==null) return;
+			if (isItemSelected)
+			{
+				if (m_currentProgram.IsRunningAt(DateTime.Now))
+				{
+					//view this channel
+					if (g_Player.Playing && g_Player.IsTVRecording)
+					{
+						g_Player.Stop();
+					}
+					try
+					{
+						if (VMR9Util.g_vmr9!=null)
+							VMR9Util.g_vmr9.Enable(false);
+
+						int count=0;
+						while (GUIGraphicsContext.InVmr9Render && count++ < 10) System.Threading.Thread.Sleep(100);
+						GUITVHome.IsTVOn=true;
+						GUITVHome.ViewChannel(m_currentProgram.Channel);
+						if (Recorder.IsViewing())
+						{
+							GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+						}
+					}
+					finally
+					{
+						if (VMR9Util.g_vmr9!=null)
+							VMR9Util.g_vmr9.Enable(true);
+					}
+
+					return;
+				}
+				ShowProgramInfo();
+				return;
+			}
+
 			if (m_strCurrentChannel.Length<=0) return;
 			if (m_strCurrentTitle.Length<=0) return;
 			GUIDialogMenu dlg=(GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);

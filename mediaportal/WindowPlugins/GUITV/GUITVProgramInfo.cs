@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Globalization;
+using MediaPortal.Dialogs;
 using MediaPortal.Util;
 using MediaPortal.GUI.Library;
 using MediaPortal.TV.Recording;
@@ -63,10 +64,14 @@ namespace MediaPortal.GUI.TV
 			bool bRecording=false;
 			foreach (TVRecording record in recordings)
 			{
+				if (record.Canceled>0) continue;
 				if (record.IsRecordingProgram(currentProgram,true) ) 
 				{
-					bRecording=true;
-					break;
+					if (!record.IsSerieIsCanceled(currentProgram.StartTime))
+					{
+						bRecording=true;
+						break;
+					}
 				}
 			}
 
@@ -97,16 +102,38 @@ namespace MediaPortal.GUI.TV
 
 			foreach (TVRecording record in recordings)
 			{
+				if (record.Canceled>0) continue;
 				if (record.IsRecordingProgram(currentProgram,true) ) 
 				{
-					bRecording=true;
-					rec=record;
-					break;
+					if (!record.IsSerieIsCanceled(currentProgram.StartTime))
+					{
+						bRecording=true;
+						rec=record;
+						break;
+					}
 				}
 			}
 
 			if (!bRecording)
 			{
+				foreach (TVRecording record in recordings)
+				{
+					if (record.IsRecordingProgram(currentProgram,false) ) 
+					{
+						if (record.Canceled>0) 
+						{
+							record.RecType=TVRecording.RecordingType.Once;
+							record.Canceled=0;
+						}
+						else if (record.IsSerieIsCanceled(currentProgram.StartTime))
+						{
+							record.UnCancelSerie(currentProgram.StartTime);
+						}
+						TVDatabase.UpdateRecording(record,TVDatabase.RecordingChange.Modified);
+						Update();
+						return;
+					}		
+				}
 				rec=new TVRecording();
 				rec.Title=currentProgram.Title;
 				rec.Channel=currentProgram.Channel;
@@ -121,17 +148,50 @@ namespace MediaPortal.GUI.TV
 				{
 					if (rec.RecType != TVRecording.RecordingType.Once)
 					{
-						//delete specific series
-						rec.CanceledSeries.Add(currentProgram.Start);
-						TVDatabase.AddCanceledSerie(rec,currentProgram.Start);
+						GUIDialogMenu dlg=(GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+						if (dlg==null) return;
+						dlg.Reset();
+						dlg.SetHeading(rec.Title);
+						dlg.AddLocalizedString( 981);//Delete this recording
+						dlg.AddLocalizedString( 982);//Delete series recording
+						dlg.DoModal( GetID);
+						if (dlg.SelectedLabel==-1) return;
+						switch (dlg.SelectedId)
+						{
+							case 981: //Delete this recording only
+							{
+								if (CheckIfRecording(rec))
+								{
+									//delete specific series
+									rec.CanceledSeries.Add(currentProgram.Start);
+									TVDatabase.AddCanceledSerie(rec,currentProgram.Start);
+									Recorder.StopRecording(rec);
+								}
+							}
+							break;
+							case 982: //Delete entire recording
+							{
+								if (CheckIfRecording(rec))
+								{
+									//cancel recording
+									rec.Canceled=Utils.datetolong(DateTime.Now);
+									TVDatabase.UpdateRecording(rec,TVDatabase.RecordingChange.Canceled);
+									Recorder.StopRecording(rec);
+								}
+							}
+							break;
+						}
 					}
 					else
 					{
-						//cancel recording
-						rec.Canceled=Utils.datetolong(DateTime.Now);
-						TVDatabase.UpdateRecording(rec,TVDatabase.RecordingChange.Canceled);
+						if (CheckIfRecording(rec))
+						{
+							//cancel recording2
+							rec.Canceled=Utils.datetolong(DateTime.Now);
+							TVDatabase.UpdateRecording(rec,TVDatabase.RecordingChange.Canceled);
+							Recorder.StopRecording(rec);
+						}
 					}
-					Recorder.StopRecording(rec);
 				}
 			}
 			Update();
@@ -139,6 +199,111 @@ namespace MediaPortal.GUI.TV
 
 		void OnAdvancedRecord()
 		{
+			if (currentProgram==null) return;
+
+			GUIDialogMenu dlg=(GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+			if (dlg!=null)
+			{
+				dlg.Reset();
+				dlg.SetHeading(GUILocalizeStrings.Get(616));//616=Select Recording type
+				//610=None
+				//611=Record once
+				//612=Record everytime on this channel
+				//613=Record everytime on every channel
+				//614=Record every week at this time
+				//615=Record every day at this time
+				for (int i=611; i <= 615; ++i)
+				{
+					dlg.AddLocalizedString(i);
+				}
+				dlg.AddLocalizedString( 672);// 672=Record Mon-Fri
+				
+				dlg.DoModal( GetID);
+				if (dlg.SelectedLabel==-1) return;
+
+				TVRecording rec=new TVRecording();
+				rec.Title=currentProgram.Title;
+				rec.Channel=currentProgram.Channel;
+				rec.Start=currentProgram.Start;
+				rec.End=currentProgram.End;
+				switch (dlg.SelectedId)
+				{
+					case 611://once
+						rec.RecType=TVRecording.RecordingType.Once;
+						break;
+					case 612://everytime, this channel
+						rec.RecType=TVRecording.RecordingType.EveryTimeOnThisChannel;
+						break;
+					case 613://everytime, all channels
+						rec.RecType=TVRecording.RecordingType.EveryTimeOnEveryChannel;
+						break;
+					case 614://weekly
+						rec.RecType=TVRecording.RecordingType.Weekly;
+						break;
+					case 615://daily
+						rec.RecType=TVRecording.RecordingType.Daily;
+						break;
+					case 672://Mo-Fi
+						rec.RecType=TVRecording.RecordingType.WeekDays;
+						break;
+				}
+				Recorder.AddRecording(ref rec);
+
+				//check if this program is interrupted (for example by a news bulletin)
+				//ifso ask the user if he wants to record the 2nd part also
+				ArrayList programs=new ArrayList();
+				DateTime dtStart=rec.EndTime.AddMinutes(1);
+				DateTime dtEnd  =dtStart.AddHours(3);
+				long iStart=Utils.datetolong(dtStart);
+				long iEnd=Utils.datetolong(dtEnd);
+				TVDatabase.GetProgramsPerChannel(rec.Channel,iStart,iEnd,ref programs);
+				if (programs.Count>=2)
+				{
+					TVProgram next=programs[0] as TVProgram;
+					TVProgram nextNext=programs[1] as TVProgram;
+					if (nextNext.Title==rec.Title)
+					{
+						TimeSpan ts=next.EndTime-next.StartTime;
+						if (ts.TotalMinutes<=40)
+						{
+							//
+							GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+							dlgYesNo.SetHeading(1012);//This program will be interrupted by
+							dlgYesNo.SetLine(1,next.Title);
+							dlgYesNo.SetLine(2,1013);//Would you like to record the second part also?
+							dlgYesNo.DoModal(GetID);
+							if (dlgYesNo.IsConfirmed) 
+							{
+								rec.Start=nextNext.Start;
+								rec.End=nextNext.End;
+								rec.ID=-1;
+								Recorder.AddRecording(ref rec);
+							}
+						}
+					}
+				}
+				
+			}
+			Update();
+		}
+		
+		bool CheckIfRecording(TVRecording rec)
+		{
+			int card;
+			if (!Recorder.IsRecordingSchedule(rec, out card)) return true;
+			GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+			if (null == dlgYesNo) return true;
+			dlgYesNo.SetHeading(GUILocalizeStrings.Get(653));//Delete this recording?
+			dlgYesNo.SetLine(1, GUILocalizeStrings.Get(730));//This schedule is recording. If you delete
+			dlgYesNo.SetLine(2, GUILocalizeStrings.Get(731));//the schedule then the recording is stopped.
+			dlgYesNo.SetLine(3, GUILocalizeStrings.Get(732));//are you sure
+			dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
+
+			if (dlgYesNo.IsConfirmed) 
+			{
+				return true;
+			}
+			return false;
 		}
 
 
