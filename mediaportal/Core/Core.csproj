@@ -1034,6 +1034,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Layouts\MarginsConverter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Layouts\Orientation.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
