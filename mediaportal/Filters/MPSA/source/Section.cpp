@@ -30,7 +30,7 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-#ifndef DEBUG
+#ifdef DEBUG
 char *logbuffer=NULL; 
 void Log(const char *fmt, ...) 
 {
@@ -737,7 +737,7 @@ void Sections::DecodeEPG(byte* buf,int len)
 		newChannel.allSectionsReceived=false;
 		m_mapEPG[key]=newChannel;
 		it=m_mapEPG.find(key);
-//		Log("epg:add new channel table:%x onid:%x tsid:%x sid:%d",tableid,network_id,transport_id,service_id);
+		Log("epg:add new channel table:%x onid:%x tsid:%x sid:%d",tableid,network_id,transport_id,service_id);
 	}
 	if (it==m_mapEPG.end()) return;
 	EPGChannel& channel=it->second;
@@ -785,7 +785,7 @@ void Sections::DecodeEPG(byte* buf,int len)
 		
 		start=start+12;
 		int off=0;
-		//Log("epg:   event:%x date:%x time:%x duration:%x running:%d free:%d start:%d desclen:%d", event_id,dateMJD,timeUTC,duration,running_status,free_CA_mode,start,descriptors_len);
+		Log("epg:    onid:%x tsid:%x sid:%d event:%x date:%x time:%x duration:%x running:%d free:%d start:%d desclen:%d",network_id,transport_id,service_id, event_id,dateMJD,timeUTC,duration,running_status,free_CA_mode,start,descriptors_len);
 		while (off < descriptors_len)
 		{
 			if (start+off+1>len) return;
@@ -1132,7 +1132,7 @@ void Sections::Reset()
 
 void Sections::GrabEPG()
 {
-	//Log("GrabEPG");
+	Log("GrabEPG");
 	m_mapEPG.clear();
 	m_bParseEPG=true;
 	m_bEpgDone=false;
@@ -1147,7 +1147,7 @@ bool Sections::IsEPGReady()
 	bool ready=m_bEpgDone;
 	if (ready) 
 	{
-		//Log("EPG done");
+		Log("EPG done");
 		m_bParseEPG=false;
 		m_bEpgDone=false;
 	}
