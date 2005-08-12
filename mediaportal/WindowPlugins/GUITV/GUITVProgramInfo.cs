@@ -20,6 +20,7 @@ namespace MediaPortal.GUI.TV
 		[SkinControlAttribute(13)]			  protected GUIFadeLabel		lblProgramTitle=null;
 		[SkinControlAttribute(2)]			  protected GUIButtonControl	btnRecord=null;
 		[SkinControlAttribute(3)]			  protected GUIButtonControl	btnAdvancedRecord=null;
+		[SkinControlAttribute(4)]			  protected GUIToggleButtonControl	btnNotify=null;
 
 		static TVProgram currentProgram=null;
 
@@ -85,6 +86,23 @@ namespace MediaPortal.GUI.TV
 				btnRecord.Label=GUILocalizeStrings.Get(264);//record
 				btnAdvancedRecord.Disabled=false;
 			}
+			TVNotify notification=null;
+			ArrayList notifies = new ArrayList();
+			TVDatabase.GetNotifies(notifies,false);
+			bool showNotify=false;
+			foreach (TVNotify notify in notifies)
+			{
+				if (notify.Program.ID==currentProgram.ID)
+				{
+					showNotify=true;
+					break;
+				}
+			}
+			if (showNotify)
+				btnNotify.Selected=true;
+			else
+				btnNotify.Selected=false;
+
 		}
 
 		protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
@@ -93,6 +111,8 @@ namespace MediaPortal.GUI.TV
 				OnRecord();
 			if (control==btnAdvancedRecord) 
 				OnAdvancedRecord();
+			if (control==btnNotify)
+				OnNotify();
 			base.OnClicked (controlId, control, actionType);
 		}
 		void OnRecord()
@@ -308,6 +328,31 @@ namespace MediaPortal.GUI.TV
 			return false;
 		}
 
+		void OnNotify()
+		{
+			TVNotify notification=null;
+			ArrayList notifies = new ArrayList();
+			TVDatabase.GetNotifies(notifies,false);
+			bool showNotify=false;
+			foreach (TVNotify notify in notifies)
+			{
+				if (notify.Program.ID==currentProgram.ID)
+				{
+					showNotify=true;
+					notification=notify;
+					break;
+				}
+			}
+			if (showNotify)
+				TVDatabase.DeleteNotify(notification);
+			else
+			{
+				TVNotify notify = new TVNotify();
+				notify.Program=currentProgram;
+				TVDatabase.AddNotify(notify);
+			}
+			Update();
+		}
 
 	}
 }

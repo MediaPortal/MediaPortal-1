@@ -3073,6 +3073,10 @@
 	<id>1039</id>
 	<value>Don't record</value>
 </string>
+<string>
+	<id>1040</id>
+	<value>Notify</value>
+</string>
 
 <string>
 	<id>1440</id>
