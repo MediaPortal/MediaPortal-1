@@ -30,6 +30,7 @@ using MediaPortal.Util;
 using Microsoft.DirectX.Direct3D;
 using Programs.Utils;
 using ProgramsDatabase;
+using FileInfo = ProgramsDatabase.FileInfo;
 
 namespace WindowPlugins.GUIPrograms
 {
@@ -462,13 +463,92 @@ namespace WindowPlugins.GUIPrograms
       {
         selectedItemIndex = GetSelectedItemNo();
         GUIListItem item = GetSelectedItem();
+        FileItem curFile = null;
         if (!item.Label.Equals(ProgramUtils.cBackLabel) && (!item.IsFolder))
         {
+          if ((item.MusicTag != null) && (item.MusicTag is FileItem))
+          {
+            curFile = (FileItem)item.MusicTag;
+          }
           // show file info but only if the selected item is not the back button
           bool ovVisible = mapSettings.OverviewVisible;
-          lastApp.OnInfo(item, ref ovVisible); 
+          ProgramInfoAction modalResult = ProgramInfoAction.LookupFileInfo;
+          lastApp.OnInfo(item, ref ovVisible, ref modalResult); 
+          if (modalResult == ProgramInfoAction.LookupFileInfo)
+          {
+            ScrapeFileInfo(curFile);
+          }
           mapSettings.OverviewVisible = ovVisible;
           UpdateListControl();
+        }
+      }
+    }
+
+    void ScrapeFileInfo(FileItem curFile)
+    {
+      int minRelevance = 30;
+      ScraperSaveType saveType = ScraperSaveType.DataAndImages;
+      GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+      GUIDialogProgress dlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+      dlgProgress.ShowWaitCursor = true;
+      dlgProgress.SetHeading("Lookup Gameinfo");
+      dlgProgress.SetLine(1, curFile.Title);
+      dlgProgress.SetLine(2, curFile.System_);
+      dlgProgress.SetLine(3, "");
+      dlgProgress.StartModal(GetID);
+      bool bSuccess = curFile.FindFileInfo(myProgScraperType.ALLGAME);
+      dlgProgress.Close();
+      if (bSuccess && curFile.FileInfoList.Count > 0)
+      {
+        GUIDialogSelect pDlg = (GUIDialogSelect)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_SELECT);
+        if (null != pDlg)
+        {
+          pDlg.Reset();
+          pDlg.SetHeading("Select Title");
+          foreach (FileInfo item in curFile.FileInfoList)
+          {
+            if (item.RelevanceNorm >= minRelevance)
+            {
+              pDlg.Add(String.Format("{0} ({1})", item.Title, item.Platform));
+            }
+          }
+          pDlg.DoModal(GetID);
+
+          // and wait till user selects one
+          int iSelectedGame = pDlg.SelectedLabel;
+          if (iSelectedGame < 0) return;
+
+          dlgProgress.StartModal(GetID);
+          curFile.FileInfoFavourite = (FileInfo)curFile.FileInfoList[iSelectedGame];
+
+          curFile.FindFileInfoDetail(lastApp, curFile.FileInfoFavourite, myProgScraperType.ALLGAME, saveType);
+          if ((saveType == ScraperSaveType.DataAndImages) || (saveType == ScraperSaveType.Data))
+          {
+            curFile.SaveFromFileInfoFavourite();
+          }
+          dlgProgress.Close();
+        }
+        OnInfo();
+      }
+      else
+      {
+        string strMsg = "";
+        if (!bSuccess)
+        {
+          strMsg = "Connection failed";
+          Log.Write("myPrograms: RefreshData failed");
+        }
+        else
+        {
+          strMsg = String.Format("No match for '{0}'", curFile.Title);
+          Log.Write("myPrograms: No data found for '{0}'", curFile.Title);
+        }
+        if (null != dlgOk)
+        {
+          dlgOk.SetHeading(187);
+          dlgOk.SetLine(1, strMsg);
+          dlgOk.SetLine(2, String.Empty);
+          dlgOk.DoModal(GetID);
         }
       }
     }

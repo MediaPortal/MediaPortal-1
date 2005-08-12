@@ -53,6 +53,11 @@ namespace Programs.Utils
     Data = 0, Images = 1, DataAndImages = 2
   } 
 
+  public enum ProgramInfoAction
+  {
+    None = 0, LookupFileInfo = 1
+  }
+
 
   /// <summary>
   /// Summary description for ProgramUtils.

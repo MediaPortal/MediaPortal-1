@@ -111,7 +111,18 @@ namespace WindowPlugins.GUIPrograms
 
     string programOverview = "";
 
+    ProgramInfoAction modalResult = ProgramInfoAction.None;
+
     #endregion 
+
+    #region Properties / Helper Routines
+    public ProgramInfoAction ModalResult
+    {
+      get {return modalResult;}
+      set {modalResult = value;}
+    }
+
+    #endregion
 
     #region Constructor / Destructor
 
@@ -230,8 +241,9 @@ namespace WindowPlugins.GUIPrograms
       }
       else if (control == this.btnRefreshData)
       {
-        RefreshData();
-        Refresh();
+        Close(ProgramInfoAction.LookupFileInfo);
+//        RefreshData();
+//        Refresh();
       }
     }
 
@@ -240,7 +252,7 @@ namespace WindowPlugins.GUIPrograms
     {
       if ((action.wID == Action.ActionType.ACTION_PREVIOUS_MENU) || (action.wID == Action.ActionType.ACTION_PARENT_DIR))
       {
-        Close();
+        Close(ProgramInfoAction.None);
         return ;
       }
 
@@ -303,8 +315,9 @@ namespace WindowPlugins.GUIPrograms
 
     #region Display
 
-    void Close()
+    void Close(ProgramInfoAction res)
     {
+      modalResult = res;
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, GetID, 0, 0, 0, 0, null);
       OnMessage(msg);
 
@@ -365,7 +378,7 @@ namespace WindowPlugins.GUIPrograms
       Update();
     }
 
-    void RefreshData()
+/*    void RefreshData()
     {
       int minRelevance = 30;
       ScraperSaveType saveType = ScraperSaveType.DataAndImages;
@@ -432,7 +445,7 @@ namespace WindowPlugins.GUIPrograms
         }
       }
     }
-
+*/
 
 
     void Update()

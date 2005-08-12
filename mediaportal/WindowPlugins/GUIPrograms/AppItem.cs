@@ -623,7 +623,7 @@ namespace ProgramsDatabase
     }
 
 
-    public virtual void OnInfo(GUIListItem item, ref bool isOverviewVisible)
+    public virtual void OnInfo(GUIListItem item, ref bool isOverviewVisible, ref ProgramInfoAction modalResult)
     {
       GUIFileInfo fileInfoDialog = (GUIFileInfo) GUIWindowManager.GetWindow(ProgramUtils.ProgramInfoID);
       if (null != fileInfoDialog)
@@ -638,6 +638,7 @@ namespace ProgramsDatabase
         fileInfoDialog.IsOverviewVisible = isOverviewVisible;
         fileInfoDialog.DoModal(GetID);
         isOverviewVisible = fileInfoDialog.IsOverviewVisible;
+        modalResult = fileInfoDialog.ModalResult;
         return;
       }
     }
