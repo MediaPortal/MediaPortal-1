@@ -1,10 +1,11 @@
-<!-- version : 1.0.0.6                                                          -->
-<!-- changed : 10-June-2005 by Zby                                              -->
+<!-- version : 1.0.0.7                                                          -->
+<!-- changed : 12-August-2005 by DMAN_LFC                                       -->
 <!-- contains:									-->
 <!--   - Europe 								-->
 <!--   - Australia 								-->
 <!--   - Belgium 								-->
 <!--   - Finland 								-->
+<!--   - France									-->
 <!--   - Sweden 								-->
 <!--   - Germany 								-->
 <!--   - UK 									-->
@@ -638,4 +639,54 @@
 		<carrier frequency="858000" bandwidth="8"/>
 		<carrier frequency="858166" bandwidth="8"/>
 	</country>
+	<country name="France - All Régions" offset="167"> 
+		<carrier frequency="474000"/> 
+		<carrier frequency="482000"/> 
+		<carrier frequency="490000"/> 
+		<carrier frequency="498000"/> 
+		<carrier frequency="506000"/> 
+		<carrier frequency="514000"/> 
+		<carrier frequency="522000"/> 
+		<carrier frequency="530000"/> 
+		<carrier frequency="538000"/> 
+		<carrier frequency="546000"/> 
+		<carrier frequency="554000"/> 
+		<carrier frequency="562000"/> 
+		<carrier frequency="570000"/> 
+		<carrier frequency="578000"/> 
+		<carrier frequency="586000"/> 
+		<carrier frequency="594000"/> 
+		<carrier frequency="602000"/> 
+		<carrier frequency="610000"/> 
+		<carrier frequency="618000"/> 
+		<carrier frequency="626000"/> 
+		<carrier frequency="634000"/> 
+		<carrier frequency="642000"/> 
+		<carrier frequency="650000"/> 
+		<carrier frequency="658000"/> 
+		<carrier frequency="666000"/> 
+		<carrier frequency="674000"/> 
+		<carrier frequency="682000"/> 
+		<carrier frequency="690000"/> 
+		<carrier frequency="698000"/> 
+		<carrier frequency="706000"/> 
+		<carrier frequency="714000"/> 
+		<carrier frequency="722000"/> 
+		<carrier frequency="730000"/> 
+		<carrier frequency="738000"/> 
+		<carrier frequency="746000"/> 
+		<carrier frequency="754000"/> 
+		<carrier frequency="762000"/> 
+		<carrier frequency="770000"/> 
+		<carrier frequency="778000"/> 
+		<carrier frequency="786000"/> 
+		<carrier frequency="794000"/> 
+		<carrier frequency="802000"/> 
+		<carrier frequency="810000"/> 
+		<carrier frequency="818000"/> 
+		<carrier frequency="826000"/> 
+		<carrier frequency="834000"/> 
+		<carrier frequency="842000"/> 
+		<carrier frequency="850000"/> 
+	</country> 
 </dvbt>
