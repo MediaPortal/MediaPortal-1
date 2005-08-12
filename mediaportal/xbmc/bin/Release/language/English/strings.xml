@@ -3447,6 +3447,8 @@
 </string>
 
 <string><id>12902</id><value>MSN Messenger OSD</value></string>
+
+<!-- My Programs --> 
 <string>
 	<id>13000</id>
 	<value>System:</value>
@@ -3503,6 +3505,14 @@
 	<id>13013</id>
 	<value>Loading video, please wait</value>
 </string>
+<string><id>13014</id><value>Scanning directory</value></string> 
+<string><id>13015</id><value>Importing gamebase file</value></string> 
+<string><id>13016</id><value>Sort by: Launches</value></string> 
+<string><id>13017</id><value>Sort by: Recent</value></string> 
+<string><id>13018</id><value>Sort by: Rating</value></string> 
+
+
+
 
 <string><id>16001</id><value>Party Shuffle</value></string> 
 
