@@ -20,6 +20,8 @@
  */
 using System;
 using System.Runtime.InteropServices;
+using System.ComponentModel;
+using System.Threading;
 using MediaPortal.Player;
 using MediaPortal.GUI.Library;
 using Microsoft.Win32;
@@ -81,6 +83,7 @@ namespace MediaPortal.Player
 				if(volumeStyle == 3)
 					return new VolumeHandlerCustom();
 			}
+
 			// classic volume table
 			return new VolumeHandler(new int[] { 0, 6553, 13106, 19659, 26212, 32765, 39318, 45871, 52424, 58977, 65535 });
 		}
@@ -128,10 +131,15 @@ namespace MediaPortal.Player
 
 		protected virtual void SetVolume(int volume)
 		{
-			_mixer.Volume = volume;
+			BackgroundWorker worker = new BackgroundWorker();
 
-			if(_mixer.IsMuted)
-				_mixer.IsMuted = false;
+			worker.DoWork += new DoWorkEventHandler(SetVolumeWorker);
+			worker.RunWorkerAsync(volume);
+		}
+		
+		protected virtual void SetVolume(bool isMuted)
+		{
+			_mixer.IsMuted = isMuted;
 
 			if(GUIWindowManager.ActiveWindow==(int)GUIWindow.Window.WINDOW_TVFULLSCREEN ||
 				GUIWindowManager.ActiveWindow==(int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO)
@@ -140,10 +148,13 @@ namespace MediaPortal.Player
 				GUIGraphicsContext.OnAction(showVolume);
 			}
 		}
-		
-		protected virtual void SetVolume(bool isMuted)
+
+		void SetVolumeWorker(object sender, DoWorkEventArgs e)
 		{
-			_mixer.IsMuted = isMuted;
+			_mixer.Volume = (int)e.Argument;
+
+			if(_mixer.IsMuted)
+				_mixer.IsMuted = false;
 
 			if(GUIWindowManager.ActiveWindow==(int)GUIWindow.Window.WINDOW_TVFULLSCREEN ||
 				GUIWindowManager.ActiveWindow==(int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO)
