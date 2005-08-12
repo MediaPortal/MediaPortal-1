@@ -2378,6 +2378,47 @@ namespace MediaPortal.TV.Database
 			}
 		}
 
+		static public TVProgram GetLastProgramForChannel(TVChannel chan)
+		{
+			TVProgram prog = new TVProgram();
+			prog.Start=prog.End=0;
+			lock (typeof(TVDatabase))
+			{
+				try
+				{
+					if (null==m_db) return prog;
+
+					SQLiteResultSet results;
+					string strSQL=String.Format("select * from tblPrograms where idChannel={0} order by iendtime desc limit 1", chan.ID);
+					results=m_db.Execute(strSQL);
+					if (results.Rows.Count== 0) return prog ;
+					long iStart=DatabaseUtility.GetAsInt64(results,0,"tblPrograms.iStartTime");
+					long iEnd=DatabaseUtility.GetAsInt64(results,0,"tblPrograms.iEndTime");
+					prog.Channel=DatabaseUtility.Get(results,0,"channel.strChannel");
+					prog.Start=iStart;
+					prog.End=iEnd;
+					prog.Genre=DatabaseUtility.Get(results,0,"genre.strGenre");
+					prog.Title=DatabaseUtility.Get(results,0,"tblPrograms.strTitle");
+					prog.Description=DatabaseUtility.Get(results,0,"tblPrograms.strDescription");
+					prog.Episode=DatabaseUtility.Get(results,0,"tblPrograms.strEpisodeName");
+					prog.Repeat=DatabaseUtility.Get(results,0,"tblPrograms.strRepeat");
+					prog.ID=DatabaseUtility.GetAsInt(results,0,"tblPrograms.idProgram");
+					prog.SeriesNum=DatabaseUtility.Get(results,0,"tblPrograms.strSeriesNum");
+					prog.EpisodeNum=DatabaseUtility.Get(results,0,"tblPrograms.strEpisodeNum");
+					prog.EpisodePart=DatabaseUtility.Get(results,0,"tblPrograms.strEpisodePart");
+					prog.Date=DatabaseUtility.Get(results,0,"tblPrograms.strDate");
+					prog.StarRating=DatabaseUtility.Get(results,0,"tblPrograms.strStarRating");
+					prog.Classification=DatabaseUtility.Get(results,0,"tblPrograms.strClassification");
+				}
+				catch(Exception ex)
+				{
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
+				}
+			}
+			return prog;
+		}
+
 		static public string GetLastProgramEntry()
 		{
 			lock (typeof(TVDatabase))

@@ -27,7 +27,6 @@ namespace MediaPortal.TV.Recording
 		bool						grabEPG=false;
 		
 		int							epgChannel=0;
-		int							epgTitle=0;
 		State						currentState=State.Idle;
 		#endregion
 
@@ -79,7 +78,6 @@ namespace MediaPortal.TV.Recording
 				{
 					currentState=State.Grabbing;
 					epgChannel=0;
-					epgTitle=0;
 					Log.WriteFile(Log.LogType.EPG,"epg-grab: start EPG grabber");
 					if (EPGInterface!=null)
 						EPGInterface.GrabEPG();
@@ -129,10 +127,7 @@ namespace MediaPortal.TV.Recording
 					}
 					else if (grabEPG)
 					{
-						for (int i=0; i < 10 && currentState==State.Parsing;++i)
-						{
 							ParseEPG();
-						}
 					}
 					else
 					{
@@ -422,7 +417,7 @@ namespace MediaPortal.TV.Recording
 					currentState=State.Idle;
 					return;
 				}
-				if (epgChannel==0 && epgTitle==0)
+				if (epgChannel==0)
 					Log.WriteFile(Log.LogType.EPG,"epg-grab: received epg for {0} channels", channelCount);
 				ushort networkid=0;
 				ushort transportid=0;
@@ -435,120 +430,122 @@ namespace MediaPortal.TV.Recording
 				{
 					Log.WriteFile(Log.LogType.EPG,"epg-grab: Unknown channel NetworkId:{0} transportid:{1} serviceid:{2}",networkid,transportid,serviceid);
 					epgChannel++;
-					epgTitle=0;
 					return;
 				}
-				
-				EPGInterface.GetEPGEventCount((uint)epgChannel,out eventCount);
-				if (epgTitle >= eventCount)
+				TVProgram lastProgram=TVDatabase.GetLastProgramForChannel(channel);
+				Log.WriteFile(Log.LogType.EPG,"epg-grab: Last program in database for {0} :{1}-{2}",
+											channel.Name,lastProgram.Start,lastProgram.End);
+				int curChannel=epgChannel;
+				epgChannel++;
+				EPGInterface.GetEPGEventCount((uint)curChannel,out eventCount);
+				for (int i=0; i < eventCount;++i)
 				{
-					epgChannel++;
-					epgTitle=0;
-					return;
-				}
-				
-				uint start_time_MJD=0,start_time_UTC=0,duration=0,languageId=0;
-				string title,description,genre;
-				IntPtr ptrTitle=IntPtr.Zero;
-				IntPtr ptrDesc=IntPtr.Zero;
-				IntPtr ptrGenre=IntPtr.Zero;
-				EPGInterface.GetEPGEvent((uint)epgChannel,(uint)epgTitle,out languageId,out start_time_MJD, out start_time_UTC, out duration,out ptrTitle,out ptrDesc, out ptrGenre);
-				epgTitle++;
-				title=Marshal.PtrToStringAnsi(ptrTitle);
-				description=Marshal.PtrToStringAnsi(ptrDesc);
-				genre=Marshal.PtrToStringAnsi(ptrGenre);
-				string language  = String.Empty;
-				language += (char)((languageId>>16)&0xff);
-				language += (char)((languageId>>8)&0xff);
-				language += (char)((languageId)&0xff);
-				bool grabLanguage=false;
-				if(m_languagesToGrab!="")
-				{
-					string[] langs=m_languagesToGrab.Split(new char[]{'/'});
-					foreach(string lang in langs)
+					uint start_time_MJD=0,start_time_UTC=0,duration=0,languageId=0;
+					string title,description,genre;
+					IntPtr ptrTitle=IntPtr.Zero;
+					IntPtr ptrDesc=IntPtr.Zero;
+					IntPtr ptrGenre=IntPtr.Zero;
+					EPGInterface.GetEPGEvent((uint)curChannel,(uint)i,out languageId,out start_time_MJD, out start_time_UTC, out duration,out ptrTitle,out ptrDesc, out ptrGenre);
+					title=Marshal.PtrToStringAnsi(ptrTitle);
+					description=Marshal.PtrToStringAnsi(ptrDesc);
+					genre=Marshal.PtrToStringAnsi(ptrGenre);
+					string language  = String.Empty;
+					language += (char)((languageId>>16)&0xff);
+					language += (char)((languageId>>8)&0xff);
+					language += (char)((languageId)&0xff);
+					bool grabLanguage=false;
+					if(m_languagesToGrab!="")
 					{
-						if(lang==String.Empty) continue;
-						if (language==lang) grabLanguage=true;
-						if (language==String.Empty) grabLanguage=true;
+						string[] langs=m_languagesToGrab.Split(new char[]{'/'});
+						foreach(string lang in langs)
+						{
+							if(lang==String.Empty) continue;
+							if (language==lang) grabLanguage=true;
+							if (language==String.Empty) grabLanguage=true;
+						}
 					}
-				}
-				else grabLanguage=true;
+					else grabLanguage=true;
 
 
-				int duration_hh = getUTC((int) ((duration >> 16) )& 255);
-				int duration_mm = getUTC((int) ((duration >> 8) )& 255);
-				int duration_ss = 0;//getUTC((int) (duration )& 255);
-				int starttime_hh = getUTC((int) ((start_time_UTC >> 16) )& 255);
-				int starttime_mm =getUTC((int) ((start_time_UTC >> 8) )& 255);
-				int starttime_ss =0;//getUTC((int) (start_time_UTC )& 255);
+					int duration_hh = getUTC((int) ((duration >> 16) )& 255);
+					int duration_mm = getUTC((int) ((duration >> 8) )& 255);
+					int duration_ss = 0;//getUTC((int) (duration )& 255);
+					int starttime_hh = getUTC((int) ((start_time_UTC >> 16) )& 255);
+					int starttime_mm =getUTC((int) ((start_time_UTC >> 8) )& 255);
+					int starttime_ss =0;//getUTC((int) (start_time_UTC )& 255);
 
-				if (starttime_hh>23) starttime_hh=23;
-				if (starttime_mm>59) starttime_mm=59;
-				if (starttime_ss>59) starttime_ss=59;
+					if (starttime_hh>23) starttime_hh=23;
+					if (starttime_mm>59) starttime_mm=59;
+					if (starttime_ss>59) starttime_ss=59;
 
-				if (duration_hh>23) duration_hh=23;
-				if (duration_mm>59) duration_mm=59;
-				if (duration_ss>59) duration_ss=59;
+					if (duration_hh>23) duration_hh=23;
+					if (duration_mm>59) duration_mm=59;
+					if (duration_ss>59) duration_ss=59;
 
-				// convert the julian date
-				int year = (int) ((start_time_MJD - 15078.2) / 365.25);
-				int month = (int) ((start_time_MJD - 14956.1 - (int)(year * 365.25)) / 30.6001);
-				int day = (int) (start_time_MJD - 14956 - (int)(year * 365.25) - (int)(month * 30.6001));
-				int k = (month == 14 || month == 15) ? 1 : 0;
-				year += 1900+ k; // start from year 1900, so add that here
-				month = month - 1 - k * 12;
-				int starttime_y=year;
-				int starttime_m=month;
-				int starttime_d=day;
+					// convert the julian date
+					int year = (int) ((start_time_MJD - 15078.2) / 365.25);
+					int month = (int) ((start_time_MJD - 14956.1 - (int)(year * 365.25)) / 30.6001);
+					int day = (int) (start_time_MJD - 14956 - (int)(year * 365.25) - (int)(month * 30.6001));
+					int k = (month == 14 || month == 15) ? 1 : 0;
+					year += 1900+ k; // start from year 1900, so add that here
+					month = month - 1 - k * 12;
+					int starttime_y=year;
+					int starttime_m=month;
+					int starttime_d=day;
 
-				DateTime dtUTC = new DateTime(starttime_y,starttime_m,starttime_d,starttime_hh,starttime_mm,starttime_ss,0);
-				DateTime dtStart=dtUTC.ToLocalTime();
-				DateTime dtEnd=dtStart.AddHours(duration_hh);
-				dtEnd=dtEnd.AddMinutes(duration_mm);
-				dtEnd=dtEnd.AddSeconds(duration_ss);
+					try
+					{
+						DateTime dtUTC = new DateTime(starttime_y,starttime_m,starttime_d,starttime_hh,starttime_mm,starttime_ss,0);
+						DateTime dtStart=dtUTC.ToLocalTime();
+						DateTime dtEnd=dtStart.AddHours(duration_hh);
+						dtEnd=dtEnd.AddMinutes(duration_mm);
+						dtEnd=dtEnd.AddSeconds(duration_ss);
 
-				TVProgram tv=new TVProgram();
-				tv.Start=Util.Utils.datetolong(dtStart);
-				tv.End=Util.Utils.datetolong(dtEnd);
-				tv.Channel=channel.Name;
-				tv.Genre=genre;
-				tv.Title=title;
-				tv.Description=description;
-				if(tv.Title==null)
-					tv.Title=String.Empty;
+						TVProgram tv=new TVProgram();
+						tv.Start=Util.Utils.datetolong(dtStart);
+						tv.End=Util.Utils.datetolong(dtEnd);
+						tv.Channel=channel.Name;
+						tv.Genre=genre;
+						tv.Title=title;
+						tv.Description=description;
+						if(tv.Title==null)
+							tv.Title=String.Empty;
 
-				if(tv.Description==null)
-					tv.Description=String.Empty;
+						if(tv.Description==null)
+							tv.Description=String.Empty;
 
-				if(tv.Description==String.Empty)
-					tv.Description=title;
+						if(tv.Description==String.Empty)
+							tv.Description=title;
 
-				if(tv.Title==String.Empty)
-					tv.Title=title;
+						if(tv.Title==String.Empty)
+							tv.Title=title;
 
-				if(tv.Title==String.Empty || tv.Title=="n.a.") 
-				{
-					return;
-				}
+						if(tv.Title==String.Empty || tv.Title=="n.a.") 
+						{
+							return;
+						}
 
-				if (!grabLanguage) 
-				{
-					Log.WriteFile(Log.LogType.EPG,"epg-grab: disregard language: {0} {1}-{2} {3} {4}", tv.Channel,tv.Start,tv.End,tv.Title,language);
-					return;
-				}
-				ArrayList programsInDatabase = new ArrayList();
-				TVDatabase.GetProgramsPerChannel(tv.Channel,tv.Start+1,tv.End-1,ref programsInDatabase);
-				if(programsInDatabase.Count==0)
-				{
-					Log.WriteFile(Log.LogType.EPG,"epg-grab: add: {0} {1}-{2} {3} {4}", tv.Channel,tv.Start,tv.End,tv.Title,language);
-					TVDatabase.AddProgram(tv);
+						if (!grabLanguage) 
+						{
+							Log.WriteFile(Log.LogType.EPG,"epg-grab: disregard language: {0} {1}-{2} {3} {4}", tv.Channel,tv.Start,tv.End,tv.Title,language);
+							return;
+						}
+						if (lastProgram.End <=tv.Start)
+						{
+							Log.WriteFile(Log.LogType.EPG,"epg-grab: add: {0} {1}-{2} {3} {4}", tv.Channel,tv.Start,tv.End,tv.Title,language);
+							TVDatabase.AddProgram(tv);
+						}
+					}
+					catch(Exception)
+					{
+						Log.WriteFile(Log.LogType.EPG,"epg-grab:invalid date:{0}-{1}-{2}",starttime_y,starttime_m,starttime_d);
+					}
 				}
 			}
 			catch(Exception ex)
 			{
 				Log.WriteFile(Log.LogType.EPG,"epg-grab:{0} {1} {2}",ex.Message,ex.Source,ex.StackTrace);
 			}
-			
 		}
 
 
