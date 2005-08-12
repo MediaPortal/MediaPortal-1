@@ -309,7 +309,7 @@ namespace MediaPortal.TV.Recording
 								case NetworkType.DVBS:
 								{
 									DVBChannel ch=new DVBChannel();
-									if(TVDatabase.GetSatChannel(chan.ID,1,ref ch)==false)//only television
+									if(TVDatabase.GetSatChannel(chan.ID,1,ref ch)==true)//only television
 									{
 										TVProgram lastProg=TVDatabase.GetLastProgramForChannel(chan);
 										CachedChannel cachedCh = new CachedChannel();

@@ -1716,7 +1716,8 @@ namespace MediaPortal.TV.Recording
 					m_analyzerInterface.ResetParser();
 					m_StartTime=DateTime.Now;
 					m_epgGrabber.GrabEPG(ch.HasEITSchedule==true);
-					VideoRendererStatistics.VideoState=VideoRendererStatistics.State.Signal;;
+					VideoRendererStatistics.VideoState=VideoRendererStatistics.State.NoSignal;
+					SetupMTSDemuxerPin();
 				}
 			}
 			finally
@@ -2199,6 +2200,8 @@ namespace MediaPortal.TV.Recording
 			//check if this card is used for watching tv
 			bool isViewing=Recorder.IsCardViewing(m_cardID);
 			if (!isViewing) return;
+
+			Log.Write("demuxer:{0} signal:{1} fps:{2}",m_streamDemuxer.RecevingPackets,SignalPresent() ,GUIGraphicsContext.Vmr9FPS);
 
 			// do we receive any packets?
 			if (!m_streamDemuxer.RecevingPackets || !SignalPresent() )
