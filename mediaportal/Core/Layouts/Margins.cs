@@ -18,18 +18,23 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
 using System;
+using System.ComponentModel;
 
 namespace MediaPortal.Layouts
 {
+	[TypeConverter(typeof(MarginsConverter))]
 	public struct Margins
 	{
 		#region Constructors
 
-		public Margins(int horizontal, int vertical)
+		public Margins(int margin) : this(margin, margin)
 		{
-			_left = _right = horizontal;
-			_top = _bottom = vertical;
+		}
+
+		public Margins(int horizontal, int vertical) : this(horizontal, vertical, horizontal, vertical)
+		{
 		}
 
 		public Margins(int left, int top, int right, int bottom)
@@ -47,6 +52,27 @@ namespace MediaPortal.Layouts
 		public override int GetHashCode()
 		{
 			return _left ^ _top ^ _right ^ _bottom;
+		}
+
+		public static Margins Parse(string source)
+		{
+			return Margins.Parse(source, null);
+		}
+
+		public static Margins Parse(string source, IFormatProvider formatProvider)
+		{
+			string[] tokens = source.Split(',');
+
+			if(tokens.Length == 4)
+				return new Margins(int.Parse(tokens[0], formatProvider), int.Parse(tokens[1], formatProvider), int.Parse(tokens[2], formatProvider), int.Parse(tokens[3], formatProvider));
+
+			if(tokens.Length == 2)
+				return new Margins(int.Parse(tokens[0], formatProvider), int.Parse(tokens[1], formatProvider));
+
+			if(tokens.Length == 1)
+				return new Margins(int.Parse(tokens[0], formatProvider));
+
+			return Margins.Empty;
 		}
 
 		#endregion Methods
