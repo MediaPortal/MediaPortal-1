@@ -1237,7 +1237,7 @@ namespace MediaPortal.TV.Recording
 
 			if (currentProgram != null)
 				currentTvProgramRecording = currentProgram.Clone();
-			currentTvRecording = recording;
+			currentTvRecording = new TVRecording(recording);
 			preRecordInterval = iPreRecordInterval;
 			postRecordInterval = iPostRecordInterval;
 			currentTvChannelName = recording.Channel;

@@ -604,7 +604,7 @@ namespace MediaPortal.TV.Recording
 			}
 
 			// not recording this yet
-			Log.WriteFile(Log.LogType.Recorder,"Recorder: time to record '{0}' on channel:{1} from {2}-{3} id:{4} priority:{5} quality:{6}",rec.Title,rec.Channel, rec.StartTime.ToLongTimeString(), rec.EndTime.ToLongTimeString(),rec.ID, rec.Priority,rec.Quality.ToString());
+			Log.WriteFile(Log.LogType.Recorder,"Recorder: time to record '{0}' on channel:{1} from {2}-{3} id:{4} priority:{5} quality:{6} {7}",rec.Title,rec.Channel, rec.StartTime.ToLongTimeString(), rec.EndTime.ToLongTimeString(),rec.ID, rec.Priority,rec.Quality.ToString(),rec.RecType.ToString());
 			Log.WriteFile(Log.LogType.Recorder,"Recorder:  find free capture card");
 			LogTvStatistics();
 
@@ -748,17 +748,19 @@ namespace MediaPortal.TV.Recording
 				{
 					if (dev.CurrentTVRecording.ID==rec.ID) 
 					{
-						Log.WriteFile(Log.LogType.Recorder,"Recorder: Stop recording card:{0} channel:{1}",dev.ID, dev.TVChannel);
 						if (rec.RecType==TVRecording.RecordingType.Once)
 						{
+							Log.WriteFile(Log.LogType.Recorder,"Recorder: Stop recording card:{0} channel:{1}",dev.ID, dev.TVChannel);
 							rec.Canceled=Utils.datetolong(DateTime.Now);
 						}
 						else
 						{
+							Log.WriteFile(Log.LogType.Recorder,"Recorder: Stop serie of recording card:{0} channel:{1}",dev.ID, dev.TVChannel);
 							long datetime=Utils.datetolong(DateTime.Now);
 							TVProgram prog=dev.CurrentProgramRecording;
 							if (prog!=null) datetime=Utils.datetolong(prog.StartTime);
 							rec.CanceledSeries.Add(datetime);
+							rec.Canceled=0;
 						}
 						TVDatabase.UpdateRecording(rec,TVDatabase.RecordingChange.Canceled);
 						dev.StopRecording();
