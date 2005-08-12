@@ -100,6 +100,9 @@ namespace MediaPortal.GUI.TV
     int                                 m_iSingleChannel=0;
     bool                                m_bUseChannelLogos=false;
 		ArrayList                           notifies = new ArrayList();
+		int																	m_cursorXBackup=0;
+		int																	m_cursorYBackup=0;
+		int																	m_channelOffsetBack=0;
 
 		DateTime  m_timeKeyPressed=DateTime.Now;
 		string    m_strInput=String.Empty;
@@ -252,9 +255,7 @@ namespace MediaPortal.GUI.TV
           {
             if (m_iCursorX == 0)
             {
-              m_bSingleChannel=!m_bSingleChannel;
-              Update(false);
-              SetFocus();
+              OnSwitchMode();
             }
             else
             {
@@ -340,9 +341,7 @@ namespace MediaPortal.GUI.TV
 					{
 						if (m_iCursorX==0)
 						{
-							m_bSingleChannel=!m_bSingleChannel;
-							Update(false);
-							SetFocus();
+							OnSwitchMode();
 							return;              
 						}
 						else
@@ -659,9 +658,7 @@ namespace MediaPortal.GUI.TV
 					}
 					else if (m_iCursorX==0)
 					{
-						m_bSingleChannel=!m_bSingleChannel;						
-						Update(false);
-						SetFocus();
+						OnSwitchMode();
 					}
 					break;
 
@@ -876,10 +873,10 @@ namespace MediaPortal.GUI.TV
 				{
 					if (m_iCursorX==0)
 					{
-						m_iSingleChannel=m_iCursorY + m_iChannelOffset;
-						if (m_iSingleChannel >= m_channels.Count) m_iSingleChannel-=m_channels.Count;
-						GUIButton3PartControl img=(GUIButton3PartControl)GetControl(m_iCursorY+(int)Controls.IMG_CHAN1);
-						if (null!=img) m_strCurrentChannel=img.Label1;
+						//m_iSingleChannel=m_iCursorY + m_iChannelOffset;
+						//if (m_iSingleChannel >= m_channels.Count) m_iSingleChannel-=m_channels.Count;
+						//GUIButton3PartControl img=(GUIButton3PartControl)GetControl(m_iCursorY+(int)Controls.IMG_CHAN1);
+						//if (null!=img) m_strCurrentChannel=img.Label1;
 					}
 					TVChannel channel=(TVChannel)m_channels[m_iSingleChannel];
 					RenderSingleChannel(channel);
@@ -1069,6 +1066,8 @@ namespace MediaPortal.GUI.TV
       // ichan = number of rows
 			for (int ichan=0; ichan < m_iChannels;++ichan)
 			{
+				GUIButton3PartControl imgCh=GetControl(ichan+(int)Controls.IMG_CHAN1) as GUIButton3PartControl;
+				imgCh.TexutureIcon="";
 
 				int iStartXPos=GetControl(0+(int)Controls.LABEL_TIME1).XPosition;              
 				int height=GetControl((int)Controls.IMG_CHAN1+1).YPosition;
@@ -1164,6 +1163,8 @@ namespace MediaPortal.GUI.TV
 
 				string strTimeSingle=String.Empty;
 				string strTime=String.Empty;
+				
+				img.Label1=program.Title;
 				if (program.Start != 0)
 				{
 					strTimeSingle=String.Format("{0}", 
@@ -1175,49 +1176,43 @@ namespace MediaPortal.GUI.TV
 
 					if (program.StartTime.Date != DateTime.Now.Date)
 					{
-						strTime=String.Format("{0} {1}-{2}", 
-							Utils.GetShortDayString(program.StartTime),
-							program.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat),
-							program.EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
-						strTimeSingle=String.Format("{0} {1}", 
-							Utils.GetShortDayString(program.StartTime),
-							program.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
+						img.Label1=String.Format("{0} {1}",Utils.GetShortDayString(program.StartTime),program.Title);
 					}
 				}
-				img.Label1=program.Title;
 				GUILabelControl labelTemplate;
 				if (program.IsRunningAt(dt))
 				{
-					labelTemplate=GetControl((int)Controls.LABEL_TITLE_TEMPLATE) as GUILabelControl;
+					labelTemplate=GetControl((int)Controls.LABEL_TITLE_DARK_TEMPLATE) as GUILabelControl;
 				}
 				else
-					labelTemplate=GetControl((int)Controls.LABEL_TITLE_DARK_TEMPLATE) as GUILabelControl;
+					labelTemplate=GetControl((int)Controls.LABEL_TITLE_TEMPLATE) as GUILabelControl;
             
 				if (labelTemplate!=null) 
 				{
 					img.FontName1=labelTemplate.FontName;
 					img.TextColor1=labelTemplate.TextColor;
-					img.TextColor2=labelTemplate.TextColor;
 				}
 				img.TextOffsetX2=5;
 				img.TextOffsetY2=img.Height/2;
 				img.FontName2="font13";
 				img.TextColor2=0xffffffff;			
+				img.Label2="";
 				if (program.IsRunningAt(dt))
-					labelTemplate=GetControl((int)Controls.LABEL_GENRE_TEMPLATE) as GUILabelControl;
-				else 
+				{
+					img.TextColor2=0xff101010;			
 					labelTemplate=GetControl((int)Controls.LABEL_GENRE_DARK_TEMPLATE) as GUILabelControl;
+				}
+				else 
+					labelTemplate=GetControl((int)Controls.LABEL_GENRE_TEMPLATE) as GUILabelControl;
+
 				if (labelTemplate!=null) 
 				{
 					img.FontName2=labelTemplate.FontName;
 					img.TextColor2=labelTemplate.TextColor;
-          img.Label2=String.Format("{0} {1}", strTime,program.Genre);
-        }
-        else
-        {
-          // No genre displayed, display start time as part of the program name
-          img.Label1=String.Format("{0} {1}", strTimeSingle, program.Title);
-        }
+					img.Label2=program.Genre;
+				}
+				imgCh.Label1=strTimeSingle;
+				imgCh.TexutureIcon="";
 
 				if (program.IsRunningAt(dt))
 				{
@@ -1451,6 +1446,7 @@ namespace MediaPortal.GUI.TV
 						img.TextOffsetY2=img.Height/2;
 						img.FontName2="font13";
 						img.TextColor2=0xffffffff;						
+
 						if (program.IsRunningAt(dt))
 							labelTemplate=GetControl((int)Controls.LABEL_GENRE_DARK_TEMPLATE) as GUILabelControl;
 						else 
@@ -1536,26 +1532,16 @@ namespace MediaPortal.GUI.TV
 			{
         if (m_iCursorY+1 < m_iChannels)
         {
-          if (m_iCursorX==0) m_iProgramOffset=0;
           m_iCursorY++;
           Update(false);
         }
         else 
         {
-          if (m_iCursorX==0)
+					 
+          if (m_iCursorY + m_iProgramOffset+1 < m_iTotalPrograms)
           {
-            m_iProgramOffset=0;
-            m_iChannelOffset++;
-            if ( m_iChannelOffset>0 && m_iChannelOffset >= m_channels.Count)  m_iChannelOffset-=m_channels.Count;
+            m_iProgramOffset++;
             Update(false);
-          }
-          else 
-          {
-            if (m_iCursorY + m_iProgramOffset+1 < m_iTotalPrograms)
-            {
-              m_iProgramOffset++;
-              Update(false);
-            }
           }
         }
 				SetFocus();
@@ -1651,7 +1637,7 @@ namespace MediaPortal.GUI.TV
 		void OnUp()
 		{
 			UnFocus();
-			if (m_iCursorX==0 && m_iCursorY==0 && m_iChannelOffset==0)
+			if (!m_bSingleChannel && m_iCursorX==0 && m_iCursorY==0 && m_iChannelOffset==0)
 			{
 				m_iCursorY=-1;
 				GetControl((int)Controls.SPINCONTROL_TIME_INTERVAL).Focus=true;
@@ -1659,32 +1645,17 @@ namespace MediaPortal.GUI.TV
 			}
 			if (m_bSingleChannel)
 			{
-				if (m_iCursorY==0)
+				if (m_iCursorY>0)
 				{
-          if (m_iCursorX==0)
-          {
-            if (m_iChannelOffset>0) 
-            {
-              m_iProgramOffset=0;
-              m_iChannelOffset--;
-              Update(false);            
-            }
-          }
-          else
-          {
-            if (m_iProgramOffset>0) 
-            {
-              m_iProgramOffset--;
-              Update(false);
-            }
-          }
-				}
-				else 
-				{
-          if (m_iCursorX==0) m_iProgramOffset=0;
 					m_iCursorY--;
-          Update(false);
 				}
+				else if (m_iProgramOffset>0)
+				{
+					m_iProgramOffset--;
+				}
+
+        Update(false);
+				
 				SetFocus();
 				UpdateCurrentProgram();
 				SetProperties();
@@ -1801,11 +1772,7 @@ namespace MediaPortal.GUI.TV
 				if (m_iCursorX==1)
 				{
 					m_iCursorX=0;
-          if (m_bSingleChannel) 
-          {
-            m_iProgramOffset=0;
-            Update(false);
-          }
+          
 					SetFocus();
 					SetProperties();
 					return;
@@ -2201,9 +2168,7 @@ namespace MediaPortal.GUI.TV
 						
 
 					case 939: // switch mode
-						m_bSingleChannel=!m_bSingleChannel;							
-						Update(false);
-						SetFocus();
+						OnSwitchMode();
 						break;
 					
 					case 264: // record
@@ -2211,6 +2176,28 @@ namespace MediaPortal.GUI.TV
 						break;
 				}
 			}
+		}
+		void OnSwitchMode()
+		{
+			UnFocus();
+			m_bSingleChannel=!m_bSingleChannel;							
+			if (m_bSingleChannel)
+			{
+				m_cursorXBackup=m_iCursorX;
+				m_cursorYBackup=m_iCursorY;
+				m_channelOffsetBack=m_iChannelOffset;
+
+				m_iProgramOffset=m_iCursorX=m_iCursorY=0;
+			}
+			else
+			{
+				//focus current channel
+				m_iCursorX=0;
+				m_iCursorY=m_cursorYBackup;
+				m_iChannelOffset=m_channelOffsetBack;
+			}
+			Update(true);
+			SetFocus();
 		}
 		void OnRecord()
 		{

@@ -35,6 +35,7 @@ ATSCParser::~ATSCParser(void)
 }
 void ATSCParser::Reset()
 {	
+	Log("ATSC:reset");
 	CAutoLock lock(&m_Lock);
 	m_epgTimeout=time(NULL);
 	m_mapEvents.clear();
