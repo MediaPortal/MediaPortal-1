@@ -71,6 +71,12 @@ namespace MediaPortal.TV.Recording
 		
 		public void GrabEPG(bool epg)
 		{
+			using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			{
+				bool enabled = xmlreader.GetValueAsBool("xmltv", "epgdvb", true);
+				if (!enabled) return;
+			}
+
 			grabEPG=epg;
 			if (Network==NetworkType.ATSC)
 			{

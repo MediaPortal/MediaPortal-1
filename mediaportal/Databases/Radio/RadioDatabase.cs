@@ -247,7 +247,9 @@ namespace MediaPortal.Radio.Database
 				{
 					if (null==m_db) return false;
 					string strSQL;
-					strSQL=String.Format("select * from station where strname like '{0}'",radioName);
+					string radioNameFiltered=radioName;
+					DatabaseUtility.RemoveInvalidChars(ref radioNameFiltered);
+					strSQL=String.Format("select * from station where strname like '{0}'",radioNameFiltered);
 					SQLiteResultSet results;
 					results=m_db.Execute(strSQL);
 					if (results.Rows.Count== 0) return false;
@@ -380,8 +382,10 @@ namespace MediaPortal.Radio.Database
         try
         {
           if (null==m_db) return -1;
-          SQLiteResultSet results;
-          strSQL=String.Format( "select * from station where strName like '{0}'", strStation);
+					SQLiteResultSet results;
+					string radioNameFiltered=strStation;
+					DatabaseUtility.RemoveInvalidChars(ref radioNameFiltered);
+          strSQL=String.Format( "select * from station where strName like '{0}'", radioNameFiltered);
           results=m_db.Execute(strSQL);
           if (results.Rows.Count==0) return -1;
           int iNewID=Int32.Parse(DatabaseUtility.Get(results,0,"idChannel"));

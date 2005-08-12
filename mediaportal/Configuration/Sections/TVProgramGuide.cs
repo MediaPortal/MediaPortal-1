@@ -87,6 +87,7 @@ namespace MediaPortal.Configuration.Sections
     private System.Windows.Forms.GroupBox groupBox4;
     private System.Windows.Forms.GroupBox groupBox5;
 		private MediaPortal.UserInterface.Controls.MPCheckBox runGrabberLowPriorityCheckBox;
+		private System.Windows.Forms.CheckBox cbGrabDVBEPG;
     int   OldTimeZoneOffsetMins=0;
 
 		public TVProgramGuide() : this("Program Guide")
@@ -177,8 +178,9 @@ namespace MediaPortal.Configuration.Sections
 			this.label16 = new System.Windows.Forms.Label();
 			this.tabPage2 = new System.Windows.Forms.TabPage();
 			this.groupBox5 = new System.Windows.Forms.GroupBox();
-			this.label14 = new System.Windows.Forms.Label();
 			this.runGrabberLowPriorityCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
+			this.label14 = new System.Windows.Forms.Label();
+			this.cbGrabDVBEPG = new System.Windows.Forms.CheckBox();
 			this.groupBox3.SuspendLayout();
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
@@ -600,6 +602,7 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
 				| System.Windows.Forms.AnchorStyles.Left) 
 				| System.Windows.Forms.AnchorStyles.Right)));
+			this.groupBox2.Controls.Add(this.cbGrabDVBEPG);
 			this.groupBox2.Controls.Add(this.listView1);
 			this.groupBox2.Controls.Add(this.button3);
 			this.groupBox2.Controls.Add(this.button2);
@@ -617,7 +620,7 @@ namespace MediaPortal.Configuration.Sections
 			this.listView1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
 				| System.Windows.Forms.AnchorStyles.Right)));
 			this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-																						this.columnHeader1});
+																																								this.columnHeader1});
 			this.listView1.FullRowSelect = true;
 			this.listView1.HideSelection = false;
 			this.listView1.Location = new System.Drawing.Point(16, 22);
@@ -733,14 +736,6 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox5.TabStop = false;
 			this.groupBox5.Text = "Grabber Settings";
 			// 
-			// label14
-			// 
-			this.label14.Location = new System.Drawing.Point(16, 48);
-			this.label14.Name = "label14";
-			this.label14.Size = new System.Drawing.Size(64, 16);
-			this.label14.TabIndex = 2;
-			this.label14.Text = "Parameters:";
-			// 
 			// runGrabberLowPriorityCheckBox
 			// 
 			this.runGrabberLowPriorityCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
@@ -750,6 +745,22 @@ namespace MediaPortal.Configuration.Sections
 			this.runGrabberLowPriorityCheckBox.TabIndex = 12;
 			this.runGrabberLowPriorityCheckBox.Text = "Run grabber with lower priority";
 			this.runGrabberLowPriorityCheckBox.CheckedChanged += new System.EventHandler(this.mpCheckBox1_CheckedChanged);
+			// 
+			// label14
+			// 
+			this.label14.Location = new System.Drawing.Point(16, 48);
+			this.label14.Name = "label14";
+			this.label14.Size = new System.Drawing.Size(64, 16);
+			this.label14.TabIndex = 2;
+			this.label14.Text = "Parameters:";
+			// 
+			// cbGrabDVBEPG
+			// 
+			this.cbGrabDVBEPG.Location = new System.Drawing.Point(280, 24);
+			this.cbGrabDVBEPG.Name = "cbGrabDVBEPG";
+			this.cbGrabDVBEPG.Size = new System.Drawing.Size(128, 24);
+			this.cbGrabDVBEPG.TabIndex = 4;
+			this.cbGrabDVBEPG.Text = "Grab EPG from DVB";
 			// 
 			// TVProgramGuide
 			// 
@@ -798,6 +809,7 @@ namespace MediaPortal.Configuration.Sections
 
 			using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
+				cbGrabDVBEPG.Checked = xmlreader.GetValueAsBool("xmltv", "epgdvb", true);
 				useColorCheckBox.Checked = xmlreader.GetValueAsBool("xmltv", "colors", false);
 				useTimeZoneCheckBox.Checked = xmlreader.GetValueAsBool("xmltv", "usetimezone", true);
 				OldTimeZoneCompensation=useTimeZoneCheckBox.Checked;
@@ -869,6 +881,7 @@ namespace MediaPortal.Configuration.Sections
 		{
 			using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
+				xmlwriter.SetValueAsBool("xmltv", "epgdvb", cbGrabDVBEPG.Checked);
 				xmlwriter.SetValueAsBool("xmltv", "colors", useColorCheckBox.Checked);
 				xmlwriter.SetValueAsBool("xmltv", "usetimezone", useTimeZoneCheckBox.Checked);
 
