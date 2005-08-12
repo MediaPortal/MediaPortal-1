@@ -169,6 +169,7 @@ namespace MediaPortal.Configuration.Sections
 			this.tabPage1 = new System.Windows.Forms.TabPage();
 			this.groupBox4 = new System.Windows.Forms.GroupBox();
 			this.groupBox2 = new System.Windows.Forms.GroupBox();
+			this.cbGrabDVBEPG = new System.Windows.Forms.CheckBox();
 			this.listView1 = new System.Windows.Forms.ListView();
 			this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
 			this.button3 = new System.Windows.Forms.Button();
@@ -180,7 +181,6 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox5 = new System.Windows.Forms.GroupBox();
 			this.runGrabberLowPriorityCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
 			this.label14 = new System.Windows.Forms.Label();
-			this.cbGrabDVBEPG = new System.Windows.Forms.CheckBox();
 			this.groupBox3.SuspendLayout();
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
@@ -197,9 +197,9 @@ namespace MediaPortal.Configuration.Sections
 			this.useColorCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.useColorCheckBox.Location = new System.Drawing.Point(16, 24);
 			this.useColorCheckBox.Name = "useColorCheckBox";
-			this.useColorCheckBox.Size = new System.Drawing.Size(112, 16);
+			this.useColorCheckBox.Size = new System.Drawing.Size(216, 16);
 			this.useColorCheckBox.TabIndex = 0;
-			this.useColorCheckBox.Text = "Use genre colors";
+			this.useColorCheckBox.Text = "Use colors for genres in the tvguide";
 			// 
 			// label15
 			// 
@@ -613,7 +613,15 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox2.Size = new System.Drawing.Size(432, 160);
 			this.groupBox2.TabIndex = 1;
 			this.groupBox2.TabStop = false;
-			this.groupBox2.Text = " DVB-EPG ";
+			this.groupBox2.Text = " DVB-EPG Grabber";
+			// 
+			// cbGrabDVBEPG
+			// 
+			this.cbGrabDVBEPG.Location = new System.Drawing.Point(280, 24);
+			this.cbGrabDVBEPG.Name = "cbGrabDVBEPG";
+			this.cbGrabDVBEPG.Size = new System.Drawing.Size(128, 24);
+			this.cbGrabDVBEPG.TabIndex = 4;
+			this.cbGrabDVBEPG.Text = "Grab EPG from DVB";
 			// 
 			// listView1
 			// 
@@ -753,14 +761,6 @@ namespace MediaPortal.Configuration.Sections
 			this.label14.Size = new System.Drawing.Size(64, 16);
 			this.label14.TabIndex = 2;
 			this.label14.Text = "Parameters:";
-			// 
-			// cbGrabDVBEPG
-			// 
-			this.cbGrabDVBEPG.Location = new System.Drawing.Point(280, 24);
-			this.cbGrabDVBEPG.Name = "cbGrabDVBEPG";
-			this.cbGrabDVBEPG.Size = new System.Drawing.Size(128, 24);
-			this.cbGrabDVBEPG.TabIndex = 4;
-			this.cbGrabDVBEPG.Text = "Grab EPG from DVB";
 			// 
 			// TVProgramGuide
 			// 
