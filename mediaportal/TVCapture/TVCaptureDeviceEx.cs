@@ -1523,6 +1523,8 @@ namespace MediaPortal.TV.Recording
 			recordedTvObject.Start = Utils.datetolong(DateTime.Now);
 			recordedTvObject.Channel = currentTvChannelName;
 			recordedTvObject.FileName = strFileName;			
+			recordedTvObject.KeepRecordingMethod=recording.KeepRecordingMethod;
+			recordedTvObject.KeepRecordingTill=recording.KeepRecordingTill;
 			if (currentRunningProgram != null)
 			{
 				recordedTvObject.Title = currentRunningProgram.Title;

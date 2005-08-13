@@ -3081,6 +3081,26 @@
 	<id>1041</id>
 	<value>Upcoming episodes</value>
 </string>
+<string>
+	<id>1042</id>
+	<value>Keep until</value>
+</string>
+<string>
+	<id>1043</id>
+	<value>Until watched</value>
+</string>
+<string>
+	<id>1044</id>
+	<value>Until space needed</value>
+</string>
+<string>
+	<id>1045</id>
+	<value>Until date</value>
+</string>
+<string>
+	<id>1046</id>
+	<value>Always</value>
+</string>
 
 <string>
 	<id>1440</id>

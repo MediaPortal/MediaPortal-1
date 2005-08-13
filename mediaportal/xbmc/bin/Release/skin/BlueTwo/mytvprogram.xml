@@ -33,9 +33,17 @@
 				<ondown>4</ondown>
 			</control>	
 			<control>
+				<description>Keep</description>
+				<type>button</type>
+				<id>4</id>
+				<label>1042</label>
+				<onup>2</onup>
+				<ondown>5</ondown>
+			</control>	
+			<control>
 				<description>Notify</description>
 				<type>togglebutton</type>
-				<id>4</id>
+				<id>5</id>
 				<label>1040</label>
 				<width>190</width>
 				<height>32</height>
@@ -49,7 +57,7 @@
 				<AltTextureNoFocus>togglebutton-off-nofocus.png</AltTextureNoFocus>
 				<textureFocus>togglebutton-on-focus.png</textureFocus>
 				<textureNoFocus>togglebutton-on-nofocus.png</textureNoFocus>
-				<onup>3</onup>
+				<onup>4</onup>
 				<ondown>99</ondown>
 			</control>	
 		</control>

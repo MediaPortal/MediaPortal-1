@@ -20,7 +20,8 @@ namespace MediaPortal.GUI.TV
 		[SkinControlAttribute(13)]			  protected GUIFadeLabel						lblProgramTitle=null;
 		[SkinControlAttribute(2)]					protected GUIButtonControl				btnRecord=null;
 		[SkinControlAttribute(3)]					protected GUIButtonControl				btnAdvancedRecord=null;
-		[SkinControlAttribute(4)]					protected GUIToggleButtonControl	btnNotify=null;
+		[SkinControlAttribute(4)]					protected GUIButtonControl				btnKeep=null;
+		[SkinControlAttribute(5)]					protected GUIToggleButtonControl	btnNotify=null;
 		[SkinControlAttribute(10)]				protected GUIListControl					lstUpcomingEpsiodes=null;
 
 		static TVProgram currentProgram=null;
@@ -81,11 +82,13 @@ namespace MediaPortal.GUI.TV
 			{
 				btnRecord.Label=GUILocalizeStrings.Get(1039);//dont record
 				btnAdvancedRecord.Disabled=true;
+				btnKeep.Disabled=false;
 			}
 			else
 			{
 				btnRecord.Label=GUILocalizeStrings.Get(264);//record
 				btnAdvancedRecord.Disabled=false;
+				btnKeep.Disabled=true;			
 			}
 			ArrayList notifies = new ArrayList();
 			TVDatabase.GetNotifies(notifies,false);
@@ -102,6 +105,7 @@ namespace MediaPortal.GUI.TV
 				btnNotify.Selected=true;
 			else
 				btnNotify.Selected=false;
+
 
 
 			lstUpcomingEpsiodes.Clear();
@@ -168,6 +172,8 @@ namespace MediaPortal.GUI.TV
 
 		protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
 		{
+			if (control==btnKeep)
+				OnKeep();
 			if (control==btnRecord) 
 				OnRecordProgram(currentProgram);
 			if (control==btnAdvancedRecord) 
@@ -494,5 +500,90 @@ namespace MediaPortal.GUI.TV
 			Update();
 		}
 
+		void OnKeep()
+		{
+			bool bRecording=false;
+			TVRecording rec=null;
+			ArrayList recordings = new ArrayList();
+			TVDatabase.GetRecordings(ref recordings);
+
+			foreach (TVRecording record in recordings)
+			{
+				if (record.Canceled>0) continue;
+				if (record.IsRecordingProgram(currentProgram,true) ) 
+				{
+					if (!record.IsSerieIsCanceled(currentProgram.StartTime))
+					{
+						bRecording=true;
+						rec=record;
+						break;
+					}
+				}
+			}
+
+			if (!bRecording)
+			{
+				return;
+			}
+
+			GUIDialogMenu dlg=(GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+			if (dlg==null) return;
+			dlg.Reset();
+			dlg.SetHeading(1042);
+			dlg.AddLocalizedString( 1043);//Until watched
+			dlg.AddLocalizedString( 1044);//Until space needed
+			dlg.AddLocalizedString( 1045);//Until date
+			dlg.AddLocalizedString( 1046);//Always
+			switch (rec.KeepRecordingMethod)
+			{
+				case TVRecorded.KeepMethod.UntilWatched: 
+					dlg.SelectedLabel=0;
+					break;
+				case TVRecorded.KeepMethod.UntilSpaceNeeded: 
+					dlg.SelectedLabel=1;
+					break;
+				case TVRecorded.KeepMethod.TillDate: 
+					dlg.SelectedLabel=2;
+					break;
+				case TVRecorded.KeepMethod.Always: 
+					dlg.SelectedLabel=3;
+					break;
+			}
+			dlg.DoModal( GetID);
+			if (dlg.SelectedLabel==-1) return;
+			switch (dlg.SelectedId)
+			{
+				case 1043: 
+					rec.KeepRecordingMethod=TVRecorded.KeepMethod.UntilWatched;
+					break;
+				case 1044: 
+					rec.KeepRecordingMethod=TVRecorded.KeepMethod.UntilSpaceNeeded;
+				
+					break;
+				case 1045: 
+					rec.KeepRecordingMethod=TVRecorded.KeepMethod.TillDate;
+					dlg.Reset();
+					dlg.ShowQuickNumbers=false;
+					dlg.SetHeading(1045);
+					for (int iDay=1; iDay <= 100; iDay++)
+					{
+						DateTime dt=currentProgram.StartTime.AddDays(iDay);
+						dlg.Add(Utils.GetShortDayString(dt));
+					}
+					TimeSpan ts=(rec.KeepRecordingTill-currentProgram.StartTime);
+					int days=(int)ts.TotalDays;
+					if (days >=100) days=30;
+					dlg.SelectedLabel=days-1;
+					dlg.DoModal(GetID);
+					if (dlg.SelectedLabel<0) return;
+					rec.KeepRecordingTill=currentProgram.StartTime.AddDays(dlg.SelectedLabel+1);
+					break;
+				case 1046: 
+					rec.KeepRecordingMethod=TVRecorded.KeepMethod.Always;
+					break;
+			}
+			TVDatabase.UpdateRecording(rec,TVDatabase.RecordingChange.Modified);
+			
+		}
 	}
 }

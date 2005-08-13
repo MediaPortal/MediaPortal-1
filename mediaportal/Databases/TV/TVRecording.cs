@@ -114,7 +114,7 @@ namespace MediaPortal.TV.Database
 		ArrayList   m_canceledSeries = new ArrayList();
 		bool				announcementSend=false;
 		DateTime		keepDate=DateTime.MaxValue;
-		TVRecorded.KeepMethod  keepMethod=TVRecorded.KeepMethod.Always;
+		TVRecorded.KeepMethod  keepMethod=TVRecorded.KeepMethod.UntilSpaceNeeded;
 
 		public DateTime KeepRecordingTill
 		{

@@ -47,7 +47,7 @@ namespace MediaPortal.TV.Database
     int         m_iID=-1;
     int         m_iPlayed=0;
 		DateTime		keepDate=DateTime.MaxValue;
-		KeepMethod  keepMethod=KeepMethod.Always;
+		KeepMethod  keepMethod=KeepMethod.UntilSpaceNeeded;
 
 		public DateTime KeepRecordingTill
 		{
