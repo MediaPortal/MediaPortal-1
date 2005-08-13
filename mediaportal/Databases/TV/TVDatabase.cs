@@ -125,7 +125,7 @@ namespace MediaPortal.TV.Database
 
 		static public void UpdateFromPreviousVersion()
 		{
-			int currentVersion=3;
+			int currentVersion=4;
 			int versionNr=0;
 			
 			AddTable("tblversion"     ,"CREATE TABLE tblversion( idVersion integer)");
@@ -168,7 +168,14 @@ namespace MediaPortal.TV.Database
 			{
 				//version 2->3 : added iSort to tblGroupMapping
 				m_db.Execute("ALTER TABLE tblGroupMapping ADD COLUMN iSort Integer");
-				
+			}
+			if (versionNr<4) 
+			{
+				//version 3->4 : added keepMethod and keepDate to recorded
+				m_db.Execute("ALTER TABLE recorded ADD COLUMN keepMethod Integer");
+				m_db.Execute("ALTER TABLE recorded ADD COLUMN keepDate text");
+				DateTime maxDate=DateTime.MaxValue;
+				m_db.Execute(String.Format("update recorded set keepMethod={0}, keepDate='{1}'",(int)TVRecorded.KeepMethod.Always,maxDate));
 			}
 			m_db.Execute(String.Format("update tblversion set idVersion={0}",currentVersion));
 		}
@@ -2197,7 +2204,7 @@ namespace MediaPortal.TV.Database
 					int iGenreId=AddGenre(recording.Genre);
 					if (iGenreId<0) return -1;
           
-					strSQL=String.Format("insert into recorded (idRecorded,idChannel,idGenre,strProgram,iStartTime,iEndTime,strDescription,strFileName,iPlayed) values ( NULL, {0}, {1}, '{2}', '{3}', '{4}', '{5}', '{6}', {7})", 
+					strSQL=String.Format("insert into recorded (idRecorded,idChannel,idGenre,strProgram,iStartTime,iEndTime,strDescription,strFileName,iPlayed,keepMethod,keepDate) values ( NULL, {0}, {1}, '{2}', '{3}', '{4}', '{5}', '{6}', {7}, {8}, '{9}')", 
 						iChannelId,
 						iGenreId,
 						strTitle,
@@ -2205,7 +2212,9 @@ namespace MediaPortal.TV.Database
 						recording.End.ToString(),
 						strDescription,
 						strFileName,
-						recording.Played);
+						recording.Played,
+						(int)recording.KeepRecordingMethod,
+						Utils.datetolong(recording.KeepRecordingTill) );
 					m_db.Execute(strSQL);
 					lNewId=m_db.LastInsertID();
 					recording.ID=lNewId;
@@ -2287,6 +2296,9 @@ namespace MediaPortal.TV.Database
 						rec.FileName=DatabaseUtility.Get(results,i,"recorded.strFileName");
 						rec.Genre=DatabaseUtility.Get(results,i,"genre.strGenre");
 						rec.Played=DatabaseUtility.GetAsInt(results,i,"recorded.iPlayed");
+						rec.KeepRecordingMethod=(TVRecorded.KeepMethod)DatabaseUtility.GetAsInt(results,i,"recorded.keepMethod");
+						long date=DatabaseUtility.GetAsInt64(results,i,"recorded.keepDate");
+						rec.KeepRecordingTill=Utils.longtodate(date);
 						recordings.Add(rec);
 					}
 
@@ -2333,7 +2345,9 @@ namespace MediaPortal.TV.Database
 					recording.FileName=DatabaseUtility.Get(results,0,"recorded.strFileName");
 					recording.Genre=DatabaseUtility.Get(results,0,"genre.strGenre");
 					recording.Played=DatabaseUtility.GetAsInt(results,0,"recorded.iPlayed");
-
+					recording.KeepRecordingMethod=(TVRecorded.KeepMethod)DatabaseUtility.GetAsInt(results,0,"recorded.keepMethod");
+					long date=DatabaseUtility.GetAsInt64(results,0,"recorded.keepDate");
+					recording.KeepRecordingTill=Utils.longtodate(date);
 					return true;
 				}
 				catch(Exception ex)

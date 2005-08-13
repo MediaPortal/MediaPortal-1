@@ -30,6 +30,13 @@ namespace MediaPortal.TV.Database
 	/// </summary>
 	public class TVRecorded
 	{
+		public enum KeepMethod
+		{
+			UntilWatched,
+			UntilSpaceNeeded,
+			TillDate,
+			Always
+		};
     long				m_iStartTime;
     long				m_iEndTime;
     string			m_strTitle;
@@ -39,6 +46,27 @@ namespace MediaPortal.TV.Database
     string      m_strFilename;
     int         m_iID=-1;
     int         m_iPlayed=0;
+		DateTime		keepDate=DateTime.MaxValue;
+		KeepMethod  keepMethod=KeepMethod.Always;
+
+		public DateTime KeepRecordingTill
+		{
+			get 
+			{
+				return keepDate;
+			}
+			set 
+			{
+				keepDate=value;
+			}
+		}
+
+		public KeepMethod KeepRecordingMethod
+		{
+			get { return keepMethod;}
+			set { keepMethod=value;}
+		}
+
     /// <summary>
     /// Property to get/set the filename of this recorded tv program
     /// </summary>
