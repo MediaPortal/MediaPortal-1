@@ -117,16 +117,19 @@ namespace MediaPortal.GUI.TV
 				GUIListItem item=new GUIListItem();
 				item.Label=recSeries.Title;
 				item.TVTag=recSeries;
+				item.MusicTag=null;
 				string strLogo=Utils.GetCoverArt(Thumbs.TVChannel,recSeries.Channel);
 				if (!System.IO.File.Exists(strLogo))
 				{
 					strLogo="defaultVideoBig.png";
 				}
-				int card;
-				if (Recorder.IsRecordingSchedule(recSeries,out card))
+				TVRecording recOrg;
+				if (IsRecordingSchedule(recSeries, out recOrg))
 				{
 					item.PinImage=Thumbs.TvRecordingIcon;
+					item.MusicTag=recOrg;
 				}
+
 				item.ThumbnailImage=strLogo;
 				item.IconImageBig=strLogo;
 				item.IconImage=strLogo;
@@ -136,21 +139,114 @@ namespace MediaPortal.GUI.TV
 																	recSeries.EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));;
 				lstUpcomingEpsiodes.Add(item);
 			}
-
-
+		}
+		bool IsRecordingSchedule(TVRecording rec, out TVRecording recOrg)
+		{
+			recOrg=null;
+			ArrayList recordings = new ArrayList();
+			TVDatabase.GetRecordings(ref recordings);
+			foreach (TVRecording record in recordings)
+			{
+				if (record.Canceled>0) continue;
+				ArrayList recs = ConflictManager.Util.GetRecordingTimes(record);
+				foreach (TVRecording recSeries in recs)
+				{
+					if (!record.IsSerieIsCanceled(recSeries.StartTime))
+					{
+						if (rec.Channel==recSeries.Channel &&
+							rec.Title  ==recSeries.Title &&
+							rec.Start==recSeries.Start)
+						{
+							recOrg=record;
+							return true;
+						}
+					}
+				}
+			}
+			return false;
 		}
 
 		protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
 		{
 			if (control==btnRecord) 
-				OnRecord();
+				OnRecordProgram(currentProgram);
 			if (control==btnAdvancedRecord) 
 				OnAdvancedRecord();
 			if (control==btnNotify)
 				OnNotify();
+			if (control==lstUpcomingEpsiodes)
+			{
+				GUIListItem item = lstUpcomingEpsiodes.SelectedListItem;
+				if (item!=null)
+				{
+					TVRecording recSeries = item.TVTag as TVRecording;
+					TVRecording recOrg    = item.MusicTag as TVRecording;
+					OnRecordRecording(recSeries,recOrg);
+				}
+			}
 			base.OnClicked (controlId, control, actionType);
 		}
-		void OnRecord()
+
+		void OnRecordRecording(TVRecording recSeries, TVRecording rec)
+		{
+			if (rec==null)
+			{
+				//not recording yet.
+
+			}
+			else
+			{
+				if (rec.RecType != TVRecording.RecordingType.Once)
+				{
+					GUIDialogMenu dlg=(GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+					if (dlg==null) return;
+					dlg.Reset();
+					dlg.SetHeading(rec.Title);
+					dlg.AddLocalizedString( 981);//Delete this recording
+					dlg.AddLocalizedString( 982);//Delete series recording
+					dlg.DoModal( GetID);
+					if (dlg.SelectedLabel==-1) return;
+					switch (dlg.SelectedId)
+					{
+						case 981: //Delete this recording only
+						{
+							if (CheckIfRecording(rec))
+							{
+								//delete specific series
+								rec.CanceledSeries.Add(recSeries.Start);
+								TVDatabase.AddCanceledSerie(rec,recSeries.Start);
+								Recorder.StopRecording(rec);
+							}
+						}
+							break;
+						case 982: //Delete entire recording
+						{
+							if (CheckIfRecording(rec))
+							{
+								//cancel recording
+								rec.Canceled=Utils.datetolong(DateTime.Now);
+								TVDatabase.UpdateRecording(rec,TVDatabase.RecordingChange.Canceled);
+								Recorder.StopRecording(rec);
+							}
+						}
+							break;
+					}
+				}
+				else
+				{
+					if (CheckIfRecording(rec))
+					{
+						//cancel recording2
+						rec.Canceled=Utils.datetolong(DateTime.Now);
+						TVDatabase.UpdateRecording(rec,TVDatabase.RecordingChange.Canceled);
+						Recorder.StopRecording(rec);
+					}
+				}
+			}
+			Update();
+		}
+
+		void OnRecordProgram(TVProgram program)
 		{
 			bool bRecording=false;
 			TVRecording rec=null;
@@ -160,9 +256,9 @@ namespace MediaPortal.GUI.TV
 			foreach (TVRecording record in recordings)
 			{
 				if (record.Canceled>0) continue;
-				if (record.IsRecordingProgram(currentProgram,true) ) 
+				if (record.IsRecordingProgram(program,true) ) 
 				{
-					if (!record.IsSerieIsCanceled(currentProgram.StartTime))
+					if (!record.IsSerieIsCanceled(program.StartTime))
 					{
 						bRecording=true;
 						rec=record;
@@ -175,33 +271,34 @@ namespace MediaPortal.GUI.TV
 			{
 				foreach (TVRecording record in recordings)
 				{
-					if (record.IsRecordingProgram(currentProgram,false) ) 
+					if (record.IsRecordingProgram(program,false) ) 
 					{
 						if (record.Canceled>0) 
 						{
 							record.RecType=TVRecording.RecordingType.Once;
 							record.Canceled=0;
+							TVDatabase.UpdateRecording(record,TVDatabase.RecordingChange.Modified);
 						}
-						else if (record.IsSerieIsCanceled(currentProgram.StartTime))
+						else if (record.IsSerieIsCanceled(program.StartTime))
 						{
-							record.UnCancelSerie(currentProgram.StartTime);
+							record.UnCancelSerie(program.StartTime);
+							TVDatabase.UpdateRecording(record,TVDatabase.RecordingChange.Modified);
 						}
-						TVDatabase.UpdateRecording(record,TVDatabase.RecordingChange.Modified);
 						Update();
 						return;
 					}		
 				}
 				rec=new TVRecording();
-				rec.Title=currentProgram.Title;
-				rec.Channel=currentProgram.Channel;
-				rec.Start=currentProgram.Start;
-				rec.End=currentProgram.End;
+				rec.Title=program.Title;
+				rec.Channel=program.Channel;
+				rec.Start=program.Start;
+				rec.End=program.End;
 				rec.RecType=TVRecording.RecordingType.Once;
 				Recorder.AddRecording(ref rec);
 			}
 			else
 			{
-				if (rec.IsRecordingProgram(currentProgram,true))
+				if (rec.IsRecordingProgram(program,true))
 				{
 					if (rec.RecType != TVRecording.RecordingType.Once)
 					{
@@ -220,8 +317,8 @@ namespace MediaPortal.GUI.TV
 								if (CheckIfRecording(rec))
 								{
 									//delete specific series
-									rec.CanceledSeries.Add(currentProgram.Start);
-									TVDatabase.AddCanceledSerie(rec,currentProgram.Start);
+									rec.CanceledSeries.Add(program.Start);
+									TVDatabase.AddCanceledSerie(rec,program.Start);
 									Recorder.StopRecording(rec);
 								}
 							}
@@ -231,8 +328,7 @@ namespace MediaPortal.GUI.TV
 								if (CheckIfRecording(rec))
 								{
 									//cancel recording
-									rec.Canceled=Utils.datetolong(DateTime.Now);
-									TVDatabase.UpdateRecording(rec,TVDatabase.RecordingChange.Canceled);
+									TVDatabase.RemoveRecording(rec);
 									Recorder.StopRecording(rec);
 								}
 							}
@@ -244,8 +340,7 @@ namespace MediaPortal.GUI.TV
 						if (CheckIfRecording(rec))
 						{
 							//cancel recording2
-							rec.Canceled=Utils.datetolong(DateTime.Now);
-							TVDatabase.UpdateRecording(rec,TVDatabase.RecordingChange.Canceled);
+							TVDatabase.RemoveRecording(rec);
 							Recorder.StopRecording(rec);
 						}
 					}
