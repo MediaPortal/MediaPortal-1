@@ -1641,7 +1641,7 @@ namespace MediaPortal.TV.Recording
 			if (m_eState!=State.Initialized) return;
 			if (GUIGraphicsContext.InVmr9Render) return;
 			ProcessCards();
-			
+			DiskManagement.Process();	
 			TimeSpan ts=DateTime.Now-m_dtProgresBar;
 			if (ts.TotalMilliseconds>10000)
 			{

@@ -945,31 +945,28 @@ namespace MediaPortal.GUI.TV
       
 			VideoDatabase.DeleteMovieStopTime(movieid);
 
-			if (m_bDeleteWatchedShow)
-			{
-				g_Player.Stop();
+			g_Player.Stop();
 
-				ArrayList itemlist = new ArrayList();
-				TVDatabase.GetRecordedTV(ref itemlist);
-				foreach (TVRecorded rec in itemlist)
+			ArrayList itemlist = new ArrayList();
+			TVDatabase.GetRecordedTV(ref itemlist);
+			foreach (TVRecorded rec in itemlist)
+			{
+				if (m_bDeleteWatchedShow || rec.KeepRecordingMethod==TVRecorded.KeepMethod.UntilWatched)
 				{
 					if (rec.FileName.ToLower().Equals(filename.ToLower()) )
 					{
 						TVDatabase.RemoveRecordedTV(rec);
-						break;
+						DiskManagement.DeleteRecording(rec.FileName);
+						VideoDatabase.DeleteMovieInfo(rec.FileName);
+						VideoDatabase.DeleteMovie(rec.FileName);
+						return;
 					}
 				}
-				DiskManagement.DeleteRecording(filename);
-				VideoDatabase.DeleteMovieInfo(filename);
-				VideoDatabase.DeleteMovie(filename);
 			}
-			else
-			{
-				IMDBMovie details = new IMDBMovie();
-				VideoDatabase.GetMovieInfoById(movieid, ref details);
-				details.Watched++;
-				VideoDatabase.SetWatched(details);
-			}
+			IMDBMovie details = new IMDBMovie();
+			VideoDatabase.GetMovieInfoById(movieid, ref details);
+			details.Watched++;
+			VideoDatabase.SetWatched(details);
     }
 
     private void OnPlayRecordingBackStarted(MediaPortal.Player.g_Player.MediaType type, string filename)

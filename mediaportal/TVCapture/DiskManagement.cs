@@ -38,6 +38,7 @@ namespace MediaPortal.TV.Recording
 	{
 		static bool					 importing=false;
 		static DateTime      m_dtCheckDiskSpace=DateTime.Now;
+		static DateTime      m_dtRecordingTimer=DateTime.MinValue;
 		public DiskManagement()
 		{
 			Recorder.OnTvRecordingEnded +=new MediaPortal.TV.Recording.Recorder.OnTvRecordingHandler(Recorder_OnTvRecordingEnded);
@@ -259,6 +260,42 @@ namespace MediaPortal.TV.Recording
 			catch(Exception){}
 		}//static void DeleteOldTimeShiftFiles(string strPath)
 
+		static public void Process()
+		{
+			if (DateTime.Now.Date!=m_dtRecordingTimer.Date)
+			{
+				m_dtRecordingTimer=DateTime.Now;
+				while (true)
+				{
+					bool deleted=false;
+					ArrayList recordings = new ArrayList();
+					TVDatabase.GetRecordedTV(ref recordings);
+					foreach (TVRecorded rec in recordings)
+					{
+						if (rec.KeepRecordingMethod==TVRecorded.KeepMethod.TillDate)
+						{
+							if (rec.KeepRecordingTill.Date<=DateTime.Now.Date)
+							{
+								if (Utils.FileDelete(rec.FileName))
+								{
+									Log.WriteFile(Log.LogType.Recorder,"Recorder: delete old recording:{0} date:{1}",
+																		rec.FileName,
+																		rec.StartTime.ToShortTimeString());
+									TVDatabase.RemoveRecordedTV(rec);
+									DeleteRecording(rec.FileName);
+									VideoDatabase.DeleteMovie(rec.FileName);
+									VideoDatabase.DeleteMovieInfo(rec.FileName);
+									deleted=true;
+									break;
+								}
+							}
+						}
+					}
+					if (!deleted) return;
+				}
+			}
+		}
+
 		static public void CheckRecordingDiskSpace()
 		{
 			TimeSpan ts = DateTime.Now-m_dtCheckDiskSpace;
@@ -290,7 +327,6 @@ namespace MediaPortal.TV.Recording
 			foreach (string drive in drives)
 			{
 				recordings.Clear();
-
 				long lMaxRecordingSize=0;
 				long diskSize=0;
 				try
@@ -328,7 +364,7 @@ namespace MediaPortal.TV.Recording
 				{
 					Log.WriteFile(Log.LogType.Recorder,"Recorder: exceeded diskspace limit for recordings on drive:{0}",drive);
 					Log.WriteFile(Log.LogType.Recorder,"Recorder:   {0} recordings contain {1} while limit is {2}",
-						recordings.Count, Utils.GetSize(totalSize), Utils.GetSize(lMaxRecordingSize) );
+																								recordings.Count, Utils.GetSize(totalSize), Utils.GetSize(lMaxRecordingSize) );
 
 					// we exceeded the diskspace
 					//delete oldest files...
@@ -336,17 +372,30 @@ namespace MediaPortal.TV.Recording
 					while (totalSize > lMaxRecordingSize && recordings.Count>0)
 					{
 						RecordingFileInfo fi = (RecordingFileInfo)recordings[0];
-						Log.WriteFile(Log.LogType.Recorder,"Recorder: delete old recording:{0} size:{1} date:{2} {3}",
-							fi.filename,
-							Utils.GetSize(fi.info.Length),
-							fi.info.CreationTime.ToShortDateString(), fi.info.CreationTime.ToShortTimeString());
-						totalSize -= fi.info.Length;
-						if (Utils.FileDelete(fi.filename))
+						ArrayList tvrecs = new ArrayList();
+						TVDatabase.GetRecordedTV(ref tvrecs);
+						foreach (TVRecorded tvrec in tvrecs)
 						{
-							DeleteRecording(fi.filename);
-							VideoDatabase.DeleteMovie(fi.filename);
-							VideoDatabase.DeleteMovieInfo(fi.filename);
-						}
+							if (tvrec.FileName.ToLower()==fi.filename.ToLower())
+							{
+								if (tvrec.KeepRecordingMethod==TVRecorded.KeepMethod.UntilSpaceNeeded)
+								{
+									Log.WriteFile(Log.LogType.Recorder,"Recorder: delete old recording:{0} size:{1} date:{2} {3}",
+																											fi.filename,
+																											Utils.GetSize(fi.info.Length),
+																											fi.info.CreationTime.ToShortDateString(), fi.info.CreationTime.ToShortTimeString());
+									totalSize -= fi.info.Length;
+									if (Utils.FileDelete(fi.filename))
+									{
+										TVDatabase.RemoveRecordedTV(tvrec);
+										DeleteRecording(fi.filename);
+										VideoDatabase.DeleteMovie(fi.filename);
+										VideoDatabase.DeleteMovieInfo(fi.filename);
+									}
+								}
+								break;
+							}//if (tvrec.FileName.ToLower()==fi.filename.ToLower())
+						}//foreach (TVRecorded tvrec in tvrecs)
 						recordings.RemoveAt(0);
 					}//while (totalSize > m_lMaxRecordingSize && files.Count>0)
 				}//if (totalSize >= lMaxRecordingSize && lMaxRecordingSize >0) 
