@@ -546,8 +546,8 @@ namespace MediaPortal.GUI.TV
 					GUIControl cntlPanel = GetControl((int)Controls.PANEL_BACKGROUND);
           GUIImage cntlChannelTemplate = (GUIImage)GetControl((int)Controls.CHANNEL_TEMPLATE);
 
-          int iHeight=cntlPanel.Height;
-          int iItemHeight=cntlChannelTemplate.Height;
+					int iHeight=cntlPanel.Height+cntlPanel.YPosition-cntlChannelTemplate.YPosition;
+					int iItemHeight=cntlChannelTemplate.Height;
 					m_iChannels= (int)(((float)iHeight) / ((float)iItemHeight) );
 
           UnFocus();
