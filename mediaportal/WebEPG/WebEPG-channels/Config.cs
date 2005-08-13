@@ -22,11 +22,13 @@
 using System;
 using System.Xml;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
+using MediaPortal.EPG.config;
 
 namespace WebEPG_conf
 {
@@ -65,6 +67,13 @@ namespace WebEPG_conf
 		private System.Windows.Forms.TextBox tbValid;
 		private System.Windows.Forms.ListBox lbGrabbers;
 		private System.Windows.Forms.Button bLoad;
+		private System.Windows.Forms.Button bImport;
+		private System.Windows.Forms.CheckBox cbFilter;
+		private System.Windows.Forms.TextBox tbFilterRegex;
+		private System.Windows.Forms.GroupBox groupBox1;
+		private System.Windows.Forms.RadioButton rbRegex;
+		private System.Windows.Forms.RadioButton rbGrabber;
+		private System.Windows.Forms.TextBox tbFilterGrabber;
 		private System.ComponentModel.IContainer components;
 
 		public fChannels()
@@ -80,8 +89,9 @@ namespace WebEPG_conf
 			bSave.Click += handler;
 			bAdd.Click += handler;
 			bRemove.Click += handler;
-			//bImport.Click += handler;
+			bImport.Click += handler;
 			bLoad.Click += handler;
+			cbFilter.CheckedChanged += handler;
 			lbChannels.SelectedValueChanged += handler;
 
 			startDirectory = Environment.CurrentDirectory;
@@ -89,7 +99,7 @@ namespace WebEPG_conf
 			//Log.WriteFile(Log.LogType.Log, false, "WebEPG Config: Loading Channels");
 			//hChannelInfo = new Hashtable();$
 
-			Load();
+			LoadConfig();
 			UpdateList("", -1);
 		}
 
@@ -118,9 +128,17 @@ namespace WebEPG_conf
 			this.bAdd = new System.Windows.Forms.Button();
 			this.lbChannels = new System.Windows.Forms.ListBox();
 			this.groupBox2 = new System.Windows.Forms.GroupBox();
+			this.cbFilter = new System.Windows.Forms.CheckBox();
+			this.bImport = new System.Windows.Forms.Button();
+			this.bLoad = new System.Windows.Forms.Button();
 			this.lCount = new System.Windows.Forms.Label();
 			this.tbCount = new System.Windows.Forms.TextBox();
 			this.bSave = new System.Windows.Forms.Button();
+			this.groupBox1 = new System.Windows.Forms.GroupBox();
+			this.tbFilterGrabber = new System.Windows.Forms.TextBox();
+			this.rbGrabber = new System.Windows.Forms.RadioButton();
+			this.rbRegex = new System.Windows.Forms.RadioButton();
+			this.tbFilterRegex = new System.Windows.Forms.TextBox();
 			this.gbChannelDetails = new System.Windows.Forms.GroupBox();
 			this.tbValid = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
@@ -134,15 +152,15 @@ namespace WebEPG_conf
 			this.gbGrabber = new System.Windows.Forms.GroupBox();
 			this.lbGrabbers = new System.Windows.Forms.ListBox();
 			this.importFile = new System.Windows.Forms.OpenFileDialog();
-			this.bLoad = new System.Windows.Forms.Button();
 			this.groupBox2.SuspendLayout();
+			this.groupBox1.SuspendLayout();
 			this.gbChannelDetails.SuspendLayout();
 			this.gbGrabber.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// bAdd
 			// 
-			this.bAdd.Location = new System.Drawing.Point(8, 368);
+			this.bAdd.Location = new System.Drawing.Point(8, 400);
 			this.bAdd.Name = "bAdd";
 			this.bAdd.Size = new System.Drawing.Size(72, 24);
 			this.bAdd.TabIndex = 12;
@@ -150,28 +168,56 @@ namespace WebEPG_conf
 			// 
 			// lbChannels
 			// 
-			this.lbChannels.Location = new System.Drawing.Point(32, 32);
+			this.lbChannels.Location = new System.Drawing.Point(16, 24);
 			this.lbChannels.Name = "lbChannels";
-			this.lbChannels.Size = new System.Drawing.Size(168, 277);
+			this.lbChannels.Size = new System.Drawing.Size(256, 264);
 			this.lbChannels.TabIndex = 10;
 			// 
 			// groupBox2
 			// 
+			this.groupBox2.Controls.Add(this.cbFilter);
+			this.groupBox2.Controls.Add(this.bImport);
 			this.groupBox2.Controls.Add(this.bLoad);
 			this.groupBox2.Controls.Add(this.lCount);
 			this.groupBox2.Controls.Add(this.tbCount);
 			this.groupBox2.Controls.Add(this.bSave);
+			this.groupBox2.Controls.Add(this.lbChannels);
+			this.groupBox2.Controls.Add(this.groupBox1);
 			this.groupBox2.Location = new System.Drawing.Point(16, 8);
 			this.groupBox2.Name = "groupBox2";
-			this.groupBox2.Size = new System.Drawing.Size(200, 400);
+			this.groupBox2.Size = new System.Drawing.Size(280, 432);
 			this.groupBox2.TabIndex = 13;
 			this.groupBox2.TabStop = false;
 			this.groupBox2.Text = "Channels";
 			this.groupBox2.Enter += new System.EventHandler(this.groupBox2_Enter);
 			// 
+			// cbFilter
+			// 
+			this.cbFilter.Location = new System.Drawing.Point(24, 320);
+			this.cbFilter.Name = "cbFilter";
+			this.cbFilter.Size = new System.Drawing.Size(48, 14);
+			this.cbFilter.TabIndex = 20;
+			this.cbFilter.Text = "Filter";
+			// 
+			// bImport
+			// 
+			this.bImport.Location = new System.Drawing.Point(8, 400);
+			this.bImport.Name = "bImport";
+			this.bImport.Size = new System.Drawing.Size(72, 24);
+			this.bImport.TabIndex = 19;
+			this.bImport.Text = "Import";
+			// 
+			// bLoad
+			// 
+			this.bLoad.Location = new System.Drawing.Point(104, 400);
+			this.bLoad.Name = "bLoad";
+			this.bLoad.Size = new System.Drawing.Size(72, 24);
+			this.bLoad.TabIndex = 18;
+			this.bLoad.Text = "Reload all";
+			// 
 			// lCount
 			// 
-			this.lCount.Location = new System.Drawing.Point(104, 312);
+			this.lCount.Location = new System.Drawing.Point(104, 292);
 			this.lCount.Name = "lCount";
 			this.lCount.Size = new System.Drawing.Size(80, 16);
 			this.lCount.TabIndex = 1;
@@ -179,7 +225,7 @@ namespace WebEPG_conf
 			// 
 			// tbCount
 			// 
-			this.tbCount.Location = new System.Drawing.Point(16, 304);
+			this.tbCount.Location = new System.Drawing.Point(16, 288);
 			this.tbCount.Name = "tbCount";
 			this.tbCount.Size = new System.Drawing.Size(72, 20);
 			this.tbCount.TabIndex = 0;
@@ -187,11 +233,57 @@ namespace WebEPG_conf
 			// 
 			// bSave
 			// 
-			this.bSave.Location = new System.Drawing.Point(112, 368);
+			this.bSave.Location = new System.Drawing.Point(200, 400);
 			this.bSave.Name = "bSave";
 			this.bSave.Size = new System.Drawing.Size(72, 24);
 			this.bSave.TabIndex = 16;
 			this.bSave.Text = "Save";
+			// 
+			// groupBox1
+			// 
+			this.groupBox1.Controls.Add(this.tbFilterGrabber);
+			this.groupBox1.Controls.Add(this.rbGrabber);
+			this.groupBox1.Controls.Add(this.rbRegex);
+			this.groupBox1.Controls.Add(this.tbFilterRegex);
+			this.groupBox1.Location = new System.Drawing.Point(16, 320);
+			this.groupBox1.Name = "groupBox1";
+			this.groupBox1.Size = new System.Drawing.Size(256, 72);
+			this.groupBox1.TabIndex = 22;
+			this.groupBox1.TabStop = false;
+			// 
+			// tbFilterGrabber
+			// 
+			this.tbFilterGrabber.Location = new System.Drawing.Point(72, 40);
+			this.tbFilterGrabber.Name = "tbFilterGrabber";
+			this.tbFilterGrabber.Size = new System.Drawing.Size(176, 20);
+			this.tbFilterGrabber.TabIndex = 24;
+			this.tbFilterGrabber.Text = "";
+			// 
+			// rbGrabber
+			// 
+			this.rbGrabber.Location = new System.Drawing.Point(8, 40);
+			this.rbGrabber.Name = "rbGrabber";
+			this.rbGrabber.Size = new System.Drawing.Size(64, 24);
+			this.rbGrabber.TabIndex = 23;
+			this.rbGrabber.Text = "Grabber";
+			// 
+			// rbRegex
+			// 
+			this.rbRegex.Checked = true;
+			this.rbRegex.Location = new System.Drawing.Point(8, 16);
+			this.rbRegex.Name = "rbRegex";
+			this.rbRegex.Size = new System.Drawing.Size(56, 24);
+			this.rbRegex.TabIndex = 22;
+			this.rbRegex.TabStop = true;
+			this.rbRegex.Text = "Regex";
+			// 
+			// tbFilterRegex
+			// 
+			this.tbFilterRegex.Location = new System.Drawing.Point(72, 16);
+			this.tbFilterRegex.Name = "tbFilterRegex";
+			this.tbFilterRegex.Size = new System.Drawing.Size(176, 20);
+			this.tbFilterRegex.TabIndex = 21;
+			this.tbFilterRegex.Text = "";
 			// 
 			// gbChannelDetails
 			// 
@@ -206,9 +298,9 @@ namespace WebEPG_conf
 			this.gbChannelDetails.Controls.Add(this.bAdd);
 			this.gbChannelDetails.Controls.Add(this.bRemove);
 			this.gbChannelDetails.Controls.Add(this.gbGrabber);
-			this.gbChannelDetails.Location = new System.Drawing.Point(224, 8);
+			this.gbChannelDetails.Location = new System.Drawing.Point(304, 8);
 			this.gbChannelDetails.Name = "gbChannelDetails";
-			this.gbChannelDetails.Size = new System.Drawing.Size(312, 400);
+			this.gbChannelDetails.Size = new System.Drawing.Size(312, 432);
 			this.gbChannelDetails.TabIndex = 14;
 			this.gbChannelDetails.TabStop = false;
 			this.gbChannelDetails.Text = "Channel Details";
@@ -241,7 +333,7 @@ namespace WebEPG_conf
 			// 
 			// bUpdate
 			// 
-			this.bUpdate.Location = new System.Drawing.Point(120, 368);
+			this.bUpdate.Location = new System.Drawing.Point(120, 400);
 			this.bUpdate.Name = "bUpdate";
 			this.bUpdate.Size = new System.Drawing.Size(72, 24);
 			this.bUpdate.TabIndex = 18;
@@ -281,7 +373,7 @@ namespace WebEPG_conf
 			// 
 			// bRemove
 			// 
-			this.bRemove.Location = new System.Drawing.Point(232, 368);
+			this.bRemove.Location = new System.Drawing.Point(232, 400);
 			this.bRemove.Name = "bRemove";
 			this.bRemove.Size = new System.Drawing.Size(72, 24);
 			this.bRemove.TabIndex = 17;
@@ -290,9 +382,9 @@ namespace WebEPG_conf
 			// gbGrabber
 			// 
 			this.gbGrabber.Controls.Add(this.lbGrabbers);
-			this.gbGrabber.Location = new System.Drawing.Point(8, 104);
+			this.gbGrabber.Location = new System.Drawing.Point(8, 128);
 			this.gbGrabber.Name = "gbGrabber";
-			this.gbGrabber.Size = new System.Drawing.Size(296, 256);
+			this.gbGrabber.Size = new System.Drawing.Size(296, 264);
 			this.gbGrabber.TabIndex = 15;
 			this.gbGrabber.TabStop = false;
 			this.gbGrabber.Text = "Grabber List";
@@ -301,34 +393,26 @@ namespace WebEPG_conf
 			// 
 			this.lbGrabbers.Location = new System.Drawing.Point(16, 24);
 			this.lbGrabbers.Name = "lbGrabbers";
-			this.lbGrabbers.Size = new System.Drawing.Size(264, 212);
+			this.lbGrabbers.Size = new System.Drawing.Size(264, 199);
 			this.lbGrabbers.TabIndex = 0;
 			// 
 			// importFile
 			// 
-			this.importFile.FileName = "ChannelList.xml";
+			this.importFile.FileName = "channels.xml";
 			this.importFile.Filter = "Xml Files (*.xml)|*.xml";
 			this.importFile.Title = "Import MP Channel File";
-			// 
-			// bLoad
-			// 
-			this.bLoad.Location = new System.Drawing.Point(16, 368);
-			this.bLoad.Name = "bLoad";
-			this.bLoad.Size = new System.Drawing.Size(72, 24);
-			this.bLoad.TabIndex = 18;
-			this.bLoad.Text = "Reload all";
 			// 
 			// fChannels
 			// 
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-			this.ClientSize = new System.Drawing.Size(552, 421);
+			this.ClientSize = new System.Drawing.Size(624, 461);
 			this.Controls.Add(this.gbChannelDetails);
-			this.Controls.Add(this.lbChannels);
 			this.Controls.Add(this.groupBox2);
 			this.MaximizeBox = false;
 			this.Name = "fChannels";
 			this.Text = "WebEPG Channel Config";
 			this.groupBox2.ResumeLayout(false);
+			this.groupBox1.ResumeLayout(false);
 			this.gbChannelDetails.ResumeLayout(false);
 			this.gbGrabber.ResumeLayout(false);
 			this.ResumeLayout(false);
@@ -382,6 +466,77 @@ namespace WebEPG_conf
 
 		private void DoEvent(Object source, EventArgs e)
 		{
+			if(source==cbFilter)
+				UpdateList("", -1);	
+
+			if(source==bImport)
+			{
+				Log.WriteFile(Log.LogType.Log, false, "WebEPG Config: Button: Import");
+				if (importFile.ShowDialog() != DialogResult.Cancel)
+				{
+					Log.WriteFile(Log.LogType.Log, false, "WebEPG Config: Importing channels: {0}", importFile.FileName);
+					MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml(importFile.FileName);
+					int channelCount = xmlreader.GetValueAsInt("ChannelInfo", "TotalChannels", 0);	
+
+					for (int ich = 0; ich < channelCount; ich++)
+					{
+						ChannelInfo channel = new ChannelInfo();
+						channel.ChannelID = xmlreader.GetValueAsString(ich.ToString(), "ChannelID", "");
+						channel.FullName = xmlreader.GetValueAsString(ich.ToString(), "FullName", "");
+						if(channel.FullName == "")
+							channel.FullName = channel.ChannelID;
+						if(channel.ChannelID != "")
+						{
+							ChannelInfo info = (ChannelInfo) ChannelList[channel.ChannelID];
+							if(info == null)
+							{
+								switch(MessageBox.Show("Add name of channel: " + channel.ChannelID +
+									"\nImport Name: " + channel.FullName,
+									"Channels Import",
+									MessageBoxButtons.YesNoCancel,
+									MessageBoxIcon.Information,
+									MessageBoxDefaultButton.Button2))
+								{
+									case DialogResult.Yes:
+										ChannelList.Add(channel.ChannelID, channel);
+										break;
+									case DialogResult.No:
+										break;
+									default:
+										UpdateList("", -1);	
+										return;
+								}
+							}
+							else
+							{
+								if(channel.FullName != info.FullName && channel.FullName != channel.ChannelID)
+								{
+									switch(MessageBox.Show("Replace name of channel: " + info.ChannelID +
+										"\nCurrent Name: " + info.FullName + "\nImport Name: " + channel.FullName,
+										"Channels Import",
+										MessageBoxButtons.YesNoCancel,
+										MessageBoxIcon.Information,
+										MessageBoxDefaultButton.Button1))
+									{
+										case DialogResult.Yes:
+											info.FullName = channel.FullName;
+											ChannelList.Remove(info.ChannelID);
+											ChannelList.Add(info.ChannelID, info);
+											break;
+										case DialogResult.No:
+											break;
+										default:
+											UpdateList("", -1);	
+											return;
+									}
+								}
+							}
+						}
+					}
+					UpdateList("", -1);	
+				}	
+			}
+
 			if(source==bSave)
 			{
 				Log.WriteFile(Log.LogType.Log, false, "WebEPG Config: Button: Save");
@@ -455,13 +610,14 @@ namespace WebEPG_conf
 
 			if(source==bLoad)
 			{
+				cbFilter.Checked = false;
 				string channel ="";
 				if(lbChannels.SelectedIndex > -1)
 				{
 					ChannelInfo info = (ChannelInfo) ChannelList.GetByIndex(lbChannels.SelectedIndex);
 					channel = info.ChannelID;
 				}
-				Load();
+				LoadConfig();
 				UpdateList(channel, -1);
 			}
 
@@ -470,7 +626,7 @@ namespace WebEPG_conf
 				Log.WriteFile(Log.LogType.Log, false, "WebEPG Config: Button: Remove");
 				if(lbChannels.SelectedIndex != -1)
 				{
-					ChannelList.RemoveAt(lbChannels.SelectedIndex);
+					ChannelList.Remove(lbChannels.SelectedValue);
 					UpdateList("", lbChannels.SelectedIndex);
 				}
 			}
@@ -479,24 +635,25 @@ namespace WebEPG_conf
 			{
 				Log.WriteFile(Log.LogType.Log, false, "WebEPG Config: Button: Add");
 				ChannelInfo info = new ChannelInfo();
-
-				while(ChannelList[info.DisplayName] != null)
-					info.DisplayName+="*";
+//
+//				while(ChannelList[info.DisplayName] != null)
+//					info.DisplayName+="*";
 
 				info.FullName = tbChannelName.Text;
 				info.ChannelID = tbChannelID.Text;
 				
-				ChannelList.Add(info.DisplayName, info);
-				UpdateList(info.DisplayName, -1);
+				ChannelList.Add(info.ChannelID, info);
+				UpdateList(info.ChannelID, -1);
 			}
 
 			if(source==lbChannels)
 			{
 				if(lbChannels.SelectedIndex > -1)
 				{
-					ChannelInfo info = (ChannelInfo) ChannelList.GetByIndex(lbChannels.SelectedIndex);
+					ChannelInfo info = (ChannelInfo) ChannelList[lbChannels.SelectedItem]; //.GetByIndex(lbChannels.SelectedIndex);
 					tbChannelID.Text = info.ChannelID;
 					tbChannelName.Text = info.FullName;
+//					tbImportName.Text = info.ImportName;
 					int index;
 					if((index = info.ChannelID.IndexOf("@")) != -1)
 						tbURL.Text = info.ChannelID.Substring(index+1);
@@ -555,12 +712,13 @@ namespace WebEPG_conf
 		{
 			if(lbChannels.SelectedIndex != -1)
 			{
-				ChannelInfo info = (ChannelInfo) ChannelList.GetByIndex(lbChannels.SelectedIndex);
+				ChannelInfo info = (ChannelInfo) ChannelList[lbChannels.SelectedValue];
 
 				info.FullName = tbChannelName.Text;
 				info.ChannelID = tbChannelID.Text;
 
-				ChannelList.SetByIndex(lbChannels.SelectedIndex, info);
+				ChannelList.Remove(info.ChannelID);
+				ChannelList.Add(info.ChannelID, info);
 			}
 		}
 
@@ -568,13 +726,14 @@ namespace WebEPG_conf
 		{
 			if(lbChannels.SelectedIndex != -1)
 			{
-				ChannelList.RemoveAt(lbChannels.SelectedIndex);
+//				ChannelList.RemoveAt(lbChannels.SelectedIndex);
 
-				ChannelInfo info = new ChannelInfo();
+				ChannelInfo info = (ChannelInfo) ChannelList[lbChannels.SelectedValue];
 
 				info.FullName = tbChannelName.Text;
 				info.ChannelID = tbChannelID.Text;
 
+				ChannelList.Remove(info.ChannelID);
 				ChannelList.Add(info.ChannelID, info);
 
 				UpdateList(info.ChannelID, -1);
@@ -796,12 +955,51 @@ namespace WebEPG_conf
 			while (Enumerator.MoveNext())
 			{
 				ChannelInfo channel = (ChannelInfo) Enumerator.Value;
-				if(channel.ChannelID == select)
-					selectedIndex=i;
-				list[i++] = channel.ChannelID;
+				if(cbFilter.Checked)
+				{
+					if(rbRegex.Checked)
+					{
+						Match result = null;
+						try
+						{
+							Regex searchRegex = new Regex(tbFilterRegex.Text);
+							result = searchRegex.Match(channel.ChannelID);
+						}
+						catch(System.ArgumentException ex)
+						{
+							Log.WriteFile(Log.LogType.Log, true, "WebEPG Config: Regex error: {0}", ex.ToString());
+						}
+						if(result.Success)
+						{
+							if(channel.ChannelID == select)
+								selectedIndex=i;
+							list[i++] = channel.ChannelID;
+						}
+					}
+
+					if(rbGrabber.Checked)
+					{
+						if(channel.GrabberList != null &&
+							channel.GrabberList[tbFilterGrabber.Text] != null)
+						{
+							if(channel.ChannelID == select)
+								selectedIndex=i;
+							list[i++] = channel.ChannelID;
+						}
+					}
+				}
+				else
+				{
+					if(channel.ChannelID == select)
+						selectedIndex=i;
+					list[i++] = channel.ChannelID;
+				}
 			}
-			tbCount.Text = ChannelList.Count.ToString();
-			lbChannels.DataSource = list;
+			tbCount.Text = i.ToString(); //ChannelList.Count.ToString();
+			string[] datasource = new string[i];
+			for(int c=0; c<i; c++)
+				datasource[c] = list[c];
+			lbChannels.DataSource = datasource;
 			if(selectedIndex > 0)
 				lbChannels.SelectedIndex = selectedIndex;
 			if(index > 0)
@@ -812,37 +1010,45 @@ namespace WebEPG_conf
 			}
 		}
 
-		private void Load()
+		private void LoadConfig()
 		{
-			ChannelList = new SortedList();
+			ChannelsList ConfigInfo = new ChannelsList(startDirectory);
+			string[] countries = ConfigInfo.GetCountries();
+			ChannelList = ConfigInfo.GetChannelsList();
 
-			if(System.IO.File.Exists(startDirectory + "\\channels\\channels.xml"))
-			{
-				Log.WriteFile(Log.LogType.Log, false, "WebEPG Config: Loading Existing channels.xml");
-				MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml(startDirectory + "\\channels\\channels.xml");
-				int channelCount = xmlreader.GetValueAsInt("ChannelInfo", "TotalChannels", 0);	
-
-				for (int ich = 0; ich < channelCount; ich++)
-				{
-					ChannelInfo channel = new ChannelInfo();
-					channel.ChannelID = xmlreader.GetValueAsString(ich.ToString(), "ChannelID", "");
-					channel.FullName = xmlreader.GetValueAsString(ich.ToString(), "FullName", "");
-					if(channel.FullName == "")
-						channel.FullName = channel.ChannelID;
-					if(channel.ChannelID != "")
-						ChannelList.Add(channel.ChannelID, channel);
-				}
-			}
-
-			
-			Log.WriteFile(Log.LogType.Log, false, "WebEPG Config: Loading Grabbers");
-			hGrabberInfo = new Hashtable();
 			CountryList = new SortedList();
-			//tGrabbers = new TreeNode("Web Sites");
-			if(System.IO.Directory.Exists(startDirectory + "\\Grabbers"))
-				GetTreeGrabbers(startDirectory + "\\Grabbers");
-			else
-				Log.WriteFile(Log.LogType.Log, true, "WebEPG Config: Cannot find grabbers directory");
+			for(int i=0; i < countries.Length; i++)
+				CountryList.Add(countries[i], new SortedList());
+				
+//			ChannelList = new SortedList();
+//
+//			if(System.IO.File.Exists(startDirectory + "\\channels\\channels.xml"))
+//			{
+//				Log.WriteFile(Log.LogType.Log, false, "WebEPG Config: Loading Existing channels.xml");
+//				MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml(startDirectory + "\\channels\\channels.xml");
+//				int channelCount = xmlreader.GetValueAsInt("ChannelInfo", "TotalChannels", 0);	
+//
+//				for (int ich = 0; ich < channelCount; ich++)
+//				{
+//					ChannelInfo channel = new ChannelInfo();
+//					channel.ChannelID = xmlreader.GetValueAsString(ich.ToString(), "ChannelID", "");
+//					channel.FullName = xmlreader.GetValueAsString(ich.ToString(), "FullName", "");
+//					if(channel.FullName == "")
+//						channel.FullName = channel.ChannelID;
+//					if(channel.ChannelID != "")
+//						ChannelList.Add(channel.ChannelID, channel);
+//				}
+//			}
+//
+//			
+//			Log.WriteFile(Log.LogType.Log, false, "WebEPG Config: Loading Grabbers");
+//			hGrabberInfo = new Hashtable();
+//			CountryList = new SortedList();
+//			//tGrabbers = new TreeNode("Web Sites");
+//			if(System.IO.Directory.Exists(startDirectory + "\\Grabbers"))
+//				GetTreeGrabbers(startDirectory + "\\Grabbers");
+//			else
+//				Log.WriteFile(Log.LogType.Log, true, "WebEPG Config: Cannot find grabbers directory");
 
 			//
 			// TODO: Add any constructor code after InitializeComponent call

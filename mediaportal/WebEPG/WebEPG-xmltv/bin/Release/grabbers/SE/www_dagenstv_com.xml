@@ -82,8 +82,8 @@
     	<entry name="tvfinland@yle.fi">29</entry>		<!-- TV Finland -->
     	<entry name="tv1@yle.fi">31</entry>			<!-- YLE TV1 -->
     	<entry name="tv2@yle.fi">36</entry>			<!-- TLE TV2 -->
-    	<entry name="mtv3.fi">39</entry>			<!-- MTV3 -->
-    	<entry name="nelonen.fi">189</entry>			<!-- Nelonen -->
+    	<entry name="mtv3@mtv3.fi">39</entry>			<!-- MTV3 -->
+    	<entry name="nelonen@nelonen.fi">189</entry>		<!-- Nelonen -->
     	<entry name="fst@yle.fi">219</entry>			<!-- FST -->
     	<entry name="yle24@yle.fi">220</entry>			<!-- YLE24 -->
     	<entry name="yleteema@yle.fi">221</entry>		<!-- YLE Teema -->

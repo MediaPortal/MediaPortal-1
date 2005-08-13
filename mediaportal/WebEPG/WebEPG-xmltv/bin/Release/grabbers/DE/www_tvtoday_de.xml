@@ -84,9 +84,9 @@
     <entry name="exrta@ard-digital.de">extra</entry>	<!-- Eins Extra -->
     <entry name="fest@ard-digital.de">festival</entry>	<!-- Eins Festival -->
     <entry name="muxx@ard-digital.de">muxx</entry>	<!-- Eins MUXX -->
-    <entry name="doku@zdf.de">doku</entry>		<!-- ZDF Doku -->
-    <entry name="info@zdf.de">info</entry>		<!-- ZDF Info -->
-    <entry name="theater@zdf.de">theater</entry>	<!-- ZDF Theater -->
+    <entry name="zdfdoku@zdf.de">doku</entry>		<!-- ZDF Doku -->
+    <entry name="zdfinfo@zdf.de">info</entry>		<!-- ZDF Info -->
+    <entry name="zdftheater@zdf.de">theater</entry>	<!-- ZDF Theater -->
 
 <!-- Schweiz -->
     <entry name="sf1@sfdrs.ch">SF1</entry>		<!-- SF 1 -->
@@ -137,7 +137,7 @@
     <entry name="Start">&#60;!--LISTING ANFANG--&#62;</entry>
 
 <!-- Unique Listing End string -->
-    <entry name="End">&#60;!--LISTING ENDE--&#62;</entry>
+    <entry name="End">&#60;!--INHALT ENDE--&#62;</entry>
 
 <!-- Template of the Listing information -->
     <entry name="Template">

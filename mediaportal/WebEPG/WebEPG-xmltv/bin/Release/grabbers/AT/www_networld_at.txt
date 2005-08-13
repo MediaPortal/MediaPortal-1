@@ -1,7 +1,7 @@
 
+http://www.networld.at/index.html?/nw1/dyn/mixed/tvprogramm/index.php?tag=1&stunde=ganzer&sparte=alle&sender=28
 
-http://www.networld.at/index.html?/nw1/dyn/mixed/tvprogramm/index.php?tag=3&stunde=ganzer&sparte=alle&ch=47
-
+data using <dt> <dd> tags
 
 
 <option value="28" selected>ORF 1

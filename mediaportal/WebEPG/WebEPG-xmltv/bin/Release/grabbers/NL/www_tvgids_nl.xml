@@ -13,17 +13,18 @@
 	<entry name="yorin.nl">46</entry>			<!-- Yorin -->
 	<entry name="sbs6.sbs.nl">36</entry>			<!-- SBS 6 -->
 	<entry name="net5.sbs.nl">37</entry>			<!-- NET 5 -->
-	<entry name="eeacute@tvgids.nl">5</entry>		<!-- E&eacute;n -->
-	<entry name="at5.nl">40</entry>				<!-- AT 5 -->
+	<entry name="veronica.sbs.nl">34</entry>		<!-- Veronica -->
+	<entry name="een.be">5</entry>				<!-- een -->	
 	<entry name="bvn.nl">90</entry>				<!-- BVN -->
-	<entry name="blauw@canalplus.nl">39</entry>		<!-- Canal+ Blauw -->
-	<entry name="geel@canalplus.nl">107</entry>		<!-- Canal+ Geel -->
-	<entry name="rood@canalplus.nl">24</entry>		<!-- Canal+ Rood -->
+	<entry name="canal+blauw@canalplus.nl">39</entry>	<!-- Canal+ Blauw -->
+	<entry name="canal+geel@canalplus.nl">107</entry>	<!-- Canal+ Geel -->
+	<entry name="canal+rood@canalplus.nl">24</entry>	<!-- Canal+ Rood -->
 	<entry name="l1.nl">115</entry>				<!-- L1 TV -->
-	<entry name="mezzo.nl">73</entry>			<!-- Mezzo -->
+	<entry name="mezzo.tv">73</entry>			<!-- Mezzo -->
 
 
 <!-- NederLand - Regional -->
+	<entry name="at5.nl">40</entry>				<!-- AT 5 -->
 	<entry name="rtvutrecht.nl">100</entry>			<!-- Regio TV Utrecht -->
 	<entry name="omroepbrabant.nl">114</entry>		<!-- Omroep Brabant TV -->
 	<entry name="omroepzeeland.nl">116</entry>		<!-- Omroep Zeeland -->

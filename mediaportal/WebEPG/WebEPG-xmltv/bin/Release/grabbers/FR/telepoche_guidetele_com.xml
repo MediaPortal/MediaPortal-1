@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 
 <profile>
 
@@ -6,8 +6,176 @@
 
   <section name="ChannelList">
 
-    <entry name="tf1.fr">1</entry>		<!-- TF1 -->
+    <entry name="tf1.fr">1</entry>
+    <entry name="france2.fr">2</entry>
+    <entry name="france3.fr">3</entry>
+    <entry name="cplus.fr">4</entry>
+    <entry name="arte-tv.com">5</entry>
+    <entry name="m6.fr">6</entry>
+    <entry name="france5.fr">7</entry>
+    <entry name="rtl9.com">8</entry>
+    <entry name="tmc.tv">9</entry>
+    
+    <entry name="tv5.org">10</entry>
+    <entry name="parispremiere@m6.fr">11</entry>
+    <entry name="eurosport.fr">12</entry>
+    <entry name="serieclub@m6.fr">13</entry>
+    <entry name="planete@planete.com">14</entry>
+    <entry name="odyssee.com">15</entry>
+    <entry name="voyage.fr">16</entry>
+    <entry name="histoire.fr">17</entry>
+    <entry name="disneychannel@disney.fr">18</entry>
+    <entry name="teletoon.fr">19</entry>
+    
+    <entry name="jetix@canalsat.fr">20</entry>
+    <entry name="canalj.net">21</entry>
+    <entry name="canaljimmy.fr">22</entry>
+    <entry name="cinetoile@tps.fr">23</entry>
+    <entry name="cinestar@tps.fr">26</entry>
+    <entry name="homecinema@tps.fr">27</entry>
+    <entry name="france4.tv">28</entry>
+    <entry name="mezzo.tv">29</entry>
+    
+    <entry name="mcm@mcm.fr">30</entry>
+    <entry name="mtv.fr">31</entry>
+    <entry name="funtv@m6.fr">33</entry>
+    <entry name="teva@m6.fr">34</entry>
+    <entry name="la1.be">35</entry>		<!-- RTBF1 -->
+    <entry name="bbcprime.com">36</entry>
+    <entry name="tsr1@tsr.ch">37</entry>
+    <entry name="w9.fr">38</entry>
+    <entry name="13emerue.fr">39</entry>
+    
+    <entry name="ab1tv.fr">40</entry>
+    <entry name="raiuno.rai.it">42</entry>
+    <entry name="raidue.rai.it">43</entry>
+    <entry name="zdf.de">44</entry>
+    <entry name="tve1@tve.es">45</entry>
+    <entry name="seasons.fr">47</entry>
+    <entry name="sport+@canalsat.fr">48</entry>
+    <entry name="franceo.rfo.fr">49</entry>		<!-- France Ô -->
+    
+    <entry name="animauxtv.fr">50</entry>
+    <entry name="comedie.com">51</entry>
+    <entry name="multivision1@tps.fr">52</entry>
+    <entry name="multivision2@tps.fr">53</entry>
+    <entry name="tvi@rtl.be">54</entry>
+    <entry name="multivision3@tps.fr">55</entry>
+    <entry name="multivision4@tps.fr">56</entry>
+    <entry name="multivision5@tps.fr">57</entry>
+    <entry name="multivision6@tps.fr">58</entry>
+    <entry name="multivision7@tps.fr">59</entry>
+    
+    <entry name="kiosque1@canalsat.fr">60</entry>
+    <entry name="kiosque2@canalsat.fr">61</entry>
+    <entry name="kiosque3@canalsat.fr">62</entry>
+    <entry name="kiosque4@canalsat.fr">63</entry>
+    <entry name="kiosque5@canalsat.fr">64</entry>
+    <entry name="kiosque6@canalsat.fr">65</entry>
+    <entry name="kiosque7@canalsat.fr">66</entry>
+    <entry name="kiosque8@canalsat.fr">67</entry>
+    <entry name="kiosque9@canalsat.fr">68</entry>
+    <entry name="kiosque10@canalsat.fr">69</entry>
+    
+    <entry name="canalcinema@canalsat.fr">71</entry>
+    <entry name="cplusdecale@canalsat.fr">72</entry>	<!-- Canal+ décalé -->
+    <entry name="cplussport@canalsat.fr">73</entry>		<!-- Canal+ Sport -->
 
+    <entry name="rtp.pt">78</entry>		<!-- RTPI -->
+    <entry name="bbcworld.com">79</entry>
+    
+    <entry name="mangas.fr">80</entry>
+    <entry name="escalestv.fr">81</entry>
+    <entry name="ard.de">83</entry>>
+    <entry name="1@betv.be">87</entry>
+    <entry name="cartoonnetwork.fr">88</entry>
+    <entry name="club@rtl.be">89</entry>
+    
+    <entry name="1@vrt.be">93</entry>
+    <entry name="rtl.be">95</entry>
+    <entry name="abmoteurs.fr">98</entry>
+
+    <entry name="xxltv.fr">100</entry>
+    <entry name="ladeux.be">104</entry>		<!-- RTBF 2 -->
+    <entry name="SWF">105</entry>		<!-- ??? -->
+    <entry name="tsr2@tsr.ch">107</entry>
+    <entry name="tsi1@rtsi.ch">108</entry>		<!-- ??? -->
+    <entry name="DRS">109</entry>		<!-- ??? -->
+
+    <entry name="chasseetpechetv.com">113</entry>
+    <entry name="cineculte@tps.fr">114</entry>
+    <entry name="tmc.tv">115</entry>
+    <entry name="equidia.fr">116</entry>
+    <entry name="lequipetv.fr">117</entry>
+    <entry name="lci.fr">118</entry>
+
+    <entry name="cnn.com">120</entry>
+    <entry name="euronews.net">121</entry>
+    <entry name="itelevision.fr">122</entry>
+    <entry name="gameone.boomtown.net">124</entry>
+    <entry name="tf6.fr">125</entry>
+    <entry name="tvbreizh.fr">126</entry>
+
+    <entry name="tpsstar@tps.fr">130</entry>	<!-- TPS Stars -->
+    <entry name="action@tps.fr">131</entry>
+    <entry name="ab3.be">132</entry>
+    <entry name="match-tv.fr">133</entry>
+    <entry name="ngcfrance.tv">134</entry>				<!-- National Geographic -->
+    <entry name="cinepremier@canalsat.fr">135</entry>	<!-- Ciné Premier -->
+    <entry name="cineemotion@canalsat.fr">136</entry>	<!-- Ciné Emotion -->
+    <entry name="cinefrisson@canalsat.fr">137</entry>	<!-- Ciné Frisson -->
+    <entry name="cinefamiz@canalsat.fr">138</entry>		<!-- Ciné Famiz -->
+    <entry name="cineauteur@canalsat.fr">139</entry>	<!-- Ciné Auteur -->
+
+    <entry name="cineclassic@canalsat.fr">140</entry>	<!-- Ciné Classic -->
+    <entry name="planete-thalassa@planete.com">141</entry>
+    <entry name="ab4@absat.fr">142</entry>
+    <entry name="cine2@betv.be">143</entry>
+    <entry name="cine1@betv.be">144</entry>
+    <entry name="cinebox@absat.fr">146</entry>
+    <entry name="cinepolar@absat.fr">147</entry>
+    <entry name="cinefx@absat.fr">148</entry>
+
+    <entry name="cinefamily@tps.fr">150</entry>	<!-- TPS Cinéfamily -->
+    <entry name="cinextreme@tps.fr">151</entry>	<!-- TPS Cinextreme -->
+    <entry name="plug@rtl.be">152</entry>
+    <entry name="espn.com">155</entry>
+    <entry name="toutelhistoire.com">159</entry>
+
+    <entry name="mcmpop@mcm.fr">160</entry>
+    <entry name="trace.tv">161</entry>			<!-- Trace TV -->
+    <entry name="bloomberg.co.uk">162</entry>
+    <entry name="ftv.fr">163</entry>
+    <entry name="boomerang@tps.fr">164</entry>
+    <entry name="discoverychannel.fr">165</entry>
+    <entry name="pinktv.fr">166</entry>
+    <entry name="direct8.fr">167</entry>
+    <entry name="nt1.tv">168</entry>
+    <entry name="nrj12.fr">169</entry>
+
+    <entry name="lcp@assemblee-nat.fr">170</entry>	<!-- La chaîne parlementaire -->
+    <entry name="piwi@tps.fr">171</entry>
+    <entry name="Entertainment">172</entry>		<!-- ??? -->
+    <entry name="2m.tv">173</entry>
+    <entry name="AlgerianTV">174</entry>		<!-- ??? -->
+    <entry name="canale5.com">175</entry>
+    <entry name="cnbceurope.com">176</entry>
+    <entry name="cuisine.tv">177</entry>
+    <entry name="extreme.com">178</entry>
+    <entry name="fillestv.com">179</entry>
+
+    <entry name="musicblack@m6musichits.m6.fr">180</entry>		<!-- M6 Music Black -->
+    <entry name="ma-planete@planete.com">182</entry>
+    <entry name="motorstv.com">183</entry>
+    <entry name="nba+@canalsat.fr">184</entry>
+    <entry name="Sailing">185</entry>			<!-- ??? -->
+    <entry name="Télif">186</entry>
+    <entry name="tfou.fr">187</entry>			<!-- ??? -->
+    <entry name="toon@disney.fr">188</entry>	<!-- Toon Disney -->
+    <entry name="vh1.com">189</entry>
+
+    <entry name="infosport.tm.fr">190</entry>
+    <entry name="m6musichits.m6.fr">191</entry>	<!-- M6 Music Hits -->
 
   </section>
 

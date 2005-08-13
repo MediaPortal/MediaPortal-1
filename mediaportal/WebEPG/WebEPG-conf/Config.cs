@@ -654,6 +654,7 @@ namespace WebEPG_conf
 								{
 									ChannelInfo channel = new ChannelInfo();
 									channel.DisplayName = name;
+									channel.Linked = false;
 									ChannelList.Add(name, channel);
 								}
 							}
@@ -773,8 +774,10 @@ namespace WebEPG_conf
 							tbGrabDays.Text = gInfo.GrabDays.ToString();
 							tbSiteDescription.Text = gInfo.SiteDesc;
 							gbLinked.Visible = gInfo.Linked;
+							nStart.Value = 18;
+							nEnd.Value = 23;
 
-							if(info.Linked)
+							if(gInfo.Linked)
 							{
 								cbLinked.Checked = info.Linked;
 								nStart.ReadOnly = !cbLinked.Checked;
@@ -1250,11 +1253,8 @@ namespace WebEPG_conf
 							channel.PrimaryGrabberName = GrabberSite;
 							channel.PrimaryGrabberID = GrabberID;
 							channel.Linked = xmlreader.GetValueAsBool(i.ToString(), "Grabber1-Linked", false);
-							if(channel.Linked)
-							{
-								channel.linkStart = xmlreader.GetValueAsInt(i.ToString(), "Grabber1-Start", 18);
-								channel.linkEnd = xmlreader.GetValueAsInt(i.ToString(), "Grabber1-End", 23);
-							}
+							channel.linkStart = xmlreader.GetValueAsInt(i.ToString(), "Grabber1-Start", 18);
+							channel.linkEnd = xmlreader.GetValueAsInt(i.ToString(), "Grabber1-End", 23);
 
 							ChannelList.Add(channel.DisplayName, channel);
 						}

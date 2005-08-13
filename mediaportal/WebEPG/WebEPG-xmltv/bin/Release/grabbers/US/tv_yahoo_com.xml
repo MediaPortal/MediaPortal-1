@@ -6,15 +6,14 @@
 
   <section name="ChannelList">
 
-    	<entry name="nbc.com">us_KJRH</entry>		<!-- NBC2 (KJRH) -->
-
+	<entry name="mtv.com">id=166030899&amp;lineup=us_Eastern&amp;channels=us_MTV</entry>
 
   </section>
 
 <!-- Formating of Listing -->
   <section name="Listing">
     <entry name="BaseURL">http://tv.yahoo.com</entry>
-    <entry name="SearchURL">/tvpdb?d=tvs&amp;id=166030587&amp;lineup=us_DMA671&amp;channels=#ID&amp;.intl=us&amp;startdate=#EPOCH_TIME</entry>
+    <entry name="SearchURL">/tvpdb?d=tvs&amp;#ID&amp;.intl=us&amp;startdate=#EPOCH_TIME</entry>
 
 <!-- Unique Listing Start string -->
     <entry name="Start">TV Listings</entry>

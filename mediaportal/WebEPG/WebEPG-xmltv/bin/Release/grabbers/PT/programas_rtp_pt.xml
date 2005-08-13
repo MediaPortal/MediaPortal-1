@@ -6,7 +6,7 @@
 
   <section name="ChannelList">
 
-    <entry name="rtp.pt">1</entry>		<!-- RTP1 -->
+    <entry name="rtp1@rtp.pt">1</entry>		<!-- RTP1 -->
 
 
   </section>

@@ -49,16 +49,19 @@ namespace MediaPortal.EPG
 			string m_strSubtitles;
 			string m_strEpNum;
 			string m_strEpTotal;
+			string[] m_strDayNames = null;
 			bool m_grabLinked;
             bool m_monthLookup;
 			bool m_searchRegex;
 			bool m_searchRemove;
+			bool m_listingStart;
 			int m_linkStart;
 			int m_linkEnd;
             int m_maxListingCount;
 			int m_offsetStart;
 			int m_LastStart;
 			int m_grabDelay;
+			int m_guideDays;
 			bool m_bNextDay;			
             Profiler m_templateProfile;
 			//Parser m_templateParser;
@@ -100,6 +103,7 @@ namespace MediaPortal.EPG
 				m_grabDelay = m_xmlreader.GetValueAsInt("Listing", "GrabDelay", 1000);
                 m_maxListingCount = m_xmlreader.GetValueAsInt("Listing", "MaxCount", 0);
 				m_offsetStart = m_xmlreader.GetValueAsInt("Listing", "OffsetStart", 0);
+				m_guideDays = m_xmlreader.GetValueAsInt("Info", "GuideDays", 0);
 
                 string ListingType = m_xmlreader.GetValueAsString("Listing", "ListingType", "");
 
@@ -167,6 +171,15 @@ namespace MediaPortal.EPG
 							{
 								m_templateSubProfile = new HTMLProfiler(sublistingTemplate, bSubAhrefs, strSubStart, strSubEnd);
 							}
+						}
+
+						string firstDay = m_xmlreader.GetValueAsString("DayNames", "0", "");
+						if(firstDay != "" && m_guideDays != 0)
+						{
+							m_strDayNames = new string[m_guideDays];
+							m_strDayNames[0] = firstDay;
+							for(int i=1; i < m_guideDays; i++)
+								m_strDayNames[i] = m_xmlreader.GetValueAsString("DayNames", i.ToString(), "");
 						}
 						break;
                 }
@@ -267,6 +280,13 @@ namespace MediaPortal.EPG
 					}
 				}
 
+				if(m_listingStart && guideData.StartTime[0] >= 20)
+				{
+					m_listingStart=false;
+					return null;
+				}
+				m_listingStart=false;
+
 				if(!m_bNextDay && m_LastStart > guideData.StartTime[0])
 					m_bNextDay=true;
 
@@ -297,49 +317,33 @@ namespace MediaPortal.EPG
 					&& guideData.StartTime[0] <= m_linkEnd
 					&& htmlProf != null)
 				{
-					string strLinkURL = htmlProf.GetHyperLink(index, m_SubListingLink);
-//					source = guideProfile.GetSource(index);
-//
-//					int pos=0;
-//					string strLinkURL="";
-//					while((pos = source.IndexOf("<a href=", pos))!=-1)
-//					{
-//						pos+=9;
-//						int endIndex = source.IndexOf("\"", pos);
-//						if(endIndex != -1)
-//						{
-//							strLinkURL = source.Substring(pos, endIndex-pos);
-//							if(strLinkURL.IndexOf(m_SubListingLink) != -1)
-//								break;
-//						}
-//						strLinkURL="";
-//
-//					}
-					if(strLinkURL != "")
+				string strLinkURL = htmlProf.GetHyperLink(index, m_SubListingLink);
+
+				if(strLinkURL != "")
+				{
+					string link = m_strURLbase;
+					if(strLinkURL.ToLower().IndexOf("http") != -1)
+						link = strLinkURL;
+					else
+						link += strLinkURL;
+					Log.WriteFile(Log.LogType.Log, false, "WebEPG: Reading {0}", link);
+					Thread.Sleep(m_grabDelay);
+					Profiler SubProfile = m_templateSubProfile.GetPageProfiler(link); 
+					int Count = SubProfile.subProfileCount(); 
+
+					if(Count > 0)
 					{
-						string link = m_strURLbase;
-						if(strLinkURL.ToLower().IndexOf("http") != -1)
-							link = strLinkURL;
-						else
-							link += strLinkURL;
-						Log.WriteFile(Log.LogType.Log, false, "WebEPG: Reading {0}", link);
-						Thread.Sleep(m_grabDelay);
-						Profiler SubProfile = m_templateSubProfile.GetPageProfiler(link); 
-						int Count = SubProfile.subProfileCount(); 
+						ProgramData SubData = SubProfile.GetProgramData(0);
+						if (SubData.Description != "")
+							program.Description = SubData.Description;
 
-						if(Count > 0)
-						{
-							ProgramData SubData = SubProfile.GetProgramData(0);
-							if (SubData.Description != "")
-								program.Description = SubData.Description;
+						if (SubData.Genre != "")
+							program.Genre = getGenre(SubData.Genre);
 
-							if (SubData.Genre != "")
-								program.Genre = getGenre(SubData.Genre);
-
-							if (SubData.SubTitle != "")
-								program.Episode = SubData.SubTitle;
-						}
+						if (SubData.SubTitle != "")
+							program.Episode = SubData.SubTitle;
 					}
+				}
 
 				}
 
@@ -419,6 +423,9 @@ namespace MediaPortal.EPG
                 while (m_GrabDay < m_MaxGrabDays)
                 {
                     strURL = strURLid;
+					if(m_strDayNames != null)
+						strURL = strURL.Replace("#DAY_NAME", m_strDayNames[m_GrabDay]);
+
                     strURL = strURL.Replace("#DAY_OFFSET", (m_GrabDay+m_offsetStart).ToString());
 					strURL = strURL.Replace("#EPOCH_TIME", GetEpochTime(m_StartGrab).ToString());
                     strURL = strURL.Replace("#YYYY", m_StartGrab.Year.ToString());
@@ -432,6 +439,7 @@ namespace MediaPortal.EPG
                     offset = 0;
 					m_LastStart=0;
 					m_bNextDay=false;
+					m_listingStart=true;
 
                     while (GetListing(strURL, offset))
                     {
@@ -441,11 +449,16 @@ namespace MediaPortal.EPG
                         offset += m_maxListingCount;
                     }
 
-                    if (strURL != strURLid)
-                    {
-                        m_StartGrab = m_StartGrab.AddDays(1);
-                        m_GrabDay++;
-                    }
+					if (strURL != strURLid)
+					{
+						m_StartGrab = m_StartGrab.AddDays(1);
+						m_GrabDay++;
+					}
+					else
+					{ 
+						if(strURL.IndexOf("#LIST_OFFSET") == -1)
+							break;
+					}
                 }
              
                 return m_programs;

@@ -94,6 +94,21 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "config\ChannelInfo.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "config\ChannelsList.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "config\GrabberInfo.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "MPCode\Log.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
