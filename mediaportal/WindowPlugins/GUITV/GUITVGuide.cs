@@ -103,6 +103,7 @@ namespace MediaPortal.GUI.TV
 		int																	m_cursorXBackup=0;
 		int																	m_cursorYBackup=0;
 		int																	m_channelOffsetBack=0;
+		DateTime														m_updateTimer=DateTime.Now;
 
 		DateTime  m_timeKeyPressed=DateTime.Now;
 		string    m_strInput=String.Empty;
@@ -675,6 +676,7 @@ namespace MediaPortal.GUI.TV
 					return;
 				}
 
+				m_updateTimer=DateTime.Now;
 				GUISpinControl cntlDay=GetControl((int)Controls.SPINCONTROL_DAY) as GUISpinControl;
 
 				// Find first day in TVGuide and set spincontrol position 
@@ -2079,6 +2081,9 @@ namespace MediaPortal.GUI.TV
 						vertLine.IsVisible=true;
 						vertLine.XPosition=(int)fpos;
 						vertLine.Select(0);
+						ts = DateTime.Now-m_updateTimer;
+						if (ts.TotalMinutes>=1)
+							Update(false);
 					}
 					else vertLine.IsVisible=false;
 				}
