@@ -124,7 +124,7 @@ namespace MediaPortal.GUI.TV
 					strLogo="defaultVideoBig.png";
 				}
 				TVRecording recOrg;
-				if (IsRecordingSchedule(recSeries, out recOrg))
+				if (IsRecordingSchedule(recSeries, out recOrg,true))
 				{
 					item.PinImage=Thumbs.TvRecordingIcon;
 					item.MusicTag=recOrg;
@@ -140,7 +140,7 @@ namespace MediaPortal.GUI.TV
 				lstUpcomingEpsiodes.Add(item);
 			}
 		}
-		bool IsRecordingSchedule(TVRecording rec, out TVRecording recOrg)
+		bool IsRecordingSchedule(TVRecording rec, out TVRecording recOrg, bool filterOutCanceled)
 		{
 			recOrg=null;
 			ArrayList recordings = new ArrayList();
@@ -151,7 +151,7 @@ namespace MediaPortal.GUI.TV
 				ArrayList recs = ConflictManager.Util.GetRecordingTimes(record);
 				foreach (TVRecording recSeries in recs)
 				{
-					if (!record.IsSerieIsCanceled(recSeries.StartTime))
+					if (!record.IsSerieIsCanceled(recSeries.StartTime) || (filterOutCanceled==false) )
 					{
 						if (rec.Channel==recSeries.Channel &&
 							rec.Title  ==recSeries.Title &&
@@ -192,7 +192,19 @@ namespace MediaPortal.GUI.TV
 			if (rec==null)
 			{
 				//not recording yet.
-
+				TVRecording recOrg;
+				if (IsRecordingSchedule(recSeries, out recOrg, false))
+				{
+					recOrg.UnCancelSerie(recSeries.StartTime);
+					TVDatabase.UpdateRecording(recOrg,TVDatabase.RecordingChange.Modified);
+				}
+				else
+				{
+					recSeries.RecType=TVRecording.RecordingType.Once;
+					Recorder.AddRecording(ref recSeries);
+				}																	
+				Update();
+				return;										 
 			}
 			else
 			{
@@ -224,8 +236,7 @@ namespace MediaPortal.GUI.TV
 							if (CheckIfRecording(rec))
 							{
 								//cancel recording
-								rec.Canceled=Utils.datetolong(DateTime.Now);
-								TVDatabase.UpdateRecording(rec,TVDatabase.RecordingChange.Canceled);
+								TVDatabase.RemoveRecording(rec);
 								Recorder.StopRecording(rec);
 							}
 						}
@@ -237,8 +248,7 @@ namespace MediaPortal.GUI.TV
 					if (CheckIfRecording(rec))
 					{
 						//cancel recording2
-						rec.Canceled=Utils.datetolong(DateTime.Now);
-						TVDatabase.UpdateRecording(rec,TVDatabase.RecordingChange.Canceled);
+						TVDatabase.RemoveRecording(rec);
 						Recorder.StopRecording(rec);
 					}
 				}
