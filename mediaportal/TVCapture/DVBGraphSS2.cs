@@ -1715,6 +1715,10 @@ namespace MediaPortal.TV.Recording
 					//m_gotAudioFormat=false;
 					m_analyzerInterface.ResetParser();
 					m_StartTime=DateTime.Now;
+
+					SetPidToPin(m_dataCtrl,0,18);		//EIT
+					SetPidToPin(m_dataCtrl,0,0xd2); //MHW
+					SetPidToPin(m_dataCtrl,0,0xd3); //MHW
 					m_epgGrabber.GrabEPG(ch.HasEITSchedule==true);
 					VideoRendererStatistics.VideoState=VideoRendererStatistics.State.NoSignal;
 					SetupMTSDemuxerPin();
