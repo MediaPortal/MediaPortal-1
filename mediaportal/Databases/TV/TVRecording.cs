@@ -113,6 +113,26 @@ namespace MediaPortal.TV.Database
 		QualityType	m_iQuality=QualityType.NotSet;
 		ArrayList   m_canceledSeries = new ArrayList();
 		bool				announcementSend=false;
+		DateTime		keepDate=DateTime.MaxValue;
+		TVRecorded.KeepMethod  keepMethod=TVRecorded.KeepMethod.Always;
+
+		public DateTime KeepRecordingTill
+		{
+			get 
+			{
+				return keepDate;
+			}
+			set 
+			{
+				keepDate=value;
+			}
+		}
+
+		public TVRecorded.KeepMethod KeepRecordingMethod
+		{
+			get { return keepMethod;}
+			set { keepMethod=value;}
+		}
 
     /// <summary>
     /// Constructor.
