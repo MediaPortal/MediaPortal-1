@@ -53,8 +53,8 @@
 		<entry name="bbca@bbc.co.uk">44</entry>          <!-- BBC America -->
 		<entry name="bbcn@bbc.co.uk">48</entry>          <!-- BBC News 24 -->
 		<entry name="bbcpar@bbc.co.uk">49</entry>          <!-- BBC Parliament -->
-		<entry name="bbcp@bbc.co.uk">50</entry>          <!-- BBC Prime -->
-		<entry name="bbcw@bbc.co.uk">90</entry>          <!-- BBC World -->
+		<entry name="bbcprime.com">50</entry>          <!-- BBC Prime -->
+		<entry name="bbcworld.com">90</entry>          <!-- BBC World -->
 		<entry name="bid.tv">594</entry>          <!-- bid tv -->
 		<entry name="thebiographychannel.co.uk">119</entry>          <!-- Biography Channel -->
 		<entry name="tt@bloomberg.co.uk">120</entry>          <!-- Bloomberg TV (TopUpTV) -->
@@ -64,8 +64,8 @@
 		<entry name="bravo.co.uk">122</entry>          <!-- Bravo -->
 		<entry name="an@bravo.co.uk">122</entry>          <!-- Bravo Analogue -->
 		<entry name="p1@bravo.co.uk">1221</entry>          <!-- Bravo Plus 1 -->
-		<entry name="eurosport.co.uk">123</entry>          <!-- British Eurosport -->
-		<entry name="2@eurosport.co.uk">1876</entry>          <!-- British Eurosport2 -->
+		<entry name="eurosport@eurosport.com">123</entry>          <!-- British Eurosport -->
+		<entry name="eurosport2@eurosport.com">1876</entry>          <!-- British Eurosport2 -->
 		<entry name="tt@cartoon-network.co.uk">128</entry>          <!-- Cartoon Network (TopUpTV) -->
 		<entry name="cartoon-network.co.uk">128</entry>          <!-- Cartoon Network -->
 		<entry name="p1@cartoon-network.co.uk">129</entry>          <!-- Cartoon Network Plus 1 -->
@@ -80,7 +80,7 @@
 		<entry name="tv@chealseafc.com">1741</entry>          <!-- Chelsea TV -->
 		<entry name="tv@classicfm.com">1763</entry>          <!-- Classic FM TV -->
 		<entry name="cnbceurope.com">125</entry>          <!-- CNBC -->
-		<entry name="cnn.com">126</entry>          <!-- CNN -->
+		<entry name="cnni-emea@cnn.com">126</entry>          <!-- CNN -->
 		<entry name="dt@communitychannel.org">1542</entry>          <!-- Community Channel (Digital Terrestrial) -->
 		<entry name="communitychannel.org">1542</entry>          <!-- Community Channel -->
 		<entry name="tt@discoverychannel.co.uk">147</entry>          <!-- Discovery (TopUpTV) -->
@@ -179,8 +179,8 @@
 		<entry name="qvcuk.com">228</entry>          <!-- QVC -->
 		<entry name="tv@rangers.co.uk">1854</entry>          <!-- Rangers TV -->
 		<entry name="realitytv.co.uk">746</entry>          <!-- Reality TV -->
-		<entry name="1@rte.ie">231</entry>          <!-- RTE 1 -->
-		<entry name="2@rte.ie">1870</entry>          <!-- RTE 2 -->
+		<entry name="rte1@rte.ie">231</entry>          <!-- RTE 1 -->
+		<entry name="rte2@rte.ie">1870</entry>          <!-- RTE 2 -->
 		<entry name="s4c.co.uk">133</entry>          <!-- S4C -->
 		<entry name="s4cd@s4c.co.uk">721</entry>          <!-- S4C Digital -->
 		<entry name="s4c2@s4c.co.uk">1766</entry>          <!-- S4C-2 -->

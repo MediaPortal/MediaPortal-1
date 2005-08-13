@@ -6,20 +6,20 @@
 
   <section name="ChannelList">
 
-    <entry name="tv1-fi">1076152536046</entry>		<!-- TV1 -->
+    <entry name="arte-tv.com">ARTE</entry>		<!-- arte -->
 
 
   </section>
 
 <!-- Formating of Listing -->
   <section name="Listing">
-    <entry name="BaseURL">http://www.nyt.fi/televisio/</entry>
-    <entry name="SearchURL">#ID/plus#DAY_OFFSET</entry>
+    <entry name="BaseURL">http://www.tvcabo.pt/TV/</entry>
+    <entry name="SearchURL">ProgramacaoTv.aspx?programId=1&amp;channelSigla=#ID</entry>
 
     <entry name="Ahrefs">yes</entry>
 
 <!-- Unique Listing Start string -->
-    <entry name="Start">pieni_webkuva</entry>
+    <entry name="Start">Imprimir</entry>
 
 <!-- Template of the Listing information -->
     <entry name="Template">
@@ -29,7 +29,7 @@
     </entry>
   </section>
   <section name="Info">
-    <entry name="GuideDays">7</entry>
-    <entry name="Lang">fr</entry>
+    <entry name="GuideDays">1</entry>
+    <entry name="Lang">pt</entry>
   </section>
 </profile>

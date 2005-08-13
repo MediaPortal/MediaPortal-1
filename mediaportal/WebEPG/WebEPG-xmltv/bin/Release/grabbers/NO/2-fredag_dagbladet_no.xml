@@ -83,12 +83,12 @@
 	<entry name="SKYNEWS_NGC">26</entry>			<!-- Sky News & NGC -->
 	<entry name="dw-world.de">14</entry>			<!-- Deutche Welle -->	
 	<entry name="bbcworld.com">38</entry>			<!-- BBC World -->
-	<entry name="cnn.com">43</entry>			<!-- CNN -->
+	<entry name="cnni-emea@cnn.com">43</entry>		<!-- CNN -->
 	<entry name="cnbc@msn.com">62</entry>			<!-- CNBC -->
 
 <!-- Tysk og Fransk -->	
 	<entry name="3sat.de">9</entry>				<!-- 3 SAT -->
-	<entry name="prosieben.de">21</entry>			<!-- PRO 7 -->	
+	<entry name="pro-sieben.de">21</entry>			<!-- PRO 7 -->	
 	<entry name="rtl.de">22</entry>				<!-- RTL 1 -->
 	<entry name="rtl2.de">23</entry>			<!-- RTL 2 -->
 	<entry name="sat1.de">24</entry>			<!-- SAT 1 -->		
