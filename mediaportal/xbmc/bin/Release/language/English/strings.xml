@@ -3077,6 +3077,10 @@
 	<id>1040</id>
 	<value>Alert me</value>
 </string>
+<string>
+	<id>1041</id>
+	<value>Upcoming episodes</value>
+</string>
 
 <string>
 	<id>1440</id>

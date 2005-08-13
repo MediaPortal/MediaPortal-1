@@ -14,13 +14,14 @@ namespace MediaPortal.GUI.TV
 	/// </summary>
 	public class GUITVProgramInfo : GUIWindow
 	{
-		[SkinControlAttribute(17)]			  protected GUILabelControl				 lblProgramGenre=null;
-		[SkinControlAttribute(15)]			  protected GUITextScrollUpControl lblProgramDescription=null;
-		[SkinControlAttribute(14)]			  protected GUILabelControl lblProgramTime=null;
-		[SkinControlAttribute(13)]			  protected GUIFadeLabel		lblProgramTitle=null;
-		[SkinControlAttribute(2)]			  protected GUIButtonControl	btnRecord=null;
-		[SkinControlAttribute(3)]			  protected GUIButtonControl	btnAdvancedRecord=null;
-		[SkinControlAttribute(4)]			  protected GUIToggleButtonControl	btnNotify=null;
+		[SkinControlAttribute(17)]			  protected GUILabelControl					lblProgramGenre=null;
+		[SkinControlAttribute(15)]			  protected GUITextScrollUpControl	lblProgramDescription=null;
+		[SkinControlAttribute(14)]			  protected GUILabelControl					lblProgramTime=null;
+		[SkinControlAttribute(13)]			  protected GUIFadeLabel						lblProgramTitle=null;
+		[SkinControlAttribute(2)]					protected GUIButtonControl				btnRecord=null;
+		[SkinControlAttribute(3)]					protected GUIButtonControl				btnAdvancedRecord=null;
+		[SkinControlAttribute(4)]					protected GUIToggleButtonControl	btnNotify=null;
+		[SkinControlAttribute(10)]				protected GUIListControl					lstUpcomingEpsiodes=null;
 
 		static TVProgram currentProgram=null;
 
@@ -86,7 +87,6 @@ namespace MediaPortal.GUI.TV
 				btnRecord.Label=GUILocalizeStrings.Get(264);//record
 				btnAdvancedRecord.Disabled=false;
 			}
-			TVNotify notification=null;
 			ArrayList notifies = new ArrayList();
 			TVDatabase.GetNotifies(notifies,false);
 			bool showNotify=false;
@@ -102,6 +102,41 @@ namespace MediaPortal.GUI.TV
 				btnNotify.Selected=true;
 			else
 				btnNotify.Selected=false;
+
+
+			lstUpcomingEpsiodes.Clear();
+			TVRecording recTmp = new TVRecording();
+			recTmp.Channel = currentProgram.Channel;
+			recTmp.Title		=currentProgram.Title;
+			recTmp.Start   = currentProgram.Start;
+			recTmp.End			= currentProgram.End;
+			recTmp.RecType = TVRecording.RecordingType.EveryTimeOnEveryChannel;
+			ArrayList recs = ConflictManager.Util.GetRecordingTimes(recTmp);
+			foreach (TVRecording recSeries in recs)
+			{
+				GUIListItem item=new GUIListItem();
+				item.Label=recSeries.Title;
+				item.TVTag=recSeries;
+				string strLogo=Utils.GetCoverArt(Thumbs.TVChannel,recSeries.Channel);
+				if (!System.IO.File.Exists(strLogo))
+				{
+					strLogo="defaultVideoBig.png";
+				}
+				int card;
+				if (Recorder.IsRecordingSchedule(recSeries,out card))
+				{
+					item.PinImage=Thumbs.TvRecordingIcon;
+				}
+				item.ThumbnailImage=strLogo;
+				item.IconImageBig=strLogo;
+				item.IconImage=strLogo;
+				item.Label2=String.Format("{0} {1} - {2}", 
+																	Utils.GetShortDayString(recSeries.StartTime) , 
+																	recSeries.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat),
+																	recSeries.EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));;
+				lstUpcomingEpsiodes.Add(item);
+			}
+
 
 		}
 
