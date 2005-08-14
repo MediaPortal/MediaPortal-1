@@ -131,36 +131,42 @@ namespace MediaPortal.Player
 
 		protected virtual void SetVolume(int volume)
 		{
-			BackgroundWorker worker = new BackgroundWorker();
+			try
+			{
+				_mixer.Volume = volume;
 
-			worker.DoWork += new DoWorkEventHandler(SetVolumeWorker);
-			worker.RunWorkerAsync(volume);
+				if(_mixer.IsMuted)
+					_mixer.IsMuted = false;
+
+				if(GUIWindowManager.ActiveWindow==(int)GUIWindow.Window.WINDOW_TVFULLSCREEN ||
+					GUIWindowManager.ActiveWindow==(int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO)
+				{
+					Action showVolume=new Action(Action.ActionType.ACTION_SHOW_VOLUME,0,0);
+					GUIWindowManager.OnAction(showVolume);
+				}
+			}
+			catch(Exception e)
+			{
+				Log.Write("VolumeHandler.SetVolume: {0}", e.Message);
+			}
 		}
 		
 		protected virtual void SetVolume(bool isMuted)
 		{
-			_mixer.IsMuted = isMuted;
-
-			if(GUIWindowManager.ActiveWindow==(int)GUIWindow.Window.WINDOW_TVFULLSCREEN ||
-				GUIWindowManager.ActiveWindow==(int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO)
+			try
 			{
-				Action showVolume=new Action(Action.ActionType.ACTION_SHOW_VOLUME,0,0);
-				GUIGraphicsContext.OnAction(showVolume);
+				_mixer.IsMuted = isMuted;
+
+				if(GUIWindowManager.ActiveWindow==(int)GUIWindow.Window.WINDOW_TVFULLSCREEN ||
+					GUIWindowManager.ActiveWindow==(int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO)
+				{
+					Action showVolume=new Action(Action.ActionType.ACTION_SHOW_VOLUME,0,0);
+					GUIWindowManager.OnAction(showVolume);
+				}
 			}
-		}
-
-		void SetVolumeWorker(object sender, DoWorkEventArgs e)
-		{
-			_mixer.Volume = (int)e.Argument;
-
-			if(_mixer.IsMuted)
-				_mixer.IsMuted = false;
-
-			if(GUIWindowManager.ActiveWindow==(int)GUIWindow.Window.WINDOW_TVFULLSCREEN ||
-				GUIWindowManager.ActiveWindow==(int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO)
+			catch(Exception e)
 			{
-				Action showVolume=new Action(Action.ActionType.ACTION_SHOW_VOLUME,0,0);
-				GUIGraphicsContext.OnAction(showVolume);
+				Log.Write("VolumeHandler.SetVolume: {0}", e.Message);
 			}
 		}
 
