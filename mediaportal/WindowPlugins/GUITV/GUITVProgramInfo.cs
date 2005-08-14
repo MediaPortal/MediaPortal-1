@@ -23,6 +23,8 @@ namespace MediaPortal.GUI.TV
 		[SkinControlAttribute(4)]					protected GUIButtonControl				btnKeep=null;
 		[SkinControlAttribute(5)]					protected GUIToggleButtonControl	btnNotify=null;
 		[SkinControlAttribute(10)]				protected GUIListControl					lstUpcomingEpsiodes=null;
+		[SkinControlAttribute(6)]					protected GUIButtonControl				btnQuality=null;
+		[SkinControlAttribute(7)]					protected GUIButtonControl				btnEpisodes=null;
 
 		static TVProgram currentProgram=null;
 
@@ -65,6 +67,7 @@ namespace MediaPortal.GUI.TV
 			ArrayList recordings = new ArrayList();
 			TVDatabase.GetRecordings(ref recordings);
 			bool bRecording=false;
+			bool bSeries=false;
 			foreach (TVRecording record in recordings)
 			{
 				if (record.Canceled>0) continue;
@@ -72,6 +75,8 @@ namespace MediaPortal.GUI.TV
 				{
 					if (!record.IsSerieIsCanceled(currentProgram.StartTime))
 					{
+						if (record.RecType!=TVRecording.RecordingType.Once)
+							bSeries=true;
 						bRecording=true;
 						break;
 					}
@@ -83,12 +88,16 @@ namespace MediaPortal.GUI.TV
 				btnRecord.Label=GUILocalizeStrings.Get(1039);//dont record
 				btnAdvancedRecord.Disabled=true;
 				btnKeep.Disabled=false;
+				btnQuality.Disabled=false;
+				btnEpisodes.Disabled=!bSeries;
 			}
 			else
 			{
 				btnRecord.Label=GUILocalizeStrings.Get(264);//record
 				btnAdvancedRecord.Disabled=false;
-				btnKeep.Disabled=true;			
+				btnKeep.Disabled=true;		
+				btnQuality.Disabled=true;
+				btnEpisodes.Disabled=true;	
 			}
 			ArrayList notifies = new ArrayList();
 			TVDatabase.GetNotifies(notifies,false);
@@ -172,6 +181,10 @@ namespace MediaPortal.GUI.TV
 
 		protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
 		{
+			if (control==btnEpisodes)
+				OnSetEpisodes();
+			if (control==btnQuality)
+				OnSetQuality();
 			if (control==btnKeep)
 				OnKeep();
 			if (control==btnRecord) 
@@ -191,6 +204,54 @@ namespace MediaPortal.GUI.TV
 				}
 			}
 			base.OnClicked (controlId, control, actionType);
+		}
+		void OnSetQuality()
+		{
+			bool bRecording=false;
+			TVRecording rec=null;
+			ArrayList recordings = new ArrayList();
+			TVDatabase.GetRecordings(ref recordings);
+
+			foreach (TVRecording record in recordings)
+			{
+				if (record.Canceled>0) continue;
+				if (record.IsRecordingProgram(currentProgram,true) ) 
+				{
+					if (!record.IsSerieIsCanceled(currentProgram.StartTime))
+					{
+						bRecording=true;
+						rec=record;
+						break;
+					}
+				}
+			}
+			if (!bRecording) return;
+			GUITVPriorities.OnSetQuality(rec);
+			Update();
+		}
+		void OnSetEpisodes()
+		{
+			bool bRecording=false;
+			TVRecording rec=null;
+			ArrayList recordings = new ArrayList();
+			TVDatabase.GetRecordings(ref recordings);
+
+			foreach (TVRecording record in recordings)
+			{
+				if (record.Canceled>0) continue;
+				if (record.IsRecordingProgram(currentProgram,true) ) 
+				{
+					if (!record.IsSerieIsCanceled(currentProgram.StartTime))
+					{
+						bRecording=true;
+						rec=record;
+						break;
+					}
+				}
+			}
+			if (!bRecording) return;
+			GUITVPriorities.OnSetEpisodesToKeep(rec);
+			Update();
 		}
 
 		void OnRecordRecording(TVRecording recSeries, TVRecording rec)
