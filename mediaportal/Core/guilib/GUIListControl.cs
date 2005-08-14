@@ -834,6 +834,7 @@ namespace MediaPortal.GUI.Library
       switch (action.wID)
       {
         case Action.ActionType.ACTION_PAGE_UP:
+					m_strSearchString="";
           OnPageUp();
           m_bRefresh = true;
           break;
@@ -845,6 +846,7 @@ namespace MediaPortal.GUI.Library
 
         case Action.ActionType.ACTION_HOME:
           {
+						m_strSearchString="";
             m_iOffset = 0;
             m_iCursorY = 0;
             m_upDown.Value = 1;
@@ -856,6 +858,7 @@ namespace MediaPortal.GUI.Library
 
         case Action.ActionType.ACTION_END:
           {
+						m_strSearchString="";
             int iItem = m_vecItems.Count - 1;
             if (iItem >= 0)
             {
@@ -906,6 +909,7 @@ namespace MediaPortal.GUI.Library
 
         case Action.ActionType.ACTION_MOVE_LEFT:
           {
+						m_strSearchString="";
             OnLeft();
             m_bRefresh = true;
           }
@@ -913,6 +917,7 @@ namespace MediaPortal.GUI.Library
 
         case Action.ActionType.ACTION_MOVE_RIGHT:
           {
+						m_strSearchString="";
             OnRight();
             m_bRefresh = true;
           }
@@ -1043,6 +1048,7 @@ namespace MediaPortal.GUI.Library
         m_bDrawFocus = true;
         if (!bUpDown && m_iSelect == ListType.CONTROL_LIST)
         {
+					m_strSearchString="";
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, WindowId, GetID, ParentID, (int) Action.ActionType.ACTION_SELECT_ITEM, 0, null);
           GUIGraphicsContext.SendMessage(msg);
         }
@@ -1063,6 +1069,7 @@ namespace MediaPortal.GUI.Library
         // don't send the messages to a dialog menu
         if ((WindowId != (int) GUIWindow.Window.WINDOW_DIALOG_MENU) || (action.wID == Action.ActionType.ACTION_SELECT_ITEM))
         {
+					m_strSearchString="";
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, WindowId, GetID, ParentID, (int) action.wID, 0, null);
           GUIGraphicsContext.SendMessage(msg);
         }

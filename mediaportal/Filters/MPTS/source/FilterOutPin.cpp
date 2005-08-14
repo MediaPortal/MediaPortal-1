@@ -131,7 +131,8 @@ STDMETHODIMP CFilterOutPin::SetPositions(LONGLONG *pCurrent,DWORD CurrentFlags,L
 }
 HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 {
-
+  try
+  {
 	BOOL startPesFound=FALSE;
 	if (m_bAboutToStop) return E_FAIL;
 	if (m_lastPTS==0)
@@ -144,155 +145,154 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 		}
 	}
 	CheckPointer(pSample, E_POINTER);
-	//CAutoLock cAutoLockShared(&m_cSharedState);
+	PBYTE pData;
+	LONG lDataLength;
+	HRESULT hr = pSample->GetPointer(&pData);
+	if (FAILED(hr))
 	{
+		LogDebug("GetPointer() failed:%x",hr);
+		m_pMPTSFilter->Log((char*)"pin: FillBuffer() error on getting pointer for sample",true);
+	
+		return hr;
+	}
+	lDataLength = pSample->GetActualDataLength();
 
-		PBYTE pData;
-		LONG lDataLength;
-		HRESULT hr = pSample->GetPointer(&pData);
-		if (FAILED(hr))
-		{
-			LogDebug("GetPointer() failed:%x",hr);
-			m_pMPTSFilter->Log((char*)"pin: FillBuffer() error on getting pointer for sample",true);
+
 		
-			return hr;
+	__int64 fileSize;
+	do
+	{
+		if (m_bAboutToStop) return E_FAIL;
+		int count=0;
+		if (m_pMPTSFilter->m_pFileReader->m_hInfoFile!=INVALID_HANDLE_VALUE)
+		{
+			while (true)
+			{	
+				if (m_bAboutToStop) return E_FAIL;
+				m_pMPTSFilter->UpdatePids();
+				if ( m_pFileReader->GetFilePointer() <= m_pSections->pids.fileStartPosition &&
+					m_pFileReader->GetFilePointer() + lDataLength>=m_pSections->pids.fileStartPosition )
+				{
+					//LogDebug("pin:Wait %x/%x (%d)", (DWORD)m_pFileReader->GetFilePointer(),(DWORD)m_pSections->pids.fileStartPosition,count);
+					count++;
+					if (count >20) break;
+					Sleep(50);
+				}
+				else break;
+				if (count>=20)
+					LogDebug("pin:Wait %x/%x (%d)", (DWORD)m_pFileReader->GetFilePointer(),(DWORD)m_pSections->pids.fileStartPosition,count);
+			}
 		}
-		lDataLength = pSample->GetActualDataLength();
 
-
-		
-		__int64 fileSize;
-		do
+		bool endOfFile=false;
+		hr = m_pBuffers->Require(lDataLength,endOfFile);
+		if (endOfFile)
 		{
-			if (m_bAboutToStop) return E_FAIL;
-			int count=0;
 			if (m_pMPTSFilter->m_pFileReader->m_hInfoFile!=INVALID_HANDLE_VALUE)
 			{
+				LogDebug("output pin:EOF");
+				m_pMPTSFilter->m_pFileReader->GetFileSize(&fileSize);
+				count=0;
 				while (true)
-				{	
+				{
 					if (m_bAboutToStop) return E_FAIL;
 					m_pMPTSFilter->UpdatePids();
-					if ( m_pFileReader->GetFilePointer() <= m_pSections->pids.fileStartPosition &&
-						m_pFileReader->GetFilePointer() + lDataLength>=m_pSections->pids.fileStartPosition )
+					if (m_pSections->pids.fileStartPosition >= fileSize-(1024*1024) ||
+						m_pSections->pids.fileStartPosition < lDataLength) 
 					{
-						//LogDebug("pin:Wait %x/%x (%d)", (DWORD)m_pFileReader->GetFilePointer(),(DWORD)m_pSections->pids.fileStartPosition,count);
+					//	LogDebug("waiteof pos:%x size:%x (%d)", m_pSections->pids.fileStartPosition,fileSize,count);
 						count++;
 						if (count >20) break;
 						Sleep(50);
 					}
 					else break;
-					if (count>=20)
-						LogDebug("pin:Wait %x/%x (%d)", (DWORD)m_pFileReader->GetFilePointer(),(DWORD)m_pSections->pids.fileStartPosition,count);
 				}
+				LogDebug("outputpin:end of file, writepos:%x slept:%i size:%x", m_pSections->pids.fileStartPosition,count,fileSize);
 			}
+		}
+					
+		if (m_bAboutToStop) return E_FAIL;
+	} while (hr==S_OK && m_pBuffers->Count() < lDataLength);
+		
 
-			bool endOfFile=false;
-			hr = m_pBuffers->Require(lDataLength,endOfFile);
-			if (endOfFile)
+	if (FAILED(hr))
+	{
+		if (m_pMPTSFilter->m_pFileReader->m_hInfoFile==INVALID_HANDLE_VALUE)
+		{
+			LogDebug("outpin:end of file detected");
+			return S_FALSE;//end of stream
+		}
+			
+		LogDebug("outpin: Require(%d) failed:0x%x",lDataLength,hr);
+		//m_pMPTSFilter->Refresh();
+		//return S_FALSE; // cant read = end of stream
+	}
+
+	m_pBuffers->DequeFromBuffer(pData, lDataLength);
+
+	ULONGLONG pts=0;
+	ULONGLONG ptsStart=0;
+	ULONGLONG ptsEnd=0;
+	
+	BOOL bSyncPoint=FALSE;
+	int pid;
+	for(int i=0;i<lDataLength;i+=188)
+	{
+		if (m_bAboutToStop) return E_FAIL;
+		if(m_pSections->CurrentPTS(&pData[i],&pts,&pid)==S_OK)
+		{
+			if (pid==m_pSections->pids.VideoPid) 
+				bSyncPoint=TRUE;
+			if (pts>0)
 			{
-				if (m_pMPTSFilter->m_pFileReader->m_hInfoFile!=INVALID_HANDLE_VALUE)
+				if (ptsStart==0) 
+				{ 
+					ptsStart=pts; 
+					ptsEnd=pts;
+				}
+				else 
 				{
-					LogDebug("output pin:EOF");
-					m_pMPTSFilter->m_pFileReader->GetFileSize(&fileSize);
-					count=0;
-					while (true)
-					{
-						if (m_bAboutToStop) return E_FAIL;
-						m_pMPTSFilter->UpdatePids();
-						if (m_pSections->pids.fileStartPosition >= fileSize-(1024*1024) ||
-							m_pSections->pids.fileStartPosition < lDataLength) 
-						{
-						//	LogDebug("waiteof pos:%x size:%x (%d)", m_pSections->pids.fileStartPosition,fileSize,count);
-							count++;
-							if (count >20) break;
-							Sleep(50);
-						}
-						else break;
-					}
-					LogDebug("outputpin:end of file, writepos:%x slept:%i size:%x", m_pSections->pids.fileStartPosition,count,fileSize);
+					ptsEnd=pts;
 				}
+				/*
+				// correct our clock
+				ULONGLONG millis = pts / 90; // Systemclock (27MHz) / 300
+				m_dwStartTime = (DWORD)(timeGetTime() - millis);
+				break; // first pts*/
 			}
-						
-			if (m_bAboutToStop) return E_FAIL;
-		} while (hr==S_OK && m_pBuffers->Count() < lDataLength);
-		
-
-		if (FAILED(hr))
-		{
-			if (m_pMPTSFilter->m_pFileReader->m_hInfoFile==INVALID_HANDLE_VALUE)
-			{
-				LogDebug("outpin:end of file detected");
-				return S_FALSE;//end of stream
-			}
-				
-			LogDebug("outpin: Require(%d) failed:0x%x",lDataLength,hr);
-			//m_pMPTSFilter->Refresh();
-			//return S_FALSE; // cant read = end of stream
+	
 		}
+	}
+	UpdatePositions(ptsStart,ptsEnd);
 
-		m_pBuffers->DequeFromBuffer(pData, lDataLength);
+	REFERENCE_TIME rtStart = static_cast<REFERENCE_TIME>(ptsStart / m_dRateSeeking);
+	REFERENCE_TIME rtStop  = static_cast<REFERENCE_TIME>(ptsEnd / m_dRateSeeking);
 
-		ULONGLONG pts=0;
-		ULONGLONG ptsStart=0;
-		ULONGLONG ptsEnd=0;
-		
-		BOOL bSyncPoint=FALSE;
-		int pid;
-		for(int i=0;i<lDataLength;i+=188)
-		{
-			if (m_bAboutToStop) return E_FAIL;
-			if(m_pSections->CurrentPTS(&pData[i],&pts,&pid)==S_OK)
-			{
-				if (pid==m_pSections->pids.VideoPid) 
-					bSyncPoint=TRUE;
-				if (pts>0)
-				{
-					if (ptsStart==0) 
-					{ 
-						ptsStart=pts; 
-						ptsEnd=pts;
-					}
-					else 
-					{
-						ptsEnd=pts;
-					}
-					/*
-					// correct our clock
-					ULONGLONG millis = pts / 90; // Systemclock (27MHz) / 300
-					m_dwStartTime = (DWORD)(timeGetTime() - millis);
-					break; // first pts*/
-				}
-		
-			}
-		}
-		UpdatePositions(ptsStart,ptsEnd);
-
-		REFERENCE_TIME rtStart = static_cast<REFERENCE_TIME>(ptsStart / m_dRateSeeking);
-		REFERENCE_TIME rtStop  = static_cast<REFERENCE_TIME>(ptsEnd / m_dRateSeeking);
-
-		if (m_pSections->pids.StartPTS>0)
-		{
-			pSample->SetTime(&rtStart, &rtStop); 
-			pSample->SetSyncPoint(bSyncPoint||startPesFound);
-		}
-		else
-		{
-			pSample->SetTime(NULL,NULL); 
-			pSample->SetSyncPoint(TRUE);
-		}
-
-		
+	if (m_pSections->pids.StartPTS>0)
+	{
+		pSample->SetTime(&rtStart, &rtStop); 
+		pSample->SetSyncPoint(bSyncPoint||startPesFound);
 		if(m_bDiscontinuity||startPesFound) 
 		{
 			LogDebug("pin: FillBuffer() SetDiscontinuity");
 			pSample->SetDiscontinuity(TRUE);
 			m_bDiscontinuity = FALSE;
 		}
+
 	}
-		
+	else
+	{
+		pSample->SetTime(NULL,NULL); 
+		pSample->SetSyncPoint(TRUE);
+		pSample->SetDiscontinuity(FALSE);
+	}
 	
-		
-	return NOERROR;
+  }
+  catch(...)
+  {
+	LogDebug("pin:FillBuffer() exception");
+  }
+  return NOERROR;
 }
 
 HRESULT CFilterOutPin::OnThreadCreate( )

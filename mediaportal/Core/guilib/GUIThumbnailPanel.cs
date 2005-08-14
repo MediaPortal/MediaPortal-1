@@ -583,18 +583,21 @@ namespace MediaPortal.GUI.Library
       switch (action.wID)
       {
         case Action.ActionType.ACTION_PAGE_UP:
+					m_strSearchString="";
           OnPageUp();
           m_bRefresh = true;
           break;
 
         case Action.ActionType.ACTION_PAGE_DOWN:
-          OnPageDown();
+          m_strSearchString="";
+					OnPageDown();
           m_bRefresh = true;
           break;
 
         case Action.ActionType.ACTION_HOME:
           {
-            m_iOffset = 0;
+            m_strSearchString="";
+						m_iOffset = 0;
             m_iCursorY = 0;
             m_iCursorX = 0;
             m_upDown.Value = 1;
@@ -606,6 +609,7 @@ namespace MediaPortal.GUI.Library
 
         case Action.ActionType.ACTION_END:
           {
+						m_strSearchString="";
             int iChan = m_vecItems.Count - 1;
             if (iChan >= 0)
             {
@@ -662,6 +666,7 @@ namespace MediaPortal.GUI.Library
 
         case Action.ActionType.ACTION_MOVE_LEFT:
           {
+						m_strSearchString="";	
             OnLeft();
             m_bRefresh = true;
           }
@@ -669,6 +674,7 @@ namespace MediaPortal.GUI.Library
 
         case Action.ActionType.ACTION_MOVE_RIGHT:
           {
+						m_strSearchString="";
             OnRight();
             m_bRefresh = true;
           }
@@ -796,6 +802,7 @@ namespace MediaPortal.GUI.Library
               //m_bDrawFocus=true;
               if (m_iSelect == GUIListControl.ListType.CONTROL_LIST)
               {
+								m_strSearchString="";
                 GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, WindowId, GetID, ParentID, (int) Action.ActionType.ACTION_SELECT_ITEM, 0, null);
                 GUIGraphicsContext.SendMessage(msg);
               }
@@ -812,6 +819,7 @@ namespace MediaPortal.GUI.Library
           {
             if (m_iSelect == GUIListControl.ListType.CONTROL_LIST)
             {
+							m_strSearchString="";
               GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, WindowId, GetID, ParentID, (int) action.wID, 0, null);
               GUIGraphicsContext.SendMessage(msg);
               m_bRefresh = true;
