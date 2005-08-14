@@ -914,7 +914,7 @@ HRESULT CDump::Write(PBYTE pbData, LONG lDataLength)
 	TSHeader header;
 	GetTSHeader(pbData,&header);
 	int pidToCheck = ( m_pPin->GetAudioPid()>0 ? m_pPin->GetAudioPid():m_pPin->GetAC3Pid() );
-	if (pidToCheck==header.Pid || (header.Pid>0 && header.Pid==m_pPin->GetVideoPid() ) )
+	if (pidToCheck==header.Pid || (header.Pid>0 && header.Pid==m_pPin->GetVideoPid() ) || (header.Pid>0 && header.Pid==m_pPin->GetPCRPid() ) )
 	{
 		int offset=4;
 		if(header.AdaptionControl==1 || header.AdaptionControl==3)

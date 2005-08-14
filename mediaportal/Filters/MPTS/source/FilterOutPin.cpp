@@ -270,8 +270,16 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 		REFERENCE_TIME rtStart = static_cast<REFERENCE_TIME>(ptsStart / m_dRateSeeking);
 		REFERENCE_TIME rtStop  = static_cast<REFERENCE_TIME>(ptsEnd / m_dRateSeeking);
 
-		pSample->SetTime(&rtStart, &rtStop); 
-		pSample->SetSyncPoint(bSyncPoint||startPesFound ||(m_lastPTS==0));
+		if (m_pSections->pids.StartPTS>0)
+		{
+			pSample->SetTime(&rtStart, &rtStop); 
+			pSample->SetSyncPoint(bSyncPoint||startPesFound);
+		}
+		else
+		{
+			pSample->SetTime(NULL,NULL); 
+			pSample->SetSyncPoint(TRUE);
+		}
 
 		
 		if(m_bDiscontinuity||startPesFound) 

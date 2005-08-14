@@ -256,7 +256,11 @@ HRESULT Sections::CurrentPTS(BYTE *pData,ULONGLONG *ptsValue,int* pid)
 	*pid=header.Pid;
 	if (header.Pid<1) return S_FALSE;
 	if (header.SyncByte!=0x47) return S_FALSE;
-	if(header.Pid!=pids.AudioPid && header.Pid != pids.AudioPid2 && header.Pid != pids.AC3 && header.Pid != pids.VideoPid)
+	if(header.Pid!=pids.AudioPid && 
+	   header.Pid != pids.AudioPid2 && 
+	   header.Pid != pids.AC3 && 
+	   header.Pid != pids.VideoPid &&
+	   header.Pid != pids.PCRPid)
 		return S_FALSE;
 
 	if(header.AdaptionControl==1 || header.AdaptionControl==3)
