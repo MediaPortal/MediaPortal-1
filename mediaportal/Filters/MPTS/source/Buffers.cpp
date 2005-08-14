@@ -66,7 +66,7 @@ HRESULT CBuffers::Require(long nBytesRequired, bool& endOfFile)
 	__int64 fileSize     = 0;
 	__int64 currPosition = m_pFileReader->GetFilePointer();
 	m_pFileReader->GetFileSize(&fileSize);
-	LogDebug("buffers: read from:%x into:%i", (DWORD)currPosition,m_buffer.iDataLen);
+//	LogDebug("buffers: read from:%x into:%i", (DWORD)currPosition,m_buffer.iDataLen);
 
 	ULONG dwBytesRead = 0;				
 	HRESULT hr = m_pFileReader->Read(&m_buffer.pData[m_buffer.iDataLen], nBytesRequired-Count(), &dwBytesRead);
@@ -95,7 +95,7 @@ HRESULT CBuffers::Require(long nBytesRequired, bool& endOfFile)
 	}
 	if (dwBytesRead>0)
 	{
-		LogDebug("buffers: read %d/%d bytes buffer:%d/%d ",dwBytesRead,nBytesRequired, m_buffer.pos,m_buffer.iDataLen);
+//		LogDebug("buffers: read %d/%d bytes buffer:%d/%d ",dwBytesRead,nBytesRequired, m_buffer.pos,m_buffer.iDataLen);
 		m_buffer.iDataLen+=dwBytesRead;
 	}
 
@@ -122,7 +122,7 @@ HRESULT CBuffers::DequeFromBuffer(BYTE *pbData, long lDataLength)
 	}
 
 	
-	LogDebug("buffers:DequeFromBuffer() get:%d/%d",lDataLength,Count());
+//	LogDebug("buffers:DequeFromBuffer() get:%d/%d",lDataLength,Count());
 	long bytesWritten = 0;
 	while (bytesWritten < lDataLength)
 	{
@@ -131,7 +131,7 @@ HRESULT CBuffers::DequeFromBuffer(BYTE *pbData, long lDataLength)
 		if (bytesWritten+copyLen > lDataLength)
 			copyLen=(lDataLength-bytesWritten);
 
-		LogDebug("buffers: pos:%d datalen:%d copy:%d written:%d", m_buffer.pos,m_buffer.iDataLen,copyLen,bytesWritten);
+//		LogDebug("buffers: pos:%d datalen:%d copy:%d written:%d", m_buffer.pos,m_buffer.iDataLen,copyLen,bytesWritten);
 		memcpy(pbData + bytesWritten, &m_buffer.pData[m_buffer.pos], copyLen);
 
 		bytesWritten += copyLen;
@@ -140,7 +140,7 @@ HRESULT CBuffers::DequeFromBuffer(BYTE *pbData, long lDataLength)
 		if (m_buffer.pos>=m_buffer.iDataLen)
 		{
 			
-			LogDebug("buffers: delete buffer");
+//			LogDebug("buffers: delete buffer");
 			m_buffer.pos=0;
 			m_buffer.iDataLen=0;
 		}

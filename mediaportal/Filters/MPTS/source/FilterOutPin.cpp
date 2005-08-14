@@ -236,8 +236,20 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 	
 	BOOL bSyncPoint=FALSE;
 	int pid;
+//	bool pids[10];
+//	pids[0]=pids[1]=pids[2]=pids[3]=pids[4]=pids[5]=false;
 	for(int i=0;i<lDataLength;i+=188)
 	{
+/*		Sections::TSHeader header;
+		m_pSections->GetTSHeader(&pData[i],&header);
+		if (header.Pid==m_pSections->pids.AC3 && m_pSections->pids.AC3>0) pids[0]=true;
+		if (header.Pid==m_pSections->pids.AudioPid && m_pSections->pids.AudioPid>0) pids[1]=true;
+		if (header.Pid==m_pSections->pids.AudioPid2 && m_pSections->pids.AudioPid2>0) pids[2]=true;
+		if (header.Pid==m_pSections->pids.VideoPid && m_pSections->pids.VideoPid>0) pids[3]=true;
+		if (header.Pid==m_pSections->pids.PCRPid && m_pSections->pids.PCRPid>0) pids[4]=true;
+		if (header.Pid==m_pSections->pids.PMTPid && m_pSections->pids.PMTPid>0) pids[5]=true;*/
+		if (pData[i]!=0x47)
+			LogDebug("sync error");
 		if (m_bAboutToStop) return E_FAIL;
 		if(m_pSections->CurrentPTS(&pData[i],&pts,&pid)==S_OK)
 		{
@@ -263,6 +275,7 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 	
 		}
 	}
+	//LogDebug("ac3:%x audio1:%x audio2:%x video:%x pcr:%x pmt:%x",pids[0],pids[1],pids[2],pids[3],pids[4],pids[5]);
 	UpdatePositions(ptsStart,ptsEnd);
 
 	REFERENCE_TIME rtStart = static_cast<REFERENCE_TIME>(ptsStart / m_dRateSeeking);
