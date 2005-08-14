@@ -2455,7 +2455,11 @@ namespace MediaPortal
 				StartFrameClock();
 				FullRender();
 				WaitForFrameClock();
-				if (g_Player.Playing) return;
+				if (g_Player.Playing) 
+				{
+					if (!g_Player.IsRadio  || !g_Player.IsTimeShifting)
+						return;
+				}
 				if (GUIGraphicsContext.CurrentState==GUIGraphicsContext.State.STOPPING) return;
 			} 
 		}
