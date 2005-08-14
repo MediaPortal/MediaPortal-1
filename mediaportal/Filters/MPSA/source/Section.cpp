@@ -751,10 +751,10 @@ void Sections::DecodeEPG(byte* buf,int len)
 	if (itSec!=channel.mapSectionsReceived.end()) return; //yes
 	channel.mapSectionsReceived[key]=true;
 
-//	Log("epg: tid:%x len:%d %d (%d/%d) sid:%d tsid:%d onid:%d slsn:%d last table id:%x cn:%d version:%d", 
-//		buf[0],len,section_length,section_number,last_section_number, 
-//		service_id,transport_id,network_id,segment_last_section_number,last_table_id,
-//		current_next_indicator,version_number);
+	Log("epg: tid:%x len:%d %d (%d/%d) sid:%d tsid:%d onid:%d slsn:%d last table id:%x cn:%d version:%d", 
+		buf[0],len,section_length,section_number,last_section_number, 
+		service_id,transport_id,network_id,segment_last_section_number,last_table_id,
+		current_next_indicator,version_number);
 
 	m_epgTimeout=time(NULL);
 	int start=14;

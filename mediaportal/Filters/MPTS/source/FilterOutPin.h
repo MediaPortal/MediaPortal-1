@@ -38,6 +38,7 @@ public:
 	//STDMETHODIMP GetCurrentPosition(LONGLONG *pCurrent);
 	HRESULT SetDuration(REFERENCE_TIME duration);
 	void ResetBuffers();
+	void AboutToStop();
 protected:
 	HRESULT GetReferenceClock(IReferenceClock **pClock);
 
@@ -59,6 +60,8 @@ protected:
 	DWORD m_dwStartTime;
 	bool m_positionToSet;
 	ULONGLONG m_lastPTS;
+	bool m_bAboutToStop;
+
 };
 
 #endif

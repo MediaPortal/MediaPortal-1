@@ -163,7 +163,9 @@ namespace MediaPortal.Player
       IPlayer newPlayer=null;
 
       string strExt=System.IO.Path.GetExtension(strFileName).ToLower();
-			if (  strExt!=".tv" &&   strExt!=".sbe" &&   strExt!=".dvr-ms" && strFileName.ToLower().IndexOf("live.ts")<0)
+			if (  strExt!=".tv" &&   strExt!=".sbe" &&   strExt!=".dvr-ms" 
+				    && strFileName.ToLower().IndexOf("live.ts")<0 
+				    &&  strFileName.ToLower().IndexOf("radio.ts")<0 )
 			{
 				newPlayer = GetExternalPlayer(strFileName);
 				if(newPlayer != null)
@@ -197,6 +199,9 @@ namespace MediaPortal.Player
 			}
 			if ( strExt==".ts")
 			{
+				if (strFileName.ToLower().IndexOf("radio.ts") >=0) 
+					return new Player.BaseTStreamBufferPlayer();
+
 				if (iUseVMR9inMYTV==0) newPlayer=new Player.BaseTStreamBufferPlayer();
 				else newPlayer=new Player.TStreamBufferPlayer9();
 				return newPlayer;

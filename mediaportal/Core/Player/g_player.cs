@@ -113,7 +113,7 @@ namespace MediaPortal.Player
     {
       //check if we're playing
       if (m_player==null) return;
-      if (m_player.Playing && PlayBackStarted!=null)
+      if (m_player.Playing)
       {
         //yes, then raise event 
         currentMedia=MediaType.Music;
@@ -134,7 +134,7 @@ namespace MediaPortal.Player
 						currentMedia=MediaType.Video;
 					}
 				}
-				Log.Write("g_Player.OnStarted() {0} media:{1}", CurrentFilePlaying, currentMedia);
+				Log.Write("g_Player.OnStarted() {0} media:{1}", CurrentFilePlaying, currentMedia.ToString());
         if (PlayBackStarted!=null)        
           PlayBackStarted(currentMedia, CurrentFilePlaying);
       }
@@ -244,6 +244,7 @@ namespace MediaPortal.Player
     public static bool PlayDVD(string strPath)
 		{
 			//stop playing radio
+
 			GUIMessage msgRadio = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_RADIO,0,0,0,0,0,null);
 			GUIWindowManager.SendMessage(msgRadio);
 			
@@ -393,13 +394,17 @@ namespace MediaPortal.Player
     public static bool Play(string strFile)
 		{
 			//stop radio
-			GUIMessage msgRadio = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_RADIO,0,0,0,0,0,null);
-			GUIWindowManager.SendMessage(msgRadio);
+			if (!Utils.IsLiveRadio(strFile))
+			{
+				GUIMessage msgRadio = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_RADIO,0,0,0,0,0,null);
+				GUIWindowManager.SendMessage(msgRadio);
+			}
 
-			if (!Utils.IsLiveTv(strFile))
+			if (!Utils.IsLiveTv(strFile) && !Utils.IsLiveRadio(strFile))
 			{
 				//file is not a live tv file
 				//so tell recorder to stop timeshifting live-tv
+				Log.Write("player: file is not live tv, so stop timeshifting:{0}", strFile);
 				GUIMessage msgTv = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_TIMESHIFT,0,0,0,0,0,null);
 				GUIWindowManager.SendMessage(msgTv);
 			}

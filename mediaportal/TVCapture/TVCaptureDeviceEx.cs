@@ -108,7 +108,8 @@ namespace MediaPortal.TV.Recording
 			Recording, 
 			PostRecording, 
 			Viewing,
-			Radio
+			Radio,
+			RadioTimeshifting
 		}
 
 		[NonSerialized] private bool				isAnalogCable;				// #MW# Should be made serializable...??
@@ -972,6 +973,7 @@ namespace MediaPortal.TV.Recording
 			{
 				if (IsRecording) return true;
 				if (currentGraphState == State.Timeshifting) return true;
+				if (currentGraphState == State.RadioTimeshifting) return true;
 				return false;
 			}
 		}
@@ -1019,7 +1021,7 @@ namespace MediaPortal.TV.Recording
 		}
 		public bool IsRadio
 		{
-			get { return currentGraphState == State.Radio; }
+			get { return (currentGraphState == State.Radio||currentGraphState == State.RadioTimeshifting); }
 		}
 
 		/// <summary>
@@ -1430,6 +1432,8 @@ namespace MediaPortal.TV.Recording
 			//stopping timeshifting will also remove the live.tv file 
 			Log.WriteFile(Log.LogType.Capture,"Card:{0} stop timeshifting",ID);
 			currentGraph.StopTimeShifting();
+			string fileName=Recorder.GetTimeShiftFileName(ID-1);
+			Utils.FileDelete(fileName);
 			currentGraphState = State.Initialized;
 			return true;
 		}
@@ -1805,8 +1809,11 @@ namespace MediaPortal.TV.Recording
 			{
 				DeleteGraph();
 				CreateGraph();
-				currentGraph.StartRadio(station);
 				currentGraphState = State.Radio;
+				currentGraph.StartRadio(station);
+#if USEMTSWRITER
+				currentGraphState = State.RadioTimeshifting;
+#endif
 			}
 			else
 			{
@@ -1886,7 +1893,10 @@ namespace MediaPortal.TV.Recording
 			//we should get this from the cardx.xml when we will be supporting .ts streams
 			get { 
 #if USEMTSWRITER
-				return "live.ts";
+				if (IsRadio)
+					return "radio.ts";
+				else
+					return "live.ts";
 #else
 				return "live.tv";
 #endif

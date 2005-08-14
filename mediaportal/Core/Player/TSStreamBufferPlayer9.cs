@@ -70,7 +70,7 @@ namespace MediaPortal.Player
     protected override bool GetInterfaces(string filename)
     {
 		  Speed=1;	
-			//Log.Write("TStreamBufferPlayer9: GetInterfaces()");
+			Log.Write("TStreamBufferPlayer9: GetInterfaces()");
       Type comtype = null;
       object comobj = null;
       
@@ -278,6 +278,13 @@ namespace MediaPortal.Player
 			}
     }
 
+		public override bool IsRadio
+		{
+			get
+			{
+				return false;
+			}
+		}
 
   }
 }

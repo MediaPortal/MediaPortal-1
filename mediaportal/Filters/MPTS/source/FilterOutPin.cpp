@@ -46,6 +46,7 @@ CFilterOutPin::CFilterOutPin(LPUNKNOWN pUnk, CMPTSFilter *pFilter, FileReader *p
 	m_dTimeInc=0;
 	m_lastPTS=0;	
 	m_dRateSeeking = 1.0;
+	m_bAboutToStop=false;
 	
 }
 
@@ -127,7 +128,8 @@ STDMETHODIMP CFilterOutPin::SetPositions(LONGLONG *pCurrent,DWORD CurrentFlags,L
 }
 HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 {
-	
+
+	if (m_bAboutToStop) return E_FAIL;
 	if (m_lastPTS==0) 
 		m_lastPTS=m_pSections->pids.StartPTS;
 	CheckPointer(pSample, E_POINTER);
@@ -151,11 +153,13 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 		__int64 fileSize;
 		do
 		{
+			if (m_bAboutToStop) return E_FAIL;
 			int count=0;
 			if (m_pMPTSFilter->m_pFileReader->m_hInfoFile!=INVALID_HANDLE_VALUE)
 			{
 				while (true)
 				{	
+					if (m_bAboutToStop) return E_FAIL;
 					m_pMPTSFilter->UpdatePids();
 					if ( m_pFileReader->GetFilePointer() <= m_pSections->pids.fileStartPosition &&
 						m_pFileReader->GetFilePointer() + lDataLength>=m_pSections->pids.fileStartPosition )
@@ -180,6 +184,7 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 					count=0;
 					while (true)
 					{
+						if (m_bAboutToStop) return E_FAIL;
 						m_pMPTSFilter->UpdatePids();
 						if (m_pSections->pids.fileStartPosition >= fileSize-(1024*1024) ||
 							m_pSections->pids.fileStartPosition < lDataLength) 
@@ -194,7 +199,8 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 					LogDebug("outputpin:end of file, writepos:%x slept:%i", m_pSections->pids.fileStartPosition,count);
 				}
 			}
-
+						
+			if (m_bAboutToStop) return E_FAIL;
 		} while (hr==S_OK && m_pBuffers->Count() < lDataLength);
 		
 
@@ -221,6 +227,7 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 		int pid;
 		for(int i=0;i<lDataLength;i+=188)
 		{
+			if (m_bAboutToStop) return E_FAIL;
 			if(m_pSections->CurrentPTS(&pData[i],&pts,&pid)==S_OK)
 			{
 				if (pid==m_pSections->pids.VideoPid) 
@@ -285,6 +292,7 @@ HRESULT CFilterOutPin::OnThreadStartPlay( )
 
 HRESULT CFilterOutPin::Run(REFERENCE_TIME tStart)
 {
+	m_bAboutToStop=false;
 	return CBaseOutputPin::Run(tStart);
 }
 
@@ -403,4 +411,9 @@ void CFilterOutPin::UpdatePositions(ULONGLONG& ptsStart, ULONGLONG& ptsEnd)
 	m_rtStart=rtStart;
 	m_rtStop=rtStop;
 	m_rtDuration=rtStop-rtStart;
+}
+void CFilterOutPin::AboutToStop()
+{			
+	LogDebug("pin: AboutToStop()");
+	m_bAboutToStop=true;
 }

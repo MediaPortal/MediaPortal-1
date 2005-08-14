@@ -252,6 +252,18 @@ namespace MediaPortal.Util
 			return false;
 
 		}
+		static public bool IsLiveRadio(string strPath)
+		{
+			if (strPath==null) return false;
+			try
+			{
+				if (strPath.ToLower().IndexOf("radio.ts")>=0 ) return true;
+			}
+			catch(Exception){}
+			return false;
+
+		}
+
 		static public bool IsVideo(string strPath)
 		{
 			if (strPath==null) return false;

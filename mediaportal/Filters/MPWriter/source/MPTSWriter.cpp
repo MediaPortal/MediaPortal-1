@@ -753,6 +753,7 @@ HRESULT CDump::OpenFile()
 #endif
 
     // Try to open the file
+	DeleteFile((LPCTSTR) pFileName);
     m_hFile = CreateFile((LPCTSTR) pFileName,
 		GENERIC_READ | GENERIC_WRITE,
 		FILE_SHARE_READ ,
@@ -771,6 +772,7 @@ HRESULT CDump::OpenFile()
 	strcpy(logFile, pFileName);
 	strcat(logFile,"w.log");
 #if DEBUG
+	DeleteFile((LPCTSTR) logFile);
 	m_logFileHandle=CreateFile((LPCTSTR)logFile,GENERIC_READ | GENERIC_WRITE,
 		FILE_SHARE_READ ,
 		NULL,
@@ -784,6 +786,7 @@ HRESULT CDump::OpenFile()
 	strcpy(infoFile, pFileName);
 	strcat(infoFile, ".info");
 
+	DeleteFile((LPCTSTR) infoFile);
     m_hInfoFile = CreateFile((LPCTSTR) infoFile,
 		GENERIC_READ | GENERIC_WRITE,
 		FILE_SHARE_READ | FILE_SHARE_WRITE,
@@ -852,6 +855,8 @@ HRESULT CDump::CloseFile()
 #else
     pFileName = m_pFileName;
 #endif
+
+	DeleteFile((LPCSTR)m_pFileName);
 
 	TCHAR infoFile[512];
 	strcpy(infoFile, pFileName);

@@ -35,6 +35,8 @@ namespace MediaPortal.Player
 {
 	public class BaseTStreamBufferPlayer : IPlayer
 	{
+		[ComImport, Guid("AFB6C280-2C41-11D3-8A60-0000F81E0E4A")]
+			class MPEG2Demultiplexer {}
 		[ComImport, Guid("A3556F1E-787B-12C4-9100-01AF313AC900")]
 		protected class MPTransportStreamReader {}
 
@@ -74,8 +76,8 @@ namespace MediaPortal.Player
 		protected int                       m_aspectX=1;
 		protected int                       m_aspectY=1;
 		protected long                      m_speedRate = 10000;
-		bool      usingNvidiaCodec=false;
-		protected bool      hasVideo=false;
+		bool																usingNvidiaCodec=false;
+		protected bool											hasVideo=false;
 		/// <summary> control interface. </summary>
 		protected IMediaControl							mediaCtrl =null;
 
@@ -115,10 +117,16 @@ namespace MediaPortal.Player
       m_dDuration=-1d;
       string strExt=System.IO.Path.GetExtension(strFile).ToLower();
 			
-      if (strFile.ToLower().IndexOf("live.ts")>=0)
+      if (strFile.ToLower().IndexOf("live.ts")>=0 ||
+				  strFile.ToLower().IndexOf("radio.ts")>=0)
       {
         m_bLive=true;
-      }
+			}
+			hasVideo=true;
+			if (strFile.ToLower().IndexOf("radio.ts")>=0)
+			{
+				hasVideo=false;
+			}
 
 			m_bIsVisible=false;
       m_bWindowVisible=false;
@@ -155,8 +163,6 @@ namespace MediaPortal.Player
 				hr = basicVideo.GetVideoSize( out m_iVideoWidth, out m_iVideoHeight );
 				if (hr== 0)
 				{
-          hasVideo=true;
-					
 					if (videoWin!=null)
 					{
 						videoWin.put_Owner( GUIGraphicsContext.ActiveForm );
@@ -872,15 +878,40 @@ namespace MediaPortal.Player
 				comobj = Activator.CreateInstance( comtype );
 				graphBuilder = (IGraphBuilder) comobj; comobj = null;
 
-				vmr7=new VMR7Util();
-				vmr7.AddVMR7(graphBuilder);
+				if (hasVideo)
+				{
+					vmr7=new VMR7Util();
+					vmr7.AddVMR7(graphBuilder);
+				}
+				MPEG2Demultiplexer m_MPEG2Demuxer=null;
+				IBaseFilter m_mpeg2Multiplexer=null;
+				Log.WriteFile(Log.LogType.Capture,"mpeg2:add new MPEG2 Demultiplexer to graph");
+				try
+				{
+					m_MPEG2Demuxer=new MPEG2Demultiplexer();
+					m_mpeg2Multiplexer = (IBaseFilter) m_MPEG2Demuxer;
+				}
+				catch(Exception){}
+				//m_mpeg2Multiplexer = DirectShowUtil.AddFilterToGraph(m_graphBuilder,"MPEG-2 Demultiplexer");
+				if (m_mpeg2Multiplexer==null) 
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"mpeg2:FAILED to create mpeg2 demuxer");
+					return false;
+				}
+				int hr=graphBuilder.AddFilter(m_mpeg2Multiplexer,"MPEG-2 Demultiplexer");
+				if (hr!=0)
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"mpeg2:FAILED to add mpeg2 demuxer to graph:0x{0:X}",hr);
+					return false;
+				}
+
 
 				bufferSource = new MPTransportStreamReader();
 				IBaseFilter filter = (IBaseFilter) bufferSource;
 				graphBuilder.AddFilter(filter, "MP TS Reader");
 		
 				IFileSourceFilter fileSource = (IFileSourceFilter) bufferSource;
-				int hr = fileSource.Load(filename, IntPtr.Zero);
+				hr = fileSource.Load(filename, IntPtr.Zero);
 
 				// add preferred video & audio codecs
 				string strVideoCodec="";
@@ -902,8 +933,11 @@ namespace MediaPortal.Player
 					if (strValue.Equals("panscan")) GUIGraphicsContext.ARType=MediaPortal.GUI.Library.Geometry.Type.PanScan43;
 				}
 				IBaseFilter videoCodec=null;
-				if (strVideoCodec.Length>0) 
-					videoCodec=DirectShowUtil.AddFilterToGraph(graphBuilder,strVideoCodec);
+				if (hasVideo)
+				{
+					if (strVideoCodec.Length>0) 
+						videoCodec=DirectShowUtil.AddFilterToGraph(graphBuilder,strVideoCodec);
+				}
 				if (strAudioCodec.Length>0) DirectShowUtil.AddFilterToGraph(graphBuilder,strAudioCodec);
 				if (strAudiorenderer.Length>0) DirectShowUtil.AddAudioRendererToGraph(graphBuilder,strAudiorenderer,false);
         if (bAddFFDshow) DirectShowUtil.AddFilterToGraph(graphBuilder,"ffdshow raw video filter");
@@ -915,27 +949,28 @@ namespace MediaPortal.Player
 				DirectShowUtil.RenderOutputPins(graphBuilder, (IBaseFilter)fileSource);
 
 				mediaCtrl	= (IMediaControl)  graphBuilder;
-				videoWin	= graphBuilder as IVideoWindow;
 				mediaEvt	= (IMediaEventEx)  graphBuilder;
 				m_mediaSeeking = graphBuilder as IMediaSeeking;
-				basicVideo	= graphBuilder as IBasicVideo2;
 				basicAudio	= graphBuilder as IBasicAudio;
-				
-				//Log.Write("TStreamBufferPlayer:SetARMode");
-				DirectShowUtil.SetARMode(graphBuilder,AmAspectRatioMode.AM_ARMODE_STRETCHED);
-
-				hasVideo=true;
-				hr = basicVideo.GetVideoSize( out m_iVideoWidth, out m_iVideoHeight );
-				if (hr!=0)
+				if (hasVideo)
 				{
-					if (videoCodec!=null)
-						graphBuilder.RemoveFilter(videoCodec);
-					hasVideo=false;
-					if (vmr7!=null)
-						vmr7.RemoveVMR7();
-					vmr7=null;
-					basicVideo	= null;
-					videoWin=null;
+					videoWin	= graphBuilder as IVideoWindow;
+					basicVideo	= graphBuilder as IBasicVideo2;
+					//Log.Write("TStreamBufferPlayer:SetARMode");
+					DirectShowUtil.SetARMode(graphBuilder,AmAspectRatioMode.AM_ARMODE_STRETCHED);
+
+					hr = basicVideo.GetVideoSize( out m_iVideoWidth, out m_iVideoHeight );
+					if (hr!=0)
+					{
+						if (videoCodec!=null)
+							graphBuilder.RemoveFilter(videoCodec);
+						hasVideo=false;
+						if (vmr7!=null)
+							vmr7.RemoveVMR7();
+						vmr7=null;
+						basicVideo	= null;
+						videoWin=null;
+					}
 				}
 				graphBuilder.SetDefaultSyncSource();
 				//Log.Write("TStreamBufferPlayer: set Deinterlace");
@@ -987,6 +1022,7 @@ namespace MediaPortal.Player
 					vmr7.RemoveVMR7();
 				vmr7=null;
 
+				while((hr=Marshal.ReleaseComObject( bufferSource ))>0); 
 				bufferSource	= null;
 
         DsUtils.RemoveFilters(graphBuilder);
@@ -1057,7 +1093,9 @@ namespace MediaPortal.Player
 		{
 			get 
 			{
-				return true;
+				if (HasVideo)
+					return true;
+				return false;
 			}
 		}
 		public override bool IsTimeShifting
@@ -1265,6 +1303,16 @@ namespace MediaPortal.Player
 			mediaCtrl.Pause();
 
 			elapsedTimer=DateTime.Now;
+		}
+
+		public override bool IsRadio
+		{
+			get
+			{
+				Log.Write("isradio() video:{0}",hasVideo);
+				if (hasVideo) return false;
+				return true;
+			}
 		}
 
 		#region IDisposable Members

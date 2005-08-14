@@ -1189,6 +1189,19 @@ namespace MediaPortal.TV.Recording
 			string FileName=String.Format(@"{0}\card{1}\{2}",dev.RecordingPath, card+1,dev.TimeShiftFileName);
 			return FileName;
 		}
+		static public string GetTimeShiftFileNameByCardId(int cardId)
+		{
+			for (int i=0; i < m_tvcards.Count;++i)
+			{
+				TVCaptureDevice dev=(TVCaptureDevice) m_tvcards[i];
+				if (dev.ID==cardId)
+				{
+					string FileName=String.Format(@"{0}\card{1}\{2}",dev.RecordingPath, i+1,dev.TimeShiftFileName);
+					return FileName;
+				}
+			}
+			return String.Empty;
+		}
 
 
 
@@ -1223,7 +1236,12 @@ namespace MediaPortal.TV.Recording
 		}
 		
 		static public void StopRadio()
-		{	
+		{
+			Log.Write("playing{0} radio:{1}",g_Player.Playing ,g_Player.IsRadio);
+			if (g_Player.Playing && g_Player.IsRadio)
+			{
+				g_Player.Stop();
+			}
 			foreach (TVCaptureDevice dev in m_tvcards)
 			{
 				if (dev.IsRadio)
@@ -1231,10 +1249,6 @@ namespace MediaPortal.TV.Recording
 					Log.WriteFile(Log.LogType.Recorder,"Recorder:StopRadio() stop radio on card:{0}", dev.ID);
 					dev.Stop();
 				}
-			}
-			if (g_Player.Playing && g_Player.IsRadio)
-			{
-				g_Player.Stop();
 			}
 			m_dtStart=new DateTime(1971,6,11,0,0,0,0);
 		}
@@ -1272,7 +1286,7 @@ namespace MediaPortal.TV.Recording
 				if (!tvcard.IsRecording)
 				{
 					if (RadioDatabase.CanCardTuneToStation(radioStationName, tvcard.ID)  || m_tvcards.Count==1)
-					{
+					{	
 						for (int x=0; x < m_tvcards.Count;++x)
 						{
 							TVCaptureDevice dev =(TVCaptureDevice)m_tvcards[x];
@@ -1284,9 +1298,17 @@ namespace MediaPortal.TV.Recording
 								}
 							}
 						}
+						m_iCurrentCard=-1;//i;
 						Log.WriteFile(Log.LogType.Recorder,"Recorder:StartRadio()  start on card:{0} station:{1}",
 															tvcard.ID,radioStationName);
 						tvcard.StartRadio(radiostation)	;
+						if (tvcard.IsTimeShifting)
+						{
+							string strTimeShiftFileName=GetTimeShiftFileNameByCardId(tvcard.ID);
+
+							Log.WriteFile(Log.LogType.Recorder,"Recorder:  currentfile:{0} newfile:{1}", g_Player.CurrentFile,strTimeShiftFileName);
+							g_Player.Play(strTimeShiftFileName);
+						}
 						m_dtStart=new DateTime(1971,6,11,0,0,0,0);;
 						return;
 					}
@@ -1625,6 +1647,7 @@ namespace MediaPortal.TV.Recording
 					{
 						if (!g_Player.Playing)
 						{
+							Log.WriteFile(Log.LogType.Recorder,"Recorder:Stop card:{0}", m_iCurrentCard);
 							dev.Stop();
 							m_iCurrentCard=-1;
 						}

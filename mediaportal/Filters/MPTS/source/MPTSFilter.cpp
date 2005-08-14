@@ -231,7 +231,7 @@ HRESULT CMPTSFilter::SetFilePosition(REFERENCE_TIME seek)
 }
 HRESULT CMPTSFilter::Pause()
 {
-	//Log((char*)"Filter: Pause()",true);
+	LogDebug("Filter: Pause()");
 	CAutoLock cObjectLock(m_pLock);
 	m_setPosition=true;
 	return CSource::Pause();
@@ -239,7 +239,8 @@ HRESULT CMPTSFilter::Pause()
 
 STDMETHODIMP CMPTSFilter::Stop()
 {
-	Log((char*)"Filter: Stop()",true);
+	LogDebug("Filter: Stop()");
+	m_pPin->AboutToStop();
 	CAutoLock cObjectLock(m_pLock);
 	CAutoLock lock(&m_Lock);
 	return CSource::Stop();
@@ -255,6 +256,7 @@ HRESULT CMPTSFilter::OnConnect()
 
 STDMETHODIMP CMPTSFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt)
 {
+	LogDebug("--- load file");
 	HRESULT hr;
 	hr = m_pFileReader->SetFileName(pszFileName);
 	if (FAILED(hr))
@@ -341,7 +343,8 @@ STDMETHODIMP CMPTSFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt)
 	Log(time.s,false);
 	Log(TEXT("."),false);
 	Log(time.u,true);
-
+	LogDebug("pids ac3:%x audio:%x audio2:%x video:%x pmt:%x pcr:%x",
+		m_pSections->pids.AC3,m_pSections->pids.AudioPid,m_pSections->pids.AudioPid2,m_pSections->pids.VideoPid,m_pSections->pids.PMTPid,m_pSections->pids.PCRPid);
 
 	CAutoLock lock(&m_Lock);
 	m_pFileReader->CloseFile();
