@@ -2215,7 +2215,8 @@ namespace MediaPortal.GUI.TV
 			if (m_currentProgram==null) return;
 			if (isItemSelected)
 			{
-				if (m_currentProgram.IsRunningAt(DateTime.Now))
+				if (m_currentProgram.IsRunningAt(DateTime.Now) ||
+					  m_currentProgram.EndTime<=DateTime.Now)
 				{
 					//view this channel
 					if (g_Player.Playing && g_Player.IsTVRecording)
