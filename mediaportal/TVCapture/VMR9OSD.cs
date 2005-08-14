@@ -460,52 +460,60 @@ namespace MediaPortal.TV.Recording
 		
 		public void RenderVolumeOSD2()
 		{
-			int gWidth=GUIGraphicsContext.Width;
-			int gHeight=GUIGraphicsContext.Height;
-
-			if(_volumeStatesBitmap != null)
+			try
 			{
-				Bitmap osd = new Bitmap(gWidth, gHeight);
-				Graphics gr = Graphics.FromImage(osd);
-					
-				int xPos = gWidth - 90;
-				int yPos = 60;
-				int imageHeight = _volumeStatesBitmap.Height / 3;
+				int gWidth=GUIGraphicsContext.Width;
+				int gHeight=GUIGraphicsContext.Height;
 
-				Rectangle[] bitmapSourceRectangle = new Rectangle[2];
-
-				if(VolumeHandler.Instance.IsMuted)
+				if(_volumeStatesBitmap != null)
 				{
-					bitmapSourceRectangle[0] = new Rectangle(0, imageHeight * 1, _volumeStatesBitmap.Width, imageHeight);
-					bitmapSourceRectangle[1] = bitmapSourceRectangle[0];
+					Bitmap osd = new Bitmap(gWidth, gHeight);
+					Graphics gr = Graphics.FromImage(osd);
+						
+					int xPos = gWidth - 90;
+					int yPos = 60;
+					int imageHeight = _volumeStatesBitmap.Height / 3;
 
-					if(_volumeMuteBitmap != null)
-						gr.DrawImage(_volumeMuteBitmap, xPos - _volumeMuteBitmap.Width, yPos + (imageHeight * 3));
-				}
-				else
-				{
-					bitmapSourceRectangle[0] = new Rectangle(0, imageHeight * 1, _volumeStatesBitmap.Width, imageHeight);
-					bitmapSourceRectangle[1] = new Rectangle(0, imageHeight * 2, _volumeStatesBitmap.Width, imageHeight);
-				}
+					Rectangle[] bitmapSourceRectangle = new Rectangle[2];
 
-				for(int index = VolumeHandler.Instance.StepMax - 1; index > VolumeHandler.Instance.Step; index--)
-				{
-					gr.DrawImage(_volumeStatesBitmap, xPos,yPos, bitmapSourceRectangle[0],System.Drawing.GraphicsUnit.Pixel);
-					xPos -= _volumeStatesBitmap.Width;
-				}
+					if(VolumeHandler.Instance.IsMuted)
+					{
+						bitmapSourceRectangle[0] = new Rectangle(0, imageHeight * 1, _volumeStatesBitmap.Width, imageHeight);
+						bitmapSourceRectangle[1] = bitmapSourceRectangle[0];
 
-				for(int index = VolumeHandler.Instance.Step; index > 0; index--)
-				{
-					gr.DrawImage(_volumeStatesBitmap, xPos,yPos, bitmapSourceRectangle[1],System.Drawing.GraphicsUnit.Pixel);
-					xPos -= _volumeStatesBitmap.Width;
-				}
+						if(_volumeMuteBitmap != null)
+							gr.DrawImage(_volumeMuteBitmap, xPos - _volumeMuteBitmap.Width, yPos + (imageHeight * 3));
+					}
+					else
+					{
+						bitmapSourceRectangle[0] = new Rectangle(0, imageHeight * 1, _volumeStatesBitmap.Width, imageHeight);
+						bitmapSourceRectangle[1] = new Rectangle(0, imageHeight * 2, _volumeStatesBitmap.Width, imageHeight);
+					}
 
-				SaveBitmap(osd,true,true,m_renderOSDAlpha);
-				gr.Dispose();
-				osd.Dispose();
-				m_timeDisplayed=DateTime.Now;
+					for(int index = VolumeHandler.Instance.StepMax - 1; index > VolumeHandler.Instance.Step; index--)
+					{
+						gr.DrawImage(_volumeStatesBitmap, xPos,yPos, bitmapSourceRectangle[0],System.Drawing.GraphicsUnit.Pixel);
+						xPos -= _volumeStatesBitmap.Width;
+					}
+
+					for(int index = VolumeHandler.Instance.Step; index > 0; index--)
+					{
+						gr.DrawImage(_volumeStatesBitmap, xPos,yPos, bitmapSourceRectangle[1],System.Drawing.GraphicsUnit.Pixel);
+						xPos -= _volumeStatesBitmap.Width;
+					}
+
+					SaveBitmap(osd,true,true,m_renderOSDAlpha);
+					gr.Dispose();
+					osd.Dispose();
+					m_timeDisplayed=DateTime.Now;
+				}
+			}
+			catch(Exception e)
+			{
+				Log.Write("VMR9OSD.RenderVolumeOSD2: {0}", e.Message);
 			}
 		}
+
 		public void RenderZapOSD(TVChannel channel,int signalQuality,int signalLevel)
 		{
 			try
@@ -1047,7 +1055,10 @@ namespace MediaPortal.TV.Recording
 					_volumeMuteBitmap = new Bitmap(m_mediaPath + "volume.states.mute.png");
 				}
 			}
-			catch{}
+			catch(Exception e)
+			{
+				Log.Write("VMR9OSD.ReadSkinFile: {0}", e.Message);
+			}
 		}
 
 		bool SaveBitmap(System.Drawing.Bitmap bitmap,bool show,bool transparent,float alphaValue)
