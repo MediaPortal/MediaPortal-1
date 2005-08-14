@@ -32,6 +32,7 @@ CFilterOutPin::CFilterOutPin(LPUNKNOWN pUnk, CMPTSFilter *pFilter, FileReader *p
 	m_pFileReader(pFileReader),
 	m_pSections(pSections),m_bDiscontinuity(FALSE), m_bFlushing(FALSE)
 {
+	LogDebug("pin:ctor()");
 	CAutoLock cAutoLock(&m_cSharedState);
 	m_dwSeekingCaps =	
 						AM_SEEKING_CanSeekForwards  | AM_SEEKING_CanSeekBackwards |
@@ -52,6 +53,7 @@ CFilterOutPin::CFilterOutPin(LPUNKNOWN pUnk, CMPTSFilter *pFilter, FileReader *p
 
 CFilterOutPin::~CFilterOutPin()
 {
+	LogDebug("pin:dtor()");
 	CAutoLock cAutoLock(&m_cSharedState);
 	m_pBuffers->Clear();
 	delete m_pBuffers;
@@ -112,6 +114,7 @@ HRESULT CFilterOutPin::DecideBufferSize(IMemAllocator *pAlloc, ALLOCATOR_PROPERT
 
 HRESULT CFilterOutPin::CompleteConnect(IPin *pReceivePin)
 {
+	LogDebug("pin:CompleteConnect()");
 	HRESULT hr = CBaseOutputPin::CompleteConnect(pReceivePin);
 	if (SUCCEEDED(hr))
 	{
@@ -129,9 +132,17 @@ STDMETHODIMP CFilterOutPin::SetPositions(LONGLONG *pCurrent,DWORD CurrentFlags,L
 HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 {
 
+	BOOL startPesFound=FALSE;
 	if (m_bAboutToStop) return E_FAIL;
-	if (m_lastPTS==0) 
+	if (m_lastPTS==0)
+	{
 		m_lastPTS=m_pSections->pids.StartPTS;
+		if (m_lastPTS!=0) 
+		{
+			startPesFound=TRUE;
+			LogDebug("pin:starting pes:%x",m_lastPTS);
+		}
+	}
 	CheckPointer(pSample, E_POINTER);
 	//CAutoLock cAutoLockShared(&m_cSharedState);
 	{
@@ -164,12 +175,14 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 					if ( m_pFileReader->GetFilePointer() <= m_pSections->pids.fileStartPosition &&
 						m_pFileReader->GetFilePointer() + lDataLength>=m_pSections->pids.fileStartPosition )
 					{
-						LogDebug("pin:Wait %x/%x (%d)", (DWORD)m_pFileReader->GetFilePointer(),(DWORD)m_pSections->pids.fileStartPosition,count);
+						//LogDebug("pin:Wait %x/%x (%d)", (DWORD)m_pFileReader->GetFilePointer(),(DWORD)m_pSections->pids.fileStartPosition,count);
 						count++;
 						if (count >20) break;
 						Sleep(50);
 					}
 					else break;
+					if (count>=20)
+						LogDebug("pin:Wait %x/%x (%d)", (DWORD)m_pFileReader->GetFilePointer(),(DWORD)m_pSections->pids.fileStartPosition,count);
 				}
 			}
 
@@ -189,14 +202,14 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 						if (m_pSections->pids.fileStartPosition >= fileSize-(1024*1024) ||
 							m_pSections->pids.fileStartPosition < lDataLength) 
 						{
-							LogDebug("waiteof pos:%x size:%x (%d)", m_pSections->pids.fileStartPosition,fileSize,count);
+						//	LogDebug("waiteof pos:%x size:%x (%d)", m_pSections->pids.fileStartPosition,fileSize,count);
 							count++;
 							if (count >20) break;
 							Sleep(50);
 						}
 						else break;
 					}
-					LogDebug("outputpin:end of file, writepos:%x slept:%i", m_pSections->pids.fileStartPosition,count);
+					LogDebug("outputpin:end of file, writepos:%x slept:%i size:%x", m_pSections->pids.fileStartPosition,count,fileSize);
 				}
 			}
 						
@@ -258,10 +271,10 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 		REFERENCE_TIME rtStop  = static_cast<REFERENCE_TIME>(ptsEnd / m_dRateSeeking);
 
 		pSample->SetTime(&rtStart, &rtStop); 
-		pSample->SetSyncPoint(bSyncPoint);
+		pSample->SetSyncPoint(bSyncPoint||startPesFound ||(m_lastPTS==0));
 
 		
-		if(m_bDiscontinuity) 
+		if(m_bDiscontinuity||startPesFound) 
 		{
 			LogDebug("pin: FillBuffer() SetDiscontinuity");
 			pSample->SetDiscontinuity(TRUE);
@@ -276,6 +289,7 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 
 HRESULT CFilterOutPin::OnThreadCreate( )
 {
+	LogDebug("pin:OnThreadCreate()");
     CAutoLock cAutoLockShared(&m_cSharedState);
 	if(m_pFileReader->IsFileInvalid()==TRUE)
 	{
@@ -286,12 +300,14 @@ HRESULT CFilterOutPin::OnThreadCreate( )
 
 HRESULT CFilterOutPin::OnThreadStartPlay( )
 {
+	LogDebug("pin:OnThreadStartPlay()");
    m_bDiscontinuity = TRUE;
    return DeliverNewSegment(m_rtStart, m_rtStop, m_dRateSeeking);
 }
 
 HRESULT CFilterOutPin::Run(REFERENCE_TIME tStart)
 {
+	LogDebug("pin:Run()");
 	m_bAboutToStop=false;
 	return CBaseOutputPin::Run(tStart);
 }
@@ -299,6 +315,7 @@ HRESULT CFilterOutPin::Run(REFERENCE_TIME tStart)
 
 HRESULT CFilterOutPin::ChangeStart()
 {
+	LogDebug("pin:ChangeStart()");
 	m_pMPTSFilter->SetFilePosition(m_rtStart);
     UpdateFromSeek();
     return S_OK;
@@ -306,6 +323,7 @@ HRESULT CFilterOutPin::ChangeStart()
 
 HRESULT CFilterOutPin::ChangeStop()
 {
+	LogDebug("pin:ChangeStop()");
     UpdateFromSeek();
     return S_OK;
 }
@@ -337,7 +355,7 @@ void CFilterOutPin::UpdateFromSeek(void)
 
 HRESULT CFilterOutPin::SetDuration(REFERENCE_TIME duration)
 {
-	
+	LogDebug("pin:SetDuration()");
 	CAutoLock lock(CTimeShiftSeeking::m_pLock);
 	m_rtDuration = duration;
 	m_rtStop = m_rtDuration;
@@ -369,6 +387,7 @@ HRESULT CFilterOutPin::GetReferenceClock(IReferenceClock **pClock)
 }
 void CFilterOutPin::ResetBuffers()
 {
+	LogDebug("Reset buffers");
 	if (m_pBuffers==NULL) return;
 	m_pBuffers->Clear();
 	m_bDiscontinuity=true;
