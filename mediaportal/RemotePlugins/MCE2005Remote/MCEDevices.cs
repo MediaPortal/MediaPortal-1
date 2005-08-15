@@ -740,10 +740,12 @@ namespace MediaPortal.Devices
 			if(Handle != IntPtr.Zero)
 				return;
 
-			CreateParams Params = new CreateParams();
-			Params.ExStyle = 0x80;
-			Params.Style = unchecked((int)0x80000000);
-			CreateHandle(Params);
+			CreateParams createParams = new CreateParams();
+
+			createParams.ExStyle = 0x08000000;
+			createParams.Style = unchecked((int)0x80000000);
+			
+			CreateHandle(createParams);
 		}
 
 		#endregion Methods

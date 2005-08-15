@@ -38,7 +38,7 @@ namespace MediaPortal.Mixer
 		{
 			CreateParams createParams = new CreateParams();
 
-			createParams.ExStyle = 0x80;
+			createParams.ExStyle = 0x08000000;
 			createParams.Style = unchecked((int)0x80000000);
 			
 			CreateHandle(createParams);

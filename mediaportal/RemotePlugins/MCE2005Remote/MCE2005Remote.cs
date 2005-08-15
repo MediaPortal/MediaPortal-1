@@ -292,16 +292,6 @@ namespace MediaPortal
 				Marshal.StructureToPtr(header,ptrStruct,false);
 				err=GetRawInputData( msg.LParam,RID_INPUT,ptrStruct,ref uiSize,Marshal.SizeOf(typeof(RAWINPUTHEADER)));
 				header=(RAWINPUTHID)Marshal.PtrToStructure(ptrStruct,typeof(RAWINPUTHID));
-				/*
-				Log.Write("header.dwsize:{0}",header.header.dwSize);
-				Log.Write("header.dwType:{0}",header.header.dwType);
-				Log.Write("header.hDevice:{0:X}",header.header.hDevice);
-				Log.Write("header.wParam:{0:X}",header.header.wParam);
-				Log.Write("hid.dwCount:{0:X}",header.hid.dwCount);
-				Log.Write("hid.dwSizeHid:{0:X}",header.hid.dwSizeHid);
-				Log.Write("hid.RawData1:{0:X} {1:X} {2:X}",header.hid.RawData1,header.hid.RawData2,header.hid.RawData3);
-				*/
-				//				Log.Write("hid.RawData1:{0:X} {1:X} {2:X}",header.hid.RawData1,header.hid.RawData2,header.hid.RawData3);
 
 				switch(header.hid.RawData2)
 				{
