@@ -178,8 +178,8 @@ namespace MediaPortal.TV.Database
 				m_db.Execute("ALTER TABLE recording ADD COLUMN keepMethod Integer");
 				m_db.Execute("ALTER TABLE recording ADD COLUMN keepDate text");
 				DateTime maxDate=DateTime.MaxValue;
-				m_db.Execute(String.Format("update recorded set keepMethod={0}, keepDate='{1}'",(int)TVRecorded.KeepMethod.Always,maxDate));
-				m_db.Execute(String.Format("update recording set keepMethod={0}, keepDate='{1}'",(int)TVRecorded.KeepMethod.Always,maxDate));
+				m_db.Execute(String.Format("update recorded set keepMethod={0}, keepDate='{1}'",(int)TVRecorded.KeepMethod.Always,Utils.datetolong(maxDate)));
+				m_db.Execute(String.Format("update recording set keepMethod={0}, keepDate='{1}'",(int)TVRecorded.KeepMethod.Always,Utils.datetolong(maxDate)));
 			}
 			m_db.Execute(String.Format("update tblversion set idVersion={0}",currentVersion));
 		}
