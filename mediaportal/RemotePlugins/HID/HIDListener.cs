@@ -38,8 +38,10 @@ namespace MediaPortal
 			if(msg.Msg != 0x0319)
 				return false;
 
+			// find out which request the MCE remote handled last
 			if((AppCommands)((msg.LParam.ToInt32() >> 16) & ~0xF000) == MCE2005Remote.LastHidRequest)
 			{
+				// possible that it is the same request mapped to an app command?
 				if(Environment.TickCount - MCE2005Remote.LastHidRequestTick < 300)
 					return true;
 			}
