@@ -466,7 +466,7 @@ namespace MediaPortal
          
 					case 0xB1: //pause
 						
-						_lastHidRequest = AppCommands.MediaPlayPause;
+						_lastHidRequest = AppCommands.MediaPause;
 						_lastHidRequestTick = Environment.TickCount;
 
 						action=new Action(Action.ActionType.ACTION_PAUSE,0,0);
