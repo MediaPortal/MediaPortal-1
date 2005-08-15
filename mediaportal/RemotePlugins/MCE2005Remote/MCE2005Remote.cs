@@ -272,79 +272,18 @@ namespace MediaPortal
 				{
 					case 0x8:
 					case 0x9:
-				 	case 0xA:
+					case 0xA:
 						// we simply want to consume these messages to prevent the OS from handling them
 						Log.Write("MCERemote2005.WndProc: Consuming WM_APPCOMMAND");
 						return true;
 				}
 			}
 
-			/*
-				  if (msg.Msg==WM_APPCOMMAND)
-				  {
-					action=new Action(Action.ActionType.ACTION_INVALID,0,0);
-					lparam>>=32;
-					Log.Write("lp:{0:X}",lparam);
-					switch (lparam)
-					{
-					  case 0x1032: //back
-						key=(char)27;
-						break;
-					  case 0x102E: //play
-						action.wID=Action.ActionType.ACTION_PLAY;
-						break;
-					  case 0x1031: //forward
-						action.wID=Action.ActionType.ACTION_FORWARD;
-						break;
-					  case 0x102F: //pause
-						action.wID=Action.ActionType.ACTION_PAUSE;
-						break;
-					  case 0xD: //stop
-						action.wID=Action.ActionType.ACTION_STOP;
-						break;
-					  case 0xC: //repeat
-						//action.wID=Action.ActionType.;
-						break;
-					  case 0xB: //next
-						action.wID=Action.ActionType.ACTION_NEXT_ITEM;
-						break;
-					  case 0x1: //previous
-						action.wID=Action.ActionType.ACTION_PREV_ITEM;
-						break;
-					  case 0x1033://channel +
-						action.wID=Action.ActionType.ACTION_NEXT_CHANNEL;
-						break;
-					  case 0x1034://channel -
-						action.wID=Action.ActionType.ACTION_PREV_CHANNEL;
-						break;
-					  case 0x8://mute
-						break;
-					  case 0x1030://record
-						action.wID=Action.ActionType.ACTION_RECORD;
-						break;
-					  default:
-						Log.Write("unknown wm_appcommand:{0:X}",lparam);
-					  break;
-					}
-					return true;
-				  }
-
-				  if (msg.Msg==WM_KEYDOWN)
-				  {
-					Log.Write("wm_keydown:{0:X} {1:X}",wparam,lparam); 
-					switch (wparam)
-					{
-					  case 0xd://OK/enter
-						break;
-					  case 0x38://*
-						break;
-					  case 0x33://#
-						break;
-					}
-				  }
-			*/ 
 			if (msg.Msg==WM_INPUT)
 			{
+				_lastHidRequest = AppCommands.None;
+				_lastHidRequestTick = 0;
+
 				RAWINPUTHID header = new RAWINPUTHID ();
 				int uiSize=0;
 				int err=GetRawInputData( msg.LParam,RID_INPUT,IntPtr.Zero,ref uiSize,Marshal.SizeOf(typeof(RAWINPUTHEADER)));
@@ -362,7 +301,7 @@ namespace MediaPortal
 				Log.Write("hid.dwSizeHid:{0:X}",header.hid.dwSizeHid);
 				Log.Write("hid.RawData1:{0:X} {1:X} {2:X}",header.hid.RawData1,header.hid.RawData2,header.hid.RawData3);
 				*/
-//				Log.Write("hid.RawData1:{0:X} {1:X} {2:X}",header.hid.RawData1,header.hid.RawData2,header.hid.RawData3);
+				//				Log.Write("hid.RawData1:{0:X} {1:X} {2:X}",header.hid.RawData1,header.hid.RawData2,header.hid.RawData3);
 
 				switch(header.hid.RawData2)
 				{
@@ -381,7 +320,7 @@ namespace MediaPortal
 						}
 						else
 						{
-//							Log.Write("unknown key pressed hid.RawData1:{0:X} {1:X} {2:X}",header.hid.RawData1,header.hid.RawData2,header.hid.RawData3);
+							//							Log.Write("unknown key pressed hid.RawData1:{0:X} {1:X} {2:X}",header.hid.RawData1,header.hid.RawData2,header.hid.RawData3);
 							return false;
 						}
 						break;
@@ -406,12 +345,12 @@ namespace MediaPortal
 						}
 						else if (header.hid.RawData3==2)
 						{
-//							Log.Write("key=27");
-//							keyCode=Keys.Escape;
+							//							Log.Write("key=27");
+							//							keyCode=Keys.Escape;
 						}
 						else
 						{
-//							Log.Write("unknown key pressed hid.RawData1:{0:X} {1:X} {2:X}",header.hid.RawData1,header.hid.RawData2,header.hid.RawData3);
+							//							Log.Write("unknown key pressed hid.RawData1:{0:X} {1:X} {2:X}",header.hid.RawData1,header.hid.RawData2,header.hid.RawData3);
 							return false;
 						}
 						break;
@@ -473,7 +412,7 @@ namespace MediaPortal
 						}
 						else
 						{
-//							Log.Write("unknown key pressed hid.RawData1:{0:X} {1:X} {2:X}",header.hid.RawData1,header.hid.RawData2,header.hid.RawData3);
+							//							Log.Write("unknown key pressed hid.RawData1:{0:X} {1:X} {2:X}",header.hid.RawData1,header.hid.RawData2,header.hid.RawData3);
 							return false;
 						}
 						break;
@@ -490,7 +429,7 @@ namespace MediaPortal
 						}
 						else
 						{
-//							Log.Write("unknown key pressed hid.RawData1:{0:X} {1:X} {2:X}",header.hid.RawData1,header.hid.RawData2,header.hid.RawData3);
+							//							Log.Write("unknown key pressed hid.RawData1:{0:X} {1:X} {2:X}",header.hid.RawData1,header.hid.RawData2,header.hid.RawData3);
 							return false;
 						}
 						break;
@@ -502,7 +441,7 @@ namespace MediaPortal
 						}
 						else
 						{
-//							Log.Write("unknown key pressed hid.RawData1:{0:X} {1:X} {2:X}",header.hid.RawData1,header.hid.RawData2,header.hid.RawData3);
+							//							Log.Write("unknown key pressed hid.RawData1:{0:X} {1:X} {2:X}",header.hid.RawData1,header.hid.RawData2,header.hid.RawData3);
 							return false;
 						}
 						break;
@@ -527,70 +466,121 @@ namespace MediaPortal
 						GUIWindowManager.SendThreadMessage(msgHome2);
 						break;
           
-//					case 0xB0: //play
-//						action=new Action(Action.ActionType.ACTION_PLAY,0,0);
-//						break;
+					case 0xB0: //play
+
+						_lastHidRequest = AppCommands.MediaPlay;
+						_lastHidRequestTick = Environment.TickCount;
+
+						action=new Action(Action.ActionType.ACTION_PLAY,0,0);
+						break;
+         
+					case 0xB1: //pause
+						
+						_lastHidRequest = AppCommands.MediaPlayPause;
+						_lastHidRequestTick = Environment.TickCount;
+
+						action=new Action(Action.ActionType.ACTION_PAUSE,0,0);
+						break;
           
-//					case 0xB1: //pause
-//						action=new Action(Action.ActionType.ACTION_PAUSE,0,0);
-//						break;
+					case 0xB2: //record
+						
+						_lastHidRequest = AppCommands.MediaRecord;
+						_lastHidRequestTick = Environment.TickCount;
+
+						action=new Action(Action.ActionType.ACTION_RECORD,0,0);
+						break;
           
-//					case 0xB2: //record
-//						action=new Action(Action.ActionType.ACTION_RECORD,0,0);
-//						break;
+					case 0xB4: //rewind
+
+						_lastHidRequest = AppCommands.MediaRewind;
+						_lastHidRequestTick = Environment.TickCount;
+						
+						action=new Action(Action.ActionType.ACTION_REWIND,0,0);
+						break;
           
-//					case 0xB4: //rewind
-//						action=new Action(Action.ActionType.ACTION_REWIND,0,0);
-//						break;
+					case 0xB3: //fast forward
+
+						_lastHidRequest = AppCommands.MediaFastForward;
+						_lastHidRequestTick = Environment.TickCount;
+
+						action=new Action(Action.ActionType.ACTION_FORWARD,0,0);
+						break;
           
-//					case 0xB3: //fast forward
-//						action=new Action(Action.ActionType.ACTION_FORWARD,0,0);
-//						break;
+					case 0xB5: //next
+						
+						_lastHidRequest = AppCommands.MediaNextTrack;
+						_lastHidRequestTick = Environment.TickCount;
+
+						if ((g_Player.Playing) && (g_Player.IsDVD))
+							action=new Action(Action.ActionType.ACTION_NEXT_CHAPTER,0,0);
+						else
+							action=new Action(Action.ActionType.ACTION_NEXT_ITEM,0,0);
+						break;
           
-//					case 0xB5: //next
-//						if ((g_Player.Playing) && (g_Player.IsDVD))
-//							action=new Action(Action.ActionType.ACTION_NEXT_CHAPTER,0,0);
-//						else
-//							action=new Action(Action.ActionType.ACTION_NEXT_ITEM,0,0);
-//						break;
+					case 0xB6: //previous
+
+						_lastHidRequest = AppCommands.MediaPreviousTrack;
+						_lastHidRequestTick = Environment.TickCount;
+
+						if ((g_Player.Playing) && (g_Player.IsDVD))
+							action=new Action(Action.ActionType.ACTION_PREV_CHAPTER,0,0);
+						else
+							action=new Action(Action.ActionType.ACTION_PREV_ITEM,0,0);
+						break;
+         
+					case 0xb7: //stop
+
+						_lastHidRequest = AppCommands.MediaStop;
+						_lastHidRequestTick = Environment.TickCount;
+
+						action=new Action(Action.ActionType.ACTION_STOP,0,0);
+						break;
           
-//					case 0xB6: //previous
-//						if ((g_Player.Playing) && (g_Player.IsDVD))
-//							action=new Action(Action.ActionType.ACTION_PREV_CHAPTER,0,0);
-//						else
-//							action=new Action(Action.ActionType.ACTION_PREV_ITEM,0,0);
-//						break;
+					case 0xe9: //volume+
+						
+						_lastHidRequest = AppCommands.VolumeUp;
+						_lastHidRequestTick = Environment.TickCount;
+
+						action=new Action(Action.ActionType.ACTION_VOLUME_UP,0,0);
+						break;
           
-//					case 0xb7: //stop
-//						action=new Action(Action.ActionType.ACTION_STOP,0,0);
-//						break;
+					case 0xea: //volume-
+
+						_lastHidRequest = AppCommands.VolumeDown;
+						_lastHidRequestTick = Environment.TickCount;
+
+						action=new Action(Action.ActionType.ACTION_VOLUME_DOWN,0,0);
+						break;
           
-//					case 0xe9: //volume+
-//						Log.Write("Remote");
-//						action=new Action(Action.ActionType.ACTION_VOLUME_UP,0,0);
-//						break;
+					case 0x9c: //channel+
+
+						_lastHidRequest = AppCommands.MediaChannelUp;
+						_lastHidRequestTick = Environment.TickCount;
+	
+						if (GUIGraphicsContext.IsFullScreenVideo)
+							action=new Action(Action.ActionType.ACTION_NEXT_CHANNEL,0,0);
+						else
+							action=new Action(Action.ActionType.ACTION_PAGE_UP,0,0);
+						break;
           
-//					case 0xea: //volume-
-//						action=new Action(Action.ActionType.ACTION_VOLUME_DOWN,0,0);
-//						break;
+					case 0x9d: //channel-
+
+						_lastHidRequest = AppCommands.MediaChannelDown;
+						_lastHidRequestTick = Environment.TickCount;
+
+						if (GUIGraphicsContext.IsFullScreenVideo)
+							action=new Action(Action.ActionType.ACTION_PREV_CHANNEL,0,0);
+						else
+							action=new Action(Action.ActionType.ACTION_PAGE_DOWN,0,0);
+						break;
           
-//					case 0x9c: //channel+
-//						if (GUIGraphicsContext.IsFullScreenVideo)
-//							action=new Action(Action.ActionType.ACTION_NEXT_CHANNEL,0,0);
-//						else
-//							action=new Action(Action.ActionType.ACTION_PAGE_UP,0,0);
-//						break;
-          
-//					case 0x9d: //channel-
-//						if (GUIGraphicsContext.IsFullScreenVideo)
-//							action=new Action(Action.ActionType.ACTION_PREV_CHANNEL,0,0);
-//						else
-//							action=new Action(Action.ActionType.ACTION_PAGE_DOWN,0,0);
-//						break;
-          
-//					case 0xe2: //mute
-//						action=new Action(Action.ActionType.ACTION_VOLUME_MUTE,0,0);
-//						break;
+					case 0xe2: //mute
+						
+						_lastHidRequest = AppCommands.VolumeMute;
+						_lastHidRequestTick = Environment.TickCount;
+
+						action=new Action(Action.ActionType.ACTION_VOLUME_MUTE,0,0);
+						break;
 
 					case 0x5A: //teletext
 						if (g_Player.IsTV)
@@ -612,7 +602,7 @@ namespace MediaPortal
 
           
 					default:
-//						Log.Write("unknown key pressed hid.RawData1:{0:X} {1:X} {2:X}",header.hid.RawData1,header.hid.RawData2,header.hid.RawData3);
+						//						Log.Write("unknown key pressed hid.RawData1:{0:X} {1:X} {2:X}",header.hid.RawData1,header.hid.RawData2,header.hid.RawData3);
 						return false;
 				}
 				return true;
@@ -682,5 +672,26 @@ namespace MediaPortal
 		}
 
 		#endregion Green Button
-	}
+
+		#region Properties
+
+		internal static AppCommands LastHidRequest
+		{
+			get { return _lastHidRequest; }
+		}	
+
+		internal static int LastHidRequestTick
+		{
+			get { return _lastHidRequestTick; }
+		}	
+
+		#endregion Properties
+
+		#region Fields
+
+		static AppCommands			_lastHidRequest;
+		static int					_lastHidRequestTick;
+
+		#endregion Fields
+}
 }
