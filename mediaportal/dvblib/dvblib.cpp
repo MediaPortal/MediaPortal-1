@@ -24,7 +24,7 @@
 #include "stdafx.h"
 #include <initguid.h>
 #include <streams.h>
-#include <dshowasf.h>
+//#include <dshowasf.h>
 #include <comdef.h>
 //#include <Dshow.h>
 #include <bdaiface.h>

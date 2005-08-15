@@ -32,7 +32,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="strmbased.lib winmm.lib comsupp.lib dxguid.lib d3d9.lib d3dx9.lib"
+				AdditionalDependencies="strmbasd.lib winmm.lib comsupp.lib dxguid.lib d3d9.lib d3dx9.lib"
 				OutputFile="$(OutDir)/dshowhelper.dll"
 				LinkIncremental="2"
 				IgnoreDefaultLibraryNames=""

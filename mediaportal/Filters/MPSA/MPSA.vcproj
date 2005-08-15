@@ -41,7 +41,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="&quot;C:\temp\Extras\DirectShow\Samples\C++\DirectShow\BaseClasses\Release\strmbase.lib&quot; quartz.lib winmm.lib "
+				AdditionalDependencies="strmbase.lib quartz.lib winmm.lib "
 				OutputFile="Release/MPSA.ax"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -110,7 +110,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="&quot;C:\temp\Extras\DirectShow\Samples\C++\DirectShow\BaseClasses\Debug\strmbasd.lib&quot; quartz.lib winmm.lib msvcrtd.lib"
+				AdditionalDependencies="strmbasd.lib quartz.lib winmm.lib msvcrtd.lib"
 				OutputFile="Debug/MPSA.ax"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"

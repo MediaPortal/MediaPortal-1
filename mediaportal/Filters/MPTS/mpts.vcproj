@@ -181,6 +181,9 @@
 			<File
 				RelativePath=".\source\StreamPids.cpp">
 			</File>
+			<File
+				RelativePath=".\source\TimeShiftSeeking.cpp">
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -205,6 +208,9 @@
 			</File>
 			<File
 				RelativePath=".\source\StreamPids.h">
+			</File>
+			<File
+				RelativePath=".\source\TimeShiftSeeking.h">
 			</File>
 		</Filter>
 	</Files>

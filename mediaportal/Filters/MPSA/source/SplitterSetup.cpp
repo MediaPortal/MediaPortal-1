@@ -20,6 +20,10 @@
  *
  */
 
+#include <windows.h>
+
+#include <xprtdefs.h>
+#include <ksuuids.h>
 #include <streams.h>
 #include <bdaiface.h>
 #include "SplitterSetup.h"
