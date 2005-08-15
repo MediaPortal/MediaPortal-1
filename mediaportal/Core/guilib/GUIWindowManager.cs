@@ -624,6 +624,7 @@ namespace MediaPortal.GUI.Library
 			m_bSwitching=true;
 			try
 			{
+				int fromWindowId=ActiveWindow;
 				// Exit if there is no previous window
 				if (m_vecWindowList.Count == 0) return;
 
@@ -676,7 +677,7 @@ namespace MediaPortal.GUI.Library
 							if (m_vecWindowList.Count > 0) m_iPrevActiveWindowID = (int)m_vecWindowList[m_vecWindowList.Count-1];
 							m_iActiveWindow=i;
 							m_iActiveWindowID=pWindow.GetID;
-							msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT,pWindow.GetID,0,0,m_iPrevActiveWindowID,0,null);
+							msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT,pWindow.GetID,0,0,fromWindowId,0,null);
 							pWindow.OnMessage(msg);
 							return;
 						}
