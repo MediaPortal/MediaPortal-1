@@ -553,22 +553,25 @@ namespace MediaPortal.GUI.TV
 
           UnFocus();
 					m_currentProgram=null;
-					m_iCursorX=0;
-					m_iCursorY=0;
-					m_iChannelOffset=0;
-          m_bSingleChannel=false;
-          m_bUseChannelLogos=false;
-					if (Recorder.IsViewing( ) )
+					if ( message.Param1!=(int) GUIWindow.Window.WINDOW_TV_PROGRAM_INFO )
 					{
-						m_strCurrentChannel= Recorder.GetTVChannelName(   );
-						GetChannels();
-						for (int i=0; i < m_channels.Count;i++)
+						m_iCursorX=0;
+						m_iCursorY=0;
+						m_iChannelOffset=0;
+						m_bSingleChannel=false;
+						m_bUseChannelLogos=false;
+						if (Recorder.IsViewing( ) )
 						{
-							TVChannel chan=(TVChannel)m_channels[i];
-							if (chan.Name.Equals(m_strCurrentChannel))
+							m_strCurrentChannel= Recorder.GetTVChannelName(   );
+							GetChannels();
+							for (int i=0; i < m_channels.Count;i++)
 							{
-								m_iCursorY=i;
-								break;
+								TVChannel chan=(TVChannel)m_channels[i];
+								if (chan.Name.Equals(m_strCurrentChannel))
+								{
+									m_iCursorY=i;
+									break;
+								}
 							}
 						}
 					}
@@ -610,7 +613,10 @@ namespace MediaPortal.GUI.TV
 						for (int i=1; i <= 4; i++) cntlTimeInterval.AddLabel(String.Empty,i);	
 						cntlTimeInterval.Value=1;
 					}
-					Update(true);
+					if ( message.Param1!= (int)GUIWindow.Window.WINDOW_TV_PROGRAM_INFO )
+						Update(true);
+					else
+						Update(false);
 					SetFocus();
 					if (m_currentProgram!=null)
 					{
@@ -2411,6 +2417,7 @@ namespace MediaPortal.GUI.TV
 		}
 		private void UpdateVerticalScrollbar()
 		{
+			if (m_channels.Count==0) return;
 			int channel=m_iCursorY+m_iChannelOffset;
 			while (channel>0 && channel >= m_channels.Count) channel -=m_channels.Count;
 			float current=(float)(m_iCursorY+m_iChannelOffset);
