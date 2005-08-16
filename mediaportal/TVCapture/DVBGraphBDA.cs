@@ -3878,7 +3878,8 @@ namespace MediaPortal.TV.Recording
 				if (currentTuningObject.SubtitlePid <=0) currentTuningObject.SubtitlePid=-1;
 				if (currentTuningObject.TeletextPid <=0) currentTuningObject.TeletextPid=-1;
 				if (currentTuningObject.VideoPid <=0) currentTuningObject.VideoPid=-1;
-				if (currentTuningObject.VideoPid <=0) currentTuningObject.PMTPid=-1;			
+				if (currentTuningObject.PMTPid <=0) currentTuningObject.PMTPid=-1;			
+				if (currentTuningObject.PCRPid <=0) currentTuningObject.PCRPid=-1;
 
 				DirectShowUtil.EnableDeInterlace(m_graphBuilder);
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneChannel() done freq:{0} ONID:{1} TSID:{2} prog:{3} audio:{4:X} video:{5:X} pmt:{6:X} ac3:{7:X} txt:{8:X}",
@@ -3899,6 +3900,7 @@ namespace MediaPortal.TV.Recording
 				if (Network()==NetworkType.ATSC)
 					m_epgGrabber.GrabEPG(false);
 				SetupMTSDemuxerPin();
+				SetupDemuxer(m_DemuxVideoPin,currentTuningObject.VideoPid,m_DemuxAudioPin,currentTuningObject.AudioPid,m_pinAC3Out,currentTuningObject.AC3Pid);
 
 				VideoRendererStatistics.VideoState=VideoRendererStatistics.State.NoSignal;
 				if (m_streamDemuxer != null)
