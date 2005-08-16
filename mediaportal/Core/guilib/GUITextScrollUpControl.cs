@@ -473,6 +473,7 @@ namespace MediaPortal.GUI.Library
 
 		// Set timeElapsed to be 0 so we delay scrolling again
 		timeElapsed = 0.0f; 
+		iScrollOffset = 0.0f;
     }
 
 
