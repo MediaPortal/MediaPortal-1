@@ -3145,6 +3145,8 @@ namespace MediaPortal.TV.Recording
 					for (int pids =0; pids < info.pid_list.Count;pids++)
 					{
 						DVBSections.PMTData data=(DVBSections.PMTData) info.pid_list[pids];
+						if (data.elementary_PID <=0) 
+							data.elementary_PID=-1;
 						if (data.isVideo)
 						{
 							if (currentTuningObject.VideoPid!=data.elementary_PID) changed=true;
@@ -3238,14 +3240,22 @@ namespace MediaPortal.TV.Recording
 								SetupDemuxerPin(m_pinMPG1Out,currentTuningObject.PCRPid,(int)MediaSampleContent.TransportPacket,false);
 								//setup demuxer MTS pin 
 								SetupMTSDemuxerPin();
+								if (m_streamDemuxer != null)
+								{
+									m_streamDemuxer.SetChannelData(currentTuningObject.AudioPid, currentTuningObject.VideoPid, currentTuningObject.TeletextPid, currentTuningObject.Audio3, currentTuningObject.ServiceName,currentTuningObject.PMTPid,currentTuningObject.ProgramNumber);
+								}
 							}
 							else
 							{
 								Log.Write("DVBGraphBDA:SendPMT() set demux: video pid:{0:X} audio pid:{1:X} AC3 pid:{2:X}",currentTuningObject.VideoPid,currentTuningObject.AudioPid,currentTuningObject.AC3Pid);
 								SetupDemuxer(m_DemuxVideoPin,currentTuningObject.VideoPid,m_DemuxAudioPin,currentTuningObject.AudioPid, m_pinAC3Out,currentTuningObject.AC3Pid);
-								//setup demuxer MTS pin 
-								if (changed)
-									SetupMTSDemuxerPin();
+								//setup demuxer MTS pin
+								SetupMTSDemuxerPin();				
+								if (m_streamDemuxer != null)
+								{
+									m_streamDemuxer.SetChannelData(currentTuningObject.AudioPid, currentTuningObject.VideoPid, currentTuningObject.TeletextPid, currentTuningObject.Audio3, currentTuningObject.ServiceName,currentTuningObject.PMTPid,currentTuningObject.ProgramNumber);
+								}
+
 							}
 						}
 					}
