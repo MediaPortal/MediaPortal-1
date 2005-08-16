@@ -20,7 +20,7 @@
  */
 //#define HW_PID_FILTERING
 //#define DUMP
-//#define USEMTSWRITER
+#define USEMTSWRITER
 #if (UseCaptureCardDefinitions)
 using System;
 using System.Collections;
@@ -3892,6 +3892,11 @@ namespace MediaPortal.TV.Recording
 				SetupMTSDemuxerPin();
 
 				VideoRendererStatistics.VideoState=VideoRendererStatistics.State.NoSignal;
+				if (m_streamDemuxer != null)
+				{
+					m_streamDemuxer.SetChannelData(currentTuningObject.AudioPid, currentTuningObject.VideoPid, currentTuningObject.TeletextPid, currentTuningObject.Audio3, currentTuningObject.ServiceName,currentTuningObject.PMTPid,currentTuningObject.ProgramNumber);
+				}
+
 			}	
 			finally
 			{
