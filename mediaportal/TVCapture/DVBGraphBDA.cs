@@ -2406,7 +2406,7 @@ namespace MediaPortal.TV.Recording
 			else
 				m_tsWriterInterface.SetAudioPid2(0);
 
-			//m_tsWriterInterface.SetSubtitlePid((ushort)currentTuningObject.SubtitlePid);
+			m_tsWriterInterface.SetSubtitlePid((ushort)currentTuningObject.SubtitlePid);
 			if (currentTuningObject.TeletextPid>0)
 				m_tsWriterInterface.SetTeletextPid((ushort)currentTuningObject.TeletextPid);
 			else
@@ -3224,7 +3224,7 @@ namespace MediaPortal.TV.Recording
 					if (currentTuningObject.Audio1 <=0) currentTuningObject.Audio1=-1;
 					if (currentTuningObject.Audio2 <=0) currentTuningObject.Audio2=-1;
 					if (currentTuningObject.Audio2 <=0) currentTuningObject.Audio2=-1;
-					//if (currentTuningObject.SubtitlePid <=0) currentTuningObject.SubtitlePid=-1;
+					if (currentTuningObject.SubtitlePid <=0) currentTuningObject.SubtitlePid=-1;
 					if (currentTuningObject.TeletextPid <=0) currentTuningObject.TeletextPid=-1;
 					if (currentTuningObject.VideoPid <=0) currentTuningObject.VideoPid=-1;
 					if (currentTuningObject.PCRPid <=0) currentTuningObject.PCRPid=-1;
@@ -3876,7 +3876,7 @@ namespace MediaPortal.TV.Recording
 				if (currentTuningObject.Audio1 <=0) currentTuningObject.Audio1=-1;
 				if (currentTuningObject.Audio2 <=0) currentTuningObject.Audio2=-1;
 				if (currentTuningObject.Audio2 <=0) currentTuningObject.Audio2=-1;
-				//if (currentTuningObject.SubtitlePid <=0) currentTuningObject.SubtitlePid=-1;
+				if (currentTuningObject.SubtitlePid <=0) currentTuningObject.SubtitlePid=-1;
 				if (currentTuningObject.TeletextPid <=0) currentTuningObject.TeletextPid=-1;
 				if (currentTuningObject.VideoPid <=0) currentTuningObject.VideoPid=-1;
 				if (currentTuningObject.VideoPid <=0) currentTuningObject.PMTPid=-1;			
