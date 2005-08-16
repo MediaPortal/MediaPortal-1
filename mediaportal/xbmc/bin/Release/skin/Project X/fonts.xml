@@ -30,14 +30,14 @@
     <height>18</height>
   </font>
    <font>
-    <name>font35</name>
-    <filename>Arial</filename>
-    <height>35</height>
-  </font>
-   <font>
     <name>dingbats</name>
     <filename>dingbats</filename>
     <height>24</height>
+  </font>
+   <font>
+    <name>font35</name>
+    <filename>Arial</filename>
+    <height>35</height>
   </font>
   <font>
 	<start>48</start>
@@ -57,10 +57,5 @@
   	  <name>font50</name>
   	  <filename>Herald</filename>
   	  <height>50</height>
-  </font>
-  <font>
-    <name>dingbats</name>
-    <filename>dingbats</filename>
-    <height>24</height>
-  </font>
+   </font>
 </fonts>
