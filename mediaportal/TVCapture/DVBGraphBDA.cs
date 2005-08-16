@@ -66,6 +66,8 @@ namespace MediaPortal.TV.Recording
 			Mpeg2PSI,
 			TransportPayload
 		} ;
+
+		#region demuxer pin media types
 		static byte[] Mpeg2ProgramVideo = 
 				{
 					0x00, 0x00, 0x00, 0x00,                         //00  .hdr.rcSource.left              = 0x00000000
@@ -131,7 +133,8 @@ namespace MediaPortal.TV.Recording
 				0x00, 0x00, 0x00, 0x00, // dwPTSLow
 				0x00, 0x00, 0x00, 0x00  // dwPTSHigh
 			} ;
-		
+		#endregion		
+
 		#region imports
 		[DllImport("dshowhelper.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
 		unsafe private static extern bool DvrMsCreate(out int id, IBaseFilter streamBufferSink, [In, MarshalAs(UnmanagedType.LPWStr)]string strPath, uint dwRecordingType);
@@ -1791,10 +1794,6 @@ namespace MediaPortal.TV.Recording
 		#endregion
 		#endregion
 
-		private bool m_streamDemuxer_AudioHasChanged(MediaPortal.TV.Recording.DVBDemuxer.AudioHeader audioFormat)
-		{
-			return false;
-		}
 		public bool Overlay
 		{
 			get 
@@ -3084,6 +3083,7 @@ namespace MediaPortal.TV.Recording
 		}//private bool findNamedFilter(System.Guid ClassID, string FriendlyName, out object device) 
 
 		#endregion
+
 		#region process helper functions
 		// send PMT to firedtv device
 		bool SendPMT()
@@ -3620,7 +3620,6 @@ namespace MediaPortal.TV.Recording
 		}//public void Process()
 
 		#endregion
-
 
 		#region Tuning
 		/// <summary>
@@ -5071,6 +5070,11 @@ namespace MediaPortal.TV.Recording
 		}
 		#endregion
 
+		#region demuxer callbacks
+		private bool m_streamDemuxer_AudioHasChanged(MediaPortal.TV.Recording.DVBDemuxer.AudioHeader audioFormat)
+		{
+			return false;
+		}
 		private bool m_streamDemuxer_OnAudioFormatChanged(MediaPortal.TV.Recording.DVBDemuxer.AudioHeader audioFormat)
 		{/*
 			Log.Write("DVBGraphBDA:Audio format changed");
@@ -5148,6 +5152,8 @@ namespace MediaPortal.TV.Recording
 					ex.Message,ex.Source,ex.StackTrace);
 			}
 		}
+
+		#endregion
 
 		void SetPids()
 		{
