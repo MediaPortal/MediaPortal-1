@@ -109,6 +109,17 @@ namespace MediaPortal.TV.Database
 		int m_physicalChannel;
 		int m_minorChannel;
 		int m_majorChannel;
+		int m_SubtitlePID=-1;
+		//
+		[BrowsableAttribute(true),ReadOnly(true)]
+		public int SubtitlePid
+		{
+			get
+			{return m_SubtitlePID;}
+			set
+			{m_SubtitlePID=value;}
+		}		
+		
 		//
 		[BrowsableAttribute(true),ReadOnly(true)]
 		public int ID
