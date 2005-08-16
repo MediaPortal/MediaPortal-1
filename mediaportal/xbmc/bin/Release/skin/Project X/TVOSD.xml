@@ -43,7 +43,7 @@
 		<type>label</type>
 		<id>101</id>
 		<posX>155</posX>
-		<posY>390</posY>
+		<posY>24</posY>
 		<label>#TV.View.start</label>
 		<align>right</align>
 		<font>font16</font>
@@ -54,7 +54,7 @@
 		<type>label</type>
 		<id>102</id>
 		<posX>555</posX>
-		<posY>390</posY>
+		<posY>24</posY>
 		<label>#TV.View.stop</label>
 		<align>left</align>
 		<font>font16</font>
@@ -86,12 +86,12 @@
 		<type>textboxscrollup</type>
 		<id>38</id>
 		<posX>205</posX>
-		<posY>460</posY>
+		<posY>477</posY>
 		<width>340</width>
 		<height>60</height>
 		<align>left</align>
 		<label>#TV.View.description</label>
-		<font>font13</font>
+		<font>font12</font>
 		<textcolor>FFFFFFFF</textcolor>
 	</control>
 	<control>
@@ -101,7 +101,7 @@
 		<width>500</width>
 		<height>60</height>
 		<posX>205</posX>
-		<posY>390</posY>
+		<posY>438</posY>
 		<align>left</align>
 		<font>font13</font>
 		<textcolor>FFFFFFFF</textcolor>
@@ -113,9 +113,9 @@
 		<width>500</width>
 		<height>60</height>
 		<posX>205</posX>
-		<posY>443</posY>
+		<posY>455</posY>
 		<align>left</align>
-		<font>font13</font>
+		<font>font12</font>
 		<textcolor>FFB2D4F5</textcolor>
 	</control>
 	<control>
@@ -123,7 +123,7 @@
 		<type>button</type>
 		<id>33</id>
 		<posX>624</posX>
-		<posY>450</posY>
+		<posY>445</posY>
 		<width>26</width>
 		<height>26</height>
 		<textureFocus>arrow_round_up_focus.png</textureFocus>
@@ -139,14 +139,14 @@
 		<type>button</type>
 		<id>34</id>
 		<posX>650</posX>
-		<posY>450</posY>
+		<posY>445</posY>
 		<width>26</width>
 		<height>26</height>
 		<textureFocus>arrow_round_down_focus.png</textureFocus>
 		<textureNoFocus>arrow_round_down_nofocus.png</textureNoFocus>
 		<label>-</label>
 		<onleft>33</onleft>
-		<onright>210</onright>
+		<onright>32</onright>
 		<onup>34</onup>
 		<ondown>210</ondown>
 	</control>
@@ -155,7 +155,7 @@
 		<type>button</type>
 		<id>31</id>
 		<posX>173</posX>
-		<posY>450</posY>
+		<posY>445</posY>
 		<width>26</width>
 		<height>26</height>
 		<textureFocus>arrow_round_right_focus.png</textureFocus>
@@ -171,15 +171,15 @@
 		<type>button</type>
 		<id>32</id>
 		<posX>147</posX>
-		<posY>450</posY>
+		<posY>445</posY>
 		<width>26</width>
 		<height>26</height>
 		<textureFocus>arrow_round_left_focus.png</textureFocus>
 		<textureNoFocus>arrow_round_left_nofocus.png</textureNoFocus>
 		<label>-</label>
-		<onleft>32</onleft>
+		<onleft>34</onleft>
 		<onright>31</onright>
-		<onup>33</onup>
+		<onup>32</onup>
 		<ondown>210</ondown>
 	</control>
 	<control>
@@ -207,9 +207,9 @@
 		<textureNoFocus>osd_back_focus.png</textureNoFocus>
 		<label>-</label>
 		<font>-</font>
-		<onleft>31</onleft>
+		<onleft>221</onleft>
 		<onright>211</onright>
-		<onup>210</onup>
+		<onup>31</onup>
 		<ondown>210</ondown>
 	</control>
 	<control>
@@ -228,7 +228,7 @@
 		<font>-</font>
 		<onleft>210</onleft>
 		<onright>212</onright>
-		<onup>211</onup>
+		<onup>31</onup>
 		<ondown>211</ondown>
 	</control>
 	<control>
@@ -245,7 +245,7 @@
 		<font>-</font>
 		<onleft>211</onleft>
 		<onright>213</onright>
-		<onup>212</onup>
+		<onup>31</onup>
 		<ondown>212</ondown>
 	</control>
 	<control>
@@ -264,7 +264,7 @@
 		<font>-</font>
 		<onleft>212</onleft>
 		<onright>214</onright>
-		<onup>213</onup>
+		<onup>31</onup>
 		<ondown>213</ondown>
 	</control>
 	<control>
@@ -283,7 +283,7 @@
 		<font>-</font>
 		<onleft>213</onleft>
 		<onright>215</onright>
-		<onup>214</onup>
+		<onup>31</onup>
 		<ondown>214</ondown>
 	</control>
 	<control>
@@ -302,7 +302,7 @@
 		<font>-</font>
 		<onleft>214</onleft>
 		<onright>216</onright>
-		<onup>215</onup>
+		<onup>31</onup>
 		<ondown>215</ondown>
 	</control>
 	<control>
@@ -321,7 +321,7 @@
 		<font>-</font>
 		<onleft>215</onleft>
 		<onright>218</onright>
-		<onup>216</onup>
+		<onup>31</onup>
 		<ondown>216</ondown>
 	</control>
 	<control>
@@ -340,7 +340,7 @@
 		<font>-</font>
 		<onleft>216</onleft>
 		<onright>219</onright>
-		<onup>218</onup>
+		<onup>31</onup>
 		<ondown>218</ondown>
 	</control>
 	<control>
@@ -359,7 +359,7 @@
 		<font>-</font>
 		<onleft>218</onleft>
 		<onright>220</onright>
-		<onup>219</onup>
+		<onup>31</onup>
 		<ondown>219</ondown>
 	</control>
 	<control>
@@ -378,7 +378,7 @@
 		<font>-</font>
 		<onleft>219</onleft>
 		<onright>221</onright>
-		<onup>220</onup>
+		<onup>31</onup>
 		<ondown>220</ondown>
 	</control>
 	<control>
@@ -397,7 +397,7 @@
 		<font>-</font>
 		<onleft>220</onleft>
 		<onright>210</onright>
-		<onup>221</onup>
+		<onup>31</onup>
 		<ondown>221</ondown>
 	</control>
 	<control>
@@ -475,7 +475,7 @@
 		<textureSliderBar>osd_slider_bg.png</textureSliderBar>
 		<textureSliderNib>osd_slider_nibNF.png</textureSliderNib>
 		<textureSliderNibFocus>osd_slider_nibFO.png</textureSliderNibFocus>
-		<onup>216</onup>
+		<onup>400</onup>
 		<ondown>216</ondown>
 		<onleft>400</onleft>
 		<onright>400</onright>
