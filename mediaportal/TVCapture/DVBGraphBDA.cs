@@ -2431,7 +2431,7 @@ namespace MediaPortal.TV.Recording
 				return false;
 
 #if USEMTSWRITER
-			if (m_tsWriter!=null)
+			if (m_tsWriter==null)
 			{
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph() add MPTSWriter");
 				m_tsWriter=(IBaseFilter) Activator.CreateInstance( Type.GetTypeFromCLSID( Clsid.MPTSWriter, true ) );
