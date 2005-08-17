@@ -4652,8 +4652,8 @@
     <tv>
       <interface cat="capture" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"  name="Adaptec USB TV Tuner"			checkdevice="true"></filter>
-        <filter cat="tvaudio"  name="Adaptec USB TV Audio"			checkdevice="true"></filter>
+        <filter cat="tvtuner"  name="Adaptec USB TvTuner"			checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="Adaptec USB TvAudio"			checkdevice="true"></filter>
         <filter cat="crossbar" name="Adaptec USB Crossbar"			checkdevice="true"></filter>
         <filter cat="capture"  name="Adaptec USB Capture Device"	checkdevice="true"></filter>
       </filters>
@@ -4672,8 +4672,8 @@
     <tv>
       <interface cat="capture" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"  name="Adaptec USB TV Tuner"			checkdevice="true"></filter>
-        <filter cat="tvaudio"  name="Adaptec USB TV Audio"			checkdevice="true"></filter>
+        <filter cat="tvtuner"  name="Adaptec USB TvTuner"			checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="Adaptec USB TvAudio"			checkdevice="true"></filter>
         <filter cat="crossbar" name="Adaptec USB Crossbar"			checkdevice="true"></filter>
         <filter cat="capture"  name="Adaptec USB Capture Device"	checkdevice="true"></filter>
       </filters>
