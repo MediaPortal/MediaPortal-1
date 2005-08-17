@@ -461,7 +461,9 @@ namespace MediaPortal.GUI.TV
 					{
 						g_Player.Speed=Utils.GetNextRewindSpeed(g_Player.Speed);
 						if (g_Player.Paused) g_Player.Pause();
-						
+
+						ScreenStateChanged();
+						UpdateGUI();						
 					}
 				}
 					break;
@@ -472,6 +474,9 @@ namespace MediaPortal.GUI.TV
 					{
 						g_Player.Speed=Utils.GetNextForwardSpeed(g_Player.Speed);
 						if (g_Player.Paused) g_Player.Pause();
+
+						ScreenStateChanged();
+						UpdateGUI();						
 						
 					}
 				}
@@ -555,6 +560,17 @@ namespace MediaPortal.GUI.TV
 				case Action.ActionType.ACTION_PAUSE:
 				{
 					if (g_Player.IsTimeShifting) g_Player.Pause();
+
+					ScreenStateChanged();
+					UpdateGUI();						
+					if (g_Player.Paused) 
+					{
+						if((GUIGraphicsContext.Vmr9Active && VMR9Util.g_vmr9!=null))
+						{
+							VMR9Util.g_vmr9.SetRepaint();
+							VMR9Util.g_vmr9.Repaint();// repaint vmr9
+						}
+					}
 				}
 					break;
 

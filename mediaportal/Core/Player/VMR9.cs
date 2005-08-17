@@ -340,6 +340,15 @@ namespace MediaPortal.Player
 		{
 			get { return quality;}
 		}
+		public void SetRepaint()
+		{
+			if (!vmr9Initialized) return;
+			if( !GUIGraphicsContext.Vmr9Active) return;
+			FrameCounter=0;
+			repaintTimer=DateTime.Now;
+			currentVmr9State = Vmr9PlayState.Repaint;
+			m_scene.DrawVideo=false;
+		}
     public void Process()
 		{
 			if (!vmr9Initialized) return;
