@@ -1060,6 +1060,7 @@ namespace MediaPortal.TV.Recording
 						
 						currentGraph.TuneChannel(channel);
 						lastChannelChange=DateTime.Now;
+						timeTimeshiftingStarted = DateTime.Now;
 #if !USEMTSWRITER
 						if (IsTimeShifting && !View)
 						{
