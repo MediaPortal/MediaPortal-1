@@ -10,6 +10,13 @@
 
 #include "Section.h"
 #include "Control.h"
+#include "..\..\..\dvblib\Include\b2c2mpeg2adapter.h"
+#include "..\..\..\dvblib\Include\b2c2_defs.h"
+#include "..\..\..\dvblib\Include\B2C2_Guids.h"
+#include "..\..\..\dvblib\Include\b2c2mpeg2adapter.h"
+#include "..\..\..\dvblib\Include\ib2c2mpeg2tunerctrl.h"
+#include "..\..\..\dvblib\Include\ib2c2mpeg2datactrl.h"
+#include "..\..\..\dvblib\Include\ib2c2mpeg2avctrl.h"
 
 // media types
 
@@ -38,8 +45,10 @@ protected:
 	HRESULT SetSectionMapping();
 	HRESULT SetMHW1Mapping();
 	HRESULT SetMHW2Mapping();
-
+    long SS2SetPidToPin(long pin,long pid);
+	BOOL SS2DeleteAllPIDs(long pin);
 protected:
+	IB2C2MPEG2DataCtrl3* m_dataCtrl;
 	bool		m_bUseATSC;
 	Sections*	m_pSections;
 	BOOL		m_demuxSetupComplete;

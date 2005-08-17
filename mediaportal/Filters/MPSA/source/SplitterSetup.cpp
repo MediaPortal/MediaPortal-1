@@ -33,6 +33,7 @@ extern void Log(const char *fmt, ...) ;
 SplitterSetup::SplitterSetup(Sections *pSections) :
 m_demuxSetupComplete(FALSE),m_pSectionsPin(NULL)
 {
+	m_dataCtrl=NULL;
 	m_bUseATSC=false;
 	m_pEPGPin=NULL;
 	m_pMHW1Pin=NULL;
@@ -58,6 +59,10 @@ SplitterSetup::~SplitterSetup()
 	if(m_pEPGPin!=NULL)
 		m_pEPGPin->Release();
 	m_pEPGPin=NULL;
+
+	if (m_dataCtrl!=NULL)
+		m_dataCtrl->Release();
+	m_dataCtrl=NULL;
 }
 
 void SplitterSetup::UseATSC(bool yesNo)
@@ -93,8 +98,18 @@ HRESULT SplitterSetup::SetDemuxPins(IFilterGraph *pGraph)
 	}
 
 	hr=SetupDemuxer(pDemuxer);
-	pGB->Release();
 	pDemuxer->Release();
+
+
+	IBaseFilter *pSS2;
+	hr=pGB->FindFilterByName(L"B2C2-Source",&pSS2);
+	if(SUCCEEDED(hr) && pSS2 !=NULL)
+	{
+		pSS2->QueryInterface(IID_IB2C2MPEG2DataCtrl3,(void**)&m_dataCtrl);
+	}
+	pSS2->Release();
+	pGB->Release();
+
 
 //	Log("SetDemuxPinsDone");
 	return NOERROR;
@@ -126,6 +141,7 @@ HRESULT SplitterSetup::SetupDefaultMapping()
 {
 //	Log("SetupDefaultMapping()");
 
+	SS2DeleteAllPIDs(0);
 	SetSectionMapping();
 	SetMHW1Mapping();
 	SetMHW2Mapping();
@@ -184,6 +200,7 @@ HRESULT SplitterSetup::SetMHW1Mapping()
 			Log("failed to map pid 0xd2");
 			return 4;
 		}
+		SS2SetPidToPin(0,0xd2);
 	}	
 	pMap->Release();
 	return S_OK;
@@ -240,6 +257,7 @@ HRESULT SplitterSetup::SetMHW2Mapping()
 			Log("failed to map pid 0xd3");
 			return 4;
 		}
+		SS2SetPidToPin(0,0xd3);
 	}
 	pMap->Release();
 	return S_OK;
@@ -324,6 +342,9 @@ HRESULT SplitterSetup::SetSectionMapping()
 			Log("failed to map pid 0x11");
 			return 4;
 		}
+		SS2SetPidToPin(0,0x0);
+		SS2SetPidToPin(0,0x10);
+		SS2SetPidToPin(0,0x11);
 	}
 	else
 	{
@@ -360,6 +381,7 @@ HRESULT SplitterSetup::MapAdditionalPID(ULONG pid)
 		return 4;
 
 	pMap->Release();
+	SS2SetPidToPin(0,pid);
 
 //	Log ("MapAdditionalPID:%x done", pid);
 	return S_OK;
@@ -383,6 +405,9 @@ HRESULT SplitterSetup::MapAdditionalPayloadPID(ULONG pid)
 		return 4;
 
 	pMap->Release();
+	
+		
+	SS2SetPidToPin(0,pid);
 	return S_OK;
 }
 bool SplitterSetup::PinIsNULL()
@@ -467,6 +492,7 @@ HRESULT SplitterSetup::SetEPGMapping()
 			Log("failed to map pid 0x12");
 			return 4;
 		}
+		SS2SetPidToPin(0,0x12);
 	}
 	pMap->Release();
 
@@ -499,4 +525,45 @@ HRESULT SplitterSetup::GetPSIMedia(AM_MEDIA_TYPE *pintype)
 	pintype->majortype = MEDIATYPE_MPEG2_SECTIONS;
 	pintype->subtype = MEDIASUBTYPE_DVB_SI;
 	return S_OK;
+}
+
+
+long SplitterSetup::SS2SetPidToPin(long pin,long pid)
+{
+	long	count=1;
+	long	pids[2];
+	HRESULT hr;
+
+	pids[0]=pid;
+
+	if(m_dataCtrl!=NULL)
+	{
+		hr=m_dataCtrl->AddPIDsToPin(&count,pids,pin);
+		if(SUCCEEDED(hr))
+			return count;
+	}
+	return 0;
+}
+BOOL SplitterSetup::SS2DeleteAllPIDs(long pin)
+{
+    HRESULT				hr;
+	long				pidCount=39;
+	long				pids[39];
+
+
+	if(m_dataCtrl!=NULL)
+	{
+		do
+		{
+			hr=m_dataCtrl->GetTsState(NULL,NULL,&pidCount,pids);
+			if(SUCCEEDED(hr))
+			{
+				hr=m_dataCtrl->DeletePIDsFromPin(pidCount,pids,pin);
+			} else
+				return false;
+
+		}while(pidCount>0);
+	}
+	
+	return true;
 }
