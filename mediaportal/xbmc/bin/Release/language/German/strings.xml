@@ -122,6 +122,10 @@
 		<value>Dezember</value>
 	</string>
 	<string>
+	 	<id>50</id> 
+	  	<value>DVD</value> 
+  	</string>
+	<string>
 		<id>100</id>
 		<value>Zeige: Symbole</value>
 	</string>
@@ -2988,6 +2992,116 @@
 	<value>Nach: Dauer</value>
 </string>
 <string>
+	<id>1020</id>
+	<value>Information</value>
+</string>
+<string>
+	<id>1021</id>
+	<value>Drücken Sie Alt+Enter um</value>
+</string>
+<string>
+	<id>1022</id>
+	<value>zum Window Mode zurück zukehren</value>
+</string>
+
+<string>
+	<id>1023</id>
+	<value>Eingehender Anruf</value>
+</string>
+<string>
+	<id>1024</id>
+	<value>von</value>
+</string>
+<string>
+	<id>1025</id>
+	<value>Ein Fehler ist aufgetreten.</value>
+</string>
+<string>
+	<id>1026</id>
+	<value>Für Details bitte in die Log-Files schauen</value>
+</string>
+
+<string>
+	<id>1027</id>
+	<value>DVD</value>
+</string>
+<string>
+	<id>1028</id>
+	<value>Stadt</value>
+</string>
+<string>
+	<id>1029</id>
+	<value>Untertitel Sprache</value>
+</string>
+<string>
+	<id>1030</id>
+	<value>Herunterfahren</value>
+</string>
+<string>
+	<id>1031</id>
+	<value>Neustarten</value>
+</string>
+<string>
+	<id>1032</id>
+	<value>Standby</value>
+</string>
+<string>
+	<id>1033</id>
+	<value>Shows are being recorded right now</value>
+</string>
+<string>
+	<id>1034</id>
+	<value>Kein Signal!</value>
+</string>
+<string>
+	<id>1035</id>
+	<value>TV Channel is scrambled!</value>
+</string>
+<string>
+	<id>1036</id>
+	<value>Kein Video gefunden</value>
+</string>
+<string>
+	<id>1037</id>
+	<value>Fernsehen - Programm Information</value>
+</string>
+<string>
+	<id>1038</id>
+	<value>Erweiterte Aufnahme</value>
+</string>
+<string>
+	<id>1039</id>
+	<value>Nicht aufnehmen</value>
+</string>
+<string>
+	<id>1040</id>
+	<value>Benachrichtigen</value>
+</string>
+<string>
+	<id>1041</id>
+	<value>Weitere Folgen</value>
+</string>
+<string>
+	<id>1042</id>
+	<value>Behalte bis</value>
+</string>
+<string>
+	<id>1043</id>
+	<value>Bis gesehen</value>
+</string>
+<string>
+	<id>1044</id>
+	<value>Solange freier Speicher verfügbar</value>
+</string>
+<string>
+	<id>1045</id>
+	<value>Bis Datum</value>
+</string>
+<string>
+	<id>1046</id>
+	<value>Immer</value>
+</string>
+<string>
 	<id>1440</id>
 	<value>Videoext</value>
 </string>
@@ -3413,6 +3527,11 @@
 	<id>13013</id>
 	<value>Video wird geladen, bitte warten</value>
 </string>
+<string><id>13014</id><value>Scanne Verzeichnis</value></string> 
+<string><id>13015</id><value>Importiere Spiel</value></string> 
+<string><id>13016</id><value>Nach: Veröffentlichung</value></string> 
+<string><id>13017</id><value>Nach: Letzte</value></string> 
+<string><id>13018</id><value>Nach: Wertung</value></string> 
 
 <string><id>16001</id><value>Partymix</value></string> 
 
@@ -3519,5 +3638,30 @@
 <string><id>103007</id><value>TV/Zap OSD</value></string>
 <string><id>107700</id><value>TV/Teletext</value></string>
 <string><id>107701</id><value>TV/Teletext</value></string>
+
+<string><id>200000</id><value>Bitte EPG Grabber auswählen. Beachten Sie bitte</value></string>
+<string><id>200001</id><value>ist ihr Land nicht aufgelistet, müssen Sie das EPG manuell einrichten</value></string>
+<string><id>200002</id><value>Sie können jetzt EPG Kanäle Ihren TV Kanälen zuordnen</value></string>
+<string><id>200003</id><value>Wählen SIe einen Kanal und drücken Sie "Enter" um die Zurodnung zu ändern</value></string>
+<string><id>200004</id><value>Manuell eingerichtete tvguide.xml</value></string>
+<string><id>200005</id><value>Bitte geben Sie die Fernbedienung an, die Sie nutzen:</value></string>
+<string><id>200006</id><value>Drücken Sie "Weiter" um Setup fortzusetzen.:</value></string>
+<string><id>200007</id><value>&lt;Zurück</value></string>
+<string><id>200008</id><value>Setup - Fernbedienung</value></string>
+<string><id>200009</id><value>Weiter &gt;</value></string>
+<string><id>200010</id><value>MediaPortal verwandelt Ihren PC in ein fortschrittliches Multi-Media Center.</value></string>
+<string><id>200011</id><value>Mit MediaPortal können Sie Ihre Lieblingsmusik geniessen</value></string>
+<string><id>200013</id><value>Sie können damit Musik &amp; Radio hören, Ihre Filme, DVDs, Photos und</value></string>
+<string><id>200014</id><value>Videos ansehen, Fernsehen oder Sendungen aufnehmen und vieles mehr.</value></string>
+<string><id>200015</id><value>Der Wizard wird Ihnen helfen MediaPortal schnell und einfach einzurichten.</value></string>
+<string><id>200016</id><value>Drücken Sie den "Weiter-Button" um fortzufahren</value></string>
+<string><id>200017</id><value>Willkommen bei MediaPortal. </value></string>
+<string><id>200018</id><value>Herzlichen Glückwunsch. Mediaportal ist jetzt fertig eingerichtet</value></string>
+<string><id>200019</id><value>Drücken Sie "Ferig" um den Wizard zu schliessen</value></string>
+<string><id>200020</id><value>Fertig</value></string>
+<string><id>200021</id><value>TV Setup - EPG</value></string>
+<string><id>200022</id><value>MediaPortal hat folgende TV-Karten gefunden:</value></string>
+<string><id>200023</id><value>Drücken Sie den "Weiter-Button" um die TV-Karten einzurichten</value></string>
+<string><id>200024</id><value>TV Setup</value></string>
 
 </strings>
