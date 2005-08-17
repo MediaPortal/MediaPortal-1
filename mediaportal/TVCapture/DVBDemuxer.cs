@@ -409,14 +409,14 @@ int m_bufferPositionPMT=0;
 		public void Process()
 		{
 			TimeSpan ts = DateTime.Now-packetTimer;
+			if (!receivingPackets && packetsReceived>0)
+			{
+				receivingPackets =true;
+				Log.Write("DVBDemuxer:receiving DVB packets");
+			}
 			if (ts.TotalMilliseconds>=1000)
 			{
-				if (!receivingPackets && packetsReceived>0)
-				{
-					receivingPackets =true;
-					Log.Write("DVBDemuxer:receiving DVB packets");
-				}
-				else if (receivingPackets && packetsReceived==0)
+				if (receivingPackets && packetsReceived==0)
 				{
 					receivingPackets =false;
 					Log.Write("DVBDemuxer:stopped receiving DVB packets");

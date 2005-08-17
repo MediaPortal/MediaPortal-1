@@ -1725,7 +1725,7 @@ namespace MediaPortal.TV.Recording
 		/// </remarks>
 		public bool StartTimeShifting(TVChannel channel, string strFileName)
 		{
-			if(m_graphState!=State.Created)
+			if(m_graphState!=State.Created && m_graphState!=State.TimeShifting)
 				return false;
 			if (Vmr9!=null)
 			{
@@ -2427,45 +2427,46 @@ namespace MediaPortal.TV.Recording
 
 		private bool CreateSinkSource(string fileName, bool useAC3)
 		{
-			if(m_graphState!=State.Created)
+			if(m_graphState!=State.Created && m_graphState!=State.TimeShifting)
 				return false;
 
 #if USEMTSWRITER
+			if (m_tsWriter!=null)
+			{
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph() add MPTSWriter");
 				m_tsWriter=(IBaseFilter) Activator.CreateInstance( Type.GetTypeFromCLSID( Clsid.MPTSWriter, true ) );
 				m_tsWriterInterface = m_tsWriter as IMPTSWriter;
 				m_tsRecordInterface = m_tsWriter as IMPTSRecord;
 
-			int hr=m_graphBuilder.AddFilter((IBaseFilter)m_tsWriter,"MPTS Writer");
-			if(hr!=0)
-			{
-				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot add MPTS Writer:{0:X}",hr);
-				return false;
-			}			
+				int hr=m_graphBuilder.AddFilter((IBaseFilter)m_tsWriter,"MPTS Writer");
+				if(hr!=0)
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot add MPTS Writer:{0:X}",hr);
+					return false;
+				}			
 
-			IFileSinkFilter fileWriter=m_tsWriter as IFileSinkFilter;
-			AMMediaType mt = new AMMediaType();
-			mt.majorType=MediaType.Stream;
-			mt.subType=MediaSubType.None;
-			mt.formatType=FormatType.None;
-			hr=fileWriter.SetFileName(fileName, ref mt);
-			if (hr!=0)
-			{
-				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot set filename '{0}' on MPTS writer:0x{1:X}",fileName,hr);
-				return false;
-			}
+				IFileSinkFilter fileWriter=m_tsWriter as IFileSinkFilter;
+				AMMediaType mt = new AMMediaType();
+				mt.majorType=MediaType.Stream;
+				mt.subType=MediaSubType.None;
+				mt.formatType=FormatType.None;
+				hr=fileWriter.SetFileName(fileName, ref mt);
+				if (hr!=0)
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot set filename '{0}' on MPTS writer:0x{1:X}",fileName,hr);
+					return false;
+				}
 
 
-			// connect demuxer->mpts writer
-			
-			if (!ConnectFilters(ref m_smartTee, ref m_tsWriter))
-			{
-				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot demuxer->MPTS writer:0x{0:X}",hr);
-				return false;
+				// connect demuxer->mpts writer
+				
+				if (!ConnectFilters(ref m_smartTee, ref m_tsWriter))
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot demuxer->MPTS writer:0x{0:X}",hr);
+					return false;
+				}
 			}
 			SetupMTSDemuxerPin();
-
-
 			return true;
 #else
 			int		hr				= 0;
@@ -2474,164 +2475,167 @@ namespace MediaPortal.TV.Recording
 			IPin	pinObj2		= null;
 			IPin	pinObj3		= null;
 			IPin	outPin		= null;
-
 			try
 			{
-				int iTimeShiftBuffer=30;
-				using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
-				{
-					iTimeShiftBuffer= xmlreader.GetValueAsInt("capture", "timeshiftbuffer", 30);
-					if (iTimeShiftBuffer<5) iTimeShiftBuffer=5;
-				}
-				iTimeShiftBuffer*=60; //in seconds
-				int iFileDuration = iTimeShiftBuffer/6;
 
-				//create StreamBufferSink filter
-				//				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateSinkSource()");
-				hr=m_graphBuilder.AddFilter((IBaseFilter)m_StreamBufferSink,"StreamBufferSink");
-				if(hr!=0)
+				if (m_graphState==State.Created)
 				{
-					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot add StreamBufferSink:{0:X}",hr);
-					return false;
-				}			
-				//create MPEG2 Analyzer filter
-				//				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Add mpeg2 analyzer()");
-				hr=m_graphBuilder.AddFilter((IBaseFilter)m_mpeg2Analyzer,"Mpeg2 Analyzer");
-				if(hr!=0)
-				{
-					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot add mpeg2 analyzer to graph:{0:X}",hr);
-					return false;
-				}
-
-				//connect mpeg2 demuxer video out->mpeg2 analyzer input pin
-				//get input pin of MPEG2 Analyzer filter
-				//				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:find mpeg2 analyzer input pin()");
-				pinObj0=DirectShowUtil.FindPinNr((IBaseFilter)m_mpeg2Analyzer,PinDirection.Input,0);
-				if(pinObj0 == null)
-				{
-					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot find mpeg2 analyzer input pin");
-					return false;
-				}
-				
-				//				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:connect demux video output->mpeg2 analyzer");
-				hr=m_graphBuilder.Connect(m_DemuxVideoPin, pinObj0) ;
-				if (hr!=0)
-				{
-					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to connect demux video output->mpeg2 analyzer:{0:X}",hr);
-					return false;
-				}
-
-				//connect MPEG2 analyzer Filter->stream buffer sink pin 0
-				//get output pin #0 from MPEG2 analyzer Filter
-				//				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:mpeg2 analyzer output->streambuffersink in");
-				pinObj1 = DirectShowUtil.FindPinNr((IBaseFilter)m_mpeg2Analyzer, PinDirection.Output, 0);	
-				if (hr!=0)
-				{
-					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot find mpeg2 analyzer output pin:{0:X}",hr);
-					return false;
-				}
-				
-				//get input pin #0 from StreamBufferSink Filter
-				pinObj2 = DirectShowUtil.FindPinNr((IBaseFilter)m_StreamBufferSink, PinDirection.Input, 0);	
-				if (hr!=0)
-				{
-					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot find SBE input pin:{0:X}",hr);
-					return false;
-				}
-
-				hr=m_graphBuilder.Connect(pinObj1, pinObj2) ;
-				if (hr!=0)
-				{
-					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to connect mpeg2 analyzer->streambuffer sink:{0:X}",hr);
-					return false;
-				}
-
-				if (!useAC3)
-				{
-					//connect MPEG2 demuxer audio output ->StreamBufferSink Input #1
-					//Get StreamBufferSink InputPin #1
-					pinObj3 = DirectShowUtil.FindPinNr((IBaseFilter)m_StreamBufferSink, PinDirection.Input, 1);	
-					if (hr!=0)
+					int iTimeShiftBuffer=30;
+					using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 					{
-						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot find SBE input pin#2");
+						iTimeShiftBuffer= xmlreader.GetValueAsInt("capture", "timeshiftbuffer", 30);
+						if (iTimeShiftBuffer<5) iTimeShiftBuffer=5;
+					}
+					iTimeShiftBuffer*=60; //in seconds
+					int iFileDuration = iTimeShiftBuffer/6;
+
+					//create StreamBufferSink filter
+					//				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateSinkSource()");
+					hr=m_graphBuilder.AddFilter((IBaseFilter)m_StreamBufferSink,"StreamBufferSink");
+					if(hr!=0)
+					{
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot add StreamBufferSink:{0:X}",hr);
+						return false;
+					}			
+					//create MPEG2 Analyzer filter
+					//				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Add mpeg2 analyzer()");
+					hr=m_graphBuilder.AddFilter((IBaseFilter)m_mpeg2Analyzer,"Mpeg2 Analyzer");
+					if(hr!=0)
+					{
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot add mpeg2 analyzer to graph:{0:X}",hr);
 						return false;
 					}
-					hr=m_graphBuilder.Connect(m_DemuxAudioPin, pinObj3) ;
-					if (hr!=0)
+
+					//connect mpeg2 demuxer video out->mpeg2 analyzer input pin
+					//get input pin of MPEG2 Analyzer filter
+					//				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:find mpeg2 analyzer input pin()");
+					pinObj0=DirectShowUtil.FindPinNr((IBaseFilter)m_mpeg2Analyzer,PinDirection.Input,0);
+					if(pinObj0 == null)
 					{
-						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to connect mpeg2 demuxer audio out->streambuffer sink in#2:{0:X}",hr);
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot find mpeg2 analyzer input pin");
 						return false;
 					}
-				}
-				else
-				{
-					//connect ac3 pin ->stream buffersink input #2
-					if (m_pinAC3Out!=null)
+					
+					//				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:connect demux video output->mpeg2 analyzer");
+					hr=m_graphBuilder.Connect(m_DemuxVideoPin, pinObj0) ;
+					if (hr!=0)
 					{
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to connect demux video output->mpeg2 analyzer:{0:X}",hr);
+						return false;
+					}
+
+					//connect MPEG2 analyzer Filter->stream buffer sink pin 0
+					//get output pin #0 from MPEG2 analyzer Filter
+					//				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:mpeg2 analyzer output->streambuffersink in");
+					pinObj1 = DirectShowUtil.FindPinNr((IBaseFilter)m_mpeg2Analyzer, PinDirection.Output, 0);	
+					if (hr!=0)
+					{
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot find mpeg2 analyzer output pin:{0:X}",hr);
+						return false;
+					}
+					
+					//get input pin #0 from StreamBufferSink Filter
+					pinObj2 = DirectShowUtil.FindPinNr((IBaseFilter)m_StreamBufferSink, PinDirection.Input, 0);	
+					if (hr!=0)
+					{
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot find SBE input pin:{0:X}",hr);
+						return false;
+					}
+
+					hr=m_graphBuilder.Connect(pinObj1, pinObj2) ;
+					if (hr!=0)
+					{
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to connect mpeg2 analyzer->streambuffer sink:{0:X}",hr);
+						return false;
+					}
+
+					if (!useAC3)
+					{
+						//connect MPEG2 demuxer audio output ->StreamBufferSink Input #1
+						//Get StreamBufferSink InputPin #1
 						pinObj3 = DirectShowUtil.FindPinNr((IBaseFilter)m_StreamBufferSink, PinDirection.Input, 1);	
 						if (hr!=0)
 						{
 							Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot find SBE input pin#2");
 							return false;
 						}
-						hr=m_graphBuilder.Connect(m_pinAC3Out, pinObj3) ;
+						hr=m_graphBuilder.Connect(m_DemuxAudioPin, pinObj3) ;
 						if (hr!=0)
 						{
-							Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to connect mpeg2 demuxer AC3 out->streambuffer sink in#2:{0:X}",hr);
+							Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to connect mpeg2 demuxer audio out->streambuffer sink in#2:{0:X}",hr);
 							return false;
 						}
 					}
-				}
-				int ipos=fileName.LastIndexOf(@"\");
-				string strDir=fileName.Substring(0,ipos);
-				m_StreamBufferConfig	= new StreamBufferConfig();
-				m_IStreamBufferConfig	= (IStreamBufferConfigure) m_StreamBufferConfig;
-				
-				// setting the StreamBufferEngine registry key
-				IntPtr HKEY = (IntPtr) unchecked ((int)0x80000002L);
-				IStreamBufferInitialize pTemp = (IStreamBufferInitialize) m_IStreamBufferConfig;
-				IntPtr subKey = IntPtr.Zero;
+					else
+					{
+						//connect ac3 pin ->stream buffersink input #2
+						if (m_pinAC3Out!=null)
+						{
+							pinObj3 = DirectShowUtil.FindPinNr((IBaseFilter)m_StreamBufferSink, PinDirection.Input, 1);	
+							if (hr!=0)
+							{
+								Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot find SBE input pin#2");
+								return false;
+							}
+							hr=m_graphBuilder.Connect(m_pinAC3Out, pinObj3) ;
+							if (hr!=0)
+							{
+								Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to connect mpeg2 demuxer AC3 out->streambuffer sink in#2:{0:X}",hr);
+								return false;
+							}
+						}
+					}
+					int ipos=fileName.LastIndexOf(@"\");
+					string strDir=fileName.Substring(0,ipos);
+					m_StreamBufferConfig	= new StreamBufferConfig();
+					m_IStreamBufferConfig	= (IStreamBufferConfigure) m_StreamBufferConfig;
+					
+					// setting the StreamBufferEngine registry key
+					IntPtr HKEY = (IntPtr) unchecked ((int)0x80000002L);
+					IStreamBufferInitialize pTemp = (IStreamBufferInitialize) m_IStreamBufferConfig;
+					IntPtr subKey = IntPtr.Zero;
 
-				RegOpenKeyEx(HKEY, "SOFTWARE\\MediaPortal", 0, 0x3f, out subKey);
-				hr=pTemp.SetHKEY(subKey);
-				
-				//set timeshifting folder
-				//				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:set timeshift folder to:{0}", strDir);
-				hr = m_IStreamBufferConfig.SetDirectory(strDir);	
-				if(hr != 0)
-				{
-					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to set timeshift folder to:{0} {1:X}", strDir,hr);
-					return false;
-				}
+					RegOpenKeyEx(HKEY, "SOFTWARE\\MediaPortal", 0, 0x3f, out subKey);
+					hr=pTemp.SetHKEY(subKey);
+					
+					//set timeshifting folder
+					//				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:set timeshift folder to:{0}", strDir);
+					hr = m_IStreamBufferConfig.SetDirectory(strDir);	
+					if(hr != 0)
+					{
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to set timeshift folder to:{0} {1:X}", strDir,hr);
+						return false;
+					}
 
-				//set number of timeshifting files
-				hr = m_IStreamBufferConfig.SetBackingFileCount(6, 8);    //4-6 files
-				if(hr != 0)
-				{
-					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to set timeshifting files to 6-8 {0:X}",hr);
-					return false;
-				}
-				
-				//set duration of each timeshift file
-				hr = m_IStreamBufferConfig.SetBackingFileDuration((uint)iFileDuration); // 60sec * 4 files= 4 mins
-				if(hr != 0)
-				{
-					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to set timeshifting filesduration to {0} {1:X}",iFileDuration,hr);
-					return false;
-				}
+					//set number of timeshifting files
+					hr = m_IStreamBufferConfig.SetBackingFileCount(6, 8);    //4-6 files
+					if(hr != 0)
+					{
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to set timeshifting files to 6-8 {0:X}",hr);
+						return false;
+					}
+					
+					//set duration of each timeshift file
+					hr = m_IStreamBufferConfig.SetBackingFileDuration((uint)iFileDuration); // 60sec * 4 files= 4 mins
+					if(hr != 0)
+					{
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to set timeshifting filesduration to {0} {1:X}",iFileDuration,hr);
+						return false;
+					}
 
-				subKey = IntPtr.Zero;
-				HKEY = (IntPtr) unchecked ((int)0x80000002L);
-				IStreamBufferInitialize pConfig = (IStreamBufferInitialize) m_StreamBufferSink;
+					subKey = IntPtr.Zero;
+					HKEY = (IntPtr) unchecked ((int)0x80000002L);
+					IStreamBufferInitialize pConfig = (IStreamBufferInitialize) m_StreamBufferSink;
 
-				RegOpenKeyEx(HKEY, "SOFTWARE\\MediaPortal", 0, 0x3f, out subKey);
-				hr = pConfig.SetHKEY(subKey);
-				//set timeshifting filename
-				//				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:set timeshift file to:{0}", fileName);
-				
-				IStreamBufferConfigure2 streamConfig2	= m_StreamBufferConfig as IStreamBufferConfigure2;
-				if (streamConfig2!=null)
-					streamConfig2.SetFFTransitionRates(8,32);
+					RegOpenKeyEx(HKEY, "SOFTWARE\\MediaPortal", 0, 0x3f, out subKey);
+					hr = pConfig.SetHKEY(subKey);
+					//set timeshifting filename
+					//				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:set timeshift file to:{0}", fileName);
+					
+					IStreamBufferConfigure2 streamConfig2	= m_StreamBufferConfig as IStreamBufferConfigure2;
+					if (streamConfig2!=null)
+						streamConfig2.SetFFTransitionRates(8,32);
+				}
 
 				// lock on the 'filename' file
 				hr=m_IStreamBufferSink.LockProfile(fileName);
@@ -2653,12 +2657,7 @@ namespace MediaPortal.TV.Recording
 					Marshal.ReleaseComObject(pinObj3);
 				if(outPin != null)
 					Marshal.ReleaseComObject(outPin);
-
-				//if ( streamBufferInitialize !=null)
-				//Marshal.ReleaseComObject(streamBufferInitialize );
-				
 			}
-			//			(m_graphBuilder as IMediaFilter).SetSyncSource(m_MPEG2Demultiplexer as IReferenceClock);
 			return true;
 #endif			
 		}//private bool CreateSinkSource(string fileName)
@@ -3632,9 +3631,21 @@ namespace MediaPortal.TV.Recording
 		public void TuneChannel(TVChannel channel)
 		{
 			if (m_NetworkProvider==null) return;
+			bool restartGraph=false;
 			m_lastPMTVersion=-1;
 			try
 			{
+				if (m_graphState==State.TimeShifting)
+				{
+					string fname=Recorder.GetTimeShiftFileNameByCardId(m_cardID);
+					if (g_Player.Playing && g_Player.CurrentFile == fname)
+					{
+						restartGraph=true;
+						g_Player.PauseGraph();
+						m_mediaControl.Stop();
+					}
+				}
+
 				if (Vmr9!=null) Vmr9.Enable(false);
 				m_iPrevChannel		= m_iCurrentChannel;
 				m_iCurrentChannel = channel.Number;
@@ -3911,6 +3922,12 @@ namespace MediaPortal.TV.Recording
 			}	
 			finally
 			{
+				if (restartGraph)
+				{
+					string fname=Recorder.GetTimeShiftFileNameByCardId(m_cardID);
+					StartTimeShifting(null,fname);
+					g_Player.ContinueGraph();
+				}
 				if (Vmr9!=null) Vmr9.Enable(true);
 			}
 		}//public void TuneChannel(AnalogVideoStandard standard,int iChannel,int country)

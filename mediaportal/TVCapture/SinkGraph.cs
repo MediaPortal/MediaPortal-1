@@ -448,11 +448,14 @@ namespace MediaPortal.TV.Recording
 
       if (m_graphState==State.TimeShifting) 
       {
-        if (channel.Number!=m_iChannelNr)
-        {
-          TuneChannel(channel);
-        }
-        return true;
+				if (channel!=null)
+				{
+					if (channel.Number!=m_iChannelNr)
+					{
+						TuneChannel(channel);
+					}
+					return true;
+				}
       }
 
 			if (Vmr9!=null)
@@ -668,78 +671,101 @@ namespace MediaPortal.TV.Recording
     public void TuneChannel(TVChannel channel)
     {
       if (m_graphState!=State.TimeShifting && m_graphState!=State.Viewing) return;
-
-      m_iChannelNr=channel.Number;
-			m_iCountryCode=channel.Country;
-    
-			AnalogVideoStandard standard=channel.TVStandard;
-      Log.WriteFile(Log.LogType.Capture,"SinkGraph:TuneChannel() tune to channel:{0} country:{1} standard:{2} name:{3}", 
-																												m_iChannelNr, m_iCountryCode, standard, channel.Name);
-
-      if (m_iChannelNr < (int)ExternalInputs.svhs)
-      {
-        if (m_TVTuner==null) return;
-				try
-				{
-					InitializeTuner();
-					SetVideoStandard(standard);
-        
-        
-					Log.WriteFile(Log.LogType.Capture,"SinkGraph:TuneChannel() tuningspace:0 country:{0} tv standard:{1} cable:{2}",
-																						m_iCountryCode,standard.ToString(),
-																						m_bUseCable);
-					int currentCountry,iCurrentChannel,iVideoSubChannel,iAudioSubChannel;
-
-          m_TVTuner.get_TVFormat(out standard);
-					m_TVTuner.get_Channel(out iCurrentChannel, out iVideoSubChannel, out iAudioSubChannel);
-					m_TVTuner.get_CountryCode(out currentCountry);
-          if (iCurrentChannel!=m_iChannelNr)
-          {
-            m_TVTuner.put_Channel(channel.Number,DShowNET.AMTunerSubChannel.Default,DShowNET.AMTunerSubChannel.Default);
-						DirectShowUtil.EnableDeInterlace(m_graphBuilder);
-          }
-          int iFreq;
-          double dFreq;
-					AMTunerSignalStrength signalStrength;
-					m_TVTuner.SignalPresent(out signalStrength);
-          m_TVTuner.get_VideoFrequency(out iFreq);
-					m_TVTuner.get_Channel(out iCurrentChannel, out iVideoSubChannel, out iAudioSubChannel);
-					m_TVTuner.get_CountryCode(out currentCountry);
-					m_TVTuner.get_TVFormat(out standard);
-					dFreq=iFreq/1000000d;
-          Log.WriteFile(Log.LogType.Capture,"SinkGraph:TuneChannel() tuned to channel:{0} county:{1} freq:{2} MHz. tvformat:{3} signal:{4}", 
-																			iCurrentChannel,currentCountry, dFreq,standard.ToString(),signalStrength.ToString());
-			
-					
-        }
-        catch(Exception){} 
-      }
-      else
-      {
-        SetVideoStandard(channel.TVStandard);
-      }
-
-      bool bFixCrossbar=true;
-      if (m_iPrevChannel>=0)
+			bool restartGraph=false;
+			try
 			{
-				if (m_iPrevChannel< (int)ExternalInputs.svhs  && channel.Number < (int)ExternalInputs.svhs) bFixCrossbar=false;
-				if (m_iPrevChannel==(int)ExternalInputs.svhs  && channel.Number ==(int)ExternalInputs.svhs) bFixCrossbar=false;
-				if (m_iPrevChannel==(int)ExternalInputs.rgb   && channel.Number ==(int)ExternalInputs.rgb) bFixCrossbar=false;
-				if (m_iPrevChannel==(int)ExternalInputs.cvbs1 && channel.Number ==(int)ExternalInputs.cvbs1) bFixCrossbar=false;
-				if (m_iPrevChannel==(int)ExternalInputs.cvbs2 && channel.Number ==(int)ExternalInputs.cvbs2) bFixCrossbar=false;
-      }
-      if (bFixCrossbar)
-      {
-        DsUtils.FixCrossbarRoutingEx(m_graphBuilder,
-																		 m_captureGraphBuilder,
-																		 m_captureFilter, 
-																		 channel.Number<(int)ExternalInputs.svhs, 
-																	   (channel.Number==(int)ExternalInputs.cvbs1), 
-																		 (channel.Number==(int)ExternalInputs.cvbs2), 
-																			(channel.Number==(int)ExternalInputs.svhs) , 
-																			(channel.Number==(int)ExternalInputs.rgb) ,
-																		 cardName);
-      }
+				if (m_graphState==State.TimeShifting)
+				{
+					string fname=Recorder.GetTimeShiftFileNameByCardId(m_cardID);
+					if (g_Player.Playing && g_Player.CurrentFile == fname)
+					{
+						restartGraph=true;
+						g_Player.PauseGraph();
+						m_mpeg2Demux.StopTimeShifting();
+					}
+				}
+
+				m_iChannelNr=channel.Number;
+				m_iCountryCode=channel.Country;
+	    
+				AnalogVideoStandard standard=channel.TVStandard;
+				Log.WriteFile(Log.LogType.Capture,"SinkGraph:TuneChannel() tune to channel:{0} country:{1} standard:{2} name:{3}", 
+					m_iChannelNr, m_iCountryCode, standard, channel.Name);
+
+				if (m_iChannelNr < (int)ExternalInputs.svhs)
+				{
+					if (m_TVTuner==null) return;
+					try
+					{
+						InitializeTuner();
+						SetVideoStandard(standard);
+	        
+	        
+						Log.WriteFile(Log.LogType.Capture,"SinkGraph:TuneChannel() tuningspace:0 country:{0} tv standard:{1} cable:{2}",
+							m_iCountryCode,standard.ToString(),
+							m_bUseCable);
+						int currentCountry,iCurrentChannel,iVideoSubChannel,iAudioSubChannel;
+
+						m_TVTuner.get_TVFormat(out standard);
+						m_TVTuner.get_Channel(out iCurrentChannel, out iVideoSubChannel, out iAudioSubChannel);
+						m_TVTuner.get_CountryCode(out currentCountry);
+						if (iCurrentChannel!=m_iChannelNr)
+						{
+							m_TVTuner.put_Channel(channel.Number,DShowNET.AMTunerSubChannel.Default,DShowNET.AMTunerSubChannel.Default);
+							DirectShowUtil.EnableDeInterlace(m_graphBuilder);
+						}
+						int iFreq;
+						double dFreq;
+						AMTunerSignalStrength signalStrength;
+						m_TVTuner.SignalPresent(out signalStrength);
+						m_TVTuner.get_VideoFrequency(out iFreq);
+						m_TVTuner.get_Channel(out iCurrentChannel, out iVideoSubChannel, out iAudioSubChannel);
+						m_TVTuner.get_CountryCode(out currentCountry);
+						m_TVTuner.get_TVFormat(out standard);
+						dFreq=iFreq/1000000d;
+						Log.WriteFile(Log.LogType.Capture,"SinkGraph:TuneChannel() tuned to channel:{0} county:{1} freq:{2} MHz. tvformat:{3} signal:{4}", 
+							iCurrentChannel,currentCountry, dFreq,standard.ToString(),signalStrength.ToString());
+				
+						
+					}
+					catch(Exception){} 
+				}
+				else
+				{
+					SetVideoStandard(channel.TVStandard);
+				}
+
+				bool bFixCrossbar=true;
+				if (m_iPrevChannel>=0)
+				{
+					if (m_iPrevChannel< (int)ExternalInputs.svhs  && channel.Number < (int)ExternalInputs.svhs) bFixCrossbar=false;
+					if (m_iPrevChannel==(int)ExternalInputs.svhs  && channel.Number ==(int)ExternalInputs.svhs) bFixCrossbar=false;
+					if (m_iPrevChannel==(int)ExternalInputs.rgb   && channel.Number ==(int)ExternalInputs.rgb) bFixCrossbar=false;
+					if (m_iPrevChannel==(int)ExternalInputs.cvbs1 && channel.Number ==(int)ExternalInputs.cvbs1) bFixCrossbar=false;
+					if (m_iPrevChannel==(int)ExternalInputs.cvbs2 && channel.Number ==(int)ExternalInputs.cvbs2) bFixCrossbar=false;
+				}
+				if (bFixCrossbar)
+				{
+					DsUtils.FixCrossbarRoutingEx(m_graphBuilder,
+						m_captureGraphBuilder,
+						m_captureFilter, 
+						channel.Number<(int)ExternalInputs.svhs, 
+						(channel.Number==(int)ExternalInputs.cvbs1), 
+						(channel.Number==(int)ExternalInputs.cvbs2), 
+						(channel.Number==(int)ExternalInputs.svhs) , 
+						(channel.Number==(int)ExternalInputs.rgb) ,
+						cardName);
+				}
+			}
+			finally
+			{
+					if (restartGraph)
+					{
+						string fname=Recorder.GetTimeShiftFileNameByCardId(m_cardID);
+						m_mpeg2Demux.StartTimeshifting(fname);
+						g_Player.ContinueGraph();
+					}
+			}
       m_iPrevChannel=channel.Number;
       m_StartTime=DateTime.Now;
     }
