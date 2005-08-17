@@ -346,6 +346,11 @@ namespace MediaPortal.Player
 				rDest.X, rDest.Y, rDest.Right, rDest.Bottom);
 
 
+			if (rSource.Y==0)
+			{
+				rSource.Y+=5;
+				rSource.Height-=10;
+			}
 			SetSourceDestRectangles(rSource,rDest);
 			SetVideoPosition(rDest);
 			m_SourceRect=rSource;

@@ -336,6 +336,12 @@ namespace MediaPortal.Player
 			  Log.Write("PlaneScene: dst        : ({0},{1})-({2},{3})",
 					rDest.X,rDest.Y,rDest.X+rDest.Width,rDest.Y+rDest.Height);
 
+				if (rSource.Y==0)
+				{
+					rSource.Y+=5;
+					rSource.Height-=10;
+				}
+
 				//next calculate which part of the video texture should be copied
 				//into the video window
 				float uoffs = ((float)rSource.X)      / (fVideoWidth);
