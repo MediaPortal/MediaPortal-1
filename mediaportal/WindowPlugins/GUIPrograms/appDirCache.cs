@@ -61,48 +61,58 @@ namespace ProgramsDatabase
       string thumbFolder = "";
       if (imageDirs.Length > 0)
       {
-        string mainImgFolder = imageDirs[0];
+        string mainImgFolder = "";
 
-        string curDir = mainImgFolder + "\\";
-        string filenameNoExtension = mainImgFolder + "\\" + guiFile.Label;
-        filenameNoExtension = Path.ChangeExtension(filenameNoExtension, null);
-        filenameNoExtension = Path.GetFileNameWithoutExtension(filenameNoExtension);
-
-        string[] exactMatchesJPG = Directory.GetFiles(curDir, filenameNoExtension + "*.jpg");
-        string[] exactMatchesGIF = Directory.GetFiles(curDir, filenameNoExtension + "*.gif");
-        string[] exactMatchesPNG = Directory.GetFiles(curDir, filenameNoExtension + "*.png");
-        if (exactMatchesJPG.Length > 0)
+        foreach (string imgFolder in imageDirs)
         {
-          thumbFolder = exactMatchesJPG[0];
-        }
-        else if (exactMatchesGIF.Length > 0)
-        {
-          thumbFolder = exactMatchesGIF[0];
-        }
-        else if (exactMatchesPNG.Length > 0)
-        {
-          thumbFolder = exactMatchesPNG[0];
-        }
-        else
-        {
-          // no exact match found! Redo with near matches!
-          string[] nearMatchesJPG = Directory.GetFiles(curDir, fileTitle + "*.jpg");
-          string[] nearMatchesGIF = Directory.GetFiles(curDir, fileTitle + "*.gif");
-          string[] nearMatchesPNG = Directory.GetFiles(curDir, fileTitle + "*.png");
-          if (nearMatchesJPG.Length > 0)
+          if (System.IO.Directory.Exists(imgFolder))
           {
-            thumbFolder = nearMatchesJPG[0];
-          }
-          else if (nearMatchesGIF.Length > 0)
-          {
-            thumbFolder = nearMatchesGIF[0];
-          }
-          else if (nearMatchesPNG.Length > 0)
-          {
-            thumbFolder = nearMatchesPNG[0];
+            mainImgFolder = imgFolder;
           }
         }
 
+        if ("" != mainImgFolder)
+        {
+          string curDir = mainImgFolder + "\\";
+          string filenameNoExtension = mainImgFolder + "\\" + guiFile.Label;
+          filenameNoExtension = Path.ChangeExtension(filenameNoExtension, null);
+          filenameNoExtension = Path.GetFileNameWithoutExtension(filenameNoExtension);
+
+          string[] exactMatchesJPG = Directory.GetFiles(curDir, filenameNoExtension + "*.jpg");
+          string[] exactMatchesGIF = Directory.GetFiles(curDir, filenameNoExtension + "*.gif");
+          string[] exactMatchesPNG = Directory.GetFiles(curDir, filenameNoExtension + "*.png");
+          if (exactMatchesJPG.Length > 0)
+          {
+            thumbFolder = exactMatchesJPG[0];
+          }
+          else if (exactMatchesGIF.Length > 0)
+          {
+            thumbFolder = exactMatchesGIF[0];
+          }
+          else if (exactMatchesPNG.Length > 0)
+          {
+            thumbFolder = exactMatchesPNG[0];
+          }
+          else
+          {
+            // no exact match found! Redo with near matches!
+            string[] nearMatchesJPG = Directory.GetFiles(curDir, fileTitle + "*.jpg");
+            string[] nearMatchesGIF = Directory.GetFiles(curDir, fileTitle + "*.gif");
+            string[] nearMatchesPNG = Directory.GetFiles(curDir, fileTitle + "*.png");
+            if (nearMatchesJPG.Length > 0)
+            {
+              thumbFolder = nearMatchesJPG[0];
+            }
+            else if (nearMatchesGIF.Length > 0)
+            {
+              thumbFolder = nearMatchesGIF[0];
+            }
+            else if (nearMatchesPNG.Length > 0)
+            {
+              thumbFolder = nearMatchesPNG[0];
+            }
+          }
+        }
       }
       return thumbFolder;
     }
