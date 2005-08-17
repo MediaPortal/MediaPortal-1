@@ -23,20 +23,12 @@ namespace WindowPlugins.GUITV
 		public override void Process()
 		{
 			if (VideoRendererStatistics.IsVideoFound)
+			{
 				GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN,true);
+				return;
+			}
 			progressControl.Percentage=Recorder.SignalStrength;
 			progressControl.IsVisible=true;
-		}
-		public string Notify
-		{
-			set
-			{
-				notify=value;
-			}
-		}
-		protected override void OnPageLoad()
-		{
-			base.OnPageLoad ();
 			switch (VideoRendererStatistics.VideoState)
 			{
 				case VideoRendererStatistics.State.NoSignal:
@@ -50,6 +42,19 @@ namespace WindowPlugins.GUITV
 					break;
 			}
 			lblNotify.Label=notify;
+		}
+		public string Notify
+		{
+			set
+			{
+				notify=value;
+			}
+		}
+		protected override void OnPageLoad()
+		{
+			GUIGraphicsContext.IsFullScreenVideo=true;
+
+			base.OnPageLoad ();
 		}
 	}
 }

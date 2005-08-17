@@ -1058,21 +1058,13 @@ namespace MediaPortal.TV.Recording
 							return;
 						}
 						
-						if (IsTimeShifting && !View)
-						{
-							if (g_Player.Playing && g_Player.CurrentFile == Recorder.GetTimeShiftFileName(ID-1))
-							{
-								g_Player.PauseGraph();
-							}
-						}
 						currentGraph.TuneChannel(channel);
 						lastChannelChange=DateTime.Now;
 #if !USEMTSWRITER
 						if (IsTimeShifting && !View)
 						{
 							if (g_Player.Playing && g_Player.CurrentFile == Recorder.GetTimeShiftFileName(ID-1))
-							{
-								g_Player.ContinueGraph();
+							{;
 								double position=g_Player.CurrentPosition;
 								double duration=g_Player.Duration;
 								if (position < duration-5d)

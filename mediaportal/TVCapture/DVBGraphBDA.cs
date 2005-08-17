@@ -3635,6 +3635,7 @@ namespace MediaPortal.TV.Recording
 			m_lastPMTVersion=-1;
 			try
 			{
+#if !USEMTSWRITER
 				if (m_graphState==State.TimeShifting)
 				{
 					string fname=Recorder.GetTimeShiftFileNameByCardId(m_cardID);
@@ -3645,7 +3646,7 @@ namespace MediaPortal.TV.Recording
 						m_mediaControl.Stop();
 					}
 				}
-
+#endif
 				if (Vmr9!=null) Vmr9.Enable(false);
 				m_iPrevChannel		= m_iCurrentChannel;
 				m_iCurrentChannel = channel.Number;
@@ -3922,12 +3923,14 @@ namespace MediaPortal.TV.Recording
 			}	
 			finally
 			{
+#if !USEMTSWRITER
 				if (restartGraph)
 				{
 					string fname=Recorder.GetTimeShiftFileNameByCardId(m_cardID);
 					StartTimeShifting(null,fname);
 					g_Player.ContinueGraph();
 				}
+#endif
 				if (Vmr9!=null) Vmr9.Enable(true);
 			}
 		}//public void TuneChannel(AnalogVideoStandard standard,int iChannel,int country)
