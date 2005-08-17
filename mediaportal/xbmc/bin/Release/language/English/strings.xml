@@ -3118,6 +3118,14 @@
 	<id>1443</id>
 	<value>Scroll speed (vertical)</value>
 </string>	
+<string>
+	<id>1444</id>
+	<value>Pre-record</value>
+</string>	
+<string>
+	<id>1445</id>
+	<value>Post-record</value>
+</string>	
 
 	<!-- My Status Strings -->
 	<string><id>1950</id><value>My Status</value></string>

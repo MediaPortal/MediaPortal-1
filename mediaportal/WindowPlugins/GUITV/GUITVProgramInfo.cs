@@ -25,6 +25,8 @@ namespace MediaPortal.GUI.TV
 		[SkinControlAttribute(10)]				protected GUIListControl					lstUpcomingEpsiodes=null;
 		[SkinControlAttribute(6)]					protected GUIButtonControl				btnQuality=null;
 		[SkinControlAttribute(7)]					protected GUIButtonControl				btnEpisodes=null;
+		[SkinControlAttribute(8)]					protected GUIButtonControl				btnPreRecord=null;
+		[SkinControlAttribute(9)]					protected GUIButtonControl				btnPostRecord=null;
 
 		static TVProgram currentProgram=null;
 
@@ -90,6 +92,8 @@ namespace MediaPortal.GUI.TV
 				btnKeep.Disabled=false;
 				btnQuality.Disabled=false;
 				btnEpisodes.Disabled=!bSeries;
+				btnPreRecord.Disabled=false;	
+				btnPostRecord.Disabled=false;
 			}
 			else
 			{
@@ -98,6 +102,8 @@ namespace MediaPortal.GUI.TV
 				btnKeep.Disabled=true;		
 				btnQuality.Disabled=true;
 				btnEpisodes.Disabled=true;	
+				btnPreRecord.Disabled=true;	
+				btnPostRecord.Disabled=true;
 			}
 			ArrayList notifies = new ArrayList();
 			TVDatabase.GetNotifies(notifies,false);
@@ -181,6 +187,10 @@ namespace MediaPortal.GUI.TV
 
 		protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
 		{
+			if (control==btnPreRecord)
+				OnPreRecordInterval();
+			if (control==btnPostRecord)
+				OnPostRecordInterval();
 			if (control==btnEpisodes)
 				OnSetEpisodes();
 			if (control==btnQuality)
@@ -205,6 +215,90 @@ namespace MediaPortal.GUI.TV
 			}
 			base.OnClicked (controlId, control, actionType);
 		}
+		void OnPreRecordInterval()
+		{
+			bool bRecording=false;
+			TVRecording rec=null;
+			ArrayList recordings = new ArrayList();
+			TVDatabase.GetRecordings(ref recordings);
+
+			foreach (TVRecording record in recordings)
+			{
+				if (record.Canceled>0) continue;
+				if (record.IsRecordingProgram(currentProgram,true) ) 
+				{
+					if (!record.IsSerieIsCanceled(currentProgram.StartTime))
+					{
+						bRecording=true;
+						rec=record;
+						break;
+					}
+				}
+			}
+			if (!bRecording) return;
+			GUIDialogMenu dlg=(GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+			if (dlg!=null)
+			{
+				dlg.Reset();
+				dlg.ShowQuickNumbers=false;
+				dlg.SetHeading(GUILocalizeStrings.Get(1444));//pre-record
+				dlg.Add(GUILocalizeStrings.Get(886));//default
+				for (int minute=0; minute < 20; minute++)
+				{
+					dlg.Add( String.Format("{0} {1}",minute,GUILocalizeStrings.Get(3004)) );
+				}
+				if (rec.PaddingFront<0) dlg.SelectedLabel=0;
+				else dlg.SelectedLabel=rec.PaddingFront+1;
+				dlg.DoModal(GetID);
+				if (dlg.SelectedLabel<0) return;
+				rec.PaddingFront=dlg.SelectedLabel-1;
+				TVDatabase.UpdateRecording(rec,TVDatabase.RecordingChange.Modified);
+			}
+			Update();
+		}
+
+		void OnPostRecordInterval()
+		{
+			bool bRecording=false;
+			TVRecording rec=null;
+			ArrayList recordings = new ArrayList();
+			TVDatabase.GetRecordings(ref recordings);
+
+			foreach (TVRecording record in recordings)
+			{
+				if (record.Canceled>0) continue;
+				if (record.IsRecordingProgram(currentProgram,true) ) 
+				{
+					if (!record.IsSerieIsCanceled(currentProgram.StartTime))
+					{
+						bRecording=true;
+						rec=record;
+						break;
+					}
+				}
+			}
+			if (!bRecording) return;
+			GUIDialogMenu dlg=(GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+			if (dlg!=null)
+			{
+				dlg.Reset();
+				dlg.ShowQuickNumbers=false;
+				dlg.SetHeading(GUILocalizeStrings.Get(1445));//pre-record
+				dlg.Add(GUILocalizeStrings.Get(886));//default
+				for (int minute=0; minute < 20; minute++)
+				{
+					dlg.Add(String.Format("{0} {1}",minute,GUILocalizeStrings.Get(3004)));
+				}
+				if (rec.PaddingEnd<0) dlg.SelectedLabel=0;
+				else dlg.SelectedLabel=rec.PaddingEnd+1;
+				dlg.DoModal(GetID);
+				if (dlg.SelectedLabel<0) return;
+				rec.PaddingEnd=dlg.SelectedLabel-1;
+				TVDatabase.UpdateRecording(rec,TVDatabase.RecordingChange.Modified);
+			}
+			Update();
+		}
+
 		void OnSetQuality()
 		{
 			bool bRecording=false;

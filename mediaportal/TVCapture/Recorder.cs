@@ -284,14 +284,18 @@ namespace MediaPortal.TV.Recording
 					{
 						if (!IsRecordingSchedule(rec, out card)) 
 						{
+							int paddingFront=rec.PaddingFront;
+							int paddingEnd=rec.PaddingEnd;
+							if (paddingFront<0) paddingFront=m_iPreRecordInterval;
+							if (paddingEnd<0) paddingEnd=m_iPostRecordInterval;
 							// check which program is running 
-							TVProgram prog=chan.GetProgramAt(dtCurrentTime.AddMinutes(1+m_iPreRecordInterval) );
+							TVProgram prog=chan.GetProgramAt(dtCurrentTime.AddMinutes(1+paddingFront) );
 
 							// if the recording should record the tv program
-							if ( rec.IsRecordingProgramAtTime(dtCurrentTime,prog,m_iPreRecordInterval, m_iPostRecordInterval) )
+							if ( rec.IsRecordingProgramAtTime(dtCurrentTime,prog,paddingFront, paddingEnd) )
 							{
 								// yes, then record it
-								if (Record(dtCurrentTime,rec,prog, m_iPreRecordInterval, m_iPostRecordInterval))
+								if (Record(dtCurrentTime,rec,prog, paddingFront, paddingEnd))
 								{
 									break;
 								}
@@ -301,10 +305,10 @@ namespace MediaPortal.TV.Recording
 								if (!rec.IsAnnouncementSend)
 								{
 									DateTime dtTime=DateTime.Now.AddMinutes(m_preRecordingWarningTime);
-									TVProgram prog2Min=chan.GetProgramAt(dtTime.AddMinutes(1+m_iPreRecordInterval) );
+									TVProgram prog2Min=chan.GetProgramAt(dtTime.AddMinutes(1+paddingFront) );
 
 									// if the recording should record the tv program
-									if ( rec.IsRecordingProgramAtTime(dtTime,prog2Min,m_iPreRecordInterval, m_iPostRecordInterval) )
+									if ( rec.IsRecordingProgramAtTime(dtTime,prog2Min,paddingFront, paddingEnd) )
 									{
 										Log.WriteFile(Log.LogType.Recorder,"Recorder: Send announcement for recording:{0}",rec.ToString());
 										rec.IsAnnouncementSend=true;
@@ -327,13 +331,18 @@ namespace MediaPortal.TV.Recording
 				if (rec.Canceled>0) continue;
 				if (rec.IsDone()) continue;
 
+				int paddingFront=rec.PaddingFront;
+				int paddingEnd=rec.PaddingEnd;
+				if (paddingFront<0) paddingFront=m_iPreRecordInterval;
+				if (paddingEnd<0) paddingEnd=m_iPostRecordInterval;
+
 				// 1st check if the recording itself should b recorded
-				if ( rec.IsRecordingProgramAtTime(DateTime.Now,null,m_iPreRecordInterval, m_iPostRecordInterval) )
+				if ( rec.IsRecordingProgramAtTime(DateTime.Now,null,paddingFront, paddingEnd) )
 				{
 					if (!IsRecordingSchedule(rec, out card)) 
 					{
 						// yes, then record it
-						if ( Record(dtCurrentTime,rec,null,m_iPreRecordInterval, m_iPostRecordInterval))
+						if ( Record(dtCurrentTime,rec,null,paddingFront, paddingEnd))
 						{
 							// recording it
 						}
@@ -345,7 +354,7 @@ namespace MediaPortal.TV.Recording
 					{
 						DateTime dtTime=DateTime.Now.AddMinutes(m_preRecordingWarningTime);
 						// if the recording should record the tv program
-						if ( rec.IsRecordingProgramAtTime(dtTime,null,m_iPreRecordInterval, m_iPostRecordInterval) )
+						if ( rec.IsRecordingProgramAtTime(dtTime,null,paddingFront, paddingEnd) )
 						{
 							rec.IsAnnouncementSend=true;
 							Log.WriteFile(Log.LogType.Recorder,"Recorder: Send announcement for recording:{0}",rec.ToString());

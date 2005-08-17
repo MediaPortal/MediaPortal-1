@@ -125,7 +125,7 @@ namespace MediaPortal.TV.Database
 
 		static public void UpdateFromPreviousVersion()
 		{
-			int currentVersion=4;
+			int currentVersion=5;
 			int versionNr=0;
 			
 			AddTable("tblversion"     ,"CREATE TABLE tblversion( idVersion integer)");
@@ -180,6 +180,16 @@ namespace MediaPortal.TV.Database
 				DateTime maxDate=DateTime.MaxValue;
 				m_db.Execute(String.Format("update recorded set keepMethod={0}, keepDate='{1}'",(int)TVRecorded.KeepMethod.Always,Utils.datetolong(maxDate)));
 				m_db.Execute(String.Format("update recording set keepMethod={0}, keepDate='{1}'",(int)TVRecorded.KeepMethod.Always,Utils.datetolong(maxDate)));
+			}
+			
+			if (versionNr<5) 
+			{
+				//version 4->5 : added paddingFront and paddingEnd to recording
+				m_db.Execute("ALTER TABLE recording ADD COLUMN paddingFront Integer");
+				m_db.Execute("ALTER TABLE recording ADD COLUMN paddingEnd Integer");
+				DateTime maxDate=DateTime.MaxValue;
+				m_db.Execute(String.Format("update recording set paddingFront=-1"));
+				m_db.Execute(String.Format("update recording set paddingEnd=-1"));
 			}
 			m_db.Execute(String.Format("update tblversion set idVersion={0}",currentVersion));
 		}
@@ -1852,7 +1862,7 @@ namespace MediaPortal.TV.Database
 					int iContentRec=1;
 					if (!recording.IsContentRecording) iContentRec=0;
 
-					strSQL=String.Format("update recording set idChannel={0},iRecordingType={1},strProgram='{2}',iStartTime='{3}',iEndTime='{4}', iCancelTime='{5}', bContentRecording={6}, quality={7}, priority={8},episodesToKeep={9},keepMethod={10},keepDate='{11}' where idRecording={12}", 
+					strSQL=String.Format("update recording set idChannel={0},iRecordingType={1},strProgram='{2}',iStartTime='{3}',iEndTime='{4}', iCancelTime='{5}', bContentRecording={6}, quality={7}, priority={8},episodesToKeep={9},keepMethod={10},keepDate='{11}', paddingFront={12}, paddingEnd={13} where idRecording={14}", 
 						iChannelId,
 						(int)recording.RecType,
 						strTitle,
@@ -1865,6 +1875,8 @@ namespace MediaPortal.TV.Database
 						recording.EpisodesToKeep,
 						(int)recording.KeepRecordingMethod,
 						Utils.datetolong(recording.KeepRecordingTill),
+						recording.PaddingFront,
+						recording.PaddingEnd,
 						recording.ID);
 					m_db.Execute(strSQL);
 	
@@ -1991,7 +2003,7 @@ namespace MediaPortal.TV.Database
 					int iContentRec=1;
 					if (!recording.IsContentRecording) iContentRec=0;
           
-					strSQL=String.Format("insert into recording (idRecording,idChannel,iRecordingType,strProgram,iStartTime,iEndTime,iCancelTime,bContentRecording,quality,priority,episodesToKeep,keepMethod,keepDate ) values ( NULL, {0}, {1}, '{2}','{3}', '{4}', '{5}', {6}, {7}, {8},{9},{10},'{11}')", 
+					strSQL=String.Format("insert into recording (idRecording,idChannel,iRecordingType,strProgram,iStartTime,iEndTime,iCancelTime,bContentRecording,quality,priority,episodesToKeep,keepMethod,keepDate,paddingFront,paddingEnd ) values ( NULL, {0}, {1}, '{2}','{3}', '{4}', '{5}', {6}, {7}, {8},{9},{10},'{11}',{12},{13})", 
 						iChannelId,
 						(int)recording.RecType,
 						strTitle,
@@ -2003,7 +2015,9 @@ namespace MediaPortal.TV.Database
 						recording.Priority,
 						recording.EpisodesToKeep,
 						(int)recording.KeepRecordingMethod,
-						Utils.datetolong(recording.KeepRecordingTill)
+						Utils.datetolong(recording.KeepRecordingTill),
+						recording.PaddingFront,
+						recording.PaddingEnd
 						);
 					m_db.Execute(strSQL);
 					lNewId=m_db.LastInsertID();
@@ -2089,6 +2103,8 @@ namespace MediaPortal.TV.Database
 							rec.KeepRecordingMethod=(TVRecorded.KeepMethod)DatabaseUtility.GetAsInt(results,i,"recording.keepMethod");
 							long date=DatabaseUtility.GetAsInt64(results,i,"recording.keepDate");
 							rec.KeepRecordingTill=Utils.longtodate(date);
+							rec.PaddingFront=DatabaseUtility.GetAsInt(results,i,"recording.paddingFront");
+							rec.PaddingEnd=DatabaseUtility.GetAsInt(results,i,"recording.paddingEnd");
 							GetCanceledRecordings(ref rec);
 							recordings.Add(rec);
 						}
@@ -2140,6 +2156,8 @@ namespace MediaPortal.TV.Database
 						rec.KeepRecordingMethod=(TVRecorded.KeepMethod)DatabaseUtility.GetAsInt(results,i,"recording.keepMethod");
 						long date=DatabaseUtility.GetAsInt64(results,i,"recording.keepDate");
 						rec.KeepRecordingTill=Utils.longtodate(date);
+						rec.PaddingFront=DatabaseUtility.GetAsInt(results,i,"recording.paddingFront");
+						rec.PaddingEnd=DatabaseUtility.GetAsInt(results,i,"recording.paddingEnd");
 						GetCanceledRecordings(ref rec);
 						recordings.Add(rec);
 					}

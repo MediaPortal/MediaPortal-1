@@ -109,6 +109,7 @@ namespace MediaPortal.TV.Database
 		bool				m_bContentRecording=true;
 		bool        m_bSeries=false;
 		int         m_iPriority=0;
+		int         m_iPaddingFront=-1, m_iPaddingEnd=-1;
 		int         episodesToKeep=Int32.MaxValue;//all
 		QualityType	m_iQuality=QualityType.NotSet;
 		ArrayList   m_canceledSeries = new ArrayList();
@@ -157,7 +158,23 @@ namespace MediaPortal.TV.Database
 			m_iQuality=rec.m_iQuality;
 			m_canceledSeries=(ArrayList)rec.m_canceledSeries.Clone();
 			EpisodesToKeep = rec.EpisodesToKeep;
+			PaddingFront=rec.PaddingFront;
+			PaddingEnd=rec.PaddingEnd;
+			keepMethod=rec.keepMethod;
+			keepDate=rec.keepDate;
 			announcementSend=rec.announcementSend;
+		}
+		
+		public int PaddingFront
+		{
+			get { return m_iPaddingFront;}
+			set { m_iPaddingFront=value;}
+		}
+		
+		public int PaddingEnd
+		{
+			get { return m_iPaddingEnd;}
+			set { m_iPaddingEnd=value;}
 		}
 
 		public bool IsAnnouncementSend
