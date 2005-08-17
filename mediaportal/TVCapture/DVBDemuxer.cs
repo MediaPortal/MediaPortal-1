@@ -212,8 +212,8 @@ int m_bufferPositionPMT=0;
 #endif
 		int m_programNumber=-1;
 		DateTime packetTimer=DateTime.MinValue;
-		bool     receivingPackets=false;
-		ulong    packetsReceived=0;
+		bool     isReceivingPackets=false;
+		ulong    numberOfPacketsReceived=0;
 		// card
 		static int m_currentDVBCard=0;
 		static NetworkType m_currentNetworkType;
@@ -394,8 +394,7 @@ int m_bufferPositionPMT=0;
 
 			//
 			packetTimer=DateTime.MinValue;
-			receivingPackets=false;
-			packetsReceived=0;
+
 			m_epgClass.ClearBuffer();
 			m_teleText.ClearBuffer();
 			Log.Write("DVBDemuxer:{0} audio:{1:X} video:{2:X} teletext:{3:X} pmt:{4:X} subtitle:{5:X} program:{6}",
@@ -404,27 +403,32 @@ int m_bufferPositionPMT=0;
 		}
 		public bool RecevingPackets
 		{
-			get { return receivingPackets;}
+			get { return isReceivingPackets;}
+		}
+		public void OnTuneNewChannel()
+		{
+			isReceivingPackets=false;
+			numberOfPacketsReceived=0;
 		}
 		public void Process()
 		{
 			TimeSpan ts = DateTime.Now-packetTimer;
-			if (!receivingPackets && packetsReceived>0)
+			if (!isReceivingPackets && numberOfPacketsReceived>0)
 			{
-				receivingPackets =true;
+				isReceivingPackets =true;
 				Log.Write("DVBDemuxer:receiving DVB packets");
 			}
 			if (ts.TotalMilliseconds>=1000)
 			{
-				if (receivingPackets && packetsReceived==0)
+				if (isReceivingPackets && numberOfPacketsReceived==0)
 				{
-					receivingPackets =false;
+					isReceivingPackets =false;
 					Log.Write("DVBDemuxer:stopped receiving DVB packets");
 				}
 				
-				//Log.Write("DVBDemuxer: receiving:{0} #:{1}", receivingPackets,packetsReceived);
+				//Log.Write("DVBDemuxer: receiving:{0} #:{1}", isReceivingPackets,numberOfPacketsReceived);
 
-				packetsReceived=0;
+				numberOfPacketsReceived=0;
 				packetTimer=DateTime.Now;
 			}
 		}
@@ -928,7 +932,7 @@ int m_bufferPositionPMT=0;
 				{
 					return 0;
 				}
-				packetsReceived++;
+				numberOfPacketsReceived++;
 /*
 				if (m_packetHeader.Pid==0)
 				{

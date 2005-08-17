@@ -23,6 +23,7 @@ public:
 	HRESULT GetFileSize(__int64 *lpllsize);
 	HRESULT GetFileSize(HANDLE handle,__int64 *lpllsize);
 	DWORD SetFilePointer(__int64 llDistanceToMove, DWORD dwMoveMethod);
+	void  SetOffset(__int64 startOfFile);
 	__int64 GetFilePointer();
 	__int64 get_FileSize(void);
 
@@ -35,7 +36,8 @@ protected:
 	LPOLESTR m_pFileName;           // The filename where we stream
 	BOOL     m_bReadOnly;
 	BOOL     m_bDelay;
-	__int64 m_fileSize;
+	__int64  m_fileSize;
+	__int64  m_startOfFile;
 };
 
 #endif

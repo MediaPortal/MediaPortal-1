@@ -102,6 +102,7 @@ HRESULT Sections::ParseFromFile()
 
 		__int64 filePointer=0;
 		m_pFileReader->SetFilePointer(filePointer,FILE_BEGIN);
+		m_pFileReader->SetOffset(0);
 		return S_OK;
 	}
 
@@ -116,9 +117,10 @@ HRESULT Sections::ParseFromFile()
 	if(pids.Duration<600000000)
 		pids.Duration=600000000;
 	m_pFileReader->SetFilePointer(filePointer,FILE_BEGIN);
+	
 	return hr;
 }
-HRESULT Sections::CheckStream(void)
+HRESULT Sections::CheckStream()
 {
 	LogDebug("Sections::CheckStream()");
 	__int64 fileSize;
@@ -137,7 +139,7 @@ HRESULT Sections::CheckStream(void)
 	unsigned long offset=0;
 	ULONGLONG filePosCounter=0;
 	ULONGLONG pts=0;
-	int pidToCheck=(pids.AudioPid!=0?pids.AudioPid:pids.AC3);
+	int pid=0;
 	while(finished!=true)
 	{
 		hr=m_pFileReader->Read(pData,188,&countBytesRead);
@@ -153,7 +155,6 @@ HRESULT Sections::CheckStream(void)
 		m_pFileReader->SetFilePointer(countBytesRead,FILE_CURRENT);
 		
 		GetTSHeader(pData,&header);
-		
 		if(hr==S_OK && header.SyncByte==0x47)
 		{
 			for(offset=4;offset<181;offset++)
@@ -164,17 +165,21 @@ HRESULT Sections::CheckStream(void)
 					WORD pesLen=(pData[offset+4]<<8)+pData[offset+5];
 					GetPESHeader(&pData[offset+6],&pes);
 					BYTE pesHeaderLen=pData[offset+8];
-					if(pes.Reserved==0x02 && pidToCheck==header.Pid) // valid header
+					if(pes.Reserved==0x02 && header.Pid>0 && (pids.AudioPid==header.Pid||pids.AudioPid2==header.Pid||pids.AC3==header.Pid) ) // valid header
 					{
 						if(pes.PTSFlags==0x02)
 						{
-							// audio pes found
-							GetPTS(&pData[offset+9],&pts);
-							if(pids.StartPTS==0)
+							if (pid==0) pid=header.Pid;
+							if (pid==header.Pid)
 							{
-								LogDebug("Sections::CheckStream() got PTS");
-								pids.StartPTS=(__int64)pts; // first pts
-								m_pFileReader->SetFilePointer(fileEndOffset,FILE_BEGIN);// sets to file-end - 1MB
+								// audio pes found
+								GetPTS(&pData[offset+9],&pts);
+								if(pids.StartPTS==0)
+								{
+									LogDebug("Sections::CheckStream() got PTS");
+									pids.StartPTS=(__int64)pts; // first pts
+									m_pFileReader->SetFilePointer(fileEndOffset,FILE_BEGIN);// sets to file-end - 1MB
+								}
 							}
 							
 						}
@@ -284,7 +289,7 @@ HRESULT Sections::CurrentPTS(BYTE *pData,ULONGLONG *ptsValue,int* pid)
 void Sections::FindPATPMT()
 {
 	if(m_pFileReader->OpenFile()==S_FALSE)
-		return;
+		return ;
 
 	LogDebug("Sections::FindPATPMT()");
 	HRESULT hr;
@@ -298,6 +303,34 @@ void Sections::FindPATPMT()
 	int pmt[255];
 	int pmtcount=0;
 	// first get all pmt pids by decoding the pat
+
+	__int64 offsetInFile=0;
+	while(true)
+	{
+		m_pFileReader->SetFilePointer(offsetInFile,FILE_BEGIN);
+		hr=m_pFileReader->Read(pData,188,&countBytesRead);
+		if(hr==S_OK)
+		{
+			GetTSHeader(pData,&header);
+			if(header.SyncByte==0x47 && header.TransportError==FALSE)
+			{
+				hr=m_pFileReader->Read(pData,188,&countBytesRead);
+				if(hr==S_OK)
+				{
+					GetTSHeader(pData,&header);
+					if(header.SyncByte==0x47 && header.TransportError==FALSE)
+					{
+						break;
+					}
+				}
+			}
+		}
+		else break;
+		offsetInFile++;
+	}
+
+	m_pFileReader->SetOffset(offsetInFile);
+	finished=false;
 	m_pFileReader->SetFilePointer(0,FILE_BEGIN);
 	pmtcount=0;
 	long pmtSectionLen=0;
@@ -310,7 +343,7 @@ void Sections::FindPATPMT()
 		if(hr==S_OK)
 		{
 			GetTSHeader(pData,&header);
-			if(header.SyncByte==0x47 && header.Pid==0)// pat
+			if(header.SyncByte==0x47 && header.Pid==0 && header.TransportError==FALSE)// pat
 			{
 				if(header.PayloadUnitStart==true)
 					offset=4+pData[4]+1;
@@ -318,6 +351,7 @@ void Sections::FindPATPMT()
 					offset=4;
 				if(pData[offset]==0x00 && pData[offset+1]==0x00 && pData[offset+2]==0x01) continue;//PES
 				int table_id = pData[offset+0];
+				if (table_id!=0) continue;
 				int section_syntax_indicator = (pData[offset+1]>>7) & 1;
 				int section_length = ((pData[offset+1]& 0xF)<<8) + pData[offset+2];
 				int transport_stream_id = (pData[offset+3]<<8)+pData[offset+4];
@@ -348,7 +382,7 @@ void Sections::FindPATPMT()
 	{
 		LogDebug("Sections::FindPATPMT() no PAT found");
 		pids.Clear();
-		return;
+		return ;
 	}
 	
 	LogDebug("Sections::FindPATPMT() Get PMT");
@@ -367,6 +401,7 @@ void Sections::FindPATPMT()
 		if(hr==S_OK)
 		{
 			GetTSHeader(pData,&header);
+			if (header.SyncByte!=0x47 || header.TransportError==TRUE) continue;
 			for(int i=0;i<pmtcount;i++)
 			{
 				actPid=pmt[i];
@@ -482,7 +517,7 @@ bool Sections::DecodePMT(byte* PMT)
 	int stream_type=0;
 	int elementary_PID=0;
 	int ES_info_length=0;
-	pids.AudioPid=pids.AudioPid2=pids.VideoPid=pids.AC3=0;
+	pids.PCRPid=pids.AudioPid=pids.AudioPid2=pids.VideoPid=pids.AC3=0;
 
 	while (len1 > 4)
 	{
@@ -557,7 +592,7 @@ bool Sections::FindVideo()
 				offset+=pData[4];
 			if (offset>= 0 && offset <188) 
 			{
-				if(pData[offset]==0 && pData[offset+1]==0 && pData[offset+2]==1)
+//				if(pData[offset]==0 && pData[offset+1]==0 && pData[offset+2]==1)
 					return true;
 			}
 		}

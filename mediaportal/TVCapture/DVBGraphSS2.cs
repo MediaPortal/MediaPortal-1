@@ -1695,6 +1695,7 @@ namespace MediaPortal.TV.Recording
 					m_lastTuneError=false;
 					if (m_streamDemuxer != null)
 					{
+						m_streamDemuxer.OnTuneNewChannel();
 						m_streamDemuxer.SetChannelData(ch.AudioPid, ch.VideoPid, ch.TeletextPid, ch.Audio3, ch.ServiceName,ch.PMTPid,ch.ProgramNumber);
 					}
 					if(m_pluginsEnabled==true)
@@ -2831,6 +2832,7 @@ namespace MediaPortal.TV.Recording
 			
 			if (m_streamDemuxer != null)
 			{
+				m_streamDemuxer.OnTuneNewChannel();
 				m_streamDemuxer.SetChannelData(ch.AudioPid, ch.VideoPid, ch.TeletextPid, ch.Audio3, ch.ServiceName,ch.PMTPid,ch.ProgramNumber);
 			}
 

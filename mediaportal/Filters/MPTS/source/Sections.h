@@ -66,7 +66,7 @@ public:
 	virtual ~Sections();
 	HRESULT GetTSHeader(BYTE *data,TSHeader *header);
 	HRESULT GetPESHeader(BYTE *data,PESHeader *header);
-	HRESULT CheckStream(void);
+	HRESULT CheckStream();
 	HRESULT ParseFromFile(void);
 	void GetPTS(BYTE *data,ULONGLONG *pts);
 	void PTSToPTSTime(ULONGLONG pts,PTSTime* ptsTime);

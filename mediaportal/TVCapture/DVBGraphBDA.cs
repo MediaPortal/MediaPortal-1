@@ -3917,7 +3917,9 @@ namespace MediaPortal.TV.Recording
 				VideoRendererStatistics.VideoState=VideoRendererStatistics.State.NoSignal;
 				if (m_streamDemuxer != null)
 				{
+					m_streamDemuxer.OnTuneNewChannel();
 					m_streamDemuxer.SetChannelData(currentTuningObject.AudioPid, currentTuningObject.VideoPid, currentTuningObject.TeletextPid, currentTuningObject.Audio3, currentTuningObject.ServiceName,currentTuningObject.PMTPid,currentTuningObject.ProgramNumber);
+
 				}
 
 			}	
@@ -4932,7 +4934,8 @@ namespace MediaPortal.TV.Recording
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:TuneRadioChannel() done");
 
 				if (m_streamDemuxer != null)
-				{
+				{	
+					m_streamDemuxer.OnTuneNewChannel();
 					m_streamDemuxer.SetChannelData(currentTuningObject.AudioPid, currentTuningObject.VideoPid, currentTuningObject.TeletextPid, currentTuningObject.Audio3, currentTuningObject.ServiceName,currentTuningObject.PMTPid,currentTuningObject.ProgramNumber);
 				}
 

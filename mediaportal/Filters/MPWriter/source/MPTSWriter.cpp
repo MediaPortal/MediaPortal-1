@@ -1152,7 +1152,7 @@ STDMETHODIMP CDump::StartRecord( ULONGLONG startTime)
 	}
 	return S_OK;
 
-}
+}	
 STDMETHODIMP CDump::StopRecord( ULONGLONG startTime)
 {
 	if (m_recHandle==INVALID_HANDLE_VALUE) return S_OK;

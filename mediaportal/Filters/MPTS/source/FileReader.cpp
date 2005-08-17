@@ -29,6 +29,7 @@ FileReader::FileReader() :
 	m_hInfoFile(INVALID_HANDLE_VALUE),
 	m_bDelay(FALSE)
 {
+	m_startOfFile=0;
 }
 
 FileReader::~FileReader()
@@ -154,6 +155,7 @@ HRESULT FileReader::OpenFile()
 
 	LogDebug("FileReader::OpenFile() file opened");
 
+	SetFilePointer(m_startOfFile,FILE_BEGIN);
 	return S_OK;
 
 }
@@ -178,6 +180,10 @@ HRESULT FileReader::CloseFile()
 
 }
 
+void FileReader::SetOffset(__int64 startofFile)
+{
+	m_startOfFile=startofFile;
+}
 BOOL FileReader::IsFileInvalid()
 {
 	return m_hFile == INVALID_HANDLE_VALUE?true:false;
@@ -195,7 +201,7 @@ HRESULT FileReader::GetFileSize(HANDLE handle,__int64 *lpllsize)
 		return E_FAIL;
 	}
 
-	*lpllsize = li.QuadPart;
+	*lpllsize = (li.QuadPart-m_startOfFile);
 	return S_OK;
 }
 
@@ -211,8 +217,8 @@ HRESULT FileReader::GetFileSize(__int64 *lpllsize)
 		return E_FAIL;
 	}
 
-	m_fileSize = li.QuadPart;
-	*lpllsize = li.QuadPart;
+	m_fileSize = (li.QuadPart-m_startOfFile);
+	*lpllsize = (li.QuadPart-m_startOfFile);
 	return S_OK;
 }
 
@@ -232,13 +238,17 @@ DWORD FileReader::SetFilePointer(__int64 llDistanceToMove, DWORD dwMoveMethod)
 		__int64 length = 0;
 		GetFileSize(&length);
 		length  = (__int64)((__int64)length + (__int64)llDistanceToMove);
-		li.QuadPart = length;
+		li.QuadPart = length+m_startOfFile;
 		dwMoveMethod = FILE_BEGIN;
 		//LogDebug("FileReader:SetFilePointer %x %x (%x)", li.HighPart,li.LowPart, dwMoveMethod);
 	}
-	else
+	else if (dwMoveMethod == FILE_CURRENT)
 	{
 		li.QuadPart = llDistanceToMove;
+	}
+	else
+	{
+		li.QuadPart = llDistanceToMove+m_startOfFile;
 		//LogDebug("FileReader:SetFilePointer %x %x (%x)", li.HighPart,li.LowPart, dwMoveMethod);
 	}
 
@@ -267,7 +277,7 @@ __int64 FileReader::GetFilePointer()
 			LogDebug("FileReader:GetFilePointer failed:%d", dwErr);
 		}
 	}
-	return li.QuadPart;
+	return li.QuadPart-m_startOfFile;
 }
 
 HRESULT FileReader::Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes)
