@@ -92,14 +92,13 @@ HRESULT SplitterSetup::SetDemuxPins(IFilterGraph *pGraph)
 	hr=pGB->FindFilterByName(L"MPEG-2 Demultiplexer",&pDemuxer);
 	if(FAILED(hr))
 	{
-		Log("SetDemuxPins failed 2");
-		pGB->Release();
-		return hr;
+		Log("SetDemuxPins failed 2:%x",hr);
 	}
-
-	hr=SetupDemuxer(pDemuxer);
-	pDemuxer->Release();
-
+	else
+	{
+		hr=SetupDemuxer(pDemuxer);
+		pDemuxer->Release();
+	}
 
 	Log("Find B2C2-Source filter");
 	IBaseFilter *pSS2;
@@ -114,11 +113,11 @@ HRESULT SplitterSetup::SetDemuxPins(IFilterGraph *pGraph)
 		}
 		else
 			Log("failed to get IID_IB2C2MPEG2DataCtrl3 %x",hr); 
+		pSS2->Release();
 	}
 	else
 	   Log("B2C2-Source filter not found");
 
-	pSS2->Release();
 	pGB->Release();
 
 
