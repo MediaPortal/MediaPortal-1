@@ -4268,6 +4268,7 @@ namespace MediaPortal.TV.Recording
 			transp.channels=null;
 			m_analyzerInterface.ResetParser();
 
+			System.Threading.Thread.Sleep(2500);
 			using (DVBSections sections = new DVBSections())
 			{
 				ushort count=0;

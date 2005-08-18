@@ -2321,6 +2321,7 @@ namespace MediaPortal.TV.Recording
 			m_analyzerInterface.ResetParser();
 
 			Log.WriteFile(Log.LogType.Capture,"auto-tune ss2: get channels()");
+			System.Threading.Thread.Sleep(2500);
 			using (DVBSections sections = new DVBSections())
 			{
 				ushort count=0;
