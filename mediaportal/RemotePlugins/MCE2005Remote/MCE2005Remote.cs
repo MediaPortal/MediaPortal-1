@@ -28,6 +28,7 @@ using System.Windows.Forms;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Devices;
+using MediaPortal.Remotes;
 
 namespace MediaPortal
 {
@@ -281,9 +282,6 @@ namespace MediaPortal
 
 			if (msg.Msg==WM_INPUT)
 			{
-				_lastHidRequest = AppCommands.None;
-				_lastHidRequestTick = 0;
-
 				RAWINPUTHID header = new RAWINPUTHID ();
 				int uiSize=0;
 				int err=GetRawInputData( msg.LParam,RID_INPUT,IntPtr.Zero,ref uiSize,Marshal.SizeOf(typeof(RAWINPUTHEADER)));
@@ -458,48 +456,60 @@ namespace MediaPortal
           
 					case 0xB0: //play
 
-						_lastHidRequest = AppCommands.MediaPlay;
-						_lastHidRequestTick = Environment.TickCount;
+						if(InputDevices.LastHidRequest == AppCommands.MediaPlay && Environment.TickCount - InputDevices.LastHidRequestTick < 300)
+							return true;
+
+						InputDevices.LastHidRequest = AppCommands.MediaPlay;
 
 						action=new Action(Action.ActionType.ACTION_PLAY,0,0);
 						break;
          
 					case 0xB1: //pause
-						
-						_lastHidRequest = AppCommands.MediaPause;
-						_lastHidRequestTick = Environment.TickCount;
+
+						if(InputDevices.LastHidRequest == AppCommands.MediaPause && Environment.TickCount - InputDevices.LastHidRequestTick < 300)
+							return true;
+
+						InputDevices.LastHidRequest = AppCommands.MediaPause;
 
 						action=new Action(Action.ActionType.ACTION_PAUSE,0,0);
 						break;
           
 					case 0xB2: //record
 						
-						_lastHidRequest = AppCommands.MediaRecord;
-						_lastHidRequestTick = Environment.TickCount;
+						if(InputDevices.LastHidRequest == AppCommands.MediaRecord && Environment.TickCount - InputDevices.LastHidRequestTick < 300)
+							return true;
+
+						InputDevices.LastHidRequest = AppCommands.MediaRecord;
 
 						action=new Action(Action.ActionType.ACTION_RECORD,0,0);
 						break;
           
 					case 0xB4: //rewind
 
-						_lastHidRequest = AppCommands.MediaRewind;
-						_lastHidRequestTick = Environment.TickCount;
+						if(InputDevices.LastHidRequest == AppCommands.MediaRewind && Environment.TickCount - InputDevices.LastHidRequestTick < 300)
+							return true;
+
+						InputDevices.LastHidRequest = AppCommands.MediaRewind;
 						
 						action=new Action(Action.ActionType.ACTION_REWIND,0,0);
 						break;
           
 					case 0xB3: //fast forward
 
-						_lastHidRequest = AppCommands.MediaFastForward;
-						_lastHidRequestTick = Environment.TickCount;
+						if(InputDevices.LastHidRequest == AppCommands.MediaFastForward && Environment.TickCount - InputDevices.LastHidRequestTick < 300)
+							return true;
+
+						InputDevices.LastHidRequest = AppCommands.MediaFastForward;
 
 						action=new Action(Action.ActionType.ACTION_FORWARD,0,0);
 						break;
           
 					case 0xB5: //next
 						
-						_lastHidRequest = AppCommands.MediaNextTrack;
-						_lastHidRequestTick = Environment.TickCount;
+						if(InputDevices.LastHidRequest == AppCommands.MediaNextTrack && Environment.TickCount - InputDevices.LastHidRequestTick < 300)
+							return true;
+
+						InputDevices.LastHidRequest = AppCommands.MediaNextTrack;
 
 						if ((g_Player.Playing) && (g_Player.IsDVD))
 							action=new Action(Action.ActionType.ACTION_NEXT_CHAPTER,0,0);
@@ -509,8 +519,10 @@ namespace MediaPortal
           
 					case 0xB6: //previous
 
-						_lastHidRequest = AppCommands.MediaPreviousTrack;
-						_lastHidRequestTick = Environment.TickCount;
+						if(InputDevices.LastHidRequest == AppCommands.MediaPreviousTrack && Environment.TickCount - InputDevices.LastHidRequestTick < 300)
+							return true;
+
+						InputDevices.LastHidRequest = AppCommands.MediaPreviousTrack;
 
 						if ((g_Player.Playing) && (g_Player.IsDVD))
 							action=new Action(Action.ActionType.ACTION_PREV_CHAPTER,0,0);
@@ -520,32 +532,40 @@ namespace MediaPortal
          
 					case 0xb7: //stop
 
-						_lastHidRequest = AppCommands.MediaStop;
-						_lastHidRequestTick = Environment.TickCount;
+						if(InputDevices.LastHidRequest == AppCommands.MediaStop && Environment.TickCount - InputDevices.LastHidRequestTick < 300)
+							return true;
+
+						InputDevices.LastHidRequest = AppCommands.MediaStop;
 
 						action=new Action(Action.ActionType.ACTION_STOP,0,0);
 						break;
           
 					case 0xe9: //volume+
 						
-						_lastHidRequest = AppCommands.VolumeUp;
-						_lastHidRequestTick = Environment.TickCount;
+						if(InputDevices.LastHidRequest == AppCommands.VolumeUp && Environment.TickCount - InputDevices.LastHidRequestTick < 300)
+							return true;
+
+						InputDevices.LastHidRequest = AppCommands.VolumeUp;
 
 						action=new Action(Action.ActionType.ACTION_VOLUME_UP,0,0);
 						break;
           
 					case 0xea: //volume-
 
-						_lastHidRequest = AppCommands.VolumeDown;
-						_lastHidRequestTick = Environment.TickCount;
+						if(InputDevices.LastHidRequest == AppCommands.VolumeDown && Environment.TickCount - InputDevices.LastHidRequestTick < 300)
+							return true;
+
+						InputDevices.LastHidRequest = AppCommands.VolumeDown;
 
 						action=new Action(Action.ActionType.ACTION_VOLUME_DOWN,0,0);
 						break;
           
 					case 0x9c: //channel+
 
-						_lastHidRequest = AppCommands.MediaChannelUp;
-						_lastHidRequestTick = Environment.TickCount;
+						if(InputDevices.LastHidRequest == AppCommands.MediaChannelUp && Environment.TickCount - InputDevices.LastHidRequestTick < 300)
+							return true;
+
+						InputDevices.LastHidRequest = AppCommands.MediaChannelUp;
 	
 						if (GUIGraphicsContext.IsFullScreenVideo)
 							action=new Action(Action.ActionType.ACTION_NEXT_CHANNEL,0,0);
@@ -555,8 +575,10 @@ namespace MediaPortal
           
 					case 0x9d: //channel-
 
-						_lastHidRequest = AppCommands.MediaChannelDown;
-						_lastHidRequestTick = Environment.TickCount;
+						if(InputDevices.LastHidRequest == AppCommands.MediaChannelDown && Environment.TickCount - InputDevices.LastHidRequestTick < 300)
+							return true;
+
+						InputDevices.LastHidRequest = AppCommands.MediaChannelDown;
 
 						if (GUIGraphicsContext.IsFullScreenVideo)
 							action=new Action(Action.ActionType.ACTION_PREV_CHANNEL,0,0);
@@ -566,8 +588,10 @@ namespace MediaPortal
           
 					case 0xe2: //mute
 						
-						_lastHidRequest = AppCommands.VolumeMute;
-						_lastHidRequestTick = Environment.TickCount;
+						if(InputDevices.LastHidRequest == AppCommands.VolumeMute && Environment.TickCount - InputDevices.LastHidRequestTick < 300)
+							return true;
+
+						InputDevices.LastHidRequest = AppCommands.VolumeMute;
 
 						action=new Action(Action.ActionType.ACTION_VOLUME_MUTE,0,0);
 						break;
@@ -662,26 +686,5 @@ namespace MediaPortal
 		}
 
 		#endregion Green Button
-
-		#region Properties
-
-		internal static AppCommands LastHidRequest
-		{
-			get { return _lastHidRequest; }
-		}	
-
-		internal static int LastHidRequestTick
-		{
-			get { return _lastHidRequestTick; }
-		}	
-
-		#endregion Properties
-
-		#region Fields
-
-		static AppCommands			_lastHidRequest;
-		static int					_lastHidRequestTick;
-
-		#endregion Fields
-}
+	}
 }

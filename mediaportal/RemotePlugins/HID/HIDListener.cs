@@ -23,6 +23,7 @@ using System;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
+using MediaPortal.Remotes;
 
 namespace MediaPortal
 {
@@ -39,14 +40,16 @@ namespace MediaPortal
 				return false;
 
 			// find out which request the MCE remote handled last
-			if((AppCommands)((msg.LParam.ToInt32() >> 16) & ~0xF000) == MCE2005Remote.LastHidRequest)
+			if((AppCommands)((msg.LParam.ToInt32() >> 16) & ~0xF000) == InputDevices.LastHidRequest)
 			{
 				// possible that it is the same request mapped to an app command?
-				if(Environment.TickCount - MCE2005Remote.LastHidRequestTick < 300)
+				if(Environment.TickCount - InputDevices.LastHidRequestTick < 300)
 					return true;
 			}
 
-			switch((AppCommands)((msg.LParam.ToInt32() >> 16) & ~0xF000))
+			InputDevices.LastHidRequest = (AppCommands)((msg.LParam.ToInt32() >> 16) & ~0xF000);
+
+			switch(InputDevices.LastHidRequest)
 			{
 				case AppCommands.BrowserBackward:
 					keyCode = Keys.Escape;
@@ -71,14 +74,17 @@ namespace MediaPortal
 					break;
 
 				case AppCommands.MediaPause:
+					Log.Write("AppCommands.MediaPause");
 					action = new Action(Action.ActionType.ACTION_PAUSE,0,0);
 					break;
 
 				case AppCommands.MediaPlay:
+					Log.Write("AppCommands.MediaPlay");
 					action = new Action(Action.ActionType.ACTION_PLAY,0,0);
 					break;
 
 				case AppCommands.MediaPlayPause:
+					Log.Write("AppCommands.MediaPlayPause");
 					if(g_Player.Playing)
 						action = new Action(Action.ActionType.ACTION_PAUSE,0,0);
 					else if(g_Player.Paused)

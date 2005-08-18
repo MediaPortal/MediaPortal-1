@@ -67,7 +67,7 @@ namespace MediaPortal.Remotes
 			if(MCE2005Remote.WndProc(ref msg, out action, out key, out keyCode))
 				return true;
 
-		  if(FireDTVRemote.WndProc(ref msg, out action, out  key, out keyCode))
+			if(FireDTVRemote.WndProc(ref msg, out action, out  key, out keyCode))
 				return true;
 
 			return false;
@@ -75,12 +75,29 @@ namespace MediaPortal.Remotes
 
 		#endregion Methods
 
+		#region Properties
+
+		internal static AppCommands LastHidRequest
+		{
+			get { return _lastHidRequest; }
+			set { _lastHidRequest = value; _lastHidRequestTick = Environment.TickCount; }
+		}	
+
+		internal static int LastHidRequestTick
+		{
+			get { return _lastHidRequestTick; }
+		}	
+
+		#endregion Properties
+
 		#region Fields
 
 		static MCE2005Remote MCE2005Remote = new MCE2005Remote();
 		static HCWRemote HCWRemote = new HCWRemote();
-    static DirectInputHandler diRemote = new DirectInputHandler();
+		static DirectInputHandler diRemote = new DirectInputHandler();
 		static MediaPortal.RemoteControls.FireDTVRemote FireDTVRemote = new MediaPortal.RemoteControls.FireDTVRemote();
+		static AppCommands			_lastHidRequest;
+		static int					_lastHidRequestTick;
 
 		#endregion Fields
 	}
