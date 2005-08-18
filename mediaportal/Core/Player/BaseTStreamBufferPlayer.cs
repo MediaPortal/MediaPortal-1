@@ -549,7 +549,7 @@ namespace MediaPortal.Player
 
     public override double ContentStart
     {
-      get {return m_dContentStart;}
+      get {return 0;}
     }
 		public override bool FullScreen
 		{
