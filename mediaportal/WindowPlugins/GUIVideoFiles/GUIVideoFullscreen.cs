@@ -508,6 +508,16 @@ namespace MediaPortal.GUI.Video
 					// PAUSE action is handled globally in the Application class
 				case Action.ActionType.ACTION_PAUSE:
 					g_Player.Pause();
+					ScreenStateChanged();
+					UpdateGUI();						
+					if (g_Player.Paused) 
+					{
+						if((GUIGraphicsContext.Vmr9Active && VMR9Util.g_vmr9!=null))
+						{
+							VMR9Util.g_vmr9.SetRepaint();
+							VMR9Util.g_vmr9.Repaint();// repaint vmr9
+						}
+					}
           
 					break;
 
