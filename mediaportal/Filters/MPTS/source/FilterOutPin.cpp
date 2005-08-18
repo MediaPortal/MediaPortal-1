@@ -133,6 +133,8 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 {
   try
   {
+	  
+	CAutoLock cAutoLock(&m_cSharedState);
 	BOOL startPesFound=FALSE;
 	if (m_bAboutToStop) return E_FAIL;
 	if (m_lastPTS==0)
@@ -406,11 +408,13 @@ HRESULT CFilterOutPin::GetReferenceClock(IReferenceClock **pClock)
 	}
 	return E_FAIL;
 }
-void CFilterOutPin::ResetBuffers()
+void CFilterOutPin::ResetBuffers(__int64 newPosition)
 {
+	CAutoLock cAutoLock(&m_cSharedState);
 	LogDebug("Reset buffers");
 	if (m_pBuffers==NULL) return;
 	m_pBuffers->Clear();
+	m_pFileReader->SetFilePointer(newPosition,FILE_BEGIN);
 	m_bDiscontinuity=true;
 }
 

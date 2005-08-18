@@ -208,7 +208,8 @@ HRESULT CMPTSFilter::SetFilePosition(REFERENCE_TIME seek)
 	
 	if (m_pFileReader->m_hInfoFile != INVALID_HANDLE_VALUE)
 	{
-		position += m_writePos;
+		if (fileSize>=MAX_FILE_LENGTH)
+			position += m_writePos;
 		if(position>fileSize)
 			position -= fileSize;
 	}
@@ -225,9 +226,8 @@ HRESULT CMPTSFilter::SetFilePosition(REFERENCE_TIME seek)
 	if(position>0) position=(position/188)*188;
 
 	LogDebug("filter: Seek to pos:%x",position);
-	hr=m_pFileReader->SetFilePointer(position,FILE_BEGIN);
-	m_pPin->ResetBuffers();
-	return hr;
+	m_pPin->ResetBuffers(position);
+	return S_OK;
 }
 HRESULT CMPTSFilter::Pause()
 {
@@ -467,13 +467,8 @@ void CMPTSFilter::UpdatePids()
 		m_pSections->pids.PCRPid=pcrpid;
 
 
-		__int64 filePointer=0;
-		LogDebug("filter: reset filepointer");
-		m_pFileReader->SetFilePointer(filePointer,FILE_BEGIN);
-		m_pFileReader->GetFilePointer();	
-		LogDebug("filter: filepointer at 0x%x", (DWORD) filePointer);
 		LogDebug("filter: reset buffers");
-		m_pPin->ResetBuffers();
+		m_pPin->ResetBuffers(0);
 		//setup demuxer?
 		
 		LogDebug("filter: setup demuxer");
