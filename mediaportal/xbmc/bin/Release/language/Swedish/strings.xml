@@ -123,6 +123,10 @@
         <value>December</value>
     </string>
     <string>
+        <id>50</id>
+        <value>Mina DVD</value>
+    </string>
+    <string>
         <id>100</id>
         <value>Visa: Ikoner</value>
     </string>
@@ -2498,8 +2502,96 @@
         </string>
         <!-- End My Alarm Strings -->
         <string>
+            <id>877</id>
+            <value>Prioritet</value>
+        </string>
+        <string>
+            <id>878</id>
+            <value>Lagring</value>
+        </string>
+        <string>
+            <id>879</id>
+            <value>Konflikt vid inspelning</value>
+        </string>
+        <string>
+            <id>880</id>
+            <value>Inspelningstid</value>
+        </string>
+        <string>
+            <id>881</id>
+            <value>Välj inspelning att avbryta:</value>
+        </string>
+        <string>
+            <id>882</id>
+            <value>Kvalitetsinställning</value>
+        </string>
+        <string>
+            <id>883</id>
+            <value>Låg</value>
+        </string>
+        <string>
+            <id>884</id>
+            <value>Medium</value>
+        </string>
+        <string>
+            <id>885</id>
+            <value>Hög</value>
+        </string>
+        <string>
+            <id>886</id>
+            <value>Default</value>
+        </string>
+        <string>
+            <id>887</id>
+            <value>Ange hur många avsnitt som skall sparas</value>
+        </string>
+        <string>
+            <id>888</id>
+            <value>Avsnittshantering</value>
+        </string>
+        <string>
+            <id>889</id>
+            <value>Alla avsnitt</value>
+        </string>
+        <string>
             <id>890</id>
             <value>Spela CD</value>
+        </string>
+        <string>
+            <id>891</id>
+            <value>Välj TV-kanal</value>
+        </string>
+        <string>
+            <id>892</id>
+            <value>Konflikt</value>
+        </string>
+        <string>
+            <id>893</id>
+            <value>Bärbar</value>
+        </string>
+        <string>
+            <id>894</id>
+            <value>Komprimera TV inspelning</value>
+        </string>
+        <string>
+            <id>895</id>
+            <value>Automatisk komprimering</value>
+        </string>
+        <string>
+            <id>896</id>
+            <value>Komprimera</value>
+        </string>
+        <string>
+            <id>897</id>
+            <value>Inställning</value>
+        </string>
+        <string>
+            <id>898</id>
+            <value>MPEG-2</value>
+        </string>
+        <string>
+            <id>899</id>
+            <value>WMV</value>
         </string>
         <string>
             <id>900</id>
@@ -2822,6 +2914,234 @@
             <value>År</value>
         </string>
         <string>
+            <id>988</id>
+            <value>Kvalitet</value>
+        </string>
+        <string>
+            <id>989</id>
+            <value>FPS</value>
+        </string>
+        <string>
+            <id>990</id>
+            <value>Bittakt</value>
+        </string>
+        <string>
+            <id>991</id>
+            <value>Prioritet</value>
+        </string>
+        <string>
+            <id>992</id>
+            <value>Radera orginalfilen</value>
+        </string>
+        <string>
+            <id>993</id>
+            <value>Special</value>
+        </string>
+        <string>
+            <id>994</id>
+            <value>Aktivera automatisk komprimering</value>
+        </string>
+        <string>
+            <id>995</id>
+            <value>Vill du komprimera</value>
+        </string>
+        <string>
+            <id>996</id>
+            <value>valda inspelningar?</value>
+        </string>
+        <string>
+            <id>997</id>
+            <value>Klart!</value>
+        </string>
+        <string>
+            <id>998</id>
+            <value>XVid</value>
+        </string>
+        <string>
+            <id>999</id>
+            <value>Denna plugin tillåter omkodning av</value>
+        </string>
+        <string>
+            <id>1000</id>
+            <value>dina TV inspelningar från dvr-ms till mpg, xvid eller wmv</value>
+        </string>
+        <string>
+            <id>1001</id>
+            <value>Var god notera att du måste ha</value>
+        </string>
+        <string>
+            <id>1002</id>
+            <value>Elecard MPEG-2 video avkodare installerad</value>
+        </string>
+        <string>
+            <id>1003</id>
+            <value>för att kunna koda om till xvid</value>
+        </string>
+        <string>
+            <id>1004</id>
+            <value>Redo att starta inspelning</value>
+        </string>
+        <string>
+            <id>1005</id>
+            <value>på kanal</value>
+        </string>
+        <string>
+            <id>1006</id>
+            <value>Tillåt start av inspelning</value>
+        </string>
+        <string>
+            <id>1007</id>
+            <value>Avbryt inspelning och fortsätt titta på TV</value>
+        </string>
+        <string>
+            <id>1008</id>
+            <value>Köa</value>
+        </string>
+        <string>
+            <id>1009</id>
+            <value>Laddar ned omslagsbild</value>
+        </string>
+        <string>
+            <id>1010</id>
+            <value>Sedd</value>
+        </string>
+        <string>
+            <id>1011</id>
+            <value>Biografi</value>
+        </string>
+        <string>
+            <id>1012</id>
+            <value>Detta programmet kommer att avbrytas av</value>
+        </string>
+        <string>
+            <id>1013</id>
+            <value>Vill du spela in andra delen också?</value>
+        </string>
+        <string>
+            <id>1014</id>
+            <value>Var god notera att du måste ha</value>
+        </string>
+        <string>
+            <id>1015</id>
+            <value>Meddela inte programstart</value>
+        </string>
+        <string>
+            <id>1016</id>
+            <value>Program startar om 5 minuter</value>
+        </string>
+        <string>
+            <id>1017</id>
+            <value>Sortera efter: Längd</value>
+        </string>
+        <string>
+            <id>1020</id>
+            <value>Information</value>
+        </string>
+        <string>
+            <id>1021</id>
+            <value>Tryck Alt+Enter för att</value>
+        </string>
+        <string>
+            <id>1022</id>
+            <value>återgå till fönster mod.</value>
+        </string>
+        <string>
+            <id>1023</id>
+            <value>Det ringer</value>
+        </string>
+        <string>
+            <id>1024</id>
+            <value>från</value>
+        </string>
+        <string>
+            <id>1025</id>
+            <value>Ett fel uppstod</value>
+        </string>
+        <string>
+            <id>1026</id>
+            <value>Kontrollera loggfilen för detaljer</value>
+        </string>
+        <string>
+            <id>1027</id>
+            <value>Min DVD</value>
+        </string>
+        <string>
+            <id>1028</id>
+            <value>Stad</value>
+        </string>
+        <string>
+            <id>1029</id>
+            <value>Textningsspråk</value>
+        </string>
+        <string>
+            <id>1030</id>
+            <value>Stäng av</value>
+        </string>
+        <string>
+            <id>1031</id>
+            <value>Starta om</value>
+        </string>
+        <string>
+            <id>1032</id>
+            <value>Sömnläge</value>
+        </string>
+        <string>
+            <id>1033</id>
+            <value>Inspelning av TV-program pågår</value>
+        </string>
+        <string>
+            <id>1034</id>
+            <value>Ingen signal</value>
+        </string>
+        <string>
+            <id>1035</id>
+            <value>Krypterad TV-kanal!</value>
+        </string>
+        <string>
+            <id>1036</id>
+            <value>Video saknas</value>
+        </string>
+        <string>
+            <id>1037</id>
+            <value>Min TV - Program information</value>
+        </string>
+        <string>
+            <id>1038</id>
+            <value>Avancerad inspelning</value>
+        </string>
+        <string>
+            <id>1039</id>
+            <value>Spela inte in</value>
+        </string>
+        <string>
+            <id>1040</id>
+            <value>Säg till mig</value>
+        </string>
+        <string>
+            <id>1041</id>
+            <value>Kommande avsnitt</value>
+        </string>
+        <string>
+            <id>1042</id>
+            <value>Spara tills</value>
+        </string>
+        <string>
+            <id>1043</id>
+            <value>Tills sedd</value>
+        </string>
+        <string>
+            <id>1044</id>
+            <value>Då utrymme behövs</value>
+        </string>
+        <string>
+            <id>1045</id>
+            <value>Tills datum</value>
+        </string>
+        <string>
+            <id>1046</id>
+            <value>Alltid</value>
+        </string>
+        <string>
             <id>13012</id>
             <value>Laddar bild, vänta lite</value>
         </string>
@@ -2830,13 +3150,21 @@
             <value>Laddar video, vänta lite</value>
         </string>
         <string>
-            <id>1440</id>
+        	<id>1440</id>
             <value>Min SVT Text</value>
-            </string>
-            <string>
-                <id>1441</id>
-                <value>TextTV</value>
-            </string>
+        </string>
+     	  <string>
+        	 <id>1441</id>
+             <value>TextTV</value>
+        </string>
+        <string>
+        	 <id>1442</id>
+             <value>Rullhastighet (horisontell)</value>
+        </string>
+        <string>
+        	 <id>1443</id>
+             <value>Rullhastighet (vertikal)</value>
+        </string>
         <!-- My Status Strings -->
         <string>
             <id>1950</id>
@@ -3695,6 +4023,34 @@
             <value>Visa kommentarer:</value>
         </string>
         <string>
+            <id>12902</id>
+            <value>MSN Messenger OSD</value>
+        </string>
+        <string>
+            <id>13014</id>
+            <value>Genomsöker katalog</value>
+        </string>
+       <string>
+            <id>13015</id>
+            <value>Importerar gamebase fil</value>
+        </string>
+       <string>
+            <id>13016</id>
+            <value>Sortera efter: Laddningar</value>
+        </string>
+       <string>
+            <id>13017</id>
+            <value>Sortera efter: Tid</value>
+        </string>
+       <string>
+            <id>13018</id>
+            <value>Sortera efter: Betyg</value>
+        </string>
+       <string>
+            <id>25001</id>
+            <value>Väntar på sida {0:X}...!</value>
+        </string>
+        <string>
             <id>100000</id>
             <value>Hem</value>
         </string>
@@ -4091,4 +4447,145 @@
             <id>19012</id>
             <value>Game Over</value>
         </string>
+        <string>
+            <id>100758</id>
+            <value>Fil dialog</value>
+        </string>
+        <string>
+            <id>100760</id>
+            <value>Min Brännare</value>
+        </string>
+        <string>
+            <id>102009</id>
+            <value>Val dialog</value>
+        </string>
+        <string>
+            <id>102015</id>
+            <value>Mini Meny</value>
+        </string>
+        <string>
+            <id>102016</id>
+            <value>Notis</value>
+        </string>
+        <string>
+            <id>103003</id>
+            <value>Min TV/OSD</value>
+        </string>
+        <string>
+            <id>103006</id>
+            <value>Min TV/MSN OSD</value>
+        </string>
+        <string>
+            <id>103007</id>
+            <value>Min TV/Zap OSD</value>
+        </string>
+        <string>
+            <id>103009</id>
+            <value>Min TV/Zap OSD</value>
+        </string>
+        <string>
+            <id>107700</id>
+            <value>Min TV/TextTV</value>
+        </string>
+        <string>
+            <id>107701</id>
+            <value>Min TV/TextTV</value>
+        </string>
+        <string>
+            <id>200000</id>
+            <value>Var god ange vilken EPG grabber du använder. Om ditt land inte</value>
+        </string>
+        <string>
+            <id>200001</id>
+            <value>finns listat så måste du tillföra EPG manuellt</value>
+        </string>
+        <string>
+            <id>200002</id>
+            <value>Nu kan du mappa EPG kanalerna mot dina TV kanaler</value>
+        </string>
+        <string>
+            <id>200003</id>
+            <value>välj kanal och tryck enter för att ändra mappningen</value>
+        </string>
+        <string>
+            <id>200004</id>
+            <value>Manuellt tillförd tvguide.xml</value>
+        </string>
+        <string>
+            <id>200005</id>
+            <value>Var god ange vilken fjärrkontroll du använder</value>
+        </string>
+        <string>
+            <id>200006</id>
+            <value>Tryck Nästa för att fortsätta</value>
+        </string>
+        <string>
+            <id>200007</id>
+            <value>>&lt;Bakåt</value>
+        </string>
+        <string>
+            <id>200008</id>
+            <value>Inställning - Fjärrkontroll</value>
+        </string>
+        <string>
+            <id>200009</id>
+            <value>Nästa&gt;</value>
+        </string>
+        <string>
+            <id>200010</id>
+            <value>MediaPortal förvandlar din PC till ett mycket avancerat mutimediacenter / HTPC </value>
+        </string>
+        <string>
+            <id>200011</id>
+            <value>Med MediaPortal kan du njuta av din favoritmusik, radio</value>
+        </string>
+        <string>
+            <id>200013</id>
+            <value>MediaPortal gör så du kan lyssna till din favorit musik och radio, titta på video och DVD-filmer</value>
+        </string>
+        <string>
+            <id>200014</id>
+            <value>foton, videos och titta/spela in TV samt mycket mer.</value>
+        </string>
+        <string>
+            <id>200015</id>
+            <value>Den här guiden kommer att hjälpa dig att konfigurera MediaPortal snabbt och lätt. Var god gå genom alla steg</value>
+        </string>
+        <string>
+            <id>200016</id>
+            <value>Tryck Nästa för att fortsätta</value>
+        </string>
+        <string>
+            <id>200017</id>
+            <value>Välkommen till MediaPortal.</value>
+        </string>
+        <string>
+            <id>200018</id>
+            <value>Gratulerar. MediaPortal är nu konfigurerat och klart att använda</value>
+        </string>
+        <string>
+            <id>200019</id>
+            <value>Tryck Avsluta för att stänga ned denna guide</value>
+        </string>
+        <string>
+            <id>200020</id>
+            <value>Avsluta</value>
+        </string>
+        <string>
+            <id>200021</id>
+            <value>TV inställning - EPG</value>
+        </string>
+        <string>
+            <id>200022</id>
+            <value>MediaPortal har hittat följande TV-kort:</value>
+        </string>
+        <string>
+            <id>200023</id>
+            <value>Tryck Nästa för att konfigurera dessa kort</value>
+        </string>
+        <string>
+            <id>200024</id>
+            <value>TV inställning</value>
+        </string>
+        
 </strings>
