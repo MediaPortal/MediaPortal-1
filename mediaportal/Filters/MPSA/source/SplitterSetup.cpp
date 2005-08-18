@@ -93,6 +93,7 @@ HRESULT SplitterSetup::SetDemuxPins(IFilterGraph *pGraph)
 	if(FAILED(hr))
 	{
 		Log("SetDemuxPins failed 2:%x",hr);
+		pDemuxer=NULL;
 	}
 	else
 	{
@@ -116,8 +117,10 @@ HRESULT SplitterSetup::SetDemuxPins(IFilterGraph *pGraph)
 		pSS2->Release();
 	}
 	else
+	{
 	   Log("B2C2-Source filter not found");
-
+	   pSS2=NULL;
+	}
 	pGB->Release();
 
 
