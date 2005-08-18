@@ -674,6 +674,18 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 				memset(m_pmtGrabData,0,4096);
 				memcpy(m_pmtGrabData,pbData,len);// save the pmt in the buffer
 				m_currentPMTLen=len;
+
+				ChannelInfo ch;	
+				m_pSections->decodePMT(pbData,&ch,len);
+				if (ch.Pids.AC3>0) m_pDemuxer->MapAdditionalPID(ch.Pids.AC3);
+				if (ch.Pids.AudioPid1>0) m_pDemuxer->SS2SetPidToPin(0,ch.Pids.AudioPid1);
+				if (ch.Pids.AudioPid2>0) m_pDemuxer->SS2SetPidToPin(0,ch.Pids.AudioPid2);
+				if (ch.Pids.AudioPid3>0) m_pDemuxer->SS2SetPidToPin(0,ch.Pids.AudioPid3);
+				if (ch.Pids.VideoPid>0) m_pDemuxer->SS2SetPidToPin(0,ch.Pids.VideoPid);
+				if (ch.Pids.Teletext>0) m_pDemuxer->SS2SetPidToPin(0,ch.Pids.Teletext);
+				if (ch.Pids.Subtitles>0) m_pDemuxer->SS2SetPidToPin(0,ch.Pids.Subtitles);
+				if (ch.PCRPid>0)		m_pDemuxer->SS2SetPidToPin(0,ch.PCRPid);
+
 			}		
 		}
 		if(pbData[0]==0x00)// pat

@@ -39,14 +39,14 @@ public:
 	bool	PinIsNULL();
 	HRESULT SetEPGMapping();
 	void	UseATSC(bool yesNo);
+    long SS2SetPidToPin(long pin,long pid);
+	BOOL SS2DeleteAllPIDs(long pin);
 protected:
 	HRESULT SetupDemuxer(IBaseFilter *p);
 	HRESULT GetPSIMedia(AM_MEDIA_TYPE *pintype);
 	HRESULT SetSectionMapping();
 	HRESULT SetMHW1Mapping();
 	HRESULT SetMHW2Mapping();
-    long SS2SetPidToPin(long pin,long pid);
-	BOOL SS2DeleteAllPIDs(long pin);
 protected:
 	IB2C2MPEG2DataCtrl3* m_dataCtrl;
 	bool		m_bUseATSC;

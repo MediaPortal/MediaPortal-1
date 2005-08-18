@@ -669,7 +669,7 @@ namespace MediaPortal.TV.Recording
 		}
 
 		//
-		private bool Tune(int Frequency,int SymbolRate,int FEC,int POL,int LNBKhz,int Diseq,int AudioPID,int VideoPID,int LNBFreq,int ecmPID,int ttxtPID,int pmtPID,int pcrPID,string pidText,int dvbsubPID)
+		private bool Tune(int Frequency,int SymbolRate,int FEC,int POL,int LNBKhz,int Diseq,int AudioPID,int VideoPID,int LNBFreq,int ecmPID,int ttxtPID,int pmtPID,int pcrPID,string pidText,int dvbsubPID, int programNumber)
 		{
 			int hr=0; // the result
 
@@ -744,6 +744,9 @@ namespace MediaPortal.TV.Recording
 			
 			DeleteAllPIDs(m_dataCtrl,0);
 			//SetPidToPin(m_dataCtrl,0,0x2000);
+
+			//tell MPSA which program we are watching so it can map the SS2 pids
+			m_analyzerInterface.SetPMTProgramNumber(programNumber);
 
 			return true;
 		}
@@ -1685,7 +1688,7 @@ namespace MediaPortal.TV.Recording
 					m_channelFound=true;
 					m_currentChannel=ch;
 					m_selectedAudioPid=ch.AudioPid;
-					if(Tune(ch.Frequency,ch.Symbolrate,6,ch.Polarity,ch.LNBKHz,ch.DiSEqC,ch.AudioPid,ch.VideoPid,ch.LNBFrequency,ch.ECMPid,ch.TeletextPid,ch.PMTPid,ch.PCRPid,ch.AudioLanguage3,ch.Audio3)==false)
+					if(Tune(ch.Frequency,ch.Symbolrate,6,ch.Polarity,ch.LNBKHz,ch.DiSEqC,ch.AudioPid,ch.VideoPid,ch.LNBFrequency,ch.ECMPid,ch.TeletextPid,ch.PMTPid,ch.PCRPid,ch.AudioLanguage3,ch.Audio3,ch.ProgramNumber)==false)
 					{
 						m_lastTuneError=true;
 						m_channelFound=false;
@@ -2283,7 +2286,7 @@ namespace MediaPortal.TV.Recording
 				}
 			}
 			catch{}
-			if(Tune(ch.Frequency,ch.Symbolrate,6,ch.Polarity,ch.LNBKHz,ch.DiSEqC,-1,-1,ch.LNBFrequency,0,0,0,0,"",0)==false)
+			if(Tune(ch.Frequency,ch.Symbolrate,6,ch.Polarity,ch.LNBKHz,ch.DiSEqC,-1,-1,ch.LNBFrequency,0,0,0,0,"",0,0)==false)
 			{
 				m_lastTuneError=true;
 				Log.WriteFile(Log.LogType.Capture,"auto-tune ss2: FAILED to tune channel");
@@ -2815,7 +2818,7 @@ namespace MediaPortal.TV.Recording
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:database invalid tuning details for channel:{0}", station.Channel);
 				return;
 			}
-			if(Tune(ch.Frequency,ch.Symbolrate,ch.FEC,ch.Polarity,ch.LNBKHz,ch.DiSEqC,ch.AudioPid,0,ch.LNBFrequency,0,0,ch.PMTPid,ch.PCRPid,ch.AudioLanguage3,0)==true)
+			if(Tune(ch.Frequency,ch.Symbolrate,ch.FEC,ch.Polarity,ch.LNBKHz,ch.DiSEqC,ch.AudioPid,0,ch.LNBFrequency,0,0,ch.PMTPid,ch.PCRPid,ch.AudioLanguage3,0,ch.ProgramNumber)==true)
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: Radio tune ok");
 			else
 			{
