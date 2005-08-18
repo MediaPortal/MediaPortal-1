@@ -31,7 +31,7 @@
 extern void Log(const char *fmt, ...) ;
 
 SplitterSetup::SplitterSetup(Sections *pSections) :
-m_demuxSetupComplete(FALSE),m_pSectionsPin(NULL)
+m_pSectionsPin(NULL)
 {
 	m_dataCtrl=NULL;
 	m_bUseATSC=false;
@@ -72,9 +72,6 @@ void SplitterSetup::UseATSC(bool yesNo)
 
 HRESULT SplitterSetup::SetDemuxPins(IFilterGraph *pGraph)
 {
-	if(m_demuxSetupComplete==TRUE)
-		return S_FALSE;
-
 	if(pGraph==NULL)
 		return S_FALSE;
 
@@ -88,66 +85,32 @@ HRESULT SplitterSetup::SetDemuxPins(IFilterGraph *pGraph)
 		return S_FALSE;
 	}
 
-	IBaseFilter *pDemuxer;
-	hr=pGB->FindFilterByName(L"MPEG-2 Demultiplexer",&pDemuxer);
-	if(FAILED(hr))
+	IEnumFilters* pEnum;
+	hr=pGB->EnumFilters(&pEnum);
+	if (SUCCEEDED(hr))
 	{
-		Log("SetDemuxPins failed 2:%x",hr);
-		pDemuxer=NULL;
-	}
-	else
-	{
-		hr=SetupDemuxer(pDemuxer);
-		pDemuxer->Release();
-	}
-
-	Log("Find B2C2-Source filter");
-	IBaseFilter *pSS2;
-	hr=pGB->FindFilterByName(L"B2C2-Source",&pSS2);
-	if(SUCCEEDED(hr) && pSS2 !=NULL)
-	{
-		Log("found B2C2-Source filter");
-		hr=pSS2->QueryInterface(IID_IB2C2MPEG2DataCtrl3,(void**)&m_dataCtrl);
-		if (SUCCEEDED(hr))
+		IBaseFilter* pFilter=NULL;
+		ULONG		 fetched=0;
+		pEnum->Reset();
+		while ( SUCCEEDED( pEnum->Next(1,&pFilter,&fetched)) )
 		{
-			Log("got IID_IB2C2MPEG2DataCtrl3");
+			if (fetched==1 && pFilter!=NULL)
+			{
+				if (m_dataCtrl==NULL)
+				{
+					hr=pFilter->QueryInterface(IID_IB2C2MPEG2DataCtrl3,(void**)&m_dataCtrl);
+					if (SUCCEEDED(hr))
+					{
+						Log("got IID_IB2C2MPEG2DataCtrl3");
+					}
+				}
+			}
+			else break;
 		}
-		else
-			Log("failed to get IID_IB2C2MPEG2DataCtrl3 %x",hr); 
-		pSS2->Release();
+		pEnum->Release();
 	}
-	else
-	{
-	   Log("B2C2-Source filter not found");
-	   pSS2=NULL;
-	}
-	pGB->Release();
-
-
 	Log("SetDemuxPinsDone");
 	return NOERROR;
-}
-HRESULT SplitterSetup::SetupDemuxer(IBaseFilter *demuxFilter)
-{
-	IMPEG2PIDMap	*pMap=NULL;
-	IEnumPIDMap		*pPidEnum=NULL;
-	HRESULT hr=0;
-
-	Log("SetupDemuxer()");
-	if(demuxFilter==NULL)
-		return S_FALSE;
-
-	IMpeg2Demultiplexer *demuxer=NULL;
-
-	hr=demuxFilter->QueryInterface(IID_IMpeg2Demultiplexer,(void**)&demuxer);
-	if(FAILED(hr))
-		return hr;
-
-	//m_pSectionsPin=NULL;
-	m_demuxSetupComplete=true;
-	demuxer->Release();
-	Log("SetupDemuxer() done");
-	return S_OK;
 }
 
 HRESULT SplitterSetup::SetupDefaultMapping()
@@ -155,7 +118,6 @@ HRESULT SplitterSetup::SetupDefaultMapping()
 	Log("SetupDefaultMapping()");
 
 	SS2DeleteAllPIDs(0);
-	SS2DeleteAllPIDs(2);
 	SetSectionMapping();
 	SetMHW1Mapping();
 	SetMHW2Mapping();

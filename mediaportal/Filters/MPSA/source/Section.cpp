@@ -30,7 +30,7 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-#ifdef DEBUG
+#ifndef DEBUG
 char *logbuffer=NULL; 
 void Log(const char *fmt, ...) 
 {
@@ -313,7 +313,7 @@ int Sections::decodePMT(BYTE *buf,ChannelInfo *ch, int len)
 	}
 	Log("DecodePMT pid:0x%x pcrpid:0x%x videopid:0x%x audiopid:0x%x ac3pid:0x%x",
 		ch->ProgrammPMTPID, ch->PCRPid,ch->Pids.VideoPid,ch->Pids.AudioPid1,ch->Pids.AC3);
-	ch->PMTReady=true;
+	ch->PMTReady=1;
 	if(last_section_number>section_number)
 		return section_number+1;
 	else
@@ -348,7 +348,7 @@ int Sections::decodeSDT(BYTE *buf,ChannelInfo ch[],int channels, int len)
 	if (table_id!=0x42) return 0;
 
 	
-	//Log.Write("decodeSDTTable len={0}/{1} section no:{2} last section no:{3}", buf.Length,section_length,section_number,last_section_number);
+	Log("decodeSDTTable len=%d section no:%d last section no:%d channels:%d", section_length,section_number,last_section_number,channels);
 
 	while (len1 > 0)
 	{
@@ -375,7 +375,7 @@ int Sections::decodeSDT(BYTE *buf,ChannelInfo ch[],int channels, int len)
 		//
 		if(channel==-1)
 		{
-			Log("sdt: channel not found for program:%x", service_id);
+			Log("sdt: channel not found for program:%d", service_id);
 		}
 
 		while (len2 > 0)
@@ -389,7 +389,7 @@ int Sections::decodeSDT(BYTE *buf,ChannelInfo ch[],int channels, int len)
 			{
 				if (channel>=0)
 				{
-					if (ch[channel].SDTReady==false)
+					if (ch[channel].SDTReady==0)
 					{
 						ServiceData serviceData;							
 						DVB_GetService(buf+pointer,&serviceData);
@@ -399,7 +399,7 @@ int Sections::decodeSDT(BYTE *buf,ChannelInfo ch[],int channels, int len)
 						ch[channel].Scrambled=free_CA_mode;
 						ch[channel].EITPreFollow=EIT_present_following_flag;
 						ch[channel].EITSchedule=EIT_schedule_flag;
-						ch[channel].SDTReady=true;
+						ch[channel].SDTReady=1;
 						ch[channel].NetworkID=original_network_id;
 						Log("sdt: pmt:0x%x provider:'%s' channel:'%s' onid:0x%x tsid:0x%x", ch[channel].ProgrammPMTPID,ch[channel].ProviderName,ch[channel].ServiceName,ch[channel].NetworkID, transport_stream_id);
 					}
@@ -500,7 +500,8 @@ void Sections::decodePAT(BYTE *pData,ChannelInfo chInfo[],int *channelCount, int
 		ch.ProgrammPMTPID=((pData[offset+2] & 0x1F)<<8)+pData[offset+3];
 		ch.ProgrammNumber=(pData[offset]<<8)+pData[offset+1];
 		ch.TransportStreamID=transport_stream_id;
-		ch.PMTReady=false;
+		ch.PMTReady=0;
+		ch.SDTReady=0;
 		Log("  ch:%d prog:%d tsid:0x%x pmtpid:0x%x", i,ch.ProgrammNumber,ch.TransportStreamID,ch.ProgrammPMTPID);
 		if(ch.ProgrammPMTPID>0x12)
 		{

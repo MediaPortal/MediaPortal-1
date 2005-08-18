@@ -26,36 +26,34 @@ public:
 
 	SplitterSetup(Sections *pSections);
 	virtual ~SplitterSetup();
-	STDMETHODIMP SetDemuxPins(IFilterGraph *pGraph);
-	HRESULT SetupDefaultMapping();
-	HRESULT MapAdditionalPID(ULONG pid);
-	HRESULT MapAdditionalPayloadPID(ULONG pid);
-	HRESULT UnMapAllPIDs();
-	HRESULT UnMapSectionPIDs();
-	HRESULT SetSectionsPin(IPin *ppin);
-	HRESULT SetMHW1Pin(IPin *ppin);
-	HRESULT SetMHW2Pin(IPin *ppin);
-	HRESULT SetEPGPin(IPin *ppin);
-	bool	PinIsNULL();
-	HRESULT SetEPGMapping();
-	void	UseATSC(bool yesNo);
-    long SS2SetPidToPin(long pin,long pid);
-	BOOL SS2DeleteAllPIDs(long pin);
+	STDMETHODIMP	SetDemuxPins(IFilterGraph *pGraph);
+	HRESULT 		SetupDefaultMapping();
+	HRESULT 		MapAdditionalPID(ULONG pid);
+	HRESULT 		MapAdditionalPayloadPID(ULONG pid);
+	HRESULT 		UnMapAllPIDs();
+	HRESULT 		UnMapSectionPIDs();
+	HRESULT 		SetSectionsPin(IPin *ppin);
+	HRESULT 		SetMHW1Pin(IPin *ppin);
+	HRESULT 		SetMHW2Pin(IPin *ppin);
+	HRESULT 		SetEPGPin(IPin *ppin);
+	bool			PinIsNULL();
+	HRESULT 		SetEPGMapping();
+	void			UseATSC(bool yesNo);
+    long 			SS2SetPidToPin(long pin,long pid);
+	BOOL 			SS2DeleteAllPIDs(long pin);
 protected:
-	HRESULT SetupDemuxer(IBaseFilter *p);
-	HRESULT GetPSIMedia(AM_MEDIA_TYPE *pintype);
-	HRESULT SetSectionMapping();
-	HRESULT SetMHW1Mapping();
-	HRESULT SetMHW2Mapping();
+	HRESULT 		GetPSIMedia(AM_MEDIA_TYPE *pintype);
+	HRESULT 		SetSectionMapping();
+	HRESULT 		SetMHW1Mapping();
+	HRESULT 		SetMHW2Mapping();
 protected:
-	IB2C2MPEG2DataCtrl3* m_dataCtrl;
-	bool		m_bUseATSC;
-	Sections*	m_pSections;
-	BOOL		m_demuxSetupComplete;
-	IPin*		m_pSectionsPin;
-	IPin*		m_pMHW1Pin;
-	IPin*		m_pMHW2Pin;
-	IPin*		m_pEPGPin;	
+	IB2C2MPEG2DataCtrl3*	m_dataCtrl;
+	bool					m_bUseATSC;
+	Sections*				m_pSections;
+	IPin*					m_pSectionsPin;
+	IPin*					m_pMHW1Pin;
+	IPin*					m_pMHW2Pin;
+	IPin*					m_pEPGPin;	
 
 };
 

@@ -53,15 +53,30 @@ HRESULT SplitterSetup::SetDemuxPins(IFilterGraph *pGraph)
 		return S_FALSE;
 	}
 
-	IBaseFilter *pDemuxer;
-	hr=pGB->FindFilterByName(L"MPEG-2 Demultiplexer",&pDemuxer);
-	if(FAILED(hr))
+	IEnumFilters* pEnum;
+	hr=pGB->EnumFilters(&pEnum);
+	if (SUCCEEDED(hr))
 	{
-		pGB->Release();
-		return hr;
+		IBaseFilter* pFilter;
+		ULONG        fetched=0;
+		pEnum->Reset();
+		while (SUCCEEDED(pEnum->Next(1,&pFilter,&fetched)))
+		{
+			if (fetched==1 && pFilter!=NULL)
+			{
+				IMpeg2Demultiplexer *demuxer=NULL;
+				hr=pFilter->QueryInterface(IID_IMpeg2Demultiplexer,(void**)&demuxer);
+				if ( SUCCEEDED(hr) && demuxer!=NULL)
+				{
+					demuxer->Release();
+					SetupDemuxer(pFilter);
+				}
+				pFilter->Release();
+			}
+			else break;
+		}
+		pEnum->Release();
 	}
-
-	hr=SetupDemuxer(pDemuxer);
 	pGB->Release();
 	return NOERROR;
 }

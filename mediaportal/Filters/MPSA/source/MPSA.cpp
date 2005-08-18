@@ -656,7 +656,7 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 			ULONG prgNumber=(pbData[3]<<8)+pbData[4];
 			for(int n=0;n<m_patChannelsCount;n++)
 			{
-				if(m_patTable[n].ProgrammNumber==prgNumber && m_patTable[n].PMTReady==false)
+				if(m_patTable[n].ProgrammNumber==prgNumber && m_patTable[n].PMTReady==0)
 				{
 					//Log("decode PMT");
 					m_pSections->decodePMT(pbData,&m_patTable[n],len);
@@ -671,21 +671,24 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 			}
 			if(m_pmtGrabProgNum==prgNumber && len<=4096)
 			{
-				memset(m_pmtGrabData,0,4096);
-				memcpy(m_pmtGrabData,pbData,len);// save the pmt in the buffer
-				m_currentPMTLen=len;
+				if (memcmp(m_pmtGrabData,pbData,len)!=0)
+				{
+					memset(m_pmtGrabData,0,4096);
+					memcpy(m_pmtGrabData,pbData,len);// save the pmt in the buffer
+					m_currentPMTLen=len;
 
-				ChannelInfo ch;	
-				m_pSections->decodePMT(pbData,&ch,len);
-				if (ch.Pids.AC3>0) m_pDemuxer->MapAdditionalPID(ch.Pids.AC3);
-				if (ch.Pids.AudioPid1>0) m_pDemuxer->SS2SetPidToPin(0,ch.Pids.AudioPid1);
-				if (ch.Pids.AudioPid2>0) m_pDemuxer->SS2SetPidToPin(0,ch.Pids.AudioPid2);
-				if (ch.Pids.AudioPid3>0) m_pDemuxer->SS2SetPidToPin(0,ch.Pids.AudioPid3);
-				if (ch.Pids.VideoPid>0) m_pDemuxer->SS2SetPidToPin(0,ch.Pids.VideoPid);
-				if (ch.Pids.Teletext>0) m_pDemuxer->SS2SetPidToPin(0,ch.Pids.Teletext);
-				if (ch.Pids.Subtitles>0) m_pDemuxer->SS2SetPidToPin(0,ch.Pids.Subtitles);
-				if (ch.PCRPid>0)		m_pDemuxer->SS2SetPidToPin(0,ch.PCRPid);
-
+					Log("New PMT: map audio/video pids for SS2");
+					ChannelInfo ch;	
+					m_pSections->decodePMT(pbData,&ch,len);
+					if (ch.Pids.AC3>0) m_pDemuxer->MapAdditionalPID(ch.Pids.AC3);
+					if (ch.Pids.AudioPid1>0) m_pDemuxer->SS2SetPidToPin(0,ch.Pids.AudioPid1);
+					if (ch.Pids.AudioPid2>0) m_pDemuxer->SS2SetPidToPin(0,ch.Pids.AudioPid2);
+					if (ch.Pids.AudioPid3>0) m_pDemuxer->SS2SetPidToPin(0,ch.Pids.AudioPid3);
+					if (ch.Pids.VideoPid>0) m_pDemuxer->SS2SetPidToPin(0,ch.Pids.VideoPid);
+					if (ch.Pids.Teletext>0) m_pDemuxer->SS2SetPidToPin(0,ch.Pids.Teletext);
+					if (ch.Pids.Subtitles>0) m_pDemuxer->SS2SetPidToPin(0,ch.Pids.Subtitles);
+					if (ch.PCRPid>0)		m_pDemuxer->SS2SetPidToPin(0,ch.PCRPid);
+				}
 			}		
 		}
 		if(pbData[0]==0x00)// pat
@@ -698,13 +701,13 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 			{
 				if (m_patChannelsCount>0) 
 				{
-					Log("Found new PAT, decode channels");
+					Log("Found new PAT, decode");
 					ResetParser();
 				}
 				//m_pDemuxer->UnMapSectionPIDs();
 				//Log("decode pat");
 				m_pSections->decodePAT(pbData,m_patTable,&m_patChannelsCount,len);
-				//Log("PAT decoded and found %d channels, map pids", m_patChannelsCount);
+				Log("PAT decoded and found %d channels, map pids", m_patChannelsCount);
 				for(int n=0;n<m_patChannelsCount;n++)
 				{
 					m_pDemuxer->MapAdditionalPID(m_patTable[n].ProgrammPMTPID);
@@ -745,12 +748,19 @@ STDMETHODIMP CStreamAnalyzer::GetLCN(WORD channel, WORD* networkId, WORD* transp
 
 STDMETHODIMP CStreamAnalyzer::IsChannelReady(ULONG channel)
 {
-	if(channel<0 || channel>(ULONG)m_patChannelsCount-1)
+	Log("IsChannelReady:%d channels:%d", channel,m_patChannelsCount);
+	if(channel<0 || channel >= (ULONG)m_patChannelsCount)
+	{
+		Log("IsChannelReady:%d channels:%d failed, invalid channel", channel,m_patChannelsCount);
 		return S_FALSE;
-
-	if((bool)m_patTable[channel].SDTReady==true && (bool)m_patTable[channel].PMTReady==true)
+	}
+	if(m_patTable[channel].SDTReady!=0 && m_patTable[channel].PMTReady!=0)
+	{
+		Log("IsChannelReady:%d returns true",channel);
 		return S_OK;
-
+	}
+		
+	Log("IsChannelReady:%d returns false SDT:%d PMT:%d", channel, m_patTable[channel].SDTReady,m_patTable[channel].PMTReady);
 	return S_FALSE;
 }
 STDMETHODIMP CStreamAnalyzer::get_IPin (IPin **ppPin)
@@ -937,19 +947,25 @@ STDMETHODIMP CStreamAnalyzer::GetPMTData(BYTE *data)
 STDMETHODIMP CStreamAnalyzer::GetChannel(WORD channel,BYTE *ch)
 {
 	
+	Log("GetChannel(%d) channels found:%d size:%d", channel, m_patChannelsCount,m_pSections->CISize());
+
 	if(channel>=0 && channel < m_patChannelsCount && m_patChannelsCount>0)
 	{
 		memcpy(ch,&m_patTable[channel],m_pSections->CISize());
-		if(m_patTable[channel].SDTReady==false || m_patTable[channel].PMTReady==false)
+		if(m_patTable[channel].SDTReady==0 || m_patTable[channel].PMTReady==0)
 		{
-			if (m_patTable[channel].SDTReady==false)
+			Log("GetChannel(%d) not ready",channel);
+			if (m_patTable[channel].SDTReady==0)
 				Log("GetChannel(%d) SDT not found");
-			if (m_patTable[channel].PMTReady==false)
+			if (m_patTable[channel].PMTReady==0)
 				Log("GetChannel(%d) PMT not found");
 			return S_FALSE;
 		}
+	
+		Log("GetChannel(%d) found ok",channel);
 		return S_OK;
 	}
+	Log("GetChannel(%d) invalid channel");
 	return S_FALSE;
 }
 STDMETHODIMP CStreamAnalyzer::GetCISize(WORD *size)
