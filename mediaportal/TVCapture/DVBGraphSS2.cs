@@ -743,7 +743,7 @@ namespace MediaPortal.TV.Recording
 			}
 			
 			DeleteAllPIDs(m_dataCtrl,0);
-			SetPidToPin(m_dataCtrl,0,0x2000);
+			//SetPidToPin(m_dataCtrl,0,0x2000);
 
 			return true;
 		}
@@ -1717,9 +1717,6 @@ namespace MediaPortal.TV.Recording
 					m_analyzerInterface.ResetParser();
 					m_StartTime=DateTime.Now;
 
-					SetPidToPin(m_dataCtrl,0,18);		//EIT
-					SetPidToPin(m_dataCtrl,0,0xd2); //MHW
-					SetPidToPin(m_dataCtrl,0,0xd3); //MHW
 					m_epgGrabber.GrabEPG(ch.HasEITSchedule==true);
 					VideoRendererStatistics.VideoState=VideoRendererStatistics.State.NoSignal;
 					SetupMTSDemuxerPin();
@@ -2312,13 +2309,10 @@ namespace MediaPortal.TV.Recording
 			TVDatabase.GetChannels(ref tvChannels);
 
 			DeleteAllPIDs(m_dataCtrl,0);
-			SetPidToPin(m_dataCtrl,0,0);
-			SetPidToPin(m_dataCtrl,0,16);
-			SetPidToPin(m_dataCtrl,0,17);
+			m_analyzerInterface.ResetParser(); //analyser will map pids needed
 			Log.WriteFile(Log.LogType.Capture,"auto-tune ss2: StoreChannels()");
 			DVBSections.Transponder transp;
 			transp.channels=null;
-			m_analyzerInterface.ResetParser();
 
 			Log.WriteFile(Log.LogType.Capture,"auto-tune ss2: get channels()");
 			System.Threading.Thread.Sleep(2500);
