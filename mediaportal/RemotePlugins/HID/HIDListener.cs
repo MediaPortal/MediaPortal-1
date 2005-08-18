@@ -74,17 +74,14 @@ namespace MediaPortal
 					break;
 
 				case AppCommands.MediaPause:
-					Log.Write("AppCommands.MediaPause");
 					action = new Action(Action.ActionType.ACTION_PAUSE,0,0);
 					break;
 
 				case AppCommands.MediaPlay:
-					Log.Write("AppCommands.MediaPlay");
 					action = new Action(Action.ActionType.ACTION_PLAY,0,0);
 					break;
 
 				case AppCommands.MediaPlayPause:
-					Log.Write("AppCommands.MediaPlayPause");
 					if(g_Player.Playing)
 						action = new Action(Action.ActionType.ACTION_PAUSE,0,0);
 					else if(g_Player.Paused)
