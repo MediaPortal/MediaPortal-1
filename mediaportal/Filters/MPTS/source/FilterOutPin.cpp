@@ -27,10 +27,10 @@ extern void LogDebug(const char *fmt, ...) ;
 
 CFilterOutPin::CFilterOutPin(LPUNKNOWN pUnk, CMPTSFilter *pFilter, FileReader *pFileReader, Sections *pSections, HRESULT *phr) :
 	CSourceStream(NAME("PinObject"), phr, pFilter, L"Out"),
-	CTimeShiftSeeking(NAME("MediaSeekingObject"), pUnk, phr, &m_cSharedState),
+	CSourceSeeking(NAME("MediaSeekingObject"), pUnk, phr, &m_cSharedState),
 	m_pMPTSFilter(pFilter),
 	m_pFileReader(pFileReader),
-	m_pSections(pSections),m_bDiscontinuity(FALSE), m_bFlushing(FALSE)
+	m_pSections(pSections),m_bDiscontinuity(FALSE)
 {
 	LogDebug("pin:ctor()");
 	CAutoLock cAutoLock(&m_cSharedState);
@@ -44,10 +44,9 @@ CFilterOutPin::CFilterOutPin(LPUNKNOWN pUnk, CMPTSFilter *pFilter, FileReader *p
 	m_rtDuration = m_rtStop = m_pSections->pids.Duration;
 	m_lTSPacketDeliverySize = 188*100;
 	m_pBuffers = new CBuffers(m_pFileReader, &m_pSections->pids,m_lTSPacketDeliverySize);
-	m_dTimeInc=0;
-	m_lastPTS=0;	
 	m_dRateSeeking = 1.0;
 	m_bAboutToStop=false;
+	
 	
 }
 
@@ -62,7 +61,7 @@ STDMETHODIMP CFilterOutPin::NonDelegatingQueryInterface( REFIID riid, void ** pp
 {
     if (riid == IID_IMediaSeeking)
     {
-        return CTimeShiftSeeking::NonDelegatingQueryInterface( riid, ppv );
+        return CSourceSeeking::NonDelegatingQueryInterface( riid, ppv );
     }
     return CSourceStream::NonDelegatingQueryInterface(riid, ppv);
 }
@@ -119,15 +118,8 @@ HRESULT CFilterOutPin::CompleteConnect(IPin *pReceivePin)
 	if (SUCCEEDED(hr))
 	{
 		m_pMPTSFilter->OnConnect();
-		ULONGLONG startPts=0, endPts=0;
-		UpdatePositions(startPts,endPts);
 	}
 	return S_OK;
-}
-STDMETHODIMP CFilterOutPin::SetPositions(LONGLONG *pCurrent,DWORD CurrentFlags,LONGLONG *pStop,DWORD StopFlags)
-{
-	LogDebug("pin:SetPositions: current:%x stop:%x", *pCurrent, *pStop);
-	return CTimeShiftSeeking::SetPositions(pCurrent,CurrentFlags,pStop,StopFlags);
 }
 HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 {
@@ -135,17 +127,8 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
   {
 	  
 	CAutoLock cAutoLock(&m_cSharedState);
-	BOOL startPesFound=FALSE;
 	if (m_bAboutToStop) return E_FAIL;
-	if (m_lastPTS==0)
-	{
-		m_lastPTS=m_pSections->pids.StartPTS;
-		if (m_lastPTS!=0) 
-		{
-			startPesFound=TRUE;
-			LogDebug("pin:starting pes:%x",m_lastPTS);
-		}
-	}
+	
 	CheckPointer(pSample, E_POINTER);
 	PBYTE pData;
 	LONG lDataLength;
@@ -236,27 +219,12 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 	ULONGLONG ptsStart=0;
 	ULONGLONG ptsEnd=0;
 	
-	BOOL bSyncPoint=FALSE;
-	int pid;
-//	bool pids[10];
-//	pids[0]=pids[1]=pids[2]=pids[3]=pids[4]=pids[5]=false;
 	for(int i=0;i<lDataLength;i+=188)
 	{
-/*		Sections::TSHeader header;
-		m_pSections->GetTSHeader(&pData[i],&header);
-		if (header.Pid==m_pSections->pids.AC3 && m_pSections->pids.AC3>0) pids[0]=true;
-		if (header.Pid==m_pSections->pids.AudioPid && m_pSections->pids.AudioPid>0) pids[1]=true;
-		if (header.Pid==m_pSections->pids.AudioPid2 && m_pSections->pids.AudioPid2>0) pids[2]=true;
-		if (header.Pid==m_pSections->pids.VideoPid && m_pSections->pids.VideoPid>0) pids[3]=true;
-		if (header.Pid==m_pSections->pids.PCRPid && m_pSections->pids.PCRPid>0) pids[4]=true;
-		if (header.Pid==m_pSections->pids.PMTPid && m_pSections->pids.PMTPid>0) pids[5]=true;*/
-		if (pData[i]!=0x47)
-			LogDebug("sync error");
 		if (m_bAboutToStop) return E_FAIL;
+		int pid;
 		if(m_pSections->CurrentPTS(&pData[i],&pts,&pid)==S_OK)
 		{
-			if (pid==m_pSections->pids.VideoPid) 
-				bSyncPoint=TRUE;
 			if (pts>0)
 			{
 				if (ptsStart==0) 
@@ -268,40 +236,31 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 				{
 					ptsEnd=pts;
 				}
-				/*
-				// correct our clock
-				ULONGLONG millis = pts / 90; // Systemclock (27MHz) / 300
-				m_dwStartTime = (DWORD)(timeGetTime() - millis);
-				break; // first pts*/
 			}
 	
 		}
 	}
-	//LogDebug("ac3:%x audio1:%x audio2:%x video:%x pcr:%x pmt:%x",pids[0],pids[1],pids[2],pids[3],pids[4],pids[5]);
-	UpdatePositions(ptsStart,ptsEnd);
-
-	REFERENCE_TIME rtStart = static_cast<REFERENCE_TIME>(ptsStart / m_dRateSeeking);
-	REFERENCE_TIME rtStop  = static_cast<REFERENCE_TIME>(ptsEnd / m_dRateSeeking);
-
-	if (m_pSections->pids.StartPTS>0)
+	
+	if (ptsStart>0)
 	{
-		pSample->SetTime(&rtStart, &rtStop); 
-		pSample->SetSyncPoint(bSyncPoint||startPesFound);
-		if(m_bDiscontinuity||startPesFound) 
-		{
-			LogDebug("pin: FillBuffer() SetDiscontinuity");
-			pSample->SetDiscontinuity(TRUE);
-			m_bDiscontinuity = FALSE;
-		}
+		UpdatePositions(ptsStart,ptsEnd);
 
+		REFERENCE_TIME rtStart = static_cast<REFERENCE_TIME>(ptsStart);
+		REFERENCE_TIME rtStop  = static_cast<REFERENCE_TIME>(ptsEnd);
+
+		pSample->SetTime(&rtStart, &rtStop); 
 	}
 	else
 	{
 		pSample->SetTime(NULL,NULL); 
-		pSample->SetSyncPoint(TRUE);
-		pSample->SetDiscontinuity(FALSE);
 	}
-	
+
+	pSample->SetSyncPoint(TRUE);
+	if(m_bDiscontinuity) 
+	{
+		pSample->SetDiscontinuity(TRUE);
+		m_bDiscontinuity = FALSE;
+	}
   }
   catch(...)
   {
@@ -313,6 +272,7 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 HRESULT CFilterOutPin::OnThreadCreate( )
 {
 	LogDebug("pin:OnThreadCreate()");
+	m_bAboutToStop=false;
     CAutoLock cAutoLockShared(&m_cSharedState);
 	if(m_pFileReader->IsFileInvalid()==TRUE)
 	{
@@ -323,17 +283,12 @@ HRESULT CFilterOutPin::OnThreadCreate( )
 
 HRESULT CFilterOutPin::OnThreadStartPlay( )
 {
-	LogDebug("pin:OnThreadStartPlay()");
+   LogDebug("pin:OnThreadStartPlay()");
    m_bDiscontinuity = TRUE;
-   return DeliverNewSegment(m_rtStart, m_rtStop, m_dRateSeeking);
+   DeliverNewSegment(m_rtStart, m_rtStop, m_dRateSeeking);
+   return CSourceStream::OnThreadStartPlay( );
 }
 
-HRESULT CFilterOutPin::Run(REFERENCE_TIME tStart)
-{
-	LogDebug("pin:Run()");
-	m_bAboutToStop=false;
-	return CBaseOutputPin::Run(tStart);
-}
 
 
 HRESULT CFilterOutPin::ChangeStart()
@@ -354,7 +309,7 @@ HRESULT CFilterOutPin::ChangeStop()
 HRESULT CFilterOutPin::ChangeRate()
 {
     {   // Scope for critical section lock.
-        CAutoLock cAutoLockSeeking(CTimeShiftSeeking::m_pLock);
+        CAutoLock cAutoLockSeeking(CSourceSeeking::m_pLock);
         if( m_dRateSeeking <= 0 ) {
             m_dRateSeeking = 1.0;  // Reset to a reasonable value.
             return E_FAIL;
@@ -364,24 +319,25 @@ HRESULT CFilterOutPin::ChangeRate()
 	return S_OK;
 }
 
+
 void CFilterOutPin::UpdateFromSeek(void)
 {
 	if (ThreadExists())
 	{
-		LogDebug("pin:UpdateFromSeek()");
-		DeliverBeginFlush();
-		Stop();
+        DeliverBeginFlush();
+        Stop();
 		DeliverEndFlush();
-		Pause();
+		Run();
 	}
 }
 
 HRESULT CFilterOutPin::SetDuration(REFERENCE_TIME duration)
 {
 	LogDebug("pin:SetDuration()");
-	CAutoLock lock(CTimeShiftSeeking::m_pLock);
+	CAutoLock lock(CSourceSeeking::m_pLock);
 	m_rtDuration = duration;
 	m_rtStop = m_rtDuration;
+	m_rtStart=0;
     return S_OK;
 }
 
@@ -415,7 +371,6 @@ void CFilterOutPin::ResetBuffers(__int64 newPosition)
 	if (m_pBuffers==NULL) return;
 	m_pBuffers->Clear();
 	m_pFileReader->SetFilePointer(newPosition,FILE_BEGIN);
-	m_bDiscontinuity=true;
 }
 
 void CFilterOutPin::UpdatePositions(ULONGLONG& ptsStart, ULONGLONG& ptsEnd)
@@ -424,14 +379,12 @@ void CFilterOutPin::UpdatePositions(ULONGLONG& ptsStart, ULONGLONG& ptsEnd)
 
 	Sections::PTSTime time;
 	rtStart=m_pSections->pids.StartPTS;
-	rtStop=m_pSections->pids.EndPTS;
 	rtDuration=m_pSections->pids.EndPTS-m_pSections->pids.StartPTS;
-	
-	
-	if (ptsStart==0) ptsStart=m_lastPTS;
-	if (ptsEnd==0) ptsEnd=m_lastPTS;
 
-	m_lastPTS=ptsEnd;
+	if (ptsStart==0) 
+		return;
+	if (ptsEnd==0)
+		ptsEnd=ptsStart;
 
 	ptsStart -=rtStart;
 	ptsEnd   -=rtStart;
@@ -442,19 +395,15 @@ void CFilterOutPin::UpdatePositions(ULONGLONG& ptsStart, ULONGLONG& ptsEnd)
 	m_pSections->PTSToPTSTime(ptsEnd,&time);
 	ptsEnd=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
 
-	m_pSections->PTSToPTSTime(rtStart,&time);
-	rtStart=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
-
-
-	m_pSections->PTSToPTSTime(rtStop,&time);
-	rtStop=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
+	m_pSections->PTSToPTSTime(rtDuration,&time);
+	rtDuration=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
 
 	//m_pSections->PTSToPTSTime(rtDuration,&time);
 	//m_rtDuration=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
 
-	m_rtStart=rtStart;
-	m_rtStop=rtStop;
-	m_rtDuration=rtStop-rtStart;
+	m_rtStart=0;
+	m_rtStop=rtDuration;
+	m_rtDuration=rtDuration;
 }
 void CFilterOutPin::AboutToStop()
 {			

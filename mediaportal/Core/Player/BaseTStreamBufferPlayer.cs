@@ -762,6 +762,10 @@ namespace MediaPortal.Player
 #endif
     void UpdateCurrentPosition()
     {
+			if (GUIGraphicsContext.InVmr9Render)
+			{
+				return;
+			}
 			int hr;
       if (m_mediaSeeking==null) return;
       //GetCurrentPosition(): Returns stream position. 
@@ -805,6 +809,10 @@ namespace MediaPortal.Player
     }
 		void UpdateDuration()
 		{
+			if (GUIGraphicsContext.InVmr9Render)
+			{
+				return;
+			}
 			//GetDuration(): Returns (content start – content stop). 
 			//content start:The time of the earliest available content. For live content, the value starts at zero and increases whenever the Stream Buffer Engine deletes an old file. 				
 			//content stop :The time of the latest available content. For live content, this value starts at zero and increases continuously.

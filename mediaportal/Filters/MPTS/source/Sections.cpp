@@ -544,7 +544,7 @@ bool Sections::DecodePMT(byte* PMT)
 				LogDebug("Sections::decodePMT() AudioPid2:0x%x",pids.AudioPid2);
 			}
 		}
-		if(stream_type==0x81 || stream_type==6)
+		if(stream_type==0x81)
 		{
 			if(pids.AC3==0)
 			{

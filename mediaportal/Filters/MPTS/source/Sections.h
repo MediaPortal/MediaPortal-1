@@ -68,12 +68,11 @@ public:
 	HRESULT GetPESHeader(BYTE *data,PESHeader *header);
 	HRESULT CheckStream();
 	HRESULT ParseFromFile(void);
-	void GetPTS(BYTE *data,ULONGLONG *pts);
-	void PTSToPTSTime(ULONGLONG pts,PTSTime* ptsTime);
+	void	GetPTS(BYTE *data,ULONGLONG *pts);
+	void	PTSToPTSTime(ULONGLONG pts,PTSTime* ptsTime);
 	HRESULT CurrentPTS(BYTE *pData,ULONGLONG *ptsValue,int* pid);
-	void ResetBuffers();
+	void	ResetBuffers();
 public:
-
 	StreamPids pids;
 	FileReader *m_pFileReader;
 
