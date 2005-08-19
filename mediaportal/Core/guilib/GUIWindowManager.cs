@@ -379,11 +379,20 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		static public void Restore()
 		{
+			GUITextureManager.CleanupThumbs();
+			GUITextureManager.Dispose();
+			GUITextureManager.Init();
+
 			// reload all controls from the xml file
 			for (int x=0; x < windowCount;++x)
 			{
 				m_vecWindows[x].Restore();
+
 			}
+			// re-init current window.
+			GUIWindow window=GetWindow(ActiveWindow);
+			window.FreeResources();
+			window.AllocResources();
 		}
 
 		/// <summary>

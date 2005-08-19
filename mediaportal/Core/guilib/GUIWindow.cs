@@ -135,6 +135,8 @@ namespace MediaPortal.GUI.Library
 			,WINDOW_SETTINGS_SORT_CHANNELS =702
 			,WINDOW_SETTINGS_MOVIES=703
 			,WINDOW_SETTINGS_DVD=704
+			,WINDOW_SETTINGS_SKIN=705
+
 
 		
 			,WINDOW_TV_PROGRAM_INFO = 748
@@ -607,6 +609,7 @@ namespace MediaPortal.GUI.Library
 			controlList.Clear();
 			m_vecPositions.Clear();
 			Load(windowXmlFileName);
+			LoadSkin();
 		}
 
 		/// <summary>

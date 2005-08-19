@@ -126,6 +126,7 @@ HRESULT SplitterSetup::SetupDemuxer(IBaseFilter *demuxFilter)
 						}
 						pins[0]->Release();
 					}
+					else break;
 				}
 				enumPins->Release();
 			}
@@ -176,6 +177,7 @@ HRESULT SplitterSetup::SetupDemuxer(IBaseFilter *demuxFilter)
 						}
 						pins[0]->Release();
 					}
+					else break;
 				}
 				enumPins->Release();
 			}

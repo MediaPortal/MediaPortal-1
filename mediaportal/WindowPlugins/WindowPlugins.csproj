@@ -1085,6 +1085,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "GUISettings\General\GUISettingsGeneral.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "GUISettings\Movies\GUISettingsMovies.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

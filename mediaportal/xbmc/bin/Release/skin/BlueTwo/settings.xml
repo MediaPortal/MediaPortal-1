@@ -30,9 +30,17 @@
 				<onup>17</onup>
 			</control>
 			<control>
-				<description>Screen</description>
+				<description>General</description>
 				<type>button</type>
 				<id>4</id>
+				<width>197</width>
+				<label>128</label>
+				<hyperlink>705</hyperlink>
+			</control>
+			<control>
+				<description>Screen</description>
+				<type>button</type>
+				<id>5</id>
 				<width>197</width>
 				<label>214</label>
 				<hyperlink>9</hyperlink>
@@ -40,7 +48,7 @@
 			<control>
 				<description>My Music</description>
 				<type>button</type>
-				<id>5</id>
+				<id>6</id>
 				<width>197</width>
 				<label>2</label>
 				<hyperlink>14</hyperlink>
@@ -48,7 +56,7 @@
 			<control>
 				<description>My Pictures</description>
 				<type>button</type>
-				<id>6</id>
+				<id>7</id>
 				<width>197</width>
 				<label>1</label>
 				<hyperlink>12</hyperlink>
@@ -56,7 +64,7 @@
 			<control>
 				<description>Movies</description>
 				<type>button</type>
-				<id>7</id>
+				<id>8</id>
 				<width>197</width>
 				<label>3</label>
 				<hyperlink>703</hyperlink>
@@ -64,7 +72,7 @@
 			<control>
 				<description>My DVD</description>
 				<type>button</type>
-				<id>8</id>
+				<id>9</id>
 				<width>197</width>
 				<label>1027</label>
 				<hyperlink>704</hyperlink>
@@ -74,7 +82,7 @@
 			<control>
 				<description>TV</description>
 				<type>button</type>
-				<id>9</id>
+				<id>10</id>
 				<width>197</width>
 				<label>605</label>
 				<hyperlink>700</hyperlink>

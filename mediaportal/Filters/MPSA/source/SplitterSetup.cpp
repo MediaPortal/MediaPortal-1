@@ -74,6 +74,7 @@ HRESULT SplitterSetup::SetDemuxPins(IFilterGraph *pGraph)
 {
 	if(pGraph==NULL)
 		return S_FALSE;
+	if (m_dataCtrl!=NULL) return NOERROR;
 
 	Log("SetDemuxPins");
 	HRESULT hr;
@@ -104,11 +105,14 @@ HRESULT SplitterSetup::SetDemuxPins(IFilterGraph *pGraph)
 						Log("got IID_IB2C2MPEG2DataCtrl3");
 					}
 				}
+				pFilter->Release();
 			}
 			else break;
+			if (m_dataCtrl!=NULL) break;
 		}
 		pEnum->Release();
 	}
+	pGB->Release();
 	Log("SetDemuxPinsDone");
 	return NOERROR;
 }

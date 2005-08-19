@@ -3101,6 +3101,11 @@
 	<id>1046</id>
 	<value>Always</value>
 </string>
+<string>
+	<id>1047</id>
+	<value>Start in fullscreen mode</value>
+</string>
+
 
 <string>
 	<id>1440</id>
