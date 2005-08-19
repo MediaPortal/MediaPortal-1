@@ -2364,7 +2364,6 @@ namespace MediaPortal.TV.Recording
 			ArrayList tvChannels = new ArrayList();
 			TVDatabase.GetChannels(ref tvChannels);
 
-			DeleteAllPIDs(m_dataCtrl,0);
 			m_analyzerInterface.ResetParser(); //analyser will map pids needed
 			Log.WriteFile(Log.LogType.Capture,"auto-tune ss2: StoreChannels()");
 			DVBSections.Transponder transp;
