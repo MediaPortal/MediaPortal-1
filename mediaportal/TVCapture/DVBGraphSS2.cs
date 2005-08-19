@@ -287,6 +287,7 @@ namespace MediaPortal.TV.Recording
 		int m_aspectX=1;
 		int m_aspectY=1;
 		bool isUsingAC3=false;
+		int  m_lastPMTVersion=-1;
 
 		DateTime m_timeDisplayed=DateTime.Now;
 
@@ -743,10 +744,8 @@ namespace MediaPortal.TV.Recording
 			}
 			
 			DeleteAllPIDs(m_dataCtrl,0);
-			//SetPidToPin(m_dataCtrl,0,0x2000);
-
-			//tell MPSA which program we are watching so it can map the SS2 pids
-			m_analyzerInterface.SetPMTProgramNumber(programNumber);
+			SetPidToPin(m_dataCtrl,0,0x2000);
+			m_lastPMTVersion=-1;
 
 			return true;
 		}
@@ -2247,7 +2246,61 @@ namespace MediaPortal.TV.Recording
 			CheckVideoResolutionChanges();
 			m_epgGrabber.Process();
 			UpdateVideoState();
-
+			
+			if (m_currentChannel!=null)
+			{
+				IntPtr pmtMem=Marshal.AllocCoTaskMem(4096);// max. size for pmt
+				if(pmtMem!=IntPtr.Zero)
+				{
+					//get the PMT
+					m_analyzerInterface.SetPMTProgramNumber(m_currentChannel.ProgramNumber);
+					int res=m_analyzerInterface.GetPMTData(pmtMem);
+					if(res!=-1)
+					{
+						//check PMT version
+						byte[] pmt=new byte[res];
+						int version=-1;
+						Marshal.Copy(pmtMem,pmt,0,res);
+						version=((pmt[5]>>1)&0x1F);
+						int pmtProgramNumber=(pmt[3]<<8)+pmt[4];
+						if (pmtProgramNumber==m_currentChannel.ProgramNumber)
+						{
+							if(m_lastPMTVersion!=version)
+							{
+								//decode pmt
+								m_lastPMTVersion=version;
+								DVBSections sections = new DVBSections();
+								DVBSections.ChannelInfo info = new DVBSections.ChannelInfo();
+								if (sections.GetChannelInfoFromPMT(pmt, ref info)) 
+								{
+									//map pids
+									if (info.pid_list!=null)
+									{
+										DeleteAllPIDs(m_dataCtrl,0);
+										SetPidToPin(m_dataCtrl,0,0);
+										SetPidToPin(m_dataCtrl,0,0x10);
+										SetPidToPin(m_dataCtrl,0,0x11);
+										SetPidToPin(m_dataCtrl,0,0xd2);
+										SetPidToPin(m_dataCtrl,0,0xd3);
+										SetPidToPin(m_dataCtrl,0,m_currentChannel.PMTPid);
+										if (m_currentChannel.PCRPid>0)
+											SetPidToPin(m_dataCtrl,0,m_currentChannel.PCRPid);
+										for (int pids =0; pids < info.pid_list.Count;pids++)
+										{
+											DVBSections.PMTData data=(DVBSections.PMTData) info.pid_list[pids];
+											if (data.elementary_PID>0 && (data.isAC3Audio || data.isAudio||data.isVideo||data.isTeletext) )
+											{
+												SetPidToPin(m_dataCtrl,0,data.elementary_PID);
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+				Marshal.FreeCoTaskMem(pmtMem);
+			}
 		}
 		
 		public PropertyPageCollection PropertyPages()
