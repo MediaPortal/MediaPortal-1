@@ -608,9 +608,11 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 		{
 			Log("Reset sections");
 			m_bReset=false;
+			m_pmtGrabProgNum=0;
 			m_patChannelsCount=0;
 			m_pSections->Reset();
 			m_atscParser.Reset();
+
 		}		
 		//CAutoLock lock(&m_Lock);
 /*
@@ -656,40 +658,32 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 			ULONG prgNumber=(pbData[3]<<8)+pbData[4];
 			for(int n=0;n<m_patChannelsCount;n++)
 			{
-				if(m_patTable[n].ProgrammNumber==prgNumber && m_patTable[n].PMTReady==0)
+				if(m_patTable[n].ProgrammNumber==prgNumber )
 				{
-					//Log("decode PMT");
-					m_pSections->decodePMT(pbData,&m_patTable[n],len);
-					//Log("PMT decoded");
-					//if(m_patTable[n].Pids.AudioPid1>0)
-					//	m_pDemuxer->MapAdditionalPayloadPID(m_patTable[n].Pids.AudioPid1);
-					//if(m_patTable[n].Pids.AudioPid2>0)
-					//	m_pDemuxer->MapAdditionalPayloadPID(m_patTable[n].Pids.AudioPid2);
-					//if(m_patTable[n].Pids.AudioPid3>0)
-					//	m_pDemuxer->MapAdditionalPayloadPID(m_patTable[n].Pids.AudioPid3);
+					if (m_patTable[n].PMTReady==0)
+					{
+						//Log("decode PMT");
+						m_pSections->decodePMT(pbData,&m_patTable[n],len);
+						//Log("PMT decoded");
+						//if(m_patTable[n].Pids.AudioPid1>0)
+						//	m_pDemuxer->MapAdditionalPayloadPID(m_patTable[n].Pids.AudioPid1);
+						//if(m_patTable[n].Pids.AudioPid2>0)
+						//	m_pDemuxer->MapAdditionalPayloadPID(m_patTable[n].Pids.AudioPid2);
+						//if(m_patTable[n].Pids.AudioPid3>0)
+						//	m_pDemuxer->MapAdditionalPayloadPID(m_patTable[n].Pids.AudioPid3);
+					}
+					if(m_pmtGrabProgNum>0 && m_pmtGrabProgNum==prgNumber && len<=4096)
+					{
+						if (memcmp(m_pmtGrabData,pbData,len)!=0)
+						{
+							memset(m_pmtGrabData,0,4096);
+							memcpy(m_pmtGrabData,pbData,len);// save the pmt in the buffer
+							m_currentPMTLen=len;
+							Log("New PMT: map audio/video pids for SS2");
+						}
+					}	
 				}
 			}
-			if(m_pmtGrabProgNum==prgNumber && len<=4096)
-			{
-				if (memcmp(m_pmtGrabData,pbData,len)!=0)
-				{
-					memset(m_pmtGrabData,0,4096);
-					memcpy(m_pmtGrabData,pbData,len);// save the pmt in the buffer
-					m_currentPMTLen=len;
-
-					Log("New PMT: map audio/video pids for SS2");
-					ChannelInfo ch;	
-					m_pSections->decodePMT(pbData,&ch,len);
-					if (ch.Pids.AC3>0) m_pDemuxer->MapAdditionalPID(ch.Pids.AC3);
-					if (ch.Pids.AudioPid1>0) m_pDemuxer->SS2SetPidToPin(0,ch.Pids.AudioPid1);
-					if (ch.Pids.AudioPid2>0) m_pDemuxer->SS2SetPidToPin(0,ch.Pids.AudioPid2);
-					if (ch.Pids.AudioPid3>0) m_pDemuxer->SS2SetPidToPin(0,ch.Pids.AudioPid3);
-					if (ch.Pids.VideoPid>0) m_pDemuxer->SS2SetPidToPin(0,ch.Pids.VideoPid);
-					if (ch.Pids.Teletext>0) m_pDemuxer->SS2SetPidToPin(0,ch.Pids.Teletext);
-					if (ch.Pids.Subtitles>0) m_pDemuxer->SS2SetPidToPin(0,ch.Pids.Subtitles);
-					if (ch.PCRPid>0)		m_pDemuxer->SS2SetPidToPin(0,ch.PCRPid);
-				}
-			}		
 		}
 		if(pbData[0]==0x00)// pat
 		{

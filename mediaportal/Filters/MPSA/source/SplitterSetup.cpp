@@ -117,7 +117,8 @@ HRESULT SplitterSetup::SetupDefaultMapping()
 {
 	Log("SetupDefaultMapping()");
 
-	SS2DeleteAllPIDs(0);
+	//SS2DeleteAllPIDs(0);
+	//SS2SetPidToPin(0,0x2000);
 	SetSectionMapping();
 	SetMHW1Mapping();
 	SetMHW2Mapping();
@@ -176,7 +177,7 @@ HRESULT SplitterSetup::SetMHW1Mapping()
 			Log("failed to map pid 0xd2");
 			return 4;
 		}
-		SS2SetPidToPin(0,0xd2);
+		//SS2SetPidToPin(0,0xd2);
 		//SS2SetPidToPin(2,0xd2);
 	}	
 	pMap->Release();
@@ -234,7 +235,7 @@ HRESULT SplitterSetup::SetMHW2Mapping()
 			Log("failed to map pid 0xd3");
 			return 4;
 		}
-		SS2SetPidToPin(0,0xd3);
+		//SS2SetPidToPin(0,0xd3);
 		//SS2SetPidToPin(2,0xd3);
 	}
 	pMap->Release();
@@ -320,9 +321,9 @@ HRESULT SplitterSetup::SetSectionMapping()
 			Log("failed to map pid 0x11");
 			return 4;
 		}
-		SS2SetPidToPin(0,0x0);
-		SS2SetPidToPin(0,0x10);
-		SS2SetPidToPin(0,0x11);
+		//SS2SetPidToPin(0,0x0);
+		//SS2SetPidToPin(0,0x10);
+		//SS2SetPidToPin(0,0x11);
 		//SS2SetPidToPin(2,0x0);
 		//SS2SetPidToPin(2,0x10);
 		//SS2SetPidToPin(2,0x11);
@@ -362,7 +363,7 @@ HRESULT SplitterSetup::MapAdditionalPID(ULONG pid)
 		return 4;
 
 	pMap->Release();
-	SS2SetPidToPin(0,pid);
+	//SS2SetPidToPin(0,pid);
 	//SS2SetPidToPin(2,pid);
 
 //	Log ("MapAdditionalPID:%x done", pid);
@@ -389,7 +390,7 @@ HRESULT SplitterSetup::MapAdditionalPayloadPID(ULONG pid)
 	pMap->Release();
 	
 		
-	SS2SetPidToPin(0,pid);
+	//SS2SetPidToPin(0,pid);
 	//SS2SetPidToPin(2,pid);
 	return S_OK;
 }
@@ -475,7 +476,7 @@ HRESULT SplitterSetup::SetEPGMapping()
 			Log("failed to map pid 0x12");
 			return 4;
 		}
-		SS2SetPidToPin(0,0x12);
+		//SS2SetPidToPin(0,0x12);
 		//SS2SetPidToPin(2,0x12);
 	}
 	pMap->Release();
