@@ -71,7 +71,7 @@ void SplitterSetup::UseATSC(bool yesNo)
 }
 
 HRESULT SplitterSetup::SetDemuxPins(IFilterGraph *pGraph)
-{
+{/*
 	if(pGraph==NULL)
 		return S_FALSE;
 	if (m_dataCtrl!=NULL) return NOERROR;
@@ -113,7 +113,7 @@ HRESULT SplitterSetup::SetDemuxPins(IFilterGraph *pGraph)
 		pEnum->Release();
 	}
 	pGB->Release();
-	Log("SetDemuxPinsDone");
+	Log("SetDemuxPinsDone");*/
 	return NOERROR;
 }
 
