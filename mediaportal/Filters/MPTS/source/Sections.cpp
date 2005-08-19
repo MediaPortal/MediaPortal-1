@@ -393,11 +393,11 @@ void Sections::FindPATPMT()
 	ULONG fpos=0;
 	while(finished!=true)
 	{
-		m_pFileReader->SetFilePointer(fpos,FILE_CURRENT);
+		//m_pFileReader->SetFilePointer(fpos,FILE_CURRENT);
 		hr=m_pFileReader->Read(pData,188,&countBytesRead);
 		if(hr!=S_OK|| countBytesRead!=188)
 			finished=true;
-		fpos+=countBytesRead;
+		//fpos+=countBytesRead;
 		if(hr==S_OK)
 		{
 			GetTSHeader(pData,&header);
