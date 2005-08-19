@@ -208,6 +208,7 @@ namespace MediaPortal.Dialogs
 
 		public void SetText(string text)
 		{
+			txtArea.OnMessage(new GUIMessage( GUIMessage.MessageType.GUI_MSG_LABEL_RESET, GetID, 0, txtArea.GetID, 0, 0, null ) );
 			txtArea.Label=text;
 		}
 		public void SetImage(string filename)

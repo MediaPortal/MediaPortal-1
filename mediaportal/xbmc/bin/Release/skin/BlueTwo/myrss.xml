@@ -27,7 +27,7 @@
 			<posY>370</posY>
 			<texture>hover_my news.png</texture>
 		</control>		
-		<control>
+		<!--control>
 			<description>My news text label</description>
 			<type>label</type>
 			<id>1</id>
@@ -37,7 +37,7 @@
 			<font>font16</font>
 			<align>right</align>
 			<textcolor>ffffffff</textcolor>
-		</control>
+		</control-->
 		<control>
 			<description>Channel name label</description>
 			<type>label</type>
@@ -76,34 +76,34 @@
 			<description>group element</description>
 			<animation>FlyInFromLeft</animation>
 			<control>
+				<description>RSS feed select</description>
+				<type>button</type>
+				<id>4</id>
+				<posX>60</posX>
+				<posY>95</posY>
+		 		<label>706</label>
+				<onleft>4</onleft>
+				<onright>50</onright>
+				<onup>17</onup>
+				<ondown>2</ondown>
+			</control>
+			<control>
 				<description>Refresh Button</description>
 				<type>button</type>
 				<id>2</id>
 				<posX>60</posX>
-				<posY>97</posY>
+				<posY>130</posY>
 		 		<label>184</label>
 				<onleft>2</onleft>
 				<onright>50</onright>
-				<onup>17</onup>
+				<onup>4</onup>
 				<ondown>4</ondown>
-			</control>
-			<control>
-				<description>RSS feed select</description>
-				<type>selectbutton</type>
-				<id>4</id>
-				<posX>60</posX>
-				<posY>131</posY>
-				<label>706</label>
-				<onleft>4</onleft>
-				<onright>50</onright>
-				<onup>2</onup>
-				<ondown>2</ondown>
 			</control>
 			<control>
 				<description>Site Logo</description>
 				<type>image</type>
 				<id>101</id>
-				<posX>77</posX>
+				<posX>60</posX>
 				<posY>170</posY>
 				<width>128</width>
 				<height>128</height>
@@ -132,7 +132,7 @@
 				<description>Chosen Story description</description>
 				<type>textboxscrollup</type>
 				<id>506</id>
-				<posX>242</posX>
+				<posX>262</posX>
 				<posY>350</posY>
 				<width>430</width>
 				<height>180</height>

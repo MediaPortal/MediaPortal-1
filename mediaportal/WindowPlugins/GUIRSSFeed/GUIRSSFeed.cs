@@ -185,6 +185,7 @@ namespace MediaPortal.GUI.RSS
 							if (dlg != null)
 							{      
 								dlg.Reset();
+								dlg.ResetAllControls();
 								dlg.SetHeading("Story");
 								dlg.SetText( story );
 								dlg.DoModal( GetID);
@@ -194,10 +195,32 @@ namespace MediaPortal.GUI.RSS
 
 					if (iControl==(int)Controls.CONTROL_BTNCHANNEL)
 					{
-						GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED,GetID,0,iControl,0,0,null);
-						OnMessage(msg);
+						OnSelectFeed();
 
-						int nSelected = (int)msg.Param1;
+						return true;
+					}
+
+				}
+					break;
+			}
+			return base.OnMessage(message);
+		}
+
+		private void OnSelectFeed()
+		{
+			GUIDialogMenu dlg=(GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+			if (dlg==null) 
+				return;
+			dlg.Reset();
+			dlg.SetHeading( 706 ); // menu
+			foreach (Site loc in m_sites)
+			{
+				dlg.Add( loc.m_Name );
+			}
+			dlg.DoModal( GetID);
+			if (dlg.SelectedLabel==-1) 
+				return;
+			int nSelected = dlg.SelectedLabel;
 
 						m_strSiteURL = ((Site)m_sites[nSelected]).m_URL;
 						m_strSiteName = ((Site)m_sites[nSelected]).m_Name;
@@ -210,14 +233,6 @@ namespace MediaPortal.GUI.RSS
 						}
 
 						UpdateNews(true);
-
-						return true;
-					}
-
-				}
-					break;
-			}
-			return base.OnMessage(message);
 		}
 
 		public override void Process()
@@ -255,18 +270,37 @@ namespace MediaPortal.GUI.RSS
 
 		void UpdateNews(bool bShowWarning)
 		{
+			GUIDialogProgress dlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
 			try
 			{
 				if (m_strSiteURL.ToLower().StartsWith("http://") ==false && m_strSiteURL.ToLower().StartsWith("file://") == false)
 				{
 					m_strSiteURL="http://"+m_strSiteURL;
 				}
+
+				long startTime = Environment.TickCount;
+				dlgProgress.SetHeading( 704 );
+				dlgProgress.SetLine(1, GUILocalizeStrings.Get(705) + m_strSiteName );
+				dlgProgress.SetLine(2, "" );
+				dlgProgress.SetLine(3, "" );
+				dlgProgress.ShowProgressBar( false );
+				dlgProgress.StartModal(GetID);
+				dlgProgress.Progress();
+
 				Uri newURL=new Uri(m_strSiteURL);
 				Download(newURL);
 				UpdateButtons();
+
+				// Leave dialog on screen for minimum of 1 seconds
+				// to eliminate the horrible flash of dialog before user can reed it
+				long endTime = Environment.TickCount;
+				if ( endTime-startTime < 1000 )
+					System.Threading.Thread.Sleep( (int)(1000-(endTime-startTime)) );
+				dlgProgress.Close();
 			}
 			catch(Exception)
 			{
+				dlgProgress.Close();
 				if (bShowWarning)
 				{
 					GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SHOW_WARNING,0,0,0,0,0,0);
@@ -390,20 +424,6 @@ namespace MediaPortal.GUI.RSS
 
 			GUIControl.FocusControl(GetID,(int)Controls.CONTROL_LIST);
 			GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_STORYTEXT, m_feed_details[0].m_description);
-
-			// Setup the selectionbutton for the channels
-			int i=0;
-
-			GUIControl.ClearControl(GetID,(int)Controls.CONTROL_BTNCHANNEL);
-			foreach (Site loc in m_sites)
-			{
-				GUIControl.AddItemLabelControl(GetID,(int)Controls.CONTROL_BTNCHANNEL, loc.m_Name);
-				if (m_strSiteURL==loc.m_URL )
-				{
-					GUIControl.SelectItemControl(GetID,(int)Controls.CONTROL_BTNCHANNEL, i);
-				}
-				i++;
-			}
 		}
 
 		bool Download(Uri location)

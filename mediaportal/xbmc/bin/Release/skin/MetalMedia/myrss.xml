@@ -29,9 +29,9 @@
 		<type>image</type>
 		<id>1</id>
 		<posX>50</posX>
-		<posY>100</posY>
+		<posY>90</posY>
 		<width>190</width>
-		<height>272</height>
+		<height>355</height>
 		<texture>panel.png</texture>
 	</control>
 	<control>
@@ -54,35 +54,35 @@
 		<font>font16</font>
 	</control>
 	<control>
+		<description>RSS feed select</description>
+		<type>button</type>
+		<id>4</id>
+		<posX>55</posX>
+		<posY>105</posY>
+		<label>706</label>
+		<onleft>50</onleft>
+		<onright>50</onright>
+		<onup>17</onup>
+		<ondown>2</ondown>
+	</control>
+	<control>
 		<description>Refresh Button</description>
 		<type>button</type>
 		<id>2</id>
 		<posX>55</posX>
-		<posY>115</posY>
- 		<label>184</label>
+		<posY>130</posY>
+ 		<label>384</label>
 		<onleft>2</onleft>
 		<onright>50</onright>
-		<onup>17</onup>
+		<onup>4</onup>
 		<ondown>4</ondown>
-	</control>
-	<control>
-		<description>RSS feed select</description>
-		<type>selectbutton</type>
-		<id>4</id>
-		<posX>55</posX>
-		<posY>143</posY>
-		<label>706</label>
-		<onleft>50</onleft>
-		<onright>50</onright>
-		<onup>2</onup>
-		<ondown>2</ondown>
 	</control>
 	<control>
 		<description>Panel Split</description>
 		<type>image</type>
 		<id>1</id>
 		<posX>55</posX>
-		<posY>180</posY>
+		<posY>160</posY>
 		<width>180</width>
 		<height>2</height>
 		<texture>panel_split.png</texture>
@@ -92,7 +92,7 @@
 		<type>image</type>
 		<id>101</id>
 		<posX>81</posX>
-		<posY>225</posY>
+		<posY>170</posY>
 		<width>128</width>
 		<height>128</height>
 		<texture>-</texture>
