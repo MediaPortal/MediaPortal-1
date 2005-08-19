@@ -957,6 +957,10 @@ namespace MediaPortal.Player
 				}
 				return ;
 			}
+			if (GUIGraphicsContext.InVmr9Render)
+			{
+				return;
+			}
       m_player.Process();
       if (!m_player.Playing)
       {
