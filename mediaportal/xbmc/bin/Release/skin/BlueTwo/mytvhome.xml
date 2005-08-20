@@ -64,7 +64,7 @@
 				<textcolor>White</textcolor>
 				<colordiffuse>White</colordiffuse>
 				<disabledcolor>#60ffffff</disabledcolor>
-				<label>1047</label>
+				<label>707</label>
 				<AltTextureFocus>togglebutton-off-focus.png</AltTextureFocus>
 				<AltTextureNoFocus>togglebutton-off-nofocus.png</AltTextureNoFocus>
 				<textureFocus>togglebutton-on-focus.png</textureFocus>
