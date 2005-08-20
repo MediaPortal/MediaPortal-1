@@ -1883,16 +1883,13 @@ namespace MediaPortal.TV.Recording
 		}
 		public string TimeShiftFileName
 		{
-			//we should get this from the cardx.xml when we will be supporting .ts streams
 			get { 
-#if USEMTSWRITER
+
+				IGraph g = GraphFactory.CreateGraph(this);
 				if (IsRadio)
-					return "radio.ts";
+					return g.RadioTimeshiftFileName();
 				else
-					return "live.ts";
-#else
-				return "live.tv";
-#endif
+					return g.TvTimeshiftFileName();
 			}
 		}
   }

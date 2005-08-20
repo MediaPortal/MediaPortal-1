@@ -253,5 +253,7 @@ namespace MediaPortal.TV.Recording
 		int GetAudioLanguage();
 		void SetAudioLanguage(int audioPid);
 		ArrayList GetAudioLanguageList();		
+		string TvTimeshiftFileName();
+		string RadioTimeshiftFileName();
 	}
 }

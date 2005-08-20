@@ -1404,5 +1404,14 @@ namespace MediaPortal.TV.Recording
 		{
 			return new ArrayList();
 		}
+		public string TvTimeshiftFileName()
+		{
+			return String.Empty;
+		}
+		public string RadioTimeshiftFileName()
+		{
+			return String.Empty;
+		}
+
 	}
 }

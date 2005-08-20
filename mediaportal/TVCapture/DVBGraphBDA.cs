@@ -5213,6 +5213,24 @@ namespace MediaPortal.TV.Recording
 
 #endif
 		}
+		public string TvTimeshiftFileName()
+		{
+#if USEMTSWRITER
+			return "live.ts";
+#else
+			return "live.tv";
+#endif
+		}
+
+
+		public string RadioTimeshiftFileName()
+		{
+#if USEMTSWRITER
+			return "radio.ts";
+#else
+			return String.Empty;
+#endif
+		}
 	}//public class DVBGraphBDA 
 }//namespace MediaPortal.TV.Recording
 //end of file

@@ -2168,5 +2168,13 @@ namespace MediaPortal.TV.Recording
 		{
 			return new ArrayList();
 		}
+		public string TvTimeshiftFileName()
+		{
+			return "live.tv";
+		}
+		public string RadioTimeshiftFileName()
+		{
+			return String.Empty;
+		}
   }
 }

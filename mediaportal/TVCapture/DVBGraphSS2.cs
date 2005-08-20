@@ -3079,5 +3079,22 @@ namespace MediaPortal.TV.Recording
 				return;
 		}
 
+		public string TvTimeshiftFileName()
+		{
+#if USEMTSWRITER
+			return "live.ts";
+#else
+			return "live.tv";
+#endif
+		}
+
+		public string RadioTimeshiftFileName()
+		{
+#if USEMTSWRITER
+			return "radio.ts";
+#else
+			return String.Empty;
+#endif
+		}
 	}// class
 }// namespace

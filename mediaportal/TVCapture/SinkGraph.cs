@@ -1470,5 +1470,14 @@ namespace MediaPortal.TV.Recording
 #endif
 			return m_audioPidList;
 		}
+
+		public string TvTimeshiftFileName()
+		{
+			return "live.tv";
+		}
+		public string RadioTimeshiftFileName()
+		{
+			return String.Empty;
+		}
   }
 }
