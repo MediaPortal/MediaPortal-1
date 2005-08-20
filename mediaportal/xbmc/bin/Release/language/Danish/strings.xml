@@ -195,7 +195,7 @@
 	<string><id>262</id><value>Scripts Output</value></string>
 	<string><id>263</id><value>HTTP server:</value></string>
 	<string><id>264</id><value>Optag</value></string>
-	<string><id>265</id><value>Stop Optag</value></string>
+	<string><id>265</id><value>Stop Optagelse</value></string>
 	<string><id>266</id><value>Sortering: Numre</value></string>
 	<string><id>267</id><value>Sortering: Tid</value></string>
 	<string><id>268</id><value>Sortering: Titel</value></string>
@@ -229,6 +229,8 @@
 	<string><id>296</id><value>Slet bogmærker</value></string>
 	<string><id>297</id><value>AVDelay</value></string>
 	<string><id>298</id><value>Slider</value></string>
+	<string><id>299</id><value>Spilletid:</value></string>
+
 	<string><id>300</id><value>1. Sprog</value></string>
 	<string><id>301</id><value>2. Lydstyrke</value></string>
 	<string><id>302</id><value>3. Stream</value></string>
@@ -423,10 +425,35 @@
 	<string><id>489</id><value>Brug playliste i sange</value></string>
 	<string><id>490</id><value>Automatisk skift liste og sange i playlist</value></string>
 	<string><id>491</id><value>Brug store ikoner</value></string>
+	<string><id>492</id><value>Sprog</value></string>
+
+	<string><id>500</id><value>Fil menu</value></string>
+	<string><id>501</id><value>Vælg som destination</value></string>
+	<string><id>502</id><value>Kan ikke udføre dette</value></string>
+	<string><id>503</id><value>Slet denne mappe</value></string>
+	<string><id>504</id><value>Gå til destination</value></string>
+	<string><id>505</id><value>Beregner</value></string>
+	<string><id>506</id><value>Er du sikker ?</value></string>
+
+	<string><id>508</id><value>Til</value></string>
+	<string><id>509</id><value>Destinations fil eksistere, overskriv ?</value></string>
+	<string><id>510</id><value>Afbryd</value></string>
+	<string><id>511</id><value>Altid</value></string>
+	<string><id>512</id><value>Aldrig</value></string>
+	<string><id>513</id><value>Filen er beskyttet, handlingen er ikke udført</value></string>
+	<string><id>514</id><value>Kan ikke oprette Mappe, handling ikke udført </value></string>
+	<string><id>515</id><value>Kan ikke slette Mappe, handling ikke udført</value></string>
+	<string><id>516</id><value>kan ikke slette destinationsfil, handling ikke udført</value></string>
+	<string><id>517</id><value>Fatal fejl, handling ikke udført</value></string>
+	<string><id>518</id><value>Slet denne sang ?</value></string>
+	<string><id>530</id><value>Foto-disk isat, vil du åbne den ?</value></string>
+	<string><id>531</id><value>Film-disk isat, vil du åbne den ?</value></string>
+	<string><id>532</id><value>Lyd-disk isat, vil du åbne den ?</value></string>
+
 	<string><id>600</id><value>TV-Guide</value></string>
-	<string><id>601</id><value>Straksoptagelse</value></string>
+	<string><id>601</id><value>Optag NU !</value></string>
 	<string><id>602</id><value>Kanal</value></string>
-	<string><id>603</id><value>Sat på tid</value></string>
+	<string><id>603</id><value>Optage timere</value></string>
 	<string><id>604</id><value>TV optagelser</value></string>
 	<string><id>605</id><value>TV</value></string>
 	<string><id>606</id><value>Indlæser ny TV-Guide</value></string>
@@ -452,7 +479,7 @@
 	<string><id>626</id><value>Skift type</value></string>
 	<string><id>627</id><value>Kanaler:</value></string>
 	<string><id>628</id><value>Programmer:</value></string>
-	<string><id>629</id><value>Stop optag</value></string>
+	<string><id>629</id><value>Stop optagelse</value></string>
 	<string><id>630</id><value>Vil du genstarte?</value></string>
 	<string><id>631</id><value>Vil du lukke computeren?</value></string>
 	<string><id>632</id><value>Objekter</value></string>
@@ -609,7 +636,34 @@
 	<string><id>871</id><value>Væk pc'en</value></string>
 <!-- End My Alarm Strings -->
 
+	<string><id>872</id><value>Starter med</value></string>
+	<string><id>873</id><value>TV show</value></string>
+	<string><id>874</id><value>Episode</value></string>
+	<string><id>875</id><value>Dette program</value></string>
+	<string><id>876</id><value>Indtil jeg stopper</value></string>
+	<string><id>877</id><value>prioriteter</value></string>
+
+	<string><id>879</id><value>Optagelses konflikter</value></string>
+
+
+	<string><id>882</id><value>Kvalitet</value></string>
+	<string><id>883</id><value>Lav</value></string>
+	<string><id>884</id><value>Medium</value></string>
+	<string><id>885</id><value>Høj</value></string>
+	<string><id>886</id><value>Standard</value></string>
+	<string><id>887</id><value>Hvor mange episoder skal gemmes</value></string>
+
+	<string><id>889</id><value>Alle episoder</value></string>
 	<string><id>890</id><value>Afspil CD</value></string>
+	<string><id>891</id><value>Vælg TV kanal</value></string>
+	<string><id>892</id><value>Konflikter</value></string>
+	<string><id>893</id><value>Bærebar</value></string>
+	<string><id>894</id><value>Komprimer optagelser</value></string>
+	<string><id>895</id><value>Automatisk komprimering</value></string>
+	<string><id>896</id><value>Komprimer</value></string>
+	<string><id>897</id><value>Indstillinger</value></string>
+	<string><id>898</id><value>MPEG-2</value></string>
+	<string><id>899</id><value>WMV</value></string>
 	<string><id>900</id><value>Fortsæt fra sidste afspilning?</value></string>
 
 <!-- MSN Strings -->
@@ -686,9 +740,50 @@
 	<string><id>976</id><value>Næste kapitel</value></string> 
 	<string><id>977</id><value>There is no free card available</value></string>
 	<string><id>978</id><value>which can watch this channel</value></string>
+	<string><id>979</id><value>Afspil fra starten</value></string>
+
+	<string><id>981</id><value>Afbryd dette program</value></string>
+	<string><id>982</id><value>Slet hele denne optagelse</value></string>
+	<string><id>983</id><value>My Playlists</value></string>
+	<string><id>984</id><value>Downloader film liste</value></string>
+	<string><id>985</id><value>Downloader film information</value></string>
+	<string><id>986</id><value>Downloader skuespiller</value></string>
+	<string><id>987</id><value>År</value></string>
+	<string><id>988</id><value>Kvalitet</value></string>
+	<string><id>989</id><value>FPS</value></string>
+	<string><id>990</id><value>Bitrate</value></string>
+	<string><id>991</id><value>Prioritet</value></string>
+	<string><id>992</id><value>Slet original fil</value></string>
+
+	<string><id>994</id><value>Vælg auto komprimering</value></string>
+	<string><id>995</id><value>Vil du komprimere</value></string>
+	<string><id>996</id><value>den valgte optagelse ?</value></string>
+	<string><id>997</id><value>Færdig</value></string>
+	<string><id>998</id><value>XviD</value></string>
+	<string><id>999</id><value>Dette plugin tillader at forvandle dine</value></string>
+	<string><id>1000</id><value>Optagelser fra dvr-ms til mpg, xvid eller Wmv</value></string>
+	<string><id>1001</id><value>Bemærk. Du skal have</value></string>
+	<string><id>1002</id><value>Elecard MPEG2 video dekoder</value></string>
+	<string><id>1003</id><value>for at kunne lave xvid</value></string>
+	<string><id>1004</id><value>Klar til at optage</value></string>
+	<string><id>1005</id><value>fra kanal</value></string>
+	<string><id>1006</id><value>Tillad at optagelse starter</value></string>
+	<string><id>1007</id><value>Stop optagelse og se stadig tv</value></string>
+	<string><id>1008</id><value>Kø</value></string>
+	<string><id>1009</id><value>Downloader coverart</value></string>
+	<string><id>1010</id><value>Set</value></string>
+	<string><id>1011</id><value>Biografi</value></string>
+	<string><id>1012</id><value>Dette program vil blive forstyrret af</value></string>
+	<string><id>1013</id><value>Vil du også optage næste del ?</value></string>
+	<string><id>1014</id><value>Giv besked om programstart</value></string>
+	<string><id>1015</id><value>Giv ikke besked om programstart</value></string>
+	<string><id>1016</id><value>Programmet starter om 5 minutter</value></string>
 
 	<string><id>1440</id><value>Tekst-TV</value></string>
 	<string><id>1441</id><value>Tekst-TV</value></string>
+	<string><id>1442</id><value>Scroll hastighed (Vertikal)</value></string>
+	<string><id>1443</id><value>Scroll hastighed (horisontal)</value></string>
+
 
 <!-- My Status Strings -->
 	<string><id>1950</id><value>Status</value></string>
@@ -809,9 +904,17 @@
 	<string><id>2130</id><value>Blok</value></string> 
 	<string><id>2131</id><value>af</value></string> 
 	<string><id>2132</id><value>Afslutter disk: forventet tid:</value></string> 
-	<string><id>2133</id><value>Kan ikke konvertere DVR-MS til MPG</value></string> 
-	<string><id>2134</id><value>De krævede DirectShow filtre er</value></string> 
-	<string><id>2135</id><value>ikke installeret!</value></string>
+	<string><id>2133</id><value>TV Optagelser</value></string> 
+	<string><id>2134</id><value>Video</value></string> 
+	<string><id>2135</id><value>Audio</value></string> 
+	<string><id>2136</id><value>Data</value></string> 
+	<string><id>2137</id><value>Konverter</value></string> 
+	<string><id>2138</id><value>Klip</value></string> 
+	<string><id>2139</id><value>Lav MP3-CD</value></string> 
+	<string><id>2140</id><value>Lav MP3-DVD</value></string> 
+	<string><id>2141</id><value>MPEG2 -> DivX</value></string> 
+	<string><id>2142</id><value>MPEG2 -> MPEG4</value></string> 
+	<string><id>2143</id><value>Hovedsiden</value></string> 
 <!-- End My Burner Strings -->
 
 <!-- My Explorer Strings -->
@@ -912,6 +1015,25 @@
 	<string><id>9010</id><value>Udstyr:</value></string>
 	<string><id>9011</id><value>Kommentar:</value></string>
 
+	<string><id>12902</id><value>MSN Messenger OSD</value></string>
+
+
+	<string><id>13000</id><value>System:</value></string>
+	<string><id>13001</id><value>Fabrikant:</value></string>
+	<string><id>13002</id><value>Launch</value></string>
+	<string><id>13003</id><value>Importerer *.mlf fil</value></string>
+	<string><id>13004</id><value>Importerer*.my fil</value></string>
+	<string><id>13005</id><value>Sidst importeret fil:</value></string>
+	<string><id>13006</id><value>Lille billede</value></string>
+	<string><id>13007</id><value>Stort billede</value></string>
+	<string><id>13008</id><value>Ken Burns effekt</value></string>
+	<string><id>13009</id><value>Tilfældig overgang</value></string>
+	<string><id>13010</id><value>X-fade overgang</value></string>
+	<string><id>13011</id><value>ken Burns hastighed</value></string>
+	<string><id>13012</id><value>Henter billede, vent venligst</value></string>
+	<string><id>13013</id><value>henter video, vent venligst</value></string>
+
+
 
 	<string><id>16001</id><value>Fest afspilning</value></string>
 
@@ -933,6 +1055,10 @@
 <!-- My Splatt Strings -->
 	<string><id>19401</id><value>Splatt</value></string>
 <!-- End My Splatt Strings -->
+
+
+	<string><id>25001</id><value>Venter på side {0:X}...!</value></string>
+
 
 	<string><id>100000</id><value>Hjem</value></string>
 	<string><id>100001</id><value>TV</value></string>
@@ -991,6 +1117,9 @@
 	<string><id>100755</id><value>Status</value></string>
 	<string><id>100756</id><value>Statusdetaljer</value></string>
 	<string><id>100757</id><value>Statusindstillinger</value></string>
+	<string><id>100758</id><value>Fil dialog</value></string>
+	<string><id>100760</id><value>My Burner</value></string>
+
 
 	<string><id>100770</id><value>Explorer</value></string>
 
@@ -1005,11 +1134,16 @@
 	<string><id>102006</id><value>Audio visualisering</value></string>
 	<string><id>102007</id><value>Billeder/Billedserie</value></string>
 	<string><id>102008</id><value>Filkø dialog</value></string>
+	<string><id>102009</id><value>Valg dialog</value></string>
 	<string><id>102010</id><value>Dato/Tid</value></string>
 	<string><id>102011</id><value>Kunstner information</value></string>
 	<string><id>102012</id><value>Kontekst menu</value></string>
 	<string><id>102013</id><value>Sæt karakter</value></string>
 	<string><id>102014</id><value>Billed info</value></string>
+	<string><id>102015</id><value>Mini Menu</value></string>
+	<string><id>102016</id><value>Besked</value></string>
+
+
 
 	<string><id>102600</id><value>Vejret</value></string>
 
@@ -1031,6 +1165,10 @@
 	<string><id>103009</id><value>Tilfældig transitions</value></string>
 	<string><id>103010</id><value>X-fade transitions</value></string>
 	<string><id>103011</id><value>K.Burns hastighed</value></string>
+
+
+	<string><id>107700</id><value>My TV/Tekst TV</value></string>
+	<string><id>107701</id><value>My TV/Tekst TV</value></string>
 
 </strings>
 
