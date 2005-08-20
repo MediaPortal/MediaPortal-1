@@ -494,7 +494,7 @@ namespace MediaPortal.TV.Recording
 					return false;
 				}
 
-				n=m_graphBuilder.AddFilter(m_demux,"Demuxer");
+				n=m_graphBuilder.AddFilter(m_demux,"MPEG-2 Demultiplexer");
 				if(n!=0)
 				{
 					Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: FAILED to add Demultiplexer");

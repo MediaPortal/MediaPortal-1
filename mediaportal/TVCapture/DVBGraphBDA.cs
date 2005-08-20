@@ -798,7 +798,7 @@ namespace MediaPortal.TV.Recording
 				if(!ConnectFilters(ref m_MPEG2Demultiplexer,ref m_TIF))
 				{
 					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to connect mpeg2 demultiplexer->TIF");
-					return false;
+					//return false;
 				}
 				IMpeg2Demultiplexer   demuxer=m_MPEG2Demultiplexer as IMpeg2Demultiplexer;
 
