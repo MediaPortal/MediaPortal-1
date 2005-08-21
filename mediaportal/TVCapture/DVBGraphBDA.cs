@@ -1359,7 +1359,6 @@ namespace MediaPortal.TV.Recording
 #endif
 				GC.Collect();GC.Collect();GC.Collect();
 				m_graphState = State.None;
-				VideoRendererStatistics.VideoState=VideoRendererStatistics.State.NoSignal;
 				//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: delete graph done");
 			}
 			catch(Exception ex)
@@ -1544,7 +1543,6 @@ namespace MediaPortal.TV.Recording
 		public bool StartViewing(TVChannel channel)
 		{
 			if (m_graphState != State.Created) return false;
-			VideoRendererStatistics.VideoState=VideoRendererStatistics.State.NoSignal;
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:StartViewing()");
 
 			m_bOverlayVisible=true;
@@ -3463,7 +3461,7 @@ namespace MediaPortal.TV.Recording
 			bool isViewing=Recorder.IsCardViewing(m_cardID);
 			if (!isViewing) return;
 
-			Log.Write("packets:{0} pmt:{1:X}  vmr9:{2} fps:{3}",m_streamDemuxer.RecevingPackets,m_lastPMTVersion,GUIGraphicsContext.Vmr9Active ,GUIGraphicsContext.Vmr9FPS);
+	//		Log.Write("packets:{0} pmt:{1:X}  vmr9:{2} fps:{3}",m_streamDemuxer.RecevingPackets,m_lastPMTVersion,GUIGraphicsContext.Vmr9Active ,GUIGraphicsContext.Vmr9FPS);
 
 			// do we receive any packets?
 			if (!m_streamDemuxer.RecevingPackets /*|| !SignalPresent()*/ )
@@ -3923,7 +3921,6 @@ namespace MediaPortal.TV.Recording
 				SetupMTSDemuxerPin();
 				SetupDemuxer(m_DemuxVideoPin,currentTuningObject.VideoPid,m_DemuxAudioPin,currentTuningObject.AudioPid,m_pinAC3Out,currentTuningObject.AC3Pid);
 
-				VideoRendererStatistics.VideoState=VideoRendererStatistics.State.NoSignal;
 				if (m_streamDemuxer != null)
 				{
 					m_streamDemuxer.OnTuneNewChannel();

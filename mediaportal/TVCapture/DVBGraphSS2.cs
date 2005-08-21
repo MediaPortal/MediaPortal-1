@@ -1726,7 +1726,7 @@ namespace MediaPortal.TV.Recording
 					m_StartTime=DateTime.Now;
 
 					m_epgGrabber.GrabEPG(ch.HasEITSchedule==true);
-					VideoRendererStatistics.VideoState=VideoRendererStatistics.State.NoSignal;
+					
 					SetupMTSDemuxerPin();
 				}
 			}
