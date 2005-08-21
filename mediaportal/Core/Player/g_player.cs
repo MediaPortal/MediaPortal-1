@@ -754,6 +754,9 @@ namespace MediaPortal.Player
       m_player.SeekRelative(dTime);
       m_currentStep=Steps.Sec0;
       m_SeekTimer=DateTime.MinValue;
+			GUIMessage msgUpdate = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYER_POSITION_CHANGED,0,0,0,0,0,null);
+			GUIGraphicsContext.SendMessage(msgUpdate);
+
     }
 
     static public void   StepNow()
@@ -763,7 +766,9 @@ namespace MediaPortal.Player
         double dTime=(int)m_currentStep+m_player.CurrentPosition;
         if (dTime<0) dTime=0d;
         if (dTime>m_player.Duration) dTime=m_player.Duration-5;
-        m_player.SeekAbsolute(dTime);
+				m_player.SeekAbsolute(dTime);
+				GUIMessage msgUpdate = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYER_POSITION_CHANGED,0,0,0,0,0,null);
+				GUIGraphicsContext.SendMessage(msgUpdate);
       }
       m_currentStep=Steps.Sec0;
       m_SeekTimer=DateTime.MinValue;
@@ -879,7 +884,9 @@ namespace MediaPortal.Player
     static public void SeekRelativePercentage(int iPercentage)
     {
       if (m_player==null) return ;
-      m_player.SeekRelativePercentage(iPercentage);
+			m_player.SeekRelativePercentage(iPercentage);
+			GUIMessage msgUpdate = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYER_POSITION_CHANGED,0,0,0,0,0,null);
+			GUIGraphicsContext.SendMessage(msgUpdate);
       
       m_currentStep=Steps.Sec0;
       m_SeekTimer=DateTime.MinValue;
@@ -888,7 +895,9 @@ namespace MediaPortal.Player
     static public void SeekAbsolute(double dTime)
     {
       if (m_player==null) return ;
-      m_player.SeekAbsolute(dTime);
+			m_player.SeekAbsolute(dTime);
+			GUIMessage msgUpdate = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYER_POSITION_CHANGED,0,0,0,0,0,null);
+			GUIGraphicsContext.SendMessage(msgUpdate);
       
       m_currentStep=Steps.Sec0;
       m_SeekTimer=DateTime.MinValue;
@@ -897,7 +906,9 @@ namespace MediaPortal.Player
     static public void SeekAsolutePercentage(int iPercentage)
     {
       if (m_player==null) return ;
-      m_player.SeekAsolutePercentage(iPercentage);
+			m_player.SeekAsolutePercentage(iPercentage);
+			GUIMessage msgUpdate = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYER_POSITION_CHANGED,0,0,0,0,0,null);
+			GUIGraphicsContext.SendMessage(msgUpdate);
       
       m_currentStep=Steps.Sec0;
       m_SeekTimer=DateTime.MinValue;

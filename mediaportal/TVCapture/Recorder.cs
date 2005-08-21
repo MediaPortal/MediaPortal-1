@@ -1735,6 +1735,10 @@ namespace MediaPortal.TV.Recording
 			switch(message.Message)
 			{
 					
+				case GUIMessage.MessageType.GUI_MSG_PLAYER_POSITION_CHANGED:
+						m_dtProgresBar=DateTime.MinValue;
+				break;
+
 				case GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_TV:
 					StopViewing();
 					break;

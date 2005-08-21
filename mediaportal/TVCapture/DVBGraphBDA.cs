@@ -878,6 +878,7 @@ namespace MediaPortal.TV.Recording
 							}
 						}
 						Marshal.ReleaseComObject(enumMedia); enumMedia=null;
+						Marshal.ReleaseComObject(pin[0]); pin[0]=null;
 					}
 				}
 				Marshal.ReleaseComObject(pinEnum); pinEnum=null;
@@ -1046,6 +1047,12 @@ namespace MediaPortal.TV.Recording
 					}
 					Log.Write("DVBGraphBDA:Demuxer is setup");
 
+					if (pinEPGout!=null) Marshal.ReleaseComObject(pinEPGout);pinEPGout=null;
+					if (pinMHW1Out!=null) Marshal.ReleaseComObject(pinMHW1Out);pinMHW1Out=null;
+					if (pinMHW2Out!=null) Marshal.ReleaseComObject(pinMHW2Out);pinMHW2Out=null;
+					if (pinMHW1In!=null) Marshal.ReleaseComObject(pinMHW1In);pinMHW1In=null;
+					if (pinMHW2In!=null) Marshal.ReleaseComObject(pinMHW2In);pinMHW2In=null;
+					if (pinEPGIn!=null) Marshal.ReleaseComObject(pinEPGIn);pinEPGIn=null;
 				}
 				else
 					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:mapped IMPEG2Demultiplexer not found");
@@ -1214,7 +1221,7 @@ namespace MediaPortal.TV.Recording
 				if(m_dvbAnalyzer!=null)
 				{
 					Log.Write("free dvbanalyzer");
-					hr=Marshal.ReleaseComObject(m_dvbAnalyzer);
+					while ((hr=Marshal.ReleaseComObject(m_dvbAnalyzer))>0); 
 					if (hr!=0) Log.Write("ReleaseComObject(m_dvbAnalyzer):{0}",hr);
 					m_dvbAnalyzer=null;
 				}
@@ -3455,6 +3462,8 @@ namespace MediaPortal.TV.Recording
 			//check if this card is used for watching tv
 			bool isViewing=Recorder.IsCardViewing(m_cardID);
 			if (!isViewing) return;
+
+			Log.Write("packets:{0} pmt:{1:X}  vmr9:{2} fps:{3}",m_streamDemuxer.RecevingPackets,m_lastPMTVersion,GUIGraphicsContext.Vmr9Active ,GUIGraphicsContext.Vmr9FPS);
 
 			// do we receive any packets?
 			if (!m_streamDemuxer.RecevingPackets /*|| !SignalPresent()*/ )

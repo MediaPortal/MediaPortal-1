@@ -119,10 +119,15 @@ HRESULT SplitterSetup::SetupDemuxer(IBaseFilter *demuxFilter)
 					if (fetched==1)
 					{
 						PIN_INFO pinInfo;
-						pins[0]->QueryPinInfo(&pinInfo);
-						if (wcscmp(pinInfo.achName,L"Video")==0)
+						hr=pins[0]->QueryPinInfo(&pinInfo);
+						if (SUCCEEDED(hr))
 						{
-							m_pVideo=pins[0];
+							if (wcscmp(pinInfo.achName,L"Video")==0)
+							{
+								m_pVideo=pins[0];
+							}
+							if (pinInfo.pFilter!=NULL)
+								pinInfo.pFilter->Release();
 						}
 						pins[0]->Release();
 					}
@@ -170,10 +175,16 @@ HRESULT SplitterSetup::SetupDemuxer(IBaseFilter *demuxFilter)
 					if (fetched==1)
 					{
 						PIN_INFO pinInfo;
-						pins[0]->QueryPinInfo(&pinInfo);
-						if (wcscmp(pinInfo.achName,L"Audio")==0)
+						hr=pins[0]->QueryPinInfo(&pinInfo);
+						if (SUCCEEDED(hr))
 						{
-							m_pAudio=pins[0];
+							if (wcscmp(pinInfo.achName,L"Audio")==0)
+							{
+								m_pAudio=pins[0];
+							}
+							
+							if (pinInfo.pFilter!=NULL)
+								pinInfo.pFilter->Release();
 						}
 						pins[0]->Release();
 					}

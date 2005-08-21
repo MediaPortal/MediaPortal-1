@@ -1101,8 +1101,13 @@ namespace MediaPortal.TV.Recording
 		//
 		private bool CreateMTSWriter(string fileName)
 		{
-			if(m_graphState!=State.Created)
+			if(m_graphState!=State.Created && m_graphState!=State.TimeShifting)
 				return false;
+			if (m_tsWriter!=null) 
+			{
+				SetupMTSDemuxerPin();
+				return true;
+			}
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateMTSWriter()");
 			//connect capture->sample grabber
 			IPin grabberIn;
@@ -1287,7 +1292,7 @@ namespace MediaPortal.TV.Recording
 
 		private bool CreateSinkSource(string fileName,bool useAC3)
 		{
-			if(m_graphState!=State.Created)
+			if(m_graphState!=State.Created && m_graphState!=State.TimeShifting)
 				return false;
 			int			hr=0;
 			IPin		pinObj0=null;
@@ -1431,7 +1436,8 @@ namespace MediaPortal.TV.Recording
 				return false;
 			int hr=0;
 			
-			TuneChannel(channel);
+			if (channel!=null)
+				TuneChannel(channel);
 
 			if(m_channelFound==false)
 				return false;
@@ -2901,7 +2907,6 @@ namespace MediaPortal.TV.Recording
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: start radio");
 
 				int hr=0;
-				AddPreferredCodecs(true,false);
 			
 				if (Vmr9!=null)
 				{
@@ -2910,6 +2915,16 @@ namespace MediaPortal.TV.Recording
 				}
 
 
+#if USEMTSWRITER
+				TuneRadioChannel(station);
+				string fname=Recorder.GetTimeShiftFileNameByCardId(m_cardID);
+				StartTimeShifting(null,fname);
+				SetupMTSDemuxerPin();
+				return ;
+			}
+#else
+				AddPreferredCodecs(true,false);
+			
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:StartRadio() Using plugins");
 				IPin samplePin=DirectShowUtil.FindPinNr(m_sampleGrabber,PinDirection.Input,0);	
 				IPin demuxInPin=DirectShowUtil.FindPinNr(m_demux,PinDirection.Input,0);	
@@ -2980,6 +2995,7 @@ namespace MediaPortal.TV.Recording
 
 			// tune to the correct channel
 			TuneRadioChannel(station);
+#endif
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:Listening to radio..");
 		}
 		public void TuneRadioFrequency(int frequency)
