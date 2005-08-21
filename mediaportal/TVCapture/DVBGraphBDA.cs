@@ -1077,6 +1077,7 @@ namespace MediaPortal.TV.Recording
 				if(win!=null)
 					win.SetObject(m_streamDemuxer.Teletext);
 
+				m_streamDemuxer.Teletext.ClearBuffer();
 
 				//m_streamDemuxer.OnAudioFormatChanged+=new MediaPortal.TV.Recording.DVBDemuxer.OnAudioChanged(m_streamDemuxer_OnAudioFormatChanged);
 				//m_streamDemuxer.OnPMTIsChanged+=new MediaPortal.TV.Recording.DVBDemuxer.OnPMTChanged(m_streamDemuxer_OnPMTIsChanged);
@@ -1357,6 +1358,7 @@ namespace MediaPortal.TV.Recording
 					fileout=null;
 				}
 #endif
+				m_streamDemuxer.Teletext.ClearBuffer();
 				GC.Collect();GC.Collect();GC.Collect();
 				m_graphState = State.None;
 				//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: delete graph done");
@@ -3940,6 +3942,7 @@ namespace MediaPortal.TV.Recording
 				}
 #endif
 				if (Vmr9!=null) Vmr9.Enable(true);
+				m_streamDemuxer.Teletext.ClearBuffer();
 			}
 		}//public void TuneChannel(AnalogVideoStandard standard,int iChannel,int country)
 

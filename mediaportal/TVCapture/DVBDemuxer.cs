@@ -158,16 +158,16 @@ namespace MediaPortal.TV.Recording
         #endregion
 
         #region Contructor/Destructor
-		public DVBDemuxer()
-		{
-			using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml(System.Windows.Forms.Application.StartupPath+@"\MediaPortal.xml"))
-			{
-				m_pluginsEnabled = xmlreader.GetValueAsBool("dvb_ts_cards", "enablePlugins", false);
-			}
-			m_secTimer.Elapsed+=new System.Timers.ElapsedEventHandler(m_secTimer_Elapsed);
-			m_secTimer.Interval=5000;
-			m_secTimer.AutoReset=false;
-		}
+				public DVBDemuxer()
+				{
+					using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml(System.Windows.Forms.Application.StartupPath+@"\MediaPortal.xml"))
+					{
+						m_pluginsEnabled = xmlreader.GetValueAsBool("dvb_ts_cards", "enablePlugins", false);
+					}
+					m_secTimer.Elapsed+=new System.Timers.ElapsedEventHandler(m_secTimer_Elapsed);
+					m_secTimer.Interval=5000;
+					m_secTimer.AutoReset=false;
+				}
         ~DVBDemuxer()
         {
         }

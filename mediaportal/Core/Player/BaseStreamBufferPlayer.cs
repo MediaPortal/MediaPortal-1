@@ -1107,6 +1107,7 @@ namespace MediaPortal.Player
 					if( hr == 0 )
 					{
 						hr = mediaEvt.FreeEventParams( code, p1, p2 );
+/*
 						if (code>=DsEvCode.StreamBufferTimeHole && code <= DsEvCode.StreamBufferRateChanged)
 						{
 							Log.Write("StreamBufferPlayer: event:{0} param1:{1} param2:{2} param1:0x{3:X} param2:0x{4:X}",code.ToString(),p1,p2,p1,p2);
@@ -1148,7 +1149,8 @@ namespace MediaPortal.Player
 								}
 							}
 						}
-						else if( code == DsEvCode.Complete || code== DsEvCode.ErrorAbort)
+						else */
+						if( code == DsEvCode.Complete || code== DsEvCode.ErrorAbort)
 						{
 							Log.Write("StreamBufferPlayer: event:{0} param1:{1} param2:{2} param1:0x{3:X} param2:0x{4:X}",code.ToString(),p1,p2,p1,p2);
 							MovieEnded();

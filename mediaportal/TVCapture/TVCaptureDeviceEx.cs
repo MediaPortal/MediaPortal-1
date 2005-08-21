@@ -1884,12 +1884,21 @@ namespace MediaPortal.TV.Recording
 		public string TimeShiftFileName
 		{
 			get { 
-
-				IGraph g = GraphFactory.CreateGraph(this);
-				if (IsRadio)
-					return g.RadioTimeshiftFileName();
+				if (currentGraph!=null)
+				{
+					if (IsRadio)
+						return currentGraph.RadioTimeshiftFileName();
+					else
+						return currentGraph.TvTimeshiftFileName();
+				}
 				else
-					return g.TvTimeshiftFileName();
+				{
+					IGraph g = GraphFactory.CreateGraph(this);
+					if (IsRadio)
+						return g.RadioTimeshiftFileName();
+					else
+						return g.TvTimeshiftFileName();
+				}
 			}
 		}
   }

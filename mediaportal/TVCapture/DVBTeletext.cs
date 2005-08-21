@@ -39,8 +39,8 @@ namespace MediaPortal.TV.Recording
 		int						m_actualSubPage=0;
 		int						m_pageCount=0;
 		//Hashtable				pages=new Hashtable();
-		System.Drawing.Bitmap	m_pageBitmap=new System.Drawing.Bitmap(1920,1080);
-		System.Drawing.Graphics m_renderGraphics;
+		System.Drawing.Bitmap	m_pageBitmap=null;
+		System.Drawing.Graphics m_renderGraphics=null;
 		int						m_txtLanguage=0;
 		public delegate void PageUpdated();
 		public event PageUpdated PageUpdatedEvent;
@@ -183,8 +183,6 @@ namespace MediaPortal.TV.Recording
 		{
 			m_pageWidth=1920;
 			m_pageHeight=1080;
-			m_pageBitmap=new System.Drawing.Bitmap(m_pageWidth,m_pageHeight);
-			m_renderGraphics=System.Drawing.Graphics.FromImage(m_pageBitmap);
 			//
 			// TODO: Fügen Sie hier die Konstruktorlogik hinzu
 			//
@@ -215,6 +213,14 @@ namespace MediaPortal.TV.Recording
 							Marshal.FreeHGlobal(m_cacheTable[t,n]);
 							m_cacheTable[t,n]=(IntPtr)0;
 						}
+				if(m_pageBitmap!=null)
+					m_pageBitmap.Dispose();
+				m_pageBitmap=null;
+
+				if(m_renderGraphics!=null)
+					m_renderGraphics.Dispose();
+				m_renderGraphics=null;
+
 			}
 			catch{}
 		}
@@ -222,10 +228,13 @@ namespace MediaPortal.TV.Recording
 		{
 			// free graphics and bitmap object
 			//
-			if(m_renderGraphics!=null)
-				m_renderGraphics.Dispose();
 			if(m_pageBitmap!=null)
 				m_pageBitmap.Dispose();
+			m_pageBitmap=null;
+
+			if(m_renderGraphics!=null)
+				m_renderGraphics.Dispose();
+			m_renderGraphics=null;
 
 			m_aitbuffer=new int[10];
 			m_basicTableOfPages=new int[2352];
@@ -358,6 +367,11 @@ namespace MediaPortal.TV.Recording
 		public System.Drawing.Bitmap GetPage(int page,int subpage)
 		{
 			
+			if (m_pageBitmap==null)
+				m_pageBitmap=new System.Drawing.Bitmap(m_pageWidth,m_pageHeight);
+			if (m_renderGraphics==null)
+				m_renderGraphics=System.Drawing.Graphics.FromImage(m_pageBitmap);
+
 			string sPage="0x"+page.ToString();
 			string sSubPage="0x"+subpage.ToString();
 
@@ -389,6 +403,7 @@ namespace MediaPortal.TV.Recording
 			}
 			return m_pageBitmap;
 		}
+
 		//
 		// returns the last subpage in cache
 		public int PageExists(int page)
@@ -417,6 +432,11 @@ namespace MediaPortal.TV.Recording
 		{
 			get
 			{
+				if (m_pageBitmap==null)
+					m_pageBitmap=new System.Drawing.Bitmap(m_pageWidth,m_pageHeight);
+				if (m_renderGraphics==null)
+					m_renderGraphics=System.Drawing.Graphics.FromImage(m_pageBitmap);
+
 				DecodePage(m_actualPage,m_actualSubPage);
 				return m_pageBitmap;
 			}
@@ -450,12 +470,11 @@ namespace MediaPortal.TV.Recording
 			m_pageHeight=height;
 			if(m_pageBitmap!=null)
 				m_pageBitmap.Dispose();
+			m_pageBitmap=null;
+
 			if(m_renderGraphics!=null)
 				m_renderGraphics.Dispose();
-			m_pageBitmap=new System.Drawing.Bitmap(m_pageWidth,m_pageHeight);
-			m_renderGraphics=System.Drawing.Graphics.FromImage(m_pageBitmap);
-
-			
+			m_renderGraphics=null;
 		}
 
 		public void SaveData(IntPtr dataPtr)
@@ -1308,7 +1327,8 @@ namespace MediaPortal.TV.Recording
 			int height=(m_pageHeight-2)/25;
 			int fntSize=(width-2<10)?10:width-2;
 			m_teletextFont=new System.Drawing.Font("Courier New",fntSize,System.Drawing.FontStyle.Bold);
-			m_renderGraphics.FillRectangle(new System.Drawing.SolidBrush(System.Drawing.Color.Black),0,0,m_pageWidth,m_pageHeight);
+			if (m_renderGraphics!=null)
+				m_renderGraphics.FillRectangle(new System.Drawing.SolidBrush(System.Drawing.Color.Black),0,0,m_pageWidth,m_pageHeight);
 			int[] topColors=new int[]{(int)TextColors.Red,(int)TextColors.Green,(int)TextColors.Yellow,(int)TextColors.Cyan};
 			int colorCounter=0;
 			if(mPage==0xFFFF)
@@ -1383,16 +1403,18 @@ namespace MediaPortal.TV.Recording
 
 				}
 			}
-			//
-			for (row = 0; row < 25; row++)
+			if (m_renderGraphics!=null && m_pageBitmap!=null)
 			{
-				x = 0;
+				for (row = 0; row < 25; row++)
+				{
+					x = 0;
 
-				for (col = 0; col < 40; col++)
-					Render(m_renderGraphics,pageChars[row*40 + col], pageAttribs[row*40 + col],ref x,ref y,width,height);
+					for (col = 0; col < 40; col++)
+						Render(m_renderGraphics,pageChars[row*40 + col], pageAttribs[row*40 + col],ref x,ref y,width,height);
 
-				y+=height+(row==23?2:0);
-				
+					y+=height+(row==23?2:0);
+					
+				}
 			}
 			m_teletextFont.Dispose();
 			return true;

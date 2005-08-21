@@ -313,7 +313,8 @@ namespace MediaPortal.TV.Recording
 			
 			win=GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT);
 			if(win!=null)
-                win.SetObject(m_streamDemuxer.Teletext);
+         win.SetObject(m_streamDemuxer.Teletext);
+			m_streamDemuxer.Teletext.ClearBuffer();
 
 //            m_streamDemuxer.OnAudioFormatChanged += new DVBDemuxer.OnAudioChanged(OnAudioFormatChanged);
 			m_streamDemuxer.SetCardType((int)DVBEPG.EPGCard.TechnisatStarCards,NetworkType.DVBS);
@@ -1023,6 +1024,8 @@ namespace MediaPortal.TV.Recording
 			GUIGraphicsContext.form.Invalidate(true);
 			GC.Collect();GC.Collect();GC.Collect();
 			m_graphState = State.None;
+			m_streamDemuxer.Teletext.ClearBuffer();
+
 			return;		
 		}
 		//
@@ -1733,6 +1736,8 @@ namespace MediaPortal.TV.Recording
 			finally
 			{
 				if (Vmr9!=null) Vmr9.Enable(true);
+				m_streamDemuxer.Teletext.ClearBuffer();
+
 			}
 		}
 		void SetDemux(int audioPid,int videoPid,int ac3Pid)
