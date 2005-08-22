@@ -399,6 +399,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "GUIMyMail\MailDetailSetup.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUIMyMail\MailDetailSetup.resx"
+                    DependentUpon = "MailDetailSetup.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "GUIMyMail\MailInfo.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -704,11 +714,6 @@
                 />
                 <File
                     RelPath = "GUIPrograms\ProgramComparer.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "GUIPrograms\ProgramConditionChecker.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

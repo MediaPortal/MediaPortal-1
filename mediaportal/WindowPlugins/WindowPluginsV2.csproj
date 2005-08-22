@@ -429,9 +429,6 @@
     <Compile Include="GUIPrograms\ProgramComparer.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="GUIPrograms\ProgramConditionChecker.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="GUIPrograms\ProgramContentManager.cs">
       <SubType>Code</SubType>
     </Compile>

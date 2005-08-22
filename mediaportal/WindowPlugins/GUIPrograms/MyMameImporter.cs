@@ -24,6 +24,7 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
+using Core.Util;
 using MediaPortal.GUI.Library;
 using Programs.Utils;
 using SQLite.NET;
@@ -44,7 +45,7 @@ namespace ProgramsDatabase
 
     public event MyEventHandler OnReadNewFile = null;
     public event MyEventHandler OnSendMessage = null;
-    ProgramConditionChecker Checker = new ProgramConditionChecker();
+    ConditionChecker Checker = new ConditionChecker();
     string mameDir;
     string catverIniFile;
     string historyDatFile;

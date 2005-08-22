@@ -22,6 +22,7 @@
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
+using Core.Util;
 using ProgramsDatabase;
 
 namespace WindowPlugins.GUIPrograms
@@ -35,7 +36,7 @@ namespace WindowPlugins.GUIPrograms
     protected OpenFileDialog dialogFile;
     protected FolderBrowserDialog dialogFolder;
     public ToolTip toolTip;
-    protected ProgramConditionChecker m_Checker = new ProgramConditionChecker();
+    protected ConditionChecker m_Checker = new ConditionChecker();
 
     public event EventHandler OnUpClick;
     public event EventHandler OnDownClick;

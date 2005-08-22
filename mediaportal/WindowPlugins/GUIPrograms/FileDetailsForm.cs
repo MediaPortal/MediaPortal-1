@@ -24,6 +24,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
+using Core.Util;
 using Programs.Utils;
 using ProgramsDatabase;
 
@@ -36,7 +37,7 @@ namespace WindowPlugins.GUIPrograms
   {
     private AppItem m_CurApp;
     private FileItem m_CurFile;
-    private ProgramConditionChecker m_Checker;
+    private ConditionChecker m_Checker;
     private OpenFileDialog openFileDialog1;
     private ToolTip toolTip1;
     private Button btnOk;
@@ -107,7 +108,7 @@ namespace WindowPlugins.GUIPrograms
       // Required for Windows Form Designer support
       //
       InitializeComponent();
-      m_Checker = new ProgramConditionChecker();
+      m_Checker = new ConditionChecker();
 
     }
 
