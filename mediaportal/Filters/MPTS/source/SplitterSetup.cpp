@@ -24,6 +24,7 @@
 #include <commctrl.h>
 #include <atlbase.h>
 
+
 SplitterSetup::SplitterSetup(Sections *pSections) :
 m_demuxSetupComplete(FALSE)
 {
@@ -119,6 +120,7 @@ HRESULT SplitterSetup::SetupDemuxer(IBaseFilter *demuxFilter)
 					if (fetched==1)
 					{
 						PIN_INFO pinInfo;
+						pinInfo.pFilter=NULL;
 						hr=pins[0]->QueryPinInfo(&pinInfo);
 						if (SUCCEEDED(hr))
 						{
@@ -175,6 +177,7 @@ HRESULT SplitterSetup::SetupDemuxer(IBaseFilter *demuxFilter)
 					if (fetched==1)
 					{
 						PIN_INFO pinInfo;
+						pinInfo.pFilter=NULL;
 						hr=pins[0]->QueryPinInfo(&pinInfo);
 						if (SUCCEEDED(hr))
 						{
@@ -238,7 +241,12 @@ HRESULT SplitterSetup::SetupPids()
 		pPidEnum->Release();
 		// map new pid
 		pid = (ULONG)m_pSections->pids.VideoPid;
-		hr=pMap->MapPID(1,&pid,MEDIA_ELEMENTARY_STREAM);
+		
+		if(m_pSections->pids.MPEG4==false)// if the mpeg2 stream contains mpeg4 we map transport payload
+			hr=pMap->MapPID(1,&pid,MEDIA_ELEMENTARY_STREAM);
+		else
+			hr=pMap->MapPID(1,&pid,MEDIA_TRANSPORT_PAYLOAD);
+
 		if(FAILED(hr))
 			return 2;
 		pMap->Release();
@@ -380,19 +388,31 @@ HRESULT SplitterSetup::GetVideoMedia(AM_MEDIA_TYPE *pintype)
 
 {
 	HRESULT hr = E_INVALIDARG;
-
 	if(pintype == NULL){return hr;}
-
 	ZeroMemory(pintype, sizeof(AM_MEDIA_TYPE));
-	pintype->majortype = MEDIATYPE_Video;
-	pintype->subtype = MEDIASUBTYPE_MPEG2_VIDEO;
-	pintype->bFixedSizeSamples = TRUE;
-	pintype->bTemporalCompression = 0;
-	pintype->lSampleSize = 0;
-	pintype->formattype = FORMAT_MPEG2Video;
-	pintype->pUnk = NULL;
-	pintype->cbFormat = sizeof(Mpeg2ProgramVideo);
-	pintype->pbFormat = Mpeg2ProgramVideo;
-
+	if(m_pSections->pids.MPEG4==false)
+	{
+		pintype->majortype = MEDIATYPE_Video;
+		pintype->subtype = MEDIASUBTYPE_MPEG2_VIDEO;
+		pintype->bFixedSizeSamples = TRUE;
+		pintype->bTemporalCompression = 0;
+		pintype->lSampleSize = 0;
+		pintype->formattype = FORMAT_MPEG2Video;
+		pintype->pUnk = NULL;
+		pintype->cbFormat = sizeof(Mpeg2ProgramVideo);
+		pintype->pbFormat = Mpeg2ProgramVideo;
+	}
+	else
+	{
+		pintype->majortype = MEDIATYPE_Video;
+		pintype->subtype = m_pSections->pids.idMPEG4;
+		pintype->bFixedSizeSamples = TRUE;
+		pintype->bTemporalCompression = 0;
+		pintype->lSampleSize = 0;
+		pintype->formattype = FORMAT_MPEG2Video;
+		pintype->pUnk = NULL;
+		pintype->cbFormat = sizeof(Mpeg2ProgramVideo);
+		pintype->pbFormat = Mpeg2ProgramVideo;
+	}
 	return S_OK;
 }

@@ -20,6 +20,7 @@
  */
 
 #include <streams.h>
+#include <aviriff.h>
 #include "Sections.h"
 void LogDebug(const char *fmt, ...) 
 {
@@ -114,8 +115,8 @@ HRESULT Sections::ParseFromFile()
 	filePointer=m_pFileReader->GetFilePointer(); // to restore after reading
 	FindPATPMT();
 	CheckStream();
-	if(pids.Duration<600000000)
-		pids.Duration=600000000;
+	if(pids.Duration<1600000000)
+		pids.Duration=1600000000;
 	m_pFileReader->SetFilePointer(filePointer,FILE_BEGIN);
 	
 	return hr;
@@ -198,6 +199,8 @@ HRESULT Sections::CheckStream()
 	// calc duration in 100 ns
 	PTSTime time;
 	PTSToPTSTime(pids.Duration,&time);
+	if(time.m==0 && time.h==0)
+		time.h=1;
 	pids.Duration=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
 	//
 	m_pFileReader->SetFilePointer(0,FILE_BEGIN);// sets to file begin
@@ -524,12 +527,19 @@ bool Sections::DecodePMT(byte* PMT)
 		stream_type = buf[pointer];
 		elementary_PID = ((buf[pointer+1]&0x1F)<<8)+buf[pointer+2];
 		ES_info_length = ((buf[pointer+3] & 0xF)<<8)+buf[pointer+4];
-		if(stream_type==1 || stream_type==2)
+		if(stream_type==1 || stream_type==2 || stream_type==0x1b)
 		{
 			pids.VideoPid=elementary_PID;
 			if (pids.PCRPid<=0)
 				pids.PCRPid=pids.VideoPid;
 			LogDebug("Sections::decodePMT() videopid:0x%x",pids.VideoPid);
+			if(stream_type==0x1b)
+			{
+				pids.idMPEG4=(GUID)FOURCCMap(FCC('H264'));
+				pids.MPEG4=true;
+			}
+			else
+				pids.MPEG4=false;
 		}
 		if(stream_type==3 || stream_type==4)
 		{

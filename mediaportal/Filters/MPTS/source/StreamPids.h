@@ -8,7 +8,7 @@
 
 #ifndef __StreamPids
 #define __StreamPids
-
+#include <strmif.h>
 #include <vector>
 
 // channel info
@@ -32,6 +32,8 @@ public:
 	int PCRPid;
 	int AC3;
 	int ac3_2;
+	bool MPEG4;
+	GUID idMPEG4;
 	long ProgramNumber;
 	__int64 StartPTS;
 	__int64 EndPTS;
