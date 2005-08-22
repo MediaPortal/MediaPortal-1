@@ -352,7 +352,7 @@ namespace MediaPortal.TV.Recording
 
 				SetQuality(3);
 
-				//SetupTeletext();
+				SetupTeletext();
 				return true;
 			}
 			catch(Exception ex)
@@ -378,15 +378,22 @@ namespace MediaPortal.TV.Recording
 			m_sampleGrabber=(IBaseFilter) Activator.CreateInstance( Type.GetTypeFromCLSID( Clsid.SampleGrabber, true ) );
 			m_sampleInterface=(ISampleGrabber) m_sampleGrabber;
 			m_graphBuilder.AddFilter(m_sampleGrabber,"Sample Grabber");
-			m_sampleInterface.SetCallback(this,1);
 
-			IBaseFilter teesink=DirectShowUtil.GetFilterByName(m_graphBuilder, "Tee/Sink-to-Sink Converter");
+			AMMediaType mt=new AMMediaType();
+			mt.majorType=DShowNET.MediaType.VBI;
+			mt.subType=DShowNET.MediaSubType.Teletext;	
+			m_sampleInterface.SetCallback(this,1);
+			m_sampleInterface.SetMediaType(ref mt);
+			m_sampleInterface.SetBufferSamples(false);
+
+			IBaseFilter teesink=DirectShowUtil.GetFilterByName(m_graphBuilder, "Kernel Tee");
 			IBaseFilter wstCodec=DirectShowUtil.GetFilterByName(m_graphBuilder,"WST Codec");
 
 			m_captureGraphBuilder.RenderStream(new Guid[]{Clsid.PinCategoryVBI},null,m_captureFilter,teesink,wstCodec);
 			m_captureGraphBuilder.RenderStream(null,null,wstCodec,null,m_sampleGrabber);
 			Marshal.ReleaseComObject(teesink);
 			Marshal.ReleaseComObject(wstCodec);
+			_hasTeletext=true;
 		}
 
 		void RetryOtherInstances(int instance)
@@ -670,11 +677,11 @@ namespace MediaPortal.TV.Recording
 
 		public int BufferCB(double SampleTime, System.IntPtr pBuffer, int BufferLen)
 		{
+			
 			if (!_grabTeletext) return 0;
 			if (pBuffer==IntPtr.Zero) return 0;
 			if (BufferLen<43) return 0;
 			
-			_hasTeletext=true;
 			TeletextGrabber.SaveAnalogData(pBuffer, BufferLen);
 			return 0;
 		}

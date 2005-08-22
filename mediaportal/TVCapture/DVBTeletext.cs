@@ -57,6 +57,7 @@ namespace MediaPortal.TV.Recording
 		string[]								 m_flofAIT=new string[2352];
 		int[,]									 m_flofTable=new int[2352,4];
 		bool										 m_fastTextDecode=false;
+		byte[]									 analogBuffer = new byte[2048];
 		//
 		//
 		string[]				m_mpPage=new string[]
@@ -492,29 +493,16 @@ namespace MediaPortal.TV.Recording
 		//	int pointer=0;
 			int dataAdd=(int)dataPtr;
 
+			Marshal.Copy(dataPtr,analogBuffer,0,bufferLen);
+
 			try
 			{
 				for (line = 0; line < maxLines; line++)
 				{
-					for (int i=0; i < 42;++i)
-						tmpBuffer[i] = Marshal.ReadByte(dataPtr,line*43+i+1);
 
-					//Marshal.Copy((IntPtr)((dataAdd)+(line*43)),tmpBuffer,3,43);
-					//tmpBuffer[0]=0x02;
-					//tmpBuffer[1]=0x2c;
-
-					//pointer = line * 43;
-					//if ((tmpBuffer[0]==0x02 || tmpBuffer[0]==0x03) && (tmpBuffer[1]==0x2C))
-					{
-						//for (b=4;b<46;b++)
-						//{
-						//	byte upper=0;
-						//	byte lower=0;
-						//	upper = (byte)((tmpBuffer[b] >> 4) & 0xf);
-						//	lower = (byte)(tmpBuffer[b] & 0xf);
-						//	tmpBuffer[b-4] = (byte)((m_lutTable[upper]) | (m_lutTable[lower+16]));
-						//}//for(b=4;
-
+					for (b=0;b<42;++b)
+						tmpBuffer[b]=analogBuffer[line*43+b];
+					
 						byte1 = m_deHamTable[tmpBuffer[0]];
 						byte2 = m_deHamTable[tmpBuffer[1]];
 
@@ -692,8 +680,7 @@ namespace MediaPortal.TV.Recording
 							{
 								PageUpdatedEvent();
 							}
-						}
-					}//if ((tmpBuffer
+						} 
 				}// for(line=0
 			}
 			catch(Exception )
