@@ -1357,6 +1357,7 @@ namespace MyMail
 		string m_mailBoxPath;
 		string m_attachmentsPath;
 		int m_lastCheckCount;
+    bool m_enabled = true;
 	
 
 		public MailBox(string label,string userName,string passWord,string server,int port,string mailboxFolder,string attachmentsFolder)
@@ -1370,6 +1371,7 @@ namespace MyMail
 			m_attachmentsPath=attachmentsFolder;
 			m_mailBoxPath=mailboxFolder;
 			m_lastCheckCount=0;
+      m_enabled=true;
 
 			// Check if MailboxFolder directory exist
 			System.IO.DirectoryInfo dInfoMail=new System.IO.DirectoryInfo(m_mailBoxPath);
@@ -1441,6 +1443,12 @@ namespace MyMail
 			get { return m_mailBoxLabel;}
 			set { m_mailBoxLabel=value;}
 		}
+
+    public bool Enabled
+    {
+      get { return m_enabled;}
+      set { m_enabled = value;}
+    }
 
 		public override string ToString()
 		{
