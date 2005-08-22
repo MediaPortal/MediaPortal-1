@@ -373,8 +373,29 @@ namespace MediaPortal.TV.Recording
 
 				
 			AddTeeSinkToGraph(m_graphBuilder); //Tee/Sink-to-Sink Converter
+			IBaseFilter teesink=DirectShowUtil.GetFilterByName(m_graphBuilder, "Kernel Tee");
+			if (teesink==null) return;
+
 			AddWstCodecToGraph(m_graphBuilder);//WST Codec
-			
+			IBaseFilter wstCodec=DirectShowUtil.GetFilterByName(m_graphBuilder,"WST Codec");
+			if (wstCodec==null) 
+			{
+				m_graphBuilder.RemoveFilter(teesink);
+				Marshal.ReleaseComObject(teesink);
+				return;
+			}
+
+			int hr=m_captureGraphBuilder.RenderStream(new Guid[]{Clsid.PinCategoryVBI},null,m_captureFilter,teesink,wstCodec);
+			if (hr!=0)
+			{
+				m_graphBuilder.RemoveFilter(teesink);
+				m_graphBuilder.RemoveFilter(wstCodec);
+				Marshal.ReleaseComObject(teesink);
+				Marshal.ReleaseComObject(wstCodec);
+				return;
+			}
+
+
 			m_sampleGrabber=(IBaseFilter) Activator.CreateInstance( Type.GetTypeFromCLSID( Clsid.SampleGrabber, true ) );
 			m_sampleInterface=(ISampleGrabber) m_sampleGrabber;
 			m_graphBuilder.AddFilter(m_sampleGrabber,"Sample Grabber");
@@ -385,12 +406,17 @@ namespace MediaPortal.TV.Recording
 			m_sampleInterface.SetCallback(this,1);
 			m_sampleInterface.SetMediaType(ref mt);
 			m_sampleInterface.SetBufferSamples(false);
-
-			IBaseFilter teesink=DirectShowUtil.GetFilterByName(m_graphBuilder, "Kernel Tee");
-			IBaseFilter wstCodec=DirectShowUtil.GetFilterByName(m_graphBuilder,"WST Codec");
-
-			m_captureGraphBuilder.RenderStream(new Guid[]{Clsid.PinCategoryVBI},null,m_captureFilter,teesink,wstCodec);
-			m_captureGraphBuilder.RenderStream(null,null,wstCodec,null,m_sampleGrabber);
+			hr=m_captureGraphBuilder.RenderStream(null,null,wstCodec,null,m_sampleGrabber);
+			if (hr!=0)
+			{
+				m_graphBuilder.RemoveFilter(teesink);
+				m_graphBuilder.RemoveFilter(wstCodec);
+				m_graphBuilder.RemoveFilter(m_sampleGrabber);
+				Marshal.ReleaseComObject(teesink);
+				Marshal.ReleaseComObject(wstCodec);
+				Marshal.ReleaseComObject(m_sampleGrabber);
+				return;
+			}
 			Marshal.ReleaseComObject(teesink);
 			Marshal.ReleaseComObject(wstCodec);
 			_hasTeletext=true;
