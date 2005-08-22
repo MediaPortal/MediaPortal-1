@@ -58,6 +58,8 @@ namespace MediaPortal.TV.Recording
 		int[,]									 m_flofTable=new int[2352,4];
 		bool										 m_fastTextDecode=false;
 		byte[]									 analogBuffer = new byte[2048];
+		byte[]									 tmpBuffer=new byte[46];
+		
 		//
 		//
 		string[]				m_mpPage=new string[]
@@ -483,11 +485,10 @@ namespace MediaPortal.TV.Recording
 			if (dataPtr==IntPtr.Zero) return;
 			if (bufferLen<43) return;
 			int maxLines=bufferLen/43;
-			byte[] txtRow=new byte[42];
 			int line=0;
 			int b=0,byte1=0, byte2=0, byte3=0, byte4=0;
 			int actualTransmittingPage=0;
-			byte[] tmpBuffer=new byte[46];
+			
 			int packetNumber;
 			byte magazine;
 		//	int pointer=0;
@@ -502,6 +503,8 @@ namespace MediaPortal.TV.Recording
 
 					for (b=0;b<42;++b)
 						tmpBuffer[b]=analogBuffer[line*43+b];
+					if (tmpBuffer[0]==0 && tmpBuffer[1]==0 && tmpBuffer[2]==0 && tmpBuffer[3]==0 && tmpBuffer[4]==0)
+						continue;
 					
 						byte1 = m_deHamTable[tmpBuffer[0]];
 						byte2 = m_deHamTable[tmpBuffer[1]];
@@ -513,6 +516,7 @@ namespace MediaPortal.TV.Recording
 						packetNumber = byte1>>3 | byte2<<1;
 						//  mag number
 						magazine =(byte)(m_deHamTable[tmpBuffer[0]] & 7);
+					  if (packetNumber<0 || packetNumber==25 || packetNumber==26 || packetNumber>27) continue;
 						if (packetNumber == 0)
 						{
 							byte1 = m_deHamTable[tmpBuffer[0]];
@@ -691,11 +695,11 @@ namespace MediaPortal.TV.Recording
 		public void SaveData(IntPtr dataPtr)
 		{
 			if (dataPtr==IntPtr.Zero) return;
-			byte[] txtRow=new byte[42];
+			
 			int line=0;
 			int b=0,byte1=0, byte2=0, byte3=0, byte4=0;
 			int actualTransmittingPage=0;
-			byte[] tmpBuffer=new byte[46];
+			
 			int packetNumber;
 			byte magazine;
 			int pointer=0;
