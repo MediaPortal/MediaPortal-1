@@ -1708,14 +1708,6 @@ namespace MediaPortal.TV.Recording
 			return currentGraph.SupportsFrameSize(framesize);
 		}
 
-		public IBaseFilter AudiodeviceFilter
-		{
-			get 
-			{ 
-				if (currentGraph==null) return null;
-				return currentGraph.AudiodeviceFilter();
-			}
-		}
 
 		public NetworkType Network
 		{
@@ -1788,14 +1780,7 @@ namespace MediaPortal.TV.Recording
 				}
 			}
 		}
-		public IBaseFilter Mpeg2DataFilter
-		{
-			get
-			{
-				if (currentGraph==null) return null;
-				return currentGraph.Mpeg2DataFilter();
-			}
-		}
+
 		public void StartRadio(RadioStation station)
 		{
 			if (currentGraphState != State.Radio)
@@ -1901,6 +1886,21 @@ namespace MediaPortal.TV.Recording
 				}
 			}
 		}
+		public void GrabTeletext(bool yesNo)
+		{
+			if (currentGraph==null) return;
+			currentGraph.GrabTeletext(yesNo);
+		}
+		public IBaseFilter AudiodeviceFilter
+		{
+			get 
+			{ 
+				if (currentGraph==null) return null;
+				return currentGraph.AudiodeviceFilter();
+			}
+		}
+
+
   }
 }  
 #endif

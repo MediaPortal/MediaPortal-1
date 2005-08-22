@@ -231,7 +231,10 @@ namespace MediaPortal.TV.Recording
 		IATSCGrabber						m_atscGrabberInterface	= null;
 		IBaseFilter							m_dvbAnalyzer=null;
 		IBaseFilter						  m_tsWriter=null;
+
+#if USEMTSWRITER
 		IMPTSWriter							m_tsWriterInterface=null;
+#endif
 		IMPTSRecord						  m_tsRecordInterface=null;
 		IBaseFilter							m_smartTee= null;			
 		
@@ -331,6 +334,8 @@ namespace MediaPortal.TV.Recording
 					return false;
 				currentTuningObject=null;
 				isUsingAC3=false;
+				if (m_streamDemuxer!=null)
+					m_streamDemuxer.GrabTeletext(false);
 
 #if DUMP
 				fileout = new System.IO.FileStream("audiodump.dat",System.IO.FileMode.OpenOrCreate,System.IO.FileAccess.Write,System.IO.FileShare.None);
@@ -1068,16 +1073,6 @@ namespace MediaPortal.TV.Recording
 
 				GetTunerSignalStatistics();
 
-				// teletext settings
-				GUIWindow win=GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TELETEXT);
-				if(win!=null)
-					win.SetObject(m_streamDemuxer.Teletext);
-			
-				win=GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT);
-				if(win!=null)
-					win.SetObject(m_streamDemuxer.Teletext);
-
-				m_streamDemuxer.Teletext.ClearBuffer();
 
 				//m_streamDemuxer.OnAudioFormatChanged+=new MediaPortal.TV.Recording.DVBDemuxer.OnAudioChanged(m_streamDemuxer_OnAudioFormatChanged);
 				//m_streamDemuxer.OnPMTIsChanged+=new MediaPortal.TV.Recording.DVBDemuxer.OnPMTChanged(m_streamDemuxer_OnPMTIsChanged);
@@ -1140,6 +1135,7 @@ namespace MediaPortal.TV.Recording
 				// to clear buffers for epg and teletext
 				if (m_streamDemuxer != null)
 				{
+					m_streamDemuxer.GrabTeletext(false);
 					m_streamDemuxer.SetChannelData(0, 0, 0, 0, "",0,0);
 				}
 
@@ -1187,7 +1183,10 @@ namespace MediaPortal.TV.Recording
 				m_analyzerInterface=null;
 				m_epgGrabberInterface=null;
 				m_mhwGrabberInterface=null;
+
+#if USEMTSWRITER
 				m_tsWriterInterface=null;
+#endif
 				m_tsRecordInterface=null;
 				Log.Write("free pins");
 
@@ -1358,7 +1357,6 @@ namespace MediaPortal.TV.Recording
 					fileout=null;
 				}
 #endif
-				m_streamDemuxer.Teletext.ClearBuffer();
 				GC.Collect();GC.Collect();GC.Collect();
 				m_graphState = State.None;
 				//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: delete graph done");
@@ -2171,11 +2169,6 @@ namespace MediaPortal.TV.Recording
 			return null;
 		}
 		
-		//not used
-		public IBaseFilter AudiodeviceFilter()
-		{
-			return null;
-		}
 
 		//not used
 		public bool SupportsFrameSize(Size framesize)
@@ -2220,16 +2213,6 @@ namespace MediaPortal.TV.Recording
 				}
 			}
 			return m_NetworkType;
-		}
-		
-		/// <summary>
-		/// Set the LNB settings for a DVB-S tune request
-		/// </summary>
-		/// <remarks>Only needed for DVB-S</remarks>
-		/// <param name="tuneRequest">IDVBTuneRequest tunerequest for a DVB-S channel</param>
-		public IBaseFilter Mpeg2DataFilter()
-		{
-			return null;
 		}
 
 		#endregion
@@ -3514,7 +3497,7 @@ namespace MediaPortal.TV.Recording
 			m_epgGrabber.Process();
 
 			TimeSpan ts=DateTime.Now-updateTimer;
-			bool reTune=false;
+			//bool reTune=false;
 
 			if (ts.TotalMilliseconds>800)
 			{
@@ -3526,6 +3509,7 @@ namespace MediaPortal.TV.Recording
 				{
 					Vmr7.Process();
 				}
+				/*
 				if(GUIGraphicsContext.Vmr9Active)
 				{
 					if (GUIGraphicsContext.Vmr9FPS < 1f)
@@ -3539,6 +3523,7 @@ namespace MediaPortal.TV.Recording
 					}
 					else timeRetune=DateTime.Now;
 				}
+				*/
 				updateTimer=DateTime.Now;
 			}
 
@@ -3578,24 +3563,26 @@ namespace MediaPortal.TV.Recording
 							ushort chcount=0;
 							m_analyzerInterface.GetChannelCount(ref chcount);
 							Log.Write("DVBGRAPHBDA:Got wrong PMT:{0} {1} channels:{2}",pmtProgramNumber,currentTuningObject.ProgramNumber, chcount);
+							/*
 							ts = DateTime.Now-timeRetune;
 							if (ts.TotalSeconds>5)
 							{
 								reTune=true;
 								timeRetune=DateTime.Now;
-							}
+							}*/
 						}
 						pmt=null;
 					}
 					else 
 					{
 						//Log.Write("DVBGRAPHBDA:could not get PMT");
+						/*
 						ts = DateTime.Now-timeRetune;
 						if (ts.TotalSeconds>=5)
 						{
 							reTune=true;
 							timeRetune=DateTime.Now;
-						}
+						}*/
 					}
 					Marshal.FreeCoTaskMem(pmtMem);
 				}
@@ -3942,7 +3929,6 @@ namespace MediaPortal.TV.Recording
 				}
 #endif
 				if (Vmr9!=null) Vmr9.Enable(true);
-				m_streamDemuxer.Teletext.ClearBuffer();
 			}
 		}//public void TuneChannel(AnalogVideoStandard standard,int iChannel,int country)
 
@@ -5239,6 +5225,17 @@ namespace MediaPortal.TV.Recording
 #else
 			return String.Empty;
 #endif
+		}
+		public void GrabTeletext(bool yesNo)
+		{
+			if (m_graphState==State.None || m_graphState==State.Created) return;
+			if (m_streamDemuxer==null) return;
+			m_streamDemuxer.GrabTeletext(yesNo);
+		}
+
+		public IBaseFilter AudiodeviceFilter()
+		{
+			return null;
 		}
 	}//public class DVBGraphBDA 
 }//namespace MediaPortal.TV.Recording

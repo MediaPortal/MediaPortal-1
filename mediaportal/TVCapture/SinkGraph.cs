@@ -81,7 +81,8 @@ namespace MediaPortal.TV.Recording
 		protected string                     cardName;
 		ArrayList						m_audioPidList=new ArrayList();
 		int									SelectedLanguage = 11;
-
+		protected bool      _grabTeletext=false;
+		protected bool			_hasTeletext=false;
 
     /// <summary>
     /// Constructor
@@ -1260,10 +1261,6 @@ namespace MediaPortal.TV.Recording
 			}
 		}
 		
-		public IBaseFilter AudiodeviceFilter()
-		{
-			return null;
-		}
 
 		public bool SupportsFrameSize(Size framesize)
 		{	
@@ -1285,10 +1282,6 @@ namespace MediaPortal.TV.Recording
 			updatedRadioChannels=0;
 		}
 
-		public IBaseFilter Mpeg2DataFilter()
-		{
-			return null;
-		}
 		
 		public void TuneRadioChannel(RadioStation station)
 		{
@@ -1439,7 +1432,7 @@ namespace MediaPortal.TV.Recording
 
 		public bool HasTeletext()
 		{
-			return false;
+			return _hasTeletext;
 		}
 		
 		public int GetAudioLanguage()
@@ -1478,6 +1471,16 @@ namespace MediaPortal.TV.Recording
 		public string RadioTimeshiftFileName()
 		{
 			return String.Empty;
+		}
+		
+		public void GrabTeletext(bool yesNo)
+		{
+			_grabTeletext=yesNo;
+		}
+
+		public IBaseFilter AudiodeviceFilter()
+		{
+			return null;
 		}
   }
 }

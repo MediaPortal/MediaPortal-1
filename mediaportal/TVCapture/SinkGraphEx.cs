@@ -50,8 +50,18 @@ namespace MediaPortal.TV.Recording
 	/// -tv recording
 	/// -tv timeshifting
 	/// </summary>	
-	public class SinkGraphEx : MediaPortal.TV.Recording.SinkGraph
+	public class SinkGraphEx : MediaPortal.TV.Recording.SinkGraph, ISampleGrabberCB
 	{
+		#region imports
+		[DllImport("dshowhelper.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
+		unsafe private static extern bool AddTeeSinkToGraph(IGraphBuilder graph);
+		[DllImport("dshowhelper.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
+		unsafe private static extern void AddWstCodecToGraph(IGraphBuilder graph);
+		#endregion 
+
+		IBaseFilter							m_sampleGrabber=null;
+		ISampleGrabber					m_sampleInterface=null;
+
 		#region Constructors
 		
 		/// <summary>
@@ -74,6 +84,8 @@ namespace MediaPortal.TV.Recording
 		{
 			try
 			{
+				_hasTeletext=false;
+				_grabTeletext=false;
 				Vmr9 =new VMR9Util("mytv");
 				Vmr7 = new VMR7Util();
 
@@ -340,6 +352,7 @@ namespace MediaPortal.TV.Recording
 
 				SetQuality(3);
 
+				//SetupTeletext();
 				return true;
 			}
 			catch(Exception ex)
@@ -347,6 +360,33 @@ namespace MediaPortal.TV.Recording
 				Log.WriteFile(Log.LogType.Capture,true,"SinkGraphEx: Unable to create graph:{0} {1} {2}",ex.Message,ex.Source,ex.StackTrace);
 				return false;
 			}
+		}
+
+		void SetupTeletext()
+		{
+			//
+			//	[							 ]		 [  tee/sink	]			 [	wst			]			[ sample	]
+			//	[	capture			 ]		 [		to			]----->[	codec		]---->[ grabber	]
+			//	[						vbi]---->[	sink			]			 [					]			[					]
+			//
+			if (GUIGraphicsContext.DX9Device==null) return;
+
+				
+			AddTeeSinkToGraph(m_graphBuilder); //Tee/Sink-to-Sink Converter
+			AddWstCodecToGraph(m_graphBuilder);//WST Codec
+			
+			m_sampleGrabber=(IBaseFilter) Activator.CreateInstance( Type.GetTypeFromCLSID( Clsid.SampleGrabber, true ) );
+			m_sampleInterface=(ISampleGrabber) m_sampleGrabber;
+			m_graphBuilder.AddFilter(m_sampleGrabber,"Sample Grabber");
+			m_sampleInterface.SetCallback(this,1);
+
+			IBaseFilter teesink=DirectShowUtil.GetFilterByName(m_graphBuilder, "Tee/Sink-to-Sink Converter");
+			IBaseFilter wstCodec=DirectShowUtil.GetFilterByName(m_graphBuilder,"WST Codec");
+
+			m_captureGraphBuilder.RenderStream(new Guid[]{Clsid.PinCategoryVBI},null,m_captureFilter,teesink,wstCodec);
+			m_captureGraphBuilder.RenderStream(null,null,wstCodec,null,m_sampleGrabber);
+			Marshal.ReleaseComObject(teesink);
+			Marshal.ReleaseComObject(wstCodec);
 		}
 
 		void RetryOtherInstances(int instance)
@@ -471,8 +511,10 @@ namespace MediaPortal.TV.Recording
 		public override void DeleteGraph()
 		{
 			if (m_graphState < State.Created) return;
+			int hr;
 
-
+			
+			_grabTeletext=false;
 			m_iPrevChannel=-1;
 			Log.WriteFile(Log.LogType.Capture,"SinkGraph:DeleteGraph()");
 			StopRecording();
@@ -513,7 +555,14 @@ namespace MediaPortal.TV.Recording
 
 			if (m_TVTuner != null)
 				Marshal.ReleaseComObject(m_TVTuner); m_TVTuner = null;
-			
+		
+			m_sampleInterface=null;
+			if (m_sampleGrabber != null) 
+			{
+				while ((hr=Marshal.ReleaseComObject(m_sampleGrabber))>0); 
+				m_sampleGrabber=null;
+			}
+
 			
 			if (m_graphBuilder!=null)
 				DsUtils.RemoveFilters(m_graphBuilder);
@@ -540,6 +589,7 @@ namespace MediaPortal.TV.Recording
 			if (m_graphBuilder != null)
 				Marshal.ReleaseComObject(m_graphBuilder); m_graphBuilder = null;
 
+			_hasTeletext=false;
 			m_graphState = State.None;
 			return ;
 		}
@@ -610,7 +660,26 @@ namespace MediaPortal.TV.Recording
 	
 	#endregion
 
-		
+		#region ISampleGrabberCB Members
+
+		public int SampleCB(double SampleTime, IMediaSample pSample)
+		{
+			// TODO:  Add SinkGraphEx.SampleCB implementation
+			return 0;
+		}
+
+		public int BufferCB(double SampleTime, System.IntPtr pBuffer, int BufferLen)
+		{
+			if (!_grabTeletext) return 0;
+			if (pBuffer==IntPtr.Zero) return 0;
+			if (BufferLen<43) return 0;
+			
+			_hasTeletext=true;
+			TeletextGrabber.SaveAnalogData(pBuffer, BufferLen);
+			return 0;
+		}
+
+		#endregion
 	}
 }
 #endif

@@ -175,13 +175,13 @@ namespace MediaPortal.TV.Recording
 
         #region global Vars
 		int SECTIONS_BUFFER_WIDTH=1024+187;// 32kb for tables
-        int m_teletextPid = 0;
-        int m_subtitlePid = 0;
-        int m_videoPid = 0;
-        int m_audioPid = 0;
+		int m_teletextPid = 0;
+		int m_subtitlePid = 0;
+		int m_videoPid = 0;
+		int m_audioPid = 0;
 		int m_pmtPid = 0;
-        string m_channelName = "";
-        bool m_pluginsEnabled = false;
+		string m_channelName = "";
+		bool m_pluginsEnabled = false;
 		// mhw
 		bool m_mhwGrabbing=false;
 		static ArrayList m_mhwChannels=new ArrayList();
@@ -190,10 +190,10 @@ namespace MediaPortal.TV.Recording
 		static ArrayList m_mhwThemes=new ArrayList();
 		// for pid 0xd3
 		byte[] m_tableBufferD3=new byte[0];
-		int m_bufferPositionD3=0;
+//		int m_bufferPositionD3=0;
 		// for pid 0xd2
 		byte[] m_tableBufferD2=new byte[0];
-		int m_bufferPositionD2=0;
+		//int m_bufferPositionD2=0;
 		// for dvb-sections
 		int m_sectionPid=-1;
 		int m_sectionTableID=-1;
@@ -219,6 +219,7 @@ int m_bufferPositionPMT=0;
 		static NetworkType m_currentNetworkType;
 		bool m_packetsReceived=false;
 		DVBSectionHeader m_sectionHeader=new DVBSectionHeader();
+		bool _grabTeletext=false;
 
 		static DateTime epgRegrabTime=DateTime.MinValue;
         #endregion
@@ -227,7 +228,7 @@ int m_bufferPositionPMT=0;
 
         TSHelperTools.TSHeader m_packetHeader = new TSHelperTools.TSHeader();
         TSHelperTools m_tsHelper = new TSHelperTools();
-        DVBTeletext m_teleText = new DVBTeletext();
+        
         DVBEPG m_epgClass = new DVBEPG();
         AudioHeader m_usedAudioFormat = new AudioHeader();
         #endregion
@@ -266,6 +267,11 @@ int m_bufferPositionPMT=0;
 			GetTable(0x12,tableID);// timeout 10 sec
 			Log.Write("start getting epg for table 0x{0:X}",tableID);
 #endif
+		}
+	
+		public void GrabTeletext(bool yesNo)
+		{
+			_grabTeletext=yesNo;
 		}
 		public void GetMHWEPG()
 		{
@@ -396,7 +402,7 @@ int m_bufferPositionPMT=0;
 			packetTimer=DateTime.MinValue;
 
 			m_epgClass.ClearBuffer();
-			m_teleText.ClearBuffer();
+			
 			Log.Write("DVBDemuxer:{0} audio:{1:X} video:{2:X} teletext:{3:X} pmt:{4:X} subtitle:{5:X} program:{6}",
 				channelName,m_audioPid, m_videoPid, m_teletextPid, m_pmtPid,m_subtitlePid,m_programNumber);
 		
@@ -856,10 +862,6 @@ int m_bufferPositionPMT=0;
 
         #region Properties
 
-        public DVBTeletext Teletext
-        {
-            get { return m_teleText; }
-        }
         #endregion
 
         #region ISampleGrabberCB Members
@@ -947,10 +949,12 @@ int m_bufferPositionPMT=0;
 				}*/
 				// teletext
 
-				if (m_packetHeader.Pid==m_teletextPid && m_teleText != null && m_teletextPid>0)
+				if (_grabTeletext)
 				{
-//					Log.Write("grab teletext 0x{0:X}",m_teletextPid);
-					m_teleText.SaveData((IntPtr)ptr);
+					if (m_packetHeader.Pid==m_teletextPid && m_teletextPid>0)
+					{
+						TeletextGrabber.SaveData((IntPtr)ptr);
+					}
 				}
 
 				if(m_packetsReceived==false)
@@ -1211,8 +1215,8 @@ int m_bufferPositionPMT=0;
         }
 
         #endregion
-
 		#region Table Handling / saving data
+			/*
 		void GetTablesD2()
 		{
 			int tableID=0;
@@ -1307,7 +1311,7 @@ int m_bufferPositionPMT=0;
 			}
 
 		}
-
+*/
 		void ParseSection()
 		{
 

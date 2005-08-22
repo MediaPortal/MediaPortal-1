@@ -32,11 +32,11 @@ namespace MediaPortal.TV.Recording
 	public enum NetworkType 
 	{
 		Unknown,
-		Analog,
-		ATSC,	// ATSC
-		DVBC,	// DVB-cable
-		DVBS, // DVB-Sattelite
-		DVBT  // DVB-Terrestial
+		Analog,		// Analog TV
+		ATSC,			// ATSC
+		DVBC,			// DVB-cable
+		DVBS, 		// DVB-Sattelite
+		DVBT  		// DVB-Terrestial
 	}
 	/// <summary>
 	/// Interface definition for graphbuilder objects
@@ -216,8 +216,18 @@ namespace MediaPortal.TV.Recording
     /// </returns>
     bool SignalPresent();
 
+		/// <summary>
+		/// returns the signal quality in 0%-100%
+		/// </summary>
+		/// <returns></returns>
 		int  SignalQuality();
+
+		/// <summary>
+		/// returns the signal strength in dB
+		/// </summary>
+		/// <returns></returns>
 		int  SignalStrength();
+
     /// <summary>
     /// This method returns the frequency to which the tv tuner is currently tuned
     /// </summary>
@@ -240,20 +250,49 @@ namespace MediaPortal.TV.Recording
 
 		bool SupportsFrameSize(Size framesize);
 
-		IBaseFilter AudiodeviceFilter();
-		NetworkType Network();
-		void Tune(object tuningObject, int disecqNo);
-		void StoreChannels(int ID,bool radio, bool tv, ref int newChannels, ref int updatedChannels,ref int newRadioChannels, ref int updatedRadioChannels);
-		IBaseFilter Mpeg2DataFilter();
 
+		// returns card network type (analog, dvb-c, dvb-t, dvb-s, atsc)
+		NetworkType Network();
+
+		// tune to a specified frequency
+		void Tune(object tuningObject, int disecqNo);
+
+		// scan radio/tv channels and store them in the database
+		void StoreChannels(int ID,bool radio, bool tv, ref int newChannels, ref int updatedChannels,ref int newRadioChannels, ref int updatedRadioChannels);
+
+		
+		// tune Start listening to radio
 		void StartRadio(RadioStation station);
+
+		
+		// tune to the specified radio station
 		void TuneRadioChannel(RadioStation station);
+
+		// tune to the specified radio Frequency
 		void TuneRadioFrequency(int frequency);
+
+		//returns true if card can decode teletext and when current tv channel has teletext
 		bool HasTeletext();
+
+		// get the current audio language
 		int GetAudioLanguage();
+
+		//select an audio language
 		void SetAudioLanguage(int audioPid);
+
+		// get a list of the audio languages present in current tv show
 		ArrayList GetAudioLanguageList();		
+
+		//return the timeshift filename for tv
 		string TvTimeshiftFileName();
+
+		//return the timeshift filename for radio
 		string RadioTimeshiftFileName();
+
+		//tell capture card to grab & decode teletext and give it to the TeletextGrabber class
+		void GrabTeletext(bool yesNo);
+
+
+		IBaseFilter AudiodeviceFilter();
 	}
 }

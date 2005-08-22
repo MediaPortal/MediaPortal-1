@@ -306,15 +306,6 @@ namespace MediaPortal.TV.Recording
 				m_cardFilename=xmlreader.GetValueAsString("dvb_ts_cards","filename","");
 			}
 
-			// teletext settings
-			GUIWindow win=GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TELETEXT);
-			if(win!=null)
-				win.SetObject(m_streamDemuxer.Teletext);
-			
-			win=GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT);
-			if(win!=null)
-         win.SetObject(m_streamDemuxer.Teletext);
-			m_streamDemuxer.Teletext.ClearBuffer();
 
 //            m_streamDemuxer.OnAudioFormatChanged += new DVBDemuxer.OnAudioChanged(OnAudioFormatChanged);
 			m_streamDemuxer.SetCardType((int)DVBEPG.EPGCard.TechnisatStarCards,NetworkType.DVBS);
@@ -420,7 +411,8 @@ namespace MediaPortal.TV.Recording
 			if (m_graphState != State.None) return false;
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:creategraph()");
 			m_myCookie=0;
-
+			if (m_streamDemuxer!=null)
+				m_streamDemuxer.GrabTeletext(false);
 			// create graphs
 			Vmr9 =new VMR9Util("mytv");
 			Vmr7=new VMR7Util();
@@ -890,6 +882,7 @@ namespace MediaPortal.TV.Recording
 
 			if (m_streamDemuxer != null)
 			{
+				m_streamDemuxer.GrabTeletext(false);
 				m_streamDemuxer.SetChannelData(0, 0, 0, 0, "",0,0);
 			}
 
@@ -1024,7 +1017,6 @@ namespace MediaPortal.TV.Recording
 			GUIGraphicsContext.form.Invalidate(true);
 			GC.Collect();GC.Collect();GC.Collect();
 			m_graphState = State.None;
-			m_streamDemuxer.Teletext.ClearBuffer();
 
 			return;		
 		}
@@ -1736,7 +1728,6 @@ namespace MediaPortal.TV.Recording
 			finally
 			{
 				if (Vmr9!=null) Vmr9.Enable(true);
-				m_streamDemuxer.Teletext.ClearBuffer();
 
 			}
 		}
@@ -2319,10 +2310,6 @@ namespace MediaPortal.TV.Recording
 			return null;
 		}
 		
-		public IBaseFilter AudiodeviceFilter()
-		{
-			return null;
-		}
 
 		public bool SupportsFrameSize(Size framesize)
 		{	
@@ -2782,10 +2769,6 @@ namespace MediaPortal.TV.Recording
 			}
 		}
 
-		public IBaseFilter Mpeg2DataFilter()
-		{
-			return null;
-		}
 
 		DVBChannel LoadDiseqcSettings(DVBChannel ch,int disNo)
 		{
@@ -3117,5 +3100,17 @@ namespace MediaPortal.TV.Recording
 			return String.Empty;
 #endif
 		}
+		public void GrabTeletext(bool yesNo)
+		{
+			if (m_graphState==State.None || m_graphState==State.Created) return;
+			if (m_streamDemuxer==null) return;
+			m_streamDemuxer.GrabTeletext(yesNo);
+		}
+		public IBaseFilter AudiodeviceFilter()
+		{
+			return null;
+		}
+
+
 	}// class
 }// namespace

@@ -31,33 +31,32 @@ namespace MediaPortal.TV.Recording
 	/// </summary>
 	public class DVBTeletext
 	{
-		IntPtr[,]				m_cacheTable=new IntPtr[0x900,0x80];
-		int[]					m_currentSubPage=new int[10];
-		byte[]					m_subPageTable=new byte[0x900];
-		int[]					m_currentPage=new int[10];
-		int						m_actualPage=0;
-		int						m_actualSubPage=0;
-		int						m_pageCount=0;
-		//Hashtable				pages=new Hashtable();
-		System.Drawing.Bitmap	m_pageBitmap=null;
-		System.Drawing.Graphics m_renderGraphics=null;
-		int						m_txtLanguage=0;
-		public delegate void PageUpdated();
+		public delegate void		 PageUpdated();
 		public event PageUpdated PageUpdatedEvent;
-		int						m_pageWidth=0;
-		int						m_pageHeight=0;
-		bool					m_hiddenMode=true;
-		bool					m_transparentMode=false;
-		string					m_pageSelectText="";
-		System.Drawing.Font		m_teletextFont=null;
-		int[]					m_aitbuffer=new int[10];
-		int[]					m_basicTableOfPages=new int[2352];
-		int						m_aitCount=-1;
-		string[]				m_aitTable=new string[2352];
-		int[]					m_topNavigationPages=new int[]{256,256,256,256};
-		string[]				m_flofAIT=new string[2352];
-		int[,]					m_flofTable=new int[2352,4];
-		bool					m_fastTextDecode=false;
+		IntPtr[,]								 m_cacheTable=new IntPtr[0x900,0x80];
+		int[]										 m_currentSubPage=new int[10];
+		byte[]									 m_subPageTable=new byte[0x900];
+		int[]										 m_currentPage=new int[10];
+		int											 m_actualPage=0;
+		int											 m_actualSubPage=0;
+		int											 m_pageCount=0;
+		System.Drawing.Bitmap		 m_pageBitmap=null;
+		System.Drawing.Graphics  m_renderGraphics=null;
+		int											 m_txtLanguage=0;
+		int											 m_pageWidth=0;
+		int											 m_pageHeight=0;
+		bool										 m_hiddenMode=true;
+		bool										 m_transparentMode=false;
+		string									 m_pageSelectText="";
+		System.Drawing.Font			 m_teletextFont=null;
+		int[]										 m_aitbuffer=new int[10];
+		int[]										 m_basicTableOfPages=new int[2352];
+		int											 m_aitCount=-1;
+		string[]								 m_aitTable=new string[2352];
+		int[]										 m_topNavigationPages=new int[]{256,256,256,256};
+		string[]								 m_flofAIT=new string[2352];
+		int[,]									 m_flofTable=new int[2352,4];
+		bool										 m_fastTextDecode=false;
 		//
 		//
 		string[]				m_mpPage=new string[]
@@ -477,6 +476,231 @@ namespace MediaPortal.TV.Recording
 			m_renderGraphics=null;
 		}
 
+		
+		public void SaveAnalogData(IntPtr dataPtr,int bufferLen)
+		{
+			if (dataPtr==IntPtr.Zero) return;
+			if (bufferLen<43) return;
+			int maxLines=bufferLen/43;
+			byte[] txtRow=new byte[42];
+			int line=0;
+			int b=0,byte1=0, byte2=0, byte3=0, byte4=0;
+			int actualTransmittingPage=0;
+			byte[] tmpBuffer=new byte[46];
+			int packetNumber;
+			byte magazine;
+		//	int pointer=0;
+			int dataAdd=(int)dataPtr;
+
+			try
+			{
+				for (line = 0; line < maxLines; line++)
+				{
+					for (int i=0; i < 42;++i)
+						tmpBuffer[i] = Marshal.ReadByte(dataPtr,line*43+i+1);
+
+					//Marshal.Copy((IntPtr)((dataAdd)+(line*43)),tmpBuffer,3,43);
+					//tmpBuffer[0]=0x02;
+					//tmpBuffer[1]=0x2c;
+
+					//pointer = line * 43;
+					//if ((tmpBuffer[0]==0x02 || tmpBuffer[0]==0x03) && (tmpBuffer[1]==0x2C))
+					{
+						//for (b=4;b<46;b++)
+						//{
+						//	byte upper=0;
+						//	byte lower=0;
+						//	upper = (byte)((tmpBuffer[b] >> 4) & 0xf);
+						//	lower = (byte)(tmpBuffer[b] & 0xf);
+						//	tmpBuffer[b-4] = (byte)((m_lutTable[upper]) | (m_lutTable[lower+16]));
+						//}//for(b=4;
+
+						byte1 = m_deHamTable[tmpBuffer[0]];
+						byte2 = m_deHamTable[tmpBuffer[1]];
+
+						if (byte1 == 0xFF || byte2 == 0xFF)
+							continue;
+
+						byte1 &= 8;
+						packetNumber = byte1>>3 | byte2<<1;
+						//  mag number
+						magazine =(byte)(m_deHamTable[tmpBuffer[0]] & 7);
+						if (packetNumber == 0)
+						{
+							byte1 = m_deHamTable[tmpBuffer[0]];
+							byte2 = m_deHamTable[tmpBuffer[3]];
+							byte3 = m_deHamTable[tmpBuffer[2]];
+
+							if (byte1 == 0xFF || byte2 == 0xFF || byte3 == 0xFF)
+							{
+								m_currentPage[magazine] = -1;
+								actualTransmittingPage = -1;
+								continue;
+							}
+
+							byte1 &= 7;
+							if (byte1==0)
+								byte1 = 8;
+							actualTransmittingPage = byte1<<8 | byte2<<4 | byte3;
+							m_currentPage[magazine] = actualTransmittingPage;
+
+							if (byte2 > 9 || byte3 > 9) 
+							{
+								m_currentSubPage[magazine] = 0;
+								m_subPageTable[m_currentPage[magazine]] = 0;
+								continue;
+							}
+
+							byte1 = m_deHamTable[tmpBuffer[7]];
+							byte2 = m_deHamTable[tmpBuffer[6]];
+							byte3 = m_deHamTable[tmpBuffer[5]];
+							byte4 = m_deHamTable[tmpBuffer[4]];
+
+							if (byte1 == 0xFF || byte2 == 0xFF || byte3 == 0xFF || byte4 == 0xFF)
+							{
+								m_currentSubPage[magazine] = -1;
+								continue;
+							}
+
+							byte1 &= 3;
+							byte3 &= 7;
+
+							if (byte1 != 0 || byte2 != 0 || byte4 > 9)
+							{
+								m_currentSubPage[magazine] = -1;
+								continue;
+							}
+							else
+								m_currentSubPage[magazine] = byte3<<4 | byte4;
+
+							int languageCode=0;
+							byte1 = m_deHamTable[tmpBuffer[9]];
+							if (byte1 == 0xFF)
+								languageCode = 0;
+							else
+								languageCode =((byte1 >> 3) & 0x01) | (((byte1 >> 2) & 0x01) << 1) | (((byte1 >> 1) & 0x01) << 2);
+
+							switch(languageCode)
+							{
+								case 0:
+									m_txtLanguage=1;
+									break;
+								case 1:
+									m_txtLanguage=4;
+									break;
+								case 2:
+									m_txtLanguage=11;
+									break;
+								case 3:
+									m_txtLanguage=5;
+									break;
+								case 4:
+									m_txtLanguage=3;
+									break;
+								case 5:
+									m_txtLanguage=8;
+									break;
+								case 6:
+									m_txtLanguage=0;
+									break;
+								default:
+									m_txtLanguage=1;
+									break;
+
+							}
+
+							if(SetMemory(1000,m_currentPage[magazine],m_currentSubPage[magazine])==false)
+								return;
+							m_subPageTable[m_currentPage[magazine]] = (byte)m_currentSubPage[magazine];
+
+							for (b = 10; b < 42; b++)
+							{
+								if ( ((tmpBuffer[b]&1)>0) ^ (((tmpBuffer[b]>>1)&1)>0) ^
+									((tmpBuffer[b]>>2)&1)>0 ^ ((tmpBuffer[b]>>3)&1)>0 ^
+									((tmpBuffer[b]>>4)&1)>0 ^ ((tmpBuffer[b]>>5)&1)>0 ^
+									((tmpBuffer[b]>>6)&1)>0 ^ (tmpBuffer[b]>>7)>0)
+									tmpBuffer[b] &= 127;
+								else
+									tmpBuffer[b] = 32;
+							}
+
+							if ((m_deHamTable[tmpBuffer[5]] & 8)!=0)   /* C4 -> erase page */
+							{
+								for(int t=0;t<960;t++)
+									Marshal.WriteByte(m_cacheTable[m_currentPage[magazine],m_currentSubPage[magazine]],t,32);
+							}
+						}
+						else if (packetNumber <= 24)
+						{
+							if(SetMemory(1000,m_currentPage[magazine],m_currentSubPage[magazine])==false)
+								return;
+
+							if ((m_currentPage[magazine] & 0x0F0) <= 0x090 && (m_currentPage[magazine] & 0x00F) <= 0x009)
+							{  
+								for (b = 2; b < 42; b++)
+								{
+									if ((tmpBuffer[b]&1)>0 ^ ((tmpBuffer[b]>>1)&1)>0 ^
+										((tmpBuffer[b]>>2)&1)>0 ^ ((tmpBuffer[b]>>3)&1)>0 ^
+										((tmpBuffer[b]>>4)&1)>0 ^ ((tmpBuffer[b]>>5)&1)>0 ^
+										((tmpBuffer[b]>>6)&1)>0 ^ (tmpBuffer[b]>>7)>0)
+										tmpBuffer[b] &= 127;
+									else
+										tmpBuffer[b] = 32;
+								}
+							}
+						}
+						else if(packetNumber==27)
+						{
+							int pageNumber=m_currentPage[magazine];
+							int subPageNumber=m_currentSubPage[magazine];
+							if(m_deHamTable[tmpBuffer[2]]==0)
+							{
+
+								byte1 = m_deHamTable[tmpBuffer[0]];
+								if (byte1!=255)
+								{
+									byte1 &= 7;
+									for (b = 0; b < 4; b++)
+									{
+										m_flofTable[pageNumber,b]=0;
+										byte2 = m_deHamTable[tmpBuffer[b*6+4]];
+										byte3 = m_deHamTable[tmpBuffer[b*6+3]];
+
+										if (byte2!=255 && byte3!=255)
+										{
+											byte4 = ((byte1 & 4)^((m_deHamTable[tmpBuffer[b*6+8]]>>1) & 4)) | ((byte1 & 2)^((m_deHamTable[tmpBuffer[b*6+8]]>>1) & 2)) |  ((byte1 & 1)^((m_deHamTable[tmpBuffer[b*6+6]]>>3) & 1));
+											if (byte4 == 0) byte4 = 8;
+											if (byte2<=9 && byte3<= 9)
+												m_flofTable[pageNumber,b] = byte4<<8 | byte2<<4 | byte3;
+										}
+									}
+
+								}
+							}
+						}
+						
+
+						if (m_currentPage[magazine]!= -1 && m_currentSubPage[magazine] != -1 &&
+							packetNumber <= 24 && ((int)m_cacheTable[m_currentPage[magazine],m_currentSubPage[magazine]]!=0))
+						{
+							IntPtr adr=m_cacheTable[m_currentPage[magazine],m_currentSubPage[magazine]];
+							int offset=packetNumber*40;
+							adr=(IntPtr)(((int)adr)+offset);
+							Marshal.Copy(tmpBuffer,2,adr,40);
+							if (m_currentPage[magazine]==m_actualPage &&
+								m_currentSubPage[magazine]==m_actualSubPage)
+							{
+								PageUpdatedEvent();
+							}
+						}
+					}//if ((tmpBuffer
+				}// for(line=0
+			}
+			catch(Exception )
+			{ 
+			}
+		}
+
 		public void SaveData(IntPtr dataPtr)
 		{
 			if (dataPtr==IntPtr.Zero) return;
@@ -685,19 +909,15 @@ namespace MediaPortal.TV.Recording
 							{
 								PageUpdatedEvent();
 							}
-
-							
 						}
-
-
 					}//if ((tmpBuffer
-
 				}// for(line=0
 			}
 			catch(Exception )
 			{ 
 			}
 		}
+
 		bool IsDEC(int i)
 		{
 			return (bool)(((i & 0x00F) <= 9) && ((i & 0x0F0) <= 0x90));

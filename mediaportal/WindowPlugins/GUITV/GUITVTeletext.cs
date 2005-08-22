@@ -51,7 +51,6 @@ namespace MediaPortal.GUI.TV
 		[SkinControlAttribute(505)]				protected GUIToggleButtonControl btnHidden=null;
 		[SkinControlAttribute(506)]				protected GUISelectButtonControl btnSubPage=null;
 
-		DVBTeletext	dvbTeletextParser;
 		Bitmap	bitmapTeletextPage;
 		string	inputLine="";
 		int		currentPageNumber=100;
@@ -147,6 +146,8 @@ namespace MediaPortal.GUI.TV
 
 		protected override void OnPageDestroy(int newWindowId)
 		{
+			TeletextGrabber.TeletextCache.PageUpdatedEvent-=new MediaPortal.TV.Recording.DVBTeletext.PageUpdated(dvbTeletextParser_PageUpdatedEvent);
+
 			if ( !GUITVHome.IsTVWindow(newWindowId) )
 			{
 				if (Recorder.IsViewing() && ! (Recorder.IsTimeShifting()||Recorder.IsRecording()) )
@@ -168,24 +169,21 @@ namespace MediaPortal.GUI.TV
 			btnSubPage.RestoreSelection=false;
 
 			ShowMessage(100,0);
-			if(dvbTeletextParser==null)
+			TeletextGrabber.TeletextCache.PageSelectText="";
+			if(imgTeletextPage!=null && TeletextGrabber.TeletextCache!=null)
 			{
-				Log.Write("dvb-teletext: no teletext object");
-				GUIWindowManager.ShowPreviousWindow();
-				return ;
+				TeletextGrabber.TeletextCache.SetPageSize(imgTeletextPage.Width,imgTeletextPage.Height);
 			}
-			dvbTeletextParser.PageSelectText="";
-			if(imgTeletextPage!=null && dvbTeletextParser!=null)
+			TeletextGrabber.TeletextCache.GetPage(100,0);
+			if(btnHidden!=null && TeletextGrabber.TeletextCache!=null)
 			{
-				dvbTeletextParser.SetPageSize(imgTeletextPage.Width,imgTeletextPage.Height);
-			}
-			dvbTeletextParser.GetPage(100,0);
-			if(btnHidden!=null && dvbTeletextParser!=null)
-			{
-				dvbTeletextParser.HiddenMode=true;
+				TeletextGrabber.TeletextCache.HiddenMode=true;
 				btnHidden.Selected=true;
 				GetNewPage();
 			}
+			TeletextGrabber.TeletextCache.PageUpdatedEvent+=new MediaPortal.TV.Recording.DVBTeletext.PageUpdated(dvbTeletextParser_PageUpdatedEvent);
+			TeletextGrabber.TeletextCache.TransparentMode=false;
+
 		}
 		protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
 		{
@@ -210,15 +208,15 @@ namespace MediaPortal.GUI.TV
 			}
 			if(control==btnHidden)
 			{
-				if(dvbTeletextParser!=null && btnHidden!=null)
+				if(TeletextGrabber.TeletextCache!=null && btnHidden!=null)
 				{
-					dvbTeletextParser.HiddenMode=btnHidden.Selected;
+					TeletextGrabber.TeletextCache.HiddenMode=btnHidden.Selected;
 					GetNewPage();
 				}
 			}
 			if(control==btnSubPage)
 			{
-				if(dvbTeletextParser!=null && btnSubPage!=null)
+				if(TeletextGrabber.TeletextCache!=null && btnSubPage!=null)
 				{
 					currentSubPageNumber=btnSubPage.SelectedItem;
 					GetNewPage();
@@ -228,9 +226,9 @@ namespace MediaPortal.GUI.TV
 
 		void GetNewPage()
 		{
-			if(dvbTeletextParser!=null)
+			if(TeletextGrabber.TeletextCache!=null)
 			{
-				bitmapTeletextPage=dvbTeletextParser.GetPage(currentPageNumber,currentSubPageNumber);
+				bitmapTeletextPage=TeletextGrabber.TeletextCache.GetPage(currentPageNumber,currentSubPageNumber);
 				Redraw();
 				Log.Write("dvb-teletext: select page {0} / subpage {1}",Convert.ToString(currentPageNumber),Convert.ToString(currentSubPageNumber));
 			}
@@ -246,8 +244,8 @@ namespace MediaPortal.GUI.TV
 			}
 			if(chKey=='c' || chKey=='C')
 			{
-				if(dvbTeletextParser!=null)
-					dvbTeletextParser.PageSelectText="";
+				if(TeletextGrabber.TeletextCache!=null)
+					TeletextGrabber.TeletextCache.PageSelectText="";
 				inputLine="";
 				GetNewPage();
 				return;
@@ -257,27 +255,27 @@ namespace MediaPortal.GUI.TV
 				chKey=='H' || chKey=='J' || chKey=='K' || chKey=='L')
 			{
 
-				if(dvbTeletextParser==null)
+				if(TeletextGrabber.TeletextCache==null)
 					return;
 				
 				string topButton=new string(chKey,1);
 					switch(topButton.ToLower())
 				{
 					case "h":
-						currentPageNumber=dvbTeletextParser.PageRed;
+						currentPageNumber=TeletextGrabber.TeletextCache.PageRed;
 						break;
 					case "j":
-						currentPageNumber=dvbTeletextParser.PageGreen;
+						currentPageNumber=TeletextGrabber.TeletextCache.PageGreen;
 						break;
 					case "k":
-						currentPageNumber=dvbTeletextParser.PageYellow;
+						currentPageNumber=TeletextGrabber.TeletextCache.PageYellow;
 						break;
 					case "l":
-						currentPageNumber=dvbTeletextParser.PageBlue;
+						currentPageNumber=TeletextGrabber.TeletextCache.PageBlue;
 						break;
 				}
 				currentSubPageNumber=0;
-				bitmapTeletextPage=dvbTeletextParser.GetPage(currentPageNumber,currentSubPageNumber);
+				bitmapTeletextPage=TeletextGrabber.TeletextCache.GetPage(currentPageNumber,currentSubPageNumber);
 				Redraw();
 				Log.Write("dvb-teletext: select page {0} / subpage {1}",Convert.ToString(currentPageNumber),Convert.ToString(currentSubPageNumber));
 				inputLine="";
@@ -294,9 +292,9 @@ namespace MediaPortal.GUI.TV
 				{
 					currentPageNumber++;
 					currentSubPageNumber=0;
-					if(dvbTeletextParser!=null)
+					if(TeletextGrabber.TeletextCache!=null)
 					{
-						bitmapTeletextPage=dvbTeletextParser.GetPage(currentPageNumber,currentSubPageNumber);
+						bitmapTeletextPage=TeletextGrabber.TeletextCache.GetPage(currentPageNumber,currentSubPageNumber);
 						Redraw();
 						Log.Write("dvb-teletext: select page {0} / subpage {1}",Convert.ToString(currentPageNumber),Convert.ToString(currentSubPageNumber));
 						inputLine="";
@@ -309,9 +307,9 @@ namespace MediaPortal.GUI.TV
 				{
 					currentPageNumber--;
 					currentSubPageNumber=0;
-					if(dvbTeletextParser!=null)
+					if(TeletextGrabber.TeletextCache!=null)
 					{
-						bitmapTeletextPage=dvbTeletextParser.GetPage(currentPageNumber,currentSubPageNumber);
+						bitmapTeletextPage=TeletextGrabber.TeletextCache.GetPage(currentPageNumber,currentSubPageNumber);
 						Redraw();
 						Log.Write("dvb-teletext: select page {0} / subpage {1}",Convert.ToString(currentPageNumber),Convert.ToString(currentSubPageNumber));
 						inputLine="";
@@ -322,9 +320,9 @@ namespace MediaPortal.GUI.TV
 				if(chKey>='0' && chKey<='9')
 				{
 					inputLine+= chKey;
-					if(dvbTeletextParser!=null)
+					if(TeletextGrabber.TeletextCache!=null)
 					{
-						dvbTeletextParser.PageSelectText=inputLine;
+						TeletextGrabber.TeletextCache.PageSelectText=inputLine;
 						GetNewPage();
 					}
 				}
@@ -339,10 +337,10 @@ namespace MediaPortal.GUI.TV
 					if(currentPageNumber>899)
 						currentPageNumber=899;
 
-					if(dvbTeletextParser!=null)
+					if(TeletextGrabber.TeletextCache!=null)
 					{
-						dvbTeletextParser.PageSelectText="";
-						bitmapTeletextPage=dvbTeletextParser.GetPage(currentPageNumber,currentSubPageNumber);
+						TeletextGrabber.TeletextCache.PageSelectText="";
+						bitmapTeletextPage=TeletextGrabber.TeletextCache.GetPage(currentPageNumber,currentSubPageNumber);
 						Redraw();
 					}
 					Log.Write("dvb-teletext: select page {0} / subpage {1}",Convert.ToString(currentPageNumber),Convert.ToString(currentSubPageNumber));
@@ -355,20 +353,10 @@ namespace MediaPortal.GUI.TV
 			}
 		}
 
-		public override void SetObject(object obj)
-		{
-			if(obj.GetType()==typeof(DVBTeletext))
-			{
-				dvbTeletextParser=(DVBTeletext)obj;
-				if(dvbTeletextParser==null)
-					return;
-				dvbTeletextParser.PageUpdatedEvent+=new MediaPortal.TV.Recording.DVBTeletext.PageUpdated(dvbTeletextParser_PageUpdatedEvent);
-			}
-		}
 
 		public bool HasTeletext()
 		{
-			return (dvbTeletextParser!=null);
+			return (TeletextGrabber.TeletextCache!=null);
 		}
 		//
 		//
@@ -386,9 +374,9 @@ namespace MediaPortal.GUI.TV
 			// here is only a flag set to true, the bitmap is getting
 			// in a timer-elapsed event!
 
-			if(dvbTeletextParser==null)
+			if(TeletextGrabber.TeletextCache==null)
 				return;
-			if(dvbTeletextParser.PageSelectText.IndexOf("-")!=-1)// page select is running
+			if(TeletextGrabber.TeletextCache.PageSelectText.IndexOf("-")!=-1)// page select is running
 				return;
 			if(GUIWindowManager.ActiveWindow==GetID)
 			{
@@ -401,8 +389,8 @@ namespace MediaPortal.GUI.TV
 			if(isPageDirty==true)
 			{
 				Log.Write("dvb-teletext page updated. {0:X}/{1}",currentPageNumber,currentSubPageNumber);
-				dvbTeletextParser.PageSelectText=Convert.ToString(currentPageNumber);
-				bitmapTeletextPage=dvbTeletextParser.GetPage(currentPageNumber,currentSubPageNumber);
+				TeletextGrabber.TeletextCache.PageSelectText=Convert.ToString(currentPageNumber);
+				bitmapTeletextPage=TeletextGrabber.TeletextCache.GetPage(currentPageNumber,currentSubPageNumber);
 				Redraw();
 				isPageDirty=false;
 			}

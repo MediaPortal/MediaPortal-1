@@ -1272,10 +1272,6 @@ namespace MediaPortal.TV.Recording
 			}
 		}
 		
-		public IBaseFilter AudiodeviceFilter()
-		{
-			return m_filterCaptureAudio;
-		}
 
 		public bool SupportsFrameSize(Size framesize)
 		{	
@@ -1301,10 +1297,6 @@ namespace MediaPortal.TV.Recording
 			updatedChannels=0;
 			newRadioChannels=0;
 			updatedRadioChannels=0;
-		}
-		public IBaseFilter Mpeg2DataFilter()
-		{
-			return null;
 		}
 		public void TuneRadioChannel(RadioStation station)
 		{
@@ -1412,6 +1404,14 @@ namespace MediaPortal.TV.Recording
 		{
 			return String.Empty;
 		}
+		public void GrabTeletext(bool yesNo)
+		{
+		}
+		public IBaseFilter AudiodeviceFilter()
+		{
+			return m_filterCaptureAudio;
+		}
+
 
 	}
 }
