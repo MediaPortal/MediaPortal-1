@@ -1669,6 +1669,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Util\ConditionChecker.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Util\CRCTool.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
