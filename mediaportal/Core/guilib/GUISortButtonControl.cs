@@ -65,6 +65,12 @@ namespace MediaPortal.GUI.Library
 			_sortImages[2] = new GUIImage(this.GetID, this.GetID + 25002, x, y, w, h, _descendingTextureFilename, 0xFFFFFFFF);
 			_sortImages[3] = new GUIImage(this.GetID, this.GetID + 25003, x, y, w, h, _descendingTextureFocusedFilename, 0xFFFFFFFF);
 		}
+		public override void ScaleToScreenResolution()
+		{
+			base.ScaleToScreenResolution();
+			GUIGraphicsContext.ScalePosToScreenResolution(ref _sortButtonWidth, ref _sortButtonHeight);
+			GUIGraphicsContext.ScalePosToScreenResolution(ref _sortButtonOffsetX, ref _sortButtonOffsetY);
+		}
 
 		public override void FreeResources()
 		{
@@ -99,17 +105,29 @@ namespace MediaPortal.GUI.Library
 			int y = m_dwPosY + _sortButtonOffsetY;
 
 			if(_sortImages[0].XPosition != x || _sortImages[0].YPosition != y)
+			{
 				_sortImages[0].SetPosition(x, y);	
-
+				_sortImages[0].Width=_sortButtonWidth;
+				_sortImages[0].Height=_sortButtonHeight;
+			}
 			if(_sortImages[1].XPosition != x || _sortImages[1].YPosition != y)
+			{
 				_sortImages[1].SetPosition(x, y);	
-
+				_sortImages[1].Width=_sortButtonWidth;
+				_sortImages[1].Height=_sortButtonHeight;
+			}
 			if(_sortImages[2].XPosition != x || _sortImages[2].YPosition != y)
+			{
 				_sortImages[2].SetPosition(x, y);	
-
+				_sortImages[2].Width=_sortButtonWidth;
+				_sortImages[2].Height=_sortButtonHeight;
+			}
 			if(_sortImages[3].XPosition != x || _sortImages[3].YPosition != y)
+			{
 				_sortImages[3].SetPosition(x, y);	
-
+				_sortImages[3].Width=_sortButtonWidth;
+				_sortImages[3].Height=_sortButtonHeight;
+			}
 			int sortImageIndex = _isAscending ? isFocused && _isSortImageHot ? 3 : 2 : isFocused && _isSortImageHot ? 1 : 0;
 
 			_sortImages[sortImageIndex].Render(timePassed);

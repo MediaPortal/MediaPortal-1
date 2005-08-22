@@ -11,3 +11,5 @@ Vmr9SetDeinterlacePrefs		@4
 DvrMsCreate					@5
 DvrMsStart					@6
 DvrMsStop					@7
+AddTeeSinkToGraph			@8
+AddWstCodecToGraph			@9

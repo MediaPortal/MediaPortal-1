@@ -232,9 +232,8 @@ namespace MediaPortal.Player
 						result=m_graphBuilder.RemoveFilter(VMR9Filter);
 						if (result!=0) Log.Write("VMR9:RemoveFilter():{0}",result);
 					}
-					catch(Exception ex)
+					catch(Exception )
 					{
-						int x=1;
 					}
 					Vmr9Deinit();
 					result=Marshal.ReleaseComObject(VMR9Filter);

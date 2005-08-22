@@ -552,3 +552,87 @@ void DvrMsStop(LONG id)
 	}
 
 }
+
+
+HRESULT CreateKernelFilter(
+    const GUID &guidCategory,  // Filter category.
+    LPCOLESTR szName,          // The name of the filter.
+    IBaseFilter **ppFilter     // Receives a pointer to the filter.
+)
+{
+    HRESULT hr;
+    ICreateDevEnum *pDevEnum = NULL;
+    IEnumMoniker *pEnum = NULL;
+    if (!szName || !ppFilter) 
+    {
+        return E_POINTER;
+    }
+
+    // Create the system device enumerator.
+    hr = CoCreateInstance(CLSID_SystemDeviceEnum, NULL, CLSCTX_INPROC,
+        IID_ICreateDevEnum, (void**)&pDevEnum);
+    if (FAILED(hr))
+    {
+        return hr;
+    }
+
+    // Create a class enumerator for the specified category.
+    hr = pDevEnum->CreateClassEnumerator(guidCategory, &pEnum, 0);
+    pDevEnum->Release();
+    if (hr != S_OK) // S_FALSE means the category is empty.
+    {
+        return E_FAIL;
+    }
+
+    // Enumerate devices within this category.
+    bool bFound = false;
+    IMoniker *pMoniker;
+    while (!bFound && (S_OK == pEnum->Next(1, &pMoniker, 0)))
+    {
+        IPropertyBag *pBag = NULL;
+        hr = pMoniker->BindToStorage(0, 0, IID_IPropertyBag, (void **)&pBag);
+        if (FAILED(hr))
+        {
+            pMoniker->Release();
+            continue; // Maybe the next one will work.
+        }
+        // Check the friendly name.
+        VARIANT var;
+        VariantInit(&var);
+        hr = pBag->Read(L"FriendlyName", &var, NULL);
+        if (SUCCEEDED(hr) && (lstrcmpiW(var.bstrVal, szName) == 0))
+        {
+            // This is the right filter.
+            hr = pMoniker->BindToObject(0, 0, IID_IBaseFilter,
+                (void**)ppFilter);
+            bFound = true;
+        }
+        VariantClear(&var);
+        pBag->Release();
+        pMoniker->Release();
+    }
+    pEnum->Release();
+    return (bFound ? hr : E_FAIL);
+}
+void AddTeeSinkToGraph(IGraphBuilder* pGraph)
+{
+	IBaseFilter* pKernelTee = NULL;
+	int hr = CreateKernelFilter(AM_KSCATEGORY_SPLITTER, OLESTR("Tee/Sink-to-Sink Converter"), &pKernelTee);
+	if (SUCCEEDED(hr))
+	{
+		pGraph->AddFilter(pKernelTee, L"Kernel Tee");
+		pKernelTee->Release();
+	}
+
+}
+
+void AddWstCodecToGraph(IGraphBuilder* pGraph)
+{
+	IBaseFilter* pWstCodec = NULL;
+	int hr = CreateKernelFilter(AM_KSCATEGORY_VBICODEC, OLESTR("WST Codec"), &pWstCodec);
+	if (SUCCEEDED(hr))
+	{
+		pGraph->AddFilter(pWstCodec, L"WST Codec");
+		pWstCodec->Release();
+	}
+}

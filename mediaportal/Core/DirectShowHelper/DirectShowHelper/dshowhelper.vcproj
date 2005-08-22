@@ -84,6 +84,7 @@
 				AdditionalDependencies="strmbase.lib winmm.lib comsupp.lib dxguid.lib d3d9.lib d3dx9.lib"
 				OutputFile="$(OutDir)/dshowhelper.dll"
 				LinkIncremental="1"
+				IgnoreDefaultLibraryNames="libcmt.lib"
 				ModuleDefinitionFile="dshowhelper.def"
 				AddModuleNamesToAssembly=""
 				GenerateDebugInformation="TRUE"

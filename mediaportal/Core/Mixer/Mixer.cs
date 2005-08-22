@@ -123,7 +123,6 @@ namespace MediaPortal.Mixer
 				return new MixerNativeMethods.MixerControlDetails(mixerControl.ControlId);
 			}
 
-			return null;
 		}
 
 		object GetValue(MixerComponentType componentType, MixerControlType controlType)
