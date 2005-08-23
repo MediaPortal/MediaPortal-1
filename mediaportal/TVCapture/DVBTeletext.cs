@@ -37,6 +37,7 @@ namespace MediaPortal.TV.Recording
 		int[]										 m_currentSubPage=new int[10];
 		byte[]									 m_subPageTable=new byte[0x900];
 		int[]										 m_currentPage=new int[10];
+		int[]										 m_lastRow=new int[10];
 		int											 m_actualPage=0;
 		int											 m_actualSubPage=0;
 		int											 m_pageCount=0;
@@ -369,41 +370,48 @@ namespace MediaPortal.TV.Recording
 		public System.Drawing.Bitmap GetPage(int page,int subpage)
 		{
 			
-			if (m_pageBitmap==null)
-				m_pageBitmap=new System.Drawing.Bitmap(m_pageWidth,m_pageHeight);
-			if (m_renderGraphics==null)
-				m_renderGraphics=System.Drawing.Graphics.FromImage(m_pageBitmap);
-
-			string sPage="0x"+page.ToString();
-			string sSubPage="0x"+subpage.ToString();
-
-			if(sPage==null || sSubPage==null)
-				return null;
-
-			m_actualPage=Convert.ToInt16(sPage,16);
-			m_actualSubPage=Convert.ToInt16(sSubPage,16);
-			
-
-			if (m_actualPage<0x100)
-				m_actualPage=0x100;
-			if(m_actualPage>0x899)
-				m_actualPage=0x899;
-
-
-			if((int)m_cacheTable[m_actualPage,m_actualSubPage]!=0)
-				DecodePage(m_actualPage,m_actualSubPage);
-			else 
+			try
 			{
-				for(int sub=0;sub<35;sub++)
-					if((int)m_cacheTable[m_actualPage,sub]!=0)//return first aval. subpage
-					{
-						DecodePage(m_actualPage,sub);
-						return m_pageBitmap;
-					}
-				DecodePage(0xFFFF,0xFFFF);
-				return m_pageBitmap;; // nothing found
+				if (m_pageBitmap==null)
+					m_pageBitmap=new System.Drawing.Bitmap(m_pageWidth,m_pageHeight);
+				if (m_renderGraphics==null)
+					m_renderGraphics=System.Drawing.Graphics.FromImage(m_pageBitmap);
+
+				string sPage="0x"+page.ToString();
+				string sSubPage="0x"+subpage.ToString();
+
+				if(sPage==null || sSubPage==null)
+					return null;
+
+				m_actualPage=Convert.ToInt16(sPage,16);
+				m_actualSubPage=Convert.ToInt16(sSubPage,16);
+				
+
+				if (m_actualPage<0x100)
+					m_actualPage=0x100;
+				if(m_actualPage>0x899)
+					m_actualPage=0x899;
+
+
+				if((int)m_cacheTable[m_actualPage,m_actualSubPage]!=0)
+					DecodePage(m_actualPage,m_actualSubPage);
+				else 
+				{
+					for(int sub=0;sub<35;sub++)
+						if((int)m_cacheTable[m_actualPage,sub]!=0)//return first aval. subpage
+						{
+							DecodePage(m_actualPage,sub);
+							return m_pageBitmap;
+						}
+					DecodePage(0xFFFF,0xFFFF);
+					return m_pageBitmap;; // nothing found
+				}
+				return m_pageBitmap;
 			}
-			return m_pageBitmap;
+			catch(Exception)
+			{
+				return m_pageBitmap;
+			}
 		}
 
 		//
@@ -500,7 +508,7 @@ namespace MediaPortal.TV.Recording
 			{
 				for (line = 0; line < maxLines; line++)
 				{
-
+					bool copyData=false;
 					for (b=0;b<42;++b)
 						tmpBuffer[b]=analogBuffer[line*43+b];
 					if (tmpBuffer[0]==0 && tmpBuffer[1]==0 && tmpBuffer[2]==0 && tmpBuffer[3]==0 && tmpBuffer[4]==0)
@@ -509,6 +517,7 @@ namespace MediaPortal.TV.Recording
 						byte1 = m_deHamTable[tmpBuffer[0]];
 						byte2 = m_deHamTable[tmpBuffer[1]];
 
+						//hamming error?
 						if (byte1 == 0xFF || byte2 == 0xFF)
 							continue;
 
@@ -519,14 +528,14 @@ namespace MediaPortal.TV.Recording
 					  if (packetNumber<0 || packetNumber==25 || packetNumber==26 || packetNumber>27) continue;
 						if (packetNumber == 0)
 						{
+							m_lastRow[magazine]=0;
+							//pagenumber
 							byte1 = m_deHamTable[tmpBuffer[0]];
 							byte2 = m_deHamTable[tmpBuffer[3]];
 							byte3 = m_deHamTable[tmpBuffer[2]];
-
 							if (byte1 == 0xFF || byte2 == 0xFF || byte3 == 0xFF)
 							{
 								m_currentPage[magazine] = -1;
-								actualTransmittingPage = -1;
 								continue;
 							}
 
@@ -534,23 +543,27 @@ namespace MediaPortal.TV.Recording
 							if (byte1==0)
 								byte1 = 8;
 							actualTransmittingPage = byte1<<8 | byte2<<4 | byte3;
-							m_currentPage[magazine] = actualTransmittingPage;
 
+//							Log.Write("page:{0:X}",actualTransmittingPage);
 							if (byte2 > 9 || byte3 > 9) 
 							{
-								m_currentSubPage[magazine] = 0;
-								m_subPageTable[m_currentPage[magazine]] = 0;
+//								Log.Write("page:{0:X} ignored",actualTransmittingPage);
+								m_currentPage[magazine] = -1;
 								continue;
 							}
+							m_currentPage[magazine] = actualTransmittingPage;
 
-							byte1 = m_deHamTable[tmpBuffer[7]];
-							byte2 = m_deHamTable[tmpBuffer[6]];
-							byte3 = m_deHamTable[tmpBuffer[5]];
-							byte4 = m_deHamTable[tmpBuffer[4]];
+							//subpage number
+							byte1 = m_deHamTable[tmpBuffer[7]]; //3
+							byte2 = m_deHamTable[tmpBuffer[6]]; //f
+							byte3 = m_deHamTable[tmpBuffer[5]]; //7
+							byte4 = m_deHamTable[tmpBuffer[4]]; //f
 
+//							Log.Write("page:{0:X} subpage:{1:X} {2:X} {3:X} {4:X}",actualTransmittingPage,byte1,byte2,byte3,byte4);
 							if (byte1 == 0xFF || byte2 == 0xFF || byte3 == 0xFF || byte4 == 0xFF)
 							{
-								m_currentSubPage[magazine] = -1;
+//								Log.Write("page:{0:X} subpage:{1:X} {2:X} {3:X} {4:X} ignored",actualTransmittingPage,byte1,byte2,byte3,byte4);
+								m_currentPage[magazine] = -1;
 								continue;
 							}
 
@@ -559,12 +572,13 @@ namespace MediaPortal.TV.Recording
 
 							if (byte1 != 0 || byte2 != 0 || byte4 > 9)
 							{
-								m_currentSubPage[magazine] = -1;
+//								Log.Write("page:{0:X} subpage:{1:X} {2:X} {3:X} {4:X} ignored2",actualTransmittingPage,byte1,byte2,byte3,byte4);
+								m_currentPage[magazine] = -1;
 								continue;
 							}
-							else
-								m_currentSubPage[magazine] = byte3<<4 | byte4;
+							m_currentSubPage[magazine] = byte3<<4 | byte4;
 
+							//language
 							int languageCode=0;
 							byte1 = m_deHamTable[tmpBuffer[9]];
 							if (byte1 == 0xFF)
@@ -621,9 +635,18 @@ namespace MediaPortal.TV.Recording
 								for(int t=0;t<960;t++)
 									Marshal.WriteByte(m_cacheTable[m_currentPage[magazine],m_currentSubPage[magazine]],t,32);
 							}
+							copyData=true;
 						}
 						else if (packetNumber <= 24)
 						{
+							if (m_currentPage[magazine] == -1) continue;
+							if (m_lastRow[magazine]!=27)
+							{
+								if (packetNumber< m_lastRow[magazine] ) continue;
+							}
+
+							m_lastRow[magazine]=packetNumber;
+//							Log.Write("mag:{0} row:{1}",magazine,packetNumber);
 							if(SetMemory(1000,m_currentPage[magazine],m_currentSubPage[magazine])==false)
 								return;
 
@@ -640,14 +663,17 @@ namespace MediaPortal.TV.Recording
 										tmpBuffer[b] = 32;
 								}
 							}
+							copyData=true;
 						}
 						else if(packetNumber==27)
 						{
+							if (packetNumber< m_lastRow[magazine] ) continue;
+							m_lastRow[magazine]=packetNumber;
+							if (m_currentPage[magazine] ==-1) continue;
 							int pageNumber=m_currentPage[magazine];
 							int subPageNumber=m_currentSubPage[magazine];
 							if(m_deHamTable[tmpBuffer[2]]==0)
 							{
-
 								byte1 = m_deHamTable[tmpBuffer[0]];
 								if (byte1!=255)
 								{
@@ -666,25 +692,28 @@ namespace MediaPortal.TV.Recording
 												m_flofTable[pageNumber,b] = byte4<<8 | byte2<<4 | byte3;
 										}
 									}
-
 								}
 							}
+							copyData=true;
 						}
 						
-
-						if (m_currentPage[magazine]!= -1 && m_currentSubPage[magazine] != -1 &&
-							packetNumber <= 24 && ((int)m_cacheTable[m_currentPage[magazine],m_currentSubPage[magazine]]!=0))
+					if (copyData)
+					{
+						if (m_currentPage[magazine]!= -1 && m_currentSubPage[magazine] != -1)
 						{
-							IntPtr adr=m_cacheTable[m_currentPage[magazine],m_currentSubPage[magazine]];
-							int offset=packetNumber*40;
-							adr=(IntPtr)(((int)adr)+offset);
-							Marshal.Copy(tmpBuffer,2,adr,40);
-							if (m_currentPage[magazine]==m_actualPage &&
-								m_currentSubPage[magazine]==m_actualSubPage)
+							if (packetNumber <= 24 && ((int)m_cacheTable[m_currentPage[magazine],m_currentSubPage[magazine]]!=0))
 							{
-								PageUpdatedEvent();
-							}
-						} 
+								IntPtr adr=m_cacheTable[m_currentPage[magazine],m_currentSubPage[magazine]];
+								int offset=packetNumber*40;
+								adr=(IntPtr)(((int)adr)+offset);
+								Marshal.Copy(tmpBuffer,2,adr,40);
+								if (m_currentPage[magazine]==m_actualPage && m_currentSubPage[magazine]==m_actualSubPage)
+								{
+									PageUpdatedEvent();
+								}
+							} 
+						}
+					}
 				}// for(line=0
 			}
 			catch(Exception )
@@ -708,7 +737,7 @@ namespace MediaPortal.TV.Recording
 			{
 				for (line = 0; line < 4; line++)
 				{
-
+					bool copyData=false;
 					Marshal.Copy((IntPtr)((dataAdd+4)+(line*0x2e)),tmpBuffer,0,46);
 
 					pointer = line*0x2e;
@@ -735,6 +764,7 @@ namespace MediaPortal.TV.Recording
 						magazine =(byte)(m_deHamTable[tmpBuffer[0]] & 7);
 						if (packetNumber == 0)
 						{
+							m_lastRow[magazine]=0;
 							byte1 = m_deHamTable[tmpBuffer[0]];
 							byte2 = m_deHamTable[tmpBuffer[3]];
 							byte3 = m_deHamTable[tmpBuffer[2]];
@@ -742,22 +772,19 @@ namespace MediaPortal.TV.Recording
 							if (byte1 == 0xFF || byte2 == 0xFF || byte3 == 0xFF)
 							{
 								m_currentPage[magazine] = -1;
-								actualTransmittingPage = -1;
 								continue;
 							}
 
 							byte1 &= 7;
 							if (byte1==0)
 								byte1 = 8;
-							actualTransmittingPage = byte1<<8 | byte2<<4 | byte3;
-							m_currentPage[magazine] = actualTransmittingPage;
 
 							if (byte2 > 9 || byte3 > 9) 
 							{
-								m_currentSubPage[magazine] = 0;
-								m_subPageTable[m_currentPage[magazine]] = 0;
+								m_currentPage[magazine] = -1;
 								continue;
 							}
+							m_currentPage[magazine] = byte1<<8 | byte2<<4 | byte3;
 
 							byte1 = m_deHamTable[tmpBuffer[7]];
 							byte2 = m_deHamTable[tmpBuffer[6]];
@@ -766,7 +793,7 @@ namespace MediaPortal.TV.Recording
 
 							if (byte1 == 0xFF || byte2 == 0xFF || byte3 == 0xFF || byte4 == 0xFF)
 							{
-								m_currentSubPage[magazine] = -1;
+								m_currentPage[magazine] = -1;
 								continue;
 							}
 
@@ -775,11 +802,10 @@ namespace MediaPortal.TV.Recording
 
 							if (byte1 != 0 || byte2 != 0 || byte4 > 9)
 							{
-								m_currentSubPage[magazine] = -1;
+								m_currentPage[magazine] = -1;
 								continue;
 							}
-							else
-								m_currentSubPage[magazine] = byte3<<4 | byte4;
+							m_currentSubPage[magazine] = byte3<<4 | byte4;
 
 							int languageCode=0;
 							byte1 = m_deHamTable[tmpBuffer[9]];
@@ -837,12 +863,22 @@ namespace MediaPortal.TV.Recording
 								for(int t=0;t<960;t++)
 									Marshal.WriteByte(m_cacheTable[m_currentPage[magazine],m_currentSubPage[magazine]],t,32);
 							}
+							 copyData=true;
 						}
 						else if (packetNumber <= 24)
 						{
+							if (m_currentPage[magazine] == -1) continue;
+							if (m_lastRow[magazine]!=27)
+							{
+								if (packetNumber< m_lastRow[magazine] ) continue;
+							}
+
+							m_lastRow[magazine]=packetNumber;
 							if(SetMemory(1000,m_currentPage[magazine],m_currentSubPage[magazine])==false)
 								return;
 
+							if (m_currentPage[magazine]==-1) continue;
+							if (m_currentSubPage[magazine]==-1) continue;
 							if ((m_currentPage[magazine] & 0x0F0) <= 0x090 && (m_currentPage[magazine] & 0x00F) <= 0x009)
 							{  
 								for (b = 2; b < 42; b++)
@@ -856,9 +892,15 @@ namespace MediaPortal.TV.Recording
 										tmpBuffer[b] = 32;
 								}
 							}
+							copyData=true;
 						}
 						else if(packetNumber==27)
 						{
+							if (m_currentPage[magazine] == -1) continue;
+							if (packetNumber< m_lastRow[magazine] ) continue;
+							m_lastRow[magazine]=packetNumber;
+							
+							if (m_currentPage[magazine]==-1) continue;
 							int pageNumber=m_currentPage[magazine];
 							int subPageNumber=m_currentSubPage[magazine];
 							if(m_deHamTable[tmpBuffer[2]]==0)
@@ -885,20 +927,25 @@ namespace MediaPortal.TV.Recording
 
 								}
 							}
+							copyData=true;
 						}
 						
 
-						if (m_currentPage[magazine]!= -1 && m_currentSubPage[magazine] != -1 &&
-							packetNumber <= 24 && ((int)m_cacheTable[m_currentPage[magazine],m_currentSubPage[magazine]]!=0))
+						if (copyData)
 						{
-							IntPtr adr=m_cacheTable[m_currentPage[magazine],m_currentSubPage[magazine]];
-							int offset=packetNumber*40;
-							adr=(IntPtr)(((int)adr)+offset);
-							Marshal.Copy(tmpBuffer,2,adr,40);
-							if (m_currentPage[magazine]==m_actualPage &&
-								m_currentSubPage[magazine]==m_actualSubPage)
+							if (m_currentPage[magazine]!= -1 && m_currentSubPage[magazine] != -1)
 							{
-								PageUpdatedEvent();
+								if (packetNumber <= 24 && ((int)m_cacheTable[m_currentPage[magazine],m_currentSubPage[magazine]]!=0))
+								{
+									IntPtr adr=m_cacheTable[m_currentPage[magazine],m_currentSubPage[magazine]];
+									int offset=packetNumber*40;
+									adr=(IntPtr)(((int)adr)+offset);
+									Marshal.Copy(tmpBuffer,2,adr,40);
+									if (m_currentPage[magazine]==m_actualPage && m_currentSubPage[magazine]==m_actualSubPage)
+									{
+										PageUpdatedEvent();
+									}
+								} 
 							}
 						}
 					}//if ((tmpBuffer
@@ -983,10 +1030,9 @@ namespace MediaPortal.TV.Recording
 		//
 		void FastTextTable(int pageNumber,int subPage)
 		{
-
+			if (pageNumber<0x100 || pageNumber>=0x900) return;
+			if (subPage<0 || subPage>0x79) return;
 			m_flofAIT=new string[2352];
-			if(pageNumber==0xFFFF)
-				return;
 
 			if((int)m_cacheTable[pageNumber,subPage]==0)
 				return;
@@ -1022,8 +1068,14 @@ namespace MediaPortal.TV.Recording
 					tmpLink+=""+((char)buffer[pointer]); // add the char
 				}
 
-
-				m_flofAIT[m_flofTable[pageNumber,buttonNumber-1]]=tmpLink;
+				if (buttonNumber>=0 && buttonNumber<=3)
+				{
+					int off=m_flofTable[pageNumber,buttonNumber-1];
+					if (off >=0 && off < 2352)
+					{
+						m_flofAIT[off]=tmpLink;
+					}
+				}
 				button++;
 				buttonNumber=-1;
 			}
