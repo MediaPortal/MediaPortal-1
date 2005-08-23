@@ -697,7 +697,8 @@ namespace MediaPortal.TV.Recording
 								Marshal.Copy(tmpBuffer,2,adr,40);
 								if (m_currentPage[magazine]==m_actualPage && m_currentSubPage[magazine]==m_actualSubPage)
 								{
-									PageUpdatedEvent();
+									if (PageUpdatedEvent!=null)
+										PageUpdatedEvent();
 								}
 							} 
 						}
@@ -954,7 +955,8 @@ namespace MediaPortal.TV.Recording
 									Marshal.Copy(tmpBuffer,2,adr,40);
 									if (m_currentPage[magazine]==m_actualPage && m_currentSubPage[magazine]==m_actualSubPage)
 									{
-										PageUpdatedEvent();
+										if (PageUpdatedEvent!=null)
+											PageUpdatedEvent();
 									}
 								} 
 							}
