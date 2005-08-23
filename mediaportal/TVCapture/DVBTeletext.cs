@@ -727,7 +727,6 @@ namespace MediaPortal.TV.Recording
 			
 			int line=0;
 			int b=0,byte1=0, byte2=0, byte3=0, byte4=0;
-			int actualTransmittingPage=0;
 			
 			int packetNumber;
 			byte magazine;
@@ -760,6 +759,7 @@ namespace MediaPortal.TV.Recording
 
 						byte1 &= 8;
 						packetNumber = byte1>>3 | byte2<<1;
+						if (packetNumber<0 || packetNumber==25 || packetNumber==26 || packetNumber>27) continue;
 						//  mag number
 						magazine =(byte)(m_deHamTable[tmpBuffer[0]] & 7);
 						if (packetNumber == 0)
