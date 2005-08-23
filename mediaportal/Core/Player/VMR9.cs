@@ -59,7 +59,9 @@ namespace MediaPortal.Player
 	}
   public class VMR9Util
   {
-		
+
+		const uint MixerPref_RenderTargetMask=0x000FF000;
+		const uint MixerPref_RenderTargetYUV=0x00002000;
 		#region imports
 		[DllImport("dshowhelper.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
 		unsafe private static extern bool Vmr9Init(IVMR9PresentCallback callback, uint dwD3DDevice, IBaseFilter vmr9Filter,uint monitor);
@@ -185,6 +187,24 @@ namespace MediaPortal.Player
 			g_vmr9=this;
 			vmr9Initialized=true;
 			SetDeinterlacePrefs();
+			System.OperatingSystem os=Environment.OSVersion;
+			if (os.Platform==System.PlatformID.Win32NT)
+			{
+				long version=os.Version.Major*10000000 + os.Version.Minor*10000 + os.Version.Build;
+				if (version >= 50012600) // we need at least win xp sp2 for VMR9 YUV mixing mode
+				{
+					IVMRMixerControl9 mixer = VMR9Filter as IVMRMixerControl9;
+					if (mixer!=null)
+					{
+						Log.Write("VMR9: enable YUV mixing");
+						uint dwPrefs;
+						mixer.GetMixingPrefs(out dwPrefs);
+						dwPrefs  &= ~MixerPref_RenderTargetMask; 
+						dwPrefs |= MixerPref_RenderTargetYUV;
+						mixer.SetMixingPrefs(dwPrefs);
+					}
+				}
+			}
 			Log.Write("VMR9Helper:Vmr9 Added");
 		}
 
