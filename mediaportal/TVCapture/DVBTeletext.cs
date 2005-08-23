@@ -1079,7 +1079,7 @@ namespace MediaPortal.TV.Recording
 					tmpLink+=""+((char)buffer[pointer]); // add the char
 				}
 
-				if (buttonNumber>=0 && buttonNumber<=3)
+				if (buttonNumber>=1 && buttonNumber<=4)
 				{
 					int off=m_flofTable[pageNumber,buttonNumber-1];
 					if (off >=0 && off < 2352)
