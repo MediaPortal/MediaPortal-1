@@ -621,13 +621,7 @@ namespace MediaPortal.TV.Recording
 
 							for (b = 10; b < 42; b++)
 							{
-								if ( ((tmpBuffer[b]&1)>0) ^ (((tmpBuffer[b]>>1)&1)>0) ^
-									((tmpBuffer[b]>>2)&1)>0 ^ ((tmpBuffer[b]>>3)&1)>0 ^
-									((tmpBuffer[b]>>4)&1)>0 ^ ((tmpBuffer[b]>>5)&1)>0 ^
-									((tmpBuffer[b]>>6)&1)>0 ^ (tmpBuffer[b]>>7)>0)
-									tmpBuffer[b] &= 127;
-								else
-									tmpBuffer[b] = 32;
+								tmpBuffer[b] &= 127;
 							}
 
 							if ((m_deHamTable[tmpBuffer[5]] & 8)!=0)   /* C4 -> erase page */
@@ -654,13 +648,7 @@ namespace MediaPortal.TV.Recording
 							{  
 								for (b = 2; b < 42; b++)
 								{
-									if ((tmpBuffer[b]&1)>0 ^ ((tmpBuffer[b]>>1)&1)>0 ^
-										((tmpBuffer[b]>>2)&1)>0 ^ ((tmpBuffer[b]>>3)&1)>0 ^
-										((tmpBuffer[b]>>4)&1)>0 ^ ((tmpBuffer[b]>>5)&1)>0 ^
-										((tmpBuffer[b]>>6)&1)>0 ^ (tmpBuffer[b]>>7)>0)
-										tmpBuffer[b] &= 127;
-									else
-										tmpBuffer[b] = 32;
+									tmpBuffer[b] &= 127;
 								}
 							}
 							copyData=true;
@@ -721,6 +709,7 @@ namespace MediaPortal.TV.Recording
 			}
 		}
 
+		int logcount=0;
 		public void SaveData(IntPtr dataPtr)
 		{
 			if (dataPtr==IntPtr.Zero) return;
@@ -769,8 +758,15 @@ namespace MediaPortal.TV.Recording
 							byte2 = m_deHamTable[tmpBuffer[3]];
 							byte3 = m_deHamTable[tmpBuffer[2]];
 
+							byte g1 = m_deHamTable[tmpBuffer[7]];
+							byte g2 = m_deHamTable[tmpBuffer[6]];
+							byte g3 = m_deHamTable[tmpBuffer[5]];
+							byte g4 = m_deHamTable[tmpBuffer[4]];
+							if (logcount>0) 
+								Log.Write("page:{0:x} {1:X} {2:X} {3:X} {4:X}",( byte1<<8 | byte2<<4), g1 ,g2,g3,g4);
 							if (byte1 == 0xFF || byte2 == 0xFF || byte3 == 0xFF)
 							{
+								if (logcount>0) Log.Write("ignore");
 								m_currentPage[magazine] = -1;
 								continue;
 							}
@@ -781,6 +777,7 @@ namespace MediaPortal.TV.Recording
 
 							if (byte2 > 9 || byte3 > 9) 
 							{
+								if (logcount>0) Log.Write("ignore");
 								m_currentPage[magazine] = -1;
 								continue;
 							}
@@ -793,6 +790,7 @@ namespace MediaPortal.TV.Recording
 
 							if (byte1 == 0xFF || byte2 == 0xFF || byte3 == 0xFF || byte4 == 0xFF)
 							{
+								if (logcount>0) Log.Write("ignore");
 								m_currentPage[magazine] = -1;
 								continue;
 							}
@@ -802,11 +800,17 @@ namespace MediaPortal.TV.Recording
 
 							if (byte1 != 0 || byte2 != 0 || byte4 > 9)
 							{
+								if (logcount>0) Log.Write("ignore");
 								m_currentPage[magazine] = -1;
 								continue;
 							}
 							m_currentSubPage[magazine] = byte3<<4 | byte4;
-
+/*
+							if (m_currentPage[magazine]==0x100)
+							{
+								Log.Write("page {0:x} {1:x}", m_currentPage[magazine],m_currentSubPage[magazine]);
+								logcount=50;
+							}*/
 							int languageCode=0;
 							byte1 = m_deHamTable[tmpBuffer[9]];
 							if (byte1 == 0xFF)
@@ -867,35 +871,42 @@ namespace MediaPortal.TV.Recording
 						}
 						else if (packetNumber <= 24)
 						{
-							if (m_currentPage[magazine] == -1) continue;
+							if (logcount>0) 
+								Log.Write("mag:{0:x} {1}",magazine,packetNumber);
+							if (m_currentPage[magazine] == -1) 
+							{
+								if (logcount>0) Log.Write("ignore p");
+								continue;
+							}
 							if (m_lastRow[magazine]!=27)
 							{
-								if (packetNumber< m_lastRow[magazine] ) continue;
+								if (packetNumber< m_lastRow[magazine] )  
+								{
+									if (logcount>0) Log.Write("ignore p2");
+									continue;
+								}
 							}
 
 							m_lastRow[magazine]=packetNumber;
 							if(SetMemory(1000,m_currentPage[magazine],m_currentSubPage[magazine])==false)
 								return;
 
-							if (m_currentPage[magazine]==-1) continue;
-							if (m_currentSubPage[magazine]==-1) continue;
-							if ((m_currentPage[magazine] & 0x0F0) <= 0x090 && (m_currentPage[magazine] & 0x00F) <= 0x009)
-							{  
-								for (b = 2; b < 42; b++)
-								{
-									if ((tmpBuffer[b]&1)>0 ^ ((tmpBuffer[b]>>1)&1)>0 ^
-										((tmpBuffer[b]>>2)&1)>0 ^ ((tmpBuffer[b]>>3)&1)>0 ^
-										((tmpBuffer[b]>>4)&1)>0 ^ ((tmpBuffer[b]>>5)&1)>0 ^
-										((tmpBuffer[b]>>6)&1)>0 ^ (tmpBuffer[b]>>7)>0)
-										tmpBuffer[b] &= 127;
-									else
-										tmpBuffer[b] = 32;
-								}
+							if (m_currentSubPage[magazine]==-1) 
+							{
+								if (logcount>0) Log.Write("ignore p3");
+								continue;
+							}
+
+							for (b = 2; b < 42; b++)
+							{
+								tmpBuffer[b] &= 127;
 							}
 							copyData=true;
 						}
 						else if(packetNumber==27)
 						{
+							if (logcount>0) 
+								Log.Write("mag:{0:x} {1}",magazine,packetNumber);
 							if (m_currentPage[magazine] == -1) continue;
 							if (packetNumber< m_lastRow[magazine] ) continue;
 							m_lastRow[magazine]=packetNumber;
@@ -930,7 +941,7 @@ namespace MediaPortal.TV.Recording
 							copyData=true;
 						}
 						
-
+						if (logcount>0) logcount--;
 						if (copyData)
 						{
 							if (m_currentPage[magazine]!= -1 && m_currentSubPage[magazine] != -1)
