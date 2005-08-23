@@ -2629,7 +2629,7 @@ namespace MediaPortal.TV.Recording
 
 				// lock on the 'filename' file
 				hr=m_IStreamBufferSink.LockProfile(fileName);
-				if (hr!=0)
+				if (hr!=0 && hr!=1)
 				{
 					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to set timeshift file to:{0} {1:X}", fileName,hr);
 					return false;

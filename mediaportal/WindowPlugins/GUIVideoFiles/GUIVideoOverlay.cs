@@ -101,7 +101,7 @@ namespace MediaPortal.GUI.Video
         SetCurrentFile(m_strFile);
       }
 
-			if ( g_Player.IsTV && (m_strProgram!=GUIPropertyManager.GetProperty("#TV.View.title")) )
+			if ( g_Player.IsTV && (m_strProgram!=GUIPropertyManager.GetProperty("#TV.View.title")) && g_Player.IsTimeShifting )
 			{
 				m_strProgram = GUIPropertyManager.GetProperty("#TV.View.title");
 				GUIPropertyManager.SetProperty("#title", GUIPropertyManager.GetProperty("#TV.View.channel"));
@@ -233,8 +233,9 @@ namespace MediaPortal.GUI.Video
         }
       }
       
+			bool isLive=g_Player.IsTimeShifting;
       string strExt = System.IO.Path.GetExtension(strFile).ToLower();
-      if (strExt.Equals(".sbe") || strExt.Equals(".dvr-ms") )
+      if (strExt.Equals(".sbe") || strExt.Equals(".dvr-ms") || (strExt.Equals(".ts") && !isLive) )
       {
         // this is a recorded movie.
         // check the TVDatabase for the description,genre,title,...
@@ -274,7 +275,7 @@ namespace MediaPortal.GUI.Video
 		 {
 			 movieDetails.SetProperties();
 		 }
-		 else if (g_Player.IsTV)
+		 else if (g_Player.IsTV && g_Player.IsTimeShifting)
 		 {
 			 GUIPropertyManager.SetProperty("#title", GUIPropertyManager.GetProperty("#TV.View.channel"));
 			 GUIPropertyManager.SetProperty("#genre", GUIPropertyManager.GetProperty("#TV.View.title"));
