@@ -1021,6 +1021,7 @@ namespace MediaPortal.TV.Recording
     {
       if (m_graphState!=State.Radio&&m_graphState!=State.Recording && m_graphState!=State.TimeShifting && m_graphState!=State.Viewing) return false;
       if (m_TVTuner==null) return true;
+			if (m_iChannelNr >= (int)ExternalInputs.svhs) return true;
       AMTunerSignalStrength strength;
       m_TVTuner.SignalPresent(out strength);
       return ( ( (int)strength ) >=1 );
@@ -1030,6 +1031,7 @@ namespace MediaPortal.TV.Recording
 		{
 			if (m_graphState!=State.Radio&&m_graphState!=State.Recording && m_graphState!=State.TimeShifting && m_graphState!=State.Viewing) return 1;
 			if (m_TVTuner==null) return 1;
+			if (m_iChannelNr >= (int)ExternalInputs.svhs) return 100;
 			AMTunerSignalStrength strength;
 			m_TVTuner.SignalPresent(out strength);
 			if (strength==AMTunerSignalStrength.SignalPresent) return 100;
@@ -1040,6 +1042,7 @@ namespace MediaPortal.TV.Recording
 		{
 			if (m_graphState!=State.Radio&&m_graphState!=State.Recording && m_graphState!=State.TimeShifting && m_graphState!=State.Viewing) return 1;
 			if (m_TVTuner==null) return 1;
+			if (m_iChannelNr >= (int)ExternalInputs.svhs) return 100;
 			AMTunerSignalStrength strength;
 			m_TVTuner.SignalPresent(out strength);
 			if (strength==AMTunerSignalStrength.SignalPresent) return 100;
