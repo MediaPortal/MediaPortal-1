@@ -381,7 +381,13 @@ namespace TVCapture
 							cardConfig.Tv.InterfaceDefinition.Mpeg2PinName   = filterInterface.Attributes.GetNamedItem(@"mpeg2").InnerText;
 							try 
 							{
-								cardConfig.Tv.InterfaceDefinition.SectionsAndTablesPinName = filterInterface.Attributes.GetNamedItem(@"sectionsandtables").InnerText;
+								cardConfig.Tv.InterfaceDefinition.SectionsAndTablesPinName = "";
+								XmlNode nodeatt=filterInterface.Attributes.GetNamedItem(@"sectionsandtables");
+								if (nodeatt!=null)
+								{
+									if (nodeatt.InnerText!=null)
+										cardConfig.Tv.InterfaceDefinition.SectionsAndTablesPinName = filterInterface.Attributes.GetNamedItem(@"sectionsandtables").InnerText;
+								}
 							}
 							catch 
 							{
