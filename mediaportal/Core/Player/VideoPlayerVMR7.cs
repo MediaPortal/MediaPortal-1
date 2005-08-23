@@ -947,6 +947,7 @@ namespace MediaPortal.Player
       Log.Write("VideoPlayer:cleanup DShow graph");
       try 
       {
+				if (videoWin!=null) videoWin.put_Visible( DsHlp.OAFALSE );
 
         if( mediaCtrl != null )
         {
@@ -990,7 +991,11 @@ namespace MediaPortal.Player
 				}
 
         m_state = PlayState.Init;
-        GC.Collect();GC.Collect();GC.Collect();
+				GUIGraphicsContext.form.Invalidate(true);
+				GC.Collect();GC.Collect();GC.Collect();
+				//switch back to directx windowed mode
+				GUIMessage msg =new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED,0,0,0,0,0,null);
+				GUIWindowManager.SendMessage(msg);
       }
       catch( Exception ex)
       {

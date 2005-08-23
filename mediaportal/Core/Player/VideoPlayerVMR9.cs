@@ -235,6 +235,9 @@ namespace MediaPortal.Player
       Log.Write("VideoPlayer9:cleanup DShow graph");
       try 
       {
+				videoWin	= graphBuilder as IVideoWindow;
+				if (videoWin!=null)
+					videoWin.put_Visible(DsHlp.OAFALSE );
 				if (Vmr9!=null)
 				{
 					Vmr9.Enable(false);
