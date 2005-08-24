@@ -107,6 +107,7 @@ BOOL MPDSTProperties::OnReceiveMessage(HWND hwnd,
             // get the hWnd of the list box
             m_hwndLB = GetDlgItem (hwnd, IDC_MEDIALIST) ;
             m_editA = GetDlgItem (hwnd, IDC_EDIT1) ;
+			m_editAC3= GetDlgItem (hwnd, IDC_EDITAC3) ;
             m_editV = GetDlgItem (hwnd, IDC_EDIT2) ;
             m_editT = GetDlgItem (hwnd, IDC_EDIT3) ;
 			m_editTSID= GetDlgItem (hwnd, IDC_EDIT4) ;
@@ -275,6 +276,11 @@ HRESULT MPDSTProperties::OnApplyChanges()
 	_i64toa((__int64)ch.Pids.AudioPid1,buffer,10);
 	SendMessage( m_editA, EM_SETSEL, 0, MAKELONG(-1,-1) ); 
 	SendMessage( m_editA, EM_REPLACESEL, 0, (LPARAM) buffer ); 
+
+	_i64toa((__int64)ch.Pids.AC3,buffer,10);
+	SendMessage( m_editAC3, EM_SETSEL, 0, MAKELONG(-1,-1) ); 
+	SendMessage( m_editAC3, EM_REPLACESEL, 0, (LPARAM) buffer ); 
+	
 	// video
 	_i64toa((__int64)ch.Pids.VideoPid,buffer,10);
 	SendMessage( m_editV, EM_SETSEL, 0, MAKELONG(-1,-1) ); 

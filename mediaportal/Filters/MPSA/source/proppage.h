@@ -36,6 +36,7 @@ private:
 
     HWND        m_hwndLB ;       // Handle of the list box
 	HWND		m_editA;
+	HWND		m_editAC3;
 	HWND		m_editV;
 	HWND		m_editT;
 	HWND		m_editTSID;

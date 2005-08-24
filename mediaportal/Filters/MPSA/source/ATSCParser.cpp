@@ -454,7 +454,6 @@ void ATSCParser::ATSCDecodeChannelTable(BYTE *buf,ChannelInfo *ch, int* channels
 			*channelsFound=0;
 			return;
 		}
-		bool ac3=false;
 		while (len < descriptors_length)
 		{
 			int descriptor_tag = buf[start+len];
@@ -467,20 +466,12 @@ void ATSCParser::ATSCDecodeChannelTable(BYTE *buf,ChannelInfo *ch, int* channels
 			Log("    decode descriptor start:%d len:%d tag:%x", start, descriptor_len, descriptor_tag);
 			switch (descriptor_tag)
 			{
-				case 0x81://ac3 audio descriptor
-					ac3=true;
-				break;
 				case 0xa1:
 					DecodeServiceLocationDescriptor( buf,start+len, channelInfo);
 				break;
 				case 0xa0:
 					DecodeExtendedChannelNameDescriptor( buf,start+len,channelInfo, maxLen);
 				break;
-			}
-			if (ac3)
-			{
-				channelInfo->Pids.AC3=channelInfo->Pids.AudioPid1;
-				channelInfo->Pids.AudioPid1=-1;
 			}
 			len += (descriptor_len+2);
 		}
@@ -524,7 +515,7 @@ void ATSCParser::DecodeServiceLocationDescriptor( byte* buf,int start,ChannelInf
 				channelInfo->Pids.VideoPid=elementary_pid;
 				break;
 			case 0x81: // audio
-				channelInfo->Pids.AudioPid1=elementary_pid;
+				channelInfo->Pids.AC3=elementary_pid;
 				break;
 			default:
 				break;
