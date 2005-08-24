@@ -121,13 +121,13 @@ void ATSCParser::ATSCDecodeMasterGuideTable(byte* buf, int len,int* channelsFoun
 
 		if (m_demuxer!=NULL) 
 		{
-			if (table_type >=0x100 && table_type  <= 0x17f) 
+			if (table_type >=0x100 && table_type  <= 0x17f)			//EIT
 				m_demuxer->MapAdditionalPID(table_type_PID);
-			else if (table_type >=0x200 && table_type  <= 0x27F) 
+			else if (table_type >=0x200 && table_type  <= 0x27F)	//ETT
 				m_demuxer->MapAdditionalPID(table_type_PID);
-			else if (table_type >=0x0301 && table_type  <= 0x03FF) 
+			else if (table_type >=0x0301 && table_type  <= 0x03FF)	//RTT
 				m_demuxer->MapAdditionalPID(table_type_PID);
-			else if (table_type == 0x0004) 
+			else if (table_type == 0x0004)							//channel ETT
 				m_demuxer->MapAdditionalPID(table_type_PID);
 		}
 		while (pos < table_type_descriptors_len)
@@ -454,6 +454,7 @@ void ATSCParser::ATSCDecodeChannelTable(BYTE *buf,ChannelInfo *ch, int* channels
 			*channelsFound=0;
 			return;
 		}
+		bool ac3=false;
 		while (len < descriptors_length)
 		{
 			int descriptor_tag = buf[start+len];
@@ -466,12 +467,20 @@ void ATSCParser::ATSCDecodeChannelTable(BYTE *buf,ChannelInfo *ch, int* channels
 			Log("    decode descriptor start:%d len:%d tag:%x", start, descriptor_len, descriptor_tag);
 			switch (descriptor_tag)
 			{
+				case 0x81://ac3 audio descriptor
+					ac3=true;
+				break;
 				case 0xa1:
 					DecodeServiceLocationDescriptor( buf,start+len, channelInfo);
 				break;
 				case 0xa0:
 					DecodeExtendedChannelNameDescriptor( buf,start+len,channelInfo, maxLen);
 				break;
+			}
+			if (ac3)
+			{
+				channelInfo->Pids.AC3=channelInfo->Pids.AudioPid1;
+				channelInfo->Pids.AudioPid1=-1;
 			}
 			len += (descriptor_len+2);
 		}
