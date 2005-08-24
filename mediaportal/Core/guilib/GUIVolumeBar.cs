@@ -83,7 +83,7 @@ namespace MediaPortal.GUI.Library
 		public int Image1
 		{
 			get { return _image1;}
-			set {  _image2=value;}
+			set {  _image1=value;}
 		}
 		public int Image2
 		{

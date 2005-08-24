@@ -1306,8 +1306,8 @@ namespace MediaPortal.GUI.Video
 				{
 					float percent = ((float)VolumeHandler.Instance.Volume) / ((float)VolumeHandler.Instance.Maximum);
 					imgVolumeMuteIcon.Visible=false;
-					imgVolumeBar.Image1=1;
 					imgVolumeBar.Image1=2;
+					imgVolumeBar.Image2=1;
 					imgVolumeBar.Percent=(int)(percent*100);
 				}
 				
