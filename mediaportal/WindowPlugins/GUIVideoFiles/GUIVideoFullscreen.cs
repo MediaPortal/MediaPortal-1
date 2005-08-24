@@ -54,32 +54,36 @@ namespace MediaPortal.GUI.Video
 			public bool  ShowTime=false;
 			public bool  wasVMRBitmapVisible=false;
 			public bool  NotifyDialogVisible=false;
+			public bool  volumeVisible=false;
 		}
 
 		enum Control 
 		{
 			BLUE_BAR    =0
-				, OSD_VIDEOPROGRESS=1
-						, LABEL_ROW1 =10
-								, LABEL_ROW2 =11
-										, LABEL_ROW3 =12
-												, IMG_PAUSE     =16
-														, IMG_2X	      =17
-																, IMG_4X	      =18
-																		, IMG_8X		    =19
-																				, IMG_16X       =20
-																						, IMG_32X       =21
+			, OSD_VIDEOPROGRESS=1
+			, LABEL_ROW1 =10
+			, LABEL_ROW2 =11
+			, LABEL_ROW3 =12
+			, IMG_PAUSE     =16
+			, IMG_2X	      =17
+			, IMG_4X	      =18
+			, IMG_8X		    =19
+			, IMG_16X       =20
+			, IMG_32X       =21
 
-																								, IMG_MIN2X	      =23
-																										, IMG_MIN4X	      =24
-																												, IMG_MIN8X		    =25
-																														, IMG_MIN16X       =26
-																																, IMG_MIN32X       =27
-																																		, LABEL_CURRENT_TIME =22
-																																				, OSD_TIMEINFO =100
-																																						, PANEL1=101
-																																								, PANEL2=120
+			, IMG_MIN2X	      =23
+			, IMG_MIN4X	      =24
+			, IMG_MIN8X		    =25
+			, IMG_MIN16X       =26
+			, IMG_MIN32X       =27
+			, LABEL_CURRENT_TIME =22
+			, OSD_TIMEINFO =100
+			, PANEL1=101
+			, PANEL2=120
 		};
+
+		[SkinControlAttribute(500)]		protected GUIImage imgVolumeMuteIcon;
+		[SkinControlAttribute(501)]		protected GUIVolumeBar imgVolumeBar;
 
 		bool isOsdVisible=false;
     
@@ -100,12 +104,13 @@ namespace MediaPortal.GUI.Video
 		bool				m_bDialogVisible=false;
 		bool				m_bMSNChatPopup=false;
 		bool				needToClearScreen=false;
+		bool        _isVolumeVisible=false;
 		GUIDialogMenu		dlg;
 		GUIVideoOSD			m_osdWindow=null;
 		GUIVideoMSNOSD	m_msnWindow=null;
 		GUIDialogNotify dialogNotify=null;
-		bool				NotifyDialogVisible=false;
-
+		bool						NotifyDialogVisible=false;
+		DateTime				_volumeTimer=DateTime.MinValue;
 		VMR9OSD				m_vmr9OSD=new VMR9OSD();
 
 		FullScreenState screenState=new FullScreenState();
@@ -278,8 +283,12 @@ namespace MediaPortal.GUI.Video
 			}
 			if (action.wID==Action.ActionType.ACTION_SHOW_VOLUME)
 			{
-				if(m_vmr9OSD!=null)
-					m_vmr9OSD.RenderVolumeOSD();
+				_volumeTimer=DateTime.Now;
+				_isVolumeVisible=true;
+				RenderVolume(_isVolumeVisible);
+
+//				if(m_vmr9OSD!=null)
+//					m_vmr9OSD.RenderVolumeOSD();
 			}
 			if (isOsdVisible)
 			{
@@ -957,6 +966,12 @@ namespace MediaPortal.GUI.Video
 				screenState.ShowTime=m_bShowTime;
 				updateGUI=true;
 			}
+			if (_isVolumeVisible != screenState.volumeVisible)
+			{
+				screenState.volumeVisible=_isVolumeVisible ;
+				updateGUI=true;
+				_volumeTimer=DateTime.Now;
+			}
 			if (updateGUI)
 			{
 				needToClearScreen=true;
@@ -1074,6 +1089,7 @@ namespace MediaPortal.GUI.Video
 				ShowControl(GetID,(int)Control.BLUE_BAR);
 				ShowControl(GetID,(int)Control.LABEL_ROW1);
 			}
+			RenderVolume(_isVolumeVisible);
 		}
 
 		
@@ -1082,10 +1098,15 @@ namespace MediaPortal.GUI.Video
 			if(m_vmr9OSD!=null)
 				m_vmr9OSD.CheckTimeOuts();
 
+			if (_isVolumeVisible)
+			{
+				TimeSpan ts = DateTime.Now -_volumeTimer;
+				if (ts.TotalSeconds>=3) RenderVolume(false);
+			}
 			if (m_bShowStatus||m_bShowStep)
 			{
 				long lTimeSpan=( (DateTime.Now.Ticks/10000) - m_dwTimeStatusShowTime);
-				if ( lTimeSpan >=2000)
+				if ( lTimeSpan >=3000)
 				{
 					m_bShowStep=false;
 					m_bShowStatus=false;
@@ -1260,6 +1281,37 @@ namespace MediaPortal.GUI.Video
 					m_osdWindow.Render(timePassed);
 				}
 			}		
+		}
+		void RenderVolume(bool show)
+		{
+			if (imgVolumeBar==null) return;
+				
+			if (!show)
+			{
+				_isVolumeVisible=false;
+				imgVolumeBar.Visible=false;
+				return;
+			}
+			else
+			{
+				imgVolumeBar.Visible=true;
+				if (VolumeHandler.Instance.IsMuted)
+				{
+					imgVolumeMuteIcon.Visible=true;
+					imgVolumeBar.Image1=1;
+					imgVolumeBar.Percent=100;
+
+				}
+				else
+				{
+					float percent = ((float)VolumeHandler.Instance.Volume) / ((float)VolumeHandler.Instance.Maximum);
+					imgVolumeMuteIcon.Visible=false;
+					imgVolumeBar.Image1=1;
+					imgVolumeBar.Image1=2;
+					imgVolumeBar.Percent=(int)(percent*100);
+				}
+				
+			}
 		}
 
 		#region helper functions

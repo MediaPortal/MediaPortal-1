@@ -3267,7 +3267,8 @@ namespace MediaPortal.TV.Recording
 				}
 				else
 				{
-					refreshPmtTable=true;
+					//refreshPmtTable=true;
+					return true;
 				}
 			}
 			catch(Exception ex)

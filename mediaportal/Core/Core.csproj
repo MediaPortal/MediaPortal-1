@@ -839,6 +839,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "guilib\GUIVolumeBar.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "guilib\GUIWaitCursor.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

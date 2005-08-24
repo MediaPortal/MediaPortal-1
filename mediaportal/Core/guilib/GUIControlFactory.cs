@@ -500,6 +500,8 @@ namespace MediaPortal.GUI.Library
 					return typeof (GUISMSInputControl);
 				case ("sortbutton"):
 					return typeof (GUISortButtonControl);
+				case ("volumebar"):
+					return typeof (GUIVolumeBar);
 				default:
 					Type t = (Type)m_hashCustomControls[xmlTypeName];
 

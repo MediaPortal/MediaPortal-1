@@ -922,6 +922,27 @@ namespace MediaPortal.GUI.Library
       sprite.Draw(texture, sourceRect, new Vector3(), pntPosition, unchecked((int)m_colDiffuse) );
     }
 		
+		public void RenderRect(float timePassed, Rectangle rectSrc, Rectangle rectDst)
+		{
+			_fx = rectDst.Left;
+			_fy = rectDst.Top;
+			_nw = rectDst.Width;
+			_nh= rectDst.Height;
+			float uoffs= ((float)(rectSrc.Left))  / ((float)(m_iTextureWidth));
+			float voffs= ((float)(rectSrc.Top))  / ((float)(m_iTextureHeight));
+			_umax = ((float)(rectSrc.Width))  / ((float)(m_iTextureWidth));
+			_vmax = ((float)(rectSrc.Height))  / ((float)(m_iTextureHeight));
+
+
+			if ( _packedTexture!=null )
+			{
+				_uoff = _texUoff + (uoffs * _texUmax);
+				_voff = _texVoff + (voffs * _texVmax);
+				_umax = _umax * _texUmax;
+				_vmax = _vmax * _texVmax;
+			}
+			Render(timePassed);
+		}
     /// <summary>
 		/// Renders the Image
 		/// </summary>

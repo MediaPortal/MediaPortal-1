@@ -60,6 +60,7 @@ namespace MediaPortal.GUI.TV
 			public bool  NotifyDialogVisible=false;
 			public bool  bottomMenuVisible=false;
 			public bool  wasVMRBitmapVisible=false;
+			public bool  volumeVisible=false;
 		}
 
 		bool				m_bShowInfo=false;
@@ -103,6 +104,11 @@ namespace MediaPortal.GUI.TV
 		bool				m_useVMR9Zap=false;
 		VMR9OSD				m_vmr9OSD=null;
 		FullScreenState screenState=new FullScreenState();
+		bool        _isVolumeVisible=false;
+		DateTime				_volumeTimer=DateTime.MinValue;
+
+		[SkinControlAttribute(500)]		protected GUIImage imgVolumeMuteIcon;
+		[SkinControlAttribute(501)]		protected GUIVolumeBar imgVolumeBar;
 
 
     enum Control 
@@ -217,8 +223,11 @@ namespace MediaPortal.GUI.TV
 			needToClearScreen=true;
 			if (action.wID==Action.ActionType.ACTION_SHOW_VOLUME)
 			{
-				if(m_vmr9OSD!=null)
-					m_vmr9OSD.RenderVolumeOSD();
+				_volumeTimer=DateTime.Now;
+				_isVolumeVisible=true;
+				RenderVolume(_isVolumeVisible);
+//				if(m_vmr9OSD!=null)
+//					m_vmr9OSD.RenderVolumeOSD();
 			}
 			//ACTION_SHOW_CURRENT_TV_INFO
 			if (action.wID==Action.ActionType.ACTION_SHOW_CURRENT_TV_INFO)
@@ -1224,6 +1233,13 @@ namespace MediaPortal.GUI.TV
 				screenState.ShowInput=m_bShowInput;
 				updateGUI=true;
 			}
+			if (_isVolumeVisible != screenState.volumeVisible)
+			{
+				screenState.volumeVisible=_isVolumeVisible ;
+				updateGUI=true;
+				_volumeTimer=DateTime.Now;
+			}
+
 			if (updateGUI)
 			{
 				needToClearScreen=true;
@@ -1360,6 +1376,7 @@ namespace MediaPortal.GUI.TV
 				ShowControl(GetID, (int)Control.MSG_BOX_LABEL4);
 			}
 
+			RenderVolume(_isVolumeVisible);
 
 		}
 
@@ -1367,6 +1384,11 @@ namespace MediaPortal.GUI.TV
 		void CheckTimeOuts()
 		{
 
+			if (_isVolumeVisible)
+			{
+				TimeSpan ts = DateTime.Now -_volumeTimer;
+				if (ts.TotalSeconds>=3) RenderVolume(false);
+			}
 			if (m_bShowGroup)
 			{
 				TimeSpan ts = (DateTime.Now - m_dwGroupZapTimer);
@@ -1730,6 +1752,37 @@ namespace MediaPortal.GUI.TV
 				}
 			}
 			base.OnPageDestroy (newWindowId);
+		}
+		void RenderVolume(bool show)
+		{
+			if (imgVolumeBar==null) return;
+				
+			if (!show)
+			{
+				_isVolumeVisible=false;
+				imgVolumeBar.Visible=false;
+				return;
+			}
+			else
+			{
+				imgVolumeBar.Visible=true;
+				if (VolumeHandler.Instance.IsMuted)
+				{
+					imgVolumeMuteIcon.Visible=true;
+					imgVolumeBar.Image1=1;
+					imgVolumeBar.Percent=100;
+
+				}
+				else
+				{
+					float percent = ((float)VolumeHandler.Instance.Volume) / ((float)VolumeHandler.Instance.Maximum);
+					imgVolumeMuteIcon.Visible=false;
+					imgVolumeBar.Image1=1;
+					imgVolumeBar.Image1=2;
+					imgVolumeBar.Percent=(int)(percent*100);
+				}
+				
+			}
 		}
 	}
 }
