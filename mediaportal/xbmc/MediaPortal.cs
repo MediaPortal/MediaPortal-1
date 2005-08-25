@@ -336,8 +336,10 @@ public class MediaPortalApp : D3DApp, IRender
 		//following crashes on some pc's, dunno why
 		//Log.Write("  Stop any known recording processes");
 		//Utils.KillExternalTVProcesses();
+#if !DEBUG
 		try
 		{
+#endif
 			if (splashScreen != null) splashScreen.SetInformation("Initializing DirectX...");
 			MediaPortalApp app = new MediaPortalApp();
 			Log.Write("  initializing DirectX");
@@ -345,22 +347,28 @@ public class MediaPortalApp : D3DApp, IRender
 			{
 				//app.PreRun();
 				Log.Write("running...");
+#if !DEBUG
 				try
 				{
+#endif
 					GUIGraphicsContext.BlankScreen=false;
 					Application.Run(app);
+#if !DEBUG
 				}
 				catch (Exception ex)
 				{
 					Log.WriteFile(Log.LogType.Log, true, "MediaPortal stopped due 2 an exception {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
 				}
+#endif
 				app.OnExit();
 			}
+#if !DEBUG
 		}
 		catch (Exception ex)
 		{
 			Log.WriteFile(Log.LogType.Log, true, "MediaPortal stopped due 2 an exception {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
 		}
+#endif
 #if DEBUG
 #else
 		if (splashScreen != null)

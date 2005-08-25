@@ -1764,6 +1764,8 @@ namespace MediaPortal.TV.Recording
 			System.Drawing.Color bgColor=GetColor(bColor);
 			if (bgColor==System.Drawing.Color.Black && isSubtitlePage)
 				bgColor=System.Drawing.Color.HotPink;
+			if (bgColor==System.Drawing.Color.HotPink && !isSubtitlePage)
+				bgColor=System.Drawing.Color.Black;
 			System.Drawing.Brush backBrush=new System.Drawing.SolidBrush(bgColor);
 			System.Drawing.Brush foreBrush=new System.Drawing.SolidBrush(GetColor(fColor));
 			System.Drawing.Pen	backPen=new System.Drawing.Pen(backBrush,1);
