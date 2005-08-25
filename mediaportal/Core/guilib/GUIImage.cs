@@ -234,6 +234,7 @@ namespace MediaPortal.GUI.Library
 		public long	ColorKey 
 		{
 			get {return m_dwColorKey;}
+			set { m_dwColorKey=value;}
 		}
 
 		/// <summary>

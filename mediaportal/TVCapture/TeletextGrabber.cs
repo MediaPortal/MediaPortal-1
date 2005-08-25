@@ -1,4 +1,5 @@
 using System;
+using MediaPortal.GUI.Library;
 
 namespace MediaPortal.TV.Recording
 {
@@ -21,17 +22,20 @@ namespace MediaPortal.TV.Recording
 		{
 			_teletext.ClearBuffer();
 			device.GrabTeletext(true);
+			Log.Write("teletext: grab teletext for card:{0}", device.CommercialName);
 		}
 
 		static private void OnTvViewingStopped(int card, TVCaptureDevice device)
 		{
 			_teletext.ClearBuffer();
 			device.GrabTeletext(false);
+			Log.Write("teletext: stop grabbing teletext for card:{0}", device.CommercialName);
 		}
 
 		static private void OnTvChannelChanged(string tvChannelName)
 		{
 			_teletext.ClearBuffer();	
+			Log.Write("teletext: clear teletext cache");
 		}
 
 		static public void SaveData(IntPtr dataPtr)

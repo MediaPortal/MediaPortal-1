@@ -373,7 +373,10 @@ namespace MediaPortal.TV.Recording
 			try
 			{
 				if (m_pageBitmap==null)
-					m_pageBitmap=new System.Drawing.Bitmap(m_pageWidth,m_pageHeight);
+				{
+						m_pageBitmap=new System.Drawing.Bitmap(m_pageWidth,m_pageHeight);
+						m_pageBitmap.MakeTransparent(System.Drawing.Color.HotPink);
+				}
 				if (m_renderGraphics==null)
 					m_renderGraphics=System.Drawing.Graphics.FromImage(m_pageBitmap);
 
@@ -443,7 +446,10 @@ namespace MediaPortal.TV.Recording
 			get
 			{
 				if (m_pageBitmap==null)
+				{
 					m_pageBitmap=new System.Drawing.Bitmap(m_pageWidth,m_pageHeight);
+					m_pageBitmap.MakeTransparent(System.Drawing.Color.HotPink);
+				}
 				if (m_renderGraphics==null)
 					m_renderGraphics=System.Drawing.Graphics.FromImage(m_pageBitmap);
 
@@ -457,8 +463,12 @@ namespace MediaPortal.TV.Recording
 		{
 			if(((int)m_cacheTable[page,subpage])==0)
 			{
+				byte[] emptyPage = new byte[size];
+				for (int i=0; i < size;++i)
+					emptyPage[i]=32;
 				m_cacheTable[page,subpage]=IntPtr.Zero;
 				m_cacheTable[page,subpage]=Marshal.AllocHGlobal(size);
+				Marshal.Copy(emptyPage,0,m_cacheTable[page,subpage],size);
 				if(m_cacheTable[page,subpage]==IntPtr.Zero)
 					return false;
 				m_pageCount++;
@@ -1265,6 +1275,7 @@ namespace MediaPortal.TV.Recording
 			byte[] pageChars=new byte[1024];
 			int[] pageAttribs=new int[1024];
 
+			bool isSubtitlePage=false;
 			if(mPage<0xffff)
 			{
 				if((int)m_cacheTable[mPage,sPage]==0)
@@ -1277,263 +1288,286 @@ namespace MediaPortal.TV.Recording
 				else
 					boxed = 0;
 
+				if ((m_deHamTable[pageChars[7-2]] & 0x4)>0 && m_transparentMode)
+					isSubtitlePage=true;
 
 				for (row = 0; row < 24; row++)
 				{
-					foreground   = (int)TextColors.White;
-					if(m_transparentMode==false)
-						background  = (int)TextColors.Black;
-					else
-						background  = (int)TextColors.Trans1;
-
-					doubleheight = 0;
-					charset      = 0;
-					mosaictype   = 0;
-					hold         = 0;
-					held_mosaic  = 32;
-				
-					for(int loop1=0;loop1<40;loop1++)
-						if(pageChars[(row*40)+loop1]==(int)Attributes.StartBox)
+					if (row==24 && isSubtitlePage)
+					{
+						for (i=0; i < 40; ++i)
 						{
-							flag=true;
-							break;
+							pageChars[row*40+i]=32;
+							pageAttribs[row*40+i]=((int)TextColors.Black<<4) | ((int)TextColors.White);
 						}
-
-					if (boxed!=0 && flag==false)
-					{
-						foreground = (int)TextColors.Trans1;
-						background = (int)TextColors.Trans1;
 					}
-				
-					for (col = 0; col < 40; col++)
+					else
 					{
-						int index = row*40 + col;
-			
-						pageAttribs[index] = (doubleheight<<10 | charset<<8 | background<<4 | foreground);
-			
-						if (pageChars[index] < 32)
-						{
-							switch (pageChars[index])
+						foreground   = (int)TextColors.White;
+						if(isSubtitlePage==false&&m_transparentMode==false)
+							background  = (int)TextColors.Black;
+						else
+							background  = (int)TextColors.Trans1;
+
+						doubleheight = 0;
+						charset      = 0;
+						mosaictype   = 0;
+						hold         = 0;
+						held_mosaic  = 32;
+					
+						for(int loop1=0;loop1<40;loop1++)
+							if(pageChars[(row*40)+loop1]==(int)Attributes.StartBox)
 							{
-								case (int)Attributes.AlphaBlack:
-									foreground = (int)TextColors.Black;
-									charset = 0;
-									break;
-
-								case (int)Attributes.AlphaRed:
-									foreground = (int)TextColors.Red;
-									charset = 0;
-									break;
-
-								case (int)Attributes.AlphaGreen:
-									foreground = (int)TextColors.Green;
-									charset = 0;
-									break;
-
-								case (int)Attributes.AlphaYellow:
-									foreground = (int)TextColors.Yellow;
-									charset = 0;
-									break;
-
-								case (int)Attributes.AlphaBlue:
-									foreground = (int)TextColors.Blue;
-									charset = 0;
-									break;
-
-								case (int)Attributes.AlphaMagenta:
-									foreground = (int)TextColors.Magenta;
-									charset = 0;
-									break;
-
-								case (int)Attributes.AlphaCyan:
-									foreground = (int)TextColors.Cyan;
-									charset = 0;
-									break;
-
-								case (int)Attributes.AlphaWhite:
-									foreground = (int)TextColors.White;
-									charset = 0;
-									break;
-
-								case (int)Attributes.Flash:
-									break;
-
-								case (int)Attributes.Steady:
-									break;
-
-								case (int)Attributes.EndBox:
-									if (boxed>0)
-									{
-										foreground = (int)TextColors.Trans1;
-										background = (int)TextColors.Trans1;
-									}
-									break;
-
-								case (int)Attributes.StartBox:
-									if (boxed>0)
-									{
-										if (col > 0)
-											for(int loop1=0;loop1<col;loop1++)
-												pageChars[(row*40)+loop1]=32;
-										for (int clear = 0; clear < col; clear++)
-											pageAttribs[row*40 + clear] = doubleheight<<10 |charset<<8|(int)TextColors.Trans1<<4 | (int)TextColors.Trans1;
-									}
-									break;
-
-								case (int)Attributes.NormalSize:
-									doubleheight = 0;
-									pageAttribs[index] =( doubleheight<<10 | charset<<8 | background<<4 | foreground);
-									break;
-
-								case (int)Attributes.DoubleHeight:
-									if (row < 23)
-										doubleheight = 1;
-									break;
-
-								case (int)Attributes.MosaicBlack:
-									foreground = (int)TextColors.Black;
-									charset = 1 + mosaictype;
-									break;
-
-								case (int)Attributes.MosaicRed:
-									foreground = (int)TextColors.Red;
-									charset = 1 + mosaictype;
-									break;
-
-								case (int)Attributes.MosaicGreen:
-									foreground = (int)TextColors.Green;
-									charset = 1 + mosaictype;
-									break;
-
-								case (int)Attributes.MosaicYellow:
-									foreground = (int)TextColors.Yellow;
-									charset = 1 + mosaictype;
-									break;
-
-								case (int)Attributes.MosaicBlue:
-									foreground = (int)TextColors.Blue;
-									charset = 1 + mosaictype;
-									break;
-
-								case (int)Attributes.MosaicMagenta:
-									foreground = (int)TextColors.Magenta;
-									charset = 1 + mosaictype;
-									break;
-
-								case (int)Attributes.MosaicCyan:
-									foreground = (int)TextColors.Cyan;
-									charset = 1 + mosaictype;
-									break;
-
-								case (int)Attributes.MosaicWhite:
-									foreground = (int)TextColors.White;
-									charset = 1 + mosaictype;
-									break;
-
-								case (int)Attributes.Conceal:
-									if (m_hiddenMode==true) 
-									{
-										foreground = background;
-										pageAttribs[index] = (doubleheight<<10 | charset<<8 | background<<4 | foreground);
-									}
-									break;
-
-								case (int)Attributes.ContiguousMosaic:
-									mosaictype = 0;
-									if (charset>0)
-									{
-										charset = 1;
-										pageAttribs[index] = (doubleheight<<10 | charset<<8 | background<<4 | foreground);
-									}
-									break;
-
-								case (int)Attributes.SeparatedMosaic:
-									mosaictype = 1;
-									if (charset>0)
-									{
-										charset = 2;
-										pageAttribs[index] = (doubleheight<<10 | charset<<8 | background<<4 | foreground);
-									}
-									break;
-
-								case (int)Attributes.Esc:
-									break;
-
-								case (int)Attributes.BlackBackground:
-									background = (int)TextColors.Black;
-									pageAttribs[index] = (doubleheight<<10 | charset<<8 | background<<4 | foreground);
-									break;
-
-								case (int)Attributes.NewBackground:
-									background = foreground;
-									pageAttribs[index] = (doubleheight<<10 | charset<<8 | background<<4 | foreground);
-									break;
-
-								case (int)Attributes.HoldMosaic:
-									hold = 1;
-									break;
-
-								case (int)Attributes.ReleaseMosaic:
-									hold = 2;
-									break;
+								flag=true;
+								break;
 							}
 
-							if (hold>0 && charset>0)
-								pageChars[index] = held_mosaic;
-							else
-								pageChars[index] = 32;
-
-							if (hold == 2)
-								hold = 0;
-						}
-						else 
+						if (boxed!=0 && flag==false)
 						{
-							if (charset>0)
-								held_mosaic = pageChars[index];
-
-							if (doubleheight>0)
-								pageChars[index + 40] = 0xFF;
+							foreground = (int)TextColors.Trans1;
+							background = (int)TextColors.Trans1;
 						}
-					}
-
-				
-					for(int count=(row+1)*40;count<((row+1)*40)+40;count++)
-					{
-						if(pageChars[count]==255)
-						{
-							for(int loop1=0;loop1<40;loop1++)
-								pageAttribs[(row+1)*40 + loop1] = ((pageAttribs[(row*40) + loop1] & 0xF0) | ((pageAttribs[(row*40) + loop1] & 0xF0)>>4));
 					
-							row++;
-							break;
+						for (col = 0; col < 40; col++)
+						{
+							int index = row*40 + col;
+				
+							pageAttribs[index] = (doubleheight<<10 | charset<<8 | background<<4 | foreground);
+				
+							if (pageChars[index] < 32)
+							{
+								switch (pageChars[index])
+								{
+									case (int)Attributes.AlphaBlack:
+										foreground = (int)TextColors.Black;
+										charset = 0;
+										break;
+
+									case (int)Attributes.AlphaRed:
+										foreground = (int)TextColors.Red;
+										charset = 0;
+										break;
+
+									case (int)Attributes.AlphaGreen:
+										foreground = (int)TextColors.Green;
+										charset = 0;
+										break;
+
+									case (int)Attributes.AlphaYellow:
+										foreground = (int)TextColors.Yellow;
+										charset = 0;
+										break;
+
+									case (int)Attributes.AlphaBlue:
+										foreground = (int)TextColors.Blue;
+										charset = 0;
+										break;
+
+									case (int)Attributes.AlphaMagenta:
+										foreground = (int)TextColors.Magenta;
+										charset = 0;
+										break;
+
+									case (int)Attributes.AlphaCyan:
+										foreground = (int)TextColors.Cyan;
+										charset = 0;
+										break;
+
+									case (int)Attributes.AlphaWhite:
+										foreground = (int)TextColors.White;
+										charset = 0;
+										break;
+
+									case (int)Attributes.Flash:
+										break;
+
+									case (int)Attributes.Steady:
+										break;
+
+									case (int)Attributes.EndBox:
+										if (boxed>0)
+										{
+											foreground = (int)TextColors.Trans1;
+											background = (int)TextColors.Trans1;
+										}
+										break;
+
+									case (int)Attributes.StartBox:
+										if (boxed>0)
+										{
+											if (col > 0)
+												for(int loop1=0;loop1<col;loop1++)
+													pageChars[(row*40)+loop1]=32;
+											for (int clear = 0; clear < col; clear++)
+												pageAttribs[row*40 + clear] = doubleheight<<10 |charset<<8|(int)TextColors.Trans1<<4 | (int)TextColors.Trans1;
+										}
+										break;
+
+									case (int)Attributes.NormalSize:
+										doubleheight = 0;
+										pageAttribs[index] =( doubleheight<<10 | charset<<8 | background<<4 | foreground);
+										break;
+
+									case (int)Attributes.DoubleHeight:
+										if (row < 23)
+											doubleheight = 1;
+										break;
+
+									case (int)Attributes.MosaicBlack:
+										foreground = (int)TextColors.Black;
+										charset = 1 + mosaictype;
+										break;
+
+									case (int)Attributes.MosaicRed:
+										foreground = (int)TextColors.Red;
+										charset = 1 + mosaictype;
+										break;
+
+									case (int)Attributes.MosaicGreen:
+										foreground = (int)TextColors.Green;
+										charset = 1 + mosaictype;
+										break;
+
+									case (int)Attributes.MosaicYellow:
+										foreground = (int)TextColors.Yellow;
+										charset = 1 + mosaictype;
+										break;
+
+									case (int)Attributes.MosaicBlue:
+										foreground = (int)TextColors.Blue;
+										charset = 1 + mosaictype;
+										break;
+
+									case (int)Attributes.MosaicMagenta:
+										foreground = (int)TextColors.Magenta;
+										charset = 1 + mosaictype;
+										break;
+
+									case (int)Attributes.MosaicCyan:
+										foreground = (int)TextColors.Cyan;
+										charset = 1 + mosaictype;
+										break;
+
+									case (int)Attributes.MosaicWhite:
+										foreground = (int)TextColors.White;
+										charset = 1 + mosaictype;
+										break;
+
+									case (int)Attributes.Conceal:
+										if (m_hiddenMode==true) 
+										{
+											foreground = background;
+											pageAttribs[index] = (doubleheight<<10 | charset<<8 | background<<4 | foreground);
+										}
+										break;
+
+									case (int)Attributes.ContiguousMosaic:
+										mosaictype = 0;
+										if (charset>0)
+										{
+											charset = 1;
+											pageAttribs[index] = (doubleheight<<10 | charset<<8 | background<<4 | foreground);
+										}
+										break;
+
+									case (int)Attributes.SeparatedMosaic:
+										mosaictype = 1;
+										if (charset>0)
+										{
+											charset = 2;
+											pageAttribs[index] = (doubleheight<<10 | charset<<8 | background<<4 | foreground);
+										}
+										break;
+
+									case (int)Attributes.Esc:
+										break;
+
+									case (int)Attributes.BlackBackground:
+										background = (int)TextColors.Black;
+										pageAttribs[index] = (doubleheight<<10 | charset<<8 | background<<4 | foreground);
+										break;
+
+									case (int)Attributes.NewBackground:
+										background = foreground;
+										pageAttribs[index] = (doubleheight<<10 | charset<<8 | background<<4 | foreground);
+										break;
+
+									case (int)Attributes.HoldMosaic:
+										hold = 1;
+										break;
+
+									case (int)Attributes.ReleaseMosaic:
+										hold = 2;
+										break;
+								}
+
+								if (hold>0 && charset>0)
+									pageChars[index] = held_mosaic;
+								else
+									pageChars[index] = 32;
+
+								if (hold == 2)
+									hold = 0;
+							}
+							else 
+							{
+								if (charset>0)
+									held_mosaic = pageChars[index];
+
+								if (doubleheight>0)
+									pageChars[index + 40] = 0xFF;
+							}
+						}
+
+					
+						for(int count=(row+1)*40;count<((row+1)*40)+40;count++)
+						{
+							if(pageChars[count]==255)
+							{
+								for(int loop1=0;loop1<40;loop1++)
+									pageAttribs[(row+1)*40 + loop1] = ((pageAttribs[(row*40) + loop1] & 0xF0) | ((pageAttribs[(row*40) + loop1] & 0xF0)>>4));
+						
+								row++;
+								break;
+							}
 						}
 					}
-
 				}
 			
 				if (IsDEC(mPage))
 				{
-					int i;
-					string pageNumber="";
-					int lineColor=0;
-					if(m_pageSelectText.IndexOf("-")==-1)
+					if (isSubtitlePage)
 					{
-						lineColor=(int)TextColors.Green;
-						pageNumber=Convert.ToString(mPage,16)+"/"+Convert.ToString(sPage,16);
+						for (int i=0; i < 40;++i)
+						{
+							pageChars[i]=0;
+							pageAttribs[i]=((int)TextColors.Black<<4) | ((int)TextColors.White);
+						}
 					}
 					else
 					{
-						lineColor=(int)TextColors.Red;
-						pageNumber=m_pageSelectText;
+						int i;
+						string pageNumber="";
+						int lineColor=0;
+						if(m_pageSelectText.IndexOf("-")==-1)
+						{
+							lineColor=(int)TextColors.Green;
+							pageNumber=Convert.ToString(mPage,16)+"/"+Convert.ToString(sPage,16);
+						}
+						else
+						{
+							lineColor=(int)TextColors.Red;
+							pageNumber=m_pageSelectText;
+						}
+						string headline="MediaPortal P."+pageNumber;
+						headline+=new string((char)32,32-headline.Length);
+						byte[] mpText=System.Text.Encoding.ASCII.GetBytes(headline);
+						System.Array.Copy(mpText,0,pageChars,0,mpText.Length);
+						for (i = 0; i < 11; i++)
+							pageAttribs[i] = ((int)TextColors.Black<<4) | lineColor;
+						for (i = 12; i < 40; i++)
+							pageAttribs[i] = ((int)TextColors.Black<<4) | ((int)TextColors.White);
 					}
-					string headline="MediaPortal P."+pageNumber;
-					headline+=new string((char)32,32-headline.Length);
-					byte[] mpText=System.Text.Encoding.ASCII.GetBytes(headline);
-					System.Array.Copy(mpText,0,pageChars,0,mpText.Length);
-					for (i = 0; i < 11; i++)
-						pageAttribs[i] = ((int)TextColors.Black<<4) | lineColor;
-					for (i = 12; i < 40; i++)
-						pageAttribs[i] = ((int)TextColors.Black<<4) | ((int)TextColors.White);
 
 				}
 			}
@@ -1604,7 +1638,12 @@ namespace MediaPortal.TV.Recording
 			int fntSize=(width-2<10)?10:width-2;
 			m_teletextFont=new System.Drawing.Font("Courier New",fntSize,System.Drawing.FontStyle.Bold);
 			if (m_renderGraphics!=null)
-				m_renderGraphics.FillRectangle(new System.Drawing.SolidBrush(System.Drawing.Color.Black),0,0,m_pageWidth,m_pageHeight);
+			{
+				if (isSubtitlePage)
+					m_renderGraphics.FillRectangle(new System.Drawing.SolidBrush(System.Drawing.Color.HotPink),0,0,m_pageWidth,m_pageHeight);
+				else
+					m_renderGraphics.FillRectangle(new System.Drawing.SolidBrush(System.Drawing.Color.Black),0,0,m_pageWidth,m_pageHeight);
+			}
 			int[] topColors=new int[]{(int)TextColors.Red,(int)TextColors.Green,(int)TextColors.Yellow,(int)TextColors.Cyan};
 			int colorCounter=0;
 			if(mPage==0xFFFF)
@@ -1686,7 +1725,7 @@ namespace MediaPortal.TV.Recording
 					x = 0;
 
 					for (col = 0; col < 40; col++)
-						Render(m_renderGraphics,pageChars[row*40 + col], pageAttribs[row*40 + col],ref x,ref y,width,height);
+						Render(m_renderGraphics,pageChars[row*40 + col], pageAttribs[row*40 + col],ref x,ref y,width,height,isSubtitlePage);
 
 					y+=height+(row==23?2:0);
 					
@@ -1697,7 +1736,7 @@ namespace MediaPortal.TV.Recording
 			// send the bitmap to the callback
 		}
 
-		void Render(System.Drawing.Graphics graph,byte chr,int attrib,ref int x,ref int y,int w,int h)
+		void Render(System.Drawing.Graphics graph,byte chr,int attrib,ref int x,ref int y,int w,int h, bool isSubtitlePage)
 		{
 			bool charReady=false;
 			char chr2='?';
@@ -1716,7 +1755,10 @@ namespace MediaPortal.TV.Recording
 			/* get colors */
 			int fColor = attrib & 0x0F;
 			int bColor = (attrib>>4) & 0x0F;
-			System.Drawing.Brush backBrush=new System.Drawing.SolidBrush(GetColor(bColor));
+			System.Drawing.Color bgColor=GetColor(bColor);
+			if (bgColor==System.Drawing.Color.Black && isSubtitlePage)
+				bgColor=System.Drawing.Color.HotPink;
+			System.Drawing.Brush backBrush=new System.Drawing.SolidBrush(bgColor);
 			System.Drawing.Brush foreBrush=new System.Drawing.SolidBrush(GetColor(fColor));
 			System.Drawing.Pen	backPen=new System.Drawing.Pen(backBrush,1);
 			System.Drawing.Pen	forePen=new System.Drawing.Pen(foreBrush,1);
@@ -1973,9 +2015,9 @@ namespace MediaPortal.TV.Recording
 				case (int)TextColors.Cyan:
 					return System.Drawing.Color.Cyan;
 				case (int)TextColors.Trans1:
-					return System.Drawing.Color.Transparent;
+					return System.Drawing.Color.HotPink;
 				case (int)TextColors.Trans2:
-					return System.Drawing.Color.Transparent;
+					return System.Drawing.Color.HotPink;
 			}
 			return System.Drawing.Color.Black;
 		}

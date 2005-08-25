@@ -391,11 +391,12 @@ namespace MediaPortal.GUI.TV
 					imgTeletext.FileName="";
 					imgTeletext.FreeResources();
 					imgTeletext.IsVisible=false;
-					//Utils.FileDelete(@"teletext.jpg");
 					GUITextureManager.ReleaseTexture("#useMemoryImage");
-					//bitmapTeletextPage.Save(@"teletext.jpg",System.Drawing.Imaging.ImageFormat.Jpeg);
+					Utils.FileDelete(@"teletext.png");
+					//img.Save(@"teletext.png",System.Drawing.Imaging.ImageFormat.Png);
 					imgTeletext.FileName="#useMemoryImage";
 					imgTeletext.MemoryImage=img;
+					imgTeletext.ColorKey=System.Drawing.Color.HotPink.ToArgb();
 					imgTeletext.AllocResources();
 					imgTeletext.IsVisible=true;
 					imgTeletext.Centered=false;
@@ -415,9 +416,10 @@ namespace MediaPortal.GUI.TV
 
 		public override void Render(float timePassed)
 		{
+			GUIGraphicsContext.IsFullScreenVideo=true;
 			lock (imgTeletext)
 			{
-				base.Render (timePassed);
+				imgTeletext.Render(timePassed);
 			}
 		}
 
