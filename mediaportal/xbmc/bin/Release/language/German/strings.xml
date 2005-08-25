@@ -3119,7 +3119,7 @@
 </string>	
 
 	<!-- My Status Strings -->
-	<string><id>1950</id><value>Staus</value></string>
+	<string><id>1950</id><value>Status</value></string>
 	<string><id>1951</id><value>Festplatte</value></string>
 	<string><id>1952</id><value>Lüfter</value></string>
 	<string><id>1953</id><value>Frei</value></string>
