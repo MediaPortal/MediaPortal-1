@@ -139,15 +139,15 @@
 	</string>
 	<string>
 		<id>103</id>
-		<value>Nach: Name</value>
+		<value>Sortiere: Name</value>
 	</string>
 	<string>
 		<id>104</id>
-		<value>Nach: Datum</value>
+		<value>Sortiere: Datum</value>
 	</string>
 	<string>
 		<id>105</id>
-		<value>Nach: Grösse</value>
+		<value>Sortiere: Grösse</value>
 	</string>
 	<string>
 		<id>106</id>
@@ -163,11 +163,11 @@
 	</string>
 	<string>
 		<id>109</id>
-		<value>Kopie erstellen</value>
+		<value>Vorschaubilder erstellen</value>
 	</string>
 	<string>
 		<id>110</id>
-		<value>Kopie wird erstellt</value>
+		<value>Vorschaubilder werden erstellt</value>
 	</string>
 	<string>
 		<id>111</id>
@@ -255,7 +255,7 @@
 	</string>
 	<string>
 		<id>132</id>
-		<value>Albumen</value>
+		<value>Alben</value>
 	</string>
 	<string>
 		<id>133</id>
@@ -263,7 +263,7 @@
 	</string>
 	<string>
 		<id>134</id>
-		<value>Freigaben</value>
+		<value>Sammlung</value>
 	</string>
 	<string>
 		<id>135</id>
@@ -431,11 +431,11 @@
 	</string>
 	<string>
 		<id>176</id>
-		<value>Stil:</value>
+		<value>Stilrichtungen:</value>
 	</string>
 	<string>
 		<id>177</id>
-		<value>Review:</value>
+		<value>Kritik:</value>
 	</string>
 	<string>
 		<id>178</id>
@@ -551,7 +551,7 @@
 	</string>
 	<string>
 		<id>206</id>
-		<value>Künstler</value>
+		<value>Darsteller</value>
 	</string>
 	<string>
 		<id>207</id>
@@ -619,7 +619,7 @@
 	</string>
 	<string>
 		<id>223</id>
-		<value>Auto Widescreen</value>
+		<value>Auto Breitbild</value>
 	</string>
 	<string>
 		<id>224</id>
@@ -723,7 +723,7 @@
 	</string>
 	<string>
 		<id>250</id>
-		<value>Visualisation</value>
+		<value>Visualisierung</value>
 	</string>
 	<string>
 		<id>251</id>
@@ -787,23 +787,23 @@
 	</string>
 	<string>
 		<id>266</id>
-		<value>Nach: Track</value>
+		<value>Sortiere: Track</value>
 	</string>
 	<string>
 		<id>267</id>
-		<value>Nach: Zeit</value>
+		<value>Sortiere: Zeit</value>
 	</string>
 	<string>
 		<id>268</id>
-		<value>Nach: Titel</value>
+		<value>Sortiere: Titel</value>
 	</string>
 	<string>
 		<id>269</id>
-		<value>Nach: Künstler</value>
+		<value>Sortiere: Künstler</value>
 	</string>
 	<string>
 		<id>270</id>
-		<value>Nach: Album</value>
+		<value>Sortiere: Album</value>
 	</string>
 	<string>
 		<id>271</id>
@@ -923,15 +923,15 @@
 	</string>
 	<string>
 		<id>300</id>
-		<value>Sprache</value>
+		<value>1. Sprache</value>
 	</string>
 	<string>
 		<id>301</id>
-		<value>Lautstärke</value>
+		<value>2. Lautstärke</value>
 	</string>
 	<string>
 		<id>302</id>
-		<value>Stream</value>
+		<value>3. Stream</value>
 	</string>
 	<string>
 		<id>303</id>
@@ -1067,7 +1067,7 @@
 	</string>
 	<string>
 		<id>336</id>
-		<value>Framerate anpassen</value>
+		<value>Wiederholrate anpassen</value>
 	</string>
 	<string>
 		<id>337</id>
@@ -1095,7 +1095,7 @@
 	</string>
 	<string>
 		<id>343</id>
-		<value>Framerate anpassen</value>
+		<value>Wiederholrate anpassen</value>
 	</string>
 	<string>
 		<id>344</id>
@@ -1119,7 +1119,7 @@
 	</string>
 	<string>
 		<id>349</id>
-		<value>Nur Default .xbe zeigen</value>
+		<value>Nur Standard .xbe zeigen</value>
 	</string>
 	<string>
 		<id>350</id>
@@ -1167,7 +1167,7 @@
 	</string>
 	<string>
 		<id>361</id>
-		<value>Präsentation</value>
+		<value>Diashow (alle Ordner)</value>
 	</string>
 	<string>
 		<id>362</id>
@@ -1175,23 +1175,23 @@
 	</string>
 	<string>
 		<id>363</id>
-		<value>Nach: Datei</value>
+		<value>Sortiere: Datei</value>
 	</string>
 	<string>
 		<id>364</id>
-		<value>DD/DTS Mehrkanal Passthrough</value>
+		<value>DD/DTS Mehrkanal durchschleifen</value>
 	</string>
 	<string>
 		<id>365</id>
-		<value>Nach: Name</value>
+		<value>Sortiere: Name</value>
 	</string>
 	<string>
 		<id>366</id>
-		<value>Nach: Jahr</value>
+		<value>Sortiere: Jahr</value>
 	</string>
 	<string>
 		<id>367</id>
-		<value>Nach: Bewertung</value>
+		<value>Sortiere: Bewertung</value>
 	</string>
 	<string>
 		<id>368</id>
@@ -1375,7 +1375,7 @@
 	</string>
 	<string>
 		<id>415</id>
-		<value>Lade Kopie...</value>
+		<value>Lade Vorschau...</value>
 	</string>
 	<string>
 		<id>416</id>
@@ -1435,7 +1435,7 @@
 	</string>
 	<string>
 		<id>430</id>
-		<value>Nach: DVD#</value>
+		<value>Sortiere: DVD#</value>
 	</string>
 	<string>
 		<id>431</id>
@@ -1555,7 +1555,7 @@
 	</string>
 	<string>
 		<id>460</id>
-		<value>Audiostream</value>
+		<value>Sprache/Kanal</value>
 	</string>
 	<string>
 		<id>461</id>
@@ -1603,7 +1603,7 @@
 	</string>
 	<string>
 		<id>472</id>
-		<value>OSD -Leerlauf</value>
+		<value>OSD Anzeigedauer</value>
 	</string>
 	<string>
 		<id>473</id>
@@ -1615,7 +1615,7 @@
 	</string>
 	<string>
 		<id>475</id>
-		<value>Mnur Musik</value>
+		<value>Nur Musik</value>
 	</string>
 	<string>
 		<id>476</id>
@@ -1635,7 +1635,7 @@
 	</string>
 	<string>
 		<id>480</id>
-		<value>Benutzeröberfläche</value>
+		<value>Benutzeroberfläche</value>
 	</string>
 	<string>
 		<id>481</id>
@@ -1711,7 +1711,7 @@
 	</string>
 	<string>
 		<id>506</id>
-		<value>Ganz sicher?</value>
+		<value>Wirklich?</value>
 	</string>
 	<string>
 		<id>507</id>
@@ -1795,7 +1795,7 @@
 	</string>
 	<string>
 		<id>603</id>
-		<value>Planer</value>
+		<value>Timer</value>
 	</string>
 	<string>
 		<id>604</id>
@@ -1863,19 +1863,19 @@
 	</string>
 	<string>
 		<id>620</id>
-		<value>Nach: Kanal</value>
+		<value>Sortiere: Kanal</value>
 	</string>
 	<string>
 		<id>621</id>
-		<value>Nach: Datum</value>
+		<value>Sortiere: Datum</value>
 	</string>
 	<string>
 		<id>622</id>
-		<value>Nach: Name</value>
+		<value>Sortiere: Name</value>
 	</string>
 	<string>
 		<id>623</id>
-		<value>Nach: Typ</value>
+		<value>Sortiere: Typ</value>
 	</string>
 	<string>
 		<id>624</id>
@@ -1967,7 +1967,7 @@
 	</string>
 	<string>
 		<id>646</id>
-		<value>Aufnahmeplaner</value>
+		<value>Timer</value>
 	</string>
 	<string>
 		<id>647</id>
@@ -2055,19 +2055,19 @@
 	</string>
 	<string>
 		<id>668</id>
-		<value>Nach: Typ</value>
+		<value>Sortiere: Typ</value>
 	</string>
 	<string>
 		<id>669</id>
-		<value>Nach: Genre</value>
+		<value>Sortiere: Genre</value>
 	</string>	
 	<string>
 		<id>670</id>
-		<value>Nach: Bitrate</value>
+		<value>Sortiere: Bitrate</value>
 	</string>	
 	<string>
 		<id>671</id>
-		<value>Nach: Gesehen</value>
+		<value>Sortiere: Gesehen</value>
 	</string>
 	<string>
 		<id>672</id>
@@ -2095,7 +2095,7 @@
 	</string>	
 	<string>
 		<id>678</id>
-		<value>Nach: Genre</value>
+		<value>Sortiere: Genre</value>
 	</string>	
 	<string>
 		<id>679</id>
@@ -2123,7 +2123,7 @@
 	</string>	
 	<string>
 		<id>685</id>
-		<value>Nach: Status</value>
+		<value>Sortiere: Status</value>
 	</string>	
 	
 <string><id>686</id><value>Geboren</value></string>
@@ -2240,7 +2240,7 @@
 </string>	
 <string>
 	<id>736</id>
-	<value>Keine EPG-Daten verfügbar</value>
+	<value>Keine Programminformationen verfügbar</value>
 </string>
 <string>
 	<id>737</id>
@@ -2377,7 +2377,7 @@
 </string>
 <string>
 	<id>859</id>
-	<value>Sleep-Timer</value>
+	<value>Sleeptimer</value>
 </string>
 <string>
 	<id>860</id>
@@ -2452,7 +2452,7 @@
 </string>
 <string>
 	<id>877</id>
-	<value>Priorität</value>
+	<value>Prioritäten</value>
 </string>
 <string>
 	<id>878</id>
@@ -2460,7 +2460,7 @@
 </string>
 <string>
 	<id>879</id>
-	<value>Konflike</value>
+	<value>Aufnahmeüberschneidung</value>
 </string>
 <string>
 	<id>880</id>
@@ -2480,7 +2480,7 @@
 </string>
 <string>
 	<id>884</id>
-	<value>Medium</value>
+	<value>Mittel</value>
 </string>
 <string>
 	<id>885</id>
@@ -2488,15 +2488,15 @@
 </string>
 <string>
 	<id>886</id>
-	<value>Default</value>
+	<value>Standard</value>
 </string>
 <string>
 	<id>887</id>
-	<value>Anzahl der Folgen</value>
+	<value>Wie viele Folgen sollen gespeichert bleiben?</value>
 </string>
 <string>
 	<id>888</id>
-	<value>Folgen Verwaltung</value>
+	<value>Serien verwalten</value>
 </string>
 <string>
 	<id>889</id>
@@ -2514,11 +2514,11 @@
 </string>
 <string>
 	<id>892</id>
-	<value>Konflikte</value>
+	<value>Überschneidungen</value>
 </string>
 <string>
 	<id>893</id>
-	<value>Portable</value>
+	<value>Portabel</value>
 </string>
 <string>
 	<id>894</id>
@@ -2530,7 +2530,7 @@
 </string>
 <string>
 	<id>896</id>
-	<value>Komprimiere</value>
+	<value>Komprimieren</value>
 </string>
 <string>
 	<id>897</id>
@@ -2695,7 +2695,7 @@
 </string>
 <string>
 	<id>937</id>
-	<value>TV Guide importieren</value>
+	<value>Programminformationen importieren</value>
 </string>
 <string>
 	<id>938</id>
@@ -2891,7 +2891,7 @@
 </string>
 <string>
 	<id>993</id>
-	<value>Custom</value>
+	<value>Benutzerdef.</value>
 </string>
 <string>
 	<id>994</id>
@@ -2925,11 +2925,11 @@
 </string>
 <string>
 	<id>1001</id>
-	<value>Bitte beachten. Sie müssen den</value>
+	<value>Bitte beachten: Sie müssen den</value>
 </string>
 <string>
 	<id>1002</id>
-	<value>Elecard MPEG2 video decoder installeiert haben</value>
+	<value>Elecard MPEG2 video decoder installiert haben</value>
 </string>
 <string>
 	<id>1003</id>
@@ -2937,7 +2937,7 @@
 </string>
 <string>
 	<id>1004</id>
-	<value>About to start recording</value>
+	<value>Vorbereitung zur Aufnahme</value>
 </string>
 <string>
 	<id>1005</id>
@@ -2957,7 +2957,7 @@
 </string>
 <string>
 	<id>1009</id>
-	<value>Lade Coverart</value>
+	<value>Lade Cover</value>
 </string>
 <string>
 	<id>1010</id>
@@ -2977,11 +2977,11 @@
 </string>
 <string>
 	<id>1014</id>
-	<value>Benachrichtige wenn Sendung beginnt</value>
+	<value>Erinnern wenn Sendung beginnt</value>
 </string>
 <string>
 	<id>1015</id>
-	<value>Keine Benachrichtigung</value>
+	<value>Keine Erinnerung</value>
 </string>
 <string>
 	<id>1016</id>
@@ -2989,7 +2989,7 @@
 </string>
 <string>
 	<id>1017</id>
-	<value>Nach: Dauer</value>
+	<value>Sortiere: Dauer</value>
 </string>
 <string>
 	<id>1020</id>
@@ -3047,7 +3047,7 @@
 </string>
 <string>
 	<id>1033</id>
-	<value>Shows are being recorded right now</value>
+	<value>Es werden gerade Sendungen aufgenommen</value>
 </string>
 <string>
 	<id>1034</id>
@@ -3055,7 +3055,7 @@
 </string>
 <string>
 	<id>1035</id>
-	<value>TV Channel is scrambled!</value>
+	<value>TV Kanal ist verschlüsselt!</value>
 </string>
 <string>
 	<id>1036</id>
@@ -3075,11 +3075,11 @@
 </string>
 <string>
 	<id>1040</id>
-	<value>Benachrichtigen</value>
+	<value>Erinnern</value>
 </string>
 <string>
 	<id>1041</id>
-	<value>Weitere Folgen</value>
+	<value>Weitere Folgen dieser Sendung</value>
 </string>
 <string>
 	<id>1042</id>
@@ -3102,12 +3102,18 @@
 	<value>Immer</value>
 </string>
 <string>
+	<id>1047</id>
+	<value>Starte im Vollbildmodus</value>
+</string>
+
+
+<string>
 	<id>1440</id>
-	<value>Videoext</value>
+	<value>Videotext</value>
 </string>
 <string>
 	<id>1441</id>
-	<value>Teletext</value>
+	<value>Videotext</value>
 </string>
 <string>
 	<id>1442</id>
@@ -3116,6 +3122,14 @@
 <string>
 	<id>1443</id>
 	<value>Scroll-Geschwindigkeit (v)</value>
+</string>	
+<string>
+	<id>1444</id>
+	<value>Vor der Aufnahme</value>
+</string>	
+<string>
+	<id>1445</id>
+	<value>Nach der Aufnahme</value>
 </string>	
 
 	<!-- My Status Strings -->
@@ -3139,7 +3153,7 @@
 	<string><id>1967</id><value>Max. Alarm</value></string>
 	<string><id>1968</id><value>Min. Alarm</value></string>
 	<string><id>1969</id><value>Soundtest</value></string>
-	<string><id>1970</id><value>Alarm Interval (in Sek.)</value></string>
+	<string><id>1970</id><value>Alarmintervall (in Sek.)</value></string>
 	<string><id>1971</id><value>Herunterfahren</value></string>
 	<string><id>1972</id><value>Details</value></string>
 	<string><id>1973</id><value>von</value></string>
@@ -3212,7 +3226,7 @@
 	<string><id>2105</id><value>Daten-CD erstellen</value></string>
 	<string><id>2106</id><value>Daten-DVD erstellen</value></string>
 	<string><id>2107</id><value>Kopieren starten</value></string>
-	<string><id>2108</id><value>Leere CD/DVD einlegen</value></string>
+	<string><id>2108</id><value>Rohling einlegen</value></string>
 	<string><id>2109</id><value>Anschliessend OK betätigen</value></string>
 	<string><id>2110</id><value>Zu kopierende CD/DVD einlegen</value></string>
 	<string><id>2111</id><value>Fertig!</value></string>
@@ -3411,7 +3425,7 @@
 </string>
 <string>
 	<id>8031</id>
-	<value>Hole Mailanzahl</value>
+	<value>Prüfe auf neue Mails</value>
 </string>
 <string>
 	<id>8033</id>
@@ -3471,6 +3485,8 @@
 </string>
 
 <string><id>12902</id><value>MSN Messenger OSD</value></string>
+
+<!-- My Programs --> 
 <string>
 	<id>13000</id>
 	<value>System::</value>
@@ -3529,9 +3545,9 @@
 </string>
 <string><id>13014</id><value>Scanne Verzeichnis</value></string> 
 <string><id>13015</id><value>Importiere Spiel</value></string> 
-<string><id>13016</id><value>Nach: Veröffentlichung</value></string> 
-<string><id>13017</id><value>Nach: Letzte</value></string> 
-<string><id>13018</id><value>Nach: Wertung</value></string> 
+<string><id>13016</id><value>Sortiere: Veröffentlichung</value></string> 
+<string><id>13017</id><value>Sortiere: Letzte</value></string> 
+<string><id>13018</id><value>Sortiere: Wertung</value></string> 
 
 <string><id>16001</id><value>Partymix</value></string> 
 
@@ -3616,7 +3632,7 @@
 <string><id>102002</id><value>Dialog OK</value></string>
 <string><id>102003</id><value>Filme/Info</value></string>
 <string><id>102004</id><value>Scripte/Info</value></string>
-<string><id>102005</id><value>Vollbild-Video</value></string>
+<string><id>102005</id><value>Vollbild</value></string>
 <string><id>102006</id><value>Audio-Visualisierung</value></string>
 <string><id>102007</id><value>Bilder/Diashow</value></string>
 <string><id>102008</id><value>Dateikomprimierung</value></string>
@@ -3661,7 +3677,7 @@
 <string><id>200020</id><value>Fertig</value></string>
 <string><id>200021</id><value>TV Setup - EPG</value></string>
 <string><id>200022</id><value>MediaPortal hat folgende TV-Karten gefunden:</value></string>
-<string><id>200023</id><value>Drücken Sie den "Weiter-Button" um die TV-Karten einzurichten</value></string>
+<string><id>200023</id><value>Drücken Sie den "Weiter" Knopf um die TV-Karten einzurichten</value></string>
 <string><id>200024</id><value>TV Setup</value></string>
 
 </strings>
