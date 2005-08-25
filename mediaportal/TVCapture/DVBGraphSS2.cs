@@ -1721,7 +1721,6 @@ namespace MediaPortal.TV.Recording
 					m_analyzerInterface.ResetParser();
 					m_StartTime=DateTime.Now;
 
-					m_epgGrabber.GrabEPG(ch.HasEITSchedule==true);
 					
 					SetupMTSDemuxerPin();
 				}
@@ -2304,6 +2303,7 @@ namespace MediaPortal.TV.Recording
 												SetPidToPin(m_dataCtrl,0,data.elementary_PID);
 											}
 										}
+										m_epgGrabber.GrabEPG(m_currentChannel.HasEITSchedule==true);
 									}
 								}
 							}
