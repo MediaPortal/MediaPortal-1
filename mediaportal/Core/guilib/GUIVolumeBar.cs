@@ -77,7 +77,6 @@ namespace MediaPortal.GUI.Library
 		{
 			base.FreeResources ();
 			imgBar.FreeResources();
-			imgBar=null;
 		}
 
 		public int Image1
