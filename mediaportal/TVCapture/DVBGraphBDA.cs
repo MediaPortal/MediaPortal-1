@@ -248,33 +248,33 @@ namespace MediaPortal.TV.Recording
 		ISampleGrabber					m_sampleInterface=null;
 
 		StreamBufferSink				m_StreamBufferSink=null;
-		StreamBufferConfig					m_StreamBufferConfig	= null;
-		VMR9Util									  Vmr9								  = null; 
-		VMR7Util									  Vmr7								  = null; 
-		//GuideDataEvent							m_Event               = null;
-		//GCHandle										myHandle;
-		//int                         adviseCookie;
+		StreamBufferConfig			m_StreamBufferConfig	= null;
+		VMR9Util								Vmr9								  = null; 
+		VMR7Util								Vmr7								  = null; 
+		//GuideDataEvent				m_Event               = null;
+		//GCHandle							myHandle;
+		//int                   adviseCookie;
 		ArrayList               m_TunerStatistics       = new ArrayList();
 		NetworkType							m_NetworkType=NetworkType.Unknown;
 		TVCaptureDevice					m_Card;
-		bool												graphRunning=false;
-		DVBChannel									currentTuningObject=null;
-		TSHelperTools								transportHelper=new TSHelperTools();
-		bool												refreshPmtTable=false;
-		protected bool							m_pluginsEnabled=false;
-		DateTime										updateTimer=DateTime.Now;
-		DateTime										timeRetune=DateTime.Now;
-		DVBDemuxer									m_streamDemuxer = new DVBDemuxer();
-		EpgGrabber									m_epgGrabber = new EpgGrabber();
-		int													m_recorderId=-1;
+		bool										graphRunning=false;
+		DVBChannel							currentTuningObject=null;
+		TSHelperTools						transportHelper=new TSHelperTools();
+		bool										refreshPmtTable=false;
+		protected bool					m_pluginsEnabled=false;
+		DateTime								updateTimer=DateTime.Now;
+		DateTime								timeRetune=DateTime.Now;
+		DVBDemuxer							m_streamDemuxer = new DVBDemuxer();
+		EpgGrabber							m_epgGrabber = new EpgGrabber();
+		int											m_recorderId=-1;
 		
-		int m_iVideoWidth=1;
-		int m_iVideoHeight=1;
-		int m_aspectX=1;
-		int m_aspectY=1;
-		bool isUsingAC3=false;
-		bool m_bOverlayVisible=true;
-
+		int											m_iVideoWidth=1;
+		int											m_iVideoHeight=1;
+		int											m_aspectX=1;
+		int											m_aspectY=1;
+		bool										isUsingAC3=false;
+		bool										m_bOverlayVisible=true;
+		DateTime								m_signalLostTimer=DateTime.Now;
 		
 #if DUMP
 		System.IO.FileStream fileout;
@@ -3441,11 +3441,19 @@ namespace MediaPortal.TV.Recording
 				GUIGraphicsContext_OnVideoWindowChanged();
 			}
 		}
+
 		void UpdateVideoState()
 		{
-			//check if this card is used for watching tv
 			bool isViewing=Recorder.IsCardViewing(m_cardID);
 			if (!isViewing) return;
+			TimeSpan ts = DateTime.Now-m_signalLostTimer;
+
+			if (ts.TotalSeconds<10) 
+			{
+				VideoRendererStatistics.VideoState=VideoRendererStatistics.State.VideoPresent;
+				return;
+			}
+			//check if this card is used for watching tv
 
 	//		Log.Write("packets:{0} pmt:{1:X}  vmr9:{2} fps:{3}",m_streamDemuxer.RecevingPackets,m_lastPMTVersion,GUIGraphicsContext.Vmr9Active ,GUIGraphicsContext.Vmr9FPS);
 
@@ -3930,6 +3938,7 @@ namespace MediaPortal.TV.Recording
 				}
 #endif
 				if (Vmr9!=null) Vmr9.Enable(true);
+				m_signalLostTimer=DateTime.Now;
 			}
 		}//public void TuneChannel(AnalogVideoStandard standard,int iChannel,int country)
 
@@ -4945,6 +4954,7 @@ namespace MediaPortal.TV.Recording
 			}
 			finally
 			{
+				m_signalLostTimer=DateTime.Now;
 			}
 		}//public void TuneRadioChannel(AnalogVideoStandard standard,int iChannel,int country)
 

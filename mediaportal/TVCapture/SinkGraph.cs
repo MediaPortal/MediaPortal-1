@@ -78,6 +78,7 @@ namespace MediaPortal.TV.Recording
     protected VideoProcAmp            m_videoAmp=null;
 		protected VMR9Util							  Vmr9=null; 
 		protected VMR7Util							  Vmr7=null; 
+		DateTime													m_signalLostTimer;
 		protected string                     cardName;
 		ArrayList						m_audioPidList=new ArrayList();
 		int									SelectedLanguage = 11;
@@ -693,6 +694,7 @@ namespace MediaPortal.TV.Recording
 				Log.WriteFile(Log.LogType.Capture,"SinkGraph:TuneChannel() tune to channel:{0} country:{1} standard:{2} name:{3}", 
 					m_iChannelNr, m_iCountryCode, standard, channel.Name);
 
+				m_signalLostTimer=DateTime.Now;
 				if (m_iChannelNr < (int)ExternalInputs.svhs)
 				{
 					if (m_TVTuner==null) return;
@@ -769,6 +771,7 @@ namespace MediaPortal.TV.Recording
 			}
       m_iPrevChannel=channel.Number;
       m_StartTime=DateTime.Now;
+
     }
 
 
@@ -1200,6 +1203,12 @@ namespace MediaPortal.TV.Recording
 			//check if this card is used for watching tv
 			bool isViewing=Recorder.IsCardViewing(m_cardID);
 			if (!isViewing) return;
+			TimeSpan ts = DateTime.Now-m_signalLostTimer;
+			if (ts.TotalSeconds<10) 
+			{
+				VideoRendererStatistics.VideoState=VideoRendererStatistics.State.VideoPresent;
+				return;
+			}
 
 			if (!SignalPresent())
 			{

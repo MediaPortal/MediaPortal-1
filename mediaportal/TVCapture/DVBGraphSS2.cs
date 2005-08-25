@@ -288,6 +288,7 @@ namespace MediaPortal.TV.Recording
 		int m_aspectY=1;
 		bool isUsingAC3=false;
 		int  m_lastPMTVersion=-1;
+		DateTime m_signalLostTimer;
 
 		DateTime m_timeDisplayed=DateTime.Now;
 
@@ -1728,7 +1729,7 @@ namespace MediaPortal.TV.Recording
 			finally
 			{
 				if (Vmr9!=null) Vmr9.Enable(true);
-
+				m_signalLostTimer=DateTime.Now;
 			}
 		}
 		void SetDemux(int audioPid,int videoPid,int ac3Pid)
@@ -2206,6 +2207,13 @@ namespace MediaPortal.TV.Recording
 			//check if this card is used for watching tv
 			bool isViewing=Recorder.IsCardViewing(m_cardID);
 			if (!isViewing) return;
+			TimeSpan ts = DateTime.Now-m_signalLostTimer;
+
+			if (ts.TotalSeconds<10) 
+			{
+				VideoRendererStatistics.VideoState=VideoRendererStatistics.State.VideoPresent;
+				return;
+			}
 
 //			Log.Write("demuxer:{0} signal:{1} fps:{2}",m_streamDemuxer.RecevingPackets,SignalPresent() ,GUIGraphicsContext.Vmr9FPS);
 

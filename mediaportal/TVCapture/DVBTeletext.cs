@@ -1295,7 +1295,7 @@ namespace MediaPortal.TV.Recording
 				{
 					if (row==24 && isSubtitlePage)
 					{
-						for (i=0; i < 40; ++i)
+						for (int i=0; i < 40; ++i)
 						{
 							pageChars[row*40+i]=32;
 							pageAttribs[row*40+i]=((int)TextColors.Black<<4) | ((int)TextColors.White);
