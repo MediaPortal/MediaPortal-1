@@ -1288,7 +1288,7 @@ namespace MediaPortal.TV.Recording
 				else
 					boxed = 0;
 
-				if ((m_deHamTable[pageChars[7-2]] & 0x4)>0 && m_transparentMode)
+				if ((m_deHamTable[pageChars[7-2]] & 0x8)>0 && m_transparentMode)
 					isSubtitlePage=true;
 
 				for (row = 0; row < 24; row++)
