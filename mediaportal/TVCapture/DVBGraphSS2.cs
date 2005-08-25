@@ -2282,6 +2282,7 @@ namespace MediaPortal.TV.Recording
 										SetPidToPin(m_dataCtrl,0,0);
 										SetPidToPin(m_dataCtrl,0,0x10);
 										SetPidToPin(m_dataCtrl,0,0x11);
+										SetPidToPin(m_dataCtrl,0,0x12);
 										SetPidToPin(m_dataCtrl,0,0xd2);
 										SetPidToPin(m_dataCtrl,0,0xd3);
 										SetPidToPin(m_dataCtrl,0,m_currentChannel.PMTPid);
