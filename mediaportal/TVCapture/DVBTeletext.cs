@@ -1324,8 +1324,11 @@ namespace MediaPortal.TV.Recording
 
 						if (boxed!=0 && flag==false)
 						{
-							foreground = (int)TextColors.Trans1;
-							background = (int)TextColors.Trans1;
+							if (m_transparentMode)
+							{
+								foreground = (int)TextColors.Trans1;
+								background = (int)TextColors.Trans1;
+							}
 						}
 					
 						for (col = 0; col < 40; col++)
@@ -1387,13 +1390,16 @@ namespace MediaPortal.TV.Recording
 									case (int)Attributes.EndBox:
 										if (boxed>0)
 										{
-											foreground = (int)TextColors.Trans1;
-											background = (int)TextColors.Trans1;
+											if (m_transparentMode)
+											{
+												foreground = (int)TextColors.Trans1;
+												background = (int)TextColors.Trans1;
+											}
 										}
 										break;
 
 									case (int)Attributes.StartBox:
-										if (boxed>0)
+										if (boxed>0 && m_transparentMode)
 										{
 											if (col > 0)
 												for(int loop1=0;loop1<col;loop1++)
