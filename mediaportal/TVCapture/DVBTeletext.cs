@@ -1288,17 +1288,17 @@ namespace MediaPortal.TV.Recording
 				else
 					boxed = 0;
 
-				if ((m_deHamTable[pageChars[7-2]] & 0x8)>0 && m_transparentMode)
+				if ((m_deHamTable[pageChars[7-2]] & 12)>0 && m_transparentMode)
 					isSubtitlePage=true;
 
 				for (row = 0; row < 24; row++)
 				{
-					if (row==24 && isSubtitlePage)
+					if ( (row==0||row==24) && isSubtitlePage)
 					{
 						for (int i=0; i < 40; ++i)
 						{
 							pageChars[row*40+i]=32;
-							pageAttribs[row*40+i]=((int)TextColors.Black<<4) | ((int)TextColors.White);
+							pageAttribs[row*40+i]=((int)TextColors.Trans1<<4) | ((int)TextColors.White);
 						}
 					}
 					else
@@ -1401,11 +1401,12 @@ namespace MediaPortal.TV.Recording
 									case (int)Attributes.StartBox:
 										if (boxed>0 && m_transparentMode)
 										{
+											background=(int)TextColors.Black;
 											if (col > 0)
 												for(int loop1=0;loop1<col;loop1++)
 													pageChars[(row*40)+loop1]=32;
 											for (int clear = 0; clear < col; clear++)
-												pageAttribs[row*40 + clear] = doubleheight<<10 |charset<<8|(int)TextColors.Trans1<<4 | (int)TextColors.Trans1;
+												pageAttribs[row*40 + clear] = doubleheight<<10 |charset<<8|(int)TextColors.Black<<4 | (int)TextColors.Black;
 										}
 										break;
 
@@ -1542,15 +1543,7 @@ namespace MediaPortal.TV.Recording
 			
 				if (IsDEC(mPage))
 				{
-					if (isSubtitlePage)
-					{
-						for (int i=0; i < 40;++i)
-						{
-							pageChars[i]=0;
-							pageAttribs[i]=((int)TextColors.Black<<4) | ((int)TextColors.White);
-						}
-					}
-					else
+					if (!isSubtitlePage)
 					{
 						int i;
 						string pageNumber="";
@@ -1627,16 +1620,6 @@ namespace MediaPortal.TV.Recording
 			// render
 			bool hasTopText=true;
 
-
-			if((int)m_cacheTable[496,0]!=0)
-				BasicTopTable();
-			if((int)m_cacheTable[498,0]!=0)
-				AdditionalInformationTable();
-			if((int)m_cacheTable[496,0]==0)
-			{
-				hasTopText=false;
-				FastTextTable(mPage,sPage);
-			}
 			int y = 0;
 			int x;
 			int width=m_pageWidth/40;
@@ -1650,84 +1633,98 @@ namespace MediaPortal.TV.Recording
 				else
 					m_renderGraphics.FillRectangle(new System.Drawing.SolidBrush(System.Drawing.Color.Black),0,0,m_pageWidth,m_pageHeight);
 			}
-			int[] topColors=new int[]{(int)TextColors.Red,(int)TextColors.Green,(int)TextColors.Yellow,(int)TextColors.Cyan};
-			int colorCounter=0;
-			if(mPage==0xFFFF)
-			{
-				m_topNavigationPages[0]=256;
-				m_topNavigationPages[1]=512;
-				m_topNavigationPages[2]=768;
-				m_topNavigationPages[3]=1024;
-			}
-			else if(hasTopText)
-			{
-				int redButton= TopNavigation(mPage, true, false); /* arguments: startpage, up, findgroup */
-				int greenButton= TopNavigation(redButton, false, false);
-				int yellowButton = TopNavigation(mPage, true, true);
-				int blueButton = TopNavigation(yellowButton, false, true);
 
-				m_topNavigationPages[0]=redButton;
-				m_topNavigationPages[1]=greenButton;
-				m_topNavigationPages[2]=yellowButton;
-				m_topNavigationPages[3]=blueButton;
-			}
-			else if(m_fastTextDecode==true)
+			if (!isSubtitlePage)
 			{
-				for(int button=0;button<4;button++)
+				if((int)m_cacheTable[496,0]!=0)
+					BasicTopTable();
+				if((int)m_cacheTable[498,0]!=0)
+					AdditionalInformationTable();
+				if((int)m_cacheTable[496,0]==0)
 				{
-					if(m_flofTable[mPage,button]!=0)
-						m_topNavigationPages[button]=m_flofTable[mPage,button];
-					else
-						m_topNavigationPages[button]=mPage;
+					hasTopText=false;
+					FastTextTable(mPage,sPage);
 				}
-			}
-			//
-			// build control line
-			if(mPage!=0xFFFF) // no top or fast text for not found page
-			{
-				if(hasTopText && m_fastTextDecode==false)
+				int[] topColors=new int[]{(int)TextColors.Red,(int)TextColors.Green,(int)TextColors.Yellow,(int)TextColors.Cyan};
+				int colorCounter=0;
+				if(mPage==0xFFFF)
 				{
-					for(int lastLine=0;lastLine<40;lastLine+=10)
-					{
-						for(int i=0;i<10;i++)
-						{
-							pageAttribs[960+lastLine+i]=topColors[colorCounter]<<4 | (int)TextColors.Black;
-						}
-						if(m_aitTable[m_topNavigationPages[colorCounter]]!=null)
-							System.Text.Encoding.ASCII.GetBytes(m_aitTable[m_topNavigationPages[colorCounter]],0,10,pageChars,960+lastLine);
+					m_topNavigationPages[0]=256;
+					m_topNavigationPages[1]=512;
+					m_topNavigationPages[2]=768;
+					m_topNavigationPages[3]=1024;
+				}
+				else if(hasTopText)
+				{
+					int redButton= TopNavigation(mPage, true, false); /* arguments: startpage, up, findgroup */
+					int greenButton= TopNavigation(redButton, false, false);
+					int yellowButton = TopNavigation(mPage, true, true);
+					int blueButton = TopNavigation(yellowButton, false, true);
 
-						colorCounter++;
-					}
+					m_topNavigationPages[0]=redButton;
+					m_topNavigationPages[1]=greenButton;
+					m_topNavigationPages[2]=yellowButton;
+					m_topNavigationPages[3]=blueButton;
 				}
-				else
-					if(m_fastTextDecode==true && hasTopText==false)
+				else if(m_fastTextDecode==true)
 				{
-					int charCounter=0;
 					for(int button=0;button<4;button++)
 					{
-						string text=m_flofAIT[m_flofTable[mPage,button]];
-						if(text==null)
-						{
-							text="";
-						}
-						text+=" ";
-						if(charCounter>=40)
-							break;
-						for(int l=0;l<text.Length;l++)
-						{
-							System.Text.Encoding.ASCII.GetBytes(text,l,1,pageChars,960+charCounter+l);
-							pageAttribs[960+charCounter+l]=(int)TextColors.Black<<4 | topColors[button];
-							
-						}
-						charCounter+=text.Length;
+						if(m_flofTable[mPage,button]!=0)
+							m_topNavigationPages[button]=m_flofTable[mPage,button];
+						else
+							m_topNavigationPages[button]=mPage;
 					}
+				}
+				//
+				// build control line
+				if(mPage!=0xFFFF) // no top or fast text for not found page
+				{
+					if(hasTopText && m_fastTextDecode==false)
+					{
+						for(int lastLine=0;lastLine<40;lastLine+=10)
+						{
+							for(int i=0;i<10;i++)
+							{
+								pageAttribs[960+lastLine+i]=topColors[colorCounter]<<4 | (int)TextColors.Black;
+							}
+							if(m_aitTable[m_topNavigationPages[colorCounter]]!=null)
+								System.Text.Encoding.ASCII.GetBytes(m_aitTable[m_topNavigationPages[colorCounter]],0,10,pageChars,960+lastLine);
 
+							colorCounter++;
+						}
+					}
+					else
+						if(m_fastTextDecode==true && hasTopText==false)
+					{
+						int charCounter=0;
+						for(int button=0;button<4;button++)
+						{
+							string text=m_flofAIT[m_flofTable[mPage,button]];
+							if(text==null)
+							{
+								text="";
+							}
+							text+=" ";
+							if(charCounter>=40)
+								break;
+							for(int l=0;l<text.Length;l++)
+							{
+								System.Text.Encoding.ASCII.GetBytes(text,l,1,pageChars,960+charCounter+l);
+								pageAttribs[960+charCounter+l]=(int)TextColors.Black<<4 | topColors[button];
+							
+							}
+							charCounter+=text.Length;
+						}
+
+					}
 				}
 			}
 			if (m_renderGraphics!=null && m_pageBitmap!=null)
 			{
 				for (row = 0; row < 25; row++)
 				{
+					if (isSubtitlePage&&row==24) break;
 					x = 0;
 
 					for (col = 0; col < 40; col++)
@@ -1762,8 +1759,8 @@ namespace MediaPortal.TV.Recording
 			int fColor = attrib & 0x0F;
 			int bColor = (attrib>>4) & 0x0F;
 			System.Drawing.Color bgColor=GetColor(bColor);
-			if (bgColor==System.Drawing.Color.Black && isSubtitlePage)
-				bgColor=System.Drawing.Color.HotPink;
+			//if (bgColor==System.Drawing.Color.Black && isSubtitlePage)
+			//	bgColor=System.Drawing.Color.HotPink;
 			if (bgColor==System.Drawing.Color.HotPink && !isSubtitlePage)
 				bgColor=System.Drawing.Color.Black;
 			System.Drawing.Brush backBrush=new System.Drawing.SolidBrush(bgColor);
