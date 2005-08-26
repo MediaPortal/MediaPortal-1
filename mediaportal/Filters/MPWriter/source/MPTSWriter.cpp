@@ -378,7 +378,11 @@ STDMETHODIMP CDumpInputPin::Receive(IMediaSample *pSample)
         return hr;
     }
 
-	m_pDump->CopyRecordingFile();
+	if (m_pDump->IsCopyingRecordingFile())
+	{
+		for (int i=0; i < 100; ++i)
+			m_pDump->CopyRecordingFile();
+	}
 	for(DWORD t=0;t<(DWORD)pSample->GetActualDataLength();t+=188)
 	{
 		if(pbData[t]==0x47)
@@ -933,6 +937,13 @@ HRESULT CDump::CloseFile()
 
 } // Open
 
+bool CDump::IsCopyingRecordingFile()
+{
+	if (m_recHandle==INVALID_HANDLE_VALUE) return false;
+	if (m_recState!=Copying) return false;
+	return true;
+}
+
 HRESULT CDump::CopyRecordingFile()
 {
 	if (m_recHandle==INVALID_HANDLE_VALUE) return S_OK;
@@ -978,7 +989,7 @@ HRESULT CDump::CopyRecordingFile()
 		{
 			m_recStartPosition+=dwBytesWritten;
 			if (m_recStartPosition>=fileSize && fileSize >=MAX_FILE_LENGTH)
-				m_recStartPosition==0;
+				m_recStartPosition=0;
 		}
 	}
 

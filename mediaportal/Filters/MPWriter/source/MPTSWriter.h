@@ -239,6 +239,7 @@ public:
 	HRESULT 	WriteTimeshiftFile(PBYTE pbData, LONG lDataLength);
 	HRESULT 	WriteRecordingFile(PBYTE pbData, LONG lDataLength);
 	HRESULT     CopyRecordingFile();
+	bool		IsCopyingRecordingFile();
 private:
     // Overriden to say what interfaces we support where
     STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void ** ppv);

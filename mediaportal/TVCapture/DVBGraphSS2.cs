@@ -1566,7 +1566,7 @@ namespace MediaPortal.TV.Recording
 					ts=DateTime.Now-dtStart;
 					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: Start recording from {0}:{1:00}:{2:00} which is {3:00}:{4:00}:{5:00} in the past",
 						dtStart.Hour, dtStart.Minute, dtStart.Second,
-						ts.TotalHours, ts.TotalMinutes, ts.TotalSeconds);
+						ts.Hours, ts.Minutes, ts.Seconds);
 															
 					lStartTime *= 10000000;
 				}
