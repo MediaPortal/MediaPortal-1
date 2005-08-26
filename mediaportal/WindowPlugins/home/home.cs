@@ -1029,6 +1029,7 @@ namespace MediaPortal.GUI.Home
 
 			// Clear plugin count
 			if (m_iButtons==0) myPluginsCount=0;
+			int myPlgInCount=0;
 
 			if (useMenus==true) 
 			{
@@ -1091,13 +1092,22 @@ namespace MediaPortal.GUI.Home
 			{
 				foreach (ISetupForm setup in plugins) 
 				{
+					
 					using(MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 					{
 						bool bHomeDefault=setup.DefaultEnabled();
 						bool inhome;
+						if(useMyPlugins==true)
+						{
+							bool pluginEnabled=xmlreader.GetValueAsBool("myplugins", setup.PluginName(), bHomeDefault);
+							if(pluginEnabled==true)
+								myPlgInCount++;
+						}
 						if(inMyPlugins==true)
 						{
 							inhome=xmlreader.GetValueAsBool("myplugins", setup.PluginName(), bHomeDefault);
+							if(inhome==true)
+								myPlgInCount++;
 						} 
 						else
 						{
@@ -1149,7 +1159,7 @@ namespace MediaPortal.GUI.Home
 						}
 					}
 				}
-				if (useMyPlugins==true && inMyPlugins==false) // if My Plugin Call make MyPlugin Button
+				if (useMyPlugins==true && inMyPlugins==false && myPlgInCount>0) // if My Plugin Call make MyPlugin Button
 				{
 					string strBtnPic=String.Format(@"{0}\media\{1}", GUIGraphicsContext.Skin,"hover_my plugins.png");
 					string strButtonImageFocus=String.Format(@"{0}\media\{1}", GUIGraphicsContext.Skin,"button_my plugins.png");
