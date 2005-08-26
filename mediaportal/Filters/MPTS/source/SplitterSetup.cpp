@@ -242,10 +242,10 @@ HRESULT SplitterSetup::SetupPids()
 		// map new pid
 		pid = (ULONG)m_pSections->pids.VideoPid;
 		
-		if(m_pSections->pids.MPEG4==false)// if the mpeg2 stream contains mpeg4 we map transport payload
+		//if(m_pSections->pids.MPEG4==false)// if the mpeg2 stream contains mpeg4 we map transport payload
 			hr=pMap->MapPID(1,&pid,MEDIA_ELEMENTARY_STREAM);
-		else
-			hr=pMap->MapPID(1,&pid,MEDIA_TRANSPORT_PAYLOAD);
+		//else
+		//	hr=pMap->MapPID(1,&pid,MEDIA_TRANSPORT_PAYLOAD);
 
 		if(FAILED(hr))
 			return 2;

@@ -535,7 +535,7 @@ bool Sections::DecodePMT(byte* PMT)
 			LogDebug("Sections::decodePMT() videopid:0x%x",pids.VideoPid);
 			if(stream_type==0x1b)
 			{
-				pids.idMPEG4=(GUID)FOURCCMap(FCC('H264'));
+				pids.idMPEG4=(GUID)FOURCCMap(FCC('VSSH'));
 				pids.MPEG4=true;
 			}
 			else
