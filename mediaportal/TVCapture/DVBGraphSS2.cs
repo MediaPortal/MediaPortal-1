@@ -18,7 +18,7 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-//#define USEMTSWRITER
+#define USEMTSWRITER
 using System;
 using Microsoft.Win32;
 using System.Drawing;
@@ -1540,7 +1540,38 @@ namespace MediaPortal.TV.Recording
 				Log.Write("DVBGraphBDA:unable to set filename:%x", hr);
 				return false;
 			}
-			hr=m_tsRecordInterface.StartRecord(0);
+
+			long lStartTime=0;
+			if (!bContentRecording)
+			{
+				// if start of program is given, then use that as our starttime
+				if (timeProgStart.Year > 2000)
+				{
+					//how many seconds are present in the timeshift buffer?
+					long timeInBuffer;
+					m_tsWriterInterface.TimeShiftBufferDuration(out timeInBuffer); // get the amount of time in the timeshiftbuffer
+					timeInBuffer/=10000000;
+
+					//how many seconds in the past we want to record?
+					TimeSpan ts = DateTime.Now - timeProgStart;
+					lStartTime=(long)ts.TotalSeconds;
+
+					//does timeshift buffer contain all this info, if not then limit it
+					if (lStartTime > timeInBuffer)
+						lStartTime=timeInBuffer;
+					
+
+					DateTime dtStart = DateTime.Now;
+					dtStart.AddSeconds( - lStartTime);
+					ts=DateTime.Now-dtStart;
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: Start recording from {0}:{1:00}:{2:00} which is {3:00}:{4:00}:{5:00} in the past",
+						dtStart.Hour, dtStart.Minute, dtStart.Second,
+						ts.TotalHours, ts.TotalMinutes, ts.TotalSeconds);
+															
+					lStartTime *= 10000000;
+				}
+			}
+			hr=m_tsRecordInterface.StartRecord(lStartTime);
 			if (hr!=0)
 			{
 				Log.Write("DVBGraphBDA:unable to start recording:%x", hr);

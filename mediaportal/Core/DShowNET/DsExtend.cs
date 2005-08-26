@@ -171,6 +171,8 @@ namespace DShowNET
 		int SetPMTPid( ushort pmtPid);
 		[PreserveSig]
 		int SetPCRPid( ushort pcrPid);
+		[PreserveSig]
+		int TimeShiftBufferDuration(out long timeInTimeShiftBuffer);
 	}
 
 	[ComVisible(true), ComImport,

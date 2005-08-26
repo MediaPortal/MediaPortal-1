@@ -40,6 +40,15 @@ struct stPESHeader
 };
 typedef stPESHeader PESHeader;
 
+struct stPTSTime
+{
+	int h;
+	int m;
+	int s;
+	int u;
+};
+typedef stPTSTime PTSTime;
+
 class CDumpInputPin;
 class CDump;
 class CDumpFilter;
@@ -63,6 +72,7 @@ DECLARE_INTERFACE_(IMPTSWriter, IUnknown)
 	STDMETHOD(SetSubtitlePid)(THIS_ int subtitlePid)PURE;
 	STDMETHOD(SetPMTPid)(THIS_ int pmtPid)PURE;
 	STDMETHOD(SetPCRPid)(THIS_ int pcrPid)PURE;
+	STDMETHOD(TimeShiftBufferDuration)(THIS_ ULONGLONG* duration)PURE;
 };
 
 // {3E05D715-0AE2-4d6a-8EE9-51DB5FBAB72B}
@@ -72,7 +82,7 @@ DEFINE_GUID(IID_IMPTSRecord,0x3e05d715, 0xae2, 0x4d6a, 0x8e, 0xe9, 0x51, 0xdb, 0
 DECLARE_INTERFACE_(IMPTSRecord, IUnknown)
 {
     STDMETHOD(SetRecordingFileName)(THIS_ char* pszFileName)PURE;
-    STDMETHOD(StartRecord)(THIS_ ULONGLONG startTime)PURE;
+    STDMETHOD(StartRecord)(THIS_ ULONGLONG timeFromTimeshiftBuffer)PURE;
     STDMETHOD(StopRecord)(THIS_ ULONGLONG startTime)PURE;
 };
 // Main filter object
@@ -104,9 +114,9 @@ public:
 
 class CDumpInputPin : public CRenderedInputPin
 {
-    CDump    * const m_pDump;           // Main renderer object
-    CCritSec * const m_pReceiveLock;    // Sample critical section
-    REFERENCE_TIME m_tLast;             // Last sample receive time
+    CDump    * const	m_pDump;           // Main renderer object
+    CCritSec * const	m_pReceiveLock;    // Sample critical section
+    REFERENCE_TIME		m_tLast;             // Last sample receive time
 
 public:
 
@@ -126,43 +136,39 @@ public:
 //    HRESULT WriteStringInfo(IMediaSample *pSample);
 
     // Check if the pin can support this specific proposed type and format
-    HRESULT CheckMediaType(const CMediaType *);
+    HRESULT		CheckMediaType(const CMediaType *);
     // Break connection
-    HRESULT BreakConnect();
+    HRESULT		BreakConnect();
 
     // Track NewSegment
     STDMETHODIMP NewSegment(REFERENCE_TIME tStart,REFERENCE_TIME tStop,double dRate);
-	HRESULT SetVideoPid(int videoPid);
-	HRESULT SetAudioPid(int audioPid);
-	HRESULT SetAudioPid2(int audioPid);
-	HRESULT SetAC3Pid(int ac3Pid);
-	HRESULT SetTeletextPid(int ttxtPid);
-	HRESULT SetSubtitlePid(int subtitlePid);
-	HRESULT SetPMTPid(int pmtPid);
-	HRESULT SetPCRPid(int pcrPid);
-	int GetVideoPid();
-	int GetAudioPid();
-	int GetAudioPid2();
-	int GetAC3Pid();
-	int GetTeletextPid();
-	int GetSubtitlePid();
-	int GetPMTPid();
-	int GetPCRPid();
-
-	void ResetPids();
-
+	HRESULT 	SetVideoPid(int videoPid);
+	HRESULT 	SetAudioPid(int audioPid);
+	HRESULT 	SetAudioPid2(int audioPid);
+	HRESULT 	SetAC3Pid(int ac3Pid);
+	HRESULT 	SetTeletextPid(int ttxtPid);
+	HRESULT 	SetSubtitlePid(int subtitlePid);
+	HRESULT 	SetPMTPid(int pmtPid);
+	HRESULT 	SetPCRPid(int pcrPid);
+	int 		GetVideoPid();
+	int 		GetAudioPid();
+	int 		GetAudioPid2();
+	int 		GetAC3Pid();
+	int 		GetTeletextPid();
+	int 		GetSubtitlePid();
+	int 		GetPMTPid();
+	int 		GetPCRPid();
+	void		ResetPids();
 private:
-	int m_videoPid;
-	int m_audio1Pid;
-	int m_audio2Pid;
-	int m_ac3Pid;
-	int m_ttxtPid;
-	int m_subtitlePid;
-	int m_pmtPid;
-	int m_pcrPid;
-
-	bool IsPidValid(int pid);
-
+	int 		m_videoPid;
+	int 		m_audio1Pid;
+	int 		m_audio2Pid;
+	int 		m_ac3Pid;
+	int 		m_ttxtPid;
+	int 		m_subtitlePid;
+	int 		m_pmtPid;
+	int 		m_pcrPid;
+	bool		IsPidValid(int pid);
 };
 
 
@@ -170,31 +176,33 @@ private:
 
 class CDump : public CUnknown, public IFileSinkFilter, public IMPTSWriter, public IMPTSRecord
 {
+	enum RecState
+	{
+		Idle,
+		Copying,
+		Following
+	};
     friend class CDumpFilter;
     friend class CDumpInputPin;
+    CDumpFilter*	m_pFilter;       // Methods for filter interfaces
+    CDumpInputPin*	m_pPin;          // A simple rendered input pin
+    CCritSec 		m_Lock;                // Main renderer critical section
+    CCritSec 		m_ReceiveLock;         // Sublock for received samples
+    CPosPassThru*	m_pPosition;      // Renderer position controls
+    HANDLE   		m_hFile;               // Handle to file for dumping
+	HANDLE   		m_hInfoFile;           // Handle to file for dumping
+	HANDLE	 		m_logFileHandle;
+	HANDLE	 		m_recHandle;
+    LPOLESTR 		m_pFileName;           // The filename where we dump
+    BOOL     		m_fWriteError;
+	__int64 		m_currentFilePosition;
+	__int64 		logFilePos;
 
-    CDumpFilter   *m_pFilter;       // Methods for filter interfaces
-    CDumpInputPin *m_pPin;          // A simple rendered input pin
-
-    CCritSec m_Lock;                // Main renderer critical section
-    CCritSec m_ReceiveLock;         // Sublock for received samples
-
-    CPosPassThru *m_pPosition;      // Renderer position controls
-
-    HANDLE   m_hFile;               // Handle to file for dumping
-	HANDLE   m_hInfoFile;           // Handle to file for dumping
-	HANDLE	 m_logFileHandle;
-	HANDLE	 m_recHandle;
-    LPOLESTR m_pFileName;           // The filename where we dump
-    BOOL     m_fWriteError;
-
-	__int64 m_currentFilePosition;
-	__int64 currentFileLength;
-	__int64 logFilePos;
-
-
+	__int64         m_recStartPosition;
+	RecState		m_recState;
+	byte*			m_pCopyBuffer;
+	int				m_pesPid;
 public:
-
     DECLARE_IUNKNOWN
 
     CDump(LPUNKNOWN pUnk, HRESULT *phr);
@@ -205,9 +213,8 @@ public:
 	STDMETHODIMP Log(char* text,bool crlf);
 
     // Write raw data stream to a file
-    HRESULT Write(PBYTE pbData, LONG lDataLength);
-	HRESULT UpdateInfoFile(bool pids);
-	void	Flush();
+	HRESULT 	 UpdateInfoFile(bool pids);
+	void		 Flush();
 
     // Implements the IFileSinkFilter interface
     STDMETHODIMP SetFileName(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt);
@@ -222,28 +229,33 @@ public:
 	STDMETHODIMP SetSubtitlePid(int subtitlePid);
 	STDMETHODIMP SetPMTPid(int pmtPid);
 	STDMETHODIMP SetPCRPid(int pcrPid);
+	STDMETHODIMP TimeShiftBufferDuration(ULONGLONG* duration);
 
 	//record
     STDMETHODIMP SetRecordingFileName(char* pszFileName);
-    STDMETHODIMP StartRecord( ULONGLONG startTime);
+    STDMETHODIMP StartRecord( ULONGLONG timeFromTimeshiftBuffer);
     STDMETHODIMP StopRecord( ULONGLONG startTime);
-private:
 
+	HRESULT 	WriteTimeshiftFile(PBYTE pbData, LONG lDataLength);
+	HRESULT 	WriteRecordingFile(PBYTE pbData, LONG lDataLength);
+	HRESULT     CopyRecordingFile();
+private:
     // Overriden to say what interfaces we support where
     STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void ** ppv);
 
     // Open and write to the file
-    HRESULT OpenFile();
-    HRESULT CloseFile();
-    HRESULT HandleWriteFailure();
+    HRESULT 	OpenFile();
+    HRESULT 	CloseFile();
+    HRESULT 	HandleWriteFailure();
 //	HRESULT CreateNewFileMapping();
-	void GetPTS(BYTE *data,ULONGLONG *pts);
-	void GetPESHeader(BYTE *data,PESHeader *header);
-	void GetTSHeader(BYTE *data,TSHeader *header);
-	ULONGLONG m_pesStart;
-	ULONGLONG m_pesNow;
-	char m_strRecordingFileName[1024];
+	void 		GetPTS(BYTE *data,ULONGLONG *pts);
+	void 		GetPESHeader(BYTE *data,PESHeader *header);
+	void 		GetTSHeader(BYTE *data,TSHeader *header);
+	void 		PTSToPTSTime(ULONGLONG pts,PTSTime* ptsTime);
 
-	map<__int64, __int64> m_mapPES;
+	ULONGLONG				m_pesStart;
+	ULONGLONG				m_pesNow;
+	char					m_strRecordingFileName[1024];
+	map<__int64, __int64>	m_mapPES;
 	typedef map<__int64, __int64> ::iterator imapPES;
 };

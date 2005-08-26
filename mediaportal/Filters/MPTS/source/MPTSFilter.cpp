@@ -346,7 +346,8 @@ STDMETHODIMP CMPTSFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt)
 	LogDebug("pids ac3:%x audio:%x audio2:%x video:%x pmt:%x pcr:%x",
 		m_pSections->pids.AC3,m_pSections->pids.AudioPid,m_pSections->pids.AudioPid2,m_pSections->pids.VideoPid,m_pSections->pids.PMTPid,m_pSections->pids.PCRPid);
 	LogDebug("pes start:%x pes end:%x duration:%02.2d:%02.2d:%02.2d writepos:%x",
-		m_pSections->pids.StartPTS,m_pSections->pids.EndPTS,time.h,time.m,time.s, m_pSections->pids.fileStartPosition);
+				(DWORD)m_pSections->pids.StartPTS,(DWORD)m_pSections->pids.EndPTS,
+				time.h,time.m,time.s, (DWORD)m_pSections->pids.fileStartPosition);
 	CAutoLock lock(&m_Lock);
 	m_pFileReader->CloseFile();
 

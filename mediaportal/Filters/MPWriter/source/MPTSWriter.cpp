@@ -277,6 +277,7 @@ HRESULT CDumpInputPin::SetPCRPid(int pcrPid)
 	return S_OK;
 }
 
+
 int CDumpInputPin::GetVideoPid()
 {
 	return m_videoPid;
@@ -344,7 +345,19 @@ STDMETHODIMP CDumpInputPin::ReceiveCanBlock()
 STDMETHODIMP CDumpInputPin::Receive(IMediaSample *pSample)
 {
     CheckPointer(pSample,E_POINTER);
-
+/*
+	//TESTTEST
+	ULONGLONG duration;
+	m_pDump->TimeShiftBufferDuration(&duration);
+	if (duration >=30LL*10000000LL)
+	{
+		if (false==true)
+		{
+			m_pDump->SetRecordingFileName("D:\\erwin\\media\\videos\\rec.ts");
+			m_pDump->StartRecord(15LL*10000000LL);
+		}
+	}
+*/
     CAutoLock lock(m_pReceiveLock);
     PBYTE pbData;
 
@@ -365,6 +378,7 @@ STDMETHODIMP CDumpInputPin::Receive(IMediaSample *pSample)
         return hr;
     }
 
+	m_pDump->CopyRecordingFile();
 	for(DWORD t=0;t<(DWORD)pSample->GetActualDataLength();t+=188)
 	{
 		if(pbData[t]==0x47)
@@ -372,7 +386,8 @@ STDMETHODIMP CDumpInputPin::Receive(IMediaSample *pSample)
 			int pid=((pbData[t+1] & 0x1F) <<8)+pbData[t+2];
 			if(IsPidValid(pid)==true)
 			{
-				hr=m_pDump->Write(pbData+t,188);
+				hr=m_pDump->WriteRecordingFile(pbData+t,188);
+				hr=m_pDump->WriteTimeshiftFile(pbData+t,188);
 				if(FAILED(hr))
 					break;
 			}
@@ -435,6 +450,11 @@ CDump::CDump(LPUNKNOWN pUnk, HRESULT *phr) :
     m_fWriteError(0),
 	m_currentFilePosition(0)
 {
+	m_pesPid=0;
+	m_hInfoFile=INVALID_HANDLE_VALUE;
+	m_hFile=INVALID_HANDLE_VALUE;
+	m_recHandle=INVALID_HANDLE_VALUE;
+
 	DeleteFile("MPTSWriter.log");
     ASSERT(phr);
 	m_logFileHandle=INVALID_HANDLE_VALUE;
@@ -462,7 +482,9 @@ CDump::CDump(LPUNKNOWN pUnk, HRESULT *phr) :
 	m_pesNow=0LL;
 	strcpy(m_strRecordingFileName,"");
 	m_recHandle=INVALID_HANDLE_VALUE;
-
+	m_recStartPosition=0;
+	m_recState=Idle;
+	m_pCopyBuffer=new byte[1000*200];
 }
 
 
@@ -489,9 +511,18 @@ STDMETHODIMP CDump::SetFileName(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt)
 
     // Create the file then close it
 
+
+
     HRESULT hr = OpenFile();
     CloseFile();
-
+	m_pesPid=0;
+/*
+	//TESTTESTTEST
+	//for debugging
+	SetAudioPid(0x24);
+	SetVideoPid(0x21);
+	SetPMTPid(0x20);
+*/
     return hr;
 
 } // SetFileName
@@ -540,11 +571,29 @@ CDump::~CDump()
     delete m_pFilter;
     delete m_pPosition;
     delete m_pFileName;
-	
+	delete [] m_pCopyBuffer;
+
 	if(m_logFileHandle!=INVALID_HANDLE_VALUE)
 	{
 		CloseHandle(m_logFileHandle);
 		m_logFileHandle=INVALID_HANDLE_VALUE;
+	}
+	if (m_recHandle!=INVALID_HANDLE_VALUE)
+	{	
+		CloseHandle(m_recHandle);
+		m_recHandle=INVALID_HANDLE_VALUE;
+	}
+	
+	if (m_hFile!=INVALID_HANDLE_VALUE)
+	{	
+		CloseHandle(m_hFile);
+		m_hFile=INVALID_HANDLE_VALUE;
+	}
+	
+	if (m_hInfoFile!=INVALID_HANDLE_VALUE)
+	{	
+		CloseHandle(m_hInfoFile);
+		m_hInfoFile=INVALID_HANDLE_VALUE;
 	}
 }
 
@@ -625,6 +674,7 @@ STDMETHODIMP CDump::SetVideoPid(int pid)
 	Log(TEXT("SetVideoPid ="),false);
 	Log((__int64)pid,true);
 	LogDebug("SetVideoPid:0x%x",pid);
+	m_pesPid=0;
 	m_pPin->SetVideoPid(pid);
 	UpdateInfoFile(true);
 	return S_OK;
@@ -633,6 +683,7 @@ STDMETHODIMP CDump::SetVideoPid(int pid)
 STDMETHODIMP CDump::SetAudioPid(int pid)
 {
 	if (pid== m_pPin->GetAudioPid()) return S_OK;
+	m_pesPid=0;
 	Log(TEXT("SetAudioPid ="),false);
 	Log((__int64)pid,true);
 	m_pPin->SetAudioPid(pid);
@@ -644,6 +695,7 @@ STDMETHODIMP CDump::SetAudioPid(int pid)
 STDMETHODIMP CDump::SetAudioPid2(int pid)
 {
 	if (pid== m_pPin->GetAudioPid2()) return S_OK;
+	m_pesPid=0;
 	Log(TEXT("SetAudioPid2 ="),false);
 	Log((__int64)pid,true);
 	m_pPin->SetAudioPid2(pid);
@@ -655,6 +707,7 @@ STDMETHODIMP CDump::SetAudioPid2(int pid)
 STDMETHODIMP CDump::SetAC3Pid(int pid)
 {
 	if (pid== m_pPin->GetAC3Pid()) return S_OK;
+	m_pesPid=0;
 	Log(TEXT("SetAC3Pid ="),false);
 	Log((__int64)pid,true);
 	m_pPin->SetAC3Pid(pid);
@@ -695,6 +748,18 @@ STDMETHODIMP CDump::SetPMTPid(int pid)
 	UpdateInfoFile(true);
 	return S_OK;
 }
+
+//return the amount of time present in the timeshiftbuffer in references time
+STDMETHODIMP CDump::TimeShiftBufferDuration(ULONGLONG* duration)
+{
+	__int64 durationInPes = m_pesNow-m_pesStart;
+	PTSTime time;
+	PTSToPTSTime(durationInPes,&time);
+	*duration=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
+
+	return S_OK;
+}
+
 STDMETHODIMP CDump::SetPCRPid(int pid)
 {
 	if (pid== m_pPin->GetPCRPid()) return S_OK;
@@ -868,19 +933,86 @@ HRESULT CDump::CloseFile()
 
 } // Open
 
-// Write
-//
-// Write raw data to the file
-//
-HRESULT CDump::Write(PBYTE pbData, LONG lDataLength)
+HRESULT CDump::CopyRecordingFile()
 {
-	//write to recording file
-	DWORD written = 0;
-	if (m_recHandle!=INVALID_HANDLE_VALUE)
+	if (m_recHandle==INVALID_HANDLE_VALUE) return S_OK;
+	if (m_recState!=Copying) return S_OK;
+
+	//copy next 100K
+	DWORD         dwBytesRead;
+	DWORD		  dwBytesToRead=1000*188;
+	LARGE_INTEGER li;
+
+	//get the filesize
+	LARGE_INTEGER	liFileSize;
+	::GetFileSizeEx(m_hFile,&liFileSize);
+	__int64         fileSize=liFileSize.QuadPart;
+
+	//set filepointer
+	li.QuadPart = m_recStartPosition;
+	HRESULT hr=SetFilePointer(m_hFile,li.LowPart,&li.HighPart,FILE_BEGIN);
+
+	//determine how many bytes we can copy
+	if (m_recStartPosition < m_currentFilePosition)
 	{
-		WriteFile(m_recHandle, pbData, lDataLength, &written, NULL);
+		if (m_recStartPosition+dwBytesToRead >= m_currentFilePosition)
+		{
+			dwBytesToRead = (DWORD)(m_currentFilePosition-m_recStartPosition);
+			m_recState=Following;
+		}
+	}
+	else 
+	{
+		if (fileSize>=MAX_FILE_LENGTH)
+		{
+			if (m_recStartPosition+dwBytesToRead >= fileSize)
+				dwBytesToRead = (DWORD)(fileSize-m_recStartPosition);
+		}
 	}
 
+	//copy bytes from timeshift file->recording file
+	if (ReadFile(m_hFile,m_pCopyBuffer,dwBytesToRead,&dwBytesRead,NULL))
+	{
+		DWORD dwBytesWritten;
+		if (WriteFile(m_recHandle,m_pCopyBuffer,dwBytesRead,&dwBytesWritten,NULL))
+		{
+			m_recStartPosition+=dwBytesWritten;
+			if (m_recStartPosition>=fileSize && fileSize >=MAX_FILE_LENGTH)
+				m_recStartPosition==0;
+		}
+	}
+
+	//restore file pointer
+	li.QuadPart=m_currentFilePosition;
+	SetFilePointer(m_hFile,li.LowPart,&li.HighPart,FILE_BEGIN);
+	return S_OK;
+}
+
+// Write
+//
+// Write raw data to the recording file
+//
+HRESULT CDump::WriteRecordingFile(PBYTE pbData, LONG lDataLength)
+{
+	
+	DWORD written = 0;
+	if (m_recHandle==INVALID_HANDLE_VALUE) return S_OK;
+	if (lDataLength<=0) return S_OK;
+	if (pbData==NULL) return S_OK;
+	if (m_recState!=Following) return S_OK;
+	WriteFile(m_recHandle, pbData, lDataLength, &written, NULL);
+	return S_OK;
+}
+
+// Write
+//
+// Write raw data to the timeshift file
+//
+HRESULT CDump::WriteTimeshiftFile(PBYTE pbData, LONG lDataLength)
+{
+	if (lDataLength<=0) return S_OK;
+	if (pbData==NULL) return S_OK;
+	DWORD written = 0;
     //write to live.ts file
     if (m_hFile == INVALID_HANDLE_VALUE)
 	{
@@ -930,11 +1062,16 @@ HRESULT CDump::Write(PBYTE pbData, LONG lDataLength)
 			{
 				if(pes.PTSFlags==0x02)
 				{
-					// audio pes found
-					ULONGLONG ptsValue =0;
-					GetPTS(&pbData[offset+9],&ptsValue);
-					m_pesNow=ptsValue;
-					if (m_pesStart==0) m_pesStart=ptsValue;
+					if (m_pesPid==0)
+						m_pesPid=header.Pid;
+					if (m_pesPid==header.Pid)
+					{
+						// audio pes found
+						ULONGLONG ptsValue =0;
+						GetPTS(&pbData[offset+9],&ptsValue);
+						m_pesNow=ptsValue;
+						if (m_pesStart==0) m_pesStart=ptsValue;
+					}
 				}	
 			}
 		}
@@ -1131,7 +1268,7 @@ STDMETHODIMP CDump::SetRecordingFileName(char* pszFileName)
 	return S_OK;
 }
 
-STDMETHODIMP CDump::StartRecord( ULONGLONG startTime)
+STDMETHODIMP CDump::StartRecord( ULONGLONG timeFromTimeshiftBuffer)
 {
 	if (m_recHandle!=INVALID_HANDLE_VALUE) return E_FAIL;
 	if (strlen(m_strRecordingFileName)==0) return E_FAIL;
@@ -1150,6 +1287,33 @@ STDMETHODIMP CDump::StartRecord( ULONGLONG startTime)
 		LogDebug("Start Record unable to create file:%d",GetLastError());
 		return E_FAIL;
 	}
+
+
+	
+	//get the total seconds present in the timeshift buffer
+	ULONGLONG duration;
+	TimeShiftBufferDuration(&duration);
+
+	//get the filesize
+	LARGE_INTEGER	liFileSize;
+	::GetFileSizeEx(m_hFile,&liFileSize);
+	__int64         fileSize=liFileSize.QuadPart;
+
+	//calculate start position
+	__int64			position=0;
+	position=(fileSize/100LL)* ( ( (duration-timeFromTimeshiftBuffer)*100LL)/ duration);
+	if (fileSize>=MAX_FILE_LENGTH)
+		position += m_currentFilePosition;
+	if(position>fileSize)
+		position -= fileSize;
+	
+	if(position<1)
+		position=0;
+
+	if(position>0) position=(position/188)*188;
+	m_recStartPosition=position;
+	m_recState=Copying;
+	
 	return S_OK;
 
 }	
@@ -1160,6 +1324,19 @@ STDMETHODIMP CDump::StopRecord( ULONGLONG startTime)
 	LogDebug("Stop Recording:'%s'",m_strRecordingFileName);
 	CloseHandle(m_recHandle);
 	m_recHandle = INVALID_HANDLE_VALUE;
+	m_recState=Idle;
+	m_recStartPosition=0;
 	strcpy(m_strRecordingFileName,"");
 	return S_OK;
+}
+
+void CDump::PTSToPTSTime(ULONGLONG pts,PTSTime* ptsTime)
+{
+	PTSTime time;
+	ULONG  _90khz = (ULONG)(pts/90);
+	time.h=(_90khz/(1000*60*60));
+	time.m=(_90khz/(1000*60))-(time.h*60);
+	time.s=(_90khz/1000)-(time.h*3600)-(time.m*60);
+	time.u=_90khz-(time.h*1000*60*60)-(time.m*1000*60)-(time.s*1000);
+	*ptsTime=time;
 }
