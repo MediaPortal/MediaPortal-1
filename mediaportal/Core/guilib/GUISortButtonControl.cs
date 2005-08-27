@@ -237,10 +237,10 @@ namespace MediaPortal.GUI.Library
 		int							_sortButtonOffsetY = 0;
 
 		[XMLSkinElement("offsetSortButtonHeight")]
-		int							_sortButtonHeight = 0;
+		int							_sortButtonHeight = 16;
 
 		[XMLSkinElement("offsetSortButtonWidth")]
-		int							_sortButtonWidth = 0;
+		int							_sortButtonWidth = 16;
 	
 		GUIImage[]					_sortImages = new GUIImage[4];
 

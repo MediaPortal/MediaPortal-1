@@ -578,13 +578,20 @@ namespace MediaPortal.GUI.Library
       m_pFont=GUIFontManager.GetFont(m_strFontName);
 
       //	Position right arrow
-      int dwPosX=(m_dwPosX+m_dwWidth-8) - 16;
-      int dwPosY=m_dwPosY+(m_dwHeight-16)/2;
+			int x1=8;
+			int x2=16;
+			GUIGraphicsContext.ScaleHorizontal(ref x1);
+			GUIGraphicsContext.ScaleHorizontal(ref x2);
+      int dwPosX=(m_dwPosX+m_dwWidth-x1) - x2;
+
+			int y1=16;
+			GUIGraphicsContext.ScaleVertical(ref y1);
+      int dwPosY=m_dwPosY+(m_dwHeight-y1)/2;
       m_imgRight.SetPosition(dwPosX,dwPosY);
       m_imgRightFocus.SetPosition(dwPosX,dwPosY);
 
       //	Position left arrow
-      dwPosX=m_dwPosX+8;
+      dwPosX=m_dwPosX+x1;
       m_imgLeft.SetPosition(dwPosX, dwPosY);
       m_imgLeftFocus.SetPosition(dwPosX, dwPosY);
 
