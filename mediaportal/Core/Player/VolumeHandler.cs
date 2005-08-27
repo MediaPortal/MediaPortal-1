@@ -88,16 +88,18 @@ namespace MediaPortal.Player
 			return new VolumeHandler(new int[] { 0, 6553, 13106, 19659, 26212, 32765, 39318, 45871, 52424, 58977, 65535 });
 		}
 
-		public void Dispose()
+		static public void Dispose()
 		{
-			if(_mixer != null)
+			if (_instance==null) return;
+			if(_instance._mixer != null)
 			{
 				using(MediaPortal.Profile.Xml writer = new MediaPortal.Profile.Xml("MediaPortal.xml"))
-					writer.SetValue("volume", "lastknown", _mixer.Volume);
+					writer.SetValue("volume", "lastknown", _instance._mixer.Volume);
 
-				_mixer.Dispose();
-				_mixer = null;
+				_instance._mixer.Dispose();
+				_instance._mixer = null;
 			}
+			_instance=null;
 		}
 
 		static int[] LoadFromRegistry()

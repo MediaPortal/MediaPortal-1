@@ -263,7 +263,6 @@ namespace MediaPortal.TV.Recording
 		bool										refreshPmtTable=false;
 		protected bool					m_pluginsEnabled=false;
 		DateTime								updateTimer=DateTime.Now;
-		DateTime								timeRetune=DateTime.Now;
 		DVBDemuxer							m_streamDemuxer = new DVBDemuxer();
 		EpgGrabber							m_epgGrabber = new EpgGrabber();
 		int											m_recorderId=-1;
@@ -275,6 +274,8 @@ namespace MediaPortal.TV.Recording
 		bool										isUsingAC3=false;
 		bool										m_bOverlayVisible=true;
 		DateTime								m_signalLostTimer=DateTime.Now;
+		int											_pmtRetyCount=0;
+		DateTime								_pmtTimer;
 		
 #if DUMP
 		System.IO.FileStream fileout;
@@ -3121,6 +3122,7 @@ namespace MediaPortal.TV.Recording
 					(int)Network());
 				if (!System.IO.File.Exists(pmtName))
 				{
+					_pmtRetyCount=0;
 					m_lastPMTVersion=-1;
 					refreshPmtTable=true;
 					return false;
@@ -3139,12 +3141,14 @@ namespace MediaPortal.TV.Recording
 				}
 				if (pmt==null)
 				{
+					_pmtRetyCount=0;
 					m_lastPMTVersion=-1;
 					refreshPmtTable=true;
 					return false;
 				}
 				if (pmt.Length<6) 
 				{
+					_pmtRetyCount=0;
 					m_lastPMTVersion=-1;
 					refreshPmtTable=true;
 					return false;
@@ -3154,6 +3158,7 @@ namespace MediaPortal.TV.Recording
 				DVBSections.ChannelInfo info = new DVBSections.ChannelInfo();
 				if (!sections.GetChannelInfoFromPMT(pmt, ref info)) 
 				{
+					_pmtRetyCount=0;
 					m_lastPMTVersion=-1;
 					refreshPmtTable=true;
 					return false;
@@ -3292,6 +3297,7 @@ namespace MediaPortal.TV.Recording
 				int pmtVersion = ((pmt[5]>>1)&0x1F);
 
 				// send the PMT table to the device
+				_pmtTimer=DateTime.Now;
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Process() send PMT version {0} to device",pmtVersion);
 				if(props.SendPMT(currentTuningObject.VideoPid,currentTuningObject.AudioPid, pmt, (int)pmt.Length))
 				{
@@ -3539,8 +3545,7 @@ namespace MediaPortal.TV.Recording
 			m_epgGrabber.Process();
 
 			TimeSpan ts=DateTime.Now-updateTimer;
-			//bool reTune=false;
-
+			
 			if (ts.TotalMilliseconds>800)
 			{
 				if(!GUIGraphicsContext.Vmr9Active && !g_Player.Playing)
@@ -3551,21 +3556,6 @@ namespace MediaPortal.TV.Recording
 				{
 					Vmr7.Process();
 				}
-				/*
-				if(GUIGraphicsContext.Vmr9Active)
-				{
-					if (GUIGraphicsContext.Vmr9FPS < 1f)
-					{
-						ts = DateTime.Now-timeRetune;
-						if (ts.TotalSeconds>=5)
-						{
-							reTune=true;
-							timeRetune=DateTime.Now;
-						}
-					}
-					else timeRetune=DateTime.Now;
-				}
-				*/
 				updateTimer=DateTime.Now;
 			}
 
@@ -3605,26 +3595,8 @@ namespace MediaPortal.TV.Recording
 							ushort chcount=0;
 							m_analyzerInterface.GetChannelCount(ref chcount);
 							Log.Write("DVBGRAPHBDA:Got wrong PMT:{0} {1} channels:{2}",pmtProgramNumber,currentTuningObject.ProgramNumber, chcount);
-							/*
-							ts = DateTime.Now-timeRetune;
-							if (ts.TotalSeconds>5)
-							{
-								reTune=true;
-								timeRetune=DateTime.Now;
-							}*/
 						}
 						pmt=null;
-					}
-					else 
-					{
-						//Log.Write("DVBGRAPHBDA:could not get PMT");
-						/*
-						ts = DateTime.Now-timeRetune;
-						if (ts.TotalSeconds>=5)
-						{
-							reTune=true;
-							timeRetune=DateTime.Now;
-						}*/
 					}
 					Marshal.FreeCoTaskMem(pmtMem);
 				}
@@ -3639,21 +3611,19 @@ namespace MediaPortal.TV.Recording
 					return;
 				}
 			}
-/*
-			if (!reTune) return;
-			ushort count=0;
-			m_analyzerInterface.GetChannelCount(ref count);
-			Log.Write("DVBGraphBDA: no video->retune.. strength:{0} quality:{1} channels:{2}", SignalStrength(), SignalQuality(), count);
-			SubmitTuneRequest(currentTuningObject);
-			if (m_streamDemuxer != null)
-			{
-				m_streamDemuxer.ResetGrabber();
-				m_streamDemuxer.SetChannelData(currentTuningObject.AudioPid, currentTuningObject.VideoPid, currentTuningObject.TeletextPid, currentTuningObject.Audio3, currentTuningObject.ServiceName,currentTuningObject.PMTPid,currentTuningObject.ProgramNumber);
-			}
-			m_lastPMTVersion=-1;
-			m_analyzerInterface.ResetParser();
 
-			refreshPmtTable =true;*/
+			if(GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.Vmr9FPS < 1f)
+			{	
+				if (m_lastPMTVersion>=0 && _pmtRetyCount<3)
+				{
+					ts=DateTime.Now-_pmtTimer;
+					if (ts.TotalSeconds>=1)
+					{
+						_pmtRetyCount++;
+						SendPMT();
+					}
+				}
+			}
 		}//public void Process()
 
 		#endregion
@@ -3671,6 +3641,7 @@ namespace MediaPortal.TV.Recording
 			if (m_NetworkProvider==null) return;
 			bool restartGraph=false;
 			m_lastPMTVersion=-1;
+			_pmtRetyCount=0;
 			try
 			{
 #if !USEMTSWRITER
@@ -3940,12 +3911,12 @@ namespace MediaPortal.TV.Recording
 																						currentTuningObject.AC3Pid,currentTuningObject.TeletextPid);
 
 
-				timeRetune=DateTime.Now;
 				refreshPmtTable	= true;
 
 				if(m_pluginsEnabled==true)
 					ExecTuner();
 				m_lastPMTVersion=-1;
+				_pmtRetyCount=0;
 				m_analyzerInterface.ResetParser();
 				if (Network()==NetworkType.ATSC)
 					m_epgGrabber.GrabEPG(false);
@@ -4979,7 +4950,6 @@ namespace MediaPortal.TV.Recording
 				}
 
 
-				timeRetune=DateTime.Now;
 				refreshPmtTable=true;
 				
 				if(m_pluginsEnabled==true)
