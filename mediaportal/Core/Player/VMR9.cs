@@ -256,8 +256,15 @@ namespace MediaPortal.Player
 					{
 					}
 					Vmr9Deinit();
-					result=Marshal.ReleaseComObject(VMR9Filter);
-					if (result!=0) Log.Write("VMR9:ReleaseComObject():{0}",result);
+					
+					try
+					{
+						result=Marshal.ReleaseComObject(VMR9Filter);
+						if (result!=0) Log.Write("VMR9:ReleaseComObject():{0}",result);
+					}
+					catch(Exception )
+					{
+					}
 					VMR9Filter = null;
 					m_graphBuilder=null;
 					m_scene = null;

@@ -407,7 +407,11 @@ namespace MediaPortal.GUI.Library
 					{
 						if (!bigOne.texture.Disposed)
 						{
-							bigOne.texture.Dispose();
+							try
+							{
+								bigOne.texture.Dispose();
+							}
+							catch(Exception){}
 						}
 						bigOne.texture=null;
 					}

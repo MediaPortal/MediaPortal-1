@@ -282,7 +282,8 @@ namespace DShowNET
             if (pinDir==dir)
             {
               PinInfo info;
-              pins[0].QueryPinInfo(out info);
+							pins[0].QueryPinInfo(out info);
+							Marshal.ReleaseComObject(info.filter);
               if ( String.Compare(info.name,strPinName)==0 )
 							{
 								Marshal.ReleaseComObject(pinEnum);
@@ -321,7 +322,8 @@ namespace DShowNET
             if (pinDir==dir)
             {
               PinInfo info;
-              pins[0].QueryPinInfo(out info);
+							pins[0].QueryPinInfo(out info);
+							Marshal.ReleaseComObject(info.filter);
               if ( iCurrentPinNr==iPinNr )
 							{
 								Marshal.ReleaseComObject(pinEnum);
@@ -404,20 +406,28 @@ namespace DShowNET
             {
               PinInfo pinInfo = new PinInfo();
               hr=pins[0].QueryPinInfo(out pinInfo);
-              if (hr>=0)
-                Log.WriteFile(Log.LogType.Capture,"  got pin#{0}:{1}",iPinNo-1,pinInfo.name);
-              else
-                Log.WriteFile(Log.LogType.Capture,"  got pin:?");
+							if (hr==0)
+							{
+								Log.WriteFile(Log.LogType.Capture,"  got pin#{0}:{1}",iPinNo-1,pinInfo.name);
+								Marshal.ReleaseComObject(pinInfo.filter);
+							}
+							else
+							{
+								Log.WriteFile(Log.LogType.Capture,"  got pin:?");
+							}
               PinDirection pinDir;
               pins[0].QueryDirection(out pinDir);
               if (pinDir==PinDirection.Output)
               {
                 IPin pConnectPin=null;
                 hr=pins[0].ConnectedTo(out pConnectPin);  
-								if (hr< 0 || pConnectPin==null)
+								if (hr!=0 || pConnectPin==null)
 								{
 									hr=graphBuilder.Render(pins[0]);
-									if (hr==0) Log.WriteFile(Log.LogType.Capture,"  render ok");
+									if (hr==0) 
+									{
+										Log.WriteFile(Log.LogType.Capture,"  render ok");
+									}
 									else 
 									{
 										Log.WriteFile(Log.LogType.Capture,true,"  render failed:{0:x}",hr);
@@ -470,10 +480,13 @@ namespace DShowNET
               //Log.WriteFile(Log.LogType.Capture,"  find pin info");
               PinInfo pinInfo = new PinInfo();
               hr=pins[0].QueryPinInfo(out pinInfo);
-              if (hr>=0)
-                Log.WriteFile(Log.LogType.Capture,"  got pin#{0}:{1}",iPinNo-1,pinInfo.name);
-              else
-                Log.WriteFile(Log.LogType.Capture,"  got pin:?");
+							if (hr>=0)
+							{
+								Marshal.ReleaseComObject(pinInfo.filter);
+								Log.WriteFile(Log.LogType.Capture,"  got pin#{0}:{1}",iPinNo-1,pinInfo.name);
+							}
+							else
+								Log.WriteFile(Log.LogType.Capture,"  got pin:?");
               PinDirection pinDir;
               pins[0].QueryDirection(out pinDir);
               if (pinDir==PinDirection.Output)
