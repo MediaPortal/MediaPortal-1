@@ -1106,8 +1106,6 @@ namespace MediaPortal.GUI.Home
 						if(inMyPlugins==true)
 						{
 							inhome=xmlreader.GetValueAsBool("myplugins", setup.PluginName(), bHomeDefault);
-							if(inhome==true)
-								myPlgInCount++;
 						} 
 						else
 						{
