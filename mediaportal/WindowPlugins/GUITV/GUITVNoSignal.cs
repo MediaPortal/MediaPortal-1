@@ -56,5 +56,17 @@ namespace WindowPlugins.GUITV
 
 			base.OnPageLoad ();
 		}
+		public override void OnAction(Action action)
+		{
+			switch (action.wID)
+			{
+
+				case Action.ActionType.ACTION_SHOW_GUI:
+					GUIWindowManager.ShowPreviousWindow();
+					return;
+			}
+			base.OnAction (action);
+		}
+
 	}
 }
