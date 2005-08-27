@@ -13,7 +13,7 @@
 #include "TimeShiftSeeking.h"
 
 
-class CFilterOutPin : public CSourceStream,public CSourceSeeking
+class CFilterOutPin : public CSourceStream,public CTimeShiftSeeking
 {
 public:
 	CFilterOutPin(LPUNKNOWN pUnk, CMPTSFilter *pFilter, FileReader *pFileReader, Sections *pSections, HRESULT *phr);

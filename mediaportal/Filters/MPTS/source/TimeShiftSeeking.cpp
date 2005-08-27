@@ -93,7 +93,7 @@ HRESULT CTimeShiftSeeking::GetTimeFormat(GUID *pFormat)
 HRESULT CTimeShiftSeeking::GetDuration(LONGLONG *pDuration)
 {
     CheckPointer(pDuration, E_POINTER);
-    CAutoLock lock(m_pLock);
+    //CAutoLock lock(m_pLock);
     *pDuration = m_rtDuration;
     return S_OK;
 }
@@ -101,7 +101,7 @@ HRESULT CTimeShiftSeeking::GetDuration(LONGLONG *pDuration)
 HRESULT CTimeShiftSeeking::GetStopPosition(LONGLONG *pStop)
 {
     CheckPointer(pStop, E_POINTER);
-    CAutoLock lock(m_pLock);
+    //CAutoLock lock(m_pLock);
     *pStop = m_rtStop;
     return S_OK;
 }
@@ -175,7 +175,7 @@ HRESULT CTimeShiftSeeking::SetPositions( LONGLONG * pCurrent,  DWORD CurrentFlag
 
     // scope for autolock
     {
-        CAutoLock lock(m_pLock);
+        //CAutoLock lock(m_pLock);
 
         // set start position
         if(StartPosBits == AM_SEEKING_AbsolutePositioning)
@@ -234,7 +234,7 @@ HRESULT CTimeShiftSeeking::GetAvailable( LONGLONG * pEarliest, LONGLONG * pLates
         *pEarliest = m_rtStart;
     }
     if(pLatest) {
-        CAutoLock lock(m_pLock);
+        //CAutoLock lock(m_pLock);
         *pLatest = m_rtStop;
     }
     return S_OK;
@@ -252,7 +252,7 @@ HRESULT CTimeShiftSeeking::SetRate( double dRate)
 HRESULT CTimeShiftSeeking::GetRate( double * pdRate)
 {
     CheckPointer(pdRate, E_POINTER);
-    CAutoLock lock(m_pLock);
+    //CAutoLock lock(m_pLock);
     *pdRate = m_dRateSeeking;
     return S_OK;
 }

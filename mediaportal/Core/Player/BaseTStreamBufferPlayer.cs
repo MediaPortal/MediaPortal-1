@@ -102,7 +102,7 @@ namespace MediaPortal.Player
 		protected const int WS_CLIPSIBLINGS	= 0x04000000;
 		protected DateTime updateTimer=DateTime.Now;
 		protected MediaPortal.GUI.Library.Geometry.Type             m_ar=MediaPortal.GUI.Library.Geometry.Type.Normal;
-
+		protected bool		  _seekToEndFlag=false;
 		public BaseTStreamBufferPlayer()
 		{
 		}
@@ -115,6 +115,7 @@ namespace MediaPortal.Player
 			m_speedRate = 10000;
 			m_bLive=false;
       m_dDuration=-1d;
+			_seekToEndFlag=false;
       string strExt=System.IO.Path.GetExtension(strFile).ToLower();
 			
       if (strFile.ToLower().IndexOf("live.ts")>=0 ||
@@ -359,7 +360,7 @@ namespace MediaPortal.Player
       }
       else
       {
-        SeekAsolutePercentage(99);
+				_seekToEndFlag=true;
       }
 		}
 
@@ -374,6 +375,14 @@ namespace MediaPortal.Player
 			if ( !Playing) return;
 			if ( !m_bStarted) return;
 			if (GUIGraphicsContext.InVmr9Render) return;
+			if (_seekToEndFlag)
+			{
+				_seekToEndFlag=false;
+				if (CurrentPosition+5 <= Duration)
+				{
+					SeekAbsolute(Duration);
+				}
+			}
 			TimeSpan ts=DateTime.Now-updateTimer;
 			if (ts.TotalMilliseconds>=800 || iSpeed!=1) 
 			{

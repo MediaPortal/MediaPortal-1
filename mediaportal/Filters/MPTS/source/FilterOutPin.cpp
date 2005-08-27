@@ -27,7 +27,7 @@ extern void LogDebug(const char *fmt, ...) ;
 
 CFilterOutPin::CFilterOutPin(LPUNKNOWN pUnk, CMPTSFilter *pFilter, FileReader *pFileReader, Sections *pSections, HRESULT *phr) :
 	CSourceStream(NAME("PinObject"), phr, pFilter, L"Out"),
-	CSourceSeeking(NAME("MediaSeekingObject"), pUnk, phr, &m_cSharedState),
+	CTimeShiftSeeking(NAME("MediaSeekingObject"), pUnk, phr, &m_cSharedState),
 	m_pMPTSFilter(pFilter),
 	m_pFileReader(pFileReader),
 	m_pSections(pSections),m_bDiscontinuity(FALSE)
@@ -61,7 +61,7 @@ STDMETHODIMP CFilterOutPin::NonDelegatingQueryInterface( REFIID riid, void ** pp
 {
     if (riid == IID_IMediaSeeking)
     {
-        return CSourceSeeking::NonDelegatingQueryInterface( riid, ppv );
+        return CTimeShiftSeeking::NonDelegatingQueryInterface( riid, ppv );
     }
     return CSourceStream::NonDelegatingQueryInterface(riid, ppv);
 }
@@ -309,7 +309,7 @@ HRESULT CFilterOutPin::ChangeStop()
 HRESULT CFilterOutPin::ChangeRate()
 {
     {   // Scope for critical section lock.
-        CAutoLock cAutoLockSeeking(CSourceSeeking::m_pLock);
+        CAutoLock cAutoLockSeeking(CTimeShiftSeeking::m_pLock);
         if( m_dRateSeeking <= 0 ) {
             m_dRateSeeking = 1.0;  // Reset to a reasonable value.
             return E_FAIL;
@@ -334,7 +334,7 @@ void CFilterOutPin::UpdateFromSeek(void)
 HRESULT CFilterOutPin::SetDuration(REFERENCE_TIME duration)
 {
 	LogDebug("pin:SetDuration()");
-	CAutoLock lock(CSourceSeeking::m_pLock);
+	CAutoLock lock(CTimeShiftSeeking::m_pLock);
 	m_rtDuration = duration;
 	m_rtStop = m_rtDuration;
 	m_rtStart=0;
