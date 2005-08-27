@@ -332,6 +332,29 @@
 			<font>dingbats</font> 
 			<textcolor>FFFFFFFF</textcolor> 
 			<visible>yes</visible> 
-		</control>			
+		</control>
+		<control>
+			<type>image</type> 
+			<id>500</id> 
+			<posX>480</posX> 
+			<posY>30</posY> 
+			<texture>volume.states.mute.png</texture> 
+			<colorkey>0</colorkey> 
+			<colordiffuse>ffffffff</colordiffuse> 
+			<visible>no</visible>
+		</control>
+		<control>
+			<type>volumebar</type> 
+			<id>501</id> 
+			<posX>500</posX> 
+			<posY>30</posY> 
+			<width>100</width>
+			<height>16</height>
+			<imageHeight>3</imageHeight>
+			<texture>volume.states.png</texture> 
+			<colorkey>0</colorkey> 
+			<colordiffuse>ffffffff</colordiffuse> 
+			<visible>no</visible>
+		</control>		
   </controls>
 </window>

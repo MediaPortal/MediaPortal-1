@@ -58,6 +58,38 @@
 				<textureFocus>togglebutton-on-focus.png</textureFocus>
 				<textureNoFocus>togglebutton-on-nofocus.png</textureNoFocus>
 				<onup>4</onup>
+				<ondown>6</ondown>
+			</control>	
+			<control>
+				<description>Quality</description>
+				<type>button</type>
+				<id>6</id>
+				<label>882</label>
+				<onup>5</onup>
+				<ondown>7</ondown>
+			</control>	
+			<control>
+				<description>Episodes</description>
+				<type>button</type>
+				<id>7</id>
+				<label>888</label>
+				<onup>6</onup>
+				<ondown>8</ondown>
+			</control>	
+			<control>
+				<description>PreRecord</description>
+				<type>button</type>
+				<id>8</id>
+				<label>1444</label>
+				<onup>7</onup>
+				<ondown>9</ondown>
+			</control>	
+			<control>
+				<description>PostRecord</description>
+				<type>button</type>
+				<id>9</id>
+				<label>1445</label>
+				<onup>8</onup>
 				<ondown>99</ondown>
 			</control>	
 		</control>
