@@ -3494,7 +3494,7 @@ namespace MediaPortal.TV.Recording
 	//		Log.Write("packets:{0} pmt:{1:X}  vmr9:{2} fps:{3}",m_streamDemuxer.RecevingPackets,m_lastPMTVersion,GUIGraphicsContext.Vmr9Active ,GUIGraphicsContext.Vmr9FPS);
 
 			// do we receive any packets?
-			if (!m_streamDemuxer.RecevingPackets /*|| !SignalPresent()*/ )
+			if (!SignalPresent() )
 			{
 				//no, then state = no signal
 				VideoRendererStatistics.VideoState=VideoRendererStatistics.State.NoSignal;
