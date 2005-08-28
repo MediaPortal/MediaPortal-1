@@ -919,22 +919,23 @@ int m_bufferPositionPMT=0;
 				}
 			}
 #endif
+				numberOfPacketsReceived++;
 
 			for (int ptr = add; ptr < end; ptr += 188)//main loop
 			{
+				numberOfPacketsReceived++;
 				if (m_pluginsEnabled == true)
 					PidCallback((IntPtr)ptr);
 				
 				m_packetHeader=m_tsHelper.GetHeader((IntPtr)ptr);
 				if(m_packetHeader.SyncByte!=0x47) 
 				{
-					return 0;
+					continue;
 				}
 				if(m_packetHeader.TransportError==true)
 				{
-					return 0;
+					continue;
 				}
-				numberOfPacketsReceived++;
 /*
 				if (m_packetHeader.Pid==0)
 				{

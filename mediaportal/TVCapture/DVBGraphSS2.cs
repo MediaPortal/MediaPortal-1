@@ -289,6 +289,7 @@ namespace MediaPortal.TV.Recording
 		bool isUsingAC3=false;
 		int  m_lastPMTVersion=-1;
 		DateTime m_signalLostTimer;
+		DateTime m_signalLostTimer2;
 
 		DateTime m_timeDisplayed=DateTime.Now;
 
@@ -2242,13 +2243,17 @@ namespace MediaPortal.TV.Recording
 			if (ts.TotalSeconds<10) 
 			{
 				VideoRendererStatistics.VideoState=VideoRendererStatistics.State.VideoPresent;
+				m_signalLostTimer2=DateTime.Now;
 				return;
 			}
+			ts = DateTime.Now-m_signalLostTimer2;
+			if (ts.TotalSeconds<2) return;
+			m_signalLostTimer2=DateTime.Now;
 
 //			Log.Write("demuxer:{0} signal:{1} fps:{2}",m_streamDemuxer.RecevingPackets,SignalPresent() ,GUIGraphicsContext.Vmr9FPS);
 
 			// do we receive any packets?
-			if (!!SignalPresent() )
+			if ( !m_streamDemuxer.RecevingPackets)
 			{
 				//no, then state = no signal
 				VideoRendererStatistics.VideoState=VideoRendererStatistics.State.NoSignal;
@@ -2934,7 +2939,6 @@ namespace MediaPortal.TV.Recording
 
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: start radio");
 
-				int hr=0;
 			
 				if (Vmr9!=null)
 				{

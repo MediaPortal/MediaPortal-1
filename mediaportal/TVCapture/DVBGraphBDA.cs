@@ -272,6 +272,7 @@ namespace MediaPortal.TV.Recording
 		bool										isUsingAC3=false;
 		bool										m_bOverlayVisible=true;
 		DateTime								m_signalLostTimer=DateTime.Now;
+		DateTime								m_signalLostTimer2=DateTime.Now;
 		int											_pmtRetyCount=0;
 		DateTime								_pmtTimer;
 		
@@ -3487,14 +3488,19 @@ namespace MediaPortal.TV.Recording
 			if (ts.TotalSeconds<10) 
 			{
 				VideoRendererStatistics.VideoState=VideoRendererStatistics.State.VideoPresent;
+				m_signalLostTimer2=DateTime.Now;
 				return;
 			}
 			//check if this card is used for watching tv
+			ts = DateTime.Now-m_signalLostTimer2;
+			if (ts.TotalSeconds<2) return;
+			m_signalLostTimer2=DateTime.Now;
 
-	//		Log.Write("packets:{0} pmt:{1:X}  vmr9:{2} fps:{3}",m_streamDemuxer.RecevingPackets,m_lastPMTVersion,GUIGraphicsContext.Vmr9Active ,GUIGraphicsContext.Vmr9FPS);
+//			Log.Write("packets:{0} pmt:{1:X}  vmr9:{2} fps:{3} signal:{4}",
+//				m_streamDemuxer.RecevingPackets,m_lastPMTVersion,GUIGraphicsContext.Vmr9Active ,GUIGraphicsContext.Vmr9FPS,SignalPresent());
 
 			// do we receive any packets?
-			if (!SignalPresent() )
+			if ( !m_streamDemuxer.RecevingPackets)
 			{
 				//no, then state = no signal
 				VideoRendererStatistics.VideoState=VideoRendererStatistics.State.NoSignal;
