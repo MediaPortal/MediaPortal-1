@@ -1305,25 +1305,32 @@ STDMETHODIMP CDump::StartRecord( ULONGLONG timeFromTimeshiftBuffer)
 	ULONGLONG duration;
 	TimeShiftBufferDuration(&duration);
 
-	//get the filesize
-	LARGE_INTEGER	liFileSize;
-	::GetFileSizeEx(m_hFile,&liFileSize);
-	__int64         fileSize=liFileSize.QuadPart;
+	if (duration>0)
+	{
+		//get the filesize
+		LARGE_INTEGER	liFileSize;
+		::GetFileSizeEx(m_hFile,&liFileSize);
+		__int64         fileSize=liFileSize.QuadPart;
 
-	//calculate start position
-	__int64			position=0;
-	position=(fileSize/100LL)* ( ( (duration-timeFromTimeshiftBuffer)*100LL)/ duration);
-	if (fileSize>=MAX_FILE_LENGTH)
-		position += m_currentFilePosition;
-	if(position>fileSize)
-		position -= fileSize;
-	
-	if(position<1)
-		position=0;
+		//calculate start position
+		__int64			position=0;
+		position=(fileSize/100LL)* ( ( (duration-timeFromTimeshiftBuffer)*100LL)/ duration);
+		if (fileSize>=MAX_FILE_LENGTH)
+			position += m_currentFilePosition;
+		if(position>fileSize)
+			position -= fileSize;
+		
+		if(position<1)
+			position=0;
 
-	if(position>0) position=(position/188)*188;
-	m_recStartPosition=position;
-	m_recState=Copying;
+		if(position>0) position=(position/188)*188;
+		m_recStartPosition=position;
+		m_recState=Copying;
+	}
+	else
+	{
+		m_recState=Following;
+	}
 	
 	return S_OK;
 

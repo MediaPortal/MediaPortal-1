@@ -169,8 +169,6 @@ namespace MediaPortal.TV.Recording
 		public static extern bool EventMsg(int eventType,[In] IntPtr data);
 		[DllImport("SoftCSA.dll",  CallingConvention=CallingConvention.StdCall)]
 		public static extern int SetAppHandle([In] IntPtr hnd/*,[In, MarshalAs(System.Runtime.InteropServices.UnmanagedType.FunctionPtr)] Delegate Callback*/);
-		[DllImport("SoftCSA.dll",  CharSet=CharSet.Unicode,CallingConvention=CallingConvention.StdCall)]
-		public static extern void PidCallback([In] IntPtr data);
 		[DllImport("SoftCSA.dll",  CallingConvention=CallingConvention.StdCall)]
 		public static extern int MenuItemClick([In] int ptr);
 		[DllImport("SoftCSA.dll",  CharSet=CharSet.Unicode,CallingConvention=CallingConvention.StdCall)]
@@ -348,7 +346,6 @@ namespace MediaPortal.TV.Recording
 				{
 					m_pluginsEnabled=xmlreader.GetValueAsBool("dvb_ts_cards","enablePlugins",false);
 				}
-
 				//no card defined? then we cannot build a graph
 				if (m_Card==null) 
 				{
@@ -1429,7 +1426,7 @@ namespace MediaPortal.TV.Recording
 					//how many seconds are present in the timeshift buffer?
 					long timeInBuffer;
 					m_tsWriterInterface.TimeShiftBufferDuration(out timeInBuffer); // get the amount of time in the timeshiftbuffer
-					timeInBuffer/=10000000;
+					if (timeInBuffer>0) timeInBuffer/=10000000;
 					Log.Write("DVBGraphBDA: timeshift buffer length:{0}",timeInBuffer);
 
 					//how many seconds in the past we want to record?

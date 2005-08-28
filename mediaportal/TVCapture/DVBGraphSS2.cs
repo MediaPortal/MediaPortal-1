@@ -1550,7 +1550,7 @@ namespace MediaPortal.TV.Recording
 					//how many seconds are present in the timeshift buffer?
 					long timeInBuffer;
 					m_tsWriterInterface.TimeShiftBufferDuration(out timeInBuffer); // get the amount of time in the timeshiftbuffer
-					timeInBuffer/=10000000;
+					if (timeInBuffer>0) timeInBuffer/=10000000;
 
 					//how many seconds in the past we want to record?
 					TimeSpan ts = DateTime.Now - timeProgStart;
