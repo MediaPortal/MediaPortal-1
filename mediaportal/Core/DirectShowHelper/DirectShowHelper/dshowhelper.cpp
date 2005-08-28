@@ -28,6 +28,9 @@
 #include <comutil.h>
 using namespace std;
 
+
+
+
 BOOL APIENTRY DllMain( HANDLE hModule, 
                        DWORD  ul_reason_for_call, 
                        LPVOID lpReserved
@@ -78,7 +81,8 @@ typedef map<int,IStreamBufferRecordControl*>::iterator imapRecordControl;
 				= { l, w1, w2, { b1, b2,  b3,  b4,  b5,  b6,  b7,  b8 } }
 
 
-INIT_GUID(bobDxvaGuid,0x335aa36e,0x7884,0x43a4,0x9c,0x91,0x7f,0x87,0xfa,0xf3,0xe3,0x7e);
+INIT_GUID(bobDxvaGuid          ,0x335aa36e, 0x7884, 0x43a4, 0x9c, 0x91, 0x7f, 0x87, 0xfa, 0xf3, 0xe3, 0x7e);
+INIT_GUID(clsidTeeSink         ,0x0A4252A0, 0x7E70, 0x11D0, 0xA5, 0xD6, 0x28, 0xDB, 0x04, 0xC1, 0x00, 0x00);
 
 void Log(const char *fmt, ...) 
 {
@@ -557,6 +561,7 @@ void DvrMsStop(LONG id)
 HRESULT CreateKernelFilter(
     const GUID &guidCategory,  // Filter category.
     LPCOLESTR szName,          // The name of the filter.
+	GUID	  clsid,		   // CLSID of the filter
     IBaseFilter **ppFilter     // Receives a pointer to the filter.
 )
 {
@@ -596,6 +601,19 @@ HRESULT CreateKernelFilter(
             pMoniker->Release();
             continue; // Maybe the next one will work.
         }
+		GUID filterClassID;
+		if (SUCCEEDED(pMoniker->GetClassID(&filterClassID)))
+		{
+			if (memcmp((void*)&filterClassID,(void*)&clsid,sizeof(GUID)) ==0)
+			{
+				// This is the right filter.
+				hr = pMoniker->BindToObject(0, 0, IID_IBaseFilter,
+					(void**)ppFilter);
+				bFound = true;
+			}
+		}
+/*
+		CLSID_WSTDecoder
         // Check the friendly name.
         VARIANT var;
         VariantInit(&var);
@@ -609,6 +627,7 @@ HRESULT CreateKernelFilter(
         }
         VariantClear(&var);
         pBag->Release();
+*/
         pMoniker->Release();
     }
     pEnum->Release();
@@ -617,7 +636,7 @@ HRESULT CreateKernelFilter(
 void AddTeeSinkToGraph(IGraphBuilder* pGraph)
 {
 	IBaseFilter* pKernelTee = NULL;
-	int hr = CreateKernelFilter(AM_KSCATEGORY_SPLITTER, OLESTR("Tee/Sink-to-Sink Converter"), &pKernelTee);
+	int hr = CreateKernelFilter(AM_KSCATEGORY_SPLITTER, OLESTR("Tee/Sink-to-Sink Converter"),clsidTeeSink, &pKernelTee);
 	if (SUCCEEDED(hr))
 	{
 		pGraph->AddFilter(pKernelTee, L"Kernel Tee");
@@ -628,8 +647,9 @@ void AddTeeSinkToGraph(IGraphBuilder* pGraph)
 
 void AddWstCodecToGraph(IGraphBuilder* pGraph)
 {
+										
 	IBaseFilter* pWstCodec = NULL;
-	int hr = CreateKernelFilter(AM_KSCATEGORY_VBICODEC, OLESTR("WST Codec"), &pWstCodec);
+	int hr = CreateKernelFilter(AM_KSCATEGORY_VBICODEC, OLESTR("WST Codec"), CLSID_WSTDecoder,&pWstCodec);
 	if (SUCCEEDED(hr))
 	{
 		pGraph->AddFilter(pWstCodec, L"WST Codec");

@@ -283,7 +283,7 @@ namespace DShowNET
             {
               PinInfo info;
 							pins[0].QueryPinInfo(out info);
-							Marshal.ReleaseComObject(info.filter);
+							//Marshal.ReleaseComObject(info.filter);
               if ( String.Compare(info.name,strPinName)==0 )
 							{
 								Marshal.ReleaseComObject(pinEnum);
@@ -323,7 +323,7 @@ namespace DShowNET
             {
               PinInfo info;
 							pins[0].QueryPinInfo(out info);
-							Marshal.ReleaseComObject(info.filter);
+							//Marshal.ReleaseComObject(info.filter);
               if ( iCurrentPinNr==iPinNr )
 							{
 								Marshal.ReleaseComObject(pinEnum);
@@ -409,7 +409,7 @@ namespace DShowNET
 							if (hr==0)
 							{
 								Log.WriteFile(Log.LogType.Capture,"  got pin#{0}:{1}",iPinNo-1,pinInfo.name);
-								Marshal.ReleaseComObject(pinInfo.filter);
+								//Marshal.ReleaseComObject(pinInfo.filter);
 							}
 							else
 							{
@@ -482,7 +482,7 @@ namespace DShowNET
               hr=pins[0].QueryPinInfo(out pinInfo);
 							if (hr>=0)
 							{
-								Marshal.ReleaseComObject(pinInfo.filter);
+								//Marshal.ReleaseComObject(pinInfo.filter);
 								Log.WriteFile(Log.LogType.Capture,"  got pin#{0}:{1}",iPinNo-1,pinInfo.name);
 							}
 							else

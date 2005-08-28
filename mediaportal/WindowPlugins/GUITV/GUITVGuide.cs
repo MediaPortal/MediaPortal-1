@@ -555,6 +555,7 @@ namespace MediaPortal.GUI.TV
 					m_currentProgram=null;
 					if ( message.Param1!=(int) GUIWindow.Window.WINDOW_TV_PROGRAM_INFO )
 					{
+						m_dtTime=DateTime.Now;
 						m_iCursorX=0;
 						m_iCursorY=0;
 						m_iChannelOffset=0;
@@ -582,7 +583,6 @@ namespace MediaPortal.GUI.TV
 
 					}
 					CheckNewTVGuide();
-					m_dtTime=DateTime.Now;
 
 					GUISpinControl cntlDay=GetControl((int)Controls.SPINCONTROL_DAY) as GUISpinControl;
 					if (cntlDay!=null)
