@@ -5065,46 +5065,46 @@ namespace MediaPortal.TV.Recording
 		#region plugins
 		void ExecTuner()
 		{
-			DVBGraphSS2.TunerData tu=new DVBGraphSS2.TunerData();
-			if (Network()==NetworkType.DVBS) tu.tt = (int) DVBGraphSS2.TunerType.ttSat;
-			if (Network()==NetworkType.DVBC) tu.tt = (int) DVBGraphSS2.TunerType.ttCable;
-			if (Network()==NetworkType.DVBT) tu.tt = (int) DVBGraphSS2.TunerType.ttTerrestrical;
-
-			tu.Frequency=(UInt32)(currentTuningObject.Frequency);
-			tu.SymbolRate=(UInt32)(currentTuningObject.Symbolrate);
-			tu.AC3=0;
-			tu.AudioPID=(UInt16)currentTuningObject.AudioPid;
-			tu.DiseqC=(UInt16)currentTuningObject.DiSEqC;
-			tu.PMT=(UInt16)currentTuningObject.PMTPid;
-			tu.ECM_0=(UInt16)currentTuningObject.ECMPid;
-			tu.FEC=(UInt16)6;
-			tu.LNB=(UInt16)currentTuningObject.LNBFrequency;
-			tu.LNBSelection=(UInt16)currentTuningObject.LNBKHz;
-			tu.NetworkID=(UInt16)currentTuningObject.NetworkID;
-			tu.PCRPID=(UInt16)currentTuningObject.PCRPid;
-			tu.Polarity=(UInt16)currentTuningObject.Polarity;
-			tu.SID=(UInt16)currentTuningObject.ProgramNumber;
-			tu.TelePID=(UInt16)currentTuningObject.TeletextPid;
-			tu.TransportStreamID=(UInt16)currentTuningObject.TransportStreamID;
-			tu.VideoPID=(UInt16)currentTuningObject.VideoPid;
-			tu.Reserved1=0;
-
-			IntPtr data=Marshal.AllocHGlobal(50);
-			Marshal.StructureToPtr(tu,data,true);
-
-			bool flag=false;
-			if(m_pluginsEnabled)
-			{
-				try
-				{
-					flag=EventMsg(999, data);
-				}
-				catch(Exception ex)
-				{
-					Log.WriteFile(Log.LogType.Capture,"Plugins-Exception: {0}",ex.Message);
-				}
-			}
-			Marshal.FreeHGlobal(data);
+//			DVBGraphSS2.TunerData tu=new DVBGraphSS2.TunerData();
+//			if (Network()==NetworkType.DVBS) tu.tt = (int) DVBGraphSS2.TunerType.ttSat;
+//			if (Network()==NetworkType.DVBC) tu.tt = (int) DVBGraphSS2.TunerType.ttCable;
+//			if (Network()==NetworkType.DVBT) tu.tt = (int) DVBGraphSS2.TunerType.ttTerrestrical;
+//
+//			tu.Frequency=(UInt32)(currentTuningObject.Frequency);
+//			tu.SymbolRate=(UInt32)(currentTuningObject.Symbolrate);
+//			tu.AC3=0;
+//			tu.AudioPID=(UInt16)currentTuningObject.AudioPid;
+//			tu.DiseqC=(UInt16)currentTuningObject.DiSEqC;
+//			tu.PMT=(UInt16)currentTuningObject.PMTPid;
+//			tu.ECM_0=(UInt16)currentTuningObject.ECMPid;
+//			tu.FEC=(UInt16)6;
+//			tu.LNB=(UInt16)currentTuningObject.LNBFrequency;
+//			tu.LNBSelection=(UInt16)currentTuningObject.LNBKHz;
+//			tu.NetworkID=(UInt16)currentTuningObject.NetworkID;
+//			tu.PCRPID=(UInt16)currentTuningObject.PCRPid;
+//			tu.Polarity=(UInt16)currentTuningObject.Polarity;
+//			tu.SID=(UInt16)currentTuningObject.ProgramNumber;
+//			tu.TelePID=(UInt16)currentTuningObject.TeletextPid;
+//			tu.TransportStreamID=(UInt16)currentTuningObject.TransportStreamID;
+//			tu.VideoPID=(UInt16)currentTuningObject.VideoPid;
+//			tu.Reserved1=0;
+//
+//			IntPtr data=Marshal.AllocHGlobal(50);
+//			Marshal.StructureToPtr(tu,data,true);
+//
+//			bool flag=false;
+//			if(m_pluginsEnabled)
+//			{
+//				try
+//				{
+//					flag=EventMsg(999, data);
+//				}
+//				catch(Exception ex)
+//				{
+//					Log.WriteFile(Log.LogType.Capture,"Plugins-Exception: {0}",ex.Message);
+//				}
+//			}
+//			Marshal.FreeHGlobal(data);
 		}
 		#endregion
 

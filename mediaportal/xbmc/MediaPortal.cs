@@ -399,25 +399,9 @@ public class MediaPortalApp : D3DApp, IRender
 	public MediaPortalApp()
 	{
 		// check to load plugins
-		bool tmpPluginsFlag = false;
 		using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 		{
-			tmpPluginsFlag = xmlreader.GetValueAsBool("dvb_ts_cards", "enablePlugins", false);
 			useScreenSaver = xmlreader.GetValueAsBool("general", "screensaver", true);
-		}
-
-		if (tmpPluginsFlag == true)
-		{
-			if (System.IO.File.Exists(Application.StartupPath + @"\SoftCSA.dll") == true)
-				DVBGraphSS2.SetMenuHandle(mnuMain.Handle.ToInt32());
-			else
-			{
-				using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
-				{
-					xmlwriter.SetValueAsBool("dvb_ts_cards", "enablePlugins", false);
-				}
-				MessageBox.Show("Plugins are disabled, DLL 'SoftCSA.dll' must be in MediaPortal-Folder!");
-			}
 		}
 
 		// check if MediaPortal is already running...
@@ -703,16 +687,6 @@ public class MediaPortalApp : D3DApp, IRender
       }
     }
     // plugins menu clicked?
-    if (msg.Msg == 0x111)
-    {
-      bool tmpPluginsFlag = false;
-      using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
-      {
-        tmpPluginsFlag = xmlreader.GetValueAsBool("dvb_ts_cards", "enablePlugins", false);
-      }
-      if (tmpPluginsFlag == true)
-        DVBGraphSS2.MenuItemClick(msg.WParam.ToInt32());
-    }
 
     if (msg.Msg == WM_SYSCOMMAND && msg.WParam.ToInt32() == SC_SCREENSAVE)
     {

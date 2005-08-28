@@ -128,38 +128,7 @@ namespace MediaPortal.TV.Recording
 		#endregion
 
 		#region Structs
-		public struct TunerData
-		{
-			public int tt;
-			public UInt32 Frequency;
-			public UInt32 SymbolRate;
-			public UInt16 LNB;           //LNB Frequency, e.g. 9750, 10600
-			public UInt16 PMT;           //PMT Pid
-			public UInt16 ECM_0; //= 0 if unencrypted
-			public byte Reserved1;
-			public byte AC3;           //= 1 if audio PID = AC3 private stream
-			//= 0 otherwise
-			public UInt16 FEC;           //1 = 1/2, 2 = 2/3, 3 = 3/4,
-			//4 = 5/6, 5 = 7/8, 6 = Auto
-			public UInt16 CAID_0;
-			public UInt16 Polarity;      //0 = H, 1 = V
-			//or Modulation or GuardUInterval
-			public UInt16 ECM_1;
-			public UInt16 LNBSelection;  //0 = none, 1 = 22 khz
-			public UInt16 CAID_1;
-			public UInt16 DiseqC;        //0 = none, 1 = A, 2 = B,
-			//3 = A/A, 4 = B/A, 5 = A/B, 6 = B/B
-			public UInt16 ECM_2;
-			public UInt16 AudioPID;
-			public UInt16 CAID_2;
-			public UInt16 VideoPID;
-			public UInt16 TransportStreamID; //from 2.0 R3 on (?), if scanned channel
-			public UInt16 TelePID;
-			public UInt16 NetworkID;         //from 2.0 R3 on (?), if scanned channel
-			public UInt16 SID;               //Service ID
-			public UInt16 PCRPID;
 
-		} 
 		#endregion
 
 		#region Imports
@@ -169,15 +138,6 @@ namespace MediaPortal.TV.Recording
 		unsafe private static extern void DvrMsStart(int id, uint startTime);
 		[DllImport("dshowhelper.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
 		unsafe private static extern void DvrMsStop(int id);
-
-		[DllImport("SoftCSA.dll",  CallingConvention=CallingConvention.StdCall)]
-		public static extern bool EventMsg(int eventType,[In] IntPtr data);
-		[DllImport("SoftCSA.dll",  CallingConvention=CallingConvention.StdCall)]
-		public static extern int SetAppHandle([In] IntPtr hnd/*,[In, MarshalAs(System.Runtime.InteropServices.UnmanagedType.FunctionPtr)] Delegate Callback*/);
-		[DllImport("SoftCSA.dll",  CallingConvention=CallingConvention.StdCall)]
-		public static extern int MenuItemClick([In] int ptr);
-		[DllImport("SoftCSA.dll",  CharSet=CharSet.Unicode,CallingConvention=CallingConvention.StdCall)]
-		public static extern int SetMenuHandle([In] long menu);
 
 		[DllImport("dvblib.dll", CharSet=CharSet.Unicode,CallingConvention=CallingConvention.StdCall)]
 		public static extern int SetupDemuxer(IPin pin,int pid,IPin pin1,int pid1,IPin pin2,int pid2);
@@ -352,56 +312,6 @@ namespace MediaPortal.TV.Recording
 		{
 		}
 		//
-		#region Plugin-Handling
-		void ExecTuner()
-		{
-			TunerData tu=new TunerData();
-			//tu.TunerType=1;
-			tu.tt=(int)TunerType.ttSat;
-			tu.Frequency=(UInt32)(m_currentChannel.Frequency);
-			tu.SymbolRate=(UInt32)(m_currentChannel.Symbolrate);
-			tu.AC3=0;
-			tu.AudioPID=(UInt16)m_currentChannel.AudioPid;
-			tu.DiseqC=(UInt16)m_currentChannel.DiSEqC;
-			tu.PMT=(UInt16)m_currentChannel.PMTPid;
-			tu.FEC=(UInt16)6;
-			tu.LNB=(UInt16)m_currentChannel.LNBFrequency;
-			tu.LNBSelection=(UInt16)m_currentChannel.LNBKHz;
-			tu.NetworkID=(UInt16)m_currentChannel.NetworkID;
-			tu.PCRPID=(UInt16)m_currentChannel.PCRPid;
-			tu.Polarity=(UInt16)m_currentChannel.Polarity;
-			tu.SID=(UInt16)m_currentChannel.ProgramNumber;
-			tu.TelePID=(UInt16)m_currentChannel.TeletextPid;
-			tu.TransportStreamID=(UInt16)m_currentChannel.TransportStreamID;
-			tu.VideoPID=(UInt16)m_currentChannel.VideoPid;
-			tu.Reserved1=0;
-			tu.ECM_0=(UInt16)m_currentChannel.ECMPid;
-			tu.ECM_1=(UInt16)m_ecmPids[1];
-			tu.ECM_2=(UInt16)m_ecmPids[2];
-			tu.CAID_0=(UInt16)m_currentChannel.Audio3;
-			tu.CAID_1=(UInt16)m_ecmIDs[1];
-			tu.CAID_2=(UInt16)m_ecmIDs[2];
-
-			IntPtr data=Marshal.AllocHGlobal(50);
-			
-			Marshal.StructureToPtr(tu,data,true);
-
-			bool flag=false;
-			if(m_pluginsEnabled)
-			{
-				try
-				{
-					flag=EventMsg(999, data/*,out pids*/);
-				}
-				catch(Exception ex)
-				{
-					Log.WriteFile(Log.LogType.Capture,"Plugins-Exception: {0}",ex.Message);
-				}
-
-			}
-			Marshal.FreeHGlobal(data);
-		}
-		#endregion
 		//
 		/// <summary>
 		/// Callback from Card. Sets an information struct with video settings
@@ -410,6 +320,7 @@ namespace MediaPortal.TV.Recording
 		public bool CreateGraph(int Quality)
 		{
 			int hr;
+			//SetAppHandle((int)GUIGraphicsContext.form.Handle);
 			if (m_graphState != State.None) return false;
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:creategraph()");
 			m_myCookie=0;
@@ -1572,7 +1483,10 @@ namespace MediaPortal.TV.Recording
 					lStartTime *= 10000000;
 				}
 			}
-			hr=m_tsRecordInterface.StartRecord(lStartTime);
+
+			if(lStartTime<1) lStartTime=1;
+
+			//hr=m_tsRecordInterface.StartRecord(lStartTime);
 			if (hr!=0)
 			{
 				Log.Write("DVBGraphBDA:unable to start recording:%x", hr);
@@ -1734,9 +1648,6 @@ namespace MediaPortal.TV.Recording
 						m_streamDemuxer.OnTuneNewChannel();
 						m_streamDemuxer.SetChannelData(ch.AudioPid, ch.VideoPid, ch.TeletextPid, ch.Audio3, ch.ServiceName,ch.PMTPid,ch.ProgramNumber);
 					}
-					if(m_pluginsEnabled==true)
-						ExecTuner();
-
 					if(m_mediaControl!=null && m_demuxVideoPin!=null && m_demuxAudioPin!=null && m_demux!=null && m_demuxInterface!=null)
 					{
 
@@ -1752,7 +1663,6 @@ namespace MediaPortal.TV.Recording
 					//m_gotAudioFormat=false;
 					m_analyzerInterface.ResetParser();
 					m_StartTime=DateTime.Now;
-
 					
 					SetupMTSDemuxerPin();
 				}
@@ -2286,7 +2196,7 @@ namespace MediaPortal.TV.Recording
 			{
 				Vmr7.Process();
 			}
-
+			//m_epgGrabber.GrabEPG(m_currentChannel.HasEITSchedule==true);
 			if (m_streamDemuxer!=null) m_streamDemuxer.Process();
 			CheckVideoResolutionChanges();
 			m_epgGrabber.Process();
