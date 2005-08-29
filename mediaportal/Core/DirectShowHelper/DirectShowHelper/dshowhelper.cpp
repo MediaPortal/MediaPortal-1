@@ -601,33 +601,30 @@ HRESULT CreateKernelFilter(
             pMoniker->Release();
             continue; // Maybe the next one will work.
         }
-		GUID filterClassID;
-		if (SUCCEEDED(pMoniker->GetClassID(&filterClassID)))
-		{
-			if (memcmp((void*)&filterClassID,(void*)&clsid,sizeof(GUID)) ==0)
-			{
-				// This is the right filter.
-				hr = pMoniker->BindToObject(0, 0, IID_IBaseFilter,
-					(void**)ppFilter);
-				bFound = true;
-			}
-		}
-/*
-		CLSID_WSTDecoder
+
         // Check the friendly name.
         VARIANT var;
         VariantInit(&var);
         hr = pBag->Read(L"FriendlyName", &var, NULL);
-        if (SUCCEEDED(hr) && (lstrcmpiW(var.bstrVal, szName) == 0))
+        if (SUCCEEDED(hr) )
         {
-            // This is the right filter.
-            hr = pMoniker->BindToObject(0, 0, IID_IBaseFilter,
-                (void**)ppFilter);
-            bFound = true;
+			bool ok=true;
+			for (int x=0; x <wcslen(szName);x++)
+			{
+				if (var.bstrVal[x]!=szName[x])
+				{
+					ok=false;
+				}
+			}
+			if (ok)
+			{
+				// This is the right filter.
+				hr = pMoniker->BindToObject(0, 0, IID_IBaseFilter,(void**)ppFilter);
+				bFound = true;
+			}
         }
         VariantClear(&var);
         pBag->Release();
-*/
         pMoniker->Release();
     }
     pEnum->Release();
@@ -636,7 +633,7 @@ HRESULT CreateKernelFilter(
 void AddTeeSinkToGraph(IGraphBuilder* pGraph)
 {
 	IBaseFilter* pKernelTee = NULL;
-	int hr = CreateKernelFilter(AM_KSCATEGORY_SPLITTER, OLESTR("Tee/Sink-to-Sink Converter"),clsidTeeSink, &pKernelTee);
+	int hr = CreateKernelFilter(AM_KSCATEGORY_SPLITTER, OLESTR("Tee"),clsidTeeSink, &pKernelTee);
 	if (SUCCEEDED(hr))
 	{
 		pGraph->AddFilter(pKernelTee, L"Kernel Tee");
@@ -649,7 +646,7 @@ void AddWstCodecToGraph(IGraphBuilder* pGraph)
 {
 										
 	IBaseFilter* pWstCodec = NULL;
-	int hr = CreateKernelFilter(AM_KSCATEGORY_VBICODEC, OLESTR("WST Codec"), CLSID_WSTDecoder,&pWstCodec);
+	int hr = CreateKernelFilter(AM_KSCATEGORY_VBICODEC, OLESTR("WST"), CLSID_WSTDecoder,&pWstCodec);
 	if (SUCCEEDED(hr))
 	{
 		pGraph->AddFilter(pWstCodec, L"WST Codec");
