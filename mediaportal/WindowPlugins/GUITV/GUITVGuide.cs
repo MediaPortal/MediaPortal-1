@@ -390,7 +390,7 @@ namespace MediaPortal.GUI.TV
 				{
 					if (m_iCursorY>=0)
 					{
-						OnUp();
+						OnUp(true);
 						UpdateVerticalScrollbar();
 						return;
 					}
@@ -400,7 +400,7 @@ namespace MediaPortal.GUI.TV
 				{
 					if (m_iCursorY>=0)
 					{
-						OnDown();
+						OnDown(true);
 						UpdateVerticalScrollbar();
 					}
 					else 
@@ -1524,15 +1524,18 @@ namespace MediaPortal.GUI.TV
 		}
 
     
-		void OnDown()
+		void OnDown(bool updateScreen)
 		{
-			UnFocus();
+			if (updateScreen) UnFocus();
 			if (m_iCursorY<0)
 			{
 				m_iCursorX=0;
 				m_iCursorY=0;
-				SetFocus();
-				GetControl((int)Controls.SPINCONTROL_TIME_INTERVAL).Focus=false;
+				if (updateScreen) 
+				{
+					SetFocus();
+					GetControl((int)Controls.SPINCONTROL_TIME_INTERVAL).Focus=false;
+				}
 				return;
 			}
 
@@ -1541,7 +1544,7 @@ namespace MediaPortal.GUI.TV
         if (m_iCursorY+1 < m_iChannels)
         {
           m_iCursorY++;
-          Update(false);
+          if (updateScreen) Update(false);
         }
         else 
         {
@@ -1549,13 +1552,16 @@ namespace MediaPortal.GUI.TV
           if (m_iCursorY + m_iProgramOffset+1 < m_iTotalPrograms)
           {
             m_iProgramOffset++;
-            Update(false);
+            if (updateScreen) Update(false);
           }
         }
-				SetFocus();
-        
-				UpdateCurrentProgram();
-				SetProperties();
+				if (updateScreen) 
+				{
+					SetFocus();
+	        
+					UpdateCurrentProgram();
+					SetProperties();
+				}
 				return;
 			}
 
@@ -1564,16 +1570,19 @@ namespace MediaPortal.GUI.TV
 				if (m_iCursorY+1 < m_iChannels)
 				{
 					m_iCursorY++;
-          Update(false);
+          if (updateScreen) Update(false);
 				}
 				else
 				{
 					m_iChannelOffset++;
 					if ( m_iChannelOffset>0 && m_iChannelOffset >= m_channels.Count)  m_iChannelOffset-=m_channels.Count;
-          Update(false);
+          if (updateScreen) Update(false);
 				}
-				SetFocus();
-				SetProperties();
+				if (updateScreen) 
+				{
+					SetFocus();
+					SetProperties();
+				}
 				return;
 			}
 			int iCurY=m_iCursorY;
@@ -1599,7 +1608,7 @@ namespace MediaPortal.GUI.TV
 				{
 					m_iChannelOffset++;
 					if (m_iChannelOffset>0 && m_iChannelOffset>=m_channels.Count)  m_iChannelOffset -=m_channels.Count;
-					Update(false);
+					if (updateScreen) Update(false);
 				}
 
 				for (int x=1; x < ColID; x++)
@@ -1630,21 +1639,24 @@ namespace MediaPortal.GUI.TV
 				m_iCursorY=iCurY;
 				m_iChannelOffset=iCurOff;
 			}
-			if (iCurOff==m_iChannelOffset)
+			if (updateScreen) 
 			{
+				if (iCurOff==m_iChannelOffset)
+				{
+					Correct();
+					UpdateCurrentProgram();
+					return;
+				}
+	      
 				Correct();
-				UpdateCurrentProgram();
-				return;
+				Update(false);  
+				SetFocus();
 			}
-      
-			Correct();
-			Update(false);  
-			SetFocus();
 		}
 
-		void OnUp()
+		void OnUp(bool updateScreen)
 		{
-			UnFocus();
+			if (updateScreen) UnFocus();
 			if (!m_bSingleChannel && m_iCursorX==0 && m_iCursorY==0 && m_iChannelOffset==0)
 			{
 				m_iCursorY=-1;
@@ -1662,11 +1674,14 @@ namespace MediaPortal.GUI.TV
 					m_iProgramOffset--;
 				}
 
-        Update(false);
-				
-				SetFocus();
-				UpdateCurrentProgram();
-				SetProperties();
+				if (updateScreen) 
+				{
+					Update(false);
+					
+					SetFocus();
+					UpdateCurrentProgram();
+					SetProperties();
+				}
 				return;
 			}
 
@@ -1677,16 +1692,19 @@ namespace MediaPortal.GUI.TV
 					if (m_iChannelOffset>0) 
 					{
 						m_iChannelOffset--;
-						Update(false);
+						if (updateScreen) Update(false);
 					}
 				}
 				else 
 				{
 					m_iCursorY--;
-          Update(false);
+          if (updateScreen) Update(false);
 				}
-				SetFocus();
-				SetProperties();
+				if (updateScreen) 
+				{
+					SetFocus();
+					SetProperties();
+				}
 				return;
 			}
 			int iCurY=m_iCursorY;
@@ -1709,7 +1727,7 @@ namespace MediaPortal.GUI.TV
 					if (m_iChannelOffset>0) 
 					{
 						m_iChannelOffset--;
-						Update(false);
+						if (updateScreen) Update(false);
 					}
 					else break;
 				}
@@ -1751,16 +1769,19 @@ namespace MediaPortal.GUI.TV
 				m_iChannelOffset=iCurOff;
 			}
 
-			if (iCurOff==m_iChannelOffset)
+			if (updateScreen) 
 			{
-				Correct();
-				UpdateCurrentProgram();
-				return;
-			}
+				if (iCurOff==m_iChannelOffset)
+				{
+					Correct();
+					UpdateCurrentProgram();
+					return;
+				}
 
-			Correct();
-			Update(false);
-			SetFocus();
+				Correct();
+				Update(false);
+				SetFocus();
+			}
 		}
 
 		void OnLeft()
@@ -2279,12 +2300,29 @@ namespace MediaPortal.GUI.TV
 
 		void OnPageUp()
 		{
+			UnFocus();
+			for (int i=0; i < m_iChannels;++i) OnUp(false);
+			Correct();
+			Update(false);  
+			SetFocus();
+		}
+		void OnPageDown()
+		{
+			UnFocus();
+			for (int i=0; i < m_iChannels;++i) OnDown(false);
+			Correct();
+			Update(false);  
+			SetFocus();
+
+		}
+		void OnNextDay()
+		{
 			m_dtTime=m_dtTime.AddDays(1.0);
 			Update(false);
 			SetFocus();
 		}
 
-		void OnPageDown()
+		void OnPreviousDay()
 		{
 			m_dtTime=m_dtTime.AddDays(-1.0);
 			Update(false);

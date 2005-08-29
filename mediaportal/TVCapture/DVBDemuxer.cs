@@ -913,7 +913,6 @@ int m_bufferPositionPMT=0;
 				}
 			}
 #endif
-				numberOfPacketsReceived++;
 
 			for (int ptr = add; ptr < end; ptr += 188)//main loop
 			{
@@ -928,7 +927,8 @@ int m_bufferPositionPMT=0;
 				{
 					continue;
 				}
-/*
+				numberOfPacketsReceived++;
+				/*
 				if (m_packetHeader.Pid==0)
 				{
 					Log.Write("pid:0x{0:X} pos:{1} cont:{2} adapt:{3} payloadunitstart:{4} len:{5} {0:X}",

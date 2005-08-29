@@ -3496,8 +3496,8 @@ namespace MediaPortal.TV.Recording
 			if (ts.TotalSeconds<2) return;
 			m_signalLostTimer2=DateTime.Now;
 
-//			Log.Write("packets:{0} pmt:{1:X}  vmr9:{2} fps:{3} signal:{4}",
-//				m_streamDemuxer.RecevingPackets,m_lastPMTVersion,GUIGraphicsContext.Vmr9Active ,GUIGraphicsContext.Vmr9FPS,SignalPresent());
+			Log.Write("packets:{0} pmt:{1:X}  vmr9:{2} fps:{3} locked:{4} quality:{5} level:{6}",
+				m_streamDemuxer.RecevingPackets,m_lastPMTVersion,GUIGraphicsContext.Vmr9Active ,GUIGraphicsContext.Vmr9FPS,SignalPresent(), SignalQuality(), SignalStrength());
 
 			// do we receive any packets?
 			if ( !m_streamDemuxer.RecevingPackets)

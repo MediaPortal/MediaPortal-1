@@ -51,8 +51,39 @@ namespace MediaPortal.GUI.TV
 			set { currentProgram=value;}
 		}
 
+		void UpdateProgramDescription(TVRecording rec)
+		{
+			if (rec==null) return;
+			ArrayList progs = new ArrayList();
+			TVDatabase.GetProgramsPerChannel(rec.Channel,rec.Start,rec.End,ref progs);
+			if (progs.Count>0)
+			{
+				foreach (TVProgram prog in progs)
+				{
+					if (prog.Start==rec.Start && prog.End==rec.End && prog.Channel==rec.Channel)
+					{
+						currentProgram=prog;
+						break;
+					}
+				}
+			}
+			if (currentProgram!=null)
+			{
+				string strTime=String.Format("{0} {1} - {2}", 
+					Utils.GetShortDayString(currentProgram.StartTime) , 
+					currentProgram.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat),
+					currentProgram.EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
+
+				lblProgramGenre.Label=currentProgram.Genre;
+				lblProgramTime.Label=strTime;
+				lblProgramDescription.Label=currentProgram.Description;
+				lblProgramTitle.Label=currentProgram.Title;
+			}
+		}
+
 		void Update()
 		{
+			lstUpcomingEpsiodes.Clear();
 			if (currentProgram==null) return;
 
 			string strTime=String.Format("{0} {1} - {2}", 
@@ -137,6 +168,7 @@ namespace MediaPortal.GUI.TV
 				item.Label=recSeries.Title;
 				item.TVTag=recSeries;
 				item.MusicTag=null;
+				item.OnItemSelected+=new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(item_OnItemSelected);
 				string strLogo=Utils.GetCoverArt(Thumbs.TVChannel,recSeries.Channel);
 				if (!System.IO.File.Exists(strLogo))
 				{
@@ -159,6 +191,7 @@ namespace MediaPortal.GUI.TV
 				lstUpcomingEpsiodes.Add(item);
 			}
 		}
+		
 		bool IsRecordingSchedule(TVRecording rec, out TVRecording recOrg, bool filterOutCanceled)
 		{
 			recOrg=null;
@@ -739,6 +772,11 @@ namespace MediaPortal.GUI.TV
 			}
 			TVDatabase.UpdateRecording(rec,TVDatabase.RecordingChange.Modified);
 			
+		}
+
+		private void item_OnItemSelected(GUIListItem item, GUIControl parent)
+		{
+			UpdateProgramDescription(item.TVTag as TVRecording);
 		}
 	}
 }
