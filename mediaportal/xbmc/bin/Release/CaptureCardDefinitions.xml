@@ -247,7 +247,7 @@
         <filter cat="encoder"  name="WinFast PVR2000 MPEG Encoder"      checkdevice="true"></filter>
       </filters>
       <connections>
-		<connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="1"></connection>
+		<connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
         <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
         <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="3"></connection>
         <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
