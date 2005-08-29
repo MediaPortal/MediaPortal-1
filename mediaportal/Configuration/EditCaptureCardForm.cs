@@ -142,8 +142,6 @@ namespace MediaPortal.Configuration
 		private System.Windows.Forms.CheckBox useLNB2;
 		private System.Windows.Forms.CheckBox useLNB3;
 		private System.Windows.Forms.CheckBox useLNB4;
-		private System.Windows.Forms.GroupBox groupBox1;
-		private System.Windows.Forms.CheckBox checkBox1;
 		private System.Windows.Forms.TabPage tabPage7;
 		private System.Windows.Forms.Button buttonBrowse;
 		private System.Windows.Forms.TextBox tbRecordingFolder;
@@ -568,8 +566,6 @@ namespace MediaPortal.Configuration
 			this.label25 = new System.Windows.Forms.Label();
 			this.comboBoxQuality = new System.Windows.Forms.ComboBox();
 			this.tabPage4 = new System.Windows.Forms.TabPage();
-			this.groupBox1 = new System.Windows.Forms.GroupBox();
-			this.checkBox1 = new System.Windows.Forms.CheckBox();
 			this.groupBox2 = new System.Windows.Forms.GroupBox();
 			this.useLNB4 = new System.Windows.Forms.CheckBox();
 			this.useLNB3 = new System.Windows.Forms.CheckBox();
@@ -618,7 +614,6 @@ namespace MediaPortal.Configuration
 			this.tabPage5.SuspendLayout();
 			this.groupBox7.SuspendLayout();
 			this.tabPage4.SuspendLayout();
-			this.groupBox1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.groupBox4.SuspendLayout();
 			this.groupBox3.SuspendLayout();
@@ -953,23 +948,23 @@ namespace MediaPortal.Configuration
 			// 
 			this.updownPrio.Location = new System.Drawing.Point(152, 272);
 			this.updownPrio.Maximum = new System.Decimal(new int[] {
-																															 10,
-																															 0,
-																															 0,
-																															 0});
+																	   10,
+																	   0,
+																	   0,
+																	   0});
 			this.updownPrio.Minimum = new System.Decimal(new int[] {
-																															 1,
-																															 0,
-																															 0,
-																															 0});
+																	   1,
+																	   0,
+																	   0,
+																	   0});
 			this.updownPrio.Name = "updownPrio";
 			this.updownPrio.Size = new System.Drawing.Size(56, 20);
 			this.updownPrio.TabIndex = 51;
 			this.updownPrio.Value = new System.Decimal(new int[] {
-																														 1,
-																														 0,
-																														 0,
-																														 0});
+																	 1,
+																	 0,
+																	 0,
+																	 0});
 			// 
 			// tabPage7
 			// 
@@ -1423,10 +1418,10 @@ namespace MediaPortal.Configuration
 			// comboBoxQuality
 			// 
 			this.comboBoxQuality.Items.AddRange(new object[] {
-																												 "Portable",
-																												 "Low",
-																												 "Medium",
-																												 "High"});
+																 "Portable",
+																 "Low",
+																 "Medium",
+																 "High"});
 			this.comboBoxQuality.Location = new System.Drawing.Point(128, 48);
 			this.comboBoxQuality.Name = "comboBoxQuality";
 			this.comboBoxQuality.Size = new System.Drawing.Size(240, 21);
@@ -1434,7 +1429,6 @@ namespace MediaPortal.Configuration
 			// 
 			// tabPage4
 			// 
-			this.tabPage4.Controls.Add(this.groupBox1);
 			this.tabPage4.Controls.Add(this.groupBox2);
 			this.tabPage4.Controls.Add(this.label23);
 			this.tabPage4.Controls.Add(this.groupBox4);
@@ -1445,26 +1439,6 @@ namespace MediaPortal.Configuration
 			this.tabPage4.TabIndex = 3;
 			this.tabPage4.Text = "DVB-S LNB";
 			this.tabPage4.Click += new System.EventHandler(this.tabPage4_Click);
-			// 
-			// groupBox1
-			// 
-			this.groupBox1.Controls.Add(this.checkBox1);
-			this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.groupBox1.Location = new System.Drawing.Point(24, 344);
-			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(144, 56);
-			this.groupBox1.TabIndex = 33;
-			this.groupBox1.TabStop = false;
-			this.groupBox1.Text = "Use SkyStar2 MD-Plugins";
-			// 
-			// checkBox1
-			// 
-			this.checkBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.checkBox1.Location = new System.Drawing.Point(32, 24);
-			this.checkBox1.Name = "checkBox1";
-			this.checkBox1.Size = new System.Drawing.Size(88, 16);
-			this.checkBox1.TabIndex = 0;
-			this.checkBox1.Text = "Use Plugins";
 			// 
 			// groupBox2
 			// 
@@ -1538,9 +1512,9 @@ namespace MediaPortal.Configuration
 			// lnbkind4
 			// 
 			this.lnbkind4.Items.AddRange(new object[] {
-																									"Ku-Band",
-																									"C-Band",
-																									"Circular"});
+														  "Ku-Band",
+														  "C-Band",
+														  "Circular"});
 			this.lnbkind4.Location = new System.Drawing.Point(232, 109);
 			this.lnbkind4.Name = "lnbkind4";
 			this.lnbkind4.Size = new System.Drawing.Size(72, 21);
@@ -1549,9 +1523,9 @@ namespace MediaPortal.Configuration
 			// lnbkind3
 			// 
 			this.lnbkind3.Items.AddRange(new object[] {
-																									"Ku-Band",
-																									"C-Band",
-																									"Circular"});
+														  "Ku-Band",
+														  "C-Band",
+														  "Circular"});
 			this.lnbkind3.Location = new System.Drawing.Point(232, 85);
 			this.lnbkind3.Name = "lnbkind3";
 			this.lnbkind3.Size = new System.Drawing.Size(72, 21);
@@ -1560,9 +1534,9 @@ namespace MediaPortal.Configuration
 			// lnbkind2
 			// 
 			this.lnbkind2.Items.AddRange(new object[] {
-																									"Ku-Band",
-																									"C-Band",
-																									"Circular"});
+														  "Ku-Band",
+														  "C-Band",
+														  "Circular"});
 			this.lnbkind2.Location = new System.Drawing.Point(232, 61);
 			this.lnbkind2.Name = "lnbkind2";
 			this.lnbkind2.Size = new System.Drawing.Size(72, 21);
@@ -1595,10 +1569,10 @@ namespace MediaPortal.Configuration
 			// lnbconfig4
 			// 
 			this.lnbconfig4.Items.AddRange(new object[] {
-																										"0 KHz",
-																										"22 KHz",
-																										"33 Khz",
-																										"44 KHz"});
+															"0 KHz",
+															"22 KHz",
+															"33 Khz",
+															"44 KHz"});
 			this.lnbconfig4.Location = new System.Drawing.Point(136, 109);
 			this.lnbconfig4.Name = "lnbconfig4";
 			this.lnbconfig4.Size = new System.Drawing.Size(80, 21);
@@ -1607,10 +1581,10 @@ namespace MediaPortal.Configuration
 			// lnbconfig3
 			// 
 			this.lnbconfig3.Items.AddRange(new object[] {
-																										"0 KHz",
-																										"22 KHz",
-																										"33 Khz",
-																										"44 KHz"});
+															"0 KHz",
+															"22 KHz",
+															"33 Khz",
+															"44 KHz"});
 			this.lnbconfig3.Location = new System.Drawing.Point(136, 85);
 			this.lnbconfig3.Name = "lnbconfig3";
 			this.lnbconfig3.Size = new System.Drawing.Size(80, 21);
@@ -1619,10 +1593,10 @@ namespace MediaPortal.Configuration
 			// lnbconfig2
 			// 
 			this.lnbconfig2.Items.AddRange(new object[] {
-																										"0 KHz",
-																										"22 KHz",
-																										"33 Khz",
-																										"44 KHz"});
+															"0 KHz",
+															"22 KHz",
+															"33 Khz",
+															"44 KHz"});
 			this.lnbconfig2.Location = new System.Drawing.Point(136, 61);
 			this.lnbconfig2.Name = "lnbconfig2";
 			this.lnbconfig2.Size = new System.Drawing.Size(80, 21);
@@ -1631,13 +1605,13 @@ namespace MediaPortal.Configuration
 			// diseqcd
 			// 
 			this.diseqcd.Items.AddRange(new object[] {
-																								 "None",
-																								 "Simple A",
-																								 "Simple B",
-																								 "Level 1 A/A",
-																								 "Level 1 B/A",
-																								 "Level 1 A/B",
-																								 "Level 1 B/B"});
+														 "None",
+														 "Simple A",
+														 "Simple B",
+														 "Level 1 A/A",
+														 "Level 1 B/A",
+														 "Level 1 A/B",
+														 "Level 1 B/B"});
 			this.diseqcd.Location = new System.Drawing.Point(16, 109);
 			this.diseqcd.Name = "diseqcd";
 			this.diseqcd.Size = new System.Drawing.Size(104, 21);
@@ -1648,13 +1622,13 @@ namespace MediaPortal.Configuration
 			// diseqcc
 			// 
 			this.diseqcc.Items.AddRange(new object[] {
-																								 "None",
-																								 "Simple A",
-																								 "Simple B",
-																								 "Level 1 A/A",
-																								 "Level 1 B/A",
-																								 "Level 1 A/B",
-																								 "Level 1 B/B"});
+														 "None",
+														 "Simple A",
+														 "Simple B",
+														 "Level 1 A/A",
+														 "Level 1 B/A",
+														 "Level 1 A/B",
+														 "Level 1 B/B"});
 			this.diseqcc.Location = new System.Drawing.Point(16, 85);
 			this.diseqcc.Name = "diseqcc";
 			this.diseqcc.Size = new System.Drawing.Size(104, 21);
@@ -1665,13 +1639,13 @@ namespace MediaPortal.Configuration
 			// diseqcb
 			// 
 			this.diseqcb.Items.AddRange(new object[] {
-																								 "None",
-																								 "Simple A",
-																								 "Simple B",
-																								 "Level 1 A/A",
-																								 "Level 1 B/A",
-																								 "Level 1 A/B",
-																								 "Level 1 B/B"});
+														 "None",
+														 "Simple A",
+														 "Simple B",
+														 "Level 1 A/A",
+														 "Level 1 B/A",
+														 "Level 1 A/B",
+														 "Level 1 B/B"});
 			this.diseqcb.Location = new System.Drawing.Point(16, 61);
 			this.diseqcb.Name = "diseqcb";
 			this.diseqcb.Size = new System.Drawing.Size(104, 21);
@@ -1682,13 +1656,13 @@ namespace MediaPortal.Configuration
 			// diseqca
 			// 
 			this.diseqca.Items.AddRange(new object[] {
-																								 "None",
-																								 "Simple A",
-																								 "Simple B",
-																								 "Level 1 A/A",
-																								 "Level 1 B/A",
-																								 "Level 1 A/B",
-																								 "Level 1 B/B"});
+														 "None",
+														 "Simple A",
+														 "Simple B",
+														 "Level 1 A/A",
+														 "Level 1 B/A",
+														 "Level 1 A/B",
+														 "Level 1 B/B"});
 			this.diseqca.Location = new System.Drawing.Point(16, 37);
 			this.diseqca.Name = "diseqca";
 			this.diseqca.Size = new System.Drawing.Size(104, 21);
@@ -1699,9 +1673,9 @@ namespace MediaPortal.Configuration
 			// lnbkind1
 			// 
 			this.lnbkind1.Items.AddRange(new object[] {
-																									"Ku-Band",
-																									"C-Band",
-																									"Circular"});
+														  "Ku-Band",
+														  "C-Band",
+														  "Circular"});
 			this.lnbkind1.Location = new System.Drawing.Point(232, 37);
 			this.lnbkind1.Name = "lnbkind1";
 			this.lnbkind1.Size = new System.Drawing.Size(72, 21);
@@ -1710,10 +1684,10 @@ namespace MediaPortal.Configuration
 			// lnbconfig1
 			// 
 			this.lnbconfig1.Items.AddRange(new object[] {
-																										"0 KHz",
-																										"22 KHz",
-																										"33 Khz",
-																										"44 KHz"});
+															"0 KHz",
+															"22 KHz",
+															"33 Khz",
+															"44 KHz"});
 			this.lnbconfig1.Location = new System.Drawing.Point(136, 37);
 			this.lnbconfig1.Name = "lnbconfig1";
 			this.lnbconfig1.Size = new System.Drawing.Size(80, 21);
@@ -1887,7 +1861,6 @@ namespace MediaPortal.Configuration
 			this.tabPage5.ResumeLayout(false);
 			this.groupBox7.ResumeLayout(false);
 			this.tabPage4.ResumeLayout(false);
-			this.groupBox1.ResumeLayout(false);
 			this.groupBox2.ResumeLayout(false);
 			this.groupBox4.ResumeLayout(false);
 			this.groupBox3.ResumeLayout(false);
@@ -2383,11 +2356,6 @@ namespace MediaPortal.Configuration
 				MessageBox.Show("Unable to create graph for this device!!", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
 			}
 
-			if (CaptureCard!=null)
-			{
-				if(CaptureCard.VideoDevice!="B2C2 MPEG-2 Source")
-					checkBox1.Enabled=false;
-			}
 
 			FillInDefaultRecordingPath();
 		}
@@ -2599,10 +2567,6 @@ namespace MediaPortal.Configuration
 			if (CaptureCard==null) return;
 			string filename=String.Format(@"database\card_{0}.xml",CaptureCard.FriendlyName);
 			
-			using(MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
-			{
-				checkBox1.Checked=xmlreader.GetValueAsBool("dvb_ts_cards","enablePlugins",false);
-			}
 			
 			using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml(filename))
 			{
@@ -2733,10 +2697,6 @@ namespace MediaPortal.Configuration
 		void SaveDVBSSettings()
 		{
 			// save settings
-			using(MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
-			{
-				xmlwriter.SetValueAsBool("dvb_ts_cards","enablePlugins",checkBox1.Checked);
-			}			
 			if (CaptureCard!=null && CaptureCard.FriendlyName!=String.Empty)
 			{
 				string filename=String.Format(@"database\card_{0}.xml",CaptureCard.FriendlyName);

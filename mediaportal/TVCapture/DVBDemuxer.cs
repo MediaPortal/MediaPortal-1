@@ -233,12 +233,6 @@ int m_bufferPositionPMT=0;
         AudioHeader m_usedAudioFormat = new AudioHeader();
         #endregion
 
-        #region Imports
-
-        [DllImport("SoftCSA.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall)]
-        public static extern void PidCallback([In] IntPtr data);
-        #endregion
-
         #region Delegates/Events
 				// audio format
 				public delegate bool OnAudioChanged(AudioHeader audioFormat);
@@ -924,8 +918,6 @@ int m_bufferPositionPMT=0;
 			for (int ptr = add; ptr < end; ptr += 188)//main loop
 			{
 				numberOfPacketsReceived++;
-				if (m_pluginsEnabled == true)
-					PidCallback((IntPtr)ptr);
 				
 				m_packetHeader=m_tsHelper.GetHeader((IntPtr)ptr);
 				if(m_packetHeader.SyncByte!=0x47) 
