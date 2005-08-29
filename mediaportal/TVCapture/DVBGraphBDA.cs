@@ -165,15 +165,7 @@ namespace MediaPortal.TV.Recording
 		[DllImport("advapi32", CharSet=CharSet.Auto)]
 		private static extern ulong RegOpenKeyEx(IntPtr key, string subKey, uint ulOptions, uint sam, out IntPtr resultKey);
 
-		[DllImport("SoftCSA.dll",  CallingConvention=CallingConvention.StdCall)]
-		public static extern bool EventMsg(int eventType,[In] IntPtr data);
-		[DllImport("SoftCSA.dll",  CallingConvention=CallingConvention.StdCall)]
-		public static extern int SetAppHandle([In] IntPtr hnd/*,[In, MarshalAs(System.Runtime.InteropServices.UnmanagedType.FunctionPtr)] Delegate Callback*/);
-		[DllImport("SoftCSA.dll",  CallingConvention=CallingConvention.StdCall)]
-		public static extern int MenuItemClick([In] int ptr);
-		[DllImport("SoftCSA.dll",  CharSet=CharSet.Unicode,CallingConvention=CallingConvention.StdCall)]
-		public static extern int SetMenuHandle([In] long menu);
-
+		
 		[DllImport("dvblib.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
 		private static extern bool GetPidMap(DShowNET.IPin filter, ref uint pid, ref uint mediasampletype);
 		[DllImport("dvblib.dll", CharSet=CharSet.Unicode,CallingConvention=CallingConvention.StdCall)]
@@ -259,7 +251,6 @@ namespace MediaPortal.TV.Recording
 		DVBChannel							currentTuningObject=null;
 		TSHelperTools						transportHelper=new TSHelperTools();
 		bool										refreshPmtTable=false;
-		protected bool					m_pluginsEnabled=false;
 		DateTime								updateTimer=DateTime.Now;
 		DVBDemuxer							m_streamDemuxer = new DVBDemuxer();
 		EpgGrabber							m_epgGrabber = new EpgGrabber();
@@ -343,10 +334,6 @@ namespace MediaPortal.TV.Recording
 				graphRunning=false;
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph(). ");
 
-				using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
-				{
-					m_pluginsEnabled=xmlreader.GetValueAsBool("dvb_ts_cards","enablePlugins",false);
-				}
 				//no card defined? then we cannot build a graph
 				if (m_Card==null) 
 				{
@@ -3916,8 +3903,6 @@ namespace MediaPortal.TV.Recording
 
 				refreshPmtTable	= true;
 
-				if(m_pluginsEnabled==true)
-					ExecTuner();
 				m_lastPMTVersion=-1;
 				_pmtRetyCount=0;
 				m_analyzerInterface.ResetParser();
@@ -4955,8 +4940,6 @@ namespace MediaPortal.TV.Recording
 
 				refreshPmtTable=true;
 				
-				if(m_pluginsEnabled==true)
-					ExecTuner();
 			}
 			finally
 			{
@@ -5062,51 +5045,6 @@ namespace MediaPortal.TV.Recording
 		}
 		#endregion
 		
-		#region plugins
-		void ExecTuner()
-		{
-//			DVBGraphSS2.TunerData tu=new DVBGraphSS2.TunerData();
-//			if (Network()==NetworkType.DVBS) tu.tt = (int) DVBGraphSS2.TunerType.ttSat;
-//			if (Network()==NetworkType.DVBC) tu.tt = (int) DVBGraphSS2.TunerType.ttCable;
-//			if (Network()==NetworkType.DVBT) tu.tt = (int) DVBGraphSS2.TunerType.ttTerrestrical;
-//
-//			tu.Frequency=(UInt32)(currentTuningObject.Frequency);
-//			tu.SymbolRate=(UInt32)(currentTuningObject.Symbolrate);
-//			tu.AC3=0;
-//			tu.AudioPID=(UInt16)currentTuningObject.AudioPid;
-//			tu.DiseqC=(UInt16)currentTuningObject.DiSEqC;
-//			tu.PMT=(UInt16)currentTuningObject.PMTPid;
-//			tu.ECM_0=(UInt16)currentTuningObject.ECMPid;
-//			tu.FEC=(UInt16)6;
-//			tu.LNB=(UInt16)currentTuningObject.LNBFrequency;
-//			tu.LNBSelection=(UInt16)currentTuningObject.LNBKHz;
-//			tu.NetworkID=(UInt16)currentTuningObject.NetworkID;
-//			tu.PCRPID=(UInt16)currentTuningObject.PCRPid;
-//			tu.Polarity=(UInt16)currentTuningObject.Polarity;
-//			tu.SID=(UInt16)currentTuningObject.ProgramNumber;
-//			tu.TelePID=(UInt16)currentTuningObject.TeletextPid;
-//			tu.TransportStreamID=(UInt16)currentTuningObject.TransportStreamID;
-//			tu.VideoPID=(UInt16)currentTuningObject.VideoPid;
-//			tu.Reserved1=0;
-//
-//			IntPtr data=Marshal.AllocHGlobal(50);
-//			Marshal.StructureToPtr(tu,data,true);
-//
-//			bool flag=false;
-//			if(m_pluginsEnabled)
-//			{
-//				try
-//				{
-//					flag=EventMsg(999, data);
-//				}
-//				catch(Exception ex)
-//				{
-//					Log.WriteFile(Log.LogType.Capture,"Plugins-Exception: {0}",ex.Message);
-//				}
-//			}
-//			Marshal.FreeHGlobal(data);
-		}
-		#endregion
 
 		#region demuxer callbacks
 		private bool m_streamDemuxer_AudioHasChanged(MediaPortal.TV.Recording.DVBDemuxer.AudioHeader audioFormat)

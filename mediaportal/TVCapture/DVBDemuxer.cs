@@ -160,10 +160,6 @@ namespace MediaPortal.TV.Recording
         #region Contructor/Destructor
 				public DVBDemuxer()
 				{
-					using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml(System.Windows.Forms.Application.StartupPath+@"\MediaPortal.xml"))
-					{
-						m_pluginsEnabled = xmlreader.GetValueAsBool("dvb_ts_cards", "enablePlugins", false);
-					}
 					m_secTimer.Elapsed+=new System.Timers.ElapsedEventHandler(m_secTimer_Elapsed);
 					m_secTimer.Interval=5000;
 					m_secTimer.AutoReset=false;
@@ -181,7 +177,6 @@ namespace MediaPortal.TV.Recording
 		int m_audioPid = 0;
 		int m_pmtPid = 0;
 		string m_channelName = "";
-		bool m_pluginsEnabled = false;
 		// mhw
 		bool m_mhwGrabbing=false;
 		static ArrayList m_mhwChannels=new ArrayList();
@@ -955,7 +950,6 @@ int m_bufferPositionPMT=0;
 					m_secTimer.Start();
 					m_packetsReceived=true;
 				}
-				// plugins
 				// get the header object
 				// audio & video
 				#region subtitles
