@@ -266,6 +266,7 @@ namespace MediaPortal.TV.Recording
 		{
 			try
 			{
+				TVDatabase.SupressEvents=true;
 				short titleCount;
 				MHWInterface.GetMHWTitleCount(out titleCount);
 				if (mhwEvent==0)
@@ -453,6 +454,11 @@ namespace MediaPortal.TV.Recording
 				Log.WriteFile(Log.LogType.Error,true,"mhw-epg: Exception while parsing MHW:{0} {1} {2}",
 					ex.Message,ex.Source,ex.StackTrace);
 			}
+			finally
+			{
+				if (currentState==State.Idle)
+					TVDatabase.SupressEvents=false;
+			}
 		}
 		#endregion
 
@@ -471,6 +477,7 @@ namespace MediaPortal.TV.Recording
 		{
 			try
 			{
+				TVDatabase.SupressEvents=true;
 				string m_languagesToGrab=String.Empty;
 				using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 				{
@@ -501,7 +508,7 @@ namespace MediaPortal.TV.Recording
 				}
 				TVProgram lastProgram=TVDatabase.GetLastProgramForChannel(channel);
 				Log.WriteFile(Log.LogType.EPG,"epg-grab: Last program in database for {0} :{1}-{2}",
-											channel.Name,lastProgram.Start,lastProgram.End);
+					channel.Name,lastProgram.Start,lastProgram.End);
 				int curChannel=epgChannel;
 				epgChannel++;
 				EPGInterface.GetEPGEventCount((uint)curChannel,out eventCount);
@@ -614,6 +621,11 @@ namespace MediaPortal.TV.Recording
 			catch(Exception ex)
 			{
 				Log.WriteFile(Log.LogType.EPG,"epg-grab:{0} {1} {2}",ex.Message,ex.Source,ex.StackTrace);
+			}
+			finally
+			{
+				if (currentState==State.Idle)
+					TVDatabase.SupressEvents=false;
 			}
 		}
 

@@ -3906,8 +3906,6 @@ namespace MediaPortal.TV.Recording
 				m_lastPMTVersion=-1;
 				_pmtRetyCount=0;
 				m_analyzerInterface.ResetParser();
-				if (Network()==NetworkType.ATSC)
-					m_epgGrabber.GrabEPG(false);
 				SetupMTSDemuxerPin();
 				SetupDemuxer(m_DemuxVideoPin,currentTuningObject.VideoPid,m_DemuxAudioPin,currentTuningObject.AudioPid,m_pinAC3Out,currentTuningObject.AC3Pid);
 
@@ -5120,7 +5118,10 @@ namespace MediaPortal.TV.Recording
 					stream.Close();
 				}
 				refreshPmtTable=true;
-				m_epgGrabber.GrabEPG(currentTuningObject.HasEITSchedule==true);
+				if (Recorder.IsCardViewing(m_cardID))
+				{
+					m_epgGrabber.GrabEPG(currentTuningObject.HasEITSchedule==true);
+				}
 			}
 			catch(Exception ex)
 			{
