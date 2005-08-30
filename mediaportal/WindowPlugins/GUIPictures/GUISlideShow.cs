@@ -600,14 +600,14 @@ namespace MediaPortal.GUI.Pictures
 				if (RenderPause()) return;     
 			}
 
-			if (!m_bShowInfo && !m_bShowZoomInfo)
+			if (!m_bShowInfo && !m_bShowZoomInfo && !m_bLoadingRawPicture)
 			{
 				m_bOSDAutoHide = true;
 				return;
 			}    
 
 			// Auto hide OSD
-			if (m_bOSDAutoHide && (m_bShowInfo||m_bShowZoomInfo))
+			if (m_bOSDAutoHide && (m_bShowInfo||m_bShowZoomInfo||m_bLoadingRawPicture))
 			{
 				int dwOSDTimeElapsed = ((int)(DateTime.Now.Ticks/10000)) - m_lSlideTime;
 				if (dwOSDTimeElapsed >= 3000)
@@ -1827,6 +1827,17 @@ namespace MediaPortal.GUI.Pictures
 			if (m_fZoomTopCurrent < 0) m_fZoomTopCurrent = 0; 
 		}
 
+		void LoadRawPictureThread()
+		{
+			// load picture
+			float width,height;
+			string slideName;
+			m_pTextureBackGround=GetSlide(true, out width,out height, out slideName);              
+			m_bLoadingRawPicture=false;
+			m_fWidthBackGround=width;
+			m_fHeightBackGround=height;
+			m_strCurrentSlide=slideName;
+		}
 		void ZoomBackGround(float fZoom)
 		{
 			if (fZoom > MAX_ZOOM_FACTOR || fZoom < 0.0f)
@@ -1838,13 +1849,20 @@ namespace MediaPortal.GUI.Pictures
 			{        
 				m_bShowZoomInfo=true;
 				m_bLoadingRawPicture=true;
+				using (WaitCursor cursor = new WaitCursor())
+				{
+					Thread WorkerThread = new Thread(new ThreadStart(LoadRawPictureThread));
+					WorkerThread.Start();
 
-				// Update window
-				GUIWindowManager.Process();
+					
+					// Update window
+					while (m_bLoadingRawPicture)
+						GUIWindowManager.Process();
 
-				// load picture
-				m_pTextureBackGround=GetSlide(true, out m_fWidthBackGround,out m_fHeightBackGround, out m_strCurrentSlide);              
-				m_bLoadingRawPicture=false;
+					// load picture
+					//m_pTextureBackGround=GetSlide(true, out m_fWidthBackGround,out m_fHeightBackGround, out m_strCurrentSlide);              
+					//m_bLoadingRawPicture=false;
+				}
 				fZoom = m_fDefaultZoomFactor * m_fUserZoomLevel;
 			}
 
