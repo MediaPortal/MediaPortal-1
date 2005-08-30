@@ -44,7 +44,7 @@ namespace MediaPortal.Configuration.Sections
     private System.Windows.Forms.CheckBox checkBoxAskBeforePlaying;
 		private System.ComponentModel.IContainer components = null;
 
-		public DeamonTools() : this("Deamon Tools")
+		public DeamonTools() : this("Daemon Tools")
 		{
 		}
 
@@ -272,7 +272,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.BackColor = System.Drawing.SystemColors.Control;
       this.Controls.Add(this.groupBox2);
-      this.Name = "DeamonTools";
+      this.Name = "DaemonTools";
       this.Size = new System.Drawing.Size(472, 408);
       this.groupBox2.ResumeLayout(false);
       this.ResumeLayout(false);
