@@ -3752,7 +3752,7 @@ namespace MediaPortal.TV.Database
 					SQLiteResultSet results;
 
 					if (complete)
-						strSQL=String.Format( "select * from channel,genre,tblPrograms,tblNotifies where channel.idChannel=tblPrograms.idChannel and tblPrograms.idGenre=genre.idGenre and tblPrograms.idProgram=tblNotifies.idProgram");
+						strSQL=String.Format( "select * from tblNotifies,tblPrograms,channel,genre where tblPrograms.idProgram=tblNotifies.idProgram and channel.idChannel=tblPrograms.idChannel and tblPrograms.idGenre=genre.idGenre");
 					else
 						strSQL=String.Format( "select * from tblNotifies");
 
