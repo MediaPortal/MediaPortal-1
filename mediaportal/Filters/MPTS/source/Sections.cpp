@@ -451,9 +451,9 @@ bool Sections::DecodePMT(byte* PMT)
 	ULONG countBytesRead;
 	int pmtSectionLen=((PMT[1]& 0xF)<<8) + PMT[2];
 	LogDebug("Sections::decodePMT() decode PMT");
-	BYTE buf[200];
-	byte pData[200];
-	memset(buf,0,pmtSectionLen);
+	BYTE buf[1200];
+	byte pData[1200];
+	memset(buf,0,1000);
 	memcpy(buf,PMT,188);
 	pmtSectionLen-=188;
 	DWORD len=0;
@@ -466,7 +466,6 @@ bool Sections::DecodePMT(byte* PMT)
 		hr=m_pFileReader->Read(pData,188,&countBytesRead);
 		if(hr!=S_OK|| countBytesRead!=188)
 			finished=true;
-		m_pFileReader->SetFilePointer(countBytesRead,FILE_CURRENT);
 		if(hr==S_OK)
 		{
 			GetTSHeader(pData,&header);
