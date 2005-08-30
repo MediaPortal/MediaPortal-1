@@ -461,6 +461,7 @@ bool Sections::DecodePMT(byte* PMT)
 	GetTSHeader(PMT,&header);
 	int contCounter=header.ContinuityCounter;
 	int offset=0;
+	int pos=188;
 	while(pmtSectionLen>0)
 	{
 		hr=m_pFileReader->Read(pData,188,&countBytesRead);
@@ -478,7 +479,8 @@ bool Sections::DecodePMT(byte* PMT)
 				len=188-offset;
 				if(len>(DWORD)pmtSectionLen)
 					len=pmtSectionLen;
-				memcpy(buf,pData+offset,len);
+				memcpy(&buf[pos],pData+offset,len);
+				pos+=len;
 				pmtSectionLen-=len;
 				contCounter=header.ContinuityCounter;
 				if(pmtSectionLen<1)
