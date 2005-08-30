@@ -84,6 +84,7 @@ DECLARE_INTERFACE_(IMPTSRecord, IUnknown)
     STDMETHOD(SetRecordingFileName)(THIS_ char* pszFileName)PURE;
     STDMETHOD(StartRecord)(THIS_ ULONGLONG timeFromTimeshiftBuffer)PURE;
     STDMETHOD(StopRecord)(THIS_ ULONGLONG startTime)PURE;
+	STDMETHOD(SetAttribute)(THIS_ int attribNo, char* attribValue)PURE;
 };
 // Main filter object
 
@@ -235,12 +236,14 @@ public:
     STDMETHODIMP SetRecordingFileName(char* pszFileName);
     STDMETHODIMP StartRecord( ULONGLONG timeFromTimeshiftBuffer);
     STDMETHODIMP StopRecord( ULONGLONG startTime);
+	STDMETHODIMP SetAttribute(int attribNo, char* attribValue);
 
 	HRESULT 	WriteTimeshiftFile(PBYTE pbData, LONG lDataLength);
 	HRESULT 	WriteRecordingFile(PBYTE pbData, LONG lDataLength);
 	HRESULT     CopyRecordingFile();
 	bool		IsCopyingRecordingFile();
 private:
+
     // Overriden to say what interfaces we support where
     STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void ** ppv);
 
@@ -253,10 +256,13 @@ private:
 	void 		GetPESHeader(BYTE *data,PESHeader *header);
 	void 		GetTSHeader(BYTE *data,TSHeader *header);
 	void 		PTSToPTSTime(ULONGLONG pts,PTSTime* ptsTime);
+	void 		WriteAttributesToRecordingFile();
 
 	ULONGLONG				m_pesStart;
 	ULONGLONG				m_pesNow;
 	char					m_strRecordingFileName[1024];
 	map<__int64, __int64>	m_mapPES;
 	typedef map<__int64, __int64> ::iterator imapPES;
+	map<int,string>         m_mapAttributes;
+	typedef map<int,string>::iterator imapAttributes;         
 };

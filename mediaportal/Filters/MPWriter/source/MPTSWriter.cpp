@@ -1279,6 +1279,66 @@ STDMETHODIMP CDump::SetRecordingFileName(char* pszFileName)
 	return S_OK;
 }
 
+void CDump::WriteAttributesToRecordingFile()
+{
+	if (m_recHandle!=INVALID_HANDLE_VALUE) return;
+	if (m_mapAttributes.size()==0) return;//no attributes
+
+	byte buf[200];
+	buf[0]=0x47; //syncbyte
+	buf[1]=0x00; //TransportError/TransportPriority/Pid Hi
+	buf[2]=0x12; //pid Lo
+	buf[3]=0;	 //TScrambling/AdaptionControl/ContinuityCounter
+	buf[4]=0xFF; //special 
+	buf[5]=0;    //len
+	int pos=6;
+	imapAttributes it = m_mapAttributes.begin();
+	DWORD written;
+	while (it != m_mapAttributes.end())
+	{
+		int attribNo	  =it->first;
+		string attribValue=it->second;
+		if (pos+10 < 188)
+		{
+			int sizeValue=attribValue.size();
+			buf[pos  ]=((attribNo>>24)&0xff);
+			buf[pos+1]=((attribNo>>16)&0xff);
+			buf[pos+2]=((attribNo>>8) &0xff);
+			buf[pos+3]=((attribNo   ) &0xff);
+			buf[pos+4]=(sizeValue>>8) &0xff;
+			buf[pos+5]=(sizeValue   ) &0xff;
+			pos+=6;
+			for (int x=0; x < sizeValue;++x)
+			{
+				buf[pos]= (attribValue.c_str())[x];
+				pos++;
+				if (pos>=188)
+				{
+					buf[5]=pos;
+
+					//write
+					WriteFile(m_recHandle, buf, 188, &written, NULL);
+					pos=6;
+				}
+			}
+		}
+		else
+		{
+			buf[5]=pos;
+			//write
+			WriteFile(m_recHandle, buf, 188, &written, NULL);
+			pos=6;
+		}
+		++it;
+	}
+	if (pos>6)
+	{
+		buf[5]=pos;
+		//write
+		WriteFile(m_recHandle, buf, 188, &written, NULL);
+	}
+}
+
 STDMETHODIMP CDump::StartRecord( ULONGLONG timeFromTimeshiftBuffer)
 {
 	if (m_recHandle!=INVALID_HANDLE_VALUE) return E_FAIL;
@@ -1300,6 +1360,7 @@ STDMETHODIMP CDump::StartRecord( ULONGLONG timeFromTimeshiftBuffer)
 	}
 
 
+	WriteAttributesToRecordingFile();
 	
 	//get the total seconds present in the timeshift buffer
 	ULONGLONG duration;
@@ -1345,6 +1406,13 @@ STDMETHODIMP CDump::StopRecord( ULONGLONG startTime)
 	m_recState=Idle;
 	m_recStartPosition=0;
 	strcpy(m_strRecordingFileName,"");
+	m_mapAttributes.clear();
+	return S_OK;
+}
+
+STDMETHODIMP CDump::SetAttribute(int attribNo, char* attribValue)
+{
+	m_mapAttributes[attribNo]= attribValue;
 	return S_OK;
 }
 
