@@ -24,6 +24,7 @@ using System.Collections;
 using System.IO;
 using System.Net;
 using System.Text;
+using System.Drawing;
 using MediaPortal.GUI.Library;
 using System.Xml;
 using MediaPortal.Util;
@@ -97,6 +98,7 @@ namespace MediaPortal.GUI.Weather
 			, CONTROL_STATICSUNS		= 73
 			, CONTROL_IMAGE_SAT			= 1000
 			, CONTROL_IMAGE_SAT_END		= 1100
+			, CONTROL_IMAGE_SUNCLOCK    = 1200
 		}
 
 		const int    NUM_DAYS			= 4;
@@ -137,9 +139,12 @@ namespace MediaPortal.GUI.Weather
 		enum Mode
 		{
 			Weather,
-			Satellite
+			Satellite,
+			GeoClock
 		}
 		Mode           m_Mode=Mode.Weather;
+		Geochron generator;
+		float sunclockLastTimeRendered;
 
 		enum ImageView
 		{
@@ -227,6 +232,8 @@ namespace MediaPortal.GUI.Weather
 					}
 					//GUIControl.SelectItemControl(GetID,(int)Controls.CONTROL_LOCATIONSELECT,iSelected);
 
+					// Init Daylight clock generator
+					generator = new Geochron( GUIGraphicsContext.Skin+@"\Media" );
 					TimeSpan ts=DateTime.Now-m_lRefreshTime;
 					if( ts.TotalMinutes >= m_iWeatherRefresh && m_strLocation!=String.Empty )
 						BackgroundUpdate(false);
@@ -245,9 +252,16 @@ namespace MediaPortal.GUI.Weather
 					int iControl=message.SenderControlId;
 					if (iControl == (int)Controls.CONTROL_BTNREFRESH)
 					{
-						m_iDayNum = -2;
-						m_strSelectedDayName="All";
-						BackgroundUpdate(false);
+						if ( m_Mode == Mode.GeoClock )
+						{
+							updateSunClock();
+						}
+						else
+						{
+							m_iDayNum = -2;
+							m_strSelectedDayName="All";
+							BackgroundUpdate(false);
+						}
 					}
 					if (iControl == (int)Controls.CONTROL_BTNVIEW)
 					{
@@ -426,8 +440,12 @@ namespace MediaPortal.GUI.Weather
 					}
 					if (iControl==(int)Controls.CONTROL_BTNSWITCH)
 					{
-						if (m_Mode==Mode.Weather) m_Mode=Mode.Satellite;
-						else m_Mode=Mode.Weather;
+						if (m_Mode==Mode.Weather)
+							m_Mode=Mode.Satellite;
+						else if (m_Mode==Mode.Satellite)
+							m_Mode=Mode.GeoClock;
+						else 
+							m_Mode=Mode.Weather;
 						GUIImage img=GetControl((int)Controls.CONTROL_IMAGE_SAT) as GUIImage;
 						if (img!=null)
 						{
@@ -476,6 +494,11 @@ namespace MediaPortal.GUI.Weather
 						{
 							m_iDayNum = -2;
 							m_strSelectedDayName="All";
+						}
+						if ( m_Mode==Mode.GeoClock )
+						{
+							sunclockLastTimeRendered = 0;
+							updateSunClock();
 						}
 						UpdateButtons();
 					}
@@ -591,6 +614,8 @@ namespace MediaPortal.GUI.Weather
 
 				for (int i= (int)Controls.CONTROL_IMAGE_SAT; i < (int)Controls.CONTROL_IMAGE_SAT_END;++i)
 					GUIControl.HideControl(GetID, i);
+				GUIControl.HideControl(GetID, (int)Controls.CONTROL_IMAGE_SUNCLOCK);
+
 
 				GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTNSWITCH, GUILocalizeStrings.Get(750));			
 				GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTNREFRESH, GUILocalizeStrings.Get(184));			//Refresh
@@ -676,19 +701,39 @@ namespace MediaPortal.GUI.Weather
 					GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABELNOWDEWP, m_dfForcast[m_iDayNum].m_szPrecipitation);
 					GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABELNOWWIND, m_dfForcast[m_iDayNum].m_szWind);
 					GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABELUPDATED, m_szForcastUpdated);
+
+					GUIControl.ShowControl(GetID,(int)Controls.CONTROL_BTNVIEW);
+					GUIControl.ShowControl(GetID,(int)Controls.CONTROL_LOCATIONSELECT);
+
 					//					m_pNowImage.SetFileName(m_dfForcast[iCurrentDayNum].m_szIconLow);
 					m_pNowImage.SetFileName(m_dfForcast[iCurrentDayNum].m_szIconHigh);
 				}
 			}
-			else
+			else if (m_Mode==Mode.Satellite)
 			{
 				GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTNSWITCH, GUILocalizeStrings.Get(717));			
 		
 				for (int i=10; i < 900;++i)
 					GUIControl.HideControl(GetID,i);
+				GUIControl.HideControl(GetID, (int)Controls.CONTROL_IMAGE_SUNCLOCK);
 
 				for (int i= (int)Controls.CONTROL_IMAGE_SAT; i < (int)Controls.CONTROL_IMAGE_SAT_END;++i)
 					GUIControl.ShowControl(GetID, i);
+
+				GUIControl.ShowControl(GetID,(int)Controls.CONTROL_BTNVIEW);
+				GUIControl.ShowControl(GetID,(int)Controls.CONTROL_LOCATIONSELECT);
+
+			}
+			else if (m_Mode==Mode.GeoClock)
+			{
+				GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTNSWITCH, "GeoClock" );//GUILocalizeStrings.Get(717));			
+				GUIControl.HideControl(GetID,(int)Controls.CONTROL_BTNVIEW);
+				GUIControl.HideControl(GetID,(int)Controls.CONTROL_LOCATIONSELECT);
+		
+				for (int i=10; i < 900;++i)
+					GUIControl.HideControl(GetID,i);
+
+				GUIControl.ShowControl(GetID, (int)Controls.CONTROL_IMAGE_SUNCLOCK);
 
 			}
 			if (m_Mode==Mode.Satellite)
@@ -727,7 +772,7 @@ namespace MediaPortal.GUI.Weather
 					}
 				}
 			}
-			else
+			else if ( m_Mode == Mode.Weather )
 			{
 
 				if (m_strSelectedDayName=="All")
@@ -1204,6 +1249,39 @@ namespace MediaPortal.GUI.Weather
 				}
 			}
 		}
+
+		public override void Render(float timePassed)
+		{
+			if ( m_Mode == Mode.GeoClock && sunclockLastTimeRendered > 10 )
+			{
+				updateSunClock();
+				sunclockLastTimeRendered = 0;
+			}
+			else
+				sunclockLastTimeRendered += timePassed;
+			base.Render(timePassed);
+		}
+
+
+		private void updateSunClock()
+		{
+			GUIImage clockImage = (GUIImage)GetControl( (int)Controls.CONTROL_IMAGE_SUNCLOCK );
+			lock (clockImage)
+			{
+				Bitmap image = generator.update( DateTime.Now );
+				System.Drawing.Image img=(Image)image.Clone();
+				clockImage.FileName="";
+				clockImage.FreeResources();
+				clockImage.IsVisible=false;
+				GUITextureManager.ReleaseTexture("#useMemoryImage");
+				clockImage.FileName="#useMemoryImage";
+				clockImage.MemoryImage=img;
+				clockImage.AllocResources();
+				clockImage.IsVisible=true;
+			}
+		}
+
+
 		#region ISetupForm Members
 
 		public bool CanEnable()
@@ -1282,6 +1360,7 @@ namespace MediaPortal.GUI.Weather
 
 		bool _workerCompleted = false;
 	}
+
 
 }
 
