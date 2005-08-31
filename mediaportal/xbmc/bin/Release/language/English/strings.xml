@@ -3578,6 +3578,9 @@
 <string><id>19011</id><value>Paused</value></string> 
 <string><id>19012</id><value>Game Over</value></string> 
 
+<!-- For the My Weather Geoclock -->
+<string><id>19100</id><value>GeoClock</value></string>
+
 
 <!-- id 100000 and higher are reserved!! --> 
 <string><id>100000</id><value>Home</value></string>
@@ -3690,4 +3693,8 @@
 <string><id>200022</id><value>MediaPortal has found the following tv-cards:</value></string>
 <string><id>200023</id><value>Press the Next button to configure these cards</value></string>
 <string><id>200024</id><value>TV Setup</value></string>
+
+
+
+
 </strings>
