@@ -611,6 +611,9 @@ namespace MediaPortal.GUI.Weather
 			{
 				for (int i=10; i < 900;++i)
 					GUIControl.ShowControl(GetID,i);
+				GUIControl.ShowControl(GetID,(int)Controls.CONTROL_BTNVIEW);
+				GUIControl.ShowControl(GetID,(int)Controls.CONTROL_LOCATIONSELECT);
+
 
 				for (int i= (int)Controls.CONTROL_IMAGE_SAT; i < (int)Controls.CONTROL_IMAGE_SAT_END;++i)
 					GUIControl.HideControl(GetID, i);
