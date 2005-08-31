@@ -302,7 +302,7 @@
 	<string><id>368</id><value>IMDB</value></string>
 	<string><id>369</id><value>Titel</value></string>
 
-<!-- My Weather Strings -->
+<!-- Weather Strings -->
 	<string><id>370</id><value>Lyn&amp;Torden</value></string>
 	<string><id>371</id><value>Delvist</value></string>
 	<string><id>372</id><value>Mest</value></string>
@@ -344,7 +344,7 @@
 	<string><id>410</id><value>Tilslutter til Weather.com</value></string>
 	<string><id>411</id><value>Henter vejret for:</value></string>
 	<string><id>412</id><value>Fejl ved indlæsning af vejr data</value></string>
-<!-- End My Weather Strings -->
+<!-- End Weather Strings -->
 
 	<string><id>413</id><value>Manuel optagelse</value></string>
 	<string><id>414</id><value>Ingen oplysninger for dette album</value></string>
@@ -611,7 +611,7 @@
 	<string><id>809</id><value>Retningslinier</value></string>
 	<string><id>810</id><value>Kort</value></string>
 
-<!-- My Alarm Strings -->
+<!-- Alarm Strings -->
 	<string><id>850</id><value>Alarm</value></string>
 	<string><id>851</id><value>Playliste</value></string>
 	<string><id>852</id><value>Alarm til/fra</value></string>
@@ -634,7 +634,7 @@
 	<string><id>869</id><value>NyAlarm</value></string>
 	<string><id>870</id><value>Gentagende</value></string>
 	<string><id>871</id><value>Væk pc'en</value></string>
-<!-- End My Alarm Strings -->
+<!-- End Alarm Strings -->
 
 	<string><id>872</id><value>Starter med</value></string>
 	<string><id>873</id><value>TV show</value></string>
@@ -744,7 +744,7 @@
 
 	<string><id>981</id><value>Afbryd dette program</value></string>
 	<string><id>982</id><value>Slet hele denne optagelse</value></string>
-	<string><id>983</id><value>My Playlists</value></string>
+	<string><id>983</id><value>Playlists</value></string>
 	<string><id>984</id><value>Downloader film liste</value></string>
 	<string><id>985</id><value>Downloader film information</value></string>
 	<string><id>986</id><value>Downloader skuespiller</value></string>
@@ -785,7 +785,7 @@
 	<string><id>1443</id><value>Scroll hastighed (horisontal)</value></string>
 
 
-<!-- My Status Strings -->
+<!-- Status Strings -->
 	<string><id>1950</id><value>Status</value></string>
 	<string><id>1951</id><value>Harddisk</value></string>
 	<string><id>1952</id><value>Blæser</value></string>
@@ -815,9 +815,9 @@
 	<string><id>1976</id><value>opm</value></string>
 	<string><id>1977</id><value>Filsystem</value></string>
 	<string><id>1978</id><value>Virtuel hukommelse</value></string>
-<!-- End My Status Strings -->
+<!-- End Status Strings -->
 
-<!-- My Recipie Strings -->
+<!-- Recipie Strings -->
 	<string><id>2005</id><value>Slet</value></string>
 	<string><id>2006</id><value>Titel</value></string>
 	<string><id>2007</id><value>Yield</value></string>
@@ -868,9 +868,9 @@
 	<string><id>2052</id><value>Søg i opskrifter</value></string>
 	<string><id>2053</id><value>Kategori</value></string>
 	<string><id>2054</id><value>Ingen fundet!</value></string>
-<!-- End of My Recipie Strings -->
+<!-- End of Recipie Strings -->
 
-<!-- End My Burner Strings -->
+<!-- End Burner Strings -->
 	<string><id>2100</id><value>Brænd</value></string>
 	<string><id>2101</id><value>Kopier CD/DVD</value></string>
 	<string><id>2102</id><value>Opret Audio-CD</value></string>
@@ -915,9 +915,9 @@
 	<string><id>2141</id><value>MPEG2 -> DivX</value></string> 
 	<string><id>2142</id><value>MPEG2 -> MPEG4</value></string> 
 	<string><id>2143</id><value>Hovedsiden</value></string> 
-<!-- End My Burner Strings -->
+<!-- End Burner Strings -->
 
-<!-- My Explorer Strings -->
+<!-- Explorer Strings -->
 	<string><id>2200</id><value>Explorer</value></string>
 	<string><id>2201</id><value>Vælge kilde</value></string>
 	<string><id>2202</id><value>Vælg destination</value></string>
@@ -944,7 +944,7 @@
 	<string><id>2223</id><value>Papirkurv</value></string>
 	<string><id>2224</id><value>Folder eksisterer!</value></string>
 	<string><id>2225</id><value>Folder oprettet</value></string>
-<!-- End My Explorer Strings -->
+<!-- End Explorer Strings -->
 
 	<string><id>3000</id><value>Programinstillinger</value></string>
 	<string><id>3001</id><value>Time</value></string>
@@ -970,7 +970,7 @@
 	<string><id>3021</id><value>Del</value></string>
 	<string><id>3022</id><value>af</value></string>
 
-<!-- My Mail Strings -->
+<!-- Mail Strings -->
 	<string><id>8000</id><value>Post</value></string>
 	<string><id>8001</id><value>Hent post</value></string>
 	<string><id>8002</id><value>Automatisk kontrol fra</value></string>
@@ -1000,7 +1000,7 @@
 	<string><id>8031</id><value>Henter bedked nummer</value></string>
 	<string><id>8033</id><value>Fremskridt</value></string>
 	<string><id>8034</id><value>Vis HTML</value></string>
-<!-- End My Mail Strings -->
+<!-- End Mail Strings -->
 
 	<string><id>9000</id><value>Billeddimensioner:</value></string>
 	<string><id>9001</id><value>Opløsning:</value></string>
@@ -1022,7 +1022,7 @@
 	<string><id>13001</id><value>Fabrikant:</value></string>
 	<string><id>13002</id><value>Launch</value></string>
 	<string><id>13003</id><value>Importerer *.mlf fil</value></string>
-	<string><id>13004</id><value>Importerer*.my fil</value></string>
+	<string><id>13004</id><value>Importerer*.fil</value></string>
 	<string><id>13005</id><value>Sidst importeret fil:</value></string>
 	<string><id>13006</id><value>Lille billede</value></string>
 	<string><id>13007</id><value>Stort billede</value></string>
@@ -1037,7 +1037,7 @@
 
 	<string><id>16001</id><value>Fest afspilning</value></string>
 
-<!-- My Tetris Strings -->
+<!-- Tetris Strings -->
 	<string><id>19001</id><value>Tetris</value></string>
 	<string><id>19002</id><value>Nyt Spil</value></string>
 	<string><id>19003</id><value>Musik</value></string>
@@ -1050,11 +1050,11 @@
 	<string><id>19010</id><value>Tryk eller klik for at starte...</value></string>
 	<string><id>19011</id><value>Pause</value></string>
 	<string><id>19012</id><value>Game Over</value></string>
-<!-- End My Tetris Strings -->
+<!-- End Tetris Strings -->
 
-<!-- My Splatt Strings -->
+<!-- Splatt Strings -->
 	<string><id>19401</id><value>Splatt</value></string>
-<!-- End My Splatt Strings -->
+<!-- End Splatt Strings -->
 
 
 	<string><id>25001</id><value>Venter på side {0:X}...!</value></string>
@@ -1118,7 +1118,7 @@
 	<string><id>100756</id><value>Statusdetaljer</value></string>
 	<string><id>100757</id><value>Statusindstillinger</value></string>
 	<string><id>100758</id><value>Fil dialog</value></string>
-	<string><id>100760</id><value>My Burner</value></string>
+	<string><id>100760</id><value>Burner</value></string>
 
 
 	<string><id>100770</id><value>Explorer</value></string>
@@ -1157,7 +1157,7 @@
 	<string><id>103001</id><value>Producent:</value></string>
 	<string><id>103002</id><value>Start</value></string>
 	<string><id>103003</id><value>Importerer *.mlf fil</value></string>
-	<string><id>103004</id><value>Importerer *.my fil</value></string>
+	<string><id>103004</id><value>Importerer *.fil</value></string>
 	<string><id>103005</id><value>Senest importerede fil:</value></string>
 	<string><id>103006</id><value>Lille billede</value></string>
 	<string><id>103007</id><value>Stort billede</value></string>
@@ -1167,8 +1167,79 @@
 	<string><id>103011</id><value>K.Burns hastighed</value></string>
 
 
-	<string><id>107700</id><value>My TV/Tekst TV</value></string>
-	<string><id>107701</id><value>My TV/Tekst TV</value></string>
+	<string><id>107700</id><value>TV/Tekst TV</value></string>
+	<string><id>107701</id><value>TV/Tekst TV</value></string>
+
+
+	<string><id>200024</id><value>TV opsætning</value></string>
+	<string><id>200023</id><value>Tryk på Næste for at indstille disse 	kort</value></string>
+	<string><id>200022</id><value>MediaPortal har fundet følgende tv-kort:</value></string>
+	<string><id>200021</id><value>TV opsætning - EPG</value></string>
+	<string><id>200020</id><value>Afslut</value></string>
+	<string><id>200019</id><value>Tryk Afslut for at lukke denne vejledning</value></string>
+	<string><id>200018</id><value>Tillykke. Mediaportal er nu sat op og klar til brug</value></string>
+	<string><id>200017</id><value>Velkommen til MediaPortal.</value></string>
+	<string><id>200016</id><value>Tryk Næste for at starte</value></string>
+	<string><id>200015</id><value>Denne guide vil hjælpe dig med at opsætte Mediaportal hurtigt og nemt. Følg venligst vejledningen her</value></string> 
+	<string><id>200014</id><value>foto, video´er og se/optage live TV og meget mere.</value></string>
+	<string><id>200013</id><value>Du kan høre din fortrukne musik og radio, se video´er og DVD´er.</value></string>
+	<string><id>200011</id><value>Med MediaPortal kan du høre din fortrukne musik, radio</value></string>
+	<string><id>200010</id><value>MediaPortal laver din PC om til et højt avanceret Multi-Media Center - en HTPC.</value></string>
+	<string><id>200009</id><value>Næste</value></string>
+	<string><id>200008</id><value>Opsætning - Fjernbetjening</value></string>
+	<string><id>200007</id><value>Tilbage</value></string>
+	<string><id>200006</id><value>Tryk på Næste for at fortsætte opsætningen:</value></string>
+	<string><id>200005</id><value>Vælg venligst hvilken fjernbetjening du har:</value></string>
+	<string><id>200004</id><value>Manuelt leveret tvguide.xml</value></string>
+	<string><id>200003</id><value>vælg en kanal og tryk "enter" for at flytte den</value></string>
+	<string><id>200002</id><value>Du kan nu sammenkæde EPG kanaler med TV kanaler</value></string>
+	<string><id>200001</id><value>i listen skal du selv levere EPG oplysninger.</value></string>
+	<string><id>200000</id><value>Vælg venligst din EPG grabber. Bemærk - hvis dit land ikke er</value></string>
+<string><id>13018</id><value>Sortere efter: Rating</value></string>
+<string><id>13017</id><value>Sortere efter: Recent</value></string>
+<string><id>13016</id><value>Sortere ffter: Launches</value></string>
+<string><id>13015</id><value>Importerer gamebass fil</value></string>
+<string><id>13014</id><value>Søger i biblioteker</value></string>
+<string><id>1445</id><value>Optag efter</value></string>
+<string><id>1444</id><value>Optag inden</value></string>
+<string><id>1047</id><value>Start i fuld skærm</value></string>
+<string><id>1046</id><value>Altid</value></string>
+<string><id>1045</id><value>Indtil dato</value></string>
+<string><id>1044</id><value>Indtil der er brug for plads</value></string>
+<string><id>1043</id><value>Indtil set</value></string>
+<string><id>1042</id><value>Gem indtil</value></string>
+<string><id>1041</id><value>Kommende episoder</value></string>
+<string><id>1040</id><value>Advar mig</value></string>
+<string><id>1039</id><value>Optag ikke</value></string>
+<string><id>1038</id><value>Avanceret optagelse</value></string>
+<string><id>1037</id><value>TV - Program information</value></string>
+<string><id>1036</id><value>Ingen video fundet</value></string>
+<string><id>1035</id><value>TV kanalen er kodet!</value></string>
+<string><id>1034</id><value>Intet signal!</value></string>
+<string><id>1033</id><value>Der bliver optaget lige nu</value></string>
+<string><id>1032</id><value>Sov</value></string>
+<string><id>1031</id><value>Genstart</value></string>
+<string><id>1030</id><value>Luk ned</value></string>
+<string><id>1029</id><value>Undertekst sprog</value></string>
+<string><id>1028</id><value>By</value></string>
+<string><id>1027</id><value>DVD</value></string>
+<string><id>1026</id><value>Se i log filerne for detaljer.</value></string>
+<string><id>1025</id><value>En fejl opstod.</value></string>
+<string><id>1024</id><value>fra</value></string>
+<string><id>1023</id><value>Indgående opkald</value></string>
+<string><id>1022</id><value>retunere til window mode.</value></string>
+<string><id>1021</id><value>Tryk Alt+Enter for at</value></string>
+<string><id>1020</id><value>Information</value></string>
+<string><id>1017</id><value>Sort by: Duration</value></string>
+<string><id>993</id><value>Speciel</value></string>
+<string><id>980</id><value>Play recording from live point</value></string>
+<string><id>888</id><value>Episode håndtering</value></string>
+<string><id>881</id><value>Vælg optagelse skal stoppe:</value></string>
+<string><id>880</id><value>Tid for optagelse:</value></string>
+<string><id>878</id><value>Lager</value></string>
+<string><id>550</id><value>Crop</value></string>
+<string><id>507</id><value>emner</value></string>
+<string><id>50</id><value>Mine DVD´er</value></string>
 
 </strings>
 
