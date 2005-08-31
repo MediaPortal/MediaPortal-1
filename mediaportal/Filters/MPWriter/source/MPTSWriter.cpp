@@ -385,10 +385,12 @@ STDMETHODIMP CDumpInputPin::Receive(IMediaSample *pSample)
 			m_pDump->CopyRecordingFile();
 	}
 
+	int off=-1;
 	if (m_restBufferLen>0)
 	{
-		//LogDebug("copy last %d bytes",  (188-m_restBufferLen));
-		memcpy(&m_restBuffer[m_restBufferLen], pbData, (188-m_restBufferLen));
+		int len=188-m_restBufferLen;
+		//LogDebug("copy last %d bytes",  len);
+		memcpy(&m_restBuffer[m_restBufferLen], pbData, len);
 		if(m_restBuffer[0]==0x47)
 		{
 			int pid=((m_restBuffer[1] & 0x1F) <<8)+m_restBuffer[2];
@@ -398,28 +400,36 @@ STDMETHODIMP CDumpInputPin::Receive(IMediaSample *pSample)
 				hr=m_pDump->WriteTimeshiftFile(m_restBuffer,188);
 			}
 		}
-
-	}
-	int off=0;
-	for (int i=0; i < pSample->GetActualDataLength()-2*188;++i)
-	{
-		if (pbData[i]==0x47 && pbData[i+188]==0x47 && pbData[i+2*188]==0x47)
+		//else LogDebug("***RESTBUFFER START != 0x47");
+		if (pbData[len]==0x47 && pbData[len+188]==0x47 && pbData[len+2*188]==0x47)
 		{
-			off=i;
-			break;
+			off=len;
 		}
 	}
-	for(DWORD t=0;t<(DWORD)pSample->GetActualDataLength()-off;t+=188)
+	if (off==-1)
 	{
-		if(pbData[t+off]==0x47)
+		for (int i=0; i < pSample->GetActualDataLength()-2*188;++i)
 		{
-			int pid=((pbData[t+1+off] & 0x1F) <<8)+pbData[t+2+off];
+			if (pbData[i]==0x47 && pbData[i+188]==0x47 && pbData[i+2*188]==0x47)
+			{
+				off=i;
+				break;
+			}
+		}
+	}
+//	if (off != (188-m_restBufferLen))
+//		LogDebug("***OFF != END OF RESTBUFFER");
+
+	for(DWORD t=off;t<(DWORD)pSample->GetActualDataLength();t+=188)
+	{
+		if (t+188 > pSample->GetActualDataLength()) break;
+		if(pbData[t]==0x47)
+		{
+			int pid=((pbData[t+1] & 0x1F) <<8)+pbData[t+2];
 			if(IsPidValid(pid)==true)
 			{
-				hr=m_pDump->WriteRecordingFile(pbData+t+off,188);
-				hr=m_pDump->WriteTimeshiftFile(pbData+t+off,188);
-				if(FAILED(hr))
-					break;
+				hr=m_pDump->WriteRecordingFile(pbData+t,188);
+				hr=m_pDump->WriteTimeshiftFile(pbData+t,188);
 			}
 
 		}
@@ -429,9 +439,11 @@ STDMETHODIMP CDumpInputPin::Receive(IMediaSample *pSample)
 	m_restBufferLen *=188;
 	m_restBufferLen=(pSample->GetActualDataLength()-off)-m_restBufferLen;
 	if (m_restBufferLen>0 && m_restBufferLen < 188)
-		memcpy(&m_restBuffer,&pbData[pSample->GetActualDataLength()-m_restBufferLen],m_restBufferLen);
-	//LogDebug("copy %d bytes off:%d len:%d", m_restBufferLen,off,pSample->GetActualDataLength());
+		memcpy(m_restBuffer,&pbData[pSample->GetActualDataLength()-m_restBufferLen],m_restBufferLen);
+//	LogDebug("copy %d bytes off:%d len:%d", m_restBufferLen,off,pSample->GetActualDataLength());
 	
+//	if (m_restBufferLen<0 || m_restBufferLen >=188)
+//		LogDebug("***RESTBUFFER INVALID");
 	m_pDump->UpdateInfoFile(false);
 	m_pDump->Flush();
     return NOERROR;
@@ -1074,11 +1086,9 @@ HRESULT CDump::WriteTimeshiftFile(PBYTE pbData, LONG lDataLength)
 	hr=SetFilePointer(m_hFile,li.LowPart,&li.HighPart,FILE_BEGIN);
 	if (FAILED(hr)) LogDebug("failed to set filepointer at %x size:%x", m_currentFilePosition,lDataLength);
 	hr=WriteFile(m_hFile, pbData, lDataLength, &written, NULL);
-	if (FAILED(hr)) LogDebug("failed to write %x size:%x", m_currentFilePosition,lDataLength);
+	if (FAILED(hr) || written!=lDataLength) LogDebug("failed to write %x size:%d written:%d", m_currentFilePosition,lDataLength,written);
 //	hr=UnlockFile(m_hFile,listart.LowPart,listart.HighPart,lDataLength,0);
 //	if (FAILED(hr)) LogDebug("failed to unlock file at %x size:%x", m_currentFilePosition,lDataLength);
-
-	if (written!=lDataLength) LogDebug("only wrote %x of %x bytes", written,lDataLength);
 	m_currentFilePosition+=written;
 
 	if (m_currentFilePosition> MAX_FILE_LENGTH)

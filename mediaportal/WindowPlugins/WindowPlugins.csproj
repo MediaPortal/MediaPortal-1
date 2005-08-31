@@ -1465,6 +1465,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "GUIWeather\Geochron.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "GUIWeather\GUIWindowWeather.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
