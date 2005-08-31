@@ -259,7 +259,7 @@
 	</string>
 	<string>
 		<id>133</id>
-		<value>Künstler</value>
+		<value>Interpreten</value>
 	</string>
 	<string>
 		<id>134</id>
@@ -411,7 +411,7 @@
 	</string>
 	<string>
 		<id>171</id>
-		<value>Künstler:</value>
+		<value>Interpret:</value>
 	</string>
 	<string>
 		<id>172</id>
@@ -423,15 +423,15 @@
 	</string>
 	<string>
 		<id>174</id>
-		<value>Genre:</value>
+		<value>Kategorie:</value>
 	</string>
 	<string>
 		<id>175</id>
-		<value>Töne:</value>
+		<value>Einflüsse:</value>
 	</string>
 	<string>
 		<id>176</id>
-		<value>Stilrichtungen:</value>
+		<value>Genres:</value>
 	</string>
 	<string>
 		<id>177</id>
@@ -491,11 +491,11 @@
 	</string>
 	<string>
 		<id>191</id>
-		<value>Zufall</value>
+		<value>Zufällige Reihenfolge</value>
 	</string>
 	<string>
 		<id>192</id>
-		<value>Löschen</value>
+		<value>Liste leeren</value>
 	</string>
 	<string>
 		<id>193</id>
@@ -523,7 +523,7 @@
 	</string>
 	<string>
 		<id>199</id>
-		<value>Regiesseur:</value>
+		<value>Regisseur:</value>
 	</string>
 	<string>
 		<id>200</id>
@@ -563,11 +563,11 @@
 	</string>
 	<string>
 		<id>209</id>
-		<value>Nächste</value>
+		<value>Weiter</value>
 	</string>
 	<string>
 		<id>210</id>
-		<value>Vorherige</value>
+		<value>Zurück</value>
 	</string>
 	<string>
 		<id>211</id>
@@ -799,7 +799,7 @@
 	</string>
 	<string>
 		<id>269</id>
-		<value>Sortiere: Künstler</value>
+		<value>Sortiere: Interpret</value>
 	</string>
 	<string>
 		<id>270</id>
@@ -1003,7 +1003,7 @@
 	</string>
 	<string>
 		<id>320</id>
-		<value>Suche Künstler...</value>
+		<value>Suche Interpreten...</value>
 	</string>
 	<string>
 		<id>321</id>
@@ -1083,7 +1083,7 @@
 	</string>
 	<string>
 		<id>340</id>
-		<value>versch. Künstler</value>
+		<value>versch. Interpreten</value>
 	</string>
 	<string>
 		<id>341</id>
@@ -1235,11 +1235,11 @@
 	</string>
 	<string>
 		<id>378</id>
-		<value>Vormittags</value>
+		<value>vormittags</value>
 	</string>
 	<string>
 		<id>379</id>
-		<value>Nachmittags</value>
+		<value>nachmittags</value>
 	</string>
 	<string>
 		<id>380</id>
@@ -1651,7 +1651,7 @@
 	</string>
 	<string>
 		<id>484</id>
-		<value>Künstler</value>
+		<value>Interpret</value>
 	</string>
 	<string>
 		<id>485</id>
@@ -2137,8 +2137,8 @@
 <string><id>702</id><value>Kein Interpret gefunden!</value></string>
 <string><id>703</id><value>Keine Internetverbindung!</value></string>
 <string><id>704</id><value>Datenabfrage</value></string>
-<string><id>705</id><value>Empfange RSS Feed für </value></string>
-<string><id>706</id><value>RSS Feed wählen</value></string>
+<string><id>705</id><value>Empfange Nachrichten von </value></string>
+<string><id>706</id><value>Nachrichtenseite wählen</value></string>
 <string><id>707</id><value>TV</value></string>
 <string><id>708</id><value>Timeshift</value></string>
 <string><id>709</id><value>Auto update</value></string>
@@ -2850,7 +2850,7 @@
 
 <string>
 	<id>983</id>
-	<value>Wiedergabeliste</value>
+	<value>Gespeicherte Listen</value>
 </string>
 <string>
 	<id>984</id>
@@ -3027,7 +3027,7 @@
 </string>
 <string>
 	<id>1028</id>
-	<value>Stadt</value>
+	<value>Stadt wählen</value>
 </string>
 <string>
 	<id>1029</id>
@@ -3051,11 +3051,11 @@
 </string>
 <string>
 	<id>1034</id>
-	<value>Kein Signal!</value>
+	<value>Kein Empfang!</value>
 </string>
 <string>
 	<id>1035</id>
-	<value>TV Kanal ist verschlüsselt!</value>
+	<value>Dieser Kanal ist verschlüsselt!</value>
 </string>
 <string>
 	<id>1036</id>
@@ -3549,8 +3549,9 @@
 <string><id>13017</id><value>Sortiere: Letzte</value></string> 
 <string><id>13018</id><value>Sortiere: Wertung</value></string> 
 
-<string><id>16001</id><value>Partymix</value></string> 
 
+
+<string><id>16001</id><value>Partymix</value></string> 
 <!-- Teletext --> 
 <string><id>25001</id><value>Warte auf Seite {0:X}...!</value></string> 
 
@@ -3608,7 +3609,7 @@
 <string><id>100500</id><value>Musik/Wiedergabeliste</value></string>
 <string><id>100501</id><value>Musik/Dateien</value></string>
 <string><id>100502</id><value>Musik/Alben</value></string>
-<string><id>100503</id><value>Musik/Künstler</value></string>
+<string><id>100503</id><value>Musik/Interpret</value></string>
 <string><id>100504</id><value>Musik/Genre</value></string>
 <string><id>100505</id><value>Musik/Top100</value></string>
 <string><id>100506</id><value>Musik/Favoriten</value></string>
@@ -3669,15 +3670,14 @@
 <string><id>200011</id><value>Mit MediaPortal können Sie Ihre Lieblingsmusik geniessen</value></string>
 <string><id>200013</id><value>Sie können damit Musik &amp; Radio hören, Ihre Filme, DVDs, Photos und</value></string>
 <string><id>200014</id><value>Videos ansehen, Fernsehen oder Sendungen aufnehmen und vieles mehr.</value></string>
-<string><id>200015</id><value>Der Wizard wird Ihnen helfen MediaPortal schnell und einfach einzurichten.</value></string>
+<string><id>200015</id><value>Der Assistent wird Ihnen helfen MediaPortal schnell und einfach einzurichten.</value></string>
 <string><id>200016</id><value>Drücken Sie den "Weiter-Button" um fortzufahren</value></string>
 <string><id>200017</id><value>Willkommen bei MediaPortal. </value></string>
 <string><id>200018</id><value>Herzlichen Glückwunsch. Mediaportal ist jetzt fertig eingerichtet</value></string>
-<string><id>200019</id><value>Drücken Sie "Ferig" um den Wizard zu schliessen</value></string>
+<string><id>200019</id><value>Drücken Sie "Ferig" um den Assistenten zu schliessen</value></string>
 <string><id>200020</id><value>Fertig</value></string>
 <string><id>200021</id><value>TV Setup - EPG</value></string>
 <string><id>200022</id><value>MediaPortal hat folgende TV-Karten gefunden:</value></string>
 <string><id>200023</id><value>Drücken Sie den "Weiter" Knopf um die TV-Karten einzurichten</value></string>
 <string><id>200024</id><value>TV Setup</value></string>
-
 </strings>
