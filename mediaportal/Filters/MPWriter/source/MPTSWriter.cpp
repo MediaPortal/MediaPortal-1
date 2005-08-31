@@ -222,6 +222,7 @@ CDumpInputPin::CDumpInputPin(CDump *pDump,
     m_tLast(0)
 {
 	ResetPids();
+	m_restBufferLen=0;
 
 }
 
@@ -384,6 +385,21 @@ STDMETHODIMP CDumpInputPin::Receive(IMediaSample *pSample)
 			m_pDump->CopyRecordingFile();
 	}
 
+	if (m_restBufferLen>0)
+	{
+		//LogDebug("copy last %d bytes",  (188-m_restBufferLen));
+		memcpy(&m_restBuffer[m_restBufferLen], pbData, (188-m_restBufferLen));
+		if(m_restBuffer[0]==0x47)
+		{
+			int pid=((m_restBuffer[1] & 0x1F) <<8)+m_restBuffer[2];
+			if(IsPidValid(pid)==true)
+			{
+				hr=m_pDump->WriteRecordingFile(m_restBuffer,188);
+				hr=m_pDump->WriteTimeshiftFile(m_restBuffer,188);
+			}
+		}
+
+	}
 	int off=0;
 	for (int i=0; i < pSample->GetActualDataLength()-2*188;++i)
 	{
@@ -408,7 +424,14 @@ STDMETHODIMP CDumpInputPin::Receive(IMediaSample *pSample)
 
 		}
 	}
-
+	
+	m_restBufferLen=(pSample->GetActualDataLength()-off)/188;
+	m_restBufferLen *=188;
+	m_restBufferLen=(pSample->GetActualDataLength()-off)-m_restBufferLen;
+	if (m_restBufferLen>0 && m_restBufferLen < 188)
+		memcpy(&m_restBuffer,&pbData[pSample->GetActualDataLength()-m_restBufferLen],m_restBufferLen);
+	//LogDebug("copy %d bytes off:%d len:%d", m_restBufferLen,off,pSample->GetActualDataLength());
+	
 	m_pDump->UpdateInfoFile(false);
 	m_pDump->Flush();
     return NOERROR;
@@ -430,6 +453,7 @@ bool CDumpInputPin::IsPidValid(int pid)
 //
 STDMETHODIMP CDumpInputPin::EndOfStream(void)
 {
+	m_restBufferLen=0;
     CAutoLock lock(m_pReceiveLock);
     return CRenderedInputPin::EndOfStream();
 

@@ -118,7 +118,8 @@ class CDumpInputPin : public CRenderedInputPin
     CDump    * const	m_pDump;           // Main renderer object
     CCritSec * const	m_pReceiveLock;    // Sample critical section
     REFERENCE_TIME		m_tLast;             // Last sample receive time
-
+	byte				m_restBuffer[200];
+	int					m_restBufferLen;
 public:
 
     CDumpInputPin(CDump *pDump,
