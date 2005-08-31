@@ -38,8 +38,8 @@ namespace MediaPortal.GUI.Weather
 		public Geochron( string path )
 		{
 			// Set up the image URLs
-			Bitmap dayImage = new Bitmap( path + "/day.jpg" );
-			Bitmap nightImage = new Bitmap( path + "/night.jpg" );
+			Bitmap dayImage = new Bitmap( path + "/day.png" );
+			Bitmap nightImage = new Bitmap( path + "/night.png" );
 
 
 			this.n_x = dayImage.Width;
