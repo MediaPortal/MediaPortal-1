@@ -142,7 +142,8 @@ namespace MediaPortal.TV.Recording
 		unsafe private static extern void DvrMsStart(int id, uint startTime);
 		[DllImport("dshowhelper.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
 		unsafe private static extern void DvrMsStop(int id);
-
+		[DllImport("dshowhelper.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
+		unsafe private static extern bool AddTeeSinkToGraph(IGraphBuilder graph);
 
 		[ComImport, Guid("6CFAD761-735D-4aa5-8AFC-AF91A7D61EBA")]
 			class VideoAnalyzer {};
@@ -652,6 +653,27 @@ namespace MediaPortal.TV.Recording
 				}
 
 #if USEMTSWRITER
+				AddTeeSinkToGraph(m_graphBuilder);
+				m_smartTee=DirectShowUtil.GetFilterByName(m_graphBuilder, "Kernel Tee");
+				if (m_smartTee==null) 
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to add Tee/Sink-Sink converter filter to graph");
+					return false;
+				}
+				if (!ConnectFilters(ref lastFilter.DSFilter,ref m_smartTee))
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to connect capture->Tee/Sink-Sink converter filter");
+					return false;
+				}
+				if (GUIGraphicsContext.DX9Device!=null && m_sampleInterface!=null)
+				{
+					if (!ConnectFilters(ref m_smartTee,ref m_sampleGrabber))
+					{
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to connect Tee/Sink-Sink converter filter->grabber");
+						return false;
+					}
+				}
+/*
 				m_smartTee = (IBaseFilter) Activator.CreateInstance(Type.GetTypeFromCLSID(Clsid.SmartTee, true));
 				if(m_smartTee== null) 
 				{
@@ -694,6 +716,7 @@ namespace MediaPortal.TV.Recording
 						}
 					}
 				}
+*/	
 #else
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph() connect interface pin->sample grabber");
 				if (GUIGraphicsContext.DX9Device!=null && m_sampleInterface!=null)
@@ -5193,7 +5216,14 @@ namespace MediaPortal.TV.Recording
 		{
 			return null;
 		}
+
+		public bool	IsTimeShifting()
+		{
+			return m_graphState==State.TimeShifting;
+		}
 	}//public class DVBGraphBDA 
+
+
 }//namespace MediaPortal.TV.Recording
 //end of file
 #endif

@@ -164,6 +164,7 @@ namespace MediaPortal.GUI.Library
 		{
 			if (m_vecThreadMessages.Count>0)
 			{
+				System.Diagnostics.Debug.WriteLine("process messages");
 				ArrayList list=m_vecThreadMessages;
 				m_vecThreadMessages=new ArrayList();
 				for (int i=0; i < list.Count;++i)
@@ -174,6 +175,7 @@ namespace MediaPortal.GUI.Library
 			}
 			if (m_vecThreadActions.Count>0)
 			{
+				System.Diagnostics.Debug.WriteLine("process actions");
 				ArrayList list=m_vecThreadActions;
 				m_vecThreadActions=new ArrayList();
 				for (int i=0; i < list.Count;++i)

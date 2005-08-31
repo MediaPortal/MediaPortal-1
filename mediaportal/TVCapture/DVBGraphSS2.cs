@@ -3065,6 +3065,10 @@ namespace MediaPortal.TV.Recording
 			return null;
 		}
 
+		public bool	IsTimeShifting()
+		{
+			return m_graphState==State.TimeShifting;
+		}
 
 	}// class
 }// namespace

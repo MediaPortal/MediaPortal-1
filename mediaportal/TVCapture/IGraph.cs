@@ -294,5 +294,6 @@ namespace MediaPortal.TV.Recording
 
 
 		IBaseFilter AudiodeviceFilter();
+		bool				IsTimeShifting();
 	}
 }

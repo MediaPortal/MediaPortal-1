@@ -1413,5 +1413,9 @@ namespace MediaPortal.TV.Recording
 		}
 
 
+		public bool	IsTimeShifting()
+		{
+			return false;
+		}
 	}
 }

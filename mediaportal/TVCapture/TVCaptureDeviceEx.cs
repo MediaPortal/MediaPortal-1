@@ -1789,9 +1789,10 @@ namespace MediaPortal.TV.Recording
 				CreateGraph();
 				currentGraphState = State.Radio;
 				currentGraph.StartRadio(station);
-#if USEMTSWRITER
-				currentGraphState = State.RadioTimeshifting;
-#endif
+				if (currentGraph.IsTimeShifting())
+				{
+					currentGraphState = State.RadioTimeshifting;
+				}
 			}
 			else
 			{

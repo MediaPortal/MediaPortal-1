@@ -79,6 +79,7 @@ namespace MediaPortal.TV.Recording
 		protected VMR9Util							  Vmr9=null; 
 		protected VMR7Util							  Vmr7=null; 
 		DateTime													m_signalLostTimer;
+		DateTime													m_signalLostTimer2;
 		protected string                     cardName;
 		ArrayList						m_audioPidList=new ArrayList();
 		int									SelectedLanguage = 11;
@@ -1209,12 +1210,10 @@ namespace MediaPortal.TV.Recording
 				VideoRendererStatistics.VideoState=VideoRendererStatistics.State.VideoPresent;
 				return;
 			}
+			ts = DateTime.Now-m_signalLostTimer2;
+			if (ts.TotalSeconds<5) return;
+			m_signalLostTimer2=DateTime.Now;
 
-			if (!SignalPresent())
-			{
-				VideoRendererStatistics.VideoState=VideoRendererStatistics.State.NoSignal;
-				return;
-			}
 			if(GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.Vmr9FPS < 1f)
 			{
 				if  ( (g_Player.Playing && !g_Player.Paused) || (!g_Player.Playing) )
@@ -1493,6 +1492,11 @@ namespace MediaPortal.TV.Recording
 		public IBaseFilter AudiodeviceFilter()
 		{
 			return null;
+		}
+		
+		public bool	IsTimeShifting()
+		{
+			return m_graphState==State.TimeShifting;
 		}
   }
 }

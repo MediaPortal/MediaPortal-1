@@ -132,15 +132,42 @@ namespace MediaPortal.GUI.TV
 					{
 						string channel=Recorder.GetTVChannelName();
 						//yes, are we recording this channel already ?
+						TVProgram prog=Navigator.GetTVChannel(channel).CurrentProgram;
 						if (!Recorder.IsRecordingChannel(channel))
 						{
 							if (GUIGraphicsContext.IsFullScreenVideo)
 							{
 								Recorder.RecordNow(channel,true);
+								if (Recorder.IsRecordingChannel(channel))
+								{
+									GUIDialogNotify dlgNotify	= (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+									if (dlgNotify	!=null)
+									{
+										string strLogo=Utils.GetCoverArt(Thumbs.TVChannel,channel);
+										dlgNotify.Reset();
+										dlgNotify.ClearAll();
+										dlgNotify.SetImage( strLogo);
+										dlgNotify.SetHeading(GUILocalizeStrings.Get(1446));//recording started
+										if (prog!=null)
+										{
+											dlgNotify.SetText( String.Format("{0} {1}-{2}",
+												prog.Title,		
+												prog.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat),
+												prog.EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat) ) );	
+										}
+										else
+										{
+											dlgNotify.SetText(GUILocalizeStrings.Get(736));//no tvguide data available
+										}
+										dlgNotify.TimeOut=5;
+
+										dlgNotify.DoModal(GUIWindowManager.ActiveWindow);
+									}
+								}
 								return;
 							}
 
-							TVProgram prog=Navigator.GetTVChannel(channel).CurrentProgram;
+							
 							if (prog!=null)
 							{
 								GUIDialogMenuBottomRight pDlgOK	= (GUIDialogMenuBottomRight)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU_BOTTOM_RIGHT);
@@ -168,6 +195,36 @@ namespace MediaPortal.GUI.TV
 							else
 							{
 								Recorder.RecordNow(channel,true);
+							}
+						}
+						else //if (!Recorder.IsRecordingChannel(channel))
+						{
+							Recorder.StopRecording(Recorder.CurrentTVRecording);
+							if (GUIGraphicsContext.IsFullScreenVideo)
+							{
+								GUIDialogNotify dlgNotify	= (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+								if (dlgNotify	!=null)
+								{
+									string strLogo=Utils.GetCoverArt(Thumbs.TVChannel,channel);
+									dlgNotify.Reset();
+									dlgNotify.ClearAll();
+									dlgNotify.SetImage( strLogo);
+									dlgNotify.SetHeading(GUILocalizeStrings.Get(1447));//recording stopped
+									if (prog!=null)
+									{
+										dlgNotify.SetText( String.Format("{0} {1}-{2}",
+											prog.Title,		
+											prog.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat),
+											prog.EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat) ) );	
+									}
+									else
+									{
+										dlgNotify.SetText(GUILocalizeStrings.Get(736));//no tvguide data available
+									}
+									dlgNotify.TimeOut=5;
+
+									dlgNotify.DoModal(GUIWindowManager.ActiveWindow);
+								}
 							}
 						}
 					}

@@ -176,7 +176,7 @@ namespace MediaPortal
     protected System.Drawing.Point storedLocation;
     private System.Windows.Forms.MenuItem menuItem1;
     private System.Windows.Forms.MenuItem menuItem2;
-    private System.Windows.Forms.Timer timer1;
+    
     private System.ComponentModel.IContainer components;
     private System.Windows.Forms.MenuItem menuItem4;
     private System.Windows.Forms.MenuItem dvdMenuItem;
@@ -278,8 +278,6 @@ namespace MediaPortal
       // multimon debugging difficult.
       clipCursorWhenFullscreen = false;
       InitializeComponent();
-      this.timer1.Interval = 300;
-      this.timer1.Start();
       this.TopMost = alwaysOnTop;
 
     }
@@ -1655,14 +1653,6 @@ namespace MediaPortal
     }
 
 
-    public virtual void OnTimer()
-    {
-    }
-    private void timer1_Tick(object sender, System.EventArgs e)
-    {
-      OnTimer();
-    }
-
     private void menuItem2_Click(object sender, System.EventArgs e)
     {
       OnSetup(sender, e);
@@ -1822,7 +1812,6 @@ namespace MediaPortal
       this.musicMenuItem = new System.Windows.Forms.MenuItem();
       this.picturesMenuItem = new System.Windows.Forms.MenuItem();
       this.televisionMenuItem = new System.Windows.Forms.MenuItem();
-      this.timer1 = new System.Windows.Forms.Timer(this.components);
       this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
       this.contextMenu1 = new System.Windows.Forms.ContextMenu();
       this.menuItem3 = new System.Windows.Forms.MenuItem();
@@ -1922,11 +1911,6 @@ namespace MediaPortal
       this.televisionMenuItem.Index = 4;
       this.televisionMenuItem.Text = "Television";
       this.televisionMenuItem.Click += new System.EventHandler(this.televisionMenuItem_Click);
-      // 
-      // timer1
-      // 
-      this.timer1.Enabled = true;
-      this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
       // 
       // notifyIcon1
       // 
@@ -2274,6 +2258,7 @@ namespace MediaPortal
 
     void WaitForFrameClock()
     {
+			if (GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.Vmr9FPS>1f) return;
       long milliSecondsLeft;
       long timeElapsed = 0;
 
@@ -2444,11 +2429,17 @@ namespace MediaPortal
 		
 		private bool AppStillIdle()
 		{
-				return !NativeGameLoop.PeekMessage(ref msg1, IntPtr.Zero, 0, 0, 0);
+			bool result= NativeGameLoop.PeekMessage(ref msg1, IntPtr.Zero, 0, 0, 0);
+			if (result)
+			{
+				System.Diagnostics.Debug.WriteLine(String.Format("msg :hwnd:{0:X} msg:{1:x} wparm:{2:X} lparm:{3:X}", msg1.hwnd,msg1.message,msg1.wParam,msg1.lParam));
+			}
+			return !result;
 		}
+
 		private void Application_Idle(object sender, EventArgs e)
 		{
-			while (AppStillIdle())
+			do
 			{
 				OnProcess();
 				FrameMove();
@@ -2458,10 +2449,11 @@ namespace MediaPortal
 				if (g_Player.Playing) 
 				{
 					if (!g_Player.IsRadio  || !g_Player.IsTimeShifting)
-						return;
+						break;
 				}
-				if (GUIGraphicsContext.CurrentState==GUIGraphicsContext.State.STOPPING) return;
-			} 
+				if (GUIGraphicsContext.CurrentState==GUIGraphicsContext.State.STOPPING) break;
+			} while (AppStillIdle() );
+
 		}
 	}
 

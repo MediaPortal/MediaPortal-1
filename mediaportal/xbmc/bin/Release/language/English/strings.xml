@@ -3131,6 +3131,14 @@
 	<id>1445</id>
 	<value>Post-record</value>
 </string>	
+<string>
+	<id>1446</id>
+	<value>Recording started:</value>
+</string>	
+<string>
+	<id>1447</id>
+	<value>Recording stopped:</value>
+</string>	
 
 	<!-- My Status Strings -->
 	<string><id>1950</id><value>My Status</value></string>
