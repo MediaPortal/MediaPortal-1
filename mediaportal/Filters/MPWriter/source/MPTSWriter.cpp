@@ -383,15 +383,25 @@ STDMETHODIMP CDumpInputPin::Receive(IMediaSample *pSample)
 		for (int i=0; i < 100; ++i)
 			m_pDump->CopyRecordingFile();
 	}
-	for(DWORD t=0;t<(DWORD)pSample->GetActualDataLength();t+=188)
+
+	int off=0;
+	for (int i=0; i < pSample->GetActualDataLength()-2*188;++i)
 	{
-		if(pbData[t]==0x47)
+		if (pbData[i]==0x47 && pbData[i+188]==0x47 && pbData[i+2*188]==0x47)
 		{
-			int pid=((pbData[t+1] & 0x1F) <<8)+pbData[t+2];
+			off=i;
+			break;
+		}
+	}
+	for(DWORD t=0;t<(DWORD)pSample->GetActualDataLength()-off;t+=188)
+	{
+		if(pbData[t+off]==0x47)
+		{
+			int pid=((pbData[t+1+off] & 0x1F) <<8)+pbData[t+2+off];
 			if(IsPidValid(pid)==true)
 			{
-				hr=m_pDump->WriteRecordingFile(pbData+t,188);
-				hr=m_pDump->WriteTimeshiftFile(pbData+t,188);
+				hr=m_pDump->WriteRecordingFile(pbData+t+off,188);
+				hr=m_pDump->WriteTimeshiftFile(pbData+t+off,188);
 				if(FAILED(hr))
 					break;
 			}
