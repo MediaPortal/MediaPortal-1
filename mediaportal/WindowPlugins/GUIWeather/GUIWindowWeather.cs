@@ -714,7 +714,7 @@ namespace MediaPortal.GUI.Weather
 			}
 			else if (m_Mode==Mode.Satellite)
 			{
-				GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTNSWITCH, GUILocalizeStrings.Get(717));			
+				GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTNSWITCH, GUILocalizeStrings.Get(19100));
 		
 				for (int i=10; i < 900;++i)
 					GUIControl.HideControl(GetID,i);
@@ -729,7 +729,7 @@ namespace MediaPortal.GUI.Weather
 			}
 			else if (m_Mode==Mode.GeoClock)
 			{
-				GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTNSWITCH, GUILocalizeStrings.Get(19100));			
+				GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTNSWITCH, GUILocalizeStrings.Get(717));			
 				GUIControl.HideControl(GetID,(int)Controls.CONTROL_BTNVIEW);
 				GUIControl.HideControl(GetID,(int)Controls.CONTROL_LOCATIONSELECT);
 		
