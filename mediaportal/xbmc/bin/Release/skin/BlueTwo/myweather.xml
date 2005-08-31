@@ -469,5 +469,19 @@
 			<centered>yes</centered>
 			<keepaspectratio>yes</keepaspectratio>
 		</control>	
+		<control>		
+			<description>Sunclock image</description>
+			<type>image</type>
+			<id>1200</id>
+			<label>-</label>
+			<posY>200</posY>
+			<posX>5</posX>
+			<width>710</width>
+			<height>358</height>
+			<onleft>3</onleft> 
+			<onright>3</onright> 
+			<onup>3</onup> 
+			<ondown>3</ondown> 
+		</control>	
 	</controls>
 </window>
