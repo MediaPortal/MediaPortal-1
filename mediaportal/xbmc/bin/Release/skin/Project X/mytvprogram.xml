@@ -22,7 +22,7 @@
 				<label></label>
 				<onup>17</onup>
 				<ondown>3</ondown>
-				<onright>99</onright>
+				<onright>10</onright>
 			</control>
 			<control>
 				<description>Advanced Record</description>
@@ -31,6 +31,7 @@
 				<label>1038</label>
 				<onup>2</onup>
 				<ondown>4</ondown>
+				<onright>10</onright>
 			</control>
 			<control>
 				<description>Keep</description>
@@ -39,6 +40,7 @@
 				<label>1042</label>
 				<onup>2</onup>
 				<ondown>5</ondown>
+				<onright>10</onright>
 			</control>
 			<control>
 				<description>Notify</description>
@@ -59,6 +61,7 @@
 				<textureNoFocus>togglebutton-on-nofocus.png</textureNoFocus>
 				<onup>4</onup>
 				<ondown>6</ondown>
+				<onright>10</onright>
 			</control>
 			<control>
 				<description>Quality</description>
@@ -67,6 +70,7 @@
 				<label>882</label>
 				<onup>5</onup>
 				<ondown>7</ondown>
+				<onright>10</onright>
 			</control>
 			<control>
 				<description>Episodes</description>
@@ -75,6 +79,7 @@
 				<label>888</label>
 				<onup>6</onup>
 				<ondown>8</ondown>
+				<onright>10</onright>
 			</control>
 			<control>
 				<description>PreRecord</description>
@@ -83,6 +88,7 @@
 				<label>1444</label>
 				<onup>7</onup>
 				<ondown>9</ondown>
+				<onright>10</onright>
 			</control>
 			<control>
 				<description>PostRecord</description>
@@ -91,6 +97,7 @@
 				<label>1445</label>
 				<onup>8</onup>
 				<ondown>99</ondown>
+				<onright>10</onright>
 			</control>
 		</control>
 		<control>
@@ -98,7 +105,7 @@
 			<type>label</type>
 			<id>11</id>
 			<posX>260</posX>
-			<posY>240</posY>
+			<posY>280</posY>
 			<label>1041</label>
 			<align>left</align>
 			<font>font13</font>
@@ -109,7 +116,7 @@
 			<type>listcontrol</type>
 			<id>10</id>
 			<posX>260</posX>
-			<posY>260</posY>
+			<posY>300</posY>
 			<width>450</width>
 			<height>250</height>
 			<textXOff>50</textXOff>
@@ -123,7 +130,7 @@
 			<PinIconXOff>45</PinIconXOff>
 			<PinIconYOff>19</PinIconYOff>
 			<spinPosX>606</spinPosX>
-			<spinPosY>418</spinPosY>
+			<spinPosY>448</spinPosY>
 			<itemWidth>35</itemWidth>
 			<itemHeight>35</itemHeight>
 			<textureFocus>recording_background_focus.png</textureFocus>
@@ -168,7 +175,7 @@
 			<posX>260</posX>
 			<posY>140</posY>
 			<width>430</width>
-			<height>200</height>
+			<height>130</height>
 			<label>#TV.RecordedTV.Description</label>
 			<font>font13</font>
 			<textcolor>FFFFFFFF</textcolor>
