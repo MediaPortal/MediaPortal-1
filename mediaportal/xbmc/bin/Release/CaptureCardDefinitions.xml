@@ -6124,8 +6124,8 @@
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface> 
       <filters> 
         <filter cat="networkprovider" 	name="Microsoft DVBT Network Provider" 	checkdevice="false"></filter> 
-        <filter cat="tunerdevice" 	name="AVerMedia BDA DVBT Tuner" 	checkdevice="true"></filter> 
-        <filter cat="capture" 		name="AVerMedia BDA Digital Capture" 	checkdevice="true"></filter> 
+        <filter cat="tunerdevice" 		name="AVerMedia BDA DVBT Tuner" 		checkdevice="true"></filter> 
+        <filter cat="capture" 			name="AVerMedia BDA Digital Capture" 	checkdevice="true"></filter> 
       </filters> 
     <connections> 
       <connection sourcefilter="networkprovider"	sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"></connection> 
@@ -6139,8 +6139,8 @@
     <tv>
       <interface cat="tunerdevice" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
-        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"  checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="DNTV Live! Tiny USB2 BDA"      checkdevice="true"></filter>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"	checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="DNTV Live! Tiny USB2 BDA"			checkdevice="true"></filter>
       </filters>
       <connections>
 	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -6156,8 +6156,8 @@
         <filter cat="tvtuner"  name="TOSHIBA PCI TV Tuner TV Tuner"		checkdevice="true"></filter>
         <filter cat="tvaudio"  name="TOSHIBA PCI TV Tuner TV Audio"		checkdevice="true"></filter>
         <filter cat="crossbar" name="TOSHIBA PCI TV Tuner Crossbar"		checkdevice="true"></filter>
-        <filter cat="capture"  name="TOSHIBA PCI TV Tuner MPEG Encoder"		checkdevice="true"></filter>
-        <filter cat="encoder"  name="TOSHIBA PCI TV Tuner Encoder"	checkdevice="true"></filter>
+        <filter cat="capture"  name="TOSHIBA PCI TV Tuner MPEG Encoder"	checkdevice="true"></filter>
+        <filter cat="encoder"  name="TOSHIBA PCI TV Tuner Encoder"		checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
@@ -6193,8 +6193,8 @@
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider"	checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="Cinergy 1400 DVB-T Tuner"		checkdevice="true"></filter>
-        <filter cat="capture"         name="Cinergy 1400 DVB-T TS"	checkdevice="true"></filter>
+        <filter cat="tunerdevice"     name="Cinergy 1400 DVB-T Tuner"			checkdevice="true"></filter>
+        <filter cat="capture"         name="Cinergy 1400 DVB-T TS"				checkdevice="true"></filter>
       </filters>
       <connections>
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -6208,9 +6208,9 @@
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
-        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"			checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="LR6650 BDA DVB-T Tuner/Demod (Thomson DTT7579)"				checkdevice="true"></filter>
-        <filter cat="capture"         name="LR6650 BDA Transport Stream Capture"	checkdevice="true"></filter>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"				checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="LR6650 BDA DVB-T Tuner/Demod (Thomson DTT7579)"	checkdevice="true"></filter>
+        <filter cat="capture"         name="LR6650 BDA Transport Stream Capture"			checkdevice="true"></filter>
       </filters>
       <connections>
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -6222,11 +6222,27 @@
   <capturecard commercialname="Pinnacle 310i TNT" capturename="Pinnacle PCTV 310i BDA Digital Capture" devid="ven_1131&amp;dev_7133&amp;subsys_002f11bd&amp;rev_d0"> 
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities> 
     <tv> 
-      <interface cat="capture" video="" audio="" mpeg2="0"></interface> 
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters> 
         <filter cat="networkprovider"	name="Microsoft DVBT Network Provider"			checkdevice="false"></filter> 
         <filter cat="tunerdevice"		name="Pinnacle PCTV 310i BDA DVBT Tuner"		checkdevice="true"></filter> 
         <filter cat="capture"			name="Pinnacle PCTV 310i BDA Digital Capture"	checkdevice="true"></filter> 
+      </filters> 
+      <connections> 
+         <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection> 
+         <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection> 
+      </connections> 
+    </tv> 
+  </capturecard>
+  
+  <capturecard commercialname="WinTV Nova-S Plus" capturename="Hauppauge WinTV 88x TS Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_92020070&amp;rev_05"> 
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities> 
+    <tv> 
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters> 
+        <filter cat="networkprovider"	name="Microsoft DVBS Network Provider"			checkdevice="false"></filter> 
+        <filter cat="tunerdevice"		name="Hauppauge WinTV 88x DVB-S Tuner/Demod"	checkdevice="true"></filter> 
+        <filter cat="capture"			name="Hauppauge WinTV 88x TS Capture"			checkdevice="true"></filter> 
       </filters> 
       <connections> 
          <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection> 
