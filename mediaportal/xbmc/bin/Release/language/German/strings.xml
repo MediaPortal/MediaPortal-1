@@ -135,7 +135,7 @@
 	</string>
 	<string>
 		<id>102</id>
-		<value>durchsuchen</value>
+		<value>Medieninfos suchen</value>
 	</string>
 	<string>
 		<id>103</id>
@@ -579,11 +579,11 @@
 	</string>
 	<string>
 		<id>213</id>
-		<value>UI-Kalibrierung</value>
+		<value>Oberfläche ausrichten</value>
 	</string>
 	<string>
 		<id>214</id>
-		<value>Bild-Kalibrierung</value>
+		<value>Bildbereich einstellen</value>
 	</string>
 	<string>
 		<id>215</id>
@@ -1455,7 +1455,7 @@
 	</string>
 	<string>
 		<id>435</id>
-		<value>Track</value>
+		<value>Titel</value>
 	</string>
 	<string>
 		<id>436</id>
@@ -2075,7 +2075,7 @@
 	</string>	
 	<string>
 		<id>673</id>
-		<value>Scroll-Geschwindigkeit</value>
+		<value>Textlauf-Geschwindigkeit</value>
 	</string>	
 	<string>
 		<id>674</id>
@@ -2659,7 +2659,7 @@
 </string>
 <string>
 	<id>928</id>
-	<value>Coverart gefunden</value>
+	<value>Suche Cover</value>
 </string>
 <string>
 	<id>929</id>
@@ -2699,7 +2699,7 @@
 </string>
 <string>
 	<id>938</id>
-	<value>Sendung ansehen</value>
+	<value>Umschalten auf diesen Kanal</value>
 </string>
 <string>
 	<id>939</id>
@@ -2719,11 +2719,11 @@
 </string>
 <string>
 	<id>943</id>
-	<value>Normal</value>
+	<value>Standard</value>
 </string>
 <string>
 	<id>944</id>
-	<value>Original</value>
+	<value>Quellformat</value>
 </string>
 <string>
 	<id>945</id>
@@ -3001,7 +3001,7 @@
 </string>
 <string>
 	<id>1022</id>
-	<value>zum Window Mode zurück zukehren</value>
+	<value>zum Fenstermodus zurück zu kehren</value>
 </string>
 
 <string>
@@ -3117,11 +3117,11 @@
 </string>
 <string>
 	<id>1442</id>
-	<value>Scroll-Geschwindigkeit (h)</value>
+	<value>Textlauf-Geschwindigkeit (h)</value>
 </string>	
 <string>
 	<id>1443</id>
-	<value>Scroll-Geschwindigkeit (v)</value>
+	<value>Textlauf-Geschwindigkeit (v)</value>
 </string>	
 <string>
 	<id>1444</id>
@@ -3130,6 +3130,14 @@
 <string>
 	<id>1445</id>
 	<value>Nach der Aufnahme</value>
+</string>	
+<string>
+	<id>1446</id>
+	<value>Aufnahme gestartet:</value>
+</string>	
+<string>
+	<id>1447</id>
+	<value>Aufnahme gestoppt:</value>
 </string>	
 
 	<!-- My Status Strings -->
@@ -3543,7 +3551,7 @@
 	<id>13013</id>
 	<value>Video wird geladen, bitte warten</value>
 </string>
-<string><id>13014</id><value>Scanne Verzeichnis</value></string> 
+<string><id>13014</id><value>Durchsuche Verzeichnis</value></string> 
 <string><id>13015</id><value>Importiere Spiel</value></string> 
 <string><id>13016</id><value>Sortiere: Veröffentlichung</value></string> 
 <string><id>13017</id><value>Sortiere: Letzte</value></string> 
@@ -3561,13 +3569,15 @@
 <string><id>19003</id><value>Musik</value></string> 
 <string><id>19004</id><value>Töne</value></string> 
 <string><id>19005</id><value>Punkte</value></string> 
-<string><id>19006</id><value>Level</value></string> 
+<string><id>19006</id><value>Stufe</value></string> 
 <string><id>19007</id><value>Reihen</value></string> 
 <string><id>19008</id><value>Rekord</value></string> 
 <string><id>19009</id><value>Nächstes</value></string> 
 <string><id>19010</id><value>Zum Starten drücken oder klicken...</value></string> 
 <string><id>19011</id><value>Pause</value></string> 
 <string><id>19012</id><value>Spiel beendet</value></string> 
+<!-- For the My Weather Geoclock -->
+<string><id>19100</id><value>Weltzeituhr</value></string>
 
 
 <!-- id 100000 and higher are reserved!! --> 
@@ -3589,7 +3599,7 @@
 <string><id>100015</id><value>Einstellungen->Bildschirm->Untertitel</value></string>
 <string><id>100016</id><value>Einstellungen->Bildschirm->Bildschirmschoner</value></string>
 <string><id>100017</id><value>Einstellungen->Wetter</value></string>
-<string><id>100020</id><value>Einstellungen->Scripte</value></string>
+<string><id>100020</id><value>Einstellungen->Skripte</value></string>
 <string><id>100021</id><value>Filme/Genre</value></string>
 <string><id>100022</id><value>Filme/Schauspieler</value></string>
 <string><id>100023</id><value>Filme/Jahr</value></string>
@@ -3600,7 +3610,7 @@
 <string><id>100028</id><value>Filme/Wiedergabeliste</value></string>
 <string><id>100029</id><value>Einstellungen->Allgemein->LCD</value></string>
 <string><id>100030</id><value>Radio</value></string>
-<string><id>100031</id><value>Einstellungen->Bildschirm->Scroll-Geschwindigkeit</value></string>
+<string><id>100031</id><value>Einstellungen->Bildschirm->Textlauf-Geschwindigkeit</value></string>
 <string><id>100032</id><value>MSN Messenger</value></string>
 <string><id>100033</id><value>MSN Chat</value></string>
 <string><id>100034</id><value>Sonstiges</value></string>
@@ -3653,31 +3663,32 @@
 <string><id>103003</id><value>TV/OSD</value></string>
 <string><id>103006</id><value>TV/MSN OSD</value></string>
 <string><id>103007</id><value>TV/Zap OSD</value></string>
-<string><id>107700</id><value>TV/Teletext</value></string>
-<string><id>107701</id><value>TV/Teletext</value></string>
+<string><id>107700</id><value>TV/Videotext</value></string>
+<string><id>107701</id><value>TV/Videotext</value></string>
 
-<string><id>200000</id><value>Bitte EPG Grabber auswählen. Beachten Sie bitte</value></string>
-<string><id>200001</id><value>ist ihr Land nicht aufgelistet, müssen Sie das EPG manuell einrichten</value></string>
-<string><id>200002</id><value>Sie können jetzt EPG Kanäle Ihren TV Kanälen zuordnen</value></string>
-<string><id>200003</id><value>Wählen SIe einen Kanal und drücken Sie "Enter" um die Zurodnung zu ändern</value></string>
+
+<string><id>200000</id><value>Bitte EPG Grabber auswählen. Beachten sie bitte</value></string>
+<string><id>200001</id><value>ist ihr Land nicht aufgelistet, müssen sie das EPG manuell einrichten</value></string>
+<string><id>200002</id><value>Sie können jetzt EPG Kanäle ihren TV Kanälen zuordnen</value></string>
+<string><id>200003</id><value>Wählen sie einen Kanal und drücken sie "Enter" um die Zurodnung zu ändern</value></string>
 <string><id>200004</id><value>Manuell eingerichtete tvguide.xml</value></string>
-<string><id>200005</id><value>Bitte geben Sie die Fernbedienung an, die Sie nutzen:</value></string>
-<string><id>200006</id><value>Drücken Sie "Weiter" um Setup fortzusetzen.:</value></string>
+<string><id>200005</id><value>Bitte geben Sie die Fernbedienung an, die sie nutzen:</value></string>
+<string><id>200006</id><value>Drücken sie "Weiter" um die Einrichtung fortzusetzen.:</value></string>
 <string><id>200007</id><value>&lt;Zurück</value></string>
 <string><id>200008</id><value>Setup - Fernbedienung</value></string>
 <string><id>200009</id><value>Weiter &gt;</value></string>
-<string><id>200010</id><value>MediaPortal verwandelt Ihren PC in ein fortschrittliches Multi-Media Center.</value></string>
-<string><id>200011</id><value>Mit MediaPortal können Sie Ihre Lieblingsmusik geniessen</value></string>
-<string><id>200013</id><value>Sie können damit Musik &amp; Radio hören, Ihre Filme, DVDs, Photos und</value></string>
+<string><id>200010</id><value>MediaPortal verwandelt ihren PC in ein fortschrittliches Multi-Media-Center.</value></string>
+<string><id>200011</id><value>Mit MediaPortal können sie Ihre Lieblingsmusik geniessen</value></string>
+<string><id>200013</id><value>Sie können damit Musik &amp; Radio hören, ihre Filme, DVD, Photos und</value></string>
 <string><id>200014</id><value>Videos ansehen, Fernsehen oder Sendungen aufnehmen und vieles mehr.</value></string>
-<string><id>200015</id><value>Der Assistent wird Ihnen helfen MediaPortal schnell und einfach einzurichten.</value></string>
-<string><id>200016</id><value>Drücken Sie den "Weiter-Button" um fortzufahren</value></string>
+<string><id>200015</id><value>Der Assistent wird ihnen helfen MediaPortal schnell und einfach einzurichten.</value></string>
+<string><id>200016</id><value>Drücken sie den "Weiter" Knopf um fortzufahren</value></string>
 <string><id>200017</id><value>Willkommen bei MediaPortal. </value></string>
 <string><id>200018</id><value>Herzlichen Glückwunsch. Mediaportal ist jetzt fertig eingerichtet</value></string>
-<string><id>200019</id><value>Drücken Sie "Ferig" um den Assistenten zu schliessen</value></string>
+<string><id>200019</id><value>Klicken sie auf "Fertig" um den Assistenten zu schliessen</value></string>
 <string><id>200020</id><value>Fertig</value></string>
 <string><id>200021</id><value>TV Setup - EPG</value></string>
 <string><id>200022</id><value>MediaPortal hat folgende TV-Karten gefunden:</value></string>
-<string><id>200023</id><value>Drücken Sie den "Weiter" Knopf um die TV-Karten einzurichten</value></string>
-<string><id>200024</id><value>TV Setup</value></string>
+<string><id>200023</id><value>Drücken sie den "Weiter" Knopf um die TV-Karten einzurichten</value></string>
+<string><id>200024</id><value>TV Konfiguration</value></string>
 </strings>
