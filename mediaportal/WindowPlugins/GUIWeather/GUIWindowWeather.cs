@@ -1273,7 +1273,7 @@ namespace MediaPortal.GUI.Weather
 			GUIImage clockImage = (GUIImage)GetControl( (int)Controls.CONTROL_IMAGE_SUNCLOCK );
 			lock (clockImage)
 			{
-				Bitmap image = generator.update( DateTime.Now );
+				Bitmap image = generator.update( DateTime.UtcNow );
 				System.Drawing.Image img=(Image)image.Clone();
 				clockImage.FileName="";
 				clockImage.FreeResources();
