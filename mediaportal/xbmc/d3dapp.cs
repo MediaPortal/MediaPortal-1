@@ -2265,7 +2265,7 @@ namespace MediaPortal
 
     void WaitForFrameClock()
     {
-			if (GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.Vmr9FPS>1f) return;
+			//if (GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.Vmr9FPS>1f) return;
       long milliSecondsLeft;
       long timeElapsed = 0;
 
