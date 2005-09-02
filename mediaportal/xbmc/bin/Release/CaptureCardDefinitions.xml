@@ -176,10 +176,10 @@
     </tv>
   </capturecard>
   
-  <capturecard commercialname="Hauppauge PVR 350 (1.18.21.22266)" capturename="Hauppauge WinTV PVR PCI II Capture" devid="ven_4444&amp;dev_0803&amp;subsys_40000070&amp;rev_01">
+  <capturecard commercialname="Hauppauge PVR 350" capturename="Hauppauge WinTV PVR PCI II Capture" devid="ven_4444&amp;dev_0803&amp;subsys_40000070&amp;rev_01">
     <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
     <tv>
-      <interface cat="capture" video="" audio="" mpeg2="1"></interface>
+      <interface cat="capture" video="" audio="" mpeg2="0"></interface>
       <filters>
         <filter cat="tvtuner"  name="Hauppauge WinTV PVR PCI II TvTuner"  checkdevice="true"></filter>
         <filter cat="tvaudio"  name="Hauppauge WinTV PVR PCI II TvAudio"  checkdevice="true"></filter>
@@ -189,7 +189,7 @@
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
         <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
-        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="7"></connection>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="8"></connection>
         <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
         <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"  sinkpin="1"></connection>
       </connections>
@@ -6243,6 +6243,22 @@
         <filter cat="networkprovider"	name="Microsoft DVBS Network Provider"			checkdevice="false"></filter> 
         <filter cat="tunerdevice"		name="Hauppauge WinTV 88x DVB-S Tuner/Demod"	checkdevice="true"></filter> 
         <filter cat="capture"			name="Hauppauge WinTV 88x TS Capture"			checkdevice="true"></filter> 
+      </filters> 
+      <connections> 
+         <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection> 
+         <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection> 
+      </connections> 
+    </tv> 
+  </capturecard>
+  
+  <capturecard commercialname="Cinergy Hybrid T USB XS" capturename="Cinergy Hybrid T USB XS (Digital)" devid="vid_0ccd&amp;amp;pid_0042&amp;amp;mi_00"> 
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities> 
+    <tv> 
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters> 
+        <filter cat="networkprovider"	name="Microsoft DVBS Network Provider"		checkdevice="false"></filter> 
+        <filter cat="tunerdevice"		name="Cinergy Hybrid T USB XS Tuner"		checkdevice="true"></filter> 
+        <filter cat="capture"			name="Cinergy Hybrid T USB XS (Digital)"	checkdevice="true"></filter> 
       </filters> 
       <connections> 
          <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection> 
