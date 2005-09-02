@@ -27,7 +27,7 @@
 	</string>
 	<string>
 		<id>6</id>
-		<value>XBOX Media Center CVS build</value>
+		<value>Media Portal CVS Version</value>
 	</string>
 	<string>
 		<id>7</id>
@@ -1087,7 +1087,7 @@
 	</string>
 	<string>
 		<id>341</id>
-		<value>DVD Wiedergabe</value>
+		<value>DVD abspielen</value>
 	</string>
 	<string>
 		<id>342</id>
@@ -1643,7 +1643,7 @@
 	</string>
 	<string>
 		<id>482</id>
-		<value>Über MediaPortal</value>
+		<value>Über Media Portal</value>
 	</string>
 	<string>
 		<id>483</id>
@@ -1683,7 +1683,7 @@
 	</string>
 	<string>
 		<id>492</id>
-		<value>Tonsprache</value>
+		<value>Sprache</value>
 	</string>
 	<string>
 		<id>500</id>
@@ -2212,7 +2212,7 @@
 </string>
 <string>
 	<id>729</id>
-	<value>Stellen Sie sicher, dass Sie VMR9 benutzen und etwas abgespielt wird</value>
+	<value>Stellen sie sicher, dass sie VMR9 benutzen und etwas abgespielt wird</value>
 </string>
 <string>
 	<id>730</id>
@@ -2428,7 +2428,7 @@
 </string>
 <string>
 	<id>871</id>
-	<value>MediaPortal aufwecken</value>
+	<value>Media Portal aufwecken</value>
 </string>
 <string>
 	<id>872</id>
@@ -2571,7 +2571,7 @@
 </string>
 <string>
 	<id>906</id>
-	<value>Geben Sie Ihre E-Mail Adresse im setup ein</value>
+	<value>Geben sie Ihre E-Mail Adresse im Setup ein</value>
 </string>
 <string>
 	<id>907</id>
@@ -2691,7 +2691,7 @@
 </string>
 <string>
 	<id>936</id>
-	<value>Fortsetzen von:</value>
+	<value>Fortsetzen bei:</value>
 </string>
 <string>
 	<id>937</id>
@@ -2779,15 +2779,15 @@
 </string>
 <string>
 	<id>958</id>
-	<value>Spricht mit</value>
+	<value>Schreibe an</value>
 </string>
 <string>
 	<id>959</id>
-	<value>Betritt den Raum</value>
+	<value>betritt den Raum</value>
 </string>
 <string>
 	<id>960</id>
-	<value>Verläßt den Raum</value>
+	<value>verläßt den Raum</value>
 </string>
 <string>
 	<id>961</id>
@@ -2813,7 +2813,7 @@
 </string>
 <string>
 	<id>974</id>
-	<value>Ursprungsmenü</value>
+	<value>Hauptmenü</value>
 </string>
 <string>
 	<id>975</id>
@@ -2829,7 +2829,7 @@
 </string>
 <string>
 	<id>978</id>
-	<value>welche den Sender anzeigen kann!</value>
+	<value>die den Sender anzeigen könnte!</value>
 </string>
 <string>
 	<id>979</id>
@@ -2845,7 +2845,7 @@
 </string>
 <string>
 	<id>982</id>
-	<value>Aufnahme vollständig löschen</value>
+	<value>Serienaufnahme löschen</value>
 </string>
 
 <string>
@@ -2854,15 +2854,15 @@
 </string>
 <string>
 	<id>984</id>
-	<value>Hole Film</value>
+	<value>Lade Filmliste</value>
 </string>
 <string>
 	<id>985</id>
-	<value>Hole Filmdetails</value>
+	<value>Lade Filmdetails</value>
 </string>
 <string>
 	<id>986</id>
-	<value>Hole Schauspieler</value>
+	<value>Lade Schauspieler</value>
 </string>
 <string>
 	<id>987</id>
@@ -2899,11 +2899,11 @@
 </string>
 <string>
 	<id>995</id>
-	<value>Wirklich komprimieren diese</value>
+	<value>Fortfahren mit der Komprimierung der</value>
 </string>
 <string>
 	<id>996</id>
-	<value>gewählte Aufnahme?</value>
+	<value>gewählten Aufnahmen?</value>
 </string>
 
 <string>
@@ -2921,19 +2921,19 @@
 </string>
 <string>
 	<id>1000</id>
-	<value>Aufnahmen von dvr-ms nach mpg, xvid oder wmv</value>
+	<value>Aufnahmen von dvr-ms nach mpg, XviD oder wmv</value>
 </string>
 <string>
 	<id>1001</id>
-	<value>Bitte beachten: Sie müssen den</value>
+	<value>Bitte beachten: Sie benötigen den</value>
 </string>
 <string>
 	<id>1002</id>
-	<value>Elecard MPEG2 video decoder installiert haben</value>
+	<value>"Elecard MPEG2 video decoder"</value>
 </string>
 <string>
 	<id>1003</id>
-	<value>für die Umwandlung zu xvid</value>
+	<value>für die Umwandlung zu XviD</value>
 </string>
 <string>
 	<id>1004</id>
@@ -2997,7 +2997,7 @@
 </string>
 <string>
 	<id>1021</id>
-	<value>Drücken Sie Alt+Enter um</value>
+	<value>Drücken sie Alt+Enter um</value>
 </string>
 <string>
 	<id>1022</id>
@@ -3117,11 +3117,11 @@
 </string>
 <string>
 	<id>1442</id>
-	<value>Textlauf-Geschwindigkeit (h)</value>
+	<value>Textlauf horizontal</value>
 </string>	
 <string>
 	<id>1443</id>
-	<value>Textlauf-Geschwindigkeit (v)</value>
+	<value>Textlauf vertikal</value>
 </string>	
 <string>
 	<id>1444</id>
@@ -3278,13 +3278,13 @@
 	<string><id>2200</id><value>Explorer</value></string>
 	<string><id>2201</id><value>Quelle wählen</value></string>
 	<string><id>2202</id><value>Ziel wählen</value></string>
-	<string><id>2203</id><value>Datei kopiren</value></string>
+	<string><id>2203</id><value>Datei kopieren</value></string>
 	<string><id>2204</id><value>Ordner erstellen</value></string>
 	<string><id>2205</id><value>Auswahl zurücksetzen</value></string>
 	<string><id>2206</id><value>Alle auswählen</value></string>
-	<string><id>2207</id><value>Möchten Sie das Verzeichnis</value></string>
+	<string><id>2207</id><value>Möchten sie das Verzeichnis</value></string>
 	<string><id>2208</id><value>anlegen?</value></string>
-	<string><id>2209</id><value>Möchten Sie die ausgewählten Daten kopieren?</value></string>
+	<string><id>2209</id><value>Möchten sie die ausgewählten Daten kopieren?</value></string>
 	<string><id>2210</id><value>Dateien kopiert!</value></string>
 	<string><id>2211</id><value>Bitte warten! Datei wird kopiert.</value></string>
 	<string><id>2212</id><value>Dateien löschen</value></string>
@@ -3385,7 +3385,7 @@
 </string>
 <string>
 	<id>8015</id>
-	<value>Überprüfen Sie das Setup für Mailbox '{0}'</value>
+	<value>Überprüfen sie das Setup für Mailbox '{0}'</value>
 </string>
 <string>
 	<id>8016</id>
@@ -3672,23 +3672,23 @@
 <string><id>200002</id><value>Sie können jetzt EPG Kanäle ihren TV Kanälen zuordnen</value></string>
 <string><id>200003</id><value>Wählen sie einen Kanal und drücken sie "Enter" um die Zurodnung zu ändern</value></string>
 <string><id>200004</id><value>Manuell eingerichtete tvguide.xml</value></string>
-<string><id>200005</id><value>Bitte geben Sie die Fernbedienung an, die sie nutzen:</value></string>
+<string><id>200005</id><value>Bitte geben sie die Fernbedienung an, die sie nutzen:</value></string>
 <string><id>200006</id><value>Drücken sie "Weiter" um die Einrichtung fortzusetzen.:</value></string>
 <string><id>200007</id><value>&lt;Zurück</value></string>
 <string><id>200008</id><value>Setup - Fernbedienung</value></string>
 <string><id>200009</id><value>Weiter &gt;</value></string>
-<string><id>200010</id><value>MediaPortal verwandelt ihren PC in ein fortschrittliches Multi-Media-Center.</value></string>
-<string><id>200011</id><value>Mit MediaPortal können sie Ihre Lieblingsmusik geniessen</value></string>
+<string><id>200010</id><value>Media Portal verwandelt ihren PC in ein fortschrittliches Multi-Media-Center.</value></string>
+<string><id>200011</id><value>Mit Media Portal können sie Ihre Lieblingsmusik geniessen</value></string>
 <string><id>200013</id><value>Sie können damit Musik &amp; Radio hören, ihre Filme, DVD, Photos und</value></string>
 <string><id>200014</id><value>Videos ansehen, Fernsehen oder Sendungen aufnehmen und vieles mehr.</value></string>
-<string><id>200015</id><value>Der Assistent wird ihnen helfen MediaPortal schnell und einfach einzurichten.</value></string>
+<string><id>200015</id><value>Der Assistent wird ihnen helfen Media Portal schnell und einfach einzurichten.</value></string>
 <string><id>200016</id><value>Drücken sie den "Weiter" Knopf um fortzufahren</value></string>
-<string><id>200017</id><value>Willkommen bei MediaPortal. </value></string>
-<string><id>200018</id><value>Herzlichen Glückwunsch. Mediaportal ist jetzt fertig eingerichtet</value></string>
+<string><id>200017</id><value>Willkommen bei Media Portal. </value></string>
+<string><id>200018</id><value>Herzlichen Glückwunsch. Media Portal ist jetzt fertig eingerichtet</value></string>
 <string><id>200019</id><value>Klicken sie auf "Fertig" um den Assistenten zu schliessen</value></string>
 <string><id>200020</id><value>Fertig</value></string>
 <string><id>200021</id><value>TV Setup - EPG</value></string>
-<string><id>200022</id><value>MediaPortal hat folgende TV-Karten gefunden:</value></string>
+<string><id>200022</id><value>Media Portal hat folgende TV-Karten gefunden:</value></string>
 <string><id>200023</id><value>Drücken sie den "Weiter" Knopf um die TV-Karten einzurichten</value></string>
 <string><id>200024</id><value>TV Konfiguration</value></string>
 </strings>
