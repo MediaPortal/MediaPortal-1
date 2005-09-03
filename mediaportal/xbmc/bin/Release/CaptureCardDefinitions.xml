@@ -6270,4 +6270,20 @@
       </connections> 
     </tv> 
   </capturecard>
+  
+  <capturecard commercialname="Terratec Cinergy 1400 DVB-T" capturename="Cinergy 1400 DVB-T Capture (BDA)" devid="ven_14f1&amp;dev_8800&amp;subsys_1161153b&amp;rev_05"> 
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities> 
+    <tv> 
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters> 
+        <filter cat="networkprovider"	name="Microsoft DVBT Network Provider"		checkdevice="false"></filter> 
+        <filter cat="tunerdevice"		name="Cinergy 1400 DVB-S TS"		checkdevice="true"></filter> 
+        <filter cat="capture"			name="Cinergy 1400 DVB-T Capture (BDA)"	checkdevice="true"></filter> 
+      </filters> 
+      <connections> 
+         <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection> 
+         <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection> 
+      </connections> 
+    </tv> 
+  </capturecard>
 </capturecards>
