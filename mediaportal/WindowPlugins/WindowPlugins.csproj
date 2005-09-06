@@ -1400,6 +1400,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "GUIVideoFiles\episode_info.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "GUIVideoFiles\GUIVideoArtistInfo.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -1446,6 +1451,11 @@
                 />
                 <File
                     RelPath = "GUIVideoFiles\GUIVideoTitle.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUIVideoFiles\tvDotComParser.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
