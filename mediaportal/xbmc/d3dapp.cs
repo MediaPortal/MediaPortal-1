@@ -30,6 +30,7 @@ using System.Runtime;
 using System.Runtime.InteropServices;
 
 using System.Drawing;
+using System.Threading;
 using System.Windows.Forms;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
@@ -91,6 +92,10 @@ namespace MediaPortal
 			}
 
 		}
+
+	  // TODO: Remove when migrating to .NET 2 (can use EventWaitHandle.OpenExisting instead)
+	  [DllImport("kernel32.dll")]
+	  private static extern IntPtr OpenEvent(uint dwDesiredAccess, bool inheritHandle, string name);
 
     const int MILLI_SECONDS_TIMER = 1;
     protected string m_strSkin = "mce";
@@ -1665,6 +1670,24 @@ namespace MediaPortal
 			Application.Idle+=new EventHandler(Application_Idle);
       Initialize();
       OnStartup();
+
+		// TODO: When migrating to .NET 2 change to use EventWaitHandle.OpenExisting
+
+		// This pile of ugliness gives an external app a change to be notified when
+		// the appliction has reached the final stage of startup
+		IntPtr handle = OpenEvent(2031619, false, "MediaPortalHandleCreated");
+			
+		if(handle == IntPtr.Zero)
+			return;
+
+		AutoResetEvent evnt = new AutoResetEvent(false);
+
+		evnt.Close();
+		GC.ReRegisterForFinalize(evnt);
+
+		evnt.Handle = handle; 
+		evnt.Set();
+		evnt.Close();
     }
 
 
