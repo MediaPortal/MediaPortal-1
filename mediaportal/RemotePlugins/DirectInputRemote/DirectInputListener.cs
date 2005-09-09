@@ -33,13 +33,11 @@ namespace MediaPortal
   {
     Device device = null;
     Thread inputListener = null;
-    AutoResetEvent deviceUpdated;
-    ManualResetEvent appShutdown;
     bool isRunning = false;
+    int delay = 150; // sleep time in milliseconds
 
     // event: send info on joystick state change 
     public delegate void diStateChange(object sender, JoystickState state);
-
     public event diStateChange OnStateChange = null;
 
 
@@ -67,8 +65,13 @@ namespace MediaPortal
       get { return isRunning; }
     }
 
+    public int Delay
+    {
+      get { return delay; }
+      set { delay = value; }
+    }
 
-    public bool InitDevice(System.Guid guid)
+    public bool InitDevice(Guid guid)
     {
       device = new Device(guid);
       device.SetCooperativeLevel(null, CooperativeLevelFlags.Background | CooperativeLevelFlags.NonExclusive);
@@ -84,10 +87,6 @@ namespace MediaPortal
                                      doi.ObjectId, new InputRange(-5000, 5000));
         }
       }
-      deviceUpdated = new AutoResetEvent(false);
-      appShutdown = new ManualResetEvent(false);
-
-      device.SetEventNotification(deviceUpdated);
       StopListener();
       StartListener();
       device.Acquire();
@@ -149,24 +148,13 @@ namespace MediaPortal
 
     void ThreadFunction()
     {
-      WaitHandle[] handles = {deviceUpdated, appShutdown};
-      // Continue running this thread until the app has closed
       while (true)
       {
-        int index = WaitHandle.WaitAny(handles);
-        if (index == 0)
-        {
-//          if (isRunning)
-          {
-            UpdateInputState();
-          }
-        }
-        else if (index == 1)
-        {
-          return;
-        }
+        UpdateInputState();
+        Thread.Sleep(delay);
       }
     }
+
 
     public bool CheckDevice()
     {
@@ -235,9 +223,9 @@ namespace MediaPortal
     {
       if (null != inputListener)
       {
+        isRunning = false;
         inputListener.Abort();
         inputListener = null;
-        isRunning = false;
       }
     }
 

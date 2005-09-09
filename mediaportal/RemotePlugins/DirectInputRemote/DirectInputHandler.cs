@@ -485,7 +485,6 @@ namespace MediaPortal
         }
       }
 
-//      if ((actionCode > 0) && (!FilterAction(actionCode, curAxisValue)))
       if (VerifyAction(actionCode, curAxisValue))
       {
         Log.Write("mapping action {0}", actionCode);
@@ -495,27 +494,14 @@ namespace MediaPortal
 
     bool VerifyAction(int actionCode, int curAxisValue)
     {
-      Log.Write(" dw 1 ");
       bool res = false;
       if (diListener.IsRunning)
       {
-        Log.Write(" dw 2 ");
         res = (actionCode > 0) && (actionCode < 4000) && (!FilterAction(actionCode, curAxisValue));
       }
       else
       {
         res = (actionCode >= 4000) && (actionCode < 5000);
-  /*
- *         Log.Write(" dw 3 ");
-        // test:
-        if ((null != lastProc) && (actionCode == 4000))
-        {
-          Log.Write(" ready to kill ");
-          //          if (!lastProc.CloseMainWindow())
-          lastProc.Kill();
-          lastProc = null;
-        }
-*/        
       }
       return res;
     }
@@ -638,6 +624,7 @@ namespace MediaPortal
     void CreateListener()
     {
       diListener = new DirectInputListener();
+      diListener.Delay = this.Delay;
       diListener.OnStateChange += new MediaPortal.DirectInputListener.diStateChange(diListener_OnStateChange);
     }
 
@@ -669,13 +656,16 @@ namespace MediaPortal
       // 2) the time elapsed when sending the same code is smaller than the delay threshold
       if (actionCode == lastCodeSent)
       {
+/*
         int timeNow = timeGetTime();
         int timeElapsed = timeNow - timeLastSend;
         if (timeElapsed < delay)
         {
           res = true;
         }
-        else if (Math.Abs(axisValue) < Math.Abs(lastAxisValue))
+        else 
+*/        
+        if (Math.Abs(axisValue) < Math.Abs(lastAxisValue))
         {
           // axis is being released => don't send action!
           res = true;
