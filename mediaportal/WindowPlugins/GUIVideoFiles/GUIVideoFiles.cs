@@ -1107,8 +1107,11 @@ namespace MediaPortal.GUI.Video
                   {
                     try
                     {
-                      Utils.FileDelete(strPath+@"\folder.jpg");
-                      System.IO.File.Copy(strThumb, strPath+@"\folder.jpg");
+						string destination = strPath+@"\folder.jpg";
+
+                      Utils.FileDelete(destination);
+                      System.IO.File.Copy(strThumb, destination);
+                      System.IO.File.SetAttributes(destination, FileAttributes.Hidden);
                     }
                     catch(Exception){ }
                   }
@@ -1301,6 +1304,7 @@ namespace MediaPortal.GUI.Video
               {
                 Utils.FileDelete(strFolderImage);
                 System.IO.File.Copy(strThumbOrg, strFolderImage);
+                System.IO.File.SetAttributes(strFolderImage, FileAttributes.Hidden);
               }
               catch (Exception)
               {
@@ -1429,6 +1433,7 @@ namespace MediaPortal.GUI.Video
                         {
                           Utils.FileDelete(strFolderImage);
                           System.IO.File.Copy(strThumbOrg, strFolderImage);
+                          System.IO.File.SetAttributes(strFolderImage, FileAttributes.Hidden);
                         }
                         catch (Exception)
                         {

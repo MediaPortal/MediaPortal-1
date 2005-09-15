@@ -1200,6 +1200,8 @@ namespace MediaPortal.GUI.Pictures
               string thumbnailImageName=path+@"\folder.jpg";
               Utils.FileDelete(thumbnailImageName);
               bmp.Save(thumbnailImageName,System.Drawing.Imaging.ImageFormat.Jpeg);
+
+			  File.SetAttributes(thumbnailImageName, FileAttributes.Hidden);
             }
             catch (Exception)
             {
