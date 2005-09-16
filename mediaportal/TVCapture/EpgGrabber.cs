@@ -536,7 +536,7 @@ namespace MediaPortal.TV.Recording
 						foreach(string lang in langs)
 						{
 							if(lang==String.Empty) continue;
-							if (language==lang) grabLanguage=true;
+							if (string.Compare(language, lang, false) == 0) grabLanguage=true;
 							if (language==String.Empty) grabLanguage=true;
 						}
 					}
