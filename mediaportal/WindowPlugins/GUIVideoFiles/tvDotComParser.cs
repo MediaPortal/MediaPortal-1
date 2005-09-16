@@ -10,14 +10,16 @@ namespace MediaPortal.GUI.Video
 	/// </summary>
 	public class tvDotComParser : ISetupForm
 	{
-		public tvDotComParser()
+		static tvDotComParser()
 		{
-
+			if(System.IO.File.Exists("log/tvcomLog.txt"))
+				System.IO.File.Copy("log/tvcomLog.txt", "log/tvcomLog.bak", true);
+			writer = new System.IO.StreamWriter("log/tvcomLog.txt", false);
 		}
 
 		string folderToSave = "Episode Guides/";
 		////////#####################
-		static System.IO.StreamWriter writer = new System.IO.StreamWriter("log/tvcomLog.txt", false);
+		static System.IO.StreamWriter writer;
 
 		public bool getSeasonEpisode(string filename, out int season, out int ep, out string showname)
 		{
@@ -28,6 +30,7 @@ namespace MediaPortal.GUI.Video
 			showname = cleanString(showname.Replace(".", " ").Replace("-", " "));
 			return true;
 		}
+
 
 		#region getting Information from Filename
 
@@ -182,7 +185,223 @@ namespace MediaPortal.GUI.Video
 			}
 		}
 
+
+		public bool getShownameEpisodeTitleOnly(string filename, out string showname, out string episodeTitle)
+		{
+			filename = System.IO.Path.GetFileNameWithoutExtension(filename);
+			showname = string.Empty;
+			episodeTitle = string.Empty;
+
+			// we first check if its a format like recorded by mediaportal
+			// examples: 28 FX_Rescue Me_200508310003p25
+			// 9 WDRB_Seinfeld_200508141830p2915
+			tvComLogWriteline(filename);
+			if(Regex.IsMatch(filename, "[0-9]{1,3}\\s[A-Z0-9]{2,}_"))
+			{
+				tvComLogWriteline("I think this is a MP Naming convention...");
+				tvComLogWriteline("Operation will show all Episodes of this show for manual selection!");
+				
+				try
+				{
+					showname = cleanString(Regex.Split(filename, "_")[1]).Trim();
+					episodeTitle = string.Empty;
+					return true;
+				}
+				catch
+				{
+					tvComLogWriteline("Could not get showname from filename");
+					return false;
+				}
+
+
+			}
+
+			filename = filename.ToLower();
+
+			if (filename.IndexOf("_") != -1)
+			{
+				try
+				{
+					showname = cleanString(Regex.Split(filename, "_")[0]).Trim();
+					episodeTitle = cleanString(Regex.Split(filename, "_")[1]);
+				}
+				catch
+				{
+					tvComLogWriteline("Could not get EpisodeTitle from filename");
+					return false;
+				}
+				episodeTitle = episodeTitle.Replace("hdtv", " ")
+					.Replace("pdtv", " ")
+					.Replace("ws", " ")
+					.Replace("pdtv", " ")
+					.Replace("xvid", " ")
+					.Replace("divx", " ")
+					.Replace("dsr", " ")
+					.Replace("dvdrip", " ")
+					.Replace("ac3", " ")
+					.Replace("proper", " ")
+					.Replace("_", " ")
+					.Replace(".", " ");
+				episodeTitle = Regex.Replace(episodeTitle, "[a-z]{2,4}\\[.{2,}", " ");
+				episodeTitle = Regex.Replace(episodeTitle, "[a-z]{2,4}-.{2,}", " ").Trim();
+				return true;
+			}
+			tvComLogWriteline("Could not get EpisodeTitle from filename");
+			return false;
+
+		}
+
+		
 		#endregion
+
+		public bool searchEpisodebyTitle(string showTitle, string subURL, string episodetitle, out System.Collections.SortedList possibleMatches, bool getAll)
+		{
+			if (!System.IO.Directory.Exists(folderToSave + showTitle))
+				System.IO.Directory.CreateDirectory(folderToSave + showTitle);
+
+			possibleMatches = new System.Collections.SortedList();
+			string saveListAllSeasons = folderToSave + showTitle + "/" + showTitle + "_episodeList_All_Seasons.htm";
+			bool redownload = false;
+			System.Net.WebClient Client = new System.Net.WebClient();
+
+			// we first get the guide of season1
+			if (!System.IO.File.Exists(saveListAllSeasons) || redownload)
+			{
+				Client.DownloadFile("http://www.tv.com/" + subURL + "/episode_listings.html&season=0", saveListAllSeasons);
+			}
+			System.IO.StreamReader r = new System.IO.StreamReader(saveListAllSeasons);
+			string line;
+			string correctEpisodeTitle;
+			int season, ep;
+			bool exactMatch = false;
+
+			// we first try if we can get an exact match
+			line = jumpStreamUntil(ref r, episodetitle.ToLower().Replace(' ','-').Trim());
+			if (line != "eRRoR" && !getAll)
+			{
+				// looks like we have a exact match
+				try
+				{
+					line = Regex.Split(line, "/")[4].Replace('-', ' ');
+					correctEpisodeTitle = jumpStreamUntil(ref r, "&nbsp;</strong>").Replace("&nbsp;</strong>", "").Trim();
+					line = correctEpisodeTitle.ToLower().Replace("the ", "")
+						.Replace("a ", "")
+						.Replace("an ", "")
+						.Replace("to ", "");
+
+					/*
+					 * 
+					 * "the" && word != "a" && word != "an" && word != "to" && word != "the" && word != "to"*/
+					if (line == episodetitle.ToLower().Replace("the ", "")
+						.Replace("a ", "")
+						.Replace("an ", "")
+						.Replace("to ", ""))
+					{
+						line = jumpStreamUntil(ref r, " - ");
+						line = Regex.Match(line, "\">.+<").ToString().Replace("\">", "").Replace("<", "");
+						season = Convert.ToInt32(Regex.Split(line, " - ")[0]);
+						ep = Convert.ToInt32(Regex.Split(line, " - ")[1]);
+
+						possibleMatches.Add(1, correctEpisodeTitle + "|" + season.ToString() + "|" + ep.ToString());
+						exactMatch = true;
+					}
+
+				}
+				catch
+				{
+					season = -1;
+					ep = -1;
+					tvComLogWriteline("Error in exact match finding....trying partial match");
+					//return false;
+				}
+			}
+			if(!exactMatch)
+			{
+
+				// we match differently here (dont use the helper method)
+				// the reason is we want to be more forgiving wiht partial matches
+				// so for instance we want "male unbonding (2)" to match the episode "male unbonding"
+				// you never know what people write into their filenames, and we want to try at least
+
+				// we need to reopen the stream
+				r = new System.IO.StreamReader(saveListAllSeasons);
+
+				// we get each of the episodetitles listed, and see if we can match it up
+				string[] titleSplit = Regex.Split(episodetitle, " ");
+				string[] split2;
+                
+				int possibleMatch = 0; // we sort them by the number of words matched (and the lenght of the word)
+
+				while (r.Peek() >= 0 )
+				{
+					possibleMatch = 0;
+					line = r.ReadLine();
+					if ((line = jumpStreamUntil(ref r, "/episode/")) != "eRRoR")
+					{
+						line = Regex.Split(line, "/")[4].Replace('-', ' ');
+                        
+						if(!getAll)
+						{
+							// version 1: string in guessed title is actually substring in real title
+							foreach (string word in titleSplit)
+							{
+								if (word != "the" && word != "a" && word != "an" && word != "to")
+								{
+									if (Regex.IsMatch(line, word))
+										possibleMatch += word.Length;
+								}
+							}
+
+							// version 2: string in actual title is substring in guessed title
+							split2 = Regex.Split(line, " ");
+							foreach (string word in split2)
+							{
+								if (word != "the" && word != "a" && word != "an" && word != "to")
+								{
+									if (Regex.IsMatch(episodetitle, word))
+										possibleMatch += word.Length;
+								}
+							}
+						}
+
+						if (possibleMatch > 0 || getAll)
+						{
+							// means we could match it
+							correctEpisodeTitle = jumpStreamUntil(ref r, "&nbsp;</strong>").Replace("&nbsp;</strong>", "").Trim();
+							line = jumpStreamUntil(ref r, " - ");
+							if(line.ToLower() != "error")
+							{
+								line = Regex.Match(line, "\">.+<").ToString().Replace("\">", "").Replace("<", "");
+								
+								try
+								{
+									season = Convert.ToInt32(Regex.Split(line, " - ")[0]);
+									ep = Convert.ToInt32(Regex.Split(line, " - ")[1]);
+									if(!getAll)
+										possibleMatches.Add(possibleMatch*10000 + (100-season)*100 + 100 - ep, correctEpisodeTitle + "|" + season.ToString() + "|" + ep.ToString());
+									else
+										possibleMatches.Add(season*100 + ep, correctEpisodeTitle + "|" + season.ToString() + "|" + ep.ToString());
+								}
+								catch
+								{
+									tvComLogWriteline("Error getting interpreting List of Episodes, probably this show's episodes aren't properly organized into Seasons/Episodes!");
+									return false;
+								}
+								
+							}
+							else
+								tvComLogWriteline("End of List reached... - Note this probably means that the List was not downloaded completely, please manually delete the file to force a redownload!");
+						}
+					}
+					else
+						break;
+				}
+			}
+
+			return true;
+
+
+		}
 
 
 		/// <summary>
@@ -195,13 +414,13 @@ namespace MediaPortal.GUI.Video
 		/// <param name="showTitle">Only needed to Save, make sure no special characters</param>
 		/// <param name="redownload">To tell the system to redownload - used in case episode was not found in this guide</param>
 		/// <returns>true if succesfull</returns>
-		public bool downloadGuides(string subURL, int season, string showTitle, bool redownload)
+		public bool downloadGuides(string subURL, int season, int ep, string showTitle, bool redownload)
 		{
 			if (!System.IO.Directory.Exists(folderToSave + showTitle))
 				System.IO.Directory.CreateDirectory(folderToSave + showTitle);
 
-			string saveGuide = folderToSave + showTitle + "/" + showTitle + "_episodeGuide.htm";
-			string saveList = folderToSave + showTitle + "/" + showTitle + "_episodeList_Season_" + season.ToString() + ".htm";
+			string saveGuide = folderToSave + showTitle + "/" + showTitle + "_episodeGuide_Season_" + season.ToString() + "_Page_" + getGuidePageFromEpisodeNo(ep).ToString() + ".htm";
+			//string saveList = folderToSave + showTitle + "/" + showTitle + "_episodeList_Season_" + season.ToString() + ".htm";
 			string saveSummary = folderToSave + showTitle + "/" + showTitle + "_Summary.htm";
 
 			System.Net.WebClient Client = new System.Net.WebClient();
@@ -209,28 +428,34 @@ namespace MediaPortal.GUI.Video
 			try
 			{
 
-				if (!System.IO.File.Exists(saveGuide) || redownload)
+				if (!System.IO.File.Exists(saveGuide))// || redownload)
 				{
-					Client.DownloadFile("http://www.tv.com/" + subURL + "/episode_guide.html&printable=1", saveGuide);
+					Client.DownloadFile("http://www.tv.com/" + subURL + "/episode_guide.html&season=" + season.ToString() + "&pg_episodes=" + getGuidePageFromEpisodeNo(ep).ToString(), saveGuide);
 					freshlyDownloaded = true;
 				}
 				else
 					tvComLogWriteline(saveGuide + " already exists, skipping download");
 				// **********
-				if (!System.IO.File.Exists(saveList) || redownload)
+				if (!System.IO.File.Exists(saveSummary))// || redownload)
 				{
-					Client.DownloadFile("http://www.tv.com/" + subURL + "/episode_listings.html&season=" + season.ToString(), saveList);
+					//Client.DownloadFile("http://www.tv.com/" + subURL + "/episode_listings.html&season=" + season.ToString(), saveList);
 					// if we downloaded a new episode list (normally at a new season) we also redownload the summary for updated info
 					Client.DownloadFile("http://www.tv.com/" + subURL + "/summary.html&full_summary=1", saveSummary);
 				}
 				else
-					tvComLogWriteline(saveList + " already exists, skipping download");
+					tvComLogWriteline(saveSummary + " already exists, skipping download");
 			}
 			catch { return false; };
 			return freshlyDownloaded;
 		}
 
-		
+
+		private int getGuidePageFromEpisodeNo(int ep)
+		{
+			return (int)ep/25 + 1;
+		}
+
+
 		/// <summary>
 		/// Downloads the first Image for the Show from TV.com and places it into the thumbs/videos folder
 		/// this one is called directly from the getEpisodeInfo method and is thus private
@@ -358,9 +583,9 @@ namespace MediaPortal.GUI.Video
 			//we open the streams
 
 			// the big guide with all the episode infos
-			System.IO.StreamReader seasonEpisodeListStream = new System.IO.StreamReader(folderToSave + showTitle + "/" + showTitle + "_episodeList_Season_" + seasonNumber.ToString() + ".htm");
+			System.IO.StreamReader seasonEpisodeGuideStream = new System.IO.StreamReader(folderToSave + showTitle + "/" + showTitle + "_episodeGuide_Season_" + seasonNumber.ToString() + "_Page_" + getGuidePageFromEpisodeNo(episodeNumber).ToString() + ".htm");
 			// the seasons ep list that we need to calculate the global ep number
-			System.IO.StreamReader showPrintableStream = new System.IO.StreamReader(folderToSave + showTitle + "/" + showTitle + "_episodeGuide.htm");
+			//System.IO.StreamReader showPrintableStream = new System.IO.StreamReader(folderToSave + showTitle + "/" + showTitle + "_episodeGuide.htm");
 			// the summary guide with general show info
 			System.IO.StreamReader showSummaryStream = new System.IO.StreamReader(folderToSave + showTitle + "/" + showTitle + "_Summary.htm");
 
@@ -372,142 +597,132 @@ namespace MediaPortal.GUI.Video
 
 			try
 			{
-				// PART 1: Getting the global episode number that we need later to get the info
-				// we go through down the episode list stream until the episodes begin
-				// edit: we also need to get the prod # here since its not in the print guide
+				// PART 1: Episode Specific Information
 
-				line = jumpStreamUntil(ref seasonEpisodeListStream, "Reviews / Score");
-				// we are now here
-				//  Reviews / Score
-				//  </th>
-				//  </tr>
-				// 
-				//         
-				//  <tr class="tr-alt">
-				//  <td class="p-5" style="border-bottom:1px solid #CDD5E0;">
-				//  <a href="http://www.tv.com/stargate-sg-1/children-of-the-gods-1/episode/7319/summary.html">
-				//
-				//
-				//                                                    1:                        
-				//                            
-				//               
-				// Children of the Gods (1)&nbsp;</strong>
-				// </td>
-				// we only need to get the global show number (1:) from this file
-				int epCount = 0;
-				while (epCount++ < episodeNumber)
-				{
-					line = jumpStreamUntil(ref seasonEpisodeListStream, ": ");
-				}
-				// no we are in the correct line;
-				line = line.Replace(" ", "").Replace(":", "");
-				// line holds the show global episode number
+				// how many eps down is it on this page of the guide                
+				int epCount = (getGuidePageFromEpisodeNo(episodeNumber)-1)*24;
+
+				//************** Episode Title
+
 				try
 				{
-					episodeInfo.globalNumber = Convert.ToInt32(line);
+					while (epCount++ < episodeNumber)
+					{
+						jumpStreamUntil(ref seasonEpisodeGuideStream, "class=\"f-big\"");
+					}
+					line = jumpStreamUntil(ref seasonEpisodeGuideStream, "</a>");
+					// now we are in the correct line;
+					episodeInfo.title = Regex.Split(line, "</a>")[0].Trim();
+                    
 				}
-				catch (Exception e)
+				catch
 				{
 					// apparently we werent in the correct line
-					// we cant continue without this number
-					tvComLogWriteline("Could not locate this episode!");
+					// we cant continue
+					tvComLogWriteline("Could not locate this episode! (Or a parsing Error Occured)");
 					tvComLogWriteline("Are you sure this episode exists?");
-					throw e;
+					throw;
 				}
-
-				// now prod # which is 9 lines down
-				for (int i = 0; i < 8; i++)
-					seasonEpisodeListStream.ReadLine();
-				line = seasonEpisodeListStream.ReadLine();
-				episodeInfo.prodNumber = line.Replace("</td>", "").Trim();
-
-				// PART 2: Getting the actual episode information
 
 				// needed for some conversions
 				System.Globalization.CultureInfo usCulture = new System.Globalization.CultureInfo("en-US");
-				//************** TITLE
-				line = jumpStreamUntil(ref showPrintableStream, "   " + episodeInfo.globalNumber.ToString());
-				showPrintableStream.ReadLine();
-				line = showPrintableStream.ReadLine().Replace("  ", ""); ;
-				// now we are in the correct part of the file (episode title)
-				episodeInfo.title = line;
+
+
 				//************** AirDate
-				line = jumpStreamUntil(ref showPrintableStream, ">First aired:</span>");
-				// we use regular expressions to get the date in this format:
-				// "07/27/1997"
-				line = System.Text.RegularExpressions.Regex.Match(line, "[0-9]{1,2}/[0-9]{1,2}/[0-9]{4}").ToString();
-				// we now hold the airdate
 				try
 				{
-					if (line.Length > 1)
+					line = jumpStreamUntil(ref seasonEpisodeGuideStream, "First aired:");
+					// we use regular expressions to get the date in this format:
+					// "07/27/1997"
+					line = System.Text.RegularExpressions.Regex.Match(line, "[0-9]{1,2}/[0-9]{1,2}/[0-9]{4}").ToString();
+					episodeInfo.firstAired = DateTime.Parse(line.Trim(), usCulture);
+				}
+				catch
+				{
+					tvComLogWriteline("Error Parsing First Aired Info....Skipping");
+				}
+
+				//************** Writer
+				jumpStreamUntil(ref seasonEpisodeGuideStream, "Writer:");
+				// next line hold the writers name
+				line = seasonEpisodeGuideStream.ReadLine();
+				if (line.IndexOf("/person/") != -1)
+				{
+					// otherwise there is no info on the writer
+					try
 					{
-						episodeInfo.firstAired = DateTime.Parse(line, usCulture.DateTimeFormat);
+						episodeInfo.writer = Regex.Split(line, "<|>")[2].Trim();
+					}
+					catch
+					{
+						tvComLogWriteline("Error Parsing Writer, Skipping.");
 					}
 				}
-				catch (Exception e)
-				{
-					// apparently we werent in the correct line
-					throw e;
-				}
-				//************** Writer
-				// we continue in the same manner
-				line = jumpStreamUntil(ref showPrintableStream, ">Writer:</span>");
-				line = showPrintableStream.ReadLine();
-
-				string[] split = System.Text.RegularExpressions.Regex.Split(line, "html\">|</a>");
-				foreach (string s in split)
-				{
-					if (s.IndexOf("<") == -1)
-						episodeInfo.writer += s.Trim() + ", ";
-				}
-				if (episodeInfo.writer.Length > 0)
-					episodeInfo.writer = episodeInfo.writer.Remove(episodeInfo.writer.LastIndexOf(","), episodeInfo.writer.Length - episodeInfo.writer.LastIndexOf(","));
 
 				//************** Director
-
-				line = jumpStreamUntil(ref showPrintableStream, ">Director:</span>");
-				line = showPrintableStream.ReadLine();
-
-				split = System.Text.RegularExpressions.Regex.Split(line, "html\">|</a>");
-				foreach (string s in split)
+				jumpStreamUntil(ref seasonEpisodeGuideStream, "Director:");
+				// next line hold the writers name
+				line = seasonEpisodeGuideStream.ReadLine();
+				if (line.IndexOf("/person/") != -1)
 				{
-					if (s.IndexOf("<") == -1)
-						episodeInfo.director += s.Trim() + ", ";
+					// otherwise there is no info on the writer
+					try
+					{
+						episodeInfo.director = Regex.Split(line, "<|>")[2].Trim();
+					}
+					catch
+					{
+						tvComLogWriteline("Error Parsing Director, Skipping.");
+					}
 				}
-				if (episodeInfo.director.Length > 0)
-					episodeInfo.director = episodeInfo.director.Remove(episodeInfo.director.LastIndexOf(","), episodeInfo.director.Length - episodeInfo.director.LastIndexOf(","));
 
 				//************** Guest Stars
 
-				line = jumpStreamUntil(ref showPrintableStream, ">Guest star:</span>");
-				line = showPrintableStream.ReadLine();
-
-
-				split = System.Text.RegularExpressions.Regex.Split(line.Replace("</a>",""), "<|>");
+				jumpStreamUntil(ref seasonEpisodeGuideStream, ">Guest star:</span>");
+				line = seasonEpisodeGuideStream.ReadLine();
+                
+				string[] split = Regex.Split(line.Replace("</a>", ""), "<|>");
 				string tmp;
 				foreach (string s in split)
 				{
 					tmp = s.Trim();
 					if (tmp.Length > 0 && tmp.IndexOf("href") == -1 && tmp.IndexOf("br /") == -1)
 					{
-						string[] split2 = Regex.Split(tmp,"\\(");
+						string[] split2 = Regex.Split(tmp, "\\(");
 						try
 						{
-							episodeInfo.guestStarsCharacters.Add(split2[1].Replace("),", "").Replace(")","").Trim());
+							//tvComLogWriteline(tmp);
+							episodeInfo.guestStarsCharacters.Add(split2[1].Replace("),", "").Trim());
 							episodeInfo.guestStars.Add(split2[0].Trim());
 						}
 						catch (Exception)
 						{
-							tvComLogWriteline("Error Parsing Guest Stars");
+							tvComLogWriteline("Error Parsing at least one of the Guest Stars, Skipping.");
 						}
 					}
 				}
+				// removing the ")" from the last gs Character
+				if (episodeInfo.guestStarsCharacters.Count > 0)
+				{
+					line = (string)episodeInfo.guestStarsCharacters[episodeInfo.guestStarsCharacters.Count - 1];
+					line = line.TrimEnd(')');
+					episodeInfo.guestStarsCharacters[episodeInfo.guestStarsCharacters.Count - 1] = line;
+				}
+
+				// ************* Episode Plot
+
+				// one line down from guest stars
+				line = seasonEpisodeGuideStream.ReadLine();
+				//line = line.Replace("<p>", "\n\n").Replace("<br />", "\n");
+				line = Regex.Replace(line, @"<(.|\n)*?>", "");
+				episodeInfo.description = line.Replace("<b>","").Replace("</b>","").Trim();
 
 				//************** Rating
 
 
-				line = jumpStreamUntil(ref showPrintableStream, ">Global rating:</span>");
-				line = showPrintableStream.ReadLine();
+				line = jumpStreamUntil(ref seasonEpisodeGuideStream, "com_score");
+				seasonEpisodeGuideStream.ReadLine();
+				line = seasonEpisodeGuideStream.ReadLine();
 
 				line = System.Text.RegularExpressions.Regex.Match(line, "[0-9]+\\.[0-9]*").ToString();
 
@@ -517,23 +732,24 @@ namespace MediaPortal.GUI.Video
 					if (line.Length > 1)
 					{
 						episodeInfo.rating = Double.Parse(line, usCulture.NumberFormat);
+
+						// *** we also get the number of ratings
+						line = jumpStreamUntil(ref seasonEpisodeGuideStream, "Ratings");
+						line = Regex.Match(line, "[0-9]+").ToString();
+						if (line.Length > 1)
+						{
+							episodeInfo.numberOfRatings = Int32.Parse(line);
+						}
+
 					}
 				}
 				catch (Exception e)
 				{
-					throw e;
+					tvComLogWriteline("Error Parsing the Rating or number of Ratings, Skipping.");
 				}
 
-				//************** Description
-
-				line = jumpStreamUntil(ref showPrintableStream, "<p>") + "\n";
-				while (line.IndexOf("</div>") == -1)
-					line += showPrintableStream.ReadLine() + "\n";
-
-				episodeInfo.description = line.Replace("</div>","").Replace("<b>", "").Replace("</b>", "").Replace("<p>", "").Replace("</p>", "\n\n").Replace("<i>", "").Replace("</i>", "").Replace("<br />", "").Trim();
-
-
-				// PART 3: General Show info
+             
+				// PART 2: General Show info
 
 				line = jumpStreamUntil(ref showSummaryStream, "thumb");
 				if (line != "eRRoR")
@@ -551,7 +767,7 @@ namespace MediaPortal.GUI.Video
 					{
 						tvComLogWriteline("Error at Parsing ImageURL");
 						tvComLogWriteline(e1.Message);
-                        
+
 					}
 				}
 				else
@@ -569,20 +785,37 @@ namespace MediaPortal.GUI.Video
 				}
 				catch (Exception e2)
 				{
-					if(line.ToLower() == "error")
+					if (line.ToLower() == "error")
 					{
 						// probably reads originally instead of airs
 						showSummaryStream = new System.IO.StreamReader(folderToSave + showTitle + "/" + showTitle + "_Summary.htm");
-						if((line = jumpStreamUntil(ref showSummaryStream, "Originally").ToLower()) == "error")
+						if ((line = jumpStreamUntil(ref showSummaryStream, "Originally").ToLower()) == "error")
 						{
 							// again an error here is not good
 							// we try to open the stream again to be on the top again, but the rest probably wont work either
 							showSummaryStream = new System.IO.StreamReader(folderToSave + showTitle + "/" + showTitle + "_Summary.htm");
+							tvComLogWriteline("Error at Parsing Originally");
+							tvComLogWriteline(e2.Message);
 
 						}
 					}
-					tvComLogWriteline("Error at Parsing Currently airs");
-					tvComLogWriteline(e2.Message);
+					else
+					{
+						try
+						{
+							// airtime one line lower
+							line = showSummaryStream.ReadLine();
+							episodeInfo.airtime = Regex.Split(line, "<|>")[2].Trim();
+						}
+						catch(Exception e22)
+						{
+							showSummaryStream = new System.IO.StreamReader(folderToSave + showTitle + "/" + showTitle + "_Summary.htm");
+							tvComLogWriteline("Error at Parsing Currently airs");
+							tvComLogWriteline(e22.Message);
+						}
+					}
+					
+
 				}
 
 				// ********** Network:
@@ -594,17 +827,19 @@ namespace MediaPortal.GUI.Video
 				}
 				catch (Exception e3)
 				{
+					showSummaryStream = new System.IO.StreamReader(folderToSave + showTitle + "/" + showTitle + "_Summary.htm");
 					tvComLogWriteline("Error at Parsing Network");
 					tvComLogWriteline(e3.Message);
 				}
 				// ********** runtime:
 				line = jumpStreamUntil(ref showSummaryStream, " mins)");
-				try 
-				{	        
+				try
+				{
 					episodeInfo.runtime = Convert.ToInt32(Regex.Split(line, "\\(| mins\\)")[1]);
 				}
 				catch (Exception e4)
 				{
+					showSummaryStream = new System.IO.StreamReader(folderToSave + showTitle + "/" + showTitle + "_Summary.htm");
 					tvComLogWriteline("Error at Parsing runtime");
 					tvComLogWriteline(e4.Message);
 				}
@@ -618,6 +853,7 @@ namespace MediaPortal.GUI.Video
 				}
 				catch (Exception e5)
 				{
+					showSummaryStream = new System.IO.StreamReader(folderToSave + showTitle + "/" + showTitle + "_Summary.htm");
 					tvComLogWriteline("Error at Parsing status");
 					tvComLogWriteline(e5.Message);
 				}
@@ -630,6 +866,7 @@ namespace MediaPortal.GUI.Video
 				}
 				catch (Exception e6)
 				{
+					showSummaryStream = new System.IO.StreamReader(folderToSave + showTitle + "/" + showTitle + "_Summary.htm");
 					tvComLogWriteline("Error at Parsing series premiere");
 					tvComLogWriteline(e6.Message);
 				}
@@ -638,31 +875,39 @@ namespace MediaPortal.GUI.Video
 				try
 				{
 					line = jumpStreamUntil(ref showSummaryStream, "/genre/");
-					episodeInfo.genre = Regex.Split(line, "<|>")[2].Trim();
+					do
+					{
+							if(line.IndexOf("/genre/") != -1)
+							episodeInfo.genre += "/" + Regex.Split(line, "<|>")[2].Trim();
+					} while ((line = showSummaryStream.ReadLine()).IndexOf("<br") == -1);
+					episodeInfo.genre = episodeInfo.genre.Substring(1);
+					try
+					{
+						// ******** Show Description
+						jumpStreamUntil(ref showSummaryStream, "<p class=");
+						showSummaryStream.ReadLine();
+						line = "";
+						while (line.IndexOf("</p") == -1 && showSummaryStream.Peek() >= 0)
+							line += showSummaryStream.ReadLine() + "\n";
+
+						episodeInfo.seriesDescription = line.Replace("<p>", "").Replace("</p>", "").Replace("<i>", "").Replace("</i>", "").Replace("<br />", "").Trim();
+
+					}
+					catch (Exception e8)
+					{
+						showSummaryStream = new System.IO.StreamReader(folderToSave + showTitle + "/" + showTitle + "_Summary.htm");
+						tvComLogWriteline("Error at Parsing general series desc");
+						tvComLogWriteline(e8.Message);
+					}
 
 				}
 				catch (Exception e7)
 				{
-					tvComLogWriteline("Error at Parsing genre");
+					showSummaryStream = new System.IO.StreamReader(folderToSave + showTitle + "/" + showTitle + "_Summary.htm");
+					tvComLogWriteline("Error at Parsing genre, have to skip series description");
 					tvComLogWriteline(e7.Message);
 				}
-				// ********** Series Descrp
-				try
-				{
-					jumpStreamUntil(ref showSummaryStream, "<p class=");
-					showSummaryStream.ReadLine();
-					line = "";
-					while (line.IndexOf("</p") == -1)
-						line += showSummaryStream.ReadLine() + "\n";
 
-					episodeInfo.seriesDescription = line.Replace("<p>", "").Replace("</p>", "").Replace("<i>", "").Replace("</i>", "").Replace("<br />", "").Trim();
-
-				}
-				catch (Exception e8)
-				{
-					tvComLogWriteline("Error at Parsing general series desc");
-					tvComLogWriteline(e8.Message);
-				}
 
 				// *********** Regular Cast
 
@@ -673,9 +918,9 @@ namespace MediaPortal.GUI.Video
 					while ((line = jumpStreamUntil(ref showSummaryStream, "summary.html")).IndexOf("person") != -1)
 					{
 						split = Regex.Split(line, "\">|>");
-						episodeInfo.stars.Add(split[1].Replace("</a","").Trim());
+						episodeInfo.stars.Add(split[1].Replace("</a", "").Trim());
 						line = jumpStreamUntil(ref showSummaryStream, "<br/>");
-						split = Regex.Split(line, ">");
+						split = split = Regex.Split(line, ">");
 						episodeInfo.starsCharacters.Add(split[1].Trim());
 					}
 				}
@@ -695,14 +940,14 @@ namespace MediaPortal.GUI.Video
 			}
 			finally
 			{
-				seasonEpisodeListStream.Close();
-				showPrintableStream.Close();
+				seasonEpisodeGuideStream.Close();
+				//showPrintableStream.Close();
 				showSummaryStream.Close();
 			}
 			return episodeInfo;
 		}
 
-		
+
 		/// <summary>
 		/// Helper method to quickly jump down in open Streams
 		/// </summary>
@@ -723,10 +968,29 @@ namespace MediaPortal.GUI.Video
 			return line;
 		}
 
-		private string cleanString(string s)
+
+		public string cleanString(string s)
 		{
-			return s.Replace(": ", " ").Replace(":", "").Replace("/", "").Replace("[","").Replace("]","");
+			foreach (char c in System.IO.Path.InvalidPathChars)
+				s = s.Replace(c, ' ');
+			return s.Replace('.', ' ')
+				.Replace(": ", " ")
+				.Replace("/", " ")
+				.Replace("-", " ")
+				.Replace("_", " ")
+				.Replace("[", " ")
+				.Replace("]", " ")
+				.Replace("(", " ")
+				.Replace(")", " ")
+				.Replace("?", " ")
+				.Replace("!", " ")
+				.Replace("\\", " ")
+				.Replace(";", " ")
+				.Replace("   ", " ")
+				.Replace("  ", " ")
+				.Trim();
 		}
+
 
 		public string[] searchMapping(string shownameGuess)
 		{
@@ -775,6 +1039,7 @@ namespace MediaPortal.GUI.Video
 
 		}
 
+
 		public void tvComLogWriteline(string line)
 		{
 
@@ -782,6 +1047,7 @@ namespace MediaPortal.GUI.Video
 			writer.Flush();
 
 		}
+
 
 		#region ISetupForm Members
  
@@ -806,7 +1072,8 @@ namespace MediaPortal.GUI.Video
 		// show the setup dialog
 		public void   ShowPlugin()  
 		{
-			MessageBox.Show("Nothing to configure, this is just an example");
+			tvComSetupForm setupForm = new tvComSetupForm();
+			setupForm.ShowDialog();
 		}	
  
 		// Indicates whether plugin can be enabled/disabled

@@ -11,6 +11,7 @@ namespace MediaPortal.GUI.Video
 		public int episodeNumber;
 		public string prodNumber = "";
 		public double rating;
+		public int numberOfRatings;
 		public DateTime firstAired;
 		public string director = "";
 		public string writer = "";

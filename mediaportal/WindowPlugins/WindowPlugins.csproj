@@ -1400,6 +1400,21 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "GUITVCom\TVcomSettings.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUITVCom\tvComSetupForm.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUITVCom\tvComSetupForm.resx"
+                    DependentUpon = "tvComSetupForm.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "GUIVideoFiles\episode_info.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
