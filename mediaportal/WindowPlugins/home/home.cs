@@ -410,11 +410,16 @@ namespace MediaPortal.GUI.Home
 				int y=(int)action.fAmount2;
 				if (x < m_iStartXoff  || x > m_iStartXoff+m_iMaxWidth)
 				{
+					m_keepState=State.Idle;
+					m_eState=m_keepState;
 					
 					return;
 				}
 				if (y < m_iStartYoff  || y > m_iStartYoff+m_iMaxHeight)
 				{
+					m_keepState=State.Idle;
+					m_eState=m_keepState;
+
 					GUIControl cntl=GetControl(base.GetFocusControlId());
 					if (cntl!=null) cntl.Focus=false;
 					
