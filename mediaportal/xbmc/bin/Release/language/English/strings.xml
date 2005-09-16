@@ -3491,6 +3491,10 @@
 	<value>View comments:</value>
 </string>
 
+<!-- TV.Com --> 
+<string><id>99845</id><value>TV.com Lookup</value></string>
+
+
 <string><id>12902</id><value>MSN Messenger OSD</value></string>
 
 <!-- My Programs --> 
@@ -3693,8 +3697,6 @@
 <string><id>200022</id><value>MediaPortal has found the following tv-cards:</value></string>
 <string><id>200023</id><value>Press the Next button to configure these cards</value></string>
 <string><id>200024</id><value>TV Setup</value></string>
-
-
 
 
 </strings>
