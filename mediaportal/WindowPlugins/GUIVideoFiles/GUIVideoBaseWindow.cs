@@ -337,10 +337,12 @@ namespace MediaPortal.GUI.Video
 					strLine=GUILocalizeStrings.Get(430);
 					break;
 			}
-			if (btnSortBy!=null)
-				btnSortBy.Label=strLine;
 
-			btnSortBy.IsAscending = CurrentSortAsc;
+			if(btnSortBy!=null)
+			{
+				btnSortBy.Label=strLine;
+				btnSortBy.IsAscending = CurrentSortAsc;
+			}
 		}
 
 		protected virtual void OnClick(int item)
@@ -355,7 +357,8 @@ namespace MediaPortal.GUI.Video
 		{
 			LoadSettings();
 
-			btnSortBy.SortChanged += new SortEventHandler(SortChanged);
+			if(btnSortBy != null)
+				btnSortBy.SortChanged += new SortEventHandler(SortChanged);
 		}
 		protected override void OnPageDestroy(int newWindowId)
 		{
