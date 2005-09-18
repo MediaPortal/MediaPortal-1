@@ -11,7 +11,7 @@
 		<posY>30</posY> 
 		<texture>video-empty.png</texture> 
 		<colorkey>0</colorkey> 
-		<colordiffuse>ffffffff</colordiffuse> 
+		<colordiffuse>White</colordiffuse> 
 		<visible>no</visible>
 	</control>
 	<control>
@@ -23,7 +23,7 @@
 		<label>-</label> 
 		<align>left</align> 
 		<font>font13</font> 
-		<textcolor>FFFFFFFF</textcolor> 
+		<textcolor>White</textcolor> 
 		<visible>no</visible>
 	</control>
 	<control>
@@ -35,7 +35,7 @@
 		<label>-</label> 
 		<align>left</align> 
 		<font>font13</font> 
-		<textcolor>FFFFFFFF</textcolor> 
+		<textcolor>White</textcolor> 
 		<visible>no</visible>
 	</control>
 	<control>
@@ -47,7 +47,7 @@
 		<label>-</label> 
 		<align>left</align> 
 		<font>font13</font> 
-		<textcolor>FFFFFFFF</textcolor> 
+		<textcolor>White</textcolor> 
 		<visible>no</visible> 
 	</control>
 	<control>
@@ -59,7 +59,7 @@
 		<visible>no</visible> 
 		<texture>video-pause.png</texture> 
 		<colorkey>0</colorkey> 
-		<colordiffuse>ffffffff</colordiffuse> 
+		<colordiffuse>White</colordiffuse> 
 	</control>
 	<control>
 		<description>2x image</description> 
@@ -70,7 +70,7 @@
 		<visible>no</visible> 
 		<texture>video+2x.png</texture> 
 		<colorkey>0</colorkey> 
-		<colordiffuse>ffffffff</colordiffuse> 
+		<colordiffuse>White</colordiffuse> 
 	</control>
 	<control>
 		<description>4x image</description> 
@@ -81,7 +81,7 @@
 		<visible>no</visible> 
 		<texture>video+4x.png</texture> 
 		<colorkey>0</colorkey> 
-		<colordiffuse>ffffffff</colordiffuse> 
+		<colordiffuse>White</colordiffuse> 
 	</control>
 	<control>
 		<description>8x image</description> 
@@ -92,7 +92,7 @@
 		<visible>no</visible> 
 		<texture>video+8x.png</texture> 
 		<colorkey>0</colorkey> 
-		<colordiffuse>ffffffff</colordiffuse> 
+		<colordiffuse>White</colordiffuse> 
 	</control>
 	<control>
 		<description>16x image</description> 
@@ -103,7 +103,7 @@
 		<visible>no</visible> 
 		<texture>video+16x.png</texture> 
 		<colorkey>0</colorkey> 
-		<colordiffuse>ffffffff</colordiffuse> 
+		<colordiffuse>White</colordiffuse> 
 	</control>
 	<control>
 		<description>32x image</description> 
@@ -114,7 +114,7 @@
 		<visible>no</visible> 
 		<texture>video+32x.png</texture> 
 		<colorkey>0</colorkey> 
-		<colordiffuse>ffffffff</colordiffuse> 
+		<colordiffuse>White</colordiffuse> 
 	</control>
 	<control>
 		<description>- 2x image</description> 
@@ -125,7 +125,7 @@
 		<visible>no</visible> 
 		<texture>video-2x.png</texture> 
 		<colorkey>0</colorkey> 
-		<colordiffuse>ffffffff</colordiffuse> 
+		<colordiffuse>White</colordiffuse> 
 	</control>
 	<control>
 		<description>- 4x image</description> 
@@ -136,7 +136,7 @@
 		<visible>no</visible> 
 		<texture>video-4x.png</texture> 
 		<colorkey>0</colorkey> 
-		<colordiffuse>ffffffff</colordiffuse> 
+		<colordiffuse>White</colordiffuse> 
 	</control>
 	<control>
 		<description>- 8x image</description> 
@@ -147,7 +147,7 @@
 		<visible>no</visible> 
 		<texture>video-8x.png</texture> 
 		<colorkey>0</colorkey> 
-		<colordiffuse>ffffffff</colordiffuse> 
+		<colordiffuse>White</colordiffuse> 
 	</control>
 	<control>
 		<description>- 16x image</description> 
@@ -158,7 +158,7 @@
 		<visible>no</visible> 
 		<texture>video-16x.png</texture> 
 		<colorkey>0</colorkey> 
-		<colordiffuse>ffffffff</colordiffuse> 
+		<colordiffuse>White</colordiffuse> 
 	</control>
 	<control>
 		<description>- 32x image</description> 
@@ -169,7 +169,7 @@
 		<visible>no</visible> 
 		<texture>video-32x.png</texture> 
 		<colorkey>0</colorkey> 
-		<colordiffuse>ffffffff</colordiffuse> 
+		<colordiffuse>White</colordiffuse> 
 	</control> 
 	<control>
 		<description>background</description> 
@@ -226,7 +226,7 @@
 		<label>0:00</label> 
 		<align>right</align> 
 		<font>font16</font> 
-		<textcolor>FFFFFFFF</textcolor> 
+		<textcolor>White</textcolor> 
 	</control>
 	<control>
 		<description>End Time Info</description> 
@@ -237,29 +237,29 @@
 		<label>#duration</label> 
 		<align>left</align> 
 		<font>font16</font> 
-		<textcolor>FFFFFFFF</textcolor> 
+		<textcolor>White</textcolor> 
 	</control>
 	<control>
 		<type>image</type> 
 		<id>500</id> 
-		<posX>480</posX> 
-		<posY>30</posY> 
+		<posX>626</posX> 
+		<posY>96</posY> 
 		<texture>volume.states.mute.png</texture> 
 		<colorkey>0</colorkey> 
-		<colordiffuse>ffffffff</colordiffuse> 
+		<colordiffuse>White</colordiffuse> 
 		<visible>no</visible>
 	</control>
 	<control>
 		<type>volumebar</type> 
 		<id>501</id> 
-		<posX>500</posX> 
-		<posY>30</posY> 
-		<width>100</width>
+		<posX>660</posX>
+		<posY>60</posY> 
+		<align>right</align>
 		<height>16</height>
 		<imageHeight>3</imageHeight>
 		<texture>volume.states.png</texture> 
 		<colorkey>0</colorkey> 
-		<colordiffuse>ffffffff</colordiffuse> 
+		<colordiffuse>White</colordiffuse> 
 		<visible>no</visible>
 	</control>
   </controls>

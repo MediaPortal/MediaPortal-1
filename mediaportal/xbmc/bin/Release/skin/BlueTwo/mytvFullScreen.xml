@@ -337,8 +337,8 @@
 		<control>
 			<type>image</type> 
 			<id>500</id> 
-			<posX>480</posX> 
-			<posY>30</posY> 
+			<posX>626</posX> 
+			<posY>96</posY> 
 			<texture>volume.states.mute.png</texture> 
 			<colorkey>0</colorkey> 
 			<colordiffuse>ffffffff</colordiffuse> 
@@ -347,14 +347,14 @@
 		<control>
 			<type>volumebar</type> 
 			<id>501</id> 
-			<posX>500</posX> 
-			<posY>30</posY> 
-			<width>100</width>
+			<posX>660</posX>
+			<posY>60</posY> 
+			<align>right</align>
 			<height>16</height>
 			<imageHeight>3</imageHeight>
 			<texture>volume.states.png</texture> 
 			<colorkey>0</colorkey> 
-			<colordiffuse>ffffffff</colordiffuse> 
+			<colordiffuse>White</colordiffuse> 
 			<visible>no</visible>
 		</control>		
 
