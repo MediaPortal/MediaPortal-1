@@ -1299,18 +1299,16 @@ namespace MediaPortal.GUI.Video
 				{
 					imgVolumeMuteIcon.Visible=true;
 					imgVolumeBar.Image1=1;
-					imgVolumeBar.Percent=100;
-
+					imgVolumeBar.Current=0;
 				}
 				else
 				{
-					float percent = ((float)VolumeHandler.Instance.Volume) / ((float)VolumeHandler.Instance.Maximum);
+					imgVolumeBar.Current = VolumeHandler.Instance.Step;
+					imgVolumeBar.Maximum = VolumeHandler.Instance.StepMax;
 					imgVolumeMuteIcon.Visible=false;
 					imgVolumeBar.Image1=2;
 					imgVolumeBar.Image2=1;
-					imgVolumeBar.Percent=(int)(percent*100);
 				}
-				
 			}
 		}
 

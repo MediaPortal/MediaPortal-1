@@ -11,11 +11,13 @@ namespace MediaPortal.GUI.Library
 	public class GUIVolumeBar : GUIControl
 	{
 		GUIImage imgBar;
-		int					_percent=40;
+		int					_current=0;
+		int					_maximum=10;
 		int					_image1=0;
 		int					_image2=1;
 		Rectangle   rectDest = new Rectangle(0,0,0,0);
 		Rectangle   rectSrc  = new Rectangle(0,0,0,0);
+		[XMLSkinElement("align")]			protected Alignment _alignment =Alignment.ALIGN_RIGHT;  
 		[XMLSkinElement("texture")]			protected string	_textureName="";
 		[XMLSkinElement("imageHeight")]	protected int _imageHeight=3;
 
@@ -29,41 +31,55 @@ namespace MediaPortal.GUI.Library
 		{
 			imgBar   =new GUIImage(dwParentID, dwControlId, dwPosX, dwPosY,0, 0, _textureName,0);
 		}
+
 		public override void Render(float timePassed)
 		{
 			if (!IsVisible) return;
-			if (imgBar.Width<=0) return;
-			int w = (int)((((float)_percent) * ((float)m_dwWidth) )/100f);
-			int x=0;
-			while (x < w)
+			if (imgBar.TextureWidth<=0) return;
+			
+			try
 			{
-				rectDest.X=m_dwPosX+x;
-				rectDest.Y=m_dwPosY;
-				rectDest.Width=imgBar.TextureWidth;
-				rectDest.Height=m_dwHeight;
-
-				rectSrc.X      = 0;
 				rectSrc.Y      = _image1 * (imgBar.TextureHeight/_imageHeight);
 				rectSrc.Width  = imgBar.TextureWidth;
 				rectSrc.Height = imgBar.TextureHeight/_imageHeight;
-				imgBar.RenderRect(timePassed,rectSrc,rectDest);
 
-				x+=imgBar.TextureWidth;
-			}
-			while (x < m_dwWidth)
-			{
-				rectDest.X=m_dwPosX+x;
+				switch(_alignment)
+				{
+					case Alignment.ALIGN_LEFT:
+						rectDest.X = m_dwPosX;
+						break;
+					case Alignment.ALIGN_CENTER:
+						rectDest.X = m_dwPosX - (((_maximum * imgBar.TextureWidth) - imgBar.TextureWidth) / 2);
+						break;
+					case Alignment.ALIGN_RIGHT:
+						rectDest.X = imgBar.TextureWidth + m_dwPosX - (_maximum * imgBar.TextureWidth);
+						break;
+				}
+
 				rectDest.Y=m_dwPosY;
 				rectDest.Width=imgBar.TextureWidth;
 				rectDest.Height=m_dwHeight;
 
-				rectSrc.X      = 0;
-				rectSrc.Y      = _image2 * (imgBar.TextureHeight/_imageHeight);
-				rectSrc.Width  = imgBar.TextureWidth;
-				rectSrc.Height= imgBar.TextureHeight/_imageHeight;
-				imgBar.RenderRect(timePassed,rectSrc,rectDest);
+				for (int index = 0; index < _current; ++index)
+				{
+					imgBar.RenderRect(timePassed,rectSrc,rectDest);
 
-				x+=imgBar.TextureWidth;
+					rectDest.X+=imgBar.TextureWidth;
+				}
+
+				if (_image2 != _image1)
+					rectSrc.Y = _image2 * (imgBar.TextureHeight/_imageHeight);
+
+				for (int index = _current + 1; index < _maximum; ++index)
+				{
+					imgBar.RenderRect(timePassed,rectSrc,rectDest);
+
+					rectDest.X+=imgBar.TextureWidth;
+				}
+			}
+			catch(Exception e)
+			{
+				Log.Write(e.Message);
 			}
 
 		}
@@ -94,14 +110,16 @@ namespace MediaPortal.GUI.Library
 			get { return _imageHeight;}
 			set {  _imageHeight=value;}
 		}
-		public int Percent
+		public int Current
 		{
-			get { return _percent;}
-			set { 
-				_percent=value;
-				if (_percent<0) _percent=0;
-				if (_percent>100) _percent=100;
-			}
+			get { return _current;}
+			set { _current = Math.Max(0, Math.Min(value, _maximum)); }
+		}
+
+		public int Maximum
+		{
+			get { return _maximum;}
+			set { _maximum=value; }
 		}
 
 		public int TextureHeight
