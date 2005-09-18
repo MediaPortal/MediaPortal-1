@@ -77,13 +77,19 @@ namespace MediaPortal.Configuration.Sections
 
 				string playListFolder=Environment.GetFolderPath(Environment.SpecialFolder.Personal);
 				playListFolder+=@"\My Playlists";
-				try
-				{
-					System.IO.Directory.CreateDirectory(playListFolder);
-				}
-				catch(Exception){}
-
 				playlistFolderTextBox.Text = xmlreader.GetValueAsString("music", "playlists", playListFolder);
+
+				if(string.Compare(playlistFolderTextBox.Text, playListFolder) == 0)
+				{
+					if(System.IO.Directory.Exists(playListFolder) == false)
+					{
+						try
+						{
+							System.IO.Directory.CreateDirectory(playListFolder);
+						}
+						catch(Exception){}
+					}
+				}
 
 				audioPlayerComboBox.Text = xmlreader.GetValueAsString("audioplayer", "player", "Windows Media Player 9");
 			    autoPlayCheckBox.Text=xmlreader.GetValueAsString("audioplayer", "autoplay", "Yes");
