@@ -39,12 +39,6 @@ namespace MediaPortal
 			if(msg.Msg != 0x0319)
 				return false;
 
-			if(InputDevices.LastHidRequest == AppCommands.BrowserBackward)
-			{
-				keyCode = Keys.Escape;
-				return true;
-			}
-
 			// find out which request the MCE remote handled last
 			if((AppCommands)((msg.LParam.ToInt32() >> 16) & ~0xF000) == InputDevices.LastHidRequest)
 			{
@@ -57,6 +51,12 @@ namespace MediaPortal
 
 			switch(InputDevices.LastHidRequest)
 			{
+				case AppCommands.BrowserBackward:
+				{
+					keyCode = Keys.Escape;
+					return true;
+				}
+
 				case AppCommands.MediaChannelUp:
 					if (GUIGraphicsContext.IsFullScreenVideo)
 						action = new Action(Action.ActionType.ACTION_NEXT_CHANNEL,0,0);
