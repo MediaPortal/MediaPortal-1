@@ -91,6 +91,11 @@ namespace MediaPortal.Devices
 		Green = 92,
 		Yellow = 93,
 		Blue = 94,
+
+		// MCE keyboard specific
+		MyTV = 70,
+		MyRadio = 80,
+		Messenger = 100,
 	}
 
 	public enum LearnState

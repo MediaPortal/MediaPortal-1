@@ -333,8 +333,12 @@ namespace MediaPortal
 						}
 						else if (header.hid.RawData3==2)
 						{
-							//							Log.Write("key=27");
-							//							keyCode=Keys.Escape;
+							if(InputDevices.LastHidRequest == AppCommands.BrowserBackward && Environment.TickCount - InputDevices.LastHidRequestTick < 300)
+								return true;
+
+							InputDevices.LastHidRequest = AppCommands.BrowserBackward;
+
+							keyCode=Keys.Escape;
 						}
 						else
 						{
@@ -613,8 +617,6 @@ namespace MediaPortal
 							}
 						}
 						break;
-
-          
 					default:
 						//						Log.Write("unknown key pressed hid.RawData1:{0:X} {1:X} {2:X}",header.hid.RawData1,header.hid.RawData2,header.hid.RawData3);
 						return false;
@@ -624,10 +626,31 @@ namespace MediaPortal
 			return false;
 		}
 
-		#region Green Button
+		#region Green Button & other problematic buttons
 
 		void OnRemoteClick(RemoteButton button)
 		{
+			if(button == RemoteButton.MyTV)
+			{
+				GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW,0,0,0,(int)GUIWindow.Window.WINDOW_TV,0,null);
+				GUIWindowManager.SendThreadMessage(msg);
+				return;
+			}
+
+			if(button == RemoteButton.MyRadio)
+			{
+				GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW,0,0,0,(int)GUIWindow.Window.WINDOW_RADIO,0,null);
+				GUIWindowManager.SendThreadMessage(msg);
+				return;
+			}
+
+			if(button == RemoteButton.Messenger)
+			{
+				GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW,0,0,0,(int)GUIWindow.Window.WINDOW_MSN,0,null);
+				GUIWindowManager.SendThreadMessage(msg);
+				return;
+			}
+
 			if(button != RemoteButton.Start)
 				return;
 
