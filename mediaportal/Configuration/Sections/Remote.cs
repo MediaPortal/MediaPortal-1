@@ -90,28 +90,34 @@ namespace MediaPortal.Configuration.Sections
 
     static public bool IsMceRemoteInstalled(IntPtr hwnd)
     {
-      RAWINPUTDEVICE[] rid1 = new RAWINPUTDEVICE[1];
+		try
+		{
+			RAWINPUTDEVICE[] rid1 = new RAWINPUTDEVICE[1];
 
-      rid1[0].usUsagePage = 0xFFBC;
-      rid1[0].usUsage = 0x88;
-      rid1[0].dwFlags = 0;
-      rid1[0].hwndTarget = hwnd;
-      bool Success = RegisterRawInputDevices(rid1, (uint)rid1.Length, (uint)Marshal.SizeOf(rid1[0]));
-      if (Success) 
-      {
-        return true;
-      }
+			rid1[0].usUsagePage = 0xFFBC;
+			rid1[0].usUsage = 0x88;
+			rid1[0].dwFlags = 0;
+			rid1[0].hwndTarget = hwnd;
+			bool Success = RegisterRawInputDevices(rid1, (uint)rid1.Length, (uint)Marshal.SizeOf(rid1[0]));
+			if (Success) 
+			{
+				return true;
+			}
 
-      rid1[0].usUsagePage = 0x0C;
-      rid1[0].usUsage = 0x01;
-      rid1[0].dwFlags = 0;
-      rid1[0].hwndTarget = hwnd;
-      Success = RegisterRawInputDevices(rid1, (uint)rid1.Length, (uint)Marshal.SizeOf(rid1[0]));
-      if (Success) 
-      {
-        return true;
-      }
-      return false;
+			rid1[0].usUsagePage = 0x0C;
+			rid1[0].usUsage = 0x01;
+			rid1[0].dwFlags = 0;
+			rid1[0].hwndTarget = hwnd;
+			Success = RegisterRawInputDevices(rid1, (uint)rid1.Length, (uint)Marshal.SizeOf(rid1[0]));
+			if (Success) 
+			{
+				return true;
+			}
+		}
+		catch(Exception)
+		{ }
+		
+		return false;
     }
 
     /// <summary>
