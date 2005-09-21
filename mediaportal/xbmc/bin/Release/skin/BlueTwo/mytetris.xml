@@ -125,6 +125,7 @@
 				<label>#tetris_highscore</label>
 			</control>
 		</control>
+		<control>
 			<type>group</type>
 			<description>group element</description>
 			<animation>FlyInFromTop</animation>
@@ -151,5 +152,6 @@
 				<nextblockx>155</nextblockx>
 				<nextblocky>368</nextblocky>
 			</control>
+		</control>
 	</controls>
 </window>
