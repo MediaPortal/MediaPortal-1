@@ -834,12 +834,23 @@ namespace MediaPortal.GUI.Weather
 		{
 			string			strURL;
 
-			if (!Util.Win32API.IsConnectedToInternet())
+			bool skipConnectionTest = false;
+			
+			using(MediaPortal.Profile.Xml xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
+				skipConnectionTest = xmlreader.GetValueAsBool("weather","skipconnectiontest", false);
+
+			Log.Write("MyWeather.SkipConnectionTest: {0}", skipConnectionTest);
+
+			int code = 0;
+
+			if (!Util.Win32API.IsConnectedToInternet(ref code))
 			{
 				if (System.IO.File.Exists(strWeatherFile)) return true;
 
-				Log.Write("MyWeather.Download: No internet connection");
-				return false;
+				Log.Write("MyWeather.Download: No internet connection {0}", code);
+
+				if(skipConnectionTest == false)
+					return false;
 			}
 
 			char c_units = m_strWeatherFTemp[0];	//convert from temp units to metric/standard
@@ -1365,7 +1376,5 @@ namespace MediaPortal.GUI.Weather
 
 		bool _workerCompleted = false;
 	}
-
-
 }
 

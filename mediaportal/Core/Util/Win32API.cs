@@ -84,6 +84,15 @@ namespace MediaPortal.Util
       return InternetGetConnectedState( out Desc, 0 ) ;
 #endif
     }
+		
+		public static bool IsConnectedToInternet(ref int code)
+		{
+#if DEBUG
+      return true;
+#else
+			return InternetGetConnectedState( out code, 0 ) ;
+#endif
+		}
 
     public static void Show(string ClassName, string WindowName, bool bVisible)
     {
