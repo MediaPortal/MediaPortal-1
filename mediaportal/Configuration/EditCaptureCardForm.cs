@@ -445,7 +445,7 @@ namespace MediaPortal.Configuration
 
 			if (cardComboBox.Items.Count == 0)
 			{
-				MessageBox.Show("No video capture card(s) where found, you won't be able to configure a capture card", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				MessageBox.Show("No video capture card(s) were found, you won't be able to configure a capture card", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
 				useRecordingCheckBox.Enabled = useWatchingCheckBox.Enabled = filterComboBox.Enabled = cardComboBox.Enabled = okButton.Enabled = setupButton.Enabled = audioCompressorComboBox.Enabled = audioDeviceComboBox.Enabled = videoCompressorComboBox.Enabled = false;
 				comboBoxLineInput.Enabled = false;
 				trackRecording.Enabled    = false;
