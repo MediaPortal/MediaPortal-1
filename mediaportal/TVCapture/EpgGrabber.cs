@@ -536,7 +536,8 @@ namespace MediaPortal.TV.Recording
 						foreach(string lang in langs)
 						{
 							if(lang==String.Empty) continue;
-							if (string.Compare(language, lang, false) == 0) grabLanguage=true;
+							// Smirnoff: made this case-insensitive as per bug reports
+							if (string.Compare(language, lang, true) == 0) grabLanguage=true;
 							if (language==String.Empty) grabLanguage=true;
 						}
 					}
