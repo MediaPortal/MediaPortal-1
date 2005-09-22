@@ -1009,6 +1009,8 @@ namespace DShowNET
 						{
 							FilterInfo filter_infos=new FilterInfo();
 							foundfilter.QueryFilterInfo(filter_infos);
+
+							Log.Write("GetFilterByName: {0}, {1}", name, filter_infos.achName);
             
 							if (filter_infos.achName.LastIndexOf(name)!=-1)
 							{
