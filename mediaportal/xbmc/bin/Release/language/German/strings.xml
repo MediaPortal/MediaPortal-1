@@ -283,35 +283,35 @@
 	</string>
 	<string>
 		<id>139</id>
-		<value>Temperaturen:</value>
+		<value>Temperaturen: </value>
 	</string>
 	<string>
 		<id>140</id>
-		<value>CPU:</value>
+		<value>CPU: </value>
 	</string>
 	<string>
 		<id>141</id>
-		<value>GPU:</value>
+		<value>GPU: </value>
 	</string>
 	<string>
 		<id>142</id>
-		<value>Zeit:</value>
+		<value>Zeit: </value>
 	</string>
 	<string>
 		<id>143</id>
-		<value>Lokal:</value>
+		<value>Lokal: </value>
 	</string>
 	<string>
 		<id>144</id>
-		<value>Version:</value>
+		<value>Version: </value>
 	</string>
 	<string>
 		<id>145</id>
-		<value>Netzwerk:</value>
+		<value>Netzwerk: </value>
 	</string>
 	<string>
 		<id>146</id>
-		<value>Typ:</value>
+		<value>Typ: </value>
 	</string>
 	<string>
 		<id>147</id>
@@ -327,11 +327,11 @@
 	</string>
 	<string>
 		<id>150</id>
-		<value>IP:</value>
+		<value>IP: </value>
 	</string>
 	<string>
 		<id>151</id>
-		<value>Verbindung:</value>
+		<value>Verbindung: </value>
 	</string>
 	<string>
 		<id>152</id>
@@ -391,55 +391,55 @@
 	</string>
 	<string>
 		<id>166</id>
-		<value>Darstellung:</value>
+		<value>Darstellung: </value>
 	</string>
 	<string>
 		<id>167</id>
-		<value>FTP Server:</value>
+		<value>FTP Server: </value>
 	</string>
 	<string>
 		<id>168</id>
-		<value>Zeit Server:</value>
+		<value>Zeit Server: </value>
 	</string>
 	<string>
 		<id>169</id>
-		<value>Auflösung:</value>
+		<value>Auflösung: </value>
 	</string>
 	<string>
 		<id>170</id>
-		<value>Album:</value>
+		<value>Album: </value>
 	</string>
 	<string>
 		<id>171</id>
-		<value>Interpret:</value>
+		<value>Interpret: </value>
 	</string>
 	<string>
 		<id>172</id>
-		<value>Veröffentlichung:</value>
+		<value>Veröffentlichung: </value>
 	</string>
 	<string>
 		<id>173</id>
-		<value>Bewertung:</value>
+		<value>Bewertung: </value>
 	</string>
 	<string>
 		<id>174</id>
-		<value>Kategorie:</value>
+		<value>Kategorie: </value>
 	</string>
 	<string>
 		<id>175</id>
-		<value>Einflüsse:</value>
+		<value>Einflüsse: </value>
 	</string>
 	<string>
 		<id>176</id>
-		<value>Genres:</value>
+		<value>Genres: </value>
 	</string>
 	<string>
 		<id>177</id>
-		<value>Kritik:</value>
+		<value>Kritik: </value>
 	</string>
 	<string>
 		<id>178</id>
-		<value>Titel:</value>
+		<value>Titel: </value>
 	</string>
 	<string>
 		<id>179</id>
@@ -459,7 +459,7 @@
 	</string>
 	<string>
 		<id>183</id>
-		<value>Review</value>
+		<value>Kritik</value>
 	</string>
 	<string>
 		<id>184</id>
@@ -511,7 +511,7 @@
 	</string>
 	<string>
 		<id>196</id>
-		<value>Film wählen:</value>
+		<value>Film wählen: </value>
 	</string>
 	<string>
 		<id>197</id>
@@ -523,31 +523,31 @@
 	</string>
 	<string>
 		<id>199</id>
-		<value>Regisseur:</value>
+		<value>Regisseur: </value>
 	</string>
 	<string>
 		<id>200</id>
-		<value>Author:</value>
+		<value>Autor: </value>
 	</string>
 	<string>
 		<id>201</id>
-		<value>Jahr:</value>
+		<value>Jahr: </value>
 	</string>
 	<string>
 		<id>202</id>
-		<value>Beschreibung:</value>
+		<value>Beschreibung: </value>
 	</string>
 	<string>
 		<id>203</id>
-		<value>Handlung:</value>
+		<value>Handlung: </value>
 	</string>
 	<string>
 		<id>204</id>
-		<value>Bewertung:</value>
+		<value>Bewertung: </value>
 	</string>
 	<string>
 		<id>205</id>
-		<value>Abstimmung:</value>
+		<value>Stimmen: </value>
 	</string>
 	<string>
 		<id>206</id>
@@ -675,11 +675,11 @@
 	</string>
 	<string>
 		<id>237</id>
-		<value>Verkleinerung:</value>
+		<value>Verkleinerung: </value>
 	</string>
 	<string>
 		<id>238</id>
-		<value>Vergrösserung:</value>
+		<value>Vergrösserung: </value>
 	</string>
 	<string>
 		<id>240</id>
@@ -775,7 +775,7 @@
 	</string>
 	<string>
 		<id>263</id>
-		<value>HTTP Server:</value>
+		<value>HTTP Server: </value>
 	</string>
 	<string>
 		<id>264</id>
@@ -1071,7 +1071,7 @@
 	</string>
 	<string>
 		<id>337</id>
-		<value>Audio Ausgabe:</value>
+		<value>Audio Ausgabe: </value>
 	</string>
 	<string>
 		<id>338</id>
@@ -1303,7 +1303,7 @@
 	</string>
 	<string>
 		<id>396</id>
-		<value>Ortsauswahl</value>
+		<value>Stadt wechseln</value>
 	</string>
 	<string>
 		<id>397</id>
@@ -1359,7 +1359,7 @@
 	</string>
 	<string>
 		<id>411</id>
-		<value>Lade Wetterinformationen für:</value>
+		<value>Lade Wetterinformationen für: </value>
 	</string>
 	<string>
 		<id>412</id>
@@ -1459,11 +1459,11 @@
 	</string>
 	<string>
 		<id>436</id>
-		<value>Jahr:</value>
+		<value>Jahr: </value>
 	</string>
 	<string>
 		<id>437</id>
-		<value>Dauer:</value>
+		<value>Dauer: </value>
 	</string>
 	<string>
 		<id>438</id>
@@ -1519,31 +1519,31 @@
 	</string>
 	<string>
 		<id>451</id>
-		<value>Reihe 1:</value>
+		<value>Reihe 1: </value>
 	</string>
 	<string>
 		<id>452</id>
-		<value>Reihe 2:</value>
+		<value>Reihe 2: </value>
 	</string>
 	<string>
 		<id>453</id>
-		<value>Reihe 3:</value>
+		<value>Reihe 3: </value>
 	</string>
 	<string>
 		<id>454</id>
-		<value>Reihe 4:</value>
+		<value>Reihe 4: </value>
 	</string>
 	<string>
 		<id>455</id>
-		<value>Reihen:</value>
+		<value>Reihen: </value>
 	</string>
 	<string>
 		<id>456</id>
-		<value>Modus:</value>
+		<value>Modus: </value>
 	</string>
 	<string>
 		<id>457</id>
-		<value>Ansicht</value>
+		<value>Ansicht ändern</value>
 	</string>
 	<string>
 		<id>458</id>
@@ -1551,7 +1551,7 @@
 	</string>
 	<string>
 		<id>459</id>
-		<value>Subs</value>
+		<value>Untertitel</value>
 	</string>
 	<string>
 		<id>460</id>
@@ -1851,7 +1851,7 @@
 	</string>
 	<string>
 		<id>617</id>
-		<value>Neu</value>
+		<value>Neue Aufnahme</value>
 	</string>
 	<string>
 		<id>618</id>
@@ -1883,7 +1883,7 @@
 	</string>
 	<string>
 		<id>625</id>
-		<value>Aufnahme gelöscht:</value>
+		<value>Aufnahme gelöscht: </value>
 	</string>
 	<string>
 		<id>626</id>
@@ -1891,11 +1891,11 @@
 	</string>
 	<string>
 		<id>627</id>
-		<value>Kanäle:</value>
+		<value>Kanäle: </value>
 	</string>
 	<string>
 		<id>628</id>
-		<value>Programme:</value>
+		<value>Programme: </value>
 	</string>
 	<string>
 		<id>629</id>
@@ -1999,7 +1999,7 @@
 	</string>
 	<string>
 		<id>654</id>
-		<value>Auswerfen</value>
+		<value>Laufwerk öffnen</value>
 	</string>
 	<string>
 		<id>655</id>
@@ -2083,7 +2083,7 @@
 	</string>	
 	<string>
 		<id>675</id>
-		<value>Beispiel:</value>
+		<value>Beispiel: </value>
 	</string>
 	<string>
 		<id>676</id>
@@ -2130,10 +2130,10 @@
 <string><id>687</id><value>Aktive Jahre</value></string>
 <string><id>688</id><value>Instrumente</value></string>
 <string><id>689</id><value>Bio.</value></string>
-<string><id>690</id><value>Discographie (Albumen)</value></string>
-<string><id>691</id><value>Discographie (Compilations, Boxes)</value></string>
-<string><id>700</id><value>Discographie (EPS, Singles)</value></string>
-<string><id>701</id><value>Discographie (Bootlegs, Videos, Interviews)</value></string>
+<string><id>690</id><value>Diskografie (Alben)</value></string>
+<string><id>691</id><value>Diskografie (Compilations, Boxes)</value></string>
+<string><id>700</id><value>Diskografie (EPs, Singles)</value></string>
+<string><id>701</id><value>Diskografie (Bootlegs, Videos, Interviews)</value></string>
 <string><id>702</id><value>Kein Interpret gefunden!</value></string>
 <string><id>703</id><value>Keine Internetverbindung!</value></string>
 <string><id>704</id><value>Datenabfrage</value></string>
@@ -2141,7 +2141,7 @@
 <string><id>706</id><value>Nachrichtenseite wählen</value></string>
 <string><id>707</id><value>TV</value></string>
 <string><id>708</id><value>Timeshift</value></string>
-<string><id>709</id><value>Auto update</value></string>
+<string><id>709</id><value>Auto Update</value></string>
 <string><id>710</id><value>Neue Version verfügbar</value></string>
 <string><id>711</id><value>Update von v#old ->v#new ?</value></string>
 <string><id>712</id><value>Zurück</value></string>
@@ -2353,7 +2353,7 @@
 </string>
 <string>
 	<id>853</id>
-	<value>Name:</value>
+	<value>Name: </value>
 </string>
 <string>
 	<id>854</id>
@@ -2402,7 +2402,7 @@
 
 <string>
 	<id>865</id>
-	<value>Minuten bis zum Schlaf:</value>
+	<value>Minuten bis zum Schlaf: </value>
 </string>
 <string>
 	<id>866</id>
@@ -2464,11 +2464,11 @@
 </string>
 <string>
 	<id>880</id>
-	<value>Aufnahmezeit:</value>
+	<value>Aufnahmezeit: </value>
 </string>
 <string>
 	<id>881</id>
-	<value>Wähle Stopzeit:</value>
+	<value>Wähle Stopzeit: </value>
 </string>
 <string>
 	<id>882</id>
@@ -2567,11 +2567,11 @@
 </string>
 <string>
 	<id>905</id>
-	<value>Das Plugin muß noch konfiguriert werden</value>
+	<value>Das Plugin muss noch konfiguriert werden</value>
 </string>
 <string>
 	<id>906</id>
-	<value>Geben sie Ihre E-Mail Adresse im Setup ein</value>
+	<value>Geben sie ihre E-Mail Adresse im Setup ein</value>
 </string>
 <string>
 	<id>907</id>
@@ -2691,7 +2691,7 @@
 </string>
 <string>
 	<id>936</id>
-	<value>Fortsetzen bei:</value>
+	<value>Fortsetzen bei: </value>
 </string>
 <string>
 	<id>937</id>
@@ -2707,7 +2707,7 @@
 </string>
 <string>
 	<id>940</id>
-	<value>Eigenschaften</value>
+	<value>EXIF Bilddetails</value>
 </string>
 <string>
 	<id>941</id>
@@ -2787,7 +2787,7 @@
 </string>
 <string>
 	<id>960</id>
-	<value>verläßt den Raum</value>
+	<value>verlässt den Raum</value>
 </string>
 <string>
 	<id>961</id>
@@ -2965,7 +2965,7 @@
 </string>
 <string>
 	<id>1011</id>
-	<value>Biographie</value>
+	<value>Biografie</value>
 </string>
 <string>
 	<id>1012</id>
@@ -2991,6 +2991,7 @@
 	<id>1017</id>
 	<value>Sortiere: Dauer</value>
 </string>
+
 <string>
 	<id>1020</id>
 	<value>Information</value>
@@ -3079,7 +3080,7 @@
 </string>
 <string>
 	<id>1041</id>
-	<value>Weitere Folgen dieser Sendung</value>
+	<value>Alle Folgen dieser Sendung</value>
 </string>
 <string>
 	<id>1042</id>
@@ -3133,11 +3134,11 @@
 </string>	
 <string>
 	<id>1446</id>
-	<value>Aufnahme gestartet:</value>
+	<value>Aufnahme gestartet: </value>
 </string>	
 <string>
 	<id>1447</id>
-	<value>Aufnahme gestoppt:</value>
+	<value>Aufnahme gestoppt: </value>
 </string>	
 
 	<!-- My Status Strings -->
@@ -3254,7 +3255,7 @@
 	<string><id>2125</id><value>Disk wird gelöscht....</value></string>
 	<string><id>2126</id><value>CD Auswerfen</value></string>
 	<string><id>2127</id><value>CD lässt sich nicht beschreiben</value></string>
-	<string><id>2128</id><value>CD wird vorbereitet. Voraussichtliche Dauer:</value></string>
+	<string><id>2128</id><value>CD wird vorbereitet. Voraussichtliche Dauer: </value></string>
 	<string><id>2129</id><value>CD wird vorbereitet.</value></string>
 	<string><id>2130</id><value>Block</value></string>
 	<string><id>2131</id><value>von</value></string>
@@ -3353,7 +3354,7 @@
 </string>
 <string>
 	<id>8007</id>
-	<value>Autocheck</value>
+	<value>Automatisch prüfen</value>
 </string>
 <string>
 	<id>8008</id>
@@ -3445,63 +3446,67 @@
 </string>
 <string>
 	<id>9000</id>
-	<value>Bildgröße:</value>
+	<value>Bildgröße: </value>
 </string>
 <string>
 	<id>9001</id>
-	<value>Auflösung:</value>
+	<value>Auflösung: </value>
 </string>
 <string>
 	<id>9002</id>
-	<value>Blitz:</value>
+	<value>Blitz: </value>
 </string>
 <string>
 	<id>9003</id>
-	<value>Meßwert:</value>
+	<value>Fokustyp: </value>
 </string>
 <string>
 	<id>9004</id>
-	<value>Belichtungsausgleich:</value>
+	<value>EV +-: </value>
 </string>
 <string>
 	<id>9005</id>
-	<value>Blende:</value>
+	<value>Verschlusszeit: </value>
 </string>
 <string>
 	<id>9006</id>
-	<value>Aufnahmedatum:</value>
+	<value>Aufnahmedatum: </value>
 </string>
 <string>
 	<id>9007</id>
-	<value>VStop:</value>
+	<value>Blende: </value>
 </string>
 <string>
 	<id>9008</id>
-	<value>Belichtungszeit:</value>
+	<value>Belichtungszeit: </value>
 </string>
 <string>
 	<id>9009</id>
-	<value>Kamera:</value>
+	<value>Kamera: </value>
 </string>
 <string>
 	<id>9010</id>
-	<value>Geräte-Typ:</value>
+	<value>Geräte-Typ: </value>
 </string>
 <string>
 	<id>9011</id>
-	<value>Zeige Kommentare:</value>
+	<value>Zeige Kommentare: </value>
 </string>
+
+<!-- TV.Com --> 
+<string><id>99845</id><value>Suche bei TV.com</value></string>
+
 
 <string><id>12902</id><value>MSN Messenger OSD</value></string>
 
 <!-- My Programs --> 
 <string>
 	<id>13000</id>
-	<value>System::</value>
+	<value>System: </value>
 </string>
 <string>
 	<id>13001</id>
-	<value>Hersteller:</value>
+	<value>Hersteller: </value>
 </string>
 <string>
 	<id>13002</id>
@@ -3517,7 +3522,7 @@
 </string>
 <string>
 	<id>13005</id>
-	<value>Zuletzt importierte Datei:</value>
+	<value>Zuletzt importierte Datei: </value>
 </string>
 <string>
 	<id>13006</id>
@@ -3559,7 +3564,9 @@
 
 
 
+
 <string><id>16001</id><value>Partymix</value></string> 
+
 <!-- Teletext --> 
 <string><id>25001</id><value>Warte auf Seite {0:X}...!</value></string> 
 
@@ -3576,8 +3583,9 @@
 <string><id>19010</id><value>Zum Starten drücken oder klicken...</value></string> 
 <string><id>19011</id><value>Pause</value></string> 
 <string><id>19012</id><value>Spiel beendet</value></string> 
+
 <!-- For the My Weather Geoclock -->
-<string><id>19100</id><value>Weltzeituhr</value></string>
+<string><id>19100</id><value>Sonnenuhr</value></string>
 
 
 <!-- id 100000 and higher are reserved!! --> 
@@ -3623,8 +3631,8 @@
 <string><id>100504</id><value>Musik/Genre</value></string>
 <string><id>100505</id><value>Musik/Top100</value></string>
 <string><id>100506</id><value>Musik/Favoriten</value></string>
-<string><id>100600</id><value>Fernsehen/Programm</value></string>
-<string><id>100601</id><value>Fernsehen/Zeitplan</value></string>
+<string><id>100600</id><value>Fernsehen/TV-Programm</value></string>
+<string><id>100601</id><value>Fernsehen/Timer</value></string>
 <string><id>100602</id><value>Fernsehen/Vollbild</value></string>
 <string><id>100603</id><value>Fernsehen/Aufnahmen</value></string>
 <string><id>100604</id><value>Fernsehen/Suche</value></string>
@@ -3672,13 +3680,13 @@
 <string><id>200002</id><value>Sie können jetzt EPG Kanäle ihren TV Kanälen zuordnen</value></string>
 <string><id>200003</id><value>Wählen sie einen Kanal und drücken sie "Enter" um die Zurodnung zu ändern</value></string>
 <string><id>200004</id><value>Manuell eingerichtete tvguide.xml</value></string>
-<string><id>200005</id><value>Bitte geben sie die Fernbedienung an, die sie nutzen:</value></string>
-<string><id>200006</id><value>Drücken sie "Weiter" um die Einrichtung fortzusetzen.:</value></string>
+<string><id>200005</id><value>Bitte geben sie die Fernbedienung an, die sie nutzen: </value></string>
+<string><id>200006</id><value>Drücken sie "Weiter" um die Einrichtung fortzusetzen: </value></string>
 <string><id>200007</id><value>&lt;Zurück</value></string>
 <string><id>200008</id><value>Setup - Fernbedienung</value></string>
 <string><id>200009</id><value>Weiter &gt;</value></string>
 <string><id>200010</id><value>Media Portal verwandelt ihren PC in ein fortschrittliches Multi-Media-Center.</value></string>
-<string><id>200011</id><value>Mit Media Portal können sie Ihre Lieblingsmusik geniessen</value></string>
+<string><id>200011</id><value>Mit Media Portal können sie ihre Lieblingsmusik geniessen</value></string>
 <string><id>200013</id><value>Sie können damit Musik &amp; Radio hören, ihre Filme, DVD, Photos und</value></string>
 <string><id>200014</id><value>Videos ansehen, Fernsehen oder Sendungen aufnehmen und vieles mehr.</value></string>
 <string><id>200015</id><value>Der Assistent wird ihnen helfen Media Portal schnell und einfach einzurichten.</value></string>
@@ -3687,8 +3695,10 @@
 <string><id>200018</id><value>Herzlichen Glückwunsch. Media Portal ist jetzt fertig eingerichtet</value></string>
 <string><id>200019</id><value>Klicken sie auf "Fertig" um den Assistenten zu schliessen</value></string>
 <string><id>200020</id><value>Fertig</value></string>
-<string><id>200021</id><value>TV Setup - EPG</value></string>
-<string><id>200022</id><value>Media Portal hat folgende TV-Karten gefunden:</value></string>
+<string><id>200021</id><value>TV Konfiguration - EPG</value></string>
+<string><id>200022</id><value>Media Portal hat folgende TV-Karten gefunden: </value></string>
 <string><id>200023</id><value>Drücken sie den "Weiter" Knopf um die TV-Karten einzurichten</value></string>
 <string><id>200024</id><value>TV Konfiguration</value></string>
+
+
 </strings>
