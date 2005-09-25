@@ -143,6 +143,8 @@ namespace ProcessPlugins.ExternalDisplay
     {
       if (IsOpen())
       {
+        Clear();
+        DisplayLines();
         Close();
       }
     }
