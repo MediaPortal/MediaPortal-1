@@ -115,6 +115,7 @@ namespace ProcessPlugins.ExternalDisplay
       {
         lines[i] = new string(' ', Settings.Instance.TextWidth);
       }
+      DisplayLines();
     }
 
     /// <summary>
@@ -143,8 +144,6 @@ namespace ProcessPlugins.ExternalDisplay
     {
       if (IsOpen())
       {
-        Clear();
-        DisplayLines();
         Close();
       }
     }
