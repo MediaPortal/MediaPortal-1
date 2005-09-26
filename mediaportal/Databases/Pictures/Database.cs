@@ -184,7 +184,12 @@ namespace MediaPortal.Picture.Database
 					{
 						ExifMetadata.Metadata metaData=extractor.GetExifMetadata(strPic);
 						strDateTaken      = System.DateTime.Parse(metaData.DatePictureTaken.DisplayValue).ToString("yyyy-MM-dd HH:mm:ss");
+
+						// Smirnoff: Query the orientation information
+//						if(iRotation == -1)
+							iRotation = EXIFOrientationToRotation(Convert.ToInt32(metaData.Orientation.Hex));
 					}
+
 					strSQL=String.Format ("insert into picture (idPicture, strFile, iRotation, strDateTaken) values(null, '{0}',{1},'{2}')", strPic, iRotation,strDateTaken);
 					//End Changed
 
@@ -247,24 +252,9 @@ namespace MediaPortal.Picture.Database
 
 					ExifMetadata extractor = new ExifMetadata();
 					ExifMetadata.Metadata metaData=extractor.GetExifMetadata(strPicture);
-					int iExifRotation = System.Convert.ToInt32(metaData.Orientation.Hex);
-					switch (iExifRotation)
-					{
-						case 6:
-							iRotation = 1;
-							break;
-						case 3:
-							iRotation = 2;
-							break;
-						case 8:
-							iRotation = 3;
-							break;
-						default:
-							iRotation = 0;
-							break;
-					}          
+					iRotation = EXIFOrientationToRotation(Convert.ToInt32(metaData.Orientation.Hex));
 
-					AddPicture(strPicture,0);
+					AddPicture(strPicture, iRotation);
 					return 0;
 				}
 				catch (Exception ex) 
@@ -288,7 +278,7 @@ namespace MediaPortal.Picture.Database
 					string strPic=strPicture;
 					DatabaseUtility.RemoveInvalidChars(ref strPic);
 
-					long lPicId=AddPicture(strPicture,iRotation);
+					long lPicId=AddPicture(strPicture, iRotation);
 					if (lPicId>=0)
 					{
 						strSQL=String.Format("update picture set iRotation={0} where strFile like '{1}'",iRotation,strPic);
@@ -302,6 +292,7 @@ namespace MediaPortal.Picture.Database
 				}
 			}
 		}
+
 		//Changed mbuzina
 		public DateTime GetDateTaken(string strPicture)
 		{
@@ -327,7 +318,7 @@ namespace MediaPortal.Picture.Database
 							return dtDateTime;
 						}
 					}
-					AddPicture(strPicture,0);
+					AddPicture(strPicture,-1);
 					using (ExifMetadata extractor = new ExifMetadata())
 					{
 						ExifMetadata.Metadata metaData=extractor.GetExifMetadata(strPic);
@@ -352,6 +343,22 @@ namespace MediaPortal.Picture.Database
 			}
 		}
 		//End Changed
+
+		public int EXIFOrientationToRotation(int orientation)
+		{
+			Log.Write("Orientation: {0}", orientation);
+
+			if(orientation == 6)
+				return 1;
+
+			if(orientation == 3)
+				return 2;
+
+			if(orientation == 8)
+				return 3;
+
+			return 0;
+		}
 			
 		#region IDisposable Members
 
