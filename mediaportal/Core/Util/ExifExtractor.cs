@@ -25,6 +25,7 @@ using System.Drawing.Imaging;
 using System.Globalization;
 using System.Diagnostics;
 using MediaPortal.GUI.Library;
+
 namespace MediaPortal.GUI.Pictures
 {
   /// Thanks to Doug Hanhart http://www.dotnet247.com/247reference/msgs/28/144569.aspx for the following code:
@@ -66,7 +67,10 @@ namespace MediaPortal.GUI.Pictures
       public MetadataItem Flash;
       public MetadataItem Resolution;
       public MetadataItem ImageDimensions;
+			public MetadataItem Orientation;
+
     }
+
 
     public int Count()
     {
@@ -140,6 +144,41 @@ namespace MediaPortal.GUI.Pictures
             break;
         }
       }
+
+			if (Description == "Orientation")
+			{
+				switch(Value)
+				{
+					case "0":
+						DescriptionValue = "Undefined";
+						break;
+					case "1":
+						DescriptionValue = "Normal";
+						break;
+					case "2":
+						DescriptionValue = "Flip Horizontal";
+						break;
+					case "3":
+						DescriptionValue = "Rotate 180";
+						break;
+					case "4":
+						DescriptionValue = "Flip Vertical";
+						break;
+					case "5":
+						DescriptionValue = "Transpose";
+						break;
+					case "6":
+						DescriptionValue = "Rotate 90";
+						break;
+					case "7":
+						DescriptionValue = "Transverse";
+						break;
+					case "8":
+						DescriptionValue = "Rotate 270";
+						break;
+				}
+			}
+
       return DescriptionValue;
     }
 
@@ -191,6 +230,7 @@ namespace MediaPortal.GUI.Pictures
         //MyMetadata.ExposureCompensation.Hex = "9204";
         //MyMetadata.MeteringMode.Hex			= "9207";
         //MyMetadata.Flash.Hex				= "9209";
+				//MyMetadata.Orientation.Hex				= "112";
 
         // Declare an ASCIIEncoding to use for returning string values from bytes
         System.Text.ASCIIEncoding Value = new System.Text.ASCIIEncoding();
@@ -273,7 +313,14 @@ namespace MediaPortal.GUI.Pictures
               string StringValue = BitConverter.ToString(propItem.Value).Substring(0,1);
               MyMetadata.ExposureCompensation.DisplayValue = StringValue;// + " (Needs work to confirm accuracy)";
             }
-          }
+					
+						MyMetadata.Orientation.Caption = "Orientation";
+						if ( proptext	== "112") 
+						{
+							MyMetadata.Orientation.DisplayValue = LookupExifValue("Orientation",BitConverter.ToInt16(propItem.Value,0).ToString());
+							MyMetadata.Orientation.Hex = BitConverter.ToInt16(propItem.Value,0).ToString();
+						}
+					}
 
           catch (Exception exc)
           {
