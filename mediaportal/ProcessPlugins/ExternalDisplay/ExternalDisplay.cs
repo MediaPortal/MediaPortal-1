@@ -61,15 +61,16 @@ namespace ProcessPlugins.ExternalDisplay
         {
           return;
         }
-				if (!VerifyDriverLynxDriver(false))
-				{
-					return;
-				}
         //Initialize display
         display = Settings.Instance.LCDType;
         if (display==null)
         {
           Log.Write("ExternalDisplay: Requested display type not found.  Plugin not started!!!");
+          return;
+        }
+        if (display is LCDHypeWrapper && !VerifyDriverLynxDriver())
+        {
+          Log.Write("ExternalDisplay: DriverLYNX Port I/O Driver (needed for the choosen display type) not detected.  Plugin not started!");
           return;
         }
         display.Initialize(Settings.Instance.Port, Settings.Instance.TextHeight, Settings.Instance.TextWidth, Settings.Instance.TextComDelay, Settings.Instance.GraphicHeight, Settings.Instance.GraphicWidth, Settings.Instance.GraphicComDelay, Settings.Instance.BackLight, Settings.Instance.Contrast);
@@ -167,11 +168,8 @@ namespace ProcessPlugins.ExternalDisplay
     /// </summary>
     public void ShowPlugin()
     {
-      if (VerifyDriverLynxDriver(true))
-      {
-        Form settings = new SetupForm();
-        settings.ShowDialog();
-      }
+      Form settings = new SetupForm();
+      settings.ShowDialog();
     }
 
     /// <summary>
@@ -381,20 +379,17 @@ namespace ProcessPlugins.ExternalDisplay
     /// <summary>
     /// Checks whether the DriverLYNX Port I/O driver is installed
     /// </summary>
-    private bool VerifyDriverLynxDriver(bool showDialog)
+    internal static bool VerifyDriverLynxDriver()
     {
       FileInfo dll = new FileInfo(string.Concat(Environment.SystemDirectory, @"\DLPORTIO.dll"));
       FileInfo sys = new FileInfo(string.Concat(Environment.SystemDirectory,@"\DRIVERS\DLPORTIO.SYS"));
       if (!(dll.Exists && sys.Exists))
       {
-				if (showDialog)
-				{
-					new DriverMissingForm().ShowDialog();
-				}
         return false;
       }
       return true;
     }
+
 
   }
 }

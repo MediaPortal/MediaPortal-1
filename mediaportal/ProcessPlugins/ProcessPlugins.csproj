@@ -239,16 +239,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "ExternalDisplay\DriverMissingForm.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ExternalDisplay\DriverMissingForm.resx"
-                    DependentUpon = "DriverMissingForm.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
                     RelPath = "ExternalDisplay\ExternalDisplay.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
