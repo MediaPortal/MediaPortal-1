@@ -2380,7 +2380,7 @@
 </string>
 <string>
 	<id>860</id>
-	<value>Increase volume over time</value>
+	<value>Fade-in volume</value>
 </string>
 <string>
 	<id>861</id>
@@ -2405,7 +2405,7 @@
 </string>
 <string>
 	<id>866</id>
-	<value>Decrease volume over time</value>
+	<value>Fade-out volume</value>
 </string>
 <string>
 	<id>867</id>
@@ -2427,7 +2427,7 @@
 </string>
 <string>
 	<id>871</id>
-	<value>Wake up pc</value>
+	<value>Wake up computer for this alarm</value>
 </string>
 <string>
 	<id>872</id>
