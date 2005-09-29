@@ -94,11 +94,10 @@ namespace MediaPortal.GUI.Library
 			if(_images == null)
 				return;
 
-			double t = Environment.TickCount - _tickCount;
-			double b = 0;
-			double c = _images.Length;
-			double d = 800;
-			double x = c * t / d + b;
+			if(_images.Length == 0)
+				return;
+
+			double x = (_images.Length * (Environment.TickCount - _tickCount)) / 800;
 
 			_images[(int)x % _images.Length].Render(timePassed);
 		}
