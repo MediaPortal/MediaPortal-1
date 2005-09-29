@@ -31,10 +31,10 @@ namespace MediaPortal.GUI.Alarm
 	/// <summary>
 	/// Summary description for GUISleepTimer.
 	/// </summary>
-	public class GUISleepTimer : GUIWindow
+	public class GUISleepTimer : GUIWindow, IDisposable
 	{
 		public event SleepTimerElapsedEventHandler SleepTimerElapsed;
-		public const int WINDOW_SLEEP_TIMER = 5002;
+		public const int WindowSleepTimer = 5002;
 
 		#region Private Variables	
 			private System.Windows.Forms.Timer _SleepTimer = new System.Windows.Forms.Timer();
@@ -58,7 +58,7 @@ namespace MediaPortal.GUI.Alarm
 				_SleepTimer.Tick += new EventHandler(OnTimer);
 				_SleepTimer.Interval = 1000; //second	
 				this.SleepTimerElapsed +=new SleepTimerElapsedEventHandler(GUISleepTimer_SleepTimerElapsed);
-				GetID=(int)GUISleepTimer.WINDOW_SLEEP_TIMER;
+				GetID=(int)GUISleepTimer.WindowSleepTimer;
 			}
 		#endregion
 
@@ -87,18 +87,17 @@ namespace MediaPortal.GUI.Alarm
 				switch ( message.Message )
 				{
 
-          case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
-            base.OnMessage(message);
-            GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(850));
-            return true;
-          //break;
+					case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
+						base.OnMessage(message);
+						GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(850));
+						return true;
+					//break;
 					case GUIMessage.MessageType.GUI_MSG_CLICKED:
 					{
 						//get sender control
 						base.OnMessage(message);
-            int iControl=message.SenderControlId;
-            
-							
+						int iControl=message.SenderControlId;
+								
 						if (iControl==(int)Controls.EnableButton)
 						{
 							GUIToggleButtonControl btnEnabled = (GUIToggleButtonControl)GetControl((int)Controls.EnableButton);
@@ -202,5 +201,14 @@ namespace MediaPortal.GUI.Alarm
 						//Util.WindowsController.ExitWindows(Util.RestartOptions.Hibernate,true);
 				}
 			#endregion
+
+		#region IDisposable Members
+
+		public void Dispose()
+		{
+			_SleepTimer.Dispose();
+		}
+
+		#endregion
 	}
 }

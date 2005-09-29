@@ -31,12 +31,11 @@ namespace MediaPortal.GUI.Alarm
 	/// <summary>
 	/// An Alarm Plugin for Media Portal
 	/// </summary>
-	public class GUIAlarm : GUIWindow, IWakeable
+	public class GUIAlarm : GUIWindow, IDisposable, IWakeable
 	{
-		public const int WINDOW_ALARM = 5000;
+		public const int WindowAlarm = 5000;
 
-		#region Private Variables	
-			
+		#region Private Variables		
 			private static int _SelectedItemNumber;
 			private System.Windows.Forms.Timer _SnoozeTimer = new System.Windows.Forms.Timer();
 			private int	_SnoozeCount;
@@ -48,15 +47,15 @@ namespace MediaPortal.GUI.Alarm
 		{
 			NewButton = 3,
 			SleepTimerButton = 4,
-			AlarmList = 5	
+			AlarmList = 50	
 		}
 		#endregion
 
 		#region Constructor
-		public GUIAlarm()
-		{
-			GetID=(int)GUIAlarm.WINDOW_ALARM;
-		}
+			public GUIAlarm()
+			{
+				GetID=(int)GUIAlarm.WindowAlarm;
+			}
 		#endregion
 		
 		#region Overrides
@@ -100,7 +99,7 @@ namespace MediaPortal.GUI.Alarm
 				case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
 				{
 					base.OnMessage(message);
-          GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(850));
+					GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(850));
 					AddAlarmsToList();
 					return true;
 				}
@@ -126,12 +125,12 @@ namespace MediaPortal.GUI.Alarm
 					{
 						//activate the new alarm window
 						_SelectedItemNumber = -1;
-						GUIWindowManager.ActivateWindow(GUIAlarmDetails.WINDOW_ALARM_DETAILS);
+						GUIWindowManager.ActivateWindow(GUIAlarmDetails.WindowAlarmDetails);
 						return true;
 					}
 					if(iControl ==(int)Controls.SleepTimerButton)
 					{
-						GUIWindowManager.ActivateWindow(GUISleepTimer.WINDOW_SLEEP_TIMER);
+						GUIWindowManager.ActivateWindow(GUISleepTimer.WindowSleepTimer);
 						return true;
 					}
 						
@@ -167,7 +166,6 @@ namespace MediaPortal.GUI.Alarm
 		/// <param name="e"></param>
 		private void OnTimer(Object sender, EventArgs e)
 		{
-			//Console.WriteLine(_SnoozeCount);
 			if(_SnoozeCount == _SnoozeTime)
 			{
 				_SnoozeTimer.Enabled= false;
@@ -185,13 +183,14 @@ namespace MediaPortal.GUI.Alarm
 		{ 
 			InitializeSnoozeTimer();
 			_SnoozeTime = Alarm.SnoozeTime;
+
 			//Load all the alarms 
 			Alarm.LoadAll();
-
-			//DateTime earliestStarttime = DateTime.Now.AddMinutes(3);	
-			//Alarm.GetNextAlarmDateTime(earliestStarttime);
 		}
 
+		/// <summary>
+		/// Adds the alarms to the list control
+		/// </summary>
 		private void AddAlarmsToList()
 		{
 			foreach (Alarm objAlarm in Alarm.LoadedAlarms)
@@ -203,11 +202,11 @@ namespace MediaPortal.GUI.Alarm
 				//set proper label
 				if(objAlarm.AlarmOccurrenceType == Alarm.AlarmType.Recurring)
 				{
-					item.Label2 = objAlarm.DaysEnabled + "   " + objAlarm.Time.ToString("HH:mm");
+					item.Label2 = objAlarm.DaysEnabled + "   " + objAlarm.Time.ToShortTimeString();
 				}
 				else
 				{
-					item.Label2 = objAlarm.Time.ToShortDateString() +  "   " + objAlarm.Time.ToString("HH:mm");
+					item.Label2 = objAlarm.Time.ToShortDateString() +  "   " + objAlarm.Time.ToShortTimeString();
 				}
 			
 				item.IsFolder=false;
@@ -217,7 +216,7 @@ namespace MediaPortal.GUI.Alarm
 				if (!objAlarm.Enabled)
 					item.Shaded = true;
 
-				item.IconImage = GetIcon(objAlarm,(Alarm.MediaType)objAlarm.AlarmMediaType);
+				item.IconImage = objAlarm.GetIcon;
 				
 				GUIControl.AddListItemControl(GetID,(int)Controls.AlarmList,item);
 			}
@@ -228,25 +227,7 @@ namespace MediaPortal.GUI.Alarm
 		void OnClick(int iItem)
 		{
 			_SelectedItemNumber = iItem;
-
-			GUIWindowManager.ActivateWindow(GUIAlarmDetails.WINDOW_ALARM_DETAILS);				
-		}
-		private string GetIcon(Alarm alarm,Alarm.MediaType mediaType)
-		{
-			switch(mediaType)
-			{
-				case Alarm.MediaType.File:
-					return "defaultAudio.png";
-				case Alarm.MediaType.PlayList:
-					return "DefaultPlaylist.png";
-				case Alarm.MediaType.Radio:
-				{
-					string thumb=Utils.GetCoverArt(Thumbs.Radio,alarm.Sound);
-					if (thumb!=String.Empty) return thumb;
-					return "DefaultMyradio.png";	
-				}
-			}
-			return string.Empty;
+			GUIWindowManager.ActivateWindow(GUIAlarmDetails.WindowAlarmDetails);				
 		}
 
 		#endregion
@@ -268,7 +249,7 @@ namespace MediaPortal.GUI.Alarm
 			return false;// !PreShutdownCheck();
 		}
 
-		public DateTime GetNextEvent(DateTime earliestWakeuptime)
+		public DateTime GetNextEvent(DateTime earliestWakeupTime)
 		{	
 			return Alarm.GetNextAlarmDateTime(DateTime.Now);
 		}
@@ -278,6 +259,14 @@ namespace MediaPortal.GUI.Alarm
 		}
 
 		#endregion
-		
+
+		#region IDisposable Members
+
+		public void Dispose()
+		{
+			_SnoozeTimer.Dispose();
+		}
+
+		#endregion
 	}
 }

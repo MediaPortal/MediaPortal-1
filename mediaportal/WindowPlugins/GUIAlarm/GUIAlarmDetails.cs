@@ -30,28 +30,29 @@ using MediaPortal.Dialogs;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.Radio.Database;
+using System.Globalization;
 
 namespace MediaPortal.GUI.Alarm
 {
 	/// <summary>
 	/// Alarm Details Window for the myalarm plugin
 	/// </summary>
-	public class GUIAlarmDetails : GUIWindow
+	public class GUIAlarmDetails : GUIWindow, IDisposable
 	{
-		public const int WINDOW_ALARM_DETAILS = 5001;
+		public const int WindowAlarmDetails = 5001;
 
 		#region Private Variables
-		private Alarm _CurrentAlarm;
-		private string _AlarmSoundsFolder = string.Empty;
-		private string _PlayListFolder;
-		private int ID;
+			private Alarm _CurrentAlarm;
+			private string _AlarmSoundsFolder = string.Empty;
+			private string _PlayListFolder;
+			private int _Id;
 		#endregion
 
 		#region Constructor
-		public GUIAlarmDetails()
-		{
-			GetID=GUIAlarmDetails.WINDOW_ALARM_DETAILS;
-		}
+			public GUIAlarmDetails()
+			{
+				GetID=GUIAlarmDetails.WindowAlarmDetails;
+			}
 		#endregion
 				
 		#region Private Enumerations
@@ -74,7 +75,9 @@ namespace MediaPortal.GUI.Alarm
 			DateLabel = 26,
 			DateDay = 27,
 			DateMonth = 28,
-			DateYear = 29
+			DateYear = 29,
+			MessageButton = 30,
+			MediaTypeImage = 31
 		}
 
 		private enum DayOfWeekControls
@@ -88,8 +91,9 @@ namespace MediaPortal.GUI.Alarm
 			Sunday = 16
 		}
 		#endregion
-		[SkinControlAttribute(4)]			protected GUISelectButtonControl btnMediaType=null;
-		[SkinControlAttribute(24)]		protected GUISelectButtonControl btnAlarmType=null;
+
+		[SkinControlAttribute(4)]		protected GUISelectButtonControl btnMediaType;
+		[SkinControlAttribute(24)]		protected GUISelectButtonControl btnAlarmType;
 		
 		#region Overrides
 		public override bool Init()
@@ -130,10 +134,11 @@ namespace MediaPortal.GUI.Alarm
 						
 					if (iControl == (int)Controls.RenameButton)
 					{
-						string strName= string.Empty;
+						string strName= _CurrentAlarm.Name;
 						GetStringFromKeyboard(ref strName);
 						if (strName.Length != 0)
 						{
+							_CurrentAlarm.Name = strName;
 							GUIControl.SetControlLabel(GetID,(int)Controls.NameLabel,strName);
 							GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(850) + @"/" + strName);
 							GUIControl.FocusControl(GetID, iControl);
@@ -141,19 +146,18 @@ namespace MediaPortal.GUI.Alarm
 						return true;
 					}
 					if(iControl ==(int)Controls.VolumeFadeButton)
-					{
-							
+					{	
 						return true;
 					}
 					if (iControl==(int)Controls.SoundList)
 					{
 						GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED,GetID,0,iControl,0,0,null);
 						OnMessage(msg);
-						int iItem=(int)msg.Param1;
+						//int iItem=(int)msg.Param1;
 						int iAction=(int)message.Param1;
 						if (iAction == (int)Action.ActionType.ACTION_SELECT_ITEM)
 						{
-							OnClick(iItem);
+							OnClick();
 						}
 						GUIControl.FocusControl(GetID, iControl);
 						return true;
@@ -170,7 +174,6 @@ namespace MediaPortal.GUI.Alarm
 						GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, iControl, 0, 0, null);
 						OnMessage(msg);
 						int nSelected = (int)msg.Param1;
-
 						_CurrentAlarm.AlarmMediaType = (Alarm.MediaType)nSelected;
 						LoadListControl(_CurrentAlarm.AlarmMediaType);
 						return true;
@@ -184,6 +187,32 @@ namespace MediaPortal.GUI.Alarm
 						_CurrentAlarm.AlarmOccurrenceType = (Alarm.AlarmType)nSelected;
 						SetTypeControls(_CurrentAlarm.AlarmOccurrenceType);
 					}
+//					if(iControl == (int)Controls.MessageButton)
+//					{	
+//						string strMessage = _CurrentAlarm.Message;
+//						GetStringFromKeyboard(ref strMessage);
+//						if (strMessage.Length != 0)
+//						{
+//							_CurrentAlarm.Message = strMessage;
+//						}
+//						return true;
+//					}
+					if(iControl == (int)Controls.AlarmHour)
+					{
+						GUISpinControl sc = ((GUISpinControl)GetControl((int)Controls.AlarmHour));
+						if(sc.Value == sc.GetMaximum())
+							sc.Value = sc.GetMinimum() + 1;
+						if(sc.Value==sc.GetMinimum())
+							sc.Value = sc.GetMaximum() - 1;
+					}
+					if(iControl == (int)Controls.AlarmMinute)
+					{
+						GUISpinControl sc = ((GUISpinControl)GetControl((int)Controls.AlarmMinute));
+						if(sc.Value == sc.GetMaximum())
+							sc.Value = sc.GetMinimum() + 1;
+						if(sc.Value==sc.GetMinimum())
+							sc.Value = sc.GetMaximum() - 1;
+					}
 				}
 					break;
 					
@@ -193,11 +222,11 @@ namespace MediaPortal.GUI.Alarm
 		#endregion
 
 		#region Base Dialog Members
-		public void RenderDlg(float timePassed)
-		{
-			// render this dialog box
-			base.Render(timePassed);
-		}
+			public void RenderDlg(float timePassed)
+			{
+				// render this dialog box
+				base.Render(timePassed);
+			}
 	
 		#endregion
 
@@ -207,7 +236,6 @@ namespace MediaPortal.GUI.Alarm
 		/// </summary>
 		private void LoadListControl(Alarm.MediaType mediaType)
 		{
-				
 			//clear the list
 			GUIControl.ClearControl(GetID,(int)Controls.SoundList);
 
@@ -217,10 +245,11 @@ namespace MediaPortal.GUI.Alarm
 			switch(mediaType)
 			{
 				case Alarm.MediaType.Radio:
-					//set the label
-					GUIControl.SetControlLabel(GetID,(int)Controls.SoundListLabel,GUILocalizeStrings.Get(862));
-					//load radios
 					_CurrentAlarm.AlarmMediaType = Alarm.MediaType.Radio;
+					//set the labels
+					GUIControl.SetControlLabel(GetID,(int)Controls.SoundListLabel,GUILocalizeStrings.Get(862));
+					GUIControl.SetControlLabel(GetID,(int)Controls.NoMediaFoundLabel,GUILocalizeStrings.Get(872));
+					//load radios
 					ArrayList stations = new ArrayList();
 					RadioDatabase.GetStations(ref stations);
 					foreach (RadioStation station in stations)
@@ -242,9 +271,10 @@ namespace MediaPortal.GUI.Alarm
 					}
 					break;
 				case Alarm.MediaType.File:
-					GUIControl.SetControlLabel(GetID,(int)Controls.SoundListLabel,GUILocalizeStrings.Get(863));
-					//load alarm sounds directory
 					_CurrentAlarm.AlarmMediaType = Alarm.MediaType.File;
+					GUIControl.SetControlLabel(GetID,(int)Controls.SoundListLabel,GUILocalizeStrings.Get(863));
+					GUIControl.SetControlLabel(GetID,(int)Controls.NoMediaFoundLabel,GUILocalizeStrings.Get(872));
+					//load alarm sounds directory				
 					Directory = new VirtualDirectory();
 					Directory.SetExtensions(Util.Utils.AudioExtensions);
 					itemlist = Directory.GetDirectory(_AlarmSoundsFolder);
@@ -271,13 +301,17 @@ namespace MediaPortal.GUI.Alarm
 					}
 					break;
 				case Alarm.MediaType.PlayList:
-					GUIControl.SetControlLabel(GetID,(int)Controls.SoundListLabel,GUILocalizeStrings.Get(851));
-					//load playlist directory
 					_CurrentAlarm.AlarmMediaType = Alarm.MediaType.PlayList;
+					GUIControl.SetControlLabel(GetID,(int)Controls.SoundListLabel,GUILocalizeStrings.Get(851));
+					GUIControl.SetControlLabel(GetID,(int)Controls.NoMediaFoundLabel,GUILocalizeStrings.Get(872));
+
+					//load playlist directory	
 					Directory = new VirtualDirectory();
 					Directory.AddExtension(".m3u");
 					itemlist = Directory.GetDirectory(_PlayListFolder);
-						
+					
+					GUIControl.ShowControl(GetID,(int)Controls.NoMediaFoundLabel);
+
 					foreach (GUIListItem item in itemlist)
 					{
 						if(!item.IsFolder)
@@ -290,22 +324,27 @@ namespace MediaPortal.GUI.Alarm
 							}
 
 							GUIControl.AddListItemControl(GetID,(int)Controls.SoundList,pItem);
-						}
-						GUIControl.HideControl(GetID,(int)Controls.NoMediaFoundLabel);
+							GUIControl.HideControl(GetID,(int)Controls.NoMediaFoundLabel);
+						}						
 					}
-					if(itemlist.Count ==0)
-					{
-						GUIControl.ShowControl(GetID,(int)Controls.NoMediaFoundLabel);
-					}
-						break;	
+					break;	
+				case Alarm.MediaType.Message:
+					GUIControl.SetControlLabel(GetID,(int)Controls.SoundListLabel,GUILocalizeStrings.Get(8019));
+					GUIListItem Item = new GUIListItem(_CurrentAlarm.Message);
+					GUIControl.AddListItemControl(GetID,(int)Controls.SoundList,Item);
+					GUIControl.HideControl(GetID,(int)Controls.NoMediaFoundLabel);
+					_CurrentAlarm.Sound = string.Empty;
+					break;
+
 				}
 			
-			
+			((GUIImage)GetControl((int)Controls.MediaTypeImage)).SetFileName(_CurrentAlarm.GetIcon);
+
 			//set object count label & selected item
 			string strObjects = String.Format("{0} {1}",GUIControl.GetItemCount(GetID,(int)Controls.SoundList).ToString(), GUILocalizeStrings.Get(632));
 			GUIPropertyManager.SetProperty("#itemcount",strObjects);
 			if(_CurrentAlarm.SelectedItem != null)
-			GUIPropertyManager.SetProperty("#selecteditem",_CurrentAlarm.SelectedItem.Label);
+				GUIPropertyManager.SetProperty("#selecteditem",_CurrentAlarm.SelectedItem.Label);
 				
 		}
 		
@@ -371,27 +410,28 @@ namespace MediaPortal.GUI.Alarm
 			/// </summary>
 			private void LoadSettings()
 			{	
-					if(this.ID == -1)
+					if(this._Id == -1)
 					{
 						GUIControl.DisableControl(GetID,(int)Controls.DeleteButton);
 
 						//create new alarm here
-						_CurrentAlarm = new Alarm(Alarm.GetNextId());
+						_CurrentAlarm = new Alarm(Alarm.GetNextId);
 					}
 					else
 					{
 						//load existing alarm
-						_CurrentAlarm = (Alarm)Alarm.LoadedAlarms[this.ID];
+						_CurrentAlarm = (Alarm)Alarm.LoadedAlarms[_Id];
 					}
 
 					_AlarmSoundsFolder = Alarm.AlarmSoundPath;
 					_PlayListFolder = Alarm.PlayListPath;
 
-					((GUISpinControl)GetControl((int)Controls.AlarmHour)).SetRange(0,23);
-					((GUISpinControl)GetControl((int)Controls.AlarmMinute)).SetRange(0,59);
+					((GUISpinControl)GetControl((int)Controls.AlarmHour)).SetRange(-1,24);
+					((GUISpinControl)GetControl((int)Controls.AlarmMinute)).SetRange(-1,60);
 					((GUISpinControl)GetControl((int)Controls.DateDay)).SetRange(0,31);
 					((GUISpinControl)GetControl((int)Controls.DateMonth )).SetRange(0,12);
 					((GUISpinControl)GetControl((int)Controls.DateYear)).SetRange(2005,2099);
+					GUIControl.SetControlLabel(GetID,(int)Controls.DateLabel,GUILocalizeStrings.Get(636) + ":");
 
 					GUIControl.EnableControl(GetID,(int)Controls.DeleteButton);
 					GUIControl.SetControlLabel(GetID,(int)Controls.NameLabel,_CurrentAlarm.Name);
@@ -403,7 +443,7 @@ namespace MediaPortal.GUI.Alarm
 					msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT,0,0,(int)Controls.PlayType,(int)_CurrentAlarm.AlarmMediaType,0,null);
 					((GUISelectButtonControl)GetControl((int)Controls.PlayType)).OnMessage(msg);
 
-				((GUISpinControl)GetControl((int)Controls.AlarmHour)).Value = _CurrentAlarm.Time.Hour;
+					((GUISpinControl)GetControl((int)Controls.AlarmHour)).Value = _CurrentAlarm.Time.Hour;
 					((GUISpinControl)GetControl((int)Controls.AlarmMinute)).Value = _CurrentAlarm.Time.Minute;
 					((GUICheckMarkControl)GetControl((int)DayOfWeekControls.Monday)).Selected = _CurrentAlarm.Mon;
 					((GUICheckMarkControl)GetControl((int)DayOfWeekControls.Tuesday)).Selected = _CurrentAlarm.Tue;
@@ -413,7 +453,7 @@ namespace MediaPortal.GUI.Alarm
 					((GUICheckMarkControl)GetControl((int)DayOfWeekControls.Saturday)).Selected = _CurrentAlarm.Sat;
 					((GUICheckMarkControl)GetControl((int)DayOfWeekControls.Sunday)).Selected = _CurrentAlarm.Sun;
 					((GUICheckMarkControl)GetControl((int)Controls.VolumeFadeButton)).Selected = _CurrentAlarm.VolumeFade;
-					((GUICheckMarkControl)GetControl((int)Controls.WakeUpButton)).Selected = _CurrentAlarm.WakeUpPC;
+					((GUICheckMarkControl)GetControl((int)Controls.WakeUpButton)).Selected = _CurrentAlarm.Wakeup;
 					((GUIToggleButtonControl)GetControl((int)Controls.EnabledButton)).Selected = _CurrentAlarm.Enabled;
 
 					((GUISpinControl)GetControl((int)Controls.DateDay)).Value = _CurrentAlarm.Time.Day;
@@ -447,12 +487,10 @@ namespace MediaPortal.GUI.Alarm
 				_CurrentAlarm.Sat = ((GUICheckMarkControl)GetControl((int)DayOfWeekControls.Saturday)).Selected;
 				_CurrentAlarm.Sun = ((GUICheckMarkControl)GetControl((int)DayOfWeekControls.Sunday)).Selected;
 				_CurrentAlarm.VolumeFade = ((GUICheckMarkControl)GetControl((int)Controls.VolumeFadeButton)).Selected;
-				_CurrentAlarm.WakeUpPC = ((GUICheckMarkControl)GetControl((int)Controls.WakeUpButton)).Selected;
+				_CurrentAlarm.Wakeup = ((GUICheckMarkControl)GetControl((int)Controls.WakeUpButton)).Selected;
 
-				
 
 				Alarm.SaveAlarm(_CurrentAlarm);
-
 				Alarm.RefreshAlarms();
 
 			}
@@ -463,8 +501,7 @@ namespace MediaPortal.GUI.Alarm
 			private void GetAlarmId()
 			{
 				//get the selected alarm from previous window
-				GUIAlarm myAlarm = (GUIAlarm)GUIWindowManager.GetWindow((int)GUIAlarm.WINDOW_ALARM);
-				this.ID = GUIAlarm.SelectedItemNo;
+				_Id = GUIAlarm.SelectedItemNo;
 				
 				LoadSettings();			
 			}
@@ -484,19 +521,33 @@ namespace MediaPortal.GUI.Alarm
 			}
 
 
-			void OnClick(int iItem)
+			void OnClick()
 			{
 				GUIListItem item = GetSelectedItem();
 				if (item==null) return;
 
-				if(_CurrentAlarm.SelectedItem != null)
-					_CurrentAlarm.SelectedItem.IconImage = string.Empty;
-			
-				_CurrentAlarm.Sound = item.Label;
+				
+				//display dialog for message
+				if(_CurrentAlarm.AlarmMediaType == Alarm.MediaType.Message)
+				{	
+					string strMessage = _CurrentAlarm.Message;
+					GetStringFromKeyboard(ref strMessage);
+					if (strMessage.Length != 0)
+					{
+						item.Label = strMessage;
+						_CurrentAlarm.Message = strMessage;
+					}
+				}
+				else
+				{
+					if(_CurrentAlarm.SelectedItem != null)
+						_CurrentAlarm.SelectedItem.IconImage = string.Empty;
+					_CurrentAlarm.Sound = item.Label;
+					item.IconImage = "check-box.png";
+				}
 				_CurrentAlarm.SelectedItem = item;
-				item.IconImage = "check-box.png";
-
-				GUIControl.RefreshControl(GetID,(int)Controls.SoundList);				
+				GUIControl.RefreshControl(GetID,(int)Controls.SoundList);	
+							
 			}
 
 			/// <summary>
@@ -508,5 +559,13 @@ namespace MediaPortal.GUI.Alarm
 			}
 		#endregion
 
+		#region IDisposable Members
+
+		public void Dispose()
+		{
+			_CurrentAlarm.Dispose();
+		}
+
+		#endregion
 	}
 }
