@@ -20,7 +20,6 @@
  */
 
 using System;
-using System.Timers;
 using ExternalDisplay.Setting;
 using MediaPortal.GUI.Library;
 using ProcessPlugins.ExternalDisplay.Setting;
@@ -36,10 +35,9 @@ namespace ProcessPlugins.ExternalDisplay
     protected int width;
     protected Line[] lines; //Keeps the lines of text to display on the display
     protected int[] pos;    //Keeps track of the start positions in the display lines
-    private Timer timer;    //Timer to handle the scrolling
     IDisplay display;       //Reference to the display we are controlling
 
-    public DisplayHandler(IDisplay _display)
+    internal DisplayHandler(IDisplay _display)
     {
       display = _display;
       height = Settings.Instance.TextHeight;
@@ -51,28 +49,23 @@ namespace ProcessPlugins.ExternalDisplay
         lines[i] = new Line();
         pos[i]=0;
       }
-      timer = new Timer(Settings.Instance.ScrollDelay);
-      timer.Enabled = false;
-      timer.Elapsed+=new ElapsedEventHandler(timer_Elapsed);
     }
 
     /// <summary>
     /// Initializes the display.
     /// </summary>
     /// <remarks>
-    public void Start()
+    internal void Start()
     {
       display.Clear();
-      timer.Enabled=true;
     }
 
     /// <summary>
     /// Stops the display.
     /// </summary>
-    public void Stop()
+    internal void Stop()
     {
       display.Clear();
-      timer.Enabled = false;
     }
 
     /// <summary>
@@ -80,7 +73,7 @@ namespace ProcessPlugins.ExternalDisplay
     /// </summary>
     /// <param name="_line">The line to thow the message on.</param>
     /// <param name="_message">The message to show.</param>
-    public void SetLine(int _line, Line _message)
+    internal void SetLine(int _line, Line _message)
     {
       lines[_line] =_message;
       //pos[_line-1]   = 0;  //reset scrolling
@@ -89,25 +82,15 @@ namespace ProcessPlugins.ExternalDisplay
     /// <summary>
     /// Cleanup
     /// </summary>
-    public void Dispose()
+    internal void Dispose()
     {
       Stop();
     }
 
     /// <summary>
-    /// This method is called when the scrolldelay timer has elapsed, and updates the display 
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private void timer_Elapsed(object sender, ElapsedEventArgs e)
-    {
-      DisplayLines();
-    }
-
-    /// <summary>
     /// Updates the display
     /// </summary>
-    protected void DisplayLines()
+    internal void DisplayLines()
     {
       try
       {

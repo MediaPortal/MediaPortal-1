@@ -22,13 +22,12 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Timers;
+using System.Threading;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using Microsoft.Win32;
 using Message = ProcessPlugins.ExternalDisplay.Setting.Message;
-using Timer = System.Timers.Timer;
 
 namespace ProcessPlugins.ExternalDisplay
 {
@@ -39,14 +38,14 @@ namespace ProcessPlugins.ExternalDisplay
   public class ExternalDisplay : IPlugin, ISetupForm
   {
     private const int WindowID        = 9876;               //The ID for this plugin
-    private System.Timers.Timer timer;
     private IDisplay display          = null;
-    private bool started              = false;              //already started?
+    private bool stopRequested        = false;              //already started?
     private bool powerEventSubscribed = false;              //subscribed to power event?
     private DisplayHandler handler;
     private Status status             = Status.Idle;
     private DateTime lastAction       = DateTime.MinValue;  //Keeps track of when last action occurred
     private PropertyBrowser browser   = null;
+    private Thread t;
 
     #region IPlugin implementation
 
@@ -55,12 +54,36 @@ namespace ProcessPlugins.ExternalDisplay
     /// </summary>
     public void Start()
     {
+      if (t!=null && t.IsAlive) //Already started?
+      {
+        return;
+      }
+      //Start the background thread
+      t = new Thread(new ThreadStart(Run));
+      t.Start();
+      //subscribe for action notification
+      GUIWindowManager.OnNewAction += new OnActionHandler(GUIWindowManager_OnNewAction);
+      //Subscribe to the PowerModeChanged event
+      if (!powerEventSubscribed)
+      {
+        SystemEvents.PowerModeChanged += new PowerModeChangedEventHandler(SystemEvents_PowerModeChanged);
+        powerEventSubscribed = true;
+      }
+      if (Settings.Instance.ShowPropertyBrowser)
+      {
+        browser = new PropertyBrowser();
+        browser.Show();
+      }
+    }
+
+    /// <summary>
+    /// Background thread for steering the display
+    /// </summary>
+    public void Run()
+    {
+      Log.Write("ExternalDisplay plugin starting...");
       try
       {
-        if (started)  //Already started?
-        {
-          return;
-        }
         //Initialize display
         display = Settings.Instance.LCDType;
         if (display==null)
@@ -76,26 +99,18 @@ namespace ProcessPlugins.ExternalDisplay
         display.Initialize(Settings.Instance.Port, Settings.Instance.TextHeight, Settings.Instance.TextWidth, Settings.Instance.TextComDelay, Settings.Instance.GraphicHeight, Settings.Instance.GraphicWidth, Settings.Instance.GraphicComDelay, Settings.Instance.BackLight, Settings.Instance.Contrast);
         handler = new DisplayHandler(display);
         handler.Start();
-        //subscribe for action notification
-        GUIWindowManager.OnNewAction += new OnActionHandler(GUIWindowManager_OnNewAction);
-        //Start timer that will do the status processing
-        timer = new Timer((Settings.Instance.ScrollDelay + 1)/2);
-        timer.Elapsed += new ElapsedEventHandler(timer_Elapsed);
-        timer.Enabled = true;
         //Start property browser if needed
-        if (Settings.Instance.ShowPropertyBrowser)
+        while(!stopRequested)
         {
-          browser = new PropertyBrowser();
-          browser.Show();
+          DoWork();
+          handler.DisplayLines();
+          Thread.Sleep(Settings.Instance.ScrollDelay);
         }
-        //Subscribe to the PowerModeChanged event
-        if (!powerEventSubscribed)
-        {
-          SystemEvents.PowerModeChanged += new PowerModeChangedEventHandler(SystemEvents_PowerModeChanged);
-          powerEventSubscribed = true;
-        }
-        started = true;
-        Log.Write("ExternalDisplay plugin started");
+        //stop display handler
+        handler.Stop();
+        //stop display
+        display.Dispose();
+        display = null; //to avoid calling after it is disposed
       }
       catch (Exception ex)
       {
@@ -110,26 +125,22 @@ namespace ProcessPlugins.ExternalDisplay
     {
       try
       {
-        if (!started)
+        if (t==null || !t.IsAlive)
         {
           return;
         }
-        //disable timer
-        timer.Enabled = false;
-        timer.Dispose();
-        timer = null; //to avoid calling after it is disposed
-        //stop display handler
-        handler.Stop();
-        //stop display
-        display.Dispose();
-        display = null; //to avoid calling after it is disposed
-        started = false;
+        stopRequested=true;
+        while(t.IsAlive)
+        {
+          Application.DoEvents();
+          Thread.Sleep(100);
+        }
+
       }
       catch (Exception ex)
       {
         Log.Write("ExternalDisplay.Stop: " + ex.Message);
       }
-
     }
 
     #endregion
@@ -239,7 +250,7 @@ namespace ProcessPlugins.ExternalDisplay
     /// <remarks>
     /// This method is automatically called every 100ms when mediaportal is running
     /// </remarks>
-    private void timer_Elapsed(object sender, ElapsedEventArgs e)
+    private void DoWork()
     {
       try
       {
@@ -352,29 +363,30 @@ namespace ProcessPlugins.ExternalDisplay
     {
       lastAction = DateTime.Now;  //Update last action time
     }
-		bool IsTVWindow(int windowId)
-		{
-			if (windowId== (int)GUIWindow.Window.WINDOW_TV) return true;
-			if (windowId== (int)GUIWindow.Window.WINDOW_TVFULLSCREEN) return true;
-			if (windowId== (int)GUIWindow.Window.WINDOW_TVGUIDE) return true;
-			if (windowId== (int)GUIWindow.Window.WINDOW_RECORDEDTV) return true;
-			if (windowId== (int)GUIWindow.Window.WINDOW_RECORDEDTVCHANNEL) return true;
-			if (windowId== (int)GUIWindow.Window.WINDOW_RECORDEDTVGENRE) return true;
-			if (windowId== (int)GUIWindow.Window.WINDOW_SCHEDULER) return true;
-			if (windowId== (int)GUIWindow.Window.WINDOW_SEARCHTV) return true;
-			if (windowId== (int)GUIWindow.Window.WINDOW_TELETEXT) return true;
-			if (windowId== (int)GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT) return true;
-			if (windowId== (int)GUIWindow.Window.WINDOW_TV_SCHEDULER_PRIORITIES) return true;
-			if (windowId== (int)GUIWindow.Window.WINDOW_TV_CONFLICTS) return true;
-			if (windowId== (int)GUIWindow.Window.WINDOW_TV_COMPRESS_MAIN) return true;
-			if (windowId== (int)GUIWindow.Window.WINDOW_TV_COMPRESS_AUTO) return true;
-			if (windowId== (int)GUIWindow.Window.WINDOW_TV_COMPRESS_COMPRESS) return true;
-			if (windowId== (int)GUIWindow.Window.WINDOW_TV_COMPRESS_COMPRESS_STATUS) return true;
-			if (windowId== (int)GUIWindow.Window.WINDOW_TV_COMPRESS_SETTINGS) return true;
-			if (windowId== (int)GUIWindow.Window.WINDOW_TV_NO_SIGNAL) return true;
-			if (windowId== (int)GUIWindow.Window.WINDOW_TV_PROGRAM_INFO) return true;
-			return false;
-		}
+
+    bool IsTVWindow(int windowId)
+    {
+      if (windowId== (int)GUIWindow.Window.WINDOW_TV) return true;
+      if (windowId== (int)GUIWindow.Window.WINDOW_TVFULLSCREEN) return true;
+      if (windowId== (int)GUIWindow.Window.WINDOW_TVGUIDE) return true;
+      if (windowId== (int)GUIWindow.Window.WINDOW_RECORDEDTV) return true;
+      if (windowId== (int)GUIWindow.Window.WINDOW_RECORDEDTVCHANNEL) return true;
+      if (windowId== (int)GUIWindow.Window.WINDOW_RECORDEDTVGENRE) return true;
+      if (windowId== (int)GUIWindow.Window.WINDOW_SCHEDULER) return true;
+      if (windowId== (int)GUIWindow.Window.WINDOW_SEARCHTV) return true;
+      if (windowId== (int)GUIWindow.Window.WINDOW_TELETEXT) return true;
+      if (windowId== (int)GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT) return true;
+      if (windowId== (int)GUIWindow.Window.WINDOW_TV_SCHEDULER_PRIORITIES) return true;
+      if (windowId== (int)GUIWindow.Window.WINDOW_TV_CONFLICTS) return true;
+      if (windowId== (int)GUIWindow.Window.WINDOW_TV_COMPRESS_MAIN) return true;
+      if (windowId== (int)GUIWindow.Window.WINDOW_TV_COMPRESS_AUTO) return true;
+      if (windowId== (int)GUIWindow.Window.WINDOW_TV_COMPRESS_COMPRESS) return true;
+      if (windowId== (int)GUIWindow.Window.WINDOW_TV_COMPRESS_COMPRESS_STATUS) return true;
+      if (windowId== (int)GUIWindow.Window.WINDOW_TV_COMPRESS_SETTINGS) return true;
+      if (windowId== (int)GUIWindow.Window.WINDOW_TV_NO_SIGNAL) return true;
+      if (windowId== (int)GUIWindow.Window.WINDOW_TV_PROGRAM_INFO) return true;
+      return false;
+    }
 
     /// <summary>
     /// Checks whether the DriverLYNX Port I/O driver is installed
@@ -389,7 +401,6 @@ namespace ProcessPlugins.ExternalDisplay
       }
       return true;
     }
-
 
   }
 }

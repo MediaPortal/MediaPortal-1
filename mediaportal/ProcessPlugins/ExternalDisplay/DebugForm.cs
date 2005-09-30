@@ -128,6 +128,7 @@ namespace ProcessPlugins.ExternalDisplay
     public void SetLine(int _line, string _message)
     {
       textLines[_line].Text = _message;
+      Application.DoEvents(); //Give this form some time to repain itself...
     }
 
     #endregion
