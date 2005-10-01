@@ -6,7 +6,7 @@
 		<title>MAME</title>
 		<launchingApplication>...yourpathhere...\Mame32.exe</launchingApplication>
 		<useShellExecute>T</useShellExecute>
-		<arguments>-joy -skip_disclaimer -skip_gameinfo</arguments>
+		<arguments>-joy -skip_gameinfo</arguments>
 		<windowStyle>minimized</windowStyle>
 		<useQuotes>T</useQuotes>
 		<fileextensions>.zip</fileextensions>
@@ -171,7 +171,7 @@
 		<title>Atari 7800</title>
 		<launchingApplication>...yourMESSpathhere...\mess.exe</launchingApplication>
 		<useShellExecute>T</useShellExecute>
-		<arguments>a7800 -cart %FILE% -skip_gameinfo -skip_disclaimer -nonewui</arguments>
+		<arguments>a7800 -cart %FILE% -skip_gameinfo -nonewui</arguments>
 		<windowStyle>minimized</windowStyle>
 		<startupDir>...yourMESSpathhere...</startupDir>
 		<useQuotes>T</useQuotes>

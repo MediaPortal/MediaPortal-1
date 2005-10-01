@@ -28,7 +28,6 @@ using Core.Util;
 using MediaPortal.GUI.Library;
 using Programs.Utils;
 using SQLite.NET;
-using WindowPlugins.GUIPrograms;
 
 namespace ProgramsDatabase
 {
@@ -50,10 +49,11 @@ namespace ProgramsDatabase
     string catverIniFile;
     string historyDatFile;
     StringCollection listFull = new StringCollection();
-    StringCollection listGames = new StringCollection();
+    StringCollection listClones = new StringCollection();
     StringCollection catverIni = new StringCollection();
     StringCollection historyDat = new StringCollection();
     StringCollection cacheRomnames = new StringCollection();
+    StringCollection cacheCloneRomnames = new StringCollection();
     StringCollection cacheHistoryRomnames = new StringCollection();
     string[] mameRoms;
 
@@ -71,6 +71,7 @@ namespace ProgramsDatabase
       while (true)
       {
         line = sr.ReadLine();
+//        Log.Write(line);
         if (line == null)
         {
           break;
@@ -91,17 +92,11 @@ namespace ProgramsDatabase
       int romendpos;
       listFull.Clear();
       cacheRomnames.Clear();
+      SendText("generating mame list (full)");
 
       Process myProcess = new Process();
       ProcessStartInfo myProcessStartInfo = new ProcessStartInfo(curApp.Filename);
-      if (((appItemMameDirect)curApp).ImportOriginalsOnly)
-      {
-        myProcessStartInfo.Arguments = "-listfull -noclones";
-      }
-      else
-      {
-        myProcessStartInfo.Arguments = "-listfull";
-      }
+      myProcessStartInfo.Arguments = "-listfull";
       myProcessStartInfo.UseShellExecute = false;
       myProcessStartInfo.RedirectStandardOutput = true;
       myProcessStartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Minimized;
@@ -113,6 +108,7 @@ namespace ProgramsDatabase
       while (true)
       {
         line = sr.ReadLine();
+//        Log.Write(line);
         if (line == null)
         {
           break;
@@ -129,40 +125,47 @@ namespace ProgramsDatabase
       myProcess.Close();
     }
 
-    void ReadListGames()
+    void ReadListClones()
     {
       string line;
-      Process myProcess = new Process();
-      ProcessStartInfo myProcessStartInfo = new ProcessStartInfo(curApp.Filename);
+      string rom;
+      int romendpos;
+      listClones.Clear();
+      cacheCloneRomnames.Clear();
+
       if (((appItemMameDirect)curApp).ImportOriginalsOnly)
       {
-        myProcessStartInfo.Arguments = "-listgames -noclones";
-      }
-      else
-      {
-        myProcessStartInfo.Arguments = "-listgames";
-      }
-      myProcessStartInfo.UseShellExecute = false;
-      myProcessStartInfo.RedirectStandardOutput = true;
-      myProcessStartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Minimized;
-      myProcessStartInfo.CreateNoWindow = true;
-      myProcess.StartInfo = myProcessStartInfo;
-      myProcess.Start();
-      StreamReader sr = myProcess.StandardOutput;
-      while (true)
-      {
-        line = sr.ReadLine();
-        if (line == null)
+        SendText("generating mame list (clones)");
+
+        Process myProcess = new Process();
+        ProcessStartInfo myProcessStartInfo = new ProcessStartInfo(curApp.Filename);
+        myProcessStartInfo.Arguments = "-listclones";
+        myProcessStartInfo.UseShellExecute = false;
+        myProcessStartInfo.RedirectStandardOutput = true;
+        myProcessStartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Minimized;
+        myProcessStartInfo.CreateNoWindow = true;
+        myProcess.StartInfo = myProcessStartInfo;
+        myProcess.Start();
+
+        StreamReader sr = myProcess.StandardOutput;
+        while (true)
         {
-          break;
+          line = sr.ReadLine();
+          if (line == null)
+          {
+            break;
+          }
+          else
+          {
+            listClones.Add(line);
+            romendpos = line.IndexOf(" ");
+            rom = line.Substring(0, romendpos);
+            cacheCloneRomnames.Add(rom);
+          }
         }
-        else
-        {
-          listGames.Add(line);
-        }
-      
+
+        myProcess.Close();
       }
-      myProcess.Close();
     }
 
 
@@ -217,9 +220,8 @@ namespace ProgramsDatabase
 
       if (Checker.IsOk)
       {
-        SendText("generating mame-gamelist");
         ReadListFull();
-        ReadListGames();
+        ReadListClones();
         if (System.IO.File.Exists(catverIniFile))
         {
           SendText("reading catver.ini");
@@ -273,11 +275,12 @@ namespace ProgramsDatabase
       return res;
     }
 
-    string GetHistory(int index)
+    void ProcessHistory(FileItem curFile, int index)
     {
       string res = "";
       string sep = "";
       string line;
+      string firstLine = "";
       bool skipping = true;
       while (true)
       {
@@ -292,6 +295,10 @@ namespace ProgramsDatabase
           {
             res = res + sep + line;
             sep = "\r\n";
+            if (firstLine == "")
+            {
+              firstLine = line;
+            }
           }
         }
         if (line.StartsWith("$bio"))
@@ -304,60 +311,89 @@ namespace ProgramsDatabase
           break;
         }
       }
-      return res;
+      curFile.Overview = res;
+      // grab year and manufacturer out of the first line of the history.dat
+      if (firstLine != "")
+      {
+        int copyrightPos = firstLine.IndexOf("(c)");
+        if (copyrightPos > 1)
+        {
+          //Tetris (c) 1989 Sega.
+          //result: 1989 Sega.
+          string yearManu = firstLine.Substring(copyrightPos + 3).Trim();
+          yearManu = yearManu.TrimEnd('.');
+          if (yearManu.IndexOf("/") == 2)
+          {
+            // trim away month info like "04/1989 Sega
+            yearManu = yearManu.Substring(3);
+          }
+          if (yearManu.Length >= 5)
+          {
+            string year = yearManu.Substring(0, 4);
+            string manu = yearManu.Substring(5).Trim();
+            curFile.Year = ProgramUtils.StrToIntDef(year, -1);
+            curFile.Manufacturer = manu;
+          }
+        }
+      }
+
     }
 
     void FillFileItem(string fullRomname, int count)
     {
       string curRomname = Path.GetFileNameWithoutExtension(fullRomname).ToLower();
       string fullEntry = "";
-      string gameEntry = "";
       string genreEntry = "";
       string versionEntry = "";
-      string history = "";
+      bool onlyOriginals = ((appItemMameDirect)curApp).ImportOriginalsOnly;
       int historyIndex = -1;
-      FileItem curFile = new FileItem(sqlDB);
-      curFile.AppID = curApp.AppID;
-      curFile.Filename = fullRomname;
-      curFile.Imagefile = GetImageFile(curRomname);
-      if ((curFile.Imagefile == "") && (curApp.ImportValidImagesOnly))
-      {
-        return;
-      }
+
       int linePos = cacheRomnames.IndexOf(curRomname);
-      if (linePos > 0)
+      int cloneLinePos =  cacheCloneRomnames.IndexOf(curRomname);
+
+      // is the rom a clone and if yes, are clones allowed to be imported?
+      if ((!onlyOriginals) || (onlyOriginals && (cloneLinePos == -1)))
       {
-        fullEntry = listFull[linePos]; //  mspacman  "Ms. Pac-Man"
-        gameEntry = listGames[linePos - 1]; // 1981 Midway   Ms. Pac-Man
-        linePos = GetLinePos(catverIni, curRomname + "=", 0);
-        if (linePos >= 0)
+        FileItem curFile = new FileItem(sqlDB);
+        curFile.AppID = curApp.AppID;
+        curFile.Filename = fullRomname;
+        curFile.Imagefile = GetImageFile(curRomname);
+        if ((curFile.Imagefile == "") && (curApp.ImportValidImagesOnly))
         {
-          genreEntry = catverIni[linePos]; // mspacman=Maze
-          linePos = GetLinePos(catverIni, curRomname + "=", linePos + 1);
+          return;
+        }
+        if (linePos > 0)
+        {
+          fullEntry = listFull[linePos]; //  mspacman  "Ms. Pac-Man"
+          linePos = GetLinePos(catverIni, curRomname + "=", 0);
           if (linePos >= 0)
           {
-            versionEntry = catverIni[linePos]; //mspacman=.37b16
+            genreEntry = catverIni[linePos]; // mspacman=Maze
+            linePos = GetLinePos(catverIni, curRomname + "=", linePos + 1);
+            if (linePos >= 0)
+            {
+              versionEntry = catverIni[linePos]; //mspacman=.37b16
+            }
           }
-        }
-        historyIndex = GetHistoryIndex(curRomname);
-        if (historyIndex != -1)
-        {
-          history = GetHistory(historyIndex); // multiline overview of the game
-        }
+          historyIndex = GetHistoryIndex(curRomname);
+          if (historyIndex != -1)
+          {
+            // process History-Dat and set OVERVIEW / YEAR and MANUFACTURER fields
+            ProcessHistory(curFile, historyIndex);
+          }
 
-        ProcessFullEntry(curFile, fullEntry);
-        ProcessGameEntry(curFile, gameEntry);
-        ProcessGenreEntry(curFile, genreEntry);
-        ProcessVersionEntry(curFile, versionEntry);
-        curFile.System_ = "Arcade";
-        curFile.Rating = 5;
-        curFile.Overview = history;
-        curFile.Write();
-        if (OnReadNewFile != null)
-        {
-          OnReadNewFile(curFile.Title, count, mameRoms.Length);
-        }
+          ProcessFullEntry(curFile, fullEntry);
+          ProcessGenreEntry(curFile, genreEntry);
+          ProcessVersionEntry(curFile, versionEntry);
+          curFile.System_ = "Arcade";
+          curFile.Rating = 5;
+          curFile.Write();
+          if (OnReadNewFile != null)
+          {
+            OnReadNewFile(curFile.Title, count, mameRoms.Length);
+          }
 
+        }
       }
     }
 
@@ -390,18 +426,6 @@ namespace ProgramsDatabase
       else
       {
         Log.Write("myPrograms: mameImport(ProcessFullEntry): unexpected string '{0}'", fullEntry);
-      }
-    }
-
-    void ProcessGameEntry(FileItem curFile, string gameEntry)
-    {
-      if (gameEntry != "")
-      {
-        // 1981 Midway   Ms. Pac-Man
-        string strYear = gameEntry.Substring(0, 4).Trim();
-        string strManu = gameEntry.Substring(5, 37).Trim();
-        curFile.Year = ProgramUtils.StrToIntDef(strYear, -1);
-        curFile.Manufacturer = strManu;
       }
     }
 
