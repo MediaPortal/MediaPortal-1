@@ -637,6 +637,12 @@ namespace MediaPortal
 				return;
 			}
 
+			if(button == RemoteButton.AspectRatio)
+			{
+				GUIGraphicsContext.OnAction(new Action(Action.ActionType.ACTION_ASPECT_RATIO, 0, 0));
+				return;
+			}
+
 			if(button == RemoteButton.MyRadio)
 			{
 				GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW,0,0,0,(int)GUIWindow.Window.WINDOW_RADIO,0,null);

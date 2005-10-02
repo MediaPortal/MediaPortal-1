@@ -96,6 +96,9 @@ namespace MediaPortal.Devices
 		MyTV = 70,
 		MyRadio = 80,
 		Messenger = 100,
+
+		// FIC Spectra specific
+		AspectRatio = 39,
 	}
 
 	public enum LearnState
