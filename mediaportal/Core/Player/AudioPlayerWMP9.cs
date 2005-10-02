@@ -552,6 +552,7 @@ namespace MediaPortal.Player
         m_SourceRect=m_VideoRect;
           
         //m_player.fullScreen=true;
+		m_player.stretchToFit=true;
         Log.Write("AudioPlayer:done");
         return;
       }
