@@ -188,6 +188,8 @@ namespace MediaPortal.Devices
 						_doubleClickButton = (RemoteButton)_deviceBuffer[5];
 						_doubleClickTick = Environment.TickCount;
 
+						Log.Write("MrMario64: {0}", _doubleClickButton);
+
 						if(Click != null)
 							Click(_doubleClickButton);
 					}
@@ -580,6 +582,35 @@ namespace MediaPortal.Devices
 				}
 
 				if(deviceInterfaceDetailData.DevicePath.IndexOf("#vid_045e&pid_006d") != -1)
+				{
+					SetupDiDestroyDeviceInfoList(handle);
+					devicePath = deviceInterfaceDetailData.DevicePath;
+					break;
+				}
+
+				if(deviceInterfaceDetailData.DevicePath.IndexOf("#vid_1460&pid_9150") != -1)
+				{
+					SetupDiDestroyDeviceInfoList(handle);
+					devicePath = deviceInterfaceDetailData.DevicePath;
+					break;
+				}
+
+				if(deviceInterfaceDetailData.DevicePath.IndexOf("#vid_03ee&pid_2501") != -1)
+				{
+					SetupDiDestroyDeviceInfoList(handle);
+					devicePath = deviceInterfaceDetailData.DevicePath;
+					break;
+				}
+
+				if(deviceInterfaceDetailData.DevicePath.IndexOf("#vid_1509&pid_9242") != -1)
+				{
+					SetupDiDestroyDeviceInfoList(handle);
+					devicePath = deviceInterfaceDetailData.DevicePath;
+					break;
+				}
+
+				// FIC Spectra/Mycom Mediacenter (as per MrMario64)
+				if(deviceInterfaceDetailData.DevicePath.IndexOf("#vid_107b&pid_3009") != -1)
 				{
 					SetupDiDestroyDeviceInfoList(handle);
 					devicePath = deviceInterfaceDetailData.DevicePath;
