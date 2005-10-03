@@ -1673,6 +1673,44 @@ namespace MediaPortal.TV.Database
 			}
 		}
 
+		static public bool GetProgramTitles(long iStartTime, long iEndTime,ref ArrayList progs)
+		{
+			lock (typeof(TVDatabase))
+			{
+				progs.Clear();
+				try
+				{
+					if (null==m_db) return false;
+					string strSQL="select distinct strtitle,strchannel from tblprograms,channel where tblprograms.idchannel=channel.idchannel ";
+
+					SQLiteResultSet results;
+					string where =String.Format(" and ( (tblPrograms.iEndTime>='{0}' and tblPrograms.iEndTime <='{1}') ", iStartTime,iEndTime);
+					where+=String.Format(" or (tblPrograms.iStartTime>='{0}' and tblPrograms.iStartTime <= '{1}' ) ", iStartTime,iEndTime);
+					where+=String.Format(" or (tblPrograms.iStartTime<='{0}' and tblPrograms.iEndTime >= '{1}') )", iStartTime,iEndTime);
+					strSQL+=where;
+					results=m_db.Execute(strSQL);
+					if (results.Rows.Count== 0) return false;
+														
+					for (int i=0; i < results.Rows.Count;++i)
+					{
+						TVProgram prog=new TVProgram();
+						prog.Channel=DatabaseUtility.Get(results,i,"strchannel");
+						prog.Title=DatabaseUtility.Get(results,i,"strtitle");
+						progs.Add(prog);
+					}
+
+					return true;
+
+				}
+				catch(Exception ex)
+				{
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
+				}
+				return false;
+			}
+		}
+
 		static public bool SearchPrograms(long iStartTime, long iEndTime,ref ArrayList progs, int SearchKind, string SearchCriteria, string channel)
 		{
 			DatabaseUtility.RemoveInvalidChars(ref SearchCriteria);

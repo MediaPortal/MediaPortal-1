@@ -73,7 +73,7 @@ namespace MediaPortal.GUI.TV
 		int        currentLevel=0;
     string     currentGenre=String.Empty;
     string     currentSearchCriteria=String.Empty;
-		string     filterLetter="a";
+		string     filterLetter="#";
 		string     filterShow=String.Empty;
 		string     filterEpisode=String.Empty;
 
@@ -521,7 +521,7 @@ namespace MediaPortal.GUI.TV
 						if (filterLetter=="#")
 						{
 							if (filterShow==String.Empty)
-								TVDatabase.SearchMinimalPrograms(start,end, ref titles, -1, currentSearchCriteria,String.Empty);
+								TVDatabase.GetProgramTitles(start,end, ref titles);
 							else
 								TVDatabase.SearchPrograms(start,end, ref titles, 3, filterShow,String.Empty);
 						}
@@ -601,7 +601,8 @@ namespace MediaPortal.GUI.TV
               GUIListItem item = new GUIListItem();
               item.IsFolder=false;
               item.Label=program.Title;
-              item.Label2=strTime;
+							if (program.Start>0)
+								item.Label2=strTime;
               item.Path=program.Title;
               item.MusicTag=program;
 							bool isSerie;
