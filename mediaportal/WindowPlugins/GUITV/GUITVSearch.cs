@@ -518,7 +518,20 @@ namespace MediaPortal.GUI.TV
             ArrayList titles = new ArrayList();
             long start=Utils.datetolong( DateTime.Now );
             long end  =Utils.datetolong( DateTime.Now.AddMonths(1) );
-            TVDatabase.SearchPrograms(start,end, ref titles, -1, currentSearchCriteria,String.Empty);
+						if (filterLetter=="#")
+						{
+							if (filterShow==String.Empty)
+								TVDatabase.SearchMinimalPrograms(start,end, ref titles, -1, currentSearchCriteria,String.Empty);
+							else
+								TVDatabase.SearchPrograms(start,end, ref titles, 3, filterShow,String.Empty);
+						}
+						else
+						{
+							if (filterShow==String.Empty)
+								TVDatabase.SearchMinimalPrograms(start,end, ref titles, 0, filterLetter,String.Empty);
+							else
+								TVDatabase.SearchPrograms(start,end, ref titles, 3, filterShow,String.Empty);
+						}
             foreach(TVProgram program in titles)
 						{
 							if (filterLetter!="#")
@@ -531,6 +544,7 @@ namespace MediaPortal.GUI.TV
 								{
 									if (!program.Title.ToLower().StartsWith(filterLetter.ToLower())) continue;
 								}
+
 								bool add=true;
 								foreach (TVProgram prog in programs)
 								{
@@ -553,15 +567,33 @@ namespace MediaPortal.GUI.TV
 									}
 								}
 							}//if (filterLetter!="#")
+							else
+							{
+								bool add=true;
+								foreach (TVProgram prog in programs)
+								{
+									if (prog.Title == program.Title)
+									{
+										add=false;
+									}
+								}
+								if (!add && filterShow==String.Empty) continue;
+								if (add)
+								{
+									programs.Add(program);
+								}
 
+								if (filterShow!=String.Empty)
+								{
+									if (program.Title==filterShow)
+									{
+										episodes.Add(program);
+									}
+								}
+							}
 							if (filterShow!=String.Empty && program.Title!=filterShow) continue;
 
-							string strTime=String.Format("{0} {1}", 
-								Utils.GetShortDayString(program.StartTime) , 
-								program.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
-							if (filterEpisode!=String.Empty && strTime != filterEpisode) continue;
-		
-							strTime=String.Format("{0} {1} - {2}", 
+							string strTime=String.Format("{0} {1} - {2}", 
 								Utils.GetShortDayString(program.StartTime) , 
 								program.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat),
 								program.EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
