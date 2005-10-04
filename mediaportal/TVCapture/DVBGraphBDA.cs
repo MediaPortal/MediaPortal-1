@@ -2437,7 +2437,11 @@ namespace MediaPortal.TV.Recording
 			else
 				m_tsWriterInterface.SetAudioPid2(0);
 
-			m_tsWriterInterface.SetSubtitlePid((ushort)currentTuningObject.SubtitlePid);
+			if (currentTuningObject.SubtitlePid>0)
+				m_tsWriterInterface.SetSubtitlePid((ushort)currentTuningObject.SubtitlePid);
+			else
+				m_tsWriterInterface.SetSubtitlePid(0);
+
 			if (currentTuningObject.TeletextPid>0)
 				m_tsWriterInterface.SetTeletextPid((ushort)currentTuningObject.TeletextPid);
 			else
@@ -3249,6 +3253,12 @@ namespace MediaPortal.TV.Recording
 							if (currentTuningObject.TeletextPid!=data.elementary_PID) changed=true;
 							currentTuningObject.TeletextPid=data.elementary_PID;
 						}
+
+						if (data.isDVBSubtitle)
+						{
+							if (currentTuningObject.SubtitlePid!=data.elementary_PID) changed=true;
+							currentTuningObject.SubtitlePid=data.elementary_PID;
+						}
 					}//for (int pids =0; pids < info.pid_list.Count;pids++)
 
 					if (currentTuningObject.PCRPid != info.pcr_pid) changed=true;
@@ -3712,6 +3722,7 @@ namespace MediaPortal.TV.Recording
 						currentTuningObject.AudioPid=audioPid;
 						currentTuningObject.VideoPid=videoPid;
 						currentTuningObject.TeletextPid=teletextPid;
+						currentTuningObject.SubtitlePid=0;
 						currentTuningObject.PMTPid=pmtPid;
 						currentTuningObject.ServiceName=channel.Name;
 						currentTuningObject.AudioLanguage=audioLanguage;
@@ -3766,6 +3777,7 @@ namespace MediaPortal.TV.Recording
 						currentTuningObject.AudioPid=audioPid;
 						currentTuningObject.VideoPid=videoPid;
 						currentTuningObject.TeletextPid=teletextPid;
+						currentTuningObject.SubtitlePid=0;
 						currentTuningObject.PMTPid=pmtPid;
 						currentTuningObject.ServiceName=channel.Name;
 						currentTuningObject.AudioLanguage=audioLanguage;
@@ -3826,6 +3838,7 @@ namespace MediaPortal.TV.Recording
 						currentTuningObject.AudioPid=ch.AudioPid;
 						currentTuningObject.VideoPid=ch.VideoPid;
 						currentTuningObject.TeletextPid=ch.TeletextPid;
+						currentTuningObject.SubtitlePid=0;
 						currentTuningObject.PMTPid=ch.PMTPid;
 						currentTuningObject.ServiceName=channel.Name;
 						currentTuningObject.AudioLanguage=ch.AudioLanguage;
@@ -3882,6 +3895,7 @@ namespace MediaPortal.TV.Recording
 						currentTuningObject.AudioPid=audioPid;
 						currentTuningObject.VideoPid=videoPid;
 						currentTuningObject.TeletextPid=teletextPid;
+						currentTuningObject.SubtitlePid=0;
 						currentTuningObject.PMTPid=pmtPid;
 						currentTuningObject.ServiceName=channel.Name;
 						currentTuningObject.AudioLanguage=audioLanguage;
@@ -4374,6 +4388,7 @@ namespace MediaPortal.TV.Recording
 				currentTuningObject.VideoPid=0;
 				currentTuningObject.AudioPid=0;
 				currentTuningObject.TeletextPid=0;
+				currentTuningObject.SubtitlePid=0;
 				currentTuningObject.AC3Pid=0;
 				currentTuningObject.Audio1=0;
 				currentTuningObject.Audio2=0;
@@ -4450,6 +4465,11 @@ namespace MediaPortal.TV.Recording
 						{
 							currentTuningObject.TeletextPid=data.elementary_PID;
 						}
+
+						if (data.isDVBSubtitle)
+						{
+							currentTuningObject.SubtitlePid=data.elementary_PID;
+						}
 					}
 				}
 
@@ -4507,6 +4527,7 @@ namespace MediaPortal.TV.Recording
 				newchannel.AudioLanguage=currentTuningObject.AudioLanguage;
 				newchannel.VideoPid=currentTuningObject.VideoPid;
 				newchannel.TeletextPid=currentTuningObject.TeletextPid;
+				newchannel.SubtitlePid=currentTuningObject.SubtitlePid;
 				newchannel.Bandwidth=currentTuningObject.Bandwidth;
 				newchannel.PMTPid=info.network_pmt_PID;
 				newchannel.Audio1=currentTuningObject.Audio1;
@@ -4876,6 +4897,7 @@ namespace MediaPortal.TV.Recording
 						currentTuningObject.AudioPid=audioPid;
 						currentTuningObject.VideoPid=0;
 						currentTuningObject.TeletextPid=0;
+						currentTuningObject.SubtitlePid=0;
 						currentTuningObject.PMTPid=pmtPid;
 						
 						currentTuningObject.PCRPid=pcrPid;
@@ -4910,6 +4932,7 @@ namespace MediaPortal.TV.Recording
 						currentTuningObject.AudioPid=ch.AudioPid;
 						currentTuningObject.VideoPid=0;
 						currentTuningObject.TeletextPid=0;
+						currentTuningObject.SubtitlePid=0;
 						currentTuningObject.PMTPid=ch.PMTPid;
 						currentTuningObject.ServiceName=channel.Name;
 						currentTuningObject.DiSEqC=ch.DiSEqC;
@@ -4941,6 +4964,7 @@ namespace MediaPortal.TV.Recording
 						currentTuningObject.AudioPid=audioPid;
 						currentTuningObject.VideoPid=0;
 						currentTuningObject.TeletextPid=0;
+						currentTuningObject.SubtitlePid=0;
 						currentTuningObject.PMTPid=pmtPid;
 						currentTuningObject.PCRPid=pcrPid;
 						currentTuningObject.Bandwidth=bandwidth;

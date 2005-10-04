@@ -249,13 +249,16 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 		REFERENCE_TIME rtStop  = static_cast<REFERENCE_TIME>(ptsEnd);
 
 		pSample->SetTime(&rtStart, &rtStop); 
-	}
+
+		pSample->SetSyncPoint(TRUE);	}
 	else
 	{
 		pSample->SetTime(NULL,NULL); 
+
+		pSample->SetSyncPoint(FALSE);
+		//m_bDiscontinuity = TRUE;
 	}
 
-	pSample->SetSyncPoint(TRUE);
 	if(m_bDiscontinuity) 
 	{
 		pSample->SetDiscontinuity(TRUE);

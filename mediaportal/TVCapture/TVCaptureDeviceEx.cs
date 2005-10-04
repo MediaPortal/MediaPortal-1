@@ -1074,6 +1074,12 @@ namespace MediaPortal.TV.Recording
 								}
 							}
 						}
+#else
+						if (IsTimeShifting && !View)
+						{
+							if (currentGraph.TvTimeshiftFileName().IndexOf(".ts")>=0)
+								g_Player.Play(g_Player.CurrentFile);
+						}
 #endif
 					}
 				}
