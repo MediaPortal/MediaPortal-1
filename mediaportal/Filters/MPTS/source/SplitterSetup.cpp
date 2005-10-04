@@ -25,6 +25,8 @@
 #include <atlbase.h>
 
 
+extern void LogDebug(const char *fmt, ...) ;
+
 SplitterSetup::SplitterSetup(Sections *pSections) :
 m_demuxSetupComplete(FALSE)
 {
@@ -216,6 +218,7 @@ HRESULT SplitterSetup::SetupPids()
 	ULONG			umPid;
 	int				maxCounter;
 	HRESULT hr=0;
+	LogDebug("mpeg2 demux:SetupPids()");
 	if (m_pVideo!=NULL && m_pSections->pids.VideoPid>0)
 	{
 
@@ -241,6 +244,7 @@ HRESULT SplitterSetup::SetupPids()
 		pPidEnum->Release();
 		// map new pid
 		pid = (ULONG)m_pSections->pids.VideoPid;
+		LogDebug("demuxer:map video pid:0x%x", pid);
 		
 		//if(m_pSections->pids.MPEG4==false)// if the mpeg2 stream contains mpeg4 we map transport payload
 			hr=pMap->MapPID(1,&pid,MEDIA_ELEMENTARY_STREAM);
@@ -280,16 +284,21 @@ HRESULT SplitterSetup::SetupPids()
 		pPidEnum->Release();
 		pid = (ULONG)audioToUse;
 		if(m_pSections->pids.VideoPid>0)
+		{
 			hr=pMap->MapPID(1,&pid,MEDIA_ELEMENTARY_STREAM); // tv
+			LogDebug("demuxer:map audio pid:0x%x MEDIA_ELEMENTARY_STREAM", pid);
+		}
 		else
 		{
 			if(m_pSections->pids.PCRPid==0 || m_pSections->pids.PCRPid>=0x1FFF)
 			{
 				hr=pMap->MapPID(1,&pid,MEDIA_TRANSPORT_PAYLOAD); // radio
+				LogDebug("demuxer:map audio pid:0x%x MEDIA_TRANSPORT_PAYLOAD", pid);
 			}
 			else
 			{
 				hr=pMap->MapPID(1,&pid,MEDIA_ELEMENTARY_STREAM); // radio
+				LogDebug("demuxer:map audio pid:0x%x MEDIA_ELEMENTARY_STREAM", pid);
 			}
 		}
 
@@ -298,6 +307,7 @@ HRESULT SplitterSetup::SetupPids()
 
 		pMap->Release();
 	}
+	LogDebug("mpeg2 demux:SetupPids() done");
 	return S_OK;
 
 }

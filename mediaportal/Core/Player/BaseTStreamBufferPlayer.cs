@@ -210,6 +210,9 @@ namespace MediaPortal.Player
 
 			if (m_bLive)
 			{
+				UpdateCurrentPosition();
+				UpdateDuration();
+				/*
 				DateTime dt=DateTime.Now;
 				do
 				{
@@ -225,7 +228,7 @@ namespace MediaPortal.Player
 				{
 					Log.Write("TStreamBufferPlayer:Seek to 99%");
 					SeekAbsolute(dPos);
-				}
+				}*/
 			}
 			else
 			{
@@ -782,7 +785,7 @@ namespace MediaPortal.Player
       long lStreamPos;
       double fCurrentPos;
       hr=m_mediaSeeking.GetCurrentPosition(out lStreamPos); // stream position
-//			Log.Write("GetCurrentPosition() pos:{0} hr:0x{1:X}", lStreamPos,hr);
+			//Log.Write("GetCurrentPosition() pos:{0} hr:0x{1:X}", lStreamPos,hr);
       fCurrentPos=lStreamPos;
       fCurrentPos/=10000000d;
 
@@ -791,7 +794,7 @@ namespace MediaPortal.Player
       double fContentStart,fContentEnd;
 			hr=m_mediaSeeking.GetAvailable(out lContentStart, out dmp);
       hr=m_mediaSeeking.GetPositions(out dmp, out lContentEnd);
-//			Log.Write("GetPositions() start:{0} end:{1} hr:0x{2:X}", lContentStart,lContentEnd,hr);
+			//Log.Write("GetPositions() start:{0} end:{1} hr:0x{2:X}", lContentStart,lContentEnd,hr);
 			fContentStart=lContentStart;
       fContentEnd=lContentEnd;
       fContentStart/=10000000d;

@@ -412,6 +412,7 @@ namespace MediaPortal.Player
 				if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING) return 0;
 				if (!drawVideoAllowed  || !isEnabled)
 				{
+					Log.Write("planescene:frame:{0} enabled:{1} allowed:{2}", m_vmr9Util.FrameCounter,drawVideoAllowed,isEnabled);
 					m_vmr9Util.FrameCounter++;
 					return 0;
 				}
@@ -445,6 +446,7 @@ namespace MediaPortal.Player
 				if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING) return 0;
 				if (!drawVideoAllowed  || !isEnabled)
 				{
+					Log.Write("planescene:frame:{0} enabled:{1} allowed:{2}", m_vmr9Util.FrameCounter,drawVideoAllowed,isEnabled);
 					m_vmr9Util.FrameCounter++;
 					return 0;
 				}

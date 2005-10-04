@@ -1,6 +1,7 @@
 using System;
 using MediaPortal.GUI.Library;
 using MediaPortal.TV.Recording;
+using MediaPortal.Player;
 namespace WindowPlugins.GUITV
 {
 	/// <summary>
@@ -63,6 +64,10 @@ namespace WindowPlugins.GUITV
 
 				case Action.ActionType.ACTION_SHOW_GUI:
 					GUIWindowManager.ShowPreviousWindow();
+					return;
+				case Action.ActionType.ACTION_PLAY:
+					if (g_Player.Playing)
+						g_Player.Play(g_Player.CurrentFile);
 					return;
 			}
 			base.OnAction (action);

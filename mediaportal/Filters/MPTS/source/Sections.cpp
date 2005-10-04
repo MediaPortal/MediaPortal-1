@@ -323,6 +323,7 @@ void Sections::FindPATPMT()
 					GetTSHeader(pData,&header);
 					if(header.SyncByte==0x47 && header.TransportError==FALSE)
 					{
+						LogDebug("Sections::Found start packet()");
 						break;
 					}
 				}
@@ -423,10 +424,12 @@ void Sections::FindPATPMT()
 						__int64 fpos=m_pFileReader->GetFilePointer();
 						if (DecodePMT(&pData[offset]) )
 						{
+							LogDebug("Sections::FindPatPMT() PMT decoded");
 							if (pids.VideoPid!=0) 
 							{
 								if (FindVideo())
 								{
+									LogDebug("Sections::FindPatPMT() got video");
 									finished=true;
 									ready=true;
 									break;

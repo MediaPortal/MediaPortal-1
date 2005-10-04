@@ -125,6 +125,7 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 {
   try
   {
+	LogDebug("FillBuffer()");
 	  
 	CAutoLock cAutoLock(&m_cSharedState);
 	if (m_bAboutToStop) return E_FAIL;
@@ -158,15 +159,14 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 				if ( m_pFileReader->GetFilePointer() <= m_pSections->pids.fileStartPosition &&
 					m_pFileReader->GetFilePointer() + lDataLength>=m_pSections->pids.fileStartPosition )
 				{
-					//LogDebug("pin:Wait %x/%x (%d)", (DWORD)m_pFileReader->GetFilePointer(),(DWORD)m_pSections->pids.fileStartPosition,count);
+					LogDebug("pin:Wait %x/%x (%d)", (DWORD)m_pFileReader->GetFilePointer(),(DWORD)m_pSections->pids.fileStartPosition,count);
 					count++;
 					if (count >20) break;
 					Sleep(50);
 				}
 				else break;
-				if (count>=20)
-					LogDebug("pin:Wait %x/%x (%d)", (DWORD)m_pFileReader->GetFilePointer(),(DWORD)m_pSections->pids.fileStartPosition,count);
 			}
+			LogDebug("pin:Wait %x/%x (%d)", (DWORD)m_pFileReader->GetFilePointer(),(DWORD)m_pSections->pids.fileStartPosition,count);
 		}
 
 		bool endOfFile=false;
@@ -185,7 +185,7 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 					if (m_pSections->pids.fileStartPosition >= fileSize-(1024*1024) ||
 						m_pSections->pids.fileStartPosition < lDataLength) 
 					{
-					//	LogDebug("waiteof pos:%x size:%x (%d)", m_pSections->pids.fileStartPosition,fileSize,count);
+						LogDebug("waiteof pos:%x size:%x (%d)", m_pSections->pids.fileStartPosition,fileSize,count);
 						count++;
 						if (count >20) break;
 						Sleep(50);

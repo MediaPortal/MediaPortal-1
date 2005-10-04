@@ -428,8 +428,13 @@ STDMETHODIMP CDumpInputPin::Receive(IMediaSample *pSample)
 			int pid=((pbData[t+1] & 0x1F) <<8)+pbData[t+2];
 			if(IsPidValid(pid)==true)
 			{
-				hr=m_pDump->WriteRecordingFile(pbData+t,188);
-				hr=m_pDump->WriteTimeshiftFile(pbData+t,188);
+				byte scrambled=pbData[t+3] & 0xC0;
+				if(!scrambled)
+				{
+					hr=m_pDump->WriteRecordingFile(pbData+t,188);
+					hr=m_pDump->WriteTimeshiftFile(pbData+t,188);
+				}
+				else LogDebug("pid:0x%x scrambled:%d", pid,scrambled);
 			}
 
 		}
