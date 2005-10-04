@@ -46,7 +46,7 @@ CFilterOutPin::CFilterOutPin(LPUNKNOWN pUnk, CMPTSFilter *pFilter, FileReader *p
 	m_pBuffers = new CBuffers(m_pFileReader, &m_pSections->pids,m_lTSPacketDeliverySize);
 	m_dRateSeeking = 1.0;
 	m_bAboutToStop=false;
-	
+	m_bPTSFound=false;	
 	
 }
 
@@ -250,7 +250,13 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 
 		pSample->SetTime(&rtStart, &rtStop); 
 
-		pSample->SetSyncPoint(TRUE);	}
+		pSample->SetSyncPoint(TRUE);	
+		if (m_bPTSFound==false)
+		{
+			m_bPTSFound=true;
+			m_bDiscontinuity=true;
+		}
+	}
 	else
 	{
 		pSample->SetTime(NULL,NULL); 
@@ -330,6 +336,7 @@ void CFilterOutPin::UpdateFromSeek(void)
         DeliverBeginFlush();
         Stop();
 		DeliverEndFlush();
+		m_bPTSFound=false;
 		Run();
 	}
 }
@@ -374,6 +381,7 @@ void CFilterOutPin::ResetBuffers(__int64 newPosition)
 	if (m_pBuffers==NULL) return;
 	m_pBuffers->Clear();
 	m_pFileReader->SetFilePointer(newPosition,FILE_BEGIN);
+	m_bPTSFound=false;
 }
 
 void CFilterOutPin::UpdatePositions(ULONGLONG& ptsStart, ULONGLONG& ptsEnd)

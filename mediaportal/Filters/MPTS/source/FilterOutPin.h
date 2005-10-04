@@ -50,6 +50,7 @@ protected:
 	BOOL			m_bDiscontinuity;
 	long			m_lTSPacketDeliverySize;
 	bool			m_bAboutToStop;
+	bool			m_bPTSFound;
 
 };
 
