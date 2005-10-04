@@ -218,7 +218,6 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 	ULONGLONG pts=0;
 	ULONGLONG ptsStart=0;
 	ULONGLONG ptsEnd=0;
-	
 	for(int i=0;i<lDataLength;i+=188)
 	{
 		if (m_bAboutToStop) return E_FAIL;
@@ -234,7 +233,8 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 				}
 				else 
 				{
-					ptsEnd=pts;
+					if (pts > ptsEnd)	
+						ptsEnd=pts;
 				}
 			}
 	
@@ -255,14 +255,37 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 		{
 			m_bPTSFound=true;
 			m_bDiscontinuity=true;
+			m_iDiscontinuity=3;
 		}
 	}
 	else
 	{
-		pSample->SetTime(NULL,NULL); 
+		if (m_bPTSFound)
+		{
+			REFERENCE_TIME rtStart = static_cast<REFERENCE_TIME>(m_prevptsStart);
+			REFERENCE_TIME rtStop  = static_cast<REFERENCE_TIME>(m_prevptsEnd);
 
-		pSample->SetSyncPoint(FALSE);
-		//m_bDiscontinuity = TRUE;
+			pSample->SetTime(&rtStart, &rtStop); 
+			pSample->SetSyncPoint(TRUE);
+		}
+		else
+		{
+			pSample->SetTime(NULL,NULL); 
+			pSample->SetSyncPoint(FALSE);
+		}
+	}
+
+	if (ptsStart>0)
+	{
+	//	if (ptsStart !=m_prevptsEnd) 
+	//		m_bDiscontinuity=true;
+		m_prevptsStart=ptsStart;
+		m_prevptsEnd=ptsEnd;
+		if (m_iDiscontinuity>0) 
+		{
+			m_iDiscontinuity--;
+			m_bDiscontinuity=true;
+		}
 	}
 
 	if(m_bDiscontinuity) 

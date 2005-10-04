@@ -417,8 +417,8 @@ STDMETHODIMP CDumpInputPin::Receive(IMediaSample *pSample)
 			}
 		}
 	}
-//	if (off != (188-m_restBufferLen))
-//		LogDebug("***OFF != END OF RESTBUFFER");
+	if (off != (188-m_restBufferLen) && off!=0)
+		LogDebug("***OFF != END OF RESTBUFFER %d %d",off,(188-m_restBufferLen));
 
 	for(DWORD t=off;t<(DWORD)pSample->GetActualDataLength();t+=188)
 	{

@@ -48,9 +48,11 @@ protected:
 	CBuffers *		m_pBuffers;
 	CCritSec		m_cSharedState;
 	BOOL			m_bDiscontinuity;
+	int				m_iDiscontinuity;
 	long			m_lTSPacketDeliverySize;
 	bool			m_bAboutToStop;
 	bool			m_bPTSFound;
+	ULONGLONG		m_prevptsStart,m_prevptsEnd;
 
 };
 
