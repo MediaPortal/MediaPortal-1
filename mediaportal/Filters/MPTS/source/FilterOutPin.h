@@ -12,6 +12,8 @@
 #include "Buffers.h"
 #include "TimeShiftSeeking.h"
 
+#include <map>
+using namespace std;
 
 class CFilterOutPin : public CSourceStream,public CTimeShiftSeeking
 {
@@ -48,11 +50,10 @@ protected:
 	CBuffers *		m_pBuffers;
 	CCritSec		m_cSharedState;
 	BOOL			m_bDiscontinuity;
-	int				m_iDiscontinuity;
 	long			m_lTSPacketDeliverySize;
 	bool			m_bAboutToStop;
-	bool			m_bPTSFound;
-	ULONGLONG		m_prevptsStart,m_prevptsEnd;
+	map<int,bool>	m_mapDiscontinuitySent;
+	typedef map<int,bool>::iterator imapDiscontinuitySent;
 
 };
 

@@ -188,7 +188,6 @@ HRESULT CMPTSFilter::SetFilePosition(REFERENCE_TIME seek)
 {
 	if(m_pFileReader->IsFileInvalid()==true)
 		m_pFileReader->OpenFile();
-	HRESULT hr;
 	__int64 fileSize;
 	m_pFileReader->GetFileSize(&fileSize);
 	if(m_pSections->pids.Duration<1)

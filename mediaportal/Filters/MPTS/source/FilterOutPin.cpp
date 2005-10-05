@@ -46,7 +46,6 @@ CFilterOutPin::CFilterOutPin(LPUNKNOWN pUnk, CMPTSFilter *pFilter, FileReader *p
 	m_pBuffers = new CBuffers(m_pFileReader, &m_pSections->pids,m_lTSPacketDeliverySize);
 	m_dRateSeeking = 1.0;
 	m_bAboutToStop=false;
-	m_bPTSFound=false;	
 	
 }
 
@@ -218,10 +217,32 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 	ULONGLONG pts=0;
 	ULONGLONG ptsStart=0;
 	ULONGLONG ptsEnd=0;
+	Sections::TSHeader header;
 	for(int i=0;i<lDataLength;i+=188)
 	{
 		if (m_bAboutToStop) return E_FAIL;
 		int pid;
+		m_pSections->GetTSHeader(&pData[i],&header);
+		imapDiscontinuitySent it = m_mapDiscontinuitySent.find(header.Pid);
+		if (header.Pid>0)
+		{
+			if (it==m_mapDiscontinuitySent.end())
+			{
+				m_mapDiscontinuitySent[header.Pid]=false;
+				if (header.Pid==m_pSections->pids.VideoPid || 
+					header.Pid==m_pSections->pids.AudioPid ||
+					header.Pid==m_pSections->pids.AC3)
+				{
+					m_bDiscontinuity=true;
+				}
+			}
+			else if (it->second==true)
+			{
+				it->second=false;
+				m_bDiscontinuity=true;
+			}
+		}
+
 		if(m_pSections->CurrentPTS(&pData[i],&pts,&pid)==S_OK)
 		{
 			if (pts>0)
@@ -251,42 +272,13 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 		pSample->SetTime(&rtStart, &rtStop); 
 
 		pSample->SetSyncPoint(TRUE);	
-		if (m_bPTSFound==false)
-		{
-			m_bPTSFound=true;
-			m_bDiscontinuity=true;
-			m_iDiscontinuity=3;
-		}
 	}
 	else
 	{
-		if (m_bPTSFound)
-		{
-			REFERENCE_TIME rtStart = static_cast<REFERENCE_TIME>(m_prevptsStart);
-			REFERENCE_TIME rtStop  = static_cast<REFERENCE_TIME>(m_prevptsEnd);
-
-			pSample->SetTime(&rtStart, &rtStop); 
-			pSample->SetSyncPoint(TRUE);
-		}
-		else
-		{
-			pSample->SetTime(NULL,NULL); 
-			pSample->SetSyncPoint(FALSE);
-		}
+		pSample->SetTime(NULL,NULL); 
+		pSample->SetSyncPoint(FALSE);
 	}
 
-	if (ptsStart>0)
-	{
-	//	if (ptsStart !=m_prevptsEnd) 
-	//		m_bDiscontinuity=true;
-		m_prevptsStart=ptsStart;
-		m_prevptsEnd=ptsEnd;
-		if (m_iDiscontinuity>0) 
-		{
-			m_iDiscontinuity--;
-			m_bDiscontinuity=true;
-		}
-	}
 
 	if(m_bDiscontinuity) 
 	{
@@ -359,7 +351,6 @@ void CFilterOutPin::UpdateFromSeek(void)
         DeliverBeginFlush();
         Stop();
 		DeliverEndFlush();
-		m_bPTSFound=false;
 		Run();
 	}
 }
@@ -403,8 +394,8 @@ void CFilterOutPin::ResetBuffers(__int64 newPosition)
 	LogDebug("Reset buffers");
 	if (m_pBuffers==NULL) return;
 	m_pBuffers->Clear();
+	m_mapDiscontinuitySent.clear();
 	m_pFileReader->SetFilePointer(newPosition,FILE_BEGIN);
-	m_bPTSFound=false;
 }
 
 void CFilterOutPin::UpdatePositions(ULONGLONG& ptsStart, ULONGLONG& ptsEnd)
