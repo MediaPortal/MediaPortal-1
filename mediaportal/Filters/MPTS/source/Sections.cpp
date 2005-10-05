@@ -23,7 +23,7 @@
 #include <aviriff.h>
 #include "Sections.h"
 void LogDebug(const char *fmt, ...) 
-{/*
+{
 #ifdef DEBUG
 	va_list ap;
 	va_start(ap,fmt);
@@ -47,7 +47,7 @@ void LogDebug(const char *fmt, ...)
 		OutputDebugString("\n");
 		fclose(fp);
 	}
-#endif*/
+#endif
 };
 
 //////////////////////////////////////////////////////////////////////

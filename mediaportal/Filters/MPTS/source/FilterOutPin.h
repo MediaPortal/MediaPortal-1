@@ -43,7 +43,7 @@ protected:
 	HRESULT GetReferenceClock(IReferenceClock **pClock);
 
 protected:
-	void UpdatePositions(ULONGLONG& startPts, ULONGLONG& endPts);
+	void UpdatePositions(ULONGLONG& startPts);
 	CMPTSFilter *	const m_pMPTSFilter;
 	FileReader *	const m_pFileReader;
 	Sections *		const m_pSections;
@@ -56,6 +56,7 @@ protected:
 	int				m_iPESPid;
 	ULONGLONG		m_prevPTS;
 	typedef map<int,bool>::iterator imapDiscontinuitySent;
+	int				m_iDiscCounter;
 
 };
 
