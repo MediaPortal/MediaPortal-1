@@ -1102,35 +1102,35 @@ HRESULT CDump::WriteTimeshiftFile(PBYTE pbData, LONG lDataLength)
 		m_currentFilePosition=0;
 	}
 
-	//update PES
-	TSHeader header;
-	GetTSHeader(pbData,&header);
-	int pidToCheck = ( m_pPin->GetAudioPid()>0 ? m_pPin->GetAudioPid():m_pPin->GetAC3Pid() );
-	if (pidToCheck==header.Pid || (header.Pid>0 && header.Pid==m_pPin->GetVideoPid() ) || (header.Pid>0 && header.Pid==m_pPin->GetPCRPid() ) )
+	if (header.Pid>0 )
 	{
+		//update PES
+		TSHeader header;
+		GetTSHeader(pbData,&header);
 		int offset=4;
 		if(header.AdaptionControl==1 || header.AdaptionControl==3)
 			offset+=pbData[4];
 		//LogDebug("pes packet check adpt:%x sync:%x %x %x %x %d",header.AdaptionControl,header.SyncByte,pbData[offset],pbData[offset+1],pbData[offset+2],offset);
-		
 		if(header.SyncByte==0x47 && pbData[offset]==0 && pbData[offset+1]==0 && pbData[offset+2]==1)
 		{
 			PESHeader pes;
 			GetPESHeader(&pbData[offset+6],&pes);
-			
 			if(pes.Reserved==0x02) // valid header
 			{
 				if(pes.PTSFlags==0x02)
 				{
-					if (m_pesPid==0)
-						m_pesPid=header.Pid;
-					if (m_pesPid==header.Pid)
+					ULONGLONG ptsValue =0;
+					GetPTS(&pbData[offset+9],&ptsValue);
+					if (ptsValue>0)
 					{
-						// audio pes found
-						ULONGLONG ptsValue =0;
-						GetPTS(&pbData[offset+9],&ptsValue);
-						m_pesNow=ptsValue;
-						if (m_pesStart==0) m_pesStart=ptsValue;
+						if (m_pesPid==0)
+							m_pesPid=header.Pid;
+						if (m_pesPid==header.Pid)
+						{
+							// audio pes found
+							m_pesNow=ptsValue;
+							if (m_pesStart==0) m_pesStart=ptsValue;
+						}
 					}
 				}	
 			}

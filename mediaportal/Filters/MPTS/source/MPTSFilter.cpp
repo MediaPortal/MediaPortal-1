@@ -388,6 +388,7 @@ void CMPTSFilter::UpdatePids()
 	if (!::ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&ptsStart, sizeof(ptsStart), &dwReadBytes, NULL)) return;
 	if (!::ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&ptsNow, sizeof(ptsNow), &dwReadBytes, NULL)) return;
 
+	if (ptsStart>ptsNow) ptsStart=1;
 	m_pSections->pids.StartPTS=(__int64)ptsStart;
 	m_pSections->pids.EndPTS=(__int64)ptsNow;
 	Sections::PTSTime time;

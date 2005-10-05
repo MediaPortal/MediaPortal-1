@@ -46,7 +46,6 @@ CFilterOutPin::CFilterOutPin(LPUNKNOWN pUnk, CMPTSFilter *pFilter, FileReader *p
 	m_pBuffers = new CBuffers(m_pFileReader, &m_pSections->pids,m_lTSPacketDeliverySize);
 	m_dRateSeeking = 1.0;
 	m_bAboutToStop=false;
-	
 }
 
 CFilterOutPin::~CFilterOutPin()
@@ -124,7 +123,7 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 {
   try
   {
-	LogDebug("FillBuffer()");
+	//LogDebug("FillBuffer()");
 	  
 	CAutoLock cAutoLock(&m_cSharedState);
 	if (m_bAboutToStop) return E_FAIL;
@@ -158,14 +157,14 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 				if ( m_pFileReader->GetFilePointer() <= m_pSections->pids.fileStartPosition &&
 					m_pFileReader->GetFilePointer() + lDataLength>=m_pSections->pids.fileStartPosition )
 				{
-					LogDebug("pin:Wait %x/%x (%d)", (DWORD)m_pFileReader->GetFilePointer(),(DWORD)m_pSections->pids.fileStartPosition,count);
+//					LogDebug("pin:Wait %x/%x (%d)", (DWORD)m_pFileReader->GetFilePointer(),(DWORD)m_pSections->pids.fileStartPosition,count);
 					count++;
 					if (count >20) break;
 					Sleep(50);
 				}
 				else break;
 			}
-			LogDebug("pin:Wait %x/%x (%d)", (DWORD)m_pFileReader->GetFilePointer(),(DWORD)m_pSections->pids.fileStartPosition,count);
+//			LogDebug("pin:Wait %x/%x (%d)", (DWORD)m_pFileReader->GetFilePointer(),(DWORD)m_pSections->pids.fileStartPosition,count);
 		}
 
 		bool endOfFile=false;
@@ -174,7 +173,7 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 		{
 			if (m_pMPTSFilter->m_pFileReader->m_hInfoFile!=INVALID_HANDLE_VALUE)
 			{
-				LogDebug("output pin:EOF");
+//				LogDebug("output pin:EOF");
 				m_pMPTSFilter->m_pFileReader->GetFileSize(&fileSize);
 				count=0;
 				while (true)
@@ -184,14 +183,14 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 					if (m_pSections->pids.fileStartPosition >= fileSize-(1024*1024) ||
 						m_pSections->pids.fileStartPosition < lDataLength) 
 					{
-						LogDebug("waiteof pos:%x size:%x (%d)", m_pSections->pids.fileStartPosition,fileSize,count);
+//						LogDebug("waiteof pos:%x size:%x (%d)", m_pSections->pids.fileStartPosition,fileSize,count);
 						count++;
 						if (count >20) break;
 						Sleep(50);
 					}
 					else break;
 				}
-				LogDebug("outputpin:end of file, writepos:%x slept:%i size:%x", m_pSections->pids.fileStartPosition,count,fileSize);
+//				LogDebug("outputpin:end of file, writepos:%x slept:%i size:%x", m_pSections->pids.fileStartPosition,count,fileSize);
 			}
 		}
 					
@@ -228,11 +227,12 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 		{
 			if (it==m_mapDiscontinuitySent.end())
 			{
+				LogDebug("new pid:%x", header.Pid);
 				m_mapDiscontinuitySent[header.Pid]=false;
-				if (header.Pid==m_pSections->pids.VideoPid || 
+				if ( header.Pid==m_pSections->pids.VideoPid || 
 					header.Pid==m_pSections->pids.AudioPid ||
 					header.Pid==m_pSections->pids.AC3)
-				{
+				{					
 					m_bDiscontinuity=true;
 				}
 			}
@@ -247,18 +247,25 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 		{
 			if (pts>0)
 			{
-				if (ptsStart==0) 
-				{ 
-					ptsStart=pts; 
-					ptsEnd=pts;
-				}
-				else 
+				if (m_iPESPid==0 && pts >= m_pSections->pids.StartPTS && pts <= m_pSections->pids.EndPTS)
 				{
-					if (pts > ptsEnd)	
+					LogDebug("found start pts:%x %x-%x pid:%x", (DWORD)pts, (DWORD)m_pSections->pids.StartPTS,(DWORD)m_pSections->pids.EndPTS,header.Pid);
+					m_iPESPid=header.Pid;
+					m_bDiscontinuity=true;
+				}
+				if (m_iPESPid==header.Pid)
+				{
+					if (ptsStart==0) 
+					{ 
+						ptsStart=pts; 
 						ptsEnd=pts;
+					}
+					else 
+					{
+						ptsEnd=pts;
+					}
 				}
 			}
-	
 		}
 	}
 	
@@ -272,14 +279,21 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 		pSample->SetTime(&rtStart, &rtStop); 
 
 		pSample->SetSyncPoint(TRUE);	
+		m_prevPTS=ptsStart;
 	}
 	else
 	{
-		pSample->SetTime(NULL,NULL); 
-		pSample->SetSyncPoint(FALSE);
+		REFERENCE_TIME rtStart = static_cast<REFERENCE_TIME>(m_prevPTS);
+		REFERENCE_TIME rtStop  = static_cast<REFERENCE_TIME>(m_prevPTS);
+
+		pSample->SetTime(&rtStart, &rtStop); 
+
+		pSample->SetSyncPoint(TRUE);
 	}
 
 
+
+	//LogDebug("snd pkt pts:%x - %x pes:%x disc:%d", (DWORD)ptsStart, (DWORD) ptsEnd, m_iPESPid, m_bDiscontinuity);
 	if(m_bDiscontinuity) 
 	{
 		pSample->SetDiscontinuity(TRUE);
@@ -308,7 +322,10 @@ HRESULT CFilterOutPin::OnThreadCreate( )
 HRESULT CFilterOutPin::OnThreadStartPlay( )
 {
    LogDebug("pin:OnThreadStartPlay()");
-   m_bDiscontinuity = TRUE;
+		
+   m_bDiscontinuity=true;
+   m_iPESPid=0;
+   m_prevPTS=0;
    DeliverNewSegment(m_rtStart, m_rtStop, m_dRateSeeking);
    return CSourceStream::OnThreadStartPlay( );
 }
@@ -396,6 +413,9 @@ void CFilterOutPin::ResetBuffers(__int64 newPosition)
 	m_pBuffers->Clear();
 	m_mapDiscontinuitySent.clear();
 	m_pFileReader->SetFilePointer(newPosition,FILE_BEGIN);
+   m_bDiscontinuity=true;
+   m_prevPTS=0;
+   m_iPESPid=0;
 }
 
 void CFilterOutPin::UpdatePositions(ULONGLONG& ptsStart, ULONGLONG& ptsEnd)

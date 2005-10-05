@@ -53,6 +53,8 @@ protected:
 	long			m_lTSPacketDeliverySize;
 	bool			m_bAboutToStop;
 	map<int,bool>	m_mapDiscontinuitySent;
+	int				m_iPESPid;
+	ULONGLONG		m_prevPTS;
 	typedef map<int,bool>::iterator imapDiscontinuitySent;
 
 };

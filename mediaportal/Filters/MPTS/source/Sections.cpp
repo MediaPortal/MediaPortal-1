@@ -23,7 +23,7 @@
 #include <aviriff.h>
 #include "Sections.h"
 void LogDebug(const char *fmt, ...) 
-{
+{/*
 #ifdef DEBUG
 	va_list ap;
 	va_start(ap,fmt);
@@ -43,9 +43,11 @@ void LogDebug(const char *fmt, ...)
 			systemTime.wDay, systemTime.wMonth, systemTime.wYear,
 			systemTime.wHour,systemTime.wMinute,systemTime.wSecond,
 			buffer);
+		OutputDebugString(buffer);
+		OutputDebugString("\n");
 		fclose(fp);
 	}
-#endif
+#endif*/
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -93,6 +95,7 @@ HRESULT Sections::ParseFromFile()
 		::ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&pids.PCRPid, sizeof(int), &dwReadBytes, NULL);
 		if (pids.PCRPid==0) pids.PCRPid=pids.VideoPid;
 
+		if (ptsStart>ptsNow) ptsStart=1;
 		pids.StartPTS=(__int64)ptsStart;
 		pids.EndPTS=(__int64)ptsNow;
 		Sections::PTSTime time;
@@ -153,39 +156,42 @@ HRESULT Sections::CheckStream()
 		{
 			finished=true;
 		}
-		m_pFileReader->SetFilePointer(countBytesRead,FILE_CURRENT);
+//		m_pFileReader->SetFilePointer(countBytesRead,FILE_CURRENT);
 		
 		GetTSHeader(pData,&header);
-		if(hr==S_OK && header.SyncByte==0x47)
+		if(hr==S_OK && header.SyncByte==0x47 )
 		{
-			for(offset=4;offset<181;offset++)
+			if (header.PayloadUnitStart && header.Pid>0)
 			{
-				if(pData[offset]==0 && pData[offset+1]==0 && pData[offset+2]==1)// pes
+				for(offset=4;offset<181;offset++)
 				{
-					BYTE streamID=(pData[offset+3]>>5) & 0x07;
-					WORD pesLen=(pData[offset+4]<<8)+pData[offset+5];
-					GetPESHeader(&pData[offset+6],&pes);
-					BYTE pesHeaderLen=pData[offset+8];
-					if(pes.Reserved==0x02 && header.Pid>0 && (pids.AudioPid==header.Pid||pids.AudioPid2==header.Pid||pids.AC3==header.Pid) ) // valid header
+					if(pData[offset]==0 && pData[offset+1]==0 && pData[offset+2]==1)// pes
 					{
-						if(pes.PTSFlags==0x02)
+						BYTE streamID=(pData[offset+3]>>5) & 0x07;
+						WORD pesLen=(pData[offset+4]<<8)+pData[offset+5];
+						GetPESHeader(&pData[offset+6],&pes);
+						BYTE pesHeaderLen=pData[offset+8];
+						if(pes.Reserved==0x02 && header.Pid>0 && (pids.VideoPid==header.Pid||pids.AudioPid==header.Pid||pids.AudioPid2==header.Pid||pids.AC3==header.Pid) ) // valid header
 						{
-							if (pid==0) pid=header.Pid;
-							if (pid==header.Pid)
+							if(pes.PTSFlags==0x02)
 							{
-								// audio pes found
-								GetPTS(&pData[offset+9],&pts);
-								if(pids.StartPTS==0)
+								if (pid==0) pid=header.Pid;
+								if (pid==header.Pid)
 								{
-									LogDebug("Sections::CheckStream() got PTS");
-									pids.StartPTS=(__int64)pts; // first pts
-									m_pFileReader->SetFilePointer(fileEndOffset,FILE_BEGIN);// sets to file-end - 1MB
+									// audio pes found
+									GetPTS(&pData[offset+9],&pts);
+									if(pids.StartPTS==0)
+									{
+										LogDebug("Sections::CheckStream() got PTS");
+										pids.StartPTS=(__int64)pts; // first pts
+										m_pFileReader->SetFilePointer(fileEndOffset,FILE_BEGIN);// sets to file-end - 1MB
+									}
 								}
+								
 							}
-							
 						}
+						break;
 					}
-					break;
 				}
 			}
 		}else 
@@ -204,6 +210,7 @@ HRESULT Sections::CheckStream()
 	pids.Duration=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
 	//
 	m_pFileReader->SetFilePointer(0,FILE_BEGIN);// sets to file begin
+	LogDebug("Start PTS:%x  end PTS:%x", (DWORD)pids.StartPTS, (DWORD)pids.EndPTS);
 	return S_OK;
 }
 
@@ -264,6 +271,7 @@ HRESULT Sections::CurrentPTS(BYTE *pData,ULONGLONG *ptsValue,int* pid)
 	*pid=header.Pid;
 	if (header.Pid<1) return S_FALSE;
 	if (header.SyncByte!=0x47) return S_FALSE;
+	if (header.PayloadUnitStart==0) return S_FALSE;
 	if(header.Pid!=pids.AudioPid && 
 	   header.Pid != pids.AudioPid2 && 
 	   header.Pid != pids.AC3 && 
