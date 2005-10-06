@@ -157,7 +157,7 @@ namespace MediaPortal.Player
 
         mediaCtrl	= (IMediaControl)  graphBuilder;
         mediaEvt	= (IMediaEventEx)  graphBuilder;
-				m_mediaSeeking = graphBuilder as IMediaSeeking;
+				m_mediaSeeking = bufferSource as IMediaSeeking;
         
 				hasVideo=true;
 				if ( !Vmr9.IsVMR9Connected )
@@ -170,6 +170,7 @@ namespace MediaPortal.Player
 					Vmr9=null;
 				}
 
+				graphBuilder.SetDefaultSyncSource();
 				return true;
       }
       catch( Exception  ex)

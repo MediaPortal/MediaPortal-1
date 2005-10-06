@@ -784,6 +784,9 @@ namespace MediaPortal.Player
       //Stream position:The current playback position, relative to the content start
       long lStreamPos;
       double fCurrentPos;
+			//SeekingCapabilities capabilities;
+			//m_mediaSeeking.GetCapabilities(out capabilities);
+			//Log.Write("GetCurrentPosition() caps:{0} ", (int)capabilities);
       hr=m_mediaSeeking.GetCurrentPosition(out lStreamPos); // stream position
 			//Log.Write("GetCurrentPosition() pos:{0} hr:0x{1:X}", lStreamPos,hr);
       fCurrentPos=lStreamPos;
@@ -970,7 +973,7 @@ namespace MediaPortal.Player
 
 				mediaCtrl	= (IMediaControl)  graphBuilder;
 				mediaEvt	= (IMediaEventEx)  graphBuilder;
-				m_mediaSeeking = graphBuilder as IMediaSeeking;
+				m_mediaSeeking = bufferSource as IMediaSeeking;
 				basicAudio	= graphBuilder as IBasicAudio;
 				if (hasVideo)
 				{
