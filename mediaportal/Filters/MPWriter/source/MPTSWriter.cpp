@@ -367,8 +367,14 @@ STDMETHODIMP CDumpInputPin::Receive(IMediaSample *pSample)
         return NOERROR;
     }
 
-    REFERENCE_TIME tStart, tStop;
+	long sampleLen=pSample->GetActualDataLength();
+	HRESULT hDisc=pSample->IsDiscontinuity();
+	HRESULT hPreRoll=pSample->IsPreroll();
+	HRESULT hSync=pSample->IsSyncPoint();
+	
+    REFERENCE_TIME tStart=0, tStop=0;
     pSample->GetTime(&tStart, &tStop);
+
 
     m_tLast = tStart;
 
@@ -378,6 +384,10 @@ STDMETHODIMP CDumpInputPin::Receive(IMediaSample *pSample)
     if (FAILED(hr)) {
         return hr;
     }
+	char buf[4096];
+	sprintf(buf,"%x-%x len:%d disc:%x preroll:%x sync:%x\n",
+			(DWORD)tStart, (DWORD) tStop, sampleLen,hDisc,hPreRoll,hSync);
+	OutputDebugString(buf);
 
 	if (m_pDump->IsCopyingRecordingFile())
 	{
@@ -1102,11 +1112,11 @@ HRESULT CDump::WriteTimeshiftFile(PBYTE pbData, LONG lDataLength)
 		m_currentFilePosition=0;
 	}
 
+	//update PES
+	TSHeader header;
+	GetTSHeader(pbData,&header);
 	if (header.Pid>0 )
 	{
-		//update PES
-		TSHeader header;
-		GetTSHeader(pbData,&header);
 		int offset=4;
 		if(header.AdaptionControl==1 || header.AdaptionControl==3)
 			offset+=pbData[4];
@@ -1178,6 +1188,11 @@ HRESULT CDump::UpdateInfoFile(bool pids)
 	{
 		LogDebug("UpdatePids() filehandle=closed");
 		return S_OK;
+	}
+
+	if (pids)
+	{
+		m_mapPES.clear();
 	}
 
 	__int64 key = (m_currentFilePosition/188) / 100;
