@@ -42,7 +42,7 @@ CFilterOutPin::CFilterOutPin(LPUNKNOWN pUnk, CMPTSFilter *pFilter, FileReader *p
 	__int64 size;
 	m_pFileReader->GetFileSize(&size);
 	m_rtDuration = m_rtStop = m_pSections->pids.Duration;
-	m_lTSPacketDeliverySize = 188;//*100;
+	m_lTSPacketDeliverySize = 188*10;
 	m_pBuffers = new CBuffers(m_pFileReader, &m_pSections->pids,m_lTSPacketDeliverySize);
 	m_dRateSeeking = 1.0;
 	m_bAboutToStop=false;
