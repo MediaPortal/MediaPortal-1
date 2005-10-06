@@ -37,7 +37,7 @@ CFilterOutPin::CFilterOutPin(LPUNKNOWN pUnk, CMPTSFilter *pFilter, FileReader *p
 	m_dwSeekingCaps =	
 						AM_SEEKING_CanSeekForwards  | AM_SEEKING_CanSeekBackwards |
 						AM_SEEKING_CanGetStopPos    | AM_SEEKING_CanGetDuration   |
-						AM_SEEKING_CanSeekAbsolute;
+						AM_SEEKING_CanSeekAbsolute  | AM_SEEKING_CanGetCurrentPos;
 
 	__int64 size;
 	m_pFileReader->GetFileSize(&size);
@@ -425,7 +425,7 @@ void CFilterOutPin::UpdatePositions(ULONGLONG& ptsStart)
 	CRefTime rtStart,rtStop,rtDuration;
 
 	Sections::PTSTime time;
-	rtStart=m_pSections->pids.StartPTS;
+	rtStart   =m_pSections->pids.StartPTS;
 	rtDuration=m_pSections->pids.EndPTS-m_pSections->pids.StartPTS;
 
 	if (ptsStart==0) 
@@ -440,9 +440,8 @@ void CFilterOutPin::UpdatePositions(ULONGLONG& ptsStart)
 	m_pSections->PTSToPTSTime(rtDuration,&time);
 	rtDuration=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
 
-	//m_pSections->PTSToPTSTime(rtDuration,&time);
-	//m_rtDuration=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
 
+	m_rtCurrent=ptsStart;
 	m_rtStart=0;
 	m_rtStop=rtDuration;
 	m_rtDuration=rtDuration;

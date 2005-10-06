@@ -32,6 +32,7 @@ CTimeShiftSeeking::CTimeShiftSeeking(
         m_pLock(pLock),
         m_rtStart((long)0)
 {
+	m_rtCurrent=0;
     m_rtStop = _I64_MAX / 2;
     m_rtDuration = m_rtStop;
     m_dRateSeeking = 1.0;
@@ -40,7 +41,8 @@ CTimeShiftSeeking::CTimeShiftSeeking(
         | AM_SEEKING_CanSeekBackwards
         | AM_SEEKING_CanSeekAbsolute
         | AM_SEEKING_CanGetStopPos
-        | AM_SEEKING_CanGetDuration;
+        | AM_SEEKING_CanGetDuration
+		| AM_SEEKING_CanGetCurrentPos;
 }
 
 HRESULT CTimeShiftSeeking::NonDelegatingQueryInterface(REFIID riid, void **ppv)
@@ -108,9 +110,8 @@ HRESULT CTimeShiftSeeking::GetStopPosition(LONGLONG *pStop)
 
 HRESULT CTimeShiftSeeking::GetCurrentPosition(LONGLONG *pCurrent)
 {
-    // GetCurrentPosition is typically supported only in renderers and
-    // not in source filters.
-    return E_NOTIMPL;
+	*pCurrent=m_rtCurrent;
+    return S_OK;
 }
 
 HRESULT CTimeShiftSeeking::GetCapabilities( DWORD * pCapabilities )

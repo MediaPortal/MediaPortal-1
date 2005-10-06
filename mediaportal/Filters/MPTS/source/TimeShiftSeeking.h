@@ -47,6 +47,7 @@ protected:
     CRefTime m_rtDuration;      // length of stream
     CRefTime m_rtStart;         // source will start here
     CRefTime m_rtStop;          // source will stop here
+    CRefTime m_rtCurrent;          // current file postition
     double m_dRateSeeking;
 
     // seeking capabilities

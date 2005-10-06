@@ -281,7 +281,7 @@ STDMETHODIMP CMPTSFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt)
 #endif
 	strcat(fileName,".log");
 
-#ifdef DEBUG
+#ifndef DEBUG
 	m_logFileHandle=CreateFile((LPCTSTR)fileName,GENERIC_READ | GENERIC_WRITE,
 		FILE_SHARE_READ | FILE_SHARE_WRITE,
 		NULL,
@@ -342,6 +342,10 @@ STDMETHODIMP CMPTSFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt)
 	Log(time.s,false);
 	Log(TEXT("."),false);
 	Log(time.u,true);
+	Log(TEXT("start PTS    : "),false);
+	Log(m_pSections->pids.StartPTS,true);
+	Log(TEXT("end PTS     : "),false);
+	Log(m_pSections->pids.EndPTS,true);
 	LogDebug("pids ac3:%x audio:%x audio2:%x video:%x pmt:%x pcr:%x",
 		m_pSections->pids.AC3,m_pSections->pids.AudioPid,m_pSections->pids.AudioPid2,m_pSections->pids.VideoPid,m_pSections->pids.PMTPid,m_pSections->pids.PCRPid);
 	LogDebug("pes start:%x pes end:%x duration:%02.2d:%02.2d:%02.2d writepos:%x",
@@ -567,7 +571,7 @@ STDMETHODIMP CMPTSFilter::Log(__int64 value,bool crlf)
 STDMETHODIMP CMPTSFilter::Log(char* text,bool crlf)
 {
 	CAutoLock lock(&m_Lock);
-#ifdef DEBUG
+#ifndef DEBUG
 	if(m_logFileHandle==INVALID_HANDLE_VALUE)
 		return S_FALSE;
 
