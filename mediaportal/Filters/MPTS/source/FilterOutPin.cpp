@@ -293,7 +293,7 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 		//m_bDiscontinuity=true;
 	}
 
-	LogDebug("snd pkt pts:%x  pes:%x disc:%d", (DWORD)ptsStart, m_iPESPid, m_bDiscontinuity);
+	//LogDebug("snd pkt pts:%x  pes:%x disc:%d", (DWORD)ptsStart, m_iPESPid, m_bDiscontinuity);
 	if(m_bDiscontinuity) 
 	{
 		pSample->SetDiscontinuity(TRUE);

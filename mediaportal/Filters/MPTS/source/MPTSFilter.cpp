@@ -454,6 +454,8 @@ void CMPTSFilter::UpdatePids()
 		return;
 	}
 	if (pcrpid==0) pcrpid=videopid;
+	if (ptsStart==0) return;
+
 	if (ac3pid	 !=m_pSections->pids.AC3 ||
 		audiopid !=m_pSections->pids.AudioPid ||
 		audiopid2!=m_pSections->pids.AudioPid2 ||
@@ -462,8 +464,8 @@ void CMPTSFilter::UpdatePids()
 		pcrpid   !=m_pSections->pids.PCRPid)
 	{
 		LogDebug("filter: PIDS changed");
-		LogDebug("got pids ac3:%x audio:%x audio2:%x video:%x pmt:%x pcr:%x",
-					ac3pid,audiopid,audiopid2,videopid,pmtpid,pcrpid);
+		LogDebug("got pids ac3:%x audio:%x audio2:%x video:%x pmt:%x pcr:%x pts:%x-%x",
+			ac3pid,audiopid,audiopid2,videopid,pmtpid,pcrpid, (DWORD)ptsStart,(DWORD)ptsNow);
 		m_pSections->pids.AC3=ac3pid;
 		m_pSections->pids.AudioPid=audiopid;
 		m_pSections->pids.AudioPid2=audiopid2;
