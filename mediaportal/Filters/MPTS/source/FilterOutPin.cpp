@@ -418,6 +418,9 @@ void CFilterOutPin::ResetBuffers(__int64 newPosition)
    m_prevPTS=0;
    m_iPESPid=0;
    m_iDiscCounter=3;
+   m_rtCurrent=0;
+   m_rtStop=0;
+   m_rtDuration=0;
 }
 
 void CFilterOutPin::UpdatePositions(ULONGLONG& ptsStart)
