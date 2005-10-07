@@ -72,6 +72,7 @@ namespace MediaPortal.TV.Recording
 		static int           m_preRecordingWarningTime=2;
 		static VMR9OSD			 m_osd = new VMR9OSD();
 		static bool          m_useVMR9Zap=false;
+		static double				 m_duration=0;
 		
 		#endregion
 
@@ -1720,11 +1721,17 @@ namespace MediaPortal.TV.Recording
 			ProcessCards();
 			DiskManagement.Process();	
 			TimeSpan ts=DateTime.Now-m_dtProgresBar;
+			if (g_Player.Playing && g_Player.Duration< m_duration)
+			{
+				RecorderProperties.UpdateRecordingProperties();
+				m_dtProgresBar=DateTime.Now;
+			}
 			if (ts.TotalMilliseconds>10000)
 			{
 				RecorderProperties.UpdateRecordingProperties();
 				m_dtProgresBar=DateTime.Now;
 			}
+			m_duration=g_Player.Duration;
 
 			ts=DateTime.Now-m_dtStart;
 			if (ts.TotalMilliseconds<30000) return;
