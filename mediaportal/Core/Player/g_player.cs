@@ -779,6 +779,7 @@ namespace MediaPortal.Player
       if (m_player==null) return "";
       int m_iTimeToStep =(int)m_currentStep;
       if (m_iTimeToStep==0) return "";
+			m_player.Process();
       if (m_player.CurrentPosition+m_iTimeToStep <= 0) return "START";//start
       if (m_player.CurrentPosition+m_iTimeToStep >= m_player.Duration) return "END";
       switch (m_currentStep)
