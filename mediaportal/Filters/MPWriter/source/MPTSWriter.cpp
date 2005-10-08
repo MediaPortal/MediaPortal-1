@@ -62,7 +62,7 @@ const AMOVIESETUP_FILTER sudDump =
 
 void LogDebug(const char *fmt, ...) 
 {
-#ifdef DEBUG
+#ifndef DEBUG
 	va_list ap;
 	va_start(ap,fmt);
 
@@ -345,6 +345,7 @@ STDMETHODIMP CDumpInputPin::ReceiveCanBlock()
 //
 STDMETHODIMP CDumpInputPin::Receive(IMediaSample *pSample)
 {
+	if (pSample==NULL) return S_OK;
     CheckPointer(pSample,E_POINTER);
 /*
 	//TESTTEST
@@ -363,14 +364,19 @@ STDMETHODIMP CDumpInputPin::Receive(IMediaSample *pSample)
     PBYTE pbData;
 
     // Has the filter been stopped yet?
-    if (m_pDump->m_hFile == INVALID_HANDLE_VALUE) {
+    if (m_pDump->m_hFile == INVALID_HANDLE_VALUE) 
+{
         return NOERROR;
     }
 
 	long sampleLen=pSample->GetActualDataLength();
-	HRESULT hDisc=pSample->IsDiscontinuity();
-	HRESULT hPreRoll=pSample->IsPreroll();
-	HRESULT hSync=pSample->IsSyncPoint();
+	if (sampleLen<=0)
+	{
+		return S_OK;
+	}
+	//HRESULT hDisc=pSample->IsDiscontinuity();
+	//HRESULT hPreRoll=pSample->IsPreroll();
+	//HRESULT hSync=pSample->IsSyncPoint();
 	
     REFERENCE_TIME tStart=0, tStop=0;
     pSample->GetTime(&tStart, &tStop);
@@ -384,10 +390,10 @@ STDMETHODIMP CDumpInputPin::Receive(IMediaSample *pSample)
     if (FAILED(hr)) {
         return hr;
     }
-	char buf[4096];
-	sprintf(buf,"%x-%x len:%d disc:%x preroll:%x sync:%x\n",
-			(DWORD)tStart, (DWORD) tStop, sampleLen,hDisc,hPreRoll,hSync);
-	OutputDebugString(buf);
+	//char buf[4096];
+	//sprintf(buf,"%x-%x len:%d disc:%x preroll:%x sync:%x\n",
+	//		(DWORD)tStart, (DWORD) tStop, sampleLen,hDisc,hPreRoll,hSync);
+	//OutputDebugString(buf);
 
 	if (m_pDump->IsCopyingRecordingFile())
 	{
@@ -399,22 +405,30 @@ STDMETHODIMP CDumpInputPin::Receive(IMediaSample *pSample)
 	if (m_restBufferLen>0)
 	{
 		int len=188-m_restBufferLen;
-		//LogDebug("copy last %d bytes",  len);
-		memcpy(&m_restBuffer[m_restBufferLen], pbData, len);
-		if(m_restBuffer[0]==0x47)
+		if (len>0 && len < sampleLen)
 		{
-			int pid=((m_restBuffer[1] & 0x1F) <<8)+m_restBuffer[2];
-			if(IsPidValid(pid)==true)
+			if (m_restBufferLen>=0 && m_restBufferLen+len < 200)
 			{
-				hr=m_pDump->WriteRecordingFile(m_restBuffer,188);
-				hr=m_pDump->WriteTimeshiftFile(m_restBuffer,188);
+				//LogDebug("copy last %d bytes",  len);
+				memcpy(&m_restBuffer[m_restBufferLen], pbData, len);
+				if(m_restBuffer[0]==0x47)
+				{
+					int pid=((m_restBuffer[1] & 0x1F) <<8)+m_restBuffer[2];
+					if(IsPidValid(pid)==true)
+					{
+						hr=m_pDump->WriteRecordingFile(m_restBuffer,188);
+						hr=m_pDump->WriteTimeshiftFile(m_restBuffer,188);
+					}
+				}
+				//else LogDebug("***RESTBUFFER START != 0x47");
+				if (pbData[len]==0x47 && pbData[len+188]==0x47 && pbData[len+2*188]==0x47)
+				{
+					off=len;
+				}
 			}
+			else m_restBufferLen=0;
 		}
-		//else LogDebug("***RESTBUFFER START != 0x47");
-		if (pbData[len]==0x47 && pbData[len+188]==0x47 && pbData[len+2*188]==0x47)
-		{
-			off=len;
-		}
+		else m_restBufferLen=0;
 	}
 	if (off==-1)
 	{
@@ -450,11 +464,15 @@ STDMETHODIMP CDumpInputPin::Receive(IMediaSample *pSample)
 		}
 	}
 	
-	m_restBufferLen=(pSample->GetActualDataLength()-off)/188;
-	m_restBufferLen *=188;
-	m_restBufferLen=(pSample->GetActualDataLength()-off)-m_restBufferLen;
-	if (m_restBufferLen>0 && m_restBufferLen < 188)
-		memcpy(m_restBuffer,&pbData[pSample->GetActualDataLength()-m_restBufferLen],m_restBufferLen);
+	m_restBufferLen=(pSample->GetActualDataLength()-off);
+	if (m_restBufferLen>0)
+	{
+		m_restBufferLen/=188;
+		m_restBufferLen *=188;
+		m_restBufferLen=(pSample->GetActualDataLength()-off)-m_restBufferLen;
+		if (m_restBufferLen>0 && m_restBufferLen < 188)
+			memcpy(m_restBuffer,&pbData[pSample->GetActualDataLength()-m_restBufferLen],m_restBufferLen);
+	}
 //	LogDebug("copy %d bytes off:%d len:%d", m_restBufferLen,off,pSample->GetActualDataLength());
 	
 //	if (m_restBufferLen<0 || m_restBufferLen >=188)
