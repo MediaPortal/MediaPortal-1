@@ -889,7 +889,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="Dvico FusionHDTV DVB-T USB2" capturename="Bluebird, WDM TsCapture" devid="vid_0fe9&amp;pid_db10&amp;mi_00">
+  <capturecard commercialname="Dvico FusionHDTV DVB-T USB2" capturename="Bluebird, WDM TsCapture" devid="vid_0fe9&amp;pid_db10">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
@@ -3787,7 +3787,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="Dvico FusionHDTV DVB-T USB2" capturename="Bluebird, WDM TsCapture" devid="vid_0fe9&amp;pid_db11&amp;mi_00">
+  <capturecard commercialname="Dvico FusionHDTV DVB-T USB2" capturename="Bluebird, WDM TsCapture" devid="vid_0fe9&amp;pid_db11">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
@@ -4841,7 +4841,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="Dvico FusionHDTV DVB-T USB2" capturename="Bluebird, WDM TsCapture" devid="vid_0fe9&amp;pid_db00&amp;mi_00">
+  <capturecard commercialname="Dvico FusionHDTV DVB-T USB2" capturename="Bluebird, WDM TsCapture" devid="vid_0fe9&amp;pid_db00">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
@@ -4857,7 +4857,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="Dvico FusionHDTV DVB-T USB2" capturename="Bluebird, WDM TsCapture" devid="vid_0fe9&amp;pid_db01&amp;mi_00">
+  <capturecard commercialname="Dvico FusionHDTV DVB-T USB2" capturename="Bluebird, WDM TsCapture" devid="vid_0fe9&amp;pid_db01">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
@@ -4873,7 +4873,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="Dvico FusionHDTV DVB-T USB2" capturename="Bluebird, WDM TsCapture" devid="vid_0fe9&amp;pid_db11&amp;mi_00">
+  <capturecard commercialname="Dvico FusionHDTV DVB-T USB2" capturename="Bluebird, WDM TsCapture" devid="vid_0fe9&amp;pid_db11">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
@@ -4889,7 +4889,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="Dvico FusionHDTV ATSC USB2" capturename="Bluebird, WDM TsCapture" devid="vid_0fe9&amp;pid_d820&amp;mi_00">
+  <capturecard commercialname="Dvico FusionHDTV ATSC USB2" capturename="Bluebird, WDM TsCapture" devid="vid_0fe9&amp;pid_d820">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
