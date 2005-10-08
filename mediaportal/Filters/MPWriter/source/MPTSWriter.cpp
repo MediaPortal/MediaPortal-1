@@ -347,138 +347,149 @@ STDMETHODIMP CDumpInputPin::Receive(IMediaSample *pSample)
 {
 	if (pSample==NULL) return S_OK;
     CheckPointer(pSample,E_POINTER);
-/*
-	//TESTTEST
-	ULONGLONG duration;
-	m_pDump->TimeShiftBufferDuration(&duration);
-	if (duration >=30LL*10000000LL)
+	try
 	{
-		if (false==true)
+
+	/*
+		//TESTTEST
+		ULONGLONG duration;
+		m_pDump->TimeShiftBufferDuration(&duration);
+		if (duration >=30LL*10000000LL)
 		{
-			m_pDump->SetRecordingFileName("D:\\erwin\\media\\videos\\rec.ts");
-			m_pDump->StartRecord(15LL*10000000LL);
-		}
-	}
-*/
-    CAutoLock lock(m_pReceiveLock);
-    PBYTE pbData;
-
-    // Has the filter been stopped yet?
-    if (m_pDump->m_hFile == INVALID_HANDLE_VALUE) 
-{
-        return NOERROR;
-    }
-
-	long sampleLen=pSample->GetActualDataLength();
-	if (sampleLen<=0)
-	{
-		return S_OK;
-	}
-	//HRESULT hDisc=pSample->IsDiscontinuity();
-	//HRESULT hPreRoll=pSample->IsPreroll();
-	//HRESULT hSync=pSample->IsSyncPoint();
-	
-    REFERENCE_TIME tStart=0, tStop=0;
-    pSample->GetTime(&tStart, &tStop);
-
-
-    m_tLast = tStart;
-
-    // Copy the data to the file
-
-    HRESULT hr = pSample->GetPointer(&pbData);
-    if (FAILED(hr)) {
-        return hr;
-    }
-	//char buf[4096];
-	//sprintf(buf,"%x-%x len:%d disc:%x preroll:%x sync:%x\n",
-	//		(DWORD)tStart, (DWORD) tStop, sampleLen,hDisc,hPreRoll,hSync);
-	//OutputDebugString(buf);
-
-	if (m_pDump->IsCopyingRecordingFile())
-	{
-		for (int i=0; i < 100; ++i)
-			m_pDump->CopyRecordingFile();
-	}
-
-	int off=-1;
-	if (m_restBufferLen>0)
-	{
-		int len=188-m_restBufferLen;
-		if (len>0 && len < sampleLen)
-		{
-			if (m_restBufferLen>=0 && m_restBufferLen+len < 200)
+			if (false==true)
 			{
-				//LogDebug("copy last %d bytes",  len);
-				memcpy(&m_restBuffer[m_restBufferLen], pbData, len);
-				if(m_restBuffer[0]==0x47)
+				m_pDump->SetRecordingFileName("D:\\erwin\\media\\videos\\rec.ts");
+				m_pDump->StartRecord(15LL*10000000LL);
+			}
+		}
+	*/
+		CAutoLock lock(m_pReceiveLock);
+		PBYTE pbData;
+
+		// Has the filter been stopped yet?
+		if (m_pDump->m_hFile == INVALID_HANDLE_VALUE) 
+	{
+			return NOERROR;
+		}
+
+		long sampleLen=pSample->GetActualDataLength();
+		if (sampleLen<=0)
+		{
+			return S_OK;
+		}
+		//HRESULT hDisc=pSample->IsDiscontinuity();
+		//HRESULT hPreRoll=pSample->IsPreroll();
+		//HRESULT hSync=pSample->IsSyncPoint();
+		
+		REFERENCE_TIME tStart=0, tStop=0;
+		pSample->GetTime(&tStart, &tStop);
+
+
+		m_tLast = tStart;
+
+		// Copy the data to the file
+
+		HRESULT hr = pSample->GetPointer(&pbData);
+		if (FAILED(hr)) {
+			return hr;
+		}
+		//char buf[4096];
+		//sprintf(buf,"%x-%x len:%d disc:%x preroll:%x sync:%x\n",
+		//		(DWORD)tStart, (DWORD) tStop, sampleLen,hDisc,hPreRoll,hSync);
+		//OutputDebugString(buf);
+
+		if (m_pDump->IsCopyingRecordingFile())
+		{
+			for (int i=0; i < 100; ++i)
+				m_pDump->CopyRecordingFile();
+		}
+
+		int off=-1;
+		if (m_restBufferLen>0)
+		{
+			int len=188-m_restBufferLen;
+			if (len>0 && len < sampleLen)
+			{
+				if (m_restBufferLen>=0 && m_restBufferLen+len < 200)
 				{
-					int pid=((m_restBuffer[1] & 0x1F) <<8)+m_restBuffer[2];
-					if(IsPidValid(pid)==true)
+					//LogDebug("copy last %d bytes",  len);
+					memcpy(&m_restBuffer[m_restBufferLen], pbData, len);
+					if(m_restBuffer[0]==0x47)
 					{
-						hr=m_pDump->WriteRecordingFile(m_restBuffer,188);
-						hr=m_pDump->WriteTimeshiftFile(m_restBuffer,188);
+						int pid=((m_restBuffer[1] & 0x1F) <<8)+m_restBuffer[2];
+						if(IsPidValid(pid)==true)
+						{
+							hr=m_pDump->WriteRecordingFile(m_restBuffer,188);
+							hr=m_pDump->WriteTimeshiftFile(m_restBuffer,188);
+						}
+					}
+					//else LogDebug("***RESTBUFFER START != 0x47");
+					if (pbData[len]==0x47 && pbData[len+188]==0x47 && pbData[len+2*188]==0x47)
+					{
+						off=len;
 					}
 				}
-				//else LogDebug("***RESTBUFFER START != 0x47");
-				if (pbData[len]==0x47 && pbData[len+188]==0x47 && pbData[len+2*188]==0x47)
-				{
-					off=len;
-				}
+				else m_restBufferLen=0;
 			}
 			else m_restBufferLen=0;
 		}
-		else m_restBufferLen=0;
-	}
-	if (off==-1)
-	{
-		for (int i=0; i < pSample->GetActualDataLength()-2*188;++i)
+		if (off==-1)
 		{
-			if (pbData[i]==0x47 && pbData[i+188]==0x47 && pbData[i+2*188]==0x47)
+			for (int i=0; i < pSample->GetActualDataLength()-2*188;++i)
 			{
-				off=i;
-				break;
-			}
-		}
-	}
-	if (off != (188-m_restBufferLen) && off!=0)
-		LogDebug("***OFF != END OF RESTBUFFER %d %d",off,(188-m_restBufferLen));
-
-	for(DWORD t=off;t<(DWORD)pSample->GetActualDataLength();t+=188)
-	{
-		if (t+188 > pSample->GetActualDataLength()) break;
-		if(pbData[t]==0x47)
-		{
-			int pid=((pbData[t+1] & 0x1F) <<8)+pbData[t+2];
-			if(IsPidValid(pid)==true)
-			{
-				byte scrambled=pbData[t+3] & 0xC0;
-				if(!scrambled)
+				if (pbData[i]==0x47 && pbData[i+188]==0x47 && pbData[i+2*188]==0x47)
 				{
-					hr=m_pDump->WriteRecordingFile(pbData+t,188);
-					hr=m_pDump->WriteTimeshiftFile(pbData+t,188);
+					off=i;
+					break;
 				}
-				//else LogDebug("pid:0x%x scrambled:%d", pid,scrambled);
 			}
-
 		}
+		if (off != (188-m_restBufferLen) && off!=0)
+			LogDebug("***OFF != END OF RESTBUFFER %d %d",off,(188-m_restBufferLen));
+
+		if (off<0)
+			off=0;
+
+		for(DWORD t=off;t<(DWORD)pSample->GetActualDataLength();t+=188)
+		{
+			if (t+188 > pSample->GetActualDataLength()) break;
+			if(pbData[t]==0x47)
+			{
+				int pid=((pbData[t+1] & 0x1F) <<8)+pbData[t+2];
+				if(IsPidValid(pid)==true)
+				{
+					byte scrambled=pbData[t+3] & 0xC0;
+					if(!scrambled)
+					{
+						hr=m_pDump->WriteRecordingFile(pbData+t,188);
+						hr=m_pDump->WriteTimeshiftFile(pbData+t,188);
+					}
+					//else LogDebug("pid:0x%x scrambled:%d", pid,scrambled);
+				}
+
+			}
+		}
+		
+		m_restBufferLen=(pSample->GetActualDataLength()-off);
+		if (m_restBufferLen>0)
+		{
+			m_restBufferLen/=188;
+			m_restBufferLen *=188;
+			m_restBufferLen=(pSample->GetActualDataLength()-off)-m_restBufferLen;
+			if (m_restBufferLen>0 && m_restBufferLen < 188)
+				memcpy(m_restBuffer,&pbData[pSample->GetActualDataLength()-m_restBufferLen],m_restBufferLen);
+		}
+	//	LogDebug("copy %d bytes off:%d len:%d", m_restBufferLen,off,pSample->GetActualDataLength());
+		
+	//	if (m_restBufferLen<0 || m_restBufferLen >=188)
+	//		LogDebug("***RESTBUFFER INVALID");
+		m_pDump->UpdateInfoFile(false);
+		m_pDump->Flush();
 	}
-	
-	m_restBufferLen=(pSample->GetActualDataLength()-off);
-	if (m_restBufferLen>0)
+	catch(...)
 	{
-		m_restBufferLen/=188;
-		m_restBufferLen *=188;
-		m_restBufferLen=(pSample->GetActualDataLength()-off)-m_restBufferLen;
-		if (m_restBufferLen>0 && m_restBufferLen < 188)
-			memcpy(m_restBuffer,&pbData[pSample->GetActualDataLength()-m_restBufferLen],m_restBufferLen);
+		LogDebug("exception in ::Receive() ");
 	}
-//	LogDebug("copy %d bytes off:%d len:%d", m_restBufferLen,off,pSample->GetActualDataLength());
-	
-//	if (m_restBufferLen<0 || m_restBufferLen >=188)
-//		LogDebug("***RESTBUFFER INVALID");
-	m_pDump->UpdateInfoFile(false);
-	m_pDump->Flush();
     return NOERROR;
 }
 void CDumpInputPin::ResetPids()
