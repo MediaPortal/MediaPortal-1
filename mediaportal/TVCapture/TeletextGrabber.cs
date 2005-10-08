@@ -9,9 +9,11 @@ namespace MediaPortal.TV.Recording
 	public class TeletextGrabber
 	{
 		static DVBTeletext _teletext;
-
+		static bool				 _grabbing=false;
+		static TVCaptureDevice _device;
 		static TeletextGrabber()
 		{
+
 			_teletext = new DVBTeletext();
 			Recorder.OnTvViewingStarted+=new MediaPortal.TV.Recording.Recorder.OnTvViewHandler(OnTvViewingStarted);
 			Recorder.OnTvViewingStopped+=new MediaPortal.TV.Recording.Recorder.OnTvViewHandler(OnTvViewingStopped);
@@ -22,6 +24,7 @@ namespace MediaPortal.TV.Recording
 		{
 			_teletext.ClearBuffer();
 			device.GrabTeletext(true);
+			_device=device;
 			Log.Write("teletext: grab teletext for card:{0}", device.CommercialName);
 		}
 
@@ -49,6 +52,29 @@ namespace MediaPortal.TV.Recording
 		static public DVBTeletext TeletextCache
 		{
 			get { return _teletext;}
+		}
+		static public bool Grab
+		{
+			get
+			{
+				return _grabbing;
+			}
+			set
+			{
+				_grabbing=value;
+				if (!_grabbing)
+				{
+					_teletext.ClearBuffer();
+					if (_device!=null)
+						_device.GrabTeletext(false);
+				}
+				else
+				{
+					_teletext.ClearBuffer();
+					if (_device!=null)
+						_device.GrabTeletext(true);
+				}
+			}
 		}
 	}
 }

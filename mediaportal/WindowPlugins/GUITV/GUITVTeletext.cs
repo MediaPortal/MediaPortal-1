@@ -146,6 +146,8 @@ namespace MediaPortal.GUI.TV
 
 		protected override void OnPageDestroy(int newWindowId)
 		{
+			
+			TeletextGrabber.Grab=false;
 			TeletextGrabber.TeletextCache.PageUpdatedEvent-=new MediaPortal.TV.Recording.DVBTeletext.PageUpdated(dvbTeletextParser_PageUpdatedEvent);
 
 			if ( !GUITVHome.IsTVWindow(newWindowId) )
@@ -166,6 +168,7 @@ namespace MediaPortal.GUI.TV
 		protected override void OnPageLoad()
 		{
 			base.OnPageLoad ();
+			TeletextGrabber.Grab=true;
 			btnSubPage.RestoreSelection=false;
 
 			ShowMessage(100,0);
@@ -388,8 +391,16 @@ namespace MediaPortal.GUI.TV
 		{
 			if(isPageDirty==true)
 			{
-				Log.Write("dvb-teletext page updated. {0:X}/{1}",currentPageNumber,currentSubPageNumber);
 				TeletextGrabber.TeletextCache.PageSelectText=Convert.ToString(currentPageNumber);
+				int NumberOfSubpages=TeletextGrabber.TeletextCache.NumberOfSubpages(currentPageNumber);
+				if (NumberOfSubpages>currentSubPageNumber)
+				{
+					currentSubPageNumber++;
+				}
+				else if (currentSubPageNumber>=NumberOfSubpages)
+					currentSubPageNumber=1;
+
+				Log.Write("dvb-teletext page updated. {0}/{1} {2}",currentPageNumber,currentSubPageNumber,NumberOfSubpages);
 				bitmapTeletextPage=TeletextGrabber.TeletextCache.GetPage(currentPageNumber,currentSubPageNumber);
 				Redraw();
 				isPageDirty=false;

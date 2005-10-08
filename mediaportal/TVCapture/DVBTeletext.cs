@@ -365,6 +365,21 @@ namespace MediaPortal.TV.Recording
 				m_txtLanguage=value;
 			}
 		}
+		public int NumberOfSubpages(int page)
+		{
+			
+			if (m_actualPage<0x100)
+				m_actualPage=0x100;
+			int total=0;
+			for (int sub=0; sub < 79; sub++)
+			{
+				if((int)m_cacheTable[m_actualPage,sub]!=0)
+				{
+					total++;
+				}
+			}
+			return total;
+		}
 		//
 		//
 		public System.Drawing.Bitmap GetPage(int page,int subpage)
@@ -705,7 +720,7 @@ namespace MediaPortal.TV.Recording
 								int offset=packetNumber*40;
 								adr=(IntPtr)(((int)adr)+offset);
 								Marshal.Copy(tmpBuffer,2,adr,40);
-								if (m_currentPage[magazine]==m_actualPage && m_currentSubPage[magazine]==m_actualSubPage)
+								if (m_currentPage[magazine]==m_actualPage /*&& m_currentSubPage[magazine]==m_actualSubPage*/)
 								{
 									if (PageUpdatedEvent!=null)
 										PageUpdatedEvent();
@@ -963,7 +978,7 @@ namespace MediaPortal.TV.Recording
 									int offset=packetNumber*40;
 									adr=(IntPtr)(((int)adr)+offset);
 									Marshal.Copy(tmpBuffer,2,adr,40);
-									if (m_currentPage[magazine]==m_actualPage && m_currentSubPage[magazine]==m_actualSubPage)
+									if (m_currentPage[magazine]==m_actualPage /*&& m_currentSubPage[magazine]==m_actualSubPage*/)
 									{
 										if (PageUpdatedEvent!=null)
 											PageUpdatedEvent();
