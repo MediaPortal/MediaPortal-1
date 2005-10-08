@@ -71,7 +71,7 @@ namespace MediaPortal.EPG
         }
 
 
-		virtual public Profiler GetPageProfiler(string strURL)
+		virtual public Profiler GetPageProfiler(string strURL, string channelID)
 		{
 			HTMLPage webPage = new HTMLPage(strURL, false);
 			Profiler retProfiler = new Profiler(webPage.GetPage(), m_cTag, m_cDelim);

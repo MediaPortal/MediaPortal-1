@@ -77,7 +77,7 @@ namespace MediaPortal.EPG.config
 		}
 
 
-		public SortedList GetChannelsList(string country)
+		public SortedList GetChannelList(string country)
 		{
 			LoadChannels(country);
 
@@ -87,11 +87,11 @@ namespace MediaPortal.EPG.config
 			return m_ChannelList;
 		}
 
-		public ChannelInfo[] GetChannelsArray(string country)
+		public ChannelInfo[] GetChannelArray(string country)
 		{
 			ChannelInfo[] ChannelArray = null;
 
-			GetChannelsList(country);
+			GetChannelList(country);
 			
 			if(m_ChannelList != null)
 			{
@@ -195,7 +195,7 @@ namespace MediaPortal.EPG.config
 						if (entryNode!=null)
 							gInfo.Linked = true;
 					} 
-					catch(System.Xml.XmlException ex) 
+					catch(System.Xml.XmlException) // ex) 
 					{
 						//Log.WriteFile(Log.LogType.Log, false, "WebEPG Config: File open failed - XML error");
 						return;

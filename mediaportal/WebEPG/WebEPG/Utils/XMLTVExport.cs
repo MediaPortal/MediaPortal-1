@@ -70,8 +70,12 @@ namespace MediaPortal.TV.Database
             m_writer.WriteEndElement();
         }
 
-        public void WriteProgram(TVProgram program)
+        public void WriteProgram(TVProgram program, int copy)
         {
+			string channelid = program.Channel;
+			if(copy > 0)
+				channelid += copy.ToString();
+
             //Stream file = new Stream(
             if (program.Start != 0 &&
                 program.Channel != String.Empty &&
@@ -81,7 +85,7 @@ namespace MediaPortal.TV.Database
                 m_writer.WriteAttributeString("start", program.Start.ToString());
                 if(program.End != 0)
                    m_writer.WriteAttributeString("stop", program.End.ToString());
-                m_writer.WriteAttributeString("channel", program.Channel);
+                m_writer.WriteAttributeString("channel", channelid);
 
                 m_writer.WriteStartElement("title");
                 //m_writer.WriteAttributeString("lang", "de");

@@ -18,21 +18,23 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-using System;
-//using System.Collections.Generic;
-using System.Text;
 
-namespace MediaPortal.TV.Database
+using System;
+using System.Collections;
+
+namespace MediaPortal.EPG.config
 {
-    public class XMLProfilerData
-    {
-		public string XPath;
-		public string ChannelEntry;
-		public string StartEntry;
-		public string EndEntry;
-		public string TitleEntry;
-		public string SubtitleEntry;
-		public string DescEntry;
-		public string GenreEntry;
-    }
+	/// <summary>
+	/// ChannelData holds all the information about a channel that is stored in the config file.
+	/// </summary>
+	public class EPGConfigData
+	{
+		public string DisplayName;
+		public string ChannelID;
+		public string PrimaryGrabberID;
+		public string PrimaryGrabberName;
+		public bool Linked;
+		public int linkStart;
+		public int linkEnd;
+	}
 }

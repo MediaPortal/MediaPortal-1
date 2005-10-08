@@ -28,9 +28,7 @@
 <!-- Formating of Listing -->
   <section name="Listing">
     <entry name="BaseURL">http://www.nyt.fi/televisio/</entry>
-    <entry name="SearchURL">#ID/plus#DAY_OFFSET</entry>
-
-    <entry name="Ahrefs">yes</entry>
+    <entry name="SearchURL">#ID/#DAY_NAME</entry>
 
 <!-- Unique Listing Start string -->
     <entry name="Start">pieni_webkuva</entry>
@@ -46,8 +44,19 @@
 &#60;/tr&#62;
     </entry>
   </section>
+
+  <section name="DayNames">
+    <entry name="0">tanaan</entry>
+    <entry name="1">huomenna</entry>
+    <entry name="2">ylihuomenna</entry>
+    <entry name="3">plus3</entry>
+    <entry name="4">plus4</entry>
+    <entry name="5">plus5</entry>
+    <entry name="6">plus6</entry>
+  </section>
+
   <section name="Info">
-    <entry name="GuideDays">14</entry>
-    <entry name="Lang">fr</entry>
+    <entry name="GuideDays">7</entry>
+    <entry name="Lang">fi</entry>
   </section>
 </profile>

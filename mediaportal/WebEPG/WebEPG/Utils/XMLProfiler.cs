@@ -34,45 +34,37 @@ namespace MediaPortal.EPG
 		XMLProfilerData m_Data;
 		//XmlDocument m_xmlDoc;
 		XmlNodeList m_nodeList;
+		string m_strURL="";
 
 		public XMLProfiler(string strSource, XMLProfilerData data)
 		{
 			m_strSource = strSource;
 			m_Data = data;
 			if(m_strSource != "")
-				NodeProfiler();
+				NodeProfiler("");
 		}
 
-		override public Profiler GetPageProfiler(string strURL)
+		public XMLProfiler(string strSource, XMLProfilerData data, string channelID)
 		{
-			HTMLPage webPage = new HTMLPage(strURL, false);
-			return new XMLProfiler(webPage.SubPage(), m_Data); 
+			m_strSource = strSource;
+			m_Data = data;
+			if(m_strSource != "")
+				NodeProfiler(channelID);
+		}
+
+		override public Profiler GetPageProfiler(string strURL, string channelID)
+		{
+			if(strURL != m_strURL)
+			{
+				HTMLPage webPage = new HTMLPage(strURL, false);
+				m_strSource = webPage.SubPage();
+				m_strURL = strURL;
+			}
+			return new XMLProfiler(m_strSource, m_Data, channelID); 
 		}
 
 		override public Parser GetProfileParser(int index)
 		{
-//			Parser profileParser = new Parser(m_subProfile[index,1]*2 - 1);
-//
-//			int startTag = m_subProfile[index,0];
-//			int sourceStart = this.m_arrayTagPos[startTag,0];
-//			int sourceLength = this.m_arrayTagPos[startTag,1] - sourceStart + 1;
-//			string element = PreProcess(this.m_strSource.Substring(sourceStart, sourceLength));
-//			profileParser.Add(element);
-//
-//			for(int i=0; i < (m_subProfile[index,1] - 1); i++)
-//			{
-//				sourceStart = this.m_arrayTagPos[startTag+i, 1] + 1;
-//				sourceLength = this.m_arrayTagPos[startTag+i+1, 0] - sourceStart;
-//				element = PreProcess(this.m_strSource.Substring(sourceStart, sourceLength));
-//				profileParser.Add(element);
-//
-//				sourceStart = this.m_arrayTagPos[startTag+i+1,0];
-//				sourceLength = this.m_arrayTagPos[startTag+i+1,1] - sourceStart + 1;
-//				element = PreProcess(this.m_strSource.Substring(sourceStart, sourceLength));
-//				profileParser.Add(element);
-//			}
-//
-//			return profileParser;
 			return null;
 		}
 
@@ -84,23 +76,35 @@ namespace MediaPortal.EPG
 			if(progNode != null)
 			{
 				XmlNode node;
-				if((node = progNode.SelectSingleNode(m_Data.TitleEntry)) != null)
+				if(m_Data.TitleEntry != "" && (node = progNode.SelectSingleNode(m_Data.TitleEntry)) != null)
 					program.Title = node.InnerText;
 
-				if((node = progNode.SelectSingleNode(m_Data.SubtitleEntry)) != null)
+				if(m_Data.SubtitleEntry != "" && (node = progNode.SelectSingleNode(m_Data.SubtitleEntry)) != null)
 					program.SubTitle = node.InnerText;
 
-				if((node = progNode.SelectSingleNode(m_Data.DescEntry)) != null)
+				if(m_Data.DescEntry != "" && (node = progNode.SelectSingleNode(m_Data.DescEntry)) != null)
 					program.Description = node.InnerText;
 
-				if((node = progNode.SelectSingleNode(m_Data.GenreEntry)) != null)
+				if(m_Data.GenreEntry != "" && (node = progNode.SelectSingleNode(m_Data.GenreEntry)) != null)
 					program.Genre = node.InnerText;
 
-				if((node = progNode.SelectSingleNode(m_Data.StartEntry)) != null)
-					program.StartTime = GetDateTime(node.InnerText);
+				if(m_Data.StartEntry != "")
+				{
+					if((node = progNode.Attributes.GetNamedItem(m_Data.StartEntry)) != null)
+						program.StartTime = GetDateTime(node.InnerText);
 
-				if((node = progNode.SelectSingleNode(m_Data.EndEntry)) != null)
-					program.EndTime = GetDateTime(node.InnerText);
+					if((node = progNode.SelectSingleNode(m_Data.StartEntry)) != null)
+						program.StartTime = GetDateTime(node.InnerText);
+				}
+
+				if(m_Data.EndEntry != "")
+				{
+					if((node = progNode.Attributes.GetNamedItem(m_Data.EndEntry)) != null)
+						program.EndTime = GetDateTime(node.InnerText);
+
+					if((node = progNode.SelectSingleNode(m_Data.EndEntry)) != null)
+						program.EndTime = GetDateTime(node.InnerText);
+				}
 			}
 
 			return program;
@@ -127,16 +131,18 @@ namespace MediaPortal.EPG
 			return time;
 		}
 
-		private void NodeProfiler()
+		private void NodeProfiler(string channelID)
 		{
-			//m_xmlDoc.Load("D:\\Zen\\EPG\\dev\\Sample-source\\d1-page.xml");
 			try
 			{
 				XmlDocument m_xmlDoc = new XmlDocument();
 				m_xmlDoc.LoadXml(m_strSource);
-				m_nodeList =  m_xmlDoc.DocumentElement.SelectNodes(m_Data.XPath);
+				if(m_Data.ChannelEntry != "")
+					m_nodeList =  m_xmlDoc.DocumentElement.SelectNodes(m_Data.XPath + "[@" + m_Data.ChannelEntry + "=\"" + channelID + "\"]");
+				else
+					m_nodeList =  m_xmlDoc.DocumentElement.SelectNodes(m_Data.XPath);
 			}
-			catch(System.Xml.XmlException ex)
+			catch(System.Xml.XmlException) // ex)
 			{
 				Log.WriteFile(Log.LogType.Log, true, "WebEPG: XML failed");
 			}

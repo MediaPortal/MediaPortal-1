@@ -100,7 +100,7 @@ namespace MediaPortal.EPG
                 }
 
                 m_strURLsearch = m_xmlreader.GetValueAsString("Listing", "SearchURL", "");
-				m_grabDelay = m_xmlreader.GetValueAsInt("Listing", "GrabDelay", 1000);
+				m_grabDelay = m_xmlreader.GetValueAsInt("Listing", "GrabDelay", 100);
                 m_maxListingCount = m_xmlreader.GetValueAsInt("Listing", "MaxCount", 0);
 				m_offsetStart = m_xmlreader.GetValueAsInt("Listing", "OffsetStart", 0);
 				m_guideDays = m_xmlreader.GetValueAsInt("Info", "GuideDays", 0);
@@ -111,6 +111,7 @@ namespace MediaPortal.EPG
 				{
 					case "XML":
 						XMLProfilerData data = new XMLProfilerData();
+						data.ChannelEntry = m_xmlreader.GetValueAsString("Listing", "ChannelEntry", "");
 						data.StartEntry = m_xmlreader.GetValueAsString("Listing", "StartEntry", "");
 						data.EndEntry = m_xmlreader.GetValueAsString("Listing", "EndEntry", "");
 						data.TitleEntry = m_xmlreader.GetValueAsString("Listing", "TitleEntry", "");
@@ -136,14 +137,17 @@ namespace MediaPortal.EPG
 					default: // HTML
 						string strGuideStart = m_xmlreader.GetValueAsString("Listing", "Start", "<body");
 						string strGuideEnd = m_xmlreader.GetValueAsString("Listing", "End", "</body");
-						bool bAhrefs = m_xmlreader.GetValueAsBool("Listing", "Ahrefs", false);
+						//bool bAhrefs = m_xmlreader.GetValueAsBool("Listing", "Ahrefs", false);
+						string tags = m_xmlreader.GetValueAsString("Listing", "Tags", "T");
+						string encoding = m_xmlreader.GetValueAsString("Listing", "Encoding", "");
 						listingTemplate = m_xmlreader.GetValueAsString("Listing", "Template", "");
 						if (listingTemplate == "")
 						{
 							Log.WriteFile(Log.LogType.Log, true, "WebEPG: {0}: No Template", File);
 							return false;
 						}
-						m_templateProfile = new HTMLProfiler(listingTemplate, bAhrefs, strGuideStart, strGuideEnd);
+						//m_templateProfile = new HTMLProfiler(listingTemplate, bAhrefs, strGuideStart, strGuideEnd);
+						m_templateProfile = new HTMLProfiler(listingTemplate, tags, strGuideStart, strGuideEnd, encoding);
 
 						m_searchRegex = m_xmlreader.GetValueAsBool("Listing", "SearchRegex", false);
 						if(m_searchRegex)
@@ -160,7 +164,9 @@ namespace MediaPortal.EPG
 						{
 							string strSubStart = m_xmlreader.GetValueAsString("SubListing", "Start", "<body");
 							string strSubEnd = m_xmlreader.GetValueAsString("SubListing", "End", "</body");
-							bool bSubAhrefs = m_xmlreader.GetValueAsBool("SubListing", "Ahrefs", false);
+							string subencoding = m_xmlreader.GetValueAsString("SubListing", "Encoding", "");
+							//bool bSubAhrefs = m_xmlreader.GetValueAsBool("SubListing", "Ahrefs", false);
+							string Subtags = m_xmlreader.GetValueAsString("SubListing", "Tags", "T");
 							string sublistingTemplate = m_xmlreader.GetValueAsString("SubListing", "Template", "");
 							if (sublistingTemplate == "")
 							{
@@ -169,7 +175,7 @@ namespace MediaPortal.EPG
 							}
 							else
 							{
-								m_templateSubProfile = new HTMLProfiler(sublistingTemplate, bSubAhrefs, strSubStart, strSubEnd);
+								m_templateSubProfile = new HTMLProfiler(sublistingTemplate, Subtags, strSubStart, strSubEnd, subencoding);
 							}
 						}
 
@@ -277,18 +283,30 @@ namespace MediaPortal.EPG
 						m_StartGrab = m_StartGrab.AddDays(1);
 						m_bNextDay=false;
 						m_LastStart=0;
+						m_listingStart=true;
 					}
 				}
 
-				if(m_listingStart && guideData.StartTime[0] >= 20)
+				if(!m_listingStart && !m_bNextDay && m_LastStart > guideData.StartTime[0])
 				{
-					m_listingStart=false;
-					return null;
-				}
-				m_listingStart=false;
-
-				if(!m_bNextDay && m_LastStart > guideData.StartTime[0])
 					m_bNextDay=true;
+					m_listingStart=true;
+				}
+
+				if(m_listingStart)
+				{
+					if(guideData.StartTime[0] >= 12)
+					{
+						if(m_LastStart == 0)
+							return null;
+						m_listingStart=false;
+					}
+				}
+				else
+				{
+					if(guideData.StartTime[0] < 12)
+						guideData.StartTime[0]+=12;
+				}
 
 				DateTime dtStart = new DateTime(m_StartGrab.Year, month, guideData.Day, guideData.StartTime[0], guideData.StartTime[1], 0, 0);
 				if(m_bNextDay)
@@ -328,7 +346,7 @@ namespace MediaPortal.EPG
 						link += strLinkURL;
 					Log.WriteFile(Log.LogType.Log, false, "WebEPG: Reading {0}", link);
 					Thread.Sleep(m_grabDelay);
-					Profiler SubProfile = m_templateSubProfile.GetPageProfiler(link); 
+					Profiler SubProfile = m_templateSubProfile.GetPageProfiler(link, ""); 
 					int Count = SubProfile.subProfileCount(); 
 
 					if(Count > 0)
@@ -350,7 +368,7 @@ namespace MediaPortal.EPG
 				return program;
 			}
 
-            private bool GetListing(string strURL, int offset)
+            private bool GetListing(string strURL, int offset, string strChannel)
             {
 				Profiler guideProfile;
                 bool bMore = false;
@@ -360,7 +378,7 @@ namespace MediaPortal.EPG
 
                 Log.WriteFile(Log.LogType.Log, false, "WebEPG: Reading {0}{1}", m_strURLbase, strURL);
 
-				guideProfile = m_templateProfile.GetPageProfiler(m_strURLbase + strURL); 
+				guideProfile = m_templateProfile.GetPageProfiler(m_strURLbase + strURL, strChannel); 
 				listingCount = guideProfile.subProfileCount();
 
 				if(listingCount == 0)
@@ -441,7 +459,7 @@ namespace MediaPortal.EPG
 					m_bNextDay=false;
 					m_listingStart=true;
 
-                    while (GetListing(strURL, offset))
+                    while (GetListing(strURL, offset, searchID))
                     {
 						Thread.Sleep(m_grabDelay);
                         if (m_maxListingCount == 0)

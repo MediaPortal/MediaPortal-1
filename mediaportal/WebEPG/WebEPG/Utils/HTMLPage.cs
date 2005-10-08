@@ -31,7 +31,7 @@ namespace MediaPortal.Util
     {
 		string m_strPageHead = string.Empty;
         string m_strPageSource = string.Empty;
-		string m_strEncode="iso8859-1";
+		string defaultEncode="iso8859-1";
         int m_startIndex;
         int m_endIndex;
 
@@ -41,17 +41,23 @@ namespace MediaPortal.Util
 
 		public HTMLPage(string strURL)
 		{
-			LoadPage(strURL, true);
+			LoadPage(strURL, true, "");
 		}
 
         public HTMLPage(string strURL, bool isHTML)
         {
-            LoadPage(strURL, isHTML);
+            LoadPage(strURL, isHTML, "");
         }
 
-        private void LoadPage(string strURL, bool isHTML)
+		public HTMLPage(string strURL, bool isHTML, string encoding)
+		{
+			LoadPage(strURL, isHTML, encoding);
+		}
+
+        private void LoadPage(string strURL, bool isHTML, string encoding)
         {
 			Encoding encode;
+			string strEncode = defaultEncode;
 			byte[] buffer;
 			byte[] Block;
 			byte[] LastBlock = new byte[]{};
@@ -89,30 +95,41 @@ namespace MediaPortal.Util
 				for(int b=0; b < size; b++)
 					buffer[i++]=Block[b];
 
-				if(isHTML)
+				if(encoding != "")
 				{
-					encode = System.Text.Encoding.GetEncoding(m_strEncode);
-					string defaultEncode = encode.GetString(buffer);
-					if((i=defaultEncode.IndexOf("charset"))!= -1)
+					strEncode = encoding;
+					Log.WriteFile(Log.LogType.Log, false, "WebPage encoding forced: {0}", strEncode);
+				}
+				else
+				{
+					if(isHTML)
 					{
-						i+=8;
-						m_strEncode="";
-						for(;i<defaultEncode.Length && defaultEncode[i]!='\"';i++)
-							m_strEncode+=defaultEncode[i];
-						Log.WriteFile(Log.LogType.Log, false, "WebPage encoding: {0}", m_strEncode);
+						encode = System.Text.Encoding.GetEncoding(defaultEncode);
+						m_strPageSource = encode.GetString(buffer);
+						if((i=m_strPageSource.IndexOf("charset"))!= -1)
+						{
+							strEncode = "";
+							i+=8;
+							for(;i<m_strPageSource.Length && m_strPageSource[i]!='\"';i++)
+								strEncode+=m_strPageSource[i];
+							Log.WriteFile(Log.LogType.Log, false, "WebPage encoding: {0}", strEncode);
+						}
 					}
 				}
 
                 // Encoding: depends on selected page
-                encode = System.Text.Encoding.GetEncoding(m_strEncode); //strEncode);
-                //sr = new StreamReader(ReceiveStream, encode);
-                m_strPageSource = encode.GetString(buffer);
+				if(m_strPageSource == "" || strEncode != defaultEncode)
+				{
+					encode = System.Text.Encoding.GetEncoding(strEncode); //strEncode);
+					//sr = new StreamReader(ReceiveStream, encode);
+					m_strPageSource = encode.GetString(buffer);
+				}
 				m_startIndex=0;
 				m_endIndex=m_strPageSource.Length;
             }
             catch (WebException ex)
             {
-                Log.WriteFile(Log.LogType.Log, true, "Error retreiving WebPage: {0} Encoding:{1} err:{2} stack:{3}", strURL, m_strEncode, ex.Message, ex.StackTrace);
+                Log.WriteFile(Log.LogType.Log, true, "Error retreiving WebPage: {0} Encoding:{1} err:{2} stack:{3}", strURL, strEncode, ex.Message, ex.StackTrace);
             }
         }
 

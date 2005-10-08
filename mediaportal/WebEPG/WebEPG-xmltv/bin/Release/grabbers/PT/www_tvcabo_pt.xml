@@ -16,7 +16,7 @@
     <entry name="BaseURL">http://www.tvcabo.pt/TV/</entry>
     <entry name="SearchURL">ProgramacaoTv.aspx?programId=1&amp;channelSigla=#ID</entry>
 
-    <entry name="Ahrefs">yes</entry>
+    <entry name="Tags">TA</entry>
 
 <!-- Unique Listing Start string -->
     <entry name="Start">Imprimir</entry>

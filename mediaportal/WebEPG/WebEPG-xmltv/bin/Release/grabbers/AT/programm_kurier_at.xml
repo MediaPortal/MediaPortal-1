@@ -18,6 +18,8 @@
 
 <!--    <entry name="Ahrefs">yes</entry> -->
 
+    <entry name="Encoding">UTF-8</entry>
+
 <!-- Unique Listing Start string -->
     <entry name="Start">incl programm_tv.ascx anfang</entry>
 

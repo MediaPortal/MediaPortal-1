@@ -184,7 +184,7 @@
     <entry name="BaseURL">http://telepoche.guidetele.com/gtv/</entry>
     <entry name="SearchURL">journee?openagent&amp;c=#ID&amp;d=#DAY_OFFSET</entry>
 
-    <entry name="Ahrefs">yes</entry>
+    <entry name="Tags">TA</entry>
     <entry name="OffsetStart">2</entry>
 
 <!-- Unique Listing Start string -->

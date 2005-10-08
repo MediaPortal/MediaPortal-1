@@ -31,39 +31,43 @@ namespace MediaPortal.EPG
 {
 	public class HTMLProfiler : Profiler
 	{
-		bool m_bAhrefs;
+		//bool m_bAhrefs;
+		string m_strTags;
 		string m_strSubProfile;
 		string m_strPageStart;
 		string m_strPageEnd;
+		string m_strEncoding="";
 
-		public HTMLProfiler(string strSource, bool ahrefs)
+		public HTMLProfiler(string strSource, string tags) //bool ahrefs)
 		{
 			m_strSource = strSource.Replace("\r", "");
 			m_strSource = m_strSource.Replace("\n", "");
 			m_strSource = m_strSource.Replace("\t", "");
-			m_bAhrefs=ahrefs;
+			//m_bAhrefs=ahrefs;
+			m_strTags = tags;
 			TableProfiler();
 		}
 
-		public HTMLProfiler(string strSource, bool ahrefs, string PageStart, string PageEnd):this(strSource, ahrefs)
+		public HTMLProfiler(string strSource, string tags, string PageStart, string PageEnd, string encoding):this(strSource, tags)
 		{
 			m_strPageStart = PageStart;
 			m_strPageEnd = PageEnd;
+			m_strEncoding = encoding;
 		}
 
-		public HTMLProfiler(string strSource, bool ahrefs, string strSubProfile):this(strSource, ahrefs)
+		public HTMLProfiler(string strSource, string tags, string strSubProfile):this(strSource, tags)
 		{
 			m_strSubProfile = strSubProfile;
 		}
 
-		override public Profiler GetPageProfiler(string strURL)
+		override public Profiler GetPageProfiler(string strURL, string channelID)
 		{
-			HTMLPage webPage = new HTMLPage(strURL, true);
+			HTMLPage webPage = new HTMLPage(strURL, true, m_strEncoding);
 			if(!webPage.SetStart(m_strPageStart))
 				Log.WriteFile(Log.LogType.Log, true, "WebEPG: Start String not found");
 			if(!webPage.SetEnd(m_strPageEnd))
 				Log.WriteFile(Log.LogType.Log, true, "WebEPG: End String not found");
-			HTMLProfiler retProfiler = new HTMLProfiler(webPage.SubPage(), m_bAhrefs, ProfileString());
+			HTMLProfiler retProfiler = new HTMLProfiler(webPage.SubPage(), m_strTags, ProfileString());
 			retProfiler.Template = GetProfileParser(0);
 			return retProfiler;
 		}
@@ -84,7 +88,7 @@ namespace MediaPortal.EPG
             {
                 arraySubProfiles[count] = nextSubProfile;
                 count++;
-                index = nextSubProfile + 1;
+                index = nextSubProfile + m_strSubProfile.Length - 1;
             }
 
             m_subProfile = new int[count, 2];
@@ -140,7 +144,46 @@ namespace MediaPortal.EPG
 						index++;
 						endTag=true;
 					}
-					
+					char TagS = char.ToUpper(strSource[index + 1]);
+
+					if(TagS == 'B' && char.ToUpper(strSource[index + 2]) == 'R')
+					{
+						strStripped += "<br>";
+	
+						while (index < strSource.Length &&
+							strSource[index] != '>')
+							index++;
+						index++;
+					}
+					else
+					{
+						if(m_strTags.IndexOf(TagS) != -1 || TagS == '#')
+						{
+							tagLength = TagEnd(strSource, index);
+							if(endTag)
+								strStripped += '<';
+
+							int copyLength = tagLength;
+							if(TagS != 'A')
+							{
+								int strip;
+								if((strip = strSource.IndexOf(' ', index, copyLength)) != -1)
+									copyLength = strip;
+							}
+							strStripped += strSource.Substring(index, copyLength);
+							strStripped += '>';
+
+							index += tagLength + 1;
+						}
+						else
+						{
+							tagLength = TagEnd(strSource, index);
+							index += tagLength + 1;
+						}
+					}
+
+
+					/*
 					switch (char.ToUpper(strSource[index + 1]))
 					{
 						case 'B': // BR
@@ -153,7 +196,10 @@ namespace MediaPortal.EPG
 								index++;
 							index++;
 							break;
+						case 'D': // div
 						case 'P': // P
+						case 'L': // LI, LINK
+						case 'S': // span
 						case 'T': // table
 						case '#': // My tags
 							if(endTag)
@@ -186,7 +232,7 @@ namespace MediaPortal.EPG
 							tagLength = TagEnd(strSource, index);
 							index += tagLength + 1;
 							break;
-					}
+					}*/
 				}
 				else
 				{
@@ -255,7 +301,7 @@ namespace MediaPortal.EPG
 						sourceArray[i] = '\x06';
 					m_strSource = new string(sourceArray);
 				}
-				return result.Value;
+				return m_strSource.Substring(result.Index, result.Length);
 			}
 
 			return "";
@@ -359,19 +405,25 @@ namespace MediaPortal.EPG
 				else
 					arrayProfile[profileIndex] = char.ToLower(tag);
 
+				if(m_strTags.IndexOf(tagS) != -1)
+					profileIndex++;
+/*
 				switch (tagS)
 				{
 					case 'A':				// A HREF
 						if (m_bAhrefs)
 							profileIndex++;
 						break;
+					case 'D':				// div
 					case 'P':				// P
+					case 'L':				// LI, LINK
+					case 'S':				// Span
 					case 'T':				// TABLE, TH, TD, TR
 						profileIndex++;
 						break;
 					default:				// All other tags BR, IMG, etc
 						break;
-				}
+				}*/
                 index = nextTag + 1;
             }
 

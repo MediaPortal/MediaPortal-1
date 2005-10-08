@@ -9,7 +9,7 @@
     <entry name="BaseURL">http://wfactory.net/lastampa/</entry>
     <entry name="SearchURL">search_channel.jsp?FRM_CHAN_DATE=#YYYY-#MM-#DD&amp;FRM_CHAN_CHAN=#ID</entry>
 
-    <entry name="Ahrefs">yes</entry>
+    <entry name="Tags">TA</entry>
 
 <!-- Template of the Listing information -->
     <entry name="Template">

@@ -104,6 +104,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "config\Config.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "config\ConfigData.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "config\GrabberInfo.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

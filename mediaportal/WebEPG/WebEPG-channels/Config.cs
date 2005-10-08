@@ -790,7 +790,7 @@ namespace WebEPG_conf
 					if (entryNode!=null)
 						gInfo.Linked = true;
 				} 
-				catch(System.Xml.XmlException ex) 
+				catch(System.Xml.XmlException) // ex) 
 				{
 					Log.WriteFile(Log.LogType.Log, false, "WebEPG Config: File open failed - XML error");
 					return;
