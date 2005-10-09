@@ -530,7 +530,7 @@ namespace MediaPortal.GUI.Alarm
 				//display dialog for message
 				if(_CurrentAlarm.AlarmMediaType == Alarm.MediaType.Message)
 				{	
-					string strMessage = _CurrentAlarm.Message;
+					string strMessage = _CurrentAlarm.Message == null ? string.Empty : _CurrentAlarm.Message;
 					GetStringFromKeyboard(ref strMessage);
 					if (strMessage.Length != 0)
 					{
