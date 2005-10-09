@@ -941,7 +941,7 @@ namespace MediaPortal.GUI.TV
 			}
 
 			ArrayList	audioPidList = Recorder.GetAudioLanguageList();
-			if (audioPidList!=null && audioPidList.Count>0)
+			if (audioPidList!=null && audioPidList.Count>1)
 			{
 				dlg.AddLocalizedString(492); // Audio language menu
 			}
@@ -1116,33 +1116,40 @@ namespace MediaPortal.GUI.TV
 			dlg.Reset();			
 			dlg.SetHeading(492); // set audio language menu
 
+			dlg.ShowQuickNumbers=true;
+
 			DVBSections.AudioLanguage al;
 			ArrayList	audioPidList = new ArrayList();
 			audioPidList = Recorder.GetAudioLanguageList();
 
+			int selected=0;
 			DVBSections sections = new DVBSections();
 			for (int i=0 ; i<audioPidList.Count ; i++)
 			{				
 				al = (DVBSections.AudioLanguage)audioPidList[i];				
 				string strLanguage = DVBSections.GetLanguageFromCode(al.AudioLanguageCode);
 				dlg.Add(strLanguage);
+				if (al.AudioPid == Recorder.GetAudioLanguage())
+				{
+					selected=i;
+				}
 			}
+			dlg.SelectedLabel=selected;
 
 			m_bDialogVisible=true;
 			
 			dlg.DoModal( GetID);
 			m_bDialogVisible=false;
 			
-			if (dlg.SelectedId==-1) return;
+			if (dlg.SelectedLabel<0) return;
 
 			// Set new language			
-			if ( (dlg.SelectedId > 0) && (dlg.SelectedId <= audioPidList.Count) )
+			if ( (dlg.SelectedLabel >= 0) && (dlg.SelectedLabel < audioPidList.Count) )
 			{
-				al = (DVBSections.AudioLanguage)audioPidList[dlg.SelectedId-1];
+				al = (DVBSections.AudioLanguage)audioPidList[dlg.SelectedLabel];
 				Recorder.SetAudioLanguage(al.AudioPid);
 			}
 
-			// TODO : SaveSettings();
 		}
 
 		

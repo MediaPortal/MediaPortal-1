@@ -1971,6 +1971,7 @@ namespace MediaPortal.TV.Recording
 		{
 			return currentTuningObject.AudioPid;
 		}
+
 		public void SetAudioLanguage(int audioPid)
 		{
 			if(audioPid!=currentTuningObject.AudioPid)
@@ -1992,40 +1993,50 @@ namespace MediaPortal.TV.Recording
 				else
 				{
 					currentTuningObject.AudioPid=audioPid;
+					SetupMTSDemuxerPin();
 				}
 			}
 		}
+
 		public ArrayList GetAudioLanguageList()
 		{
 			if (currentTuningObject==null) return new ArrayList();
 			DVBSections.AudioLanguage al;
 			ArrayList audioPidList = new ArrayList();
-			if(currentTuningObject.AudioPid!=0)
+			/*
+			if(currentTuningObject.AudioPid>0)
 			{
 				al=new MediaPortal.TV.Recording.DVBSections.AudioLanguage();
 				al.AudioPid=currentTuningObject.AudioPid;
 				al.AudioLanguageCode=currentTuningObject.AudioLanguage;
 				audioPidList.Add(al);
-			}
-			if(currentTuningObject.Audio1!=0)
+			}*/
+			if(currentTuningObject.Audio1>0)
 			{
 				al=new MediaPortal.TV.Recording.DVBSections.AudioLanguage();
 				al.AudioPid=currentTuningObject.Audio1;
 				al.AudioLanguageCode=currentTuningObject.AudioLanguage1;
 				audioPidList.Add(al);
 			}
-			if(currentTuningObject.Audio2!=0)
+			if(currentTuningObject.Audio2>0)
 			{
 				al=new MediaPortal.TV.Recording.DVBSections.AudioLanguage();
 				al.AudioPid=currentTuningObject.Audio2;
 				al.AudioLanguageCode=currentTuningObject.AudioLanguage2;
 				audioPidList.Add(al);
 			}
-			if(currentTuningObject.Audio3!=0)
+			if(currentTuningObject.Audio3>0)
 			{
 				al=new MediaPortal.TV.Recording.DVBSections.AudioLanguage();
 				al.AudioPid=currentTuningObject.Audio3;
 				al.AudioLanguageCode=currentTuningObject.AudioLanguage3;
+				audioPidList.Add(al);
+			}
+			if(currentTuningObject.AC3Pid>0)
+			{
+				al=new MediaPortal.TV.Recording.DVBSections.AudioLanguage();
+				al.AudioPid=currentTuningObject.AC3Pid;
+				al.AudioLanguageCode="AC-3";
 				audioPidList.Add(al);
 			}
 			return audioPidList;
