@@ -160,9 +160,6 @@ namespace MediaPortal.TV.Recording
         #region Contructor/Destructor
 				public DVBDemuxer()
 				{
-					m_secTimer.Elapsed+=new System.Timers.ElapsedEventHandler(m_secTimer_Elapsed);
-					m_secTimer.Interval=5000;
-					m_secTimer.AutoReset=false;
 				}
         ~DVBDemuxer()
         {
@@ -170,34 +167,15 @@ namespace MediaPortal.TV.Recording
         #endregion
 
         #region global Vars
-		int SECTIONS_BUFFER_WIDTH=1024+187;// 32kb for tables
-		int m_teletextPid = 0;
-		int m_subtitlePid = 0;
-		int m_videoPid = 0;
-		int m_audioPid = 0;
-		int m_pmtPid = 0;
-		string m_channelName = "";
-		// mhw
-		bool m_mhwGrabbing=false;
-		static ArrayList m_mhwChannels=new ArrayList();
-		static ArrayList m_mhwTitles=new ArrayList();
-		static ArrayList m_mhwSummaries=new ArrayList();
-		static ArrayList m_mhwThemes=new ArrayList();
-		// for pid 0xd3
-		byte[] m_tableBufferD3=new byte[0];
-//		int m_bufferPositionD3=0;
-		// for pid 0xd2
-		byte[] m_tableBufferD2=new byte[0];
-		//int m_bufferPositionD2=0;
-		// for dvb-sections
-		int m_sectionPid=-1;
-		int m_sectionTableID=-1;
-		byte[] m_tableBufferSec=new byte[0];
-		int m_bufferPositionSec=0;
-		static ArrayList m_tableSections=new ArrayList();
-		System.Timers.Timer m_secTimer=new System.Timers.Timer();
-		int m_eitScheduleLastTable=0x50;
-		int m_lastContinuityCounter=0;
+				int m_teletextPid = 0;
+				int m_subtitlePid = 0;
+				int m_videoPid = 0;
+				int m_audioPid = 0;
+				int m_pmtPid = 0;
+				string m_channelName = "";
+				int _restBufferLen=0;
+				byte[] _restBuffer = new byte[200];
+				IntPtr _ptrRestBuffer=Marshal.AllocCoTaskMem(200);
 #if GRABPPMT
 		// pmt
 		int m_currentPMTVersion=-1;
@@ -205,18 +183,19 @@ namespace MediaPortal.TV.Recording
 		byte[] m_tableBufferPMT=new byte[4096];
 int m_bufferPositionPMT=0;
 #endif
-		int m_programNumber=-1;
-		DateTime packetTimer=DateTime.MinValue;
-		bool     isReceivingPackets=false;
-		ulong    numberOfPacketsReceived=0;
-		// card
-		static int m_currentDVBCard=0;
-		static NetworkType m_currentNetworkType;
-		bool m_packetsReceived=false;
-		DVBSectionHeader m_sectionHeader=new DVBSectionHeader();
-		bool _grabTeletext=false;
+				int m_programNumber=-1;
+				DateTime packetTimer=DateTime.MinValue;
+				bool     isReceivingPackets=false;
+				bool     isScrambled=false;
+				ulong    numberOfPacketsReceived=0;
+				// card
+				static int m_currentDVBCard=0;
+				static NetworkType m_currentNetworkType;
+				bool m_packetsReceived=false;
+				DVBSectionHeader m_sectionHeader=new DVBSectionHeader();
+				bool _grabTeletext=false;
 
-		static DateTime epgRegrabTime=DateTime.MinValue;
+				
         #endregion
 
         #region global Objects
@@ -231,7 +210,7 @@ int m_bufferPositionPMT=0;
         #region Delegates/Events
 				// audio format
 				public delegate bool OnAudioChanged(AudioHeader audioFormat);
-				public event OnAudioChanged OnAudioFormatChanged; 
+				
 #if GRABPPMT
 				// pmt handling
 				public delegate void OnPMTChanged(byte[] pmtTable);
@@ -239,7 +218,6 @@ int m_bufferPositionPMT=0;
 #endif
 				// grab table
 				public delegate void OnTableReceived(int pid,int tableID,ArrayList tableList);
-				public event OnTableReceived OnGotTable;
 				#endregion
 
         #region public functions
@@ -262,29 +240,8 @@ int m_bufferPositionPMT=0;
 		{
 			_grabTeletext=yesNo;
 		}
-		public void GetMHWEPG()
-		{
-#if GRABMHW
-			if(m_sectionPid!=-1)
-			{
-				Log.WriteFile(Log.LogType.EPG,"MHWEPG: section pid already set to {0:X}",m_sectionPid);
-				return; // only grab when no other grabbing was started
-			}
-			m_tableBufferD2=new byte[66000];
-			m_tableBufferD3=new byte[66000];
-			m_mhwGrabbing=true;
-			m_secTimer.Interval=30000;// grab for 30 sec.
-			m_seTimer.Start();
-#endif
-		}
-		public void ResetGrabber()
-		{
-			m_packetsReceived=false;
-			m_sectionPid=-1;
-			m_sectionTableID=-1;
-			m_secTimer.Stop();
-		}
-		public void SetCardType(int cardType, NetworkType networkType)
+
+			public void SetCardType(int cardType, NetworkType networkType)
 		{
 			m_currentDVBCard=cardType;
 			m_currentNetworkType=networkType;
@@ -319,28 +276,9 @@ int m_bufferPositionPMT=0;
 			return header;
 		}
 
-		public bool GetTable(int pid,int tableID,int timeout)
-		{
-			if(pid<0 || pid>0x1FFF)
-			{
-				
-				Log.Write("dvb-demuxer: GetTable invalid pid:{0:X}", pid);
-				return false;
-			}
-			SECTIONS_BUFFER_WIDTH=1280;
-			m_secTimer.Interval=timeout;
-			return GetTable(pid,tableID);
-		}
 		public void SetChannelData(int audio, int video, int teletext, int subtitle, string channelName,int pmtPid, int programnumber)
 		{
-			ClearSectionsGrabber();
-			m_secTimer.Stop();
 			m_packetsReceived=false;
-			epgRegrabTime= DateTime.MinValue;
-#if GRABPPMT
-			m_currentPMTVersion=-1;
-			m_bufferPositionPMT=0;
-#endif
 			m_programNumber=-1;
 			if (programnumber>0)
 				m_programNumber=programnumber;
@@ -376,21 +314,9 @@ int m_bufferPositionPMT=0;
 				{
 					m_channelName = channelName;
 				}
-
-			// clear buffers and reset pids
-
-			m_tableBufferD2=new byte[0];
-			m_tableBufferD3=new byte[0];
-			m_tableBufferSec=new byte[0];
-			m_tableSections.Clear();
-			m_mhwGrabbing=false;
-			m_sectionPid=-1;
-			m_sectionTableID=-1;
-
 			//
 			packetTimer=DateTime.MinValue;
 
-			m_epgClass.ClearBuffer();
 			
 			Log.Write("DVBDemuxer:{0} audio:{1:X} video:{2:X} teletext:{3:X} pmt:{4:X} subtitle:{5:X} program:{6}",
 				channelName,m_audioPid, m_videoPid, m_teletextPid, m_pmtPid,m_subtitlePid,m_programNumber);
@@ -400,8 +326,13 @@ int m_bufferPositionPMT=0;
 		{
 			get { return isReceivingPackets;}
 		}
+		public bool IsScrambled
+		{
+			get { return isScrambled;}
+		}
 		public void OnTuneNewChannel()
 		{
+			isScrambled=false;
 			isReceivingPackets=false;
 			numberOfPacketsReceived=0;
 		}
@@ -431,119 +362,6 @@ int m_bufferPositionPMT=0;
         #endregion
 
 		#region functions
-		bool IsEPGScheduleGrabbing()
-		{
-			if(m_sectionTableID>=0x50 && m_sectionTableID<=0x6f && m_sectionPid==0x12)
-			{
-				return true;
-			}
-			return false;
-		}
-
-		bool GetTable(int pid,int tableID)
-		{
-			if(m_sectionPid!=-1)
-			{
-				Log.Write("dvb-demuxer: sectionpid already set to:{0:X}", m_sectionPid);
-				return false;
-			}
-			m_tableBufferSec=new byte[SECTIONS_BUFFER_WIDTH+1];
-			m_tableSections=new ArrayList();
-			m_packetsReceived=false;
-			m_sectionPid=pid;
-			m_sectionTableID=tableID;
-			return true;
-		}
-		void ProcessEPGData()
-		{
-			Thread epgThread=new Thread(new ThreadStart(ProcessEPG));
-			epgThread.IsBackground=false;
-			epgThread.Priority=ThreadPriority.Lowest;
-			epgThread.Name="EPG-Parser";
-			epgThread.Start();
-			if(epgThread.Join(1000)==true)
-				Log.WriteFile(Log.LogType.EPG,"thread end:{0}",epgThread.Name);
-		}
-		void GetAllSections()
-		{
-			if(m_tableBufferSec==null)
-				return;
-			if(m_tableBufferSec.Length<SECTIONS_BUFFER_WIDTH)
-				return;
-			lock(m_tableBufferSec.SyncRoot)
-			{
-				byte[] data=(byte[])m_tableBufferSec.Clone();
-				for(int i=0;i<SECTIONS_BUFFER_WIDTH;)
-				{
-					if(i+13>=SECTIONS_BUFFER_WIDTH)
-						break;
-					if(data[i]==0xff)
-					{
-						i++;
-						continue;
-					}
-					DVBSectionHeader header=GetSectionHeader(data,i);
-					if(header.SectionLength<1 || header.SectionLength+4+i>SECTIONS_BUFFER_WIDTH)
-						break;
-					try
-					{
-						Array.Copy(data,i,m_tableBufferSec,0,header.SectionLength+3);
-					}
-					catch
-					{
-					}
-					if(header.TableID==m_sectionTableID)
-						ParseSection();
-					i+=header.SectionLength+4;
-				}
-			}
-		}
-		void ClearGrabber()
-		{
-			// timeout for grabbing sections
-			// clean up
-			m_secTimer.Stop();
-
-			int currentTable=m_sectionTableID;
-			int currentPid=m_sectionPid;
-
-			if(currentTable>=0x50 && currentTable<=0x6f && currentPid==0x12)
-			{
-				m_sectionPid=-1;
-#if GRABEPG
-				ProcessEPGData();
-#endif
-			}
-			else if(OnGotTable!=null)
-			{			
-				m_sectionPid=-1;
-				OnGotTable(currentPid,currentTable,(ArrayList)m_tableSections.Clone());
-				m_tableSections.Clear();
-			}
-
-			
-			ClearSectionsGrabber();
-#if GRABEPG
-			if(currentTable>=0x50 && currentTable<=0x6f && currentPid==0x12)
-			{
-				if(m_eitScheduleLastTable>currentTable)
-				{
-					int table=currentTable+1;
-					//Log.Write("additional grab table id {0}",table);
-					GetEPGSchedule(table,0);
-				}
-			}
-#endif
-		}
-
-		void ClearSectionsGrabber()
-		{
-			m_tableBufferSec=new byte[0];
-			m_sectionPid=-1;
-			m_sectionTableID=-1;
-			m_bufferPositionSec=0;
-			m_tableSections=new ArrayList();
-		}
 		UInt32 GetCRC32(byte[] data)
 		{
 			UInt32 crc = 0xffffffff;
@@ -572,10 +390,6 @@ int m_bufferPositionPMT=0;
 
 			
 			return (UInt32)((data[ptr]<<24)+(data[ptr+1]<<16)+(data[ptr+2]<<8)+data[ptr+3]);
-		}
-		DVBSectionHeader GetHeader()
-		{
-			return GetSectionHeader(m_tableBufferSec);
 		}
 		bool ParseAudioHeader(byte[] data, ref AudioHeader header)
         {
@@ -735,118 +549,6 @@ int m_bufferPositionPMT=0;
 
             return pesData;
         }
-		bool SectionIsInBuffer(int sectionNumber,int serviceID)
-		{
-			lock(m_tableSections.SyncRoot)
-			{
-				if(m_tableSections==null)
-				{
-					m_tableSections=new ArrayList();
-					return false;
-				}
-				foreach(byte[] data in m_tableSections)
-				{
-					DVBSectionHeader header=GetSectionHeader(data);
-					if(header.SectionNumber==sectionNumber && header.TableIDExtension==serviceID)
-						return true;
-				}
-			}
-			return false;
-		}
-		bool SectionIsInBuffer(int sectionNumber)
-		{
-			lock(m_tableSections.SyncRoot)
-			{
-				
-				if(m_tableSections==null)
-				{
-					m_tableSections=new ArrayList();
-					return false;
-				}
-				foreach(byte[] data in m_tableSections)
-				{
-					DVBSectionHeader header=GetSectionHeader(data);
-					if(header.SectionNumber==sectionNumber)
-						return true;
-				}
-			}
-			return false;
-		}
-		static void ProcessEPG()
-		{
-			if(m_currentDVBCard==(int)DVBEPG.EPGCard.Invalid || m_currentDVBCard==(int)DVBEPG.EPGCard.Unknown)
-				return ;
-			ArrayList dataList=new ArrayList();
-			if(m_tableSections!=null)
-			{
-				dataList=(ArrayList)m_tableSections.Clone();
-				m_tableSections.Clear();
-			}
-			DVBEPG		tmpEPGClass=new DVBEPG(m_currentDVBCard,m_currentNetworkType);
-			Log.WriteFile(Log.LogType.EPG,"mhw started thread {0}",System.Threading.Thread.CurrentThread.Name);
-			int count=0;
-			if(dataList!=null)
-			{
-				count+=tmpEPGClass.GetEPG(dataList,0, out epgRegrabTime);
-			}
-			if(m_mhwChannels!=null && m_mhwTitles!=null && m_mhwThemes!=null && m_mhwSummaries!=null)
-			{
-				if(m_mhwChannels.Count>0)
-				{
-					tmpEPGClass.SetMHWBuffer(m_mhwChannels,m_mhwTitles,m_mhwSummaries,m_mhwThemes);
-					count+=tmpEPGClass.GetEPG( out epgRegrabTime);
-					m_mhwChannels.Clear();
-					m_mhwTitles.Clear();
-					m_mhwThemes.Clear();
-					m_mhwSummaries.Clear();
-				}
-			}
-			Log.WriteFile(Log.LogType.EPG,"mhwepg ready. added {0} events to database! Next grab at {1}",count, epgRegrabTime.ToString() );
-		}
-
-		private void m_secTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
-		{
-			if(m_mhwGrabbing==false)
-			{
-				//Log.Write("dvb-demuxer: timeout for pid:{0} tableid:{1}",m_sectionPid, m_sectionTableID);//change
-				m_secTimer.Stop();
-				ClearGrabber();// clear up
-			}
-			else
-			{
-				// delete buffers and save epg-data
-				m_secTimer.Stop();
-				m_mhwGrabbing=false;
-#if GRABMHW
-				Log.WriteFile(Log.LogType.EPG,"MHW-EPG grabbing stop");
-				m_epgClass.GetMHWBuffer(ref m_mhwChannels,ref m_mhwTitles,ref m_mhwSummaries,ref m_mhwThemes);
-				if (m_mhwChannels!=null)
-					Log.WriteFile(Log.LogType.EPG,"mhw:channels:{0}", m_mhwChannels.Count);
-				else
-					Log.WriteFile(Log.LogType.EPG,"mhw:no channels");
-
-				if (m_mhwTitles!=null)
-					Log.WriteFile(Log.LogType.EPG,"mhw:titles:{0}", m_mhwTitles.Count);
-				else
-					Log.WriteFile(Log.LogType.EPG,"mhw:no titles");
-				
-				if (m_mhwSummaries!=null)
-					Log.WriteFile(Log.LogType.EPG,"mhw:summaries:{0}", m_mhwSummaries.Count);
-				else
-					Log.WriteFile(Log.LogType.EPG,"mhw:no summaries");
-				
-				if (m_mhwThemes!=null)
-					Log.WriteFile(Log.LogType.EPG,"mhw:themes:{0}", m_mhwThemes.Count);
-				else
-					Log.WriteFile(Log.LogType.EPG,"mhw:no themes");
-
-				ProcessEPGData();
-				m_tableBufferD2=new byte[0];
-				m_tableBufferD3=new byte[0];
-#endif
-			}
-		}
-
 		#endregion
 
         #region Properties
@@ -868,75 +570,90 @@ int m_bufferPositionPMT=0;
 		System.IO.FileStream stream=null;
 		ulong fileLen=0;
 #endif
-		public int BufferCB(double SampleTime, IntPtr pBuffer, int BufferLen)
-		{
-			int add = (int)pBuffer;
-			int end = add + BufferLen;
-
-			// when here, we can set graph as running
-#if MAKEDUMP
-			if (fileLen==0&&writer==null && stream==null)
+			public int BufferCB(double SampleTime, IntPtr pBuffer, int BufferLen)
 			{
-				fileLen=0;
-				stream = new System.IO.FileStream("dump4GB.ts",System.IO.FileMode.Create,System.IO.FileAccess.Write,System.IO.FileShare.None);
-				writer = new System.IO.BinaryWriter(stream);
-			}
-			
-			if (writer!=null)
-			{
-				for (int ptr = add; ptr < end; ptr += 188)//main loop
+				int off=-1;
+				if (_restBufferLen>0)
 				{
-					m_packetHeader=m_tsHelper.GetHeader((IntPtr)ptr);
-					if (m_packetHeader.Pid==2222 ||
-						m_packetHeader.Pid==2220 ||
-						m_packetHeader.Pid==0 || true)
+					int len=188-_restBufferLen;	//remaining bytes of packet
+					if (len>0 && len < BufferLen)
 					{
-						byte[] byData=new byte[188];
-						Marshal.Copy((IntPtr)ptr,byData,0,188);
-						writer.Write(byData,0,188);
-						fileLen +=(ulong)188;
-					}
+						if (_restBufferLen>=0 && _restBufferLen+len < 200)
+						{
 
-					//limit to 100MB
-					if (fileLen > 1024L*1024L*50L)
+							//copy the remaining bytes 
+							Marshal.Copy(pBuffer,_restBuffer,_restBufferLen,len);
+							Marshal.Copy(_restBuffer,0,_ptrRestBuffer,188);
+
+							ProcessPacket(_ptrRestBuffer);
+
+							//set offset ...
+							if (Marshal.ReadByte(pBuffer,len)==0x47 && Marshal.ReadByte(pBuffer,len+188)==0x47 && Marshal.ReadByte(pBuffer,len+2*188)==0x47)
+							{
+								off=len;
+							}
+						}
+						else _restBufferLen=0;
+					}
+					else _restBufferLen=0;
+				}
+				if (off==-1)
+				{
+					//no then find first 3 transport packets in mediasample
+					for (int i=0; i < BufferLen-2*188;++i)
 					{
-						writer.Close();
-						stream.Close();
-						writer=null;
-						stream=null;
+						if (Marshal.ReadByte(pBuffer,i)==0x47 && Marshal.ReadByte(pBuffer,i+188)==0x47 && Marshal.ReadByte(pBuffer,i+2*188)==0x47)
+						{
+							//found first 3 ts packets
+							//set the offset
+							off=i;
+							break;
+						}
 					}
 				}
+				for(uint t=(uint)off;t<BufferLen;t+=188)
+				{
+					if (t+188 > BufferLen) break;
+					ProcessPacket((IntPtr)((int)pBuffer+t));
+				}
+				if (_restBufferLen>0)
+				{
+					_restBufferLen/=188;
+					_restBufferLen *=188;
+					_restBufferLen=(BufferLen-off)-_restBufferLen;
+					if (_restBufferLen>0 && _restBufferLen < 188)
+					{
+						//copy the incomplete packet in the rest buffer
+						Marshal.Copy((IntPtr)((int)pBuffer+BufferLen-_restBufferLen),_restBuffer,0,_restBufferLen);
+					}
+				}
+				return 0;
 			}
-#endif
 
-			for (int ptr = add; ptr < end; ptr += 188)//main loop
+			public void ProcessPacket(IntPtr ptr)
 			{
+				if (ptr==IntPtr.Zero) return;
 				numberOfPacketsReceived++;
 				
 				m_packetHeader=m_tsHelper.GetHeader((IntPtr)ptr);
 				if(m_packetHeader.SyncByte!=0x47) 
 				{
-					continue;
+					return;
 				}
 				if(m_packetHeader.TransportError==true)
 				{
-					continue;
+					return;
 				}
-				numberOfPacketsReceived++;
-				/*
-				if (m_packetHeader.Pid==0)
+				if (m_packetHeader.Pid==m_videoPid)
 				{
-					Log.Write("pid:0x{0:X} pos:{1} cont:{2} adapt:{3} payloadunitstart:{4} len:{5} {0:X}",
-						m_packetHeader.Pid,
-						m_bufferPositionSec,
-						m_packetHeader.ContinuityCounter,
-						m_packetHeader.AdaptionFieldControl,
-						m_packetHeader.PayloadUnitStart,
-						m_packetHeader.SectionLen,
-						m_sectionPid);
-				}*/
-				// teletext
+					if (m_packetHeader.TransportScrambling!=0)
+						isScrambled=true;
+					else
+						isScrambled=false;
+				}
 
+				numberOfPacketsReceived++;
+				// teletext
 				if (_grabTeletext)
 				{
 					if (m_packetHeader.Pid==m_teletextPid && m_teletextPid>0)
@@ -947,461 +664,12 @@ int m_bufferPositionPMT=0;
 
 				if(m_packetsReceived==false)
 				{
-					m_secTimer.Start();
 					m_packetsReceived=true;
 				}
-				// get the header object
-				// audio & video
-				#region subtitles
-				if(m_subtitlePid>0 && m_subtitlePid==m_packetHeader.Pid)
-				{
-				}
 
-				#endregion
-
-				#region Audio & Video
-				if (m_packetHeader.Pid == m_audioPid && m_audioPid > 0)
-				{
-					if(OnAudioFormatChanged!=null)
-					{
-						//					Log.Write("got audio pid:0x{0:X}", m_audioPid);
-						if (m_packetHeader.PayloadUnitStart == true)// start
-						{
-							AudioHeader ah = new AudioHeader();
-							byte[] packet = new byte[184];
-							Marshal.Copy((IntPtr)(ptr+4), packet, 0, 184);
-							if (ParseAudioHeader((byte[])GetAudioHeader(packet).Clone(),ref ah) == true)
-							{
-								if (ah.Bitrate!=m_usedAudioFormat.Bitrate || 
-									ah.Channel!=m_usedAudioFormat.Channel ||
-									ah.SamplingFreq!=m_usedAudioFormat.SamplingFreq ||
-									ah.Layer!=m_usedAudioFormat.Layer ||
-									ah.Mode!=m_usedAudioFormat.Mode)
-								{
-										bool success=OnAudioFormatChanged(ah);
-										if(success) m_usedAudioFormat = ah;
-								}
-							}
-						}
-					}
-				}
-				/*
-				if (m_packetHeader.Pid == m_videoPid && m_videoPid > 0)
-				{
-//					Log.Write("got video pid:0x{0:X}", m_videoPid);
-					if (m_packetHeader.PayloadUnitStart == true)// start
-					{
-						byte[] packet = new byte[188];
-						Marshal.Copy((IntPtr)ptr, packet, 0, 188);
-					}
-				}
-				*/
-				#endregion
-#if GRABMHW
-				#region mhw grabbing
-				if(m_mhwGrabbing==true)// only grab from epg-grabber
-				{
-//					Log.Write("grab mhw");
-					try
-					{
-
-						int offset=0;
-						//
-						// calc offset & pointers
-						if(m_packetHeader.PayloadUnitStart==true && m_packetHeader.AdaptionFieldControl==1)
-							offset=1;
-						//
-						// copy data and set grabbing flag
-						// mhw (pids 0xd3 & 0xd2)
-
-						if(m_packetHeader.Pid==0xd2)
-						{
-							if(m_bufferPositionD2+(184-offset)<65534)
-							{
-								Marshal.Copy((IntPtr)(ptr+4+offset),m_tableBufferD2,m_bufferPositionD2,184-offset);
-								m_bufferPositionD2+=(184-offset);
-							}
-							else
-								GetTablesD2();
-						}
-						if(m_packetHeader.Pid==0xd3)
-						{
-							if(m_bufferPositionD3+(184-offset)<65534)
-							{
-								Marshal.Copy((IntPtr)(ptr+4+offset),m_tableBufferD3,m_bufferPositionD3,184-offset);
-								m_bufferPositionD3+=(184-offset);
-							}
-							else
-								GetTablesD3();
-								
-						}
-
-					}
-					catch(Exception ex)
-					{
-						Log.Write("mhw-epg: exception {0} source:{1}",ex.Message,ex.StackTrace);
-					}
-
-				
-				}
-
-				#endregion
-#endif
-
-#if GRABPPMT
-				#region pmt handling
-				if(m_pmtPid >0 && m_packetHeader.Pid==m_pmtPid)
-				{
-					//if (m_currentPMTVersion==-1)
-					//	Log.Write("grab pmt:0x{0:X} adpt:{1} pos:{2}",m_pmtPid,m_packetHeader.AdaptionFieldControl,m_bufferPositionPMT);
-					try
-					{
-						int offset=0;
-						//
-						// calc offset & pointers
-						if(m_packetHeader.AdaptionFieldControl==2 || m_packetHeader.AdaptionFieldControl==3)
-							continue;
-						if(m_packetHeader.PayloadUnitStart==true && m_bufferPositionSec==0)
-							offset=m_packetHeader.AdaptionField+1;
-						else if(m_packetHeader.PayloadUnitStart==true)
-							offset=1;
-		
-						if(m_bufferPositionPMT+(184-offset)<=4093)
-						{
-							Marshal.Copy((IntPtr)(ptr+4+offset),m_tableBufferPMT,m_bufferPositionPMT,184-offset);
-							m_bufferPositionPMT+=(184-offset);
-						}
-						DVBSectionHeader header=GetSectionHeader(m_tableBufferPMT,0);
-
-						if(m_bufferPositionPMT>=header.SectionLength+3 && header.TableID==0x02 && header.SectionLength>0)
-						{
-							if(header.VersionNumber!=m_currentPMTVersion)
-							{
-							  //Log.Write("Got new PMT version:{0} progr:{1:X}=={2:X}",
-								//					header.VersionNumber,m_programNumber,header.TableIDExtension);
-								int len=header.SectionLength+3;
-								byte[] data=new byte[len];
-								Array.Copy(m_tableBufferPMT,0,data,0,len);
-								UInt32 crc1=GetCRC32(data);
-								UInt32 crc2=GetSectionCRCValue(data,len-4);
-								if(crc1==crc2)
-								{
-									if (m_programNumber <=0 || m_programNumber == header.TableIDExtension)
-									{
-										if (OnPMTIsChanged!=null)
-											OnPMTIsChanged((byte[])data.Clone());
-										m_currentPMTVersion=header.VersionNumber;
-									}
-								}
-								else 
-								{
-									Log.Write("PMT CRC error");
-								}
-							}
-							m_bufferPositionPMT=0;
-						}
-					}
-					catch(Exception ex)
-					{
-						Log.Write("mhw-epg: exception {0} source:{1}",ex.Message,ex.StackTrace);
-					}
-
-				
-				}
-			
-				#endregion
-#endif
-				#region sections
-
-				if(m_sectionPid!=-1 && m_packetHeader.Pid==m_sectionPid)
-				{
-					try
-					{
-						// calc offset
-						if(m_packetHeader.AdaptionFieldControl==2)
-						{
-							//Log.Write("ignore adapt=2");
-							continue;
-						}
-						if(m_packetHeader.AdaptionFieldControl==3)
-						{
-							//Log.Write("ignore adapt=3");
-							continue;
-						}
-						if(m_bufferPositionSec==0 && m_packetHeader.ContinuityCounter!=0)
-						{
-							continue;
-						}
-						int offset=0;
-						if(m_packetHeader.PayloadUnitStart==true && m_bufferPositionSec==0)
-							offset=m_packetHeader.AdaptionField+1;
-						else if(m_packetHeader.PayloadUnitStart==true)
-							offset=1;
-
-						//
-						// start copy data for every section on its table-id-byte
-						if(m_bufferPositionSec==0 && m_sectionTableID!=Marshal.ReadByte((IntPtr)(ptr+4+offset)))
-						{
-							//Log.Write("ignore sectiontableid wrong");
-							continue;
-						}
-						if(m_bufferPositionSec>0)
-						{
-							int counter=m_lastContinuityCounter;
-							if(counter==15)
-								counter=-1;
-							if(counter+1!=m_packetHeader.ContinuityCounter)
-							{
-								//Log.Write("dvb-demuxer: continuity counter dont match for pid {0}!={1}",counter+1,m_packetHeader.ContinuityCounter);
-								m_bufferPositionSec=0;
-							}
-						}
-						
-						//
-						// copy data
-						if(m_bufferPositionSec+(184-offset)<=SECTIONS_BUFFER_WIDTH)
-						{
-							Marshal.Copy((IntPtr)(ptr+4+offset),m_tableBufferSec,m_bufferPositionSec,184-offset);
-							m_bufferPositionSec+=(184-offset);
-							
-							DVBSectionHeader header=GetHeader();
-							m_lastContinuityCounter=m_packetHeader.ContinuityCounter;
-
-							if(IsEPGScheduleGrabbing()==false && m_bufferPositionSec>=header.SectionLength && header.SectionLength>0)
-							{
-//								Log.Write("Parse...");
-								ParseSection();
-							}
-								
-						}
-						else 
-						{
-							DVBSectionHeader header=GetHeader();
-							if(IsEPGScheduleGrabbing()==false && m_bufferPositionSec>header.SectionLength && header.SectionLength>0)
-							{
-//								Log.Write("Parse2...");
-								ParseSection();
-							}
-							else if(IsEPGScheduleGrabbing()==true)
-								GetAllSections();
-							m_bufferPositionSec=0;
-						}
-					}
-					catch(Exception ex)
-					{
-						Log.WriteFile(Log.LogType.EPG,"mhw-epg: exception {0} source:{1}",ex.Message,ex.StackTrace);
-					}
-
-				
-				}
-				#endregion
-
-
-			}
-            return 0;
-        }
+      }
 
         #endregion
-		#region Table Handling / saving data
-			/*
-		void GetTablesD2()
-		{
-			int tableID=0;
-			int sectionLen=0;
-
-			lock(m_tableBufferD2.SyncRoot)
-			{
-				int ptr=0;
-				// find first start of table
-				do
-				{
-					if(ptr>=0 && ptr<65533)
-					{
-						if(ptr>65534 || ptr<0)
-							break;
-						tableID=m_tableBufferD2[ptr];
-						sectionLen=((m_tableBufferD2[ptr+1]-0x70)<<8)+m_tableBufferD2[ptr+2];
-						// table ok?
-						if((tableID==0x90 || tableID==0x91) && (m_tableBufferD2[ptr+1]>=0x70 && m_tableBufferD2[ptr+1]<=0x7F))
-						{
-							// found table
-							// ignore last data and ready
-							if(ptr+sectionLen+3>=65535) break;
-							if(sectionLen<1) continue;
-							if(sectionLen+3>65533) continue;
-							byte[] data=new byte[sectionLen+3];
-							try
-							{
-								Array.Copy(m_tableBufferD2,ptr,data,0,sectionLen+3);
-								SaveData(0xd2,tableID,data);
-							}
-							catch
-							{
-							}
-							ptr+=sectionLen+3;
-						}// else ptr+=1
-						else
-							ptr++;
-						
-					}
-					else break;
-				}while(1!=0);
-				// clear up
-				m_bufferPositionD2=0;
-			}
-		}
-		void GetTablesD3()
-		{
-			int tableID=0;
-			int sectionLen=0;
-
-			lock(m_tableBufferD3.SyncRoot)
-			{
-				int ptr=0;
-				// find first start of table
-				do
-				{
-					if(ptr>=0 && ptr<65533)
-					{
-						if(ptr>65534 || ptr<0)
-							break;
-						tableID=m_tableBufferD3[ptr];
-						sectionLen=((m_tableBufferD3[ptr+1]-0x70)<<8)+m_tableBufferD3[ptr+2];
-						// table ok?
-						if((tableID==0x90 || tableID==0x91 || tableID==0x92) && (m_tableBufferD3[ptr+1]>=0x70 && m_tableBufferD3[ptr+1]<=0x7F))
-						{
-							// found table
-							// ignore last data and ready
-							
-							if(ptr+sectionLen+3>=65535) break;
-							if(sectionLen<1) continue;
-							if(sectionLen+3>65533) continue;
-							byte[] data=new byte[sectionLen+3];
-							try
-							{
-								Array.Copy(m_tableBufferD3,ptr,data,0,sectionLen+3);
-								SaveData(0xd3,tableID,data);
-							}
-							catch
-							{
-							}
-							ptr+=sectionLen+3;
-						}// else ptr+=1
-						else
-							ptr++;
-						
-					}
-					else break;
-				}while(1!=0);
-				// clear up
-				m_bufferPositionD3=0;
-			}
-
-		}
-*/
-		void ParseSection()
-		{
-
-			lock(m_tableSections.SyncRoot)
-			{
-				int ptr=0;
-				byte[] data=new byte[0];
-				DVBSectionHeader header=new DVBSectionHeader();
-
-				header=GetHeader();
-				header.SectionLength+=3;
-				bool sectionOK=false;
-				// table ok?
-//				Log.Write("table id:{0} =={1}",header.TableID,m_sectionTableID);
-				if(header.TableID==m_sectionTableID)
-				{
-					// found table
-					// ignore last data and ready
-					if(ptr+header.SectionLength>=65535) return;
-					if(header.SectionLength<1) return;
-					if(header.SectionLength>65535) return;
-					data=new byte[header.SectionLength];
-					try
-					{
-						Array.Copy(m_tableBufferSec,ptr,data,0,header.SectionLength);
-						UInt32 crc1=GetCRC32(data);
-						UInt32 crc2=GetSectionCRCValue(data,header.SectionLength-4);
-						if(crc1==crc2)
-						{
-							if(header.TableID>m_eitScheduleLastTable)
-								m_eitScheduleLastTable=header.HeaderExtB13;
-							sectionOK=true;
-						}
-						else
-						{
-							//Log.WriteFile(Log.LogType.Error,"CRC error:{0:X} != {1:X}", crc1,crc2);
-							sectionOK=false;
-							// reject the section
-						}
-					}
-					catch
-					{
-						sectionOK=false;
-					}
-				}
-
-				// clean up
-				if(sectionOK==false)
-				{
-					m_bufferPositionSec=0;
-					return;
-				}
-
-				if(IsEPGScheduleGrabbing()) // check section-number and service-id
-				{
-					if(SectionIsInBuffer(header.SectionNumber,header.TableIDExtension)==false)
-					{
-//						Log.Write("added section-number: {0} segment last: {1} last_section: {2} section len:{3}",header.SectionNumber,header.HeaderExtB12,header.LastSectionNumber,header.SectionLength);
-						m_secTimer.Stop();
-						m_secTimer.Interval=6000;
-						m_secTimer.Start();
-						m_tableSections.Add(data);
-						// timeout only after grabbing last section
-					}
-				}
-				else 
-				{
-					if(SectionIsInBuffer(header.SectionNumber)==false)
-					{
-//						Log.Write("added section-number: {0} segment last: {1} last_section: {2} section len:{3}",header.SectionNumber,header.HeaderExtB12,header.LastSectionNumber,header.SectionLength);
-						m_secTimer.Stop();
-						m_secTimer.Start();
-						m_tableSections.Add(data);
-
-					}
-					// timeout only after grabbing last section
-				}
-				// check if table is complete
-				if(IsEPGScheduleGrabbing()==false && m_tableSections.Count-1==header.LastSectionNumber)
-				{
-					// ready, clean up
-					m_secTimer.Stop();
-					ClearGrabber();
-				}
-				else
-				{
-					m_bufferPositionSec=0;// grab next
-				}
-				
-				if (IsEPGScheduleGrabbing()==false)
-				{
-					if (epgRegrabTime!=DateTime.MinValue)
-					{
-						if (DateTime.Now.AddMinutes(10) > epgRegrabTime)
-						{
-							GetEPGSchedule(0x50,0);
-						}
-					}
-				}
-			}
-		}
-		// parsesection
-		#endregion
 
 		//
 		//

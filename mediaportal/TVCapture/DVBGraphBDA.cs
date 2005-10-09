@@ -3549,16 +3549,11 @@ namespace MediaPortal.TV.Recording
 				{
 					// we receive packets, got a PMT.
 					// is channel scrambled ?
-					if(GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.Vmr9FPS < 1f)
+					if(m_streamDemuxer.IsScrambled)
 					{
 						if  ( (g_Player.Playing && !g_Player.Paused) || (!g_Player.Playing) )
 						{
 							VideoRendererStatistics.VideoState=VideoRendererStatistics.State.Scrambled;
-						}
-						else
-						{
-							// todo: check for vmr7 is we are receiving video 
-							VideoRendererStatistics.VideoState=VideoRendererStatistics.State.VideoPresent;
 						}
 					}
 					else
@@ -4317,7 +4312,6 @@ namespace MediaPortal.TV.Recording
 				ushort count=0;
 				sections.DemuxerObject=m_streamDemuxer;
 				sections.Timeout=2500;
-				sections.GetTablesUsingMicrosoft=true;
 				for (int i=0; i < 100; ++i)
 				{
 					bool allFound=true;

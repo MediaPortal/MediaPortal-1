@@ -58,13 +58,8 @@ namespace MediaPortal.TV.Recording
 		int									m_timeoutMS=1000; // the timeout in milliseconds
 		// two skystar2 specific globals
 		bool								m_setPid=false;
-		DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3 m_dataControl=null;
-		System.Timers.Timer					m_eitTimeoutTimer=null;
-		bool								m_breakAction=false;
 		object								m_dataCtrl=null;
 		static DVBDemuxer					m_streamDemuxer;
-		bool								m_syncWait=false;
-		bool                m_getTablesUsingMS=false;
 		static object						m_syncRelease=false;
 
 		static string[] m_langCodes=new string[]{
@@ -252,7 +247,6 @@ namespace MediaPortal.TV.Recording
 				if(value!=null)
 				{
 					m_streamDemuxer=value;
-					m_streamDemuxer.OnGotTable+=new MediaPortal.TV.Recording.DVBDemuxer.OnTableReceived(m_streamDemuxer_OnGotTable);
 				}
 			}
 		}
@@ -260,13 +254,6 @@ namespace MediaPortal.TV.Recording
 		{
 			m_sectionsList=new ArrayList();	
 			transp=new TPList[200];
-			m_eitTimeoutTimer=new System.Timers.Timer(3000);
-			m_eitTimeoutTimer.Elapsed+=new System.Timers.ElapsedEventHandler(m_eitTimeoutTimer_Elapsed);
-		}
-		public bool GetTablesUsingMicrosoft
-		{
-			get { return m_getTablesUsingMS;}
-			set { m_getTablesUsingMS=value;}
 		}
 		//
 		public int Timeout
@@ -687,41 +674,6 @@ namespace MediaPortal.TV.Recording
 		//
 		//
 		// iso 639 language codes
-
-		private void m_eitTimeoutTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
-		{
-			m_breakAction=true;
-			m_syncWait=true;
-			if(m_streamDemuxer!=null)
-				m_streamDemuxer.ResetGrabber();//stop timer and set pid to -1
-		}
-
-		// get stream data with mps demuxer-class
-		public bool GetStreamData(DShowNET.IBaseFilter filter,int pid, int tid,int tableSection,int timeout)
-		{
-			//when in config...
-			if (GUIGraphicsContext.DX9Device==null || m_getTablesUsingMS)
-			{
-				return MsGetStreamData(filter,pid,tid,tableSection,timeout);
-			}
-
-			m_sectionsList=new ArrayList();
-			bool flag=false;
-			if(m_streamDemuxer.GetTable(pid,tid,timeout)==true)
-			{
-				m_syncWait=false;
-				m_eitTimeoutTimer.Interval=timeout*2;
-				m_eitTimeoutTimer.Start();
-				while(m_syncWait==false)
-				{
-					System.Windows.Forms.Application.DoEvents();
-					System.Threading.Thread.Sleep(100);
-				}
-				m_eitTimeoutTimer.Stop();
-			}
-			return flag;	
-
-		}
 		private bool MsGetStreamData(DShowNET.IBaseFilter filter,int pid, int tid,int tableSection,int timeout)
 		{
 			bool flag;
@@ -991,7 +943,6 @@ namespace MediaPortal.TV.Recording
 
 		#endregion
 
-		#region Table Decoding
 		#region tables
 		private void decodeBATTable(byte[] buf, TPList transponderInfo, ref Transponder tp)
 		{
@@ -1655,78 +1606,6 @@ namespace MediaPortal.TV.Recording
 			return 0;
 		}
 
-		void LoadPMTTables (DShowNET.IBaseFilter filter,TPList tpInfo, ref Transponder tp)
-		{
-			int t;
-			int n;
-			ArrayList	tab42=new ArrayList();
-			ArrayList	tab46=new ArrayList();
-
-			//get SDT (Service Description Table) (pid 0x11)
-			//The SDT is used to list the names and other parameters of the services within TSs. 
-			//For each TS a separate SDT sub-Table exists.
-			GetStreamData(filter,0x11, 0x42,0,m_timeoutMS);
-			tab42=(ArrayList)m_sectionsList.Clone();
-			
-			GetStreamData(filter,0x11, 0x46,0,500); // low value, nothing in most of time
-			tab46=(ArrayList)m_sectionsList.Clone();
-
-			//for each PMT ...
-			ChannelInfo pat;
-			ArrayList pmtList = tp.PMTTable;
-			int pmtScans;
-			pmtScans = (pmtList.Count / 20) + 1;
-			for (t = 1; t <= pmtScans; t++)
-			{
-				for (n = 0; n <= 19; n++)
-				{
-					if (((t - 1) * 20) + n > pmtList.Count - 1)
-					{
-						break;
-					}
-					pat = (ChannelInfo) pmtList[((t - 1) * 20) + n];
-					
-					int res=0;
-					if(m_setPid)
-					{
-						DVBSkyStar2Helper.DeleteAllPIDs((DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3)m_dataCtrl,0);
-						DVBSkyStar2Helper.SetPidToPin((DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3)m_dataCtrl,0,pat.network_pmt_PID);
-					}
-
-					//get the PMT table
-					
-					GetStreamData(filter,pat.network_pmt_PID, 2,0,m_timeoutMS); 
-
-					//PMT table contains the audio/video/teletext pids, so decode them
-					
-					foreach(byte[] wdata in m_sectionsList)
-					{
-						res=decodePMTTable(wdata, tpInfo, tp,ref pat);
-					}
-					
-					//SDT contains the service/provider name, so get it
-					if(res>0)
-					{
-						
-						foreach(byte[] wdata in tab42)
-							decodeSDTTable(wdata, tpInfo,ref tp,ref pat);
-						foreach(byte[] wdata in tab46)
-							decodeSDTTable(wdata, tpInfo,ref tp,ref pat);
-					}
-
-					if (pat.pid_list==null)
-						Log.Write("DVBSections: no PMT found for channel:#{0}", ((t - 1) * 20) + n);
-					else if (pat.pid_list.Count==0)
-						Log.Write("DVBSections: no PMT found for channel:#{0}", ((t - 1) * 20) + n);
-					
-					if (pat.serviceID==0)
-						Log.Write("DVBSections: no SDT found for channel:#{0}", ((t - 1) * 20) + n);
-
-					tp.channels.Add(pat);
-				}
-			}
-			
-		}//private void LoadPMTTables (DShowNET.IBaseFilter filter,TPList tpInfo, ref Transponder tp)
 		
 
 		private int decodeEITTable(byte[] buf, ref EIT_Program_Info eitInfo,int lastSection,bool flag)
@@ -2655,142 +2534,9 @@ namespace MediaPortal.TV.Recording
 		//
 		#endregion
 
-		#region process nit/pat sections
-		//
-		//
-		public bool ProcessNITSections(DShowNET.IBaseFilter filter,ref DVBNetworkInfo nit)
-		{
-			GetStreamData(filter,16, 0x40,0,m_timeoutMS);
-			foreach(byte[] arr in m_sectionsList)
-				decodeNITTable(arr, ref nit);
-			return true;
-		}
-
-		public bool ProcessNITSections(DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3 dataCtrl,DShowNET.IBaseFilter filter,ref DVBNetworkInfo nit)
-		{
-			m_setPid=true;
-			m_dataControl=dataCtrl;
-			GetStreamData(filter,16, 0x40,0,m_timeoutMS);
-			foreach(byte[] arr in m_sectionsList)
-				decodeNITTable(arr, ref nit);
-			
-			return true;
-		}
-		//
-		//
-		public bool ProcessPATSections(DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3 dataCtrl,DShowNET.IBaseFilter filter,TPList tp,ref Transponder transponder)
-		{
-			m_setPid=true;
-			m_dataControl=dataCtrl;
-			int count=0;
-			GetStreamData(filter,0, 0,0,m_timeoutMS);
-			foreach(byte[] arr in m_sectionsList)
-				count=decodePATTable(arr, tp, ref transponder);
-			if(count>0)
-				LoadPMTTables(filter,tp,ref transponder);
-			return true;
-		}
-		public bool ProcessPATSections(DShowNET.IBaseFilter filter,TPList tp,ref Transponder transponder)
-		{
-			
-			m_setPid=false;
-			GetStreamData(filter,0, 0,0,m_timeoutMS);
-			foreach(byte[] arr in m_sectionsList)
-				decodePATTable(arr, tp, ref transponder);
-			LoadPMTTables(filter,tp,ref transponder);
-			return true;
-		}
-		//
-		//
-		#endregion
-
-		#endregion
+		
 
 		#region EPG
-		public ArrayList GetEITPresentFollowing(DShowNET.IBaseFilter filter)
-		{
-			EIT_Program_Info eit=new EIT_Program_Info();
-			eit.eitList=new ArrayList();
-			GetStreamData(filter,18,0x4E,0,50);
-
-			foreach(byte[] arr in m_sectionsList)
-				decodeEITTable(arr,ref eit,0,false);
-			return eit.eitList;
-		}
-
-		//
-		// returns events found in tables >=0x50 && <=0x6f 
-		// lastTab holds the last table
-		//
-		public ArrayList GetEITSchedule(int tab,DShowNET.IBaseFilter filter,ref int lastTab)
-		{
-			if(tab<0x50 || tab>0x6f)
-				return null;
-			EIT_Program_Info eit=new EIT_Program_Info();
-			eit.eitList=new ArrayList();
-			EITDescr descr=new EITDescr();
-
-			bool startFlag=false;
-			bool endFlag=false;
-			int ret=-1;
-			m_breakAction=false;
-			m_eitTimeoutTimer.Interval=10000;// one minute
-			m_eitTimeoutTimer.Start();
-			while(1!=0)
-			{
-				System.Windows.Forms.Application.DoEvents();
-				GetStreamData(filter,18,tab,1,m_timeoutMS);
-				
-				foreach(byte[] arr in m_sectionsList)
-					ret=decodeEITTable(arr,ref eit,ret,startFlag);
-				
-				if(eit.eitList.Count>0)
-				{
-					descr=(EITDescr)eit.eitList[0];
-					lastTab=descr.lastTable;
-					//Log.WriteFile(Log.LogType.Capture,"epg-grab: last Table={0}",lastTab);
-					//Log.WriteFile(Log.LogType.Capture,"epg-grab: last section={0}",descr.lastSection);
-				}
-				
-				if(ret==-1)
-				{
-					
-					startFlag=true;
-					//Log.WriteFile(Log.LogType.Capture,"epg-grab: start grabbing table");
-					m_eitTimeoutTimer.Start();
-				}
-
-				if(ret==-2)
-				{
-					endFlag=true;
-					//Log.WriteFile(Log.LogType.Capture,"epg-grab: end grabbing table");
-					m_eitTimeoutTimer.Start();
-
-				}
-				
-				if(ret>=0 && startFlag==true)
-					//Log.WriteFile(Log.LogType.Capture,"epg-grab: grab section {0} complete",ret);
-
-				if(startFlag==false)
-				{
-					eit.eitList.Clear();
-				}
-
-				if(startFlag==true && endFlag==true)
-					break;
-				
-				
-				if(m_breakAction==true)
-				{
-					Log.WriteFile(Log.LogType.Capture,"epg-grab: FAILED timeout on getting epg");
-					break;
-				}
-
-
-			}
-
-			return eit.eitList;
-		}
 		public ArrayList GetEITSchedule(ArrayList epgData)
 		{
 			if(epgData==null)
@@ -2816,228 +2562,13 @@ namespace MediaPortal.TV.Recording
 		}
 		#endregion
 
-		#region Scanning
-		//
-		//
 
-		/// <summary>
-		/// Get all information about channels & services 
-		/// </summary>
-		/// <param name="filter">IBase filter implementing IMpeg2Data</param>
-		/// <returns>Transponder object containg all channels/services found</returns>
-		public Transponder Scan(DShowNET.IBaseFilter filter)
-		{
-			m_sectionsList=new ArrayList();	
-			Transponder transponder = new Transponder();
-			if(m_setPid==true)
-			{
-				DVBSkyStar2Helper.DeleteAllPIDs((DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3)m_dataCtrl,0);
-				DVBSkyStar2Helper.SetPidToPin((DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3)m_dataCtrl,0,0);
-				DVBSkyStar2Helper.SetPidToPin((DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3)m_dataCtrl,0,16);
-				DVBSkyStar2Helper.SetPidToPin((DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3)m_dataCtrl,0,17);
-				Log.WriteFile(Log.LogType.Capture,"auto-tune ss2: pids set");
-			}
-			try
-			{
-				Log.Write("AutoTune()");
-
-				transponder.channels = new ArrayList();
-				transponder.PMTTable = new ArrayList();
-
-				//get Program Assocation Table (PAT) (pid=0x0)
-				GetStreamData(filter,0, 0,0,Timeout);
-				
-				//The PAT contains a list of services
-				//for each services it specifies the transport stream id, program number and network PMT pid
-				foreach(byte[] patTable in m_sectionsList)
-					decodePATTable(patTable, transp[0], ref transponder);
-
-				if (transponder.PMTTable.Count>0)
-				{
-					Log.Write("DVBSections: decoding PAT delivered {0} services",transponder.PMTTable.Count);
-				}
-				else return transponder;
-
-				// now that we got the network PMT (Program Map Table) pids for all services
-				// load & decode the PMT tables themselves
-				LoadPMTTables(filter,transp[0],ref transponder);
-
-				// Fill in Logical Channel Numbers
-				//Log.Write("Number of channels before processing NIT: {0}", transponder.channels.Count);
-				//GetStreamData(filter, 16, 0x40, 0, Timeout);
-				//foreach(byte[] arr in m_sectionsList)
-				//	decodeNITTable(arr, ref transponder);
-				
-				Log.Write("AutoTune() done");
-			}
-			catch(Exception ex)
-			{
-				Log.WriteFile(Log.LogType.Capture,true,"dvbsections:Scan() exception:{0}", ex.ToString());
-			}
-			return transponder;
-		}//public Transponder Scan(DShowNET.IBaseFilter filter)
-		
-
-		public DVBChannel GetDVBChannel(DShowNET.IBaseFilter filter, int serviceId)
-		{
-			Log.WriteFile(Log.LogType.Capture,"DVBSections.GetDVBChannel for service:{0}", serviceId);
-			DVBChannel chan = new DVBChannel();
-
-			ArrayList pmtTable=new ArrayList();
-			try
-			{
-				m_sectionsList=new ArrayList();	
-				Transponder transponder = new Transponder();
-				transponder.channels = new ArrayList();
-				transponder.PMTTable = new ArrayList();
-				GetStreamData(filter,0, 0,0,5000);
-				if (m_sectionsList.Count==0)
-				{
-					Log.WriteFile(Log.LogType.Capture,"DVBSections.GetDVBChannel no sections found");
-					return null;
-				}
-				// jump to parser
-				foreach(byte[] arr in m_sectionsList)
-					decodePATTable(arr, transp[0], ref transponder);
-
-				LoadPMTTables(filter,transp[0],ref transponder);
-				int t;
-				int n;
-				ArrayList	tab42=new ArrayList();
-				ArrayList	tab46=new ArrayList();
-
-				// check tables
-				//AddTSPid(17);
-				//
-				
-				Debug.WriteLine("GET tab42");
-				GetStreamData(filter,17, 0x42,0,200);
-				tab42=(ArrayList)m_sectionsList.Clone();
-				
-				Debug.WriteLine("GET tab46");
-				GetStreamData(filter,17, 0x46,0,200);
-				tab46=(ArrayList)m_sectionsList.Clone();
-
-				
-				//bool flag=false;
-				ChannelInfo pat;
-				ArrayList pmtList = transponder.PMTTable;
-				int pmtScans;
-				pmtScans = (pmtList.Count / 20) + 1;
-				
-				for (t = 1; t <= pmtScans; t++)
-				{
-					//flag = DeleteAllPIDsI();
-					for (n = 0; n <= 19; n++)
-					{
-						if (((t - 1) * 20) + n > pmtList.Count - 1)
-						{
-							break;
-						}
-						pat = (ChannelInfo) pmtList[((t - 1) * 20) + n];
-						
-						// parse pmt
-						int res=0;
-						GetStreamData(filter,pat.network_pmt_PID, 2,0,5000); // get here the pmt
-						foreach(byte[] wdata in m_sectionsList)
-						{
-							res=decodePMTTable(wdata, transp[0], transponder,ref pat);
-						}
-
-						if(res>0)
-						{
-
-							foreach(byte[] wdata in tab42)
-								decodeSDTTable(wdata, transp[0],ref transponder,ref pat);
-
-							foreach(byte[] wdata in tab46)
-								decodeSDTTable(wdata, transp[0],ref transponder,ref pat);
-						}
-						transponder.channels.Add(pat);
-					}
-				}
-
-				foreach (ChannelInfo chanInfo in transponder.channels)
-				{
-					if (chanInfo.serviceID==serviceId)
-					{
-						Log.WriteFile(Log.LogType.Capture,"DVBSections.GetDVBChannel found channel details");
-						for (int pids =0; pids < chanInfo.pid_list.Count;pids++)
-						{
-							DVBSections.PMTData data=(DVBSections.PMTData) chanInfo.pid_list[pids];
-							if (data.isVideo)
-								chan.VideoPid=data.elementary_PID;
-							if (data.isAC3Audio)
-								chan.AC3Pid=data.elementary_PID;
-							if (data.isTeletext)
-								chan.TeletextPid=data.elementary_PID;
-							if (data.isAudio)
-								chan.AudioPid=data.elementary_PID;
-						}
-						
-						chan.TransportStreamID=chanInfo.transportStreamID;
-						chan.Symbolrate=chanInfo.symb;
-						chan.ServiceType=chanInfo.serviceType;
-						chan.ServiceProvider=chanInfo.service_provider_name;
-						chan.ServiceName=chanInfo.service_name;
-						chan.ProgramNumber=chanInfo.program_number;
-						chan.Polarity=chanInfo.pol;
-						chan.PMTPid=chanInfo.network_pmt_PID;
-						chan.PCRPid=chanInfo.pcr_pid;
-						chan.NetworkID=chanInfo.networkID;
-						chan.LNBKHz=chanInfo.lnb01;
-						chan.LNBFrequency=chanInfo.lnbkhz;
-						chan.IsScrambled=chanInfo.scrambled;
-						chan.ID=1;
-						chan.HasEITSchedule=chanInfo.eitSchedule;
-						chan.HasEITPresentFollow=chanInfo.eitPreFollow;
-						chan.Frequency=chanInfo.freq;
-						chan.FEC=chanInfo.fec;
-						chan.ECMPid=0;
-						chan.DiSEqC=0;
-						Log.WriteFile(Log.LogType.Capture,"name:{0} audio:{1:X} video:{2:X} txt:{3:X} EIT:{4} EITPF:{5}",
-							chan.ServiceName,chan.AudioPid,chan.VideoPid,chan.TeletextPid,chan.HasEITSchedule,chan.HasEITPresentFollow);
-					}
-				}
-			}
-			catch(Exception ex)
-			{
-				Log.WriteFile(Log.LogType.Capture,true,"dvbsections:GetDVBChannel() exception:{0}", ex.ToString());
-			}
-			return chan;
-
-
-		}//public Transponder GetRAWPMT(DShowNET.IBaseFilter filter)
-	
-		#endregion
-
-		// get current/next info
-		//
-
-		private void m_streamDemuxer_OnGotTable(int pid, int tableID, ArrayList tableList)
-		{
-			//Log.Write("dvbsections:OnGotTable() pid:{0:X} tid:{1:X} count:{2}", pid,tableID,tableList.Count);
-			m_syncWait=true;
-			if(tableList.Count>0)
-			{
-			
-				try
-				{
-					m_sectionsList=(ArrayList)tableList.Clone();
-				}
-				catch
-				{
-				}
-			}
-
-		}
 		#region IDisposable Members
 
 		public void Dispose()
 		{
 			if (m_streamDemuxer!=null)
 			{
-				m_streamDemuxer.OnGotTable-=new MediaPortal.TV.Recording.DVBDemuxer.OnTableReceived(m_streamDemuxer_OnGotTable);
 				m_streamDemuxer=null;
 			}
 		}

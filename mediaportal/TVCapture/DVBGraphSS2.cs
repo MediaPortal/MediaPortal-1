@@ -2329,7 +2329,6 @@ namespace MediaPortal.TV.Recording
 				ushort count=0;
 				sections.DemuxerObject=m_streamDemuxer;
 				sections.Timeout=2500;
-				sections.GetTablesUsingMicrosoft=true;
 				
 				for (int i=0; i < 100; ++i)
 				{

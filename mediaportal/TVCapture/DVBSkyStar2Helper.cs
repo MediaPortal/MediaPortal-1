@@ -467,18 +467,7 @@ namespace MediaPortal.TV.Recording
 		//
 		DVBSections							m_dvbSections;
 		ArrayList							m_eitList;
-		ArrayList							m_transponderList;
-		int									m_diseqc=0;
-		int									m_lnb0=0;
-		int									m_lnb1=0;
-		int									m_lnbsw=0;
-		int									m_lnbkhz=0;
-		System.Windows.Forms.ProgressBar	m_progress=null;
 		System.Windows.Forms.TextBox		m_textBox=null;
-		int									m_lnbfreq=0;
-		int									m_selKhz=0;
-		bool								m_breakScan=false;
-		System.Windows.Forms.TreeView		m_transponderTV=null;
 		DShowNET.IBaseFilter				m_mpeg2Data=null;
 		DVBSections.TPList[]				m_transponder;
 		IGraphBuilder						m_sourceGraph=null;
@@ -742,6 +731,7 @@ namespace MediaPortal.TV.Recording
             
 			return true;
 		}
+		/*
 		//
 		public void OpenTPLFile (ref DVBSections.Transponder[] list,int diseqc,int lnbkhz,int lnb0,int lnb1,int lnbsw,System.Windows.Forms.ProgressBar progBar,System.Windows.Forms.TextBox feedbackText,System.Windows.Forms.TreeView transponderTreeView)
 		{
@@ -872,181 +862,12 @@ namespace MediaPortal.TV.Recording
 			count -= 1;
 			ProcessNIT(count,ref nit);
 		}
-		//
-		private void StartScan (int count, ref DVBSections.Transponder[] transplist)
-		{
-
-			if(m_graphState!=State.Running) return;
-
-			int t;
-			int lnbFreq;
-			int servCount=0;
-			int lnbkhz=0;
-			bool tunedFlag=false;
-			int tuneTryCount;
-
-			m_transponderList = new ArrayList();
-			transplist = new DVBSections.Transponder[count + 1];
-			try
-			{
-				for (t = 0; t <= count; t++)
-				{
-					if(m_textBox!=null)
-					{
-						m_textBox.Text=Convert.ToString(m_transponder[t].TPfreq)+" MHz ("+Convert.ToString(servCount)+" services found yet)";
-						System.Windows.Forms.Application.DoEvents();
-						m_textBox.Refresh();
-					}
-
-					if(m_breakScan==true)
-						break;
-					// feedback
-					if(m_progress!=null)
-					{
-						m_progress.Minimum = 0;
-						m_progress.Maximum = count;
-						m_progress.Value = t;
-					}
-					// set the tranponder data
-					transplist[t].channels = new ArrayList();
-					transplist[t].PMTTable = new ArrayList();
-					if(m_lnb1!=-1 && m_lnbsw!=-1)
-					{
-						if (m_transponder[t].TPfreq >= m_lnbsw*1000)
-						{
-							lnbFreq = m_lnb1;
-							lnbkhz=m_lnbkhz;
-						}
-						else
-						{
-							lnbFreq = m_lnb0;
-							lnbkhz=0;
-						}
-					}
-					else
-					{
-						lnbFreq = m_lnb0;
-						lnbkhz=0;
-					}
-					m_lnbfreq=lnbFreq;
-					m_selKhz=lnbkhz;
-					m_dvbSections.SetLNBParams(m_diseqc,m_lnb0,m_lnb1,m_lnbsw,m_lnbkhz,lnbkhz,lnbFreq);
-					// feedback
-					tunedFlag=false;
-					tuneTryCount=0;
-					TuneChannel(m_transponder[t].TPfreq, m_transponder[t].TPsymb, 6, m_transponder[t].TPpol, m_selKhz, 0, lnbFreq);	
-					do // try 3 times to tune
-					{
-						tunedFlag=TuneChannel(m_transponder[t].TPfreq, m_transponder[t].TPsymb, 6, m_transponder[t].TPpol, m_selKhz, m_diseqc, lnbFreq);
-						tuneTryCount++;
-					}while(tunedFlag==false && tuneTryCount<5);
-					//
-					SetPidToPin(m_dataCtrl,0,16);
-					SetPidToPin(m_dataCtrl,0,17);
-					SetPidToPin(m_dataCtrl,0,0);
-					if (tunedFlag==true)
-					{
-						m_dvbSections.Timeout=6000;
-						m_dvbSections.ProcessPATSections(m_dataCtrl,m_mpeg2Data,m_transponder[t],ref transplist[t]);
-						if(m_textBox!=null)
-						{
-							servCount+=transplist[t].channels.Count;
-						}
-						if(m_textBox!=null)
-						{
-							m_textBox.Text=Convert.ToString((m_transponder[t].TPfreq)/1000)+" MHz ("+Convert.ToString(servCount)+" services found yet)";
-							System.Windows.Forms.Application.DoEvents();
-						}
-					}
-					System.Windows.Forms.Application.DoEvents();
-				}// for (t=
-			}// try
-			catch(Exception ex)
-			{
-				Log.Write("skystar2: FAILED scan exception:{0}",ex.Message);
-				//System.Windows.Forms.MessageBox.Show(ex.Message);
-			}
-		}
-		//
-		//
-		private void ProcessNIT (int count, ref DVBSections.DVBNetworkInfo nit)
-		{
-
-			if(m_graphState!=State.Running) return;
-
-			int t;
-			int lnbFreq;
-			int lnbkhz=0;
-			bool tunedFlag=false;
-			int tuneTryCount;
-			ArrayList tmpList=new ArrayList();
-
-			m_transponderList = new ArrayList();
-			nit.NITDescriptorList = new ArrayList();
-			try
-			{
-				for (t = 0; t <= count; t++)
-				{
-					if(m_breakScan==true)
-						break;
-					// set the tranponder data
-					if(m_lnb1!=-1 && m_lnbsw!=-1)
-					{
-						if (m_transponder[t].TPfreq >= m_lnbsw*1000)
-						{
-							lnbFreq = m_lnb1;
-							lnbkhz=m_lnbkhz;
-						}
-						else
-						{
-							lnbFreq = m_lnb0;
-							lnbkhz=0;
-						}
-					}
-					else
-					{
-						lnbFreq = m_lnb0;
-						lnbkhz=0;
-					}
-					m_lnbfreq=lnbFreq;
-					m_selKhz=lnbkhz;
-					m_dvbSections.SetLNBParams(m_diseqc,m_lnb0,m_lnb1,m_lnbsw,m_lnbkhz,lnbkhz,lnbFreq);
-					// feedback
-					tunedFlag=false;
-					tuneTryCount=0;
-					TuneChannel(m_transponder[t].TPfreq, m_transponder[t].TPsymb, 6, m_transponder[t].TPpol, m_selKhz, 0, lnbFreq);	
-					do // try 3 times to tune
-					{
-						tunedFlag=TuneChannel(m_transponder[t].TPfreq, m_transponder[t].TPsymb, 6, m_transponder[t].TPpol, m_selKhz, m_diseqc, lnbFreq);
-						tuneTryCount++;
-					}while(tunedFlag==false && tuneTryCount<3);
-					//
-					SetPidToPin(m_dataCtrl,0,16);
-					if (tunedFlag==true)
-					{
-						m_dvbSections.Timeout=8000;
-						m_dvbSections.ProcessNITSections(m_dataCtrl,m_mpeg2Data,ref nit);
-						
-						if(nit.NITDescriptorList.Count>tmpList.Count)
-						{
-							tmpList=(ArrayList)nit.NITDescriptorList.Clone();
-						}
-					}
-					System.Windows.Forms.Application.DoEvents();
-				}// for (t=
-			}// try
-			catch(Exception ex)
-			{
-				Log.Write("skystar2: FAILED ProcessNIT exception:{0}",ex.Message);
-				//System.Windows.Forms.MessageBox.Show(ex.Message);
-			}
-			nit.NITDescriptorList=(ArrayList)tmpList.Clone();
-		}
+*/
+		
 		//
 		//
 		public void InterruptScan()
 		{
-			m_breakScan=true;
 			m_textBox.Text="(Stopping scan...please wait a moment!)";
 
 		}
