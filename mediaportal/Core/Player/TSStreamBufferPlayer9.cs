@@ -98,7 +98,7 @@ namespace MediaPortal.Player
 
 				MPEG2Demultiplexer m_MPEG2Demuxer=null;
 				IBaseFilter m_mpeg2Multiplexer=null;
-				Log.WriteFile(Log.LogType.Capture,"mpeg2:add new MPEG2 Demultiplexer to graph");
+				Log.WriteFile(Log.LogType.Capture,"TStreamBufferPlayer9:add new MPEG2 Demultiplexer to graph");
 				try
 				{
 					m_MPEG2Demuxer=new MPEG2Demultiplexer();
@@ -108,34 +108,39 @@ namespace MediaPortal.Player
 				//m_mpeg2Multiplexer = DirectShowUtil.AddFilterToGraph(m_graphBuilder,"MPEG-2 Demultiplexer");
 				if (m_mpeg2Multiplexer==null) 
 				{
-					Log.WriteFile(Log.LogType.Capture,true,"mpeg2:FAILED to create mpeg2 demuxer");
+					Log.WriteFile(Log.LogType.Capture,true,"TStreamBufferPlayer9:FAILED to create mpeg2 demuxer");
 					return false;
 				}
 				 hr=graphBuilder.AddFilter(m_mpeg2Multiplexer,"MPEG-2 Demultiplexer");
 				if (hr!=0)
 				{
-					Log.WriteFile(Log.LogType.Capture,true,"mpeg2:FAILED to add mpeg2 demuxer to graph:0x{0:X}",hr);
+					Log.WriteFile(Log.LogType.Capture,true,"TStreamBufferPlayer9:FAILED to add mpeg2 demuxer to graph:0x{0:X}",hr);
 					return false;
 				}
 
+				Log.WriteFile(Log.LogType.Capture,"TStreamBufferPlayer9:add new TS reader to graph");
 
 				bufferSource = new MPTransportStreamReader();
 				IBaseFilter filter = (IBaseFilter) bufferSource;
 				graphBuilder.AddFilter(filter, "MP TS Reader");
 		
+				Log.WriteFile(Log.LogType.Capture,"TStreamBufferPlayer9:open file");
 				IFileSourceFilter fileSource = (IFileSourceFilter) bufferSource;
 				 hr = fileSource.Load(filename, IntPtr.Zero);
+
+				Log.WriteFile(Log.LogType.Capture,"TStreamBufferPlayer9:add codecs");
+
 				// add preferred video & audio codecs
-				string strVideoCodec="";
-        string strAudioCodec="";
-				string strAudioRenderer="";
+				string strVideoCodec=String.Empty;
+        string strAudioCodec=String.Empty;
+				string strAudioRenderer=String.Empty;
         bool   bAddFFDshow=false;
 				using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
         {
           bAddFFDshow=xmlreader.GetValueAsBool("mytv","ffdshow",false);
-					strVideoCodec=xmlreader.GetValueAsString("mytv","videocodec","");
-					strAudioCodec=xmlreader.GetValueAsString("mytv","audiocodec","");
-					strAudioRenderer=xmlreader.GetValueAsString("mytv","audiorenderer","");
+					strVideoCodec=xmlreader.GetValueAsString("mytv","videocodec",String.Empty);
+					strAudioCodec=xmlreader.GetValueAsString("mytv","audiocodec",String.Empty);
+					strAudioRenderer=xmlreader.GetValueAsString("mytv","audiorenderer",String.Empty);
 					string strValue=xmlreader.GetValueAsString("mytv","defaultar","normal");
 					if (strValue.Equals("zoom")) GUIGraphicsContext.ARType=MediaPortal.GUI.Library.Geometry.Type.Zoom;
 					if (strValue.Equals("stretch")) GUIGraphicsContext.ARType=MediaPortal.GUI.Library.Geometry.Type.Stretch;

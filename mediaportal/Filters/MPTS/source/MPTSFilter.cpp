@@ -51,6 +51,7 @@ CMPTSFilter::CMPTSFilter(IUnknown *pUnk, HRESULT *phr) :
 
 	ASSERT(phr);
 
+	LogDebug("--------");
 	m_pFileReader = new FileReader();
 	m_pSections = new Sections(m_pFileReader);
 	m_pDemux = new SplitterSetup(m_pSections);
@@ -293,7 +294,7 @@ STDMETHODIMP CMPTSFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt)
 
 	if (m_pFileReader->m_hInfoFile!=INVALID_HANDLE_VALUE)
 	{
-		Log(TEXT("using .info:"),true);
+		LogDebug("using .info file");
 		__int64	fileSize = 0;
 		DWORD count=0;
 		while(true)
@@ -305,6 +306,7 @@ STDMETHODIMP CMPTSFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt)
 			count++;
 		}
 
+		/*
 		while(true)
 		{
 			m_pFileReader->GetFileSize(&fileSize);
@@ -312,7 +314,7 @@ STDMETHODIMP CMPTSFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt)
 				break;
 			Sleep(100);
 			count++;
-		}
+		}*/
 	}
 	//If this a file start then return null.
 	RefreshPids();

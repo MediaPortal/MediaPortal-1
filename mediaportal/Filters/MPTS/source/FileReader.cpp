@@ -119,7 +119,7 @@ HRESULT FileReader::OpenFile()
 	if (m_hFile == INVALID_HANDLE_VALUE) {
 
 		DWORD dwErr = GetLastError();
-		LogDebug("FileReader::OpenFile() unable to open file:%x, try again",dwErr);
+		//LogDebug("FileReader::OpenFile() unable to open file:%x, try again",dwErr);
 		//Test incase file is being recorded to
 		m_hFile = CreateFile((LPCTSTR) pFileName,		// The filename
 							GENERIC_READ,				// File access
@@ -140,10 +140,17 @@ HRESULT FileReader::OpenFile()
 		m_bReadOnly = TRUE;
 	}
 
+
+	if (m_hFile == INVALID_HANDLE_VALUE)
+		LogDebug("FileReader::OpenFile() unable to open file");
+	else
+		LogDebug("FileReader::OpenFile() file opened");
+
 	TCHAR infoName[512];
 	strcpy(infoName, pFileName);
 	strcat(infoName, ".info");
 
+	LogDebug("FileReader::OpenFile() open .info file");
 	m_hInfoFile = CreateFile((LPCTSTR) infoName, // The filename
 			GENERIC_READ,    // File access
 			FILE_SHARE_READ |
@@ -153,7 +160,10 @@ HRESULT FileReader::OpenFile()
 			FILE_ATTRIBUTE_NORMAL, // |	FILE_FLAG_RANDOM_ACCESS, // More flags
 			NULL);
 
-	LogDebug("FileReader::OpenFile() file opened");
+	if (m_hInfoFile!= INVALID_HANDLE_VALUE)
+		LogDebug("FileReader::OpenFile() .info file opened");
+	else
+		LogDebug("FileReader::OpenFile() .info file not found");
 
 	SetFilePointer(m_startOfFile,FILE_BEGIN);
 	return S_OK;

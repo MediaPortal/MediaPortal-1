@@ -125,7 +125,7 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
   {
 	//LogDebug("FillBuffer()");
 	  
-	//CAutoLock cAutoLock(&m_cSharedState);
+	CAutoLock cAutoLock(&m_cSharedState);
 	if (m_bAboutToStop) return E_FAIL;
 	
 	CheckPointer(pSample, E_POINTER);
@@ -339,7 +339,7 @@ HRESULT CFilterOutPin::OnThreadStartPlay( )
 
 HRESULT CFilterOutPin::ChangeStart()
 {
-	LogDebug("pin:ChangeStart()");
+	LogDebug("pin:ChangeStart() %x",(DWORD)m_rtStart);
 	m_pMPTSFilter->SetFilePosition(m_rtStart);
     UpdateFromSeek();
     return S_OK;
@@ -376,6 +376,7 @@ void CFilterOutPin::UpdateFromSeek(void)
 		DeliverEndFlush();
 		Run();
 	}
+	LogDebug("pin:UpdateFromSeek() done");
 }
 
 HRESULT CFilterOutPin::SetDuration(REFERENCE_TIME duration)

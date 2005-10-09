@@ -1074,6 +1074,14 @@ namespace MediaPortal.TV.Recording
 								}
 							}
 						}
+#else
+						if (IsTimeShifting && !View)
+						{
+							if (g_Player.Playing && g_Player.CurrentFile == Recorder.GetTimeShiftFileName(ID-1))
+							{
+								g_Player.Play(g_Player.CurrentFile);
+							}
+						}
 #endif
 					}
 				}
