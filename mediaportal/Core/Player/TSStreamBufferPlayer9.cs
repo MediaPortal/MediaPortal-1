@@ -170,7 +170,7 @@ namespace MediaPortal.Player
 					Vmr9=null;
 				}
 
-				graphBuilder.SetDefaultSyncSource();
+				//graphBuilder.SetDefaultSyncSource();
 				return true;
       }
       catch( Exception  ex)
