@@ -261,7 +261,7 @@ void Sections::PTSToPTSTime(ULONGLONG pts,PTSTime* ptsTime)
 HRESULT Sections::CurrentPTS(BYTE *pData,ULONGLONG *ptsValue,int* pid)
 {
 	HRESULT hr=S_FALSE;
-	*ptsValue=-1;
+	*ptsValue=0;
 	TSHeader header;
 	PESHeader pes;
 	GetTSHeader(pData,&header);
@@ -290,8 +290,11 @@ HRESULT Sections::CurrentPTS(BYTE *pData,ULONGLONG *ptsValue,int* pid)
 			if(pes.PTSFlags==0x02)
 			{
 				// audio pes found
-				GetPTS(&pData[offset+9],ptsValue);
-				hr=S_OK;
+				if (pes.PESHeaderDataLength==5)
+				{
+					GetPTS(&pData[offset+9],ptsValue);
+					hr=S_OK;
+				}
 			}
 		}	
 	}

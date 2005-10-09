@@ -347,6 +347,7 @@ STDMETHODIMP CDumpInputPin::Receive(IMediaSample *pSample)
 {
 	if (pSample==NULL) return S_OK;
     CheckPointer(pSample,E_POINTER);
+	int step=0;
 	try
 	{
 
@@ -368,15 +369,17 @@ STDMETHODIMP CDumpInputPin::Receive(IMediaSample *pSample)
 
 		// Has the filter been stopped yet?
 		if (m_pDump->m_hFile == INVALID_HANDLE_VALUE) 
-	{
+		{
 			return NOERROR;
 		}
 
+		step=1;
 		long sampleLen=pSample->GetActualDataLength();
 		if (sampleLen<=0)
 		{
 			return S_OK;
 		}
+		step=2;
 		//HRESULT hDisc=pSample->IsDiscontinuity();
 		//HRESULT hPreRoll=pSample->IsPreroll();
 		//HRESULT hSync=pSample->IsSyncPoint();
@@ -384,13 +387,15 @@ STDMETHODIMP CDumpInputPin::Receive(IMediaSample *pSample)
 		REFERENCE_TIME tStart=0, tStop=0;
 		pSample->GetTime(&tStart, &tStop);
 
+		step=3;
 
 		m_tLast = tStart;
 
 		// Copy the data to the file
 
 		HRESULT hr = pSample->GetPointer(&pbData);
-		if (FAILED(hr)) {
+		if (FAILED(hr)) 
+		{
 			return hr;
 		}
 		//char buf[4096];
@@ -398,32 +403,49 @@ STDMETHODIMP CDumpInputPin::Receive(IMediaSample *pSample)
 		//		(DWORD)tStart, (DWORD) tStop, sampleLen,hDisc,hPreRoll,hSync);
 		//OutputDebugString(buf);
 
+		step=4;
 		if (m_pDump->IsCopyingRecordingFile())
 		{
 			for (int i=0; i < 100; ++i)
 				m_pDump->CopyRecordingFile();
 		}
 
+		step=5;
 		int off=-1;
+		// did last media sample we received contain a incomplete transport packet at the end?
 		if (m_restBufferLen>0)
 		{
-			int len=188-m_restBufferLen;
+			//yep then we copy the remaining bytes of the packet first
+			int len=188-m_restBufferLen;	//remaining bytes of packet
 			if (len>0 && len < sampleLen)
 			{
 				if (m_restBufferLen>=0 && m_restBufferLen+len < 200)
 				{
 					//LogDebug("copy last %d bytes",  len);
+
+					//copy the remaining bytes 
+					step=51;
 					memcpy(&m_restBuffer[m_restBufferLen], pbData, len);
+
+					//check if this is indeed a transport packet
 					if(m_restBuffer[0]==0x47)
 					{
+						//check if pid is ok
 						int pid=((m_restBuffer[1] & 0x1F) <<8)+m_restBuffer[2];
 						if(IsPidValid(pid)==true)
 						{
+							//yes then write the packet to the files
+							step=52;
 							hr=m_pDump->WriteRecordingFile(m_restBuffer,188);
+							step=53;
 							hr=m_pDump->WriteTimeshiftFile(m_restBuffer,188);
+							step=54;
 						}
 					}
+					step=55;
 					//else LogDebug("***RESTBUFFER START != 0x47");
+
+					//set offset ...
 					if (pbData[len]==0x47 && pbData[len+188]==0x47 && pbData[len+2*188]==0x47)
 					{
 						off=len;
@@ -433,36 +455,55 @@ STDMETHODIMP CDumpInputPin::Receive(IMediaSample *pSample)
 			}
 			else m_restBufferLen=0;
 		}
+		step=6;
+
+		// is offset set ?
 		if (off==-1)
 		{
+			//no then find first 3 transport packets in mediasample
 			for (int i=0; i < pSample->GetActualDataLength()-2*188;++i)
 			{
 				if (pbData[i]==0x47 && pbData[i+188]==0x47 && pbData[i+2*188]==0x47)
 				{
+					//found first 3 ts packets
+					//set the offset
 					off=i;
 					break;
 				}
 			}
 		}
+		step=7;
 		if (off != (188-m_restBufferLen) && off!=0)
 			LogDebug("***OFF != END OF RESTBUFFER %d %d",off,(188-m_restBufferLen));
 
 		if (off<0)
 			off=0;
 
+
+		//loop through all transport packets in the media sample
+		step=8;
 		for(DWORD t=off;t<(DWORD)pSample->GetActualDataLength();t+=188)
 		{
+			//sanity check
 			if (t+188 > pSample->GetActualDataLength()) break;
+
+			//is this a transport packet
 			if(pbData[t]==0x47)
 			{
+				//yes, is pid ok?
 				int pid=((pbData[t+1] & 0x1F) <<8)+pbData[t+2];
 				if(IsPidValid(pid)==true)
 				{
+					//is packet scrambled?
 					byte scrambled=pbData[t+3] & 0xC0;
 					if(!scrambled)
 					{
+						//no, then write packet to files
+						step=81;
 						hr=m_pDump->WriteRecordingFile(pbData+t,188);
+						step=82;
 						hr=m_pDump->WriteTimeshiftFile(pbData+t,188);
+						step=83;
 					}
 					//else LogDebug("pid:0x%x scrambled:%d", pid,scrambled);
 				}
@@ -470,6 +511,8 @@ STDMETHODIMP CDumpInputPin::Receive(IMediaSample *pSample)
 			}
 		}
 		
+		//calculate if there's a incomplete transport packet at end of media sample
+		step=9;
 		m_restBufferLen=(pSample->GetActualDataLength()-off);
 		if (m_restBufferLen>0)
 		{
@@ -477,18 +520,25 @@ STDMETHODIMP CDumpInputPin::Receive(IMediaSample *pSample)
 			m_restBufferLen *=188;
 			m_restBufferLen=(pSample->GetActualDataLength()-off)-m_restBufferLen;
 			if (m_restBufferLen>0 && m_restBufferLen < 188)
+			{
+				//copy the incomplete packet in the rest buffer
 				memcpy(m_restBuffer,&pbData[pSample->GetActualDataLength()-m_restBufferLen],m_restBufferLen);
+			}
 		}
+		step=10;
 	//	LogDebug("copy %d bytes off:%d len:%d", m_restBufferLen,off,pSample->GetActualDataLength());
 		
 	//	if (m_restBufferLen<0 || m_restBufferLen >=188)
 	//		LogDebug("***RESTBUFFER INVALID");
+
+		//update the .info file with new positions and pes
 		m_pDump->UpdateInfoFile(false);
 		m_pDump->Flush();
+		step=11;
 	}
 	catch(...)
 	{
-		LogDebug("exception in ::Receive() ");
+		LogDebug("exception in ::Receive() %d %d",step,m_restBufferLen);
 	}
     return NOERROR;
 }
@@ -1147,38 +1197,59 @@ HRESULT CDump::WriteTimeshiftFile(PBYTE pbData, LONG lDataLength)
 	//update PES
 	TSHeader header;
 	GetTSHeader(pbData,&header);
-	if (header.Pid>0 )
+	if (header.Pid>0 && !header.TransportError && header.TScrambling==0 && 
+		(header.Pid==m_pPin->GetAC3Pid() ||
+		header.Pid==m_pPin->GetVideoPid() ||
+		header.Pid==m_pPin->GetAudioPid() ||
+		header.Pid==m_pPin->GetAudioPid2() ) )
 	{
 		int offset=4;
 		if(header.AdaptionControl==1 || header.AdaptionControl==3)
 			offset+=pbData[4];
-		//LogDebug("pes packet check adpt:%x sync:%x %x %x %x %d",header.AdaptionControl,header.SyncByte,pbData[offset],pbData[offset+1],pbData[offset+2],offset);
-		if(header.SyncByte==0x47 && pbData[offset]==0 && pbData[offset+1]==0 && pbData[offset+2]==1)
+		if (offset >=0 && offset<188)
 		{
-			PESHeader pes;
-			GetPESHeader(&pbData[offset+6],&pes);
-			if(pes.Reserved==0x02) // valid header
+			//LogDebug("pes packet check adpt:%x sync:%x %x %x %x %d",header.AdaptionControl,header.SyncByte,pbData[offset],pbData[offset+1],pbData[offset+2],offset);
+			if(header.SyncByte==0x47 && pbData[offset]==0 && pbData[offset+1]==0 && pbData[offset+2]==1)
 			{
-				if(pes.PTSFlags==0x02)
+				PESHeader pes;
+				GetPESHeader(&pbData[offset+6],&pes);
+				if(pes.Reserved==0x02) // valid header
 				{
-					ULONGLONG ptsValue =0;
-					GetPTS(&pbData[offset+9],&ptsValue);
-					if (ptsValue>0)
+					if(pes.PTSFlags==0x02)
 					{
-						if (m_pesPid==0)
-							m_pesPid=header.Pid;
-						if (m_pesPid==header.Pid)
+						if (pes.PESHeaderDataLength==5)
 						{
-							// audio pes found
-							m_pesNow=ptsValue;
-							if (m_pesStart==0) 
+							ULONGLONG ptsValue =0;
+							GetPTS(&pbData[offset+9],&ptsValue);
+							if (ptsValue>0)
 							{
-								m_pesStart=ptsValue;
-								LogDebug("start pes:%x", (DWORD)m_pesStart);
+								if (m_pesPid==0)
+									m_pesPid=header.Pid;
+								if (m_pesPid==header.Pid)
+								{
+									// audio pes found
+									if (m_pesStart==0) 
+									{
+										m_pesStart=ptsValue;
+										LogDebug("start pes:%x pid:%x", (DWORD)m_pesStart, header.Pid);
+									}
+									m_pesNow=ptsValue;
+									//LogDebug("pts:%x %x %x", (DWORD)m_pesStart,(DWORD)m_pesNow,header.Pid);
+									/*
+									LogDebug("pes:%x copy:%x cr:%x dataalign:%x dsm:%x escr:%x esrate:%x org:%x crc:%x ext:%x len:%x prio:%x pts:%x res:%x scramb:%x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x ", (DWORD)ptsValue,
+											pes.AdditionalCopyInfoFlag,pes.Copyright,pes.dataAlignmentIndicator,
+											pes.DSMTrickModeFlag,pes.ESCRFlag,pes.ESRateFlag,pes.Original,
+											pes.PESCRCFlag,pes.PESExtensionFlag,pes.PESHeaderDataLength,pes.Priority,
+											pes.PTSFlags,pes.Reserved,pes.ScramblingControl,
+											pbData[9],pbData[10],pbData[11],pbData[12],pbData[13],pbData[14],pbData[15],pbData[16],pbData[17],
+											pbData[18],pbData[19],pbData[20],pbData[21],pbData[22],pbData[23],pbData[24],pbData[25],pbData[26],
+											pbData[27],pbData[28],pbData[29]);
+									*/
+								}
 							}
 						}
-					}
-				}	
+					}	
+				}
 			}
 		}
 	}

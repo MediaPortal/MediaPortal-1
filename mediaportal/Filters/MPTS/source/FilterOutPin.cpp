@@ -247,6 +247,7 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 		{
 			if (pts>0)
 			{
+				//LogDebug("found  pts:%x %x-%x pid:%x", (DWORD)pts, (DWORD)m_pSections->pids.StartPTS,(DWORD)m_pSections->pids.EndPTS,header.Pid);
 				if (m_iPESPid==0 && pts >= m_pSections->pids.StartPTS && pts <= m_pSections->pids.EndPTS)
 				{
 					LogDebug("found start pts:%x %x-%x pid:%x", (DWORD)pts, (DWORD)m_pSections->pids.StartPTS,(DWORD)m_pSections->pids.EndPTS,header.Pid);
