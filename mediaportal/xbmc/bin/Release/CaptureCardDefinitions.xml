@@ -6380,4 +6380,22 @@
       </connections>
     </tv>
   </capturecard>
+
+  <capturecard commercialname="DVD EZMaker Pro (USB 2.0)" capturename="AVermedia USB Capture" devid="vid_07ca&amp;pid_0002">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="crossbar" name="AVermedia USB Crossbar"	checkdevice="true"></filter>
+        <filter cat="capture"  name="AVermedia USB Capture"	checkdevice="true"></filter>
+        <filter cat="encoder"  name="AVermedia USB Encoder"	checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"  sinkpin="1"></connection>
+        <connection sourcefilter="capture"  sourcepin="1" sinkfilter="encoder"  sinkpin="0"></connection>
+        <connection sourcefilter="capture"  sourcepin="2" sinkfilter="encoder"  sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
 </capturecards>
