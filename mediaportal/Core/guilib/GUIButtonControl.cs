@@ -42,12 +42,13 @@ namespace MediaPortal.GUI.Library
 		[XMLSkinElement("script")]			protected string	m_strScriptAction="";
 		[XMLSkinElement("textXOff")]		protected int       m_iTextOffsetX=0;
 		[XMLSkinElement("textYOff")]		protected int       m_iTextOffsetY=0;
+		[XMLSkinElement("textalign")]		protected GUIControl.Alignment       _textAlignment=GUIControl.Alignment.ALIGN_LEFT;
 		[XMLSkinElement("application")]		protected string    m_strApplication="";
 		[XMLSkinElement("arguments")]		protected string    m_strArguments="";
-    protected int       m_dwFrameCounter=0;
+		protected int       m_dwFrameCounter=0;
 		protected GUIImage	m_imgFocus=null;
 		protected GUIImage  m_imgNoFocus=null; 
-    protected GUILabelControl     m_label=null;
+		protected GUILabelControl     m_label=null;
 
 		public GUIButtonControl(int dwParentID) : base(dwParentID)
 		{
@@ -80,15 +81,16 @@ namespace MediaPortal.GUI.Library
 		{
 			base.FinalizeConstruction();
 			m_imgFocus  = new GUIImage(m_dwParentID, m_dwControlID, m_dwPosX, m_dwPosY,
-									   m_dwWidth, m_dwHeight, m_strImgFocusTexture,0);
+				m_dwWidth, m_dwHeight, m_strImgFocusTexture,0);
 			
 			m_imgNoFocus= new GUIImage(m_dwParentID, m_dwControlID, m_dwPosX, m_dwPosY,
-									   m_dwWidth, m_dwHeight, m_strImgNoFocusTexture,0);
+				m_dwWidth, m_dwHeight, m_strImgNoFocusTexture,0);
 			
-      m_imgFocus.Filtering=false;
-      m_imgNoFocus.Filtering=false;
+			m_imgFocus.Filtering=false;
+			m_imgNoFocus.Filtering=false;
 			GUILocalizeStrings.LocalizeLabel(ref m_strLabel);
-      m_label = new GUILabelControl(m_dwParentID,0,m_dwPosX,m_dwPosY,m_dwWidth, m_dwHeight,m_strFontName,m_strLabel,m_dwTextColor,GUIControl.Alignment.ALIGN_LEFT,false);
+			m_label = new GUILabelControl(m_dwParentID,0,m_dwPosX,m_dwPosY,m_dwWidth, m_dwHeight,m_strFontName,m_strLabel,m_dwTextColor,GUIControl.Alignment.ALIGN_LEFT,false);
+			m_label.TextAlignment = _textAlignment;
 		}
 
 		/// <summary>
@@ -123,38 +125,47 @@ namespace MediaPortal.GUI.Library
 		public override void Render(float timePassed)
 		{
 			// Do not render if not visible.
-      if (GUIGraphicsContext.EditMode==false)
-      {
-        if (!IsVisible ) return;
-      }
+			if (GUIGraphicsContext.EditMode==false)
+			{
+				if (!IsVisible ) return;
+			}
 
 			// The GUIButtonControl has the focus
 			if (Focus)
 			{
 				//render the focused image
 				m_imgFocus.Render(timePassed);
-      }
+			}
 			else 
 			{
 				//render the non-focused image
-        m_imgNoFocus.Render(timePassed);  		
-      }
+				m_imgNoFocus.Render(timePassed);  		
+			}
+
+			m_label.TextAlignment = _textAlignment;
+			m_label.Label=m_strLabel;
+			m_label.TextColor= Disabled ? m_dwDisabledColor : m_dwTextColor;
 
 			// render the text on the button
-      if (Disabled )
-      {
-        m_label.Label=m_strLabel;
-        m_label.TextColor=m_dwDisabledColor;
-        m_label.SetPosition(m_iTextOffsetX+m_dwPosX, m_iTextOffsetY+m_dwPosY);
-        m_label.Render(timePassed);
-      }
-      else
-      {
-        m_label.Label=m_strLabel;
-        m_label.TextColor=m_dwTextColor;
-        m_label.SetPosition(m_iTextOffsetX+m_dwPosX, m_iTextOffsetY+m_dwPosY);
-        m_label.Render(timePassed);
-      }
+			int x = 0;
+
+			switch(_textAlignment)
+			{
+				case Alignment.ALIGN_LEFT:
+					x = m_iTextOffsetX + m_dwPosX;
+					break;
+
+//				case Alignment.ALIGN_CENTER:
+//					x = m_dwPosX + (m_dwWidth / 2);
+//					break;
+
+				case Alignment.ALIGN_RIGHT:
+					x = m_dwPosX + m_dwWidth - m_iTextOffsetY;
+					break;
+			}
+
+			m_label.SetPosition(x, m_iTextOffsetY + m_dwPosY);
+			m_label.Render(timePassed);
 		}
 
 		/// <summary>
@@ -167,57 +178,57 @@ namespace MediaPortal.GUI.Library
 		{
 			base.OnAction(action);
 			GUIMessage message ;
-      if (Focus)
-      {
-        if (action.wID == Action.ActionType.ACTION_MOUSE_CLICK||action.wID == Action.ActionType.ACTION_SELECT_ITEM)
-        {
+			if (Focus)
+			{
+				if (action.wID == Action.ActionType.ACTION_MOUSE_CLICK||action.wID == Action.ActionType.ACTION_SELECT_ITEM)
+				{
 					// If this button contains scriptactions call the scriptactions.
-          if (m_strApplication.Length!=0)
-          {
-							//button should start an external application, so start it
-							Process proc = new Process();
+					if (m_strApplication.Length!=0)
+					{
+						//button should start an external application, so start it
+						Process proc = new Process();
 
-              string strWorkingDir=System.IO.Path.GetFullPath(m_strApplication);
-              string strFileName=System.IO.Path.GetFileName(m_strApplication);
-              strWorkingDir=strWorkingDir.Substring(0, strWorkingDir.Length - (strFileName.Length+1) );
-              proc.StartInfo.FileName=strFileName;
-              proc.StartInfo.WorkingDirectory=strWorkingDir;
-              proc.StartInfo.Arguments=m_strArguments;
-              proc.StartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Minimized;
-	            proc.StartInfo.CreateNoWindow=true;
-              proc.Start();
-              //proc.WaitForExit();
-          }
+						string strWorkingDir=System.IO.Path.GetFullPath(m_strApplication);
+						string strFileName=System.IO.Path.GetFileName(m_strApplication);
+						strWorkingDir=strWorkingDir.Substring(0, strWorkingDir.Length - (strFileName.Length+1) );
+						proc.StartInfo.FileName=strFileName;
+						proc.StartInfo.WorkingDirectory=strWorkingDir;
+						proc.StartInfo.Arguments=m_strArguments;
+						proc.StartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Minimized;
+						proc.StartInfo.CreateNoWindow=true;
+						proc.Start();
+						//proc.WaitForExit();
+					}
 
 					// If this links to another window go to the window.
-          if (m_lHyperLinkWindowID >=0)
-          {
-            GUIWindowManager.ActivateWindow((int)m_lHyperLinkWindowID);
-            return;
-          }
+					if (m_lHyperLinkWindowID >=0)
+					{
+						GUIWindowManager.ActivateWindow((int)m_lHyperLinkWindowID);
+						return;
+					}
 					// If this button corresponds to an action generate that action.
-          if (ActionID >=0)
-          {
-            Action newaction = new Action((Action.ActionType)ActionID,0,0);
-            GUIGraphicsContext.OnAction(newaction);
-            return;
-          }
+					if (ActionID >=0)
+					{
+						Action newaction = new Action((Action.ActionType)ActionID,0,0);
+						GUIGraphicsContext.OnAction(newaction);
+						return;
+					}
           
-          // button selected.
-          if (SubItemCount>0)
-          {
+					// button selected.
+					if (SubItemCount>0)
+					{
 						// if we got subitems, then change the label of the control to the next
 						//subitem
-            SelectedItem++;
-            if (SelectedItem >= SubItemCount) SelectedItem=0;
-            Label=(string)GetSubItem(SelectedItem);
-          }
+						SelectedItem++;
+						if (SelectedItem >= SubItemCount) SelectedItem=0;
+						Label=(string)GetSubItem(SelectedItem);
+					}
 
 					// send a message to anyone interested 
-          message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED,WindowId,GetID, ParentID,0,0,null );
-          GUIGraphicsContext.SendMessage(message);
-        }
-      }
+					message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED,WindowId,GetID, ParentID,0,0,null );
+					GUIGraphicsContext.SendMessage(message);
+				}
+			}
 		}
 		
 		/// <summary>
@@ -234,8 +245,8 @@ namespace MediaPortal.GUI.Library
 			{
 				if (message.Message == GUIMessage.MessageType.GUI_MSG_LABEL_SET)
 				{
-          if (message.Label!=null)
-					  Label=message.Label;
+					if (message.Label!=null)
+						Label=message.Label;
 					return true;
 				}
 			}
@@ -267,13 +278,13 @@ namespace MediaPortal.GUI.Library
 			m_dwWidth=m_imgFocus.Width;
 			m_dwHeight=m_imgFocus.Height;
       
-      if (SubItemCount>0)
-      {
-        Label=(string)GetSubItem(SelectedItem);
-      }
-      m_label.Width=m_dwWidth;
-      m_label.Height=m_dwHeight;
-      m_label.AllocResources();
+			if (SubItemCount>0)
+			{
+				Label=(string)GetSubItem(SelectedItem);
+			}
+			m_label.Width=m_dwWidth;
+			m_label.Height=m_dwHeight;
+			m_label.AllocResources();
 		}
 
 		/// <summary>
@@ -284,7 +295,7 @@ namespace MediaPortal.GUI.Library
 			base.FreeResources();
 			m_imgFocus.FreeResources();
 			m_imgNoFocus.FreeResources();
-      m_label.FreeResources();
+			m_label.FreeResources();
 		}
 
 		/// <summary>
@@ -350,11 +361,12 @@ namespace MediaPortal.GUI.Library
 		public string FontName
 		{ 
 			get { return m_strFontName; }
-			set { 
-        if (value==null) return;
-        m_strFontName=value;
-        m_label.FontName=m_strFontName;
-      }
+			set 
+			{ 
+				if (value==null) return;
+				m_strFontName=value;
+				m_label.FontName=m_strFontName;
+			}
 		}
 
 		/// <summary>
@@ -365,15 +377,15 @@ namespace MediaPortal.GUI.Library
 		/// <param name="dwColor">The font color.</param>
 		public void SetLabel( string strFontName,string strLabel,long dwColor)
 		{
-      if (strFontName==null) return;
-      if (strLabel==null) return;
+			if (strFontName==null) return;
+			if (strLabel==null) return;
 			Label=strLabel;
 			m_dwTextColor=dwColor;
-      m_strFontName=strFontName;
+			m_strFontName=strFontName;
       
-      m_label.FontName=m_strFontName;
-      m_label.TextColor=dwColor;
-      m_label.Label=strLabel;
+			m_label.FontName=m_strFontName;
+			m_label.TextColor=dwColor;
+			m_label.Label=strLabel;
 		}
 
 		/// <summary>
@@ -382,13 +394,13 @@ namespace MediaPortal.GUI.Library
 		public string Label
 		{ 
 			get { return m_strLabel; }
-      set 
-      {
-        if (value==null) return;
+			set 
+			{
+				if (value==null) return;
              
-        m_strLabel=value;
-        m_label.Label=m_strLabel;
-      }
+				m_strLabel=value;
+				m_label.Label=m_strLabel;
+			}
 		}
 
 		/// <summary>
@@ -406,46 +418,53 @@ namespace MediaPortal.GUI.Library
 		public string ScriptAction  
 		{ 
 			get { return m_strScriptAction; }
-      set 
-      { 
-        if (value==null) return;
-        m_strScriptAction=value; 
-      }
+			set 
+			{ 
+				if (value==null) return;
+				m_strScriptAction=value; 
+			}
 		}
 
 		/// <summary>
 		/// Get/set the action ID that corresponds to this button.
 		/// </summary>
-    public int ActionID
-    {
-      get { return m_iAction;}
-      set { m_iAction=value;}
+		public int ActionID
+		{
+			get { return m_iAction;}
+			set { m_iAction=value;}
 
-    }
+		}
 
-    /// <summary>
-    /// Get/set the X-offset of the label.
-    /// </summary>
-    public int TextOffsetX
-    {
-      get { return m_iTextOffsetX;}
-      set 
-      { 
-        if (value<0) return;
-        m_iTextOffsetX=value;
-      }
-    }
-    /// <summary>
-    /// Get/set the Y-offset of the label.
-    /// </summary>
-    public int TextOffsetY
-    {
-      get { return m_iTextOffsetY;}
-      set { 
-            if (value<0) return;
-            m_iTextOffsetY=value;
-      }
-    }
+		/// <summary>
+		/// Get/set the X-offset of the label.
+		/// </summary>
+		public int TextOffsetX
+		{
+			get { return m_iTextOffsetX;}
+			set 
+			{ 
+				if (value<0) return;
+				m_iTextOffsetX=value;
+			}
+		}
+		/// <summary>
+		/// Get/set the Y-offset of the label.
+		/// </summary>
+		public int TextOffsetY
+		{
+			get { return m_iTextOffsetY;}
+			set 
+			{ 
+				if (value<0) return;
+				m_iTextOffsetY=value;
+			}
+		}
+
+		public GUIControl.Alignment TextAlignment
+		{
+			get { return _textAlignment; }
+			set { _textAlignment = value; }
+		}
 
 		/// <summary>
 		/// Perform an update after a change has occured. E.g. change to a new position.
@@ -463,8 +482,8 @@ namespace MediaPortal.GUI.Library
 			m_imgNoFocus.Width=m_dwWidth;
 			m_imgNoFocus.Height=m_dwHeight;
       
-      m_imgFocus.SetPosition(m_dwPosX, m_dwPosY);
-      m_imgNoFocus.SetPosition(m_dwPosX, m_dwPosY);
+			m_imgFocus.SetPosition(m_dwPosX, m_dwPosY);
+			m_imgNoFocus.SetPosition(m_dwPosX, m_dwPosY);
 		}
 
 		public void Refresh()
@@ -476,28 +495,29 @@ namespace MediaPortal.GUI.Library
 		/// Get/Set the the application filename
 		/// which should be launched when this button gets clicked
 		/// </summary>
-	  public string Application
-	  {
-	    get { return m_strApplication; }
-      set 
-      { 
-        if (value==null) return;
-        m_strApplication = value; 
-      }
-	  }
+		public string Application
+		{
+			get { return m_strApplication; }
+			set 
+			{ 
+				if (value==null) return;
+				m_strApplication = value; 
+			}
+		}
 
 		/// <summary>
 		/// Get/Set the arguments for the application
 		/// which should be launched when this button gets clicked
 		/// </summary>
 		public string Arguments
-	  {
-	    get { return m_strArguments; }
-	    set { 
-        if (value==null) return;
-        m_strArguments = value; 
-      }
-	  }
+		{
+			get { return m_strArguments; }
+			set 
+			{ 
+				if (value==null) return;
+				m_strArguments = value; 
+			}
+		}
 
 		/// <summary>
 		/// get/set the current selected item
@@ -506,20 +526,21 @@ namespace MediaPortal.GUI.Library
 		/// When the user presses the button, the next item will be selected
 		/// and shown on the button
 		/// </summary>
-    public override int SelectedItem
-    {
-      get { return m_SelectedItem;}
-      set {
-        if (value<0) return;
-        if (SubItemCount>0)
-        {
-          m_SelectedItem=value;
-          if (m_SelectedItem<0 || m_SelectedItem >= SubItemCount) m_SelectedItem=0;
-          Label=(string)GetSubItem(m_SelectedItem);
-        }
-        else m_SelectedItem=0;
-      }
-    }
+		public override int SelectedItem
+		{
+			get { return m_SelectedItem;}
+			set 
+			{
+				if (value<0) return;
+				if (SubItemCount>0)
+				{
+					m_SelectedItem=value;
+					if (m_SelectedItem<0 || m_SelectedItem >= SubItemCount) m_SelectedItem=0;
+					Label=(string)GetSubItem(m_SelectedItem);
+				}
+				else m_SelectedItem=0;
+			}
+		}
 
 	}
 }
