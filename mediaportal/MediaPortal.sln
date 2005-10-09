@@ -64,6 +64,22 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemotePlugins", "RemotePlug
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebEPG", "WebEPG\WebEPG\WebEPG.csproj", "{F7CB2A9F-004E-4667-BEAF-782F1C28E2D3}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebEPG-channels", "WebEPG\WebEPG-channels\WebEPG-channels.csproj", "{21F2FA6E-4B52-442E-A5A8-64573061D571}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebEPG-conf", "WebEPG\WebEPG-conf\WebEPG-conf.csproj", "{47B8906A-5EC9-4641-811E-8BC0EAF97DDD}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebEPG-xmltv", "WebEPG\WebEPG-xmltv\WebEPG-xmltv.csproj", "{67D44FEB-AC41-4B93-AC1D-876318CDD16B}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -183,6 +199,38 @@ Global
 		{0A234721-1F13-4DF8-9B1E-64D9E3111203}.UseCaptureCardDefinitions.Build.0 = Release|.NET
 		{0A234721-1F13-4DF8-9B1E-64D9E3111203}.UseCaptureDefintionsRelease.ActiveCfg = Release|.NET
 		{0A234721-1F13-4DF8-9B1E-64D9E3111203}.UseCaptureDefintionsRelease.Build.0 = Release|.NET
+		{F7CB2A9F-004E-4667-BEAF-782F1C28E2D3}.Debug.ActiveCfg = Debug|.NET
+		{F7CB2A9F-004E-4667-BEAF-782F1C28E2D3}.Debug.Build.0 = Debug|.NET
+		{F7CB2A9F-004E-4667-BEAF-782F1C28E2D3}.Release.ActiveCfg = Release|.NET
+		{F7CB2A9F-004E-4667-BEAF-782F1C28E2D3}.Release.Build.0 = Release|.NET
+		{F7CB2A9F-004E-4667-BEAF-782F1C28E2D3}.UseCaptureCardDefinitions.ActiveCfg = Release|.NET
+		{F7CB2A9F-004E-4667-BEAF-782F1C28E2D3}.UseCaptureCardDefinitions.Build.0 = Release|.NET
+		{F7CB2A9F-004E-4667-BEAF-782F1C28E2D3}.UseCaptureDefintionsRelease.ActiveCfg = Release|.NET
+		{F7CB2A9F-004E-4667-BEAF-782F1C28E2D3}.UseCaptureDefintionsRelease.Build.0 = Release|.NET
+		{21F2FA6E-4B52-442E-A5A8-64573061D571}.Debug.ActiveCfg = Debug|.NET
+		{21F2FA6E-4B52-442E-A5A8-64573061D571}.Debug.Build.0 = Debug|.NET
+		{21F2FA6E-4B52-442E-A5A8-64573061D571}.Release.ActiveCfg = Release|.NET
+		{21F2FA6E-4B52-442E-A5A8-64573061D571}.Release.Build.0 = Release|.NET
+		{21F2FA6E-4B52-442E-A5A8-64573061D571}.UseCaptureCardDefinitions.ActiveCfg = Release|.NET
+		{21F2FA6E-4B52-442E-A5A8-64573061D571}.UseCaptureCardDefinitions.Build.0 = Release|.NET
+		{21F2FA6E-4B52-442E-A5A8-64573061D571}.UseCaptureDefintionsRelease.ActiveCfg = Release|.NET
+		{21F2FA6E-4B52-442E-A5A8-64573061D571}.UseCaptureDefintionsRelease.Build.0 = Release|.NET
+		{47B8906A-5EC9-4641-811E-8BC0EAF97DDD}.Debug.ActiveCfg = Debug|.NET
+		{47B8906A-5EC9-4641-811E-8BC0EAF97DDD}.Debug.Build.0 = Debug|.NET
+		{47B8906A-5EC9-4641-811E-8BC0EAF97DDD}.Release.ActiveCfg = Release|.NET
+		{47B8906A-5EC9-4641-811E-8BC0EAF97DDD}.Release.Build.0 = Release|.NET
+		{47B8906A-5EC9-4641-811E-8BC0EAF97DDD}.UseCaptureCardDefinitions.ActiveCfg = Release|.NET
+		{47B8906A-5EC9-4641-811E-8BC0EAF97DDD}.UseCaptureCardDefinitions.Build.0 = Release|.NET
+		{47B8906A-5EC9-4641-811E-8BC0EAF97DDD}.UseCaptureDefintionsRelease.ActiveCfg = Release|.NET
+		{47B8906A-5EC9-4641-811E-8BC0EAF97DDD}.UseCaptureDefintionsRelease.Build.0 = Release|.NET
+		{67D44FEB-AC41-4B93-AC1D-876318CDD16B}.Debug.ActiveCfg = Debug|.NET
+		{67D44FEB-AC41-4B93-AC1D-876318CDD16B}.Debug.Build.0 = Debug|.NET
+		{67D44FEB-AC41-4B93-AC1D-876318CDD16B}.Release.ActiveCfg = Release|.NET
+		{67D44FEB-AC41-4B93-AC1D-876318CDD16B}.Release.Build.0 = Release|.NET
+		{67D44FEB-AC41-4B93-AC1D-876318CDD16B}.UseCaptureCardDefinitions.ActiveCfg = Release|.NET
+		{67D44FEB-AC41-4B93-AC1D-876318CDD16B}.UseCaptureCardDefinitions.Build.0 = Release|.NET
+		{67D44FEB-AC41-4B93-AC1D-876318CDD16B}.UseCaptureDefintionsRelease.ActiveCfg = Release|.NET
+		{67D44FEB-AC41-4B93-AC1D-876318CDD16B}.UseCaptureDefintionsRelease.Build.0 = Release|.NET
 	EndGlobalSection
 	GlobalSection(SolutionItems) = postSolution
 	EndGlobalSection

@@ -99,3 +99,4 @@ copy ..\..\..\AxInterop.WMPLib.dll .
 
 copy ..\..\..\FireDTVKeyMap.XML .
 copy ..\..\..\FireDTVKeyMap.XML.Schema .
+copy ..\..\..\WebEPG\WebEPG\bin\Debug\WebEPG.dll .
