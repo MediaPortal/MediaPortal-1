@@ -104,12 +104,12 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "config\Config.cs"
+                    RelPath = "config\EPGConfig.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "config\ConfigData.cs"
+                    RelPath = "config\EPGConfigData.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
