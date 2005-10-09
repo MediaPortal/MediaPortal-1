@@ -3551,10 +3551,7 @@ namespace MediaPortal.TV.Recording
 					// is channel scrambled ?
 					if(m_streamDemuxer.IsScrambled)
 					{
-						if  ( (g_Player.Playing && !g_Player.Paused) || (!g_Player.Playing) )
-						{
 							VideoRendererStatistics.VideoState=VideoRendererStatistics.State.Scrambled;
-						}
 					}
 					else
 						VideoRendererStatistics.VideoState=VideoRendererStatistics.State.VideoPresent;

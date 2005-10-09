@@ -2170,19 +2170,11 @@ namespace MediaPortal.TV.Recording
 			}
 			else
 			{	
-				// we receive packets
+				// we receive packets, got a PMT.
 				// is channel scrambled ?
-				if(GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.Vmr9FPS < 1f)
+				if(m_streamDemuxer.IsScrambled)
 				{
-					if  ( (g_Player.Playing && !g_Player.Paused) || (!g_Player.Playing) )
-					{
-						VideoRendererStatistics.VideoState=VideoRendererStatistics.State.Scrambled;
-					}
-					else
-					{
-						// todo: check for vmr7 is we are receiving video 
-						VideoRendererStatistics.VideoState=VideoRendererStatistics.State.VideoPresent;
-					}
+					VideoRendererStatistics.VideoState=VideoRendererStatistics.State.Scrambled;
 				}
 				else
 					VideoRendererStatistics.VideoState=VideoRendererStatistics.State.VideoPresent;
