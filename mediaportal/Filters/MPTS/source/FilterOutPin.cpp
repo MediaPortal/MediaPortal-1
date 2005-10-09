@@ -125,7 +125,7 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
   {
 	//LogDebug("FillBuffer()");
 	  
-	CAutoLock cAutoLock(&m_cSharedState);
+	//CAutoLock cAutoLock(&m_cSharedState);
 	if (m_bAboutToStop) return E_FAIL;
 	
 	CheckPointer(pSample, E_POINTER);
@@ -153,7 +153,10 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 			while (true)
 			{	
 				if (m_bAboutToStop) return E_FAIL;
-				m_pMPTSFilter->UpdatePids();
+				if ( m_pMPTSFilter->UpdatePids())
+				{
+					LogDebug("pin:pids changed");
+				}
 				if ( m_pFileReader->GetFilePointer() <= m_pSections->pids.fileStartPosition &&
 					m_pFileReader->GetFilePointer() + lDataLength>=m_pSections->pids.fileStartPosition )
 				{
@@ -365,6 +368,7 @@ HRESULT CFilterOutPin::ChangeRate()
 
 void CFilterOutPin::UpdateFromSeek(void)
 {
+	LogDebug("pin:UpdateFromSeek()");
 	if (ThreadExists())
 	{
         DeliverBeginFlush();

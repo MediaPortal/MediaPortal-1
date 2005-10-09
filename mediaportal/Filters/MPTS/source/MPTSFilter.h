@@ -62,7 +62,7 @@ public:
 	STDMETHODIMP Log(char* text,bool crlf);
 	STDMETHODIMP Log(__int64 value,bool crlf);
 	HRESULT SetFilePosition(REFERENCE_TIME seek);
-	void UpdatePids();
+	bool UpdatePids();
 	FileReader *m_pFileReader;
 protected:
 	// IFileSourceFilter
