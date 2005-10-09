@@ -1287,6 +1287,7 @@ namespace MediaPortal.GUI.Home
 			string strFontName= ((GUIButtonControl)GetControl((int)Controls.TemplateButton)).FontName;
 			long   lFontColor = ((GUIButtonControl)GetControl((int)Controls.TemplateButton)).TextColor;
 			long   lDisabledColor = ((GUIButtonControl)GetControl((int)Controls.TemplateButton)).DisabledColor;
+
 			int xpos  =GetControl( (int)Controls.TemplateButton).XPosition;
 			int width =GetControl( (int)Controls.TemplateButton).Width;
 			int height=GetControl( (int)Controls.TemplateButton).Height;
@@ -1353,6 +1354,7 @@ namespace MediaPortal.GUI.Home
 					button.TextOffsetX= ((GUIButtonControl)GetControl((int)Controls.TemplateButton)).TextOffsetX;
 					button.TextOffsetY= ((GUIButtonControl)GetControl((int)Controls.TemplateButton)).TextOffsetY;
 					button.ColourDiffuse= ((GUIButtonControl)GetControl((int)Controls.TemplateButton)).ColourDiffuse;
+					button.TextAlignment = ((GUIButtonControl)GetControl((int)Controls.TemplateButton)).TextAlignment;
 					button.SetNavigation(iButtonId-1,2,iButtonId,iButtonId);
 
 					//Trace.WriteLine(String.Format("id:{0} btn:{1}", iButtonId,strButtonText));
