@@ -4612,4 +4612,18 @@
         <id>1445</id>
         <value>Spela in efter</value>
     </string>
+
+<!-- My Trailers Strings --> 
+<string><id>5900</id><value>Mina Trailers</value></string> 
+<string><id>5901</id><value>Visa Filmer</value></string> 
+<string><id>5902</id><value>Visa vilka filmer?</value></string> 
+<string><id>5903</id><value>Nyligen släppta filmer</value></string> 
+<string><id>5904</id><value>Mest sedda filmer</value></string> 
+<string><id>5905</id><value>Alla filmer</value></string> 
+<string><id>5906</id><value>Trailers</value></string> 
+<string><id>5907</id><value>Clips</value></string> 
+<string><id>5908</id><value>Mer material</value></string> 
+<string><id>5909</id><value>Kan inte spela film!</value></string> 
+<!-- End of My Trailers Strings -->
+
 </strings>
