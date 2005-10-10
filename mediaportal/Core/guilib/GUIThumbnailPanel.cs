@@ -278,6 +278,8 @@ namespace MediaPortal.GUI.Library
 
       long dwColor = m_dwTextColor;
       if (pItem.Selected) dwColor = m_dwSelectedColor;
+			if (!bFocus)
+				dwColor&=0xaaffffff;
 
       if (pItem.IsRemote)
       {
@@ -288,6 +290,7 @@ namespace MediaPortal.GUI.Library
       {
         if (buttonOnly)
         {
+					btn.ColourDiffuse=0xffffffff;
           btn.Focus = true;
           btn.SetPosition(dwPosX, dwPosY);
           if (true == m_bShowTexture) btn.Render(timePassed);
@@ -298,7 +301,8 @@ namespace MediaPortal.GUI.Library
       else
       {
         if (buttonOnly)
-        {
+				{
+					btn.ColourDiffuse=0xaaffffff;
           btn.Focus = false;
           btn.SetPosition(dwPosX, dwPosY);
           if (true == m_bShowTexture) btn.Render(timePassed);
@@ -344,6 +348,11 @@ namespace MediaPortal.GUI.Library
           int xOff = (m_iThumbWidth + 2*iOverSized - pImage.RenderWidth)/2;
           int yOff = (m_iThumbHeight + 2*iOverSized - pImage.RenderHeight)/2;
           pImage.SetPosition(m_iThumbXPos + dwPosX - iOverSized + xOff, m_iThumbYPos - iOverSized + dwPosY + yOff);
+					if (bFocus)
+						pImage.ColourDiffuse=0xffffffff;
+					else
+						pImage.ColourDiffuse=0xaaffffff;
+
           pImage.Render(timePassed);
         }
       }
@@ -378,7 +387,12 @@ namespace MediaPortal.GUI.Library
             pImage.Height = m_iThumbHeight + 2*iOverSized;
             int xOff = (m_iThumbWidth + 2*iOverSized - pImage.RenderWidth)/2;
             int yOff = (m_iThumbHeight + 2*iOverSized - pImage.RenderHeight)/2;
-            pImage.SetPosition(m_iThumbXPos - iOverSized + dwPosX + xOff, m_iThumbYPos - iOverSized + dwPosY + yOff);
+						pImage.SetPosition(m_iThumbXPos - iOverSized + dwPosX + xOff, m_iThumbYPos - iOverSized + dwPosY + yOff);
+						if (bFocus)
+							pImage.ColourDiffuse=0xffffffff;
+						else
+							pImage.ColourDiffuse=0xaaffffff;
+
             pImage.Render(timePassed);
           }
         }

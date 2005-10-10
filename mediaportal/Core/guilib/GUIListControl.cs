@@ -339,6 +339,10 @@ namespace MediaPortal.GUI.Library
           GUIControl btn = m_imgButton[buttonNr] as GUIControl;
           if (btn != null)
           {
+						if (gotFocus)
+							btn.ColourDiffuse=0xffffffff;
+						else
+							btn.ColourDiffuse=0xaaffffff;
             btn.Focus = gotFocus;
             btn.SetPosition(x, y);
             btn.Render(timePassed);
@@ -348,7 +352,7 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    protected virtual void RenderIcon(float timePassed, int buttonNr, int x, int y)
+    protected virtual void RenderIcon(float timePassed, int buttonNr, int x, int y,bool gotFocus)
     {
       GUIListItem pItem = (GUIListItem) m_vecItems[buttonNr + m_iOffset];
 
@@ -372,13 +376,18 @@ namespace MediaPortal.GUI.Library
         pImage.Width = m_iImageWidth;
         pImage.Height = m_iImageHeight;
         pImage.SetPosition(x, y);
+				if (gotFocus)
+					pImage.ColourDiffuse=0xffffffff;
+				else
+					pImage.ColourDiffuse=0xaaffffff;
+
         pImage.Render(timePassed);
         pImage = null;
       }
       pItem = null;
     }
 
-    protected virtual void RenderPinIcon(float timePassed, int buttonNr, int x, int y)
+    protected virtual void RenderPinIcon(float timePassed, int buttonNr, int x, int y,bool gotFocus)
     {
       GUIListItem pItem = (GUIListItem) m_vecItems[buttonNr + m_iOffset];
       if (pItem.HasPinIcon)
@@ -404,14 +413,18 @@ namespace MediaPortal.GUI.Library
         else
         {
           pinImage.SetPosition(x + PinIconOffsetX, y + PinIconOffsetY);
-        }
+				}
+				if (gotFocus)
+					pinImage.ColourDiffuse=0xffffffff;
+				else
+					pinImage.ColourDiffuse=0xaaffffff;
         pinImage.Render(timePassed);
         pinImage = null;
       } //if (pItem.HasPinIcon)
       pItem = null;
     }
 
-    protected virtual void RenderLabel(float timePassed, int buttonNr, int dwPosX, int dwPosY)
+    protected virtual void RenderLabel(float timePassed, int buttonNr, int dwPosX, int dwPosY,bool gotFocus)
     {
       GUIListItem pItem = (GUIListItem) m_vecItems[buttonNr + m_iOffset];
       long dwColor = m_dwTextColor;
@@ -461,8 +474,11 @@ namespace MediaPortal.GUI.Library
               GUILabelControl label2 = m_labels2[buttonNr] as GUILabelControl;
               if (label2 != null)
               {
-                label2.SetPosition(xpos, ypos + 2 + m_iTextOffsetY2);
-                label2.TextColor = dwColor;
+								label2.SetPosition(xpos, ypos + 2 + m_iTextOffsetY2);
+								if (gotFocus)
+									label2.TextColor = dwColor;
+								else
+									label2.TextColor = dwColor&0xaaffffff;
                 label2.Label = pItem.Label2;
                 label2.TextAlignment = GUIControl.Alignment.ALIGN_RIGHT;
                 label2.FontName = m_strFont2Name;
@@ -486,7 +502,9 @@ namespace MediaPortal.GUI.Library
         {
           dwColor = m_dwRemoteColor;
           if (pItem.IsDownloading) dwColor = m_dwDownloadColor;
-        }
+				}
+				if (!gotFocus)
+					dwColor = dwColor&0xaaffffff;
         RenderText(timePassed, buttonNr, (float) dwPosX, (float) dwPosY + 2 + m_iTextOffsetY, (float) dMaxWidth, dwColor, m_wszText, bSelected);
       } //if (m_bTextVisible1)
 
@@ -519,8 +537,11 @@ namespace MediaPortal.GUI.Library
               GUILabelControl label2 = m_labels2[buttonNr] as GUILabelControl;
               if (label2 != null)
               {
-                label2.SetPosition(dwPosX, dwPosY + 2 + m_iTextOffsetY2);
-                label2.TextColor = dwColor;
+								label2.SetPosition(dwPosX, dwPosY + 2 + m_iTextOffsetY2);
+								if (gotFocus)
+									label2.TextColor = dwColor;
+								else
+									label2.TextColor = dwColor&0xaaffffff;
                 label2.Label = m_wszText;
                 label2.TextAlignment = GUIControl.Alignment.ALIGN_RIGHT;
                 label2.FontName = m_strFont2Name;
@@ -564,8 +585,11 @@ namespace MediaPortal.GUI.Library
               GUILabelControl label3 = m_labels3[buttonNr] as GUILabelControl;
               if (label3 != null)
               {
-                label3.SetPosition(dwPosX, ypos);
-                label3.TextColor = dwColor;
+								label3.SetPosition(dwPosX, ypos);
+								if (gotFocus)
+									label3.TextColor = dwColor;
+								else
+									label3.TextColor = dwColor&0xaaffffff;
                 label3.Label = pItem.Label3;
                 label3.TextAlignment = GUIControl.Alignment.ALIGN_LEFT;
                 label3.FontName = m_strFont2Name;
@@ -621,16 +645,19 @@ namespace MediaPortal.GUI.Library
       {
         int dwPosX = m_dwPosX;
         if (i + m_iOffset < m_vecItems.Count)
-        {
+				{
+					bool gotFocus = false;
+					if (m_bDrawFocus && i == m_iCursorY && Focus && m_iSelect == ListType.CONTROL_LIST)
+						gotFocus = true;
           // render the icon
-          RenderIcon(timePassed, i, dwPosX + m_iIconOffsetX, dwPosY + m_iIconOffsetY);
+          RenderIcon(timePassed, i, dwPosX + m_iIconOffsetX, dwPosY + m_iIconOffsetY,gotFocus);
 
           dwPosX += (m_iImageWidth + 10);
 
           // render the text
-          RenderLabel(timePassed, i, dwPosX, dwPosY);
+          RenderLabel(timePassed, i, dwPosX, dwPosY,gotFocus);
 
-          RenderPinIcon(timePassed, i, m_dwPosX, dwPosY);
+          RenderPinIcon(timePassed, i, m_dwPosX, dwPosY,gotFocus);
 
           dwPosY += m_iItemHeight + m_iSpaceBetweenItems;
         } //if (i + m_iOffset < m_vecItems.Count)
