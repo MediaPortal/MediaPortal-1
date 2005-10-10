@@ -1779,26 +1779,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Util\SQLite\SQLiteClient.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Util\SQLite\SQLiteException.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Util\SQLite\SQLiteResultSet.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Util\SQLite\SQLSelectBuilder.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "WinLirc\WinLirc.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
