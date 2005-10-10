@@ -619,6 +619,14 @@ namespace MediaPortal.Devices
 					devicePath = deviceInterfaceDetailData.DevicePath;
 					break;
 				}
+
+				// Toshiba MCE remote
+				if(deviceInterfaceDetailData.DevicePath.IndexOf("#vid_0609&pid_031d") != -1)
+				{
+					SetupDiDestroyDeviceInfoList(handle);
+					devicePath = deviceInterfaceDetailData.DevicePath;
+					break;
+				}
 			}
 
 			return devicePath;
