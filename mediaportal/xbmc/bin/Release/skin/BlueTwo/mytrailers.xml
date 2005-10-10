@@ -178,7 +178,7 @@
 			<description>Movie Title value</description>
 			<id>1</id>
 			<posX>256</posX>
-			<posY>56</posY>
+			<posY>44</posY>
 			<label>#title</label>
 			<font>font18</font>
 			<disabledcolor>ff808080</disabledcolor>
