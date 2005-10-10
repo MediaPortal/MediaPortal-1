@@ -1290,6 +1290,16 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "GUITrailers\GUITrailers.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUITrailers\GUITrailersPlugin.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "GUITV\GUIFullscreenTeletext.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -1421,16 +1431,6 @@
                 />
                 <File
                     RelPath = "GUIVideoFiles\episode_info.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "GUIVideoFiles\GUITrailers.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "GUIVideoFiles\GUITrailersPlugin.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
