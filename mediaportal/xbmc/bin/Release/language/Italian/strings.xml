@@ -1683,7 +1683,7 @@
 	</string>
 	<string>
 		<id>602</id>
-		<value>Canale</value>
+		<value>Canale:</value>
 	</string>
 	<string>
 		<id>603</id>
@@ -2279,7 +2279,7 @@
 	</string>
 	<string>
 		<id>102011</id>
-		<value>Informazioni sull’Artista</value>
+		<value>Informazioni sull'Artista</value>
 	</string>
 	<string>
 		<id>102012</id>
@@ -2291,7 +2291,7 @@
 	</string>
 	<string>
 		<id>102014</id>
-		<value>Informazioni sull’Immagine</value>
+		<value>Informazioni sull'Immagine</value>
 	</string>
 	<string>
 		<id>102600</id>
@@ -2629,7 +2629,7 @@
 	</string>
 	<string>
 		<id>861</id>
-		<value>Dettagli dell’Allarme</value>
+		<value>Dettagli dell'Allarme</value>
 	</string>
 	<string>
 		<id>862</id>
@@ -2693,7 +2693,7 @@
 	</string>
 	<string>
 		<id>900</id>
-		<value>Ricomincia il video dall’ultimo segnalibro?</value>
+		<value>Ricomincia il video dall'ultimo segnalibro?</value>
 	</string>
 	<string>
 		<id>901</id>
@@ -2725,7 +2725,7 @@
 	</string>
 	<string>
 		<id>908</id>
-		<value>sta scrivendo un messaggio…</value>
+		<value>sta scrivendo un messaggio.</value>
 	</string>
 	<string>
 		<id>909</id>
@@ -3075,7 +3075,7 @@
 	</string>
 	<string>
 		<id>1970</id>
-		<value>Intervallo dell’allarme (secondi)</value>
+		<value>Intervallo dell'allarme (secondi)</value>
 	</string>
 	<string>
 		<id>1971</id>

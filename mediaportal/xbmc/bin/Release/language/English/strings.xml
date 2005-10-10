@@ -1790,7 +1790,7 @@
 	</string>
 	<string>
 		<id>602</id>
-		<value>Channel</value>
+		<value>Channel:</value>
 	</string>
 	<string>
 		<id>603</id>
@@ -3325,7 +3325,50 @@
 	<string><id>3020</id><value>Episode</value></string>
 	<string><id>3021</id><value>Part</value></string>
 	<string><id>3022</id><value>of</value></string>
-	
+
+	<!-- My Trailers Strings -->
+<string>
+	<id>5900</id>
+	<value>My Trailers</value>
+</string>
+<string>
+	<id>5901</id>
+	<value>Show Movies</value>
+</string>
+<string>
+	<id>5902</id>
+	<value>Show which movies?</value>
+</string>
+<string>
+	<id>5903</id>
+	<value>Just added movies</value>
+</string>
+<string>
+	<id>5904</id>
+	<value>Most watched movies</value>
+</string>
+<string>
+	<id>5905</id>
+	<value>All movies</value>
+</string>
+<string>
+	<id>5906</id>
+	<value>Trailers</value>
+</string>
+<string>
+	<id>5907</id>
+	<value>Clips</value>
+</string>
+<string>
+	<id>5908</id>
+	<value>More</value>
+</string>
+<string>
+	<id>5909</id>
+	<value>Can't stream movie!</value>
+</string>
+
+	<!-- End of My Trailers Strings -->	
 <string>
 	<id>8000</id>
 	<value>My Mail</value>

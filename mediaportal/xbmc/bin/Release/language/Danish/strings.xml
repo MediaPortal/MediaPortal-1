@@ -452,7 +452,7 @@
 
 	<string><id>600</id><value>TV-Guide</value></string>
 	<string><id>601</id><value>Optag NU !</value></string>
-	<string><id>602</id><value>Kanal</value></string>
+	<string><id>602</id><value>Kanal:</value></string>
 	<string><id>603</id><value>Optage timere</value></string>
 	<string><id>604</id><value>TV optagelser</value></string>
 	<string><id>605</id><value>TV</value></string>
