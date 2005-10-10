@@ -131,11 +131,23 @@ namespace MediaPortal.ITunesPlayer
 					iTunesApp= new iTunesLib.iTunesAppClass();
 				}
 
+				iTunesApp.Stop();
 				iTunesApp.PlayFile(strFile);
 
 				
 				playerPaused=false;
 				currentFile=strFile;
+				int count=0;
+				while (iTunesApp.PlayerState != ITPlayerState.ITPlayerStatePlaying)
+				{
+					System.Threading.Thread.Sleep(10);
+					if (count++ > 50) break;
+				}
+				if (iTunesApp.PlayerState != ITPlayerState.ITPlayerStatePlaying)
+				{
+					iTunesApp.Stop();
+					return false;
+				}
 				return true;
 			}
 			catch(Exception)
