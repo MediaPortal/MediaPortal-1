@@ -117,6 +117,9 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("selectedColor2")] protected long m_dwSelectedColor2 = 0xFFFFFFFF;
     [XMLSkinElement("selectedColor3")] protected long m_dwSelectedColor3 = 0xFFFFFFFF;
 
+	[XMLSkinElement("folderPrefix")] protected string _folderPrefix = "[";
+	[XMLSkinElement("folderSuffix")] protected string _folderSuffix = "]";
+
     [XMLSkinElement("textureUp")] protected string m_strUp = "";
     [XMLSkinElement("textureDown")] protected string m_strDown = "";
     [XMLSkinElement("textureUpFocus")] protected string m_strUpFocus = "";
@@ -1923,8 +1926,8 @@ namespace MediaPortal.GUI.Library
         strThumb = pItem.ThumbnailImage;
         if (pItem.IsFolder)
         {
-          strLabel = String.Format("[{0}]", pItem.Label);
-        }
+			strLabel = String.Format("{0}{1}{2}", _folderPrefix, pItem.Label, _folderSuffix);
+		}
       }
       return iItem;
     }

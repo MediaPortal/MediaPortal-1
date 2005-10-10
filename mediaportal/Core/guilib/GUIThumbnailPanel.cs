@@ -96,7 +96,10 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("thumbWidthBig")] protected int m_iThumbWidthBig = 0;
     [XMLSkinElement("thumbHeightBig")] protected int m_iThumbHeightBig = 0;
 
-    bool m_bShowTexture = true;
+	[XMLSkinElement("folderPrefix")] protected string _folderPrefix = "[";
+	[XMLSkinElement("folderSuffix")] protected string _folderSuffix = "]";
+	  
+	bool m_bShowTexture = true;
     int m_iOffset = 0;
     int m_iLastItemPageValues = 0;
 
@@ -1714,7 +1717,7 @@ namespace MediaPortal.GUI.Library
         strLabel2 = pItem.Label2;
         if (pItem.IsFolder)
         {
-          strLabel = String.Format("[{0}]", pItem.Label);
+          strLabel = String.Format("{0}{1}{2}", _folderPrefix, pItem.Label, _folderSuffix);
         }
         strThumbnail = pItem.ThumbnailImage;
       }

@@ -77,6 +77,8 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("scrollbartop")] protected string m_strScrollBarTop = "";
     [XMLSkinElement("scrollbarbottom")] protected string m_strScrollBarBottom = "";
 
+	[XMLSkinElement("folderPrefix")] protected string _folderPrefix = "[";
+	[XMLSkinElement("folderSuffix")] protected string _folderSuffix = "]";
 
     [XMLSkinElement("backgroundheight")] protected int m_iBackgroundHeight;
     [XMLSkinElement("backgroundwidth")] protected int m_iBackgroundWidth;
@@ -1617,8 +1619,8 @@ namespace MediaPortal.GUI.Library
           strLabel2 = pItem.Label2;
           if (pItem.IsFolder)
           {
-            strLabel = String.Format("[{0}]", pItem.Label);
-          }
+			  strLabel = String.Format("{0}{1}{2}", _folderPrefix, pItem.Label, _folderSuffix);
+		  }
           strThumbnail = pItem.ThumbnailImage;
         }
       }
