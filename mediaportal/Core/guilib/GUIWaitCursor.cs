@@ -27,7 +27,7 @@ using System.Threading;
 
 namespace MediaPortal.GUI.Library
 {
-	public sealed class GUIWaitCursor : GUIControl, IDisposable
+	public sealed class GUIWaitCursor : GUIControl
 	{
 		#region Constructors
 
@@ -39,96 +39,49 @@ namespace MediaPortal.GUI.Library
 
 		#region Methods
 
-		GUIImage[] _images;
-
 		public void Dispose()
 		{
-			if(_images == null)
-				return;
-
-			for(int index = 0; index < _images.Length; index++)
-				_images[index].FreeResources();
+			_animation.Dispose();
 		}
 
 		public static void Init()
 		{
-			if(_instance != null)
-				_instance.Dispose();
-
-			_instance = new GUIWaitCursor();
-
-			ArrayList array = new ArrayList();
+			_animation = new GUIAnimation();
 
 			foreach(string filename in Directory.GetFiles(GUIGraphicsContext.Skin + @"\media\", "common.waiting.*.png"))
-				array.Add(filename);
-
-			int x = 0;
-			int y = 0;
-			int w = 0;
-			int h = 0;
-
-			_instance._images = new GUIImage[array.Count];
-
-			for(int index = 0; index < _instance._images.Length; index++)
-			{
-				_instance._images[index] = new GUIImage(_instance.ParentID, 200001 + index, x, y, w, h, (string)array[index], Color.White);
-				_instance._images[index].AllocResources();
-
-				if(index != 0)
-					continue;
-
-				w = _instance._images[index].Width;
-				h = _instance._images[index].Height;
-				x = (GUIGraphicsContext.Width - w) / 2;
-				y = (GUIGraphicsContext.Height - h) / 2;
-
-				_instance._images[index].SetPosition(x, y);
-			}
+				_animation.Filenames.Add(filename);
 		}
 
 		public override void Render(float timePassed)
 		{
+		}
+			
+		public static void Render()
+		{
 			if(_showCount <= 0)
 				return;
 
-			if(_images == null)
-				return;
-
-			if(_images.Length == 0)
-				return;
-
-			double x = (_images.Length * (Environment.TickCount - _tickCount)) / 800;
-
-			_images[(int)x % _images.Length].Render(timePassed);
+			_animation.Render(GUIGraphicsContext.TimePassed);
 		}
 
-		public void Show()
+		public static void Show()
 		{
 			if(Interlocked.Increment(ref _showCount) == 0)
 				Interlocked.Exchange(ref _tickCount, Environment.TickCount);
 		}
 
-		public void Hide()
+		public static void Hide()
 		{
 			Interlocked.Decrement(ref _showCount);
 		}
 
 		#endregion Methods
 
-		#region Properties
-		
-		public static GUIWaitCursor Instance
-		{
-			get { return _instance; }
-		}
-
-		#endregion Properties
-
 		#region Fields
 
-		static GUIWaitCursor			_instance;
-		int								_showCount;
-		float							_tickCount = 0;
+		static GUIAnimation				_animation;
+		static int						_showCount;
+		static float					_tickCount = 0;
 
 		#endregion Fields
 	}

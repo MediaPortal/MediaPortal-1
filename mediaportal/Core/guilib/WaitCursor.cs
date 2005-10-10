@@ -29,7 +29,7 @@ namespace MediaPortal.GUI.Library
 
 		public WaitCursor()
 		{
-			GUIWaitCursor.Instance.Show();
+			GUIWaitCursor.Show();
 		}
 
 		#endregion Constructors
@@ -38,7 +38,7 @@ namespace MediaPortal.GUI.Library
 
 		public void Dispose()
 		{
-			GUIWaitCursor.Instance.Hide();
+			GUIWaitCursor.Hide();
 		}
 
 		#endregion Methods

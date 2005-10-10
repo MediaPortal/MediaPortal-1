@@ -184,6 +184,7 @@ namespace MediaPortal.GUI.Library
 					  ,WINDOW_CARTOONS = 7800
 			,WINDOW_DIALOG_TEXT = 7900
 				 ,WINDOW_SUNCLOCK = 8000
+			,WINDOW_TRAILERS = 5900
 		}
 #endregion
 
@@ -932,7 +933,7 @@ namespace MediaPortal.GUI.Library
 						((GUIControl)controlList[x]).Render(timePassed);
 					}
 
-					GUIWaitCursor.Instance.Render(timePassed);
+					GUIWaitCursor.Render();
 				}
 				catch(Exception ex)
 				{
