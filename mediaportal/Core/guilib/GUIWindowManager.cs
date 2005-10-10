@@ -819,7 +819,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     static void PostRender(float timePassed)
     {
-      if (GUIGraphicsContext.IsFullScreenVideo && GUIGraphicsContext.ShowBackground) return;
+      //if (GUIGraphicsContext.IsFullScreenVideo && GUIGraphicsContext.ShowBackground) return;
 			if (OnPostRender!=null)
 			{
 				//render overlay layer 1-10
