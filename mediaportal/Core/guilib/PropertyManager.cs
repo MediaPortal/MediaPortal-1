@@ -168,6 +168,7 @@ namespace MediaPortal.GUI.Library
 			m_properties["#Play.Current.IsWatched"]=String.Empty; 
 
  
+			
 			m_properties["#Play.Next.Thumb"]=String.Empty; 
 			m_properties["#Play.Next.File"]=String.Empty; 
 			m_properties["#Play.Next.Title"]=String.Empty; 
@@ -179,7 +180,20 @@ namespace MediaPortal.GUI.Library
 			m_properties["#Play.Next.Track"]=String.Empty;   
 			m_properties["#Play.Next.Year"]=String.Empty;    
 			m_properties["#Play.Next.Duration"]=String.Empty; 
-			
+			m_properties["#Play.Next.Plot"]=String.Empty; 
+			m_properties["#Play.Next.PlotOutline"]=String.Empty; 
+			m_properties["#Play.Next.Channel"]=String.Empty; 
+			m_properties["#Play.Next.Cast"]=String.Empty; 
+			m_properties["#Play.Next.DVDLabel"]=String.Empty; 
+			m_properties["#Play.Next.IMDBNumber"]=String.Empty; 
+			m_properties["#Play.Next.Rating"]=String.Empty; 
+			m_properties["#Play.Next.TagLine"]=String.Empty; 
+			m_properties["#Play.Next.Votes"]=String.Empty; 
+			m_properties["#Play.Next.Credits"]=String.Empty; 
+			m_properties["#Play.Next.Runtime"]=String.Empty; 
+			m_properties["#Play.Next.MPAARating"]=String.Empty; 
+			m_properties["#Play.Next.IsWatched"]=String.Empty; 
+
 
     }
 
@@ -242,45 +256,59 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
     static public void RemovePlayerProperties()
     {
-      m_bChanged=true;
-      SetProperty("#playlogo",String.Empty);
-      SetProperty("#title",String.Empty);
-      SetProperty("#artist",String.Empty);
-      SetProperty("#album",String.Empty);
-      SetProperty("#track",String.Empty);
-      SetProperty("#year",String.Empty);
-      SetProperty("#comment",String.Empty);
-			SetProperty("#shortduration",String.Empty);
-			SetProperty("#duration",String.Empty);
-      SetProperty("#thumb",String.Empty);
-      SetProperty("#director",String.Empty);
-      SetProperty("#genre",String.Empty);
-      SetProperty("#cast",String.Empty);
-      SetProperty("#dvdlabel",String.Empty);
-      SetProperty("#imdbnumber",String.Empty);
-      SetProperty("#file",String.Empty);
-      SetProperty("#plot",String.Empty);
-      SetProperty("#plotoutline",String.Empty);
-      SetProperty("#rating",String.Empty);
-      SetProperty("#tagline",String.Empty);
-      SetProperty("#votes",String.Empty);
-      SetProperty("#credits",String.Empty);
-			SetProperty("#currentplaytime",String.Empty);
-			SetProperty("#shortcurrentplaytime",String.Empty);
-      SetProperty("#playspeed",String.Empty);
-      SetProperty("#channel",String.Empty);
+			SetProperty("#Play.Current.Thumb",String.Empty);
+			SetProperty("#Play.Current.File",String.Empty);
+			SetProperty("#Play.Current.Title",String.Empty);
+			SetProperty("#Play.Current.Genre",String.Empty);
+			SetProperty("#Play.Current.Comment",String.Empty);
+			SetProperty("#Play.Current.Artist",String.Empty); 
+			SetProperty("#Play.Current.Director",String.Empty); 
+			SetProperty("#Play.Current.Album",String.Empty);  
+			SetProperty("#Play.Current.Track",String.Empty);  
+			SetProperty("#Play.Current.Year",String.Empty);   
+			SetProperty("#Play.Current.Duration",String.Empty);
+			SetProperty("#Play.Current.Plot",String.Empty);
+			SetProperty("#Play.Current.PlotOutline",String.Empty);
+			SetProperty("#Play.Current.Channel",String.Empty);
+			SetProperty("#Play.Current.Cast",String.Empty);
+			SetProperty("#Play.Current.DVDLabel",String.Empty);
+			SetProperty("#Play.Current.IMDBNumber",String.Empty);
+			SetProperty("#Play.Current.Rating",String.Empty);
+			SetProperty("#Play.Current.TagLine",String.Empty);
+			SetProperty("#Play.Current.Votes",String.Empty);
+			SetProperty("#Play.Current.Credits",String.Empty);
+			SetProperty("#Play.Current.Runtime",String.Empty);
+			SetProperty("#Play.Current.MPAARating",String.Empty);
+			SetProperty("#Play.Current.IsWatched",String.Empty);
 
-      
-      SetProperty("#fileNext",String.Empty);
-      SetProperty("#titleNext",String.Empty);
-      SetProperty("#genreNext",String.Empty);
-      SetProperty("#commentNext",String.Empty);
-      SetProperty("#artistNext",String.Empty);
-      SetProperty("#albumNext",String.Empty);
-      SetProperty("#trackNext",String.Empty);
-      SetProperty("#yearNext",String.Empty);
-      SetProperty("#durationNext",String.Empty);
-      SetProperty("#thumbNext",String.Empty);
+ 
+			
+			SetProperty("#Play.Next.Thumb",String.Empty);
+			SetProperty("#Play.Next.File",String.Empty);
+			SetProperty("#Play.Next.Title",String.Empty);
+			SetProperty("#Play.Next.Genre",String.Empty);
+			SetProperty("#Play.Next.Comment",String.Empty);
+			SetProperty("#Play.Next.Artist",String.Empty); 
+			SetProperty("#Play.Next.Director",String.Empty); 
+			SetProperty("#Play.Next.Album",String.Empty);  
+			SetProperty("#Play.Next.Track",String.Empty);  
+			SetProperty("#Play.Next.Year",String.Empty);   
+			SetProperty("#Play.Next.Duration",String.Empty);
+			SetProperty("#Play.Next.Plot",String.Empty);
+			SetProperty("#Play.Next.PlotOutline",String.Empty);
+			SetProperty("#Play.Next.Channel",String.Empty);
+			SetProperty("#Play.Next.Cast",String.Empty);
+			SetProperty("#Play.Next.DVDLabel",String.Empty);
+			SetProperty("#Play.Next.IMDBNumber",String.Empty);
+			SetProperty("#Play.Next.Rating",String.Empty);
+			SetProperty("#Play.Next.TagLine",String.Empty);
+			SetProperty("#Play.Next.Votes",String.Empty);
+			SetProperty("#Play.Next.Credits",String.Empty);
+			SetProperty("#Play.Next.Runtime",String.Empty);
+			SetProperty("#Play.Next.MPAARating",String.Empty);
+			SetProperty("#Play.Next.IsWatched",String.Empty);
+
+      m_bChanged=true;
     }
 
 		/// <summary>
