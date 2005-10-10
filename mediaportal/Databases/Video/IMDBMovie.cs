@@ -253,5 +253,30 @@ namespace MediaPortal.Video.Database
 			if (Watched>0) strValue="yes";
 			GUIPropertyManager.SetProperty("#iswatched",strValue);
 		}
+		public void SetPlayProperties()
+		{
+			string strThumb = Utils.GetLargeCoverArtName(Thumbs.MovieTitle,Title);
+			GUIPropertyManager.SetProperty("#Play.Current.Director",Director);
+			GUIPropertyManager.SetProperty("#Play.Current.Genre",Genre);
+			GUIPropertyManager.SetProperty("#Play.Current.Cast",Cast);
+			GUIPropertyManager.SetProperty("#Play.Current.DVDLabel",DVDLabel);
+			GUIPropertyManager.SetProperty("#Play.Current.IMDBNumber",IMDBNumber);
+			GUIPropertyManager.SetProperty("#Play.Current.File",File);
+			GUIPropertyManager.SetProperty("#Play.Current.Plot",Plot);
+			GUIPropertyManager.SetProperty("#Play.Current.PlotOutline",PlotOutline);
+			GUIPropertyManager.SetProperty("#Play.Current.Rating",Rating.ToString());
+			GUIPropertyManager.SetProperty("#Play.Current.TagLine",TagLine);
+			GUIPropertyManager.SetProperty("#Play.Current.Votes",Votes);
+			GUIPropertyManager.SetProperty("#Play.Current.Credits",WritingCredits);
+			GUIPropertyManager.SetProperty("#Play.Current.Thumb",strThumb);
+			GUIPropertyManager.SetProperty("#Play.Current.Title",Title);
+			GUIPropertyManager.SetProperty("#Play.Current.Year",Year.ToString());
+			GUIPropertyManager.SetProperty("#Play.Current.Runtime",RunTime.ToString());
+			GUIPropertyManager.SetProperty("#Play.Current.MPAARating",MPARating.ToString());
+			string strValue="no";
+			if (Watched>0) strValue="yes";
+			GUIPropertyManager.SetProperty("#Play.Current.IsWatched",strValue);
+		}
+
 	}
 }

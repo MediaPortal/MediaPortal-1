@@ -66,7 +66,7 @@
 		<id>102</id> 
 		<posX>555</posX> 
 		<posY>390</posY> 
-		<label>#duration</label> 
+		<label>#Play.Current.Duration</label> 
 		<align>left</align> 
 		<font>font16</font> 
 		<textcolor>FFFFFFFF</textcolor> 
@@ -77,7 +77,7 @@
 		<id>102</id> 
 		<posX>585</posX> 
 		<posY>420</posY> 
-		<texture>#thumb</texture> 
+		<texture>#Play.Current.Thumb</texture> 
 		<height>130</height>
 		<width>80</width>
 		<visible>yes</visible>
@@ -93,7 +93,7 @@
 		<height>90</height>
 		<align>left</align> 
 		<font>font13</font>
-		<label>#plot</label>
+		<label>#Play.Current.Plot</label>
 		<textcolor>FFFFFFFF</textcolor>
 	</control>
 	<control>

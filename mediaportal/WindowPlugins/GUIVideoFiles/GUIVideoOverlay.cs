@@ -40,7 +40,7 @@ namespace MediaPortal.GUI.Video
     {
 			CONTROL_VIDEO_RECTANGLE = 0
 			,CONTROL_VIDEO_WINDOW=1
-		,CONTROL_PLAYTIME = 2
+		  ,CONTROL_PLAYTIME = 2
       , CONTROL_PLAY_LOGO = 3
       , CONTROL_PAUSE_LOGO = 4
       , CONTROL_INFO = 5
@@ -104,10 +104,10 @@ namespace MediaPortal.GUI.Video
 			if ( g_Player.IsTV && (m_strProgram!=GUIPropertyManager.GetProperty("#TV.View.title")) && g_Player.IsTimeShifting )
 			{
 				m_strProgram = GUIPropertyManager.GetProperty("#TV.View.title");
-				GUIPropertyManager.SetProperty("#title", GUIPropertyManager.GetProperty("#TV.View.channel"));
-				GUIPropertyManager.SetProperty("#genre", m_strProgram);
-				GUIPropertyManager.SetProperty("#year", GUIPropertyManager.GetProperty("#TV.View.genre"));
-				GUIPropertyManager.SetProperty("#director", GUIPropertyManager.GetProperty("#TV.View.start")+" - "+GUIPropertyManager.GetProperty("#TV.View.stop"));
+				GUIPropertyManager.SetProperty("#Play.Current.Title", GUIPropertyManager.GetProperty("#TV.View.channel"));
+				GUIPropertyManager.SetProperty("#Play.Current.Genre", m_strProgram);
+				GUIPropertyManager.SetProperty("#Play.Current.Year", GUIPropertyManager.GetProperty("#TV.View.genre"));
+				GUIPropertyManager.SetProperty("#Play.Current.Director", GUIPropertyManager.GetProperty("#TV.View.start")+" - "+GUIPropertyManager.GetProperty("#TV.View.stop"));
 			}
 
 			if (GUIGraphicsContext.IsFullScreenVideo) return false;
@@ -120,7 +120,7 @@ namespace MediaPortal.GUI.Video
     public override void PostRender(float timePassed,int iLayer)
     {
       if (iLayer != 2) return;
-			if (GUIPropertyManager.GetProperty("#thumb") != m_strThumb)
+			if (GUIPropertyManager.GetProperty("#Play.Current.Thumb") != m_strThumb)
 			{
 				m_strFile=g_Player.CurrentFile ;
 				SetCurrentFile(m_strFile);
@@ -196,18 +196,18 @@ namespace MediaPortal.GUI.Video
     /// <param name="strFile">Filename of the current playing movie</param>
     /// <remarks>
     /// Function will fill in the following tags for TV programs
-    /// #title, #plot, #plotoutline #file, #thumb, #year, #channel,
+    /// #Play.Current.Title, #Play.Current.Plot, #Play.Current.PlotOutline #Play.Current.File, #Play.Current.Thumb, #Play.Current.Year, #Play.Current.Channel,
     /// 
     /// Function will fill in the following tags for movies
-    /// #title, #plot, #plotoutline #file, #thumb, #year
-    /// #director, #cast, #dvdlabel, #imdbnumber, #plot, #plotoutline, #rating, #tagline, #votes, #credits
+    /// #Play.Current.Title, #Play.Current.Plot, #Play.Current.PlotOutline #Play.Current.File, #Play.Current.Thumb, #Play.Current.Year
+    /// #Play.Current.Director, #cast, #dvdlabel, #imdbnumber, #Play.Current.Plot, #Play.Current.PlotOutline, #rating, #tagline, #votes, #credits
     /// </remarks>
     void SetCurrentFile(string strFile)
     {
       GUIPropertyManager.RemovePlayerProperties();
-      GUIPropertyManager.SetProperty("#title", System.IO.Path.GetFileName(strFile));
-      GUIPropertyManager.SetProperty("#file",System.IO.Path.GetFileName(strFile));
-      GUIPropertyManager.SetProperty("#thumb","");
+      GUIPropertyManager.SetProperty("#Play.Current.Title", System.IO.Path.GetFileName(strFile));
+      GUIPropertyManager.SetProperty("#Play.Current.File",System.IO.Path.GetFileName(strFile));
+      GUIPropertyManager.SetProperty("#Play.Current.Thumb","");
 
       if (g_Player.IsDVD)
       {
@@ -225,8 +225,8 @@ namespace MediaPortal.GUI.Video
           string strName=strFile;
           int pos=strFile.LastIndexOfAny( new char[] {'\\','/'} );
           if (pos>=0 && pos+1 < strFile.Length-1) strName=strFile.Substring(pos+1);
-          GUIPropertyManager.SetProperty("#title", strName);
-          GUIPropertyManager.SetProperty("#file", strName);
+          GUIPropertyManager.SetProperty("#Play.Current.Title", strName);
+          GUIPropertyManager.SetProperty("#Play.Current.File", strName);
 
           // construct full filename as imdb info is stored...
           strFile+=@"\VIDEO_TS\VIDEO_TS.IFO";
@@ -246,18 +246,18 @@ namespace MediaPortal.GUI.Video
           string strTime = String.Format("{0} {1} ", 
                                 Utils.GetShortDayString(recording.StartTime) , 
                                 Utils.SecondsToHMString((int)ts.TotalSeconds));
-          GUIPropertyManager.SetProperty("#title",recording.Title);
-          GUIPropertyManager.SetProperty("#plot",recording.Title+"\n"+recording.Description);
-          GUIPropertyManager.SetProperty("#plotoutline",recording.Description);
-          GUIPropertyManager.SetProperty("#genre", recording.Genre);
-          GUIPropertyManager.SetProperty("#year",strTime);
-          GUIPropertyManager.SetProperty("#channel",recording.Channel);
+          GUIPropertyManager.SetProperty("#Play.Current.Title",recording.Title);
+          GUIPropertyManager.SetProperty("#Play.Current.Plot",recording.Title+"\n"+recording.Description);
+          GUIPropertyManager.SetProperty("#Play.Current.PlotOutline",recording.Description);
+          GUIPropertyManager.SetProperty("#Play.Current.Genre", recording.Genre);
+          GUIPropertyManager.SetProperty("#Play.Current.Year",strTime);
+          GUIPropertyManager.SetProperty("#Play.Current.Channel",recording.Channel);
           string strLogo = Utils.GetCoverArt(Thumbs.TVChannel,recording.Channel);
           if (!System.IO.File.Exists(strLogo))
           {
             strLogo = "defaultVideoBig.png";
           }
-					GUIPropertyManager.SetProperty("#thumb", strLogo);
+					GUIPropertyManager.SetProperty("#Play.Current.Thumb", strLogo);
 					m_strThumb=strLogo;
 					return;
         }
@@ -273,12 +273,12 @@ namespace MediaPortal.GUI.Video
       }
 		 if (bMovieInfoFound)
 		 {
-			 movieDetails.SetProperties();
+			 movieDetails.SetPlayProperties();
 		 }
 		 else if (g_Player.IsTV && g_Player.IsTimeShifting)
 		 {
-			 GUIPropertyManager.SetProperty("#title", GUIPropertyManager.GetProperty("#TV.View.channel"));
-			 GUIPropertyManager.SetProperty("#genre", GUIPropertyManager.GetProperty("#TV.View.title"));
+			 GUIPropertyManager.SetProperty("#Play.Current.Title", GUIPropertyManager.GetProperty("#TV.View.channel"));
+			 GUIPropertyManager.SetProperty("#Play.Current.Genre", GUIPropertyManager.GetProperty("#TV.View.title"));
 		 }
 		 else
 		 {
@@ -286,9 +286,9 @@ namespace MediaPortal.GUI.Video
 			 item.IsFolder = false;
 			 item.Path = strFile;
 			 Utils.SetThumbnails(ref item);
-			 GUIPropertyManager.SetProperty("#thumb",item.ThumbnailImage);
+			 GUIPropertyManager.SetProperty("#Play.Current.Thumb",item.ThumbnailImage);
 		 }
-		 m_strThumb=GUIPropertyManager.GetProperty("#thumb");
+		 m_strThumb=GUIPropertyManager.GetProperty("#Play.Current.Thumb");
     }
 		public override bool Focused
 		{

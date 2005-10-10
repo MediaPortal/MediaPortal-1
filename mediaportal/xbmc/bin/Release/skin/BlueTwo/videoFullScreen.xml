@@ -234,7 +234,7 @@
 		<id>102</id> 
 		<posX>555</posX> 
 		<posY>415</posY> 
-		<label>#duration</label> 
+		<label>#Play.Current.Duration</label> 
 		<align>left</align> 
 		<font>font16</font> 
 		<textcolor>White</textcolor> 

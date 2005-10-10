@@ -139,7 +139,47 @@ namespace MediaPortal.GUI.Library
 			m_properties["#TV.Transcoding.Title"]=String.Empty;        
 			m_properties["#TV.Transcoding.Genre"]=String.Empty;        
 			m_properties["#TV.Transcoding.Description"]=String.Empty;        
-			m_properties["#TV.Transcoding.Channel"]=String.Empty;        
+			m_properties["#TV.Transcoding.Channel"]=String.Empty; 
+      
+ 
+			m_properties["#Play.Current.Thumb"]=String.Empty; 
+			m_properties["#Play.Current.File"]=String.Empty; 
+			m_properties["#Play.Current.Title"]=String.Empty; 
+			m_properties["#Play.Current.Genre"]=String.Empty; 
+			m_properties["#Play.Current.Comment"]=String.Empty; 
+			m_properties["#Play.Current.Artist"]=String.Empty;  
+			m_properties["#Play.Current.Director"]=String.Empty;  
+			m_properties["#Play.Current.Album"]=String.Empty;   
+			m_properties["#Play.Current.Track"]=String.Empty;   
+			m_properties["#Play.Current.Year"]=String.Empty;    
+			m_properties["#Play.Current.Duration"]=String.Empty; 
+			m_properties["#Play.Current.Plot"]=String.Empty; 
+			m_properties["#Play.Current.PlotOutline"]=String.Empty; 
+			m_properties["#Play.Current.Channel"]=String.Empty; 
+			m_properties["#Play.Current.Cast"]=String.Empty; 
+			m_properties["#Play.Current.DVDLabel"]=String.Empty; 
+			m_properties["#Play.Current.IMDBNumber"]=String.Empty; 
+			m_properties["#Play.Current.Rating"]=String.Empty; 
+			m_properties["#Play.Current.TagLine"]=String.Empty; 
+			m_properties["#Play.Current.Votes"]=String.Empty; 
+			m_properties["#Play.Current.Credits"]=String.Empty; 
+			m_properties["#Play.Current.Runtime"]=String.Empty; 
+			m_properties["#Play.Current.MPAARating"]=String.Empty; 
+			m_properties["#Play.Current.IsWatched"]=String.Empty; 
+
+ 
+			m_properties["#Play.Next.Thumb"]=String.Empty; 
+			m_properties["#Play.Next.File"]=String.Empty; 
+			m_properties["#Play.Next.Title"]=String.Empty; 
+			m_properties["#Play.Next.Genre"]=String.Empty; 
+			m_properties["#Play.Next.Comment"]=String.Empty; 
+			m_properties["#Play.Next.Artist"]=String.Empty;  
+			m_properties["#Play.Next.Director"]=String.Empty;  
+			m_properties["#Play.Next.Album"]=String.Empty;   
+			m_properties["#Play.Next.Track"]=String.Empty;   
+			m_properties["#Play.Next.Year"]=String.Empty;    
+			m_properties["#Play.Next.Duration"]=String.Empty; 
+			
 
     }
 

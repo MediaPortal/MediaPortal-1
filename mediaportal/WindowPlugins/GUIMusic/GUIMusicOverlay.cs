@@ -150,7 +150,7 @@ namespace MediaPortal.GUI.Music
         return;
       }
 			
-			if (GUIPropertyManager.GetProperty("#thumb") != m_strThumb)
+			if (GUIPropertyManager.GetProperty("#Play.Current.Thumb") != m_strThumb)
 			{
 				m_strFile=g_Player.CurrentFile ;
 				SetCurrentFile(m_strFile);
@@ -303,7 +303,7 @@ namespace MediaPortal.GUI.Music
         ShowControl( (int)Controls.CONTROL_BIG_PLAYTIME);
       }
 
-      string strThumb=(string )GUIPropertyManager.GetProperty("#thumb");
+      string strThumb=(string )GUIPropertyManager.GetProperty("#Play.Current.Thumb");
 
 
       GUIImage AlbumArtPicture = (GUIImage)GetControl((int)Controls.CONTROL_LOGO_PIC); 
@@ -453,8 +453,8 @@ namespace MediaPortal.GUI.Music
       GUIPropertyManager.RemovePlayerProperties();
       m_iFrames=0;
       string skin = GUIGraphicsContext.Skin;
-      GUIPropertyManager.SetProperty("#thumb",String.Empty);
-      GUIPropertyManager.SetProperty("#thumbnext",String.Empty);
+      GUIPropertyManager.SetProperty("#Play.Current.Thumb",String.Empty);
+      GUIPropertyManager.SetProperty("#Play.Next.Thumb",String.Empty);
 
       base.RestoreControlPosition((int)Controls.CONTROL_LOGO_PIC);
 
@@ -466,11 +466,11 @@ namespace MediaPortal.GUI.Music
       string thumb;
       tag=GetInfo(strFile, out thumb);
 
-      GUIPropertyManager.SetProperty("#thumb",thumb);
+      GUIPropertyManager.SetProperty("#Play.Current.Thumb",thumb);
       try
       {
-        GUIPropertyManager.SetProperty("#file",System.IO.Path.GetFileName(strFile));
-        GUIPropertyManager.SetProperty("#title",System.IO.Path.GetFileName(strFile));
+        GUIPropertyManager.SetProperty("#Play.Current.File",System.IO.Path.GetFileName(strFile));
+        GUIPropertyManager.SetProperty("#Play.Current.Title",System.IO.Path.GetFileName(strFile));
       }
       catch(Exception){}
 
@@ -488,21 +488,21 @@ namespace MediaPortal.GUI.Music
         string strYear=String.Format("{0}{1}",strText, tag.Year);
         if (tag.Year<=1900) strYear=String.Empty;
 
-        GUIPropertyManager.SetProperty("#genre",tag.Genre);
-        GUIPropertyManager.SetProperty("#comment",tag.Comment);
-        GUIPropertyManager.SetProperty("#title",tag.Title);
-        GUIPropertyManager.SetProperty("#artist",tag.Artist);
-        GUIPropertyManager.SetProperty("#album",tag.Album);
-        GUIPropertyManager.SetProperty("#track",strTrack);
-        GUIPropertyManager.SetProperty("#year",strYear);
-        GUIPropertyManager.SetProperty("#duration",strDuration);
+        GUIPropertyManager.SetProperty("#Play.Current.Genre",tag.Genre);
+        GUIPropertyManager.SetProperty("#Play.Current.Comment",tag.Comment);
+        GUIPropertyManager.SetProperty("#Play.Current.Title",tag.Title);
+        GUIPropertyManager.SetProperty("#Play.Current.Artist",tag.Artist);
+        GUIPropertyManager.SetProperty("#Play.Current.Album",tag.Album);
+        GUIPropertyManager.SetProperty("#Play.Current.Track",strTrack);
+        GUIPropertyManager.SetProperty("#Play.Current.Year",strYear);
+        GUIPropertyManager.SetProperty("#Play.Current.Duration",strDuration);
       }
       else
       {
         GUIMessage msg1=new GUIMessage (GUIMessage .MessageType.GUI_MSG_LABEL_ADD, GetID, 0,(int)Controls.CONTROL_INFO,0,0,null); 
         msg1.Label= System.IO.Path.GetFileName(strFile );
         OnMessage(msg1);
-        GUIPropertyManager.SetProperty("#title",msg1.Label);
+        GUIPropertyManager.SetProperty("#Play.Current.Title",msg1.Label);
       }
 
       //--------- next file ---------------------
@@ -516,11 +516,11 @@ namespace MediaPortal.GUI.Music
       thumb=String.Empty;
       tag=GetInfo(strFile, out thumb);
 
-      GUIPropertyManager.SetProperty("#thumbNext",thumb);
+      GUIPropertyManager.SetProperty("#Play.Next.Thumb",thumb);
       try
       {
-        GUIPropertyManager.SetProperty("#fileNext",System.IO.Path.GetFileName(strFile));
-        GUIPropertyManager.SetProperty("#titleNext",System.IO.Path.GetFileName(strFile));
+        GUIPropertyManager.SetProperty("#Play.Next.File",System.IO.Path.GetFileName(strFile));
+        GUIPropertyManager.SetProperty("#Play.Next.Title",System.IO.Path.GetFileName(strFile));
       }
       catch(Exception){}
 
@@ -538,23 +538,23 @@ namespace MediaPortal.GUI.Music
         string strYear=String.Format("{0}{1}",strText, tag.Year);
         if (tag.Year<=1900) strYear=String.Empty;
 
-        GUIPropertyManager.SetProperty("#genreNext",tag.Genre);
-        GUIPropertyManager.SetProperty("#commentNext",tag.Comment);
-        GUIPropertyManager.SetProperty("#titleNext",tag.Title);
-        GUIPropertyManager.SetProperty("#artistNext",tag.Artist);
-        GUIPropertyManager.SetProperty("#albumNext",tag.Album);
-        GUIPropertyManager.SetProperty("#trackNext",strTrack);
-        GUIPropertyManager.SetProperty("#yearNext",strYear);
-        GUIPropertyManager.SetProperty("#durationNext",strDuration);
+        GUIPropertyManager.SetProperty("#Play.Next.Genre",tag.Genre);
+        GUIPropertyManager.SetProperty("#Play.Next.Comment",tag.Comment);
+        GUIPropertyManager.SetProperty("#Play.Next.Title",tag.Title);
+        GUIPropertyManager.SetProperty("#Play.Next.Artist",tag.Artist);
+        GUIPropertyManager.SetProperty("#Play.Next.Album",tag.Album);
+        GUIPropertyManager.SetProperty("#Play.Next.Track",strTrack);
+        GUIPropertyManager.SetProperty("#Play.Next.Year",strYear);
+        GUIPropertyManager.SetProperty("#Play.Next.Duration",strDuration);
       }
       else
       {
         GUIMessage msg1=new GUIMessage (GUIMessage .MessageType.GUI_MSG_LABEL_ADD, GetID, 0,(int)Controls.CONTROL_INFO,0,0,null); 
         msg1.Label= System.IO.Path.GetFileName(strFile );
         OnMessage(msg1);
-        GUIPropertyManager.SetProperty("#titleNext",msg1.Label);
+        GUIPropertyManager.SetProperty("#Play.Next.Title",msg1.Label);
       }
-			m_strThumb=(string )GUIPropertyManager.GetProperty("#thumb");
+			m_strThumb=(string )GUIPropertyManager.GetProperty("#Play.Current.Thumb");
     }
 
     MusicTag GetInfo(string strFile , out string thumb)
