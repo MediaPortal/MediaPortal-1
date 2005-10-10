@@ -249,6 +249,16 @@ namespace MediaPortal.GUI.Library
 
 				try
 				{
+					if(type == typeof(double))
+					{
+						double result = 0;
+
+						if(double.TryParse(valueText, NumberStyles.Number, null, out result))
+							return result;
+
+						return 1;
+					}
+
 					if(type == typeof(int) || type == typeof(long))
 					{
 						if(string.Compare(valueName, "textcolor", true) == 0 || 
@@ -502,6 +512,8 @@ namespace MediaPortal.GUI.Library
 					return typeof (GUISortButtonControl);
 				case ("volumebar"):
 					return typeof (GUIVolumeBar);
+				case ("animation"):
+					return typeof (GUIAnimation);
 				default:
 					Type t = (Type)m_hashCustomControls[xmlTypeName];
 
