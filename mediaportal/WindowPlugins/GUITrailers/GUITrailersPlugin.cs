@@ -1,12 +1,45 @@
+/* 
+ *	Copyright (C) 2005 Media Portal
+ *	http://mediaportal.sourceforge.net
+ *
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *   
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *   
+ *  You should have received a copy of the GNU General Public License
+ *  along with GNU Make; see the file COPYING.  If not, write to
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  http://www.gnu.org/copyleft/gpl.html
+ *
+ */
+
 using System;
+using System.Drawing;
+using System.IO;
+using System.Collections;
+using System.ComponentModel;
+using System.Windows.Forms;
+using System.Net;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading;
+using MediaPortal.Util;
+using MediaPortal.Dialogs;
+using MediaPortal.Player;
+using MediaPortal.Playlists;
+using MediaPortal.TagReader;
 using MediaPortal.GUI.Library;
 
 namespace MediaPortal.GUI.Video
 {
 	public class GUITrailersPlugin : ISetupForm
 	{
-		#region ISetupForm Members
-
 		// Returns the name of the plugin which is shown in the plugin menu
 		public string PluginName()
 		{
@@ -26,29 +59,29 @@ namespace MediaPortal.GUI.Video
 		}	
 		
 		// show the setup dialog
-		public void ShowPlugin()  
+		public void   ShowPlugin()  
 		{
 		}	
 
 		// Indicates whether plugin can be enabled/disabled
-		public bool CanEnable()   
+		public bool   CanEnable()   
 		{
 			return true;
 		}	
 
 		// get ID of windowplugin belonging to this setup
-		public int GetWindowId() 
+		public int    GetWindowId() 
 		{
 			return 5900;
 		}	
 		
 		// Indicates if plugin is enabled by default;
-		public bool DefaultEnabled()
+		public bool   DefaultEnabled()
 		{
 			return true;
 		}	
 		// indicates if a plugin has its own setup screen
-		public bool HasSetup()    
+		public bool   HasSetup()    
 		{
 			return false;
 		}    
@@ -72,6 +105,7 @@ namespace MediaPortal.GUI.Video
 			strPictureImage=String.Empty;
 			return true;
 		}
-		#endregion
 	}
 }
+
+

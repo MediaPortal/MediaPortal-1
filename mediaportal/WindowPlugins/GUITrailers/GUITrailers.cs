@@ -1,11 +1,34 @@
+/* 
+ *	Copyright (C) 2005 Media Portal
+ *	http://mediaportal.sourceforge.net
+ *
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *   
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *   
+ *  You should have received a copy of the GNU General Public License
+ *  along with GNU Make; see the file COPYING.  If not, write to
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  http://www.gnu.org/copyleft/gpl.html
+ *
+ */
+
 using System;
 using System.Drawing;
 using System.IO;
 using System.Collections;
+using System.ComponentModel;
 using System.Windows.Forms;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using MediaPortal.Util;
 using MediaPortal.Dialogs;
 using MediaPortal.Player;
@@ -90,6 +113,8 @@ namespace MediaPortal.GUI.Video
 		string preleasedate;    // and will load them back after playing the 
 		string pplot;			// movie.
 		string pcast;
+
+		string _downloadedText		= string.Empty;
 
 		#endregion
 
@@ -420,16 +445,64 @@ namespace MediaPortal.GUI.Video
 
 		void GetWebPage(string url, out string HTMLDownload) // Get url and put in string
 		{
-			WebClient wc = new WebClient();
-			byte[] HTMLBuffer;
-			
-			HTMLBuffer = wc.DownloadData(url);
-			HTMLDownload = Encoding.ASCII.GetString(HTMLBuffer);
+			if(_workerCompleted)
+			{
+				_workerCompleted = false;
+
+				BackgroundWorker worker = new BackgroundWorker();
+
+				worker.DoWork += new DoWorkEventHandler(DownloadWorker);
+				worker.RunWorkerAsync(url);
+
+				using(WaitCursor cursor = new WaitCursor())
+				{
+					while(_workerCompleted == false)
+						GUIWindowManager.Process();
+				}
+
+				HTMLDownload = _downloadedText;
+
+				_downloadedText = null;
+			}
+			else
+			{
+				HTMLDownload = string.Empty;
+			}
 		}
+
+		void DownloadWorker(object sender, DoWorkEventArgs e)
+		{
+			WebClient wc = new WebClient();
+
+			try
+			{
+				byte[] HTMLBuffer;
+
+				HTMLBuffer = wc.DownloadData((string)e.Argument);
+				
+				_downloadedText = Encoding.ASCII.GetString(HTMLBuffer);
+			}
+			catch(Exception ex)
+			{
+				Log.Write("GUITrailers.DownloadWorker: {0}", ex.Message);
+			}
+			finally
+			{
+				wc.Dispose();
+			}
+
+			_workerCompleted = true;
+		}
+
+		bool _workerCompleted = true;
+
 		void GetTrailers()
 		{
 			GUIPropertyManager.SetProperty("#title", "Getting movies...");
 			GetWebPage(@"http://movies.yahoo.com/trailers/archive/", out TempHTML);
+
+			if(TempHTML == null || TempHTML == string.Empty)
+				return;
 
 			MatchCollection mc = Regex.Matches(TempHTML, @"<a\shref=.(?<trailerurl>/shop.*).>(?<moviename>.*)</a>");
 
@@ -442,7 +515,6 @@ namespace MediaPortal.GUI.Video
 				i++;
 			}
 			GUIPropertyManager.SetProperty("#title", "");
-
 		}
 
 		void ShowMovies()
@@ -489,6 +561,9 @@ namespace MediaPortal.GUI.Video
 			Array.Clear(MoreUrl,0,25);
 
 			GetWebPage(@"http://movies.yahoo.com/"+url, out TempHTML);
+
+			if(TempHTML == null || TempHTML == string.Empty)
+				return;
 
 			MatchCollection mc = Regex.Matches(TempHTML, @"(?sx-m).*?(?:</tr>)");
 
@@ -746,6 +821,9 @@ namespace MediaPortal.GUI.Video
 			TempHTML = "";
 			GetWebPage(url, out TempHTML);
 
+			if(TempHTML == null || TempHTML == string.Empty)
+				return;
+
 			Match m = Regex.Match(TempHTML, @"<Ref\shref\s=\s.(?<mmsurl>mms.*).\s/>");
 			MMSUrl = m.Groups["mmsurl"].Value;
 			if(MMSUrl.Equals("")==true)
@@ -779,6 +857,10 @@ namespace MediaPortal.GUI.Video
 			coverurl = coverurl.Replace("trailer","info");
 
 			GetWebPage(coverurl, out TempHTML);
+
+			if(TempHTML == null || TempHTML == string.Empty)
+				return;
+
 			// Get PosterUrl
 			Match m = Regex.Match(TempHTML,@"<img\ssrc=(?<posterurl>http://us.movies1.yimg.com/movies.yahoo.com/images/.*.jpg)");
 			PosterUrl = m.Groups["posterurl"].Value;
@@ -788,15 +870,20 @@ namespace MediaPortal.GUI.Video
 				Match p = Regex.Match(TempHTML,@"<img\ssrc=(?<posterurl>http://shopping.yahoo.com/video/images/muze/dvd.*.jpg)");
 				PosterUrl = p.Groups["posterurl"].Value;
 			}
-			// Download Poster
-			WebClient wc = new WebClient();
-			name = name.Replace(":","-");
-			wc.DownloadFile(PosterUrl, @"thumbs\MPTemp -"+name + ".jpg");
-			while(System.IO.File.Exists(@"thumbs\MPTemp -"+name + ".jpg")!=true)
+
+			using(WaitCursor cursor = new WaitCursor())
 			{
+				// Download Poster
+				WebClient wc = new WebClient();
+				name = name.Replace(":","-");
+				wc.DownloadFile(PosterUrl, @"thumbs\MPTemp -"+name + ".jpg");
+
+				while(System.IO.File.Exists(@"thumbs\MPTemp -"+name + ".jpg")!=true)
+					GUIWindowManager.Process();
+
+				// Display Poster
+				poster.SetFileName(@"thumbs\MPTemp -"+name + ".jpg");
 			}
-			// Display Poster
-			poster.SetFileName(@"thumbs\MPTemp -"+name + ".jpg");
 
 			// Get MoviePlot
 			int EP = TempHTML.IndexOf("<br clear=\"all\" />");
@@ -827,6 +914,9 @@ namespace MediaPortal.GUI.Video
 		void GetJustAdded()
 		{
 			GetWebPage("http://movies.yahoo.com/trailers/", out TempHTML);
+
+			if(TempHTML == null || TempHTML == string.Empty)
+				return;
 		
 			int BJA = TempHTML.IndexOf(@"<!-- just added -->");
 			int EJA = TempHTML.IndexOf(@"<!-- /just added -->",BJA);
@@ -876,6 +966,9 @@ namespace MediaPortal.GUI.Video
 		{
 			GetWebPage("http://movies.yahoo.com/trailers/", out TempHTML);
 		
+			if(TempHTML == null || TempHTML == string.Empty)
+				return;
+
 			int BMW = TempHTML.IndexOf(@"<!-- most watched -->");
 			int EMW = TempHTML.IndexOf(@"<!-- /most watched -->",BMW);
 			int TMW = EMW-BMW;
@@ -929,6 +1022,9 @@ namespace MediaPortal.GUI.Video
 			casturl = casturl.Replace("trailer","cast");
 
 			GetWebPage(casturl, out TempHTML);
+
+			if(TempHTML == null || TempHTML == string.Empty)
+				return;
 
 			MatchCollection mc = Regex.Matches(TempHTML, @"<A\sHRef=./shop.*>(?<cast>.*)</a>");
 
