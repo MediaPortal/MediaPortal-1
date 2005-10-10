@@ -29,6 +29,18 @@ namespace MediaPortal.GUI.Library
 {
 	public sealed class GUIAnimation : GUIControl, IDisposable
 	{
+		#region Constructors
+
+		public GUIAnimation()
+		{
+		}
+
+		public GUIAnimation(int parentId) : base(parentId)
+		{
+		}
+
+		#endregion Constructors
+
 		#region Methods
 
 		public void Dispose()
@@ -47,6 +59,14 @@ namespace MediaPortal.GUI.Library
 			int w = 0;
 			int h = 0;
 
+			if(_filenames == null)
+			{
+				_filenames = new ArrayList();
+
+				foreach(string filename in _textureNames.Split(';'))
+					_filenames.Add(filename.Trim());
+			}
+
 			_images = new GUIImage[_filenames.Count];
 
 			for(int index = 0; index < _images.Length; index++)
@@ -54,13 +74,14 @@ namespace MediaPortal.GUI.Library
 				_images[index] = new GUIImage(ParentID, _imageId + index, x, y, w, h, (string)_filenames[index], Color.White);
 				_images[index].AllocResources();
 
-				if(index != 0)
-					continue;
+				w = Math.Max(w, _images[index].Width);
+				h = Math.Max(h, _images[index].Height);
+			}
 
-				w = _images[index].Width;
-				h = _images[index].Height;
-				x = (GUIGraphicsContext.Width - w) / 2;
-				y = (GUIGraphicsContext.Height - h) / 2;
+			for(int index = 0; index < _images.Length; index++)
+			{
+				x = (GUIGraphicsContext.Width - _images[index].Width) / 2;
+				y = (GUIGraphicsContext.Height - _images[index].Height) / 2;
 
 				_images[index].SetPosition(x, y);
 				_imageId++;
@@ -69,7 +90,7 @@ namespace MediaPortal.GUI.Library
 
 		public override void Render(float timePassed)
 		{
-			if(_filenames != null && _images == null)
+			if(_images == null)
 				PrepareImages();
 
 			if(_images == null)
@@ -78,7 +99,7 @@ namespace MediaPortal.GUI.Library
 			if(_images.Length == 0)
 				return;
 
-			double x = (_images.Length * (Environment.TickCount - _tickCount)) / 800;
+			double x = (_images.Length * (Environment.TickCount - _tickCount)) / (_rate * 1000);
 
 			_images[(int)x % _images.Length].Render(timePassed);
 		}
@@ -93,6 +114,16 @@ namespace MediaPortal.GUI.Library
 		}
 		
 		#endregion Properties
+
+		#region Properties (Skin)
+
+		[XMLSkinElement("textures")]
+		protected string					_textureNames = string.Empty;
+
+		[XMLSkinElement("rate")]
+		protected double					_rate = 1;
+
+		#endregion Properties (Skin)
 
 		#region Fields
 
