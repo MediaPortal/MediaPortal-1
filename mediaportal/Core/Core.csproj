@@ -644,6 +644,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "guilib\GUIAnimation.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "guilib\GUIButton3PartControl.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -1770,6 +1775,26 @@
                 />
                 <File
                     RelPath = "Util\WindowsController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Util\SQLite\SQLiteClient.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Util\SQLite\SQLiteException.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Util\SQLite\SQLiteResultSet.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Util\SQLite\SQLSelectBuilder.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
