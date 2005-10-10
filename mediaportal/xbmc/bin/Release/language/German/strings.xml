@@ -3700,5 +3700,17 @@
 <string><id>200023</id><value>Drücken sie den "Weiter" Knopf um die TV-Karten einzurichten</value></string>
 <string><id>200024</id><value>TV Konfiguration</value></string>
 
+<!-- My Trailers Strings --> 
+<string><id>5900</id><value>Meine Trailer</value></string> 
+<string><id>5901</id><value>Zeige Filme</value></string> 
+<string><id>5902</id><value>Welchen Trailer zeigen?</value></string> 
+<string><id>5903</id><value>Neu hinzugefügte</value></string> 
+<string><id>5904</id><value>Meist geschauter Film</value></string> 
+<string><id>5905</id><value>Alle Filme</value></string> 
+<string><id>5906</id><value>Trailers</value></string> 
+<string><id>5907</id><value>Clips</value></string> 
+<string><id>5908</id><value>Mehr</value></string> 
+<string><id>5909</id><value>Kann Film nicht laden!</value></string> 
+<!-- End of My Trailers Strings --> 
 
 </strings>

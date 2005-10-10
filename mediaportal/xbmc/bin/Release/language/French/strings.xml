@@ -1085,4 +1085,18 @@
 	<string><id>103007</id><value>TV/Zap OSD</value></string>
 	<string><id>107700</id><value>TV/T&#233;l&#233;texte</value></string>
 	<string><id>107701</id><value>TV/T&#233;l&#233;texte</value></string>
+	
+	<!-- My Trailers Strings --> 
+	<string><id>5900</id><value>Bandes Annonces</value></string> 
+	<string><id>5901</id><value>Voir les bandes annonces</value></string> 
+	<string><id>5902</id><value>Quelles bandes annonces ?</value></string> 
+	<string><id>5903</id><value>Les dernières ajoutées</value></string> 
+	<string><id>5904</id><value>Les plus regardées</value></string> 
+	<string><id>5905</id><value>Toutes les bandes annonces</value></string> 
+	<string><id>5906</id><value>Bandes Annonces</value></string> 
+	<string><id>5907</id><value>Clips</value></string> 
+	<string><id>5908</id><value>Plus...</value></string> 
+	<string><id>5909</id><value>Impossible d'accéder à la vidéo !</value></string> 
+	<!-- End of My Trailers Strings -->	
+
 </strings>
