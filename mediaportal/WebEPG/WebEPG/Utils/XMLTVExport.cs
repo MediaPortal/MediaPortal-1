@@ -29,7 +29,7 @@ using System.Net;
 //using MediaPortal.GUI.Library;
 //using MediaPortal.Util;
 
-namespace MediaPortal.TV.Database
+namespace MediaPortal.Webepg.TV.Database
 {
 	/// <summary>
 	/// 

@@ -26,15 +26,15 @@ using System.Web;
 using System.Text;
 using System.Collections;
 using MediaPortal.Util;
-using MediaPortal.Profile;
-using MediaPortal.GUI.Library;
-using MediaPortal.TV.Database;
+using MediaPortal.Webepg.Profile;
+using MediaPortal.Webepg.GUI.Library;
+using MediaPortal.Webepg.TV.Database;
 
 namespace MediaPortal.EPG
 {
 	public class WebEPG
 	{
-		MediaPortal.Profile.Xml m_xmlreader;
+		MediaPortal.Webepg.Profile.Xml m_xmlreader;
 		WebListingGrabber m_EPGGrabber;
 
 		struct GrabberInfo
@@ -79,7 +79,7 @@ namespace MediaPortal.EPG
 
 			Log.WriteFile(Log.LogType.Log, false, "Loading ChannelMap: WebEPG.xml");
 
-			m_xmlreader = new MediaPortal.Profile.Xml("WebEPG.xml");
+			m_xmlreader = new MediaPortal.Webepg.Profile.Xml("WebEPG.xml");
 			maxGrabDays = m_xmlreader.GetValueAsInt("General", "MaxDays", 1);
 			grabberDir = m_xmlreader.GetValueAsString("General", "GrabberDir", Environment.CurrentDirectory + "\\grabbers\\");
 			m_EPGGrabber = new WebListingGrabber(maxGrabDays, grabberDir);

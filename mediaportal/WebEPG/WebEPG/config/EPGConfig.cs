@@ -21,7 +21,7 @@
 
 using System;
 using System.Collections;
-using MediaPortal.GUI.Library;
+using MediaPortal.Webepg.GUI.Library;
 
 namespace MediaPortal.EPG.config
 {
@@ -119,7 +119,7 @@ namespace MediaPortal.EPG.config
 				return;
 
 			Log.WriteFile(Log.LogType.Log, false, "WebEPG Config: Loading Existing WebEPG.xml");
-			MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml(configFile);
+			MediaPortal.Webepg.Profile.Xml xmlreader = new MediaPortal.Webepg.Profile.Xml(configFile);
 			_MaxGrab = xmlreader.GetValueAsInt("General", "MaxDays", 1);
 
 			int channelCount = xmlreader.GetValueAsInt("ChannelMap", "Count", 0);	
@@ -157,7 +157,7 @@ namespace MediaPortal.EPG.config
 				System.IO.File.Delete(confFile.Replace(".xml",".bak"));
 				System.IO.File.Move(confFile,confFile.Replace(".xml",".bak"));
 			}
-			MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml(confFile);
+			MediaPortal.Webepg.Profile.Xml xmlwriter = new MediaPortal.Webepg.Profile.Xml(confFile);
 
 			xmlwriter.SetValue("General", "MaxDays", _MaxGrab.ToString());
 			xmlwriter.SetValue("ChannelMap", "Count", _ConfigList.Count.ToString());

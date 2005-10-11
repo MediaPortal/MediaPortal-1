@@ -24,9 +24,9 @@ using System.Text;
 using System.Xml;
 using System.Collections;
 using System.Reflection;
-using MediaPortal.GUI.Library;
+using MediaPortal.Webepg.GUI.Library;
 
-namespace MediaPortal.Profile
+namespace MediaPortal.Webepg.Profile
 {
 	public class Xml :IDisposable
 	{
@@ -139,7 +139,7 @@ namespace MediaPortal.Profile
 		/// <seealso cref="GetValue" />
     public void Save()
     {
-			lock (typeof(MediaPortal.Profile.Xml))
+			lock (typeof(MediaPortal.Webepg.Profile.Xml))
 			{
 				if (m_doc==null) return;
 				if (m_doc.DocumentElement==null) return;

@@ -28,8 +28,8 @@ using System.Text;
 using System.Windows.Forms;
 using MediaPortal.Util;
 using MediaPortal.EPG;
-using MediaPortal.GUI.Library;
-using MediaPortal.TV.Database;
+using MediaPortal.Webepg.GUI.Library;
+using MediaPortal.Webepg.TV.Database;
 
 namespace MediaPortal.EPG.TestWebEPG
 {

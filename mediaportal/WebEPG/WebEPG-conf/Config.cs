@@ -25,7 +25,7 @@ using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
-using MediaPortal.GUI.Library;
+using MediaPortal.Webepg.GUI.Library;
 
 namespace WebEPG_conf
 {
@@ -78,7 +78,7 @@ namespace WebEPG_conf
 		private System.Windows.Forms.CheckBox cbLinked;
 		private System.Windows.Forms.GroupBox gbLinked;
 		private System.Windows.Forms.NumericUpDown nEnd;
-		private System.ComponentModel.IContainer components;
+		//private System.ComponentModel.IContainer components;
 
 		public fChannels()
 		{
@@ -117,10 +117,10 @@ namespace WebEPG_conf
 		{
 			if( disposing )
 			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
+//				if(components != null)
+//				{
+//					components.Dispose();
+//				}
 			}
 			base.Dispose( disposing );
 		}
@@ -637,7 +637,7 @@ namespace WebEPG_conf
 				if (importFile.ShowDialog() != DialogResult.Cancel)
 				{
 					Log.WriteFile(Log.LogType.Log, false, "WebEPG Config: Importing MP ChannelList: {0}", importFile.FileName);
-					MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml(importFile.FileName);
+					MediaPortal.Webepg.Profile.Xml xmlreader = new MediaPortal.Webepg.Profile.Xml(importFile.FileName);
 					int version = xmlreader.GetValueAsInt("MP channel export list", "version", 0);
 					if(version == 1)
 					{
@@ -681,7 +681,7 @@ namespace WebEPG_conf
 					System.IO.File.Delete(confFile.Replace(".xml",".bak"));
 					System.IO.File.Move(confFile,confFile.Replace(".xml",".bak"));
 				}
-				MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml(confFile);
+				MediaPortal.Webepg.Profile.Xml xmlwriter = new MediaPortal.Webepg.Profile.Xml(confFile);
 
 				xmlwriter.SetValue("General", "MaxDays", nMaxGrab.Value.ToString());
 
@@ -933,7 +933,7 @@ namespace WebEPG_conf
 					if (entryNode!=null)
 						gInfo.Linked = true;
 				} 
-				catch(System.Xml.XmlException ex) 
+				catch(System.Xml.XmlException) 
 				{
 					Log.WriteFile(Log.LogType.Log, false, "WebEPG Config: File open failed - XML error");
 					return;
@@ -1062,7 +1062,7 @@ namespace WebEPG_conf
 
 		private ChannelInfo GetChannelInfo(string filename)
 		{
-			MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml(filename);
+			MediaPortal.Webepg.Profile.Xml xmlreader = new MediaPortal.Webepg.Profile.Xml(filename);
 			ChannelInfo info = new ChannelInfo();
 
 			info.FullName = xmlreader.GetValueAsString("ChannelInfo", "FullName", "");
@@ -1143,7 +1143,7 @@ namespace WebEPG_conf
 			if(System.IO.File.Exists(startDirectory + "\\channels\\channels.xml"))
 			{
 				Log.WriteFile(Log.LogType.Log, false, "WebEPG Config: Loading Existing channels.xml");
-				MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml(startDirectory + "\\channels\\channels.xml");
+				MediaPortal.Webepg.Profile.Xml xmlreader = new MediaPortal.Webepg.Profile.Xml(startDirectory + "\\channels\\channels.xml");
 				int channelCount = xmlreader.GetValueAsInt("ChannelInfo", "TotalChannels", 0);	
 
 				for (int i = 0; i < channelCount; i++)
@@ -1224,7 +1224,7 @@ namespace WebEPG_conf
 			if(System.IO.File.Exists(startDirectory + "\\WebEPG.xml"))
 			{
 				Log.WriteFile(Log.LogType.Log, false, "WebEPG Config: Loading Existing WebEPG.xml");
-				MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml(startDirectory + "\\WebEPG.xml");
+				MediaPortal.Webepg.Profile.Xml xmlreader = new MediaPortal.Webepg.Profile.Xml(startDirectory + "\\WebEPG.xml");
 				nMaxGrab.Value = xmlreader.GetValueAsInt("General", "MaxDays", 1);
 				int channelCount = xmlreader.GetValueAsInt("ChannelMap", "Count", 0);	
 

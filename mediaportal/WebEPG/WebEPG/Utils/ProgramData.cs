@@ -23,7 +23,7 @@ using System;
 //using System.Collections.Generic;
 using System.Text;
 
-namespace MediaPortal.TV.Database
+namespace MediaPortal.Webepg.TV.Database
 {
     public class ProgramData
     {

@@ -28,13 +28,21 @@ using System.Threading;
 using System.Collections;
 using System.Globalization;
 using MediaPortal.Util;
-using MediaPortal.Profile;
-using MediaPortal.GUI.Library;
-using MediaPortal.TV.Database;
+using MediaPortal.Webepg.Profile;
+using MediaPortal.Webepg.GUI.Library;
+using MediaPortal.Webepg.TV.Database;
 using MediaPortal.WebEPGUtils;
 
 namespace MediaPortal.EPG
 {
+
+		public enum Expect
+		{
+			Start,
+			Morning,
+			Afternoon
+		}
+
         /// <summary>
         /// Summary description for Class1
         /// </summary>
@@ -54,7 +62,7 @@ namespace MediaPortal.EPG
             bool m_monthLookup;
 			bool m_searchRegex;
 			bool m_searchRemove;
-			bool m_listingStart;
+			int m_listingTime;
 			int m_linkStart;
 			int m_linkEnd;
             int m_maxListingCount;
@@ -67,7 +75,7 @@ namespace MediaPortal.EPG
 			//Parser m_templateParser;
 			Profiler m_templateSubProfile;
 			//Parser m_templateSubParser;
-            MediaPortal.Profile.Xml m_xmlreader;
+            MediaPortal.Webepg.Profile.Xml m_xmlreader;
             ArrayList m_programs;
             DateTime m_StartGrab;
             int m_MaxGrabDays;
@@ -90,7 +98,7 @@ namespace MediaPortal.EPG
 
                 Log.WriteFile(Log.LogType.Log, false, "WebEPG: Opening {0}", File);
 
-                m_xmlreader = new MediaPortal.Profile.Xml(m_strBaseDir + File);
+                m_xmlreader = new MediaPortal.Webepg.Profile.Xml(m_strBaseDir + File);
 
                 m_strURLbase = m_xmlreader.GetValueAsString("Listing", "BaseURL", "");
                 if (m_strURLbase == "")
@@ -283,29 +291,46 @@ namespace MediaPortal.EPG
 						m_StartGrab = m_StartGrab.AddDays(1);
 						m_bNextDay=false;
 						m_LastStart=0;
-						m_listingStart=true;
+						m_listingTime = (int) Expect.Morning;
 					}
 				}
 
-				if(!m_listingStart && !m_bNextDay && m_LastStart > guideData.StartTime[0])
+				switch(m_listingTime)
 				{
-					m_bNextDay=true;
-					m_listingStart=true;
-				}
+					case (int) Expect.Start:
+						if(guideData.StartTime[0] >= 20)
+							return null;				// Guide starts on pervious day ignore these listings.
 
-				if(m_listingStart)
-				{
-					if(guideData.StartTime[0] >= 12)
-					{
-						if(m_LastStart == 0)
-							return null;
-						m_listingStart=false;
-					}
-				}
-				else
-				{
-					if(guideData.StartTime[0] < 12)
-						guideData.StartTime[0]+=12;
+						m_listingTime = (int) Expect.Morning;
+						goto case Expect.Morning;      // Pass into Morning Code
+
+					case (int) Expect.Morning:
+						if(m_LastStart > guideData.StartTime[0])
+						{
+							m_listingTime = (int) Expect.Afternoon;
+						}
+						else
+						{
+							if(guideData.StartTime[0] <= 12)
+								break;						// Do nothing
+						}
+
+						// Pass into Afternoon Code
+						goto case Expect.Afternoon;
+
+					case (int) Expect.Afternoon:
+						if(guideData.StartTime[0] < 12)		// Site doesn't have correct time
+							guideData.StartTime[0] += 12;	// starts again at 1:00 with "pm"
+
+						if(!m_bNextDay && m_LastStart > guideData.StartTime[0])
+						{
+							m_bNextDay = true;
+							m_listingTime = (int) Expect.Morning;
+						}
+						break;
+
+					default:
+						break;
 				}
 
 				DateTime dtStart = new DateTime(m_StartGrab.Year, month, guideData.Day, guideData.StartTime[0], guideData.StartTime[1], 0, 0);
@@ -335,6 +360,7 @@ namespace MediaPortal.EPG
 					&& guideData.StartTime[0] <= m_linkEnd
 					&& htmlProf != null)
 				{
+
 				string strLinkURL = htmlProf.GetHyperLink(index, m_SubListingLink);
 
 				if(strLinkURL != "")
@@ -457,7 +483,7 @@ namespace MediaPortal.EPG
                     offset = 0;
 					m_LastStart=0;
 					m_bNextDay=false;
-					m_listingStart=true;
+					m_listingTime = (int) Expect.Start;
 
                     while (GetListing(strURL, offset, searchID))
                     {

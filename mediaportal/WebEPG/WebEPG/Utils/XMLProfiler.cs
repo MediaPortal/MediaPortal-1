@@ -24,8 +24,8 @@ using System.Text;
 using System.Xml;
 using MediaPortal.WebEPGUtils;
 using MediaPortal.Util;
-using MediaPortal.GUI.Library;
-using MediaPortal.TV.Database;
+using MediaPortal.Webepg.GUI.Library;
+using MediaPortal.Webepg.TV.Database;
 
 namespace MediaPortal.EPG
 {

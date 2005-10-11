@@ -25,7 +25,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using MediaPortal.WebEPGUtils;
 using MediaPortal.Util;
-using MediaPortal.GUI.Library;
+using MediaPortal.Webepg.GUI.Library;
 
 namespace MediaPortal.EPG
 {

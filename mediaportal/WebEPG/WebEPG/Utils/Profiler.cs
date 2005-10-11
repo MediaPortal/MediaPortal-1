@@ -23,7 +23,7 @@ using System;
 using System.Text;
 using MediaPortal.WebEPGUtils;
 using MediaPortal.Util;
-using MediaPortal.TV.Database;
+using MediaPortal.Webepg.TV.Database;
 
 namespace MediaPortal.EPG
 {

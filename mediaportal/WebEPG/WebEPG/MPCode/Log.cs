@@ -23,7 +23,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 
-namespace MediaPortal.GUI.Library
+namespace MediaPortal.Webepg.GUI.Library
 {
 	/// <summary>
 	/// An implementation of a log mechanism for the GUI library.

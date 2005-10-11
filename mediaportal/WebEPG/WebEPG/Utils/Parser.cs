@@ -20,7 +20,7 @@
  */
 
 using System;
-using MediaPortal.TV.Database;
+using MediaPortal.Webepg.TV.Database;
 
 namespace MediaPortal.WebEPGUtils
 {

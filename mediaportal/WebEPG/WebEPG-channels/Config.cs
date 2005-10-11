@@ -27,7 +27,7 @@ using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
-using MediaPortal.GUI.Library;
+using MediaPortal.Webepg.GUI.Library;
 using MediaPortal.EPG.config;
 
 namespace WebEPG_conf
@@ -43,8 +43,8 @@ namespace WebEPG_conf
 		//private TreeNode tGrabbers;
 		private SortedList ChannelList;
 		private SortedList CountryList;
-		private Hashtable hChannelInfo;
-		private Hashtable hGrabberInfo;
+		//private Hashtable hChannelInfo;
+		//private Hashtable hGrabberInfo;
 		private EventHandler handler;
 		private EventHandler selectHandler;
 		private System.Windows.Forms.GroupBox groupBox2;
@@ -74,7 +74,7 @@ namespace WebEPG_conf
 		private System.Windows.Forms.RadioButton rbRegex;
 		private System.Windows.Forms.RadioButton rbGrabber;
 		private System.Windows.Forms.TextBox tbFilterGrabber;
-		private System.ComponentModel.IContainer components;
+		// private System.ComponentModel.IContainer components;
 
 		public fChannels()
 		{
@@ -110,10 +110,10 @@ namespace WebEPG_conf
 		{
 			if( disposing )
 			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
+//				if(components != null)
+//				{
+//					components.Dispose();
+//				}
 			}
 			base.Dispose( disposing );
 		}
@@ -189,7 +189,6 @@ namespace WebEPG_conf
 			this.groupBox2.TabIndex = 13;
 			this.groupBox2.TabStop = false;
 			this.groupBox2.Text = "Channels";
-			this.groupBox2.Enter += new System.EventHandler(this.groupBox2_Enter);
 			// 
 			// cbFilter
 			// 
@@ -431,36 +430,26 @@ namespace WebEPG_conf
 			//Application.Run(new fGrabber());
 		}
 
-		private void label2_Click(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		private void groupBox2_Enter(object sender, System.EventArgs e)
-		{
-		
-		}
-
 		private void DoSelect(Object source, EventArgs e)
 		{
 			if(source==selection)
 			{
-				if(selection.Text == "Selection ")
-				{
-					this.Activate();
-					string[] id = (string[]) selection.Tag;
-					selection.Text = "Selection";
-
-					tbChannelName.Tag = id[0];
-					ChannelInfo info = (ChannelInfo) hChannelInfo[id[0]];
-					if(info != null)
-					{
-						tbChannelName.Text = info.FullName;
-						//Log.WriteFile(Log.LogType.Log, false, "WebEPG Config: Selection: {0}", info.FullName);
-
-						UpdateCurrent();
-					}
-				}
+//				if(selection.Text == "Selection ")
+//				{
+//					this.Activate();
+//					string[] id = (string[]) selection.Tag;
+//					selection.Text = "Selection";
+//
+//					tbChannelName.Tag = id[0];
+//					ChannelInfo info = (ChannelInfo) hChannelInfo[id[0]];
+//					if(info != null)
+//					{
+//						tbChannelName.Text = info.FullName;
+//						//Log.WriteFile(Log.LogType.Log, false, "WebEPG Config: Selection: {0}", info.FullName);
+//
+//						UpdateCurrent();
+//					}
+//				}
 			}
 		}
 
@@ -475,7 +464,7 @@ namespace WebEPG_conf
 				if (importFile.ShowDialog() != DialogResult.Cancel)
 				{
 					Log.WriteFile(Log.LogType.Log, false, "WebEPG Config: Importing channels: {0}", importFile.FileName);
-					MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml(importFile.FileName);
+					MediaPortal.Webepg.Profile.Xml xmlreader = new MediaPortal.Webepg.Profile.Xml(importFile.FileName);
 					int channelCount = xmlreader.GetValueAsInt("ChannelInfo", "TotalChannels", 0);	
 
 					for (int ich = 0; ich < channelCount; ich++)
@@ -546,7 +535,7 @@ namespace WebEPG_conf
 					System.IO.File.Delete(confFile.Replace(".xml",".bak"));
 					System.IO.File.Move(confFile,confFile.Replace(".xml",".bak"));
 				}
-				MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml(confFile);
+				MediaPortal.Webepg.Profile.Xml xmlwriter = new MediaPortal.Webepg.Profile.Xml(confFile);
 
 				ChannelInfo[] infoList = new ChannelInfo[ChannelList.Count];
 
@@ -802,7 +791,7 @@ namespace WebEPG_conf
 				gInfo.GrabberID=file.Directory.Name + "\\" + file.Name;
 				gInfo.GrabberName = GrabberSite;
 				gInfo.Country = file.Directory.Name;
-				hGrabberInfo.Add(gInfo.GrabberID, gInfo);
+				//hGrabberInfo.Add(gInfo.GrabberID, gInfo);
 
 				if(CountryList[file.Directory.Name] == null)
 					CountryList.Add(file.Directory.Name, new SortedList());
@@ -900,7 +889,7 @@ namespace WebEPG_conf
 
 		private ChannelInfo GetChannelInfo(string filename)
 		{
-			MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml(filename);
+			MediaPortal.Webepg.Profile.Xml xmlreader = new MediaPortal.Webepg.Profile.Xml(filename);
 			ChannelInfo info = new ChannelInfo();
 
 			info.FullName = xmlreader.GetValueAsString("ChannelInfo", "FullName", "");

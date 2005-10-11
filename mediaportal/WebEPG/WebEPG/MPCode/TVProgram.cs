@@ -20,11 +20,11 @@
  */
 
 using System;
-using MediaPortal.GUI.Library;
+using MediaPortal.Webepg.GUI.Library;
 using System.Diagnostics;
 using System.Text;
 
-namespace MediaPortal.TV.Database
+namespace MediaPortal.Webepg.TV.Database
 {
   /// <summary>
   /// Class which holds all details about a TV program

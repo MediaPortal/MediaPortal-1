@@ -23,7 +23,7 @@ using System.Text;
 using System.IO;
 using System.Net;
 using System.Web;
-using MediaPortal.GUI.Library;
+using MediaPortal.Webepg.GUI.Library;
 
 namespace MediaPortal.Util
 {

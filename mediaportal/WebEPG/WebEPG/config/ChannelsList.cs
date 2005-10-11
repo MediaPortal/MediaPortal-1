@@ -22,7 +22,7 @@
 using System;
 using System.Xml;
 using System.Collections;
-using MediaPortal.GUI.Library;
+using MediaPortal.Webepg.GUI.Library;
 
 namespace MediaPortal.EPG.config
 {
@@ -115,7 +115,7 @@ namespace MediaPortal.EPG.config
 			if(System.IO.File.Exists(m_strChannelsFile))
 			{
 				//Log.WriteFile(Log.LogType.Log, false, "WebEPG Config: Loading Existing channels.xml");
-				MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml(m_strChannelsFile);
+				MediaPortal.Webepg.Profile.Xml xmlreader = new MediaPortal.Webepg.Profile.Xml(m_strChannelsFile);
 				int channelCount = xmlreader.GetValueAsInt(country, "TotalChannels", 0);	
 
 				if(channelCount > 0)
@@ -143,7 +143,7 @@ namespace MediaPortal.EPG.config
 			if(System.IO.File.Exists(m_strChannelsFile))
 			{
 				//Log.WriteFile(Log.LogType.Log, false, "WebEPG Config: Loading Existing channels.xml");
-				MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml(m_strChannelsFile);
+				MediaPortal.Webepg.Profile.Xml xmlreader = new MediaPortal.Webepg.Profile.Xml(m_strChannelsFile);
 				int channelCount = xmlreader.GetValueAsInt("ChannelInfo", "TotalChannels", 0);	
 
 				if(channelCount > 0)
