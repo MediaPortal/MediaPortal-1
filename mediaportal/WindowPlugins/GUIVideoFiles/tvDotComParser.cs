@@ -743,7 +743,7 @@ namespace MediaPortal.GUI.Video
 
 					}
 				}
-				catch (Exception e)
+				catch
 				{
 					tvComLogWriteline("Error Parsing the Rating or number of Ratings, Skipping.");
 				}
