@@ -290,7 +290,7 @@ HRESULT Sections::CurrentPTS(BYTE *pData,ULONGLONG *ptsValue,int* pid)
 			if(pes.PTSFlags==0x02)
 			{
 				// audio pes found
-				if (pes.PESHeaderDataLength==5)
+				if (pes.ESCRFlag==0 && pes.ESRateFlag==0 && pes.DSMTrickModeFlag==0 && pes.AdditionalCopyInfoFlag==0 && pes.PESCRCFlag==0 && pes.PESExtensionFlag==0)
 				{
 					GetPTS(&pData[offset+9],ptsValue);
 					hr=S_OK;
