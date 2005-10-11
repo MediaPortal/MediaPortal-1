@@ -1,36 +1,12 @@
 <window>
-  <id>5002</id>
-  <defaultcontrol>3</defaultcontrol>
-  <allowoverlay>yes</allowoverlay>
-    <controls>
-		<control>
-			<description>background image</description>
-			<type>image</type>
-			<id>1</id>
-			<posX>0</posX>
-			<posY>0</posY>
-			<width>720</width>
-			<height>576</height>
-			<texture>background.png</texture>
-		</control>
-		<control>
-			<type>image</type>
-			<id>1</id>
-			<posX>60</posX>
-			<posY>20</posY>
-			<texture>alarm_logo.png</texture>
-		</control>
-		<control>
-			<description>sleep timer text label</description>
-			<type>label</type>
-			<id>1</id>
-			<posX>250</posX>
-			<posY>70</posY>
-			<label>859</label>
-			<font>font16</font>
-			<align>right</align>
-			<textcolor>ffffffff</textcolor>
-		</control>
+	<id>5002</id>
+	<defaultcontrol>3</defaultcontrol>
+	<allowoverlay>yes</allowoverlay>
+	<define>#header.label:859</define>
+	<define>#header.image:alarm_logo.png</define>
+	<define>#header.hover:hover_my alarm.png</define>
+	<controls>
+		<import>common.window.xml</import>
 		<control>
 			<description>sleep time label</description>
 			<type>label</type>
@@ -62,7 +38,7 @@
 			<textureFocus>togglebutton-on-focus.png</textureFocus>
 			<textureNoFocus>togglebutton-on-nofocus.png</textureNoFocus>
 			<onright>4</onright>
-			<onup>21</onup>
+			<onup>17</onup>
 			<ondown>7</ondown>
 		</control>
 		<control>
@@ -138,5 +114,17 @@
 			<textureFocus>check-box.png</textureFocus>
 			<textureNoFocus>check-boxNF.png</textureNoFocus>
 		</control>
-    </controls>
+		<control>
+			<description>Background TV</description>
+			<type>image</type>
+			<id>1</id>
+			<posX>70</posX>
+			<posY>400</posY>
+			<width>-</width>
+			<height>-</height>
+			<colordiffuse>ffffffff</colordiffuse>
+			<texture>Background_Alarm.png</texture>
+			<colorkey>0</colorkey>
+		</control>
+	</controls>
 </window>

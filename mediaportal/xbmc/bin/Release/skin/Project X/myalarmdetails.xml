@@ -1,62 +1,26 @@
 <window>
-  <id>5001</id>
-  <defaultcontrol>2</defaultcontrol>
-  <allowoverlay>yes</allowoverlay>
-    <controls>
+	<id>5001</id>
+	<defaultcontrol>2</defaultcontrol>
+	<allowoverlay>yes</allowoverlay>
+	<define>#header.label:861</define>
+	<define>#header.image:alarm_logo.png</define>
+	<define>#header.hover:hover_my alarm.png</define>
+	<controls>
+		<import>common.window.xml</import>
 		<control>
-			<description>background image</description>
+			<description>media type image</description>
 			<type>image</type>
-			<id>1</id>
-			<posX>0</posX>
-			<posY>0</posY>
-			<width>720</width>
-			<height>576</height>
-			<texture>background.png</texture>
-		</control>
-		<control>
-			<type>image</type>
-			<id>1</id>
-			<posX>60</posX>
-			<posY>20</posY>
-			<texture>alarm_logo.png</texture>
-		</control>
-		<control>
-			<description>myalarm text label</description>
-			<type>label</type>
-			<id>1</id>
-			<posX>250</posX>
-			<posY>70</posY>
-			<label>861</label>
-			<font>font16</font>
-			<align>right</align>
-			<textcolor>ffffffff</textcolor>
-		</control>
-		<control>
-			<description>Number of Files Label</description>
-			<type>label</type>
-			<id>1</id>
+			<id>31</id>
 			<posX>270</posX>
-			<posY>530</posY>
-			<label>#itemcount</label>
-			<align>left</align>
-			<textcolor>ffffffff</textcolor>
+			<posY>322</posY>
+			<height>16</height>
+			<width>16</width>
 		</control>
 		<control>
-			<description>Selected item Label</description>
-			<type>label</type>
-			<id>1</id>
-			<posX>660</posX>
-			<posY>70</posY>
-			<label>#selecteditem</label>
-			<font>font13</font>
-			<align>right</align>
-			<textcolor>ffffffff</textcolor>
-		</control>
-		<control>
-			<description>media type label</description>
+			<description>media type selection label</description>
 			<type>label</type>
 			<id>21</id>
-			<posX>270</posX>
+			<posX>290</posX>
 			<posY>320</posY>
 			<label>-</label>
 			<font>font13</font>
@@ -69,7 +33,7 @@
 			<id>23</id>
 			<posX>270</posX>
 			<posY>350</posY>
-			<label>No media found</label>
+			<label>872</label>
 			<font>font13</font>
 			<align>left</align>
 			<textcolor>FFFFFFFF</textcolor>
@@ -85,7 +49,7 @@
 			<onleft>22</onleft>
 			<onup>22</onup>
 			<ondown>2</ondown>
-	</control>
+		</control>
 		<control>
 			<description>Alarm On/Off button</description>
 			<type>togglebutton</type>
@@ -107,7 +71,7 @@
 			<textureNoFocus>togglebutton-on-nofocus.png</textureNoFocus>
 			<onright>7</onright>
 			<onleft>7</onleft>
-			<onup>21</onup>
+			<onup>17</onup>
 			<ondown>24</ondown>
 		</control>
 		<control>
@@ -125,8 +89,8 @@
 				<subitem>647</subitem>
 				<subitem>870</subitem>
 			</subitems>
-		 </control>
-		 <control>
+		</control>
+		<control>
 			<description>Media Type</description>
 			<type>selectbutton</type>
 			<id>4</id>
@@ -141,8 +105,21 @@
 				<subitem>851</subitem>
 				<subitem>862</subitem>
 				<subitem>863</subitem>
+				<subitem>8019</subitem>
 			</subitems>
-		 </control>
+		</control>
+		<!-- <control>
+			<description>Message Button</description> 
+			<type>button</type> 
+			<id>30</id> 
+			<posX>60</posX> 
+			<posY>199</posY> 
+			<label>8019</label> 
+			<onright>7</onright>
+			<onleft>7</onleft> 
+			<onup>4</onup> 
+			<ondown>5</ondown> 
+		</control>-->
 		<control>
 			<description>Rename Button</description>
 			<type>button</type>
@@ -194,7 +171,7 @@
 			<type>label</type>
 			<id>1</id>
 			<posX>270</posX>
-			<posY>135</posY>
+			<posY>137</posY>
 			<label>142</label>
 			<font>font13</font>
 			<align>left</align>
@@ -387,7 +364,7 @@
 			<type>label</type>
 			<id>26</id>
 			<posX>270</posX>
-			<posY>180</posY>
+			<posY>177</posY>
 			<label>636</label>
 			<font>font13</font>
 			<align>left</align>
@@ -456,5 +433,17 @@
 			<textureUpFocus>arrow_round_up_focus.png</textureUpFocus>
 			<textureDownFocus>arrow_round_down_focus.png</textureDownFocus>
 		</control>
-  </controls>
+		<control>
+			<description>Background TV</description>
+			<type>image</type>
+			<id>1</id>
+			<posX>70</posX>
+			<posY>400</posY>
+			<width>-</width>
+			<height>-</height>
+			<colordiffuse>ffffffff</colordiffuse>
+			<texture>Background_Alarm.png</texture>
+			<colorkey>0</colorkey>
+		</control>
+	</controls>
 </window>
