@@ -11,10 +11,10 @@
 			<type>group</type>
 			<description>group element</description>
 			<animation>FlyInFromLeft</animation>
-	    		<posX>60</posX>
-	    		<posY>97</posY>
+	    <posX>60</posX>
+	    <posY>97</posY>
 			<layout>StackLayout</layout>
-		    <control>
+				<control>
 			    <description>View-As button</description>
 			    <type>button</type>
 			    <id>2</id>
