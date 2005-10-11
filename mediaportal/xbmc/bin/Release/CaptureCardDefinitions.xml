@@ -5371,7 +5371,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="AverMedia AVerTVHD MCE A180" capturename="AVerTVHD A180 BDA Digital Capture" devid="ven_1131&amp;dev_7130&amp;subsys_10441461&amp;rev_11">
+  <capturecard commercialname="AverMedia AVerTVHD MCE A180" capturename="AVerTVHD A180 BDA Digital Capture" devid="ven_1131&amp;dev_7130&amp;subsys_10441461&amp;rev_d1">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
@@ -5387,7 +5387,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="AverMedia AVerTVHD MCE A180" capturename="AVerTVHD A180 BDA Digital Capture" devid="ven_1131&amp;dev_7133&amp;subsys_10441461&amp;rev_11">
+  <capturecard commercialname="AverMedia AVerTVHD MCE A180" capturename="AVerTVHD A180 BDA Digital Capture" devid="ven_1131&amp;dev_7133&amp;subsys_10441461&amp;rev_d1">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
@@ -5403,7 +5403,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="AverMedia AVerTVHD MCE A180" capturename="AVerTVHD A180 BDA Digital Capture" devid="ven_1131&amp;dev_7133&amp;subsys_11441461&amp;rev_11">
+  <capturecard commercialname="AverMedia AVerTVHD MCE A180" capturename="AVerTVHD A180 BDA Digital Capture" devid="ven_1131&amp;dev_7133&amp;subsys_11441461&amp;rev_d1">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
