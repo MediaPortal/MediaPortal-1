@@ -118,10 +118,10 @@ namespace MediaPortal.GUI.Library
 		#region Properties (Skin)
 
 		[XMLSkinElement("textures")]
-		protected string					_textureNames = string.Empty;
+		string								_textureNames = string.Empty;
 
 		[XMLSkinElement("rate")]
-		protected double					_rate = 1;
+		double								_rate = 1;
 
 		#endregion Properties (Skin)
 
@@ -130,7 +130,7 @@ namespace MediaPortal.GUI.Library
 		GUIImage[]						_images;
 		ArrayList						_filenames;
 		static int						_imageId = 200000;
-		float							_tickCount;
+		float							_tickCount = 0;
 
 		#endregion Fields
 	}
