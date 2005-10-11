@@ -146,10 +146,10 @@ namespace MediaPortal.TV.Recording
 		private static extern bool GetSectionData(DShowNET.IBaseFilter filter,int pid, int tid, ref int secCount,int tabSec,int timeout);
 
 		[DllImport("dvblib.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
-		public static extern int SetPidToPin(DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3 dataCtrl,int pin,int pid);		
+		public static extern int SetPidToPin(DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3 dataCtrl,UInt16 pin,UInt16 pid);		
 
 		[DllImport("dvblib.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
-		public static extern bool DeleteAllPIDs(DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3 dataCtrl,int pin);
+		public static extern bool DeleteAllPIDs(DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3 dataCtrl,UInt16 pin);
 			
 		[DllImport("dvblib.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
 		public static extern int GetSNR(DVBSkyStar2Helper.IB2C2MPEG2TunerCtrl2 tunerCtrl,[Out] out int a,[Out] out int b);
@@ -650,7 +650,18 @@ namespace MediaPortal.TV.Recording
 			}
 			
 			DeleteAllPIDs(m_dataCtrl,0);
-			SetPidToPin(m_dataCtrl,0,0x2000);
+			
+			int n=SetPidToPin(m_dataCtrl,0,(ushort)VideoPID);
+			n=SetPidToPin(m_dataCtrl,0,(ushort)AudioPID);
+			n=SetPidToPin(m_dataCtrl,0,(ushort)pcrPID);
+			n=SetPidToPin(m_dataCtrl,0,(ushort)pmtPID);
+			n=SetPidToPin(m_dataCtrl,0,(ushort)0);
+			n=SetPidToPin(m_dataCtrl,0,(ushort)0x10);
+			n=SetPidToPin(m_dataCtrl,0,(ushort)0x11);
+			n=SetPidToPin(m_dataCtrl,0,(ushort)0x12);
+
+
+
 			m_lastPMTVersion=-1;
 
 			return true;
@@ -1332,7 +1343,7 @@ namespace MediaPortal.TV.Recording
 		{
 			int res=0;
 			
-			res=SetPidToPin(m_dataCtrl,pin,pid);
+			res=SetPidToPin(m_dataCtrl,(ushort)pin,(ushort)pid);
 			
 			return res;
 		}
@@ -2202,7 +2213,7 @@ namespace MediaPortal.TV.Recording
 					//get the PMT
 					m_analyzerInterface.SetPMTProgramNumber(m_currentChannel.ProgramNumber);
 					int res=m_analyzerInterface.GetPMTData(pmtMem);
-					if(res!=-1)
+					if(res!=-1 )
 					{
 						//check PMT version
 						byte[] pmt=new byte[res];
@@ -2223,22 +2234,24 @@ namespace MediaPortal.TV.Recording
 									//map pids
 									if (info.pid_list!=null)
 									{
+
 										DeleteAllPIDs(m_dataCtrl,0);
+										//										DeleteAllPIDs(m_dataCtrl,0);
 										SetPidToPin(m_dataCtrl,0,0);
 										SetPidToPin(m_dataCtrl,0,0x10);
 										SetPidToPin(m_dataCtrl,0,0x11);
 										SetPidToPin(m_dataCtrl,0,0x12);
 										SetPidToPin(m_dataCtrl,0,0xd2);
 										SetPidToPin(m_dataCtrl,0,0xd3);
-										SetPidToPin(m_dataCtrl,0,m_currentChannel.PMTPid);
+										SetPidToPin(m_dataCtrl,0,(ushort)m_currentChannel.PMTPid);
 										if (m_currentChannel.PCRPid>0)
-											SetPidToPin(m_dataCtrl,0,m_currentChannel.PCRPid);
+											SetPidToPin(m_dataCtrl,0,(ushort)m_currentChannel.PCRPid);
 										for (int pids =0; pids < info.pid_list.Count;pids++)
 										{
 											DVBSections.PMTData data=(DVBSections.PMTData) info.pid_list[pids];
 											if (data.elementary_PID>0 && (data.isAC3Audio || data.isAudio||data.isVideo||data.isTeletext) )
 											{
-												SetPidToPin(m_dataCtrl,0,data.elementary_PID);
+												SetPidToPin(m_dataCtrl,0,(ushort)data.elementary_PID);
 											}
 										}
 										m_epgGrabber.GrabEPG(m_currentChannel.HasEITSchedule==true);
@@ -2292,6 +2305,8 @@ namespace MediaPortal.TV.Recording
 			}
 			else
 			{
+				DeleteAllPIDs(m_dataCtrl,0);
+				SetPidToPin(m_dataCtrl,0,0x2000);
 				m_lastTuneError=false;
 				Log.WriteFile(Log.LogType.Capture,"called Tune(object)");
 			}
