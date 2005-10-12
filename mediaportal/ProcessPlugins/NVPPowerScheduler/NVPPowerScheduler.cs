@@ -618,9 +618,11 @@ namespace MediaPortal.PowerScheduler
 									{
 										case (TVRecording.RecordingType.EveryTimeOnEveryChannel):
 										{		
-											tmpNextStarttime = program.StartTime.AddMinutes(- m_iPreRecordInterval);
-											if (tmpNextStarttime.Ticks > earliestStarttime.Ticks)
+											//tmpNextStarttime = program.StartTime.AddMinutes(- m_iPreRecordInterval);
+											//if (tmpNextStarttime.Ticks > earliestStarttime.Ticks)
+											if (program.Title == rec.Title)
 											{
+												tmpNextStarttime = program.StartTime.AddMinutes(- m_iPreRecordInterval);
 												programfound = true;
 												if (m_bExtensiveLog) Log.Write(" PowerScheduler:  TVGuide {0} {1} {2} ", program.Title, program.Channel, tmpNextStarttime);
 											}
