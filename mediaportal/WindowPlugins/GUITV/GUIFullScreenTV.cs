@@ -1648,7 +1648,7 @@ namespace MediaPortal.GUI.TV
 				m_timeKeyPressed = DateTime.Now;
 				m_strChannel += chKey;
 				GUIMessage msg= new GUIMessage  (GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID,0, (int)Control.LABEL_ROW1,0,0,null); 
-				msg.Label=String.Format("{0}:{1}", GUILocalizeStrings.Get(602),m_strChannel); 
+				msg.Label=String.Format("{0}{1}", GUILocalizeStrings.Get(602),m_strChannel); 
 				OnMessage(msg);
 
 				if (m_strChannel.Length == 3)
