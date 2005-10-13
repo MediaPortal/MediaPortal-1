@@ -71,6 +71,7 @@ namespace MediaPortal.GUI.Library
 
 			for(int index = 0; index < _images.Length; index++)
 			{
+				_imageId++;
 				_images[index] = new GUIImage(ParentID, _imageId + index, x, y, w, h, (string)_filenames[index], Color.White);
 				_images[index].AllocResources();
 
@@ -79,13 +80,7 @@ namespace MediaPortal.GUI.Library
 			}
 
 			for(int index = 0; index < _images.Length; index++)
-			{
-				x = (GUIGraphicsContext.Width - _images[index].Width) / 2;
-				y = (GUIGraphicsContext.Height - _images[index].Height) / 2;
-
-				_images[index].SetPosition(x, y);
-				_imageId++;
-			}
+				_images[index].SetPosition(m_dwPosX, m_dwPosY);
 		}
 
 		public override void Render(float timePassed)
