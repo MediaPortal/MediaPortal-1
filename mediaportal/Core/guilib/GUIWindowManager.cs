@@ -424,6 +424,8 @@ namespace MediaPortal.GUI.Library
 			{
 				m_vecWindows[x].FreeResources();
 			}
+
+			GUIWaitCursor.Dispose();
 		}
 
 		/// <summary>
