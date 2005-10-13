@@ -247,6 +247,34 @@ namespace MediaPortal.GUI.Library
 //					return GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT;
 //				}
 
+				if(type == typeof(HorizontalAlignment))
+				{
+					if(string.Compare(valueText, "center", true) == 0)
+						return HorizontalAlignment.Center;
+
+					if(string.Compare(valueText, "bottom", true) == 0)
+						return HorizontalAlignment.Right;
+
+					if(string.Compare(valueText, "stretch", true) == 0)
+						return HorizontalAlignment.Stretch;
+
+					return HorizontalAlignment.Left;
+				}
+				
+				if(type == typeof(VerticalAlignment))
+				{
+					if(string.Compare(valueText, "center", true) == 0)
+						return VerticalAlignment.Center;
+
+					if(string.Compare(valueText, "bottom", true) == 0)
+						return VerticalAlignment.Bottom;
+
+					if(string.Compare(valueText, "stretch", true) == 0)
+						return VerticalAlignment.Stretch;
+
+					return VerticalAlignment.Top;
+				}
+
 				try
 				{
 					if(type == typeof(double))
