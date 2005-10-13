@@ -39,9 +39,14 @@ namespace MediaPortal.GUI.Library
 
 		#region Methods
 
-		public void Dispose()
+		public static void Dispose()
 		{
-			_animation.Dispose();
+			_animation.FreeResources();
+		}
+
+		public static void Hide()
+		{
+			Interlocked.Decrement(ref _showCount);
 		}
 
 		public static void Init()
@@ -50,6 +55,13 @@ namespace MediaPortal.GUI.Library
 
 			foreach(string filename in Directory.GetFiles(GUIGraphicsContext.Skin + @"\media\", "common.waiting.*.png"))
 				_animation.Filenames.Add(filename);
+
+			//_animation.Filenames.Add(@"\media\" + Path.GetFileName(filename));
+
+			_animation.HorizontalAlignment = HorizontalAlignment.Center;
+			_animation.VerticalAlignment = VerticalAlignment.Center;
+			_animation.SetPosition(GUIGraphicsContext.Width / 2, GUIGraphicsContext.Height / 2);
+			_animation.AllocResources();
 		}
 
 		public override void Render(float timePassed)
@@ -68,11 +80,6 @@ namespace MediaPortal.GUI.Library
 		{
 			if(Interlocked.Increment(ref _showCount) == 0)
 				Interlocked.Exchange(ref _tickCount, Environment.TickCount);
-		}
-
-		public static void Hide()
-		{
-			Interlocked.Decrement(ref _showCount);
 		}
 
 		#endregion Methods
