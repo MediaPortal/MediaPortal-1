@@ -88,7 +88,7 @@
 				<ondown>3</ondown>
 			</control>
 			<control>
-				<type>button</type>
+				<type>sortbutton</type>
 				<id>3</id>
 				<posX>60</posX>
 				<posY>131</posY>
