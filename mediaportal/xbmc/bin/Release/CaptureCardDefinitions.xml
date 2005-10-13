@@ -6428,4 +6428,20 @@
       </connections>
     </tv>
   </capturecard>
+
+  <capturecard commercialname="Pinnacle PCTV 60e DVBT" capturename="Pinnacle PCTV 60e Capture" devid="vid_2304&amp;pid_0216">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"	checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="Pinnacle PCTV 60e Tuner"			checkdevice="true"></filter>
+        <filter cat="capture"         name="Pinnacle PCTV 60e Capture"			checkdevice="true"></filter>
+      </filters>
+      <connections>
+  	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+  	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
 </capturecards>
