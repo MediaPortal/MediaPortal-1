@@ -31,7 +31,7 @@ using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.Picture.Database;
 using MediaPortal.Dialogs;
-using MediaPortal.Animations;
+using MediaPortal.Animation;
 
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
