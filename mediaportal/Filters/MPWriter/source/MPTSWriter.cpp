@@ -1189,7 +1189,7 @@ HRESULT CDump::WriteTimeshiftFile(PBYTE pbData, LONG lDataLength)
 
 		if (m_currentFilePosition> MAX_FILE_LENGTH)
 		{
-			LogDebug("end of file reached, back to 0");
+			LogDebug("end of file reached, back to 0 pes start:%x pes end:%x", (DWORD)m_pesStart, (DWORD)m_pesNow);
 			m_currentFilePosition=0;
 		}
 	}
@@ -1197,58 +1197,56 @@ HRESULT CDump::WriteTimeshiftFile(PBYTE pbData, LONG lDataLength)
 	//update PES
 	TSHeader header;
 	GetTSHeader(pbData,&header);
-	if (header.Pid>0 && !header.TransportError && header.TScrambling==0 && 
+	if (header.Pid>0 && !header.TransportError && header.TScrambling==0 && header.PayloadUnitStart!=0 &&
 		(header.Pid==m_pPin->GetAC3Pid() ||
 		header.Pid==m_pPin->GetVideoPid() ||
 		header.Pid==m_pPin->GetAudioPid() ||
 		header.Pid==m_pPin->GetAudioPid2() ) )
 	{
+		if(header.AdaptionControl!=1 && header.AdaptionControl!=3) return S_OK;
 		int offset=4;
-		if(header.AdaptionControl==1 || header.AdaptionControl==3)
-			offset+=pbData[4];
-		if (offset >=0 && offset<188)
+		offset+=pbData[4];
+		if (offset < 0|| offset>188) return S_OK;
+		if(header.SyncByte!=0x47 || pbData[offset]!=0 || pbData[offset+1]!=0 || pbData[offset+2]!=1) return S_OK;
+		int code=pbData[offset+3]| 0x100;
+		if (!((code >= 0x1c0 && code <= 0x1df) ||
+			(code >= 0x1e0 && code <= 0x1ef) ||
+			(code == 0x1bd)))
 		{
-			//LogDebug("pes packet check adpt:%x sync:%x %x %x %x %d",header.AdaptionControl,header.SyncByte,pbData[offset],pbData[offset+1],pbData[offset+2],offset);
-			if(header.SyncByte==0x47 && pbData[offset]==0 && pbData[offset+1]==0 && pbData[offset+2]==1)
+			return S_OK;
+		}
+		PESHeader pes;
+		GetPESHeader(&pbData[offset+6],&pes);
+		if(pes.Reserved!=0x02) return S_OK;
+		if(pes.PTSFlags!=0x02 && pes.PTSFlags!=0x03) return S_OK;
+		if (pes.ESCRFlag==0 && pes.ESRateFlag==0 && pes.DSMTrickModeFlag==0 && pes.AdditionalCopyInfoFlag==0 && pes.PESCRCFlag==0 && pes.PESExtensionFlag==0)
+		{
+			ULONGLONG ptsValue =0;
+			GetPTS(&pbData[offset+9],&ptsValue);
+			if (ptsValue>0)
 			{
-				PESHeader pes;
-				GetPESHeader(&pbData[offset+6],&pes);
-				if(pes.Reserved==0x02) // valid header
+				if (m_pesPid==0)
+					m_pesPid=header.Pid;
+				if (m_pesPid==header.Pid)
 				{
-					if(pes.PTSFlags==0x02)
+					// audio pes found
+					if (m_pesStart==0) 
 					{
-						if (pes.ESCRFlag==0 && pes.ESRateFlag==0 && pes.DSMTrickModeFlag==0 && pes.AdditionalCopyInfoFlag==0 && pes.PESCRCFlag==0 && pes.PESExtensionFlag==0)
-						{
-							ULONGLONG ptsValue =0;
-							GetPTS(&pbData[offset+9],&ptsValue);
-							if (ptsValue>0)
-							{
-								if (m_pesPid==0)
-									m_pesPid=header.Pid;
-								if (m_pesPid==header.Pid)
-								{
-									// audio pes found
-									if (m_pesStart==0) 
-									{
-										m_pesStart=ptsValue;
-										LogDebug("start pes:%x pid:%x", (DWORD)m_pesStart, header.Pid);
-									}
-									m_pesNow=ptsValue;
-									//LogDebug("pts:%x %x %x", (DWORD)m_pesStart,(DWORD)m_pesNow,header.Pid);
-									/*
-									LogDebug("pes:%x copy:%x cr:%x dataalign:%x dsm:%x escr:%x esrate:%x org:%x crc:%x ext:%x len:%x prio:%x pts:%x res:%x scramb:%x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x ", (DWORD)ptsValue,
-											pes.AdditionalCopyInfoFlag,pes.Copyright,pes.dataAlignmentIndicator,
-											pes.DSMTrickModeFlag,pes.ESCRFlag,pes.ESRateFlag,pes.Original,
-											pes.PESCRCFlag,pes.PESExtensionFlag,pes.PESHeaderDataLength,pes.Priority,
-											pes.PTSFlags,pes.Reserved,pes.ScramblingControl,
-											pbData[9],pbData[10],pbData[11],pbData[12],pbData[13],pbData[14],pbData[15],pbData[16],pbData[17],
-											pbData[18],pbData[19],pbData[20],pbData[21],pbData[22],pbData[23],pbData[24],pbData[25],pbData[26],
-											pbData[27],pbData[28],pbData[29]);
-									*/
-								}
-							}
-						}
-					}	
+						m_pesStart=ptsValue;
+						LogDebug("start pes:%x pid:%x", (DWORD)m_pesStart, header.Pid);
+					}
+					m_pesNow=ptsValue;
+					//LogDebug("pts:%x %x %x", (DWORD)m_pesStart,(DWORD)m_pesNow,header.Pid);
+					/*
+					LogDebug("pes:%x copy:%x cr:%x dataalign:%x dsm:%x escr:%x esrate:%x org:%x crc:%x ext:%x len:%x prio:%x pts:%x res:%x scramb:%x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x ", (DWORD)ptsValue,
+							pes.AdditionalCopyInfoFlag,pes.Copyright,pes.dataAlignmentIndicator,
+							pes.DSMTrickModeFlag,pes.ESCRFlag,pes.ESRateFlag,pes.Original,
+							pes.PESCRCFlag,pes.PESExtensionFlag,pes.PESHeaderDataLength,pes.Priority,
+							pes.PTSFlags,pes.Reserved,pes.ScramblingControl,
+							pbData[9],pbData[10],pbData[11],pbData[12],pbData[13],pbData[14],pbData[15],pbData[16],pbData[17],
+							pbData[18],pbData[19],pbData[20],pbData[21],pbData[22],pbData[23],pbData[24],pbData[25],pbData[26],
+							pbData[27],pbData[28],pbData[29]);
+					*/
 				}
 			}
 		}
@@ -1309,7 +1307,7 @@ HRESULT CDump::UpdateInfoFile(bool pids)
 	if (it != m_mapPES.end())
 	{
 		m_pesStart = it->second;
-		LogDebug("file position:%x startpes:%x", (DWORD)m_currentFilePosition,(DWORD)m_pesStart);
+		//LogDebug("file position:%x startpes:%x", (DWORD)m_currentFilePosition,(DWORD)m_pesStart);
 	}
 
 	//update the info file

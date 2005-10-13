@@ -1,3 +1,4 @@
+
 /* 
  *	Copyright (C) 2005 Media Portal
  *	http://mediaportal.sourceforge.net
@@ -34,7 +35,7 @@ void LogDebug(const char *fmt, ...)
 	tmp=vsprintf(buffer, fmt, ap);
 	va_end(ap); 
 
-	FILE* fp = fopen("MPTS.log","a+");
+	FILE* fp = fopen("mpts.log","a+");
 	if (fp!=NULL)
 	{
 		SYSTEMTIME systemTime;
@@ -279,17 +280,35 @@ HRESULT Sections::CurrentPTS(BYTE *pData,ULONGLONG *ptsValue,int* pid)
 	   header.Pid != pids.PCRPid)
 		return S_FALSE;
 
+	if (header.AdaptionControl==0) return hr; //reserved value;
+	if (header.AdaptionControl==2) return hr; //adaption field only
+
 	if(header.AdaptionControl==1 || header.AdaptionControl==3)
+	{
+		//skip adaption field
 		offset+=pData[4];
+	}
 	if (offset< 0 || offset+14>=188) return S_FALSE;
 	if(header.SyncByte==0x47 && pData[offset]==0 && pData[offset+1]==0 && pData[offset+2]==1)
 	{
+		int code=pData[offset+3]| 0x100;
+		if (!((code >= 0x1c0 && code <= 0x1df) ||
+              (code >= 0x1e0 && code <= 0x1ef) ||
+              (code == 0x1bd)))
+		{
+			return hr;
+		}
 		GetPESHeader(&pData[offset+6],&pes);
 		if(pes.Reserved==0x02) // valid header
 		{
-			if(pes.PTSFlags==0x02)
+			if(pes.PTSFlags==0x02 || pes.PTSFlags==0x03)
 			{
 				// audio pes found
+				GetPTS(&pData[offset+9],ptsValue);
+				char buffer[128];
+				sprintf(buffer,"pid: %x pes:%x\n", header.Pid,(DWORD) (*ptsValue));
+				OutputDebugString(buffer);
+
 				if (pes.ESCRFlag==0 && pes.ESRateFlag==0 && pes.DSMTrickModeFlag==0 && pes.AdditionalCopyInfoFlag==0 && pes.PESCRCFlag==0 && pes.PESExtensionFlag==0)
 				{
 					GetPTS(&pData[offset+9],ptsValue);

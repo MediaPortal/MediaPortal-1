@@ -15,6 +15,8 @@ using namespace std;
 
 
 #define MAX_FILE_LENGTH (2000LL*1024LL*1024LL)  // 2 gigabyte
+
+//#define MAX_FILE_LENGTH (10LL*1024LL*1024LL)  // 50MB
 class CBuffers
 {
 public:

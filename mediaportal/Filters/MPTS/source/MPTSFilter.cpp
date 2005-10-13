@@ -374,7 +374,7 @@ bool CMPTSFilter::UpdatePids()
 	}
 	if (m_pFileReader->m_hInfoFile==INVALID_HANDLE_VALUE) 
 	{
-		//LogDebug("UpdatePids() info file not opened");
+		LogDebug("UpdatePids() info file not opened");
 		return false;
 	}
 	DWORD dwReadBytes;
@@ -393,6 +393,16 @@ bool CMPTSFilter::UpdatePids()
 	if (!::ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&writepos, 8, &dwReadBytes, NULL)) return false;
 	if (!::ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&ptsStart, sizeof(ptsStart), &dwReadBytes, NULL)) return false;
 	if (!::ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&ptsNow, sizeof(ptsNow), &dwReadBytes, NULL)) return false;
+
+	if (ptsStart != m_pSections->pids.StartPTS)
+	{
+		//LogDebug("start pts changed from %x->%x to new start pts:%x", (DWORD)m_pSections->pids.StartPTS,(DWORD)m_pSections->pids.EndPTS,(DWORD)ptsStart);
+	}
+	if (ptsNow < m_pSections->pids.EndPTS)
+	{
+		//LogDebug("start pts wrapped from %x->%x to new pts:%x - %x", 
+//			(DWORD)m_pSections->pids.StartPTS,(DWORD)m_pSections->pids.EndPTS,(DWORD)ptsStart, (DWORD)ptsNow);
+	}
 
 	if (ptsStart>ptsNow) ptsStart=1;
 	m_pSections->pids.StartPTS=(__int64)ptsStart;
@@ -466,7 +476,7 @@ bool CMPTSFilter::UpdatePids()
 		pcrpid   !=m_pSections->pids.PCRPid)
 	{
 		LogDebug("filter: PIDS changed");
-		LogDebug("got pids ac3:%x audio:%x audio2:%x video:%x pmt:%x pcr:%x pts:%x-%x",
+		LogDebug("got pids ac3:%x audio:%x audio2:%x video:%x pmt:%x pcr:%x ptso:%x-%x",
 			ac3pid,audiopid,audiopid2,videopid,pmtpid,pcrpid, (DWORD)ptsStart,(DWORD)ptsNow);
 		m_pSections->pids.AC3=ac3pid;
 		m_pSections->pids.AudioPid=audiopid;

@@ -160,14 +160,14 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 				if ( m_pFileReader->GetFilePointer() <= m_pSections->pids.fileStartPosition &&
 					m_pFileReader->GetFilePointer() + lDataLength>=m_pSections->pids.fileStartPosition )
 				{
-//					LogDebug("pin:Wait %x/%x (%d)", (DWORD)m_pFileReader->GetFilePointer(),(DWORD)m_pSections->pids.fileStartPosition,count);
+					//LogDebug("pin:Wait %x/%x (%d)", (DWORD)m_pFileReader->GetFilePointer(),(DWORD)m_pSections->pids.fileStartPosition,count);
 					count++;
 					if (count >20) break;
 					Sleep(50);
 				}
 				else break;
 			}
-//			LogDebug("pin:Wait %x/%x (%d)", (DWORD)m_pFileReader->GetFilePointer(),(DWORD)m_pSections->pids.fileStartPosition,count);
+			//LogDebug("pin:Wait %x/%x (%d)", (DWORD)m_pFileReader->GetFilePointer(),(DWORD)m_pSections->pids.fileStartPosition,count);
 		}
 
 		bool endOfFile=false;
@@ -176,7 +176,7 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 		{
 			if (m_pMPTSFilter->m_pFileReader->m_hInfoFile!=INVALID_HANDLE_VALUE)
 			{
-//				LogDebug("output pin:EOF");
+				//LogDebug("output pin:EOF");
 				m_pMPTSFilter->m_pFileReader->GetFileSize(&fileSize);
 				count=0;
 				while (true)
@@ -186,14 +186,14 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 					if (m_pSections->pids.fileStartPosition >= fileSize-(1024*1024) ||
 						m_pSections->pids.fileStartPosition < lDataLength) 
 					{
-//						LogDebug("waiteof pos:%x size:%x (%d)", m_pSections->pids.fileStartPosition,fileSize,count);
+						//LogDebug("waiteof pos:%x size:%x (%d)", m_pSections->pids.fileStartPosition,fileSize,count);
 						count++;
 						if (count >20) break;
 						Sleep(50);
 					}
 					else break;
 				}
-//				LogDebug("outputpin:end of file, writepos:%x slept:%i size:%x", m_pSections->pids.fileStartPosition,count,fileSize);
+				//LogDebug("outputpin:end of file, writepos:%x slept:%i size:%x", m_pSections->pids.fileStartPosition,count,fileSize);
 			}
 		}
 					
@@ -205,11 +205,11 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 	{
 		if (m_pMPTSFilter->m_pFileReader->m_hInfoFile==INVALID_HANDLE_VALUE)
 		{
-			LogDebug("outpin:end of file detected");
+			//LogDebug("outpin:end of file detected");
 			return S_FALSE;//end of stream
 		}
 			
-		LogDebug("outpin: Require(%d) failed:0x%x",lDataLength,hr);
+		//LogDebug("outpin: Require(%d) failed:0x%x",lDataLength,hr);
 		//m_pMPTSFilter->Refresh();
 		//return S_FALSE; // cant read = end of stream
 	}
@@ -297,7 +297,7 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 		//m_bDiscontinuity=true;
 	}
 
-	//LogDebug("snd pkt pts:%x  pes:%x disc:%d", (DWORD)ptsStart, m_iPESPid, m_bDiscontinuity);
+//	LogDebug("snd pkt pts:%x  pes:%x disc:%d", (DWORD)ptsStart, m_iPESPid, m_bDiscontinuity);
 	if(m_bDiscontinuity) 
 	{
 		pSample->SetDiscontinuity(TRUE);
