@@ -19,6 +19,18 @@ namespace MediaPortal.Animation
 
 		#endregion Constructors
 
+		#region Methods
+
+		public static Duration Parse(string text)
+		{
+			if(string.Compare(text, "Automatic", true) == 0)
+				return Duration.Automatic;
+
+			return new Duration(TimeSpan.Parse(text).TotalMilliseconds);
+		}
+
+		#endregion Methods
+
 		#region Operators
         
 		public static implicit operator double(Duration duration) 

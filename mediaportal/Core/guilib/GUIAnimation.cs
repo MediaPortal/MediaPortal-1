@@ -1,3 +1,5 @@
+#region Copyright (C) 2005 Media Portal
+
 /* 
  *	Copyright (C) 2005 Media Portal
  *	http://mediaportal.sourceforge.net
@@ -19,15 +21,19 @@
  *
  */
 
+#endregion
+
 using System;
 using System.Drawing;
 using System.Collections;
 using System.IO;
 using System.Threading;
 
+using MediaPortal.Animation;
+
 namespace MediaPortal.GUI.Library
 {
-	public sealed class GUIAnimation : GUIControl
+	public class GUIAnimation : GUIControl
 	{
 		#region Constructors
 
@@ -45,8 +51,6 @@ namespace MediaPortal.GUI.Library
 
 		public override void AllocResources()
 		{
-			Log.Write("Ani.AllocResources");
-
 			if(_filenames == null)
 			{
 				_filenames = new ArrayList();
@@ -148,16 +152,22 @@ namespace MediaPortal.GUI.Library
 		#region Properties (Skin)
 
 		[XMLSkinElement("HorizontalAlignment")]
-		HorizontalAlignment					_horizontalAlignment = HorizontalAlignment.Left;
+		protected HorizontalAlignment			_horizontalAlignment = HorizontalAlignment.Left;
 
 		[XMLSkinElement("textures")]
-		string								_textureNames = string.Empty;
+		protected string						_textureNames = string.Empty;
 
 		[XMLSkinElement("rate")]
-		double								_rate = 1;
+		protected double						_rate = 1;
+
+		[XMLSkinElement("Duration")]
+		protected Duration						_duration = Duration.Automatic;
+
+		[XMLSkinElement("RepeatBehavior")]	
+		protected RepeatBehavior				_repeatBehavior = RepeatBehavior.Forever;
 
 		[XMLSkinElement("VerticalAlignment")]
-		VerticalAlignment					_verticalAlignment = VerticalAlignment.Top;
+		protected VerticalAlignment				_verticalAlignment = VerticalAlignment.Top;
 
 		#endregion Properties (Skin)
 

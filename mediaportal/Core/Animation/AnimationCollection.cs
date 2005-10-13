@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.ComponentModel;
 
-namespace MediaPortal.Animations
+namespace MediaPortal.Animation
 {
 	public sealed class AnimationCollection : CollectionBase
 	{

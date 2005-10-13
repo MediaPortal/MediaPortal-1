@@ -19,7 +19,7 @@ namespace MediaPortal.Animation
 		public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
 		{
 			if(value is string)
-				return new Duration(TimeSpan.Parse((string)value).TotalMilliseconds);
+				return Duration.Parse((string)value);
 
 			return base.ConvertFrom(context, culture, value);
 		}

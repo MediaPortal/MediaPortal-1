@@ -16,12 +16,7 @@ namespace MediaPortal.Animation
 		public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
 		{
 			if(value is string)
-			{
-				if(string.Compare((string)value, "Forever", true) == 0)
-					return RepeatBehavior.Forever;
-
-				return new RepeatBehavior(double.Parse((string)value));
-			}
+				return RepeatBehavior.Parse((string)value);
 
 			return base.ConvertFrom(context, culture, value);
 		}

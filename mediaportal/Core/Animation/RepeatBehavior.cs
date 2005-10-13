@@ -25,6 +25,18 @@ namespace MediaPortal.Animation
 
 		#endregion Constructors
 
+		#region Methods
+
+		public static RepeatBehavior Parse(string text)
+		{
+			if(string.Compare(text, "Forever", true) == 0)
+				return RepeatBehavior.Forever;
+
+			return new RepeatBehavior(double.Parse((string)text));
+		}
+
+		#endregion Methods
+
 		#region Properties
 
 		public bool IsIterationCount
