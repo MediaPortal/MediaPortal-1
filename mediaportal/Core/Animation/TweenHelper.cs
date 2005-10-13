@@ -1,6 +1,6 @@
 using System;
 
-namespace MediaPortal.Animations
+namespace MediaPortal.Animation
 {
 	internal sealed class TweenHelper
 	{

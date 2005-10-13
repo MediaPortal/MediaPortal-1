@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace MediaPortal.Animations
+namespace MediaPortal.Animation
 {
 	internal sealed class NativeMethods
 	{

@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel;
 
-namespace MediaPortal.Animations
+namespace MediaPortal.Animation
 {
 	[TypeConverter(typeof(DurationConverter))]
 	public class Duration
@@ -31,6 +31,8 @@ namespace MediaPortal.Animations
 		#region Fields
 
 		double _duration;
+
+		public static readonly Duration Automatic = new Duration();
 
 		#endregion Fields
 	}

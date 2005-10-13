@@ -3,7 +3,7 @@ using System.ComponentModel;
 
 using MediaPortal.Dispatcher;
 
-namespace MediaPortal.Animations
+namespace MediaPortal.Animation
 {
 	public sealed class ClockController
 	{

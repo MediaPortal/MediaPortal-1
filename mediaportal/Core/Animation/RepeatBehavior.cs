@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel;
 
-namespace MediaPortal.Animations
+namespace MediaPortal.Animation
 {
 	[TypeConverter(typeof(RepeatBehaviorConverter))]
 	public struct RepeatBehavior
@@ -53,7 +53,7 @@ namespace MediaPortal.Animations
 
 		double						_count;
 		Duration					_duration;
-        public static readonly RepeatBehavior		Forever = new RepeatBehavior(double.PositiveInfinity);
+		public static readonly RepeatBehavior		Forever = new RepeatBehavior(double.PositiveInfinity);
 
 		#endregion Members
 	}

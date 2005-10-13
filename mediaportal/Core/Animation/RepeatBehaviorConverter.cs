@@ -2,7 +2,7 @@ using System;
 using System.ComponentModel;
 using System.Globalization;
 
-namespace MediaPortal.Animations
+namespace MediaPortal.Animation
 {
 	public class RepeatBehaviorConverter : TypeConverter
 	{
@@ -17,7 +17,7 @@ namespace MediaPortal.Animations
 		{
 			if(value is string)
 			{
-				if(string.Compare((string)value, "forever") == 0)
+				if(string.Compare((string)value, "Forever", true) == 0)
 					return RepeatBehavior.Forever;
 
 				return new RepeatBehavior(double.Parse((string)value));

@@ -2,15 +2,18 @@ using System;
 using System.ComponentModel;
 using System.Globalization;
 
-namespace MediaPortal.Animations
+namespace MediaPortal.Animation
 {
 	public class DurationConverter : TypeConverter
 	{
 		#region Methods
 
-		public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
+		public override bool CanConvertFrom(ITypeDescriptorContext context, Type t)
 		{
-			return sourceType == typeof(String);
+			if(t == typeof(string))
+				return true;
+
+			return base.CanConvertFrom(context, t);
 		}
 
 		public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
