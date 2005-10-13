@@ -56,8 +56,6 @@ namespace MediaPortal.GUI.Library
 			foreach(string filename in Directory.GetFiles(GUIGraphicsContext.Skin + @"\media\", "common.waiting.*.png"))
 				_animation.Filenames.Add(filename);
 
-			//_animation.Filenames.Add(@"\media\" + Path.GetFileName(filename));
-
 			_animation.HorizontalAlignment = HorizontalAlignment.Center;
 			_animation.VerticalAlignment = VerticalAlignment.Center;
 			_animation.SetPosition(GUIGraphicsContext.Width / 2, GUIGraphicsContext.Height / 2);
