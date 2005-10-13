@@ -27,7 +27,7 @@ using System.Threading;
 
 namespace MediaPortal.GUI.Library
 {
-	public sealed class GUIAnimation : GUIControl, IDisposable
+	public sealed class GUIAnimation : GUIControl
 	{
 		#region Constructors
 
@@ -43,21 +43,9 @@ namespace MediaPortal.GUI.Library
 
 		#region Methods
 
-		public void Dispose()
+		public override void AllocResources()
 		{
-			if(_images == null)
-				return;
-
-			for(int index = 0; index < _images.Length; index++)
-				_images[index].FreeResources();
-		}
-
-		void PrepareImages()
-		{
-			int x = 0;
-			int y = 0;
-			int w = 0;
-			int h = 0;
+			Log.Write("Ani.AllocResources");
 
 			if(_filenames == null)
 			{
@@ -69,10 +57,13 @@ namespace MediaPortal.GUI.Library
 
 			_images = new GUIImage[_filenames.Count];
 
+			int w = 0;
+			int h = 0;
+
 			for(int index = 0; index < _images.Length; index++)
 			{
 				_imageId++;
-				_images[index] = new GUIImage(ParentID, _imageId + index, x, y, w, h, (string)_filenames[index], Color.White);
+				_images[index] = new GUIImage(ParentID, _imageId + index, 0, 0, 0, 0, (string)_filenames[index], Color.White);
 				_images[index].AllocResources();
 
 				w = Math.Max(w, _images[index].Width);
@@ -80,14 +71,43 @@ namespace MediaPortal.GUI.Library
 			}
 
 			for(int index = 0; index < _images.Length; index++)
-				_images[index].SetPosition(m_dwPosX, m_dwPosY);
+			{
+				int x = m_dwPosX;
+				int y = m_dwPosY;
+
+				if(_horizontalAlignment == HorizontalAlignment.Center)
+				{
+					x = x - (w / 2);
+				}
+				else if(_horizontalAlignment == HorizontalAlignment.Right)
+				{
+					x = x - w;
+				}
+
+				if(_verticalAlignment == VerticalAlignment.Center)
+				{
+					y = y - (h / 2);
+				}
+				else if(_verticalAlignment == VerticalAlignment.Bottom)
+				{
+					y = y - h;
+				}
+
+				_images[index].SetPosition(x, y);
+			}
+		}
+
+		public override void FreeResources()
+		{
+			if(_images == null)
+				return;
+
+			for(int index = 0; index < _images.Length; index++)
+				_images[index].FreeResources();
 		}
 
 		public override void Render(float timePassed)
 		{
-			if(_images == null)
-				PrepareImages();
-
 			if(_images == null)
 				return;
 
@@ -96,27 +116,48 @@ namespace MediaPortal.GUI.Library
 
 			double x = (_images.Length * (Environment.TickCount - _tickCount)) / (_rate * 1000);
 
-			_images[(int)x % _images.Length].Render(timePassed);
+			int index = (int)x % _images.Length;
+
+			if(index < _images.Length)
+				_images[index].Render(timePassed);
 		}
 
 		#endregion Methods
 
 		#region Properties
 
+		public HorizontalAlignment HorizontalAlignment
+		{
+			get { return _horizontalAlignment; }
+			set { _horizontalAlignment = value; }
+		}
+
 		public ArrayList Filenames
 		{
 			get { if(_filenames == null) _filenames = new ArrayList(); return _filenames; }
 		}
 		
+		public VerticalAlignment VerticalAlignment
+		{
+			get { return _verticalAlignment; }
+			set { _verticalAlignment = value; }
+		}
+
 		#endregion Properties
 
 		#region Properties (Skin)
+
+		[XMLSkinElement("HorizontalAlignment")]
+		HorizontalAlignment					_horizontalAlignment = HorizontalAlignment.Left;
 
 		[XMLSkinElement("textures")]
 		string								_textureNames = string.Empty;
 
 		[XMLSkinElement("rate")]
 		double								_rate = 1;
+
+		[XMLSkinElement("VerticalAlignment")]
+		VerticalAlignment					_verticalAlignment = VerticalAlignment.Top;
 
 		#endregion Properties (Skin)
 
