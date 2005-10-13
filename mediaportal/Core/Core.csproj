@@ -864,6 +864,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "guilib\HorizontalAlignment.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "guilib\IPlugin.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -940,6 +945,11 @@
                 />
                 <File
                     RelPath = "guilib\Util.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "guilib\VerticalAlignment.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
