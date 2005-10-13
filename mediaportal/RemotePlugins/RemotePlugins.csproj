@@ -97,14 +97,12 @@
                 <Reference
                     Name = "Microsoft.DirectX"
                     AssemblyName = "Microsoft.DirectX"
-                    HintPath = "C:\WINDOWS\Microsoft.NET\DirectX for Managed Code\1.0.2902.0\Microsoft.DirectX.dll"
-                    AssemblyFolderKey = "hklm\dn\dx_1.0.2902.0"
+                    HintPath = "..\Microsoft.DirectX.dll"
                 />
                 <Reference
                     Name = "Microsoft.DirectX.DirectInput"
                     AssemblyName = "Microsoft.DirectX.DirectInput"
-                    HintPath = "C:\WINDOWS\Microsoft.NET\DirectX for Managed Code\1.0.2902.0\Microsoft.DirectX.DirectInput.dll"
-                    AssemblyFolderKey = "hklm\dn\dx_1.0.2902.0"
+                    HintPath = "..\Microsoft.DirectX.DirectInput.dll"
                 />
             </References>
         </Build>
