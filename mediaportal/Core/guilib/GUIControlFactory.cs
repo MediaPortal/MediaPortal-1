@@ -28,6 +28,7 @@ using System.Xml;
 using System.Windows.Serialization;
 
 using MediaPortal.Layouts;
+using MediaPortal.Animation;
 
 namespace MediaPortal.GUI.Library
 {
@@ -114,10 +115,10 @@ namespace MediaPortal.GUI.Library
 		/// updatable field, indexed by their corresponding Xml Element name. </returns>
 		static Hashtable GetFieldsToUpdate(Type guiControlType)
 		{
-			// Lazy Initializiation...
+					// Lazy Initializiation...
 			if (m_reflectionCacheByControlType.ContainsKey(guiControlType)) 
 				return (Hashtable)m_reflectionCacheByControlType[guiControlType]; 
-			
+
 			Hashtable fieldsTable = new Hashtable();
 			FieldInfo[] allFields = guiControlType.GetFields(
 				BindingFlags.Instance 
@@ -135,7 +136,6 @@ namespace MediaPortal.GUI.Library
 			}
 			m_reflectionCacheByControlType[guiControlType] = fieldsTable;
 			return fieldsTable;
-						
 		}
 
 		private static object ConvertXmlStringToObject(string valueName, string valueText, Type type)
@@ -247,34 +247,6 @@ namespace MediaPortal.GUI.Library
 //					return GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT;
 //				}
 
-				if(type == typeof(HorizontalAlignment))
-				{
-					if(string.Compare(valueText, "center", true) == 0)
-						return HorizontalAlignment.Center;
-
-					if(string.Compare(valueText, "bottom", true) == 0)
-						return HorizontalAlignment.Right;
-
-					if(string.Compare(valueText, "stretch", true) == 0)
-						return HorizontalAlignment.Stretch;
-
-					return HorizontalAlignment.Left;
-				}
-				
-				if(type == typeof(VerticalAlignment))
-				{
-					if(string.Compare(valueText, "center", true) == 0)
-						return VerticalAlignment.Center;
-
-					if(string.Compare(valueText, "bottom", true) == 0)
-						return VerticalAlignment.Bottom;
-
-					if(string.Compare(valueText, "stretch", true) == 0)
-						return VerticalAlignment.Stretch;
-
-					return VerticalAlignment.Top;
-				}
-
 				try
 				{
 					if(type == typeof(double))
@@ -346,6 +318,12 @@ namespace MediaPortal.GUI.Library
 
 				if(type == typeof(ILayout))
 					return ParseLayout(valueText);
+			
+				// much of the above could be changed to use the following, needs time for thorough testing though
+				TypeConverter converter = TypeDescriptor.GetConverter(type);
+
+				if(converter.CanConvertFrom(typeof(string)))
+					return converter.ConvertFromString(valueText);
 			
 				return null;
 //			}
