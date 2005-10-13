@@ -1019,11 +1019,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Layouts\IAddChild.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "Layouts\ILayout.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -1620,6 +1615,20 @@
                 />
                 <File
                     RelPath = "System.Threading\TimeoutLock.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Serialization\IAddChild.cs"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Serialization\MarkupExtension.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Serialization\TypeExtension.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
