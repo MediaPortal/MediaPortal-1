@@ -1,4 +1,4 @@
-﻿<window>
+<window>
 	<id>5900</id>
 	<defaultcontrol>2</defaultcontrol>
 	<allowoverlay>yes</allowoverlay>
@@ -21,6 +21,18 @@
 			<posX>60</posX>
 			<posY>20</posY>
 			<texture>trailers_logo.png</texture>
+		</control>
+		<control>
+			<description>Background TV</description>
+			<type>image</type>
+			<id>1</id>
+			<posX>85</posX>
+			<posY>400</posY>
+			<width>-</width>
+			<height>-</height>
+			<colordiffuse>ffffffff</colordiffuse>
+			<texture>Background_Video.png</texture>
+			<colorkey>0</colorkey>
 		</control>
 		<control>
 			<type>togglebutton</type>
@@ -157,7 +169,7 @@
 			<subitems>-</subitems>
 			<label>872</label>
 			<textureFocus>menu_list_nofocus.png</textureFocus>
-			<subitems />
+			<subitems/>
 		</control>
 		<control>
 			<type>textboxscrollup</type>
@@ -196,7 +208,7 @@
 			<onup>2</onup>
 			<ondown>2</ondown>
 			<textcolor>ffffffff</textcolor>
-			<downloadColor>ff80ff80</downloadColor>
+			<downloadColor>ffffffff</downloadColor>
 			<remoteColor>ffFFA075</remoteColor>
 			<textXOff2>0</textXOff2>
 			<IconYOff>8</IconYOff>
@@ -254,7 +266,7 @@
 			<posY>268</posY>
 			<width>101</width>
 			<height>150</height>
-			<texture>background.png</texture>
+			<texture>-</texture>
 		</control>
 	</controls>
 </window>
