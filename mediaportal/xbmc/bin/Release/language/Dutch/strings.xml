@@ -122,6 +122,10 @@
 		<value>december</value>
 	</string>
 	<string>
+		<id>50</id>
+		<value>Mijn DVD's</value>
+	</string>
+	<string>
 		<id>100</id>
 		<value>Bekijk: Iconen</value>
 	</string>
@@ -2834,11 +2838,11 @@
   </string>
   <string>
   	<id>959</id>
-  	<value>has joined the conversation</value>
+  	<value>doet mee aan gesprek</value>
   </string>
   <string>
   	<id>960</id>
-  	<value>has left the conversation</value>
+  	<value>heeft gesprek verlaten</value>
   </string>
   <string>
   	<id>961</id>
@@ -3040,6 +3044,120 @@
 	<value>Sorteer: Lengte</value>
 </string>
 
+<string>
+	<id>1020</id>
+	<value>Informatie</value>
+</string>
+<string>
+	<id>1021</id>
+	<value>Druk op ALT+ENTER om</value>
+</string>
+<string>
+	<id>1022</id>
+	<value>terug te keren naar venstermodus</value>
+</string>
+<string>
+	<id>1023</id>
+	<value>Binnenkomend gesprek</value>
+</string>
+<string>
+	<id>1024</id>
+	<value>van</value>
+</string>
+<string>
+	<id>1025</id>
+	<value>Er is een fout opgetreden.</value>
+</string>
+<string>
+	<id>1026</id>
+	<value>Zie het log voor details.</value>
+</string>
+<string>
+	<id>1027</id>
+	<value>Mijn DVD</value>
+</string>
+<string>
+	<id>1028</id>
+	<value>Stad</value>
+</string>
+<string>
+	<id>1029</id>
+	<value>Ondertitelings taal</value>
+</string>
+<string>
+	<id>1030</id>
+	<value>Uitschakelen</value>
+</string>
+<string>
+	<id>1031</id>
+	<value>Herstarten</value>
+</string>
+<string>
+	<id>1032</id>
+	<value>Slapen</value>
+</string>
+<string>
+	<id>1033</id>
+	<value>Er worden programma's opgenomen</value>
+</string>
+<string>
+	<id>1034</id>
+	<value>Geen signaal gedetecteerd!</value>
+</string>
+<string>
+	<id>1035</id>
+	<value>Kanaal is gecodeerd</value>
+</string>
+<string>
+	<id>1036</id>
+	<value>Geen video gevonden</value>
+</string>
+<string>
+	<id>1037</id>
+	<value>Mijn TV - programma informatie</value>
+</string>
+<string>
+	<id>1038</id>
+	<value>Geavanceerde opname</value>
+</string>
+<string>
+	<id>1039</id>
+	<value>Niet opnemen</value>
+</string>
+<string>
+	<id>1040</id>
+	<value>Waarschuw mij</value>
+</string>
+<string>
+	<id>1041</id>
+	<value>Aankomende afleveringen</value>
+</string>
+<string>
+	<id>1042</id>
+	<value>Bewaar tot</value>
+</string>
+<string>
+	<id>1043</id>
+	<value>tot bekeken</value>
+</string>
+<string>
+	<id>1044</id>
+	<value>tot ruimte nodig</value>
+</string>
+<string>
+	<id>1045</id>
+	<value>tot datum</value>
+</string>
+<string>
+	<id>1046</id>
+	<value>Altijd</value>
+</string>
+<string>
+	<id>1047</id>
+	<value>Start in volledig scherm</value>
+</string>
+
+
   <string>
   	<id>1440</id>
   	<value>Mijn Teletekst</value>
@@ -3055,6 +3173,22 @@
  <string>
 	<id>1443</id>
 	<value>Rol snelheid (ver.)</value>
+ </string>
+ <string>
+	<id>1444</id>
+	<value>Voor-Opname</value>
+ </string>
+ <string>
+	<id>1445</id>
+	<value>Na-Opname</value>
+ </string>
+ <string>
+	<id>1446</id>
+	<value>Opname gestart:</value>
+ </string>
+ <string>
+	<id>1447</id>
+	<value>Opname gestopt:</value>
  </string>
 
   <!-- My Status strings -->
@@ -3940,6 +4074,11 @@
   </string>
 
   <string>
+  	<id>99845</id>
+  	<value>Zoek op TV.com</value>
+  </string>
+
+  <string>
   	<id>13000</id>
   	<value>Systeem:</value>
   </string>
@@ -3991,6 +4130,28 @@
   	<id>13012</id>
   	<value>Plaatje wordt geladen, even geduld...</value>
   </string>
+  <string>
+  	<id>13014</id>
+  	<value>Map doorzoeken</value>
+  </string>
+  <string>
+  	<id>13015</id>
+  	<value>Spelbestand wordt geimporteerd</value>
+  </string>
+  <string>
+  	<id>13016</id>
+  	<value>Sorteer op: Gestart</value>
+  </string>
+  <string>
+  	<id>13017</id>
+  	<value>Sorteer op: Recent</value>
+  </string>
+  <string>
+  	<id>13018</id>
+  	<value>Sorteer op: Beoordeling</value>
+  </string>
+
+
   <string>
   	<id>16001</id>
   	<value>Feest mix</value>
@@ -4044,6 +4205,11 @@
   <string>
     <id>19012</id>
     <value>Spel voorbij</value>
+  </string>
+
+  <string>
+    <id>19100</id>
+    <value>GEO-Klok</value>
   </string>
   
  	<string>
@@ -4400,6 +4566,102 @@
     <value>Wachten op pagina {0:X}...</value>
   </string>
 
+  <string>
+    <id>200000</id>
+    <value>Selecteer uw EPG grabber. Als uw land er</value>
+  </string>
+  <string>
+    <id>200001</id>
+    <value>niet tussen staat, zult u deze handmatig moeten invoeren.</value>
+  </string>
+  <string>
+    <id>200002</id>
+    <value>U kunt nu de EPG-kanalen koppelen aan de TV-kanalen</value>
+  </string>
+  <string>
+    <id>200003</id>
+    <value>Om koppeling te wijzigen selecteerd u een kanaal en drukt op ENTER</value>
+  </string>
+  <string>
+    <id>200004</id>
+    <value>Handmatig aangeleverde tvguide.xml</value>
+  </string>
+  <string>
+    <id>200005</id>
+    <value>Selecteer uw model afstandsbediening:</value>
+  </string>
+  <string>
+    <id>200006</id>
+    <value>Druk op VOLGENDE om verder te gaan met instellen:</value>
+  </string>
+  <string>
+    <id>200007</id>
+    <value>Vorige</value>
+  </string>
+  <string>
+    <id>200008</id>
+    <value>Stel in: de afstandsbediening</value>
+  </string>
+  <string>
+    <id>200009</id>
+    <value>Volgende</value>
+  </string>
+  <string>
+    <id>200010</id>
+    <value>MediaPortal verandert uw PC in een zeer geavanceerd Multi-Media Center / HTPC.</value>
+  </string>
+  <string>
+    <id>200011</id>
+    <value>Met MediaPortal kunt u genieten van uw favoriete muziek, radio</value>
+  </string>
+  <string>
+    <id>200013</id>
+    <value>Het stelt u in staat om te luisteren naar uw favorite muziek en radio, uw video's en dvd's te bekijken</value>
+  </string>
+  <string>
+    <id>200014</id>
+    <value>foto's, video's en bekijk of neem TV op en nog veel meer.</value>
+  </string>
+  <string>
+    <id>200015</id>
+    <value>Deze wizard zal u helpen om MediaPortal snel en makkelijk in te stellen. Volg de stappen.</value>
+  </string>
+  <string>
+    <id>200016</id>
+    <value>Druk op VOLGENDE om te beginnen</value>
+  </string>
+  <string>
+    <id>200017</id>
+    <value>Welkom bij MediaPortal.</value>
+  </string>
+  <string>
+    <id>200018</id>
+    <value>Gefeliciteerd! Mediaportal is nu klaar voor gebruik</value>
+  </string>
+  <string>
+    <id>200019</id>
+    <value>Druk op KLAAR om deze wizard af te sluiten</value>
+  </string>
+  <string>
+    <id>200020</id>
+    <value>Klaar</value>
+  </string>
+  <string>
+    <id>200021</id>
+    <value>TV Instellingen - ProgrammaGids</value>
+  </string>
+  <string>
+    <id>200022</id>
+    <value>MediaPortal heeft de volgende TV-kaarten gevonden:</value>
+  </string>
+  <string>
+    <id>200023</id>
+    <value>Druk op VOLGENDE om deze TV-kaarten in te stellen</value>
+  </string>
+  <string>
+    <id>200024</id>
+    <value>TV Instellingen</value>
+  </string>
 
 <!-- My Trailers Strings --> 
 <string><id>5900</id><value>Mijn Trailers</value></string> 
