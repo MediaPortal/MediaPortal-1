@@ -162,12 +162,13 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 				{
 					//LogDebug("pin:Wait %x/%x (%d)", (DWORD)m_pFileReader->GetFilePointer(),(DWORD)m_pSections->pids.fileStartPosition,count);
 					count++;
-					if (count >20) break;
+					if (count >100) break;
 					Sleep(50);
 				}
 				else break;
 			}
-			//LogDebug("pin:Wait %x/%x (%d)", (DWORD)m_pFileReader->GetFilePointer(),(DWORD)m_pSections->pids.fileStartPosition,count);
+			if (count>=100)
+				LogDebug("pin:Wait %x/%x (%d)", (DWORD)m_pFileReader->GetFilePointer(),(DWORD)m_pSections->pids.fileStartPosition,count);
 		}
 
 		bool endOfFile=false;
@@ -176,7 +177,7 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 		{
 			if (m_pMPTSFilter->m_pFileReader->m_hInfoFile!=INVALID_HANDLE_VALUE)
 			{
-				//LogDebug("output pin:EOF");
+				LogDebug("output pin:EOF");
 				m_pMPTSFilter->m_pFileReader->GetFileSize(&fileSize);
 				count=0;
 				while (true)
@@ -186,14 +187,15 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 					if (m_pSections->pids.fileStartPosition >= fileSize-(1024*1024) ||
 						m_pSections->pids.fileStartPosition < lDataLength) 
 					{
-						//LogDebug("waiteof pos:%x size:%x (%d)", m_pSections->pids.fileStartPosition,fileSize,count);
+						LogDebug("waiteof pos:%x size:%x (%d)", m_pSections->pids.fileStartPosition,fileSize,count);
 						count++;
-						if (count >20) break;
+						if (count >100) break;
 						Sleep(50);
 					}
 					else break;
 				}
-				//LogDebug("outputpin:end of file, writepos:%x slept:%i size:%x", m_pSections->pids.fileStartPosition,count,fileSize);
+				LogDebug("outputpin:end of file, writepos:%x slept:%i fsize:%x", m_pSections->pids.fileStartPosition,count,fileSize);
+				m_bDiscontinuity=true;
 			}
 		}
 					
@@ -205,7 +207,7 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 	{
 		if (m_pMPTSFilter->m_pFileReader->m_hInfoFile==INVALID_HANDLE_VALUE)
 		{
-			//LogDebug("outpin:end of file detected");
+			LogDebug("outpin:end of file detected");
 			return S_FALSE;//end of stream
 		}
 			

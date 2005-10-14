@@ -1721,12 +1721,12 @@ namespace MediaPortal.TV.Recording
 			ProcessCards();
 			DiskManagement.Process();	
 			TimeSpan ts=DateTime.Now-m_dtProgresBar;
-			if (g_Player.Playing && (g_Player.Duration< m_duration || Math.Abs(g_Player.CurrentPosition-_lastPosition)  >=1 ) )
+			if (g_Player.Playing && (Math.Abs(g_Player.Duration- m_duration)>=1 || Math.Abs(g_Player.CurrentPosition-_lastPosition)  >=1 ) )
 			{
 				RecorderProperties.UpdateRecordingProperties();
 				m_dtProgresBar=DateTime.Now;
 			}
-			if (ts.TotalMilliseconds>10000)
+			else if (ts.TotalMilliseconds>10000)
 			{
 				RecorderProperties.UpdateRecordingProperties();
 				m_dtProgresBar=DateTime.Now;
