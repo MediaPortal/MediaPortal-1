@@ -66,7 +66,12 @@ namespace MediaPortal.GUI.Library
 		{
 			ALIGN_LEFT, 
 			ALIGN_RIGHT, 
-			ALIGN_CENTER
+			ALIGN_CENTER,
+
+			// added to support XAML parser
+			Left = ALIGN_LEFT,
+			Right = ALIGN_RIGHT,
+			Center = ALIGN_CENTER,
 		}
 		
 
