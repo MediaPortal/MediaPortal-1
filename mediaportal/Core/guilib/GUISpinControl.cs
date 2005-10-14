@@ -29,12 +29,18 @@ namespace MediaPortal.GUI.Library
 	/// </summary>
 	public class GUISpinControl : GUIControl
 	{
-		public enum SpinType:int
+		public enum SpinType //:int
 		{
 			SPIN_CONTROL_TYPE_INT,
 			SPIN_CONTROL_TYPE_FLOAT,
-			SPIN_CONTROL_TYPE_TEXT
+			SPIN_CONTROL_TYPE_TEXT,
+
+			// needed for XAML parser
+			Int = SPIN_CONTROL_TYPE_INT,
+			Float = SPIN_CONTROL_TYPE_FLOAT,
+			Text = SPIN_CONTROL_TYPE_TEXT,
 		};
+
 		public enum SpinSelect
 		{
 			SPIN_BUTTON_DOWN,
