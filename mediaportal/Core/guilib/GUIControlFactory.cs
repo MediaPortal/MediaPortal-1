@@ -140,114 +140,19 @@ namespace MediaPortal.GUI.Library
 
 		private static object ConvertXmlStringToObject(string valueName, string valueText, Type type)
 		{
-//			try
-//			{
-//				try
-//				{
-					if(type == typeof (string))
-						return valueText;
-//				}
-//				catch (Exception) 
-//				{ 
-//					return String.Empty;
-//				}
-
-//				try
-//				{
-					if (type == typeof (bool))
-					{
-						if(string.Compare(valueText, "off", true) == 0 ||
-							string.Compare(valueText, "no", true) == 0 ||
-							string.Compare(valueText, "disabled", true) == 0)
-						{
-							return false;
-						}
-
-						return true;
-					}
-//				}
-//				catch(Exception)
-//				{
-//					return false;
-//				}
-
-				try
+				if (type == typeof (bool))
 				{
-					if (type == typeof (GUIControl.Alignment))
+					if(string.Compare(valueText, "off", true) == 0 ||
+						string.Compare(valueText, "no", true) == 0 ||
+						string.Compare(valueText, "disabled", true) == 0)
 					{
-						if(string.Compare(valueText, "right", true) == 0)
-							return GUIControl.Alignment.ALIGN_RIGHT;
-
-						if(string.Compare(valueText, "center", true) == 0)
-							return GUIControl.Alignment.ALIGN_CENTER;
-
-						return GUIControl.Alignment.ALIGN_LEFT;
+						return false;
 					}
-				}
-				catch(Exception)
-				{
-					return GUIControl.Alignment.ALIGN_LEFT;
+
+					return true;
 				}
 
-//				try
-//				{
-					if (type == typeof (GUIControl.eOrientation))
-					{
-						if(string.Compare(valueText, "vertical", true) == 0)
-							return GUIControl.eOrientation.Vertical;
-
-						return GUIControl.eOrientation.Horizontal;
-					}
-//				}
-//				catch(Exception)
-//				{
-//					return GUIControl.Alignment.ALIGN_LEFT;
-//				}
-
-//				try
-//				{
-					if (type == typeof (Animator.AnimationType))
-					{
-						if(string.Compare(valueText, "flyinfromleft", true) == 0)
-							return Animator.AnimationType.FlyInFromLeft;
-
-						if(string.Compare(valueText, "flyinfromright", true) == 0)
-							return Animator.AnimationType.FlyInFromRight;
-
-						if(string.Compare(valueText, "flyinfromtop", true) == 0)
-							return Animator.AnimationType.FlyInFromTop;
-
-						if(string.Compare(valueText, "flyinfrombottom", true) == 0)
-							return Animator.AnimationType.FlyInFromBottom;
-
-						if(string.Compare(valueText, "zoominfrommiddle", true) == 0)
-							return Animator.AnimationType.ZoomInFromMiddle;
-					}
-//				}
-//				catch(Exception)
-//				{
-//					return Animator.AnimationType.FlyInFromLeft;
-//				}
-
-//				try
-//				{
-					if (type == typeof(GUISpinControl.SpinType))
-					{
-						if(string.Compare(valueText, "int", true) == 0)
-								return GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT;
-
-						if(string.Compare(valueText, "float", true) == 0)
-							return GUISpinControl.SpinType.SPIN_CONTROL_TYPE_FLOAT;
-
-						return GUISpinControl.SpinType.SPIN_CONTROL_TYPE_TEXT;
-					}
-//				}
-//				catch(Exception)
-//				{
-//					return GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT;
-//				}
-
-				try
+			try
 				{
 					if(type == typeof(double))
 					{
@@ -318,7 +223,7 @@ namespace MediaPortal.GUI.Library
 
 				if(type == typeof(ILayout))
 					return ParseLayout(valueText);
-			
+
 				// much of the above could be changed to use the following, needs time for thorough testing though
 				TypeConverter converter = TypeDescriptor.GetConverter(type);
 
@@ -347,13 +252,13 @@ namespace MediaPortal.GUI.Library
 			{
 				if(control is ISupportInitialize)
 					((ISupportInitialize)control).BeginInit();
-				
+
 				XmlNode referenceNode = 
 					(XmlNode) m_referenceNodesByControlType[typeOfControlToCreate];
-				
+
 				if (referenceNode != null)
 					UpdateControlWithXmlData(control,typeOfControlToCreate, referenceNode, defines);
-				
+
 				UpdateControlWithXmlData(control,typeOfControlToCreate, pControlNode, defines);
 				
 				control.ScaleToScreenResolution();
@@ -393,7 +298,8 @@ namespace MediaPortal.GUI.Library
 			}
 			catch(Exception e)
 			{
-				Log.Write("Buffer: {0}", e.Message);
+				Log.Write("GUIControlFactory.Create: {0}", e.Message);
+				Log.Write("Parent: {0} Id: {1}", dwParentId, control.GetID);
 			}
 
 			return control;
