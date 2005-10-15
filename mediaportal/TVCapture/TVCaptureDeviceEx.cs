@@ -1057,7 +1057,16 @@ namespace MediaPortal.TV.Recording
 							lastChannelChange=DateTime.Now;
 							return;
 						}
-						
+#if USEMTSWRITER
+						if (IsTimeShifting && !View)
+						{
+							if (g_Player.Playing && g_Player.CurrentFile == Recorder.GetTimeShiftFileName(ID-1))
+							{
+								if (!g_Player.Paused)
+									g_Player.Pause();
+							}
+						}
+#endif						
 						currentGraph.TuneChannel(channel);
 						lastChannelChange=DateTime.Now;
 						timeTimeshiftingStarted = DateTime.Now;
