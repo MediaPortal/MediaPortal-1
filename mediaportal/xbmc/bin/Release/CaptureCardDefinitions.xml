@@ -2752,7 +2752,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="TOSHIBA Style Bay TV Tuner" capturename="TOSHIBA Style Bay TV Tuner KiT Device" devid="vid_1009&amp;pid_0007">
+  <capturecard commercialname="Toshiba Style Bay TV Tuner" capturename="TOSHIBA Style Bay TV Tuner KiT Device" devid="vid_1009&amp;pid_0007">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
@@ -6150,7 +6150,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="TOSHIBA MPEG TV Tuner " capturename="TOSHIBA PCI TV Tuner MPEG Encoder" devid="ven_4444&amp;dev_0016&amp;subsys_00011179;rev_01">
+  <capturecard commercialname="Toshiba MPEG TV Tuner" capturename="TOSHIBA PCI TV Tuner MPEG Encoder" devid="ven_4444&amp;dev_0016&amp;subsys_00011179;rev_01">
     <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"></capabilities>
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
@@ -6441,6 +6441,22 @@
       <connections>
   	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
   	<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Technotrend Hybrid T-3000" capturename="TechnoTrend BDA/DVB Capture" devid="ven_1131&amp;dev_7133&amp;subsys_280413C2&amp;rev_01">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"    checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="TechnoTrend BDA/DVB-T Tuner"        checkdevice="true"></filter>
+        <filter cat="capture"         name="TechnoTrend BDA/DVB Capture"        checkdevice="true"></filter>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
