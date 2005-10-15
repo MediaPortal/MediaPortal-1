@@ -458,12 +458,16 @@ STDMETHODIMP CDumpInputPin::Receive(IMediaSample *pSample)
 						int pid=((m_restBuffer[1] & 0x1F) <<8)+m_restBuffer[2];
 						if(IsPidValid(pid)==true)
 						{
-							//yes then write the packet to the files
-							step=52;
-							hr=m_pDump->WriteRecordingFile(m_restBuffer,188);
-							step=53;
-							hr=m_pDump->WriteTimeshiftFile(m_restBuffer,188);
-							step=54;
+							byte scrambled=pbData[3] & 0xC0;
+							if( !scrambled && m_audioState==Unscrambled && (m_videoState==Unscrambled||m_videoPid<=0) )
+							{
+								//yes then write the packet to the files
+								step=52;
+								hr=m_pDump->WriteRecordingFile(m_restBuffer,188);
+								step=53;
+								hr=m_pDump->WriteTimeshiftFile(m_restBuffer,188);
+								step=54;
+							}
 						}
 					}
 					step=55;
@@ -557,7 +561,7 @@ STDMETHODIMP CDumpInputPin::Receive(IMediaSample *pSample)
 							m_videoTimer=GetTickCount();
 						}
 					}
-					if(!scrambled)
+					if( !scrambled && m_audioState==Unscrambled && (m_videoState==Unscrambled||m_videoPid<=0) )
 					{
 						//no, then write packet to files
 						step=81;
