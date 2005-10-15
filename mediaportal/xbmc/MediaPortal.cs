@@ -171,12 +171,12 @@ public class MediaPortalApp : D3DApp, IRender
 			System.Diagnostics.Process.Start("configuration.exe", @"/wizard");
 			return;
 		}
-		CodecsForm form = new CodecsForm();
-		if (!form.AreCodecsInstalled())
-		{
-			form.ShowDialog();
-		}
-		form=null;
+		//CodecsForm form = new CodecsForm();
+		//if (!form.AreCodecsInstalled())
+		//{
+		//	form.ShowDialog();
+		//}
+		//form=null;
 
 #if !DEBUG
 		string version=ConfigurationSettings.AppSettings["version"];
@@ -187,69 +187,7 @@ public class MediaPortalApp : D3DApp, IRender
 		splashScreen.Update();
 		//clientInfo=null;
 #endif
-
-		// Stop MCE services
-		Utils.StopMCEServices();
-
-		Log.Write("  Set registry keys for intervideo/windvd/hauppauge codecs");
-		// Set Intervideo registry keys 
-		try
-		{
-			RegistryKey hklm = Registry.LocalMachine;
-
-			// windvd6 mpeg2 codec settings
-			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal", "BOBWEAVE", 1);
-			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\AudioDec", "DsContinuousRate", 1);
-			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "DsContinuousRate", 1);
-			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "Dxva", 1);
-			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "DxvaFetchSample", 0);
-			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "ResendOnFamine", 0);
-			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "VgaQuery", 1);
-			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "VMR", 2);
-			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "BOBWEAVE", 1);
-			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\Common\AudioDec\MediaPortal", "DsContinuousRate", 1);
-			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\Common\VideoDec\MediaPortal", "DsContinuousRate", 1);
-			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\Common\VideoDec\MediaPortal", "Dxva", 1);
-			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\Common\VideoDec\MediaPortal", "DxvaFetchSample", 0);
-			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\Common\VideoDec\MediaPortal", "ResendOnFamine", 0);
-			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\Common\VideoDec\MediaPortal", "VgaQuery", 1);
-			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\Common\VideoDec\MediaPortal", "VMR", 2);
-			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\Common\VideoDec\MediaPortal", "BOBWEAVE", 1);
-
-			// hauppauge mpeg2 codec settings
-			SetDWORDRegKey(hklm, @"SOFTWARE\IviSDK4Hauppauge\Common\VideoDec", "Hwmc", 1);
-			SetDWORDRegKey(hklm, @"SOFTWARE\IviSDK4Hauppauge\Common\VideoDec", "Dxva", 1);
-
-			hklm.Close();
-
-			// windvd6 mpeg2 codec settings
-			hklm = Registry.CurrentUser;
-			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal", "BOBWEAVE", 1);
-			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\AudioDec", "DsContinuousRate", 1);
-			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "DsContinuousRate", 1);
-			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "Dxva", 1);
-			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "DxvaFetchSample", 0);
-			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "ResendOnFamine", 0);
-			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "VgaQuery", 1);
-			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "VMR", 2);
-			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "BOBWEAVE", 1);
-			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal", "BOBWEAVE", 1);
-			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\Common\AudioDec\MediaPortal", "DsContinuousRate", 1);
-			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\Common\VideoDec\MediaPortal", "DsContinuousRate", 1);
-			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\Common\VideoDec\MediaPortal", "Dxva", 1);
-			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\Common\VideoDec\MediaPortal", "DxvaFetchSample", 0);
-			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\Common\VideoDec\MediaPortal", "ResendOnFamine", 0);
-			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\Common\VideoDec\MediaPortal", "VgaQuery", 1);
-			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\Common\VideoDec\MediaPortal", "VMR", 2);
-			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\Common\VideoDec\MediaPortal", "BOBWEAVE", 1);
-	
-			hklm.Close();
-			hklm=null;
-		}
-		catch (Exception)
-		{
-		}
-
+		
 
 		Log.Write("  verify that directx 9 is installed");
 		try
@@ -436,8 +374,6 @@ public class MediaPortalApp : D3DApp, IRender
 		GUIGraphicsContext.form = this;
 		GUIGraphicsContext.graphics = null;
 		GUIGraphicsContext.RenderGUI = this;
-
-		GUIWindowManager.OnNewAction += new OnActionHandler(this.OnAction);
 		try
 		{
 			using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
@@ -454,157 +390,18 @@ public class MediaPortalApp : D3DApp, IRender
 			m_strSkin = "BlueTwo";
 			m_strLanguage = "english";
 		}
+		SetStyle(ControlStyles.Opaque, true);
+		SetStyle(ControlStyles.UserPaint, true);
+		SetStyle(ControlStyles.AllPaintingInWmPaint, true);
+		SetStyle(ControlStyles.DoubleBuffer, false);
 
 		Log.Write("  Check skin version");
 		CheckSkinVersion();
 
-		if (m_bAutoHideMouse)
-		{
-			HideCursor();
-		}
-
-		GUIWindowManager.Receivers += new SendMessageHandler(OnMessage);
-		GUIWindowManager.Callbacks += new GUIWindowManager.OnCallBackHandler(this.Process);
-		GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STARTING;
-    Utils.OnStartExternal += new Utils.UtilEventHandler(OnStartExternal);
-    Utils.OnStopExternal += new Utils.UtilEventHandler(OnStopExternal);
-
-		// load keymapping from keymap.xml
-		ActionTranslator.Load();
-
-		// One time setup for proxy servers
-		// also set credentials to allow use with firewalls that require them
-		// this means we can use the .NET internet objects and not have
-		// to worry about proxies elsewhere in the code
-		System.Net.WebProxy proxy = System.Net.WebProxy.GetDefaultProxy();
-		proxy.Credentials = System.Net.CredentialCache.DefaultCredentials;
-		System.Net.GlobalProxySelection.Select = proxy;
-
-		//register the playlistplayer for thread messages (like playback stopped,ended)
-		Log.Write("  Init playlist player");
-		PlayListPlayer.Init();
-
-		//
-		// Only load the USBUIRT device if it has been enabled in the configuration
-		//
-		using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
-		{
-			bool inputEnabled = xmlreader.GetValueAsBool("USBUIRT", "internal", false) ;
-			bool outputEnabled = xmlreader.GetValueAsBool("USBUIRT", "external", false) ;
-
-			if (inputEnabled == true || outputEnabled == true)
-			{
-				Log.Write("  Creating the USBUIRT device");
-				this.usbuirtdevice = USBUIRT.Create(new USBUIRT.OnRemoteCommand(OnRemoteCommand));
-				Log.Write("  done creating the USBUIRT device");
-			}
-			//Load Winlirc if enabled.
-			//sd00//
-			bool winlircInputEnabled = xmlreader.GetValueAsString("WINLIRC", "enabled", "false") == "true";
-			if (winlircInputEnabled == true)
-			{
-				Log.Write("  creating the WINLIRC device");
-				this.winlircdevice = new WinLirc();
-				Log.Write("  done creating the WINLIRC device");
-			}
-			//sd00//
-			//Load RedEye if enabled.
-			bool redeyeInputEnabled = xmlreader.GetValueAsString("RedEye", "internal", "false") == "true";
-			if (redeyeInputEnabled == true)
-			{
-				Log.Write("creating the REDEYE device");
-				this.redeyedevice = RedEye.Create(new RedEye.OnRemoteCommand(OnRemoteCommand));
-				Log.Write("done creating the RedEye device");
-			}
-			inputEnabled = xmlreader.GetValueAsString("SerialUIR", "internal", "false") == "true";
-
-			if (inputEnabled == true)
-			{
-				Log.Write("  creating the SerialUIR device");
-				this.serialuirdevice = SerialUIR.Create(new SerialUIR.OnRemoteCommand(OnRemoteCommand));
-				Log.Write("  done creating the SerialUIR device");
-			}
-		}
-
-		//registers the player for video window size notifications
-		Log.Write("  Init players");
-		g_Player.Init();
-
-		//  hook ProcessExit for a chance to clean up when closed peremptorily
-
-#if AUTOUPDATE
-      AppDomain.CurrentDomain.ProcessExit += new EventHandler(CurrentDomain_ProcessExit);
-
-      //  hook form close to stop updater too
-      this.Closed += new EventHandler(MediaPortal_Closed);
-#endif
-		XmlDocument doc = new XmlDocument();
-		try
-		{
-			doc.Load("mediaportal.exe.config");
-			XmlNode node = doc.SelectSingleNode("/configuration/appStart/ClientApplicationInfo/appFolderName");
-			node.InnerText = System.IO.Directory.GetCurrentDirectory();
-
-			node = doc.SelectSingleNode("/configuration/appUpdater/UpdaterConfiguration/application/client/baseDir");
-			node.InnerText = System.IO.Directory.GetCurrentDirectory();
-
-			node = doc.SelectSingleNode("/configuration/appUpdater/UpdaterConfiguration/application/client/tempDir");
-			node.InnerText = System.IO.Directory.GetCurrentDirectory();
-			doc.Save("Mediaportal.exe.config");
-		}
-		catch (Exception)
-		{
-		}
-
-
-		Thumbs.CreateFolders();
-		try
-		{
-#if DEBUG
-#else
-#if AUTOUPDATE
-        UpdaterConfiguration config = UpdaterConfiguration.Instance;
-				config.Logging.LogPath = System.IO.Directory.GetCurrentDirectory() + @"\log\updatelog.log";
-				config.Applications[0].Client.BaseDir = System.IO.Directory.GetCurrentDirectory();
-				config.Applications[0].Client.TempDir = System.IO.Directory.GetCurrentDirectory() + @"\temp";
-				config.Applications[0].Client.XmlFile = System.IO.Directory.GetCurrentDirectory() + @"\MediaPortal.exe.config";
-				config.Applications[0].Server.ServerManifestFileDestination = System.IO.Directory.GetCurrentDirectory() + @"\xml\ServerManifest.xml";
-				
-				try
-				{
-					System.IO.Directory.CreateDirectory(config.Applications[0].Client.BaseDir + @"\temp");
-					System.IO.Directory.CreateDirectory(config.Applications[0].Client.BaseDir + @"\xml");
-					System.IO.Directory.CreateDirectory(config.Applications[0].Client.BaseDir + @"\log");
-				}
-				catch(Exception){}
-				Utils.DeleteFiles(config.Applications[0].Client.BaseDir + @"\log", "*.log");
-				ClientApplicationInfo clientInfo = ClientApplicationInfo.Deserialize("MediaPortal.exe.config");
-				clientInfo.AppFolderName = System.IO.Directory.GetCurrentDirectory();
-				ClientApplicationInfo.Save("MediaPortal.exe.config",clientInfo.AppFolderName, clientInfo.InstalledVersion);
-				m_strCurrentVersion = clientInfo.InstalledVersion;
-				Text += (" - [v" + m_strCurrentVersion + "]");
-				//  make an Updater for use in-process with us
-				_updater = new ApplicationUpdateManager();
-
-				//  hook Updater events
-				_updater.DownloadStarted += new UpdaterActionEventHandler(OnUpdaterDownloadStarted);
-				_updater.UpdateAvailable += new UpdaterActionEventHandler(OnUpdaterUpdateAvailable);
-				_updater.DownloadCompleted += new UpdaterActionEventHandler(OnUpdaterDownloadCompleted);
-
-				//  start the updater on a separate thread so that our UI remains responsive
-				_updaterThread = new Thread(new ThreadStart(_updater.StartUpdater));
-				_updaterThread.Start();
-#endif
-#endif
-		}
-		catch (Exception)
-		{
-		}
-		using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
-		{
-			m_iDateLayout = xmlreader.GetValueAsInt("home", "datelayout", 0);
-		}
-		screenSaverTimer=DateTime.Now;
+		System.Threading.Thread startThread = new Thread( new ThreadStart(DoStartupJobs));
+		startThread.Priority=ThreadPriority.BelowNormal;
+		startThread.Start();
+			
 	}
 	#endregion
 
@@ -764,18 +561,16 @@ public class MediaPortalApp : D3DApp, IRender
 	/// </summary>
 	protected override void OnStartup()
 	{
+		Thread.CurrentThread.Priority=ThreadPriority.BelowNormal;
 		// set window form styles
 		// these styles enable double buffering, which results in no flickering
 		Log.Write("Mediaportal.OnStartup()");
-		SetStyle(ControlStyles.Opaque, true);
-		SetStyle(ControlStyles.UserPaint, true);
-		SetStyle(ControlStyles.AllPaintingInWmPaint, true);
-		SetStyle(ControlStyles.DoubleBuffer, false);
 
 		// set process priority
 		m_MouseTimeOut = DateTime.Now;
 		//System.Threading.Thread.CurrentThread.Priority=System.Threading.ThreadPriority.BelowNormal;
 
+		if (splashScreen != null) splashScreen.SetInformation("Starting recorder...");
 		Recorder.Start();
 		AutoPlay.StartListening();
 
@@ -784,15 +579,6 @@ public class MediaPortalApp : D3DApp, IRender
 		PluginManager.Load();
 		PluginManager.Start();
 
-		//
-		// Kill the splash screen
-		//
-		if (splashScreen != null)
-		{
-			splashScreen.Close();
-			splashScreen.Dispose();
-			splashScreen = null;
-		}
 
 		tMouseClickTimer = new System.Timers.Timer(SystemInformation.DoubleClickTime);
 		tMouseClickTimer.AutoReset = false;
@@ -815,6 +601,15 @@ public class MediaPortalApp : D3DApp, IRender
 		GUIPropertyManager.SetProperty("#time", GetTime());
 
 		JobDispatcher.Init();
+		//
+		// Kill the splash screen
+		//
+		if (splashScreen != null)
+		{
+			splashScreen.Close();
+			splashScreen.Dispose();
+			splashScreen = null;
+		}
 	}
 
 
@@ -2237,5 +2032,222 @@ public class MediaPortalApp : D3DApp, IRender
 	private void job_DoWork(object sender, DoWorkEventArgs e)
 	{
 		Log.Write("Job: {0}", DateTime.Now.TimeOfDay);
+	}
+
+	void DoStartupJobs()
+	{
+		Thread.CurrentThread.Priority=ThreadPriority.BelowNormal;
+		// Stop MCE services
+		Utils.StopMCEServices();
+
+		Log.Write("  Set registry keys for intervideo/windvd/hauppauge codecs");
+		// Set Intervideo registry keys 
+		try
+		{
+			RegistryKey hklm = Registry.LocalMachine;
+
+			// windvd6 mpeg2 codec settings
+			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal", "BOBWEAVE", 1);
+			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\AudioDec", "DsContinuousRate", 1);
+			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "DsContinuousRate", 1);
+			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "Dxva", 1);
+			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "DxvaFetchSample", 0);
+			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "ResendOnFamine", 0);
+			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "VgaQuery", 1);
+			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "VMR", 2);
+			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "BOBWEAVE", 1);
+			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\Common\AudioDec\MediaPortal", "DsContinuousRate", 1);
+			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\Common\VideoDec\MediaPortal", "DsContinuousRate", 1);
+			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\Common\VideoDec\MediaPortal", "Dxva", 1);
+			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\Common\VideoDec\MediaPortal", "DxvaFetchSample", 0);
+			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\Common\VideoDec\MediaPortal", "ResendOnFamine", 0);
+			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\Common\VideoDec\MediaPortal", "VgaQuery", 1);
+			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\Common\VideoDec\MediaPortal", "VMR", 2);
+			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\Common\VideoDec\MediaPortal", "BOBWEAVE", 1);
+
+			// hauppauge mpeg2 codec settings
+			SetDWORDRegKey(hklm, @"SOFTWARE\IviSDK4Hauppauge\Common\VideoDec", "Hwmc", 1);
+			SetDWORDRegKey(hklm, @"SOFTWARE\IviSDK4Hauppauge\Common\VideoDec", "Dxva", 1);
+
+			hklm.Close();
+
+			// windvd6 mpeg2 codec settings
+			hklm = Registry.CurrentUser;
+			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal", "BOBWEAVE", 1);
+			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\AudioDec", "DsContinuousRate", 1);
+			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "DsContinuousRate", 1);
+			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "Dxva", 1);
+			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "DxvaFetchSample", 0);
+			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "ResendOnFamine", 0);
+			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "VgaQuery", 1);
+			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "VMR", 2);
+			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "BOBWEAVE", 1);
+			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal", "BOBWEAVE", 1);
+			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\Common\AudioDec\MediaPortal", "DsContinuousRate", 1);
+			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\Common\VideoDec\MediaPortal", "DsContinuousRate", 1);
+			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\Common\VideoDec\MediaPortal", "Dxva", 1);
+			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\Common\VideoDec\MediaPortal", "DxvaFetchSample", 0);
+			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\Common\VideoDec\MediaPortal", "ResendOnFamine", 0);
+			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\Common\VideoDec\MediaPortal", "VgaQuery", 1);
+			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\Common\VideoDec\MediaPortal", "VMR", 2);
+			SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\Common\VideoDec\MediaPortal", "BOBWEAVE", 1);
+	
+			hklm.Close();
+			hklm=null;
+		}
+		catch (Exception)
+		{
+		}
+
+		GUIWindowManager.OnNewAction += new OnActionHandler(this.OnAction);
+
+		if (m_bAutoHideMouse)
+		{
+			HideCursor();
+		}
+
+		GUIWindowManager.Receivers += new SendMessageHandler(OnMessage);
+		GUIWindowManager.Callbacks += new GUIWindowManager.OnCallBackHandler(this.Process);
+		GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STARTING;
+		Utils.OnStartExternal += new Utils.UtilEventHandler(OnStartExternal);
+		Utils.OnStopExternal += new Utils.UtilEventHandler(OnStopExternal);
+
+		// load keymapping from keymap.xml
+		ActionTranslator.Load();
+
+		// One time setup for proxy servers
+		// also set credentials to allow use with firewalls that require them
+		// this means we can use the .NET internet objects and not have
+		// to worry about proxies elsewhere in the code
+		System.Net.WebProxy proxy = System.Net.WebProxy.GetDefaultProxy();
+		proxy.Credentials = System.Net.CredentialCache.DefaultCredentials;
+		System.Net.GlobalProxySelection.Select = proxy;
+
+		//register the playlistplayer for thread messages (like playback stopped,ended)
+		Log.Write("  Init playlist player");
+		PlayListPlayer.Init();
+
+		//
+		// Only load the USBUIRT device if it has been enabled in the configuration
+		//
+		using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+		{
+			bool inputEnabled = xmlreader.GetValueAsBool("USBUIRT", "internal", false) ;
+			bool outputEnabled = xmlreader.GetValueAsBool("USBUIRT", "external", false) ;
+
+			if (inputEnabled == true || outputEnabled == true)
+			{
+				Log.Write("  Creating the USBUIRT device");
+				this.usbuirtdevice = USBUIRT.Create(new USBUIRT.OnRemoteCommand(OnRemoteCommand));
+				Log.Write("  done creating the USBUIRT device");
+			}
+			//Load Winlirc if enabled.
+			//sd00//
+			bool winlircInputEnabled = xmlreader.GetValueAsString("WINLIRC", "enabled", "false") == "true";
+			if (winlircInputEnabled == true)
+			{
+				Log.Write("  creating the WINLIRC device");
+				this.winlircdevice = new WinLirc();
+				Log.Write("  done creating the WINLIRC device");
+			}
+			//sd00//
+			//Load RedEye if enabled.
+			bool redeyeInputEnabled = xmlreader.GetValueAsString("RedEye", "internal", "false") == "true";
+			if (redeyeInputEnabled == true)
+			{
+				Log.Write("creating the REDEYE device");
+				this.redeyedevice = RedEye.Create(new RedEye.OnRemoteCommand(OnRemoteCommand));
+				Log.Write("done creating the RedEye device");
+			}
+			inputEnabled = xmlreader.GetValueAsString("SerialUIR", "internal", "false") == "true";
+
+			if (inputEnabled == true)
+			{
+				Log.Write("  creating the SerialUIR device");
+				this.serialuirdevice = SerialUIR.Create(new SerialUIR.OnRemoteCommand(OnRemoteCommand));
+				Log.Write("  done creating the SerialUIR device");
+			}
+		}
+
+		//registers the player for video window size notifications
+		Log.Write("  Init players");
+		g_Player.Init();
+
+		//  hook ProcessExit for a chance to clean up when closed peremptorily
+
+#if AUTOUPDATE
+      AppDomain.CurrentDomain.ProcessExit += new EventHandler(CurrentDomain_ProcessExit);
+
+      //  hook form close to stop updater too
+      this.Closed += new EventHandler(MediaPortal_Closed);
+#endif
+		XmlDocument doc = new XmlDocument();
+		try
+		{
+			doc.Load("mediaportal.exe.config");
+			XmlNode node = doc.SelectSingleNode("/configuration/appStart/ClientApplicationInfo/appFolderName");
+			node.InnerText = System.IO.Directory.GetCurrentDirectory();
+
+			node = doc.SelectSingleNode("/configuration/appUpdater/UpdaterConfiguration/application/client/baseDir");
+			node.InnerText = System.IO.Directory.GetCurrentDirectory();
+
+			node = doc.SelectSingleNode("/configuration/appUpdater/UpdaterConfiguration/application/client/tempDir");
+			node.InnerText = System.IO.Directory.GetCurrentDirectory();
+			doc.Save("Mediaportal.exe.config");
+		}
+		catch (Exception)
+		{
+		}
+
+
+		Thumbs.CreateFolders();
+		try
+		{
+#if DEBUG
+#else
+#if AUTOUPDATE
+        UpdaterConfiguration config = UpdaterConfiguration.Instance;
+				config.Logging.LogPath = System.IO.Directory.GetCurrentDirectory() + @"\log\updatelog.log";
+				config.Applications[0].Client.BaseDir = System.IO.Directory.GetCurrentDirectory();
+				config.Applications[0].Client.TempDir = System.IO.Directory.GetCurrentDirectory() + @"\temp";
+				config.Applications[0].Client.XmlFile = System.IO.Directory.GetCurrentDirectory() + @"\MediaPortal.exe.config";
+				config.Applications[0].Server.ServerManifestFileDestination = System.IO.Directory.GetCurrentDirectory() + @"\xml\ServerManifest.xml";
+				
+				try
+				{
+					System.IO.Directory.CreateDirectory(config.Applications[0].Client.BaseDir + @"\temp");
+					System.IO.Directory.CreateDirectory(config.Applications[0].Client.BaseDir + @"\xml");
+					System.IO.Directory.CreateDirectory(config.Applications[0].Client.BaseDir + @"\log");
+				}
+				catch(Exception){}
+				Utils.DeleteFiles(config.Applications[0].Client.BaseDir + @"\log", "*.log");
+				ClientApplicationInfo clientInfo = ClientApplicationInfo.Deserialize("MediaPortal.exe.config");
+				clientInfo.AppFolderName = System.IO.Directory.GetCurrentDirectory();
+				ClientApplicationInfo.Save("MediaPortal.exe.config",clientInfo.AppFolderName, clientInfo.InstalledVersion);
+				m_strCurrentVersion = clientInfo.InstalledVersion;
+				Text += (" - [v" + m_strCurrentVersion + "]");
+				//  make an Updater for use in-process with us
+				_updater = new ApplicationUpdateManager();
+
+				//  hook Updater events
+				_updater.DownloadStarted += new UpdaterActionEventHandler(OnUpdaterDownloadStarted);
+				_updater.UpdateAvailable += new UpdaterActionEventHandler(OnUpdaterUpdateAvailable);
+				_updater.DownloadCompleted += new UpdaterActionEventHandler(OnUpdaterDownloadCompleted);
+
+				//  start the updater on a separate thread so that our UI remains responsive
+				_updaterThread = new Thread(new ThreadStart(_updater.StartUpdater));
+				_updaterThread.Start();
+#endif
+#endif
+		}
+		catch (Exception)
+		{
+		}
+		using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+		{
+			m_iDateLayout = xmlreader.GetValueAsInt("home", "datelayout", 0);
+		}
+		screenSaverTimer=DateTime.Now;
+
 	}
 }

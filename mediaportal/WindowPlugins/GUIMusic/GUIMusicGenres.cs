@@ -76,7 +76,6 @@ namespace MediaPortal.GUI.Music
     public override bool Init()
     {
       m_strDirectory=String.Empty;
-			handler.CurrentView="Artists";
 			GUIWindowManager.Receivers += new SendMessageHandler(this.OnThreadMessage);
       return Load (GUIGraphicsContext.Skin+@"\mymusicgenres.xml");
     }
@@ -175,12 +174,12 @@ namespace MediaPortal.GUI.Music
 
 		protected override void OnPageLoad()
 		{
+			base.OnPageLoad();
 			string view=MusicState.View;
 			if (view==String.Empty)
 				view=((ViewDefinition)handler.Views[0]).Name;
 
 			handler.CurrentView = view;
-			base.OnPageLoad ();
 			LoadDirectory(m_strDirectory);
 			if (facadeView.Count <=0)
 			{

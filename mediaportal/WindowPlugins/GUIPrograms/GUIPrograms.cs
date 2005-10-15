@@ -329,7 +329,7 @@ namespace WindowPlugins.GUIPrograms
     ~GUIPrograms()
     {
       SaveSettings();
-      FolderSettings.DeleteFolderSetting("root", "Programs");
+      //FolderSettings.DeleteFolderSetting("root", "Programs");
     }
 
     #endregion 

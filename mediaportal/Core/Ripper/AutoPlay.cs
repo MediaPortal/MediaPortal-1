@@ -175,6 +175,7 @@ namespace MediaPortal.Ripper
 
     private static void StartListeningForEvents()
     {
+			if (m_vecList==null) return;
       int nrOfDrives=m_vecList.Count;      
       if (nrOfDrives<=0) return;
       try

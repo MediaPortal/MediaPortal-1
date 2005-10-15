@@ -169,26 +169,6 @@ namespace MediaPortal.GUI.TV
 
 			m_strTVGuideFile+=@"\tvguide.xml";
 
-			CheckNewTVGuide();
-			// check if there's a new TVguide.xml
-			try
-			{
-				ArrayList channels = new ArrayList();
-				ArrayList programs = new ArrayList();
-				TVDatabase.GetChannels(ref channels);
-				if (channels.Count==0) 
-				{
-					StartImportXML();
-				}
-				channels=null;
-			}
-			catch (Exception)
-			{
-			}
-    
-			TVDatabase.OnProgramsChanged+=new MediaPortal.TV.Database.TVDatabase.OnChangedHandler(TVDatabase_OnProgramsChanged);
-			TVDatabase.OnNotifiesChanged+=new MediaPortal.TV.Database.TVDatabase.OnChangedHandler(TVDatabase_OnNotifiesChanged);
-			ConflictManager.OnConflictsUpdated+=new MediaPortal.TV.Recording.ConflictManager.OnConflictsUpdatedHandler(ConflictManager_OnConflictsUpdated);
 			return Load (GUIGraphicsContext.Skin+@"\mytvguide.xml");
 		}
 
@@ -236,6 +216,32 @@ namespace MediaPortal.GUI.TV
 			}
 		}
 		#endregion
+
+		protected override void OnPageLoad()
+		{
+			base.OnPageLoad ();
+			CheckNewTVGuide();
+			// check if there's a new TVguide.xml
+			try
+			{
+				ArrayList channels = new ArrayList();
+				ArrayList programs = new ArrayList();
+				TVDatabase.GetChannels(ref channels);
+				if (channels.Count==0) 
+				{
+					StartImportXML();
+				}
+				channels=null;
+			}
+			catch (Exception)
+			{
+			}
+    
+			TVDatabase.OnProgramsChanged+=new MediaPortal.TV.Database.TVDatabase.OnChangedHandler(TVDatabase_OnProgramsChanged);
+			TVDatabase.OnNotifiesChanged+=new MediaPortal.TV.Database.TVDatabase.OnChangedHandler(TVDatabase_OnNotifiesChanged);
+			ConflictManager.OnConflictsUpdated+=new MediaPortal.TV.Recording.ConflictManager.OnConflictsUpdatedHandler(ConflictManager_OnConflictsUpdated);
+		}
+
 
 		public override void OnAction(Action action)
 		{
@@ -2517,6 +2523,10 @@ namespace MediaPortal.GUI.TV
 		}
 		protected override void OnPageDestroy(int newWindowId)
 		{
+			TVDatabase.OnProgramsChanged-=new MediaPortal.TV.Database.TVDatabase.OnChangedHandler(TVDatabase_OnProgramsChanged);
+			TVDatabase.OnNotifiesChanged-=new MediaPortal.TV.Database.TVDatabase.OnChangedHandler(TVDatabase_OnNotifiesChanged);
+			ConflictManager.OnConflictsUpdated-=new MediaPortal.TV.Recording.ConflictManager.OnConflictsUpdatedHandler(ConflictManager_OnConflictsUpdated);
+
 			base.OnPageDestroy (newWindowId);
 					
 			if ( !GUITVHome.IsTVWindow(newWindowId) )

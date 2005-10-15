@@ -115,9 +115,6 @@ namespace MediaPortal.GUI.TV
 		public override bool Init()
 		{
 			bool bResult= Load (GUIGraphicsContext.Skin+@"\mytvhome.xml");
-			// Create the channel navigator (it will load groups and channels)
-			m_navigator = new ChannelNavigator();
-			LoadSettings();
 			return bResult;
 		}
 
@@ -287,6 +284,11 @@ namespace MediaPortal.GUI.TV
 
 		protected override void OnPageLoad()
 		{
+			if (m_navigator ==null)
+			{
+				m_navigator = new ChannelNavigator();			// Create the channel navigator (it will load groups and channels)
+				LoadSettings();
+			}
 			base.OnPageLoad ();
 			/*
 			if (g_Player.Playing && !g_Player.IsTV)

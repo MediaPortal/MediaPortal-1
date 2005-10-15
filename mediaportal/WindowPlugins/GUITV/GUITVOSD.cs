@@ -113,7 +113,6 @@ namespace MediaPortal.GUI.TV
     public GUITVOSD()
     {
 			GetID=(int)GUIWindow.Window.WINDOW_TVOSD;
-			TVDatabase.GetChannels(ref listTvChannels);
     }
 
     public override bool Init()
@@ -285,6 +284,7 @@ namespace MediaPortal.GUI.TV
         {
           // following line should stay. Problems with OSD not
           // appearing are already fixed elsewhere
+					TVDatabase.GetChannels(ref listTvChannels);
 					GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(100000 + GetID));
 					previousProgram=null;
           AllocResources();

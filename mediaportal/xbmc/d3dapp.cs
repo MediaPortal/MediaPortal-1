@@ -1669,7 +1669,7 @@ namespace MediaPortal
     {
 			Application.Idle+=new EventHandler(Application_Idle);
       Initialize();
-      OnStartup();
+			OnStartup();
 
 		// TODO: When migrating to .NET 2 change to use EventWaitHandle.OpenExisting
 

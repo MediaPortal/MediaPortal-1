@@ -126,8 +126,8 @@ namespace MediaPortal.Dispatcher
 		{
 			lock(_dispatcher)
 			{
-				if(_isRunning == false)
-					throw new InvalidOperationException("Dispatcher is already shutdown.");
+				//if(_isRunning == false)
+				//	throw new InvalidOperationException("Dispatcher is already shutdown.");
 
 				_isRunning = false;
 				_dispatcher.Clear();

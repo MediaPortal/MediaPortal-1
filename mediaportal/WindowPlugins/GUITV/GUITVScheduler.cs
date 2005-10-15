@@ -117,7 +117,6 @@ namespace MediaPortal.GUI.TV
 		{
 			bool bResult=Load (GUIGraphicsContext.Skin+@"\mytvscheduler.xml");
 			LoadSettings();
-			ConflictManager.OnConflictsUpdated+=new MediaPortal.TV.Recording.ConflictManager.OnConflictsUpdatedHandler(ConflictManager_OnConflictsUpdated);
 			return bResult;
 		}
 
@@ -165,6 +164,7 @@ namespace MediaPortal.GUI.TV
 		protected override void OnPageLoad()
 		{
 			base.OnPageLoad ();
+			ConflictManager.OnConflictsUpdated+=new MediaPortal.TV.Recording.ConflictManager.OnConflictsUpdatedHandler(ConflictManager_OnConflictsUpdated);
 					
 			LoadSettings();
 			needUpdate=false;
@@ -177,6 +177,7 @@ namespace MediaPortal.GUI.TV
 		}
 		protected override void OnPageDestroy(int newWindowId)
 		{
+			ConflictManager.OnConflictsUpdated-=new MediaPortal.TV.Recording.ConflictManager.OnConflictsUpdatedHandler(ConflictManager_OnConflictsUpdated);
 			base.OnPageDestroy (newWindowId);
 			m_iSelectedItem=GetSelectedItemNo();
 			SaveSettings();

@@ -63,7 +63,7 @@ namespace MediaPortal.GUI.Music
 		protected   bool       m_bSortAscendingRoot;
 		private     bool       m_bUseID3=false;
 		protected   MusicViewHandler handler;
-		protected MusicDatabase		      m_database = new MusicDatabase();
+		protected MusicDatabase		      m_database;
 		[SkinControlAttribute(50)]		protected GUIFacadeControl facadeView=null;
 		[SkinControlAttribute(2)]			protected GUIButtonControl btnViewAs=null;
 		[SkinControlAttribute(3)]			protected GUISortButtonControl btnSortBy=null;
@@ -71,7 +71,6 @@ namespace MediaPortal.GUI.Music
 
 		public GUIMusicBaseWindow()
 		{
-				handler= new MusicViewHandler();
 		}
 		protected bool UseID3
 		{
@@ -438,6 +437,11 @@ namespace MediaPortal.GUI.Music
 
 		protected override void OnPageLoad()
 		{
+			if (m_database==null)
+			{
+				handler= new MusicViewHandler();
+				m_database = new MusicDatabase();
+			}
 			LoadSettings();
 
 			if(btnSortBy != null)

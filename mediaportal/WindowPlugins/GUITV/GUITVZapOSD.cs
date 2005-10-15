@@ -58,7 +58,6 @@ namespace MediaPortal.GUI.TV
     {
 		
 			GetID=(int)GUIWindow.Window.WINDOW_TVZAPOSD;
-			TVDatabase.GetChannels(ref tvChannelList);
     }
 
     public override bool Init()
@@ -117,6 +116,7 @@ namespace MediaPortal.GUI.TV
 		{
 			// following line should stay. Problems with OSD not
 			// appearing are already fixed elsewhere
+			TVDatabase.GetChannels(ref tvChannelList);
 			AllocResources();
 			// if (g_application.m_pPlayer) g_application.m_pPlayer.ShowOSD(false);
 			ResetAllControls();							// make sure the controls are positioned relevant to the OSD Y offset

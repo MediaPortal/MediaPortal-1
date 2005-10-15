@@ -58,7 +58,6 @@ namespace MediaPortal.GUI.TV
 		public override bool Init()
 		{
 			bool bResult=Load (GUIGraphicsContext.Skin+@"\mytvconflicts.xml");
-			ConflictManager.OnConflictsUpdated+=new MediaPortal.TV.Recording.ConflictManager.OnConflictsUpdatedHandler(ConflictManager_OnConflictsUpdated);
 			return bResult;
 		}
 
@@ -89,6 +88,7 @@ namespace MediaPortal.GUI.TV
 		protected override void OnPageLoad()
 		{
 			base.OnPageLoad ();
+			ConflictManager.OnConflictsUpdated+=new MediaPortal.TV.Recording.ConflictManager.OnConflictsUpdatedHandler(ConflictManager_OnConflictsUpdated);
 					
 			needUpdate=false;
 			LoadDirectory();
@@ -101,6 +101,7 @@ namespace MediaPortal.GUI.TV
 		{
 			base.OnPageDestroy (newWindowId);
 			m_iSelectedItem=GetSelectedItemNo();
+			ConflictManager.OnConflictsUpdated-=new MediaPortal.TV.Recording.ConflictManager.OnConflictsUpdatedHandler(ConflictManager_OnConflictsUpdated);
 					
 			if ( !GUITVHome.IsTVWindow(newWindowId) )
 			{
