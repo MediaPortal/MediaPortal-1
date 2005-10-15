@@ -45,6 +45,24 @@ namespace MediaPortal.GUI.Library
 		[XMLSkinElement("textalign")]		protected GUIControl.Alignment       _textAlignment=GUIControl.Alignment.ALIGN_LEFT;
 		[XMLSkinElement("application")]		protected string    m_strApplication="";
 		[XMLSkinElement("arguments")]		protected string    m_strArguments="";
+
+		[XMLSkinElement("hover")]			
+		protected string					_hoverFilename = string.Empty;
+
+		[XMLSkinElement("hoverX")]			
+		protected int						_hoverX;
+
+		[XMLSkinElement("hoverY")]
+		protected int						_hoverY;
+
+		[XMLSkinElement("hoverWidth")]
+		protected int						_hoverWidth;
+
+		[XMLSkinElement("hoverHeight")]
+		protected int						_hoverHeight;
+
+		protected GUIImage					_hoverImage; 
+
 		protected int       m_dwFrameCounter=0;
 		protected GUIImage	m_imgFocus=null;
 		protected GUIImage  m_imgNoFocus=null; 
@@ -85,6 +103,12 @@ namespace MediaPortal.GUI.Library
 			
 			m_imgNoFocus= new GUIImage(m_dwParentID, m_dwControlID, m_dwPosX, m_dwPosY,
 				m_dwWidth, m_dwHeight, m_strImgNoFocusTexture,0);
+
+			if(_hoverFilename != string.Empty)
+			{
+				_hoverImage = new GUIImage(m_dwParentID, m_dwControlID, _hoverX, _hoverY, _hoverWidth, _hoverHeight, _hoverFilename, 0);
+				_hoverImage.Filtering = false;	
+			}
 			
 			m_imgFocus.Filtering=false;
 			m_imgNoFocus.Filtering=false;
@@ -135,6 +159,9 @@ namespace MediaPortal.GUI.Library
 			{
 				//render the focused image
 				m_imgFocus.Render(timePassed);
+
+				if(_hoverImage != null)
+					_hoverImage.Render(timePassed);
 			}
 			else 
 			{
@@ -263,6 +290,9 @@ namespace MediaPortal.GUI.Library
 			base.PreAllocResources();
 			m_imgFocus.PreAllocResources();
 			m_imgNoFocus.PreAllocResources();
+
+			if(_hoverImage != null)
+				_hoverImage.PreAllocResources();
       
 		}
 		
@@ -275,6 +305,10 @@ namespace MediaPortal.GUI.Library
 			m_dwFrameCounter=0;
 			m_imgFocus.AllocResources();
 			m_imgNoFocus.AllocResources();
+
+			if(_hoverImage != null)
+				_hoverImage.AllocResources();
+
 			m_dwWidth=m_imgFocus.Width;
 			m_dwHeight=m_imgFocus.Height;
       
@@ -296,6 +330,9 @@ namespace MediaPortal.GUI.Library
 			m_imgFocus.FreeResources();
 			m_imgNoFocus.FreeResources();
 			m_label.FreeResources();
+
+			if(_hoverImage != null)
+				_hoverImage.FreeResources();
 		}
 
 		/// <summary>
@@ -319,6 +356,9 @@ namespace MediaPortal.GUI.Library
 			base.SetAlpha(dwAlpha);
 			m_imgFocus.SetAlpha(dwAlpha);
 			m_imgNoFocus.SetAlpha(dwAlpha);
+
+			if(_hoverImage != null)
+				_hoverImage.SetAlpha(dwAlpha);
 		}
 
 		/// <summary>
