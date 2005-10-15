@@ -306,15 +306,14 @@ STDMETHODIMP CMPTSFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt)
 			count++;
 		}
 
-		/*
 		while(true)
 		{
 			m_pFileReader->GetFileSize(&fileSize);
-			if(fileSize>=200000 ||count>=50)
+			if(fileSize>=50000 ||count>=50)
 				break;
 			Sleep(100);
 			count++;
-		}*/
+		}
 	}
 	//If this a file start then return null.
 	RefreshPids();

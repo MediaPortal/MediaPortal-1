@@ -2427,7 +2427,7 @@ namespace MediaPortal.TV.Recording
 #if USEMTSWRITER
 			if (m_tsWriterInterface== null || m_tsWriterInterface==null || currentTuningObject==null) return;
 			Log.Write("DVBGraphBDA:SetupMTSDemuxerPin");
-			//m_tsWriterInterface.ResetPids();
+			m_tsWriterInterface.ResetPids();
 			if (currentTuningObject.AC3Pid>0)
 				m_tsWriterInterface.SetAC3Pid((ushort)currentTuningObject.AC3Pid);
 			else

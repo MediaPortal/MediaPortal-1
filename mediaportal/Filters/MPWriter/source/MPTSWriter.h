@@ -171,6 +171,8 @@ private:
 	int 		m_pmtPid;
 	int 		m_pcrPid;
 	bool		IsPidValid(int pid);
+	bool		m_bResettingPids;
+	bool		m_bUpdatePids;
 };
 
 

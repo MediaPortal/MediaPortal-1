@@ -272,6 +272,10 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 	
 	if (ptsStart>0)
 	{
+		if (ptsStart < m_pSections->pids.StartPTS || ptsStart > (m_pSections->pids.EndPTS+ ((__int64)0x100000)) )
+		{
+			LogDebug("INVALID pts:%x %x-%x", (DWORD)ptsStart,(DWORD)m_pSections->pids.StartPTS ,(DWORD) m_pSections->pids.EndPTS);
+		}
 		UpdatePositions(ptsStart);
 
 		REFERENCE_TIME rtStart = static_cast<REFERENCE_TIME>(ptsStart);

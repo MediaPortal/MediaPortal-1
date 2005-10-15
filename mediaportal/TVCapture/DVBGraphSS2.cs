@@ -1168,7 +1168,7 @@ namespace MediaPortal.TV.Recording
 		{
 #if USEMTSWRITER
 			if (m_tsWriterInterface== null || m_tsWriterInterface==null || m_currentChannel==null) return;
-			//m_tsWriterInterface.ResetPids();
+			m_tsWriterInterface.ResetPids();
 			if (m_currentChannel.AC3Pid>0)
 				m_tsWriterInterface.SetAC3Pid((ushort)m_currentChannel.AC3Pid);
 			else

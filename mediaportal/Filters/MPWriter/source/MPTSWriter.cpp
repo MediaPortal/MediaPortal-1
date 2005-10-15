@@ -138,7 +138,7 @@ STDMETHODIMP CDumpFilter::Stop()
 {
     CAutoLock cObjectLock(m_pLock);
 	
-	LogDebug("graph Stop() called");
+	LogDebug("CDumpFilter::Stop()");
 	m_pDump->Log(TEXT("graph Stop() called"),true);
 
     if (m_pDump)
@@ -155,6 +155,7 @@ STDMETHODIMP CDumpFilter::Stop()
 //
 STDMETHODIMP CDumpFilter::Pause()
 {
+	LogDebug("CDumpFilter::Pause()");
     CAutoLock cObjectLock(m_pLock);
 
     if (m_pDump)
@@ -185,6 +186,7 @@ STDMETHODIMP CDumpFilter::Pause()
 //
 STDMETHODIMP CDumpFilter::Run(REFERENCE_TIME tStart)
 {
+	LogDebug("CDumpFilter::Run()");
     CAutoLock cObjectLock(m_pLock);
 
     // Clear the global 'write error' flag that would be set
@@ -221,9 +223,19 @@ CDumpInputPin::CDumpInputPin(CDump *pDump,
     m_pDump(pDump),
     m_tLast(0)
 {
-	ResetPids();
-	m_restBufferLen=0;
+	LogDebug("CDumpInputPin:ctor");
 
+	m_videoPid=-1;
+	m_audio1Pid=-1;
+	m_audio2Pid=-1;
+	m_ac3Pid=-1;
+	m_ttxtPid=-1;
+	m_subtitlePid=-1;
+	m_pmtPid=-1;
+	m_pcrPid=-1;
+	m_restBufferLen=0;
+	m_bResettingPids=true;
+	m_bUpdatePids=false;
 }
 
 
@@ -269,7 +281,10 @@ HRESULT CDumpInputPin::SetSubtitlePid(int subtitlePid)
 }
 HRESULT CDumpInputPin::SetPMTPid(int pmtPid)
 {
+	LogDebug("pin:setPMTPid:%x", pmtPid);
 	m_pmtPid=pmtPid;
+	m_bUpdatePids=true;
+	m_pDump->UpdateInfoFile(true);
 	return S_OK;
 }
 HRESULT CDumpInputPin::SetPCRPid(int pcrPid)
@@ -351,19 +366,23 @@ STDMETHODIMP CDumpInputPin::Receive(IMediaSample *pSample)
 	try
 	{
 
-	/*
-		//TESTTEST
-		ULONGLONG duration;
-		m_pDump->TimeShiftBufferDuration(&duration);
-		if (duration >=30LL*10000000LL)
+		if (m_bUpdatePids)
 		{
-			if (false==true)
-			{
-				m_pDump->SetRecordingFileName("D:\\erwin\\media\\videos\\rec.ts");
-				m_pDump->StartRecord(15LL*10000000LL);
-			}
+			LogDebug("CDumpInputPin::Receive():start receiving");
+			m_bUpdatePids=false;
+			m_bResettingPids=false;
+			return S_OK;
 		}
-	*/
+
+		//are pids set?
+		if (m_bResettingPids) 
+		{
+			//not yet
+			//LogDebug("ignore...");
+			return S_OK;
+		}
+
+
 		CAutoLock lock(m_pReceiveLock);
 		PBYTE pbData;
 
@@ -507,6 +526,7 @@ STDMETHODIMP CDumpInputPin::Receive(IMediaSample *pSample)
 					}
 					//else LogDebug("pid:0x%x scrambled:%d", pid,scrambled);
 				}
+				//else LogDebug("wrong pid:%x", pid);
 
 			}
 		}
@@ -544,7 +564,9 @@ STDMETHODIMP CDumpInputPin::Receive(IMediaSample *pSample)
 }
 void CDumpInputPin::ResetPids()
 {
-	m_videoPid=m_audio1Pid=m_audio2Pid=m_ac3Pid=m_ttxtPid=m_subtitlePid=m_pmtPid=m_pcrPid=-1;
+	LogDebug("pin:ResetPids()");
+	m_bResettingPids=true;
+	//m_videoPid=m_audio1Pid=m_audio2Pid=m_ac3Pid=m_ttxtPid=m_subtitlePid=m_pmtPid=m_pcrPid=-1;
 }
 bool CDumpInputPin::IsPidValid(int pid)
 {
@@ -594,6 +616,8 @@ CDump::CDump(LPUNKNOWN pUnk, HRESULT *phr) :
     m_fWriteError(0),
 	m_currentFilePosition(0)
 {
+
+	LogDebug("CDump::ctor()");
 	m_pesPid=0;
 	m_hInfoFile=INVALID_HANDLE_VALUE;
 	m_hFile=INVALID_HANDLE_VALUE;
@@ -636,6 +660,7 @@ STDMETHODIMP CDump::SetFileName(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt)
 {
     // Is this a valid filename supplied
 
+	LogDebug("CDump::SetFileName()");
     CheckPointer(pszFileName,E_POINTER);
     if(wcslen(pszFileName) > MAX_PATH)
         return ERROR_FILENAME_EXCED_RANGE;
@@ -658,7 +683,6 @@ STDMETHODIMP CDump::SetFileName(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt)
 
 
     HRESULT hr = OpenFile();
-    CloseFile();
 	m_pesPid=0;
 /*
 	//TESTTESTTEST
@@ -817,10 +841,9 @@ STDMETHODIMP CDump::SetVideoPid(int pid)
 	if (pid== m_pPin->GetVideoPid()) return S_OK;
 	Log(TEXT("SetVideoPid ="),false);
 	Log((__int64)pid,true);
-	LogDebug("SetVideoPid:0x%x",pid);
+	LogDebug("CDump::SetVideoPid:0x%x",pid);
 	m_pesPid=0;
 	m_pPin->SetVideoPid(pid);
-	UpdateInfoFile(true);
 	return S_OK;
 
 }
@@ -831,8 +854,7 @@ STDMETHODIMP CDump::SetAudioPid(int pid)
 	Log(TEXT("SetAudioPid ="),false);
 	Log((__int64)pid,true);
 	m_pPin->SetAudioPid(pid);
-	LogDebug("SetAudioPid:0x%x",pid);
-	UpdateInfoFile(true);
+	LogDebug("CDump::SetAudioPid:0x%x",pid);
 	return S_OK;
 
 }
@@ -843,8 +865,7 @@ STDMETHODIMP CDump::SetAudioPid2(int pid)
 	Log(TEXT("SetAudioPid2 ="),false);
 	Log((__int64)pid,true);
 	m_pPin->SetAudioPid2(pid);
-	LogDebug("SetAudioPid2:0x%x",pid);
-	UpdateInfoFile(true);
+	LogDebug("CDump::SetAudioPid2:0x%x",pid);
 	return S_OK;
 
 }
@@ -855,8 +876,7 @@ STDMETHODIMP CDump::SetAC3Pid(int pid)
 	Log(TEXT("SetAC3Pid ="),false);
 	Log((__int64)pid,true);
 	m_pPin->SetAC3Pid(pid);
-	LogDebug("SetAC3Pid:0x%x",pid);
-	UpdateInfoFile(true);
+	LogDebug("CDump::SetAC3Pid:0x%x",pid);
 	return S_OK;
 
 }
@@ -866,8 +886,7 @@ STDMETHODIMP CDump::SetTeletextPid(int pid)
 	Log(TEXT("SetTeletextPid ="),false);
 	Log((__int64)pid,true);
 	m_pPin->SetTeletextPid(pid);
-	LogDebug("SetTeletextPid:0x%x",pid);
-	UpdateInfoFile(true);
+	LogDebug("CDump::SetTeletextPid:0x%x",pid);
 	return S_OK;
 
 }
@@ -877,8 +896,7 @@ STDMETHODIMP CDump::SetSubtitlePid(int pid)
 	Log(TEXT("SetSubtitlePid ="),false);
 	Log((__int64)pid,true);
 	m_pPin->SetSubtitlePid(pid);
-	LogDebug("SetSubtitlePid:0x%x",pid);
-	UpdateInfoFile(true);
+	LogDebug("CDump::SetSubtitlePid:0x%x",pid);
 	return S_OK;
 
 }
@@ -888,8 +906,7 @@ STDMETHODIMP CDump::SetPMTPid(int pid)
 	Log(TEXT("SetPMTPid ="),false);
 	Log((__int64)pid,true);
 	m_pPin->SetPMTPid(pid);
-	LogDebug("SetPMTPid:0x%x",pid);
-	UpdateInfoFile(true);
+	LogDebug("CDump::SetPMTPid:0x%x",pid);
 	return S_OK;
 }
 
@@ -910,22 +927,19 @@ STDMETHODIMP CDump::SetPCRPid(int pid)
 	Log(TEXT("SetPCRPid ="),false);
 	Log((__int64)pid,true);
 	m_pPin->SetPCRPid(pid);
-	LogDebug("SetPCRPid:0x%x",pid);
-	UpdateInfoFile(true);
+	LogDebug("CDump::SetPCRPid:0x%x",pid);
 	return S_OK;
 }
 
 STDMETHODIMP CDump::ResetPids()
 {
-	LogDebug("Reset Pids");
-	m_pFilter->Stop();
+	LogDebug("--------------------------------------------");
+	LogDebug("CDump::ResetPids()");
 	LONG val;
 	m_pPin->ResetPids();
 	m_currentFilePosition=0;
 	SetFilePointer(m_hFile,0,&val,FILE_BEGIN);
 	SetEndOfFile(m_hFile);
-	OpenFile();
-	m_pFilter->Run(0);
 	return S_OK;
 }
 //
@@ -935,7 +949,7 @@ STDMETHODIMP CDump::ResetPids()
 //
 HRESULT CDump::OpenFile()
 {
-	LogDebug("OpenFile");
+	LogDebug("CDump::OpenFile");
     TCHAR *pFileName = NULL;
 
     // Is the file already opened
@@ -1006,7 +1020,7 @@ HRESULT CDump::OpenFile()
 
 
 
-	UpdateInfoFile(true);
+//	UpdateInfoFile(true);
 	return S_OK;
 
 } // Open
@@ -1025,7 +1039,7 @@ HRESULT CDump::CloseFile()
 
     if (m_hFile != INVALID_HANDLE_VALUE)
 	{
-		LogDebug("CloseFile()");
+		LogDebug("CDump::CloseFile()");
 
 		Log(TEXT("CloseFile called"),true);
 		LARGE_INTEGER li;
@@ -1167,7 +1181,7 @@ HRESULT CDump::WriteTimeshiftFile(PBYTE pbData, LONG lDataLength)
     //write to live.ts file
     if (m_hFile == INVALID_HANDLE_VALUE)
 	{
-        Log(TEXT("Write: m_hFile is invalid"),true);
+        Log(TEXT("CDump::WriteTimeshiftFile(): m_hFile is invalid"),true);
 		return S_FALSE;
     }
 	if (m_pesStart!=0)
@@ -1189,7 +1203,7 @@ HRESULT CDump::WriteTimeshiftFile(PBYTE pbData, LONG lDataLength)
 
 		if (m_currentFilePosition> MAX_FILE_LENGTH)
 		{
-			LogDebug("end of file reached, back to 0 pes start:%x pes end:%x", (DWORD)m_pesStart, (DWORD)m_pesNow);
+			LogDebug("CDump::WriteTimeshiftFile() end of file reached, back to 0 pes start:%x pes end:%x", (DWORD)m_pesStart, (DWORD)m_pesNow);
 			m_currentFilePosition=0;
 		}
 	}
@@ -1233,7 +1247,7 @@ HRESULT CDump::WriteTimeshiftFile(PBYTE pbData, LONG lDataLength)
 					if (m_pesStart==0) 
 					{
 						m_pesStart=ptsValue;
-						LogDebug("start pes:%x pid:%x", (DWORD)m_pesStart, header.Pid);
+						LogDebug("CDump::WriteTimeshiftFile() start pes:%x pid:%x", (DWORD)m_pesStart, header.Pid);
 					}
 					m_pesNow=ptsValue;
 					//LogDebug("pts:%x %x %x", (DWORD)m_pesStart,(DWORD)m_pesNow,header.Pid);
@@ -1291,13 +1305,13 @@ HRESULT CDump::UpdateInfoFile(bool pids)
 {
 	if (m_hInfoFile==INVALID_HANDLE_VALUE) 
 	{
-		LogDebug("UpdatePids() filehandle=closed");
+		LogDebug("CDump::UpdateInfoFile(): filehandle=closed");
 		return S_OK;
 	}
 
 	if (pids)
 	{
-		LogDebug("pids changed, clear map");
+		LogDebug("CDump::UpdateInfoFile(): pids changed, clear map");
 		m_mapPES.clear();
 	}
 
@@ -1321,7 +1335,7 @@ HRESULT CDump::UpdateInfoFile(bool pids)
 	WriteFile(m_hInfoFile, &m_pesNow, sizeof(m_pesNow), &written, NULL);
 	if (pids)
 	{
-		LogDebug("UpdatePids() ac3:0x%x audio:0x%x audio2:0x%x video:0x%x ttx:0x%x pmt:0x%x subtitle:0x%x pcr:0x%x",
+		LogDebug("CDump::UpdateInfoFile(): ac3:0x%x audio:0x%x audio2:0x%x video:0x%x ttx:0x%x pmt:0x%x subtitle:0x%x pcr:0x%x",
 			m_pPin->GetAC3Pid(),m_pPin->GetAudioPid(),m_pPin->GetAudioPid2(),m_pPin->GetVideoPid(),
 			m_pPin->GetTeletextPid(),m_pPin->GetPMTPid(),m_pPin->GetSubtitlePid(),m_pPin->GetPCRPid());
 
