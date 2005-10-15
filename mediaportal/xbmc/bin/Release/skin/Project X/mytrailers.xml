@@ -189,10 +189,11 @@
 			<type>fadelabel</type>
 			<description>Movie Title value</description>
 			<id>1</id>
-			<posX>256</posX>
-			<posY>44</posY>
+			<posX>65</posX>
+			<posY>500</posY>
 			<label>#title</label>
 			<font>font18</font>
+			<width>180</width>
 			<disabledcolor>ff808080</disabledcolor>
 		</control>
 		<control>
