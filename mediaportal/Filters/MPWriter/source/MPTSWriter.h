@@ -8,6 +8,14 @@
 #include <map>
 using namespace std;
 
+enum StreamState
+{
+	Started,
+	NotPresent,
+	Scrambled,
+	Unscrambled,
+};
+
 struct stTSHEADER
 {
 	BYTE SyncByte			;
@@ -173,6 +181,10 @@ private:
 	bool		IsPidValid(int pid);
 	bool		m_bResettingPids;
 	bool		m_bUpdatePids;
+	StreamState	m_audioState;
+	StreamState	m_videoState;
+	DWORD       m_audioTimer;
+	DWORD       m_videoTimer;
 };
 
 

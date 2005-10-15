@@ -369,8 +369,13 @@ STDMETHODIMP CDumpInputPin::Receive(IMediaSample *pSample)
 		if (m_bUpdatePids)
 		{
 			LogDebug("CDumpInputPin::Receive():start receiving");
+			m_restBufferLen=0;
 			m_bUpdatePids=false;
 			m_bResettingPids=false;
+			m_audioState=Started;
+			m_videoState=Started;
+			m_audioTimer=GetTickCount();
+			m_videoTimer=GetTickCount();
 			return S_OK;
 		}
 
@@ -515,6 +520,43 @@ STDMETHODIMP CDumpInputPin::Receive(IMediaSample *pSample)
 				{
 					//is packet scrambled?
 					byte scrambled=pbData[t+3] & 0xC0;
+					if (pid>0)
+					{
+						if (pid==m_audio1Pid || pid==m_audio2Pid || pid==m_ac3Pid)
+						{
+							StreamState state=Unscrambled;
+							if (scrambled)
+							{
+								state=Scrambled;
+								if (m_audioState!=state)
+									LogDebug("pid:0x%x audio stream is scrambled",pid);
+							}
+							else
+							{
+								if (m_audioState!=state)
+									LogDebug("pid:0x%x audio stream is unscrambled",pid);
+							}
+							m_audioState=state;
+							m_audioTimer=GetTickCount();
+						}
+						if (pid==m_videoPid)
+						{
+							StreamState state=Unscrambled;
+							if (scrambled)
+							{
+								state=Scrambled;
+								if (m_videoState!=state)
+									LogDebug("pid:0x%x video stream is scrambled",pid);
+							}
+							else
+							{
+								if (m_videoState!=state)
+									LogDebug("pid:0x%x video stream is unscrambled",pid);
+							}
+							m_videoState=state;
+							m_videoTimer=GetTickCount();
+						}
+					}
 					if(!scrambled)
 					{
 						//no, then write packet to files
@@ -555,6 +597,23 @@ STDMETHODIMP CDumpInputPin::Receive(IMediaSample *pSample)
 		m_pDump->UpdateInfoFile(false);
 		m_pDump->Flush();
 		step=11;
+
+		if (m_audioState != NotPresent)
+		{
+			if (GetTickCount()-m_audioTimer > 100)
+			{
+				LogDebug("pid:0x%x audio stream not found",m_audio1Pid);
+				m_audioState = NotPresent;
+			}
+		}
+		if (m_videoState != NotPresent)
+		{
+			if (GetTickCount()-m_audioTimer > 100)
+			{
+				LogDebug("pid:0x%x audio stream not found",m_videoPid);
+				m_videoState = NotPresent;
+			}
+		}
 	}
 	catch(...)
 	{
