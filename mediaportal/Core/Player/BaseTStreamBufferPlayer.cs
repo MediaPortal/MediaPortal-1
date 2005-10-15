@@ -378,6 +378,7 @@ namespace MediaPortal.Player
 			if ( !Playing) return;
 			if ( !m_bStarted) return;
 			if (GUIGraphicsContext.InVmr9Render) return;
+			OnProcess();
 			if (_seekToEndFlag)
 			{
 				_seekToEndFlag=false;
@@ -395,35 +396,7 @@ namespace MediaPortal.Player
 				updateTimer=DateTime.Now;
 				//Log.Write("pos:{0} duration:{1}", m_dCurrentPos,m_dDuration);
 			}
-			double dBackingFileLength = 10d * 60d;					      // each backing file is 10 min
-			double dMaxDuration       = 10d * dBackingFileLength; // max. 10 backing files
-/*
-			if (IsTimeShifting)
-			{
-				if (Paused && Duration >= (dMaxDuration-60d) && CurrentPosition <= (2*dBackingFileLength) )
-				{
-					Log.Write("BaseTTStreamBufferPlayer: unpause since timeshiftbuffer gets rolled over");
-					Pause();
-				}
 
-				if (Speed<0 && Duration >= (dMaxDuration-60d) && CurrentPosition <= (2*dBackingFileLength) )
-				{
-					Log.Write("BaseTTStreamBufferPlayer: stop RWD since timeshiftbuffer gets rolled over");
-					Speed=1;
-				}
-				if (Speed>1 && CurrentPosition+5d >=Duration) 
-				{
-					Log.Write("BaseTTStreamBufferPlayer: stop FFWD since end of timeshiftbuffer reached");
-					Speed=1;
-					SeekAsolutePercentage(99);
-				}
-				if (Speed<0 && CurrentPosition<5d)
-				{
-					Log.Write("BaseTTStreamBufferPlayer: stop RWD since begin of timeshiftbuffer reached");
-					Speed=1;
-					SeekAsolutePercentage(0);
-				}
-			}*/
 			m_dLastPosition=CurrentPosition;
 							
 			if (hasVideo) 
@@ -450,7 +423,6 @@ namespace MediaPortal.Player
 				}      
 			}
 			
-			OnProcess();
 			CheckVideoResolutionChanges();
 			if (m_speedRate!=10000)
 			{
