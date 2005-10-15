@@ -3941,6 +3941,7 @@ namespace MediaPortal.TV.Recording
 																						currentTuningObject.AC3Pid,currentTuningObject.TeletextPid);
 
 
+				SendPMT();
 				refreshPmtTable	= true;
 
 				m_lastPMTVersion=-1;

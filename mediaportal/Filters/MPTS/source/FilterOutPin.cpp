@@ -248,6 +248,11 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 			}
 		}
 
+		byte scrambled=pData[i+3] & 0xC0;
+		if (scrambled)
+		{
+			LogDebug("pid:%x SCRAMBLED PACKET???", header.Pid);
+		}
 		if(m_pSections->CurrentPTS(&pData[i],&pts,&pid)==S_OK)
 		{
 			if (pts>0)
