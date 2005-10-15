@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<profile>
+  <section name="ChannelList">
+
+    <entry name="antena3tv.es">3-Antena+3</entry>	<!--Antena 3 -->
+    <entry name="rtvcanal9.com">8-Canal+9</entry>
+    <entry name="Canalplus@plus.es">5-Canal+Plus</entry>
+    <entry name="canalsur@canalsur.es">9-Canal+Sur</entry>
+    <entry name="canalsur2@canalsur.es">9-Canal+Sur+2</entry>
+    <entry name="canal33-es">14-Canal+33</entry>
+    <entry name="digitalplus@plus.es">21-Digital+Plus</entry>
+    <entry name="etb1@eitb.com">11-ETB+1</entry>
+    <entry name="etb2@eitb.com">12-ETB+2</entry>
+    <entry name="tvela2@tve.es">2-La+2+de+TVE</entry>
+    <entry name="rtvcm.es">17-PROGRAMACION+DE+CASTILLA+LA+MANCHA+TELEVISI&#211;N</entry>
+    <entry name="k3-es">20-PROGRAMACION+DE+K3</entry>
+    <entry name="punt2-es">15-Punt+2</entry>
+    <entry name="telecinco.es">4-Tele+5</entry>
+    <entry name="telemadrid.es">6-Telemadrid</entry>
+    <entry name="tvcanaria.tv">16-Televisi&#243;n+Canaria</entry>
+    <entry name="tvcatalunya.com">7-TV3</entry>
+    <entry name="tve1@tve.es">1-TVE1</entry>
+    <entry name="crtvg.es">10-TVG</entry>
+
+  </section>
+  <section name="Listing">
+    <entry name="BaseURL">http://www.elpais.es/parrillatv/</entry>
+    <entry name="SearchURL">resultados.html?franja=&amp;tipo=&amp;canal=#ID&amp;dia=#YYYY#MM#DD</entry>
+
+<!-- Unique Listing Start string -->
+    <entry name="Start">Programa</entry>
+
+<!-- Unique Listing End string -->
+    <entry name="End">&#60;!-- BANNER_RIGHT</entry>
+
+<!-- Template of the Listing information -->
+    <entry name="Template">
+	&#60;tr&#62;&#60;td&#62;&#60;/td&#62;&#60;/tr&#62;
+	&#60;tr&#62;&#60;td&#62;&#60;#START&#62;&#60;/td&#62;
+	&#60;td&#62;&#60;#TITLE&#62;&#60;/td&#62;
+	&#60;td&#62;&#60;/td&#62;
+	&#60;td&#62;&#60;#GENRE&#62;&#60;/td&#62;
+	&#60;/tr&#62;
+	&#60;tr&#62;&#60;td&#62;&#60;#DESCRIPTION&#62;&#60;/td&#62;&#60;/tr&#62;
+    </entry>
+  </section>
+  <section name="DateTime">
+    <entry name="Months">no</entry>
+  </section>
+</profile>

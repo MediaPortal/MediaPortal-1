@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<profile>
+
+<!-- Channel section lists all the channels available from this website. -->
+
+  <section name="ChannelList">
+
+    <entry name="dois.tv">2:</entry>
+    <entry name="arte-tv.com">Arte</entry>
+    <entry name="axn.pt">AXN</entry>
+    <entry name="bbcprime.com">BBCP</entry>
+    <entry name="bbcworld.com">BBCW</entry>
+    <entry name="biographychannel.tv">BIOC</entry>
+    <entry name="bloomberg.co.uk">BLG</entry>
+    <entry name="cartoonnetwork.co.uk">CART</entry>
+    <entry name="cancaonova.com">CN</entry>
+    <entry name="cnbceurope.com">CNBC</entry>
+    <entry name="cnni-emea@cnn.com">CNN</entry>
+    <entry name="disney.pt">DC</entry>
+    <entry name="tudiscovery.com">DISC</entry>
+    <entry name="discoverycivilisation.co.uk">DISCC</entry>
+    <entry name="discoveryscience.co.uk">DISCS</entry>
+    <entry name="discovery-turbo-pt">DISCT</entry>
+    <entry name="eurosportnews@eurosport.com">EPNS</entry>
+    <entry name="extreme.com">ES</entry>
+    <entry name="euronews.net">EUN</entry>
+    <entry name="eurosport@eurosport.com">EURS</entry>
+    <entry name="fox-pt">Fox</entry>
+    <entry name="foxlife-pt">FOXF</entry>
+    <entry name="gntpt.globo.com">GNT</entry>
+    <entry name="canalhistoria.com">HIST</entry>
+    <entry name="canal-hollywood.com">HOLL</entry>
+    <entry name="LusomundoAction@lusomundo.pt">LUSA</entry>
+    <entry name="LusomundoHappy@lusomundo.pt">LUSH</entry>
+    <entry name="m6.fr">M6</entry>
+    <entry name="mcmtop@mcm.net">MCM</entry>
+    <entry name="mezzo.tv">MEZZ</entry>
+    <entry name="mtv.pt">MTV</entry>
+    <entry name="mtv2europe.com">MTV2</entry>
+    <entry name="mtvbase.co.uk">MTVB</entry>
+    <entry name="mtvhits@mtv.co.uk">MTVH</entry>
+    <entry name="nationalgeographic.pt">NG</entry>
+    <entry name="nickelodeon.pt">NICK</entry>
+    <entry name="odisea-odisseia.com">ODIS</entry>
+    <entry name="peopleandartslatino.com">P+A</entry>
+    <entry name="canal-panda.com">PAND</entry>
+    <entry name="playboytvla.com">PLBY</entry>
+    <entry name="raiuno.rai.it">RAI1</entry>
+    <entry name="rtp1@rtp.pt">RTP1</entry>
+    <entry name="RTP Africa@rtp.pt">RTPA</entry>
+    <entry name="RTP Memoria@rtp.pt">RTPM</entry>
+    <entry name="RTPN@rtp.pt">RTPN</entry>
+    <entry name="Venus.com.ar">SEXH</entry>
+    <entry name="SIC@sapo.pt">SIC</entry>
+    <entry name="SIC Comedia@sapo.pt">SICC</entry>
+    <entry name="SIC Mulher@sapo.pt">SICM</entry>
+    <entry name="SIC Noticias@sapo.pt">SICN</entry>
+    <entry name="SIC Radical@sapo.pt">SICR</entry>
+    <entry name="skynews@sky.com">SKYN</entry>
+    <entry name="sms-tv-pt">SMSTV</entry>
+    <entry name="sporttv.pt">SPTV</entry>
+    <entry name="LusomundoGallery@lusomundo.pt">TCG</entry>
+    <entry name="tcmeurope.com">TCM</entry>
+    <entry name="LusomundoPremium@lusomundo.pt">TCP</entry>
+    <entry name="tv5.org">TV5</entry>
+    <entry name="crtvg.es">TVG</entry>
+    <entry name="tve.es">TVEI</entry>
+    <entry name="tvi.iol.pt">TVI</entry>
+    <entry name="vh1e.com">VH1</entry>
+    <entry name="vivir-tv-pt">VIV</entry>
+
+  </section>
+
+<!-- Formating of Listing -->
+  <section name="Listing">
+    <entry name="BaseURL">http://www.tvcabo.pt/TV/</entry>
+    <entry name="SearchURL">ProgramacaoTv.aspx?programId=1&amp;channelSigla=#ID&amp;SelectedDay=#DAY_OFFSET</entry>
+
+    <entry name="Tags">TA</entry>
+    <entry name="OffsetStart">7</entry>
+
+<!-- Unique Listing Start string -->
+    <entry name="Start">Imprimir</entry>
+
+<!-- Template of the Listing information -->
+    <entry name="Template">
+&#60;tr&#62;
+&#60;td&#62;&#60;#START&#62;&#60;/td&#62;&#60;td&#62;&#60;a &#62;&#60;#TITLE&#62;&#60;/a&#62;&#60;/td&#62;
+&#60;/tr&#62;
+    </entry>
+
+    <entry name="SubListingLink">GetProgram</entry>
+
+  </section>
+
+  <section name="SubListing">
+   <entry name="URL">http://www.tvcabo.pt/TV/ProgramacaoTv.aspx?programId=#1&amp;channelSigla=#2</entry>
+   <entry name="Start">Menu Topo</entry>
+   <entry name="End">//Menu Topo</entry>
+   <entry name="Tags">TA</entry>
+	
+   <entry name="Template">
+&#60;table&#62;
+&#60;tr&#62;&#60;td&#62;&#60;/td&#62;&#60;/tr&#62;
+&#60;tr&#62;
+&#60;td&#62;&#60;#DESCRIPTION&#62;&#60;/td&#62;
+&#60;/tr&#62;
+&#60;/table&#62;
+   </entry>	
+  </section>
+
+  <section name="Info">
+    <entry name="GuideDays">6</entry>
+    <entry name="Lang">pt</entry>
+  </section>
+</profile>

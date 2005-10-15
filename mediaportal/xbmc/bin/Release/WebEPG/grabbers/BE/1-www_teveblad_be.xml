@@ -1,0 +1,113 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<!-- www_teveblad_be.xml  Version 1.1 -->
+
+<profile>
+  <section name="ChannelList">
+<!-- Regional -->
+    <entry name="atv.be">ATV</entry>					<!-- ATV -->
+    <entry name="avs.be">AVS</entry>					<!-- AVS -->
+    <entry name="focus.be">FOCUS</entry>				<!-- Focus -->
+    <entry name="kanaal3.be">KANAAL3</entry>				<!-- Kanaal3 -->
+    <entry name="ringtv.be">RINGTV</entry>				<!-- RingTV -->
+    <entry name="robtv.be">ROBTV</entry>				<!-- Rob TV -->
+    <entry name="rtv.be">RTV</entry>					<!-- RTV -->
+    <entry name="tvbrussel.be">TVBRUSSEL</entry>			<!-- TV Brussel -->
+    <entry name="tvlimburg.be">TVLIMBURG</entry>			<!-- TV Limburg -->
+    <entry name="wtv.be">WTV</entry>					<!-- WTV -->
+<!-- National -->
+    <entry name="een.be">EEN</entry>					<!-- één -->
+    <entry name="ketnet.be">Ketnet</entry>				<!-- Ketnet -->
+    <entry name="canvas.be">Canvas</entry>				<!-- Canvas -->
+    <entry name="sporza.be">SPORZA</entry>				<!-- Sporza -->
+    <entry name="kanaal2@vrt.be">KANAAL2</entry>			<!-- Kanaal 2 -->
+    <entry name="vtm.be">VTM</entry>					<!-- VTM -->
+    <entry name="vt4.be">VT4</entry>					<!-- VT4 -->
+    <entry name="vijftv.be">VIJFTV</entry>				<!-- VijfTV -->
+    <entry name="vitaya.be">VITAYA</entry>				<!-- Vitaya -->
+    <entry name="libertytv.be">EVENTTV</entry>				<!-- LibertyTV -->
+    <entry name="kanaalz.be">KANAALZ</entry>				<!-- KanaalZ -->
+    <entry name="fezztival.be">FEZZTIVAL</entry>			<!-- Fezztival -->
+    <entry name="actuatv-be">ACTUATV</entry>				<!-- Actua-TV -->
+    <entry name="nickelodeon.be">NICKELODEON</entry>			<!-- Nickelodeon -->
+    <entry name="canal+rood@canalplus.be">CANAL+</entry>		<!-- Canal+ Rood -->
+    <entry name="canal+blauw@canalplus.be">CANAL+BLAUW</entry>		<!-- Canal+ Blauw -->
+    <entry name="la1.be">RTBF1</entry>					<!-- La Une -->
+    <entry name="ladeux.be">RTBF2</entry>				<!-- La Deux -->
+    <entry name="tvi@rtl.be">RTL-TVI</entry>				<!-- RTL-TVI -->
+    <entry name="club@rtl.be">CLUBRTL</entry>				<!-- ClubRTL -->
+    <entry name="tmf.be">TMF</entry>					<!-- TMF -->
+    <entry name="jim.be">JIM</entry>					<!-- JIM -->
+<!-- European -->
+    <entry name="ned1@omroep.nl">NED1</entry>				<!-- Ned 1 -->
+    <entry name="ned2@omroep.nl">NED2</entry>				<!-- Ned 2 -->
+    <entry name="ned3@omroep.nl">NED3</entry>				<!-- Ned 3 -->
+    <entry name="net5.sbs.nl">NET5</entry>				<!-- Net 5 -->
+    <entry name="rtl4@rtl.nl">RTL4</entry>				<!-- RTL 4 -->
+    <entry name="rtl5@rtl.nl">RTL5</entry>				<!-- RTL 5 -->
+    <entry name="sbs6.sbs.nl">SBS6</entry>				<!-- SBS 6 -->
+    <entry name="yorin.nl">VERONICA</entry>				<!-- Yorin -->
+    <entry name="tcm.nl">TCM</entry>					<!-- TCM -->
+    <entry name="cartoonnetwork.com">CARTOONNETWORK</entry>		<!-- Cartoon Network -->
+    <entry name="eurosport@eurosport.com">EUROSPORT</entry>		<!-- Eurosport -->
+    <entry name="espn.com">ESPN</entry>					<!-- ESPN Classic Sport -->
+    <entry name="bvn.nl">BVN-TV</entry>					<!-- BVN-TV -->
+    <entry name="discoverychannel.nl">DISCOVERY</entry>			<!-- Discovery Channel -->
+    <entry name="tf1.fr">TF1</entry>					<!-- TF1 -->
+    <entry name="france2.fr">FRANCE2</entry>				<!-- France 2 -->
+    <entry name="france3.fr">FRANCE3</entry>				<!-- France 3 -->
+    <entry name="f@tv5.fr">TV5</entry>					<!-- TV5 -->
+    <entry name="arte-tv.com">ARTE</entry>				<!-- ARTE -->
+    <entry name="bbc1@bbc.co.uk">BBC1</entry>				<!-- BBC1 -->
+    <entry name="bbc2@bbc.co.uk">BBC2</entry>				<!-- BBC2 -->
+    <entry name="bbcworld.com">BBCWORLD</entry>				<!-- BBC World -->
+    <entry name="meridiantv.co.uk">ITV-MERIDIAN</entry>			<!-- ITV - Meridian -->
+    <entry name="ard.de">ARD</entry>					<!-- ARD -->
+    <entry name="zdf.de">ZDF</entry>					<!-- ZDF -->
+    <entry name="wdr.de">WDR</entry>					<!-- WDR -->
+    <entry name="sw.de">SWR</entry>					<!-- SWF -->
+    <entry name="rtl.de">RTL</entry>					<!-- RTL Deutchland -->
+    <entry name="mtv.nl">MTVNL</entry>					<!-- MTV NL -->
+    <entry name="raiuno.rai.it">RAIUNO</entry>				<!-- Rai Uno -->
+    <entry name="tve.es">TVE</entry>					<!-- TVE -->
+    <entry name="trt.int@trt.net.tr">TRT</entry>			<!-- TRT -->
+<!-- International -->
+    <entry name="nbc-ngc.com">NBC/NGC</entry>				<!-- NBC/Nat.Geo. -->
+    <entry name="cnni-emea@cnn.com">CNN</entry>				<!-- CNN International - EMEA -->
+    <entry name="cnbc.com">CNBC</entry>					<!-- CNBC -->
+  </section>
+
+<!-- Formating of Listing -->
+  <section name="Listing">
+    <entry name="BaseURL">http://www.teveblad.be/ndl/</entry>
+    <entry name="SearchURL">zender.asp?move=full&amp;channel=#ID&amp;dag=#_M/#_D/#YYYY</entry>
+
+<!-- Unique Listing Start string -->
+<!--     <entry name="Start">Complet</entry> -->
+
+<!-- Unique Listing End string -->
+<!--    <entry name="End">&#60;/body&#62;</entry> -->
+
+<!-- Template of the Listing information -->
+    <entry name="Template">
+	&#60;tr&#62;
+	&#60;td&#62;&#60;/td&#62;
+	&#60;td&#62;&#60;#START&#62;&#60;/td&#62;
+	&#60;td&#62;&#60;#END&#62;&#60;/td&#62;
+	&#60;td&#62;&#60;#TITLE&#62;&#60;/td&#62;
+	&#60;td&#62;&#60;#GENRE&#62;&#60;&#60;/td&#62;
+	&#60;td&#62;&#60;/td&#62;
+	&#60;/tr&#62;
+	&#60;tr&#62;
+	&#60;td&#62;&#60;/td&#62;
+	&#60;td&#62;&#60;/td&#62;
+	&#60;td&#62;&#60;#DESCRIPTION&#62;&#60;/td&#62;
+	&#60;td&#62;&#60;/td&#62;
+	&#60;/tr&#62;</entry>
+  </section>
+  <section name="Info">
+    <entry name="GuideDays">3</entry>
+    <entry name="Language">fr</entry>
+    <entry name="SiteDescription">...</entry>
+  </section>
+</profile>

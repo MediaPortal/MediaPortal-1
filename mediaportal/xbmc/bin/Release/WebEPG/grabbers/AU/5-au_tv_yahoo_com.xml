@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<profile>
+
+<!-- Channel section lists all the channels available from this website. -->
+<!-- This is JUST MELBOURNE, VIC, METRO, DIGITAL, non-HD ...more to come -->
+
+  <section name="ChannelList">
+<entry name="abc-vic@abc.net.au">92843</entry>				<!-- ABC VIC -->
+	<entry name="abc2@abc.net.au">283793</entry>				<!-- ABC2 -->
+	<entry name="7-vic-metro@seven.com.au">96100</entry>			<!-- Seven Metro VIC -->
+	<entry name="9-vic-metro@ninemsn.com.au">252342</entry>		<!-- Nine Metro VIC -->
+	<entry name="10-vic-metro@ten.com.au">250185</entry>			<!-- Ten Metro VIC -->
+	<entry name="sbs@sbs.com.au">273191</entry>				<!-- SBS -->
+	<entry name="sbs2@sbs.com.au">272787</entry>				<!-- SBS 2 -->
+	<entry name="channel31-vic@channel31.com.au">251882</entry>		<!-- CHANNEL 31 VIC -->
+
+  	<entry name="abc-nsw@abc.net.au">18294</entry>				<!-- ABC NSW -->
+	<entry name="abc2@abc.net.au">283793</entry>				<!-- ABC2 -->
+	<entry name="7-nsw-metro@seven.com.au">18891</entry>			<!-- Seven Metro NSW -->
+	<entry name="9-nsw-metro@ninemsn.com.au">18671</entry>		<!-- Nine Metro NSW -->
+	<entry name="10-nsw-metro@ten.com.au">85459</entry>			<!-- Ten Metro NSW -->
+	<entry name="sbs@sbs.com.au">251831</entry>				<!-- SBS -->
+	<entry name="sbs2@sbs.com.au">272787</entry>				<!-- SBS 2 -->
+
+  	<entry name="abc-qld@abc.net.au">246952</entry>				<!-- ABC QLD -->
+	<entry name="abc2@abc.net.au">283793</entry>				<!-- ABC2 -->
+	<entry name="7-qld-metro@seven.com.au">92783</entry>			<!-- Seven Metro QLD -->
+	<entry name="9-qld-metro@ninemsn.com.au">260461</entry>		<!-- Nine Metro QLD -->
+	<entry name="10-qld-metro@ten.com.au">246955</entry>			<!-- Ten Metro QLD -->
+	<entry name="sbs@sbs.com.au">264783</entry>				<!-- SBS -->
+	<entry name="sbs2@sbs.com.au">272787</entry>				<!-- SBS 2 -->
+
+  	<entry name="abc-nt@abc.net.au">251888</entry>				<!-- ABC NT -->
+	<entry name="abc2@abc.net.au">283793</entry>				<!-- ABC2 -->
+	<entry name="7-nt-metro@seven.com.au">251862</entry>			<!-- Seven Metro NT -->
+	<entry name="9-nt-metro@ninemsn.com.au">86169</entry>			<!-- Nine Metro NT -->
+	<entry name="sbs@sbs.com.au">273204</entry>				<!-- SBS -->
+	<entry name="sbs2@sbs.com.au">272787</entry>				<!-- SBS 2 -->
+
+  	<entry name="abc-act@abc.net.au">275885</entry>				<!-- ABC ACT -->
+	<entry name="abc2@abc.net.au">283793</entry>				<!-- ABC2 -->
+	<entry name="7-act-metro@seven.com.au">81869</entry>			<!-- Seven(Prime) Metro ACT -->
+	<entry name="9-act-metro@ninemsn.com.au">249943</entry>		<!-- Nine(WIN) Metro ACT -->
+	<entry name="10-act-metro@ten.com.au">86157</entry>			<!-- Ten Metro ACT -->
+	<entry name="sbs@sbs.com.au">259105</entry>				<!-- SBS -->
+	<entry name="sbs2@sbs.com.au">272787</entry>				<!-- SBS 2 -->
+
+  	<entry name="abc-sa@abc.net.au">86170</entry>				<!-- ABC SA -->
+	<entry name="abc2@abc.net.au">283793</entry>				<!-- ABC2 -->
+	<entry name="7-sa-metro@seven.com.au">85832</entry>			<!-- Seven Metro SA -->
+	<entry name="9-sa-metro@ninemsn.com.au">86173</entry>			<!-- Nine Metro SA -->
+	<entry name="10-sa-metro@ten.com.au">250187</entry>			<!-- Ten Metro SA -->
+	<entry name="sbs@sbs.com.au">259106</entry>				<!-- SBS -->
+	<entry name="sbs2@sbs.com.au">272787</entry>				<!-- SBS 2 -->
+
+  	<entry name="abc-tas@abc.net.au">86162</entry>				<!-- ABC TAS -->
+	<entry name="abc2@abc.net.au">283793</entry>				<!-- ABC2 -->
+	<entry name="7-tas-metro@seven.com.au">251856</entry>			<!-- Seven(Southern Cross) Metro TAS -->
+	<entry name="9-tas-metro@ninemsn.com.au">249724</entry>		<!-- Nine(WIN) Metro TAS -->
+	<entry name="10-tas-metro@ten.com.au">272547</entry>			<!-- Ten(TDT) Metro TAS -->
+	<entry name="sbs@sbs.com.au">264617</entry>				<!-- SBS -->
+	<entry name="sbs2@sbs.com.au">272787</entry>				<!-- SBS 2 -->
+
+  </section>
+
+<!-- Formating of Listing -->
+  <section name="Listing">
+    <entry name="BaseURL">http://au.tv.yahoo.com/</entry>
+    <entry name="SearchURL">venueresults.html?dt=#YYYY-#MM-#DD&amp;vn=#ID</entry>
+
+    <entry name="GrabDelay">5000</entry>
+
+<!-- Unique Listing Start string -->
+    <entry name="Start">&#60;b&#62; Program</entry>
+
+<!-- Template of the Listing information -->
+    <entry name="Template">
+	&#60;tr&#62;
+	&#60;td&#62;&#60;#START&#62;&#60;/td&#62;
+        &#60;td&#62;&#60;#TITLE&#62;&#60;/td&#62;
+	&#60;/tr&#62;
+    </entry>
+    <entry name="SubListingLink">event</entry>
+  </section>
+
+  <section name="SubListing">
+    <entry name="Tags">TP</entry>
+
+<!-- Template of the Listing information -->
+    <entry name="Template">
+&#60;tr&#62; 
+&#60;td&#62;
+&#60;P&#62;
+&#60;P&#62;&#60;#GENRE&#62;&#60;P&#62;&#60;#DESCRIPTION&#62;&#60;P&#62;
+    </entry>
+  </section>
+  <section name="Info">
+    <entry name="GuideDays">14</entry>
+    <entry name="Lang">en</entry>
+  </section>
+</profile>
+
+
+
+

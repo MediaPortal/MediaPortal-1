@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- www_tvtoday_de.xml  Version 1.1 -->
+
+<profile>
+  <section name="ChannelList">
+
+<!-- Deutschland - Haupt -->
+    <entry name="ard.de">ARD</entry> 			<!-- ARD -->
+    <entry name="pro-sieben.de">PRO+7</entry>		<!-- Pro 7 -->
+    <entry name="3sat.de">3SAT</entry> 			<!-- 3sat -->
+    <entry name="sat1.de">SAT.1</entry> 		<!-- Sat.1 -->
+    <entry name="arte-tv.com">ARTE</entry> 			<!-- arte -->
+    <entry name="rtl.de">RTL</entry>			<!-- RTL -->
+    <entry name="rtl2.de">RTL+2</entry>			<!-- RTL 2 -->
+    <entry name="super-rtl.de">SUPER+RTL</entry>	<!-- SuperRTL -->
+    <entry name="kabel1.de">KABEL+1</entry> 		<!-- Kabel1 -->
+    <entry name="vox.de">VOX</entry> 			<!-- VOX -->
+    <entry name="zdf.de">ZDF</entry> 			<!-- ZDF -->
+    <entry name="dsf.de">DSF</entry> 			<!-- DSF -->
+
+<!-- Deutschland - Regional -->
+    <entry name="wdr.de">WEST</entry> 			<!-- WDR -->
+    <entry name="swr.de">SW+III</entry> 		<!-- Suedwest -->
+    <entry name="tvm.de">TV+M%DCNCHEN</entry>		<!-- TV Muenchen -->
+    <entry name="tvnrw.com">TVNRW</entry>		<!-- TV nrw -->
+    <entry name="br-online.de">BAYERN</entry> 		<!-- Bayern -->
+    <entry name="rbb-online.de">RBB</entry> 		<!-- RBB Rundfunk Berlin-Brandenburg -->
+    <entry name="fab.de">FAB</entry> 			<!-- Fernsehen aus Berlin -->
+    <entry name="hamburg1.de">HAMBURG+1</entry> 	<!-- Hamburg 1 -->
+    <entry name="hr-online.de">HESSEN</entry> 		<!-- Hessen 3 -->
+    <entry name="ndrtv.de">NDR</entry> 			<!-- NDR -->
+    <entry name="mdr.de">MDR</entry> 			<!-- MDR -->
+
+<!-- Deutschland - Extra -->
+    <entry name="phoenix.de">PHOENIX</entry> 		<!-- Phoenix -->
+    <entry name="neunlive.de">NEUNLIVE</entry> 		<!-- Neun Live -->
+    <entry name="kika.de">KINDER KANAL</entry> 		<!-- Kika -->
+    <entry name="n24.de">N24</entry> 			<!-- N24 -->
+    <entry name="n-tv.de">N-TV</entry> 			<!-- n-tv -->
+    <entry name="giga.de">NBC-SUPER</entry> 		<!-- NBC/CNBC/Giga -->
+    <entry name="viva.tv">VIVA</entry>			<!-- VIVA -->
+    <entry name="vivaplus.tv">VIVAPLUS</entry>		<!-- VIVA Plus -->
+    <entry name="mtv.de">MTV</entry>			<!-- MTV Deutsch -->
+    <entry name="mtv2.de">MTV2</entry>			<!-- MTV 2 Deutsch -->
+    <entry name="tele5.de">TELE5</entry> 		<!-- TELE5 -->
+    <entry name="xxp.tv">XXP</entry> 			<!-- XXP -->
+
+<!-- Deutschland - Digital -->
+    <entry name="premiere.de">PREMIERE</entry>		<!-- Premiere Start -->
+    <entry name="serie@premiere.de">premserie</entry>	<!-- Premiere Serie -->
+    <entry name="krimi@premiere.de">krimi</entry>	<!-- Premiere Krimi & Co -->
+    <entry name="nost@premiere.de">premnostalgie</entry><!-- Premiere Nostalgie -->
+    <entry name="scifi@premiere.de">premscifi</entry>	<!-- Premiere SCI FI -->
+    <entry name="at@premiere.de">premaustria</entry>	<!-- Premiere AUSTRIA -->
+    <entry name="prem1@premiere.de">prem1</entry>	<!-- Premiere 1 -->
+    <entry name="prem2@premiere.de">prem2</entry>	<!-- Premiere 2 -->
+    <entry name="prem3@premiere.de">prem3</entry>	<!-- Premiere 3 -->
+    <entry name="prem4@premiere.de">prem4</entry>	<!-- Premiere 4 -->
+    <entry name="prem5@premiere.de">prem5</entry>	<!-- Premiere 5 -->
+    <entry name="prem6@premiere.de">prem6</entry>	<!-- Premiere 6 -->
+    <entry name="prem7@premiere.de">prem7</entry>	<!-- Premiere 7 -->
+    <entry name="dir1@premiere.de">premdirekt1</entry>	<!-- Premiere Direkt1 -->
+    <entry name="dir2@premiere.de">premdirekt2</entry>	<!-- Premiere Direkt2 -->
+    <entry name="dir3@premiere.de">premdirekt3</entry>	<!-- Premiere Direkt3 -->
+    <entry name="dir4@premiere.de">premdirekt4</entry>	<!-- Premiere Direkt4 -->
+    <entry name="sport1@premiere.de">premspo1</entry>	<!-- Premiere Sport1 -->
+    <entry name="sport2@premiere.de">premspo2</entry>	<!-- Premiere Sport2 -->
+    <entry name="erot1@premiere.de">premerotik1</entry>	<!-- Premiere Erotik1 -->
+    <entry name="erot2@premiere.de">premerotik2</entry>	<!-- Premiere Erotik2 -->
+    <entry name="erot3@premiere.de">premerotik3</entry>	<!-- Premiere Erotik3 -->
+    <entry name="13thstreet.de">street</entry>		<!-- 13th Street -->
+    <entry name="discovery.de">discov</entry>		<!-- Discovery Channel -->
+    <entry name="disney.de">disney</entry>		<!-- Disney Channel -->
+    <entry name="foxkids.de">foxkids</entry>		<!-- Fox Kids -->
+    <entry name="junior.tv">junior</entry>		<!-- Junior -->
+    <entry name="beate-uhse.tv">uhsetv</entry>		<!-- BEATE UHSE -->
+    <entry name="animalplanet.de">animal</entry>	<!-- Animal Planet -->
+    <entry name="mgm.com">mgm</entry>			<!-- MGM -->
+    <entry name="classic@premiere.de">classic</entry>	<!-- CLASSICA -->
+    <entry name="hit24.tv">hit24</entry>		<!-- HIT24 -->
+    <entry name="goldstar-tv.de">goldstar</entry>	<!-- Goldstar -->
+    <entry name="heimatkanal.de">heimat</entry>		<!-- HEIMATKANAL -->
+    <entry name="exrta@ard-digital.de">extra</entry>	<!-- Eins Extra -->
+    <entry name="fest@ard-digital.de">festival</entry>	<!-- Eins Festival -->
+    <entry name="muxx@ard-digital.de">muxx</entry>	<!-- Eins MUXX -->
+    <entry name="zdfdoku@zdf.de">doku</entry>		<!-- ZDF Doku -->
+    <entry name="zdfinfo@zdf.de">info</entry>		<!-- ZDF Info -->
+    <entry name="zdftheater@zdf.de">theater</entry>	<!-- ZDF Theater -->
+
+<!-- Schweiz -->
+    <entry name="sf1@sfdrs.ch">SF1</entry>		<!-- SF 1 -->
+    <entry name="sf2@sfdrs.ch">SF2</entry>		<!-- SF 2 -->
+
+<!-- Oesterreich -->
+    <entry name="orf1@orf.at">ORF+1</entry>		<!-- ORF 1 -->
+    <entry name="orf2@orf.at">ORF+2</entry>		<!-- ORF 2 -->
+
+<!-- Frankreich -->
+    <entry name="tf1.fr">TF 1</entry>			<!-- TF 1 -->
+    <entry name="france2.fr">ANTENNE 2</entry>		<!-- france 2 -->
+    <entry name="france3.fr">FR+3</entry> 		<!-- france 3 -->	
+    <entry name="f@tv5.fr">TV+5</entry>			<!-- TV5 francophone -->
+
+<!-- Daenemark -->
+    <entry name="dr1@dr.dk">D%C4NEMARK+1</entry>	<!-- DR1 -->
+    <entry name="dr2@dr.dk">D%C4NEMARK+2</entry>	<!-- DR2 -->
+
+<!-- Holland -->
+    <entry name="ned1@omroep.nl">HOLLAND+1</entry>	<!-- Nederland 1 -->
+    <entry name="ned2@omroep.nl">HOLLAND+2</entry>	<!-- Nederland 2 -->
+    <entry name="ned3@omroep.nl">HOLLAND+3</entry>	<!-- Nederland 3 -->
+
+<!-- Grossbritannien -->
+    <entry name="bbcworld.com">BBCWORLD</entry>		<!-- BBC World -->
+
+<!-- Tuerki -->
+    <entry name="trt.net.tr">TRT</entry>		<!-- TRT -->
+
+<!-- Europa -->
+    <entry name="eurosport@eurosport.com">EUROSPORT</entry> 	<!-- EuroSport -->
+    <entry name="euronews.net">EURONEWS</entry> 	<!-- EuroNews -->
+
+<!-- International -->
+    <entry name="cnni-emea@cnn.com">CNN</entry>		<!-- CNN International - EMEA -->
+  </section>
+
+<!-- Formating of Listing -->
+  <section name="Listing">
+    <entry name="BaseURL">http://www.tvtoday.de/tv/programm/</entry>
+    <entry name="SearchURL">programm.php?ztag=#DAY_OFFSET&amp;sparte=alle&amp;uhrzeit=05%3A00%3A00&amp;sender=#ID&amp;von=#LIST_OFFSET</entry>
+
+<!-- Maximum Number of listings per page -->
+    <entry name="MaxCount">12</entry>
+
+<!-- Unique Listing Start string -->
+    <entry name="Start">&#60;!--LISTING ANFANG--&#62;</entry>
+
+<!-- Unique Listing End string -->
+    <entry name="End">&#60;!--INHALT ENDE--&#62;</entry>
+
+<!-- Template of the Listing information -->
+    <entry name="Template">
+	&#60;table&#62;
+	&#60;tr&#62;
+	&#60;td&#62;&#60;/td&#62;
+	&#60;td&#62;&#60;#START&#62;&#60;/td&#62;
+	&#60;td&#62;&#60;#TITLE&#62;( &#60;br&#62;&#60;#DESCRIPTION&#62;&#60;/td&#62;
+	&#60;/tr&#62;
+	&#60;/table&#62;
+    </entry>
+  </section>
+  <section name="Info">
+    <entry name="GuideDays">14</entry>
+    <entry name="Lang">de</entry>
+    <entry name="SiteDescription">Diese Seite hat die Programm&#252;berschau auf der Hauptpage.</entry>
+  </section>
+</profile>

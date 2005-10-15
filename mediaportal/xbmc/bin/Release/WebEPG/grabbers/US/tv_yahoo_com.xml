@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<profile>
+
+<!-- Channel section lists all the channels available from this website. -->
+
+  <section name="ChannelList">
+
+<!-- Eastern -->
+
+	<entry name="Eastern@mtv.com">id=166030899&amp;channels=us_MTV&amp;lineup=us_Eastern</entry>
+	<entry name="Eastern@cbs.com">id=166030320&amp;channels=us_CBS&amp;lineup=us_Eastern</entry>
+	<entry name="Eastern@abc.com">id=166034662&amp;channels=us_ABC&amp;lineup=us_Eastern</entry>
+	<entry name="Eastern@fox.com">id=166034673&amp;channels=us_FOX&amp;lineup=us_Eastern</entry>
+	<entry name="Eastern@nbc.com">id=166034682&amp;channels=us_NBC&amp;lineup=us_Eastern</entry>
+	<entry name="Eastern@pbs.com">id=166034688&amp;channels=us_PBS&amp;lineup=us_Eastern</entry>
+	<entry name="Eastern@upn.com">id=166031970&amp;channels=us_UPN&amp;lineup=us_Eastern</entry>
+	<entry name="Eastern@warnerbros.com">id=166031972&amp;channels=us_WB&amp;lineup=us_Eastern</entry>
+	<entry name="Eastern@paxtv.com">id=166032580&amp;channels=us_PAXTV&amp;lineup=us_Eastern</entry>
+	<entry name="Eastern@telemundo.com">id=166030369&amp;channels=us_TELE&amp;lineup=us_Eastern</entry>
+	<entry name="Eastern@univision.net">id=166030944&amp;channels=us_UNI&amp;lineup=us_Eastern</entry>
+	<entry name="Eastern@discovery.com">id=166030951&amp;channels=us_DSC&amp;lineup=us_Eastern</entry>
+	<entry name="Eastern@espn.com">id=166030359&amp;channels=us_ESPN&amp;lineup=us_Eastern</entry>
+	<entry name="Eastern@nick.com">id=166030908&amp;channels=us_NIK&amp;lineup=us_Eastern</entry>
+	<entry name="Eastern@tnt.com">id=166030956&amp;channels=us_TNT&amp;lineup=us_Eastern</entry>
+	<entry name="Eastern@tbs.com">id=166031546&amp;channels=us_TBS&amp;lineup=us_Eastern</entry>
+	<entry name="Eastern@usanetwork.com">id=166030961&amp;channels=us_USA&amp;lineup=us_Eastern</entry>
+	<entry name="Eastern@disney.com">id=166030356&amp;channels=us_DISN&amp;lineup=us_Eastern</entry>
+	<entry name="Eastern@encoretv.com">id=166030358&amp;channels=us_ENCORE&amp;lineup=us_Eastern</entry>
+	<entry name="Eastern@hbo.com">id=166030370&amp;channels=us_HBO&amp;lineup=us_Eastern</entry>
+	<entry name="Eastern@cinemax.com">id=166030334&amp;channels=us_MAX&amp;lineup=us_Eastern</entry>
+	<entry name="Eastern@sho.com">id=166030941&amp;channels=us_SHOW&amp;lineup=us_Eastern</entry>
+	<entry name="Eastern@starz.com">id=166031855&amp;channels=us_STARZ&amp;lineup=us_Eastern</entry>
+	<entry name="Eastern-TMC@sho.com">id=166030954&amp;channels=us_TMC&amp;lineup=us_Eastern</entry>
+	<entry name="Eastern-ESPN2@espn.com">id=166031784&amp;channels=us_ESPN2&amp;lineup=us_Eastern</entry>
+	<entry name="Eastern@cnn.com">id=166030347&amp;channels=us_CNN&amp;lineup=us_Eastern</entry>
+	<entry name="Eastern-hbo2@hbo.com">id=166060302&amp;channels=us_HBO2&amp;lineup=us_Eastern</entry>
+	<entry name="Eastern@vh1.com">id=166030965&amp;channels=us_VH1&amp;lineup=us_Eastern</entry>
+	<entry name="Eastern@foxnews.com">id=166032298&amp;channels=us_FNC&amp;lineup=us_Eastern</entry>
+	<entry name="Eastern@msnbc.msn.com">id=166032274&amp;channels=us_MSNBC&amp;lineup=us_Eastern</entry>
+	<entry name="Eastern@cnbc.com">id=166030346&amp;channels=us_CNBC&amp;lineup=us_Eastern</entry>
+	<entry name="Eastern@turnerclassicmovies.com">id=166031876&amp;channels=us_TCM&amp;lineup=us_Eastern</entry>
+
+<!-- Central -->
+
+	<entry name="Central@mtv.com">id=166030899&amp;channels=us_MTV&amp;lineup=us_Central</entry>
+	<entry name="Central@cbs.com">id=166034671&amp;channels=us_CBSC&amp;lineup=us_Central</entry>
+	<entry name="Central@abc.com">id=166034666&amp;channels=us_ABCC&amp;lineup=us_Central</entry>
+	<entry name="Central@fox.com">id=166034677&amp;channels=us_FOXC&amp;lineup=us_Central</entry>
+	<entry name="Central@nbc.com">id=166034683&amp;channels=us_NBCC&amp;lineup=us_Central</entry>
+	<entry name="Central@pbs.com">id=166034689&amp;channels=us_PBSC&amp;lineup=us_Central</entry>
+	<entry name="Central@upn.com">id=166034694&amp;channels=us_UPNC&amp;lineup=us_Central</entry>
+	<entry name="Central@warnerbros.com">id=166034699&amp;channels=us_WBC&amp;lineup=us_Central</entry>
+	<entry name="Central@paxtv.com">id=166034701&amp;channels=us_PAXC&amp;lineup=us_Central</entry>
+	<entry name="Central@telemundo.com">id=166030369&amp;channels=us_TELE&amp;lineup=us_Central</entry>
+	<entry name="Central@univision.net">id=166030944&amp;channels=us_UNI&amp;lineup=us_Central</entry>
+	<entry name="Central@discovery.com">id=166030951&amp;channels=us_DSC&amp;lineup=us_Central</entry>
+	<entry name="Central@espn.com">id=166030359&amp;channels=us_ESPN&amp;lineup=us_Central</entry>
+	<entry name="Central@nick.com">id=166030908&amp;channels=us_NIK&amp;lineup=us_Central</entry>
+	<entry name="Central@tnt.com">id=166030956&amp;channels=us_TNT&amp;lineup=us_Central</entry>
+	<entry name="Central@tbs.com">id=166031546&amp;channels=us_TBS&amp;lineup=us_Central</entry>
+	<entry name="Central@usanetwork.com">id=166030961&amp;channels=us_USA&amp;lineup=us_Central</entry>
+	<entry name="Central@disney.com">id=166030356&amp;channels=us_DISN&amp;lineup=us_Central</entry>
+	<entry name="Central@encoretv.com">id=166030358&amp;channels=us_ENCORE&amp;lineup=us_Central</entry>
+	<entry name="Central@hbo.com">id=166030370&amp;channels=us_HBO&amp;lineup=us_Central</entry>
+	<entry name="Central@cinemax.com">id=166030334&amp;channels=us_MAX&amp;lineup=us_Central</entry>
+	<entry name="Central@sho.com">id=166030941&amp;channels=us_SHOW&amp;lineup=us_Central</entry>
+	<entry name="Central@starz.com">id=166031855&amp;channels=us_STARZ&amp;lineup=us_Central</entry>
+	<entry name="Central-TMC@sho.com">id=166030954&amp;channels=us_TMC&amp;lineup=us_Central</entry>
+	<entry name="Central-ESPN2@espn.com">id=166031784&amp;channels=us_ESPN2&amp;lineup=us_Central</entry>
+	<entry name="Central@cnn.com">id=166030347&amp;channels=us_CNN&amp;lineup=us_Central</entry>
+	<entry name="Central-hbo2@hbo.com">id=166060302&amp;channels=us_HBO2&amp;lineup=us_Centra</entry>
+	<entry name="Central@vh1.com">id=166030965&amp;channels=us_VH1&amp;lineup=us_Central</entry>
+	<entry name="Central@foxnews.com">id=166032298&amp;channels=us_FNC&amp;lineup=us_Central</entry>
+	<entry name="Central@msnbc.msn.com">id=166032274&amp;channels=us_MSNBC&amp;lineup=us_Central</entry>
+	<entry name="Central@cnbc.com">id=166030346&amp;amp;channels=us_CNBC&amp;amp;lineup=us_Central</entry>
+	<entry name="Central@turnerclassicmovies.com">id=166031876&amp;channels=us_TCM&amp;lineup=us_Central</entry>
+
+
+<!-- Louisville, KY -->
+
+	<entry name="WHAS@abc.com">id=166031202&amp;channels=us_WHAS&amp;lineup=us_KY16673</entry>
+	<entry name="WLKY@cbs.com">id=166031340&amp;channels=us_WLKY&amp;lineup=us_KY16673</entry>
+	<entry name="WAVE@nbc.com">id=166031014&amp;channels=us_WAVE&amp;lineup=us_KY16673</entry>
+	<entry name="WDRB@fox.com">id=166031108&amp;channels=us_WDRB&amp;lineup=us_KY16673</entry>
+
+  </section>
+
+<!-- Formating of Listing -->
+  <section name="Listing">
+    <entry name="BaseURL">http://tv.yahoo.com</entry>
+    <entry name="SearchURL">/tvpdb?d=tvs&amp;#ID&amp;.intl=us&amp;startdate=#EPOCH_TIME</entry>
+
+<!-- Unique Listing Start string -->
+    <entry name="Start">Program Schedule</entry>
+
+    <entry name="Tags">LA</entry>
+
+<!-- Template of the Listing information -->
+    <entry name="Template">
+	&#60;li&#62;&#60;#START&#62;&#60;a &#62;&#60;#TITLE&#62;&#60;/a&#62;&#60;/li&#62;
+    </entry>
+    <entry name="SubListingLink">tvpdb</entry>
+  </section>
+
+  <section name="SubListing">
+    <entry name="Tags">AP</entry>
+
+<!-- Template of the Listing information -->
+    <entry name="Template">
+	&#60;A &#62;&#60;/A&#62;
+	&#60;BR&#62;&#60;#GENRE&#62;,
+	&#60;p&#62;
+	&#60;p&#62;&#60;#DESCRIPTION&#62;
+	&#60;p&#62;
+	&#60;p&#62;
+	&#60;/p&#62;
+    </entry>
+  </section>
+  <section name="Info">
+    <entry name="GuideDays">14</entry>
+    <entry name="Lang">en</entry>
+  </section>
+</profile>

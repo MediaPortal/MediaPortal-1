@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The grabber xml file describes how to get the program listing infomation from the page. -->
+<!-- It has the following format: -->
+<profile>
+
+<!-- Channel section lists all the channels available from this website. -->
+
+  <section name="ChannelList">
+
+    <entry name="Showtime">showtime</entry>			    <!-- Showtime -->
+    <entry name="nrk1@nrk.no">nrktv1</entry>                        <!-- NRK1 -->
+    <entry name="nrk2@nrk.no">nrktv2</entry>                        <!-- NRK2 -->
+    <entry name="tv2.no">tv2</entry>                                <!-- TV2 -->
+    <entry name="tv2xtra.no">tv2xtra</entry>                        <!-- TV2 Xtra -->
+    <entry name="tvnorge.no">tvn</entry>                            <!-- TV Norge -->
+    <entry name="tv3.no">tv3</entry>                                <!-- TV3 -->
+    <entry name="ztv.no">ztvnor</entry>                             <!-- ZTV -->
+    <entry name="3plus.dk">tv3pldan</entry>                         <!-- Dansk TV3 -->
+    <entry name="3sat.de">3sat</entry>                              <!-- 3SAT -->
+    <entry name="animalplanet.com">animal</entry>                   <!-- Animal Planet -->
+    <entry name="bbcprime.com">bbcprime</entry>                     <!-- BBC Prime -->
+    <entry name="bbcworld.com">bbcworld</entry>                     <!-- BBC World -->
+    <entry name="canalplus@canalplus.no">canalpl</entry>            <!-- Canal+ -->
+    <entry name="cmorefilm@canalplus.no">cmorefilm</entry>          <!-- CmoreFilm -->
+    <entry name="film1@canalplus.no">canplfilm1</entry>             <!-- Canal+ Film1 -->
+    <entry name="film2@canalplus.no">canplfilm2</entry>             <!-- Canal+ Film2 -->
+    <entry name="sport@canalplus.no">canplspo</entry>               <!-- Canal+ Sport -->
+    <entry name="cartoonnetwork.no">cartoon</entry>                 <!-- Cartoon Network -->
+    <entry name="cinema@canaldigital.no">cinema</entry>             <!-- Cinema -->
+    <entry name="club">club</entry>                                 <!-- Club -->
+    <entry name="cnbc@msn.com">cnbc</entry>                         <!-- CNBC -->
+    <entry name="CNBC_NGC">cnbcnatgeoch</entry>                     <!-- CNBC og National Geographic Channel -->
+    <entry name="cnni-emea@cnn.com">cnn</entry>                     <!-- CNN -->
+    <entry name="discovery@discovery.com">discov</entry>            <!--  -->
+    <entry name="civilisation@discovery.com">dcivil</entry>         <!--  -->
+    <entry name="sci_trek@discovery.com">dscitrek</entry>           <!--  -->
+    <entry name="travel_adventure@discovery.com">dtravel</entry>    <!--  -->
+    <entry name="disneychannel.no">disney</entry>                   <!--  -->
+    <entry name="dr1@dr.dk">dtv1</entry>                            <!--  -->
+    <entry name="dr2@dr.dk">dr2</entry>                             <!--  -->
+    <entry name="dsf.de">dsf</entry>                                <!--  -->
+    <entry name="dw-world.de">dw</entry>                            <!--  -->
+    <entry name="eonline.com">e</entry>                             <!--  -->
+    <entry name="eurosport@eurosport.com">eurospo</entry>           <!--  -->
+    <entry name="extremesports.tv">extreme</entry>                  <!--  -->
+    <entry name="hallmarkchannel.com">hallmark</entry>              <!--  -->
+    <entry name="jetix.no">jetix</entry>                            <!--  -->
+    <entry name="kanal5.se">kanal5</entry>                          <!--  -->
+    <entry name="mtv@mtve.com">mtv</entry>                          <!--  -->
+    <entry name="nationalgeographic.com">natgeoch</entry>           <!--  -->
+    <entry name="nickelodeon.no">nickelod</entry>                   <!--  -->
+    <entry name="pro-sieben.de">pro7</entry>                        <!--  -->
+    <entry name="realitychannel.tv">reality</entry>                 <!--  -->
+    <entry name="rtl.de">rtl1</entry>                               <!--  -->
+    <entry name="rtl2.de">rtl2</entry>                              <!--  -->
+    <entry name="sat1.de">sat1</entry>                              <!--  -->
+    <entry name="skynews@sky.com">skynews</entry>                   <!--  -->
+    <entry name="SKYNEWS_NGC">skyntgeo</entry>                      <!--  -->
+    <entry name="star">star</entry>                                 <!--  -->
+    <entry name="svt1@svt.se">svtv1</entry>                         <!--  -->
+    <entry name="svt2@svt.se">svtv2</entry>                         <!--  -->
+    <entry name="tcm.com">tcm</entry>                               <!--  -->
+    <entry name="TCM_CARTOONNETWORK">tcmcartoon</entry>             <!--  -->
+    <entry name="THE_STUDIO">thestudio</entry>                      <!--  -->
+    <entry name="travelchannel.com">travel</entry>                  <!--  -->
+    <entry name="tv1000@tv1000.no">tv1000</entry>                   <!--  -->
+    <entry name="action@tv1000.no">tv1kaction</entry>               <!--  -->
+    <entry name="classic@tv1000.no">tv1kclassic</entry>             <!--  -->
+    <entry name="family@tv1000.no">tv1kfamily</entry>               <!--  -->
+    <entry name="nordic@tv1000.no">tv1knordic</entry>               <!--  -->
+    <entry name="tv2@tv2.dk">dtv2</entry>                           <!--  -->
+    <entry name="tv3.dk">tv3dan</entry>                             <!--  -->
+    <entry name="tv3.se">tv3sve</entry>                             <!--  -->
+    <entry name="tv4@tv4.se">tv4</entry>                            <!--  -->
+    <entry name="tv5.org">tv5</entry>                               <!--  -->
+    <entry name="tv6.at">tv6sve</entry>                             <!--  -->
+    <entry name="tv8.se">tv8</entry>                                <!--  -->
+    <entry name="vh1.com">vh1</entry>                               <!--  -->
+    <entry name="explorer@viasat.no">viaexpl</entry>                <!--  -->
+    <entry name="history@viasat.no">viahis</entry>                  <!--  -->
+    <entry name="sport@viasatsport.no">viaspo</entry>               <!--  -->
+    <entry name="sport2@viasatsport.no">viaspo2</entry>             <!--  -->
+    <entry name="sport3@viasatsport.no">viaspo3</entry>             <!--  -->
+    <entry name="ztv.se">ztvsve</entry>                             <!--  -->
+    <entry name="thevoice.no">thevoicetv</entry>                    <!-- The Voice -->
+    
+		
+  </section>
+
+<!-- Formating of Listing -->
+  <section name="Listing">
+    <entry name="BaseURL">http://www.sol.no/underholdning/tv/guiden/</entry>
+    <entry name="SearchURL">index.cgi?StartTime=0500&amp;EndTime=2900&amp;Date=#YYYY-#MM-#DD&amp;Categories=*&amp;Channels=#ID</entry>
+
+    <entry name="Start"/>
+
+<!-- Template of the Listing information -->
+    <entry name="Template">
+&lt;td>&lt;/td>
+&lt;/tr>&lt;tr>
+&lt;td>&lt;/td>
+&lt;td>&lt;#START>&lt;br>&lt;#END>&lt;br>&lt;/td>
+&lt;td>&lt;#GENRE>&lt;/td>
+&lt;td>&lt;#TITLE>&lt;br>&lt;#DESCRIPTION>&lt;/td>
+    </entry>
+
+    <entry name="SearchRegex">yes</entry>
+    <entry name="SearchRemove">yes</entry>
+    <entry name="SearchRepeat">\(R\)</entry>
+    <entry name="SearchSubtitles">\([t]+\)</entry>
+    <entry name="SearchEpNum"> \([0-9]{1,4}[\):]</entry>
+    <entry name="SearchEpTotal">\x06[0-9]{1,4}\)</entry>
+
+
+    <entry name="SubListingLink">tvguiden</entry>
+  </section>
+
+  <section name="SubListing">
+<!-- Unique Listing Start string -->
+
+<!-- Template of the Listing information -->
+    <entry name="Template">
+&lt;table>
+&lt;tr>&lt;td>&lt;b>&lt;/b>&lt;/td>&lt;/tr>
+&lt;tr>
+&lt;td>&lt;b>&lt;/b>&lt;br>&lt;br>&lt;/td>
+&lt;td>&lt;#GENRE>&lt;/td>
+&lt;td>&lt;b>&lt;/b>&lt;/td>
+&lt;td>&lt;br>&lt;/td>
+&lt;/tr>
+&lt;tr>&lt;td>&lt;#DESCRIPTION>&lt;/td>&lt;/tr>
+    </entry>
+  </section>
+  <section name="Info">
+    <entry name="GuideDays">12</entry>
+    <entry name="Lang">no</entry>
+    <entry name="SiteDescription">www.sol.no has good "linked descriptions," and the server is stable and fast. Genre grabbing implemented. THE BEST grabber for Norway.</entry>
+   </section>
+</profile>

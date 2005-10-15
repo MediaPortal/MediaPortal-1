@@ -1,0 +1,182 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<!-- The grabber xml file describes how to get the program listing infomation from the page. -->
+<!-- www.tvinfo.de Grabber Version: 1.2 -->
+
+<profile>
+
+<!-- Channel section lists all the channels available from this website. -->
+
+  <section name="ChannelList">
+
+	<!-- Öffentlich Rechtliche -->
+    <entry name="ard.de">37</entry> <!--ARD-->
+	<entry name="zdf.de">36</entry> <!--ZDF-->
+	<entry name="wdr.de">35</entry> <!--WDR-->
+	<entry name="ndrtv.de">15</entry> <!--NDR-->
+	<entry name="mdr.de">14</entry> <!--MDR-->	
+	<entry name="br-online.de">6</entry> <!--Bayern-->
+	<entry name="swr.de">44</entry> <!--SWR-->
+	<entry name="hr-online.de">11</entry> <!--HR (Hessen)-->
+	<entry name="rbb-online.de">5</entry> <!--RBB-->
+	
+	<!-- Private Hauptsender -->
+	<entry name="rtl.de">23</entry> <!--RTL-->
+	<entry name="rtl2.de">24</entry> <!--RTL2-->	
+	<entry name="super-rtl.de">25</entry> <!--Super RTL-->
+	<entry name="sat1.de">38</entry> <!--Sat1-->
+	<entry name="pro-sieben.de">22</entry> <!--Pro7-->
+	<entry name="kabel1.de">12</entry> <!--Kabel1-->
+	<entry name="vox.de">34</entry> <!--VOX-->
+	
+	<!-- Nachrichten -->
+	<entry name="n-tv.de">81</entry> <!--n-tv-->
+	<entry name="n24.de">40</entry> <!--N24-->
+	<entry name="euronews.net">94</entry> <!--EuroNews-->
+	<entry name="cnni-emea@cnn.com">93</entry> <!--CNN-->
+	<entry name="giga.de">80</entry> <!--NBC-->
+	<entry name="bloomberg.co.uk">98</entry> <!--BloombergTV-->	
+	<entry name="bbcworld.com">123</entry> <!--BBC-->
+	
+	<!-- Sparte -->
+	<entry name="eurosport@eurosport.com">10</entry> <!--Eurosport-->
+	<entry name="dsf.de">7</entry> <!--DSF-->
+	<entry name="kika.de">13</entry> <!--Kinderkanal-->
+	<entry name="mtv.de">46</entry> <!--MTV-->
+	<entry name="mtv2.de">124</entry> <!--MTV2-->
+	<entry name="viva.tv">32</entry> <!--VIVA-->
+	<entry name="vivaplus.tv">148</entry> <!--VIVA PLUS-->
+	<entry name="tele5.de">152</entry> <!--Tele 5-->
+	<entry name="neunlive.de">134</entry> <!--9 Live-->
+	<entry name="3sat.de">2</entry> <!--3sat-->
+	<entry name="arte-tv.com">4</entry> <!--arte-->
+	<entry name="gotv.at">176</entry> <!--gotv -->
+	<entry name="alpha@br-online.de">3</entry> <!--BR-Alpha-->
+	<entry name="phoenix.de">20</entry> <!--Phoenix-->
+	<entry name="dw-world.de">100</entry> <!--DW-tv-->
+	<entry name="cityinfotv.de">180</entry> <!--CityInfo-->
+	<entry name="sports@extreme.com">189</entry> <!--Extreme Sports Channel-->
+	<entry name="bibeltv.de">191</entry> <!--Bibel TV-->
+	<entry name="bahntv.de">195</entry> <!--Bahn TV-->
+	<entry name="spikatv.de">204</entry> <!--Spi.ka tv-->
+	<entry name="terranova.de">205</entry> <!--Terra Nova-->
+	<entry name="tv2@tv2.dk">208</entry> <!--TV 2-->
+	
+	<!-- Lokale -->
+	<entry name="tvb.de">182</entry> <!--TVBerlin-->
+	<entry name="spreekanal.de">145</entry> <!--Spreekanal-->
+	<entry name="tvm.de">31</entry> <!--TV München-->
+	<entry name="fab.de">39</entry> <!--FAB-->
+	<entry name="saartv.de">89</entry> <!--SaarTV-->
+	<entry name="hamburg1.de">113</entry> <!--HH1-->
+	<entry name="xxp.tv">130</entry> <!--XXP-->
+	<entry name="rtlfrankenlifetv.de">186</entry> <!--TV Franken-->
+	<entry name="rheinmaintv.de">192</entry> <!--rheinmaintv-->
+	<entry name="rnf.de">203</entry> <!--RNFplus-->	
+
+	<!-- Shopping-TV -->
+	<entry name="rtlshop.de">177</entry> <!--RTLSHOP-->
+	<entry name="hse24.de">131</entry> <!--Home Shopping Europe-->
+	<entry name="qvc.de">132</entry> <!--QVC-->
+	
+	<!-- Ausland -->
+	<entry name="trt.net.tr">178</entry> <!--TRT-->
+	<entry name="bbcprime.com">129</entry> <!--BBC Prime-->
+	<entry name="cnbceurope.com">183</entry> <!--CNBC-->
+	<entry name="sf1@sfdrs.ch">41</entry> <!--SF1-->
+	<entry name="sf2@sfdrs.ch">42</entry> <!--SF2-->
+	<entry name="orf1@orf.at">17</entry> <!--ORF1-->
+	<entry name="orf2@orf.at">18</entry> <!--ORF2-->
+	<entry name="tw1.at">136</entry> <!--TW1-->
+	<entry name="steiermark1.at">137</entry> <!--Steiermark 1-->
+	<entry name="tsr1@tsr.ch">27</entry> <!--TSR1-->
+	<entry name="tsr2@tsr.ch">28</entry> <!--TSR2-->
+	<entry name="rtl.lu">102</entry> <!--RTL Lux-->
+	<entry name="1@rtvslo.si">146</entry> <!--TV Slovenija 1-->
+	<entry name="2@rtvslo.si">147</entry> <!--TV Slovenija 2-->
+	<entry name="atvplus.at">108</entry> <!--ATVplus-->
+	<entry name="dr1@dr.dk">109</entry> <!--DR1-->
+	<entry name="dr2@dr.dk">110</entry> <!--DR2-->
+	<entry name="ned1@omroep.nl">103</entry> <!--NL 1-->
+	<entry name="ned2@omroep.nl">104</entry> <!--NL 2-->
+	<entry name="ned3@omroep.nl">105</entry> <!--NL 3-->
+	<entry name="1@betv.be">185</entry> <!--Belgien 1-->
+	<entry name="pulstv.at">202</entry> <!--Puls tv-->
+	<entry name="tsi1@rtsi.ch">206</entry> <!--TSI1-->
+	<entry name="tsi2@rtsi.ch">207</entry> <!--TSI2-->
+	
+	<!-- Digital-TV -->
+	<entry name="exrta@ard-digital.de">111</entry> <!--EinsExtra-->
+	<entry name="fest@ard-digital.de">8</entry> <!--EinsFestival-->
+	<entry name="plus@ard-digital.de">9</entry> <!--EinsPlus-->
+	<entry name="zdftheater@zdf.de">92</entry> <!--ZDFtheaterkanal-->
+	<entry name="zdfdoku@zdf.de">112</entry> <!--ZDFdokukanal-->
+	<entry name="zdfinfo@zdf.de">133</entry> <!--ZDFinfokanal-->
+	<entry name="planet-tv.de">73</entry> <!--Planet-->
+	
+	<!-- Premiere World -->
+	<entry name="premiere.de">162</entry> <!-- Premiere Start -->
+	<entry name="sport1@premiere.de">47</entry> <!-- Premiere Sport Portal -->
+	<entry name="prem1@premiere.de">153</entry> <!-- Premiere 1 -->
+	<entry name="prem2@premiere.de">154</entry> <!-- Premiere 2 -->
+	<entry name="prem3@premiere.de">155</entry> <!-- Premiere 3 -->
+	<entry name="prem4@premiere.de">156</entry> <!-- Premiere 4 -->
+	<entry name="prem5@premiere.de">157</entry> <!-- Premiere 5 -->
+	<entry name="prem6@premiere.de">158</entry> <!-- Premiere 6 -->
+	<entry name="prem7@premiere.de">159</entry> <!-- Premiere 7 -->
+	<entry name="nost@premiere.de">160</entry> <!-- Premiere Nostalgie -->
+	<entry name="serie@premiere.de">161</entry> <!-- Premiere Serie -->
+	<entry name="13thstreet.de">52</entry> <!-- 13th Street -->
+	<entry name="krimi@premiere.de">71</entry> <!-- Premiere Krimi -->
+	<entry name="disney.de">61</entry> <!-- Disney Channel -->
+	<entry name="discovery.de">60</entry> <!-- Discovery Channel -->
+	<entry name="scifi.com">188</entry> <!-- Sci Fi -->
+	<entry name="history@discovery.de">209</entry> <!-- Discovery Geschichte -->
+	<entry name="junior@premiere.de">70</entry> <!-- Junior -->
+	<entry name="classic@premiere.de">58</entry> <!-- Classica -->
+	<entry name="goldstar-tv.de">68</entry> <!-- Goldstar TV -->
+	<entry name="heimatkanal.de">172</entry> <!-- Heimatkanal -->
+	<entry name="beate-uhse.tv">106</entry> <!-- Beate Uhse TV -->
+	<entry name="mgm.com">181</entry> <!-- MGM -->
+	<entry name="animal@discovery.com">193</entry> <!-- Animal Planet -->
+	<entry name="hit24.tv">194</entry> <!-- hit24 -->
+	<entry name="bluemovie.cc">196</entry> <!-- Blue Movie -->
+	<entry name="extra@bluemovie.cc">197</entry> <!-- Blue Movie Extra -->
+	<entry name="dir-er@premiere.de">199</entry> <!-- Premiere Direkt Erotik -->
+	<entry name="dir1@premiere.de">201</entry> <!-- Premiere Direkt -->
+	
+  </section>
+
+
+  <section name="Listing">
+
+    <entry name="BaseURL">http://www.tvinfo.de/</entry>
+    <entry name="SearchURL">exe.php3?target=senderlist.inc&amp;newD=#_D&amp;newM=#_M&amp;newY=#YYYY&amp;showSenderID=#ID</entry>
+    <entry name="Tags">TA</entry>
+    <entry name="Template">
+	&#60;td&#62;&#60;#START&#62; &#60;/td&#62;
+	&#60;td&#62;&#60;a href&#62;&#60;#TITLE&#62;&#60;/a&#62;&#60;#DESCRIPTION&#62;&#60;/td&#62;
+	&#60;td&#62;&#60;#GENRE&#62;  &#60;/td&#62;&#60;/tr &#62;
+    </entry>
+    <entry name="SubListingLink">popup</entry>
+  </section>
+  
+  <section name="SubListing">
+    
+   <entry name="Start">SMS-Reminder</entry>
+   <entry name="End">Als TV-Tipp per E-Mail an Freunde verschicken</entry>
+   <entry name="Ahrefs">yes</entry>
+   <entry name="Tags">TA</entry>
+	
+   <entry name="Template">
+    <!-- &#60;/table&#62;&#60;#DESCRIPTION&#62;&#60;/TD&#62;&#60;/TR&#62;&#60;/table&#62;&#60;table&#62;&#60;tr&#62;&#60;td&#62;&#60;/td&#62;&#60;/tr&#62;&#60;/table&#62;&#60;table&#62;&#60;tr&#62;&#60;td&#62;&#60;TABLE&#62;&#60;tr&#62;&#60;td&#62;&#60;a href&#62; -->
+	&#60;TD&#62;&#60;table&#62;&#60;tr&#62;&#60;td&#62;&#60;p&#62;&#60;/td&#62;&#60;/tr&#62;&#60;/table&#62;&#60;#DESCRIPTION&#62;&#60;/TD&#62;&#60;/TR&#62;&#60;/table&#62; 
+   </entry>	
+  </section>
+
+  <section name="Info">
+    <entry name="GuideDays">14</entry>
+    <entry name="Language">de</entry>
+    <entry name="SiteDescription">Hauptseite: Sendungstitel, Unterseite: Beschreibung. Zur Zeit funktioniert das Grabben der Beschreibungen leider nicht einwandfrei.</entry>
+  </section>
+</profile>

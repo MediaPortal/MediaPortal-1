@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--   Version 1.0 -->
+
+<profile>
+  <section name="ChannelList">
+    <entry name="tvone@tvnz.co.nz">TV One</entry>
+    <entry name="tv2@tvnz.co.nz">TV 2</entry>
+    <entry name="tv3.co.nz">TV 3</entry>
+    <entry name="tritv.co.nz">TriTV</entry>
+    <entry name="JTV@wtv.co.nz">JTV</entry>
+    <entry name="KTV@wtv.co.nz">KTV</entry>
+    <entry name="CTV1@wtv.co.nz">CTV 1</entry>
+    <entry name="CTV2@wtv.co.nz">CTV 2</entry>
+    <entry name="CTV3@wtv.co.nz">CTV 3</entry>
+    <entry name="CTV4@wtv.co.nz">CTV 4</entry>
+    <entry name="CTV5@wtv.co.nz">CTV 5</entry>
+    <entry name="southlandtv.co.nz">Southland TV</entry>
+    <entry name="maoritelevision.com">Maori Television</entry>
+    <entry name="primetv.co.nz">Prime</entry>
+    <entry name="bbcworld.com">BBC World</entry>
+    <entry name="cnni-apac@cnn.com">CNN</entry>
+    <entry name="c4tv.co.nz">C4</entry>
+    <entry name="cartoonnetwork.co.nz">Cartoon Network</entry>
+    <entry name="disney.com.au">Disney</entry>
+    <entry name="espn_international@espn.com">ESPN</entry>
+    <entry name="J2@juicetv.com">J2</entry>
+    <entry name="nickelodeon.com.au">Nickelodeon</entry>
+    <entry name="playboytv.co.nz">Playboy</entry>
+    <entry name="rialto.co.nz">Rialto</entry>
+    <entry name="shinetv.co.nz">Shine</entry>
+    <entry name="spice@skytv.co.nz">Spice</entry>
+    <entry name="spice2@skytv.co.nz">Spice 2</entry>
+    <entry name="trackside@tab.co.nz">Trackside</entry>
+    <entry name="uktv.co.nz">UKTV</entry>
+    <entry name="juicetv.com">Juice TV</entry>
+    <entry name="mgm@skytv.co.nz">MGM</entry>
+    <entry name="tcm@skytv.co.nz">TCM</entry>
+    <entry name="animalplanet.com.au">Animal Planet</entry>
+    <entry name="discoveryanz.com">Discovery</entry>
+    <entry name="eentertainment.com">E!</entry>
+    <entry name="historychannel.com.au">History</entry>
+    <entry name="livingchannel.co.nz">Living Channel</entry>
+    <entry name="nationalgeographic.com.au">Nat. Geographic</entry>
+    <entry name="SKY_1@skytv.co.nz">SKY 1</entry>
+    <entry name="SKY_Box_Office@skytv.co.nz">SKY Box Office</entry>
+    <entry name="SKY_News_Aust_NZ@skytv.co.nz">SKY News Aust/NZ</entry>
+    <entry name="SKY_Box_Office_1@skytv.co.nz">SKY Box Office 1</entry>
+    <entry name="SKY_Box_Office_2@skytv.co.nz">SKY Box Office 2</entry>
+    <entry name="SKY_Box_Office_3@skytv.co.nz">SKY Box Office 3</entry>
+    <entry name="SKY_Box_Office_4@skytv.co.nz">SKY Box Office 4</entry>
+    <entry name="SKY_Box_Office_5@skytv.co.nz">SKY Box Office 5</entry>
+    <entry name="SKY_Box_Office_6@skytv.co.nz">SKY Box Office 6</entry>
+    <entry name="SKY_Box_Office_7@skytv.co.nz">SKY Box Office 7</entry>
+    <entry name="SKY_Movies_1@skytv.co.nz">SKY Movies 1</entry>
+    <entry name="SKY_Movies_2@skytv.co.nz">SKY Movies 2</entry>
+    <entry name="SKY_Sport_1@skytv.co.nz">SKY Sport 1</entry>
+    <entry name="SKY_Sport_2@skytv.co.nz">SKY Sport 2</entry>
+    <entry name="SKY_Sport_3@skytv.co.nz">SKY Sport 3</entry>
+    <entry name="Rugby_Channel@skytv.co.nz">Rugby Channel</entry>
+    <entry name="arts_channel@theartschannel.co.nz">Arts Channel</entry>
+
+<!--    Following same as under another name
+    <entry name="bbcworld.com">Maori</entry>
+    <entry name="bbcworld.com">One</entry>
+    <entry name="bbcworld.com">3</entry>
+    <entry name="bbcworld.com">2</entry>  -->
+
+
+  </section>
+
+<!-- Formating of Listing -->
+  <section name="Listing"> 
+    <entry name="BaseURL">http://ontv.orcon.net.nz/listings.xml</entry>
+
+    <entry name="GrabDelay">0</entry>
+
+    <entry name="ListingType">XML</entry>
+
+    <entry name="XPath">//programme</entry>
+
+    <entry name="ChannelEntry">channel</entry>
+    <entry name="StartEntry">start</entry>
+    <entry name="TitleEntry">title</entry>
+    <entry name="DescEntry">desc</entry>
+  </section>
+</profile>

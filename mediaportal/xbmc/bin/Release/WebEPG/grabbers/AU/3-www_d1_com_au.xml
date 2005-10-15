@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--   Version 1.0 -->
+
+<profile>
+  <section name="ChannelList">
+    
+	<entry name="abc-vic@abc.net.au">freehd.Melbourne.2</entry>		<!-- ABC VIC -->
+	<entry name="abc2@abc.net.au">freehd.Melbourne.2-2</entry>		<!-- ABC2 -->
+	<entry name="7-vic-metro@seven.com.au">freehd.Melbourne.7</entry>	<!-- Seven Metro VIC -->
+	<entry name="9-vic-metro@ninemsn.com.au">freehd.Melbourne.9</entry>	<!-- Nine Metro VIC -->
+	<entry name="10-vic-metro@ten.com.au">freehd.Melbourne.10</entry>	<!-- Ten Metro VIC -->
+	<entry name="sbs@sbs.com.au">freehd.Melbourne.SBS</entry>		<!-- SBS VIC-->
+	<entry name="sbs2@sbs.com.au">freehd.Melbourne.SBS-2</entry>		<!-- SBS 2 (SBS news) -->
+	
+	<entry name="abc-nsw@abc.net.au">freehd.Sydney.2</entry>		<!-- ABC NSW -->
+	<entry name="abc2@abc.net.au">freehd.Sydney.2-2</entry>			<!-- ABC2 -->
+	<entry name="7-nsw-metro@seven.com.au">freehd.Sydeny.7</entry>		<!-- Seven Metro NSW -->
+	<entry name="9-nsw-metro@ninemsn.com.au">freehd.Sydney.9</entry>	<!-- Nine Metro NSW -->
+	<entry name="10-nsw-metro@ten.com.au">freehd.Sydney.10</entry>		<!-- Ten Metro NSW -->
+	<entry name="sbs@sbs.com.au">freehd.Sydney.SBS</entry>			<!-- SBS NSW -->
+	<entry name="sbs2@sbs.com.au">freehd.Sydney.SBS-2</entry>		<!-- SBS 2 (SBS news) -->
+
+	<entry name="abc-sa@abc.net.au">freehd.Adelaide.2</entry>		<!-- ABC SA -->
+	<entry name="abc2@abc.net.au">freehd.Adelaide.2-2</entry>		<!-- ABC2 -->
+	<entry name="7-sa-metro@seven.com.au">freehd.Adelaide.7</entry>		<!-- Seven Metro SA -->
+	<entry name="9-sa-metro@ninemsn.com.au">freehd.Adelaide.9</entry>	<!-- Nine Metro SA -->
+	<entry name="10-sa-metro@ten.com.au">freehd.Adelaide.10</entry>		<!-- Ten Metro SA -->
+	<entry name="sbs-sa@sbs.com.au">freehd.Adelaide.SBS</entry>		<!-- SBS SA -->
+	<entry name="sbs2@sbs.com.au">freehd.Adelaide.SBS-2</entry>		<!-- SBS 2 (SBS news) -->
+
+	<entry name="abc-qld@abc.net.au">freehd.Brisbane.2</entry>		<!-- ABC QLD -->
+	<entry name="abc2@abc.net.au">freehd.Brisbane.2-2</entry>		<!-- ABC2 -->
+	<entry name="7-qld-metro@seven.com.au">freehd.Brisbane.7</entry>	<!-- Seven Metro QLD -->
+	<entry name="9-qld-metro@ninemsn.com.au">freehd.Brisbane.9</entry>	<!-- Nine Metro QLD -->
+	<entry name="10-qld-metro@ten.com.au">freehd.Brisbane.10</entry>	<!-- Ten Metro QLD -->
+	<entry name="sbs@sbs.com.au">freehd.Brisbane.SBS</entry>		<!-- SBS QLD -->
+	<entry name="sbs2@sbs.com.au">freehd.Brisbane.SBS-2</entry>		<!-- SBS 2 (SBS news) -->
+
+	<entry name="abc-tas@abc.net.au">freehd.Hobart.2</entry>		<!-- ABC TAS -->
+	<entry name="abc2@abc.net.au">freehd.Hobart.2-2</entry>			<!-- ABC2 -->
+	<entry name="7-tas-metro@seven.com.au">freehd.Hobart.7</entry>		<!-- Seven Metro TAS -->
+	<entry name="9-tas-metro@ninemsn.com.au">freehd.Hobart.9</entry>	<!-- Nine Metro TAS -->
+	<entry name="10-tas-metro@ten.com.au">freehd.Hobart.10</entry>		<!-- Ten Metro TAS -->
+	<entry name="sbs@sbs.com.au">freehd.Hobart.SBS</entry>			<!-- SBS TAS -->
+	<entry name="sbs2@sbs.com.au">freehd.Hobart.SBS-2</entry>		<!-- SBS 2 (SBS news) -->
+
+	<entry name="abc-wa@abc.net.au">freehd.Perth.2</entry>			<!-- ABC WA -->
+	<entry name="abc2@abc.net.au">freehd.Perth.2-2</entry>			<!-- ABC2 -->
+	<entry name="7-wa-metro@seven.com.au">freehd.Perth.7</entry>		<!-- Seven Metro WA -->
+	<entry name="9-wa-metro@ninemsn.com.au">freehd.Perth.9</entry>		<!-- Nine Metro WA -->
+	<entry name="10-wa-metro@ten.com.au">freehd.Perth.10</entry>		<!-- Ten Metro WA -->
+	<entry name="sbs-wa@sbs.com.au">freehd.Perth.SBS</entry>		<!-- SBS WA -->
+	<entry name="sbs2@sbs.com.au">freehd.Perth.SBS-2</entry>		<!-- SBS 2 (SBS news) -->
+
+	<entry name="abc-act@abc.net.au">freehd.Canberra.2</entry>		<!-- ABC ACT -->
+	<entry name="abc2@abc.net.au">freehd.Canberra.2-2</entry>		<!-- ABC2 -->
+	<entry name="7-act-metro@seven.com.au">freehd.Canberra.7</entry>	<!-- Seven Metro ACT -->
+	<entry name="9-act-metro@ninemsn.com.au">freehd.Canberra.9</entry>	<!-- Nine Metro ACT -->
+	<entry name="10-act-metro@ten.com.au">freehd.Canberra.10</entry>	<!-- Ten Metro ACT -->
+	<entry name="sbs@sbs.com.au">freehd.Canberra.SBS</entry>		<!-- SBS ACT -->
+	<entry name="sbs2@sbs.com.au">freehd.Canberra.SBS-2</entry>		<!-- SBS 2 (SBS news) -->
+
+	<entry name="abc-nt@abc.net.au">freehd.Darwin.2</entry>			<!-- ABC NT -->
+	<entry name="abc2@abc.net.au">freehd.Darwin.2-2</entry>			<!-- ABC2 -->
+	<entry name="7-nt-metro@seven.com.au">freehd.Darwin.7</entry>		<!-- Seven Metro NT -->
+	<entry name="9-nt-metro@ninemsn.com.au">freehd.Darwin.9</entry>		<!-- Nine Metro NT -->
+	<entry name="10-nt-metro@ten.com.au">freehd.Darwin.10</entry>		<!-- Ten Metro NT -->
+	<entry name="sbs-nt@sbs.com.au">freehd.Darwin.SBS</entry>		<!-- SBS NT -->
+	<entry name="sbs2@sbs.com.au">freehd.Darwin.SBS-2</entry>		<!-- SBS 2 (SBS news) -->
+
+
+  </section>
+<!-- Formating of Listing -->
+  <section name="Listing"> 
+    <entry name="BaseURL">http://www.d1.com.au/D1XMLTV.asmx/</entry>
+    <entry name="SearchURL">GetPrograms?channelid=#ID&amp;date=#MM-#DD-#YYYY</entry>
+
+    <entry name="ListingType">XML</entry>
+
+    <entry name="XPath">//Programs</entry>
+
+    <entry name="StartEntry">Start</entry>
+    <entry name="EndEntry">Stop</entry>
+    <entry name="TitleEntry">Title</entry>
+    <entry name="SubtitleEntry">Subtitle</entry>
+    <entry name="DescEntry">Description</entry>
+    <entry name="GenreEntry">Category</entry>
+  </section>
+</profile>

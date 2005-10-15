@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- The grabber xml file describes how to get the program listing infomation from the page. -->
+<!-- It has the following format: -->
+
+<profile>
+
+<!-- Channel section lists all the channels available from this website. -->
+
+  <section name="ChannelList">
+
+    <entry name=".unique channel id...">.channel id as used by web site.</entry>	<!-- Full channel name here -->
+
+  </section>
+
+<!-- Formating of Listing -->
+<!-- This section describes how to find the program infomation -->
+  <section name="Listing">
+
+<!-- _________________________ -->
+<!-- Base URL .. must start with 'http://' and have '/' on the end -->
+    <entry name="BaseURL">http://www.tvsite.tv/guide/</entry>
+
+<!-- _________________________ -->
+<!-- Search URL .. must have #ID - the channel id -->
+<!-- Can also have any of the following: -->
+<!-- #LIST_OFFSET	- offset position in a list longer then one page -->
+<!-- #DAY_OFFSET 	- offset of the day from today (0) -->
+<!-- #YYYY 		- year -->
+<!-- #MONTH 		- month full name (ie January) -->
+<!-- #MM 		- month with leading 0 -->
+<!-- #_M 		- month without leading 0 -->
+<!-- #WEEKDAY		- day of week full name (ie Monday) -->
+<!-- #DD 		- day with leading 0 -->
+<!-- #_D 		- day without leading 0 -->
+<!-- replace & with &amp; -->
+    <entry name="SearchURL">search.php3?channel=#ID&amp;limit=#LIST_OFFSET</entry>
+
+<!-- _________________________ -->
+<!-- Maximum Number of listings per page -->
+<!-- Optional only required if a single day's listing are over more then on page -->
+<!-- Used together with #LIST_OFFSET -->
+    <entry name="MaxCount">10</entry>
+
+<!-- _________________________ -->
+<!-- Unique Listing Start string -->
+<!-- speeds search by reducing, search area. Search string from start of HTML source -->
+<!-- Optional - If left out defaults to "<body" -->
+    <entry name="Start">&#60;!-- Vorschlag Output DB start--&#62;</entry>
+
+<!-- _________________________ -->
+<!-- Unique Listing End string -->
+<!-- speeds search by reducing, search area. Search string from postion of start string -->
+<!-- Optional - If left out defaults to "</body" -->
+    <entry name="End">&#60;!-- Vorschlag Include output DB ende --&#62;</entry>
+
+<!-- Template of the Listing information -->
+<!-- This give the layout of the program listing in HTML -->
+<!-- Currently only looks at the following tags: table, tr, td and br -->
+<!-- These tags can be simplied by remove everything after the tag name. ie <tr xxx> = <tr> -->
+<!-- All other tags can be removed. -->
+<!-- Required: -->
+<!-- <#TITLE>		- program name/title -->
+<!-- <#START> 		- program start time -->
+<!-- Optional: -->
+<!-- <#END> 		- program end time -->
+<!-- <#DESCRIPTION>	- program describtion text -->
+<!-- <#DAY> 		- program day (required if not part of page lookup) -->
+<!-- <#MONTH> 		- program month (required if not part of page lookup) -->
+<!-- All '<' and '>' must be replaced with &#60; and &#62; -->
+<!-- tabs and newlines are ignored so these can be used for formating -->
+
+    <entry name="Template">
+<!-- Example from www.fernsehen.ch -->
+	&#60;tr&#62;
+	&#60;td&#62;xxx &#60;/td&#62;
+	&#60;td&#62;Samstag&#60;br&#62;&#60;#DAY&#62;. &#60;#MONTH&#62;&#60;br&#62;&#60;#START&#62; - &#60;#END&#62;&#60;br&#62;&#60;/td&#62;
+	&#60;td&#62;&#60;#NAME&#62;&#60;br&#62;&#60;#TEXT&#62;&#60;/td&#62;
+	&#60;/tr&#62;
+<!-- Example from www.tvtoday.de -->
+	&#60;table&#62;
+	&#60;tr&#62;
+	&#60;td&#62;&#60;/td&#62;
+	&#60;td&#62;&#60;#START&#62;&#60;/td&#62;
+	&#60;td&#62;&#60;#NAME&#62;(xxx) 38 Min. bis &#60;#END&#62;   Showview  80-45-935&#60;br&#62;&#60;#TEXT&#62;&#60;br&#62; &#60;br&#62;&#60;/td&#62;
+	&#60;/tr&#62;
+	&#60;/table&#62;
+    </entry>
+  </section>
+  <section name="DateTime">
+
+<!-- If the months are listed on the page as text they must be entered here. -->
+<!-- If the page uses day offset or yyyy/mm/dd to load the page then this is not required -->
+<!-- enter 'no' for Months and leave the rest out. -->
+    <entry name="Months">yes</entry>
+    <entry name="Januar">1</entry>
+    <entry name="Februar">2</entry>
+    <entry name="M&#228;rz">3</entry>
+    <entry name="April">4</entry>
+    <entry name="Mai">5</entry>
+    <entry name="Juni">6</entry>
+    <entry name="Juli">7</entry>
+    <entry name="August">8</entry>
+    <entry name="September">9</entry>
+    <entry name="Oktober">10</entry>
+    <entry name="November">11</entry>
+    <entry name="Dezember">12</entry>
+  </section>
+</profile>

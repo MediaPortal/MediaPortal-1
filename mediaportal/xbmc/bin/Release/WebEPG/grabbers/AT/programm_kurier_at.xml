@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<profile>
+
+<!-- Channel section lists all the channels available from this website. -->
+
+  <section name="ChannelList">
+
+    <entry name="orf1@orf.at">14</entry>		<!-- orf1 -->
+
+  </section>
+
+<!-- Formating of Listing -->
+  <section name="Listing">
+    <entry name="BaseURL">http://programm.kurier.at/cont/tv/</entry>
+    <entry name="SearchURL">sender.aspx?senderid=#ID&amp;date=#DD.#MM.#YYYY%2006:00:00&amp;menuSender=menuSender</entry>
+
+<!--    <entry name="Ahrefs">yes</entry> -->
+
+    <entry name="Encoding">UTF-8</entry>
+
+<!-- Unique Listing Start string -->
+    <entry name="Start">incl programm_tv.ascx anfang</entry>
+
+    <entry name="End">incl programm_tv.ascx ende</entry>
+
+<!-- Template of the Listing information -->
+    <entry name="Template">
+&#60;tr&#62;
+&#60;td&#62;&#60;#START&#62;&#60;br&#62;&#60;/td&#62;
+&#60;td&#62;&#60;/td&#62;
+&#60;td&#62;&#60;#TITLE&#62;&#60;br&#62;&#60;#DESCRIPTION&#62;&#60;/td&#62;
+&#60;td&#62;&#60;/td&#62;
+&#60;/tr&#62;
+    </entry>
+  </section>
+  <section name="Info">
+    <entry name="GuideDays">7</entry>
+    <entry name="Lang">fr</entry>
+  </section>
+</profile>

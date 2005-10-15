@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<profile>
+  <section name="Default">
+    <entry name="Grabbers">5</entry>
+    <entry name="1">AU\www_sbs_com_au.xml</entry>
+    <entry name="2">AU\www_ourguide_com_au.xml</entry>
+    <entry name="3">AU\www_d1_com_au.xml</entry>
+    <entry name="4">AU\www_abc_net_au.xml</entry>
+    <entry name="5">AU\au_tv_yahoo_com.xml</entry>
+  </section>
+</profile>
