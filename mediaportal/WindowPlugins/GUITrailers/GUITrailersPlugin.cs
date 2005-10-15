@@ -43,7 +43,7 @@ namespace MediaPortal.GUI.Video
 		// Returns the name of the plugin which is shown in the plugin menu
 		public string PluginName()
 		{
-			return GUILocalizeStrings.Get(5900);
+			return "My Trailers";
 		}
 
 		// Returns the description of the plugin is shown in the plugin menu
@@ -99,10 +99,10 @@ namespace MediaPortal.GUI.Video
 		///          false : plugin does not need its own button on home</returns>
 		public bool   GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage) 
 		{
-			strButtonText=PluginName();
+			strButtonText= GUILocalizeStrings.Get(5900);
 			strButtonImage=String.Empty;
 			strButtonImageFocus=String.Empty;
-			strPictureImage=String.Empty;
+			strPictureImage= "hover_my trailers.png";
 			return true;
 		}
 	}
