@@ -61,6 +61,8 @@ namespace MediaPortal.GUI.Video
 		// show the setup dialog
 		public void   ShowPlugin()  
 		{
+			GUITrailersSetupForm setup = new GUITrailersSetupForm();
+			setup.ShowDialog();
 		}	
 
 		// Indicates whether plugin can be enabled/disabled
@@ -83,7 +85,7 @@ namespace MediaPortal.GUI.Video
 		// indicates if a plugin has its own setup screen
 		public bool   HasSetup()    
 		{
-			return false;
+			return true;
 		}    
 	
 		/// <summary>
