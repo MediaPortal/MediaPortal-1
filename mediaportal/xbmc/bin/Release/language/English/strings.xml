@@ -3367,6 +3367,38 @@
 	<id>5909</id>
 	<value>Can't stream movie!</value>
 </string>
+<string>
+	<id>5910</id>
+	<value>Getting movie info</value>
+</string>
+<string>
+	<id>5911</id>
+	<value>New in theaters</value>
+</string>
+<string>
+	<id>5912</id>
+	<value>Previous week</value>
+</string>
+<string>
+	<id>5913</id>
+	<value>This week</value>
+</string>
+<string>
+	<id>5914</id>
+	<value>Next week</value>
+</string>
+<string>
+	<id>5915</id>
+	<value>No movie reviews yet</value>
+</string>
+<string>
+	<id>5916</id>
+	<value>No trailers were found.</value>
+</string>
+<string>
+	<id>5917</id>
+	<value>German Trailers</value>
+</string>
 
 	<!-- End of My Trailers Strings -->	
 <string>
