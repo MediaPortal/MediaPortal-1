@@ -1082,6 +1082,8 @@ namespace MediaPortal.GUI.GUIBurner
 		{
 			using(MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml")) 
 			{
+				Log.Write("GUIBurner.LoadSettings: 1");
+
 				isBurner=xmlreader.GetValueAsBool("burner","burn",true);
 				fastFormat=xmlreader.GetValueAsBool("burner","fastformat",true);
 				tmpFolder=xmlreader.GetValueAsString("burner","temp_folder","c:\\");
@@ -1095,11 +1097,16 @@ namespace MediaPortal.GUI.GUIBurner
 				deleteDatabase=xmlreader.GetValueAsBool("burner","deletetvdatabase",false);
 				mpegPath=xmlreader.GetValueAsString("burner","mpeg_folder","");
 				
+				Log.Write("GUIBurner.LoadSettings: 2");
+
 				if (isBurner==true) 
 				{
 					burnClass= new XPBurn.XPBurnCD();
 					burnClass.BurnerDrive = burnClass.RecorderDrives[recorder].ToString();
 				}
+
+				Log.Write("GUIBurner.LoadSettings: 3");
+
 				if(recordCards==1) 
 				{
 					drives[driveCount++]="["+GUILocalizeStrings.Get(2133)+"]";
@@ -1109,8 +1116,13 @@ namespace MediaPortal.GUI.GUIBurner
 					drives[driveCount++]="["+GUILocalizeStrings.Get(2144)+"]";
 					drives[driveCount++]="["+GUILocalizeStrings.Get(2145)+"]";
 				}
+
+				Log.Write("GUIBurner.LoadSettings: 4");
+
 				for (int i=0; i<20; i++) 
 				{
+					Log.Write("GUIBurner.LoadSettings: 5.{0}", i + 1);
+
 					sound[i]=xmlreader.GetValueAsString("music","sharepath"+i.ToString()," ").Trim();		
 					sname[i]=xmlreader.GetValueAsString("music","sharename"+i.ToString()," ").Trim();		
 					vname[i]=xmlreader.GetValueAsString("movies","sharename"+i.ToString()," ").Trim();
@@ -1123,6 +1135,7 @@ namespace MediaPortal.GUI.GUIBurner
 						drives[driveCount]="["+pname[i]+"]";
 						driveCount++;
 					}
+
 					if (vname[i].StartsWith("CD/")==false && video[i]!="") 
 					{
 						drives[driveCount]="["+vname[i]+"]";
