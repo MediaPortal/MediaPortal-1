@@ -179,7 +179,7 @@ namespace MediaPortal.Devices
 		{
 			try
 			{
-				if(_deviceStream.EndRead(asyncResult) == 13)
+				if(_deviceStream.EndRead(asyncResult) == 13 && _deviceBuffer[1] == 1)
 				{
 					if(_deviceBuffer[5] == (int)_doubleClickButton && Environment.TickCount - _doubleClickTick <= _doubleClickTime)
 					{
@@ -190,8 +190,6 @@ namespace MediaPortal.Devices
 					{
 						_doubleClickButton = (RemoteButton)_deviceBuffer[5];
 						_doubleClickTick = Environment.TickCount;
-
-						Log.Write("MrMario64: {0}", _doubleClickButton);
 
 						if(Click != null)
 							Click(_doubleClickButton);
