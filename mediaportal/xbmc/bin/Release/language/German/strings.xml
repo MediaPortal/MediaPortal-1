@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="windows-1250"?>
+
 <strings>
+
 	<characters>255</characters>
+
 	<string>
 		<id>0</id>
 		<value>Anwendungen</value>
@@ -2390,6 +2393,9 @@
 		<id>810</id>
 		<value>Karte</value>
 	</string>
+
+<!-- "Alarm" Strings -->
+
 	<string>
 		<id>850</id>
 		<value>Alarm</value>
@@ -2400,7 +2406,7 @@
 	</string>
 	<string>
 		<id>852</id>
-		<value>Alarm An/Aus</value>
+		<value>Alarm aktiv</value>
 	</string>
 	<string>
 		<id>853</id>
@@ -2408,7 +2414,7 @@
 	</string>
 	<string>
 		<id>854</id>
-		<value>An diesem Tag aktiv</value>
+		<value>An diesen Tagen aktiv:</value>
 	</string>
 	<string>
 		<id>855</id>
@@ -2416,7 +2422,7 @@
 	</string>
 	<string>
 		<id>856</id>
-		<value>Sleep-Timer</value>
+		<value>Sleep-Timer Start</value>
 	</string>
 	<string>
 		<id>857</id>
@@ -2464,11 +2470,11 @@
 	</string>
 	<string>
 		<id>868</id>
-		<value>Reset</value>
+		<value>Zurücksetzen</value>
 	</string>
 	<string>
 		<id>869</id>
-		<value>Neuer Alarm</value>
+		<value>Neuer Alarm </value>
 	</string>
 	<string>
 		<id>870</id>
@@ -2478,6 +2484,9 @@
 		<id>871</id>
 		<value>Computer aufwecken</value>
 	</string>
+
+<!-- Ende "Alarm" Strings -->
+
 	<string>
 		<id>872</id>
 		<value>Beginnt mit...</value>
@@ -3174,6 +3183,9 @@
 		<id>1447</id>
 		<value>Aufnahme gestoppt:</value>
 	</string>
+
+<!-- "Status" Strings -->
+
 	<string>
 		<id>1950</id>
 		<value>Status</value>
@@ -3290,6 +3302,11 @@
 		<id>1978</id>
 		<value>Virtueller Speicher</value>
 	</string>
+
+<!-- Ende "Status" Strings -->
+
+<!-- "Rezepte" Strings -->
+
 	<string>
 		<id>2005</id>
 		<value>Löschen</value>
@@ -3490,6 +3507,11 @@
 		<id>2054</id>
 		<value>Kein Eintrag!</value>
 	</string>
+
+<!-- Ende "Rezepte" Strings -->
+
+<!-- "Brennen" Strings -->
+
 	<string>
 		<id>2100</id>
 		<value>Brennen</value>
@@ -3666,10 +3688,11 @@
 		<id>2143</id>
 		<value>Hauptmenü</value>
 	</string>
-	<string>
-		<id>2144</id>
-		<value>MP Backup</value>
-	</string>
+
+<!-- Ende "Brennen" Strings -->
+
+<!-- "Dateimanager" Strings -->
+
 	<string>
 		<id>2200</id>
 		<value>Explorer</value>
@@ -3774,6 +3797,9 @@
 		<id>2225</id>
 		<value>Verzeichnis angelegt</value>
 	</string>
+
+<!-- Ende "Dateimanager" Strings -->
+
 	<string>
 		<id>3000</id>
 		<value>Programmoptionen</value>
@@ -3866,6 +3892,86 @@
 		<id>3022</id>
 		<value>von</value>
 	</string>
+
+<!-- "Kino-Trailer" Strings --> 
+
+	<string>
+		<id>5900</id>
+		<value>Kino-Trailer</value>
+	</string> 
+	<string>
+		<id>5901</id>
+		<value>Zeige Trailer</value>
+	</string> 
+	<string>
+		<id>5902</id>
+		<value>Welche Trailer zeigen?</value>
+	</string> 
+	<string>
+		<id>5903</id>
+		<value>Neue Trailer</value>
+	</string> 
+	<string>
+		<id>5904</id>
+		<value>Meistgesehene Trailer</value>
+	</string> 
+	<string>
+		<id>5905</id>
+		<value>Alle Trailer</value>
+	</string> 
+	<string>
+		<id>5906</id>
+		<value>Trailer</value>
+	</string> 
+	<string>
+		<id>5907</id>
+		<value>Ausschnitte</value>
+	</string> 
+	<string>
+		<id>5908</id>
+		<value>Mehr</value>
+	</string> 
+	<string>
+		<id>5909</id>
+		<value>Kann Film nicht laden!</value>
+	</string> 
+	<string>
+		<id>5910</id>
+		<value>Lade Film-Info</value>
+	</string>
+	<string>
+		<id>5911</id>
+		<value>Neu im Kino</value>
+	</string>
+	<string>
+		<id>5912</id>
+		<value>Letzte Woche</value>
+	</string>
+	<string>
+		<id>5913</id>
+		<value>Diese Woche</value>
+	</string>
+	<string>
+		<id>5914</id>
+		<value>Nächste Woche</value>
+	</string>
+	<string>
+		<id>5915</id>
+		<value>Bislang keine Kritiken</value>
+	</string>
+	<string>
+		<id>5916</id>
+		<value>Kein Trailer gefunden!</value>
+	</string>
+	<string>
+		<id>5917</id>
+		<value>Deutsche Trailer</value>
+	</string>
+
+<!-- Ende "Kino-Trailer" Strings -->
+
+<!-- "E-Mail" Strings -->
+
 	<string>
 		<id>8000</id>
 		<value>E-Mail</value>
@@ -3982,6 +4088,9 @@
 		<id>8034</id>
 		<value>Zeige HTML</value>
 	</string>
+
+<!-- Ende "E-Mail" Strings -->
+
 	<string>
 		<id>9000</id>
 		<value>Bildgröße:</value>
@@ -4123,6 +4232,9 @@
 		<value>Warte auf Seite {0:X}...</value>
 	</string>
 	<string>
+
+<!-- "Tetris" Strings --> 
+
 		<id>19001</id>
 		<value>Tetris</value>
 	</string>
@@ -4170,6 +4282,9 @@
 		<id>19012</id>
 		<value>Spiel beendet</value>
 	</string>
+
+<!-- Ende "Tetris" Strings --> 
+
 	<string>
 		<id>19100</id>
 		<value>Karte</value>
@@ -4602,48 +4717,5 @@
 		<id>200024</id>
 		<value>TV-Konfiguration</value>
 	</string>
-	
-	<!-- My Trailers Strings --> 
-	<string>
-		<id>5900</id>
-		<value>Kino-Trailer</value>
-	</string> 
-	<string>
-		<id>5901</id>
-		<value>Zeige Trailer</value>
-	</string> 
-	<string>
-		<id>5902</id>
-		<value>Welchen Trailer zeigen?</value>
-	</string> 
-	<string>
-		<id>5903</id>
-		<value>Neu hinzugefügte Trailer</value>
-	</string> 
-	<string>
-		<id>5904</id>
-		<value>Meistgesehene Trailer</value>
-	</string> 
-	<string>
-		<id>5905</id>
-		<value>Alle Trailer</value>
-	</string> 
-	<string>
-		<id>5906</id>
-		<value>Trailer</value>
-	</string> 
-	<string>
-		<id>5907</id>
-		<value>Clips</value>
-	</string> 
-	<string>
-		<id>5908</id>
-		<value>Mehr</value>
-	</string> 
-	<string>
-		<id>5909</id>
-		<value>Kann Film nicht laden!</value>
-	</string> 
-	<!-- End of My Trailers Strings --> 
 
 </strings>
