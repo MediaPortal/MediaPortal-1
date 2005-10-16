@@ -27,7 +27,7 @@
 			<type>image</type>
 			<id>1</id>
 			<posX>85</posX>
-			<posY>400</posY>
+			<posY>422</posY>
 			<width>-</width>
 			<height>-</height>
 			<colordiffuse>ffffffff</colordiffuse>
@@ -190,7 +190,7 @@
 			<description>Movie Title value</description>
 			<id>1</id>
 			<posX>65</posX>
-			<posY>500</posY>
+			<posY>475</posY>
 			<label>#title</label>
 			<font>font18</font>
 			<width>180</width>
@@ -253,18 +253,18 @@
 			<type>image</type>
 			<description>movie border</description>
 			<id>0</id>
-			<posX>96</posX>
-			<posY>252</posY>
-			<width>120</width>
+			<posX>93</posX>
+			<posY>243</posY>
+			<width>126</width>
 			<height>184</height>
-			<texture>playback_background.png</texture>
+			<texture>Backgroundsmal.png</texture>
 		</control>
 		<control>
 			<type>image</type>
 			<description>movie poster</description>
 			<id>24</id>
-			<posX>104</posX>
-			<posY>268</posY>
+			<posX>106</posX>
+			<posY>260</posY>
 			<width>101</width>
 			<height>150</height>
 			<texture>-</texture>
