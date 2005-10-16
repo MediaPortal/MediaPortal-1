@@ -33,6 +33,7 @@ namespace MediaPortal.TagReader.MP4
 	public class MP4TagReader: ITagReader
 	{
 		protected MusicTag m_tag = new MusicTag();
+		protected byte[] _imageBytes;
 
 		public MP4TagReader()
 		{
@@ -110,6 +111,25 @@ namespace MediaPortal.TagReader.MP4
 					{
 						m_tag.Track = EndianBitConverter.Big.ToInt32(dataAtom.Data, 0);
 					}
+
+					// cover image
+					dataAtom = (ParsedDataAtom)MP4Parser.findAtom(ilstAtom.Children, "COVR.DATA");
+
+					// This will be followed by 8 bytes (three for frame size, one for text encoding, three for image format [iTunes seems to always be JPG], one for picture type [probably 0x00 for "other]), then a null-terminated description string (looks like iTunes doesn't use the String, so there's just a 0x00), and then the image data.
+					if(dataAtom != null) 
+					{
+						try
+						{
+							_imageBytes = new byte[dataAtom.Data.Length];
+
+							Array.Copy(dataAtom.Data, 0, _imageBytes, 0, dataAtom.Data.Length);
+						}
+						catch(Exception e)
+						{
+							Log.Write("MP4TagReader.ReadTag: {0} while extracting embedded cover art", e.Message);
+						}
+					}
+
 					// Log.Write("Title={0}", m_tag.Title);
 					// Log.Write("Artist={0}", m_tag.Artist);
 					// Log.Write("Album={0}", m_tag.Album);
@@ -131,6 +151,11 @@ namespace MediaPortal.TagReader.MP4
 		public override MusicTag Tag
 		{
 			get { return m_tag;}
+		}
+
+		public override byte[] Image
+		{
+			get { return _imageBytes; }
 		}
 
 		protected static String GetGenre(int genreNr)
