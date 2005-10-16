@@ -1300,6 +1300,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "GUITrailers\GUITrailersSetupForm.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUITrailers\GUITrailersSetupForm.resx"
+                    DependentUpon = "GUITrailersSetupForm.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "GUITV\GUIFullscreenTeletext.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
