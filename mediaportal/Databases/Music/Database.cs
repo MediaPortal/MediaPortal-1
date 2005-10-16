@@ -2287,6 +2287,7 @@ namespace MediaPortal.Music.Database
 										try
 										{
 											System.IO.File.Copy(strSmallThumb,folderThumb,true);
+											System.IO.File.SetAttributes(folderThumb, System.IO.File.GetAttributes(folderThumb) | System.IO.FileAttributes.Hidden);
 										}
 										catch(Exception){}
 									}
