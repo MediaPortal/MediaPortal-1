@@ -6253,7 +6253,7 @@
     </tv> 
   </capturecard>
   
-  <capturecard commercialname="Terratec Cinergy Hybrid T USB XS" capturename="Cinergy Hybrid T USB XS (Digital)" devid="vid_0ccd&amp;amp;pid_0042&amp;amp;mi_00"> 
+  <capturecard commercialname="Terratec Cinergy Hybrid T USB XS" capturename="Cinergy Hybrid T USB XS (Digital)" devid="vid_0ccd&amp;pid_0042&amp;mi_00"> 
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities> 
     <tv> 
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
@@ -6459,5 +6459,21 @@
 		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
       </connections>
     </tv>
+  </capturecard>
+
+  <capturecard commercialname="Terratec Cinergy T USB XS (DVB-T)" capturename="Cinergy T USB XS Receiver" devid="vid_0ccd&amp;pid_0043&amp;mi_00"> 
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities> 
+    <tv> 
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters> 
+        <filter cat="networkprovider"	name="Microsoft DVBS Network Provider"		checkdevice="false"></filter> 
+        <filter cat="tunerdevice"		name="Cinergy T USB XS Tuner"		checkdevice="true"></filter> 
+        <filter cat="capture"			name="Cinergy T USB XS Receiver"	checkdevice="true"></filter> 
+      </filters> 
+      <connections> 
+         <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection> 
+         <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection> 
+      </connections> 
+    </tv> 
   </capturecard>
 </capturecards>
