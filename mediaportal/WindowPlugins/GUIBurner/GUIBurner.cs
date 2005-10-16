@@ -140,12 +140,12 @@ namespace MediaPortal.GUI.GUIBurner
 		convFile[] cFiles = new convFile[100];
 		private	XPBurn.XPBurnCD burnClass; 
 		
-		string[] video = new string[20];
-		string[] vname = new string[20];
-		string[] sound = new string[20];
-		string[] sname = new string[20];
-		string[] pictures = new string[20];
-		string[] pname = new string[20];
+		string[] video = new string[50];
+		string[] vname = new string[50];
+		string[] sound = new string[50];
+		string[] sname = new string[50];
+		string[] pictures = new string[50];
+		string[] pname = new string[50];
 
 		private string recordpath1="";  // for TV card 1
 		private string recordpath2="";	// for TV card 2
@@ -157,7 +157,7 @@ namespace MediaPortal.GUI.GUIBurner
 		private string tmpStr;
 		private ArrayList currentExt=null;
 		private string currentFolder=null;
-		private string[] drives=new string[35];
+		private string[] drives=new string[50];
 		private int driveCount=0;
 		private long actSize=0;
 		private long cdSize=681574400;
@@ -500,7 +500,7 @@ namespace MediaPortal.GUI.GUIBurner
 									} 
 									else 
 									{
-										for (int i=0; i<20; i++) 
+										for (int i=0; i< 50; i++) 
 										{
 											if (pname[i]==shareName)
 											{
@@ -1119,7 +1119,7 @@ namespace MediaPortal.GUI.GUIBurner
 
 				Log.Write("GUIBurner.LoadSettings: 4");
 
-				for (int i=0; i<20; i++) 
+				for (int i=0; i< 50; i++) 
 				{
 					Log.Write("GUIBurner.LoadSettings: 5.{0}", i + 1);
 
