@@ -20,6 +20,7 @@
  */
 using System;
 using System.Collections;
+using System.Drawing;
 using System.Windows.Forms; // used for Keys definition
 using Microsoft.DirectX.Direct3D;
 
@@ -93,6 +94,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("InfoImagey")] protected int m_iInfoImageY;
     [XMLSkinElement("InfoImagediffuse")] protected int m_dwInfoImageDiffuse;
     [XMLSkinElement("InfoImage")] protected string m_strInfoImage;
+    [XMLSkinElement("unfocusedAlpha")] protected int _unfocusedAlpha = 0xFF;
 
     int m_iItemHeightLow;
     int m_iItemWidthLow;

@@ -20,6 +20,7 @@
  */
 using System;
 using System.Collections;
+using System.Drawing;
 using System.Windows.Forms; // used for Keys definition
 using Microsoft.DirectX.Direct3D;
 
@@ -99,7 +100,9 @@ namespace MediaPortal.GUI.Library
 	[XMLSkinElement("folderPrefix")] protected string _folderPrefix = "[";
 	[XMLSkinElement("folderSuffix")] protected string _folderSuffix = "]";
 	  
-	bool m_bShowTexture = true;
+	[XMLSkinElement("unfocusedAlpha")] protected int _unfocusedAlpha = 0xFF;
+	  
+	  bool m_bShowTexture = true;
     int m_iOffset = 0;
     int m_iLastItemPageValues = 0;
 
@@ -279,7 +282,7 @@ namespace MediaPortal.GUI.Library
       long dwColor = m_dwTextColor;
       if (pItem.Selected) dwColor = m_dwSelectedColor;
 			if (!bFocus)
-				dwColor&=0xaaffffff;
+				dwColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
 
       if (pItem.IsRemote)
       {
@@ -302,7 +305,7 @@ namespace MediaPortal.GUI.Library
       {
         if (buttonOnly)
 				{
-					btn.ColourDiffuse=0xaaffffff;
+					btn.ColourDiffuse=Color.FromArgb(_unfocusedAlpha, Color.White).ToArgb();
           btn.Focus = false;
           btn.SetPosition(dwPosX, dwPosY);
           if (true == m_bShowTexture) btn.Render(timePassed);
@@ -351,7 +354,7 @@ namespace MediaPortal.GUI.Library
 					if (bFocus)
 						pImage.ColourDiffuse=0xffffffff;
 					else
-						pImage.ColourDiffuse=0xaaffffff;
+						pImage.ColourDiffuse=Color.FromArgb(_unfocusedAlpha, Color.White).ToArgb();
 
           pImage.Render(timePassed);
         }
@@ -391,7 +394,7 @@ namespace MediaPortal.GUI.Library
 						if (bFocus)
 							pImage.ColourDiffuse=0xffffffff;
 						else
-							pImage.ColourDiffuse=0xaaffffff;
+							pImage.ColourDiffuse=Color.FromArgb(_unfocusedAlpha, Color.White).ToArgb();
 
             pImage.Render(timePassed);
           }
