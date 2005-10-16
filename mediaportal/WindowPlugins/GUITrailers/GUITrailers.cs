@@ -1154,7 +1154,6 @@ namespace MediaPortal.GUI.Video
 			label8.Visible=false;
 			plotarea.Visible=false;
 			btntoggleplot.Visible=false;
-			buttonOne.NavigateUp = 3;
 			btntogglecast.Visible=false;
 			btnletter.NavigateDown =2;
 
