@@ -113,6 +113,7 @@ namespace MediaPortal.GUI.Video
 		string preleasedate;    // and will load them back after playing the 
 		string pplot;			// movie.
 		string pcast;
+		double rating;
 
 		// Get from mediaportal.xml
 		string bitrate = string.Empty;
@@ -1005,6 +1006,9 @@ namespace MediaPortal.GUI.Video
 			Match m3 = Regex.Match(TempHTML,@"<b>Release\sDate:.*;(?<releasedate>.*)");
 			ReleaseDate = m3.Groups["releasedate"].Value;
 			GUIPropertyManager.SetProperty("#year", ReleaseDate);
+
+			// Get Rating
+			Match r = Regex.Match(TempHTML,@"Average\sGrade.*.grade.>(?<rating>.*)<");
 			
 			casturl = url;
 			ShowLabelsTrue();
@@ -1169,14 +1173,12 @@ namespace MediaPortal.GUI.Video
 			label6.Visible=true;
 			label8.Visible=true;
 			btntoggleplot.Visible=true;
-			buttonOne.NavigateUp = 6;
 			btntogglecast.Visible=true;
 			btnletter.NavigateDown =5;
 			if(castview==true)
 				ToggleButtonCast();
 			else
 				ToggleButtonPlot();
-
 		}
 
 		void GetGUIProperties()
@@ -1309,7 +1311,7 @@ namespace MediaPortal.GUI.Video
 				ConvertStr(G_Cast[i], out G_Cast[i]);
 
 				// get plot
-				Match pl = Regex.Match(TempBlok[i], @"(?s-imnx:<td\scolspan.*class=.pcontent.>(?<movieplot>.*)<p)");
+				Match pl = Regex.Match(TempBlok[i], @"(?s-imnx:<td\scolspan.*class=.pcontent.>(?<movieplot>.*)<p\sstyle)");
 				G_Plot[i] = pl.Groups["movieplot"].Value;
 				ConvertStr(G_Plot[i], out G_Plot[i]);
 
