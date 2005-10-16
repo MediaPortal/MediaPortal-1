@@ -199,6 +199,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "CallerId\ISDN\ISDNSetupForm.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "CallerId\ISDN\ISDNSetupForm.resx"
+                    DependentUpon = "ISDNSetupForm.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "CallerId\ISDN\ISDNWatch.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

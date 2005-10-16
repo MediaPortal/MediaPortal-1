@@ -55,6 +55,9 @@ namespace ProcessPlugins.CallerId
     static string myCountryCode;
     static string myAreaCode;
     bool ISDNdisabled = false;
+    bool stopMedia    = true;
+    bool autoResume   = false;
+    int resumeTimeOut = -1;
 
     ISDNWatch ISDNWatch;
 
@@ -239,11 +242,13 @@ namespace ProcessPlugins.CallerId
 
     public bool HasSetup()
     {
-      return false;
+      return true;
     }
 
     public void ShowPlugin()
     {
+      Form setup = new ISDNSetupForm();
+      setup.ShowDialog();
     }
 
     #endregion
@@ -277,6 +282,15 @@ namespace ProcessPlugins.CallerId
       {
         ISDNdisabled = true;
         Log.Write("ISDN: CAPI error. No ISDN card installed? Caller-ID disabled.");
+      }
+
+      using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      {
+        stopMedia     = xmlreader.GetValueAsBool("isdn", "stopmedia", true);
+        autoResume    = xmlreader.GetValueAsBool("isdn", "autoresume", false);
+        resumeTimeOut = xmlreader.GetValueAsInt ("isdn", "timeout", -1);
+        if (resumeTimeOut == 0)
+          resumeTimeOut = -1;
       }
     }
 
@@ -369,15 +383,16 @@ namespace ProcessPlugins.CallerId
             notifyText = callerId + "\n\n" + GUILocalizeStrings.Get(1025) + "\n" + GUILocalizeStrings.Get(1026); // 1025 An error occurred. 1026 See the log files for details.
           }
 
-          if (g_Player.Playing && !g_Player.Paused)
+          if (g_Player.Playing && !g_Player.Paused && stopMedia)
             g_Player.Pause();
 
           dialogNotify.SetHeading(notifyHeading);
           dialogNotify.SetText(notifyText);
           dialogNotify.SetImage(notifyImage);
+          dialogNotify.TimeOut = resumeTimeOut;
           dialogNotify.DoModal(GUIWindowManager.ActiveWindow);
           
-          if (g_Player.Playing && g_Player.Paused)
+          if (g_Player.Playing && g_Player.Paused && stopMedia)
             g_Player.Pause();
         }
       }
