@@ -4600,7 +4600,7 @@
   </string>
   <string>
     <id>200007</id>
-    <value>Vorige</value>
+    <value>&lt;Vorige</value>
   </string>
   <string>
     <id>200008</id>
@@ -4608,7 +4608,7 @@
   </string>
   <string>
     <id>200009</id>
-    <value>Volgende</value>
+    <value>Volgende&gt;</value>
   </string>
   <string>
     <id>200010</id>
