@@ -51,7 +51,7 @@ namespace MediaPortal.GUI.Video
 		[SkinControlAttribute(24)]			protected GUIImage poster =null;
 		[SkinControlAttribute(50)]			protected GUILabelControl label0 = null;
 		[SkinControlAttribute(51)]			protected GUIFadeLabel label1 = null;
-		[SkinControlAttribute(52)]			protected GUILabelControl label2 = null;
+		[SkinControlAttribute(52)]			protected GUILabelControl label2 = null; //runtime
 		[SkinControlAttribute(53)]			protected GUILabelControl label3 = null;
 		[SkinControlAttribute(54)]			protected GUILabelControl label4 = null;
 		[SkinControlAttribute(55)]			protected GUILabelControl label5 = null;
@@ -181,9 +181,26 @@ namespace MediaPortal.GUI.Video
 				btnletter.AddSubItem(k.ToString());
 			}
 			LoadSettings();
-			ShowLabelsFalse();
-
+			if(tcmview==true || G_viewInfoAndTrailer==true)
+			{
+				ShowLabelsTrue();
+				listview.SelectedListItemIndex = Prev_SelectedItem;
+				listview.Focus = true;
+				buttonOne.Focus = false;
+			}
+			else
+			{
+				ShowLabelsFalse();
+				GUIPropertyManager.SetProperty("#title", "");
+				poster.SetFileName(GUIGraphicsContext.Skin+@"\media\background.png");
+			}
 		}
+
+		protected override void OnPreviousWindow()
+		{
+			base.OnPreviousWindow ();
+		}
+
 			
 				
 		private void OnButtonOne()
@@ -194,6 +211,14 @@ namespace MediaPortal.GUI.Video
 			dlgm.AddLocalizedString(5903);	// Diaglog for which movies to show
 			dlgm.AddLocalizedString(5904);
 			dlgm.AddLocalizedString(5905);
+			//if language is german than show option german trailers
+			string language="";
+			using(MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml")) 
+			{
+				language = xmlreader.GetValue("skin","language");
+			}
+			if(language.Equals("German")==true)
+				dlgm.AddLocalizedString(5917);
 			dlgm.DoModal(GUIWindowManager.ActiveWindow);
 
 			if(dlgm.SelectedLabel==0)
@@ -228,6 +253,16 @@ namespace MediaPortal.GUI.Video
 				listview.Focus=true;
 				Prev_SelectedItem = 0;
 				ShowMovies();
+			}
+			if(language.Equals("German")==true)
+			{
+				if(dlgm.SelectedLabel==3)
+				{
+					buttonOne.Focus=false;
+					listview.Focus=true;
+					Prev_SelectedItem = 0;
+					ShowGermanLayoutWoche();
+				}
 			}
 		}
 		
@@ -341,7 +376,9 @@ namespace MediaPortal.GUI.Video
 		}
 		private void ToggleButtonCast()
 		{
-			GetCastInfo(casturl);
+			if(G_viewInfoAndTrailer==true)
+				GUIPropertyManager.SetProperty("cast", G_Cast[GermanSelected]);
+			else GetCastInfo(casturl);
 			btntoggleplot.Selected=false;
 			btntogglecast.Selected=true;
 			plotarea.Visible=false;
@@ -352,7 +389,7 @@ namespace MediaPortal.GUI.Video
 
 		private void OnClick(int itemindex) // // When something is pressed in the listview
 		{
-			
+			// Trailer, Clips, Movie listview
 			if(tcmview==true)
 			{
 				if(itemindex==0)
@@ -383,6 +420,7 @@ namespace MediaPortal.GUI.Video
 				else if(itemindex==3)
 					ShowMore();
 			}
+				// Trailerview
 			else if(tview==true)
 			{
 				if(itemindex==0)
@@ -393,6 +431,7 @@ namespace MediaPortal.GUI.Video
 					Play(TrailersUrl[itemindex-1]);
 				}
 			}
+				// Clipsview
 			else if(cview==true)
 			{
 				if(itemindex==0)
@@ -404,7 +443,7 @@ namespace MediaPortal.GUI.Video
 				}
 
 			}
-
+				// Moreview
 			else if(mview==true)
 			{
 				if(itemindex==0)
@@ -415,33 +454,78 @@ namespace MediaPortal.GUI.Video
 					Play(MoreUrl[itemindex-1]);
 				}
 			}
+				// JustAddedview
 			else if(jaview==true)
 			{
 				GetMovieInfo(JAMovieUrl[itemindex], JAMovieName[itemindex], itemindex);
 				ShowTrailersClipsMore();
 				ShowMovieInfo(JAMovieUrl[itemindex], JAMovieName[itemindex], itemindex);
 			}
+				// MostWatchedview
 			else if(mwview==true)
 			{
 				GetMovieInfo(MWMovieUrl[itemindex], MWMovieName[itemindex], itemindex);
 				ShowTrailersClipsMore();
 				ShowMovieInfo(MWMovieUrl[itemindex], MWMovieName[itemindex], itemindex);
 			}
+				// Letterbutton view
 			else if(letterview==true)
 			{
 				GetMovieInfo(LMovieUrl[itemindex], LMovieName[itemindex], itemindex);
 				ShowTrailersClipsMore();
 				ShowMovieInfo(LMovieUrl[itemindex], LMovieName[itemindex], itemindex);
 			}
+				// All movies view
 			else if(allview==true)
 			{
 				GetMovieInfo(MovieURL[itemindex], MovieName[itemindex], itemindex);
 				ShowTrailersClipsMore();
 				ShowMovieInfo(MovieURL[itemindex], MovieName[itemindex], itemindex);
 			}
-
+				// German Trailerview Woche
+			else if(G_viewWoche==true)
+			{
+				if(itemindex==0)
+				{
+					GetGermanTrailers("http://de.movies.yahoo.com/mvsl.html");
+					ShowGermanTrailers();
+				}
+				if(itemindex==1)
+				{
+					GetGermanTrailers("http://de.movies.yahoo.com/neu_im_kino.html");
+					ShowGermanTrailers();
+				}
+				if(itemindex==2)
+				{
+					GetGermanTrailers("http://de.movies.yahoo.com/mvsn.html");
+					ShowGermanTrailers();
+				}
+			}
+				// German TrailerMovies view
+			else if(G_viewMovie==true)
+			{
+				if(itemindex==0)
+					ShowGermanLayoutWoche();
+				else
+				{
+					ShowGermanMovieInfo(GermanMovieName[itemindex-1],itemindex-1);
+				}
+			}
+				// German movie info and single trailer view
+			else if(G_viewInfoAndTrailer==true)
+			{
+				if(itemindex==0)
+					ShowGermanTrailers();
+				if(itemindex==1)
+				{
+					if(GermanTrailerURL[GermanSelected]!=null)
+						Prev_SelectedItem = listview.SelectedListItemIndex;
+						PlayGermanTrailer(GermanTrailerURL[GermanSelected]);
+				}
+			}
 
 		}
+
 
 		void GetWebPage(string url, out string HTMLDownload) // Get url and put in string
 		{
@@ -498,7 +582,7 @@ namespace MediaPortal.GUI.Video
 
 		void GetTrailers()
 		{
-			GUIPropertyManager.SetProperty("#title", "Getting movies...");
+			GUIPropertyManager.SetProperty("#title", GUILocalizeStrings.Get(5910));
 			GetWebPage(@"http://movies.yahoo.com/trailers/archive/", out TempHTML);
 
 			if(TempHTML == null || TempHTML == string.Empty)
@@ -813,6 +897,7 @@ namespace MediaPortal.GUI.Video
 			tview = false;
 			cview = false;
 			mview = false;
+			G_viewInfoAndTrailer = false;
 			ShowLabelsFalse();
 		}
 	
@@ -904,7 +989,7 @@ namespace MediaPortal.GUI.Video
 			GUIPropertyManager.SetProperty("#runtime", Runtime);
 
 			// Get ReleaseDate
-			Match m3 = Regex.Match(TempHTML,@"<b>Release\sDate:</b>.*;(?<releasedate>.*)\.");
+			Match m3 = Regex.Match(TempHTML,@"<b>Release\sDate:.*;(?<releasedate>.*)");
 			ReleaseDate = m3.Groups["releasedate"].Value;
 			GUIPropertyManager.SetProperty("#year", ReleaseDate);
 			
@@ -1102,17 +1187,294 @@ namespace MediaPortal.GUI.Video
 		}
 		void LoadSettings()
 		{
+			if(plotview==true)
+				ToggleButtonPlot();
+			if(castview==true)
+				ToggleButtonCast();
 			if(tview==true)
 				ShowTrailers();
 			if(cview==true)
 				ShowClips();
 			if(mview==true)
 				ShowMore();
-			if(plotview==true)
-				ToggleButtonPlot();
-			if(castview==true)
-				ToggleButtonCast();
+			if(G_viewInfoAndTrailer==true)
+				ShowGermanMovieInfo(GermanMovieName[GermanSelected], GermanSelected);
 		}
+
+		#region German movie-trailers (de.movies.yahoo.com)
+		//-------------------------------------------------------------------------	
+		// German trailers de.movies.yahoo.com
+		//-------------------------------------------------------------------------
+		string[] GermanMovieName = new string[25];
+		string[] GermanTrailerURL = new string[25];
+
+		string[] G_Genre = new string[25];
+		string[] G_Runtime = new string[25];
+		string[] G_Releasedate = new string[25];
+		string[] G_Plot = new string[25];
+		string[] G_Cast = new string[25];
+		string[] G_PosterUrl = new string[25];
+		Double[] G_Rating = new double[25];
+
+		int GermanSelected;
+		
+		bool G_viewWoche = false; //Woche listview
+		bool G_viewMovie = false; //Movie listview
+		bool G_viewInfoAndTrailer = false; // Info and Trailerview
+
+
+		void GetGermanTrailers(string url)
+		{
+			Array.Clear(GermanMovieName, 0,25);
+			Array.Clear(GermanTrailerURL, 0,25);
+			Array.Clear(G_Genre, 0,25);
+			Array.Clear(G_Runtime, 0,25);
+			Array.Clear(G_Releasedate, 0,25);
+			Array.Clear(G_Plot, 0,25);
+			Array.Clear(G_Cast, 0,25);
+			Array.Clear(G_PosterUrl, 0,25);
+			Array.Clear(G_Rating, 0,25);
+
+			GetWebPage(url, out TempHTML);
+			if(TempHTML == null || TempHTML == string.Empty)
+				return;
+
+			// check if there are any trailersreviews available for this week;
+            Match a = Regex.Match(TempHTML, @"Leider noch keine Film-Besprechungen");
+			if(a.Success==true)
+				return;
+            
+			string[] TempBlok = new string[25];
+
+			MatchCollection mc = Regex.Matches(TempHTML, @"(?s-imnx:&nbsp;<span\sclass=.promo.(?<tempblok>.*?).E9EEF2.>)");
+			int i = 0;
+			foreach(Match m in mc)
+			{
+				//split page in bloks to ease search
+				TempBlok[i] = m.Groups["tempblok"].Value;
+
+				//get moviename & releasedate
+				Match ur = Regex.Match(TempBlok[i], @"<a\shref=(?<movieurl>.*.html)>(?<moviename>.*)?</a>.*(?<releasedate>ab.*).</span>");
+				GermanMovieName[i] = ur.Groups["moviename"].Value;
+				ConvertStr(GermanMovieName[i], out GermanMovieName[i]);
+				G_Releasedate[i] = ur.Groups["releasedate"].Value;
+
+				// get posterurl
+				Match p = Regex.Match(TempBlok[i], @"<IMG\sSRC=.*reviews/(?<posterurl>.*)s.jpg");
+				if(p.Groups["posterurl"].Success==true)
+					G_PosterUrl[i] = "http://eur.i1.yimg.com/eur.yimg.com/emvreviews/" + p.Groups["posterurl"].Value + "m.jpg";
+
+				// get genre
+				Match g = Regex.Match(TempBlok[i], @"Genre:</b>(?<moviegenre>.*)<br>");
+				G_Genre[i] = g.Groups["moviegenre"].Value;
+				ConvertStr(G_Genre[i], out G_Genre[i]);
+
+				// get rating
+				MatchCollection rc = Regex.Matches(TempBlok[i], @"http://eur.news1.yimg.com/eur.yimg.com/i/de/mo/1s.gif");
+				G_Rating[i] = rc.Count;
+
+				// get cast
+				G_Cast[i]="";
+				MatchCollection cc = Regex.Matches(TempBlok[i], @"http://de.search.movies.yahoo.com/search/movies_de.*<nobr>(?<cast>.*)</nobr>");
+				foreach(Match c in cc)
+				{
+					if(G_Cast[i].Equals(""))
+					{
+						G_Cast[i] = c.Groups["cast"].Value;
+					}
+					else
+					{
+						G_Cast[i] = G_Cast[i].Insert(G_Cast[i].Length,", ");
+						G_Cast[i] = G_Cast[i].Insert(G_Cast[i].Length, c.Groups["cast"].Value);
+					}
+				}
+				ConvertStr(G_Cast[i], out G_Cast[i]);
+
+				// get plot
+				Match pl = Regex.Match(TempBlok[i], @"(?s-imnx:<td\scolspan.*class=.pcontent.>(?<movieplot>.*)<p)");
+				G_Plot[i] = pl.Groups["movieplot"].Value;
+				ConvertStr(G_Plot[i], out G_Plot[i]);
+
+				// get trailerurl
+				Match t = Regex.Match(TempBlok[i], @"href=.(?<trailerurl>.*).><b>Trailer</b></a>");
+				if(t.Groups["trailerurl"].Success==true)
+					GermanTrailerURL[i] = "http://de.movies.yahoo.com" + t.Groups["trailerurl"].Value;
+                
+				i++;
+			}
+            
+		}
+		void ShowGermanLayoutWoche()
+		{
+			ResetViews();
+			mwview = false;
+			jaview = false;
+			allview = false;
+			letterview = false;
+			G_viewWoche = true;
+			poster.SetFileName(GUIGraphicsContext.Skin+@"\media\background.png");
+			GUIPropertyManager.SetProperty("#title", GUILocalizeStrings.Get(5911));
+
+			listview.Clear();
+			//add Vorwoche
+			GUIListItem item = new GUIListItem();
+			item.IsFolder = true;
+			item.Label = GUILocalizeStrings.Get(5912);
+			Utils.SetDefaultIcons(item);
+			listview.Add(item);
+			//add Diese Woche
+			GUIListItem item1 = new GUIListItem();
+			item1.IsFolder = true;
+			item1.Label = GUILocalizeStrings.Get(5913);
+			Utils.SetDefaultIcons(item1);
+			listview.Add(item1);
+			// add Nachste Woche
+			GUIListItem item2 = new GUIListItem();
+			item2.IsFolder = true;
+			item2.Label = GUILocalizeStrings.Get(5914);
+			Utils.SetDefaultIcons(item2);
+			listview.Add(item2);
+			
+			listview.SelectedListItemIndex = 1;
+			listview.Focus=true;
+			
+		}
+		void ShowGermanTrailers()
+		{
+			ResetViews();
+			mwview = false;
+			jaview = false;
+			allview = false;
+			letterview = false;
+			G_viewWoche = false;
+			G_viewMovie = true;
+			poster.SetFileName(GUIGraphicsContext.Skin+@"\media\background.png");
+			GUIPropertyManager.SetProperty("#title", GUILocalizeStrings.Get(5911));
+			
+			listview.Clear();
+			if(GermanMovieName[0]==null)
+			{
+				GUIListItem item = new GUIListItem();
+				item.Label = ".. - " + GUILocalizeStrings.Get(5915);
+				item.IsFolder = true;
+				item.IconImage ="defaultFolderBack.png";
+				listview.Add(item);
+				return;
+			}
+			else
+			{
+				GUIListItem item1 = new GUIListItem();
+				item1.Label = "..";
+				item1.IsFolder = true;
+				Utils.SetDefaultIcons(item1);
+				listview.Add(item1);
+
+				int i = 0;
+				while(GermanMovieName[i] !=null)
+				{
+					GUIListItem item = new GUIListItem();
+					item.IsFolder = true;
+					item.Label = GermanMovieName[i];
+					Utils.SetDefaultIcons(item);
+					listview.Add(item);
+					i++;
+				}
+				listview.SelectedListItemIndex = Prev_SelectedItem;
+				listview.Focus=true;
+			}
+		}
+		void ShowGermanMovieInfo(string name, int i)
+		{
+			G_viewMovie=false;
+			G_viewInfoAndTrailer=true;
+			GermanSelected = i;
+			Prev_SelectedItem = i+1;
+
+			ShowLabelsTrue();
+			GUIPropertyManager.SetProperty("#title", name);
+			GUIPropertyManager.SetProperty("#genre", G_Genre[i]);
+			label2.Visible=false; //runtime info not available
+			GUIPropertyManager.SetProperty("#runtime", "");
+			GUIPropertyManager.SetProperty("#year", G_Releasedate[i]);
+			GUIPropertyManager.SetProperty("#plot", G_Plot[i]);
+			GUIPropertyManager.SetProperty("#cast", G_Cast[i]);
+
+			//Download Poster
+			if(G_PosterUrl[i] !=null)
+			{
+				using(WaitCursor cursor = new WaitCursor())
+				{
+			
+					// Download Poster
+					WebClient wc = new WebClient();
+					name = name.Replace(":","-");
+					wc.DownloadFile(G_PosterUrl[i], @"thumbs\MPTemp -"+name + ".jpg");
+
+					while(System.IO.File.Exists(@"thumbs\MPTemp -"+name + ".jpg")!=true)
+						GUIWindowManager.Process();
+
+					// Display Poster
+					poster.SetFileName(@"thumbs\MPTemp -"+name + ".jpg");
+				}
+			}
+
+			listview.Clear();
+			if(GermanTrailerURL[i]==null)
+			{
+				GUIListItem item = new GUIListItem();
+				item.Label = ".. - " + GUILocalizeStrings.Get(5916);
+				item.IsFolder = true;
+				item.IconImage ="defaultFolderBack.png";
+				listview.Add(item);
+			}
+			else
+			{
+				GUIListItem item1 = new GUIListItem();
+				item1.Label = "..";
+				item1.IsFolder = true;
+				Utils.SetDefaultIcons(item1);
+				listview.Add(item1);
+
+				GUIListItem item = new GUIListItem();
+				item.Label = name + " Trailer";
+				item.IsFolder = false;
+				item.IconImage = "defaultVideo.png";
+				listview.Add(item);
+			}
+			
+            
+		}
+		void PlayGermanTrailer(string url)
+		{
+			GetWebPage(url, out TempHTML);
+
+			Match m = Regex.Match(TempHTML, @"wmv-300-.\.(?<trailernumber>\d*)??,");
+			string PlayUrl = "http://playlist.yahoo.com/makeplaylist.dll?id=" + m.Groups["trailernumber"].Value + "&ru=y&b=8kd6ji91f1vde434d527d";
+			Play(PlayUrl);
+		}
+
+
+		void ConvertStr(string input, out string output)
+		{
+			input = input.Replace("&uml;" ,((char)168).ToString());
+			input = input.Replace("&Auml;" ,((char)196).ToString());
+			input = input.Replace("&Euml;" ,((char)203).ToString());
+			input = input.Replace("&Iuml;" ,((char)207).ToString());
+			input = input.Replace("&Ouml;" ,((char)214).ToString());
+			input = input.Replace("&Uuml;" ,((char)220).ToString());
+			input = input.Replace("&auml;" ,((char)228).ToString());
+			input = input.Replace("&euml;" ,((char)235).ToString());
+			input = input.Replace("&iuml;" ,((char)239).ToString());
+			input = input.Replace("&ouml;" ,((char)246).ToString());
+			input = input.Replace("&uuml;" ,((char)252).ToString());
+			input = input.Replace("&yuml;" ,((char)255).ToString());
+			input = input.Replace("&Yuml;" ,((char)168).ToString());
+			input = input.Replace("&szlig;", "ß");
+			output = input;
+		}
+
+
+		#endregion
 	}
 }
 
