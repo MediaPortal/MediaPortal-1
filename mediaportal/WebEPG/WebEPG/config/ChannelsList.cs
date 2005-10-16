@@ -29,7 +29,7 @@ namespace MediaPortal.EPG.config
 	/// <summary>
 	/// Summary description for config.
 	/// </summary>
-	public class ChannelsList
+	public class ChannelsList : IComparer
 	{
 		string m_strGrabberDir;
 		string m_strChannelsFile;
@@ -87,9 +87,10 @@ namespace MediaPortal.EPG.config
 			return m_ChannelList;
 		}
 
-		public ChannelInfo[] GetChannelArray(string country)
+		public ArrayList GetChannelArrayList(string country)
 		{
-			ChannelInfo[] ChannelArray = null;
+			//ChannelInfo[] ChannelArray = null;
+			ArrayList ChannelArray = null;
 
 			GetChannelList(country);
 			
@@ -97,14 +98,19 @@ namespace MediaPortal.EPG.config
 			{
 				IDictionaryEnumerator Enumerator = m_ChannelList.GetEnumerator();
 
-				ChannelArray = new ChannelInfo[m_ChannelList.Count];
-				int i=0;
+				//ChannelArray = new ChannelInfo[m_ChannelList.Count];
+				//int i=0;
+
+				ChannelArray = new ArrayList();
 
 				while (Enumerator.MoveNext())
 				{
 					ChannelInfo channel = (ChannelInfo) Enumerator.Value;
-					ChannelArray[i++] = channel;
+					//ChannelArray[i++] = channel;
+					ChannelArray.Add(channel);
 				}
+
+				ChannelArray.Sort(this);
 			}
 
 			return ChannelArray;
@@ -245,5 +251,15 @@ namespace MediaPortal.EPG.config
 				}
 			}
 		}
+		#region IComparer Members
+
+		public int Compare(object x, object y)
+		{
+			ChannelInfo ch1 = (ChannelInfo) x;
+			ChannelInfo ch2 = (ChannelInfo) y;
+			return String.Compare(ch1.FullName, ch2.FullName, true);
+		}
+
+		#endregion
 	}
 }

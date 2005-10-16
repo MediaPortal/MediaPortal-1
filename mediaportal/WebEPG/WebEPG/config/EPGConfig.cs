@@ -165,9 +165,9 @@ namespace MediaPortal.EPG.config
 			for(int i=0; i < _ConfigList.Count; i++)
 			{
 				EPGConfigData channel = (EPGConfigData) _ConfigList[i];
-				xmlwriter.SetValue(i.ToString(), "ChannelID", channel.ChannelID);
-				xmlwriter.SetValue(i.ToString(), "DisplayName", channel.DisplayName);
-				xmlwriter.SetValue(i.ToString(), "Grabber1", channel.PrimaryGrabberID);
+				xmlwriter.SetValue((i+1).ToString(), "ChannelID", channel.ChannelID);
+				xmlwriter.SetValue((i+1).ToString(), "DisplayName", channel.DisplayName);
+				xmlwriter.SetValue((i+1).ToString(), "Grabber1", channel.PrimaryGrabberID);
 				if(channel.Linked)
 				{
 					xmlwriter.SetValueAsBool((i+1).ToString(), "Grabber1-Linked", channel.Linked);
@@ -175,7 +175,7 @@ namespace MediaPortal.EPG.config
 					xmlwriter.SetValue((i+1).ToString(), "Grabber1-End", channel.linkEnd);
 				}
 			}
-			//xmlwriter.SaveCache();
+			xmlwriter.Save();
 		}
 	}
 }
