@@ -19,6 +19,7 @@
  *
  */
 using System;
+using System.Drawing;
 using System.Collections;
 using System.Windows.Forms; // used for Keys definition
 using Microsoft.DirectX.Direct3D;
@@ -136,6 +137,9 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("spinWidth")] protected int m_dwSpinWidth;
     [XMLSkinElement("spinPosX")] protected int m_dwSpinX;
     [XMLSkinElement("spinPosY")] protected int m_dwSpinY;
+
+	[XMLSkinElement("unfocusedAlpha")] protected int _unfocusedAlpha = 0xFF;
+
     bool wordWrap = false;
 
     // Search            
@@ -342,7 +346,7 @@ namespace MediaPortal.GUI.Library
 						if (gotFocus)
 							btn.ColourDiffuse=0xffffffff;
 						else
-							btn.ColourDiffuse=0xaaffffff;
+							btn.ColourDiffuse=Color.FromArgb(_unfocusedAlpha, Color.White).ToArgb();
             btn.Focus = gotFocus;
             btn.SetPosition(x, y);
             btn.Render(timePassed);
@@ -379,7 +383,7 @@ namespace MediaPortal.GUI.Library
 				if (gotFocus)
 					pImage.ColourDiffuse=0xffffffff;
 				else
-					pImage.ColourDiffuse=0xaaffffff;
+					pImage.ColourDiffuse=Color.FromArgb(_unfocusedAlpha, Color.White).ToArgb();
 
         pImage.Render(timePassed);
         pImage = null;
@@ -417,7 +421,7 @@ namespace MediaPortal.GUI.Library
 				if (gotFocus)
 					pinImage.ColourDiffuse=0xffffffff;
 				else
-					pinImage.ColourDiffuse=0xaaffffff;
+					pinImage.ColourDiffuse=Color.FromArgb(_unfocusedAlpha, Color.White).ToArgb();
         pinImage.Render(timePassed);
         pinImage = null;
       } //if (pItem.HasPinIcon)
@@ -478,7 +482,7 @@ namespace MediaPortal.GUI.Library
 								if (gotFocus)
 									label2.TextColor = dwColor;
 								else
-									label2.TextColor = dwColor&0xaaffffff;
+									label2.TextColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
                 label2.Label = pItem.Label2;
                 label2.TextAlignment = GUIControl.Alignment.ALIGN_RIGHT;
                 label2.FontName = m_strFont2Name;
@@ -504,7 +508,7 @@ namespace MediaPortal.GUI.Library
           if (pItem.IsDownloading) dwColor = m_dwDownloadColor;
 				}
 				if (!gotFocus)
-					dwColor = dwColor&0xaaffffff;
+					dwColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
         RenderText(timePassed, buttonNr, (float) dwPosX, (float) dwPosY + 2 + m_iTextOffsetY, (float) dMaxWidth, dwColor, m_wszText, bSelected);
       } //if (m_bTextVisible1)
 
@@ -541,7 +545,7 @@ namespace MediaPortal.GUI.Library
 								if (gotFocus)
 									label2.TextColor = dwColor;
 								else
-									label2.TextColor = dwColor&0xaaffffff;
+									label2.TextColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
                 label2.Label = m_wszText;
                 label2.TextAlignment = GUIControl.Alignment.ALIGN_RIGHT;
                 label2.FontName = m_strFont2Name;
@@ -589,7 +593,7 @@ namespace MediaPortal.GUI.Library
 								if (gotFocus)
 									label3.TextColor = dwColor;
 								else
-									label3.TextColor = dwColor&0xaaffffff;
+									label3.TextColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
                 label3.Label = pItem.Label3;
                 label3.TextAlignment = GUIControl.Alignment.ALIGN_LEFT;
                 label3.FontName = m_strFont2Name;
