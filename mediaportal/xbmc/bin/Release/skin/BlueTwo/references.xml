@@ -141,6 +141,7 @@
 		<IconXOff>8</IconXOff>
 		<IconYOff>8</IconYOff>
 		<suffix>|</suffix>
+		<unfocusedAlpha>170</unfocusedAlpha>
 	</control>
 	<control>
 		<description>default checklistcontrol</description>
@@ -269,6 +270,7 @@
 		<thumbPosXBig>12</thumbPosXBig>
 		<thumbPosYBig>12</thumbPosYBig>	
 		<thumbZoom>no</thumbZoom>
+		<unfocusedAlpha>170</unfocusedAlpha>
 	</control>
 	<control>
 		<description>default filmstrip</description>
@@ -324,7 +326,7 @@
 		<InfoImagewidth>325</InfoImagewidth>
 		<InfoImageheight>263</InfoImageheight>
 		<InfoImagediffuse>ffffffff</InfoImagediffuse>
-		
+		<unfocusedAlpha>170</unfocusedAlpha>
 	</control>
 	<control>
 		<description>default fadelabel</description>
