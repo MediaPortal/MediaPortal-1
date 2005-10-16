@@ -1685,6 +1685,10 @@
 		<value>Audio language</value>
 	</string>
 	<string>
+		<id>493</id>
+		<value>Actor:</value>
+	</string>
+	<string>
 		<id>500</id>
 		<value>File menu</value>
 	</string>

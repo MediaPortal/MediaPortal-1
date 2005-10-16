@@ -21,6 +21,16 @@
 		<texture>info_logo.png</texture>
 	</control>	
 	<control>
+		<description>Artist</description> 
+		<type>label</type> 
+		<id>1</id> 
+		<posX>100</posX> 
+		<posY>100</posY> 
+		<label>493</label> 
+		<font>font13</font> 
+		<textcolor>FFB2D4F5</textcolor> 
+	</control>
+	<control>
 		<description>Artist value</description> 
 		<type>label</type> 
 		<id>20</id> 
@@ -30,16 +40,6 @@
 		<font>font16</font>
 		<align>left</align> 
 		<textcolor>FFFFFFFF</textcolor> 
-	</control>
-	<control>
-		<description>Artist</description> 
-		<type>label</type> 
-		<id>1</id> 
-		<posX>100</posX> 
-		<posY>100</posY> 
-		<label>171</label> 
-		<font>font13</font> 
-		<textcolor>FFB2D4F5</textcolor> 
 	</control>
 	<control>
 		<description>Born</description> 

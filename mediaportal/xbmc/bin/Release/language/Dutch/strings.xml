@@ -1686,6 +1686,10 @@
 		<value>Audio taal</value>
 	</string>
 	<string>
+		<id>493</id>
+		<value>Akteur:</value>
+	</string>
+	<string>
 		<id>500</id>
 		<value>Bestand menu</value>
 	</string>
