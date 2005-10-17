@@ -122,6 +122,10 @@
 		<value>Joulukuu</value>
 	</string>
 	<string>
+ 		<id>50</id> 
+  		<value>DVD:t</value> 
+  	</string>	
+	<string>
 		<id>100</id>
 		<value>Näytä: Ikonit</value>
 	</string>
@@ -387,7 +391,7 @@
 	</string>
 	<string>
 		<id>166</id>
-		<value>Skin:</value>
+		<value>Ulkoasu:</value>
 	</string>
 	<string>
 		<id>167</id>
@@ -1031,7 +1035,7 @@
 	</string>
 	<string>
 		<id>328</id>
-		<value>Talletetaan muutokset...</value>
+		<value>Tallennetaan muutokset...</value>
 	</string>
 	<string>
 		<id>329</id>
@@ -1679,8 +1683,12 @@
 	</string>
 	<string>
 		<id>492</id>
-		<value>Audio kieli</value>
+		<value>Audiokieli</value>
 	</string>
+	<string>
+		<id>493</id>
+		<value>Näyttelijä</value>
+	</string>	
 	<string>
 		<id>500</id>
 		<value>Tiedostovalikko</value>
@@ -1788,7 +1796,7 @@
 	</string>
 	<string>
 		<id>602</id>
-		<value>Kanava:</value>
+		<value>Kanava</value>
 	</string>
 	<string>
 		<id>603</id>
@@ -1832,7 +1840,7 @@
 	</string>
 	<string>
 		<id>613</id>
-		<value>Tallenna aika kaikilta kanavilta</value>
+		<value>Tallenna aina kaikilta kanavilta</value>
 	</string>
 	<string>
 		<id>614</id>
@@ -1896,7 +1904,7 @@
 	</string>
 	<string>
 		<id>629</id>
-		<value>Lopeta nauhoitus</value>
+		<value>Lopeta tallennus</value>
 	</string>
 	<string>
 		<id>630</id>
@@ -2378,7 +2386,7 @@
         </string>
         <string>
 	        <id>807</id>
-	        <value>Yield</value>
+	        <value>tuottaa</value>
         </string>
         <string>
 	        <id>808</id>
@@ -2929,15 +2937,15 @@
 	<string>
                  <id>990</id>
                  <value>Bitrate</value>
-        </string>        
+        </string>
 	<string>
                  <id>991</id>
                  <value>Prioriteetti</value>
-        </string>        
+        </string>
         <string>
                  <id>992</id>
                  <value>Poista alkuperäinen tiedosto</value>
-        </string>     
+        </string>
 	<string>
                  <id>993</id>
                  <value>Oma</value>
@@ -2972,11 +2980,11 @@
         </string>
 	<string>
                  <id>1001</id>
-                 <value>WMV -muotoon Sinulla tulee olla</value>
-        </string>  
+                 <value>WMV -muotoon sinulla tulee olla</value>
+        </string>
 	<string>
                  <id>1002</id>
-                 <value>Elecard MPEG2 video decoderin asennettuna</value>
+                 <value>elecard MPEG2 video decoderi asennettuna</value>
         </string>
 	<string>
                  <id>1003</id>
@@ -2984,7 +2992,7 @@
         </string>
 	<string>
                  <id>1004</id>
-                 <value>Aloitetaan tallentamaan</value>
+                 <value>Aloitetaan tallennus</value>
         </string>
 	<string>
                  <id>1005</id>
@@ -2992,11 +3000,15 @@
         </string>
 	<string>
                  <id>1006</id>
-                 <value>Salli nauhoituksen alkaminen</value>
+                 <value>Salli tallennuksen aloitus</value>
         </string>
 	<string>
                  <id>1007</id>
                  <value>Peruuta tallennus ja jatka TV:n katsomista</value>
+        </string>
+        <string>
+	        <id>1008</id>
+	        <value>Jono</value>
         </string>
 	<string>
                  <id>1009</id>
@@ -3029,7 +3041,124 @@
 	<string>
                  <id>1016 </id>
                  <value>Ohjelma alkamassa</value>
-        </string>        
+        </string>
+        <string>
+        	<id>1017</id>
+         	<value>Järjestä: Kesto</value>
+        </string>
+
+        <string>
+        	<id>1020</id>
+         	<value>Tiedot</value>
+        </string>
+        <string>
+	        <id>1021</id>
+	        <value>Paina Alt+Enter</value>
+        </string>
+        <string>
+	        <id>1022</id>
+	        <value>palauttaaksesi ohjelman ikkuna näkymän</value>
+        </string>
+        <string>
+	        <id>1023</id>
+	        <value>Puhelu</value>
+        </string>
+        <string>
+	        <id>1024</id>
+	        <value> </value>
+        </string>
+        <string>
+	        <id>1025</id>
+	        <value>Tapahtui virhetilanne.</value>
+        </string>
+        <string>
+	        <id>1026</id>
+	        <value>Lisätietoja virheestä löydät lokitiedostosta.</value>
+        </string>
+        <string>
+	        <id>1027</id>
+	        <value>DVD</value>
+        </string>
+        <string>
+	        <id>1028</id>
+	        <value>Kaupunki</value>
+        </string>
+        <string>
+	        <id>1029</id>
+	        <value>Tekstitys kieli</value>
+        </string>
+        <string>
+	        <id>1030</id>
+	        <value>Sammuta</value>
+        </string>
+        <string>
+	        <id>1031</id>
+	        <value>Käynnistä uudelleen</value>
+        </string>
+        <string>
+	        <id>1032</id>
+	        <value>Siirry unitilaan</value>
+        </string>
+        <string>
+	        <id>1033</id>
+	        <value>Ohjelma tallennetaan nyt</value>
+        </string>
+        <string>
+	        <id>1034</id>
+	        <value>Ei signaalia!</value>
+        </string>
+        <string>
+	        <id>1035</id>
+	        <value>Salattu TV kanava!</value>
+        </string>
+        <string>
+	        <id>1036</id>
+	        <value>Tiedostoa ei löytynyt</value>
+        </string>
+        <string>
+	        <id>1037</id>
+	        <value>TV - Ohjelmatiedot</value>
+        </string>
+        <string>
+	        <id>1038</id>
+	        <value>Lisäasetukset</value>
+        </string>
+        <string>
+	        <id>1039</id>
+	        <value>Älä tallenna</value>
+        </string>
+        <string>
+	        <id>1040</id>
+	        <value>Huomauta</value>
+        </string>
+        <string>
+	        <id>1041</id>
+	        <value>Tulevat jaksot</value>
+        </string>
+        <string>
+	        <id>1042</id>
+	        <value>Säilytä asti</value>
+        </string>
+        <string>
+	        <id>1043</id>
+	        <value>kunnes katsottu</value>
+        </string>
+        <string>
+	        <id>1044</id>
+	        <value>kunnes tila loppuu</value>
+        </string>
+        <string>
+	        <id>1045</id>
+	        <value>saakka</value>
+        </string>
+        <string>
+	        <id>1046</id>
+	        <value>Aina</value>
+        </string>
+        <string>
+	        <id>1047</id>
+	        <value>Kokoruutu käynnistyessä</value>
+        </string>
         <string>
         	<id>1440</id>
          	<value>Teksti-tv</value>
@@ -3037,6 +3166,30 @@
         <string>
         	<id>1441</id>
          	<value>Teksti-tv</value>
+        </string>
+        <string>
+	        <id>1442</id>
+	        <value>Vieritysnopeus (vaaka)</value>
+        </string>
+        <string>
+	        <id>1443</id>
+	        <value>Vieritysnopeus (pysty)</value>
+        </string>
+        <string>
+	         <id>1444</id>
+	         <value>Ennakko</value>
+        </string>
+        <string>
+	         <id>1445</id>
+	         <value>Ylimäärä</value>
+        </string>
+        <string>
+	         <id>1446</id>
+	         <value>Tallennus aloitettu:</value>
+        </string>
+        <string>
+	         <id>1447</id>
+	         <value>Tallennus lopetettu:</value>
         </string>
 
 
@@ -3435,7 +3588,7 @@
         </string>
 	<string>
                 <id>2118</id>
-                <value>Convert DVR-MS</value>
+                <value>Muunna DVR-MS</value>
         </string>
 	<string>
                 <id>2119</id>
@@ -3738,6 +3891,83 @@
                 <id>3022</id>
                 <value></value>
         </string>
+        
+	<!-- My Trailers Strings -->
+	<string>
+		<id>5900</id>
+		<value>Trailerit</value>
+	</string>
+	<string>
+		<id>5901</id>
+		<value>Näytä elokuvat</value>
+	</string>
+	<string>
+		<id>5902</id>
+		<value>Mitkä elokuvat näytetään?</value>
+	</string>
+	<string>
+		<id>5903</id>
+		<value>Viimeksi lisätyt elokuvat</value>
+	</string>
+	<string>
+		<id>5904</id>
+		<value>Eniten katsotut elokuvat</value>
+	</string>
+	<string>
+		<id>5905</id>
+		<value>Kaikki elokuvat</value>
+	</string>
+	<string>
+		<id>5906</id>
+		<value>Trailerit</value>
+	</string>
+	<string>
+		<id>5907</id>
+		<value>Pätkät</value>
+	</string>
+	<string>
+		<id>5908</id>
+		<value>Lisää</value>
+	</string>
+	<string>
+		<id>5909</id>
+		<value>Trailerin streamaus epäonnistu!</value>
+	</string>
+	<string>
+		<id>5910</id>
+		<value>Ladataan elokuvan tietoja</value>
+	</string>
+	<string>
+		<id>5911</id>
+		<value>Uutuus elokuvateattereissa</value>
+	</string>
+	<string>
+		<id>5912</id>
+		<value>Edellinen viikko</value>
+	</string>
+	<string>
+		<id>5913</id>
+		<value>Kuluva viikko</value>
+	</string>
+	<string>
+		<id>5914</id>
+		<value>Seuraava viikko</value>
+	</string>
+	<string>
+		<id>5915</id>
+		<value>Ei elokuva-arvosteluja vielä saatavilla</value>
+	</string>
+	<string>
+		<id>5916</id>
+		<value>Yhtään traileria ei löytynyt.</value>
+	</string>
+	<string>
+		<id>5917</id>
+		<value>Saksalaiset trailerit</value>
+	</string>
+
+	<!-- End of My Trailers Strings -->	        
+        
         <string>
 	        <id>8000</id>
 	        <value>Sähköposti</value>
@@ -4255,12 +4485,33 @@
 	        <id>13013</id>
 	        <value>Avataan videota, odota hetkinen</value>
         </string>
+        <string>
+                <id>13014</id>
+                <value>Haen kansiosta</value>
+        </string>
+        <string>
+                <id>13015</id>
+                <value>Tuon pelitietokantaa</value>
+        </string>
+        <string>
+                <id>13016</id>
+                <value>Järjestä: Käynnistyskerrat</value>
+        </string>
+        <string>
+                <id>13017</id>
+                <value>Järjestä: Viimeaikaiset</value>
+        </string>
+        <string>
+                <id>13018</id>
+                <value>Järjestä: Arvosana</value>
+        </string>
 
         <string>
         	<id>16001</id>
          	<value>Jukeboxi</value>
          </string>
-         <!-- My Tetris --> 
+
+         <!-- My Tetris -->
          <string>
                  <id>19001</id>
                  <value>Tetris</value>
@@ -4309,6 +4560,19 @@
                  <id>19012</id>
                  <value>Peli loppu</value>
          </string>
+         
+	<!-- For the My Weather Geoclock -->
+	<string>
+		<id>19100</id>
+		<value>Geokello</value>
+	</string>         
+         
+	<!-- TV.Com --> 
+	<string>
+		<id>99845</id>
+		<value>Etsi TV.com:sta</value>
+	</string>         
+         
 	<string>
                  <id>100758</id>
                  <value>Tiedosto dialogi</value>
@@ -4357,6 +4621,99 @@
                  <id>12902</id>
                  <value>MSN Messenger OSD</value>
         </string>
-
+        <string>
+                <id>200000</id>
+                <value>Valitse ohjelmatietojen hakutapa.  </value>
+        </string>
+        <string>
+                <id>200001</id>
+                <value>not listed then you will need to supply the EPG manually</value>
+        </string>
+        <string>
+                <id>200002</id>
+                <value>Yhdistä ohjelmatietojen kanavat TV kanaviin.</value>
+        </string>
+        <string>
+                <id>200003</id>
+                <value>Valitse kanava ja paina enter yhditääksesi kanavat.</value>
+        </string>
+        <string>
+                <id>200004</id>
+                <value>Anna tvguide.xml</value>
+        </string>
+        <string>
+                <id>200005</id>
+                <value>Valitse käyttämäsi kauko ohjain:</value>
+        </string>
+        <string>
+                <id>200006</id>
+                <value>Paina seuraava jatkaaksesi asennusta:</value>
+        </string>
+        <string>
+                <id>200007</id>
+                <value>&lt;Takaisin</value>
+        </string>
+        <string>
+                <id>200008</id>
+                <value>Asennus - Kauko ohjain</value>
+        </string>
+        <string>
+                <id>200009</id>
+                <value>Seuraava&gt;</value>
+        </string>
+        <string>
+                <id>200010</id>
+                <value>MediaPortal ohjelmiston avulla tietokoneestasi tulee edistynyt multimediakeskus / HTPC.</value>
+        </string>
+        <string>
+                 <id>200011</id>
+                 <value>With MediaPortal you can enjoy your favorite music, radio</value>
+        </string>
+        <string>
+                <id>200013</id>
+                <value>It allows you to listen to your favorite music &amp; radio, watch your video's and DVD's</value>
+        </string>
+        <string>
+                <id>200014</id><value>photos, videos and view/record live TV and much more.</value>
+        </string>
+        <string>
+                <id>200015</id><value>This wizard will help you to setup Mediaportal fast and easy. Please follow the steps through this </value>
+        </string>
+        <string>
+                <id>200016</id>
+                <value>Paina seuraava aloittaaksesi</value>
+        </string>
+        <string>
+                <id>200017</id>
+                <value>Tervetuloa MediaPortal ohjelmiston käyttäjäksi. </value>
+        </string>
+        <string>
+                <id>200018</id>
+                <value>Mediaportal on nyt asennettu ja on valmis käytettäväksi</value>
+        </string>
+        <string>
+                <id>200019</id>
+                <value>Paina Valmis lopettaksesi tämän velhon</value>
+        </string>
+        <string>
+                <id>200020</id>
+                <value>Valmis</value>
+        </string>
+        <string>
+                <id>200021</id>
+                <value>TV Setup - EPG</value>
+        </string>
+        <string>
+                <id>200022</id>
+                <value>MediaPortal on löytänyt nämä TV-kortit:</value>
+        </string>
+        <string>
+                <id>200023</id>
+                <value>Paina Seuraava TV-korttien asetusten muuttamiseksi </value>
+        </string>
+        <string>
+                <id>200024</id>
+                <value>TV Setup</value>
+        </string>
 </strings>
 
