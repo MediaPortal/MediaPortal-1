@@ -1062,8 +1062,9 @@ namespace MediaPortal.TV.Recording
 						{
 							if (g_Player.Playing && g_Player.CurrentFile == Recorder.GetTimeShiftFileName(ID-1))
 							{
-								if (!g_Player.Paused)
-									g_Player.Pause();
+								g_Player.Stop();
+								//if (!g_Player.Paused)
+								//	g_Player.Pause();
 							}
 						}
 #endif						
@@ -1088,7 +1089,7 @@ namespace MediaPortal.TV.Recording
 						{
 							if (g_Player.Playing && g_Player.CurrentFile == Recorder.GetTimeShiftFileName(ID-1))
 							{
-								g_Player.Play(g_Player.CurrentFile);
+								//g_Player.Play(g_Player.CurrentFile);TESTTEST
 							}
 						}
 #endif
@@ -1117,7 +1118,7 @@ namespace MediaPortal.TV.Recording
 				StartTimeShifting();
         
 				Log.WriteFile(Log.LogType.Capture,"TVCaptureDevice.Rebuildgraph() play:{0}",Recorder.GetTimeShiftFileName(ID-1));        
-				g_Player.Play(Recorder.GetTimeShiftFileName(ID-1));
+				//g_Player.Play(Recorder.GetTimeShiftFileName(ID-1));TESTTEST
 			}
 			else 
 			{

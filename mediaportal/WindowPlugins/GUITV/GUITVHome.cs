@@ -319,9 +319,6 @@ namespace MediaPortal.GUI.TV
 		protected override void OnPageDestroy(int newWindowId)
 		{
 			
-					
-          
-			SaveSettings();
 			//if we're switching to another plugin
 			if ( !GUITVHome.IsTVWindow(newWindowId) )
 			{
@@ -765,7 +762,7 @@ namespace MediaPortal.GUI.TV
 				{
 					//then play it
 					Log.Write("GUITVHome.StartPlaying() Play:{0}",strFileName);
-					g_Player.Play(strFileName);
+					g_Player.Play(strFileName); 
 				}
 				else 
 				{

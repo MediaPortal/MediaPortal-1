@@ -74,6 +74,7 @@ namespace MediaPortal.TV.Recording
 		static bool          m_useVMR9Zap=false;
 		static double				 m_duration=0;
 		static double        _lastPosition=0;
+		static DateTime			 _killTimeshiftingTimer;
 		#endregion
 
 		#region delegates and events
@@ -1564,7 +1565,7 @@ namespace MediaPortal.TV.Recording
 					if (g_Player.CurrentFile!=strTimeShiftFileName)
 					{
 						Log.WriteFile(Log.LogType.Recorder,"Recorder:  start viewing timeshift file of card {0}", dev.ID);
-						g_Player.Play(strTimeShiftFileName);
+						//g_Player.Play(strTimeShiftFileName); TESTTEST
 					}
 					m_dtStart=new DateTime(1971,6,11,0,0,0,0);
 					if (OnTvViewingStarted!=null) 
@@ -1654,7 +1655,7 @@ namespace MediaPortal.TV.Recording
 					if (g_Player.CurrentFile!=strTimeShiftFileName)
 					{
 						Log.WriteFile(Log.LogType.Recorder,"Recorder:  currentfile:{0} newfile:{1}", g_Player.CurrentFile,strTimeShiftFileName);
-						g_Player.Play(strTimeShiftFileName);
+						//g_Player.Play(strTimeShiftFileName); TESTTEST
 					}
 					m_dtStart=new DateTime(1971,6,11,0,0,0,0);
 					if (OnTvViewingStarted!=null) 
@@ -1693,18 +1694,31 @@ namespace MediaPortal.TV.Recording
 			{
 				TVCaptureDevice dev =(TVCaptureDevice)m_tvcards[i];
 				dev.Process();
-				if (m_iCurrentCard==i)
+				if (dev.IsTimeShifting && !dev.IsRecording)
 				{
-					if (dev.IsTimeShifting && !dev.IsRecording)
+					if (m_iCurrentCard==i)
 					{
 						if (!g_Player.Playing)
 						{
-							Log.WriteFile(Log.LogType.Recorder,"Recorder:Stop card:{0}", m_iCurrentCard);
-							dev.Stop();
-							m_iCurrentCard=-1;
-							if (OnTvViewingStopped!=null)
+							TimeSpan ts=DateTime.Now-_killTimeshiftingTimer;
+							if (ts.TotalSeconds>10)
+							{
+								Log.WriteFile(Log.LogType.Recorder,"Recorder:Stop card:{0}", m_iCurrentCard);
+								dev.Stop();
+								m_iCurrentCard=-1;
+								if (OnTvViewingStopped!=null)
 									OnTvViewingStopped(i,dev);
+							}
 						}
+						else 
+						{
+							_killTimeshiftingTimer=DateTime.Now;
+						}
+					}
+					else
+					{
+						Log.WriteFile(Log.LogType.Recorder,"Recorder:Stop card:{0}", m_iCurrentCard);
+						dev.Stop();
 					}
 				}
 			}
