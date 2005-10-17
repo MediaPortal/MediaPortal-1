@@ -45,7 +45,6 @@
 				<type>button</type>
 				<id>6</id>
 				<label>341</label>
-				<ondown>99</ondown>
 			</control>
 
 			<!-- Trailers -->
