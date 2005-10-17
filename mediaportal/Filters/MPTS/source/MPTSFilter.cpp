@@ -46,7 +46,7 @@ CUnknown * WINAPI CMPTSFilter::CreateInstance(LPUNKNOWN punk, HRESULT *phr)
 // Constructor
 CMPTSFilter::CMPTSFilter(IUnknown *pUnk, HRESULT *phr) :
 	CSource(NAME("CMPTSFilter"), pUnk, CLSID_MPTSFilter),
-	m_pPin(NULL),m_logFileHandle(NULL)
+	m_pPin(NULL)
 {
 
 	ASSERT(phr);
@@ -74,10 +74,6 @@ CMPTSFilter::~CMPTSFilter()
 	delete m_pSections;
 	delete m_pFileReader;
 	
-	if(m_logFileHandle!=INVALID_HANDLE_VALUE)
-	{
-		CloseHandle(m_logFileHandle);
-	}
 
 }
 
@@ -121,7 +117,6 @@ int CMPTSFilter::GetPinCount()
 
 STDMETHODIMP CMPTSFilter::SetSyncClock(void)
 {
-	//Log(TEXT("filter: SetSyncClock()"),true);
 
 	HRESULT hr;
 	IFilterGraph *pGraph=GetFilterGraph();
@@ -131,20 +126,15 @@ STDMETHODIMP CMPTSFilter::SetSyncClock(void)
 	hr=pGraph->FindFilterByName(L"Default DirectSound Device",&pFilter);
 	if(pFilter==NULL)
 	{
-		Log(TEXT("filter: DSoundRender not found, try to add..."),true);
 		hr=CoCreateInstance(CLSID_DSoundRender, NULL,CLSCTX_INPROC_SERVER,IID_IBaseFilter,(void**)&pFilter);
 		if(SUCCEEDED(hr))
 		{
-			Log(TEXT("filter: Create successfull, add to graph..."),true);
 			hr=pGraph->AddFilter(pFilter,L"Default DirectSound Device");
-			if(SUCCEEDED(hr))
-					Log(TEXT("filter: DSoundRender add ok!"),true);
 
 		}
 	}
 	if(SUCCEEDED(hr) && pMF!=NULL)
 	{
-		Log(TEXT("filter: DSoundRender found/added ok"),true);
 
 		if(pFilter!=NULL)
 		{
@@ -154,9 +144,7 @@ STDMETHODIMP CMPTSFilter::SetSyncClock(void)
 			{
 				if(pClock!=NULL) 
 				{
-					Log((char*)" setting pClock = ",false);
 					hr=pMF->SetSyncSource(pClock);
-					Log(hr,true);
 					pClock->Release();
 				}
 			}
@@ -176,11 +164,8 @@ STDMETHODIMP CMPTSFilter::Run(REFERENCE_TIME tStart)
 {
 	CAutoLock cObjectLock(m_pLock);
 	HRESULT hr;
-	//Log((char*)"filter: Run() tStart= ",false);
-	//Log(tStart,true);
 	if(m_pFileReader->IsFileInvalid()==true)
 	{
-		Log((char*)"filter: Run() invalid file handle ",true);
 	}
 	hr=CSource::Run(tStart);
 	return hr;
@@ -198,12 +183,23 @@ HRESULT CMPTSFilter::SetFilePosition(REFERENCE_TIME seek)
 	if (seek>0)
 	{
 		Sections::PTSTime time;
+		if (m_pSections->pids.EndPTS > m_pSections->pids.StartPTS)
+		{
+			ULONGLONG duration=m_pSections->pids.EndPTS-m_pSections->pids.StartPTS;
+			m_pSections->PTSToPTSTime(duration,&time);
+			duration=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
 
-		ULONGLONG duration=m_pSections->pids.EndPTS-m_pSections->pids.StartPTS;
-		m_pSections->PTSToPTSTime(duration,&time);
-		duration=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
+			position=(fileSize/100LL)* ( (seek*100LL)/ duration);
+		}
+		else
+		{
+			//STARTPTS---------------MAXPTS---------------ENDPTS
+			ULONGLONG duration=m_pSections->pids.EndPTS-(MAX_PTS-m_pSections->pids.StartPTS);
+			m_pSections->PTSToPTSTime(duration,&time);
+			duration=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
 
-		position=(fileSize/100LL)* ( (seek*100LL)/ duration);
+			position=(fileSize/100LL)* ( (seek*100LL)/ duration);
+		}
 	}
 	
 	if (m_pFileReader->m_hInfoFile != INVALID_HANDLE_VALUE)
@@ -216,7 +212,6 @@ HRESULT CMPTSFilter::SetFilePosition(REFERENCE_TIME seek)
 
 	if(position>fileSize || position<0)
 	{
-		Log((char*)"SetFilePosition() error",false);
 		return S_FALSE;
 	}
 
@@ -229,6 +224,7 @@ HRESULT CMPTSFilter::SetFilePosition(REFERENCE_TIME seek)
 	m_pPin->ResetBuffers(position);
 	return S_OK;
 }
+
 HRESULT CMPTSFilter::Pause()
 {
 	LogDebug("Filter: Pause()");
@@ -248,7 +244,6 @@ STDMETHODIMP CMPTSFilter::Stop()
 
 HRESULT CMPTSFilter::OnConnect()
 {
-	//Log((char*)"filter: Connecting pins",true);
 	HRESULT hr=m_pDemux->SetDemuxPins(GetFilterGraph());
 	SetSyncClock();// try to select the clock on the audio-renderer
 	return S_OK;
@@ -282,15 +277,6 @@ STDMETHODIMP CMPTSFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt)
 #endif
 	strcat(fileName,".log");
 
-#ifndef DEBUG
-	m_logFileHandle=CreateFile((LPCTSTR)fileName,GENERIC_READ | GENERIC_WRITE,
-		FILE_SHARE_READ | FILE_SHARE_WRITE,
-		NULL,
-		CREATE_ALWAYS,
-		FILE_ATTRIBUTE_NORMAL | FILE_FLAG_RANDOM_ACCESS,
-		NULL);
-#endif
-	logFilePos=0;
 
 	if (m_pFileReader->m_hInfoFile!=INVALID_HANDLE_VALUE)
 	{
@@ -319,36 +305,10 @@ STDMETHODIMP CMPTSFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt)
 	RefreshPids();
 
 	RefreshDuration();
-	Log(TEXT("found audio-pid 1: "),false);
-	Log((__int64)m_pSections->pids.AudioPid,true);
-	Log(TEXT("found audio-pid 2: "),false);
-	Log((__int64)m_pSections->pids.AudioPid2,true);
-	Log(TEXT("found video-pid  : "),false);
-	Log((__int64)m_pSections->pids.VideoPid,true);
-	Log(TEXT("found pmt pid    : "),false);
-	Log((__int64)m_pSections->pids.PMTPid,true);
-	Log(TEXT("found pcr pid    : "),false);
-	Log((__int64)m_pSections->pids.PCRPid,true);
-	Log(TEXT("found ac3 pid    : "),false);
-	Log((__int64)m_pSections->pids.AC3,true);
-	Log(TEXT("program number   : "),false);
-	Log((__int64)m_pSections->pids.ProgramNumber,true);
-	Log(TEXT("file duration    : "),false);
 	Sections::PTSTime time;
 	m_pSections->PTSToPTSTime(m_pSections->pids.DurTime,&time);
-	Log(time.h,false);
-	Log(TEXT(":"),false);
-	Log(time.m,false);
-	Log(TEXT(":"),false);
-	Log(time.s,false);
-	Log(TEXT("."),false);
-	Log(time.u,true);
-	Log(TEXT("start PTS    : "),false);
-	Log(m_pSections->pids.StartPTS,true);
-	Log(TEXT("end PTS     : "),false);
-	Log(m_pSections->pids.EndPTS,true);
-	LogDebug("pids ac3:%x audio:%x audio2:%x video:%x pmt:%x pcr:%x",
-		m_pSections->pids.AC3,m_pSections->pids.AudioPid,m_pSections->pids.AudioPid2,m_pSections->pids.VideoPid,m_pSections->pids.PMTPid,m_pSections->pids.PCRPid);
+	LogDebug("pids ac3:%x audio1:%x audio2:%x audio3:%x video:%x pmt:%x pcr:%x",
+		m_pSections->pids.AC3,m_pSections->pids.AudioPid1,m_pSections->pids.AudioPid2,m_pSections->pids.AudioPid3,m_pSections->pids.VideoPid,m_pSections->pids.PMTPid,m_pSections->pids.PCRPid);
 	LogDebug("pes start:%x pes end:%x duration:%02.2d:%02.2d:%02.2d writepos:%x",
 				(DWORD)m_pSections->pids.StartPTS,(DWORD)m_pSections->pids.EndPTS,
 				time.h,time.m,time.s, (DWORD)m_pSections->pids.fileStartPosition);
@@ -379,7 +339,7 @@ bool CMPTSFilter::UpdatePids()
 	DWORD dwReadBytes;
 	LARGE_INTEGER li,writepos;
 	li.QuadPart = 0;
-	int ttxPid,subtitlePid,videopid,audiopid,audiopid2,ac3pid,pmtpid,pcrpid;
+	int ttxPid,subtitlePid,videopid,audiopid,audiopid2,audiopid3=0,ac3pid,pmtpid,pcrpid;
 	DWORD dwPos=::SetFilePointer(m_pFileReader->m_hInfoFile, li.LowPart, &li.HighPart, FILE_BEGIN);
 	if (dwPos != 0)
 	{
@@ -468,18 +428,20 @@ bool CMPTSFilter::UpdatePids()
 	if (ptsStart==0) return false;
 
 	if (ac3pid	 !=m_pSections->pids.AC3 ||
-		audiopid !=m_pSections->pids.AudioPid ||
+		audiopid !=m_pSections->pids.AudioPid1 ||
 		audiopid2!=m_pSections->pids.AudioPid2 ||
+		audiopid3!=m_pSections->pids.AudioPid3 ||
 		videopid !=m_pSections->pids.VideoPid ||
 		pmtpid   !=m_pSections->pids.PMTPid ||
 		pcrpid   !=m_pSections->pids.PCRPid)
 	{
 		LogDebug("filter: PIDS changed");
-		LogDebug("got pids ac3:%x audio:%x audio2:%x video:%x pmt:%x pcr:%x ptso:%x-%x",
-			ac3pid,audiopid,audiopid2,videopid,pmtpid,pcrpid, (DWORD)ptsStart,(DWORD)ptsNow);
+		LogDebug("got pids ac3:%x audio:%x audio2:%x audio3:%x video:%x pmt:%x pcr:%x ptso:%x-%x",
+			ac3pid,audiopid,audiopid2,audiopid3,videopid,pmtpid,pcrpid, (DWORD)ptsStart,(DWORD)ptsNow);
 		m_pSections->pids.AC3=ac3pid;
-		m_pSections->pids.AudioPid=audiopid;
+		m_pSections->pids.AudioPid1=audiopid;
 		m_pSections->pids.AudioPid2=audiopid2;
+		m_pSections->pids.AudioPid3=audiopid3;
 		m_pSections->pids.VideoPid=videopid;
 		m_pSections->pids.PMTPid=pmtpid;
 		m_pSections->pids.PCRPid=pcrpid;
@@ -578,36 +540,49 @@ STDMETHODIMP CMPTSFilter::Refresh(void)
 	RefreshPids();
 	return S_OK;
 }
-STDMETHODIMP CMPTSFilter::Log(__int64 value,bool crlf)
+
+
+//audio stream selection
+STDMETHODIMP CMPTSFilter::SetCurrentAudioPid(int audioPid)
 {
-	char buffer[100];
-	return Log(_i64toa(value,buffer,10),crlf);
+	if (m_pSections->pids.CurrentAudioPid==audioPid) return S_OK;
+	m_pSections->pids.CurrentAudioPid=audioPid;
+	m_pDemux->SetupPids();
+	return S_OK;
 }
-STDMETHODIMP CMPTSFilter::Log(char* text,bool crlf)
+
+STDMETHODIMP CMPTSFilter::GetCurrentAudioPid(int* audioPid)
 {
-	CAutoLock lock(&m_Lock);
-#ifndef DEBUG
-	if(m_logFileHandle==INVALID_HANDLE_VALUE)
-		return S_FALSE;
+	*audioPid=m_pSections->pids.CurrentAudioPid;
+	return S_OK;
+}
 
-	char _crlf[2];
-	_crlf[0]=(char)13;
-	_crlf[1]=(char)10;
-
-	DWORD written=0;
-	DWORD len=strlen(text);
-	LARGE_INTEGER li;
-	li.QuadPart = (LONGLONG)logFilePos;
-	SetFilePointer(m_logFileHandle,li.LowPart,&li.HighPart,FILE_BEGIN);
-	WriteFile(m_logFileHandle, text, len, &written, NULL);
-	logFilePos+=(__int64)written;
-	if(crlf)
+STDMETHODIMP CMPTSFilter::GetAudioPid(int index,int* audioPid, BOOL* isAC3, char** language)
+{
+	*language=0;
+	*isAC3=FALSE;
+	*audioPid=0;
+	*language="";
+	switch (index)
 	{
-		written=0;
-		WriteFile(m_logFileHandle, _crlf, 2, &written, NULL);
-		logFilePos+=(__int64)written;
+		case 0:
+			*audioPid=m_pSections->pids.AudioPid1;
+			*language=(char*)m_pSections->pids.AudioLanguage1.c_str();
+		break;
+		case 1:
+			*audioPid=m_pSections->pids.AudioPid2;
+			*language=(char*)m_pSections->pids.AudioLanguage2.c_str();
+		break;
+		case 2:
+			*audioPid=m_pSections->pids.AudioPid3;
+			*language=(char*)m_pSections->pids.AudioLanguage3.c_str();
+		break;
+		case 3:
+			*audioPid=m_pSections->pids.AC3;
+			*language=(char*)m_pSections->pids.AC3Language.c_str();
+			*isAC3=TRUE;
+		break;
 	}
-#endif
 	return S_OK;
 }
 

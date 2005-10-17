@@ -41,8 +41,7 @@ CTimeShiftSeeking::CTimeShiftSeeking(
         | AM_SEEKING_CanSeekBackwards
         | AM_SEEKING_CanSeekAbsolute
         | AM_SEEKING_CanGetStopPos
-        | AM_SEEKING_CanGetDuration
-		| AM_SEEKING_CanGetCurrentPos;
+        | AM_SEEKING_CanGetDuration;
 }
 
 HRESULT CTimeShiftSeeking::NonDelegatingQueryInterface(REFIID riid, void **ppv)

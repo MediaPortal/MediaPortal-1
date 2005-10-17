@@ -568,14 +568,8 @@ void FontEnginePresentTextures()
 
 }
 
-
-//*******************************************************************************************************************
-void FontEngineAddFont(void* device, int fontNumber,void* fontTexture, int firstChar, int endChar, float textureScale, float textureWidth, float textureHeight, float fSpacingPerChar,int maxVertices)
+void FontEngineSetDevice(void* device)
 {
-	if (fontNumber< 0 || fontNumber>=MAX_FONTS) return;
-	if (fontTexture==NULL) return;
-	if (firstChar<0 || firstChar>endChar) return;
-
 	m_pDevice = (LPDIRECT3DDEVICE9)device;
 
 	m_Filter = D3DTEXF_NONE;
@@ -586,6 +580,15 @@ void FontEngineAddFont(void* device, int fontNumber,void* fontTexture, int first
 	if((caps.StretchRectFilterCaps&D3DPTFILTERCAPS_MINFLINEAR)
 	&& (caps.StretchRectFilterCaps&D3DPTFILTERCAPS_MAGFLINEAR))
 		m_Filter = D3DTEXF_LINEAR;
+}
+
+//*******************************************************************************************************************
+void FontEngineAddFont( int fontNumber,void* fontTexture, int firstChar, int endChar, float textureScale, float textureWidth, float textureHeight, float fSpacingPerChar,int maxVertices)
+{
+	if (fontNumber< 0 || fontNumber>=MAX_FONTS) return;
+	if (fontTexture==NULL) return;
+	if (firstChar<0 || firstChar>endChar) return;
+
 
 	fontData[fontNumber].vertices      = new CUSTOMVERTEX[MaxNumfontVertices];
 	for (int i=0; i < MaxNumfontVertices;++i)

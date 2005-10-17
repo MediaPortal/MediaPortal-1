@@ -486,18 +486,24 @@ STDMETHODIMP CStreamAnalyzer::NonDelegatingQueryInterface(REFIID riid, void ** p
     // Do we have this interface
 	if (riid == IID_IStreamAnalyzer)
 	{
+		Log("get IID_IStreamAnalyzer");
 		return GetInterface((IStreamAnalyzer*)this, ppv);
 	}
 	else if (riid == IID_IEPGGrabber)
 	{
-		return GetInterface((IEPGGrabber*)this, ppv);
+		Log("get IID_IEPGGrabber %x", (*ppv));
+		HRESULT hr= GetInterface((IEPGGrabber*)this, ppv);
+		Log("result:%x %x", hr, (*ppv));
+		return hr;
 	}
 	else if (riid == IID_IMHWGrabber)
 	{
+		Log("get IID_IMHWGrabber");
 		return GetInterface((IMHWGrabber*)this, ppv);
 	}
 	else if (riid == IID_ATSCGrabber)
 	{
+		Log("get IID_ATSCGrabber");
 		return GetInterface((IATSCGrabber*)this, ppv);
 	}
     else if (riid == IID_IBaseFilter || riid == IID_IMediaFilter || riid == IID_IPersist)

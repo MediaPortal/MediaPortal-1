@@ -37,7 +37,7 @@ CFilterOutPin::CFilterOutPin(LPUNKNOWN pUnk, CMPTSFilter *pFilter, FileReader *p
 	m_dwSeekingCaps =	
 						AM_SEEKING_CanSeekForwards  | AM_SEEKING_CanSeekBackwards |
 						AM_SEEKING_CanGetStopPos    | AM_SEEKING_CanGetDuration   |
-						AM_SEEKING_CanSeekAbsolute  | AM_SEEKING_CanGetCurrentPos;
+						AM_SEEKING_CanSeekAbsolute;
 
 	__int64 size;
 	m_pFileReader->GetFileSize(&size);
@@ -135,7 +135,6 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 	if (FAILED(hr))
 	{
 		LogDebug("GetPointer() failed:%x",hr);
-		m_pMPTSFilter->Log((char*)"pin: FillBuffer() error on getting pointer for sample",true);
 	
 		return hr;
 	}
@@ -219,7 +218,7 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 	m_pBuffers->DequeFromBuffer(pData, lDataLength);
 
 	ULONGLONG pts=0;
-	ULONGLONG ptsStart=0;
+	ULONGLONG ptsNow=0;
 	Sections::TSHeader header;
 	for(int i=0;i<lDataLength;i+=188)
 	{
@@ -234,9 +233,11 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 				LogDebug("new pid:%x", header.Pid);
 				m_mapDiscontinuitySent[header.Pid]=false;
 				if ( header.Pid==m_pSections->pids.VideoPid || 
-					header.Pid==m_pSections->pids.AudioPid ||
+					header.Pid==m_pSections->pids.AudioPid1 ||
+					header.Pid==m_pSections->pids.AudioPid2 ||
+					header.Pid==m_pSections->pids.AudioPid3 ||
 					header.Pid==m_pSections->pids.AC3)
-				{					
+				{
 					m_iDiscCounter=3;
 					m_bDiscontinuity=true;
 				}
@@ -265,9 +266,9 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 				}
 				if (m_iPESPid==header.Pid)
 				{
-					if (ptsStart==0) 
+					if (ptsNow==0) 
 					{ 
-						ptsStart=pts; 
+						ptsNow=pts; 
 						break;
 					}
 				}
@@ -275,21 +276,21 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 		}
 	}
 	
-	if (ptsStart>0)
+	if (ptsNow>0)
 	{
-		if (ptsStart < m_pSections->pids.StartPTS || ptsStart > (m_pSections->pids.EndPTS+ ((__int64)0x100000)) )
+		if (ptsNow < m_pSections->pids.StartPTS || ptsNow > (m_pSections->pids.EndPTS+ ((__int64)0x100000)) )
 		{
-			LogDebug("INVALID pts:%x %x-%x", (DWORD)ptsStart,(DWORD)m_pSections->pids.StartPTS ,(DWORD) m_pSections->pids.EndPTS);
+			LogDebug("INVALID pts:%x %x-%x", (DWORD)ptsNow,(DWORD)m_pSections->pids.StartPTS ,(DWORD) m_pSections->pids.EndPTS);
 		}
-		UpdatePositions(ptsStart);
+		UpdatePositions(ptsNow);
 
-		REFERENCE_TIME rtStart = static_cast<REFERENCE_TIME>(ptsStart);
-		REFERENCE_TIME rtStop  = static_cast<REFERENCE_TIME>(ptsStart+1);
+		REFERENCE_TIME rtStart = static_cast<REFERENCE_TIME>(ptsNow);
+		REFERENCE_TIME rtStop  = static_cast<REFERENCE_TIME>(ptsNow+1);
 
 		pSample->SetTime(&rtStart, &rtStop); 
 
 		pSample->SetSyncPoint(TRUE);	
-		m_prevPTS=ptsStart;
+		m_prevPTS=ptsNow;
 	}
 	else
 	{
@@ -308,7 +309,7 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 		//m_bDiscontinuity=true;
 	}
 
-//	LogDebug("snd pkt pts:%x  pes:%x disc:%d", (DWORD)ptsStart, m_iPESPid, m_bDiscontinuity);
+//	LogDebug("snd pkt pts:%x  pes:%x disc:%d", (DWORD)ptsNow, m_iPESPid, m_bDiscontinuity);
 	if(m_bDiscontinuity) 
 	{
 		pSample->SetDiscontinuity(TRUE);
@@ -440,28 +441,56 @@ void CFilterOutPin::ResetBuffers(__int64 newPosition)
    m_rtDuration=0;
 }
 
-void CFilterOutPin::UpdatePositions(ULONGLONG& ptsStart)
+void CFilterOutPin::UpdatePositions(ULONGLONG& ptsNow)
 {
-	CRefTime rtStart,rtStop,rtDuration;
-
-	Sections::PTSTime time;
-	rtStart   =m_pSections->pids.StartPTS;
-	rtDuration=m_pSections->pids.EndPTS-m_pSections->pids.StartPTS;
-
-	if (ptsStart==0) 
+	if (ptsNow==0) 
 		return;
 
-	ptsStart -=rtStart;
+	CRefTime rtStart,rtStop,rtDuration;
+	Sections::PTSTime time;
+	if (m_pSections->pids.StartPTS < m_pSections->pids.EndPTS)
+	{
+		rtStart   =m_pSections->pids.StartPTS;
+		rtDuration=m_pSections->pids.EndPTS-m_pSections->pids.StartPTS;
 
-	m_pSections->PTSToPTSTime(ptsStart,&time);
-	ptsStart=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
+		ptsNow -=rtStart;
+
+		m_pSections->PTSToPTSTime(ptsNow,&time);
+		ptsNow=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
 
 
-	m_pSections->PTSToPTSTime(rtDuration,&time);
-	rtDuration=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
+//		LogDebug("1)%02.2d:%02.2d:%02.2d", time.h,time.m,time.s);
+
+		m_pSections->PTSToPTSTime(rtDuration,&time);
+		rtDuration=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
+	}
+	else
+	{
+		//STARTPTS -------------- MAX_PTS -------------------------------- ENDPTS
+		rtStart    = m_pSections->pids.StartPTS;
+		rtDuration = m_pSections->pids.EndPTS- (MAX_PTS-m_pSections->pids.StartPTS);
+
+		if (ptsNow  > m_pSections->pids.StartPTS)
+		{
+			ptsNow =ptsNow-rtStart;
+		}
+		else
+		{
+			ptsNow += (MAX_PTS-m_pSections->pids.StartPTS);
+		}
+
+		m_pSections->PTSToPTSTime(ptsNow,&time);
+		ptsNow=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
+
+//		LogDebug("2)%02.2d:%02.2d:%02.2d", time.h,time.m,time.s);
+
+		m_pSections->PTSToPTSTime(rtDuration,&time);
+		rtDuration=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
+	}
 
 
-	m_rtCurrent=ptsStart;
+	m_rtCurrent=ptsNow;
+//	LogDebug("%x %d", (DWORD)ptsNow, (DWORD)(m_rtCurrent.Millisecs()/1000L));
 	m_rtStart=0;
 	m_rtStop=rtDuration;
 	m_rtDuration=rtDuration;

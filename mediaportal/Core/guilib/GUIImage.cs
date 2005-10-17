@@ -363,6 +363,7 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public override void AllocResources()
 		{
+
 			//imageSprite = new Sprite(GUIGraphicsContext.DX9Device);
 
       g_nAnisotropy=GUIGraphicsContext.DX9Device.DeviceCaps.MaxAnisotropy;

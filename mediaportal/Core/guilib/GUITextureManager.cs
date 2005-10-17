@@ -40,7 +40,6 @@ namespace MediaPortal.GUI.Library
   {
     static ArrayList 			m_cache = new ArrayList();
     static ArrayList 			_DownloadCache = new ArrayList();
-    static bool      			_Disposed=false;
     const int        			MAX_THUMB_WIDTH=512;
     const int        			MAX_THUMB_HEIGHT=512;
 		static TexturePacker _packer = new TexturePacker();
@@ -64,34 +63,30 @@ namespace MediaPortal.GUI.Library
     {
 			Log.Write("texturemanager:dispose()");
 			_packer.Dispose();
-      if ( !_Disposed)
+      if (disposing)
       {
-        if (disposing)
+        foreach (CachedTexture cached in m_cache)
         {
-          foreach (CachedTexture cached in m_cache)
-          {
-            cached.Dispose();
-          }
-          m_cache.Clear();
+          cached.Dispose();
         }
-        _DownloadCache.Clear();
+        m_cache.Clear();
+      }
+      _DownloadCache.Clear();
 
-        string [] files=System.IO.Directory.GetFiles("thumbs","MPTemp*.*");
-        if (files!=null)
+      string [] files=System.IO.Directory.GetFiles("thumbs","MPTemp*.*");
+      if (files!=null)
+      {
+        foreach (string file in files)
         {
-          foreach (string file in files)
+          try
           {
-            try
-            {
-              System.IO.File.Delete(file);
-            }
-            catch(Exception) 
-            {
-            }
+            System.IO.File.Delete(file);
+          }
+          catch(Exception) 
+          {
           }
         }
       }
-      _Disposed=true;
     }
 
     static public void StartPreLoad()

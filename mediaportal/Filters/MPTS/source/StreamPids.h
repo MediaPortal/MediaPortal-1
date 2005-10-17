@@ -10,7 +10,8 @@
 #define __StreamPids
 #include <strmif.h>
 #include <vector>
-
+#include <string>
+using namespace std;
 // channel info
 
 
@@ -25,9 +26,15 @@ public:
 	void CopyFrom(StreamPids *StreamPids);
 	void CopyTo(StreamPids *StreamPids);
 	int GetPIDCount();
+	int CurrentAudioPid;
 	int VideoPid;
-	int AudioPid;
+	int AudioPid1;
 	int AudioPid2;
+	int AudioPid3;
+	string AudioLanguage1;
+	string AudioLanguage2;
+	string AudioLanguage3;
+	string AC3Language;
 	int PMTPid;
 	int PCRPid;
 	int AC3;

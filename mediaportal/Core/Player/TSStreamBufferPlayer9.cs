@@ -163,7 +163,7 @@ namespace MediaPortal.Player
 
         mediaCtrl	= (IMediaControl)  graphBuilder;
         mediaEvt	= (IMediaEventEx)  graphBuilder;
-				m_mediaSeeking = bufferSource as IMediaSeeking;
+				m_mediaSeeking = graphBuilder as IMediaSeeking;
         
 				hasVideo=true;
 				if ( !Vmr9.IsVMR9Connected )

@@ -108,6 +108,7 @@ namespace MediaPortal.GUI.Library
 
 			for(int index = 0; index < _images.Length; index++)
 				_images[index].FreeResources();
+			_images=null;
 		}
 
 		public override void Render(float timePassed)

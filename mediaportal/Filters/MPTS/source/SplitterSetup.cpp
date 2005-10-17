@@ -141,62 +141,58 @@ HRESULT SplitterSetup::SetupDemuxer(IBaseFilter *demuxFilter)
 			}
 		}
 	}
-	int audioToUse=(m_pSections->pids.AudioPid>0?m_pSections->pids.AudioPid:m_pSections->pids.AC3);
-	if(audioToUse>0)
+	if (m_pAudio==NULL)
 	{
-		if (m_pAudio==NULL)
+		ZeroMemory(&type, sizeof(AM_MEDIA_TYPE));
+		if(m_pSections->pids.VideoPid>0)
 		{
-			ZeroMemory(&type, sizeof(AM_MEDIA_TYPE));
-			if(m_pSections->pids.VideoPid>0)
+			if(m_pSections->pids.AC3==m_pSections->pids.CurrentAudioPid)
+				GetAC3Media(&type);
+			else 
+				GetMP2Media(&type);// tv
+		}
+		else
+		{
+			if(m_pSections->pids.PCRPid==0 || m_pSections->pids.PCRPid>=0x1FFF)
 			{
-				if(audioToUse==m_pSections->pids.AudioPid)
-					GetMP2Media(&type);// tv
-				else 
-					GetAC3Media(&type);
+				GetAudioPayload(&type);// radio
 			}
 			else
 			{
-				if(m_pSections->pids.PCRPid==0 || m_pSections->pids.PCRPid>=0x1FFF)
-				{
-					GetAudioPayload(&type);// radio
-				}
-				else
-				{
-					GetMP2Media(&type); // radio
-				}	
-			}
-			hr=demuxer->CreateOutputPin(&type,L"Audio" ,&m_pAudio);
-			if (hr==VFW_E_DUPLICATE_NAME)
+				GetMP2Media(&type); // radio
+			}	
+		}
+		hr=demuxer->CreateOutputPin(&type,L"Audio" ,&m_pAudio);
+		if (hr==VFW_E_DUPLICATE_NAME)
+		{
+			//pin already exists!
+			IEnumPins* enumPins;
+			demuxFilter->EnumPins(&enumPins);
+			enumPins->Reset();
+			IPin* pins[2];
+			ULONG fetched;
+			while (enumPins->Next(1, &pins[0],&fetched)==0)
 			{
-				//pin already exists!
-				IEnumPins* enumPins;
-				demuxFilter->EnumPins(&enumPins);
-				enumPins->Reset();
-				IPin* pins[2];
-				ULONG fetched;
-				while (enumPins->Next(1, &pins[0],&fetched)==0)
+				if (fetched==1)
 				{
-					if (fetched==1)
+					PIN_INFO pinInfo;
+					pinInfo.pFilter=NULL;
+					hr=pins[0]->QueryPinInfo(&pinInfo);
+					if (SUCCEEDED(hr))
 					{
-						PIN_INFO pinInfo;
-						pinInfo.pFilter=NULL;
-						hr=pins[0]->QueryPinInfo(&pinInfo);
-						if (SUCCEEDED(hr))
+						if (wcscmp(pinInfo.achName,L"Audio")==0)
 						{
-							if (wcscmp(pinInfo.achName,L"Audio")==0)
-							{
-								m_pAudio=pins[0];
-							}
-							
-							if (pinInfo.pFilter!=NULL)
-								pinInfo.pFilter->Release();
+							m_pAudio=pins[0];
 						}
-						pins[0]->Release();
+						
+						if (pinInfo.pFilter!=NULL)
+							pinInfo.pFilter->Release();
 					}
-					else break;
+					pins[0]->Release();
 				}
-				enumPins->Release();
+				else break;
 			}
+			enumPins->Release();
 		}
 	}
 
@@ -257,7 +253,6 @@ HRESULT SplitterSetup::SetupPids()
 	}
 	
 	// audio 
-	int audioToUse=(m_pSections->pids.AudioPid>0?m_pSections->pids.AudioPid:m_pSections->pids.AC3);
 	if (m_pAudio!=NULL)
 	{
 
@@ -282,7 +277,7 @@ HRESULT SplitterSetup::SetupPids()
 				return 8;
 		}
 		pPidEnum->Release();
-		pid = (ULONG)audioToUse;
+		pid = (ULONG)m_pSections->pids.CurrentAudioPid;
 		if(m_pSections->pids.VideoPid>0)
 		{
 			hr=pMap->MapPID(1,&pid,MEDIA_ELEMENTARY_STREAM); // tv

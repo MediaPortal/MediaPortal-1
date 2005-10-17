@@ -652,6 +652,8 @@ public class MediaPortalApp : D3DApp, IRender
 			tMouseClickTimer = null;
 		}
 
+		
+		GUIWaitCursor.Dispose();
 		GUIFontManager.Dispose();
 		GUIWindowManager.Clear();
 		GUILocalizeStrings.Dispose();
@@ -664,7 +666,7 @@ public class MediaPortalApp : D3DApp, IRender
 
 	/// <summary>
 	/// The device has been created.  Resources that are not lost on
-	/// Reset() can be created here -- resources in Pool.Default,
+	/// Reset() can be created here -- resources in Pool.Managed,
 	/// Pool.Scratch, or Pool.SystemMemory.  Image surfaces created via
 	/// CreateImageSurface are never lost and can be created here.  Vertex
 	/// shaders and pixel shaders can also be created here as they are not
@@ -673,6 +675,8 @@ public class MediaPortalApp : D3DApp, IRender
 	protected override void InitializeDeviceObjects()
 	{
 		GUIWindowManager.Clear();
+		
+		GUIWaitCursor.Dispose();
 		GUITextureManager.Dispose();
 		GUIFontManager.Dispose();
 
@@ -741,7 +745,7 @@ public class MediaPortalApp : D3DApp, IRender
 
 	/// <summary>
 	/// The device exists, but may have just been Reset().  Resources in
-	/// Pool.Default and any other device state that persists during
+	/// Pool.Managed and any other device state that persists during
 	/// rendering should be set here.  Render states, matrices, textures,
 	/// etc., that don't change during rendering can be set once here to
 	/// avoid redundant state setting during Render() or FrameMove().
@@ -757,11 +761,12 @@ public class MediaPortalApp : D3DApp, IRender
 			//g_Player.Stop();
 			GUIGraphicsContext.Load();
 			GUIFontManager.Dispose();
+			GUIWaitCursor.Dispose();
 			GUIFontManager.LoadFonts(@"skin\" + m_strSkin + @"\fonts.xml");
 			GUIFontManager.InitializeDeviceObjects();
 			if (GUIGraphicsContext.DX9Device != null)
 			{
-				GUIWindowManager.Restore();
+				GUIWindowManager.OnResize();
 				GUIWindowManager.PreInit();
 				GUIWindowManager.ActivateWindow(GUIWindowManager.ActiveWindow);
 				GUIWindowManager.OnDeviceRestored();
@@ -1333,6 +1338,14 @@ public class MediaPortalApp : D3DApp, IRender
 			return;
 		}
 
+		if (key.KeyChar=='f')
+		{
+			GUIGraphicsContext.SendMessage(new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED,0,0,0,1,0,0));
+		}
+		if (key.KeyChar=='n')
+		{
+			GUIGraphicsContext.SendMessage(new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED,0,0,0,0,0,0));
+		}
 		if (key.KeyChar == '!') 
 		{
 			m_bShowStats = !m_bShowStats;
@@ -1822,7 +1835,12 @@ public class MediaPortalApp : D3DApp, IRender
 				}
 				if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING) return;
 
-
+/*
+				GUIWaitCursor.Dispose();
+				GUITextureManager.CleanupThumbs();
+				GUITextureManager.Dispose();
+				GUIFontManager.Dispose();
+*/
 				if (fullscreen)
 				{
 					//switch to fullscreen mode
@@ -1830,14 +1848,14 @@ public class MediaPortalApp : D3DApp, IRender
 					if (!GUIGraphicsContext.DX9Device.PresentationParameters.Windowed)
 					{
 						message.Param1 = 1;
-						return;
 					}
-					SwitchFullScreenOrWindowed(false, true);
-					GUIFontManager.RestoreDeviceObjects();
-					if (!GUIGraphicsContext.DX9Device.PresentationParameters.Windowed)
+					else
 					{
-						message.Param1 = 1;
-						return;
+						SwitchFullScreenOrWindowed(false, true);
+						if (!GUIGraphicsContext.DX9Device.PresentationParameters.Windowed)
+						{
+							message.Param1 = 1;
+						}
 					}
 				}
 				else
@@ -1846,8 +1864,10 @@ public class MediaPortalApp : D3DApp, IRender
 					Log.Write("goto windowed:{0}", GUIGraphicsContext.DX9Device.PresentationParameters.Windowed);
 					if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed) return;
 					SwitchFullScreenOrWindowed(true, true);
-					GUIFontManager.RestoreDeviceObjects();
 				}
+				//GUIWindowManager.OnResize();
+				//GUIWindowManager.ActivateWindow(GUIWindowManager.ActiveWindow);
+
 
 				break;
 		}

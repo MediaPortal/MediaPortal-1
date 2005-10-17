@@ -41,7 +41,9 @@ namespace MediaPortal.GUI.Library
 
 		public static void Dispose()
 		{
-			_animation.FreeResources();
+			if (_animation!=null)
+				_animation.FreeResources();
+			_animation=null;
 		}
 
 		public static void Hide()
@@ -51,10 +53,11 @@ namespace MediaPortal.GUI.Library
 
 		public static void Init()
 		{
+
 			_animation = new GUIAnimation();
 
 			foreach(string filename in Directory.GetFiles(GUIGraphicsContext.Skin + @"\media\", "common.waiting.*.png"))
-				_animation.Filenames.Add(filename);
+				_animation.Filenames.Add(System.IO.Path.GetFileName(filename));
 
 			_animation.HorizontalAlignment = HorizontalAlignment.Center;
 			_animation.VerticalAlignment = VerticalAlignment.Center;

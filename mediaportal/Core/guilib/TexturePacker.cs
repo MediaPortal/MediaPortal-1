@@ -195,7 +195,6 @@ namespace MediaPortal.GUI.Library
 						SoapFormatter formatter = new SoapFormatter();
 						packedTextures = (ArrayList)formatter.Deserialize(fileStream);
 						fileStream.Close();
-						LoadPackedGraphics();
 						return true;
 					}
 					catch
@@ -214,24 +213,24 @@ namespace MediaPortal.GUI.Library
 			packedTextures=new ArrayList();
 			string[] files1 =System.IO.Directory.GetFiles( String.Format(@"{0}\media",skinName),"*.png" );
 			string[] files2 =System.IO.Directory.GetFiles( @"thumbs\tv\logos","*.png" );
-			//string[] files3 =System.IO.Directory.GetFiles( @"weather\64x64","*.png" );
-			//string[] files4 =System.IO.Directory.GetFiles( @"weather\128x128","*.png" );
-			//string[] files5 =System.IO.Directory.GetFiles( String.Format(@"{0}\media\tetris",skinName),"*.png" );
-			string [] files = new string[files1.Length+files2.Length/*+files3.Length+files4.Length+files5.Length*/];
+			string[] files3 =System.IO.Directory.GetFiles( @"weather\64x64","*.png" );
+			string[] files4 =System.IO.Directory.GetFiles( @"weather\128x128","*.png" );
+			string[] files5 =System.IO.Directory.GetFiles( String.Format(@"{0}\media\tetris",skinName),"*.png" );
+			string [] files = new string[files1.Length+files2.Length+files3.Length+files4.Length+files5.Length];
 			
 			int off=0;
 			for (int i=0; i < files1.Length;++i)
 				files[off++] = files1[i];
 			for (int i=0; i < files2.Length;++i)
 				files[off++] = files2[i];
-/*
+
 			for (int i=0; i < files3.Length;++i)
 				files[off++] = files3[i];
 			for (int i=0; i < files4.Length;++i)
 				files[off++] = files4[i];
 			for (int i=0; i < files5.Length;++i)
 				files[off++] = files5[i];
-*/
+
 			//Determine maximum texture dimensions
 			//We limit the max resolution to 2048x2048
 			Caps d3dcaps = GUIGraphicsContext.DX9Device.DeviceCaps;
@@ -278,39 +277,34 @@ namespace MediaPortal.GUI.Library
 				if (!ImagesLeft) break;
 			}
 			SavePackedSkin(skinName);
-			LoadPackedGraphics();
 		}
 
-		void LoadPackedGraphics()
+		void LoadPackedGraphics(int index)
 		{
 		//	return ;
-			int index=0;
-			foreach (PackedTexture bigOne in packedTextures)
+			PackedTexture bigOne =(PackedTexture)packedTextures[index];
+			Format useFormat=Format.A8R8G8B8;
+			//if (IsCompressedTextureFormatOk(Format.Dxt5))
+			//	useFormat=Format.Dxt5;
+			if (bigOne.texture==null)
 			{
-				Format useFormat=Format.A8R8G8B8;
-				//if (IsCompressedTextureFormatOk(Format.Dxt5))
-				//	useFormat=Format.Dxt5;
-				if (bigOne.texture==null)
-				{
-					bigOne.textureNo=-1;
+				bigOne.textureNo=-1;
 
-					string fileName=String.Format(@"{0}\packedgfx{1}.png",GUIGraphicsContext.Skin,index);
-					ImageInformation info2 = new ImageInformation();
-					Texture tex = TextureLoader.FromFile(GUIGraphicsContext.DX9Device,
-						fileName,
-						0,0,//width/height
-						1,//mipslevels
-						0,//Usage.Dynamic,
-						useFormat,
-						Pool.Managed,
-						Filter.None,
-						Filter.None,
-						(int)0,
-						ref info2);
-					bigOne.texture=tex;
-					Log.Write("TexturePacker: Loaded {0} texture:{1}x{2} miplevels:{3}",fileName, info2.Width,info2.Height, tex.LevelCount);
-				}
-				index++;
+				string fileName=String.Format(@"{0}\packedgfx{1}.png",GUIGraphicsContext.Skin,index);
+				ImageInformation info2 = new ImageInformation();
+				Texture tex = TextureLoader.FromFile(GUIGraphicsContext.DX9Device,
+					fileName,
+					0,0,//width/height
+					1,//mipslevels
+					0,//Usage.Dynamic,
+					useFormat,
+					Pool.Managed,
+					Filter.None,
+					Filter.None,
+					(int)0,
+					ref info2);
+				bigOne.texture=tex;
+				Log.Write("TexturePacker: Loaded {0} texture:{1}x{2} miplevels:{3}",fileName, info2.Width,info2.Height, tex.LevelCount);
 			}
 		}
 
@@ -323,8 +317,8 @@ namespace MediaPortal.GUI.Library
 				if (bmp.Width >= GUIGraphicsContext.Width ||
 					bmp.Height >= GUIGraphicsContext.Height)
 				{
-					dontAdd=true;
-					return false;
+					//dontAdd=true;
+					//return false;
 				}
 				int pos;
 				string skinName=String.Format(@"{0}\media", GUIGraphicsContext.Skin).ToLower();
@@ -370,7 +364,7 @@ namespace MediaPortal.GUI.Library
 					iHeight= foundNode.Rect.Height-2;
 					if (bigOne.texture==null)
 					{
-						LoadPackedGraphics();
+						LoadPackedGraphics(index);
 					}
 
 					tex=bigOne.texture;

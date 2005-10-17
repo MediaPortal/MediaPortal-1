@@ -1716,6 +1716,9 @@ namespace MediaPortal
     {
       Log.Write("App.ToggleFullWindowed()");
       isMaximized = !isMaximized;
+			GUITextureManager.CleanupThumbs();
+			GUITextureManager.Dispose();
+			GUIFontManager.Dispose();
       GUIGraphicsContext.DX9Device.DeviceReset -= new System.EventHandler(this.OnDeviceReset);
       if (isMaximized)
       {

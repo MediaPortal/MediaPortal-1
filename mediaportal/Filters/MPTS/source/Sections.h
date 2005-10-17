@@ -60,6 +60,7 @@ private:
 	void FindPATPMT();
 	bool DecodePMT(byte *pData);
 	bool FindVideo();
+	string DVB_GetMPEGISO639Lang (byte *b);
 public:
 
 	Sections(FileReader *fileReader);

@@ -394,7 +394,7 @@ namespace MediaPortal.Player
 					
 				UpdateDuration();
 				updateTimer=DateTime.Now;
-				//Log.Write("pos:{0} duration:{1}", m_dCurrentPos,m_dDuration);
+				Log.Write("pos:{0} duration:{1}", m_dCurrentPos.ToString("f2"),m_dDuration.ToString("f2"));
 			}
 
 			m_dLastPosition=CurrentPosition;
@@ -712,7 +712,7 @@ namespace MediaPortal.Player
           if (dTime<0.0d) dTime=0.0d;
           if (dTime>Duration) dTime=Duration;
 					dTime=Math.Floor(dTime);
-          //Log.Write("seekabs: {0} duration:{1} current pos:{2}", dTime,Duration, CurrentPosition);
+          Log.Write("seekabs: {0} duration:{1} current pos:{2}", dTime,Duration, CurrentPosition);
           dTime*=10000000d;
 					long pStop=0;
 
@@ -760,7 +760,7 @@ namespace MediaPortal.Player
 			//m_mediaSeeking.GetCapabilities(out capabilities);
 			//Log.Write("GetCurrentPosition() caps:{0} ", (int)capabilities);
       hr=m_mediaSeeking.GetCurrentPosition(out lStreamPos); // stream position
-			//Log.Write("GetCurrentPosition() pos:{0} hr:0x{1:X}", lStreamPos,hr);
+			Log.Write("GetCurrentPosition() pos:{0} hr:0x{1:X}", lStreamPos,hr);
       fCurrentPos=lStreamPos;
       fCurrentPos/=10000000d;
 
@@ -947,7 +947,7 @@ namespace MediaPortal.Player
 
 				mediaCtrl	= (IMediaControl)  graphBuilder;
 				mediaEvt	= (IMediaEventEx)  graphBuilder;
-				m_mediaSeeking = bufferSource as IMediaSeeking;
+				m_mediaSeeking = graphBuilder as IMediaSeeking;
 				basicAudio	= graphBuilder as IBasicAudio;
 				if (hasVideo)
 				{

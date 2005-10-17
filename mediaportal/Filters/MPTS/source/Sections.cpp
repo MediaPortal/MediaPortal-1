@@ -39,7 +39,7 @@ void LogDebug(const char *fmt, ...)
 	if (fp!=NULL)
 	{
 		SYSTEMTIME systemTime;
-		GetSystemTime(&systemTime);
+		GetLocalTime(&systemTime);
 		fprintf(fp,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d %s\n",
 			systemTime.wDay, systemTime.wMonth, systemTime.wYear,
 			systemTime.wHour,systemTime.wMinute,systemTime.wSecond,
@@ -87,7 +87,7 @@ HRESULT Sections::ParseFromFile()
 		::ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&ptsStart, sizeof(ptsStart), &dwReadBytes, NULL) ;
 		::ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&ptsNow, sizeof(ptsNow), &dwReadBytes, NULL) ;
 		::ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&pids.AC3, sizeof(int), &dwReadBytes, NULL);
-		::ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&pids.AudioPid, sizeof(int), &dwReadBytes, NULL);
+		::ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&pids.AudioPid1, sizeof(int), &dwReadBytes, NULL);
 		::ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&pids.AudioPid2, sizeof(int), &dwReadBytes, NULL);
 		::ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&pids.VideoPid, sizeof(int), &dwReadBytes, NULL);
 		::ReadFile(m_pFileReader->m_hInfoFile, (PVOID)&ttxPid, sizeof(int), &dwReadBytes, NULL);
@@ -97,6 +97,7 @@ HRESULT Sections::ParseFromFile()
 		if (pids.PCRPid==0) pids.PCRPid=pids.VideoPid;
 
 		if (ptsStart>ptsNow) ptsStart=1;
+		pids.CurrentAudioPid=pids.AudioPid1;
 		pids.StartPTS=(__int64)ptsStart;
 		pids.EndPTS=(__int64)ptsNow;
 		Sections::PTSTime time;
@@ -159,45 +160,21 @@ HRESULT Sections::CheckStream()
 		}
 //		m_pFileReader->SetFilePointer(countBytesRead,FILE_CURRENT);
 		
-		GetTSHeader(pData,&header);
-		if(hr==S_OK && header.SyncByte==0x47 )
-		{
-			if (header.PayloadUnitStart && header.Pid>0)
+		int apid;
+		ULONGLONG currentPts;
+		if (CurrentPTS(pData,&currentPts,&apid) == S_OK)
+		{					
+			if (pid==0) pid=apid;
+			if (pid==apid)
 			{
-				for(offset=4;offset<181;offset++)
+				pts=currentPts;
+				if(pids.StartPTS==0)
 				{
-					if(pData[offset]==0 && pData[offset+1]==0 && pData[offset+2]==1)// pes
-					{
-						BYTE streamID=(pData[offset+3]>>5) & 0x07;
-						WORD pesLen=(pData[offset+4]<<8)+pData[offset+5];
-						GetPESHeader(&pData[offset+6],&pes);
-						BYTE pesHeaderLen=pData[offset+8];
-						if(pes.Reserved==0x02 && header.Pid>0 && (pids.VideoPid==header.Pid||pids.AudioPid==header.Pid||pids.AudioPid2==header.Pid||pids.AC3==header.Pid) ) // valid header
-						{
-							if(pes.PTSFlags==0x02)
-							{
-								if (pid==0) pid=header.Pid;
-								if (pid==header.Pid)
-								{
-									// audio pes found
-									GetPTS(&pData[offset+9],&pts);
-									if(pids.StartPTS==0)
-									{
-										LogDebug("Sections::CheckStream() got PTS");
-										pids.StartPTS=(__int64)pts; // first pts
-										m_pFileReader->SetFilePointer(fileEndOffset,FILE_BEGIN);// sets to file-end - 1MB
-									}
-								}
-								
-							}
-						}
-						break;
-					}
+					pids.StartPTS=(__int64)pts; // first pts
+					m_pFileReader->SetFilePointer(fileEndOffset,FILE_BEGIN);// sets to file-end - 1MB
 				}
 			}
-		}else 
-			finished=true;
-
+		}
 	}
 	// set end pts
 	pids.EndPTS=(__int64)pts;
@@ -273,9 +250,7 @@ HRESULT Sections::CurrentPTS(BYTE *pData,ULONGLONG *ptsValue,int* pid)
 	if (header.Pid<1) return S_FALSE;
 	if (header.SyncByte!=0x47) return S_FALSE;
 	if (header.PayloadUnitStart==0) return S_FALSE;
-	if(header.Pid!=pids.AudioPid && 
-	   header.Pid != pids.AudioPid2 && 
-	   header.Pid != pids.AC3 && 
+	if(header.Pid!=pids.CurrentAudioPid &&
 	   header.Pid != pids.VideoPid &&
 	   header.Pid != pids.PCRPid)
 		return S_FALSE;
@@ -303,7 +278,7 @@ HRESULT Sections::CurrentPTS(BYTE *pData,ULONGLONG *ptsValue,int* pid)
 		{
 			if(pes.PTSFlags==0x02 || pes.PTSFlags==0x03)
 			{
-				// audio pes found
+				// pes packet found
 				GetPTS(&pData[offset+9],ptsValue);
 				char buffer[128];
 				sprintf(buffer,"pid: %x pes:%x\n", header.Pid,(DWORD) (*ptsValue));
@@ -353,7 +328,7 @@ void Sections::FindPATPMT()
 					GetTSHeader(pData,&header);
 					if(header.SyncByte==0x47 && header.TransportError==FALSE)
 					{
-						LogDebug("Sections::Found start packet()");
+						LogDebug("Sections::Found start packet() at 0x%x",offsetInFile);
 						break;
 					}
 				}
@@ -554,7 +529,7 @@ bool Sections::DecodePMT(byte* PMT)
 	int stream_type=0;
 	int elementary_PID=0;
 	int ES_info_length=0;
-	pids.PCRPid=pids.AudioPid=pids.AudioPid2=pids.VideoPid=pids.AC3=0;
+	pids.PCRPid=pids.CurrentAudioPid=pids.AudioPid1=pids.AudioPid2=pids.AudioPid3=pids.VideoPid=pids.AC3=0;
 
 	while (len1 > 4)
 	{
@@ -577,15 +552,21 @@ bool Sections::DecodePMT(byte* PMT)
 		}
 		if(stream_type==3 || stream_type==4)
 		{
-			if(pids.AudioPid==0)
+			if(pids.AudioPid1==0)
 			{
-				pids.AudioPid=elementary_PID;
-				LogDebug("Sections::decodePMT() AudioPid:0x%x",pids.AudioPid);
+				pids.CurrentAudioPid=elementary_PID;
+				pids.AudioPid1=elementary_PID;
+				LogDebug("Sections::decodePMT() AudioPid:0x%x",pids.AudioPid1);
 			}
-			else
+			else if (pids.AudioPid2==0)
 			{
 				pids.AudioPid2=elementary_PID;
 				LogDebug("Sections::decodePMT() AudioPid2:0x%x",pids.AudioPid2);
+			}
+			else 
+			{
+				pids.AudioPid3=elementary_PID;
+				LogDebug("Sections::decodePMT() AudioPid3:0x%x",pids.AudioPid3);
 			}
 		}
 		if(stream_type==0x81)
@@ -606,6 +587,15 @@ bool Sections::DecodePMT(byte* PMT)
 			x = buf[pointer + 1] + 2;
 			if(indicator==0x6A)
 				pids.AC3=elementary_PID;
+			if (indicator==0x0a)
+			{
+				//decode language...
+				string language=DVB_GetMPEGISO639Lang((byte*)&buf[pointer]);
+				if (elementary_PID==pids.AudioPid1) pids.AudioLanguage1=language;
+				if (elementary_PID==pids.AudioPid2) pids.AudioLanguage2=language;
+				if (elementary_PID==pids.AudioPid3) pids.AudioLanguage3=language;
+				if (elementary_PID==pids.AC3) pids.AC3Language=language;
+			}
 			len2 -= x;
 			len1 -= x;
 			pointer += x;
@@ -613,6 +603,39 @@ bool Sections::DecodePMT(byte* PMT)
 		}
 	}
 	return true;
+}
+//
+string Sections::DVB_GetMPEGISO639Lang (byte* b)
+
+{
+
+	int		descriptor_tag;
+	int     descriptor_length;		
+	string  ISO_639_language_code="";
+	int     audio_type;
+	int     len;
+
+	descriptor_tag= b[0];
+	descriptor_length= b[1];
+	if(descriptor_tag==0xa)
+	{
+		len = descriptor_length;
+		char* bytes=new char[len+1];
+
+		int pointer= 2;
+
+		while ( len > 0) 
+		{
+			memcpy(bytes,&b[pointer],len);
+			ISO_639_language_code=(string)bytes;
+			if(descriptor_length>4)
+				audio_type = bytes[3];
+			pointer += 4;
+			len -= 4;
+		}
+	}
+	
+	return ISO_639_language_code;
 }
 bool Sections::FindVideo()
 {

@@ -204,6 +204,7 @@ namespace MediaPortal.GUI.Library
     protected int m_iAutoHideTopbar = -1;
 		protected bool m_bAutoHideTopbar = false;
 		bool isSkinLoaded = false;
+		bool _shouldRestore=false;
 		#endregion
 
 		#region ctor
@@ -608,10 +609,7 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public virtual void Restore()
 		{
-			controlList.Clear();
-			m_vecPositions.Clear();
-			Load(windowXmlFileName);
-			LoadSkin();
+			_shouldRestore=true;
 		}
 
 		/// <summary>
@@ -828,7 +826,7 @@ namespace MediaPortal.GUI.Library
 						}
 						catch(Exception ex)
 						{
-							Log.WriteFile(Log.LogType.Log,true,"GUIWindow:OnWindowLoaded id:{0} ex:{1} {2}", atrb.ID,ex.Message,ex.StackTrace);
+							Log.WriteFile(Log.LogType.Log,true,"GUIWindow:OnWindowLoaded id:{0} ex:{1} {2} {3}", atrb.ID,ex.Message,ex.StackTrace,this.ToString());
 						}
 					}
 				}
@@ -897,12 +895,29 @@ namespace MediaPortal.GUI.Library
 			get { return windowId; }
 			set { windowId = value; }
 		}
+
+		public void DoRestoreSkin()
+		{
+			if (!_shouldRestore) return;
+			_shouldRestore=false;
+			controlList.Clear();
+			m_vecPositions.Clear();
+			Load(windowXmlFileName);
+			LoadSkin();
+			FreeResources();
+			AllocResources();
+		}
 		/// <summary>
 		/// Render() method. This method draws the window by asking every control
 		/// of the window to render itself
 		/// </summary>
 		public virtual void Render(float timePassed)
 		{
+
+			if (_shouldRestore)
+			{
+				DoRestoreSkin();
+			}			
       //lock (this)
       {
 				try
@@ -1086,6 +1101,10 @@ namespace MediaPortal.GUI.Library
 							// Initialize the window.
 						case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT : 
 						{
+							if (_shouldRestore)
+							{
+								DoRestoreSkin();
+							}
 							GUIPropertyManager.SetProperty("#itemcount",String.Empty);
 							GUIPropertyManager.SetProperty("#selecteditem",String.Empty);
 							GUIPropertyManager.SetProperty("#selecteditem2",String.Empty);

@@ -32,12 +32,17 @@ namespace MediaPortal.GUI.Library
 	{
 		[DllImport("fontEngine.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
 		unsafe private static extern void FontEnginePresentTextures();
+
+
+		[DllImport("fontEngine.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
+		unsafe private static extern void FontEngineSetDevice(void* device);
+
 		static protected ArrayList m_fonts = new ArrayList();
 
-    // singleton. Dont allow any instance of this class
-    private GUIFontManager()
-    {
-    }
+		// singleton. Dont allow any instance of this class
+		private GUIFontManager()
+		{
+		}
 
 		static public int Count
 		{
@@ -51,19 +56,19 @@ namespace MediaPortal.GUI.Library
 		static public bool LoadFonts( string strFilename)
 		{
 			// Clear current set of fonts
-      Dispose();
+			Dispose();
 			int counter=0;
-      Log.Write("  Load fonts from {0}", strFilename);
+			Log.Write("  Load fonts from {0}", strFilename);
 			m_fonts.Clear();
 
 			// Load the debug font
 			GUIFont fontDebug = new GUIFont("debug","Arial",12);
 			fontDebug.ID=counter++;
-      fontDebug.Load();
-      m_fonts.Add(fontDebug);			
+			fontDebug.Load();
+			m_fonts.Add(fontDebug);			
 
 
-      try
+			try
 			{
 				// Load the XML document
 				XmlDocument doc = new XmlDocument();
@@ -76,8 +81,8 @@ namespace MediaPortal.GUI.Library
 				XmlNodeList list=doc.DocumentElement.SelectNodes("/fonts/font");
 				foreach (XmlNode node in list)
 				{
-          XmlNode nodeStart=node.SelectSingleNode("start");
-          XmlNode nodeEnd  =node.SelectSingleNode("end");
+					XmlNode nodeStart=node.SelectSingleNode("start");
+					XmlNode nodeEnd  =node.SelectSingleNode("end");
 					XmlNode nodeName = node.SelectSingleNode("name");
 					XmlNode nodeFileName = node.SelectSingleNode("filename");
 					XmlNode nodeHeight = node.SelectSingleNode("height");
@@ -95,10 +100,10 @@ namespace MediaPortal.GUI.Library
 						string strFileName=nodeFileName.InnerText;
 						int iHeight=Int32.Parse(nodeHeight.InnerText);
             
-            // height is based on 720x576
-            float fPercent =( (float)GUIGraphicsContext.Height) / 576.0f;
-            fPercent*=iHeight;
-            iHeight=(int)fPercent;
+						// height is based on 720x576
+						float fPercent =( (float)GUIGraphicsContext.Height) / 576.0f;
+						fPercent*=iHeight;
+						iHeight=(int)fPercent;
 						System.Drawing.FontStyle style = new System.Drawing.FontStyle();
 						style=System.Drawing.FontStyle.Regular;
 						if (bold)
@@ -107,16 +112,16 @@ namespace MediaPortal.GUI.Library
 							style|=System.Drawing.FontStyle.Italic;
 						GUIFont font = new GUIFont(strName,strFileName,iHeight,style);
 						font.ID=counter++;
-            if (nodeStart!=null && nodeStart.InnerText!="" && nodeEnd!=null&& nodeEnd.InnerText!="" )
-            {
-              int start=Int32.Parse(nodeStart.InnerText);
-              int end=Int32.Parse(nodeEnd.InnerText);
-              font.SetRange(start,end);
-            }
-            else
-            {
-              font.SetRange(0,GUIGraphicsContext.CharsInCharacterSet);
-            }
+						if (nodeStart!=null && nodeStart.InnerText!="" && nodeEnd!=null&& nodeEnd.InnerText!="" )
+						{
+							int start=Int32.Parse(nodeStart.InnerText);
+							int end=Int32.Parse(nodeEnd.InnerText);
+							font.SetRange(start,end);
+						}
+						else
+						{
+							font.SetRange(0,GUIGraphicsContext.CharsInCharacterSet);
+						}
 
 						font.Load();
 						m_fonts.Add(font);
@@ -126,7 +131,7 @@ namespace MediaPortal.GUI.Library
 			}
 			catch(Exception ex)
 			{
-        Log.Write("exception loading fonts {0} err:{1} stack:{2}", strFilename, ex.Message,ex.StackTrace);
+				Log.Write("exception loading fonts {0} err:{1} stack:{2}", strFilename, ex.Message,ex.StackTrace);
 			}
 
 			return false;
@@ -137,11 +142,11 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		/// <param name="iFont">The font number</param>
 		/// <returns>A GUIFont instance representing the fontnumber or a default GUIFont if the number does not exists.</returns>
-    static public GUIFont GetFont( int iFont)
-    {
-      if (iFont>=0 && iFont < m_fonts.Count) return (GUIFont) m_fonts[ iFont];
-      return GetFont("debug");
-    }
+		static public GUIFont GetFont( int iFont)
+		{
+			if (iFont>=0 && iFont < m_fonts.Count) return (GUIFont) m_fonts[ iFont];
+			return GetFont("debug");
+		}
 
 		/// <summary>
 		/// Gets a GUIFont.
@@ -152,33 +157,33 @@ namespace MediaPortal.GUI.Library
 		{
 			for (int i=0; i < m_fonts.Count;++i)
 			{
-        GUIFont font=(GUIFont)m_fonts[i];
+				GUIFont font=(GUIFont)m_fonts[i];
 				if (font.FontName==strFontName) return font;
 			}
 
-      // just return a font
-      return GetFont("debug");
+			// just return a font
+			return GetFont("debug");
 		}
 
-    static public void Present()
-    {
+		static public void Present()
+		{
 
-		FontEnginePresentTextures();
-      for (int i=0; i < m_fonts.Count;++i)
-      {
-        GUIFont font=(GUIFont)m_fonts[i];
-        font.Present();
-      }
-    }
+			FontEnginePresentTextures();
+			for (int i=0; i < m_fonts.Count;++i)
+			{
+				GUIFont font=(GUIFont)m_fonts[i];
+				font.Present();
+			}
+		}
 		/// <summary>
 		/// Disposes all GUIFonts.
 		/// </summary>
 		static public void	Dispose()
 		{
-      foreach (GUIFont font in m_fonts)
-      {
-        font.Dispose(null,null);
-      }
+			foreach (GUIFont font in m_fonts)
+			{
+				font.Dispose(null,null);
+			}
 		}
 
 		/// <summary>
@@ -186,7 +191,7 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		static public void InitializeDeviceObjects()
 		{
-      Log.Write("  fonts.InitializeDeviceObjects()");
+			Log.Write("  fonts.InitializeDeviceObjects()");
 			foreach (GUIFont font in m_fonts)
 			{
 				font.InitializeDeviceObjects();
@@ -198,12 +203,19 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		static public void RestoreDeviceObjects()
 		{
-      if (GUIGraphicsContext.CurrentState==GUIGraphicsContext.State.STOPPING) return;
+			IntPtr upDevice = DShowNET.DsUtils.GetUnmanagedDevice(GUIGraphicsContext.DX9Device);
+
+			unsafe
+			{
+				FontEngineSetDevice(upDevice.ToPointer());
+			}
+			if (GUIGraphicsContext.CurrentState==GUIGraphicsContext.State.STOPPING) return;
 
 			foreach (GUIFont font in m_fonts)
 			{
 				font.RestoreDeviceObjects();
 			}
+
 		}
 	}
 }

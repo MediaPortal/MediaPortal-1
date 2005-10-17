@@ -33,9 +33,12 @@ StreamPids::~StreamPids()
 
 void StreamPids::Clear()
 {
+	AudioLanguage1=AudioLanguage2=AudioLanguage3=AC3Language="";
+	CurrentAudioPid=0;
 	VideoPid=0;
-	AudioPid=0;
+	AudioPid1=0;
 	AudioPid2=0;
+	AudioPid3=0;
 	PMTPid=0;
 	PCRPid=0;
 	AC3=0;

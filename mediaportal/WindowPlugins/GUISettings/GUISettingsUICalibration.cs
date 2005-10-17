@@ -179,7 +179,7 @@ namespace MediaPortal.GUI.Settings
       {
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
         {
-          GUIWindowManager.Restore();
+          GUIWindowManager.OnResize();
           GUIWindowManager.PreInit();
             GUIGraphicsContext.Save();
         }

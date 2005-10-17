@@ -196,7 +196,7 @@ namespace WindowPlugins.GUISettings
 		{
 			SaveSettings();
 			GUIGraphicsContext.Skin=@"skin\"+btnSkin.SelectedLabel;
-			GUIWindowManager.Restore();
+			GUIWindowManager.OnResize();
 			OnPageLoad();
 			GUIControl.FocusControl(GetID,btnSkin.GetID);
 		}
@@ -204,7 +204,7 @@ namespace WindowPlugins.GUISettings
 		{
 			SaveSettings();
 			GUILocalizeStrings.Load(@"language\" + btnLanguage.SelectedLabel + @"\strings.xml");
-			GUIWindowManager.Restore();
+			GUIWindowManager.OnResize();
 			OnPageLoad();
 			GUIControl.FocusControl(GetID,btnLanguage.GetID);
 		}

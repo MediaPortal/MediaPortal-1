@@ -375,15 +375,16 @@ namespace MediaPortal.GUI.Library
 				m_vecWindows[x].ResetAllControls();
 			}
 		}
+
 		/// <summary>
-		/// Restore() will restore all the positions of all controls of all windows
+		/// OnResize() will restore all the positions of all controls of all windows
 		/// to their original values as specified in the skin files
 		/// </summary>
-		static public void Restore()
+		static public void OnResize()
 		{
-			GUITextureManager.CleanupThumbs();
-			GUITextureManager.Dispose();
-			GUITextureManager.Init();
+//			GUITextureManager.Init();
+			
+			GUIWaitCursor.Init();
 
 			// reload all controls from the xml file
 			for (int x=0; x < windowCount;++x)
@@ -392,9 +393,9 @@ namespace MediaPortal.GUI.Library
 
 			}
 			// re-init current window.
-			GUIWindow window=GetWindow(ActiveWindow);
-			window.FreeResources();
-			window.AllocResources();
+			//GUIWindow window=GetWindow(ActiveWindow);
+			//window.FreeResources();
+			//window.AllocResources();
 		}
 
 		/// <summary>
@@ -450,8 +451,8 @@ namespace MediaPortal.GUI.Library
 						window.GetType().ToString(), ex.ToString());
 				}
 			}
-
 			GUIWaitCursor.Init();
+
 		}
 
 		/// <summary>
@@ -798,7 +799,11 @@ namespace MediaPortal.GUI.Library
 		{
 			for (int x=0; x < windowCount;++x)
 			{
-				if ( m_vecWindows[x].GetID==dwID) return m_vecWindows[x];
+				if ( m_vecWindows[x].GetID==dwID) 
+				{
+					m_vecWindows[x].DoRestoreSkin();
+					return m_vecWindows[x];
+				}
 			}
 			return null;
 		}

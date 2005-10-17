@@ -43,7 +43,7 @@ namespace MediaPortal.GUI.Library
 		unsafe private static extern void FontEngineInitialize(int iScreenWidth, int iScreenHeight);
 
 		[DllImport("fontEngine.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
-		unsafe private static extern void FontEngineAddFont(void* device, int fontNumber,void* fontTexture, int firstChar, int endChar, float textureScale, float textureWidth, float textureHeight, float fSpacingPerChar,int maxVertices);
+		unsafe private static extern void FontEngineAddFont(int fontNumber,void* fontTexture, int firstChar, int endChar, float textureScale, float textureWidth, float textureHeight, float fSpacingPerChar,int maxVertices);
 
 		[DllImport("fontEngine.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
 		unsafe private static extern void FontEngineRemoveFont(int fontNumber);
@@ -57,6 +57,9 @@ namespace MediaPortal.GUI.Library
 		
 		[DllImport("fontEngine.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
 		unsafe private static extern void FontEnginePresent3D(int fontNumber);
+
+		[DllImport("fontEngine.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
+		unsafe private static extern void FontEngineSetDevice(void* device);
 
 		// Font rendering flags
 		[System.Flags]
@@ -288,7 +291,8 @@ namespace MediaPortal.GUI.Library
 		/// <param name="text">The actual text.</param>
 		/// <param name="flags">Font render flags.</param>
 		protected void DrawText(float xpos, float ypos, Color color, string text, RenderFlags flags, int maxWidth)
-    {
+		{
+			if (!FontAdded) ReloadFont();
 			if (text==null) return;
 			if (text==String.Empty) return;
 			if (xpos <=0) return ;
@@ -364,6 +368,7 @@ namespace MediaPortal.GUI.Library
 		/// <returns>The size of the rendered text.</returns>
 		public void GetTextExtent(string text, ref float textwidth, ref float textheight)
 		{
+			if (!FontAdded) ReloadFont();
       textwidth  = 0.0f;
       textheight = 0.0f;
 
@@ -433,6 +438,10 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public void InitializeDeviceObjects()
 		{
+		}
+
+		void ReloadFont()
+		{
       textureScale  = 1.0f; // Draw fonts into texture without scaling
 
      
@@ -498,7 +507,8 @@ namespace MediaPortal.GUI.Library
           textureWidth=info.Width;
           RestoreDeviceObjects();
           Log.Write("  Loaded font:{0} height:{1} texture:{2}x{3} chars:[{4}-{5}] miplevels:{6}",
-              m_strFontName, m_iFontHeight,textureWidth,textureWidth, _StartCharacter,_EndCharacter,fontTexture.LevelCount);
+						m_strFontName, m_iFontHeight,textureWidth,textureWidth, _StartCharacter,_EndCharacter,fontTexture.LevelCount);
+					SetFontEgine();
           return;
         }
       }
@@ -609,24 +619,26 @@ namespace MediaPortal.GUI.Library
           }
         }
       }
-			RestoreDeviceObjects();
+			SetFontEgine();
 		}
 
+		public void RestoreDeviceObjects()
+		{
+		}
 		/// <summary>
 		/// Restore the font after a device has been reset.
 		/// </summary>
-		public void RestoreDeviceObjects()
+		public void SetFontEgine()
 		{
 			if (FontAdded) return;
 			if (ID<0) return;
 			Surface surf = GUIGraphicsContext.DX9Device.GetRenderTarget( 0 );
 			
 			if (logfonts) Log.Write("GUIFont:RestoreDeviceObjects() fontengine: add font:"+ID.ToString());
-			IntPtr upDevice = DShowNET.DsUtils.GetUnmanagedDevice(GUIGraphicsContext.DX9Device);
 			IntPtr upTexture = DShowNET.DsUtils.GetUnmanagedTexture(fontTexture);
 			unsafe
 			{
-				FontEngineAddFont(upDevice.ToPointer(), ID,upTexture.ToPointer(), _StartCharacter, _EndCharacter, textureScale, textureWidth, textureHeight, spacingPerChar,MaxNumfontVertices);
+				FontEngineAddFont(ID,upTexture.ToPointer(), _StartCharacter, _EndCharacter, textureScale, textureWidth, textureHeight, spacingPerChar,MaxNumfontVertices);
 			}
 			
 			int length=textureCoords.GetLength(0);
