@@ -71,7 +71,8 @@ namespace MediaPortal.GUI.Library
 			m_properties["#iswatched"]=String.Empty;  // boolean indication movie has been watched
 			m_properties["#thumb"]=String.Empty;
       m_properties["#currentplaytime"]=String.Empty;
-      m_properties["#shortcurrentplaytime"]=String.Empty;
+		m_properties["#currentplaytimeremaining"]=String.Empty;
+		m_properties["#shortcurrentplaytime"]=String.Empty;
       m_properties["#duration"]=String.Empty;
       m_properties["#shortduration"]=String.Empty;
       m_properties["#playlogo"]=String.Empty;
