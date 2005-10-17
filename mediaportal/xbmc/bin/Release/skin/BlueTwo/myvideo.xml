@@ -47,6 +47,16 @@
 				<label>341</label>
 				<ondown>99</ondown>
 			</control>
+
+			<!-- Trailers -->
+			<control>
+				<type>button</type>
+				<id>7</id>
+				<hyperlink>5900</hyperlink>
+				<label>5906</label>
+				<ondown>99</ondown>
+			</control>
+			
 		</control>
 		<import>common.facade.xml</import>
 	</controls>
