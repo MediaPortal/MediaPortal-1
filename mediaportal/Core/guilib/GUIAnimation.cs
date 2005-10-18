@@ -126,8 +126,18 @@ namespace MediaPortal.GUI.Library
 			if(_images.Length == 0)
 				return;
 
-			if(_isAnimating == false)
+			if(_isFirstRender)
+			{
+				_startTick = AnimationTimer.TickCount;
+				_isAnimating = true;
+				_isFirstRender = false;
+
+				Log.Write("Blah");
+			}
+			else if(_isAnimating == false)
+			{
 				return;
+			}
 
 			double elapsedTicks = AnimationTimer.TickCount - _startTick;
 			double progress = Math.Min(1, TweenHelper.Interpolate(_easing, 0, 1, _startTick, _duration));
@@ -234,6 +244,7 @@ namespace MediaPortal.GUI.Library
 		ArrayList						_filenames;
 		GUIImage[]						_images;
 		bool							_isAnimating = false;
+		bool							_isFirstRender = true;
 		int								_iterationCount = 0;
 		static int						_imageId = 200000;
 		double							_startTick = 0;

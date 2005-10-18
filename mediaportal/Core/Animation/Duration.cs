@@ -40,6 +40,8 @@ namespace MediaPortal.Animation
 		public Duration(double duration)
 		{
 			_duration = duration;
+
+			MediaPortal.GUI.Library.Log.Write("Duration: {0}", _duration);
 		}
 
 		#endregion Constructors
@@ -51,7 +53,7 @@ namespace MediaPortal.Animation
 			if(string.Compare(text, "Automatic", true) == 0)
 				return Duration.Automatic;
 
-			return new Duration(TimeSpan.Parse(text).TotalMilliseconds);
+			return new Duration(Convert.ToDouble(text));
 		}
 
 		#endregion Methods
