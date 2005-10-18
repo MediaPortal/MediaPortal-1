@@ -149,16 +149,15 @@ namespace MediaPortal.GUI.Library
 							_isAnimating = false;
 
 							// XAML: fire event
-
-							return;
 						}
 					}
 
-					_startTick = AnimationTimer.TickCount;
+					if(_isAnimating)
+						_startTick = AnimationTimer.TickCount;
 				}
 			}
 
-			int index = (int)(progress * (_images.Length - 1));
+			int index = (int)Math.Min((progress * _images.Length), _images.Length - 1);
 
 			if(_isAnimating && index < _images.Length)
 				_images[index].Render(timePassed);
