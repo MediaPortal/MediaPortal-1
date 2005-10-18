@@ -6491,5 +6491,21 @@
         <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
       </connections>
     </tv>
-  </capturecard>  
+  </capturecard>
+
+  <capturecard commercialname="DNTV Live Pro" capturename="DNTV Live! Pro Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_00251822&amp;rev_05">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"            checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="DNTV Live! Pro BDA DVB-T Tuner/Demod"      checkdevice="true"></filter>
+        <filter cat="capture"         name="DNTV Live! Pro Transport Stream Capture"             checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
 </capturecards>
