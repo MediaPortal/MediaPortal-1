@@ -238,7 +238,6 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 					header.Pid==m_pSections->pids.AudioPid3 ||
 					header.Pid==m_pSections->pids.AC3)
 				{
-					m_iDiscCounter=3;
 					m_bDiscontinuity=true;
 				}
 			}
@@ -316,7 +315,6 @@ HRESULT CFilterOutPin::OnThreadStartPlay( )
 {
    LogDebug("pin:OnThreadStartPlay()");
 		
-   m_iDiscCounter=3;
    m_bDiscontinuity=true;
    m_iPESPid=0;
    DeliverNewSegment(m_rtStart, m_rtStop, m_dRateSeeking);
@@ -410,7 +408,6 @@ void CFilterOutPin::ResetBuffers(__int64 newPosition)
 	m_pFileReader->SetFilePointer(newPosition,FILE_BEGIN);
    m_bDiscontinuity=true;
    m_iPESPid=0;
-   m_iDiscCounter=3;
    m_rtCurrent=0;
    m_rtStop=0;
    m_rtDuration=0;
