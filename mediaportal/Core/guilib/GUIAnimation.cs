@@ -49,6 +49,12 @@ namespace MediaPortal.GUI.Library
 
 		#region Methods
 
+		public void Begin()
+		{
+			_startTick = AnimationTimer.TickCount;
+			_isAnimating = true;
+		}
+
 		public override void AllocResources()
 		{
 			if(_filenames == null)
@@ -108,7 +114,8 @@ namespace MediaPortal.GUI.Library
 
 			for(int index = 0; index < _images.Length; index++)
 				_images[index].FreeResources();
-			_images=null;
+
+			_images = null;
 		}
 
 		public override void Render(float timePassed)
@@ -119,11 +126,41 @@ namespace MediaPortal.GUI.Library
 			if(_images.Length == 0)
 				return;
 
-			double x = (_images.Length * (Environment.TickCount - _tickCount)) / (_rate * 1000);
+			if(_isAnimating == false)
+				return;
 
-			int index = (int)x % _images.Length;
+			double elapsedTicks = AnimationTimer.TickCount - _startTick;
+			double progress = elapsedTicks / _duration;
 
-			if(index < _images.Length)
+			progress *= 1000;
+
+			// determine whether we are repeating
+			if((_duration / 1000) < elapsedTicks)
+			{
+				if(_repeatBehavior.IsIterationCount)
+				{
+					_iterationCount++;
+
+					// have we performed all iterations??
+					if(!RepeatBehavior.Equals(_repeatBehavior, RepeatBehavior.Forever))
+					{
+						if(_repeatBehavior.IterationCount <= _iterationCount)
+						{
+							_isAnimating = false;
+
+							// XAML: fire event
+
+							return;
+						}
+					}
+
+					_startTick = AnimationTimer.TickCount;
+				}
+			}
+
+			int index = (int)(progress * (_images.Length - 1));
+
+			if(_isAnimating && index < _images.Length)
 				_images[index].Render(timePassed);
 		}
 
@@ -131,15 +168,27 @@ namespace MediaPortal.GUI.Library
 
 		#region Properties
 
+		public Duration Duration
+		{
+			get { return _duration; }
+			set { _duration = value; }
+		}
+
+		public ArrayList Filenames
+		{
+			get { if(_filenames == null) _filenames = new ArrayList(); return _filenames; }
+		}
+
 		public HorizontalAlignment HorizontalAlignment
 		{
 			get { return _horizontalAlignment; }
 			set { _horizontalAlignment = value; }
 		}
 
-		public ArrayList Filenames
+		public RepeatBehavior RepeatBehavior
 		{
-			get { if(_filenames == null) _filenames = new ArrayList(); return _filenames; }
+			get { return _repeatBehavior; }
+			set { _repeatBehavior = value; }
 		}
 		
 		public VerticalAlignment VerticalAlignment
@@ -174,10 +223,12 @@ namespace MediaPortal.GUI.Library
 
 		#region Fields
 
-		GUIImage[]						_images;
 		ArrayList						_filenames;
+		GUIImage[]						_images;
+		bool							_isAnimating = false;
+		int								_iterationCount = 0;
 		static int						_imageId = 200000;
-		float							_tickCount = 0;
+		double							_startTick = 0;
 
 		#endregion Fields
 	}

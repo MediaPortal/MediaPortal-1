@@ -10,17 +10,17 @@ namespace MediaPortal.Animation
 
 		public RepeatBehavior(double iterationCount)
 		{
-			_count = Math.Max(1, Math.Min(double.MaxValue, iterationCount));
+			_count = Math.Max(1, iterationCount);
 			_duration = null;
 		}
 
-		public RepeatBehavior(Duration repeatDuration)
+		public RepeatBehavior(Duration duration)
 		{
-			if(repeatDuration == null)
-				throw new ArgumentNullException("repeatDuration");
+			if(duration == null)
+				throw new ArgumentNullException("duration");
 
-			_count = double.NaN;
-			_duration = repeatDuration;
+			_count = 0;
+			_duration = duration;
 		}
 
 		#endregion Constructors
@@ -41,7 +41,7 @@ namespace MediaPortal.Animation
 
 		public bool IsIterationCount
 		{ 
-			get { return _count != double.NaN; }
+			get { return _count != 0; }
 		}
 
 		public bool IsRepeatDuration 
@@ -51,7 +51,7 @@ namespace MediaPortal.Animation
 
 		public double IterationCount 
 		{ 
-			get { return _count < 1 ? 1 : _count; }
+			get { return _count; }
 		}
 
 		public Duration RepeatDuration 
@@ -63,9 +63,9 @@ namespace MediaPortal.Animation
 
 		#region Members
 
-		double						_count;
-		Duration					_duration;
-		public static readonly RepeatBehavior		Forever = new RepeatBehavior(double.PositiveInfinity);
+		double									_count;
+		Duration								_duration;
+		public static readonly RepeatBehavior	Forever = new RepeatBehavior(double.PositiveInfinity);
 
 		#endregion Members
 	}

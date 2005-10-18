@@ -25,6 +25,8 @@ using System.Collections;
 using System.IO;
 using System.Threading;
 
+using MediaPortal.Animation;
+
 namespace MediaPortal.GUI.Library
 {
 	public sealed class GUIWaitCursor : GUIControl
@@ -41,9 +43,10 @@ namespace MediaPortal.GUI.Library
 
 		public static void Dispose()
 		{
-			if (_animation!=null)
+			if(_animation != null)
 				_animation.FreeResources();
-			_animation=null;
+			
+			_animation = null;
 		}
 
 		public static void Hide()
@@ -53,7 +56,6 @@ namespace MediaPortal.GUI.Library
 
 		public static void Init()
 		{
-
 			_animation = new GUIAnimation();
 
 			foreach(string filename in Directory.GetFiles(GUIGraphicsContext.Skin + @"\media\", "common.waiting.*.png"))
@@ -63,6 +65,8 @@ namespace MediaPortal.GUI.Library
 			_animation.VerticalAlignment = VerticalAlignment.Center;
 			_animation.SetPosition(GUIGraphicsContext.Width / 2, GUIGraphicsContext.Height / 2);
 			_animation.AllocResources();
+			_animation.Duration = new Duration(800);
+			_animation.RepeatBehavior = RepeatBehavior.Forever;
 		}
 
 		public override void Render(float timePassed)
@@ -79,8 +83,8 @@ namespace MediaPortal.GUI.Library
 
 		public static void Show()
 		{
-			if(Interlocked.Increment(ref _showCount) == 0)
-				Interlocked.Exchange(ref _tickCount, Environment.TickCount);
+			if(Interlocked.Increment(ref _showCount) == 1)
+				_animation.Begin();
 		}
 
 		#endregion Methods

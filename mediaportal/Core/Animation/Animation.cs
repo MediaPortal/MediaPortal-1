@@ -98,7 +98,7 @@ namespace MediaPortal.Animation
 				_iterationCount = 0;
 				_isReversed = false;
 				_isAnimating = true;
-				_beginTime = AnimationTimer.Tick;
+				_beginTime = AnimationTimer.TickCount;
 
 				if(Begun != null)
 					Begun(this, EventArgs.Empty);

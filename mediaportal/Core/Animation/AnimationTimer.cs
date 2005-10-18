@@ -8,8 +8,12 @@ namespace MediaPortal.Animation
 
 		static AnimationTimer()
 		{
-			if(NativeMethods.QueryPerformanceFrequency(ref _tickFrequency) == false)
+			long frequency = 0;
+
+			if(NativeMethods.QueryPerformanceFrequency(ref frequency) == false)
 				throw new NotSupportedException("Hi-res timer");
+
+			_frequency = frequency;
 		}
 
 		private AnimationTimer()
@@ -20,7 +24,7 @@ namespace MediaPortal.Animation
 
 		#region Properties
 
-		public static int Tick
+		public static double TickCount
 		{
 			get
 			{
@@ -29,7 +33,7 @@ namespace MediaPortal.Animation
 				if(NativeMethods.QueryPerformanceCounter(ref tick) == false)
 					throw new NotSupportedException("Hi-res timer");
 
-				return TweenHelper.Tick = (int)((1000 * (tick / _tickFrequency)) + ((1000 * (tick % _tickFrequency)) / _tickFrequency));
+				return ((double)tick / _frequency);
 			}
 		}
 
@@ -37,7 +41,7 @@ namespace MediaPortal.Animation
 
 		#region Fields
 
-		static long					_tickFrequency = 0;
+		static double				_frequency = 0;
 
 		#endregion Fields
 	}
