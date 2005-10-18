@@ -299,7 +299,15 @@ namespace MediaPortal.GUI.Music
 						handler.Select(item.AlbumInfoTag as Song);
 					
 					m_iItemSelected=-1;
-					LoadDirectory(item.Path);
+          //set level if no path is set
+          if (item.Path == "")
+          {
+            LoadDirectory((handler.CurrentLevel + 1).ToString());
+          }
+          else
+          {
+            LoadDirectory(item.Path);
+          }
 				}				
 			}
 			else
@@ -467,7 +475,8 @@ namespace MediaPortal.GUI.Music
       {
         if (SelectedItem.IsFolder && SelectedItem.Label!="..")
         {
-          m_history.Set(SelectedItem.Label, m_strDirectory);
+          //m_history.Set(SelectedItem.Label, m_strDirectory);
+          m_history.Set(SelectedItem.Label, handler.CurrentLevel.ToString());
         }
       }
       m_strDirectory=strNewDirectory;
