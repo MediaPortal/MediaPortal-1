@@ -3,258 +3,196 @@
 	<defaultcontrol>2</defaultcontrol>
 	<allowoverlay>yes</allowoverlay>
 	<define>#header.label:5900</define>
-	<define>#header.image:trailers_logo.png</define>
-	<define>#header.hover:</define>
+	<define>#header.hover:hover_my trailers.png</define>
 	<controls>
 		<import>common.window.xml</import>
+
+   <control>
+      <type>group</type>
+ 			<id>5555</id>
+      <layout>StackLayout(0)</layout>
+      <posX>55</posX>
+      <posY>115</posY>
+			<width>180</width>
+ 			<onleft>5555</onleft>
+ 			<onright>4</onright>
+
+  		<control>
+  			<type>button</type>
+  			<description>Show movies</description>
+  			<id>2</id>
+   			<onup>1234</onup> <!-- Non existing, so it goes to the topbar -->
+  			<label>5901</label>
+  		</control>
+  		<control>
+  			<type>selectbutton</type>
+  			<description>Letter button</description>
+  			<id>3</id>
+  			<subitems>-</subitems>
+  			<label>872</label>
+  		</control>
+    	<control>
+    		<description>Panel Split</description>
+    		<type>image</type>
+    		<id>1</id>
+    		<texture>panel_split_stack.png</texture>
+    	</control>
+  		<control>
+  			<type>togglebutton</type>
+  			<description>Plot</description>
+  			<id>5</id>
+  			<label>207</label>
+  			<width>180</width>
+  			<height>28</height>
+    		<AltTextureFocus>togglebutton-off-focus.png</AltTextureFocus>
+    		<AltTextureNoFocus>togglebutton-off-nofocus.png</AltTextureNoFocus>
+    		<textureFocus>togglebutton-on-focus.png</textureFocus>
+    		<textureNoFocus>togglebutton-on-nofocus.png</textureNoFocus>
+  		</control>
+  		<control>
+  			<type>togglebutton</type>
+  			<description>Cast</description>
+  			<id>6</id>
+  			<label>206</label>
+        <posX>55</posX>
+  			<width>180</width>
+  			<height>28</height>
+    		<AltTextureFocus>togglebutton-off-focus.png</AltTextureFocus>
+    		<AltTextureNoFocus>togglebutton-off-nofocus.png</AltTextureNoFocus>
+    		<textureFocus>togglebutton-on-focus.png</textureFocus>
+    		<textureNoFocus>togglebutton-on-nofocus.png</textureNoFocus>
+  			<ondown>2</ondown>
+  		</control>
+    </control>
+
+ 		<control>
+ 			<type>image</type>
+ 			<description>movie poster</description>
+ 			<id>24</id>
+ 			<posX>95</posX>
+ 			<posY>238</posY>
+ 			<width>101</width>
+ 			<height>120</height>
+ 			<texture>folder_focus.png</texture>
+  		<centered>yes</centered>
+	  	<keepaspectratio>yes</keepaspectratio>
+ 		</control>
+
 		<control>
-			<type>image</type>
-			<description>BackGround</description>
+			<type>label</type>
+			<description>Movie Title value</description>
 			<id>1</id>
-			<posX>0</posX>
-			<posY>0</posY>
-			<texture>background.png</texture>
+			<posX>670</posX>
+			<posY>80</posY>
+			<label>#title</label>
+   		<align>right</align>
 		</control>
+
 		<control>
-			<type>image</type>
-			<id>1</id>
-			<posX>60</posX>
-			<posY>20</posY>
-			<texture>trailers_logo.png</texture>
-		</control>
-		<control>
-			<type>togglebutton</type>
-			<description>Plot</description>
-			<id>5</id>
-			<posX>60</posX>
-			<posY>167</posY>
-			<onleft>4</onleft>
-			<onright>4</onright>
-			<onup>3</onup>
-			<ondown>6</ondown>
-			<label>207</label>
-			<width>190</width>
-			<height>32</height>
-			<textureFocus>togglebutton-on-focus.png</textureFocus>
-			<textureNoFocus>togglebutton-on-nofocus.png</textureNoFocus>
-			<AltTextureFocus>togglebutton-off-focus.png</AltTextureFocus>
-			<AltTextureNoFocus>togglebutton-off-nofocus.png</AltTextureNoFocus>
-		</control>
-		<control>
-			<type>togglebutton</type>
-			<description>Cast</description>
-			<id>6</id>
-			<posX>60</posX>
-			<posY>202</posY>
-			<onleft>4</onleft>
-			<onright>4</onright>
-			<onup>5</onup>
+			<type>listcontrol</type>
+			<description>listview</description>
+			<id>4</id>
+			<posX>250</posX>
+   		<posY>110</posY>
+			<onleft>2</onleft>
+			<onright>2</onright>
+			<onup>2</onup>
 			<ondown>2</ondown>
-			<label>206</label>
-			<width>190</width>
-			<height>32</height>
-			<textureFocus>togglebutton-on-focus.png</textureFocus>
-			<textureNoFocus>togglebutton-on-nofocus.png</textureNoFocus>
-			<AltTextureFocus>togglebutton-off-focus.png</AltTextureFocus>
-			<AltTextureNoFocus>togglebutton-off-nofocus.png</AltTextureNoFocus>
+		</control>
+
+		<control>
+			<type>label</type>
+			<description>Runtime txt</description>
+			<id>52</id>
+			<posX>250</posX>
+			<posY>240</posY>
+			<label>299</label>
+		</control>
+		<control>
+			<type>label</type>
+			<description>Runtime value</description>
+			<id>53</id>
+			<posX>380</posX>
+			<posY>240</posY>
+			<label>#runtime</label>
+		</control>
+
+		<control>
+			<type>label</type>
+			<description>Runtime txt</description>
+			<id>54</id>
+			<posX>250</posX>
+			<posY>265</posY>
+			<label>172</label>
+		</control>
+		<control>
+			<type>label</type>
+			<description>Year</description>
+			<id>55</id>
+			<posX>380</posX>
+			<posY>265</posY>
+			<label>#year</label>
+		</control>
+
+		<control>
+			<type>label</type>
+			<description>Genre txt</description>
+			<id>50</id>
+			<posX>250</posX>
+			<posY>290</posY>
+			<label>174</label>
 		</control>
 		<control>
 			<type>fadelabel</type>
 			<description>genre value</description>
 			<id>51</id>
-			<posX>315</posX>
-			<posY>280</posY>
+			<posX>380</posX>
+			<posY>290</posY>
+			<width>305</width>
 			<label>#genre</label>
-			<disabledcolor>ff808080</disabledcolor>
+		</control>
+
+		<control>
+			<type>label</type>
+			<description>Cast txt</description>
+			<id>56</id>
+			<posX>250</posX>
+			<posY>315</posY>
+			<label>Cast:</label>
 		</control>
 		<control>
 			<type>textboxscrollup</type>
 			<description>Cast value</description>
 			<id>57</id>
 			<posX>250</posX>
-			<posY>330</posY>
+			<posY>340</posY>
 			<width>440</width>
 			<height>192</height>
-			<colordiffuse>ffffffff</colordiffuse>
-			<font>font13</font>
 			<label>#cast</label>
-			<textcolor>FFFFFFFF</textcolor>
 		</control>
+
 		<control>
 			<type>label</type>
-			<description>Genre txt</description>
-			<id>56</id>
-			<posX>250</posX>
-			<posY>305</posY>
-			<label>Cast:</label>
-			<textcolor>ffb2d4f5</textcolor>
-		</control>
-		<control>
-			<type>label</type>
-			<description>Runtime value</description>
-			<id>55</id>
-			<posX>380</posX>
-			<posY>255</posY>
-			<label>#year</label>
-			<textcolor>ffffffff</textcolor>
-		</control>
-		<control>
-			<type>label</type>
-			<description>Runtime txt</description>
-			<id>54</id>
-			<posX>250</posX>
-			<posY>255</posY>
-			<label>172</label>
-			<textcolor>ffb2d4f5</textcolor>
-		</control>
-		<control>
-			<type>label</type>
-			<description>Runtime value</description>
-			<id>53</id>
-			<posX>325</posX>
-			<posY>230</posY>
-			<label>#runtime</label>
-			<textcolor>ffffffff</textcolor>
-		</control>
-		<control>
-			<type>label</type>
-			<description>Runtime txt</description>
-			<id>52</id>
-			<posX>250</posX>
-			<posY>230</posY>
-			<label>299</label>
-			<textcolor>ffb2d4f5</textcolor>
-		</control>
-		<control>
-			<type>label</type>
-			<description>Genre txt</description>
-			<id>50</id>
-			<posX>250</posX>
-			<posY>280</posY>
-			<label>174</label>
-			<textcolor>ffb2d4f5</textcolor>
-		</control>
-		<control>
-			<type>label</type>
-			<description>Genre txt</description>
+			<description>Plot txt</description>
 			<id>58</id>
 			<posX>250</posX>
-			<posY>305</posY>
+			<posY>315</posY>
 			<visible>no</visible>
 			<label>Plot:</label>
-			<textcolor>ffb2d4f5</textcolor>
-		</control>
-		<control>
-			<type>selectbutton</type>
-			<description>Letter button</description>
-			<id>3</id>
-			<posX>60</posX>
-			<posY>132</posY>
-			<onleft>4</onleft>
-			<onright>4</onright>
-			<onup>2</onup>
-			<ondown>4</ondown>
-			<subitems>-</subitems>
-			<label>872</label>
-			<textureFocus>menu_list_nofocus.png</textureFocus>
-			<subitems />
 		</control>
 		<control>
 			<type>textboxscrollup</type>
 			<description>Plot value</description>
 			<id>59</id>
 			<posX>250</posX>
-			<posY>328</posY>
+			<posY>340</posY>
 			<width>440</width>
 			<height>200</height>
-			<colordiffuse>ffffffff</colordiffuse>
 			<visible>no</visible>
-			<font>font13</font>
 			<label>#plot</label>
-			<textcolor>FFFFFFFF</textcolor>
 		</control>
-		<control>
-			<type>fadelabel</type>
-			<description>Movie Title value</description>
-			<id>1</id>
-			<posX>256</posX>
-			<posY>44</posY>
-			<label>#title</label>
-			<font>font18</font>
-			<disabledcolor>ff808080</disabledcolor>
-		</control>
-		<control>
-			<type>listcontrol</type>
-			<description>listview</description>
-			<id>4</id>
-			<posX>250</posX>
-			<posY>97</posY>
-			<width>440</width>
-			<height>432</height>
-			<onleft>2</onleft>
-			<onright>2</onright>
-			<onup>2</onup>
-			<ondown>2</ondown>
-			<textcolor>ffffffff</textcolor>
-			<downloadColor>ff80ff80</downloadColor>
-			<remoteColor>ffFFA075</remoteColor>
-			<textXOff2>0</textXOff2>
-			<IconYOff>8</IconYOff>
-			<textYOff>4</textYOff>
-			<textureFocus>list_sub_focus.png</textureFocus>
-			<font>font13</font>
-			<textureUp>page_up_nofocus.png</textureUp>
-			<textXOff>5</textXOff>
-			<shadedColor>20ffffff</shadedColor>
-			<textureHeight>32</textureHeight>
-			<selectedColor>FFF8BC70</selectedColor>
-			<textureNoFocus>list_sub_nofocus.png</textureNoFocus>
-			<IconXOff>8</IconXOff>
-			<textureDownFocus>page_down_focus.png</textureDownFocus>
-			<spinColor>ffffffff</spinColor>
-			<spinPosX>590</spinPosX>
-			<spinPosY>530</spinPosY>
-			<spinHeight>27</spinHeight>
-			<spinWidth>26</spinWidth>
-			<suffix>|</suffix>
-			<textcolor2>ffffffff</textcolor2>
-			<textcolor3>ffffffff</textcolor3>
-			<textYOff2>4</textYOff2>
-			<image>folder_focus.png</image>
-			<textureUpFocus>page_up_focus.png</textureUpFocus>
-			<textureDown>page_down_nofocus.png</textureDown>
-		</control>
-		<control>
-			<type>button</type>
-			<description>Show movies</description>
-			<id>2</id>
-			<posX>60</posX>
-			<posY>97</posY>
-			<onleft>4</onleft>
-			<onright>4</onright>
-			<onup>17</onup>
-			<ondown>3</ondown>
-			<label>5901</label>
-		</control>
-		<control>
-			<type>image</type>
-			<description>movie border</description>
-			<id>0</id>
-			<posX>96</posX>
-			<posY>252</posY>
-			<width>120</width>
-			<height>184</height>
-			<texture>playback_background.png</texture>
-		</control>
-		<control>
-			<type>image</type>
-			<description>movie poster</description>
-			<id>24</id>
-			<posX>104</posX>
-			<posY>268</posY>
-			<width>101</width>
-			<height>150</height>
-			<texture>background.png</texture>
-		</control>
+
+
+
 	</controls>
 </window>

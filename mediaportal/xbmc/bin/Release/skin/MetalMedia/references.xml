@@ -42,8 +42,8 @@
 		<height>28</height>
 		<textXOff>10</textXOff>
 		<textYOff>2</textYOff>
-		<textureFocus>button_focus.png</textureFocus>
-		<textureNoFocus>button_nofocus.png</textureNoFocus>
+		<textureFocus>button-focus.png</textureFocus>
+		<textureNoFocus>button-nofocus.png</textureNoFocus>
 		<font>font13</font>
 		<textcolor>ff484848</textcolor>
 		<colordiffuse>ffffffff</colordiffuse>
@@ -74,14 +74,25 @@
 		<id>4</id>
 		<posX>192</posX>
 		<posY>162</posY>
+		<width>180</width>
+		<height>28</height>
+
+<!--
 		<width>16</width>
 		<height>16</height>
+-->
 		<textXOff>10</textXOff>
 		<textYOff>2</textYOff>
+    		<AltTextureFocus>togglebutton-off-focus.png</AltTextureFocus>
+    		<AltTextureNoFocus>togglebutton-off-nofocus.png</AltTextureNoFocus>
+    		<textureFocus>togglebutton-on-focus.png</textureFocus>
+    		<textureNoFocus>togglebutton-on-nofocus.png</textureNoFocus>
+<!--
 		<textureFocus>arrow_up_focus.png</textureFocus>
 		<textureNoFocus>arrow_up_nofocus.png</textureNoFocus>
 		<AltTextureFocus>arrow_down_focus.png</AltTextureFocus>
 		<AltTextureNoFocus>arrow_down_nofocus.png</AltTextureNoFocus>
+-->
 		<label>-</label>
 		<font>font13</font>
 		<textcolor>ff484848</textcolor>
