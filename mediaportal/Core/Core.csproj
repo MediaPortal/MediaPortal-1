@@ -1883,30 +1883,6 @@
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
-                <File
-                    RelPath = "Xaml\CVS\Entries"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Xaml\CVS\Entries.Extra"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Xaml\CVS\Entries.Extra.Old"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Xaml\CVS\Entries.Old"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Xaml\CVS\Repository"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Xaml\CVS\Root"
-                    BuildAction = "None"
-                />
             </Include>
         </Files>
     </CSHARP>
