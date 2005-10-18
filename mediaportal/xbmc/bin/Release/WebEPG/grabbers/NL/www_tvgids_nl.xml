@@ -10,12 +10,13 @@
 	<entry name="ned3@omroep.nl">3</entry>			<!-- Nederland 3 -->
 	<entry name="rtl4.nl">4</entry>				<!-- RTL 4 -->
 	<entry name="rtl5.nl">31</entry>			<!-- RTL 5 -->
-	<entry name="yorin.nl">46</entry>			<!-- Yorin -->
+	<entry name="rtl7.nl">46</entry>			<!-- RTL 7 (Yorin?) -->
 	<entry name="sbs6.sbs.nl">36</entry>			<!-- SBS 6 -->
 	<entry name="net5.sbs.nl">37</entry>			<!-- NET 5 -->
 	<entry name="veronica.sbs.nl">34</entry>		<!-- Veronica -->
 	<entry name="een.be">5</entry>				<!-- een -->	
 	<entry name="bvn.nl">90</entry>				<!-- BVN -->
+	<entry name="talpa.tv">92</entry>			<!-- Talpa -->
 	<entry name="canal+blauw@canalplus.nl">39</entry>	<!-- Canal+ Blauw -->
 	<entry name="canal+geel@canalplus.nl">107</entry>	<!-- Canal+ Geel -->
 	<entry name="canal+rood@canalplus.nl">24</entry>	<!-- Canal+ Rood -->
@@ -99,13 +100,15 @@
 <!-- This section describes how to find the program infomation -->
   <section name="Listing">
     <entry name="BaseURL">http://www.tvgids.nl</entry>
-    <entry name="SearchURL">/zoeken/?trefwoord=Titel+of+trefwoord&amp;station=#ID&amp;genre=&amp;interval=#DAY_OFFSET&amp;timeslot=0</entry>
+    <entry name="SearchURL">/zoeken/?trefwoord=Titel+of+trefwoord&amp;station=#ID&amp;genre=&amp;interval=0&amp;periode=7&amp;timeslot=0</entry>
 
 <!-- Unique Listing Start string -->
-    <entry name="Start">Zender:</entry>
+
+<!--    <entry name="Start">Zender:</entry>-->
 
 <!-- Unique Listing End string -->
-    <entry name="End">voetKnop</entry>
+
+<!--    <entry name="End">voetKnop</entry>-->
 
 <!-- Template of the Listing information -->
     <entry name="Template">
@@ -137,10 +140,11 @@
     </entry>
   </section>
   <section name="Info">
-    <entry name="GuideDays">3</entry>
+    <entry name="GuideDays">7</entry>
     <entry name="Language">nl</entry>
     <entry name="SiteDescription">Main page: Title only, Linked page: Description &amp; Genre</entry>
   </section>
+
   <section name="GenreMap">
    <entry name="Amusement" >Amusement</entry>
    <entry name="Animatie" >Animatie</entry>

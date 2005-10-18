@@ -104,6 +104,8 @@
 		<entry name="e4tu@channel4.com">50271</entry>          <!-- E4 (TopUpTV) -->
 		<entry name="e4@channel4.com">587</entry>          <!-- E4 -->
 		<entry name="e4p1@channel4.com">50224</entry>          <!-- E4 Plus 1 -->
+		<entry name="more4@channel4.com">50459</entry>          <!-- More 4 -->
+		<entry name="more4p1@channel4.com">50460</entry>          <!-- More 4 plus 1-->
 		<entry name="euronews.net">570</entry>          <!-- Euronews -->
 		<entry name="sports@extreme.com">630</entry>          <!-- Extreme Sports Channel -->
 		<entry name="ftn.tv">6195</entry>          <!-- f tn -->

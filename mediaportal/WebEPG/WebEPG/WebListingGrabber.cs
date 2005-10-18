@@ -70,6 +70,7 @@ namespace MediaPortal.EPG
 			int m_LastStart;
 			int m_grabDelay;
 			int m_guideDays;
+			//int m_addDays;
 			bool m_bNextDay;			
             Profiler m_templateProfile;
 			//Parser m_templateParser;
@@ -108,7 +109,7 @@ namespace MediaPortal.EPG
                 }
 
                 m_strURLsearch = m_xmlreader.GetValueAsString("Listing", "SearchURL", "");
-				m_grabDelay = m_xmlreader.GetValueAsInt("Listing", "GrabDelay", 100);
+				m_grabDelay = m_xmlreader.GetValueAsInt("Listing", "GrabDelay", 500);
                 m_maxListingCount = m_xmlreader.GetValueAsInt("Listing", "MaxCount", 0);
 				m_offsetStart = m_xmlreader.GetValueAsInt("Listing", "OffsetStart", 0);
 				m_guideDays = m_xmlreader.GetValueAsInt("Info", "GuideDays", 0);
@@ -247,6 +248,7 @@ namespace MediaPortal.EPG
 			private TVProgram GetProgram(Profiler guideProfile, int index)
 			{
 				//Parser Listing = guideProfile.GetProfileParser(index);
+				int addDays = 1;
 				TVProgram program = new TVProgram();
 				HTMLProfiler htmlProf = null;
 				if(guideProfile is HTMLProfiler) 
@@ -295,6 +297,8 @@ namespace MediaPortal.EPG
 					}
 				}
 
+				//Log.WriteFile(Log.LogType.Log, false, "WebEPG: {0}:{1}/{2}", guideData.StartTime[0], guideData.StartTime[1], guideData.Day);
+				// Adjust Time 
 				switch(m_listingTime)
 				{
 					case (int) Expect.Start:
@@ -316,17 +320,31 @@ namespace MediaPortal.EPG
 						}
 
 						// Pass into Afternoon Code
+						//m_LastStart = 0;
 						goto case Expect.Afternoon;
 
 					case (int) Expect.Afternoon:
 						if(guideData.StartTime[0] < 12)		// Site doesn't have correct time
 							guideData.StartTime[0] += 12;	// starts again at 1:00 with "pm"
 
-						if(!m_bNextDay && m_LastStart > guideData.StartTime[0])
+						if(m_LastStart > guideData.StartTime[0])
 						{
-							m_bNextDay = true;
+							guideData.StartTime[0] -= 12;
+							if(m_bNextDay)
+							{
+								addDays++;
+								m_GrabDay++;
+								m_StartGrab = m_StartGrab.AddDays(1);
+								//m_bNextDay = false;
+							} 
+							else
+							{
+								m_bNextDay = true;
+							}
 							m_listingTime = (int) Expect.Morning;
+							break;
 						}
+
 						break;
 
 					default:
@@ -335,19 +353,33 @@ namespace MediaPortal.EPG
 
 				DateTime dtStart = new DateTime(m_StartGrab.Year, month, guideData.Day, guideData.StartTime[0], guideData.StartTime[1], 0, 0);
 				if(m_bNextDay)
-					dtStart = dtStart.AddDays(1);
+					dtStart = dtStart.AddDays(addDays);
 				program.Start = GetLongDateTime(dtStart);
 				m_LastStart = guideData.StartTime[0];
 
 				if (guideData.EndTime != null)
 				{
-					if(!m_bNextDay && guideData.StartTime[0] > guideData.EndTime[0])
-						m_bNextDay=true;
 					DateTime dtEnd = new DateTime(m_StartGrab.Year, month, guideData.Day, guideData.EndTime[0], guideData.EndTime[1], 0, 0);
 					if(m_bNextDay)
-						dtEnd = dtEnd.AddDays(1);
+					{
+						if(guideData.StartTime[0] > guideData.EndTime[0])
+							dtEnd = dtEnd.AddDays(addDays+1);
+						else
+							dtEnd = dtEnd.AddDays(addDays);
+					}
+					else
+					{
+						if(guideData.StartTime[0] > guideData.EndTime[0])
+							dtEnd = dtEnd.AddDays(addDays);
+					}
 					program.End = GetLongDateTime(dtEnd);
+
+					//Log.WriteFile(Log.LogType.Log, false, "WebEPG: {0}:{1}/{2}-{3}:{4}/{5} - {6}", guideData.StartTime[0], guideData.StartTime[1], dtStart.Day, guideData.EndTime[0], guideData.EndTime[1], dtEnd.Day, guideData.Title);
 				}
+//				else
+//				{
+//					Log.WriteFile(Log.LogType.Log, false, "WebEPG: {0}:{1}/{2} - {3}", guideData.StartTime[0], guideData.StartTime[1], dtStart.Day, guideData.Title);
+//				}
 				
 				if (guideData.Description != "")
 					program.Description = guideData.Description;
@@ -361,33 +393,33 @@ namespace MediaPortal.EPG
 					&& htmlProf != null)
 				{
 
-				string strLinkURL = htmlProf.GetHyperLink(index, m_SubListingLink);
+					string strLinkURL = htmlProf.GetHyperLink(index, m_SubListingLink);
 
-				if(strLinkURL != "")
-				{
-					string link = m_strURLbase;
-					if(strLinkURL.ToLower().IndexOf("http") != -1)
-						link = strLinkURL;
-					else
-						link += strLinkURL;
-					Log.WriteFile(Log.LogType.Log, false, "WebEPG: Reading {0}", link);
-					Thread.Sleep(m_grabDelay);
-					Profiler SubProfile = m_templateSubProfile.GetPageProfiler(link, ""); 
-					int Count = SubProfile.subProfileCount(); 
-
-					if(Count > 0)
+					if(strLinkURL != "")
 					{
-						ProgramData SubData = SubProfile.GetProgramData(0);
-						if (SubData.Description != "")
-							program.Description = SubData.Description;
+						string link = m_strURLbase;
+						if(strLinkURL.ToLower().IndexOf("http") != -1)
+							link = strLinkURL;
+						else
+							link += strLinkURL;
+						Log.WriteFile(Log.LogType.Log, false, "WebEPG: Reading {0}", link);
+						Thread.Sleep(m_grabDelay);
+						Profiler SubProfile = m_templateSubProfile.GetPageProfiler(link, ""); 
+						int Count = SubProfile.subProfileCount(); 
 
-						if (SubData.Genre != "")
-							program.Genre = getGenre(SubData.Genre);
+						if(Count > 0)
+						{
+							ProgramData SubData = SubProfile.GetProgramData(0);
+							if (SubData.Description != "")
+								program.Description = SubData.Description;
 
-						if (SubData.SubTitle != "")
-							program.Episode = SubData.SubTitle;
+							if (SubData.Genre != "")
+								program.Genre = getGenre(SubData.Genre);
+
+							if (SubData.SubTitle != "")
+								program.Episode = SubData.SubTitle;
+						}
 					}
-				}
 
 				}
 
@@ -482,7 +514,7 @@ namespace MediaPortal.EPG
 
                     offset = 0;
 					m_LastStart=0;
-					m_bNextDay=false;
+					m_bNextDay = false;
 					m_listingTime = (int) Expect.Start;
 
                     while (GetListing(strURL, offset, searchID))
