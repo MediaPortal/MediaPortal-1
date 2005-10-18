@@ -180,6 +180,7 @@ private:
 	int 		m_pcrPid;
 	bool		IsPidValid(int pid);
 	bool		m_bResettingPids;
+	bool		m_bClearFile;
 	bool		m_bUpdatePids;
 	StreamState	m_audioState;
 	StreamState	m_videoState;
@@ -231,6 +232,8 @@ public:
     // Write raw data stream to a file
 	HRESULT 	 UpdateInfoFile(bool pids);
 	void		 Flush();
+	HRESULT		Clear();
+
 
     // Implements the IFileSinkFilter interface
     STDMETHODIMP SetFileName(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt);

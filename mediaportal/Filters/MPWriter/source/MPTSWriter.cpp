@@ -284,7 +284,6 @@ HRESULT CDumpInputPin::SetPMTPid(int pmtPid)
 	LogDebug("pin:setPMTPid:%x", pmtPid);
 	m_pmtPid=pmtPid;
 	m_bUpdatePids=true;
-	m_pDump->UpdateInfoFile(true);
 	return S_OK;
 }
 HRESULT CDumpInputPin::SetPCRPid(int pcrPid)
@@ -366,17 +365,29 @@ STDMETHODIMP CDumpInputPin::Receive(IMediaSample *pSample)
 	try
 	{
 
+		if (m_bClearFile)
+		{
+			if (SUCCEEDED(m_pDump->Clear()))
+			{
+				LogDebug("CDumpInputPin::Receive():cleared file");
+				m_bClearFile=false;
+			}
+		}
+
 		if (m_bUpdatePids)
 		{
-			LogDebug("CDumpInputPin::Receive():start receiving");
-			m_restBufferLen=0;
-			m_bUpdatePids=false;
-			m_bResettingPids=false;
-			m_audioState=Started;
-			m_videoState=Started;
-			m_audioTimer=GetTickCount();
-			m_videoTimer=GetTickCount();
-			return S_OK;
+			if (SUCCEEDED(m_pDump->UpdateInfoFile(true)))
+			{
+				LogDebug("CDumpInputPin::Receive():start receiving");
+				m_restBufferLen=0;
+				m_bUpdatePids=false;
+				m_bResettingPids=false;
+				m_audioState=Started;
+				m_videoState=Started;
+				m_audioTimer=GetTickCount();
+				m_videoTimer=GetTickCount();
+				return S_OK;
+			}
 		}
 
 		//are pids set?
@@ -629,6 +640,7 @@ void CDumpInputPin::ResetPids()
 {
 	LogDebug("pin:ResetPids()");
 	m_bResettingPids=true;
+	m_bClearFile=true;
 	//m_videoPid=m_audio1Pid=m_audio2Pid=m_ac3Pid=m_ttxtPid=m_subtitlePid=m_pmtPid=m_pcrPid=-1;
 }
 bool CDumpInputPin::IsPidValid(int pid)
@@ -1375,6 +1387,13 @@ void CDump::GetPESHeader(BYTE *data,PESHeader *header)
 	header->PESHeaderDataLength=data[2];
 }
 
+HRESULT CDump::Clear()
+{
+	m_pesNow=m_pesStart=m_pesPid=0;
+	m_currentFilePosition=0;
+	return UpdateInfoFile(true);
+}
+
 HRESULT CDump::UpdateInfoFile(bool pids)
 {
 	if (m_hInfoFile==INVALID_HANDLE_VALUE) 
@@ -1406,26 +1425,26 @@ HRESULT CDump::UpdateInfoFile(bool pids)
 	if (INVALID_SET_FILE_POINTER==SetFilePointer(m_hInfoFile,li.LowPart,&li.HighPart,FILE_BEGIN))
 	{
 		LogDebug("CDump::UpdateInfoFile(): failed to set filepointer at 0");
-		return S_OK;
+		return E_FAIL;
 	}
 	BOOL result=WriteFile(m_hInfoFile, &m_currentFilePosition, sizeof(m_currentFilePosition), &written, NULL);
 	if (FALSE==result || written != sizeof(m_currentFilePosition))
 	{
 		LogDebug("CDump::UpdateInfoFile(): failed to write currentPos" );
-		return S_OK;
+		return E_FAIL;
 	}
 	result=WriteFile(m_hInfoFile, &m_pesStart, sizeof(m_pesStart), &written, NULL);
 	if (FALSE==result || written != sizeof(m_pesStart))
 	{
 		LogDebug("CDump::UpdateInfoFile(): failed to write pesStart" );
-		return S_OK;
+		return E_FAIL;
 	}
 
 	result=WriteFile(m_hInfoFile, &m_pesNow, sizeof(m_pesNow), &written, NULL);
 	if (FALSE==result || written != sizeof(m_pesNow))
 	{
 		LogDebug("CDump::UpdateInfoFile(): failed to write pesNow" );
-		return S_OK;
+		return E_FAIL;
 	}
 
 	if (pids)
@@ -1439,7 +1458,7 @@ HRESULT CDump::UpdateInfoFile(bool pids)
 		if (FALSE==result || written != sizeof(pid))
 		{
 			LogDebug("CDump::UpdateInfoFile(): failed to write AC3pid" );
-			return S_OK;
+			return E_FAIL;
 		}		
 
 		pid=m_pPin->GetAudioPid();
@@ -1447,7 +1466,7 @@ HRESULT CDump::UpdateInfoFile(bool pids)
 		if (FALSE==result || written != sizeof(pid))
 		{
 			LogDebug("CDump::UpdateInfoFile(): failed to write audio pid" );
-			return S_OK;
+			return E_FAIL;
 		}		
 
 		pid=m_pPin->GetAudioPid2();
@@ -1455,7 +1474,7 @@ HRESULT CDump::UpdateInfoFile(bool pids)
 		if (FALSE==result || written != sizeof(pid))
 		{
 			LogDebug("CDump::UpdateInfoFile(): failed to write audio2 pid" );
-			return S_OK;
+			return E_FAIL;
 		}		
 		
 		pid=m_pPin->GetVideoPid();
@@ -1463,7 +1482,7 @@ HRESULT CDump::UpdateInfoFile(bool pids)
 		if (FALSE==result || written != sizeof(pid))
 		{
 			LogDebug("CDump::UpdateInfoFile(): failed to write video pid" );
-			return S_OK;
+			return E_FAIL;
 		}		
 		
 		pid=m_pPin->GetTeletextPid();
@@ -1471,7 +1490,7 @@ HRESULT CDump::UpdateInfoFile(bool pids)
 		if (FALSE==result || written != sizeof(pid))
 		{
 			LogDebug("CDump::UpdateInfoFile(): failed to write teletext pid" );
-			return S_OK;
+			return E_FAIL;
 		}		
 		
 		pid=m_pPin->GetPMTPid();
@@ -1479,7 +1498,7 @@ HRESULT CDump::UpdateInfoFile(bool pids)
 		if (FALSE==result || written != sizeof(pid))
 		{
 			LogDebug("CDump::UpdateInfoFile(): failed to write PMT pid" );
-			return S_OK;
+			return E_FAIL;
 		}		
 		
 		pid=m_pPin->GetSubtitlePid();
@@ -1487,7 +1506,7 @@ HRESULT CDump::UpdateInfoFile(bool pids)
 		if (false==result || written != sizeof(pid))
 		{
 			LogDebug("CDump::UpdateInfoFile(): failed to write subtitle pid" );
-			return S_OK;
+			return E_FAIL;
 		}		
 		
 		pid=m_pPin->GetPCRPid();
@@ -1495,7 +1514,7 @@ HRESULT CDump::UpdateInfoFile(bool pids)
 		if (false==result || written != sizeof(pid))
 		{
 			LogDebug("CDump::UpdateInfoFile(): failed to write PCR pid" );
-			return S_OK;
+			return E_FAIL;
 		}		
 
 		m_currentFilePosition=0;
@@ -1503,16 +1522,19 @@ HRESULT CDump::UpdateInfoFile(bool pids)
 		li.QuadPart = 0;
 		if (INVALID_SET_FILE_POINTER!=SetFilePointer(m_hFile,li.LowPart,&li.HighPart,FILE_BEGIN))
 		{
-			SetEndOfFile(m_hFile);
+			if (!SetEndOfFile(m_hFile))
+			{
+				LogDebug("CDump::UpdateInfoFile(): failed to set eof");
+				return E_FAIL;
+			}
 		}
 		else
 		{
 			LogDebug("CDump::UpdateInfoFile(): failed to set ts filepointer at 0");
-			return S_OK;
+			return E_FAIL;
 		}
 		m_pesStart=m_pesNow=0;
 	}
-	//UnlockFile(m_hInfoFile,0,0,8+8*sizeof(int),0);
 	return S_OK;
 }
 
