@@ -65,7 +65,7 @@ namespace MediaPortal.GUI.Library
 			_animation.VerticalAlignment = VerticalAlignment.Center;
 			_animation.SetPosition(GUIGraphicsContext.Width / 2, GUIGraphicsContext.Height / 2);
 			_animation.AllocResources();
-			_animation.Duration = new Duration(800);
+			_animation.Duration = new Duration(3000);
 			_animation.RepeatBehavior = RepeatBehavior.Forever;
 		}
 
