@@ -59,7 +59,7 @@ namespace MediaPortal.GUI.Library
 			_animation = new GUIAnimation();
 
 			foreach(string filename in Directory.GetFiles(GUIGraphicsContext.Skin + @"\media\", "common.waiting.*.png"))
-				_animation.Filenames.Add(System.IO.Path.GetFileName(filename));
+				_animation.Filenames.Add(Path.GetFileName(filename));
 
 			_animation.HorizontalAlignment = HorizontalAlignment.Center;
 			_animation.VerticalAlignment = VerticalAlignment.Center;
@@ -72,7 +72,7 @@ namespace MediaPortal.GUI.Library
 		public override void Render(float timePassed)
 		{
 		}
-			
+
 		public static void Render()
 		{
 			if(_showCount <= 0)
@@ -93,7 +93,6 @@ namespace MediaPortal.GUI.Library
 
 		static GUIAnimation				_animation;
 		static int						_showCount;
-		static float					_tickCount = 0;
 
 		#endregion Fields
 	}

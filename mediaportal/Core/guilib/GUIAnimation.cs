@@ -130,37 +130,37 @@ namespace MediaPortal.GUI.Library
 				return;
 
 			double elapsedTicks = AnimationTimer.TickCount - _startTick;
-			double progress = elapsedTicks / _duration;
-
-			progress *= 1000;
+			double progress = Math.Min(1, TweenHelper.Interpolate(_easing, 0, 1, _startTick, _duration));
 
 			// determine whether we are repeating
-			if((_duration / 1000) < elapsedTicks)
+			if(_duration < elapsedTicks)
 			{
-				if(_repeatBehavior.IsIterationCount)
+				// keep track of iterations regardless of the repeat behaviour
+				_iterationCount++;
+
+				if(_repeatBehavior.IsIterationCount && _repeatBehavior.IterationCount <= _iterationCount)
 				{
-					_iterationCount++;
+					_isAnimating = false;
 
-					// have we performed all iterations??
-					if(!RepeatBehavior.Equals(_repeatBehavior, RepeatBehavior.Forever))
-					{
-						if(_repeatBehavior.IterationCount <= _iterationCount)
-						{
-							_isAnimating = false;
-
-							// XAML: fire event
-						}
-					}
-
-					if(_isAnimating)
-						_startTick = AnimationTimer.TickCount;
+					// XAML: fire event
 				}
+				else if(_repeatBehavior.IsRepeatDuration && _repeatBehavior.RepeatDuration <= elapsedTicks)
+				{
+					_isAnimating = false;
+
+					// XAML: fire event
+				}
+
+				if(_isAnimating)
+					_startTick = AnimationTimer.TickCount;
 			}
 
-			int index = (int)Math.Min((progress * _images.Length), _images.Length - 1);
+			int index = 0;
 
-			if(_isAnimating && index < _images.Length)
-				_images[index].Render(timePassed);
+			if(_isAnimating && progress < 1)
+				index = (int)(progress * _images.Length);
+			
+			_images[index].Render(timePassed);
 		}
 
 		#endregion Methods
@@ -171,6 +171,12 @@ namespace MediaPortal.GUI.Library
 		{
 			get { return _duration; }
 			set { _duration = value; }
+		}
+
+		public Easing Easing
+		{
+			get { return _easing; }
+			set { _easing = value; }
 		}
 
 		public ArrayList Filenames
@@ -199,6 +205,9 @@ namespace MediaPortal.GUI.Library
 		#endregion Properties
 
 		#region Properties (Skin)
+
+		[XMLSkinElement("Easing")]
+		protected Easing						_easing = Easing.Linear;
 
 		[XMLSkinElement("HorizontalAlignment")]
 		protected HorizontalAlignment			_horizontalAlignment = HorizontalAlignment.Left;
