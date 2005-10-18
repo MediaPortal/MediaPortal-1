@@ -38,6 +38,7 @@ namespace MediaPortal.Player
 		[ComImport, Guid("AFB6C280-2C41-11D3-8A60-0000F81E0E4A")]
 			class MPEG2Demultiplexer {}
 		VMR9Util Vmr9 = null;
+		IBaseFilter _filter;
     public TStreamBufferPlayer9()
     {
     }
@@ -122,8 +123,8 @@ namespace MediaPortal.Player
 				Log.WriteFile(Log.LogType.Capture,"TStreamBufferPlayer9:add new TS reader to graph");
 
 				bufferSource = new MPTransportStreamReader();
-				IBaseFilter filter = (IBaseFilter) bufferSource;
-				graphBuilder.AddFilter(filter, "MP TS Reader");
+				_filter = (IBaseFilter) bufferSource;
+				graphBuilder.AddFilter(_filter, "MP TS Reader");
 		
 				Log.WriteFile(Log.LogType.Capture,"TStreamBufferPlayer9:open file");
 				IFileSourceFilter fileSource = (IFileSourceFilter) bufferSource;
@@ -159,7 +160,7 @@ namespace MediaPortal.Player
         if (bAddFFDshow) DirectShowUtil.AddFilterToGraph(graphBuilder,"ffdshow raw video filter");
 
 				// render output pins of SBE
-        DirectShowUtil.RenderOutputPins(graphBuilder, (IBaseFilter)fileSource);
+        DirectShowUtil.RenderOutputPins(graphBuilder, _filter);
 
         mediaCtrl	= (IMediaControl)  graphBuilder;
         mediaEvt	= (IMediaEventEx)  graphBuilder;
@@ -233,7 +234,12 @@ namespace MediaPortal.Player
 						Vmr9.Release();
 						Vmr9=null;
 					}
-					
+
+					if (_filter!=null)
+					{
+						Marshal.ReleaseComObject(_filter);
+						_filter=null;
+					}					
 					basicAudio	= null;
 					basicVideo	= null;
 					m_mediaSeeking=null;
