@@ -287,7 +287,11 @@ STDMETHODIMP CMPTSFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt)
 		{
 			m_pFileReader->GetFileSize(m_pFileReader->m_hInfoFile,&fileSize);
 			if(fileSize>8)
-				break;
+			{
+				RefreshPids();
+				if (m_pSections->pids.StartPTS>0 && m_pSections->pids.EndPTS>0)
+					break;
+			}
 			Sleep(80);
 			count++;
 		}

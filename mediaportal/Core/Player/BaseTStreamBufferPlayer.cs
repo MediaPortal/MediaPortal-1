@@ -223,11 +223,12 @@ namespace MediaPortal.Player
 
 				UpdateCurrentPosition();
 				double dPos=m_dDuration;
-				if (dPos>=0)
+				if (dPos >= 0.5)
 				{
 					Log.Write("TStreamBufferPlayer:Seek to 99%");
 					SeekAbsolute(dPos);
 				}
+				else return false;
 			}
 			else
 			{
@@ -235,7 +236,7 @@ namespace MediaPortal.Player
 				UpdateDuration();
 			}
 
-			Log.Write("TStreamBufferPlayer:playing duration:{0}",Utils.SecondsToHMSString( (int)m_dDuration) );
+			//Log.Write("TStreamBufferPlayer:playing duration:{0}",Utils.SecondsToHMSString( (int)m_dDuration) );
 			m_state=PlayState.Playing;
 			OnInitialized();
 			return true;
@@ -393,7 +394,7 @@ namespace MediaPortal.Player
 					
 				UpdateDuration();
 				updateTimer=DateTime.Now;
-				Log.Write("pos:{0} duration:{1}", m_dCurrentPos.ToString("f2"),m_dDuration.ToString("f2"));
+				//Log.Write("pos:{0} duration:{1}", m_dCurrentPos.ToString("f2"),m_dDuration.ToString("f2"));
 			}
 
 			m_dLastPosition=CurrentPosition;
@@ -759,7 +760,7 @@ namespace MediaPortal.Player
 			//m_mediaSeeking.GetCapabilities(out capabilities);
 			//Log.Write("GetCurrentPosition() caps:{0} ", (int)capabilities);
       hr=m_mediaSeeking.GetCurrentPosition(out lStreamPos); // stream position
-			Log.Write("GetCurrentPosition() pos:{0} hr:0x{1:X}", lStreamPos,hr);
+			//Log.Write("GetCurrentPosition() pos:{0} hr:0x{1:X}", lStreamPos,hr);
       fCurrentPos=lStreamPos;
       fCurrentPos/=10000000d;
 

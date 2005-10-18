@@ -282,31 +282,8 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 		{
 			LogDebug("INVALID pts:%x %x-%x", (DWORD)ptsNow,(DWORD)m_pSections->pids.StartPTS ,(DWORD) m_pSections->pids.EndPTS);
 		}
-		UpdatePositions(ptsNow);
-
-		REFERENCE_TIME rtStart = static_cast<REFERENCE_TIME>(ptsNow);
-		REFERENCE_TIME rtStop  = static_cast<REFERENCE_TIME>(ptsNow+1);
-
-		pSample->SetTime(&rtStart, &rtStop); 
-
-		pSample->SetSyncPoint(TRUE);	
-		m_prevPTS=ptsNow;
-	}
-	else
-	{
-		pSample->SetTime(NULL,NULL); 
-		pSample->SetSyncPoint(FALSE);
-	}
-
-	if (m_iPESPid==0)
-		pSample->SetPreroll(TRUE);
-	else
-		pSample->SetPreroll(FALSE);
-
-	if (m_iDiscCounter>0)
-	{
-		m_iDiscCounter--;
-		//m_bDiscontinuity=true;
+		UpdatePositions(ptsNow);	
+		
 	}
 
 //	LogDebug("snd pkt pts:%x  pes:%x disc:%d", (DWORD)ptsNow, m_iPESPid, m_bDiscontinuity);
@@ -342,7 +319,6 @@ HRESULT CFilterOutPin::OnThreadStartPlay( )
    m_iDiscCounter=3;
    m_bDiscontinuity=true;
    m_iPESPid=0;
-   m_prevPTS=0;
    DeliverNewSegment(m_rtStart, m_rtStop, m_dRateSeeking);
    return CSourceStream::OnThreadStartPlay( );
 }
@@ -433,7 +409,6 @@ void CFilterOutPin::ResetBuffers(__int64 newPosition)
 	m_mapDiscontinuitySent.clear();
 	m_pFileReader->SetFilePointer(newPosition,FILE_BEGIN);
    m_bDiscontinuity=true;
-   m_prevPTS=0;
    m_iPESPid=0;
    m_iDiscCounter=3;
    m_rtCurrent=0;
