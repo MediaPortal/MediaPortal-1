@@ -212,6 +212,7 @@ namespace MediaPortal.Player
 			{
 				UpdateCurrentPosition();
 				UpdateDuration();
+				SeekAsolutePercentage(99);
 				/*
 				DateTime dt=DateTime.Now;
 				do
