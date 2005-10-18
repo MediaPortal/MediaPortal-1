@@ -11,6 +11,7 @@
 #include "Sections.h"
 #include "Buffers.h"
 #include "TimeShiftSeeking.h"
+#include "tsdemux.h"
 
 #include <map>
 using namespace std;
@@ -56,6 +57,7 @@ protected:
 	int				m_iPESPid;
 	typedef map<int,bool>::iterator imapDiscontinuitySent;
 
+	TsDemux m_tsDemuxer;
 };
 
 #endif

@@ -187,6 +187,9 @@
 			<File
 				RelativePath=".\source\TimeShiftSeeking.cpp">
 			</File>
+			<File
+				RelativePath=".\source\TsDemux.cpp">
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -214,6 +217,9 @@
 			</File>
 			<File
 				RelativePath=".\source\TimeShiftSeeking.h">
+			</File>
+			<File
+				RelativePath=".\source\TsDemux.h">
 			</File>
 		</Filter>
 	</Files>

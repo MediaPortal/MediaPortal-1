@@ -253,6 +253,17 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 		{
 			LogDebug("pid:%x SCRAMBLED PACKET???", header.Pid);
 		}
+		if (header.Pid>0)
+		{
+			if ( header.Pid==m_pSections->pids.VideoPid || 
+				header.Pid==m_pSections->pids.AudioPid1 ||
+				header.Pid==m_pSections->pids.AudioPid2 ||
+				header.Pid==m_pSections->pids.AudioPid3 ||
+				header.Pid==m_pSections->pids.AC3)
+			{
+				m_tsDemuxer.ParsePacket(pData);
+			}
+		}
 		if(m_pSections->CurrentPTS(&pData[i],&pts,&pid)==S_OK)
 		{
 			if (pts>0)
