@@ -6556,4 +6556,226 @@
       </connections>
     </tv>
   </capturecard>
+
+  <capturecard commercialname="Kworld T220 DVB-T Duo" capturename="713x BDA Digital Capture" devid="ven_1131&amp;dev_7133&amp;subsys_720117de&amp;rev_d0">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"    checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="713x BDA DVBT Tuner"                checkdevice="true"></filter>
+        <filter cat="capture"         name="713x BDA Digital Capture"           checkdevice="true"></filter>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Lite-On USB DVB-T" capturename="LITE-ON DVB-T (PID=F001) receiver" devid="vid_04ca&amp;pid_f001">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="tunerdevice" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"            checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="LITE-ON DVB-T (PID=F001) receiver"      checkdevice="true"></filter>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Phillips Chipset DVB-T" capturename="713x BDA Digital Capture" devid="ven_1131&amp;dev_7133&amp;subsys_713117de&amp;rev_d0">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"    checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="713x BDA DVBT Tuner"                checkdevice="true"></filter>
+        <filter cat="capture"         name="713x BDA Digital Capture"           checkdevice="true"></filter>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Phillips Chipset DVB-T" capturename="713x BDA Digital Capture" devid="ven_1131&amp;dev_7133&amp;subsys_713517de&amp;rev_d0">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"    checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="713x BDA DVBT Tuner"                checkdevice="true"></filter>
+        <filter cat="capture"         name="713x BDA Digital Capture"           checkdevice="true"></filter>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Phillips Chipset DVB-T" capturename="713x BDA Digital Capture" devid="ven_1131&amp;dev_7133&amp;subsys_713617de&amp;rev_d0">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"    checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="713x BDA DVBT Tuner"                checkdevice="true"></filter>
+        <filter cat="capture"         name="713x BDA Digital Capture"           checkdevice="true"></filter>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Phillips Chipset DVB-T" capturename="713x BDA Digital Capture" devid="ven_1131&amp;dev_7133&amp;subsys_713717de&amp;rev_d0">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"    checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="713x BDA DVBT Tuner"                checkdevice="true"></filter>
+        <filter cat="capture"         name="713x BDA Digital Capture"           checkdevice="true"></filter>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Phillips Chipset DVB-T" capturename="713x BDA Digital Capture" devid="ven_1131&amp;dev_7133&amp;subsys_713817de&amp;rev_d0">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"    checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="713x BDA DVBT Tuner"                checkdevice="true"></filter>
+        <filter cat="capture"         name="713x BDA Digital Capture"           checkdevice="true"></filter>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Phillips Chipset DVB-T" capturename="713x BDA Digital Capture" devid="ven_1131&amp;dev_7133&amp;subsys_720017de&amp;rev_d0">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"    checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="713x BDA DVBT Tuner"                checkdevice="true"></filter>
+        <filter cat="capture"         name="713x BDA Digital Capture"           checkdevice="true"></filter>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Phillips Chipset DVB-T" capturename="713x BDA Digital Capture" devid="ven_1131&amp;dev_7133&amp;subsys_713917de&amp;rev_d0">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"    checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="713x BDA DVBT Tuner"                checkdevice="true"></filter>
+        <filter cat="capture"         name="713x BDA Digital Capture"           checkdevice="true"></filter>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Phillips Chipset DVB-T" capturename="713x BDA Digital Capture" devid="ven_1131&amp;dev_7133&amp;subsys_713a17de&amp;rev_d0">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"    checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="713x BDA DVBT Tuner"                checkdevice="true"></filter>
+        <filter cat="capture"         name="713x BDA Digital Capture"           checkdevice="true"></filter>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Phillips Chipset DVB-T" capturename="713x BDA Digital Capture" devid="ven_1131&amp;dev_7133&amp;subsys_720217de&amp;rev_d0">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"    checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="713x BDA DVBT Tuner"                checkdevice="true"></filter>
+        <filter cat="capture"         name="713x BDA Digital Capture"           checkdevice="true"></filter>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Phillips Chipset DVB-T" capturename="713x BDA Digital Capture" devid="ven_1131&amp;dev_7133&amp;subsys_720317de&amp;rev_d0">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"    checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="713x BDA DVBT Tuner"                checkdevice="true"></filter>
+        <filter cat="capture"         name="713x BDA Digital Capture"           checkdevice="true"></filter>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Phillips Chipset DVB-T" capturename="713x BDA Digital Capture" devid="ven_1131&amp;dev_7133&amp;subsys_725017de&amp;rev_d0">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"    checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="713x BDA DVBT Tuner"                checkdevice="true"></filter>
+        <filter cat="capture"         name="713x BDA Digital Capture"           checkdevice="true"></filter>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Phillips Chipset DVB-T" capturename="713x BDA Digital Capture" devid="ven_1131&amp;dev_7133&amp;subsys_723017de&amp;rev_d0">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"    checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="713x BDA DVBT Tuner"                checkdevice="true"></filter>
+        <filter cat="capture"         name="713x BDA Digital Capture"           checkdevice="true"></filter>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
 </capturecards>
