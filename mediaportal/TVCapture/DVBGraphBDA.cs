@@ -1976,6 +1976,7 @@ namespace MediaPortal.TV.Recording
 		{
 			if(audioPid!=currentTuningObject.AudioPid)
 			{
+				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: change audio stream from pid {0:X}-> pid:{1:X}",currentTuningObject.AudioPid,audioPid);
 				int hr;
 				if (audioPid==currentTuningObject.AC3Pid)
 				{
@@ -2424,6 +2425,7 @@ namespace MediaPortal.TV.Recording
 
 		void SetupMTSDemuxerPin()
 		{
+
 #if USEMTSWRITER
 			if (m_tsWriterInterface== null || m_tsWriterInterface==null || currentTuningObject==null) return;
 			Log.Write("DVBGraphBDA:SetupMTSDemuxerPin");
@@ -3287,6 +3289,7 @@ namespace MediaPortal.TV.Recording
 					if (currentTuningObject.PCRPid <=0) currentTuningObject.PCRPid=-1;
 					try
 					{
+						SetupMTSDemuxerPin();
 						if (changed)
 						{
 							if (m_graphState==State.Radio && (currentTuningObject.PCRPid<=0||currentTuningObject.PCRPid>=0x1fff))
@@ -3295,8 +3298,6 @@ namespace MediaPortal.TV.Recording
 								SetupDemuxer(m_DemuxVideoPin,0,m_DemuxAudioPin,0,m_pinAC3Out,0);
 								SetupDemuxerPin(m_pinMPG1Out,currentTuningObject.AudioPid,(int)MediaSampleContent.TransportPayload,true);
 								SetupDemuxerPin(m_pinMPG1Out,currentTuningObject.PCRPid,(int)MediaSampleContent.TransportPacket,false);
-								//setup demuxer MTS pin 
-								SetupMTSDemuxerPin();
 								if (m_streamDemuxer != null)
 								{
 									m_streamDemuxer.SetChannelData(currentTuningObject.AudioPid, currentTuningObject.VideoPid, currentTuningObject.TeletextPid, currentTuningObject.Audio3, currentTuningObject.ServiceName,currentTuningObject.PMTPid,currentTuningObject.ProgramNumber);
@@ -3309,8 +3310,6 @@ namespace MediaPortal.TV.Recording
 														currentTuningObject.Audio1,currentTuningObject.Audio2,currentTuningObject.Audio3,
 														currentTuningObject.SubtitlePid,currentTuningObject.TeletextPid,currentTuningObject.PCRPid);
 								SetupDemuxer(m_DemuxVideoPin,currentTuningObject.VideoPid,m_DemuxAudioPin,currentTuningObject.AudioPid, m_pinAC3Out,currentTuningObject.AC3Pid);
-								//setup demuxer MTS pin
-								SetupMTSDemuxerPin();				
 								if (m_streamDemuxer != null)
 								{
 									m_streamDemuxer.SetChannelData(currentTuningObject.AudioPid, currentTuningObject.VideoPid, currentTuningObject.TeletextPid, currentTuningObject.Audio3, currentTuningObject.ServiceName,currentTuningObject.PMTPid,currentTuningObject.ProgramNumber);

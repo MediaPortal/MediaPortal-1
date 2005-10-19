@@ -34,15 +34,15 @@ CFilterOutPin::CFilterOutPin(LPUNKNOWN pUnk, CMPTSFilter *pFilter, FileReader *p
 {
 	LogDebug("pin:ctor()");
 	CAutoLock cAutoLock(&m_cSharedState);
-	m_dwSeekingCaps =	
-						AM_SEEKING_CanSeekForwards  | AM_SEEKING_CanSeekBackwards |
-						AM_SEEKING_CanGetStopPos    | AM_SEEKING_CanGetDuration   |
-						AM_SEEKING_CanSeekAbsolute;
+	//m_dwSeekingCaps =	
+	//					AM_SEEKING_CanSeekForwards  | AM_SEEKING_CanSeekBackwards |
+	//					AM_SEEKING_CanGetStopPos    | AM_SEEKING_CanGetDuration   |
+	//					AM_SEEKING_CanSeekAbsolute;
 
 	__int64 size;
 	m_pFileReader->GetFileSize(&size);
 	m_rtDuration = m_rtStop = m_pSections->pids.Duration;
-	m_lTSPacketDeliverySize = 188*1000;
+	m_lTSPacketDeliverySize = 188*100;
 	m_pBuffers = new CBuffers(m_pFileReader, &m_pSections->pids,m_lTSPacketDeliverySize);
 	m_dRateSeeking = 1.0;
 	m_bAboutToStop=false;
@@ -181,7 +181,7 @@ HRESULT CFilterOutPin::GetData(byte* pData, int lDataLength)
 					else break;
 				}
 				LogDebug("outputpin:end of file, writepos:%x slept:%i fsize:%x", m_pSections->pids.fileStartPosition,count,fileSize);
-				m_bDiscontinuity=true;
+				m_bDiscontinuity=TRUE;
 			}
 		}
 					
@@ -259,6 +259,7 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 						filePointer=0;
 						m_pFileReader->SetFilePointer(startPointer,FILE_BEGIN);	
 						LogDebug("iframe found at pos:%x",startPointer);
+						m_bDiscontinuity=FALSE;
 						break;
 					}
 					if (isStart)
@@ -294,13 +295,13 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 					header.Pid==m_pSections->pids.AudioPid3 ||
 					header.Pid==m_pSections->pids.AC3)
 				{
-					m_bDiscontinuity=true;
+					m_bDiscontinuity=TRUE;
 				}
 			}
 			else if (it->second==true)
 			{
 				it->second=false;
-				m_bDiscontinuity=true;
+				m_bDiscontinuity=TRUE;
 			}
 		}
 /*
@@ -382,7 +383,7 @@ HRESULT CFilterOutPin::OnThreadStartPlay( )
    LogDebug("pin:OnThreadStartPlay()");
 	
    m_State=SeekIFrame;
-   m_bDiscontinuity=true;
+   m_bDiscontinuity=TRUE;
    m_iPESPid=0;
    DeliverNewSegment(m_rtStart, m_rtStop, m_dRateSeeking);
    return CSourceStream::OnThreadStartPlay( );
@@ -473,7 +474,7 @@ void CFilterOutPin::ResetBuffers(__int64 newPosition)
 	m_pBuffers->Clear();
 	m_mapDiscontinuitySent.clear();
 	m_pFileReader->SetFilePointer(newPosition,FILE_BEGIN);
-   m_bDiscontinuity=true;
+   m_bDiscontinuity=TRUE;
    m_iPESPid=0;
    m_rtCurrent=0;
    m_rtStop=0;

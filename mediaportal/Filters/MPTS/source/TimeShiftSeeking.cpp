@@ -41,7 +41,8 @@ CTimeShiftSeeking::CTimeShiftSeeking(
         | AM_SEEKING_CanSeekBackwards
         | AM_SEEKING_CanSeekAbsolute
         | AM_SEEKING_CanGetStopPos
-        | AM_SEEKING_CanGetDuration;
+        | AM_SEEKING_CanGetDuration
+		| AM_SEEKING_AbsolutePositioning;
 }
 
 HRESULT CTimeShiftSeeking::NonDelegatingQueryInterface(REFIID riid, void **ppv)
@@ -109,8 +110,7 @@ HRESULT CTimeShiftSeeking::GetStopPosition(LONGLONG *pStop)
 
 HRESULT CTimeShiftSeeking::GetCurrentPosition(LONGLONG *pCurrent)
 {
-	*pCurrent=m_rtCurrent;
-    return S_OK;
+    return E_NOTIMPL;
 }
 
 HRESULT CTimeShiftSeeking::GetCapabilities( DWORD * pCapabilities )

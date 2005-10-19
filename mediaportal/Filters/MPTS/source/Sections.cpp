@@ -281,9 +281,9 @@ HRESULT Sections::CurrentPTS(BYTE *pData,ULONGLONG *ptsValue,int* pid)
 			{
 				// pes packet found
 				GetPTS(&pData[offset+9],ptsValue);
-				char buffer[128];
-				sprintf(buffer,"pid: %x pes:%x\n", header.Pid,(DWORD) (*ptsValue));
-				OutputDebugString(buffer);
+				//char buffer[128];
+				//sprintf(buffer,"pid: %x pes:%x\n", header.Pid,(DWORD) (*ptsValue));
+				//OutputDebugString(buffer);
 
 				if (pes.ESCRFlag==0 && pes.ESRateFlag==0 && pes.DSMTrickModeFlag==0 && pes.AdditionalCopyInfoFlag==0 && pes.PESCRCFlag==0 && pes.PESExtensionFlag==0)
 				{
