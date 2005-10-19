@@ -1971,7 +1971,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="KNC ONE TV Station DVB-S+" capturename="KNC TV-Station DVB-S Capture" devid="ven_1131&amp;dev_7146&amp;subsys_00111894&amp;rev_01">
+  <capturecard commercialname="KNC ONE TV Station DVB-S+" capturename="KNC TV-Station DVB-S+ Capture" devid="ven_1131&amp;dev_7146&amp;subsys_00111894&amp;rev_01">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
