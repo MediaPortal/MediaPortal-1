@@ -211,7 +211,7 @@ namespace MediaPortal.Player
 			if (m_bLive)
 			{
 				UpdateCurrentPosition();
-				UpdateDuration();/*
+				UpdateDuration();
 				DateTime dt=DateTime.Now;
 				do
 				{
@@ -221,14 +221,15 @@ namespace MediaPortal.Player
 					if (ts.TotalSeconds>=2) break;
 				} while (m_dDuration<1);
 
+				UpdateDuration();
 				UpdateCurrentPosition();
-				double dPos=m_dDuration;
-				if (dPos >= 0.5)
-				{
-					Log.Write("TStreamBufferPlayer:Seek to 99%");
-					SeekAbsolute(dPos);
-				}
-				else return false;*/
+				//double dPos=m_dDuration;
+				//if (dPos >= 0.5)
+				//{
+				//	Log.Write("TStreamBufferPlayer:Seek to 99%");
+				//	SeekAbsolute(dPos);
+				//}
+				//else return false;
 			}
 			else
 			{
