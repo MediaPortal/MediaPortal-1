@@ -313,6 +313,7 @@ HRESULT SplitterSetup::GetAC3Media(AM_MEDIA_TYPE *pintype)
 
 	if(pintype == NULL){return hr;}
 
+	LogDebug("audio media type: audio / ac3");
 	ZeroMemory(pintype, sizeof(AM_MEDIA_TYPE));
 	pintype->majortype = MEDIATYPE_Audio;
 	pintype->subtype = MEDIASUBTYPE_DOLBY_AC3;
@@ -334,6 +335,7 @@ HRESULT SplitterSetup::GetMP2Media(AM_MEDIA_TYPE *pintype)
 
 	if(pintype == NULL){return hr;}
 
+	LogDebug("audio media type: audio / MPEG2 audio");
 	ZeroMemory(pintype, sizeof(AM_MEDIA_TYPE));
 	pintype->majortype = MEDIATYPE_Audio;
 	pintype->subtype = MEDIASUBTYPE_MPEG2_AUDIO; //MEDIASUBTYPE_MPEG1Payload;
@@ -354,6 +356,7 @@ HRESULT SplitterSetup::GetAudioPayload(AM_MEDIA_TYPE *pintype)
 
 	if(pintype == NULL){return hr;}
 
+	LogDebug("audio media type: audio / mpeg1 payload");
 	ZeroMemory(pintype, sizeof(AM_MEDIA_TYPE));
 	pintype->majortype = MEDIATYPE_Audio;
 	pintype->subtype = MEDIASUBTYPE_MPEG1Payload; //MEDIASUBTYPE_MPEG1Payload;
@@ -375,6 +378,7 @@ HRESULT SplitterSetup::GetMP1Media(AM_MEDIA_TYPE *pintype)
 
 	if(pintype == NULL){return hr;}
 
+	LogDebug("audio media type: audio / mpeg1 payload");
 	ZeroMemory(pintype, sizeof(AM_MEDIA_TYPE));
 	pintype->majortype = MEDIATYPE_Audio;
 	pintype->subtype = MEDIASUBTYPE_MPEG1Payload;
@@ -397,6 +401,7 @@ HRESULT SplitterSetup::GetVideoMedia(AM_MEDIA_TYPE *pintype)
 	ZeroMemory(pintype, sizeof(AM_MEDIA_TYPE));
 	if(m_pSections->pids.MPEG4==false)
 	{
+		LogDebug("video media type: video / mpeg2 video");
 		pintype->majortype = MEDIATYPE_Video;
 		pintype->subtype = MEDIASUBTYPE_MPEG2_VIDEO;
 		pintype->bFixedSizeSamples = TRUE;
@@ -409,6 +414,7 @@ HRESULT SplitterSetup::GetVideoMedia(AM_MEDIA_TYPE *pintype)
 	}
 	else
 	{
+		LogDebug("video media type: video / mpeg4 video");
 		pintype->majortype = MEDIATYPE_Video;
 		pintype->subtype = m_pSections->pids.idMPEG4;
 		pintype->bFixedSizeSamples = TRUE;

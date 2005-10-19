@@ -72,11 +72,9 @@ Sections::~Sections()
 
 HRESULT Sections::ParseFromFile()
 {
-
 	if (m_pFileReader->m_hInfoFile!=INVALID_HANDLE_VALUE)
-	{
-
-		LogDebug("Get pids from info file");
+	{	
+		LogDebug("sections::ParseFromFile() using live.info");
 		DWORD			dwReadBytes;
 		ULONGLONG		ptsStart;
 		ULONGLONG		ptsNow;
@@ -101,6 +99,7 @@ HRESULT Sections::ParseFromFile()
 		pids.CurrentAudioPid=pids.AudioPid1;
 		pids.StartPTS=(__int64)ptsStart;
 		pids.EndPTS=(__int64)ptsNow;
+		pids.MPEG4=false;
 		Sections::PTSTime time;
 		pids.Duration=ptsNow-ptsStart;
 		pids.DurTime=pids.Duration;
@@ -115,6 +114,7 @@ HRESULT Sections::ParseFromFile()
 	}
 
 	
+	LogDebug("sections::ParseFromFile() parse pat/pmt");
 	__int64 filePointer=0;
 	HRESULT hr = S_OK;
 	__int64 len;
@@ -455,6 +455,7 @@ void Sections::FindPATPMT()
 }
 bool Sections::DecodePMT(byte* PMT)
 {
+	LogDebug("sections::DecodePMT");
 	bool finished;
 	int hr;
 	ULONG countBytesRead;

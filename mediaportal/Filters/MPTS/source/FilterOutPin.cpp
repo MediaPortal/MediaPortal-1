@@ -116,9 +116,14 @@ HRESULT CFilterOutPin::CompleteConnect(IPin *pReceivePin)
 	HRESULT hr = CBaseOutputPin::CompleteConnect(pReceivePin);
 	if (SUCCEEDED(hr))
 	{
-		m_pMPTSFilter->OnConnect();
+		hr=m_pMPTSFilter->OnConnect();
+		LogDebug("pin:CompleteConnect() done");
 	}
-	return S_OK;
+	else
+	{
+		LogDebug("pin:CompleteConnect() failed:%x",hr);
+	}
+	return hr;
 }
 
 HRESULT CFilterOutPin::GetData(byte* pData, int lDataLength)

@@ -244,8 +244,13 @@ STDMETHODIMP CMPTSFilter::Stop()
 
 HRESULT CMPTSFilter::OnConnect()
 {
+	LogDebug("filter::OnConnect");
 	HRESULT hr=m_pDemux->SetDemuxPins(GetFilterGraph());
-	SetSyncClock();// try to select the clock on the audio-renderer
+	if (SUCCEEDED(hr))
+		LogDebug("filter::OnConnect ok");
+	else
+		LogDebug("filter::OnConnect failed:%x",hr);
+	//SetSyncClock();// try to select the clock on the audio-renderer
 	return S_OK;
 }
 
