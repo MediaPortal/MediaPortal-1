@@ -61,6 +61,7 @@ void TsDemux::ParsePacket(byte* packet)
 			tss = new MpegTSFilter();
 			tss->pid=pid;
 			tss->last_cc=-1;
+			tss->m_scrambled=false;
 			m_mapFilters[pid]=tss;
 		}
 	}
@@ -87,11 +88,13 @@ void TsDemux::ParsePacket(byte* packet)
         /* skip adapation field */
         p += p[0] + 1;	//offset=packet[4]+1
     }
+	tss->m_scrambled=(packet[3] & 0xC0)!=0;
     /* if past the end of packet, ignore */
     p_end = packet + TS_PACKET_SIZE;
     if (p >= p_end)
         return;
-
+	if (tss->m_scrambled)
+		return;
 	ParsePacket(tss,p,p_end-p,is_start);
 }
 
@@ -234,5 +237,60 @@ __int64 TsDemux::get_pts(const byte *p)
 //**********************************************************************
 void TsDemux::DecodePesPacket(MpegTSFilter* tss, const byte* pesPacket, int packetLen)
 {
-	
+  int startcode=tss->header[3]|0x100;
+  if (startcode >= 0x1e0 && startcode <= 0x1ef) 
+  {
+	  tss->streamType=STREAM_VIDEO;
+	  DecodeVideoPacket(tss, pesPacket, packetLen);
+  } 
+  else if (startcode >= 0x1c0 && startcode <= 0x1df) 
+  {
+     tss->streamType=STREAM_AUDIO;
+  } 
+  else 
+  {
+	  tss->streamType=STREAM_PRIVATE;
+	  return;
+  }
+}
+
+void TsDemux::DecodeVideoPacket(MpegTSFilter* tss, const byte* pesPacket, int packetLen)
+{
+	int off=0;
+	while (off < packetLen)
+	{
+
+		while (pesPacket[off]!=0x0 || pesPacket[off+1]!=0x0 || pesPacket[off+2]!=0x1)
+		{
+			off++;
+			if (off+2>=packetLen) return;
+		}
+		int streamId=pesPacket[off+3];
+		switch (streamId)
+		{
+			case 0xb3: // sequence header:
+			break;
+			case 0xb5: // extension
+			break;
+			case 0xb2: //userdata
+			break;
+			case 0xb8: //group of pictures
+			break;
+			case 0x0: // Picture
+			{
+				Mpeg2FrameType frameType= (Mpeg2FrameType )((pesPacket[off+5]>>3)&7);
+				int x=1;
+			}
+			break;
+			case 0xb7: //sequence end
+			break;
+			default:
+				if (streamId>=0x01 && streamId <= 0xaf)
+				{
+					//slice
+				}
+			break;
+		}
+		off+=3;
+	}
 }

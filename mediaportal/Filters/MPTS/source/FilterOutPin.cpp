@@ -261,7 +261,7 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 				header.Pid==m_pSections->pids.AudioPid3 ||
 				header.Pid==m_pSections->pids.AC3)
 			{
-				m_tsDemuxer.ParsePacket(pData);
+				m_tsDemuxer.ParsePacket(&pData[i]);
 			}
 		}
 		if(m_pSections->CurrentPTS(&pData[i],&pts,&pid)==S_OK)
