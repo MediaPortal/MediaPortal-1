@@ -1296,14 +1296,14 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="KNC ONE TV-Station DVB-T" capturename="TV Station DVB-T MCE (TU1216)" devid="ven_1131&amp;dev_7146&amp;subsys_00301894&amp;rev_01">
+  <capturecard commercialname="KNC ONE TV-Station DVB-T" capturename="KNC TV-Station DVB-T Capture" devid="ven_1131&amp;dev_7146&amp;subsys_00301894&amp;rev_01">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
         <filter cat="networkprovider" 	name="Microsoft DVBT Network Provider" 	checkdevice="false"></filter>
-        <filter cat="tunerdevice" 		name="TV Station DVB-T Tuner (TU1216)" 	checkdevice="true"></filter>
-        <filter cat="capture" 			name="TV Station DVB-T MCE (TU1216)" 	checkdevice="true"></filter>
+        <filter cat="tunerdevice" 		name="KNC TV-Station DVB-T Tuner" 	checkdevice="true"></filter>
+        <filter cat="capture" 			name="KNC TV-Station DVB-T Capture" 	checkdevice="true"></filter>
       </filters>
       <connections>
 	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -1955,14 +1955,14 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="KNC ONE TV Station DVB-S" capturename="TV Station DVB-S X2 MCE (SU1200_2)" devid="ven_1131&amp;dev_7146&amp;subsys_00101894&amp;rev_01">
+  <capturecard commercialname="KNC ONE TV Station DVB-S" capturename="KNC TV-Station DVB-S Capture" devid="ven_1131&amp;dev_7146&amp;subsys_00101894&amp;rev_01">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBS Network Provider"		checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="TV Station DVB-S Tuner X2 (SU1200_2)"	checkdevice="true"></filter>
-        <filter cat="capture"         name="TV Station DVB-S X2 MCE (SU1200_2)"		checkdevice="true"></filter>
+        <filter cat="tunerdevice"     name="KNC TV-Station DVB-S Tuner"	checkdevice="true"></filter>
+        <filter cat="capture"         name="KNC TV-Station DVB-S Capture"		checkdevice="true"></filter>
       </filters>
       <connections>
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -1971,14 +1971,14 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="KNC ONE TV Station DVB-S" capturename="TV Station DVB-S X2 MCE (SU1200_2)" devid="ven_1131&amp;dev_7146&amp;subsys_00111894&amp;rev_01">
+  <capturecard commercialname="KNC ONE TV Station DVB-S+" capturename="KNC TV-Station DVB-S Capture" devid="ven_1131&amp;dev_7146&amp;subsys_00111894&amp;rev_01">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBS Network Provider"    	checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="TV Station DVB-S Tuner X2 (SU1200_2)"	checkdevice="true"></filter>
-        <filter cat="capture"         name="TV Station DVB-S X2 MCE (SU1200_2)"		checkdevice="true"></filter>
+        <filter cat="tunerdevice"     name="KNC TV-Station DVB-S+ Tuner"	checkdevice="true"></filter>
+        <filter cat="capture"         name="KNC TV-Station DVB-S+ Capture"		checkdevice="true"></filter>
       </filters>
       <connections>
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -1987,14 +1987,14 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="KNC ONE TV Station DVB-S" capturename="TV Station DVB-S MCE (SU1200_K)" devid="ven_1131&amp;dev_7146&amp;subsys_4f561131&amp;rev_01">
+  <capturecard commercialname="KNC ONE TV Station DVB" capturename="KNC TV-Station DVB Capture" devid="ven_1131&amp;dev_7146&amp;subsys_4f561131&amp;rev_01">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBS Network Provider"    checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="TV Station DVB-S Tuner (SU1200_K)"  checkdevice="true"></filter>
-        <filter cat="capture"         name="TV Station DVB-S MCE (SU1200_K)"    checkdevice="true"></filter>
+        <filter cat="tunerdevice"     name="KNC TV-Station DVB Tuner"  checkdevice="true"></filter>
+        <filter cat="capture"         name="KNC TV-Station DVB Capture"    checkdevice="true"></filter>
       </filters>
       <connections>
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -2003,14 +2003,14 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="KNC ONE TV-Station DVB-T" capturename="TV Station DVB-T MCE (TU1216)" devid="ven_1131&amp;dev_7146&amp;subsys_00311894&amp;rev_01">
+  <capturecard commercialname="KNC ONE TV-Station DVB-T+" capturename="KNC TV-Station DVB-T+ Capture" devid="ven_1131&amp;dev_7146&amp;subsys_00311894&amp;rev_01">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
         <filter cat="networkprovider" 	name="Microsoft DVBT Network Provider" 	checkdevice="false"></filter>
-        <filter cat="tunerdevice" 		name="TV Station DVB-T Tuner (TU1216)" 	checkdevice="true"></filter>
-        <filter cat="capture" 			name="TV Station DVB-T MCE (TU1216)" 	checkdevice="true"></filter>
+        <filter cat="tunerdevice" 		name="KNC TV-Station DVB-T+ Tuner" 	checkdevice="true"></filter>
+        <filter cat="capture" 			name="KNC TV-Station DVB-T+ Capture" 	checkdevice="true"></filter>
       </filters>
       <connections>
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -2019,14 +2019,14 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="KNC ONE TV-Station DVB-C" capturename="TV Station DVB-C MCE (CU1216)" devid="ven_1131&amp;dev_7146&amp;subsys_00201894&amp;rev_01">
+  <capturecard commercialname="KNC ONE TV-Station DVB-C" capturename="KNC TV-Station DVB-C Capture" devid="ven_1131&amp;dev_7146&amp;subsys_00201894&amp;rev_01">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
         <filter cat="networkprovider" 	name="Microsoft DVBC Network Provider" 	checkdevice="false"></filter>
-        <filter cat="tunerdevice" 		name="TV Station DVB-C Tuner (CU1216)" 	checkdevice="true"></filter>
-        <filter cat="capture" 			name="TV Station DVB-C MCE (CU1216)" 	checkdevice="true"></filter>
+        <filter cat="tunerdevice" 		name="KNC TV-Station DVB-C Tuner" 	checkdevice="true"></filter>
+        <filter cat="capture" 			name="KNC TV-Station DVB-C Capture" 	checkdevice="true"></filter>
       </filters>
       <connections>
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -2035,14 +2035,14 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="KNC ONE TV-Station DVB-C" capturename="TV Station DVB-C MCE (CU1216)" devid="ven_1131&amp;dev_7146&amp;subsys_00211894&amp;rev_01">
+  <capturecard commercialname="KNC ONE TV-Station DVB-C+" capturename="KNC TV-Station DVB-C+ Capture" devid="ven_1131&amp;dev_7146&amp;subsys_00211894&amp;rev_01">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
         <filter cat="networkprovider" 	name="Microsoft DVBC Network Provider" 	checkdevice="false"></filter>
-        <filter cat="tunerdevice" 		name="TV Station DVB-C Tuner (CU1216)" 	checkdevice="true"></filter>
-        <filter cat="capture" 			name="TV Station DVB-C MCE (CU1216)" 	checkdevice="true"></filter>
+        <filter cat="tunerdevice" 		name="KNC TV-Station DVB-C+ Tuner" 	checkdevice="true"></filter>
+        <filter cat="capture" 			name="KNC TV-Station DVB-C+ Capture" 	checkdevice="true"></filter>
       </filters>
       <connections>
 	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -6505,6 +6505,54 @@
       <connections>
         <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
         <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="KNC ONE TV Station DVB" capturename="KNC TV-Station DVB Capture" devid="ven_1131&amp;dev_7146&amp;subsys_4F50113&amp;rev_01">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBS Network Provider"    checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="KNC TV-Station DVB Tuner"  checkdevice="true"></filter>
+        <filter cat="capture"         name="KNC TV-Station DVB Capture"    checkdevice="true"></filter>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="KNC ONE TV Station DVB-S X4" capturename="KNC TV-Station DVB-S X4 Capture" devid="ven_1131&amp;dev_7146&amp;subsys_00401894&amp;rev_01">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBS Network Provider"    checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="KNC TV-Station DVB-S X4 Tuner"  checkdevice="true"></filter>
+        <filter cat="capture"         name="KNC TV-Station DVB-S X4 Capture"    checkdevice="true"></filter>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="KNC ONE TV Station DVB-S+ X4" capturename="KNC TV-Station DVB-S+ X4 Capture" devid="ven_1131&amp;dev_7146&amp;subsys_00411894&amp;rev_01">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBS Network Provider"    checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="KNC TV-Station DVB-S+ X4 Tuner"  checkdevice="true"></filter>
+        <filter cat="capture"         name="KNC TV-Station DVB-S+ X4 Capture"    checkdevice="true"></filter>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
