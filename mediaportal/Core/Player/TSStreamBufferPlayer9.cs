@@ -162,7 +162,7 @@ namespace MediaPortal.Player
 
 				// render output pins of SBE
 				IPin pin=DirectShowUtil.FindPinNr(_filter,PinDirection.Output,0);
-				graphBuwilder.Render(pin);
+				graphBuilder.Render(pin);
 				Marshal.ReleaseComObject(pin);
 
         mediaCtrl	= (IMediaControl)  graphBuilder;
