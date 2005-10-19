@@ -129,15 +129,22 @@ HRESULT Sections::ParseFromFile()
 				{
 					return S_OK;
 				}
-				bool isStart;
-				if ( tsDemuxer.ParsePacket(pData,isStart))
+				TSHeader header;
+				GetTSHeader(pData,&header);
+				if (header.Pid==pids.VideoPid)
 				{
-					m_pFileReader->SetFilePointer(0,FILE_BEGIN);
-					m_pFileReader->SetOffset(startPointer);
-					return S_OK;
+					bool isStart;
+					if ( tsDemuxer.ParsePacket(pData,isStart))
+					{
+						if (isStart)
+							startPointer=filePointer;
+						m_pFileReader->SetFilePointer(0,FILE_BEGIN);
+						m_pFileReader->SetOffset(startPointer);
+						return S_OK;
+					}
+					if (isStart)
+						startPointer=filePointer;
 				}
-				if (isStart)
-					startPointer=filePointer;
 				filePointer+=188;
 			}
 		}
