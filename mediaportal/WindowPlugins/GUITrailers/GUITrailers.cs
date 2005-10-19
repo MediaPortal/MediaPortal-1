@@ -59,9 +59,11 @@ namespace MediaPortal.GUI.Video
 		[SkinControlAttribute(57)]			protected GUITextScrollUpControl castarea=null;
 		[SkinControlAttribute(58)]			protected GUILabelControl label8 =null;
 		[SkinControlAttribute(59)]			protected GUITextScrollUpControl plotarea=null;
+		//[SkinControlAttribute(60)]			protected GUIImageList labelrating =null;
 
 		#region Variables
-
+        
+		int Movie_Selected = 0; // remember movie selected in listview
 		int Prev_SelectedItem = 0;	// remember listview selections
 
 		string TempHTML;	// GetWeb string
@@ -113,7 +115,7 @@ namespace MediaPortal.GUI.Video
 		string preleasedate;    // and will load them back after playing the 
 		string pplot;			// movie.
 		string pcast;
-		double rating;
+		double prating;
 
 		// Get from mediaportal.xml
 		string bitrate = string.Empty;
@@ -186,7 +188,7 @@ namespace MediaPortal.GUI.Video
 				btnletter.AddSubItem(k.ToString());
 			}
 			LoadSettings();
-			if(tcmview==true || G_viewInfoAndTrailer==true)
+			if(tcmview==true || G_viewInfoAndTrailer==true || tview==true || cview==true || mview==true)
 			{
 				ShowLabelsTrue();
 				listview.SelectedListItemIndex = Prev_SelectedItem;
@@ -462,6 +464,7 @@ namespace MediaPortal.GUI.Video
 				// JustAddedview
 			else if(jaview==true)
 			{
+				Movie_Selected = listview.SelectedListItemIndex;
 				GetMovieInfo(JAMovieUrl[itemindex], JAMovieName[itemindex], itemindex);
 				ShowTrailersClipsMore();
 				ShowMovieInfo(JAMovieUrl[itemindex], JAMovieName[itemindex], itemindex);
@@ -469,6 +472,7 @@ namespace MediaPortal.GUI.Video
 				// MostWatchedview
 			else if(mwview==true)
 			{
+				Movie_Selected = listview.SelectedListItemIndex;
 				GetMovieInfo(MWMovieUrl[itemindex], MWMovieName[itemindex], itemindex);
 				ShowTrailersClipsMore();
 				ShowMovieInfo(MWMovieUrl[itemindex], MWMovieName[itemindex], itemindex);
@@ -483,6 +487,7 @@ namespace MediaPortal.GUI.Video
 				// All movies view
 			else if(allview==true)
 			{
+				Movie_Selected = listview.SelectedListItemIndex;
 				GetMovieInfo(MovieURL[itemindex], MovieName[itemindex], itemindex);
 				ShowTrailersClipsMore();
 				ShowMovieInfo(MovieURL[itemindex], MovieName[itemindex], itemindex);
@@ -628,7 +633,7 @@ namespace MediaPortal.GUI.Video
 				listview.Add(item);
 				i++;
 			}
-			listview.SelectedListItemIndex = Prev_SelectedItem;
+			listview.SelectedListItemIndex = Movie_Selected;
 		}
 
 		void GetMovieInfo(string url, string name, int i)
@@ -823,7 +828,9 @@ namespace MediaPortal.GUI.Video
 				Utils.SetDefaultIcons(item);
 				listview.Add(item);
 			}
-			
+			listview.SelectedListItemIndex = Prev_SelectedItem;
+			listview.Focus = true;
+			buttonOne.Focus = false;
 		}
 
 		void ShowTrailers()
@@ -1009,6 +1016,49 @@ namespace MediaPortal.GUI.Video
 
 			// Get Rating
 			Match r = Regex.Match(TempHTML,@"Average\sGrade.*.grade.>(?<rating>.*)<");
+			switch(r.Groups["rating"].Value)
+			{
+				case "A+":
+					prating = 10;
+					return;
+				case "A":
+					prating = 9;
+					return;
+				case "A-":
+					prating = 8.5;
+					return;
+				case "B+":
+					prating = 8;
+					return;
+				case "B":
+					prating = 7;
+					return;
+				case "B-":
+					prating = 6.5;
+					return;
+				case "C+":
+					prating = 6;
+					return;
+				case "C":
+					prating = 5;
+					return;
+				case "C-":
+					prating = 4.5;
+					return;
+				case "D+":
+					prating = 4;
+					return;
+				case "D":
+					prating = 3;
+					return;
+				case "D-":
+					prating = 2.5;
+					return;
+				case "F":
+					prating = 1;
+					return;
+			}
+			GUIPropertyManager.SetProperty("#rating", prating.ToString());
 			
 			casturl = url;
 			ShowLabelsTrue();
@@ -1060,7 +1110,7 @@ namespace MediaPortal.GUI.Video
 				listview.Add(item);
 				i++;
 			}
-			listview.SelectedListItemIndex = Prev_SelectedItem;
+			listview.SelectedListItemIndex = Movie_Selected;
 			listview.Focus=true;
 		}
 
@@ -1111,7 +1161,7 @@ namespace MediaPortal.GUI.Video
 				listview.Add(item);
 				i++;
 			}
-			listview.SelectedListItemIndex = Prev_SelectedItem;
+			listview.SelectedListItemIndex = Movie_Selected;
 		}
 
 		void GetCastInfo(string url)
@@ -1159,6 +1209,7 @@ namespace MediaPortal.GUI.Video
 			plotarea.Visible=false;
 			btntoggleplot.Visible=false;
 			btntogglecast.Visible=false;
+			//labelrating.Visible=false;
 			btnletter.NavigateDown =2;
 
 		}
@@ -1174,6 +1225,7 @@ namespace MediaPortal.GUI.Video
 			label8.Visible=true;
 			btntoggleplot.Visible=true;
 			btntogglecast.Visible=true;
+			//labelrating.Visible=true;
 			btnletter.NavigateDown =5;
 			if(castview==true)
 				ToggleButtonCast();
@@ -1189,6 +1241,7 @@ namespace MediaPortal.GUI.Video
 			preleasedate = GUIPropertyManager.GetProperty("#year");
 			pplot = GUIPropertyManager.GetProperty("#plot");
 			pcast = GUIPropertyManager.GetProperty("#cast");
+			//float.Parse(prating) = GUIPropertyManager.GetProperty("#rating");
 		}
 		void SetGUIProperties()
 		{
@@ -1198,6 +1251,7 @@ namespace MediaPortal.GUI.Video
 			GUIPropertyManager.SetProperty("#year", preleasedate);
 			GUIPropertyManager.SetProperty("#plot", pplot);
 			GUIPropertyManager.SetProperty("#cast", pcast);
+			GUIPropertyManager.SetProperty("#rating", prating.ToString());
 		}
 		void LoadSettings()
 		{
