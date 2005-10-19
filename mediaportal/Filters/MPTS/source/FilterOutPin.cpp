@@ -42,10 +42,11 @@ CFilterOutPin::CFilterOutPin(LPUNKNOWN pUnk, CMPTSFilter *pFilter, FileReader *p
 	__int64 size;
 	m_pFileReader->GetFileSize(&size);
 	m_rtDuration = m_rtStop = m_pSections->pids.Duration;
-	m_lTSPacketDeliverySize = 188*10;
+	m_lTSPacketDeliverySize = 188*1000;
 	m_pBuffers = new CBuffers(m_pFileReader, &m_pSections->pids,m_lTSPacketDeliverySize);
 	m_dRateSeeking = 1.0;
 	m_bAboutToStop=false;
+	m_State=SeekIFrame;
 }
 
 CFilterOutPin::~CFilterOutPin()
@@ -119,29 +120,10 @@ HRESULT CFilterOutPin::CompleteConnect(IPin *pReceivePin)
 	}
 	return S_OK;
 }
-HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
+
+HRESULT CFilterOutPin::GetData(byte* pData, int lDataLength)
 {
-  try
-  {
-	//LogDebug("FillBuffer()");
-	  
-	CAutoLock cAutoLock(&m_cSharedState);
-	if (m_bAboutToStop) return E_FAIL;
-	
-	CheckPointer(pSample, E_POINTER);
-	PBYTE pData;
-	LONG lDataLength;
-	HRESULT hr = pSample->GetPointer(&pData);
-	if (FAILED(hr))
-	{
-		LogDebug("GetPointer() failed:%x",hr);
-	
-		return hr;
-	}
-	lDataLength = pSample->GetActualDataLength();
-
-
-		
+	HRESULT hr;
 	__int64 fileSize;
 	do
 	{
@@ -216,6 +198,75 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 	}
 
 	m_pBuffers->DequeFromBuffer(pData, lDataLength);
+	return S_OK;
+}
+HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
+{
+  try
+  {
+	//LogDebug("FillBuffer()");
+	  
+	CAutoLock cAutoLock(&m_cSharedState);
+	if (m_bAboutToStop) return E_FAIL;
+	
+	CheckPointer(pSample, E_POINTER);
+	PBYTE pData;
+	LONG lDataLength;
+	HRESULT hr = pSample->GetPointer(&pData);
+	if (FAILED(hr))
+	{
+		LogDebug("GetPointer() failed:%x",hr);
+	
+		return hr;
+	}
+	lDataLength = pSample->GetActualDataLength();
+
+
+	if (m_State==SeekIFrame)
+	{
+		LogDebug("find iframe");
+		m_State=Running;
+		// find first i-frame
+		TsDemux tsDemuxer;
+		__int64 startPointer=m_pFileReader->GetFilePointer();;
+		__int64 filePointer=m_pFileReader->GetFilePointer();
+		if (m_pSections->pids.VideoPid>0)
+		{
+			BYTE pData[188];
+			ULONG countBytesRead;
+			Sections::TSHeader header;
+			while (true)
+			{
+				HRESULT hr=GetData(pData,188);
+				
+				if (hr!=S_OK) 
+				{
+					return S_OK;
+				}
+				m_pSections->GetTSHeader(pData,&header);
+				if (header.Pid==m_pSections->pids.VideoPid)
+				{
+					bool isStart;
+					if ( tsDemuxer.ParsePacket(pData, isStart))
+					{
+						if (isStart)
+							startPointer=filePointer;
+						filePointer=0;
+						m_pFileReader->SetFilePointer(startPointer,FILE_BEGIN);	
+						LogDebug("iframe found at pos:%x",startPointer);
+						break;
+					}
+					if (isStart)
+						startPointer=filePointer;
+				}
+				filePointer+=188;
+			}
+		}
+	}
+		
+
+	hr=GetData(pData,lDataLength);
+	if (hr==E_FAIL) return E_FAIL;
 
 	ULONGLONG pts=0;
 	ULONGLONG ptsNow=0;
@@ -247,7 +298,7 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 				m_bDiscontinuity=true;
 			}
 		}
-
+/*
 		byte scrambled=pData[i+3] & 0xC0;
 		if (scrambled)
 		{
@@ -262,6 +313,7 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 				int x=1;//i-frame;
 			}
 		}
+*/
 		if(m_pSections->CurrentPTS(&pData[i],&pts,&pid)==S_OK)
 		{
 			if (pts>0)
@@ -323,7 +375,8 @@ HRESULT CFilterOutPin::OnThreadCreate( )
 HRESULT CFilterOutPin::OnThreadStartPlay( )
 {
    LogDebug("pin:OnThreadStartPlay()");
-		
+	
+   m_State=SeekIFrame;
    m_bDiscontinuity=true;
    m_iPESPid=0;
    DeliverNewSegment(m_rtStart, m_rtStop, m_dRateSeeking);
@@ -420,6 +473,7 @@ void CFilterOutPin::ResetBuffers(__int64 newPosition)
    m_rtCurrent=0;
    m_rtStop=0;
    m_rtDuration=0;
+   m_State=SeekIFrame;
 }
 
 void CFilterOutPin::UpdatePositions(ULONGLONG& ptsNow)

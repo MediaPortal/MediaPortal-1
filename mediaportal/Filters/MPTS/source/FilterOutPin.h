@@ -18,6 +18,11 @@ using namespace std;
 
 class CFilterOutPin : public CSourceStream,public CTimeShiftSeeking
 {
+	enum State
+	{
+		SeekIFrame,
+		Running
+	};
 public:
 	CFilterOutPin(LPUNKNOWN pUnk, CMPTSFilter *pFilter, FileReader *pFileReader, Sections *pSections, HRESULT *phr);
 	~CFilterOutPin();
@@ -44,7 +49,9 @@ protected:
 	HRESULT GetReferenceClock(IReferenceClock **pClock);
 
 protected:
-	void UpdatePositions(ULONGLONG& ptsNow);
+	State			m_State;
+	HRESULT			GetData(byte* pData, int maxLen);
+	void			UpdatePositions(ULONGLONG& ptsNow);
 	CMPTSFilter *	const m_pMPTSFilter;
 	FileReader *	const m_pFileReader;
 	Sections *		const m_pSections;

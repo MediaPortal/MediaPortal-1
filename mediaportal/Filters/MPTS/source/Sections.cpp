@@ -23,7 +23,7 @@
 #include <streams.h>
 #include <aviriff.h>
 #include "Sections.h"
-#include "tsdemux.h"
+
 void LogDebug(const char *fmt, ...) 
 {
 #ifndef DEBUG
@@ -111,43 +111,6 @@ HRESULT Sections::ParseFromFile()
 		m_pFileReader->SetFilePointer(filePointer,FILE_BEGIN);
 		m_pFileReader->SetOffset(0);
 
-		// find first i-frame
-		TsDemux tsDemuxer;
-		__int64 startPointer=0;
-		if (pids.VideoPid>0)
-		{
-			BYTE pData[188];
-			ULONG countBytesRead;
-			while (true)
-			{
-				HRESULT hr=m_pFileReader->Read(pData,188,&countBytesRead);
-				if (countBytesRead==0) 
-				{
-					return S_OK;
-				}
-				if (hr!=S_OK) 
-				{
-					return S_OK;
-				}
-				TSHeader header;
-				GetTSHeader(pData,&header);
-				if (header.Pid==pids.VideoPid)
-				{
-					bool isStart;
-					if ( tsDemuxer.ParsePacket(pData,isStart))
-					{
-						if (isStart)
-							startPointer=filePointer;
-						m_pFileReader->SetFilePointer(0,FILE_BEGIN);
-						m_pFileReader->SetOffset(startPointer);
-						return S_OK;
-					}
-					if (isStart)
-						startPointer=filePointer;
-				}
-				filePointer+=188;
-			}
-		}
 		return S_OK;
 	}
 
@@ -162,44 +125,6 @@ HRESULT Sections::ParseFromFile()
 	if(pids.Duration<1600000000)
 		pids.Duration=1600000000;
 	m_pFileReader->SetFilePointer(filePointer,FILE_BEGIN);
-	// find first i-frame
-	TsDemux tsDemuxer;
-	__int64 startPointer=0;
-	if (pids.VideoPid>0)
-	{
-		BYTE pData[188];
-		ULONG countBytesRead;
-		TSHeader header;
-		while (true)
-		{
-			HRESULT hr=m_pFileReader->Read(pData,188,&countBytesRead);
-			if (countBytesRead==0) 
-			{
-				return S_OK;
-			}
-			if (hr!=S_OK) 
-			{
-				return S_OK;
-			}
-			GetTSHeader(pData,&header);
-			if (header.Pid==pids.VideoPid)
-			{
-				bool isStart;
-				if ( tsDemuxer.ParsePacket(pData, isStart))
-				{
-					if (isStart)
-						startPointer=filePointer;
-					filePointer=0;
-					m_pFileReader->SetOffset(m_pFileReader->GetOffset()+startPointer);
-					m_pFileReader->SetFilePointer(filePointer,FILE_BEGIN);	
-					return S_OK;
-				}
-				if (isStart)
-					startPointer=filePointer;
-			}
-			filePointer+=188;
-		}
-	}
 	return hr;
 }
 HRESULT Sections::CheckStream()
