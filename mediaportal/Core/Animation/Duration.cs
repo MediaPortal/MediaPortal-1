@@ -39,9 +39,13 @@ namespace MediaPortal.Animation
 
 		public Duration(double duration)
 		{
-			_duration = duration;
+			// according to docs this isn't a constructor in Avalon
+			_timeSpan = TimeSpan.FromMilliseconds(duration);
+		}
 
-			MediaPortal.GUI.Library.Log.Write("Duration: {0}", _duration);
+		public Duration(TimeSpan timeSpan)
+		{
+			_timeSpan = timeSpan;
 		}
 
 		#endregion Constructors
@@ -53,7 +57,10 @@ namespace MediaPortal.Animation
 			if(string.Compare(text, "Automatic", true) == 0)
 				return Duration.Automatic;
 
-			return new Duration(Convert.ToDouble(text));
+			if(string.Compare(text, "Forever", true) == 0)
+				return Duration.Forever;
+
+			return new Duration(TimeSpan.Parse(text));
 		}
 
 		#endregion Methods
@@ -62,16 +69,31 @@ namespace MediaPortal.Animation
         
 		public static implicit operator double(Duration duration) 
 		{
-			return duration._duration;
+			return duration.TimeSpan.TotalMilliseconds;
 		}
 
 		#endregion Operators
 
+		#region Properties
+
+		public bool HasTimeSpan
+		{
+			get { return _timeSpan.TotalMilliseconds != 0; }
+		}
+
+		public TimeSpan TimeSpan
+		{
+			get { return _timeSpan; }
+		}
+
+		#endregion Properties
+
 		#region Fields
 
-		double _duration;
+		TimeSpan							_timeSpan;
 
-		public static readonly Duration Automatic = new Duration();
+		public static readonly Duration		Automatic = new Duration();
+		public static readonly Duration		Forever = new Duration();
 
 		#endregion Fields
 	}
