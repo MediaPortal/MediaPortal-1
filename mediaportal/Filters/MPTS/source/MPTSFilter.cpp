@@ -297,8 +297,13 @@ STDMETHODIMP CMPTSFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt)
 				if (m_pSections->pids.StartPTS>0 && m_pSections->pids.EndPTS>0)
 					break;
 			}
-			Sleep(80);
+			Sleep(100);
 			count++;
+			if (count >50)
+			{
+				LogDebug("failed:unable to get start/end pts from live.info");
+				return VFW_E_INVALIDMEDIATYPE;
+			}
 		}
 /*
 		count=0;
