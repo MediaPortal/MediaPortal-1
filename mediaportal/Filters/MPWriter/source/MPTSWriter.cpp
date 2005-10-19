@@ -365,17 +365,10 @@ STDMETHODIMP CDumpInputPin::Receive(IMediaSample *pSample)
 	try
 	{
 
-		if (m_bClearFile)
-		{
-			if (SUCCEEDED(m_pDump->Clear()))
-			{
-				LogDebug("CDumpInputPin::Receive():cleared file");
-				m_bClearFile=false;
-			}
-		}
 
 		if (m_bUpdatePids)
 		{
+			CAutoLock fileLock(&m_section);
 			if (SUCCEEDED(m_pDump->UpdateInfoFile(true)))
 			{
 				LogDebug("CDumpInputPin::Receive():start receiving");
@@ -441,6 +434,7 @@ STDMETHODIMP CDumpInputPin::Receive(IMediaSample *pSample)
 		step=4;
 		if (m_pDump->IsCopyingRecordingFile())
 		{
+			CAutoLock fileLock(&m_section);
 			for (int i=0; i < 100; ++i)
 				m_pDump->CopyRecordingFile();
 		}
@@ -472,6 +466,7 @@ STDMETHODIMP CDumpInputPin::Receive(IMediaSample *pSample)
 							byte scrambled=pbData[3] & 0xC0;
 							if( !scrambled && m_audioState==Unscrambled && (m_videoState==Unscrambled||m_videoPid<=0) )
 							{
+								CAutoLock fileLock(&m_section);
 								//yes then write the packet to the files
 								step=52;
 								hr=m_pDump->WriteRecordingFile(m_restBuffer,188);
@@ -574,6 +569,7 @@ STDMETHODIMP CDumpInputPin::Receive(IMediaSample *pSample)
 					}
 					if( !scrambled && m_audioState==Unscrambled && (m_videoState==Unscrambled||m_videoPid<=0) )
 					{
+						CAutoLock fileLock(&m_section);
 						//no, then write packet to files
 						step=81;
 						hr=m_pDump->WriteRecordingFile(pbData+t,188);
@@ -609,6 +605,7 @@ STDMETHODIMP CDumpInputPin::Receive(IMediaSample *pSample)
 	//		LogDebug("***RESTBUFFER INVALID");
 
 		//update the .info file with new positions and pes
+		CAutoLock fileLock(&m_section);
 		m_pDump->UpdateInfoFile(false);
 		m_pDump->Flush();
 		step=11;
@@ -640,9 +637,13 @@ void CDumpInputPin::ResetPids()
 {
 	LogDebug("pin:ResetPids()");
 	m_bResettingPids=true;
-	m_bClearFile=true;
-	//m_videoPid=m_audio1Pid=m_audio2Pid=m_ac3Pid=m_ttxtPid=m_subtitlePid=m_pmtPid=m_pcrPid=-1;
+	
+
+	CAutoLock fileLock (&m_section);
+	m_pDump->Clear();	
+	LogDebug("pin:ResetPids() done");
 }
+
 bool CDumpInputPin::IsPidValid(int pid)
 {
 	if(pid==0 || pid==1 || pid==0x11||pid==m_videoPid || pid==m_audio1Pid ||
@@ -1353,6 +1354,7 @@ HRESULT CDump::WriteTimeshiftFile(PBYTE pbData, LONG lDataLength)
 	}
 	return S_OK;
 }
+
 void CDump::GetPTS(BYTE *data,ULONGLONG *pts)
 {
 	*pts= 0xFFFFFFFFL & ( (6&data[0])<<29 | (255&data[1])<<22 | (254&data[2])<<14 | (255&data[3])<<7 | (((254&data[4])>>1)& 0x7F));
@@ -1388,7 +1390,8 @@ void CDump::GetPESHeader(BYTE *data,PESHeader *header)
 }
 
 HRESULT CDump::Clear()
-{
+{	
+	LogDebug("CDump::Clear()");
 	m_pesNow=m_pesStart=m_pesPid=0;
 	m_currentFilePosition=0;
 	return UpdateInfoFile(true);
@@ -1396,6 +1399,7 @@ HRESULT CDump::Clear()
 
 HRESULT CDump::UpdateInfoFile(bool pids)
 {
+	
 	if (m_hInfoFile==INVALID_HANDLE_VALUE) 
 	{
 		LogDebug("CDump::UpdateInfoFile(): filehandle=closed");

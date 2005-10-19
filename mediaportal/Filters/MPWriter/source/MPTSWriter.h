@@ -170,6 +170,7 @@ public:
 	int 		GetPCRPid();
 	void		ResetPids();
 private:
+	CCritSec				m_section;
 	int 		m_videoPid;
 	int 		m_audio1Pid;
 	int 		m_audio2Pid;
@@ -180,7 +181,7 @@ private:
 	int 		m_pcrPid;
 	bool		IsPidValid(int pid);
 	bool		m_bResettingPids;
-	bool		m_bClearFile;
+	
 	bool		m_bUpdatePids;
 	StreamState	m_audioState;
 	StreamState	m_videoState;
