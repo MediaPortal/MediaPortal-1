@@ -3188,7 +3188,8 @@ namespace MediaPortal.TV.Recording
 				}
 				if (info.pid_list!=null)
 				{
-					
+					if (info.pcr_pid	 <=0)
+						info.pcr_pid=-1;
 					bool changed=false;
 					bool hasAudio=false;
 					int audioOptions=0;
@@ -3279,7 +3280,7 @@ namespace MediaPortal.TV.Recording
 					if (currentTuningObject.AudioPid <=0) currentTuningObject.AudioPid=-1;
 					if (currentTuningObject.Audio1 <=0) currentTuningObject.Audio1=-1;
 					if (currentTuningObject.Audio2 <=0) currentTuningObject.Audio2=-1;
-					if (currentTuningObject.Audio2 <=0) currentTuningObject.Audio2=-1;
+					if (currentTuningObject.Audio3 <=0) currentTuningObject.Audio3=-1;
 					if (currentTuningObject.SubtitlePid <=0) currentTuningObject.SubtitlePid=-1;
 					if (currentTuningObject.TeletextPid <=0) currentTuningObject.TeletextPid=-1;
 					if (currentTuningObject.VideoPid <=0) currentTuningObject.VideoPid=-1;
@@ -3303,7 +3304,10 @@ namespace MediaPortal.TV.Recording
 							}
 							else
 							{
-								Log.Write("DVBGraphBDA:SendPMT() set demux: video pid:{0:X} audio pid:{1:X} AC3 pid:{2:X}",currentTuningObject.VideoPid,currentTuningObject.AudioPid,currentTuningObject.AC3Pid);
+								Log.Write("DVBGraphBDA:SendPMT() set demux: video pid:{0:X} audio pid:{1:X} AC3 pid:{2:X} audio1 pid:{3:X} audio2 pid:{4:X} audio3 pid:{5:X} subtitle pid:{6:X} teletext pid:{7:X} pcr pid:{8:X}",
+														currentTuningObject.VideoPid,currentTuningObject.AudioPid,currentTuningObject.AC3Pid,
+														currentTuningObject.Audio1,currentTuningObject.Audio2,currentTuningObject.Audio3,
+														currentTuningObject.SubtitlePid,currentTuningObject.TeletextPid,currentTuningObject.PCRPid);
 								SetupDemuxer(m_DemuxVideoPin,currentTuningObject.VideoPid,m_DemuxAudioPin,currentTuningObject.AudioPid, m_pinAC3Out,currentTuningObject.AC3Pid);
 								//setup demuxer MTS pin
 								SetupMTSDemuxerPin();				
