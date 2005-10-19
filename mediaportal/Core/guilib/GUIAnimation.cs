@@ -131,8 +131,6 @@ namespace MediaPortal.GUI.Library
 				_startTick = AnimationTimer.TickCount;
 				_isAnimating = true;
 				_isFirstRender = false;
-
-				Log.Write("Blah");
 			}
 			else if(_isAnimating == false)
 			{
