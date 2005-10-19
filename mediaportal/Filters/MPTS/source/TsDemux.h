@@ -41,6 +41,7 @@ private:
 			__int64 pts, dts;
 			bool m_scrambled;
 			StreamType streamType;
+			Mpeg2FrameType frameType;
 			byte header[MAX_PES_HEADER_SIZE];
 			
 	 };
@@ -48,7 +49,7 @@ private:
 public:
 	TsDemux(void);
 	virtual ~TsDemux(void);
-	void ParsePacket(byte* tsPacket);
+	bool ParsePacket(byte* tsPacket, bool& isStart);
 
 private:
 	__int64 get_pts(const byte *p);

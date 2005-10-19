@@ -24,6 +24,7 @@ public:
 	HRESULT GetFileSize(HANDLE handle,__int64 *lpllsize);
 	DWORD SetFilePointer(__int64 llDistanceToMove, DWORD dwMoveMethod);
 	void  SetOffset(__int64 startOfFile);
+	__int64 GetOffset();
 	__int64 GetFilePointer();
 	__int64 get_FileSize(void);
 

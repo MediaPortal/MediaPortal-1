@@ -165,7 +165,7 @@ HRESULT FileReader::OpenFile()
 	else
 		LogDebug("FileReader::OpenFile() .info file not found");
 
-	SetFilePointer(m_startOfFile,FILE_BEGIN);
+	SetFilePointer(0,FILE_BEGIN);
 	return S_OK;
 
 }
@@ -193,6 +193,10 @@ HRESULT FileReader::CloseFile()
 void FileReader::SetOffset(__int64 startofFile)
 {
 	m_startOfFile=startofFile;
+}
+__int64 FileReader::GetOffset()
+{
+	return m_startOfFile;
 }
 BOOL FileReader::IsFileInvalid()
 {

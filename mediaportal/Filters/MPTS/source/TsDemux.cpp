@@ -43,15 +43,16 @@ TsDemux::~TsDemux(void)
 // demux TS packets and break them up in PES packets
 // for each complete PES packet call DecodePesPacket()
 //**********************************************************************
-void TsDemux::ParsePacket(byte* packet)
+bool TsDemux::ParsePacket(byte* packet, bool& isStart)
 {
     MpegTSFilter *tss=NULL;
     const byte *p, *p_end;
     int pid, cc, cc_ok, afc, is_start;
 	
-	if (packet[0] != 0x47) return;
+	if (packet[0] != 0x47) return false;
     pid = ((packet[1] & 0x1f) << 8) | packet[2];
 	is_start = packet[1] & 0x40;
+	isStart=is_start;
 
 	imapFilters it = m_mapFilters.find(pid);
 	if (it==m_mapFilters.end())
@@ -70,7 +71,7 @@ void TsDemux::ParsePacket(byte* packet)
 		tss = it->second;
 	}
     if (!tss)
-        return;
+        return false;
     
 	/* continuity check (currently not used) */
     cc = (packet[3] & 0xf);
@@ -81,9 +82,9 @@ void TsDemux::ParsePacket(byte* packet)
     afc = (packet[3] >> 4) & 3;
     p = packet + 4;
     if (afc == 0) /* reserved value */
-        return;
+        return false;
     if (afc == 2) /* adaptation field only */
-        return;
+        return false;
     if (afc == 3) {
         /* skip adapation field */
         p += p[0] + 1;	//offset=packet[4]+1
@@ -92,10 +93,11 @@ void TsDemux::ParsePacket(byte* packet)
     /* if past the end of packet, ignore */
     p_end = packet + TS_PACKET_SIZE;
     if (p >= p_end)
-        return;
+        return false;
 	if (tss->m_scrambled)
-		return;
+		return false;
 	ParsePacket(tss,p,p_end-p,is_start);
+	return (tss->frameType==IFrame);
 }
 
 //**********************************************************************
@@ -278,7 +280,7 @@ void TsDemux::DecodeVideoPacket(MpegTSFilter* tss, const byte* pesPacket, int pa
 			break;
 			case 0x0: // Picture
 			{
-				Mpeg2FrameType frameType= (Mpeg2FrameType )((pesPacket[off+5]>>3)&7);
+				tss->frameType= (Mpeg2FrameType )((pesPacket[off+5]>>3)&7);
 				int x=1;
 			}
 			break;
