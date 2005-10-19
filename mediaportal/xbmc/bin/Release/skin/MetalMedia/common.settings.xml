@@ -10,29 +10,37 @@
 			<height>576</height>
 			<texture>background.png</texture>
 		</control>
-		<control>
-			<type>image</type>
-			<id>1</id>
-			<posX>48</posX>
-			<posY>390</posY>
-			<texture>#header.hover</texture>
-		</control>
-		<control>
-			<type>image</type>
-			<description>MP	Logo</description>
-			<id>1</id>
-			<posX>32</posX>
-			<posY>24</posY>
-			<texture>mplogo.png</texture>
-		</control>
+  	<control>
+  		<description>Button panel</description>
+  		<type>image</type>
+  		<id>1</id>
+  		<posX>50</posX>
+  		<posY>100</posY>
+  		<width>190</width>
+  		<height>272</height>
+  		<texture>panel.png</texture>
+  	</control>
+  	<control>
+  		<description>Section BG</description>
+  		<type>image</type>
+  		<id>1</id>
+  		<posX>300</posX>
+  		<posY>150</posY>
+  		<width>350</width>
+  		<height>350</height>
+  		<colordiffuse>20ffffff</colordiffuse>
+<!--  		<texture>hover_settings.png</texture> -->
+  		<texture>#header.hover</texture>
+  	</control>
 		<control>
 			<type>label</type>
 			<description>e.g. Setup TV</description>
 			<id>1</id>
-			<posX>32</posX>
-			<posY>96</posY>
+			<posX>670</posX>
+			<posY>80</posY>
 			<label>#header.label</label>
 			<font>font18</font>
+			<align>right</align>
 		</control>
 	</controls>
 </window>

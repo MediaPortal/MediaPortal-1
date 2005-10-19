@@ -19,12 +19,12 @@
 		<description>Settings BG</description>
 		<type>image</type>
 		<id>1</id>
-		<posX>215</posX>
-		<posY>65</posY>
-		<width>450</width>
-		<height>450</height>
+ 		<posX>300</posX>
+ 		<posY>150</posY>
+ 		<width>350</width>
+ 		<height>350</height>
 		<colordiffuse>20ffffff</colordiffuse>
-		<texture>home-settings.png</texture>
+		<texture>hover_settings.png</texture>
 	</control>
 	<control>
 		<description>GUI Settings text label</description>
@@ -41,7 +41,7 @@
 		<description>Scroll Speed label horizontal</description>
 		<type>label</type>
 		<id>1</id>
-		<posX>100</posX>
+		<posX>250</posX>
 		<posY>200</posY>
 		<label>1442</label>
 	</control>
@@ -49,7 +49,7 @@
 		<description>Speedselect Horizontal</description>
 		<type>spincontrol</type>
 		<id>2</id>
-		<posX>240</posX>
+		<posX>390</posX>
 		<posY>204</posY>
 		<reverse>yes</reverse>
 		<onup>1234</onup> <!-- Goto topbar -->
@@ -62,7 +62,7 @@
 		<description>Scroll Speed label vertical</description>
 		<type>label</type>
 		<id>1</id>
-		<posX>100</posX>
+		<posX>250</posX>
 		<posY>218</posY>
 		<label>1443</label>
 	</control>
@@ -70,7 +70,7 @@
 		<description>Speedselect Vertical</description>
 		<type>spincontrol</type>
 		<id>4</id>
-		<posX>240</posX>
+		<posX>390</posX>
 		<posY>222</posY>
 		<reverse>yes</reverse>
 		<onup>2</onup>
@@ -83,8 +83,8 @@
 		<description>FPS label</description>
 		<type>label</type>
 		<id>1</id>
-		<posX>100</posX>
-		<posY>260</posY>
+		<posX>250</posX>
+		<posY>240</posY>
 		<label>973</label>
 		<font>font13</font>
 	</control>
@@ -92,7 +92,7 @@
 		<description>FPS select</description>
 		<type>spincontrol</type>
 		<id>3</id>
-		<posX>284</posX>
+		<posX>434</posX>
 		<posY>244</posY>
 		<reverse>yes</reverse>
 		<onup>4</onup>
@@ -104,7 +104,7 @@
 		<description>currentFPS count</description>
 		<type>label</type>
 		<id>1</id>
-		<posX>345</posX>
+		<posX>495</posX>
 		<posY>240</posY>
 		<label>#fps</label>
 	</control>
@@ -113,7 +113,7 @@
 		<description>Example value</description>
 		<type>label</type>
 		<id>0</id>
-		<posX>100</posX>
+		<posX>250</posX>
 		<posY>300</posY>
 		<width>400</width>
 		<label>675</label>
@@ -122,7 +122,7 @@
 		<description>Horizontal example</description>
 		<type>fadelabel</type>
 		<id>25</id>
-		<posX>120</posX>
+		<posX>270</posX>
 		<posY>320</posY>
 		<width>300</width>
 		<label>-</label>
@@ -131,7 +131,7 @@
 		<description>Textarea example</description>
 		<type>textboxscrollup</type>
 		<id>26</id>
-		<posX>120</posX>
+		<posX>270</posX>
 		<posY>350</posY>
 		<width>300</width>
 		<height>100</height>

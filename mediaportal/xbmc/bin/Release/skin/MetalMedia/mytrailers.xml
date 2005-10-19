@@ -9,12 +9,10 @@
 
    <control>
       <type>group</type>
- 			<id>5555</id>
       <layout>StackLayout(0)</layout>
       <posX>55</posX>
       <posY>115</posY>
 			<width>180</width>
- 			<onleft>5555</onleft>
  			<onright>4</onright>
 
   		<control>

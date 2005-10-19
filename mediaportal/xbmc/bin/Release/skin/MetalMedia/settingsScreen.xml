@@ -2,86 +2,42 @@
 	<id>9</id>
 	<defaultcontrol>2</defaultcontrol>
 	<allowoverlay>yes</allowoverlay>
+	<define>#header.label:100009</define>
+	<define>#header.hover:hover_settings.png</define>
+
 <controls>
-	<control>
-		<description>BG</description>
-		<type>image</type>
-		<id>1</id>
-		<posX>0</posX>
-		<posY>0</posY>
-		<width>720</width>
-		<height>576</height>
-		<texture>background.png</texture>
-		<colorkey>0</colorkey>
-		<colordiffuse>ffffffff</colordiffuse>
-	</control>
-	<control>
-		<description>Settings BG</description>
-		<type>image</type>
-		<id>1</id>
-		<posX>300</posX>
-		<posY>150</posY>
-		<width>350</width>
-		<height>350</height>
-		<colordiffuse>20ffffff</colordiffuse>
-		<texture>settings.png</texture>
-	</control>
-	<control>
-		<type>image</type>
-		<id>1</id>
-		<posX>413</posX>
-		<posY>150</posY>
-		<width>207</width>
-		<height>130</height>
-		<texture>panel.png</texture>
-	</control>
-	<control>
-		<description>UI Calibration button</description>
-		<type>button</type>
-		<id>2</id>
-		<posX>418</posX>
-		<posY>165</posY>
-		<width>197</width>
-		<height>32</height>
-		<font>font13</font>
-		<label>213</label>
-		<hyperlink>10</hyperlink>
-		<onleft>2</onleft>
-		<onright>2</onright>
-		<onup>21</onup>
-		<ondown>3</ondown>
-	</control>
-	<control>
-		<description>Screen Calibration button</description>
-		<type>button</type>
-		<id>3</id>
-		<posX>418</posX>
-		<posY>197</posY>
-		<width>197</width>
-		<height>32</height>
-		<font>font13</font>
-		<label>214</label>
-		<hyperlink>11</hyperlink>
-		<onleft>3</onleft>
-		<onright>3</onright>
-		<onup>2</onup>
-		<ondown>4</ondown>
-	</control>
-	<control>
-		<description>Scroll speed button</description>
-		<type>button</type>
-		<id>4</id>
-		<posX>418</posX>
-		<posY>232</posY>
-		<width>197</width>
-		<height>32</height>
-		<font>font13</font>
-		<label>673</label>
-		<hyperlink>31</hyperlink>
-		<onleft>4</onleft>
-		<onright>4</onright>
-		<onup>3</onup>
-		<ondown>2</ondown>
-	</control>
+	<import>common.settings.xml</import>
+
+  <control>
+    <type>group</type>
+    <layout>StackLayout(0)</layout>
+    <posX>55</posX>
+    <posY>115</posY>
+  	<width>180</width>
+
+  	<control>
+  		<description>UI Calibration button</description>
+  		<type>button</type>
+  		<id>2</id>
+  		<label>213</label>
+  		<hyperlink>10</hyperlink>
+  		<onup>1234</onup> <!-- Use nonexisting id to go to topbar -->
+  	</control>
+  	<control>
+  		<description>Screen Calibration button</description>
+  		<type>button</type>
+  		<id>3</id>
+  		<label>214</label>
+  		<hyperlink>11</hyperlink>
+  	</control>
+  	<control>
+  		<description>Scroll speed button</description>
+  		<type>button</type>
+  		<id>4</id>
+  		<label>673</label>
+  		<hyperlink>31</hyperlink>
+  		<ondown>2</ondown>
+  	</control>
+  </control>
 </controls>
 </window>

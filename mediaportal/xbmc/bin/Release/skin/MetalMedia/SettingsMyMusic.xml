@@ -24,7 +24,7 @@
 		<width>350</width>
 		<height>350</height>
 		<colordiffuse>20ffffff</colordiffuse>
-		<texture>settings.png</texture>
+		<texture>hover_my music.png</texture>
 	</control>
 	<control>
 		<description>Settings text label</description>
