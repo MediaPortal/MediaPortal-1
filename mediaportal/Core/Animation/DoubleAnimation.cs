@@ -27,71 +27,141 @@ using System;
 
 namespace MediaPortal.Animation
 {
-	public class DoubleAnimation : Animation
+	public class DoubleAnimation : AnimationTimeline
 	{
 		#region Constructors
 
 		public DoubleAnimation()
 		{
-//			_type = AnimationType.None;
+			_type = AnimationType.None;
 		}
 
 		public DoubleAnimation(double from)
 		{
-//			_type = AnimationType.From;
+			_type = AnimationType.From;
 			_from = from;
 		}
 
-		public DoubleAnimation(double from, double to)
+		protected DoubleAnimation(DoubleAnimation animation, CloneType cloneType) : base(animation, cloneType)
 		{
-//			_type = AnimationType.FromTo;
-			_from = from;
-			_to = to;
+			_from = animation._from;
+			_to = animation._to;
+			_type = animation._type;
 		}
 
-		public DoubleAnimation(double from, double to, Duration duration)
+		public DoubleAnimation(double to, Duration duration)
 		{
-//			_type = AnimationType.FromTo;
-			_from = from;
+			_type = AnimationType.To;
 			_to = to;
 
 			this.Duration = duration;
 		}
 
+		public DoubleAnimation(double to, Duration duration, FillBehavior fillBehavior)
+		{
+			_type = AnimationType.To;
+			_to = to;
+
+			base.Duration = duration;
+			base.FillBehavior = fillBehavior;
+		}
+
+		public DoubleAnimation(double from, double to, Duration duration, FillBehavior fillBehavior)
+		{
+			_type = AnimationType.FromTo;
+			_from = from;
+			_to = to;
+
+			base.Duration = duration;
+			base.FillBehavior = fillBehavior;
+		}
+
 		#endregion Constructors
 
+		#region Methods
+
+		protected override object GetCurrentValueOverride(object baseValue, AnimationClock clock)
+		{
+			if(_type == AnimationType.By)
+			{
+				// animation progresses from the base value, the previous animation's output value,
+				// or a zero value (depending on how the animation is configured) to the sum of that
+				// value and the value specified by the By property
+			}
+
+			if(_type == AnimationType.From)
+			{
+				// The animation progresses from the value specified by the From property to the base value, 
+				// the previous animation's output value, or a zero value (depending upon how the animation is configured).
+			}
+
+			if(_type == AnimationType.FromBy)
+			{
+				// animation progresses from the value specified by the From property to the value 
+				// specified by the sum of the From and By properties
+			}
+
+			if(_type == AnimationType.FromTo)
+			{
+				// The animation progresses from the value specified by the From property to the value 
+				// specified by the To property.
+			}
+
+			if(_type == AnimationType.To)
+			{
+				// The animation progresses from the base value, the previous animation's output value,
+				// or a zero value (depending on how the animation is configured) to the value 
+				// specified by the To property.
+			}
+
+			return _from + clock.CurrentProgress * (_to - _from);
+		}
+
+		protected override Timeline CopyOverride()
+		{
+			return new DoubleAnimation(this, CloneType.DeepClone);
+		}
+
+		#endregion Methods
+
 		#region Properties
+
+		public override Type BaseValueType
+		{
+			get { return typeof(double); }
+		}
+
+		public double By
+		{
+			get { return _to - _from; }
+			set { if((_type & AnimationType.To) != 0) throw new InvalidOperationException(); _type |= AnimationType.By; _by = value; }
+		}
 
 		public double From
 		{
 			get { return _from; }
-			set { _from = value; }
+			set { _type |= AnimationType.From; _from = value; }
 		}
 
 		public double To
 		{
 			get { return _to; }
-			set { _to = value; }
+			set { _type &= ~AnimationType.By; _type |= AnimationType.To; _to = value; }
 		}
 
-		public override object Value
+		protected override bool UsesBaseValueCore
 		{
-			get
-			{
-				if(IsReversed)
-					return Math.Max(TweenHelper.Interpolate(this.Easing, this.To, this.From, this.BeginTime, this.Duration), this.From);
-				
-				return Math.Min(TweenHelper.Interpolate(this.Easing, this.From, this.To, this.BeginTime, this.Duration), this.To);
-			}
+			get { return false; }
 		}
 
 		#endregion Properties
 
 		#region Fields
 
-//		AnimationType				_type = AnimationType.None;
+		double						_by = 1;
 		double						_from;
 		double						_to;
+		AnimationType				_type = AnimationType.None;
 
 		#endregion Fields
 	}

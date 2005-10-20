@@ -55,7 +55,7 @@ namespace MediaPortal.Animation
 			switch(easing)
 			{
 				case Easing.Linear:
-					return c*t/d + b;
+					return c*t/d  + b;
 
 					///////////// QUADRATIC EASING: t^2 ///////////////////
 				case Easing.QuadraticEaseIn:

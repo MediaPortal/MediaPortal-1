@@ -27,8 +27,9 @@ using System.Reflection;
 using System.Xml;
 using System.Windows.Serialization;
 
-using MediaPortal.Layouts;
 using MediaPortal.Animation;
+using MediaPortal.Layouts;
+using MediaPortal.Xaml;
 
 namespace MediaPortal.GUI.Library
 {
@@ -140,102 +141,97 @@ namespace MediaPortal.GUI.Library
 
 		private static object ConvertXmlStringToObject(string valueName, string valueText, Type type)
 		{
-				if (type == typeof (bool))
+			if (type == typeof (bool))
+			{
+				if(string.Compare(valueText, "off", true) == 0 ||
+					string.Compare(valueText, "no", true) == 0 ||
+					string.Compare(valueText, "disabled", true) == 0)
 				{
-					if(string.Compare(valueText, "off", true) == 0 ||
-						string.Compare(valueText, "no", true) == 0 ||
-						string.Compare(valueText, "disabled", true) == 0)
-					{
-						return false;
-					}
-
-					return true;
+					return false;
 				}
+
+				return true;
+			}
 
 			try
+			{
+				if(type == typeof(double))
 				{
-					if(type == typeof(double))
+					double result = 0;
+
+					if(double.TryParse(valueText, NumberStyles.Number, null, out result))
+						return result;
+
+					return 1;
+				}
+
+				if(type == typeof(int) || type == typeof(long))
+				{
+					if(string.Compare(valueName, "textcolor", true) == 0 || 
+						string.Compare(valueName, "colorkey", true) == 0 || 
+						string.Compare(valueName, "colordiffuse", true) == 0)
 					{
-						double result = 0;
-
-						if(double.TryParse(valueText, NumberStyles.Number, null, out result))
-							return result;
-
-						return 1;
-					}
-
-					if(type == typeof(int) || type == typeof(long))
-					{
-						if(string.Compare(valueName, "textcolor", true) == 0 || 
-							string.Compare(valueName, "colorkey", true) == 0 || 
-							string.Compare(valueName, "colordiffuse", true) == 0)
+						if(valueText.Length > 0)
 						{
-							if(valueText.Length > 0)
+							bool isNamedColor = false;
+
+							foreach(char ch in valueText)
 							{
-								bool isNamedColor = false;
+								if(ch >= '0' && ch <= '9' || ch >= 'A' && ch <= 'F' || ch >= 'a' && ch <= 'f')
+									continue;
 
-								foreach(char ch in valueText)
+								isNamedColor = true;
+								break;
+							}
+
+							if(isNamedColor)
+							{
+								int index = valueText.IndexOf(':');
+
+								if(index != -1)
 								{
-									if(ch >= '0' && ch <= '9' || ch >= 'A' && ch <= 'F' || ch >= 'a' && ch <= 'f')
-										continue;
+									Color color = ColorTranslator.FromHtml(valueText.Substring(0, index));
+									int alpha = 255;
 
-									isNamedColor = true;
-									break;
-								}
-
-								if(isNamedColor)
-								{
-									int index = valueText.IndexOf(':');
-
-									if(index != -1)
+									if(index < valueText.Length)
 									{
-										Color color = ColorTranslator.FromHtml(valueText.Substring(0, index));
-										int alpha = 255;
-
-										if(index < valueText.Length)
-										{
-											if(valueText[index + 1] == '#')
-												alpha = int.Parse(valueText.Substring(index + 2), NumberStyles.HexNumber);
-											else
-												alpha = int.Parse(valueText.Substring(index + 1));
-										}
-
-										return Color.FromArgb(alpha, color).ToArgb();
+										if(valueText[index + 1] == '#')
+											alpha = int.Parse(valueText.Substring(index + 2), NumberStyles.HexNumber);
+										else
+											alpha = int.Parse(valueText.Substring(index + 1));
 									}
 
-									return Color.FromName(valueText).ToArgb();
+									return Color.FromArgb(alpha, color).ToArgb();
 								}
 
-								return ColorTranslator.FromHtml('#' + valueText).ToArgb();
+								return Color.FromName(valueText).ToArgb();
 							}
+
+							return ColorTranslator.FromHtml('#' + valueText).ToArgb();
 						}
 					}
-
-					if (type == typeof (int))
-						return System.Int32.Parse(valueText);
-					if (type == typeof (long))
-						return System.Int64.Parse(valueText, NumberStyles.HexNumber);
-				}
-				catch(Exception)
-				{
-					return 0;
 				}
 
-				if(type == typeof(ILayout))
-					return ParseLayout(valueText);
+				if (type == typeof (int))
+					return System.Int32.Parse(valueText);
+				if (type == typeof (long))
+					return System.Int64.Parse(valueText, NumberStyles.HexNumber);
+			}
+			catch(Exception)
+			{
+				return 0;
+			}
 
-				// much of the above could be changed to use the following, needs time for thorough testing though
-				TypeConverter converter = TypeDescriptor.GetConverter(type);
+			if(type == typeof(ILayout))
+				return ParseLayout(valueText);
 
-				if(converter.CanConvertFrom(typeof(string)))
-					return converter.ConvertFromString(valueText);
-			
-				return null;
-//			}
-//			catch (Exception)
-//			{
-//				return null;
-//			}
+			// much of the above could be changed to use the following, needs time for thorough testing though
+			TypeConverter converter = TypeDescriptor.GetConverter(type);
+
+			if(converter.CanConvertFrom(typeof(string)))
+				return converter.ConvertFromString(valueText);
+		
+			return null;
 		}
 
 		public static GUIControl Create(int dwParentId, XmlNode pControlNode, IDictionary defines)
@@ -324,8 +320,7 @@ namespace MediaPortal.GUI.Library
 					if(text.Length > 0 && text[0] == '#' && defines.Contains(text))
 						text = (string)defines[text];
 
-					object newValue = ConvertXmlStringToObject(element.Name, text,
-						correspondingField.FieldType);
+					object newValue = ConvertXmlStringToObject(element.Name, text, correspondingField.FieldType);
 			
 					try
 					{
@@ -336,10 +331,44 @@ namespace MediaPortal.GUI.Library
 						Log.Write("Couldn't place {0}, which is {1} in {2}. Exception:{3}",  
 							newValue, newValue.GetType(), correspondingField,e) ;
 					}
+				}
+				else
+				{
+					if(char.IsUpper(element.Name[0]))
+					{
+						Log.Write("controlType: {0}", controlType.Name);
+						Log.Write("elementName: {0}", element.Name);
 
+						PropertyInfo propertyInfo;
+
+						if(element.Name.IndexOf('.') != -1)
+						{
+							propertyInfo = controlType.GetProperty(element.Name.Split('.')[1]);
+						}
+						else
+						{
+							propertyInfo = controlType.GetProperty(element.Name);
+						}
+
+						if(propertyInfo == null)
+						{
+							Log.Write("GUIControlFactory.UpdateControlWithXmlData: '{0}' does not contain a definition for '{1}'", controlType, element.Name);
+							return;
+						}
+
+						XamlParser parser = new XamlParser();
+
+						string xml = element.OuterXml;
+
+						if(xml.IndexOf("Button.") != -1)
+							xml = xml.Replace("Button.", "GUIControl.");
+						else if(xml.IndexOf("Window.") != -1)
+							xml = xml.Replace("Window.", "GUIWindow.");
+
+						parser.LoadXml(xml, XmlNodeType.Element, control);
+					}
 				}
 			}
-
 		}
 
 		private static void AddSubitemsToControl(XmlNode subItemsNode, GUIControl control)

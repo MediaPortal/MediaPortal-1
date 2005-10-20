@@ -26,14 +26,19 @@
 using System;
 using System.Collections;
 using System.ComponentModel;
+using System.Windows.Serialization;
 
 namespace MediaPortal.Animation
 {
-	public sealed class AnimationCollection : CollectionBase
+	public sealed class AnimationCollection : CollectionBase, IAddChild
 	{
 		#region Constructors
 
-		internal AnimationCollection(object target)
+		public AnimationCollection()
+		{
+		}
+
+		public AnimationCollection(object target)
 		{
 			_target = target;
 		}
@@ -44,75 +49,88 @@ namespace MediaPortal.Animation
 			_binding = binding;
 		}
 
-		private AnimationCollection()
-		{
-		}
-
 		#endregion Constructors
 
 		#region Methods
 
-		public void Add(Animation animation)
+		public void Add(AnimationBase animation)
 		{
 			if(animation == null)
                 throw new ArgumentNullException("animation");
 
-			animation.Attach(_target, _binding);
+			if(_target != null && _binding != null)
+				animation.Attach(_target, _binding);
 
 			List.Add(animation);
 		}
 
-		public bool Contains(Animation animation)
+		void IAddChild.AddChild(object child)
 		{
-			if(animation == null) throw new ArgumentNullException("animation");
+			AnimationBase animation = child as AnimationBase;
+
+			if(animation == null)
+				throw new ArgumentException("child");
+
+			List.Add(animation);
+		}
+
+		void IAddChild.AddText(string text)
+		{
+			throw new NotSupportedException("AnimationCollection.IAddChild.AddText");
+		}
+
+		public bool Contains(AnimationBase animation)
+		{
+			if(animation == null)
+				throw new ArgumentNullException("animation");
 
 			return List.Contains(animation);
 		}
 
-		public void CopyTo(Animation[] array, int arrayIndex)
+		public void CopyTo(AnimationBase[] array, int arrayIndex)
 		{
-			if(array == null) throw new ArgumentNullException("array");
+			if(array == null)
+				throw new ArgumentNullException("array");
 
 			List.CopyTo(array, arrayIndex);
 		}
 
-		public int IndexOf(Animation animation)
+		public int IndexOf(AnimationBase animation)
 		{
-			if(animation == null) throw new ArgumentNullException("animation");
+			if(animation == null)
+				throw new ArgumentNullException("animation");
 
 			return List.IndexOf(animation);
 		}
 
-		public void Insert(int index, Animation animation)
+		public void Insert(int index, AnimationBase animation)
 		{
-			if(animation == null) throw new ArgumentNullException("animation");
+			if(animation == null)
+				throw new ArgumentNullException("animation");
 
 			List.Insert(index, animation);
 		}
 
-		public bool Remove(Animation animation)
+		public bool Remove(AnimationBase animation)
 		{
-			if(animation == null) throw new ArgumentNullException("animation");
-			if(List.Contains(animation) == false) return false;
+			if(animation == null)
+				throw new ArgumentNullException("animation");
+			
+			if(List.Contains(animation) == false)
+				return false;
 
 			List.Remove(animation);
 
 			return true;
 		}
 
-		public void Tick(int tickCurrent)
-		{
-			for(int index = 0; index < List.Count; index++)
-				((Animation)List[index]).Tick(tickCurrent);
-		}
-
 		#endregion Methods
 
 		#region Properties
 
-		public Animation this[int index]
+		public AnimationBase this[int index]
 		{ 
-			get { return (Animation)List[index]; }
+			get { return (AnimationBase)List[index]; }
 			set { List[index] = value; }
 		}
 

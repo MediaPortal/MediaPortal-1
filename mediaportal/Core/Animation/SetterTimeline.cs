@@ -24,87 +24,62 @@
 #endregion
 
 using System;
-using System.ComponentModel;
-
-using MediaPortal.Dispatcher;
+using System.Windows;
 
 namespace MediaPortal.Animation
 {
-	public sealed class ClockController
+	public class SetterTimeline : ParallelTimeline
 	{
+		#region Constructors
+
+		public SetterTimeline()
+		{
+			_targetName = string.Empty;
+		}
+
+		protected SetterTimeline(SetterTimeline timeline, CloneType cloneType) : base(timeline, cloneType)
+		{
+		}
+
+		public SetterTimeline(string targetName, PropertyPath path, object value)
+		{
+			_targetName = targetName;
+			_value = value;
+
+			base.Path = path;
+		}
+
+		#endregion Constructors
+
 		#region Methods
 
-		public void Begin()
-		{
-			_job = new Job();
-			_job.DoWork += new DoWorkEventHandler(BeginWorker);
-			_job.Dispatch();
-		}
-
-		public void BeginIn(double beginIn)
-		{
-			_job = new Job();
-			_job.DoWork += new DoWorkEventHandler(BeginWorker);
-			_job.Dispatch((int)beginIn);
-		}
-
-		internal void BeginWorker(object sender, DoWorkEventArgs e)
-		{
-		}
-
-		public void Pause()
-		{
-//			_isPaused = true;
-		}
-
-		public void Resume()
-		{
-//			_isPaused = false;
-		}
-
-		public void Reverse()
-		{
-//			_isReversed = !_isReversed;
-		}
-
-		public void Seek(TimeSpan offset, TimeSeekOrigin origin)
+		protected internal override Clock AllocateClock()
 		{
 			throw new NotImplementedException();
-		}
-
-		public void SkipToFill()
-		{
-//			if(blahblah == RepeatBehavior.Forever)
-//				throw new InvalidOperationException();
-		}
-
-		public void Stop()
-		{
 		}
 
 		#endregion Methods
 
 		#region Properties
-	
-		public Clock Clock
+
+		public string TargetName
 		{
-			get { return _clock; }
+			get { return _targetName; }
+			set { if(string.Compare(_targetName, value) != 0) { _targetName = value; } }
 		}
 
-		public double SpeedRatio
-		{ 
-			get { return _speedRatio; }
-			set { _speedRatio = value; }
+		public object Value
+		{
+			get { return _value; }
+			set { _value = value; }
 		}
 
 		#endregion Properties
-        
+
 		#region Fields
-		
-		Clock					_clock;
-		AnimationBase			_animation;
-		Job						_job;
-		double					_speedRatio = 1;
+
+		string						_targetName = string.Empty;
+		object						_value;
 
 		#endregion Fields
 	}

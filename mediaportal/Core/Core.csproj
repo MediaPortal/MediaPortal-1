@@ -199,7 +199,7 @@
         <Files>
             <Include>
                 <File
-                    RelPath = "Animation.cs"
+                    RelPath = "Application.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -209,12 +209,22 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Animation\Animation.cs"
+                    RelPath = "Animation\AnimationBase.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Animation\AnimationClock.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Animation\AnimationCollection.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Animation\AnimationTimeline.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -229,7 +239,32 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Animation\Clock.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Animation\ClockCollection.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Animation\ClockController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Animation\ClockGroup.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Animation\ClockState.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Animation\CloneType.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -254,7 +289,22 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Animation\FillBehavior.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Animation\IClock.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Animation\NativeMethods.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Animation\ParallelTimeline.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -265,6 +315,36 @@
                 />
                 <File
                     RelPath = "Animation\RepeatBehaviorConverter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Animation\SetterTimeline.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Animation\StoryboardCollection.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Animation\Timeline.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Animation\TimelineGroup.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Animation\TimeManager.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Animation\TimeSeekOrigin.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -1615,6 +1695,81 @@
                 />
                 <File
                     RelPath = "System.Threading\TimeoutLock.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows\ComponentResourceKey.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows\INameScope.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows\PropertyPath.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows\PropertyPathConverter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows\ResourceDictionary.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows\ResourceKey.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows\Setter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows\SetterCollection.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows\StaticResourceExtension.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows\StaticResources.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows\Style.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows\TemplateBindingExtension.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows\Trigger.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows\TriggerCollection.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Data\IValueConverter.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

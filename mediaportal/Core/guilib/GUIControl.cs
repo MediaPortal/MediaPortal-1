@@ -23,6 +23,7 @@ using System.Collections;
 using System.Diagnostics;
 using System.Drawing;
 
+using MediaPortal.Animation;
 using MediaPortal.Layouts;
 
 namespace MediaPortal.GUI.Library
@@ -1219,6 +1220,18 @@ namespace MediaPortal.GUI.Library
 			set { m_bVisible = value; }
 		}
 
+		public AnimationCollection Animations
+		{
+			get { if(_animations != null) _animations = new AnimationCollection(this); return _animations; }
+			set { _animations = value; }
+		}
+
 		#endregion Properties
+
+		#region Fields
+
+		AnimationCollection			_animations;
+
+		#endregion Fields
 	}
 }

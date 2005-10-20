@@ -8,18 +8,9 @@ using System.Xml;
 
 namespace MediaPortal.Xaml
 {
-	public class XamlParser : IDisposable
+	public class XamlParser
 	{
 		#region Methods
-
-		public void Dispose()
-		{
-			if(_xmlReader != null)
-			{
-				_xmlReader.Close();
-				_xmlReader = null;
-			}
-		}
 
 		public Type GetType(string type)
 		{
@@ -40,64 +31,19 @@ namespace MediaPortal.Xaml
 		{
 			_xmlReader = new XmlTextReader(_filename = filename);
 			_xmlReader.WhitespaceHandling = WhitespaceHandling.None;
-			_xmlReader.XmlResolver = null;
 			_xmlReader.Namespaces = true;
 
-			while(_xmlReader.Read())
-			{
-				try
-				{
-					switch(_xmlReader.NodeType)
-					{
-						case XmlNodeType.Element:
+			return Read();
+		}
 
-							if(_xmlReader.Name.IndexOf('.') == -1)
-							{
-								ReadElement();
-							}
-							else
-							{
-								ReadElementCompoundProperty();
-							}
-							
-							break;
-						
-						case XmlNodeType.Text:
-						case XmlNodeType.CDATA:
-							_elementText.Append(_xmlReader.Value);
-							break;
+		public object LoadXml(string fragment, XmlNodeType type, object target)
+		{
+			_xmlReader = new XmlTextReader(fragment, type, null);
+			_xmlReader.WhitespaceHandling = WhitespaceHandling.None;
 
-						case XmlNodeType.EndElement:
-							
-							if(_xmlReader.Name.IndexOf('.') == -1)
-							{
-								ReadElementEnd();
-							}
-							else
-							{
-								ReadElementEndCompoundProperty();
-							}
+			_elementStack.Push(target);
 
-							break;
-					}
-				}
-				catch(XamlParserException e)
-				{
-#if !DEBUG 
-					System.Windows.Forms.MessageBox.Show(e.Message);
-#endif
-					Console.WriteLine(e.Message);
-				}
-				catch(Exception e)
-				{
-#if !DEBUG 
-					System.Windows.Forms.MessageBox.Show(string.Format("{0}({1},{2}): {3}", _filename, _xmlReader.LineNumber, _xmlReader.LinePosition, e.Message));
-#endif
-					Console.WriteLine("{0}({1},{2}): {3}", _filename, _xmlReader.LineNumber, _xmlReader.LinePosition, e.Message);
-				}
-			}
-
-			return _target;
+			return Read();
 		}
 
 		object InvokeGetter()
@@ -180,6 +126,62 @@ namespace MediaPortal.Xaml
 			}
 		}
 
+		object Read()
+		{
+			while(_xmlReader.Read())
+			{
+				try
+				{
+					switch(_xmlReader.NodeType)
+					{
+						case XmlNodeType.Element:
+
+							if(_xmlReader.Name.IndexOf('.') == -1)
+							{
+								ReadElement();
+							}
+							else
+							{
+								ReadElementCompoundProperty();
+							}
+							
+							break;
+						
+						case XmlNodeType.Text:
+						case XmlNodeType.CDATA:
+							_elementText.Append(_xmlReader.Value);
+							break;
+
+						case XmlNodeType.EndElement:
+							
+							if(_xmlReader.Name.IndexOf('.') == -1)
+							{
+								ReadElementEnd();
+							}
+							else
+							{
+								ReadElementEndCompoundProperty();
+							}
+
+							break;
+					}
+				}
+				catch(XamlParserException e)
+				{
+					MediaPortal.GUI.Library.Log.Write("XamlParser.Read: {0}", e.Message);
+				}
+				catch(Exception e)
+				{
+					MediaPortal.GUI.Library.Log.Write("XamlParser.Read: {0}({1},{2}): {3}", _filename, _xmlReader.LineNumber, _xmlReader.LinePosition, e.Message);
+				}
+			}
+
+			_xmlReader.Close();
+			_xmlReader = null;
+
+			return _target;
+		}
+
 		void ReadAttributes()
 		{
 			object target = _elementStack.Peek();
@@ -204,11 +206,11 @@ namespace MediaPortal.Xaml
 				{
 					if(value.StartsWith("{"))
 					{
-//						Application.Current.Resources.Add(ReadExtension(value), _target);
+						App.Current.Resources.Add(ReadExtension(value), _target);
 					}
 					else
 					{
-//						Application.Current.Resources.Add(value, _target);
+						App.Current.Resources.Add(value, _target);
 					}
 
 					continue;
@@ -262,10 +264,10 @@ namespace MediaPortal.Xaml
 			if(_target is ISupportInitialize)
 				((ISupportInitialize)_target).BeginInit();
 
-			if(_elementStack.Count > 0 && _elementStack.Peek() is IAddChild)
+			if(_elementStack.Count != 0 && _elementStack.Peek() is IAddChild)
 				((IAddChild)_elementStack.Peek()).AddChild(_target);
 
-			if(_elementStack.Count > 0 && _elementStack.Peek() is IList)
+			if(_elementStack.Count != 0 && _elementStack.Peek() is IList)
 				((IList)_elementStack.Peek()).Add(_target);
 
 			_elementStack.Push(_target);
@@ -356,7 +358,7 @@ namespace MediaPortal.Xaml
 		Stack						_elementStack = new Stack();
 		string						_filename = string.Empty;
 		Hashtable					_namedItems = new Hashtable();
-		string[]					_namespaces = new string[] { "MediaPortal", "MediaPortal.Controls", "MediaPortal.Drawing", "MediaPortal.Drawing.Shapes", "MediaPortal.Drawing.Transforms", "MediaPortal.Animation", "System.Windows", "System.Windows.Serialization", "MediaPortal.Drawing.Paths" };
+		string[]					_namespaces = new string[] { "MediaPortal", "MediaPortal.Controls", "MediaPortal.Drawing", "MediaPortal.Drawing.Shapes", "MediaPortal.Drawing.Transforms", "MediaPortal.Animation", "System.Windows", "System.Windows.Serialization", "MediaPortal.Drawing.Paths", "MediaPortal.GUI.Library" };
 		object						_target;
 		XmlTextReader				_xmlReader;
 
