@@ -1,20 +1,20 @@
  <strings>
 	<characters>512</characters>
-	<string>
+	<string Prefix="My ">
 		<id>0</id>
-		<value>My Programs</value>
+		<value>Programs</value>
 	</string>
-	<string>
+	<string Prefix="My ">
 		<id>1</id>
-		<value>My Pictures</value>
+		<value>Pictures</value>
 	</string>
-	<string>
+	<string Prefix="My ">
 		<id>2</id>
-		<value>My Music</value>
+		<value>Music</value>
 	</string>
-	<string>
+	<string Prefix="My ">
 		<id>3</id>
-		<value>My Videos</value>
+		<value>Videos</value>
 	</string>
 	<string>
 		<id>4</id>
@@ -28,21 +28,21 @@
 		<id>6</id>
 		<value>XBOX Media Center CVS build</value>
 	</string>
-	<string>
+	<string Prefix="My ">
 		<id>7</id>
-		<value>My Files</value>
+		<value>Files</value>
 	</string>
-	<string>
+	<string Prefix="My ">
 		<id>8</id>
-		<value>My Weather</value>
+		<value>Weather</value>
 	</string>
-	<string>
+	<string Prefix="My ">
 		<id>9</id>
-		<value>My News</value>
+		<value>News</value>
 	</string>
-	<string>
+	<string Prefix="My ">
 		<id>10</id>
-		<value>My Recipes</value>
+		<value>Recipes</value>
 	</string>
 	<string>
 		<id>11</id>
@@ -120,9 +120,9 @@
 		<id>32</id>
 		<value>December</value>
 	</string>
-	<string>
+	<string Prefix="My ">
  		<id>50</id> 
-  		<value>My DVDs</value> 
+  		<value>DVDs</value> 
   	</string>
 	<string>
 		<id>100</id>
@@ -176,13 +176,13 @@
 		<id>112</id>
 		<value>PAUSED</value>
 	</string>
-	<string>
+	<string Prefix="My ">
 		<id>113</id>
-		<value>My Files : Source</value>
+		<value>Files : Source</value>
 	</string>
-	<string>
+	<string Prefix="My ">
 		<id>114</id>
-		<value>My Files : Destination</value>
+		<value>Files : Destination</value>
 	</string>
 	<string>
 		<id>115</id>
@@ -1384,21 +1384,21 @@
 		<id>417</id>
 		<value>View: Big Icons</value>
 	</string>
-	<string>
+	<string Prefix="My ">
 		<id>418</id>
-		<value>My Videos/Genres</value>
+		<value>Videos/Genres</value>
 	</string>
-	<string>
+	<string Prefix="My ">
 		<id>419</id>
-		<value>My Videos/Actors</value>
+		<value>Videos/Actors</value>
 	</string>
-	<string>
+	<string Prefix="My ">
 		<id>420</id>
-		<value>My Videos/Years</value>
+		<value>Videos/Years</value>
 	</string>
-	<string>
+	<string Prefix="My ">
 		<id>421</id>
-		<value>My Videos/Title</value>
+		<value>Videos/Title</value>
 	</string>
 	<string>
 		<id>422</id>
@@ -1804,9 +1804,9 @@
 		<id>604</id>
 		<value>Recorded TV</value>
 	</string>
-	<string>
+	<string Prefix="My ">
 		<id>605</id>
-		<value>My TV</value>
+		<value>TV</value>
 	</string>
 	<string>
 		<id>606</id>
@@ -2044,9 +2044,9 @@
 		<id>664</id>
 		<value>Delete this picture?</value>
 	</string>
-	<string>
+	<string Prefix="My ">
 		<id>665</id>
-		<value>My Radio</value>
+		<value>Radio</value>
 	</string>
 	<string>
 		<id>666</id>
@@ -2342,9 +2342,9 @@
 	<value>Card</value>
 </string>
 <!-- My Alarm Strings -->
-<string>
+<string Prefix="My ">
 	<id>850</id>
-	<value>My Alarm</value>
+	<value>Alarm</value>
 </string>
 <string>
 	<id>851</id>
@@ -2600,9 +2600,9 @@
 	<id>912</id>
 	<value>Unable to download latest news</value>
 </string>
-<string>
+<string Prefix="My ">
 	<id>913</id>
-	<value>My Plugins</value>
+	<value>Plugins</value>
 </string>
 <string>
 	<id>914</id>
@@ -2851,9 +2851,9 @@
 	<value>Delete this entire recording</value>
 </string>
 
-<string>
+<string Prefix="My ">
 	<id>983</id>
-	<value>My Playlists</value>
+	<value>Playlists</value>
 </string>
 <string>
 	<id>984</id>
@@ -3025,9 +3025,9 @@
 	<value>See the log files for details.</value>
 </string>
 
-<string>
+<string Prefix="My ">
 	<id>1027</id>
-	<value>My DVD</value>
+	<value>DVD</value>
 </string>
 <string>
 	<id>1028</id>
@@ -3065,9 +3065,9 @@
 	<id>1036</id>
 	<value>No video found</value>
 </string>
-<string>
+<string Prefix="My ">
 	<id>1037</id>
-	<value>My TV - Program information</value>
+	<value>TV - Program information</value>
 </string>
 <string>
 	<id>1038</id>
@@ -3111,9 +3111,9 @@
 </string>
 
 
-<string>
+<string Prefix="My ">
 	<id>1440</id>
-	<value>My TeleText</value>
+	<value>TeleText</value>
 </string>
 <string>
 	<id>1441</id>
@@ -3145,7 +3145,7 @@
 </string>	
 
 	<!-- My Status Strings -->
-	<string><id>1950</id><value>My Status</value></string>
+	<string Prefix="My "><id>1950</id><value>Status</value></string>
 	<string><id>1951</id><value>Harddisk</value></string>
 	<string><id>1952</id><value>Fan</value></string>
 	<string><id>1953</id><value>Free</value></string>
@@ -3230,7 +3230,7 @@
 	<!-- End of My Recipie Strings -->
 	
 	<!-- My Burner Strings -->
-	<string><id>2100</id><value>My Burner</value></string>
+	<string Prefix="My "><id>2100</id><value>Burner</value></string>
 	<string><id>2101</id><value>Copy CD/DVD</value></string>
 	<string><id>2102</id><value>Create Audio-CD</value></string>
 	<string><id>2103</id><value>Create Video-CD</value></string>
@@ -3278,7 +3278,7 @@
 	
 
 	<!-- My Explorer Strings -->
-	<string><id>2200</id><value>My Explorer</value></string>
+	<string Prefix="My "><id>2200</id><value>Explorer</value></string>
 	<string><id>2201</id><value>Select source</value></string>
 	<string><id>2202</id><value>Select destination</value></string>
 	<string><id>2203</id><value>Copy data</value></string>
@@ -3331,9 +3331,9 @@
 	<string><id>3022</id><value>of</value></string>
 
 	<!-- My Trailers Strings -->
-<string>
+<string Prefix="My ">
 	<id>5900</id>
-	<value>My Trailers</value>
+	<value>Trailers</value>
 </string>
 <string>
 	<id>5901</id>
@@ -3405,9 +3405,9 @@
 </string>
 
 	<!-- End of My Trailers Strings -->	
-<string>
+<string Prefix="My ">
 	<id>8000</id>
-	<value>My Mail</value>
+	<value>Mail</value>
 </string>
 <string>
 	<id>8001</id>
@@ -3648,7 +3648,7 @@
 <string><id>25001</id><value>Waiting for Page {0:X}...!</value></string> 
 
 <!-- My Tetris --> 
-<string><id>19001</id><value>My Tetris</value></string> 
+<string Prefix="My "><id>19001</id><value>Tetris</value></string> 
 <string><id>19002</id><value>New Game</value></string> 
 <string><id>19003</id><value>Music</value></string> 
 <string><id>19004</id><value>Sounds</value></string> 
@@ -3667,12 +3667,12 @@
 
 <!-- id 100000 and higher are reserved!! --> 
 <string><id>100000</id><value>Home</value></string>
-<string><id>100001</id><value>My TV</value></string>
-<string><id>100002</id><value>My Pictures</value></string>
-<string><id>100003</id><value>My Files</value></string>
+<string Prefix="My "><id>100001</id><value>TV</value></string>
+<string Prefix="My "><id>100002</id><value>Pictures</value></string>
+<string Prefix="My "><id>100003</id><value>Files</value></string>
 <string><id>100004</id><value>Settings</value></string>
-<string><id>100005</id><value>My Music</value></string>
-<string><id>100006</id><value>My Videos</value></string>
+<string Prefix="My "><id>100005</id><value>Music</value></string>
+<string Prefix="My "><id>100006</id><value>Videos</value></string>
 <string><id>100007</id><value>System information</value></string>
 <string><id>100008</id><value>Settings->General</value></string>
 <string><id>100009</id><value>Settings->Screen</value></string>
@@ -3685,52 +3685,52 @@
 <string><id>100016</id><value>Settings->Screen->Screensaver</value></string>
 <string><id>100017</id><value>Settings->Weather</value></string>
 <string><id>100020</id><value>Settings->Scripts</value></string>
-<string><id>100021</id><value>My Videos/genre</value></string>
-<string><id>100022</id><value>My Videos/actor</value></string>
-<string><id>100023</id><value>My Videos/year</value></string>
+<string Prefix="My "><id>100021</id><value>Videos/genre</value></string>
+<string Prefix="My "><id>100022</id><value>Videos/actor</value></string>
+<string Prefix="My "><id>100023</id><value>Videos/year</value></string>
 <string><id>100024</id><value>Settings->Programs</value></string>
-<string><id>100025</id><value>My Videos/title</value></string>
+<string Prefix="My "><id>100025</id><value>Videos/title</value></string>
 <string><id>100026</id><value>Settings->General->Cache</value></string>
 <string><id>100027</id><value>Settings->General->Autorun</value></string>
-<string><id>100028</id><value>My Videos/playlist</value></string>
+<string Prefix="My "><id>100028</id><value>Videos/playlist</value></string>
 <string><id>100029</id><value>Settings->General->LCD</value></string>
-<string><id>100030</id><value>My Radio</value></string>
+<string Prefix="My "><id>100030</id><value>Radio</value></string>
 <string><id>100031</id><value>Settings->Screen->scroll speed</value></string>
 <string><id>100032</id><value>MSN Messenger</value></string>
 <string><id>100033</id><value>MSN Messenger chat</value></string>
-<string><id>100034</id><value>My Plugins</value></string>
+<string Prefix="My "><id>100034</id><value>Plugins</value></string>
 <string><id>100100</id><value>Yes/no dialog</value></string>
 <string><id>100101</id><value>Progress dialog</value></string>
-<string><id>100500</id><value>My Music/playlist</value></string>
-<string><id>100501</id><value>My Music/shares</value></string>
-<string><id>100502</id><value>My Music/albums</value></string>
-<string><id>100503</id><value>My Music/artists</value></string>
-<string><id>100504</id><value>My Music/genres</value></string>
-<string><id>100505</id><value>My Music/top100</value></string>
-<string><id>100506</id><value>My Music/Favorites</value></string>
-<string><id>100600</id><value>My TV/Guide</value></string>
-<string><id>100601</id><value>My TV/Scheduler</value></string>
-<string><id>100602</id><value>My TV/fullscreen</value></string>
-<string><id>100603</id><value>My TV/Recorded TV</value></string>
-<string><id>100604</id><value>My TV/Search</value></string>
-<string><id>100605</id><value>My TV/Recorded Tv/Genre</value></string>
-<string><id>100606</id><value>My TV/Recorded Tv/channels</value></string>
-<string><id>100750</id><value>My Recipes</value></string>
-<string><id>100755</id><value>My Status</value></string>
-<string><id>100756</id><value>My Status details</value></string>
-<string><id>100757</id><value>My Status preferences</value></string>
+<string Prefix="My "><id>100500</id><value>Music/playlist</value></string>
+<string Prefix="My "><id>100501</id><value>Music/shares</value></string>
+<string Prefix="My "><id>100502</id><value>Music/albums</value></string>
+<string Prefix="My "><id>100503</id><value>Music/artists</value></string>
+<string Prefix="My "><id>100504</id><value>Music/genres</value></string>
+<string Prefix="My "><id>100505</id><value>Music/top100</value></string>
+<string Prefix="My "><id>100506</id><value>Music/Favorites</value></string>
+<string Prefix="My "><id>100600</id><value>TV/Guide</value></string>
+<string Prefix="My "><id>100601</id><value>TV/Scheduler</value></string>
+<string Prefix="My "><id>100602</id><value>TV/fullscreen</value></string>
+<string Prefix="My "><id>100603</id><value>TV/Recorded TV</value></string>
+<string Prefix="My "><id>100604</id><value>TV/Search</value></string>
+<string Prefix="My "><id>100605</id><value>TV/Recorded Tv/Genre</value></string>
+<string Prefix="My "><id>100606</id><value>TV/Recorded Tv/channels</value></string>
+<string Prefix="My "><id>100750</id><value>Recipes</value></string>
+<string Prefix="My "><id>100755</id><value>Status</value></string>
+<string Prefix="My "><id>100756</id><value>Status details</value></string>
+<string Prefix="My "><id>100757</id><value>Status preferences</value></string>
 <string><id>100758</id><value>File dialog</value></string>
-<string><id>100760</id><value>My Burner</value></string>
-<string><id>100770</id><value>My Explorer</value></string>
+<string Prefix="My "><id>100760</id><value>Burner</value></string>
+<string Prefix="My "><id>100770</id><value>Explorer</value></string>
 <string><id>101000</id><value>keyboard</value></string>
 <string><id>102000</id><value>Select dialog</value></string>
-<string><id>102001</id><value>My Music/info</value></string>
+<string Prefix="My "><id>102001</id><value>Music/info</value></string>
 <string><id>102002</id><value>Dialog OK</value></string>
-<string><id>102003</id><value>My Videos/Info</value></string>
-<string><id>102004</id><value>My Scripts/Info</value></string>
+<string Prefix="My "><id>102003</id><value>Videos/Info</value></string>
+<string Prefix="My "><id>102004</id><value>Scripts/Info</value></string>
 <string><id>102005</id><value>Fullscreen video</value></string>
 <string><id>102006</id><value>Audio visisalisation</value></string>
-<string><id>102007</id><value>My Picture/slideshow</value></string>
+<string Prefix="My "><id>102007</id><value>Picture/slideshow</value></string>
 <string><id>102008</id><value>Filestacking dialog</value></string>
 <string><id>102009</id><value>Selection dialog</value></string>
 <string><id>102010</id><value>Date/Time</value></string>
@@ -3740,17 +3740,16 @@
 <string><id>102014</id><value>Picture info</value></string>
 <string><id>102015</id><value>Mini Menu</value></string>
 <string><id>102016</id><value>Notification</value></string>
-<string><id>102600</id><value>My Weather</value></string>
-<string><id>102700</id><value>My News</value></string>
+<string Prefix="My "><id>102600</id><value>Weather</value></string>
+<string Prefix="My "><id>102700</id><value>News</value></string>
 <string><id>102900</id><value>Screensaver</value></string>
 <string><id>102901</id><value>Fullscreen OSD</value></string>
 
-<string><id>103003</id><value>My TV/OSD</value></string>
-<string><id>103006</id><value>My TV/MSN OSD</value></string>
-<string><id>103007</id><value>My TV/Zap OSD</value></string>
-<string><id>107700</id><value>My TV/Teletext</value></string>
-<string><id>107701</id><value>My TV/Teletext</value></string>
-
+<string Prefix="My "><id>103003</id><value>TV/OSD</value></string>
+<string Prefix="My "><id>103006</id><value>TV/MSN OSD</value></string>
+<string Prefix="My "><id>103007</id><value>TV/Zap OSD</value></string>
+<string Prefix="My "><id>107700</id><value>TV/Teletext</value></string>
+<string Prefix="My "><id>107701</id><value>TV/Teletext</value></string>
 
 <string><id>200000</id><value>Please select your EPG grabber. Note if your country is</value></string>
 <string><id>200001</id><value>not listed then you will need to supply the EPG manually</value></string>
