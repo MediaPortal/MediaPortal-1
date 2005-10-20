@@ -29,7 +29,7 @@ namespace MediaPortal.Animation
 {
 	public enum FillBehavior
 	{
-		Deactivate,
+		Stop,
 		HoldEnd,
 	}
 }
