@@ -66,7 +66,7 @@ namespace System.Windows
 		#region Fields
 
 		DependencyBinding			_binding;
-		bool						_isTriggered;
+//		bool						_isTriggered = false;
 		SetterCollection			_setters;
 		object						_value;
 

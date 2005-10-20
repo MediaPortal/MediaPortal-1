@@ -36,6 +36,10 @@ namespace MediaPortal.Animation
 
 		public void Begin()
 		{
+			// stop compiler never used warnings
+			if(_animation == null)
+				_animation = null;
+
 			_job = new Job();
 			_job.DoWork += new DoWorkEventHandler(BeginWorker);
 			_job.Dispatch();
@@ -101,8 +105,8 @@ namespace MediaPortal.Animation
         
 		#region Fields
 		
-		Clock					_clock;
-		AnimationBase			_animation;
+		Clock					_clock = null;
+		AnimationBase			_animation = null;
 		Job						_job;
 		double					_speedRatio = 1;
 

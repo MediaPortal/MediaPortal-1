@@ -35,7 +35,7 @@ namespace MediaPortal.Animation
 		{
 			_timeline = timeline;
 			_timeline.CurrentStateInvalidated += new EventHandler(TimelineCurrentStateInvalidated);
-			_timeline.CurrentGlobalSpeedInvalidated += new EventHandler(TimelineCurrentGlobabSpeedInvalidated);
+			_timeline.CurrentGlobalSpeedInvalidated += new EventHandler(TimelineCurrentGlobalSpeedInvalidated);
 			_timeline.CurrentTimeInvalidated += new EventHandler(TimelineCurrentTimeInvalidated);
 		}
 
@@ -45,9 +45,17 @@ namespace MediaPortal.Animation
 
 		private void TimelineCurrentStateInvalidated(object sender, EventArgs e)
 		{
+			// to stop '...' is never used compiler warnings
+			if(_currentTime == 0)
+			{
+			}
+
+			if(_currentState == ClockState.Stopped)
+			{
+			}
 		}
 
-		private void TimelineCurrentGlobabSpeedInvalidated(object sender, EventArgs e)
+		private void TimelineCurrentGlobalSpeedInvalidated(object sender, EventArgs e)
 		{
 		}
 
@@ -119,13 +127,13 @@ namespace MediaPortal.Animation
 
 		#region Fields
 
-		ClockCollection				_children;
-		ClockState					_currentState;
-		double						_currentTime;
-		bool						_isPaused;
-		Duration					_naturalDuration;
-		Clock						_parent;
-		Timeline					_timeline;
+		ClockCollection				_children = null;
+		ClockState					_currentState = ClockState.Stopped;
+		double						_currentTime = 0;
+		bool						_isPaused = false;
+		Duration					_naturalDuration = Duration.Automatic;
+		Clock						_parent = null;
+		Timeline					_timeline = null;
 
 		#endregion Fields
 	}

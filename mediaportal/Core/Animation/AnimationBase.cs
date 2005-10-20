@@ -214,22 +214,22 @@ namespace MediaPortal.Animation
 */
 		#region Fields
 
-		double						_accelerationRatio;
-		double						_beginTime;
-		bool						_isAutoReverse;
-		bool						_isAnimating;
-		AnimationCollection			_children;
-		double						_cutoffTime;
-		double						_decelerationRatio;
+//		double						_accelerationRatio;
+		double						_beginTime = 0;
+		bool						_isAutoReverse = false;
+		bool						_isAnimating = false;
+//		AnimationCollection			_children;
+//		double						_cutoffTime;
+//		double						_decelerationRatio;
 		Duration					_duration = new Duration();
-		RepeatBehavior				_repeatBehavior;
+		RepeatBehavior				_repeatBehavior = RepeatBehavior.Forever;
 		object						_target;
 		DependencyBinding			_binding;
-		ClockController				_interactiveController;
-		bool						_isReversed;
+//		ClockController				_interactiveController;
+		bool						_isReversed = false;
 		int							_iterationCount = 0;
 		bool						_isPaused = false;
-		Easing						_easingStyle;
+//		Easing						_easingStyle;
 
 		#endregion Fields
 	}

@@ -148,7 +148,7 @@ namespace MediaPortal.Animation
 		#region Fields
 
 		Clock						_clock;
-		bool						_isDirty;
+		bool						_isDirty = false;
 		bool						_isPaused;
 		bool						_isStarted;
 		long						_startTick;

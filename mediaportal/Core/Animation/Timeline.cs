@@ -36,6 +36,12 @@ namespace MediaPortal.Animation
 
 		protected Timeline()
 		{
+			// stop compiled never used warnings
+			if(CurrentGlobalSpeedInvalidated != null)
+				CurrentGlobalSpeedInvalidated(this, EventArgs.Empty);
+
+			if(CurrentTimeInvalidated != null)
+				CurrentTimeInvalidated(this, EventArgs.Empty);
 		}
 
 		protected Timeline(TimeSpan beginTime)
@@ -69,7 +75,7 @@ namespace MediaPortal.Animation
 		{
 			lock(this)
 			{
-				_iterationCount = 0;
+//				_iterationCount = 0;
 				_isReversed = false;
 				_isAnimating = true;
 //				_beginTime = AnimationTimer.Progress();
@@ -223,7 +229,7 @@ namespace MediaPortal.Animation
 
 		double						_accelerationRatio;
 		double						_beginTime;
-		double						_beginTimeRepetition;
+//		double						_beginTimeRepetition = 0;
 		FillBehavior				_fillBehavior;
 		bool						_isAutoReverse;
 		bool						_isAnimating;
@@ -236,8 +242,8 @@ namespace MediaPortal.Animation
 		RepeatBehavior				_repeatBehavior;
 		ClockController				_interactiveController;
 		bool						_isReversed;
-		int							_iterationCount = 0;
-		bool						_isPaused = false;
+//		int							_iterationCount = 0;
+//		bool						_isPaused = false;
 
 		#endregion Fields
 	}
