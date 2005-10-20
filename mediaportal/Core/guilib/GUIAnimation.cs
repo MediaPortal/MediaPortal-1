@@ -132,16 +132,12 @@ namespace MediaPortal.GUI.Library
 				_isAnimating = true;
 				_isFirstRender = false;
 			}
-			else if(_isAnimating == false)
-			{
-				return;
-			}
 
 			double elapsedTicks = AnimationTimer.TickCount - _startTick;
 			double progress = Math.Min(1, TweenHelper.Interpolate(_easing, 0, 1, _startTick, _duration));
 
 			// determine whether we are repeating
-			if(_duration < elapsedTicks)
+			if(_isAnimating && _duration < elapsedTicks)
 			{
 				// keep track of iterations regardless of the repeat behaviour
 				_iterationCount++;
