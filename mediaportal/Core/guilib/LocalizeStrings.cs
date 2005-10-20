@@ -21,7 +21,9 @@
 
 using System;
 using System.Collections;
+using System.Text;
 using System.Xml;
+
 namespace MediaPortal.GUI.Library
 {
 	/// <summary>
@@ -62,6 +64,11 @@ namespace MediaPortal.GUI.Library
 		/// <returns></returns>
     static bool LoadMap(string strFileName, ref System.Collections.Hashtable map, bool bDetermineNumberOfChars)
     {
+		bool isPrefixEnabled = true;
+
+		using(MediaPortal.Profile.Xml reader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			isPrefixEnabled = reader.GetValueAsBool("general", "myprefix", true);
+
 			if (strFileName==null) return false;
 			if (strFileName==String.Empty) return false;
 			if (map==null) return false;
@@ -97,9 +104,23 @@ namespace MediaPortal.GUI.Library
         XmlNodeList list=doc.DocumentElement.SelectNodes("/strings/string");
         foreach (XmlNode node in list)
         {
-          string strLine=node.SelectSingleNode("value").InnerText;
-          int    iCode       =(int)System.Int32.Parse(node.SelectSingleNode("id").InnerText);
-          map[iCode]=strLine;
+			StringBuilder builder = new StringBuilder();
+
+			int    iCode       =(int)System.Int32.Parse(node.SelectSingleNode("id").InnerText);
+
+			XmlAttribute prefix = node.Attributes["Prefix"];
+
+			if(isPrefixEnabled && prefix != null)
+				builder.Append(prefix.Value);
+
+			builder.Append(node.SelectSingleNode("value").InnerText);
+
+			XmlAttribute suffix = node.Attributes["Suffix"];
+
+			if(isPrefixEnabled && suffix != null)
+				builder.Append(suffix.Value);
+
+			map[iCode]=builder.ToString();
         }
         return true;
       }
