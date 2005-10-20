@@ -490,7 +490,7 @@ STDMETHODIMP CDumpInputPin::Receive(IMediaSample *pSample)
 						int pid=((m_restBuffer[1] & 0x1F) <<8)+m_restBuffer[2];
 						if(IsPidValid(pid)==true)
 						{
-							byte scrambled=pbData[3] & 0xC0;
+							byte scrambled=m_restBuffer[3] & 0xC0;
 							if( !scrambled && m_audioState==Unscrambled && (m_videoState==Unscrambled||m_videoPid<=0) )
 							{
 								CAutoLock fileLock(&m_section);
