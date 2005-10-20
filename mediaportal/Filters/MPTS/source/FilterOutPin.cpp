@@ -153,8 +153,8 @@ HRESULT CFilterOutPin::GetData(byte* pData, int lDataLength)
 				}
 				else break;
 			}
-			if (count>=100)
-				LogDebug("pin:Wait %x/%x (%d)", (DWORD)m_pFileReader->GetFilePointer(),(DWORD)m_pSections->pids.fileStartPosition,count);
+			//if (count>=100)
+				//LogDebug("pin:Wait %x/%x (%d)", (DWORD)m_pFileReader->GetFilePointer(),(DWORD)m_pSections->pids.fileStartPosition,count);
 		}
 
 		bool endOfFile=false;
@@ -272,7 +272,11 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 		
 
 	hr=GetData(pData,lDataLength);
-	if (hr==E_FAIL) return E_FAIL;
+	if (hr==E_FAIL) 
+	{
+		LogDebug("FAILED to get data from file");
+		return E_FAIL;
+	}
 
 	ULONGLONG pts=0;
 	ULONGLONG ptsNow=0;
@@ -282,6 +286,7 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 		if (m_bAboutToStop) return E_FAIL;
 		int pid;
 		m_pSections->GetTSHeader(&pData[i],&header);
+		/*
 		imapDiscontinuitySent it = m_mapDiscontinuitySent.find(header.Pid);
 		if (header.Pid>0)
 		{
@@ -303,7 +308,7 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 				it->second=false;
 				m_bDiscontinuity=TRUE;
 			}
-		}
+		}*/
 /*
 		byte scrambled=pData[i+3] & 0xC0;
 		if (scrambled)
@@ -355,6 +360,7 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 //	LogDebug("snd pkt pts:%x  pes:%x disc:%d", (DWORD)ptsNow, m_iPESPid, m_bDiscontinuity);
 	if(m_bDiscontinuity) 
 	{
+		LogDebug("set discontinuity");
 		pSample->SetDiscontinuity(TRUE);
 		m_bDiscontinuity = FALSE;
 	}

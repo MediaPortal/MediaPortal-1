@@ -503,18 +503,34 @@ STDMETHODIMP CDumpInputPin::Receive(IMediaSample *pSample)
 							}
 						}
 					}
+					else 
+					{
+						LogDebug("error4");
+					}
 					step=55;
-					//else LogDebug("***RESTBUFFER START != 0x47");
 
 					//set offset ...
 					if (pbData[len]==0x47 && pbData[len+188]==0x47 && pbData[len+2*188]==0x47)
 					{
 						off=len;
 					}
+					else 
+					{
+						LogDebug("error3");
+						m_restBufferLen=0;
+					}
 				}
-				else m_restBufferLen=0;
+				else 
+				{
+					LogDebug("error2");
+					m_restBufferLen=0;
+				}
 			}
-			else m_restBufferLen=0;
+			else 
+			{
+				LogDebug("error1");
+				m_restBufferLen=0;
+			}
 		}
 		step=6;
 
@@ -534,12 +550,12 @@ STDMETHODIMP CDumpInputPin::Receive(IMediaSample *pSample)
 			}
 		}
 		step=7;
-		if (off != (188-m_restBufferLen) && off!=0)
-			LogDebug("***OFF != END OF RESTBUFFER %d %d",off,(188-m_restBufferLen));
-
+		
 		if (off<0)
+		{
+			LogDebug("error5");
 			off=0;
-
+		}
 
 		//loop through all transport packets in the media sample
 		step=8;
@@ -609,6 +625,10 @@ STDMETHODIMP CDumpInputPin::Receive(IMediaSample *pSample)
 				//else LogDebug("wrong pid:%x", pid);
 
 			}
+			else 
+			{
+				LogDebug("error6");
+			}
 		}
 		
 		//calculate if there's a incomplete transport packet at end of media sample
@@ -628,8 +648,8 @@ STDMETHODIMP CDumpInputPin::Receive(IMediaSample *pSample)
 		step=10;
 	//	LogDebug("copy %d bytes off:%d len:%d", m_restBufferLen,off,pSample->GetActualDataLength());
 		
-	//	if (m_restBufferLen<0 || m_restBufferLen >=188)
-	//		LogDebug("***RESTBUFFER INVALID");
+		if (m_restBufferLen<0 || m_restBufferLen >=188)
+			LogDebug("***RESTBUFFER INVALID");
 
 		//update the .info file with new positions and pes
 		CAutoLock fileLock(&m_section);

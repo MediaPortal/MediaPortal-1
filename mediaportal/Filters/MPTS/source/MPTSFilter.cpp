@@ -250,7 +250,7 @@ HRESULT CMPTSFilter::OnConnect()
 		LogDebug("filter::OnConnect ok");
 	else
 		LogDebug("filter::OnConnect failed:%x",hr);
-	//SetSyncClock();// try to select the clock on the audio-renderer
+	SetSyncClock();// try to select the clock on the audio-renderer
 	return S_OK;
 }
 
