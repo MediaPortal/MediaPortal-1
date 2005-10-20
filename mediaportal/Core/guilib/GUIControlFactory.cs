@@ -336,9 +336,6 @@ namespace MediaPortal.GUI.Library
 				{
 					if(char.IsUpper(element.Name[0]))
 					{
-						Log.Write("controlType: {0}", controlType.Name);
-						Log.Write("elementName: {0}", element.Name);
-
 						PropertyInfo propertyInfo;
 
 						if(element.Name.IndexOf('.') != -1)
