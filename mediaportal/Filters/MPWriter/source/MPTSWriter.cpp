@@ -649,7 +649,7 @@ STDMETHODIMP CDumpInputPin::Receive(IMediaSample *pSample)
 		{
 			if (GetTickCount()-m_audioTimer > 100)
 			{
-				LogDebug("pid:0x%x audio stream not found",m_videoPid);
+				LogDebug("pid:0x%x video stream not found",m_videoPid);
 				m_videoState = NotPresent;
 			}
 		}
