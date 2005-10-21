@@ -27,6 +27,9 @@ using System.Reflection;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Direct3D = Microsoft.DirectX.Direct3D;
+
+using MediaPortal.Xaml;
+
 namespace MediaPortal.GUI.Library
 {
 	/// <summary>
@@ -439,6 +442,21 @@ namespace MediaPortal.GUI.Library
 				{
 					// TODO Add some error when conversion fails message here.
 				}
+
+				foreach(XmlNode node in doc.DocumentElement.SelectNodes("/window/*[contains(name(), '.')]"))
+				{
+					XamlParser parser = new XamlParser();
+
+					string xml = node.OuterXml;
+
+					if(xml.StartsWith("Button."))
+						xml = xml.Replace("Button.", "GUIControl.");
+					else if(xml.StartsWith("Window."))
+						xml = xml.Replace("Window.", "GUIWindow.");
+
+					parser.LoadXml(xml, XmlNodeType.Element, this);
+				}
+
 				// Configure the overlay settings
 				XmlNode nodeOverlay = doc.DocumentElement.SelectSingleNode("/window/allowoverlay");
 				if (nodeOverlay != null) 
