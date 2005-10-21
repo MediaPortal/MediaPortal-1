@@ -1,3 +1,5 @@
+#region Copyright (C) 2005 Media Portal
+
 /* 
  *	Copyright (C) 2005 Media Portal
  *	http://mediaportal.sourceforge.net
@@ -18,16 +20,18 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
+
 using System;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Collections;
-using System.Xml;
 using System.Reflection;
-using Microsoft.DirectX;
-using Microsoft.DirectX.Direct3D;
-using Direct3D = Microsoft.DirectX.Direct3D;
+using System.Windows;
+using System.Xml;
 
+using MediaPortal.Animation;
 using MediaPortal.Xaml;
 
 namespace MediaPortal.GUI.Library
@@ -450,9 +454,10 @@ namespace MediaPortal.GUI.Library
 
 					string xml = node.OuterXml;
 
-					if(xml.StartsWith("Button."))
+					if(xml.IndexOf("Button.") != -1)
 						xml = xml.Replace("Button.", "GUIControl.");
-					else if(xml.StartsWith("Window."))
+					
+					if(xml.IndexOf("Window.") != -1)
 						xml = xml.Replace("Window.", "GUIWindow.");
 
 					parser.LoadXml(xml, XmlNodeType.Element, this);
@@ -1276,6 +1281,28 @@ namespace MediaPortal.GUI.Library
 			}
 		}
 		#endregion
+
+		#region Properties
+
+		public StoryboardCollection Storyboards
+		{
+			get { if(_storyboards == null) _storyboards = new StoryboardCollection(); return _storyboards; }
+		}
+
+		public ResourceDictionary Resources
+		{
+			get { if(_resources == null) _resources = new ResourceDictionary(); return _resources; }
+			set { _resources = value; }
+		}
+
+		#endregion Properties
+
+		#region Fields
+
+		ResourceDictionary			_resources;
+		StoryboardCollection		_storyboards;
+
+		#endregion Fields
 
 	}
 }

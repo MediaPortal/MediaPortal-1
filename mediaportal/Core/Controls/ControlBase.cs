@@ -64,13 +64,19 @@ namespace MediaPortal.Controls
 			set;
 		}
 
+		public abstract Point Location
+		{
+			get;
+			set;
+		}
+
 		public abstract Thickness Margin
 		{
 			get;
 			set;
 		}
 
-		public abstract Point Location
+		public abstract double Opacity
 		{
 			get;
 			set;

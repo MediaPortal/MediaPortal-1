@@ -1226,6 +1226,12 @@ namespace MediaPortal.GUI.Library
 			set { _margin = value; }
 		}
 
+		public override double Opacity
+		{
+			get { return 255.0 / System.Drawing.Color.FromArgb((int)m_colDiffuse).A; }
+			set { m_colDiffuse = System.Drawing.Color.FromArgb((int)(255 * value), System.Drawing.Color.FromArgb((int)m_colDiffuse)).ToArgb(); }
+		}
+
 		public override Size Size
 		{
 			get { return new Size(m_dwWidth, m_dwHeight); }

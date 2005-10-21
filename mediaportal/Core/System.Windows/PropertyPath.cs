@@ -89,6 +89,8 @@ namespace System.Windows
 
 				Type t = GetType(typename);
 
+				MediaPortal.GUI.Library.Log.Write("typename: {0}", typename);
+
 				if(t == null)
 					throw new ArgumentException(string.Format("The type or namespace '{0}' could not be found", t));
 
@@ -133,7 +135,7 @@ namespace System.Windows
 
 		string						_path = string.Empty;
 		object[]					_propertyInfoArray;
-		static string[]				_namespaces = new string[] { "MediaPortal", "MediaPortal.Controls", "MediaPortal.Drawing", "MediaPortal.Drawing.Shapes", "MediaPortal.Drawing.Transforms", "MediaPortal.Animation", "System.Windows", "System.Windows.Serialization", "MediaPortal.Drawing.Paths" };
+		static string[]				_namespaces = new string[] { "MediaPortal", "MediaPortal.Controls", "MediaPortal.Drawing", "MediaPortal.Drawing.Shapes", "MediaPortal.Drawing.Transforms", "MediaPortal.Animation", "System.Windows", "System.Windows.Serialization", "MediaPortal.Drawing.Paths", "MediaPortal.GUI.Library" };
 
 		#endregion Fields
 	}

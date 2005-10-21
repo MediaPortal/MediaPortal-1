@@ -33,6 +33,8 @@ namespace MediaPortal.Controls
 {
 	public class StackPanel
 	{
+		#region Constructors
+
 		public StackPanel()
 		{
 			_layout = new StackLayout();
@@ -40,6 +42,8 @@ namespace MediaPortal.Controls
 			_group = new GUIGroup(0);
 			_group.Layout = _layout;
 		}
+
+		#endregion Constructors
 
 		#region Properties
 
