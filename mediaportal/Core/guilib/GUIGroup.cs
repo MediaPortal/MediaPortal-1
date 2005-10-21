@@ -21,10 +21,10 @@
 using System;
 using System.Collections;
 using System.ComponentModel;
-using System.Drawing;
 using System.Windows.Serialization;
 
-using MediaPortal.Layouts;
+using MediaPortal.Drawing;
+using MediaPortal.Drawing.Layouts;
 
 namespace MediaPortal.GUI.Library
 {
@@ -289,7 +289,7 @@ namespace MediaPortal.GUI.Library
 			_layout.Arrange(this);
 		}
 
-		protected override void ArrangeCore(Rectangle rect)
+		protected override void ArrangeCore(Rect rect)
 		{
 			this.Location = rect.Location;
 			this.Size = rect.Size;
@@ -330,15 +330,15 @@ namespace MediaPortal.GUI.Library
 			get { return _children; }
 		}
 
+		Thickness ILayoutComposite.Margin
+		{
+			get { return base.Margin; }
+		}
+
 		public ILayout Layout
 		{
 			get { return _layout; }
 			set { _layout = value; }
-		}
-
-		Margins ILayoutComposite.Margins
-		{
-			get { return new Margins(0, 0); }
 		}
 
 		#endregion Properties

@@ -39,11 +39,16 @@ namespace MediaPortal.Drawing
 		void IScenegraphResource.PrepareResource(ScenegraphContext context)
 		{
 			_isDirty = false;
+
 		}
 
 		void IScenegraphResource.ReleaseResource(ScenegraphContext context)
 		{
 			_isDirty = true;
+
+			// prevent compiler warnings
+			if(_isDirty)
+				_isDirty = true;
 		}
 
 		protected void RaiseChanged()

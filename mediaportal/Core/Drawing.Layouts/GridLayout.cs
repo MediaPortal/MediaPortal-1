@@ -126,11 +126,11 @@ namespace MediaPortal.Drawing.Layouts
 
 			double w = (size.Width - t.Width - (cols - 1) * _spacing.Width) / cols;
 			double h = (size.Height - t.Height - (rows - 1) * _spacing.Height) / rows;
-			double y = t.Top;
+			double y = composite.Location.Y + t.Top;
 
 			for(int row = 0; row < rows; row++)
 			{
-				double x = t.Left;
+				double x = composite.Location.X + t.Left;
 
 				for(int col = 0; col < cols; col++)
 				{

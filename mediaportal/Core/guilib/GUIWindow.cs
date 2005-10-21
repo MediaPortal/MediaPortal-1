@@ -443,6 +443,7 @@ namespace MediaPortal.GUI.Library
 					// TODO Add some error when conversion fails message here.
 				}
 
+				// find any XAML complex/compound properties
 				foreach(XmlNode node in doc.DocumentElement.SelectNodes("/window/*[contains(name(), '.')]"))
 				{
 					XamlParser parser = new XamlParser();

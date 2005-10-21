@@ -21,17 +21,17 @@
 using System;
 using System.Collections;
 using System.Diagnostics;
-using System.Drawing;
 
 using MediaPortal.Animation;
-using MediaPortal.Layouts;
+using MediaPortal.Drawing;
+using MediaPortal.Drawing.Layouts;
 
 namespace MediaPortal.GUI.Library
 {
 	/// <summary>
 	/// Base class for GUIControls.
 	/// </summary>
-	public abstract class GUIControl : MediaPortal.Layouts.Control
+	public abstract class GUIControl : MediaPortal.Controls.ControlBase
 	{
 		[XMLSkinElement("subtype")]			protected string  m_strSubType = "";
 		[XMLSkinElement("onleft")]			protected int			m_dwControlLeft = 0;
@@ -56,7 +56,7 @@ namespace MediaPortal.GUI.Library
 		protected int			m_iWindowID;
 		protected int			m_SelectedItem=0;
 		protected ArrayList m_SubItems = new ArrayList();
-		protected Rectangle m_originalRect;
+		protected System.Drawing.Rectangle m_originalRect;
 		protected bool m_bAnimating=false;
 		protected long m_lOriginalColorDiffuse;
 
@@ -211,7 +211,7 @@ namespace MediaPortal.GUI.Library
 
 			if(this is GUIListControl)
 			{
-				Rectangle rect = ((GUIListControl)this).SelectedRectangle;
+				System.Drawing.Rectangle rect = ((GUIListControl)this).SelectedRectangle;
 
 				currentX = rect.X;
 				currentY = rect.Y;
@@ -258,8 +258,8 @@ namespace MediaPortal.GUI.Library
 		
 		static double CalcBearing(Point p1, Point p2)
 		{
-			int horzDelta = p2.X - p1.X;
-			int vertDelta = p2.Y - p1.Y;
+			double horzDelta = p2.X - p1.X;
+			double vertDelta = p2.Y - p1.Y;
 
 			// arctan gives us the bearing, just need to convert -pi..+pi to 0..360 deg
 			double bearing = Math.Round(90 - Math.Atan2(vertDelta, horzDelta) / Math.PI * 180 + 360) % 360;
@@ -272,8 +272,8 @@ namespace MediaPortal.GUI.Library
 
 		static double CalcDistance(Point p2, Point p1)
 		{
-			int horzDelta = p2.X - p1.X;
-			int vertDelta = p2.Y - p1.Y;
+			double horzDelta = p2.X - p1.X;
+			double vertDelta = p2.Y - p1.Y;
 
 			return Math.Round(Math.Sqrt((horzDelta * horzDelta) + (vertDelta * vertDelta)));
 		}
@@ -491,18 +491,6 @@ namespace MediaPortal.GUI.Library
 		}
 
 		/// <summary>
-		/// Gets and sets the visible state of the control.
-		/// </summary>
-		public virtual bool IsVisible
-		{
-			get { return m_bVisible; }
-			set 
-			{
-				m_bVisible = value;
-			}
-		}
-			
-		/// <summary>
 		/// Gets and sets the Disabled property of the control.
 		/// </summary>
 		public virtual bool Disabled
@@ -587,6 +575,12 @@ namespace MediaPortal.GUI.Library
 				if (m_dwPosY<0) m_dwPosY=0;
 				Update();
 			}
+		}
+
+		public bool Visible
+		{
+			get { return IsVisible; }
+			set { IsVisible = value; }
 		}
 
 		/// <summary>
@@ -1100,7 +1094,7 @@ namespace MediaPortal.GUI.Library
 		public virtual void StorePosition()
 		{
 			m_bAnimating=false;
-			m_originalRect=new Rectangle(m_dwPosX, m_dwPosY, m_dwWidth, m_dwHeight);
+			m_originalRect=new System.Drawing.Rectangle(m_dwPosX, m_dwPosY, m_dwWidth, m_dwHeight);
 			m_lOriginalColorDiffuse=m_colDiffuse;
 		}
 
@@ -1183,12 +1177,12 @@ namespace MediaPortal.GUI.Library
 
 		#region Methods
 
-		protected override void ArrangeCore(Rectangle rect)
+		protected override void ArrangeCore(Rect rect)
 		{
-			m_dwPosX = rect.X;
-			m_dwPosY = rect.Y;
-			m_dwWidth = rect.Width;
-			m_dwHeight = rect.Height;
+			m_dwPosX = (int)rect.X;
+			m_dwPosY = (int)rect.Y;
+			m_dwWidth = (int)rect.Width;
+			m_dwHeight = (int)rect.Height;
 
 			Update();
 		}
@@ -1202,28 +1196,46 @@ namespace MediaPortal.GUI.Library
 
 		#region Properties
 
-		public override Size Size
+		public AnimationCollection Animations
 		{
-			get { return new Size(m_dwWidth, m_dwHeight); }
-			set { m_dwWidth = value.Width; m_dwHeight = value.Height; Update(); }
+			get { if(_animations != null) _animations = new AnimationCollection(this); return _animations; }
+			set { _animations = value; }
 		}
 
-		public override Point Location
+		public override HorizontalAlignment HorizontalAlignment
 		{
-			get { return new Point(m_dwPosX, m_dwPosY); }
-			set { m_dwPosX = value.X; m_dwPosY = value.Y; Update(); }
+			get { return _horizontalAlignment; }
+			set { _horizontalAlignment = value; }
 		}
 
-		public override bool Visible
+		public override bool IsVisible
 		{
 			get { return m_bVisible; }
 			set { m_bVisible = value; }
 		}
 
-		public AnimationCollection Animations
+		public override Point Location
 		{
-			get { if(_animations != null) _animations = new AnimationCollection(this); return _animations; }
-			set { _animations = value; }
+			get { return new Point(m_dwPosX, m_dwPosY); }
+			set { m_dwPosX = (int)value.X; m_dwPosY = (int)value.Y; Update(); }
+		}
+
+		public override Thickness Margin
+		{
+			get { return _margin; }
+			set { _margin = value; }
+		}
+
+		public override Size Size
+		{
+			get { return new Size(m_dwWidth, m_dwHeight); }
+			set { m_dwWidth = (int)value.Width; m_dwHeight = (int)value.Height; Update(); }
+		}
+
+		public override VerticalAlignment VerticalAlignment
+		{
+			get { return _verticalAlignment; }
+			set { _verticalAlignment = value; }
 		}
 
 		#endregion Properties
@@ -1231,6 +1243,9 @@ namespace MediaPortal.GUI.Library
 		#region Fields
 
 		AnimationCollection			_animations;
+		HorizontalAlignment			_horizontalAlignment;
+		Thickness					_margin;
+		VerticalAlignment			_verticalAlignment;
 
 		#endregion Fields
 	}

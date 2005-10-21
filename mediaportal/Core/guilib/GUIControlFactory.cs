@@ -28,7 +28,8 @@ using System.Xml;
 using System.Windows.Serialization;
 
 using MediaPortal.Animation;
-using MediaPortal.Layouts;
+using MediaPortal.Drawing;
+using MediaPortal.Drawing.Layouts;
 using MediaPortal.Xaml;
 
 namespace MediaPortal.GUI.Library
@@ -90,7 +91,7 @@ namespace MediaPortal.GUI.Library
 
 		private static void ReadSkinSizeFromReferenceFile(XmlDocument doc)
 		{
-			GUIGraphicsContext.SkinSize = new Size(720, 576);
+			GUIGraphicsContext.SkinSize = new System.Drawing.Size(720, 576);
 			XmlNode nodeSkinWidth = doc.DocumentElement.SelectSingleNode("/controls/skin/width/text()");
 			XmlNode nodeSkinHeight = doc.DocumentElement.SelectSingleNode("/controls/skin/height/text()");
 			if (nodeSkinWidth != null && nodeSkinHeight != null)
@@ -100,7 +101,7 @@ namespace MediaPortal.GUI.Library
 					int iWidth = Convert.ToInt16(nodeSkinWidth.Value);
 					int iHeight = Convert.ToInt16(nodeSkinHeight.Value);
 					Log.Write("  original skin size:{0}x{1}", iWidth, iHeight);
-					GUIGraphicsContext.SkinSize = new Size(iWidth, iHeight);
+					GUIGraphicsContext.SkinSize = new System.Drawing.Size(iWidth, iHeight);
 				}
 				catch (FormatException) // Size values were invalid.
 				{

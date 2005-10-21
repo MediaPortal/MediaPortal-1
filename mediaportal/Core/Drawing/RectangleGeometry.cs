@@ -140,7 +140,7 @@ namespace MediaPortal.Drawing
 		double						_radiusX;
 		double						_radiusY;
 		Rect						_rect;
-		PathFigure					_pathFigure;
+//		PathFigure					_pathFigure;
 		
 		#endregion Fields
 	}

@@ -26,6 +26,7 @@ using System.IO;
 using System.Threading;
 
 using MediaPortal.Animation;
+using MediaPortal.Drawing;
 
 namespace MediaPortal.GUI.Library
 {

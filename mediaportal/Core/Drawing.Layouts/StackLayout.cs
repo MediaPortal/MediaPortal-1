@@ -89,8 +89,8 @@ namespace MediaPortal.Drawing.Layouts
 			Thickness t = composite.Margin;
 			Point l = composite.Location;
 
-			double x = t.Left;
-			double y = t.Top;
+			double x = composite.Location.X + t.Left;
+			double y = composite.Location.Y + t.Top;
 			double w = _orientation != Orientation.Horizontal ? Math.Max(0, composite.Size.Width - t.Width) : 0;
 			double h = _orientation == Orientation.Horizontal ? Math.Max(0, composite.Size.Height - t.Height) : 0;
 

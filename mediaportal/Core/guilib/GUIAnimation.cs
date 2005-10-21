@@ -30,6 +30,7 @@ using System.IO;
 using System.Threading;
 
 using MediaPortal.Animation;
+using MediaPortal.Drawing;
 
 namespace MediaPortal.GUI.Library
 {
@@ -189,7 +190,7 @@ namespace MediaPortal.GUI.Library
 			get { if(_filenames == null) _filenames = new ArrayList(); return _filenames; }
 		}
 
-		public HorizontalAlignment HorizontalAlignment
+		public override HorizontalAlignment HorizontalAlignment
 		{
 			get { return _horizontalAlignment; }
 			set { _horizontalAlignment = value; }
@@ -201,7 +202,7 @@ namespace MediaPortal.GUI.Library
 			set { _repeatBehavior = value; }
 		}
 		
-		public VerticalAlignment VerticalAlignment
+		public override VerticalAlignment VerticalAlignment
 		{
 			get { return _verticalAlignment; }
 			set { _verticalAlignment = value; }

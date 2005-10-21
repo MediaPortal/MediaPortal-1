@@ -49,6 +49,10 @@ namespace MediaPortal.Drawing.Paths
 		protected void RaiseChanged()
 		{
 			_isDirty = true;
+
+			// prevent compiler warnings
+			if(_isDirty)
+				_isDirty = true;
 		}
 
 		#endregion Methods
