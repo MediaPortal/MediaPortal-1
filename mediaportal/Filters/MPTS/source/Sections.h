@@ -19,6 +19,21 @@ public:
 		ULONG ProgrammPMTPID;
 	};
 
+	typedef struct AdaptionHeader
+	{
+		bool DiscontinuityIndicator;
+		bool RandomAccessIndicator;
+		bool ElementaryStreamPriorityIndicator;
+		bool PCRFlag;
+		bool OPCRFlag;
+		bool SplicingPointFlag;
+		bool TransportPrivateData;
+		bool AdaptationHeaderExtension;
+		unsigned short Len;
+		ULONGLONG PCRValue;
+		WORD PCRCounter;
+	};
+
 	typedef struct TSHeader
 	{
 		BYTE SyncByte			;
@@ -67,6 +82,7 @@ public:
 	virtual ~Sections();
 	HRESULT GetTSHeader(BYTE *data,TSHeader *header);
 	HRESULT GetPESHeader(BYTE *data,PESHeader *header);
+	HRESULT GetAdaptionHeader(BYTE *data,AdaptionHeader *header);
 	HRESULT CheckStream();
 	HRESULT ParseFromFile(void);
 	void	GetPTS(BYTE *data,ULONGLONG *pts);

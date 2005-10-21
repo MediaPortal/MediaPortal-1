@@ -192,7 +192,24 @@ HRESULT Sections::CheckStream()
 	LogDebug("Start PTS:%x  end PTS:%x", (DWORD)pids.StartPTS, (DWORD)pids.EndPTS);
 	return S_OK;
 }
-
+HRESULT Sections::GetAdaptionHeader(BYTE *data,AdaptionHeader *header)
+{
+	header->Len=data[0];
+	header->DiscontinuityIndicator=(data[1] & 0x80)>0?true:false;
+	header->RandomAccessIndicator=(data[1] & 0x40)>0?true:false;
+	header->ElementaryStreamPriorityIndicator=(data[1] & 0x20)>0?true:false;
+	header->PCRFlag=(data[1] & 0x10)>0?true:false;
+	header->OPCRFlag=(data[1] & 0x08)>0?true:false;
+	header->SplicingPointFlag=(data[1] & 0x04)>0?true:false;
+	header->TransportPrivateData=(data[1] & 0x02)>0?true:false;
+	header->AdaptationHeaderExtension=(data[1] & 0x01)>0?true:false;
+	if(header->PCRFlag==true)
+	{
+		GetPTS(&data[2],&(header->PCRValue));
+		header->PCRCounter=((data[6] & 0x01)*256)+data[7];
+	}
+	return S_OK;
+}
 HRESULT Sections::GetTSHeader(BYTE *data,TSHeader *header)
 {
 	header->SyncByte=data[0];
@@ -225,7 +242,14 @@ HRESULT Sections::GetPESHeader(BYTE *data,PESHeader *header)
 }
 void Sections::GetPTS(BYTE *data,ULONGLONG *pts)
 {
-	*pts= 0xFFFFFFFFL & ( (6&data[0])<<29 | (255&data[1])<<22 | (254&data[2])<<14 | (255&data[3])<<7 | (((254&data[4])>>1)& 0x7F));
+	ULONGLONG ptsVal;
+	bool ptsFlag=false;
+	ptsVal= 0xFFFFFFFFL & ( (6&data[0])<<29 | (255&data[1])<<22 | (254&data[2])<<14 | (255&data[3])<<7 | (((254&data[4])>>1)& 0x7F));
+	if ((ptsVal & 0xFF000000L)==0xFF000000L) 
+		ptsFlag=true;
+	if (ptsFlag && ptsVal<0xF0000000L) 
+		ptsVal |=0x100000000L;
+	*pts=ptsVal;
 }
 void Sections::PTSToPTSTime(ULONGLONG pts,PTSTime* ptsTime)
 {
@@ -256,14 +280,26 @@ HRESULT Sections::CurrentPTS(BYTE *pData,ULONGLONG *ptsValue,int* pid)
 	   header.Pid != pids.PCRPid)
 		return S_FALSE;
 
-	if (header.AdaptionControl==0) return hr; //reserved value;
+	//if (header.AdaptionControl==0) return hr; //reserved value;
 	if (header.AdaptionControl==2) return hr; //adaption field only
 
-	if(header.AdaptionControl==1 || header.AdaptionControl==3)
+	if(header.AdaptionControl==3 || (header.PayloadUnitStart==true && header.AdaptionControl==1))
 	{
 		//skip adaption field
 		offset+=pData[4];
+		if(header.AdaptionControl==3)
+		{
+			AdaptionHeader ah;
+			GetAdaptionHeader(&pData[4],&ah);
+			//if(ah.PCRFlag)
+			//{
+			//	PTSTime time;
+			//	PTSToPTSTime(ah.PCRValue,&time);
+			//	LogDebug("pcr-count:%d / pcr-value:%x / h:m:s:ms= %d:%d:%d.%d\n", ah.PCRCounter,ah.PCRValue,time.h,time.m,time.s,time.u);
+			//}
+		}
 	}
+
 	if (offset< 0 || offset+14>=188) return S_FALSE;
 	if(header.SyncByte==0x47 && pData[offset]==0 && pData[offset+1]==0 && pData[offset+2]==1)
 	{
