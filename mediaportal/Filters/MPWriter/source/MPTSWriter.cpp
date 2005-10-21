@@ -300,6 +300,7 @@ HRESULT CDumpInputPin::SetSubtitlePid(int subtitlePid)
 
 HRESULT CDumpInputPin::SetPCRPid(int pcrPid)
 {
+	if (pcrPid <=0) pcrPid=m_videoPid;
 	if (m_pcrPid==pcrPid) return S_OK;
 	m_pcrPid=pcrPid;
 	m_bResettingPids=true;
