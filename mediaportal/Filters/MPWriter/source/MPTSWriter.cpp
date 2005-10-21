@@ -311,11 +311,17 @@ HRESULT CDumpInputPin::SetPCRPid(int pcrPid)
 HRESULT CDumpInputPin::SetPMTPid(int pmtPid)
 {
 	CAutoLock fileLock (&m_section);
-	if (m_pmtPid != pmtPid)
+	if (m_pmtPid != pmtPid)	
+	{
 		m_bResettingPids=true;
+	}
+	else
+	{
+		if (m_bUpdatePids) return S_OK;
+	}
 	if (false==m_bResettingPids) return S_OK;
 
-	LogDebug("pin:PMT pid:%x", pmtPid);
+	LogDebug("pin:PMT pid:%x %x %x %x", m_pmtPid,pmtPid, m_bResettingPids,m_bUpdatePids);
 	m_pmtPid=pmtPid;
 	m_pDump->Clear();	
 	
