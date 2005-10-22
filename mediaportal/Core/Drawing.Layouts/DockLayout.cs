@@ -51,13 +51,13 @@ namespace MediaPortal.Drawing.Layouts
 
 		public void Arrange(FrameworkElement element)
 		{
-			ILayoutComponent l = null;
-			ILayoutComponent t = null;
-			ILayoutComponent r = null;
-			ILayoutComponent b = null;
-			ILayoutComponent f = null;
+			FrameworkElement l = null;
+			FrameworkElement t = null;
+			FrameworkElement r = null;
+			FrameworkElement b = null;
+			FrameworkElement f = null;
 
-//			foreach(ILayoutComponent child in element.Children)
+//			foreach(FrameworkElement child in element.Children)
 			{
 //				if(child.Dock == Dock.Left)
 //					l = child;
@@ -86,38 +86,30 @@ namespace MediaPortal.Drawing.Layouts
 
 			if(t != null)
 			{
-				Size s = t.Size;
+				t.Arrange(new Rect(left, top, right - left, t.Height));
 
-				t.Arrange(new Rect(left, top, right - left, s.Height));
-
-				top = top + s.Height + _spacing.Height;
+				top = top + t.Height + _spacing.Height;
 			}
 
 			if(b != null)
 			{
-				Size s = b.Size;
+				b.Arrange(new Rect(left, bottom - b.Height, right - left, b.Height));
 
-				b.Arrange(new Rect(left, bottom - s.Height, right - left, s.Height));
-
-				bottom = bottom - (s.Height + _spacing.Height);
+				bottom = bottom - (b.Height + _spacing.Height);
 			}
 
 			if(r != null)
 			{
-				Size s = r.Size;
+				r.Arrange(new Rect(right - r.Width, top, r.Width, bottom - top));
 
-				r.Arrange(new Rect(right - s.Width, top, s.Width, bottom - top));
-
-				right = right - (s.Width + _spacing.Width);
+				right = right - (r.Width + _spacing.Width);
 			}
 
 			if(l != null)
 			{
-				Size s = l.Size;
+				l.Arrange(new Rect(left, top, l.Width, bottom - top));
 
-				l.Arrange(new Rect(left, top, s.Width, bottom - top));
-
-				left = left + s.Width + _spacing.Width;
+				left = left + l.Width + _spacing.Width;
 			}
 
 			if(f != null)
@@ -126,13 +118,13 @@ namespace MediaPortal.Drawing.Layouts
 	
 		public Size Measure(FrameworkElement element, Size availableSize)
 		{
-			ILayoutComponent l = null;
-			ILayoutComponent t = null;
-			ILayoutComponent r = null;
-			ILayoutComponent b = null;
-			ILayoutComponent f = null;
+			FrameworkElement l = null;
+			FrameworkElement t = null;
+			FrameworkElement r = null;
+			FrameworkElement b = null;
+			FrameworkElement f = null;
 
-//			foreach(ILayoutComponent child in element.Children)
+//			foreach(FrameworkElement child in element.Children)
 			{
 //				if(child.Dock == Dock.Left)
 //					l = child;
@@ -157,37 +149,42 @@ namespace MediaPortal.Drawing.Layouts
 
 			if(r != null)
 			{
-				s = r.Measure();
-				w = s.Width + _spacing.Width;
-				h = Math.Max(h, s.Height);
+				r.Measure(availableSize);
+
+				w = r.Width + _spacing.Width;
+				h = Math.Max(h, r.Height);
 			}
 
 			if(l != null)
 			{
-				s = l.Measure();
-				w = s.Width + _spacing.Width;
-				h = Math.Max(h, s.Height);
+				l.Measure(availableSize);
+
+				w = l.Width + _spacing.Width;
+				h = Math.Max(h, l.Height);
 			}
 
 			if(f != null)
 			{
-				s = f.Measure();
-				w = w + s.Width;
-				h = Math.Max(h, s.Height);
+				f.Measure(availableSize);
+
+				w = w + f.Width;
+				h = Math.Max(h, f.Height);
 			}
 
 			if(t != null)
 			{
-				s = t.Measure();
-				w = Math.Max(w, s.Width);
-				h = h + s.Height + _spacing.Height;
+				t.Measure(availableSize);
+
+				w = Math.Max(w, t.Width);
+				h = h + t.Height + _spacing.Height;
 			}
 
 			if(b != null)
 			{
-				s = b.Measure();
-				w = Math.Max(w, s.Width);
-				h = h + s.Height + _spacing.Height;
+				b.Measure(availableSize);
+
+				w = Math.Max(w, b.Width);
+				h = h + b.Height + _spacing.Height;
 			}
 
 			Thickness m = element.Margin;

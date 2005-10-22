@@ -24,6 +24,7 @@
 #endregion
 
 using System;
+using System.Windows;
 
 using MediaPortal.Controls;
 using MediaPortal.Drawing;
@@ -53,37 +54,37 @@ namespace MediaPortal.Drawing.Layouts
 
 		#region Methods
 
-		void ApplyAlignment(ILayoutComponent child, Thickness t, double x, double y, double w, double h)
+		void ApplyAlignment(FrameworkElement element, Thickness t, double x, double y, double w, double h)
 		{
-			Rect rect = new Rect(x, y, child.Size.Width, child.Size.Height);
+			Rect rect = new Rect(x, y, element.Width, element.Height);
             
-			switch(child.HorizontalAlignment)
+			switch(element.HorizontalAlignment)
 			{
 				case HorizontalAlignment.Center:
-					rect.X = x + ((w - child.Size.Width) / 2);
+					rect.X = x + ((w - element.Width) / 2);
 					break;
 				case HorizontalAlignment.Right:
-					rect.X = x + w  - child.Size.Width;
+					rect.X = x + w  - element.Width;
 					break;
 				case HorizontalAlignment.Stretch:
 					rect.Width = w;
 					break;
 			}
 
-			switch(child.VerticalAlignment)
+			switch(element.VerticalAlignment)
 			{
 				case VerticalAlignment.Center:
-					rect.Y = y + ((h - child.Size.Height) / 2);
+					rect.Y = y + ((h - element.Height) / 2);
 					break;
 				case VerticalAlignment.Bottom:
-					rect.Y = y + h  - child.Size.Height;
+					rect.Y = y + h  - element.Height;
 					break;
 				case VerticalAlignment.Stretch:
 					rect.Height = h;
 					break;
 			}
 		
-			child.Arrange(rect);
+			element.Arrange(rect);
 		}
 
 		public void Arrange(FrameworkElement element)
@@ -96,21 +97,21 @@ namespace MediaPortal.Drawing.Layouts
 			double w = _orientation != Orientation.Horizontal ? Math.Max(0, element.Width - t.Width) : 0;
 			double h = _orientation == Orientation.Horizontal ? Math.Max(0, element.Height - t.Height) : 0;
 
-			foreach(ILayoutComponent child in element.LogicalChildren)
+			foreach(FrameworkElement child in element.LogicalChildren)
 			{
-				if(child.IsVisible == false)
+				if(child.Visibility == Visibility.Collapsed)
 					continue;
 
 				if(_orientation == Orientation.Horizontal)
 				{
-					ApplyAlignment(child, t, x, y, w = child.Size.Width, h);
+					ApplyAlignment(child, t, x, y, w = child.Width, h);
 
 					x += w + _spacing.Width;
 
 					continue;
 				}
 
-				ApplyAlignment(child, t, x, y, w, h = child.Size.Height);
+				ApplyAlignment(child, t, x, y, w, h = child.Height);
 
 				y += h + _spacing.Height;
 			}
@@ -121,23 +122,15 @@ namespace MediaPortal.Drawing.Layouts
 			double w = 0;
 			double h = 0;
 
-			foreach(object childX in element.LogicalChildren)
+			foreach(FrameworkElement child in element.LogicalChildren)
 			{
-				if(childX is ILayoutComponent == false)
-				{
-					MediaPortal.GUI.Library.Log.Write("Bugger: {0}", childX.GetType());
-					continue;
-				}
-
-				ILayoutComponent child = (ILayoutComponent)childX;
-
-				if(child.IsVisible == false)
+				if(child.Visibility == Visibility.Collapsed)
 					continue;
 
-				Size s = child.Measure();
+				child.Measure(availableSize);
 
-				w = _orientation != Orientation.Horizontal ? Math.Max(w, s.Width) : w + s.Width + _spacing.Width;
-				h = _orientation == Orientation.Horizontal ? Math.Max(h, s.Height) : h + s.Height + _spacing.Height;
+				w = _orientation != Orientation.Horizontal ? Math.Max(w, child.Width) : w + child.Width + _spacing.Width;
+				h = _orientation == Orientation.Horizontal ? Math.Max(h, child.Height) : h + child.Height + _spacing.Height;
 			}
 
 			Thickness t = element.Margin;

@@ -24,7 +24,7 @@
 #endregion
 
 using System;
-using System.Collections;
+using System.Windows;
 
 using MediaPortal.Controls;
 using MediaPortal.Drawing;
@@ -77,37 +77,37 @@ namespace MediaPortal.Drawing.Layouts
 
 		#region Methods
 
-		void ApplyAlignment(ILayoutComponent child, Thickness t, double x, double y, double w, double h)
+		void ApplyAlignment(FrameworkElement element, Thickness t, double x, double y, double w, double h)
 		{
-			Rect rect = new Rect(x, y, child.Size.Width, child.Size.Height);
+			Rect rect = new Rect(x, y, element.Width, element.Height);
             
-			switch(child.HorizontalAlignment)
+			switch(element.HorizontalAlignment)
 			{
 				case HorizontalAlignment.Center:
-					rect.X = x + ((w - child.Size.Width) / 2);
+					rect.X = x + ((w - element.Width) / 2);
 					break;
 				case HorizontalAlignment.Right:
-					rect.X = x + w  - child.Size.Width;
+					rect.X = x + w  - element.Width;
 					break;
 				case HorizontalAlignment.Stretch:
 					rect.Width = w;
 					break;
 			}
 
-			switch(child.VerticalAlignment)
+			switch(element.VerticalAlignment)
 			{
 				case VerticalAlignment.Center:
-					rect.Y = y + ((h - child.Size.Height) / 2);
+					rect.Y = y + ((h - element.Height) / 2);
 					break;
 				case VerticalAlignment.Bottom:
-					rect.Y = y + h  - child.Size.Height;
+					rect.Y = y + h  - element.Height;
 					break;
 				case VerticalAlignment.Stretch:
 					rect.Height = h;
 					break;
 			}
 		
-			child.Arrange(rect);
+			element.Arrange(rect);
 		}
 
 		public void Arrange(FrameworkElement element)
@@ -138,11 +138,9 @@ namespace MediaPortal.Drawing.Layouts
 
 					if(index < element.LogicalChildren.Count)
 					{
-						ILayoutComponent component = null;
+						FrameworkElement component = element.LogicalChildren[index];
 
-						component = (ILayoutComponent)element.LogicalChildren[index];
-
-						if(component.IsVisible == false)
+						if(component.Visibility == Visibility.Collapsed)
 							continue;
 
 						ApplyAlignment(component, t, x, y, w, h); 
@@ -168,15 +166,15 @@ namespace MediaPortal.Drawing.Layouts
 			else
 				rows = (element.LogicalChildren.Count + cols - 1) / cols;
 
-			foreach(ILayoutComponent component in element.LogicalChildren)
+			foreach(FrameworkElement child in element.LogicalChildren)
 			{
-				if(component.IsVisible == false)
+				if(child.IsVisible == false)
 					continue;
 
-				Size s = component.Measure();
+				child.Measure(availableSize);
 
-				w = Math.Max(w, s.Width);
-				h = Math.Max(h, s.Height);
+				w = Math.Max(w, child.Width);
+				h = Math.Max(h, child.Height);
 			}
 
 			Thickness t = element.Margin;

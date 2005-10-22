@@ -264,11 +264,9 @@ namespace MediaPortal.GUI.Library
 
 		void IAddChild.AddChild(object value)
 		{
-//			if(value is ILayoutComponent == false)
 			if(value is GUIControl == false)
 				return;
 
-//			LogicalChildren.Add((ILayoutComponent)value);
 			LogicalChildren.Add((GUIControl)value);
 		}
 

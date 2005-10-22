@@ -32,7 +32,7 @@ using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Controls
 {
-	public class FrameworkElement : UIElement, ILayoutComponent
+	public class FrameworkElement : UIElement
 	{
 		#region Constructors
 
@@ -157,26 +157,5 @@ namespace MediaPortal.Controls
 		double						_width;
 
 		#endregion Fields
-
-		////
-
-		#region Methods
-
-		Size ILayoutComponent.Measure()
-		{
-			base.Measure(Size.Empty);
-			return new Size(_width, _height);
-		}
-
-		#endregion Methods
-
-		#region Properties
-
-		Size ILayoutComponent.Size
-		{
-			get { return new Size(_width, _height); }
-		}
-
-		#endregion Properties
 	}
 }

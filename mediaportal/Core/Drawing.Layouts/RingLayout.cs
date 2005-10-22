@@ -24,6 +24,7 @@
 #endregion
 
 using System;
+using System.Windows;
 
 using MediaPortal.Controls;
 using MediaPortal.Drawing;
@@ -52,37 +53,37 @@ namespace MediaPortal.Drawing.Layouts
 
 		#region Methods
 
-		void ApplyAlignment(ILayoutComponent child, Thickness t, double x, double y, double w, double h)
+		void ApplyAlignment(FrameworkElement element, Thickness t, double x, double y, double w, double h)
 		{
-			Rect rect = new Rect(x, y, child.Size.Width, child.Size.Height);
+			Rect rect = new Rect(x, y, element.Width, element.Height);
             
-			switch(child.HorizontalAlignment)
+			switch(element.HorizontalAlignment)
 			{
 				case HorizontalAlignment.Center:
-					rect.X = x + w / 2 - child.Size.Width / 2;
+					rect.X = x + w / 2 - element.Width / 2;
 					break;
 				case HorizontalAlignment.Right:
-					rect.X = x + w  - child.Size.Width;
+					rect.X = x + w  - element.Width;
 					break;
 				case HorizontalAlignment.Stretch:
 					rect.Width = w - t.Right;
 					break;
 			}
 
-			switch(child.VerticalAlignment)
+			switch(element.VerticalAlignment)
 			{
 				case VerticalAlignment.Center:
-					rect.Y = y + h / 2 - child.Size.Height / 2;
+					rect.Y = y + h / 2 - element.Height / 2;
 					break;
 				case VerticalAlignment.Bottom:
-					rect.Y = h  - child.Size.Height;
+					rect.Y = h  - element.Height;
 					break;
 				case VerticalAlignment.Stretch:
 					rect.Height = h - t.Bottom;
 					break;
 			}
 		
-			child.Arrange(rect);
+			element.Arrange(rect);
 		}
 
 		public void Arrange(FrameworkElement element)
@@ -93,14 +94,15 @@ namespace MediaPortal.Drawing.Layouts
 
 			int index = 0;
 
-			foreach(ILayoutComponent child in element.LogicalChildren)
+			foreach(FrameworkElement child in element.LogicalChildren)
 			{
-				if(child.IsVisible == false)
+				if(child.Visibility == Visibility.Collapsed)
 					continue;
 
 				double angle = (++index * 2 * Math.PI) / element.LogicalChildren.Count;
 
-				r.Size = child.Size;
+				r.Width = child.Width;
+				r.Height = child.Height;
 				r.X = t.Left + _spacing.Width + ((_size.Width - t.Width - (_spacing.Width * 2)) / 2) + (int)(Math.Sin(angle) * _radius) - (r.Width / 2);
 				r.Y = t.Top + _spacing.Height + ((_size.Height - t.Height - (_spacing.Height * 2)) / 2) - (int)(Math.Cos(angle) * _radius) - (r.Height / 2);
 
@@ -113,15 +115,15 @@ namespace MediaPortal.Drawing.Layouts
 			double w = 0;
 			double h = 0;
 
-			foreach(ILayoutComponent child in element.LogicalChildren)
+			foreach(FrameworkElement child in element.LogicalChildren)
 			{
-				if(child.IsVisible == false)
+				if(child.Visibility == Visibility.Collapsed)
 					continue;
 
-				Size s = child.Measure();
+				child.Measure(availableSize);
 
-				w = Math.Max(w, s.Width);
-				h = Math.Max(h, s.Height);
+				w = Math.Max(w, child.Width);
+				h = Math.Max(h, child.Height);
 			}
 
 			Thickness t = element.Margin;

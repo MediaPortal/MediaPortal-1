@@ -30,7 +30,7 @@ using System.Drawing;
 
 namespace MediaPortal.Drawing.Layouts
 {
-	public interface ILayoutComposite : ILayoutComponent
+	public interface ILayoutComposite
 	{
 		#region Properties
 
