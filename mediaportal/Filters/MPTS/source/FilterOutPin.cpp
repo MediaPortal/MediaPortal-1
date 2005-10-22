@@ -127,7 +127,10 @@ HRESULT CFilterOutPin::GetData(byte* pData, int lDataLength, bool allowedToWait)
 	__int64 fileSize;
 	do
 	{
-		if (m_bAboutToStop) return E_FAIL;
+		if (m_bAboutToStop) return S_FALSE;
+		__int64 fileSize;
+		m_pFileReader->GetFileSize(&fileSize);
+		if (fileSize<=0) return S_FALSE;
 		int count=0;
 		if (m_pMPTSFilter->m_pFileReader->m_hInfoFile!=INVALID_HANDLE_VALUE)
 		{
@@ -182,7 +185,7 @@ HRESULT CFilterOutPin::GetData(byte* pData, int lDataLength, bool allowedToWait)
 			}
 		}
 					
-		if (m_bAboutToStop) return E_FAIL;
+		if (m_bAboutToStop) return S_FALSE;
 	} while (hr==S_OK && m_pBuffers->Count() < lDataLength);
 		
 
@@ -302,10 +305,10 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 
 
 	hr=GetData(pData,lDataLength,true);
-	if (hr==E_FAIL) 
+	if (hr!=S_OK) 
 	{
 		LogDebug("FAILED to get data from file");
-		return E_FAIL;
+		return S_FALSE;
 	}
 
 	pSample->SetActualDataLength(lDataLength);

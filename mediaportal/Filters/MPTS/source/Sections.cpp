@@ -74,7 +74,7 @@ HRESULT Sections::ParseFromFile()
 {
 	if (m_pFileReader->m_hInfoFile!=INVALID_HANDLE_VALUE)
 	{	
-		LogDebug("sections::ParseFromFile() using live.info");
+		//LogDebug("sections::ParseFromFile() using live.info");
 		DWORD			dwReadBytes;
 		ULONGLONG		ptsStart;
 		ULONGLONG		ptsNow;
