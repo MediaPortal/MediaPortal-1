@@ -196,6 +196,7 @@ namespace MediaPortal.Player
 
 			DirectShowUtil.EnableDeInterlace(graphBuilder);
 			hr = mediaCtrl.Run();
+			m_mediaSeeking = graphBuilder as IMediaSeeking;
 			if (hr < 0)
 			{
 				Log.WriteFile(Log.LogType.Log,true,"TStreamBufferPlayer:Rungraph failed");
@@ -213,24 +214,8 @@ namespace MediaPortal.Player
 			{
 				UpdateCurrentPosition();
 				UpdateDuration();
-				DateTime dt=DateTime.Now;
-				do
-				{
-					UpdateDuration();
-					Application.DoEvents();						
-					TimeSpan ts=DateTime.Now-dt;
-					if (ts.TotalSeconds>=2) break;
-				} while (m_dDuration<1);
 
-				UpdateDuration();
-				UpdateCurrentPosition();
-				double dPos=m_dDuration;
-				if (dPos >= 0.5)
-				{
-					Log.Write("TStreamBufferPlayer:Seek to 99%");
-					SeekAbsolute(dPos);
-				}
-				else return false;
+
 			}
 			else
 			{
@@ -754,47 +739,12 @@ namespace MediaPortal.Player
 			}
 			int hr;
       if (m_mediaSeeking==null) return;
-      //GetCurrentPosition(): Returns stream position. 
-      //Stream position:The current playback position, relative to the content start
       long lStreamPos;
       double fCurrentPos;
-			//SeekingCapabilities capabilities;
-			//m_mediaSeeking.GetCapabilities(out capabilities);
-			//Log.Write("GetCurrentPosition() caps:{0} ", (int)capabilities);
       hr=m_mediaSeeking.GetCurrentPosition(out lStreamPos); // stream position
-			//Log.Write("GetCurrentPosition() pos:{0} hr:0x{1:X}", lStreamPos,hr);
       fCurrentPos=lStreamPos;
       fCurrentPos/=10000000d;
-
-
-      long lContentStart,lContentEnd,dmp;
-      double fContentStart,fContentEnd;
-			hr=m_mediaSeeking.GetAvailable(out lContentStart, out dmp);
-      hr=m_mediaSeeking.GetPositions(out dmp, out lContentEnd);
-			//Log.Write("GetPositions() start:{0} end:{1} hr:0x{2:X}", lContentStart,lContentEnd,hr);
-			fContentStart=lContentStart;
-      fContentEnd=lContentEnd;
-      fContentStart/=10000000d;
-      fContentEnd/=10000000d;
-      //double fPos=m_dCurrentPos;
-      //fCurrentPos-=fContentStart;
-      m_dCurrentPos=fCurrentPos;
-      m_dContentStart=fContentStart;
-#if DEBUG
-      TimeSpan ts=DateTime.Now-dtStart;
-      if (ts.TotalMilliseconds>=1000)
-      {
-        long lDuration;
-        double fDuration;
-        m_mediaSeeking.GetDuration(out lDuration); 
-        fDuration=lDuration;
-        fDuration/=10000000d;
-
-        //Log.Write("pos:{0} content:{1}-{2} duration:{3} stream:{4}",m_dCurrentPos,fContentStart,fContentEnd,fDuration,fPos);
-                  
-        dtStart=DateTime.Now;
-      }
-#endif
+			m_dCurrentPos=fCurrentPos;
     }
 		void UpdateDuration()
 		{
@@ -802,13 +752,9 @@ namespace MediaPortal.Player
 			{
 				return;
 			}
-			//GetDuration(): Returns (content start – content stop). 
-			//content start:The time of the earliest available content. For live content, the value starts at zero and increases whenever the Stream Buffer Engine deletes an old file. 				
-			//content stop :The time of the latest available content. For live content, this value starts at zero and increases continuously.
 			
 			long lDuration;
 			int hr=m_mediaSeeking.GetDuration(out lDuration); 
-//			Log.Write("GetDuration() duration:{0} hr:0x{1:X}", lDuration,hr);
 			m_dDuration=lDuration;
 			m_dDuration/=10000000d;
 		}

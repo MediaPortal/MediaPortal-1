@@ -183,7 +183,7 @@ HRESULT CMPTSFilter::SetFilePosition(REFERENCE_TIME seek)
 	if (seek>0)
 	{
 		Sections::PTSTime time;
-		if (m_pSections->pids.EndPTS > m_pSections->pids.StartPTS)
+		if (m_pSections->pids.EndPTS >= m_pSections->pids.StartPTS)
 		{
 			ULONGLONG duration=m_pSections->pids.EndPTS-m_pSections->pids.StartPTS;
 			m_pSections->PTSToPTSTime(duration,&time);

@@ -27,18 +27,13 @@ extern void LogDebug(const char *fmt, ...) ;
 
 CFilterOutPin::CFilterOutPin(LPUNKNOWN pUnk, CMPTSFilter *pFilter, FileReader *pFileReader, Sections *pSections, HRESULT *phr) :
 	CSourceStream(NAME("PinObject"), phr, pFilter, L"Out"),
-	CTimeShiftSeeking(NAME("MediaSeekingObject"), pUnk, phr, &m_cSharedState),
+	CSourceSeeking(NAME("MediaSeekingObject"), pUnk, phr, &m_cSharedState),
 	m_pMPTSFilter(pFilter),
 	m_pFileReader(pFileReader),
 	m_pSections(pSections),m_bDiscontinuity(FALSE)
 {
 	LogDebug("pin:ctor()");
 	CAutoLock cAutoLock(&m_cSharedState);
-	//m_dwSeekingCaps =	
-	//					AM_SEEKING_CanSeekForwards  | AM_SEEKING_CanSeekBackwards |
-	//					AM_SEEKING_CanGetStopPos    | AM_SEEKING_CanGetDuration   |
-	//					AM_SEEKING_CanSeekAbsolute;
-
 	__int64 size;
 	m_pFileReader->GetFileSize(&size);
 	m_rtDuration = m_rtStop = m_pSections->pids.Duration;
@@ -46,7 +41,7 @@ CFilterOutPin::CFilterOutPin(LPUNKNOWN pUnk, CMPTSFilter *pFilter, FileReader *p
 	m_pBuffers = new CBuffers(m_pFileReader, &m_pSections->pids,m_lTSPacketDeliverySize);
 	m_dRateSeeking = 1.0;
 	m_bAboutToStop=false;
-	m_State=SeekIFrame;
+	
 }
 
 CFilterOutPin::~CFilterOutPin()
@@ -60,7 +55,7 @@ STDMETHODIMP CFilterOutPin::NonDelegatingQueryInterface( REFIID riid, void ** pp
 {
     if (riid == IID_IMediaSeeking)
     {
-        return CTimeShiftSeeking::NonDelegatingQueryInterface( riid, ppv );
+        return CSourceSeeking::NonDelegatingQueryInterface( riid, ppv );
     }
     return CSourceStream::NonDelegatingQueryInterface(riid, ppv);
 }
@@ -205,42 +200,19 @@ HRESULT CFilterOutPin::GetData(byte* pData, int lDataLength)
 	m_pBuffers->DequeFromBuffer(pData, lDataLength);
 	return S_OK;
 }
-HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
-{
-  try
-  {
-	//LogDebug("FillBuffer()");
-	  
-	CAutoLock cAutoLock(&m_cSharedState);
-	if (m_bAboutToStop) 
-	{
-		return E_FAIL;
-	}
-	
-	CheckPointer(pSample, E_POINTER);
-	PBYTE pData;
-	LONG lDataLength;
-	HRESULT hr = pSample->GetPointer(&pData);
-	if (FAILED(hr))
-	{
-		LogDebug("FAILED: GetPointer() failed:%x",hr);
-	
-		return hr;
-	}
-	lDataLength = pSample->GetActualDataLength();
 
-	if (m_State==SeekIFrame)
-	{
-		m_State=Running;
+void CFilterOutPin::SeekIFrame()
+{
+		m_pBuffers->Clear();
 		// find first i-frame
 		TsDemux tsDemuxer;
 		__int64 startPointer=m_pFileReader->GetFilePointer();;
 		__int64 filePointer=m_pFileReader->GetFilePointer();
+		ULONGLONG pts;
 		if (m_pSections->pids.VideoPid>0)
 		{
 			LogDebug("find iframe pos:%x",(DWORD)filePointer);
 			BYTE pData[188];
-			ULONG countBytesRead;
 			Sections::TSHeader header;
 			bool iFrameFound=false;
 			while (true)
@@ -250,9 +222,24 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 				if (hr!=S_OK) 
 				{
 					LogDebug("FAILED : GetData() in seekiframe!");
-					return S_OK;
+					return ;
 				}
 				m_pSections->GetTSHeader(pData,&header);
+
+				int pid;
+				if(m_pSections->CurrentPTS(pData,&pts,&pid)==S_OK)
+				{
+					if (pts>0)
+					{
+						if (pts >= m_pSections->pids.StartPTS && pts <= m_pSections->pids.EndPTS)
+						{
+							//LogDebug("pts:%x pid:%x", (DWORD)pts, header.Pid);
+							m_iPESPid=header.Pid;
+							UpdatePositions(pts);
+						}
+					}
+				}
+
 				if (header.Pid==m_pSections->pids.VideoPid)
 				{
 					bool isStart;
@@ -276,8 +263,35 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 					LogDebug("FAILED : Iframe not found!");
 			}
 		}
+	
+}
+HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
+{
+  try
+  {
+	//LogDebug("FillBuffer()");
+	  
+	CAutoLock cAutoLock(&m_cSharedState);
+	if (m_bAboutToStop) 
+	{
+		return E_FAIL;
 	}
-		
+	
+	CheckPointer(pSample, E_POINTER);
+	PBYTE pData;
+	LONG lDataLength;
+	
+	ULONGLONG pts=0;
+	ULONGLONG ptsNow=0;
+	HRESULT hr = pSample->GetPointer(&pData);
+	if (FAILED(hr))
+	{
+		LogDebug("FAILED: GetPointer() failed:%x",hr);
+	
+		return hr;
+	}
+	lDataLength = pSample->GetActualDataLength();
+
 
 	hr=GetData(pData,lDataLength);
 	if (hr==E_FAIL) 
@@ -286,53 +300,15 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 		return E_FAIL;
 	}
 
-	ULONGLONG pts=0;
-	ULONGLONG ptsNow=0;
+	pSample->SetActualDataLength(lDataLength);
+	pts=0;
+	ptsNow=0;
 	Sections::TSHeader header;
 	for(int i=0;i<lDataLength;i+=188)
 	{
 		if (m_bAboutToStop) return E_FAIL;
 		int pid;
 		m_pSections->GetTSHeader(&pData[i],&header);
-		/*
-		imapDiscontinuitySent it = m_mapDiscontinuitySent.find(header.Pid);
-		if (header.Pid>0)
-		{
-			if (it==m_mapDiscontinuitySent.end())
-			{
-				LogDebug("new pid:%x", header.Pid);
-				m_mapDiscontinuitySent[header.Pid]=false;
-				if ( header.Pid==m_pSections->pids.VideoPid || 
-					header.Pid==m_pSections->pids.AudioPid1 ||
-					header.Pid==m_pSections->pids.AudioPid2 ||
-					header.Pid==m_pSections->pids.AudioPid3 ||
-					header.Pid==m_pSections->pids.AC3)
-				{
-					m_bDiscontinuity=TRUE;
-				}
-			}
-			else if (it->second==true)
-			{
-				it->second=false;
-				m_bDiscontinuity=TRUE;
-			}
-		}*/
-/*
-		byte scrambled=pData[i+3] & 0xC0;
-		if (scrambled)
-		{
-			LogDebug("pid:%x SCRAMBLED PACKET???", header.Pid);
-		}
-			
-		bool isStart;
-		if ( header.Pid==m_pSections->pids.VideoPid )
-		{
-			if (m_tsDemuxer.ParsePacket(&pData[i],isStart))
-			{
-				int x=1;//i-frame;
-			}
-		}
-*/
 		if(m_pSections->CurrentPTS(&pData[i],&pts,&pid)==S_OK)
 		{
 			if (pts>0)
@@ -365,14 +341,13 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 		
 	}
 
-//	LogDebug("snd pkt pts:%x  pes:%x disc:%d", (DWORD)ptsNow, m_iPESPid, m_bDiscontinuity);
-	pSample->SetSyncPoint(TRUE);
+	pSample->SetTime(NULL,NULL);
 	if(m_bDiscontinuity) 
 	{
 		LogDebug("set discontinuity");
 		pSample->SetDiscontinuity(TRUE);
 		m_bDiscontinuity = FALSE;
-	}
+	}	
   }
   catch(...)
   {
@@ -390,34 +365,44 @@ HRESULT CFilterOutPin::OnThreadCreate( )
 	{
 		m_pFileReader->OpenFile();
 	}
-    return S_OK;
+	SeekIFrame();
+	return CSourceStream::OnThreadCreate();
 }
 
 HRESULT CFilterOutPin::OnThreadStartPlay( )
 {
-   LogDebug("pin:OnThreadStartPlay()");
-	
-   m_State=SeekIFrame;
-   m_bDiscontinuity=TRUE;
-   m_iPESPid=0;
-   m_pBuffers->Clear();
-	DeliverNewSegment(m_rtStart, m_rtStop, m_dRateSeeking);
-   return CSourceStream::OnThreadStartPlay( );
+	LogDebug("pin:OnThreadStartPlay() %x-%x pos:%x", (DWORD)m_rtStart, (DWORD)m_rtStop, (DWORD)m_pSections->m_pFileReader->GetFilePointer());
+	m_bDiscontinuity=TRUE;
+	m_pBuffers->Clear();
+	HRESULT hr=DeliverNewSegment(m_rtStart, m_rtStop, m_dRateSeeking);
+	return CSourceStream::OnThreadStartPlay( );
 }
+
 
 
 
 HRESULT CFilterOutPin::ChangeStart()
 {
- 	LogDebug("pin:ChangeStart() %x",(DWORD)m_rtStart);
-	m_pMPTSFilter->SetFilePosition(m_rtStart);
-    UpdateFromSeek();
+	if (ThreadExists())
+	{
+		DeliverBeginFlush();
+		Stop();
+		DeliverEndFlush();
+		m_pMPTSFilter->SetFilePosition(m_rtStart);
+		SeekIFrame();
+ 		LogDebug("pin:ChangeStart() done %x",(DWORD)m_rtStart);
+		Run();
+	}
    return S_OK;
 }
 
 HRESULT CFilterOutPin::ChangeStop()
 {
 	LogDebug("pin:ChangeStop()");
+   {
+        CAutoLock lock(CSourceSeeking::m_pLock);
+    }
+
     UpdateFromSeek();
     return S_OK;
 }
@@ -425,7 +410,7 @@ HRESULT CFilterOutPin::ChangeStop()
 HRESULT CFilterOutPin::ChangeRate()
 {
     {   // Scope for critical section lock.
-        CAutoLock cAutoLockSeeking(CTimeShiftSeeking::m_pLock);
+        CAutoLock cAutoLockSeeking(CSourceSeeking::m_pLock);
         if( m_dRateSeeking <= 0 ) {
             m_dRateSeeking = 1.0;  // Reset to a reasonable value.
             return E_FAIL;
@@ -452,58 +437,35 @@ void CFilterOutPin::UpdateFromSeek(void)
 HRESULT CFilterOutPin::SetDuration(REFERENCE_TIME duration)
 {
 	LogDebug("pin:SetDuration()");
-	CAutoLock lock(CTimeShiftSeeking::m_pLock);
+	CAutoLock lock(CSourceSeeking::m_pLock);
 	m_rtDuration = duration;
 	m_rtStop = m_rtDuration;
 	m_rtStart=0;
     return S_OK;
 }
-
-HRESULT CFilterOutPin::GetReferenceClock(IReferenceClock **pClock)
-{
-	HRESULT hr;
-	FILTER_INFO		filterInfo;
-	hr = m_pFilter->QueryFilterInfo(&filterInfo);
-
-	if (filterInfo.pGraph)
-	{
-		// Get IMediaFilter interface
-		IMediaFilter* pMediaFilter = NULL;
-		hr = filterInfo.pGraph->QueryInterface(IID_IMediaFilter, (void**)&pMediaFilter);
-		filterInfo.pGraph->Release();
-
-		if (pMediaFilter)
-		{
-			// Get IReferenceClock interface
-			hr = pMediaFilter->GetSyncSource(pClock);
-			pMediaFilter->Release();
-			return S_OK;
-		}
-	}
-	return E_FAIL;
-}
 void CFilterOutPin::ResetBuffers(__int64 newPosition)
 {
 	CAutoLock cAutoLock(&m_cSharedState);
 	LogDebug("Reset buffers");
+	m_pFileReader->SetFilePointer(newPosition,FILE_BEGIN);
+/*   
 	if (m_pBuffers==NULL) return;
 	m_pBuffers->Clear();
 	m_mapDiscontinuitySent.clear();
 	m_pFileReader->SetFilePointer(newPosition,FILE_BEGIN);
    m_bDiscontinuity=TRUE;
    m_iPESPid=0;
-/*   m_rtCurrent=0;
+m_rtCurrent=0;
    m_rtStop=0;
    m_rtDuration=0;
   */
-   m_State=SeekIFrame;
 }
 
 void CFilterOutPin::UpdatePositions(ULONGLONG& ptsNow)
 {
 	if (ptsNow==0) 
 		return;
-
+	static int prevsec=0;
 	CRefTime rtStart,rtStop,rtDuration;
 	Sections::PTSTime time;
 	if (m_pSections->pids.StartPTS < m_pSections->pids.EndPTS)
@@ -517,7 +479,32 @@ void CFilterOutPin::UpdatePositions(ULONGLONG& ptsNow)
 		ptsNow=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
 
 
-//		LogDebug("1)%02.2d:%02.2d:%02.2d", time.h,time.m,time.s);
+		if (prevsec!=time.s)
+		{
+			prevsec=time.s;
+			LogDebug("1)%02.2d:%02.2d:%02.2d", time.h,time.m,time.s);
+
+			/*
+			char buffer[200];
+			prevsec=time.s;
+			HRESULT hr;
+			IMediaSeeking* seek;
+			IFilterGraph* graph=m_pFilter->GetFilterGraph();
+			graph->QueryInterface(IID_IMediaSeeking,(void**)&seek);
+			LONGLONG current,current2,stop,earliest,latest;
+			hr=seek->GetCurrentPosition(&current);
+			hr=seek->GetPositions(&current2,&stop);
+			hr=seek->GetAvailable(&earliest,&latest);
+			seek->Release();
+			double fc=((double)current)/10000000.0;
+			double fc2=((double)current2)/10000000.0;
+			double fst=((double)stop)/10000000.0;
+			double ear=((double)earliest)/10000000.0;
+			double lat=((double)latest)/10000000.0;
+			sprintf(buffer,"%02.2d:%02.2d:%02.2d %03.3f %03.3f %03.3f %03.3f %03.3f \n ", time.h,time.m,time.s,fc,fc2,fst,ear,lat);
+			OutputDebugString(buffer);
+			//graph->Release();*/
+		}
 
 		m_pSections->PTSToPTSTime(rtDuration,&time);
 		rtDuration=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
@@ -540,16 +527,18 @@ void CFilterOutPin::UpdatePositions(ULONGLONG& ptsNow)
 		m_pSections->PTSToPTSTime(ptsNow,&time);
 		ptsNow=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
 
-//		LogDebug("2)%02.2d:%02.2d:%02.2d", time.h,time.m,time.s);
+		if (prevsec!=time.s)
+		{
+			prevsec=time.s;
+			LogDebug("2)%02.2d:%02.2d:%02.2d", time.h,time.m,time.s);
+		}
 
 		m_pSections->PTSToPTSTime(rtDuration,&time);
 		rtDuration=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
 	}
 
 
-	m_rtCurrent=ptsNow;
-//	LogDebug("%x %d", (DWORD)ptsNow, (DWORD)(m_rtCurrent.Millisecs()/1000L));
-	m_rtStart=0;
+	//m_rtStart=0;
 	m_rtStop=rtDuration;
 	m_rtDuration=rtDuration;
 }

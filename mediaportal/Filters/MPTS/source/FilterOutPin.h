@@ -16,13 +16,8 @@
 #include <map>
 using namespace std;
 
-class CFilterOutPin : public CSourceStream,public CTimeShiftSeeking
+class CFilterOutPin : public CSourceStream,public CSourceSeeking
 {
-	enum State
-	{
-		SeekIFrame,
-		Running
-	};
 public:
 	CFilterOutPin(LPUNKNOWN pUnk, CMPTSFilter *pFilter, FileReader *pFileReader, Sections *pSections, HRESULT *phr);
 	~CFilterOutPin();
@@ -45,11 +40,11 @@ public:
 	HRESULT SetDuration(REFERENCE_TIME duration);
 	void	ResetBuffers(__int64 newPosition);
 	void	AboutToStop();
-protected:
-	HRESULT GetReferenceClock(IReferenceClock **pClock);
 
 protected:
-	State			m_State;
+
+protected:
+	void			SeekIFrame();
 	HRESULT			GetData(byte* pData, int maxLen);
 	void			UpdatePositions(ULONGLONG& ptsNow);
 	CMPTSFilter *	const m_pMPTSFilter;
@@ -63,8 +58,7 @@ protected:
 	map<int,bool>	m_mapDiscontinuitySent;
 	int				m_iPESPid;
 	typedef map<int,bool>::iterator imapDiscontinuitySent;
-
-	TsDemux m_tsDemuxer;
+	
 };
 
 #endif
