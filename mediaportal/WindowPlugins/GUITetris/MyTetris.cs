@@ -761,10 +761,8 @@ namespace MediaPortal.Games.Tetris
 
 		public override void Render(float timePassed)
 		{
-			if(GUIGraphicsContext.EditMode == false && m_bVisible == false)
-			{
+			if(GUIGraphicsContext.EditMode == false && IsVisible == false)
 				return;
-			}
 
 			if(m_theGame != null && m_theGame.State == State.Running && m_bHasFocus == false)
 			{
