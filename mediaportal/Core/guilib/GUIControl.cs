@@ -141,15 +141,15 @@ namespace MediaPortal.GUI.Library
 		{
 			int x = m_dwPosX;
 			int y = m_dwPosY;
-			int w = this.Width;
-			int h = this.Height;
+			int w = base.Width;
+			int h = base.Height;
 
 			GUIGraphicsContext.ScaleRectToScreenResolution(ref x, ref y, ref w, ref h);
 
 			m_dwPosX = x;
 			m_dwPosY = y;
-			this.Width = w;
-			this.Height = h;
+			base.Width = w;
+			base.Height = h;
 		}
 
 		/// <summary>
@@ -1063,7 +1063,7 @@ namespace MediaPortal.GUI.Library
 		public virtual void StorePosition()
 		{
 			m_bAnimating=false;
-			m_originalRect=new System.Drawing.Rectangle(m_dwPosX, m_dwPosY, this.Width, this.Height);
+			m_originalRect=new System.Drawing.Rectangle(m_dwPosX, m_dwPosY, base.Width, base.Height);
 			m_lOriginalColorDiffuse=m_colDiffuse;
 		}
 
@@ -1082,8 +1082,8 @@ namespace MediaPortal.GUI.Library
 		{
 			m_dwPosX=m_originalRect.X;
 			m_dwPosY=m_originalRect.Y;
-			this.Width = m_originalRect.Width;
-			this.Height = m_originalRect.Height;
+			base.Width = m_originalRect.Width;
+			base.Height = m_originalRect.Height;
 			m_colDiffuse=m_lOriginalColorDiffuse;
 			Update();
 			m_bAnimating=false;
@@ -1096,8 +1096,8 @@ namespace MediaPortal.GUI.Library
 		{
 			x=m_dwPosX;
 			y=m_dwPosY;
-			width=this.Width;
-			height=this.Height;
+			width=base.Width;
+			height=base.Height;
 		}
 
 		/// <summary>
@@ -1116,8 +1116,8 @@ namespace MediaPortal.GUI.Library
 			m_colDiffuse=color;
 			m_dwPosX=x;
 			m_dwPosY=y;
-			this.Width=w;
-			this.Height=h;
+			base.Width=w;
+			base.Height=h;
 			DoUpdate();
 		}
 
@@ -1207,7 +1207,7 @@ namespace MediaPortal.GUI.Library
 
 		public Size Size
 		{
-			get { return new Size(this.Width, this.Height); }
+			get { return new Size(base.Width, base.Height); }
 			set { base.Width = (int)value.Width; base.Height = (int)value.Height; Update(); }
 		}
 
