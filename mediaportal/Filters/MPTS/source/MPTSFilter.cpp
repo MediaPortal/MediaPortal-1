@@ -122,10 +122,10 @@ STDMETHODIMP CMPTSFilter::SetSyncClock(void)
 	IFilterGraph *pGraph=GetFilterGraph();
 	IBaseFilter *pFilter=NULL;
 	IMediaFilter *pMF=NULL;
-	hr=pGraph->QueryInterface(IID_IMediaFilter,(void**)&pMF);
 	hr=pGraph->FindFilterByName(L"Default DirectSound Device",&pFilter);
 	if(pFilter==NULL)
 	{
+		return S_OK;
 		hr=CoCreateInstance(CLSID_DSoundRender, NULL,CLSCTX_INPROC_SERVER,IID_IBaseFilter,(void**)&pFilter);
 		if(SUCCEEDED(hr))
 		{
@@ -133,6 +133,7 @@ STDMETHODIMP CMPTSFilter::SetSyncClock(void)
 
 		}
 	}
+	hr=pGraph->QueryInterface(IID_IMediaFilter,(void**)&pMF);
 	if(SUCCEEDED(hr) && pMF!=NULL)
 	{
 
@@ -167,6 +168,8 @@ STDMETHODIMP CMPTSFilter::Run(REFERENCE_TIME tStart)
 	if(m_pFileReader->IsFileInvalid()==true)
 	{
 	}
+	//SetSyncClock();// try to select the clock on the audio-renderer
+	m_pGraph->SetDefaultSyncSource();
 	hr=CSource::Run(tStart);
 	return hr;
 }
@@ -229,14 +232,13 @@ HRESULT CMPTSFilter::Pause()
 {
 	LogDebug("Filter: Pause()");
 	CAutoLock cObjectLock(m_pLock);
-	m_setPosition=true;
+	
 	return CSource::Pause();
 }
 
 STDMETHODIMP CMPTSFilter::Stop()
 {
 	LogDebug("Filter: Stop()");
-	m_pPin->AboutToStop();
 	CAutoLock cObjectLock(m_pLock);
 	CAutoLock lock(&m_Lock);
 	return CSource::Stop();
@@ -250,7 +252,6 @@ HRESULT CMPTSFilter::OnConnect()
 		LogDebug("filter::OnConnect ok");
 	else
 		LogDebug("filter::OnConnect failed:%x",hr);
-	SetSyncClock();// try to select the clock on the audio-renderer
 	return S_OK;
 }
 

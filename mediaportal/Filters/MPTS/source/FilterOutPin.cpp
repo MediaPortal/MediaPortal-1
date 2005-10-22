@@ -212,7 +212,10 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 	//LogDebug("FillBuffer()");
 	  
 	CAutoLock cAutoLock(&m_cSharedState);
-	if (m_bAboutToStop) return E_FAIL;
+	if (m_bAboutToStop) 
+	{
+		return E_FAIL;
+	}
 	
 	CheckPointer(pSample, E_POINTER);
 	PBYTE pData;
@@ -220,7 +223,7 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 	HRESULT hr = pSample->GetPointer(&pData);
 	if (FAILED(hr))
 	{
-		LogDebug("GetPointer() failed:%x",hr);
+		LogDebug("FAILED: GetPointer() failed:%x",hr);
 	
 		return hr;
 	}
@@ -229,7 +232,6 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 
 	if (m_State==SeekIFrame)
 	{
-		LogDebug("find iframe");
 		m_State=Running;
 		// find first i-frame
 		TsDemux tsDemuxer;
@@ -237,15 +239,18 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 		__int64 filePointer=m_pFileReader->GetFilePointer();
 		if (m_pSections->pids.VideoPid>0)
 		{
+			LogDebug("find iframe pos:%x",(DWORD)filePointer);
 			BYTE pData[188];
 			ULONG countBytesRead;
 			Sections::TSHeader header;
+			bool iFrameFound=false;
 			while (true)
 			{
 				HRESULT hr=GetData(pData,188);
 				
 				if (hr!=S_OK) 
 				{
+					LogDebug("FAILED : GetData() in seekiframe!");
 					return S_OK;
 				}
 				m_pSections->GetTSHeader(pData,&header);
@@ -259,13 +264,17 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 						filePointer=0;
 						m_pFileReader->SetFilePointer(startPointer,FILE_BEGIN);	
 						LogDebug("iframe found at pos:%x",startPointer);
-						m_bDiscontinuity=FALSE;
+						iFrameFound=true;
 						break;
 					}
 					if (isStart)
 						startPointer=filePointer;
 				}
 				filePointer+=188;
+			}
+			if (false==iFrameFound)
+			{
+					LogDebug("FAILED : Iframe not found!");
 			}
 		}
 	}
@@ -367,7 +376,7 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
   }
   catch(...)
   {
-	LogDebug("pin:FillBuffer() exception");
+	LogDebug("FAILED: pin:FillBuffer() exception");
   }
   return NOERROR;
 }
@@ -391,7 +400,8 @@ HRESULT CFilterOutPin::OnThreadStartPlay( )
    m_State=SeekIFrame;
    m_bDiscontinuity=TRUE;
    m_iPESPid=0;
-   DeliverNewSegment(m_rtStart, m_rtStop, m_dRateSeeking);
+   m_pBuffers->Clear();
+	DeliverNewSegment(m_rtStart, m_rtStop, m_dRateSeeking);
    return CSourceStream::OnThreadStartPlay( );
 }
 
@@ -399,10 +409,10 @@ HRESULT CFilterOutPin::OnThreadStartPlay( )
 
 HRESULT CFilterOutPin::ChangeStart()
 {
-	LogDebug("pin:ChangeStart() %x",(DWORD)m_rtStart);
+ 	LogDebug("pin:ChangeStart() %x",(DWORD)m_rtStart);
 	m_pMPTSFilter->SetFilePosition(m_rtStart);
     UpdateFromSeek();
-    return S_OK;
+   return S_OK;
 }
 
 HRESULT CFilterOutPin::ChangeStop()
@@ -482,9 +492,10 @@ void CFilterOutPin::ResetBuffers(__int64 newPosition)
 	m_pFileReader->SetFilePointer(newPosition,FILE_BEGIN);
    m_bDiscontinuity=TRUE;
    m_iPESPid=0;
-   m_rtCurrent=0;
+/*   m_rtCurrent=0;
    m_rtStop=0;
    m_rtDuration=0;
+  */
    m_State=SeekIFrame;
 }
 
@@ -545,5 +556,8 @@ void CFilterOutPin::UpdatePositions(ULONGLONG& ptsNow)
 void CFilterOutPin::AboutToStop()
 {			
 	LogDebug("pin: AboutToStop()");
-	m_bAboutToStop=true;
+	Inactive();
+//	LONGLONG current=0,stop=0;
+//	HRESULT hr=SetPositions(&current,AM_SEEKING_AbsolutePositioning,&stop,AM_SEEKING_AbsolutePositioning);
+//	m_bAboutToStop=true;
 }
