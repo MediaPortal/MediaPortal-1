@@ -1325,7 +1325,7 @@ HRESULT CDump::WriteTimeshiftFile(PBYTE pbData, LONG lDataLength)
 		if(header.AdaptionControl==3 || (header.PayloadUnitStart==true && header.AdaptionControl==1)) 
 		{
 			AdaptionHeader ah;
-			GetAdaptionHeader(&pbData[5],&ah);
+			GetAdaptionHeader(&pbData[4],&ah);
 
 			if(ah.PCRFlag==true)
 			{
