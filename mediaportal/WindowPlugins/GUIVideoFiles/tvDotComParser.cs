@@ -817,20 +817,20 @@ namespace MediaPortal.GUI.Video
 
 				// one line down from guest stars
 				line = seasonEpisodeGuideStream.ReadLine();
-
+				
 				do
 				{
 					line = line.Replace("<BR />","\n").Replace("<br />","\n");
-
+					episodeInfo.description += Regex.Replace(line, @"<(.|\n)*?>", "").Trim();
 					if(line.IndexOf("</p>") != -1)  // we loop until the paragraph ends
 					{
-						line = Regex.Replace(line, @"<(.|\n)*?>", "");
-						episodeInfo.description += line.Trim();
 						break;
 					}
+					episodeInfo.description += "\n";
 					line = seasonEpisodeGuideStream.ReadLine();
 				}while(true);
 				
+
 				//************** Rating
 
 
