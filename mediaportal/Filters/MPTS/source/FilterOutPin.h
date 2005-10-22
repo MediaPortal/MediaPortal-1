@@ -45,7 +45,7 @@ protected:
 
 protected:
 	void			SeekIFrame();
-	HRESULT			GetData(byte* pData, int maxLen);
+	HRESULT			GetData(byte* pData, int maxLen, bool allowedToWait);
 	void			UpdatePositions(ULONGLONG& ptsNow);
 	CMPTSFilter *	const m_pMPTSFilter;
 	FileReader *	const m_pFileReader;
