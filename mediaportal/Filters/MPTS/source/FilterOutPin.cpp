@@ -229,8 +229,6 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 	}
 	lDataLength = pSample->GetActualDataLength();
 
-		m_State=Running;
-
 	if (m_State==SeekIFrame)
 	{
 		m_State=Running;
