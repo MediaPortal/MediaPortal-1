@@ -1694,8 +1694,8 @@ namespace MediaPortal.TV.Recording
 			{
 				TVCaptureDevice dev =(TVCaptureDevice)m_tvcards[i];
 				dev.Process();
-				if (dev.IsTimeShifting && !dev.IsRecording)
-				{
+				if (dev.IsTimeShifting && !dev.IsRecording && !dev.IsRadio)
+				{	
 					if (m_iCurrentCard==i)
 					{
 						if (!g_Player.Playing)

@@ -834,29 +834,30 @@ namespace MediaPortal.Player
 					vmr7.AddVMR7(graphBuilder);
 				}
 				int hr;
-				/*
-				MPEG2Demultiplexer m_MPEG2Demuxer=null;
-				IBaseFilter m_mpeg2Multiplexer=null;
-				Log.WriteFile(Log.LogType.Capture,"mpeg2:add new MPEG2 Demultiplexer to graph");
-				try
+				if (!hasVideo)
 				{
-					m_MPEG2Demuxer=new MPEG2Demultiplexer();
-					m_mpeg2Multiplexer = (IBaseFilter) m_MPEG2Demuxer;
+					MPEG2Demultiplexer m_MPEG2Demuxer=null;
+					IBaseFilter m_mpeg2Multiplexer=null;
+					Log.WriteFile(Log.LogType.Capture,"mpeg2:add new MPEG2 Demultiplexer to graph");
+					try
+					{
+						m_MPEG2Demuxer=new MPEG2Demultiplexer();
+						m_mpeg2Multiplexer = (IBaseFilter) m_MPEG2Demuxer;
+					}
+					catch(Exception){}
+					//m_mpeg2Multiplexer = DirectShowUtil.AddFilterToGraph(m_graphBuilder,"MPEG-2 Demultiplexer");
+					if (m_mpeg2Multiplexer==null) 
+					{
+						Log.WriteFile(Log.LogType.Capture,true,"mpeg2:FAILED to create mpeg2 demuxer");
+						return false;
+					}
+					hr=graphBuilder.AddFilter(m_mpeg2Multiplexer,"MPEG-2 Demultiplexer");
+					if (hr!=0)
+					{
+						Log.WriteFile(Log.LogType.Capture,true,"mpeg2:FAILED to add mpeg2 demuxer to graph:0x{0:X}",hr);
+						return false;
+					}
 				}
-				catch(Exception){}
-				//m_mpeg2Multiplexer = DirectShowUtil.AddFilterToGraph(m_graphBuilder,"MPEG-2 Demultiplexer");
-				if (m_mpeg2Multiplexer==null) 
-				{
-					Log.WriteFile(Log.LogType.Capture,true,"mpeg2:FAILED to create mpeg2 demuxer");
-					return false;
-				}
-				int hr=graphBuilder.AddFilter(m_mpeg2Multiplexer,"MPEG-2 Demultiplexer");
-				if (hr!=0)
-				{
-					Log.WriteFile(Log.LogType.Capture,true,"mpeg2:FAILED to add mpeg2 demuxer to graph:0x{0:X}",hr);
-					return false;
-				}
-*/
 
 				bufferSource = new MPTransportStreamReader();
 				IBaseFilter filter = (IBaseFilter) bufferSource;

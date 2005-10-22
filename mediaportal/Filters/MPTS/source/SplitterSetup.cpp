@@ -43,16 +43,22 @@ HRESULT SplitterSetup::SetDemuxPins(IFilterGraph *pGraph)
 {
 
 	if(m_demuxSetupComplete==true)
+	{
+		LogDebug("demux already setup");
 		return S_FALSE;
-
+	}
 	if(pGraph==NULL)
+	{
+		LogDebug("IFilterGraph==NULL");
 		return S_FALSE;
+	}
 
 	HRESULT hr;
 	IGraphBuilder *pGB=NULL;
 
 	if(FAILED(pGraph->QueryInterface(IID_IGraphBuilder, (void **) &pGB)))
 	{
+		LogDebug("IID_IGraphBuilder not found");
 		return S_FALSE;
 	}
 
@@ -89,6 +95,7 @@ HRESULT SplitterSetup::SetupDemuxer(IBaseFilter *demuxFilter)
 	IEnumPIDMap		*pPidEnum=NULL;
 	HRESULT hr=0;
 
+	LogDebug("mpeg2 demux:SetupDemuxer()");
 	if(demuxFilter==NULL)
 		return S_FALSE;
 
@@ -96,7 +103,10 @@ HRESULT SplitterSetup::SetupDemuxer(IBaseFilter *demuxFilter)
 
 	hr=demuxFilter->QueryInterface(IID_IMpeg2Demultiplexer,(void**)&demuxer);
 	if(FAILED(hr))
+	{
+		LogDebug("mpeg2 demux:FAILED to get IMpeg2Demultiplexer");
 		return hr;
+	}
 	// create pins on demuxer
 	// audio
 	AM_MEDIA_TYPE type;
@@ -106,6 +116,7 @@ HRESULT SplitterSetup::SetupDemuxer(IBaseFilter *demuxFilter)
 	{
 		if (m_pVideo==NULL)
 		{
+			LogDebug("mpeg2 demux:create video pin");
 			ZeroMemory(&type, sizeof(AM_MEDIA_TYPE));
 			GetVideoMedia(&type);
 			hr=demuxer->CreateOutputPin(&type, L"Video",&m_pVideo);
@@ -143,6 +154,7 @@ HRESULT SplitterSetup::SetupDemuxer(IBaseFilter *demuxFilter)
 	}
 	if (m_pAudio==NULL)
 	{
+		LogDebug("mpeg2 demux:create audio pin");
 		ZeroMemory(&type, sizeof(AM_MEDIA_TYPE));
 		if(m_pSections->pids.VideoPid>0)
 		{
