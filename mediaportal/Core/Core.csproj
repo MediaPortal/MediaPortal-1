@@ -404,6 +404,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Controls\ButtonBase.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Controls\ControlBase.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -2274,7 +2279,17 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows\RoutedEventArgs.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows\RoutedEventConverter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows\RoutedEventHandler.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
