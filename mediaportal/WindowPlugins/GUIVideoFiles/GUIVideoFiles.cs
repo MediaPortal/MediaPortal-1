@@ -1107,11 +1107,8 @@ namespace MediaPortal.GUI.Video
                   {
                     try
                     {
-						string destination = strPath+@"\folder.jpg";
-
-                      Utils.FileDelete(destination);
-                      System.IO.File.Copy(strThumb, destination);
-                      System.IO.File.SetAttributes(destination, FileAttributes.Hidden);
+                      Utils.FileDelete(strPath+@"\folder.jpg");
+                      System.IO.File.Copy(strThumb, strPath+@"\folder.jpg");
                     }
                     catch(Exception){ }
                   }
@@ -1304,7 +1301,6 @@ namespace MediaPortal.GUI.Video
               {
                 Utils.FileDelete(strFolderImage);
                 System.IO.File.Copy(strThumbOrg, strFolderImage);
-                System.IO.File.SetAttributes(strFolderImage, FileAttributes.Hidden);
               }
               catch (Exception)
               {
@@ -1433,7 +1429,6 @@ namespace MediaPortal.GUI.Video
                         {
                           Utils.FileDelete(strFolderImage);
                           System.IO.File.Copy(strThumbOrg, strFolderImage);
-                          System.IO.File.SetAttributes(strFolderImage, FileAttributes.Hidden);
                         }
                         catch (Exception)
                         {
@@ -2449,11 +2444,12 @@ namespace MediaPortal.GUI.Video
 			pDlgProgress.ShowProgressBar(true);
 
 			// show dialog that we're downloading the movie info
+						
 			pDlgProgress.SetHeading("Now querying TV.com");
 			pDlgProgress.SetLine(1, "Trying to gather Info from filename...");
 			pDlgProgress.StartModal(GUIWindowManager.ActiveWindow);
 			pDlgProgress.Progress();
-
+			
 			currentSelectedItem = facadeView.SelectedListItemIndex;
 			GUIDialogSelect dlgSelect = (GUIDialogSelect)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_SELECT);
 
@@ -2471,52 +2467,48 @@ namespace MediaPortal.GUI.Video
 			string[] searchResults;
 			int pick = 0;
 			bool repeat = false; // if set to false we dont repeat and cancel out
+
+
 			bool searchDone = false;
 			do
 			{
-				if(!tvParser.getSeasonEpisode(strFileName, out season, out ep, out showname))
+				string tmpFilename = strFileName;
+				while(searchDone || (!tvParser.getSeasonEpisode(tmpFilename, out season, out ep, out showname) && !(TVcomSettings.lookupIfNoSEinFilename && tvParser.getShownameEpisodeTitleOnly(tmpFilename, out showname, out episodeTitle))))
 				{
-					if(!TVcomSettings.lookupIfNoSEinFilename || !tvParser.getShownameEpisodeTitleOnly(strFileName, out showname, out episodeTitle))
-					{
-						pDlgOK.SetHeading("Unsupported Filename");
-						pDlgOK.SetLine(1,"Could not get enough Info from Filename");
-						pDlgOK.DoModal( GetID);
-						tvParser.tvComLogWriteline("Could not get enough Info from Filename. Are you sure the filename is in a supported Format?");
-
-						oldFilename = strFileName;
-						GetStringFromKeyboard(ref strFileName);
-						if(strFileName.Length==0 || oldFilename==strFileName)
-							return;
-						oldFilename = "";
-
-						if(tvParser.getSeasonEpisode(strFileName, out season, out ep, out showname))
-						{
-							if(!TVcomSettings.lookupIfNoSEinFilename || !tvParser.getShownameEpisodeTitleOnly(strFileName, out showname, out episodeTitle))
-							{
-								pDlgOK.SetHeading("Unsupported Filename");
-								pDlgOK.SetLine(1,"Still could not get enough Info from Filename");
-								pDlgOK.SetLine(2,"Aborting");
-								pDlgOK.DoModal( GetID);
-								tvParser.tvComLogWriteline("Could not get enough Info from manual Input. Are you sure the filename is in a supported Format?");
-								return;
-							}
-
-						}
-					}
+					if(searchDone)
+						tvParser.tvComLogWriteline("Showing Keyboard..");
+					else
+						tvParser.tvComLogWriteline("Could not get enough Info from Filename. Showing Keyboard..");
 					
+					searchDone = false;
+					oldFilename = tmpFilename;
+					GetStringFromKeyboard(ref tmpFilename);
+					tvParser.tvComLogWriteline("User entered: " + tmpFilename);
+					if(oldFilename == tmpFilename || tmpFilename.Length==0)
+					{
+						return;
+					}
 				}
+
+				//ShowProgress("Now querying TV.com","Info from Filename found!","",10);
 				pDlgProgress.SetPercentage(10);
 				showname = showname.Replace("_"," ").Replace("-", "").Replace(".", " ").Replace(":", "").Replace("  "," ").Trim().ToLower();
 
 				if(season>0)
 				{
+					// we use seasonno + epno to search
+
 					tvParser.tvComLogWriteline("I think this file is \"" + showname + "\" Season: " + season.ToString() + " Episode: " + ep.ToString());
 					pDlgProgress.SetLine(2, "\"" + showname + "\" - Season: " + season.ToString() + " - Episode: " + ep.ToString());
+					//ShowProgress("Now querying TV.com","Info from Filename found!","\"" + showname + "\" - Season: " + season.ToString() + " - Episode: " + ep.ToString(),15);
 				}
 				else if(episodeTitle != string.Empty)
 				{
-					tvParser.tvComLogWriteline("I think this file is \"" + showname + "\" EpisodeTitle:: " + episodeTitle);
-					pDlgProgress.SetLine(2, "\"" + showname + "\" - Season: " + season.ToString() + " - Episode: \"" + episodeTitle + "\"");
+					// we use the episodetitle to search
+
+					tvParser.tvComLogWriteline("I think this file is \"" + showname + "\" EpisodeTitle: " + episodeTitle);
+					pDlgProgress.SetLine(2, "\"" + showname + "\" - Episode: \"" + episodeTitle + "\"");
+					//ShowProgress("Now querying TV.com","Info from Filename found!","\"" + showname + "\" - Episode: " + episodeTitle,15);
 				}
 
 				tvParser.tvComLogWriteline("Calling Search..");
@@ -2524,7 +2516,7 @@ namespace MediaPortal.GUI.Video
 				
 				pDlgProgress.SetLine(1, "Starting Search...");
 
-				//pDlgProgress.StartModal(GUIWindowManager.ActiveWindow);
+				pDlgProgress.StartModal(GUIWindowManager.ActiveWindow);
 				pDlgProgress.Progress();
 				pDlgProgress.StartModal(GUIWindowManager.ActiveWindow);
 
@@ -2546,9 +2538,10 @@ namespace MediaPortal.GUI.Video
 						tvParser.tvComLogWriteline(searchResults.Length/2 + " Results found, awaiting user selection...");
 						pDlgProgress.Close();
 						dlg.Reset();
-						dlg.SetHeading("Search results for " + strFileName);
+						dlg.SetHeading("Search results for: " + showname);
 						for (int i = 0; i < searchResults.Length; i += 2)
 							dlg.Add(searchResults[i]);
+						dlg.Add("Manual Input");
 						dlg.DoModal( GetID);
 						pick = dlg.SelectedId;
 						pick = (pick * 2 - 2);
@@ -2558,31 +2551,34 @@ namespace MediaPortal.GUI.Video
 						}
 						catch
 						{
-							// most likely the user pressed escape on the resultlist
-							return;
+							// most likely the user selected manual on the resultlit
+							// or pressed esc
+							// we want to return to the keyboard input
+							tvParser.tvComLogWriteline("User selected to manually input...");
+							searchResults = new string[0];
+							repeat = true;
+	
 						}
 
-						//pDlgProgress.StartModal(GUIWindowManager.ActiveWindow);
+						pDlgProgress.StartModal(GUIWindowManager.ActiveWindow);
 					}
 					else if(searchResults.Length==0)
 					{
-						tvParser.tvComLogWriteline("No results for " + showname + ", aborting...");
+						tvParser.tvComLogWriteline("No results for: " + showname + " -> aborting...");
 						tvParser.tvComLogWriteline("--------------------------");
-						pDlgProgress.Close();
+						//pDlgProgress.Close();
 						pDlgOK.SetHeading("No results");
-						pDlgOK.SetLine(1,"Sorry, no results returned on " + showname);
+						pDlgOK.SetLine(1,"Sorry, no results returned on: " + showname);
 						pDlgOK.DoModal(GetID);
 						if(repeat)
 							return;
-						oldFilename = strFileName;
-						GetStringFromKeyboard(ref strFileName);
-						if(strFileName.Length==0 || oldFilename==strFileName)
-							return;
-						repeat = !repeat;
+						searchResults = new string[0];
+						repeat = true;
 					}
 					else
 						tvParser.tvComLogWriteline("Only one result: " + searchResults[pick]  + " , skipping Resultlist.");
 				}
+			
 			}while(searchResults.Length==0 && repeat && searchDone);
 			
 			if(searchDone)
@@ -2594,9 +2590,11 @@ namespace MediaPortal.GUI.Video
 
 			pDlgProgress.SetLine(1,"Working, please be patient...");
 			pDlgProgress.SetLine(2, "\"" + searchResults[pick] + "\" - Season: " + season.ToString() + " - Episode: " + ep.ToString());
-			pDlgProgress.Progress();
 			pDlgProgress.SetPercentage(30);
+			pDlgProgress.Progress();
 			pDlgProgress.StartModal(GUIWindowManager.ActiveWindow);		
+			
+			//ShowProgress("Now querying TV.com","Show and Episode identified!","\"" + searchResults[pick] + "\" - Season: " + season.ToString() + " - Episode: " + ep.ToString(),35);
 
 			tvParser.tvComLogWriteline("Now downloading Guides, this may take some time...");	
 			
@@ -2616,10 +2614,12 @@ namespace MediaPortal.GUI.Video
 				
 				if(episodeTitle != string.Empty)
 				{
-					pDlgProgress.SetLine(2, "\"" + searchResults[pick] + "\" - Episode: " + episodeTitle + "\"");
-					pDlgProgress.SetLine(3,"Trying to match Episodetitle ...");
-					//pDlgProgress.ContinueModal();
+					pDlgProgress.SetLine(1, "\"" + searchResults[pick] + "\" - Episode: " + episodeTitle + "\"");
+					pDlgProgress.SetLine(2,"Trying to match Episodetitle ...");
+					pDlgProgress.ContinueModal();
 					pDlgProgress.Progress();
+					
+					//ShowProgress("Now querying TV.com","Trying to match Episodetitle now...","\"" + searchResults[pick] + "\" - Episode: " + episodeTitle + "\"",35);
 					tvParser.searchEpisodebyTitle(searchResults[pick], searchResults[pick + 1], episodeTitle, out sl, false);
 				}
 				else
@@ -2652,7 +2652,7 @@ namespace MediaPortal.GUI.Video
 						tvParser.tvComLogWriteline(sl.Count + " Results found, awaiting user selection...");
 						pDlgProgress.Close();
 						dlg.Reset();
-						dlg.SetHeading("Search results for " + episodeTitle);
+						dlg.SetHeading("Search results for: " + showname + " - " + episodeTitle);
 						for (int i = sl.Count - 1; i >= 0; i--)
 						{
 							string tmp1 = (string)sl.GetByIndex(i);
@@ -2701,10 +2701,12 @@ namespace MediaPortal.GUI.Video
 				}
 				if (sl.Count == 0)
 				{
-					tvParser.tvComLogWriteline("No hits found on EpisodeTitle Search, showing all Episodes...");
+					tvParser.tvComLogWriteline("Showing all Episodes...");
 					pDlgProgress.SetPercentage(80);
 					if(episodeTitle != string.Empty)
-						pDlgProgress.SetLine(1,"Sorry, no results found!");
+					{	pDlgProgress.SetLine(1,"Sorry, no results found!");
+
+					}
 					pDlgProgress.SetLine(2, "\"" + searchResults[pick] + "\"");
 					pDlgProgress.SetLine(3,"Getting List of Episodes ...");
 					//pDlgProgress.ContinueModal();
@@ -2718,7 +2720,7 @@ namespace MediaPortal.GUI.Video
 					tvParser.tvComLogWriteline(sl.Count.ToString());
 					pDlgProgress.Close();
 					dlg.Reset();
-					dlg.SetHeading("Episodes for " + searchResults[pick]);
+					dlg.SetHeading("Episodes for: " + searchResults[pick]);
 
 					for (int i = 0; i < sl.Count; i++)
 					{
@@ -2732,6 +2734,8 @@ namespace MediaPortal.GUI.Video
 						dlg.Add(season.ToString() + "x" + ep.ToString("00") + " - " + correctTitle);
 
 					}
+					dlg.Add("Start over!");
+
 					try
 					{
 						dlg.DoModal( GetID);
@@ -2749,8 +2753,10 @@ namespace MediaPortal.GUI.Video
 					catch
 					{
 						// most likely the user pressed escape on the resultlist
-						tvParser.tvComLogWriteline("Pressed ESC on Episode Results?");
-						
+						// or he selected Start over
+
+						tvParser.tvComLogWriteline("Either selected to Start over or pressed ESC on Episode Results?");
+						onTVcom(strFileName, out newPathAndFilename);
 						return;
 					}
 				}
@@ -2762,9 +2768,9 @@ namespace MediaPortal.GUI.Video
 
 			pDlgProgress.SetPercentage(50);
 			pDlgProgress.SetLine(2, "\"" + searchResults[pick] + "\" - Season: " + season.ToString() + " - Episode: " + ep.ToString());
-			pDlgProgress.SetLine(3,"Currently Downloading...");
+			pDlgProgress.SetLine(1,"Currently Downloading...");
 			pDlgProgress.Progress();
-			//pDlgProgress.ContinueModal();
+			pDlgProgress.ContinueModal();
 
 			
 
@@ -2781,11 +2787,10 @@ namespace MediaPortal.GUI.Video
 					tvParser.tvComLogWriteline("There was an error during the download, or the download was skipped, it might still work though...");
 				}
 
-				pDlgProgress.SetPercentage(80);
+				pDlgProgress.SetPercentage(90);
 				pDlgProgress.SetLine(1,"Now parsing info...");
-				pDlgProgress.SetLine(3,"");
 				pDlgProgress.Progress();
-				//pDlgProgress.ContinueModal();
+				pDlgProgress.ContinueModal();
 
 				// we parse the info and write to the db
 				try
@@ -2794,203 +2799,230 @@ namespace MediaPortal.GUI.Video
 					
 					episode_info ef = tvParser.getEpisodeInfo(searchResults[pick],season,ep);
 					
-					pDlgProgress.SetPercentage(90);
-					pDlgProgress.SetLine(1,"Performing Final Steps...");
-					//pDlgProgress.ContinueModal();
-					pDlgProgress.Progress();
-					//pDlgProgress.
-
-					IMDBMovie movieDetails = new IMDBMovie();
-					movieDetails.Director = ef.director;
-					movieDetails.WritingCredits = ef.writer;
-					movieDetails.Year = ef.firstAired.Year;
-					//movieDetails.Title = searchResults[pick];
-
-					tvParser.tvComLogWriteline("Trying to construct Title...");
-					
-					// for title and filename we need to clear genre of the "/" seperator for multiple genres
-					ef.genre = ef.genre.Replace("/"," ").Replace("  ", " ");
-
-					movieDetails.Genre = TVcomSettings.genreFormat
-						.Replace("[SHOWNAME]", searchResults[pick])
-						.Replace("[SEASONNO]", season.ToString())
-						.Replace("[EPISODENO]", ep.ToString("00"))
-						.Replace("[EPISODETITLE]", ef.title)
-						.Replace("[AIRDATE]", ef.firstAired.ToShortDateString())
-						.Replace("[AIRTIME]", ef.airtime)
-						.Replace("[CHANNEL]", ef.network)
-						.Replace("[GENRE]", ef.genre);
-
-					movieDetails.Title = TVcomSettings.renameFormat
-						.Replace("[SHOWNAME]", searchResults[pick])
-						.Replace("[SEASONNO]", season.ToString())
-						.Replace("[EPISODENO]", ep.ToString("00"))
-						.Replace("[EPISODETITLE]", ef.title)
-						.Replace("[AIRDATE]", ef.firstAired.ToShortDateString())
-						.Replace("[AIRTIME]", ef.airtime)
-						.Replace("[CHANNEL]", ef.network)
-						.Replace("[GENRE]", ef.genre);
-
-					tvParser.tvComLogWriteline("Title constructed: " + movieDetails.Title);
-					
-					movieDetails.RunTime = ef.runtime;
-					
-					movieDetails.TagLine = season.ToString() + "x" + ep.ToString("00") + " - " + ef.title;
-					movieDetails.PlotOutline = movieDetails.TagLine;
-					movieDetails.MPARating = movieDetails.TagLine; // we use this to display the episodes title, there is no real use for this field anyways.
-
-					System.Globalization.CultureInfo culture = new System.Globalization.CultureInfo("en-US");
-
-					System.Threading.Thread.CurrentThread.CurrentCulture = culture;
-            
-					movieDetails.Plot = "Episode Premiered: " + ef.firstAired.ToLongDateString() +
-						"\n\n" + ef.description + 
-						"\n-------------\n" + searchResults[pick] + ":" +
-						"\n  Premiered: " + ef.seriesPremiere.ToLongDateString() +
-						"\n  Airs: " + ef.airtime + " on " + ef.network +
-						"\n  Runtime: " + ef.runtime.ToString() + " mins" + 
-						"\n  Status: " + ef.status +
-						"\n  Genre: " + ef.genre +
-						"\n\n" + ef.seriesDescription +
-						"\n-------------\n-------------\n";
-
-					movieDetails.Rating = (float)ef.rating;
-
-					
-					
-
-					string cast = "";
-					for(int i=0; i<ef.stars.Count && i<ef.starsCharacters.Count; i++)
+					if(ef.description.ToLower().IndexOf("coming soon") != -1 && ef.description.Length < 75 && !freshlydownloaded)
 					{
-						cast += ef.stars[i] + " as " + ef.starsCharacters[i] + "\n";
+						tvParser.tvComLogWriteline("Episode Descripton contained \"coming soon\", so we will redownload a fresh copy of the guide...");
+						reDownload = true;
 					}
-					for(int i=0; i<ef.guestStars.Count && i<ef.guestStarsCharacters.Count; i++)
+					else if (freshlydownloaded && ef.description.IndexOf("coming soon") != -1 && ef.description.Length < 75)
 					{
-						cast += ef.guestStars[i] + " as " + ef.guestStarsCharacters[i] + "\n";
-					}
-					cast.Remove(cast.Length-2,2); // remove the last \n
-
-					
-					movieDetails.Cast = cast;
-
-					movieDetails.File = pathAndFilename.Remove(0,pathAndFilename.LastIndexOf("\\")+1);
-					movieDetails.Path = strPath;
-
-					//tvParser.tvComLogWriteline("Getting info for Actors and Director (imdb function). This might take some time...");
-					//DownloadActors(movieDetails);
-					//DownloadDirector(movieDetails);
-
-					if (TVcomSettings.renameFiles)
-					{
-						if (episodeTitle == string.Empty || TVcomSettings.renameOnlyIfNoSEinFilename)
-						{
-							string newFilename = string.Empty;
-							if(
-								(TVcomSettings.renameFormat.IndexOf("[EPISODETITLE]") != -1) ||
-								(TVcomSettings.renameFormat.IndexOf("[EPISODENO]") != -1 && TVcomSettings.renameFormat.IndexOf("[SEASONNO]") != -1))
-							{
-
-								newFilename = TVcomSettings.renameFormat
-									.Replace("[SHOWNAME]", searchResults[pick])
-									.Replace("[SEASONNO]", season.ToString())
-									.Replace("[EPISODENO]", ep.ToString("00"))
-									.Replace("[EPISODETITLE]", ef.title)
-									.Replace("[GENRE]", ef.genre)
-									.Replace("[AIRDATE]", ef.firstAired.ToShortDateString())
-									.Replace("[AIRTIME]", ef.airtime)
-									.Replace("[CHANNEL]", ef.network)
-									+  Path.GetExtension(pathAndFilename).Replace("?","").Replace(":","").Replace("\\","");
-
-								tvParser.tvComLogWriteline("Renaming File...");
-								tvParser.tvComLogWriteline("...Old Filename: " + strFileName);
-								
-								
-								if(TVcomSettings.replaceSpacesWith != ' ')
-									newFilename = newFilename.Replace(' ', TVcomSettings.replaceSpacesWith);
-	                            tvParser.tvComLogWriteline("...New Filename: " + newFilename);
-								
-								try
-								{
-									pDlgProgress.SetPercentage(92);
-									pDlgProgress.SetLine(3,"Renaming File...");
-									pDlgProgress.Progress();
-									System.IO.File.Move(pathAndFilename, Path.GetDirectoryName(pathAndFilename) + "/" + newFilename);
-									movieDetails.File = newFilename.Remove(0,pathAndFilename.LastIndexOf("\\")+1);
-									movieDetails.Path = Path.GetDirectoryName(newFilename);
-									pathAndFilename = Path.GetDirectoryName(pathAndFilename) + "\\" + newFilename;
-									newPathAndFilename = pathAndFilename;
-									tvParser.tvComLogWriteline("Sucessfully renamed File!");
 						
-								}
-								catch(Exception e)
-								{
-									tvParser.tvComLogWriteline("Could not rename File...is the Format correct?");
-									tvParser.tvComLogWriteline(e.Message);
-								}
-							}
-							else
-								tvParser.tvComLogWriteline("Tried to rename, but the specified format is invalid - " + TVcomSettings.renameFormat);
-						}
 					}
-					
-					// rename the shows picture to the constructed title
-					string picturePath = "thumbs/videos/title/";
-
-					string currentPictureFilename = picturePath + searchResults[pick] + ".jpg";
-					
-					try
+					else
 					{
-						pDlgProgress.SetLine(3,"Setting Thumbnail...");
+
 						pDlgProgress.SetPercentage(95);
+						pDlgProgress.SetLine(1,"Performing Final Steps...");
+						pDlgProgress.ContinueModal();
 						pDlgProgress.Progress();
 
-						tvParser.tvComLogWriteline("Trying to copy Image according to constructed Title...");
+						IMDBMovie movieDetails = new IMDBMovie();
+						movieDetails.Director = ef.director;
+						movieDetails.WritingCredits = ef.writer;
+						movieDetails.Year = ef.firstAired.Year;
+						//movieDetails.Title = searchResults[pick];
 
-						System.IO.File.Copy(currentPictureFilename, picturePath + movieDetails.Title + ".jpg", false);
-						System.IO.File.Copy(currentPictureFilename.Replace(".jpg", "L.jpg"), picturePath + movieDetails.Title + "L.jpg", false);
+						tvParser.tvComLogWriteline("Trying to construct Title...");
+					
+						// for title and filename we need to clear genre of the "/" seperator for multiple genres
+						ef.genre = ef.genre.Replace("/"," ").Replace("  ", " ");
 
-						tvParser.tvComLogWriteline("Sucessfully created Thumbnail!");
-						
-					}
-					catch(Exception e)
-					{
-						tvParser.tvComLogWriteline("Could not copy Image...(probably the image already exists)");
-						tvParser.tvComLogWriteline(e.Message);
-					}
+						movieDetails.Genre = TVcomSettings.genreFormat
+							.Replace("[SHOWNAME]", searchResults[pick])
+							.Replace("[SEASONNO]", season.ToString())
+							.Replace("[EPISODENO]", ep.ToString("00"))
+							.Replace("[EPISODETITLE]", ef.title)
+							.Replace("[AIRDATE]", ef.firstAired.ToShortDateString())
+							.Replace("[AIRTIME]", ef.airtime)
+							.Replace("[CHANNEL]", ef.network)
+							.Replace("[GENRE]", ef.genre);
 
-					try
-					{
-						if(TVcomSettings.genreFormat.IndexOf("[SHOWNAME]") != -1)
+						movieDetails.Title = TVcomSettings.titleFormat
+							.Replace("[SHOWNAME]", searchResults[pick])
+							.Replace("[SEASONNO]", season.ToString())
+							.Replace("[EPISODENO]", ep.ToString("00"))
+							.Replace("[EPISODETITLE]", ef.title)
+							.Replace("[AIRDATE]", ef.firstAired.ToShortDateString())
+							.Replace("[AIRTIME]", ef.airtime)
+							.Replace("[CHANNEL]", ef.network)
+							.Replace("[GENRE]", ef.genre);
+
+						// since we need to rename the thumbnail to the title, we have to ensure no illegal chars
+
+						movieDetails.Title = tvParser.getFilennameFriendlyString(movieDetails.Title);
+
+						tvParser.tvComLogWriteline("Title constructed: " + movieDetails.Title);
+					
+						movieDetails.RunTime = ef.runtime;
+					
+						movieDetails.TagLine = season.ToString() + "x" + ep.ToString("00") + " - " + ef.title;
+						movieDetails.PlotOutline = movieDetails.TagLine;
+						movieDetails.MPARating = movieDetails.TagLine; // we use this to display the episodes title, there is no real use for this field anyways.
+
+						System.Globalization.CultureInfo culture = new System.Globalization.CultureInfo("en-US");
+
+						System.Threading.Thread.CurrentThread.CurrentCulture = culture;
+            
+						movieDetails.Plot = "Episode Premiered: " + ef.firstAired.ToLongDateString() +
+							"\n\n" + ef.description + 
+							"\n-------------\n" + searchResults[pick] + ":" +
+							"\n  Premiered: " + ef.seriesPremiere.ToLongDateString() +
+							"\n  Airs: " + ef.airtime + " on " + ef.network +
+							"\n  Runtime: " + ef.runtime.ToString() + " mins" + 
+							"\n  Status: " + ef.status +
+							"\n  Genre: " + ef.genre +
+							"\n\n" + ef.seriesDescription +
+							"\n-------------\n-------------\n";
+
+						movieDetails.Rating = (float)ef.rating;
+						movieDetails.Votes = ef.numberOfRatings.ToString();
+
+						string cast = "";
+						if(ef.stars.Count > 0 && ef.starsCharacters.Count > 0)
 						{
-							tvParser.tvComLogWriteline("Since the Genre Format includes the Showname, we will also create a thumbnail for the Genre!");
-							System.IO.File.Copy(currentPictureFilename, picturePath.Replace("title", "genre") + movieDetails.Genre + ".jpg", false);
-							System.IO.File.Copy(currentPictureFilename.Replace(".jpg", "L.jpg"), picturePath.Replace("title", "genre") + movieDetails.Genre + "L.jpg", false);
-							tvParser.tvComLogWriteline("Sucessfully created Thumbnail!");
+							for(int i=0; i<ef.stars.Count && i<ef.starsCharacters.Count; i++)
+							{
+								cast += ef.stars[i] + " as " + ef.starsCharacters[i] + "\n";
+							}
 						}
-					}
-					catch(Exception e)
-					{
-						tvParser.tvComLogWriteline("Could not copy Image...(probably the image already exists)");
-						tvParser.tvComLogWriteline(e.Message);
-					}
-					// write to db
+						if(ef.guestStars.Count > 0 && ef.guestStarsCharacters.Count > 0)
+						{
+							for(int i=0; i<ef.guestStars.Count && i<ef.guestStarsCharacters.Count; i++)
+							{
+								cast += ef.guestStars[i] + " as " + ef.guestStarsCharacters[i] + "\n";
+							}
+							cast.Remove(cast.Length-2,2); // remove the last \n
+						}
 
-					pDlgProgress.SetPercentage(98);
-					pDlgProgress.SetLine(3,"Writing to Database..");
-					//pDlgProgress.ContinueModal();
-					pDlgProgress.Progress();
-					tvParser.tvComLogWriteline("Now writing to DB...");
-					VideoDatabase.AddMovie(pathAndFilename, false);
-					VideoDatabase.SetMovieInfo(pathAndFilename, ref movieDetails);
+						movieDetails.Cast = cast;
 
+						movieDetails.File = pathAndFilename.Remove(0,pathAndFilename.LastIndexOf("\\")+1);
+						movieDetails.Path = strPath;
+
+						if(TVcomSettings.lookupActors)
+						{
+							tvParser.tvComLogWriteline("Getting info for Actors and Director (imdb function). This might take some time...");
+							DownloadActors(movieDetails);
+							DownloadDirector(movieDetails);
+							tvParser.tvComLogWriteline("Actor Information downloaded!");
+						}
+
+						if (TVcomSettings.renameFiles)
+						{
+							if (episodeTitle == string.Empty || !TVcomSettings.renameOnlyIfNoSEinFilename)
+							{
+								string newFilename = string.Empty;
+								if(
+									(TVcomSettings.renameFormat.IndexOf("[EPISODETITLE]") != -1) ||
+									(TVcomSettings.renameFormat.IndexOf("[EPISODENO]") != -1 && TVcomSettings.renameFormat.IndexOf("[SEASONNO]") != -1))
+								{
+
+									newFilename = TVcomSettings.renameFormat
+										.Replace("[SHOWNAME]", searchResults[pick])
+										.Replace("[SEASONNO]", season.ToString())
+										.Replace("[EPISODENO]", ep.ToString("00"))
+										.Replace("[EPISODETITLE]", ef.title)
+										.Replace("[GENRE]", ef.genre)
+										.Replace("[AIRDATE]", ef.firstAired.ToShortDateString())
+										.Replace("[AIRTIME]", ef.airtime)
+										.Replace("[CHANNEL]", ef.network)
+										+  Path.GetExtension(pathAndFilename);
+
+									newFilename = tvParser.getFilennameFriendlyString(newFilename);
+
+									tvParser.tvComLogWriteline("Renaming File...");
+									tvParser.tvComLogWriteline("...Old Filename: " + strFileName);
+								
+								
+									if(TVcomSettings.replaceSpacesWith != ' ')
+										newFilename = newFilename.Replace(' ', TVcomSettings.replaceSpacesWith);
+									tvParser.tvComLogWriteline("...New Filename: " + newFilename);
+								
+									try
+									{
+										pDlgProgress.SetPercentage(92);
+										pDlgProgress.SetLine(3,"Renaming File...");
+										pDlgProgress.Progress();
+										System.IO.File.Move(pathAndFilename, Path.GetDirectoryName(pathAndFilename) + "/" + newFilename);
+										movieDetails.File = newFilename.Remove(0,pathAndFilename.LastIndexOf("\\")+1);
+										movieDetails.Path = Path.GetDirectoryName(newFilename);
+										pathAndFilename = Path.GetDirectoryName(pathAndFilename) + "\\" + newFilename;
+										newPathAndFilename = pathAndFilename;
+										tvParser.tvComLogWriteline("Sucessfully renamed File!");
+						
+									}
+									catch(Exception e)
+									{
+										tvParser.tvComLogWriteline("Could not rename File...is the Format correct?");
+										tvParser.tvComLogWriteline(e.Message);
+									}
+								}
+								else
+									tvParser.tvComLogWriteline("Tried to rename, but the specified format is invalid - " + TVcomSettings.renameFormat);
+							}
+						}
+					
+					
+						// rename the shows picture to the constructed title
+						string picturePath = "thumbs/videos/title/";
+
+						string currentPictureFilename = picturePath + searchResults[pick] + ".jpg";
+						
+						try
+						{
+							pDlgProgress.SetLine(3,"Setting Thumbnail...");
+							pDlgProgress.SetPercentage(95);
+							pDlgProgress.Progress();
+	
+							tvParser.tvComLogWriteline("Trying to copy Image according to constructed Title: " + movieDetails.Title);
+	
+							System.IO.File.Copy(currentPictureFilename, picturePath + movieDetails.Title + ".jpg", false);
+							System.IO.File.Copy(currentPictureFilename.Replace(".jpg", "L.jpg"), picturePath + movieDetails.Title + "L.jpg", false);
+	
+							tvParser.tvComLogWriteline("Sucessfully created Thumbnail!");
+							
+						}
+						catch(Exception e)
+						{
+							tvParser.tvComLogWriteline("Could not copy Image...(probably the image already exists, however you might also have your title constructed in a way that you cannot name files, please double check:)");
+							tvParser.tvComLogWriteline(e.Message);
+						}
+	
+						try
+						{
+							if(TVcomSettings.genreFormat.IndexOf("[SHOWNAME]") != -1)
+							{
+								tvParser.tvComLogWriteline("Since the Genre Format includes the Showname, we will also create a thumbnail for the Genre!");
+								System.IO.File.Copy(currentPictureFilename, picturePath.Replace("title", "genre") + movieDetails.Genre + ".jpg", false);
+								System.IO.File.Copy(currentPictureFilename.Replace(".jpg", "L.jpg"), picturePath.Replace("title", "genre") + movieDetails.Genre + "L.jpg", false);
+								tvParser.tvComLogWriteline("Sucessfully created Thumbnail!");
+							}
+						}
+						catch(Exception e)
+						{
+							tvParser.tvComLogWriteline("Could not copy Image...(probably the image already exists, however you might also have your genre constructed in a way that you cannot name files, please double check:)");
+							tvParser.tvComLogWriteline(e.Message);
+						}
+						// write to db
+					
+						pDlgProgress.SetPercentage(98);
+						pDlgProgress.SetLine(3,"Writing to Database..");
+						pDlgProgress.ContinueModal();
+						pDlgProgress.Progress();
+						tvParser.tvComLogWriteline("Now writing to DB...");
+						VideoDatabase.AddMovie(pathAndFilename, false);
+						VideoDatabase.SetMovieInfo(pathAndFilename, ref movieDetails);
+					}
 				}
 				catch(Exception except)
 				{
+					tvParser.tvComLogWriteline(reDownload.ToString() + freshlydownloaded.ToString());
 					if(reDownload)
 					{
 						tvParser.tvComLogWriteline(except.Message);
 						dlg.Reset();
-						dlg.Add("There was an error processing the downloaded Information.");
+						dlg.Add("There was an error...");
+						dlg.Add(except.Message);
 						dlg.Add("Please see Log for more information.");
 						dlg.DoModal(GetID);
 					}
@@ -3058,6 +3090,7 @@ namespace MediaPortal.GUI.Video
 					VideoDatabase.GetMovieInfo(pathandFilename, ref movieDetails);
 					tvDotComParser.tvComLogWritelineStatic("End Folder Operation!");
 					tvDotComParser.tvComLogWritelineStatic("___________________________");
+					return;
 				}
 				else
 					return;
@@ -3075,6 +3108,8 @@ namespace MediaPortal.GUI.Video
 			// display result
 			
 			facadeView.RefreshCoverArt();
+			LoadDirectory(currentFolder);
+			
 			pDlgInfo.Movie = movieDetails;
 			pDlgInfo.DoModal(GUIWindowManager.ActiveWindow);
 
