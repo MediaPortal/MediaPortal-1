@@ -1,3 +1,24 @@
+/* 
+ *	Copyright (C) 2005 Media Portal
+ *	http://mediaportal.sourceforge.net
+ *
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *   
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *   
+ *  You should have received a copy of the GNU General Public License
+ *  along with GNU Make; see the file COPYING.  If not, write to
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  http://www.gnu.org/copyleft/gpl.html
+ *
+ */
+
 using System;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -6,7 +27,9 @@ using MediaPortal.GUI.Library;
 namespace MediaPortal.GUI.Video
 {
 	/// <summary>
-	/// Zusammenfassung für tvDotComParser.
+	/// This class implements all the necessary methods to search, download and interpret
+	/// episode information from tv.com.
+	/// Note that GUIVideo files implements necessary methods which then call this class.
 	/// </summary>
 	public class tvDotComParser : ISetupForm
 	{
@@ -193,6 +216,7 @@ namespace MediaPortal.GUI.Video
 			episodeTitle = string.Empty;
 
 			// we first check if its a format like recorded by mediaportal
+			// if so we will show all episodes of a show and let the user pick
 			// examples: 28 FX_Rescue Me_200508310003p25
 			// 9 WDRB_Seinfeld_200508141830p2915
 			tvComLogWriteline(filename);
@@ -227,28 +251,45 @@ namespace MediaPortal.GUI.Video
 				}
 				catch
 				{
-					tvComLogWriteline("Could not get EpisodeTitle from filename");
+					tvComLogWriteline("Could not get EpisodeTitle from filename (tried \"_\")");
 					return false;
 				}
-				episodeTitle = episodeTitle.Replace("hdtv", " ")
-					.Replace("pdtv", " ")
-					.Replace("ws", " ")
-					.Replace("pdtv", " ")
-					.Replace("xvid", " ")
-					.Replace("divx", " ")
-					.Replace("dsr", " ")
-					.Replace("dvdrip", " ")
-					.Replace("ac3", " ")
-					.Replace("proper", " ")
-					.Replace("_", " ")
-					.Replace(".", " ");
-				episodeTitle = Regex.Replace(episodeTitle, "[a-z]{2,4}\\[.{2,}", " ");
-				episodeTitle = Regex.Replace(episodeTitle, "[a-z]{2,4}-.{2,}", " ").Trim();
-				return true;
 			}
-			tvComLogWriteline("Could not get EpisodeTitle from filename");
-			return false;
-
+			else if (filename.IndexOf("-") != -1)
+			{
+				try
+				{
+					showname = cleanString(Regex.Split(filename, "-")[0]).Trim();
+					episodeTitle = cleanString(Regex.Split(filename, "-")[1]);
+				}
+				catch
+				{
+					tvComLogWriteline("Could not get EpisodeTitle from filename (tried \"-\")");
+					return false;
+				}
+			}
+			else
+			{
+				tvComLogWriteline("Could not get EpisodeTitle from filename");
+				showname = filename;
+				episodeTitle = String.Empty;
+				
+			}
+			episodeTitle = episodeTitle.Replace("hdtv", " ")
+				.Replace("pdtv", " ")
+				.Replace("ws", " ")
+				.Replace("pdtv", " ")
+				.Replace("xvid", " ")
+				.Replace("divx", " ")
+				.Replace("dsr", " ")
+				.Replace("dvdrip", " ")
+				.Replace("ac3", " ")
+				.Replace("proper", " ")
+				.Replace("_", " ")
+				.Replace(".", " ");
+			episodeTitle = Regex.Replace(episodeTitle, "[a-z]{2,4}\\[.{2,}", " ");
+			episodeTitle = Regex.Replace(episodeTitle, "[a-z]{2,4}-.{2,}", " ").Trim();
+			return true;
 		}
 
 		
@@ -428,7 +469,7 @@ namespace MediaPortal.GUI.Video
 			try
 			{
 
-				if (!System.IO.File.Exists(saveGuide))// || redownload)
+				if (!System.IO.File.Exists(saveGuide)|| redownload)
 				{
 					Client.DownloadFile("http://www.tv.com/" + subURL + "/episode_guide.html&season=" + season.ToString() + "&pg_episodes=" + getGuidePageFromEpisodeNo(ep).ToString(), saveGuide);
 					freshlyDownloaded = true;
@@ -453,6 +494,64 @@ namespace MediaPortal.GUI.Video
 		private int getGuidePageFromEpisodeNo(int ep)
 		{
 			return (int)ep/25 + 1;
+		}
+
+
+		/// <summary>
+		/// This method looks at the contents of the file "offsets" to see if any offsets where specified for the
+		/// current show and season.
+		/// This is useful if specials are listed as normal episodes on tv.com (eg. Lost - Season 1 Episode 1)
+		/// </summary>
+		/// <param name="showName">Name of the Show</param>
+		/// <param name="season">Current Season</param>
+		/// <param name="ep">Number of Episode</param>
+		/// <returns></returns>
+		private int getOffset(string showName, int season, int ep)
+		{
+
+			int offSet = 0;
+			if(System.IO.File.Exists(folderToSave + "offsets"))
+			{
+				System.IO.StreamReader or = new System.IO.StreamReader(folderToSave + "offsets");
+	        
+				string line, all = "";
+				while((line=or.ReadLine()) != null)
+					all += line;
+
+				or.Close();
+
+				string[] lines = Regex.Split(all,"\n");
+
+	        
+				tvComLogWriteline("Offset file found, searching for matches...");
+	       
+				for(int i=0;i<lines.Length;i++)
+				{
+					string[] elems = Regex.Split(lines[i], ";");
+					if(elems[0].ToLower().Equals(showName.ToLower()) && elems[1].Equals(season.ToString()))
+					{
+						if(ep >= Convert.ToInt32(elems[2]))
+						{
+							tvComLogWriteline("Found offset...");
+							if(elems.Length < 4)
+							{
+								offSet++;
+							}
+							else
+							{
+								offSet += Convert.ToInt32(elems[3]);
+							}
+						}
+					}
+				}
+				if(offSet>0)
+					tvComLogWriteline("Total Offset: " + offSet.ToString());
+				else
+					tvComLogWriteline("No Offsets found...");
+			}
+			
+
+			return offSet;
 		}
 
 
@@ -593,7 +692,7 @@ namespace MediaPortal.GUI.Video
 
 			episodeInfo.seasonNumber = seasonNumber;
 			episodeInfo.episodeNumber = episodeNumber;
-			string line;
+			string line = "";
 
 			try
 			{
@@ -602,14 +701,19 @@ namespace MediaPortal.GUI.Video
 				// how many eps down is it on this page of the guide                
 				int epCount = (getGuidePageFromEpisodeNo(episodeNumber)-1)*24;
 
+				// offset
+				epCount -= getOffset(showTitle, seasonNumber, episodeNumber);
+
 				//************** Episode Title
 
 				try
 				{
 					while (epCount++ < episodeNumber)
 					{
-						jumpStreamUntil(ref seasonEpisodeGuideStream, "class=\"f-big\"");
+						line = jumpStreamUntil(ref seasonEpisodeGuideStream, "class=\"f-big\"");
 					}
+					if(line.ToLower() == "error")
+						throw new Exception("Could not locate Episode!");
 					line = jumpStreamUntil(ref seasonEpisodeGuideStream, "</a>");
 					// now we are in the correct line;
 					episodeInfo.title = Regex.Split(line, "</a>")[0].Trim();
@@ -713,10 +817,20 @@ namespace MediaPortal.GUI.Video
 
 				// one line down from guest stars
 				line = seasonEpisodeGuideStream.ReadLine();
-				//line = line.Replace("<p>", "\n\n").Replace("<br />", "\n");
-				line = Regex.Replace(line, @"<(.|\n)*?>", "");
-				episodeInfo.description = line.Replace("<b>","").Replace("</b>","").Trim();
 
+				do
+				{
+					line = line.Replace("<BR />","\n").Replace("<br />","\n");
+
+					if(line.IndexOf("</p>") != -1)  // we loop until the paragraph ends
+					{
+						line = Regex.Replace(line, @"<(.|\n)*?>", "");
+						episodeInfo.description += line.Trim();
+						break;
+					}
+					line = seasonEpisodeGuideStream.ReadLine();
+				}while(true);
+				
 				//************** Rating
 
 
@@ -754,7 +868,6 @@ namespace MediaPortal.GUI.Video
 				line = jumpStreamUntil(ref showSummaryStream, "thumb");
 				if (line != "eRRoR")
 				{
-					//tvComLogWriteline(line);
 					try
 					{
 						if (!downloadPicture(Regex.Split(line, "<img src=\"|\" alt")[1].Trim(), showTitle))
@@ -890,7 +1003,8 @@ namespace MediaPortal.GUI.Video
 						while (line.IndexOf("</p") == -1 && showSummaryStream.Peek() >= 0)
 							line += showSummaryStream.ReadLine() + "\n";
 
-						episodeInfo.seriesDescription = line.Replace("<p>", "").Replace("</p>", "").Replace("<i>", "").Replace("</i>", "").Replace("<br />", "").Trim();
+						line = Regex.Replace(line.Replace("<br />","\n").Replace("<BR />","\n"), @"<(.|\n)*?>", "");
+						episodeInfo.seriesDescription = line.Trim();
 
 					}
 					catch (Exception e8)
@@ -1048,7 +1162,15 @@ namespace MediaPortal.GUI.Video
 
 		}
 
-
+		public string getFilennameFriendlyString(string input)
+		{
+			foreach(char c in System.IO.Path.InvalidPathChars)
+			{
+				input = input.Replace(c,' ');
+			}
+			input = input.Replace("  "," ").Trim();
+			return input;
+		}
 		#region ISetupForm Members
  
 		// Returns the name of the plugin which is shown in the plugin menu
