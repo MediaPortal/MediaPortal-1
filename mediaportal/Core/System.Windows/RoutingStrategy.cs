@@ -25,43 +25,12 @@
 
 using System;
 
-using MediaPortal.Drawing;
-
-namespace MediaPortal.Controls
+namespace System.Windows
 {
-	public class Button
+	public enum RoutingStrategy
 	{
-		#region Constructors
-
-		public Button()
-		{
-		}
-
-		#endregion Constructors
-
-		#region Properties
-
-		public Brush Background
-		{
-			get { return _background; }
-			set { _background = value; }
-		}
-
-		#endregion Properties
-
-		#region Fields
-
-		Brush						_background;
-
-		#endregion Fields
-
-//		public static readonly RoutedEvent ClickEvent = EventManager.RegisterRoutedEvent("Click", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(Button));
-
-//		// Provide CLR accessors for the event
-//		public event RoutedEventHandler Tap
-//		{
-//			add { AddHandler(TapEvent, value); } 
-//			remove { RemoveHandler(TapEvent, value); }
-//		}
+		Bubble,
+		Direct,
+		Tunnel,
 	}
 }

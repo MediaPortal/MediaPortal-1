@@ -2234,6 +2234,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows\EventManager.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows\EventTrigger.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -2270,6 +2275,11 @@
                 />
                 <File
                     RelPath = "System.Windows\RoutedEventConverter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows\RoutingStrategy.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

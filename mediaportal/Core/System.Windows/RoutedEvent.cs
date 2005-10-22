@@ -37,6 +37,14 @@ namespace System.Windows
 		{
 		}
 
+		internal RoutedEvent(string name, RoutingStrategy routingStrategy, Type handlerType, Type ownerType)
+		{
+			_name = name;
+			_routingStrategy = routingStrategy;
+			_handlerType = handlerType;
+			_ownerType = ownerType;
+		}
+
 		#endregion Constructors
 
 		#region Methods
@@ -46,6 +54,49 @@ namespace System.Windows
 			return new RoutedEvent();
 		}
 
+		public RoutedEvent AddOwner(Type ownerType)
+		{
+			throw new NotImplementedException();
+		}
+
+		public override string ToString()
+		{
+			throw new NotImplementedException();
+		}
+
 		#endregion Methods
+
+		#region Properties
+
+		public Type HandlerType
+		{
+			get { return _handlerType; }
+		}
+
+		public string Name
+		{
+			get { return _name; }
+		}
+
+		public Type OwnerType
+		{
+			get { return _ownerType; }
+		}
+
+		public RoutingStrategy RoutingStrategy
+		{
+			get { return _routingStrategy; }
+		}
+
+		#endregion Properties
+
+		#region Fields
+
+		Type						_handlerType;
+		string						_name;
+		Type						_ownerType;
+		RoutingStrategy				_routingStrategy;
+
+		#endregion Fields
 	}
 }
