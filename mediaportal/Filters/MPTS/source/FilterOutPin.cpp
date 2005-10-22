@@ -367,6 +367,7 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 	}
 
 //	LogDebug("snd pkt pts:%x  pes:%x disc:%d", (DWORD)ptsNow, m_iPESPid, m_bDiscontinuity);
+	pSample->SetSyncPoint(TRUE);
 	if(m_bDiscontinuity) 
 	{
 		LogDebug("set discontinuity");
@@ -556,7 +557,7 @@ void CFilterOutPin::UpdatePositions(ULONGLONG& ptsNow)
 void CFilterOutPin::AboutToStop()
 {			
 	LogDebug("pin: AboutToStop()");
-	Inactive();
+//	Inactive();
 //	LONGLONG current=0,stop=0;
 //	HRESULT hr=SetPositions(&current,AM_SEEKING_AbsolutePositioning,&stop,AM_SEEKING_AbsolutePositioning);
 //	m_bAboutToStop=true;

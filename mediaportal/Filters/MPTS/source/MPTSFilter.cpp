@@ -168,8 +168,8 @@ STDMETHODIMP CMPTSFilter::Run(REFERENCE_TIME tStart)
 	if(m_pFileReader->IsFileInvalid()==true)
 	{
 	}
-	//SetSyncClock();// try to select the clock on the audio-renderer
-	m_pGraph->SetDefaultSyncSource();
+	SetSyncClock();// try to select the clock on the audio-renderer
+	//m_pGraph->SetDefaultSyncSource();
 	hr=CSource::Run(tStart);
 	return hr;
 }

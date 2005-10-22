@@ -421,7 +421,7 @@ STDMETHODIMP CDumpInputPin::Receive(IMediaSample *pSample)
 		if (m_bResettingPids) 
 		{
 			//not yet
-			//LogDebug("ignore...");
+			LogDebug("CDumpInputPin::Receive():ignore...");
 			return S_OK;
 		}
 
