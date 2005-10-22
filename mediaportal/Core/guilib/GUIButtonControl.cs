@@ -182,10 +182,6 @@ namespace MediaPortal.GUI.Library
 					x = m_iTextOffsetX + m_dwPosX;
 					break;
 
-//				case Alignment.ALIGN_CENTER:
-//					x = m_dwPosX + (m_dwWidth / 2);
-//					break;
-
 				case Alignment.ALIGN_RIGHT:
 					x = m_dwPosX + m_dwWidth - m_iTextOffsetY;
 					break;
@@ -517,7 +513,6 @@ namespace MediaPortal.GUI.Library
 			m_imgFocus.Width=m_dwWidth;
 			m_imgFocus.Height=m_dwHeight;
 
-			
 			m_imgNoFocus.ColourDiffuse=ColourDiffuse;
 			m_imgNoFocus.Width=m_dwWidth;
 			m_imgNoFocus.Height=m_dwHeight;

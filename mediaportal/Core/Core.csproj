@@ -304,6 +304,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Animation\HandoffBehavior.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Animation\IClock.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -409,12 +414,17 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Controls\ControlBase.cs"
+                    RelPath = "Controls\FrameworkElement.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Controls\StackPanel.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Controls\UIElement.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -2350,6 +2360,11 @@
                 />
                 <File
                     RelPath = "System.Windows\TriggerCollection.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows\Visibility.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

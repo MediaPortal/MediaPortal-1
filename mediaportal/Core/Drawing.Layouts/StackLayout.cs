@@ -24,7 +24,9 @@
 #endregion
 
 using System;
-using System.Collections;
+
+using MediaPortal.Controls;
+using MediaPortal.Drawing;
 
 namespace MediaPortal.Drawing.Layouts
 {
@@ -84,17 +86,17 @@ namespace MediaPortal.Drawing.Layouts
 			child.Arrange(rect);
 		}
 
-		public void Arrange(ILayoutComposite composite)
+		public void Arrange(FrameworkElement element)
 		{
-			Thickness t = composite.Margin;
-			Point l = composite.Location;
+			Thickness t = element.Margin;
+			Point l = element.Location;
 
-			double x = composite.Location.X + t.Left;
-			double y = composite.Location.Y + t.Top;
-			double w = _orientation != Orientation.Horizontal ? Math.Max(0, composite.Size.Width - t.Width) : 0;
-			double h = _orientation == Orientation.Horizontal ? Math.Max(0, composite.Size.Height - t.Height) : 0;
+			double x = element.Location.X + t.Left;
+			double y = element.Location.Y + t.Top;
+			double w = _orientation != Orientation.Horizontal ? Math.Max(0, element.Width - t.Width) : 0;
+			double h = _orientation == Orientation.Horizontal ? Math.Max(0, element.Height - t.Height) : 0;
 
-			foreach(ILayoutComponent child in composite.Children)
+			foreach(ILayoutComponent child in element.LogicalChildren)
 			{
 				if(child.IsVisible == false)
 					continue;
@@ -114,13 +116,21 @@ namespace MediaPortal.Drawing.Layouts
 			}
 		}
 
-		public Size Measure(ILayoutComposite composite, Size availableSize)
+		public Size Measure(FrameworkElement element, Size availableSize)
 		{
 			double w = 0;
 			double h = 0;
 
-			foreach(ILayoutComponent child in composite.Children)
+			foreach(object childX in element.LogicalChildren)
 			{
+				if(childX is ILayoutComponent == false)
+				{
+					MediaPortal.GUI.Library.Log.Write("Bugger: {0}", childX.GetType());
+					continue;
+				}
+
+				ILayoutComponent child = (ILayoutComponent)childX;
+
 				if(child.IsVisible == false)
 					continue;
 
@@ -130,7 +140,7 @@ namespace MediaPortal.Drawing.Layouts
 				h = _orientation == Orientation.Horizontal ? Math.Max(h, s.Height) : h + s.Height + _spacing.Height;
 			}
 
-			Thickness t = composite.Margin;
+			Thickness t = element.Margin;
 
 			_size.Width = w + t.Width;
 			_size.Height = h + t.Height;

@@ -737,7 +737,7 @@ namespace MediaPortal.GUI.Library
     public bool PreRender()
     {
       // Do not render if not visible
-      if (false==m_bVisible)
+      if (false==IsVisible)
       {
         m_bWasVisible = false;
         return false;
@@ -950,7 +950,7 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public override void Render(float timePassed)
     {
-			if (!m_bVisible) return;
+			if (!IsVisible) return;
       if (!PreRender()) return;
 			
       //get the current frame

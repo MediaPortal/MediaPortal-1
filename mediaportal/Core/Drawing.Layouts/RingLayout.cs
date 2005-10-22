@@ -24,7 +24,9 @@
 #endregion
 
 using System;
-using System.Drawing;
+
+using MediaPortal.Controls;
+using MediaPortal.Drawing;
 
 namespace MediaPortal.Drawing.Layouts
 {
@@ -83,20 +85,20 @@ namespace MediaPortal.Drawing.Layouts
 			child.Arrange(rect);
 		}
 
-		public void Arrange(ILayoutComposite composite)
+		public void Arrange(FrameworkElement element)
 		{
-			Point l = composite.Location;
+			Point l = element.Location;
 			Rect r = new Rect();
-			Thickness t = composite.Margin;
+			Thickness t = element.Margin;
 
 			int index = 0;
 
-			foreach(ILayoutComponent child in composite.Children)
+			foreach(ILayoutComponent child in element.LogicalChildren)
 			{
 				if(child.IsVisible == false)
 					continue;
 
-				double angle = (++index * 2 * Math.PI) / composite.Children.Count;
+				double angle = (++index * 2 * Math.PI) / element.LogicalChildren.Count;
 
 				r.Size = child.Size;
 				r.X = t.Left + _spacing.Width + ((_size.Width - t.Width - (_spacing.Width * 2)) / 2) + (int)(Math.Sin(angle) * _radius) - (r.Width / 2);
@@ -106,12 +108,12 @@ namespace MediaPortal.Drawing.Layouts
 			}
 		}
 
-		public Size Measure(ILayoutComposite composite, Size availableSize)
+		public Size Measure(FrameworkElement element, Size availableSize)
 		{
 			double w = 0;
 			double h = 0;
 
-			foreach(ILayoutComponent child in composite.Children)
+			foreach(ILayoutComponent child in element.LogicalChildren)
 			{
 				if(child.IsVisible == false)
 					continue;
@@ -122,9 +124,9 @@ namespace MediaPortal.Drawing.Layouts
 				h = Math.Max(h, s.Height);
 			}
 
-			Thickness t = composite.Margin;
+			Thickness t = element.Margin;
 
-			_radius = (Math.Min(w + _spacing.Width * composite.Children.Count, h + _spacing.Height * composite.Children.Count) / 2);
+			_radius = (Math.Min(w + _spacing.Width * element.LogicalChildren.Count, h + _spacing.Height * element.LogicalChildren.Count) / 2);
 			_radius -= Math.Max(w, h) / 2;
 			_size.Width = (int)(2 * _radius) - w + t.Width;
 			_size.Height = (int)(2 * _radius) - h + t.Height;

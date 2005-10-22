@@ -33,6 +33,7 @@ using System.Windows;
 using System.Xml;
 
 using MediaPortal.Animation;
+using MediaPortal.Controls;
 using MediaPortal.Xaml;
 
 namespace MediaPortal.GUI.Library
@@ -48,7 +49,7 @@ namespace MediaPortal.GUI.Library
 	/// Each window plugin should derive from this base class
 	/// Pluginwindows should be copied in the plugins/windows folder
 	/// </summary>
-	public class GUIWindow : ISupportInitialize
+	public class GUIWindow : FrameworkElement, ISupportInitialize
 	{
 		#region window ids
 		//enum of all standard windows in MP
@@ -202,7 +203,6 @@ namespace MediaPortal.GUI.Library
 		private int previousFocusedControlId=-1;
 		protected int defaultControlId = 0;
 		protected ArrayList m_vecPositions = new ArrayList();
-		protected ArrayList controlList = new ArrayList();
 		protected string windowXmlFileName = "";
 		protected bool overlayAllowed = true;
 		
@@ -246,14 +246,7 @@ namespace MediaPortal.GUI.Library
     {
     	GUIControlFactory.ClearReferences();
     }
-		/// <summary>
-		/// Property which returns an arraylist containing all controls 
-		/// of this window
-		/// </summary>
-    public ArrayList GUIControls
-    {
-      get { return controlList;}
-    }
+
 		public int PreviousFocusedId
 		{
 			get
@@ -270,7 +263,7 @@ namespace MediaPortal.GUI.Library
 		{
       if (control==null) return;
 			control.WindowId = GetID;
-			controlList.Add(control);
+			LogicalChildren.Add(control);
 		}
 
 		/// <summary>
@@ -280,7 +273,7 @@ namespace MediaPortal.GUI.Library
 		public void Remove(int dwId)
 		{
 			int index = 0;
-			foreach (GUIControl control in controlList)
+			foreach (GUIControl control in LogicalChildren)
 			{
         GUIGroup grp = control as GUIGroup;
         if (grp !=null)
@@ -291,8 +284,8 @@ namespace MediaPortal.GUI.Library
         {
           if (control.GetID == dwId)
           {
-						if (index >=0 && index < controlList.Count)
-							controlList.RemoveAt(index);
+						if (index >=0 && index < LogicalChildren.Count)
+							LogicalChildren.RemoveAt(index);
             return;
           }
         }
@@ -308,9 +301,9 @@ namespace MediaPortal.GUI.Library
     {
 			try
 			{
-				for (int x = 0; x < controlList.Count; ++x)
+				for (int x = 0; x < LogicalChildren.Count; ++x)
 				{
-					((GUIControl)controlList[x]).OnInit();
+					LogicalChildren[x].OnInit();
 				}
 			}
 			catch(Exception ex)
@@ -325,9 +318,9 @@ namespace MediaPortal.GUI.Library
     {
 			try
 			{
-				for (int x = 0; x < controlList.Count; ++x)
+				for (int x = 0; x < LogicalChildren.Count; ++x)
 				{
-					((GUIControl)controlList[x]).OnDeInit();
+					LogicalChildren[x].OnDeInit();
 				}
 			}
 			catch(Exception ex)
@@ -351,7 +344,7 @@ namespace MediaPortal.GUI.Library
 		public void ClearAll()
 		{
 			FreeResources();
-			controlList = new ArrayList();
+			LogicalChildren.Clear();
 		}
 
 
@@ -362,9 +355,9 @@ namespace MediaPortal.GUI.Library
 
 		public void RestoreControlPosition(int iControl)
 		{
-			for (int x = 0; x < controlList.Count; ++x)
+			for (int x = 0; x < LogicalChildren.Count; ++x)
 			{
-				GUIControl cntl = (GUIControl)controlList[x];
+				GUIControl cntl = LogicalChildren[x];
 				cntl.ReStorePosition();
 			}
 		}
@@ -401,7 +394,7 @@ namespace MediaPortal.GUI.Library
 			// no filename is configured
 			if (windowXmlFileName == "") return false;
 			// TODO what is the reason for this check
-			if (controlList.Count > 0) return false;
+			if (LogicalChildren.Count > 0) return false;
 			defaultControlId = 0;
 			// Load the reference controls
 			int iPos = windowXmlFileName.LastIndexOf('\\');
@@ -505,11 +498,11 @@ namespace MediaPortal.GUI.Library
 					switch(node.Name)
 					{
 						case "control":
-							LoadControl(node, controlList, defines);
+							LoadControl(node, defines);
 							break;
 						case "include":
 						case "import":
-							LoadInclude(node, controlList, defines);
+							LoadInclude(node, defines);
 							break;
 					}
 				}
@@ -524,7 +517,7 @@ namespace MediaPortal.GUI.Library
 			}
 			catch (Exception ex)
 			{
-				Log.WriteFile(Log.LogType.Log,true,"exception loading window {0} err:{1}", windowXmlFileName, ex.Message);
+				Log.WriteFile(Log.LogType.Log,true,"exception loading window {0} err:{1}\r\n\r\n{2}\r\n\r\n", windowXmlFileName, ex.Message, ex.StackTrace);
 				return false;
 			}
 		}
@@ -534,10 +527,11 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		/// <param name="node">XmlNode describing the control</param>
 		/// <param name="controls">on return this will contain an arraylist of all controls loaded</param>
-		protected void LoadControl(XmlNode node, ArrayList controls, IDictionary defines)
+		protected void LoadControl(XmlNode node, IDictionary defines)
 		{
-			if (node==null) return;
-			if (controls==null) return;
+			if(node == null || LogicalChildren == null)
+				return;
+
 			try
 			{
 				GUIControl newControl = GUIControlFactory.Create(windowId, node, defines);
@@ -551,7 +545,8 @@ namespace MediaPortal.GUI.Library
 							windowXmlFileName, img.GetID, img.Width, img.Height, img.FileName);
 					}
 				}
-				controls.Add(newControl);
+
+				LogicalChildren.Add(newControl);
 			}
 			catch(Exception ex)
 			{
@@ -559,9 +554,9 @@ namespace MediaPortal.GUI.Library
 			}
 		}
 
-		bool LoadInclude(XmlNode node, ArrayList controlList, IDictionary defines)
+		bool LoadInclude(XmlNode node, IDictionary defines)
 		{
-			if(node == null || controlList == null)
+			if(node == null || LogicalChildren == null)
 				return false;
 
 			if(System.IO.File.Exists(windowXmlFileName) == false)
@@ -583,7 +578,7 @@ namespace MediaPortal.GUI.Library
 					return false;
 
 				foreach(XmlNode controlNode in doc.DocumentElement.SelectNodes("/window/controls/control"))
-					LoadControl(controlNode, controlList, defines);
+					LoadControl(controlNode, defines);
 
 				return true;
 			}
@@ -764,15 +759,15 @@ namespace MediaPortal.GUI.Library
 			{
 				// tell every control we're gonna alloc the resources next
 				
-				for (int x = 0; x < controlList.Count; ++x)
+				for (int x = 0; x < LogicalChildren.Count; ++x)
 				{
-					((GUIControl)controlList[x]).PreAllocResources();
+					LogicalChildren[x].PreAllocResources();
 				}
 
 				// ask every control to alloc its resources
-				for (int x = 0; x < controlList.Count; ++x)
+				for (int x = 0; x < LogicalChildren.Count; ++x)
 				{
-					((GUIControl)controlList[x]).AllocResources();
+					LogicalChildren[x].AllocResources();
 				}
 			}
 			catch(Exception ex)
@@ -790,9 +785,9 @@ namespace MediaPortal.GUI.Library
 			try
 			{
 				// tell every control to free its resources
-				for (int x = 0; x < controlList.Count; ++x)
+				for (int x = 0; x < LogicalChildren.Count; ++x)
 				{
-					((GUIControl)controlList[x]).FreeResources();
+					LogicalChildren[x].FreeResources();
 				}
 			}
 			catch(Exception ex)
@@ -808,9 +803,9 @@ namespace MediaPortal.GUI.Library
 		{
 			try
 			{
-				for (int x = 0; x < controlList.Count; ++x)
+				for (int x = 0; x < LogicalChildren.Count; ++x)
 				{
-					((GUIControl)controlList[x]).DoUpdate();
+					LogicalChildren[x].DoUpdate();
 				}
 			}
 			catch(Exception ex)
@@ -827,9 +822,9 @@ namespace MediaPortal.GUI.Library
 		protected virtual void OnWindowLoaded()
 		{
 			m_vecPositions = new ArrayList();
-			for (int i = 0; i < controlList.Count; ++i)
+			for (int i = 0; i < LogicalChildren.Count; ++i)
 			{
-				GUIControl control = (GUIControl)controlList[i];
+				GUIControl control = LogicalChildren[i];
 				control.StorePosition();
 				CPosition pos = new CPosition(ref control, control.XPosition, control.YPosition);
 				m_vecPositions.Add(pos);
@@ -869,9 +864,9 @@ namespace MediaPortal.GUI.Library
 		/// <returns>GUIControl or null if control is not found</returns>
 		public virtual GUIControl	GetControl(int iControlId) 
 		{
-			for (int x = 0; x < controlList.Count; ++x)
+			for (int x = 0; x < LogicalChildren.Count; ++x)
 			{
-				GUIControl cntl = (GUIControl)controlList[x];
+				GUIControl cntl = LogicalChildren[x];
 				GUIControl cntlFound =  cntl.GetControlById( iControlId  );
 				if (cntlFound!=null) return cntlFound;
 
@@ -886,9 +881,9 @@ namespace MediaPortal.GUI.Library
 		/// <returns>id of control or -1 if no control has the focus</returns>
 		public virtual int GetFocusControlId()
 		{
-			for (int x = 0; x < controlList.Count; ++x)
+			for (int x = 0; x < LogicalChildren.Count; ++x)
 			{
-				GUIGroup grp = controlList[x] as GUIGroup;
+				GUIGroup grp = LogicalChildren[x] as GUIGroup;
 				if (grp!=null)
 				{
 					int iFocusedControlId=grp.GetFocusControlId();
@@ -900,7 +895,7 @@ namespace MediaPortal.GUI.Library
 				}
 				else
 				{
-					if (((GUIControl)controlList[x]).Focus) return ((GUIControl)controlList[x]).GetID;
+					if (LogicalChildren[x].Focus) return LogicalChildren[x].GetID;
 				}
 			}
 			return - 1;
@@ -928,7 +923,7 @@ namespace MediaPortal.GUI.Library
 		{
 			if (!_shouldRestore) return;
 			_shouldRestore=false;
-			controlList.Clear();
+			LogicalChildren.Clear();
 			m_vecPositions.Clear();
 			Load(windowXmlFileName);
 			LoadSkin();
@@ -971,9 +966,9 @@ namespace MediaPortal.GUI.Library
 						}
 						font=null;
 					}
-					for (int x = 0; x < controlList.Count; ++x)
+					for (int x = 0; x < LogicalChildren.Count; ++x)
 					{
-						((GUIControl)controlList[x]).Render(timePassed);
+						LogicalChildren[x].Render(timePassed);
 					}
 
 					GUIWaitCursor.Render();
@@ -995,9 +990,9 @@ namespace MediaPortal.GUI.Library
     {
 			try
 			{
-				for (int x = 0; x < controlList.Count; ++x)
+				for (int x = 0; x < LogicalChildren.Count; ++x)
 				{
-					if (((GUIControl)((GUIControl)controlList[x])).NeedRefresh()) return true;
+					if (LogicalChildren[x].NeedRefresh()) return true;
 				}
 			}
 			catch(Exception ex)
@@ -1246,9 +1241,9 @@ namespace MediaPortal.GUI.Library
 
 		protected virtual void OnMouseMove(int cx, int cy, Action action)
 		{
-			for (int i=controlList.Count-1 ; i>=0 ; i--)
+			for (int i=LogicalChildren.Count-1 ; i>=0 ; i--)
 			{
-				GUIControl control =(GUIControl )controlList[i];
+				GUIControl control =(GUIControl )LogicalChildren[i];
 				bool bFocus;
 				int controlID;
 				if (control.HitTest(cx, cy, out controlID, out bFocus))
@@ -1271,9 +1266,9 @@ namespace MediaPortal.GUI.Library
 		}
 		protected virtual void OnMouseClick(int posX, int posY, Action action)
 		{
-			for (int i=controlList.Count-1 ; i>=0 ; i--)
+			for (int i=LogicalChildren.Count-1 ; i>=0 ; i--)
 			{
-				GUIControl control =(GUIControl )controlList[i];
+				GUIControl control =(GUIControl )LogicalChildren[i];
 				bool bFocus;
 				int controlID;
 				if (control.HitTest(posX, posY, out controlID, out bFocus))
@@ -1286,6 +1281,11 @@ namespace MediaPortal.GUI.Library
 		}
 		#endregion
 
+		public GUIControlCollection controlList
+		{
+			get { return this.LogicalChildren; }
+		}
+
 		/// XAML related code follows
 
 		#region Methods
@@ -1296,10 +1296,10 @@ namespace MediaPortal.GUI.Library
 
 		void ISupportInitialize.EndInit()
 		{
-			PrepareTriggers();
+//			PrepareTriggers();
 		}
 
-		void PrepareTriggers()
+/*		void PrepareTriggers()
 		{
 			if(_triggers == null)
 				return;
@@ -1325,7 +1325,7 @@ namespace MediaPortal.GUI.Library
 				}
 			}
 		}
-
+*/
 		#endregion Methods
 
 		#region Properties
@@ -1335,24 +1335,11 @@ namespace MediaPortal.GUI.Library
 			get { if(_storyboards == null) _storyboards = new StoryboardCollection(); return _storyboards; }
 		}
 
-		public ResourceDictionary Resources
-		{
-			get { if(_resources == null) _resources = new ResourceDictionary(); return _resources; }
-			set { _resources = value; }
-		}
-
-		public TriggerCollection Triggers
-		{
-			get { if(_triggers == null) _triggers = new TriggerCollection(); return _triggers; }
-		}
-
 		#endregion Properties
 
 		#region Fields
 
-		ResourceDictionary			_resources;
 		StoryboardCollection		_storyboards;
-		TriggerCollection			_triggers;
 
 		#endregion Fields
 	}

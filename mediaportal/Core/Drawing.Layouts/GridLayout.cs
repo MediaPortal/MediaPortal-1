@@ -25,8 +25,8 @@
 
 using System;
 using System.Collections;
-using System.Drawing;
 
+using MediaPortal.Controls;
 using MediaPortal.Drawing;
 
 namespace MediaPortal.Drawing.Layouts
@@ -110,41 +110,37 @@ namespace MediaPortal.Drawing.Layouts
 			child.Arrange(rect);
 		}
 
-		public void Arrange(ILayoutComposite composite)
+		public void Arrange(FrameworkElement element)
 		{
-			Point location = composite.Location;
-			Size size = composite.Size;
-			Thickness t = composite.Margin;
+			Point location = element.Location;
+			Size size = element.RenderSize;
+			Thickness t = element.Margin;
 
 			int rows = _rows;
 			int cols = _cols;
 
 			if(rows > 0)
-				cols = (composite.Children.Count + rows - 1) / rows;
+				cols = (element.LogicalChildren.Count + rows - 1) / rows;
 			else
-				rows = (composite.Children.Count + cols - 1) / cols;
+				rows = (element.LogicalChildren.Count + cols - 1) / cols;
 
 			double w = (size.Width - t.Width - (cols - 1) * _spacing.Width) / cols;
 			double h = (size.Height - t.Height - (rows - 1) * _spacing.Height) / rows;
-			double y = composite.Location.Y + t.Top;
+			double y = element.Location.Y + t.Top;
 
 			for(int row = 0; row < rows; row++)
 			{
-				double x = composite.Location.X + t.Left;
+				double x = element.Location.X + t.Left;
 
 				for(int col = 0; col < cols; col++)
 				{
 					int index = _orientation == Orientation.Vertical ? col * rows + row : row * cols + col;
 
-					if(index < composite.Children.Count)
+					if(index < element.LogicalChildren.Count)
 					{
 						ILayoutComponent component = null;
 
-						if(composite.Children is IList)
-							component = (ILayoutComponent)((IList)composite.Children)[index];
-
-						if(composite.Children is ILayoutComponentCollection)
-							component = ((ILayoutComponentCollection)composite.Children)[index];
+						component = (ILayoutComponent)element.LogicalChildren[index];
 
 						if(component.IsVisible == false)
 							continue;
@@ -159,7 +155,7 @@ namespace MediaPortal.Drawing.Layouts
 			}
 		}
 
-		public Size Measure(ILayoutComposite composite, Size availableSize)
+		public Size Measure(FrameworkElement element, Size availableSize)
 		{
 			double w = 0;
 			double h = 0;
@@ -168,11 +164,11 @@ namespace MediaPortal.Drawing.Layouts
 			int cols = _cols;
 
 			if(rows > 0)
-				cols = (composite.Children.Count + rows - 1) / rows;
+				cols = (element.LogicalChildren.Count + rows - 1) / rows;
 			else
-				rows = (composite.Children.Count + cols - 1) / cols;
+				rows = (element.LogicalChildren.Count + cols - 1) / cols;
 
-			foreach(ILayoutComponent component in composite.Children)
+			foreach(ILayoutComponent component in element.LogicalChildren)
 			{
 				if(component.IsVisible == false)
 					continue;
@@ -183,7 +179,7 @@ namespace MediaPortal.Drawing.Layouts
 				h = Math.Max(h, s.Height);
 			}
 
-			Thickness t = composite.Margin;
+			Thickness t = element.Margin;
 
 			_size.Width = (w * cols + _spacing.Width * (cols - 1)) + t.Width;
 			_size.Height = (h * rows + _spacing.Height * (rows - 1)) + t.Height;

@@ -34,32 +34,12 @@ namespace MediaPortal.Controls
 	{
 		#region Constructors
 
-		static Button()
-		{
-		}
 		
 		public Button()
 		{
 		}
 
 		#endregion Constructors
-
-		#region Events
-
-		// Provide CLR accessors for the event
-//		public event RoutedEventHandler Click
-//		{
-//			add		{ AddHandler(ClickEvent, value); } 
-//			remove	{ RemoveHandler(ClickEvent, value); }
-//		}
-
-		#endregion Events
-
-		#region Events (Routed)
-
-		public static readonly RoutedEvent ClickEvent = EventManager.RegisterRoutedEvent("Click", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(Button));
-
-		#endregion Events (Routed)
 
 		#region Properties
 

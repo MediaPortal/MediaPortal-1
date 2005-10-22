@@ -25,7 +25,9 @@
 
 using System;
 using System.Collections;
-using System.Drawing;
+
+using MediaPortal.Controls;
+using MediaPortal.Drawing;
 
 namespace MediaPortal.Drawing.Layouts
 {
@@ -47,7 +49,7 @@ namespace MediaPortal.Drawing.Layouts
 
 		#region Methods
 
-		public void Arrange(ILayoutComposite composite)
+		public void Arrange(FrameworkElement element)
 		{
 			ILayoutComponent l = null;
 			ILayoutComponent t = null;
@@ -55,7 +57,7 @@ namespace MediaPortal.Drawing.Layouts
 			ILayoutComponent b = null;
 			ILayoutComponent f = null;
 
-//			foreach(ILayoutComponent child in composite.Children)
+//			foreach(ILayoutComponent child in element.Children)
 			{
 //				if(child.Dock == Dock.Left)
 //					l = child;
@@ -73,9 +75,9 @@ namespace MediaPortal.Drawing.Layouts
 //					f = child;
 			}
 
-			Thickness m = composite.Margin;
-			Size size = composite.Size;
-			Point location = composite.Location;
+			Thickness m = element.Margin;
+			Size size = element.RenderSize;
+			Point location = element.Location;
 
 			double top = location.Y + m.Top;
 			double bottom = location.Y + size.Height - m.Bottom;
@@ -122,7 +124,7 @@ namespace MediaPortal.Drawing.Layouts
 				f.Arrange(new Rect(left, top, right - left, bottom - top));
 		}
 	
-		public Size Measure(ILayoutComposite composite, Size availableSize)
+		public Size Measure(FrameworkElement element, Size availableSize)
 		{
 			ILayoutComponent l = null;
 			ILayoutComponent t = null;
@@ -130,7 +132,7 @@ namespace MediaPortal.Drawing.Layouts
 			ILayoutComponent b = null;
 			ILayoutComponent f = null;
 
-//			foreach(ILayoutComponent child in composite.Children)
+//			foreach(ILayoutComponent child in element.Children)
 			{
 //				if(child.Dock == Dock.Left)
 //					l = child;
@@ -188,7 +190,7 @@ namespace MediaPortal.Drawing.Layouts
 				h = h + s.Height + _spacing.Height;
 			}
 
-			Thickness m = composite.Margin;
+			Thickness m = element.Margin;
 
 			_size.Width = w + m.Width;
 			_size.Height = h + m.Height;

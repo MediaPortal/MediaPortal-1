@@ -33,7 +33,7 @@ namespace MediaPortal.GUI.Library
 	/// A group can hold 1 or more controls
 	/// and apply an animation to the entire group
 	/// </summary>
-	public class GUIGroup : GUIControl, ILayoutComposite, ISupportInitialize, IAddChild
+	public class GUIGroup : GUIControl, ISupportInitialize, IAddChild
 	{
 		#region Constructors
 
@@ -53,7 +53,7 @@ namespace MediaPortal.GUI.Library
 
 		public void AddControl(GUIControl control)
 		{
-			_children.Add(control);
+			LogicalChildren.Add(control);
 		}
 
 		public override void Render(float timePassed)
@@ -68,7 +68,7 @@ namespace MediaPortal.GUI.Library
 						StorePosition();
 					}
 
-					foreach(GUIControl control in _children)
+					foreach(GUIControl control in LogicalChildren)
 					{
 						if(control != null)
 							control.Animate(timePassed, _animator);
@@ -78,7 +78,7 @@ namespace MediaPortal.GUI.Library
 				}
 			}
 
-			foreach(GUIControl control in _children)
+			foreach(GUIControl control in LogicalChildren)
 				control.Render(timePassed);
 			
 			if(_animator != null && _animator.IsDone())
@@ -96,25 +96,25 @@ namespace MediaPortal.GUI.Library
 				_animator = null;
 			}
 
-			foreach(GUIControl control in _children)
+			foreach(GUIControl control in LogicalChildren)
 				control.FreeResources();
 		}
 
 		public override void AllocResources()
 		{
-			foreach(GUIControl control in _children)
+			foreach(GUIControl control in LogicalChildren)
 				control.AllocResources();
 		}
 
 		public override void PreAllocResources()
 		{
-			foreach(GUIControl control in _children)
+			foreach(GUIControl control in LogicalChildren)
 				control.PreAllocResources();
 		}
 
 		public override GUIControl GetControlById(int ID)
 		{
-			foreach(GUIControl control in _children)
+			foreach(GUIControl control in LogicalChildren)
 			{
 				GUIControl childControl = control.GetControlById(ID);
 
@@ -127,7 +127,7 @@ namespace MediaPortal.GUI.Library
 
 		public override bool NeedRefresh()
 		{
-			foreach(GUIControl control in _children)
+			foreach(GUIControl control in LogicalChildren)
 			{
 				if(control.NeedRefresh())
 					return true;
@@ -141,9 +141,9 @@ namespace MediaPortal.GUI.Library
 			controlID=-1;
 			focused=false;
 
-			for(int index = _children.Count - 1; index >= 0; index--)
+			for(int index = LogicalChildren.Count - 1; index >= 0; index--)
 			{
-				if((_children[index]).HitTest(x, y, out controlID, out focused))
+				if((LogicalChildren[index]).HitTest(x, y, out controlID, out focused))
 					return true;
 			}
 
@@ -152,7 +152,7 @@ namespace MediaPortal.GUI.Library
 
 		public override void OnAction(Action action)
 		{
-			foreach(GUIControl control in _children)
+			foreach(GUIControl control in LogicalChildren)
 			{
 				if(control.Focus)
 					control.OnAction(action);
@@ -161,7 +161,7 @@ namespace MediaPortal.GUI.Library
 
 		public void Remove(int controlId)
 		{
-			foreach(GUIControl control in _children)
+			foreach(GUIControl control in LogicalChildren)
 			{
 				if(control is GUIGroup)
 				{
@@ -170,7 +170,7 @@ namespace MediaPortal.GUI.Library
 				}
 				else if(control.GetID == controlId)
 				{
-					_children.Remove(control);
+					LogicalChildren.Remove(control);
 					break;
 				}
 			}
@@ -178,7 +178,7 @@ namespace MediaPortal.GUI.Library
 
 		public int GetFocusControlId()
 		{
-			foreach(GUIControl control in _children)
+			foreach(GUIControl control in LogicalChildren)
 			{
 				if(control is GUIGroup)
 				{
@@ -198,13 +198,13 @@ namespace MediaPortal.GUI.Library
 
 		public override void DoUpdate()
 		{
-			foreach(GUIControl control in _children)
+			foreach(GUIControl control in LogicalChildren)
 				control.DoUpdate();
 		}
     
 		public override void StorePosition()
 		{
-			foreach(GUIControl control in _children)
+			foreach(GUIControl control in LogicalChildren)
 				control.StorePosition();
       
 			base.StorePosition();
@@ -212,7 +212,7 @@ namespace MediaPortal.GUI.Library
 
 		public override void ReStorePosition()
 		{
-			foreach(GUIControl control in _children)
+			foreach(GUIControl control in LogicalChildren)
 				control.ReStorePosition();
       
 			base.ReStorePosition();
@@ -220,7 +220,7 @@ namespace MediaPortal.GUI.Library
 
 		public override void Animate(float timePassed,Animator animator)
 		{
-			foreach(GUIControl control in _children)
+			foreach(GUIControl control in LogicalChildren)
 				control.Animate(timePassed, animator);
 
 			base.Animate(timePassed, animator);
@@ -238,12 +238,12 @@ namespace MediaPortal.GUI.Library
 
 		public int Count
 		{
-			get { return _children.Count; }
+			get { return LogicalChildren.Count; }
 		}
 
 		public GUIControl this[int index]
 		{
-			get { return _children[index]; }
+			get { return LogicalChildren[index]; }
 		}
 
 		/// <summary>
@@ -253,7 +253,7 @@ namespace MediaPortal.GUI.Library
 		public override int WindowId
 		{
 			get { return base.WindowId; }
-			set { base.WindowId = value; foreach(GUIControl control in _children) control.WindowId = value; }
+			set { base.WindowId = value; foreach(GUIControl control in LogicalChildren) control.WindowId = value; }
 		}
 
 		#endregion Properties
@@ -268,8 +268,8 @@ namespace MediaPortal.GUI.Library
 			if(value is GUIControl == false)
 				return;
 
-//			_children.Add((ILayoutComponent)value);
-			_children.Add((GUIControl)value);
+//			LogicalChildren.Add((ILayoutComponent)value);
+			LogicalChildren.Add((GUIControl)value);
 		}
 
 		void IAddChild.AddText(string text)
@@ -289,15 +289,17 @@ namespace MediaPortal.GUI.Library
 			_layout.Arrange(this);
 		}
 
-		protected override void ArrangeCore(Rect rect)
+		protected override Size ArrangeOverride(Rect finalRect)
 		{
-			this.Location = rect.Location;
-			this.Size = rect.Size;
+			this.Location = finalRect.Location;
+			this.Size = finalRect.Size;
 
 			if(_layout == null)
-				return;
+				return this.Size;
 
 			_layout.Arrange(this);
+
+			return finalRect.Size;
 		}
 
 		void ISupportInitialize.BeginInit()
@@ -311,7 +313,7 @@ namespace MediaPortal.GUI.Library
 				Arrange();
 		}
 
-		protected override Size MeasureCore()
+		protected override Size MeasureOverride(Size availableSize)
 		{
 			if(_layout == null)
 				return Size.Empty;
@@ -325,16 +327,6 @@ namespace MediaPortal.GUI.Library
 
 		#region Properties
 
-		ICollection ILayoutComposite.Children
-		{
-			get { return _children; }
-		}
-
-		Thickness ILayoutComposite.Margin
-		{
-			get { return base.Margin; }
-		}
-
 		public ILayout Layout
 		{
 			get { return _layout; }
@@ -347,7 +339,6 @@ namespace MediaPortal.GUI.Library
 
 		Animator					_animator;
 		int							_beginInitCount = 0;
-		GUIControlCollection		_children = new GUIControlCollection();
 
 		[XMLSkinElement("layout")]
 		ILayout						_layout;

@@ -113,31 +113,34 @@ namespace MediaPortal.GUI.Library
 		/// 
 		/// </summary>
 		/// <param name="guiControlType">The type of control you wish to update.</param>
-		/// <returns>A hashtable which contains the FieldInfo objects for every
+		/// <returns>A hashtable which contains the MemberInfo objects for every
 		/// updatable field, indexed by their corresponding Xml Element name. </returns>
-		static Hashtable GetFieldsToUpdate(Type guiControlType)
+		static Hashtable GetMembersToUpdate(Type guiControlType)
 		{
 					// Lazy Initializiation...
 			if (m_reflectionCacheByControlType.ContainsKey(guiControlType)) 
 				return (Hashtable)m_reflectionCacheByControlType[guiControlType]; 
 
-			Hashtable fieldsTable = new Hashtable();
-			FieldInfo[] allFields = guiControlType.GetFields(
+			Hashtable membersTable = new Hashtable();
+
+			MemberInfo[] allMembers = guiControlType.GetMembers(
 				BindingFlags.Instance 
 				|BindingFlags.NonPublic
 				|BindingFlags.FlattenHierarchy
 				|BindingFlags.Public);
-			foreach (FieldInfo field in allFields)
+
+			foreach(MemberInfo member in allMembers)
 			{
-				if (field.IsDefined(typeof(XMLSkinElementAttribute), false))
+				if(member.IsDefined(typeof(XMLSkinElementAttribute), false))
 				{
 					XMLSkinElementAttribute atrb = (XMLSkinElementAttribute)
-						field.GetCustomAttributes(typeof(XMLSkinElementAttribute), false)[0];
-					fieldsTable[atrb.XmlElementName] = field;
+						member.GetCustomAttributes(typeof(XMLSkinElementAttribute), false)[0];
+
+					membersTable[atrb.XmlElementName] = member;
 				}
 			}
-			m_reflectionCacheByControlType[guiControlType] = fieldsTable;
-			return fieldsTable;
+			m_reflectionCacheByControlType[guiControlType] = membersTable;
+			return membersTable;
 		}
 
 		private static object ConvertXmlStringToObject(string valueName, string valueText, Type type)
@@ -295,7 +298,7 @@ namespace MediaPortal.GUI.Library
 			}
 			catch(Exception e)
 			{
-				Log.Write("GUIControlFactory.Create: {0}", e.Message);
+				Log.Write("GUIControlFactory.Create: {0}\r\n\r\n{1}\r\n\r\n", e.Message, e.StackTrace);
 				Log.Write("Parent: {0} Id: {1}", dwParentId, control.GetID);
 			}
 
@@ -306,31 +309,39 @@ namespace MediaPortal.GUI.Library
 			Type controlType,
 			XmlNode pControlNode, IDictionary defines)
 		{
-			Hashtable fieldsThatCanBeUpdated = GetFieldsToUpdate(controlType);
+			Hashtable membersThatCanBeUpdated = GetMembersToUpdate(controlType);
 
 			XmlNodeList childNodes = pControlNode.ChildNodes;
 			foreach (XmlNode element in childNodes)
 			{
-				FieldInfo correspondingField =
-					fieldsThatCanBeUpdated[element.Name] as FieldInfo;
+				MemberInfo correspondingMember =
+					membersThatCanBeUpdated[element.Name] as MemberInfo;
 
-				if (correspondingField != null)
+				if (correspondingMember != null)
 				{
 					string text = element.InnerText;
 
 					if(text.Length > 0 && text[0] == '#' && defines.Contains(text))
 						text = (string)defines[text];
 
-					object newValue = ConvertXmlStringToObject(element.Name, text, correspondingField.FieldType);
+					object newValue = null;
+					
+					if(correspondingMember.MemberType == MemberTypes.Field)
+						newValue = ConvertXmlStringToObject(element.Name, text, ((FieldInfo)correspondingMember).FieldType);
+					else if(correspondingMember.MemberType == MemberTypes.Property)
+						newValue = ConvertXmlStringToObject(element.Name, text, ((PropertyInfo)correspondingMember).PropertyType);
 			
 					try
 					{
-						correspondingField.SetValue(control, newValue);
+						if(correspondingMember.MemberType == MemberTypes.Field)
+							((FieldInfo)correspondingMember).SetValue(control, newValue);
+						else if(correspondingMember.MemberType == MemberTypes.Property)
+							((PropertyInfo)correspondingMember).SetValue(control, newValue, null);
 					}
 					catch (Exception e)
 					{
 						Log.Write("Couldn't place {0}, which is {1} in {2}. Exception:{3}",  
-							newValue, newValue.GetType(), correspondingField,e) ;
+							newValue, newValue.GetType(), correspondingMember,e) ;
 					}
 				}
 				else

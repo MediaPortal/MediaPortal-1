@@ -25,7 +25,9 @@
 
 using System;
 using System.ComponentModel;
-using System.Drawing;
+
+using MediaPortal.Controls;
+using MediaPortal.Drawing;
 
 namespace MediaPortal.Drawing.Layouts
 {
@@ -33,8 +35,8 @@ namespace MediaPortal.Drawing.Layouts
 	{
 		#region Methods
 
-		void Arrange(ILayoutComposite composite);
-		Size Measure(ILayoutComposite composite, Size availableSize);
+		void Arrange(FrameworkElement element);
+		Size Measure(FrameworkElement element, Size availableSize);
 
 		#endregion Methods
 

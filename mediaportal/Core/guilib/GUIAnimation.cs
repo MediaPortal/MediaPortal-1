@@ -190,7 +190,7 @@ namespace MediaPortal.GUI.Library
 			get { if(_filenames == null) _filenames = new ArrayList(); return _filenames; }
 		}
 
-		public override HorizontalAlignment HorizontalAlignment
+		public new HorizontalAlignment HorizontalAlignment
 		{
 			get { return _horizontalAlignment; }
 			set { _horizontalAlignment = value; }
@@ -202,7 +202,7 @@ namespace MediaPortal.GUI.Library
 			set { _repeatBehavior = value; }
 		}
 		
-		public override VerticalAlignment VerticalAlignment
+		public new VerticalAlignment VerticalAlignment
 		{
 			get { return _verticalAlignment; }
 			set { _verticalAlignment = value; }

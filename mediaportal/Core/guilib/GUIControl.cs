@@ -1,3 +1,5 @@
+#region Copyright (C) 2005 Media Portal
+
 /* 
  *	Copyright (C) 2005 Media Portal
  *	http://mediaportal.sourceforge.net
@@ -18,11 +20,15 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
+
 using System;
 using System.Collections;
 using System.Diagnostics;
 
 using MediaPortal.Animation;
+using MediaPortal.Controls;
 using MediaPortal.Drawing;
 using MediaPortal.Drawing.Layouts;
 
@@ -31,22 +37,17 @@ namespace MediaPortal.GUI.Library
 	/// <summary>
 	/// Base class for GUIControls.
 	/// </summary>
-	public abstract class GUIControl : MediaPortal.Controls.ControlBase
+	public abstract class GUIControl : FrameworkElement
 	{
 		[XMLSkinElement("subtype")]			protected string  m_strSubType = "";
 		[XMLSkinElement("onleft")]			protected int			m_dwControlLeft = 0;
 		[XMLSkinElement("onright")]			protected int			m_dwControlRight = 0;
 		[XMLSkinElement("onup")]			protected int			m_dwControlUp = 0;
 		[XMLSkinElement("ondown")]			protected int			m_dwControlDown = 0;
-		[XMLSkinElement("posX")]			protected int			m_dwPosX = 0;
-		[XMLSkinElement("posY")]			protected int			m_dwPosY = 0;
-		[XMLSkinElement("height")]			protected int			m_dwHeight = 0;
-		[XMLSkinElement("width")]			protected int			m_dwWidth = 0;
 		[XMLSkinElement("colordiffuse")]	protected long			m_colDiffuse = 0xFFFFFFFF;
 		[XMLSkinElement("id")]				protected int			m_dwControlID = 0;
 		[XMLSkinElement("type")]			protected string		m_strControlType = "";
 		[XMLSkinElement("description")]		protected string		m_Description="";
-		[XMLSkinElement("visible")]			protected bool			m_bVisible = true;
 		protected int			m_dwParentID = 0;
 		protected bool			m_bHasFocus = false;
 		protected bool			m_bDisabled = false;
@@ -113,8 +114,9 @@ namespace MediaPortal.GUI.Library
 			m_dwControlID = dwControlId;
 			m_dwPosX = dwPosX;
 			m_dwPosY = dwPosY;
-			m_dwWidth = dwWidth;
-			m_dwHeight = dwHeight;
+
+			base.Width = dwWidth;
+			base.Height = dwHeight;
 		}
 
 		/// <summary> 
@@ -137,9 +139,18 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public virtual void ScaleToScreenResolution()
 		{
-			GUIGraphicsContext.ScaleRectToScreenResolution(ref m_dwPosX, ref m_dwPosY, ref m_dwWidth, ref m_dwHeight);
-		}
+			int x = m_dwPosX;
+			int y = m_dwPosY;
+			int w = this.Width;
+			int h = this.Height;
 
+			GUIGraphicsContext.ScaleRectToScreenResolution(ref x, ref y, ref w, ref h);
+
+			m_dwPosX = x;
+			m_dwPosY = y;
+			this.Width = w;
+			this.Height = h;
+		}
 
 		/// <summary>
 		/// The default render method. This needs to be overwritten when inherited to give every control 
@@ -221,7 +232,7 @@ namespace MediaPortal.GUI.Library
 			double distanceMin = 10000;
 			double bearingMin = 10000;
 
-			foreach(GUIControl control in FlattenHierarchy(GUIWindowManager.GetWindow(WindowId).GUIControls))
+			foreach(GUIControl control in FlattenHierarchy(GUIWindowManager.GetWindow(WindowId).LogicalChildren))
 			{
 				if(control.GetID == GetID)
 					continue;
@@ -278,11 +289,11 @@ namespace MediaPortal.GUI.Library
 			return Math.Round(Math.Sqrt((horzDelta * horzDelta) + (vertDelta * vertDelta)));
 		}
 
-		ArrayList FlattenHierarchy(ArrayList controlList)
+		ArrayList FlattenHierarchy(GUIControlCollection controls)
 		{
 			ArrayList targetList = new ArrayList();
 
-			FlattenHierarchy(controlList, targetList);
+			FlattenHierarchy(controls, targetList);
 
 			return targetList;
 		}
@@ -515,7 +526,7 @@ namespace MediaPortal.GUI.Library
 		/// <param name="dwPosY">The Y position.</param>
 		public virtual void SetPosition(int dwPosX, int dwPosY)
 		{
-			if (m_dwPosX == dwPosX && m_dwPosY == dwPosY) return;
+			if(m_dwPosX == dwPosX && m_dwPosY == dwPosY) return;
 			m_dwPosX = dwPosX;
 			m_dwPosY = dwPosY;
 			Update();
@@ -553,13 +564,7 @@ namespace MediaPortal.GUI.Library
 		public virtual int XPosition
 		{
 			get { return m_dwPosX; }
-			set 
-			{ 
-				if (m_dwPosX==value) return;
-				m_dwPosX = value; 
-				if (m_dwPosX<0) m_dwPosX=0;
-				Update();
-			}
+			set { if(m_dwPosX != value) { m_dwPosX = Math.Max(0, value); Update(); } }
 		}
 
 		/// <summary>
@@ -568,49 +573,13 @@ namespace MediaPortal.GUI.Library
 		public virtual int YPosition
 		{
 			get { return m_dwPosY; }
-			set 
-			{ 
-				if (m_dwPosY==value) return;
-				m_dwPosY = value; 
-				if (m_dwPosY<0) m_dwPosY=0;
-				Update();
-			}
+			set { if(m_dwPosY != value) { m_dwPosY = Math.Max(0, value); Update(); } }
 		}
 
 		public bool Visible
 		{
 			get { return IsVisible; }
 			set { IsVisible = value; }
-		}
-
-		/// <summary>
-		/// Gets and sets the width of the control.
-		/// </summary>
-		public virtual int Width
-		{
-			get { return m_dwWidth; }
-			set 
-			{ 
-				if (m_dwWidth==value) return;
-				m_dwWidth = value;
-				if (m_dwWidth<0) m_dwWidth=0;
-				Update();
-			}
-		}
-
-		/// <summary>
-		/// Gets and sets the height of the control.
-		/// </summary>
-		public virtual int Height
-		{
-			get { return m_dwHeight; }
-			set 
-			{ 
-				if (m_dwHeight==value) return;
-				m_dwHeight = value; 
-				if (m_dwHeight<0) m_dwHeight=0;
-				Update();
-			}
 		}
 
 		/// <summary>
@@ -1094,7 +1063,7 @@ namespace MediaPortal.GUI.Library
 		public virtual void StorePosition()
 		{
 			m_bAnimating=false;
-			m_originalRect=new System.Drawing.Rectangle(m_dwPosX, m_dwPosY, m_dwWidth, m_dwHeight);
+			m_originalRect=new System.Drawing.Rectangle(m_dwPosX, m_dwPosY, this.Width, this.Height);
 			m_lOriginalColorDiffuse=m_colDiffuse;
 		}
 
@@ -1113,8 +1082,8 @@ namespace MediaPortal.GUI.Library
 		{
 			m_dwPosX=m_originalRect.X;
 			m_dwPosY=m_originalRect.Y;
-			m_dwWidth=m_originalRect.Width;
-			m_dwHeight=m_originalRect.Height;
+			this.Width = m_originalRect.Width;
+			this.Height = m_originalRect.Height;
 			m_colDiffuse=m_lOriginalColorDiffuse;
 			Update();
 			m_bAnimating=false;
@@ -1127,8 +1096,8 @@ namespace MediaPortal.GUI.Library
 		{
 			x=m_dwPosX;
 			y=m_dwPosY;
-			width=m_dwWidth;
-			height=m_dwHeight;
+			width=this.Width;
+			height=this.Height;
 		}
 
 		/// <summary>
@@ -1147,8 +1116,8 @@ namespace MediaPortal.GUI.Library
 			m_colDiffuse=color;
 			m_dwPosX=x;
 			m_dwPosY=y;
-			m_dwWidth=w;
-			m_dwHeight=h;
+			this.Width=w;
+			this.Height=h;
 			DoUpdate();
 		}
 
@@ -1158,6 +1127,34 @@ namespace MediaPortal.GUI.Library
 			{
 				return m_strSubType;
 			}
+		}
+
+		[XMLSkinElement("width")]
+		public int m_dwWidth
+		{
+			get { return base.Width; }
+			set { base.Width = value; }
+		}
+
+		[XMLSkinElement("height")]
+		public int m_dwHeight
+		{
+			get { return base.Height; }
+			set { base.Height = value; }
+		}
+
+		[XMLSkinElement("posX")]
+		public int m_dwPosX
+		{
+			get { return (int)base.Location.X; }
+			set { base.Location = new Point(value, base.Location.Y); }
+		}
+
+		[XMLSkinElement("posY")]
+		public int m_dwPosY
+		{
+			get { return (int)base.Location.Y; }
+			set { base.Location = new Point(base.Location.X, value); }
 		}
 
 		/////////////////////////////////////////////
@@ -1177,53 +1174,29 @@ namespace MediaPortal.GUI.Library
 
 		#region Methods
 
-		protected override void ArrangeCore(Rect rect)
+		protected override Size ArrangeOverride(Rect finalRect)
 		{
-			m_dwPosX = (int)rect.X;
-			m_dwPosY = (int)rect.Y;
-			m_dwWidth = (int)rect.Width;
-			m_dwHeight = (int)rect.Height;
+			Size size = base.ArrangeOverride(finalRect);
 
 			Update();
-		}
 
-		protected override Size MeasureCore()
-		{
-			return this.Size;
+			return size;
 		}
 
 		#endregion Methods
 
 		#region Properties
 
-		public AnimationCollection Animations
+		public override int Width
 		{
-			get { if(_animations != null) _animations = new AnimationCollection(this); return _animations; }
-			set { _animations = value; }
+			get { return base.Width; }
+			set { if(base.Width != value) { base.Width = Math.Max(0, value); Update(); } }
 		}
 
-		public override HorizontalAlignment HorizontalAlignment
+		public override int Height
 		{
-			get { return _horizontalAlignment; }
-			set { _horizontalAlignment = value; }
-		}
-
-		public override bool IsVisible
-		{
-			get { return m_bVisible; }
-			set { m_bVisible = value; }
-		}
-
-		public override Point Location
-		{
-			get { return new Point(m_dwPosX, m_dwPosY); }
-			set { m_dwPosX = (int)value.X; m_dwPosY = (int)value.Y; Update(); }
-		}
-
-		public override Thickness Margin
-		{
-			get { return _margin; }
-			set { _margin = value; }
+			get { return base.Height; }
+			set { if(base.Height != value) { base.Height = Math.Max(0, value); Update(); } }
 		}
 
 		public override double Opacity
@@ -1232,27 +1205,12 @@ namespace MediaPortal.GUI.Library
 			set { m_colDiffuse = System.Drawing.Color.FromArgb((int)(255 * value), System.Drawing.Color.FromArgb((int)m_colDiffuse)).ToArgb(); }
 		}
 
-		public override Size Size
+		public Size Size
 		{
-			get { return new Size(m_dwWidth, m_dwHeight); }
-			set { m_dwWidth = (int)value.Width; m_dwHeight = (int)value.Height; Update(); }
-		}
-
-		public override VerticalAlignment VerticalAlignment
-		{
-			get { return _verticalAlignment; }
-			set { _verticalAlignment = value; }
+			get { return new Size(this.Width, this.Height); }
+			set { base.Width = (int)value.Width; base.Height = (int)value.Height; Update(); }
 		}
 
 		#endregion Properties
-
-		#region Fields
-
-		AnimationCollection			_animations;
-		HorizontalAlignment			_horizontalAlignment;
-		Thickness					_margin;
-		VerticalAlignment			_verticalAlignment;
-
-		#endregion Fields
 	}
 }

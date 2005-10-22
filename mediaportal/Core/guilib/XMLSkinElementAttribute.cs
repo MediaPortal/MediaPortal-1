@@ -25,7 +25,7 @@ namespace MediaPortal.GUI.Library
 	/// <summary>
 	/// Indicates that a field can be initialized from XML skin data.
 	/// </summary>
-	[AttributeUsage(AttributeTargets.Field)]
+	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
 	public class XMLSkinElementAttribute : Attribute
 	{
 		string m_xmlElementName;

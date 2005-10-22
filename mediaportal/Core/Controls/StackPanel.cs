@@ -31,7 +31,7 @@ using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Controls
 {
-	public class StackPanel
+	public class StackPanel : UIElement
 	{
 		#region Constructors
 
