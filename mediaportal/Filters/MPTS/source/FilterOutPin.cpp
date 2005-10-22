@@ -557,8 +557,5 @@ void CFilterOutPin::UpdatePositions(ULONGLONG& ptsNow)
 void CFilterOutPin::AboutToStop()
 {			
 	LogDebug("pin: AboutToStop()");
-//	Inactive();
-//	LONGLONG current=0,stop=0;
-//	HRESULT hr=SetPositions(&current,AM_SEEKING_AbsolutePositioning,&stop,AM_SEEKING_AbsolutePositioning);
-//	m_bAboutToStop=true;
+	m_bAboutToStop=true;
 }

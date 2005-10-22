@@ -238,6 +238,7 @@ STDMETHODIMP CMPTSFilter::Stop()
 	LogDebug("Filter: Stop()");
 	CAutoLock cObjectLock(m_pLock);
 	CAutoLock lock(&m_Lock);
+	m_pPin->AboutToStop();
 	return CSource::Stop();
 }
 

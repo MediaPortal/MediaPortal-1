@@ -224,13 +224,13 @@ namespace MediaPortal.Player
 
 				UpdateDuration();
 				UpdateCurrentPosition();
-				//double dPos=m_dDuration;
-				//if (dPos >= 0.5)
-				//{
-				//	Log.Write("TStreamBufferPlayer:Seek to 99%");
-				//	SeekAbsolute(dPos);
-				//}
-				//else return false;
+				double dPos=m_dDuration;
+				if (dPos >= 0.5)
+				{
+					Log.Write("TStreamBufferPlayer:Seek to 99%");
+					SeekAbsolute(dPos);
+				}
+				else return false;
 			}
 			else
 			{
