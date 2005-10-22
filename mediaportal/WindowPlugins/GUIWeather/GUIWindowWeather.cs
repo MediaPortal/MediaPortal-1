@@ -37,7 +37,7 @@ namespace MediaPortal.GUI.Weather
 {
 	public class GUIWindowWeather : GUIWindow, ISetupForm
 	{
-		class Location
+		class LocationInfo
 		{
 			public string		m_strCity;
 			public string		m_strCode;
@@ -211,7 +211,7 @@ namespace MediaPortal.GUI.Weather
 					int i=0;
 					int iSelected=0;
 //					GUIControl.ClearControl(GetID,(int)Controls.CONTROL_LOCATIONSELECT);
-					foreach (Location loc in m_locations)
+					foreach (LocationInfo loc in m_locations)
 					{
 						string strCity=loc.m_strCity;
 						int pos=strCity.IndexOf(",");
@@ -370,14 +370,14 @@ namespace MediaPortal.GUI.Weather
 						{
 							pDlgOK.Reset();
 							pDlgOK.SetHeading(8);//my weather
-							foreach(Location loc in m_locations)
+							foreach(LocationInfo loc in m_locations)
 							{
 								pDlgOK.Add(loc.m_strCity);
 							}
 							pDlgOK.DoModal(GetID);
 							if (pDlgOK.SelectedLabel>=0)
 							{
-								Location loc =(Location)m_locations[pDlgOK.SelectedLabel];
+								LocationInfo loc =(LocationInfo)m_locations[pDlgOK.SelectedLabel];
 								m_strLocation=loc.m_strCode;
 								m_szLocation=loc.m_strCity;
 								m_strSatelliteURL=loc.m_strURLSattelite;
@@ -543,7 +543,7 @@ namespace MediaPortal.GUI.Weather
 					{
 						if (strSatURL.Length==0)
 							strSatURL="http://www.zdf.de/ZDFde/wetter/showpicture/0,2236,161,00.gif";
-						Location loc= new Location();
+						LocationInfo loc= new LocationInfo();
 						loc.m_strCity=strCity;
 						loc.m_strCode=strCode;
 						loc.m_strURLSattelite=strSatURL;
@@ -563,7 +563,7 @@ namespace MediaPortal.GUI.Weather
 				{
 					if (m_locations.Count>0)
 					{
-						m_strLocation=((Location)m_locations[0]).m_strCode;
+						m_strLocation=((LocationInfo)m_locations[0]).m_strCode;
 					}
 				}
 			}
