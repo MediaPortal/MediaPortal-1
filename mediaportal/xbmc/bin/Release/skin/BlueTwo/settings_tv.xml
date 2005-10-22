@@ -23,6 +23,11 @@
 			</control>
 			<control>
 				<type>button</type>
+				<id>33</id>
+				<label>Audio Renderer</label>
+			</control>
+			<control>
+				<type>button</type>
 				<id>26</id>
 				<label>Video Renderer</label>
 			</control>

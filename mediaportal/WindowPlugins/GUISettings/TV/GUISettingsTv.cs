@@ -17,6 +17,7 @@ namespace WindowPlugins.GUISettings.TV
 		[SkinControlAttribute(28)]			protected GUIButtonControl btnAspectRatio=null;
 		[SkinControlAttribute(29)]			protected GUIButtonControl btnTimeshiftBuffer=null;
 		[SkinControlAttribute(30)]			protected GUIButtonControl btnAutoTurnOnTv=null;
+		[SkinControlAttribute(33)]			protected GUIButtonControl btnAudioRenderer=null;
 		public GUISettingsTv()
 		{
 			GetID=(int)GUIWindow.Window.WINDOW_SETTINGS_TV;
@@ -28,6 +29,7 @@ namespace WindowPlugins.GUISettings.TV
 		}
 		protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
 		{
+			if (control==btnAudioRenderer) OnAudioRenderer();
 			if (control==btnVideoCodec) OnVideoCodec();
 			if (control==btnAudioCodec) OnAudioCodec();
 			if (control==btnVideoRenderer) OnVideoRenderer();
@@ -244,5 +246,39 @@ namespace WindowPlugins.GUISettings.TV
 				}
 			}
 		}
+		void OnAudioRenderer()
+		{
+			string strAudioRenderer="";
+			using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			{
+				strAudioRenderer=xmlreader.GetValueAsString("mytv","audiorenderer","");
+			}
+			ArrayList availableAudioFilters = FilterHelper.GetAudioRenderers();
+
+			GUIDialogMenu dlg=(GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+			if (dlg!=null)
+			{
+				dlg.Reset();
+				dlg.SetHeading(GUILocalizeStrings.Get(924));//Menu
+				int selected=0;
+				int count=0;
+				foreach (string codec in availableAudioFilters)
+				{
+					dlg.Add(codec);//delete
+					if (codec==strAudioRenderer)
+						selected=count;
+					count++;
+				}
+				dlg.SelectedLabel=selected;
+			}
+			dlg.DoModal(GetID);
+			if (dlg.SelectedLabel<0) return;
+			using (MediaPortal.Profile.Xml   xmlwriter=new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			{
+				xmlwriter.SetValue("mytv","audiorenderer",(string)availableAudioFilters[dlg.SelectedLabel]);
+			}
+
+		}
+
 	}
 }
