@@ -25,33 +25,16 @@
 
 using System;
 
-namespace System.Windows.Serialization
+namespace System.Windows
 {
-	public class TypeExtension : MarkupExtension
+	public abstract class TriggerAction
 	{
-		#region Methods
+		#region Constructors
 
-		public override object ProvideValue(object target, object value)
+		public TriggerAction()
 		{
-			Type t = null;
-
-			foreach(string ns in _namespaces)
-			{
-				t = Type.GetType(ns + "." + (string)value);
-
-				if(t != null)
-					return t;
-			}
-
-			return null;
 		}
 
-		#endregion Methods
-
-		#region Fields
-
-		static string[]				_namespaces = MediaPortal.Xaml.XamlParser.DefaultNamespaces;
-
-		#endregion Fields
+		#endregion Constructors
 	}
 }

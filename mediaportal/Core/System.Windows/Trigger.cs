@@ -29,7 +29,7 @@ using System.Windows.Serialization;
 
 namespace System.Windows
 {
-	public sealed class Trigger : IAddChild
+	public sealed class Trigger : TriggerBase, IAddChild
 	{
 		#region Constructors
 

@@ -1,3 +1,5 @@
+#region Copyright (C) 2005 Media Portal
+
 /* 
  *	Copyright (C) 2005 Media Portal
  *	http://mediaportal.sourceforge.net
@@ -18,6 +20,9 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
+
 using System;
 
 using MediaPortal.Drawing;

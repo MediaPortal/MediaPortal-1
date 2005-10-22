@@ -377,13 +377,22 @@ namespace MediaPortal.Xaml
 
 		#endregion Methods
 
+		#region Properties
+
+		public static string[] DefaultNamespaces
+		{
+			get { return _namespaces; }
+		}
+
+		#endregion Properties
+
 		#region Fields
 
 		StringBuilder				_elementText = new StringBuilder();
 		Stack						_elementStack = new Stack();
 		string						_filename = string.Empty;
 		Hashtable					_namedItems = new Hashtable();
-		string[]					_namespaces = new string[] { "MediaPortal", "MediaPortal.Controls", "MediaPortal.Drawing", "MediaPortal.Drawing.Shapes", "MediaPortal.Drawing.Transforms", "MediaPortal.Animation", "System.Windows", "System.Windows.Serialization", "MediaPortal.Drawing.Paths", "MediaPortal.GUI.Library" };
+		static string[]				_namespaces = new string[] { "MediaPortal", "MediaPortal.Controls", "MediaPortal.Drawing", "MediaPortal.Drawing.Shapes", "MediaPortal.Drawing.Transforms", "MediaPortal.Animation", "System.Windows", "System.Windows.Serialization", "MediaPortal.Drawing.Paths", "MediaPortal.GUI.Library" };
 		object						_target;
 		XmlTextReader				_xmlReader;
 

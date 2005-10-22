@@ -244,6 +244,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Animation\BeginAction.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Animation\Clock.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -339,6 +344,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Animation\TimelineAction.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Animation\TimelineGroup.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -355,6 +365,11 @@
                 />
                 <File
                     RelPath = "Animation\TweenHelper.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Controls\Button.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -2189,6 +2204,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows\EventTrigger.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows\INameScope.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -2210,6 +2230,11 @@
                 />
                 <File
                     RelPath = "System.Windows\ResourceKey.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows\RoutedEvent.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -2245,6 +2270,21 @@
                 />
                 <File
                     RelPath = "System.Windows\Trigger.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows\TriggerAction.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows\TriggerActionCollection.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows\TriggerBase.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

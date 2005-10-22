@@ -24,33 +24,64 @@
 #endregion
 
 using System;
+using System.Windows.Serialization;
 
-namespace System.Windows.Serialization
+namespace System.Windows
 {
-	public class TypeExtension : MarkupExtension
+	public class EventTrigger : TriggerBase, IAddChild
 	{
+		#region Constructors
+
+		public EventTrigger()
+		{
+		}
+
+		public EventTrigger(RoutedEvent routedEvent)
+		{
+			_routedEvent = routedEvent;
+		}
+
+		#endregion Constructors
+
 		#region Methods
 
-		public override object ProvideValue(object target, object value)
+		void IAddChild.AddChild(object child)
 		{
-			Type t = null;
+		}
 
-			foreach(string ns in _namespaces)
-			{
-				t = Type.GetType(ns + "." + (string)value);
-
-				if(t != null)
-					return t;
-			}
-
-			return null;
+		void IAddChild.AddText(string text)
+		{
+			throw new NotSupportedException("EventTrigger.IAddChild.AddText");
 		}
 
 		#endregion Methods
 
+		#region Properties
+
+		public TriggerActionCollection Actions
+		{
+			get { if(_actions == null) _actions = new TriggerActionCollection(); return _actions; }
+		}
+
+		public RoutedEvent RoutedEvent
+		{
+			get { return _routedEvent; }
+			set { _routedEvent = value; }
+		}
+
+		public string SourceName
+		{
+			get { return _sourceName; }
+			set { _sourceName = value; }
+		}
+
+		#endregion Properties
+
 		#region Fields
 
-		static string[]				_namespaces = MediaPortal.Xaml.XamlParser.DefaultNamespaces;
+		TriggerActionCollection		_actions;
+		RoutedEvent					_routedEvent;
+		string						_sourceName;
 
 		#endregion Fields
 	}

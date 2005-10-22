@@ -24,33 +24,29 @@
 #endregion
 
 using System;
+using System.Windows;
 
-namespace System.Windows.Serialization
+namespace MediaPortal.Animation
 {
-	public class TypeExtension : MarkupExtension
+	public class TimelineAction : TriggerAction
 	{
-		#region Methods
-
-		public override object ProvideValue(object target, object value)
+		public TimelineAction()
 		{
-			Type t = null;
-
-			foreach(string ns in _namespaces)
-			{
-				t = Type.GetType(ns + "." + (string)value);
-
-				if(t != null)
-					return t;
-			}
-
-			return null;
 		}
 
-		#endregion Methods
+		#region Properties
+
+		public string TargetName
+		{
+			get { return _targetName; }
+			set { _targetName = value; }
+		}
+
+		#endregion Properties
 
 		#region Fields
 
-		static string[]				_namespaces = MediaPortal.Xaml.XamlParser.DefaultNamespaces;
+		string						_targetName;
 
 		#endregion Fields
 	}

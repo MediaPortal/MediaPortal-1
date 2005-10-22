@@ -135,7 +135,7 @@ namespace System.Windows
 
 		string						_path = string.Empty;
 		object[]					_propertyInfoArray;
-		static string[]				_namespaces = new string[] { "MediaPortal", "MediaPortal.Controls", "MediaPortal.Drawing", "MediaPortal.Drawing.Shapes", "MediaPortal.Drawing.Transforms", "MediaPortal.Animation", "System.Windows", "System.Windows.Serialization", "MediaPortal.Drawing.Paths", "MediaPortal.GUI.Library" };
+		static string[]				_namespaces = XamlParser.DefaultNamespaces;
 
 		#endregion Fields
 	}
