@@ -15,6 +15,21 @@ enum StreamState
 	Scrambled,
 	Unscrambled,
 };
+typedef struct AdaptionHeader
+	{
+		bool DiscontinuityIndicator;
+		bool RandomAccessIndicator;
+		bool ElementaryStreamPriorityIndicator;
+		bool PCRFlag;
+		bool OPCRFlag;
+		bool SplicingPointFlag;
+		bool TransportPrivateData;
+		bool AdaptationHeaderExtension;
+		unsigned short Len;
+		ULONGLONG PCRValue;
+		WORD PCRCounter;
+};
+
 
 struct stTSHEADER
 {
@@ -272,6 +287,7 @@ private:
     HRESULT 	HandleWriteFailure();
 //	HRESULT CreateNewFileMapping();
 	void 		GetPTS(BYTE *data,ULONGLONG *pts);
+	HRESULT		GetAdaptionHeader(BYTE *data,AdaptionHeader *header);
 	void 		GetPESHeader(BYTE *data,PESHeader *header);
 	void 		GetTSHeader(BYTE *data,TSHeader *header);
 	void 		PTSToPTSTime(ULONGLONG pts,PTSTime* ptsTime);

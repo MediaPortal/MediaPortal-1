@@ -1253,7 +1253,24 @@ HRESULT CDump::WriteRecordingFile(PBYTE pbData, LONG lDataLength)
 	}
 	return S_OK;
 }
-
+HRESULT CDump::GetAdaptionHeader(BYTE *data,AdaptionHeader *header)
+{
+	header->Len=data[0];
+	header->DiscontinuityIndicator=(data[1] & 0x80)>0?true:false;
+	header->RandomAccessIndicator=(data[1] & 0x40)>0?true:false;
+	header->ElementaryStreamPriorityIndicator=(data[1] & 0x20)>0?true:false;
+	header->PCRFlag=(data[1] & 0x10)>0?true:false;
+	header->OPCRFlag=(data[1] & 0x08)>0?true:false;
+	header->SplicingPointFlag=(data[1] & 0x04)>0?true:false;
+	header->TransportPrivateData=(data[1] & 0x02)>0?true:false;
+	header->AdaptationHeaderExtension=(data[1] & 0x01)>0?true:false;
+	if(header->PCRFlag==true)
+	{
+		GetPTS(&data[2],&(header->PCRValue));
+		header->PCRCounter=((data[6] & 0x01)*256)+data[7];
+	}
+	return S_OK;
+}
 // Write
 //
 // Write raw data to the timeshift file
@@ -1298,68 +1315,91 @@ HRESULT CDump::WriteTimeshiftFile(PBYTE pbData, LONG lDataLength)
 	}
 
 	//update PES
+	ULONGLONG ptsValue;
 	TSHeader header;
 	GetTSHeader(pbData,&header);
-	if (header.Pid>0 && !header.TransportError && header.TScrambling==0 && header.PayloadUnitStart!=0 &&
-		(header.Pid==m_pPin->GetAC3Pid() ||
-		header.Pid==m_pPin->GetVideoPid() ||
-		header.Pid==m_pPin->GetAudioPid() ||
-		header.Pid==m_pPin->GetAudioPid2() ) )
+	if (header.Pid>0)
 	{
 		if(header.AdaptionControl!=1 && header.AdaptionControl!=3) return S_OK;
-		int offset=4;
-		offset+=pbData[4];
-		if (offset < 0|| offset>188) return S_OK;
-		if(header.SyncByte!=0x47 || pbData[offset]!=0 || pbData[offset+1]!=0 || pbData[offset+2]!=1) return S_OK;
-		int code=pbData[offset+3]| 0x100;
-		if (!((code >= 0x1c0 && code <= 0x1df) ||
+		//int offset=4;
+		if(header.AdaptionControl==3 || (header.PayloadUnitStart==true && header.AdaptionControl==1)) 
+		{
+			AdaptionHeader ah;
+			GetAdaptionHeader(&pbData[5],&ah);
+
+			if(ah.PCRFlag==true)
+			{
+				ptsValue=ah.PCRValue;
+				if (m_pesPid==0)
+					m_pesPid=header.Pid;
+				if (m_pesStart==0) 
+				{
+					m_pesStart=ptsValue;
+					LogDebug("CDump::WriteTimeshiftFile() start pes:%x pid:%x", (DWORD)m_pesStart, header.Pid);
+				}
+				m_pesNow=ptsValue;
+			}
+			//offset+=pbData[4];
+		}
+		//if (offset < 0|| offset>188) return S_OK;
+		//if(header.SyncByte!=0x47 || pbData[offset]!=0 || pbData[offset+1]!=0 || pbData[offset+2]!=1) return S_OK;
+		//int code=pbData[offset+3]| 0x100;
+		/*if (!((code >= 0x1c0 && code <= 0x1df) ||
 			(code >= 0x1e0 && code <= 0x1ef) ||
 			(code == 0x1bd)))
 		{
 			return S_OK;
 		}
-		PESHeader pes;
-		GetPESHeader(&pbData[offset+6],&pes);
-		if(pes.Reserved!=0x02) return S_OK;
-		if(pes.PTSFlags!=0x02 && pes.PTSFlags!=0x03) return S_OK;
-		if (pes.ESCRFlag==0 && pes.ESRateFlag==0 && pes.DSMTrickModeFlag==0 && pes.AdditionalCopyInfoFlag==0 && pes.PESCRCFlag==0 && pes.PESExtensionFlag==0)
-		{
-			ULONGLONG ptsValue =0;
-			GetPTS(&pbData[offset+9],&ptsValue);
-			if (ptsValue>0)
-			{
-				if (m_pesPid==0)
-					m_pesPid=header.Pid;
-				if (m_pesPid==header.Pid)
-				{
-					// audio pes found
-					if (m_pesStart==0) 
-					{
-						m_pesStart=ptsValue;
-						LogDebug("CDump::WriteTimeshiftFile() start pes:%x pid:%x", (DWORD)m_pesStart, header.Pid);
-					}
-					m_pesNow=ptsValue;
-					//LogDebug("pts:%x %x %x", (DWORD)m_pesStart,(DWORD)m_pesNow,header.Pid);
-					/*
-					LogDebug("pes:%x copy:%x cr:%x dataalign:%x dsm:%x escr:%x esrate:%x org:%x crc:%x ext:%x len:%x prio:%x pts:%x res:%x scramb:%x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x ", (DWORD)ptsValue,
-							pes.AdditionalCopyInfoFlag,pes.Copyright,pes.dataAlignmentIndicator,
-							pes.DSMTrickModeFlag,pes.ESCRFlag,pes.ESRateFlag,pes.Original,
-							pes.PESCRCFlag,pes.PESExtensionFlag,pes.PESHeaderDataLength,pes.Priority,
-							pes.PTSFlags,pes.Reserved,pes.ScramblingControl,
-							pbData[9],pbData[10],pbData[11],pbData[12],pbData[13],pbData[14],pbData[15],pbData[16],pbData[17],
-							pbData[18],pbData[19],pbData[20],pbData[21],pbData[22],pbData[23],pbData[24],pbData[25],pbData[26],
-							pbData[27],pbData[28],pbData[29]);
-					*/
-				}
-			}
-		}
+		*/
+		//PESHeader pes;
+		//GetPESHeader(&pbData[offset+6],&pes);
+		//if(pes.Reserved!=0x02) return S_OK;
+		//if(pes.PTSFlags!=0x02 && pes.PTSFlags!=0x03) return S_OK;
+		//if (pes.ESCRFlag==0 && pes.ESRateFlag==0 && pes.DSMTrickModeFlag==0 && pes.AdditionalCopyInfoFlag==0 && pes.PESCRCFlag==0 && pes.PESExtensionFlag==0)
+		//{
+			//ULONGLONG ptsValue =0;
+			//GetPTS(&pbData[offset+9],&ptsValue);
+			//if (ptsValue>0)
+			//{
+			//	if (m_pesPid==0)
+			//		m_pesPid=header.Pid;
+			//	if (m_pesPid==header.Pid)
+			//	{
+			//		// audio pes found
+			//		if (m_pesStart==0) 
+			//		{
+			//			m_pesStart=ptsValue;
+			//			LogDebug("CDump::WriteTimeshiftFile() start pes:%x pid:%x", (DWORD)m_pesStart, header.Pid);
+			//		}
+			//		m_pesNow=ptsValue;
+			//		//LogDebug("pts:%x %x %x", (DWORD)m_pesStart,(DWORD)m_pesNow,header.Pid);
+			//		/*
+			//		LogDebug("pes:%x copy:%x cr:%x dataalign:%x dsm:%x escr:%x esrate:%x org:%x crc:%x ext:%x len:%x prio:%x pts:%x res:%x scramb:%x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x ", (DWORD)ptsValue,
+			//				pes.AdditionalCopyInfoFlag,pes.Copyright,pes.dataAlignmentIndicator,
+			//				pes.DSMTrickModeFlag,pes.ESCRFlag,pes.ESRateFlag,pes.Original,
+			//				pes.PESCRCFlag,pes.PESExtensionFlag,pes.PESHeaderDataLength,pes.Priority,
+			//				pes.PTSFlags,pes.Reserved,pes.ScramblingControl,
+			//				pbData[9],pbData[10],pbData[11],pbData[12],pbData[13],pbData[14],pbData[15],pbData[16],pbData[17],
+			//				pbData[18],pbData[19],pbData[20],pbData[21],pbData[22],pbData[23],pbData[24],pbData[25],pbData[26],
+			//				pbData[27],pbData[28],pbData[29]);
+			//		*/
+			//	}
+			//}
+		//}
 	}
 	return S_OK;
 }
 
 void CDump::GetPTS(BYTE *data,ULONGLONG *pts)
 {
-	*pts= 0xFFFFFFFFL & ( (6&data[0])<<29 | (255&data[1])<<22 | (254&data[2])<<14 | (255&data[3])<<7 | (((254&data[4])>>1)& 0x7F));
+	ULONGLONG ptsVal;
+	bool ptsFlag=false;
+	ptsVal= 0xFFFFFFFFL & ( (6&data[0])<<29 | (255&data[1])<<22 | (254&data[2])<<14 | (255&data[3])<<7 | (((254&data[4])>>1)& 0x7F));
+	if ((ptsVal & 0xFF000000L)==0xFF000000L) 
+		ptsFlag=true;
+	if (ptsFlag && ptsVal<0xF0000000L) 
+		ptsVal |=0x100000000L;
+	*pts=ptsVal;
 }
 void CDump::GetTSHeader(BYTE *data,TSHeader *header)
 {

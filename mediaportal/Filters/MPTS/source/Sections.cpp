@@ -274,7 +274,7 @@ HRESULT Sections::CurrentPTS(BYTE *pData,ULONGLONG *ptsValue,int* pid)
 	*pid=header.Pid;
 	if (header.Pid<1) return S_FALSE;
 	if (header.SyncByte!=0x47) return S_FALSE;
-	if (header.PayloadUnitStart==0) return S_FALSE;
+	//if (header.PayloadUnitStart==0) return S_FALSE;
 	if(header.Pid!=pids.CurrentAudioPid &&
 	   header.Pid != pids.VideoPid &&
 	   header.Pid != pids.PCRPid)
@@ -291,44 +291,46 @@ HRESULT Sections::CurrentPTS(BYTE *pData,ULONGLONG *ptsValue,int* pid)
 		{
 			AdaptionHeader ah;
 			GetAdaptionHeader(&pData[4],&ah);
-			//if(ah.PCRFlag)
-			//{
-			//	PTSTime time;
-			//	PTSToPTSTime(ah.PCRValue,&time);
-			//	LogDebug("pcr-count:%d / pcr-value:%x / h:m:s:ms= %d:%d:%d.%d\n", ah.PCRCounter,ah.PCRValue,time.h,time.m,time.s,time.u);
-			//}
-		}
-	}
-
-	if (offset< 0 || offset+14>=188) return S_FALSE;
-	if(header.SyncByte==0x47 && pData[offset]==0 && pData[offset+1]==0 && pData[offset+2]==1)
-	{
-		int code=pData[offset+3]| 0x100;
-		if (!((code >= 0x1c0 && code <= 0x1df) ||
-              (code >= 0x1e0 && code <= 0x1ef) ||
-              (code == 0x1bd)))
-		{
-			return hr;
-		}
-		GetPESHeader(&pData[offset+6],&pes);
-		if(pes.Reserved==0x02) // valid header
-		{
-			if(pes.PTSFlags==0x02 || pes.PTSFlags==0x03)
+			if(ah.PCRFlag)
 			{
-				// pes packet found
-				GetPTS(&pData[offset+9],ptsValue);
-				//char buffer[128];
-				//sprintf(buffer,"pid: %x pes:%x\n", header.Pid,(DWORD) (*ptsValue));
-				//OutputDebugString(buffer);
-
-				if (pes.ESCRFlag==0 && pes.ESRateFlag==0 && pes.DSMTrickModeFlag==0 && pes.AdditionalCopyInfoFlag==0 && pes.PESCRCFlag==0 && pes.PESExtensionFlag==0)
-				{
-					GetPTS(&pData[offset+9],ptsValue);
-					hr=S_OK;
-				}
+				PTSTime time;
+				PTSToPTSTime(ah.PCRValue,&time);
+				//LogDebug("pcr-count:%d / pcr-value:%x / h:m:s:ms= %d:%d:%d.%d\n", ah.PCRCounter,ah.PCRValue,time.h,time.m,time.s,time.u);
+				*ptsValue=ah.PCRValue;
+				hr=S_OK;
 			}
-		}	
+		}
 	}
+
+	//if (offset< 0 || offset+14>=188) return S_FALSE;
+	//if(header.SyncByte==0x47 && pData[offset]==0 && pData[offset+1]==0 && pData[offset+2]==1)
+	//{
+	//	int code=pData[offset+3]| 0x100;
+	//	if (!((code >= 0x1c0 && code <= 0x1df) ||
+ //             (code >= 0x1e0 && code <= 0x1ef) ||
+ //             (code == 0x1bd)))
+	//	{
+	//		return hr;
+	//	}
+	//	GetPESHeader(&pData[offset+6],&pes);
+	//	if(pes.Reserved==0x02) // valid header
+	//	{
+	//		if(pes.PTSFlags==0x02 || pes.PTSFlags==0x03)
+	//		{
+	//			// pes packet found
+	//			GetPTS(&pData[offset+9],ptsValue);
+	//			//char buffer[128];
+	//			//sprintf(buffer,"pid: %x pes:%x\n", header.Pid,(DWORD) (*ptsValue));
+	//			//OutputDebugString(buffer);
+
+	//			if (pes.ESCRFlag==0 && pes.ESRateFlag==0 && pes.DSMTrickModeFlag==0 && pes.AdditionalCopyInfoFlag==0 && pes.PESCRCFlag==0 && pes.PESExtensionFlag==0)
+	//			{
+	//				GetPTS(&pData[offset+9],ptsValue);
+	//				hr=S_OK;
+	//			}
+	//		}
+	//	}	
+	//}
 	return hr;
 }
 void Sections::FindPATPMT()
