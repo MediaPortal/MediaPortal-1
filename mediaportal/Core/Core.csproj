@@ -319,6 +319,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Animation\PauseAction.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Animation\RepeatBehavior.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -329,7 +334,32 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Animation\ResumeAction.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Animation\ReverseAction.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Animation\SeekAction.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Animation\SetterTimeline.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Animation\SkipToFillAction.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Animation\StopAction.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -2235,6 +2265,11 @@
                 />
                 <File
                     RelPath = "System.Windows\RoutedEvent.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows\RoutedEventConverter.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

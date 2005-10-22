@@ -194,10 +194,12 @@ namespace MediaPortal.Xaml
 				catch(XamlParserException e)
 				{
 					MediaPortal.GUI.Library.Log.Write("XamlParser.Read: {0}", e.Message);
+					MediaPortal.GUI.Library.Log.Write("Node: {0}", _xmlReader.Name);
 				}
 				catch(Exception e)
 				{
 					MediaPortal.GUI.Library.Log.Write("XamlParser.Read: {0}({1},{2}): {3}", _filename, _xmlReader.LineNumber, _xmlReader.LinePosition, e.Message);
+					MediaPortal.GUI.Library.Log.Write("Node: {0}", _xmlReader.Name);
 				}
 			}
 

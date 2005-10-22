@@ -70,9 +70,14 @@ namespace System.Windows
 			throw new NotImplementedException();
 		}
 			
-		void IAddChild.AddChild(object value)
+		void IAddChild.AddChild(object child)
 		{
-			List.Add((Setter)value);
+			Setter setter = child as Setter;
+
+			if(setter == null)
+				throw new ArgumentException("child");
+
+			List.Add(setter);
 		}
 
 		void IAddChild.AddText(string text)

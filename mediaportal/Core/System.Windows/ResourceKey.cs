@@ -31,9 +31,13 @@ namespace System.Windows
 {
 	public abstract class ResourceKey : MarkupExtension
 	{
+		#region Constructors
+
 		public ResourceKey()
 		{
 		}
+
+		#endregion Constructors
 
 		#region Methods
 

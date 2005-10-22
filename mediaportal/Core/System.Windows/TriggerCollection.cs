@@ -70,9 +70,14 @@ namespace System.Windows
 			throw new NotImplementedException();
 		}
 			
-		void IAddChild.AddChild(object value)
+		void IAddChild.AddChild(object child)
 		{
-			List.Add((Trigger)value);
+			TriggerBase trigger = child as TriggerBase;
+
+			if(trigger == null)
+				throw new ArgumentException("child");
+
+			List.Add(trigger);
 		}
 
 		void IAddChild.AddText(string text)

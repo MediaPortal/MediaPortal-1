@@ -24,10 +24,11 @@
 #endregion
 
 using System;
+using System.ComponentModel;
 
 namespace System.Windows
 {
-	/// TODO: Needs implementation
+	[TypeConverter(typeof(RoutedEventConverter))]
 	public sealed class RoutedEvent
 	{
 		#region Constructors
@@ -37,5 +38,14 @@ namespace System.Windows
 		}
 
 		#endregion Constructors
+
+		#region Methods
+
+		public static RoutedEvent Parse(string text)
+		{
+			return new RoutedEvent();
+		}
+
+		#endregion Methods
 	}
 }

@@ -28,8 +28,6 @@ using System.Collections;
 using System.ComponentModel;
 using System.Reflection;
 
-using MediaPortal.Xaml;
-
 namespace System.Windows
 {
 	[TypeConverter(typeof(PropertyPathConverter))]
@@ -89,8 +87,6 @@ namespace System.Windows
 
 				Type t = GetType(typename);
 
-				MediaPortal.GUI.Library.Log.Write("typename: {0}", typename);
-
 				if(t == null)
 					throw new ArgumentException(string.Format("The type or namespace '{0}' could not be found", t));
 
@@ -135,7 +131,7 @@ namespace System.Windows
 
 		string						_path = string.Empty;
 		object[]					_propertyInfoArray;
-		static string[]				_namespaces = XamlParser.DefaultNamespaces;
+		static string[]				_namespaces = MediaPortal.Xaml.XamlParser.DefaultNamespaces;
 
 		#endregion Fields
 	}

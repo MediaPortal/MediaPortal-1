@@ -362,7 +362,7 @@ namespace MediaPortal.GUI.Library
 							xml = xml.Replace("Button.", "GUIControl.");
 						else if(xml.IndexOf("Window.") != -1)
 							xml = xml.Replace("Window.", "GUIWindow.");
-
+						
 						parser.LoadXml(xml, XmlNodeType.Element, control);
 					}
 				}

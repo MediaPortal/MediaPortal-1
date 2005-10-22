@@ -27,6 +27,7 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Collections;
+using System.ComponentModel;
 using System.Reflection;
 using System.Windows;
 using System.Xml;
@@ -47,7 +48,7 @@ namespace MediaPortal.GUI.Library
 	/// Each window plugin should derive from this base class
 	/// Pluginwindows should be copied in the plugins/windows folder
 	/// </summary>
-	public class GUIWindow 
+	public class GUIWindow : ISupportInitialize
 	{
 		#region window ids
 		//enum of all standard windows in MP
@@ -512,6 +513,9 @@ namespace MediaPortal.GUI.Library
 							break;
 					}
 				}
+
+				// TODO: remove this when all XAML parser or will result in double initialization
+				((ISupportInitialize)this).EndInit();
 
 				// initialize the controls
 				OnWindowLoaded();
@@ -1282,6 +1286,48 @@ namespace MediaPortal.GUI.Library
 		}
 		#endregion
 
+		/// XAML related code follows
+
+		#region Methods
+
+		void ISupportInitialize.BeginInit()
+		{
+		}
+
+		void ISupportInitialize.EndInit()
+		{
+			PrepareTriggers();
+		}
+
+		void PrepareTriggers()
+		{
+			if(_triggers == null)
+				return;
+
+			foreach(TriggerBase trigger in _triggers)
+			{
+				if(trigger is EventTrigger)
+				{
+					PrepareEventTrigger((EventTrigger)trigger);
+				}
+			}
+		}
+
+		void PrepareEventTrigger(EventTrigger trigger)
+		{
+			Log.Write("GUIWindow.PrepareEventTrigger: {0}", trigger.SourceName);
+
+			foreach(TriggerAction action in trigger.Actions)
+			{
+				if(action is BeginAction)
+				{
+					Log.Write("GUIWindow.PrepareEventTrigger: BeginTrigger");
+				}
+			}
+		}
+
+		#endregion Methods
+
 		#region Properties
 
 		public StoryboardCollection Storyboards
@@ -1295,15 +1341,20 @@ namespace MediaPortal.GUI.Library
 			set { _resources = value; }
 		}
 
+		public TriggerCollection Triggers
+		{
+			get { if(_triggers == null) _triggers = new TriggerCollection(); return _triggers; }
+		}
+
 		#endregion Properties
 
 		#region Fields
 
 		ResourceDictionary			_resources;
 		StoryboardCollection		_storyboards;
+		TriggerCollection			_triggers;
 
 		#endregion Fields
-
 	}
 }
 
