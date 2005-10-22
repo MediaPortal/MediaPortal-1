@@ -212,8 +212,15 @@ namespace MediaPortal.Player
 
 			if (m_bLive)
 			{
-				UpdateCurrentPosition();
-				UpdateDuration();
+				DateTime dt=DateTime.Now;
+				do
+				{
+					UpdateDuration();
+					Application.DoEvents();						
+					TimeSpan ts=DateTime.Now-dt;
+					if (ts.TotalSeconds>=2) break;
+				} while (m_dDuration<0.5);
+				if (m_dDuration<0.5) return false;
 				
 
 			}
