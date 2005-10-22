@@ -1,3 +1,24 @@
+/* 
+ *	Copyright (C) 2005 Media Portal
+ *	http://mediaportal.sourceforge.net
+ *
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *   
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *   
+ *  You should have received a copy of the GNU General Public License
+ *  along with GNU Make; see the file COPYING.  If not, write to
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  http://www.gnu.org/copyleft/gpl.html
+ *
+ */
+
 using System;
 using System.Text;
 
@@ -15,12 +36,14 @@ namespace MediaPortal.GUI.Video
 		public static bool renameOnlyIfNoSEinFilename = true;
 		public static string renameFormat = "[SHOWNAME] - [SEASONNO]x[EPISODENO] - [EPISODETITLE]";
 		public static char replaceSpacesWith = ' ';
+		public static bool lookupActors = false;
 
 		public static string titleFormat = "[SHOWNAME] - [SEASONNO]x[EPISODENO] - [EPISODETITLE]";
 
 		public static string genreFormat = "[SHOWNAME] ([GENRE])";
 
 		private const string settingsFilePath = "Episode Guides/settings";
+
 
 
 
@@ -37,6 +60,7 @@ namespace MediaPortal.GUI.Video
 				replaceSpacesWith = Convert.ToChar(r.ReadLine());
 				titleFormat = r.ReadLine();
 				genreFormat = r.ReadLine();
+				lookupActors =  Convert.ToBoolean(r.ReadLine());
 				r.Close();
 				tvDotComParser.tvComLogWritelineStatic("Settings loaded Succesfully");
 
@@ -47,6 +71,7 @@ namespace MediaPortal.GUI.Video
 				tvDotComParser.tvComLogWritelineStatic(replaceSpacesWith.ToString());
 				tvDotComParser.tvComLogWritelineStatic(titleFormat);
 				tvDotComParser.tvComLogWritelineStatic(genreFormat);
+				tvDotComParser.tvComLogWritelineStatic(lookupActors.ToString());
 
 				return true;
 			}
@@ -73,6 +98,7 @@ namespace MediaPortal.GUI.Video
 			w.WriteLine(replaceSpacesWith.ToString());
 			w.WriteLine(titleFormat);
 			w.WriteLine(genreFormat);
+			w.WriteLine(lookupActors.ToString());
 			w.Close();
 
 			tvDotComParser.tvComLogWritelineStatic("Settings updated:");
@@ -84,6 +110,7 @@ namespace MediaPortal.GUI.Video
 			tvDotComParser.tvComLogWritelineStatic(replaceSpacesWith.ToString());
 			tvDotComParser.tvComLogWritelineStatic(titleFormat);
 			tvDotComParser.tvComLogWritelineStatic(genreFormat);
+			tvDotComParser.tvComLogWritelineStatic(lookupActors.ToString());
 
 		}
 	}
