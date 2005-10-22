@@ -1754,7 +1754,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="Emuzed Maui IIS PCI PVR" capturename="Emuzed Maui SE Device" devid="ven_123f&amp;dev_8120&amp;subsys_00071809&amp;rev_b0">
+  <capturecard commercialname="Emuzed Maui IIS PCI PVR" capturename="Emuzed Maui 2S Device" devid="ven_123f&amp;dev_8120&amp;subsys_00071809&amp;rev_b0">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
@@ -1781,7 +1781,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="Emuzed Maui IIS PCI PVR" capturename="Emuzed Maui SE Device" devid="ven_123f&amp;dev_8120&amp;subsys_00071809&amp;rev_b1">
+  <capturecard commercialname="Emuzed Maui IIS PCI PVR" capturename="Emuzed Maui 2S Device" devid="ven_123f&amp;dev_8120&amp;subsys_00071809&amp;rev_b1">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
@@ -1808,7 +1808,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="Emuzed Maui II NTSC-FM" capturename="Emuzed Maui SE Device" devid="ven_123f&amp;dev_8120&amp;subsys_000c1809&amp;rev_b0">
+  <capturecard commercialname="Emuzed Maui II NTSC-FM" capturename="Emuzed Maui 2S NTSC FM Device" devid="ven_123f&amp;dev_8120&amp;subsys_000c1809&amp;rev_b0">
     <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
@@ -1835,7 +1835,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="Emuzed Maui II NTSC-FM" capturename="Emuzed Maui SE Device" devid="ven_123f&amp;dev_8120&amp;subsys_000c1809&amp;rev_b1">
+  <capturecard commercialname="Emuzed Maui II NTSC-FM" capturename="Emuzed Maui 2S NTSC FM Device" devid="ven_123f&amp;dev_8120&amp;subsys_000c1809&amp;rev_b1">
     <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
@@ -1862,7 +1862,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="Emuzed Maui-IIS PAL FM V-One" capturename="Emuzed Maui SE Device" devid="ven_123f&amp;dev_8120&amp;subsys_00081809&amp;rev_b0">
+  <capturecard commercialname="Emuzed Maui-IIS PAL FM V-One" capturename="Emuzed Maui 2S PAL FM Device" devid="ven_123f&amp;dev_8120&amp;subsys_00081809&amp;rev_b0">
     <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
@@ -1889,7 +1889,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="Emuzed Maui-IIS PAL FM V-One" capturename="Emuzed Maui SE Device" devid="ven_123f&amp;dev_8120&amp;subsys_00081809&amp;rev_b1">
+  <capturecard commercialname="Emuzed Maui-IIS PAL FM V-One" capturename="Emuzed Maui 2S PAL FM Device" devid="ven_123f&amp;dev_8120&amp;subsys_00081809&amp;rev_b1">
     <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
