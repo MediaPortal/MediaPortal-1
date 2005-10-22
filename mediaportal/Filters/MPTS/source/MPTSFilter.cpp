@@ -114,7 +114,7 @@ int CMPTSFilter::GetPinCount()
 {
 	return 1;
 }
-
+/*
 STDMETHODIMP CMPTSFilter::SetSyncClock(void)
 {
 
@@ -158,7 +158,7 @@ STDMETHODIMP CMPTSFilter::SetSyncClock(void)
 	
 	return S_OK;
 }
-
+*/
 
 STDMETHODIMP CMPTSFilter::Run(REFERENCE_TIME tStart)
 {
@@ -249,7 +249,7 @@ HRESULT CMPTSFilter::OnConnect()
 		LogDebug("filter::OnConnect ok");
 	else
 		LogDebug("filter::OnConnect failed:%x",hr);
-	SetSyncClock();
+	//SetSyncClock();
 	return S_OK;
 }
 

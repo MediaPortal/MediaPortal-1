@@ -78,6 +78,7 @@ namespace MediaPortal.Player
 		protected long                      m_speedRate = 10000;
 		bool																usingNvidiaCodec=false;
 		protected bool											hasVideo=false;
+		protected IBaseFilter								audioRendererFilter;
 		/// <summary> control interface. </summary>
 		protected IMediaControl							mediaCtrl =null;
 
@@ -937,7 +938,11 @@ namespace MediaPortal.Player
 						videoCodec=DirectShowUtil.AddFilterToGraph(graphBuilder,strVideoCodec);
 				}
 				if (strAudioCodec.Length>0) DirectShowUtil.AddFilterToGraph(graphBuilder,strAudioCodec);
-				if (strAudiorenderer.Length>0) DirectShowUtil.AddAudioRendererToGraph(graphBuilder,strAudiorenderer,false);
+				if (strAudiorenderer.Length==0) 
+				{
+					strAudiorenderer="Default DirectSound Device";					
+				}
+					audioRendererFilter=DirectShowUtil.AddAudioRendererToGraph(graphBuilder,strAudiorenderer,false);
         if (bAddFFDshow) DirectShowUtil.AddFilterToGraph(graphBuilder,"ffdshow raw video filter");
 
 				if (strVideoCodec.ToLower().IndexOf("nvidia")>=0)
@@ -970,7 +975,13 @@ namespace MediaPortal.Player
 						videoWin=null;
 					}
 				}
-				graphBuilder.SetDefaultSyncSource();
+				if (audioRendererFilter!=null)
+				{
+					IMediaFilter mp				= graphBuilder as IMediaFilter;
+					IReferenceClock clock = audioRendererFilter as IReferenceClock;
+					hr=mp.SetSyncSource(clock);
+				}
+				
 				//Log.Write("TStreamBufferPlayer: set Deinterlace");
 
 				//Log.Write("TStreamBufferPlayer: done");
@@ -1022,6 +1033,10 @@ namespace MediaPortal.Player
 
 				while((hr=Marshal.ReleaseComObject( bufferSource ))>0); 
 				bufferSource	= null;
+
+				if (audioRendererFilter!=null)
+					Marshal.ReleaseComObject( audioRendererFilter );
+				audioRendererFilter	= null;
 
         DsUtils.RemoveFilters(graphBuilder);
 

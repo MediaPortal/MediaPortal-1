@@ -67,7 +67,7 @@ public:
 	int					GetPinCount();
 	STDMETHODIMP 		Run(REFERENCE_TIME tStart);
 	STDMETHODIMP 		Pause();
-	STDMETHODIMP 		SetSyncClock(void);
+	//STDMETHODIMP 		SetSyncClock(void);
 	STDMETHODIMP 		Stop();
 	HRESULT				OnConnect();
 	STDMETHODIMP		Refresh();

@@ -157,9 +157,11 @@ namespace MediaPortal.Player
 				if (strVideoCodec.Length>0) 
 					videoCodec=DirectShowUtil.AddFilterToGraph(graphBuilder,strVideoCodec);
 				if (strAudioCodec.Length>0) DirectShowUtil.AddFilterToGraph(graphBuilder,strAudioCodec);
-				if (strAudioRenderer.Length>0) DirectShowUtil.AddAudioRendererToGraph(graphBuilder,strAudioRenderer,false);
+				if (strAudioRenderer.Length==0) 
+					strAudioRenderer="Default DirectSound Device";
         if (bAddFFDshow) DirectShowUtil.AddFilterToGraph(graphBuilder,"ffdshow raw video filter");
 
+				audioRendererFilter=DirectShowUtil.AddAudioRendererToGraph(graphBuilder,strAudioRenderer,false);
 				// render output pins of SBE
 				IPin pin=DirectShowUtil.FindPinNr(_filter,PinDirection.Output,0);
 				graphBuilder.Render(pin);
@@ -168,7 +170,14 @@ namespace MediaPortal.Player
         mediaCtrl	= (IMediaControl)  graphBuilder;
         mediaEvt	= (IMediaEventEx)  graphBuilder;
 				m_mediaSeeking = graphBuilder as IMediaSeeking;
-        
+
+				if (audioRendererFilter!=null)
+				{
+					IMediaFilter mp				= graphBuilder as IMediaFilter;
+					IReferenceClock clock = audioRendererFilter as IReferenceClock;
+					hr=mp.SetSyncSource(clock);
+				}
+				        
 				hasVideo=true;
 				if ( !Vmr9.IsVMR9Connected )
 				{
@@ -249,6 +258,10 @@ namespace MediaPortal.Player
 						Log.Write("Release filesource:{0}", x);
 						_fileSource=null;
 					}
+					if (audioRendererFilter!=null)
+						Marshal.ReleaseComObject( audioRendererFilter );
+					audioRendererFilter	= null;
+
 					basicAudio	= null;
 					basicVideo	= null;
 					m_mediaSeeking=null;
