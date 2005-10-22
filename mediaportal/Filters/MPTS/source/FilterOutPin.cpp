@@ -337,8 +337,17 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 		{
 			LogDebug("INVALID pts:%x %x-%x", (DWORD)ptsNow,(DWORD)m_pSections->pids.StartPTS ,(DWORD) m_pSections->pids.EndPTS);
 		}
+		CRefTime rtStart,rtNow;
+		Sections::PTSTime ptsTimeNow,ptsTimeStart;
+		m_pSections->PTSToPTSTime(ptsNow,&ptsTimeNow);
+		m_pSections->PTSToPTSTime(m_pSections->pids.StartPTS,&ptsTimeStart);
+		rtNow=((ULONGLONG)36000000000*ptsTimeNow.h)+((ULONGLONG)600000000*ptsTimeNow.m)+((ULONGLONG)10000000*ptsTimeNow.s)+((ULONGLONG)1000*ptsTimeNow.u);
+		rtStart =((ULONGLONG)36000000000*ptsTimeStart.h)+((ULONGLONG)600000000*ptsTimeStart.m)+((ULONGLONG)10000000*ptsTimeStart.s)+((ULONGLONG)1000*ptsTimeStart.u);
+		rtNow -= rtStart;
 		UpdatePositions(ptsNow);	
-		
+		REFERENCE_TIME tStart=(REFERENCE_TIME)rtNow;
+		REFERENCE_TIME tEnd=(REFERENCE_TIME)rtNow;
+		pSample->SetTime(&tStart,&tEnd);
 	}
 
 	pSample->SetTime(NULL,NULL);
