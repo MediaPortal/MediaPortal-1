@@ -125,7 +125,6 @@ STDMETHODIMP CMPTSFilter::SetSyncClock(void)
 	hr=pGraph->FindFilterByName(L"Default DirectSound Device",&pFilter);
 	if(pFilter==NULL)
 	{
-		return S_OK;
 		hr=CoCreateInstance(CLSID_DSoundRender, NULL,CLSCTX_INPROC_SERVER,IID_IBaseFilter,(void**)&pFilter);
 		if(SUCCEEDED(hr))
 		{
@@ -168,8 +167,6 @@ STDMETHODIMP CMPTSFilter::Run(REFERENCE_TIME tStart)
 	if(m_pFileReader->IsFileInvalid()==true)
 	{
 	}
-	SetSyncClock();// try to select the clock on the audio-renderer
-	//m_pGraph->SetDefaultSyncSource();
 	hr=CSource::Run(tStart);
 	return hr;
 }
@@ -252,6 +249,7 @@ HRESULT CMPTSFilter::OnConnect()
 		LogDebug("filter::OnConnect ok");
 	else
 		LogDebug("filter::OnConnect failed:%x",hr);
+	SetSyncClock();
 	return S_OK;
 }
 
