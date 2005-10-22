@@ -1266,7 +1266,12 @@ HRESULT CDump::GetAdaptionHeader(BYTE *data,AdaptionHeader *header)
 	header->AdaptationHeaderExtension=(data[1] & 0x01)>0?true:false;
 	if(header->PCRFlag==true)
 	{
-		GetPTS(&data[2],&(header->PCRValue));
+
+		__int64 pcr_H=(data[2]& 0x080)>>7;
+		__int64 pcr_L =((data[2]&0x7f)<<25) + (data[3]<<17) + (data[4]<<9) + ((data[5])<<1)+((data[6]&0x80)>>7);
+		__int64 ull=ull = (pcr_H << 32) + pcr_L;
+		//GetPTS(&data[2],&(header->PCRValue));
+		header->PCRValue=ull;
 		header->PCRCounter=((data[6] & 0x01)*256)+data[7];
 	}
 	return S_OK;

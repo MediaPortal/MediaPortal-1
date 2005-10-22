@@ -396,7 +396,7 @@ namespace MediaPortal.Player
 					
 				UpdateDuration();
 				updateTimer=DateTime.Now;
-				//Log.Write("pos:{0} duration:{1}", m_dCurrentPos.ToString("f2"),m_dDuration.ToString("f2"));
+				Log.Write("pos:{0} duration:{1}", m_dCurrentPos.ToString("f2"),m_dDuration.ToString("f2"));
 			}
 
 			m_dLastPosition=CurrentPosition;

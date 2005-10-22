@@ -147,6 +147,7 @@ HRESULT Sections::CheckStream()
 	ULONGLONG filePosCounter=0;
 	ULONGLONG pts=0;
 	int pid=0;
+	__int64 fpos=0;
 	while(finished!=true)
 	{
 		hr=m_pFileReader->Read(pData,188,&countBytesRead);
@@ -176,6 +177,7 @@ HRESULT Sections::CheckStream()
 				}
 			}
 		}
+		fpos++;
 	}
 	// set end pts
 	pids.EndPTS=(__int64)pts;
@@ -205,7 +207,12 @@ HRESULT Sections::GetAdaptionHeader(BYTE *data,AdaptionHeader *header)
 	header->AdaptationHeaderExtension=(data[1] & 0x01)>0?true:false;
 	if(header->PCRFlag==true)
 	{
-		GetPTS(&data[2],&(header->PCRValue));
+
+		__int64 pcr_H=(data[2]& 0x080)>>7;
+		__int64 pcr_L =((data[2]&0x7f)<<25) + (data[3]<<17) + (data[4]<<9) + ((data[5])<<1)+((data[6]&0x80)>>7);
+		__int64 ull=ull = (pcr_H << 32) + pcr_L;
+		header->PCRValue=ull;
+		//GetPTS(&data[2],&(header->PCRValue));
 		header->PCRCounter=((data[6] & 0x01)*256)+data[7];
 	}
 	return S_OK;
@@ -242,6 +249,7 @@ HRESULT Sections::GetPESHeader(BYTE *data,PESHeader *header)
 }
 void Sections::GetPTS(BYTE *data,ULONGLONG *pts)
 {
+	//High:1 Low:32 reserved:6 extension:9
 	ULONGLONG ptsVal;
 	bool ptsFlag=false;
 	ptsVal= 0xFFFFFFFFL & ( (6&data[0])<<29 | (255&data[1])<<22 | (254&data[2])<<14 | (255&data[3])<<7 | (((254&data[4])>>1)& 0x7F));
@@ -253,14 +261,14 @@ void Sections::GetPTS(BYTE *data,ULONGLONG *pts)
 }
 void Sections::PTSToPTSTime(ULONGLONG pts,PTSTime* ptsTime)
 {
-	PTSTime time;
 	ULONG  _90khz = (ULONG)(pts/90);
-	time.h=(_90khz/(1000*60*60));
-	time.m=(_90khz/(1000*60))-(time.h*60);
-	time.s=(_90khz/1000)-(time.h*3600)-(time.m*60);
-	time.u=_90khz-(time.h*1000*60*60)-(time.m*1000*60)-(time.s*1000);
-	*ptsTime=time;
+	ptsTime->h=(_90khz/(1000*60*60));
+	ptsTime->m=(_90khz/(1000*60))-(ptsTime->h*60);
+	ptsTime->s=(_90khz/1000)-(ptsTime->h*3600)-(ptsTime->m*60);
+	ptsTime->u=_90khz-(ptsTime->h*1000*60*60)-(ptsTime->m*1000*60)-(ptsTime->s*1000);
+
 }
+static int prevpts=0;
 HRESULT Sections::CurrentPTS(BYTE *pData,ULONGLONG *ptsValue,int* pid)
 {
 	HRESULT hr=S_FALSE;
@@ -283,6 +291,21 @@ HRESULT Sections::CurrentPTS(BYTE *pData,ULONGLONG *ptsValue,int* pid)
 	//if (header.AdaptionControl==0) return hr; //reserved value;
 	if (header.AdaptionControl==2) return hr; //adaption field only
 
+	//          0  1  2  3    4  5    6
+	//  0000:  [47 82 00 f3] [cc 5b] [38 2a  0e ad e4 52 12 75 a0 46   G....[8*...R.u.F
+	//        program_clock_reference:
+    //        baseH: 0 (0x00)
+    //        baseL: 1884560731 (0x70541d5b)
+    //        reserved: 50 (0x32)
+    //        extension: 82 (0x0052)
+    //         ==> program_clock_reference: 565368219382 (0x83a29266f6)  [= PCR-Timestamp: 5:48:59.563680]
+    //    original_program_clock_reference:
+    //        baseH: 0 (0x00)
+    //        baseL: 619397261 (0x24eb408d)
+    //        reserved: 8 (0x08)
+    //        extension: 11 (0x000b)
+    //         ==> original_program_clock_reference: 185819178311 (0x2b43afa547)  [= PCR-Timestamp: 1:54:42.191789]
+
 	if(header.AdaptionControl==3 || (header.PayloadUnitStart==true && header.AdaptionControl==1))
 	{
 		//skip adaption field
@@ -293,9 +316,13 @@ HRESULT Sections::CurrentPTS(BYTE *pData,ULONGLONG *ptsValue,int* pid)
 			GetAdaptionHeader(&pData[4],&ah);
 			if(ah.PCRFlag)
 			{
-				PTSTime time;
-				PTSToPTSTime(ah.PCRValue,&time);
-				//LogDebug("pcr-count:%d / pcr-value:%x / h:m:s:ms= %d:%d:%d.%d\n", ah.PCRCounter,ah.PCRValue,time.h,time.m,time.s,time.u);
+				PTSTime ptsTime;
+				PTSToPTSTime(ah.PCRValue,&ptsTime);
+				if (prevpts!=ptsTime.s)
+				{
+					LogDebug("pcr-count:%d / pcr-value:%x / h:m:s:ms= %d:%d:%d.%d", ah.PCRCounter,(DWORD)ah.PCRValue,ptsTime.h,ptsTime.m,ptsTime.s,ptsTime.u);
+					prevpts=ptsTime.s;
+				}
 				*ptsValue=ah.PCRValue;
 				hr=S_OK;
 			}
