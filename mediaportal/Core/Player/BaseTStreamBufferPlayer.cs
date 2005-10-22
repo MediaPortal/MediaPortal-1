@@ -214,7 +214,7 @@ namespace MediaPortal.Player
 			{
 				UpdateCurrentPosition();
 				UpdateDuration();
-
+				
 
 			}
 			else
