@@ -76,7 +76,7 @@ void LogDebug(const char *fmt, ...)
 	if (fp!=NULL)
 	{
 		SYSTEMTIME systemTime;
-		GetSystemTime(&systemTime);
+		GetLocalTime(&systemTime);
 		fprintf(fp,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d %s\n",
 			systemTime.wDay, systemTime.wMonth, systemTime.wYear,
 			systemTime.wHour,systemTime.wMinute,systemTime.wSecond,
@@ -1339,58 +1339,19 @@ HRESULT CDump::WriteTimeshiftFile(PBYTE pbData, LONG lDataLength)
 					m_pesPid=header.Pid;
 				if (m_pesStart==0) 
 				{
+					m_pesNow=ptsValue;
 					m_pesStart=ptsValue;
 					LogDebug("CDump::WriteTimeshiftFile() start pes:%x pid:%x", (DWORD)m_pesStart, header.Pid);
+					
+					WriteTimeshiftFile(pbData, lDataLength);
+					FlushFileBuffers(m_hFile);
 				}
 				m_pesNow=ptsValue;
+
+				return S_OK;
 			}
 			//offset+=pbData[4];
 		}
-		//if (offset < 0|| offset>188) return S_OK;
-		//if(header.SyncByte!=0x47 || pbData[offset]!=0 || pbData[offset+1]!=0 || pbData[offset+2]!=1) return S_OK;
-		//int code=pbData[offset+3]| 0x100;
-		/*if (!((code >= 0x1c0 && code <= 0x1df) ||
-			(code >= 0x1e0 && code <= 0x1ef) ||
-			(code == 0x1bd)))
-		{
-			return S_OK;
-		}
-		*/
-		//PESHeader pes;
-		//GetPESHeader(&pbData[offset+6],&pes);
-		//if(pes.Reserved!=0x02) return S_OK;
-		//if(pes.PTSFlags!=0x02 && pes.PTSFlags!=0x03) return S_OK;
-		//if (pes.ESCRFlag==0 && pes.ESRateFlag==0 && pes.DSMTrickModeFlag==0 && pes.AdditionalCopyInfoFlag==0 && pes.PESCRCFlag==0 && pes.PESExtensionFlag==0)
-		//{
-			//ULONGLONG ptsValue =0;
-			//GetPTS(&pbData[offset+9],&ptsValue);
-			//if (ptsValue>0)
-			//{
-			//	if (m_pesPid==0)
-			//		m_pesPid=header.Pid;
-			//	if (m_pesPid==header.Pid)
-			//	{
-			//		// audio pes found
-			//		if (m_pesStart==0) 
-			//		{
-			//			m_pesStart=ptsValue;
-			//			LogDebug("CDump::WriteTimeshiftFile() start pes:%x pid:%x", (DWORD)m_pesStart, header.Pid);
-			//		}
-			//		m_pesNow=ptsValue;
-			//		//LogDebug("pts:%x %x %x", (DWORD)m_pesStart,(DWORD)m_pesNow,header.Pid);
-			//		/*
-			//		LogDebug("pes:%x copy:%x cr:%x dataalign:%x dsm:%x escr:%x esrate:%x org:%x crc:%x ext:%x len:%x prio:%x pts:%x res:%x scramb:%x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x ", (DWORD)ptsValue,
-			//				pes.AdditionalCopyInfoFlag,pes.Copyright,pes.dataAlignmentIndicator,
-			//				pes.DSMTrickModeFlag,pes.ESCRFlag,pes.ESRateFlag,pes.Original,
-			//				pes.PESCRCFlag,pes.PESExtensionFlag,pes.PESHeaderDataLength,pes.Priority,
-			//				pes.PTSFlags,pes.Reserved,pes.ScramblingControl,
-			//				pbData[9],pbData[10],pbData[11],pbData[12],pbData[13],pbData[14],pbData[15],pbData[16],pbData[17],
-			//				pbData[18],pbData[19],pbData[20],pbData[21],pbData[22],pbData[23],pbData[24],pbData[25],pbData[26],
-			//				pbData[27],pbData[28],pbData[29]);
-			//		*/
-			//	}
-			//}
-		//}
 	}
 	return S_OK;
 }
@@ -1568,6 +1529,9 @@ HRESULT CDump::UpdateInfoFile(bool pids)
 			return E_FAIL;
 		}		
 
+		FlushFileBuffers(m_hInfoFile);
+		
+
 		m_currentFilePosition=0;
 		LARGE_INTEGER li;
 		li.QuadPart = 0;
@@ -1578,6 +1542,8 @@ HRESULT CDump::UpdateInfoFile(bool pids)
 				LogDebug("CDump::UpdateInfoFile(): failed to set eof");
 				return E_FAIL;
 			}
+			
+			FlushFileBuffers(m_hFile);
 		}
 		else
 		{
