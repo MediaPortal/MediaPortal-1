@@ -4987,7 +4987,7 @@ namespace MediaPortal.TV.Recording
 					m_streamDemuxer.OnTuneNewChannel();
 					m_streamDemuxer.SetChannelData(currentTuningObject.AudioPid, currentTuningObject.VideoPid, currentTuningObject.TeletextPid, currentTuningObject.Audio3, currentTuningObject.ServiceName,currentTuningObject.PMTPid,currentTuningObject.ProgramNumber);
 				}
-
+				SendPMT();
 
 				refreshPmtTable=true;
 				

@@ -288,6 +288,17 @@ STDMETHODIMP CMPTSFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt)
 		LogDebug("using .info file");
 		__int64	fileSize = 0;
 		DWORD count=0;
+
+
+		while(true)
+		{
+			m_pFileReader->GetFileSize(&fileSize);
+			if(fileSize>0||count>=50)
+				break;
+			Sleep(100);
+			count++;
+		}
+		count=0;
 		while(true)
 		{
 			m_pFileReader->GetFileSize(m_pFileReader->m_hInfoFile,&fileSize);
@@ -305,18 +316,8 @@ STDMETHODIMP CMPTSFilter::Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt)
 				break;
 			}
 		}
-/*
-		count=0;
-		while(true)
-		{
-			m_pFileReader->GetFileSize(&fileSize);
-			if(fileSize>=250000 ||count>=50)
-				break;
-			Sleep(100);
-			count++;
-		}
 		m_pFileReader->GetFileSize(&fileSize);
-		LogDebug("filesize:%d", (DWORD)fileSize);*/
+		LogDebug("filesize:%d", (DWORD)fileSize);
 	}
 	//If this a file start then return null.
 	RefreshPids();

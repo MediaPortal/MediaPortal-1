@@ -130,7 +130,11 @@ HRESULT CFilterOutPin::GetData(byte* pData, int lDataLength, bool allowedToWait)
 		if (m_bAboutToStop) return S_FALSE;
 		__int64 fileSize;
 		m_pFileReader->GetFileSize(&fileSize);
-		if (fileSize<=0) return S_FALSE;
+		if (fileSize<=0) 
+		{
+			LogDebug("pin:filesize=0");
+			return S_FALSE;
+		}
 		int count=0;
 		if (m_pMPTSFilter->m_pFileReader->m_hInfoFile!=INVALID_HANDLE_VALUE)
 		{
