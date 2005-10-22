@@ -320,7 +320,7 @@ HRESULT Sections::CurrentPTS(BYTE *pData,ULONGLONG *ptsValue,int* pid)
 				PTSToPTSTime(ah.PCRValue,&ptsTime);
 				if (prevpts!=ptsTime.s)
 				{
-					LogDebug("pcr-count:%d / pcr-value:%x / h:m:s:ms= %d:%d:%d.%d", ah.PCRCounter,(DWORD)ah.PCRValue,ptsTime.h,ptsTime.m,ptsTime.s,ptsTime.u);
+					//LogDebug("pcr-count:%d / pcr-value:%x / h:m:s:ms= %d:%d:%d.%d", ah.PCRCounter,(DWORD)ah.PCRValue,ptsTime.h,ptsTime.m,ptsTime.s,ptsTime.u);
 					prevpts=ptsTime.s;
 				}
 				*ptsValue=ah.PCRValue;
