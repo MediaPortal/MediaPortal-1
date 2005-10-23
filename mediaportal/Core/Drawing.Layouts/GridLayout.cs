@@ -113,7 +113,6 @@ namespace MediaPortal.Drawing.Layouts
 		public void Arrange(FrameworkElement element)
 		{
 			Point location = element.Location;
-			Size size = new Size(element.Width, element.Height);
 			Thickness t = element.Margin;
 
 			int rows = _rows;
@@ -124,8 +123,8 @@ namespace MediaPortal.Drawing.Layouts
 			else
 				rows = (element.LogicalChildren.Count + cols - 1) / cols;
 
-			double w = (size.Width - t.Width - (cols - 1) * _spacing.Width) / cols;
-			double h = (size.Height - t.Height - (rows - 1) * _spacing.Height) / rows;
+			double w = (element.Width - t.Width - (cols - 1) * _spacing.Width) / cols;
+			double h = (element.Height - t.Height - (rows - 1) * _spacing.Height) / rows;
 			double y = element.Location.Y + t.Top;
 
 			for(int row = 0; row < rows; row++)

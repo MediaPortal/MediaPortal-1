@@ -160,9 +160,9 @@ namespace MediaPortal.GUI.Library
 					_startTick = AnimationTimer.TickCount;
 			}
 
-			int index = 0;
+			int index = _images.Length - 1;
 
-			if(_isAnimating && progress < 1)
+			if(_isAnimating && progress <= 1)
 				index = (int)(progress * _images.Length);
 
 //			_images[index].SetPosition((int)(progress * 700), _images[index].YPosition);
