@@ -2,74 +2,40 @@
 	<id>5000</id>
 	<defaultcontrol>3</defaultcontrol>
 	<allowoverlay>yes</allowoverlay>
+	<define>#header.label:850</define>
+	<define>#header.hover:hover_my alarm.png</define>
 
   <controls>
-  	<control>
-  		<description>background image</description>
-  		<type>image</type>
-  		<id>1</id>
-  		<posX>0</posX>
-  		<posY>0</posY>
-  		<width>720</width>
-  		<height>576</height>
-  		<texture>background.png</texture>
-  	</control>
-  	<control>
-  		<description>MyAlarm BG</description>
-  		<type>image</type>
-  		<id>1</id>
-  		<posX>300</posX>
-  		<posY>150</posY>
-  		<width>350</width>
-  		<height>350</height>
-  		<colordiffuse>20ffffff</colordiffuse>
-  		<texture>myalarm.png</texture>
-  	</control>
-  	<control>
-  		<description>Panel</description>
-  		<type>image</type>
-  		<id>1</id>
-  		<posX>50</posX>
-  		<posY>100</posY>
-  		<width>190</width>
-  		<height>272</height>
-  		<texture>panel.png</texture>
-  	</control>
+  	<import>common.window.xml</import>
 
-		<control>
-			<description>New button</description>
-			<type>button</type>
-			<id>3</id>
-  		<posX>55</posX>
-    	<posY>115</posY>
-			<label>617</label>
-			<onup>20</onup>
-			<ondown>4</ondown>
-      <onleft>3</onleft>
-			<onright>5</onright>
-		</control>
-		<control>
-			<description>Sleep timer Button</description>
-			<type>button</type>
-			<id>4</id>
-			<posX>55</posX>
-			<posY>143</posY>
-			<label>859</label>
-			<onright>5</onright>
-      <onleft>4</onleft>
-			<onup>3</onup>
-			<ondown>3</ondown>
-		</control>
-  	<control>
-  		<description>Panel Split</description>
-  		<type>image</type>
-  		<id>1</id>
-  		<posX>55</posX>
-  		<posY>180</posY>
+    <control>
+      <type>group</type>
+      <layout>StackLayout(0)</layout>
+      <posX>55</posX>
+      <posY>115</posY>
   		<width>180</width>
-  		<height>2</height>
-  		<texture>panel_split.png</texture>
-  	</control>
+
+  		<control>
+  			<description>New button</description>
+  			<type>button</type>
+  			<id>3</id>
+  			<label>617</label>
+  			<onup>1234</onup> <!-- Non existing, so it will go to topbar -->
+  		</control>
+  		<control>
+  			<description>Sleep timer Button</description>
+  			<type>button</type>
+  			<id>4</id>
+  			<label>859</label>
+  			<ondown>3</ondown> <!-- Go to top button -->
+  		</control>
+    	<control>
+    		<description>Panel Split</description>
+    		<type>image</type>
+    		<id>1</id>
+    		<texture>panel_split_stack.png</texture>
+    	</control>
+   	</control>
 
     <control>
     	<description>alarms listcontrol</description>
