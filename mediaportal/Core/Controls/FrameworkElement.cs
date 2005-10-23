@@ -26,6 +26,7 @@
 using System;
 using System.Windows;
 
+using MediaPortal.Animation;
 using MediaPortal.Drawing;
 using MediaPortal.Drawing.Layouts;
 using MediaPortal.GUI.Library;
@@ -67,6 +68,33 @@ namespace MediaPortal.Controls
 		protected virtual Size MeasureOverride(Size availableSize)
 		{
 			return new Size(_width, _height);
+		}
+
+		protected void PrepareTriggers()
+		{
+			if(Triggers == null)
+				return;
+
+			foreach(TriggerBase trigger in _triggers)
+			{
+				if(trigger is EventTrigger)
+				{
+					PrepareEventTrigger((EventTrigger)trigger);
+				}
+			}
+		}
+
+		void PrepareEventTrigger(EventTrigger trigger)
+		{
+			Log.Write("GUIWindow.PrepareEventTrigger: {0}", trigger.SourceName);
+
+			foreach(TriggerAction action in trigger.Actions)
+			{
+				if(action is BeginAction)
+				{
+					Log.Write("GUIWindow.PrepareEventTrigger: BeginTrigger");
+				}
+			}
 		}
 
 		#endregion Methods

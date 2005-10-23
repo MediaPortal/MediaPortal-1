@@ -508,6 +508,8 @@ namespace MediaPortal.GUI.Library
 				// TODO: remove this when all XAML parser or will result in double initialization
 				((ISupportInitialize)this).EndInit();
 
+				PrepareTriggers();
+
 				// initialize the controls
 				OnWindowLoaded();
 				isSkinLoaded = true;
@@ -1294,36 +1296,8 @@ namespace MediaPortal.GUI.Library
 
 		void ISupportInitialize.EndInit()
 		{
-//			PrepareTriggers();
 		}
 
-/*		void PrepareTriggers()
-		{
-			if(_triggers == null)
-				return;
-
-			foreach(TriggerBase trigger in _triggers)
-			{
-				if(trigger is EventTrigger)
-				{
-					PrepareEventTrigger((EventTrigger)trigger);
-				}
-			}
-		}
-
-		void PrepareEventTrigger(EventTrigger trigger)
-		{
-			Log.Write("GUIWindow.PrepareEventTrigger: {0}", trigger.SourceName);
-
-			foreach(TriggerAction action in trigger.Actions)
-			{
-				if(action is BeginAction)
-				{
-					Log.Write("GUIWindow.PrepareEventTrigger: BeginTrigger");
-				}
-			}
-		}
-*/
 		#endregion Methods
 
 		#region Properties
