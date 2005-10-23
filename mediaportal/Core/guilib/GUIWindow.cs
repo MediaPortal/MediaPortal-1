@@ -24,8 +24,6 @@
 #endregion
 
 using System;
-using System.Drawing;
-using System.Windows.Forms;
 using System.Collections;
 using System.ComponentModel;
 using System.Reflection;
@@ -49,7 +47,7 @@ namespace MediaPortal.GUI.Library
 	/// Each window plugin should derive from this base class
 	/// Pluginwindows should be copied in the plugins/windows folder
 	/// </summary>
-	public class GUIWindow : FrameworkElement, ISupportInitialize
+	public class GUIWindow : Panel, ISupportInitialize
 	{
 		#region window ids
 		//enum of all standard windows in MP

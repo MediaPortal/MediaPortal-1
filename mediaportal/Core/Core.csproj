@@ -839,11 +839,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Drawing.Layouts\ILayoutComposite.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "Drawing.Layouts\RingLayout.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

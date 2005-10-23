@@ -305,9 +305,9 @@ namespace MediaPortal.GUI.Library
 				if(control.GetID == 1)
 					continue;
 
-				if(control is ILayoutComposite)
+				if(control is GUIGroup)
 				{
-					FlattenHierarchy(((ILayoutComposite)control).Children, targetList);
+					FlattenHierarchy(control.LogicalChildren, targetList);
 					continue;
 				}
 
