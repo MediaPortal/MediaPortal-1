@@ -419,12 +419,22 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Controls\Panel.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Controls\StackPanel.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Controls\UIElement.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Controls\UIElementCollection.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
