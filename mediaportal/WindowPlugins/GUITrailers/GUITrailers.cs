@@ -43,7 +43,6 @@ namespace MediaPortal.GUI.Video
 	/// </summary>
 	public class GUITrailers : GUIWindow
 	{
-		[SkinControlAttribute(2)]			protected GUIButtonControl buttonOne=null;
 		[SkinControlAttribute(3)]			protected GUISelectButtonControl btnletter=null;
 		[SkinControlAttribute(4)]			protected GUIListControl listview=null;
 		[SkinControlAttribute(5)]			protected GUIToggleButtonControl btntoggleplot = null;
@@ -63,13 +62,16 @@ namespace MediaPortal.GUI.Video
 
 		#region Variables
         
+		int Main_Selected = 0; // remember mainvielist selected
 		int Movie_Selected = 0; // remember movie selected in listview
+		int TCM_Selected = 0; // remberer selections Trailers, Clips, More View
 		int Prev_SelectedItem = 0;	// remember listview selections
 
 		string TempHTML;	// GetWeb string
 		string MMSUrl;
 		string currentletter ="";
 		string casturl;
+		string backgroundposter = null;
 
 		DateTime RefreshDaily = DateTime.Now.Date; //for the daily update, if HTPC is on 24h it will refresh strings every day.
 		
@@ -98,6 +100,7 @@ namespace MediaPortal.GUI.Video
 		bool foundc = false;
 		bool foundm = false;
 
+		bool mainview = false;
 		bool allview = false; // bools for reminding which view the user is in
 		bool tcmview = false;
 		bool tview = false;
@@ -108,6 +111,7 @@ namespace MediaPortal.GUI.Video
 		bool letterview = false;
 		bool plotview = true;
 		bool castview = false;
+
 		
 		string ptitle;			// Used by SetGUIProperties, GetGUIProperties
 		string pgenre;			// Before MP start playing a movie fullscreen
@@ -121,8 +125,15 @@ namespace MediaPortal.GUI.Video
 		string bitrate = string.Empty;
 		bool Show_GT = false;
 
+		// BackGroundworker
 		string _downloadedText		= string.Empty;
 
+		// For Downloading trailers
+//		string DownloadFileName = string.Empty;
+//		string DownloadFileUrl = string.Empty;
+//		bool downloadfileview = false;
+
+                
 		#endregion
 
 		public override int GetID
@@ -143,8 +154,6 @@ namespace MediaPortal.GUI.Video
 
 		protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)  // For when a button is pressed
 		{
-			if (control==buttonOne) 
-				OnButtonOne();
 			if (control==btnletter)
 				OnButtonTwo();
 			if (control==listview)
@@ -172,11 +181,13 @@ namespace MediaPortal.GUI.Video
 
 		protected override void OnPageDestroy(int newWindowId)
 		{
+			if(G_viewInfoAndTrailer==true || tview==true || cview==true || mview==true)
+			{
+				Prev_SelectedItem = listview.SelectedListItemIndex;
+			}
 			GetGUIProperties();
 			base.OnPageDestroy (newWindowId);
 		}
-
-
 
 		protected override void OnPageLoad()
 		{
@@ -188,18 +199,20 @@ namespace MediaPortal.GUI.Video
 				btnletter.AddSubItem(k.ToString());
 			}
 			LoadSettings();
-			if(tcmview==true || G_viewInfoAndTrailer==true || tview==true || cview==true || mview==true)
+			if(G_viewInfoAndTrailer==true || tview==true || cview==true || mview==true)
 			{
-				ShowLabelsTrue();
 				listview.SelectedListItemIndex = Prev_SelectedItem;
 				listview.Focus = true;
-				buttonOne.Focus = false;
 			}
 			else
 			{
 				ShowLabelsFalse();
 				GUIPropertyManager.SetProperty("#title", "");
-				poster.SetFileName(GUIGraphicsContext.Skin+@"\media\background.png");
+				if(backgroundposter==null)
+                    backgroundposter = poster.FileName;
+				poster.SetFileName(GUIGraphicsContext.Skin+@"\media\"+backgroundposter);
+				ShowMainListView();
+				listview.Focus=true;
 			}
 		}
 
@@ -208,70 +221,31 @@ namespace MediaPortal.GUI.Video
 			base.OnPreviousWindow ();
 		}
 
-			
-				
-		private void OnButtonOne()
-		{
-			GUIDialogMenu dlgm = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-			dlgm.Reset();
-			dlgm.SetHeading(5902);
-			dlgm.AddLocalizedString(5903);	// Diaglog for which movies to show
-			dlgm.AddLocalizedString(5904);
-			dlgm.AddLocalizedString(5905);
-			//if language is german than show option german trailers
-			string language="";
-			using(MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml")) 
-			{
-				language = xmlreader.GetValue("skin","language");
-			}
-			if(language.Equals("German")==true || Show_GT==true)
-				dlgm.AddLocalizedString(5917);
-			dlgm.DoModal(GUIWindowManager.ActiveWindow);
-
-			if(dlgm.SelectedLabel==0)
-			{
-				if(RefreshDaily.Equals(DateTime.Now.Date)==false) // For the daily refresh
-					Array.Clear(JAMovieName,0,50);
-				if(JAMovieName[0]==null)
-				{GetJustAdded();}
-				buttonOne.Focus=false;
-				listview.Focus=true;
-				Prev_SelectedItem = 0;
-				ShowJustAdded();
-			}
-			if(dlgm.SelectedLabel==1)
-			{
-				if(RefreshDaily.Equals(DateTime.Now.Date)==false)
-					Array.Clear(MWMovieName,0,50);
-				if(MWMovieName[0]==null)
-				{GetMostWatched();}
-				buttonOne.Focus=false;
-				listview.Focus=true;
-				Prev_SelectedItem = 0;
-				ShowMostWatched();
-			}
-			if(dlgm.SelectedLabel==2)
-			{
-				if(RefreshDaily.Equals(DateTime.Now.Date)==false)
-					Array.Clear(MovieName,0,2000);
-				if(MovieName[0]==null)
-				{GetTrailers();}
-				buttonOne.Focus=false;
-				listview.Focus=true;
-				Prev_SelectedItem = 0;
-				ShowMovies();
-			}
-			if(language.Equals("German")==true || Show_GT==true)
-			{
-				if(dlgm.SelectedLabel==3)
-				{
-					buttonOne.Focus=false;
-					listview.Focus=true;
-					Prev_SelectedItem = 0;
-					ShowGermanLayoutWoche();
-				}
-			}
-		}
+	
+        // Tryed to create to download file with nice notify window, works for http urls but not
+		// for mms:// urls so this can be used for apple movies maybe?
+//		protected override void OnShowContextMenu()
+//		{
+//			base.OnShowContextMenu ();
+//			GUIListItem item=listview.SelectedListItem;
+//			int itemNo=listview.SelectedListItemIndex;
+//			if (item==null) return;
+//			if (downloadfileview==false) return;
+//
+//			GUIDialogMenu dlg=(GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+//			if (dlg==null) return;
+//			dlg.Reset();
+//			dlg.SetHeading(924); // menu
+//			dlg.Add("Download");
+//			dlg.Add("Download & Play");
+//			dlg.DoModal(GetID);
+//			if(dlg.SelectedLabelText.Equals("Download"))
+//			{
+//				GetMMSURL(TrailersUrl[itemNo]);
+//				DownloadFile();
+//			}
+//		
+//		}
 		
 		private void OnButtonTwo()
 		{
@@ -291,11 +265,15 @@ namespace MediaPortal.GUI.Video
 			allview=false;
 			jaview=false;
 			mwview=false;
-			poster.SetFileName(GUIGraphicsContext.Skin+@"\media\background.png");
+			poster.SetFileName(GUIGraphicsContext.Skin+@"\media\"+backgroundposter);
 			GUIPropertyManager.SetProperty("#title","");
-			            
 			letter = btnletter.SelectedLabel;
-			
+		
+			GUIListItem item1 = new GUIListItem();
+			item1.Label = "..";
+			item1.IsFolder = true;
+			Utils.SetDefaultIcons(item1);
+			listview.Add(item1);
 						
 			while(MovieName[i]!=null)
 			{
@@ -401,6 +379,7 @@ namespace MediaPortal.GUI.Video
 			{
 				if(itemindex==0)
 				{
+					TCM_Selected = 0;
 					if(allview==true)
 						ShowMovies();
 					else if(jaview==true)
@@ -412,6 +391,7 @@ namespace MediaPortal.GUI.Video
 				}
 				else if(itemindex==1)
 				{
+					TCM_Selected = 1;
 					if(foundt==true)
 						ShowTrailers();
 					else if(foundt==false & foundc==true)
@@ -419,13 +399,17 @@ namespace MediaPortal.GUI.Video
 				}
 				else if(itemindex==2)
 				{
+					TCM_Selected = 2;
 					if(foundt==false & foundc==true)
 						ShowMore();
 					else if(foundc==true)
 						ShowClips();
 				}
 				else if(itemindex==3)
+				{
+					TCM_Selected = 3;
 					ShowMore();
+				}
 			}
 				// Trailerview
 			else if(tview==true)
@@ -464,48 +448,121 @@ namespace MediaPortal.GUI.Video
 				// JustAddedview
 			else if(jaview==true)
 			{
-				Movie_Selected = listview.SelectedListItemIndex;
-				GetMovieInfo(JAMovieUrl[itemindex], JAMovieName[itemindex], itemindex);
-				ShowTrailersClipsMore();
-				ShowMovieInfo(JAMovieUrl[itemindex], JAMovieName[itemindex], itemindex);
+				if(itemindex==0)
+				{
+					Movie_Selected = 0;
+					ShowMainListView();
+				}
+				else
+				{
+					itemindex = itemindex-1;
+					Movie_Selected = listview.SelectedListItemIndex;
+					GetMovieInfo(JAMovieUrl[itemindex], JAMovieName[itemindex], itemindex);
+					ShowTrailersClipsMore();
+					ShowMovieInfo(JAMovieUrl[itemindex], JAMovieName[itemindex], itemindex);
+				}
 			}
 				// MostWatchedview
 			else if(mwview==true)
 			{
-				Movie_Selected = listview.SelectedListItemIndex;
-				GetMovieInfo(MWMovieUrl[itemindex], MWMovieName[itemindex], itemindex);
-				ShowTrailersClipsMore();
-				ShowMovieInfo(MWMovieUrl[itemindex], MWMovieName[itemindex], itemindex);
+				if(itemindex==0)
+				{
+					Movie_Selected = 0;
+					ShowMainListView();
+				}
+				else
+				{
+					itemindex = itemindex-1;
+					Movie_Selected = listview.SelectedListItemIndex;
+					GetMovieInfo(MWMovieUrl[itemindex], MWMovieName[itemindex], itemindex);
+					ShowTrailersClipsMore();
+					ShowMovieInfo(MWMovieUrl[itemindex], MWMovieName[itemindex], itemindex);
+				}
 			}
 				// Letterbutton view
 			else if(letterview==true)
 			{
-				GetMovieInfo(LMovieUrl[itemindex], LMovieName[itemindex], itemindex);
-				ShowTrailersClipsMore();
-				ShowMovieInfo(LMovieUrl[itemindex], LMovieName[itemindex], itemindex);
+				if(itemindex==0)
+				{
+					Movie_Selected = 0;
+					ShowMainListView();
+				}
+				else
+				{
+					GetMovieInfo(LMovieUrl[itemindex-1], LMovieName[itemindex-1], itemindex);
+					ShowTrailersClipsMore();
+					ShowMovieInfo(LMovieUrl[itemindex-1], LMovieName[itemindex-1], itemindex);
+				}
 			}
 				// All movies view
 			else if(allview==true)
 			{
-				Movie_Selected = listview.SelectedListItemIndex;
-				GetMovieInfo(MovieURL[itemindex], MovieName[itemindex], itemindex);
-				ShowTrailersClipsMore();
-				ShowMovieInfo(MovieURL[itemindex], MovieName[itemindex], itemindex);
+				if(itemindex==0)
+				{
+					Movie_Selected = 0;
+					ShowMainListView();
+				}
+				else
+				{
+					itemindex = itemindex-1;
+					Movie_Selected = listview.SelectedListItemIndex;
+					GetMovieInfo(MovieURL[itemindex], MovieName[itemindex], itemindex);
+					ShowTrailersClipsMore();
+					ShowMovieInfo(MovieURL[itemindex], MovieName[itemindex], itemindex);
+				}
+			}
+				// Main selection view
+			else if(mainview==true)
+			{
+				if(itemindex==0) // just added movies
+				{
+					Main_Selected = listview.SelectedListItemIndex;
+					if(RefreshDaily.Equals(DateTime.Now.Date)==false) // For the daily refresh
+						Array.Clear(JAMovieName,0,50);
+					if(JAMovieName[0]==null)
+					{GetJustAdded();}
+					ShowJustAdded();
+				}
+				if(itemindex==1) // mostwatched movies
+				{
+					Main_Selected = listview.SelectedListItemIndex;
+					if(RefreshDaily.Equals(DateTime.Now.Date)==false)
+						Array.Clear(MWMovieName,0,50);
+					if(MWMovieName[0]==null)
+					{GetMostWatched();}
+					ShowMostWatched();
+				}
+				if(itemindex==2) // all movies
+				{
+					Main_Selected = listview.SelectedListItemIndex;
+					if(RefreshDaily.Equals(DateTime.Now.Date)==false)
+						Array.Clear(MovieName,0,2000);
+					if(MovieName[0]==null)
+					{GetTrailers();}
+					ShowMovies();
+				}
+				if(itemindex==3) // german trailers
+				{
+					Main_Selected = listview.SelectedListItemIndex;
+					ShowGermanLayoutWoche();
+				}
 			}
 				// German Trailerview Woche
 			else if(G_viewWoche==true)
 			{
 				if(itemindex==0)
+					ShowMainListView();
+				if(itemindex==1)
 				{
 					GetGermanTrailers("http://de.movies.yahoo.com/mvsl.html");
 					ShowGermanTrailers();
 				}
-				if(itemindex==1)
+				if(itemindex==2)
 				{
 					GetGermanTrailers("http://de.movies.yahoo.com/neu_im_kino.html");
 					ShowGermanTrailers();
 				}
-				if(itemindex==2)
+				if(itemindex==3)
 				{
 					GetGermanTrailers("http://de.movies.yahoo.com/mvsn.html");
 					ShowGermanTrailers();
@@ -515,9 +572,13 @@ namespace MediaPortal.GUI.Video
 			else if(G_viewMovie==true)
 			{
 				if(itemindex==0)
+				{
+					Movie_Selected = 0;
 					ShowGermanLayoutWoche();
+				}
 				else
 				{
+					Movie_Selected = listview.SelectedListItemIndex;
 					ShowGermanMovieInfo(GermanMovieName[itemindex-1],itemindex-1);
 				}
 			}
@@ -530,10 +591,9 @@ namespace MediaPortal.GUI.Video
 				{
 					if(GermanTrailerURL[GermanSelected]!=null)
 						Prev_SelectedItem = listview.SelectedListItemIndex;
-						PlayGermanTrailer(GermanTrailerURL[GermanSelected]);
+					PlayGermanTrailer(GermanTrailerURL[GermanSelected]);
 				}
 			}
-
 		}
 
 
@@ -590,6 +650,105 @@ namespace MediaPortal.GUI.Video
 
 		bool _workerCompleted = true;
 
+		#region Download File in background and popup notify-window
+//		void DownloadFile()
+//		{
+//			if(_workerDownloadFileCompleted)
+//			{
+//				_workerDownloadFileCompleted = false;
+//
+//				BackgroundWorker worker = new BackgroundWorker();
+//
+//				worker.DoWork +=new DoWorkEventHandler(DownloadFileWorker);
+//				worker.RunWorkerAsync(DownloadFileUrl);
+//
+//				using (WaitCursor cursor = new WaitCursor())
+//				{
+//					while(_workerDownloadFileCompleted==false)
+//						GUIWindowManager.Process();
+//				}
+//			}
+//		}
+//
+//		void DownloadFileWorker(object sender, DoWorkEventArgs e)
+//		{
+////			string url = "http://movies.apple.com/movies/lionsgate/saw_2/saw_ii-tlr2_m480.mov";
+////			string filename = @"c:\saw.mov";
+//			
+//			string url = MMSUrl;
+//			string filename = @"c:\" +DownloadFileName + ".wmv";
+//
+//			WebClient wc = new WebClient();
+//
+//			try
+//			{
+//				wc.DownloadFile(url, filename);
+//
+//			}
+//			catch(Exception ex)
+//			{
+//				Log.Write("Guitrailers.DownloadFile: {0}", ex.Message);
+//			}
+//			finally
+//			{
+//				wc.Dispose();
+//			}
+//
+//			_workerDownloadFileCompleted = true;
+//			
+//			GUIDialogNotify dlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+//			dlgNotify.Reset();
+//			dlgNotify.ClearAll();
+//			dlgNotify.SetHeading("Download finished");
+//			if(System.IO.File.Exists(@"thumbs\MPTemp -"+DownloadFileName + ".jpg")==true)
+//                dlgNotify.SetImage(@"thumbs\MPTemp -"+DownloadFileName + ".jpg");
+//			dlgNotify.SetText("finished download of trailer: "+ DownloadFileName);
+//			dlgNotify.TimeOut = 5;
+//			dlgNotify.DoModal(GetID);
+//
+//		}
+//
+//		bool _workerDownloadFileCompleted = true;
+		#endregion
+
+		void ShowMainListView()
+		{
+			ResetViews();
+			mainview = true;
+			allview = false;
+			jaview = false;
+			mwview = false;
+			letterview = false;
+			poster.SetFileName(GUIGraphicsContext.Skin+@"\media\"+backgroundposter);
+			GUIPropertyManager.SetProperty("#title", GUILocalizeStrings.Get(5902));
+
+			string[] MainListOptions = new string[10];
+			MainListOptions[0] = GUILocalizeStrings.Get(5903);
+			MainListOptions[1] = GUILocalizeStrings.Get(5904);
+			MainListOptions[2] = GUILocalizeStrings.Get(5905);
+			MainListOptions[3] = GUILocalizeStrings.Get(5902);
+			string language="";
+			using(MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml")) 
+			{
+				language = xmlreader.GetValue("skin","language");
+			}
+			if(language.Equals("German")==true || Show_GT==true)
+				MainListOptions[3] = GUILocalizeStrings.Get(5917);
+
+			listview.Clear();
+			int i = 0;
+			while(MainListOptions[i] !=null)
+			{
+				GUIListItem item = new GUIListItem();
+				item.IsFolder = true;
+				Utils.SetDefaultIcons(item);
+				item.Label = MainListOptions[i];
+				listview.Add(item);
+				i++;
+			}
+			listview.SelectedListItemIndex = Main_Selected;
+		}
+
 		void GetTrailers()
 		{
 			GUIPropertyManager.SetProperty("#title", GUILocalizeStrings.Get(5910));
@@ -618,11 +777,16 @@ namespace MediaPortal.GUI.Video
 			jaview = false;
 			mwview = false;
 			letterview = false;
-			poster.SetFileName(GUIGraphicsContext.Skin+@"\media\background.png");
+			poster.SetFileName(GUIGraphicsContext.Skin+@"\media\"+backgroundposter);
 			GUIPropertyManager.SetProperty("#title", GUILocalizeStrings.Get(5905));
-
 			
 			listview.Clear();
+			GUIListItem item1 = new GUIListItem();
+			item1.Label = "..";
+			item1.IsFolder = true;
+			Utils.SetDefaultIcons(item1);
+			listview.Add(item1);
+
 			int i = 0;
 			while(MovieName[i] !=null)
 			{
@@ -639,7 +803,6 @@ namespace MediaPortal.GUI.Video
 		void GetMovieInfo(string url, string name, int i)
 		{
 			GUIPropertyManager.SetProperty("#title", "Getting moviesinfo...");
-			Prev_SelectedItem = i;
 			ResetViews();
 			tcmview = true;
 
@@ -828,9 +991,8 @@ namespace MediaPortal.GUI.Video
 				Utils.SetDefaultIcons(item);
 				listview.Add(item);
 			}
-			listview.SelectedListItemIndex = Prev_SelectedItem;
+			listview.SelectedListItemIndex = TCM_Selected;
 			listview.Focus = true;
-			buttonOne.Focus = false;
 		}
 
 		void ShowTrailers()
@@ -857,7 +1019,6 @@ namespace MediaPortal.GUI.Video
 			}
 			listview.SelectedListItemIndex = Prev_SelectedItem;
 			listview.Focus = true;
-			buttonOne.Focus = false;
 		}
 		void ShowClips()
 		{
@@ -883,7 +1044,6 @@ namespace MediaPortal.GUI.Video
 			}
 			listview.SelectedListItemIndex = Prev_SelectedItem;
 			listview.Focus = true;
-			buttonOne.Focus = false;
 		}
 		void ShowMore()
 		{
@@ -909,11 +1069,11 @@ namespace MediaPortal.GUI.Video
 			}
 			listview.SelectedListItemIndex = Prev_SelectedItem;
 			listview.Focus = true;
-			buttonOne.Focus = false;
 		}
 
 		void ResetViews()
 		{
+			mainview = false;
 			tcmview = false;
 			tview = false;
 			cview = false;
@@ -1095,11 +1255,16 @@ namespace MediaPortal.GUI.Video
 			jaview = true;
 			allview = false;
 			letterview = false;
-			poster.SetFileName(GUIGraphicsContext.Skin+@"\media\background.png");
+			poster.SetFileName(GUIGraphicsContext.Skin+@"\media\"+backgroundposter);
 			GUIPropertyManager.SetProperty("#title", GUILocalizeStrings.Get(5903));
-
 			
 			listview.Clear();
+			GUIListItem item1 = new GUIListItem();
+			item1.Label = "..";
+			item1.IsFolder = true;
+			Utils.SetDefaultIcons(item1);
+			listview.Add(item1);
+
 			int i = 0;
 			while(JAMovieName[i] !=null)
 			{
@@ -1146,11 +1311,16 @@ namespace MediaPortal.GUI.Video
 			jaview = false;
 			allview = false;
 			letterview = false;
-			poster.SetFileName(GUIGraphicsContext.Skin+@"\media\background.png");
+			poster.SetFileName(GUIGraphicsContext.Skin+@"\media\"+backgroundposter);
 			GUIPropertyManager.SetProperty("#title", GUILocalizeStrings.Get(5904));
-
 			
 			listview.Clear();
+			GUIListItem item1 = new GUIListItem();
+			item1.Label = "..";
+			item1.IsFolder = true;
+			Utils.SetDefaultIcons(item1);
+			listview.Add(item1);
+
 			int i = 0;
 			while(MWMovieName[i] !=null)
 			{
@@ -1210,7 +1380,7 @@ namespace MediaPortal.GUI.Video
 			btntoggleplot.Visible=false;
 			btntogglecast.Visible=false;
 			//labelrating.Visible=false;
-			btnletter.NavigateDown =2;
+			btnletter.NavigateDown =4;
 
 		}
 		void ShowLabelsTrue()
@@ -1274,6 +1444,7 @@ namespace MediaPortal.GUI.Video
 			}
 
 		}
+
 
 		#region German movie-trailers (de.movies.yahoo.com)
 		//-------------------------------------------------------------------------	
@@ -1386,10 +1557,16 @@ namespace MediaPortal.GUI.Video
 			allview = false;
 			letterview = false;
 			G_viewWoche = true;
-			poster.SetFileName(GUIGraphicsContext.Skin+@"\media\background.png");
+			poster.SetFileName(GUIGraphicsContext.Skin+@"\media\"+backgroundposter);
 			GUIPropertyManager.SetProperty("#title", GUILocalizeStrings.Get(5911));
 
 			listview.Clear();
+			GUIListItem item0 = new GUIListItem();
+			item0.Label = "..";
+			item0.IsFolder = true;
+			Utils.SetDefaultIcons(item0);
+			listview.Add(item0);
+
 			//add Vorwoche
 			GUIListItem item = new GUIListItem();
 			item.IsFolder = true;
@@ -1422,7 +1599,7 @@ namespace MediaPortal.GUI.Video
 			letterview = false;
 			G_viewWoche = false;
 			G_viewMovie = true;
-			poster.SetFileName(GUIGraphicsContext.Skin+@"\media\background.png");
+			poster.SetFileName(GUIGraphicsContext.Skin+@"\media\"+backgroundposter);
 			GUIPropertyManager.SetProperty("#title", GUILocalizeStrings.Get(5911));
 			
 			listview.Clear();
@@ -1453,12 +1630,13 @@ namespace MediaPortal.GUI.Video
 					listview.Add(item);
 					i++;
 				}
-				listview.SelectedListItemIndex = Prev_SelectedItem;
+				listview.SelectedListItemIndex = Movie_Selected;
 				listview.Focus=true;
 			}
 		}
 		void ShowGermanMovieInfo(string name, int i)
 		{
+			ResetViews();
 			G_viewMovie=false;
 			G_viewInfoAndTrailer=true;
 			GermanSelected = i;
@@ -1515,8 +1693,6 @@ namespace MediaPortal.GUI.Video
 				item.IconImage = "defaultVideo.png";
 				listview.Add(item);
 			}
-			
-            
 		}
 		void PlayGermanTrailer(string url)
 		{
@@ -1549,6 +1725,7 @@ namespace MediaPortal.GUI.Video
 
 
 		#endregion
+
 	}
 }
 
