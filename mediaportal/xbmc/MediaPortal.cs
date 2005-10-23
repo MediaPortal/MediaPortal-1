@@ -380,7 +380,7 @@ public class MediaPortalApp : D3DApp, IRender
 			{
 				m_strSkin = xmlreader.GetValueAsString("skin", "name", "BlueTwo");
 				m_strLanguage = xmlreader.GetValueAsString("skin", "language", "English");
-				m_bAutoHideMouse = xmlreader.GetValueAsBool("general", "autohidemouse", false);
+				_autoHideMouse = xmlreader.GetValueAsBool("general", "autohidemouse", false);
 				GUIGraphicsContext.MouseSupport = xmlreader.GetValueAsBool("general", "mousesupport", true);
 				GUIGraphicsContext.DBLClickAsRightClick = xmlreader.GetValueAsBool("general", "dblclickasrightclick", false);
 			}
@@ -567,7 +567,7 @@ public class MediaPortalApp : D3DApp, IRender
 		Log.Write("Mediaportal.OnStartup()");
 
 		// set process priority
-		m_MouseTimeOut = DateTime.Now;
+		_mouseTimeOutTimer = DateTime.Now;
 		//System.Threading.Thread.CurrentThread.Priority=System.Threading.ThreadPriority.BelowNormal;
 
 		if (splashScreen != null) splashScreen.SetInformation("Starting recorder...");
@@ -1420,7 +1420,7 @@ public class MediaPortalApp : D3DApp, IRender
 	{
 		screenSaverTimer=DateTime.Now;
 		// Disable first mouse action when mouse was hidden
-		if (!m_bShowCursor)
+		if (!_showCursor)
 		{
 			base.mousemove(e);
 			return;
@@ -1474,7 +1474,7 @@ public class MediaPortalApp : D3DApp, IRender
 		screenSaverTimer=DateTime.Now;
 		GUIGraphicsContext.BlankScreen=false;
 		// Disable first mouse action when mouse was hidden
-		if (!m_bShowCursor)
+		if (!_showCursor)
 		{
 			base.mouseclick(e);
 			return;
@@ -2122,7 +2122,7 @@ public class MediaPortalApp : D3DApp, IRender
 
 		GUIWindowManager.OnNewAction += new OnActionHandler(this.OnAction);
 
-		if (m_bAutoHideMouse)
+		if (_autoHideMouse)
 		{
 			HideCursor();
 		}

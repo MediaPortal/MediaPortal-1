@@ -110,9 +110,9 @@ namespace MediaPortal
     protected System.Windows.Forms.MenuItem mnuExit;
     #endregion
 
-    protected bool m_bAutoHideMouse = false;
-    protected bool m_bNeedUpdate = false;
-    protected DateTime m_MouseTimeOut = DateTime.Now;
+    protected bool _autoHideMouse = false;
+    protected bool _needUpdate = false;
+    protected DateTime _mouseTimeOutTimer = DateTime.Now;
     // The window we will render too
     private System.Windows.Forms.Control ourRenderTarget;
     // Should we use the default windows
@@ -132,8 +132,8 @@ namespace MediaPortal
     private bool isClosing = false; // Are we closing?
     private bool isChangingFormStyle = false; // Are we changing the forms style?
     private bool isWindowActive = true; // Are we waiting for got focus?
-    protected bool m_bShowCursor = true;
-    protected bool m_bLastShowCursor = true;
+    protected bool _showCursor = true;
+    protected bool _lastShowCursor = true;
     bool UseMillisecondTiming = true;
 
     static int lastx = -1;
@@ -1286,7 +1286,7 @@ namespace MediaPortal
           InitializeDeviceObjects();
         }
         deviceLost = false;
-        m_bNeedUpdate = true;
+        _needUpdate = true;
       }
 
 
@@ -1338,34 +1338,34 @@ namespace MediaPortal
 
     public void HideCursor()
     {
-      if (m_bShowCursor)
+      if (_showCursor)
       {
-        m_bShowCursor = false;
-        m_bLastShowCursor = false;
+        _showCursor = false;
+        _lastShowCursor = false;
         Cursor.Hide();
       }
     }
 
     void HandleCursor()
     {
-      if (m_bAutoHideMouse)
+      if (_autoHideMouse)
       {
-        if (m_bShowCursor != m_bLastShowCursor)
+        if (_showCursor != _lastShowCursor)
         {
-          if (!m_bShowCursor)
+          if (!_showCursor)
             Cursor.Hide();
           else
             Cursor.Show();
-          m_bLastShowCursor = m_bShowCursor;
+          _lastShowCursor = _showCursor;
         }
-        if (m_bShowCursor)
+        if (_showCursor)
         {
-          TimeSpan ts = DateTime.Now - m_MouseTimeOut;
+          TimeSpan ts = DateTime.Now - _mouseTimeOutTimer;
           if (ts.TotalSeconds >= 3)
           {
             //hide mouse
-            m_bShowCursor = false;
-            m_bNeedUpdate = true;
+            _showCursor = false;
+            _needUpdate = true;
             Invalidate(true);
           }
         }
@@ -1514,7 +1514,7 @@ namespace MediaPortal
       g_Player.Stop();
       if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed == false)
         SwitchFullScreenOrWindowed(true, true);
-      m_bAutoHideMouse = false;
+      _autoHideMouse = false;
       Cursor.Show();
       Invalidate(true);
 
@@ -1993,7 +1993,7 @@ namespace MediaPortal
     /// </summary>
     protected override void OnMouseMove(System.Windows.Forms.MouseEventArgs e)
     {
-      m_MouseTimeOut = DateTime.Now;
+      _mouseTimeOutTimer = DateTime.Now;
       if ((GUIGraphicsContext.DX9Device != null) && (!GUIGraphicsContext.DX9Device.Disposed))
       {
         // Move the D3D cursor
@@ -2133,26 +2133,26 @@ namespace MediaPortal
         lastx = e.X;
         lasty = e.Y;
         System.Windows.Forms.Cursor ourCursor = this.Cursor;
-        if (!m_bShowCursor)
+        if (!_showCursor)
         {
-          m_bShowCursor = true;
-          m_bNeedUpdate = true;
+          _showCursor = true;
+          _needUpdate = true;
           Invalidate(true);
         }
-        m_MouseTimeOut = DateTime.Now;
+        _mouseTimeOutTimer = DateTime.Now;
       }
     }
     protected virtual void mouseclick(MouseEventArgs e)
     {
       //this.Text=String.Format("show click");
       System.Windows.Forms.Cursor ourCursor = this.Cursor;
-      if (!m_bShowCursor)
+      if (!_showCursor)
       {
-        m_bShowCursor = true;
-        m_bNeedUpdate = true;
+        _showCursor = true;
+        _needUpdate = true;
         Invalidate(true);
       }
-      m_MouseTimeOut = DateTime.Now;
+      _mouseTimeOutTimer = DateTime.Now;
     }
 
     private void OnKeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)

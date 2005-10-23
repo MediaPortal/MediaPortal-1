@@ -217,9 +217,15 @@ namespace MediaPortal.GUI.Library
 				}
 
 				if (type == typeof (int))
+				{
+					if (valueText.CompareTo("-")==0) return 0;
 					return System.Int32.Parse(valueText);
+				}
 				if (type == typeof (long))
+				{
+					if (valueText.CompareTo("-")==0) return 0;
 					return System.Int64.Parse(valueText, NumberStyles.HexNumber);
+				}
 			}
 			catch(Exception)
 			{
