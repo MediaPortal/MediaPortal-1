@@ -726,7 +726,6 @@ namespace MediaPortal.GUI.Video
 			MainListOptions[0] = GUILocalizeStrings.Get(5903);
 			MainListOptions[1] = GUILocalizeStrings.Get(5904);
 			MainListOptions[2] = GUILocalizeStrings.Get(5905);
-			MainListOptions[3] = GUILocalizeStrings.Get(5902);
 			string language="";
 			using(MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml")) 
 			{
