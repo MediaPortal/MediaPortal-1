@@ -2427,12 +2427,19 @@ namespace MediaPortal.GUI.TV
 		void GetChannels()
 		{
 			m_channels.Clear();
-			foreach (TVChannel chan in GUITVHome.Navigator.CurrentGroup.tvChannels)
+
+			try
 			{
-				if (chan.VisibleInGuide)
+				foreach (TVChannel chan in GUITVHome.Navigator.CurrentGroup.tvChannels)
 				{
-					m_channels.Add(chan);
+					if (chan.VisibleInGuide)
+					{
+						m_channels.Add(chan);
+					}
 				}
+			}
+			catch
+			{
 			}
 
 			if (m_channels.Count==0)
