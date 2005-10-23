@@ -16,17 +16,11 @@
  			<onright>4</onright>
 
   		<control>
-  			<type>button</type>
-  			<description>Show movies</description>
-  			<id>2</id>
-   			<onup>1234</onup> <!-- Non existing, so it goes to the topbar -->
-  			<label>5901</label>
-  		</control>
-  		<control>
   			<type>selectbutton</type>
   			<description>Letter button</description>
   			<id>3</id>
   			<subitems>-</subitems>
+			<onup>1234</onup> <!-- Non existing, so it goes to the topbar -->
   			<label>872</label>
   		</control>
     	<control>
@@ -59,7 +53,7 @@
     		<AltTextureNoFocus>togglebutton-off-nofocus.png</AltTextureNoFocus>
     		<textureFocus>togglebutton-on-focus.png</textureFocus>
     		<textureNoFocus>togglebutton-on-nofocus.png</textureNoFocus>
-  			<ondown>2</ondown>
+  			<ondown>3</ondown>
   		</control>
     </control>
 
@@ -92,10 +86,10 @@
 			<id>4</id>
 			<posX>250</posX>
    		<posY>110</posY>
-			<onleft>2</onleft>
-			<onright>2</onright>
-			<onup>2</onup>
-			<ondown>2</ondown>
+			<onleft>3</onleft>
+			<onright>3</onright>
+			<onup>3</onup>
+			<ondown>3</ondown>
 		</control>
 
 		<control>

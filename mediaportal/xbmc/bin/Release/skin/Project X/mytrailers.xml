@@ -39,7 +39,7 @@
 			<description>Plot</description>
 			<id>5</id>
 			<posX>60</posX>
-			<posY>167</posY>
+			<posY>132</posY>
 			<onleft>4</onleft>
 			<onright>4</onright>
 			<onup>3</onup>
@@ -57,11 +57,11 @@
 			<description>Cast</description>
 			<id>6</id>
 			<posX>60</posX>
-			<posY>202</posY>
+			<posY>167</posY>
 			<onleft>4</onleft>
 			<onright>4</onright>
 			<onup>5</onup>
-			<ondown>2</ondown>
+			<ondown>3</ondown>
 			<label>206</label>
 			<width>190</width>
 			<height>32</height>
@@ -161,10 +161,10 @@
 			<description>Letter button</description>
 			<id>3</id>
 			<posX>60</posX>
-			<posY>132</posY>
+			<posY>97</posY>
 			<onleft>4</onleft>
 			<onright>4</onright>
-			<onup>2</onup>
+			<onup>17</onup>
 			<ondown>4</ondown>
 			<subitems>-</subitems>
 			<label>872</label>
@@ -204,10 +204,10 @@
 			<posY>97</posY>
 			<width>440</width>
 			<height>432</height>
-			<onleft>2</onleft>
-			<onright>2</onright>
-			<onup>2</onup>
-			<ondown>2</ondown>
+			<onleft>3</onleft>
+			<onright>3</onright>
+			<onup>3</onup>
+			<ondown>3</ondown>
 			<textcolor>ffffffff</textcolor>
 			<downloadColor>ffffffff</downloadColor>
 			<remoteColor>ffFFA075</remoteColor>
@@ -236,18 +236,6 @@
 			<image>folder_focus.png</image>
 			<textureUpFocus>page_up_focus.png</textureUpFocus>
 			<textureDown>page_down_nofocus.png</textureDown>
-		</control>
-		<control>
-			<type>button</type>
-			<description>Show movies</description>
-			<id>2</id>
-			<posX>60</posX>
-			<posY>97</posY>
-			<onleft>4</onleft>
-			<onright>4</onright>
-			<onup>17</onup>
-			<ondown>3</ondown>
-			<label>5901</label>
 		</control>
 		<control>
 			<type>image</type>
