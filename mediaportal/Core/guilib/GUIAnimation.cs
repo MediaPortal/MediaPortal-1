@@ -160,7 +160,7 @@ namespace MediaPortal.GUI.Library
 					_startTick = AnimationTimer.TickCount;
 			}
 
-			int index = _images.Length - 1;
+			int index = _fillBehavior == FillBehavior.Stop ? 0 : _images.Length - 1;
 
 			if(_isAnimating && progress <= 1)
 				index = (int)(progress * _images.Length);
@@ -214,6 +214,9 @@ namespace MediaPortal.GUI.Library
 
 		[XMLSkinElement("Easing")]
 		protected Easing						_easing = Easing.Linear;
+
+		[XMLSkinElement("FillBehavior")]
+		protected FillBehavior					_fillBehavior = FillBehavior.HoldEnd;
 
 		[XMLSkinElement("HorizontalAlignment")]
 		protected HorizontalAlignment			_horizontalAlignment = HorizontalAlignment.Left;
