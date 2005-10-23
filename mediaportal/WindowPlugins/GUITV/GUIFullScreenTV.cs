@@ -828,7 +828,7 @@ namespace MediaPortal.GUI.TV
 
 					base.OnMessage(message);
 					GUIGraphicsContext.IsFullScreenVideo=false;
-					if ( !GUITVHome.IsTVWindow(message.Param1) )
+					if ( !Recorder.IsTVWindow(message.Param1) )
 					{
 						if (! g_Player.Playing)
 						{
@@ -1746,7 +1746,7 @@ namespace MediaPortal.GUI.TV
 
 		protected override void OnPageDestroy(int newWindowId)
 		{
-			if ( !GUITVHome.IsTVWindow(newWindowId) )
+			if ( !Recorder.IsTVWindow(newWindowId) )
 			{
 				if (Recorder.IsViewing() && ! (Recorder.IsTimeShifting()||Recorder.IsRecording()) )
 				{

@@ -191,7 +191,7 @@ namespace MediaPortal.GUI.TV
 		{
 			base.OnPageDestroy (newWindowId);
 			SaveSettings();
-			if ( !GUITVHome.IsTVWindow(newWindowId) )
+			if ( !Recorder.IsTVWindow(newWindowId) )
 			{
 				if (Recorder.IsViewing() && ! (Recorder.IsTimeShifting()||Recorder.IsRecording()) )
 				{

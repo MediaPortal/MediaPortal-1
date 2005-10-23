@@ -66,7 +66,7 @@ namespace MediaPortal.GUI.TV
 
 		protected override void OnPageDestroy(int newWindowId)
 		{
-			if ( !GUITVHome.IsTVWindow(newWindowId) )
+			if ( !Recorder.IsTVWindow(newWindowId) )
 			{
 				if (Recorder.IsViewing() && ! (Recorder.IsTimeShifting()||Recorder.IsRecording()) )
 				{

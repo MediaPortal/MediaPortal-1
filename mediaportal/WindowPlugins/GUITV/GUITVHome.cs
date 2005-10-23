@@ -320,7 +320,7 @@ namespace MediaPortal.GUI.TV
 		{
 			
 			//if we're switching to another plugin
-			if ( !GUITVHome.IsTVWindow(newWindowId) )
+			if ( !Recorder.IsTVWindow(newWindowId) )
 			{
 				//and we're not playing which means we dont timeshift tv
 				if (Recorder.IsViewing() && ! (Recorder.IsTimeShifting()||Recorder.IsRecording()) )

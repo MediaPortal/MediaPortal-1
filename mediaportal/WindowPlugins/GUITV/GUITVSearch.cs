@@ -143,7 +143,7 @@ namespace MediaPortal.GUI.TV
 			listRecordings.Clear();
 			listRecordings=null;
 					
-			if ( !GUITVHome.IsTVWindow(newWindowId) )
+			if ( !Recorder.IsTVWindow(newWindowId) )
 			{
 				if (Recorder.IsViewing() && ! (Recorder.IsTimeShifting()||Recorder.IsRecording()) )
 				{

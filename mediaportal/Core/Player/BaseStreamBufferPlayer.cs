@@ -655,12 +655,6 @@ namespace MediaPortal.Player
 
 				CloseInterfaces();
 			}
-			if (_isLive)
-			{
-				//stop timeshifting tv
-				GUIMessage msgTv = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_TIMESHIFT,0,0,0,0,0,null);
-				GUIWindowManager.SendMessage(msgTv);
-			}
 
 		}
 /*

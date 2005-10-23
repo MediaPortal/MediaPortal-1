@@ -150,7 +150,7 @@ namespace MediaPortal.GUI.TV
 			TeletextGrabber.Grab=false;
 			TeletextGrabber.TeletextCache.PageUpdatedEvent-=new MediaPortal.TV.Recording.DVBTeletext.PageUpdated(dvbTeletextParser_PageUpdatedEvent);
 
-			if ( !GUITVHome.IsTVWindow(newWindowId) )
+			if ( !Recorder.IsTVWindow(newWindowId) )
 			{
 				if (Recorder.IsViewing() && ! (Recorder.IsTimeShifting()||Recorder.IsRecording()) )
 				{

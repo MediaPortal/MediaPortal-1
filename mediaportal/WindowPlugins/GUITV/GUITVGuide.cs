@@ -520,7 +520,7 @@ namespace MediaPortal.GUI.TV
 					base.OnMessage(message);
 					SaveSettings();
 					m_recordings.Clear();
-					if ( !GUITVHome.IsTVWindow(message.Param1) )
+					if ( !Recorder.IsTVWindow(message.Param1) )
 					{
 						if (! g_Player.Playing)
 						{
@@ -2536,7 +2536,7 @@ namespace MediaPortal.GUI.TV
 
 			base.OnPageDestroy (newWindowId);
 					
-			if ( !GUITVHome.IsTVWindow(newWindowId) )
+			if ( !Recorder.IsTVWindow(newWindowId) )
 			{
 				if (Recorder.IsViewing() && ! (Recorder.IsTimeShifting()||Recorder.IsRecording()) )
 				{

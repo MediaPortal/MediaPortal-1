@@ -182,7 +182,7 @@ namespace MediaPortal.GUI.TV
 			m_iSelectedItem=GetSelectedItemNo();
 			SaveSettings();
 					
-			if ( !GUITVHome.IsTVWindow(newWindowId) )
+			if ( !Recorder.IsTVWindow(newWindowId) )
 			{
 				if (Recorder.IsViewing() && ! (Recorder.IsTimeShifting()||Recorder.IsRecording()) )
 				{

@@ -104,7 +104,7 @@ namespace MediaPortal.GUI.TV
 			base.OnPageDestroy (newWindowId);
 			m_iSelectedItem=GetSelectedItemNo();
 					
-			if ( !GUITVHome.IsTVWindow(newWindowId) )
+			if ( !Recorder.IsTVWindow(newWindowId) )
 			{
 				if (Recorder.IsViewing() && ! (Recorder.IsTimeShifting()||Recorder.IsRecording()) )
 				{
