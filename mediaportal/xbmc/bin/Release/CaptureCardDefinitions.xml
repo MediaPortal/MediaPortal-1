@@ -6779,7 +6779,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="Hama DVB-T USB 2.0 Stick & Box" capturename="Digital TV Device Capture" devid="vid_14aa&amp;pid_0221">
+  <capturecard commercialname="Hama DVB-T USB 2.0 Stick/Box" capturename="Digital TV Device Capture" devid="vid_14aa&amp;pid_0221">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
