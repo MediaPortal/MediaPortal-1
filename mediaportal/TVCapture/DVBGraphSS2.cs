@@ -1579,8 +1579,8 @@ namespace MediaPortal.TV.Recording
 					ex.Message,ex.Source,ex.StackTrace);
 			}
 			m_graphState=State.Recording;
-#endif
 			return true;
+#endif
 		}
     
     

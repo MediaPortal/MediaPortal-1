@@ -72,7 +72,7 @@ namespace MediaPortal.Player
     protected double                            m_dContentStart;
 		protected double                            m_dDuration=-1d;
     protected bool          										m_bStarted=false;
-    protected bool          										m_bLive=false;
+    protected bool          										_isLive=false;
     protected double                            m_dLastPosition=0;
 		protected bool                              m_bWindowVisible=false;
 		protected int												rotCookie = 0;
@@ -120,12 +120,12 @@ namespace MediaPortal.Player
       if (!System.IO.File.Exists(strFile)) return false;
 			iSpeed=1;
 			m_speedRate = 10000;
-			m_bLive=false;
+			_isLive=false;
       m_dDuration=-1d;
       string strExt=System.IO.Path.GetExtension(strFile).ToLower();
       if (strExt.Equals(".tv"))
       {
-        m_bLive=true;
+        _isLive=true;
       }
 
 			minBackingFiles=6;
@@ -223,7 +223,7 @@ namespace MediaPortal.Player
 
 			m_state=PlayState.Playing;
 
-			if (m_bLive)
+			if (_isLive)
 			{
 				DateTime dt=DateTime.Now;
 				do
@@ -655,6 +655,13 @@ namespace MediaPortal.Player
 
 				CloseInterfaces();
 			}
+			if (_isLive)
+			{
+				//stop timeshifting tv
+				GUIMessage msgTv = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_TIMESHIFT,0,0,0,0,0,null);
+				GUIWindowManager.SendMessage(msgTv);
+			}
+
 		}
 /*
 		public override int Speed
@@ -1174,7 +1181,7 @@ namespace MediaPortal.Player
 		}
 		public override bool IsTimeShifting
 		{
-			get {return m_bLive;}
+			get {return _isLive;}
 		}      
 
     public override bool Visible
