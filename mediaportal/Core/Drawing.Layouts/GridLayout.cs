@@ -113,7 +113,7 @@ namespace MediaPortal.Drawing.Layouts
 		public void Arrange(FrameworkElement element)
 		{
 			Point location = element.Location;
-			Size size = element.RenderSize;
+			Size size = new Size(element.Width, element.Height);
 			Thickness t = element.Margin;
 
 			int rows = _rows;
@@ -168,7 +168,7 @@ namespace MediaPortal.Drawing.Layouts
 
 			foreach(FrameworkElement child in element.LogicalChildren)
 			{
-				if(child.IsVisible == false)
+				if(child.Visibility == Visibility.Collapsed)
 					continue;
 
 				child.Measure(availableSize);

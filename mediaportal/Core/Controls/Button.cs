@@ -33,7 +33,6 @@ namespace MediaPortal.Controls
 	public class Button : ButtonBase
 	{
 		#region Constructors
-
 		
 		public Button()
 		{

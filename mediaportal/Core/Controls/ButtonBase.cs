@@ -3,7 +3,7 @@ using System.Windows;
 
 namespace MediaPortal.Controls
 {
-	public class ButtonBase : UIElement
+	public class ButtonBase : FrameworkElement
 	{
 		#region Constructors
 
