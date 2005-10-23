@@ -96,6 +96,7 @@ DECLARE_INTERFACE_(IMPTSWriter, IUnknown)
 	STDMETHOD(SetPMTPid)(THIS_ int pmtPid)PURE;
 	STDMETHOD(SetPCRPid)(THIS_ int pcrPid)PURE;
 	STDMETHOD(TimeShiftBufferDuration)(THIS_ ULONGLONG* duration)PURE;
+	STDMETHOD(IsStarted)(THIS_ int* yesNo)PURE;
 };
 
 // {3E05D715-0AE2-4d6a-8EE9-51DB5FBAB72B}
@@ -265,7 +266,7 @@ public:
 	STDMETHODIMP SetPMTPid(int pmtPid);
 	STDMETHODIMP SetPCRPid(int pcrPid);
 	STDMETHODIMP TimeShiftBufferDuration(ULONGLONG* duration);
-
+	STDMETHODIMP IsStarted(int* yesNo);
 	//record
     STDMETHODIMP SetRecordingFileName(char* pszFileName);
     STDMETHODIMP StartRecord( ULONGLONG timeFromTimeshiftBuffer);

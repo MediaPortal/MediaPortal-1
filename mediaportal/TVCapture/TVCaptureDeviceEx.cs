@@ -1058,6 +1058,7 @@ namespace MediaPortal.TV.Recording
 							return;
 						}
 #if USEMTSWRITER
+						//stop playback before we zap channels
 						if (IsTimeShifting && !View)
 						{
 							if (g_Player.Playing && g_Player.CurrentFile == Recorder.GetTimeShiftFileName(ID-1))
@@ -1084,14 +1085,6 @@ namespace MediaPortal.TV.Recording
 								}
 							}
 						}
-#else
-						if (IsTimeShifting && !View)
-						{
-							if (g_Player.Playing && g_Player.CurrentFile == Recorder.GetTimeShiftFileName(ID-1))
-							{
-								//g_Player.Play(g_Player.CurrentFile);TESTTEST
-							}
-						}
 #endif
 					}
 				}
@@ -1103,6 +1096,7 @@ namespace MediaPortal.TV.Recording
 		{
 			Log.WriteFile(Log.LogType.Capture,"Card:{0} rebuild graph",ID);
 			State state=currentGraphState;
+			//stop playback of this channel
 			if (g_Player.Playing && g_Player.CurrentFile == Recorder.GetTimeShiftFileName(ID-1))
 			{
 				Log.WriteFile(Log.LogType.Capture,"TVCaptureDevice.Rebuildgraph() stop media");
@@ -1212,6 +1206,7 @@ namespace MediaPortal.TV.Recording
 			currentTvRecording = null;
 			preRecordInterval = 0;
 			postRecordInterval = 0;
+
 			if (!g_Player.Playing)
 			{
 				DeleteGraph();
@@ -1223,7 +1218,7 @@ namespace MediaPortal.TV.Recording
 				DeleteGraph();
 				return;
 			}
-		}
+		}//StopRecording()
 
 		/// <summary>
 		/// This method can be used to start a new recording

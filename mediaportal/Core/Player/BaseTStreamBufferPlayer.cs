@@ -220,7 +220,11 @@ namespace MediaPortal.Player
 					TimeSpan ts=DateTime.Now-dt;
 					if (ts.TotalSeconds>=2) break;
 				} while (m_dDuration<0.5);
-				if (m_dDuration<0.5) return false;
+				if (m_dDuration<0.1) 
+				{
+					//Log.Write("TStreamBufferPlayer:failed to play file duration:{0}",Utils.SecondsToHMSString( (int)m_dDuration) );
+					//return false;
+				}
 				
 
 			}

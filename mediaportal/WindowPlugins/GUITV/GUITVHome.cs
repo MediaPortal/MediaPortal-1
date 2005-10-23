@@ -477,29 +477,6 @@ namespace MediaPortal.GUI.TV
 		public override void Process()
 		{ 
 			if (GUIGraphicsContext.InVmr9Render) return;
-			//if we're not playing the timeshifting file
-			TimeSpan ts;
-			if (Recorder.IsTimeShifting() || Recorder.IsRecording())
-			{
-				if (!g_Player.Playing)
-				{
-					//then try to start it
-					ts=DateTime.Now-dtlastTime;
-					if (ts.TotalMilliseconds>=1000)
-					{
-						dtlastTime=DateTime.Now;
-						string fileName=Recorder.GetTimeShiftFileName();
-						try
-						{
-							if (System.IO.File.Exists(fileName))
-							{
-								StartPlaying(true);
-							}
-						}
-						catch(Exception){}
-					}
-				}
-			}
 
 			// Let the navigator zap channel if needed
 			Navigator.CheckChannelChange();
@@ -536,7 +513,7 @@ namespace MediaPortal.GUI.TV
 			{
 				imgRecordingIcon.IsVisible=false;
 			}
-			ts = DateTime.Now-m_updateTimer;
+			TimeSpan ts = DateTime.Now-m_updateTimer;
 			if (ts.TotalMilliseconds>500)
 			{
 				m_updateTimer=DateTime.Now;

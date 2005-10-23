@@ -29,7 +29,7 @@
 
 //maxium timeshifting length
 #define MAX_FILE_LENGTH (2000LL*1024LL*1024LL)  // 2 gigabyte
-//#define MAX_FILE_LENGTH (10LL*1024LL*1024LL)  // 50MB
+//#define MAX_FILE_LENGTH (50LL*1024LL*1024LL)  // 50MB
 
 // Setup data
 const AMOVIESETUP_MEDIATYPE sudPinTypes =
@@ -1007,6 +1007,12 @@ STDMETHODIMP CDump::TimeShiftBufferDuration(ULONGLONG* duration)
 	return S_OK;
 }
 
+STDMETHODIMP CDump::IsStarted(int* yesNo)
+{
+	*yesNo=0;
+	if (m_currentFilePosition>0) *yesNo=1;
+	return S_OK;
+}
 STDMETHODIMP CDump::SetPCRPid(int pid)
 {
 	m_pPin->SetPCRPid(pid);

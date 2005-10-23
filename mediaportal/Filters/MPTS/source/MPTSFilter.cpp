@@ -390,6 +390,8 @@ bool CMPTSFilter::UpdatePids()
 	m_pSections->PTSToPTSTime(m_pSections->pids.Duration,&time);
 	m_pSections->pids.Duration=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
 
+	if (ptsNow==ptsStart)
+		m_pSections->pids.Duration=10000000;
 	m_writePos=writepos.QuadPart;
 	m_pSections->pids.fileStartPosition=writepos.QuadPart;
 

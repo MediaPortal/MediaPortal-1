@@ -1332,17 +1332,16 @@ namespace MediaPortal.TV.Recording
 								}
 							}
 						}
-						m_iCurrentCard=-1;//i;
-						Log.WriteFile(Log.LogType.Recorder,"Recorder:StartRadio()  start on card:{0} station:{1}",
-															tvcard.ID,radioStationName);
+						m_iCurrentCard=i;
+						Log.WriteFile(Log.LogType.Recorder,"Recorder:StartRadio()  start on card:{0} station:{1}",tvcard.ID,radioStationName);
 						tvcard.StartRadio(radiostation)	;
-						if (tvcard.IsTimeShifting)
+						/*if (tvcard.IsTimeShifting)
 						{
 							string strTimeShiftFileName=GetTimeShiftFileNameByCardId(tvcard.ID);
 
 							Log.WriteFile(Log.LogType.Recorder,"Recorder:  currentfile:{0} newfile:{1}", g_Player.CurrentFile,strTimeShiftFileName);
 							g_Player.Play(strTimeShiftFileName);
-						}
+						}*/
 						m_dtStart=new DateTime(1971,6,11,0,0,0,0);;
 						return;
 					}
@@ -1690,6 +1689,33 @@ namespace MediaPortal.TV.Recording
 		/// </summary>
 		static void ProcessCards()
 		{
+			//if we're not playing the timeshifting file, then start playing it...
+			if (Recorder.IsTimeShifting() || Recorder.IsRecording())
+			{
+				if (!g_Player.Playing)
+				{
+					//then try to start it
+					string fileName=Recorder.GetTimeShiftFileName();
+					try
+					{
+						if (System.IO.File.Exists(fileName))
+						{
+							using (FileStream f = new FileStream(fileName,System.IO.FileMode.Open,FileAccess.Read,FileShare.ReadWrite))
+							{
+								if (f.Length>0)
+								{
+									g_Player.Play(fileName); 
+								}
+							}
+						}
+					}
+					catch(Exception)
+					{
+					}
+				}
+			}
+
+			
 			for (int i=0; i < m_tvcards.Count;++i)
 			{
 				TVCaptureDevice dev =(TVCaptureDevice)m_tvcards[i];

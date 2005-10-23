@@ -210,7 +210,6 @@ namespace MediaPortal.TV.Recording
 		IPin												m_DemuxAudioPin				= null;
 		protected IPin					m_demuxSectionsPin=null;
 		IStreamBufferSink						m_IStreamBufferSink		= null;
-		IStreamBufferConfigure			m_IStreamBufferConfig	= null;
 		IBaseFilter							m_TIF										= null;			// Transport Information Filter
 		IBaseFilter             m_NetworkProvider				= null;			// BDA Network Provider
 		IBaseFilter             m_TunerDevice						= null;			// BDA Digital Tuner Device
@@ -225,6 +224,8 @@ namespace MediaPortal.TV.Recording
 
 #if USEMTSWRITER
 		IMPTSWriter							m_tsWriterInterface=null;
+#else
+		IStreamBufferConfigure			m_IStreamBufferConfig	= null;
 #endif
 		IMPTSRecord						  m_tsRecordInterface=null;
 		IBaseFilter							m_smartTee= null;			
@@ -1269,7 +1270,7 @@ namespace MediaPortal.TV.Recording
 				}
 				
 
-				m_IStreamBufferConfig=null;
+				//m_IStreamBufferConfig=null;
 				m_IStreamBufferSink=null;
 
 				if (m_StreamBufferSink!=null) 
@@ -3568,7 +3569,7 @@ namespace MediaPortal.TV.Recording
 
 			if (m_streamDemuxer!=null)
 				m_streamDemuxer.Process();
-
+			
 			UpdateVideoState();
 
 			m_epgGrabber.Process();
@@ -3668,7 +3669,7 @@ namespace MediaPortal.TV.Recording
 		public void TuneChannel(TVChannel channel)
 		{
 			if (m_NetworkProvider==null) return;
-			bool restartGraph=false;
+			//bool restartGraph=false;
 			m_lastPMTVersion=-1;
 			_pmtRetyCount=0;
 			try

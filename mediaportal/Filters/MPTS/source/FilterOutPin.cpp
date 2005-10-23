@@ -185,7 +185,7 @@ HRESULT CFilterOutPin::GetData(byte* pData, int lDataLength, bool allowedToWait)
 					else break;
 				}
 				LogDebug("outputpin:end of file, writepos:%x slept:%i fsize:%x", m_pSections->pids.fileStartPosition,count,fileSize);
-				m_bDiscontinuity=TRUE;
+				//m_bDiscontinuity=TRUE;
 			}
 		}
 					
