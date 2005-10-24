@@ -25,13 +25,29 @@
 
 using System;
 
-namespace System.Windows
+using MediaPortal.Drawing;
+
+namespace MediaPortal.Controls
 {
-	public interface INameScope
+	public abstract class OnDemandVisual : Visual
 	{
+		#region Constructors
+
+		protected OnDemandVisual()
+		{
+		}
+
+		#endregion Constructors
+
 		#region Methods
-			
-		object FindName(string name);
+
+		protected void InvalidateVisual()
+		{
+		}
+		
+		protected virtual void OnRender(DrawingContext drawingContext)
+		{
+		}
 
 		#endregion Methods
 	}

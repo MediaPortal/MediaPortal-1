@@ -232,7 +232,7 @@ namespace MediaPortal.GUI.Library
 			double distanceMin = 10000;
 			double bearingMin = 10000;
 
-			foreach(GUIControl control in FlattenHierarchy(GUIWindowManager.GetWindow(WindowId).LogicalChildren))
+			foreach(GUIControl control in FlattenHierarchy(GUIWindowManager.GetWindow(WindowId).Children))
 			{
 				if(control.GetID == GetID)
 					continue;
@@ -289,11 +289,11 @@ namespace MediaPortal.GUI.Library
 			return Math.Round(Math.Sqrt((horzDelta * horzDelta) + (vertDelta * vertDelta)));
 		}
 
-		ArrayList FlattenHierarchy(GUIControlCollection controls)
+		ArrayList FlattenHierarchy(UIElementCollection elements)
 		{
 			ArrayList targetList = new ArrayList();
 
-			FlattenHierarchy(controls, targetList);
+			FlattenHierarchy(elements, targetList);
 
 			return targetList;
 		}
@@ -307,7 +307,7 @@ namespace MediaPortal.GUI.Library
 
 				if(control is GUIGroup)
 				{
-					FlattenHierarchy(control.LogicalChildren, targetList);
+					FlattenHierarchy(((GUIGroup)control).Children, targetList);
 					continue;
 				}
 

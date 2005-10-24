@@ -24,6 +24,7 @@
 #endregion
 
 using System;
+using System.Windows;
 
 using MediaPortal.Drawing;
 using MediaPortal.Drawing.Layouts;
@@ -88,7 +89,7 @@ namespace MediaPortal.Controls
 			double w = _orientation != Orientation.Horizontal ? Math.Max(0, element.Width - t.Width) : 0;
 			double h = _orientation == Orientation.Horizontal ? Math.Max(0, element.Height - t.Height) : 0;
 
-			foreach(FrameworkElement child in element.LogicalChildren)
+			foreach(FrameworkElement child in Children)
 			{
 				if(child.Visibility == System.Windows.Visibility.Collapsed)
 					continue;
@@ -137,7 +138,7 @@ namespace MediaPortal.Controls
 
 			Thickness t = this.Margin;
 
-			foreach(FrameworkElement child in this.LogicalChildren)
+			foreach(FrameworkElement child in this.Children)
 			{
 				if(child.Visibility == System.Windows.Visibility.Collapsed)
 					continue;
@@ -258,7 +259,7 @@ namespace MediaPortal.Controls
 
 		#region Properties (Dependency)
 
-//		public static readonly DependencyProperty OrientationProperty;
+		public static readonly DependencyProperty OrientationProperty;
 
 		#endregion Properties (Dependency)
 

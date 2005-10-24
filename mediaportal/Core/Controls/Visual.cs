@@ -24,15 +24,41 @@
 #endregion
 
 using System;
+using System.Windows;
 
-namespace System.Windows
+namespace MediaPortal.Controls
 {
-	public interface INameScope
+	public abstract class Visual : DependencyObject
 	{
-		#region Methods
-			
-		object FindName(string name);
+		#region Constructors
 
-		#endregion Methods
+		protected Visual()
+		{
+		}
+
+		#endregion Constructors
+
+		protected internal virtual void OnVisualChildrenChanged(DependencyObject visualAdded, DependencyObject visualRemoved, int indexAffected)
+		{
+		}
+
+		protected internal virtual void OnVisualParentChanged(Visual oldParent)
+		{
+		}
+			
+		#region Properties
+
+		protected internal Visual VisualParent
+		{
+			get { return _visualParent; }
+		}
+
+		#endregion Properties
+
+		#region Fields
+
+		Visual						_visualParent = null;
+
+		#endregion Fields
 	}
 }

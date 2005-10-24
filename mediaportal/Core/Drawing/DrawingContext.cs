@@ -25,14 +25,9 @@
 
 using System;
 
-namespace System.Windows
+namespace MediaPortal.Drawing
 {
-	public interface INameScope
+	public class DrawingContext
 	{
-		#region Methods
-			
-		object FindName(string name);
-
-		#endregion Methods
 	}
 }

@@ -24,54 +24,18 @@
 #endregion
 
 using System;
-using System.Windows;
+using System.Windows.Serialization;
 
-using MediaPortal.Controls;
 using MediaPortal.Drawing;
-using MediaPortal.GUI.Library;
 
-namespace MediaPortal.Drawing.Layouts
+namespace MediaPortal.Controls
 {
-	public class GridLayout : ILayout
+	public class Grid : Panel, IAddChild
 	{
 		#region Constructors
 
-		public GridLayout() : this(1, 0, 0, 0)
+		public Grid()
 		{
-		}
-
-		public GridLayout(int columns) : this(columns, 0, 0, 0)
-		{
-		}
-
-		public GridLayout(int columns, int rows) : this(columns, rows, 0, 0)
-		{
-		}
-
-		public GridLayout(int columns, int rows, double spacing) : this(columns, rows, spacing, spacing)
-		{
-		}
-
-		public GridLayout(int columns, int rows, double horizontalSpacing, double verticalSpacing)  : this(columns, rows, horizontalSpacing, verticalSpacing, Orientation.Horizontal)
-		{
-		}
-
-		public GridLayout(int columns, int rows, double horizontalSpacing, double verticalSpacing, Orientation orientation)
-		{
-			if(rows < 0)
-				throw new ArgumentOutOfRangeException("rows");
-
-			if(columns < 0)
-				throw new ArgumentOutOfRangeException("columns");
-
-			if(columns == 0 && rows == 0)
-				throw new ArgumentException("rows and columns cannot both be zero");
-
-			_cols = columns;
-			_rows = rows;
-			_spacing.Width = Math.Max(0, horizontalSpacing);
-			_spacing.Height = Math.Max(0, verticalSpacing);
-			_orientation = orientation;
 		}
 
 		#endregion Constructors
@@ -111,39 +75,39 @@ namespace MediaPortal.Drawing.Layouts
 			element.Arrange(rect);
 		}
 
-		public void Arrange(GUIGroup element)
+		protected override Size ArrangeOverride(Rect finalRect)
 		{
-			Point location = element.Location;
-			Thickness t = element.Margin;
+			Point location = this.Location;
+			Thickness t = this.Margin;
 
 			int rows = _rows;
 			int cols = _cols;
 
 			if(rows > 0)
-				cols = (element.Children.Count + rows - 1) / rows;
+				cols = (this.Children.Count + rows - 1) / rows;
 			else
-				rows = (element.Children.Count + cols - 1) / cols;
+				rows = (this.Children.Count + cols - 1) / cols;
 
-			double w = (element.Width - t.Width - (cols - 1) * _spacing.Width) / cols;
-			double h = (element.Height - t.Height - (rows - 1) * _spacing.Height) / rows;
-			double y = element.Location.Y + t.Top;
+			double w = (this.Width - t.Width - (cols - 1) * _spacing.Width) / cols;
+			double h = (this.Height - t.Height - (rows - 1) * _spacing.Height) / rows;
+			double y = this.Location.Y + t.Top;
 
 			for(int row = 0; row < rows; row++)
 			{
-				double x = element.Location.X + t.Left;
+				double x = this.Location.X + t.Left;
 
 				for(int col = 0; col < cols; col++)
 				{
 					int index = _orientation == Orientation.Vertical ? col * rows + row : row * cols + col;
 
-					if(index < element.Children.Count)
+					if(index < Children.Count)
 					{
-						FrameworkElement component = (FrameworkElement)element.Children[index];
+						FrameworkElement element = (FrameworkElement)Children[index];
 
-						if(component.Visibility == Visibility.Collapsed)
+						if(element.Visibility == System.Windows.Visibility.Collapsed)
 							continue;
 
-						ApplyAlignment(component, t, x, y, w, h); 
+						ApplyAlignment(element, t, x, y, w, h); 
 					}
 
 					x += w + _spacing.Width;
@@ -151,9 +115,11 @@ namespace MediaPortal.Drawing.Layouts
 
 				y += h + _spacing.Height;
 			}
+
+			return Size.Empty;
 		}
 
-		public Size Measure(GUIGroup element, Size availableSize)
+		protected override Size MeasureOverride(Size availableSize)
 		{
 			double w = 0;
 			double h = 0;
@@ -162,22 +128,22 @@ namespace MediaPortal.Drawing.Layouts
 			int cols = _cols;
 
 			if(rows > 0)
-				cols = (element.Children.Count + rows - 1) / rows;
+				cols = (Children.Count + rows - 1) / rows;
 			else
-				rows = (element.Children.Count + cols - 1) / cols;
+				rows = (Children.Count + cols - 1) / cols;
 
-			foreach(FrameworkElement child in element.Children)
+			foreach(FrameworkElement element in Children)
 			{
-				if(child.Visibility == Visibility.Collapsed)
+				if(element.Visibility == System.Windows.Visibility.Collapsed)
 					continue;
 
-				child.Measure(availableSize);
+				element.Measure(availableSize);
 
-				w = Math.Max(w, child.Width);
-				h = Math.Max(h, child.Height);
+				w = Math.Max(w, element.Width);
+				h = Math.Max(h, element.Height);
 			}
 
-			Thickness t = element.Margin;
+			Thickness t = this.Margin;
 
 			_size.Width = (w * cols + _spacing.Width * (cols - 1)) + t.Width;
 			_size.Height = (h * rows + _spacing.Height * (rows - 1)) + t.Height;

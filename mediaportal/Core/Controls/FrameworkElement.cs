@@ -24,6 +24,7 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Windows;
 
 using MediaPortal.Animation;
@@ -120,10 +121,9 @@ namespace MediaPortal.Controls
 			set { _horizontalAlignment = value; }
 		}
 
-		// TODO: this needs to be IEnumerator LogicalChildren
-		public GUIControlCollection LogicalChildren
+		protected internal virtual IEnumerator LogicalChildren
 		{
-			get { return _logicalChildren; }
+			get { return NullEnumerator.Instance; }
 		}
 
 		public Thickness Margin
@@ -175,7 +175,6 @@ namespace MediaPortal.Controls
 		double						_height;
 		HorizontalAlignment			_horizontalAlignment;
 		Point						_location = Point.Empty;
-		GUIControlCollection		_logicalChildren = new GUIControlCollection();
 		Thickness					_margin;
 		string						_name = string.Empty;
 		Style						_style;

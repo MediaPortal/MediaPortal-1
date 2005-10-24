@@ -47,153 +47,153 @@ namespace MediaPortal.GUI.Library
 	/// Each window plugin should derive from this base class
 	/// Pluginwindows should be copied in the plugins/windows folder
 	/// </summary>
-	public class GUIWindow : Panel, ISupportInitialize
+	public class GUIWindow : Page, ISupportInitialize
 	{
 		#region window ids
 		//enum of all standard windows in MP
 		public enum Window
 		{
 			WINDOW_INVALID = -1
-			,WINDOW_HOME = 0 
-			,WINDOW_TV = 1 
-			,WINDOW_PICTURES = 2 
-			,WINDOW_FILES = 3 
-			,WINDOW_SETTINGS = 4 
-			,WINDOW_MUSIC = 5 
-			,WINDOW_VIDEOS = 6 
-			,WINDOW_SYSTEM_INFORMATION = 7
-			,WINDOW_SETTINGS_GENERAL = 8
-			,WINDOW_SETTINGS_SCREEN = 9
-			,WINDOW_UI_CALIBRATION = 10
-			,WINDOW_MOVIE_CALIBRATION = 11
-			,WINDOW_SETTINGS_SLIDESHOW = 12
-			,WINDOW_SETTINGS_FILTER = 13
-			,WINDOW_SETTINGS_MUSIC = 14
-			,WINDOW_SETTINGS_SUBTITLES = 15
-			,WINDOW_SETTINGS_SCREENSAVER = 16
-			,WINDOW_WEATHER_SETTINGS = 17
-			,WINDOW_SETTINGS_OSD = 18
-			,WINDOW_SCRIPTS = 20
-			,WINDOW_VIDEO_GENRE = 21
-			,WINDOW_VIDEO_ACTOR = 22
-			,WINDOW_VIDEO_YEAR = 23
-			,WINDOW_SETTINGS_PROGRAMS = 24
-			,WINDOW_VIDEO_TITLE = 25
-			,WINDOW_SETTINGS_CACHE = 26
-			,WINDOW_SETTINGS_AUTORUN = 27
-			,WINDOW_VIDEO_PLAYLIST = 28
-      ,WINDOW_SETTINGS_LCD = 29
-      ,WINDOW_RADIO = 30
-      ,WINDOW_SETTINGS_GUI = 31
-      ,WINDOW_MSN = 32
-      ,WINDOW_MSN_CHAT = 33
-      ,WINDOW_MYPLUGINS = 34
-			,WINDOW_SECOND_HOME = 35
+				,WINDOW_HOME = 0 
+					 ,WINDOW_TV = 1 
+						  ,WINDOW_PICTURES = 2 
+							   ,WINDOW_FILES = 3 
+									,WINDOW_SETTINGS = 4 
+										 ,WINDOW_MUSIC = 5 
+											  ,WINDOW_VIDEOS = 6 
+												   ,WINDOW_SYSTEM_INFORMATION = 7
+														,WINDOW_SETTINGS_GENERAL = 8
+															 ,WINDOW_SETTINGS_SCREEN = 9
+																  ,WINDOW_UI_CALIBRATION = 10
+																	   ,WINDOW_MOVIE_CALIBRATION = 11
+																			,WINDOW_SETTINGS_SLIDESHOW = 12
+																				 ,WINDOW_SETTINGS_FILTER = 13
+																					  ,WINDOW_SETTINGS_MUSIC = 14
+																						   ,WINDOW_SETTINGS_SUBTITLES = 15
+																								,WINDOW_SETTINGS_SCREENSAVER = 16
+																									 ,WINDOW_WEATHER_SETTINGS = 17
+																										  ,WINDOW_SETTINGS_OSD = 18
+																											   ,WINDOW_SCRIPTS = 20
+																													,WINDOW_VIDEO_GENRE = 21
+																														 ,WINDOW_VIDEO_ACTOR = 22
+																															  ,WINDOW_VIDEO_YEAR = 23
+																																   ,WINDOW_SETTINGS_PROGRAMS = 24
+																																		,WINDOW_VIDEO_TITLE = 25
+																																			 ,WINDOW_SETTINGS_CACHE = 26
+																																				  ,WINDOW_SETTINGS_AUTORUN = 27
+																																					   ,WINDOW_VIDEO_PLAYLIST = 28
+																																							,WINDOW_SETTINGS_LCD = 29
+																																								 ,WINDOW_RADIO = 30
+																																									  ,WINDOW_SETTINGS_GUI = 31
+																																										   ,WINDOW_MSN = 32
+																																												,WINDOW_MSN_CHAT = 33
+																																													 ,WINDOW_MYPLUGINS = 34
+																																														  ,WINDOW_SECOND_HOME = 35
 
-			,WINDOW_DIALOG_YES_NO = 100
-			,WINDOW_DIALOG_PROGRESS = 101
-			,WINDOW_MUSIC_PLAYLIST = 500
-			,WINDOW_MUSIC_FILES = 501
-			,WINDOW_MUSIC_ALBUM = 502
-			,WINDOW_MUSIC_ARTIST = 503
-			,WINDOW_MUSIC_GENRE = 504
-			,WINDOW_MUSIC_TOP100 = 505
-			,WINDOW_MUSIC_FAVORITES = 506
-			,WINDOW_MUSIC_YEARS = 507
-			,WINDOW_TVGUIDE = 600
-			,WINDOW_SCHEDULER = 601
-			,WINDOW_TVFULLSCREEN = 602
-			,WINDOW_RECORDEDTV = 603
-      ,WINDOW_SEARCHTV = 604
-      ,WINDOW_RECORDEDTVGENRE = 605
-      ,WINDOW_RECORDEDTVCHANNEL = 606
-			,WINDOW_TV_SCHEDULER_PRIORITIES = 607
-			,WINDOW_TV_CONFLICTS = 608
-			,WINDOW_TV_COMPRESS_MAIN = 609
-			,WINDOW_TV_COMPRESS_SETTINGS = 610
-			,WINDOW_TV_COMPRESS_AUTO = 611
-			,WINDOW_TV_COMPRESS_COMPRESS = 612
-			,WINDOW_TV_COMPRESS_COMPRESS_STATUS = 613
-		  ,WINDOW_VIDEO_ARTIST_INFO = 614
-			,WINDOW_WIZARD_WELCOME =615
-			,WINDOW_WIZARD_CARDS_DETECTED =616
-		  ,WINDOW_WIZARD_DVBT_COUNTRY =617
-		  ,WINDOW_WIZARD_DVBT_SCAN=618
-			,WINDOW_WIZARD_DVBC_COUNTRY =619
-			,WINDOW_WIZARD_DVBC_SCAN=620
-			,WINDOW_WIZARD_DVBS_SELECT_LNB=621
-			,WINDOW_WIZARD_DVBS_SELECT_DETAILS=622
-			,WINDOW_WIZARD_DVBS_SELECT_TRANSPONDER=623
-			,WINDOW_WIZARD_DVBS_SCAN=624
-			,WINDOW_WIZARD_ATSC_SCAN=625
-			,WINDOW_WIZARD_ANALOG_COUNTRY=626
-			,WINDOW_WIZARD_ANALOG_CITY=627
-			,WINDOW_WIZARD_ANALOG_IMPORTED=628
-			,WINDOW_WIZARD_ANALOG_MANUAL_TUNE=629
-			,WINDOW_WIZARD_ANALOG_TUNE=630
-			,WINDOW_WIZARD_ANALOG_RENAME=631
-			,WINDOW_WIZARD_ANALOG_SCAN_RADIO=632
-			,WINDOW_WIZARD_ANALOG_RENAME_RADIO=633
-			,WINDOW_WIZARD_REMOTE=634
-		  ,WINDOW_WIZARD_EPG_SELECT=635
-			,WINDOW_WIZARD_FINISHED =699
-			,WINDOW_SETTINGS_TV =700
-			,WINDOW_SETTINGS_RECORDINGS =701
-			,WINDOW_SETTINGS_SORT_CHANNELS =702
-			,WINDOW_SETTINGS_MOVIES=703
-			,WINDOW_SETTINGS_DVD=704
-			,WINDOW_SETTINGS_SKIN=705
+																																															   ,WINDOW_DIALOG_YES_NO = 100
+																																																	,WINDOW_DIALOG_PROGRESS = 101
+																																																		 ,WINDOW_MUSIC_PLAYLIST = 500
+																																																			  ,WINDOW_MUSIC_FILES = 501
+																																																				   ,WINDOW_MUSIC_ALBUM = 502
+																																																						,WINDOW_MUSIC_ARTIST = 503
+																																																							 ,WINDOW_MUSIC_GENRE = 504
+																																																								  ,WINDOW_MUSIC_TOP100 = 505
+																																																									   ,WINDOW_MUSIC_FAVORITES = 506
+																																																											,WINDOW_MUSIC_YEARS = 507
+																																																												 ,WINDOW_TVGUIDE = 600
+																																																													  ,WINDOW_SCHEDULER = 601
+																																																														   ,WINDOW_TVFULLSCREEN = 602
+																																																																,WINDOW_RECORDEDTV = 603
+																																																																	 ,WINDOW_SEARCHTV = 604
+																																																																		  ,WINDOW_RECORDEDTVGENRE = 605
+																																																																			   ,WINDOW_RECORDEDTVCHANNEL = 606
+																																																																					,WINDOW_TV_SCHEDULER_PRIORITIES = 607
+																																																																						 ,WINDOW_TV_CONFLICTS = 608
+																																																																							  ,WINDOW_TV_COMPRESS_MAIN = 609
+																																																																								   ,WINDOW_TV_COMPRESS_SETTINGS = 610
+																																																																										,WINDOW_TV_COMPRESS_AUTO = 611
+																																																																											 ,WINDOW_TV_COMPRESS_COMPRESS = 612
+																																																																												  ,WINDOW_TV_COMPRESS_COMPRESS_STATUS = 613
+																																																																													   ,WINDOW_VIDEO_ARTIST_INFO = 614
+																																																																															,WINDOW_WIZARD_WELCOME =615
+																																																																																 ,WINDOW_WIZARD_CARDS_DETECTED =616
+																																																																																	  ,WINDOW_WIZARD_DVBT_COUNTRY =617
+																																																																																		   ,WINDOW_WIZARD_DVBT_SCAN=618
+																																																																																				,WINDOW_WIZARD_DVBC_COUNTRY =619
+																																																																																					 ,WINDOW_WIZARD_DVBC_SCAN=620
+																																																																																						  ,WINDOW_WIZARD_DVBS_SELECT_LNB=621
+																																																																																							   ,WINDOW_WIZARD_DVBS_SELECT_DETAILS=622
+																																																																																									,WINDOW_WIZARD_DVBS_SELECT_TRANSPONDER=623
+																																																																																										 ,WINDOW_WIZARD_DVBS_SCAN=624
+																																																																																											  ,WINDOW_WIZARD_ATSC_SCAN=625
+																																																																																												   ,WINDOW_WIZARD_ANALOG_COUNTRY=626
+																																																																																														,WINDOW_WIZARD_ANALOG_CITY=627
+																																																																																															 ,WINDOW_WIZARD_ANALOG_IMPORTED=628
+																																																																																																  ,WINDOW_WIZARD_ANALOG_MANUAL_TUNE=629
+																																																																																																	   ,WINDOW_WIZARD_ANALOG_TUNE=630
+																																																																																																			,WINDOW_WIZARD_ANALOG_RENAME=631
+																																																																																																				 ,WINDOW_WIZARD_ANALOG_SCAN_RADIO=632
+																																																																																																					  ,WINDOW_WIZARD_ANALOG_RENAME_RADIO=633
+																																																																																																						   ,WINDOW_WIZARD_REMOTE=634
+																																																																																																								,WINDOW_WIZARD_EPG_SELECT=635
+																																																																																																									 ,WINDOW_WIZARD_FINISHED =699
+																																																																																																										  ,WINDOW_SETTINGS_TV =700
+																																																																																																											   ,WINDOW_SETTINGS_RECORDINGS =701
+																																																																																																													,WINDOW_SETTINGS_SORT_CHANNELS =702
+																																																																																																														 ,WINDOW_SETTINGS_MOVIES=703
+																																																																																																															  ,WINDOW_SETTINGS_DVD=704
+																																																																																																																   ,WINDOW_SETTINGS_SKIN=705
 
 
 		
-			,WINDOW_TV_PROGRAM_INFO = 748
-			,WINDOW_TV_NO_SIGNAL = 749
-      ,WINDOW_MY_RECIPIES = 750
-      ,WINDOW_STATUS = 755
-      ,WINDOW_STATUS_DETAILS = 756
-      ,WINDOW_STATUS_PREFS = 757
-			,WINDOW_DIALOG_FILE = 758
-		  ,WINDOW_MY_BURNER=760
+																																																																																																																		,WINDOW_TV_PROGRAM_INFO = 748
+																																																																																																																			 ,WINDOW_TV_NO_SIGNAL = 749
+																																																																																																																				  ,WINDOW_MY_RECIPIES = 750
+																																																																																																																					   ,WINDOW_STATUS = 755
+																																																																																																																							,WINDOW_STATUS_DETAILS = 756
+																																																																																																																								 ,WINDOW_STATUS_PREFS = 757
+																																																																																																																									  ,WINDOW_DIALOG_FILE = 758
+																																																																																																																										   ,WINDOW_MY_BURNER=760
 
-			,WINDOW_VIRTUAL_KEYBOARD = 1000
-			,WINDOW_VIRTUAL_SEARCH_KEYBOARD = 1001 // by Agree
-			,WINDOW_DIALOG_SELECT = 2000
-			,WINDOW_MUSIC_INFO = 2001
-			,WINDOW_DIALOG_OK = 2002
-			,WINDOW_VIDEO_INFO = 2003
-			,WINDOW_MUSIC_OVERLAY = 2004
-			,WINDOW_FULLSCREEN_VIDEO = 2005
-			,WINDOW_VISUALISATION = 2006
-			,WINDOW_SLIDESHOW = 2007
-			,WINDOW_DIALOG_FILESTACKING = 2008
-			,WINDOW_DIALOG_SELECT2 = 2009
-			,WINDOW_DIALOG_DATETIME = 2010
-			,WINDOW_ARTIST_INFO = 2011
-			,WINDOW_DIALOG_MENU = 2012
-			,WINDOW_DIALOG_RATING = 2013
-			,WINDOW_DIALOG_EXIF = 2014
-			,WINDOW_DIALOG_MENU_BOTTOM_RIGHT=2015
-			,WINDOW_DIALOG_NOTIFY=2016
-			,WINDOW_WEATHER = 2600
-			,WINDOW_SCREENSAVER = 2900
-			,WINDOW_OSD = 2901
-			,WINDOW_MSNOSD = 2902
-			,WINDOW_VIDEO_OVERLAY = 3000
-			,WINDOW_DVD = 3001 // for keymapping
-			,WINDOW_TV_OVERLAY = 3002
-      ,WINDOW_TVOSD = 3003
-      ,WINDOW_TOPBARHOME = 3004
-      ,WINDOW_TOPBAR = 3005
-			,WINDOW_TVMSNOSD = 3006
-			,WINDOW_TVZAPOSD=3007
-			,WINDOW_TELETEXT = 7700
-			,WINDOW_FULLSCREEN_TELETEXT = 7701
-					  ,WINDOW_CARTOONS = 7800
-			,WINDOW_DIALOG_TEXT = 7900
-				 ,WINDOW_SUNCLOCK = 8000
-			,WINDOW_TRAILERS = 5900
+																																																																																																																												,WINDOW_VIRTUAL_KEYBOARD = 1000
+																																																																																																																													 ,WINDOW_VIRTUAL_SEARCH_KEYBOARD = 1001 // by Agree
+																																																																																																																														  ,WINDOW_DIALOG_SELECT = 2000
+																																																																																																																															   ,WINDOW_MUSIC_INFO = 2001
+																																																																																																																																	,WINDOW_DIALOG_OK = 2002
+																																																																																																																																		 ,WINDOW_VIDEO_INFO = 2003
+																																																																																																																																			  ,WINDOW_MUSIC_OVERLAY = 2004
+																																																																																																																																				   ,WINDOW_FULLSCREEN_VIDEO = 2005
+																																																																																																																																						,WINDOW_VISUALISATION = 2006
+																																																																																																																																							 ,WINDOW_SLIDESHOW = 2007
+																																																																																																																																								  ,WINDOW_DIALOG_FILESTACKING = 2008
+																																																																																																																																									   ,WINDOW_DIALOG_SELECT2 = 2009
+																																																																																																																																											,WINDOW_DIALOG_DATETIME = 2010
+																																																																																																																																												 ,WINDOW_ARTIST_INFO = 2011
+																																																																																																																																													  ,WINDOW_DIALOG_MENU = 2012
+																																																																																																																																														   ,WINDOW_DIALOG_RATING = 2013
+																																																																																																																																																,WINDOW_DIALOG_EXIF = 2014
+																																																																																																																																																	 ,WINDOW_DIALOG_MENU_BOTTOM_RIGHT=2015
+																																																																																																																																																		  ,WINDOW_DIALOG_NOTIFY=2016
+																																																																																																																																																			   ,WINDOW_WEATHER = 2600
+																																																																																																																																																					,WINDOW_SCREENSAVER = 2900
+																																																																																																																																																						 ,WINDOW_OSD = 2901
+																																																																																																																																																							  ,WINDOW_MSNOSD = 2902
+																																																																																																																																																								   ,WINDOW_VIDEO_OVERLAY = 3000
+																																																																																																																																																										,WINDOW_DVD = 3001 // for keymapping
+																																																																																																																																																											 ,WINDOW_TV_OVERLAY = 3002
+																																																																																																																																																												  ,WINDOW_TVOSD = 3003
+																																																																																																																																																													   ,WINDOW_TOPBARHOME = 3004
+																																																																																																																																																															,WINDOW_TOPBAR = 3005
+																																																																																																																																																																 ,WINDOW_TVMSNOSD = 3006
+																																																																																																																																																																	  ,WINDOW_TVZAPOSD=3007
+																																																																																																																																																																		   ,WINDOW_TELETEXT = 7700
+																																																																																																																																																																				,WINDOW_FULLSCREEN_TELETEXT = 7701
+																																																																																																																																																																					 ,WINDOW_CARTOONS = 7800
+																																																																																																																																																																						  ,WINDOW_DIALOG_TEXT = 7900
+																																																																																																																																																																							   ,WINDOW_SUNCLOCK = 8000
+																																																																																																																																																																									,WINDOW_TRAILERS = 5900
 		}
-#endregion
+		#endregion
 
 		#region variables
 		private int windowId = -1; 
@@ -207,7 +207,7 @@ namespace MediaPortal.GUI.Library
 		//-1=default from topbar.xml 
 		// 0=flase from skin.xml
 		// 1=true  from skin.xml
-    protected int m_iAutoHideTopbar = -1;
+		protected int m_iAutoHideTopbar = -1;
 		protected bool m_bAutoHideTopbar = false;
 		bool isSkinLoaded = false;
 		bool _shouldRestore=false;
@@ -219,31 +219,31 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public GUIWindow()
 		{
-    }
+		}
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="strXMLFile">filename of xml skin file which belongs to this window</param>
-    public GUIWindow(string skinFile)
-    {
+		public GUIWindow(string skinFile)
+		{
 			if (skinFile==null) return;
-      previousWindowId=-1;
-      windowXmlFileName=skinFile;
+			previousWindowId=-1;
+			windowXmlFileName=skinFile;
 
-    }
+		}
 
 		#endregion
 
 		#region methods
-    /// <summary>
-    /// Clear() method. This method gets called when user switches skin. It removes any static vars
-    /// the GUIWindow class has
-    /// </summary>
-    static public void Clear()
-    {
-    	GUIControlFactory.ClearReferences();
-    }
+		/// <summary>
+		/// Clear() method. This method gets called when user switches skin. It removes any static vars
+		/// the GUIWindow class has
+		/// </summary>
+		static public void Clear()
+		{
+			GUIControlFactory.ClearReferences();
+		}
 
 		public int PreviousFocusedId
 		{
@@ -259,9 +259,9 @@ namespace MediaPortal.GUI.Library
 		/// <param name="control">new control to add</param>
 		public void Add(ref GUIControl control)
 		{
-      if (control==null) return;
+			if (control==null) return;
 			control.WindowId = GetID;
-			LogicalChildren.Add(control);
+			Children.Add(control);
 		}
 
 		/// <summary>
@@ -271,22 +271,22 @@ namespace MediaPortal.GUI.Library
 		public void Remove(int dwId)
 		{
 			int index = 0;
-			foreach (GUIControl control in LogicalChildren)
+			foreach (GUIControl control in Children)
 			{
-        GUIGroup grp = control as GUIGroup;
-        if (grp !=null)
-        {
-          grp.Remove(dwId);
-        }
-        else
-        {
-          if (control.GetID == dwId)
-          {
-						if (index >=0 && index < LogicalChildren.Count)
-							LogicalChildren.RemoveAt(index);
-            return;
-          }
-        }
+				GUIGroup grp = control as GUIGroup;
+				if (grp !=null)
+				{
+					grp.Remove(dwId);
+				}
+				else
+				{
+					if (control.GetID == dwId)
+					{
+						if (index >=0 && index < Children.Count)
+							Children.RemoveAt(index);
+						return;
+					}
+				}
 				index++;
 			}
 		}
@@ -295,37 +295,35 @@ namespace MediaPortal.GUI.Library
 		/// This method will call the OnInit() on each control belonging to this window
 		/// this gives the control a way to do some pre-initalisation stuff
 		/// </summary>
-    public void InitControls()
-    {
+		public void InitControls()
+		{
 			try
 			{
-				for (int x = 0; x < LogicalChildren.Count; ++x)
+				for (int x = 0; x < Children.Count; ++x)
 				{
-					LogicalChildren[x].OnInit();
+					((GUIControl)Children[x]).OnInit();
 				}
 			}
 			catch(Exception ex)
 			{
 				Log.WriteFile(Log.LogType.Log,true,"InitControls exception:{0}", ex.ToString());
 			}
-    }
+		}
 
 		/// This method will call the OnDeInit() on each control belonging to this window
 		/// this gives the control a way to do some de-initalisation stuff
-    protected void DeInitControls()
-    {
+		protected void DeInitControls()
+		{
 			try
 			{
-				for (int x = 0; x < LogicalChildren.Count; ++x)
-				{
-					LogicalChildren[x].OnDeInit();
-				}
+				foreach(GUIControl control in Children)
+					control.OnDeInit();
 			}
 			catch(Exception ex)
 			{
 				Log.WriteFile(Log.LogType.Log,true,"DeInitControls exception:{0}", ex.ToString());
 			}
-    }
+		}
 
 
 		/// <summary>
@@ -342,7 +340,7 @@ namespace MediaPortal.GUI.Library
 		public void ClearAll()
 		{
 			FreeResources();
-			LogicalChildren.Clear();
+			Children.Clear();
 		}
 
 
@@ -353,11 +351,8 @@ namespace MediaPortal.GUI.Library
 
 		public void RestoreControlPosition(int iControl)
 		{
-			for (int x = 0; x < LogicalChildren.Count; ++x)
-			{
-				GUIControl cntl = LogicalChildren[x];
-				cntl.ReStorePosition();
-			}
+			foreach(GUIControl control in Children)
+				control.ReStorePosition();
 		}
 		#endregion 
 
@@ -392,7 +387,7 @@ namespace MediaPortal.GUI.Library
 			// no filename is configured
 			if (windowXmlFileName == "") return false;
 			// TODO what is the reason for this check
-			if (LogicalChildren.Count > 0) return false;
+			if (Children.Count > 0) return false;
 			defaultControlId = 0;
 			// Load the reference controls
 			int iPos = windowXmlFileName.LastIndexOf('\\');
@@ -529,7 +524,7 @@ namespace MediaPortal.GUI.Library
 		/// <param name="controls">on return this will contain an arraylist of all controls loaded</param>
 		protected void LoadControl(XmlNode node, IDictionary defines)
 		{
-			if(node == null || LogicalChildren == null)
+			if(node == null || Children == null)
 				return;
 
 			try
@@ -546,7 +541,7 @@ namespace MediaPortal.GUI.Library
 					}
 				}
 
-				LogicalChildren.Add(newControl);
+				Children.Add(newControl);
 			}
 			catch(Exception ex)
 			{
@@ -556,7 +551,7 @@ namespace MediaPortal.GUI.Library
 
 		bool LoadInclude(XmlNode node, IDictionary defines)
 		{
-			if(node == null || LogicalChildren == null)
+			if(node == null || Children == null)
 				return false;
 
 			if(System.IO.File.Exists(windowXmlFileName) == false)
@@ -669,12 +664,12 @@ namespace MediaPortal.GUI.Library
 			get { return overlayAllowed; }
 		}
     
-    /// <summary>
-    /// Returns whether autohide the topbar is allowed on this screen
-    /// </summary>
-    public virtual bool AutoHideTopbar 
-    {
-      get
+		/// <summary>
+		/// Returns whether autohide the topbar is allowed on this screen
+		/// </summary>
+		public virtual bool AutoHideTopbar 
+		{
+			get
 			{
 				// set topbar autohide 
 				switch (m_iAutoHideTopbar)
@@ -687,11 +682,11 @@ namespace MediaPortal.GUI.Library
 						return GUIGraphicsContext.DefaultTopBarHide;
 				}
 			}
-    }
+		}
 
-    public virtual void Process()
-    {
-    }
+		public virtual void Process()
+		{
+		}
 
 		public virtual void SetObject(object obj)
 		{
@@ -759,16 +754,12 @@ namespace MediaPortal.GUI.Library
 			{
 				// tell every control we're gonna alloc the resources next
 				
-				for (int x = 0; x < LogicalChildren.Count; ++x)
-				{
-					LogicalChildren[x].PreAllocResources();
-				}
+				foreach(GUIControl control in Children)
+					control.PreAllocResources();
 
 				// ask every control to alloc its resources
-				for (int x = 0; x < LogicalChildren.Count; ++x)
-				{
-					LogicalChildren[x].AllocResources();
-				}
+				foreach(GUIControl control in Children)
+					control.AllocResources();
 			}
 			catch(Exception ex)
 			{
@@ -785,10 +776,8 @@ namespace MediaPortal.GUI.Library
 			try
 			{
 				// tell every control to free its resources
-				for (int x = 0; x < LogicalChildren.Count; ++x)
-				{
-					LogicalChildren[x].FreeResources();
-				}
+				foreach(GUIControl control in Children)
+					control.FreeResources();
 			}
 			catch(Exception ex)
 			{
@@ -803,10 +792,8 @@ namespace MediaPortal.GUI.Library
 		{
 			try
 			{
-				for (int x = 0; x < LogicalChildren.Count; ++x)
-				{
-					LogicalChildren[x].DoUpdate();
-				}
+				foreach(GUIControl control in Children)
+					control.DoUpdate();
 			}
 			catch(Exception ex)
 			{
@@ -822,9 +809,10 @@ namespace MediaPortal.GUI.Library
 		protected virtual void OnWindowLoaded()
 		{
 			m_vecPositions = new ArrayList();
-			for (int i = 0; i < LogicalChildren.Count; ++i)
+
+			for (int i = 0; i < Children.Count; ++i)
 			{
-				GUIControl control = LogicalChildren[i];
+				GUIControl control = (GUIControl)Children[i];
 				control.StorePosition();
 				CPosition pos = new CPosition(ref control, control.XPosition, control.YPosition);
 				m_vecPositions.Add(pos);
@@ -864,9 +852,9 @@ namespace MediaPortal.GUI.Library
 		/// <returns>GUIControl or null if control is not found</returns>
 		public virtual GUIControl	GetControl(int iControlId) 
 		{
-			for (int x = 0; x < LogicalChildren.Count; ++x)
+			for (int x = 0; x < Children.Count; ++x)
 			{
-				GUIControl cntl = LogicalChildren[x];
+				GUIControl cntl = (GUIControl)Children[x];
 				GUIControl cntlFound =  cntl.GetControlById( iControlId  );
 				if (cntlFound!=null) return cntlFound;
 
@@ -881,9 +869,9 @@ namespace MediaPortal.GUI.Library
 		/// <returns>id of control or -1 if no control has the focus</returns>
 		public virtual int GetFocusControlId()
 		{
-			for (int x = 0; x < LogicalChildren.Count; ++x)
+			for (int x = 0; x < Children.Count; ++x)
 			{
-				GUIGroup grp = LogicalChildren[x] as GUIGroup;
+				GUIGroup grp = Children[x] as GUIGroup;
 				if (grp!=null)
 				{
 					int iFocusedControlId=grp.GetFocusControlId();
@@ -895,7 +883,8 @@ namespace MediaPortal.GUI.Library
 				}
 				else
 				{
-					if (LogicalChildren[x].Focus) return LogicalChildren[x].GetID;
+					if(((GUIControl)Children[x]).Focus)
+						return ((GUIControl)Children[x]).GetID;
 				}
 			}
 			return - 1;
@@ -923,7 +912,7 @@ namespace MediaPortal.GUI.Library
 		{
 			if (!_shouldRestore) return;
 			_shouldRestore=false;
-			LogicalChildren.Clear();
+			Children.Clear();
 			m_vecPositions.Clear();
 			Load(windowXmlFileName);
 			LoadSkin();
@@ -941,43 +930,42 @@ namespace MediaPortal.GUI.Library
 			{
 				DoRestoreSkin();
 			}			
-      //lock (this)
-      {
-				try
+			//lock (this)
+		{
+			try
+			{
+				if (!isSkinLoaded)
 				{
-					if (!isSkinLoaded)
-					{
-						if (GUIGraphicsContext.IsFullScreenVideo) return;
-						if (GetID == (int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO) return;
-						if (GetID == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN) return;
+					if (GUIGraphicsContext.IsFullScreenVideo) return;
+					if (GetID == (int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO) return;
+					if (GetID == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN) return;
 
-						// Print an error message
-						GUIFont font = GUIFontManager.GetFont(0);
-						if (font != null)
-						{
-							float fW = 0f;
-							float fH = 0f;
-							string strLine = String.Format("Missing or invalid file:{0}", windowXmlFileName);
-							font.GetTextExtent(strLine, ref fW, ref fH);
-							float x = (GUIGraphicsContext.Width - fW) / 2f;
-							float y = (GUIGraphicsContext.Height - fH) / 2f;
-							font.DrawText(x, y, 0xffffffff, strLine, GUIControl.Alignment.ALIGN_LEFT,-1);
-							strLine=null;
-						}
-						font=null;
-					}
-					for (int x = 0; x < LogicalChildren.Count; ++x)
+					// Print an error message
+					GUIFont font = GUIFontManager.GetFont(0);
+					if (font != null)
 					{
-						LogicalChildren[x].Render(timePassed);
+						float fW = 0f;
+						float fH = 0f;
+						string strLine = String.Format("Missing or invalid file:{0}", windowXmlFileName);
+						font.GetTextExtent(strLine, ref fW, ref fH);
+						float x = (GUIGraphicsContext.Width - fW) / 2f;
+						float y = (GUIGraphicsContext.Height - fH) / 2f;
+						font.DrawText(x, y, 0xffffffff, strLine, GUIControl.Alignment.ALIGN_LEFT,-1);
+						strLine=null;
 					}
+					font=null;
+				}
 
-					GUIWaitCursor.Render();
-				}
-				catch(Exception ex)
-				{
-					Log.WriteFile(Log.LogType.Log,true,"render exception:{0}", ex.ToString());
-				}
-      }
+				foreach(GUIControl control in Children)
+					control.Render(timePassed);
+
+				GUIWaitCursor.Render();
+			}
+			catch(Exception ex)
+			{
+				Log.WriteFile(Log.LogType.Log,true,"render exception:{0}", ex.ToString());
+			}
+		}
 		}
 
 		/// <summary>
@@ -987,12 +975,13 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		/// <returns>true or false</returns>
 		public virtual bool NeedRefresh()
-    {
+		{
 			try
 			{
-				for (int x = 0; x < LogicalChildren.Count; ++x)
+				foreach(GUIControl control in Children)
 				{
-					if (LogicalChildren[x].NeedRefresh()) return true;
+					if(control.NeedRefresh())
+						return true;
 				}
 			}
 			catch(Exception ex)
@@ -1012,66 +1001,66 @@ namespace MediaPortal.GUI.Library
 		{
 			if (action==null) return ;
 			int id;
-      //lock (this)
-      {
-				if (action.wID == Action.ActionType.ACTION_CONTEXT_MENU)
-				{
-					OnShowContextMenu();
-					return;
-				}
-				if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
-				{
-					OnPreviousWindow();
-					return;
-				}
+			//lock (this)
+		{
+			if (action.wID == Action.ActionType.ACTION_CONTEXT_MENU)
+			{
+				OnShowContextMenu();
+				return;
+			}
+			if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
+			{
+				OnPreviousWindow();
+				return;
+			}
 
-				try
+			try
+			{
+				GUIMessage msg;
+				// mouse moved, check which control has the focus
+				if (action.wID == Action.ActionType.ACTION_MOUSE_MOVE)
 				{
-					GUIMessage msg;
-					// mouse moved, check which control has the focus
-					if (action.wID == Action.ActionType.ACTION_MOUSE_MOVE)
-					{
-						OnMouseMove((int)action.fAmount1, (int)action.fAmount2,action);
-						id=GetFocusControlId();
-						if (id>=0) previousFocusedControlId=id;
-						return;
-					}
-					// mouse clicked if there is a hit pass the action
-					if (action.wID == Action.ActionType.ACTION_MOUSE_CLICK)
-					{
-						OnMouseClick((int)action.fAmount1, (int)action.fAmount2,action);
-						id=GetFocusControlId();
-						if (id>=0) previousFocusedControlId=id;
-						return;
-					}
+					OnMouseMove((int)action.fAmount1, (int)action.fAmount2,action);
+					id=GetFocusControlId();
+					if (id>=0) previousFocusedControlId=id;
+					return;
+				}
+				// mouse clicked if there is a hit pass the action
+				if (action.wID == Action.ActionType.ACTION_MOUSE_CLICK)
+				{
+					OnMouseClick((int)action.fAmount1, (int)action.fAmount2,action);
+					id=GetFocusControlId();
+					if (id>=0) previousFocusedControlId=id;
+					return;
+				}
 	  			
-					// send the action to the control which has the focus
-					GUIControl cntlFoc = GetControl(GetFocusControlId() );
-					if (cntlFoc!=null)
-					{
-						id=GetFocusControlId();
-						if (id>=0) previousFocusedControlId=id;
-						cntlFoc.OnAction(action);
-						id=GetFocusControlId();
-						if (id>=0) previousFocusedControlId=id;
-
-						return;
-					}
-
-					// no control has focus?
-					// set focus to the default control then
-					msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, defaultControlId, 0, 0, null);
-					OnMessage(msg);
-					msg=null;
+				// send the action to the control which has the focus
+				GUIControl cntlFoc = GetControl(GetFocusControlId() );
+				if (cntlFoc!=null)
+				{
+					id=GetFocusControlId();
+					if (id>=0) previousFocusedControlId=id;
+					cntlFoc.OnAction(action);
 					id=GetFocusControlId();
 					if (id>=0) previousFocusedControlId=id;
 
+					return;
 				}
-				catch(Exception ex)
-				{
-					Log.WriteFile(Log.LogType.Log,true,"OnAction exception:{0}", ex.ToString());
-				}
-      }
+
+				// no control has focus?
+				// set focus to the default control then
+				msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, defaultControlId, 0, 0, null);
+				OnMessage(msg);
+				msg=null;
+				id=GetFocusControlId();
+				if (id>=0) previousFocusedControlId=id;
+
+			}
+			catch(Exception ex)
+			{
+				Log.WriteFile(Log.LogType.Log,true,"OnAction exception:{0}", ex.ToString());
+			}
+		}
 		}
 
 		public virtual bool Focused
@@ -1090,160 +1079,160 @@ namespace MediaPortal.GUI.Library
 		public virtual bool OnMessage(GUIMessage message)
 		{
 			if (message==null) return true;
-      //lock (this)
+			//lock (this)
 			int id;
-      {
-				try
+		{
+			try
+			{
+				switch (message.Message)
 				{
-					switch (message.Message)
+					case GUIMessage.MessageType.GUI_MSG_CLICKED:
 					{
-						case GUIMessage.MessageType.GUI_MSG_CLICKED:
-						{
-							int iControlId = message.SenderControlId;
-							if (iControlId != 0) 
-								OnClicked( iControlId, GetControl(iControlId), (Action.ActionType)message.Param1) ;
-						}
+						int iControlId = message.SenderControlId;
+						if (iControlId != 0) 
+							OnClicked( iControlId, GetControl(iControlId), (Action.ActionType)message.Param1) ;
+					}
 						break;
-						case GUIMessage.MessageType.GUI_MSG_CLICKED_DOWN:
-						{
-							int iControlId = message.SenderControlId;
-							if (iControlId != 0) 
-								OnClickedDown( iControlId, GetControl(iControlId), (Action.ActionType)message.Param1) ;
-						}
-							break;
-
-						case GUIMessage.MessageType.GUI_MSG_CLICKED_UP:
-						{
-							int iControlId = message.SenderControlId;
-							if (iControlId != 0) 
-								OnClickedUp( iControlId, GetControl(iControlId), (Action.ActionType)message.Param1) ;
-						}
-							break;
-
-
-							// Initialize the window.
-						case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT : 
-						{
-							if (_shouldRestore)
-							{
-								DoRestoreSkin();
-							}
-							GUIPropertyManager.SetProperty("#itemcount",String.Empty);
-							GUIPropertyManager.SetProperty("#selecteditem",String.Empty);
-							GUIPropertyManager.SetProperty("#selecteditem2",String.Empty);
-							GUIPropertyManager.SetProperty("#selectedthumb",String.Empty);
-							LoadSkin();
-							AllocResources();
-							InitControls();
-							GUIGraphicsContext.Overlay = overlayAllowed;
-
-							// set topbar autohide 
-							switch (m_iAutoHideTopbar)
-							{
-								case 0:
-									m_bAutoHideTopbar = false;
-									break;
-								case 1:
-									m_bAutoHideTopbar = true;
-									break;
-								default:
-									m_bAutoHideTopbar = GUIGraphicsContext.DefaultTopBarHide;
-									break;
-							}
-							GUIGraphicsContext.AutoHideTopBar = m_bAutoHideTopbar;
-							GUIGraphicsContext.TopBarHidden = m_bAutoHideTopbar;
-
-							if (message.Param1 != (int)GUIWindow.Window.WINDOW_INVALID)
-							{
-								if (message.Param1 != GetID)
-									previousWindowId = message.Param1;
-							}
-							GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, defaultControlId, 0, 0, null);
-							OnMessage(msg);
-
-              if (message.Param1 != (int)GUIWindow.Window.WINDOW_INVALID)
-              {
-                GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(100000 + GetID));
-              }
-							Log.Write( "window:{0} init", this.ToString());
-						}
-							OnPageLoad();
-							id=GetFocusControlId();
-							if (id>=0) previousFocusedControlId=id;
-							return true;
-							// TODO BUG ! Check if this return needs to be in the case and if there needs to be a break statement after each case.
-	      
-							// Cleanup and free resources
-						case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT : 
-						{
-							OnPageDestroy(message.Param1);
-							if (previousWindowId != (int)GUIWindow.Window.WINDOW_INVALID)
-              {
-                GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(100000 + previousWindowId));
-              }
-
-							Log.Write( "window:{0} deinit", this.ToString());
-							FreeResources();
-							DeInitControls();
-							GUITextureManager.CleanupThumbs();
-							GC.Collect();
-							GC.Collect();
-							GC.Collect();
-							long lTotalMemory=GC.GetTotalMemory(true);
-							Log.Write("Total Memory allocated:{0}", MediaPortal.Util.Utils.GetSize(lTotalMemory) );
-							return true;
-						}
-	  				
-							// Set the focus on the correct control
-						case GUIMessage.MessageType.GUI_MSG_SETFOCUS : 
-						{
-							if (GetFocusControlId() == message.TargetControlId) return true;
-
-							if (message.TargetControlId > 0)
-							{
-								GUIControl cntlFocused= GetControl(GetFocusControlId());					
-								if (cntlFocused!=null) 
-								{
-									GUIMessage msgLostFocus = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LOSTFOCUS, GetID, cntlFocused.GetID, cntlFocused.GetID, 0, 0, null);
-									cntlFocused.OnMessage(msgLostFocus);
-									msgLostFocus=null;
-									cntlFocused=null;
-								}
-								GUIControl cntTarget=GetControl(message.TargetControlId);
-								if (cntTarget!=null)
-								{
-									cntTarget.OnMessage(message);
-								}
-								cntTarget=null;
-							}
-							id=GetFocusControlId();
-							if (id>=0) previousFocusedControlId=id;
-							return true;
-						}
-					}
-	      
-					GUIControl cntlTarget=GetControl(message.TargetControlId);
-					if (cntlTarget!=null)
+					case GUIMessage.MessageType.GUI_MSG_CLICKED_DOWN:
 					{
-						return cntlTarget.OnMessage(message);
+						int iControlId = message.SenderControlId;
+						if (iControlId != 0) 
+							OnClickedDown( iControlId, GetControl(iControlId), (Action.ActionType)message.Param1) ;
 					}
-					id=GetFocusControlId();
-					if (id>=0) previousFocusedControlId=id;
+						break;
 
+					case GUIMessage.MessageType.GUI_MSG_CLICKED_UP:
+					{
+						int iControlId = message.SenderControlId;
+						if (iControlId != 0) 
+							OnClickedUp( iControlId, GetControl(iControlId), (Action.ActionType)message.Param1) ;
+					}
+						break;
+
+
+						// Initialize the window.
+					case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT : 
+					{
+						if (_shouldRestore)
+						{
+							DoRestoreSkin();
+						}
+						GUIPropertyManager.SetProperty("#itemcount",String.Empty);
+						GUIPropertyManager.SetProperty("#selecteditem",String.Empty);
+						GUIPropertyManager.SetProperty("#selecteditem2",String.Empty);
+						GUIPropertyManager.SetProperty("#selectedthumb",String.Empty);
+						LoadSkin();
+						AllocResources();
+						InitControls();
+						GUIGraphicsContext.Overlay = overlayAllowed;
+
+						// set topbar autohide 
+						switch (m_iAutoHideTopbar)
+						{
+							case 0:
+								m_bAutoHideTopbar = false;
+								break;
+							case 1:
+								m_bAutoHideTopbar = true;
+								break;
+							default:
+								m_bAutoHideTopbar = GUIGraphicsContext.DefaultTopBarHide;
+								break;
+						}
+						GUIGraphicsContext.AutoHideTopBar = m_bAutoHideTopbar;
+						GUIGraphicsContext.TopBarHidden = m_bAutoHideTopbar;
+
+						if (message.Param1 != (int)GUIWindow.Window.WINDOW_INVALID)
+						{
+							if (message.Param1 != GetID)
+								previousWindowId = message.Param1;
+						}
+						GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, defaultControlId, 0, 0, null);
+						OnMessage(msg);
+
+						if (message.Param1 != (int)GUIWindow.Window.WINDOW_INVALID)
+						{
+							GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(100000 + GetID));
+						}
+						Log.Write( "window:{0} init", this.ToString());
+					}
+						OnPageLoad();
+						id=GetFocusControlId();
+						if (id>=0) previousFocusedControlId=id;
+						return true;
+						// TODO BUG ! Check if this return needs to be in the case and if there needs to be a break statement after each case.
+	      
+						// Cleanup and free resources
+					case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT : 
+					{
+						OnPageDestroy(message.Param1);
+						if (previousWindowId != (int)GUIWindow.Window.WINDOW_INVALID)
+						{
+							GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(100000 + previousWindowId));
+						}
+
+						Log.Write( "window:{0} deinit", this.ToString());
+						FreeResources();
+						DeInitControls();
+						GUITextureManager.CleanupThumbs();
+						GC.Collect();
+						GC.Collect();
+						GC.Collect();
+						long lTotalMemory=GC.GetTotalMemory(true);
+						Log.Write("Total Memory allocated:{0}", MediaPortal.Util.Utils.GetSize(lTotalMemory) );
+						return true;
+					}
+	  				
+						// Set the focus on the correct control
+					case GUIMessage.MessageType.GUI_MSG_SETFOCUS : 
+					{
+						if (GetFocusControlId() == message.TargetControlId) return true;
+
+						if (message.TargetControlId > 0)
+						{
+							GUIControl cntlFocused= GetControl(GetFocusControlId());					
+							if (cntlFocused!=null) 
+							{
+								GUIMessage msgLostFocus = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LOSTFOCUS, GetID, cntlFocused.GetID, cntlFocused.GetID, 0, 0, null);
+								cntlFocused.OnMessage(msgLostFocus);
+								msgLostFocus=null;
+								cntlFocused=null;
+							}
+							GUIControl cntTarget=GetControl(message.TargetControlId);
+							if (cntTarget!=null)
+							{
+								cntTarget.OnMessage(message);
+							}
+							cntTarget=null;
+						}
+						id=GetFocusControlId();
+						if (id>=0) previousFocusedControlId=id;
+						return true;
+					}
 				}
-				catch(Exception ex)
+	      
+				GUIControl cntlTarget=GetControl(message.TargetControlId);
+				if (cntlTarget!=null)
 				{
-					Log.WriteFile(Log.LogType.Log,true,"OnMessage exception:{0}", ex.ToString());
+					return cntlTarget.OnMessage(message);
 				}
-        return false;
-      }
+				id=GetFocusControlId();
+				if (id>=0) previousFocusedControlId=id;
+
+			}
+			catch(Exception ex)
+			{
+				Log.WriteFile(Log.LogType.Log,true,"OnMessage exception:{0}", ex.ToString());
+			}
+			return false;
+		}
 		}
 
 		protected virtual void OnMouseMove(int cx, int cy, Action action)
 		{
-			for (int i=LogicalChildren.Count-1 ; i>=0 ; i--)
+			for (int i=Children.Count-1 ; i>=0 ; i--)
 			{
-				GUIControl control =(GUIControl )LogicalChildren[i];
+				GUIControl control =(GUIControl )Children[i];
 				bool bFocus;
 				int controlID;
 				if (control.HitTest(cx, cy, out controlID, out bFocus))
@@ -1266,9 +1255,9 @@ namespace MediaPortal.GUI.Library
 		}
 		protected virtual void OnMouseClick(int posX, int posY, Action action)
 		{
-			for (int i=LogicalChildren.Count-1 ; i>=0 ; i--)
+			for (int i=Children.Count-1 ; i>=0 ; i--)
 			{
-				GUIControl control =(GUIControl )LogicalChildren[i];
+				GUIControl control =(GUIControl )Children[i];
 				bool bFocus;
 				int controlID;
 				if (control.HitTest(posX, posY, out controlID, out bFocus))
@@ -1281,9 +1270,9 @@ namespace MediaPortal.GUI.Library
 		}
 		#endregion
 
-		public GUIControlCollection controlList
+		public UIElementCollection controlList
 		{
-			get { return this.LogicalChildren; }
+			get { return this.Children; }
 		}
 
 		/// XAML related code follows
@@ -1302,6 +1291,11 @@ namespace MediaPortal.GUI.Library
 
 		#region Properties
 
+		public UIElementCollection Children
+		{
+			get { if(_children == null) _children = new UIElementCollection(); return _children; }
+		}
+
 		public StoryboardCollection Storyboards
 		{
 			get { if(_storyboards == null) _storyboards = new StoryboardCollection(); return _storyboards; }
@@ -1311,6 +1305,7 @@ namespace MediaPortal.GUI.Library
 
 		#region Fields
 
+		UIElementCollection			_children;
 		StoryboardCollection		_storyboards;
 
 		#endregion Fields

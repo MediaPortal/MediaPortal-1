@@ -25,14 +25,12 @@
 
 using System;
 
-namespace System.Windows
+namespace MediaPortal.Controls
 {
-	public interface INameScope
+	public class ControlTemplate
 	{
-		#region Methods
-			
-		object FindName(string name);
-
-		#endregion Methods
+		public ControlTemplate()
+		{
+		}
 	}
 }

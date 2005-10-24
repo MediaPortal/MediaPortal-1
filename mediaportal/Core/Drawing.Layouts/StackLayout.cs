@@ -28,6 +28,7 @@ using System.Windows;
 
 using MediaPortal.Controls;
 using MediaPortal.Drawing;
+using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Drawing.Layouts
 {
@@ -87,7 +88,7 @@ namespace MediaPortal.Drawing.Layouts
 			element.Arrange(rect);
 		}
 
-		public void Arrange(FrameworkElement element)
+		public void Arrange(GUIGroup element)
 		{
 			Thickness t = element.Margin;
 			Point l = element.Location;
@@ -97,7 +98,7 @@ namespace MediaPortal.Drawing.Layouts
 			double w = _orientation != Orientation.Horizontal ? Math.Max(0, element.Width - t.Width) : 0;
 			double h = _orientation == Orientation.Horizontal ? Math.Max(0, element.Height - t.Height) : 0;
 
-			foreach(FrameworkElement child in element.LogicalChildren)
+			foreach(FrameworkElement child in element.Children)
 			{
 				if(child.Visibility == Visibility.Collapsed)
 					continue;
@@ -117,12 +118,12 @@ namespace MediaPortal.Drawing.Layouts
 			}
 		}
 
-		public Size Measure(FrameworkElement element, Size availableSize)
+		public Size Measure(GUIGroup element, Size availableSize)
 		{
 			double w = 0;
 			double h = 0;
 
-			foreach(FrameworkElement child in element.LogicalChildren)
+			foreach(FrameworkElement child in element.Children)
 			{
 				if(child.Visibility == Visibility.Collapsed)
 					continue;

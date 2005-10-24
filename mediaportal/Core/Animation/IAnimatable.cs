@@ -24,15 +24,29 @@
 #endregion
 
 using System;
+using System.Windows;
 
-namespace System.Windows
+namespace MediaPortal.Animation
 {
-	public interface INameScope
+	public interface IAnimatable
 	{
 		#region Methods
-			
-		object FindName(string name);
 
+		void ApplyAnimationClock(DependencyProperty dp, AnimationClock clock);
+		void ApplyAnimationClock(DependencyProperty dp, AnimationClock clock, HandoffBehavior handoffBehavior);
+		void BeginAnimation(DependencyProperty dp, AnimationTimeline animation);
+		void BeginAnimation(DependencyProperty dp, AnimationTimeline animation, HandoffBehavior handoffBehavior);
+		object GetAnimationBaseValue(DependencyProperty dp);
+			
 		#endregion Methods
+						
+		#region Properties
+
+		bool HasAnimatedProperties
+		{
+			get;
+		}
+
+		#endregion Properties
 	}
 }

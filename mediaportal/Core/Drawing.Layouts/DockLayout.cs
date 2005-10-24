@@ -28,6 +28,7 @@ using System.Collections;
 
 using MediaPortal.Controls;
 using MediaPortal.Drawing;
+using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Drawing.Layouts
 {
@@ -49,7 +50,7 @@ namespace MediaPortal.Drawing.Layouts
 
 		#region Methods
 
-		public void Arrange(FrameworkElement element)
+		public void Arrange(GUIGroup element)
 		{
 			FrameworkElement l = null;
 			FrameworkElement t = null;
@@ -116,7 +117,7 @@ namespace MediaPortal.Drawing.Layouts
 				f.Arrange(new Rect(left, top, right - left, bottom - top));
 		}
 	
-		public Size Measure(FrameworkElement element, Size availableSize)
+		public Size Measure(GUIGroup element, Size availableSize)
 		{
 			FrameworkElement l = null;
 			FrameworkElement t = null;

@@ -25,14 +25,49 @@
 
 using System;
 
-namespace System.Windows
+namespace System.Collections
 {
-	public interface INameScope
+	public sealed class NullEnumerator : IEnumerator
 	{
+		#region Constructors
+
+		private NullEnumerator()
+		{
+		}
+		
+		#endregion Constructors
+
 		#region Methods
-			
-		object FindName(string name);
+
+		public void Reset()
+		{
+		}
+
+		public bool MoveNext()
+		{
+			return false;
+		}
 
 		#endregion Methods
+
+		#region Properties
+
+		public object Current
+		{
+			get { return null; }
+		}
+
+		public static IEnumerator Instance
+		{
+			get { return _instance == null ? _instance = new NullEnumerator() : _instance; }
+		}
+
+		#endregion Properties
+
+		#region Fields
+
+		static NullEnumerator		_instance;		
+
+		#endregion Fields
 	}
 }

@@ -309,6 +309,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Animation\IAnimatable.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Animation\IClock.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -414,12 +419,42 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Controls\ControlTemplate.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Controls\FrameworkElement.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Controls\FrameworkElementFactory.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Controls\FrameworkTemplate.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Controls\Grid.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Controls\IScrollInfo.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Controls\OnDemandVisual.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Controls\Page.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -440,6 +475,11 @@
                 />
                 <File
                     RelPath = "Controls\UIElementCollection.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Controls\Visual.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -600,6 +640,11 @@
                 />
                 <File
                     RelPath = "Drawing\DoubleCollection.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Drawing\DrawingContext.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -2184,6 +2229,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Collections\EmptyEnumerator.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Collections\PriorityQueue.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -2245,6 +2295,16 @@
                 />
                 <File
                     RelPath = "System.Windows\ComponentResourceKey.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows\DependencyObject.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows\DependencyProperty.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -2365,6 +2425,11 @@
                 />
                 <File
                     RelPath = "System.Windows\Visibility.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows\WindowState.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

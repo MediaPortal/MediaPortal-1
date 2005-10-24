@@ -27,12 +27,13 @@ using System;
 
 namespace System.Windows
 {
-	public interface INameScope
+	public class DependencyObject
 	{
-		#region Methods
-			
-		object FindName(string name);
-
-		#endregion Methods
+		public DependencyObject()
+		{
+			//
+			// TODO: Add constructor logic here
+			//
+		}
 	}
 }

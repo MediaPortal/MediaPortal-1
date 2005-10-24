@@ -27,12 +27,10 @@ using System;
 
 namespace System.Windows
 {
-	public interface INameScope
+	public enum WindowState
 	{
-		#region Methods
-			
-		object FindName(string name);
-
-		#endregion Methods
+		Maximized,
+		Minimized,
+		Normal = 0,
 	}
 }

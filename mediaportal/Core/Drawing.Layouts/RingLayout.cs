@@ -28,6 +28,7 @@ using System.Windows;
 
 using MediaPortal.Controls;
 using MediaPortal.Drawing;
+using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Drawing.Layouts
 {
@@ -86,7 +87,7 @@ namespace MediaPortal.Drawing.Layouts
 			element.Arrange(rect);
 		}
 
-		public void Arrange(FrameworkElement element)
+		public void Arrange(GUIGroup element)
 		{
 			Point l = element.Location;
 			Rect r = new Rect();
@@ -94,12 +95,12 @@ namespace MediaPortal.Drawing.Layouts
 
 			int index = 0;
 
-			foreach(FrameworkElement child in element.LogicalChildren)
+			foreach(FrameworkElement child in element.Children)
 			{
 				if(child.Visibility == Visibility.Collapsed)
 					continue;
 
-				double angle = (++index * 2 * Math.PI) / element.LogicalChildren.Count;
+				double angle = (++index * 2 * Math.PI) / element.Children.Count;
 
 				r.Width = child.Width;
 				r.Height = child.Height;
@@ -110,12 +111,12 @@ namespace MediaPortal.Drawing.Layouts
 			}
 		}
 
-		public Size Measure(FrameworkElement element, Size availableSize)
+		public Size Measure(GUIGroup element, Size availableSize)
 		{
 			double w = 0;
 			double h = 0;
 
-			foreach(FrameworkElement child in element.LogicalChildren)
+			foreach(FrameworkElement child in element.Children)
 			{
 				if(child.Visibility == Visibility.Collapsed)
 					continue;
@@ -128,7 +129,7 @@ namespace MediaPortal.Drawing.Layouts
 
 			Thickness t = element.Margin;
 
-			_radius = (Math.Min(w + _spacing.Width * element.LogicalChildren.Count, h + _spacing.Height * element.LogicalChildren.Count) / 2);
+			_radius = (Math.Min(w + _spacing.Width * element.Children.Count, h + _spacing.Height * element.Children.Count) / 2);
 			_radius -= Math.Max(w, h) / 2;
 			_size.Width = (int)(2 * _radius) - w + t.Width;
 			_size.Height = (int)(2 * _radius) - h + t.Height;

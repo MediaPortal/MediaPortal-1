@@ -47,6 +47,19 @@ namespace System.Windows
 
 		#endregion Constructors
 
+		#region Events
+
+//		public event EventHandler			Activated;
+//		public event EventHandler			Closed;
+//		public event CancelEventHandler		Closing;
+//		public event EventHandler			Deactivated;
+//		public event EventHandler			Loading;
+//		public event EventHandler			LocationChanged;
+//		public event EventHandler			StateChanged;
+//		public event EventHandler			WindowSizeChanged;
+
+		#endregion Events
+
 		#region Methods
 
 		private static Type GetType(string type)

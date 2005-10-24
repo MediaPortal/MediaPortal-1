@@ -34,7 +34,7 @@ using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Controls
 {
-	public class UIElement
+	public class UIElement : OnDemandVisual, IAnimatable
 	{
 		#region Constructors
 
@@ -45,6 +45,27 @@ namespace MediaPortal.Controls
 		#endregion Constructors
 
 		#region Methods
+
+		void IAnimatable.ApplyAnimationClock(DependencyProperty dp, AnimationClock clock)
+		{
+		}
+
+		void IAnimatable.ApplyAnimationClock(DependencyProperty dp, AnimationClock clock, HandoffBehavior handoffBehavior)
+		{
+		}
+
+		void IAnimatable.BeginAnimation(DependencyProperty dp, AnimationTimeline animation)
+		{
+		}
+
+		void IAnimatable.BeginAnimation(DependencyProperty dp, AnimationTimeline animation, HandoffBehavior handoffBehavior)
+		{
+		}
+		
+		public object GetAnimationBaseValue(DependencyProperty dp)
+		{
+			return null;
+		}
 
 		public void AddHandler(RoutedEvent routedEvent, Delegate handler)
 		{
@@ -97,6 +118,11 @@ namespace MediaPortal.Controls
 		#endregion Methods
 
 		#region Properties
+
+		public bool HasAnimatedProperties
+		{
+			get { throw new NotImplementedException(); }
+		}
 
 		public bool IsArrangeValid
 		{

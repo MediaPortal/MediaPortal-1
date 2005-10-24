@@ -609,7 +609,7 @@ namespace MediaPortal.Dialogs
 			FreeResources();
 		}
 
-		public string Text
+		public new string Text
 		{
 			get { return m_strData;}
 			set { m_strData=value;}
