@@ -1,5 +1,5 @@
-﻿<window>
-   <id>626</id>
+<window>
+   <id>635</id>
    <defaultcontrol>24</defaultcontrol>
    <allowoverlay>yes</allowoverlay>
    <controls>
@@ -13,32 +13,31 @@
       </control>
       <control>
          <type>button</type>
-         <description>manual tune</description>
-         <id>23</id>
-         <posX>418</posX>
+         <description>Back</description>
+         <id>25</id>
+         <posX>448</posX>
          <posY>504</posY>
-         <onleft>25</onleft>
-         <onright>25</onright>
+         <onleft>23</onleft>
+         <onright>5</onright>
          <onup>24</onup>
          <ondown>25</ondown>
-         <label>Manual Tune</label>
-         <width>126</width>
+         <label>200007</label>
+         <width>96</width>
          <height>32</height>
-     		<textureFocus>list_focus.png</textureFocus>
-     		<textureNoFocus>list_nofocus.png</textureNoFocus>
+       		<textureFocus>list_focus.png</textureFocus>
+       		<textureNoFocus>list_nofocus.png</textureNoFocus>
       </control>
       <control>
          <type>button</type>
-         <description>Back</description>
-         <id>25</id>
+         <description>Next</description>
+         <id>5</id>
          <posX>560</posX>
          <posY>504</posY>
-         <onleft>23</onleft>
-         <onright>25</onright>
+         <onleft>25</onleft>
+         <onright>5</onright>
          <onup>24</onup>
-         <ondown>25</ondown>
-         <hyperlink>616</hyperlink>
-         <label>&lt;Back</label>
+         <ondown>5</ondown>
+         <label>200009</label>
          <width>96</width>
          <height>32</height>
      		<textureFocus>list_focus.png</textureFocus>
@@ -46,20 +45,20 @@
       </control>
       <control>
          <type>label</type>
-         <description>Welcome to MediaPortal. </description>
-         <id>1</id>
+         <description>Please select your EPG grabber. Note if your country is</description>
+         <id>2</id>
          <posX>32</posX>
-         <posY>176</posY>
-         <label>not listed then you will need to manual tune</label>
+         <posY>152</posY>
+         <label>200000</label>
          <font>font12</font>
       </control>
       <control>
          <type>label</type>
-         <description>Welcome to MediaPortal. </description>
-         <id>1</id>
+         <description>not listed then you will need to supply the EPG manually</description>
+         <id>3</id>
          <posX>32</posX>
-         <posY>152</posY>
-         <label>Please select your country or region. Note if your country/region is </label>
+         <posY>176</posY>
+         <label>200001</label>
          <font>font12</font>
       </control>
       <control>
@@ -79,11 +78,11 @@
       </control>
       <control>
          <type>label</type>
-         <description>Setup Analog</description>
+         <description>TV Setup - EPG</description>
          <id>1</id>
          <posX>32</posX>
          <posY>120</posY>
-         <label>TV Setup - Analog TV</label>
+         <label>200021</label>
          <font>font18</font>
       </control>
       <control>
@@ -94,11 +93,10 @@
          <posY>232</posY>
          <width>592</width>
          <height>220</height>
-         <onleft>23</onleft>
-         <onright>23</onright>
-         <onup>23</onup>
-         <ondown>23</ondown>
-         <textXOff>5</textXOff>
+         <onleft>5</onleft>
+         <onright>5</onright>
+         <onup>5</onup>
+         <ondown>5</ondown>
          <spinPosX>546</spinPosX>
          <spinPosY>425</spinPosY>
       </control>

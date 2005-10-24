@@ -1,5 +1,5 @@
 ﻿<window>
-   <id>626</id>
+   <id>619</id>
    <defaultcontrol>24</defaultcontrol>
    <allowoverlay>yes</allowoverlay>
    <controls>
@@ -12,30 +12,23 @@
          <texture>background.png</texture>
       </control>
       <control>
-         <type>button</type>
-         <description>manual tune</description>
-         <id>23</id>
-         <posX>418</posX>
-         <posY>504</posY>
-         <onleft>25</onleft>
-         <onright>25</onright>
-         <onup>24</onup>
-         <ondown>25</ondown>
-         <label>Manual Tune</label>
-         <width>126</width>
-         <height>32</height>
-     		<textureFocus>list_focus.png</textureFocus>
-     		<textureNoFocus>list_nofocus.png</textureNoFocus>
+         <type>label</type>
+         <description>Welcome to MediaPortal. </description>
+         <id>1</id>
+         <posX>32</posX>
+         <posY>200</posY>
+         <label>and add your country/region.</label>
+         <font>font12</font>
       </control>
       <control>
          <type>button</type>
          <description>Back</description>
          <id>25</id>
-         <posX>560</posX>
+         <posX>448</posX>
          <posY>504</posY>
-         <onleft>23</onleft>
+         <onleft>25</onleft>
          <onright>25</onright>
-         <onup>24</onup>
+         <onup>25</onup>
          <ondown>25</ondown>
          <hyperlink>616</hyperlink>
          <label>&lt;Back</label>
@@ -50,7 +43,7 @@
          <id>1</id>
          <posX>32</posX>
          <posY>176</posY>
-         <label>not listed then you will need to manual tune</label>
+         <label>not listed then you will need to edit TuningParameters/*.dvbc</label>
          <font>font12</font>
       </control>
       <control>
@@ -79,11 +72,11 @@
       </control>
       <control>
          <type>label</type>
-         <description>Setup Analog</description>
+         <description>Setup DVBC</description>
          <id>1</id>
          <posX>32</posX>
          <posY>120</posY>
-         <label>TV Setup - Analog TV</label>
+         <label>TV Setup - DVB Cable</label>
          <font>font18</font>
       </control>
       <control>
@@ -94,13 +87,38 @@
          <posY>232</posY>
          <width>592</width>
          <height>220</height>
-         <onleft>23</onleft>
-         <onright>23</onright>
-         <onup>23</onup>
-         <ondown>23</ondown>
+         <onleft>5</onleft>
+         <onright>5</onright>
+         <onup>5</onup>
+         <ondown>5</ondown>
          <textXOff>5</textXOff>
-         <spinPosX>546</spinPosX>
-         <spinPosY>425</spinPosY>
+         <downloadColor>ff80ff80</downloadColor>
+         <textcolor2>ffffffff</textcolor2>
+         <textcolor3>ffffffff</textcolor3>
+         <spinColor>ffffffff</spinColor>
+         <font>font13</font>
+         <textureDownFocus>page_down_focus.png</textureDownFocus>
+         <textureUp>page_up_nofocus.png</textureUp>
+         <remoteColor>ffFFA075</remoteColor>
+         <textYOff>4</textYOff>
+         <spinHeight>27</spinHeight>
+         <textcolor>ffffffff</textcolor>
+         <shadedColor>20ffffff</shadedColor>
+         <textureHeight>32</textureHeight>
+         <spinPosX>550</spinPosX>
+         <spinPosY>400</spinPosY>
+         <textYOff2>4</textYOff2>
+         <textureUpFocus>page_up_focus.png</textureUpFocus>
+         <textXOff2>0</textXOff2>
+         <textureFocus>list_sub_focus.png</textureFocus>
+         <textureNoFocus>list_sub_nofocus.png</textureNoFocus>
+         <textureDown>page_down_nofocus.png</textureDown>
+         <IconYOff>8</IconYOff>
+         <spinWidth>26</spinWidth>
+         <suffix>|</suffix>
+         <selectedColor>FFF8BC70</selectedColor>
+         <image>folder_focus.png</image>
+         <IconXOff>8</IconXOff>
       </control>
    </controls>
 </window>
