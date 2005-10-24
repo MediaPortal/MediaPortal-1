@@ -15,7 +15,7 @@
          <type>button</type>
          <description>Back</description>
          <id>25</id>
-         <posX>444</posX>
+         <posX>448</posX>
          <posY>504</posY>
          <onleft>25</onleft>
          <onright>5</onright>
@@ -23,10 +23,10 @@
          <ondown>25</ondown>
          <hyperlink>615</hyperlink>
          <label>200007</label>
-         <width>100</width>
-         <height>28</height>
-     		 <textureFocus>button_filled-focus.png</textureFocus>
-      	 <textureNoFocus>button_filled-nofocus.png</textureNoFocus>
+         <width>96</width>
+         <height>32</height>
+ 		<textureFocus>list_focus.png</textureFocus>
+ 		<textureNoFocus>list_nofocus.png</textureNoFocus>
       </control>
       <control>
          <type>label</type>
@@ -81,10 +81,10 @@
          <onup>5</onup>
          <ondown>5</ondown>
          <label>200009</label>
-         <width>100</width>
-         <height>28</height>
-     		 <textureFocus>button_filled-focus.png</textureFocus>
-      	 <textureNoFocus>button_filled-nofocus.png</textureNoFocus>
+         <width>96</width>
+         <height>32</height>
+ 		<textureFocus>list_focus.png</textureFocus>
+ 		<textureNoFocus>list_nofocus.png</textureNoFocus>
       </control>
       <control>
          <type>textbox</type>

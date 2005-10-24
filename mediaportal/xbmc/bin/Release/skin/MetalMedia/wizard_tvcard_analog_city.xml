@@ -15,17 +15,17 @@
          <type>button</type>
          <description>manual tune</description>
          <id>23</id>
-         <posX>444</posX>
+         <posX>418</posX>
          <posY>504</posY>
          <onleft>25</onleft>
          <onright>25</onright>
          <onup>24</onup>
          <ondown>25</ondown>
-         <label>Manual</label>
-         <width>100</width>
-         <height>28</height>
-     		 <textureFocus>button_filled-focus.png</textureFocus>
-      	 <textureNoFocus>button_filled-nofocus.png</textureNoFocus>
+         <label>Manual Tune</label>
+         <width>126</width>
+         <height>32</height>
+ 		<textureFocus>list_focus.png</textureFocus>
+ 		<textureNoFocus>list_nofocus.png</textureNoFocus>
       </control>
       <control>
          <type>button</type>
@@ -39,10 +39,10 @@
          <ondown>25</ondown>
          <hyperlink>626</hyperlink>
          <label>&lt;Back</label>
-         <width>100</width>
-         <height>28</height>
-     		 <textureFocus>button_filled-focus.png</textureFocus>
-      	 <textureNoFocus>button_filled-nofocus.png</textureNoFocus>
+         <width>96</width>
+         <height>32</height>
+ 		<textureFocus>list_focus.png</textureFocus>
+ 		<textureNoFocus>list_nofocus.png</textureNoFocus>
       </control>
       <control>
          <type>label</type>
