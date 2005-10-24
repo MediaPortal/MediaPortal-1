@@ -31,34 +31,249 @@ using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Controls
 {
-	public class StackPanel : Panel
+	public class StackPanel : Panel, IScrollInfo
 	{
 		#region Constructors
 
 		public StackPanel()
 		{
-			_layout = new StackLayout();
-
-			_group = new GUIGroup(0);
-			_group.Layout = _layout;
 		}
 
 		#endregion Constructors
 
+		#region Methods
+
+		void ApplyAlignment(FrameworkElement element, Thickness t, double x, double y, double w, double h)
+		{
+			Rect rect = new Rect(x, y, element.Width, element.Height);
+            
+			switch(element.HorizontalAlignment)
+			{
+				case HorizontalAlignment.Center:
+					rect.X = x + ((w - element.Width) / 2);
+					break;
+				case HorizontalAlignment.Right:
+					rect.X = x + w  - element.Width;
+					break;
+				case HorizontalAlignment.Stretch:
+					rect.Width = w;
+					break;
+			}
+
+			switch(element.VerticalAlignment)
+			{
+				case VerticalAlignment.Center:
+					rect.Y = y + ((h - element.Height) / 2);
+					break;
+				case VerticalAlignment.Bottom:
+					rect.Y = y + h  - element.Height;
+					break;
+				case VerticalAlignment.Stretch:
+					rect.Height = h;
+					break;
+			}
+		
+			element.Arrange(rect);
+		}
+
+		protected override Size ArrangeOverride(Rect finalRect)
+		{
+			FrameworkElement element = this;
+
+			Thickness t = element.Margin;
+			Point l = element.Location;
+
+			double x = element.Location.X + t.Left;
+			double y = element.Location.Y + t.Top;
+			double w = _orientation != Orientation.Horizontal ? Math.Max(0, element.Width - t.Width) : 0;
+			double h = _orientation == Orientation.Horizontal ? Math.Max(0, element.Height - t.Height) : 0;
+
+			foreach(FrameworkElement child in element.LogicalChildren)
+			{
+				if(child.Visibility == System.Windows.Visibility.Collapsed)
+					continue;
+
+				if(_orientation == Orientation.Horizontal)
+				{
+					ApplyAlignment(child, t, x, y, w = child.Width, h);
+
+					x += w + child.Margin.Width;
+				}
+				else
+				{
+					ApplyAlignment(child, t, x, y, w, h = child.Height);
+
+					y += h + child.Margin.Height;
+				}
+			}
+
+			return Size.Empty;
+		}
+
+		public void LineDown()
+		{
+		}
+
+		public void LineLeft()
+		{
+		}
+
+		public void LineRight()
+		{
+		}
+
+		public void LineUp()
+		{
+		}
+
+//		public Rect MakeVisible(Visual visual, Rect rectangle)
+//		{
+//		}
+
+		protected override Size MeasureOverride(Size availableSize)
+		{
+			double w = 0;
+			double h = 0;
+
+			Thickness t = this.Margin;
+
+			foreach(FrameworkElement child in this.LogicalChildren)
+			{
+				if(child.Visibility == System.Windows.Visibility.Collapsed)
+					continue;
+
+				child.Measure(availableSize);
+
+				w = _orientation != Orientation.Horizontal ? Math.Max(w, child.Width) : w + child.Width + t.Width;
+				h = _orientation == Orientation.Horizontal ? Math.Max(h, child.Height) : h + child.Height + t.Height;
+			}
+
+			_size.Width = w + t.Width;
+			_size.Height = h + t.Height;
+
+			return _size;
+		}
+
+		public void MouseWheelDown()
+		{
+		}
+
+		public void MouseWheelLeft()
+		{
+		}
+
+		public void MouseWheelRight()
+		{
+		}
+
+		public void MouseWheelUp()
+		{
+		}
+
+		public void PageDown()
+		{
+		}
+
+		public void PageLeft()
+		{
+		}
+
+		public void PageRight()
+		{
+		}
+
+		public void PageUp()
+		{
+		}
+
+		// are these document incorrectly?
+		public void SetHorizontalOffset(double offset)
+		{
+		}
+
+		public void SetVerticalOffset(double offset)
+		{
+		}
+
+		#endregion Methods
+
 		#region Properties
+
+		public bool CanScrollHorizontally
+		{
+			get { return _isCanScrollHorizontally; }
+			set { _isCanScrollHorizontally = value; }
+		}
+
+		public bool CanScrollVertically
+		{
+			get { return _isCanScrollVertically; }
+			set { _isCanScrollVertically = value; }
+		}
+
+		public double ExtentHeight
+		{
+			get { return _extentHeight; }
+		}
+
+		public double ExtentWidth
+		{
+			get { return _extentWidth; }
+		}
+
+		public double HorizontalOffset
+		{
+			get { return _horizontalOffset; }
+		}
 
 		public Orientation Orientation
 		{
-			get { return _layout.Orientation; }
-			set { _layout.Orientation = value; }
+			get { return _orientation; }
+			set { _orientation = value; }
 		}
 
+//		public ScrollViewer ScrollOwner
+//		{
+//			get;
+//			set;
+//		}
+
+		public double VerticalOffset
+		{
+			get { return _verticalOffset; }
+		}
+
+		public double ViewportHeight
+		{
+			get { return _viewportHeight; }
+		}
+
+		public double ViewportWidth
+		{
+			get { return _viewportWidth; }
+		}
+			
+		
 		#endregion Properties
 
-		#region Fields
+		#region Properties (Dependency)
 
-		GUIGroup					_group;
-		StackLayout					_layout;
+//		public static readonly DependencyProperty OrientationProperty;
+
+		#endregion Properties (Dependency)
+
+		#region Fields
+		
+		bool						_isCanScrollHorizontally = false;
+		bool						_isCanScrollVertically = false;
+		double						_extentHeight = 0;
+		double						_extentWidth = 0;
+		double						_horizontalOffset = 0;
+		Orientation					_orientation = Orientation.Vertical;
+		Size						_size = Size.Empty;
+		double						_verticalOffset = 0;
+		double						_viewportHeight = 0;
+		double						_viewportWidth = 0;
 
 		#endregion Fields
 	}

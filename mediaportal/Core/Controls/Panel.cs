@@ -98,13 +98,13 @@ namespace MediaPortal.Controls
 
 		#endregion Properties
 
-		#region Properties (Dependancy)
+		#region Properties (Dependency)
 
 //		public static readonly DependencyProperty BackgroundProperty
 
 //		public static readonly DependencyProperty IsItemsHostProperty
 
-		#endregion Properties (Dependancy)
+		#endregion Properties (Dependency)
 
 		#region Fields
 

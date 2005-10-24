@@ -419,6 +419,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Controls\IScrollInfo.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Controls\Panel.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
