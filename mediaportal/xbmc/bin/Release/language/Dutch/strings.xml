@@ -4667,18 +4667,80 @@
     <value>TV Instellingen</value>
   </string>
 
-<!-- My Trailers Strings --> 
-<string><id>5900</id><value>Mijn Trailers</value></string> 
-<string><id>5901</id><value>Laat films zien</value></string> 
-<string><id>5902</id><value>Welke films laten zien?</value></string> 
-<string><id>5903</id><value>nieuw toegevoegde films</value></string> 
-<string><id>5904</id><value>Meest bekeken films</value></string> 
-<string><id>5905</id><value>Alle films</value></string> 
-<string><id>5906</id><value>Trailers</value></string>
-<string><id>5907</id><value>Clips</value></string> 
-<string><id>5908</id><value>Meer</value></string> 
-<string><id>5909</id><value>Kan film niet laden!</value></string> 
-<!-- End of My Trailers Strings -->
+  <!-- My Trailers Strings -->
+  <string>
+    <id>5900</id>
+    <value>Mijn Trailers</value>
+  </string>
+  <string>
+    <id>5901</id>
+    <value>Laat films zien</value>
+  </string>
+  <string>
+    <id>5902</id>
+    <value>Welke films laten zien?</value>
+  </string>
+  <string>
+    <id>5903</id>
+    <value>nieuw toegevoegde films</value>
+  </string>
+  <string>
+    <id>5904</id>
+    <value>Meest bekeken films</value>
+  </string>
+  <string>
+    <id>5905</id>
+    <value>Alle films</value>
+  </string>
+  <string>
+    <id>5906</id>
+    <value>Trailers</value>
+  </string>
+  <string>
+    <id>5907</id>
+    <value>Clips</value>
+  </string>
+  <string>
+    <id>5908</id>
+    <value>Meer</value>
+  </string>
+  <string>
+    <id>5909</id>
+    <value>Kan film niet laden!</value>
+  </string>
+  <string>
+  	<id>5910</id>
+  	<value>Film gegevens worden opgehaald</value>
+  </string>
+  <string>
+  	<id>5911</id>
+  	<value>Nieuw in de bioscoop</value>
+  </string>
+  <string>
+  	<id>5912</id>
+  	<value>Vorige week</value>
+  </string>
+  <string>
+  	<id>5913</id>
+  	<value>Deze week</value>
+  </string>
+  <string>
+  	<id>5914</id>
+  	<value>Volgende week</value>
+  </string>
+  <string>
+  	<id>5915</id>
+  	<value>Nog geen recencies</value>
+  </string>
+  <string>
+  	<id>5916</id>
+  	<value>Geen trailers gevonden.</value>
+  </string>
+  <string>
+  	<id>5917</id>
+  	<value>Duitse trailers</value>
+  </string>
+  <!-- End of My Trailers Strings -->
 
 </strings>
 
