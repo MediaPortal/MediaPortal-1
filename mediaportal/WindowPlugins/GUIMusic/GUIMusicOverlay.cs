@@ -321,6 +321,7 @@ namespace MediaPortal.GUI.Music
           else
           {
             //else make surrounding rectangle visible
+						SurroundingRectangle.IsVisible=true;
             SurroundingRectangle.SetPosition(m_iPosXRect,m_iPosYRect);
 
             // and position the video/visualisation in middle of the rectangle
