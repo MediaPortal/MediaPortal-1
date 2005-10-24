@@ -49,34 +49,34 @@ namespace MediaPortal.Player
     const uint  VFW_E_DVD_DECNOTENOUGH    =0x8004027B;
     const uint  VFW_E_DVD_RENDERFAIL      =0x8004027A;
 
-		VMR9Util Vmr9 = null;
+		VMR9Util _vmr9 = null;
     /// <summary> create the used COM components and get the interfaces. </summary>
-    protected override bool GetInterfaces(string strPath)
+    protected override bool GetInterfaces(string path)
     {
       int		            hr;
       Type	            comtype = null;
       object	          comobj = null;
-      m_bFreeNavigator=true;
-      dvdInfo=null;
-      dvdCtrl=null;
-			videoWin=null;
-      string strDVDNavigator="DVD Navigator";
-      string strARMode="";
-      string strDisplayMode="";
+      _freeNavigator=true;
+      _dvdInfo=null;
+      _dvdCtrl=null;
+			_videoWin=null;
+      string dvdDNavigator="DVD Navigator";
+      string aspectRatio="";
+      string displayMode="";
       using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
       {
-				strDVDNavigator=xmlreader.GetValueAsString("dvdplayer","navigator","DVD Navigator");
-				strARMode=xmlreader.GetValueAsString("dvdplayer","armode","").ToLower();
-        if ( strARMode=="crop") arMode=AmAspectRatioMode.AM_ARMODE_CROP;
-        if ( strARMode=="letterbox") arMode=AmAspectRatioMode.AM_ARMODE_LETTER_BOX;
-        if ( strARMode=="stretch") arMode=AmAspectRatioMode.AM_ARMODE_STRETCHED;
-        if ( strARMode=="follow stream") arMode=AmAspectRatioMode.AM_ARMODE_STRETCHED_AS_PRIMARY;
+				dvdDNavigator=xmlreader.GetValueAsString("dvdplayer","navigator","DVD Navigator");
+				aspectRatio=xmlreader.GetValueAsString("dvdplayer","armode","").ToLower();
+        if ( aspectRatio=="crop") arMode=AmAspectRatioMode.AM_ARMODE_CROP;
+        if ( aspectRatio=="letterbox") arMode=AmAspectRatioMode.AM_ARMODE_LETTER_BOX;
+        if ( aspectRatio=="stretch") arMode=AmAspectRatioMode.AM_ARMODE_STRETCHED;
+        if ( aspectRatio=="follow stream") arMode=AmAspectRatioMode.AM_ARMODE_STRETCHED_AS_PRIMARY;
 
-        strDisplayMode=xmlreader.GetValueAsString("dvdplayer","displaymode","").ToLower();
-        if (strDisplayMode=="default") m_iVideoPref=0;
-        if (strDisplayMode=="16:9") m_iVideoPref=1;
-        if (strDisplayMode=="4:3 pan scan") m_iVideoPref=2;
-        if (strDisplayMode=="4:3 letterbox") m_iVideoPref=3;
+        displayMode=xmlreader.GetValueAsString("dvdplayer","displaymode","").ToLower();
+        if (displayMode=="default") _videoPref=0;
+        if (displayMode=="16:9") _videoPref=1;
+        if (displayMode=="4:3 pan scan") _videoPref=2;
+        if (displayMode=="4:3 letterbox") _videoPref=3;
       }
 			GUIMessage msg =new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED,0,0,0,1,0,null);
 			GUIWindowManager.SendMessage(msg);
@@ -84,44 +84,44 @@ namespace MediaPortal.Player
       try 
       {
 
-        Vmr9=new VMR9Util("dvdplayer");
+        _vmr9=new VMR9Util("dvdplayer");
         comtype = Type.GetTypeFromCLSID( Clsid.DvdGraphBuilder );
         if( comtype == null )
           throw new NotSupportedException( "DirectX (8.1 or higher) not installed?" );
         comobj = Activator.CreateInstance( comtype );
-        dvdGraph = (IDvdGraphBuilder) comobj; comobj = null;
+        _dvdGraph = (IDvdGraphBuilder) comobj; comobj = null;
 
-        hr = dvdGraph.GetFiltergraph( out graphBuilder );
+        hr = _dvdGraph.GetFiltergraph( out _graphBuilder );
         if( hr != 0 )
           Marshal.ThrowExceptionForHR( hr );
 
-				DsROT.AddGraphToRot( graphBuilder, out rotCookie );		// graphBuilder capGraph
-				Vmr9.AddVMR9(graphBuilder);
+				DsROT.AddGraphToRot( _graphBuilder, out _rotCookie );		// _graphBuilder capGraph
+				_vmr9.AddVMR9(_graphBuilder);
 				try
 				{
-					Log.Write("DVDPlayer9:Add {0}",strDVDNavigator);
-					dvdbasefilter=DirectShowUtil.AddFilterToGraph(graphBuilder,strDVDNavigator);
-					if (dvdbasefilter!=null)
+					Log.Write("DVDPlayer9:Add {0}",dvdDNavigator);
+					_dvdbasefilter=DirectShowUtil.AddFilterToGraph(_graphBuilder,dvdDNavigator);
+					if (_dvdbasefilter!=null)
 					{
-						AddPreferedCodecs(graphBuilder);
-						dvdCtrl=dvdbasefilter as IDvdControl2;
-						if (dvdCtrl!=null)
+						AddPreferedCodecs(_graphBuilder);
+						_dvdCtrl=_dvdbasefilter as IDvdControl2;
+						if (_dvdCtrl!=null)
 						{
-							dvdInfo = dvdbasefilter as IDvdInfo2;
-							if (strPath!=null) 
+							_dvdInfo = _dvdbasefilter as IDvdInfo2;
+							if (path!=null) 
 							{
-								if (strPath.Length!=0)
-									hr=dvdCtrl.SetDVDDirectory(strPath);
+								if (path.Length!=0)
+									hr=_dvdCtrl.SetDVDDirectory(path);
 								
 							}
-							dvdCtrl.SetOption( DvdOptionFlag.HmsfTimeCodeEvt, true );	// use new HMSF timecode format
-							dvdCtrl.SetOption( DvdOptionFlag.ResetOnStop, false );
-							DirectShowUtil.RenderOutputPins(graphBuilder,dvdbasefilter);
+							_dvdCtrl.SetOption( DvdOptionFlag.HmsfTimeCodeEvt, true );	// use new HMSF timecode format
+							_dvdCtrl.SetOption( DvdOptionFlag.ResetOnStop, false );
+							DirectShowUtil.RenderOutputPins(_graphBuilder,_dvdbasefilter);
 								
-							m_bFreeNavigator=false;
+							_freeNavigator=false;
 						}
 
-						//Marshal.ReleaseComObject( dvdbasefilter); dvdbasefilter = null;              
+						//Marshal.ReleaseComObject( _dvdbasefilter); _dvdbasefilter = null;              
 					}
 				}
 				catch(Exception ex)
@@ -130,52 +130,52 @@ namespace MediaPortal.Player
 				}
 				Guid riid ;
 
-        if (dvdInfo==null)
+        if (_dvdInfo==null)
 				{
 					Log.Write("Dvdplayer9:volume rendered, get interfaces");
           riid = typeof( IDvdInfo2 ).GUID;
-          hr = dvdGraph.GetDvdInterface( ref riid, out comobj );
+          hr = _dvdGraph.GetDvdInterface( ref riid, out comobj );
           if( hr < 0 )
             Marshal.ThrowExceptionForHR( hr );
-          dvdInfo = (IDvdInfo2) comobj; comobj = null;
+          _dvdInfo = (IDvdInfo2) comobj; comobj = null;
         }
 
-        if (dvdCtrl==null)
+        if (_dvdCtrl==null)
         {
 					Log.Write("Dvdplayer9: get IDvdControl2");
           riid = typeof( IDvdControl2 ).GUID;
-          hr = dvdGraph.GetDvdInterface( ref riid, out comobj );
+          hr = _dvdGraph.GetDvdInterface( ref riid, out comobj );
           if( hr < 0 )
             Marshal.ThrowExceptionForHR( hr );
-          dvdCtrl = (IDvdControl2) comobj; comobj = null;
-					if (dvdCtrl!=null)
+          _dvdCtrl = (IDvdControl2) comobj; comobj = null;
+					if (_dvdCtrl!=null)
 						Log.Write("Dvdplayer9: get IDvdControl2");
 					else
 						Log.WriteFile(Log.LogType.Log,true,"Dvdplayer9: FAILED TO get get IDvdControl2");
         }
 
 
-        mediaCtrl	= (IMediaControl)  graphBuilder;
-        mediaEvt	= (IMediaEventEx)  graphBuilder;
-        basicAudio	= graphBuilder as IBasicAudio;
-        mediaPos	= (IMediaPosition) graphBuilder;
-        basicVideo	= graphBuilder as IBasicVideo2;
+        _mediaCtrl	= (IMediaControl)  _graphBuilder;
+        _mediaEvt	= (IMediaEventEx)  _graphBuilder;
+        _basicAudio	= _graphBuilder as IBasicAudio;
+        _mediaPos	= (IMediaPosition) _graphBuilder;
+        _basicVideo	= _graphBuilder as IBasicVideo2;
 
       
 
         Log.Write("Dvdplayer9:disable line 21");
         // disable Closed Captions!
         IBaseFilter basefilter;
-        graphBuilder.FindFilterByName("Line 21 Decoder", out basefilter);
+        _graphBuilder.FindFilterByName("Line 21 Decoder", out basefilter);
         if (basefilter==null)
-          graphBuilder.FindFilterByName("Line21 Decoder", out basefilter);
+          _graphBuilder.FindFilterByName("Line21 Decoder", out basefilter);
         if (basefilter!=null)
         {
-          line21Decoder=(IAMLine21Decoder)basefilter;
-          if (line21Decoder!=null)
+          _line21Decoder=(IAMLine21Decoder)basefilter;
+          if (_line21Decoder!=null)
           {
             AMLine21CCState state=AMLine21CCState.Off;
-            hr=line21Decoder.SetServiceState(ref state);
+            hr=_line21Decoder.SetServiceState(ref state);
             if (hr==0)
             {
               Log.Write("DVDPlayer9:Closed Captions disabled");
@@ -187,27 +187,27 @@ namespace MediaPortal.Player
           }
         }
 
-        DirectShowUtil.SetARMode(graphBuilder,arMode);
-        DirectShowUtil.EnableDeInterlace(graphBuilder);
+        DirectShowUtil.SetARMode(_graphBuilder,arMode);
+        DirectShowUtil.EnableDeInterlace(_graphBuilder);
         //m_ovMgr = new OVTOOLLib.OvMgrClass();
-        //m_ovMgr.SetGraph(graphBuilder);
+        //m_ovMgr.SetGraph(_graphBuilder);
 
 
 
-        m_iVideoWidth=Vmr9.VideoWidth;
-        m_iVideoHeight=Vmr9.VideoHeight;
+        _videoWidth=_vmr9.VideoWidth;
+        _videoHeight=_vmr9.VideoHeight;
 
 
-				if (!Vmr9.IsVMR9Connected)
+				if (!_vmr9.IsVMR9Connected)
 				{
 					Log.Write("DVDPlayer9:failed vmr9 not connected");
-					mediaCtrl=null;
+					_mediaCtrl=null;
 					Cleanup();
-					return base.GetInterfaces(strPath);
+					return base.GetInterfaces(path);
 				}
-				Vmr9.SetDeinterlaceMode();
+				_vmr9.SetDeinterlaceMode();
         Log.Write("Dvdplayer9:graph created");
-        m_bStarted=true;
+        _started=true;
         return true;
       }
       catch( Exception )
@@ -228,94 +228,94 @@ namespace MediaPortal.Player
 
 		void Cleanup()
 		{
-			if (graphBuilder==null) return;
+			if (_graphBuilder==null) return;
       int hr;
       try 
       {
         Log.Write("DVDPlayer9:cleanup DShow graph");
-				if( mediaCtrl != null )
+				if( _mediaCtrl != null )
 				{
-					hr = mediaCtrl.Stop();
-					mediaCtrl = null;
+					hr = _mediaCtrl.Stop();
+					_mediaCtrl = null;
 				}
-        m_state = PlayState.Stopped;
-				m_bVisible=false;
+        _state = PlayState.Stopped;
+				_visible=false;
 
-        mediaEvt = null;
-				dvdCtrl = null;
-				dvdInfo = null;
-				basicVideo=null;
-				basicAudio=null;
-				mediaPos=null;
-				videoWin=null;
+        _mediaEvt = null;
+				_dvdCtrl = null;
+				_dvdInfo = null;
+				_basicVideo=null;
+				_basicAudio=null;
+				_mediaPos=null;
+				_videoWin=null;
 
-				if (Vmr9!=null) 
+				if (_vmr9!=null) 
 				{
-					Vmr9.RemoveVMR9();
-					Vmr9.Release();
+					_vmr9.RemoveVMR9();
+					_vmr9.Release();
 				}
-				Vmr9=null;
+				_vmr9=null;
 
 				
-				if (videoCodecFilter!=null) 
+				if (_videoCodecFilter!=null) 
 				{
-					while ( (hr=Marshal.ReleaseComObject(videoCodecFilter))>0); 
-					videoCodecFilter=null;
+					while ( (hr=Marshal.ReleaseComObject(_videoCodecFilter))>0); 
+					_videoCodecFilter=null;
 				}
-				if (audioCodecFilter!=null) 
+				if (_audioCodecFilter!=null) 
 				{
-					while ( (hr=Marshal.ReleaseComObject(audioCodecFilter))>0); 
-					audioCodecFilter=null;
-				}
-				
-				if (audioRendererFilter!=null) 
-				{
-					while ( (hr=Marshal.ReleaseComObject(audioRendererFilter))>0); 
-					audioRendererFilter=null;
+					while ( (hr=Marshal.ReleaseComObject(_audioCodecFilter))>0); 
+					_audioCodecFilter=null;
 				}
 				
-				if (ffdShowFilter!=null) 
+				if (_audioRendererFilter!=null) 
 				{
-					while ( (hr=Marshal.ReleaseComObject(ffdShowFilter))>0); 
-					ffdShowFilter=null;
+					while ( (hr=Marshal.ReleaseComObject(_audioRendererFilter))>0); 
+					_audioRendererFilter=null;
+				}
+				
+				if (_ffdShowFilter!=null) 
+				{
+					while ( (hr=Marshal.ReleaseComObject(_ffdShowFilter))>0); 
+					_ffdShowFilter=null;
 				}
 
     		
-        if( cmdOption.dvdCmd != null )
-          Marshal.ReleaseComObject( cmdOption.dvdCmd ); 
-				cmdOption.dvdCmd = null;
-        pendingCmd = false;
+        if( _cmdOption.dvdCmd != null )
+          Marshal.ReleaseComObject( _cmdOption.dvdCmd ); 
+				_cmdOption.dvdCmd = null;
+        _pendingCmd = false;
 
-				if( dvdbasefilter != null )
+				if( _dvdbasefilter != null )
 				{
-					while ((hr=Marshal.ReleaseComObject( dvdbasefilter))>0); 
-					dvdbasefilter = null;              
+					while ((hr=Marshal.ReleaseComObject( _dvdbasefilter))>0); 
+					_dvdbasefilter = null;              
 				}
 
-				if( dvdGraph != null )
+				if( _dvdGraph != null )
 				{
-					while ((hr=Marshal.ReleaseComObject( dvdGraph ))>0); 
-					dvdGraph = null;
+					while ((hr=Marshal.ReleaseComObject( _dvdGraph ))>0); 
+					_dvdGraph = null;
 				}
-				if (line21Decoder!=null)
+				if (_line21Decoder!=null)
 				{
-					while ((hr=Marshal.ReleaseComObject( line21Decoder))>0); 
-					line21Decoder=null;
-				}
-
-
-				if (rotCookie !=0) 
-					DsROT.RemoveGraphFromRot( ref rotCookie );		// graphBuilder capGraph
-				rotCookie=0;
-
-				if( graphBuilder != null )
-				{
-					DsUtils.RemoveFilters(graphBuilder);
-					while ((hr=Marshal.ReleaseComObject( graphBuilder ))>0); 
-					graphBuilder = null;
+					while ((hr=Marshal.ReleaseComObject( _line21Decoder))>0); 
+					_line21Decoder=null;
 				}
 
-        m_state = PlayState.Init;
+
+				if (_rotCookie !=0) 
+					DsROT.RemoveGraphFromRot( ref _rotCookie );		// _graphBuilder capGraph
+				_rotCookie=0;
+
+				if( _graphBuilder != null )
+				{
+					DsUtils.RemoveFilters(_graphBuilder);
+					while ((hr=Marshal.ReleaseComObject( _graphBuilder ))>0); 
+					_graphBuilder = null;
+				}
+
+        _state = PlayState.Init;
 
 				GUIMessage msg =new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED,0,0,0,0,0,null);
 				GUIWindowManager.SendMessage(msg);
@@ -331,12 +331,12 @@ namespace MediaPortal.Player
 
     protected override void OnProcess()
     {
-			if (GUIGraphicsContext.Vmr9Active && Vmr9!=null)
+			if (GUIGraphicsContext.Vmr9Active && _vmr9!=null)
 			{
-				Vmr9.Process();
+				_vmr9.Process();
 				if (GUIGraphicsContext.Vmr9FPS < 1f)
 				{
-					Vmr9.Repaint();// repaint vmr9
+					_vmr9.Repaint();// repaint vmr9
 				}
 			}
       //m_SourceRect=m_scene.SourceRect;
