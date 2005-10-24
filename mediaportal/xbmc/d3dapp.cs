@@ -1335,17 +1335,6 @@ namespace MediaPortal
         }
       }
     }
-
-    public void HideCursor()
-    {
-      if (_showCursor)
-      {
-        _showCursor = false;
-        _lastShowCursor = false;
-        Cursor.Hide();
-      }
-    }
-
     void HandleCursor()
     {
       if (_autoHideMouse)
@@ -1363,7 +1352,8 @@ namespace MediaPortal
           TimeSpan ts = DateTime.Now - _mouseTimeOutTimer;
           if (ts.TotalSeconds >= 3)
           {
-            //hide mouse
+						//hide mouse
+						Cursor.Hide();
             _showCursor = false;
             _needUpdate = true;
             Invalidate(true);
@@ -2134,7 +2124,8 @@ namespace MediaPortal
         lasty = e.Y;
         System.Windows.Forms.Cursor ourCursor = this.Cursor;
         if (!_showCursor)
-        {
+				{
+					Cursor.Show();
           _showCursor = true;
           _needUpdate = true;
           Invalidate(true);
@@ -2148,6 +2139,7 @@ namespace MediaPortal
       System.Windows.Forms.Cursor ourCursor = this.Cursor;
       if (!_showCursor)
       {
+				Cursor.Show();
         _showCursor = true;
         _needUpdate = true;
         Invalidate(true);

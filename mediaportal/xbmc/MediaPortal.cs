@@ -2122,10 +2122,6 @@ public class MediaPortalApp : D3DApp, IRender
 
 		GUIWindowManager.OnNewAction += new OnActionHandler(this.OnAction);
 
-		if (_autoHideMouse)
-		{
-			HideCursor();
-		}
 
 		GUIWindowManager.Receivers += new SendMessageHandler(OnMessage);
 		GUIWindowManager.Callbacks += new GUIWindowManager.OnCallBackHandler(this.Process);
