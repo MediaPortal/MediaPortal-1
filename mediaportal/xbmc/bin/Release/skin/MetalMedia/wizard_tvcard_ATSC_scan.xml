@@ -89,41 +89,15 @@
          <onright>5</onright>
          <onup>5</onup>
          <ondown>5</ondown>
-         <textcolor>ffffffff</textcolor>
-         <downloadColor>ff80ff80</downloadColor>
-         <remoteColor>ffFFA075</remoteColor>
-         <textXOff2>0</textXOff2>
-         <IconYOff>8</IconYOff>
-         <textYOff>4</textYOff>
-         <textureFocus>list_sub_focus.png</textureFocus>
-         <font>font13</font>
-         <textureUp>page_up_nofocus.png</textureUp>
-         <textXOff>5</textXOff>
-         <shadedColor>20ffffff</shadedColor>
-         <textureHeight>32</textureHeight>
-         <selectedColor>FFF8BC70</selectedColor>
-         <textureNoFocus>list_sub_nofocus.png</textureNoFocus>
-         <IconXOff>8</IconXOff>
-         <textureDownFocus>page_down_focus.png</textureDownFocus>
-         <spinColor>ffffffff</spinColor>
-         <spinPosX>550</spinPosX>
-         <spinPosY>400</spinPosY>
-         <spinHeight>27</spinHeight>
-         <spinWidth>26</spinWidth>
-         <suffix>|</suffix>
-         <textcolor2>ffffffff</textcolor2>
-         <textcolor3>ffffffff</textcolor3>
-         <textYOff2>4</textYOff2>
-         <image>folder_focus.png</image>
-         <textureUpFocus>page_up_focus.png</textureUpFocus>
-         <textureDown>page_down_nofocus.png</textureDown>
+         <spinPosX>546</spinPosX>
+         <spinPosY>365</spinPosY>
       </control>
       <control>
 		<description>progress control</description> 
 		<type>progress</type> 
 		<id>20</id> 
 		<posX>32</posX> 
-		<posY>330</posY>
+		<posY>337</posY>
 		<width>592</width> 
 		<height>25</height>
 	 </control>

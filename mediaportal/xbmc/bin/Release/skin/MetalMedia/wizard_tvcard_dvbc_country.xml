@@ -91,34 +91,8 @@
          <onright>5</onright>
          <onup>5</onup>
          <ondown>5</ondown>
-         <textXOff>5</textXOff>
-         <downloadColor>ff80ff80</downloadColor>
-         <textcolor2>ffffffff</textcolor2>
-         <textcolor3>ffffffff</textcolor3>
-         <spinColor>ffffffff</spinColor>
-         <font>font13</font>
-         <textureDownFocus>page_down_focus.png</textureDownFocus>
-         <textureUp>page_up_nofocus.png</textureUp>
-         <remoteColor>ffFFA075</remoteColor>
-         <textYOff>4</textYOff>
-         <spinHeight>27</spinHeight>
-         <textcolor>ffffffff</textcolor>
-         <shadedColor>20ffffff</shadedColor>
-         <textureHeight>32</textureHeight>
-         <spinPosX>550</spinPosX>
-         <spinPosY>400</spinPosY>
-         <textYOff2>4</textYOff2>
-         <textureUpFocus>page_up_focus.png</textureUpFocus>
-         <textXOff2>0</textXOff2>
-         <textureFocus>list_sub_focus.png</textureFocus>
-         <textureNoFocus>list_sub_nofocus.png</textureNoFocus>
-         <textureDown>page_down_nofocus.png</textureDown>
-         <IconYOff>8</IconYOff>
-         <spinWidth>26</spinWidth>
-         <suffix>|</suffix>
-         <selectedColor>FFF8BC70</selectedColor>
-         <image>folder_focus.png</image>
-         <IconXOff>8</IconXOff>
+         <spinPosX>546</spinPosX>
+         <spinPosY>425</spinPosY>
       </control>
    </controls>
 </window>
