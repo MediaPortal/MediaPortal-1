@@ -57,12 +57,12 @@ namespace System.Windows
 
 		public object GetValue(DependencyProperty dp)
 		{
-			if(dp.DefaultMetadata.GetValueOverride != null)
+			if(dp.DefaultMetadata != null && dp.DefaultMetadata.GetValueOverride != null)
 				return dp.DefaultMetadata.GetValueOverride(this);
 
 			object value = _properties[dp];
 
-			if(value == null)
+			if(value == null && dp.DefaultMetadata != null)
 				value = dp.DefaultMetadata.DefaultValue;
 
 			return value;
@@ -77,7 +77,7 @@ namespace System.Windows
 		{
 			object value = _properties[dp];
 
-			if(value == null)
+			if(value == null && dp.DefaultMetadata != null)
 				value = dp.DefaultMetadata.DefaultValue;
 
 			return value;
@@ -87,23 +87,23 @@ namespace System.Windows
 		{
 			if(dp.DefaultMetadata.PropertyInvalidatedCallback != null)
 				dp.DefaultMetadata.PropertyInvalidatedCallback(this);
+
+			OnPropertyInvalidated(dp, dp.DefaultMetadata);
 		}
 
 		protected virtual void OnPropertyInvalidated(DependencyProperty dp, PropertyMetadata metadata)
 		{
-			if(dp.DefaultMetadata.PropertyInvalidatedCallback != null)
-				dp.DefaultMetadata.PropertyInvalidatedCallback(this);
 		}
 
 		public object ReadLocalValue(DependencyProperty dp)
 		{
-			if(dp.DefaultMetadata.ReadLocalValueOverride != null)
+			if(dp.DefaultMetadata != null && dp.DefaultMetadata.ReadLocalValueOverride != null)
 				return dp.DefaultMetadata.ReadLocalValueOverride(this);
 
 			object value = _properties[dp];
 
 			// should we really be returning default value here?
-			if(value == null)
+			if(value == null && dp.DefaultMetadata != null)
 				value = dp.DefaultMetadata.DefaultValue;
 
 			return value;
@@ -113,10 +113,10 @@ namespace System.Windows
 		{
 			_properties[dp] = value;
 
-			if(dp.DefaultMetadata.ReadOnly)
+			if(dp.DefaultMetadata != null && dp.DefaultMetadata.ReadOnly)
 				throw new InvalidOperationException("DependencyProperty is read-only");
 
-			if(dp.DefaultMetadata.SetValueOverride != null)
+			if(dp.DefaultMetadata != null && dp.DefaultMetadata.SetValueOverride != null)
 				dp.DefaultMetadata.SetValueOverride(this, value);
 		}
 
@@ -129,10 +129,10 @@ namespace System.Windows
 		{
 			_properties[dp] = value;
 
-			if(dp.DefaultMetadata.ReadOnly)
+			if(dp.DefaultMetadata != null && dp.DefaultMetadata.ReadOnly)
 				throw new InvalidOperationException("DependencyProperty is read-only");
 
-			if(dp.DefaultMetadata.SetValueOverride != null)
+			if(dp.DefaultMetadata != null && dp.DefaultMetadata.SetValueOverride != null)
 				dp.DefaultMetadata.SetValueOverride(this, value);
 		}
 

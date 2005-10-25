@@ -28,7 +28,7 @@ using System.Collections;
 
 namespace System.Windows
 {
-	public struct LocalValueEnumerator : IEnumerator
+	public struct LocalValueEnumerator : IEnumerable, IEnumerator
 	{
 		#region Constructors
 
@@ -41,6 +41,11 @@ namespace System.Windows
 		#endregion Constructors
 
 		#region Methods
+
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return this;
+		}
 
 		public bool MoveNext()
 		{

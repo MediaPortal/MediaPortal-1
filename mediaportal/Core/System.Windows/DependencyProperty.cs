@@ -24,26 +24,57 @@
 #endregion
 
 using System;
+using System.Collections;
 
 namespace System.Windows
 {
 	public sealed class DependencyProperty
 	{
+		#region Constructors
+
+		private DependencyProperty()
+		{
+		}
+
+		private DependencyProperty(DependencyProperty dp, PropertyMetadata defaultMetadata)
+		{
+			_defaultMetadata = defaultMetadata;
+			_name = dp._name;
+			_ownerType = dp._ownerType;
+			_propertyType = dp._propertyType;
+			_validateValueCallback = dp._validateValueCallback;
+
+			_properties[_name + _ownerType] = this;
+		}
+
+		private DependencyProperty(string name, Type propertyType, Type ownerType, PropertyMetadata defaultMetadata, ValidateValueCallback validateValueCallback)
+		{
+			_name = name;
+			_propertyType = propertyType;
+			_ownerType = ownerType;
+			_defaultMetadata = defaultMetadata;
+			_validateValueCallback = validateValueCallback;
+
+			_properties[name + ownerType] = this;
+		}
+
+		#endregion Constructors
+
 		#region Methods
 
 		public DependencyProperty AddOwner(Type ownerType)
 		{
-			throw new NotImplementedException();
+			return AddOwner(ownerType, _defaultMetadata);
 		}
 
-		public DependencyProperty AddOwner(Type ownerType, PropertyMetadata typeMetadata)
+		public DependencyProperty AddOwner(Type ownerType, PropertyMetadata defaultMetadata)
 		{
-			throw new NotImplementedException();
+			return new DependencyProperty(this, defaultMetadata);
 		}
 			
 		public static DependencyProperty FromName(string name, Type ownerType)
 		{
-			throw new NotImplementedException();
+			return (DependencyProperty)_properties[name + ownerType];
 		}
 
 		public override int GetHashCode()
@@ -56,14 +87,19 @@ namespace System.Windows
 			throw new NotImplementedException();
 		}
 
-		public PropertyMetadata GetMetadata(Type forType)
+		public PropertyMetadata GetMetadata(Type ownerType)
 		{
-			throw new NotImplementedException();
+			DependencyProperty dp = (DependencyProperty)_properties[_name + ownerType];
+			
+			if(dp == null)
+				return null;
+			
+			return dp._defaultMetadata;
 		}
 
 		public bool IsValidType(object value)
 		{
-			throw new NotImplementedException();
+			return _propertyType.IsInstanceOfType(value);
 		}
 
 		public bool IsValidValue(object value)
@@ -74,14 +110,19 @@ namespace System.Windows
 			return _validateValueCallback(value);
 		}
 
-		public void OverrideMetadata(Type forType, PropertyMetadata typeMetadata)
+		public void OverrideMetadata(Type ownerType, PropertyMetadata defaultMetadata)
 		{
-			throw new NotImplementedException();
+			OverrideMetadata(ownerType, defaultMetadata, null);
 		}
 
-		public void OverrideMetadata(Type forType, PropertyMetadata typeMetadata, DependencyPropertyKey key)
+		public void OverrideMetadata(Type ownerType, PropertyMetadata defaultMetadata, DependencyPropertyKey key)
 		{
-			throw new NotImplementedException();
+			DependencyProperty dp = (DependencyProperty)_properties[_name + ownerType];
+			
+			if(dp == null)
+				return;
+			
+			dp._defaultMetadata = defaultMetadata;
 		}
 		
 		public static DependencyProperty Register(string name, Type propertyType, Type ownerType)
@@ -89,14 +130,14 @@ namespace System.Windows
 			return DependencyProperty.Register(name, propertyType, ownerType, null, null);
 		}
 
-		public static DependencyProperty Register(string name, Type propertyType, Type ownerType, PropertyMetadata typeMetadata)
+		public static DependencyProperty Register(string name, Type propertyType, Type ownerType, PropertyMetadata defaultMetadata)
 		{
-			return DependencyProperty.Register(name, propertyType, ownerType, typeMetadata, null);
+			return DependencyProperty.Register(name, propertyType, ownerType, defaultMetadata, null);
 		}
 
-		public static DependencyProperty Register(string name, Type propertyType, Type ownerType, PropertyMetadata typeMetadata, ValidateValueCallback validateValueCallback)
+		public static DependencyProperty Register(string name, Type propertyType, Type ownerType, PropertyMetadata defaultMetadata, ValidateValueCallback validateValueCallback)
 		{
-			throw new NotImplementedException();
+			return new DependencyProperty(name, propertyType, ownerType, defaultMetadata, validateValueCallback);
 		}
 
 		public static DependencyProperty RegisterAttached(string name, Type propertyType, Type ownerType)
@@ -124,12 +165,12 @@ namespace System.Windows
 			throw new NotImplementedException();
 		}
 
-		public static DependencyPropertyKey RegisterReadOnly(string name, Type propertyType, Type ownerType, PropertyMetadata typeMetadata)
+		public static DependencyPropertyKey RegisterReadOnly(string name, Type propertyType, Type ownerType, PropertyMetadata defaultMetadata)
 		{
-			return DependencyProperty.RegisterReadOnly(name, propertyType, ownerType, typeMetadata, null);
+			return DependencyProperty.RegisterReadOnly(name, propertyType, ownerType, defaultMetadata, null);
 		}
 
-		public static DependencyPropertyKey RegisterReadOnly(string name, Type propertyType, Type ownerType, PropertyMetadata typeMetadata, ValidateValueCallback validateValueCallback)
+		public static DependencyPropertyKey RegisterReadOnly(string name, Type propertyType, Type ownerType, PropertyMetadata defaultMetadata, ValidateValueCallback validateValueCallback)
 		{
 			throw new NotImplementedException();
 		}
@@ -173,10 +214,12 @@ namespace System.Windows
 		#region Fields
 
 		PropertyMetadata			_defaultMetadata = null;
-		int							_globalIndex = ++_globalIndexNext;
+		readonly int				_globalIndex = _globalIndexNext++;
 		static int					_globalIndexNext = 0;
 		string						_name = string.Empty;
 		Type						_ownerType = null;
+		static Hashtable			_properties = new Hashtable();
+		Hashtable					_metadata = new Hashtable();
 		Type						_propertyType = null;
 		ValidateValueCallback		_validateValueCallback = null;
 
