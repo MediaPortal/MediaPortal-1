@@ -809,7 +809,6 @@ namespace MediaPortal.Player
 						{
 							Log.Write("EVT:DvdChaptStart:{0}",p1);
 							_currChapter = p1;
-
 							SelectSubtitleLanguage(_subtitleLanguage);
 							DvdTimeCode totaltime;
 							int         ulTimeCodeFlags; 
@@ -818,7 +817,6 @@ namespace MediaPortal.Player
 							_duration=( (double)totaltime.bHours)* 3600d;
 							_duration +=( ( (double)totaltime.bMinutes)* 60d );
 							_duration +=( ( (double)totaltime.bSeconds) );
-
 							break;
 						}
 						case DsEvCode.DvdTitleChange:
@@ -1262,7 +1260,11 @@ namespace MediaPortal.Player
             timeCode.bFrames=0;
             DvdPlayLocation loc;
             _currTitle=_dvdInfo.GetCurrentLocation(out loc);
-            int hr=_dvdCtrl.PlayAtTime(ref timeCode,DvdCmdFlags.None,null);
+						
+			
+						
+
+						int hr=_dvdCtrl.PlayAtTime(ref timeCode,DvdCmdFlags.Block,null);
             if (hr!=0)
             {
               if ( ((uint)hr)==VFW_E_DVD_OPERATION_INHIBITED) Log.Write("DVDPlayer:PlayAtTimeInTitle( {0}:{1:00}:{2:00}) not allowed at this point",hours,minutes,seconds);
@@ -1270,7 +1272,8 @@ namespace MediaPortal.Player
               else Log.WriteFile(Log.LogType.Log,true,"DVDPlayer:PlayAtTimeInTitle( {0}:{1:00}:{2:00}) failed:0x{3:X}",hours,minutes,seconds,hr); 
             }
             //SetDefaultLanguages();
-            //_dvdCtrl.Pause(false);
+						
+						Log.Write("DVDPlayer:Seek to {0}:{1}:{2} done", hours,minutes,seconds);
           }
         }
       }
