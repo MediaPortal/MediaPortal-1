@@ -24,6 +24,7 @@
 #endregion
 
 using System;
+using System.ComponentModel;
 using System.Collections;
 using System.Windows;
 
@@ -34,22 +35,26 @@ using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Controls
 {
-	public class FrameworkElement : UIElement //, ISupportInitialize
+	public class FrameworkElement : UIElement, IResourceHost, ISupportInitialize
 	{
 		#region Constructors
 
 		static FrameworkElement()
 		{
-			ActualHeightProperty = DependencyProperty.Register("ActualHeight", typeof(double), typeof(FrameworkElement), new PropertyMetadata(0.0));
-			ActualWidthProperty = DependencyProperty.Register("ActualWidth", typeof(double), typeof(FrameworkElement), new PropertyMetadata(0.0));
+			ActualHeightProperty = DependencyProperty.Register("ActualHeight", typeof(double), typeof(FrameworkElement), new PropertyMetadata(0.0, new PropertyInvalidatedCallback(ActualHeightPropertyInvalidated)));
+			ActualWidthProperty = DependencyProperty.Register("ActualWidth", typeof(double), typeof(FrameworkElement), new PropertyMetadata(0.0, new PropertyInvalidatedCallback(ActualWidthPropertyInvalidated)));
+			FlowDirectionProperty = DependencyProperty.Register("FlowDirection", typeof(FlowDirection), typeof(FrameworkElement), new PropertyMetadata(FlowDirection.LeftToRight));
 			FocusableProperty = DependencyProperty.Register("Focusable", typeof(bool), typeof(FrameworkElement), new PropertyMetadata(true));
 			HeightProperty = DependencyProperty.Register("Height", typeof(double), typeof(FrameworkElement), new PropertyMetadata(0.0));
-			HorizontalAlignmentProperty = DependencyProperty.Register("HorizontalAlignment", typeof(HorizontalAlignment), typeof(FrameworkElement), new PropertyMetadata(HorizontalAlignment.Left));
+			HorizontalAlignmentProperty = DependencyProperty.Register("HorizontalAlignment", typeof(HorizontalAlignment), typeof(FrameworkElement), new PropertyMetadata(HorizontalAlignment.Stretch));
 			MarginProperty = DependencyProperty.Register("Margin", typeof(Thickness), typeof(FrameworkElement), new PropertyMetadata(Thickness.Empty));
 			NameProperty = DependencyProperty.Register("Name", typeof(string), typeof(FrameworkElement), new PropertyMetadata(string.Empty));
 			StyleProperty = DependencyProperty.Register("Style", typeof(Style), typeof(FrameworkElement));
-			VerticalAlignmentProperty = DependencyProperty.Register("VerticalAlignment", typeof(VerticalAlignment), typeof(FrameworkElement), new PropertyMetadata(VerticalAlignment.Top));
+			VerticalAlignmentProperty = DependencyProperty.Register("VerticalAlignment", typeof(VerticalAlignment), typeof(FrameworkElement), new PropertyMetadata(VerticalAlignment.Stretch));
 			WidthProperty = DependencyProperty.Register("Width", typeof(double), typeof(FrameworkElement), new PropertyMetadata(0.0));
+
+			LoadedEvent = EventManager.RegisterRoutedEvent("Loaded", RoutingStrategy.Direct, typeof(RoutedEventHandler), typeof(FrameworkElement));
+			SizeChangedEvent = EventManager.RegisterRoutedEvent("SizeChanged", RoutingStrategy.Direct, typeof(RoutedEventHandler), typeof(FrameworkElement));
 		}	
 			
 		public FrameworkElement()
@@ -57,6 +62,26 @@ namespace MediaPortal.Controls
 		}
 
 		#endregion Constructors
+
+		#region Events
+
+		public event EventHandler Initialized;
+
+		public event RoutedEventHandler Loaded
+		{
+			add		{ AddHandler(LoadedEvent, value); } 
+			remove	{ RemoveHandler(LoadedEvent, value); }
+		}
+
+		public event RoutedEventHandler SizeChanged
+		{
+			add		{ AddHandler(SizeChangedEvent, value); } 
+			remove	{ RemoveHandler(SizeChangedEvent, value); }
+		}
+
+		public event EventHandler Unloaded;
+
+		#endregion Events
 
 		#region Events (Routed)
 
@@ -66,6 +91,20 @@ namespace MediaPortal.Controls
 		#endregion Events (Routed)
 
 		#region Methods
+
+		private static void ActualHeightPropertyInvalidated(DependencyObject d)
+		{
+			FrameworkElement element = (FrameworkElement)d;
+
+			element.RaiseEvent(new RoutedEventArgs(SizeChangedEvent, d));
+		}
+
+		private static void ActualWidthPropertyInvalidated(DependencyObject d)
+		{
+			FrameworkElement element = (FrameworkElement)d;
+
+			element.RaiseEvent(new RoutedEventArgs(SizeChangedEvent, d));
+		}
 
 		protected override sealed void ArrangeCore(Rect finalRect)
 		{
@@ -83,6 +122,38 @@ namespace MediaPortal.Controls
 			return finalRect.Size;
 		}
 
+		void ISupportInitialize.BeginInit()
+		{
+		}
+
+		void ISupportInitialize.EndInit()
+		{
+			_isInitialized = true;
+
+			OnInitialized(EventArgs.Empty);
+
+			if(Initialized != null)
+				Initialized(this, EventArgs.Empty);
+		}
+
+		public static FlowDirection GetFlowDirection(DependencyObject d)
+		{
+			return (FlowDirection)d.GetValue(FlowDirectionProperty);
+		}
+
+		object IResourceHost.GetResource(object key)
+		{
+			if(_resources == null)
+				return null;
+
+			return _resources[key];
+		}
+
+		protected override object GetValueCore(DependencyProperty dp, object baseValue, PropertyMetadata metadata)
+		{
+			return null;
+		}
+
 		protected override sealed Size MeasureCore(Size availableSize)
 		{
 			return MeasureOverride(availableSize);
@@ -93,6 +164,20 @@ namespace MediaPortal.Controls
 			return new Size((double)GetValue(WidthProperty), (double)GetValue(HeightProperty));
 		}
 
+		protected virtual void OnInitialized(EventArgs e)
+		{
+		}
+
+		protected internal override void OnVisualParentChanged(Visual oldParent)
+		{
+			_isInitialized = true;
+
+			OnInitialized(EventArgs.Empty);
+
+			if(Initialized != null)
+				Initialized(this, EventArgs.Empty);
+		}
+			
 		protected void PrepareTriggers()
 		{
 			if(Triggers == null)
@@ -120,6 +205,11 @@ namespace MediaPortal.Controls
 			}
 		}
 
+		public static void SetFlowDirection(DependencyObject d, FlowDirection flowDirection)
+		{
+			d.SetValue(FlowDirectionProperty, flowDirection);
+		}
+
 		#endregion Methods
 
 		#region Properties
@@ -127,28 +217,27 @@ namespace MediaPortal.Controls
 		// TODO: should not be virtual and must be double
 		public virtual int ActualHeight
 		{
-			get { return (int)GetValue(ActualHeightProperty); }
+			get { return (int)(double)GetValue(ActualHeightProperty); }
 			set { SetValue(ActualHeightProperty, (double)value); }
 		}
 
 		// TODO: should not be virtual and must be double
 		public virtual int ActualWidth
 		{
-			get { return (int)GetValue(ActualWidthProperty); }
+			get { return (int)(double)GetValue(ActualWidthProperty); }
 			set { SetValue(ActualWidthProperty, (double)value); }
+		}
+
+		public FlowDirection FlowDirection
+		{
+			get { return (FlowDirection)GetValue(FlowDirectionProperty); }
+			set { SetValue(FlowDirectionProperty, value); }
 		}
 
 		public bool Focusable
 		{
 			get { return (bool)GetValue(FocusableProperty); }
 			set { SetValue(FocusableProperty, value); }
-		}
-
-		// TODO: Remove this
-		public virtual Point Location
-		{
-			get { return _location; }
-			set { _location = value; }
 		}
 
 		// TODO: should not be virtual and must be double
@@ -162,6 +251,29 @@ namespace MediaPortal.Controls
 		{
 			get { return (HorizontalAlignment)GetValue(HorizontalAlignmentProperty); }
 			set { SetValue(HorizontalAlignmentProperty, value); }
+		}
+
+		public bool IsInitialized
+		{
+			get { return _isInitialized; }
+		}
+
+		public bool IsLoaded
+		{
+			get { return _isLoaded; }
+		}
+
+		protected bool IsTreeSeperator
+		{
+			get { return _isTreeSeperator; }
+			set { if(_isLoaded == false) throw new InvalidOperationException(); _isTreeSeperator = value; }
+		}
+
+		// TODO: Remove this
+		public virtual Point Location
+		{
+			get { return _location; }
+			set { _location = value; }
 		}
 
 		protected internal virtual IEnumerator LogicalChildren
@@ -179,6 +291,11 @@ namespace MediaPortal.Controls
 		{
 			get { return (string)GetValue(NameProperty); }
 			set { SetValue(NameProperty, value); }
+		}
+
+		IResourceHost IResourceHost.ParentResourceHost
+		{
+			get { return base.VisualParent as IResourceHost; }
 		}
 		
 		public ResourceDictionary Resources
@@ -217,6 +334,7 @@ namespace MediaPortal.Controls
 
 		public static readonly DependencyProperty ActualHeightProperty;
 		public static readonly DependencyProperty ActualWidthProperty;
+		public static readonly DependencyProperty FlowDirectionProperty;
 		public static readonly DependencyProperty FocusableProperty;
 		public static readonly DependencyProperty HeightProperty;
 		public static readonly DependencyProperty HorizontalAlignmentProperty;
@@ -230,6 +348,9 @@ namespace MediaPortal.Controls
 
 		#region Fields
 
+		bool						_isInitialized = false;
+		bool						_isLoaded = false;
+		bool						_isTreeSeperator = false;
 		Point						_location = Point.Empty;
 		ResourceDictionary			_resources;
 		TriggerCollection			_triggers;

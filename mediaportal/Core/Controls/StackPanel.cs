@@ -84,22 +84,21 @@ namespace MediaPortal.Controls
 
 		protected override Size ArrangeOverride(Rect finalRect)
 		{
-			FrameworkElement element = this;
+			Thickness t = Margin;
 
-			Thickness t = element.Margin;
-			Point l = element.Location;
+			Orientation orientation = this.Orientation;
 
-			double x = element.Location.X + t.Left;
-			double y = element.Location.Y + t.Top;
-			double w = _orientation != Orientation.Horizontal ? Math.Max(0, element.Width - t.Width) : 0;
-			double h = _orientation == Orientation.Horizontal ? Math.Max(0, element.Height - t.Height) : 0;
+			double x = this.Location.X + t.Left;
+			double y = this.Location.Y + t.Top;
+			double w = orientation != Orientation.Horizontal ? Math.Max(0, this.Width - t.Width) : 0;
+			double h = orientation == Orientation.Horizontal ? Math.Max(0, this.Height - t.Height) : 0;
 
 			foreach(FrameworkElement child in Children)
 			{
 				if(child.Visibility == System.Windows.Visibility.Collapsed)
 					continue;
 
-				if(_orientation == Orientation.Horizontal)
+				if(orientation == Orientation.Horizontal)
 				{
 					ApplyAlignment(child, t, x, y, w = child.Width, h);
 
@@ -141,6 +140,7 @@ namespace MediaPortal.Controls
 			double w = 0;
 			double h = 0;
 
+			Orientation orientation = this.Orientation;
 			Thickness t = this.Margin;
 
 			foreach(FrameworkElement child in this.Children)
@@ -150,8 +150,8 @@ namespace MediaPortal.Controls
 
 				child.Measure(availableSize);
 
-				w = _orientation != Orientation.Horizontal ? Math.Max(w, child.Width) : w + child.Width + t.Width;
-				h = _orientation == Orientation.Horizontal ? Math.Max(h, child.Height) : h + child.Height + t.Height;
+				w = orientation != Orientation.Horizontal ? Math.Max(w, child.Width) : w + child.Width + t.Width;
+				h = orientation == Orientation.Horizontal ? Math.Max(h, child.Height) : h + child.Height + t.Height;
 			}
 
 			_size.Width = w + t.Width;

@@ -256,7 +256,7 @@ namespace MediaPortal.GUI.Library
 
 			try
 			{
-				if(control is ISupportInitialize)
+//				if(control is ISupportInitialize)
 					((ISupportInitialize)control).BeginInit();
 
 				XmlNode referenceNode = 
@@ -299,7 +299,7 @@ namespace MediaPortal.GUI.Library
 					}
 				}
 
-				if(control is ISupportInitialize)
+//				if(control is ISupportInitialize)
 					((ISupportInitialize)control).EndInit();
 			}
 			catch(Exception e)

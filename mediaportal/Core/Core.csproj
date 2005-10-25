@@ -2334,12 +2334,22 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows\FlowDirection.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows\GetValueOverride.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "System.Windows\INameScope.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows\IResourceHost.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
