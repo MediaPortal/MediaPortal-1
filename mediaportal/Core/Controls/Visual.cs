@@ -38,6 +38,8 @@ namespace MediaPortal.Controls
 
 		#endregion Constructors
 
+		#region Methods
+
 		protected internal virtual void OnVisualChildrenChanged(DependencyObject visualAdded, DependencyObject visualRemoved, int indexAffected)
 		{
 		}
@@ -45,6 +47,8 @@ namespace MediaPortal.Controls
 		protected internal virtual void OnVisualParentChanged(Visual oldParent)
 		{
 		}
+
+		#endregion Methods
 			
 		#region Properties
 

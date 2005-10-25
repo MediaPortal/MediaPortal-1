@@ -38,6 +38,16 @@ namespace MediaPortal.Controls
 	{
 		#region Constructors
 
+		static UIElement()
+		{
+			IsEnabledProperty = DependencyProperty.Register("IsEnabled", typeof(bool), typeof(UIElement), new PropertyMetadata(true));
+			IsFocusedProperty = DependencyProperty.Register("IsFocused", typeof(bool), typeof(UIElement), new PropertyMetadata(false));
+			IsVisibleProperty = DependencyProperty.Register("IsVisible", typeof(bool), typeof(UIElement), new PropertyMetadata(true));
+			OpacityMaskProperty = DependencyProperty.Register("OpacityMask", typeof(Brush), typeof(UIElement));
+			OpacityProperty = DependencyProperty.Register("Opacity", typeof(double), typeof(UIElement), new PropertyMetadata(1.0));
+			VisibilityProperty = DependencyProperty.Register("IsEnabled", typeof(Visibility), typeof(UIElement), new PropertyMetadata(Visibility.Visible));
+		}
+
 		public UIElement()
 		{
 		}
@@ -168,6 +178,17 @@ namespace MediaPortal.Controls
 		}
 
 		#endregion Properties
+
+		#region Properties (Dependency)
+
+		public static readonly DependencyProperty IsEnabledProperty;
+		public static readonly DependencyProperty IsFocusedProperty;
+		public static readonly DependencyProperty IsVisibleProperty;
+		public static readonly DependencyProperty OpacityProperty;
+		public static readonly DependencyProperty OpacityMaskProperty;
+		public static readonly DependencyProperty VisibilityProperty;
+
+		#endregion Properties (Dependency)
 
 		#region Fields
 

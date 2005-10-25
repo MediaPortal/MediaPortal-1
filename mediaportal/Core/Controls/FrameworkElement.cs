@@ -34,15 +34,36 @@ using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Controls
 {
-	public class FrameworkElement : UIElement
+	public class FrameworkElement : UIElement //, ISupportInitialize
 	{
 		#region Constructors
 
+		static FrameworkElement()
+		{
+			ActualHeightProperty = DependencyProperty.Register("ActualHeight", typeof(double), typeof(FrameworkElement), new PropertyMetadata(0.0));
+			ActualWidthProperty = DependencyProperty.Register("ActualWidth", typeof(double), typeof(FrameworkElement), new PropertyMetadata(0.0));
+			FocusableProperty = DependencyProperty.Register("Focusable", typeof(bool), typeof(FrameworkElement), new PropertyMetadata(true));
+			HeightProperty = DependencyProperty.Register("Height", typeof(double), typeof(FrameworkElement), new PropertyMetadata(0.0));
+			HorizontalAlignmentProperty = DependencyProperty.Register("HorizontalAlignment", typeof(HorizontalAlignment), typeof(FrameworkElement), new PropertyMetadata(HorizontalAlignment.Left));
+			MarginProperty = DependencyProperty.Register("Margin", typeof(Thickness), typeof(FrameworkElement), new PropertyMetadata(Thickness.Empty));
+			NameProperty = DependencyProperty.Register("Name", typeof(string), typeof(FrameworkElement), new PropertyMetadata(string.Empty));
+			StyleProperty = DependencyProperty.Register("Style", typeof(Style), typeof(FrameworkElement));
+			VerticalAlignmentProperty = DependencyProperty.Register("VerticalAlignment", typeof(VerticalAlignment), typeof(FrameworkElement), new PropertyMetadata(VerticalAlignment.Top));
+			WidthProperty = DependencyProperty.Register("Width", typeof(double), typeof(FrameworkElement), new PropertyMetadata(0.0));
+		}	
+			
 		public FrameworkElement()
 		{
 		}
 
 		#endregion Constructors
+
+		#region Events (Routed)
+
+		public static readonly RoutedEvent LoadedEvent;
+		public static readonly RoutedEvent SizeChangedEvent;
+
+		#endregion Events (Routed)
 
 		#region Methods
 
@@ -55,8 +76,9 @@ namespace MediaPortal.Controls
 		protected virtual Size ArrangeOverride(Rect finalRect)
 		{
 			_location = finalRect.Location;
-			_width = finalRect.Width;
-			_height = finalRect.Height;
+
+			SetValue(WidthProperty, finalRect.Width);
+			SetValue(HeightProperty, finalRect.Height);
 
 			return finalRect.Size;
 		}
@@ -68,7 +90,7 @@ namespace MediaPortal.Controls
 
 		protected virtual Size MeasureOverride(Size availableSize)
 		{
-			return new Size(_width, _height);
+			return new Size((double)GetValue(WidthProperty), (double)GetValue(HeightProperty));
 		}
 
 		protected void PrepareTriggers()
@@ -102,6 +124,27 @@ namespace MediaPortal.Controls
 
 		#region Properties
 
+		// TODO: should not be virtual and must be double
+		public virtual int ActualHeight
+		{
+			get { return (int)GetValue(ActualHeightProperty); }
+			set { SetValue(ActualHeightProperty, (double)value); }
+		}
+
+		// TODO: should not be virtual and must be double
+		public virtual int ActualWidth
+		{
+			get { return (int)GetValue(ActualWidthProperty); }
+			set { SetValue(ActualWidthProperty, (double)value); }
+		}
+
+		public bool Focusable
+		{
+			get { return (bool)GetValue(FocusableProperty); }
+			set { SetValue(FocusableProperty, value); }
+		}
+
+		// TODO: Remove this
 		public virtual Point Location
 		{
 			get { return _location; }
@@ -111,14 +154,14 @@ namespace MediaPortal.Controls
 		// TODO: should not be virtual and must be double
 		public virtual int Height
 		{
-			get { return (int)_height; }
-			set { _height = value; }
+			get { return (int)(double)GetValue(HeightProperty); }
+			set { SetValue(HeightProperty, (double)value); }
 		}
 
 		public HorizontalAlignment HorizontalAlignment
 		{
-			get { return _horizontalAlignment; }
-			set { _horizontalAlignment = value; }
+			get { return (HorizontalAlignment)GetValue(HorizontalAlignmentProperty); }
+			set { SetValue(HorizontalAlignmentProperty, value); }
 		}
 
 		protected internal virtual IEnumerator LogicalChildren
@@ -128,14 +171,14 @@ namespace MediaPortal.Controls
 
 		public Thickness Margin
 		{
-			get { return _margin; }
-			set { _margin = value; }
+			get { return (Thickness)GetValue(MarginProperty); }
+			set { SetValue(MarginProperty, value); }
 		}
 
 		public string Name
 		{
-			get { return _name; }
-			set { _name = value; }
+			get { return (string)GetValue(NameProperty); }
+			set { SetValue(NameProperty, value); }
 		}
 		
 		public ResourceDictionary Resources
@@ -146,8 +189,8 @@ namespace MediaPortal.Controls
 
 		public Style Style
 		{
-			get { return _style; }
-			set { _style = value; }
+			get { return (Style)GetValue(StyleProperty); }
+			set { SetValue(StyleProperty, value); }
 		}
 
 		public TriggerCollection Triggers
@@ -157,31 +200,39 @@ namespace MediaPortal.Controls
 
 		public VerticalAlignment VerticalAlignment
 		{
-			get { return _verticalAlignment; }
-			set { _verticalAlignment = value; }
+			get { return (VerticalAlignment)GetValue(VerticalAlignmentProperty); }
+			set { SetValue(VerticalAlignmentProperty, value); }
 		}
 
 		// TODO: should not be virtual and must be double
 		public virtual int Width
 		{
-			get { return (int)_width; }
-			set { _width = value; }
+			get { return (int)((double)GetValue(WidthProperty)); }
+			set { SetValue(WidthProperty, (double)value); }
 		}
 
 		#endregion Properties
 
+		#region Properties (Dependency)
+
+		public static readonly DependencyProperty ActualHeightProperty;
+		public static readonly DependencyProperty ActualWidthProperty;
+		public static readonly DependencyProperty FocusableProperty;
+		public static readonly DependencyProperty HeightProperty;
+		public static readonly DependencyProperty HorizontalAlignmentProperty;
+		public static readonly DependencyProperty MarginProperty;
+		public static readonly DependencyProperty NameProperty;
+		public static readonly DependencyProperty StyleProperty;
+		public static readonly DependencyProperty VerticalAlignmentProperty;
+		public static readonly DependencyProperty WidthProperty;
+
+		#endregion Properties (Dependency)
+
 		#region Fields
 
-		double						_height;
-		HorizontalAlignment			_horizontalAlignment;
 		Point						_location = Point.Empty;
-		Thickness					_margin;
-		string						_name = string.Empty;
-		Style						_style;
 		ResourceDictionary			_resources;
 		TriggerCollection			_triggers;
-		VerticalAlignment			_verticalAlignment;
-		double						_width;
 
 		#endregion Fields
 	}
