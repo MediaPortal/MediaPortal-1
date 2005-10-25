@@ -1768,9 +1768,9 @@
 		<filter cat="mux"			name="C-Cube DVx MPEG Multiplexer"		checkdevice="false"></filter>
       </filters>
       <connections>
-        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
         <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
-        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar" 	sinkpin="7"></connection>
         <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
         <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
         <connection sourcefilter="capture"		sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
@@ -1795,9 +1795,9 @@
 		<filter cat="mux"			name="C-Cube DVx MPEG Multiplexer"		checkdevice="false"></filter>
       </filters>
       <connections>
-        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar" 	sinkpin="2"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
         <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"  	sinkpin="0"></connection>
-        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar" 	sinkpin="4"></connection>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar" 	sinkpin="7"></connection>
         <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"  	sinkpin="0"></connection>
         <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"      sinkpin="1"></connection>
         <connection sourcefilter="capture"		sourcepin="0" sinkfilter="encodervideo" sinkpin="0"></connection>
