@@ -24,6 +24,8 @@
 #endregion
 
 using System;
+using System.Collections;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Serialization;
 
@@ -120,6 +122,41 @@ namespace MediaPortal.Controls
 		}
 
 		#endregion Methods
+
+		#region Properties
+
+		[BindableAttribute(true)]
+		public object Content
+		{
+			get { return GetValue(ContentProperty); }
+			set { SetValue(ContentProperty, value); }
+		}
+
+		[BindableAttribute(true)] 
+		public DataTemplate ContentTemplate
+		{
+			get { return (DataTemplate)GetValue(ContentTemplateProperty); }
+			set { SetValue(ContentTemplateProperty, value); }
+		}
+
+		[BindableAttribute(true)] 
+		public DataTemplateSelector ContentTemplateSelector
+		{
+			get { return (DataTemplateSelector)GetValue(ContentTemplateSelectorProperty); }
+			set { SetValue(ContentTemplateSelectorProperty, value); }
+		}
+
+		public bool HasContent
+		{
+			get { return (bool)GetValue(HasContentProperty); }
+		}
+
+		protected internal override IEnumerator LogicalChildren
+		{
+			get { throw new NotImplementedException(); }
+		}
+
+		#endregion Properties
 
 		#region Properties (Dependency)
 

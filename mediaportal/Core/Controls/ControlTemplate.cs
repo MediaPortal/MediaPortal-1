@@ -24,13 +24,54 @@
 #endregion
 
 using System;
+using System.Windows;
 
 namespace MediaPortal.Controls
 {
-	public class ControlTemplate
+	public class ControlTemplate : FrameworkTemplate
 	{
+		#region Constructors
+
 		public ControlTemplate()
 		{
 		}
+
+		public ControlTemplate(Type targetType)
+		{
+			_targetType = targetType;
+		}
+
+		#endregion Constructors
+
+		#region Methods
+
+		protected override void ValidateTemplatedParent(FrameworkElement templatedParent)
+		{
+			throw new NotImplementedException();
+		}
+
+		#endregion Methods
+
+		#region Properties
+
+		public Type TargetType
+		{
+			get { return _targetType; }
+			set { _targetType = value; }
+		}
+
+		public TriggerCollection Triggers
+		{
+			get { if(_triggers == null) _triggers = new TriggerCollection(); return _triggers; }
+		}
+
+		#endregion Properties
+
+		#region Fields
+
+		Type						_targetType;
+		TriggerCollection			_triggers;
+
+		#endregion Fields
 	}
 }
