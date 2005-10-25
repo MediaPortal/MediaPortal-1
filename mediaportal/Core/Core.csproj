@@ -214,6 +214,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Animation\Animatable.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Animation\AnimationBase.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -2370,6 +2375,11 @@
                 />
                 <File
                     RelPath = "System.Windows\FlowDirection.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows\Freezable.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
