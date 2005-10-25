@@ -25,11 +25,11 @@
 
 using System;
 using System.ComponentModel;
-using System.Xml;
+//using System.Xml;
 
 namespace System.Windows
 {
-	public sealed class Setter
+	public sealed class Setter : SetterBase
 	{
 		#region Constructors
 

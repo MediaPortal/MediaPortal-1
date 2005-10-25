@@ -24,64 +24,34 @@
 #endregion
 
 using System;
-using System.ComponentModel;
-using System.Windows.Serialization;
 
 namespace System.Windows
 {
-	public sealed class Trigger : TriggerBase, IAddChild
+	public abstract class SetterBase
 	{
-		#region Constructors
-
-		public Trigger()
-		{
-		}
-
-		#endregion Constructors
-
 		#region Methods
 
-		void IAddChild.AddChild(object child)
+		protected void CheckSealed()
 		{
-			if(child == null)
-				throw new ArgumentNullException("child");
-
-			if(child is SetterBase == false)
-				throw new Exception(string.Format("Cannot convert '{0}' to type '{1}'", child.GetType(), typeof(Trigger)));
-
-			if(_setters == null)
-				_setters = new SetterBaseCollection();
-
-			_setters.Add((Setter)child);
-		}
-
-		void IAddChild.AddText(string text)
-		{
-			throw new NotSupportedException();
-		}
+			if(_isSealed)
+				throw new InvalidOperationException();
+		}	
 
 		#endregion Methods
 
 		#region Properties
-		
-		public SetterBaseCollection Setters
-		{
-			get { if(_setters == null) _setters = new SetterBaseCollection(); return _setters; }
-		}
 
-		public object Value
-		{ 
-			get { return _value; }
-			set { _value = value; }
+		public bool IsSealed
+		{
+			get { return _isSealed; }
 		}
 
 		#endregion Properties
 
-		#region Fields
+		#region Methods
 
-		SetterBaseCollection		_setters;
-		object						_value;
+		bool					_isSealed = false;
 
-		#endregion Fields
+		#endregion Methods
 	}
 }

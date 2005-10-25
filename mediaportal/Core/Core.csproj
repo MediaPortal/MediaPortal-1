@@ -454,6 +454,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Controls\Dock.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Controls\DockPanel.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Controls\FrameworkElement.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -880,11 +890,6 @@
                 />
                 <File
                     RelPath = "Drawing\VerticalAlignment.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing.Layouts\Dock.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -2449,6 +2454,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows\RoutedEventHandlerInfo.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows\RoutingStrategy.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -2459,7 +2469,12 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Windows\SetterCollection.cs"
+                    RelPath = "System.Windows\SetterBase.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows\SetterBaseCollection.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

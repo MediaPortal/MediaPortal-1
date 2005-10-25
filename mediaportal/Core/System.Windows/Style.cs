@@ -64,7 +64,7 @@ namespace System.Windows
 		void IAddChild.AddChild(object child)
 		{
 			if(_setters == null)
-				_setters = new SetterCollection();
+				_setters = new SetterBaseCollection();
 
 			_setters.Add((Setter)child);
 		}
@@ -119,9 +119,9 @@ namespace System.Windows
 			get { if(_resources == null) _resources = new ResourceDictionary(); return _resources; }
 		}
 
-		public SetterCollection Setters
+		public SetterBaseCollection Setters
 		{ 
-			get { if(_setters == null) _setters = new SetterCollection(); return _setters; }
+			get { if(_setters == null) _setters = new SetterBaseCollection(); return _setters; }
 		}
 
 		IResourceHost IResourceHost.ParentResourceHost
@@ -149,7 +149,7 @@ namespace System.Windows
 		static int					_globalIndexNext = 0;
 		bool						_isSealed = false;
 		ResourceDictionary			_resources;
-		SetterCollection			_setters;
+		SetterBaseCollection		_setters;
 		static Hashtable			_styles = new Hashtable();
 		TriggerCollection			_triggers;
 		Type						_targetType;

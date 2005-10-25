@@ -62,10 +62,12 @@ namespace System.Windows
 
 		public static void RegisterClassHandler(Type classType, RoutedEvent routedEvent, Delegate handler)
 		{
+			RegisterClassHandler(classType, routedEvent, handler, false);
 		}
 			
 		public static void RegisterClassHandler(Type classType, RoutedEvent routedEvent, Delegate handler, bool handledEventsToo)
 		{
+			_classHandlers[classType.GetHashCode() ^ routedEvent.GetHashCode()] = new RoutedEventHandlerInfo(handler, false);
 		}
 
 		public static RoutedEvent RegisterRoutedEvent(string name, RoutingStrategy routingStrategy, Type handlerType, Type ownerType)
@@ -93,6 +95,7 @@ namespace System.Windows
 
 		static Hashtable			_routedEventsByName = new Hashtable();
 		static Hashtable			_routedEventsByOwner = new Hashtable();
+		static Hashtable			_classHandlers = new Hashtable();
 
 		#endregion Fields
 	}
