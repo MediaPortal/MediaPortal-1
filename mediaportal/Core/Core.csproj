@@ -409,6 +409,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Automation\IInvokeProvider.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Controls\Button.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -419,7 +424,32 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Controls\ClickMode.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Controls\ContentControl.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Controls\Control.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Controls\ControlTemplate.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Controls\DataTemplate.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Controls\DataTemplateSelector.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -1740,6 +1770,11 @@
                 />
                 <File
                     RelPath = "guilib\XMLSkinElementAttribute.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Input\ICommand.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

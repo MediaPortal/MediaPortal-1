@@ -24,15 +24,28 @@
 #endregion
 
 using System;
+using System.ComponentModel;
 using System.Windows;
+
+using MediaPortal.Input;
 
 namespace MediaPortal.Controls
 {
-	public class ButtonBase : FrameworkElement
+	public abstract class ButtonBase : ContentControl
 	{
 		#region Constructors
 
-		public ButtonBase()
+		static ButtonBase()
+		{
+			ClickModeProperty = DependencyProperty.Register("ClickMode", typeof(ClickMode), typeof(ButtonBase), new PropertyMetadata(ClickMode.OnRelease));
+			CommandParameterProperty = DependencyProperty.Register("CommandParameter", typeof(object), typeof(ButtonBase));
+			CommandProperty = DependencyProperty.Register("Command", typeof(ClickMode), typeof(ButtonBase), new PropertyMetadata(ClickMode.OnRelease));
+			IsPressedProperty = DependencyProperty.Register("IsPressed", typeof(bool), typeof(ButtonBase), new PropertyMetadata(false));
+
+			ClickEvent = EventManager.RegisterRoutedEvent("Click", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(Button));
+		}
+
+		protected ButtonBase()
 		{
 		}
 
@@ -50,8 +63,57 @@ namespace MediaPortal.Controls
 
 		#region Events (Routed)
 
-		public static readonly RoutedEvent ClickEvent = EventManager.RegisterRoutedEvent("Click", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(Button));
+		public static readonly RoutedEvent ClickEvent;
 
 		#endregion Events (Routed)
+
+		#region Methods
+
+		protected virtual void OnClick()
+		{
+		}
+
+		#endregion Methods
+
+		#region Properties
+
+		[BindableAttribute(true)] 
+		public ClickMode ClickMode
+		{
+			get { return (ClickMode)GetValue(ClickModeProperty); }
+			set { SetValue(ClickModeProperty, value); }
+		}
+
+		[BindableAttribute(true)] 
+		public ICommand Command
+		{
+			get { return (ICommand)GetValue(CommandProperty); }
+			set { SetValue(CommandProperty, value);  }
+		}
+
+		[BindableAttribute(true)] 
+		public object CommandParameter
+		{
+			get { return GetValue(CommandParameterProperty); }
+			set { SetValue(CommandParameterProperty, value); }
+		}
+
+		[BindableAttribute(true)] 
+		public bool IsPressed
+		{
+			get { return (bool)GetValue(IsPressedProperty); }
+			set { SetValue(IsPressedProperty, value); }
+		}
+
+		#endregion Properties
+
+		#region Properties (Dependency)
+
+		public static readonly DependencyProperty ClickModeProperty;
+		public static readonly DependencyProperty CommandParameterProperty;
+		public static readonly DependencyProperty CommandProperty;
+		public static readonly DependencyProperty IsPressedProperty;
+
+		#endregion Properties (Dependency)
 	}
 }

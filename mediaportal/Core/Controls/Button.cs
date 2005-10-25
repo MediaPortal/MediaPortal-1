@@ -26,19 +26,41 @@
 using System;
 using System.Windows;
 
+using MediaPortal.Automation;
 using MediaPortal.Drawing;
 
 namespace MediaPortal.Controls
 {
-	public class Button : ButtonBase
+	public class Button : ButtonBase, IInvokeProvider
 	{
 		#region Constructors
 		
+		static Button()
+		{
+			IsCancelProperty = DependencyProperty.Register("IsCancel", typeof(bool), typeof(Button), new PropertyMetadata(false));
+			IsDefaultedProperty = DependencyProperty.Register("IsDefaulted", typeof(bool), typeof(Button), new PropertyMetadata(false));
+			IsDefaultProperty = DependencyProperty.Register("IsDefault", typeof(bool), typeof(Button), new PropertyMetadata(false));
+		}
+
 		public Button()
 		{
 		}
 
 		#endregion Constructors
+
+		#region Methods
+
+		void IInvokeProvider.Invoke()
+		{
+			throw new NotImplementedException();
+		}
+
+		protected override void OnClick()
+		{
+			throw new NotImplementedException();
+		}
+
+		#endregion Methods
 
 		#region Properties
 
@@ -48,7 +70,33 @@ namespace MediaPortal.Controls
 			set { _background = value; }
 		}
 
+		public bool IsCancel
+		{
+			get { return (bool)GetValue(IsCancelProperty); }
+			set { SetValue(IsCancelProperty, value); }
+		}
+
+		public bool IsDefault
+		{
+			get { return (bool)GetValue(IsDefaultProperty); }
+			set { SetValue(IsDefaultProperty, value); }
+		}
+
+		public bool IsDefaulted
+		{
+			get { return (bool)GetValue(IsDefaultedProperty); }
+			set { SetValue(IsDefaultedProperty, value); }
+		}
+		
 		#endregion Properties
+
+		#region Properties (Dependency)
+
+		public static readonly DependencyProperty IsCancelProperty;
+		public static readonly DependencyProperty IsDefaultedProperty;
+		public static readonly DependencyProperty IsDefaultProperty;
+
+		#endregion Properties (Dependency)
 
 		#region Fields
 
