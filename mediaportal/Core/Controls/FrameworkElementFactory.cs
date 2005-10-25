@@ -24,13 +24,118 @@
 #endregion
 
 using System;
+using System.Windows;
+using System.Windows.Data;
 
 namespace MediaPortal.Controls
 {
 	public class FrameworkElementFactory
 	{
+		#region Constructors
+
 		public FrameworkElementFactory()
 		{
 		}
+
+		public FrameworkElementFactory(string text)
+		{
+			_text = text;
+		}
+
+		public FrameworkElementFactory(Type type)		
+		{
+			_type = type;
+		}
+
+		public FrameworkElementFactory(Type type, string name)
+		{
+			_type = type;
+			_name = name;
+		}
+
+		#endregion Constructors
+
+		#region Methods
+
+		public void AddHandler(RoutedEvent routedEvent, Delegate handler)
+		{
+		}
+
+		public void AddHandler(RoutedEvent routedEvent, Delegate handler, bool handledEventsToo)
+		{
+		}
+
+		public void AppendChild(FrameworkElementFactory child)
+		{
+		}
+			
+		public void RemoveHandler(RoutedEvent routedEvent, Delegate handler)
+		{
+		}
+			
+		public void SetBinding(DependencyProperty dp, Binding binding)
+		{
+		}
+			
+		public void SetResourceReference(DependencyProperty dp, object name)
+		{
+		}
+			
+		public void SetValue(DependencyProperty dp, object value)
+		{
+		}
+			
+		#endregion Methods
+
+		#region Properties
+
+		public FrameworkElementFactory FirstChild
+		{
+			get { throw new NotImplementedException(); }
+		}
+
+		public bool IsSealed
+		{
+			get { return _isSealed; }
+		}
+
+		public string Name
+		{
+			get { return _name; }
+			set { _name = value; }
+		}
+
+		public FrameworkElementFactory NextSibling
+		{
+			get { throw new NotImplementedException(); }
+		}
+
+		public FrameworkElementFactory Parent
+		{
+			get { throw new NotImplementedException(); }
+		}
+
+		public string Text
+		{
+			get { return _text; }
+			set { _text = value; }
+		}
+		
+		public Type Type
+		{
+			get { return _type; }
+			set { _type = value; }
+		}
+
+		#endregion Properties
+
+		#region Fields
+
+		bool						_isSealed = false;
+		string						_name = string.Empty;
+		string						_text = string.Empty;
+		Type						_type = null;
+
+		#endregion Fields
 	}
 }
