@@ -2304,7 +2304,22 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows\DependencyObjectType.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows\DependencyProperty.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows\DependencyPropertyKey.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows\DispatcherObject.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -2319,7 +2334,32 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows\GetValueOverride.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows\INameScope.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows\LocalValueEntry.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows\LocalValueEnumerator.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows\PropertyInvalidatedCallback.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows\PropertyMetadata.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -2330,6 +2370,11 @@
                 />
                 <File
                     RelPath = "System.Windows\PropertyPathConverter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows\ReadLocalValueOverride.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -2379,6 +2424,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows\SetValueOverride.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows\StaticResourceExtension.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -2424,12 +2474,22 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows\ValidateValueCallback.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows\Visibility.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "System.Windows\WindowState.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows\WriteLocalValueOverride.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
