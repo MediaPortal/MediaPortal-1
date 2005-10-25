@@ -24,21 +24,71 @@
 #endregion
 
 using System;
+using System.Windows;
 
 namespace MediaPortal.Controls
 {
-	public class RowDefinition
+	public class RowDefinition : DefinitionBase
 	{
+		#region Constructors
+
+		static RowDefinition()
+		{
+			MaxHeightProperty = DependencyProperty.Register("MaxHeight", typeof(double), typeof(RowDefinition));
+			MinHeightProperty = DependencyProperty.Register("MinHeight", typeof(double), typeof(RowDefinition));
+			HeightProperty = DependencyProperty.Register("Height", typeof(GridLength), typeof(RowDefinition), new PropertyMetadata(new GridLength(GridUnitType.Star)));
+		}
+
 		public RowDefinition()
 		{
 		}
 
-		public GridLength Height
+		#endregion Constructors
+
+		#region Properties
+
+		public double ActualHeight
 		{
-			get { return _height; }
-			set { _height = value; }
+			get { return ((GridLength)GetValue(HeightProperty)).Value; }
 		}
 
-		GridLength _height = new GridLength();
+		public GridLength Height
+		{
+			get { return (GridLength)GetValue(HeightProperty); }
+			set { SetValue(HeightProperty, value); }
+		}
+
+		public double MaxHeight
+		{
+			get { return (double)GetValue(MaxHeightProperty); }
+			set { SetValue(MaxHeightProperty, value); }
+		}
+
+		public double MinHeight
+		{
+			get { return (double)GetValue(MinHeightProperty); }
+			set { SetValue(MinHeightProperty, value); }
+		}
+
+		public double Offset
+		{
+			get { return _offset; }
+		}
+
+		#endregion Properties
+
+		#region Properties (Dependency)
+	
+		public static readonly DependencyProperty HeightProperty;
+		public static readonly DependencyProperty MaxHeightProperty;
+		public static readonly DependencyProperty MinHeightProperty;
+
+		#endregion Properties (Dependency)
+
+		#region Fields
+
+		double						_offset = 0;
+
+		#endregion Fields
 	}
 }

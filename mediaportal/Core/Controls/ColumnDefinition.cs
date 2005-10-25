@@ -64,6 +64,11 @@ namespace MediaPortal.Controls
 			set { SetValue(MinWidthProperty, value); }
 		}
 
+		public double Offset
+		{
+			get { return _offset; }
+		}
+
 		public GridLength Width
 		{
 			get { return (GridLength)GetValue(WidthProperty); }
@@ -79,5 +84,11 @@ namespace MediaPortal.Controls
 		public static readonly DependencyProperty WidthProperty;
 
 		#endregion Properties (Dependency)
+
+		#region Fields
+
+		double						_offset = 0;
+
+		#endregion Fields
 	}
 }
