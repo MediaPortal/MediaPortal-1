@@ -46,6 +46,7 @@ namespace MediaPortal.Controls
 
 		protected override void ValidateTemplatedParent(FrameworkElement templatedParent)
 		{
+			throw new NotImplementedException();
 		}
 
 		#endregion Methods

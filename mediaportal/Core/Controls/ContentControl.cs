@@ -35,9 +35,9 @@ namespace MediaPortal.Controls
 
 		static ContentControl()
 		{
-			ContentProperty = DependencyProperty.Register("Content", typeof(object), typeof(ContentControl));
-			ContentTemplateProperty = DependencyProperty.Register("ContentTemplate", typeof(DataTemplate), typeof(ContentControl));
-			ContentTemplateSelectorProperty = DependencyProperty.Register("ContentTemplateSelector", typeof(DataTemplateSelector), typeof(ContentControl));
+			ContentProperty = DependencyProperty.Register("Content", typeof(object), typeof(ContentControl), new PropertyMetadata(new PropertyInvalidatedCallback(ContentChanged)));
+			ContentTemplateProperty = DependencyProperty.Register("ContentTemplate", typeof(DataTemplate), typeof(ContentControl), new PropertyMetadata(new PropertyInvalidatedCallback(ContentTemplateChanged)));
+			ContentTemplateSelectorProperty = DependencyProperty.Register("ContentTemplateSelector", typeof(DataTemplateSelector), typeof(ContentControl), new PropertyMetadata(new PropertyInvalidatedCallback(ContentTemplateSelectorChanged)));
 			HasContentProperty = DependencyProperty.Register("HasContent", typeof(bool), typeof(ContentControl), new PropertyMetadata(false));
 		}
 
@@ -67,6 +67,21 @@ namespace MediaPortal.Controls
 		{
 		}
 
+		protected static void ContentChanged(DependencyObject d)
+		{
+			((ContentControl)d).OnContentChanged(null, null);
+		}		
+
+		protected static void ContentTemplateChanged(DependencyObject d)
+		{
+			((ContentControl)d).OnContentTemplateChanged(null, null);
+		}		
+		
+		protected static void ContentTemplateSelectorChanged(DependencyObject d)
+		{
+			((ContentControl)d).OnContentTemplateChanged(null, null);
+		}		
+		
 		public static object GetContent(DependencyObject d)
 		{
 			return d.GetValue(ContentProperty);
