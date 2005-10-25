@@ -28,13 +28,18 @@ using System.Windows;
 
 using MediaPortal.Drawing;
 using MediaPortal.Drawing.Layouts;
-using MediaPortal.GUI.Library;
+//using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Controls
 {
 	public class StackPanel : Panel, IScrollInfo
 	{
 		#region Constructors
+
+		static StackPanel()
+		{
+			OrientationProperty = DependencyProperty.Register("Orientation", typeof(Orientation), typeof(StackPanel), new PropertyMetadata(Orientation.Vertical));
+		}
 
 		public StackPanel()
 		{
@@ -229,8 +234,8 @@ namespace MediaPortal.Controls
 
 		public Orientation Orientation
 		{
-			get { return _orientation; }
-			set { _orientation = value; }
+			get { return (Orientation)GetValue(OrientationProperty); }
+			set { SetValue(OrientationProperty, value); }
 		}
 
 //		public ScrollViewer ScrollOwner
@@ -253,7 +258,6 @@ namespace MediaPortal.Controls
 		{
 			get { return _viewportWidth; }
 		}
-			
 		
 		#endregion Properties
 
@@ -270,7 +274,6 @@ namespace MediaPortal.Controls
 		double						_extentHeight = 0;
 		double						_extentWidth = 0;
 		double						_horizontalOffset = 0;
-		Orientation					_orientation = Orientation.Vertical;
 		Size						_size = Size.Empty;
 		double						_verticalOffset = 0;
 		double						_viewportHeight = 0;

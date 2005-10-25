@@ -24,10 +24,11 @@
 #endregion
 
 using System;
+using System.ComponentModel;
+using System.Windows;
 using System.Windows.Serialization;
 
 using MediaPortal.Drawing;
-using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Controls
 {
@@ -35,10 +36,16 @@ namespace MediaPortal.Controls
 	{
 		#region Constructors
 
+		static Panel()
+		{
+			BackgroundProperty = DependencyProperty.Register("Background", typeof(Brush), typeof(Panel));
+			IsItemsHostProperty = DependencyProperty.Register("IsItemsHostProperty", typeof(bool), typeof(Panel), new PropertyMetadata(false));
+		}
+
 		public Panel()
 		{
 		}
-
+		
 		#endregion Constructors
 
 		#region Methods
@@ -60,13 +67,19 @@ namespace MediaPortal.Controls
 
 //		protected virtual UIElementCollection CreateUIElementCollection(FrameworkElement logicalParent)
 
-//		public static Brush GetBackground(DependencyObject d)
+		public static Brush GetBackground(DependencyObject d)
+		{
+			return (Brush)d.GetValue(BackgroundProperty);
+		}
 
 //		protected virtual void OnIsItemsHostChanged(bool oldIsItemsHost, bool newIsItemsHost)
 			
 //		protected override void OnRender(DrawingContext dc)
 
-//		public static void SetBackground(DependencyObject d, Brush background);
+		public static void SetBackground(DependencyObject d, Brush background)
+		{
+			d.SetValue(BackgroundProperty, background);
+		}
 
 		#endregion Methods
 
@@ -74,8 +87,8 @@ namespace MediaPortal.Controls
 
 		public Brush Background
 		{
-			get { return _background; }
-			set { _background = value; }
+			get { return (Brush)GetValue(BackgroundProperty); }
+			set { SetValue(BackgroundProperty, value); }
 		}
 
 		public UIElementCollection Children
@@ -88,8 +101,12 @@ namespace MediaPortal.Controls
 //			get { return _children; }
 //		}
 
-//		[BindableAttribute(false)] 
-//		public bool IsItemsHost { get; set; }
+		[BindableAttribute(false)] 
+		public bool IsItemsHost
+		{
+			get { return (bool)GetValue(IsItemsHostProperty); }
+			set { SetValue(IsItemsHostProperty, value); }
+		}
 
 //		protected internal override UIElementCollection LogicalChildren
 //		{
@@ -100,15 +117,13 @@ namespace MediaPortal.Controls
 
 		#region Properties (Dependency)
 
-//		public static readonly DependencyProperty BackgroundProperty
-
-//		public static readonly DependencyProperty IsItemsHostProperty
+		public static readonly DependencyProperty BackgroundProperty;
+		public static readonly DependencyProperty IsItemsHostProperty;
 
 		#endregion Properties (Dependency)
 
 		#region Fields
 
-		Brush						_background;
 		UIElementCollection			_children;
 
 		#endregion Fields
