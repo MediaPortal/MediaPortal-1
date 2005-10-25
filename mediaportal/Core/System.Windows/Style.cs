@@ -25,12 +25,11 @@
 
 using System;
 using System.Collections;
-using System.ComponentModel;
 using System.Windows.Serialization;
 
 namespace System.Windows
 {
-	public class Style : IAddChild, INameScope
+	public class Style : IAddChild, INameScope, IResourceHost
 	{
 		#region Constructors
 
@@ -38,24 +37,24 @@ namespace System.Windows
 		{
 		}
 
-		public Style(Type type)
+		public Style(Type targetType)
 		{
-			if(type == null)
-				throw new ArgumentNullException("type");
+			if(targetType == null)
+				throw new ArgumentNullException("targetType");
 
-			_type = type;
+			_targetType = targetType;
 		}
 
-		public Style(Type type, Style baseStyle)
+		public Style(Type targetType, Style basedOn)
 		{
-			if(type == null)
-				throw new ArgumentNullException("type");
+			if(targetType == null)
+				throw new ArgumentNullException("targetType");
 
-			if(baseStyle == null)
+			if(basedOn == null)
 				throw new ArgumentNullException("basedOn");
 
-			_type = type;
-			_baseStyle = baseStyle;
+			_targetType = targetType;
+			_basedOn = basedOn;
 		}
 
 		#endregion Constructors
@@ -75,13 +74,29 @@ namespace System.Windows
 			throw new NotSupportedException();
 		}
 
-		public void Apply(object o)
-		{
-		}
-
 		object INameScope.FindName(string name)
 		{
 			return _styles[name];				
+		}
+
+		public override int GetHashCode()
+		{
+			return _globalIndex;
+		}
+
+		object IResourceHost.GetResource(object key)
+		{
+			return _styles[key];
+		}
+
+		public void RegisterName(string name, object context)
+		{
+			_styles[name] = context;
+		}
+
+		public void UnregisterName(string name)
+		{
+			_styles.Remove(name);
 		}
 
 		#endregion Methods
@@ -90,62 +105,54 @@ namespace System.Windows
 
 		public Style BasedOn
 		{
-			get { return _baseStyle; }
-			set { _baseStyle = value; }
+			get { return _basedOn; }
+			set { _basedOn = value; }
+		}
+
+		public bool IsSealed
+		{
+			get { return _isSealed; }
+		}
+
+		public ResourceDictionary Resources
+		{
+			get { if(_resources == null) _resources = new ResourceDictionary(); return _resources; }
 		}
 
 		public SetterCollection Setters
 		{ 
-			get { return _setters == null ? _setters = new SetterCollection() : _setters; }
+			get { if(_setters == null) _setters = new SetterCollection(); return _setters; }
+		}
+
+		IResourceHost IResourceHost.ParentResourceHost
+		{
+			get { throw new NotImplementedException(); }
 		}
 
 		public Type TargetType
 		{ 
-			get { return _type; }
-			set { _type = value; }
+			get { return _targetType; }
+			set { _targetType = value; }
 		}
 
 		public TriggerCollection Triggers
 		{
-			get { return _triggers == null ? _triggers = new TriggerCollection() : _triggers; }
+			get { if(_triggers == null) _triggers = new TriggerCollection(); return _triggers; }
 		}
 
-/*		ICollection IScenegraphGroup.Children
-		{
-			get { if(_children == null) _children = new ScenegraphCollection(this); return _children; }
-		}
-
-		bool IScenegraphGroup.HasChildren
-		{
-			get { return _children != null && _children.Count != 0; }
-		}
-
-		bool IScenegraphElement.HasParents
-		{
-			get { return _parents != null && _parents.Count != 0; }
-		}
-
-		ICollection IScenegraphElement.Parents
-		{
-			get { if(_parents == null) _parents = new ScenegraphCollection(this); return _parents; }
-		}
-
-		protected ICollection ScenegraphChildren
-		{
-			get { if(_children == null) _children = new ScenegraphCollection(this); return _children; }
-		}
-*/
 		#endregion Properties
 
 		#region Fields
 
-		Style						_baseStyle;
-//		ScenegraphCollection		_children;
-//		ScenegraphCollection		_parents;
+		Style						_basedOn;
+		readonly int				_globalIndex = _globalIndexNext++;
+		static int					_globalIndexNext = 0;
+		bool						_isSealed = false;
+		ResourceDictionary			_resources;
 		SetterCollection			_setters;
 		static Hashtable			_styles = new Hashtable();
 		TriggerCollection			_triggers;
-		Type						_type;
+		Type						_targetType;
 
 		#endregion Fields
 	}
