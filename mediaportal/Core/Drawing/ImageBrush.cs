@@ -25,12 +25,13 @@
 
 using System;
 using System.ComponentModel;
+using System.Windows;
 
-using MediaPortal.Drawing.Scenegraph;
+using MediaPortal.Animation;
 
 namespace MediaPortal.Drawing
 {
-	public class ImageBrush : TileBrush, IScenegraphAttribute, ISupportInitialize
+	public class ImageBrush : TileBrush, ISupportInitialize
 	{
 		#region Properties
 
@@ -40,12 +41,16 @@ namespace MediaPortal.Drawing
 			set { _imageSource = value; }
 		}
 
-		object IScenegraphAttribute.Value
+		#endregion Properties
+
+		#region Methods
+
+		protected override Freezable CreateInstanceCore()
 		{
-			get { return _imageSource; }
+			return new ImageBrush();
 		}
 
-		#endregion Properties
+		#endregion Methods
 
 		void ISupportInitialize.BeginInit()
 		{

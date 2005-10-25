@@ -30,7 +30,7 @@ using System.Windows.Serialization;
 
 namespace MediaPortal.Animation
 {
-	public abstract class Timeline : AnimationBase, IAddChild
+	public abstract class Timeline : Animatable, IAddChild
 	{
 		#region Constructors
 
@@ -39,6 +39,9 @@ namespace MediaPortal.Animation
 			// stop compiled never used warnings
 			if(CurrentGlobalSpeedInvalidated != null)
 				CurrentGlobalSpeedInvalidated(this, EventArgs.Empty);
+
+			if(CurrentStateInvalidated != null)
+				CurrentStateInvalidated(this, EventArgs.Empty);
 
 			if(CurrentTimeInvalidated != null)
 				CurrentTimeInvalidated(this, EventArgs.Empty);
@@ -64,35 +67,11 @@ namespace MediaPortal.Animation
 
 		#region Events
 
-		public event EventHandler Changed;
 		public event EventHandler CurrentGlobalSpeedInvalidated;
 		public event EventHandler CurrentStateInvalidated;
 		public event EventHandler CurrentTimeInvalidated;
 
 		#endregion Events
-
-		internal void Begin()
-		{
-			lock(this)
-			{
-//				_iterationCount = 0;
-				_isReversed = false;
-				_isAnimating = true;
-//				_beginTime = AnimationTimer.Progress();
-//				_beginTimeRepetition = _beginTime;
-
-				if(CurrentStateInvalidated != null)
-					CurrentStateInvalidated(this, EventArgs.Empty);
-			}
-		}
-
-		#region Methods
-
-		void RaiseChanged()
-		{
-			if(Changed != null)
-				Changed(this, EventArgs.Empty);
-		}
 
 		void IAddChild.AddChild(object child)
 		{
@@ -101,15 +80,15 @@ namespace MediaPortal.Animation
 
 		protected virtual void AddChild(object child)
 		{
-			AnimationBase animation = child as AnimationBase;
+			Timeline timeline = child as Timeline;
 
-			if(animation == null)
+			if(timeline == null)
 				return;
 
 			if(_children == null)
-				_children = new ArrayList();
+				_children = new TimelineCollection();
 
-			_children.Add(child);
+			_children.Add(timeline);
 		}
 
 		void IAddChild.AddText(string text)
@@ -119,131 +98,120 @@ namespace MediaPortal.Animation
 
 		protected internal virtual Clock AllocateClock()
 		{
-			return new Clock(this);
+			return CreateClock();
 		}
 
-		public Timeline Copy()
+		public new Timeline Copy()
 		{
-			return CopyOverride();
+			return (Timeline)base.Copy();
 		}
 
-		protected abstract Timeline CopyOverride();
+		protected override void CopyCore(Freezable sourceFreezable)
+		{
+			base.CopyCore(sourceFreezable);
+		}
+
+		protected override void CopyCurrentValueCore(Animatable sourceAnimatable)
+		{
+			base.CopyCurrentValueCore(sourceAnimatable);
+		}
 
 		public Clock CreateClock()
 		{
-			return AllocateClock();
+			return new Clock(this);
 		}
 
 		protected internal Duration GetNaturalDuration(Clock clock)
 		{
-			return GetNaturalDurationOverride(clock);
+			return GetNaturalDurationCore(clock);
 		}
 
-		protected virtual Duration GetNaturalDurationOverride(Clock clock)
+		protected virtual Duration GetNaturalDurationCore(Clock clock)
 		{
-			return Duration.Automatic;
+			return clock.NaturalDuration;
 		}
 
-		#endregion Methods
+		protected override void OnPropertyInvalidated(DependencyProperty dp, PropertyMetadata metadata)
+		{
+		}
 
 		#region Properties
 
 		public double AccelerationRatio
 		{ 
 			get { return _accelerationRatio; }
-			set { if(!double.Equals(_accelerationRatio, value)) { _accelerationRatio = value; RaiseChanged(); } }
+			set { if(value < 0 || value > 1) throw new ArgumentOutOfRangeException(); _accelerationRatio = value; }
 		}
 
 		public bool AutoReverse
 		{ 
 			get { return _isAutoReverse; }
-			set { if(!bool.Equals(_isAutoReverse, value)) { _isAutoReverse = value; RaiseChanged(); } }
+			set { _isAutoReverse = value; }
 		}
 
 		public double BeginTime
 		{
 			get { return _beginTime; }
-			set { if(!double.Equals(_beginTime, value)) { _beginTime = value; RaiseChanged(); } }
+			set { _beginTime = value; }
 		}
 		
 		public double CutoffTime
 		{
 			get { return _cutoffTime; }
-			set { if(!double.Equals(_cutoffTime, value)) { _cutoffTime = value; RaiseChanged(); } }
+			set { _cutoffTime = value; }
 		}
 
 		public double DecelerationRatio
 		{ 
 			get { return _decelerationRatio; }
-			set { if(!double.Equals(_decelerationRatio, value)) { _decelerationRatio = value; RaiseChanged(); } }
+			set { if(value < 0 || value > 1) throw new ArgumentOutOfRangeException(); _decelerationRatio = value; }
 		}
 
 		public Duration Duration
 		{
 			get { return _duration; }
-			set { if(!Duration.Equals(_duration, value)) { _duration = value; RaiseChanged(); } }
+			set { _duration = value; }
 		}
 
 		public FillBehavior FillBehavior
 		{
 			get { return _fillBehavior; }
-			set { if(!FillBehavior.Equals(_fillBehavior, value)) { _fillBehavior = value; RaiseChanged(); } }
-		}
-
-		public PropertyPath Path
-		{
-			get { return _path; }
-			set { if(!PropertyPath.Equals(_path, value)) { _path = value; RaiseChanged(); } }
+			set { _fillBehavior = value; }
 		}
 
 		public string Name
 		{
 			get { return _name; }
-			set { if(!string.Equals(_name, value)) { _name = value; RaiseChanged(); } }
+			set { _name = value; }
 		}
 
 		public RepeatBehavior RepeatBehavior
 		{ 
 			get { return _repeatBehavior; }
-			set { if(!RepeatBehavior.Equals(_repeatBehavior, value)) { _repeatBehavior = value; RaiseChanged(); } }
+			set { _repeatBehavior = value; }
 		}
 
-		public ClockController InteractiveController
+		public double SpeedRatio
 		{
-			get { if(_interactiveController == null) _interactiveController = new ClockController(); return _interactiveController; }
-		}
-
-		public bool IsAnimating
-		{
-			get { return _isAnimating; }
-		}
-
-		public bool IsReversed
-		{
-			get { return _isReversed; }
+			get { return _speedRatio; }
+			set { _speedRatio = value; }
 		}
 
 		#endregion Properties
 
 		#region Fields
 
-		double						_accelerationRatio;
+		double						_accelerationRatio = 0;
 		double						_beginTime;
-//		double						_beginTimeRepetition = 0;
+		double						_cutoffTime;
+		double						_decelerationRatio = 0;
+		Duration					_duration = new Duration();
 		FillBehavior				_fillBehavior;
 		bool						_isAutoReverse;
-		bool						_isAnimating;
-		ArrayList					_children;		
-		double						_cutoffTime;
-		double						_decelerationRatio;
-		Duration					_duration = new Duration();
-		PropertyPath				_path;
-		string						_name;
-		RepeatBehavior				_repeatBehavior;
-		ClockController				_interactiveController;
-		bool						_isReversed;
-//		int							_iterationCount = 0;
-//		bool						_isPaused = false;
+		string						_name = string.Empty;
+		RepeatBehavior				_repeatBehavior = RepeatBehavior.Forever;
+		double						_speedRatio = 1;
+		TimelineCollection			_children;
 
 		#endregion Fields
 	}

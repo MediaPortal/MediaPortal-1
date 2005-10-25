@@ -24,11 +24,11 @@
 #endregion
 
 using System;
-using System.Collections;
+using System.Windows;
 using System.ComponentModel;
 using System.Drawing;
 
-using MediaPortal.Drawing.Scenegraph;
+using MediaPortal.Animation;
 
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
@@ -36,149 +36,81 @@ using Microsoft.DirectX.Direct3D;
 namespace MediaPortal.Drawing
 {
 	[TypeConverter(typeof(ImageSourceConverter))]
-	public class ImageSource : IScenegraphTexture, IScenegraphResource
+	public abstract class ImageSource : Animatable, IFormattable
 	{
 		#region Constructors
 
-		public ImageSource()
+		static ImageSource()
 		{
-			_filename = string.Empty;
-		}
-
-		public ImageSource(Bitmap bitmap)
-		{
-			_bitmap = bitmap;
-			_isLoaded = true;
-			_filename = string.Empty;
-		}
-
-		public ImageSource(string filename)
-		{
-			_filename = filename;
+			AreaOfInterestProperty = DependencyProperty.Register("AreaOfInterest", typeof(Rect), typeof(ImageSource));
+			AreaOfInterestUnitsProperty = DependencyProperty.Register("AreaOfInterestUnits", typeof(BrushMappingMode), typeof(ImageSource));
 		}
 
 		#endregion Constructors
 
 		#region Methods
 
-		void IScenegraphResource.PrepareResource(ScenegraphContext context)
+		public new ImageSource Copy()
 		{
- 			ImageSource cached = (ImageSource)_cache[_filename];
-
-			if(_isLoaded == false)
-			{
-				if(cached == null)
-				{
-					_bitmap = (Bitmap)Image.FromFile(_filename);
-					_pixelWidth = _bitmap.Width;
-					_pixelHeight = _bitmap.Height;
-
-					_aspectRatio = (float)_pixelWidth / _pixelHeight;
-
-					_dpiX = _bitmap.HorizontalResolution;
-					_dpiY = _bitmap.VerticalResolution;
-
-					_texture = Texture.FromBitmap(context.Device, _bitmap, Usage.None, Pool.Managed);
-					_isLoaded = true;
-					_cache[_filename] = this;
-				}
-				else
-				{
-					_pixelWidth = cached._pixelWidth;
-					_pixelHeight = cached._pixelHeight;
-
-					_aspectRatio = cached._aspectRatio;
-
-					_dpiX = cached._dpiX;
-					_dpiY = cached._dpiX;
-
-					_texture = cached._texture;
-					_isLoaded = cached._isLoaded;
-				}
-			}
-			
-			if(_texture == null)
-				return;
-
-			context.Device.SetTexture(0, _texture);
+			return (ImageSource)base.Copy();
 		}
 
-		void IScenegraphResource.ReleaseResource(ScenegraphContext context)
+		protected override void CopyCore(Freezable sourceFreezable)
 		{
-			if(_texture == null)
-				return;
+		}
 
-			_texture.Dispose();
-			_texture = null;
+		protected override void CopyCurrentValueCore(Animatable sourceAnimatable)
+		{
+		}
 
-			ImageSource cached = _cache[_filename] as ImageSource;
+		protected override bool FreezeCore(bool isChecking)
+		{
+			throw new NotImplementedException();
+		}
 
-			if(cached == null)
-				return;
+		public ImageSource GetCurrentValue()
+		{
+			throw new NotImplementedException();
+		}
 
-			_cache.Remove(_filename);
+		string IFormattable.ToString(string format, IFormatProvider provider)
+		{
+			throw new NotImplementedException();
+		}
+
+		public override string ToString()
+		{
+			throw new NotImplementedException();
+		}
+
+		public string ToString(IFormatProvider provider)
+		{
+			throw new NotImplementedException();
 		}
 
 		#endregion Methods
-
+				
 		#region Properties
 
-		public double AspectRatio
+		public Rect AreaOfInterest
 		{
-			get { return _aspectRatio; }
+			get { return (Rect)GetValue(AreaOfInterestProperty); }
+			set { SetValue(AreaOfInterestProperty, value); }
 		}
 
-		public string Filename
+		public BrushMappingMode AreaOfInterestUnits
 		{
-			get { return _filename; }
-		}
-
-		bool IScenegraphElement.HasParents
-		{
-			get { return _parents != null && _parents.Count != 0; }
-		}
-
-		public bool IsLoaded
-		{
-			get { return _isLoaded; }
-		}
-
-		ICollection IScenegraphElement.Parents
-		{
-			get { if(_parents == null) _parents = new ScenegraphCollection(this); return _parents; }
-		}
-
-		public int PixelWidth
-		{
-			get { return _pixelWidth; }
-		}
-
-		public int PixelHeight
-		{
-			get { return _pixelHeight; }
-		}
-
-		Texture IScenegraphTexture.Texture
-		{
-			get { return _texture; }
+			get { return (BrushMappingMode)GetValue(AreaOfInterestUnitsProperty); }
+			set { SetValue(AreaOfInterestUnitsProperty, value); }
 		}
 
 		#endregion Properties
 
-		#region Fields
+		#region Properties (Dependency)
 
-		float						_aspectRatio;
-		Bitmap						_bitmap;
-		static Hashtable			_cache = new Hashtable();
-		float						_dpiX;
-		float						_dpiY;
-		string						_filename;
-		bool						_isLoaded;
-		int							_pixelWidth;
-		int							_pixelHeight;
-		Texture						_texture;
-		ScenegraphCollection		_parents;
-
-		#endregion Fields
+		public static readonly DependencyProperty AreaOfInterestProperty;
+		public static readonly DependencyProperty AreaOfInterestUnitsProperty;
+		
+		#endregion Properties (Dependency)
 	}
 }

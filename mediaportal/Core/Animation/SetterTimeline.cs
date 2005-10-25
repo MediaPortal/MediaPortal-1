@@ -45,8 +45,6 @@ namespace MediaPortal.Animation
 		{
 			_targetName = targetName;
 			_value = value;
-
-			base.Path = path;
 		}
 
 		#endregion Constructors

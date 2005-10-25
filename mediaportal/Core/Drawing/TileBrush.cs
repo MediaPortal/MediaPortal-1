@@ -25,73 +25,58 @@
 
 using System;
 
-using MediaPortal.Drawing.Scenegraph;
-using MediaPortal.Drawing.Shapes;
-
 namespace MediaPortal.Drawing
 {
-	public abstract class TileBrush : Brush, IScenegraphResource
+	public abstract class TileBrush : Brush
 	{
-		#region Methods
-
-		void IScenegraphResource.PrepareResource(ScenegraphContext context)
-		{
-		}
-
-		void IScenegraphResource.ReleaseResource(ScenegraphContext context)
-		{
-		}
-
-		#endregion Methods
-
 		#region Properties
 
 		public AlignmentX AlignmentX
 		{
 			get { return _alignmentX; }
-			set { if(AlignmentX.Equals(_alignmentX, value) == false) { _alignmentX = value; RaiseChanged(); } }
+			set { _alignmentX = value; }
 		}
 
 		public AlignmentY AlignmentY
 		{
 			get { return _alignmentY; }
-			set { if(AlignmentY.Equals(_alignmentY, value) == false) { _alignmentY = value; RaiseChanged(); } }
+			set { _alignmentY = value; }
 		}
 
 		public Stretch Stretch
 		{
 			get { return _stretch; }
-			set { if(Stretch.Equals(_stretch, value) == false) { _stretch = value; RaiseChanged(); } }
+			set { _stretch = value; }
 		}
 
 		public TileMode	TileMode
 		{
 			get { return _tileMode; }
-			set { if(TileMode.Equals(_tileMode, value) == false) { _tileMode = value; RaiseChanged(); } }
+			set { _tileMode = value; }
 		}
 
 		public Rect Viewbox
 		{ 
 			get { return _viewbox; }
-			set { if(Rect.Equals(_viewbox, value) == false) { _viewbox = value; RaiseChanged(); } }
+			set { _viewbox = value; }
 		}
 
 		public BrushMappingMode ViewboxUnits
 		{
 			get { return _viewboxUnits; }
-			set { if(BrushMappingMode.Equals(_viewboxUnits, value) == false) { _viewboxUnits = value; RaiseChanged(); } }
+			set { _viewboxUnits = value; }
 		}
 
 		public Rect Viewport
 		{
 			get { return _viewport; }
-			set { if(Rect.Equals(_viewport, value) == false) { _viewport = value; RaiseChanged(); } }
+			set { _viewport = value; }
 		}
 
 		public BrushMappingMode ViewportUnits
 		{
 			get { return _viewportUnits; }
-			set { if(BrushMappingMode.Equals(_viewportUnits, value) == false) { _viewportUnits = value; RaiseChanged(); } }
+			set { _viewportUnits = value; }
 		}
 
 		#endregion Properties

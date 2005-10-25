@@ -24,6 +24,7 @@
 #endregion
 
 using System;
+using System.Windows;
 
 namespace MediaPortal.Animation
 {
@@ -55,14 +56,18 @@ namespace MediaPortal.Animation
 
 		#region Methods
 
+		protected override Freezable CreateInstanceCore()
+		{
+			return new ParallelTimeline();
+		}
+
 		public new ParallelTimeline Copy()
 		{
 			return (ParallelTimeline)base.Copy();
 		}
 
-		protected override Timeline CopyOverride()
+		protected override void CopyCore(Freezable sourceFreezable)
 		{
-			return new ParallelTimeline(this, CloneType.DeepClone);
 		}
 
 		#endregion Methods

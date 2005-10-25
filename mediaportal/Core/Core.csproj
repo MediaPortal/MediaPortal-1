@@ -219,17 +219,7 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Animation\AnimationBase.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "Animation\AnimationClock.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Animation\AnimationCollection.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -390,6 +380,11 @@
                 />
                 <File
                     RelPath = "Animation\TimelineAction.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Animation\TimelineCollection.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -629,11 +624,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Drawing\BrushBase.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "Drawing\BrushConverter.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -765,11 +755,6 @@
                 />
                 <File
                     RelPath = "Drawing\ImageSourceConverter.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing\LinearGradientBrush.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

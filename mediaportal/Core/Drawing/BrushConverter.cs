@@ -71,8 +71,7 @@ namespace MediaPortal.Drawing
 				if(string.Compare(tokens[0], "VerticalGradient", true) == 0)
 					return ParseVerticalGradient(tokens);
 
-				// Why are you doing this????
-				return new ImageSource((string)value);
+				throw new NotImplementedException();
 			}
 
 			return base.ConvertFrom(context, culture, value);
@@ -93,7 +92,8 @@ namespace MediaPortal.Drawing
 			if(ec.A == 0 && ec.R == 0 && ec.G == 0 && ec.B == 0)
 				ec = ColorTranslator.FromHtml(tokens[2]);
 
-			return new LinearGradientBrush(sc, ec, new Point(0, 0.5), new Point(1, 0.5));
+//			return new LinearGradientBrush(sc, ec, new Point(0, 0.5), new Point(1, 0.5));
+			throw new NotImplementedException();
 		}
 
 		private Brush ParseLinearGradient(StringTokenizer tokens)
@@ -117,7 +117,8 @@ namespace MediaPortal.Drawing
 			Point sp = new Point(Convert.ToDouble(spxy[0], CultureInfo.CurrentCulture), Convert.ToDouble(spxy[1], CultureInfo.CurrentCulture));
 			Point ep = new Point(Convert.ToDouble(epxy[0], CultureInfo.CurrentCulture), Convert.ToDouble(epxy[1], CultureInfo.CurrentCulture));
 
-			return new LinearGradientBrush(sc, ec, sp, ep);
+			throw new NotImplementedException();
+//			return new LinearGradientBrush(sc, ec, sp, ep);
 		}
 
 		private Brush ParseSolidColor(string text)
@@ -145,7 +146,8 @@ namespace MediaPortal.Drawing
 			if(lc.A == 0 && lc.R == 0 && lc.G == 0 && lc.B == 0)
 				lc = ColorTranslator.FromHtml(tokens[2]);
 
-			return new LinearGradientBrush(uc, lc, new Point(0.5, 0), new Point(0.5, 1));
+			throw new NotImplementedException();
+//			return new LinearGradientBrush(uc, lc, new Point(0.5, 0), new Point(0.5, 1));
 		}
 
 		#endregion Methods

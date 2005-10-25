@@ -25,42 +25,73 @@
 
 using System;
 using System.ComponentModel;
+using System.Windows;
 
+using MediaPortal.Animation;
 using MediaPortal.Drawing.Transforms;
-using MediaPortal.Drawing.Scenegraph;
 
 namespace MediaPortal.Drawing
 {
 	[TypeConverter(typeof(BrushConverter))]
-	public abstract class Brush : BrushBase, IScenegraphResource
+	public abstract class Brush : Animatable, IFormattable
 	{
+		#region Constructors
+
+		static Brush()
+		{
+			OpacityProperty = DependencyProperty.Register("Opacity", typeof(double), typeof(Brush), new PropertyMetadata(1.0));
+			RelativeTransformProperty = DependencyProperty.Register("RelativeTransform", typeof(Transform), typeof(Brush)); 
+			TransformProperty = DependencyProperty.Register("Transform", typeof(Transform), typeof(Brush));
+		}
+
+		protected Brush()
+		{
+		}
+
+		#endregion Constructors
+
 		#region Methods
 
-		void IScenegraphResource.PrepareResource(ScenegraphContext context)
+		public new Brush Copy()
 		{
-			_isDirty = false;
-
+			return (Brush)base.Copy();											
 		}
 
-		void IScenegraphResource.ReleaseResource(ScenegraphContext context)
+		protected override void CopyCore(Freezable sourceFreezable)
 		{
-			_isDirty = true;
-
-			// prevent compiler warnings
-			if(_isDirty)
-				_isDirty = true;
 		}
 
-		protected void RaiseChanged()
+		protected override void CopyCurrentValueCore(Animatable sourceAnimatable)
 		{
-			RaiseChanged(EventArgs.Empty);
 		}
 
-		protected void RaiseChanged(EventArgs e)
+		protected override bool FreezeCore(bool isChecking)
 		{
-			_isDirty = true;
+			throw new NotImplementedException();
+		}
 
-			Console.WriteLine("A object of type '{0}' has raised its Changed event", this.GetType().Name);
+		public Brush GetCurrentValue()
+		{
+			throw new NotImplementedException();
+		}
+
+		protected override void PropagateChangedHandlersCore(EventHandler handler, bool adding)
+		{
+		}
+
+		string IFormattable.ToString(string format, IFormatProvider provider)
+		{
+			throw new NotImplementedException();
+		}
+
+		public override string ToString()
+		{
+			return base.ToString();
+		}
+
+		public string ToString(IFormatProvider provider)
+		{
+			throw new NotImplementedException();
 		}
 
 		#endregion Methods
@@ -69,31 +100,30 @@ namespace MediaPortal.Drawing
 
 		public double Opacity
 		{
-			get { return _opacity; }
-			set { if(double.Equals(_opacity, value) == false) { _opacity = value; RaiseChanged(); } }
+			get { return (double)GetValue(OpacityProperty); }
+			set { SetValue(OpacityProperty, value); }
 		}
 
 		public Transform RelativeTransform
 		{
-			get { return _relativeTransform; }
-			set { if(Transform.Equals(_relativeTransform, value) == false) { _relativeTransform = value; RaiseChanged(); } }
+			get { return (Transform)GetValue(RelativeTransformProperty); }
+			set { SetValue(RelativeTransformProperty, value); }
 		}
 
 		public Transform Transform
 		{
-			get { return _transform; }
-			set { if(Transform.Equals(_transform, value) == false) { _transform = value; RaiseChanged(); } }
+			get { return (Transform)GetValue(TransformProperty); }
+			set { SetValue(TransformProperty, value); }
 		}
 
 		#endregion Properties
 
-		#region Fields
+		#region Properties (Dependency)
 
-		bool						_isDirty;
-		double						_opacity;
-		Transform					_relativeTransform;
-		Transform					_transform;
+		public static readonly DependencyProperty OpacityProperty;
+		public static readonly DependencyProperty RelativeTransformProperty;
+		public static readonly DependencyProperty TransformProperty;
 
-		#endregion Fields
+		#endregion Properties (Dependency)
 	}
 }

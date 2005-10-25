@@ -1,3 +1,5 @@
+#region Copyright (C) 2005 Media Portal
+
 /* 
  *	Copyright (C) 2005 Media Portal
  *	http://mediaportal.sourceforge.net
@@ -18,33 +20,35 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
+
 using System;
 using System.Collections;
-using System.Windows.Forms;
 
-namespace MediaPortal.Layouts
+namespace MediaPortal.Animation
 {
-	internal sealed class ILayoutComponentCollection : CollectionBase
+	public sealed class TimelineCollection : CollectionBase
 	{
 		#region Methods
 
-		public void Add(ILayoutComponent component)
+		public void Add(Timeline timeline)
 		{
-			if(component == null)
-				throw new ArgumentNullException("component");
+			if(timeline == null)
+				throw new ArgumentNullException("timeline");
 
-			List.Add(component);
-		}
-		
-		public bool Contains(ILayoutComponent component)
-		{
-			if(component == null)
-				throw new ArgumentNullException("component");
-
-			return List.Contains(component);
+			List.Add(timeline);
 		}
 
-		public void CopyTo(ILayoutComponent[] array, int arrayIndex)
+		public bool Contains(Timeline timeline)
+		{
+			if(timeline == null)
+				throw new ArgumentNullException("timeline");
+
+			return List.Contains(timeline);
+		}
+
+		public void CopyTo(Timeline[] array, int arrayIndex)
 		{
 			if(array == null)
 				throw new ArgumentNullException("array");
@@ -52,31 +56,31 @@ namespace MediaPortal.Layouts
 			List.CopyTo(array, arrayIndex);
 		}
 
-		public int IndexOf(ILayoutComponent component)
+		public int IndexOf(Timeline timeline)
 		{
-			if(component == null)
-				throw new ArgumentNullException("component");
+			if(timeline == null)
+				throw new ArgumentNullException("timeline");
 
-			return List.IndexOf(component);
+			return List.IndexOf(timeline);
 		}
 
-		public void Insert(int index, ILayoutComponent component)
+		public void Insert(int index, Timeline timeline)
 		{
-			if(component == null)
-				throw new ArgumentNullException("component");
+			if(timeline == null)
+				throw new ArgumentNullException("timeline");
 
-			List.Insert(index, component);
+			List.Insert(index, timeline);
 		}
 
-		public bool Remove(ILayoutComponent component)
+		public bool Remove(Timeline timeline)
 		{
-			if(component == null)
-				throw new ArgumentNullException("component");
-
-			if(List.Contains(component) == false)
+			if(timeline == null)
+				throw new ArgumentNullException("timeline");
+			
+			if(List.Contains(timeline) == false)
 				return false;
 
-			List.Remove(component);
+			List.Remove(timeline);
 
 			return true;
 		}
@@ -85,13 +89,12 @@ namespace MediaPortal.Layouts
 
 		#region Properties
 
-		public ILayoutComponent this[int index]
+		public Timeline this[int index]
 		{ 
-			get { return (ILayoutComponent)List[index]; }
+			get { return (Timeline)List[index]; }
 			set { List[index] = value; }
 		}
 
 		#endregion Properties
 	}
 }
-

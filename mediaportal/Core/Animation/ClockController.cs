@@ -106,7 +106,7 @@ namespace MediaPortal.Animation
 		#region Fields
 		
 		Clock					_clock = null;
-		AnimationBase			_animation = null;
+		Animatable				_animation = null;
 		Job						_job;
 		double					_speedRatio = 1;
 

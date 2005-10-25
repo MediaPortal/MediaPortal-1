@@ -58,16 +58,13 @@ namespace MediaPortal.Animation
 			return (AnimationClock)base.CreateClock();
 		}
 
-/*		object IScenegraphAnimation.GetCurrentValue(object baseValue, AnimationClock clock)
+		protected override void CopyCurrentValueCore(Animatable sourceAnimatable)
 		{
-			return GetCurrentValueOverride(baseValue, clock);
 		}
-*/			
-		protected abstract object GetCurrentValueOverride(object baseValue, AnimationClock clock);
 			
-		protected override Duration GetNaturalDurationOverride(Clock clock)
+		protected override Duration GetNaturalDurationCore(Clock clock)
 		{
-			return new Duration(1);
+			return base.GetNaturalDurationCore(clock);
 		}
 			
 		#endregion Methods

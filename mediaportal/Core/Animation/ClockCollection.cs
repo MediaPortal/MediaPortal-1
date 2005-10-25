@@ -51,11 +51,6 @@ namespace MediaPortal.Animation
 			if(clock == null)
 				throw new ArgumentNullException("clock");
 
-			if(clock.Parent != null && clock.Parent != _parent)
-				clock.Parent.Children.Remove(clock);
-				
-//			clock.Parent = _parent;
-
 			List.Add(clock);
 		}
 

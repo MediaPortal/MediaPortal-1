@@ -45,7 +45,8 @@ namespace MediaPortal.Drawing
 		public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
 		{
 			if(value is string)
-				return new ImageSource((string)value);
+				throw new NotImplementedException();
+//				return new ImageSource((string)value);
 
 			return base.ConvertFrom(context, culture, value);
 		}

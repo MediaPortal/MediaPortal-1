@@ -67,14 +67,9 @@ namespace MediaPortal.Animation
 
 		#region Properties
 
-		public ClockCollection Children
+		public ClockController Controller
 		{ 
-			get { if(_children == null) _children = new ClockCollection(this); return _children; }
-		}
-
-		public ClockController ClockController
-		{ 
-			get { return _timeline.InteractiveController; }
+			get { return null; }
 		}
 
 		public double CurrentGlobalSpeed
@@ -127,7 +122,6 @@ namespace MediaPortal.Animation
 
 		#region Fields
 
-		ClockCollection				_children = null;
 		ClockState					_currentState = ClockState.Stopped;
 		double						_currentTime = 0;
 		bool						_isPaused = false;

@@ -24,6 +24,7 @@
 #endregion
 
 using System;
+using System.Windows;
 
 namespace MediaPortal.Animation
 {
@@ -80,7 +81,12 @@ namespace MediaPortal.Animation
 
 		#region Methods
 
-		protected override object GetCurrentValueOverride(object baseValue, AnimationClock clock)
+		protected override Freezable CreateInstanceCore()
+		{
+			return new DoubleAnimation();
+		}
+
+/*		protected override object GetCurrentValueOverride(object baseValue, AnimationClock clock)
 		{
 			if(_type == AnimationType.By)
 			{
@@ -116,12 +122,7 @@ namespace MediaPortal.Animation
 
 			return _from + clock.CurrentProgress * (_to - _from);
 		}
-
-		protected override Timeline CopyOverride()
-		{
-			return new DoubleAnimation(this, CloneType.DeepClone);
-		}
-
+*/
 		#endregion Methods
 
 		#region Properties

@@ -48,6 +48,11 @@ namespace MediaPortal.Drawing
 
 		#region Methods
 
+		protected override System.Windows.Freezable CreateInstanceCore()
+		{
+			return new SolidColorBrush();
+		}
+
 		public static SolidColorBrush Parse(string color)
 		{
 			return new SolidColorBrush(ColorTranslator.FromHtml(color));
@@ -60,7 +65,7 @@ namespace MediaPortal.Drawing
 		public Color Color
 		{
 			get { return _color; }
-			set { if(Color.Equals(_color, value) == false) { _color = value; RaiseChanged(); } }
+			set { _color = value; }
 		}
 
 		#endregion Properties
