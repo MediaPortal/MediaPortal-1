@@ -56,7 +56,7 @@ namespace System.Windows
 
 		#region Fields
 
-		DependencyProperty			_dependencyProperty;
+		DependencyProperty			_dependencyProperty = null;
 
 		#endregion Fields
 	}

@@ -173,7 +173,7 @@ namespace System.Windows
 		bool						_isSealed;
 		PropertyInvalidatedCallback _propertyInvalidatedCallback;
 		ReadLocalValueOverride		_readLocalValueOverride;
-		bool						_isReadOnly;
+		bool						_isReadOnly = false;
 		SetValueOverride			_setValueOverride;
 		WriteLocalValueOverride		_writeLocalValueOverride;
 

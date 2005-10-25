@@ -172,13 +172,13 @@ namespace System.Windows
 
 		#region Fields
 
-		PropertyMetadata			_defaultMetadata;
-		int							_globalIndex;
+		PropertyMetadata			_defaultMetadata = null;
+		int							_globalIndex = ++_globalIndexNext;
 		static int					_globalIndexNext = 0;
-		string						_name;
-		Type						_ownerType;
-		Type						_propertyType;
-		ValidateValueCallback		_validateValueCallback;
+		string						_name = string.Empty;
+		Type						_ownerType = null;
+		Type						_propertyType = null;
+		ValidateValueCallback		_validateValueCallback = null;
 
 		#endregion Fields
 	}

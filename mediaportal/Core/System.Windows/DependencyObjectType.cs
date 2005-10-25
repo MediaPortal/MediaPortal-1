@@ -87,11 +87,11 @@ namespace System.Windows
 
 		#region Fields
 
-		DependencyObjectType		_baseType;
-		int							_id;
-		static int					_idGlobalIndex = 0;
-		string						_name;
-		Type						_systemType;
+		DependencyObjectType		_baseType = null;
+		int							_id = ++_idNext;
+		static int					_idNext = 0;
+		string						_name = string.Empty;
+		Type						_systemType = null;
 
 		#endregion Fields
 	}

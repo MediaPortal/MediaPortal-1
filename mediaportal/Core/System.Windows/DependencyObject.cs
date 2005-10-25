@@ -154,9 +154,9 @@ namespace System.Windows
 
 		#region Fields
 
-		DependencyObjectType		_dependencyObjectType;
+		DependencyObjectType		_dependencyObjectType = null;
 		bool						_isCanBeUnbound = false;
-		Hashtable					_properties;
+		Hashtable					_properties = new Hashtable();
 
 		#endregion Fields
 	}
