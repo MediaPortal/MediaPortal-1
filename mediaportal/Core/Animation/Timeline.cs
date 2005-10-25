@@ -73,6 +73,8 @@ namespace MediaPortal.Animation
 
 		#endregion Events
 
+		#region Methods
+
 		void IAddChild.AddChild(object child)
 		{
 			AddChild(child);
@@ -134,6 +136,8 @@ namespace MediaPortal.Animation
 		protected override void OnPropertyInvalidated(DependencyProperty dp, PropertyMetadata metadata)
 		{
 		}
+
+		#endregion Methods
 
 		#region Properties
 
