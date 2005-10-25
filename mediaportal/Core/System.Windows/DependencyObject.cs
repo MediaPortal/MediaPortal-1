@@ -24,16 +24,140 @@
 #endregion
 
 using System;
+using System.Collections;
 
 namespace System.Windows
 {
-	public class DependencyObject
+	public class DependencyObject : DispatcherObject
 	{
+		#region Constructors
+
 		public DependencyObject()
 		{
-			//
-			// TODO: Add constructor logic here
-			//
 		}
+
+		public DependencyObject(bool canBeUnbound)
+		{
+			_isCanBeUnbound = canBeUnbound;
+		}
+
+		#endregion Constructors
+
+		#region Methods
+
+		public void ClearValue(DependencyProperty dp)
+		{
+			_properties.Remove(dp);
+		}
+
+		public LocalValueEnumerator GetLocalValueEnumerator()
+		{
+			return new LocalValueEnumerator(_properties);
+		}
+
+		public object GetValue(DependencyProperty dp)
+		{
+			if(dp.DefaultMetadata.GetValueOverride != null)
+				return dp.DefaultMetadata.GetValueOverride(this);
+
+			object value = _properties[dp];
+
+			if(value == null)
+				value = dp.DefaultMetadata.DefaultValue;
+
+			return value;
+		}
+
+		public object GetValueBase(DependencyProperty dp)
+		{
+			return GetValueCore(dp, _properties[dp], dp.GetMetadata(this));
+		}
+
+		protected virtual object GetValueCore(DependencyProperty dp, object baseValue, PropertyMetadata metadata)
+		{
+			object value = _properties[dp];
+
+			if(value == null)
+				value = dp.DefaultMetadata.DefaultValue;
+
+			return value;
+		}
+
+		public void InvalidateProperty(DependencyProperty dp)
+		{
+			if(dp.DefaultMetadata.PropertyInvalidatedCallback != null)
+				dp.DefaultMetadata.PropertyInvalidatedCallback(this);
+		}
+
+		protected virtual void OnPropertyInvalidated(DependencyProperty dp, PropertyMetadata metadata)
+		{
+			if(dp.DefaultMetadata.PropertyInvalidatedCallback != null)
+				dp.DefaultMetadata.PropertyInvalidatedCallback(this);
+		}
+
+		public object ReadLocalValue(DependencyProperty dp)
+		{
+			if(dp.DefaultMetadata.ReadLocalValueOverride != null)
+				return dp.DefaultMetadata.ReadLocalValueOverride(this);
+
+			object value = _properties[dp];
+
+			// should we really be returning default value here?
+			if(value == null)
+				value = dp.DefaultMetadata.DefaultValue;
+
+			return value;
+		}
+
+		public void SetValue(DependencyProperty dp, object value)
+		{
+			_properties[dp] = value;
+
+			if(dp.DefaultMetadata.ReadOnly)
+				throw new InvalidOperationException("DependencyProperty is read-only");
+
+			if(dp.DefaultMetadata.SetValueOverride != null)
+				dp.DefaultMetadata.SetValueOverride(this, value);
+		}
+
+		public void SetValue(DependencyPropertyKey key, object value)
+		{
+			_properties[key.DependencyProperty] = value;
+		}
+
+		public void SetValueBase(DependencyProperty dp, object value)
+		{
+			_properties[dp] = value;
+
+			if(dp.DefaultMetadata.ReadOnly)
+				throw new InvalidOperationException("DependencyProperty is read-only");
+
+			if(dp.DefaultMetadata.SetValueOverride != null)
+				dp.DefaultMetadata.SetValueOverride(this, value);
+		}
+
+		public void SetValueBase(DependencyPropertyKey key, object value)
+		{
+			_properties[key.DependencyProperty] = value;
+		}
+
+		#endregion Methods
+
+		#region Properties
+
+		public DependencyObjectType DependencyObjectType
+		{
+			get { return _dependencyObjectType; }
+		}
+
+		#endregion Properties
+
+		#region Fields
+
+		DependencyObjectType		_dependencyObjectType;
+		bool						_isCanBeUnbound = false;
+		Hashtable					_properties;
+
+		#endregion Fields
 	}
 }

@@ -27,16 +27,159 @@ using System;
 
 namespace System.Windows
 {
-	/// <summary>
-	/// Summary description for DependencyProperty.
-	/// </summary>
-	public class DependencyProperty
+	public sealed class DependencyProperty
 	{
-		public DependencyProperty()
+		#region Methods
+
+		public DependencyProperty AddOwner(Type ownerType)
 		{
-			//
-			// TODO: Add constructor logic here
-			//
+			throw new NotImplementedException();
 		}
+
+		public DependencyProperty AddOwner(Type ownerType, PropertyMetadata typeMetadata)
+		{
+			throw new NotImplementedException();
+		}
+			
+		public static DependencyProperty FromName(string name, Type ownerType)
+		{
+			throw new NotImplementedException();
+		}
+
+		public override int GetHashCode()
+		{
+			return _globalIndex;
+		}
+
+		public PropertyMetadata GetMetadata(DependencyObject d)
+		{
+			throw new NotImplementedException();
+		}
+
+		public PropertyMetadata GetMetadata(Type forType)
+		{
+			throw new NotImplementedException();
+		}
+
+		public bool IsValidType(object value)
+		{
+			throw new NotImplementedException();
+		}
+
+		public bool IsValidValue(object value)
+		{
+			if(_validateValueCallback == null)
+				return true;
+
+			return _validateValueCallback(value);
+		}
+
+		public void OverrideMetadata(Type forType, PropertyMetadata typeMetadata)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void OverrideMetadata(Type forType, PropertyMetadata typeMetadata, DependencyPropertyKey key)
+		{
+			throw new NotImplementedException();
+		}
+		
+		public static DependencyProperty Register(string name, Type propertyType, Type ownerType)
+		{
+			return DependencyProperty.Register(name, propertyType, ownerType, null, null);
+		}
+
+		public static DependencyProperty Register(string name, Type propertyType, Type ownerType, PropertyMetadata typeMetadata)
+		{
+			return DependencyProperty.Register(name, propertyType, ownerType, typeMetadata, null);
+		}
+
+		public static DependencyProperty Register(string name, Type propertyType, Type ownerType, PropertyMetadata typeMetadata, ValidateValueCallback validateValueCallback)
+		{
+			throw new NotImplementedException();
+		}
+
+		public static DependencyProperty RegisterAttached(string name, Type propertyType, Type ownerType)
+		{
+			return DependencyProperty.RegisterAttached(name, propertyType, ownerType, null, null);
+		}
+
+		public static DependencyProperty RegisterAttached(string name, Type propertyType, Type ownerType, PropertyMetadata defaultMetadata)
+		{
+			return DependencyProperty.RegisterAttached(name, propertyType, ownerType, defaultMetadata, null);
+		}
+
+		public static DependencyProperty RegisterAttached(string name, Type propertyType, Type ownerType, PropertyMetadata defaultMetadata, ValidateValueCallback validateValueCallback)
+		{
+			throw new NotImplementedException();
+		}
+
+		public static DependencyPropertyKey RegisterAttachedReadOnly(string name, Type propertyType, Type ownerType, PropertyMetadata defaultMetadata)
+		{
+			return DependencyProperty.RegisterAttachedReadOnly(name, propertyType, ownerType, defaultMetadata, null);
+		}
+
+		public static DependencyPropertyKey RegisterAttachedReadOnly(string name, Type propertyType, Type ownerType, PropertyMetadata defaultMetadata, ValidateValueCallback validateValueCallback)
+		{
+			throw new NotImplementedException();
+		}
+
+		public static DependencyPropertyKey RegisterReadOnly(string name, Type propertyType, Type ownerType, PropertyMetadata typeMetadata)
+		{
+			return DependencyProperty.RegisterReadOnly(name, propertyType, ownerType, typeMetadata, null);
+		}
+
+		public static DependencyPropertyKey RegisterReadOnly(string name, Type propertyType, Type ownerType, PropertyMetadata typeMetadata, ValidateValueCallback validateValueCallback)
+		{
+			throw new NotImplementedException();
+		}
+
+		#endregion Methods
+
+		#region Properties
+
+		public PropertyMetadata DefaultMetadata
+		{
+			get { return _defaultMetadata; }
+		}
+
+		public int GlobalIndex
+		{
+			get { return _globalIndex; }
+		}
+
+		public string Name
+		{
+			get { return _name; }
+		}
+
+		public Type OwnerType
+		{
+			get { return _ownerType; }
+		}
+
+		public Type PropertyType
+		{
+			get { return _propertyType; }
+		}
+
+		public ValidateValueCallback ValidateValueCallback
+		{
+			get { return _validateValueCallback; }
+		}
+
+		#endregion Properties
+
+		#region Fields
+
+		PropertyMetadata			_defaultMetadata;
+		int							_globalIndex;
+		static int					_globalIndexNext = 0;
+		string						_name;
+		Type						_ownerType;
+		Type						_propertyType;
+		ValidateValueCallback		_validateValueCallback;
+
+		#endregion Fields
 	}
 }
