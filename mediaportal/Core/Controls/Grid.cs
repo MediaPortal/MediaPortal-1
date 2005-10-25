@@ -54,7 +54,27 @@ namespace MediaPortal.Controls
 
 		#region Methods
 
-		void ApplyAlignment(FrameworkElement element, Thickness t, double x, double y, double w, double h)
+		void IAddChild.AddChild(object child)
+		{
+			if(child is ColumnDefinition)
+			{
+				ColumnDefinitions.Add((ColumnDefinition)child);
+			}
+			else if(child is RowDefinition)
+			{
+				RowDefinitions.Add((RowDefinition)child);
+			}
+			else if(child is UIElement)
+			{
+				Children.Add((UIElement)child);
+			}
+			else
+			{
+				throw new ArgumentException("");
+			}
+		}
+
+		void ApplyAlignment(FrameworkElement element, double x, double y, double w, double h)
 		{
 			Rect rect = new Rect(x, y, element.Width, element.Height);
             
@@ -89,24 +109,21 @@ namespace MediaPortal.Controls
 
 		protected override Size ArrangeOverride(Rect finalRect)
 		{
-			Point location = this.Location;
-			Thickness t = this.Margin;
-
 			int rows = _rowDefinitions.Count;
 			int cols = _colDefinitions.Count;
 
 			if(rows > 0)
-				cols = (this.Children.Count + rows - 1) / rows;
+				cols = (Children.Count + rows - 1) / rows;
 			else
-				rows = (this.Children.Count + cols - 1) / cols;
+				rows = (Children.Count + cols - 1) / cols;
 
-			double w = (this.Width - t.Width - (cols - 1) * _spacing.Width) / cols;
-			double h = (this.Height - t.Height - (rows - 1) * _spacing.Height) / rows;
-			double y = this.Location.Y + t.Top;
+			double w = (Width - Margin.Width - (cols - 1) * _spacing.Width) / cols;
+			double h = (Height - Margin.Height - (rows - 1) * _spacing.Height) / rows;
+			double y = Location.Y + Margin.Top;
 
 			for(int row = 0; row < rows; row++)
 			{
-				double x = this.Location.X + t.Left;
+				double x = Location.X + Margin.Left;
 
 				for(int col = 0; col < cols; col++)
 				{
@@ -119,7 +136,7 @@ namespace MediaPortal.Controls
 						if(element.Visibility == System.Windows.Visibility.Collapsed)
 							continue;
 
-						ApplyAlignment(element, t, x, y, w, h); 
+						ApplyAlignment(element, x, y, w, h); 
 					}
 
 					x += w + _spacing.Width;
@@ -136,8 +153,8 @@ namespace MediaPortal.Controls
 			double w = 0;
 			double h = 0;
 
-			int rows = _rowDefinitions.Count;
-			int cols = _colDefinitions.Count;
+			int rows = RowDefinitions.Count;
+			int cols = ColumnDefinitions.Count;
 
 			if(rows > 0)
 				cols = (Children.Count + rows - 1) / rows;

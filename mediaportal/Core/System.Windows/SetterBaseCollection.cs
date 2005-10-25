@@ -72,12 +72,13 @@ namespace System.Windows
 			
 		void IAddChild.AddChild(object child)
 		{
-			SetterBase setter = child as SetterBase;
+			if(child == null)
+				throw new ArgumentNullException("child");
 
-			if(setter == null)
-				throw new ArgumentException("child");
+			if(child is SetterBase == false)
+				throw new Exception(string.Format("Cannot convert '{0}' to type '{1}'", child.GetType(), typeof(SetterBase)));
 
-			List.Add(setter);
+			List.Add((SetterBase)child);
 		}
 
 		void IAddChild.AddText(string text)

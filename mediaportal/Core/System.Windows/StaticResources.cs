@@ -30,6 +30,8 @@ namespace System.Windows
 {
 	public sealed class StaticResources
 	{
+		#region Methods
+
 		public static object Find(string name)
 		{
 			return _resources[name];
@@ -40,6 +42,12 @@ namespace System.Windows
 			return _resources.Contains(name);
 		}
 
-		static Hashtable			_resources = new Hashtable();
+		#endregion Methods
+
+		#region Fields
+
+		static Hashtable			_resources = new Hashtable(100);
+
+		#endregion Fields
 	}
 }

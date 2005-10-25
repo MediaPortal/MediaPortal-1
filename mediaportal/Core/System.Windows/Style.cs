@@ -63,10 +63,13 @@ namespace System.Windows
 
 		void IAddChild.AddChild(object child)
 		{
-			if(_setters == null)
-				_setters = new SetterBaseCollection();
+			if(child == null)
+				throw new ArgumentNullException("child");
 
-			_setters.Add((Setter)child);
+			if(child is SetterBase == false)
+				throw new Exception(string.Format("Cannot convert '{0}' to type '{1}'", child.GetType(), typeof(SetterBase)));
+
+			Setters.Add((SetterBase)child);
 		}
 
 		void IAddChild.AddText(string text)
@@ -150,7 +153,7 @@ namespace System.Windows
 		bool						_isSealed = false;
 		ResourceDictionary			_resources;
 		SetterBaseCollection		_setters;
-		static Hashtable			_styles = new Hashtable();
+		static Hashtable			_styles = new Hashtable(100);
 		TriggerCollection			_triggers;
 		Type						_targetType;
 

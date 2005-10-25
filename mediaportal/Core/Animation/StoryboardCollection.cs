@@ -72,12 +72,13 @@ namespace MediaPortal.Animation
 			
 		void IAddChild.AddChild(object child)
 		{
-			Timeline timeline = child as Timeline;
+			if(child == null)
+				throw new ArgumentNullException("child");
 
-			if(timeline == null)
-				throw new ArgumentException("child");
+			if(child is Timeline == false)
+				throw new Exception(string.Format("Cannot convert '{0}' to type '{1}'", child.GetType(), typeof(Timeline)));
 
-			List.Add(timeline);
+			List.Add((Timeline)child);
 		}
 
 		void IAddChild.AddText(string text)

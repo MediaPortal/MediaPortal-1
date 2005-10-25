@@ -72,12 +72,13 @@ namespace System.Windows
 			
 		void IAddChild.AddChild(object child)
 		{
-			TriggerBase trigger = child as TriggerBase;
+			if(child == null)
+				throw new ArgumentNullException("child");
 
-			if(trigger == null)
-				throw new ArgumentException("child");
+			if(child is TriggerBase == false)
+				throw new Exception(string.Format("Cannot convert '{0}' to type '{1}'", child.GetType(), typeof(TriggerBase)));
 
-			List.Add(trigger);
+			List.Add((TriggerBase)child);
 		}
 
 		void IAddChild.AddText(string text)

@@ -93,9 +93,9 @@ namespace System.Windows
 
 		#region Fields
 
-		static Hashtable			_routedEventsByName = new Hashtable();
-		static Hashtable			_routedEventsByOwner = new Hashtable();
-		static Hashtable			_classHandlers = new Hashtable();
+		static Hashtable			_routedEventsByName = new Hashtable(100);
+		static Hashtable			_routedEventsByOwner = new Hashtable(100);
+		static Hashtable			_classHandlers = new Hashtable(100);
 
 		#endregion Fields
 	}

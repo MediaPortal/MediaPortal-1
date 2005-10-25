@@ -46,12 +46,13 @@ namespace MediaPortal.Controls
 
 		void IAddChild.AddChild(object child)
 		{
-			UIElement element = child as UIElement;
+			if(child == null)
+				throw new ArgumentNullException("child");
 
-			if(element == null)
-				throw new ArgumentException("child must be derived from UIElement", "child");
+			if(child is UIElement == false)
+				throw new Exception(string.Format("Cannot convert '{0}' to type '{1}'", child.GetType(), typeof(UIElement)));
 
-			_child = element;
+			_child = (UIElement)child;
 		}
 
 		void IAddChild.AddText(string text)

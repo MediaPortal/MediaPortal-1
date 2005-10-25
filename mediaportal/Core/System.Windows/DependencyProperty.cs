@@ -218,7 +218,7 @@ namespace System.Windows
 		static int					_globalIndexNext = 0;
 		string						_name = string.Empty;
 		Type						_ownerType = null;
-		static Hashtable			_properties = new Hashtable();
+		static Hashtable			_properties = new Hashtable(100);
 		Hashtable					_metadata = new Hashtable();
 		Type						_propertyType = null;
 		ValidateValueCallback		_validateValueCallback = null;

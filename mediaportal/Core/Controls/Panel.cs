@@ -52,12 +52,13 @@ namespace MediaPortal.Controls
 
 		void IAddChild.AddChild(object child)
 		{
-			UIElement element = child as UIElement;
+			if(child == null)
+				throw new ArgumentNullException("child");
 
-			if(element == null)
-				throw new ArgumentException("child");
+			if(child is UIElement == false)
+				throw new Exception(string.Format("Cannot convert '{0}' to type '{1}'", child.GetType(), typeof(UIElement)));
 
-			Children.Add(element);
+			Children.Add((UIElement)child);
 		}
 
 		void IAddChild.AddText(string text)
@@ -96,22 +97,12 @@ namespace MediaPortal.Controls
 			get { if(_children == null) _children = new UIElementCollection(); return _children; }
 		}
 
-//		protected internal UIElementCollection InternalChildren
-//		{
-//			get { return _children; }
-//		}
-
 		[BindableAttribute(false)] 
 		public bool IsItemsHost
 		{
 			get { return (bool)GetValue(IsItemsHostProperty); }
 			set { SetValue(IsItemsHostProperty, value); }
 		}
-
-//		protected internal override UIElementCollection LogicalChildren
-//		{
-//			get { return _children; }
-//		}
 
 		#endregion Properties
 

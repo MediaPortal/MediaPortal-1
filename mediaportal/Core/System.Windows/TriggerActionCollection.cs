@@ -70,14 +70,20 @@ namespace System.Windows
 			throw new NotImplementedException();
 		}
 			
-		void IAddChild.AddChild(object value)
+		void IAddChild.AddChild(object child)
 		{
-			List.Add((TriggerAction)value);
+			if(child == null)
+				throw new ArgumentNullException("child");
+
+			if(child is TriggerAction == false)
+				throw new Exception(string.Format("Cannot convert '{0}' to type '{1}'", child.GetType(), typeof(TriggerAction)));
+
+			List.Add((TriggerAction)child);
 		}
 
 		void IAddChild.AddText(string text)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		public int IndexOf(TriggerAction action)

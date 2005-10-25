@@ -47,12 +47,12 @@ namespace System.Windows
 				throw new ArgumentNullException("child");
 
 			if(child is SetterBase == false)
-				throw new Exception(string.Format("Cannot convert '{0}' to type '{1}'", child.GetType(), typeof(Trigger)));
+				throw new Exception(string.Format("Cannot convert '{0}' to type '{1}'", child.GetType(), typeof(SetterBase)));
 
 			if(_setters == null)
 				_setters = new SetterBaseCollection();
 
-			_setters.Add((Setter)child);
+			_setters.Add((SetterBase)child);
 		}
 
 		void IAddChild.AddText(string text)
