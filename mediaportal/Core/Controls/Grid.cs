@@ -24,6 +24,8 @@
 #endregion
 
 using System;
+using System.Collections;
+using System.Windows;
 using System.Windows.Serialization;
 
 using MediaPortal.Drawing;
@@ -33,6 +35,16 @@ namespace MediaPortal.Controls
 	public class Grid : Panel, IAddChild
 	{
 		#region Constructors
+
+		static Grid()
+		{
+			ColumnProperty = DependencyProperty.Register("Column", typeof(int), typeof(Grid));
+			ColumnSpanProperty = DependencyProperty.Register("ColumnSpan", typeof(int), typeof(Grid), new PropertyMetadata((int)1));
+			IsSharedSizeScopeProperty = DependencyProperty.Register("IsSharedSizeScope", typeof(bool), typeof(Grid), new PropertyMetadata(false));
+			RowProperty = DependencyProperty.Register("Row", typeof(int), typeof(Grid));
+			RowSpanProperty = DependencyProperty.Register("RowSpan", typeof(int), typeof(Grid), new PropertyMetadata((int)1));
+			ShowGridLinesProperty = DependencyProperty.Register("ShowGridLines", typeof(bool), typeof(Grid), new PropertyMetadata(false));
+		}
 
 		public Grid()
 		{
@@ -80,8 +92,8 @@ namespace MediaPortal.Controls
 			Point location = this.Location;
 			Thickness t = this.Margin;
 
-			int rows = _rows;
-			int cols = _cols;
+			int rows = _rowDefinitions.Count;
+			int cols = _colDefinitions.Count;
 
 			if(rows > 0)
 				cols = (this.Children.Count + rows - 1) / rows;
@@ -124,8 +136,8 @@ namespace MediaPortal.Controls
 			double w = 0;
 			double h = 0;
 
-			int rows = _rows;
-			int cols = _cols;
+			int rows = _rowDefinitions.Count;
+			int cols = _colDefinitions.Count;
 
 			if(rows > 0)
 				cols = (Children.Count + rows - 1) / rows;
@@ -143,57 +155,59 @@ namespace MediaPortal.Controls
 				h = Math.Max(h, element.Height);
 			}
 
-			Thickness t = this.Margin;
+			w = (w * cols + _spacing.Width * (cols - 1)) + Margin.Width;
+			h = (h * rows + _spacing.Height * (rows - 1)) + Margin.Height;
 
-			_size.Width = (w * cols + _spacing.Width * (cols - 1)) + t.Width;
-			_size.Height = (h * rows + _spacing.Height * (rows - 1)) + t.Height;
-
-			return _size;
+			return new Size(w, h);
 		}
 
 		#endregion Methods
 
 		#region Properties
 
-		public int Columns
+		public ColumnDefinitionCollection ColumnDefinitions
 		{
-			get { return _cols; }
-			set { if(value != _cols) { _cols = value; } }
+			get { return _colDefinitions; }
 		}
 
-		public Orientation Orientation
+		protected internal override IEnumerator LogicalChildren
 		{
-			get { return _orientation; }
-			set { _orientation = value; }
-		}
-	
-		public int Rows
-		{
-			get { return _rows; }
-			set { if(value != _rows) { _rows = value; } }
+			get { throw new NotImplementedException(); }
 		}
 
-		public Size Size
+		public RowDefinitionCollection RowDefinitions
 		{
-			get { return _size; }
+			get { return _rowDefinitions; }
 		}
 
-		public Size Spacing
+		public bool ShowGridLines
 		{
-			get { return _spacing; }
-			set { if(Size.Equals(_spacing, value) == false) { _spacing = value; } }
+			get { return (bool)GetValue(ShowGridLinesProperty); }
+			set { SetValue(ShowGridLinesProperty, value); }
 		}
 
 		#endregion Properties
 
+		#region Properties (Dependency)
+
+		public static readonly DependencyProperty ColumnProperty;
+		public static readonly DependencyProperty ColumnSpanProperty;
+		public static readonly DependencyProperty IsSharedSizeScopeProperty;
+		public static readonly DependencyProperty RowProperty;
+		public static readonly DependencyProperty RowSpanProperty;
+		public static readonly DependencyProperty ShowGridLinesProperty;
+
+		#endregion Properties (Dependency)
+
 		#region Fields
 
-		int							_cols;
-		Orientation					_orientation;
-		int							_rows;
-		Size						_size = Size.Empty;
-		Size						_spacing = Size.Empty;
+		ColumnDefinitionCollection	_colDefinitions = new ColumnDefinitionCollection();
+		RowDefinitionCollection		_rowDefinitions = new RowDefinitionCollection();
 
 		#endregion Fields
+
+		// temporary
+		Size _spacing = Size.Empty;
+		Orientation _orientation = Orientation.Vertical;
 	}
 }

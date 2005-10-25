@@ -27,44 +27,14 @@ using System;
 
 namespace MediaPortal.Controls
 {
-	public class DataTemplate : FrameworkTemplate
+	public enum GridUnitType
 	{
-		#region Constructors
+		#region Values
 
-		public DataTemplate()
-		{
-		}
+		Auto,
+		Pixel,
+		Star,
 
-		public DataTemplate(object dataType)
-		{
-			_dataType = dataType;
-		}
-
-		#endregion Constructors
-
-		#region Methods
-
-		protected override void ValidateTemplatedParent(FrameworkElement templatedParent)
-		{
-			throw new NotImplementedException();
-		}
-
-		#endregion Methods
-
-		#region Properties
-
-		public object DataType
-		{
-			get { return _dataType; }
-			set { _dataType = value; }
-		}
-
-		#endregion Properties
-
-		#region Fields
-
-		object						_dataType;
-
-		#endregion Fields
+		#endregion Values
 	}
 }

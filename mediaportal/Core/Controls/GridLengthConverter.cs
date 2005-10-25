@@ -24,47 +24,39 @@
 #endregion
 
 using System;
+using System.ComponentModel;
+using System.Globalization;
 
 namespace MediaPortal.Controls
 {
-	public class DataTemplate : FrameworkTemplate
+	public class GridLengthConverter : TypeConverter
 	{
-		#region Constructors
-
-		public DataTemplate()
-		{
-		}
-
-		public DataTemplate(object dataType)
-		{
-			_dataType = dataType;
-		}
-
-		#endregion Constructors
-
 		#region Methods
 
-		protected override void ValidateTemplatedParent(FrameworkElement templatedParent)
+		public override bool CanConvertFrom(ITypeDescriptorContext context, Type t)
 		{
-			throw new NotImplementedException();
+			if(t == typeof(string))
+				return true;
+
+			return base.CanConvertFrom(context, t);
+		}
+
+		public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
+		{
+			if(value is string)
+			{
+				if(string.Compare((string)value, "*") == 0)
+					return new GridLength(GridUnitType.Star);
+
+				if(string.Compare((string)value, "Auto", true) == 0)
+					return new GridLength(GridUnitType.Auto);
+
+				return new GridLength(double.Parse((string)value));
+			}
+
+			return base.ConvertFrom(context, culture, value);
 		}
 
 		#endregion Methods
-
-		#region Properties
-
-		public object DataType
-		{
-			get { return _dataType; }
-			set { _dataType = value; }
-		}
-
-		#endregion Properties
-
-		#region Fields
-
-		object						_dataType;
-
-		#endregion Fields
 	}
 }

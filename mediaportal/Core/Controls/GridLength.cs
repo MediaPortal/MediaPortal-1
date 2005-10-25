@@ -24,46 +24,63 @@
 #endregion
 
 using System;
+using System.ComponentModel;
 
 namespace MediaPortal.Controls
 {
-	public class DataTemplate : FrameworkTemplate
+	[TypeConverter(typeof(GridLengthConverter))]
+	public struct GridLength
 	{
 		#region Constructors
 
-		public DataTemplate()
+		public GridLength(double pixels)
 		{
+			_value = pixels;
+			_unit = GridUnitType.Pixel;
 		}
 
-		public DataTemplate(object dataType)
+		public GridLength(GridUnitType unit)
 		{
-			_dataType = dataType;
+			_value = 0;
+			_unit = unit;
 		}
 
 		#endregion Constructors
 
-		#region Methods
-
-		protected override void ValidateTemplatedParent(FrameworkElement templatedParent)
-		{
-			throw new NotImplementedException();
-		}
-
-		#endregion Methods
-
 		#region Properties
 
-		public object DataType
+		public GridUnitType GridUnitType
 		{
-			get { return _dataType; }
-			set { _dataType = value; }
+			get { return _unit; }
+			set { _unit = value; }
+		}
+
+		public bool IsAbsolute
+		{
+			get { return _unit == GridUnitType.Pixel; }
+		}
+
+		public bool IsAuto
+		{
+			get { return _unit == GridUnitType.Auto; }
+		}
+
+		public bool IsStar
+		{
+			get { return _unit == GridUnitType.Star; }
+		}
+
+		public double Value
+		{
+			get { return _value; }
 		}
 
 		#endregion Properties
 
 		#region Fields
 
-		object						_dataType;
+		double						_value;
+		GridUnitType				_unit;
 
 		#endregion Fields
 	}

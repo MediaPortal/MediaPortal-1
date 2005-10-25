@@ -25,46 +25,11 @@
 
 using System;
 
-namespace MediaPortal.Controls
+namespace System.Windows
 {
-	public class DataTemplate : FrameworkTemplate
-	{
-		#region Constructors
+	#region Delegates
 
-		public DataTemplate()
-		{
-		}
+	public delegate void DependencyPropertyChangedEventHandler(object sender, DependencyPropertyChangedEventArgs e);
 
-		public DataTemplate(object dataType)
-		{
-			_dataType = dataType;
-		}
-
-		#endregion Constructors
-
-		#region Methods
-
-		protected override void ValidateTemplatedParent(FrameworkElement templatedParent)
-		{
-			throw new NotImplementedException();
-		}
-
-		#endregion Methods
-
-		#region Properties
-
-		public object DataType
-		{
-			get { return _dataType; }
-			set { _dataType = value; }
-		}
-
-		#endregion Properties
-
-		#region Fields
-
-		object						_dataType;
-
-		#endregion Fields
-	}
+	#endregion Delegates
 }

@@ -24,46 +24,52 @@
 #endregion
 
 using System;
+using System.ComponentModel;
 
-namespace MediaPortal.Controls
+namespace System.Windows
 {
-	public class DataTemplate : FrameworkTemplate
+	public class DependencyPropertyChangedEventArgs : PropertyChangedEventArgs
 	{
 		#region Constructors
 
-		public DataTemplate()
+		public DependencyPropertyChangedEventArgs(DependencyProperty property, object oldValue, object newValue) : base(string.Empty)
 		{
-		}
-
-		public DataTemplate(object dataType)
-		{
-			_dataType = dataType;
+			_property = property;
+			_oldValue = oldValue;
+			_newValue = newValue;
 		}
 
 		#endregion Constructors
 
-		#region Methods
-
-		protected override void ValidateTemplatedParent(FrameworkElement templatedParent)
-		{
-			throw new NotImplementedException();
-		}
-
-		#endregion Methods
-
 		#region Properties
 
-		public object DataType
+		public object NewValue
 		{
-			get { return _dataType; }
-			set { _dataType = value; }
+			get { return _newValue; }
+		}
+
+		public object OldValue
+		{
+			get { return _oldValue; }
+		}
+
+		public DependencyProperty Property
+		{
+			get { return _property; }
+		}
+
+		public override string PropertyName
+		{
+			get { return _property.Name; }
 		}
 
 		#endregion Properties
 
 		#region Fields
 
-		object						_dataType;
+		object						_newValue;
+		object						_oldValue;
+		DependencyProperty			_property;
 
 		#endregion Fields
 	}

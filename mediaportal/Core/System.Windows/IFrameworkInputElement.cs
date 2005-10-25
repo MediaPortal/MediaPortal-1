@@ -25,46 +25,23 @@
 
 using System;
 
-namespace MediaPortal.Controls
+namespace System.Windows
 {
-	public class DataTemplate : FrameworkTemplate
+	public interface IFrameworkInputElement
 	{
-		#region Constructors
-
-		public DataTemplate()
-		{
-		}
-
-		public DataTemplate(object dataType)
-		{
-			_dataType = dataType;
-		}
-
-		#endregion Constructors
-
-		#region Methods
-
-		protected override void ValidateTemplatedParent(FrameworkElement templatedParent)
-		{
-			throw new NotImplementedException();
-		}
-
-		#endregion Methods
-
 		#region Properties
 
-		public object DataType
+		bool Focusable
 		{
-			get { return _dataType; }
-			set { _dataType = value; }
+			get;
+		}
+
+		string Name
+		{
+			get;
+			set;
 		}
 
 		#endregion Properties
-
-		#region Fields
-
-		object						_dataType;
-
-		#endregion Fields
 	}
 }

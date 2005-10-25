@@ -27,44 +27,18 @@ using System;
 
 namespace MediaPortal.Controls
 {
-	public class DataTemplate : FrameworkTemplate
+	public class RowDefinition
 	{
-		#region Constructors
-
-		public DataTemplate()
+		public RowDefinition()
 		{
 		}
 
-		public DataTemplate(object dataType)
+		public GridLength Height
 		{
-			_dataType = dataType;
+			get { return _height; }
+			set { _height = value; }
 		}
 
-		#endregion Constructors
-
-		#region Methods
-
-		protected override void ValidateTemplatedParent(FrameworkElement templatedParent)
-		{
-			throw new NotImplementedException();
-		}
-
-		#endregion Methods
-
-		#region Properties
-
-		public object DataType
-		{
-			get { return _dataType; }
-			set { _dataType = value; }
-		}
-
-		#endregion Properties
-
-		#region Fields
-
-		object						_dataType;
-
-		#endregion Fields
+		GridLength _height = new GridLength();
 	}
 }

@@ -25,45 +25,31 @@
 
 using System;
 
-namespace MediaPortal.Controls
+namespace System.ComponentModel
 {
-	public class DataTemplate : FrameworkTemplate
+	public class PropertyChangedEventArgs : EventArgs
 	{
 		#region Constructors
 
-		public DataTemplate()
+		public PropertyChangedEventArgs(string propertyName)
 		{
-		}
-
-		public DataTemplate(object dataType)
-		{
-			_dataType = dataType;
+			_propertyName = propertyName;
 		}
 
 		#endregion Constructors
 
-		#region Methods
-
-		protected override void ValidateTemplatedParent(FrameworkElement templatedParent)
-		{
-			throw new NotImplementedException();
-		}
-
-		#endregion Methods
-
 		#region Properties
 
-		public object DataType
+		public virtual string PropertyName
 		{
-			get { return _dataType; }
-			set { _dataType = value; }
+			get { return _propertyName; }
 		}
 
-		#endregion Properties
+		#endregion properties
 
 		#region Fields
 
-		object						_dataType;
+		string						_propertyName = string.Empty;
 
 		#endregion Fields
 	}

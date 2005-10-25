@@ -429,7 +429,22 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Controls\ColumnDefinition.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Controls\ColumnDefinitionCollection.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Controls\ContentControl.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Controls\ContentElement.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -454,12 +469,22 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Controls\DefinitionBase.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Controls\Dock.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Controls\DockPanel.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Controls\FrameworkContentElement.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -484,6 +509,21 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Controls\GridLength.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Controls\GridLengthConverter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Controls\GridUnitType.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Controls\IScrollInfo.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -495,6 +535,16 @@
                 />
                 <File
                     RelPath = "Controls\Panel.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Controls\RowDefinition.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Controls\RowDefinitionCollection.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -2344,6 +2394,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows\DependencyPropertyChangedEventArgs.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows\DependencyPropertyChangedEventHandler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows\DependencyPropertyKey.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -2375,6 +2435,11 @@
                 />
                 <File
                     RelPath = "System.Windows\GetValueOverride.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows\IFrameworkInputElement.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

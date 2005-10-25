@@ -24,47 +24,21 @@
 #endregion
 
 using System;
+using System.ComponentModel;
+using System.Windows;
+
+using MediaPortal.Input;
 
 namespace MediaPortal.Controls
 {
-	public class DataTemplate : FrameworkTemplate
+	public class FrameworkContentElement : ContentElement//, IFrameworkInputElement, IInputElement, ISupportInitialize, IResourceHost
 	{
 		#region Constructors
 
-		public DataTemplate()
+		public FrameworkContentElement()
 		{
-		}
-
-		public DataTemplate(object dataType)
-		{
-			_dataType = dataType;
 		}
 
 		#endregion Constructors
-
-		#region Methods
-
-		protected override void ValidateTemplatedParent(FrameworkElement templatedParent)
-		{
-			throw new NotImplementedException();
-		}
-
-		#endregion Methods
-
-		#region Properties
-
-		public object DataType
-		{
-			get { return _dataType; }
-			set { _dataType = value; }
-		}
-
-		#endregion Properties
-
-		#region Fields
-
-		object						_dataType;
-
-		#endregion Fields
 	}
 }
