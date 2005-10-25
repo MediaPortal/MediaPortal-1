@@ -30,11 +30,11 @@ using System.Windows;
 using MediaPortal.Animation;
 using MediaPortal.Drawing;
 using MediaPortal.Drawing.Layouts;
-using MediaPortal.GUI.Library;
+using MediaPortal.Input;
 
 namespace MediaPortal.Controls
 {
-	public class UIElement : OnDemandVisual, IAnimatable
+	public class UIElement : Visual, IInputElement, IAnimatable
 	{
 		#region Constructors
 
@@ -45,7 +45,7 @@ namespace MediaPortal.Controls
 			IsVisibleProperty = DependencyProperty.Register("IsVisible", typeof(bool), typeof(UIElement), new PropertyMetadata(true));
 			OpacityMaskProperty = DependencyProperty.Register("OpacityMask", typeof(Brush), typeof(UIElement));
 			OpacityProperty = DependencyProperty.Register("Opacity", typeof(double), typeof(UIElement), new PropertyMetadata(1.0));
-			VisibilityProperty = DependencyProperty.Register("IsEnabled", typeof(Visibility), typeof(UIElement), new PropertyMetadata(Visibility.Visible));
+			VisibilityProperty = DependencyProperty.Register("Visibility", typeof(Visibility), typeof(UIElement), new PropertyMetadata(Visibility.Visible));
 		}
 
 		public UIElement()
@@ -139,30 +139,46 @@ namespace MediaPortal.Controls
 			get { return _isArrangeValid; }
 		}
 
+		public bool IsEnabled
+		{
+			get { return IsEnabledCore; }
+			set { SetValue(IsEnabledProperty, value); }
+		}
+
+		protected virtual bool IsEnabledCore
+		{
+			get { return (bool)GetValue(IsEnabledProperty); }
+		}
+
+		public bool IsFocused
+		{
+			get { return (bool)GetValue(IsFocusedProperty); }
+		}
+
 		public bool IsMeasureValid
 		{
 			get { return _isMeasureValid; }
 		}
 
-		[XMLSkinElement("visible")]
+		[MediaPortal.GUI.Library.XMLSkinElement("visible")]
 		public bool IsVisible
 		{
-			get { return _visibility == Visibility.Visible; }
+			get { return (Visibility)GetValue(VisibilityProperty) == Visibility.Visible; }
 
 			// TODO: there should be no set accessor
-			set { _visibility = value ? Visibility.Visible : Visibility.Hidden; }
+			set { SetValue(VisibilityProperty, value ? Visibility.Visible : Visibility.Hidden); }
 		}
 
 		public virtual double Opacity
 		{
-			get { return _opacity; }
-			set { _opacity = value; }
+			get { return (double)GetValue(OpacityProperty); }
+			set { SetValue(OpacityProperty, value); }
 		}
 
 		public Brush OpacityMask
 		{
-			get { return _opacityMask; }
-			set { _opacityMask = value; }
+			get { return (Brush)GetValue(OpacityMaskProperty); }
+			set { SetValue(OpacityMaskProperty, value); }
 		}
 
 		public Size RenderSize
@@ -173,8 +189,8 @@ namespace MediaPortal.Controls
 
 		public Visibility Visibility
 		{
-			get { return _visibility; }
-			set { _visibility = value; }
+			get { return (Visibility)GetValue(VisibilityProperty); }
+			set { SetValue(VisibilityProperty, value); }
 		}
 
 		#endregion Properties
@@ -194,10 +210,7 @@ namespace MediaPortal.Controls
 
 		bool						_isArrangeValid = false;
 		bool						_isMeasureValid = false;
-		double						_opacity = 1;
-		Brush						_opacityMask;
 		Size						_renderSize = Size.Empty;
-		Visibility					_visibility = Visibility.Visible;
 
 		#endregion Fields
 	}

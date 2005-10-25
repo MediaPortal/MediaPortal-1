@@ -28,7 +28,6 @@ using System.Windows;
 
 using MediaPortal.Drawing;
 using MediaPortal.Drawing.Layouts;
-//using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Controls
 {

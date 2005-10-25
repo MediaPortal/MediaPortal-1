@@ -31,7 +31,6 @@ using System.Windows;
 using MediaPortal.Animation;
 using MediaPortal.Drawing;
 using MediaPortal.Drawing.Layouts;
-using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Controls
 {
@@ -194,13 +193,10 @@ namespace MediaPortal.Controls
 
 		void PrepareEventTrigger(EventTrigger trigger)
 		{
-			Log.Write("GUIWindow.PrepareEventTrigger: {0}", trigger.SourceName);
-
 			foreach(TriggerAction action in trigger.Actions)
 			{
 				if(action is BeginAction)
 				{
-					Log.Write("GUIWindow.PrepareEventTrigger: BeginTrigger");
 				}
 			}
 		}
