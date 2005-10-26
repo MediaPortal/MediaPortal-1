@@ -424,6 +424,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Controls\Canvas.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Controls\ClickMode.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
