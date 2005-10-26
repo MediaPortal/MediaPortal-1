@@ -24,12 +24,22 @@
 #endregion
 
 using System;
+using System.Collections;
+using System.Threading;
 using System.Windows;
 
 namespace MediaPortal
 {
-	public class App
+	public class Application : DispatcherObject, IResourceHost
 	{
+		#region Constructors
+
+		protected Application()
+		{
+		}
+
+		#endregion Constructors
+
 		#region Methods
 
 		public object FindResource(object key)
@@ -40,18 +50,18 @@ namespace MediaPortal
 			return _resources[key];
 		}
 
-		public void Run()
+		object IResourceHost.GetResource(object key)
 		{
-			System.Windows.Forms.Application.Run();
+			return FindResource(key);
 		}
 
 		#endregion Methods
 
 		#region Properties
 
-		public static App Current
+		public static Application Current
 		{
-			get { if(_current == null) _current = new App(); return _current; }
+			get { if(_current == null) _current = new Application(); return _current; }
 		}
 
 		public ResourceDictionary Resources
@@ -60,11 +70,27 @@ namespace MediaPortal
 			set { _resources = value; }
 		}
 
+		IResourceHost IResourceHost.ParentResourceHost
+		{
+			get { return null; }
+		}
+
+		public IDictionary Properties
+		{
+			get { return _properties; }
+		}
+
+		public static void DoEvents()
+		{
+			System.Windows.Forms.Application.DoEvents();
+		}
+
 		#endregion Properties
 
 		#region Fields
 
-		static App					_current;
+		static Application 			_current;
+		Hashtable					_properties = new Hashtable(100);
 		ResourceDictionary			_resources;
 
 		#endregion Fields

@@ -38,6 +38,7 @@ namespace System.Threading
 
 		public void VerifyAccess()
 		{
+			// should throw when called from incorrect thread
 		}
 
 		#endregion Methods
@@ -53,7 +54,7 @@ namespace System.Threading
 
 		#region Fields
 
-		Dispatcher					_dispatcher;
+		Dispatcher					_dispatcher = null;
 
 		#endregion Fields
 	}

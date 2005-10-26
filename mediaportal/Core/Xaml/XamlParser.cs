@@ -233,11 +233,11 @@ namespace MediaPortal.Xaml
 				{
 					if(value.StartsWith("{"))
 					{
-						App.Current.Resources.Add(ReadExtension(value), _target);
+						Application.Current.Resources.Add(ReadExtension(value), _target);
 					}
 					else
 					{
-						App.Current.Resources.Add(value, _target);
+						Application.Current.Resources.Add(value, _target);
 					}
 
 					continue;
