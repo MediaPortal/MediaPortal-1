@@ -29,7 +29,7 @@ using System.Windows;
 
 namespace MediaPortal.Controls
 {
-	public abstract class FrameworkTemplate : INameScope
+	public abstract class FrameworkTemplate : INameScope, IResourceHost
 	{
 		#region Constructors
 
@@ -43,19 +43,24 @@ namespace MediaPortal.Controls
 
 		object INameScope.FindName(string name)
 		{
+			return FindName(name, null);
+		}
+
+		public DependencyObject FindName(string name, FrameworkElement templatedParent)
+		{
 			if(_names == null)
 				return null;
 
-			return _names[name];
+			return (DependencyObject)_names[name];
 		}
 
-//		public DependencyObject FindName(string name, FrameworkElement templatedParent)
-//		{
-//		}
+		object IResourceHost.GetResource(object key)
+		{
+			if(_names == null)
+				return null;
 
-//		public DependencyObject FindName(string name, FrameworkElement templatedParent, bool searchOutsideTemplate)
-//		{
-//		}
+			return (DependencyObject)_names[key];
+		}
 
 		public void RegisterName(string name, object context)
 		{
@@ -75,6 +80,7 @@ namespace MediaPortal.Controls
 
 		protected virtual void ValidateTemplatedParent(FrameworkElement templatedParent)
 		{
+			throw new NotImplementedException();
 		}
 
 		#endregion Methods
@@ -84,6 +90,16 @@ namespace MediaPortal.Controls
 		public bool IsSealed
 		{
 			get { return _isSealed; }
+		}
+
+		public ResourceDictionary Resources
+		{
+			get { if(_resources == null) _resources = new ResourceDictionary(); return _resources; }
+		}
+
+		IResourceHost IResourceHost.ParentResourceHost
+		{
+			get { throw new NotImplementedException(); }
 		}
 
 		public FrameworkElementFactory VisualTree
@@ -98,6 +114,7 @@ namespace MediaPortal.Controls
 
 		bool						_isSealed = false;
 		Hashtable					_names;
+		ResourceDictionary			_resources;
 		FrameworkElementFactory		_visualTree;
 
 		#endregion Fields
