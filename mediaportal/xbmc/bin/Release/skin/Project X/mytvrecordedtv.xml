@@ -112,7 +112,7 @@
 				<onleft>2</onleft>
 				<onright>10</onright>
 				<onup>2</onup>
-				<ondown>4</ondown>
+				<ondown>5</ondown>
 			</control>
 			<control>
 				<description>All,Genre,Channel button</description>
@@ -123,7 +123,7 @@
 				<label>457</label>
 				<onleft>6</onleft>
 				<onright>10</onright>
-				<onup>4</onup>
+				<onup>3</onup>
 				<ondown>6</ondown>
 			</control>
 			<control>
