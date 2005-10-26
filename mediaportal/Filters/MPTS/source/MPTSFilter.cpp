@@ -162,11 +162,11 @@ STDMETHODIMP CMPTSFilter::SetSyncClock(void)
 
 STDMETHODIMP CMPTSFilter::Run(REFERENCE_TIME tStart)
 {
+	if (m_State==State_Paused) LogDebug("filter:run paused->run");
+	if (m_State==State_Running) LogDebug("filter:run run->run");
+	if (m_State==State_Stopped) LogDebug("filter:run stop->run");
 	CAutoLock cObjectLock(m_pLock);
 	HRESULT hr;
-	if(m_pFileReader->IsFileInvalid()==true)
-	{
-	}
 	hr=CSource::Run(tStart);
 	return hr;
 }
@@ -186,19 +186,26 @@ HRESULT CMPTSFilter::SetFilePosition(REFERENCE_TIME seek)
 		if (m_pSections->pids.EndPTS >= m_pSections->pids.StartPTS)
 		{
 			ULONGLONG duration=m_pSections->pids.EndPTS-m_pSections->pids.StartPTS;
-			m_pSections->PTSToPTSTime(duration,&time);
-			duration=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
+			if (duration>0)
+			{
+				m_pSections->PTSToPTSTime(duration,&time);
+				duration=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
 
-			position=(fileSize/100LL)* ( (seek*100LL)/ duration);
+				if (duration>0)
+					position=(fileSize/100LL)* ( (seek*100LL)/ duration);
+			}
 		}
 		else
 		{
 			//STARTPTS---------------MAXPTS---------------ENDPTS
 			ULONGLONG duration=m_pSections->pids.EndPTS-(MAX_PTS-m_pSections->pids.StartPTS);
-			m_pSections->PTSToPTSTime(duration,&time);
-			duration=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
-
-			position=(fileSize/100LL)* ( (seek*100LL)/ duration);
+			if (duration>0)
+			{
+				m_pSections->PTSToPTSTime(duration,&time);
+				duration=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
+				if (duration>0)
+					position=(fileSize/100LL)* ( (seek*100LL)/ duration);
+			}
 		}
 	}
 	
@@ -227,7 +234,10 @@ HRESULT CMPTSFilter::SetFilePosition(REFERENCE_TIME seek)
 
 HRESULT CMPTSFilter::Pause()
 {
-	LogDebug("Filter: Pause()");
+	if (m_State==State_Paused) LogDebug("filter:pause paused->pause");
+	if (m_State==State_Running) LogDebug("filter:pause run->pause");
+	if (m_State==State_Stopped) LogDebug("filter:pause stop->pause");
+
 	CAutoLock cObjectLock(m_pLock);
 	
 	return CSource::Pause();
@@ -235,7 +245,10 @@ HRESULT CMPTSFilter::Pause()
 
 STDMETHODIMP CMPTSFilter::Stop()
 {
-	LogDebug("Filter: Stop()");
+
+	if (m_State==State_Paused) LogDebug("filter:stop paused->stop");
+	if (m_State==State_Running) LogDebug("filter:stop run->stop");
+	if (m_State==State_Stopped) LogDebug("filter:stop stop->stop");
 	CAutoLock cObjectLock(m_pLock);
 	CAutoLock lock(&m_Lock);
 	m_pPin->AboutToStop();

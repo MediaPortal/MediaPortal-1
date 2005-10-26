@@ -26,7 +26,7 @@
 
 void LogDebug(const char *fmt, ...) 
 {
-#ifndef DEBUG
+//#ifndef DEBUG
 	va_list ap;
 	va_start(ap,fmt);
 
@@ -49,7 +49,7 @@ void LogDebug(const char *fmt, ...)
 		OutputDebugString("\n");
 		fclose(fp);
 	}
-#endif
+//#endif
 };
 
 //////////////////////////////////////////////////////////////////////
