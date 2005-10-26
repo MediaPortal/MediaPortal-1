@@ -104,7 +104,7 @@ namespace MediaPortal.Configuration
 			//
 			// Set caption
 			//
-			wizardCaption = "MediaPortal Settings Wizard - " + Application.ProductVersion;
+			wizardCaption = "MediaPortal Settings Wizard - " + System.Windows.Forms.Application.ProductVersion;
 
 			//
 			// Check if we got a sections file to read from, or if we should specify

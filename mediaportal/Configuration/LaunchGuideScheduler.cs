@@ -30,8 +30,8 @@ namespace MediaPortal.Configuration
 
     public static bool LaunchGuideScheduler()
     {	//start an TVGuideScheduler process
-      string appath = Application.StartupPath + "\\TVGuideScheduler.exe";
-      string WorkingDir=Application.StartupPath;
+      string appath = System.Windows.Forms.Application.StartupPath + "\\TVGuideScheduler.exe";
+      string WorkingDir=System.Windows.Forms.Application.StartupPath;
       try
       {
         Process runGuideScheduler = new Process();

@@ -841,7 +841,7 @@ namespace MediaPortal.Configuration.Sections
 
 		private void openDialogButton_Click(object sender, System.EventArgs e)
 		{
-			openFileDialog1.InitialDirectory = Application.StartupPath;
+			openFileDialog1.InitialDirectory = System.Windows.Forms.Application.StartupPath;
 			openFileDialog1.Filter = "xml files (*.xml)|*.xml|All files (*.*)|*.*" ;
 			openFileDialog1.FilterIndex = 1 ;
 			openFileDialog1.RestoreDirectory = true ;

@@ -174,13 +174,13 @@ namespace MediaPortal.GUI.Home
 			}
 			if (useMenus==true) 
 			{
-				if (System.IO.File.Exists(Application.StartupPath + @"\menu2.bin"))
+				if (System.IO.File.Exists(System.Windows.Forms.Application.StartupPath + @"\menu2.bin"))
 				{
-					loadTree(treeView, Application.StartupPath + @"\menu2.bin");
+					loadTree(treeView, System.Windows.Forms.Application.StartupPath + @"\menu2.bin");
 				} 
 				else 
 				{
-					loadTree(treeView, Application.StartupPath + @"\menu.bin");// if new menu handling load menutree
+					loadTree(treeView, System.Windows.Forms.Application.StartupPath + @"\menu.bin");// if new menu handling load menutree
 				}
 			}
 			

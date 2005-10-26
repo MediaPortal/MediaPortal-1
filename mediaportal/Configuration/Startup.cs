@@ -106,7 +106,7 @@ namespace MediaPortal.Configuration
 			{
         
         Log.Write("start application");
-				Application.Run(applicationForm);
+				System.Windows.Forms.Application.Run(applicationForm);
 			}
 		}
 
@@ -119,8 +119,8 @@ namespace MediaPortal.Configuration
 				Thumbs.CreateFolders();
 
 				AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
-				Application.EnableVisualStyles();
-				Application.DoEvents();
+				System.Windows.Forms.Application.EnableVisualStyles();
+				System.Windows.Forms.Application.DoEvents();
 
 					new Startup(arguments).Start();
 			}
@@ -135,7 +135,7 @@ namespace MediaPortal.Configuration
 			if(args.Name.IndexOf(".resources") < 0)
 			{
 				MessageBox.Show("Failed to locate assembly '" + args.Name + "'." + Environment.NewLine + "Note that the configuration program must be executed from/reside in the MediaPortal folder, the execution will now end.", "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
-				Application.Exit();
+				System.Windows.Forms.Application.Exit();
 			}
 				
 			return null;

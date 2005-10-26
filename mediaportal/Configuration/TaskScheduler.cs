@@ -130,7 +130,7 @@ namespace MediaPortal.Configuration
       {
         try
         {
-          string path = Application.StartupPath;
+          string path = System.Windows.Forms.Application.StartupPath;
           t = st.CreateTask("MPGuideScheduler");
           t.ApplicationName = path + @"\TVGuideScheduler.exe";
           t.WorkingDirectory = path;
