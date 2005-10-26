@@ -27,20 +27,43 @@ using System;
 
 namespace System.Windows
 {
-	public abstract class TriggerBase : DependencyObject
+	public class TriggerInvalidatedEventArgs : EventArgs
 	{
+		#region Constructors
+
+		public TriggerInvalidatedEventArgs(DependencyObject element, DependencyProperty property, Style style)
+		{
+			_element = element;
+			_property = property;
+			_style = style;
+		}
+
+		#endregion Constructors
+
 		#region Properties
 
-		public bool IsSealed
+		public DependencyObject Element
 		{
-			get { return _isSealed; }
+			get { return _element; }
+		}
+
+		public DependencyProperty Property
+		{
+			get { return _property; }
+		}
+
+		public Style Style
+		{
+			get { return _style; }
 		}
 
 		#endregion Properties
 
 		#region Fields
 
-		bool						_isSealed = false;
+		DependencyObject			_element;
+		DependencyProperty			_property;
+		Style						_style;
 
 		#endregion Fields
 	}

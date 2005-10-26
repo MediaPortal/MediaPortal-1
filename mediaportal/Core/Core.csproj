@@ -2599,6 +2599,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows\TriggerInvalidatedEventArgs.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows\TriggerInvalidatedEventHandler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows\ValidateValueCallback.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

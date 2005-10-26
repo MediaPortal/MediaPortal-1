@@ -27,21 +27,9 @@ using System;
 
 namespace System.Windows
 {
-	public abstract class TriggerBase : DependencyObject
-	{
-		#region Properties
+	#region Delegates
 
-		public bool IsSealed
-		{
-			get { return _isSealed; }
-		}
+	public delegate void TriggerInvalidatedEventHandler(object sender, TriggerInvalidatedEventArgs e);
 
-		#endregion Properties
-
-		#region Fields
-
-		bool						_isSealed = false;
-
-		#endregion Fields
-	}
+	#endregion Delegates
 }

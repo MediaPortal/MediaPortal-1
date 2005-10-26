@@ -48,7 +48,7 @@ namespace MediaPortal.Controls
 
 		#region Methods
 
-		void ApplyAlignment(FrameworkElement element, Thickness t, double x, double y, double w, double h)
+		void ApplyAlignment(FrameworkElement element, double x, double y, double w, double h)
 		{
 			Rect rect = new Rect(x, y, element.Width, element.Height);
             
@@ -83,14 +83,13 @@ namespace MediaPortal.Controls
 
 		protected override Size ArrangeOverride(Rect finalRect)
 		{
-			Thickness t = Margin;
+			Orientation orientation = Orientation;
+			Thickness margin = Margin;
 
-			Orientation orientation = this.Orientation;
-
-			double x = this.Location.X + t.Left;
-			double y = this.Location.Y + t.Top;
-			double w = orientation != Orientation.Horizontal ? Math.Max(0, this.Width - t.Width) : 0;
-			double h = orientation == Orientation.Horizontal ? Math.Max(0, this.Height - t.Height) : 0;
+			double x = Location.X + margin.Left;
+			double y = Location.Y + margin.Top;
+			double w = orientation != Orientation.Horizontal ? Math.Max(0, Width - margin.Width) : 0;
+			double h = orientation == Orientation.Horizontal ? Math.Max(0, Height - margin.Height) : 0;
 
 			foreach(FrameworkElement child in Children)
 			{
@@ -99,13 +98,13 @@ namespace MediaPortal.Controls
 
 				if(orientation == Orientation.Horizontal)
 				{
-					ApplyAlignment(child, t, x, y, w = child.Width, h);
+					ApplyAlignment(child, x, y, w = child.Width, h);
 
 					x += w + child.Margin.Width;
 				}
 				else
 				{
-					ApplyAlignment(child, t, x, y, w, h = child.Height);
+					ApplyAlignment(child, x, y, w, h = child.Height);
 
 					y += h + child.Margin.Height;
 				}
@@ -191,7 +190,7 @@ namespace MediaPortal.Controls
 		{
 		}
 
-		// are these document incorrectly?
+		// are these documented incorrectly?
 		public void SetHorizontalOffset(double offset)
 		{
 		}

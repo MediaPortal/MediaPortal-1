@@ -131,6 +131,11 @@ namespace MediaPortal.Controls
 
 		#region Properties
 
+		public Size DesiredSize
+		{
+			get { return _desiredSize; }
+		}
+
 		public bool HasAnimatedProperties
 		{
 			get { throw new NotImplementedException(); }
@@ -165,9 +170,8 @@ namespace MediaPortal.Controls
 		[MediaPortal.GUI.Library.XMLSkinElement("visible")]
 		public bool IsVisible
 		{
-			get { return (Visibility)GetValue(VisibilityProperty) == Visibility.Visible; }
-
 			// TODO: there should be no set accessor
+			get { return (Visibility)GetValue(VisibilityProperty) == Visibility.Visible; }
 			set { SetValue(VisibilityProperty, value ? Visibility.Visible : Visibility.Hidden); }
 		}
 
@@ -210,6 +214,7 @@ namespace MediaPortal.Controls
 
 		#region Fields
 
+		Size						_desiredSize = Size.Empty;
 		bool						_isArrangeValid = false;
 		bool						_isMeasureValid = false;
 		Size						_renderSize = Size.Empty;

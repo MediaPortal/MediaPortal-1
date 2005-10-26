@@ -81,7 +81,25 @@ namespace MediaPortal.Controls
 
 		protected override Size MeasureOverride(Size availableSize)
 		{
-			return base.MeasureOverride (availableSize);
+/*			if(_isEmpty)
+			{
+				_l = point.X;
+				_t = point.Y;
+				_r = point.X;
+				_b = point.Y;
+				_isEmpty = false;
+
+				return;
+			}
+
+//			foreach(UIElement element in 
+
+			_l = Math.Min(_l, point.X);
+			_t = Math.Min(_t, point.Y);
+			_r = Math.Max(_r, point.X);
+			_b = Math.Max(_b, point.Y);
+			
+*/			return base.MeasureOverride (availableSize);
 		}
 
 		public static void SetBottom(UIElement element, double bottom)
