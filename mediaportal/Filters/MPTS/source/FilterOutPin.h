@@ -58,7 +58,6 @@ protected:
 	map<int,bool>	m_mapDiscontinuitySent;
 	int				m_iPESPid;
 	typedef map<int,bool>::iterator imapDiscontinuitySent;
-	
 };
 
 #endif

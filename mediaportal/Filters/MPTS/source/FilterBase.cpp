@@ -69,7 +69,8 @@ BOOL APIENTRY DllMain(HANDLE hModule,
 					  DWORD  dwReason,
 					  LPVOID lpReserved)
 {
-	return DllEntryPoint((HINSTANCE)(hModule), dwReason, lpReserved);
+	BOOL result=DllEntryPoint((HINSTANCE)(hModule), dwReason, lpReserved);
+	return result;
 }
 
 

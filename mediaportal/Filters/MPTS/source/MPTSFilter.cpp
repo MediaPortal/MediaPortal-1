@@ -168,11 +168,12 @@ STDMETHODIMP CMPTSFilter::Run(REFERENCE_TIME tStart)
 	CAutoLock cObjectLock(m_pLock);
 	HRESULT hr;
 	hr=CSource::Run(tStart);
+	m_pDemux->ShowDemuxPins(GetFilterGraph());
 	return hr;
 }
 HRESULT CMPTSFilter::SetFilePosition(REFERENCE_TIME seek)
 {
-	if(m_pFileReader->IsFileInvalid()==true)
+	if(m_pFileReader->IsFileInvalid()==TRUE)
 		m_pFileReader->OpenFile();
 	__int64 fileSize;
 	m_pFileReader->GetFileSize(&fileSize);
@@ -388,7 +389,7 @@ bool CMPTSFilter::UpdatePids()
 	{
 		//LogDebug("start pts changed from %x->%x to new start pts:%x", (DWORD)m_pSections->pids.StartPTS,(DWORD)m_pSections->pids.EndPTS,(DWORD)ptsStart);
 	}
-	if (ptsNow < m_pSections->pids.EndPTS)
+	if (ptsNow < (ULONGLONG)m_pSections->pids.EndPTS)
 	{
 		//LogDebug("start pts wrapped from %x->%x to new pts:%x - %x", 
 //			(DWORD)m_pSections->pids.StartPTS,(DWORD)m_pSections->pids.EndPTS,(DWORD)ptsStart, (DWORD)ptsNow);

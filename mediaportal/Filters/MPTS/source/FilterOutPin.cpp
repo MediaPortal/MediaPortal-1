@@ -124,7 +124,7 @@ HRESULT CFilterOutPin::CompleteConnect(IPin *pReceivePin)
 HRESULT CFilterOutPin::GetData(byte* pData, int lDataLength, bool allowedToWait)
 {
 	HRESULT hr;
-	__int64 fileSize;
+//	__int64 fileSize;
 	do
 	{
 		if (m_bAboutToStop) return S_FALSE;
@@ -241,7 +241,7 @@ void CFilterOutPin::SeekIFrame()
 		{
 			if (pts>0)
 			{
-				if (pts >= m_pSections->pids.StartPTS && pts <= m_pSections->pids.EndPTS)
+				if (pts >= (ULONGLONG)m_pSections->pids.StartPTS && pts <= (ULONGLONG)m_pSections->pids.EndPTS)
 				{
 					//LogDebug("pts:%x pid:%x", (DWORD)pts, header.Pid);
 					m_iPESPid=header.Pid;
@@ -329,7 +329,7 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 			if (pts>0)
 			{
 				//LogDebug("found  pts:%x %x-%x pid:%x", (DWORD)pts, (DWORD)m_pSections->pids.StartPTS,(DWORD)m_pSections->pids.EndPTS,header.Pid);
-				if (m_iPESPid==0 && pts >= m_pSections->pids.StartPTS && pts <= m_pSections->pids.EndPTS)
+				if (m_iPESPid==0 && pts >= (ULONGLONG)m_pSections->pids.StartPTS && pts <= (ULONGLONG)m_pSections->pids.EndPTS)
 				{
 					LogDebug("found start pts:%x %x-%x pid:%x", (DWORD)pts, (DWORD)m_pSections->pids.StartPTS,(DWORD)m_pSections->pids.EndPTS,header.Pid);
 					m_iPESPid=header.Pid;
@@ -348,7 +348,7 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 	
 	if (ptsNow>0)
 	{
-		if (ptsNow < m_pSections->pids.StartPTS || ptsNow > (m_pSections->pids.EndPTS+ ((__int64)0x100000)) )
+		if (ptsNow < (ULONGLONG)m_pSections->pids.StartPTS || ptsNow > (ULONGLONG)(m_pSections->pids.EndPTS+ ((__int64)0x100000)) )
 		{
 			LogDebug("INVALID pts:%x %x-%x", (DWORD)ptsNow,(DWORD)m_pSections->pids.StartPTS ,(DWORD) m_pSections->pids.EndPTS);
 		}
@@ -540,7 +540,7 @@ void CFilterOutPin::UpdatePositions(ULONGLONG& ptsNow)
 		rtStart    = m_pSections->pids.StartPTS;
 		rtDuration = m_pSections->pids.EndPTS- (MAX_PTS-m_pSections->pids.StartPTS);
 
-		if (ptsNow  > m_pSections->pids.StartPTS)
+		if (ptsNow  >= (ULONGLONG)m_pSections->pids.StartPTS)
 		{
 			ptsNow =ptsNow-rtStart;
 		}

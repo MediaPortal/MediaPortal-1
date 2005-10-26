@@ -9,6 +9,7 @@
 
 #include "Sections.h"
 #include "Control.h"
+#include <dvdmedia.h>
 
 // media types
 	static BYTE	Mpeg2ProgramVideo [] = 
@@ -144,8 +145,9 @@ public:
 	SplitterSetup(Sections *pSections);
 	virtual ~SplitterSetup();
 	STDMETHODIMP SetDemuxPins(IFilterGraph *pGraph);
+	void ShowDemuxPins(IFilterGraph *pGraph);
 	HRESULT SetupPids();
-
+	
 
 protected:
 	HRESULT	GetAC3Media(AM_MEDIA_TYPE *pintype);
@@ -160,7 +162,8 @@ protected:
 	BOOL m_demuxSetupComplete;
 	IPin* m_pAudio;
 	IPin* m_pVideo;
-
+	MPEG2VIDEOINFO m_videoHdr;
+	WAVEFORMATEX   m_ac3Hdr;
 };
 
 #endif

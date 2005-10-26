@@ -23,7 +23,8 @@
 #include "SplitterSetup.h"
 #include <commctrl.h>
 #include <atlbase.h>
-
+#include <streams.h>
+#include <dvdmedia.h>
 
 extern void LogDebug(const char *fmt, ...) ;
 
@@ -33,6 +34,19 @@ m_demuxSetupComplete(FALSE)
 	m_pSections = pSections;
 	m_pAudio=NULL;
 	m_pVideo=NULL;
+
+	memset(&m_videoHdr,0,sizeof(MPEG2VIDEOINFO));
+	m_videoHdr.dwProfile=2;
+	m_videoHdr.dwLevel=2;
+
+	memset(&m_ac3Hdr,0,sizeof(WAVEFORMATEX));
+	m_ac3Hdr.wFormatTag=0;
+	m_ac3Hdr.nChannels=2;
+	m_ac3Hdr.nSamplesPerSec=48000;
+	m_ac3Hdr.nBlockAlign=768;
+	m_ac3Hdr.wBitsPerSample=16;
+	m_ac3Hdr.cbSize=0;
+	
 }
 
 SplitterSetup::~SplitterSetup()
@@ -82,7 +96,34 @@ HRESULT SplitterSetup::SetDemuxPins(IFilterGraph *pGraph)
 					demuxer->Release();
 					//LogDebug("demux: found IMpeg2Demultiplexer");
 					SetupDemuxer(pFilter);
-				}
+				}/*
+				else
+				{
+					IEnumPins *pinEnum;
+					if (SUCCEEDED(pFilter->EnumPins(&pinEnum)))
+					{
+						if (pinEnum!=NULL)
+						{
+							pinEnum->Reset();
+							ULONG fetched;
+							IPin* pin;
+							while (SUCCEEDED(pinEnum->Next(1,&pin,&fetched)))
+							{
+								if (fetched==1 && pin!=NULL)
+								{
+									IMPEG2PIDMap	*pMap=NULL;
+									if (SUCCEEDED(pin->QueryInterface(IID_IMPEG2PIDMap,(void**)&pMap)))
+									{
+										pMap->Release();
+									}
+									pin->Release();
+								}
+								else break;
+							}
+							pinEnum->Release();
+						}
+					}
+				}*/
 				pFilter->Release();
 			}
 			else break;
@@ -165,10 +206,7 @@ HRESULT SplitterSetup::SetupDemuxer(IBaseFilter *demuxFilter)
 		ZeroMemory(&type, sizeof(AM_MEDIA_TYPE));
 		if(m_pSections->pids.VideoPid>0)
 		{
-			if(m_pSections->pids.AC3==m_pSections->pids.CurrentAudioPid)
-				GetAC3Media(&type);
-			else 
-				GetMP2Media(&type);// tv
+			GetAC3Media(&type);
 		}
 		else
 		{
@@ -350,6 +388,60 @@ HRESULT SplitterSetup::SetupPids()
 	return S_OK;
 
 }
+void SplitterSetup::ShowDemuxPins(IFilterGraph *pGraph)
+{
+	DbgSetModuleLevel(LOG_TRACE,10);
+	/*
+	IBaseFilter* pFilter;
+	pGraph->FindFilterByName(L"NVIDIA Transport Demux",&pFilter);
+	IEnumPins *pinEnum;
+	if (SUCCEEDED(pFilter->EnumPins(&pinEnum)))
+	{
+		if (pinEnum!=NULL)
+		{
+			pinEnum->Reset();
+			ULONG fetched;
+			IPin* pin;
+			while (SUCCEEDED(pinEnum->Next(1,&pin,&fetched)))
+			{
+				if (fetched==1 && pin!=NULL)
+				{
+					
+					PIN_INFO info;
+					PIN_DIRECTION dir;
+					pin->QueryDirection(&dir);
+					if (dir==PINDIR_OUTPUT)
+					{
+						pin->QueryPinInfo(&info);
+						AM_MEDIA_TYPE pmt;
+						pin->ConnectionMediaType(&pmt);
+						DisplayType((LPTSTR)info.achName,&pmt);
+						pin->Release();
+						MPEG2VIDEOINFO* mp=(MPEG2VIDEOINFO *)pmt.pbFormat;
+						WAVEFORMATEX* mpa=(WAVEFORMATEX*)pmt.pbFormat;
+						int xx=1;
+					}
+				}
+				else break;
+			}
+			pinEnum->Release();
+		}
+	}*/
+	//DbgOutString("demuxer:");
+	//DumpGraph(pGraph,5);
+	if (m_pVideo!=NULL)
+	{
+		AM_MEDIA_TYPE pmt;
+		m_pVideo->ConnectionMediaType(&pmt);
+	//	DisplayType("video media:",&pmt);
+	}
+	if (m_pAudio!=NULL)
+	{
+		AM_MEDIA_TYPE pmt;
+		m_pAudio->ConnectionMediaType(&pmt);
+	//	DisplayType("audio media:",&pmt);
+	}
+}
 
 HRESULT SplitterSetup::GetAC3Media(AM_MEDIA_TYPE *pintype)
 {
@@ -361,8 +453,8 @@ HRESULT SplitterSetup::GetAC3Media(AM_MEDIA_TYPE *pintype)
 	ZeroMemory(pintype, sizeof(AM_MEDIA_TYPE));
 	pintype->majortype = MEDIATYPE_Audio;
 	pintype->subtype = MEDIASUBTYPE_DOLBY_AC3;
-	pintype->cbFormat = sizeof(MPEG1AudioFormat);
-	pintype->pbFormat = MPEG1AudioFormat;
+	pintype->cbFormat = sizeof(WAVEFORMATEX);
+	pintype->pbFormat = (BYTE*)&m_ac3Hdr;
 	pintype->bFixedSizeSamples = TRUE;
 	pintype->bTemporalCompression = 0;
 	pintype->lSampleSize = 1;
@@ -450,11 +542,11 @@ HRESULT SplitterSetup::GetVideoMedia(AM_MEDIA_TYPE *pintype)
 		pintype->subtype = MEDIASUBTYPE_MPEG2_VIDEO;
 		pintype->bFixedSizeSamples = TRUE;
 		pintype->bTemporalCompression = 0;
-		pintype->lSampleSize = 0;
-		pintype->formattype = FORMAT_MPEG2Video;
+		pintype->lSampleSize = 1;
+		pintype->formattype = FORMAT_MPEG2Video;//MPEG2VIDEOINFO 
 		pintype->pUnk = NULL;
-		pintype->cbFormat = sizeof(Mpeg2ProgramVideo);
-		pintype->pbFormat = Mpeg2ProgramVideo;
+		pintype->cbFormat = sizeof(MPEG2VIDEOINFO);
+		pintype->pbFormat = (BYTE*)&m_videoHdr;//Mpeg2ProgramVideo;
 	}
 	else
 	{
@@ -466,8 +558,8 @@ HRESULT SplitterSetup::GetVideoMedia(AM_MEDIA_TYPE *pintype)
 		pintype->lSampleSize = 0;
 		pintype->formattype = FORMAT_MPEG2Video;
 		pintype->pUnk = NULL;
-		pintype->cbFormat = sizeof(Mpeg2ProgramVideo);
-		pintype->pbFormat = Mpeg2ProgramVideo;
+		pintype->cbFormat = sizeof(MPEG2VIDEOINFO);
+		pintype->pbFormat = (BYTE*)&m_videoHdr;//Mpeg2ProgramVideo;
 	}
 	return S_OK;
 }

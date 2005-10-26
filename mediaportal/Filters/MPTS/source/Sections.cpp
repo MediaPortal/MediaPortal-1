@@ -143,8 +143,6 @@ HRESULT Sections::CheckStream()
 	bool finished=false;
 	ULONG countBytesRead;
 	m_pFileReader->SetFilePointer(0,FILE_BEGIN);
-	TSHeader header;
-	PESHeader pes;
 	unsigned long offset=0;
 	ULONGLONG filePosCounter=0;
 	ULONGLONG pts=0;
@@ -276,7 +274,6 @@ HRESULT Sections::CurrentPTS(BYTE *pData,ULONGLONG *ptsValue,int* pid)
 	HRESULT hr=S_FALSE;
 	*ptsValue=0;
 	TSHeader header;
-	PESHeader pes;
 	GetTSHeader(pData,&header);
 	int offset=4;
 	bool found=false;
