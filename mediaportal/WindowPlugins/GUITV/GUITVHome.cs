@@ -706,50 +706,6 @@ namespace MediaPortal.GUI.TV
 		}
 
 		/// <summary>
-		/// this method is called periodicaly by MP
-		/// as long as this window is shown
-		/// It will check if anything has changed like
-		/// tv channel switched or recording started/stopped
-		/// and will update the GUI
-		/// </summary>
-
-		/// <summary>
-		/// This method will try playing the timeshifting file
-		/// </summary>
-		/// <param name="bCheckOnOffButton">check state of tv on/off button</param>
-		static void StartPlaying(bool bCheckOnOffButton)
-		{
-			if (bCheckOnOffButton)
-			{
-				//if tv is off then do nothing
-				if (!Recorder.IsViewing()) return;
-			}
-      
-			// if we're not timeshifting then do nothing
-			if (!Recorder.IsTimeShifting() ) return;
-      
-			//get the timeshifting filename
-			string strFileName=Recorder.GetTimeShiftFileName();
-    
-			//if we're not playing this file yet
-			if (!g_Player.Playing || g_Player.IsTV==false || g_Player.CurrentFile != strFileName)
-			{
-				// and it exists
-				if (System.IO.File.Exists(strFileName))
-				{
-					//then play it
-					Log.Write("GUITVHome.StartPlaying() Play:{0}",strFileName);
-					g_Player.Play(strFileName); 
-				}
-				else 
-				{
-					// file does not exists. turn off tv
-					m_bTVON=false;
-				}
-			}
-		}
-
-		/// <summary>
 		/// When called this method will switch to the previous TV channel
 		/// </summary>
 		static public void OnPreviousChannel()
@@ -816,7 +772,6 @@ namespace MediaPortal.GUI.TV
 				GUIFullScreenTV	TVWindow = (GUIFullScreenTV) GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
 				if (TVWindow != null) TVWindow.UpdateOSD();
 			}
-			StartPlaying(false);
 		}
 
 		/// <summary>

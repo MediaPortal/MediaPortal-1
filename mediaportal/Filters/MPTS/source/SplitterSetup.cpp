@@ -42,6 +42,7 @@ SplitterSetup::~SplitterSetup()
 HRESULT SplitterSetup::SetDemuxPins(IFilterGraph *pGraph)
 {
 
+	LogDebug("demux:SetDemuxPins()");
 	if(m_demuxSetupComplete==true)
 	{
 		LogDebug("demux already setup");
@@ -73,11 +74,13 @@ HRESULT SplitterSetup::SetDemuxPins(IFilterGraph *pGraph)
 		{
 			if (fetched==1 && pFilter!=NULL)
 			{
+				//LogDebug("got filter");
 				IMpeg2Demultiplexer *demuxer=NULL;
 				hr=pFilter->QueryInterface(IID_IMpeg2Demultiplexer,(void**)&demuxer);
 				if ( SUCCEEDED(hr) && demuxer!=NULL)
 				{
 					demuxer->Release();
+					//LogDebug("demux: found IMpeg2Demultiplexer");
 					SetupDemuxer(pFilter);
 				}
 				pFilter->Release();
@@ -85,6 +88,10 @@ HRESULT SplitterSetup::SetDemuxPins(IFilterGraph *pGraph)
 			else break;
 		}
 		pEnum->Release();
+	}
+	else
+	{
+		LogDebug("failed to enum filters");
 	}
 	pGB->Release();
 	return NOERROR;
@@ -226,17 +233,23 @@ HRESULT SplitterSetup::SetupPids()
 	ULONG			umPid;
 	int				maxCounter;
 	HRESULT hr=0;
-	LogDebug("mpeg2 demux:SetupPids()");
+	LogDebug("mpeg2 demux:SetupPids() audio:%x video:%x (%x %x)",m_pSections->pids.VideoPid,m_pSections->pids.CurrentAudioPid, m_pVideo,m_pAudio);
 	if (m_pVideo!=NULL && m_pSections->pids.VideoPid>0)
 	{
-
+		LogDebug("mpeg2 demux:SetupPids() setup video pid");
 		hr=m_pVideo->QueryInterface(IID_IMPEG2PIDMap,(void**)&pMap);
 		if(FAILED(hr) || pMap==NULL)
+		{	
+			LogDebug("mpeg2 demux:SetupPids() failed to get IMPEG2PIDMap");
 			return 1;
+		}
 		// 
 		hr=pMap->EnumPIDMap(&pPidEnum);
 		if(FAILED(hr) || pPidEnum==NULL)
+		{
+			LogDebug("mpeg2 demux:SetupPids() failed to enum pids");
 			return 5;
+		}
 		// enum and unmap the pids
 		maxCounter=20;
 		while(pPidEnum->Next(1,&pm,&count)== S_OK)
@@ -247,7 +260,10 @@ HRESULT SplitterSetup::SetupPids()
 			umPid=pm.ulPID;
 			hr=pMap->UnmapPID(1,&umPid);
 			if(FAILED(hr))
+			{
+				LogDebug("mpeg2 demux:SetupPids() failed unmap pid:%x",umPid);
 				return 6;
+			}
 		}
 		pPidEnum->Release();
 		// map new pid
@@ -260,7 +276,10 @@ HRESULT SplitterSetup::SetupPids()
 		//	hr=pMap->MapPID(1,&pid,MEDIA_TRANSPORT_PAYLOAD);
 
 		if(FAILED(hr))
+		{
+			LogDebug("mpeg2 demux:SetupPids() failed map pid:%x",pid);
 			return 2;
+		}
 		pMap->Release();
 	}
 	
@@ -268,13 +287,20 @@ HRESULT SplitterSetup::SetupPids()
 	if (m_pAudio!=NULL)
 	{
 
+		LogDebug("mpeg2 demux:SetupPids() setup audio pid");
 		hr=m_pAudio->QueryInterface(IID_IMPEG2PIDMap,(void**)&pMap);
 		if(FAILED(hr) || pMap==NULL)
+		{
+			LogDebug("mpeg2 demux:SetupPids() failed to get IMPEG2PIDMap");
 			return 3;
+		}
 		// 
 		hr=pMap->EnumPIDMap(&pPidEnum);
 		if(FAILED(hr) || pPidEnum==NULL)
+		{
+			LogDebug("mpeg2 demux:SetupPids() failed to enumpids");
 			return 7;
+		}
 		// enum and unmap the pids
 		maxCounter=20;
 		while(pPidEnum->Next(1,&pm,&count)== S_OK)
@@ -286,7 +312,10 @@ HRESULT SplitterSetup::SetupPids()
 			umPid=pm.ulPID;
 			hr=pMap->UnmapPID(1,&umPid);
 			if(FAILED(hr))
+			{
+				LogDebug("mpeg2 demux:SetupPids() failed unmap pid:%x",umPid);
 				return 8;
+			}
 		}
 		pPidEnum->Release();
 		pid = (ULONG)m_pSections->pids.CurrentAudioPid;
@@ -310,7 +339,10 @@ HRESULT SplitterSetup::SetupPids()
 		}
 
 		if(FAILED(hr))
+		{
+			LogDebug("mpeg2 demux:SetupPids() failed to map pid:%x",pid);
 			return 4;
+		}
 
 		pMap->Release();
 	}

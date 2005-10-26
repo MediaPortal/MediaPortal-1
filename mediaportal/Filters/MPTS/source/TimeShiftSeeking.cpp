@@ -20,6 +20,7 @@
  */
 #include <streams.h>
 #include ".\timeshiftseeking.h"
+extern void LogDebug(const char *fmt, ...) ;
 
 // -- CTimeShiftSeeking implementation ------------
 
@@ -42,7 +43,8 @@ CTimeShiftSeeking::CTimeShiftSeeking(
         | AM_SEEKING_CanSeekAbsolute
         | AM_SEEKING_CanGetStopPos
         | AM_SEEKING_CanGetDuration
-		| AM_SEEKING_AbsolutePositioning;
+		| AM_SEEKING_AbsolutePositioning
+		| AM_SEEKING_CanGetCurrentPos;
 }
 
 HRESULT CTimeShiftSeeking::NonDelegatingQueryInterface(REFIID riid, void **ppv)
@@ -110,7 +112,8 @@ HRESULT CTimeShiftSeeking::GetStopPosition(LONGLONG *pStop)
 
 HRESULT CTimeShiftSeeking::GetCurrentPosition(LONGLONG *pCurrent)
 {
-    return E_NOTIMPL;
+	*pCurrent=m_rtStart;
+    return *pCurrent;
 }
 
 HRESULT CTimeShiftSeeking::GetCapabilities( DWORD * pCapabilities )
@@ -181,16 +184,25 @@ HRESULT CTimeShiftSeeking::SetPositions( LONGLONG * pCurrent,  DWORD CurrentFlag
         if(StartPosBits == AM_SEEKING_AbsolutePositioning)
         {
             m_rtStart = *pCurrent;
+			double dStart=(double)((ULONGLONG)m_rtStart);
+			dStart/=10000000.0;
+			LogDebug("setpositions start:%f", m_rtStart);
         }
         else if(StartPosBits == AM_SEEKING_RelativePositioning)
         {
             m_rtStart += *pCurrent;
+			double dStart=(double)((ULONGLONG)m_rtStart);
+			dStart/=10000000.0;
+			LogDebug("setpositions startrel:%f", dStart);
         }
 
         // set stop position
         if(StopPosBits == AM_SEEKING_AbsolutePositioning)
         {
             m_rtStop = *pStop;
+			double dStop=(double)((ULONGLONG)m_rtStop);
+			dStop/=10000000.0;
+			LogDebug("setpositions stop:%f", dStop);
         }
         else if(StopPosBits == AM_SEEKING_IncrementalPositioning)
         {
@@ -199,6 +211,9 @@ HRESULT CTimeShiftSeeking::SetPositions( LONGLONG * pCurrent,  DWORD CurrentFlag
         else if(StopPosBits == AM_SEEKING_RelativePositioning)
         {
             m_rtStop = m_rtStop + *pStop;
+			double dStop=(double)((ULONGLONG)m_rtStop);
+			dStop/=10000000.0;
+			LogDebug("setpositions relstop:%f", dStop);
         }
     }
 

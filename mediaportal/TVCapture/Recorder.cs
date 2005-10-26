@@ -1569,6 +1569,7 @@ namespace MediaPortal.TV.Recording
 					_startTimer=new DateTime(1971,6,11,0,0,0,0);
 					if (OnTvViewingStarted!=null) 
 						OnTvViewingStarted(_currentCardIndex, dev);
+					_killTimeshiftingTimer=DateTime.Now;
 					return;
 				}//if  (timeshift || dev.IsRecording)
 				else
@@ -1591,6 +1592,7 @@ namespace MediaPortal.TV.Recording
 					_startTimer=new DateTime(1971,6,11,0,0,0,0);
 					if (OnTvViewingStarted!=null) 
 						OnTvViewingStarted(_currentCardIndex,dev);
+					_killTimeshiftingTimer=DateTime.Now;
 					return;
 				}
 			}//if (cardNo>=0)
@@ -1659,6 +1661,7 @@ namespace MediaPortal.TV.Recording
 					_startTimer=new DateTime(1971,6,11,0,0,0,0);
 					if (OnTvViewingStarted!=null) 
 						OnTvViewingStarted(_currentCardIndex,dev);
+					_killTimeshiftingTimer=DateTime.Now;
 					return;
 				}//if (dev.SupportsTimeShifting)
 			}//if (timeshift)
@@ -1674,6 +1677,7 @@ namespace MediaPortal.TV.Recording
 			_startTimer=new DateTime(1971,6,11,0,0,0,0);
 			if (OnTvViewingStarted!=null) 
 				OnTvViewingStarted(_currentCardIndex,dev);
+			_killTimeshiftingTimer=DateTime.Now;
 		}//static public void StartViewing(string channel, bool TVOnOff, bool timeshift)
 
 		#endregion
@@ -1727,25 +1731,28 @@ namespace MediaPortal.TV.Recording
 				if (!g_Player.Playing)
 				{
 					int windowId=GUIWindowManager.ActiveWindow;
-					if (!IsTVWindow(windowId) && !Recorder.IsRadio()) return;
-			
-					//then try to start it
-					string fileName=Recorder.GetTimeShiftFileName();
-					try
+					if (IsTVWindow(windowId) || Recorder.IsRadio()) 
 					{
-						if (System.IO.File.Exists(fileName))
+						
+						//then try to start it
+						string fileName=Recorder.GetTimeShiftFileName();
+						try
 						{
-							using (FileStream f = new FileStream(fileName,System.IO.FileMode.Open,FileAccess.Read,FileShare.ReadWrite))
+							if (System.IO.File.Exists(fileName))
 							{
-								if (f.Length>0)
+								using (FileStream f = new FileStream(fileName,System.IO.FileMode.Open,FileAccess.Read,FileShare.ReadWrite))
 								{
-									g_Player.Play(fileName); 
+									if (f.Length>1024*10)
+									{
+										Log.Write("Recorder:filesize:{0} play timeshifting", f.Length);
+										g_Player.Play(fileName); 
+									}
 								}
 							}
 						}
-					}
-					catch(Exception)
-					{
+						catch(Exception)
+						{
+						}
 					}
 				}
 			}
@@ -1764,7 +1771,6 @@ namespace MediaPortal.TV.Recording
 							TimeSpan ts=DateTime.Now-_killTimeshiftingTimer;
 							if (ts.TotalSeconds>10)
 							{
-								Log.WriteFile(Log.LogType.Recorder,"Recorder:Stop card:{0}", _currentCardIndex);
 								dev.Stop();
 								_currentCardIndex=-1;
 								if (OnTvViewingStopped!=null)
