@@ -28,17 +28,11 @@ using System.Windows;
 
 namespace MediaPortal.Animation
 {
-	public abstract class AnimationTimeline : Timeline
-	{	
+	public abstract class DoubleAnimationBase : AnimationTimeline
+	{
 		#region Constructors
 
-		static AnimationTimeline()
-		{
-			IsAdditiveProperty = DependencyProperty.Register("IsAdditive", typeof(bool), typeof(AnimationTimeline), new PropertyMetadata(false));
-			IsCumulativeProperty = DependencyProperty.Register("IsCumulative", typeof(bool), typeof(AnimationTimeline), new PropertyMetadata(false));
-		}
-
-		protected AnimationTimeline()
+		protected DoubleAnimationBase()
 		{
 		}
 
@@ -46,42 +40,27 @@ namespace MediaPortal.Animation
 
 		#region Methods
 
-		protected internal override Clock AllocateClock()
+		public new DoubleAnimationBase Copy()
 		{
-			return CreateClock();
-		}
-		
-		public new AnimationClock CreateClock()
-		{
-			return new AnimationClock(this);
+			return (DoubleAnimationBase)base.Copy();
 		}
 
-		protected override Duration GetNaturalDurationCore(Clock clock)
+		public double GetCurrentValue(double defaultOriginValue, double defaultDestinationValue, AnimationClock animationClock)
 		{
-			return base.GetNaturalDurationCore(clock);
+			return GetCurrentValueCore(defaultOriginValue, defaultDestinationValue, animationClock);	
 		}
+
+		protected abstract double GetCurrentValueCore(double defaultOriginValue, double defaultDestinationValue, AnimationClock animationClock);
 
 		#endregion Methods
 
 		#region Properties
 
-		public virtual bool IsDestinationDefault
+		public override sealed Type TargetPropertyType
 		{
-			get { throw new NotImplementedException(); }
-		}
-
-		public abstract Type TargetPropertyType
-		{
-			get;
+			get { return typeof(double); }
 		}
 
 		#endregion Properties
-
-		#region Properties (Dependency)
-
-		public static readonly DependencyProperty IsAdditiveProperty;
-		public static readonly DependencyProperty IsCumulativeProperty;
-
-		#endregion Properties (Dependency)
 	}
 }

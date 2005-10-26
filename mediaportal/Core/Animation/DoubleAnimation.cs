@@ -28,142 +28,142 @@ using System.Windows;
 
 namespace MediaPortal.Animation
 {
-	public class DoubleAnimation : AnimationTimeline
+	public class DoubleAnimation : DoubleAnimationBase
 	{
 		#region Constructors
 
+		static DoubleAnimation()
+		{
+			ByProperty = DependencyProperty.Register("By", typeof(double), typeof(DoubleAnimation));
+			FromProperty = DependencyProperty.Register("From", typeof(double), typeof(DoubleAnimation));
+			ToProperty = DependencyProperty.Register("To", typeof(double), typeof(DoubleAnimation));
+		}
+
 		public DoubleAnimation()
 		{
-			_type = AnimationType.None;
-		}
-
-		public DoubleAnimation(double from)
-		{
-			_type = AnimationType.From;
-			_from = from;
-		}
-
-		protected DoubleAnimation(DoubleAnimation animation, CloneType cloneType) : base(animation, cloneType)
-		{
-			_from = animation._from;
-			_to = animation._to;
-			_type = animation._type;
 		}
 
 		public DoubleAnimation(double to, Duration duration)
 		{
-			_type = AnimationType.To;
-			_to = to;
+			this.To = to;
+			this.Duration = duration;
+		}
 
+		public DoubleAnimation(double from, double to, Duration duration)
+		{
+			this.From = from;
+			this.To = to;
 			this.Duration = duration;
 		}
 
 		public DoubleAnimation(double to, Duration duration, FillBehavior fillBehavior)
 		{
-			_type = AnimationType.To;
-			_to = to;
-
-			base.Duration = duration;
-			base.FillBehavior = fillBehavior;
+			this.To = to;
+			this.Duration = duration;
+			this.FillBehavior = fillBehavior;
 		}
 
 		public DoubleAnimation(double from, double to, Duration duration, FillBehavior fillBehavior)
 		{
-			_type = AnimationType.FromTo;
-			_from = from;
-			_to = to;
-
-			base.Duration = duration;
-			base.FillBehavior = fillBehavior;
+			this.From = from;
+			this.To = to;
+			this.Duration = duration;
+			this.FillBehavior = fillBehavior;
 		}
-
+			
 		#endregion Constructors
 
 		#region Methods
 
+		public new DoubleAnimation Copy()
+		{
+			return (DoubleAnimation)base.Copy();
+		}
+
+		protected override void CopyCore(Freezable sourceFreezable)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected override void CopyCurrentValueCore(Animatable sourceAnimatable)
+		{
+			throw new NotImplementedException();
+		}
+			
 		protected override Freezable CreateInstanceCore()
 		{
 			return new DoubleAnimation();
 		}
 
-/*		protected override object GetCurrentValueOverride(object baseValue, AnimationClock clock)
+		protected override double GetCurrentValueCore(double defaultOriginValue, double defaultDestinationValue, AnimationClock animationClock)
 		{
-			if(_type == AnimationType.By)
-			{
-				// animation progresses from the base value, the previous animation's output value,
-				// or a zero value (depending on how the animation is configured) to the sum of that
-				// value and the value specified by the By property
-			}
-
-			if(_type == AnimationType.From)
-			{
-				// The animation progresses from the value specified by the From property to the base value, 
-				// the previous animation's output value, or a zero value (depending upon how the animation is configured).
-			}
-
-			if(_type == AnimationType.FromBy)
-			{
-				// animation progresses from the value specified by the From property to the value 
-				// specified by the sum of the From and By properties
-			}
-
-			if(_type == AnimationType.FromTo)
-			{
-				// The animation progresses from the value specified by the From property to the value 
-				// specified by the To property.
-			}
-
-			if(_type == AnimationType.To)
-			{
-				// The animation progresses from the base value, the previous animation's output value,
-				// or a zero value (depending on how the animation is configured) to the value 
-				// specified by the To property.
-			}
-
-			return _from + clock.CurrentProgress * (_to - _from);
+			throw new NotImplementedException();
 		}
-*/
+
+		// By
+		// animation progresses from the base value, the previous animation's output value,
+		// or a zero value (depending on how the animation is configured) to the sum of that
+		// value and the value specified by the By property
+
+		// AnimationType.From
+		// The animation progresses from the value specified by the From property to the base value, 
+		// the previous animation's output value, or a zero value (depending upon how the animation is configured).
+
+		// FromBy
+		// animation progresses from the value specified by the From property to the value 
+		// specified by the sum of the From and By properties
+
+		// FromTo
+		// The animation progresses from the value specified by the From property to the value 
+		// specified by the To property.
+
+		// To
+		// The animation progresses from the base value, the previous animation's output value,
+		// or a zero value (depending on how the animation is configured) to the value 
+		// specified by the To property.
+
 		#endregion Methods
 
 		#region Properties
 
-		public override Type BaseValueType
-		{
-			get { return typeof(double); }
-		}
-
 		public double By
 		{
-			get { return _to - _from; }
-			set { if((_type & AnimationType.To) != 0) throw new InvalidOperationException(); _type |= AnimationType.By; _by = value; }
+			get { return (double)GetValue(ByProperty); }
+			set { SetValue(ByProperty, value); }
 		}
 
 		public double From
 		{
-			get { return _from; }
-			set { _type |= AnimationType.From; _from = value; }
+			get { return (double)GetValue(FromProperty); }
+			set { SetValue(FromProperty, value); }
+		}
+
+		public bool IsAdditive
+		{
+			get { return (bool)GetValue(IsAdditiveProperty); }
+			set { SetValue(IsAdditiveProperty, value); }
+		}
+
+		public bool IsCumulative
+		{
+			get { return (bool)GetValue(IsCumulativeProperty); }
+			set { SetValue(IsCumulativeProperty, value); }
 		}
 
 		public double To
 		{
-			get { return _to; }
-			set { _type &= ~AnimationType.By; _type |= AnimationType.To; _to = value; }
-		}
-
-		protected override bool UsesBaseValueCore
-		{
-			get { return false; }
+			get { return (double)GetValue(ToProperty); }
+			set { SetValue(ToProperty, value); }
 		}
 
 		#endregion Properties
 
-		#region Fields
+		#region Properties (Dependency)
 
-		double						_by = 1;
-		double						_from;
-		double						_to;
-		AnimationType				_type = AnimationType.None;
-
-		#endregion Fields
+		public static readonly DependencyProperty ByProperty;
+		public static readonly DependencyProperty FromProperty;
+		public static readonly DependencyProperty ToProperty;
+		
+		#endregion Properties (Dependency)
 	}
 }
