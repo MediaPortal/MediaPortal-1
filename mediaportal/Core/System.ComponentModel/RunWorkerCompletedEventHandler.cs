@@ -27,5 +27,9 @@ using System;
 
 namespace System.ComponentModel
 {
+	#region Delegates
+
 	public delegate void RunWorkerCompletedEventHandler(object sender, RunWorkerCompletedEventArgs e);
+
+	#endregion Delegates
 }

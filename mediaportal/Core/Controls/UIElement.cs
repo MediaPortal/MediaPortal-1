@@ -58,33 +58,29 @@ namespace MediaPortal.Controls
 
 		#region Methods
 
-		void IAnimatable.ApplyAnimationClock(DependencyProperty dp, AnimationClock clock)
+		public void ApplyAnimationClock(DependencyProperty dp, AnimationClock clock)
 		{
+			ApplyAnimationClock(dp, clock, HandoffBehavior.SnapshotAndReplace);
 		}
 
-		void IAnimatable.ApplyAnimationClock(DependencyProperty dp, AnimationClock clock, HandoffBehavior handoffBehavior)
+		public void ApplyAnimationClock(DependencyProperty dp, AnimationClock clock, HandoffBehavior handoffBehavior)
 		{
+			throw new NotImplementedException();
 		}
-
-		void IAnimatable.BeginAnimation(DependencyProperty dp, AnimationTimeline animation)
-		{
-		}
-
-		void IAnimatable.BeginAnimation(DependencyProperty dp, AnimationTimeline animation, HandoffBehavior handoffBehavior)
-		{
-		}
-		
+	
 		public object GetAnimationBaseValue(DependencyProperty dp)
 		{
-			return null;
+			return GetValue(dp);
 		}
 
 		public void AddHandler(RoutedEvent routedEvent, Delegate handler)
 		{
+			AddHandler(routedEvent, handler, true);
 		}
 
 		public void AddHandler(RoutedEvent routedEvent, Delegate handler, bool handledEventsToo)
 		{
+			throw new NotImplementedException();
 		}
 
 		public void Arrange(Rect finalRect)
@@ -94,14 +90,17 @@ namespace MediaPortal.Controls
 
 		protected virtual void ArrangeCore(Rect finalRect)
 		{
+			// no default implementation
 		}
 			
-		public void BeginAnimation(DependencyBinding dp, AnimationTimeline animation)
+		public void BeginAnimation(DependencyProperty dp, AnimationTimeline animation)
 		{
+			BeginAnimation(dp, animation, HandoffBehavior.SnapshotAndReplace);
 		}
 
-		public void BeginAnimation(DependencyBinding dp, AnimationTimeline animation, HandoffBehavior handoffBehavior)
+		public void BeginAnimation(DependencyProperty dp, AnimationTimeline animation, HandoffBehavior handoffBehavior)
 		{
+			throw new NotImplementedException();
 		}
 
 		public void Measure(Size availableSize)
@@ -111,9 +110,15 @@ namespace MediaPortal.Controls
 
 		protected virtual Size MeasureCore(Size availableSize)
 		{
+			// no default implementation
 			return Size.Empty;
 		}
 			
+		protected virtual void OnRender(DrawingContext dc)
+		{
+			// no default implementation
+		}
+
 		public void RaiseEvent(RoutedEventArgs e)
 		{
 		}

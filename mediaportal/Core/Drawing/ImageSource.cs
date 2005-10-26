@@ -104,6 +104,16 @@ namespace MediaPortal.Drawing
 			set { SetValue(AreaOfInterestUnitsProperty, value); }
 		}
 
+		public abstract double Height
+		{
+			get;
+		}
+
+		public abstract double Width
+		{
+			get;
+		}
+
 		#endregion Properties
 
 		#region Properties (Dependency)

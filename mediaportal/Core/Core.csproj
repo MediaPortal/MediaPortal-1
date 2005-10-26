@@ -534,6 +534,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Controls\Image.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Controls\IScrollInfo.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -1830,6 +1835,41 @@
                 />
                 <File
                     RelPath = "guilib\XMLSkinElementAttribute.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Imaging\BitmapCacheOption.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Imaging\BitmapCreateOptions.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Imaging\BitmapImage.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Imaging\BitmapSource.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Imaging\DownloadProgressEventArgs.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Imaging\DownloadProgressEventHandler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Imaging\Rotation.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

@@ -25,11 +25,32 @@
 
 using System;
 
-namespace System.ComponentModel
+namespace MediaPortal.Imaging
 {
-	#region Delegates
+	public class DownloadProgressEventArgs : EventArgs
+	{
+		#region Constructors
 
-	public delegate void ProgressChangedEventHandler(object sender, ProgressChangedEventArgs e);
+		public DownloadProgressEventArgs(int progress)
+		{
+			_progress = progress;
+		}
 
-	#endregion Delegates
+		#endregion Constructors
+
+		#region Properties
+
+		public int Progress
+		{
+			get { return _progress; }
+		}
+
+		#endregion Properties
+
+		#region Fields
+
+		int							_progress;
+
+		#endregion Fields
+	}
 }

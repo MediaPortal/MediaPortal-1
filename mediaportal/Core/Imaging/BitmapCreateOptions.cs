@@ -25,11 +25,18 @@
 
 using System;
 
-namespace System.ComponentModel
+namespace MediaPortal.Imaging
 {
-	#region Delegates
+	[FlagsAttribute] 
+	public enum BitmapCreateOptions
+	{
+		#region Values
+		
+		DelayCreation,
+		IgnoreColorProfile,
+		None = 0,
+		PreservePixelFormat,
 
-	public delegate void ProgressChangedEventHandler(object sender, ProgressChangedEventArgs e);
-
-	#endregion Delegates
+		#endregion Values
+	}
 }

@@ -29,7 +29,11 @@ namespace MediaPortal.Drawing
 {
 	public enum FillRule
 	{
+		#region Values
+
 		EvenOdd,
 		Nonzero,
+
+		#endregion Values
 	}
 }

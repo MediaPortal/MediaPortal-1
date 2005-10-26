@@ -25,11 +25,17 @@
 
 using System;
 
-namespace System.ComponentModel
+namespace MediaPortal.Imaging
 {
-	#region Delegates
+	public enum  Rotation
+	{
+		#region Values
 
-	public delegate void ProgressChangedEventHandler(object sender, ProgressChangedEventArgs e);
+		Rotate0,
+		Rotate180,
+		Rotate270,
+		Rotate90,
 
-	#endregion Delegates
+		#endregion Values
+	}
 }

@@ -25,11 +25,17 @@
 
 using System;
 
-namespace System.ComponentModel
+namespace MediaPortal.Imaging
 {
-	#region Delegates
+	public enum BitmapCacheOption
+	{
+		#region Values
 
-	public delegate void ProgressChangedEventHandler(object sender, ProgressChangedEventArgs e);
+		Default,
+		None,
+		OnDemand,
+		OnLoad,
 
-	#endregion Delegates
+		#endregion Values
+	}
 }

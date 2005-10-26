@@ -150,7 +150,8 @@ namespace MediaPortal.Controls
 
 		protected override object GetValueCore(DependencyProperty dp, object baseValue, PropertyMetadata metadata)
 		{
-			return null;
+			// no default implementation
+			return DependencyProperty.UnsetValue;
 		}
 
 		protected override sealed Size MeasureCore(Size availableSize)
@@ -165,6 +166,7 @@ namespace MediaPortal.Controls
 
 		protected virtual void OnInitialized(EventArgs e)
 		{
+			// no default implementation
 		}
 
 		protected internal override void OnVisualParentChanged(Visual oldParent)
@@ -179,7 +181,7 @@ namespace MediaPortal.Controls
 			
 		protected void PrepareTriggers()
 		{
-			if(Triggers == null)
+			if(_triggers == null)
 				return;
 
 			foreach(TriggerBase trigger in _triggers)
@@ -191,7 +193,7 @@ namespace MediaPortal.Controls
 			}
 		}
 
-		void PrepareEventTrigger(EventTrigger trigger)
+		private void PrepareEventTrigger(EventTrigger trigger)
 		{
 			foreach(TriggerAction action in trigger.Actions)
 			{
