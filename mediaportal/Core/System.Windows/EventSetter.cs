@@ -24,17 +24,54 @@
 #endregion
 
 using System;
+using System.Windows;
 
 namespace System.Windows
 {
-	public abstract class TriggerAction : DependencyObject
+	public class EventSetter : SetterBase
 	{
 		#region Constructors
 
-		public TriggerAction()
+		public EventSetter()
 		{
 		}
 
+		public EventSetter(RoutedEvent routedEvent, Delegate handler)
+		{
+			_event = routedEvent;
+			_handler = handler;
+		}
+
 		#endregion Constructors
+
+		#region Properties
+
+		public RoutedEvent Event
+		{
+			get { return _event; }
+			set { _event = value; }
+		}
+
+		public bool HandledEventsToo
+		{
+			get { return _isHandledEventsToo; }
+			set { _isHandledEventsToo = value; }
+		}
+
+		public Delegate Handler
+		{
+			get { return _handler; }
+			set { _handler = value; }
+		}
+
+		#endregion Properties
+
+		#region Fields
+
+		RoutedEvent					_event = null;
+		bool						_isHandledEventsToo = false;
+		Delegate					_handler = null;
+
+		#endregion Fields
 	}
 }

@@ -27,14 +27,41 @@ using System;
 
 namespace System.Windows
 {
-	public abstract class TriggerAction : DependencyObject
+	public sealed class DependencySource
 	{
 		#region Constructors
 
-		public TriggerAction()
+		private DependencySource()
 		{
 		}
 
+		public DependencySource(DependencyObject dependencyObject, DependencyProperty dependencyProperty)
+		{
+			_dependencyObject = dependencyObject;
+			_dependencyProperty = dependencyProperty;
+		}
+
 		#endregion Constructors
+
+		#region Properties
+
+		public DependencyObject DependencyObject
+		{
+			get { return _dependencyObject; }
+		}
+
+		public DependencyProperty DependencyProperty
+		{
+			get { return _dependencyProperty; }
+		}
+
+		#endregion Properties
+
+		#region Fields
+
+		DependencyObject			_dependencyObject;
+		DependencyProperty			_dependencyProperty;
+
+		#endregion Fields
 	}
 }

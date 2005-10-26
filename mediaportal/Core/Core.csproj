@@ -2414,12 +2414,22 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows\DependencySource.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows\DispatcherObject.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "System.Windows\EventManager.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows\EventSetter.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

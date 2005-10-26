@@ -87,6 +87,11 @@ namespace System.Windows
 			throw new NotImplementedException();
 		}
 
+		public PropertyMetadata GetMetadata(DependencyObjectType type)
+		{
+			throw new NotImplementedException();
+		}
+
 		public PropertyMetadata GetMetadata(Type ownerType)
 		{
 			DependencyProperty dp = (DependencyProperty)_properties[_name + ownerType];
@@ -104,6 +109,9 @@ namespace System.Windows
 
 		public bool IsValidValue(object value)
 		{
+			if(value == UnsetValue)
+				return false;
+
 			if(_validateValueCallback == null)
 				return true;
 
@@ -152,7 +160,8 @@ namespace System.Windows
 
 		public static DependencyProperty RegisterAttached(string name, Type propertyType, Type ownerType, PropertyMetadata defaultMetadata, ValidateValueCallback validateValueCallback)
 		{
-			throw new NotImplementedException();
+			// TODO: What should differ for attached properties???
+			return Register(name, propertyType, ownerType, defaultMetadata, validateValueCallback);
 		}
 
 		public static DependencyPropertyKey RegisterAttachedReadOnly(string name, Type propertyType, Type ownerType, PropertyMetadata defaultMetadata)
@@ -222,6 +231,8 @@ namespace System.Windows
 		Hashtable					_metadata = new Hashtable();
 		Type						_propertyType = null;
 		ValidateValueCallback		_validateValueCallback = null;
+
+		public static readonly object UnsetValue = new object();
 
 		#endregion Fields
 	}

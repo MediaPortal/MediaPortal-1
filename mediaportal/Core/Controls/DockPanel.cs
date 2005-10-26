@@ -36,7 +36,7 @@ namespace MediaPortal.Controls
 
 		static DockPanel()
 		{
-			DockProperty = DependencyProperty.Register("Dock", typeof(Dock), typeof(DockPanel));
+			DockProperty = DependencyProperty.RegisterAttached("Dock", typeof(Dock), typeof(DockPanel));
 			LastChildFillProperty = DependencyProperty.Register("LastFillChild", typeof(bool), typeof(DockPanel), new PropertyMetadata(true)); 
 		}
 

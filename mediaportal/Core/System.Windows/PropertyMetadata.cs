@@ -168,7 +168,7 @@ namespace System.Windows
 
 		#region Fields
 	
-		object						_defaultValue;
+		object						_defaultValue = DependencyProperty.UnsetValue;
 		GetValueOverride			_getValueOverride;
 		bool						_isSealed;
 		PropertyInvalidatedCallback _propertyInvalidatedCallback;

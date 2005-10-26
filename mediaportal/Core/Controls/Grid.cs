@@ -38,11 +38,11 @@ namespace MediaPortal.Controls
 
 		static Grid()
 		{
-			ColumnProperty = DependencyProperty.Register("Column", typeof(int), typeof(Grid));
-			ColumnSpanProperty = DependencyProperty.Register("ColumnSpan", typeof(int), typeof(Grid), new PropertyMetadata((int)1));
-			IsSharedSizeScopeProperty = DependencyProperty.Register("IsSharedSizeScope", typeof(bool), typeof(Grid), new PropertyMetadata(false));
-			RowProperty = DependencyProperty.Register("Row", typeof(int), typeof(Grid));
-			RowSpanProperty = DependencyProperty.Register("RowSpan", typeof(int), typeof(Grid), new PropertyMetadata((int)1));
+			ColumnProperty = DependencyProperty.RegisterAttached("Column", typeof(int), typeof(Grid));
+			ColumnSpanProperty = DependencyProperty.RegisterAttached("ColumnSpan", typeof(int), typeof(Grid), new PropertyMetadata((int)1));
+			IsSharedSizeScopeProperty = DependencyProperty.RegisterAttached("IsSharedSizeScope", typeof(bool), typeof(Grid), new PropertyMetadata(false));
+			RowProperty = DependencyProperty.RegisterAttached("Row", typeof(int), typeof(Grid));
+			RowSpanProperty = DependencyProperty.RegisterAttached("RowSpan", typeof(int), typeof(Grid), new PropertyMetadata((int)1));
 			ShowGridLinesProperty = DependencyProperty.Register("ShowGridLines", typeof(bool), typeof(Grid), new PropertyMetadata(false));
 		}
 

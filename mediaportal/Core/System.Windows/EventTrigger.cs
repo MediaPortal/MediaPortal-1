@@ -45,13 +45,33 @@ namespace System.Windows
 
 		#region Methods
 
+		protected virtual void AddChild(object child)
+		{
+			if(child == null)
+				throw new ArgumentNullException("child");
+
+			if(child is TriggerAction == false)
+				throw new Exception(string.Format("Cannot convert '{0}' to type '{1}'", child.GetType(), typeof(TriggerAction)));
+
+			if(_actions == null)
+				_actions = new TriggerActionCollection();
+
+			_actions.Add((TriggerAction)child);
+		}
+
+		protected virtual void AddText(string text)
+		{
+			throw new NotSupportedException("EventTrigger.IAddChild.AddText");
+		}
+
 		void IAddChild.AddChild(object child)
 		{
+			AddChild(child);
 		}
 
 		void IAddChild.AddText(string text)
 		{
-			throw new NotSupportedException("EventTrigger.IAddChild.AddText");
+			AddText(text);
 		}
 
 		#endregion Methods
