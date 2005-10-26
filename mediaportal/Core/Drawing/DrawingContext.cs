@@ -24,10 +24,63 @@
 #endregion
 
 using System;
+using System.Windows;
+using System.Threading;
+
+using MediaPortal.Animation;
+using MediaPortal.Drawing.Transforms;
 
 namespace MediaPortal.Drawing
 {
-	public class DrawingContext
+	public abstract class DrawingContext : DispatcherObject, IDisposable
 	{
+		#region Methods
+
+		public abstract void Close();
+		protected abstract void DisposeCore();
+
+//		public abstract void DrawDrawing(Drawing drawing);
+
+		public abstract void DrawEllipse(Brush brush, Pen pen, Point center, double radiusX, double radiusY);
+		public abstract void DrawEllipse(Brush brush, Pen pen, Point center, AnimationClock centerAnimations, double radiusX, AnimationClock radiusXAnimations, double radiusY, AnimationClock radiusYAnimations);
+
+		public abstract void DrawGeometry(Brush brush, Pen pen, Geometry geometry);
+		public abstract void DrawGlyphRun(Brush foregroundBrush, GlyphRun glyphRun);
+
+		public abstract void DrawImage(ImageSource imageSource, Rect rectangle);
+		public abstract void DrawImage(ImageSource imageSource, Rect rectangle, AnimationClock rectangleAnimations);
+
+		public abstract void DrawLine(Pen pen, Point point0, Point point1);
+		public abstract void DrawLine(Pen pen, Point point0, AnimationClock point0Animations, Point point1, AnimationClock point1Animations);
+
+		public abstract void DrawRectangle(Brush brush, Pen pen, Rect rectangle);
+		public abstract void DrawRectangle(Brush brush, Pen pen, Rect rectangle, AnimationClock rectangleAnimations);
+
+		public abstract void DrawRoundedRectangle(Brush brush, Pen pen, Rect rectangle, double radiusX, double radiusY);
+		public abstract void DrawRoundedRectangle(Brush brush, Pen pen, Rect rectangle, AnimationClock rectangleAnimations, double radiusX, AnimationClock radiusXAnimations, double radiusY, AnimationClock radiusYAnimations);
+
+		public abstract void DrawText(FormattedText formattedText, Point origin);
+			
+//		public abstract void DrawVideo(MediaClock clock, Rect rectangle);
+//		public abstract void DrawVideo(MediaClock clock, Rect rectangle, AnimationClock rectangleAnimations);
+
+		public abstract void Pop();
+		public abstract void PushClip(Geometry clipGeometry);
+
+		public abstract void PushOpacity(double opacity);
+		public abstract void PushOpacity(double opacity, AnimationClock opacityAnimations);
+
+		public abstract void PushTransform(Transform transform);
+
+		protected virtual void VerifyApiNonstructuralChange()
+		{
+		}
+
+		void IDisposable.Dispose()
+		{
+			DisposeCore();
+		}
+
+		#endregion Methods
 	}
 }

@@ -24,43 +24,62 @@
 #endregion
 
 using System;
+using System.Threading;
 
 namespace MediaPortal.Animation
 {
-	public class Clock
+	public class Clock : DispatcherObject
 	{
 		#region Constructors
 
-		internal Clock(Timeline timeline)
+		protected internal Clock(Timeline timeline)
 		{
 			_timeline = timeline;
-			_timeline.CurrentStateInvalidated += new EventHandler(TimelineCurrentStateInvalidated);
 			_timeline.CurrentGlobalSpeedInvalidated += new EventHandler(TimelineCurrentGlobalSpeedInvalidated);
+			_timeline.CurrentStateInvalidated += new EventHandler(TimelineCurrentStateInvalidated);
 			_timeline.CurrentTimeInvalidated += new EventHandler(TimelineCurrentTimeInvalidated);
 		}
 
 		#endregion Constructors
 
+		#region Events
+
+		public event EventHandler CurrentGlobalSpeedInvalidated;
+		public event EventHandler CurrentStateInvalidated;
+		public event EventHandler CurrentTimeInvalidated;
+		
+		#endregion Events
+
 		#region Methods
+
+		protected virtual void DiscontinuousTimeMovement()
+		{
+		}
+
+		protected virtual void SpeedChanged()
+		{
+		}
+
+		protected virtual void Stopped()
+		{
+		}
+		
+		private void TimelineCurrentGlobalSpeedInvalidated(object sender, EventArgs e)
+		{
+			if(CurrentGlobalSpeedInvalidated != null)
+				CurrentGlobalSpeedInvalidated(sender, e);
+		}
 
 		private void TimelineCurrentStateInvalidated(object sender, EventArgs e)
 		{
-			// to stop '...' is never used compiler warnings
-			if(_currentTime == 0)
-			{
-			}
-
-			if(_currentState == ClockState.Stopped)
-			{
-			}
-		}
-
-		private void TimelineCurrentGlobalSpeedInvalidated(object sender, EventArgs e)
-		{
+			if(CurrentStateInvalidated != null)
+				CurrentStateInvalidated(sender, e);
 		}
 
 		private void TimelineCurrentTimeInvalidated(object sender, EventArgs e)
 		{
+			if(CurrentTimeInvalidated != null)
+				CurrentTimeInvalidated(sender, e);
 		}
 
 		#endregion Methods
@@ -74,7 +93,7 @@ namespace MediaPortal.Animation
 
 		public double CurrentGlobalSpeed
 		{
-			get { return TimeManager.CurrentGlobalTime.Milliseconds; }
+			get { return 1; }
 		}
 
 		public int CurrentIteration
@@ -90,12 +109,12 @@ namespace MediaPortal.Animation
 
 		public ClockState CurrentState
 		{ 
-			get { return ClockState.Stopped; }
+			get { return _currentState; }
 		}
 
 		public TimeSpan CurrentTime
 		{
-			get { return TimeSpan.Zero; }
+			get { return _currentTime; }
 		}
 
 		public bool IsPaused
@@ -123,7 +142,7 @@ namespace MediaPortal.Animation
 		#region Fields
 
 		ClockState					_currentState = ClockState.Stopped;
-		double						_currentTime = 0;
+		TimeSpan					_currentTime = TimeSpan.Zero;
 		bool						_isPaused = false;
 		Duration					_naturalDuration = Duration.Automatic;
 		Clock						_parent = null;

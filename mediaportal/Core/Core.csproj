@@ -739,6 +739,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Drawing\FormattedText.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Drawing\Geometry.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -775,6 +780,11 @@
                 />
                 <File
                     RelPath = "Drawing\GeometryGroup.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Drawing\GlyphRun.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -2580,6 +2590,11 @@
                 />
                 <File
                     RelPath = "System.Windows\Style.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows\SystemResourceHost.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
