@@ -63,7 +63,17 @@ namespace MediaPortal.GUI.Library
 				_filenames = new ArrayList();
 
 				foreach(string filename in _textureNames.Split(';'))
-					_filenames.Add(filename.Trim());
+				{
+					if(filename.IndexOfAny(new char[] { '?', '*' }) != -1)
+					{
+						foreach(string match in Directory.GetFiles(GUIGraphicsContext.Skin + @"\media\", filename))
+							_filenames.Add(Path.GetFileName(match));
+					}
+					else
+					{
+						_filenames.Add(filename.Trim());
+					}
+				}
 			}
 
 			_images = new GUIImage[_filenames.Count];
