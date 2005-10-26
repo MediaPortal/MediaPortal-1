@@ -229,7 +229,7 @@ namespace MediaPortal.Player
 				do
 				{
 					UpdateDuration();
-					Application.DoEvents();						
+					System.Windows.Forms.Application.DoEvents();						
 					TimeSpan ts=DateTime.Now-dt;
 					if (ts.TotalSeconds>=2) break;
 				} while (m_dDuration<1);
@@ -1259,9 +1259,9 @@ namespace MediaPortal.Player
 							if (iSpeed==1)
 							{
 								mediaCtrl.Stop();
-								Application.DoEvents();
+								System.Windows.Forms.Application.DoEvents();
 								System.Threading.Thread.Sleep(200);
-								Application.DoEvents();
+								System.Windows.Forms.Application.DoEvents();
 								FilterState state;
 								mediaCtrl.GetState(100,out state);
 								//Log.Write("state:{0}", state.ToString());
@@ -1305,10 +1305,10 @@ namespace MediaPortal.Player
 			//mediaEvt.SetNotifyWindow( IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero );
 			//mediaCtrl.Stop();
 
-			Application.DoEvents();
+			System.Windows.Forms.Application.DoEvents();
 			FilterState state;
 			mediaCtrl.GetState(200,out state);
-			Application.DoEvents();
+			System.Windows.Forms.Application.DoEvents();
 			Log.Write("state:{0}", state.ToString());
 
 
@@ -1320,7 +1320,7 @@ namespace MediaPortal.Player
 			mediaEvt.SetNotifyWindow( GUIGraphicsContext.ActiveForm, WM_GRAPHNOTIFY, IntPtr.Zero );
 			m_state=PlayState.Playing;
 			mediaCtrl.GetState(200,out state);
-			Application.DoEvents();
+			System.Windows.Forms.Application.DoEvents();
 			Log.Write("state:{0}", state.ToString());
 		}
 

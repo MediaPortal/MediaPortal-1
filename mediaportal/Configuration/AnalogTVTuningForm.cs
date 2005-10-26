@@ -573,7 +573,7 @@ namespace MediaPortal
 			if (strength>100) strength=100;
 			signalQuality.Value=quality;
 			signalStrength.Value=strength;
-			Application.DoEvents();
+			System.Windows.Forms.Application.DoEvents();
 		}
 
 		static bool reentrant=false;

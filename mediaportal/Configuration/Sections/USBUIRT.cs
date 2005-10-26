@@ -376,7 +376,7 @@ namespace MediaPortal.Configuration.Sections
 		private void Instance_StartLearning(object sender, LearningEventArgs e)
 		{
 			statusLabel.Text = "Press and hold the '" + e.Button + "' button on your remote";
-			Application.DoEvents();
+			System.Windows.Forms.Application.DoEvents();
 		}
 
 		private void OnRemoteCommand(object command)

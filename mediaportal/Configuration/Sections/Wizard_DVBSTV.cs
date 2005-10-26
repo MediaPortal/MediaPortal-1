@@ -485,14 +485,14 @@ namespace MediaPortal.Configuration.Sections
 					string chanDesc=String.Format("freq:{0} Khz, Pol:{1} SR:{2}",transponder.TPfreq, transponder.TPpol, transponder.TPsymb );
 					string description=String.Format("Transponder:{0}/{1} {2}", index,count,chanDesc);
 					lblStatus.Text=(description);
-					Application.DoEvents();
+					System.Windows.Forms.Application.DoEvents();
 
 					ScanNextTransponder();
 					if (captureCard.SignalPresent())
 					{
 						description=String.Format("Found signal for transponder:{0} {1}, Scanning channels", currentIndex,chanDesc);
 						lblStatus.Text=(description);
-						Application.DoEvents();
+						System.Windows.Forms.Application.DoEvents();
 						ScanChannels();
 					}
 				}			
@@ -540,7 +540,7 @@ namespace MediaPortal.Configuration.Sections
 		void ScanChannels()
 		{
 			System.Threading.Thread.Sleep(400);
-			Application.DoEvents();
+			System.Windows.Forms.Application.DoEvents();
 			
 			captureCard.StoreTunedChannels(false,true,ref newChannels, ref updatedChannels, ref newRadioChannels, ref updatedRadioChannels);
 			
@@ -555,7 +555,7 @@ namespace MediaPortal.Configuration.Sections
 				{
 					m_currentDiseqc++;
 					progressBar3.Value=(100);
-					Application.DoEvents();
+					System.Windows.Forms.Application.DoEvents();
 				}
 				else
 				{
@@ -582,7 +582,7 @@ namespace MediaPortal.Configuration.Sections
 			System.Threading.Thread.Sleep(400);
 			if (captureCard.SignalQuality <40)
 				System.Threading.Thread.Sleep(400);
-			Application.DoEvents();
+			System.Windows.Forms.Application.DoEvents();
 
 		}
 
@@ -602,14 +602,14 @@ namespace MediaPortal.Configuration.Sections
 			LoadFrequencies();
 			progressBar3.Visible=true;
 			progressBar3.Value=0;
-			Application.DoEvents();
+			System.Windows.Forms.Application.DoEvents();
 			newChannels=0; updatedChannels=0;
 			newRadioChannels=0; updatedRadioChannels=0;
 			DoScan();
 			lblStatus.Text=String.Format("Imported {0} tv channels, {1} radio channels",newChannels, newRadioChannels);
 		
 			progressBar3.Value=100;
-			Application.DoEvents();
+			System.Windows.Forms.Application.DoEvents();
 		}
 
 		private void cbTransponder_SelectedIndexChanged(object sender, System.EventArgs e)

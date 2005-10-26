@@ -1477,7 +1477,7 @@ namespace MediaPortal.Configuration.Sections
     private void SetStatus(string status)
     {
       fileLabel.Text = status;
-      Application.DoEvents();
+      System.Windows.Forms.Application.DoEvents();
     }
 
     /// <summary>
@@ -1488,7 +1488,7 @@ namespace MediaPortal.Configuration.Sections
     private void SetCount(int count, int total)
     {
       countLabel.Text = String.Format("{0} of {1}", count.ToString(), total.ToString());
-      Application.DoEvents();
+      System.Windows.Forms.Application.DoEvents();
     }
 
     /// <summary>
@@ -1546,9 +1546,9 @@ namespace MediaPortal.Configuration.Sections
 			int id=VideoDatabase.GetMovieInfo(file,ref movieDetails);
 			if (id<0) 
 			{
-				Application.DoEvents();
+				System.Windows.Forms.Application.DoEvents();
 				imdb.Find( Utils.GetFilename(file));
-				Application.DoEvents();
+				System.Windows.Forms.Application.DoEvents();
 				if(stopRebuild)  return null;
 				if (imdb.Count<=0) return null;
 				if (imdb.Count>0)
@@ -1566,7 +1566,7 @@ namespace MediaPortal.Configuration.Sections
 				if ( imdb.GetDetails(imdb[selectedItem],ref movieDetails))
 				{
 					if(stopRebuild)  return null;
-					Application.DoEvents();
+					System.Windows.Forms.Application.DoEvents();
 					if (ID < 0)
 					{
 						string path,filename;
@@ -1603,7 +1603,7 @@ namespace MediaPortal.Configuration.Sections
 					DownloadThumnail(Thumbs.MovieTitle,movieDetails.ThumbURL,movieDetails.Title);
 					
 					if (stopRebuild) return null;
-					Application.DoEvents();
+					System.Windows.Forms.Application.DoEvents();
 				}
 			}
 			if (id>=0)
@@ -1620,7 +1620,7 @@ namespace MediaPortal.Configuration.Sections
 			if(stopRebuild)  return;
 			if (url==null) return;
 			if (url.Length==0) return;
-			Application.DoEvents();
+			System.Windows.Forms.Application.DoEvents();
 			string strThumb = Utils.GetCoverArtName(folder,name);
 			string LargeThumb = Utils.GetLargeCoverArtName(folder,name);
 			if (!System.IO.File.Exists(strThumb))
@@ -1727,7 +1727,7 @@ namespace MediaPortal.Configuration.Sections
 		{
 			labelLine1.Text=line1;
 			labelLine2.Text=line2;
-			Application.DoEvents();
+			System.Windows.Forms.Application.DoEvents();
 		}
 
 		private void tabPage1_Click(object sender, System.EventArgs e)
@@ -2277,7 +2277,7 @@ namespace MediaPortal.Configuration.Sections
 				int id=VideoDatabase.AddMovie(movie.Title,true);
 				movie.ID=id;
 				VideoDatabase.SetMovieInfoById(id,ref movie);
-				Application.DoEvents();
+				System.Windows.Forms.Application.DoEvents();
 			}
 			LoadMovies();
 		}

@@ -267,7 +267,7 @@ namespace MediaPortal.TV.Recording
 		{
 			currentIndex++;
 			ScanDVBCChannel();
-			Application.DoEvents();
+			System.Windows.Forms.Application.DoEvents();
 		}
 
 		void ScanDVBCChannel()

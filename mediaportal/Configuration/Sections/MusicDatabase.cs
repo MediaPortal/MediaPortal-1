@@ -364,7 +364,7 @@ namespace MediaPortal.Configuration.Sections
     private void SetStatus(string status)
     {
       fileLabel.Text = status;
-      Application.DoEvents();
+      System.Windows.Forms.Application.DoEvents();
     }
 
     

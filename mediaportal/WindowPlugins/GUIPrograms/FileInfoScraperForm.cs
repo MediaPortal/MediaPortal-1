@@ -719,17 +719,17 @@ namespace WindowPlugins.GUIPrograms
           {
             curItem.SubItems[1].Text = String.Format("waiting...");
             System.Threading.Thread.Sleep(20000);
-            Application.DoEvents();
+            System.Windows.Forms.Application.DoEvents();
             numberOfSearches = 0;
           }
           curItem.SubItems[1].Text = String.Format("searching...");
           curItem.Font = new Font(curItem.Font, curItem.Font.Style | FontStyle.Bold);
-          Application.DoEvents();
+          System.Windows.Forms.Application.DoEvents();
           bSuccess = file.FindFileInfo(myProgScraperType.ALLGAME);
           curItem.SubItems[1].Text = String.Format("{0} matches", file.FileInfoList.Count);
           StepProgressBar();
           buttonSelectBestMatch.Enabled = true;
-          Application.DoEvents();
+          System.Windows.Forms.Application.DoEvents();
         }
       }
       ChangeFileSelection();
@@ -937,19 +937,19 @@ namespace WindowPlugins.GUIPrograms
             if (numberOfSearches > 20)
             {
               curItem.SubItems[1].Text = String.Format("waiting...");
-              Application.DoEvents();
+              System.Windows.Forms.Application.DoEvents();
               System.Threading.Thread.Sleep(20000);
               numberOfSearches = 0;
             }
             curItem.SubItems[1].Text = String.Format("<searching...>");
-            Application.DoEvents();
+            System.Windows.Forms.Application.DoEvents();
             file.FindFileInfoDetail(m_CurApp, file.FileInfoFavourite, myProgScraperType.ALLGAME, saveType);
             if ((saveType == ScraperSaveType.DataAndImages) || (saveType == ScraperSaveType.Data))
             {
               file.SaveFromFileInfoFavourite();
             }
             curItem.SubItems[1].Text = String.Format("<saved>");
-            Application.DoEvents();
+            System.Windows.Forms.Application.DoEvents();
           }
         }
       }

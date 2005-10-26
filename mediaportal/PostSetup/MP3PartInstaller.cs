@@ -240,7 +240,7 @@ namespace PostSetup
 
 				while (dt.IsAlive)
 				{
-					Application.DoEvents();
+					System.Windows.Forms.Application.DoEvents();
 					if (this.cancelCalled)
 					{
 						break;
@@ -270,7 +270,7 @@ namespace PostSetup
 				labProgressBytes.Text = "Cancel!";
 				this.dt.Abort();
 				this.dt = null;
-				Application.DoEvents();
+				System.Windows.Forms.Application.DoEvents();
 				Thread.Sleep(200);
 				progressBar.Visible = false;
 				progressBar.Value = 0;

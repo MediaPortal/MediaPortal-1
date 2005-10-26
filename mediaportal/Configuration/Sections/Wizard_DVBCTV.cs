@@ -407,7 +407,7 @@ namespace MediaPortal.Configuration.Sections
 			string description=String.Format("Found signal for channel:{0} {1}, Scanning channels", currentIndex,chanDesc);
 			labelStatus.Text=description;
 			System.Threading.Thread.Sleep(400);
-			Application.DoEvents();
+			System.Windows.Forms.Application.DoEvents();
 
 			captureCard.StoreTunedChannels(false,true,ref newChannels, ref updatedChannels, ref newRadioChannels, ref updatedRadioChannels);
 			
@@ -451,7 +451,7 @@ namespace MediaPortal.Configuration.Sections
 			if (captureCard.SignalQuality <40)
 				System.Threading.Thread.Sleep(400);
 
-			Application.DoEvents();
+			System.Windows.Forms.Application.DoEvents();
 		}
 	}
 }

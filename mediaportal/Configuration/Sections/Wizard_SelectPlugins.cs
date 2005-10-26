@@ -376,7 +376,7 @@ namespace MediaPortal.Configuration.Sections
 		private void SetStatus(string status)
 		{
 			fileLabel.Text = status;
-			Application.DoEvents();
+			System.Windows.Forms.Application.DoEvents();
 		}
 
 		void ScanFolder(string folder, bool scanForAudio, bool scanForVideo, bool scanForPhotos)
@@ -419,7 +419,7 @@ namespace MediaPortal.Configuration.Sections
 			labelMovieCount.Text = totalVideo.ToString();
 			labelPhotoCount.Text = totalPhotos.ToString();
 			labelMusicCount.Text = totalAudio.ToString();
-			Application.DoEvents();
+			System.Windows.Forms.Application.DoEvents();
 			long videoCount=totalVideo;
 			long audioCount=totalAudio;
 			long photoCount=totalPhotos;

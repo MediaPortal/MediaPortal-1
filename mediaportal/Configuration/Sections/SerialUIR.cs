@@ -829,19 +829,19 @@ namespace MediaPortal.Configuration.Sections
 			MediaPortal.SerialIR.SerialUIR.Instance.StartListening += new StartListeningEventHandler(Instance_CodeReceived);
 			statusLabel.Text = "Learning finished !";
 			internalCommandsButton.Enabled = true;
-			Application.DoEvents();
+			System.Windows.Forms.Application.DoEvents();
 		}
 
 		private void Instance_CodeReceived(object sender, ListeningEventArgs e)
 		{
 			statusLabel.Text = e.Code;
-			Application.DoEvents();
+			System.Windows.Forms.Application.DoEvents();
 		}
 
 		private void Instance_StartLearning(object sender, LearningEventArgs e)
 		{
 			statusLabel.Text = "Press and hold the '" + e.Button + "' button on your remote";
-			Application.DoEvents();
+			System.Windows.Forms.Application.DoEvents();
 		}
 
 		private void OnRemoteCommand(object command)

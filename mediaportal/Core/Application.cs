@@ -80,11 +80,6 @@ namespace MediaPortal
 			get { return _properties; }
 		}
 
-		public static void DoEvents()
-		{
-			System.Windows.Forms.Application.DoEvents();
-		}
-
 		#endregion Properties
 
 		#region Fields

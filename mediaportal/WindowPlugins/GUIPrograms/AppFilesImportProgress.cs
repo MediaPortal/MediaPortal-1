@@ -111,7 +111,7 @@ namespace WindowPlugins.GUIPrograms
       if (CurApp != null)
       {
         progressText.Text = "";
-        Application.DoEvents(); // make sure the title caption appears....
+        System.Windows.Forms.Application.DoEvents(); // make sure the title caption appears....
         CurApp.OnRefreshInfo += new AppItem.RefreshInfoEventHandler(RefreshInfo);
         try
         {
@@ -134,7 +134,7 @@ namespace WindowPlugins.GUIPrograms
       progressText.Text = progressText.Text + "\r\n" + Message;
       progressText.SelectionStart = progressText.Text.Length;
       progressText.ScrollToCaret();
-      Application.DoEvents();
+      System.Windows.Forms.Application.DoEvents();
     }
 
     public AppItem CurApp

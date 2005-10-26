@@ -318,7 +318,7 @@ namespace MediaPortal.Configuration.Sections
 				frequency /=1000f;
 				string description=String.Format("frequency:{0} MHz. Bandwidth:{1} MHz", frequency.ToString("f2"), tmp[1]);
 				labelStatus.Text=description;
-				Application.DoEvents();
+				System.Windows.Forms.Application.DoEvents();
 
 				ScanNextFrequency(0);
 				if (captureCard.SignalPresent())
@@ -401,7 +401,7 @@ namespace MediaPortal.Configuration.Sections
 			System.Threading.Thread.Sleep(400);
 			if (captureCard.SignalQuality <40)
 				System.Threading.Thread.Sleep(400);
-			Application.DoEvents();
+			System.Windows.Forms.Application.DoEvents();
 
 			captureCard.StoreTunedChannels(false,true,ref newChannels, ref updatedChannels, ref newRadioChannels, ref updatedRadioChannels);
 		}

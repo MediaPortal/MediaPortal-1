@@ -132,7 +132,7 @@ namespace ProcessPlugins.ExternalDisplay
         stopRequested=true;
         while(t.IsAlive)
         {
-          Application.DoEvents();
+          System.Windows.Forms.Application.DoEvents();
           Thread.Sleep(100);
         }
 
