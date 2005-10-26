@@ -2374,6 +2374,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Threading\Dispatcher.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Threading\DispatcherObject.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Threading\TimeoutLock.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -2415,11 +2425,6 @@
                 />
                 <File
                     RelPath = "System.Windows\DependencySource.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\DispatcherObject.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

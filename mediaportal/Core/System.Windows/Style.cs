@@ -117,6 +117,11 @@ namespace System.Windows
 			get { return _isSealed; }
 		}
 
+		IResourceHost IResourceHost.ParentResourceHost
+		{
+			get { return _basedOn; }
+		}
+
 		public ResourceDictionary Resources
 		{
 			get { if(_resources == null) _resources = new ResourceDictionary(); return _resources; }
@@ -125,11 +130,6 @@ namespace System.Windows
 		public SetterBaseCollection Setters
 		{ 
 			get { if(_setters == null) _setters = new SetterBaseCollection(); return _setters; }
-		}
-
-		IResourceHost IResourceHost.ParentResourceHost
-		{
-			get { throw new NotImplementedException(); }
 		}
 
 		public Type TargetType

@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections;
+using System.Threading;
 
 namespace System.Windows
 {
@@ -38,6 +39,7 @@ namespace System.Windows
 
 		public DependencyObject(bool canBeUnbound)
 		{
+			// specifies whether this object can be detached from main thread
 			_isCanBeUnbound = canBeUnbound;
 		}
 
@@ -48,6 +50,11 @@ namespace System.Windows
 		public void ClearValue(DependencyProperty dp)
 		{
 			_properties.Remove(dp);
+		}
+
+		public void ClearValue(DependencyPropertyKey key)
+		{
+			throw new NotImplementedException();
 		}
 
 		public LocalValueEnumerator GetLocalValueEnumerator()
