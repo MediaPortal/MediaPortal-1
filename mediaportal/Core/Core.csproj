@@ -244,6 +244,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Animation\BeginStoryboard.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Animation\Clock.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -359,17 +364,17 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Animation\SetterTimeline.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "Animation\SkipToFillAction.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Animation\StopAction.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Animation\Storyboard.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

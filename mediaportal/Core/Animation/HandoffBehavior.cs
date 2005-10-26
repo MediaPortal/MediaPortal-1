@@ -29,7 +29,11 @@ namespace MediaPortal.Animation
 {
 	public enum HandoffBehavior
 	{
+		#region Fields
+
 		Compose,
-		SnapshotAndReplace,
+		SnapshotAndReplace = 0,
+
+		#endregion Fields
 	}
 }

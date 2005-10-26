@@ -25,59 +25,70 @@
 
 using System;
 using System.Windows;
+using System.Windows.Serialization;
 
 namespace MediaPortal.Animation
 {
-	public class SetterTimeline : ParallelTimeline
+	public sealed class BeginStoryboard : TriggerAction, IAddChild
 	{
 		#region Constructors
 
-		public SetterTimeline()
+		static BeginStoryboard()
 		{
-			_targetName = string.Empty;
+			StoryboardProperty = DependencyProperty.Register("Storyboard", typeof(Storyboard), typeof(BeginStoryboard));
 		}
 
-		protected SetterTimeline(SetterTimeline timeline, CloneType cloneType) : base(timeline, cloneType)
+		public BeginStoryboard()
 		{
-		}
-
-		public SetterTimeline(string targetName, PropertyPath path, object value)
-		{
-			_targetName = targetName;
-			_value = value;
 		}
 
 		#endregion Constructors
 
 		#region Methods
 
-		protected internal override Clock AllocateClock()
+		void IAddChild.AddChild(object child)
 		{
-			throw new NotImplementedException();
+			if(child == null)
+				throw new ArgumentNullException("child");
+
+			if(child is Storyboard == false)
+				throw new Exception(string.Format("Cannot convert '{0}' to type '{1}'", child.GetType(), typeof(Storyboard)));
+
+			SetValue(StoryboardProperty, child);
+		}
+
+		void IAddChild.AddText(string text)
+		{
+			throw new NotSupportedException();
 		}
 
 		#endregion Methods
 
 		#region Properties
 
-		public string TargetName
+		public HandoffBehavior HandoffBehavior
 		{
-			get { return _targetName; }
-			set { if(string.Compare(_targetName, value) != 0) { _targetName = value; } }
+			get { return _handoffBehavior; }
+			set { _handoffBehavior = value; }
 		}
 
-		public object Value
+		public Storyboard Storyboard
 		{
-			get { return _value; }
-			set { _value = value; }
+			get { return (Storyboard)GetValue(StoryboardProperty); }
+			set { SetValue(StoryboardProperty, value); }
 		}
 
 		#endregion Properties
 
+		#region Properties (Dependency)
+
+		public static readonly DependencyProperty StoryboardProperty;
+
+		#endregion Properties (Dependency)
+
 		#region Fields
 
-		string						_targetName = string.Empty;
-		object						_value;
+		HandoffBehavior				_handoffBehavior;
 
 		#endregion Fields
 	}
