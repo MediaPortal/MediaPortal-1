@@ -158,7 +158,7 @@ public class MediaPortalApp : D3DApp, IRender
 		Log.Write("Mediaportal is starting up");
 
 		//Set current directory
-		string applicationPath = Application.ExecutablePath;
+		string applicationPath = System.Windows.Forms.Application.ExecutablePath;
 		applicationPath = System.IO.Path.GetFullPath(applicationPath);
 		applicationPath = System.IO.Path.GetDirectoryName(applicationPath);
 		System.IO.Directory.SetCurrentDirectory(applicationPath);
@@ -290,7 +290,7 @@ public class MediaPortalApp : D3DApp, IRender
 				{
 #endif
 					GUIGraphicsContext.BlankScreen=false;
-					Application.Run(app);
+					System.Windows.Forms.Application.Run(app);
 #if !DEBUG
 				}
 				catch (Exception ex)
@@ -345,7 +345,7 @@ public class MediaPortalApp : D3DApp, IRender
 		// check if MediaPortal is already running...
 
 		Log.Write("  Check if mediaportal is already started");
-		m_UniqueIdentifier = Application.ExecutablePath.Replace("\\", "_");
+		m_UniqueIdentifier = System.Windows.Forms.Application.ExecutablePath.Replace("\\", "_");
 		m_Mutex = new System.Threading.Mutex(false, m_UniqueIdentifier);
 		if (!m_Mutex.WaitOne(1, true))
 		{

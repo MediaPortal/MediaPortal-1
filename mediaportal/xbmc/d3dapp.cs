@@ -1657,8 +1657,8 @@ namespace MediaPortal
 
     private void D3DApp_Load(object sender, System.EventArgs e)
     {
-			Application.Idle+=new EventHandler(Application_Idle);
-      Initialize();
+			System.Windows.Forms.Application.Idle+=new EventHandler(Application_Idle);
+			Initialize();
 			OnStartup();
 
 		// TODO: When migrating to .NET 2 change to use EventWaitHandle.OpenExisting

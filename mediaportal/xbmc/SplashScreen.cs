@@ -51,7 +51,7 @@ namespace MediaPortal
 			// TODO: Add any constructor code after InitializeComponent call
 			//
       SetInformation("Loading...");
-      SetVersion(Application.ProductVersion);
+      SetVersion(System.Windows.Forms.Application.ProductVersion);
 		}
 
     public void SetInformation(string information)
