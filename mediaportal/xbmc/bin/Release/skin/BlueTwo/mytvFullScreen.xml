@@ -176,18 +176,9 @@
 		<control>
 			<description>background</description> 
 			<type>image</type> 
-			<id>103</id> 
-			<posX>13</posX> 
-			<posY>367</posY>
-			<texture>progress_bg.png</texture>		
-			<visible>yes</visible> 
-		</control>
-		<control>
-			<description>background</description> 
-			<type>image</type> 
 			<id>104</id> 
 			<posX>171</posX> 
-			<posY>416</posY>
+			<posY>496</posY>
 			<width>375</width>
 			<height>22</height>
 			<texture>osd_progress_background.png</texture>		
@@ -198,7 +189,7 @@
 			<type>tvprogress</type> 
 			<id>100</id> 
 			<posX>159</posX> 
-			<posY>417</posY> 
+			<posY>497</posY> 
 			<width>400</width>
 			<toptexture>osd_progress_indicator.png</toptexture> 
 			<TextureOffsetY>22</TextureOffsetY>
@@ -227,34 +218,23 @@
 			<textcolor>FF000000</textcolor> 
 		</control> 
 		<control>
-			<description>Current time</description> 
-			<type>label</type> 
-			<id>105</id> 
-			<posX>70</posX> 
-			<posY>430</posY> 
-			<label>#TV.Record.current</label> 
-			<align>left</align> 
-			<font>font72</font> 
-			<textcolor>30ffffff</textcolor> 
-		</control>
-		<control>
-			<description>Start Time Info</description> 
+			<description>Current Time Info</description> 
 			<type>label</type> 
 			<id>106</id> 
 			<posX>160</posX> 
-			<posY>415</posY> 
-			<label>#TV.View.start</label> 
+			<posY>495</posY> 
+			<label>#TV.Record.current</label> 
 			<align>right</align> 
 			<font>font16</font> 
 			<textcolor>FFFFFFFF</textcolor> 
 		</control>
 		<control>
-			<description>End Time Info</description> 
+			<description>Remaining Time Info</description> 
 			<type>label</type> 
 			<id>107</id> 
 			<posX>555</posX> 
-			<posY>415</posY> 
-			<label>#TV.View.stop</label> 
+			<posY>495</posY> 
+			<label>#TV.View.remaining</label> 
 			<align>left</align> 
 			<font>font16</font> 
 			<textcolor>FFFFFFFF</textcolor> 

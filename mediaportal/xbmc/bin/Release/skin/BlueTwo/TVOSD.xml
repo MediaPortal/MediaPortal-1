@@ -39,7 +39,7 @@
 		<label>#TV.View.Percentage</label>
 	</control>
 	<control>
-		<description>Start Time Info</description> 
+		<description>Current Time Info</description> 
 		<type>label</type> 
 		<id>101</id> 
 		<posX>160</posX> 
@@ -131,7 +131,7 @@
 		<textureFocus>arrow_round_left_focus.png</textureFocus>
 		<textureNoFocus>arrow_round_left_nofocus.png</textureNoFocus>
 		<label>-</label>
-		<onleft>221</onleft>
+		<onleft>214</onleft>
 		<onright>34</onright>
 		<onup>33</onup>
 		<ondown>32</ondown>
@@ -179,7 +179,7 @@
 		<textureFocus>arrow_round_down_focus.png</textureFocus>
 		<textureNoFocus>arrow_round_down_nofocus.png</textureNoFocus>
 		<label>-</label>
-		<onleft>221</onleft>
+		<onleft>214</onleft>
 		<onright>31</onright>
 		<onup>33</onup>
 		<ondown>32</ondown>
@@ -285,7 +285,7 @@
 		<label>-</label> 
 		<font>-</font> 
 		<onleft>213</onleft> 
-		<onright>211</onright> 
+		<onright>33</onright> 
 		<onup>219</onup> 
 		<ondown>216</ondown> 
 	</control>
@@ -323,7 +323,7 @@
 		<label>-</label> 
 		<font>-</font> 
 		<onleft>213</onleft> 
-		<onright>212</onright> 
+		<onright>33</onright> 
 		<onup>214</onup> 
 		<ondown>210</ondown> 
 	</control>
@@ -361,7 +361,7 @@
 		<label>-</label> 
 		<font>-</font> 
 		<onleft>213</onleft> 
-		<onright>218</onright> 
+		<onright>33</onright> 
 		<onup>215</onup> 
 		<ondown>214</ondown> 
 	</control>
