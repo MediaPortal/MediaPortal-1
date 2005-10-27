@@ -2724,6 +2724,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Serialization\ICanAddNamespaceEntries.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Serialization\MarkupExtension.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

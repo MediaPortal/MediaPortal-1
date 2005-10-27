@@ -42,7 +42,7 @@ namespace System.Windows
 		
 		public static RoutedEvent GetRoutedEventFromName(string name, Type ownerType)
 		{
-			return (RoutedEvent)_routedEventsByName[name];
+			return (RoutedEvent)_routedEvents[ownerType + name];
 		}
 
 		public static RoutedEvent[] GetRoutedEvents()
@@ -52,39 +52,24 @@ namespace System.Windows
 
 		public static RoutedEvent[] GetRoutedEventsForOwner(Type ownerType)
 		{
-			ArrayList list = _routedEventsByOwner[ownerType] as ArrayList;
-
-			if(list == null)
-				return new RoutedEvent[0];
-
-			return (RoutedEvent[])list.ToArray();
+			throw new NotImplementedException();
 		}
 
 		public static void RegisterClassHandler(Type classType, RoutedEvent routedEvent, Delegate handler)
 		{
-			RegisterClassHandler(classType, routedEvent, handler, false);
+			RegisterClassHandler(classType, routedEvent, handler, true);
 		}
 			
 		public static void RegisterClassHandler(Type classType, RoutedEvent routedEvent, Delegate handler, bool handledEventsToo)
 		{
-			_classHandlers[classType.GetHashCode() ^ routedEvent.GetHashCode()] = new RoutedEventHandlerInfo(handler, false);
+			_classHandlers[classType.GetHashCode() ^ routedEvent.GetHashCode()] = new RoutedEventHandlerInfo(handler, handledEventsToo);
 		}
 
 		public static RoutedEvent RegisterRoutedEvent(string name, RoutingStrategy routingStrategy, Type handlerType, Type ownerType)
 		{
 			RoutedEvent routedEvent = new RoutedEvent(name, routingStrategy, handlerType, ownerType);
 
-			_routedEventsByName[name] = routedEvent;
-			
-			ArrayList list = _routedEventsByOwner[ownerType] as ArrayList;
-
-			if(list == null)
-			{
-				list = new ArrayList();
-				_routedEventsByOwner[ownerType] = list;
-			}
-
-			list.Add(routedEvent);
+			_routedEvents[ownerType + name] = routedEvent;
 
 			return routedEvent;
 		}
@@ -93,8 +78,7 @@ namespace System.Windows
 
 		#region Fields
 
-		static Hashtable			_routedEventsByName = new Hashtable(100);
-		static Hashtable			_routedEventsByOwner = new Hashtable(100);
+		static Hashtable			_routedEvents = new Hashtable(100);
 		static Hashtable			_classHandlers = new Hashtable(100);
 
 		#endregion Fields

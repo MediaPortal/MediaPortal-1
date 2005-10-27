@@ -47,70 +47,6 @@ namespace System.Windows
 
 		#endregion Constructors
 
-		#region Methods
-
-		private static Type GetType(string type)
-		{
-			Type t = null;
-
-			foreach(string ns in _namespaces)
-			{
-				t = Type.GetType(ns + "." + type);
-
-				if(t != null)
-					break;
-			}
-
-			return t;
-		}
-
-		private static object[] InnerParse(string path)
-		{
-			string[] parts = path.Split('.');
-
-			ArrayList list = new ArrayList();
-
-			// this should definately be improved upon!!!
-			for(int index = 0; index < parts.Length; index += 2)
-			{
-				string typename = parts[index].Trim();
-				string property = parts[index + 1].Trim();
-
-				if(typename == string.Empty || typename.StartsWith("(") == false)
-					throw new ArgumentException(string.Format("( expected)"));
-
-				if(property == string.Empty || property.EndsWith(")") == false)
-					throw new ArgumentException(string.Format(") expected)"));
-
-				// remove the ( from the type specifier
-				typename = typename.Substring(1);
-
-				Type t = GetType(typename);
-
-				if(t == null)
-					throw new ArgumentException(string.Format("The type or namespace '{0}' could not be found", t));
-
-				// remove the ) from the property name
-				property = property.Substring(0, property.Length - 1);
-
-				PropertyInfo propertyInfo = t.GetProperty(property, BindingFlags.Instance | BindingFlags.Public);
-
-				if(propertyInfo  == null)
-					throw new ArgumentException(string.Format("'{0}' does not contain a definition for '{1}'", t, property));
-
-				list.Add(propertyInfo);
-			}
-
-			return list.ToArray();
-		}
-
-		public static PropertyPath Parse(string path)
-		{
-			return new PropertyPath(path, InnerParse(path));
-		}
-
-		#endregion Methods
-
 		#region Properties
 
 		public string Path
@@ -120,10 +56,10 @@ namespace System.Windows
 		}
 
 //		public DependencyBindingCollection PathParameters
-		public object[] PathParameters
-		{
-			get { if(_propertyInfoArray == null) _propertyInfoArray = InnerParse(_path); return _propertyInfoArray; }
-		}
+//		public object[] PathParameters
+//		{
+//			get { if(_propertyInfoArray == null) _propertyInfoArray = InnerParse(_path); return _propertyInfoArray; }
+//		}
 
 		#endregion Properties
 
@@ -131,7 +67,6 @@ namespace System.Windows
 
 		string						_path = string.Empty;
 		object[]					_propertyInfoArray;
-		static string[]				_namespaces = MediaPortal.Xaml.XamlParser.DefaultNamespaces;
 
 		#endregion Fields
 	}

@@ -24,40 +24,13 @@
 #endregion
 
 using System;
-using System.Windows;
 
 namespace System.Windows.Serialization
 {
-	public class TypeExtension : MarkupExtension, ICanAddNamespaceEntries
+	public interface ICanAddNamespaceEntries
 	{
-		#region Methods
-
-		void ICanAddNamespaceEntries.AddNamespaceEntries(string[] namespaces)
-		{
-			_namespaces = namespaces;
-		}
-
-		public override object ProvideValue(object target, object value)
-		{
-			Type t = null;
-
-			foreach(string ns in _namespaces)
-			{
-				t = Type.GetType(ns + "." + (string)value);
-
-				if(t != null)
-					return t;
-			}
-
-			return null;
-		}
-
-		#endregion Methods
-
-		#region Fields
-
-		string[]					_namespaces;
-
-		#endregion Fields
+		// TODO:
+//		void AddNamespaceEntries(XamlDesignerSerializationManager manager, object value);
+		void AddNamespaceEntries(string[] namespaces);
 	}
 }

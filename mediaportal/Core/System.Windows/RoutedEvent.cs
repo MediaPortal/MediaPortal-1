@@ -24,6 +24,7 @@
 #endregion
 
 using System;
+using System.Globalization;
 using System.ComponentModel;
 
 namespace System.Windows
@@ -62,44 +63,15 @@ namespace System.Windows
 
 		#region Methods
 
-		private static Type GetType(string type)
-		{
-			Type t = null;
-
-			foreach(string ns in MediaPortal.Xaml.XamlParser.DefaultNamespaces)
-			{
-				t = Type.GetType(ns + "." + type);
-
-				if(t != null)
-					break;
-			}
-
-			return t;
-		}
-
-		public static RoutedEvent Parse(string text)
-		{
-			string[] tokens = text.Split('.');
-
-			if(tokens.Length != 2)
-				throw new ArgumentException("text");
-
-			Type t = GetType(tokens[0]);
-
-			if(t == null)
-				throw new InvalidOperationException(string.Format("The type or namespace '{0}' could not be found", tokens[0]));
-
-			return EventManager.GetRoutedEventFromName(tokens[1], t);
-		}
-
 		public RoutedEvent AddOwner(Type ownerType)
 		{
-			throw new NotImplementedException();
+			return EventManager.RegisterRoutedEvent(_name, _routingStrategy, _handlerType, ownerType);
 		}
 
 		public override string ToString()
 		{
-			throw new NotImplementedException();
+			// TODO: Is this the correct way???
+			return string.Format("{0}.{1}", _ownerType.Name, _name);
 		}
 
 		#endregion Methods

@@ -138,6 +138,9 @@ namespace MediaPortal.Xaml
 
 				TypeConverter typeConverter = TypeDescriptor.GetConverter(propertyInfo.PropertyType);
 
+				if(typeConverter is ICanAddNamespaceEntries)
+					((ICanAddNamespaceEntries)typeConverter).AddNamespaceEntries(_namespaces);
+
 				try
 				{
 					propertyInfo.SetValue(target, typeConverter.ConvertFrom(_target), null);
@@ -264,6 +267,9 @@ namespace MediaPortal.Xaml
 
 				TypeConverter typeConverter = TypeDescriptor.GetConverter(propertyInfo.PropertyType);
 
+				if(typeConverter is ICanAddNamespaceEntries)
+					((ICanAddNamespaceEntries)typeConverter).AddNamespaceEntries(_namespaces);
+
 				try
 				{
 					object convertedValue = typeConverter.ConvertFromString(_xmlReader.Value);
@@ -364,7 +370,12 @@ namespace MediaPortal.Xaml
 			if(t.IsSubclassOf(typeof(MarkupExtension)) == false)
 				throw new XamlParserException(string.Format("'{0}' is not of type 'System.Windows.Serialization.MarkupExtension'", t), _filename, _xmlReader);
 
-			return ((MarkupExtension)Activator.CreateInstance(t)).ProvideValue(_target, value);
+			MarkupExtension extension = (MarkupExtension)Activator.CreateInstance(t);
+
+			if(extension is ICanAddNamespaceEntries)
+				((ICanAddNamespaceEntries)extension).AddNamespaceEntries(_namespaces);
+
+			return extension.ProvideValue(_target, value);
 		}
 
 		void ReadNamespace(string name, string value)
@@ -378,15 +389,6 @@ namespace MediaPortal.Xaml
 		}
 
 		#endregion Methods
-
-		#region Properties
-
-		public static string[] DefaultNamespaces
-		{
-			get { return _namespaces; }
-		}
-
-		#endregion Properties
 
 		#region Fields
 

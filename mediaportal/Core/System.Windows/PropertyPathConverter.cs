@@ -24,15 +24,23 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.ComponentModel;
 using System.Globalization;
+using System.Reflection;
+using System.Windows.Serialization;
 
 namespace System.Windows
 {
-	public sealed class PropertyPathConverter : TypeConverter
+	public sealed class PropertyPathConverter : TypeConverter, ICanAddNamespaceEntries
 	{
 		#region Methods
 
+		void ICanAddNamespaceEntries.AddNamespaceEntries(string[] namespaces)
+		{
+			_namespaces = namespaces;
+		}
+		
 		public override bool CanConvertFrom(ITypeDescriptorContext context, Type t)
 		{
 			if(t == typeof(string))
@@ -44,11 +52,65 @@ namespace System.Windows
 		public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
 		{
 			if(value is string)
-				return PropertyPath.Parse((string)value);
-
+				return Parse((string)value);
+				
 			return base.ConvertFrom(context, culture, value);
 		}
 
+		private object Parse(string path)
+		{
+			string[] parts = path.Split('.');
+
+			ArrayList list = new ArrayList();
+
+			// this should definately be improved upon!!!
+			for(int index = 0; index < parts.Length; index += 2)
+			{
+				string typename = parts[index].Trim();
+				string property = parts[index + 1].Trim();
+
+				if(typename == string.Empty || typename.StartsWith("(") == false)
+					throw new ArgumentException(string.Format("( expected)"));
+
+				if(property == string.Empty || property.EndsWith(")") == false)
+					throw new ArgumentException(string.Format(") expected)"));
+
+				// remove the ( from the type specifier
+				typename = typename.Substring(1);
+
+				Type type = null;
+
+				foreach(string ns in _namespaces)
+				{
+					type = Type.GetType(ns + "." + typename);
+
+					if(type != null)
+						break;
+				}
+
+				if(type == null)
+					throw new ArgumentException(string.Format("The type or namespace '{0}' could not be found", type));
+
+				// remove the ) from the property name
+				property = property.Substring(0, property.Length - 1);
+
+				PropertyInfo propertyInfo = type.GetProperty(property, BindingFlags.Instance | BindingFlags.Public);
+
+				if(propertyInfo  == null)
+					throw new ArgumentException(string.Format("'{0}' does not contain a definition for '{1}'", type, property));
+
+				list.Add(propertyInfo);
+			}
+
+			return list.ToArray();
+		}
+
 		#endregion Methods
+
+		#region Fields
+
+		string[]					_namespaces;
+
+		#endregion Fields
 	}
 }
