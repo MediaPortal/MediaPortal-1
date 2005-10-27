@@ -287,12 +287,12 @@ namespace MediaPortal.Xaml
 		{
 			_elementText = _elementText.Length > 0 ? new StringBuilder() : _elementText;
 
-			Type targetType = GetType(_xmlReader.Name);
+			Type type = GetType(_xmlReader.Name);
 
-			if(targetType == null)
+			if(type == null)
 				throw new XamlParserException(string.Format("The type or namespace '{0}' could not be found", _xmlReader.Name), _filename, _xmlReader);
 
-			_target = Activator.CreateInstance(targetType);
+			_target = Activator.CreateInstance(type);
 
 			if(_target is ISupportInitialize)
 				((ISupportInitialize)_target).BeginInit();
@@ -300,8 +300,8 @@ namespace MediaPortal.Xaml
 			if(_elementStack.Count != 0 && _elementStack.Peek() is IAddChild)
 				((IAddChild)_elementStack.Peek()).AddChild(_target);
 
-			if(_elementStack.Count != 0 && _elementStack.Peek() is IList)
-				((IList)_elementStack.Peek()).Add(_target);
+//			else if(_elementStack.Count != 0 && _elementStack.Peek() is IList)
+//				((IList)_elementStack.Peek()).Add(_target);
 
 			_elementStack.Push(_target);
 

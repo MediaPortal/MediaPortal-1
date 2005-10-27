@@ -25,11 +25,9 @@
 
 using System;
 
-namespace System.Windows
+namespace MediaPortal.Input
 {
-	#region Delegates
-
-	public delegate void RoutedEventHandler(RoutedEventArgs e);
-
-	#endregion Delegates
+	public class KeyboardFocusChangedEventArgs //: KeyboardEventArgs
+	{
+	}
 }

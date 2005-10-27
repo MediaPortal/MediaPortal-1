@@ -92,14 +92,13 @@ namespace System.Windows
 
 		public void InvalidateProperty(DependencyProperty dp)
 		{
-			if(dp.DefaultMetadata.PropertyInvalidatedCallback != null)
-				dp.DefaultMetadata.PropertyInvalidatedCallback(this);
-
 			OnPropertyInvalidated(dp, dp.DefaultMetadata);
 		}
 
 		protected virtual void OnPropertyInvalidated(DependencyProperty dp, PropertyMetadata metadata)
 		{
+			if(dp.DefaultMetadata.PropertyInvalidatedCallback != null)
+				dp.DefaultMetadata.PropertyInvalidatedCallback(this);
 		}
 
 		public object ReadLocalValue(DependencyProperty dp)
@@ -118,18 +117,12 @@ namespace System.Windows
 
 		public void SetValue(DependencyProperty dp, object value)
 		{
-			_properties[dp] = value;
-
-			if(dp.DefaultMetadata != null && dp.DefaultMetadata.ReadOnly)
-				throw new InvalidOperationException("DependencyProperty is read-only");
-
-			if(dp.DefaultMetadata != null && dp.DefaultMetadata.SetValueOverride != null)
-				dp.DefaultMetadata.SetValueOverride(this, value);
+			SetValueBase(dp, value);
 		}
 
 		public void SetValue(DependencyPropertyKey key, object value)
 		{
-			_properties[key.DependencyProperty] = value;
+			SetValueBase(key, value);
 		}
 
 		public void SetValueBase(DependencyProperty dp, object value)
@@ -137,15 +130,19 @@ namespace System.Windows
 			_properties[dp] = value;
 
 			if(dp.DefaultMetadata != null && dp.DefaultMetadata.ReadOnly)
-				throw new InvalidOperationException("DependencyProperty is read-only");
+				throw new InvalidOperationException(string.Format("DependencyProperty '{0}' has been declared read-only", dp.Name));
 
 			if(dp.DefaultMetadata != null && dp.DefaultMetadata.SetValueOverride != null)
 				dp.DefaultMetadata.SetValueOverride(this, value);
+
+			OnPropertyInvalidated(dp, dp.DefaultMetadata);			
 		}
 
 		public void SetValueBase(DependencyPropertyKey key, object value)
 		{
 			_properties[key.DependencyProperty] = value;
+
+			OnPropertyInvalidated(key.DependencyProperty, key.DependencyProperty.DefaultMetadata);			
 		}
 
 		#endregion Methods

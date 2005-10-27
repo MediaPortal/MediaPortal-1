@@ -42,12 +42,24 @@ namespace MediaPortal.Controls
 		{
 			IsEnabledProperty = DependencyProperty.Register("IsEnabled", typeof(bool), typeof(UIElement), new PropertyMetadata(true));
 			IsFocusedProperty = DependencyProperty.Register("IsFocused", typeof(bool), typeof(UIElement), new PropertyMetadata(false));
+			IsKeyboardFocusedProperty = DependencyProperty.Register("IsKeyboardFocused", typeof(bool), typeof(UIElement), new PropertyMetadata(false));
+			IsKeyboardFocusWithinProperty = DependencyProperty.Register("IsKeyboardFocusWithinProperty", typeof(bool), typeof(UIElement), new PropertyMetadata(false));
 			IsVisibleProperty = DependencyProperty.Register("IsVisible", typeof(bool), typeof(UIElement), new PropertyMetadata(true));
 			OpacityMaskProperty = DependencyProperty.Register("OpacityMask", typeof(Brush), typeof(UIElement));
 			OpacityProperty = DependencyProperty.Register("Opacity", typeof(double), typeof(UIElement), new PropertyMetadata(1.0));
 			VisibilityProperty = DependencyProperty.Register("Visibility", typeof(Visibility), typeof(UIElement), new PropertyMetadata(Visibility.Visible));
-		
+
+			GotKeyboardFocusEvent = EventManager.RegisterRoutedEvent("GotKeyboardFocus", RoutingStrategy.Direct, typeof(KeyboardFocusChangedEventHandler), typeof(UIElement));
+			LostKeyboardFocusEvent = EventManager.RegisterRoutedEvent("LostKeyboardFocus", RoutingStrategy.Direct, typeof(KeyboardFocusChangedEventHandler), typeof(UIElement));
+			IsEnabledChangedEvent = EventManager.RegisterRoutedEvent("IsEnabledChanged", RoutingStrategy.Direct, typeof(RoutedEventHandler), typeof(UIElement));
+			IsKeyboardFocusedChangedEvent = EventManager.RegisterRoutedEvent("IsEnabledChanged", RoutingStrategy.Direct, typeof(RoutedEventHandler), typeof(UIElement));
+			IsKeyboardFocusWithinChangedEvent = EventManager.RegisterRoutedEvent("IsEnabledChanged", RoutingStrategy.Direct, typeof(RoutedEventHandler), typeof(UIElement));
+			IsVisibleChangedEvent = EventManager.RegisterRoutedEvent("IsEnabledChanged", RoutingStrategy.Direct, typeof(RoutedEventHandler), typeof(UIElement));
+			PreviewLostKeyboardFocusEvent = EventManager.RegisterRoutedEvent("PreviewLostKeyboardFocus", RoutingStrategy.Direct, typeof(KeyboardFocusChangedEventHandler), typeof(UIElement));
+			LostKeyboardFocusEvent = EventManager.RegisterRoutedEvent("PreviewGotKeyboardFocus", RoutingStrategy.Direct, typeof(KeyboardFocusChangedEventHandler), typeof(UIElement));
+
 //			EventManager.RegisterClassHandler(typeof(UIElement), Keyboard.KeyDownEvent, new KeyEventHandler(UIElement.OnKeyDownThunk));
+//			EventManager.RegisterClassHandler(
 		}
 
 		public UIElement()
@@ -55,6 +67,19 @@ namespace MediaPortal.Controls
 		}
 
 		#endregion Constructors
+
+		#region Events (Routed)
+
+		public static readonly RoutedEvent GotKeyboardFocusEvent;
+		public static readonly RoutedEvent LostKeyboardFocusEvent;
+		public static readonly RoutedEvent IsEnabledChangedEvent;
+		public static readonly RoutedEvent IsKeyboardFocusedChangedEvent;
+		public static readonly RoutedEvent IsKeyboardFocusWithinChangedEvent;
+		public static readonly RoutedEvent IsVisibleChangedEvent;
+		public static readonly RoutedEvent PreviewLostKeyboardFocusEvent;
+		public static readonly RoutedEvent PreviewGotKeyboardFocusEvent;
+
+		#endregion Events (Routed)
 
 		#region Methods
 
@@ -114,6 +139,53 @@ namespace MediaPortal.Controls
 			return Size.Empty;
 		}
 			
+		public bool Focus()
+		{
+/*			if(IsFocused)
+				return true;
+
+			if(Focusable && IsEnabled)
+				return false;
+
+			if(!IsKeyboardFocused)
+			{
+			}
+
+			if(!IsKeyboardFocusWithin)
+			{
+				IsKeyboardFocusWithin = true;
+
+				new RoutedEventArgs(UIElement.IsKeyboardFocusedChanged);
+				RaiseEvent();
+				
+			}
+
+			IsKeyboardFocused = true;
+			IsKeyboardFocusWithin = true;
+
+			// If the related properties were not already true, then calling this method may also 
+			// raise these events in the order given:
+			// PreviewLostKeyboardFocus
+			// PreviewGotKeyboardFocus (source is the new focus target)
+			// IsKeyboardFocusedChanged
+			// IsKeyboardFocusWithinChanged
+			// LostKeyboardFocus
+			// GotKeyboardFocus (source is the new focus target).
+*/
+
+			return true;
+		}			
+			
+		protected override void OnPropertyInvalidated(DependencyProperty dp, PropertyMetadata metadata)
+		{
+			// assume that this is used to set the dirty flag on cached properties?
+//			MediaPortal.GUI.Library.Log.Write("UIElement.OnPropertyInvalidated: {0}", dp.Name);
+		}
+			
+		protected internal virtual void OnIsKeyboardFocusWithinChanged(DependencyPropertyChangedEventArgs e)
+		{
+		}
+			
 		protected virtual void OnRender(DrawingContext dc)
 		{
 			// no default implementation
@@ -151,6 +223,7 @@ namespace MediaPortal.Controls
 			get { return _isArrangeValid; }
 		}
 
+		[DependencyProperty(DefaultValue=true)]
 		public bool IsEnabled
 		{
 			get { return IsEnabledCore; }
@@ -162,6 +235,7 @@ namespace MediaPortal.Controls
 			get { return (bool)GetValue(IsEnabledProperty); }
 		}
 
+		[DependencyProperty(DefaultValue=false)]
 		public bool IsFocused
 		{
 			get { return (bool)GetValue(IsFocusedProperty); }
@@ -180,12 +254,14 @@ namespace MediaPortal.Controls
 			set { SetValue(VisibilityProperty, value ? Visibility.Visible : Visibility.Hidden); }
 		}
 
+		[DependencyProperty(DefaultValue=1.0)]
 		public virtual double Opacity
 		{
 			get { return (double)GetValue(OpacityProperty); }
 			set { SetValue(OpacityProperty, value); }
 		}
 
+		[DependencyProperty]
 		public Brush OpacityMask
 		{
 			get { return (Brush)GetValue(OpacityMaskProperty); }
@@ -198,6 +274,7 @@ namespace MediaPortal.Controls
 			set { _renderSize = value; }
 		}
 
+		[DependencyProperty(DefaultValue=Visibility.Visible)]
 		public Visibility Visibility
 		{
 			get { return (Visibility)GetValue(VisibilityProperty); }
@@ -210,6 +287,8 @@ namespace MediaPortal.Controls
 
 		public static readonly DependencyProperty IsEnabledProperty;
 		public static readonly DependencyProperty IsFocusedProperty;
+		public static readonly DependencyProperty IsKeyboardFocusedProperty;
+		public static readonly DependencyProperty IsKeyboardFocusWithinProperty;
 		public static readonly DependencyProperty IsVisibleProperty;
 		public static readonly DependencyProperty OpacityProperty;
 		public static readonly DependencyProperty OpacityMaskProperty;

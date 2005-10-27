@@ -82,6 +82,11 @@ namespace MediaPortal.Controls
 		{
 		}
 
+		public bool Focus()
+		{
+			return false;
+		}
+
 		public object GetAnimationBaseValue(DependencyProperty dp)
 		{
 			throw new NotImplementedException();

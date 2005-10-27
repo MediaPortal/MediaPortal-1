@@ -24,10 +24,28 @@
 #endregion
 
 using System;
+using System.Windows;
 
 namespace MediaPortal.Input
 {
 	public interface IInputElement
 	{
+		#region Methods
+
+		void AddHandler(RoutedEvent routedEvent, Delegate handler);
+		bool Focus();
+		void RaiseEvent(RoutedEventArgs e);
+		void RemoveHandler(RoutedEvent routedEvent, Delegate handler);
+
+		#endregion Methods
+
+		#region Properties
+
+		bool IsEnabled
+		{
+			get;
+		}
+		
+		#endregion Properties
 	}
 }

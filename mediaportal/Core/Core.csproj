@@ -1889,6 +1889,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Input\KeyboardFocusChangedEventArgs.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Input\KeyboardFocusChangedEventHandler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Mixer\Mixer.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -2465,6 +2475,11 @@
                 />
                 <File
                     RelPath = "System.Windows\DependencyProperty.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows\DependencyPropertyAttribute.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
