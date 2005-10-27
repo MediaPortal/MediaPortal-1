@@ -39,7 +39,7 @@ HRESULT CFilterAudioPin::Deliver(IMediaSample *ms)
 	return S_OK;
 
 }
-ULONGLONG CFilterAudioPin::Process(BYTE *ms,REFERENCE_TIME start,REFERENCE_TIME stop)
+ULONGLONG CFilterAudioPin::Process(BYTE *ms,REFERENCE_TIME* start,REFERENCE_TIME* stop)
 {
 	CAutoLock cAutoLock(&m_cSharedState);
 	CheckPointer(ms,E_POINTER);
@@ -62,6 +62,7 @@ ULONGLONG CFilterAudioPin::Process(BYTE *ms,REFERENCE_TIME start,REFERENCE_TIME 
 			continue;// no packet
 		if(tsHeader.Pid==m_pSections->pids.CurrentAudioPid)
 		{
+
 			pesOffset=4;
 			if(tsHeader.AdaptionControl==0x02) continue;// no payload
 			if(tsHeader.AdaptionControl==0x03) 
@@ -76,6 +77,7 @@ ULONGLONG CFilterAudioPin::Process(BYTE *ms,REFERENCE_TIME start,REFERENCE_TIME 
 			}
 			
 			pesMemPointer+=cpyLen;
+
 		}
 	}
 
@@ -88,6 +90,7 @@ ULONGLONG CFilterAudioPin::Process(BYTE *ms,REFERENCE_TIME start,REFERENCE_TIME 
 			audioSample->GetPointer(&data);
 			CopyMemory(data,m_samplePES,pesMemPointer);
 			audioSample->SetActualDataLength(pesMemPointer);
+			audioSample->SetTime(start,stop);
 			HRESULT hr=Deliver(audioSample);
 			audioSample->Release();
 			if(hr==S_FALSE)

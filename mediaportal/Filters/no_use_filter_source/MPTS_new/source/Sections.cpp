@@ -164,8 +164,10 @@ HRESULT Sections::CheckStream()
 		
 		int apid;
 		ULONGLONG currentPts;
-		if (CurrentPTS(pData,&currentPts,&apid) == S_OK)
+		if (CurrentPTS("ts:",pData,currentPts) == S_OK)
 		{					
+			GetTSHeader(pData,&header);
+			apid=header.Pid;
 			if (pid==0) pid=apid;
 			if (pid==apid)
 			{
@@ -208,8 +210,12 @@ HRESULT Sections::GetAdaptionHeader(BYTE *data,AdaptionHeader *header)
 	if(header->PCRFlag==true)
 	{
 
-		__int64 pcr_H=(data[2]& 0x080)>>7;
-		__int64 pcr_L =((data[2]&0x7f)<<25) + (data[3]<<17) + (data[4]<<9) + ((data[5])<<1)+((data[6]&0x80)>>7);
+		__int64 pcr_H=(__int64)((data[2]& 0x080)>>7);
+		__int64 pcr_L =(__int64)((data[2]&0x7f));pcr_L<<=25;
+		pcr_L |= (__int64)(data[3]<<17); 
+		pcr_L |= (__int64) (data[4]<<9); 
+		pcr_L |= (__int64) ((data[5])<<1);
+		pcr_L |= (__int64)((data[6]&0x80)>>7);
 		__int64 ull=ull = (pcr_H << 32) + pcr_L;
 		header->PCRValue=ull;
 		//GetPTS(&data[2],&(header->PCRValue));
@@ -269,27 +275,27 @@ void Sections::PTSToPTSTime(ULONGLONG pts,PTSTime* ptsTime)
 
 }
 static int prevpts=0;
-HRESULT Sections::CurrentPTS(BYTE *pData,ULONGLONG *ptsValue,int* pid)
+HRESULT Sections::CurrentPTS(char* debugTxt, BYTE *pData,ULONGLONG &ptsValue)
 {
+
 	HRESULT hr=S_FALSE;
-	*ptsValue=0;
+	ptsValue=0;
 	TSHeader header;
 	PESHeader pes;
 	GetTSHeader(pData,&header);
 	int offset=4;
 	bool found=false;
 
-	*pid=header.Pid;
-	if (header.Pid<1) return S_FALSE;
-	if (header.SyncByte!=0x47) return S_FALSE;
-	//if (header.PayloadUnitStart==0) return S_FALSE;
+	int pid=header.Pid;
+	if (header.Pid<1) 
+		return S_FALSE;
+	if (header.SyncByte!=0x47) 
+		return S_FALSE;
 	if(header.Pid!=pids.CurrentAudioPid &&
 	   header.Pid != pids.VideoPid &&
 	   header.Pid != pids.PCRPid)
 		return S_FALSE;
 
-	//if (header.AdaptionControl==0) return hr; //reserved value;
-	if (header.AdaptionControl==2) return hr; //adaption field only
 
 	//          0  1  2  3    4  5    6
 	//  0000:  [47 82 00 f3] [cc 5b] [38 2a  0e ad e4 52 12 75 a0 46   G....[8*...R.u.F
@@ -305,27 +311,22 @@ HRESULT Sections::CurrentPTS(BYTE *pData,ULONGLONG *ptsValue,int* pid)
     //        reserved: 8 (0x08)
     //        extension: 11 (0x000b)
     //         ==> original_program_clock_reference: 185819178311 (0x2b43afa547)  [= PCR-Timestamp: 1:54:42.191789]
-
-	if(header.AdaptionControl==3 || (header.PayloadUnitStart==true && header.AdaptionControl==1))
+	if(header.AdaptionControl==2 ||  header.AdaptionControl==3)
 	{
 		//skip adaption field
-		offset+=pData[4];
-		if(header.AdaptionControl==3)
+		AdaptionHeader ah;
+		GetAdaptionHeader(&pData[4],&ah);
+		if(ah.PCRFlag)
 		{
-			AdaptionHeader ah;
-			GetAdaptionHeader(&pData[4],&ah);
-			if(ah.PCRFlag)
+			PTSTime ptsTime;
+			PTSToPTSTime(ah.PCRValue,&ptsTime);
+			if (prevpts!=ptsTime.s)
 			{
-				PTSTime ptsTime;
-				PTSToPTSTime(ah.PCRValue,&ptsTime);
-				if (prevpts!=ptsTime.s)
-				{
-					//LogDebug("pcr-count:%d / pcr-value:%x / h:m:s:ms= %d:%d:%d.%d", ah.PCRCounter,(DWORD)ah.PCRValue,ptsTime.h,ptsTime.m,ptsTime.s,ptsTime.u);
-					prevpts=ptsTime.s;
-				}
-				*ptsValue=ah.PCRValue;
-				hr=S_OK;
+				LogDebug("%s pcr-count:%d / pcr-value:%x / h:m:s:ms= %d:%d:%d.%d",debugTxt, ah.PCRCounter,(DWORD)ah.PCRValue,ptsTime.h,ptsTime.m,ptsTime.s,ptsTime.u);
+				prevpts=ptsTime.s;
 			}
+			ptsValue=ah.PCRValue;
+			hr=S_OK;
 		}
 	}
 
@@ -578,6 +579,8 @@ bool Sections::DecodePMT(byte* PMT)
 	int section_number = buf[6];
 	int last_section_number = buf[7];
 	int program_info_length = ((buf[10] & 0xF)<<8)+buf[11];
+	int pcr_pid=((buf[8]& 0x1F)<<8)+buf[9];
+	
 	int len2 = program_info_length;
 	int pointer = 12;
 	int len1 = section_length - pointer;
@@ -597,6 +600,7 @@ bool Sections::DecodePMT(byte* PMT)
 	int elementary_PID=0;
 	int ES_info_length=0;
 	pids.PCRPid=pids.CurrentAudioPid=pids.AudioPid1=pids.AudioPid2=pids.AudioPid3=pids.VideoPid=pids.AC3=0;
+	pids.PCRPid=pcr_pid;
 
 	while (len1 > 4)
 	{

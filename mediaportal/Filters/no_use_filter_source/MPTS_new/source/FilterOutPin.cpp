@@ -243,8 +243,8 @@ void CFilterOutPin::SeekIFrame()
 		}
 		m_pSections->GetTSHeader(pData,&header);
 
-		int pid;
-		if(m_pSections->CurrentPTS(pData,&pts,&pid)==S_OK)
+		int pid=header.Pid;
+		if(m_pSections->CurrentPTS("ts:",pData,pts)==S_OK)
 		{
 			if (pts>0)
 			{
@@ -332,8 +332,9 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 		if (m_bAboutToStop) return E_FAIL;
 		int pid;
 		m_pSections->GetTSHeader(&pData[i],&header);
-		if(m_pSections->CurrentPTS(&pData[i],&pts,&pid)==S_OK)
+		if(m_pSections->CurrentPTS("ts:",&pData[i],pts)==S_OK)
 		{
+			pid=header.Pid;
 			if (pts>0)
 			{
 				//LogDebug("found  pts:%x %x-%x pid:%x", (DWORD)pts, (DWORD)m_pSections->pids.StartPTS,(DWORD)m_pSections->pids.EndPTS,header.Pid);

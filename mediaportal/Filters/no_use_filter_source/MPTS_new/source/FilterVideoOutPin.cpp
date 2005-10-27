@@ -48,10 +48,12 @@ STDMETHODIMP CFilterVideoPin::SetPositions(LONGLONG *pCurrent,DWORD CurrentFlags
 	return CSourceSeeking::SetPositions(pCurrent,CurrentFlags,pStop,StopFlags);
 }
 
-ULONGLONG CFilterVideoPin::Process(BYTE *ms)
+ULONGLONG CFilterVideoPin::Process(BYTE *ms, ULONGLONG& ptsStart,ULONGLONG& ptsEnd)
 {
 	CAutoLock cAutoLock(&m_cSharedState);
 	CheckPointer(ms,E_POINTER);
+	ptsStart=0;
+	ptsEnd=0;
 
 	DWORD offset;
 	DWORD pesOffset=0;
@@ -70,8 +72,16 @@ ULONGLONG CFilterVideoPin::Process(BYTE *ms)
 		m_pSections->GetTSHeader(sampleData+offset,&tsHeader);
 		if(tsHeader.SyncByte!=0x47 || tsHeader.TransportError)
 			continue;// no packet
+		ULONGLONG pts;
+		if (S_OK==m_pSections->CurrentPTS("video ",sampleData+offset,pts))
+		{
+			if (ptsStart==0) ptsStart=pts;
+			ptsEnd=pts;
+		}
+
 		if(tsHeader.Pid==m_pSections->pids.VideoPid)
 		{
+
 			pesOffset=4;
 			if( tsHeader.AdaptionControl == 0x02) continue;// no payload
 			if( tsHeader.AdaptionControl == 0x03) 
@@ -86,9 +96,8 @@ ULONGLONG CFilterVideoPin::Process(BYTE *ms)
 			}
 			
 			pesMemPointer+=cpyLen;
-
+			
 		}
-
 	}
 
 	return pesMemPointer;
@@ -134,9 +143,33 @@ HRESULT CFilterVideoPin::FillBuffer(IMediaSample *pSample)
 	}
 	CopyMemory(audioBuffer,buffer,18800);
 
-	lDataLength=m_pMPTSFilter->m_pAudioPin->Process(audioBuffer,m_rtStart,m_rtStop);
+	ULONGLONG ptsStart, ptsEnd;
+	lDataLength=Process(buffer, ptsStart, ptsEnd);
 
-	lDataLength=Process(buffer);
+	if (ptsStart!=0)
+	{
+		ptsStart -= m_pSections->pids.StartPTS;
+		ptsEnd   -= m_pSections->pids.StartPTS;
+
+
+		REFERENCE_TIME refStart,refEnd;
+		Sections::PTSTime time;
+		m_pSections->PTSToPTSTime(ptsStart,&time);
+		refStart=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
+
+		m_pSections->PTSToPTSTime(ptsEnd,&time);
+		refEnd=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
+
+		m_pMPTSFilter->m_pAudioPin->Process(audioBuffer,&refStart,&refEnd);
+		pSample->SetTime(&refStart,&refEnd+1000);
+
+	}
+	else
+	{
+		m_pMPTSFilter->m_pAudioPin->Process(audioBuffer,NULL,NULL);
+		pSample->SetTime(NULL,NULL);
+	}
+
 	if(lDataLength)
 	{
 		CopyMemory(pData,m_samplePES,lDataLength);
@@ -150,7 +183,7 @@ HRESULT CFilterVideoPin::FillBuffer(IMediaSample *pSample)
 	}
 	else
 	{
-		int x=1;
+		pSample->SetActualDataLength(0);
 	}
 	//
 

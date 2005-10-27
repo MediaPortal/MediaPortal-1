@@ -41,7 +41,7 @@ public:
 	STDMETHODIMP SetPositions(LONGLONG *pCurrent,DWORD CurrentFlags,LONGLONG *pStop,DWORD StopFlags);
 
 	//
-	ULONGLONG Process(BYTE *);
+	ULONGLONG Process(BYTE *data, ULONGLONG& ptsStart,ULONGLONG& ptsEnd);
 
 	
 protected:

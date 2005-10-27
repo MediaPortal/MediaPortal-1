@@ -577,6 +577,7 @@ bool Sections::DecodePMT(byte* PMT)
 	int section_number = buf[6];
 	int last_section_number = buf[7];
 	int program_info_length = ((buf[10] & 0xF)<<8)+buf[11];
+	int pcr_pid=((buf[8]& 0x1F)<<8)+buf[9];
 	int len2 = program_info_length;
 	int pointer = 12;
 	int len1 = section_length - pointer;
@@ -596,6 +597,7 @@ bool Sections::DecodePMT(byte* PMT)
 	int elementary_PID=0;
 	int ES_info_length=0;
 	pids.PCRPid=pids.CurrentAudioPid=pids.AudioPid1=pids.AudioPid2=pids.AudioPid3=pids.VideoPid=pids.AC3=0;
+	pids.PCRPid=pcr_pid;
 
 	while (len1 > 4)
 	{

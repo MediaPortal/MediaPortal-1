@@ -22,7 +22,7 @@ public:
 	STDMETHODIMP ConnectionMediaType(AM_MEDIA_TYPE *pmt);
 
 	//
-	ULONGLONG Process(BYTE *ms,REFERENCE_TIME,REFERENCE_TIME);
+	ULONGLONG Process(BYTE *ms,REFERENCE_TIME*,REFERENCE_TIME*);
 	HRESULT Deliver(IMediaSample *ms);
 	
 protected:
