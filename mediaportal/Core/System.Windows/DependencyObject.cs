@@ -97,8 +97,8 @@ namespace System.Windows
 
 		protected virtual void OnPropertyInvalidated(DependencyProperty dp, PropertyMetadata metadata)
 		{
-			if(dp.DefaultMetadata.PropertyInvalidatedCallback != null)
-				dp.DefaultMetadata.PropertyInvalidatedCallback(this);
+			if(metadata != null && metadata.PropertyInvalidatedCallback != null)
+				metadata.PropertyInvalidatedCallback(this);
 		}
 
 		public object ReadLocalValue(DependencyProperty dp)

@@ -59,6 +59,8 @@ namespace MediaPortal.GUI.Library
 				Log.Write("  Loading references from {0}", referenceFile);
 				m_referenceNodesByControlType = new Hashtable();
 				XmlDocument doc = new XmlDocument();
+
+				doc.PreserveWhitespace = true;
 				doc.Load(referenceFile);
 				// Check the root element
 				if (doc.DocumentElement == null || doc.DocumentElement.Name != "controls")
