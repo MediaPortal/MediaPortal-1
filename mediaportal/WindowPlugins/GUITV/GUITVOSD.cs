@@ -1253,7 +1253,8 @@ namespace MediaPortal.GUI.TV
 
 					strTime=String.Format("{0} ", prog.EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
 					GUIPropertyManager.SetProperty("#TV.View.stop", strTime);
-        }
+					GUIPropertyManager.SetProperty("#TV.View.remaining", Utils.SecondsToHMSString(prog.EndTime - prog.StartTime));
+		}
 				if (tbProgramDescription!=null)
 				{
 					tbProgramDescription.Label=prog.Description;
@@ -1271,8 +1272,9 @@ namespace MediaPortal.GUI.TV
       }
       else
 			{
-				GUIPropertyManager.SetProperty("#TV.View.start", "");
-				GUIPropertyManager.SetProperty("#TV.View.stop", "");
+				GUIPropertyManager.SetProperty("#TV.View.start", string.Empty);
+				GUIPropertyManager.SetProperty("#TV.View.stop", string.Empty);
+				GUIPropertyManager.SetProperty("#TV.View.remaining", string.Empty);
 				if (lblCurrentTime!=null)
 				{
 					lblCurrentTime.Label=String.Empty;
@@ -1322,6 +1324,7 @@ namespace MediaPortal.GUI.TV
 			{
 				GUIPropertyManager.SetProperty("#TV.View.start",prog.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
 				GUIPropertyManager.SetProperty("#TV.View.stop",prog.EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
+				GUIPropertyManager.SetProperty("#TV.View.remaining", Utils.SecondsToHMSString(prog.EndTime - prog.StartTime));
 				GUIPropertyManager.SetProperty("#TV.View.genre",prog.Genre);
 				GUIPropertyManager.SetProperty("#TV.View.title",prog.Title);
 				GUIPropertyManager.SetProperty("#TV.View.description",prog.Description);

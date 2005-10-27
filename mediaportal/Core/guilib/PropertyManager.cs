@@ -94,6 +94,7 @@ namespace MediaPortal.GUI.Library
       m_properties["#TV.View.thumb"]=String.Empty;      
       m_properties["#TV.View.start"]=String.Empty;      
       m_properties["#TV.View.stop"]=String.Empty;       
+	  m_properties["#TV.View.remaining"]=String.Empty;       
       m_properties["#TV.View.genre"]=String.Empty;      
       m_properties["#TV.View.title"]=String.Empty;      
       m_properties["#TV.View.description"]=String.Empty;

@@ -543,6 +543,12 @@ namespace MediaPortal.Util
 			strHMS=String.Format("{0}:{1:00}",hh,mm);
 			return strHMS;
 		}
+
+		static public string SecondsToHMSString(TimeSpan timespan)
+		{
+			return SecondsToHMSString(timespan.Seconds);
+		}
+		
 		static public string SecondsToHMSString(int lSeconds)
 		{
 			if (lSeconds<0) return ("0:00");

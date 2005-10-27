@@ -132,6 +132,7 @@ namespace MediaPortal.TV.Recording
 			GUIPropertyManager.SetProperty("#TV.View.thumb",  String.Empty);
 			GUIPropertyManager.SetProperty("#TV.View.start",String.Empty);
 			GUIPropertyManager.SetProperty("#TV.View.stop", String.Empty);
+			GUIPropertyManager.SetProperty("#TV.View.remaining", String.Empty);
 			GUIPropertyManager.SetProperty("#TV.View.genre",String.Empty);
 			GUIPropertyManager.SetProperty("#TV.View.title",String.Empty);
 			GUIPropertyManager.SetProperty("#TV.View.description",String.Empty);
@@ -214,6 +215,7 @@ namespace MediaPortal.TV.Recording
 
 			GUIPropertyManager.SetProperty("#TV.View.start",String.Empty);
 			GUIPropertyManager.SetProperty("#TV.View.stop" ,String.Empty);
+			GUIPropertyManager.SetProperty("#TV.View.remaining" ,String.Empty);
 			GUIPropertyManager.SetProperty("#TV.View.genre",String.Empty);
 			GUIPropertyManager.SetProperty("#TV.View.title", tvChannelName);
 			GUIPropertyManager.SetProperty("#TV.View.description",String.Empty);
@@ -227,6 +229,7 @@ namespace MediaPortal.TV.Recording
 					programStart=prog.Start;
 					GUIPropertyManager.SetProperty("#TV.View.start",prog.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
 					GUIPropertyManager.SetProperty("#TV.View.stop",prog.EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
+					GUIPropertyManager.SetProperty("#TV.View.remaining", Utils.SecondsToHMSString(prog.EndTime - prog.StartTime));
 					GUIPropertyManager.SetProperty("#TV.View.genre",prog.Genre);
 					GUIPropertyManager.SetProperty("#TV.View.title",prog.Title);
 					GUIPropertyManager.SetProperty("#TV.View.description",prog.Description);
