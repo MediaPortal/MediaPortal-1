@@ -161,7 +161,6 @@ namespace MediaPortal.Controls
 
 		protected virtual void OnInitialized(EventArgs e)
 		{
-			// no default implementation
 			_isInitialized = true;
 
 			if(Initialized != null)

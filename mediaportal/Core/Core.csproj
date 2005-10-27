@@ -2529,6 +2529,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows\FrameworkPropertyMetadata.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows\FrameworkPropertyMetadataOptions.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows\Freezable.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -2705,6 +2715,11 @@
                 />
                 <File
                     RelPath = "System.Windows\TriggerInvalidatedEventHandler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows\UIPropertyMetadata.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

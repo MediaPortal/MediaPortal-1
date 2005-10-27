@@ -67,6 +67,12 @@ namespace System.Windows
 			_propertyInvalidatedCallback = propertyInvalidatedCallback;
 		}
 
+		public PropertyMetadata(object defaultValue, PropertyInvalidatedCallback propertyInvalidatedCallback, GetValueOverride getValueOverride)
+		{
+			_defaultValue = defaultValue;
+			_propertyInvalidatedCallback = propertyInvalidatedCallback;
+		}
+
 		public PropertyMetadata(PropertyInvalidatedCallback propertyInvalidatedCallback, GetValueOverride getValueOverride)
 		{
 			_propertyInvalidatedCallback = propertyInvalidatedCallback;
@@ -102,7 +108,7 @@ namespace System.Windows
 
 		protected virtual PropertyMetadata CreateInstance()
 		{
-			throw new NotImplementedException();
+			return new PropertyMetadata();
 		}
 
 		protected virtual void Merge(PropertyMetadata baseMetadata, DependencyProperty dp)

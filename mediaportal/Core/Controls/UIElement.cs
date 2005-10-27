@@ -40,14 +40,21 @@ namespace MediaPortal.Controls
 
 		static UIElement()
 		{
-			IsEnabledProperty = DependencyProperty.Register("IsEnabled", typeof(bool), typeof(UIElement), new PropertyMetadata(true));
-			IsFocusedProperty = DependencyProperty.Register("IsFocused", typeof(bool), typeof(UIElement), new PropertyMetadata(false));
-			IsKeyboardFocusedProperty = DependencyProperty.Register("IsKeyboardFocused", typeof(bool), typeof(UIElement), new PropertyMetadata(false));
-			IsKeyboardFocusWithinProperty = DependencyProperty.Register("IsKeyboardFocusWithinProperty", typeof(bool), typeof(UIElement), new PropertyMetadata(false));
-			IsVisibleProperty = DependencyProperty.Register("IsVisible", typeof(bool), typeof(UIElement), new PropertyMetadata(true));
+			IsEnabledProperty = DependencyProperty.Register("IsEnabled", typeof(bool), typeof(UIElement), new FrameworkPropertyMetadata(true));
+			IsFocusedProperty = DependencyProperty.Register("IsFocused", typeof(bool), typeof(UIElement), new FrameworkPropertyMetadata(false));
+
+			IsKeyboardFocusedPropertyKey = DependencyProperty.RegisterReadOnly("IsKeyboardFocused", typeof(bool), typeof(UIElement), new FrameworkPropertyMetadata(false));
+			IsKeyboardFocusedProperty = IsKeyboardFocusedPropertyKey.DependencyProperty;
+
+			IsKeyboardFocusWithinPropertyKey = DependencyProperty.RegisterReadOnly("IsKeyboardFocusWithinProperty", typeof(bool), typeof(UIElement), new FrameworkPropertyMetadata(false));
+			IsKeyboardFocusWithinProperty = IsKeyboardFocusWithinPropertyKey.DependencyProperty;
+			
+			IsVisiblePropertyKey = DependencyProperty.RegisterReadOnly("IsVisible", typeof(bool), typeof(UIElement), new FrameworkPropertyMetadata(true));
+			IsVisibleProperty = IsVisiblePropertyKey.DependencyProperty;
+
 			OpacityMaskProperty = DependencyProperty.Register("OpacityMask", typeof(Brush), typeof(UIElement));
-			OpacityProperty = DependencyProperty.Register("Opacity", typeof(double), typeof(UIElement), new PropertyMetadata(1.0));
-			VisibilityProperty = DependencyProperty.Register("Visibility", typeof(Visibility), typeof(UIElement), new PropertyMetadata(Visibility.Visible));
+			OpacityProperty = DependencyProperty.Register("Opacity", typeof(double), typeof(UIElement), new FrameworkPropertyMetadata(1.0));
+			VisibilityProperty = DependencyProperty.Register("Visibility", typeof(Visibility), typeof(UIElement), new FrameworkPropertyMetadata(Visibility.Visible));
 
 			GotKeyboardFocusEvent = EventManager.RegisterRoutedEvent("GotKeyboardFocus", RoutingStrategy.Direct, typeof(KeyboardFocusChangedEventHandler), typeof(UIElement));
 			LostKeyboardFocusEvent = EventManager.RegisterRoutedEvent("LostKeyboardFocus", RoutingStrategy.Direct, typeof(KeyboardFocusChangedEventHandler), typeof(UIElement));
@@ -285,14 +292,18 @@ namespace MediaPortal.Controls
 
 		#region Properties (Dependency)
 
-		public static readonly DependencyProperty IsEnabledProperty;
-		public static readonly DependencyProperty IsFocusedProperty;
-		public static readonly DependencyProperty IsKeyboardFocusedProperty;
-		public static readonly DependencyProperty IsKeyboardFocusWithinProperty;
-		public static readonly DependencyProperty IsVisibleProperty;
-		public static readonly DependencyProperty OpacityProperty;
-		public static readonly DependencyProperty OpacityMaskProperty;
-		public static readonly DependencyProperty VisibilityProperty;
+		public static readonly DependencyProperty		IsEnabledProperty;
+		public static readonly DependencyProperty		IsFocusedProperty;
+		public static readonly DependencyProperty		IsKeyboardFocusedProperty;
+		public static readonly DependencyProperty		IsKeyboardFocusWithinProperty;
+		public static readonly DependencyProperty		IsVisibleProperty;
+		public static readonly DependencyProperty		OpacityProperty;
+		public static readonly DependencyProperty		OpacityMaskProperty;
+		public static readonly DependencyProperty		VisibilityProperty;
+
+		static readonly DependencyPropertyKey			IsKeyboardFocusedPropertyKey;
+		static readonly DependencyPropertyKey			IsKeyboardFocusWithinPropertyKey;
+		static readonly DependencyPropertyKey			IsVisiblePropertyKey;
 
 		#endregion Properties (Dependency)
 

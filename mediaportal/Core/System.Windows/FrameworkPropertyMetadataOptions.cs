@@ -27,43 +27,24 @@ using System;
 
 namespace System.Windows
 {
-	public sealed class DependencyPropertyKey
+	[FlagsAttribute] 
+	public enum FrameworkPropertyMetadataOptions
 	{
-		#region Constructors
+		#region Values
 
-		private DependencyPropertyKey()
-		{
-		}
+		AffectsArrange,
+		AffectsMeasure,
+		AffectsParentArrange,
+		AffectsParentMeasure,
+		AffectsRender,
+		BindsTwoWayByDefault,
+		Inherits,
+		Journal,
+		None,
+		NotDataBindable,
+		SpanSeparatedTrees,
+		UpdatesSourceOnLostFocusByDefault,
 
-		internal DependencyPropertyKey(string name, Type propertyType, Type ownerType, PropertyMetadata defaultMetadata, ValidateValueCallback validateValueCallback)
-		{
-			_dependencyProperty = DependencyProperty.Register(name, propertyType, ownerType, defaultMetadata, validateValueCallback);
-		}
-
-		#endregion Constructors
-			
-		#region Methods
-
-		public void OverrideMetadata(Type ownerType, PropertyMetadata metadata)
-		{
-			_dependencyProperty.OverrideMetadata(ownerType, metadata, this);
-		}
-
-		#endregion Methods
-
-		#region Properties
-
-		public DependencyProperty DependencyProperty
-		{
-			get { return _dependencyProperty; }
-		}
-
-		#endregion Properties
-
-		#region Fields
-
-		DependencyProperty			_dependencyProperty = null;
-
-		#endregion Fields
+		#endregion Values
 	}
 }

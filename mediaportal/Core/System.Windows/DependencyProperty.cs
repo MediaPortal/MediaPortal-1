@@ -134,8 +134,10 @@ namespace System.Windows
 			
 			if(dp == null)
 				return;
-			
+
 			dp._defaultMetadata = defaultMetadata;
+
+			// PropertyMetadata.Merge
 		}
 		
 		public static DependencyProperty Register(string name, Type propertyType, Type ownerType)
@@ -186,7 +188,7 @@ namespace System.Windows
 
 		public static DependencyPropertyKey RegisterReadOnly(string name, Type propertyType, Type ownerType, PropertyMetadata defaultMetadata, ValidateValueCallback validateValueCallback)
 		{
-			throw new NotImplementedException();
+			return new DependencyPropertyKey(name, propertyType, ownerType, defaultMetadata, validateValueCallback);
 		}
 
 		#endregion Methods
@@ -233,6 +235,8 @@ namespace System.Windows
 		string						_name = string.Empty;
 		Type						_ownerType = null;
 		static Hashtable			_properties = new Hashtable(100);
+		static Hashtable			_propertiesReadOnly = new Hashtable(100);
+		static Hashtable			_propertiesAttached = new Hashtable(100);
 		Hashtable					_metadata = new Hashtable();
 		Type						_propertyType = null;
 		ValidateValueCallback		_validateValueCallback = null;
