@@ -75,7 +75,7 @@ ULONGLONG CFilterVideoPin::Process(BYTE *ms)
 			pesOffset=4;
 			if( tsHeader.AdaptionControl == 0x02) continue;// no payload
 			if( tsHeader.AdaptionControl == 0x03) 
-				pesOffset+=sampleData[offset + 4];
+				pesOffset+=1+sampleData[offset + 4];
 			// copy len
 			cpyLen=188-pesOffset;
 			if(pesMemPointer+cpyLen>=18800 || offset+cpyLen>=18800)
