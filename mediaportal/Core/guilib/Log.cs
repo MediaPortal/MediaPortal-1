@@ -21,6 +21,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 
 namespace MediaPortal.GUI.Library
 {
@@ -81,7 +82,14 @@ namespace MediaPortal.GUI.Library
     /// <param name="arg">An array containing the actual data of the string.</param>
     static public void Write(string strFormat, params object[] arg)
     {
-      WriteFile(LogType.Log,strFormat,arg);
+		// uncomment the following four lines to help identify the calling method, this
+		// is useful in situations where an unreported exception causes problems
+//		StackTrace stackTrace = new StackTrace();
+//		StackFrame stackFrame = stackTrace.GetFrame(1);
+//		MethodBase methodBase = stackFrame.GetMethod();
+//		WriteFile(LogType.Log, "{0}", methodBase.Name);
+
+		WriteFile(LogType.Log,strFormat,arg);
     }
 
     static string GetFileName(LogType type)
