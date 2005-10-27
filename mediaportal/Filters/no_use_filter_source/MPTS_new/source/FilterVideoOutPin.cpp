@@ -59,9 +59,7 @@ ULONGLONG CFilterVideoPin::Process(BYTE *ms)
 	DWORD cpyLen=0;
 	Sections::TSHeader tsHeader;
 	ULONGLONG ptsNow=0;
-	//const DWORD sampleDataLen=ms->GetActualDataLength();
-	BYTE *sampleData=ms;
-//	BYTE samplePES[18800];
+	BYTE* sampleData=ms;
 
 
 	ptsNow=0;
@@ -89,22 +87,10 @@ ULONGLONG CFilterVideoPin::Process(BYTE *ms)
 			
 			pesMemPointer+=cpyLen;
 
-			int pid;
-			ULONGLONG pts;
-			if(m_pSections->CurrentPTS(sampleData+offset,&pts,&pid)==S_OK)
-			{
-				if (pts>0)
-				{
-					ptsNow=pts;
-				}
-			}
 		}
 
 	}
-	CopyMemory(sampleData,m_samplePES,pesMemPointer);
 
-	//delete [] samplePES;
-	//Deliver(ms);
 	return pesMemPointer;
 }
 

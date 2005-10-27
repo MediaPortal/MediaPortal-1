@@ -79,18 +79,24 @@ ULONGLONG CFilterAudioPin::Process(BYTE *ms,REFERENCE_TIME start,REFERENCE_TIME 
 		}
 	}
 
-	IMediaSample *audioSample;
-	if(GetDeliveryBuffer(&audioSample,&start,&stop,255)==S_OK)
+	if (pesMemPointer>0)
 	{
-		BYTE *data;
-		audioSample->GetPointer(&data);
-		CopyMemory(data,m_samplePES,pesMemPointer);
-		audioSample->SetActualDataLength(pesMemPointer);
-		HRESULT hr=Deliver(audioSample);
-		audioSample->Release();
+		IMediaSample *audioSample;
+		if(GetDeliveryBuffer(&audioSample,NULL,NULL,0)==S_OK)
+		{
+			BYTE *data;
+			audioSample->GetPointer(&data);
+			CopyMemory(data,m_samplePES,pesMemPointer);
+			audioSample->SetActualDataLength(pesMemPointer);
+			HRESULT hr=Deliver(audioSample);
+			audioSample->Release();
+		}
+		else
+		{
+			//no buffer!
+			int x=1;
+		}
 	}
-	//delete [] samplePES;
-	//Deliver(ms);
 	return pesMemPointer;
 }
 
