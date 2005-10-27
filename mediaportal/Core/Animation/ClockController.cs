@@ -32,33 +32,23 @@ namespace MediaPortal.Animation
 {
 	public sealed class ClockController
 	{
+		#region Constructors
+
+		internal ClockController(Clock clock)
+		{
+			_clock = clock;
+		}
+
+		#endregion Constructors
+
 		#region Methods
 
 		public void Begin()
-		{
-			// stop compiler never used warnings
-			if(_animation == null)
-				_animation = null;
-
-			_job = new Job();
-			_job.DoWork += new DoWorkEventHandler(BeginWorker);
-			_job.Dispatch();
-		}
-
-		public void BeginIn(double beginIn)
-		{
-			_job = new Job();
-			_job.DoWork += new DoWorkEventHandler(BeginWorker);
-			_job.Dispatch((int)beginIn);
-		}
-
-		internal void BeginWorker(object sender, DoWorkEventArgs e)
 		{
 		}
 
 		public void Pause()
 		{
-//			_isPaused = true;
 		}
 
 		public void Resume()
@@ -74,6 +64,10 @@ namespace MediaPortal.Animation
 		public void Seek(TimeSpan offset, TimeSeekOrigin origin)
 		{
 			throw new NotImplementedException();
+		}
+
+		public void SeekAlignedToLastTick(TimeSpan offset, TimeSeekOrigin origin)
+		{
 		}
 
 		public void SkipToFill()
@@ -106,8 +100,6 @@ namespace MediaPortal.Animation
 		#region Fields
 		
 		Clock					_clock = null;
-		Animatable				_animation = null;
-		Job						_job;
 		double					_speedRatio = 1;
 
 		#endregion Fields

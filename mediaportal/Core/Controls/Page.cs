@@ -24,6 +24,7 @@
 #endregion
 
 using System;
+using System.ComponentModel;
 using System.Collections;
 using System.Windows;
 using System.Windows.Serialization;
@@ -38,6 +39,15 @@ namespace MediaPortal.Controls
 
 		static Page()
 		{
+			BackgroundProperty = DependencyProperty.Register("Background", typeof(Brush), typeof(Page));
+			ContentProperty = DependencyProperty.Register("Content", typeof(object), typeof(Page));
+//			FontFamilyProperty = DependencyProperty.Register("FontFamily", typeof(FontFamily), typeof(Page));
+			FontSizeProperty = DependencyProperty.Register("FontSize", typeof(double), typeof(Page));
+			ForegroundProperty = DependencyProperty.Register("Foreground", typeof(Brush), typeof(Page));
+			KeepAliveProperty = DependencyProperty.Register("KeepAlive", typeof(bool), typeof(Page));
+			TemplateProperty = DependencyProperty.Register("Template", typeof(ControlTemplate), typeof(Page));
+			TitleProperty = DependencyProperty.Register("Title", typeof(string), typeof(Page));
+			
 			LoadedEvent.AddOwner(typeof(Page));
 		}
 
@@ -57,11 +67,30 @@ namespace MediaPortal.Controls
 			if(child is UIElement == false)
 				throw new Exception(string.Format("Cannot convert '{0}' to type '{1}'", child.GetType(), typeof(UIElement)));
 
-			_child = (UIElement)child;
+//			_child = (UIElement)child;
 		}
 
 		void IAddChild.AddText(string text)
 		{
+		}
+
+		protected override Size ArrangeOverride(Rect finalRect)
+		{
+			return base.ArrangeOverride(finalRect);
+		}
+
+		protected override Size MeasureOverride(Size availableSize)
+		{
+			return base.MeasureOverride(availableSize);
+		}
+
+		protected virtual void OnTemplateChanged(ControlTemplate oldTemplate, ControlTemplate newTemplate)
+		{
+		}
+
+		protected internal override void OnVisualParentChanged(Visual oldParent)
+		{
+			base.OnVisualParentChanged(oldParent);
 		}
 
 		object INameScope.FindName(string name)
@@ -94,45 +123,63 @@ namespace MediaPortal.Controls
 
 		public Brush Background
 		{
-			get { return _background; }
-			set { _background = value; }
+			get { return (Brush)GetValue(BackgroundProperty); }
+			set { SetValue(BackgroundProperty, value); }
 		}
 
-		public UIElement Child
+		public object Content
 		{
-			get { return _child; }
-			set { _child = value; }
+			get { return GetValue(ContentProperty); }
+			set { SetValue(ContentProperty, value); }
 		}
 
-//		public IconData Icon { get; set; }
+//		[BindableAttribute(true)] 
+//		public FontFamily FontFamily
+//		{
+//			get { return (FontFamily)GetValue(FontFamilyProperty); }
+//			set { SetValue(FontFamilyProperty, value); }
+//		}
+
+		[BindableAttribute(true)] 
+		public double FontSize
+		{
+			get { return (double)GetValue(FontSizeProperty); }
+			set { SetValue(FontSizeProperty, value); }
+		}
+
+		[BindableAttribute(true)] 
+		public Brush Foreground
+		{
+			get { return (Brush)GetValue(ForegroundProperty); }
+			set { SetValue(ForegroundProperty, value); }
+		}
+
+		public bool KeepAlive
+		{
+			get { return (bool)GetValue(KeepAliveProperty); }
+			set { SetValue(KeepAliveProperty, value); }
+		}
 
 		protected internal override IEnumerator LogicalChildren
 		{
 			get { if(_logicalChildren == null) return NullEnumerator.Instance; return _logicalChildren.GetEnumerator(); }
 		}
 
-		public object StatusBarContent
-		{
-			get { return _statusBarContent; }
-			set { _statusBarContent = value; }
-		}
+//		public NavigationService NavigationService
+//		{
+//			get;
+//		}
 
 		public ControlTemplate Template
 		{
-			get { return _template; }
-			set { _template = value; }
+			get { return (ControlTemplate)GetValue(TemplateProperty); }
+			set { SetValue(TemplateProperty, value); }
 		}
 
-		public string Text
+		public string Title
 		{
-			get { return _text; }
-			set { _text = value; }
-		}
-
-		public double Top
-		{
-			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException(); }
+			get { return (string)GetValue(TitleProperty); }
+			set { SetValue(TitleProperty, value); }
 		}
 
 		public double WindowHeight
@@ -141,7 +188,7 @@ namespace MediaPortal.Controls
 			set { throw new NotImplementedException(); }
 		}
 
-		public WindowState WindowState
+		public string WindowTitle
 		{
 			get { throw new NotImplementedException(); }
 			set { throw new NotImplementedException(); }
@@ -155,15 +202,23 @@ namespace MediaPortal.Controls
 
 		#endregion Properties
 
+		#region Properties (Dependency)
+
+		public static readonly DependencyProperty BackgroundProperty;
+		public static readonly DependencyProperty ContentProperty;
+		public static readonly DependencyProperty FontFamilyProperty;
+		public static readonly DependencyProperty FontSizeProperty;
+		public static readonly DependencyProperty ForegroundProperty;
+		public static readonly DependencyProperty KeepAliveProperty;
+		public static readonly DependencyProperty TemplateProperty;
+		public static readonly DependencyProperty TitleProperty;
+
+		#endregion Properties (Dependency)
+
 		#region Fields
 
-		Brush						_background;
-		UIElement					_child;
 		UIElementCollection			_logicalChildren = null;
-		Hashtable					_names;
-		object						_statusBarContent;
-		ControlTemplate				_template;
-		string						_text;
+		Hashtable					_names = new Hashtable(20);
 
 		#endregion Fields
 	}

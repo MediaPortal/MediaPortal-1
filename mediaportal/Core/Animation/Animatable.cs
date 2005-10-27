@@ -40,19 +40,21 @@ namespace MediaPortal.Animation
 
 		#region Methods
 
-		public void ApplyAnimationClock(DependencyProperty dp, AnimationClock clock)
+		public void ApplyAnimationClock(DependencyProperty property, AnimationClock clock)
+		{
+			ApplyAnimationClock(property, clock, HandoffBehavior.SnapshotAndReplace);
+		}
+
+		public void ApplyAnimationClock(DependencyProperty property, AnimationClock clock, HandoffBehavior handoffBehavior)
 		{
 		}
 
-		public void ApplyAnimationClock(DependencyProperty dp, AnimationClock clock, HandoffBehavior handoffBehavior)
+		public void BeginAnimation(DependencyProperty property, AnimationTimeline animation)
 		{
+			BeginAnimation(property, animation, HandoffBehavior.SnapshotAndReplace);
 		}
 
-		public void BeginAnimation(DependencyProperty dp, AnimationTimeline animation)
-		{
-		}
-
-		public void BeginAnimation(DependencyProperty dp, AnimationTimeline animation, HandoffBehavior handoffBehavior)
+		public void BeginAnimation(DependencyProperty property, AnimationTimeline animation, HandoffBehavior handoffBehavior)
 		{
 		}
 
