@@ -74,7 +74,6 @@ namespace System.Windows
 
 		void IAddChild.AddText(string text)
 		{
-			throw new NotSupportedException();
 		}
 
 		object INameScope.FindName(string name)

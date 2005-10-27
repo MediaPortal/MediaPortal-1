@@ -83,7 +83,6 @@ namespace System.Windows
 
 		void IAddChild.AddText(string text)
 		{
-			throw new NotImplementedException();
 		}
 
 		public int IndexOf(Trigger trigger)

@@ -80,7 +80,6 @@ namespace MediaPortal.Drawing.Transforms
 
 		void IAddChild.AddText(string text)
 		{
-			throw new NotImplementedException();
 		}
 
 		public int IndexOf(Transform transform)

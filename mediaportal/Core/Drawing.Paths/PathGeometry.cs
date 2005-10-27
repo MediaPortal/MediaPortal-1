@@ -49,7 +49,6 @@ namespace MediaPortal.Drawing.Paths
 
 		void IAddChild.AddText(string text)
 		{
-			throw new NotSupportedException();
 		}
 
 		#endregion Methods

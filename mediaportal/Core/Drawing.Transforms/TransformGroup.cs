@@ -71,7 +71,6 @@ namespace MediaPortal.Drawing.Transforms
 
 		void IAddChild.AddText(string text)
 		{
-			throw new NotSupportedException();
 		}
 
 		#endregion Methods

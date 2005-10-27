@@ -61,7 +61,6 @@ namespace System.Windows
 
 		protected virtual void AddText(string text)
 		{
-			throw new NotSupportedException("EventTrigger.IAddChild.AddText");
 		}
 
 		void IAddChild.AddChild(object child)

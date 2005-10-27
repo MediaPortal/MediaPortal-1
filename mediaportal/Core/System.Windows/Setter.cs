@@ -25,7 +25,6 @@
 
 using System;
 using System.ComponentModel;
-//using System.Xml;
 
 namespace System.Windows
 {
@@ -37,82 +36,46 @@ namespace System.Windows
 		{
 		}
 
-		public Setter(DependencyBinding binding, object value)
+		public Setter(DependencyProperty property, object value)
 		{
-			_binding = binding;
+			_property = property;
 			_value = value;
 		}
 
-		public Setter(DependencyBinding binding, object value, string targetName)
+		public Setter(DependencyProperty property, object value, string targetName)
 		{
-			_binding = binding;
+			_property = property;
 			_value = value;
 			_targetName = targetName;
 		}
 
 		#endregion Constructors
 
-		#region Methods
-
-		void SetValue(object value)
-		{
-			if(_binding == null)
-			{
-				_value = value;
-				return;
-			}
-
-			if(_binding.PropertyType == typeof(object))
-			{
-				_value = value;
-				return;
-			}
-
-			if(_binding.PropertyType == value.GetType())
-			{
-				_value = value;
-				return;
-			}
-
-			TypeConverter converter = TypeDescriptor.GetConverter(_binding.PropertyType);
-
-			try
-			{
-				_value = converter.ConvertFromString((string)value);
-			}
-			catch(Exception e)
-			{
-				throw new Exception(string.Format("Cannot convert '{0}' to type '{1}'", value, _binding.PropertyType), e);
-			}
-		}
-
-		#endregion Methods
-
 		#region Properties
 
-		public DependencyBinding Property
+		public DependencyProperty Property
 		{
-			get { return _binding; }
-			set { _binding = value; }
+			get { return _property; }
+			set { CheckSealed(); _property = value; }
 		}
 
 		public string TargetName
 		{
 			get { return _targetName; }
-			set { _targetName = value; }
+			set { CheckSealed(); _targetName = value; }
 		}
 
 		public object Value
 		{
 			get { return _value; }
-			set { SetValue(value); }
+			set { CheckSealed(); _value = value; }
 		}
 
 		#endregion Properties
 
 		#region Fields
 
-		DependencyBinding			_binding;
+		DependencyProperty			_property;
 		string						_targetName = string.Empty;
 		object						_value;
 

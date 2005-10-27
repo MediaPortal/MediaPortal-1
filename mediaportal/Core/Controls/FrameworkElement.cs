@@ -127,12 +127,7 @@ namespace MediaPortal.Controls
 
 		void ISupportInitialize.EndInit()
 		{
-			_isInitialized = true;
-
 			OnInitialized(EventArgs.Empty);
-
-			if(Initialized != null)
-				Initialized(this, EventArgs.Empty);
 		}
 
 		public static FlowDirection GetFlowDirection(DependencyObject d)
@@ -167,16 +162,17 @@ namespace MediaPortal.Controls
 		protected virtual void OnInitialized(EventArgs e)
 		{
 			// no default implementation
+			_isInitialized = true;
+
+			if(Initialized != null)
+				Initialized(this, EventArgs.Empty);
 		}
 
 		protected internal override void OnVisualParentChanged(Visual oldParent)
 		{
-			_isInitialized = true;
-
 			OnInitialized(EventArgs.Empty);
 
-			if(Initialized != null)
-				Initialized(this, EventArgs.Empty);
+			PrepareTriggers();
 		}
 			
 		protected void PrepareTriggers()
@@ -187,19 +183,20 @@ namespace MediaPortal.Controls
 			foreach(TriggerBase trigger in _triggers)
 			{
 				if(trigger is EventTrigger)
-				{
 					PrepareEventTrigger((EventTrigger)trigger);
-				}
 			}
 		}
 
 		private void PrepareEventTrigger(EventTrigger trigger)
 		{
+			if(trigger.RoutedEvent == FrameworkElement.LoadedEvent)
+				MediaPortal.GUI.Library.Log.Write("FIRE FIRE FIRE IN THE WHOLE");
+
 			foreach(TriggerAction action in trigger.Actions)
 			{
-				if(action is BeginAction)
-				{
-				}
+//				if(action is )
+//				{
+//				}
 			}
 		}
 

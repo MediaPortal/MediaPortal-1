@@ -47,7 +47,7 @@ namespace MediaPortal.GUI.Library
 	/// Each window plugin should derive from this base class
 	/// Pluginwindows should be copied in the plugins/windows folder
 	/// </summary>
-	public class GUIWindow : Page, ISupportInitialize
+	public class GUIWindow : Page
 	{
 		#region window ids
 		//enum of all standard windows in MP
@@ -503,7 +503,7 @@ namespace MediaPortal.GUI.Library
 				// TODO: remove this when all XAML parser or will result in double initialization
 				((ISupportInitialize)this).EndInit();
 
-				PrepareTriggers();
+//				PrepareTriggers();
 
 				// initialize the controls
 				OnWindowLoaded();
@@ -1276,18 +1276,6 @@ namespace MediaPortal.GUI.Library
 		}
 
 		/// XAML related code follows
-
-		#region Methods
-
-		void ISupportInitialize.BeginInit()
-		{
-		}
-
-		void ISupportInitialize.EndInit()
-		{
-		}
-
-		#endregion Methods
 
 		#region Properties
 

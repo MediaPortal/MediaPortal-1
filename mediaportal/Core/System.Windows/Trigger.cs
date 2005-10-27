@@ -39,6 +39,12 @@ namespace System.Windows
 
 		#endregion Constructors
 
+		#region Events
+
+		public event TriggerInvalidatedEventHandler Invalidated;
+
+		#endregion Events
+
 		#region Methods
 
 		void IAddChild.AddChild(object child)
@@ -57,16 +63,27 @@ namespace System.Windows
 
 		void IAddChild.AddText(string text)
 		{
-			throw new NotSupportedException();
 		}
 
 		#endregion Methods
 
 		#region Properties
 		
+		public DependencyProperty Property
+		{
+			get { return _property; }
+			set { _property = value; }
+		}
+
 		public SetterBaseCollection Setters
 		{
 			get { if(_setters == null) _setters = new SetterBaseCollection(); return _setters; }
+		}
+
+		public string SourceName
+		{
+			get { return _sourceName; }
+			set { _sourceName = value; }
 		}
 
 		public object Value
@@ -79,7 +96,9 @@ namespace System.Windows
 
 		#region Fields
 
+		DependencyProperty			_property;
 		SetterBaseCollection		_setters;
+		string						_sourceName;
 		object						_value;
 
 		#endregion Fields

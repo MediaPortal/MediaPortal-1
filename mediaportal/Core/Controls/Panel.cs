@@ -63,7 +63,6 @@ namespace MediaPortal.Controls
 
 		void IAddChild.AddText(string text)
 		{
-			throw new NotSupportedException("Panel.IAddChild.AddText");
 		}
 
 //		protected virtual UIElementCollection CreateUIElementCollection(FrameworkElement logicalParent)

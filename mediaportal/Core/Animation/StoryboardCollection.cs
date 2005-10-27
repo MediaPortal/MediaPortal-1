@@ -83,7 +83,6 @@ namespace MediaPortal.Animation
 
 		void IAddChild.AddText(string text)
 		{
-			throw new NotSupportedException();
 		}
 
 		public int IndexOf(Timeline timeline)

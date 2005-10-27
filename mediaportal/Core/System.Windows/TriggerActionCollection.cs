@@ -83,7 +83,6 @@ namespace System.Windows
 
 		void IAddChild.AddText(string text)
 		{
-			throw new NotSupportedException();
 		}
 
 		public int IndexOf(TriggerAction action)
