@@ -168,7 +168,7 @@ namespace MediaPortal.GUI.Library
       //fPos += 10.0f;
       if ((int)fWidth > 1)
       {
-        if (m_bHasFocus)
+        if (IsFocused)
         {
           m_guiMidFocus.SetPosition((int)fPos, m_guiBackground.YPosition );
           m_guiMidFocus.Render(timePassed);

@@ -684,11 +684,11 @@ namespace MediaPortal.GUI.Library
     }
     public override bool Focus
     {
-      get { return m_bHasFocus;}
+      get { return base.Focus;}
       set 
       { 
-        m_bHasFocus=value;
-        if (!m_bHasFocus)
+        base.Focus=value;
+        if(!IsFocused)
         {
           switch (m_iType)
           {

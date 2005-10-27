@@ -2043,18 +2043,11 @@ namespace MediaPortal.GUI.Library
     }
 
 
-    public override bool Focus
-    {
-      get { return m_bHasFocus; }
-      set
-      {
-        if (m_bHasFocus != value)
-        {
-          m_bHasFocus = value;
-          //m_bDrawFocus=true;
-        }
-      }
-    }
+	public override bool Focus
+	{
+		get { return IsFocused; }
+		set { if(IsFocused != value) base.Focus = value; }
+	}
 
     public void Add(GUIListItem item)
     {

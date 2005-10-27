@@ -49,8 +49,6 @@ namespace MediaPortal.GUI.Library
 		[XMLSkinElement("type")]			protected string		m_strControlType = "";
 		[XMLSkinElement("description")]		protected string		m_Description="";
 		protected int			m_dwParentID = 0;
-		protected bool			m_bHasFocus = false;
-		protected bool			m_bDisabled = false;
 		protected bool			m_bSelected = false;
 		protected bool			m_bCalibration = true;
 		protected object		m_Data;
@@ -392,25 +390,21 @@ namespace MediaPortal.GUI.Library
 						return true;
 					}
 					
-
 					case GUIMessage.MessageType.GUI_MSG_VISIBLE : 
-						if (IsVisible) return false;
-						IsVisible = true;
+						Visibility = System.Windows.Visibility.Visible;
 						return true;
-					
 		      
 					case GUIMessage.MessageType.GUI_MSG_HIDDEN : 
-						IsVisible = false;
+						Visibility = System.Windows.Visibility.Hidden;
 						return true;
-					
 
 					case GUIMessage.MessageType.GUI_MSG_ENABLED : 
-						m_bDisabled = false;
+						IsEnabled = false;
 						return true;
 					
 		      
 					case GUIMessage.MessageType.GUI_MSG_DISABLED : 
-						m_bDisabled = true;
+						IsEnabled = true;
 						return true;
 					
 					case GUIMessage.MessageType.GUI_MSG_SELECTED : 
@@ -448,13 +442,10 @@ namespace MediaPortal.GUI.Library
 		/// <summary>
 		/// Sets and gets the status of the focus of the control.
 		/// </summary>
-		public virtual bool Focus
+		public new virtual bool Focus
 		{
-			get { return m_bHasFocus; }
-			set 
-			{ 
-				m_bHasFocus = value; 
-			}
+			get { return IsFocused; }
+			set { SetValue(IsFocusedProperty, value); }
 		}
 
 		/// <summary>
@@ -495,10 +486,7 @@ namespace MediaPortal.GUI.Library
 		/// <returns>true or false</returns>
 		public virtual bool CanFocus()
 		{
-			
-			if (!IsVisible) return false;
-			if (Disabled) return false;
-			return true;
+			return Focusable && IsEnabled && IsVisible;
 		}
 
 		/// <summary>
@@ -506,8 +494,8 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public virtual bool Disabled
 		{
-			get { return m_bDisabled; }
-			set { m_bDisabled = value; }
+			get { return !IsEnabled; }
+			set { IsEnabled = value; }
 		}
 
 		/// <summary>

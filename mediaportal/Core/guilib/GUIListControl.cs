@@ -443,7 +443,7 @@ namespace MediaPortal.GUI.Library
 
       dwPosX += m_iTextOffsetX;
       bool bSelected = false;
-      if (buttonNr == m_iCursorY && Focus && m_iSelect == ListType.CONTROL_LIST)
+      if (buttonNr == m_iCursorY && IsFocused && m_iSelect == ListType.CONTROL_LIST)
       {
         bSelected = true;
       }
@@ -471,7 +471,7 @@ namespace MediaPortal.GUI.Library
           else
             xpos = m_dwPosX + m_iTextOffsetX2;
 
-          if (m_labels2 != null)
+			if (m_labels2 != null)
           {
             if (buttonNr >= 0 && buttonNr < m_labels2.Count)
             {
@@ -633,7 +633,7 @@ namespace MediaPortal.GUI.Library
         {
           // render item
           bool gotFocus = false;
-          if (m_bDrawFocus && i == m_iCursorY && Focus && m_iSelect == ListType.CONTROL_LIST)
+          if (m_bDrawFocus && i == m_iCursorY && IsFocused && m_iSelect == ListType.CONTROL_LIST)
             gotFocus = true;
           RenderButton(timePassed, i, m_dwPosX, dwPosY, gotFocus);
         }
@@ -651,7 +651,7 @@ namespace MediaPortal.GUI.Library
         if (i + m_iOffset < m_vecItems.Count)
 				{
 					bool gotFocus = false;
-					if (m_bDrawFocus && i == m_iCursorY && Focus && m_iSelect == ListType.CONTROL_LIST)
+					if (m_bDrawFocus && i == m_iCursorY && IsFocused && m_iSelect == ListType.CONTROL_LIST)
 						gotFocus = true;
           // render the icon
           RenderIcon(timePassed, i, dwPosX + m_iIconOffsetX, dwPosY + m_iIconOffsetY,gotFocus);
@@ -2384,15 +2384,8 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public override bool Focus
     {
-      get { return m_bHasFocus; }
-      set
-      {
-        if (m_bHasFocus != value)
-        {
-          m_bHasFocus = value;
-          m_bDrawFocus = true;
-        }
-      }
+      get { return IsFocused; }
+      set { if(IsFocused != value) { base.Focus = value; m_bDrawFocus = true; } }
     }
 
     public void Add(GUIListItem item)

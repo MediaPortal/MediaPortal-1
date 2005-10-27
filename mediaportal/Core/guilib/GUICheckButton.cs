@@ -122,11 +122,11 @@ namespace MediaPortal.GUI.Library
 		{
 			get
 			{
-				return base.Focus;
+				return IsFocused;
 			}
 			set
 			{
-				if (value != m_bHasFocus && value)
+				if (value != IsFocused && value)
 				{
 					GUIPropertyManager.SetProperty("#highlightedbutton", Label);
 				}
