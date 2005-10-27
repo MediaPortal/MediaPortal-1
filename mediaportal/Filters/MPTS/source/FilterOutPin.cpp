@@ -215,6 +215,10 @@ void CFilterOutPin::SeekIFrame()
 	try
 	{
 	if (m_pSections->pids.VideoPid<=0) return;
+	m_rtStart=0;
+	m_rtStop=_I64_MAX / 2;
+	m_rtDuration=_I64_MAX / 2;
+
 	m_pBuffers->Clear();
 	// find first i-frame
 	TsDemux tsDemuxer;
@@ -302,7 +306,7 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 	if (FAILED(hr))
 	{
 		LogDebug("FAILED: GetPointer() failed:%x",hr);
-	
+		
 		return hr;
 	}
 	lDataLength = pSample->GetActualDataLength();
@@ -311,8 +315,11 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 	hr=GetData(pData,lDataLength,true);
 	if (hr!=S_OK) 
 	{
+		m_bDiscontinuity=TRUE;
+		pSample->SetDiscontinuity(TRUE);
+		pSample->SetPreroll(TRUE);
 		LogDebug("FAILED to get data from file");
-		return S_FALSE;
+		return NOERROR;
 	}
 
 	pSample->SetActualDataLength(lDataLength);
@@ -352,6 +359,7 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 		{
 			LogDebug("INVALID pts:%x %x-%x", (DWORD)ptsNow,(DWORD)m_pSections->pids.StartPTS ,(DWORD) m_pSections->pids.EndPTS);
 		}
+		static int secl=0;
 		CRefTime rtStart,rtNow;
 		Sections::PTSTime ptsTimeNow,ptsTimeStart;
 		m_pSections->PTSToPTSTime(ptsNow,&ptsTimeNow);
@@ -359,6 +367,20 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 		rtNow=((ULONGLONG)36000000000*ptsTimeNow.h)+((ULONGLONG)600000000*ptsTimeNow.m)+((ULONGLONG)10000000*ptsTimeNow.s)+((ULONGLONG)1000*ptsTimeNow.u);
 		rtStart =((ULONGLONG)36000000000*ptsTimeStart.h)+((ULONGLONG)600000000*ptsTimeStart.m)+((ULONGLONG)10000000*ptsTimeStart.s)+((ULONGLONG)1000*ptsTimeStart.u);
 		rtNow -= rtStart;
+		if (secl!=ptsTimeNow.s)
+		{
+			ULONGLONG p=(REFERENCE_TIME)rtNow;
+			ULONGLONG  h = (p/36000000000);
+			p -= (h*36000000000);
+
+			ULONGLONG  m = (p/600000000);
+			p -= (m*600000000);
+
+			ULONGLONG  s = (p/10000000);
+			LogDebug("now:%02.2d:%02.2d:%02.2d: start:%02.2d:%02.2d:%02.2d %x",(DWORD)h,(DWORD)m,(DWORD)s,ptsTimeStart.h,ptsTimeStart.m,ptsTimeStart.s, (DWORD)rtNow);
+			secl=ptsTimeNow.s;
+
+		}
 		UpdatePositions(ptsNow);	
 		REFERENCE_TIME tStart=(REFERENCE_TIME)rtNow;
 		REFERENCE_TIME tEnd=(REFERENCE_TIME)rtNow+10;
@@ -532,6 +554,8 @@ void CFilterOutPin::UpdatePositions(ULONGLONG& ptsNow)
 
 		m_pSections->PTSToPTSTime(rtDuration,&time);
 		rtDuration=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
+		//	LogDebug("2)%02.2d:%02.2d:%02.2d", time.h,time.m,time.s);
+
 	}
 	else
 	{

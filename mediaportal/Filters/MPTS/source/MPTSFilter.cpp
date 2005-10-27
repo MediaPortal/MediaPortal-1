@@ -88,6 +88,10 @@ STDMETHODIMP CMPTSFilter::NonDelegatingQueryInterface(REFIID riid, void ** ppv)
 	{
 		return GetInterface((IMPTSControl*)this, ppv);
 	}
+	if (riid == IID_IAMFilterMiscFlags)
+	{
+		return GetInterface((IAMFilterMiscFlags*)this, ppv);
+	}
 	if (riid == IID_IFileSourceFilter)
 	{
 		return GetInterface((IFileSourceFilter*)this, ppv);
@@ -162,11 +166,12 @@ STDMETHODIMP CMPTSFilter::SetSyncClock(void)
 
 STDMETHODIMP CMPTSFilter::Run(REFERENCE_TIME tStart)
 {
-	if (m_State==State_Paused) LogDebug("filter:run paused->run");
-	if (m_State==State_Running) LogDebug("filter:run run->run");
-	if (m_State==State_Stopped) LogDebug("filter:run stop->run");
+	if (m_State==State_Paused) LogDebug("filter:run paused->run ref clock:%x",(DWORD)tStart);
+	if (m_State==State_Running) LogDebug("filter:run run->run ref clock:%x",(DWORD)tStart);
+	if (m_State==State_Stopped) LogDebug("filter:run stop->run ref clock:%x",(DWORD)tStart);
 	CAutoLock cObjectLock(m_pLock);
 	HRESULT hr;
+	
 	hr=CSource::Run(tStart);
 	m_pDemux->ShowDemuxPins(GetFilterGraph());
 	return hr;
@@ -620,3 +625,10 @@ STDMETHODIMP CMPTSFilter::GetAudioPid(int index,int* audioPid, BOOL* isAC3, char
 	return S_OK;
 }
 
+
+// IAMFilterMiscFlags
+
+ULONG CMPTSFilter::GetMiscFlags()
+{
+	return AM_FILTER_MISC_FLAGS_IS_SOURCE;
+}

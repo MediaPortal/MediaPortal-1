@@ -49,7 +49,7 @@ DECLARE_INTERFACE_(IMPTSControl, IUnknown)
 // filter
 class CMPTSFilter;
 
-class CMPTSFilter : public CSource,public IFileSourceFilter,public IMPTSControl
+class CMPTSFilter : public CSource,public IFileSourceFilter,public IMPTSControl, public IAMFilterMiscFlags
 {
 	//friend class CFilterOutPin;
 public:
@@ -77,11 +77,15 @@ public:
 	HRESULT				SetFilePosition(REFERENCE_TIME seek);
 	bool				UpdatePids();
 	FileReader*			m_pFileReader;
+
+	// IAMFilterMiscFlags
+	virtual ULONG STDMETHODCALLTYPE		GetMiscFlags();
 protected:
 	// IFileSourceFilter
 	STDMETHODIMP Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt);
 	STDMETHODIMP GetCurFile(LPOLESTR * ppszFileName,AM_MEDIA_TYPE *pmt);
 	STDMETHODIMP GetDuration(REFERENCE_TIME *dur);
+
 
 	//audio stream selection
 	STDMETHODIMP SetCurrentAudioPid(int audioPid);
