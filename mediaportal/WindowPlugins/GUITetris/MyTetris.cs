@@ -35,7 +35,7 @@ using Tetris;
 namespace MediaPortal.Games.Tetris
 {
 	/// <summary>
-	/// Written by Smirnoff (lee@netpoint-it.co.uk)
+	/// Written by Smirnoff (smirnuff@gmail.com)
 	/// </summary>
 	public class MyTetris : GUIWindow, ISetupForm
 	{
@@ -314,7 +314,7 @@ namespace MediaPortal.Games.Tetris
 
 		public string Author()
 		{
-			return "Smirnoff";
+			return "Smirnuff";
 		}
 
 		public string Description()
@@ -357,7 +357,7 @@ namespace MediaPortal.Games.Tetris
 	}
 
 	/// <summary>
-	/// Written by Smirnoff (lee@netpoint-it.co.uk)
+	/// Written by Smirnuff (smirnuff@gmail.com)
 	/// </summary>
 	public class MyTetrisControl : GUIControl, IHostTetris
 	{
@@ -424,7 +424,7 @@ namespace MediaPortal.Games.Tetris
 
 		void RenderTexture(float timePassed)
 		{
-			if(m_bHasFocus)
+			if(IsFocused)
 			{
 				m_imgTextureFocused.Render(timePassed);
 			}
@@ -764,7 +764,7 @@ namespace MediaPortal.Games.Tetris
 			if(GUIGraphicsContext.EditMode == false && IsVisible == false)
 				return;
 
-			if(m_theGame != null && m_theGame.State == State.Running && m_bHasFocus == false)
+			if(m_theGame != null && m_theGame.State == State.Running && IsFocused == false)
 			{
 				// force the game to be paused
 				m_theGame.State = State.Paused;

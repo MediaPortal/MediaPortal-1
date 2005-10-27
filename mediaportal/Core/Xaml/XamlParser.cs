@@ -205,7 +205,6 @@ namespace MediaPortal.Xaml
 				catch(Exception e)
 				{
 					MediaPortal.GUI.Library.Log.Write("XamlParser.Read: {0}({1},{2}): {3}", _filename, _xmlReader.LineNumber, _xmlReader.LinePosition, e.Message);
-					MediaPortal.GUI.Library.Log.Write("Node: {0}", _xmlReader.Name);
 				}
 			}
 
@@ -307,7 +306,6 @@ namespace MediaPortal.Xaml
 						throw new XamlParserException(string.Format("Cannot convert '{0}' to type '{1}'", _xmlReader.Value, methodInfo.GetParameters()[1].ParameterType), _filename, _xmlReader);
 					}
 
-					((MethodInfo)memberInfo).Invoke(null, new object[] { target, value });
 					continue;
 				}
 				else
