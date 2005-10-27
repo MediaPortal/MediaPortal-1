@@ -34,13 +34,18 @@ namespace MediaPortal.Controls
 {
 	public class Page : FrameworkElement, INameScope, /* IWindowService, */ IAddChild
 	{
-		#region Methods
+		#region Constructors
+
+		static Page()
+		{
+			LoadedEvent.AddOwner(typeof(Page));
+		}
 
 		public Page()
 		{
 		}
 
-		#endregion Methods
+		#endregion Constructors
 
 		#region Methods
 

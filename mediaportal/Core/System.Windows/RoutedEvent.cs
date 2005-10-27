@@ -68,9 +68,14 @@ namespace System.Windows
 			return EventManager.RegisterRoutedEvent(_name, _routingStrategy, _handlerType, ownerType);
 		}
 
+		public override int GetHashCode()
+		{
+			return _globalIndex;
+		}
+
 		public override string ToString()
 		{
-			// TODO: Is this the correct way???
+			// TODO: what should this look like???
 			return string.Format("{0}.{1}", _ownerType.Name, _name);
 		}
 
@@ -102,6 +107,8 @@ namespace System.Windows
 
 		#region Fields
 
+		readonly int				_globalIndex = _globalIndexNext++;
+		static int					_globalIndexNext = 0;
 		Type						_handlerType;
 		string						_name;
 		Type						_ownerType;

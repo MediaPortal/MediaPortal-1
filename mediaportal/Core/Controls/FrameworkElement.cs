@@ -165,19 +165,21 @@ namespace MediaPortal.Controls
 
 			if(Initialized != null)
 				Initialized(this, EventArgs.Empty);
+
+			PrepareTriggers();
 		}
 
 		protected internal override void OnVisualParentChanged(Visual oldParent)
 		{
 			OnInitialized(EventArgs.Empty);
-
-			PrepareTriggers();
 		}
 			
 		protected void PrepareTriggers()
 		{
 			if(_triggers == null)
 				return;
+
+			MediaPortal.GUI.Library.Log.Write("PrepareTriggers");
 
 			foreach(TriggerBase trigger in _triggers)
 			{
@@ -188,14 +190,13 @@ namespace MediaPortal.Controls
 
 		private void PrepareEventTrigger(EventTrigger trigger)
 		{
-			if(trigger.RoutedEvent == FrameworkElement.LoadedEvent)
+			MediaPortal.GUI.Library.Log.Write("PrepareTriggers: {0}", trigger.RoutedEvent.ToString());
+
+			if(trigger.RoutedEvent == Page.LoadedEvent)
 				MediaPortal.GUI.Library.Log.Write("FIRE FIRE FIRE IN THE WHOLE");
 
 			foreach(TriggerAction action in trigger.Actions)
 			{
-//				if(action is )
-//				{
-//				}
 			}
 		}
 
