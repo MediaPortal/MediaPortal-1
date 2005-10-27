@@ -361,11 +361,10 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 		rtNow -= rtStart;
 		UpdatePositions(ptsNow);	
 		REFERENCE_TIME tStart=(REFERENCE_TIME)rtNow;
-		REFERENCE_TIME tEnd=(REFERENCE_TIME)rtNow;
+		REFERENCE_TIME tEnd=(REFERENCE_TIME)rtNow+10;
 		pSample->SetTime(&tStart,&tEnd);
 	}
 
-	pSample->SetTime(NULL,NULL);
 	if(m_bDiscontinuity) 
 	{
 		LogDebug("set discontinuity");
@@ -563,6 +562,7 @@ void CFilterOutPin::UpdatePositions(ULONGLONG& ptsNow)
 	}
 
 
+	if (rtDuration==0) rtDuration=_I64_MAX / 2;
 	//m_rtStart=0;
 	m_rtStop=rtDuration;
 	m_rtDuration=rtDuration;

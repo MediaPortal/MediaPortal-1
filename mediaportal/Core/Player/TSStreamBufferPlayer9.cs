@@ -98,7 +98,7 @@ namespace MediaPortal.Player
 				_vmr9.AddVMR9(_graphBuilder);			
 				_vmr9.Enable(false);	
 				int hr;
-/*
+
 				MPEG2Demultiplexer m_MPEG2Demuxer=null;
 				IBaseFilter m_mpeg2Multiplexer=null;
 				Log.WriteFile(Log.LogType.Capture,"TStreamBufferPlayer9:add new MPEG2 Demultiplexer to graph");
@@ -120,7 +120,7 @@ namespace MediaPortal.Player
 					Log.WriteFile(Log.LogType.Capture,true,"TStreamBufferPlayer9:FAILED to add mpeg2 demuxer to graph:0x{0:X}",hr);
 					return false;
 				}
-*/
+
 				Log.WriteFile(Log.LogType.Capture,"TStreamBufferPlayer9:add new TS reader to graph");
 
 				_bufferSource = new MPTransportStreamReader();

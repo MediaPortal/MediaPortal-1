@@ -210,29 +210,18 @@ namespace MediaPortal.Player
 
 			_state=PlayState.Playing;
 
+			UpdateCurrentPosition();
+			UpdateDuration();
 			if (_isLive)
 			{
-				DateTime dt=DateTime.Now;
-				do
-				{
-					UpdateDuration();
-					System.Windows.Forms.Application.DoEvents();						
-					TimeSpan ts=DateTime.Now-dt;
-					if (ts.TotalSeconds>=2) break;
-				} while (_duration<0.5);
-				if (_duration<0.1) 
-				{
-					//Log.Write("TStreamBufferPlayer:failed to play file duration:{0}",Utils.SecondsToHMSString( (int)_duration) );
-					//return false;
-				}
-				
-
+				SeekAbsolute(0);
 			}
 			else
 			{
 				//seek to end of file
-				UpdateDuration();
+				SeekAbsolute(0);
 			}
+
 
 			//Log.Write("TStreamBufferPlayer:playing duration:{0}",Utils.SecondsToHMSString( (int)_duration) );
 			_state=PlayState.Playing;
@@ -838,7 +827,7 @@ namespace MediaPortal.Player
 					vmr7.AddVMR7(_graphBuilder);
 				}
 				int hr;
-				if (!_hasVideo)
+				//if (!_hasVideo)
 				{
 					MPEG2Demultiplexer m_MPEG2Demuxer=null;
 					IBaseFilter m_mpeg2Multiplexer=null;
