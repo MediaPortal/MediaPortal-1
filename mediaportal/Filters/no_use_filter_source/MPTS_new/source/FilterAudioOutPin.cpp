@@ -50,10 +50,9 @@ ULONGLONG CFilterAudioPin::Process(BYTE *ms,REFERENCE_TIME start,REFERENCE_TIME 
 	DWORD cpyLen=0;
 	Sections::TSHeader tsHeader;
 	BYTE *sampleData=ms;
-	BYTE samplePES[18800];
 
-	CheckPointer(samplePES,E_OUTOFMEMORY);
 
+	ULONGLONG ptsNow=0;
 	for(offset=0;offset<18800;offset+=188)
 	{
 		if(offset+184>18800)
@@ -61,23 +60,23 @@ ULONGLONG CFilterAudioPin::Process(BYTE *ms,REFERENCE_TIME start,REFERENCE_TIME 
 		m_pSections->GetTSHeader(sampleData+offset,&tsHeader);
 		if(tsHeader.SyncByte!=0x47 || tsHeader.TransportError)
 			continue;// no packet
-		if(tsHeader.Pid==m_pSections->pids.AudioPid1)
+		if(tsHeader.Pid==m_pSections->pids.CurrentAudioPid)
 		{
 			pesOffset=4;
 			if(tsHeader.AdaptionControl==0x02) continue;// no payload
-			if(tsHeader.AdaptionControl==0x03) pesOffset+=1+sampleData[offset+4];
+			if(tsHeader.AdaptionControl==0x03) 
+				pesOffset+=sampleData[offset+4];
 			// copy len
 			cpyLen=188-pesOffset;
 			if(pesMemPointer+cpyLen>=18800 || offset+cpyLen>=18800)
 				break;
 			else
 			{
-				CopyMemory(samplePES+pesMemPointer,sampleData+offset+pesOffset,cpyLen);
+				CopyMemory(m_samplePES+pesMemPointer,sampleData+offset+pesOffset,cpyLen);
 			}
 			
 			pesMemPointer+=cpyLen;
 		}
-
 	}
 
 	IMediaSample *audioSample;
@@ -85,7 +84,7 @@ ULONGLONG CFilterAudioPin::Process(BYTE *ms,REFERENCE_TIME start,REFERENCE_TIME 
 	{
 		BYTE *data;
 		audioSample->GetPointer(&data);
-		CopyMemory(data,samplePES,pesMemPointer);
+		CopyMemory(data,m_samplePES,pesMemPointer);
 		audioSample->SetActualDataLength(pesMemPointer);
 		HRESULT hr=Deliver(audioSample);
 		audioSample->Release();

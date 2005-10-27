@@ -58,12 +58,13 @@ ULONGLONG CFilterVideoPin::Process(BYTE *ms)
 	DWORD pesMemPointer=0;
 	DWORD cpyLen=0;
 	Sections::TSHeader tsHeader;
+	ULONGLONG ptsNow=0;
 	//const DWORD sampleDataLen=ms->GetActualDataLength();
 	BYTE *sampleData=ms;
-	BYTE samplePES[18800];
+//	BYTE samplePES[18800];
 
-	CheckPointer(samplePES,E_OUTOFMEMORY);
 
+	ptsNow=0;
 	for(offset=0;offset<18800;offset+=188)
 	{
 		if(offset+184>18800)
@@ -74,22 +75,33 @@ ULONGLONG CFilterVideoPin::Process(BYTE *ms)
 		if(tsHeader.Pid==m_pSections->pids.VideoPid)
 		{
 			pesOffset=4;
-			if(tsHeader.AdaptionControl==0x02) continue;// no payload
-			if(tsHeader.AdaptionControl==0x03) pesOffset+=1+sampleData[offset+4];
+			if( tsHeader.AdaptionControl == 0x02) continue;// no payload
+			if( tsHeader.AdaptionControl == 0x03) 
+				pesOffset+=sampleData[offset + 4];
 			// copy len
 			cpyLen=188-pesOffset;
 			if(pesMemPointer+cpyLen>=18800 || offset+cpyLen>=18800)
 				break;
 			else
 			{
-				CopyMemory(samplePES+pesMemPointer,sampleData+offset+pesOffset,cpyLen);
+				CopyMemory(m_samplePES+pesMemPointer,sampleData+offset+pesOffset,cpyLen);
 			}
 			
 			pesMemPointer+=cpyLen;
+
+			int pid;
+			ULONGLONG pts;
+			if(m_pSections->CurrentPTS(sampleData+offset,&pts,&pid)==S_OK)
+			{
+				if (pts>0)
+				{
+					ptsNow=pts;
+				}
+			}
 		}
 
 	}
-	CopyMemory(sampleData,samplePES,pesMemPointer);
+	CopyMemory(sampleData,m_samplePES,pesMemPointer);
 
 	//delete [] samplePES;
 	//Deliver(ms);
@@ -140,13 +152,19 @@ HRESULT CFilterVideoPin::FillBuffer(IMediaSample *pSample)
 
 	lDataLength=Process(buffer);
 	if(lDataLength)
-		CopyMemory(pData,buffer,lDataLength);
-
-	pSample->SetActualDataLength(lDataLength);
-	if(m_bDiscontinuity==true)
 	{
-		m_bDiscontinuity=FALSE;
-		pSample->SetDiscontinuity(TRUE);
+		CopyMemory(pData,m_samplePES,lDataLength);
+
+		pSample->SetActualDataLength(lDataLength);
+		if(m_bDiscontinuity==TRUE)
+		{
+			m_bDiscontinuity=FALSE;
+			pSample->SetDiscontinuity(TRUE);
+		}
+	}
+	else
+	{
+		int x=1;
 	}
 	//
 

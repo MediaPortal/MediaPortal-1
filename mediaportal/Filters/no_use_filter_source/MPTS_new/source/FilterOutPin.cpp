@@ -429,7 +429,7 @@ HRESULT CFilterOutPin::ChangeStart()
 		//	hr=demuxIn->Release();
 		//}
 		m_pMPTSFilter->SetFilePosition(m_rtStart);
-		m_bDiscontinuity=true;
+		m_bDiscontinuity=TRUE;
 		DeliverBeginFlush();
 		Stop();
 		DeliverEndFlush();

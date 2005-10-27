@@ -31,7 +31,7 @@ protected:
 protected:
 	CCritSec		m_cSharedState;
 	BOOL			m_bDiscontinuity;
-
+	BYTE			m_samplePES[18800];
 public:
 	Sections	*m_pSections;
 	
