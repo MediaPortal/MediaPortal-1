@@ -133,7 +133,7 @@ HRESULT CFilterVideoPin::FillBuffer(IMediaSample *pSample)
 	ULONGLONG ptsNow=0;
 	HRESULT hr = pSample->GetPointer(&pData);
 	
-	pSample->SetTime((REFERENCE_TIME*)&m_rtStart,(REFERENCE_TIME*)&m_rtStop);
+	//pSample->SetTime((REFERENCE_TIME*)&m_rtStart,(REFERENCE_TIME*)&m_rtStop);
 	if (FAILED(hr))
 	{
 		LogDebug("FAILED: GetPointer() failed:%x",hr);
