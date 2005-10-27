@@ -175,6 +175,9 @@ namespace MediaPortal.GUI.Library
 			if(_isAnimating && progress <= 1)
 				index = (int)(progress * _images.Length);
 
+			if(index >= _images.Length)
+				index = _images.Length - 1;
+
 //			_images[index].SetPosition((int)(progress * 700), _images[index].YPosition);
 			_images[index].Render(timePassed);
 		}
