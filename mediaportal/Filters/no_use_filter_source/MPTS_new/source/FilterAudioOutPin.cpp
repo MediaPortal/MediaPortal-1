@@ -90,6 +90,8 @@ ULONGLONG CFilterAudioPin::Process(BYTE *ms,REFERENCE_TIME start,REFERENCE_TIME 
 			audioSample->SetActualDataLength(pesMemPointer);
 			HRESULT hr=Deliver(audioSample);
 			audioSample->Release();
+			if(hr==S_FALSE)
+				DeliverEndOfStream();
 		}
 		else
 		{

@@ -189,15 +189,16 @@ HRESULT CFilterVideoPin::OnThreadCreate()
 
 HRESULT CFilterVideoPin::ChangeStart()
 {
+	HRESULT hr;
 	if (ThreadExists())
 	{
 		DeliverBeginFlush();
-		m_pMPTSFilter->m_pAudioPin->DeliverBeginFlush();
+		hr=m_pMPTSFilter->m_pAudioPin->DeliverBeginFlush();
 		Stop();
 		DeliverEndFlush();
-		m_pMPTSFilter->m_pAudioPin->DeliverEndFlush();
-		Run();
+		hr=m_pMPTSFilter->m_pAudioPin->DeliverEndFlush();
 		m_pMPTSFilter->SetFilePosition(m_rtStart);
+		Run();
 	}
 	return S_OK;
 }
