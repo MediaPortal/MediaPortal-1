@@ -1168,32 +1168,20 @@ namespace MediaPortal.Player
 
 
 		public override void ContinueGraph()
-		{/*
+		{
 			if (_mediaCtrl==null) return;
 
-			Log.Write("TStreamBufferPlayer:ContinueGraph");
-			//_mediaEvt.SetNotifyWindow( IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero );
-			//_mediaCtrl.Stop();
-
-			System.Windows.Forms.Application.DoEvents();
-			FilterState state;
-			_mediaCtrl.GetState(200,out state);
-			System.Windows.Forms.Application.DoEvents();
-			Log.Write("state:{0}", state.ToString());
-
+			Log.Write("TStreamBufferPlayer:continue graph");
 			_mediaCtrl.Run();
 			_mediaEvt.SetNotifyWindow( GUIGraphicsContext.ActiveForm, WM_GRAPHNOTIFY, IntPtr.Zero );
-			_state=PlayState.Playing;
-			_mediaCtrl.GetState(200,out state);
-			System.Windows.Forms.Application.DoEvents();
-			Log.Write("state:{0}", state.ToString());*/
+			SeekAbsolute(0);
 		}
 
 		public override void PauseGraph()
-		{/*
+		{
 			Log.Write("TStreamBufferPlayer:Pause graph");
 			_mediaEvt.SetNotifyWindow( IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero );
-			_mediaCtrl.Stop();*/
+			_mediaCtrl.Pause();
 		}
 		
 

@@ -207,12 +207,15 @@ HRESULT Sections::GetAdaptionHeader(BYTE *data,AdaptionHeader *header)
 	header->AdaptationHeaderExtension=(data[1] & 0x01)>0?true:false;
 	if(header->PCRFlag==true)
 	{
-
-		__int64 pcr_H=(data[2]& 0x080)>>7;
-		__int64 pcr_L =((data[2]&0x7f)<<25) + (data[3]<<17) + (data[4]<<9) + ((data[5])<<1)+((data[6]&0x80)>>7);
-		__int64 ull=ull = (pcr_H << 32) + pcr_L;
-		header->PCRValue=ull;
-		//GetPTS(&data[2],&(header->PCRValue));
+		header->Len=data[0];
+		header->DiscontinuityIndicator=(data[1] & 0x80)>0?true:false;
+		header->RandomAccessIndicator=(data[1] & 0x40)>0?true:false;
+		header->ElementaryStreamPriorityIndicator=(data[1] & 0x20)>0?true:false;
+		header->PCRFlag=(data[1] & 0x10)>0?true:false;
+		header->OPCRFlag=(data[1] & 0x08)>0?true:false;
+		header->SplicingPointFlag=(data[1] & 0x04)>0?true:false;
+		header->TransportPrivateData=(data[1] & 0x02)>0?true:false;
+		header->AdaptationHeaderExtension=(data[1] & 0x01)>0?true:false;
 		header->PCRCounter=((data[6] & 0x01)*256)+data[7];
 	}
 	return S_OK;
@@ -287,9 +290,6 @@ HRESULT Sections::CurrentPTS(BYTE *pData,ULONGLONG *ptsValue,int* pid)
 	   header.Pid != pids.PCRPid)
 		return S_FALSE;
 
-	//if (header.AdaptionControl==0) return hr; //reserved value;
-	if (header.AdaptionControl==2) return hr; //adaption field only
-
 	//          0  1  2  3    4  5    6
 	//  0000:  [47 82 00 f3] [cc 5b] [38 2a  0e ad e4 52 12 75 a0 46   G....[8*...R.u.F
 	//        program_clock_reference:
@@ -305,26 +305,21 @@ HRESULT Sections::CurrentPTS(BYTE *pData,ULONGLONG *ptsValue,int* pid)
     //        extension: 11 (0x000b)
     //         ==> original_program_clock_reference: 185819178311 (0x2b43afa547)  [= PCR-Timestamp: 1:54:42.191789]
 
-	if(header.AdaptionControl==3 || (header.PayloadUnitStart==true && header.AdaptionControl==1))
+	if(header.AdaptionControl==3 || header.AdaptionControl==2)
 	{
-		//skip adaption field
-		offset+=pData[4];
-		if(header.AdaptionControl==3)
+		AdaptionHeader ah;
+		GetAdaptionHeader(&pData[4],&ah);
+		if(ah.PCRFlag)
 		{
-			AdaptionHeader ah;
-			GetAdaptionHeader(&pData[4],&ah);
-			if(ah.PCRFlag)
+			PTSTime ptsTime;
+			PTSToPTSTime(ah.PCRValue,&ptsTime);
+			if (prevpts!=ptsTime.s)
 			{
-				PTSTime ptsTime;
-				PTSToPTSTime(ah.PCRValue,&ptsTime);
-				if (prevpts!=ptsTime.s)
-				{
-					//LogDebug("pcr-count:%d / pcr-value:%x / h:m:s:ms= %d:%d:%d.%d", ah.PCRCounter,(DWORD)ah.PCRValue,ptsTime.h,ptsTime.m,ptsTime.s,ptsTime.u);
-					prevpts=ptsTime.s;
-				}
-				*ptsValue=ah.PCRValue;
-				hr=S_OK;
+				//LogDebug("pcr-count:%d / pcr-value:%x / h:m:s:ms= %d:%d:%d.%d", ah.PCRCounter,(DWORD)ah.PCRValue,ptsTime.h,ptsTime.m,ptsTime.s,ptsTime.u);
+				prevpts=ptsTime.s;
 			}
+			*ptsValue=ah.PCRValue;
+			hr=S_OK;
 		}
 	}
 

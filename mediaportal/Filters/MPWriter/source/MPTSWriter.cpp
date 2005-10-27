@@ -1272,11 +1272,13 @@ HRESULT CDump::GetAdaptionHeader(BYTE *data,AdaptionHeader *header)
 	header->AdaptationHeaderExtension=(data[1] & 0x01)>0?true:false;
 	if(header->PCRFlag==true)
 	{
-
-		__int64 pcr_H=(data[2]& 0x080)>>7;
-		__int64 pcr_L =((data[2]&0x7f)<<25) + (data[3]<<17) + (data[4]<<9) + ((data[5])<<1)+((data[6]&0x80)>>7);
+		__int64 pcr_H=(__int64)((data[2]& 0x080)>>7);
+		__int64 pcr_L =(__int64)((data[2]&0x7f));pcr_L<<=25;
+		pcr_L |= (__int64)(data[3]<<17); 
+		pcr_L |= (__int64) (data[4]<<9); 
+		pcr_L |= (__int64) ((data[5])<<1);
+		pcr_L |= (__int64)((data[6]&0x80)>>7);
 		__int64 ull=ull = (pcr_H << 32) + pcr_L;
-		//GetPTS(&data[2],&(header->PCRValue));
 		header->PCRValue=ull;
 		header->PCRCounter=((data[6] & 0x01)*256)+data[7];
 	}
@@ -1331,9 +1333,7 @@ HRESULT CDump::WriteTimeshiftFile(PBYTE pbData, LONG lDataLength)
 	GetTSHeader(pbData,&header);
 	if (header.Pid>0)
 	{
-		if(header.AdaptionControl!=1 && header.AdaptionControl!=3) return S_OK;
-		//int offset=4;
-		if(header.AdaptionControl==3 || (header.PayloadUnitStart==true && header.AdaptionControl==1)) 
+		if(header.AdaptionControl==2 || header.AdaptionControl==3) 
 		{
 			AdaptionHeader ah;
 			GetAdaptionHeader(&pbData[4],&ah);
@@ -1356,7 +1356,6 @@ HRESULT CDump::WriteTimeshiftFile(PBYTE pbData, LONG lDataLength)
 
 				return S_OK;
 			}
-			//offset+=pbData[4];
 		}
 	}
 	return S_OK;
