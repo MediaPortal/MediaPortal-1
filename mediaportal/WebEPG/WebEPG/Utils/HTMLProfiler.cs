@@ -307,50 +307,102 @@ namespace MediaPortal.EPG
 			return "";
 		}
 
-		public string GetHyperLink(int profileIndex, string match)
+		public string GetHyperLink(int profileIndex, string match, string linkURL)
 		{
 
-			string regex = "<a href=[^\"]*\".*" + match.ToLower() + "[^\"]*\"";
+			string regex = "<a href=[^>]*" + match.ToLower() + "[^>]*>";
 
 			string result = SearchRegex(profileIndex, regex, false);
-//			string source = this.GetSource(profileIndex);
-//
-//			int pos=0;
+
 			string strLinkURL="";
 
 			if(result != "")
 			{
 				int start = -1;
-				int end = -1;
-				start = result.IndexOf("\"");
-				if(start != -1)
-					end = result.IndexOf("\"", ++start);
-				if(end != -1)
-					strLinkURL = result.Substring(start, end-start);
+				char delim = '>';
+
+				if((start = result.IndexOf("=")) != -1)
+				{
+					for(int i=0; i < result.Length - start; i++)
+					{
+						if(result[start+i] == '\"' || result[start+i] == '\'')
+						{
+							delim = result[start+i];
+							break;
+						}
+					}
+				}
+
+				if(delim != '>')
+				{
+					start = -1;
+					int end = -1;
+					start = result.IndexOf(delim);
+					if(start != -1)
+						end = result.IndexOf(delim, ++start);
+					if(end != -1)
+						strLinkURL = result.Substring(start, end-start);
+				}
 			}
-			
-//
-//			while((pos = source.ToLower().IndexOf("<a href=", pos))!=-1)
-//			{
-//				pos+=9;
-//				int endIndex = source.IndexOf("\"", pos);
-//				if(endIndex != -1)
-//				{
-//					strLinkURL = source.Substring(pos, endIndex-pos);
-//					if(strLinkURL.IndexOf(match) != -1)
-//						break;
-//				}
-//				strLinkURL="";
-//
-//			}
+
+			if(strLinkURL.ToLower().IndexOf("http") == -1)
+			{
+				if(strLinkURL.ToLower().IndexOf("javascript") != -1)
+				{
+					string [] param = GetJavaSubLinkParams(strLinkURL);
+
+					strLinkURL = linkURL;
+
+					for(int i = 0; i < param.Length; i++)
+						strLinkURL = strLinkURL.Replace("#" + (i + 1).ToString(), param[i]);
+				}
+				else
+				{
+					strLinkURL = linkURL + strLinkURL;
+				}
+			}
 
 			return strLinkURL;
-//
-//			int startTag = m_subProfile[profileIndex,0];
-//			int endTag = m_subProfile[profileIndex,1];
-//			int sourceStart = this.m_arrayTagPos[startTag,0];
-//			int sourceLength = this.m_arrayTagPos[endTag,1] - sourceStart + 1;
-//			string source = this.m_strSource.Substring(sourceStart, sourceLength);
+		}
+
+		private string [] GetJavaSubLinkParams(string link)
+		{
+
+			int args = -1;
+			int [,] param = null;
+			int start = -1;
+
+			if((start = link.IndexOf("(")) != -1)
+			{
+				args = 0;
+				param = new int[link.Length - start,2];
+				param[0,0] = start+1;
+				for(int i = 0; i < link.Length - start; i++)
+				{
+					if(link[start + i] == ',')
+					{
+						param[args,1] = start+i;
+						args++;
+						param[args,0] = start+i+1;
+					}
+					if(link[start + i] == ')')
+					{
+						param[args,1] = start+i;
+						break;
+					}
+				}
+			}
+
+			string [] array = null;
+			if( args != -1 && param != null)
+			{
+				args++;
+				array = new string[args];
+				for(int i = 0; i < args; i++)
+					array[i] = link.Substring(param[i,0], param[i,1]-param[i,0]).Trim('\"');
+			}
+
+			return array;
 		}
 
         private void TableProfiler()

@@ -110,7 +110,7 @@ namespace MediaPortal.WebEPGUtils
 								searchStart = tempElement[TagStart-1].ToString();
 							ListStart = listElement.IndexOf(searchStart, ListEnd);
 							if(ListStart == -1)
-								break; // error
+								break; // error start not found give up
 							ListStart+=searchStart.Length;
 						}
 						TagStart += t;
@@ -122,7 +122,7 @@ namespace MediaPortal.WebEPGUtils
 								searchEnd = tempElement[TagStart+1].ToString();
 							ListEnd = listElement.IndexOf(searchEnd, ListStart);
 							if(ListEnd == -1)
-								break; // error
+								 ListEnd = listElement.Length; // error end not found .. take whole element
 						}
 
 						string element = listElement.Substring(ListStart, ListEnd-ListStart);

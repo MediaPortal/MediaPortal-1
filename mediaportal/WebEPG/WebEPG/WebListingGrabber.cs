@@ -49,6 +49,7 @@ namespace MediaPortal.EPG
         public class WebListingGrabber
         {
             string m_strURLbase = string.Empty;
+			string m_strSubURL = string.Empty;
             string m_strURLsearch = string.Empty;
             string m_strID = string.Empty;
             string m_strBaseDir = "";
@@ -174,7 +175,7 @@ namespace MediaPortal.EPG
 							string strSubStart = m_xmlreader.GetValueAsString("SubListing", "Start", "<body");
 							string strSubEnd = m_xmlreader.GetValueAsString("SubListing", "End", "</body");
 							string subencoding = m_xmlreader.GetValueAsString("SubListing", "Encoding", "");
-							//bool bSubAhrefs = m_xmlreader.GetValueAsBool("SubListing", "Ahrefs", false);
+							m_strSubURL = m_xmlreader.GetValueAsString("SubListing", "URL", "");
 							string Subtags = m_xmlreader.GetValueAsString("SubListing", "Tags", "T");
 							string sublistingTemplate = m_xmlreader.GetValueAsString("SubListing", "Template", "");
 							if (sublistingTemplate == "")
@@ -374,12 +375,12 @@ namespace MediaPortal.EPG
 					}
 					program.End = GetLongDateTime(dtEnd);
 
-					//Log.WriteFile(Log.LogType.Log, false, "WebEPG: {0}:{1}/{2}-{3}:{4}/{5} - {6}", guideData.StartTime[0], guideData.StartTime[1], dtStart.Day, guideData.EndTime[0], guideData.EndTime[1], dtEnd.Day, guideData.Title);
+					Log.WriteFile(Log.LogType.Log, false, "WebEPG: {0}:{1}/{2}-{3}:{4}/{5} - {6}", guideData.StartTime[0], guideData.StartTime[1], dtStart.Day, guideData.EndTime[0], guideData.EndTime[1], dtEnd.Day, guideData.Title);
 				}
-//				else
-//				{
-//					Log.WriteFile(Log.LogType.Log, false, "WebEPG: {0}:{1}/{2} - {3}", guideData.StartTime[0], guideData.StartTime[1], dtStart.Day, guideData.Title);
-//				}
+				else
+				{
+					Log.WriteFile(Log.LogType.Log, false, "WebEPG: {0}:{1}/{2} - {3}", guideData.StartTime[0], guideData.StartTime[1], dtStart.Day, guideData.Title);
+				}
 				
 				if (guideData.Description != "")
 					program.Description = guideData.Description;
@@ -392,19 +393,19 @@ namespace MediaPortal.EPG
 					&& guideData.StartTime[0] <= m_linkEnd
 					&& htmlProf != null)
 				{
+					string linkURL; 
+					if(m_strSubURL != "")
+						linkURL = m_strSubURL;
+					else
+						linkURL = m_strURLbase;
 
-					string strLinkURL = htmlProf.GetHyperLink(index, m_SubListingLink);
+					string strLinkURL = htmlProf.GetHyperLink(index, m_SubListingLink, linkURL);
 
 					if(strLinkURL != "")
 					{
-						string link = m_strURLbase;
-						if(strLinkURL.ToLower().IndexOf("http") != -1)
-							link = strLinkURL;
-						else
-							link += strLinkURL;
-						Log.WriteFile(Log.LogType.Log, false, "WebEPG: Reading {0}", link);
+						Log.WriteFile(Log.LogType.Log, false, "WebEPG: Reading {0}", strLinkURL);
 						Thread.Sleep(m_grabDelay);
-						Profiler SubProfile = m_templateSubProfile.GetPageProfiler(link, ""); 
+						Profiler SubProfile = m_templateSubProfile.GetPageProfiler(strLinkURL, ""); 
 						int Count = SubProfile.subProfileCount(); 
 
 						if(Count > 0)
