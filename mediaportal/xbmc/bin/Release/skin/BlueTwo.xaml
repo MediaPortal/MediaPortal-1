@@ -1,0 +1,29 @@
+<Style TargetType="{x:Type Page}">
+	<Setter Property="FontSize" Value="32" />
+	
+	<Page.Triggers>
+
+		<!-- Fade the window in when loaded -->
+		<EventTrigger RoutedEvent"Page.Loaded">
+			<EventTrigger.Actions>
+				<BeginStoryboard>
+					<Storyboard>
+						<DoubleAnimation Storyboard.TargetName="blah" Storyboard.TargetProperty="(Page.Opacity)" From="0" Duration="0:0:1" />
+					</Storyboard>
+				</BeginStoryboard>
+			</EventTrigger.Actions>
+		</EventTrigger>
+
+		<!-- Fade the window out when unloaded -->
+		<EventTrigger RoutedEvent"Page.Unloaded">
+			<EventTrigger.Actions>
+				<BeginStoryboard>
+					<Storyboard>
+						<DoubleAnimation Storyboard.TargetName="blah" Storyboard.TargetProperty="(Page.Opacity)" To="0" Duration="0:0:1" />
+					</Storyboard>
+				</BeginStoryboard>
+			</EventTrigger.Actions>
+		</EventTrigger>
+
+	</Page.Triggers>
+</Style>
