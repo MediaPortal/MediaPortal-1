@@ -24,48 +24,43 @@
 #endregion
 
 using System;
-using System.Windows;
+using System.Xml;
 
-namespace MediaPortal.Controls
+namespace System.Windows
 {
-	public class DataTemplate : FrameworkTemplate
+	// Gaston Milano's Blog
+	// http://weblogs.asp.net/gmilano/archive/2004/11/28/271383.aspx
+	public sealed class VisualUtility
 	{
 		#region Constructors
 
-		public DataTemplate()
+		private VisualUtility()
 		{
-		}
-
-		public DataTemplate(object dataType)
-		{
-			_dataType = dataType;
 		}
 
 		#endregion Constructors
 
 		#region Methods
 
-		protected override void ValidateTemplatedParent(FrameworkElement templatedParent)
+		public static void GetVisualTreeInfo(Visual element, XmlWriter writer)
 		{
-			throw new NotImplementedException();
+			if(element == null)
+				throw new ArgumentNullException("element");
+
+			writer.WriteStartElement("VisualElement");
+			writer.WriteElementString("Type", element.GetType().ToString());
+
+			VisualCollection vc = VisualOperations.GetChildren(element);
+
+			if(vc != null && vc.Count != 0)
+			{
+				foreach(Visual v in vc)
+					GetVisualTreeInfo(v, writer);
+			}
+
+			writer.WriteEndElement();
 		}
 
 		#endregion Methods
-
-		#region Properties
-
-		public object DataType
-		{
-			get { return _dataType; }
-			set { _dataType = value; }
-		}
-
-		#endregion Properties
-
-		#region Fields
-
-		object						_dataType;
-
-		#endregion Fields
 	}
 }

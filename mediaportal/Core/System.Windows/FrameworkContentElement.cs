@@ -24,28 +24,27 @@
 #endregion
 
 using System;
+using System.Collections;
+using System.ComponentModel;
 using System.Windows;
 
-namespace MediaPortal.Controls
+using MediaPortal.Input;
+
+namespace System.Windows
 {
-	public class DataTemplate : FrameworkTemplate
+	public class FrameworkContentElement : ContentElement//, IFrameworkInputElement, IInputElement, ISupportInitialize, IResourceHost
 	{
 		#region Constructors
 
-		public DataTemplate()
+		public FrameworkContentElement()
 		{
-		}
-
-		public DataTemplate(object dataType)
-		{
-			_dataType = dataType;
 		}
 
 		#endregion Constructors
 
 		#region Methods
 
-		protected override void ValidateTemplatedParent(FrameworkElement templatedParent)
+		public object FindName(string name)
 		{
 			throw new NotImplementedException();
 		}
@@ -54,18 +53,16 @@ namespace MediaPortal.Controls
 
 		#region Properties
 
-		public object DataType
+		public DependencyObject Parent
 		{
-			get { return _dataType; }
-			set { _dataType = value; }
+			get { return null; }
+		}
+
+		protected internal virtual IEnumerator LogicalChildren
+		{
+			get { return NullEnumerator.Instance; }
 		}
 
 		#endregion Properties
-
-		#region Fields
-
-		object						_dataType;
-
-		#endregion Fields
 	}
 }

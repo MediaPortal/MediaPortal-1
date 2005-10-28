@@ -28,7 +28,9 @@ namespace System.Windows
 
 		protected virtual void InvokeEventHandler(Delegate handler, object target)
 		{
-			// TODO: Find Eric Gunnerson's blogs on safely invoking events
+			// Roy Osherove
+			// http://weblogs.asp.net/rosherove/articles/DefensiveEventPublishing.aspx
+	
 			throw new NotImplementedException();
 		}
 
@@ -47,7 +49,7 @@ namespace System.Windows
 		public bool Handled
 		{
 			get { return _isHandled; }
-			set { _isHandled = true; }
+			set { _isHandled = value; }
 		}
 
 		public object OriginalSource
@@ -64,7 +66,7 @@ namespace System.Windows
 		public object Source
 		{
 			get { return _source; }
-			set { _source = value; }
+			set { OnSetSource(value); }
 		}
 
 		#endregion Properties

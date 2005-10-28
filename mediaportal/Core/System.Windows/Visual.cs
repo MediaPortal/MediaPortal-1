@@ -26,45 +26,42 @@
 using System;
 using System.Windows;
 
-namespace MediaPortal.Controls
+namespace System.Windows
 {
-	public class DataTemplate : FrameworkTemplate
+	public abstract class Visual : DependencyObject
 	{
 		#region Constructors
 
-		public DataTemplate()
+		protected Visual()
 		{
-		}
-
-		public DataTemplate(object dataType)
-		{
-			_dataType = dataType;
 		}
 
 		#endregion Constructors
 
 		#region Methods
 
-		protected override void ValidateTemplatedParent(FrameworkElement templatedParent)
+		protected internal virtual void OnVisualChildrenChanged(DependencyObject visualAdded, DependencyObject visualRemoved, int indexAffected)
 		{
-			throw new NotImplementedException();
+		}
+
+		protected internal virtual void OnVisualParentChanged(Visual oldParent)
+		{
 		}
 
 		#endregion Methods
-
+			
 		#region Properties
 
-		public object DataType
+		protected internal Visual VisualParent
 		{
-			get { return _dataType; }
-			set { _dataType = value; }
+			get { return _visualParent; }
 		}
 
 		#endregion Properties
 
 		#region Fields
 
-		object						_dataType;
+		Visual						_visualParent = null;
 
 		#endregion Fields
 	}

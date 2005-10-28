@@ -24,47 +24,52 @@
 #endregion
 
 using System;
-using System.Windows;
 
-namespace MediaPortal.Controls
+using MediaPortal.Drawing;
+
+namespace System.Windows
 {
-	public class DataTemplate : FrameworkTemplate
+	public class RequestBringIntoViewEventArgs : RoutedEventArgs
 	{
 		#region Constructors
 
-		public DataTemplate()
+		public RequestBringIntoViewEventArgs(DependencyObject targetObject)
 		{
+			_targetObject = targetObject;
+			_targetRect = Rect.Empty;
 		}
 
-		public DataTemplate(object dataType)
+		public RequestBringIntoViewEventArgs(DependencyObject targetObject, Rect rect)
 		{
-			_dataType = dataType;
+			_targetObject = targetObject;
+			_targetRect = rect;
 		}
 
 		#endregion Constructors
 
 		#region Methods
-
-		protected override void ValidateTemplatedParent(FrameworkElement templatedParent)
+	
+		protected override void InvokeEventHandler(Delegate handler, object target)
 		{
 			throw new NotImplementedException();
 		}
 
-		#endregion Methods
-
-		#region Properties
-
-		public object DataType
+		public DependencyObject TargetObject
 		{
-			get { return _dataType; }
-			set { _dataType = value; }
+			get { return _targetObject; }
 		}
 
-		#endregion Properties
+		public Rect TargetRect
+		{
+			get { return _targetRect; }
+		}
+
+		#endregion Methods
 
 		#region Fields
 
-		object						_dataType;
+		DependencyObject			_targetObject;
+		Rect						_targetRect;
 
 		#endregion Fields
 	}

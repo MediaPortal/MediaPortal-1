@@ -77,7 +77,7 @@ namespace System.Windows
 		public static DependencyProperty FromName(string name, Type ownerType)
 		{
 			if(ownerType == typeof(MediaPortal.GUI.Library.GUIControl))
-				return (DependencyProperty)_properties[name + typeof(MediaPortal.Controls.FrameworkElement)];
+				return (DependencyProperty)_properties[name + typeof(System.Windows.FrameworkElement)];
 
 			return (DependencyProperty)_properties[name + ownerType];
 		}

@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections;
+using System.Windows;
 
 using MediaPortal.Controls;
 using MediaPortal.Drawing;

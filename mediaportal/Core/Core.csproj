@@ -454,16 +454,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Controls\ContentControl.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Controls\ContentElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "Controls\Control.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -495,26 +485,6 @@
                 />
                 <File
                     RelPath = "Controls\DockPanel.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Controls\FrameworkContentElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Controls\FrameworkElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Controls\FrameworkElementFactory.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Controls\FrameworkTemplate.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -570,21 +540,6 @@
                 />
                 <File
                     RelPath = "Controls\StackPanel.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Controls\UIElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Controls\UIElementCollection.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Controls\Visual.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -2384,7 +2339,12 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Collections\EmptyEnumerator.cs"
+                    RelPath = "System.Collections\NullEnumerable.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Collections\NullEnumerator.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -2464,6 +2424,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows\ContentControl.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows\ContentElement.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows\DependencyObject.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -2529,12 +2499,32 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows\FrameworkContentElement.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows\FrameworkElement.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows\FrameworkElementFactory.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows\FrameworkPropertyMetadata.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "System.Windows\FrameworkPropertyMetadataOptions.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows\FrameworkTemplate.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -2574,6 +2564,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows\LogicalTreeHelper.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows\PropertyInvalidatedCallback.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -2595,6 +2590,16 @@
                 />
                 <File
                     RelPath = "System.Windows\ReadLocalValueOverride.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows\RequestBringIntoViewEventArgs.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows\RequestBringIntoViewHandler.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -2719,6 +2724,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows\UIElement.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows\UIElementCollection.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows\UIPropertyMetadata.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -2730,6 +2745,26 @@
                 />
                 <File
                     RelPath = "System.Windows\Visibility.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows\Visual.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows\VisualCollection.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows\VisualOperations.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows\VisualUtility.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

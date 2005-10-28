@@ -74,7 +74,9 @@ namespace MediaPortal.Controls
 
 //		protected virtual void OnIsItemsHostChanged(bool oldIsItemsHost, bool newIsItemsHost)
 			
-//		protected override void OnRender(DrawingContext dc)
+		protected override void OnRender(DrawingContext dc)
+		{
+		}
 
 		public static void SetBackground(DependencyObject d, Brush background)
 		{

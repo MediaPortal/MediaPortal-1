@@ -24,47 +24,49 @@
 #endregion
 
 using System;
-using System.Windows;
 
-namespace MediaPortal.Controls
+namespace System.Collections
 {
-	public class DataTemplate : FrameworkTemplate
+	public sealed class NullEnumerator : IEnumerator
 	{
 		#region Constructors
 
-		public DataTemplate()
+		private NullEnumerator()
 		{
 		}
-
-		public DataTemplate(object dataType)
-		{
-			_dataType = dataType;
-		}
-
+		
 		#endregion Constructors
 
 		#region Methods
 
-		protected override void ValidateTemplatedParent(FrameworkElement templatedParent)
+		public void Reset()
 		{
-			throw new NotImplementedException();
+		}
+
+		public bool MoveNext()
+		{
+			return false;
 		}
 
 		#endregion Methods
 
 		#region Properties
 
-		public object DataType
+		public object Current
 		{
-			get { return _dataType; }
-			set { _dataType = value; }
+			get { return null; }
+		}
+
+		public static IEnumerator Instance
+		{
+			get { if(_instance == null) _instance = new NullEnumerator(); return _instance; }
 		}
 
 		#endregion Properties
 
 		#region Fields
 
-		object						_dataType;
+		static NullEnumerator		_instance;		
 
 		#endregion Fields
 	}
