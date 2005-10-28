@@ -26,6 +26,7 @@
 using System;
 using System.Collections;
 using System.ComponentModel;
+using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Xml;
@@ -59,11 +60,23 @@ namespace System.Windows.Serialization
 			return t;
 		}
 
-		public static object Load(string filename)
+		public static object LoadXml(string filename)
 		{
 			XamlParser parser = new XamlParser();
 
 			return parser.Read(filename);
+		}
+
+		public static object LoadXml(Stream stream)
+		{	
+			throw new NotImplementedException();
+		}
+
+		public static object LoadXml(XmlReader reader)
+		{
+			XamlParser parser = new XamlParser();
+
+			return parser.Read(reader);
 		}
 
 		public static object LoadXml(string fragment, XmlNodeType xmlNodeType, object target)
@@ -75,7 +88,7 @@ namespace System.Windows.Serialization
 
 		private object InvokeGetter()
 		{
-			string[] tokens = _xmlReader.Name.Split('.');
+			string[] tokens = _reader.Name.Split('.');
 
 			return InvokeGetter(tokens[0], tokens[1]);
 		}
@@ -85,7 +98,7 @@ namespace System.Windows.Serialization
 			Type t = GetType(type);
 
 			if(t == null)
-				throw new XamlParserException(string.Format("The type or namespace '{0}' could not be found", type), _filename, _xmlReader);
+				throw new XamlParserException(string.Format("The type or namespace '{0}' could not be found", type), _filename, _reader);
 
 			// walk the stack looking for an item of the correct type
 			foreach(object target in _elementStack)
@@ -96,7 +109,7 @@ namespace System.Windows.Serialization
 				PropertyInfo propertyInfo = t.GetProperty(property);
 
 				if(propertyInfo == null)
-					throw new XamlParserException(string.Format("'{0}' does not contain a definition for '{1}'", t, property), _filename, _xmlReader);
+					throw new XamlParserException(string.Format("'{0}' does not contain a definition for '{1}'", t, property), _filename, _reader);
 
 				return propertyInfo.GetValue(target, null);
 			}
@@ -107,7 +120,7 @@ namespace System.Windows.Serialization
 
 		private void InvokeSetter(object value)
 		{
-			string[] tokens = _xmlReader.Name.Split('.');
+			string[] tokens = _reader.Name.Split('.');
 
 			InvokeSetter(tokens[0], tokens[1], value);
 		}
@@ -117,7 +130,7 @@ namespace System.Windows.Serialization
 			Type t = GetType(type);
 
 			if(t == null)
-				throw new XamlParserException(string.Format("The type or namespace '{0}' could not be found", type), _filename, _xmlReader);
+				throw new XamlParserException(string.Format("The type or namespace '{0}' could not be found", type), _filename, _reader);
 			
 			foreach(object target in _elementStack)
 			{
@@ -127,7 +140,7 @@ namespace System.Windows.Serialization
 				PropertyInfo propertyInfo = t.GetProperty(property);
 
 				if(propertyInfo == null)
-					throw new XamlParserException(string.Format("'{0}' does not contain a definition for '{1}'", t, property), _filename, _xmlReader);
+					throw new XamlParserException(string.Format("'{0}' does not contain a definition for '{1}'", t, property), _filename, _reader);
 
 				if(propertyInfo.CanWrite == false)
 					break;
@@ -149,26 +162,29 @@ namespace System.Windows.Serialization
 				}
 				catch(FormatException)
 				{
-					throw new XamlParserException(string.Format("Cannot convert '{0}' to type '{1}'", _xmlReader.Value, propertyInfo.PropertyType), _filename, _xmlReader);
+					throw new XamlParserException(string.Format("Cannot convert '{0}' to type '{1}'", _reader.Value, propertyInfo.PropertyType), _filename, _reader);
 				}
 
 				break;
 			}
 		}
 
+		private object Read(XmlReader reader)
+		{
+			throw new NotImplementedException();
+		}
+
 		private object Read(string filename)
 		{
-			_xmlReader = new XmlTextReader(_filename = filename);
-			_xmlReader.WhitespaceHandling = WhitespaceHandling.None;
-			_xmlReader.Namespaces = true;
+			_reader = new XmlTextReader(_filename = filename);
 
 			return Read();
 		}
 
 		private object Read(string fragment, XmlNodeType xmlNodeType, object target)
 		{
-			_xmlReader = new XmlTextReader(fragment, xmlNodeType, null);
-			_xmlReader.WhitespaceHandling = WhitespaceHandling.None;
+			_reader = new XmlTextReader(fragment, xmlNodeType, null);
+//			_reader.WhitespaceHandling = WhitespaceHandling.None;
 
 			_elementStack.Push(target);
 
@@ -177,22 +193,22 @@ namespace System.Windows.Serialization
 
 		private object Read()
 		{
-			while(_xmlReader.Read())
+			while(_reader.Read())
 			{
 				try
 				{
-					switch(_xmlReader.NodeType)
+					switch(_reader.NodeType)
 					{
 						case XmlNodeType.Element:
 
-							if(_xmlReader.Name.IndexOf('.') == -1)
+							if(_reader.Name.IndexOf('.') == -1)
 							{
-								MediaPortal.GUI.Library.Log.Write("ReadElement: {0}", _xmlReader.Name);
+								MediaPortal.GUI.Library.Log.Write("ReadElement: {0}", _reader.Name);
 								ReadElement();
 							}
 							else
 							{
-								MediaPortal.GUI.Library.Log.Write("ReadElementCompoundProperty: {0}", _xmlReader.Name);
+								MediaPortal.GUI.Library.Log.Write("ReadElementCompoundProperty: {0}", _reader.Name);
 								ReadElementCompoundProperty();
 							}
 							
@@ -200,19 +216,19 @@ namespace System.Windows.Serialization
 						
 						case XmlNodeType.Text:
 						case XmlNodeType.CDATA:
-							_elementText.Append(_xmlReader.Value);
+							_elementText.Append(_reader.Value);
 							break;
 
 						case XmlNodeType.EndElement:
 							
-							if(_xmlReader.Name.IndexOf('.') == -1)
+							if(_reader.Name.IndexOf('.') == -1)
 							{
-								MediaPortal.GUI.Library.Log.Write("ReadElementEnd: {0}", _xmlReader.Name);
+								MediaPortal.GUI.Library.Log.Write("ReadElementEnd: {0}", _reader.Name);
 								ReadElementEnd();
 							}
 							else
 							{
-								MediaPortal.GUI.Library.Log.Write("ReadElementEndCompoundProperty: {0}", _xmlReader.Name);
+								MediaPortal.GUI.Library.Log.Write("ReadElementEndCompoundProperty: {0}", _reader.Name);
 								ReadElementEndCompoundProperty();
 							}
 
@@ -225,12 +241,12 @@ namespace System.Windows.Serialization
 				}
 				catch(Exception e)
 				{
-					MediaPortal.GUI.Library.Log.Write("XamlParser.Read: {0}({1},{2}): {3}", _filename, _xmlReader.LineNumber, _xmlReader.LinePosition, e.Message);
+					MediaPortal.GUI.Library.Log.Write("XamlParser.Read: {0}({1},{2}): {3}", _filename, _reader.LineNumber, _reader.LinePosition, e.Message);
 				}
 			}
 
-			_xmlReader.Close();
-			_xmlReader = null;
+			_reader.Close();
+			_reader = null;
 
 			return _target;
 		}
@@ -239,14 +255,14 @@ namespace System.Windows.Serialization
 		{
 			object target = _elementStack.Peek();
 
-			for(int index = 0; index < _xmlReader.AttributeCount; index++)
+			for(int index = 0; index < _reader.AttributeCount; index++)
 			{
-				_xmlReader.MoveToAttribute(index);
+				_reader.MoveToAttribute(index);
 
-				string name = _xmlReader.Name.Trim();
-				string value = _xmlReader.Value.Trim();
+				string name = _reader.Name.Trim();
+				string value = _reader.Value.Trim();
 
-				MediaPortal.GUI.Library.Log.Write("ReadAttributes: {0}", _xmlReader.Name);
+				MediaPortal.GUI.Library.Log.Write("ReadAttributes: {0}", _reader.Name);
 
 				if(name.StartsWith("xmlns"))
 					continue;
@@ -291,7 +307,7 @@ namespace System.Windows.Serialization
 				}
 
 				if(memberInfo == null)
-					throw new XamlParserException(string.Format("'{0}' does not contain a definition for '{1}'", t, name), _filename, _xmlReader);
+					throw new XamlParserException(string.Format("'{0}' does not contain a definition for '{1}'", t, name), _filename, _reader);
 
 				if(value.StartsWith("{"))
 				{
@@ -318,13 +334,13 @@ namespace System.Windows.Serialization
 
 					try
 					{
-						object convertedValue = typeConverter.ConvertFromString(_xmlReader.Value);
+						object convertedValue = typeConverter.ConvertFromString(_reader.Value);
 
 						methodInfo.Invoke(null, new object[] { target, convertedValue });
 					}
 					catch(FormatException)
 					{
-						throw new XamlParserException(string.Format("Cannot convert '{0}' to type '{1}'", _xmlReader.Value, methodInfo.GetParameters()[1].ParameterType), _filename, _xmlReader);
+						throw new XamlParserException(string.Format("Cannot convert '{0}' to type '{1}'", _reader.Value, methodInfo.GetParameters()[1].ParameterType), _filename, _reader);
 					}
 
 					continue;
@@ -335,7 +351,7 @@ namespace System.Windows.Serialization
 
 					if(propertyInfo.PropertyType == typeof(object))
 					{
-						propertyInfo.SetValue(target, _xmlReader.Value, null);
+						propertyInfo.SetValue(target, _reader.Value, null);
 						continue;
 					}
 
@@ -346,14 +362,14 @@ namespace System.Windows.Serialization
 
 					try
 					{
-						object convertedValue = typeConverter.ConvertFromString(_xmlReader.Value);
+						object convertedValue = typeConverter.ConvertFromString(_reader.Value);
 
 						if(memberInfo is PropertyInfo)
 							propertyInfo.SetValue(target, convertedValue, null);
 					}
 					catch(FormatException)
 					{
-						throw new XamlParserException(string.Format("Cannot convert '{0}' to type '{1}'", _xmlReader.Value, propertyInfo.PropertyType), _filename, _xmlReader);
+						throw new XamlParserException(string.Format("Cannot convert '{0}' to type '{1}'", _reader.Value, propertyInfo.PropertyType), _filename, _reader);
 					}
 				}
 			}
@@ -363,10 +379,10 @@ namespace System.Windows.Serialization
 		{
 			_elementText = _elementText.Length > 0 ? new StringBuilder() : _elementText;
 
-			Type type = GetType(_xmlReader.Name);
+			Type type = GetType(_reader.Name);
 
 			if(type == null)
-				throw new XamlParserException(string.Format("The type or namespace '{0}' could not be found", _xmlReader.Name), _filename, _xmlReader);
+				throw new XamlParserException(string.Format("The type or namespace '{0}' could not be found", _reader.Name), _filename, _reader);
 
 			_target = Activator.CreateInstance(type);
 
@@ -380,7 +396,7 @@ namespace System.Windows.Serialization
 
 			_elementStack.Push(_target);
 
-			bool isEmptyElement = _xmlReader.IsEmptyElement;
+			bool isEmptyElement = _reader.IsEmptyElement;
 
 			ReadAttributes();
 
@@ -412,7 +428,7 @@ namespace System.Windows.Serialization
 		private object ReadExtension(string value)
 		{
 			if(value.EndsWith("}") == false)
-				throw new XamlParserException("} expected", _filename, _xmlReader);
+				throw new XamlParserException("} expected", _filename, _reader);
 
 			value = value.Substring(1, value.Length - 2).TrimStart();
 
@@ -440,10 +456,10 @@ namespace System.Windows.Serialization
 				t = GetType(name);
 
 			if(t == null)
-				throw new XamlParserException(string.Format("The parser extension '{0}' could not be found", name), _filename, _xmlReader);
+				throw new XamlParserException(string.Format("The parser extension '{0}' could not be found", name), _filename, _reader);
 
 			if(t.IsSubclassOf(typeof(MarkupExtension)) == false)
-				throw new XamlParserException(string.Format("'{0}' is not of type 'System.Windows.Serialization.MarkupExtension'", t), _filename, _xmlReader);
+				throw new XamlParserException(string.Format("'{0}' is not of type 'System.Windows.Serialization.MarkupExtension'", t), _filename, _reader);
 
 			MarkupExtension extension = (MarkupExtension)Activator.CreateInstance(t);
 
@@ -457,10 +473,10 @@ namespace System.Windows.Serialization
 		{
 			string ns = string.Empty;
 
-			int nameIndex = _xmlReader.Name.IndexOf(':');
+			int nameIndex = _reader.Name.IndexOf(':');
 
 			if(nameIndex != -1)
-				ns = _xmlReader.Name.Substring(nameIndex);
+				ns = _reader.Name.Substring(nameIndex);
 		}
 
 		#endregion Methods
@@ -473,7 +489,7 @@ namespace System.Windows.Serialization
 		Hashtable					_namedItems = new Hashtable();
 		static string[]				_namespaces = new string[] { "MediaPortal", "MediaPortal.Controls", "MediaPortal.Drawing", "MediaPortal.Drawing.Shapes", "MediaPortal.Drawing.Transforms", "MediaPortal.Animation", "System.Windows", "System.Windows.Serialization", "MediaPortal.Drawing.Paths", "MediaPortal.GUI.Library" };
 		object						_target;
-		XmlTextReader				_xmlReader;
+		XmlTextReader				_reader;
 
 		#endregion Fields
 	}

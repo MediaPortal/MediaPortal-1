@@ -75,7 +75,7 @@ namespace System.Windows
 			if(_source.IsFile == false)
 				throw new InvalidOperationException("");
 
-			XamlParser.Load(_source.ToString());
+			XamlParser.LoadXml(_source.ToString());
 		}
 
 		public object FindName(string name)
