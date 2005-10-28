@@ -29,8 +29,12 @@ namespace MediaPortal.Animation
 {
 	public enum ClockState
 	{
-		Stopped,
+		#region Values
+		
 		Active,
 		Filling,
+		Stopped = 0,
+
+		#endregion Values
 	}
 }

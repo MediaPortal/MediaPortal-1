@@ -123,7 +123,7 @@ namespace System.Windows
 		{
 			if(clock == null)
 			{
-				// providing null as the clock parameter is used to remove an animation from a property
+				// if clock parameter is null we are to remove the animation from the property
 				if(_animatedProperties != null)
 					_animatedProperties.Remove(property);
 
@@ -401,7 +401,7 @@ namespace System.Windows
 		public Size RenderSize
 		{
 			get { return _renderSize; }
-			set { Size renderSizeOld = _renderSize; }
+			set { _renderSize = value; }
 		}
 
 		public Visibility Visibility

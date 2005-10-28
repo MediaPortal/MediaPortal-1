@@ -43,10 +43,6 @@ namespace MediaPortal.Animation
 		{
 		}
 
-		protected internal TimelineGroup(TimelineGroup timeline, CloneType cloneType) : base(timeline, cloneType)
-		{
-		}
-
 		protected TimelineGroup(TimeSpan beginTime, Duration duration, RepeatBehavior repeatBehavior) : base(beginTime, duration, repeatBehavior)
 		{
 		}
@@ -71,7 +67,6 @@ namespace MediaPortal.Animation
 		}
 
 //		protected override sealed Freezable CopyCore();
-//		protected abstract Animatable CopyCore(CloneType cloneType);
 				
 		#endregion Methods
 	}

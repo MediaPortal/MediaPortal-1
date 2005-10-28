@@ -47,6 +47,7 @@ namespace MediaPortal.Animation
 				CurrentTimeInvalidated(this, EventArgs.Empty);
 		}
 
+		// Nullable<TimeSpan>
 		protected Timeline(TimeSpan beginTime)
 		{
 		}
@@ -55,10 +56,6 @@ namespace MediaPortal.Animation
 		{
 		}
 
-		protected internal Timeline(Timeline timeline, CloneType cloneType)
-		{
-		}
-		
 		protected Timeline(TimeSpan beginTime, Duration duration, RepeatBehavior repeatBehavior)
 		{
 		}

@@ -274,11 +274,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Animation\CloneType.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "Animation\DoubleAnimation.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

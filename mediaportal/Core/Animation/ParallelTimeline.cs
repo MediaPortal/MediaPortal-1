@@ -44,10 +44,6 @@ namespace MediaPortal.Animation
 		{
 		}
 
-		protected internal ParallelTimeline(ParallelTimeline timeline, CloneType cloneType)
-		{
-		}
-
 		public ParallelTimeline(TimeSpan beginTime, Duration duration, RepeatBehavior repeatBehavior)
 		{
 		}

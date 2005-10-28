@@ -39,7 +39,7 @@ namespace MediaPortal.Animation
 
 		#region Methods
 
-		public object GetCurrentValue(object baseValue)
+		public object GetCurrentValue(object defaultOriginValue, object defaultDestinationValue)
 		{
 			throw new NotImplementedException();
 		}

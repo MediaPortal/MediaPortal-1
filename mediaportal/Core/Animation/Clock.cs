@@ -66,20 +66,22 @@ namespace MediaPortal.Animation
 		
 		private void TimelineCurrentGlobalSpeedInvalidated(object sender, EventArgs e)
 		{
+			SpeedChanged();
+
 			if(CurrentGlobalSpeedInvalidated != null)
-				CurrentGlobalSpeedInvalidated(sender, e);
+				CurrentGlobalSpeedInvalidated(this, e);
 		}
 
 		private void TimelineCurrentStateInvalidated(object sender, EventArgs e)
 		{
 			if(CurrentStateInvalidated != null)
-				CurrentStateInvalidated(sender, e);
+				CurrentStateInvalidated(this, e);
 		}
 
 		private void TimelineCurrentTimeInvalidated(object sender, EventArgs e)
 		{
 			if(CurrentTimeInvalidated != null)
-				CurrentTimeInvalidated(sender, e);
+				CurrentTimeInvalidated(this, e);
 		}
 
 		#endregion Methods
@@ -91,8 +93,10 @@ namespace MediaPortal.Animation
 			get { return null; }
 		}
 
+		// should be Nullable<double> or NullableDouble
 		public double CurrentGlobalSpeed
 		{
+			// if the clock is stopped this should return null (when using appropriate nullable type)
 			get { return 1; }
 		}
 
@@ -104,6 +108,8 @@ namespace MediaPortal.Animation
 
 		public double CurrentProgress
 		{ 
+			// If the clock is active, the progress is always a value between 0 and 1, inclusive
+			// If the clock is inactive and the fill attribute is not in effect, this property returns null
 			get { return 1; }
 		}
 
@@ -129,7 +135,7 @@ namespace MediaPortal.Animation
 
 		public Clock Parent
 		{
-			get { return _parent; }
+			get { return null; }
 		}
 
 		public Timeline Timeline
@@ -145,7 +151,6 @@ namespace MediaPortal.Animation
 		TimeSpan					_currentTime = TimeSpan.Zero;
 		bool						_isPaused = false;
 		Duration					_naturalDuration = Duration.Automatic;
-		Clock						_parent = null;
 		Timeline					_timeline = null;
 
 		#endregion Fields
