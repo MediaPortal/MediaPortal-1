@@ -28,11 +28,11 @@ using System.Collections;
 using System.ComponentModel;
 using System.Reflection;
 using System.Windows;
+using System.Windows.Serialization;
 using System.Xml;
 
 using MediaPortal.Animation;
 using MediaPortal.Controls;
-using MediaPortal.Xaml;
 
 namespace MediaPortal.GUI.Library
 {
@@ -437,8 +437,6 @@ namespace MediaPortal.GUI.Library
 				// find any XAML complex/compound properties
 				foreach(XmlNode node in doc.DocumentElement.SelectNodes("/window/*[contains(name(), '.')]"))
 				{
-					XamlParser parser = new XamlParser();
-
 					string xml = node.OuterXml;
 
 					if(xml.IndexOf("Button.") != -1)
@@ -447,7 +445,7 @@ namespace MediaPortal.GUI.Library
 					if(xml.IndexOf("Window.") != -1)
 						xml = xml.Replace("Window.", "GUIWindow.");
 
-					parser.LoadXml(xml, XmlNodeType.Element, this);
+					XamlParser.LoadXml(xml, XmlNodeType.Element, this);
 				}
 
 				// Configure the overlay settings

@@ -1,0 +1,480 @@
+#region Copyright (C) 2005 Media Portal
+
+/* 
+ *	Copyright (C) 2005 Media Portal
+ *	http://mediaportal.sourceforge.net
+ *
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *   
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *   
+ *  You should have received a copy of the GNU General Public License
+ *  along with GNU Make; see the file COPYING.  If not, write to
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  http://www.gnu.org/copyleft/gpl.html
+ *
+ */
+
+#endregion
+
+using System;
+using System.Collections;
+using System.ComponentModel;
+using System.Reflection;
+using System.Text;
+using System.Xml;
+
+namespace System.Windows.Serialization
+{
+	public sealed class XamlParser
+	{
+		#region Constructors
+
+		private XamlParser()
+		{
+		}
+
+		#endregion Constructors
+
+		#region Methods
+
+		private Type GetType(string type)
+		{
+			Type t = null;
+
+			foreach(string ns in _namespaces)
+			{
+				t = Type.GetType(ns + "." + type);
+
+				if(t != null)
+					break;
+			}
+
+			return t;
+		}
+
+		public static object Load(string filename)
+		{
+			XamlParser parser = new XamlParser();
+
+			return parser.Read(filename);
+		}
+
+		public static object LoadXml(string fragment, XmlNodeType xmlNodeType, object target)
+		{
+			XamlParser parser = new XamlParser();
+
+			return parser.Read(fragment, xmlNodeType, target);
+		}
+
+		private object InvokeGetter()
+		{
+			string[] tokens = _xmlReader.Name.Split('.');
+
+			return InvokeGetter(tokens[0], tokens[1]);
+		}
+
+		private object InvokeGetter(string type, string property)
+		{
+			Type t = GetType(type);
+
+			if(t == null)
+				throw new XamlParserException(string.Format("The type or namespace '{0}' could not be found", type), _filename, _xmlReader);
+
+			// walk the stack looking for an item of the correct type
+			foreach(object target in _elementStack)
+			{
+				if(t.IsInstanceOfType(target) == false)
+					continue;
+
+				PropertyInfo propertyInfo = t.GetProperty(property);
+
+				if(propertyInfo == null)
+					throw new XamlParserException(string.Format("'{0}' does not contain a definition for '{1}'", t, property), _filename, _xmlReader);
+
+				return propertyInfo.GetValue(target, null);
+			}
+			
+			// A local variable named 'b' is already defined in this scope
+			throw new InvalidOperationException(string.Format("No instance of '{0}' is defined in this scope'", t));
+		}
+
+		private void InvokeSetter(object value)
+		{
+			string[] tokens = _xmlReader.Name.Split('.');
+
+			InvokeSetter(tokens[0], tokens[1], value);
+		}
+		
+		private void InvokeSetter(string type, string property, object value)
+		{
+			Type t = GetType(type);
+
+			if(t == null)
+				throw new XamlParserException(string.Format("The type or namespace '{0}' could not be found", type), _filename, _xmlReader);
+			
+			foreach(object target in _elementStack)
+			{
+				if(t.IsInstanceOfType(target) == false)
+					continue;
+
+				PropertyInfo propertyInfo = t.GetProperty(property);
+
+				if(propertyInfo == null)
+					throw new XamlParserException(string.Format("'{0}' does not contain a definition for '{1}'", t, property), _filename, _xmlReader);
+
+				if(propertyInfo.CanWrite == false)
+					break;
+
+				if(propertyInfo.PropertyType == typeof(object))
+				{
+					propertyInfo.SetValue(target, _target, null);
+					break;
+				}
+
+				TypeConverter typeConverter = TypeDescriptor.GetConverter(propertyInfo.PropertyType);
+
+				if(typeConverter is ICanAddNamespaceEntries)
+					((ICanAddNamespaceEntries)typeConverter).AddNamespaceEntries(_namespaces);
+
+				try
+				{
+					propertyInfo.SetValue(target, typeConverter.ConvertFrom(_target), null);
+				}
+				catch(FormatException)
+				{
+					throw new XamlParserException(string.Format("Cannot convert '{0}' to type '{1}'", _xmlReader.Value, propertyInfo.PropertyType), _filename, _xmlReader);
+				}
+
+				break;
+			}
+		}
+
+		private object Read(string filename)
+		{
+			_xmlReader = new XmlTextReader(_filename = filename);
+			_xmlReader.WhitespaceHandling = WhitespaceHandling.None;
+			_xmlReader.Namespaces = true;
+
+			return Read();
+		}
+
+		private object Read(string fragment, XmlNodeType xmlNodeType, object target)
+		{
+			_xmlReader = new XmlTextReader(fragment, xmlNodeType, null);
+			_xmlReader.WhitespaceHandling = WhitespaceHandling.None;
+
+			_elementStack.Push(target);
+
+			return Read();
+		}
+
+		private object Read()
+		{
+			while(_xmlReader.Read())
+			{
+				try
+				{
+					switch(_xmlReader.NodeType)
+					{
+						case XmlNodeType.Element:
+
+							if(_xmlReader.Name.IndexOf('.') == -1)
+							{
+								MediaPortal.GUI.Library.Log.Write("ReadElement: {0}", _xmlReader.Name);
+								ReadElement();
+							}
+							else
+							{
+								MediaPortal.GUI.Library.Log.Write("ReadElementCompoundProperty: {0}", _xmlReader.Name);
+								ReadElementCompoundProperty();
+							}
+							
+							break;
+						
+						case XmlNodeType.Text:
+						case XmlNodeType.CDATA:
+							_elementText.Append(_xmlReader.Value);
+							break;
+
+						case XmlNodeType.EndElement:
+							
+							if(_xmlReader.Name.IndexOf('.') == -1)
+							{
+								MediaPortal.GUI.Library.Log.Write("ReadElementEnd: {0}", _xmlReader.Name);
+								ReadElementEnd();
+							}
+							else
+							{
+								MediaPortal.GUI.Library.Log.Write("ReadElementEndCompoundProperty: {0}", _xmlReader.Name);
+								ReadElementEndCompoundProperty();
+							}
+
+							break;
+					}
+				}
+				catch(XamlParserException e)
+				{
+					MediaPortal.GUI.Library.Log.Write("XamlParser.Read: {0}", e.Message);
+				}
+				catch(Exception e)
+				{
+					MediaPortal.GUI.Library.Log.Write("XamlParser.Read: {0}({1},{2}): {3}", _filename, _xmlReader.LineNumber, _xmlReader.LinePosition, e.Message);
+				}
+			}
+
+			_xmlReader.Close();
+			_xmlReader = null;
+
+			return _target;
+		}
+
+		private void ReadAttributes()
+		{
+			object target = _elementStack.Peek();
+
+			for(int index = 0; index < _xmlReader.AttributeCount; index++)
+			{
+				_xmlReader.MoveToAttribute(index);
+
+				string name = _xmlReader.Name.Trim();
+				string value = _xmlReader.Value.Trim();
+
+				MediaPortal.GUI.Library.Log.Write("ReadAttributes: {0}", _xmlReader.Name);
+
+				if(name.StartsWith("xmlns"))
+					continue;
+
+				if(string.Compare(name, "Name") == 0 || name.EndsWith(":Name"))
+				{
+					_namedItems[value] = target;
+					continue;
+				}
+
+				if(string.Compare(name, "Key") == 0 || name.EndsWith(":Key"))
+				{
+					if(value.StartsWith("{"))
+					{
+						MediaPortal.Application.Current.Resources.Add(ReadExtension(value), _target);
+					}
+					else
+					{
+						MediaPortal.Application.Current.Resources.Add(value, _target);
+					}
+
+					continue;
+				}
+
+				MemberInfo memberInfo;
+				Type t;
+
+				if(name.IndexOf('.') != -1)
+				{
+					string[] tokens = name.Split('.');
+
+					t = GetType(tokens[0]);
+
+					memberInfo = t.GetMethod("Set" + tokens[1], BindingFlags.Public | BindingFlags.Static);
+					name = tokens[1];
+				}
+				else
+				{
+					t = target.GetType();
+
+					memberInfo = t.GetProperty(name);
+				}
+
+				if(memberInfo == null)
+					throw new XamlParserException(string.Format("'{0}' does not contain a definition for '{1}'", t, name), _filename, _xmlReader);
+
+				if(value.StartsWith("{"))
+				{
+					if(memberInfo is PropertyInfo)
+					{
+						((PropertyInfo)memberInfo).SetValue(target, ReadExtension(value), null);
+					}
+					else if(memberInfo is MethodInfo)
+					{
+						((MethodInfo)memberInfo).Invoke(null, new object[] { target, ReadExtension(value) });
+					}
+
+					continue;
+				}
+
+				if(memberInfo is MethodInfo)
+				{
+					MethodInfo methodInfo = (MethodInfo)memberInfo;
+
+					TypeConverter typeConverter = TypeDescriptor.GetConverter(methodInfo.GetParameters()[1].ParameterType);
+
+					if(typeConverter is ICanAddNamespaceEntries)
+						((ICanAddNamespaceEntries)typeConverter).AddNamespaceEntries(_namespaces);
+
+					try
+					{
+						object convertedValue = typeConverter.ConvertFromString(_xmlReader.Value);
+
+						methodInfo.Invoke(null, new object[] { target, convertedValue });
+					}
+					catch(FormatException)
+					{
+						throw new XamlParserException(string.Format("Cannot convert '{0}' to type '{1}'", _xmlReader.Value, methodInfo.GetParameters()[1].ParameterType), _filename, _xmlReader);
+					}
+
+					continue;
+				}
+				else
+				{
+					PropertyInfo propertyInfo = (PropertyInfo)memberInfo;
+
+					if(propertyInfo.PropertyType == typeof(object))
+					{
+						propertyInfo.SetValue(target, _xmlReader.Value, null);
+						continue;
+					}
+
+					TypeConverter typeConverter = TypeDescriptor.GetConverter(propertyInfo.PropertyType);
+
+					if(typeConverter is ICanAddNamespaceEntries)
+						((ICanAddNamespaceEntries)typeConverter).AddNamespaceEntries(_namespaces);
+
+					try
+					{
+						object convertedValue = typeConverter.ConvertFromString(_xmlReader.Value);
+
+						if(memberInfo is PropertyInfo)
+							propertyInfo.SetValue(target, convertedValue, null);
+					}
+					catch(FormatException)
+					{
+						throw new XamlParserException(string.Format("Cannot convert '{0}' to type '{1}'", _xmlReader.Value, propertyInfo.PropertyType), _filename, _xmlReader);
+					}
+				}
+			}
+		}
+
+		private void ReadElement()
+		{
+			_elementText = _elementText.Length > 0 ? new StringBuilder() : _elementText;
+
+			Type type = GetType(_xmlReader.Name);
+
+			if(type == null)
+				throw new XamlParserException(string.Format("The type or namespace '{0}' could not be found", _xmlReader.Name), _filename, _xmlReader);
+
+			_target = Activator.CreateInstance(type);
+
+			if(_target is ISupportInitialize)
+				((ISupportInitialize)_target).BeginInit();
+
+			if(_elementStack.Count != 0 && _elementStack.Peek() is IAddChild)
+				((IAddChild)_elementStack.Peek()).AddChild(_target);
+			else if(_elementStack.Count != 0 && _elementStack.Peek() is IList)
+				((IList)_elementStack.Peek()).Add(_target);
+
+			_elementStack.Push(_target);
+
+			bool isEmptyElement = _xmlReader.IsEmptyElement;
+
+			ReadAttributes();
+
+			if(isEmptyElement)
+				ReadElementEnd();
+		}
+
+		private void ReadElementCompoundProperty()
+		{
+			_elementStack.Push(InvokeGetter());
+		}
+
+		private void ReadElementEnd()
+		{
+			_target = _elementStack.Pop();
+
+			if(_target is IAddChild && _elementText.Length > 0)
+				((IAddChild)_target).AddText(_elementText.ToString());
+
+			if(_target is ISupportInitialize)
+				((ISupportInitialize)_target).EndInit();
+		}
+
+		private void ReadElementEndCompoundProperty()
+		{
+			InvokeSetter(_elementStack.Pop());
+		}
+
+		private object ReadExtension(string value)
+		{
+			if(value.EndsWith("}") == false)
+				throw new XamlParserException("} expected", _filename, _xmlReader);
+
+			value = value.Substring(1, value.Length - 2).TrimStart();
+
+			int endOfExtensionNameIndex = value.IndexOf(' ');
+
+			string name;
+
+			if(endOfExtensionNameIndex == -1)
+			{
+				name = value.TrimEnd();
+				value = string.Empty;
+			}
+			else
+			{
+				name = value.Substring(0, endOfExtensionNameIndex);
+				value = value.Substring(endOfExtensionNameIndex).Trim();
+			}
+
+			if(name.IndexOf(':') != -1)
+				name = name.Substring(name.IndexOf(':') + 1);
+
+			Type t = GetType(name + "Extension");
+
+			if(t == null)
+				t = GetType(name);
+
+			if(t == null)
+				throw new XamlParserException(string.Format("The parser extension '{0}' could not be found", name), _filename, _xmlReader);
+
+			if(t.IsSubclassOf(typeof(MarkupExtension)) == false)
+				throw new XamlParserException(string.Format("'{0}' is not of type 'System.Windows.Serialization.MarkupExtension'", t), _filename, _xmlReader);
+
+			MarkupExtension extension = (MarkupExtension)Activator.CreateInstance(t);
+
+			if(extension is ICanAddNamespaceEntries)
+				((ICanAddNamespaceEntries)extension).AddNamespaceEntries(_namespaces);
+
+			return extension.ProvideValue(_target, value);
+		}
+
+		private void ReadNamespace(string name, string value)
+		{
+			string ns = string.Empty;
+
+			int nameIndex = _xmlReader.Name.IndexOf(':');
+
+			if(nameIndex != -1)
+				ns = _xmlReader.Name.Substring(nameIndex);
+		}
+
+		#endregion Methods
+
+		#region Fields
+
+		StringBuilder				_elementText = new StringBuilder();
+		Stack						_elementStack = new Stack();
+		string						_filename = string.Empty;
+		Hashtable					_namedItems = new Hashtable();
+		static string[]				_namespaces = new string[] { "MediaPortal", "MediaPortal.Controls", "MediaPortal.Drawing", "MediaPortal.Drawing.Shapes", "MediaPortal.Drawing.Transforms", "MediaPortal.Animation", "System.Windows", "System.Windows.Serialization", "MediaPortal.Drawing.Paths", "MediaPortal.GUI.Library" };
+		object						_target;
+		XmlTextReader				_xmlReader;
+
+		#endregion Fields
+	}
+}

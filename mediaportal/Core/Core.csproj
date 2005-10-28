@@ -2609,6 +2609,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows\ResourceDictionaryCollection.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows\ResourceKey.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -2805,6 +2810,16 @@
                 />
                 <File
                     RelPath = "System.Windows.Serialization\TypeExtension.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Serialization\XamlParser.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Serialization\XamlParserException.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -3048,16 +3063,7 @@
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
-                <File
-                    RelPath = "Xaml\XamlParser.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Xaml\XamlParserException.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
+                <Folder RelPath = "Xaml\" />
             </Include>
         </Files>
     </CSHARP>

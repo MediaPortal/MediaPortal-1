@@ -73,7 +73,7 @@ namespace MediaPortal.Imaging
 		private void DownloadWorker(object sender, DoWorkEventArgs e)
 		{
 			using(WebClient client = new WebClient())
-				client.DownloadFile("http://www.csharpfriends.com/Members/index.aspx", " index.aspx");
+				client.DownloadData((string)e.Argument);
 		}
 
 		private void DownloadWorkerProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -99,7 +99,7 @@ namespace MediaPortal.Imaging
 				worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(DownloadWorkerCompleted);
 				worker.WorkerReportsProgress = true;
 				worker.WorkerSupportsCancellation = true;
-				worker.RunWorkerAsync(_uriSource);
+				worker.RunWorkerAsync(_uriSource.ToString());
 			}
 		}
 

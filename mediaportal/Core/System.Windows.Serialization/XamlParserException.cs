@@ -24,37 +24,41 @@
 #endregion
 
 using System;
-using System.Reflection;
-using System.Windows.Serialization;
+using System.Xml;
 
-namespace System.Windows
+namespace System.Windows.Serialization
 {
-	public abstract class ResourceKey : MarkupExtension
+	public class XamlParserException : Exception
 	{
 		#region Constructors
 
-		protected ResourceKey()
+		public XamlParserException(string message, string filename, XmlTextReader reader) : base(string.Format("{0}({1},{2}): {3}", filename, reader.LineNumber, reader.LinePosition, message))
 		{
+			_lineNumber = reader.LineNumber;
+			_linePosition = reader.LinePosition;
 		}
 
 		#endregion Constructors
 
-		#region Methods
-
-		public override object ProvideValue(object targetObject, object targetProperty)
-		{
-			throw new NotImplementedException();
-		}
-
-		#endregion Methods
-
 		#region Properties
 
-		public abstract Assembly Assembly
+		public int LineNumber
 		{
-			get;
+			get { return _lineNumber; }
+		}
+
+		public int LinePosition
+		{
+			get { return _linePosition; }
 		}
 
 		#endregion Properties
+
+		#region Fields
+
+		int							_lineNumber;
+		int							_linePosition;
+
+		#endregion Fields
 	}
 }

@@ -83,8 +83,7 @@ namespace System.Windows
 					element.BringIntoView();
 
 				return;
-			}
-*/
+			}*/
 		}
 
 		public static DependencyObject FindLogicalNode(DependencyObject current, string name)

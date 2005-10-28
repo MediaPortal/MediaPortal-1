@@ -30,7 +30,6 @@ using System.Windows.Serialization;
 using MediaPortal.Animation;
 using MediaPortal.Drawing;
 using MediaPortal.Drawing.Layouts;
-using MediaPortal.Xaml;
 
 namespace MediaPortal.GUI.Library
 {
@@ -373,8 +372,6 @@ namespace MediaPortal.GUI.Library
 							return;
 						}
 
-						XamlParser parser = new XamlParser();
-
 						string xml = element.OuterXml;
 
 						if(xml.IndexOf("Button.") != -1)
@@ -382,7 +379,7 @@ namespace MediaPortal.GUI.Library
 						else if(xml.IndexOf("Window.") != -1)
 							xml = xml.Replace("Window.", "GUIWindow.");
 						
-						parser.LoadXml(xml, XmlNodeType.Element, control);
+						XamlParser.LoadXml(xml, XmlNodeType.Element, control);
 					}
 				}
 			}

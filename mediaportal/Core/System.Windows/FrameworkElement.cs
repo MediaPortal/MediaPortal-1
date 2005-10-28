@@ -59,6 +59,9 @@ namespace System.Windows
 			
 		public FrameworkElement()
 		{
+			// TODO: prevent unused compiler warning
+			if(Unloaded != null)
+				Unloaded(null, null);
 		}
 
 		#endregion Constructors

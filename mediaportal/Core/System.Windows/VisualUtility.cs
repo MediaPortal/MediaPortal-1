@@ -50,12 +50,12 @@ namespace System.Windows
 			writer.WriteStartElement("VisualElement");
 			writer.WriteElementString("Type", element.GetType().ToString());
 
-			VisualCollection vc = VisualOperations.GetChildren(element);
+			VisualCollection children = VisualOperations.GetChildren(element);
 
-			if(vc != null && vc.Count != 0)
+			if(children != null && children.Count != 0)
 			{
-				foreach(Visual v in vc)
-					GetVisualTreeInfo(v, writer);
+				foreach(Visual visual in children)
+					GetVisualTreeInfo(visual, writer);
 			}
 
 			writer.WriteEndElement();

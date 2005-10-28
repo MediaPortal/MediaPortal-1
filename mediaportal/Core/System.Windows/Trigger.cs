@@ -35,6 +35,9 @@ namespace System.Windows
 
 		public Trigger()
 		{
+			// TODO: prevent unused compiler warning
+			if(Invalidated != null)
+				Invalidated(null, null);
 		}
 
 		#endregion Constructors
