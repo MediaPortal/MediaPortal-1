@@ -48,19 +48,19 @@ STDMETHODIMP CFilterVideoPin::SetPositions(LONGLONG *pCurrent,DWORD CurrentFlags
 	return CSourceSeeking::SetPositions(pCurrent,CurrentFlags,pStop,StopFlags);
 }
 
-ULONGLONG CFilterVideoPin::Process(BYTE *ms, REFERENCE_TIME& ptsStart,REFERENCE_TIME& ptsEnd)
+void CFilterVideoPin::Process(BYTE *ms, REFERENCE_TIME& ptsStart,REFERENCE_TIME& ptsEnd, int& videoSampleLen, int& audioSampleLen)
 {
+	videoSampleLen=audioSampleLen=0;
 	CAutoLock cAutoLock(&m_cSharedState);
-	DWORD pesMemPointer=0;
 	for(int offset=0;offset<18800;offset+=188)
 	{
 		bool isStart;
 		m_tsDemuxer.ParsePacket(ms+offset,isStart);
-		pesMemPointer+=m_tsDemuxer.GetVideoPacket(m_pSections->pids.VideoPid,&m_samplePES[pesMemPointer]);
+		videoSampleLen+=m_tsDemuxer.GetVideoPacket(m_pSections->pids.VideoPid,&m_videoBuffer[videoSampleLen]);
+		audioSampleLen+=m_tsDemuxer.GetAudioPacket(m_pSections->pids.CurrentAudioPid,&m_audioBuffer[audioSampleLen]);
 	}
 	m_tsDemuxer.GetPCRReferenceTime(ptsStart);
 	ptsEnd=ptsStart;
-	return pesMemPointer;
 }
 
 CFilterVideoPin::~CFilterVideoPin()
@@ -95,6 +95,7 @@ HRESULT CFilterVideoPin::FillBuffer(IMediaSample *pSample)
 		return hr;
 	}
 	int videoSampleLen=0;
+	int audioSampleLen=0;
 	do
 	{
 		lDataLength = 18800;
@@ -107,26 +108,16 @@ HRESULT CFilterVideoPin::FillBuffer(IMediaSample *pSample)
 		CopyMemory(audioBuffer,buffer,18800);
 
 		REFERENCE_TIME ptsStart, ptsEnd;
-		videoSampleLen=Process(buffer, ptsStart, ptsEnd);
-
-		if (false&&ptsStart!=0)
+		Process(buffer, ptsStart, ptsEnd,videoSampleLen, audioSampleLen);
+		if (audioSampleLen>0)
 		{
-
-			//m_pMPTSFilter->m_pAudioPin->Process(audioBuffer,&refStart,&refEnd);
-			//pSample->SetTime(&refStart,&refEnd+1000);
-			pSample->SetTime(NULL,NULL);
-
+			m_pMPTSFilter->m_pAudioPin->Process(m_audioBuffer,audioSampleLen,ptsStart, ptsEnd);
 		}
-		else
+		if (videoSampleLen>0)
 		{
-			m_pMPTSFilter->m_pAudioPin->Process(audioBuffer,NULL,NULL);
-			pSample->SetTime(NULL,NULL);
-		}
+			CopyMemory(pData,m_videoBuffer,videoSampleLen);
 
-		if(videoSampleLen)
-		{
-			CopyMemory(pData,m_samplePES,videoSampleLen);
-
+			//pSample->SetTime(&ptsStart,&ptsEnd);
 			pSample->SetActualDataLength(videoSampleLen);
 			if(m_bDiscontinuity==TRUE)
 			{
@@ -323,7 +314,7 @@ HRESULT	CFilterVideoPin::DecideBufferSize(IMemAllocator *pAlloc, ALLOCATOR_PROPE
         ppropInputRequest->cBuffers = 2;
     }
 
-	ppropInputRequest->cbBuffer = sizeof(m_samplePES);
+	ppropInputRequest->cbBuffer = sizeof(m_videoBuffer);
 	
     ALLOCATOR_PROPERTIES Actual;
     hr = pAlloc->SetProperties(ppropInputRequest, &Actual);

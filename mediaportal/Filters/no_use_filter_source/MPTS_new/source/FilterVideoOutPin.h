@@ -41,7 +41,7 @@ public:
 	STDMETHODIMP SetPositions(LONGLONG *pCurrent,DWORD CurrentFlags,LONGLONG *pStop,DWORD StopFlags);
 
 	//
-	ULONGLONG Process(BYTE *data, REFERENCE_TIME& ptsStart,REFERENCE_TIME& ptsEnd);
+	void Process(BYTE *data, REFERENCE_TIME& ptsStart,REFERENCE_TIME& ptsEnd, int& videoSampleLen, int& audioSampleLen);
 
 	
 protected:
@@ -63,7 +63,8 @@ protected:
 	map<int,bool>	m_mapDiscontinuitySent;
 	int				m_iPESPid;
 	typedef map<int,bool>::iterator imapDiscontinuitySent;
-	BYTE			m_samplePES[300000];
+	BYTE			m_videoBuffer[20000];
+	BYTE			m_audioBuffer[20000];
 	
 };
 

@@ -259,6 +259,7 @@ void TsDemux::DecodePesPacket(MpegTSFilter* tss, const byte* pesPacket, int pack
   else if (startcode >= 0x1c0 && startcode <= 0x1df) 
   {
      tss->m_streamType=AudioStream;
+	 DecodeAudioPacket(tss,pesPacket,packetLen);
   } 
   else 
   {
@@ -267,6 +268,13 @@ void TsDemux::DecodePesPacket(MpegTSFilter* tss, const byte* pesPacket, int pack
   }
 }
 
+
+//**************************************************************************************************************************************
+void TsDemux::DecodeAudioPacket(MpegTSFilter* tss, const byte* pesPacket, int packetLen)
+{
+	memcpy(&tss->m_audioPacket[tss->m_audioPacketLen],pesPacket,packetLen);
+	tss->m_audioPacketLen+=packetLen;
+}
 //**************************************************************************************************************************************
 void TsDemux::DecodeVideoPacket(MpegTSFilter* tss, const byte* pesPacket, int packetLen)
 {
@@ -374,6 +382,18 @@ int TsDemux::GetVideoPacket(int videoPid,byte* packet)
 	memcpy(packet,tss->m_videoPacket,tss->m_videoPacketLen);
 	int len=tss->m_videoPacketLen;
 	tss->m_videoPacketLen=0;
+	return len;
+}
+
+//**************************************************************************************************************************************
+int TsDemux::GetAudioPacket(int audioPid,byte* packet)
+{
+	imapFilters it = m_mapFilters.find(audioPid);
+	if (it==m_mapFilters.end()) return 0;
+	MpegTSFilter* tss=it->second;
+	memcpy(packet,tss->m_audioPacket,tss->m_audioPacketLen);
+	int len=tss->m_audioPacketLen;
+	tss->m_audioPacketLen=0;
 	return len;
 }
 

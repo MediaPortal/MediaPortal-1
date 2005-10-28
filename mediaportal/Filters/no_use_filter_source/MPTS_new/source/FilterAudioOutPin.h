@@ -22,7 +22,7 @@ public:
 	STDMETHODIMP ConnectionMediaType(AM_MEDIA_TYPE *pmt);
 
 	//
-	ULONGLONG Process(BYTE *ms,REFERENCE_TIME*,REFERENCE_TIME*);
+	void Process(BYTE *audioBuffer,int audioSampleLen,REFERENCE_TIME& start,REFERENCE_TIME& stop);
 	HRESULT Deliver(IMediaSample *ms);
 	
 protected:
@@ -31,7 +31,6 @@ protected:
 protected:
 	CCritSec		m_cSharedState;
 	BOOL			m_bDiscontinuity;
-	BYTE			m_samplePES[18800];
 public:
 	Sections	*m_pSections;
 	

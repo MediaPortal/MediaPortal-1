@@ -75,6 +75,10 @@ private:
 			int				 m_videoframeRate;
 			byte			 m_videoPacket[100000];
 			int				 m_videoPacketLen;
+
+			//audiostream properties
+			byte			 m_audioPacket[100000];
+			int				 m_audioPacketLen;
 	 };
 
 public:
@@ -82,6 +86,7 @@ public:
 	virtual ~TsDemux(void);
 	bool	ParsePacket(byte* tsPacket, bool& isStart);
 	int		GetVideoPacket(int videoPid,byte* packet);
+	int		GetAudioPacket(int audioPid,byte* packet);
 	void 	GetVideoAttributes(int videoPid,int& videoWidth, int &videoHeight,Mpeg2AspectRatio& aspectRatio, __int64& averageTimePerFrame,long& videoBitRate,int& videoframeRate);
 	void	GetPCRTime(Sections::PTSTime& time);
 	void	GetPCRReferenceTime(REFERENCE_TIME& reftime);
@@ -89,6 +94,7 @@ private:
 	__int64 get_pts(const byte *p);
 	void	DecodePesPacket(MpegTSFilter* tss, const byte* pesPacket, int packetLen);
 	void	DecodeVideoPacket(MpegTSFilter* tss, const byte* pesPacket, int packetLen);
+	void	DecodeAudioPacket(MpegTSFilter* tss, const byte* pesPacket, int packetLen);
 	void	ParsePacket(MpegTSFilter* tss,const byte *buf, int buf_size, int is_start);
 
 	map<int , MpegTSFilter*> m_mapFilters;

@@ -39,58 +39,19 @@ HRESULT CFilterAudioPin::Deliver(IMediaSample *ms)
 	return S_OK;
 
 }
-ULONGLONG CFilterAudioPin::Process(BYTE *ms,REFERENCE_TIME* start,REFERENCE_TIME* stop)
+void CFilterAudioPin::Process(BYTE *audioBuffer,int audioSampleLen,REFERENCE_TIME& start,REFERENCE_TIME& stop)
 {
 	CAutoLock cAutoLock(&m_cSharedState);
-	CheckPointer(ms,E_POINTER);
-
-	DWORD offset;
-	DWORD pesOffset=0;
-	DWORD pesMemPointer=0;
-	DWORD cpyLen=0;
-	Sections::TSHeader tsHeader;
-	BYTE *sampleData=ms;
-
-
-	ULONGLONG ptsNow=0;
-	for(offset=0;offset<18800;offset+=188)
-	{
-		if(offset+184>18800)
-			break;
-		m_pSections->GetTSHeader(sampleData+offset,&tsHeader);
-		if(tsHeader.SyncByte!=0x47 || tsHeader.TransportError)
-			continue;// no packet
-		if(tsHeader.Pid==m_pSections->pids.CurrentAudioPid)
-		{
-
-			pesOffset=4;
-			if(tsHeader.AdaptionControl==0x02) continue;// no payload
-			if(tsHeader.AdaptionControl==0x03) 
-				pesOffset+=1+sampleData[offset+4];
-			// copy len
-			cpyLen=188-pesOffset;
-			if(pesMemPointer+cpyLen>=18800 || offset+cpyLen>=18800)
-				break;
-			else
-			{
-				CopyMemory(m_samplePES+pesMemPointer,sampleData+offset+pesOffset,cpyLen);
-			}
-			
-			pesMemPointer+=cpyLen;
-
-		}
-	}
-
-	if (pesMemPointer>0)
+	if (audioSampleLen>0)
 	{
 		IMediaSample *audioSample;
 		if(GetDeliveryBuffer(&audioSample,NULL,NULL,0)==S_OK)
 		{
 			BYTE *data;
 			audioSample->GetPointer(&data);
-			CopyMemory(data,m_samplePES,pesMemPointer);
-			audioSample->SetActualDataLength(pesMemPointer);
-			audioSample->SetTime(start,stop);
+			CopyMemory(data,audioBuffer,audioSampleLen);
+			audioSample->SetActualDataLength(audioSampleLen);
+			//audioSample->SetTime(&start,&stop);
 			HRESULT hr=Deliver(audioSample);
 			audioSample->Release();
 			if(hr==S_FALSE)
@@ -102,7 +63,6 @@ ULONGLONG CFilterAudioPin::Process(BYTE *ms,REFERENCE_TIME* start,REFERENCE_TIME
 			int x=1;
 		}
 	}
-	return pesMemPointer;
 }
 
 CFilterAudioPin::~CFilterAudioPin()
@@ -163,7 +123,7 @@ HRESULT CFilterAudioPin::CheckMediaType(const CMediaType *cmt)
 {
 	CAutoLock lock(CBaseOutputPin::m_pLock);
 	CheckPointer(cmt,E_POINTER);
-	if(cmt->majortype==MEDIATYPE_MPEG2_PES &&
+	if(cmt->majortype==MEDIATYPE_Audio &&
 		cmt->subtype==MEDIASUBTYPE_MPEG2_AUDIO)
 	{
 		return S_OK;
@@ -175,7 +135,7 @@ STDMETHODIMP CFilterAudioPin::ConnectionMediaType(AM_MEDIA_TYPE *pmt)
 	CAutoLock lock(CBaseOutputPin::m_pLock);
 	CheckPointer(pmt,E_POINTER);
 
-	pmt->majortype=MEDIATYPE_MPEG2_PES;
+	pmt->majortype=MEDIATYPE_Audio;
 	pmt->subtype=MEDIASUBTYPE_MPEG2_AUDIO;
 	pmt->formattype=FORMAT_MPEG2Audio;
 	return S_OK;
@@ -192,7 +152,7 @@ HRESULT	CFilterAudioPin::GetMediaType(int iPosition,CMediaType *pMediaType)
     }
 
 	pMediaType->InitMediaType();
-	pMediaType->SetType(&MEDIATYPE_MPEG2_PES);
+	pMediaType->SetType(&MEDIATYPE_Audio);
 	pMediaType->SetSubtype(&MEDIASUBTYPE_MPEG2_AUDIO);
 	pMediaType->SetFormatType(&FORMAT_MPEG2Audio);
 	pMediaType->SetFormat(MPEG1AudioFormat,sizeof(MPEG1AudioFormat));
