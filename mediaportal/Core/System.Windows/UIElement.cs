@@ -384,7 +384,8 @@ namespace System.Windows
 		public Size RenderSize
 		{
 			get { return _renderSize; }
-			set { Size renderSizeOld = _renderSize; OnRenderSizeChanged(new SizeChangedInfo(this, _renderSize = value, false, false)); }
+//			set { Size renderSizeOld = _renderSize; OnRenderSizeChanged(new SizeChangedInfo(this, _renderSize = value, false, false)); }
+			set { }
 		}
 
 		[DependencyProperty(DefaultValue=Visibility.Visible)]
