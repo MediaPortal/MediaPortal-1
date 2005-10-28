@@ -50,12 +50,29 @@ STDMETHODIMP CFilterVideoPin::SetPositions(LONGLONG *pCurrent,DWORD CurrentFlags
 
 ULONGLONG CFilterVideoPin::Process(BYTE *ms, ULONGLONG& ptsStart,ULONGLONG& ptsEnd)
 {
+	ptsStart=0;
+	ptsEnd=0;
 	DWORD pesMemPointer=0;
+	Sections::TSHeader tsHeader;
 	for(int offset=0;offset<18800;offset+=188)
 	{
-		bool isStart;
-		m_tsDemuxer.ParsePacket(ms+offset,isStart);
-		pesMemPointer+=m_tsDemuxer.GetVideoPacket(&m_samplePES[pesMemPointer]);
+		m_pSections->GetTSHeader(ms+offset,&tsHeader);
+		if(tsHeader.SyncByte!=0x47 || tsHeader.TransportError)
+			continue;// no packet
+
+		ULONGLONG pts;
+		if (S_OK==m_pSections->CurrentPTS("video ",ms+offset,pts))
+		{
+			if (ptsStart==0) ptsStart=pts;
+			ptsEnd=pts;
+		}
+
+		if(tsHeader.Pid==m_pSections->pids.VideoPid)
+		{
+			bool isStart;
+			m_tsDemuxer.ParsePacket(ms+offset,isStart);
+			pesMemPointer+=m_tsDemuxer.GetVideoPacket(&m_samplePES[pesMemPointer]);
+		}
 	}
 	return pesMemPointer;
 /*
