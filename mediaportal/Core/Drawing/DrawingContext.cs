@@ -37,6 +37,12 @@ namespace MediaPortal.Drawing
 		#region Methods
 
 		public abstract void Close();
+
+		void IDisposable.Dispose()
+		{
+			DisposeCore();
+		}
+
 		protected abstract void DisposeCore();
 
 //		public abstract void DrawDrawing(Drawing drawing);
@@ -74,11 +80,6 @@ namespace MediaPortal.Drawing
 
 		protected virtual void VerifyApiNonstructuralChange()
 		{
-		}
-
-		void IDisposable.Dispose()
-		{
-			DisposeCore();
 		}
 
 		#endregion Methods

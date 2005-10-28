@@ -29,8 +29,34 @@ namespace System.Windows
 {
 	public sealed class EventRoute
 	{
-		public EventRoute()
+		#region Constructors
+
+		public EventRoute(RoutedEvent routedEvent)
 		{
 		}
+
+		#endregion Constructors
+
+		#region Methods
+
+		public void Add(object target, Delegate handler, bool handledEventsToo)
+		{
+		}
+
+		public object PeekBranchNode()
+		{
+			throw new NotImplementedException();
+		}
+
+		public object PeekBranchSource()
+		{
+			throw new NotImplementedException();
+		}
+
+		public void PushBranchNode(object node, object source)
+		{
+		}
+
+		#endregion Methods
 	}
 }

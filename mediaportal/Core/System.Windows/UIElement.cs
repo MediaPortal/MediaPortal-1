@@ -26,6 +26,7 @@
 using System;
 using System.Collections;
 using System.ComponentModel;
+using System.Threading;
 
 using MediaPortal.Animation;
 using MediaPortal.Drawing;
@@ -110,22 +111,29 @@ namespace System.Windows
 			return null;
 		}
 
-		public void ApplyAnimationClock(DependencyProperty dp, AnimationClock clock)
+		public void ApplyAnimationClock(DependencyProperty property, AnimationClock clock)
 		{
 			// Applies an animation to a specified dependency property on this element,
 			// with the behavior that any existing animations will be stopped and replaced with the new animation. 
 
-			ApplyAnimationClock(dp, clock, HandoffBehavior.SnapshotAndReplace);
+			ApplyAnimationClock(property, clock, HandoffBehavior.SnapshotAndReplace);
 		}
 
 		public void ApplyAnimationClock(DependencyProperty property, AnimationClock clock, HandoffBehavior handoffBehavior)
 		{
-			// providing null as the property parameter can be used to remove an animation from a property
-			if(property == null)
+			if(clock == null)
 			{
+				// providing null as the clock parameter is used to remove an animation from a property
+				if(_animatedProperties != null)
+					_animatedProperties.Remove(property);
+
+				return;
 			}
 
-			throw new NotImplementedException();
+			if(_animatedProperties == null)
+				_animatedProperties = new Hashtable();
+
+			_animatedProperties[property] = clock;
 		}
 	
 		public void Arrange(Rect finalRect)
@@ -137,13 +145,13 @@ namespace System.Windows
 		{
 			// no default implementation
 		}
-			
-		public void BeginAnimation(DependencyProperty dp, AnimationTimeline animation)
+
+		public void BeginAnimation(DependencyProperty property, AnimationTimeline animation)
 		{
-			BeginAnimation(dp, animation, HandoffBehavior.SnapshotAndReplace);
+			BeginAnimation(property, animation, HandoffBehavior.SnapshotAndReplace);
 		}
 
-		public void BeginAnimation(DependencyProperty dp, AnimationTimeline animation, HandoffBehavior handoffBehavior)
+		public void BeginAnimation(DependencyProperty property, AnimationTimeline animation, HandoffBehavior handoffBehavior)
 		{
 			// If the animation's BeginTime is NULL, then any current animations will be removed 
 			// and the current value of the property will be held. If the entire animation value 
@@ -195,9 +203,12 @@ namespace System.Windows
 			return true;
 		}			
 
-		public object GetAnimationBaseValue(DependencyProperty dp)
+		public object GetAnimationBaseValue(DependencyProperty property)
 		{
-			return GetValue(dp);
+			if(_animatedProperties != null && _animatedProperties.Contains(property))
+				return GetValueBase(property);
+
+			return GetValue(property);
 		}
 
 //		protected internal virtual IAutomationPropertyProvider GetAutomationProvider()
@@ -212,10 +223,10 @@ namespace System.Windows
 			return null;
 		}
 		
-		protected override object GetValueCore(DependencyProperty dp, object baseValue, PropertyMetadata metadata)
+		protected override object GetValueCore(DependencyProperty property, object baseValue, PropertyMetadata metadata)
 		{
-			return null;
 //			_animatedProperties[property];
+			return null;
 		}
 
 		public void InvalidateArrange()
@@ -223,6 +234,7 @@ namespace System.Windows
 			_isArrangeValid = false;
 			
 			// after the invalidation, the element will have its layout updated, which will occur asynchronously.
+			ThreadPool.QueueUserWorkItem(new WaitCallback(UpdateLayoutWorker), this);
 		}
 
 		public void InvalidateMeasure()
@@ -230,7 +242,6 @@ namespace System.Windows
 			_isMeasureValid = false;
 
 			InvalidateArrange();
-
 		}
 
 		public void InvalidateVisual()
@@ -255,12 +266,12 @@ namespace System.Windows
 			InvalidateMeasure();
 		}
 			
-		protected override void OnPropertyInvalidated(DependencyProperty dp, PropertyMetadata metadata)
+		protected override void OnPropertyInvalidated(DependencyProperty property, PropertyMetadata metadata)
 		{
 			// assume that this is used to set the dirty flag on cached properties?
 //			MediaPortal.GUI.Library.Log.Write("UIElement.OnPropertyInvalidated: {0}", dp.Name);
 		}
-			
+
 		protected internal virtual void OnIsKeyboardFocusWithinChanged(DependencyPropertyChangedEventArgs e)
 		{
 		}
@@ -303,6 +314,10 @@ namespace System.Windows
 
 		public void UpdateLayout()
 		{
+			// only update when necessary to do so
+			if(_isMeasureValid && _isArrangeValid)
+				return;
+
 			// This ensures that elements with IsMeasureValid==false or IsArrangeValid==false will call 
 			// element-specific MeasureCore and ArrangeCore methods, forces layout update, and all computed
 			// sizes will be validated.
@@ -315,6 +330,12 @@ namespace System.Windows
 			// and positions after you do all changes to properties that may affect layout. 
 
 
+		}
+		
+		protected void UpdateLayoutWorker(object state)
+		{
+//			UIElement element = (UIElement)state;
+//			element.Arrange(
 		}
 		
 		#endregion Methods
@@ -336,7 +357,6 @@ namespace System.Windows
 			get { return _isArrangeValid; }
 		}
 
-		[DependencyProperty(DefaultValue=true)]
 		public bool IsEnabled
 		{
 			get { return IsEnabledCore; }
@@ -348,7 +368,6 @@ namespace System.Windows
 			get { return (bool)GetValue(IsEnabledProperty); }
 		}
 
-		[DependencyProperty(DefaultValue=false)]
 		public bool IsFocused
 		{
 			get { return (bool)GetValue(IsFocusedProperty); }
@@ -367,14 +386,12 @@ namespace System.Windows
 			set { SetValue(VisibilityProperty, value ? Visibility.Visible : Visibility.Hidden); }
 		}
 
-		[DependencyProperty(DefaultValue=1.0)]
 		public virtual double Opacity
 		{
 			get { return (double)GetValue(OpacityProperty); }
 			set { SetValue(OpacityProperty, value); }
 		}
 
-		[DependencyProperty]
 		public Brush OpacityMask
 		{
 			get { return (Brush)GetValue(OpacityMaskProperty); }
@@ -384,11 +401,9 @@ namespace System.Windows
 		public Size RenderSize
 		{
 			get { return _renderSize; }
-//			set { Size renderSizeOld = _renderSize; OnRenderSizeChanged(new SizeChangedInfo(this, _renderSize = value, false, false)); }
-			set { }
+			set { Size renderSizeOld = _renderSize; }
 		}
 
-		[DependencyProperty(DefaultValue=Visibility.Visible)]
 		public Visibility Visibility
 		{
 			get { return (Visibility)GetValue(VisibilityProperty); }
