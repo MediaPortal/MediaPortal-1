@@ -25,6 +25,7 @@
 //**********************************************************************
 TsDemux::TsDemux(void)
 {
+	m_videoPacketLen=0;
 }
 
 //**********************************************************************
@@ -258,6 +259,8 @@ void TsDemux::DecodePesPacket(MpegTSFilter* tss, const byte* pesPacket, int pack
 
 void TsDemux::DecodeVideoPacket(MpegTSFilter* tss, const byte* pesPacket, int packetLen)
 {
+	memcpy(m_videoPacket,pesPacket,packetLen);
+	m_videoPacketLen=packetLen;
 	int off=0;
 	while (off < packetLen)
 	{
@@ -295,4 +298,11 @@ void TsDemux::DecodeVideoPacket(MpegTSFilter* tss, const byte* pesPacket, int pa
 		}
 		off+=3;
 	}
+}
+int TsDemux::GetVideoPacket(byte* packet)
+{
+	memcpy(packet,m_videoPacket,m_videoPacketLen);
+	int len=m_videoPacketLen;
+	m_videoPacketLen=0;
+	return len;
 }

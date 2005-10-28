@@ -43,7 +43,6 @@ private:
 			StreamType streamType;
 			Mpeg2FrameType frameType;
 			byte header[MAX_PES_HEADER_SIZE];
-			
 	 };
 
 public:
@@ -51,6 +50,7 @@ public:
 	virtual ~TsDemux(void);
 	bool ParsePacket(byte* tsPacket, bool& isStart);
 
+	int TsDemux::GetVideoPacket(byte* packet);
 private:
 	__int64 get_pts(const byte *p);
 	void DecodePesPacket(MpegTSFilter* tss, const byte* pesPacket, int packetLen);
@@ -59,4 +59,6 @@ private:
 
 	map<int , MpegTSFilter*> m_mapFilters;
 	typedef map<int , MpegTSFilter*>::iterator imapFilters;
+	byte m_videoPacket[8192];
+	int  m_videoPacketLen;
 };

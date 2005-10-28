@@ -45,6 +45,7 @@ public:
 
 	
 protected:
+	TsDemux m_tsDemuxer;
 
 
 protected:

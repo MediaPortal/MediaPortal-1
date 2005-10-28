@@ -50,6 +50,15 @@ STDMETHODIMP CFilterVideoPin::SetPositions(LONGLONG *pCurrent,DWORD CurrentFlags
 
 ULONGLONG CFilterVideoPin::Process(BYTE *ms, ULONGLONG& ptsStart,ULONGLONG& ptsEnd)
 {
+	DWORD pesMemPointer=0;
+	for(int offset=0;offset<18800;offset+=188)
+	{
+		bool isStart;
+		m_tsDemuxer.ParsePacket(ms+offset,isStart);
+		pesMemPointer+=m_tsDemuxer.GetVideoPacket(&m_samplePES[pesMemPointer]);
+	}
+	return pesMemPointer;
+/*
 	CAutoLock cAutoLock(&m_cSharedState);
 	CheckPointer(ms,E_POINTER);
 	ptsStart=0;
@@ -99,7 +108,7 @@ ULONGLONG CFilterVideoPin::Process(BYTE *ms, ULONGLONG& ptsStart,ULONGLONG& ptsE
 			
 		}
 	}
-
+*/
 	return pesMemPointer;
 }
 
@@ -204,7 +213,7 @@ HRESULT CFilterVideoPin::OnThreadStartPlay()
 	LogDebug("pin:OnThreadStartPlay() %x-%x pos:%x", (DWORD)m_rtStart, (DWORD)m_rtStop, (DWORD)m_pSections->m_pFileReader->GetFilePointer());
 	m_bDiscontinuity=TRUE;
 	m_pBuffers->Clear();
-	SeekIFrame();
+//	SeekIFrame();
 	HRESULT hr=DeliverNewSegment(m_rtStart, m_rtStop, m_dRateSeeking);
 	hr=m_pMPTSFilter->m_pAudioPin->DeliverNewSegment(m_rtStart, m_rtStop, m_dRateSeeking);
 	return CSourceStream::OnThreadStartPlay( );
