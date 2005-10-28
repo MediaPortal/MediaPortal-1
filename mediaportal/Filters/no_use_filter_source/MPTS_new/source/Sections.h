@@ -78,6 +78,7 @@ private:
 	string DVB_GetMPEGISO639Lang (byte *b);
 public:
 
+	Sections();
 	Sections(FileReader *fileReader);
 	virtual ~Sections();
 	HRESULT GetTSHeader(BYTE *data,TSHeader *header);

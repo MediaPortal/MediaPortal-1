@@ -1,4 +1,6 @@
 #pragma once
+#include "sections.h"
+
 #include <map>
 using namespace std;
 #define AV_NOPTS_VALUE __int64(0x8000000000000000)
@@ -10,17 +12,18 @@ class TsDemux
 {
 private:
 
-	enum MpegTSState {
-		MPEGTS_HEADER = 0,
-		MPEGTS_PESHEADER_FILL,
-		MPEGTS_PAYLOAD,
-		MPEGTS_SKIP,
+	enum MpegTSState 
+	{
+		PesHeader = 0,
+		PesHeaderFill,
+		PesPayLoad,
+		PesSkip,
 	};
 	enum StreamType
 	{
-		STREAM_VIDEO,
-		STREAM_AUDIO,
-		STREAM_PRIVATE
+		VideoStream,
+		AudioStream,
+		PrivateStream
 	};
 	enum Mpeg2FrameType
 	{
@@ -51,25 +54,25 @@ private:
 	class MpegTSFilter 
 	{
 		public:
-			int				 pid;
-			int				 last_cc; /* last cc code (-1 if first packet) */
-			MpegTSState		 state;
-			int				 data_index;
-			int				 total_size;
-			int				 pes_header_size;
-			__int64			 pts, dts;			// pts/dts values
+			int				 m_pid;
+			int				 m_last_cc; /* last cc code (-1 if first packet) */
+			MpegTSState		 m_state;
+			int				 m_data_index;
+			int				 m_total_size;
+			int				 m_pes_header_size;
+			__int64			 m_pts, m_dts;		// pts/dts values
 			bool			 m_scrambled;		// true if stream is scrambled
-			StreamType		 streamType;		// stream type : video, audio or private
+			StreamType		 m_streamType;		// stream type : video, audio or private
+			byte			 m_header[MAX_PES_HEADER_SIZE];
 			
 			//video stream properties
-			Mpeg2FrameType	 frameType;			// type of last frame: I,B,P
-			__int64			 averageTimePerFrame;
-			int				 videoWidth;
-			int				 videoHeight;
-			Mpeg2AspectRatio videoAspectRatio;
-			long			 videoBitRate;
-			int				 videoframeRate;
-			byte			 header[MAX_PES_HEADER_SIZE];
+			Mpeg2FrameType	 m_videoFrameType;			// type of last frame: I,B,P
+			__int64			 m_averageTimePerFrame;
+			int				 m_videoWidth;
+			int				 m_videoHeight;
+			Mpeg2AspectRatio m_videoAspectRatio;
+			long			 m_videoBitRate;
+			int				 m_videoframeRate;
 			byte			 m_videoPacket[100000];
 			int				 m_videoPacketLen;
 	 };
@@ -77,9 +80,11 @@ private:
 public:
 	TsDemux(void);
 	virtual ~TsDemux(void);
-	bool ParsePacket(byte* tsPacket, bool& isStart);
-
-	int GetVideoPacket(int videoPid,byte* packet);
+	bool	ParsePacket(byte* tsPacket, bool& isStart);
+	int		GetVideoPacket(int videoPid,byte* packet);
+	void 	GetVideoAttributes(int videoPid,int& videoWidth, int &videoHeight,Mpeg2AspectRatio& aspectRatio, __int64& averageTimePerFrame,long& videoBitRate,int& videoframeRate);
+	void	GetPCRTime(Sections::PTSTime& time);
+	void	GetPCRReferenceTime(REFERENCE_TIME& reftime);
 private:
 	__int64 get_pts(const byte *p);
 	void	DecodePesPacket(MpegTSFilter* tss, const byte* pesPacket, int packetLen);
@@ -88,5 +93,6 @@ private:
 
 	map<int , MpegTSFilter*> m_mapFilters;
 	typedef map<int , MpegTSFilter*>::iterator imapFilters;
-public:
+	ULONGLONG		 m_pcrNow;
+	ULONGLONG		 m_pcrStart;
 };

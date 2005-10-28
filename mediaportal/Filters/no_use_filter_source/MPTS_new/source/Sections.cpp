@@ -54,6 +54,9 @@ void LogDebug(const char *fmt, ...)
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
+Sections::Sections()
+{
+}
 Sections::Sections(FileReader *pFileReader)
 {
 	m_pFileReader=pFileReader;

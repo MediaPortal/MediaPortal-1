@@ -20,11 +20,14 @@
  */
 #include <windows.h>
 #include ".\tsdemux.h"
+#include "sections.h"
 
 
 //**********************************************************************
 TsDemux::TsDemux(void)
 {
+	m_pcrStart=0;
+	m_pcrNow=0;
 }
 
 //**********************************************************************
@@ -60,8 +63,8 @@ bool TsDemux::ParsePacket(byte* packet, bool& isStart)
 		if (is_start)
 		{
 			tss = new MpegTSFilter();
-			tss->pid=pid;
-			tss->last_cc=-1;
+			tss->m_pid=pid;
+			tss->m_last_cc=-1;
 			tss->m_scrambled=false;
 			m_mapFilters[pid]=tss;
 		}
@@ -75,9 +78,16 @@ bool TsDemux::ParsePacket(byte* packet, bool& isStart)
     
 	/* continuity check (currently not used) */
     cc = (packet[3] & 0xf);
-    cc_ok = (tss->last_cc < 0) || ((((tss->last_cc + 1) & 0x0f) == cc));
-    tss->last_cc = cc;
+    cc_ok = (tss->m_last_cc < 0) || ((((tss->m_last_cc + 1) & 0x0f) == cc));
+    tss->m_last_cc = cc;
     
+	Sections sections;
+	ULONGLONG pcr;
+	if (sections.CurrentPTS("",packet,pcr))
+	{
+		if (m_pcrStart==0) m_pcrStart=pcr;
+		m_pcrNow=pcr;
+	}
     /* skip adaptation field */
     afc = (packet[3] >> 4) & 3;
     p = packet + 4;
@@ -97,7 +107,7 @@ bool TsDemux::ParsePacket(byte* packet, bool& isStart)
 	if (tss->m_scrambled)
 		return false;
 	ParsePacket(tss,p,p_end-p,is_start);
-	return (tss->frameType==IFrame);
+	return (tss->m_videoFrameType==IFrame);
 }
 
 //**********************************************************************
@@ -109,97 +119,97 @@ void TsDemux::ParsePacket(MpegTSFilter* tss,const byte *buf, int buf_size, int i
     int len, code;
 	if (is_start) 
 	{
-        tss->state = MPEGTS_HEADER;
-        tss->data_index = 0;
+        tss->m_state = PesHeader;
+        tss->m_data_index = 0;
 
     }
     p = buf;
     while (buf_size > 0) 
 	{
-        switch(tss->state) 
+        switch(tss->m_state) 
 		{
-			case MPEGTS_HEADER:
-				len = PES_START_SIZE - tss->data_index; // 9 bytes
+			case PesHeader:
+				len = PES_START_SIZE - tss->m_data_index; // 9 bytes
 				if (len > buf_size)
 					len = buf_size;
-				memcpy(tss->header + tss->data_index, p, len);
-				tss->data_index += len;
+				memcpy(tss->m_header + tss->m_data_index, p, len);
+				tss->m_data_index += len;
 				p += len;
 				buf_size -= len;
-				if (tss->data_index == PES_START_SIZE) 
+				if (tss->m_data_index == PES_START_SIZE) 
 				{
 					/* we got all the PES or section header. We can now
 					decide */
 	#if 0
-					av_hex_dump(tss->header, tss->data_index);
+					av_hex_dump(tss->m_header, tss->m_data_index);
 	#endif
-					if (tss->header[0] == 0x00 && tss->header[1] == 0x00 &&
-						tss->header[2] == 0x01) 
+					if (tss->m_header[0] == 0x00 && tss->m_header[1] == 0x00 &&
+						tss->m_header[2] == 0x01) 
 					{
 						/* it must be an mpeg2 PES stream */
-						code = tss->header[3] | 0x100;
+						code = tss->m_header[3] | 0x100;
 						if (!((code >= 0x1c0 && code <= 0x1df) ||
 							(code >= 0x1e0 && code <= 0x1ef) ||
 							(code == 0x1bd)))
 							goto skip;
 
-						tss->state = MPEGTS_PESHEADER_FILL;
-						tss->total_size = (tss->header[4] << 8) | tss->header[5];
+						tss->m_state = PesHeaderFill;
+						tss->m_total_size = (tss->m_header[4] << 8) | tss->m_header[5];
 						/* NOTE: a zero total size means the PES size is
 						unbounded */
-						if (tss->total_size)
-							tss->total_size += 6;
-						tss->pes_header_size = tss->header[8] + 9;
+						if (tss->m_total_size)
+							tss->m_total_size += 6;
+						tss->m_pes_header_size = tss->m_header[8] + 9;
 					} 
 					else 
 					{
 						/* otherwise, it should be a table */
 						/* skip packet */
 					skip:
-						tss->state = MPEGTS_SKIP;
+						tss->m_state = PesSkip;
 						continue;
 					}
 				}
             break;
 				/**********************************************/
 				/* PES packing parsing */
-			case MPEGTS_PESHEADER_FILL:
-				len = tss->pes_header_size - tss->data_index;
+			case PesHeaderFill:
+				len = tss->m_pes_header_size - tss->m_data_index;
 				if (len > buf_size)
 					len = buf_size;
-				memcpy(tss->header + tss->data_index, p, len);
-				tss->data_index += len;
+				memcpy(tss->m_header + tss->m_data_index, p, len);
+				tss->m_data_index += len;
 				p += len;
 				buf_size -= len;
-				if (tss->data_index == tss->pes_header_size) 
+				if (tss->m_data_index == tss->m_pes_header_size) 
 				{
 					const byte *r;
 					unsigned int flags;
 
-					flags = tss->header[7];
-					r = tss->header + 9;
-					tss->pts = AV_NOPTS_VALUE;
-					tss->dts = AV_NOPTS_VALUE;
+					flags = tss->m_header[7];
+					r = tss->m_header + 9;
+					tss->m_pts = AV_NOPTS_VALUE;
+					tss->m_dts = AV_NOPTS_VALUE;
 					if ((flags & 0xc0) == 0x80) 
 					{
-						tss->pts = get_pts(r);
+						tss->m_pts = get_pts(r);
 						r += 5;
 					} 
 					else if ((flags & 0xc0) == 0xc0) 
 					{
-						tss->pts = get_pts(r);
+						tss->m_pts = get_pts(r);
 						r += 5;
-						tss->dts = get_pts(r);
+						tss->m_dts = get_pts(r);
 						r += 5;
 					}
 					/* we got the full header. We parse it and get the payload */
-					tss->state = MPEGTS_PAYLOAD;
+					tss->m_state = PesPayLoad;
 				}
             break;
-			case MPEGTS_PAYLOAD:
-				if (tss->total_size) 
+			case PesPayLoad:
+				if (tss->m_total_size) 
 				{
-					len = tss->total_size - tss->data_index;
+					len = tss->m_total_size - tss->m_data_index;
 					if (len > buf_size)
 						len = buf_size;
 				} 
@@ -214,7 +224,7 @@ void TsDemux::ParsePacket(MpegTSFilter* tss,const byte *buf, int buf_size, int i
 				buf_size = 0;
             break;
 
-			case MPEGTS_SKIP:
+			case PesSkip:
 				buf_size = 0;
             break;
         }
@@ -240,23 +250,24 @@ __int64 TsDemux::get_pts(const byte *p)
 //**********************************************************************
 void TsDemux::DecodePesPacket(MpegTSFilter* tss, const byte* pesPacket, int packetLen)
 {
-  int startcode=tss->header[3]|0x100;
+  int startcode=tss->m_header[3]|0x100;
   if (startcode >= 0x1e0 && startcode <= 0x1ef) 
   {
-	  tss->streamType=STREAM_VIDEO;
+	  tss->m_streamType=VideoStream;
 	  DecodeVideoPacket(tss, pesPacket, packetLen);
   } 
   else if (startcode >= 0x1c0 && startcode <= 0x1df) 
   {
-     tss->streamType=STREAM_AUDIO;
+     tss->m_streamType=AudioStream;
   } 
   else 
   {
-	  tss->streamType=STREAM_PRIVATE;
+	  tss->m_streamType=PrivateStream;
 	  return;
   }
 }
 
+//**************************************************************************************************************************************
 void TsDemux::DecodeVideoPacket(MpegTSFilter* tss, const byte* pesPacket, int packetLen)
 {
 	if (tss->m_videoPacketLen+packetLen>=sizeof(tss->m_videoPacket))
@@ -281,39 +292,39 @@ void TsDemux::DecodeVideoPacket(MpegTSFilter* tss, const byte* pesPacket, int pa
 			case 0xb3: // sequence header:
 			{
 
-				tss->videoWidth		   = (pesPacket[off+4]      <<4 )  + ((pesPacket[off+5]&0xf0)>>4);
-				tss->videoHeight	   =((pesPacket[off+5]&0xf) <<8 )  + (pesPacket[off+6]);
-				tss->videoAspectRatio  =(Mpeg2AspectRatio)((pesPacket[off+7]&0xf0)>>4 );
-				tss->videoframeRate    = (pesPacket[off+7]&0xf);
-				tss->videoBitRate	   = (pesPacket[off+8]      <<10)  + (pesPacket[off+9]<<2) + ((pesPacket[off+10]&0xc0)>>6);
-				switch (tss->videoframeRate)
+				tss->m_videoWidth		   = (pesPacket[off+4]      <<4 )  + ((pesPacket[off+5]&0xf0)>>4);
+				tss->m_videoHeight	   =((pesPacket[off+5]&0xf) <<8 )  + (pesPacket[off+6]);
+				tss->m_videoAspectRatio  =(Mpeg2AspectRatio)((pesPacket[off+7]&0xf0)>>4 );
+				tss->m_videoframeRate    = (pesPacket[off+7]&0xf);
+				tss->m_videoBitRate	   = (pesPacket[off+8]      <<10)  + (pesPacket[off+9]<<2) + ((pesPacket[off+10]&0xc0)>>6);
+				switch (tss->m_videoframeRate)
 				{
 					case 1: 
-						tss->videoframeRate=23976;
+						tss->m_videoframeRate=23976;
 					break;
 					case 2: 
-						tss->videoframeRate=24000;
+						tss->m_videoframeRate=24000;
 					break;
 					case 3: 
-						tss->videoframeRate=25000;
+						tss->m_videoframeRate=25000;
 					break;
 					case 4: 
-						tss->videoframeRate=29970;
+						tss->m_videoframeRate=29970;
 					break;
 					case 5: 
-						tss->videoframeRate=30000;
+						tss->m_videoframeRate=30000;
 					break;
 					case 6: 
-						tss->videoframeRate=50000;
+						tss->m_videoframeRate=50000;
 					break;
 					case 7: 
-						tss->videoframeRate=59940;
+						tss->m_videoframeRate=59940;
 					break;
 					case 8: 
-						tss->videoframeRate=60000;
+						tss->m_videoframeRate=60000;
 					break;
 					default:
-						tss->videoframeRate=0;
+						tss->m_videoframeRate=0;
 					break;
 				}
 			}
@@ -334,7 +345,7 @@ void TsDemux::DecodeVideoPacket(MpegTSFilter* tss, const byte* pesPacket, int pa
 			break;
 			case 0x0: // Picture
 			{
-				tss->frameType= (Mpeg2FrameType )((pesPacket[off+5]>>3)&7);
+				tss->m_videoFrameType= (Mpeg2FrameType )((pesPacket[off+5]>>3)&7);
 				int x=1;
 			}
 			break;
@@ -353,6 +364,8 @@ void TsDemux::DecodeVideoPacket(MpegTSFilter* tss, const byte* pesPacket, int pa
 		off+=3;
 	}
 }
+
+//**************************************************************************************************************************************
 int TsDemux::GetVideoPacket(int videoPid,byte* packet)
 {
 	imapFilters it = m_mapFilters.find(videoPid);
@@ -364,3 +377,35 @@ int TsDemux::GetVideoPacket(int videoPid,byte* packet)
 	return len;
 }
 
+//**************************************************************************************************************************************
+void TsDemux::GetVideoAttributes(int videoPid,int& videoWidth, int &videoHeight,Mpeg2AspectRatio& aspectRatio, __int64& averageTimePerFrame,long& videoBitRate,int& videoframeRate)
+{
+	videoPid=videoWidth=videoHeight=averageTimePerFrame=videoBitRate=videoframeRate=0;
+	aspectRatio=forbidden;
+
+	imapFilters it = m_mapFilters.find(videoPid);
+	if (it==m_mapFilters.end()) return ;
+	MpegTSFilter* tss=it->second;
+	videoWidth=tss->m_videoWidth;
+	videoHeight=tss->m_videoHeight;
+	aspectRatio=tss->m_videoAspectRatio;
+	averageTimePerFrame=tss->m_averageTimePerFrame;
+	videoBitRate=tss->m_videoBitRate;
+	videoframeRate=tss->m_videoframeRate;
+}
+
+
+//**************************************************************************************************************************************
+void TsDemux::GetPCRTime(Sections::PTSTime& time)
+{
+	Sections sections;
+	sections.PTSToPTSTime(m_pcrNow-m_pcrStart,&time);
+}
+
+//**************************************************************************************************************************************
+void TsDemux::GetPCRReferenceTime(REFERENCE_TIME& reftime)
+{
+	Sections::PTSTime time;
+	GetPCRTime(time);
+	reftime=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
+}
