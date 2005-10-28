@@ -63,7 +63,7 @@ protected:
 	map<int,bool>	m_mapDiscontinuitySent;
 	int				m_iPESPid;
 	typedef map<int,bool>::iterator imapDiscontinuitySent;
-	BYTE			m_samplePES[18800];
+	BYTE			m_samplePES[300000];
 	
 };
 

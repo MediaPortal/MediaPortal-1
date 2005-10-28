@@ -71,7 +71,7 @@ ULONGLONG CFilterVideoPin::Process(BYTE *ms, ULONGLONG& ptsStart,ULONGLONG& ptsE
 		{
 			bool isStart;
 			m_tsDemuxer.ParsePacket(ms+offset,isStart);
-			pesMemPointer+=m_tsDemuxer.GetVideoPacket(&m_samplePES[pesMemPointer]);
+			pesMemPointer+=m_tsDemuxer.GetVideoPacket(m_pSections->pids.VideoPid,&m_samplePES[pesMemPointer]);
 		}
 	}
 	return pesMemPointer;
@@ -278,7 +278,7 @@ void CFilterVideoPin::UpdatePositions(ULONGLONG& ptsNow)
 HRESULT CFilterVideoPin::GetData(byte* pData, int lDataLength, bool allowedToWait)
 {
 	HRESULT hr;
-	__int64 fileSize;
+//	__int64 fileSize;
 	do
 	{
 		if (m_bAboutToStop) return S_FALSE;
@@ -400,7 +400,7 @@ HRESULT	CFilterVideoPin::DecideBufferSize(IMemAllocator *pAlloc, ALLOCATOR_PROPE
         ppropInputRequest->cBuffers = 2;
     }
 
-	ppropInputRequest->cbBuffer = 18800;
+	ppropInputRequest->cbBuffer = sizeof(m_samplePES);
 	
     ALLOCATOR_PROPERTIES Actual;
     hr = pAlloc->SetProperties(ppropInputRequest, &Actual);
@@ -467,7 +467,7 @@ void CFilterVideoPin::SeekIFrame()
 		{
 			if (pts>0)
 			{
-				if (pts >= m_pSections->pids.StartPTS && pts <= m_pSections->pids.EndPTS)
+				if (pts >= (ULONGLONG)m_pSections->pids.StartPTS && pts <= (ULONGLONG)m_pSections->pids.EndPTS)
 				{
 					//LogDebug("pts:%x pid:%x", (DWORD)pts, header.Pid);
 					m_iPESPid=header.Pid;

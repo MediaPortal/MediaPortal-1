@@ -25,7 +25,6 @@
 //**********************************************************************
 TsDemux::TsDemux(void)
 {
-	m_videoPacketLen=0;
 }
 
 //**********************************************************************
@@ -53,7 +52,7 @@ bool TsDemux::ParsePacket(byte* packet, bool& isStart)
 	if (packet[0] != 0x47) return false;
     pid = ((packet[1] & 0x1f) << 8) | packet[2];
 	is_start = packet[1] & 0x40;
-	isStart=is_start;
+	isStart=(is_start!=0);
 
 	imapFilters it = m_mapFilters.find(pid);
 	if (it==m_mapFilters.end())
@@ -112,6 +111,7 @@ void TsDemux::ParsePacket(MpegTSFilter* tss,const byte *buf, int buf_size, int i
 	{
         tss->state = MPEGTS_HEADER;
         tss->data_index = 0;
+
     }
     p = buf;
     while (buf_size > 0) 
@@ -259,12 +259,12 @@ void TsDemux::DecodePesPacket(MpegTSFilter* tss, const byte* pesPacket, int pack
 
 void TsDemux::DecodeVideoPacket(MpegTSFilter* tss, const byte* pesPacket, int packetLen)
 {
-	if (m_videoPacketLen!=0 || packetLen>=sizeof(m_videoPacket))
+	if (tss->m_videoPacketLen+packetLen>=sizeof(tss->m_videoPacket))
 	{
 		int x=1;
 	}
-	memcpy(m_videoPacket,pesPacket,packetLen);
-	m_videoPacketLen=packetLen;
+	memcpy(&tss->m_videoPacket[tss->m_videoPacketLen],pesPacket,packetLen);
+	tss->m_videoPacketLen+=packetLen;
 
 	int off=0;
 	while (off < packetLen)
@@ -279,12 +279,58 @@ void TsDemux::DecodeVideoPacket(MpegTSFilter* tss, const byte* pesPacket, int pa
 		switch (streamId)
 		{
 			case 0xb3: // sequence header:
+			{
+
+				tss->videoWidth		   = (pesPacket[off+4]      <<4 )  + ((pesPacket[off+5]&0xf0)>>4);
+				tss->videoHeight	   =((pesPacket[off+5]&0xf) <<8 )  + (pesPacket[off+6]);
+				tss->videoAspectRatio  =(Mpeg2AspectRatio)((pesPacket[off+7]&0xf0)>>4 );
+				tss->videoframeRate    = (pesPacket[off+7]&0xf);
+				tss->videoBitRate	   = (pesPacket[off+8]      <<10)  + (pesPacket[off+9]<<2) + ((pesPacket[off+10]&0xc0)>>6);
+				switch (tss->videoframeRate)
+				{
+					case 1: 
+						tss->videoframeRate=23976;
+					break;
+					case 2: 
+						tss->videoframeRate=24000;
+					break;
+					case 3: 
+						tss->videoframeRate=25000;
+					break;
+					case 4: 
+						tss->videoframeRate=29970;
+					break;
+					case 5: 
+						tss->videoframeRate=30000;
+					break;
+					case 6: 
+						tss->videoframeRate=50000;
+					break;
+					case 7: 
+						tss->videoframeRate=59940;
+					break;
+					case 8: 
+						tss->videoframeRate=60000;
+					break;
+					default:
+						tss->videoframeRate=0;
+					break;
+				}
+			}
 			break;
 			case 0xb5: // extension
+			{
+			}
 			break;
 			case 0xb2: //userdata
+			{
+				int x=1;
+			}
 			break;
 			case 0xb8: //group of pictures
+			{
+				int x=1;
+			}
 			break;
 			case 0x0: // Picture
 			{
@@ -293,6 +339,9 @@ void TsDemux::DecodeVideoPacket(MpegTSFilter* tss, const byte* pesPacket, int pa
 			}
 			break;
 			case 0xb7: //sequence end
+			{
+				int x=1;
+			}
 			break;
 			default:
 				if (streamId>=0x01 && streamId <= 0xaf)
@@ -304,10 +353,14 @@ void TsDemux::DecodeVideoPacket(MpegTSFilter* tss, const byte* pesPacket, int pa
 		off+=3;
 	}
 }
-int TsDemux::GetVideoPacket(byte* packet)
+int TsDemux::GetVideoPacket(int videoPid,byte* packet)
 {
-	memcpy(packet,m_videoPacket,m_videoPacketLen);
-	int len=m_videoPacketLen;
-	m_videoPacketLen=0;
+	imapFilters it = m_mapFilters.find(videoPid);
+	if (it==m_mapFilters.end()) return 0;
+	MpegTSFilter* tss=it->second;
+	memcpy(packet,tss->m_videoPacket,tss->m_videoPacketLen);
+	int len=tss->m_videoPacketLen;
+	tss->m_videoPacketLen=0;
 	return len;
 }
+
