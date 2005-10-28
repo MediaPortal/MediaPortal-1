@@ -97,7 +97,7 @@ namespace MediaPortal.Configuration.Sections
 				audioRendererComboBox.SelectedItem = xmlreader.GetValueAsString("movieplayer", "audiorenderer", "Default DirectSound Device");
 				
 				int videoRenderer = xmlreader.GetValueAsInt("movieplayer", "vmr9", 0);
-				if(videoRenderer >= 0 && videoRenderer <= VideoRenderers.List.Length)				
+				if(videoRenderer >= 0 && videoRenderer < VideoRenderers.List.Length)				
 					videoRendererComboBox.SelectedItem = VideoRenderers.List[videoRenderer];
 
         //

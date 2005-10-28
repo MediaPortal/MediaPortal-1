@@ -395,7 +395,7 @@ namespace MediaPortal.Configuration.Sections
 				//
 				int videoRenderer = xmlreader.GetValueAsInt("mytv", "vmr9", 0);
 
-				if(videoRenderer >= 0 && videoRenderer <= VideoRenderers.List.Length)
+				if(videoRenderer >= 0 && videoRenderer < VideoRenderers.List.Length)
 					rendererComboBox.SelectedItem = VideoRenderers.List[videoRenderer];
 
 

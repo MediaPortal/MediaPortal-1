@@ -30,7 +30,7 @@ namespace MediaPortal.TV.Database
 	{
 		public int ID=-1;
 		public TVProgram Program=null;
-	}
+ 	}
 
 	public struct SpecialChannelsStruct
 	{
