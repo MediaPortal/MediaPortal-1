@@ -305,125 +305,136 @@ namespace MediaPortal.Configuration
 		/// </summary>
 		private void InitializeComponent()
 		{
-      System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(SettingsForm));
-      this.sectionTree = new System.Windows.Forms.TreeView();
-      this.cancelButton = new System.Windows.Forms.Button();
-      this.okButton = new System.Windows.Forms.Button();
-      this.headerLabel = new MediaPortal.UserInterface.Controls.MPGradientLabel();
-      this.holderPanel = new System.Windows.Forms.Panel();
-      this.beveledLine1 = new MediaPortal.UserInterface.Controls.MPBeveledLine();
-      this.applyButton = new System.Windows.Forms.Button();
-      this.SuspendLayout();
-      // 
-      // sectionTree
-      // 
-      this.sectionTree.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-        | System.Windows.Forms.AnchorStyles.Left)));
-      this.sectionTree.FullRowSelect = true;
-      this.sectionTree.HideSelection = false;
-      this.sectionTree.HotTracking = true;
-      this.sectionTree.ImageIndex = -1;
-      this.sectionTree.Indent = 19;
-      this.sectionTree.ItemHeight = 16;
-      this.sectionTree.Location = new System.Drawing.Point(16, 16);
-      this.sectionTree.Name = "sectionTree";
-      this.sectionTree.SelectedImageIndex = -1;
-      this.sectionTree.Size = new System.Drawing.Size(184, 440);
-      this.sectionTree.TabIndex = 2;
-      this.sectionTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.sectionTree_AfterSelect);
-      // 
-      // cancelButton
-      // 
-      this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.cancelButton.Location = new System.Drawing.Point(621, 479);
-      this.cancelButton.Name = "cancelButton";
-      this.cancelButton.TabIndex = 1;
-      this.cancelButton.Text = "Cancel";
-      this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
-      // 
-      // okButton
-      // 
-      this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.okButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.okButton.Location = new System.Drawing.Point(542, 479);
-      this.okButton.Name = "okButton";
-      this.okButton.TabIndex = 0;
-      this.okButton.Text = "OK";
-      this.okButton.Click += new System.EventHandler(this.okButton_Click);
-      // 
-      // headerLabel
-      // 
-      this.headerLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.headerLabel.Caption = "";
-      this.headerLabel.FirstColor = System.Drawing.SystemColors.InactiveCaption;
-      this.headerLabel.Font = new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-      this.headerLabel.LastColor = System.Drawing.Color.WhiteSmoke;
-      this.headerLabel.Location = new System.Drawing.Point(216, 16);
-      this.headerLabel.Name = "headerLabel";
-      this.headerLabel.PaddingLeft = 2;
-      this.headerLabel.Size = new System.Drawing.Size(472, 24);
-      this.headerLabel.TabIndex = 3;
-      this.headerLabel.TabStop = false;
-      this.headerLabel.TextColor = System.Drawing.Color.WhiteSmoke;
-      this.headerLabel.TextFont = new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-      // 
-      // holderPanel
-      // 
-      this.holderPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-        | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.holderPanel.AutoScroll = true;
-      this.holderPanel.BackColor = System.Drawing.SystemColors.Control;
-      this.holderPanel.Location = new System.Drawing.Point(216, 48);
-      this.holderPanel.Name = "holderPanel";
-      this.holderPanel.Size = new System.Drawing.Size(472, 408);
-      this.holderPanel.TabIndex = 4;
-      // 
-      // beveledLine1
-      // 
-      this.beveledLine1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.beveledLine1.Location = new System.Drawing.Point(8, 469);
-      this.beveledLine1.Name = "beveledLine1";
-      this.beveledLine1.Size = new System.Drawing.Size(688, 2);
-      this.beveledLine1.TabIndex = 5;
-      this.beveledLine1.TabStop = false;
-      // 
-      // applyButton
-      // 
-      this.applyButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.applyButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.applyButton.Location = new System.Drawing.Point(462, 479);
-      this.applyButton.Name = "applyButton";
-      this.applyButton.TabIndex = 6;
-      this.applyButton.TabStop = false;
-      this.applyButton.Text = "Apply";
-      this.applyButton.Visible = false;
-      this.applyButton.Click += new System.EventHandler(this.applyButton_Click);
-      // 
-      // SettingsForm
-      // 
-      this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-      this.AutoScroll = true;
-      this.ClientSize = new System.Drawing.Size(704, 510);
-      this.Controls.Add(this.applyButton);
-      this.Controls.Add(this.beveledLine1);
-      this.Controls.Add(this.holderPanel);
-      this.Controls.Add(this.headerLabel);
-      this.Controls.Add(this.okButton);
-      this.Controls.Add(this.cancelButton);
-      this.Controls.Add(this.sectionTree);
-      this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-      this.Name = "SettingsForm";
-      this.Text = "Settings";
-      this.Load += new System.EventHandler(this.SettingsForm_Load);
-      this.Closed += new System.EventHandler(this.SettingsForm_Closed);
-      this.ResumeLayout(false);
+			System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(SettingsForm));
+			this.sectionTree = new System.Windows.Forms.TreeView();
+			this.cancelButton = new System.Windows.Forms.Button();
+			this.okButton = new System.Windows.Forms.Button();
+			this.headerLabel = new MediaPortal.UserInterface.Controls.MPGradientLabel();
+			this.holderPanel = new System.Windows.Forms.Panel();
+			this.beveledLine1 = new MediaPortal.UserInterface.Controls.MPBeveledLine();
+			this.applyButton = new System.Windows.Forms.Button();
+			this.SuspendLayout();
+			// 
+			// sectionTree
+			// 
+			this.sectionTree.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+				| System.Windows.Forms.AnchorStyles.Left)));
+			this.sectionTree.FullRowSelect = true;
+			this.sectionTree.HideSelection = false;
+			this.sectionTree.HotTracking = true;
+			this.sectionTree.ImageIndex = -1;
+			this.sectionTree.Indent = 19;
+			this.sectionTree.ItemHeight = 16;
+			this.sectionTree.Location = new System.Drawing.Point(16, 16);
+			this.sectionTree.Name = "sectionTree";
+			this.sectionTree.SelectedImageIndex = -1;
+			this.sectionTree.Size = new System.Drawing.Size(184, 440);
+			this.sectionTree.TabIndex = 2;
+			this.sectionTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.sectionTree_AfterSelect);
+			this.sectionTree.BeforeSelect += new System.Windows.Forms.TreeViewCancelEventHandler(this.sectionTree_BeforeSelect);
+			// 
+			// cancelButton
+			// 
+			this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.cancelButton.Location = new System.Drawing.Point(621, 479);
+			this.cancelButton.Name = "cancelButton";
+			this.cancelButton.TabIndex = 1;
+			this.cancelButton.Text = "Cancel";
+			this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
+			// 
+			// okButton
+			// 
+			this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.okButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.okButton.Location = new System.Drawing.Point(542, 479);
+			this.okButton.Name = "okButton";
+			this.okButton.TabIndex = 0;
+			this.okButton.Text = "OK";
+			this.okButton.Click += new System.EventHandler(this.okButton_Click);
+			// 
+			// headerLabel
+			// 
+			this.headerLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+				| System.Windows.Forms.AnchorStyles.Right)));
+			this.headerLabel.Caption = "";
+			this.headerLabel.FirstColor = System.Drawing.SystemColors.InactiveCaption;
+			this.headerLabel.Font = new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.headerLabel.LastColor = System.Drawing.Color.WhiteSmoke;
+			this.headerLabel.Location = new System.Drawing.Point(216, 16);
+			this.headerLabel.Name = "headerLabel";
+			this.headerLabel.PaddingLeft = 2;
+			this.headerLabel.Size = new System.Drawing.Size(472, 24);
+			this.headerLabel.TabIndex = 3;
+			this.headerLabel.TabStop = false;
+			this.headerLabel.TextColor = System.Drawing.Color.WhiteSmoke;
+			this.headerLabel.TextFont = new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			// 
+			// holderPanel
+			// 
+			this.holderPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+				| System.Windows.Forms.AnchorStyles.Left) 
+				| System.Windows.Forms.AnchorStyles.Right)));
+			this.holderPanel.AutoScroll = true;
+			this.holderPanel.BackColor = System.Drawing.SystemColors.Control;
+			this.holderPanel.Location = new System.Drawing.Point(216, 48);
+			this.holderPanel.Name = "holderPanel";
+			this.holderPanel.Size = new System.Drawing.Size(472, 408);
+			this.holderPanel.TabIndex = 4;
+			// 
+			// beveledLine1
+			// 
+			this.beveledLine1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+				| System.Windows.Forms.AnchorStyles.Right)));
+			this.beveledLine1.Location = new System.Drawing.Point(8, 469);
+			this.beveledLine1.Name = "beveledLine1";
+			this.beveledLine1.Size = new System.Drawing.Size(688, 2);
+			this.beveledLine1.TabIndex = 5;
+			this.beveledLine1.TabStop = false;
+			// 
+			// applyButton
+			// 
+			this.applyButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.applyButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.applyButton.Location = new System.Drawing.Point(462, 479);
+			this.applyButton.Name = "applyButton";
+			this.applyButton.TabIndex = 6;
+			this.applyButton.TabStop = false;
+			this.applyButton.Text = "Apply";
+			this.applyButton.Visible = false;
+			this.applyButton.Click += new System.EventHandler(this.applyButton_Click);
+			// 
+			// SettingsForm
+			// 
+			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+			this.AutoScroll = true;
+			this.ClientSize = new System.Drawing.Size(704, 510);
+			this.Controls.Add(this.applyButton);
+			this.Controls.Add(this.beveledLine1);
+			this.Controls.Add(this.holderPanel);
+			this.Controls.Add(this.headerLabel);
+			this.Controls.Add(this.okButton);
+			this.Controls.Add(this.cancelButton);
+			this.Controls.Add(this.sectionTree);
+			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+			this.Name = "SettingsForm";
+			this.Text = "Settings";
+			this.Load += new System.EventHandler(this.SettingsForm_Load);
+			this.Closed += new System.EventHandler(this.SettingsForm_Closed);
+			this.ResumeLayout(false);
 
-    }
+		}
 		#endregion
+
+		private void sectionTree_BeforeSelect(object sender, System.Windows.Forms.TreeViewCancelEventArgs e)
+		{
+			SectionTreeNode treeNode = e.Node as SectionTreeNode;
+
+			if(treeNode != null)
+			{
+				e.Cancel = !treeNode.Section.CanActivate;
+			}
+		}
 
 		/// <summary>
 		/// 
@@ -436,8 +447,8 @@ namespace MediaPortal.Configuration
 
 			if(treeNode != null)
 			{
-				headerLabel.Caption = treeNode.Section.Text;
-				ActivateSection(treeNode.Section);
+				if(ActivateSection(treeNode.Section))
+					headerLabel.Caption = treeNode.Section.Text;
 			}
 		}
 
@@ -445,14 +456,18 @@ namespace MediaPortal.Configuration
 		/// 
 		/// </summary>
 		/// <param name="section"></param>
-		private void ActivateSection(SectionSettings section)
+		private bool ActivateSection(SectionSettings section)
 		{
-			section.Dock = DockStyle.Fill;
+			if(section.CanActivate == false)
+				return false;
 
+			section.Dock = DockStyle.Fill;
 			section.OnSectionActivated();
 
 			holderPanel.Controls.Clear();
 			holderPanel.Controls.Add(section);
+
+			return true;
 		}
 
 		private void SettingsForm_Closed(object sender, System.EventArgs e)
@@ -725,6 +740,5 @@ namespace MediaPortal.Configuration
       }
       return true;
     }
-
 	}
 }

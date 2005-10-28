@@ -157,6 +157,11 @@ namespace MediaPortal.Configuration
 		{
 		}
 
+		public virtual bool CanActivate
+		{
+			get { return true; }
+		}
+
 		#region Component Designer generated code
 		/// <summary> 
 		/// Required method for Designer support - do not modify 
