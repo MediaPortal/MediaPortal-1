@@ -55,7 +55,7 @@ namespace System.Windows
 
 		public DependencyObject Parent
 		{
-			get { return null; }
+			get { throw new NotImplementedException(); }
 		}
 
 		protected internal virtual IEnumerator LogicalChildren

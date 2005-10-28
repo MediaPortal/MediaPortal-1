@@ -308,7 +308,7 @@ namespace System.Windows
 
 		public DependencyObject Parent
 		{	
-			get { return LogicalTreeHelper.GetParent(this); }
+			get { throw new NotImplementedException(); }
 		}
 
 		IResourceHost IResourceHost.ParentResourceHost
