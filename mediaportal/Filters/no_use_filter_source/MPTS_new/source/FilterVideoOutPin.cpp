@@ -160,59 +160,59 @@ HRESULT CFilterVideoPin::FillBuffer(IMediaSample *pSample)
 		LogDebug("FAILED: GetPointer() failed:%x",hr);
 		return hr;
 	}
-	lDataLength = 18800;
-	hr=GetData(buffer,lDataLength,true);
-	if (hr!=S_OK) 
+	int videoSampleLen=0;
+	do
 	{
-		LogDebug("FAILED to get data from file");
-		return S_FALSE;
-	}
-	CopyMemory(audioBuffer,buffer,18800);
-
-	ULONGLONG ptsStart, ptsEnd;
-	lDataLength=Process(buffer, ptsStart, ptsEnd);
-
-	if (ptsStart!=0)
-	{
-		ptsStart -= m_pSections->pids.StartPTS;
-		ptsEnd   -= m_pSections->pids.StartPTS;
-
-
-		REFERENCE_TIME refStart,refEnd;
-		Sections::PTSTime time;
-		m_pSections->PTSToPTSTime(ptsStart,&time);
-		refStart=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
-
-		m_pSections->PTSToPTSTime(ptsEnd,&time);
-		refEnd=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
-
-		m_pMPTSFilter->m_pAudioPin->Process(audioBuffer,&refStart,&refEnd);
-		pSample->SetTime(&refStart,&refEnd+1000);
-
-	}
-	else
-	{
-		m_pMPTSFilter->m_pAudioPin->Process(audioBuffer,NULL,NULL);
-		pSample->SetTime(NULL,NULL);
-	}
-
-	if(lDataLength)
-	{
-		CopyMemory(pData,m_samplePES,lDataLength);
-
-		pSample->SetActualDataLength(lDataLength);
-		if(m_bDiscontinuity==TRUE)
+		lDataLength = 18800;
+		hr=GetData(buffer,lDataLength,true);
+		if (hr!=S_OK) 
 		{
-			m_bDiscontinuity=FALSE;
-			pSample->SetDiscontinuity(TRUE);
+			LogDebug("FAILED to get data from file");
+			return S_FALSE;
 		}
-	}
-	else
-	{
-		pSample->SetActualDataLength(0);
-	}
-	//
+		CopyMemory(audioBuffer,buffer,18800);
 
+		ULONGLONG ptsStart, ptsEnd;
+		videoSampleLen=Process(buffer, ptsStart, ptsEnd);
+
+		if (ptsStart!=0)
+		{
+			ptsStart -= m_pSections->pids.StartPTS;
+			ptsEnd   -= m_pSections->pids.StartPTS;
+
+
+			REFERENCE_TIME refStart,refEnd;
+			Sections::PTSTime time;
+			m_pSections->PTSToPTSTime(ptsStart,&time);
+			refStart=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
+
+			m_pSections->PTSToPTSTime(ptsEnd,&time);
+			refEnd=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
+
+			//m_pMPTSFilter->m_pAudioPin->Process(audioBuffer,&refStart,&refEnd);
+			//pSample->SetTime(&refStart,&refEnd+1000);
+			pSample->SetTime(NULL,NULL);
+
+		}
+		else
+		{
+			//m_pMPTSFilter->m_pAudioPin->Process(audioBuffer,NULL,NULL);
+			pSample->SetTime(NULL,NULL);
+		}
+
+		if(videoSampleLen)
+		{
+			CopyMemory(pData,m_samplePES,videoSampleLen);
+
+			pSample->SetActualDataLength(videoSampleLen);
+			if(m_bDiscontinuity==TRUE)
+			{
+				m_bDiscontinuity=FALSE;
+				pSample->SetDiscontinuity(TRUE);
+			}
+		}
+		//
+	} while (videoSampleLen==0);
 	return S_OK;
 }
 
@@ -429,7 +429,7 @@ HRESULT	CFilterVideoPin::GetMediaType( CMediaType *pMediaType)
     CheckPointer(pMediaType,E_POINTER); 
 
 	pMediaType->InitMediaType();
-	pMediaType->SetType(&MEDIATYPE_MPEG2_PES);
+	pMediaType->SetType(&MEDIATYPE_Video);
 	pMediaType->SetSubtype(&MEDIASUBTYPE_MPEG2_VIDEO);
 	pMediaType->SetFormatType(&FORMAT_MPEG2Video);
 	pMediaType->SetFormat(Mpeg2ProgramVideo,sizeof(Mpeg2ProgramVideo));
