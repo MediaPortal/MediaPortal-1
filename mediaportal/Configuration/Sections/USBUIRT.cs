@@ -73,6 +73,9 @@ namespace MediaPortal.Configuration.Sections
 			InitializeComponent();
 
 			//MediaPortal.IR.USBUIRT.Create(new MediaPortal.IR.USBUIRT.OnRemoteCommand(OnRemoteCommand));
+			if(MediaPortal.IR.USBUIRT.Instance == null)
+				return;
+
 			lblUSBUIRTVersion.Text=MediaPortal.IR.USBUIRT.Instance.GetVersions();
 		}
 
@@ -105,10 +108,18 @@ namespace MediaPortal.Configuration.Sections
 	
 				int repeatCount = xmlreader.GetValueAsInt("USBUIRT", "repeatcount", 2) ;
 				commandRepeatNumUpDn.Value = repeatCount;
+
+				if(MediaPortal.IR.USBUIRT.Instance == null)
+					return;
+
 				MediaPortal.IR.USBUIRT.Instance.CommandRepeatCount = repeatCount;
 
 				int interCommandDelay = xmlreader.GetValueAsInt("USBUIRT", "commanddelay", 100) ;
 				interCommandDelayNumUpDn.Value = interCommandDelay;
+
+				if(MediaPortal.IR.USBUIRT.Instance == null)
+					return;
+
 				MediaPortal.IR.USBUIRT.Instance.InterCommandDelay = interCommandDelay;
 
 				EnableTestIrControls();
@@ -871,6 +882,13 @@ namespace MediaPortal.Configuration.Sections
 		{
 			MediaPortal.IR.USBUIRT.Instance.SkipLearnForCurrentCode = true;
 		}
+
+		public override bool CanActivate
+		{
+			get { return MediaPortal.IR.USBUIRT.Instance != null; }
+		}
+
+
 	}
 }
 
