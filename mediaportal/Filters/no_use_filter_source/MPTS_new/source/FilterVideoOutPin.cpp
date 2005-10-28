@@ -204,6 +204,7 @@ HRESULT CFilterVideoPin::OnThreadStartPlay()
 	LogDebug("pin:OnThreadStartPlay() %x-%x pos:%x", (DWORD)m_rtStart, (DWORD)m_rtStop, (DWORD)m_pSections->m_pFileReader->GetFilePointer());
 	m_bDiscontinuity=TRUE;
 	m_pBuffers->Clear();
+	SeekIFrame();
 	HRESULT hr=DeliverNewSegment(m_rtStart, m_rtStop, m_dRateSeeking);
 	hr=m_pMPTSFilter->m_pAudioPin->DeliverNewSegment(m_rtStart, m_rtStop, m_dRateSeeking);
 	return CSourceStream::OnThreadStartPlay( );
@@ -409,23 +410,73 @@ HRESULT	CFilterVideoPin::GetMediaType( CMediaType *pMediaType)
 	int len=sizeof(Mpeg2ProgramVideo);
 	return S_OK;
 }
-//HRESULT	CFilterVideoPin::GetSample(IMediaSample** ppSample, long len)
-//{
-//	return S_OK;
-//}
-//HRESULT	CFilterVideoPin::Active()
-//{
-//	return S_OK;
-//}
+void CFilterVideoPin::SeekIFrame()
+{
+	try
+	{
+	if (m_pSections->pids.VideoPid<=0) return;
+	m_pBuffers->Clear();
+	// find first i-frame
+	TsDemux tsDemuxer;
+	__int64 startPointer=m_pFileReader->GetFilePointer();;
+	__int64 filePointer=m_pFileReader->GetFilePointer();
+	ULONGLONG pts;
+	LogDebug("find iframe pos:%x",(DWORD)filePointer);
+	BYTE pData[188];
+	Sections::TSHeader header;
+	bool iFrameFound=false;
+	while (true)
+	{
+		HRESULT hr=GetData(pData,188,false);
+		
+		if (hr!=S_OK) 
+		{
+			LogDebug("FAILED : GetData() in seekiframe!");
+			return ;
+		}
+		m_pSections->GetTSHeader(pData,&header);
 
-//HRESULT CFilterVideoPin::GetMediaType(CMediaType *pmt)
-//{
-//
-//    return S_OK;
-//}
+		int pid=header.Pid;
+		if(m_pSections->CurrentPTS("ts:",pData,pts)==S_OK)
+		{
+			if (pts>0)
+			{
+				if (pts >= m_pSections->pids.StartPTS && pts <= m_pSections->pids.EndPTS)
+				{
+					//LogDebug("pts:%x pid:%x", (DWORD)pts, header.Pid);
+					m_iPESPid=header.Pid;
+					UpdatePositions(pts);
+				}
+			}
+		}
 
-//HRESULT CFilterVideoPin::CompleteConnect(IPin *pReceivePin)
-//{
-//
-//	return S_OK;
-//}
+		if (header.Pid==m_pSections->pids.VideoPid)
+		{
+			bool isStart;
+			if ( tsDemuxer.ParsePacket(pData, isStart))
+			{
+				if (isStart)
+					startPointer=filePointer;
+				filePointer=0;
+				m_pFileReader->SetFilePointer(startPointer,FILE_BEGIN);	
+				LogDebug("iframe found at pos:%x",startPointer);
+				iFrameFound=true;
+				break;
+			}
+			if (isStart)
+				startPointer=filePointer;
+		}
+		filePointer+=188;
+	}
+	if (false==iFrameFound)
+	{
+			LogDebug("FAILED : Iframe not found!");
+	}
+	else LogDebug("Iframe found!");
+	}
+	catch(...)
+	{
+		LogDebug("FAILED : exception while seeking for iframe!");
+	}
+	
+}
