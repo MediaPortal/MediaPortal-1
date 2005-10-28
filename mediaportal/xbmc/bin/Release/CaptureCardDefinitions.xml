@@ -333,72 +333,6 @@
     </tv>
   </capturecard> 
   
-<!--   We use the 1.2.1.9 driver filter names now - drivers can be found here... http://www.digitalrise.biz/  -->
-
-  <capturecard commercialname="Twinhan DVB-S" capturename="TwinHan PCI BDA Capture Filter" devid="ven_109e&amp;dev_0878&amp;subsys_00011822&amp;rev_11">
-    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
-    <tv>
-      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
-      <filters>
-        <filter cat="networkprovider" name="Microsoft DVBS Network Provider"  	checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="TwinHan PCI BDA Tuner Filter"    	checkdevice="true"></filter>
-        <filter cat="capture"         name="TwinHan PCI BDA Capture Filter"   	checkdevice="true"></filter>
-      </filters>
-      <connections>
-		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
-		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
-      </connections>
-    </tv>
-  </capturecard>
-  
-  <capturecard commercialname="Twinhan VisionDTV DVB-T" capturename="TwinHan DVBT BDA Capture Filter" devid="ven_109e&amp;dev_0878&amp;subsys_00011822&amp;rev_11">
-    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
-    <tv>
-      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
-      <filters>
-        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"  	checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="TwinHan DVBT BDA Tuner Filter"    	checkdevice="true"></filter>
-        <filter cat="capture"         name="TwinHan DVBT BDA Capture Filter"   	checkdevice="true"></filter>
-      </filters>
-      <connections>
-		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
-		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
-      </connections>
-    </tv>
-  </capturecard>
-
-  <capturecard commercialname="Twinhan VisionDTV DVB-S" capturename="TwinHan DVBS BDA Capture Filter" devid="ven_109e&amp;dev_0878&amp;subsys_00011822&amp;rev_11">
-    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
-    <tv>
-      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
-      <filters>
-        <filter cat="networkprovider" name="Microsoft DVBS Network Provider"    checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="TwinHan DVBS BDA Tuner Filter"	checkdevice="true"></filter>
-        <filter cat="capture"         name="TwinHan DVBS BDA Capture Filter"	checkdevice="true"></filter>
-      </filters>
-      <connections>
-		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
-		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
-      </connections>
-    </tv>
-  </capturecard>
-
-  <capturecard commercialname="Twinhan VisionDTV DVB-C" capturename="TwinHan DVBC BDA Capture Filter" devid="ven_109e&amp;dev_0878&amp;subsys_00011822&amp;rev_11"> 
-    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities> 
-    <tv> 
-      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface> 
-      <filters> 
-		<filter cat="networkprovider" 	name="Microsoft DVBC Network Provider"	checkdevice="false"></filter> 
-		<filter cat="tunerdevice" 	name="TwinHan DVBC BDA Tuner Filter" 	checkdevice="true"></filter> 
-		<filter cat="capture" 		name="TwinHan DVBC BDA Capture Filter" 	checkdevice="true"></filter> 
-      </filters> 
-      <connections> 
-		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection> 
-		<connection sourcefilter="tunerdevice" 	   sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection> 
-      </connections> 
-    </tv> 
-  </capturecard> 
-
   <capturecard commercialname="Chaintech DTT-1000" capturename="THDTV DVB-t BDA Capture Filter" devid="ven_109e&amp;dev_0878&amp;subsys_fc00270&amp;rev_11">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
@@ -6403,8 +6337,8 @@
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider"  	checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="DTV-DVBT 878 Digital Capture Filter"    	checkdevice="true"></filter>
-        <filter cat="capture"         name="DTV-DVBT 878 Digital Tuner Filter"   	checkdevice="true"></filter>
+        <filter cat="tunerdevice"     name="DTV-DVBT 878 Digital Tuner Filter"    	checkdevice="true"></filter>
+        <filter cat="capture"         name="DTV-DVBT 878 Digital Capture Filter"   	checkdevice="true"></filter>
       </filters>
       <connections>
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -6419,8 +6353,8 @@
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBS Network Provider"  	checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="DTV-DVBS 878 Digital Capture Filter"    	checkdevice="true"></filter>
-        <filter cat="capture"         name="DTV-DVBS 878 Digital Tuner Filter"   	checkdevice="true"></filter>
+        <filter cat="tunerdevice"     name="DTV-DVBS 878 Digital Tuner Filter"    	checkdevice="true"></filter>
+        <filter cat="capture"         name="DTV-DVBS 878 Digital Capture Filter"   	checkdevice="true"></filter>
       </filters>
       <connections>
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
