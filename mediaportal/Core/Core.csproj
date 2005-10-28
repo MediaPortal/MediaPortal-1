@@ -1839,6 +1839,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Input\IFrameworkInputElement.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Input\IInputElement.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -2484,6 +2489,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows\EventRoute.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows\EventSetter.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -2665,6 +2675,21 @@
                 />
                 <File
                     RelPath = "System.Windows\SetValueOverride.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows\SizeChangedEventArgs.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows\SizeChangedEventHandler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows\SizeChangedInfo.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -3063,7 +3088,6 @@
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
-                <Folder RelPath = "Xaml\" />
             </Include>
         </Files>
     </CSHARP>

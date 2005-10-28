@@ -27,6 +27,7 @@ using System;
 
 namespace System.Windows
 {
+	// http://channel9.msdn.com/ShowPost.aspx?PostID=73455
 	public struct RoutedEventHandlerInfo
 	{
 		#region Constructors
@@ -36,7 +37,7 @@ namespace System.Windows
 			_handler = handler;
 			_isInvokeHandlerEventsToo = isInvokeHandlerEventsToo;
 			_globalIndex = _globalIndexNext++;
-   }
+		}
 
 		#endregion Constructors
 
@@ -60,6 +61,15 @@ namespace System.Windows
 			return _handler.GetHashCode();
 		}
 
+		internal void InvokeHandler(object target, RoutedEventArgs routedEventArgs)
+		{
+			// RoutedEventArgs.InvokeEventHandler
+		}
+	
+		#endregion Methods
+
+		#region Operators
+
 		public static bool operator ==(RoutedEventHandlerInfo handlerInfo1, RoutedEventHandlerInfo handlerInfo2)
 		{
 			return handlerInfo1._handler == handlerInfo2._handler && handlerInfo1._isInvokeHandlerEventsToo == handlerInfo2._isInvokeHandlerEventsToo;
@@ -70,7 +80,7 @@ namespace System.Windows
 			return handlerInfo1._handler != handlerInfo2._handler && handlerInfo1._isInvokeHandlerEventsToo != handlerInfo2._isInvokeHandlerEventsToo;
 		}
 
-		#endregion Methods
+		#endregion Operators
 
 		#region Properties
 

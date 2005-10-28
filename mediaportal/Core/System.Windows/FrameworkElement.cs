@@ -31,10 +31,11 @@ using System.Windows;
 using MediaPortal.Animation;
 using MediaPortal.Drawing;
 using MediaPortal.Drawing.Layouts;
+using MediaPortal.Input;
 
 namespace System.Windows
 {
-	public class FrameworkElement : UIElement, IResourceHost, ISupportInitialize
+	public class FrameworkElement : UIElement, IFrameworkInputElement, IInputElement, ISupportInitialize, IResourceHost
 	{
 		#region Constructors
 
@@ -55,13 +56,11 @@ namespace System.Windows
 			LoadedEvent = EventManager.RegisterRoutedEvent("Loaded", RoutingStrategy.Direct, typeof(RoutedEventHandler), typeof(FrameworkElement));
 			RequestBringIntoViewEvent = EventManager.RegisterRoutedEvent("RequestBringIntoView", RoutingStrategy.Direct, typeof(RequestBringIntoViewEventHandler), typeof(FrameworkElement));
 			SizeChangedEvent = EventManager.RegisterRoutedEvent("SizeChanged", RoutingStrategy.Direct, typeof(RoutedEventHandler), typeof(FrameworkElement));
+			UnloadedEvent = EventManager.RegisterRoutedEvent("Unloaded", RoutingStrategy.Direct, typeof(RoutedEventHandler), typeof(FrameworkElement));
 		}	
 			
 		public FrameworkElement()
 		{
-			// TODO: prevent unused compiler warning
-			if(Unloaded != null)
-				Unloaded(null, null);
 		}
 
 		#endregion Constructors
@@ -88,7 +87,11 @@ namespace System.Windows
 			remove	{ RemoveHandler(SizeChangedEvent, value); }
 		}
 
-		public event EventHandler Unloaded;
+		public event RoutedEventHandler Unloaded
+		{
+			add		{ AddHandler(UnloadedEvent, value); } 
+			remove	{ RemoveHandler(UnloadedEvent, value); }
+		}
 
 		#endregion Events
 
@@ -97,10 +100,22 @@ namespace System.Windows
 		public static readonly RoutedEvent LoadedEvent;
 		public static readonly RoutedEvent RequestBringIntoViewEvent;
 		public static readonly RoutedEvent SizeChangedEvent;
+		public static readonly RoutedEvent UnloadedEvent;
 
 		#endregion Events (Routed)
 
 		#region Methods
+
+		protected internal void AddLogicalChild(object child)
+		{
+			
+		}
+
+		protected internal override object AdjustEventSource(RoutedEventArgs args)
+		{
+			// return null if no change occurred
+			return null;
+		}
 
 		private static void ActualHeightPropertyInvalidated(DependencyObject d)
 		{
@@ -134,36 +149,128 @@ namespace System.Windows
 
 		void ISupportInitialize.BeginInit()
 		{
+			BeginInit();
+		}
+
+		public virtual void BeginInit()
+		{
+			if(_isInitializing)
+				throw new InvalidOperationException();
+		}
+
+		public void BeginStoryboard(Storyboard storyboard)
+		{
+			BeginStoryboard(storyboard, HandoffBehavior.SnapshotAndReplace, false);
+		}
+
+		public void BeginStoryboard(Storyboard storyboard, HandoffBehavior handoffBehavior)
+		{
+			BeginStoryboard(storyboard, handoffBehavior, false);
+		}
+
+		public void BeginStoryboard(Storyboard storyboard, HandoffBehavior handoffBehavior, bool isControllable)
+		{
+			// For the signatures that do not use the isControllable, parameter, or when that 
+			// parameter is specified false, the timeline clocks associated with the animation
+			// are removed as soon as it reaches the "Fill" period. Therefore the animation can't
+			// be restarted after running once. Note that controlling an animation also requires
+			// that the storyboard be named or accessible as an instance in procedural code.
+
 		}
 
 		public void BringIntoView()
 		{
-			throw new NotImplementedException();
+			BringIntoView(new Rect(Point.Empty, RenderSize));
+		}
+
+		public void BringIntoView(Rect targetRectangle)
+		{
+			// ScrollContentPresenter.MakeVisible
+		}
+
+		protected override sealed bool BuildRouteCore(EventRoute route, RoutedEventArgs args)
+		{
+			return VisualParent == null;
 		}
 
 		void ISupportInitialize.EndInit()
 		{
+			EndInit();
+		}
+
+		public virtual void EndInit()
+		{
+			if(_isInitializing == false)
+				return;
+
 			OnInitialized(EventArgs.Empty);
 		}
 
+		public virtual bool EnsureVisuals()
+		{
+			return false;
+		}
+			
 		public object FindName(string name)
 		{
-			throw new NotImplementedException();
+			object namedObject = null;
+			
+			if(_names != null)
+				namedObject = _names[name];
+
+			//			if(namedObject == null)
+			//				namedObject = LogicalTreeHelper.GetChildren(this);
+
+			return namedObject;
 		}
+
+		public object FindResource(object key)
+		{
+			object resource = null;
+
+			if(_resources != null)
+				resource = _resources[key];
+
+			if(resource == null)
+				resource = LogicalTreeHelper.FindLogicalNode(this, (string)key);
+
+			return resource;
+		}
+
+//		protected internal override IAutomationPropertyProvider GetAutomationProvider ()
+//		{
+//		}
+
+//		public BindingExpression GetBindingExpression(DependencyProperty dp)
+//		{
+//		}
 
 		public static FlowDirection GetFlowDirection(DependencyObject d)
 		{
 			return (FlowDirection)d.GetValue(FlowDirectionProperty);
 		}
 
-		object IResourceHost.GetResource(object key)
+		protected override Geometry GetLayoutClip(Size layoutSlotSize)
 		{
-			if(_resources == null)
-				return null;
-
-			return _resources[key];
+			return null;
 		}
 
+		object IResourceHost.GetResource(object key)
+		{
+			return FindResource(key);
+		}
+
+		// MSDN states to use FindName instead
+		protected internal DependencyObject GetTemplateChild(string childName)
+		{
+			return FindName(childName) as DependencyObject;
+		}
+
+		protected internal override DependencyObject GetUIParentCore()
+		{
+			return this.VisualParent;
+		}
+	
 		protected override object GetValueCore(DependencyProperty dp, object baseValue, PropertyMetadata metadata)
 		{
 			// no default implementation
@@ -177,7 +284,7 @@ namespace System.Windows
 
 		protected virtual Size MeasureOverride(Size availableSize)
 		{
-			return new Size((double)GetValue(WidthProperty), (double)GetValue(HeightProperty));
+			return availableSize;
 		}
 
 		protected virtual void OnInitialized(EventArgs e)
@@ -190,11 +297,27 @@ namespace System.Windows
 			PrepareTriggers();
 		}
 
+		protected override void OnPropertyInvalidated(DependencyProperty dp, PropertyMetadata metadata)
+		{
+		}
+			
+		protected internal override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
+		{
+		}
+			
 		protected internal override void OnVisualParentChanged(Visual oldParent)
 		{
+			// the default implementation of this virtual method queries for the new parent,
+			// and raises various initialization events/sets internal flags about initialization
+			// state as appropriate. Always call base() to preserve this behavior.
+
 			OnInitialized(EventArgs.Empty);
 		}
 			
+		protected internal virtual void ParentLayoutInvalidated(UIElement child)
+		{
+		}
+
 		protected void PrepareTriggers()
 		{
 			if(_triggers == null)
@@ -211,19 +334,27 @@ namespace System.Windows
 
 		private void PrepareEventTrigger(EventTrigger trigger)
 		{
-			//			MediaPortal.GUI.Library.Log.Write("PrepareTriggers: {0}", trigger.RoutedEvent.ToString());
+//			MediaPortal.GUI.Library.Log.Write("PrepareTriggers: {0}", trigger.RoutedEvent.ToString());
 
-			//			if(trigger.RoutedEvent == Page.LoadedEvent)
-			//				MediaPortal.GUI.Library.Log.Write("FIRE FIRE FIRE IN THE WHOLE");
+//			if(trigger.RoutedEvent == Page.LoadedEvent)
+//				MediaPortal.GUI.Library.Log.Write("FIRE FIRE FIRE IN THE WHOLE");
 
-			//			foreach(TriggerAction action in trigger.Actions)
-			//			{
-			//			}
+//			foreach(TriggerAction action in trigger.Actions)
+//			{
+//			}
 		}
 
-		public static void SetFlowDirection(DependencyObject d, FlowDirection flowDirection)
+		protected internal void RemoveLogicalChild(object child)
 		{
-			d.SetValue(FlowDirectionProperty, flowDirection);
+		}
+			
+		public static void SetFlowDirection(DependencyObject element, FlowDirection flowDirection)
+		{
+			element.SetValue(FlowDirectionProperty, flowDirection);
+		}
+
+		public void SetResourceReference(DependencyProperty property, object name)
+		{
 		}
 
 		#endregion Methods
@@ -370,8 +501,10 @@ namespace System.Windows
 		#region Fields
 
 		bool						_isInitialized = false;
+		bool						_isInitializing = false;
 		bool						_isLoaded = false;
 		bool						_isTreeSeperator = false;
+		Hashtable					_names;
 		Point						_location = Point.Empty;
 		ResourceDictionary			_resources;
 		TriggerCollection			_triggers;

@@ -77,6 +77,14 @@ namespace System.Windows
 
 		public object GetValueBase(DependencyProperty dp)
 		{
+			// Local value (ie, <Object Property="value"> 
+			// Property triggers 
+			// TemplatedParent's template (ie, that template includes <Setter>s) 
+			// Style property 
+			// ThemeStyle 
+			// Inheritance ("property inheritance" -- from your parent element, not your superclass) 
+			// DefaultValue specified when you registered the property (or override metadata)
+
 			return GetValueCore(dp, _properties[dp], dp.GetMetadata(this));
 		}
 

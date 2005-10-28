@@ -24,6 +24,7 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.ComponentModel;
 
 using MediaPortal.Animation;
@@ -89,21 +90,6 @@ namespace System.Windows
 
 		#region Methods
 
-		public void ApplyAnimationClock(DependencyProperty dp, AnimationClock clock)
-		{
-			ApplyAnimationClock(dp, clock, HandoffBehavior.SnapshotAndReplace);
-		}
-
-		public void ApplyAnimationClock(DependencyProperty dp, AnimationClock clock, HandoffBehavior handoffBehavior)
-		{
-			throw new NotImplementedException();
-		}
-	
-		public object GetAnimationBaseValue(DependencyProperty dp)
-		{
-			return GetValue(dp);
-		}
-
 		public void AddHandler(RoutedEvent routedEvent, Delegate handler)
 		{
 			AddHandler(routedEvent, handler, true);
@@ -114,6 +100,34 @@ namespace System.Windows
 			throw new NotImplementedException();
 		}
 
+		public void AddToEventRoute(EventRoute route, RoutedEventArgs e)
+		{
+		}
+
+		protected internal virtual object AdjustEventSource(RoutedEventArgs args)
+		{
+			// default implementation always returns null
+			return null;
+		}
+
+		public void ApplyAnimationClock(DependencyProperty dp, AnimationClock clock)
+		{
+			// Applies an animation to a specified dependency property on this element,
+			// with the behavior that any existing animations will be stopped and replaced with the new animation. 
+
+			ApplyAnimationClock(dp, clock, HandoffBehavior.SnapshotAndReplace);
+		}
+
+		public void ApplyAnimationClock(DependencyProperty property, AnimationClock clock, HandoffBehavior handoffBehavior)
+		{
+			// providing null as the property parameter can be used to remove an animation from a property
+			if(property == null)
+			{
+			}
+
+			throw new NotImplementedException();
+		}
+	
 		public void Arrange(Rect finalRect)
 		{
 			ArrangeCore(finalRect);
@@ -131,56 +145,115 @@ namespace System.Windows
 
 		public void BeginAnimation(DependencyProperty dp, AnimationTimeline animation, HandoffBehavior handoffBehavior)
 		{
+			// If the animation's BeginTime is NULL, then any current animations will be removed 
+			// and the current value of the property will be held. If the entire animation value 
+			// is given as NULL, all animations will be removed from the property and the property value 
+			// will revert back to its base value.
+
 			throw new NotImplementedException();
 		}
 
+		protected virtual bool BuildRouteCore(EventRoute route, RoutedEventArgs args)
+		{
+			return true;
+		}
+			
+		public bool Focus()
+		{
+			/*			if(IsFocused)
+							return true;
+
+						if(Focusable && IsEnabled)
+							return false;
+
+						if(!IsKeyboardFocused)
+						{
+						}
+
+						if(!IsKeyboardFocusWithin)
+						{
+							IsKeyboardFocusWithin = true;
+
+							new RoutedEventArgs(UIElement.IsKeyboardFocusedChanged);
+							RaiseEvent();
+				
+						}
+
+						IsKeyboardFocused = true;
+						IsKeyboardFocusWithin = true;
+
+						// If the related properties were not already true, then calling this method may also 
+						// raise these events in the order given:
+						// PreviewLostKeyboardFocus
+						// PreviewGotKeyboardFocus (source is the new focus target)
+						// IsKeyboardFocusedChanged
+						// IsKeyboardFocusWithinChanged
+						// LostKeyboardFocus
+						// GotKeyboardFocus (source is the new focus target).
+			*/
+
+			return true;
+		}			
+
+		public object GetAnimationBaseValue(DependencyProperty dp)
+		{
+			return GetValue(dp);
+		}
+
+//		protected internal virtual IAutomationPropertyProvider GetAutomationProvider()
+
+		protected virtual Geometry GetLayoutClip(Size layoutSlotSize)
+		{
+			return new RectangleGeometry(new Rect(Point.Empty, RenderSize));
+		}
+	
+		protected internal virtual DependencyObject GetUIParentCore()
+		{
+			return null;
+		}
+		
+		protected override object GetValueCore(DependencyProperty dp, object baseValue, PropertyMetadata metadata)
+		{
+			return null;
+//			_animatedProperties[property];
+		}
+
+		public void InvalidateArrange()
+		{
+			_isArrangeValid = false;
+			
+			// after the invalidation, the element will have its layout updated, which will occur asynchronously.
+		}
+
+		public void InvalidateMeasure()
+		{
+			_isMeasureValid = false;
+
+			InvalidateArrange();
+
+		}
+
+		public void InvalidateVisual()
+		{
+			InvalidateArrange();
+		}
+			
 		public void Measure(Size availableSize)
 		{
+			// http://winfx.msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/T_System_Windows_UIElement_Members.asp
 			MeasureCore(availableSize);
 		}
 
 		protected virtual Size MeasureCore(Size availableSize)
 		{
-			// no default implementation
+			// http://winfx.msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/html/T_System_Windows_UIElement_Members.asp
 			return Size.Empty;
 		}
 			
-		public bool Focus()
+		protected virtual void OnChildDesiredSizeChanged(UIElement child)
 		{
-/*			if(IsFocused)
-				return true;
-
-			if(Focusable && IsEnabled)
-				return false;
-
-			if(!IsKeyboardFocused)
-			{
-			}
-
-			if(!IsKeyboardFocusWithin)
-			{
-				IsKeyboardFocusWithin = true;
-
-				new RoutedEventArgs(UIElement.IsKeyboardFocusedChanged);
-				RaiseEvent();
-				
-			}
-
-			IsKeyboardFocused = true;
-			IsKeyboardFocusWithin = true;
-
-			// If the related properties were not already true, then calling this method may also 
-			// raise these events in the order given:
-			// PreviewLostKeyboardFocus
-			// PreviewGotKeyboardFocus (source is the new focus target)
-			// IsKeyboardFocusedChanged
-			// IsKeyboardFocusWithinChanged
-			// LostKeyboardFocus
-			// GotKeyboardFocus (source is the new focus target).
-*/
-
-			return true;
-		}			
+			InvalidateMeasure();
+		}
 			
 		protected override void OnPropertyInvalidated(DependencyProperty dp, PropertyMetadata metadata)
 		{
@@ -197,8 +270,16 @@ namespace System.Windows
 			// no default implementation
 		}
 
+		protected internal virtual void OnRenderSizeChanged(SizeChangedInfo info)
+		{
+			// no default implementation
+		}
+			
 		public void RaiseEvent(RoutedEventArgs e)
 		{
+			RoutedEventHandlerInfo x = new RoutedEventHandlerInfo();
+
+			x.InvokeHandler(e.RoutedEvent, e);
 		}
 
 		public void RemoveHandler(RoutedEvent routedEvent, Delegate handler)
@@ -210,6 +291,32 @@ namespace System.Windows
 				throw new ArgumentNullException("handler");
 		}
 
+		public DrawingContext RenderOpen()
+		{
+			throw new NotImplementedException();
+		}
+
+		public Point TranslatePoint(Point pt, UIElement relativeTo)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void UpdateLayout()
+		{
+			// This ensures that elements with IsMeasureValid==false or IsArrangeValid==false will call 
+			// element-specific MeasureCore and ArrangeCore methods, forces layout update, and all computed
+			// sizes will be validated.
+
+			// This method does nothing if layout is unchanged, or if neither arrangement nor measurement 
+			// of a layout is invalid. However, if layout is invalid in either respect, the method call will 
+			// redo the entire layout, therefore avoid calling it after each minute change in the element tree. 
+			// In fact, it makes sense to either never call it (the layout system will do this in a deferred manner, 
+			// in a way that balances performance and currency) or only call it if you absolutely need updated sizes 
+			// and positions after you do all changes to properties that may affect layout. 
+
+
+		}
+		
 		#endregion Methods
 
 		#region Properties
@@ -221,7 +328,7 @@ namespace System.Windows
 
 		public bool HasAnimatedProperties
 		{
-			get { throw new NotImplementedException(); }
+			get { return _animatedProperties != null && _animatedProperties.Count != 0; }
 		}
 
 		public bool IsArrangeValid
@@ -277,7 +384,7 @@ namespace System.Windows
 		public Size RenderSize
 		{
 			get { return _renderSize; }
-			set { _renderSize = value; }
+			set { Size renderSizeOld = _renderSize; OnRenderSizeChanged(new SizeChangedInfo(this, _renderSize = value, false, false)); }
 		}
 
 		[DependencyProperty(DefaultValue=Visibility.Visible)]
@@ -308,6 +415,7 @@ namespace System.Windows
 
 		#region Fields
 
+		Hashtable					_animatedProperties;
 		Size						_desiredSize = Size.Empty;
 		bool						_isArrangeValid = false;
 		bool						_isMeasureValid = false;
