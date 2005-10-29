@@ -1260,7 +1260,7 @@ namespace MediaPortal.GUI.TV
 			{
 				if (!isOsdVisible)
 				{
-					for (int i=(int)Control.OSD_VIDEOPROGRESS; i < (int)Control.OSD_VIDEOPROGRESS+20;++i)
+					for (int i=(int)Control.OSD_VIDEOPROGRESS; i < (int)Control.OSD_VIDEOPROGRESS+50;++i)
 						ShowControl(GetID,i);
 
 					// Set recorder status
@@ -1271,14 +1271,14 @@ namespace MediaPortal.GUI.TV
 				}
 				else
 				{
-					for (int i=(int)Control.OSD_VIDEOPROGRESS; i < (int)Control.OSD_VIDEOPROGRESS+20;++i)
+					for (int i=(int)Control.OSD_VIDEOPROGRESS; i < (int)Control.OSD_VIDEOPROGRESS+50;++i)
 						HideControl(GetID,i);
 					HideControl(GetID, (int)Control.REC_LOGO);
 				}
 			}
 			else
 			{
-				for (int i=(int)Control.OSD_VIDEOPROGRESS; i < (int)Control.OSD_VIDEOPROGRESS+20;++i)
+				for (int i=(int)Control.OSD_VIDEOPROGRESS; i < (int)Control.OSD_VIDEOPROGRESS+50;++i)
 					HideControl(GetID,i);
 				HideControl(GetID, (int)Control.REC_LOGO);
 			}

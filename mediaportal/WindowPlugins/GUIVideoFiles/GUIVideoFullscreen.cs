@@ -79,7 +79,7 @@ namespace MediaPortal.GUI.Video
 			, LABEL_CURRENT_TIME =22
 			, OSD_TIMEINFO =100
 			, PANEL1=101
-			, PANEL2=120
+			, PANEL2=150
 		};
 
 		[SkinControlAttribute(500)]		protected GUIImage imgVolumeMuteIcon;
