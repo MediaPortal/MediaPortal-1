@@ -74,12 +74,43 @@ namespace id3
 			}
 			// Get the id3 flag byte, only read what I understad
 			_id3Flags = (byte)(0xf0 & reader.ReadByte());
+
+			/*
 			// Get the id3 size, swap and unsync the integer
-			_id3RawSize = Swap.Int32(Sync.UnsafeBigEndian(reader.ReadInt32()));
+			uint x=reader.ReadUInt32();
+			_id3RawSize = Swap.Int32(Sync.UnsafeBigEndian((int)x));
 			if(_id3RawSize == 0)
 			{
 				throw new Exception("tag size can't be zero");
-			}
+			}*/
+
+			// read teh size
+			// this code is courtesy of Daniel E. White w/ minor modifications by me  Thanx Dan
+			//Dan Code 
+			char[] tagSize = reader.ReadChars(4);    // I use this to read the bytes in from the file
+			int[] bytes = new int[4];      // for bit shifting
+			ulong newSize = 0;    // for the final number
+			// The ID3v2 tag size is encoded with four bytes
+			// where the most significant bit (bit 7)
+			// is set to zero in every byte,
+			// making a total of 28 bits.
+			// The zeroed bits are ignored
+			//
+			// Some bit grinding is necessary.  Hang on.
+			
+
+			bytes[3] =  tagSize[3]             | ((tagSize[2] & 1) << 7) ;
+			bytes[2] = ((tagSize[2] >> 1) & 63) | ((tagSize[1] & 3) << 6) ;
+			bytes[1] = ((tagSize[1] >> 2) & 31) | ((tagSize[0] & 7) << 5) ;
+			bytes[0] = ((tagSize[0] >> 3) & 15) ;
+
+			newSize = ((UInt64)10 +	(UInt64)bytes[3] |
+											((UInt64)bytes[2] << 8)  |
+											((UInt64)bytes[1] << 16) |
+											((UInt64)bytes[0] << 24)) ;
+			//End Dan Code
+			_id3RawSize=(int)newSize;
+
 		}
 
 		public byte Version

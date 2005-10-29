@@ -91,8 +91,9 @@ namespace id3
 					}
 					default:
 					{
-						throw new Exception("Not implemented");
+						//throw new Exception("Not implemented");
 					}
+						break;
 				}
 			}
 
@@ -125,8 +126,9 @@ namespace id3
 					}
 					default:
 					{
-						throw new Exception("Not implemented");
+						//throw new Exception("Not implemented");
 					}
+						break;
 				}
 				return flags;
 			}

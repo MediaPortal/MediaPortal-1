@@ -39,6 +39,7 @@ namespace id3
 			{
 				case "USLT":
 				case "COMM":
+				case "COM\0":
 				{
 					return new FrameLCText(tag);
 				}

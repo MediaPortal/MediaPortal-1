@@ -107,27 +107,108 @@ namespace id3
 			while(rawSize > index + 10) // repeat while there is at least one complete frame avaliable, 10 is the minimum size of a valid frame
 			{
 				byte[] tag = new byte[4];
-				reader.Read(tag,0,4);
+				
+				if (_tagHeader.Version==2)
+				{
+					reader.Read(tag,0,3);
+					index+=3; // read 3 bytes
+				}
+				else
+				{
+					reader.Read(tag,0,4);
+					index+=4; // read 4 bytes
+				}
 				if(tag[0] == 0)
 				{
 					break; // We reached the padding area
 				}
-				index+=4; // read 4 bytes
-				//TODO: Validate key valid ranges
-				frameSize = Swap.Int32(reader.ReadInt32());
-				index+=4; // read 4 bytes
-				// ID3v4 now has syncsafe sizes
-				if(_tagHeader.Version == 4)
+				char[] tagSize = new char[5];    // I use this to read the bytes in from the file
+				int[] bytes = new int[5];      // for bit shifting
+				ulong newSize = 0;    // for the final number
+
+				if (_tagHeader.Version == 2)
 				{
-					Sync.Unsafe(frameSize);
+					// only have 3 bytes for size ;
+
+
+					tagSize = reader.ReadChars(3);    // I use this to read the bytes in from the file
+					bytes = new int[5];      // for bit shifting
+					newSize = 0;    // for the final number
+					// The ID3v2 tag size is encoded with four bytes
+					// where the most significant bit (bit 7)
+					// is set to zero in every byte,
+					// making a total of 28 bits.
+					// The zeroed bits are ignored
+					//
+					// Some bit grinding is necessary.  Hang on.
+			
+
+					bytes[3] =  tagSize[2]             | ((tagSize[1] & 1) << 7) ;
+					bytes[2] = ((tagSize[1] >> 1) & 63) | ((tagSize[0] & 3) << 6) ;
+					bytes[1] = ((tagSize[0] >> 2) & 31) ;
+
+					newSize  = (((UInt64)bytes[3]) |
+						((UInt64)bytes[2] << 8)  |
+						((UInt64)bytes[1] << 16));
+					//End Dan Code
+					index+=3; // read 3 bytes
 				}
+				else if (_tagHeader.Version == 3 || _tagHeader.Version == 4)
+				{
+					// version  2.4
+					tagSize = reader.ReadChars(4);    // I use this to read the bytes in from the file
+					bytes = new int[4];      // for bit shifting
+					newSize = 0;    // for the final number
+				
+					// The ID3v2 tag size is encoded with four bytes
+					// where the most significant bit (bit 7)
+					// is set to zero in every byte,
+					// making a total of 28 bits.
+					// The zeroed bits are ignored
+					//
+					// Some bit grinding is necessary.  Hang on.
+			
+
+					bytes[3] =  tagSize[3]             | ((tagSize[2] & 1) << 7) ;
+					bytes[2] = ((tagSize[2] >> 1) & 63) | ((tagSize[1] & 3) << 6) ;
+					bytes[1] = ((tagSize[1] >> 2) & 31) | ((tagSize[0] & 7) << 5) ;
+					bytes[0] = ((tagSize[0] >> 3) & 15) ;
+
+					newSize  = (((UInt64)bytes[3]) |
+						((UInt64)bytes[2] << 8)  |
+						((UInt64)bytes[1] << 16) |
+						((UInt64)bytes[0] << 24)) ;
+					//End Dan Code
+					index+=4; // read 4 bytes
+				}
+
+				//TODO: Validate key valid ranges
+				frameSize = (int)newSize;
+				
+				
 				// The size of the frame can't be larger than the avaliable space
 				if(frameSize > rawSize - index)
 				{
-					throw new Exception("Tag Frame corrupt");
+					break;//throw new Exception("Tag Frame corrupt");
 				}
-				flags = Swap.UInt16(reader.ReadUInt16());
-				index+=2; // read 2 bytes
+
+				flags=0;
+				if (_tagHeader.Version > 2)
+				{
+					// versions 3+ have frame tags.
+					if (_tagHeader.Version == 3)
+					{
+						reader.ReadByte();
+						index++;
+					}
+					else if (_tagHeader.Version == 4)
+					{
+
+						flags = Swap.UInt16(reader.ReadUInt16());
+						index+=2; // read 2 bytes
+					}
+				}
+
 				byte[] frameData = new byte[frameSize];
 				reader.Read(frameData,0,frameSize);
 				index+=frameSize; // read more bytes

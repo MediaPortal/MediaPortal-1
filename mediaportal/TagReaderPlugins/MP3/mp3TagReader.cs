@@ -229,115 +229,111 @@ namespace MediaPortal.TagReader.ID3
           Stream s = null;
           FileInfo file = new FileInfo(filename);
           s = file.OpenRead();
-          try
-          {
-            idtag.Deserialize(s);
-            //Log.Write (" read id3tagv2");
-            Frame frame = new Frame(idtag.Header);
-            foreach(RawFrame rawFrame in idtag)
-            {
-              try
-              {
-                frame.Parse(rawFrame);
-                string strTag=Strip(rawFrame.Tag).Trim();
-                string strValue=Strip(frame.ToString()).Trim();
-                if ( (strTag=="TCON" || strTag=="TCO" ) && strValue.Length>0) 
-                {
-                  string strGenre=strValue;
-                  if (strGenre.Length>2)
-                  {
-                    if (strGenre[0]=='(' && strGenre[strGenre.Length-1]==')')
-                    {
-                      strGenre=strValue.Substring(1,strGenre.Length-2);
-                      m_tag.Genre=GetGenre(GetInt(strGenre));
-                    }
-                    else m_tag.Genre=strValue;
-                  }
-                  else m_tag.Genre=strValue;
-                }
-                else if ( (strTag=="TALB" || strTag=="TAL" ) && strValue.Length>0) m_tag.Album=strValue;
-                else if ( (strTag=="TP1"  || strTag=="TPE1") && strValue.Length>0) m_tag.Artist=strValue;
-                else if ( (strTag=="TIT2" || strTag=="TT2" ) && strValue.Length>0) m_tag.Title=strValue;
-                else if ( (strTag=="TYER" || strTag=="TYE" ) && strValue.Length>0) m_tag.Year=GetInt(strValue);
-                else if ( (strTag=="TRCK" || strTag=="TRK" ) && strValue.Length>0) m_tag.Track=GetInt(strValue);
-                else if ( strTag=="COMM" )
-                {
-//          FrameLCText lcTextFrame = (FrameLCText)frame.FrameBase;
-                }
-                else if ( strTag == "APIC" ) 
-                {
-                  FrameAPIC apicFrame = (FrameAPIC)frame.FrameBase;
-                  m_imageBytes = apicFrame.PictureData;
-                }
-                m_containsID3Information=true;
-              }
-              catch(Exception )
-              {
-                //Log.Write (" error reading id3tagv2");
-              }
-            }
-            try
-            {
-              m_tag.Duration = ReadDuration(s);
-
-            }
-            catch (Exception)
-            {
-              //Log.Write (" error reading id3tagv1");
-            }
-
-          }
-          catch(Exception)
-          {
-            //Log.Write (" read id3tagv1");
-            ID3v1 id3v1 = new ID3v1();
-            try
+					try
+					{
+						idtag.Deserialize(s);
+						//Log.Write (" read id3tagv2");
+						Frame frame = new Frame(idtag.Header);
+						foreach(RawFrame rawFrame in idtag)
 						{
-							ParseFileName(filename);
-              id3v1.Deserialize(s);
-              idtag = id3v1.Tags;
-              m_containsID3Information=true;
-              m_tag.Genre=GetGenre((int)id3v1.Genre);
-              m_tag.Title=Strip(id3v1.Song).Trim();
-              m_tag.Album=Strip(id3v1.Album).Trim();
-              m_tag.Artist=Strip(id3v1.Artist).Trim();  
-              m_tag.Duration=ReadDuration(s);
-              try{
-                m_tag.Track=Int32.Parse(id3v1.Track);
-              }
-              catch(Exception )
-              {
-                //Log.Write (" error reading id3tagv1");
-              }
-              try{
-                m_tag.Year=Int32.Parse(id3v1.Year);
-              }
-              catch(Exception )
-              {
-                //Log.Write (" error reading id3tagv1");
-              }
+							try
+							{
+								frame.Parse(rawFrame);
+								string strTag=Strip(rawFrame.Tag).Trim();
+								string strValue=Strip(frame.ToString()).Trim();
+								if ( (strTag=="TCON" || strTag=="TCO" ) && strValue.Length>0) 
+								{
+									string strGenre=strValue;
+									if (strGenre.Length>2)
+									{
+										if (strGenre[0]=='(' && strGenre[strGenre.Length-1]==')')
+										{
+											strGenre=strValue.Substring(1,strGenre.Length-2);
+											m_tag.Genre=GetGenre(GetInt(strGenre));
+										}
+										else m_tag.Genre=strValue;
+									}
+									else m_tag.Genre=strValue;
+								}
+								else if ( (strTag=="TALB" || strTag=="TAL" ) && strValue.Length>0) m_tag.Album=strValue;
+								else if ( (strTag=="TP1"  || strTag=="TPE1") && strValue.Length>0) m_tag.Artist=strValue;
+								else if ( (strTag=="TIT2" || strTag=="TT2" ) && strValue.Length>0) m_tag.Title=strValue;
+								else if ( (strTag=="TYER" || strTag=="TYE" ) && strValue.Length>0) m_tag.Year=GetInt(strValue);
+								else if ( (strTag=="TRCK" || strTag=="TRK" ) && strValue.Length>0) m_tag.Track=GetInt(strValue);
+								else if ( strTag=="COMM" )
+								{
+									//          FrameLCText lcTextFrame = (FrameLCText)frame.FrameBase;
+								}
+								else if ( strTag == "APIC" ) 
+								{
+									FrameAPIC apicFrame = (FrameAPIC)frame.FrameBase;
+									m_imageBytes = apicFrame.PictureData;
+								}
+								m_containsID3Information=true;
+							}
+							catch(Exception )
+							{
+								//Log.Write (" error reading id3tagv2");
+							}
+						}
+						try
+						{
+							m_tag.Duration = ReadDuration(s);
+
+						}
+						catch (Exception)
+						{
+							//Log.Write (" error reading id3tagv1");
+						}
+					}
+					catch(Exception)
+					{
+					}
+          //Log.Write (" read id3tagv1");
+          ID3v1 id3v1 = new ID3v1();
+          try
+					{
+						ParseFileName(filename);
+            id3v1.Deserialize(s);
+            idtag = id3v1.Tags;
+            m_containsID3Information=true;
+            if (m_tag.Genre.Length==0) m_tag.Genre=GetGenre((int)id3v1.Genre);
+            if (m_tag.Title.Length==0) m_tag.Title=Strip(id3v1.Song).Trim();
+            if (m_tag.Album.Length==0) m_tag.Album=Strip(id3v1.Album).Trim();
+            if (m_tag.Artist.Length==0) m_tag.Artist=Strip(id3v1.Artist).Trim();  
+            if (m_tag.Duration==0) m_tag.Duration=ReadDuration(s);
+            try{
+              m_tag.Track=Int32.Parse(id3v1.Track);
             }
             catch(Exception )
             {
               //Log.Write (" error reading id3tagv1");
             }
-
-            m_tag.Duration=ReadDuration(s);
-						try
-						{
-							m_tag.Duration=ReadDuration(s);
-              m_containsID3Information=true;
-
-						}
-						catch(Exception )
-						{
-							//Log.Write (" error reading id3tagv1");
-						}
+            try{
+              if (m_tag.Year==0)m_tag.Year=Int32.Parse(id3v1.Year);
+            }
+            catch(Exception )
+            {
+              //Log.Write (" error reading id3tagv1");
+            }
           }
-          finally
+          catch(Exception )
           {
-            s.Close();
+            //Log.Write (" error reading id3tagv1");
           }
+
+          m_tag.Duration=ReadDuration(s);
+					try
+					{
+						m_tag.Duration=ReadDuration(s);
+            m_containsID3Information=true;
+
+					}
+					catch(Exception )
+					{
+						//Log.Write (" error reading id3tagv1");
+					}
+            s.Close();
         }
         else
         {
