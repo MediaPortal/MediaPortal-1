@@ -46,7 +46,7 @@ protected:
 protected:
 	void			SeekIFrame();
 	HRESULT			GetData(byte* pData, int maxLen, bool allowedToWait);
-	void			UpdatePositions(ULONGLONG& ptsNow);
+	void CFilterOutPin::UpdatePositions(ULONGLONG ptsNow, REFERENCE_TIME refNow);
 	CMPTSFilter *	const m_pMPTSFilter;
 	FileReader *	const m_pFileReader;
 	Sections *		const m_pSections;

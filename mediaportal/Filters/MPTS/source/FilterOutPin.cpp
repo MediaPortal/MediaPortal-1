@@ -249,7 +249,8 @@ void CFilterOutPin::SeekIFrame()
 				{
 					//LogDebug("pts:%x pid:%x", (DWORD)pts, header.Pid);
 					m_iPESPid=header.Pid;
-					UpdatePositions(pts);
+					REFERENCE_TIME refTime=0;
+					UpdatePositions(pts,refTime);
 				}
 			}
 		}
@@ -359,34 +360,15 @@ HRESULT CFilterOutPin::FillBuffer(IMediaSample *pSample)
 		{
 			LogDebug("INVALID pts:%x %x-%x", (DWORD)ptsNow,(DWORD)m_pSections->pids.StartPTS ,(DWORD) m_pSections->pids.EndPTS);
 		}
-		static int secl=0;
-		CRefTime rtStart,rtNow;
-		Sections::PTSTime ptsTimeNow,ptsTimeStart;
-		m_pSections->PTSToPTSTime(ptsNow,&ptsTimeNow);
-		m_pSections->PTSToPTSTime(m_pSections->pids.StartPTS,&ptsTimeStart);
-		rtNow=((ULONGLONG)36000000000*ptsTimeNow.h)+((ULONGLONG)600000000*ptsTimeNow.m)+((ULONGLONG)10000000*ptsTimeNow.s)+((ULONGLONG)1000*ptsTimeNow.u);
-		rtStart =((ULONGLONG)36000000000*ptsTimeStart.h)+((ULONGLONG)600000000*ptsTimeStart.m)+((ULONGLONG)10000000*ptsTimeStart.s)+((ULONGLONG)1000*ptsTimeStart.u);
-		rtNow -= rtStart;
-		if (secl!=ptsTimeNow.s)
-		{
-			ULONGLONG p=(REFERENCE_TIME)rtNow;
-			ULONGLONG  h = (p/36000000000);
-			p -= (h*36000000000);
-
-			ULONGLONG  m = (p/600000000);
-			p -= (m*600000000);
-
-			ULONGLONG  s = (p/10000000);
-			LogDebug("now:%02.2d:%02.2d:%02.2d: start:%02.2d:%02.2d:%02.2d %x",(DWORD)h,(DWORD)m,(DWORD)s,ptsTimeStart.h,ptsTimeStart.m,ptsTimeStart.s, (DWORD)rtNow);
-			secl=ptsTimeNow.s;
-
-		}
-		UpdatePositions(ptsNow);	
-		REFERENCE_TIME tStart=(REFERENCE_TIME)rtNow;
-		REFERENCE_TIME tEnd=(REFERENCE_TIME)rtNow+10;
+		REFERENCE_TIME tStart=0;
+		UpdatePositions(ptsNow, tStart);	
+		REFERENCE_TIME tEnd=tStart+1;
 		pSample->SetTime(&tStart,&tEnd);
 	}
-
+	else
+	{
+		pSample->SetTime(NULL,NULL);
+	}
 	if(m_bDiscontinuity) 
 	{
 		LogDebug("set discontinuity");
@@ -507,12 +489,12 @@ m_rtCurrent=0;
   */
 }
 
-void CFilterOutPin::UpdatePositions(ULONGLONG& ptsNow)
+void CFilterOutPin::UpdatePositions(ULONGLONG ptsNow, REFERENCE_TIME refNow)
 {
 	if (ptsNow==0) 
 		return;
 	static int prevsec=0;
-	CRefTime rtStart,rtStop,rtDuration;
+	REFERENCE_TIME rtStart,rtStop,rtDuration;
 	Sections::PTSTime time;
 	if (m_pSections->pids.StartPTS < m_pSections->pids.EndPTS)
 	{
@@ -521,41 +503,8 @@ void CFilterOutPin::UpdatePositions(ULONGLONG& ptsNow)
 
 		ptsNow -=rtStart;
 
-		m_pSections->PTSToPTSTime(ptsNow,&time);
-		ptsNow=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
-
-
-		if (prevsec!=time.s)
-		{
-			prevsec=time.s;
-		//	LogDebug("1)%02.2d:%02.2d:%02.2d", time.h,time.m,time.s);
-
-			/*
-			char buffer[200];
-			prevsec=time.s;
-			HRESULT hr;
-			IMediaSeeking* seek;
-			IFilterGraph* graph=m_pFilter->GetFilterGraph();
-			graph->QueryInterface(IID_IMediaSeeking,(void**)&seek);
-			LONGLONG current,current2,stop,earliest,latest;
-			hr=seek->GetCurrentPosition(&current);
-			hr=seek->GetPositions(&current2,&stop);
-			hr=seek->GetAvailable(&earliest,&latest);
-			seek->Release();
-			double fc=((double)current)/10000000.0;
-			double fc2=((double)current2)/10000000.0;
-			double fst=((double)stop)/10000000.0;
-			double ear=((double)earliest)/10000000.0;
-			double lat=((double)latest)/10000000.0;
-			sprintf(buffer,"%02.2d:%02.2d:%02.2d %03.3f %03.3f %03.3f %03.3f %03.3f \n ", time.h,time.m,time.s,fc,fc2,fst,ear,lat);
-			OutputDebugString(buffer);
-			//graph->Release();*/
-		}
-
-		m_pSections->PTSToPTSTime(rtDuration,&time);
-		rtDuration=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
-		//	LogDebug("2)%02.2d:%02.2d:%02.2d", time.h,time.m,time.s);
-
+		m_pSections->PTSToRefTime(ptsNow,refNow);
+		m_pSections->PTSToRefTime(rtDuration,rtDuration);
 	}
 	else
 	{
@@ -572,17 +521,8 @@ void CFilterOutPin::UpdatePositions(ULONGLONG& ptsNow)
 			ptsNow += (MAX_PTS-m_pSections->pids.StartPTS);
 		}
 
-		m_pSections->PTSToPTSTime(ptsNow,&time);
-		ptsNow=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
-
-		if (prevsec!=time.s)
-		{
-			prevsec=time.s;
-		//	LogDebug("2)%02.2d:%02.2d:%02.2d", time.h,time.m,time.s);
-		}
-
-		m_pSections->PTSToPTSTime(rtDuration,&time);
-		rtDuration=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
+		m_pSections->PTSToRefTime(ptsNow,refNow);
+		m_pSections->PTSToRefTime(rtDuration,rtDuration);
 	}
 
 

@@ -23,6 +23,7 @@
 #include <streams.h>
 #include <aviriff.h>
 #include "Sections.h"
+#include <streams.h>
 
 void LogDebug(const char *fmt, ...) 
 {
@@ -100,11 +101,9 @@ HRESULT Sections::ParseFromFile()
 		pids.StartPTS=(__int64)ptsStart;
 		pids.EndPTS=(__int64)ptsNow;
 		pids.MPEG4=false;
-		Sections::PTSTime time;
 		pids.Duration=ptsNow-ptsStart;
 		pids.DurTime=pids.Duration;
-		PTSToPTSTime(pids.Duration,&time);
-		pids.Duration=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
+		PTSToRefTime(ptsNow-ptsStart,pids.Duration);
 
 		if (ptsNow==ptsStart)
 			pids.Duration=10000000;
@@ -184,11 +183,8 @@ HRESULT Sections::CheckStream()
 	pids.Duration=(pids.EndPTS-pids.StartPTS);
 	pids.DurTime=pids.Duration;
 	// calc duration in 100 ns
-	PTSTime time;
-	PTSToPTSTime(pids.Duration,&time);
-	if(time.m==0 && time.h==0)
-		time.h=1;
-	pids.Duration=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
+
+	PTSToRefTime(pids.EndPTS-pids.StartPTS,pids.Duration);
 	//
 	m_pFileReader->SetFilePointer(0,FILE_BEGIN);// sets to file begin
 	LogDebug("Start PTS:%x  end PTS:%x", (DWORD)pids.StartPTS, (DWORD)pids.EndPTS);
@@ -207,15 +203,16 @@ HRESULT Sections::GetAdaptionHeader(BYTE *data,AdaptionHeader *header)
 	header->AdaptationHeaderExtension=(data[1] & 0x01)>0?true:false;
 	if(header->PCRFlag==true)
 	{
-		header->Len=data[0];
-		header->DiscontinuityIndicator=(data[1] & 0x80)>0?true:false;
-		header->RandomAccessIndicator=(data[1] & 0x40)>0?true:false;
-		header->ElementaryStreamPriorityIndicator=(data[1] & 0x20)>0?true:false;
-		header->PCRFlag=(data[1] & 0x10)>0?true:false;
-		header->OPCRFlag=(data[1] & 0x08)>0?true:false;
-		header->SplicingPointFlag=(data[1] & 0x04)>0?true:false;
-		header->TransportPrivateData=(data[1] & 0x02)>0?true:false;
-		header->AdaptationHeaderExtension=(data[1] & 0x01)>0?true:false;
+
+		__int64 pcr_H=(__int64)((data[2]& 0x080)>>7);
+		__int64 pcr_L =(__int64)((data[2]&0x7f));pcr_L<<=25;
+		pcr_L |= (__int64)(data[3]<<17); 
+		pcr_L |= (__int64) (data[4]<<9); 
+		pcr_L |= (__int64) ((data[5])<<1);
+		pcr_L |= (__int64)((data[6]&0x80)>>7);
+		__int64 ull=ull = (pcr_H << 32) + pcr_L;
+		header->PCRValue=ull;
+		//GetPTS(&data[2],&(header->PCRValue));
 		header->PCRCounter=((data[6] & 0x01)*256)+data[7];
 	}
 	return S_OK;
@@ -264,14 +261,23 @@ void Sections::GetPTS(BYTE *data,ULONGLONG *pts)
 }
 void Sections::PTSToPTSTime(ULONGLONG pts,PTSTime* ptsTime)
 {
-	ULONG  _90khz = (ULONG)(pts/90);
-	ptsTime->h=(_90khz/(1000*60*60));
-	ptsTime->m=(_90khz/(1000*60))-(ptsTime->h*60);
-	ptsTime->s=(_90khz/1000)-(ptsTime->h*3600)-(ptsTime->m*60);
-	ptsTime->u=_90khz-(ptsTime->h*1000*60*60)-(ptsTime->m*1000*60)-(ptsTime->s*1000);
+	ULONGLONG  _90khz = (ULONGLONG)(pts/90LL);
+	ptsTime->h=(_90khz/(1000LL*60LL*60LL));
+	ptsTime->m=(_90khz/(1000LL*60LL))-(ptsTime->h*60LL);
+	ptsTime->s=(_90khz/1000LL)-(ptsTime->h*3600LL)-(ptsTime->m*60LL);
+	ptsTime->u=_90khz-(ptsTime->h*1000LL*60LL*60LL)-(ptsTime->m*1000LL*60LL)-(ptsTime->s*1000LL);
+}
+void Sections::PTSToRefTime(ULONGLONG pts,REFERENCE_TIME& refTime)
+{
+	PTSTime time;
+	PTSToPTSTime(pts,&time);
+	refTime=MILLISECONDS_TO_100NS_UNITS(time.u);
+	refTime+=MILLISECONDS_TO_100NS_UNITS(time.s*1000);
+	refTime+=MILLISECONDS_TO_100NS_UNITS(time.m*1000LL*60L);
+	refTime+=MILLISECONDS_TO_100NS_UNITS(time.h*1000LL*60L*60L);
 
 }
-static int prevpts=0;
+
 HRESULT Sections::CurrentPTS(BYTE *pData,ULONGLONG *ptsValue,int* pid)
 {
 	HRESULT hr=S_FALSE;
@@ -313,11 +319,6 @@ HRESULT Sections::CurrentPTS(BYTE *pData,ULONGLONG *ptsValue,int* pid)
 		{
 			PTSTime ptsTime;
 			PTSToPTSTime(ah.PCRValue,&ptsTime);
-			if (prevpts!=ptsTime.s)
-			{
-				//LogDebug("pcr-count:%d / pcr-value:%x / h:m:s:ms= %d:%d:%d.%d", ah.PCRCounter,(DWORD)ah.PCRValue,ptsTime.h,ptsTime.m,ptsTime.s,ptsTime.u);
-				prevpts=ptsTime.s;
-			}
 			*ptsValue=ah.PCRValue;
 			hr=S_OK;
 		}

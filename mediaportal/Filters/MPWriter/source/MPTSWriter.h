@@ -65,10 +65,10 @@ typedef stPESHeader PESHeader;
 
 struct stPTSTime
 {
-	int h;
-	int m;
-	int s;
-	int u;
+	ULONGLONG h;
+	ULONGLONG m;
+	ULONGLONG s;
+	ULONGLONG u;
 };
 typedef stPTSTime PTSTime;
 

@@ -1824,13 +1824,12 @@ STDMETHODIMP CDump::SetAttribute(int attribNo, char* attribValue)
 	return S_OK;
 }
 
+
 void CDump::PTSToPTSTime(ULONGLONG pts,PTSTime* ptsTime)
 {
-	PTSTime time;
-	ULONG  _90khz = (ULONG)(pts/90);
-	time.h=(_90khz/(1000*60*60));
-	time.m=(_90khz/(1000*60))-(time.h*60);
-	time.s=(_90khz/1000)-(time.h*3600)-(time.m*60);
-	time.u=_90khz-(time.h*1000*60*60)-(time.m*1000*60)-(time.s*1000);
-	*ptsTime=time;
+	ULONGLONG  _90khz = (ULONGLONG)(pts/90LL);
+	ptsTime->h=(_90khz/(1000LL*60LL*60LL));
+	ptsTime->m=(_90khz/(1000LL*60LL))-(ptsTime->h*60LL);
+	ptsTime->s=(_90khz/1000LL)-(ptsTime->h*3600LL)-(ptsTime->m*60LL);
+	ptsTime->u=_90khz-(ptsTime->h*1000LL*60LL*60LL)-(ptsTime->m*1000LL*60LL)-(ptsTime->s*1000LL);
 }

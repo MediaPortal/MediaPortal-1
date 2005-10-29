@@ -65,10 +65,10 @@ public:
 	};
 	typedef struct PTSTime
 	{
-		int h;
-		int m;
-		int s;
-		int u;
+		ULONGLONG h;
+		ULONGLONG m;
+		ULONGLONG s;
+		ULONGLONG u;
 	};
 
 private:
@@ -87,6 +87,7 @@ public:
 	HRESULT ParseFromFile(void);
 	void	GetPTS(BYTE *data,ULONGLONG *pts);
 	void	PTSToPTSTime(ULONGLONG pts,PTSTime* ptsTime);
+	void	PTSToRefTime(ULONGLONG pts,REFERENCE_TIME& refTime);
 	HRESULT CurrentPTS(BYTE *pData,ULONGLONG *ptsValue,int* pid);
 	void	ResetBuffers();
 public:
