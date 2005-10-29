@@ -65,10 +65,10 @@ public:
 	};
 	typedef struct PTSTime
 	{
-		int h;
-		int m;
-		int s;
-		int u;
+		ULONGLONG h;
+		ULONGLONG m;
+		ULONGLONG s;
+		ULONGLONG u;
 	};
 
 private:

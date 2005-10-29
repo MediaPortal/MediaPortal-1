@@ -21,13 +21,18 @@
 #include <windows.h>
 #include ".\tsdemux.h"
 #include "sections.h"
+#include <streams.h>
 
+extern void LogDebug(const char *fmt, ...) ;
 
 //**********************************************************************
 TsDemux::TsDemux(void)
 {
+	m_packetCount=0;
+	m_pcrPrev=0;
 	m_pcrStart=0;
 	m_pcrNow=0;
+	m_pcr_incr=0;
 }
 
 //**********************************************************************
@@ -56,15 +61,16 @@ bool TsDemux::ParsePacket(byte* packet, bool& isStart)
     pid = ((packet[1] & 0x1f) << 8) | packet[2];
 	is_start = packet[1] & 0x40;
 	isStart=(is_start!=0);
+    cc = (packet[3] & 0xf);
 
 	imapFilters it = m_mapFilters.find(pid);
 	if (it==m_mapFilters.end())
 	{
-		if (is_start)
+		//if (is_start)
 		{
 			tss = new MpegTSFilter();
 			tss->m_pid=pid;
-			tss->m_last_cc=-1;
+			tss->m_last_cc=cc;
 			tss->m_scrambled=false;
 			m_mapFilters[pid]=tss;
 		}
@@ -77,17 +83,51 @@ bool TsDemux::ParsePacket(byte* packet, bool& isStart)
         return false;
     
 	/* continuity check (currently not used) */
-    cc = (packet[3] & 0xf);
     cc_ok = (tss->m_last_cc < 0) || ((((tss->m_last_cc + 1) & 0x0f) == cc));
     tss->m_last_cc = cc;
     
 	Sections sections;
 	ULONGLONG pcr;
-	if (sections.CurrentPTS("",packet,pcr))
+	if (S_OK==sections.CurrentPTS(NULL,packet,pcr))
 	{
-		if (m_pcrStart==0) m_pcrStart=pcr;
+		if (m_pcrStart==0) 
+		{
+			m_pcrStart=pcr;
+			m_pcrOff=0;
+			m_pcrPrev=pcr;
+			m_pcr_incr=0;
+		}
+		else
+		{
+			if (m_packetCount>0)
+			{
+				m_pcr_incr = (double)( (pcr - m_pcrPrev) / ((double)m_packetCount) );
+			}
+			else 
+			{
+				m_pcr_incr=0;
+			}
+		}
+		m_pcrPrev=pcr;
+		m_pcrOff=0;
 		m_pcrNow=pcr;
+		m_packetCount=0;
+		
+		//Sections::PTSTime time;
+		//GetPCRTime(time);
+		//LogDebug("pcr:%02.2d:%02.2d:%02.2d:%02.2d (%x)**",(DWORD)(DWORD)time.h,(DWORD)time.m,(DWORD)time.s,(DWORD)time.u, (DWORD)pcr);
 	}
+	else
+	{
+		m_pcrOff+=m_pcr_incr;
+		m_pcrNow+=abs(m_pcrOff);
+		m_pcrOff -= abs(m_pcrOff);
+		m_packetCount++;
+		//Sections::PTSTime time;
+//		GetPCRTime(time);
+//		LogDebug("pcr:%02.2d:%02.2d:%02.2d:%02.2d", (DWORD)time.h(DWORD),time.(DWORD)m,time.s,(DWORD)time.u);
+	}
+
     /* skip adaptation field */
     afc = (packet[3] >> 4) & 3;
     p = packet + 4;
@@ -300,11 +340,11 @@ void TsDemux::DecodeVideoPacket(MpegTSFilter* tss, const byte* pesPacket, int pa
 			case 0xb3: // sequence header:
 			{
 
-				tss->m_videoWidth		   = (pesPacket[off+4]      <<4 )  + ((pesPacket[off+5]&0xf0)>>4);
-				tss->m_videoHeight	   =((pesPacket[off+5]&0xf) <<8 )  + (pesPacket[off+6]);
+				tss->m_videoWidth		 = (pesPacket[off+4]      <<4 )  + ((pesPacket[off+5]&0xf0)>>4);
+				tss->m_videoHeight	     =((pesPacket[off+5]&0xf) <<8 )  + (pesPacket[off+6]);
 				tss->m_videoAspectRatio  =(Mpeg2AspectRatio)((pesPacket[off+7]&0xf0)>>4 );
 				tss->m_videoframeRate    = (pesPacket[off+7]&0xf);
-				tss->m_videoBitRate	   = (pesPacket[off+8]      <<10)  + (pesPacket[off+9]<<2) + ((pesPacket[off+10]&0xc0)>>6);
+				tss->m_videoBitRate	     = (pesPacket[off+8]      <<10)  + (pesPacket[off+9]<<2) + ((pesPacket[off+10]&0xc0)>>6);
 				switch (tss->m_videoframeRate)
 				{
 					case 1: 
@@ -353,8 +393,30 @@ void TsDemux::DecodeVideoPacket(MpegTSFilter* tss, const byte* pesPacket, int pa
 			break;
 			case 0x0: // Picture
 			{
+				m_bNewPicture=true;
 				tss->m_videoFrameType= (Mpeg2FrameType )((pesPacket[off+5]>>3)&7);
 				int x=1;
+				if (tss->m_videoFrameType==IFrame)
+				{
+					static REFERENCE_TIME last=0;
+
+					REFERENCE_TIME diff=m_pcrNow-last;
+					Sections sections;
+					Sections::PTSTime time;
+					sections.PTSToPTSTime(diff,&time);
+
+					REFERENCE_TIME refTime;
+					refTime=MILLISECONDS_TO_100NS_UNITS(time.u);
+					refTime+=MILLISECONDS_TO_100NS_UNITS(time.s*1000);
+					refTime+=MILLISECONDS_TO_100NS_UNITS(time.m*1000LL*60L);
+					refTime+=MILLISECONDS_TO_100NS_UNITS(time.h*1000LL*60L*60L);
+
+
+					LogDebug("pcr:%02.2d:%02.2d:%02.2d:%02.2d (%x)**",(DWORD)(DWORD)time.h,(DWORD)time.m,(DWORD)time.s,(DWORD)time.u, (DWORD)refTime);
+					last=m_pcrNow;
+
+
+				}
 			}
 			break;
 			case 0xb7: //sequence end
@@ -423,9 +485,20 @@ void TsDemux::GetPCRTime(Sections::PTSTime& time)
 }
 
 //**************************************************************************************************************************************
-void TsDemux::GetPCRReferenceTime(REFERENCE_TIME& reftime)
+void TsDemux::GetPCRReferenceTime(REFERENCE_TIME& refTime)
 {
 	Sections::PTSTime time;
 	GetPCRTime(time);
-	reftime=((ULONGLONG)36000000000*time.h)+((ULONGLONG)600000000*time.m)+((ULONGLONG)10000000*time.s)+((ULONGLONG)1000*time.u);
+
+	refTime=MILLISECONDS_TO_100NS_UNITS(time.u);
+	refTime+=MILLISECONDS_TO_100NS_UNITS(time.s*1000);
+	refTime+=MILLISECONDS_TO_100NS_UNITS(time.m*1000LL*60L);
+	refTime+=MILLISECONDS_TO_100NS_UNITS(time.h*1000LL*60L*60L);
+
+}
+bool TsDemux::IsNewPicture()
+{
+	bool newPic=m_bNewPicture;
+	m_bNewPicture=false;
+	return newPic;
 }

@@ -90,6 +90,7 @@ public:
 	void 	GetVideoAttributes(int videoPid,int& videoWidth, int &videoHeight,Mpeg2AspectRatio& aspectRatio, __int64& averageTimePerFrame,long& videoBitRate,int& videoframeRate);
 	void	GetPCRTime(Sections::PTSTime& time);
 	void	GetPCRReferenceTime(REFERENCE_TIME& reftime);
+	bool    IsNewPicture();
 private:
 	__int64 get_pts(const byte *p);
 	void	DecodePesPacket(MpegTSFilter* tss, const byte* pesPacket, int packetLen);
@@ -101,4 +102,9 @@ private:
 	typedef map<int , MpegTSFilter*>::iterator imapFilters;
 	ULONGLONG		 m_pcrNow;
 	ULONGLONG		 m_pcrStart;
+	ULONGLONG		 m_pcrPrev;
+	double  		 m_pcr_incr;
+	double  		 m_pcrOff;
+	int				 m_packetCount;
+	bool			 m_bNewPicture;
 };

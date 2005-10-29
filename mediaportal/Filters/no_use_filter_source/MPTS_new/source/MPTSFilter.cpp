@@ -130,10 +130,16 @@ int CMPTSFilter::GetPinCount()
 
 STDMETHODIMP CMPTSFilter::Run(REFERENCE_TIME tStart)
 {
+	LogDebug("filter:Run(%x)", (DWORD)tStart);
 	CAutoLock cObjectLock(m_pLock);
 	HRESULT hr;
 	hr=CSource::Run(tStart);
 	return hr;
+}
+
+REFERENCE_TIME CMPTSFilter::StreamStartTime()
+{
+	return m_tStart;
 }
 HRESULT CMPTSFilter::SetFilePosition(REFERENCE_TIME seek)
 {

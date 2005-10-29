@@ -38,7 +38,7 @@ CFilterVideoPin::CFilterVideoPin(LPUNKNOWN pUnk, CMPTSFilter *pFilter, FileReade
 	__int64 size;
 	m_pFileReader->GetFileSize(&size);
 	m_rtDuration = m_rtStop = 36560522000;
-	m_lTSPacketDeliverySize = 188*100;
+	m_lTSPacketDeliverySize = 188;
 	m_pBuffers = new CBuffers(m_pFileReader, &m_pSections->pids,m_lTSPacketDeliverySize);
 	m_dRateSeeking = 1.0;
 	m_bAboutToStop=false;
@@ -48,19 +48,21 @@ STDMETHODIMP CFilterVideoPin::SetPositions(LONGLONG *pCurrent,DWORD CurrentFlags
 	return CSourceSeeking::SetPositions(pCurrent,CurrentFlags,pStop,StopFlags);
 }
 
-void CFilterVideoPin::Process(BYTE *ms, REFERENCE_TIME& ptsStart,REFERENCE_TIME& ptsEnd, int& videoSampleLen, int& audioSampleLen)
+void CFilterVideoPin::Process(BYTE *ms, REFERENCE_TIME& ptsStart,REFERENCE_TIME& ptsEnd, int& m_videoSampleLen, int& m_audioSampleLen)
 {
-	videoSampleLen=audioSampleLen=0;
+	m_videoSampleLen=m_audioSampleLen=0;
 	CAutoLock cAutoLock(&m_cSharedState);
-	for(int offset=0;offset<18800;offset+=188)
+	for(int offset=0;offset<m_lTSPacketDeliverySize;offset+=188)
 	{
 		bool isStart;
 		m_tsDemuxer.ParsePacket(ms+offset,isStart);
-		videoSampleLen+=m_tsDemuxer.GetVideoPacket(m_pSections->pids.VideoPid,&m_videoBuffer[videoSampleLen]);
-		audioSampleLen+=m_tsDemuxer.GetAudioPacket(m_pSections->pids.CurrentAudioPid,&m_audioBuffer[audioSampleLen]);
+		if (ptsStart==0)
+			m_tsDemuxer.GetPCRReferenceTime(ptsStart);
+
+		m_videoSampleLen+=m_tsDemuxer.GetVideoPacket(m_pSections->pids.VideoPid,&m_videoBuffer[m_videoSampleLen]);
+		m_audioSampleLen+=m_tsDemuxer.GetAudioPacket(m_pSections->pids.CurrentAudioPid,&m_audioBuffer[m_audioSampleLen]);
 	}
-	m_tsDemuxer.GetPCRReferenceTime(ptsStart);
-	ptsEnd=ptsStart;
+	m_tsDemuxer.GetPCRReferenceTime(ptsEnd);
 }
 
 CFilterVideoPin::~CFilterVideoPin()
@@ -94,39 +96,84 @@ HRESULT CFilterVideoPin::FillBuffer(IMediaSample *pSample)
 		LogDebug("FAILED: GetPointer() failed:%x",hr);
 		return hr;
 	}
-	int videoSampleLen=0;
-	int audioSampleLen=0;
 	do
 	{
-		lDataLength = 18800;
+		lDataLength = m_lTSPacketDeliverySize;
 		hr=GetData(buffer,lDataLength,true);
 		if (hr!=S_OK) 
 		{
 			LogDebug("FAILED to get data from file");
 			return S_FALSE;
 		}
-		CopyMemory(audioBuffer,buffer,18800);
+		CopyMemory(audioBuffer,buffer,m_lTSPacketDeliverySize);
 
-		REFERENCE_TIME ptsStart, ptsEnd;
-		Process(buffer, ptsStart, ptsEnd,videoSampleLen, audioSampleLen);
-		if (audioSampleLen>0)
+		REFERENCE_TIME ptsStart=0, ptsEnd=0;
+			
+		
+		bool sampleSend=false;
+		CAutoLock cAutoLock(&m_cSharedState);
+		for(int offset=0;offset<m_lTSPacketDeliverySize;offset+=188)
 		{
-			m_pMPTSFilter->m_pAudioPin->Process(m_audioBuffer,audioSampleLen,ptsStart, ptsEnd);
+			bool isStart;
+			bool iframe=m_tsDemuxer.ParsePacket(buffer+offset,isStart);
+			if (iframe)
+			{
+				m_tsDemuxer.GetPCRReferenceTime(ptsStart);
+			}
+			if (m_tsDemuxer.IsNewPicture() && m_videoSampleLen>0)
+			{
+				if (sampleSend==true)
+				{
+					int x=1;
+				}
+				sampleSend=true;
+				CopyMemory(pData,m_videoBuffer,m_videoSampleLen);
+
+				if (ptsStart>0) pSample->SetTime(&ptsStart,&ptsStart+1);
+				pSample->SetActualDataLength(m_videoSampleLen);
+				if(m_bDiscontinuity==TRUE)
+				{
+					m_bDiscontinuity=FALSE;
+					pSample->SetDiscontinuity(TRUE);
+				}
+				m_videoSampleLen=0;
+				
+				if (m_audioSampleLen>0)
+				{
+					m_pMPTSFilter->m_pAudioPin->Process(m_audioBuffer,m_audioSampleLen,ptsStart, ptsEnd);
+				}
+				m_audioSampleLen=0;
+			}
+
+			m_videoSampleLen+=m_tsDemuxer.GetVideoPacket(m_pSections->pids.VideoPid,&m_videoBuffer[m_videoSampleLen]);
+			m_audioSampleLen+=m_tsDemuxer.GetAudioPacket(m_pSections->pids.CurrentAudioPid,&m_audioBuffer[m_audioSampleLen]);
 		}
-		if (videoSampleLen>0)
-		{
-			CopyMemory(pData,m_videoBuffer,videoSampleLen);
+		ptsEnd=ptsStart+1;
+		
+		if (sampleSend) return S_OK;
 
-			//pSample->SetTime(&ptsStart,&ptsEnd);
-			pSample->SetActualDataLength(videoSampleLen);
+		if (m_audioSampleLen>0)
+		{
+			m_pMPTSFilter->m_pAudioPin->Process(m_audioBuffer,m_audioSampleLen,ptsStart, ptsEnd);
+			m_audioSampleLen=0;
+		}
+
+		if (m_videoSampleLen>0)
+		{
+			CopyMemory(pData,m_videoBuffer,m_videoSampleLen);
+
+			if (ptsStart>0) pSample->SetTime(&ptsStart,&ptsEnd);
+			pSample->SetActualDataLength(m_videoSampleLen);
 			if(m_bDiscontinuity==TRUE)
 			{
 				m_bDiscontinuity=FALSE;
 				pSample->SetDiscontinuity(TRUE);
 			}
+			m_videoSampleLen=0;
+			return S_OK;
 		}
 		//
-	} while (videoSampleLen==0);
+	} while (true);
 	return S_OK;
 }
 
@@ -144,7 +191,8 @@ HRESULT CFilterVideoPin::OnThreadStartPlay()
 	LogDebug("pin:OnThreadStartPlay() %x-%x pos:%x", (DWORD)m_rtStart, (DWORD)m_rtStop, (DWORD)m_pSections->m_pFileReader->GetFilePointer());
 	m_bDiscontinuity=TRUE;
 	m_pBuffers->Clear();
-//	SeekIFrame();
+	SeekIFrame();
+	m_audioSampleLen=m_videoSampleLen=0;
 	HRESULT hr=DeliverNewSegment(m_rtStart, m_rtStop, m_dRateSeeking);
 	hr=m_pMPTSFilter->m_pAudioPin->DeliverNewSegment(m_rtStart, m_rtStop, m_dRateSeeking);
 	return CSourceStream::OnThreadStartPlay( );
@@ -311,7 +359,7 @@ HRESULT	CFilterVideoPin::DecideBufferSize(IMemAllocator *pAlloc, ALLOCATOR_PROPE
 
 	if (ppropInputRequest->cBuffers == 0)
     {
-        ppropInputRequest->cBuffers = 2;
+        ppropInputRequest->cBuffers = 20;
     }
 
 	ppropInputRequest->cbBuffer = sizeof(m_videoBuffer);

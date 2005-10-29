@@ -41,6 +41,7 @@ HRESULT CFilterAudioPin::Deliver(IMediaSample *ms)
 }
 void CFilterAudioPin::Process(BYTE *audioBuffer,int audioSampleLen,REFERENCE_TIME& start,REFERENCE_TIME& stop)
 {
+	if (FALSE==CBaseOutputPin::IsConnected()) return;
 	CAutoLock cAutoLock(&m_cSharedState);
 	if (audioSampleLen>0)
 	{
@@ -51,7 +52,8 @@ void CFilterAudioPin::Process(BYTE *audioBuffer,int audioSampleLen,REFERENCE_TIM
 			audioSample->GetPointer(&data);
 			CopyMemory(data,audioBuffer,audioSampleLen);
 			audioSample->SetActualDataLength(audioSampleLen);
-			//audioSample->SetTime(&start,&stop);
+			if (start>0)
+				audioSample->SetTime(&start,&stop);
 			HRESULT hr=Deliver(audioSample);
 			audioSample->Release();
 			if(hr==S_FALSE)
@@ -93,7 +95,7 @@ HRESULT	CFilterAudioPin::DecideBufferSize(IMemAllocator *pAlloc, ALLOCATOR_PROPE
 
 	if (ppropInputRequest->cBuffers == 0)
     {
-        ppropInputRequest->cBuffers = 2;
+        ppropInputRequest->cBuffers = 12;
     }
 
 	ppropInputRequest->cbBuffer = 18800;

@@ -270,11 +270,11 @@ void Sections::GetPTS(BYTE *data,ULONGLONG *pts)
 }
 void Sections::PTSToPTSTime(ULONGLONG pts,PTSTime* ptsTime)
 {
-	ULONG  _90khz = (ULONG)(pts/90);
-	ptsTime->h=(_90khz/(1000*60*60));
-	ptsTime->m=(_90khz/(1000*60))-(ptsTime->h*60);
-	ptsTime->s=(_90khz/1000)-(ptsTime->h*3600)-(ptsTime->m*60);
-	ptsTime->u=_90khz-(ptsTime->h*1000*60*60)-(ptsTime->m*1000*60)-(ptsTime->s*1000);
+	ULONGLONG  _90khz = (ULONGLONG)(pts/90LL);
+	ptsTime->h=(_90khz/(1000LL*60LL*60LL));
+	ptsTime->m=(_90khz/(1000LL*60LL))-(ptsTime->h*60LL);
+	ptsTime->s=(_90khz/1000LL)-(ptsTime->h*3600LL)-(ptsTime->m*60LL);
+	ptsTime->u=_90khz-(ptsTime->h*1000LL*60LL*60LL)-(ptsTime->m*1000LL*60LL)-(ptsTime->s*1000LL);
 
 }
 static int prevpts=0;
@@ -294,11 +294,13 @@ HRESULT Sections::CurrentPTS(char* debugTxt, BYTE *pData,ULONGLONG &ptsValue)
 		return S_FALSE;
 	if (header.SyncByte!=0x47) 
 		return S_FALSE;
-	if(header.Pid!=pids.CurrentAudioPid &&
-	   header.Pid != pids.VideoPid &&
-	   header.Pid != pids.PCRPid)
-		return S_FALSE;
-
+	if (debugTxt!=NULL)
+	{
+		if(header.Pid!=pids.CurrentAudioPid &&
+		header.Pid != pids.VideoPid &&
+		header.Pid != pids.PCRPid)
+			return S_FALSE;
+	}
 
 	//          0  1  2  3    4  5    6
 	//  0000:  [47 82 00 f3] [cc 5b] [38 2a  0e ad e4 52 12 75 a0 46   G....[8*...R.u.F
@@ -325,7 +327,7 @@ HRESULT Sections::CurrentPTS(char* debugTxt, BYTE *pData,ULONGLONG &ptsValue)
 			PTSToPTSTime(ah.PCRValue,&ptsTime);
 			if (prevpts!=ptsTime.s)
 			{
-				LogDebug("%s pcr-count:%d / pcr-value:%x / h:m:s:ms= %d:%d:%d.%d",debugTxt, ah.PCRCounter,(DWORD)ah.PCRValue,ptsTime.h,ptsTime.m,ptsTime.s,ptsTime.u);
+				//LogDebug("%s pcr-count:%d / pcr-value:%x / h:m:s:ms= %d:%d:%d.%d",debugTxt, ah.PCRCounter,(DWORD)ah.PCRValue,ptsTime.h,ptsTime.m,ptsTime.s,ptsTime.u);
 				prevpts=ptsTime.s;
 			}
 			ptsValue=ah.PCRValue;

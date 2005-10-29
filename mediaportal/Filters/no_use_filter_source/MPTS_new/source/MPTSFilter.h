@@ -87,6 +87,7 @@ public:
 	HRESULT				SetFilePosition(REFERENCE_TIME seek);
 	bool				UpdatePids();
 	FileReader*			m_pFileReader;
+	REFERENCE_TIME		StreamStartTime();
 protected:
 	// IFileSourceFilter
 	STDMETHODIMP Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt);

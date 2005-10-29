@@ -63,9 +63,10 @@ protected:
 	map<int,bool>	m_mapDiscontinuitySent;
 	int				m_iPESPid;
 	typedef map<int,bool>::iterator imapDiscontinuitySent;
-	BYTE			m_videoBuffer[20000];
-	BYTE			m_audioBuffer[20000];
-	
+	BYTE			m_videoBuffer[40000];
+	BYTE			m_audioBuffer[40000];
+	int             m_videoSampleLen;
+	int             m_audioSampleLen;
 };
 
 #endif
