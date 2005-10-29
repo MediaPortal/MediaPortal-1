@@ -1563,12 +1563,12 @@ namespace MediaPortal.TV.Recording
 					}
 
 					//yes, check if we're already playing/watching it
-					//strTimeShiftFileName=GetTimeShiftFileName(_currentCardIndex);
-					//if (g_Player.CurrentFile!=strTimeShiftFileName)
-					//{
-						//Log.WriteFile(Log.LogType.Recorder,"Recorder:  start viewing timeshift file of card {0}", dev.ID);
-						//g_Player.Play(strTimeShiftFileName); TESTTEST
-					//}
+					strTimeShiftFileName=GetTimeShiftFileName(_currentCardIndex);
+					if (g_Player.CurrentFile!=strTimeShiftFileName)
+					{
+						Log.WriteFile(Log.LogType.Recorder,"Recorder:  start viewing timeshift file of card {0}", dev.ID);
+						g_Player.Play(strTimeShiftFileName); //TESTTEST
+					}
 					_startTimer=new DateTime(1971,6,11,0,0,0,0);
 					if (OnTvViewingStarted!=null) 
 						OnTvViewingStarted(_currentCardIndex, dev);
@@ -1659,7 +1659,7 @@ namespace MediaPortal.TV.Recording
 					if (g_Player.CurrentFile!=strTimeShiftFileName)
 					{
 						Log.WriteFile(Log.LogType.Recorder,"Recorder:  currentfile:{0} newfile:{1}", g_Player.CurrentFile,strTimeShiftFileName);
-						//g_Player.Play(strTimeShiftFileName); TESTTEST
+						g_Player.Play(strTimeShiftFileName); //TESTTEST
 					}
 					_startTimer=new DateTime(1971,6,11,0,0,0,0);
 					if (OnTvViewingStarted!=null) 

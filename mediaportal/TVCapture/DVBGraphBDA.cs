@@ -137,6 +137,12 @@ namespace MediaPortal.TV.Recording
 
 		#region imports
 		[DllImport("dshowhelper.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
+		unsafe private static extern bool DvrMsCreate(out int id, IBaseFilter streamBufferSink, [In, MarshalAs(UnmanagedType.LPWStr)]string strPath, uint dwRecordingType);
+		[DllImport("dshowhelper.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
+		unsafe private static extern void DvrMsStart(int id, uint startTime);
+		[DllImport("dshowhelper.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
+		unsafe private static extern void DvrMsStop(int id);
+		[DllImport("dshowhelper.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
 		unsafe private static extern bool AddTeeSinkToGraph(IGraphBuilder graph);
 
 		[ComImport, Guid("6CFAD761-735D-4aa5-8AFC-AF91A7D61EBA")]
@@ -145,6 +151,11 @@ namespace MediaPortal.TV.Recording
 		[ComImport, Guid("AFB6C280-2C41-11D3-8A60-0000F81E0E4A")]
 			class MPEG2Demultiplexer {}
     
+		[ComImport, Guid("2DB47AE5-CF39-43c2-B4D6-0CD8D90946F4")]
+			class StreamBufferSink {};
+
+		[ComImport, Guid("FA8A68B2-C864-4ba2-AD53-D3876A87494B")]
+			class StreamBufferConfig {}
 	    
 		[DllImport("advapi32", CharSet=CharSet.Auto)]
 		private static extern bool ConvertStringSidToSid(string pStringSid, ref IntPtr pSID);
@@ -179,6 +190,9 @@ namespace MediaPortal.TV.Recording
 		const int WS_CLIPCHILDREN	= 0x02000000;
 		const int WS_CLIPSIBLINGS	= 0x04000000;
 
+		private static Guid CLSID_StreamBufferSink					= new Guid(0x2db47ae5, 0xcf39, 0x43c2, 0xb4, 0xd6, 0xc, 0xd8, 0xd9, 0x9, 0x46, 0xf4);
+		private static Guid CLSID_Mpeg2VideoStreamAnalyzer	= new Guid(0x6cfad761, 0x735d, 0x4aa5, 0x8a, 0xfc, 0xaf, 0x91, 0xa7, 0xd6, 0x1e, 0xba);
+		private static Guid CLSID_StreamBufferConfig				= new Guid(0xfa8a68b2, 0xc864, 0x4ba2, 0xad, 0x53, 0xd3, 0x87, 0x6a, 0x87, 0x49, 0x4b);
 		
 		int											_lastPMTVersion				= -1;
 		int                     _cardId								= -1;
@@ -194,7 +208,8 @@ namespace MediaPortal.TV.Recording
 		IPin										_pinDemuxerVideo				= null;
 		IPin										_pinDemuxerAudio				= null;
 		protected IPin					_pinDemuxerSections=null;
-		
+		IStreamBufferSink						m_IStreamBufferSink		= null;
+		IStreamBufferConfigure			m_IStreamBufferConfig	= null;
 		IBaseFilter							_filterTIF										= null;			// Transport Information Filter
 		IBaseFilter             _filterNetworkProvider				= null;			// BDA Network Provider
 		IBaseFilter             _filterTunerDevice						= null;			// BDA Digital Tuner Device
@@ -205,13 +220,15 @@ namespace MediaPortal.TV.Recording
 		IMHWGrabber							_mhwGrabberInterface		= null;
 		IATSCGrabber						_atscGrabberInterface	= null;
 		IBaseFilter							_filterDvbAnalyzer=null;
-		IBaseFilter						  _filterTsWriter=null;
 
+#if USEMTSWRITER
+		IBaseFilter						  _filterTsWriter=null;
 		IMPTSWriter							_tsWriterInterface=null;
 		IMPTSRecord						  _tsRecordInterface=null;
+#endif
 		IBaseFilter							_filterSmartTee= null;			
 		
-		
+		VideoAnalyzer						m_mpeg2Analyzer					= null;
 		IGraphBuilder           _graphBuilder					= null;
 		ICaptureGraphBuilder2   _captureGraphBuilderInterface		= null;
 		IVideoWindow            _videoWindowInterface						= null;
@@ -220,8 +237,8 @@ namespace MediaPortal.TV.Recording
 		IBaseFilter							_filterSampleGrabber=null;
 		ISampleGrabber					_sampleInterface=null;
 
-		
-		
+		StreamBufferSink				m_StreamBufferSink=null;
+		StreamBufferConfig					m_StreamBufferConfig	= null;
 		VMR9Util								_vmr9								  = null; 
 		VMR7Util								_vmr7								  = null; 
 		ArrayList               _tunerStatistics       = new ArrayList();
@@ -234,7 +251,7 @@ namespace MediaPortal.TV.Recording
 		DateTime								_updateTimer=DateTime.Now;
 		DVBDemuxer							_streamDemuxer = new DVBDemuxer();
 		EpgGrabber							_epgGrabber = new EpgGrabber();
-		
+		int											m_recorderId=-1;
 		
 		int											_videoWidth=1;
 		int											_videoHeight=1;
@@ -273,6 +290,15 @@ namespace MediaPortal.TV.Recording
 			try
 			{				
 				System.IO.Directory.CreateDirectory(@"database\pmt");
+			}
+			catch(Exception){}
+			//create registry keys needed by the streambuffer engine for timeshifting/recording
+			try
+			{
+				RegistryKey hkcu = Registry.CurrentUser;
+				hkcu.CreateSubKey(@"Software\MediaPortal");
+				RegistryKey hklm = Registry.LocalMachine;
+				hklm.CreateSubKey(@"Software\MediaPortal");
 			}
 			catch(Exception){}
 			
@@ -621,6 +647,7 @@ namespace MediaPortal.TV.Recording
 					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:CreateGraph() FAILED interface filter not found");
 					return false;
 				}
+#if USEMTSWRITER
 
 				AddTeeSinkToGraph(_graphBuilder);
 				_filterSmartTee=DirectShowUtil.GetFilterByName(_graphBuilder, "Kernel Tee");
@@ -634,58 +661,17 @@ namespace MediaPortal.TV.Recording
 					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to connect capture->Tee/Sink-Sink converter filter");
 					return false;
 				}
+#else
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph() connect interface pin->sample grabber");
 				if (GUIGraphicsContext.DX9Device!=null && _sampleInterface!=null)
 				{
-					if (!ConnectFilters(ref _filterSmartTee,ref _filterSampleGrabber))
+					if (!ConnectFilters(ref lastFilter.DSFilter,ref _filterSampleGrabber))
 					{
 						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to connect Tee/Sink-Sink converter filter->grabber");
 						return false;
 					}
 				}
-/*
-				_filterSmartTee = (IBaseFilter) Activator.CreateInstance(Type.GetTypeFromCLSID(Clsid.SmartTee, true));
-				if(_filterSmartTee== null) 
-				{
-					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to create SmartTee filter");
-					return false;
-				}
-				bool tryInfTee=false;
-				_graphBuilder.AddFilter(_filterSmartTee, "Smart Tee Filter");
-				if (!ConnectFilters(ref lastFilter.DSFilter,ref _filterSmartTee))
-				{
-					tryInfTee=true;
-				}
-				if (!tryInfTee)
-				{
-					if (GUIGraphicsContext.DX9Device!=null && _sampleInterface!=null)
-					{
-						if (!ConnectFilters(ref _filterSmartTee,ref _filterSampleGrabber))
-						{
-							tryInfTee=true;
-						}
-					}
-				}
-				if (tryInfTee)
-				{
-					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Add InfTee");
-					_graphBuilder.RemoveFilter(_filterSmartTee);
-					Marshal.ReleaseComObject(_filterSmartTee);
-					_filterSmartTee = (IBaseFilter) Activator.CreateInstance(Type.GetTypeFromCLSID(Clsid.InfTee, true));
-					if (!ConnectFilters(ref lastFilter.DSFilter,ref _filterSmartTee))
-					{
-						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to connect capture->smart tee");
-						return false;
-					}
-					if (GUIGraphicsContext.DX9Device!=null && _sampleInterface!=null)
-					{
-						if (!ConnectFilters(ref _filterSmartTee,ref _filterSampleGrabber))
-						{
-							Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to connect smart tee->grabber");
-							return false;
-						}
-					}
-				}
-*/	
+#endif
 				//=========================================================================================================
 				// add the MPEG-2 Demultiplexer 
 				//=========================================================================================================
@@ -723,6 +709,7 @@ namespace MediaPortal.TV.Recording
 				_graphBuilder.AddFilter(_filterTIF, "BDA MPEG2 Transport Information Filter");
 
 
+#if USEMTSWRITER
 				if (GUIGraphicsContext.DX9Device!=null &&_sampleInterface!=null)
 				{
 					
@@ -743,6 +730,28 @@ namespace MediaPortal.TV.Recording
 						return false;
 					}
 				}			
+#else
+
+				if (GUIGraphicsContext.DX9Device!=null &&_sampleInterface!=null)
+				{
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph() connect grabber->demuxer");
+					if(!ConnectFilters(ref _filterSampleGrabber, ref _filterMpeg2Demultiplexer)) 
+					{
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to connect samplegrabber filter->mpeg2 demultiplexer");
+						return false;
+					}
+				}
+				else
+				{
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph() connect capture->demuxer");
+					if(!ConnectFilters(ref lastFilter.DSFilter, ref _filterMpeg2Demultiplexer)) 
+					{
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to connect samplegrabber filter->mpeg2 demultiplexer");
+						return false;
+					}
+				}				
+
+#endif
 
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateGraph() connect demuxer->tif");
 				if(!ConnectFilters(ref _filterMpeg2Demultiplexer,ref _filterTIF))
@@ -1007,8 +1016,13 @@ namespace MediaPortal.TV.Recording
 				else
 					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:mapped IMPEG2Demultiplexer not found");
 				
-				
-				
+				//=========================================================================================================
+				// Create the streambuffer engine and mpeg2 video analyzer components since we need them for
+				// recording and timeshifting
+				//=========================================================================================================
+				m_StreamBufferSink  = new StreamBufferSink();
+				m_mpeg2Analyzer     = new VideoAnalyzer();
+				m_IStreamBufferSink = (IStreamBufferSink) m_StreamBufferSink;
 				_graphState=State.Created;
 
 				GetTunerSignalStatistics();
@@ -1112,14 +1126,21 @@ namespace MediaPortal.TV.Recording
 					_vmr7=null;
 				}
 				
+				if (m_recorderId>=0) 
+				{
+					DvrMsStop(m_recorderId);
+					m_recorderId=-1;
+				}
+				
 				_isGraphRunning=false;
 				_basicVideoInterFace = null;
 				_analyzerInterface=null;
 				_epgGrabberInterface=null;
 				_mhwGrabberInterface=null;
-
+#if USEMTSWRITER
 				_tsWriterInterface=null;
 				_tsRecordInterface=null;
+#endif
 				Log.Write("free pins");
 
 				if (_pinDemuxerSections!=null)
@@ -1157,7 +1178,7 @@ namespace MediaPortal.TV.Recording
 					if (hr!=0) Log.Write("ReleaseComObject(_filterDvbAnalyzer):{0}",hr);
 					_filterDvbAnalyzer=null;
 				}
-
+#if USEMTSWRITER
 				if (_filterTsWriter!=null)
 				{
 					Log.Write("free MPTSWriter");
@@ -1165,6 +1186,7 @@ namespace MediaPortal.TV.Recording
 					if (hr!=0) Log.Write("ReleaseComObject(_filterTsWriter):{0}",hr);
 					_filterTsWriter=null;
 				}
+#endif
 				if (_filterSmartTee != null)
 				{
 					while ((hr=Marshal.ReleaseComObject(_filterSmartTee))>0); 
@@ -1192,7 +1214,25 @@ namespace MediaPortal.TV.Recording
 				}
 				
 
+				m_IStreamBufferConfig=null;
+				m_IStreamBufferSink=null;
 
+				if (m_StreamBufferSink!=null) 
+				{
+					Log.Write("DVBGraphBDA:free streambuffersink");
+					while ((hr=Marshal.ReleaseComObject(m_StreamBufferSink))>0); 
+					if (hr!=0) Log.Write("DVBGraphBDA:ReleaseComObject(m_StreamBufferSink):{0}",hr);
+					m_StreamBufferSink=null;
+				}
+
+
+				if (m_StreamBufferConfig != null) 
+				{
+					Log.Write("DVBGraphBDA:free streambufferconfig");
+					while ((hr=Marshal.ReleaseComObject(m_StreamBufferConfig))>0); 
+					if (hr!=0) Log.Write("DVBGraphBDA:ReleaseComObject(m_StreamBufferConfig):{0}",hr);
+					m_StreamBufferConfig=null;
+				}
 				if (_filterNetworkProvider != null)
 				{	
 					Log.Write("DVBGraphBDA:free networkprovider");
@@ -1305,6 +1345,8 @@ namespace MediaPortal.TV.Recording
 			if (_graphState != State.TimeShifting) 
 				return false;
 			
+			if (m_StreamBufferSink == null) 
+				return false;
 
 			if (_vmr9!=null)
 			{
@@ -1318,7 +1360,7 @@ namespace MediaPortal.TV.Recording
 				_vmr7.RemoveVMR7();
 				_vmr7=null;
 			}
-
+#if USEMTSWRITER
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:StartRecording()");
 			strFileName=System.IO.Path.ChangeExtension(strFileName,".ts");
 			int hr=_tsRecordInterface.SetRecordingFileName(strFileName);
@@ -1369,6 +1411,83 @@ namespace MediaPortal.TV.Recording
 
 			_graphState = State.Recording;
 			return true;
+#else
+			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:StartRecording()");
+			uint iRecordingType=0;
+			if (bContentRecording) 
+				iRecordingType = 0;
+			else 
+				iRecordingType = 1;										
+
+			try
+			{
+				bool success=DvrMsCreate(out m_recorderId,(IBaseFilter)m_IStreamBufferSink,strFileName,iRecordingType);
+				if (!success)
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:StartRecording() FAILED to create recording");
+					return false;
+				}
+				long lStartTime = 0;
+
+				// if we're making a reference recording
+				// then record all content from the past as well
+				if (!bContentRecording)
+				{
+					// so set the startttime...
+					uint uiSecondsPerFile;
+					uint uiMinFiles, uiMaxFiles;
+					m_IStreamBufferConfig.GetBackingFileCount(out uiMinFiles, out uiMaxFiles);
+					m_IStreamBufferConfig.GetBackingFileDuration(out uiSecondsPerFile);
+					lStartTime = uiSecondsPerFile;
+					lStartTime *= (long)uiMaxFiles;
+
+					// if start of program is given, then use that as our starttime
+					if (timeProgStart.Year > 2000)
+					{
+						TimeSpan ts = DateTime.Now - timeProgStart;
+						Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: Start recording from {0}:{1:00}:{2:00} which is {3:00}:{4:00}:{5:00} in the past",
+							timeProgStart.Hour, timeProgStart.Minute, timeProgStart.Second,
+							ts.TotalHours, ts.TotalMinutes, ts.TotalSeconds);
+																
+						lStartTime = (long)ts.TotalSeconds;
+					}
+					else Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: record entire timeshift buffer");
+	      
+					TimeSpan tsMaxTimeBack = DateTime.Now - _startTimer;
+					if (lStartTime > tsMaxTimeBack.TotalSeconds)
+					{
+						lStartTime = (long)tsMaxTimeBack.TotalSeconds;
+					}
+	        
+
+					lStartTime *= -10000000L;//in reference time 
+				}//if (!bContentRecording)
+				/*
+						foreach (MetadataItem item in attributes.Values)
+						{
+							try
+							{
+								if (item.Type == MetadataItemType.String)
+									m_recorder.SetAttributeString(item.Name,item.Value.ToString());
+								if (item.Type == MetadataItemType.Dword)
+									m_recorder.SetAttributeDWORD(item.Name,UInt32.Parse(item.Value.ToString()));
+							}
+							catch(Exception){}
+						}*/
+				DvrMsStart(m_recorderId,(uint)lStartTime);
+			}
+			catch(Exception ex)
+			{
+				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to start recording :{0} {1} {2}",
+					ex.Message,ex.Source,ex.StackTrace);
+			}
+			finally
+			{
+			}
+			_graphState = State.Recording;
+			return true;
+
+#endif
 		}//public bool StartRecording(int country,AnalogVideoStandard standard,int iChannelNr, ref string strFileName, bool bContentRecording, DateTime timeProgStart)
 	    
 		/// <summary>
@@ -1382,11 +1501,20 @@ namespace MediaPortal.TV.Recording
 		{
 			if (_graphState != State.Recording) return;
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:stop recording...");
+#if USEMTSWRITER
 			if (_tsRecordInterface!=null)
 			{
 				_tsRecordInterface.StopRecord(0);
 			}
+#else
+			if (m_recorderId>=0) 
+			{
+				DvrMsStop(m_recorderId);
+				m_recorderId=-1;
 
+			}
+
+#endif
 
 			_graphState = State.TimeShifting;
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:stopped recording...");
@@ -2245,7 +2373,7 @@ namespace MediaPortal.TV.Recording
 
 		void SetupMTSDemuxerPin()
 		{
-
+#if USEMTSWRITER
 			if (_tsWriterInterface== null || _tsWriterInterface==null || _currentTuningObject==null) return;
 			Log.Write("DVBGraphBDA:SetupMTSDemuxerPin");
 			_tsWriterInterface.ResetPids();
@@ -2290,10 +2418,12 @@ namespace MediaPortal.TV.Recording
 				_tsWriterInterface.SetPCRPid(0);
 
 			_tsWriterInterface.SetPMTPid((ushort)_currentTuningObject.PMTPid);
+#endif
 		}
 
 		private bool CreateSinkSource(string fileName, bool useAC3)
 		{
+#if USEMTSWRITER
 			if(_graphState!=State.Created && _graphState!=State.TimeShifting)
 				return false;
 
@@ -2334,6 +2464,200 @@ namespace MediaPortal.TV.Recording
 			}
 			SetupMTSDemuxerPin();
 			return true;
+#else
+			int		hr				= 0;
+			IPin	pinObj0		= null;
+			IPin	pinObj1		= null;
+			IPin	pinObj2		= null;
+			IPin	pinObj3		= null;
+			IPin	outPin		= null;
+
+			try
+			{
+				int iTimeShiftBuffer=30;
+				using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+				{
+					iTimeShiftBuffer= xmlreader.GetValueAsInt("capture", "timeshiftbuffer", 30);
+					if (iTimeShiftBuffer<5) iTimeShiftBuffer=5;
+				}
+				iTimeShiftBuffer*=60; //in seconds
+				int iFileDuration = iTimeShiftBuffer/6;
+
+				//create StreamBufferSink filter
+				//				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateSinkSource()");
+				hr=_graphBuilder.AddFilter((IBaseFilter)m_StreamBufferSink,"StreamBufferSink");
+				if(hr!=0)
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot add StreamBufferSink:{0:X}",hr);
+					return false;
+				}			
+				//create MPEG2 Analyzer filter
+				//				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Add mpeg2 analyzer()");
+				hr=_graphBuilder.AddFilter((IBaseFilter)m_mpeg2Analyzer,"Mpeg2 Analyzer");
+				if(hr!=0)
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot add mpeg2 analyzer to graph:{0:X}",hr);
+					return false;
+				}
+
+				//connect mpeg2 demuxer video out->mpeg2 analyzer input pin
+				//get input pin of MPEG2 Analyzer filter
+				//				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:find mpeg2 analyzer input pin()");
+				pinObj0=DirectShowUtil.FindPinNr((IBaseFilter)m_mpeg2Analyzer,PinDirection.Input,0);
+				if(pinObj0 == null)
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot find mpeg2 analyzer input pin");
+					return false;
+				}
+				
+				//				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:connect demux video output->mpeg2 analyzer");
+				hr=_graphBuilder.Connect(_pinDemuxerVideo, pinObj0) ;
+				if (hr!=0)
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to connect demux video output->mpeg2 analyzer:{0:X}",hr);
+					return false;
+				}
+
+				//connect MPEG2 analyzer Filter->stream buffer sink pin 0
+				//get output pin #0 from MPEG2 analyzer Filter
+				//				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:mpeg2 analyzer output->streambuffersink in");
+				pinObj1 = DirectShowUtil.FindPinNr((IBaseFilter)m_mpeg2Analyzer, PinDirection.Output, 0);	
+				if (hr!=0)
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot find mpeg2 analyzer output pin:{0:X}",hr);
+					return false;
+				}
+				
+				//get input pin #0 from StreamBufferSink Filter
+				pinObj2 = DirectShowUtil.FindPinNr((IBaseFilter)m_StreamBufferSink, PinDirection.Input, 0);	
+				if (hr!=0)
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot find SBE input pin:{0:X}",hr);
+					return false;
+				}
+
+				hr=_graphBuilder.Connect(pinObj1, pinObj2) ;
+				if (hr!=0)
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to connect mpeg2 analyzer->streambuffer sink:{0:X}",hr);
+					return false;
+				}
+
+				if (!useAC3)
+				{
+					//connect MPEG2 demuxer audio output ->StreamBufferSink Input #1
+					//Get StreamBufferSink InputPin #1
+					pinObj3 = DirectShowUtil.FindPinNr((IBaseFilter)m_StreamBufferSink, PinDirection.Input, 1);	
+					if (hr!=0)
+					{
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot find SBE input pin#2");
+						return false;
+					}
+					hr=_graphBuilder.Connect(_pinDemuxerAudio, pinObj3) ;
+					if (hr!=0)
+					{
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to connect mpeg2 demuxer audio out->streambuffer sink in#2:{0:X}",hr);
+						return false;
+					}
+				}
+				else
+				{
+					//connect ac3 pin ->stream buffersink input #2
+					if (_pinAC3Out!=null)
+					{
+						pinObj3 = DirectShowUtil.FindPinNr((IBaseFilter)m_StreamBufferSink, PinDirection.Input, 1);	
+						if (hr!=0)
+						{
+							Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot find SBE input pin#2");
+							return false;
+						}
+						hr=_graphBuilder.Connect(_pinAC3Out, pinObj3) ;
+						if (hr!=0)
+						{
+							Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to connect mpeg2 demuxer AC3 out->streambuffer sink in#2:{0:X}",hr);
+							return false;
+						}
+					}
+				}
+				int ipos=fileName.LastIndexOf(@"\");
+				string strDir=fileName.Substring(0,ipos);
+				m_StreamBufferConfig	= new StreamBufferConfig();
+				m_IStreamBufferConfig	= (IStreamBufferConfigure) m_StreamBufferConfig;
+				
+				// setting the StreamBufferEngine registry key
+				IntPtr HKEY = (IntPtr) unchecked ((int)0x80000002L);
+				IStreamBufferInitialize pTemp = (IStreamBufferInitialize) m_IStreamBufferConfig;
+				IntPtr subKey = IntPtr.Zero;
+
+				RegOpenKeyEx(HKEY, "SOFTWARE\\MediaPortal", 0, 0x3f, out subKey);
+				hr=pTemp.SetHKEY(subKey);
+				
+				//set timeshifting folder
+				//				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:set timeshift folder to:{0}", strDir);
+				hr = m_IStreamBufferConfig.SetDirectory(strDir);	
+				if(hr != 0)
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to set timeshift folder to:{0} {1:X}", strDir,hr);
+					return false;
+				}
+
+				//set number of timeshifting files
+				hr = m_IStreamBufferConfig.SetBackingFileCount(6, 8);    //4-6 files
+				if(hr != 0)
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to set timeshifting files to 6-8 {0:X}",hr);
+					return false;
+				}
+				
+				//set duration of each timeshift file
+				hr = m_IStreamBufferConfig.SetBackingFileDuration((uint)iFileDuration); // 60sec * 4 files= 4 mins
+				if(hr != 0)
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to set timeshifting filesduration to {0} {1:X}",iFileDuration,hr);
+					return false;
+				}
+
+				subKey = IntPtr.Zero;
+				HKEY = (IntPtr) unchecked ((int)0x80000002L);
+				IStreamBufferInitialize pConfig = (IStreamBufferInitialize) m_StreamBufferSink;
+
+				RegOpenKeyEx(HKEY, "SOFTWARE\\MediaPortal", 0, 0x3f, out subKey);
+				hr = pConfig.SetHKEY(subKey);
+				//set timeshifting filename
+				//				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:set timeshift file to:{0}", fileName);
+				
+				IStreamBufferConfigure2 streamConfig2	= m_StreamBufferConfig as IStreamBufferConfigure2;
+				if (streamConfig2!=null)
+					streamConfig2.SetFFTransitionRates(8,32);
+
+				// lock on the 'filename' file
+				hr=m_IStreamBufferSink.LockProfile(fileName);
+				if (hr!=0 && hr!=1)
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED to set timeshift file to:{0} {1:X}", fileName,hr);
+					return false;
+				}
+			}
+			finally
+			{
+				if(pinObj0 != null)
+					Marshal.ReleaseComObject(pinObj0);
+				if(pinObj1 != null)
+					Marshal.ReleaseComObject(pinObj1);
+				if(pinObj2 != null)
+					Marshal.ReleaseComObject(pinObj2);
+				if(pinObj3 != null)
+					Marshal.ReleaseComObject(pinObj3);
+				if(outPin != null)
+					Marshal.ReleaseComObject(outPin);
+
+				//if ( streamBufferInitialize !=null)
+				//Marshal.ReleaseComObject(streamBufferInitialize );
+				
+			}
+			//			(_graphBuilder as IMediaFilter).SetSyncSource(_filterMpeg2Demultiplexer as IReferenceClock);
+			return true;
+#endif
 		}//private bool CreateSinkSource(string fileName)
 
 		/// <summary>
@@ -3191,7 +3515,7 @@ namespace MediaPortal.TV.Recording
 		{
 			if (_graphState==State.None || _graphState==State.Created) return;
 
-
+/*
 			if (_graphState==State.TimeShifting && _graphIsPaused)
 			{
 				string fileName=Recorder.GetTimeShiftFileNameByCardId(_cardId);
@@ -3201,7 +3525,7 @@ namespace MediaPortal.TV.Recording
 						{
 							using (FileStream f = new FileStream(fileName,System.IO.FileMode.Open,FileAccess.Read,FileShare.ReadWrite))
 							{
-								if (f.Length>1024*100)//100kb
+								if (f.Length>0)//100kb
 								{
 									g_Player.ContinueGraph();
 									_graphIsPaused=false;
@@ -3210,6 +3534,7 @@ namespace MediaPortal.TV.Recording
 						}
 				}
 			}
+*/
 			if (_streamDemuxer!=null)
 				_streamDemuxer.Process();
 			
@@ -3315,17 +3640,21 @@ namespace MediaPortal.TV.Recording
 			//bool restartGraph=false;
 			_lastPMTVersion=-1;
 			_pmtRetyCount=0;
+			bool restartGraph=false;
 			try
 			{
+#if !USEMTSWRITER
 				if (_graphState==State.TimeShifting)
 				{
-					string fileName=Recorder.GetTimeShiftFileNameByCardId(_cardId);
-					if (g_Player.Playing && g_Player.CurrentFile == fileName)
-					{		
-							g_Player.PauseGraph();
-							_graphIsPaused=true;
+					string fname=Recorder.GetTimeShiftFileNameByCardId(_cardId);
+					if (g_Player.Playing && g_Player.CurrentFile == fname)
+					{
+						restartGraph=true;
+						g_Player.PauseGraph();
+						_mediaControl.Stop();
 					}
 				}
+#endif
 				if (_vmr9!=null) _vmr9.Enable(false);
 				
 				_currentChannelNumber = channel.Number;
@@ -3604,6 +3933,14 @@ namespace MediaPortal.TV.Recording
 			}	
 			finally
 			{
+#if !USEMTSWRITER
+				if (restartGraph)
+				{
+					string fname=Recorder.GetTimeShiftFileNameByCardId(_cardId);
+					StartTimeShifting(null,fname);
+					g_Player.ContinueGraph();
+				}
+#endif
 				if (_vmr9!=null) _vmr9.Enable(true);
 				_signalLostTimer=DateTime.Now;
 			}
@@ -4651,11 +4988,77 @@ namespace MediaPortal.TV.Recording
 
 
 				TuneRadioChannel(station);
+#if USEMTSWRITER
 				string fileName=Recorder.GetTimeShiftFileNameByCardId(_cardId);
 				StartTimeShifting(null,fileName);
 				SetupMTSDemuxerPin();
 				return ;
 			}
+#else
+				// add the preferred video/audio codecs
+				AddPreferredCodecs(true,false);
+
+				if ( _currentTuningObject.PCRPid<=0 || _currentTuningObject.PCRPid>=0x1fff)
+				{
+					SetupDemuxer(_pinDemuxerVideo,0,_pinDemuxerAudio,0,_pinAC3Out,0);
+					SetupDemuxerPin(_pinMPG1Out,_currentTuningObject.AudioPid,(int)MediaSampleContent.TransportPayload,true);
+					SetupDemuxerPin(_pinMPG1Out,_currentTuningObject.PCRPid,(int)MediaSampleContent.TransportPacket,false);
+					//setup demuxer MTS pin
+					SetupMTSDemuxerPin();
+
+					IMpeg2Demultiplexer mpeg2Demuxer= _filterMpeg2Demultiplexer as IMpeg2Demultiplexer ;
+					if (mpeg2Demuxer!=null)
+					{
+						Log.Write("DVBGraphBDA:MPEG2 demultiplexer PID mapping:");
+						uint pid=0,sampletype=0;
+						GetPidMap(_pinMPG1Out,ref pid, ref sampletype);
+						Log.Write("DVBGraphBDA:  Pin:mpg1 is mapped to pid:{0:x} content:{1}", pid, sampletype);
+					}
+					if(_graphBuilder.Render(_pinMPG1Out/*_pinDemuxerAudio*/) != 0)
+					{
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to render audio out pin MPEG-2 Demultiplexer");
+						return;
+					}
+				}
+				else
+				{
+					//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:StartRadio() render demux output pin");
+					if(_graphBuilder.Render(_pinDemuxerAudio) != 0)
+					{
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to render audio out pin MPEG-2 Demultiplexer");
+						return;
+					}
+				}
+				//get the IMediaControl interface of the graph
+				if(_mediaControl == null)
+					_mediaControl = _graphBuilder as IMediaControl;
+
+				//start the graph
+				//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: start graph");
+				if (_mediaControl!=null)
+				{
+					int hr=_mediaControl.Run();
+					if (hr<0)
+					{
+						Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: FAILED unable to start graph :0x{0:X}", hr);
+					}
+				}
+				else
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA: FAILED cannot get IMediaControl");
+				}
+
+				_isGraphRunning=true;
+				_graphState = State.Radio;
+				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Listening to radio..");
+				return;
+			}
+
+			// tune to the correct channel
+
+			TuneRadioChannel(station);
+			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Listening to radio..");
+#endif
 		}
 		
 		public void TuneRadioFrequency(int frequency)
@@ -4786,13 +5189,21 @@ namespace MediaPortal.TV.Recording
 		}
 		public string TvTimeshiftFileName()
 		{
+#if USEMTSWRITER
 			return "live.ts";
+#else
+			return "live.tv";
+#endif
 		}
 
 
 		public string RadioTimeshiftFileName()
 		{
+#if USEMTSWRITER
 			return "radio.ts";
+#else
+			return String.Empty;
+#endif
 		}
 		public void GrabTeletext(bool yesNo)
 		{

@@ -18,7 +18,7 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-#define USEMTSWRITER
+//#define USEMTSWRITER
 using System;
 using Microsoft.Win32;
 using System.Drawing;
@@ -185,12 +185,12 @@ namespace MediaPortal.TV.Recording
 		IMHWGrabber							m_mhwGrabberInterface		= null;
 		IBaseFilter							m_dvbAnalyzer=null;
 		IStreamAnalyzer					m_analyzerInterface			= null;
-
+#if USEMTSWRITER
 		IBaseFilter						  m_tsWriter=null;
 		IMPTSWriter							m_tsWriterInterface=null;
 		IMPTSRecord						  m_tsRecordInterface=null;
 		IBaseFilter							m_smartTee= null;			
-
+#endif
 		EpgGrabber							m_epgGrabber = new EpgGrabber();
 
 		protected IMpeg2Demultiplexer	m_demuxInterface=null;
@@ -852,10 +852,10 @@ namespace MediaPortal.TV.Recording
 			m_analyzerInterface=null;
 			m_epgGrabberInterface=null;
 			m_mhwGrabberInterface=null;
-
+#if USEMTSWRITER
 			m_tsWriterInterface=null;
 			m_tsRecordInterface=null;
-			
+#endif			
 
 			if(m_dvbAnalyzer!=null)
 			{
@@ -864,6 +864,7 @@ namespace MediaPortal.TV.Recording
 				if (hr!=0) Log.Write("ReleaseComObject(m_dvbAnalyzer):{0}",hr);
 				m_dvbAnalyzer=null;
 			}
+#if USEMTSWRITER
 			if (m_tsWriter!=null)
 			{
 				Log.Write("free MPTSWriter");
@@ -878,6 +879,7 @@ namespace MediaPortal.TV.Recording
 				if (hr!=0) Log.Write("DVBGraphBDA:ReleaseComObject(m_smartTee):{0}",hr);
 				m_smartTee = null;
 			}
+#endif
 			if (m_videoWindow != null)
 			{
 				m_bOverlayVisible=false;
@@ -1018,6 +1020,7 @@ namespace MediaPortal.TV.Recording
 			return true;
 		}
 		//
+#if USEMTSWRITER
 		private bool CreateMTSWriter(string fileName)
 		{
 			if(m_graphState!=State.Created && m_graphState!=State.TimeShifting)
@@ -1163,7 +1166,7 @@ namespace MediaPortal.TV.Recording
 			SetupMTSDemuxerPin();
 			return true;
 		}
-
+#endif
 		void SetupMTSDemuxerPin()
 		{
 #if USEMTSWRITER
@@ -1603,12 +1606,12 @@ namespace MediaPortal.TV.Recording
 				m_recorderId=-1;
 			}
 
-
-			if (m_tsRecordInterface!=null)
+#if USEMTSWRITER
+			if (_tsRecordInterface!=null)
 			{
-				m_tsRecordInterface.StopRecord(0);
+				_tsRecordInterface.StopRecord(0);
 			}
-
+#endif
 			m_graphState=State.TimeShifting;
 			return ;
 
@@ -2888,7 +2891,7 @@ namespace MediaPortal.TV.Recording
 					return ;
 				}
 
-				hr=m_graphBuilder.Connect(m_data0,samplePin);
+				int hr=m_graphBuilder.Connect(m_data0,samplePin);
 				if(hr!=0)
 				{
 					Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:StartViewing() FAILED: cannot connect data0->samplepin");
