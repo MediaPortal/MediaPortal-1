@@ -3715,10 +3715,50 @@
 <string Prefix="My "><id>100604</id><value>TV/Search</value></string>
 <string Prefix="My "><id>100605</id><value>TV/Recorded Tv/Genre</value></string>
 <string Prefix="My "><id>100606</id><value>TV/Recorded Tv/channels</value></string>
+<string Prefix="My "><id>100607</id><value>TV/Scheduler/Priorities</value></string>
+<string Prefix="My "><id>100608</id><value>TV/Scheduler/Conflicts</value></string>
+<string Prefix="My "><id>100609</id><value>TV/Compress/Main</value></string>
+<string Prefix="My "><id>100610</id><value>TV/Compress/Settings</value></string>
+<string Prefix="My "><id>100611</id><value>TV/Compress/Auto</value></string>
+<string Prefix="My "><id>100612</id><value>TV/Compress/Compress</value></string>
+<string Prefix="My "><id>100613</id><value>TV/Compress/Status</value></string>
+<string Prefix="My "><id>100614</id><value>Video Artist Info</value></string>
+<string Prefix="My "><id>100615</id><value>Wizard/Welcome</value></string>
+<string Prefix="My "><id>100616</id><value>Wizard/Cards detected</value></string>
+<string Prefix="My "><id>100617</id><value>Wizard/Country</value></string>
+<string Prefix="My "><id>100618</id><value>Wizard/Scan</value></string>
+<string Prefix="My "><id>100619</id><value>Wizard/DVBC/Country</value></string>
+<string Prefix="My "><id>100620</id><value>Wizard/DVBC/Scan</value></string>
+<string Prefix="My "><id>100621</id><value>Wizard/DVBS/LNB</value></string>
+<string Prefix="My "><id>100622</id><value>Wizard/DVBS/LNB details</value></string>
+<string Prefix="My "><id>100623</id><value>Wizard/DVBS/Transponder</value></string>
+<string Prefix="My "><id>100624</id><value>Wizard/DVBS/Scan</value></string>
+<string Prefix="My "><id>100625</id><value>Wizard/ATSC/Scan</value></string>
+<string Prefix="My "><id>100626</id><value>Wizard/Analog/Country</value></string>
+<string Prefix="My "><id>100627</id><value>Wizard/Analog/City</value></string>
+<string Prefix="My "><id>100628</id><value>Wizard/Analog/Imported</value></string>
+<string Prefix="My "><id>100629</id><value>Wizard/Analog/Manual</value></string>
+<string Prefix="My "><id>100630</id><value>Wizard/Analog/Scan</value></string>
+<string Prefix="My "><id>100631</id><value>Wizard/Analog/Rename</value></string>
+<string Prefix="My "><id>100632</id><value>Wizard/Analog/Radio</value></string>
+<string Prefix="My "><id>100633</id><value>Wizard/Analog/Rename Radio</value></string>
+<string Prefix="My "><id>100634</id><value>Wizard/Remote</value></string>
+<string Prefix="My "><id>100635</id><value>Wizard/EPG</value></string>
+<string Prefix="My "><id>100699</id><value>Wizard/Finished</value></string>
+<string Prefix="My "><id>100700</id><value>TV Settings</value></string>
+<string Prefix="My "><id>100701</id><value>TV Recording Settings</value></string>
+<string Prefix="My "><id>100702</id><value>TV Sort channels</value></string>
+<string Prefix="My "><id>100703</id><value>TV Movie settings</value></string>
+<string Prefix="My "><id>100704</id><value>DVD settings</value></string>
+<string Prefix="My "><id>100705</id><value>Skin settings</value></string>
+<string Prefix="My "><id>100748</id><value>Program info</value></string>
+<string Prefix="My "><id>100749</id><value>TV/No signal</value></string>
 <string Prefix="My "><id>100750</id><value>Recipes</value></string>
 <string Prefix="My "><id>100755</id><value>Status</value></string>
 <string Prefix="My "><id>100756</id><value>Status details</value></string>
 <string Prefix="My "><id>100757</id><value>Status preferences</value></string>
+<string Prefix="My "><id>100758</id><value>File dialog</value></string>
+<string Prefix="My "><id>100760</id><value>Burner</value></string>
 <string><id>100758</id><value>File dialog</value></string>
 <string Prefix="My "><id>100760</id><value>Burner</value></string>
 <string Prefix="My "><id>100770</id><value>Explorer</value></string>
@@ -3776,5 +3816,8 @@
 <string><id>200023</id><value>Press the Next button to configure these cards</value></string>
 <string><id>200024</id><value>TV Setup</value></string>
 
+<!-- Web Browser Strings -->
+<string><id>4000</id><value>Web Browser</value></string>
+<string><id>4001</id><value>Favorites</value></string>
 
 </strings>
