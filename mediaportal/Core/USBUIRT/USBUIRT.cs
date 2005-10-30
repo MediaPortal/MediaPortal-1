@@ -129,7 +129,9 @@ namespace MediaPortal.IR
 		public delegate void EventLearnedHandler(object sender, LearningEventArgs e);
 		public delegate void EndLearnedHandler(object sender, EventArgs e);
 	
-		private delegate void UUIRTReceiveCallbackDelegate( string val );
+		//private delegate void UUIRTReceiveCallbackDelegate( string val );
+		private delegate void UUIRTReceiveCallbackDelegate(string val, IntPtr reserved);
+		
 		public delegate void IRLearnCallbackDelegate( uint val, uint val2, ulong val3);
 		public delegate void OnRemoteCommand(object command);
 		#endregion
@@ -379,7 +381,7 @@ namespace MediaPortal.IR
 					isUsbUirtLoaded = true;
 					
 
-					Log.Write("USBUIRT:Open succes:{0}",GetVersions());
+					Log.Write("USBUIRT:Open success:{0}",GetVersions());
 				}
 				else
 				{
@@ -453,21 +455,11 @@ namespace MediaPortal.IR
 					// Dispose any managed resources.
 				}
 
-				IntPtr nullPtr = new IntPtr(-1);
+				IntPtr emptyPtr = new IntPtr(-1);
 
-				//if(isUsbUirtLoaded && UsbUirtHandle != IntPtr.Zero)
-				if(isUsbUirtLoaded && UsbUirtHandle != nullPtr)
+				if(isUsbUirtLoaded && UsbUirtHandle != emptyPtr && UsbUirtHandle != IntPtr.Zero)
 				{
-					//UUIRTSetReceiveCallback(UsbUirtHandle, null, 0);
-					//urcb = null;
-
-					// Make sure we clear all subscribed events...
-					//remoteCommandCallback = null;
-					//StartLearning = null;
-					//OnEventLearned = null;
-					//OnEndLearning = null;
-
-					//UUIRTClose(UsbUirtHandle);
+					UUIRTClose(UsbUirtHandle);
 					UsbUirtHandle = IntPtr.Zero;
 					isUsbUirtLoaded = false;
 				}
@@ -645,7 +637,8 @@ namespace MediaPortal.IR
 			}
 		}
 
-		public void UUIRTReceiveCallback( string irid )
+		//public void UUIRTReceiveCallback( string irid )
+		public void UUIRTReceiveCallback(string irid, IntPtr reserved)
 		{
 			if(!ReceiveEnabled) 
 				return;
@@ -676,8 +669,7 @@ namespace MediaPortal.IR
 					waitingForIrRxLearnEvent = false;
 					NotifyEventLearned(controlCodeButtonNames[currentButtonIndex], irid, true, totCodeCount, curCodeIndex);
 
-					Console.WriteLine("In UUIRTReceiveCallback...");
-
+					//Console.WriteLine("In UUIRTReceiveCallback...");
 					
 					if(currentButtonIndex < controlCodeButtonNames.Length - 1 || 
 						currentButtonIndex < controlCodeButtonNames.Length && !capturingToggledIrCode)
@@ -761,7 +753,7 @@ namespace MediaPortal.IR
 
 		public void Close()
 		{
-			//this.Dispose();
+			this.Dispose();
 		}
 
 		#endregion 

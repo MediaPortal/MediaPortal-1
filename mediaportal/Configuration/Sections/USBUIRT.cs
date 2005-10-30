@@ -69,10 +69,10 @@ namespace MediaPortal.Configuration.Sections
 
 		public USBUIRT(string name) : base(name)
 		{
-			// This call is required by the Windows Form Designer.
 			InitializeComponent();
+			
+			MediaPortal.IR.USBUIRT.Create(new MediaPortal.IR.USBUIRT.OnRemoteCommand(OnRemoteCommand));
 
-			//MediaPortal.IR.USBUIRT.Create(new MediaPortal.IR.USBUIRT.OnRemoteCommand(OnRemoteCommand));
 			if(MediaPortal.IR.USBUIRT.Instance == null)
 				return;
 
@@ -91,8 +91,7 @@ namespace MediaPortal.Configuration.Sections
 					components.Dispose();
 				}
 
-				//MediaPortal.IR.USBUIRT.Instance.Dispose();
-				//MediaPortal.IR.USBUIRT.Instance.Close();
+				MediaPortal.IR.USBUIRT.Instance.Dispose();
 			}
 			base.Dispose( disposing );
 		}
@@ -101,28 +100,34 @@ namespace MediaPortal.Configuration.Sections
 		{
 			using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
-				inputCheckBox.Checked	= xmlreader.GetValueAsBool("USBUIRT", "internal", false) ;
-				outputCheckBox.Checked	= xmlreader.GetValueAsBool("USBUIRT", "external", false) ;
-				digitCheckBox.Checked	= xmlreader.GetValueAsBool("USBUIRT", "is3digit", false) ;
-				enterCheckBox.Checked	= xmlreader.GetValueAsBool("USBUIRT", "needsenter", false) ; 
+				try
+				{
+					Log.Write("USBUIRT: Setting configuration control values");
+
+					inputCheckBox.Checked	= xmlreader.GetValueAsBool("USBUIRT", "internal", false) ;
+					outputCheckBox.Checked	= xmlreader.GetValueAsBool("USBUIRT", "external", false) ;
+					digitCheckBox.Checked	= xmlreader.GetValueAsBool("USBUIRT", "is3digit", false) ;
+					enterCheckBox.Checked	= xmlreader.GetValueAsBool("USBUIRT", "needsenter", false) ; 
 	
-				int repeatCount = xmlreader.GetValueAsInt("USBUIRT", "repeatcount", 2) ;
-				commandRepeatNumUpDn.Value = repeatCount;
+					int repeatCount = xmlreader.GetValueAsInt("USBUIRT", "repeatcount", 2) ;
+					commandRepeatNumUpDn.Value = repeatCount;
 
-				if(MediaPortal.IR.USBUIRT.Instance == null)
-					return;
+					int interCommandDelay = xmlreader.GetValueAsInt("USBUIRT", "commanddelay", 100) ;
+					interCommandDelayNumUpDn.Value = interCommandDelay;
 
-				MediaPortal.IR.USBUIRT.Instance.CommandRepeatCount = repeatCount;
+					EnableTestIrControls();
 
-				int interCommandDelay = xmlreader.GetValueAsInt("USBUIRT", "commanddelay", 100) ;
-				interCommandDelayNumUpDn.Value = interCommandDelay;
+					if(MediaPortal.IR.USBUIRT.Instance == null)
+						return;
 
-				if(MediaPortal.IR.USBUIRT.Instance == null)
-					return;
+					MediaPortal.IR.USBUIRT.Instance.CommandRepeatCount = repeatCount;
+					MediaPortal.IR.USBUIRT.Instance.InterCommandDelay = interCommandDelay;
+				}
 
-				MediaPortal.IR.USBUIRT.Instance.InterCommandDelay = interCommandDelay;
-
-				EnableTestIrControls();
+				catch(Exception ex)
+				{
+					Log.Write("USBUIRT: Setting control values failed: " + ex.Message);
+				}
 			}
 		}
 
@@ -149,14 +154,6 @@ namespace MediaPortal.Configuration.Sections
 		private void InitializeComponent()
 		{
 			this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-			this.LearnStatusPnl = new System.Windows.Forms.Panel();
-			this.CancelLearnBtn = new System.Windows.Forms.Button();
-			this.LearnPrgBar = new System.Windows.Forms.ProgressBar();
-			this.LearnStatusLbl = new System.Windows.Forms.Label();
-			this.panel1 = new System.Windows.Forms.Panel();
-			this.receivedIrTxtBox = new System.Windows.Forms.TextBox();
-			this.statusLabel = new System.Windows.Forms.Label();
-			this.SkipCodeBtn = new System.Windows.Forms.Button();
 			this.SettingsPnl = new System.Windows.Forms.Panel();
 			this.testSendIrBtn = new System.Windows.Forms.Button();
 			this.testSendIrTxtBox = new System.Windows.Forms.TextBox();
@@ -172,17 +169,25 @@ namespace MediaPortal.Configuration.Sections
 			this.digitCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
 			this.outputCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
 			this.inputCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
+			this.LearnStatusPnl = new System.Windows.Forms.Panel();
+			this.CancelLearnBtn = new System.Windows.Forms.Button();
+			this.LearnPrgBar = new System.Windows.Forms.ProgressBar();
+			this.LearnStatusLbl = new System.Windows.Forms.Label();
+			this.panel1 = new System.Windows.Forms.Panel();
+			this.receivedIrTxtBox = new System.Windows.Forms.TextBox();
+			this.statusLabel = new System.Windows.Forms.Label();
+			this.SkipCodeBtn = new System.Windows.Forms.Button();
 			this.label4 = new System.Windows.Forms.Label();
 			this.groupBox2 = new System.Windows.Forms.GroupBox();
 			this.label3 = new System.Windows.Forms.Label();
 			this.linkLabel1 = new System.Windows.Forms.LinkLabel();
 			this.label2 = new System.Windows.Forms.Label();
 			this.groupBox1.SuspendLayout();
-			this.LearnStatusPnl.SuspendLayout();
-			this.panel1.SuspendLayout();
 			this.SettingsPnl.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.interCommandDelayNumUpDn)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.commandRepeatNumUpDn)).BeginInit();
+			this.LearnStatusPnl.SuspendLayout();
+			this.panel1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -198,86 +203,6 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox1.Size = new System.Drawing.Size(472, 296);
 			this.groupBox1.TabIndex = 0;
 			this.groupBox1.TabStop = false;
-			// 
-			// LearnStatusPnl
-			// 
-			this.LearnStatusPnl.Controls.Add(this.CancelLearnBtn);
-			this.LearnStatusPnl.Controls.Add(this.LearnPrgBar);
-			this.LearnStatusPnl.Controls.Add(this.LearnStatusLbl);
-			this.LearnStatusPnl.Controls.Add(this.panel1);
-			this.LearnStatusPnl.Controls.Add(this.SkipCodeBtn);
-			this.LearnStatusPnl.Location = new System.Drawing.Point(8, 8);
-			this.LearnStatusPnl.Name = "LearnStatusPnl";
-			this.LearnStatusPnl.Size = new System.Drawing.Size(456, 280);
-			this.LearnStatusPnl.TabIndex = 9;
-			// 
-			// CancelLearnBtn
-			// 
-			this.CancelLearnBtn.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.CancelLearnBtn.Location = new System.Drawing.Point(344, 248);
-			this.CancelLearnBtn.Name = "CancelLearnBtn";
-			this.CancelLearnBtn.Size = new System.Drawing.Size(88, 23);
-			this.CancelLearnBtn.TabIndex = 3;
-			this.CancelLearnBtn.Text = "Cancel Learn";
-			this.CancelLearnBtn.Click += new System.EventHandler(this.CancelLearnBtn_Click);
-			// 
-			// LearnPrgBar
-			// 
-			this.LearnPrgBar.Location = new System.Drawing.Point(24, 224);
-			this.LearnPrgBar.Name = "LearnPrgBar";
-			this.LearnPrgBar.Size = new System.Drawing.Size(408, 16);
-			this.LearnPrgBar.TabIndex = 2;
-			// 
-			// LearnStatusLbl
-			// 
-			this.LearnStatusLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.LearnStatusLbl.Location = new System.Drawing.Point(24, 16);
-			this.LearnStatusLbl.Name = "LearnStatusLbl";
-			this.LearnStatusLbl.Size = new System.Drawing.Size(408, 16);
-			this.LearnStatusLbl.TabIndex = 1;
-			this.LearnStatusLbl.Text = "Learn Status:";
-			// 
-			// panel1
-			// 
-			this.panel1.BackColor = System.Drawing.SystemColors.Window;
-			this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this.panel1.Controls.Add(this.receivedIrTxtBox);
-			this.panel1.Controls.Add(this.statusLabel);
-			this.panel1.DockPadding.All = 20;
-			this.panel1.Location = new System.Drawing.Point(24, 32);
-			this.panel1.Name = "panel1";
-			this.panel1.Size = new System.Drawing.Size(408, 188);
-			this.panel1.TabIndex = 0;
-			// 
-			// receivedIrTxtBox
-			// 
-			this.receivedIrTxtBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
-			this.receivedIrTxtBox.ForeColor = System.Drawing.SystemColors.ControlDark;
-			this.receivedIrTxtBox.Location = new System.Drawing.Point(20, 152);
-			this.receivedIrTxtBox.Multiline = true;
-			this.receivedIrTxtBox.Name = "receivedIrTxtBox";
-			this.receivedIrTxtBox.Size = new System.Drawing.Size(366, 28);
-			this.receivedIrTxtBox.TabIndex = 5;
-			this.receivedIrTxtBox.Text = "";
-			// 
-			// statusLabel
-			// 
-			this.statusLabel.Dock = System.Windows.Forms.DockStyle.Top;
-			this.statusLabel.Font = new System.Drawing.Font("Verdana", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.statusLabel.Location = new System.Drawing.Point(20, 20);
-			this.statusLabel.Name = "statusLabel";
-			this.statusLabel.Size = new System.Drawing.Size(366, 128);
-			this.statusLabel.TabIndex = 4;
-			// 
-			// SkipCodeBtn
-			// 
-			this.SkipCodeBtn.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.SkipCodeBtn.Location = new System.Drawing.Point(24, 248);
-			this.SkipCodeBtn.Name = "SkipCodeBtn";
-			this.SkipCodeBtn.Size = new System.Drawing.Size(88, 23);
-			this.SkipCodeBtn.TabIndex = 3;
-			this.SkipCodeBtn.Text = "Skip this Code";
-			this.SkipCodeBtn.Click += new System.EventHandler(this.SkipCodeBtn_Click);
 			// 
 			// SettingsPnl
 			// 
@@ -399,7 +324,6 @@ namespace MediaPortal.Configuration.Sections
 			this.label1.Size = new System.Drawing.Size(144, 16);
 			this.label1.TabIndex = 5;
 			this.label1.Text = "USBUIRT version detected:";
-			this.label1.Click += new System.EventHandler(this.label1_Click);
 			// 
 			// tunerCommandsButton
 			// 
@@ -465,6 +389,86 @@ namespace MediaPortal.Configuration.Sections
 			this.inputCheckBox.Text = "Use your remote to control Media Portal";
 			this.inputCheckBox.CheckedChanged += new System.EventHandler(this.inputCheckBox_CheckedChanged);
 			// 
+			// LearnStatusPnl
+			// 
+			this.LearnStatusPnl.Controls.Add(this.CancelLearnBtn);
+			this.LearnStatusPnl.Controls.Add(this.LearnPrgBar);
+			this.LearnStatusPnl.Controls.Add(this.LearnStatusLbl);
+			this.LearnStatusPnl.Controls.Add(this.panel1);
+			this.LearnStatusPnl.Controls.Add(this.SkipCodeBtn);
+			this.LearnStatusPnl.Location = new System.Drawing.Point(8, 8);
+			this.LearnStatusPnl.Name = "LearnStatusPnl";
+			this.LearnStatusPnl.Size = new System.Drawing.Size(456, 280);
+			this.LearnStatusPnl.TabIndex = 9;
+			// 
+			// CancelLearnBtn
+			// 
+			this.CancelLearnBtn.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.CancelLearnBtn.Location = new System.Drawing.Point(344, 248);
+			this.CancelLearnBtn.Name = "CancelLearnBtn";
+			this.CancelLearnBtn.Size = new System.Drawing.Size(88, 23);
+			this.CancelLearnBtn.TabIndex = 3;
+			this.CancelLearnBtn.Text = "Cancel Learn";
+			this.CancelLearnBtn.Click += new System.EventHandler(this.CancelLearnBtn_Click);
+			// 
+			// LearnPrgBar
+			// 
+			this.LearnPrgBar.Location = new System.Drawing.Point(24, 224);
+			this.LearnPrgBar.Name = "LearnPrgBar";
+			this.LearnPrgBar.Size = new System.Drawing.Size(408, 16);
+			this.LearnPrgBar.TabIndex = 2;
+			// 
+			// LearnStatusLbl
+			// 
+			this.LearnStatusLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.LearnStatusLbl.Location = new System.Drawing.Point(24, 16);
+			this.LearnStatusLbl.Name = "LearnStatusLbl";
+			this.LearnStatusLbl.Size = new System.Drawing.Size(408, 16);
+			this.LearnStatusLbl.TabIndex = 1;
+			this.LearnStatusLbl.Text = "Learn Status:";
+			// 
+			// panel1
+			// 
+			this.panel1.BackColor = System.Drawing.SystemColors.Window;
+			this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.panel1.Controls.Add(this.receivedIrTxtBox);
+			this.panel1.Controls.Add(this.statusLabel);
+			this.panel1.DockPadding.All = 20;
+			this.panel1.Location = new System.Drawing.Point(24, 32);
+			this.panel1.Name = "panel1";
+			this.panel1.Size = new System.Drawing.Size(408, 188);
+			this.panel1.TabIndex = 0;
+			// 
+			// receivedIrTxtBox
+			// 
+			this.receivedIrTxtBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
+			this.receivedIrTxtBox.ForeColor = System.Drawing.SystemColors.ControlDark;
+			this.receivedIrTxtBox.Location = new System.Drawing.Point(20, 152);
+			this.receivedIrTxtBox.Multiline = true;
+			this.receivedIrTxtBox.Name = "receivedIrTxtBox";
+			this.receivedIrTxtBox.Size = new System.Drawing.Size(366, 28);
+			this.receivedIrTxtBox.TabIndex = 5;
+			this.receivedIrTxtBox.Text = "";
+			// 
+			// statusLabel
+			// 
+			this.statusLabel.Dock = System.Windows.Forms.DockStyle.Top;
+			this.statusLabel.Font = new System.Drawing.Font("Verdana", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.statusLabel.Location = new System.Drawing.Point(20, 20);
+			this.statusLabel.Name = "statusLabel";
+			this.statusLabel.Size = new System.Drawing.Size(366, 128);
+			this.statusLabel.TabIndex = 4;
+			// 
+			// SkipCodeBtn
+			// 
+			this.SkipCodeBtn.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.SkipCodeBtn.Location = new System.Drawing.Point(24, 248);
+			this.SkipCodeBtn.Name = "SkipCodeBtn";
+			this.SkipCodeBtn.Size = new System.Drawing.Size(88, 23);
+			this.SkipCodeBtn.TabIndex = 3;
+			this.SkipCodeBtn.Text = "Skip this Code";
+			this.SkipCodeBtn.Click += new System.EventHandler(this.SkipCodeBtn_Click);
+			// 
 			// label4
 			// 
 			this.label4.Location = new System.Drawing.Point(0, 0);
@@ -525,11 +529,11 @@ namespace MediaPortal.Configuration.Sections
 			this.Size = new System.Drawing.Size(472, 408);
 			this.Load += new System.EventHandler(this.USBUIRT_Load);
 			this.groupBox1.ResumeLayout(false);
-			this.LearnStatusPnl.ResumeLayout(false);
-			this.panel1.ResumeLayout(false);
 			this.SettingsPnl.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.interCommandDelayNumUpDn)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.commandRepeatNumUpDn)).EndInit();
+			this.LearnStatusPnl.ResumeLayout(false);
+			this.panel1.ResumeLayout(false);
 			this.groupBox2.ResumeLayout(false);
 			this.ResumeLayout(false);
 
@@ -645,11 +649,6 @@ namespace MediaPortal.Configuration.Sections
 
 		private void OnRemoteCommand(object command)
 		{
-		}
-
-		private void label1_Click(object sender, System.EventArgs e)
-		{
-		
 		}
 
 		private void USBUIRT_Load(object sender, System.EventArgs e)
@@ -887,8 +886,6 @@ namespace MediaPortal.Configuration.Sections
 		{
 			get { return MediaPortal.IR.USBUIRT.Instance != null; }
 		}
-
-
 	}
 }
 
