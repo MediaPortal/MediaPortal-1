@@ -25,8 +25,7 @@
 
 using System;
 using System.Collections;
-
-using MediaPortal.Input;
+using System.Windows.Input;
 
 namespace System.Windows
 {

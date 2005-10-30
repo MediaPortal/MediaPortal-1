@@ -24,44 +24,28 @@
 #endregion
 
 using System;
-using System.Collections;
-using System.ComponentModel;
 using System.Windows;
-using System.Windows.Input;
 
-namespace System.Windows
+namespace System.Windows.Input
 {
-	public class FrameworkContentElement : ContentElement//, IFrameworkInputElement, IInputElement, ISupportInitialize, IResourceHost
+	public interface IInputElement
 	{
-		#region Constructors
-
-		public FrameworkContentElement()
-		{
-		}
-
-		#endregion Constructors
-
 		#region Methods
 
-		public object FindName(string name)
-		{
-			throw new NotImplementedException();
-		}
+		void AddHandler(RoutedEvent routedEvent, Delegate handler);
+		bool Focus();
+		void RaiseEvent(RoutedEventArgs e);
+		void RemoveHandler(RoutedEvent routedEvent, Delegate handler);
 
 		#endregion Methods
 
 		#region Properties
 
-		public DependencyObject Parent
+		bool IsEnabled
 		{
-			get { throw new NotImplementedException(); }
+			get;
 		}
-
-		protected internal virtual IEnumerator LogicalChildren
-		{
-			get { return NullEnumerator.Instance; }
-		}
-
+		
 		#endregion Properties
 	}
 }

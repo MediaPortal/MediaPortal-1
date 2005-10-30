@@ -27,11 +27,11 @@ using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Threading;
+using System.Windows.Input;
 
 using MediaPortal.Animation;
 using MediaPortal.Drawing;
 using MediaPortal.Drawing.Layouts;
-using MediaPortal.Input;
 
 namespace System.Windows
 {

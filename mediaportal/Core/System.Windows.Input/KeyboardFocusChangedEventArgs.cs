@@ -24,44 +24,10 @@
 #endregion
 
 using System;
-using System.Collections;
-using System.ComponentModel;
-using System.Windows;
-using System.Windows.Input;
 
-namespace System.Windows
+namespace System.Windows.Input
 {
-	public class FrameworkContentElement : ContentElement//, IFrameworkInputElement, IInputElement, ISupportInitialize, IResourceHost
+	public class KeyboardFocusChangedEventArgs //: KeyboardEventArgs
 	{
-		#region Constructors
-
-		public FrameworkContentElement()
-		{
-		}
-
-		#endregion Constructors
-
-		#region Methods
-
-		public object FindName(string name)
-		{
-			throw new NotImplementedException();
-		}
-
-		#endregion Methods
-
-		#region Properties
-
-		public DependencyObject Parent
-		{
-			get { throw new NotImplementedException(); }
-		}
-
-		protected internal virtual IEnumerator LogicalChildren
-		{
-			get { return NullEnumerator.Instance; }
-		}
-
-		#endregion Properties
 	}
 }
