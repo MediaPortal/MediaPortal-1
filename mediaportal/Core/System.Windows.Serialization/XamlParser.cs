@@ -447,8 +447,8 @@ namespace System.Windows.Serialization
 				value = value.Substring(endOfExtensionNameIndex).Trim();
 			}
 
-			if(name.IndexOf(':') != -1)
-				name = name.Substring(name.IndexOf(':') + 1);
+			if(name.IndexOf(':') > 0)
+				name = name.Substring(0, name.IndexOf(':'));
 
 			Type t = GetType(name + "Extension");
 

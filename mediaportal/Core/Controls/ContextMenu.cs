@@ -82,6 +82,17 @@ namespace MediaPortal.Controls
 
 		#region Methods
 
+/*		protected override void AddChild(object child)
+		{
+			if(child == null)
+				throw new ArgumentNullException("child");
+
+			if(child is MenuItem == false)
+				throw new Exception(string.Format("Cannot convert '{0}' to type '{1}'", child.GetType(), typeof(MenuItem)));
+
+			Items.Add((MenuItem)child);
+		}
+*/
 		protected virtual void OnClosed(RoutedEventArgs e)
 		{
 		}

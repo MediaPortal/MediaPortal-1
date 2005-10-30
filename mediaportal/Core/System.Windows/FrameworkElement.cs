@@ -29,6 +29,7 @@ using System.Collections;
 using System.Windows;
 
 using MediaPortal.Animation;
+using MediaPortal.Controls;
 using MediaPortal.Drawing;
 using MediaPortal.Drawing.Layouts;
 using MediaPortal.Input;
@@ -43,6 +44,7 @@ namespace System.Windows
 		{
 			ActualHeightProperty = DependencyProperty.Register("ActualHeight", typeof(double), typeof(FrameworkElement), new PropertyMetadata(0.0, new PropertyInvalidatedCallback(ActualHeightPropertyInvalidated)));
 			ActualWidthProperty = DependencyProperty.Register("ActualWidth", typeof(double), typeof(FrameworkElement), new PropertyMetadata(0.0, new PropertyInvalidatedCallback(ActualWidthPropertyInvalidated)));
+			ContextMenuProperty = DependencyProperty.Register("ContextMenu", typeof(ContextMenu), typeof(FrameworkElement));
 			FlowDirectionProperty = DependencyProperty.Register("FlowDirection", typeof(FlowDirection), typeof(FrameworkElement), new PropertyMetadata(FlowDirection.LeftToRight));
 			FocusableProperty = DependencyProperty.Register("Focusable", typeof(bool), typeof(FrameworkElement), new PropertyMetadata(true));
 			HeightProperty = DependencyProperty.Register("Height", typeof(double), typeof(FrameworkElement), new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsArrange));
@@ -375,6 +377,12 @@ namespace System.Windows
 			set { SetValue(ActualWidthProperty, (double)value); }
 		}
 
+		public ContextMenu ContextMenu
+		{
+			get { return (ContextMenu)GetValue(ContextMenuProperty); }
+			set { SetValue(ContextMenuProperty, value); }
+		}
+
 		public FlowDirection FlowDirection
 		{
 			get { return (FlowDirection)GetValue(FlowDirectionProperty); }
@@ -491,6 +499,7 @@ namespace System.Windows
 
 		public static readonly DependencyProperty ActualHeightProperty;
 		public static readonly DependencyProperty ActualWidthProperty;
+		public static readonly DependencyProperty ContextMenuProperty;
 		public static readonly DependencyProperty FlowDirectionProperty;
 		public static readonly DependencyProperty FocusableProperty;
 		public static readonly DependencyProperty HeightProperty;

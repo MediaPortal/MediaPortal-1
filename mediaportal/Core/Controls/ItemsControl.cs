@@ -55,6 +55,8 @@ namespace MediaPortal.Controls
 
 		protected virtual void AddChild(object child)
 		{
+			MediaPortal.GUI.Library.Log.Write("Adding to items: {0}", child);
+
 			if(_items == null)
 				_items = new ItemCollection();
 
@@ -82,16 +84,16 @@ namespace MediaPortal.Controls
 
 		#region Properties
 
-		[BindableAttribute(true)] 
-		public ItemCollection Items
-		{
-			get { if(_items == null) _items = new ItemCollection(); return _items; }
-		}
-
 		public bool HasItems
 		{
 			get { return (bool)GetValue(HasItemsProperty); }
 			set { SetValue(HasItemsProperty, value); }
+		}
+
+		[BindableAttribute(true)] 
+		public ItemCollection Items
+		{
+			get { if(_items == null) _items = new ItemCollection(); return _items; }
 		}
 
 		protected internal override IEnumerator LogicalChildren

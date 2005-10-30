@@ -25,8 +25,8 @@
 
 using System;
 using System.Windows;
+using System.Windows.Automation;
 
-using MediaPortal.Automation;
 using MediaPortal.Drawing;
 
 namespace MediaPortal.Controls

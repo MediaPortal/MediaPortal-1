@@ -414,11 +414,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Automation\IInvokeProvider.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "Controls\Button.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -509,6 +504,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Controls\HeaderedItemsControl.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Controls\Image.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -530,6 +530,11 @@
                 />
                 <File
                     RelPath = "Controls\MenuBase.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Controls\MenuItem.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -1854,11 +1859,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Input\ICommand.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "Input\IFrameworkInputElement.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -2854,6 +2854,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Automation\IInvokeProvider.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Data\Binding.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -2864,12 +2869,22 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Input\ICommand.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Serialization\IAddChild.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "System.Windows.Serialization\ICanAddNamespaceEntries.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Serialization\LocalizeExtension.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

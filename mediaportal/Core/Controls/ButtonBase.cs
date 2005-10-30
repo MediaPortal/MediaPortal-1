@@ -26,8 +26,7 @@
 using System;
 using System.ComponentModel;
 using System.Windows;
-
-using MediaPortal.Input;
+using System.Windows.Input;
 
 namespace MediaPortal.Controls
 {
