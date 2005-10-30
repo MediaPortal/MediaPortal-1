@@ -30,7 +30,7 @@ using System.Windows.Serialization;
 
 namespace MediaPortal.Animation
 {
-	public abstract class Timeline : Animatable, IAddChild
+	public abstract class Timeline : Animatable
 	{
 		#region Constructors
 
@@ -47,17 +47,19 @@ namespace MediaPortal.Animation
 				CurrentTimeInvalidated(this, EventArgs.Empty);
 		}
 
-		// Nullable<TimeSpan>
-		protected Timeline(TimeSpan beginTime)
+		protected Timeline(NullableTimeSpan beginTime) : this(beginTime, Duration.Automatic)
 		{
 		}
 
-		protected Timeline(TimeSpan beginTime, Duration duration)
+		protected Timeline(NullableTimeSpan beginTime, Duration duration) : this(beginTime, duration, RepeatBehavior.Forever)
 		{
 		}
 
-		protected Timeline(TimeSpan beginTime, Duration duration, RepeatBehavior repeatBehavior)
+		protected Timeline(NullableTimeSpan beginTime, Duration duration, RepeatBehavior repeatBehavior)
 		{
+			_beginTime = beginTime;
+			_duration = duration;
+			_repeatBehavior = repeatBehavior;
 		}
 
 		#endregion Constructors
@@ -72,32 +74,12 @@ namespace MediaPortal.Animation
 
 		#region Methods
 
-		void IAddChild.AddChild(object child)
-		{
-			AddChild(child);
-		}
-
-		protected virtual void AddChild(object child)
-		{
-			if(child == null)
-				throw new ArgumentNullException("child");
-
-			if(child is Timeline == false)
-				throw new Exception(string.Format("Cannot convert '{0}' to type '{1}'", child.GetType(), typeof(Timeline)));
-
-			if(_children == null)
-				_children = new TimelineCollection();
-
-			_children.Add((Timeline)child);
-		}
-
-		void IAddChild.AddText(string text)
-		{
-		}
+		
+		// Clock.FromTimeline 
 
 		protected internal virtual Clock AllocateClock()
 		{
-			return CreateClock();
+			return new Clock(this);
 		}
 
 		public new Timeline Copy()
@@ -108,6 +90,19 @@ namespace MediaPortal.Animation
 		protected override void CopyCore(Freezable sourceFreezable)
 		{
 			base.CopyCore(sourceFreezable);
+
+			Timeline sourceTimeline = (Timeline)sourceFreezable;
+			
+			sourceTimeline._accelerationRatio = _accelerationRatio;
+			sourceTimeline._beginTime = _beginTime;
+			sourceTimeline._cutoffTime = _cutoffTime;
+			sourceTimeline._decelerationRatio = _decelerationRatio;
+			sourceTimeline._duration = _duration;
+			sourceTimeline._fillBehavior = _fillBehavior;
+			sourceTimeline._isAutoReverse = _isAutoReverse;
+			sourceTimeline._name = _name;
+			sourceTimeline._repeatBehavior = _repeatBehavior;
+			sourceTimeline._speedRatio = _speedRatio;
 		}
 
 		protected override void CopyCurrentValueCore(Animatable sourceAnimatable)
@@ -122,6 +117,8 @@ namespace MediaPortal.Animation
 
 		protected internal Duration GetNaturalDuration(Clock clock)
 		{
+			// only be called when the Duration property is set to Automatic
+																 
 			return GetNaturalDurationCore(clock);
 		}
 
@@ -150,13 +147,13 @@ namespace MediaPortal.Animation
 			set { _isAutoReverse = value; }
 		}
 
-		public double BeginTime
+		public NullableTimeSpan BeginTime
 		{
 			get { return _beginTime; }
 			set { _beginTime = value; }
 		}
 		
-		public double CutoffTime
+		public NullableTimeSpan CutoffTime
 		{
 			get { return _cutoffTime; }
 			set { _cutoffTime = value; }
@@ -203,8 +200,8 @@ namespace MediaPortal.Animation
 		#region Fields
 
 		double						_accelerationRatio = 0;
-		double						_beginTime;
-		double						_cutoffTime;
+		NullableTimeSpan			_beginTime;
+		NullableTimeSpan			_cutoffTime;
 		double						_decelerationRatio = 0;
 		Duration					_duration = new Duration();
 		FillBehavior				_fillBehavior;
@@ -212,7 +209,6 @@ namespace MediaPortal.Animation
 		string						_name = string.Empty;
 		RepeatBehavior				_repeatBehavior = RepeatBehavior.Forever;
 		double						_speedRatio = 1;
-		TimelineCollection			_children = null;
 
 		#endregion Fields
 	}

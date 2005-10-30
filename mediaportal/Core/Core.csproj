@@ -2339,6 +2339,31 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System\INullable.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System\NullableDouble.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System\NullableDoubleConverter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System\NullableTimeSpan.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System\NullableTimeSpanConverter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Collections\NullEnumerable.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

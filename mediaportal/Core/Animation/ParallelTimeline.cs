@@ -36,15 +36,15 @@ namespace MediaPortal.Animation
 		{
 		}
 
-		public ParallelTimeline(TimeSpan beginTime)
+		public ParallelTimeline(NullableTimeSpan beginTime) : base(beginTime)
 		{
 		}
 
-		public ParallelTimeline(TimeSpan beginTime, Duration duration)
+		public ParallelTimeline(NullableTimeSpan beginTime, Duration duration) : base(beginTime, duration)
 		{
 		}
 
-		public ParallelTimeline(TimeSpan beginTime, Duration duration, RepeatBehavior repeatBehavior)
+		public ParallelTimeline(NullableTimeSpan beginTime, Duration duration, RepeatBehavior repeatBehavior) : base(beginTime, duration, repeatBehavior)
 		{
 		}
 
@@ -52,18 +52,19 @@ namespace MediaPortal.Animation
 
 		#region Methods
 
-		protected override Freezable CreateInstanceCore()
-		{
-			return new ParallelTimeline();
-		}
-
 		public new ParallelTimeline Copy()
 		{
 			return (ParallelTimeline)base.Copy();
 		}
 
-		protected override void CopyCore(Freezable sourceFreezable)
+		protected override Freezable CreateInstanceCore()
 		{
+			return new ParallelTimeline();
+		}
+
+		protected override Duration GetNaturalDurationCore(Clock clock)
+		{
+			throw new NotImplementedException();
 		}
 
 		#endregion Methods

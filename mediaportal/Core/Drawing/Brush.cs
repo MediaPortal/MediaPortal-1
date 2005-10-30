@@ -70,7 +70,7 @@ namespace MediaPortal.Drawing
 			throw new NotImplementedException();
 		}
 
-		public Brush GetCurrentValue()
+		public new Brush GetCurrentValue()
 		{
 			throw new NotImplementedException();
 		}

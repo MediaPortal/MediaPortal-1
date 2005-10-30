@@ -24,10 +24,12 @@
 #endregion
 
 using System;
+using System.Windows;
+using System.Windows.Serialization;
 
 namespace MediaPortal.Animation
 {
-	public abstract class TimelineGroup : Timeline
+	public abstract class TimelineGroup : Timeline, IAddChild
 	{
 		#region Constructors
 
@@ -35,15 +37,15 @@ namespace MediaPortal.Animation
 		{
 		}
 
-		protected TimelineGroup(TimeSpan beginTime) : base(beginTime)
+		protected TimelineGroup(NullableTimeSpan beginTime) : base(beginTime)
 		{
 		}
 
-		protected TimelineGroup(TimeSpan beginTime, Duration duration) : base(beginTime, duration)
+		protected TimelineGroup(NullableTimeSpan beginTime, Duration duration) : base(beginTime, duration)
 		{
 		}
 
-		protected TimelineGroup(TimeSpan beginTime, Duration duration, RepeatBehavior repeatBehavior) : base(beginTime, duration, repeatBehavior)
+		protected TimelineGroup(NullableTimeSpan beginTime, Duration duration, RepeatBehavior repeatBehavior) : base(beginTime, duration, repeatBehavior)
 		{
 		}
 
@@ -51,11 +53,24 @@ namespace MediaPortal.Animation
 
 		#region Methods
 
-		public new ClockGroup CreateClock()
+		void IAddChild.AddChild(object child)
 		{
-			return (ClockGroup)base.CreateClock();
+			AddChild(child);
+		}
+		
+		protected virtual void AddChild(object child)
+		{
 		}
 
+		void IAddChild.AddText(string text)
+		{
+			AddText(text);
+		}
+
+		protected virtual void AddText(string text)
+		{
+		}
+			
 		protected internal override Clock AllocateClock()
 		{
 			return new ClockGroup(this);
@@ -66,8 +81,59 @@ namespace MediaPortal.Animation
 			return (TimelineGroup)base.Copy();
 		}
 
-//		protected override sealed Freezable CopyCore();
-				
+		protected override void CopyCore(Freezable sourceFreezable)
+		{
+			base.CopyCore(sourceFreezable);
+
+			if(_children == null)
+				return;
+
+			foreach(Timeline childTimeline in _children)
+				((TimelineGroup)sourceFreezable).Children.Add(childTimeline.Copy());
+		}
+
+		protected override void CopyCurrentValueCore(Animatable sourceAnimatable)
+		{
+		}
+
+		public new ClockGroup CreateClock()
+		{
+			return new ClockGroup(this);
+		}
+
+		protected override bool FreezeCore(bool isChecking)
+		{
+			if(_children == null)
+				return base.FreezeCore(isChecking);
+
+			foreach(Freezable child in _children)
+			{
+				if(Freezable.Freeze(child, isChecking) == false)
+					return false;
+			}
+
+			return base.FreezeCore(isChecking);
+		}
+
+		protected override void PropagateChangedHandlersCore(EventHandler handler, bool isAdding)
+		{
+		}
+
 		#endregion Methods
+
+		#region Properties
+
+		public TimelineCollection Children
+		{
+			get { if(_children == null) _children = new TimelineCollection(); return _children; }
+		}
+
+		#endregion Properties
+
+		#region Fields
+
+		TimelineCollection			_children;
+
+		#endregion Fields
 	}
 }

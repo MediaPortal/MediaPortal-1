@@ -82,7 +82,11 @@ namespace MediaPortal.Animation
 
 		protected override void CopyCore(Freezable sourceFreezable)
 		{
-			throw new NotImplementedException();
+			base.CopyCore(sourceFreezable);
+
+			sourceFreezable.SetValue(ByProperty, GetValue(ByProperty));
+			sourceFreezable.SetValue(FromProperty, GetValue(FromProperty));
+			sourceFreezable.SetValue(ToProperty, GetValue(ToProperty));
 		}
 
 		protected override void CopyCurrentValueCore(Animatable sourceAnimatable)

@@ -74,10 +74,10 @@ namespace System.Windows
 
 		#region Fields
 
-		bool						_heightChanged;
-		Size						_newSize;
-		Size						_previousSize;
-		bool						_widthChanged;
+		bool						_heightChanged = false;
+		Size						_newSize = Size.Empty;
+		Size						_previousSize = Size.Empty;
+		bool						_widthChanged = false;
 
 		#endregion Fields
 	}

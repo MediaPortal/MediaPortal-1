@@ -42,27 +42,6 @@ namespace System
 
 		#endregion Constructors
 
-		#region Properties
-
-		public bool HasValue
-		{
-			get { return _hasValue; }
-		}
-
-		public double Value
-		{
-			get { if(_hasValue) throw new NullReferenceException(); return _value; }
-			set { _value = value; }
-		}
-
-		object INullable.Value
-		{
-			get { if(_hasValue) throw new NullReferenceException(); return _value; }
-			set { _value = (double)value; }
-		}
-
-		#endregion Properties
-
 		#region Methods
 
 		public int CompareTo(object other)
@@ -351,6 +330,27 @@ namespace System
 		}
 
 		#endregion Operators
+
+		#region Properties
+
+		public bool HasValue
+		{
+			get { return _hasValue; }
+		}
+
+		public double Value
+		{
+			get { if(!_hasValue) throw new NullReferenceException(); return _value; }
+			set { _value = value; }
+		}
+
+		object INullable.Value
+		{
+			get { if(!_hasValue) throw new NullReferenceException(); return _value; }
+			set { _value = (double)value; }
+		}
+
+		#endregion Properties
 
 		#region Fields
 

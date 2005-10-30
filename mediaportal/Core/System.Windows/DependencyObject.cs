@@ -47,9 +47,9 @@ namespace System.Windows
 
 		#region Methods
 
-		public void ClearValue(DependencyProperty dp)
+		public void ClearValue(DependencyProperty property)
 		{
-			_properties.Remove(dp);
+			_properties.Remove(property);
 		}
 
 		public void ClearValue(DependencyPropertyKey key)
@@ -62,70 +62,72 @@ namespace System.Windows
 			return new LocalValueEnumerator(_properties);
 		}
 
-		public object GetValue(DependencyProperty dp)
+		public object GetValue(DependencyProperty property)
 		{
-			if(dp.DefaultMetadata != null && dp.DefaultMetadata.GetValueOverride != null)
-				return dp.DefaultMetadata.GetValueOverride(this);
+			if(property.DefaultMetadata != null && property.DefaultMetadata.GetValueOverride != null)
+				return property.DefaultMetadata.GetValueOverride(this);
 
-			object value = _properties[dp];
+			object value = _properties[property];
 
-			if(value == null && dp.DefaultMetadata != null)
-				value = dp.DefaultMetadata.DefaultValue;
+			if(value == null && property.DefaultMetadata != null)
+				value = property.DefaultMetadata.DefaultValue;
 
 			return value;
 		}
 
-		public object GetValueBase(DependencyProperty dp)
+		public object GetValueBase(DependencyProperty property)
 		{
-			// Local value (ie, <Object Property="value"> 
-			// Property triggers 
-			// TemplatedParent's template (ie, that template includes <Setter>s) 
-			// Style property 
-			// ThemeStyle 
-			// Inheritance ("property inheritance" -- from your parent element, not your superclass) 
-			// DefaultValue specified when you registered the property (or override metadata)
+			// ms-help://MS.WinFXSDK.1033/Wcp_conceptual/html/1fbada8e-4867-4ed1-8d97-62c07dad7ebc.htm
+			// - Animations
+			// - Local
+			// - Property triggers (TemplatedParent, Template, Style, ThemeStyle)
+			// - TemplatedParent's template (ie, that template includes <Setter>s) 
+			// - Style property 
+			// - ThemeStyle 
+			// - Inheritance ("property inheritance" -- from your parent element, not your superclass) 
+			// - DefaultValue specified when you registered the property (or override metadata)
 
-			return GetValueCore(dp, _properties[dp], dp.GetMetadata(this));
+			return GetValueCore(property, _properties[property], property.GetMetadata(this));
 		}
 
-		protected virtual object GetValueCore(DependencyProperty dp, object baseValue, PropertyMetadata metadata)
+		protected virtual object GetValueCore(DependencyProperty property, object baseValue, PropertyMetadata metadata)
 		{
-			object value = _properties[dp];
+			object value = _properties[property];
 
-			if(value == null && dp.DefaultMetadata != null)
-				value = dp.DefaultMetadata.DefaultValue;
+			if(value == null && property.DefaultMetadata != null)
+				value = property.DefaultMetadata.DefaultValue;
 
 			return value;
 		}
 
-		public void InvalidateProperty(DependencyProperty dp)
+		public void InvalidateProperty(DependencyProperty property)
 		{
-			OnPropertyInvalidated(dp, dp.DefaultMetadata);
+			OnPropertyInvalidated(property, property.DefaultMetadata);
 		}
 
-		protected virtual void OnPropertyInvalidated(DependencyProperty dp, PropertyMetadata metadata)
+		protected virtual void OnPropertyInvalidated(DependencyProperty property, PropertyMetadata metadata)
 		{
 			if(metadata != null && metadata.PropertyInvalidatedCallback != null)
 				metadata.PropertyInvalidatedCallback(this);
 		}
 
-		public object ReadLocalValue(DependencyProperty dp)
+		public object ReadLocalValue(DependencyProperty property)
 		{
-			if(dp.DefaultMetadata != null && dp.DefaultMetadata.ReadLocalValueOverride != null)
-				return dp.DefaultMetadata.ReadLocalValueOverride(this);
+			if(property.DefaultMetadata != null && property.DefaultMetadata.ReadLocalValueOverride != null)
+				return property.DefaultMetadata.ReadLocalValueOverride(this);
 
-			object value = _properties[dp];
+			object value = _properties[property];
 
 			// should we really be returning default value here?
-			if(value == null && dp.DefaultMetadata != null)
-				value = dp.DefaultMetadata.DefaultValue;
+			if(value == null && property.DefaultMetadata != null)
+				value = property.DefaultMetadata.DefaultValue;
 
 			return value;
 		}
 
-		public void SetValue(DependencyProperty dp, object value)
+		public void SetValue(DependencyProperty property, object value)
 		{
-			SetValueBase(dp, value);
+			SetValueBase(property, value);
 		}
 
 		public void SetValue(DependencyPropertyKey key, object value)
@@ -133,17 +135,17 @@ namespace System.Windows
 			SetValueBase(key, value);
 		}
 
-		public void SetValueBase(DependencyProperty dp, object value)
+		public void SetValueBase(DependencyProperty property, object value)
 		{
-			_properties[dp] = value;
+			_properties[property] = value;
 
-			if(dp.DefaultMetadata != null && dp.DefaultMetadata.ReadOnly)
-				throw new InvalidOperationException(string.Format("DependencyProperty '{0}' has been declared read-only", dp.Name));
+			if(property.DefaultMetadata != null && property.DefaultMetadata.ReadOnly)
+				throw new InvalidOperationException(string.Format("DependencyProperty '{0}' has been declared read-only", property.Name));
 
-			if(dp.DefaultMetadata != null && dp.DefaultMetadata.SetValueOverride != null)
-				dp.DefaultMetadata.SetValueOverride(this, value);
+			if(property.DefaultMetadata != null && property.DefaultMetadata.SetValueOverride != null)
+				property.DefaultMetadata.SetValueOverride(this, value);
 
-			OnPropertyInvalidated(dp, dp.DefaultMetadata);			
+			OnPropertyInvalidated(property, property.DefaultMetadata);			
 		}
 
 		public void SetValueBase(DependencyPropertyKey key, object value)

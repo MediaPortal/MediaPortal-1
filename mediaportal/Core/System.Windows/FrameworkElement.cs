@@ -462,6 +462,11 @@ namespace System.Windows
 			set { SetValue(StyleProperty, value); }
 		}
 
+		public DependencyObject TemplatedParent
+		{
+			get { return _templatedParent; }
+		}
+
 		public TriggerCollection Triggers
 		{
 			get { if(_triggers == null) _triggers = new TriggerCollection(); return _triggers; }
@@ -504,9 +509,10 @@ namespace System.Windows
 		bool						_isInitializing = false;
 		bool						_isLoaded = false;
 		bool						_isTreeSeperator = false;
-		Hashtable					_names;
+		Hashtable					_names = null;
 		Point						_location = Point.Empty;
 		ResourceDictionary			_resources;
+		DependencyObject			_templatedParent = null;
 		TriggerCollection			_triggers;
 
 		#endregion Fields

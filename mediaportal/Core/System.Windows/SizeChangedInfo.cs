@@ -36,6 +36,8 @@ namespace System.Windows
 		public SizeChangedInfo(UIElement element, Size previousSize, bool widthChanged, bool heightChanged)
 		{
 			_previousSize = previousSize;
+			_widthChanged = widthChanged;
+			_heightChanged = heightChanged;
 		}
 
 		#endregion Constructors
@@ -67,7 +69,7 @@ namespace System.Windows
 		#region Fields
 
 		bool						_heightChanged;
-		Size						_newSize;
+		Size						_newSize = Size.Empty;
 		Size						_previousSize;
 		bool						_widthChanged;
 

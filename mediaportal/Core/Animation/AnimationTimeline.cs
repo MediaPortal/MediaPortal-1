@@ -58,7 +58,8 @@ namespace MediaPortal.Animation
 
 		protected override Duration GetNaturalDurationCore(Clock clock)
 		{
-			return base.GetNaturalDurationCore(clock);
+			// default duration for an animation is 1 second
+			return new Duration(1000);
 		}
 
 		#endregion Methods

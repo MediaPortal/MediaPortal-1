@@ -56,6 +56,7 @@ namespace System.Windows
 
 		protected virtual void CopyCore(Freezable sourceFreezable)
 		{
+			// no default implementation
 		}
 
 		protected Freezable CreateInstance()
@@ -97,14 +98,22 @@ namespace System.Windows
 			return freezableCopy;
 		}
 	
-		protected override object GetValueCore(DependencyProperty dp, object baseValue, PropertyMetadata metadata)
+		protected override object GetValueCore(DependencyProperty property, object baseValue, PropertyMetadata metadata)
 		{
-			throw new NotImplementedException();
+			ReadPreamble();
+
+			return base.GetValueCore(property, baseValue, metadata);
 		}
 
-		protected static void ModifyHandlerIfNotFrozen(Freezable freezable, EventHandler handler, bool adding)
+		protected static void ModifyHandlerIfNotFrozen(Freezable freezable, EventHandler handler, bool isAdding)
 		{
-			throw new NotImplementedException();
+			if(freezable.IsFrozen)
+				return;
+
+			if(isAdding)
+				freezable.Changed += handler;
+			else
+				freezable.Changed -= handler;
 		}
 
 		protected virtual void OnChanged()
@@ -115,26 +124,40 @@ namespace System.Windows
 
 		protected void PropagateChangedHandlers(Freezable oldValue, Freezable newValue)
 		{
+			foreach(Delegate handler in oldValue.Changed.GetInvocationList())
+				newValue.PropagateChangedHandlersCore((EventHandler)handler, true);
+
+			foreach(Delegate handler in newValue.Changed.GetInvocationList())
+				oldValue.PropagateChangedHandlersCore((EventHandler)handler, false);
 		}
 
-		protected virtual void PropagateChangedHandlersCore(EventHandler handler, bool adding)
+		protected virtual void PropagateChangedHandlersCore(EventHandler handler, bool isAdding)
 		{
+			if(isAdding)
+				Changed += handler;
+			else
+				Changed -= handler;
 		}
 
 		protected void ReadPreamble()
 		{
+			CheckAccess();
 		}
 
 		protected virtual void ValidateObjectState()
 		{
+			// no default implementation
 		}
 
 		protected void WritePostscript()
 		{
+			ValidateObjectState();
+			OnChanged();
 		}
 
 		protected void WritePreamble()
 		{
+			CheckAccess();
 		}
 
 		#endregion Methods
@@ -143,7 +166,7 @@ namespace System.Windows
 
 		public bool CanFreeze
 		{
-			get { return !_isFrozen; }
+			get { return _isFrozen == false; }
 		}
 
 		public bool IsFrozen

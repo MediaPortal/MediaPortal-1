@@ -77,6 +77,12 @@ namespace MediaPortal.Animation
 			set { SetValue(StoryboardProperty, value); }
 		}
 
+		public string Name
+		{
+			get { return _name; }
+			set { _name = value; }
+		}
+
 		#endregion Properties
 
 		#region Properties (Dependency)
@@ -88,6 +94,7 @@ namespace MediaPortal.Animation
 		#region Fields
 
 		HandoffBehavior				_handoffBehavior;
+		string						_name = string.Empty;
 
 		#endregion Fields
 	}

@@ -70,6 +70,11 @@ namespace MediaPortal.Animation
 
 		protected override bool FreezeCore(bool isChecking)
 		{
+			// An Animatable will return false from this method if there are any Clocks 
+			// animating any of its properties. If the Animatable has persistent animations specified,
+			// but all of the Clocks have been removed, it may still return true from this method if the
+			// Timelines themselves can be frozen
+
 			throw new NotImplementedException();
 		}
 
@@ -78,9 +83,14 @@ namespace MediaPortal.Animation
 			throw new NotImplementedException();
 		}
 
-		protected override object GetValueCore(DependencyProperty dp, object baseValue, PropertyMetadata metadata)
+		public Animatable GetCurrentValue()
 		{
-			return null;
+			throw new NotImplementedException();
+		}
+
+		protected override object GetValueCore(DependencyProperty property, object baseValue, PropertyMetadata metadata)
+		{
+			throw new NotImplementedException();
 		}
 
 		#endregion Methods

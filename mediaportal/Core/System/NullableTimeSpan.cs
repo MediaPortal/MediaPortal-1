@@ -34,42 +34,53 @@ namespace System
 	{
 		#region Constructors
 
+		public NullableTimeSpan(long ticks)
+		{
+			_hasValue = true;
+			_value = TimeSpan.FromTicks(ticks);
+		}
+
 		public NullableTimeSpan(TimeSpan ts)
 		{
 			_hasValue = true;
 			_value = ts;
 		}
 
+		public NullableTimeSpan(int hours, int minutes, int seconds)
+		{
+			_hasValue = true;
+			_value = TimeSpan.FromHours(hours) + TimeSpan.FromMinutes(minutes) + TimeSpan.FromMinutes(minutes);
+		}
+
+		public NullableTimeSpan(int days, int hours, int minutes, int seconds)
+		{
+			_hasValue = true;
+			_value = TimeSpan.FromDays(days) + TimeSpan.FromHours(hours) + TimeSpan.FromMinutes(minutes) + TimeSpan.FromSeconds(seconds);
+		}
+ 
+		public NullableTimeSpan(int days, int hours, int minutes, int seconds, int milliseconds)
+		{
+			_hasValue = true;
+			_value = TimeSpan.FromDays(days) + TimeSpan.FromHours(hours) + TimeSpan.FromMinutes(minutes) + TimeSpan.FromSeconds(seconds) + TimeSpan.FromMilliseconds(milliseconds);
+		}
+
 		#endregion Constructors
-
-		#region Properties
-
-		public bool HasValue
-		{
-			get { return _hasValue; }
-		}
-
-		public TimeSpan Value
-		{
-			get { if(_hasValue) throw new NullReferenceException(); return _value; }
-			set { _value = value; }
-		}
-
-		object INullable.Value
-		{
-			get { if(_hasValue) throw new NullReferenceException(); return _value; }
-			set { _value = (TimeSpan)value; }
-		}
-
-		#endregion Properties
 
 		#region Methods
 
-		public NullableTimeSpan Add(NullableTimeSpan ts)
+		public NullableTimeSpan Add(NullableTimeSpan timespan)
 		{
-			return new NullableTimeSpan(_value.Add(ts._value));
+			if(_hasValue == false || timespan._hasValue == false)
+				return Null;
+
+			return new NullableTimeSpan(_value.Add(timespan._value));
 		}
  
+		public static int Compare(NullableTimeSpan l, NullableTimeSpan r)
+		{
+			return l.CompareTo(r);
+		} 
+
 		public int CompareTo(object other)
 		{
 			if(other == null)
@@ -92,6 +103,14 @@ namespace System
 			return _value.CompareTo(nullable._value);
 		}
 
+		public NullableTimeSpan Duration()
+		{
+			if(_hasValue == false)
+				return Null;
+
+			return new NullableTimeSpan(_value.Duration());
+		}
+
 		public override bool Equals(object other) 
 		{
 			if(other is NullableTimeSpan == false)
@@ -102,9 +121,52 @@ namespace System
 			return _hasValue == nullable._hasValue && _value.Equals(nullable._value);
 		}
 
+		public static bool Equals(TimeSpan l, TimeSpan r)
+		{
+			return l == r;
+		}
+
+		public static NullableTimeSpan FromDays(double days)
+		{
+			return new NullableTimeSpan(TimeSpan.FromDays(days));
+		} 
+
+		public static NullableTimeSpan FromHours(double hours)
+		{
+			return new NullableTimeSpan(TimeSpan.FromHours(hours));
+		} 
+
+		public static NullableTimeSpan FromMilliseconds(double milliseconds)
+		{
+			return new NullableTimeSpan(TimeSpan.FromMilliseconds(milliseconds));
+		}
+
+		public static NullableTimeSpan FromMinutes(double minutes)
+		{
+			return new NullableTimeSpan(TimeSpan.FromMinutes(minutes));
+		}
+
+		public static NullableTimeSpan FromSeconds(double seconds)
+		{
+			return new NullableTimeSpan(TimeSpan.FromMilliseconds(seconds));
+		}
+
+		public static NullableTimeSpan FromTicks(double ticks)
+		{
+			return new NullableTimeSpan(TimeSpan.FromMilliseconds(ticks));
+		}
+
 		public override int GetHashCode() 
 		{
 			return _value.GetHashCode();
+		}
+
+		public NullableTimeSpan Negate()
+		{
+			if(_hasValue == false)
+				return Null;
+
+			return new NullableTimeSpan(_value.Negate());
 		}
 
 		public static NullableTimeSpan Parse(string s)
@@ -147,23 +209,17 @@ namespace System
 			if(l._hasValue == false || r._hasValue == false)
 				return Null;
 			
-			return new NullableTimeSpan(l._value + r._value); 
+			return l.Add(r); 
 		}
 
 		public static NullableTimeSpan operator - (NullableTimeSpan l, NullableTimeSpan r) 
 		{
-			if(l._hasValue == false || r._hasValue == false)
-				return Null;
-			
-			return new NullableTimeSpan(l._value - r._value); 
+			return l.Subtract(r);
 		}
 
 		public static NullableTimeSpan operator - (NullableTimeSpan l) 
 		{
-			if(l._hasValue)
-				return Null;
-
-			return new NullableTimeSpan(-l._value);
+			return l.Negate();
 		}
 		
 		public static bool operator > (NullableTimeSpan l, NullableTimeSpan r) 
@@ -186,7 +242,91 @@ namespace System
 			return l._hasValue && r._hasValue && l._value < r._value;
 		}
 
+		public NullableTimeSpan Subtract(NullableTimeSpan timespan)
+		{
+			if(_hasValue == false || timespan._hasValue == false)
+				return Null;
+			
+			return new NullableTimeSpan(_value.Subtract(timespan._value)); 
+		}
+
 		#endregion Operators
+
+		#region Properties
+
+		public int Days
+		{
+			get { if(!_hasValue) throw new NullReferenceException(); return _value.Days; }
+		}
+
+		public int Hours
+		{
+			get { if(!_hasValue) throw new NullReferenceException(); return _value.Hours; }
+		}
+
+		public int Milliseconds
+		{
+			get { if(!_hasValue) throw new NullReferenceException(); return _value.Milliseconds; }
+		}
+
+		public int Minutes
+		{
+			get { if(!_hasValue) throw new NullReferenceException(); return _value.Minutes; }
+		}
+
+		public int Seconds
+		{
+			get { if(!_hasValue) throw new NullReferenceException(); return _value.Seconds; }
+		}
+
+		public double TotalDays
+		{
+			get { if(!_hasValue) throw new NullReferenceException(); return _value.TotalDays; }
+		}
+
+		public double TotalHours
+		{
+			get { if(!_hasValue) throw new NullReferenceException(); return _value.TotalHours; }
+		}
+
+		public double TotalMilliseconds
+		{
+			get { if(!_hasValue) throw new NullReferenceException(); return _value.TotalMilliseconds; }
+		}
+
+		public double TotalMinutes
+		{
+			get { if(!_hasValue) throw new NullReferenceException(); return _value.TotalMinutes; }
+		}
+
+		public double TotalSeconds
+		{
+			get { if(!_hasValue) throw new NullReferenceException(); return _value.TotalSeconds; }
+		}
+
+		public long Ticks
+		{
+			get { if(!_hasValue) throw new NullReferenceException(); return _value.Ticks; }
+		}
+
+		public bool HasValue
+		{
+			get { return _hasValue; }
+		}
+
+		public TimeSpan Value
+		{
+			get { if(!_hasValue) throw new NullReferenceException(); return _value; }
+			set { _value = value; }
+		}
+
+		object INullable.Value
+		{
+			get { if(!_hasValue) throw new NullReferenceException(); return _value; }
+			set { _value = (TimeSpan)value; }
+		}
+
+		#endregion Properties
 
 		#region Fields
 
@@ -194,6 +334,15 @@ namespace System
 		TimeSpan					_value;
 
 		public static readonly NullableTimeSpan Null = new NullableTimeSpan();
+		public static readonly NullableTimeSpan MaxValue = new NullableTimeSpan(TimeSpan.MaxValue);
+		public static readonly NullableTimeSpan MinValue = new NullableTimeSpan(TimeSpan.MaxValue);
+		public static readonly NullableTimeSpan Zero = new NullableTimeSpan(0);
+ 
+		public const long TicksPerDay = TimeSpan.TicksPerDay;
+		public const long TicksPerHour = TimeSpan.TicksPerHour;
+		public const long TicksPerMillisecond = TimeSpan.TicksPerMillisecond;
+		public const long TicksPerMinute = TimeSpan.TicksPerMinute;
+		public const long TicksPerSecond = TimeSpan.TicksPerSecond;
 
 		#endregion Fields
 	}

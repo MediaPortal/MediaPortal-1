@@ -68,7 +68,7 @@ namespace MediaPortal.Drawing
 			throw new NotImplementedException();
 		}
 
-		public ImageSource GetCurrentValue()
+		public new ImageSource GetCurrentValue()
 		{
 			throw new NotImplementedException();
 		}
