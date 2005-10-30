@@ -198,8 +198,9 @@ namespace id3
 					// versions 3+ have frame tags.
 					if (_tagHeader.Version == 3)
 					{
-						reader.ReadByte();
-						index++;
+
+						flags = Swap.UInt16(reader.ReadUInt16());
+						index+=2; // read 2 bytes
 					}
 					else if (_tagHeader.Version == 4)
 					{
