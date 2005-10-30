@@ -78,7 +78,7 @@
 			<posY>535</posY>
 			<align>left</align>
 			<font>font16</font>
-			<label>&gt;#Play.Current.Title\r#Play.Current.Artist\r#Play.Current.Album\r#Play.Current.Duration</label>
+			<label>#Play.Current.Title\r#Play.Current.Artist\r#Play.Current.Album\r#Play.Current.Duration</label>
 			<textcolor>FF000000</textcolor>
 			<id>5</id>
 		</control>
