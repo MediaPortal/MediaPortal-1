@@ -218,23 +218,12 @@
 			<textcolor>FF000000</textcolor> 
 		</control> 
 		<control>
-			<description>Current time</description> 
-			<type>label</type> 
-			<id>105</id> 
-			<posX>70</posX> 
-			<posY>430</posY> 
-			<label>#TV.Record.current</label> 
-			<align>left</align> 
-			<font>font72</font> 
-			<textcolor>30ffffff</textcolor> 
-		</control>
-		<control>
 			<description>Start Time Info</description> 
 			<type>label</type> 
 			<id>106</id> 
 			<posX>160</posX> 
 			<posY>495</posY> 
-			<label>#TV.View.start</label> 
+			<label>#TV.Record.current</label> 
 			<align>right</align> 
 			<font>font16</font> 
 			<textcolor>FFFFFFFF</textcolor> 
@@ -245,7 +234,7 @@
 			<id>107</id> 
 			<posX>555</posX> 
 			<posY>495</posY> 
-			<label>#TV.View.stop</label> 
+			<label>#TV.Record.duration</label> 
 			<align>left</align> 
 			<font>font16</font> 
 			<textcolor>FFFFFFFF</textcolor> 
