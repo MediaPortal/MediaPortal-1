@@ -31,6 +31,16 @@ namespace System
 	[TypeConverter(typeof(NullableTimeSpanConverter))]
 	public struct NullableTimeSpan : INullable
 	{
+		#region Constructors
+
+		public NullableTimeSpan(TimeSpan timespan)
+		{
+			_hasValue = true;
+			_value = timespan;
+		}
+
+		#endregion Constructors
+
 		#region Properties
 
 		public bool HasValue

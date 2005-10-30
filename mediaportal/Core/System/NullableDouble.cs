@@ -30,7 +30,7 @@ using System.Globalization;
 namespace System
 {
 	[TypeConverter(typeof(NullableDoubleConverter))]
-	public struct NullableDouble : INullable, IComparable, IConvertible, IFormattable
+	public struct NullableDouble : IComparable, IConvertible, IFormattable, INullable
 	{
 		#region Constructors
 
