@@ -20,16 +20,13 @@
  */
 using System;
 using System.IO;
-//using System.Drawing;
 using System.Collections;
 using System.Globalization;
 using System.Xml;
 using System.Net;
-//using MediaPortal.Dialogs;
-//using MediaPortal.GUI.Library;
-//using MediaPortal.Util;
+using MediaPortal.Webepg.TV.Database;
 
-namespace MediaPortal.Webepg.TV.Database
+namespace MediaPortal.WebEPG
 {
 	/// <summary>
 	/// 

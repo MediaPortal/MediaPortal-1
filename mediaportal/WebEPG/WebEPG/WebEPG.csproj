@@ -79,6 +79,11 @@
                     AssemblyName = "System.Xml"
                     HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.XML.dll"
                 />
+                <Reference
+                    Name = "Utils"
+                    Project = "{6DA0E4DF-6230-4642-98B5-E690BB6942BB}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
             </References>
         </Build>
         <Files>
@@ -134,37 +139,22 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Utils\HTMLPage.cs"
+                    RelPath = "Parser\DataProfiler.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Utils\HTMLProfiler.cs"
+                    RelPath = "Parser\ProgramData.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Utils\Parser.cs"
+                    RelPath = "Parser\XMLProfiler.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Utils\Profiler.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Utils\ProgramData.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Utils\XMLProfiler.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Utils\XMLProfilerData.cs"
+                    RelPath = "Parser\XMLProfilerData.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

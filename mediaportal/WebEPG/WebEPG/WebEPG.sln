@@ -17,6 +17,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebEPG-channels", "..\WebEP
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utils", "..\..\Utils\Utils.csproj", "{6DA0E4DF-6230-4642-98B5-E690BB6942BB}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -39,6 +43,10 @@ Global
 		{21F2FA6E-4B52-442E-A5A8-64573061D571}.Debug.Build.0 = Debug|.NET
 		{21F2FA6E-4B52-442E-A5A8-64573061D571}.Release.ActiveCfg = Release|.NET
 		{21F2FA6E-4B52-442E-A5A8-64573061D571}.Release.Build.0 = Release|.NET
+		{6DA0E4DF-6230-4642-98B5-E690BB6942BB}.Debug.ActiveCfg = Debug|.NET
+		{6DA0E4DF-6230-4642-98B5-E690BB6942BB}.Debug.Build.0 = Debug|.NET
+		{6DA0E4DF-6230-4642-98B5-E690BB6942BB}.Release.ActiveCfg = Release|.NET
+		{6DA0E4DF-6230-4642-98B5-E690BB6942BB}.Release.Build.0 = Release|.NET
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection

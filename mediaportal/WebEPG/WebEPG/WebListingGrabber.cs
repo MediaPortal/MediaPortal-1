@@ -27,11 +27,11 @@ using System.Text;
 using System.Threading;
 using System.Collections;
 using System.Globalization;
-using MediaPortal.Util;
 using MediaPortal.Webepg.Profile;
 using MediaPortal.Webepg.GUI.Library;
 using MediaPortal.Webepg.TV.Database;
-using MediaPortal.WebEPGUtils;
+using MediaPortal.WebEPG;
+using MediaPortal.Utils.Web;
 
 namespace MediaPortal.EPG
 {
@@ -141,7 +141,7 @@ namespace MediaPortal.EPG
 							Log.WriteFile(Log.LogType.Log, true, "WebEPG: {0}: No Template", File);
 							return false;
 						}
-						m_templateProfile = new Profiler(listingTemplate, strDataDelimitor[0], strListingDelimitor[0]);
+						m_templateProfile = new DataProfiler(listingTemplate, strDataDelimitor[0], strListingDelimitor[0]);
 						break;
 
 					default: // HTML
@@ -264,9 +264,11 @@ namespace MediaPortal.EPG
 						string epTotal  = htmlProf.SearchRegex(index, m_strEpTotal, m_searchRemove);
 					}
 				}
-				ProgramData guideData =	guideProfile.GetProgramData(index); //m_templateParser.GetProgram(Listing);
+				ProgramData guideData = new ProgramData();
+				ParserData data = (ParserData) guideData;
+				guideProfile.GetParserData(index, ref data); //m_templateParser.GetProgram(Listing);
 
-				if(guideData == null || guideData.StartTime == null || guideData.Title == "")
+				if(guideData.StartTime == null || guideData.Title == "")
 					return null;
 
 				program.Channel = m_strID;
@@ -405,12 +407,15 @@ namespace MediaPortal.EPG
 					{
 						Log.WriteFile(Log.LogType.Log, false, "WebEPG: Reading {0}", strLinkURL);
 						Thread.Sleep(m_grabDelay);
-						Profiler SubProfile = m_templateSubProfile.GetPageProfiler(strLinkURL, ""); 
+						Profiler SubProfile = m_templateSubProfile.GetPageProfiler(strLinkURL); 
 						int Count = SubProfile.subProfileCount(); 
 
 						if(Count > 0)
 						{
-							ProgramData SubData = SubProfile.GetProgramData(0);
+							ProgramData SubData =  new ProgramData();
+							ParserData refdata = (ParserData) SubData;
+							SubProfile.GetParserData(0, ref refdata);
+							
 							if (SubData.Description != "")
 								program.Description = SubData.Description;
 
@@ -437,7 +442,12 @@ namespace MediaPortal.EPG
 
                 Log.WriteFile(Log.LogType.Log, false, "WebEPG: Reading {0}{1}", m_strURLbase, strURL);
 
-				guideProfile = m_templateProfile.GetPageProfiler(m_strURLbase + strURL, strChannel); 
+				if(m_templateProfile is XMLProfiler)
+				{
+					XMLProfiler templateProfile = (XMLProfiler) m_templateProfile;
+					templateProfile.SetChannelID(strChannel);
+				}
+				guideProfile = m_templateProfile.GetPageProfiler(m_strURLbase + strURL); 
 				listingCount = guideProfile.subProfileCount();
 
 				if(listingCount == 0)

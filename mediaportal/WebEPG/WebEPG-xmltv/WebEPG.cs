@@ -25,10 +25,10 @@ using System.Net;
 using System.Web;
 using System.Text;
 using System.Collections;
-using MediaPortal.Util;
 using MediaPortal.Webepg.Profile;
 using MediaPortal.Webepg.GUI.Library;
 using MediaPortal.Webepg.TV.Database;
+using MediaPortal.WebEPG;
 
 namespace MediaPortal.EPG
 {

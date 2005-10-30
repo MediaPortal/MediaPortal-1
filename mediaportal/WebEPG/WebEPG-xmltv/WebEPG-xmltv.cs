@@ -26,7 +26,6 @@ using System.Web;
 using System.Text;
 //using System.Collections.Generic;
 using System.Windows.Forms;
-using MediaPortal.Util;
 using MediaPortal.EPG;
 using MediaPortal.Webepg.GUI.Library;
 using MediaPortal.Webepg.TV.Database;
