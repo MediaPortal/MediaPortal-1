@@ -30,7 +30,7 @@ using System.Globalization;
 namespace System
 {
 	[TypeConverter(typeof(NullableDoubleConverter))]
-	public struct NullableDouble : INullable, IComparable, IFormattable
+	public struct NullableDouble : INullable, IComparable, IConvertible, IFormattable
 	{
 		#region Constructors
 
@@ -145,25 +145,91 @@ namespace System
 			return new NullableDouble(double.Parse(s, style, provider));
 		}
 
-		// TODO: Implement IConvertible
-/*		TypeCode GetTypeCode()
-		bool ToBoolean(IFormatProvider provider);
-		byte ToByte(IFormatProvider provider);
-		char ToChar(IFormatProvider provider);
-		DateTime ToDateTime(IFormatProvider provider);
-		decimal ToDecimal(IFormatProvider provider);
-		double ToDouble(IFormatProvider provider);
-		short ToInt16(IFormatProvider provider);
-		int ToInt32(IFormatProvider provider);
-		long ToInt64(IFormatProvider provider);
-		sbyte ToSByte(IFormatProvider provider);
-		float ToSingle(IFormatProvider provider);
-		string ToString(IFormatProvider provider);
-		object ToType(Type conversionType, IFormatProvider provider);
-		ushort ToUInt16(IFormatProvider provider);
-		uint ToUInt32(IFormatProvider provider);
-		ulong ToUInt64(IFormatProvider provider);
-*/
+		TypeCode IConvertible.GetTypeCode()
+		{
+			return ((IConvertible)_value).GetTypeCode();
+		}
+
+		bool IConvertible.ToBoolean(IFormatProvider provider)
+		{
+			return ((IConvertible)_value).ToBoolean(provider);
+		}
+		
+		byte IConvertible.ToByte(IFormatProvider provider)
+		{
+			return ((IConvertible)_value).ToByte(provider);
+		}
+
+		char IConvertible.ToChar(IFormatProvider provider)
+		{
+			return ((IConvertible)_value).ToChar(provider);
+		}
+
+		DateTime IConvertible.ToDateTime(IFormatProvider provider)
+		{
+			return ((IConvertible)_value).ToDateTime(provider);
+		}
+	
+		decimal IConvertible.ToDecimal(IFormatProvider provider)
+		{
+			return ((IConvertible)_value).ToDecimal(provider);
+		}
+
+		double IConvertible.ToDouble(IFormatProvider provider)
+		{
+			return ((IConvertible)_value).ToDouble(provider);
+		}
+		
+		short IConvertible.ToInt16(IFormatProvider provider)
+		{
+			return ((IConvertible)_value).ToInt16(provider);
+		}
+
+		int IConvertible.ToInt32(IFormatProvider provider)
+		{
+			return ((IConvertible)_value).ToInt32(provider);
+		}
+
+		long IConvertible.ToInt64(IFormatProvider provider)
+		{
+			return ((IConvertible)_value).ToInt64(provider);
+		}
+
+		sbyte IConvertible.ToSByte(IFormatProvider provider)		
+		{
+			return ((IConvertible)_value).ToSByte(provider);
+		}
+
+		float IConvertible.ToSingle(IFormatProvider provider)		
+		{
+			return ((IConvertible)_value).ToSingle(provider);
+		}
+
+		string IConvertible.ToString(IFormatProvider provider)		
+		{
+			return ToString(provider);
+		}
+
+		object IConvertible.ToType(Type conversionType, IFormatProvider provider)		
+		{
+			return ((IConvertible)_value).ToType(conversionType, provider);
+		}
+
+		ushort IConvertible.ToUInt16(IFormatProvider provider)		
+		{
+			return ((IConvertible)_value).ToUInt16(provider);
+		}
+
+		uint IConvertible.ToUInt32(IFormatProvider provider)		
+		{
+			return ((IConvertible)_value).ToUInt32(provider);
+		}
+
+		ulong IConvertible.ToUInt64(IFormatProvider provider)		
+		{
+			return ((IConvertible)_value).ToUInt64(provider);
+		}
+
 		public override string ToString()
 		{
 			return ToString("{0}");
