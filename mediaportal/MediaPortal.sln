@@ -80,6 +80,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebEPG-xmltv", "WebEPG\WebE
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utils", "Utils\Utils.csproj", "{6DA0E4DF-6230-4642-98B5-E690BB6942BB}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -231,6 +235,14 @@ Global
 		{67D44FEB-AC41-4B93-AC1D-876318CDD16B}.UseCaptureCardDefinitions.Build.0 = Release|.NET
 		{67D44FEB-AC41-4B93-AC1D-876318CDD16B}.UseCaptureDefintionsRelease.ActiveCfg = Release|.NET
 		{67D44FEB-AC41-4B93-AC1D-876318CDD16B}.UseCaptureDefintionsRelease.Build.0 = Release|.NET
+		{6DA0E4DF-6230-4642-98B5-E690BB6942BB}.Debug.ActiveCfg = Debug|.NET
+		{6DA0E4DF-6230-4642-98B5-E690BB6942BB}.Debug.Build.0 = Debug|.NET
+		{6DA0E4DF-6230-4642-98B5-E690BB6942BB}.Release.ActiveCfg = Release|.NET
+		{6DA0E4DF-6230-4642-98B5-E690BB6942BB}.Release.Build.0 = Release|.NET
+		{6DA0E4DF-6230-4642-98B5-E690BB6942BB}.UseCaptureCardDefinitions.ActiveCfg = Release|.NET
+		{6DA0E4DF-6230-4642-98B5-E690BB6942BB}.UseCaptureCardDefinitions.Build.0 = Release|.NET
+		{6DA0E4DF-6230-4642-98B5-E690BB6942BB}.UseCaptureDefintionsRelease.ActiveCfg = Release|.NET
+		{6DA0E4DF-6230-4642-98B5-E690BB6942BB}.UseCaptureDefintionsRelease.Build.0 = Release|.NET
 	EndGlobalSection
 	GlobalSection(SolutionItems) = postSolution
 	EndGlobalSection
