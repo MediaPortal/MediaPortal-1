@@ -449,6 +449,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Controls\ContextMenu.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Controls\Control.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -514,12 +519,32 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Controls\ItemCollection.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Controls\ItemsControl.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Controls\MenuBase.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Controls\Page.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Controls\Panel.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Controls\PlacementMode.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
