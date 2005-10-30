@@ -25,18 +25,19 @@
 
 using System;
 using System.ComponentModel;
+using System.Globalization;
 
 namespace System
 {
 	[TypeConverter(typeof(NullableTimeSpanConverter))]
-	public struct NullableTimeSpan : INullable
+	public struct NullableTimeSpan : IComparable, INullable
 	{
 		#region Constructors
 
-		public NullableTimeSpan(TimeSpan timespan)
+		public NullableTimeSpan(TimeSpan ts)
 		{
 			_hasValue = true;
-			_value = timespan;
+			_value = ts;
 		}
 
 		#endregion Constructors
@@ -62,10 +63,137 @@ namespace System
 
 		#endregion Properties
 
+		#region Methods
+
+		public NullableTimeSpan Add(NullableTimeSpan ts)
+		{
+			return new NullableTimeSpan(_value.Add(ts._value));
+		}
+ 
+		public int CompareTo(object other)
+		{
+			if(other == null)
+				return 1;
+
+			if(other is NullableTimeSpan == false)
+				throw new ArgumentException("");
+
+			NullableTimeSpan nullable = (NullableTimeSpan)other;
+
+			if(_hasValue == false)
+				return -1;
+
+			if(_hasValue == false && nullable._hasValue == false)
+				return 0;
+
+			if(nullable._hasValue == false)
+				return 1;
+
+			return _value.CompareTo(nullable._value);
+		}
+
+		public override bool Equals(object other) 
+		{
+			if(other is NullableTimeSpan == false)
+				return false;
+
+			NullableTimeSpan nullable = (NullableTimeSpan)other;
+
+			return _hasValue == nullable._hasValue && _value.Equals(nullable._value);
+		}
+
+		public override int GetHashCode() 
+		{
+			return _value.GetHashCode();
+		}
+
+		public static NullableTimeSpan Parse(string s)
+		{
+			if(string.Compare(s, "Null", true) == 0)
+				return Null;
+
+			return new NullableTimeSpan(TimeSpan.Parse(s));
+		}
+
+		public override string ToString()
+		{
+			if(_hasValue == false)
+				return "Null";
+
+			return _value.ToString();;
+		}
+
+		#endregion Methods
+
+		#region Operators
+
+		public static explicit operator TimeSpan(NullableTimeSpan nullable) 
+		{
+			return nullable._value;
+		}
+
+		public static bool operator == (NullableTimeSpan l, NullableTimeSpan r)
+		{
+			return l._hasValue && r._hasValue && l._value == r._value;
+		}
+
+		public static bool operator != (NullableTimeSpan l, NullableTimeSpan r) 
+		{
+			return l._hasValue && r._hasValue && l._value != r._value;
+		}
+		
+		public static NullableTimeSpan operator + (NullableTimeSpan l, NullableTimeSpan r) 
+		{
+			if(l._hasValue == false || r._hasValue == false)
+				return Null;
+			
+			return new NullableTimeSpan(l._value + r._value); 
+		}
+
+		public static NullableTimeSpan operator - (NullableTimeSpan l, NullableTimeSpan r) 
+		{
+			if(l._hasValue == false || r._hasValue == false)
+				return Null;
+			
+			return new NullableTimeSpan(l._value - r._value); 
+		}
+
+		public static NullableTimeSpan operator - (NullableTimeSpan l) 
+		{
+			if(l._hasValue)
+				return Null;
+
+			return new NullableTimeSpan(-l._value);
+		}
+		
+		public static bool operator > (NullableTimeSpan l, NullableTimeSpan r) 
+		{
+			return l._hasValue && r._hasValue && l._value > r._value;
+		}
+
+		public static bool operator >= (NullableTimeSpan l, NullableTimeSpan r) 
+		{
+			return l._hasValue && r._hasValue && l._value >= r._value;
+		}
+
+		public static bool operator < (NullableTimeSpan l, NullableTimeSpan r) 
+		{
+			return l._hasValue && r._hasValue && l._value < r._value;
+		}
+
+		public static bool operator <= (NullableTimeSpan l, NullableTimeSpan r) 
+		{
+			return l._hasValue && r._hasValue && l._value < r._value;
+		}
+
+		#endregion Operators
+
 		#region Fields
 
 		bool						_hasValue;
 		TimeSpan					_value;
+
+		public static readonly NullableTimeSpan Null = new NullableTimeSpan();
 
 		#endregion Fields
 	}
