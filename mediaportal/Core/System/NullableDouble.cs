@@ -274,7 +274,7 @@ namespace System
 
 		public static explicit operator double(NullableDouble nullable) 
 		{
-			return nullable.Value;
+			return nullable._value;
 		}
 
 		public static bool operator == (NullableDouble l, NullableDouble r)
