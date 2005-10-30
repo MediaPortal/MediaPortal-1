@@ -84,4 +84,13 @@ copy ..\..\..\TaskScheduler.dll .
 copy ..\..\..\AxInterop.WMPLib.dll .
 copy ..\..\..\FireDTVKeyMap.XML .
 copy ..\..\..\FireDTVKeyMap.XML.Schema .
+
+
 copy ..\..\..\WebEPG\WebEPG\bin\Release\WebEPG.dll .
+copy ..\..\..\Utils\bin\Release\Utils.dll .
+
+copy ..\..\..\WebEPG\WebEPG\bin\Release\WebEPG.dll WebEPG\
+copy ..\..\..\WebEPG\WebEPG-xmltv\bin\Release\WebEPG-xmltv.exe WebEPG\WebEPG.exe
+copy ..\..\..\WebEPG\WebEPG-conf\bin\Release\WebEPG-conf.exe WebEPG\
+copy ..\..\..\WebEPG\WebEPG-channels\bin\Release\WebEPG-channels.exe WebEPG\
+copy ..\..\..\Utils\bin\Release\Utils.dll WebEPG\
