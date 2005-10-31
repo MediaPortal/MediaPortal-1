@@ -2514,6 +2514,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Input\FocusManager.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Input\ICommand.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
