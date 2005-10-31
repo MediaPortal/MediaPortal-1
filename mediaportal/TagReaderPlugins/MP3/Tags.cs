@@ -122,7 +122,7 @@ namespace id3
 				{
 					break; // We reached the padding area
 				}
-				char[] tagSize = new char[5];    // I use this to read the bytes in from the file
+				byte[] tagSize = new byte[5];    // I use this to read the bytes in from the file
 				int[] bytes = new int[5];      // for bit shifting
 				ulong newSize = 0;    // for the final number
 
@@ -131,7 +131,7 @@ namespace id3
 					// only have 3 bytes for size ;
 
 
-					tagSize = reader.ReadChars(3);    // I use this to read the bytes in from the file
+					tagSize = reader.ReadBytes(3);    // I use this to read the bytes in from the file
 					bytes = new int[5];      // for bit shifting
 					newSize = 0;    // for the final number
 					// The ID3v2 tag size is encoded with four bytes
@@ -148,15 +148,15 @@ namespace id3
 					bytes[1] = ((tagSize[0] >> 2) & 31) ;
 
 					newSize  = (((UInt64)bytes[3]) |
-						((UInt64)bytes[2] << 8)  |
-						((UInt64)bytes[1] << 16));
+											((UInt64)bytes[2] << 8)  |
+											((UInt64)bytes[1] << 16));
 					//End Dan Code
 					index+=3; // read 3 bytes
 				}
 				else if (_tagHeader.Version == 3 || _tagHeader.Version == 4)
 				{
 					// version  2.4
-					tagSize = reader.ReadChars(4);    // I use this to read the bytes in from the file
+					tagSize = reader.ReadBytes(4);    // I use this to read the bytes in from the file
 					bytes = new int[4];      // for bit shifting
 					newSize = 0;    // for the final number
 				
@@ -174,11 +174,16 @@ namespace id3
 					bytes[1] = ((tagSize[1] >> 2) & 31) | ((tagSize[0] & 7) << 5) ;
 					bytes[0] = ((tagSize[0] >> 3) & 15) ;
 
-					newSize  = (((UInt64)bytes[3]) |
-						((UInt64)bytes[2] << 8)  |
-						((UInt64)bytes[1] << 16) |
-						((UInt64)bytes[0] << 24)) ;
-					//End Dan Code
+					if ( (tagSize[3]&0x80)==0 && (tagSize[2]&0x80)==0 &&  (tagSize[1]&0x80)==0 && (tagSize[0]&0x80)==0)
+					{
+						newSize  = (((UInt64)bytes[3]) |
+							((UInt64)bytes[2] << 8)  |
+							((UInt64)bytes[1] << 16) |
+							((UInt64)bytes[0] << 24)) ;
+						//End Dan Code
+					}
+					else
+						newSize  = (ulong)((tagSize[3])+(tagSize[2]<<8)+(tagSize[1]<<16)+(tagSize[0]<<24));
 					index+=4; // read 4 bytes
 				}
 
@@ -198,7 +203,6 @@ namespace id3
 					// versions 3+ have frame tags.
 					if (_tagHeader.Version == 3)
 					{
-
 						flags = Swap.UInt16(reader.ReadUInt16());
 						index+=2; // read 2 bytes
 					}

@@ -174,7 +174,7 @@ namespace id3
 			if(Encryption == true)
 			{
 				//TODO: Encription
-				throw new Exception("Not implemented");
+			//	throw new Exception("Not implemented");
 			}
 			if(Unsynchronisation == true)
 			{
