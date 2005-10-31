@@ -6192,7 +6192,7 @@
     <tv> 
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters> 
-        <filter cat="networkprovider"	name="Microsoft DVBS Network Provider"		checkdevice="false"></filter> 
+        <filter cat="networkprovider"	name="Microsoft DVBT Network Provider"		checkdevice="false"></filter> 
         <filter cat="tunerdevice"		name="Cinergy Hybrid T USB XS Tuner"		checkdevice="true"></filter> 
         <filter cat="capture"			name="Cinergy Hybrid T USB XS (Digital)"	checkdevice="true"></filter> 
       </filters> 
@@ -6400,7 +6400,7 @@
     <tv> 
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters> 
-        <filter cat="networkprovider"	name="Microsoft DVBS Network Provider"	checkdevice="false"></filter> 
+        <filter cat="networkprovider"	name="Microsoft DVBT Network Provider"	checkdevice="false"></filter> 
         <filter cat="tunerdevice"		name="Cinergy T USB XS Tuner"			checkdevice="true"></filter> 
         <filter cat="capture"			name="Cinergy T USB XS Receiver"		checkdevice="true"></filter> 
       </filters> 
