@@ -27,6 +27,7 @@ using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Serialization;
 
 namespace System.Windows.Controls
@@ -70,6 +71,7 @@ namespace System.Windows.Controls
 
 		protected virtual void AddText(string text)
 		{
+			// no default implementation
 		}
 
 		public override void BeginInit()
@@ -80,6 +82,24 @@ namespace System.Windows.Controls
 		{
 		}
 
+		protected virtual DependencyObject GetContainerForItemOverride(object item)
+		{
+			throw new NotImplementedException();
+		}
+		
+		protected override void OnKeyDown(KeyEventArgs e)
+		{
+		}
+			
+		protected virtual void PrepareContainerForItemOverride(DependencyObject element, object item)
+		{
+		}
+			
+		protected virtual bool IsItemItsOwnContainerOverride(object item)
+		{
+			throw new NotImplementedException();
+		}
+			
 		#endregion Methods
 
 		#region Properties

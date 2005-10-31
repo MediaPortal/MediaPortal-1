@@ -24,10 +24,59 @@
 #endregion
 
 using System;
+using System.Windows.Input;
 
 namespace System.Windows.Controls
 {
 	public class Menu : MenuBase
 	{
+		#region Constructors
+
+		static Menu()
+		{
+			IsMainMenuProperty = DependencyProperty.Register("IsMainMenu", typeof(bool), typeof(Menu));
+		}
+
+		public Menu()
+		{
+		}
+
+		#endregion Constructors
+
+		#region Methods
+
+		protected override void HandleMouseButton(MouseButtonEventArgs e)
+		{
+		}
+		
+		protected override void OnInitialized(EventArgs e)
+		{
+		}
+		
+		protected override void OnKeyDown(KeyEventArgs e)
+		{
+		}
+
+		protected override void PrepareContainerForItemOverride(DependencyObject element, Object item)
+		{
+		}
+
+		#endregion Methods
+
+		#region Properties (Dependency)
+
+		public static readonly DependencyProperty IsMainMenuProperty;
+
+		#endregion Properties (Dependency)
+
+		#region Fields
+
+		public bool IsMainMenu
+		{
+			get { return (bool)GetValue(IsMainMenuProperty); }
+			set { SetValue(IsMainMenuProperty, value); }
+		}
+
+		#endregion Fields
 	}
 }

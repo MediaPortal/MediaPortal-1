@@ -24,28 +24,17 @@
 #endregion
 
 using System;
-using System.Windows;
 
 namespace System.Windows.Controls
 {
-	public class Control : FrameworkElement
+	public enum MenuItemMode
 	{
-		#region Constructors
+		#region Values
+		
+		Checkable,
+		Default,
+		Separator,
 
-		public Control()
-		{
-		}
-
-		#endregion Constructors
-
-		#region Methods
-
-
-
-		#endregion Methods
-
-		#region Properties (Dependency)
-
-		#endregion Properties (Dependency)
+		#endregion Values
 	}
 }

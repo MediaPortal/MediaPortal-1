@@ -25,6 +25,7 @@
 
 using System;
 using System.Windows;
+using System.Windows.Input;
 
 namespace System.Windows.Controls
 {
@@ -40,34 +41,41 @@ namespace System.Windows.Controls
 
 		#region Methods
 
-//		protected override DependencyObject GetContainerForItemOverride(object item)
-//		{
-//			throw new NotImplementedException();
-//		}
+		protected override DependencyObject GetContainerForItemOverride(object item)
+		{
+			throw new NotImplementedException();
+		}
 
-		// HandleMouseButton
+		protected virtual void HandleMouseButton(MouseButtonEventArgs e)
+		{
+			throw new NotImplementedException();
+		}
 
-//		protected override bool IsItemItsOwnContainerOverride(object item)
-//		{
-//			// Returns true if the item is its own ItemContainer;
-//			throw new NotImplementedException();
-//		}
+		protected override bool IsItemItsOwnContainerOverride(object item)
+		{
+			// Returns true if the item is its own ItemContainer;
+			throw new NotImplementedException();
+		}
 
 		protected override void OnInitialized(EventArgs e)
 		{
+			throw new NotImplementedException();
 		}
 		
-//		protected internal override void OnIsFocusWithinChanged(DependencyPropertyChangedEventArgs e)
-//		{
-//		}
+		protected internal override void OnIsFocusWithinChanged(DependencyPropertyChangedEventArgs e)
+		{
+			throw new NotImplementedException();
+		}
 
-//		protected override void OnKeyDown(KeyEventArgs e)
-//		{
-//		}
+		protected override void OnKeyDown(KeyEventArgs e)
+		{
+			throw new NotImplementedException();
+		}
 
-//		protected override void OnMouseLeave(MouseEventArgs e)
-//		{
-//		}
+		protected override void OnMouseLeave(MouseEventArgs e)
+		{
+			throw new NotImplementedException();
+		}
 
 		#endregion Methods
 	}

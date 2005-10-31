@@ -168,39 +168,39 @@ namespace System.Windows
 			
 		public bool Focus()
 		{
-			/*			if(IsFocused)
-							return true;
-
-						if(Focusable && IsEnabled)
-							return false;
-
-						if(!IsKeyboardFocused)
-						{
-						}
-
-						if(!IsKeyboardFocusWithin)
-						{
-							IsKeyboardFocusWithin = true;
-
-							new RoutedEventArgs(UIElement.IsKeyboardFocusedChanged);
-							RaiseEvent();
-				
-						}
-
-						IsKeyboardFocused = true;
-						IsKeyboardFocusWithin = true;
-
-						// If the related properties were not already true, then calling this method may also 
-						// raise these events in the order given:
-						// PreviewLostKeyboardFocus
-						// PreviewGotKeyboardFocus (source is the new focus target)
-						// IsKeyboardFocusedChanged
-						// IsKeyboardFocusWithinChanged
-						// LostKeyboardFocus
-						// GotKeyboardFocus (source is the new focus target).
-			*/
-
 			return true;
+
+/*			if(IsFocused)
+				return true;
+
+			if(Focusable && IsEnabled)
+				return false;
+
+			if(!IsKeyboardFocused)
+			{
+			}
+
+			if(!IsKeyboardFocusWithin)
+			{
+				IsKeyboardFocusWithin = true;
+
+				new RoutedEventArgs(UIElement.IsKeyboardFocusedChanged);
+				RaiseEvent();
+	
+			}
+
+			IsKeyboardFocused = true;
+			IsKeyboardFocusWithin = true;
+
+			// If the related properties were not already true, then calling this method may also 
+			// raise these events in the order given:
+			// PreviewLostKeyboardFocus
+			// PreviewGotKeyboardFocus (source is the new focus target)
+			// IsKeyboardFocusedChanged
+			// IsKeyboardFocusWithinChanged
+			// LostKeyboardFocus
+			// GotKeyboardFocus (source is the new focus target).
+*/
 		}			
 
 		public object GetAnimationBaseValue(DependencyProperty property)
@@ -264,6 +264,61 @@ namespace System.Windows
 		protected virtual void OnChildDesiredSizeChanged(UIElement child)
 		{
 			InvalidateMeasure();
+		}
+			
+		protected virtual void OnKeyDown(KeyEventArgs e)
+		{
+			// no default implementation
+		}
+
+		protected virtual void OnKeyUp(KeyEventArgs e)
+		{
+			// no default implementation
+		}
+
+		protected internal virtual void OnIsFocusWithinChanged(DependencyPropertyChangedEventArgs e)
+		{
+			throw new NotImplementedException();
+		}
+		
+		protected virtual void OnMouseEnter(MouseEventArgs e)
+		{
+			// no default implementation
+		}
+			
+		protected virtual void OnMouseLeave(MouseEventArgs e)
+		{
+			// no default implementation
+		}
+
+		protected virtual void OnMouseLeftButtonDown(MouseButtonEventArgs e)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected virtual void OnMouseLeftButtonUp(MouseButtonEventArgs e)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected virtual void OnMouseMove(MouseEventArgs e)
+		{
+			throw new NotImplementedException();
+		}
+			
+		protected virtual void OnMouseRightButtonDown(MouseButtonEventArgs e)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected virtual void OnMouseRightButtonUp(MouseButtonEventArgs e)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected virtual void OnMouseWheel(MouseWheelEventArgs e)
+		{
+			throw new NotImplementedException();
 		}
 			
 		protected override void OnPropertyInvalidated(DependencyProperty property, PropertyMetadata metadata)

@@ -24,28 +24,18 @@
 #endregion
 
 using System;
-using System.Windows;
 
 namespace System.Windows.Controls
 {
-	public class Control : FrameworkElement
+	public enum MenuItemRole
 	{
-		#region Constructors
+		#region Values
 
-		public Control()
-		{
-		}
+		SubmenuHeader,
+		SubmenuItem,
+		TopLevelHeader,
+		TopLevelItem,
 
-		#endregion Constructors
-
-		#region Methods
-
-
-
-		#endregion Methods
-
-		#region Properties (Dependency)
-
-		#endregion Properties (Dependency)
+		#endregion Values
 	}
 }

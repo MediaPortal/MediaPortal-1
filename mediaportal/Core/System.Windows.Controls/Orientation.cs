@@ -24,28 +24,16 @@
 #endregion
 
 using System;
-using System.Windows;
 
 namespace System.Windows.Controls
 {
-	public class Control : FrameworkElement
+	public enum Orientation
 	{
-		#region Constructors
+		#region Values
 
-		public Control()
-		{
-		}
+		Horizontal,
+		Vertical,
 
-		#endregion Constructors
-
-		#region Methods
-
-
-
-		#endregion Methods
-
-		#region Properties (Dependency)
-
-		#endregion Properties (Dependency)
+		#endregion Values
 	}
 }

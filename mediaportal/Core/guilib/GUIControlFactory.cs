@@ -25,6 +25,7 @@ using System.Drawing;
 using System.Globalization;
 using System.Reflection;
 using System.Xml;
+using System.Windows.Controls;
 using System.Windows.Media.Animation;
 using System.Windows.Serialization;
 

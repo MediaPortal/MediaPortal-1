@@ -24,28 +24,10 @@
 #endregion
 
 using System;
-using System.Windows;
 
-namespace System.Windows.Controls
+namespace System.Windows.Input
 {
-	public class Control : FrameworkElement
+	public class KeyEventArgs
 	{
-		#region Constructors
-
-		public Control()
-		{
-		}
-
-		#endregion Constructors
-
-		#region Methods
-
-
-
-		#endregion Methods
-
-		#region Properties (Dependency)
-
-		#endregion Properties (Dependency)
 	}
 }

@@ -213,7 +213,6 @@
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
-                <Folder RelPath = "Animation\" />
                 <File
                     RelPath = "DirectX.Capture\AudioCapabilities.cs"
                     SubType = "Code"
@@ -476,11 +475,6 @@
                 />
                 <File
                     RelPath = "Drawing\Matrix.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing\Orientation.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -2645,6 +2639,21 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Controls\MenuItemMode.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Controls\MenuItemRole.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Controls\Orientation.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Controls\Page.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -2721,6 +2730,26 @@
                 />
                 <File
                     RelPath = "System.Windows.Input\KeyboardFocusChangedEventHandler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Input\KeyEventArgs.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Input\MouseButtonEventArgs.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Input\MouseEventArgs.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Input\MouseWheelEventArgs.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

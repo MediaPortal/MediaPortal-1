@@ -25,14 +25,9 @@
 
 using System;
 
-namespace MediaPortal.Automation
+namespace System.Windows.Input
 {
-	public interface IInvokeProvider
+	public class MouseEventArgs
 	{
-		#region Methods
-
-		void Invoke();
-
-		#endregion Methods
 	}
 }
