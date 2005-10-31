@@ -25,7 +25,6 @@
 
 using System;
 
-using MediaPortal.Drawing.Paths;
 using MediaPortal.Drawing.Transforms;
 
 namespace MediaPortal.Drawing
@@ -77,7 +76,7 @@ namespace MediaPortal.Drawing
 			if(_radiusY > _rect.Height / 2.0)
 				_radiusY = _rect.Height / 2.0;
 
-			PathFigure figure = new PathFigure();
+/*			PathFigure figure = new PathFigure();
 
 			figure.IsFilled = true;
 			figure.IsClosed = true;
@@ -103,7 +102,7 @@ namespace MediaPortal.Drawing
 				figure.Segments.Add(new LineSegment(new Point(_rect.Left, _rect.Bottom), true));
 				figure.Segments.Add(new CloseSegment(true));
 			}
-		}
+*/		}
 
 		#endregion Methods
 
@@ -117,19 +116,19 @@ namespace MediaPortal.Drawing
 		public double RadiusX
 		{
 			get { return _radiusX; }
-			set { if(!double.Equals(_radiusX, value)) { _radiusX = value; RaiseChanged(); } }
+			set { }
 		}
 
 		public double RadiusY
 		{
 			get { return _radiusY; }
-			set { if(!double.Equals(_radiusY, value)) { _radiusY = value; RaiseChanged(); } }
+			set { }
 		}
 
 		public Rect Rect
 		{
 			get { return _rect; }
-			set { if(!Rect.Equals(_rect, value)) { _rect = value; RaiseChanged(); } }
+			set { }
 		}
 
 		#endregion Properties

@@ -208,8 +208,8 @@ namespace MediaPortal.GUI.Library
 			{
 				if (action.wID == Action.ActionType.ACTION_MOUSE_CLICK||action.wID == Action.ActionType.ACTION_SELECT_ITEM)
 				{
-//					if(base.ContextMenu != null)
-//						DoContextMenu();
+					if(base.ContextMenu != null)
+						DoContextMenu();
 
 					// If this button contains scriptactions call the scriptactions.
 					if (m_strApplication.Length!=0)
@@ -583,49 +583,34 @@ namespace MediaPortal.GUI.Library
 			}
 		}
 
-/*		void DoContextMenu()
+		void DoContextMenu()
 		{
-			GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+			Log.Write("Hi1");
+			IDialogbox dialog = (IDialogbox)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
 
-			if(dlg==null)
+			Log.Write("Hi2");
+			if(dialog == null)
 				return;
 
-			dlg.Reset();
-			dlg.SetHeading(924); // menu
+			Log.Write("Hi3");
+
+			dialog.Reset();
+			dialog.SetHeading(924); // menu
 
 			foreach(object item in ContextMenu.Items)
 			{
 				if(item is MenuItem)
-					dlg.AddLocalizedString(((MenuItem)item).Header);
+					dialog.Add((string)(((MenuItem)item).Header));
 			}
 
-			dlg.DoModal(GetID);
+			dialog.DoModal(GetID);
 
-			if(dlg.SelectedId==-1)
+			if(dialog.SelectedId==-1)
 				return;
 
-			switch(dlg.SelectedId)
-			{
-			case 117: // Delete
-					OnDelete();
-					break;
-
-				case 735: // Rotate					
-					DoRotate();
-					break;
-				
-				case 108: // Start slideshow
-					StartSlideShow();
-					break;
-
-				case 940: // Properties
-					OnShowInfo();
-					break;
-
-				case 970:
-					ShowPreviousWindow();
-					break;
-			}
+//			switch(dialog.SelectedId)
+//			{
+//			}
 		}	
-*/	}
+	}
 }

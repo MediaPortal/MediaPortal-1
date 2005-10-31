@@ -27,8 +27,6 @@ using System;
 using System.Windows;
 
 using MediaPortal.Drawing;
-using MediaPortal.Drawing.Paths;
-using MediaPortal.Drawing.Shapes;
 using MediaPortal.Drawing.Transforms;
 
 namespace System.Windows

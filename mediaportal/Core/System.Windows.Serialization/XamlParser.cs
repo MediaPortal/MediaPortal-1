@@ -111,7 +111,12 @@ namespace System.Windows.Serialization
 				if(propertyInfo == null)
 					throw new XamlParserException(string.Format("'{0}' does not contain a definition for '{1}'", t, property), _filename, _reader);
 
-				return propertyInfo.GetValue(target, null);
+				object value = propertyInfo.GetValue(target, null);
+
+				if(value == null && propertyInfo.CanWrite)
+					value = Activator.CreateInstance(propertyInfo.PropertyType);
+
+				return value;
 			}
 			
 			// A local variable named 'b' is already defined in this scope
@@ -127,6 +132,8 @@ namespace System.Windows.Serialization
 		
 		private void InvokeSetter(string type, string property, object value)
 		{
+			//			MediaPortal.GUI.Library.Log.Write("InvokeSetter: {0}, {1}, {2}", type, property, value.GetType());
+
 			Type t = GetType(type);
 
 			if(t == null)
@@ -147,6 +154,15 @@ namespace System.Windows.Serialization
 
 				if(propertyInfo.PropertyType == typeof(object))
 				{
+					propertyInfo.SetValue(target, _target, null);
+					break;
+				}
+
+				//				MediaPortal.GUI.Library.Log.Write("blah, blah: {0} {1}", value, propertyInfo.PropertyType);
+
+				if(value != null && value.GetType().IsSubclassOf(propertyInfo.PropertyType))
+				{
+					//					MediaPortal.GUI.Library.Log.Write("ack, sck: {0} {1}", value, propertyInfo.PropertyType);
 					propertyInfo.SetValue(target, _target, null);
 					break;
 				}
@@ -184,7 +200,7 @@ namespace System.Windows.Serialization
 		private object Read(string fragment, XmlNodeType xmlNodeType, object target)
 		{
 			_reader = new XmlTextReader(fragment, xmlNodeType, null);
-//			_reader.WhitespaceHandling = WhitespaceHandling.None;
+			//			_reader.WhitespaceHandling = WhitespaceHandling.None;
 
 			_elementStack.Push(target);
 
@@ -203,12 +219,12 @@ namespace System.Windows.Serialization
 
 							if(_reader.Name.IndexOf('.') == -1)
 							{
-								MediaPortal.GUI.Library.Log.Write("ReadElement: {0}", _reader.Name);
+								//								MediaPortal.GUI.Library.Log.Write("ReadElement: {0}", _reader.Name);
 								ReadElement();
 							}
 							else
 							{
-								MediaPortal.GUI.Library.Log.Write("ReadElementCompoundProperty: {0}", _reader.Name);
+								//								MediaPortal.GUI.Library.Log.Write("ReadElementCompoundProperty: {0}", _reader.Name);
 								ReadElementCompoundProperty();
 							}
 							
@@ -223,12 +239,12 @@ namespace System.Windows.Serialization
 							
 							if(_reader.Name.IndexOf('.') == -1)
 							{
-								MediaPortal.GUI.Library.Log.Write("ReadElementEnd: {0}", _reader.Name);
+								//								MediaPortal.GUI.Library.Log.Write("ReadElementEnd: {0}", _reader.Name);
 								ReadElementEnd();
 							}
 							else
 							{
-								MediaPortal.GUI.Library.Log.Write("ReadElementEndCompoundProperty: {0}", _reader.Name);
+								//								MediaPortal.GUI.Library.Log.Write("ReadElementEndCompoundProperty: {0}", _reader.Name);
 								ReadElementEndCompoundProperty();
 							}
 
@@ -262,15 +278,23 @@ namespace System.Windows.Serialization
 				string name = _reader.Name.Trim();
 				string value = _reader.Value.Trim();
 
-				MediaPortal.GUI.Library.Log.Write("ReadAttributes: {0}", _reader.Name);
+				//				MediaPortal.GUI.Library.Log.Write("ReadAttributes: {0}", _reader.Name);
 
 				if(name.StartsWith("xmlns"))
 					continue;
 
 				if(string.Compare(name, "Name") == 0 || name.EndsWith(":Name"))
 				{
-					_namedItems[value] = target;
-					continue;
+					INameScope nameScope = (INameScope)WalkStackForSubclassOf(typeof(INameScope));
+
+					if(nameScope != null)
+						nameScope.RegisterName(value, target);
+					else
+					{
+						// there is no object in the stack that handles name registration so
+						// we register the name with the Application's resource dictionary
+						MediaPortal.Application.Current.Resources.RegisterName(value, target);
+					}
 				}
 
 				if(string.Compare(name, "Key") == 0 || name.EndsWith(":Key"))
@@ -479,6 +503,19 @@ namespace System.Windows.Serialization
 				ns = _reader.Name.Substring(nameIndex);
 		}
 
+		object WalkStackForSubclassOf(Type typeWanted)
+		{
+			foreach(object target in _elementStack)
+			{
+				Type typeCurrent = target.GetType();
+
+				if(typeCurrent.IsSubclassOf(typeWanted) == false)
+					return target;
+			}
+
+			return null;
+		}
+
 		#endregion Methods
 
 		#region Fields
@@ -486,7 +523,6 @@ namespace System.Windows.Serialization
 		StringBuilder				_elementText = new StringBuilder();
 		Stack						_elementStack = new Stack();
 		string						_filename = string.Empty;
-		Hashtable					_namedItems = new Hashtable();
 		static string[]				_namespaces = new string[] { "MediaPortal", "System.Windows.Controls", "MediaPortal.Drawing", "MediaPortal.Drawing.Shapes", "MediaPortal.Drawing.Transforms", "System.Windows.Media.Animation", "System.Windows", "System.Windows.Serialization", "MediaPortal.Drawing.Paths", "MediaPortal.GUI.Library" };
 		object						_target;
 		XmlTextReader				_reader;

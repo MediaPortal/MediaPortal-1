@@ -92,19 +92,19 @@ namespace MediaPortal.Drawing
 		public GeometryCombineMode GeometryCombineMode
 		{
 			get { return _mode; }
-			set { if(_mode != value) { _mode = value; RaiseChanged(); } }
+			set { }
 		}
 
 		public Geometry Geometry1
 		{
 			get { return _geometry1; }
-			set { if(!Geometry.Equals(_geometry1, value)) { _geometry1 = value; RaiseChanged(); } }
+			set { }
 		}
 
 		public Geometry Geometry2
 		{
 			get { return _geometry2; }
-			set { if(!Geometry.Equals(_geometry2, value)) { _geometry2 = value; RaiseChanged(); } }
+			set { }
 		}
 
 		#endregion Properties

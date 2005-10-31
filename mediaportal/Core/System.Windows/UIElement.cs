@@ -433,6 +433,11 @@ namespace System.Windows
 			get { return _isMeasureValid; }
 		}
 
+		public CommandBindingCollection CommandBindings
+		{
+			get { if(_commandBindings == null) _commandBindings = new CommandBindingCollection(); return _commandBindings; }
+		}
+
 		[MediaPortal.GUI.Library.XMLSkinElement("visible")]
 		public bool IsVisible
 		{
@@ -487,6 +492,7 @@ namespace System.Windows
 		#region Fields
 
 		Hashtable					_animatedProperties;
+		CommandBindingCollection	_commandBindings;
 		Size						_desiredSize = Size.Empty;
 		bool						_isArrangeValid = false;
 		bool						_isMeasureValid = false;

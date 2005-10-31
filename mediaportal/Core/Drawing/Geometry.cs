@@ -30,12 +30,10 @@ using System.ComponentModel;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 
-using MediaPortal.Drawing.Scenegraph;
-
 namespace MediaPortal.Drawing
 {
 	[TypeConverter(typeof(GeometryConverter))]
-	public class Geometry : GeometryBase, IScenegraphGeometry, IScenegraphResource
+	public class Geometry
 	{
 		#region Constructors
 
@@ -62,34 +60,6 @@ namespace MediaPortal.Drawing
 		}
 
 		#endregion Constructors
-
-		#region Methods
-
-		public void PrepareResource(ScenegraphContext context)
-		{
-			lock(this)
-			{
-				if(_vertexBuffer != null)
-					return;
-
-				_vertexBuffer = new VertexBuffer(_vertexType, _vertexArray.Length, context.Device, Usage.WriteOnly, _vertexFormat, Pool.Default);
-				_vertexBuffer.SetData(_vertexArray, 0, LockFlags.None);
-			}
-		}
-
-		public void ReleaseResource(ScenegraphContext context)
-		{
-			lock(this)
-			{
-				if(_vertexBuffer == null)
-					return;
-
-				_vertexBuffer.Dispose();
-				_vertexBuffer = null;
-			}
-		}
-
-		#endregion Methods
 
 		#region Properties
 
@@ -139,7 +109,7 @@ namespace MediaPortal.Drawing
 		int							_primitiveCount;
 		PrimitiveType				_primitiveType;
 		Array						_vertexArray;
-		VertexBuffer				_vertexBuffer;
+		VertexBuffer				_vertexBuffer = null;
 		VertexFormats				_vertexFormat;
 		Type						_vertexType;
 

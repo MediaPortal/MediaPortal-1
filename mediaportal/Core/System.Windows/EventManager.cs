@@ -62,7 +62,7 @@ namespace System.Windows
 		{
 			RegisterClassHandler(classType, routedEvent, handler, true);
 		}
-			
+
 		public static void RegisterClassHandler(Type classType, RoutedEvent routedEvent, Delegate handler, bool handledEventsToo)
 		{
 			_classHandlers[classType.GetHashCode() ^ routedEvent.GetHashCode()] = new RoutedEventHandlerInfo(handler, handledEventsToo);

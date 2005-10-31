@@ -23,48 +23,11 @@
 
 #endregion
 
-using System;
-using System.Collections;
-using System.ComponentModel;
-
-using Microsoft.DirectX;
-using Microsoft.DirectX.Direct3D;
-
-namespace MediaPortal.Drawing.Transforms
+namespace System.Windows.Input
 {
-	[TypeConverter(typeof(TransformConverter))]
-	public abstract class Transform
-	{
-		#region Methods
+	#region Delegate
+	
+	public delegate void QueryEnabledEventHandler(object sender, QueryEnabledEventArgs e);
 
-		protected abstract Matrix PrepareValue();
-
-		protected void RaiseChanged()
-		{
-			RaiseChanged(EventArgs.Empty);
-		}
-
-		protected void RaiseChanged(EventArgs e)
-		{
-			_isDirty = true;
-		}
-
-		#endregion Methods
-
-		#region Properties
-
-		public Matrix Value
-		{
-			get { if(_isDirty) { _value = PrepareValue(); _isDirty = false; } return _value; }
-		}
-
-		#endregion Properties
-
-		#region Fields
-
-		bool						_isDirty = true;
-		Matrix						_value;
-
-		#endregion Fields
-	}
+	#endregion Delegate
 }

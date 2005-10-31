@@ -28,7 +28,6 @@ using System.Collections;
 using System.Text.RegularExpressions;
 
 using MediaPortal.Drawing;
-using MediaPortal.Drawing.Paths;
 
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;

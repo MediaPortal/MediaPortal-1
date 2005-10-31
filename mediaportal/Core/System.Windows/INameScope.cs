@@ -32,6 +32,7 @@ namespace System.Windows
 		#region Methods
 			
 		object FindName(string name);
+		void RegisterName(string name, object scopedElement);
 
 		#endregion Methods
 	}

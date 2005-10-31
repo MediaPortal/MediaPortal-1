@@ -155,26 +155,6 @@
                     HintPath = "..\Setup\postsetup\wmppia.dll"
                 />
                 <Reference
-                    Name = "Microsoft.DirectX"
-                    AssemblyName = "Microsoft.DirectX"
-                    HintPath = "..\Microsoft.DirectX.dll"
-                />
-                <Reference
-                    Name = "Microsoft.DirectX.Direct3D"
-                    AssemblyName = "Microsoft.DirectX.Direct3D"
-                    HintPath = "..\Microsoft.DirectX.Direct3D.dll"
-                />
-                <Reference
-                    Name = "Microsoft.DirectX.Direct3DX"
-                    AssemblyName = "Microsoft.DirectX.Direct3DX"
-                    HintPath = "..\Microsoft.DirectX.Direct3DX.dll"
-                />
-                <Reference
-                    Name = "Microsoft.DirectX.DirectDraw"
-                    AssemblyName = "Microsoft.DirectX.DirectDraw"
-                    HintPath = "..\Microsoft.DirectX.DirectDraw.dll"
-                />
-                <Reference
                     Name = "System.Web.Services"
                     AssemblyName = "System.Web.Services"
                     HintPath = "..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Web.Services.dll"
@@ -193,6 +173,26 @@
                     Name = "Interop.TunerLib"
                     AssemblyName = "Interop.TunerLib"
                     HintPath = "..\Interop.TunerLib.dll"
+                />
+                <Reference
+                    Name = "Microsoft.DirectX"
+                    AssemblyName = "Microsoft.DirectX"
+                    HintPath = "..\Microsoft.DirectX.dll"
+                />
+                <Reference
+                    Name = "Microsoft.DirectX.Direct3D"
+                    AssemblyName = "Microsoft.DirectX.Direct3D"
+                    HintPath = "..\Microsoft.DirectX.Direct3D.dll"
+                />
+                <Reference
+                    Name = "Microsoft.DirectX.Direct3DX"
+                    AssemblyName = "Microsoft.DirectX.Direct3DX"
+                    HintPath = "..\Microsoft.DirectX.Direct3DX.dll"
+                />
+                <Reference
+                    Name = "Microsoft.DirectX.DirectDraw"
+                    AssemblyName = "Microsoft.DirectX.DirectDraw"
+                    HintPath = "..\Microsoft.DirectX.DirectDraw.dll"
                 />
             </References>
         </Build>
@@ -389,11 +389,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Drawing\GeometryBase.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "Drawing\GeometryCollection.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -410,11 +405,6 @@
                 />
                 <File
                     RelPath = "Drawing\GeometryDrawing.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing\GeometryFactory.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -619,211 +609,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Drawing.Paths\ArcSegment.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing.Paths\BezierSegment.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing.Paths\CloseSegment.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing.Paths\EllipseGeometry.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing.Paths\LineGeometry.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing.Paths\LineSegment.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing.Paths\PathFigure.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing.Paths\PathFigureBase.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing.Paths\PathFigureCollection.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing.Paths\PathFigureConverter.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing.Paths\PathGeometry.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing.Paths\PathSegment.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing.Paths\PathSegmentCollection.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing.Paths\PathSegmentConverter.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing.Paths\PolyBezierSegment.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing.Paths\QuadraticBezierSegment.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing.Paths\StartSegment.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing.Paths\SweepDirection.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing.Paths\ToleranceType.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing.Paths\Triangle.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing.Paths\Triangulator.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing.Scenegraph\Camera.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing.Scenegraph\IScenegraphAnimatable.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing.Scenegraph\IScenegraphAnimation.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing.Scenegraph\IScenegraphAttribute.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing.Scenegraph\IScenegraphBounds.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing.Scenegraph\IScenegraphCamera.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing.Scenegraph\IScenegraphClock.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing.Scenegraph\IScenegraphElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing.Scenegraph\IScenegraphGeometry.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing.Scenegraph\IScenegraphGroup.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing.Scenegraph\IScenegraphInput.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing.Scenegraph\IScenegraphResource.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing.Scenegraph\IScenegraphSwitch.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing.Scenegraph\IScenegraphTexture.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing.Scenegraph\IScenegraphTransform.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing.Scenegraph\ScenegraphCollection.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing.Scenegraph\ScenegraphContext.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing.Scenegraph\ScenegraphState.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing.Scenegraph\TraverseEventArgs.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing.Scenegraph\TraverseEventHandler.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "Drawing.Transforms\RotateTransform.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -835,11 +620,6 @@
                 />
                 <File
                     RelPath = "Drawing.Transforms\Transform.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing.Transforms\TransformBase.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -1350,6 +1130,11 @@
                 />
                 <File
                     RelPath = "guilib\GUIWindowManager.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "guilib\IDialogbox.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -2699,7 +2484,32 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Input\CommandBinding.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Input\CommandBindingCollection.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Input\CommandConverter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Input\CommandManager.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Input\ExecuteEventArgs.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Input\ExecuteEventHandler.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -2750,6 +2560,16 @@
                 />
                 <File
                     RelPath = "System.Windows.Input\MouseWheelEventArgs.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Input\QueryEnabledEventArgs.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Input\QueryEnabledEventHandler.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

@@ -60,49 +60,34 @@ namespace System.Windows
 		private object Parse(string path)
 		{
 			string[] parts = path.Split('.');
+			string typename = parts[0].Trim();
+			string property = parts[1].Trim();
 
-			ArrayList list = new ArrayList();
+			if(typename == string.Empty)
+				throw new ArgumentException(string.Format("Type expected"));
 
-			// this should definately be improved upon!!!
-			for(int index = 0; index < parts.Length; index += 2)
+			if(property == string.Empty)
+				throw new ArgumentException(string.Format("Name expected"));
+
+			Type type = null;
+
+			foreach(string ns in _namespaces)
 			{
-				string typename = parts[index].Trim();
-				string property = parts[index + 1].Trim();
+				type = Type.GetType(ns + "." + typename);
 
-				if(typename == string.Empty || typename.StartsWith("(") == false)
-					throw new ArgumentException(string.Format("( expected)"));
-
-				if(property == string.Empty || property.EndsWith(")") == false)
-					throw new ArgumentException(string.Format(") expected)"));
-
-				// remove the ( from the type specifier
-				typename = typename.Substring(1);
-
-				Type type = null;
-
-				foreach(string ns in _namespaces)
-				{
-					type = Type.GetType(ns + "." + typename);
-
-					if(type != null)
-						break;
-				}
-
-				if(type == null)
-					throw new ArgumentException(string.Format("The type or namespace '{0}' could not be found", type));
-
-				// remove the ) from the property name
-				property = property.Substring(0, property.Length - 1);
-
-				PropertyInfo propertyInfo = type.GetProperty(property, BindingFlags.Instance | BindingFlags.Public);
-
-				if(propertyInfo  == null)
-					throw new ArgumentException(string.Format("'{0}' does not contain a definition for '{1}'", type, property));
-
-				list.Add(propertyInfo);
+				if(type != null)
+					break;
 			}
 
-			return list.ToArray();
+			if(type == null)
+				throw new ArgumentException(string.Format("The type or namespace '{0}' could not be found", type));
+
+			PropertyInfo propertyInfo = type.GetProperty(property, BindingFlags.Static | BindingFlags.Public);
+
+			if(propertyInfo  == null)
+				throw new ArgumentException(string.Format("'{0}' does not contain a definition for '{1}'", type, property));
+
+			return propertyInfo;
 		}
 
 		#endregion Methods
