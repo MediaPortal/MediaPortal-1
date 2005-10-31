@@ -24,30 +24,48 @@
 #endregion
 
 using System;
-using System.ComponentModel;
+using System.Windows;
 
-using System.Windows.Controls;
-using MediaPortal.Drawing;
-using MediaPortal.GUI.Library;
-
-namespace MediaPortal.Drawing.Layouts
+namespace System.Windows.Controls
 {
-	public interface ILayout
+	public class DataTemplate : FrameworkTemplate
 	{
+		#region Constructors
+
+		public DataTemplate()
+		{
+		}
+
+		public DataTemplate(object dataType)
+		{
+			_dataType = dataType;
+		}
+
+		#endregion Constructors
+
 		#region Methods
 
-		void Arrange(GUIGroup element);
-		Size Measure(GUIGroup element, Size availableSize);
+		protected override void ValidateTemplatedParent(FrameworkElement templatedParent)
+		{
+			throw new NotImplementedException();
+		}
 
 		#endregion Methods
 
 		#region Properties
 
-		Size Size
+		public object DataType
 		{
-			get;
+			get { return _dataType; }
+			set { _dataType = value; }
 		}
 
 		#endregion Properties
+
+		#region Fields
+
+		object						_dataType;
+
+		#endregion Fields
 	}
 }

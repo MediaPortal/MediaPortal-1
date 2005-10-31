@@ -24,30 +24,21 @@
 #endregion
 
 using System;
-using System.ComponentModel;
+using System.Runtime.InteropServices;
 
-using System.Windows.Controls;
-using MediaPortal.Drawing;
-using MediaPortal.GUI.Library;
-
-namespace MediaPortal.Drawing.Layouts
+namespace System.Windows.Automation.Provider
 {
-	public interface ILayout
+	[ComVisibleAttribute(true)] 
+	[GuidAttribute("76d12d7e-b227-4417-9ce2-42642ffa896a")] 
+	public enum ExpandCollapseState
 	{
-		#region Methods
+		#region Values
 
-		void Arrange(GUIGroup element);
-		Size Measure(GUIGroup element, Size availableSize);
+		Collapsed,
+		Expanded,
+		LeafNode,
+		PartiallyExpanded,
 
-		#endregion Methods
-
-		#region Properties
-
-		Size Size
-		{
-			get;
-		}
-
-		#endregion Properties
+		#endregion Values
 	}
 }

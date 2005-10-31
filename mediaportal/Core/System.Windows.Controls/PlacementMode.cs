@@ -24,30 +24,26 @@
 #endregion
 
 using System;
-using System.ComponentModel;
 
-using System.Windows.Controls;
-using MediaPortal.Drawing;
-using MediaPortal.GUI.Library;
-
-namespace MediaPortal.Drawing.Layouts
+namespace System.Windows.Controls
 {
-	public interface ILayout
+	public enum PlacementMode
 	{
-		#region Methods
+		#region Fields
 
-		void Arrange(GUIGroup element);
-		Size Measure(GUIGroup element, Size availableSize);
+		Absolute,
+		AbsolutePoint,
+		Bottom,
+		Center,
+		Custom,
+		Left,
+		Mouse,
+		MousePoint,
+		Relative,
+		RelativePoint,
+		Right,
+		Top,
 
-		#endregion Methods
-
-		#region Properties
-
-		Size Size
-		{
-			get;
-		}
-
-		#endregion Properties
+		#endregion Fields
 	}
 }

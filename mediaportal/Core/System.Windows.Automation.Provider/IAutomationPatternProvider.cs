@@ -24,30 +24,15 @@
 #endregion
 
 using System;
-using System.ComponentModel;
 
-using System.Windows.Controls;
-using MediaPortal.Drawing;
-using MediaPortal.GUI.Library;
-
-namespace MediaPortal.Drawing.Layouts
+namespace System.Windows.Automation.Provider
 {
-	public interface ILayout
+	public interface IAutomationPatternProvider
 	{
 		#region Methods
 
-		void Arrange(GUIGroup element);
-		Size Measure(GUIGroup element, Size availableSize);
+		object GetPatternProvider(UIElement target, AutomationPattern pattern);
 
 		#endregion Methods
-
-		#region Properties
-
-		Size Size
-		{
-			get;
-		}
-
-		#endregion Properties
 	}
 }

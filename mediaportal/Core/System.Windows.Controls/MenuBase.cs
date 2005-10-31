@@ -24,30 +24,51 @@
 #endregion
 
 using System;
-using System.ComponentModel;
+using System.Windows;
 
-using System.Windows.Controls;
-using MediaPortal.Drawing;
-using MediaPortal.GUI.Library;
-
-namespace MediaPortal.Drawing.Layouts
+namespace System.Windows.Controls
 {
-	public interface ILayout
+	public abstract class MenuBase : ItemsControl
 	{
-		#region Methods
+		#region Constructors
 
-		void Arrange(GUIGroup element);
-		Size Measure(GUIGroup element, Size availableSize);
-
-		#endregion Methods
-
-		#region Properties
-
-		Size Size
+		protected MenuBase()
 		{
-			get;
 		}
 
-		#endregion Properties
+		#endregion Constructors
+
+		#region Methods
+
+//		protected override DependencyObject GetContainerForItemOverride(object item)
+//		{
+//			throw new NotImplementedException();
+//		}
+
+		// HandleMouseButton
+
+//		protected override bool IsItemItsOwnContainerOverride(object item)
+//		{
+//			// Returns true if the item is its own ItemContainer;
+//			throw new NotImplementedException();
+//		}
+
+		protected override void OnInitialized(EventArgs e)
+		{
+		}
+		
+//		protected internal override void OnIsFocusWithinChanged(DependencyPropertyChangedEventArgs e)
+//		{
+//		}
+
+//		protected override void OnKeyDown(KeyEventArgs e)
+//		{
+//		}
+
+//		protected override void OnMouseLeave(MouseEventArgs e)
+//		{
+//		}
+
+		#endregion Methods
 	}
 }

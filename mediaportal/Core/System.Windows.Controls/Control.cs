@@ -24,30 +24,22 @@
 #endregion
 
 using System;
-using System.ComponentModel;
+using System.Windows;
 
-using System.Windows.Controls;
-using MediaPortal.Drawing;
-using MediaPortal.GUI.Library;
-
-namespace MediaPortal.Drawing.Layouts
+namespace System.Windows.Controls
 {
-	public interface ILayout
+	public class Control : FrameworkElement
 	{
-		#region Methods
+		#region Constructors
 
-		void Arrange(GUIGroup element);
-		Size Measure(GUIGroup element, Size availableSize);
-
-		#endregion Methods
-
-		#region Properties
-
-		Size Size
+		public Control()
 		{
-			get;
 		}
 
-		#endregion Properties
+		#endregion Constructors
+
+		#region Properties (Dependency)
+
+		#endregion Properties (Dependency)
 	}
 }

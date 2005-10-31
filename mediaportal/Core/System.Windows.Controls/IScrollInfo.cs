@@ -23,27 +23,86 @@
 
 #endregion
 
-using System;
-using System.ComponentModel;
-
-using System.Windows.Controls;
 using MediaPortal.Drawing;
-using MediaPortal.GUI.Library;
 
-namespace MediaPortal.Drawing.Layouts
+namespace System.Windows.Controls
 {
-	public interface ILayout
+	public interface IScrollInfo
 	{
 		#region Methods
 
-		void Arrange(GUIGroup element);
-		Size Measure(GUIGroup element, Size availableSize);
+		void LineDown();
+		void LineLeft();
+		void LineRight();
+		void LineUp();
+//		Rect MakeVisible(Visual visual, Rect rectangle);
+		void MouseWheelDown();
+		void MouseWheelLeft();
+		void MouseWheelRight();
+		void MouseWheelUp();
+		void PageDown();
+		void PageLeft();
+		void PageRight();
+		void PageUp();
+
+		// are these document incorrectly?
+		void SetHorizontalOffset(double offset);
+		void SetVerticalOffset(double offset);
 
 		#endregion Methods
 
 		#region Properties
 
-		Size Size
+		bool CanScrollHorizontally
+		{
+			get;
+			set;
+		}
+
+		bool CanScrollVertically
+		{
+			get;
+			set;
+		}
+
+		double ExtentHeight
+		{
+			get;
+		}
+
+		double ExtentWidth
+		{
+			get;
+		}
+
+		double HorizontalOffset
+		{
+			get;
+		}
+
+		Orientation Orientation
+		{
+			get;
+			set;
+		}
+
+//		ScrollViewer ScrollOwner
+//		{
+//			get;
+//			set;
+//		}
+
+		double VerticalOffset
+		{
+			get;
+		}
+
+		double ViewportHeight
+		{
+			get;
+		}
+
+		double ViewportWidth
 		{
 			get;
 		}

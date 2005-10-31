@@ -43,7 +43,7 @@ namespace System.Windows
 		public static RoutedEvent GetRoutedEventFromName(string name, Type ownerType)
 		{
 			if(ownerType == typeof(MediaPortal.GUI.Library.GUIWindow))
-				return (RoutedEvent)_routedEvents[typeof(MediaPortal.Controls.Page) + name];
+				return (RoutedEvent)_routedEvents[typeof(System.Windows.Controls.Page) + name];
 
 			return (RoutedEvent)_routedEvents[ownerType + name];
 		}

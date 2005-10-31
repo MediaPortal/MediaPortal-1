@@ -487,7 +487,7 @@ namespace System.Windows.Serialization
 		Stack						_elementStack = new Stack();
 		string						_filename = string.Empty;
 		Hashtable					_namedItems = new Hashtable();
-		static string[]				_namespaces = new string[] { "MediaPortal", "MediaPortal.Controls", "MediaPortal.Drawing", "MediaPortal.Drawing.Shapes", "MediaPortal.Drawing.Transforms", "MediaPortal.Animation", "System.Windows", "System.Windows.Serialization", "MediaPortal.Drawing.Paths", "MediaPortal.GUI.Library" };
+		static string[]				_namespaces = new string[] { "MediaPortal", "System.Windows.Controls", "MediaPortal.Drawing", "MediaPortal.Drawing.Shapes", "MediaPortal.Drawing.Transforms", "MediaPortal.Animation", "System.Windows", "System.Windows.Serialization", "MediaPortal.Drawing.Paths", "MediaPortal.GUI.Library" };
 		object						_target;
 		XmlTextReader				_reader;
 

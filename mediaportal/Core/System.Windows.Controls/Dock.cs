@@ -24,30 +24,20 @@
 #endregion
 
 using System;
-using System.ComponentModel;
 
-using System.Windows.Controls;
-using MediaPortal.Drawing;
-using MediaPortal.GUI.Library;
-
-namespace MediaPortal.Drawing.Layouts
+namespace System.Windows.Controls
 {
-	public interface ILayout
+	public enum Dock
 	{
-		#region Methods
+		#region Values
 
-		void Arrange(GUIGroup element);
-		Size Measure(GUIGroup element, Size availableSize);
+		None,
+		Left,
+		Top,
+		Right,
+		Bottom,
+		Fill,
 
-		#endregion Methods
-
-		#region Properties
-
-		Size Size
-		{
-			get;
-		}
-
-		#endregion Properties
+		#endregion Values
 	}
 }

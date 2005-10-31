@@ -28,7 +28,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Windows.Serialization;
 
-using MediaPortal.Controls;
+using System.Windows.Controls;
 
 namespace System.Windows
 {

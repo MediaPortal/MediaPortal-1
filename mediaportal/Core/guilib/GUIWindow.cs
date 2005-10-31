@@ -32,7 +32,7 @@ using System.Windows.Serialization;
 using System.Xml;
 
 using MediaPortal.Animation;
-using MediaPortal.Controls;
+using System.Windows.Controls;
 
 namespace MediaPortal.GUI.Library
 {

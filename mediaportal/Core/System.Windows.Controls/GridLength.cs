@@ -26,28 +26,62 @@
 using System;
 using System.ComponentModel;
 
-using System.Windows.Controls;
-using MediaPortal.Drawing;
-using MediaPortal.GUI.Library;
-
-namespace MediaPortal.Drawing.Layouts
+namespace System.Windows.Controls
 {
-	public interface ILayout
+	[TypeConverter(typeof(GridLengthConverter))]
+	public struct GridLength
 	{
-		#region Methods
+		#region Constructors
 
-		void Arrange(GUIGroup element);
-		Size Measure(GUIGroup element, Size availableSize);
+		public GridLength(double pixels)
+		{
+			_value = pixels;
+			_unit = GridUnitType.Pixel;
+		}
 
-		#endregion Methods
+		public GridLength(GridUnitType unit)
+		{
+			_value = 0;
+			_unit = unit;
+		}
+
+		#endregion Constructors
 
 		#region Properties
 
-		Size Size
+		public GridUnitType GridUnitType
 		{
-			get;
+			get { return _unit; }
+			set { _unit = value; }
+		}
+
+		public bool IsAbsolute
+		{
+			get { return _unit == GridUnitType.Pixel; }
+		}
+
+		public bool IsAuto
+		{
+			get { return _unit == GridUnitType.Auto; }
+		}
+
+		public bool IsStar
+		{
+			get { return _unit == GridUnitType.Star; }
+		}
+
+		public double Value
+		{
+			get { return _value; }
 		}
 
 		#endregion Properties
+
+		#region Fields
+
+		double						_value;
+		GridUnitType				_unit;
+
+		#endregion Fields
 	}
 }

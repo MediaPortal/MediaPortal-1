@@ -24,26 +24,24 @@
 #endregion
 
 using System;
-using System.ComponentModel;
+using System.Runtime.InteropServices;
 
-using System.Windows.Controls;
-using MediaPortal.Drawing;
-using MediaPortal.GUI.Library;
-
-namespace MediaPortal.Drawing.Layouts
+namespace System.Windows.Automation.Provider
 {
-	public interface ILayout
+	[ComVisibleAttribute(true)] 
+	[InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIUnknown)] 
+	[GuidAttribute("56d00bd0-c4f4-433c-a836-1a52a57e0892")] 
+	public interface IToggleProvider
 	{
 		#region Methods
-
-		void Arrange(GUIGroup element);
-		Size Measure(GUIGroup element, Size availableSize);
-
+		
+		void Toggle();
+		
 		#endregion Methods
 
 		#region Properties
-
-		Size Size
+		
+		ToggleState ToggleState
 		{
 			get;
 		}

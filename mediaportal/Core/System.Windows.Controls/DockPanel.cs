@@ -24,34 +24,31 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Windows;
 
-using System.Windows.Controls;
 using MediaPortal.Drawing;
-using MediaPortal.GUI.Library;
 
-namespace MediaPortal.Drawing.Layouts
+namespace System.Windows.Controls
 {
-	public class DockLayout : ILayout
+	public class DockPanel : Panel
 	{
 		#region Constructors
 
-		public DockLayout()
+		static DockPanel()
 		{
-			_spacing = new Size(0, 0);
+			DockProperty = DependencyProperty.RegisterAttached("Dock", typeof(Dock), typeof(DockPanel));
+			LastChildFillProperty = DependencyProperty.Register("LastFillChild", typeof(bool), typeof(DockPanel), new PropertyMetadata(true)); 
 		}
 
-		public DockLayout(int horizontalSpacing, int verticalSpacing)
+		public DockPanel()
 		{
-			_spacing = new Size(Math.Max(0, horizontalSpacing), Math.Max(0, verticalSpacing));
 		}
 
 		#endregion Constructors
 
 		#region Methods
 
-		public void Arrange(GUIGroup element)
+		protected override Size ArrangeOverride(Rect finalRect)
 		{
 			FrameworkElement l = null;
 			FrameworkElement t = null;
@@ -59,32 +56,30 @@ namespace MediaPortal.Drawing.Layouts
 			FrameworkElement b = null;
 			FrameworkElement f = null;
 
-//			foreach(FrameworkElement child in element.Children)
+			foreach(FrameworkElement element in Children)
 			{
-//				if(child.Dock == Dock.Left)
-//					l = child;
+				if(DockPanel.GetDock(element) == Dock.Left)
+					l = element;
 
-//				if(child.Dock == Dock.Top)
-//					t = child;
+				if(DockPanel.GetDock(element) == Dock.Top)
+					t = element;
 
-//				if(child.Dock == Dock.Right)
-//					r = child;
+				if(DockPanel.GetDock(element) == Dock.Right)
+					r = element;
 
-//				if(child.Dock == Dock.Bottom)
-//					b = child;
+				if(DockPanel.GetDock(element) == Dock.Bottom)
+					b = element;
 
-//				if(child.Dock == Dock.Fill)
-//					f = child;
+				if(DockPanel.GetDock(element) == Dock.Fill)
+					f = element;
 			}
 
-			Thickness m = element.Margin;
-			Size size = element.RenderSize;
-			Point location = element.Location;
+			double top = Location.Y + Margin.Top;
+			double bottom = Location.Y + Height - Margin.Bottom;
+			double left = Location.X + Margin.Left;
+			double right = Location.X + Width - Margin.Right;
 
-			double top = location.Y + m.Top;
-			double bottom = location.Y + size.Height - m.Bottom;
-			double left = location.X + m.Left;
-			double right = location.X + size.Width - m.Right;
+			Size _spacing = Size.Empty;
 
 			if(t != null)
 			{
@@ -116,9 +111,16 @@ namespace MediaPortal.Drawing.Layouts
 
 			if(f != null)
 				f.Arrange(new Rect(left, top, right - left, bottom - top));
+
+			return Size.Empty;
 		}
-	
-		public Size Measure(GUIGroup element, Size availableSize)
+
+		public static Dock GetDock(UIElement element)
+		{
+			return (Dock)element.GetValue(DockProperty);
+		}
+
+		protected override Size MeasureOverride(Size availableSize)
 		{
 			FrameworkElement l = null;
 			FrameworkElement t = null;
@@ -126,28 +128,29 @@ namespace MediaPortal.Drawing.Layouts
 			FrameworkElement b = null;
 			FrameworkElement f = null;
 
-//			foreach(FrameworkElement child in element.Children)
+			foreach(FrameworkElement element in Children)
 			{
-//				if(child.Dock == Dock.Left)
-//					l = child;
+				if(DockPanel.GetDock(element) == Dock.Left)
+					l = element;
 
-//				if(child.Dock == Dock.Top)
-//					t = child;
+				if(DockPanel.GetDock(element) == Dock.Top)
+					t = element;
 
-//				if(child.Dock == Dock.Right)
-//					r = child;
+				if(DockPanel.GetDock(element) == Dock.Right)
+					r = element;
 
-//				if(child.Dock == Dock.Bottom)
-//					b = child;
+				if(DockPanel.GetDock(element) == Dock.Bottom)
+					b = element;
 
-//				if(child.Dock == Dock.Fill)
-//					f = child;
+				if(DockPanel.GetDock(element) == Dock.Fill)
+					f = element;
 			}
 
 			double w = 0;
 			double h = 0;
 
 			Size s = Size.Empty;
+			Size _spacing = Size.Empty;
 
 			if(r != null)
 			{
@@ -189,36 +192,30 @@ namespace MediaPortal.Drawing.Layouts
 				h = h + b.Height + _spacing.Height;
 			}
 
-			Thickness m = element.Margin;
+			return new Size(w + Margin.Width, h + Margin.Height);
+		}
 
-			_size.Width = w + m.Width;
-			_size.Height = h + m.Height;
-
-			return _size;
+		public static void SetDock(UIElement element, Dock dock)
+		{
+			element.SetValue(DockProperty, dock);
 		}
 
 		#endregion Methods
 
 		#region Properties
 
-		public Size Size
+		public bool LastChildFill
 		{
-			get { return _size; }
-		}
-
-		public Size Spacing
-		{
-			get { return _spacing; }
-			set { if(Size.Equals(_spacing, value) == false) { _spacing = value; } }
+			get { return (bool)GetValue(LastChildFillProperty); }
 		}
 
 		#endregion Properties
 
-		#region Fields
+		#region Properties (Dependency)
 
-		Size						_spacing = Size.Empty;
-		Size						_size = Size.Empty;
+		public static readonly DependencyProperty DockProperty;
+		public static readonly DependencyProperty LastChildFillProperty;
 
-		#endregion Fields
+		#endregion Properties (Dependency)
 	}
 }

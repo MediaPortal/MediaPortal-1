@@ -26,7 +26,7 @@
 using System;
 using System.Windows;
 
-using MediaPortal.Controls;
+using System.Windows.Controls;
 using MediaPortal.Drawing;
 using MediaPortal.GUI.Library;
 

@@ -29,7 +29,7 @@ using System.Diagnostics;
 using System.Windows;
 
 using MediaPortal.Animation;
-using MediaPortal.Controls;
+using System.Windows.Controls;
 using MediaPortal.Drawing;
 using MediaPortal.Drawing.Layouts;
 

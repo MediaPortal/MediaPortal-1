@@ -23,7 +23,7 @@ using System.Collections;
 using System.Drawing;
 using System.Diagnostics;
 
-using MediaPortal.Controls;
+using System.Windows.Controls;
 
 
 namespace MediaPortal.GUI.Library

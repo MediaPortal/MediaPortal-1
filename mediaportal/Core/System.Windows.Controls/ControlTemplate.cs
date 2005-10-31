@@ -24,30 +24,54 @@
 #endregion
 
 using System;
-using System.ComponentModel;
+using System.Windows;
 
-using System.Windows.Controls;
-using MediaPortal.Drawing;
-using MediaPortal.GUI.Library;
-
-namespace MediaPortal.Drawing.Layouts
+namespace System.Windows.Controls
 {
-	public interface ILayout
+	public class ControlTemplate : FrameworkTemplate
 	{
+		#region Constructors
+
+		public ControlTemplate()
+		{
+		}
+
+		public ControlTemplate(Type targetType)
+		{
+			_targetType = targetType;
+		}
+
+		#endregion Constructors
+
 		#region Methods
 
-		void Arrange(GUIGroup element);
-		Size Measure(GUIGroup element, Size availableSize);
+		protected override void ValidateTemplatedParent(FrameworkElement templatedParent)
+		{
+			throw new NotImplementedException();
+		}
 
 		#endregion Methods
 
 		#region Properties
 
-		Size Size
+		public Type TargetType
 		{
-			get;
+			get { return _targetType; }
+			set { _targetType = value; }
+		}
+
+		public TriggerCollection Triggers
+		{
+			get { if(_triggers == null) _triggers = new TriggerCollection(); return _triggers; }
 		}
 
 		#endregion Properties
+
+		#region Fields
+
+		Type						_targetType;
+		TriggerCollection			_triggers;
+
+		#endregion Fields
 	}
 }
