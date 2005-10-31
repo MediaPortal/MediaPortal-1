@@ -17,7 +17,7 @@
                 DelaySign = "false"
                 OutputType = "Library"
                 PreBuildEvent = ""
-                PostBuildEvent = "copy $(TargetPath) $(ProjectDir)..\xbmc\$(OutDir)\$(TargetFileName)"
+                PostBuildEvent = ""
                 RootNamespace = "MediaPortal"
                 RunPostBuildEvent = "OnBuildSuccess"
                 StartupObject = ""
