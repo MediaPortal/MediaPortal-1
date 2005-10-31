@@ -53,9 +53,9 @@
 			<description>Start Time Info</description>
 			<type>label</type>
 			<id>101</id>
-			<posX>160</posX>
-			<posY>390</posY>
-			<label>0:00</label>
+			<posX>140</posX>
+			<posY>24</posY>
+			<label>-#currentremaining</label>
 			<align>right</align>
 			<font>font16</font>
 			<textcolor>FFFFFFFF</textcolor>

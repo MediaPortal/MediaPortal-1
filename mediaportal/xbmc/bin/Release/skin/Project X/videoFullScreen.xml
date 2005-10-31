@@ -54,8 +54,8 @@
 			<description>pause image</description>
 			<type>image</type>
 			<id>16</id>
-			<posX>550</posX>
-			<posY>30</posY>
+			<posX>565</posX>
+			<posY>20</posY>
 			<visible>no</visible>
 			<texture>video-pause.png</texture>
 			<colorkey>0</colorkey>
@@ -65,8 +65,8 @@
 			<description>2x image</description>
 			<type>image</type>
 			<id>17</id>
-			<posX>550</posX>
-			<posY>30</posY>
+			<posX>565</posX>
+			<posY>20</posY>
 			<visible>no</visible>
 			<texture>video+2x.png</texture>
 			<colorkey>0</colorkey>
@@ -76,8 +76,8 @@
 			<description>4x image</description>
 			<type>image</type>
 			<id>18</id>
-			<posX>550</posX>
-			<posY>30</posY>
+			<posX>565</posX>
+			<posY>20</posY>
 			<visible>no</visible>
 			<texture>video+4x.png</texture>
 			<colorkey>0</colorkey>
@@ -87,8 +87,8 @@
 			<description>8x image</description>
 			<type>image</type>
 			<id>19</id>
-			<posX>550</posX>
-			<posY>30</posY>
+			<posX>565</posX>
+			<posY>20</posY>
 			<visible>no</visible>
 			<texture>video+8x.png</texture>
 			<colorkey>0</colorkey>
@@ -98,8 +98,8 @@
 			<description>16x image</description>
 			<type>image</type>
 			<id>20</id>
-			<posX>550</posX>
-			<posY>30</posY>
+			<posX>565</posX>
+			<posY>20</posY>
 			<visible>no</visible>
 			<texture>video+16x.png</texture>
 			<colorkey>0</colorkey>
@@ -109,8 +109,8 @@
 			<description>32x image</description>
 			<type>image</type>
 			<id>21</id>
-			<posX>550</posX>
-			<posY>30</posY>
+			<posX>565</posX>
+			<posY>20</posY>
 			<visible>no</visible>
 			<texture>video+32x.png</texture>
 			<colorkey>0</colorkey>
@@ -120,7 +120,7 @@
 			<description>- 2x image</description>
 			<type>image</type>
 			<id>23</id>
-			<posX>608</posX>
+			<posX>565</posX>
 			<posY>20</posY>
 			<visible>no</visible>
 			<texture>video-2x.png</texture>
@@ -131,7 +131,7 @@
 			<description>- 4x image</description>
 			<type>image</type>
 			<id>24</id>
-			<posX>608</posX>
+			<posX>565</posX>
 			<posY>20</posY>
 			<visible>no</visible>
 			<texture>video-4x.png</texture>
@@ -142,7 +142,7 @@
 			<description>- 8x image</description>
 			<type>image</type>
 			<id>25</id>
-			<posX>608</posX>
+			<posX>565</posX>
 			<posY>20</posY>
 			<visible>no</visible>
 			<texture>video-8x.png</texture>
@@ -153,7 +153,7 @@
 			<description>- 16x image</description>
 			<type>image</type>
 			<id>26</id>
-			<posX>608</posX>
+			<posX>565</posX>
 			<posY>20</posY>
 			<visible>no</visible>
 			<texture>video-16x.png</texture>
@@ -164,7 +164,7 @@
 			<description>- 32x image</description>
 			<type>image</type>
 			<id>27</id>
-			<posX>608</posX>
+			<posX>565</posX>
 			<posY>20</posY>
 			<visible>no</visible>
 			<texture>video-32x.png</texture>
@@ -198,7 +198,7 @@
 			<label>#percentage</label>
 		</control>
 		<control>
-			<description>Current time</description>
+			<description>Start Time Info</description>
 			<type>label</type>
 			<id>100</id>
 			<posX>70</posX>
@@ -206,29 +206,18 @@
 			<label>#currentplaytime</label>
 			<align>left</align>
 			<font>font50</font>
-			<textcolor>22ffffff</textcolor>
-		</control>
-		<control>
-			<description>Start Time Info</description>
-			<type>label</type>
-			<id>101</id>
-			<posX>160</posX>
-			<posY>390</posY>
-			<label>0:00</label>
-			<align>right</align>
-			<font>font16</font>
-			<textcolor>FFFFFFFF</textcolor>
+			<textcolor>White</textcolor>
 		</control>
 		<control>
 			<description>End Time Info</description>
 			<type>label</type>
 			<id>102</id>
-			<posX>555</posX>
-			<posY>390</posY>
-			<label>#Play.Current.Duration</label>
-			<align>left</align>
-			<font>font16</font>
-			<textcolor>FFFFFFFF</textcolor>
+			<posX>110</posX>
+			<posY>24</posY>
+			<label>-#currentremaining</label>
+		<align>left</align>
+		<font>font16</font>
+		<textcolor>White</textcolor>
 		</control>
 		<control>
 			<type>image</type>
