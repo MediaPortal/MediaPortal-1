@@ -60,6 +60,16 @@ namespace System.Windows.Serialization
 			return t;
 		}
 
+		private TypeConverter GetTypeConverter(Type type)
+		{
+			TypeConverter converter = TypeDescriptor.GetConverter(type);
+
+			if(converter is ICanAddNamespaceEntries)
+				((ICanAddNamespaceEntries)converter).AddNamespaceEntries(_namespaces);
+
+			return converter;
+		}
+
 		public static object LoadXml(string filename)
 		{
 			XamlParser parser = new XamlParser();
@@ -100,27 +110,22 @@ namespace System.Windows.Serialization
 			if(t == null)
 				throw new XamlParserException(string.Format("The type or namespace '{0}' could not be found", type), _filename, _reader);
 
-			// walk the stack looking for an item of the correct type
-			foreach(object target in _elementStack)
-			{
-				if(t.IsInstanceOfType(target) == false)
-					continue;
+			object target = WalkStackForInstanceOf(t);
 
-				PropertyInfo propertyInfo = t.GetProperty(property);
+			if(target == null)
+				throw new InvalidOperationException(string.Format("No instance of '{0}' is defined in this scope", t));
 
-				if(propertyInfo == null)
-					throw new XamlParserException(string.Format("'{0}' does not contain a definition for '{1}'", t, property), _filename, _reader);
+			PropertyInfo propertyInfo = t.GetProperty(property);
 
-				object value = propertyInfo.GetValue(target, null);
+			if(propertyInfo == null)
+				throw new XamlParserException(string.Format("'{0}' does not contain a definition for '{1}'", t, property), _filename, _reader);
 
-				if(value == null && propertyInfo.CanWrite)
-					value = Activator.CreateInstance(propertyInfo.PropertyType);
+			object value = propertyInfo.GetValue(target, null);
 
-				return value;
-			}
-			
-			// A local variable named 'b' is already defined in this scope
-			throw new InvalidOperationException(string.Format("No instance of '{0}' is defined in this scope'", t));
+			if(value == null && propertyInfo.CanWrite)
+				value = Activator.CreateInstance(propertyInfo.PropertyType);
+
+			return value;
 		}
 
 		private void InvokeSetter(object value)
@@ -132,45 +137,32 @@ namespace System.Windows.Serialization
 		
 		private void InvokeSetter(string type, string property, object value)
 		{
-			//			MediaPortal.GUI.Library.Log.Write("InvokeSetter: {0}, {1}, {2}", type, property, value.GetType());
-
 			Type t = GetType(type);
 
 			if(t == null)
 				throw new XamlParserException(string.Format("The type or namespace '{0}' could not be found", type), _filename, _reader);
-			
-			foreach(object target in _elementStack)
+
+			object target = WalkStackForInstanceOf(t);
+
+			PropertyInfo propertyInfo = t.GetProperty(property);
+
+			if(propertyInfo == null)
+				throw new XamlParserException(string.Format("'{0}' does not contain a definition for '{1}'", t, property), _filename, _reader);
+
+			if(propertyInfo.CanWrite == false)
+				return;
+
+			if(propertyInfo.PropertyType == typeof(object))
 			{
-				if(t.IsInstanceOfType(target) == false)
-					continue;
-
-				PropertyInfo propertyInfo = t.GetProperty(property);
-
-				if(propertyInfo == null)
-					throw new XamlParserException(string.Format("'{0}' does not contain a definition for '{1}'", t, property), _filename, _reader);
-
-				if(propertyInfo.CanWrite == false)
-					break;
-
-				if(propertyInfo.PropertyType == typeof(object))
-				{
-					propertyInfo.SetValue(target, _target, null);
-					break;
-				}
-
-				//				MediaPortal.GUI.Library.Log.Write("blah, blah: {0} {1}", value, propertyInfo.PropertyType);
-
-				if(value != null && value.GetType().IsSubclassOf(propertyInfo.PropertyType))
-				{
-					//					MediaPortal.GUI.Library.Log.Write("ack, sck: {0} {1}", value, propertyInfo.PropertyType);
-					propertyInfo.SetValue(target, _target, null);
-					break;
-				}
-
-				TypeConverter typeConverter = TypeDescriptor.GetConverter(propertyInfo.PropertyType);
-
-				if(typeConverter is ICanAddNamespaceEntries)
-					((ICanAddNamespaceEntries)typeConverter).AddNamespaceEntries(_namespaces);
+				propertyInfo.SetValue(target, _target, null);
+			}
+			else if(propertyInfo.PropertyType.IsInstanceOfType(value))
+			{
+				propertyInfo.SetValue(target, _target, null);
+			}
+			else
+			{
+				TypeConverter typeConverter = GetTypeConverter(propertyInfo.PropertyType);
 
 				try
 				{
@@ -180,8 +172,6 @@ namespace System.Windows.Serialization
 				{
 					throw new XamlParserException(string.Format("Cannot convert '{0}' to type '{1}'", _reader.Value, propertyInfo.PropertyType), _filename, _reader);
 				}
-
-				break;
 			}
 		}
 
@@ -200,7 +190,7 @@ namespace System.Windows.Serialization
 		private object Read(string fragment, XmlNodeType xmlNodeType, object target)
 		{
 			_reader = new XmlTextReader(fragment, xmlNodeType, null);
-			//			_reader.WhitespaceHandling = WhitespaceHandling.None;
+//			_reader.WhitespaceHandling = WhitespaceHandling.None;
 
 			_elementStack.Push(target);
 
@@ -218,15 +208,9 @@ namespace System.Windows.Serialization
 						case XmlNodeType.Element:
 
 							if(_reader.Name.IndexOf('.') == -1)
-							{
-								//								MediaPortal.GUI.Library.Log.Write("ReadElement: {0}", _reader.Name);
 								ReadElement();
-							}
 							else
-							{
-								//								MediaPortal.GUI.Library.Log.Write("ReadElementCompoundProperty: {0}", _reader.Name);
 								ReadElementCompoundProperty();
-							}
 							
 							break;
 						
@@ -238,15 +222,9 @@ namespace System.Windows.Serialization
 						case XmlNodeType.EndElement:
 							
 							if(_reader.Name.IndexOf('.') == -1)
-							{
-								//								MediaPortal.GUI.Library.Log.Write("ReadElementEnd: {0}", _reader.Name);
 								ReadElementEnd();
-							}
 							else
-							{
-								//								MediaPortal.GUI.Library.Log.Write("ReadElementEndCompoundProperty: {0}", _reader.Name);
 								ReadElementEndCompoundProperty();
-							}
 
 							break;
 					}
@@ -278,8 +256,6 @@ namespace System.Windows.Serialization
 				string name = _reader.Name.Trim();
 				string value = _reader.Value.Trim();
 
-				//				MediaPortal.GUI.Library.Log.Write("ReadAttributes: {0}", _reader.Name);
-
 				if(name.StartsWith("xmlns"))
 					continue;
 
@@ -288,7 +264,9 @@ namespace System.Windows.Serialization
 					INameScope nameScope = (INameScope)WalkStackForSubclassOf(typeof(INameScope));
 
 					if(nameScope != null)
+					{
 						nameScope.RegisterName(value, target);
+					}
 					else
 					{
 						// there is no object in the stack that handles name registration so
@@ -351,10 +329,7 @@ namespace System.Windows.Serialization
 				{
 					MethodInfo methodInfo = (MethodInfo)memberInfo;
 
-					TypeConverter typeConverter = TypeDescriptor.GetConverter(methodInfo.GetParameters()[1].ParameterType);
-
-					if(typeConverter is ICanAddNamespaceEntries)
-						((ICanAddNamespaceEntries)typeConverter).AddNamespaceEntries(_namespaces);
+					TypeConverter typeConverter = GetTypeConverter(methodInfo.GetParameters()[1].ParameterType);
 
 					try
 					{
@@ -379,10 +354,7 @@ namespace System.Windows.Serialization
 						continue;
 					}
 
-					TypeConverter typeConverter = TypeDescriptor.GetConverter(propertyInfo.PropertyType);
-
-					if(typeConverter is ICanAddNamespaceEntries)
-						((ICanAddNamespaceEntries)typeConverter).AddNamespaceEntries(_namespaces);
+					TypeConverter typeConverter = GetTypeConverter(propertyInfo.PropertyType);
 
 					try
 					{
@@ -446,7 +418,7 @@ namespace System.Windows.Serialization
 
 		private void ReadElementEndCompoundProperty()
 		{
-			InvokeSetter(_elementStack.Pop());
+			InvokeSetter(_target = _elementStack.Pop());
 		}
 
 		private object ReadExtension(string value)
@@ -510,6 +482,19 @@ namespace System.Windows.Serialization
 				Type typeCurrent = target.GetType();
 
 				if(typeCurrent.IsSubclassOf(typeWanted) == false)
+					return target;
+			}
+
+			return null;
+		}
+
+		object WalkStackForInstanceOf(Type typeWanted)
+		{
+			foreach(object target in _elementStack)
+			{
+				Type typeCurrent = target.GetType();
+
+				if(typeCurrent.IsInstanceOfType(typeWanted) == false)
 					return target;
 			}
 

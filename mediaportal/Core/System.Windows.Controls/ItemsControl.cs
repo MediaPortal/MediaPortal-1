@@ -38,7 +38,7 @@ namespace System.Windows.Controls
 
 		static ItemsControl()
 		{
-			HasItemsProperty = DependencyProperty.Register("HasItems", typeof(bool), typeof(ContextMenu), new PropertyMetadata(false));
+			HasItemsProperty = DependencyProperty.Register("HasItems", typeof(bool), typeof(ItemsControl), new PropertyMetadata(false));
 		}
 
 		public ItemsControl()

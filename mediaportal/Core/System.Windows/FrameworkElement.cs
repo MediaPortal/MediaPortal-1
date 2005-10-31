@@ -299,7 +299,7 @@ namespace System.Windows
 			PrepareTriggers();
 		}
 
-		protected override void OnPropertyInvalidated(DependencyProperty dp, PropertyMetadata metadata)
+		protected override void OnPropertyInvalidated(DependencyProperty property, PropertyMetadata metadata)
 		{
 		}
 			

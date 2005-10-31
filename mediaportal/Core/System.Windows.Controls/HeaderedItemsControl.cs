@@ -64,7 +64,7 @@ namespace System.Windows.Controls
 			
 		public override string ToString()
 		{
-			throw new NotImplementedException();
+			return base.ToString();
 		}
 
 		#endregion Methods
