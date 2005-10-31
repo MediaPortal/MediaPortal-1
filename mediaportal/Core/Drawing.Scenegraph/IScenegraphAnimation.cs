@@ -24,8 +24,7 @@
 #endregion
 
 using System;
-
-using MediaPortal.Animation;
+using System.Windows.Media.Animation;
 
 namespace MediaPortal.Drawing.Scenegraph
 {

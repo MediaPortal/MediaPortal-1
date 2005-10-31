@@ -24,10 +24,10 @@
 #endregion
 
 using System;
-using System.Windows;
 using System.Threading;
+using System.Windows;
+using System.Windows.Media.Animation;
 
-using MediaPortal.Animation;
 using MediaPortal.Drawing.Transforms;
 
 namespace MediaPortal.Drawing

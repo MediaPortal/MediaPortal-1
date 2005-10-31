@@ -28,11 +28,10 @@ using System.Collections;
 using System.ComponentModel;
 using System.Reflection;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media.Animation;
 using System.Windows.Serialization;
 using System.Xml;
-
-using MediaPortal.Animation;
-using System.Windows.Controls;
 
 namespace MediaPortal.GUI.Library
 {

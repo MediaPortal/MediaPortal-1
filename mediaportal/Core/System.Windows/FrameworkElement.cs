@@ -27,10 +27,10 @@ using System;
 using System.ComponentModel;
 using System.Collections;
 using System.Windows;
-using System.Windows.Input;
-
-using MediaPortal.Animation;
 using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media.Animation;
+
 using MediaPortal.Drawing;
 using MediaPortal.Drawing.Layouts;
 

@@ -28,8 +28,8 @@ using System.Drawing;
 using System.Collections;
 using System.IO;
 using System.Threading;
+using System.Windows.Media.Animation;
 
-using MediaPortal.Animation;
 using MediaPortal.Drawing;
 
 namespace MediaPortal.GUI.Library

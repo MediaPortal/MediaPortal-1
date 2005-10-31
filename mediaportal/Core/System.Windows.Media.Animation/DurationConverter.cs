@@ -25,44 +25,30 @@
 
 using System;
 using System.ComponentModel;
-using System.Windows;
-using System.Windows.Media.Animation;
+using System.Globalization;
 
-namespace MediaPortal.Drawing
+namespace System.Windows.Media.Animation
 {
-	public class ImageBrush : TileBrush, ISupportInitialize
+	public class DurationConverter : TypeConverter
 	{
-		#region Properties
-
-		public ImageSource ImageSource
-		{
-			get { return _imageSource; }
-			set { _imageSource = value; }
-		}
-
-		#endregion Properties
-
 		#region Methods
 
-		protected override Freezable CreateInstanceCore()
+		public override bool CanConvertFrom(ITypeDescriptorContext context, Type t)
 		{
-			return new ImageBrush();
+			if(t == typeof(string))
+				return true;
+
+			return base.CanConvertFrom(context, t);
+		}
+
+		public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
+		{
+			if(value is string)
+				return Duration.Parse((string)value);
+
+			return base.ConvertFrom(context, culture, value);
 		}
 
 		#endregion Methods
-
-		void ISupportInitialize.BeginInit()
-		{
-		}
-
-		void ISupportInitialize.EndInit()
-		{
-		}
-
-		#region Fields
-
-		ImageSource					_imageSource;	
-
-		#endregion Fields
 	}
 }

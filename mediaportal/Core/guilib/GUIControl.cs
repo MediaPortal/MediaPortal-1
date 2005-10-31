@@ -27,9 +27,9 @@ using System;
 using System.Collections;
 using System.Diagnostics;
 using System.Windows;
-
-using MediaPortal.Animation;
 using System.Windows.Controls;
+using System.Windows.Media.Animation;
+
 using MediaPortal.Drawing;
 using MediaPortal.Drawing.Layouts;
 

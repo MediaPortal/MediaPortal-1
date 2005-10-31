@@ -28,8 +28,8 @@ using System.Collections;
 using System.ComponentModel;
 using System.Threading;
 using System.Windows.Input;
+using System.Windows.Media.Animation;
 
-using MediaPortal.Animation;
 using MediaPortal.Drawing;
 using MediaPortal.Drawing.Layouts;
 

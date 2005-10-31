@@ -24,44 +24,49 @@
 #endregion
 
 using System;
-using System.ComponentModel;
-using System.Windows;
-using System.Windows.Media.Animation;
 
-namespace MediaPortal.Drawing
+namespace System.Windows.Media.Animation
 {
-	public class ImageBrush : TileBrush, ISupportInitialize
+	public sealed class AnimationTimer
 	{
+		#region Constructors
+
+		static AnimationTimer()
+		{
+			long frequency = 0;
+
+			if(NativeMethods.QueryPerformanceFrequency(ref frequency) == false)
+				throw new NotSupportedException("Hi-res timer");
+
+			_frequency = frequency;
+		}
+
+		private AnimationTimer()
+		{
+		}
+
+		#endregion Constructors
+
 		#region Properties
 
-		public ImageSource ImageSource
+		public static double TickCount
 		{
-			get { return _imageSource; }
-			set { _imageSource = value; }
+			get
+			{
+				long tick = 0;
+
+				if(NativeMethods.QueryPerformanceCounter(ref tick) == false)
+					throw new NotSupportedException("Hi-res timer");
+
+				return TweenHelper.TickCount = ((double)tick / _frequency) * 1000;
+			}
 		}
 
 		#endregion Properties
 
-		#region Methods
-
-		protected override Freezable CreateInstanceCore()
-		{
-			return new ImageBrush();
-		}
-
-		#endregion Methods
-
-		void ISupportInitialize.BeginInit()
-		{
-		}
-
-		void ISupportInitialize.EndInit()
-		{
-		}
-
 		#region Fields
 
-		ImageSource					_imageSource;	
+		static double				_frequency = 0;
 
 		#endregion Fields
 	}

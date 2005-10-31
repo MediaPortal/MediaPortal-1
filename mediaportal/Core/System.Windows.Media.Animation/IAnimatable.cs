@@ -24,45 +24,29 @@
 #endregion
 
 using System;
-using System.ComponentModel;
 using System.Windows;
-using System.Windows.Media.Animation;
 
-namespace MediaPortal.Drawing
+namespace System.Windows.Media.Animation
 {
-	public class ImageBrush : TileBrush, ISupportInitialize
+	public interface IAnimatable
 	{
+		#region Methods
+
+		void ApplyAnimationClock(DependencyProperty dp, AnimationClock clock);
+		void ApplyAnimationClock(DependencyProperty dp, AnimationClock clock, HandoffBehavior handoffBehavior);
+		void BeginAnimation(DependencyProperty dp, AnimationTimeline animation);
+		void BeginAnimation(DependencyProperty dp, AnimationTimeline animation, HandoffBehavior handoffBehavior);
+		object GetAnimationBaseValue(DependencyProperty dp);
+			
+		#endregion Methods
+						
 		#region Properties
 
-		public ImageSource ImageSource
+		bool HasAnimatedProperties
 		{
-			get { return _imageSource; }
-			set { _imageSource = value; }
+			get;
 		}
 
 		#endregion Properties
-
-		#region Methods
-
-		protected override Freezable CreateInstanceCore()
-		{
-			return new ImageBrush();
-		}
-
-		#endregion Methods
-
-		void ISupportInitialize.BeginInit()
-		{
-		}
-
-		void ISupportInitialize.EndInit()
-		{
-		}
-
-		#region Fields
-
-		ImageSource					_imageSource;	
-
-		#endregion Fields
 	}
 }

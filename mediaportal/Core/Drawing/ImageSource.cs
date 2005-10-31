@@ -24,11 +24,10 @@
 #endregion
 
 using System;
-using System.Windows;
 using System.ComponentModel;
 using System.Drawing;
-
-using MediaPortal.Animation;
+using System.Windows;
+using System.Windows.Media.Animation;
 
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;

@@ -26,8 +26,7 @@
 using System;
 using System.Windows;
 using System.Windows.Input;
-
-using MediaPortal.Animation;
+using System.Windows.Media.Animation;
 
 namespace System.Windows
 {

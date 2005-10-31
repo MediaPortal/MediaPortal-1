@@ -25,9 +25,9 @@ using System.Drawing;
 using System.Globalization;
 using System.Reflection;
 using System.Xml;
+using System.Windows.Media.Animation;
 using System.Windows.Serialization;
 
-using MediaPortal.Animation;
 using MediaPortal.Drawing;
 using MediaPortal.Drawing.Layouts;
 

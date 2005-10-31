@@ -26,8 +26,8 @@
 using System;
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Media.Animation;
 
-using MediaPortal.Animation;
 using MediaPortal.Drawing.Transforms;
 
 namespace MediaPortal.Drawing

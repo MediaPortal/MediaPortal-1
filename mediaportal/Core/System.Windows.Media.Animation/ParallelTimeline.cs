@@ -24,45 +24,49 @@
 #endregion
 
 using System;
-using System.ComponentModel;
 using System.Windows;
-using System.Windows.Media.Animation;
 
-namespace MediaPortal.Drawing
+namespace System.Windows.Media.Animation
 {
-	public class ImageBrush : TileBrush, ISupportInitialize
+	public class ParallelTimeline : TimelineGroup
 	{
-		#region Properties
+		#region Constructors
 
-		public ImageSource ImageSource
+		public ParallelTimeline()
 		{
-			get { return _imageSource; }
-			set { _imageSource = value; }
 		}
 
-		#endregion Properties
+		public ParallelTimeline(NullableTimeSpan beginTime) : base(beginTime)
+		{
+		}
+
+		public ParallelTimeline(NullableTimeSpan beginTime, Duration duration) : base(beginTime, duration)
+		{
+		}
+
+		public ParallelTimeline(NullableTimeSpan beginTime, Duration duration, RepeatBehavior repeatBehavior) : base(beginTime, duration, repeatBehavior)
+		{
+		}
+
+		#endregion Constructors
 
 		#region Methods
 
+		public new ParallelTimeline Copy()
+		{
+			return (ParallelTimeline)base.Copy();
+		}
+
 		protected override Freezable CreateInstanceCore()
 		{
-			return new ImageBrush();
+			return new ParallelTimeline();
+		}
+
+		protected override Duration GetNaturalDurationCore(Clock clock)
+		{
+			throw new NotImplementedException();
 		}
 
 		#endregion Methods
-
-		void ISupportInitialize.BeginInit()
-		{
-		}
-
-		void ISupportInitialize.EndInit()
-		{
-		}
-
-		#region Fields
-
-		ImageSource					_imageSource;	
-
-		#endregion Fields
 	}
 }

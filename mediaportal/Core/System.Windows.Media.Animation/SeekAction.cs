@@ -24,44 +24,39 @@
 #endregion
 
 using System;
-using System.ComponentModel;
-using System.Windows;
-using System.Windows.Media.Animation;
 
-namespace MediaPortal.Drawing
+namespace System.Windows.Media.Animation
 {
-	public class ImageBrush : TileBrush, ISupportInitialize
+	public class SeekAction : TimelineAction
 	{
+		#region Constructors
+
+		public SeekAction()
+		{
+		}
+
+		#endregion Constructors
+
 		#region Properties
 
-		public ImageSource ImageSource
+		public TimeSpan Offset
 		{
-			get { return _imageSource; }
-			set { _imageSource = value; }
+			get { return _offset; }
+			set { _offset = value; }
+		}
+
+		public TimeSeekOrigin Origin
+		{
+			get { return _origin; }
+			set { _origin = value; }
 		}
 
 		#endregion Properties
 
-		#region Methods
-
-		protected override Freezable CreateInstanceCore()
-		{
-			return new ImageBrush();
-		}
-
-		#endregion Methods
-
-		void ISupportInitialize.BeginInit()
-		{
-		}
-
-		void ISupportInitialize.EndInit()
-		{
-		}
-
 		#region Fields
 
-		ImageSource					_imageSource;	
+		TimeSpan					_offset;
+		TimeSeekOrigin				_origin;
 
 		#endregion Fields
 	}

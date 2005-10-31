@@ -24,45 +24,41 @@
 #endregion
 
 using System;
-using System.ComponentModel;
-using System.Windows;
-using System.Windows.Media.Animation;
 
-namespace MediaPortal.Drawing
+namespace System.Windows.Media.Animation
 {
-	public class ImageBrush : TileBrush, ISupportInitialize
+	public enum Easing
 	{
-		#region Properties
-
-		public ImageSource ImageSource
-		{
-			get { return _imageSource; }
-			set { _imageSource = value; }
-		}
-
-		#endregion Properties
-
-		#region Methods
-
-		protected override Freezable CreateInstanceCore()
-		{
-			return new ImageBrush();
-		}
-
-		#endregion Methods
-
-		void ISupportInitialize.BeginInit()
-		{
-		}
-
-		void ISupportInitialize.EndInit()
-		{
-		}
-
-		#region Fields
-
-		ImageSource					_imageSource;	
-
-		#endregion Fields
+		Linear,
+		QuadraticEaseIn,
+		QuadraticEaseOut,
+		QuadraticEaseInOut,
+		CubicEaseIn,
+		CubicEaseOut,
+		CubicEaseInOut,
+		QuarticEaseIn,
+		QuarticEaseOut,
+		QuarticEaseInOut,
+		QuinticEaseIn,
+		QuinticEaseOut,
+		QuinticEaseInOut,
+		SineEaseIn,
+		SineEaseOut,
+		SineEaseInOut,
+		ExponentialEaseIn,
+		ExponentialEaseOut,
+		ExponentialEaseInOut,
+		CircularEaseIn,
+		CircularEaseOut,
+		CircularEaseInOut,
+		ElasticEaseIn,
+		ElasticEaseOut,
+		ElasticEaseInOut,
+		BackEaseIn,
+		BackEaseOut,
+		BackEaseInOut,
+		BounceEaseIn,
+		BounceEaseOut,
+		BounceEaseInOut,
 	}
 }
