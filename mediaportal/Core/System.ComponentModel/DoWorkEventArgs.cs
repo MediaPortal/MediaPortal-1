@@ -27,7 +27,9 @@ using System;
 
 namespace System.ComponentModel
 {
-	public class DoWorkEventArgs : CancelEventArgs
+#if DOTNET1
+
+    public class DoWorkEventArgs : CancelEventArgs
 	{
 		#region Constructors
 
@@ -60,4 +62,6 @@ namespace System.ComponentModel
 
 		#endregion Fields
 	}
+
+#endif
 }

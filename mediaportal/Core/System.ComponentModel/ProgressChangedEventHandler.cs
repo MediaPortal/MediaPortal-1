@@ -29,7 +29,11 @@ namespace System.ComponentModel
 {
 	#region Delegates
 
-	public delegate void ProgressChangedEventHandler(object sender, ProgressChangedEventArgs e);
+#if DOTNET1
 
-	#endregion Delegates
+    public delegate void ProgressChangedEventHandler(object sender, ProgressChangedEventArgs e);
+
+#endif
+
+    #endregion Delegates
 }

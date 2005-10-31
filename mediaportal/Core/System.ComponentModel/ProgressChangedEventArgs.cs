@@ -27,13 +27,11 @@ using System;
 
 namespace System.ComponentModel
 {
-	public class ProgressChangedEventArgs : EventArgs
+#if DOTNET1
+
+    public class ProgressChangedEventArgs : EventArgs
 	{
 		#region Constructors
-
-		public ProgressChangedEventArgs(int progressPercentage) : this(progressPercentage, null)
-		{
-		}
 
 		public ProgressChangedEventArgs(int progressPercentage, object state)
 		{
@@ -64,4 +62,6 @@ namespace System.ComponentModel
 
 		#endregion Fields
 	}
+
+#endif
 }

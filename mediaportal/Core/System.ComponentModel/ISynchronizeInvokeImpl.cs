@@ -27,10 +27,14 @@ using System;
 
 namespace System.ComponentModel
 {
-	public class ISynchronizeInvokeImpl
+#if DOTNET1
+
+    public class ISynchronizeInvokeImpl
 	{
 		public ISynchronizeInvokeImpl()
 		{
 		}
 	}
+
+#endif
 }

@@ -129,7 +129,7 @@ namespace MediaPortal.Dispatcher
 			if(_isProgressReported == false)
 				throw new InvalidOperationException("Job does not report its progress");
 
-			object[] e = new object[] { this, new ProgressChangedEventArgs(percent) };
+			object[] e = new object[] { this, new ProgressChangedEventArgs(percent, null) };
 
 			foreach(Delegate handler in ProgressChanged.GetInvocationList())
 				InvokeDelegate(handler, e);

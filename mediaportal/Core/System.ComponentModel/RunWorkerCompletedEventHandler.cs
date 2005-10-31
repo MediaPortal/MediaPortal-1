@@ -29,7 +29,12 @@ namespace System.ComponentModel
 {
 	#region Delegates
 
+
+#if DOTNET1
+
 	public delegate void RunWorkerCompletedEventHandler(object sender, RunWorkerCompletedEventArgs e);
+
+#endif
 
 	#endregion Delegates
 }

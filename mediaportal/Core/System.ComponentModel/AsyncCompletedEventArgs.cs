@@ -27,7 +27,9 @@ using System;
 
 namespace System.ComponentModel
 {
-	public class AsyncCompletedEventArgs : EventArgs
+#if DOTNET1
+
+    public class AsyncCompletedEventArgs : EventArgs
 	{   
 		#region Constructors
 
@@ -67,4 +69,6 @@ namespace System.ComponentModel
 
 		#endregion Fields
 	}
+
+#endif
 }

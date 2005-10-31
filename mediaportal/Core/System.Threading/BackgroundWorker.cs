@@ -28,6 +28,8 @@ using System.ComponentModel;
 
 namespace System.Threading
 {
+#if DOTNET1
+
 	public class BackgroundWorker
 	{
 		#region Events
@@ -153,4 +155,6 @@ namespace System.Threading
 
 		#endregion Fields
 	}
+
+#endif
 }

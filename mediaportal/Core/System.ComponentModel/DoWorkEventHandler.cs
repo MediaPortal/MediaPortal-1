@@ -27,5 +27,13 @@ using System;
 
 namespace System.ComponentModel
 {
-	public delegate void DoWorkEventHandler(object sender, DoWorkEventArgs e);
+    #region Delegate
+
+#if DOTNET1
+
+    public delegate void DoWorkEventHandler(object sender, DoWorkEventArgs e);
+
+#endif
+
+    #endregion Delegate
 }
