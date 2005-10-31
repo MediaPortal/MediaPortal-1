@@ -56,8 +56,6 @@ namespace System.Windows.Controls
 
 		protected virtual void AddChild(object child)
 		{
-			MediaPortal.GUI.Library.Log.Write("Adding to items: {0}", child);
-
 			if(_items == null)
 				_items = new ItemCollection();
 

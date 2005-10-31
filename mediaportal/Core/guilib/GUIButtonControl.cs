@@ -585,14 +585,10 @@ namespace MediaPortal.GUI.Library
 
 		void DoContextMenu()
 		{
-			Log.Write("Hi1");
 			IDialogbox dialog = (IDialogbox)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
 
-			Log.Write("Hi2");
 			if(dialog == null)
 				return;
-
-			Log.Write("Hi3");
 
 			dialog.Reset();
 			dialog.SetHeading(924); // menu
@@ -600,17 +596,13 @@ namespace MediaPortal.GUI.Library
 			foreach(object item in ContextMenu.Items)
 			{
 				if(item is MenuItem)
-					dialog.Add((string)(((MenuItem)item).Header));
+					dialog.Add(((MenuItem)item).Header as string);
 			}
 
-			dialog.DoModal(GetID);
+			dialog.DoModal(ParentID);
 
 			if(dialog.SelectedId==-1)
 				return;
-
-//			switch(dialog.SelectedId)
-//			{
-//			}
-		}	
+		}
 	}
 }
