@@ -102,7 +102,7 @@ namespace System.Threading
 			if(_isProgressReported == false)
 				throw new InvalidOperationException("Background worker does not report its progress");
 
-			object[] args = new object[] { this, new ProgressChangedEventArgs(percent) };
+			object[] args = new object[] { this, new ProgressChangedEventArgs(percent, null) };
 
 			foreach(Delegate handler in ProgressChanged.GetInvocationList())
 				InvokeDelegate(handler, args);
