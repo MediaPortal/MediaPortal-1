@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
 <capturecards>
-  <capturecard commercialname="General S/W encoding card" capturename="" devid="S/W">
-    <capabilities tv="true" radio="true" mpeg2="false" mce="false" sw="true" bda="false"></capabilities>
-  </capturecard> 
+<!--  <capturecard commercialname="General S/W encoding card" capturename="" devid="S/W"> -->
+<!--      <capabilities tv="true" radio="true" mpeg2="false" mce="false" sw="true" bda="false"></capabilities> -->
+<!--  </capturecard> --> 
 <!--  <capturecard commercialname="General MCE card" capturename="" devid="MCE"> -->
 <!--    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"></capabilities> -->
 <!--  </capturecard> -->
-  <capturecard commercialname="General H/W encoding card" capturename="" devid="HW">
-    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
-  </capturecard>
+  <capturecard commercialname="General H/W encoding card" capturename="" devid="HW"> 
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities> 
+  </capturecard> 
 
   <capturecard commercialname="Hauppauge PVR500MCE (a)" capturename="Hauppauge WinTV PVR PCI II Capture" devid="ven_4444&amp;dev_0016&amp;subsys_e8070070&amp;rev_01">
     <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"></capabilities>
