@@ -34,7 +34,7 @@ namespace System.Windows.Controls
 
 		static Control()
 		{
-			FocusableProperty.OverrideMetadata(typeof(Control), new FrameworkPropertyMetadata(true));
+//			FocusableProperty.OverrideMetadata(typeof(Control), new FrameworkPropertyMetadata(true));
 		}
 
 		public Control()

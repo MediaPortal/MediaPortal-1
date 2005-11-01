@@ -126,10 +126,10 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public virtual void FinalizeConstruction()
 		{
-//			if (m_dwControlUp == 0) m_dwControlUp		= m_dwControlID - 1; 
-//			if (m_dwControlDown == 0) m_dwControlDown	= m_dwControlID + 1; 
-//			if (m_dwControlLeft == 0) m_dwControlLeft	= m_dwControlID; 
-//			if (m_dwControlRight == 0) m_dwControlRight = m_dwControlID; 
+			//			if (m_dwControlUp == 0) m_dwControlUp		= m_dwControlID - 1; 
+			//			if (m_dwControlDown == 0) m_dwControlDown	= m_dwControlID + 1; 
+			//			if (m_dwControlLeft == 0) m_dwControlLeft	= m_dwControlID; 
+			//			if (m_dwControlRight == 0) m_dwControlRight = m_dwControlID; 
 		}
 			
 		/// <summary>
@@ -495,7 +495,7 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public virtual bool Disabled
 		{
-			get { return IsEnabled == false; }
+			get { return !IsEnabled; }
 			set { IsEnabled = !value; }
 		}
 
