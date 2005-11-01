@@ -90,15 +90,15 @@ namespace System.Windows
 
 			metadata = new FrameworkPropertyMetadata();
 			metadata.DefaultValue = 0.0;
-			metadata.PropertyInvalidatedCallback = new PropertyInvalidatedCallback(OnHeightPropertyInvalidated);
-			metadata.GetValueOverride = new GetValueOverride(OnHeightPropertyGetValue);
+//			metadata.PropertyInvalidatedCallback = new PropertyInvalidatedCallback(OnHeightPropertyInvalidated);
+//			metadata.GetValueOverride = new GetValueOverride(OnHeightPropertyGetValue);
 			metadata.AffectsArrange = true;
 			metadata.AffectsMeasure = true;
 			metadata.AffectsParentArrange = true;
 			metadata.AffectsParentMeasure = true;
 			metadata.AffectsRender = true;
 
-			HeightProperty = DependencyProperty.Register("Height", typeof(double), typeof(FrameworkElement), metadata);
+			HeightProperty = DependencyProperty.Register("Height", typeof(double), typeof(FrameworkElement), new PropertyMetadata(0.0));
 
 			#endregion Height
 
@@ -112,15 +112,15 @@ namespace System.Windows
 
 			metadata = new FrameworkPropertyMetadata();
 			metadata.DefaultValue = 0.0;
-			metadata.PropertyInvalidatedCallback = new PropertyInvalidatedCallback(OnWidthPropertyInvalidated);
-			metadata.GetValueOverride = new GetValueOverride(OnWidthPropertyGetValue);
+//			metadata.PropertyInvalidatedCallback = new PropertyInvalidatedCallback(OnWidthPropertyInvalidated);
+//			metadata.GetValueOverride = new GetValueOverride(OnWidthPropertyGetValue);
 			metadata.AffectsArrange = true;
 			metadata.AffectsMeasure = true;
 			metadata.AffectsParentArrange = true;
 			metadata.AffectsParentMeasure = true;
 			metadata.AffectsRender = true;
 
-			WidthProperty = DependencyProperty.Register("Width", typeof(double), typeof(FrameworkElement), metadata);
+			WidthProperty = DependencyProperty.Register("Width", typeof(double), typeof(FrameworkElement), new PropertyMetadata(0.0));
 
 			#endregion WidthProperty
 
@@ -473,8 +473,9 @@ namespace System.Windows
 		// TODO: should not be virtual and must be double
 		public virtual int Height
 		{
-			get { if(_heightDirty) { _heightCache = (double)GetValue(HeightProperty); _heightDirty = false; } return (int)_heightCache; }
-			set { SetValue(HeightProperty, value); }
+//			get { if(_heightDirty) { _heightCache = (double)GetValue(HeightProperty); _heightDirty = false; } return (int)_heightCache; }
+			get { return (int)((double)GetValue(HeightProperty)); }
+			set { SetValue(HeightProperty, (double)value); }
 		}
 
 		public HorizontalAlignment HorizontalAlignment
@@ -564,8 +565,9 @@ namespace System.Windows
 		// TODO: should not be virtual and must be double
 		public virtual int Width
 		{
-			get { if(_widthDirty) { _widthCache = (double)GetValue(WidthProperty); _widthDirty = false; } return (int)_widthCache; }
-			set { SetValue(WidthProperty, value); }
+//			get { if(_widthDirty) { _widthCache = (double)GetValue(WidthProperty); _widthDirty = false; } return (int)_widthCache; }
+			get { return (int)((double)GetValue(WidthProperty)); }
+			set { SetValue(WidthProperty, (double)value); }
 		}
 
 		#endregion Properties

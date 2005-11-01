@@ -136,7 +136,7 @@ namespace System.Windows
 
 		public void SetValue(DependencyPropertyKey key, object value)
 		{
-			SetValueBase(key, value);
+			SetValueBase(key.DependencyProperty, value);
 		}
 
 		public void SetValueBase(DependencyProperty property, object value)
@@ -154,9 +154,7 @@ namespace System.Windows
 
 		public void SetValueBase(DependencyPropertyKey key, object value)
 		{
-			_properties[key.DependencyProperty] = value;
-
-			OnPropertyInvalidated(key.DependencyProperty, key.DependencyProperty.DefaultMetadata);			
+			SetValueBase(key.DependencyProperty, value);
 		}
 
 		#endregion Methods

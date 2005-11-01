@@ -164,6 +164,10 @@ namespace MediaPortal.GUI.Library
 							if (m_strFileName[1] != ':')
 								strFileNameTemp = GUIGraphicsContext.Skin + @"\media\" + m_strFileName;
 						}
+						
+						if(strFileNameTemp.Length > 0 && strFileNameTemp.IndexOf(@"\#") != -1)
+							return;
+
 						using (Image img = Image.FromFile(strFileNameTemp))
 						{
 							if (0 == m_dwWidth)  m_dwWidth = img.Width;

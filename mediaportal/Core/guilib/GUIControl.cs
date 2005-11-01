@@ -495,7 +495,7 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public virtual bool Disabled
 		{
-			get { return !IsEnabled; }
+			get { return IsEnabled == false; }
 			set { IsEnabled = !value; }
 		}
 
@@ -565,11 +565,10 @@ namespace MediaPortal.GUI.Library
 			set { if(m_dwPosY != value) { m_dwPosY = Math.Max(0, value); Update(); } }
 		}
 
-		[MediaPortal.GUI.Library.XMLSkinElement("visible")]
 		public bool Visible
 		{
-			get { return true; /*Visibility != Visibility.Hidden;*/ }
-			set { Visibility = Visibility.Hidden; }
+			get { return IsVisible; }
+			set { IsVisible = value; }
 		}
 
 		/// <summary>
