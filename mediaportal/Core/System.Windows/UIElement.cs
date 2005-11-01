@@ -471,7 +471,6 @@ namespace System.Windows
 			get { if(_commandBindings == null) _commandBindings = new CommandBindingCollection(); return _commandBindings; }
 		}
 
-		[MediaPortal.GUI.Library.XMLSkinElement("visible")]
 		public bool IsVisible
 		{
 			// TODO: there should be no set accessor

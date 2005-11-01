@@ -565,10 +565,11 @@ namespace MediaPortal.GUI.Library
 			set { if(m_dwPosY != value) { m_dwPosY = Math.Max(0, value); Update(); } }
 		}
 
+		[MediaPortal.GUI.Library.XMLSkinElement("visible")]
 		public bool Visible
 		{
-			get { return IsVisible; }
-			set { IsVisible = value; }
+			get { return true; /*Visibility != Visibility.Hidden;*/ }
+			set { Visibility = Visibility.Hidden; }
 		}
 
 		/// <summary>
