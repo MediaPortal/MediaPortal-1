@@ -6744,4 +6744,36 @@
       </connections>
     </tv>
   </capturecard>
+
+  <capturecard commercialname="Twinhan DVB-C" capturename="DTV-DVBC 878 Digital Capture Filter" devid="ven_109e&amp;dev_0878&amp;subsys_00011822&amp;rev_11">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBC Network Provider"  	checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="DTV-DVBC 878 Digital Tuner Filter"    	checkdevice="true"></filter>
+        <filter cat="capture"         name="DTV-DVBC 878 Digital Capture Filter"   	checkdevice="true"></filter>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Twinhan ATSC" capturename="DTV-ATSC 878 Digital Capture Filter" devid="ven_109e&amp;dev_0878&amp;subsys_00011822&amp;rev_11">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft ATSC Network Provider"  	checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="DTV-ATSC 878 Digital Tuner Filter"    	checkdevice="true"></filter>
+        <filter cat="capture"         name="DTV-ATSC 878 Digital Capture Filter"   	checkdevice="true"></filter>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
 </capturecards>
