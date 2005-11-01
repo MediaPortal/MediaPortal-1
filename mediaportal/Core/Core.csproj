@@ -1879,16 +1879,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Threading\Dispatcher.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Threading\DispatcherObject.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "System.Threading\TimeoutLock.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -2519,6 +2509,86 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Dispatcher\Dispatcher.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Dispatcher\DispatcherEventArgs.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Dispatcher\DispatcherFrame.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Dispatcher\DispatcherHookEventArgs.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Dispatcher\DispatcherHookEventHandler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Dispatcher\DispatcherHooks.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Dispatcher\DispatcherOperation.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Dispatcher\DispatcherOperationStatus.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Dispatcher\DispatcherPriority.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Dispatcher\DispatcherProcessingDisabled.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Dispatcher\DispatcherSynchronizationContext.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Dispatcher\DispatcherTimer.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Dispatcher\DispatcherUnhandledExceptionEventArgs.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Dispatcher\DispatcherUnhandledExceptionEventHandler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Dispatcher\DispatcherUnhandledExceptionFilterEventArgs.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Dispatcher\DispatcherUnhandledExceptionFilterEventHandler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Input\ApplicationCommands.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -2860,6 +2930,11 @@
                 />
                 <File
                     RelPath = "System.Windows.Serialization\XamlParserException.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Threading\DispatcherObject.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

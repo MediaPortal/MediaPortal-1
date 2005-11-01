@@ -23,22 +23,40 @@
 
 #endregion
 
-using System;
-
-namespace System.Threading
+namespace System.Windows.Dispatcher
 {
-	public abstract class DispatcherObject
+	public sealed class DispatcherOperation
 	{
+		#region Constructors
+
+		internal DispatcherOperation(DispatcherPriority priority, Dispatcher dispatcher)
+		{
+			_priority = priority;
+			_dispatcher = dispatcher;
+		}
+
+		#endregion Constructors
+
+		#region Events
+
+		public event EventHandler Aborted;
+		public event EventHandler Completed;
+
+		#endregion Events
+
 		#region Methods
 
-		public bool CheckAccess()
+		public bool Abort()
 		{
+			if(Aborted != null)
+				Aborted(this, EventArgs.Empty);
+
 			return true;
 		}
 
-		public void VerifyAccess()
+		public DispatcherOperationStatus Wait()
 		{
-			// should throw when called from incorrect thread
+			throw new NotImplementedException();
 		}
 
 		#endregion Methods
@@ -50,12 +68,31 @@ namespace System.Threading
 			get { return _dispatcher; }
 		}
 
+		public DispatcherPriority Priority
+		{
+			get { return _priority; }
+			set { _priority = value; }
+		}
+
+		public object Result
+		{
+			get { return _result; }
+		}
+
+		public DispatcherOperationStatus Status
+		{
+			get { return _status; }
+		}
+
 		#endregion Properties
 
 		#region Fields
 
-		Dispatcher					_dispatcher = null;
-
+		Dispatcher					_dispatcher;
+		DispatcherPriority			_priority;
+		object						_result = null;
+		DispatcherOperationStatus	_status = DispatcherOperationStatus.Pending;
+	
 		#endregion Fields
 	}
 }

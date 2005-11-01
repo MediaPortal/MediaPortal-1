@@ -27,6 +27,7 @@ using System;
 using System.Threading;
 using System.Windows;
 using System.Windows.Media.Animation;
+using System.Windows.Threading;
 
 using MediaPortal.Drawing.Transforms;
 

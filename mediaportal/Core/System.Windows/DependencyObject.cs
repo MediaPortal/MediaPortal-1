@@ -25,7 +25,8 @@
 
 using System;
 using System.Collections;
-using System.Threading;
+using System.Windows;
+using System.Windows.Threading;
 
 namespace System.Windows
 {
@@ -62,9 +63,10 @@ namespace System.Windows
 			return new LocalValueEnumerator(_properties);
 		}
 
+		// http://www.64bit-world.com/forums/microsoft-public-developer-winfx-avalon/10124-xamlpad-exe-nullreferencexception-winfx-ctp-sept.html
 		public object GetValue(DependencyProperty property)
 		{
-			return GetValueBase(property);
+			return GetValueCommon(property, property.GetMetadata(this));
 		}
 
 		public object GetValueBase(DependencyProperty property)
@@ -80,6 +82,11 @@ namespace System.Windows
 			// - DefaultValue specified when you registered the property (or override metadata)
 
 			return GetValueCore(property, _properties[property], property.GetMetadata(this));
+		}
+
+		protected virtual object GetValueCommon(DependencyProperty property, PropertyMetadata metadata)
+		{
+			return GetValueCore(property, null, metadata);
 		}
 
 		protected virtual object GetValueCore(DependencyProperty property, object baseValue, PropertyMetadata metadata)

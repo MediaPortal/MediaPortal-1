@@ -24,7 +24,8 @@
 #endregion
 
 using System;
-using System.Threading;
+using System.Windows;
+using System.Windows.Threading;
 
 namespace System.Windows.Media.Animation
 {

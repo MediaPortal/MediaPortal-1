@@ -74,7 +74,6 @@ namespace System.Windows.Media.Animation
 
 		#region Methods
 
-		
 		// Clock.FromTimeline 
 
 		protected internal virtual Clock AllocateClock()
@@ -118,7 +117,6 @@ namespace System.Windows.Media.Animation
 		protected internal Duration GetNaturalDuration(Clock clock)
 		{
 			// only be called when the Duration property is set to Automatic
-																 
 			return GetNaturalDurationCore(clock);
 		}
 

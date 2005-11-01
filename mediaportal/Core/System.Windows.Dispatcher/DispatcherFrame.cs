@@ -24,70 +24,43 @@
 #endregion
 
 using System;
-using System.Collections;
-using System.Windows;
 using System.Windows.Threading;
 
-namespace MediaPortal
+namespace System.Windows.Dispatcher
 {
-	public class Application : DispatcherObject, IResourceHost
+	public class DispatcherFrame : DispatcherObject
 	{
+		// samples stack
+		// http://www.64bit-world.com/forums/microsoft-public-developer-winfx-avalon/10124-xamlpad-exe-nullreferencexception-winfx-ctp-sept.html
+
 		#region Constructors
 
-		protected Application()
+		public DispatcherFrame()
+		{
+		}
+
+		public DispatcherFrame(bool exitWhenRequested)
 		{
 		}
 
 		#endregion Constructors
 
-		#region Methods
-
-		public object FindResource(object key)
-		{
-			if(_resources == null)
-				return null;
-
-			return _resources[key];
-		}
-
-		object IResourceHost.GetResource(object key)
-		{
-			return FindResource(key);
-		}
-
-		#endregion Methods
-
 		#region Properties
 
-		public static Application Current
+		public bool Continue
 		{
-			get { if(_current == null) _current = new Application(); return _current; }
-		}
-
-		public ResourceDictionary Resources
-		{
-			get { if(_resources == null) _resources = new ResourceDictionary(); return _resources; }
-			set { _resources = value; }
-		}
-
-		IResourceHost IResourceHost.ParentResourceHost
-		{
-			get { return null; }
-		}
-
-		public IDictionary Properties
-		{
-			get { return _properties; }
+			get { return _isContinue; }
+			set { _isContinue = value; }
 		}
 
 		#endregion Properties
 
 		#region Fields
 
-		static Application 			_current;
-		Hashtable					_properties = new Hashtable(100);
-		ResourceDictionary			_resources;
+		bool						_isContinue;
 
 		#endregion Fields
+
+
 	}
 }

@@ -23,70 +23,36 @@
 
 #endregion
 
-using System;
-using System.Collections;
-using System.Windows;
-using System.Windows.Threading;
-
-namespace MediaPortal
+namespace System.Windows.Dispatcher
 {
-	public class Application : DispatcherObject, IResourceHost
+	public sealed class DispatcherHookEventArgs : EventArgs
 	{
 		#region Constructors
 
-		protected Application()
+		public DispatcherHookEventArgs(DispatcherOperation operation)
 		{
+			_operation = operation;
 		}
 
 		#endregion Constructors
 
-		#region Methods
-
-		public object FindResource(object key)
-		{
-			if(_resources == null)
-				return null;
-
-			return _resources[key];
-		}
-
-		object IResourceHost.GetResource(object key)
-		{
-			return FindResource(key);
-		}
-
-		#endregion Methods
-
 		#region Properties
 
-		public static Application Current
+		public Dispatcher Dispatcher
 		{
-			get { if(_current == null) _current = new Application(); return _current; }
+			get { throw new NotImplementedException(); }
 		}
 
-		public ResourceDictionary Resources
+		public DispatcherOperation Operation
 		{
-			get { if(_resources == null) _resources = new ResourceDictionary(); return _resources; }
-			set { _resources = value; }
-		}
-
-		IResourceHost IResourceHost.ParentResourceHost
-		{
-			get { return null; }
-		}
-
-		public IDictionary Properties
-		{
-			get { return _properties; }
+			get { return _operation; }
 		}
 
 		#endregion Properties
 
 		#region Fields
 
-		static Application 			_current;
-		Hashtable					_properties = new Hashtable(100);
-		ResourceDictionary			_resources;
+		DispatcherOperation			_operation;
 
 		#endregion Fields
 	}

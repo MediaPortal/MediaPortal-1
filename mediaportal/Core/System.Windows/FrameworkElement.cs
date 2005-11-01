@@ -589,10 +589,6 @@ namespace System.Windows
 
 		#region Fields
 
-		double						_actualHeightCache;
-		bool						_actualHeightDirty;
-		double						_actualWidthCache;
-		bool						_actualWidthDirty;
 		double						_heightCache;
 		bool						_heightDirty;
 		bool						_isInitialized = false;

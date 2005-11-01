@@ -52,10 +52,10 @@ namespace System.Windows.Input
 
 		#region Events (Routed)
 
-		public event ExecuteEventHandler		Execute;
-		public event ExecuteEventHandler		PreviewExecute;
-		public event QueryEnabledEventHandler	PreviewQueryEnabled;
-		public event QueryEnabledEventHandler	QueryEnabled;
+//		public event ExecuteEventHandler		Execute;
+//		public event ExecuteEventHandler		PreviewExecute;
+//		public event QueryEnabledEventHandler	PreviewQueryEnabled;
+//		public event QueryEnabledEventHandler	QueryEnabled;
 
 		#endregion Events (Routed)
 

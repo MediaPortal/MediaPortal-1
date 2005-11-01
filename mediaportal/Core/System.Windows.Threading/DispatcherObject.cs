@@ -23,17 +23,37 @@
 
 #endregion
 
-using System;
-
-namespace System.Threading
+namespace System.Windows.Threading
 {
-	public class Dispatcher
+	public abstract class DispatcherObject
 	{
-		public Dispatcher()
+		#region Methods
+
+		public bool CheckAccess()
 		{
-			//
-			// TODO: Add constructor logic here
-			//
+			return true;
 		}
+
+		public void VerifyAccess()
+		{
+			// should throw when called from incorrect thread
+		}
+
+		#endregion Methods
+
+		#region Properties
+
+		public System.Windows.Dispatcher.Dispatcher Dispatcher
+		{
+			get { return _dispatcher; }
+		}
+
+		#endregion Properties
+
+		#region Fields
+
+		System.Windows.Dispatcher.Dispatcher _dispatcher;
+
+		#endregion Fields
 	}
 }
