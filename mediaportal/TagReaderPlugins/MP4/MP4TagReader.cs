@@ -96,6 +96,7 @@ namespace MediaPortal.TagReader.MP4
 					if (dataAtom != null) 
 					{
 						m_tag.Genre = GetGenre(EndianBitConverter.Big.ToInt16(dataAtom.Data, 0));
+					}
 					// custom genre
 					dataAtom = (ParsedDataAtom)MP4Parser.findAtom(ilstAtom.Children, "©GEN.DATA");
 					if (dataAtom != null) 
