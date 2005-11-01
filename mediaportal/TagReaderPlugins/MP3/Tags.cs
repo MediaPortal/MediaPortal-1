@@ -122,6 +122,10 @@ namespace id3
 				{
 					break; // We reached the padding area
 				}
+				bool apicFrame=false;
+				if (tag[0]==0x41 && tag[1]==0x50 && tag[2]==0x49 && tag[3] == 0x43)
+					apicFrame=true;
+
 				byte[] tagSize = new byte[5];    // I use this to read the bytes in from the file
 				int[] bytes = new int[5];      // for bit shifting
 				ulong newSize = 0;    // for the final number
@@ -147,9 +151,14 @@ namespace id3
 					bytes[2] = ((tagSize[1] >> 1) & 63) | ((tagSize[0] & 3) << 6) ;
 					bytes[1] = ((tagSize[0] >> 2) & 31) ;
 
-					newSize  = (((UInt64)bytes[3]) |
+					if ( apicFrame==false&& (tagSize[2]&0x80)==0 &&  (tagSize[1]&0x80)==0 && (tagSize[0]&0x80)==0)
+					{
+						newSize  = (((UInt64)bytes[3]) |
 											((UInt64)bytes[2] << 8)  |
-											((UInt64)bytes[1] << 16));
+							((UInt64)bytes[1] << 16));
+					}
+					else
+						newSize  = (ulong)((tagSize[2])+(tagSize[1]<<8)+(tagSize[0]<<16));
 					//End Dan Code
 					index+=3; // read 3 bytes
 				}
@@ -174,7 +183,7 @@ namespace id3
 					bytes[1] = ((tagSize[1] >> 2) & 31) | ((tagSize[0] & 7) << 5) ;
 					bytes[0] = ((tagSize[0] >> 3) & 15) ;
 
-					if ( (tagSize[3]&0x80)==0 && (tagSize[2]&0x80)==0 &&  (tagSize[1]&0x80)==0 && (tagSize[0]&0x80)==0)
+					if ( apicFrame==false&&(tagSize[3]&0x80)==0 && (tagSize[2]&0x80)==0 &&  (tagSize[1]&0x80)==0 && (tagSize[0]&0x80)==0)
 					{
 						newSize  = (((UInt64)bytes[3]) |
 							((UInt64)bytes[2] << 8)  |
