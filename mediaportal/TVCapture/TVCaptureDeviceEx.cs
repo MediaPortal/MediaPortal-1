@@ -355,27 +355,36 @@ namespace MediaPortal.TV.Recording
 				registryKeyName=@"SYSTEM\CurrentControlSet\Services\"+serviceName+@"\Enum";
 				Log.Write("        key:{0}", registryKeyName);
 				subkey=hklm.OpenSubKey(registryKeyName,false);
-				Int32 count=(Int32)subkey.GetValue("Count");
-				Log.Write("        Number of cards:{0}", count);
-				for (int i=0; i < count; i++)
+				if (subkey!= null)
 				{
-					string moniker=(string)subkey.GetValue(i.ToString());
-					moniker=moniker.Replace(@"\", "#");
-					moniker=moniker.Replace(@"/", "#");
-					Log.Write("          card#{0}={1}", i,moniker);
-				}
-				for (int i=0; i < count; i++)
-				{
-					string moniker=(string)subkey.GetValue(i.ToString());
-					moniker=moniker.Replace(@"\", "#");
-					moniker=moniker.Replace(@"/", "#");
-					if (monikerName.ToLower().IndexOf(moniker.ToLower()) >=0)
+					Int32 count=(Int32)subkey.GetValue("Count");
+					Log.Write("        Number of cards:{0}", count);
+					for (int i=0; i < count; i++)
 					{
-						Log.Write("        using card:#{0}", i);
-						subkey.Close();
-						hklm.Close();
-						return i;
+						string moniker=(string)subkey.GetValue(i.ToString());
+						moniker=moniker.Replace(@"\", "#");
+						moniker=moniker.Replace(@"/", "#");
+						Log.Write("          card#{0}={1}", i,moniker);
 					}
+					for (int i=0; i < count; i++)
+					{
+						string moniker=(string)subkey.GetValue(i.ToString());
+						moniker=moniker.Replace(@"\", "#");
+						moniker=moniker.Replace(@"/", "#");
+						if (monikerName.ToLower().IndexOf(moniker.ToLower()) >=0)
+						{
+							Log.Write("        using card:#{0}", i);
+							subkey.Close();
+							hklm.Close();
+							return i;
+						}
+					}
+				}
+				else
+				{
+					Log.Write("        using card:0");
+					hklm.Close();
+					return -1;
 				}
 				subkey.Close();
 			}
@@ -409,22 +418,30 @@ namespace MediaPortal.TV.Recording
 				registryKeyName=@"SYSTEM\CurrentControlSet\Services\"+serviceName+@"\Enum";
 				Log.Write("        key:{0}", registryKeyName);
 				subkey=hklm.OpenSubKey(registryKeyName,false);
-				Int32 count=(Int32)subkey.GetValue("Count");
-				Log.Write("        filters available:{0}", count);
-				for (int i=0; i < count;++i)
+				if (subkey!=null)
 				{
-					string moniker=(string)subkey.GetValue(i.ToString());
-					moniker=moniker.Replace(@"\", "#");
-					moniker=moniker.Replace(@"/", "#");
-					Log.Write("          filter#:{0}={1}",i,moniker);
+					Int32 count=(Int32)subkey.GetValue("Count");
+					Log.Write("        filters available:{0}", count);
+					for (int i=0; i < count;++i)
+					{
+						string moniker=(string)subkey.GetValue(i.ToString());
+						moniker=moniker.Replace(@"\", "#");
+						moniker=moniker.Replace(@"/", "#");
+						Log.Write("          filter#:{0}={1}",i,moniker);
+					}
+					string monikerToUse=(string)subkey.GetValue(instance.ToString());
+					monikerToUse=monikerToUse.Replace(@"\", "#");
+					monikerToUse=monikerToUse.Replace(@"/", "#");
+					Log.Write("        using filter #:{0}={1}",instance,monikerToUse);
+					subkey.Close();
+					hklm.Close();
+					return monikerToUse;
 				}
-				string monikerToUse=(string)subkey.GetValue(instance.ToString());
-				monikerToUse=monikerToUse.Replace(@"\", "#");
-				monikerToUse=monikerToUse.Replace(@"/", "#");
-				Log.Write("        using filter #:{0}={1}",instance,monikerToUse);
-				subkey.Close();
-				hklm.Close();
-				return monikerToUse;
+				else
+				{
+					hklm.Close();
+					return String.Empty;
+				}
 			}
 			hklm.Close();
 			return String.Empty;
