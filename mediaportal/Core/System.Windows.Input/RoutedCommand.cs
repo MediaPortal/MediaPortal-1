@@ -86,7 +86,7 @@ namespace System.Windows.Input
 		{
 			// returns the state of the target's IsEnabled property
 			// by sending the QueryEnabled event to the target.
-			throw new NotImplementedException();
+			return target.IsEnabled;
 		}
 
 		public static void SetTarget(DependencyObject d, IInputElement target)

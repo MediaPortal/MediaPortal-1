@@ -23,34 +23,10 @@
 
 #endregion
 
-using System;
-using System.Windows;
-
-namespace System.Windows.Controls
+namespace System.Windows
 {
-	public class Control : FrameworkElement
+	public class EventPrivateKey
 	{
-		#region Constructors
-
-		static Control()
-		{
-			FocusableProperty.OverrideMetadata(typeof(Control), new FrameworkPropertyMetadata(true));
-		}
-
-		public Control()
-		{
-		}
-
-		#endregion Constructors
-
-		#region Methods
-
-
-
-		#endregion Methods
-
-		#region Properties (Dependency)
-
-		#endregion Properties (Dependency)
+		// this class is intentionally empty and is used to provide unique keys for a hashtable 
 	}
 }

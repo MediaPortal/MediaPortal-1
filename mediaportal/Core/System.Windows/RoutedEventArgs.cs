@@ -63,7 +63,7 @@ namespace System.Windows
 			{
 				try
 				{
-					sink.DynamicInvoke(new object[] { _source, this });
+					sink.Method.Invoke(target, new object[] { _source, this });
 
 					if(_isHandled)
 						return;

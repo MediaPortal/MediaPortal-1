@@ -94,6 +94,11 @@ namespace System.Windows.Media.Animation
 
 		protected override void CopyCurrentValueCore(Animatable sourceAnimatable)
 		{
+			// The timeline to copy properties from. 
+			// If this parameter is null, this timeline is constructed with default property values.
+
+//			if(sourceAnimatable == null)
+//				CopyCore(sourceFreezable);
 		}
 
 		public new ClockGroup CreateClock()

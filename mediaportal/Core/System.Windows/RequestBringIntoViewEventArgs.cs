@@ -51,7 +51,7 @@ namespace System.Windows
 	
 		protected override void InvokeEventHandler(Delegate handler, object target)
 		{
-			throw new NotImplementedException();
+			base.InvokeEventHandler(handler, target);
 		}
 
 		public DependencyObject TargetObject

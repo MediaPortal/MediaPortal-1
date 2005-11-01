@@ -23,8 +23,6 @@
 
 #endregion
 
-using System;
-
 namespace System.Windows.Input
 {
 	public interface IFrameworkInputElement : IInputElement

@@ -23,34 +23,22 @@
 
 #endregion
 
-using System;
-using System.Windows;
-
-namespace System.Windows.Controls
+namespace System.Windows
 {
-	public class Control : FrameworkElement
+	internal class RoutedEventHandlerInfoList
 	{
-		#region Constructors
-
-		static Control()
+		public void AddHandler(RoutedEvent routedEvent, Delegate handler, bool handledEventsToo)
 		{
-			FocusableProperty.OverrideMetadata(typeof(Control), new FrameworkPropertyMetadata(true));
+			
 		}
 
-		public Control()
+		public bool Contains(RoutedEvent routedEvent)
 		{
+			return false;
 		}
 
-		#endregion Constructors
-
-		#region Methods
-
-
-
-		#endregion Methods
-
-		#region Properties (Dependency)
-
-		#endregion Properties (Dependency)
+		public void RemoveHandler(RoutedEvent routedEvent, Delegate handler)
+		{
+		}
 	}
 }

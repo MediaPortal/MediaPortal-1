@@ -98,11 +98,15 @@ namespace System.Windows
 
 		public void AddHandler(RoutedEvent routedEvent, Delegate handler, bool handledEventsToo)
 		{
-			throw new NotImplementedException();
+			if(_eventHandlersStore == null)
+				_eventHandlersStore = new EventHandlersStore();
+
+			_eventHandlersStore.AddRoutedEventHandler(routedEvent, handler, handledEventsToo);
 		}
 
 		public void AddToEventRoute(EventRoute route, RoutedEventArgs e)
 		{
+			BuildRouteCore(route, e);
 		}
 
 		protected internal virtual object AdjustEventSource(RoutedEventArgs args)
@@ -133,7 +137,15 @@ namespace System.Windows
 			if(_animatedProperties == null)
 				_animatedProperties = new Hashtable();
 
-			_animatedProperties[property] = clock;
+			ArrayList clocks = _animatedProperties[property] as ArrayList;
+
+			if(clocks == null)
+				_animatedProperties[property] = clocks = new ArrayList();
+
+			if(handoffBehavior == HandoffBehavior.SnapshotAndReplace)
+				clocks.Clear();
+			
+			clocks.Add(clock);
 		}
 	
 		public void Arrange(Rect finalRect)
@@ -158,7 +170,12 @@ namespace System.Windows
 			// is given as NULL, all animations will be removed from the property and the property value 
 			// will revert back to its base value.
 
-			throw new NotImplementedException();
+			if(animation == null)
+				_animatedProperties.Remove(property);
+			else if(animation.BeginTime.HasValue)
+				throw new NotImplementedException();
+			else
+				throw new NotImplementedException();
 		}
 
 		protected virtual bool BuildRouteCore(EventRoute route, RoutedEventArgs args)
@@ -205,7 +222,7 @@ namespace System.Windows
 
 		public object GetAnimationBaseValue(DependencyProperty property)
 		{
-			if(_animatedProperties != null && _animatedProperties.Contains(property))
+			if(_animatedProperties != null && _animatedProperties.ContainsKey(property))
 				return GetValueBase(property);
 
 			return GetValue(property);
@@ -331,6 +348,18 @@ namespace System.Windows
 		{
 		}
 			
+		protected virtual void OnQueryEnabled(object sender, QueryEnabledEventArgs e)
+		{
+			if(_commandBindings == null)
+				return;
+
+			foreach(CommandBinding binding in _commandBindings)
+			{
+				if(binding.Command == e.Command)
+					e.IsEnabled = binding.Command.IsEnabled;
+			}
+		}
+
 		protected virtual void OnRender(DrawingContext dc)
 		{
 			// no default implementation
@@ -343,18 +372,22 @@ namespace System.Windows
 			
 		public void RaiseEvent(RoutedEventArgs e)
 		{
-			RoutedEventHandlerInfo x = new RoutedEventHandlerInfo();
+			if(_eventHandlersStore == null)
+				return;
 
-			x.InvokeHandler(e.RoutedEvent, e);
+			foreach(RoutedEventHandlerInfo handler in _eventHandlersStore.GetRoutedEventHandlers(e.RoutedEvent))
+			{
+				if(e.Handled && handler.InvokeHandledEventsToo == false)
+					continue;
+
+				handler.InvokeHandler(this, e);
+			}
 		}
 
 		public void RemoveHandler(RoutedEvent routedEvent, Delegate handler)
 		{
-			if(routedEvent == null)
-				throw new ArgumentNullException("routedEvent");
-
-			if(handler == null)
-				throw new ArgumentNullException("handler");
+			if(_eventHandlersStore != null)
+				_eventHandlersStore.RemoveRoutedEventHandler(routedEvent, handler);
 		}
 
 		public DrawingContext RenderOpen()
@@ -494,6 +527,7 @@ namespace System.Windows
 		Hashtable					_animatedProperties;
 		CommandBindingCollection	_commandBindings;
 		Size						_desiredSize = Size.Empty;
+		EventHandlersStore			_eventHandlersStore;
 		bool						_isArrangeValid = false;
 		bool						_isMeasureValid = false;
 		Size						_renderSize = Size.Empty;

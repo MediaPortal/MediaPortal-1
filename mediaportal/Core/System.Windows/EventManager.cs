@@ -42,10 +42,11 @@ namespace System.Windows
 		
 		public static RoutedEvent GetRoutedEventFromName(string name, Type ownerType)
 		{
+			// MPSPECIFIC
 			if(ownerType == typeof(MediaPortal.GUI.Library.GUIWindow))
-				return (RoutedEvent)_routedEvents[typeof(System.Windows.Controls.Page) + name];
+				ownerType = typeof(System.Windows.Controls.Page);
 
-			return (RoutedEvent)_routedEvents[ownerType + name];
+			return (RoutedEvent)_registeredRoutedEvents[ownerType + name];
 		}
 
 		public static RoutedEvent[] GetRoutedEvents()
@@ -60,19 +61,19 @@ namespace System.Windows
 
 		public static void RegisterClassHandler(Type classType, RoutedEvent routedEvent, Delegate handler)
 		{
-			RegisterClassHandler(classType, routedEvent, handler, true);
+//			_registeredClassHandlers[classType].AddHandler(routedEvent, handler, true);
 		}
 
 		public static void RegisterClassHandler(Type classType, RoutedEvent routedEvent, Delegate handler, bool handledEventsToo)
 		{
-			_classHandlers[classType.GetHashCode() ^ routedEvent.GetHashCode()] = new RoutedEventHandlerInfo(handler, handledEventsToo);
+//			_registeredClassHandlers[classType].AddHandler(routedEvent, handler, handledEventsToo);
 		}
 
 		public static RoutedEvent RegisterRoutedEvent(string name, RoutingStrategy routingStrategy, Type handlerType, Type ownerType)
 		{
 			RoutedEvent routedEvent = new RoutedEvent(name, routingStrategy, handlerType, ownerType);
 
-			_routedEvents[ownerType + name] = routedEvent;
+			_registeredRoutedEvents[ownerType + name] = routedEvent;
 
 			return routedEvent;
 		}
@@ -81,8 +82,8 @@ namespace System.Windows
 
 		#region Fields
 
-		static Hashtable			_routedEvents = new Hashtable(100);
-		static Hashtable			_classHandlers = new Hashtable(100);
+		static Hashtable						_registeredRoutedEvents = new Hashtable();
+		static RoutedEventHandlerInfoStore		_registeredClassHandlers = new RoutedEventHandlerInfoStore();
 
 		#endregion Fields
 	}

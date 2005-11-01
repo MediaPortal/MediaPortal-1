@@ -23,11 +23,9 @@
 
 #endregion
 
-using System;
-
 namespace System.ComponentModel
 {
-#if DOTNET1
+#if !NET_2_0
 
     public class DoWorkEventArgs : CancelEventArgs
 	{

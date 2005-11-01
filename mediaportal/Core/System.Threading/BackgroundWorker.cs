@@ -28,7 +28,7 @@ using System.ComponentModel;
 
 namespace System.Threading
 {
-#if DOTNET1
+#if !NET_2_0
 
 	public class BackgroundWorker
 	{

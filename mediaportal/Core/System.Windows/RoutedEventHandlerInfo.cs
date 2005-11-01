@@ -32,10 +32,10 @@ namespace System.Windows
 	{
 		#region Constructors
 		
-		internal RoutedEventHandlerInfo(Delegate handler, bool isInvokeHandlerEventsToo)
+		internal RoutedEventHandlerInfo(Delegate handler, bool isInvokeHandledEventsToo)
 		{
 			_handler = handler;
-			_isInvokeHandlerEventsToo = isInvokeHandlerEventsToo;
+			_isInvokeHandledEventsToo = isInvokeHandledEventsToo;
 			_globalIndex = _globalIndexNext++;
 		}
 
@@ -63,7 +63,7 @@ namespace System.Windows
 
 		internal void InvokeHandler(object target, RoutedEventArgs routedEventArgs)
 		{
-			// RoutedEventArgs.InvokeEventHandler
+			_handler.Method.Invoke(target, new object[] { routedEventArgs });
 		}
 	
 		#endregion Methods
@@ -72,12 +72,12 @@ namespace System.Windows
 
 		public static bool operator ==(RoutedEventHandlerInfo handlerInfo1, RoutedEventHandlerInfo handlerInfo2)
 		{
-			return handlerInfo1._handler == handlerInfo2._handler && handlerInfo1._isInvokeHandlerEventsToo == handlerInfo2._isInvokeHandlerEventsToo;
+			return handlerInfo1._handler == handlerInfo2._handler && handlerInfo1._isInvokeHandledEventsToo == handlerInfo2._isInvokeHandledEventsToo;
 		}
 
 		public static bool operator !=(RoutedEventHandlerInfo handlerInfo1, RoutedEventHandlerInfo handlerInfo2)
 		{
-			return handlerInfo1._handler != handlerInfo2._handler && handlerInfo1._isInvokeHandlerEventsToo != handlerInfo2._isInvokeHandlerEventsToo;
+			return handlerInfo1._handler != handlerInfo2._handler && handlerInfo1._isInvokeHandledEventsToo != handlerInfo2._isInvokeHandledEventsToo;
 		}
 
 		#endregion Operators
@@ -91,7 +91,7 @@ namespace System.Windows
 
 		public bool InvokeHandledEventsToo
 		{
-			get { return _isInvokeHandlerEventsToo; }
+			get { return _isInvokeHandledEventsToo; }
 		}
 
 		#endregion Properties
@@ -99,7 +99,7 @@ namespace System.Windows
 		#region Fields
 
 		Delegate					_handler;
-		bool						_isInvokeHandlerEventsToo;
+		bool						_isInvokeHandledEventsToo;
 		readonly int				_globalIndex;
 		static int					_globalIndexNext = 0;
 

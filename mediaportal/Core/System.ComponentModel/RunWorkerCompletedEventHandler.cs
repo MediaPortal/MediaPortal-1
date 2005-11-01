@@ -23,13 +23,11 @@
 
 #endregion
 
-using System;
-
 namespace System.ComponentModel
 {
 	#region Delegates
 
-#if DOTNET1
+#if !NET_2_0
 
 	public delegate void RunWorkerCompletedEventHandler(object sender, RunWorkerCompletedEventArgs e);
 

@@ -24,7 +24,6 @@
 #endregion
 
 using System;
-
 using MediaPortal.Drawing;
 
 namespace System.Windows

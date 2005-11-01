@@ -23,8 +23,6 @@
 
 #endregion
 
-using System;
-
 namespace System.Windows.Input
 {
 	// not implemented - declared for other classes' compilability

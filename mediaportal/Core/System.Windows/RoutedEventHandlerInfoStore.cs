@@ -24,33 +24,41 @@
 #endregion
 
 using System;
-using System.Windows;
+using System.Collections;
 
-namespace System.Windows.Controls
+namespace System.Windows
 {
-	public class Control : FrameworkElement
+	internal class RoutedEventHandlerInfoStore
 	{
-		#region Constructors
-
-		static Control()
+		public void AddHandler(RoutedEvent routedEvent, Delegate handler, bool handledEventsToo)
 		{
-			FocusableProperty.OverrideMetadata(typeof(Control), new FrameworkPropertyMetadata(true));
+			RoutedEventHandlerInfoList list = _handlers[routedEvent] as RoutedEventHandlerInfoList;
+
+			if(list == null)
+				_handlers[routedEvent] = list = new RoutedEventHandlerInfoList();
+
+			list.AddHandler(routedEvent, handler, handledEventsToo);
 		}
 
-		public Control()
+		public bool Contains(RoutedEvent routedEvent)
 		{
+			return _handlers.ContainsKey(routedEvent);
 		}
 
-		#endregion Constructors
+		public void RemoveHandler(RoutedEvent routedEvent, Delegate handler)
+		{
 
-		#region Methods
+		}
 
+		public RoutedEventHandlerInfoList this[RoutedEvent routedEvent]
+		{
+			get { return _handlers[routedEvent] as RoutedEventHandlerInfoList; }
+		}
 
+		#region Fields
 
-		#endregion Methods
+		Hashtable					_handlers = new Hashtable();
 
-		#region Properties (Dependency)
-
-		#endregion Properties (Dependency)
+		#endregion Fields
 	}
 }

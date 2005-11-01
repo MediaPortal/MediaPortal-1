@@ -54,7 +54,7 @@ namespace System.Windows
 
 		public void ClearValue(DependencyPropertyKey key)
 		{
-			throw new NotImplementedException();
+			_properties.Remove(key.DependencyProperty);
 		}
 
 		public LocalValueEnumerator GetLocalValueEnumerator()
@@ -64,15 +64,7 @@ namespace System.Windows
 
 		public object GetValue(DependencyProperty property)
 		{
-			if(property.DefaultMetadata != null && property.DefaultMetadata.GetValueOverride != null)
-				return property.DefaultMetadata.GetValueOverride(this);
-
-			object value = _properties[property];
-
-			if(value == null && property.DefaultMetadata != null)
-				value = property.DefaultMetadata.DefaultValue;
-
-			return value;
+			return GetValueBase(property);
 		}
 
 		public object GetValueBase(DependencyProperty property)

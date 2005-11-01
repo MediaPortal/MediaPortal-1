@@ -110,7 +110,7 @@
                     ConfigurationOverrideFile = ""
                     DefineConstants = "TRACE;UseCaptureCardDefinitions;DOTNET1"
                     DocumentationFile = ""
-                    DebugSymbols = "true"
+                    DebugSymbols = "false"
                     FileAlignment = "4096"
                     IncrementalBuild = "false"
                     NoStdLib = "false"
@@ -1954,7 +1954,17 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows\EventHandlersStore.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows\EventManager.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows\EventPrivateKey.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -2120,6 +2130,16 @@
                 />
                 <File
                     RelPath = "System.Windows\RoutedEventHandlerInfo.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows\RoutedEventHandlerInfoList.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows\RoutedEventHandlerInfoStore.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

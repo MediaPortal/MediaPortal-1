@@ -120,6 +120,11 @@ namespace System.Windows
 			_isSealed = true;
 		}
 
+		protected internal void SetReadOnly()
+		{
+			_isReadOnly = true;
+		}
+
 		#endregion Methods
 
 		#region Properties

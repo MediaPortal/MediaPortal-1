@@ -200,8 +200,8 @@ namespace System.Windows.Media.Animation
 		#region Fields
 
 		double						_accelerationRatio = 0;
-		NullableTimeSpan			_beginTime;
-		NullableTimeSpan			_cutoffTime;
+		NullableTimeSpan			_beginTime = NullableTimeSpan.Null;
+		NullableTimeSpan			_cutoffTime = NullableTimeSpan.Null;
 		double						_decelerationRatio = 0;
 		Duration					_duration = new Duration();
 		FillBehavior				_fillBehavior;
