@@ -82,12 +82,18 @@ namespace System.Windows
 			if(type == null)
 				throw new ArgumentException(string.Format("The type or namespace '{0}' could not be found", type));
 
-			PropertyInfo propertyInfo = type.GetProperty(property, BindingFlags.Static | BindingFlags.Public);
+			MemberInfo memberInfo = type.GetProperty(property, BindingFlags.Static | BindingFlags.Public);
 
-			if(propertyInfo  == null)
+			if(memberInfo == null)
+				memberInfo = type.GetField(property, BindingFlags.Static | BindingFlags.Public);
+
+			if(memberInfo == null)
 				throw new ArgumentException(string.Format("'{0}' does not contain a definition for '{1}'", type, property));
 
-			return propertyInfo;
+			if(memberInfo is PropertyInfo)
+				return ((PropertyInfo)memberInfo).GetValue(null, null);
+
+			return ((FieldInfo)memberInfo).GetValue(null);
 		}
 
 		#endregion Methods

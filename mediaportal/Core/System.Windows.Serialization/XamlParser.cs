@@ -113,7 +113,7 @@ namespace System.Windows.Serialization
 			object target = WalkStackForInstanceOf(t);
 
 			if(target == null)
-				throw new InvalidOperationException(string.Format("No instance of '{0}' is defined in this scope", t));
+				throw new XamlParserException(string.Format("No instance of '{0}' is defined in this scope", type), _filename, _reader);
 
 			PropertyInfo propertyInfo = t.GetProperty(property);
 
@@ -190,8 +190,6 @@ namespace System.Windows.Serialization
 		private object Read(string fragment, XmlNodeType xmlNodeType, object target)
 		{
 			_reader = new XmlTextReader(fragment, xmlNodeType, null);
-//			_reader.WhitespaceHandling = WhitespaceHandling.None;
-
 			_elementStack.Push(target);
 
 			return Read();
@@ -278,13 +276,9 @@ namespace System.Windows.Serialization
 				if(string.Compare(name, "Key") == 0 || name.EndsWith(":Key"))
 				{
 					if(value.StartsWith("{"))
-					{
 						MediaPortal.Application.Current.Resources.Add(ReadExtension(value), _target);
-					}
 					else
-					{
 						MediaPortal.Application.Current.Resources.Add(value, _target);
-					}
 
 					continue;
 				}
@@ -304,8 +298,10 @@ namespace System.Windows.Serialization
 				else
 				{
 					t = target.GetType();
+					memberInfo = t.GetProperty(name, BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
 
-					memberInfo = t.GetProperty(name);
+					if(memberInfo == null)
+						memberInfo = t.GetEvent(name, BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
 				}
 
 				if(memberInfo == null)
@@ -333,9 +329,9 @@ namespace System.Windows.Serialization
 
 					try
 					{
-						object convertedValue = typeConverter.ConvertFromString(_reader.Value);
+						object convertedFromString = typeConverter.ConvertFromString(_reader.Value);
 
-						methodInfo.Invoke(null, new object[] { target, convertedValue });
+						methodInfo.Invoke(null, new object[] { target, convertedFromString });
 					}
 					catch(FormatException)
 					{
@@ -344,7 +340,7 @@ namespace System.Windows.Serialization
 
 					continue;
 				}
-				else
+				else if(memberInfo is PropertyInfo)
 				{
 					PropertyInfo propertyInfo = (PropertyInfo)memberInfo;
 
@@ -358,15 +354,20 @@ namespace System.Windows.Serialization
 
 					try
 					{
-						object convertedValue = typeConverter.ConvertFromString(_reader.Value);
+						object convertedFromString = typeConverter.ConvertFromString(_reader.Value);
 
 						if(memberInfo is PropertyInfo)
-							propertyInfo.SetValue(target, convertedValue, null);
+							propertyInfo.SetValue(target, convertedFromString, null);
 					}
 					catch(FormatException)
 					{
 						throw new XamlParserException(string.Format("Cannot convert '{0}' to type '{1}'", _reader.Value, propertyInfo.PropertyType), _filename, _reader);
 					}
+				}
+				else if(memberInfo is EventInfo)
+				{
+					// TODO: Hook up to event
+					MediaPortal.GUI.Library.Log.Write("Event: {0}", memberInfo.Name);
 				}
 			}
 		}
@@ -508,7 +509,7 @@ namespace System.Windows.Serialization
 		StringBuilder				_elementText = new StringBuilder();
 		Stack						_elementStack = new Stack();
 		string						_filename = string.Empty;
-		static string[]				_namespaces = new string[] { "MediaPortal", "System.Windows.Controls", "MediaPortal.Drawing", "MediaPortal.Drawing.Shapes", "MediaPortal.Drawing.Transforms", "System.Windows.Media.Animation", "System.Windows", "System.Windows.Serialization", "MediaPortal.Drawing.Paths", "MediaPortal.GUI.Library" };
+		static string[]				_namespaces = new string[] { "MediaPortal", "System.Windows.Controls", "MediaPortal.Drawing", "MediaPortal.Drawing.Shapes", "MediaPortal.Drawing.Transforms", "System.Windows.Media.Animation", "System.Windows", "System.Windows.Serialization", "MediaPortal.Drawing.Paths", "MediaPortal.GUI.Library", "System.Windows.Input" };
 		object						_target;
 		XmlTextReader				_reader;
 

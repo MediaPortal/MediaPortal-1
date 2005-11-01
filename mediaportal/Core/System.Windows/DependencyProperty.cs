@@ -38,13 +38,13 @@ namespace System.Windows
 		{
 		}
 
-		private DependencyProperty(DependencyProperty dp, PropertyMetadata defaultMetadata)
+		private DependencyProperty(DependencyProperty property, PropertyMetadata defaultMetadata)
 		{
 			_defaultMetadata = defaultMetadata;
-			_name = dp._name;
-			_ownerType = dp._ownerType;
-			_propertyType = dp._propertyType;
-			_validateValueCallback = dp._validateValueCallback;
+			_name = property._name;
+			_ownerType = property._ownerType;
+			_propertyType = property._propertyType;
+			_validateValueCallback = property._validateValueCallback;
 
 			_properties[_name + _ownerType] = this;
 		}
@@ -99,12 +99,12 @@ namespace System.Windows
 
 		public PropertyMetadata GetMetadata(Type ownerType)
 		{
-			DependencyProperty dp = (DependencyProperty)_properties[_name + ownerType];
+			DependencyProperty property = (DependencyProperty)_properties[_name + ownerType];
 			
-			if(dp == null)
+			if(property == null)
 				return null;
 			
-			return dp._defaultMetadata;
+			return property._defaultMetadata;
 		}
 
 		public bool IsValidType(object value)
@@ -130,19 +130,19 @@ namespace System.Windows
 
 		public void OverrideMetadata(Type ownerType, PropertyMetadata defaultMetadata, DependencyPropertyKey key)
 		{
-			DependencyProperty dp = (DependencyProperty)_properties[_name + ownerType];
+			DependencyProperty property = (DependencyProperty)_properties[_name + ownerType];
 			
-			if(dp == null)
+			if(property == null)
 				return;
 
-			dp._defaultMetadata = defaultMetadata;
+			property._defaultMetadata = defaultMetadata;
 
 			// PropertyMetadata.Merge
 		}
 		
 		public static DependencyProperty Register(string name, Type propertyType, Type ownerType)
 		{
-			return DependencyProperty.Register(name, propertyType, ownerType, null, null);
+			return DependencyProperty.Register(name, propertyType, ownerType, null);
 		}
 
 		public static DependencyProperty Register(string name, Type propertyType, Type ownerType, PropertyMetadata defaultMetadata)
@@ -157,7 +157,7 @@ namespace System.Windows
 
 		public static DependencyProperty RegisterAttached(string name, Type propertyType, Type ownerType)
 		{
-			return DependencyProperty.RegisterAttached(name, propertyType, ownerType, null, null);
+			return DependencyProperty.RegisterAttached(name, propertyType, ownerType, null);
 		}
 
 		public static DependencyProperty RegisterAttached(string name, Type propertyType, Type ownerType, PropertyMetadata defaultMetadata)

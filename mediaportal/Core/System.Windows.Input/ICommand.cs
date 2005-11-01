@@ -24,9 +24,11 @@
 #endregion
 
 using System;
+using System.ComponentModel;
 
 namespace System.Windows.Input
 {
+	[TypeConverter(typeof(CommandConverter))]
 	public interface ICommand
 	{
 		#region Methods

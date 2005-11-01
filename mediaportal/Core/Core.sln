@@ -7,6 +7,7 @@ Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
 		Release = Release
+		Release (Standalone) = Release (Standalone)
 		UseCaptureCardDefinitions = UseCaptureCardDefinitions
 		UseCaptureDefintionsRelease = UseCaptureDefintionsRelease
 	EndGlobalSection
@@ -15,6 +16,8 @@ Global
 		{02FFFC1F-2555-4B99-8B01-3432D0673855}.Debug.Build.0 = Debug|.NET
 		{02FFFC1F-2555-4B99-8B01-3432D0673855}.Release.ActiveCfg = Release|.NET
 		{02FFFC1F-2555-4B99-8B01-3432D0673855}.Release.Build.0 = Release|.NET
+		{02FFFC1F-2555-4B99-8B01-3432D0673855}.Release (Standalone).ActiveCfg = Release (Standalone)|.NET
+		{02FFFC1F-2555-4B99-8B01-3432D0673855}.Release (Standalone).Build.0 = Release (Standalone)|.NET
 		{02FFFC1F-2555-4B99-8B01-3432D0673855}.UseCaptureCardDefinitions.ActiveCfg = UseCaptureCardDefinitions|.NET
 		{02FFFC1F-2555-4B99-8B01-3432D0673855}.UseCaptureCardDefinitions.Build.0 = UseCaptureCardDefinitions|.NET
 		{02FFFC1F-2555-4B99-8B01-3432D0673855}.UseCaptureDefintionsRelease.ActiveCfg = UseCaptureDefintionsRelease|.NET
