@@ -296,7 +296,7 @@ namespace MediaPortal.Configuration.Sections
 			cards.LoadCaptureCards();
 			foreach (TVCaptureDevice dev in cards.captureCards)
 			{
-				if (dev.Network==NetworkType.DVBT)
+				if (dev.Network==NetworkType.DVBT || dev.VideoDevice=="B2C2 MPEG-2 Source")
 				{
 					captureCard = dev;
 					captureCard.CreateGraph();

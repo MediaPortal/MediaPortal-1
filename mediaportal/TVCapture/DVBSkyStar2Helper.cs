@@ -339,7 +339,7 @@ namespace MediaPortal.TV.Recording
 			[PreserveSig]
 			int GetTunerCapabilities (
 				IntPtr tunerCaps, 
-				int count
+				ref int count
 				) ;
 
 			// Terrestrial (ATSC)

@@ -126,6 +126,10 @@ namespace MediaPortal.Configuration
 				Log.Write("found {0} tv cards",sect.captureCards.Count);
 				foreach (TVCaptureDevice dev in sect.captureCards)
 				{
+					if (dev.VideoDevice=="B2C2 MPEG-2 Source")
+					{
+						dev.CreateGraph();
+					}
 					if (dev.Network==NetworkType.Analog) 
 					{
 						Log.Write("Analog TV Card:{0}",dev.CommercialName);
@@ -145,6 +149,10 @@ namespace MediaPortal.Configuration
 					{
 						Log.Write("Digital DVB-S Card:{0}",dev.CommercialName);
 						DVBSCard=true;
+					}
+					if (dev.VideoDevice=="B2C2 MPEG-2 Source")
+					{
+						dev.DeleteGraph();
 					}
 				}
 

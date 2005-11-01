@@ -2824,6 +2824,20 @@ namespace MediaPortal.TV.Database
 					string strProvider=providerName;
 					DatabaseUtility.RemoveInvalidChars(ref strChannel);
 					DatabaseUtility.RemoveInvalidChars(ref strProvider);
+					string al=audioLanguage;
+					string al1=audioLanguage1;
+					string al2=audioLanguage2;
+					string al3=audioLanguage3;
+					al=(al==null?"":al.Trim());
+					al1=(al1==null?"":al1.Trim());
+					al2=(al2==null?"":al2.Trim());
+					al3=(al3==null?"":al3.Trim());
+					strChannel=(strChannel==null?"":strChannel.Trim());
+					strChannel=(strChannel==null?"":strChannel.Trim());
+					DatabaseUtility.RemoveInvalidChars(ref al);
+					DatabaseUtility.RemoveInvalidChars(ref al1);
+					DatabaseUtility.RemoveInvalidChars(ref al2);
+					DatabaseUtility.RemoveInvalidChars(ref al3);
 
 					SQLiteResultSet results;
 					strSQL=String.Format( "select * from channel ");
@@ -2838,7 +2852,7 @@ namespace MediaPortal.TV.Database
 						//ac3Pid,audio1Pid,audio2Pid,audio3Pid,sAudioLang,sAudioLang1,sAudioLang2,sAudioLang3
 						strSQL=String.Format("insert into tblDVBTMapping (idChannel, strChannel ,strProvider, iLCN , frequency , bandwidth , ONID , TSID , SID , audioPid,videoPid,teletextPid,pmtPid,ac3Pid,audio1Pid,audio2Pid,audio3Pid,sAudioLang,sAudioLang1,sAudioLang2,sAudioLang3,HasEITPresentFollow , HasEITSchedule ,Visible,pcrPid) Values( NULL, '{0}', '{1}', {2},'{3}',{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14},{15},'{16}','{17}','{18}','{19}',{20},{21},1,{22})",
 									strChannel.Trim(),strProvider.Trim(),idChannel,frequency,bandWidth,ONID,TSID,SID,audioPid,videoPid,teletextPid,pmtPid,
-									ac3Pid,audio1,audio2,audio3,audioLanguage.Trim(),audioLanguage1.Trim(),audioLanguage2.Trim(),audioLanguage3.Trim(),
+									ac3Pid,audio1,audio2,audio3,al,al1,al2,al3,
 								(HasEITPresentFollow==true?1:0) , (HasEITSchedule==true?1:0) , pcrPid
 						);
 						//Log.WriteFile(Log.LogType.Log,true,"sql:{0}", strSQL);
@@ -2850,7 +2864,7 @@ namespace MediaPortal.TV.Database
 					{
 						strSQL=String.Format( "update tblDVBTMapping set frequency='{0}', ONID={1}, TSID={2}, SID={3}, strChannel='{4}',strProvider='{5}',audioPid={6},videoPid={7},teletextPid={8},pmtPid={9}, bandwidth={10},ac3Pid={11},audio1Pid={12},audio2Pid={13},audio3Pid={14},sAudioLang='{15}',sAudioLang1='{16}',sAudioLang2='{17}',sAudioLang3='{18}',HasEITPresentFollow={19} , HasEITSchedule={20}, pcrPid={21}  where iLCN like '{22}'", 
 							frequency,ONID,TSID,SID,strChannel.Trim(), strProvider.Trim(),audioPid,videoPid,teletextPid, pmtPid,bandWidth,
-							ac3Pid,audio1,audio2,audio3,audioLanguage.Trim(),audioLanguage1.Trim(),audioLanguage2.Trim(),audioLanguage3.Trim(),
+							ac3Pid,audio1,audio2,audio3,al,al1,al2,al3,
 							(HasEITPresentFollow==true?1:0) , (HasEITSchedule==true?1:0),pcrPid 
 							,idChannel);
 						//	Log.WriteFile(Log.LogType.Log,true,"sql:{0}", strSQL);
@@ -2880,6 +2894,20 @@ namespace MediaPortal.TV.Database
 					string strProvider=providerName;
 					DatabaseUtility.RemoveInvalidChars(ref strChannel);
 					DatabaseUtility.RemoveInvalidChars(ref strProvider);
+					string al=audioLanguage;
+					string al1=audioLanguage1;
+					string al2=audioLanguage2;
+					string al3=audioLanguage3;
+					al=(al==null?"":al.Trim());
+					al1=(al1==null?"":al1.Trim());
+					al2=(al2==null?"":al2.Trim());
+					al3=(al3==null?"":al3.Trim());
+					strChannel=(strChannel==null?"":strChannel.Trim());
+					strChannel=(strChannel==null?"":strChannel.Trim());
+					DatabaseUtility.RemoveInvalidChars(ref al);
+					DatabaseUtility.RemoveInvalidChars(ref al1);
+					DatabaseUtility.RemoveInvalidChars(ref al2);
+					DatabaseUtility.RemoveInvalidChars(ref al3);
 
 					SQLiteResultSet results;
 					strSQL=String.Format( "select * from channel ");
@@ -2893,7 +2921,7 @@ namespace MediaPortal.TV.Database
 						// doesnt exists, add it
 						strSQL=String.Format("insert into tblDVBCMapping (idChannel, strChannel,strProvider,iLCN,frequency,symbolrate,innerFec,modulation,ONID,TSID,SID,audioPid,videoPid,teletextPid,pmtPid,ac3Pid,audio1Pid,audio2Pid,audio3Pid,sAudioLang,sAudioLang1,sAudioLang2,sAudioLang3, HasEITPresentFollow , HasEITSchedule ,Visible,pcrPid) Values( NULL, '{0}', '{1}', {2},'{3}',{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14},{15},{16},{17},'{18}','{19}','{20}','{21}',{22},{23},1,{24})"
 																	,strChannel.Trim(),strProvider.Trim(),idChannel,frequency,symbolrate,innerFec,modulation,ONID,TSID,SID,audioPid,videoPid,teletextPid, pmtPid,
-																	ac3Pid,audio1,audio2,audio3,audioLanguage.Trim(),audioLanguage1.Trim(),audioLanguage2.Trim(),audioLanguage3.Trim(),
+																	ac3Pid,audio1,audio2,audio3,al,al1,al2,al3,
 																	(HasEITPresentFollow==true?1:0) , (HasEITSchedule==true?1:0),pcrPid );
 						//Log.WriteFile(Log.LogType.Log,true,"sql:{0}", strSQL);
 						m_db.Execute(strSQL);
@@ -2904,7 +2932,7 @@ namespace MediaPortal.TV.Database
 					{
 						strSQL=String.Format( "update tblDVBCMapping set frequency='{0}', symbolrate={1}, innerFec={2}, modulation={3}, ONID={4}, TSID={5}, SID={6}, strChannel='{7}', strProvider='{8}',audioPid={9}, videoPid={10}, teletextPid={11}, pmtPid={12},ac3Pid={13},audio1Pid={14},audio2Pid={15},audio3Pid={16},sAudioLang='{17}',sAudioLang1='{18}',sAudioLang2='{19}',sAudioLang3='{20}',HasEITPresentFollow={21} , HasEITSchedule={22},pcrPid={23}  where iLCN like '{24}'", 
 																	frequency,symbolrate,innerFec,modulation,ONID,TSID,SID,strChannel.Trim(), strProvider.Trim(),audioPid,videoPid,teletextPid,pmtPid,
-																	ac3Pid,audio1,audio2,audio3,audioLanguage,audioLanguage1.Trim(),audioLanguage2.Trim(),audioLanguage3.Trim(),
+																	ac3Pid,audio1,audio2,audio3,al,al1,al2,al3,
 																	(HasEITPresentFollow==true?1:0) , (HasEITSchedule==true?1:0),pcrPid,
 																	idChannel);
 						//Log.WriteFile(Log.LogType.Log,true,"sql:{0}", strSQL);
@@ -2935,6 +2963,20 @@ namespace MediaPortal.TV.Database
 					string strProvider=providerName;
 					DatabaseUtility.RemoveInvalidChars(ref strChannel);
 					DatabaseUtility.RemoveInvalidChars(ref strProvider);
+					string al=audioLanguage;
+					string al1=audioLanguage1;
+					string al2=audioLanguage2;
+					string al3=audioLanguage3;
+					al=(al==null?"":al.Trim());
+					al1=(al1==null?"":al1.Trim());
+					al2=(al2==null?"":al2.Trim());
+					al3=(al3==null?"":al3.Trim());
+					strChannel=(strChannel==null?"":strChannel.Trim());
+					strChannel=(strChannel==null?"":strChannel.Trim());
+					DatabaseUtility.RemoveInvalidChars(ref al);
+					DatabaseUtility.RemoveInvalidChars(ref al1);
+					DatabaseUtility.RemoveInvalidChars(ref al2);
+					DatabaseUtility.RemoveInvalidChars(ref al3);
 
 					SQLiteResultSet results;
 					strSQL=String.Format( "select * from channel ");
@@ -2948,7 +2990,7 @@ namespace MediaPortal.TV.Database
 						// doesnt exists, add it
 						strSQL=String.Format("insert into tblATSCMapping (idChannel, strChannel,strProvider,iLCN,frequency,symbolrate,innerFec,modulation,ONID,TSID,SID,audioPid,videoPid,teletextPid,pmtPid,ac3Pid,audio1Pid,audio2Pid,audio3Pid,sAudioLang,sAudioLang1,sAudioLang2,sAudioLang3,channelNumber,minorChannel,majorChannel, HasEITPresentFollow , HasEITSchedule ,Visible,pcrPid) Values( NULL, '{0}', '{1}', {2},'{3}',{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14},{15},{16},{17},'{18}','{19}','{20}','{21}',{22},{23},{24},{25},{26},1,{27})"
 							,strChannel.Trim(),strProvider.Trim(),idChannel,frequency,symbolrate,innerFec,modulation,ONID,TSID,SID,audioPid,videoPid,teletextPid, pmtPid,
-							ac3Pid,audio1,audio2,audio3,audioLanguage.Trim(),audioLanguage1.Trim(),audioLanguage2.Trim(),audioLanguage3.Trim(), physicalChannel,minorChannel,majorChannel,
+							ac3Pid,audio1,audio2,audio3,al,al1,al2,al3, physicalChannel,minorChannel,majorChannel,
 							(HasEITPresentFollow==true?1:0) , (HasEITSchedule==true?1:0),pcrPid);
 						//Log.WriteFile(Log.LogType.Log,true,"sql:{0}", strSQL);
 						m_db.Execute(strSQL);
@@ -2959,7 +3001,7 @@ namespace MediaPortal.TV.Database
 					{
 						strSQL=String.Format( "update tblATSCMapping set frequency='{0}', symbolrate={1}, innerFec={2}, modulation={3}, ONID={4}, TSID={5}, SID={6}, strChannel='{7}', strProvider='{8}',audioPid={9}, videoPid={10}, teletextPid={11}, pmtPid={12},ac3Pid={13},audio1Pid={14},audio2Pid={15},audio3Pid={16},sAudioLang='{17}',sAudioLang1='{18}',sAudioLang2='{19}',sAudioLang3='{20}', channelNumber={21}, majorChannel={22}, minorChannel={23},HasEITPresentFollow={24} , HasEITSchedule={25},pcrPid={26}  where iLCN like '{27}'", 
 							frequency,symbolrate,innerFec,modulation,ONID,TSID,SID,strChannel.Trim(), strProvider.Trim(),audioPid,videoPid,teletextPid,pmtPid,
-							ac3Pid,audio1,audio2,audio3,audioLanguage,audioLanguage1.Trim(),audioLanguage2.Trim(),audioLanguage3.Trim(), physicalChannel,minorChannel,majorChannel,
+							ac3Pid,audio1,audio2,audio3,al,al1,al2,al3, physicalChannel,minorChannel,majorChannel,
 							(HasEITPresentFollow==true?1:0) , (HasEITSchedule==true?1:0),pcrPid,
 							idChannel);
 						//Log.WriteFile(Log.LogType.Log,true,"sql:{0}", strSQL);
@@ -2978,6 +3020,289 @@ namespace MediaPortal.TV.Database
 			}
 		}
 
+		static public bool GetDVBTChannel(int idChannel,ref DVBChannel retChannel)
+		{
+			int bandwidth=-1;
+			int frequency=-1,ONID=-1,TSID=-1,SID=-1;
+			int audioPid=-1, videoPid=-1, teletextPid=-1, pmtPid=-1, pcrPid=-1;
+			string strProvider;
+			int audio1,audio2,audio3,ac3Pid;
+			string audioLanguage,audioLanguage1,audioLanguage2,audioLanguage3;
+			bool HasEITPresentFollow,HasEITSchedule;
+
+			HasEITPresentFollow=HasEITSchedule=false;
+			audio1=audio2=audio3=ac3Pid=-1;
+			audioLanguage=audioLanguage1=audioLanguage2=audioLanguage3="";
+			bandwidth=-1;
+			audioPid=videoPid=teletextPid=0;
+			strProvider="";
+			frequency=-1;
+			pmtPid=-1;
+			ONID=-1;
+			TSID=-1;
+			SID=-1;
+			pcrPid=-1;
+			if (m_db == null) return false;
+			lock (typeof(TVDatabase))
+			{
+				try
+				{
+					if (null == m_db) return false;
+					string strSQL;
+					strSQL = String.Format("select * from tblDVBTMapping where iLCN={0}",idChannel);
+					SQLiteResultSet results;
+					results = m_db.Execute(strSQL);
+					if (results.Rows.Count != 1) return false;
+					frequency=DatabaseUtility.GetAsInt(results,0,"frequency");
+					ONID=DatabaseUtility.GetAsInt(results,0,"ONID");
+					TSID=DatabaseUtility.GetAsInt(results,0,"TSID");
+					SID=DatabaseUtility.GetAsInt(results,0,"SID");
+					strProvider=DatabaseUtility.Get(results,0,"strProvider");
+					audioPid=DatabaseUtility.GetAsInt(results,0,"audioPid");
+					videoPid=DatabaseUtility.GetAsInt(results,0,"videoPid");
+					teletextPid=DatabaseUtility.GetAsInt(results,0,"teletextPid");
+					pmtPid=DatabaseUtility.GetAsInt(results,0,"pmtPid");
+					bandwidth=DatabaseUtility.GetAsInt(results,0,"bandwidth");
+					audio1=DatabaseUtility.GetAsInt(results,0,"audio1Pid");
+					audio2=DatabaseUtility.GetAsInt(results,0,"audio2Pid");
+					audio3=DatabaseUtility.GetAsInt(results,0,"audio3Pid");
+					ac3Pid=DatabaseUtility.GetAsInt(results,0,"ac3Pid");
+					audioLanguage=DatabaseUtility.Get(results,0,"sAudioLang");
+					audioLanguage1=DatabaseUtility.Get(results,0,"sAudioLang1");
+					audioLanguage2=DatabaseUtility.Get(results,0,"sAudioLang2");
+					audioLanguage3=DatabaseUtility.Get(results,0,"sAudioLang3");
+					HasEITPresentFollow=DatabaseUtility.GetAsInt(results,0,"HasEITPresentFollow")!=0;
+					HasEITSchedule=DatabaseUtility.GetAsInt(results,0,"HasEITSchedule")!=0;
+					pcrPid=DatabaseUtility.GetAsInt(results,0,"pcrPid");
+					
+					retChannel.Bandwidth=bandwidth;
+					retChannel.Frequency=frequency;
+					retChannel.NetworkID=ONID;
+					retChannel.TransportStreamID=TSID;
+					retChannel.ProgramNumber=SID;
+					retChannel.AudioPid=audioPid;
+					retChannel.VideoPid=videoPid;
+					retChannel.TeletextPid=teletextPid;
+					retChannel.SubtitlePid=0;
+					retChannel.PMTPid=pmtPid;
+					retChannel.AudioLanguage=audioLanguage;
+					retChannel.AudioLanguage1=audioLanguage1;
+					retChannel.AudioLanguage2=audioLanguage2;
+					retChannel.AudioLanguage3=audioLanguage3;
+					retChannel.AC3Pid=ac3Pid;
+					retChannel.PCRPid=pcrPid;
+					retChannel.Audio1=audio1;
+					retChannel.Audio2=audio2;
+					retChannel.Audio3=audio3;
+					retChannel.HasEITPresentFollow=HasEITPresentFollow;
+					retChannel.HasEITSchedule=HasEITSchedule;
+					
+					return true;
+				}
+				catch(Exception ex)
+				{
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
+				}
+				return false;
+			}
+		}
+		
+		static public bool GetDVBCChannel(int idChannel,ref DVBChannel retChannel)
+		{
+			int frequency=-1,ONID=-1,TSID=-1,SID=-1,symbolrate=-1,innerFec=-1,modulation=-1;
+			int audioPid=-1, videoPid=-1, teletextPid=-1, pmtPid=-1, pcrPid=-1;
+			string strProvider;
+			int audio1,audio2,audio3,ac3Pid;
+			string audioLanguage,audioLanguage1,audioLanguage2,audioLanguage3;
+			bool HasEITPresentFollow,HasEITSchedule;
+
+			HasEITPresentFollow=HasEITSchedule=false;
+			audio1=audio2=audio3=ac3Pid=-1;
+			audioLanguage=audioLanguage1=audioLanguage2=audioLanguage3="";
+			pmtPid=-1;
+			audioPid=videoPid=teletextPid=0;
+			strProvider="";
+			frequency=-1;
+			symbolrate=-1;
+			innerFec=-1;
+			modulation=-1;
+			ONID=-1;
+			TSID=-1;
+			SID=-1;
+			pcrPid=-1;
+			if (m_db == null) return false;
+			//Log.WriteFile(Log.LogType.Log,true,"GetTuneRequest for iLCN:{0}", iLCN);
+			lock (typeof(TVDatabase))
+			{
+				try
+				{
+					if (null == m_db) return false;
+					string strSQL;
+					strSQL = String.Format("select * from tblDVBCMapping where iLCN={0}",idChannel);
+					SQLiteResultSet results;
+					results = m_db.Execute(strSQL);
+					if (results.Rows.Count != 1) return false;
+					frequency=DatabaseUtility.GetAsInt(results,0,"frequency");
+					symbolrate=DatabaseUtility.GetAsInt(results,0,"symbolrate");
+					innerFec=DatabaseUtility.GetAsInt(results,0,"innerFec");
+					modulation=DatabaseUtility.GetAsInt(results,0,"modulation");
+					ONID=DatabaseUtility.GetAsInt(results,0,"ONID");
+					TSID=DatabaseUtility.GetAsInt(results,0,"TSID");
+					SID=DatabaseUtility.GetAsInt(results,0,"SID");
+					strProvider=DatabaseUtility.Get(results,0,"strProvider");
+					audioPid=DatabaseUtility.GetAsInt(results,0,"audioPid");
+					videoPid=DatabaseUtility.GetAsInt(results,0,"videoPid");
+					teletextPid=DatabaseUtility.GetAsInt(results,0,"teletextPid");
+					pmtPid=DatabaseUtility.GetAsInt(results,0,"pmtPid");
+					audio1=DatabaseUtility.GetAsInt(results,0,"audio1Pid");
+					audio2=DatabaseUtility.GetAsInt(results,0,"audio2Pid");
+					audio3=DatabaseUtility.GetAsInt(results,0,"audio3Pid");
+					ac3Pid=DatabaseUtility.GetAsInt(results,0,"ac3Pid");
+					audioLanguage=DatabaseUtility.Get(results,0,"sAudioLang");
+					audioLanguage1=DatabaseUtility.Get(results,0,"sAudioLang1");
+					audioLanguage2=DatabaseUtility.Get(results,0,"sAudioLang2");
+					audioLanguage3=DatabaseUtility.Get(results,0,"sAudioLang3");
+					
+					HasEITPresentFollow=DatabaseUtility.GetAsInt(results,0,"HasEITPresentFollow")!=0;
+					HasEITSchedule=DatabaseUtility.GetAsInt(results,0,"HasEITSchedule")!=0;
+					pcrPid=DatabaseUtility.GetAsInt(results,0,"pcrPid");
+
+					retChannel.Frequency=frequency;
+					retChannel.Symbolrate=symbolrate;
+					retChannel.FEC=innerFec;
+					retChannel.Modulation=modulation;
+					retChannel.NetworkID=ONID;
+					retChannel.TransportStreamID=TSID;
+					retChannel.ProgramNumber=SID;
+					retChannel.AudioPid=audioPid;
+					retChannel.VideoPid=videoPid;
+					retChannel.TeletextPid=teletextPid;
+					retChannel.SubtitlePid=0;
+					retChannel.PMTPid=pmtPid;
+					retChannel.AudioLanguage=audioLanguage;
+					retChannel.AudioLanguage1=audioLanguage1;
+					retChannel.AudioLanguage2=audioLanguage2;
+					retChannel.AudioLanguage3=audioLanguage3;
+					retChannel.AC3Pid=ac3Pid;
+					retChannel.Audio1=audio1;
+					retChannel.Audio2=audio2;
+					retChannel.Audio3=audio3;
+					retChannel.PCRPid=pcrPid;
+					retChannel.HasEITPresentFollow=HasEITPresentFollow;
+					retChannel.HasEITSchedule=HasEITSchedule;
+					return true;
+				}
+				catch(Exception ex)
+				{
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
+				}
+				return false;
+			}
+		}
+		
+		static public bool GetATSCChannel(int idChannel,ref DVBChannel retChannel)
+		{
+			int minorChannel=-1, majorChannel=-1, physicalChannel=-1,symbolrate=-1,innerFec=-1,modulation=-1;
+			int frequency=-1,ONID=-1,TSID=-1,SID=-1;
+			int audioPid=-1, videoPid=-1, teletextPid=-1, pmtPid=-1, pcrPid=-1;
+			string strProvider;
+			int audio1,audio2,audio3,ac3Pid;
+			string audioLanguage,audioLanguage1,audioLanguage2,audioLanguage3;
+			bool HasEITPresentFollow,HasEITSchedule;
+
+			HasEITPresentFollow=HasEITSchedule=false;
+			minorChannel=-1; majorChannel=-1;
+			audio1=audio2=audio3=ac3Pid=-1;
+			physicalChannel=-1;
+			audioLanguage=audioLanguage1=audioLanguage2=audioLanguage3="";
+			pmtPid=-1;
+			audioPid=videoPid=teletextPid=0;
+			strProvider="";
+			frequency=-1;
+			symbolrate=-1;
+			innerFec=-1;
+			modulation=-1;
+			ONID=-1;
+			TSID=-1;
+			SID=-1;
+			pcrPid=-1;
+			if (m_db == null) return false;
+			//Log.WriteFile(Log.LogType.Log,true,"GetTuneRequest for iLCN:{0}", iLCN);
+			lock (typeof(TVDatabase))
+			{
+				try
+				{
+					if (null == m_db) return false;
+					string strSQL;
+					strSQL = String.Format("select * from tblATSCMapping where iLCN={0}",idChannel);
+					SQLiteResultSet results;
+					results = m_db.Execute(strSQL);
+					if (results.Rows.Count != 1) return false;
+					frequency=DatabaseUtility.GetAsInt(results,0,"frequency");
+					symbolrate=DatabaseUtility.GetAsInt(results,0,"symbolrate");
+					innerFec=DatabaseUtility.GetAsInt(results,0,"innerFec");
+					modulation=DatabaseUtility.GetAsInt(results,0,"modulation");
+					ONID=DatabaseUtility.GetAsInt(results,0,"ONID");
+					TSID=DatabaseUtility.GetAsInt(results,0,"TSID");
+					SID=DatabaseUtility.GetAsInt(results,0,"SID");
+					strProvider=DatabaseUtility.Get(results,0,"strProvider");
+					audioPid=DatabaseUtility.GetAsInt(results,0,"audioPid");
+					videoPid=DatabaseUtility.GetAsInt(results,0,"videoPid");
+					teletextPid=DatabaseUtility.GetAsInt(results,0,"teletextPid");
+					pmtPid=DatabaseUtility.GetAsInt(results,0,"pmtPid");
+					audio1=DatabaseUtility.GetAsInt(results,0,"audio1Pid");
+					audio2=DatabaseUtility.GetAsInt(results,0,"audio2Pid");
+					audio3=DatabaseUtility.GetAsInt(results,0,"audio3Pid");
+					ac3Pid=DatabaseUtility.GetAsInt(results,0,"ac3Pid");
+					audioLanguage=DatabaseUtility.Get(results,0,"sAudioLang");
+					audioLanguage1=DatabaseUtility.Get(results,0,"sAudioLang1");
+					audioLanguage2=DatabaseUtility.Get(results,0,"sAudioLang2");
+					audioLanguage3=DatabaseUtility.Get(results,0,"sAudioLang3");
+					physicalChannel=DatabaseUtility.GetAsInt(results,0,"channelNumber");
+					minorChannel=DatabaseUtility.GetAsInt(results,0,"minorChannel");
+					majorChannel=DatabaseUtility.GetAsInt(results,0,"majorChannel");
+					HasEITPresentFollow=DatabaseUtility.GetAsInt(results,0,"HasEITPresentFollow")!=0;
+					HasEITSchedule=DatabaseUtility.GetAsInt(results,0,"HasEITSchedule")!=0;
+					pcrPid=DatabaseUtility.GetAsInt(results,0,"pcrPid");
+
+					retChannel.PhysicalChannel=physicalChannel;
+					retChannel.MinorChannel=minorChannel;
+					retChannel.MajorChannel=majorChannel;
+					retChannel.Frequency=frequency;
+					retChannel.Symbolrate=symbolrate;
+					retChannel.FEC=innerFec;
+					retChannel.Modulation=modulation;
+					retChannel.NetworkID=ONID;
+					retChannel.TransportStreamID=TSID;
+					retChannel.ProgramNumber=SID;
+					retChannel.AudioPid=audioPid;
+					retChannel.VideoPid=videoPid;
+					retChannel.TeletextPid=teletextPid;
+					retChannel.SubtitlePid=0;
+					retChannel.PMTPid=pmtPid;
+					retChannel.AudioLanguage=audioLanguage;
+					retChannel.AudioLanguage1=audioLanguage1;
+					retChannel.AudioLanguage2=audioLanguage2;
+					retChannel.AudioLanguage3=audioLanguage3;
+					retChannel.AC3Pid=ac3Pid;
+					retChannel.PCRPid=pcrPid;
+					retChannel.Audio1=audio1;
+					retChannel.Audio2=audio2;
+					retChannel.Audio3=audio3;
+					retChannel.HasEITSchedule=HasEITSchedule;
+					retChannel.HasEITPresentFollow=HasEITPresentFollow;
+					return true;
+				}
+				catch(Exception ex)
+				{
+					Log.WriteFile(Log.LogType.Log,true,"TVDatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);
+					Open();
+				}
+				return false;
+			}
+		}
 		
 		static public void GetDVBTTuneRequest(int idChannel, out string strProvider,out int frequency, out int ONID, out int TSID, out int SID, out int audioPid, out int videoPid, out int teletextPid, out int pmtPid, out int bandwidth, out int audio1,out int audio2,out int audio3,out int ac3Pid, out string audioLanguage, out string audioLanguage1,out string audioLanguage2,out string audioLanguage3, out bool HasEITPresentFollow, out bool HasEITSchedule, out int pcrPid) 
 		{

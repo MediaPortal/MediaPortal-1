@@ -333,7 +333,7 @@ namespace MediaPortal.Configuration.Sections
 			cards.LoadCaptureCards();
 			foreach (TVCaptureDevice dev in cards.captureCards)
 			{
-				if (dev.Network==NetworkType.DVBC)
+				if (dev.Network==NetworkType.DVBC || dev.VideoDevice=="B2C2 MPEG-2 Source")
 				{
 					captureCard = dev;
 					captureCard.CreateGraph();
