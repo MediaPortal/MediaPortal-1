@@ -52,14 +52,14 @@ namespace MediaPortal.GUI.TV
 
 		};
 
-		static bool     			m_bTVON=true;
-		static bool     			m_bTimeShifting=true;
+		static bool     			_isTvOn=true;
+		static bool     			_isTimeShifting=true;
 		static ChannelNavigator		m_navigator;
 		
-		DateTime        			m_updateTimer=DateTime.Now;
-		bool            			autoTurnOnTv=false;
-		bool									settingsLoaded=false;
-		DateTime						  dtlastTime=DateTime.Now;
+		DateTime        			_updateTimer=DateTime.Now;
+		bool            			_autoTurnOnTv=false;
+		bool									_settingsLoaded=false;
+		DateTime						  _dtlastTime=DateTime.Now;
 
 		[SkinControlAttribute(2)]			protected GUIButtonControl btnTvGuide=null;
 		[SkinControlAttribute(3)]			protected GUIButtonControl btnRecord=null;
@@ -81,14 +81,14 @@ namespace MediaPortal.GUI.TV
 		#region Serialisation
 		void LoadSettings()
 		{
-			if (settingsLoaded) return;
-			settingsLoaded=true;
+			if (_settingsLoaded) return;
+			_settingsLoaded=true;
 			using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				m_navigator.LoadSettings(xmlreader);
-				m_bTVON=xmlreader.GetValueAsBool("mytv","tvon",true);
-				m_bTimeShifting=xmlreader.GetValueAsBool("mytv","timeshifting",true);
-				autoTurnOnTv   = xmlreader.GetValueAsBool("mytv","autoturnontv",false);
+				_isTvOn=xmlreader.GetValueAsBool("mytv","tvon",true);
+				_isTimeShifting=xmlreader.GetValueAsBool("mytv","timeshifting",true);
+				_autoTurnOnTv   = xmlreader.GetValueAsBool("mytv","_autoTurnOnTv",false);
 
 				string strValue=xmlreader.GetValueAsString("mytv","defaultar","normal");
 				if (strValue.Equals("zoom")) GUIGraphicsContext.ARType=MediaPortal.GUI.Library.Geometry.Type.Zoom;
@@ -105,8 +105,8 @@ namespace MediaPortal.GUI.TV
 			using (MediaPortal.Profile.Xml   xmlwriter=new MediaPortal.Profile.Xml("MediaPortal.xml"))
 			{
 				m_navigator.SaveSettings(xmlwriter);
-				xmlwriter.SetValueAsBool("mytv","tvon",m_bTVON);
-				xmlwriter.SetValueAsBool("mytv","timeshifting",m_bTimeShifting);
+				xmlwriter.SetValueAsBool("mytv","tvon",_isTvOn);
+				xmlwriter.SetValueAsBool("mytv","timeshifting",_isTimeShifting);
 			}
 		}
 		#endregion
@@ -346,7 +346,7 @@ namespace MediaPortal.GUI.TV
 				{
 					//tv off
 					Log.Write("TVHome:turn tv off");
-					m_bTVON=false;
+					_isTvOn=false;
 					SaveSettings();
 					g_Player.Stop();
 				}
@@ -354,7 +354,7 @@ namespace MediaPortal.GUI.TV
 				{
 					// tv on
 					Log.Write("TVHome:turn tv on {0}", Navigator.CurrentChannel);
-					m_bTVON=true;
+					_isTvOn=true;
 
 					//stop playing anything
 					if (g_Player.Playing)
@@ -381,8 +381,8 @@ namespace MediaPortal.GUI.TV
 			if (control==btnTimeshiftingOnOff)
 			{
 				//turn timeshifting off 
-				m_bTimeShifting=!Recorder.IsTimeShifting();
-				Log.Write("tv home timeshift onoff:{0}",m_bTimeShifting);
+				_isTimeShifting=!Recorder.IsTimeShifting();
+				Log.Write("tv home timeshift onoff:{0}",_isTimeShifting);
 				SaveSettings();
 				ViewChannelAndCheck(Navigator.CurrentChannel);
 				UpdateChannelButton();
@@ -427,7 +427,7 @@ namespace MediaPortal.GUI.TV
 				string channel    =btnChannel.SelectedLabel;
 				if ((channel.Length > 0) && (Navigator.CurrentChannel != channel))
 				{
-					m_bTVON=true;
+					_isTvOn=true;
 					Log.Write("tv home btnchan:{0}",channel);
 					ViewChannelAndCheck(channel);
 					Navigator.UpdateCurrentChannel();
@@ -449,10 +449,10 @@ namespace MediaPortal.GUI.TV
 				case GUIMessage.MessageType.GUI_MSG_RESUME_TV:
 				{
 					LoadSettings();
-					if (autoTurnOnTv)
+					if (_autoTurnOnTv)
 					{
 						//restart viewing...  
-						m_bTVON=true;
+						_isTvOn=true;
 						Log.Write("tv home msg resume tv:{0}",Navigator.CurrentChannel);
 						ViewChannel(Navigator.CurrentChannel);
 					}
@@ -465,7 +465,7 @@ namespace MediaPortal.GUI.TV
 					break;
 
 				case GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_VIEWING:
-					m_bTVON=false;
+					_isTvOn=false;
 					Log.Write("tv home msg stop chan:{0}",message.Label);
 					ViewChannel(message.Label);
 					Navigator.UpdateCurrentChannel();
@@ -513,10 +513,10 @@ namespace MediaPortal.GUI.TV
 			{
 				imgRecordingIcon.IsVisible=false;
 			}
-			TimeSpan ts = DateTime.Now-m_updateTimer;
+			TimeSpan ts = DateTime.Now-_updateTimer;
 			if (ts.TotalMilliseconds>500)
 			{
-				m_updateTimer=DateTime.Now;
+				_updateTimer=DateTime.Now;
 
 				GUIControl.HideControl(GetID, (int)Controls.LABEL_REC_INFO);
 				GUIControl.HideControl(GetID, (int)Controls.IMG_REC_RECTANGLE);
@@ -733,7 +733,7 @@ namespace MediaPortal.GUI.TV
 				if ( (g_Player.IsMusic && g_Player.HasVideo) ) return;
 			}
 			ViewChannel(channel);
-			if (Recorder.TVChannelName!=channel && m_bTVON)
+			if (Recorder.TVChannelName!=channel && _isTvOn)
 			{
 				GUIDialogOK pDlgOK	= (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
 				if (pDlgOK!=null)
@@ -754,18 +754,14 @@ namespace MediaPortal.GUI.TV
 				if (g_Player.IsDVD) return;
 				if ( (g_Player.IsMusic && g_Player.HasVideo) ) return;
 			}
-			if (m_bTVON)
-				Log.Write("GUITVHome.ViewChannel(): View channel={0} ts:{1}", channel, m_bTimeShifting);
+			if (_isTvOn)
+				Log.Write("GUITVHome.ViewChannel(): View channel={0} ts:{1}", channel, _isTimeShifting);
 			else
 				Log.Write("GUITVHome.ViewChannel(): turn tv off");
 
-			Recorder.StartViewing( channel, m_bTVON, m_bTimeShifting) ;
-			if (Recorder.IsViewing())
-			{
-				Navigator.UpdateCurrentChannel();
-			}
-			m_bTimeShifting=Recorder.IsTimeShifting();
-			m_bTVON=m_bTimeShifting||Recorder.IsViewing();
+			Recorder.StartViewing( channel, _isTvOn, _isTimeShifting) ;
+			Navigator.UpdateCurrentChannel();
+			_isTvOn=true;
 
 			if (GUIGraphicsContext.IsFullScreenVideo)
 			{
@@ -836,8 +832,8 @@ namespace MediaPortal.GUI.TV
 
 		static public bool IsTVOn
 		{
-			get { return m_bTVON;}
-			set { m_bTVON=value;}
+			get { return _isTvOn;}
+			set { _isTvOn=value;}
 		}
 
 		/// <summary>

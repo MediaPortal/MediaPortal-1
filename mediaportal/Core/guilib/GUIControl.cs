@@ -496,7 +496,7 @@ namespace MediaPortal.GUI.Library
 		public virtual bool Disabled
 		{
 			get { return !IsEnabled; }
-			set { IsEnabled = value; }
+			set { IsEnabled = !value; }
 		}
 
 		/// <summary>
