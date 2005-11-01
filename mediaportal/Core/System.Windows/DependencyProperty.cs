@@ -90,12 +90,12 @@ namespace System.Windows
 
 		public PropertyMetadata GetMetadata(DependencyObject d)
 		{
-			return null;
+			return GetMetadata(d.DependencyObjectType);
 		}
 
 		public PropertyMetadata GetMetadata(DependencyObjectType type)
 		{
-			throw new NotImplementedException();
+			return _defaultMetadata;
 		}
 
 		public PropertyMetadata GetMetadata(Type ownerType)
@@ -137,8 +137,6 @@ namespace System.Windows
 				return;
 
 			property._defaultMetadata = defaultMetadata;
-
-			// PropertyMetadata.Merge
 		}
 		
 		public static DependencyProperty Register(string name, Type propertyType, Type ownerType)

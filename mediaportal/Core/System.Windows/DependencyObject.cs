@@ -66,7 +66,12 @@ namespace System.Windows
 		// http://www.64bit-world.com/forums/microsoft-public-developer-winfx-avalon/10124-xamlpad-exe-nullreferencexception-winfx-ctp-sept.html
 		public object GetValue(DependencyProperty property)
 		{
-			return GetValueCommon(property, property.GetMetadata(this));
+			object value = _properties[property];
+
+			if(value == null && property.DefaultMetadata != null)
+				value = property.DefaultMetadata.DefaultValue;
+
+			return value;
 		}
 
 		public object GetValueBase(DependencyProperty property)
@@ -93,8 +98,8 @@ namespace System.Windows
 		{
 			object value = _properties[property];
 
-			if(value == null && property.DefaultMetadata != null)
-				value = property.DefaultMetadata.DefaultValue;
+			if(value == null && metadata != null)
+				value = metadata.DefaultValue;
 
 			return value;
 		}

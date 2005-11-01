@@ -50,7 +50,7 @@
                     ConfigurationOverrideFile = ""
                     DefineConstants = "TRACE;UseCaptureCardDefinitions;DOTNET1"
                     DocumentationFile = ""
-                    DebugSymbols = "false"
+                    DebugSymbols = "true"
                     FileAlignment = "4096"
                     IncrementalBuild = "false"
                     NoStdLib = "false"
