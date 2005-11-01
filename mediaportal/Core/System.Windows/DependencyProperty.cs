@@ -90,7 +90,7 @@ namespace System.Windows
 
 		public PropertyMetadata GetMetadata(DependencyObject d)
 		{
-			throw new NotImplementedException();
+			return null;
 		}
 
 		public PropertyMetadata GetMetadata(DependencyObjectType type)
