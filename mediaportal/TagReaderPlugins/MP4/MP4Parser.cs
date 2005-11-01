@@ -39,7 +39,7 @@ namespace MediaPortal.TagReader.MP4
 			"ILST", "©NAM", "©CPY", "©DAY", "©DIR",
 			"©FMT", "©INF", "©PRD", "©PRF", "©REQ", 
 			"©SRC", "©WRT", "©ART", "©ALB", "TRKN",
-			"©CMT", "COVR", "DISK", "GNRE"
+			"©CMT", "COVR", "DISK", "GNRE", "©GEN"
 		};
 		static byte[] atomSizeBuf = new byte[4];
 		static byte[] atomTypeBuf = new byte[4];

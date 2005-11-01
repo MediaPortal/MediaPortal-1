@@ -67,28 +67,28 @@ namespace MediaPortal.TagReader.MP4
 					ParsedDataAtom dataAtom = (ParsedDataAtom)MP4Parser.findAtom(ilstAtom.Children, "©NAM.DATA");
 					if (dataAtom != null) 
 					{
-						m_tag.Title = Encoding.Default.GetString(dataAtom.Data);
+						m_tag.Title = Encoding.UTF8.GetString(dataAtom.Data);
 					}
 
 					// artist
 					dataAtom = (ParsedDataAtom)MP4Parser.findAtom(ilstAtom.Children, "©ART.DATA");
 					if (dataAtom != null) 
 					{
-						m_tag.Artist = Encoding.Default.GetString(dataAtom.Data);
+						m_tag.Artist = Encoding.UTF8.GetString(dataAtom.Data);
 					}
 
 					// album
 					dataAtom = (ParsedDataAtom)MP4Parser.findAtom(ilstAtom.Children, "©ALB.DATA");
 					if (dataAtom != null) 
 					{
-						m_tag.Album = Encoding.Default.GetString(dataAtom.Data);
+						m_tag.Album = Encoding.UTF8.GetString(dataAtom.Data);
 					}
 
 					// comment
 					dataAtom = (ParsedDataAtom)MP4Parser.findAtom(ilstAtom.Children, "©CMT.DATA");
 					if (dataAtom != null) 
 					{
-						m_tag.Comment = Encoding.Default.GetString(dataAtom.Data);
+						m_tag.Comment = Encoding.UTF8.GetString(dataAtom.Data);
 					}
 
 					// genre
@@ -96,6 +96,11 @@ namespace MediaPortal.TagReader.MP4
 					if (dataAtom != null) 
 					{
 						m_tag.Genre = GetGenre(EndianBitConverter.Big.ToInt16(dataAtom.Data, 0));
+					// custom genre
+					dataAtom = (ParsedDataAtom)MP4Parser.findAtom(ilstAtom.Children, "©GEN.DATA");
+					if (dataAtom != null) 
+					{
+						m_tag.Genre = Encoding.UTF8.GetString(dataAtom.Data);
 					}
 
 					// year
