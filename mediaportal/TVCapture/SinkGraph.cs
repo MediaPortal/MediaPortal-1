@@ -1152,7 +1152,7 @@ namespace MediaPortal.TV.Recording
       if (m_IAMAnalogVideoDecoder==null) return;
       AnalogVideoStandard currentStandard;
       int hr=m_IAMAnalogVideoDecoder.get_TVFormat(out currentStandard);
-      if (currentStandard==standard) return;
+      //if (currentStandard==standard) return;
 
       Log.WriteFile(Log.LogType.Capture,"SinkGraph:Select tvformat:{0}", standard.ToString());
       if (standard==AnalogVideoStandard.None) standard=AnalogVideoStandard.PAL_B;
