@@ -49,40 +49,40 @@ namespace MediaPortal.TV.Recording
 		#region Mpeg2-Arrays
 		static byte[] Mpeg2ProgramVideo = 
 				{
-					0x00, 0x00, 0x00, 0x00,                         //00  .hdr.rcSource.left              = 0x00000000
-					0x00, 0x00, 0x00, 0x00,                         //04  .hdr.rcSource.top               = 0x00000000
-					0xD0, 0x02, 0x00, 0x00,                         //08  .hdr.rcSource.right             = 0x000002d0 //720
-					0x40, 0x02, 0x00, 0x00,                         //0c  .hdr.rcSource.bottom            = 0x00000240 //576
-					0x00, 0x00, 0x00, 0x00,                         //10  .hdr.rcTarget.left              = 0x00000000
-					0x00, 0x00, 0x00, 0x00,                         //14  .hdr.rcTarget.top               = 0x00000000
-					0xD0, 0x02, 0x00, 0x00,                         //18  .hdr.rcTarget.right             = 0x000002d0 //720
-					0x40, 0x02, 0x00, 0x00,                         //1c  .hdr.rcTarget.bottom            = 0x00000240// 576
-					0x00, 0x09, 0x3D, 0x00,                         //20  .hdr.dwBitRate                  = 0x003d0900
-					0x00, 0x00, 0x00, 0x00,                         //24  .hdr.dwBitErrorRate             = 0x00000000
+					0x00, 0x00, 0x00, 0x00,                         //00  hdr.rcSource.left              = 0x00000000
+					0x00, 0x00, 0x00, 0x00,                         //04  hdr.rcSource.top               = 0x00000000
+					0xD0, 0x02, 0x00, 0x00,                         //08  hdr.rcSource.right             = 0x000002d0 //720
+					0x40, 0x02, 0x00, 0x00,                         //0c  hdr.rcSource.bottom            = 0x00000240 //576
+					0x00, 0x00, 0x00, 0x00,                         //10  hdr.rcTarget.left              = 0x00000000
+					0x00, 0x00, 0x00, 0x00,                         //14  hdr.rcTarget.top               = 0x00000000
+					0xD0, 0x02, 0x00, 0x00,                         //18  hdr.rcTarget.right             = 0x000002d0 //720
+					0x40, 0x02, 0x00, 0x00,                         //1c  hdr.rcTarget.bottom            = 0x00000240// 576
+					0x00, 0x09, 0x3D, 0x00,                         //20  hdr.dwBitRate                  = 0x003d0900
+					0x00, 0x00, 0x00, 0x00,                         //24  hdr.dwBitErrorRate             = 0x00000000
 
 					//0x051736=333667-> 10000000/333667 = 29.97fps
 					//0x061A80=400000-> 10000000/400000 = 25fps
-					0x80, 0x1A, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00, //28  .hdr.AvgTimePerFrame            = 0x0000000000051763 ->1000000/ 40000 = 25fps
-					0x00, 0x00, 0x00, 0x00,                         //2c  .hdr.dwInterlaceFlags           = 0x00000000
-					0x00, 0x00, 0x00, 0x00,                         //30  .hdr.dwCopyProtectFlags         = 0x00000000
-					0x04, 0x00, 0x00, 0x00,                         //34  .hdr.dwPictAspectRatioX         = 0x00000004
-					0x03, 0x00, 0x00, 0x00,                         //38  .hdr.dwPictAspectRatioY         = 0x00000003
-					0x00, 0x00, 0x00, 0x00,                         //3c  .hdr.dwReserved1                = 0x00000000
-					0x00, 0x00, 0x00, 0x00,                         //40  .hdr.dwReserved2                = 0x00000000
-					0x28, 0x00, 0x00, 0x00,                         //44  .hdr.bmiHeader.biSize           = 0x00000028
-					0xD0, 0x02, 0x00, 0x00,                         //48  .hdr.bmiHeader.biWidth          = 0x000002d0 //720
-					0x40, 0x02, 0x00, 0x00,                         //4c  .hdr.bmiHeader.biHeight         = 0x00000240 //576
-					0x00, 0x00,                                     //50  .hdr.bmiHeader.biPlanes         = 0x0000
-					0x00, 0x00,                                     //54  .hdr.bmiHeader.biBitCount       = 0x0000
-					0x00, 0x00, 0x00, 0x00,                         //58  .hdr.bmiHeader.biCompression    = 0x00000000
-					0x00, 0x00, 0x00, 0x00,                         //5c  .hdr.bmiHeader.biSizeImage      = 0x00000000
-					0xD0, 0x07, 0x00, 0x00,                         //60  .hdr.bmiHeader.biXPelsPerMeter  = 0x000007d0
-					0x27, 0xCF, 0x00, 0x00,                         //64  .hdr.bmiHeader.biYPelsPerMeter  = 0x0000cf27
-					0x00, 0x00, 0x00, 0x00,                         //68  .hdr.bmiHeader.biClrUsed        = 0x00000000
-					0x00, 0x00, 0x00, 0x00,                         //6c  .hdr.bmiHeader.biClrImportant   = 0x00000000
-					0x98, 0xF4, 0x06, 0x00,                         //70  .dwStartTimeCode                = 0x0006f498
-					0x00, 0x00, 0x00, 0x00,                         //74  .cbSequenceHeader               = 0x00000056
-					//0x00, 0x00, 0x00, 0x00,                         //74  .cbSequenceHeader               = 0x00000000
+					0x80, 0x1A, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00, //28  hdr.AvgTimePerFrame            = 0x0000000000051763 ->1000000/ 40000 = 25fps
+					0x00, 0x00, 0x00, 0x00,                         //2c  hdr.dwInterlaceFlags           = 0x00000000
+					0x00, 0x00, 0x00, 0x00,                         //30  hdr.dwCopyProtectFlags         = 0x00000000
+					0x04, 0x00, 0x00, 0x00,                         //34  hdr.dwPictAspectRatioX         = 0x00000004
+					0x03, 0x00, 0x00, 0x00,                         //38  hdr.dwPictAspectRatioY         = 0x00000003
+					0x00, 0x00, 0x00, 0x00,                         //3c  hdr.dwReserved1                = 0x00000000
+					0x00, 0x00, 0x00, 0x00,                         //40  hdr.dwReserved2                = 0x00000000
+					0x28, 0x00, 0x00, 0x00,                         //44  hdr.bmiHeader.biSize           = 0x00000028
+					0xD0, 0x02, 0x00, 0x00,                         //48  hdr.bmiHeader.biWidth          = 0x000002d0 //720
+					0x40, 0x02, 0x00, 0x00,                         //4c  hdr.bmiHeader.biHeight         = 0x00000240 //576
+					0x00, 0x00,                                     //50  hdr.bmiHeader.biPlanes         = 0x0000
+					0x00, 0x00,                                     //54  hdr.bmiHeader.biBitCount       = 0x0000
+					0x00, 0x00, 0x00, 0x00,                         //58  hdr.bmiHeader.biCompression    = 0x00000000
+					0x00, 0x00, 0x00, 0x00,                         //5c  hdr.bmiHeader.biSizeImage      = 0x00000000
+					0xD0, 0x07, 0x00, 0x00,                         //60  hdr.bmiHeader.biXPelsPerMeter  = 0x000007d0
+					0x27, 0xCF, 0x00, 0x00,                         //64  hdr.bmiHeader.biYPelsPerMeter  = 0x0000cf27
+					0x00, 0x00, 0x00, 0x00,                         //68  hdr.bmiHeader.biClrUsed        = 0x00000000
+					0x00, 0x00, 0x00, 0x00,                         //6c  hdr.bmiHeader.biClrImportant   = 0x00000000
+					0x98, 0xF4, 0x06, 0x00,                         //70  dwStartTimeCode                = 0x0006f498
+					0x00, 0x00, 0x00, 0x00,                         //74  cbSequenceHeader               = 0x00000056
+					//0x00, 0x00, 0x00, 0x00,                         //74  cbSequenceHeader               = 0x00000000
 					0x02, 0x00, 0x00, 0x00,                         //78  .dwProfile                      = 0x00000002
 					0x02, 0x00, 0x00, 0x00,                         //7c  .dwLevel                        = 0x00000002
 					0x00, 0x00, 0x00, 0x00,                         //80  .Flags                          = 0x00000000
@@ -116,18 +116,57 @@ namespace MediaPortal.TV.Recording
 			Radio,
 			EPGGrab
 		};
-
+/* tuner type from SDK
+		TUNER_SATELLITE = 0,
+		TUNER_CABLE  = 1,
+		TUNER_TERRESTRIAL = 2,
+		TUNER_ATSC = 3,
+		TUNER_TERRESTRIAL_DVB = TUNER_TERRESTRIAL,
+		TUNER_TERRESTRIAL_ATSC = TUNER_ATSC,
+		TUNER_UNKNOWN = -1,
+*/
 		public enum TunerType
 		{
-			ttCable=0,
-			ttSat,
-			ttTerrestrical,
-			ttATSC
-		
+			ttSat = 0,
+			ttCable = 1,
+			ttTerrestrial = 2,
+			ttATSC = 3,
+			ttUnknown = -1
 		}
+		protected enum eModulationTAG
+		{
+			QAM_4 = 2,
+			QAM_16,
+			QAM_32,
+			QAM_64,
+			QAM_128,
+			QAM_256,
+			MODE_UNKNOWN = -1
+		} 
+
 		#endregion
 
 		#region Structs
+			/*
+			*	Structure completedy by GetTunerCapabilities() to return tuner capabilities
+			*/
+		public struct tTunerCapabilities
+		{
+			public TunerType	eModulation;
+			public int		dwConstellationSupported;       // Show if SetModulation() is supported
+			public int		dwFECSupported;                 // Show if SetFec() is suppoted
+			public int		dwMinTransponderFreqInKHz;
+			public int		dwMaxTransponderFreqInKHz;
+			public int		dwMinTunerFreqInKHz;
+			public int		dwMaxTunerFreqInKHz;
+			public int		dwMinSymbolRateInBaud;
+			public int		dwMaxSymbolRateInBaud;
+			public int		bAutoSymbolRate;				// Obsolte		
+			public int		dwPerformanceMonitoring;        // See bitmask definitions below
+			public int		dwLockTimeInMilliSecond;		// lock time in millisecond
+			public int		dwKernelLockTimeInMilliSecond;	// lock time for kernel
+			public int		dwAcquisitionCapabilities;
+		}
 
 		#endregion
 
@@ -254,6 +293,7 @@ namespace MediaPortal.TV.Recording
 		DateTime m_timeDisplayed=DateTime.Now;
 
 		bool m_lastTuneError=false;
+		NetworkType			m_NetworkType=NetworkType.DVBS;
 		#endregion
 
 		
@@ -270,6 +310,7 @@ namespace MediaPortal.TV.Recording
 
 
 //            m_streamDemuxer.OnAudioFormatChanged += new DVBDemuxer.OnAudioChanged(OnAudioFormatChanged);
+
 			m_streamDemuxer.SetCardType((int)DVBEPG.EPGCard.TechnisatStarCards,NetworkType.DVBS);
 //			m_streamDemuxer.OnPMTIsChanged+=new MediaPortal.TV.Recording.DVBDemuxer.OnPMTChanged(m_streamDemuxer_OnPMTIsChanged);
 //			m_streamDemuxer.OnGotTable+=new MediaPortal.TV.Recording.DVBDemuxer.OnTableReceived(m_streamDemuxer_OnGotTable);
@@ -434,6 +475,42 @@ namespace MediaPortal.TV.Recording
 					Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: Tuner initialize failed");
 					return false;
 				}
+				// Get tuner type (DVBS, DVBC, DVBT, ATSC)
+			
+				tTunerCapabilities tc;
+				int lTunerCapSize = Marshal.SizeOf(typeof(tTunerCapabilities));
+				
+				IntPtr ptCaps=Marshal.AllocHGlobal(lTunerCapSize);
+
+				n = m_tunerCtrl.GetTunerCapabilities(ptCaps, ref lTunerCapSize);
+				if(n!=0)
+				{
+					Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: Tuner Type failed");
+					return false;
+				}
+					
+				tc = (tTunerCapabilities)Marshal.PtrToStructure(ptCaps,typeof(tTunerCapabilities));
+
+				switch(tc.eModulation)
+				{
+					case TunerType.ttSat:
+						m_NetworkType = NetworkType.DVBS;
+						break;
+					case TunerType.ttCable:
+						m_NetworkType = NetworkType.DVBC;
+						break;
+					case TunerType.ttTerrestrial:
+						m_NetworkType = NetworkType.DVBT;
+						break;
+					case TunerType.ttATSC:
+						m_NetworkType = NetworkType.ATSC;
+						break;
+					case TunerType.ttUnknown:
+						m_NetworkType = NetworkType.Unknown;
+						break;
+				}
+				Marshal.FreeHGlobal(ptCaps);
+				
 				// call checklock once, the return value dont matter
 	
 				n=m_tunerCtrl.CheckLock();
@@ -576,9 +653,10 @@ namespace MediaPortal.TV.Recording
 		}
 
 		//
-		private bool Tune(int Frequency,int SymbolRate,int FEC,int POL,int LNBKhz,int Diseq,int AudioPID,int VideoPID,int LNBFreq,int ecmPID,int ttxtPID,int pmtPID,int pcrPID,string pidText,int dvbsubPID, int programNumber)
+		private bool Tune(int Frequency,int SymbolRate,int FEC,int POL,int LNBKhz,int Diseq,int AudioPID,int VideoPID,int LNBFreq,int ecmPID,int ttxtPID,int pmtPID,int pcrPID,string pidText,int dvbsubPID, int programNumber, DVBChannel ch)
 		{
 			int hr=0; // the result
+			int modulation=5;
 
 			m_lastTuneError=false;
 			// clear epg
@@ -589,57 +667,87 @@ namespace MediaPortal.TV.Recording
 				return false;
 
 			// skystar
-			if(m_cardType=="" || m_cardType=="skystar")
+			hr = m_tunerCtrl.SetFrequency(Frequency);
+			if (hr!=0)
 			{
-				hr = m_tunerCtrl.SetFrequency(Frequency);
-				if (hr!=0)
-				{
-					Log.WriteFile(Log.LogType.Capture,"Tune for SkyStar2 FAILED: on SetFrequency");
-					return false;	// *** FUNCTION EXIT POINT
-				}
-				hr = m_tunerCtrl.SetSymbolRate(SymbolRate);
-				if (hr!=0)
-				{
-					Log.WriteFile(Log.LogType.Capture,"Tune for SkyStar2 FAILED: on SetSymbolRate");
-					return false;	// *** FUNCTION EXIT POINT
-				}
-				hr = m_tunerCtrl.SetLnbFrequency(LNBFreq);
-				if (hr!=0)
-				{
-					Log.WriteFile(Log.LogType.Capture,"Tune for SkyStar2 FAILED: on SetLnbFrequency");
-					return false;	// *** FUNCTION EXIT POINT
-				}
-				hr = m_tunerCtrl.SetFec(FEC);
-				if (hr!=0)
-				{
-					Log.WriteFile(Log.LogType.Capture,"Tune for SkyStar2 FAILED: on SetFec");
-					return false;	// *** FUNCTION EXIT POINT
-				}
-				hr = m_tunerCtrl.SetPolarity(POL);
-				if (hr!=0)
-				{
-					Log.WriteFile(Log.LogType.Capture,"Tune for SkyStar2 FAILED: on SetPolarity");
-					return false;	// *** FUNCTION EXIT POINT
-				}
-				hr = m_tunerCtrl.SetLnbKHz(LNBKhz);
-				if (hr!=0)
-				{
-					Log.WriteFile(Log.LogType.Capture,"Tune for SkyStar2 FAILED: on SetLnbKHz");
-					return false;	// *** FUNCTION EXIT POINT
-				}
-				hr = m_tunerCtrl.SetDiseqc(Diseq);
-				if (hr!=0)
-				{
-					Log.WriteFile(Log.LogType.Capture,"Tune for SkyStar2 FAILED: on SetDiseqc");
-					return false;	// *** FUNCTION EXIT POINT
-				}
+				Log.WriteFile(Log.LogType.Capture,"Tune for SkyStar2 FAILED: on SetFrequency");
+				return false;	// *** FUNCTION EXIT POINT
+			}
+			hr = m_tunerCtrl.SetSymbolRate(SymbolRate);
+			if (hr!=0)
+			{
+				Log.WriteFile(Log.LogType.Capture,"Tune for SkyStar2 FAILED: on SetSymbolRate");
+				return false;	// *** FUNCTION EXIT POINT
+			}
+			
+			hr = m_tunerCtrl.SetLnbFrequency(LNBFreq);
+			if (hr!=0)
+			{
+				Log.WriteFile(Log.LogType.Capture,"Tune for SkyStar2 FAILED: on SetLnbFrequency");
+				return false;	// *** FUNCTION EXIT POINT
+			}
+			hr = m_tunerCtrl.SetFec(FEC);
+			if (hr!=0)
+			{
+				Log.WriteFile(Log.LogType.Capture,"Tune for SkyStar2 FAILED: on SetFec");
+				return false;	// *** FUNCTION EXIT POINT
+			}
+			hr = m_tunerCtrl.SetPolarity(POL);
+			if (hr!=0)
+			{
+				Log.WriteFile(Log.LogType.Capture,"Tune for SkyStar2 FAILED: on SetPolarity");
+				return false;	// *** FUNCTION EXIT POINT
+			}
+			hr = m_tunerCtrl.SetLnbKHz(LNBKhz);
+			if (hr!=0)
+			{
+				Log.WriteFile(Log.LogType.Capture,"Tune for SkyStar2 FAILED: on SetLnbKHz");
+				return false;	// *** FUNCTION EXIT POINT
+			}
+			hr = m_tunerCtrl.SetDiseqc(Diseq);
+			if (hr!=0)
+			{
+				Log.WriteFile(Log.LogType.Capture,"Tune for SkyStar2 FAILED: on SetDiseqc");
+				return false;	// *** FUNCTION EXIT POINT
 			}
 			// cablestar
-			
-			
+			if(m_NetworkType == NetworkType.DVBC)
+			{
+				switch(ch.Modulation)
+				{
+					case (int)TunerLib.ModulationType.BDA_MOD_16QAM :
+						modulation = (int)eModulationTAG.QAM_16;
+						break;
+					case (int)TunerLib.ModulationType.BDA_MOD_32QAM :
+						modulation = (int)eModulationTAG.QAM_32;
+						break;
+					case (int)TunerLib.ModulationType.BDA_MOD_64QAM :
+						modulation = (int)eModulationTAG.QAM_64;
+						break;
+					case (int)TunerLib.ModulationType.BDA_MOD_128QAM :
+						modulation = (int)eModulationTAG.QAM_128;
+						break;
+					case (int)TunerLib.ModulationType.BDA_MOD_256QAM :
+						modulation = (int)eModulationTAG.QAM_256;
+						break;
+				}
+				hr = m_tunerCtrl.SetModulation(modulation);
+				if (hr!=0)
+				{
+					Log.WriteFile(Log.LogType.Capture,"Tune for SkyStar2 FAILED: on SetModulation");
+					return false;	// *** FUNCTION EXIT POINT
+				}
+			}			
 			
 			// airstar
-
+			/* used ????
+			hr = m_tunerCtrl.SetGuardInterval(-1);
+			if (hr!=0)
+			{
+				Log.WriteFile(Log.LogType.Capture,"Tune for SkyStar2 FAILED: on SetGuardInterval");
+				return false;	// *** FUNCTION EXIT POINT
+			}
+			*/
 			// final
 			hr = m_tunerCtrl.SetTunerStatus();
 			if (hr!=0)	
@@ -940,7 +1048,10 @@ namespace MediaPortal.TV.Recording
 			}
 
 			//add collected stuff into programs database
-			GUIGraphicsContext.form.Invalidate(true);
+			if (GUIGraphicsContext.form != null)
+			{
+				GUIGraphicsContext.form.Invalidate(true);
+			}
 			GC.Collect();GC.Collect();GC.Collect();
 			m_graphState = State.None;
 
@@ -1584,6 +1695,7 @@ namespace MediaPortal.TV.Recording
 			m_graphState=State.Recording;
 			return true;
 #endif
+
 		}
     
     
@@ -1607,9 +1719,9 @@ namespace MediaPortal.TV.Recording
 			}
 
 #if USEMTSWRITER
-			if (_tsRecordInterface!=null)
+			if (m_tsRecordInterface!=null)
 			{
-				_tsRecordInterface.StopRecord(0);
+				m_tsRecordInterface.StopRecord(0);
 			}
 #endif
 			m_graphState=State.TimeShifting;
@@ -1634,13 +1746,50 @@ namespace MediaPortal.TV.Recording
 				{
 					
 					DVBChannel ch=new DVBChannel();
-					if(TVDatabase.GetSatChannel(channelID,1,ref ch)==false)//only television
+					ch.ServiceName=channel.Name;
+					switch (m_NetworkType)
 					{
-						Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: Tune: channel not found in database (idChannel={0})",channelID);
-						m_channelFound=false;
-						return;
+						case NetworkType.DVBS: 
+						{
+							if(TVDatabase.GetSatChannel(channelID,1,ref ch)==false)//only television
+							{
+								Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: Tune: channel not found in database (idChannel={0})",channelID);
+								m_channelFound=false;
+								return;
+							}
+							break;
+						}
+						case NetworkType.DVBC:
+						{
+							if(TVDatabase.GetDVBCChannel(channelID,ref ch)==false)//only television
+							{
+								Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: Tune: channel not found in database (idChannel={0})",channelID);
+								m_channelFound=false;
+								return;
+							}
+							break;
+						}
+						case NetworkType.DVBT:
+						{
+							if(TVDatabase.GetDVBTChannel(channelID,ref ch)==false)//only television
+							{
+								Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: Tune: channel not found in database (idChannel={0})",channelID);
+								m_channelFound=false;
+								return;
+							}
+							break;
+						}
+						case NetworkType.ATSC:
+						{
+							if(TVDatabase.GetATSCChannel(channelID,ref ch)==false)//only television
+							{
+								Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: Tune: channel not found in database (idChannel={0})",channelID);
+								m_channelFound=false;
+								return;
+							}
+							break;
+						}
 					}
-
 					if(m_pluginsEnabled==false && ch.IsScrambled==true)
 					{
 						m_channelFound=false;
@@ -1649,7 +1798,7 @@ namespace MediaPortal.TV.Recording
 					m_channelFound=true;
 					m_currentChannel=ch;
 					m_selectedAudioPid=ch.AudioPid;
-					if(Tune(ch.Frequency,ch.Symbolrate,6,ch.Polarity,ch.LNBKHz,ch.DiSEqC,ch.AudioPid,ch.VideoPid,ch.LNBFrequency,ch.ECMPid,ch.TeletextPid,ch.PMTPid,ch.PCRPid,ch.AudioLanguage3,ch.Audio3,ch.ProgramNumber)==false)
+					if(Tune(ch.Frequency,ch.Symbolrate,6,ch.Polarity,ch.LNBKHz,ch.DiSEqC,ch.AudioPid,ch.VideoPid,ch.LNBFrequency,ch.ECMPid,ch.TeletextPid,ch.PMTPid,chPCRPid,ch.AudioLanguage3,ch.Audio3,ch.ProgramNumber,ch)==false)
 					{
 						m_lastTuneError=true;
 						m_channelFound=false;
@@ -2280,7 +2429,7 @@ namespace MediaPortal.TV.Recording
 		}
 		public NetworkType Network()
 		{
-				return NetworkType.DVBS;
+			return m_NetworkType;
 		}
 		//
 		public void Tune(object tuningObject, int disecqNo)
@@ -2300,7 +2449,7 @@ namespace MediaPortal.TV.Recording
 				}
 			}
 			catch{}
-			if(Tune(ch.Frequency,ch.Symbolrate,6,ch.Polarity,ch.LNBKHz,ch.DiSEqC,-1,-1,ch.LNBFrequency,0,0,0,0,"",0,0)==false)
+			if(Tune(ch.Frequency,ch.Symbolrate,6,ch.Polarity,ch.LNBKHz,ch.DiSEqC,-1,-1,ch.LNBFrequency,0,0,0,0,"",0,0,ch)==false)
 			{
 				m_lastTuneError=true;
 				Log.WriteFile(Log.LogType.Capture,"auto-tune ss2: FAILED to tune channel");
@@ -2584,11 +2733,80 @@ namespace MediaPortal.TV.Recording
 						updatedChannels++;
 						Log.WriteFile(Log.LogType.Capture,"auto-tune ss2: channel {0} already exists in tv database",newchannel.ServiceName);
 					}
-					Log.WriteFile(Log.LogType.Capture,"auto-tune ss2: map channel {0} id:{1} to DVBS card:{2}",newchannel.ServiceName,channelId,ID);
-					newchannel.ID=channelId;
-					TVDatabase.AddSatChannel(newchannel);
-					TVDatabase.MapChannelToCard(channelId,ID);
+					if (Network() == NetworkType.DVBT)
+					{
+						//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: map channel {0} id:{1} to DVBT card:{2}",newchannel.ServiceName,channelId,ID);
+						TVDatabase.MapDVBTChannel(newchannel.ServiceName,
+							newchannel.ServiceProvider,
+							channelId, 
+							newchannel.Frequency, 
+							newchannel.NetworkID,
+							newchannel.TransportStreamID,
+							newchannel.ProgramNumber,
+							newchannel.AudioPid,
+							newchannel.VideoPid, 
+							newchannel.TeletextPid,
+							newchannel.PMTPid,
+							newchannel.Bandwidth,
+							newchannel.Audio1,newchannel.Audio2,newchannel.Audio3,newchannel.AC3Pid,newchannel.PCRPid ,
+							newchannel.AudioLanguage,newchannel.AudioLanguage1,newchannel.AudioLanguage2,newchannel.AudioLanguage3,
+							newchannel.HasEITPresentFollow , newchannel.HasEITSchedule);
+					}
+					if (Network() == NetworkType.DVBC)
+					{
+						//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: map channel {0} id:{1} to DVBC card:{2}",newchannel.ServiceName,channelId,ID);
+						TVDatabase.MapDVBCChannel(newchannel.ServiceName,
+							newchannel.ServiceProvider,
+							channelId, 
+							newchannel.Frequency, 
+							newchannel.Symbolrate,
+							newchannel.FEC,
+							newchannel.Modulation,
+							newchannel.NetworkID,
+							newchannel.TransportStreamID,
+							newchannel.ProgramNumber,
+							newchannel.AudioPid,
+							newchannel.VideoPid, 
+							newchannel.TeletextPid,
+							newchannel.PMTPid,
+							newchannel.Audio1,newchannel.Audio2,newchannel.Audio3,newchannel.AC3Pid,newchannel.PCRPid ,
+							newchannel.AudioLanguage,newchannel.AudioLanguage1,newchannel.AudioLanguage2,newchannel.AudioLanguage3,
+							newchannel.HasEITPresentFollow , newchannel.HasEITSchedule);
 
+					}
+					if (Network() == NetworkType.ATSC)
+					{
+						//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: map channel {0} id:{1} to ATSC card:{2}",newchannel.ServiceName,channelId,ID);
+						TVDatabase.MapATSCChannel(newchannel.ServiceName,
+							newchannel.PhysicalChannel, 
+							newchannel.MinorChannel,  
+							newchannel.MajorChannel, 
+							newchannel.ServiceProvider,
+							channelId, 
+							newchannel.Frequency, 
+							newchannel.Symbolrate,
+							newchannel.FEC,
+							newchannel.Modulation,
+							newchannel.NetworkID,
+							newchannel.TransportStreamID,
+							newchannel.ProgramNumber,
+							newchannel.AudioPid,
+							newchannel.VideoPid, 
+							newchannel.TeletextPid,
+							newchannel.PMTPid,
+							newchannel.Audio1,newchannel.Audio2,newchannel.Audio3,newchannel.AC3Pid,newchannel.PCRPid ,
+							newchannel.AudioLanguage,newchannel.AudioLanguage1,newchannel.AudioLanguage2,newchannel.AudioLanguage3,
+							newchannel.HasEITPresentFollow , newchannel.HasEITSchedule);
+
+					}
+
+					if (Network() == NetworkType.DVBS)
+					{
+							Log.WriteFile(Log.LogType.Capture,"auto-tune ss2: map channel {0} id:{1} to DVBS card:{2}",newchannel.ServiceName,channelId,ID);
+							newchannel.ID=channelId;
+							TVDatabase.AddSatChannel(newchannel);
+					}
+					TVDatabase.MapChannelToCard(channelId,ID);
 					
 					TVGroup group = new TVGroup();
 					if (info.scrambled)
@@ -2664,6 +2882,23 @@ namespace MediaPortal.TV.Recording
 							Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: channel {0} already exists in tv database",newchannel.ServiceName);
 						}
 
+						if (Network() == NetworkType.DVBT)
+						{
+							//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: map channel {0} id:{1} to DVBT card:{2}",newchannel.ServiceName,channelId,ID);
+							RadioDatabase.MapDVBTChannel(newchannel.ServiceName,newchannel.ServiceProvider,channelId, newchannel.Frequency, newchannel.NetworkID,newchannel.TransportStreamID,newchannel.ProgramNumber,newchannel.AudioPid,newchannel.PMTPid,newchannel.Bandwidth, newchannel.PCRPid);
+						}
+						if (Network() == NetworkType.DVBC)
+						{
+							//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: map channel {0} id:{1} to DVBC card:{2}",newchannel.ServiceName,channelId,ID);
+							RadioDatabase.MapDVBCChannel(newchannel.ServiceName,newchannel.ServiceProvider,channelId, newchannel.Frequency, newchannel.Symbolrate,newchannel.FEC,newchannel.Modulation,newchannel.NetworkID,newchannel.TransportStreamID,newchannel.ProgramNumber,newchannel.AudioPid,newchannel.PMTPid, newchannel.PCRPid);
+						}
+						if (Network() == NetworkType.ATSC)
+						{
+							//Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: map channel {0} id:{1} to DVBC card:{2}",newchannel.ServiceName,channelId,ID);
+							RadioDatabase.MapATSCChannel(newchannel.ServiceName,newchannel.PhysicalChannel, 
+								newchannel.MinorChannel,  
+								newchannel.MajorChannel, newchannel.ServiceProvider,channelId, newchannel.Frequency, newchannel.Symbolrate,newchannel.FEC,newchannel.Modulation,newchannel.NetworkID,newchannel.TransportStreamID,newchannel.ProgramNumber,newchannel.AudioPid,newchannel.PMTPid, newchannel.PCRPid);
+						}
 						if (Network() == NetworkType.DVBS)
 						{
 							Log.WriteFile(Log.LogType.Capture,"auto-tune ss2: map channel {0} id:{1} to DVBS card:{2}",newchannel.ServiceName,channelId,ID);
@@ -2828,7 +3063,7 @@ namespace MediaPortal.TV.Recording
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2:database invalid tuning details for channel:{0}", station.Channel);
 				return;
 			}
-			if(Tune(ch.Frequency,ch.Symbolrate,ch.FEC,ch.Polarity,ch.LNBKHz,ch.DiSEqC,ch.AudioPid,0,ch.LNBFrequency,0,0,ch.PMTPid,ch.PCRPid,ch.AudioLanguage3,0,ch.ProgramNumber)==true)
+			if(Tune(ch.Frequency,ch.Symbolrate,ch.FEC,ch.Polarity,ch.LNBKHz,ch.DiSEqC,ch.AudioPid,0,ch.LNBFrequency,0,0,ch.PMTPid,ch.PCRPid,ch.AudioLanguage3,0,ch.ProgramNumber,ch)==true)
 				Log.WriteFile(Log.LogType.Capture,"DVBGraphSS2: Radio tune ok");
 			else
 			{
