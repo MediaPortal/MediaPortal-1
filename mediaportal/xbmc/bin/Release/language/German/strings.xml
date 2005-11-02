@@ -1685,6 +1685,10 @@
 		<value>Sprache</value>
 	</string>
 	<string>
+		<id>493</id>
+		<value>Darsteller:</value>
+	</string>
+	<string>
 		<id>500</id>
 		<value>Datei-Menü</value>
 	</string>
@@ -1763,7 +1767,7 @@
 	
 	<string>
 		<id>530</id>
-		<value>Photo-CD eingelegt! Öffnen?</value>
+		<value>Foto-CD eingelegt! Öffnen?</value>
 	</string>
 	<string>
 		<id>531</id>
@@ -2431,7 +2435,7 @@
 </string>
 <string>
 	<id>872</id>
-	<value>Starte mit</value>
+	<value>Beginnend mit</value>
 </string>
 <string>
 	<id>873</id>
@@ -3259,7 +3263,7 @@
 	<string><id>2130</id><value>Block</value></string>
 	<string><id>2131</id><value>von</value></string>
 	<string><id>2132</id><value>CD wird geschlossen. Voraussichtliche Dauer:</value></string>
-	<string><id>2133</id><value>TV Aufnahmen</value></string>
+	<string><id>2133</id><value>TV-Aufnahmen</value></string>
 	<string><id>2134</id><value>Video</value></string>
 	<string><id>2135</id><value>Audio</value></string>
 	<string><id>2136</id><value>Daten</value></string>
@@ -3696,7 +3700,7 @@
 <string><id>100033</id><value>MSN Chat</value></string>
 <string><id>100034</id><value>Sonstiges</value></string>
 <string><id>100100</id><value>Ja/Nein Dialog</value></string>
-<string><id>100101</id><value>in Arbeit Dialog</value></string>
+<string><id>100101</id><value>Bitte warten...</value></string>
 <string><id>100500</id><value>Musik/Wiedergabeliste</value></string>
 <string><id>100501</id><value>Musik/Dateien</value></string>
 <string><id>100502</id><value>Musik/Alben</value></string>
@@ -3711,19 +3715,59 @@
 <string><id>100604</id><value>Fernsehen/Suche</value></string>
 <string><id>100605</id><value>Fernsehen/Aufnahmen/Genre</value></string>
 <string><id>100606</id><value>Fernsehen/Aufnahmen/Kanäle</value></string>
+<string><id>100607</id><value>Fernsehen/Timer/Prioritäten</value></string>
+<string><id>100608</id><value>Fernsehen/Timer/Überschneidungen</value></string>
+<string><id>100609</id><value>Fernsehen/Komprimieren/Hauptmenü</value></string>
+<string><id>100610</id><value>Fernsehen/Komprimieren/Einstellungen</value></string>
+<string><id>100611</id><value>Fernsehen/Komprimieren/Automatisch</value></string>
+<string><id>100612</id><value>Fernsehen/Komprimieren/Komprimieren</value></string>
+<string><id>100613</id><value>Fernsehen/Komprimieren/Status</value></string>
+<string><id>100614</id><value>Video-Künstler-Info</value></string>
+<string><id>100615</id><value>Assistent/Willkommen</value></string>
+<string><id>100616</id><value>Assistent/Karten gefunden</value></string>
+<string><id>100617</id><value>Assistent/Land</value></string>
+<string><id>100618</id><value>Assistent/Kanalsuche</value></string>
+<string><id>100619</id><value>Assistent/DVBC/Land</value></string>
+<string><id>100620</id><value>Assistent/DVBC/Kanalsuche</value></string>
+<string><id>100621</id><value>Assistent/DVBS/LNB</value></string>
+<string><id>100622</id><value>Assistent/DVBS/LNB-Details</value></string>
+<string><id>100623</id><value>Assistent/DVBS/Transponder</value></string>
+<string><id>100624</id><value>Assistent/DVBS/Kanalsuche</value></string>
+<string><id>100625</id><value>Assistent/ATSC/Kanalsuche</value></string>
+<string><id>100626</id><value>Assistent/Analog/Land</value></string>
+<string><id>100627</id><value>Assistent/Analog/Stadt</value></string>
+<string><id>100628</id><value>Assistent/Analog/Importiert</value></string>
+<string><id>100629</id><value>Assistent/Analog/Manuell</value></string>
+<string><id>100630</id><value>Assistent/Analog/Kanalsuche</value></string>
+<string><id>100631</id><value>Assistent/Analog/Umbenennen</value></string>
+<string><id>100632</id><value>Assistent/Analog/Radio</value></string>
+<string><id>100633</id><value>Assistent/Analog/Radio umbenennen</value></string>
+<string><id>100634</id><value>Assistent/Fernbedienung</value></string>
+<string><id>100635</id><value>Assistent/EPG</value></string>
+<string><id>100699</id><value>Assistent/Fertig</value></string>
+<string><id>100700</id><value>TV-Einstellungen</value></string>
+<string><id>100701</id><value>TV-Aufnahme-Einstellungen</value></string>
+<string><id>100702</id><value>TV-Kanäle sortieren</value></string>
+<string><id>100703</id><value>TV-Film-Einstellungen</value></string>
+<string><id>100704</id><value>DVD-Einstellungen</value></string>
+<string><id>100705</id><value>Oberflächen-Einstellungen</value></string>
+<string><id>100748</id><value>Programm-Info</value></string>
+<string><id>100749</id><value>TV/Kein Signal</value></string>
 <string><id>100750</id><value>Rezepte</value></string>
 <string><id>100755</id><value>Status</value></string>
 <string><id>100756</id><value>Status Details</value></string>
 <string><id>100757</id><value>Status Einstellungen</value></string>
-<string><id>100758</id><value>Datei Dialog</value></string>
+<string><id>100758</id><value>Datei-Dialog</value></string>
 <string><id>100760</id><value>Brenner</value></string>
+
+
 <string><id>100770</id><value>Explorer</value></string>
 <string><id>101000</id><value>Tastatur</value></string>
-<string><id>102000</id><value>Dialogauswahl</value></string>
+<string><id>102000</id><value>Auswahldialog</value></string>
 <string><id>102001</id><value>Musik/Info</value></string>
 <string><id>102002</id><value>Dialog OK</value></string>
 <string><id>102003</id><value>Filme/Info</value></string>
-<string><id>102004</id><value>Scripte/Info</value></string>
+<string><id>102004</id><value>Skripte/Info</value></string>
 <string><id>102005</id><value>Vollbild</value></string>
 <string><id>102006</id><value>Audio-Visualisierung</value></string>
 <string><id>102007</id><value>Bilder/Diashow</value></string>
@@ -3747,7 +3791,6 @@
 <string><id>107700</id><value>TV/Videotext</value></string>
 <string><id>107701</id><value>TV/Videotext</value></string>
 
-
 <string><id>200000</id><value>Bitte EPG Grabber auswählen. Beachten sie bitte</value></string>
 <string><id>200001</id><value>ist ihr Land nicht aufgelistet, müssen sie das EPG manuell einrichten</value></string>
 <string><id>200002</id><value>Sie können jetzt EPG-Kanäle ihren TV-Kanälen zuordnen</value></string>
@@ -3760,18 +3803,23 @@
 <string><id>200009</id><value>Weiter &gt;</value></string>
 <string><id>200010</id><value>Media Portal verwandelt ihren PC in ein fortschrittliches Multi-Media-Center.</value></string>
 <string><id>200011</id><value>Mit Media Portal können sie ihre Lieblingsmusik geniessen</value></string>
-<string><id>200013</id><value>Sie können damit Musik &amp; Radio hören, ihre Filme, DVD, Photos und</value></string>
+<string><id>200013</id><value>Sie können damit Musik &amp; Radio hören, ihre Filme, DVD, Fotos und</value></string>
 <string><id>200014</id><value>Videos ansehen, Fernsehen oder Sendungen aufnehmen und vieles mehr.</value></string>
-<string><id>200015</id><value>Der Assistent wird ihnen helfen Media Portal schnell und einfach einzurichten.</value></string>
+<string><id>200015</id><value>Der Assistent wird ihnen helfen, Media Portal schnell und einfach einzurichten.</value></string>
 <string><id>200016</id><value>Drücken sie den "Weiter" Knopf um fortzufahren</value></string>
 <string><id>200017</id><value>Willkommen bei Media Portal. </value></string>
-<string><id>200018</id><value>Herzlichen Glückwunsch. Media Portal ist jetzt fertig eingerichtet</value></string>
+<string><id>200018</id><value>Herzlichen Glückwunsch - Media Portal ist jetzt fertig eingerichtet!</value></string>
 <string><id>200019</id><value>Klicken sie auf "Fertig" um den Assistenten zu schliessen</value></string>
 <string><id>200020</id><value>Fertig</value></string>
-<string><id>200021</id><value>TV Konfiguration - EPG</value></string>
+<string><id>200021</id><value>TV-Konfiguration - EPG</value></string>
 <string><id>200022</id><value>Media Portal hat folgende TV-Karten gefunden: </value></string>
 <string><id>200023</id><value>Drücken sie den "Weiter" Knopf um die TV-Karten einzurichten</value></string>
-<string><id>200024</id><value>TV Konfiguration</value></string>
+<string><id>200024</id><value>TV-Konfiguration</value></string>
+
+<!-- Web Browser Strings -->
+<string><id>4000</id><value>Web-Browser</value></string>
+<string><id>4001</id><value>Lesezeichen</value></string>
+
 <string><id>666666</id><value>translated by "rtv" with many thanks to all helpers - please direct updates/issues to f1n4rf1n@gmx.de or drop me a PM in the forums!</value></string>
 
 
