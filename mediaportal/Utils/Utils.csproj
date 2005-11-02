@@ -123,11 +123,6 @@
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
-                <File
-                    RelPath = "Xml\Xml.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
             </Include>
         </Files>
     </CSHARP>
