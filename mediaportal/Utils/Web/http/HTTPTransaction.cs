@@ -89,7 +89,7 @@ namespace MediaPortal.Utils.Web
 				if(m_Cookies != null)
 					request.CookieContainer.Add( m_Cookies );
 					
-                HttpWebResponse m_Response = (HttpWebResponse) request.GetResponse();
+                m_Response = (HttpWebResponse) request.GetResponse();
 				m_Response.Cookies = request.CookieContainer.GetCookies(request.RequestUri);
 				m_Cookies = m_Response.Cookies;
 
