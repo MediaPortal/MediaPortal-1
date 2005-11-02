@@ -740,14 +740,26 @@ namespace MediaPortal.TV.Recording
 			}			
 			
 			// airstar
-			/* used ????
-			hr = m_tunerCtrl.SetGuardInterval(-1);
-			if (hr!=0)
+			if(m_NetworkType == NetworkType.DVBT)
 			{
-				Log.WriteFile(Log.LogType.Capture,"Tune for SkyStar2 FAILED: on SetGuardInterval");
-				return false;	// *** FUNCTION EXIT POINT
+				/* used ????
+				hr = m_tunerCtrl.SetGuardInterval(-1);
+				if (hr!=0)
+				{
+					Log.WriteFile(Log.LogType.Capture,"Tune for SkyStar2 FAILED: on SetGuardInterval");
+					return false;	// *** FUNCTION EXIT POINT
+				}
+				*/
+				// Set Channel Bandwidth (NOTE: Temporarily use polarity function to avoid having to 
+				// change SDK interface for SetBandwidth)
+				// from Technisat SDK 02/2005
+				hr = m_tunerCtrl.SetPolarity(ch.Bandwidth);
+				if (hr!=0)
+				{
+					Log.WriteFile(Log.LogType.Capture,"Tune for SkyStar2 FAILED: on SetBandwidth");
+					return false;	// *** FUNCTION EXIT POINT
+				}
 			}
-			*/
 			// final
 			hr = m_tunerCtrl.SetTunerStatus();
 			if (hr!=0)	
@@ -1798,7 +1810,7 @@ namespace MediaPortal.TV.Recording
 					m_channelFound=true;
 					m_currentChannel=ch;
 					m_selectedAudioPid=ch.AudioPid;
-					if(Tune(ch.Frequency,ch.Symbolrate,6,ch.Polarity,ch.LNBKHz,ch.DiSEqC,ch.AudioPid,ch.VideoPid,ch.LNBFrequency,ch.ECMPid,ch.TeletextPid,ch.PMTPid,ch.PCRPid,ch.AudioLanguage3,ch.Audio3,ch.ProgramNumber,ch)==false)
+					if(Tune(ch.Frequency,ch.Symbolrate,6,ch.Polarity,ch.LNBKHz,ch.DiSEqC,ch.AudioPid,ch.VideoPid,ch.LNBFrequency,ch.ECMPid,ch.TeletextPid,ch.PMTPid,chPCRPid,ch.AudioLanguage3,ch.Audio3,ch.ProgramNumber,ch)==false)
 					{
 						m_lastTuneError=true;
 						m_channelFound=false;
