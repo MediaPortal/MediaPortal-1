@@ -20,6 +20,7 @@
  */
 //#define HW_PID_FILTERING
 //#define DUMP
+//#define USEMTSWRITER
 #if (UseCaptureCardDefinitions)
 using System;
 using System.IO;
@@ -649,6 +650,7 @@ namespace MediaPortal.TV.Recording
 				}
 #if USEMTSWRITER
 
+				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Add Tee/Sink-Sink converter to graph");
 				AddTeeSinkToGraph(_graphBuilder);
 				_filterSmartTee=DirectShowUtil.GetFilterByName(_graphBuilder, "Kernel Tee");
 				if (_filterSmartTee==null) 
@@ -656,9 +658,16 @@ namespace MediaPortal.TV.Recording
 					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to add Tee/Sink-Sink converter filter to graph");
 					return false;
 				}
+				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Connect capture->Tee/Sink-Sink converter");
 				if (!ConnectFilters(ref lastFilter.DSFilter,ref _filterSmartTee))
 				{
 					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to connect capture->Tee/Sink-Sink converter filter");
+					return false;
+				}
+				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Connect Tee/Sink-Sink converter->grabber");
+				if (!ConnectFilters(ref _filterSmartTee,ref _filterSampleGrabber))
+				{
+					Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed to connect Tee/Sink-Sink converter->grabber");
 					return false;
 				}
 #else
@@ -3644,7 +3653,7 @@ namespace MediaPortal.TV.Recording
 			try
 			{
 #if USEMTSWRITER
-				if (_graphState==State.TimeShifting)
+				/*if (_graphState==State.TimeShifting)
 				{
 					string fname=Recorder.GetTimeShiftFileNameByCardId(_cardId);
 					if (g_Player.Playing && g_Player.CurrentFile == fname)
@@ -3653,7 +3662,7 @@ namespace MediaPortal.TV.Recording
 						g_Player.PauseGraph();
 						_mediaControl.Stop();
 					}
-				}
+				}*/
 #endif
 				if (_vmr9!=null) _vmr9.Enable(false);
 				
@@ -3934,12 +3943,12 @@ namespace MediaPortal.TV.Recording
 			finally
 			{
 #if USEMTSWRITER
-				if (restartGraph)
+				/*if (restartGraph)
 				{
 					string fname=Recorder.GetTimeShiftFileNameByCardId(_cardId);
 					StartTimeShifting(null,fname);
 					g_Player.ContinueGraph();
-				}
+				}*/
 #endif
 				if (_vmr9!=null) _vmr9.Enable(true);
 				_signalLostTimer=DateTime.Now;
