@@ -35,8 +35,6 @@ namespace MediaPortal.Utils.Web
 		string defaultEncode = "iso8859-1";
 		string m_Encoding;
 		string m_Error;
-        int m_startIndex;
-        int m_endIndex;
 
         public HTMLPage()
         {
@@ -67,6 +65,15 @@ namespace MediaPortal.Utils.Web
 
 		public bool LoadPage(string strURL)
 		{
+			if(HTMLCache.Caching)
+			{
+				if(HTMLCache.LoadPage(strURL))
+				{
+					m_strPageSource = HTMLCache.GetPage();
+					return true;
+				}
+			}
+
 			Encoding encode;
 			string strEncode = defaultEncode;
 
@@ -99,8 +106,9 @@ namespace MediaPortal.Utils.Web
 					encode = System.Text.Encoding.GetEncoding(strEncode);
 					m_strPageSource = encode.GetString(pageData);
 				}
-				m_startIndex=0;
-				m_endIndex=m_strPageSource.Length;
+
+				if(HTMLCache.Caching)
+					HTMLCache.SavePage(strURL, m_strPageSource);
 
 				return true;
 			}
@@ -108,38 +116,14 @@ namespace MediaPortal.Utils.Web
 			return false;
         }
 
-        public string GetPage() //string strURL, string strEncode)
+        public string GetPage()
         {
             return m_strPageSource;
         }
 
-		public bool SetStart(string strStart)
-		{
-			int startIndex = m_strPageSource.IndexOf(strStart, 0);
-
-			if(startIndex != -1)
-			{
-				m_startIndex = startIndex;
-				return true;
-			}
-			return false;
-		}
-
-		public bool SetEnd(string strEnd)
-		{
-			int endIndex = m_strPageSource.IndexOf(strEnd, 0);
-
-			if(endIndex != -1)
-			{
-				m_endIndex = endIndex;
-				return true;
-			}
-			return false;
-		}
-
-        public string SubPage()
-        {
-            return m_strPageSource.Substring(m_startIndex, m_endIndex - m_startIndex);
-        }
+//        public string GetBody()
+//        {
+//            //return m_strPageSource.Substring(m_startIndex, m_endIndex - m_startIndex);
+//        }
     }
 }

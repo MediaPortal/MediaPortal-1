@@ -89,6 +89,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Web\http\HTMLCache.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Web\http\HTMLPage.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -115,6 +120,11 @@
                 />
                 <File
                     RelPath = "Web\Parser\Profiler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Xml\Xml.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
