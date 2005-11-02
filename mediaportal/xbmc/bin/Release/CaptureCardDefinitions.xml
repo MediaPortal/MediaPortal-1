@@ -5326,13 +5326,13 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="ADS Instant TV DVB-T USB (PTV-334)" capturename="DiBcom MOD3000 TV receiver" devid="vid_06e1&amp;pid_a334">
+  <capturecard commercialname="ADS Instant TV DVB-T USB (PTV-334)" capturename="ADS MOD3000 TV receiver" devid="vid_06e1&amp;pid_a334&amp;mi_00">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="tunerdevice" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider"	checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="DiBcom MOD3000 TV receiver"			checkdevice="true"></filter>
+        <filter cat="tunerdevice"     name="ADS MOD3000 TV receiver"			checkdevice="true"></filter>
       </filters>
       <connections>
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -6241,7 +6241,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="ADS Tech InstantTV DVB-S" capturename="DigiGo DVBS 2388x Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_03411421&amp;rev_05">
+  <capturecard commercialname="ADS-Tech Instant TV DVB-S" capturename="DigiGo DVBS 2388x Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_03411421&amp;rev_05">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
@@ -6255,5 +6255,53 @@
 		<connection sourcefilter="tunerdevice"		sourcepin="0" sinkfilter="capture"		sinkpin="0"></connection>
       </connections>
     </tv>
+  </capturecard>
+
+  <capturecard commercialname="ADS-Tech Instant TV DVB-T CardBus" capturename="713x BDA Digital Capture" devid="ven_1131&amp;dev_7133&amp;subsys_14210335&amp;rev_f0"> 
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities> 
+    <tv> 
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface> 
+      <filters> 
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"  checkdevice="false"></filter> 
+        <filter cat="tunerdevice"     name="713x BDA DVBT Tuner"              checkdevice="true"></filter> 
+        <filter cat="capture"         name="713x BDA Digital Capture"         checkdevice="true"></filter> 
+      </filters> 
+      <connections> 
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection> 
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection> 
+      </connections> 
+    </tv> 
+  </capturecard>
+
+  <capturecard commercialname="ADS-Tech Instant Dual TV DVB-T CardBus" capturename="713x BDA Digital Capture" devid="ven_1131&amp;dev_7133&amp;subsys_14210331&amp;rev_f0"> 
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities> 
+    <tv> 
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface> 
+      <filters> 
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"  checkdevice="false"></filter> 
+        <filter cat="tunerdevice"     name="713x BDA DVBT Tuner"              checkdevice="true"></filter> 
+        <filter cat="capture"         name="713x BDA Digital Capture"         checkdevice="true"></filter> 
+      </filters> 
+      <connections> 
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection> 
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection> 
+      </connections> 
+    </tv> 
+  </capturecard>
+
+  <capturecard commercialname="ADS-Tech Instant TV DVB-T" capturename="DigiGo DVBT 2388x Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_86231462&amp;rev_05"> 
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities> 
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface> 
+      <filters> 
+		<filter cat="networkprovider"	name="Microsoft DVBT Network Provider"				checkdevice="false"></filter> 
+		<filter cat="tunerdevice"		name="DigiGo DVBT BDA Tuner/Demod"					checkdevice="true"></filter> 
+		<filter cat="capture"			name="DigiGo DVBT 2388x Transport Stream Capture"	checkdevice="true"></filter>
+      </filters> 
+      <connections> 
+		<connection sourcefilter="networkprovider"	sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"></connection> 
+		<connection sourcefilter="tunerdevice"		sourcepin="0" sinkfilter="capture"		sinkpin="0"></connection> 
+      </connections> 
+    </tv> 
   </capturecard>
 </capturecards>
