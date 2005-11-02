@@ -3643,7 +3643,7 @@ namespace MediaPortal.TV.Recording
 			bool restartGraph=false;
 			try
 			{
-#if !USEMTSWRITER
+#if USEMTSWRITER
 				if (_graphState==State.TimeShifting)
 				{
 					string fname=Recorder.GetTimeShiftFileNameByCardId(_cardId);
@@ -3933,7 +3933,7 @@ namespace MediaPortal.TV.Recording
 			}	
 			finally
 			{
-#if !USEMTSWRITER
+#if USEMTSWRITER
 				if (restartGraph)
 				{
 					string fname=Recorder.GetTimeShiftFileNameByCardId(_cardId);
