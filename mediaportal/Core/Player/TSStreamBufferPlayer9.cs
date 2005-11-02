@@ -123,9 +123,9 @@ namespace MediaPortal.Player
 
 				Log.WriteFile(Log.LogType.Capture,"TStreamBufferPlayer9:add new TS reader to graph");
 
-				_bufferSource = new MPTransportStreamReader();
+				_bufferSource = new TsFileSource();
 				_filter = (IBaseFilter) _bufferSource;
-				_graphBuilder.AddFilter(_filter, "MP TS Reader");
+				_graphBuilder.AddFilter(_filter, "TsFileSource");
 		
 				Log.WriteFile(Log.LogType.Capture,"TStreamBufferPlayer9:open file");
 				_fileSource = (IFileSourceFilter) _bufferSource;

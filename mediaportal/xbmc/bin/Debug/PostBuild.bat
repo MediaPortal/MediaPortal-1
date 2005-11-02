@@ -18,10 +18,10 @@ del /F /Q plugins\process\*.*
 del *.dll
 del *.ax
 copy ..\..\..\MPSA.ax .
-copy ..\..\..\MPTS.ax .
+copy ..\..\..\TSFileSource.ax .
 copy ..\..\..\MPTSWriter.ax .
 regsvr32 /s MPSA.ax
-regsvr32 /s MPTS.ax
+regsvr32 /s TSFileSource.ax
 regsvr32 /s MPTSWriter.ax
 
 copy ..\..\..\core\directshowhelper\directshowhelper\release\dshowhelper.dll .

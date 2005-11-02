@@ -37,8 +37,10 @@ namespace MediaPortal.Player
 	{
 		[ComImport, Guid("AFB6C280-2C41-11D3-8A60-0000F81E0E4A")]
 			class MPEG2Demultiplexer {}
-		[ComImport, Guid("A3556F1E-787B-12C4-9100-01AF313AC900")]
-		protected class MPTransportStreamReader {}
+//		[ComImport, Guid("A3556F1E-787B-12C4-9100-01AF313AC900")]
+//		protected class MPTransportStreamReader {}
+		[ComImport, Guid("4F8BF30C-3BEB-43A3-8BF2-10096FD28CF2")]
+		protected class TsFileSource{}
 
 		public enum PlayState
 		{
@@ -62,7 +64,7 @@ namespace MediaPortal.Player
 		protected PlayState													_state=PlayState.Init;
 		protected int																_volume=100;
 		protected  IGraphBuilder			  			      _graphBuilder =null;
-		protected  MPTransportStreamReader 			    _bufferSource=null ;
+		protected  TsFileSource 										_bufferSource=null ;
 		protected  IMediaSeeking									  _mediaSeeking=null;
 		protected int                               _speed=1;
 		protected double                            _currentPos;
@@ -852,9 +854,9 @@ namespace MediaPortal.Player
 					}
 				}
 
-				_bufferSource = new MPTransportStreamReader();
+				_bufferSource = new TsFileSource();
 				IBaseFilter filter = (IBaseFilter) _bufferSource;
-				_graphBuilder.AddFilter(filter, "MP TS Reader");
+				_graphBuilder.AddFilter(filter, "TsFileSource");
 		
 				IFileSourceFilter fileSource = (IFileSourceFilter) _bufferSource;
 				hr = fileSource.Load(filename, IntPtr.Zero);
