@@ -468,6 +468,7 @@ namespace MediaPortal.Player
 			}
 			try
 			{
+				Direct3D.Surface backBuffer=null;
 				m_idebugstep=0;
 				reentrant=true;
 				GUIGraphicsContext.InVmr9Render=true;
@@ -497,7 +498,8 @@ namespace MediaPortal.Player
 				}
 
 				m_idebugstep=2;
-				//					backBuffer=GUIGraphicsContext.DX9Device.GetBackBuffer(0,0,BackBufferType.Mono);
+				
+				backBuffer=GUIGraphicsContext.DX9Device.GetBackBuffer(0,0,BackBufferType.Mono);
 				//first time, fade in the video in 12 steps
 				int iMaxSteps = 12;
 				if (m_iFrame < iMaxSteps)
@@ -601,17 +603,23 @@ namespace MediaPortal.Player
 						}
 					}
 					m_idebugstep=17;
-
-					//using (GraphicsStream strm=backBuffer.LockRectangle(LockFlags.None))
-					//{
-					//}
-					//backBuffer.UnlockRectangle();
 					GUIFontManager.Present();
 					m_idebugstep=18;
+
 					//and present it onscreen
 				}
 				GUIGraphicsContext.DX9Device.EndScene();
 				m_idebugstep=19;
+				if (GUIGraphicsContext.DirectXPresentParameters.Windowed)
+				{
+					if (GUIGraphicsContext.DirectXPresentParameters.PresentFlag == PresentFlag.LockableBackBuffer)
+					{
+						using (GraphicsStream strm=backBuffer.LockRectangle(LockFlags.None))
+						{
+						}
+						backBuffer.UnlockRectangle();
+					}
+				}
 				GUIGraphicsContext.DX9Device.Present();
 				m_idebugstep=20;
 			}
@@ -653,7 +661,7 @@ namespace MediaPortal.Player
 				//if we're stopping then just return
 				float timePassed=GUIGraphicsContext.TimePassed;
 				if (m_bStop) return;
-				//Direct3D.Surface backBuffer=null;
+				Direct3D.Surface backBuffer=null;
 				//sanity checks
 				if (GUIGraphicsContext.DX9Device==null) return;
 				if (GUIGraphicsContext.DX9Device.Disposed) return;
@@ -668,7 +676,7 @@ namespace MediaPortal.Player
 
 
 				m_idebugstep=3;
-				//					backBuffer=GUIGraphicsContext.DX9Device.GetBackBuffer(0,0,BackBufferType.Mono);
+				backBuffer=GUIGraphicsContext.DX9Device.GetBackBuffer(0,0,BackBufferType.Mono);
 				//first time, fade in the video in 12 steps
 				int iMaxSteps = 12;
 				if (m_iFrame < iMaxSteps)
@@ -767,17 +775,22 @@ namespace MediaPortal.Player
 						}
 					}
 					m_idebugstep=14;
-
-					//using (GraphicsStream strm=backBuffer.LockRectangle(LockFlags.None))
-					//{
-					//}
-					//backBuffer.UnlockRectangle();
 					GUIFontManager.Present();
 					//and present it onscreen
 				}
 				m_idebugstep=15;
 				GUIGraphicsContext.DX9Device.EndScene();
 				m_idebugstep=16;
+				if (GUIGraphicsContext.DirectXPresentParameters.Windowed)
+				{
+					if (GUIGraphicsContext.DirectXPresentParameters.PresentFlag == PresentFlag.LockableBackBuffer)
+					{
+						using (GraphicsStream strm=backBuffer.LockRectangle(LockFlags.None))
+						{
+						}
+						backBuffer.UnlockRectangle();
+					}
+				}
 				GUIGraphicsContext.DX9Device.Present();
 				m_idebugstep=17;
 			}

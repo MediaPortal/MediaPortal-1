@@ -346,6 +346,8 @@ namespace MediaPortal.GUI.TV
 			{
 				dlg.Add( GUILocalizeStrings.Get(i));
 			}
+			dlg.Add( GUILocalizeStrings.Get(1048));//Settings
+
 			dlg.DoModal( GetID);
 			if (dlg.SelectedLabel==-1) return;
 			switch (dlg.SelectedLabel)
@@ -360,6 +362,13 @@ namespace MediaPortal.GUI.TV
 				{
 					if ( OnPlayRecording(iItem))
 						return;
+				}
+					break;
+					
+				case 2: // Settings
+				{
+					GUITvRecordedInfo.CurrentProgram = rec;
+					GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TV_RECORDED_INFO,true);
 				}
 					break;
 			}

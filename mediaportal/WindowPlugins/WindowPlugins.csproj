@@ -1405,6 +1405,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "GUITV\GUITVRecordedInfo.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "GUITV\GUITVScheduler.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

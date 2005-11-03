@@ -2796,8 +2796,16 @@ namespace MediaPortal.Music.Database
 			  foreach(string extension in Extensions)
 			  {
 				  string[] files = Directory.GetFiles(path, String.Format("*{0}", extension));
-				  availableFiles.AddRange(files);
-				  totalFiles += files.Length;
+					for (int i=0; i < files.Length; ++i)
+					{
+						string ext=System.IO.Path.GetExtension(files[i]).ToLower();
+						if (ext == ".m3u") continue;
+						if (ext == ".pls") continue;
+						if (ext == ".wpl") continue;
+						if (ext == ".b4s") continue;
+						availableFiles.Add(files[i]);
+						totalFiles ++;
+					}
 			  }
 		  }
 		  catch

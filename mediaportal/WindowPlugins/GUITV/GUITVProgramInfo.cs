@@ -756,7 +756,7 @@ namespace MediaPortal.GUI.TV
 					for (int iDay=1; iDay <= 100; iDay++)
 					{
 						DateTime dt=currentProgram.StartTime.AddDays(iDay);
-						dlg.Add(Utils.GetShortDayString(dt));
+						dlg.Add(dt.ToLongDateString());
 					}
 					TimeSpan ts=(rec.KeepRecordingTill-currentProgram.StartTime);
 					int days=(int)ts.TotalDays;

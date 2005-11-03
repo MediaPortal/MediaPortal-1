@@ -33,6 +33,7 @@ namespace MediaPortal.Player
 {
   public class g_Player
   {
+		#region enums
     public enum Steps :int 
     { 
       Hourm2=-2*60*60,
@@ -57,32 +58,41 @@ namespace MediaPortal.Player
       Hour1=60*60,
       Hour2=2*60*60
     };
-    static Steps                     m_currentStep=Steps.Sec0;
-    static DateTime                  m_SeekTimer=DateTime.MinValue;
+		public enum MediaType  { Video, TV, Radio, Music,Recording };
+		#endregion
 
-    static Player.IPlayer            m_player=null;
-    static SubTitles                 m_subs=null;        
-    static bool                      m_bInit=false;
-    static string                    CurrentFilePlaying="";
-    
-    public enum MediaType  { Video, TV, Radio, Music,Recording };
+		#region variables
+    static Steps                     _currentStep=Steps.Sec0;
+    static DateTime                  _seekTimer=DateTime.MinValue;
+    static Player.IPlayer            _player=null;
+    static SubTitles                 _subs=null;        
+    static bool                      _isInitalized=false;
+    static string                    _currentFilePlaying="";
+		static MediaType									_currentMedia;
+		#endregion
+
+		#region events
     public delegate void StoppedHandler(MediaType type, int stoptime, string filename);
     public delegate void EndedHandler(MediaType type, string filename);
     public delegate void StartedHandler(MediaType type, string filename);
     static public event StoppedHandler PlayBackStopped;
     static public event EndedHandler PlayBackEnded;
     static public event StartedHandler PlayBackStarted;
+		#endregion
 
-		static MediaType currentMedia;
 
+		#region ctor/dtor
     // singleton. Dont allow any instance of this class
     private g_Player()
     {
     }
     public static Player.IPlayer Player
     {
-      get { return m_player;}
+      get { return _player;}
     }
+		#endregion
+
+		#region public members
 
     //called when current playing file is stopped
     static void OnStopped()
@@ -92,7 +102,7 @@ namespace MediaPortal.Player
       {
         //yes, then raise event 
 				Log.Write("g_Player.OnStopped()");   
-        PlayBackStopped(currentMedia,(int)g_Player.CurrentPosition, g_Player.CurrentFile);
+        PlayBackStopped(_currentMedia,(int)g_Player.CurrentPosition, g_Player.CurrentFile);
       }
     }
 
@@ -105,65 +115,65 @@ namespace MediaPortal.Player
 				//yes, then raise event 
 				Log.Write("g_Player.OnEnded()");
         
-        PlayBackEnded(currentMedia, CurrentFilePlaying);
+        PlayBackEnded(_currentMedia, _currentFilePlaying);
       }
     }
     //called when starting playing a file
     static void OnStarted()
     {
       //check if we're playing
-      if (m_player==null) return;
-      if (m_player.Playing)
+      if (_player==null) return;
+      if (_player.Playing)
       {
         //yes, then raise event 
-        currentMedia=MediaType.Music;
-				if (m_player.IsTV) 
+        _currentMedia=MediaType.Music;
+				if (_player.IsTV) 
 				{
-					currentMedia=MediaType.TV;
-					if (!m_player.IsTimeShifting) 
-						currentMedia=MediaType.Recording;
+					_currentMedia=MediaType.TV;
+					if (!_player.IsTimeShifting) 
+						_currentMedia=MediaType.Recording;
 				}
-				else if (m_player.IsRadio) 
+				else if (_player.IsRadio) 
 				{
-					currentMedia=MediaType.Radio;
+					_currentMedia=MediaType.Radio;
 				}
-        else if (m_player.HasVideo) 
+        else if (_player.HasVideo) 
 				{
-					if ( !Utils.IsAudio (CurrentFilePlaying) )
+					if ( !Utils.IsAudio (_currentFilePlaying) )
 					{
-						currentMedia=MediaType.Video;
+						_currentMedia=MediaType.Video;
 					}
 				}
-				Log.Write("g_Player.OnStarted() {0} media:{1}", CurrentFilePlaying, currentMedia.ToString());
+				Log.Write("g_Player.OnStarted() {0} media:{1}", _currentFilePlaying, _currentMedia.ToString());
         if (PlayBackStarted!=null)        
-          PlayBackStarted(currentMedia, CurrentFilePlaying);
+          PlayBackStarted(_currentMedia, _currentFilePlaying);
       }
     }
 		
 		public static void PauseGraph()
 		{
-			if (m_player!=null)
+			if (_player!=null)
 			{
-				m_player.PauseGraph();
+				_player.PauseGraph();
 			}
 		}
 		
 		public static void ContinueGraph()
 		{
-			if (m_player!=null)
+			if (_player!=null)
 			{
-				m_player.ContinueGraph();
+				_player.ContinueGraph();
 			}
 		}
 
     public static void Stop()
     {
-      if (m_player!=null)
+      if (_player!=null)
       {
 				Log.Write("g_Player.Stop()");
         OnStopped();
         GUIGraphicsContext.ShowBackground=true;
-				m_player.Stop();
+				_player.Stop();
 				GUIGraphicsContext.form.Invalidate(true);
 				GUIMessage msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_STOPPED,0,0,0,0,0,null);
         GUIWindowManager.SendThreadMessage(msg);
@@ -171,25 +181,25 @@ namespace MediaPortal.Player
 				GUIGraphicsContext.IsFullScreenVideo=false;
         GUIGraphicsContext.IsPlaying=false;
         GUIGraphicsContext.IsPlayingVideo=false;
-        m_player.Release();
-        m_player=null;
+        _player.Release();
+        _player=null;
       }
     }
     
     public static void Pause()
     {
-      if (m_player!=null)
+      if (_player!=null)
       {
-        m_currentStep=Steps.Sec0;
-        m_SeekTimer=DateTime.MinValue;
-        m_player.Pause();
+        _currentStep=Steps.Sec0;
+        _seekTimer=DateTime.MinValue;
+        _player.Pause();
       }
     }
     public static bool OnAction(Action action)
     {
-      if (m_player!=null)
+      if (_player!=null)
       {
-        return m_player.OnAction(action);
+        return _player.OnAction(action);
       }
       return false;
     }
@@ -198,42 +208,42 @@ namespace MediaPortal.Player
     {
       get 
       {
-        if (m_player==null) return false;
-        return m_player.IsDVD;
+        if (_player==null) return false;
+        return _player.IsDVD;
       }
     }
     public static bool IsTV
     {
       get 
       {
-        if (m_player==null) return false;
-        return m_player.IsTV;
+        if (_player==null) return false;
+        return _player.IsTV;
       }
 		}
 		public static bool IsTVRecording
 		{
 			get 
 			{
-				if (m_player==null) return false;
-				return (currentMedia==MediaType.Recording);
+				if (_player==null) return false;
+				return (_currentMedia==MediaType.Recording);
 			}
 		}
     public static bool IsTimeShifting
     {
       get 
       {
-        if (m_player==null) return false;
-        return m_player.IsTimeShifting;
+        if (_player==null) return false;
+        return _player.IsTimeShifting;
       }
     }
 
     public static void Release()
     {
-      if (m_player!=null)
+      if (_player!=null)
       {
-        m_player.Stop();
-        m_player.Release();
-        m_player=null;
+        _player.Stop();
+        _player.Release();
+        _player=null;
       }
     }
     public static bool PlayDVD()
@@ -253,16 +263,16 @@ namespace MediaPortal.Player
 			GUIWindowManager.SendMessage(msgTv);
 
 			Log.Write("g_Player.PlayDVD()");
-      m_currentStep=Steps.Sec0;
-      m_SeekTimer=DateTime.MinValue;
-      m_subs=null;
-      if (m_player!=null)
+      _currentStep=Steps.Sec0;
+      _seekTimer=DateTime.MinValue;
+      _subs=null;
+      if (_player!=null)
       {
         GUIGraphicsContext.ShowBackground=true;
         OnStopped();
-        m_player.Stop();
+        _player.Stop();
         GUIGraphicsContext.form.Invalidate(true);
-        m_player=null;
+        _player=null;
       }
 
       if (Utils.PlayDVD()) return true;
@@ -273,28 +283,28 @@ namespace MediaPortal.Player
       }
 
       if (iUseVMR9!=0)
-        m_player = new DVDPlayer9();
+        _player = new DVDPlayer9();
       else        
-        m_player = new DVDPlayer();
+        _player = new DVDPlayer();
 
-      bool bResult=m_player.Play(strPath);
+      bool bResult=_player.Play(strPath);
       if (!bResult)
       {
         Log.WriteFile(Log.LogType.Log,true,"g_Player.PlayDVD():failed to play");
-        m_player.Release();
-        m_player=null;
-        m_subs=null;
+        _player.Release();
+        _player=null;
+        _subs=null;
         GC.Collect();GC.Collect();GC.Collect();
         Log.Write("dvdplayer:bla");
       }
-      else if (m_player.Playing)
+      else if (_player.Playing)
       {
-        if (!m_player.IsTV)
+        if (!_player.IsTV)
         {
           GUIGraphicsContext.IsFullScreenVideo=true;
           GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
         }
-        CurrentFilePlaying=m_player.CurrentFile;
+        _currentFilePlaying=_player.CurrentFile;
         OnStarted();
         return true;
       }
@@ -316,78 +326,79 @@ namespace MediaPortal.Player
 			GUIMessage msgTv = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_TIMESHIFT,0,0,0,0,0,null);
 			GUIWindowManager.SendMessage(msgTv);
 
-      m_currentStep=Steps.Sec0;
-      m_SeekTimer=DateTime.MinValue;
-      m_bInit=true;
-      m_subs=null;
+      _currentStep=Steps.Sec0;
+      _seekTimer=DateTime.MinValue;
+      _isInitalized=true;
+      _subs=null;
       Log.Write("g_Player.PlayAudioStream({0})",strURL);
-      if (m_player!=null)
+      if (_player!=null)
       {
         GUIGraphicsContext.ShowBackground=true;
         OnStopped();
-        m_player.Stop();
+        _player.Stop();
         GUIGraphicsContext.form.Invalidate(true);
-        m_player=null;
+        _player=null;
       }
-      m_player = new AudioPlayerWMP9();
+      _player = new AudioPlayerWMP9();
 
-      bool bResult=m_player.Play(strURL);
+      bool bResult=_player.Play(strURL);
       if (!bResult)
       {
         Log.Write("player:ended");
-        m_player.Release();
-        m_player=null;
-        m_subs=null;
+        _player.Release();
+        _player=null;
+        _subs=null;
         GC.Collect();GC.Collect();GC.Collect();
       }
-      else if (m_player.Playing)
+      else if (_player.Playing)
       {
-        CurrentFilePlaying=m_player.CurrentFile;
+        _currentFilePlaying=_player.CurrentFile;
         OnStarted();
       }
-      m_bInit=false;
+      _isInitalized=false;
       return bResult;
     }
 	  //Added by juvinious 19/02/2005
 	  public static bool PlayVideoStream(string strURL)
 	  {
-		  m_currentStep=Steps.Sec0;
-		  m_SeekTimer=DateTime.MinValue;
-		  m_bInit=true;
-		  m_subs=null;
+		  _currentStep=Steps.Sec0;
+		  _seekTimer=DateTime.MinValue;
+		  _isInitalized=true;
+		  _subs=null;
 		  Log.Write("g_Player.PlayVideoStream({0})",strURL);
-		  if (m_player!=null)
+		  if (_player!=null)
 		  {
 			  GUIGraphicsContext.ShowBackground=true;
 			  OnStopped();
-			  m_player.Stop();
+			  _player.Stop();
 			  GUIGraphicsContext.form.Invalidate(true);
-			  m_player=null;
+			  _player=null;
 		  }
 		  int iUseVMR9inMYMovies=0;
 		  using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
 		  {
 			  iUseVMR9inMYMovies=xmlreader.GetValueAsInt("movieplayer","vmr9",0);
 		  }
-		  if (iUseVMR9inMYMovies==0) m_player= new Player.VideoPlayerVMR7();
-		  if (iUseVMR9inMYMovies==1) m_player= new Player.VideoPlayerVMR9wl();
-		  if (iUseVMR9inMYMovies==2) m_player= new Player.VideoPlayerVMR9();
+		  if (iUseVMR9inMYMovies==0) 
+				_player= new Player.VideoPlayerVMR7();
+		  else
+				_player= new Player.VideoPlayerVMR9();
 	
-		  bool bResult=m_player.Play(strURL);
+		  bool bResult=_player.Play(strURL);
 		  if (!bResult)
 		  {
 			  Log.Write("player:ended");
-			  m_player.Release();
-			  m_player=null;
-			  m_subs=null;
+			  _player.Release();
+			  _player=null;
+			  _subs=null;
 			  GC.Collect();GC.Collect();GC.Collect();
 		  }
-		  else if (m_player.Playing)
+		  else if (_player.Playing)
 		  {
-			  CurrentFilePlaying=m_player.CurrentFile;
+			  _currentFilePlaying=_player.CurrentFile;
 			  OnStarted();
 		  }
-		  m_bInit=false;
+		  _isInitalized=false;
 		  return bResult;
 	  }
 
@@ -409,26 +420,26 @@ namespace MediaPortal.Player
 				GUIWindowManager.SendMessage(msgTv);
 			}
 
-      m_currentStep=Steps.Sec0;
-      m_SeekTimer=DateTime.MinValue;
+      _currentStep=Steps.Sec0;
+      _seekTimer=DateTime.MinValue;
       if (strFile==null) return false;
       if (strFile.Length==0) return false;
-      m_bInit=true;
-      m_subs=null;
+      _isInitalized=true;
+      _subs=null;
       Log.Write("g_Player.Play({0})",strFile);
-      if (m_player!=null)
+      if (_player!=null)
       {
         GUIGraphicsContext.ShowBackground=true;
         OnStopped();
-        m_player.Stop();
-        m_player=null;
+        _player.Stop();
+        _player=null;
         GC.Collect();GC.Collect();GC.Collect();GC.Collect();
       }
       if (Utils.IsVideo(strFile))
       {
         if (Utils.PlayMovie(strFile))
         {
-          m_bInit=false;
+          _isInitalized=false;
           return false;
         }
         string strExt = System.IO.Path.GetExtension(strFile).ToLower();
@@ -442,72 +453,72 @@ namespace MediaPortal.Player
           }
 
           if (iUseVMR9!=0)
-            m_player = new DVDPlayer9();
+            _player = new DVDPlayer9();
           else        
-            m_player = new DVDPlayer();
+            _player = new DVDPlayer();
 
-          bool bResult=m_player.Play(strFile);
+          bool bResult=_player.Play(strFile);
           if (!bResult)
           {
             Log.Write("player:ended");
-            m_player.Release();
-            m_player=null;
-            m_subs=null;
+            _player.Release();
+            _player=null;
+            _subs=null;
             GC.Collect();GC.Collect();GC.Collect();
           }
-          else if (m_player.Playing)
+          else if (_player.Playing)
           {
-            CurrentFilePlaying=m_player.CurrentFile;
+            _currentFilePlaying=_player.CurrentFile;
             OnStarted();
 
             GUIGraphicsContext.IsFullScreenVideo=true;
             GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
           }
-          m_bInit=false;
+          _isInitalized=false;
           return bResult;
         }
       }
-      m_player = PlayerFactory.Create( strFile);
-      if (m_player!=null)
+      _player = PlayerFactory.Create( strFile);
+      if (_player!=null)
       {
         if (Utils.IsVideo(strFile))
         {
           //string strSubFile=System.IO.Path.ChangeExtension(strFile,".srt");
-          //m_subs=SubReader.ReadTag(strSubFile);
-          //if (m_subs==null)
+          //_subs=SubReader.ReadTag(strSubFile);
+          //if (_subs==null)
           //{
           //  strSubFile=System.IO.Path.ChangeExtension(strFile,".smi");
-          //  m_subs=SubReader.ReadTag(strSubFile);
+          //  _subs=SubReader.ReadTag(strSubFile);
           //}
-          //if (m_subs==null)
+          //if (_subs==null)
           //{
           //  strSubFile=System.IO.Path.ChangeExtension(strFile,".sami");
-          //  m_subs=SubReader.ReadTag(strSubFile);
+          //  _subs=SubReader.ReadTag(strSubFile);
           //}
-          //if (m_subs!=null)
+          //if (_subs!=null)
           //{
-          //  m_subs.LoadSettings();
+          //  _subs.LoadSettings();
           //}
         }
 
-        bool bResult=m_player.Play(strFile);
+        bool bResult=_player.Play(strFile);
         if (!bResult)
         {
           Log.Write("player:ended");
-          m_player.Release();
-          m_player=null;
-          m_subs=null;
+          _player.Release();
+          _player=null;
+          _subs=null;
           GC.Collect();GC.Collect();GC.Collect();
         }
-        else if (m_player.Playing)
+        else if (_player.Playing)
         {
-          CurrentFilePlaying=m_player.CurrentFile;
+          _currentFilePlaying=_player.CurrentFile;
           OnStarted();
         }
-        m_bInit=false;
+        _isInitalized=false;
         return bResult;
       }
-      m_bInit=false;
+      _isInitalized=false;
       return false;
     }
 
@@ -515,8 +526,8 @@ namespace MediaPortal.Player
     {
       get 
       {
-        if (m_player==null) return false;
-        return (currentMedia==MediaType.Radio);
+        if (_player==null) return false;
+        return (_currentMedia==MediaType.Radio);
       }
 		}
 
@@ -524,8 +535,8 @@ namespace MediaPortal.Player
 		{
 			get 
 			{
-				if (m_player==null) return false;
-				return (currentMedia==MediaType.Music);
+				if (_player==null) return false;
+				return (_currentMedia==MediaType.Music);
 			}
 		}
 
@@ -533,9 +544,9 @@ namespace MediaPortal.Player
     {
       get 
 			{ 
-				if (m_player==null) return false;
-        if (m_bInit) return false;
-        bool bResult=m_player.Playing;
+				if (_player==null) return false;
+        if (_isInitalized) return false;
+        bool bResult=_player.Playing;
         return bResult;
       }
     }
@@ -544,17 +555,17 @@ namespace MediaPortal.Player
     {
       get 
       { 
-        if (m_player==null) return false;
-        return m_player.Paused;
+        if (_player==null) return false;
+        return _player.Paused;
       }
     }
     public static bool Stopped
     {
       get 
       { 
-        if (m_bInit) return false;
-        if (m_player==null) return false;
-        bool bResult=m_player.Stopped;
+        if (_isInitalized) return false;
+        if (_player==null) return false;
+        bool bResult=_player.Stopped;
         return bResult;
       }
     }
@@ -563,15 +574,15 @@ namespace MediaPortal.Player
     {
       get 
       { 
-        if (m_player==null) return 1;
-        return m_player.Speed;
+        if (_player==null) return 1;
+        return _player.Speed;
       }
       set 
       {
-        if (m_player==null) return ;
-        m_player.Speed=value;
-        m_currentStep=Steps.Sec0;
-        m_SeekTimer=DateTime.MinValue;
+        if (_player==null) return ;
+        _player.Speed=value;
+        _currentStep=Steps.Sec0;
+        _seekTimer=DateTime.MinValue;
       }
     }
 
@@ -580,22 +591,22 @@ namespace MediaPortal.Player
     {
       get 
       { 
-        if (m_player==null) return "";
-        return m_player.CurrentFile;
+        if (_player==null) return "";
+        return _player.CurrentFile;
       }
     }
 
     static public int Volume
     {
       get { 
-        if (m_player==null) return 0;
-        return m_player.Volume;
+        if (_player==null) return 0;
+        return _player.Volume;
       }
       set 
       {
-        if (m_player != null)
+        if (_player != null)
         {
-          m_player.Volume=value;
+          _player.Volume=value;
         }
       }
     }
@@ -605,9 +616,9 @@ namespace MediaPortal.Player
       get { return GUIGraphicsContext.ARType;}
       set 
       {
-        if (m_player != null)
+        if (_player != null)
         {
-          m_player.ARType=value;
+          _player.ARType=value;
         }
       }
     }
@@ -616,14 +627,14 @@ namespace MediaPortal.Player
     {
       get 
       { 
-        if (m_player==null) return 0;
-        return m_player.PositionX;
+        if (_player==null) return 0;
+        return _player.PositionX;
       }
       set 
       {
-        if (m_player != null)
+        if (_player != null)
         {
-          m_player.PositionX=value;
+          _player.PositionX=value;
         }
       }
     }
@@ -632,14 +643,14 @@ namespace MediaPortal.Player
     {
       get 
       { 
-        if (m_player==null) return 0;
-        return m_player.PositionY;
+        if (_player==null) return 0;
+        return _player.PositionY;
       }
       set 
       {
-        if (m_player != null)
+        if (_player != null)
         {
-          m_player.PositionY=value;
+          _player.PositionY=value;
         }
       }
     }
@@ -648,14 +659,14 @@ namespace MediaPortal.Player
     {
       get 
       { 
-        if (m_player==null) return 0;
-        return m_player.RenderWidth;
+        if (_player==null) return 0;
+        return _player.RenderWidth;
       }
       set 
       {
-        if (m_player != null)
+        if (_player != null)
         {
-          m_player.RenderWidth=value;
+          _player.RenderWidth=value;
         }
       }
     }
@@ -663,14 +674,14 @@ namespace MediaPortal.Player
     {
         get 
      { 
-       if (m_player==null) return false;
-       return m_player.Visible;
+       if (_player==null) return false;
+       return _player.Visible;
      }
       set 
       {
-        if (m_player != null)
+        if (_player != null)
         {
-          m_player.Visible=value;
+          _player.Visible=value;
         }
       }
     }
@@ -678,14 +689,14 @@ namespace MediaPortal.Player
     {
       get 
       { 
-        if (m_player==null) return 0;
-        return m_player.RenderHeight;
+        if (_player==null) return 0;
+        return _player.RenderHeight;
       }
       set 
       {
-        if (m_player != null)
+        if (_player != null)
         {
-          m_player.RenderHeight=value;
+          _player.RenderHeight=value;
         }
       }
     }
@@ -694,8 +705,8 @@ namespace MediaPortal.Player
     {
       get 
       { 
-        if (m_player==null) return 0;
-        return m_player.Duration;
+        if (_player==null) return 0;
+        return _player.Duration;
       }
     }
 
@@ -703,16 +714,16 @@ namespace MediaPortal.Player
     {
       get 
       { 
-        if (m_player==null) return 0;
-        return m_player.CurrentPosition;
+        if (_player==null) return 0;
+        return _player.CurrentPosition;
       }
     }
     static public double ContentStart
     {
       get 
       { 
-        if (m_player==null) return 0;
-        return m_player.ContentStart;
+        if (_player==null) return 0;
+        return _player.ContentStart;
       }
     }
 
@@ -720,14 +731,14 @@ namespace MediaPortal.Player
     {
       get 
       { 
-        if (m_player==null) return GUIGraphicsContext.IsFullScreenVideo;
-        return m_player.FullScreen;
+        if (_player==null) return GUIGraphicsContext.IsFullScreenVideo;
+        return _player.FullScreen;
       }
       set 
       {
-        if (m_player != null)
+        if (_player != null)
         {
-          m_player.FullScreen=value;
+          _player.FullScreen=value;
         }
       }
     }
@@ -735,8 +746,8 @@ namespace MediaPortal.Player
     {
       get 
       { 
-        if (m_player==null) return 0;
-        return m_player.Width;
+        if (_player==null) return 0;
+        return _player.Width;
       }
     }
 
@@ -744,16 +755,16 @@ namespace MediaPortal.Player
     {
       get 
       { 
-        if (m_player==null) return 0;
-        return m_player.Height;
+        if (_player==null) return 0;
+        return _player.Height;
       }
     }
     static public void SeekRelative(double dTime)
     {
-      if (m_player==null) return ;
-      m_player.SeekRelative(dTime);
-      m_currentStep=Steps.Sec0;
-      m_SeekTimer=DateTime.MinValue;
+      if (_player==null) return ;
+      _player.SeekRelative(dTime);
+      _currentStep=Steps.Sec0;
+      _seekTimer=DateTime.MinValue;
 			GUIMessage msgUpdate = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYER_POSITION_CHANGED,0,0,0,0,0,null);
 			GUIGraphicsContext.SendMessage(msgUpdate);
 
@@ -761,28 +772,28 @@ namespace MediaPortal.Player
 
     static public void   StepNow()
     {
-      if (m_currentStep!=Steps.Sec0 && m_player!=null) 
+      if (_currentStep!=Steps.Sec0 && _player!=null) 
       {
-        double dTime=(int)m_currentStep+m_player.CurrentPosition;
+        double dTime=(int)_currentStep+_player.CurrentPosition;
         if (dTime<0) dTime=0d;
-        if (dTime>m_player.Duration) dTime=m_player.Duration-5;
-				m_player.SeekAbsolute(dTime);
+        if (dTime>_player.Duration) dTime=_player.Duration-5;
+				_player.SeekAbsolute(dTime);
 				GUIMessage msgUpdate = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYER_POSITION_CHANGED,0,0,0,0,0,null);
 				GUIGraphicsContext.SendMessage(msgUpdate);
       }
-      m_currentStep=Steps.Sec0;
-      m_SeekTimer=DateTime.MinValue;
+      _currentStep=Steps.Sec0;
+      _seekTimer=DateTime.MinValue;
       
     }
     static public string GetStepDescription()
     {
-      if (m_player==null) return "";
-      int m_iTimeToStep =(int)m_currentStep;
+      if (_player==null) return "";
+      int m_iTimeToStep =(int)_currentStep;
       if (m_iTimeToStep==0) return "";
-			m_player.Process();
-      if (m_player.CurrentPosition+m_iTimeToStep <= 0) return "START";//start
-      if (m_player.CurrentPosition+m_iTimeToStep >= m_player.Duration) return "END";
-      switch (m_currentStep)
+			_player.Process();
+      if (_player.CurrentPosition+m_iTimeToStep <= 0) return "START";//start
+      if (_player.CurrentPosition+m_iTimeToStep >= _player.Duration) return "END";
+      switch (_currentStep)
       {
         case Steps.Hourm2: return "-2hrs";
         case Steps.Hourm1: return "-1hr";
@@ -812,10 +823,10 @@ namespace MediaPortal.Player
     {
       bStart=false;
       bEnd=false;
-      if (m_player==null) return 0;
-      int m_iTimeToStep=(int)m_currentStep;
-      if (m_player.CurrentPosition+m_iTimeToStep <= 0) bStart=true;//start
-      if (m_player.CurrentPosition+m_iTimeToStep >= m_player.Duration) bEnd=true;
+      if (_player==null) return 0;
+      int m_iTimeToStep=(int)_currentStep;
+      if (_player.CurrentPosition+m_iTimeToStep <= 0) bStart=true;//start
+      if (_player.CurrentPosition+m_iTimeToStep >= _player.Duration) bEnd=true;
       return m_iTimeToStep;
     }
 
@@ -823,110 +834,110 @@ namespace MediaPortal.Player
     {
       if (bFF)
       {
-        switch (m_currentStep)
+        switch (_currentStep)
         {
-          case Steps.Hourm2: m_currentStep=Steps.Hourm1;break;
-          case Steps.Hourm1: m_currentStep=Steps.Minm30;break;
-          case Steps.Minm30: m_currentStep=Steps.Minm15;break;
-          case Steps.Minm15: m_currentStep=Steps.Minm10;break;
-          case Steps.Minm10: m_currentStep=Steps.Minm5;break;
-          case Steps.Minm5: m_currentStep=Steps.Minm3;break;
-          case Steps.Minm3: m_currentStep=Steps.Minm1;break;
-          case Steps.Minm1: m_currentStep=Steps.Secm30;break;
-          case Steps.Secm30: m_currentStep=Steps.Secm15;break;
-          case Steps.Secm15: m_currentStep=Steps.Sec0;break;
+          case Steps.Hourm2: _currentStep=Steps.Hourm1;break;
+          case Steps.Hourm1: _currentStep=Steps.Minm30;break;
+          case Steps.Minm30: _currentStep=Steps.Minm15;break;
+          case Steps.Minm15: _currentStep=Steps.Minm10;break;
+          case Steps.Minm10: _currentStep=Steps.Minm5;break;
+          case Steps.Minm5: _currentStep=Steps.Minm3;break;
+          case Steps.Minm3: _currentStep=Steps.Minm1;break;
+          case Steps.Minm1: _currentStep=Steps.Secm30;break;
+          case Steps.Secm30: _currentStep=Steps.Secm15;break;
+          case Steps.Secm15: _currentStep=Steps.Sec0;break;
 
-          case Steps.Sec0:  m_currentStep=Steps.Sec15;break;
+          case Steps.Sec0:  _currentStep=Steps.Sec15;break;
 
-          case Steps.Sec15: m_currentStep=Steps.Sec30;break;
-          case Steps.Sec30: m_currentStep=Steps.Min1;break;
-          case Steps.Min1:  m_currentStep=Steps.Min3;break;
-          case Steps.Min3:  m_currentStep=Steps.Min5;break;
-          case Steps.Min5:  m_currentStep=Steps.Min10;break;
-          case Steps.Min10: m_currentStep=Steps.Min15;break;
-          case Steps.Min15: m_currentStep=Steps.Min30;break;
-          case Steps.Min30: m_currentStep=Steps.Hour1;break;
-          case Steps.Hour1: m_currentStep=Steps.Hour2;break;
+          case Steps.Sec15: _currentStep=Steps.Sec30;break;
+          case Steps.Sec30: _currentStep=Steps.Min1;break;
+          case Steps.Min1:  _currentStep=Steps.Min3;break;
+          case Steps.Min3:  _currentStep=Steps.Min5;break;
+          case Steps.Min5:  _currentStep=Steps.Min10;break;
+          case Steps.Min10: _currentStep=Steps.Min15;break;
+          case Steps.Min15: _currentStep=Steps.Min30;break;
+          case Steps.Min30: _currentStep=Steps.Hour1;break;
+          case Steps.Hour1: _currentStep=Steps.Hour2;break;
           case Steps.Hour2: break;
         }
       }
       else
       {
-        switch (m_currentStep)
+        switch (_currentStep)
         {
           case Steps.Hourm2:  break;
-          case Steps.Hourm1:  m_currentStep=Steps.Hourm2;break;
-          case Steps.Minm30:  m_currentStep=Steps.Hourm1;break;
-          case Steps.Minm15: m_currentStep=Steps.Minm30;break;
-          case Steps.Minm10: m_currentStep=Steps.Minm15;break;
-          case Steps.Minm5: m_currentStep=Steps.Minm10;break;
-          case Steps.Minm3: m_currentStep=Steps.Minm5;break;
-          case Steps.Minm1: m_currentStep=Steps.Minm3;break;
-          case Steps.Secm30: m_currentStep=Steps.Minm1;break;
-          case Steps.Secm15: m_currentStep=Steps.Secm30;break;
+          case Steps.Hourm1:  _currentStep=Steps.Hourm2;break;
+          case Steps.Minm30:  _currentStep=Steps.Hourm1;break;
+          case Steps.Minm15: _currentStep=Steps.Minm30;break;
+          case Steps.Minm10: _currentStep=Steps.Minm15;break;
+          case Steps.Minm5: _currentStep=Steps.Minm10;break;
+          case Steps.Minm3: _currentStep=Steps.Minm5;break;
+          case Steps.Minm1: _currentStep=Steps.Minm3;break;
+          case Steps.Secm30: _currentStep=Steps.Minm1;break;
+          case Steps.Secm15: _currentStep=Steps.Secm30;break;
 
-          case Steps.Sec0:  m_currentStep=Steps.Secm15;break;
+          case Steps.Sec0:  _currentStep=Steps.Secm15;break;
 
-          case Steps.Sec15: m_currentStep=Steps.Sec0;break;
-          case Steps.Sec30: m_currentStep=Steps.Sec15;break;
-          case Steps.Min1:  m_currentStep=Steps.Sec30;break;
-          case Steps.Min3:  m_currentStep=Steps.Min1;break;
-          case Steps.Min5:  m_currentStep=Steps.Min3;break;
-          case Steps.Min10: m_currentStep=Steps.Min5;break;
-          case Steps.Min15: m_currentStep=Steps.Min10;break;
-          case Steps.Min30: m_currentStep=Steps.Min15; break;
-          case Steps.Hour1: m_currentStep=Steps.Min30; break;
-          case Steps.Hour2: m_currentStep=Steps.Hour1; break;
+          case Steps.Sec15: _currentStep=Steps.Sec0;break;
+          case Steps.Sec30: _currentStep=Steps.Sec15;break;
+          case Steps.Min1:  _currentStep=Steps.Sec30;break;
+          case Steps.Min3:  _currentStep=Steps.Min1;break;
+          case Steps.Min5:  _currentStep=Steps.Min3;break;
+          case Steps.Min10: _currentStep=Steps.Min5;break;
+          case Steps.Min15: _currentStep=Steps.Min10;break;
+          case Steps.Min30: _currentStep=Steps.Min15; break;
+          case Steps.Hour1: _currentStep=Steps.Min30; break;
+          case Steps.Hour2: _currentStep=Steps.Hour1; break;
         }
       }
-      m_SeekTimer=DateTime.Now;
+      _seekTimer=DateTime.Now;
     }
 
     static public void SeekRelativePercentage(int iPercentage)
     {
-      if (m_player==null) return ;
-			m_player.SeekRelativePercentage(iPercentage);
+      if (_player==null) return ;
+			_player.SeekRelativePercentage(iPercentage);
 			GUIMessage msgUpdate = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYER_POSITION_CHANGED,0,0,0,0,0,null);
 			GUIGraphicsContext.SendMessage(msgUpdate);
       
-      m_currentStep=Steps.Sec0;
-      m_SeekTimer=DateTime.MinValue;
+      _currentStep=Steps.Sec0;
+      _seekTimer=DateTime.MinValue;
     }
 
     static public void SeekAbsolute(double dTime)
     {
-      if (m_player==null) return ;
-			m_player.SeekAbsolute(dTime);
+      if (_player==null) return ;
+			_player.SeekAbsolute(dTime);
 			GUIMessage msgUpdate = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYER_POSITION_CHANGED,0,0,0,0,0,null);
 			GUIGraphicsContext.SendMessage(msgUpdate);
       
-      m_currentStep=Steps.Sec0;
-      m_SeekTimer=DateTime.MinValue;
+      _currentStep=Steps.Sec0;
+      _seekTimer=DateTime.MinValue;
     }
 
     static public void SeekAsolutePercentage(int iPercentage)
     {
-      if (m_player==null) return ;
-			m_player.SeekAsolutePercentage(iPercentage);
+      if (_player==null) return ;
+			_player.SeekAsolutePercentage(iPercentage);
 			GUIMessage msgUpdate = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYER_POSITION_CHANGED,0,0,0,0,0,null);
 			GUIGraphicsContext.SendMessage(msgUpdate);
       
-      m_currentStep=Steps.Sec0;
-      m_SeekTimer=DateTime.MinValue;
+      _currentStep=Steps.Sec0;
+      _seekTimer=DateTime.MinValue;
     }
     static public bool HasVideo
     {
       get {
-        if (m_player==null) return false;
-        return m_player.HasVideo;
+        if (_player==null) return false;
+        return _player.HasVideo;
       }
     }
     static public bool IsVideo
     {
       get 
       {
-        if (m_player==null) return false;
-        if (currentMedia==MediaType.Video) return true;
+        if (_player==null) return false;
+        if (_currentMedia==MediaType.Video) return true;
 				return false;
       }
     }
@@ -935,29 +946,29 @@ namespace MediaPortal.Player
     {
       get 
       {
-        if (m_player==null) return false;
-        return (m_subs!=null);
+        if (_player==null) return false;
+        return (_subs!=null);
       }
     }
     static public void RenderSubtitles()
     {
-      if (m_player==null) return ;
-      if (m_subs==null) return ;
+      if (_player==null) return ;
+      if (_subs==null) return ;
       if (HasSubs)
       {
-        m_subs.Render( m_player.CurrentPosition );
+        _subs.Render( _player.CurrentPosition );
       }
     }
     static public void WndProc( ref Message m )
     {
-      if (m_player==null) return;
-      m_player.WndProc(ref m);
+      if (_player==null) return;
+      _player.WndProc(ref m);
     }
 
     
     static public void Process()
     {
-			if (m_player==null) 
+			if (_player==null) 
 			{
 				if((GUIGraphicsContext.Vmr9Active && VMR9Util.g_vmr9!=null))
 				{
@@ -973,11 +984,11 @@ namespace MediaPortal.Player
 			{
 				return;
 			}
-      m_player.Process();
-      if (!m_player.Playing)
+      _player.Process();
+      if (!_player.Playing)
       {
 				Log.Write("g_Player.Process() player stopped...");
-        if (m_player.Ended)
+        if (_player.Ended)
         {
           GUIMessage msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_ENDED,0,0,0,0,0,null);
           GUIWindowManager.SendThreadMessage(msg);
@@ -989,9 +1000,9 @@ namespace MediaPortal.Player
       else
       {
 
-        if (m_currentStep!=Steps.Sec0)
+        if (_currentStep!=Steps.Sec0)
         {
-          TimeSpan ts = DateTime.Now-m_SeekTimer;
+          TimeSpan ts = DateTime.Now-_seekTimer;
           if (ts.TotalMilliseconds>1500)
           {
             StepNow();
@@ -1004,75 +1015,75 @@ namespace MediaPortal.Player
     {
       get 
       { 
-        if (m_player==null) return 0;
-        return m_player.AudioStreams;
+        if (_player==null) return 0;
+        return _player.AudioStreams;
       }
     }
     static public int CurrentAudioStream
     {
       get 
       { 
-        if (m_player==null) return 0;
-        return m_player.CurrentAudioStream;
+        if (_player==null) return 0;
+        return _player.CurrentAudioStream;
       }
       set 
       {
-        if (m_player!=null) 
+        if (_player!=null) 
         {
-          m_player.CurrentAudioStream=value;
+          _player.CurrentAudioStream=value;
         }
       }
     }
     static public string AudioLanguage(int iStream)
     {
-      if (m_player==null) return Strings.Unknown;
-      return m_player.AudioLanguage(iStream);
+      if (_player==null) return Strings.Unknown;
+      return _player.AudioLanguage(iStream);
     }
 
     static public int SubtitleStreams
     {
       get 
       { 
-        if (m_player==null) return 0;
-        return m_player.SubtitleStreams;
+        if (_player==null) return 0;
+        return _player.SubtitleStreams;
       }
     }
     static public int CurrentSubtitleStream
     {
       get 
       { 
-        if (m_player==null) return 0;
-        return m_player.CurrentSubtitleStream;
+        if (_player==null) return 0;
+        return _player.CurrentSubtitleStream;
       }
       set {
-        if (m_player!=null) 
+        if (_player!=null) 
         {
-          m_player.CurrentSubtitleStream=value;
+          _player.CurrentSubtitleStream=value;
         }
       }
     }
     static public void SetVideoWindow()
     {
-      if (m_player==null) return ;
-      m_player.SetVideoWindow();
+      if (_player==null) return ;
+      _player.SetVideoWindow();
     }
 
     static public string SubtitleLanguage(int iStream)
     {
-      if (m_player==null) return Strings.Unknown;
-      return m_player.SubtitleLanguage(iStream);
+      if (_player==null) return Strings.Unknown;
+      return _player.SubtitleLanguage(iStream);
     }
     static public bool EnableSubtitle
     {
       get 
       {
-        if (m_player==null) return false;
-        return m_player.EnableSubtitle;
+        if (_player==null) return false;
+        return _player.EnableSubtitle;
       }
       set 
       {
-        if (m_player==null) return ;
-        m_player.EnableSubtitle=value;
+        if (_player==null) return ;
+        _player.EnableSubtitle=value;
       }
     }
 
@@ -1086,10 +1097,10 @@ namespace MediaPortal.Player
     {
       if (!Playing) return;
       if (!HasVideo) return;
-      if (m_player==null) return;
-      m_player.Contrast=GUIGraphicsContext.Contrast;
-      m_player.Brightness=GUIGraphicsContext.Brightness;
-      m_player.Gamma=GUIGraphicsContext.Gamma;
+      if (_player==null) return;
+      _player.Contrast=GUIGraphicsContext.Contrast;
+      _player.Brightness=GUIGraphicsContext.Brightness;
+      _player.Gamma=GUIGraphicsContext.Gamma;
     }
 
     static void OnVideoWindowChanged()
@@ -1125,8 +1136,8 @@ namespace MediaPortal.Player
     static public Rectangle VideoWindow
     {
       get { 
-        if (m_player==null) return new Rectangle(0,0,0,0);
-        return m_player.VideoWindow;
+        if (_player==null) return new Rectangle(0,0,0,0);
+        return _player.VideoWindow;
       }
     }
 
@@ -1137,29 +1148,32 @@ namespace MediaPortal.Player
     {
       get 
       { 
-        if (m_player==null) return new Rectangle(0,0,0,0);
-        return m_player.SourceWindow;
+        if (_player==null) return new Rectangle(0,0,0,0);
+        return _player.SourceWindow;
       }
     }
     static public int GetHDC()
     {
-      if (m_player==null) return 0;
-      return m_player.GetHDC();
+      if (_player==null) return 0;
+      return _player.GetHDC();
     }
 
     static public void ReleaseHDC(int HDC)
     {
-      if (m_player==null) return ;
-      m_player.ReleaseHDC(HDC);
+      if (_player==null) return ;
+      _player.ReleaseHDC(HDC);
     }
 
     static public bool CanSeek
     {
       get 
       { 
-        if (m_player==null) return false;
-        return m_player.CanSeek();
+        if (_player==null) return false;
+        return _player.CanSeek();
       }
     }
+
+		#endregion
+
   }
 }

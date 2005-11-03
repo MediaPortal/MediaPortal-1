@@ -35,31 +35,31 @@ namespace MediaPortal.Player
   public class StreamBufferPlayer9 : BaseStreamBufferPlayer
   {
 
-		VMR9Util Vmr9 = null;
+		VMR9Util _vmr9 = null;
     public StreamBufferPlayer9()
     {
     }
 		protected override void OnInitialized()
 		{
-			if (Vmr9!=null)
+			if (_vmr9!=null)
 			{
-				Vmr9.Enable(true);
-				m_bUpdateNeeded=true;
+				_vmr9.Enable(true);
+				_updateNeeded=true;
 				SetVideoWindow();
 			}
 		}
 		public override void SetVideoWindow()
 		{
-			if (GUIGraphicsContext.IsFullScreenVideo!= m_bFullScreen)
+			if (GUIGraphicsContext.IsFullScreenVideo!= _isFullscreen)
 			{
-				m_bFullScreen=GUIGraphicsContext.IsFullScreenVideo;
-				m_bUpdateNeeded=true;
+				_isFullscreen=GUIGraphicsContext.IsFullScreenVideo;
+				_updateNeeded=true;
 			}
 
-			if (!m_bUpdateNeeded) return;
+			if (!_updateNeeded) return;
       
-			m_bUpdateNeeded=false;
-			m_bStarted=true;
+			_updateNeeded=false;
+			_isStarted=true;
 
 		}
 
@@ -88,12 +88,12 @@ namespace MediaPortal.Player
           return false;
         }
         comobj = Activator.CreateInstance( comtype );
-        graphBuilder = (IGraphBuilder) comobj; comobj = null;
-//Log.Write("StreamBufferPlayer9: add vmr9");
+        _graphBuilder = (IGraphBuilder) comobj; comobj = null;
+//Log.Write("StreamBufferPlayer9: add _vmr9");
 
-				Vmr9= new VMR9Util("mytv");
-				Vmr9.AddVMR9(graphBuilder);			
-				Vmr9.Enable(false);	
+				_vmr9= new VMR9Util("mytv");
+				_vmr9.AddVMR9(_graphBuilder);			
+				_vmr9.Enable(false);	
 
 
 				int hr;
@@ -114,8 +114,8 @@ namespace MediaPortal.Player
 					uint max,maxnon;
 					hr=streamConfig2.GetFFTransitionRates(out max,out maxnon);	
 
-					streamConfig2.GetBackingFileCount(out minBackingFiles, out maxBackingFiles);
-					streamConfig2.GetBackingFileDuration(out backingFileDuration);
+					streamConfig2.GetBackingFileCount(out _minBackingFiles, out _maxBackingFiles);
+					streamConfig2.GetBackingFileDuration(out _backingFileDuration);
 
 				}
 				//Log.Write("StreamBufferPlayer9: add sbe");
@@ -124,23 +124,23 @@ namespace MediaPortal.Player
         Guid clsid = Clsid.StreamBufferSource;
         Guid riid = typeof(IStreamBufferSource).GUID;
         Object comObj = DsBugWO.CreateDsInstance( ref clsid, ref riid );
-        bufferSource = (IStreamBufferSource) comObj; comObj = null;
-        if (bufferSource==null) 
+        _bufferSource = (IStreamBufferSource) comObj; comObj = null;
+        if (_bufferSource==null) 
         {
           Log.WriteFile(Log.LogType.Log,true,"StreamBufferPlayer9:Failed to create instance of SBE (do you have WinXp SP1?)");
           return false;
         }	
 
 		
-        IBaseFilter filter = (IBaseFilter) bufferSource;
-        hr=graphBuilder.AddFilter(filter, "SBE SOURCE");
+        IBaseFilter filter = (IBaseFilter) _bufferSource;
+        hr=_graphBuilder.AddFilter(filter, "SBE SOURCE");
         if (hr!=0) 
         {
           Log.WriteFile(Log.LogType.Log,true,"StreamBufferPlayer9:Failed to add SBE to graph");
           return false;
         }	
 		
-        IFileSourceFilter fileSource = (IFileSourceFilter) bufferSource;
+        IFileSourceFilter fileSource = (IFileSourceFilter) _bufferSource;
         if (fileSource==null) 
         {
           Log.WriteFile(Log.LogType.Log,true,"StreamBufferPlayer9:Failed to get IFileSourceFilter");
@@ -178,42 +178,49 @@ namespace MediaPortal.Player
 					if (strValue.Equals("panscan")) GUIGraphicsContext.ARType=MediaPortal.GUI.Library.Geometry.Type.PanScan43;
 
 				}
-				if (strVideoCodec.Length>0) videoCodecFilter=DirectShowUtil.AddFilterToGraph(graphBuilder,strVideoCodec);
-				if (strAudioCodec.Length>0) audioCodecFilter=DirectShowUtil.AddFilterToGraph(graphBuilder,strAudioCodec);
-				if (strAudioRenderer.Length>0) audioRendererFilter=DirectShowUtil.AddAudioRendererToGraph(graphBuilder,strAudioRenderer,false);
-				if (bAddFFDshow) ffdShowFilter=DirectShowUtil.AddFilterToGraph(graphBuilder,"ffdshow raw video filter");
+				if (strVideoCodec.Length>0) _videoCodecFilter=DirectShowUtil.AddFilterToGraph(_graphBuilder,strVideoCodec);
+				if (strAudioCodec.Length>0) _audioCodecFilter=DirectShowUtil.AddFilterToGraph(_graphBuilder,strAudioCodec);
+				if (strAudioRenderer.Length>0) _audioRendererFilter=DirectShowUtil.AddAudioRendererToGraph(_graphBuilder,strAudioRenderer,false);
+				if (bAddFFDshow) _ffdShowFilter=DirectShowUtil.AddFilterToGraph(_graphBuilder,"ffdshow raw video filter");
 
 				// render output pins of SBE
-        DirectShowUtil.RenderOutputPins(graphBuilder, (IBaseFilter)fileSource);
+        DirectShowUtil.RenderOutputPins(_graphBuilder, (IBaseFilter)fileSource);
 
-        mediaCtrl	= (IMediaControl)  graphBuilder;
-        mediaEvt	= (IMediaEventEx)  graphBuilder;
-				m_mediaSeeking = bufferSource as IStreamBufferMediaSeeking ;
-				m_mediaSeeking2= bufferSource as IStreamBufferMediaSeeking2 ;
-				if (m_mediaSeeking==null)
+        _mediaCtrl	= (IMediaControl)  _graphBuilder;
+        _mediaEvt	= (IMediaEventEx)  _graphBuilder;
+				_mediaSeeking = _bufferSource as IStreamBufferMediaSeeking ;
+				_mediaSeeking2= _bufferSource as IStreamBufferMediaSeeking2 ;
+				if (_mediaSeeking==null)
 				{
 					Log.WriteFile(Log.LogType.Log,true,"Unable to get IMediaSeeking interface#1");
 				}
-				if (m_mediaSeeking2==null)
+				if (_mediaSeeking2==null)
 				{
 					Log.WriteFile(Log.LogType.Log,true,"Unable to get IMediaSeeking interface#2");
 				}
+				if (_audioRendererFilter!=null)
+				{
+					IMediaFilter mp				= _graphBuilder as IMediaFilter;
+					IReferenceClock clock = _audioRendererFilter as IReferenceClock;
+					hr=mp.SetSyncSource(clock);
+				}
+
         
 //        Log.Write("StreamBufferPlayer9:SetARMode");
-//        DirectShowUtil.SetARMode(graphBuilder,AmAspectRatioMode.AM_ARMODE_STRETCHED);
+//        DirectShowUtil.SetARMode(_graphBuilder,AmAspectRatioMode.AM_ARMODE_STRETCHED);
 
         //Log.Write("StreamBufferPlayer9: set Deinterlace");
 
-				if ( !Vmr9.IsVMR9Connected )
+				if ( !_vmr9.IsVMR9Connected )
 				{
-					//VMR9 is not supported, switch to overlay
+					//_vmr9 is not supported, switch to overlay
 					Log.Write("StreamBufferPlayer9: switch to overlay");
-					mediaCtrl=null;
+					_mediaCtrl=null;
 					Cleanup();
 					return base.GetInterfaces(filename);
 				}
 
-				Vmr9.SetDeinterlaceMode();
+				_vmr9.SetDeinterlaceMode();
 				return true;
 
       }
@@ -235,14 +242,14 @@ namespace MediaPortal.Player
 
 		void Cleanup()
 		{
-				if (graphBuilder==null) return;
+				if (_graphBuilder==null) return;
 
         int hr;
         //Log.Write("StreamBufferPlayer9:cleanup DShow graph {0}",GUIGraphicsContext.InVmr9Render);
         try 
         {
-					if(Vmr9!=null)
-						Vmr9.Enable(false);
+					if(_vmr9!=null)
+						_vmr9.Enable(false);
 					int counter=0;
 					while (GUIGraphicsContext.InVmr9Render)
 					{
@@ -251,18 +258,18 @@ namespace MediaPortal.Player
 						if (counter >200) break;
 					}
 
-					if( mediaCtrl != null )
+					if( _mediaCtrl != null )
 					{
-						hr = mediaCtrl.Stop();
+						hr = _mediaCtrl.Stop();
 					}
-					mediaCtrl=null;
-					mediaEvt = null;
-					m_mediaSeeking=null;
-					m_mediaSeeking2=null;
-					videoWin=null;
-					basicAudio	= null;
-					basicVideo	= null;
-					bufferSource=null;
+					_mediaCtrl=null;
+					_mediaEvt = null;
+					_mediaSeeking=null;
+					_mediaSeeking2=null;
+					_videoWin=null;
+					_basicAudio	= null;
+					_basicVideo	= null;
+					_bufferSource=null;
 		
 					if (streamConfig2!=null) 
 					{
@@ -272,48 +279,48 @@ namespace MediaPortal.Player
 
 					m_StreamBufferConfig=null;
 
-					if(Vmr9!=null)
+					if(_vmr9!=null)
 					{
-						Vmr9.RemoveVMR9();
-						Vmr9.Release();
-						Vmr9=null;
+						_vmr9.RemoveVMR9();
+						_vmr9.Release();
+						_vmr9=null;
 					}
-					if (videoCodecFilter!=null) 
+					if (_videoCodecFilter!=null) 
 					{
-						while ( (hr=Marshal.ReleaseComObject(videoCodecFilter))>0); 
-						videoCodecFilter=null;
+						while ( (hr=Marshal.ReleaseComObject(_videoCodecFilter))>0); 
+						_videoCodecFilter=null;
 					}
-					if (audioCodecFilter!=null) 
+					if (_audioCodecFilter!=null) 
 					{
-						while ( (hr=Marshal.ReleaseComObject(audioCodecFilter))>0); 
-						audioCodecFilter=null;
-					}
-				
-					if (audioRendererFilter!=null) 
-					{
-						while ( (hr=Marshal.ReleaseComObject(audioRendererFilter))>0); 
-						audioRendererFilter=null;
+						while ( (hr=Marshal.ReleaseComObject(_audioCodecFilter))>0); 
+						_audioCodecFilter=null;
 					}
 				
-					if (ffdShowFilter!=null) 
+					if (_audioRendererFilter!=null) 
 					{
-						while ( (hr=Marshal.ReleaseComObject(ffdShowFilter))>0); 
-						ffdShowFilter=null;
+						while ( (hr=Marshal.ReleaseComObject(_audioRendererFilter))>0); 
+						_audioRendererFilter=null;
+					}
+				
+					if (_ffdShowFilter!=null) 
+					{
+						while ( (hr=Marshal.ReleaseComObject(_ffdShowFilter))>0); 
+						_ffdShowFilter=null;
 					}
 
-					DsUtils.RemoveFilters(graphBuilder);
+					DsUtils.RemoveFilters(_graphBuilder);
 
-					if( rotCookie != 0 )
-						DsROT.RemoveGraphFromRot( ref rotCookie );
-					rotCookie=0;
-					if( graphBuilder != null )
+					if( _rotCookie != 0 )
+						DsROT.RemoveGraphFromRot( ref _rotCookie );
+					_rotCookie=0;
+					if( _graphBuilder != null )
 					{
-						while((hr=Marshal.ReleaseComObject( graphBuilder ))>0); 
-						graphBuilder = null;
+						while((hr=Marshal.ReleaseComObject( _graphBuilder ))>0); 
+						_graphBuilder = null;
 					}
 
 				GUIGraphicsContext.form.Invalidate(true);
-				m_state = PlayState.Init;
+				_state = PlayState.Init;
 				GC.Collect();GC.Collect();GC.Collect();
       }
       catch( Exception ex)
@@ -330,17 +337,17 @@ namespace MediaPortal.Player
 
     protected override void OnProcess()
 		{
-			if (Vmr9!=null)
+			if (_vmr9!=null)
 			{
-				m_iVideoWidth=Vmr9.VideoWidth;
-				m_iVideoHeight=Vmr9.VideoHeight;
+				_videoWidth=_vmr9.VideoWidth;
+				_videoHeight=_vmr9.VideoHeight;
 			}
-			if((GUIGraphicsContext.Vmr9Active && Vmr9!=null))
+			if((GUIGraphicsContext.Vmr9Active && _vmr9!=null))
 			{
-				Vmr9.Process();
+				_vmr9.Process();
 				if (GUIGraphicsContext.Vmr9FPS < 1f)
 				{
-					Vmr9.Repaint();// repaint vmr9
+					_vmr9.Repaint();// repaint _vmr9
 				}
 			}
     }

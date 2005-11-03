@@ -3758,8 +3758,7 @@
 <string Prefix="My "><id>100756</id><value>Status details</value></string>
 <string Prefix="My "><id>100757</id><value>Status preferences</value></string>
 <string Prefix="My "><id>100758</id><value>File dialog</value></string>
-<string Prefix="My "><id>100760</id><value>Burner</value></string>
-<string><id>100758</id><value>File dialog</value></string>
+<string Prefix="My "><id>100759</id><value>Recorded Tv Info</value></string>
 <string Prefix="My "><id>100760</id><value>Burner</value></string>
 <string Prefix="My "><id>100770</id><value>Explorer</value></string>
 <string><id>101000</id><value>keyboard</value></string>

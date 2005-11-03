@@ -996,7 +996,7 @@ namespace MediaPortal.GUI.TV
 			int hour,minute;
 			for (hour=0; hour <= 23; hour++)
 			{
-				for (minute=0; minute < 60; minute+=15)
+				for (minute=0; minute < 60; minute+=5)
 				{
 					if (hour==0 && minute==0) continue;
 					string time="";
@@ -1018,7 +1018,7 @@ namespace MediaPortal.GUI.TV
 			dlg.DoModal( GetID);
 			if (dlg.SelectedLabel==-1) return;
 
-			int mins=(dlg.SelectedLabel+1)*15;
+			int mins=(dlg.SelectedLabel+1)*5;
 			hour=(mins)/60;
 			minute=((mins)%60);
 
