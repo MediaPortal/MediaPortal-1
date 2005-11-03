@@ -205,6 +205,8 @@ namespace System.Windows
 		{
 			if(_isInitializing)
 				throw new InvalidOperationException();
+
+			_isInitializing = true;
 		}
 
 		public void BeginStoryboard(Storyboard storyboard)
@@ -251,6 +253,8 @@ namespace System.Windows
 		{
 			if(_isInitializing == false)
 				return;
+
+			RaiseEvent(new RoutedEventArgs(LoadedEvent, this));
 
 			OnInitialized(EventArgs.Empty);
 		}

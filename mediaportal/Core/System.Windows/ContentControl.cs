@@ -38,10 +38,43 @@ namespace System.Windows
 
 		static ContentControl()
 		{
-			ContentProperty = DependencyProperty.Register("Content", typeof(object), typeof(ContentControl), new PropertyMetadata(new PropertyInvalidatedCallback(ContentChanged)));
-			ContentTemplateProperty = DependencyProperty.Register("ContentTemplate", typeof(DataTemplate), typeof(ContentControl), new PropertyMetadata(new PropertyInvalidatedCallback(ContentTemplateChanged)));
-			ContentTemplateSelectorProperty = DependencyProperty.Register("ContentTemplateSelector", typeof(DataTemplateSelector), typeof(ContentControl), new PropertyMetadata(new PropertyInvalidatedCallback(ContentTemplateSelectorChanged)));
-			HasContentProperty = DependencyProperty.Register("HasContent", typeof(bool), typeof(ContentControl), new PropertyMetadata(false));
+			FrameworkPropertyMetadata metadata;
+
+			#region Content
+
+			metadata = new FrameworkPropertyMetadata();
+			metadata.GetValueOverride = new GetValueOverride(OnContentPropertyGetValue);
+			metadata.PropertyInvalidatedCallback = new PropertyInvalidatedCallback(OnContentPropertyInvalidated);
+
+			ContentProperty = DependencyProperty.Register("Content", typeof(object), typeof(ContentControl), metadata);
+
+			#endregion Content
+
+			#region ContentTemplate
+
+			metadata = new FrameworkPropertyMetadata();
+
+			ContentTemplateProperty = DependencyProperty.Register("ContentTemplate", typeof(DataTemplate), typeof(ContentControl), metadata);
+
+			#endregion ContentTemplate
+
+			#region ContentTemplateSelector
+
+			metadata = new FrameworkPropertyMetadata();
+
+			ContentTemplateSelectorProperty = DependencyProperty.Register("ContentTemplateSelector", typeof(DataTemplateSelector), typeof(ContentControl), metadata);
+
+			#endregion ContentTemplateSelector
+
+			#region HasContent
+
+			metadata = new FrameworkPropertyMetadata();
+			metadata.GetValueOverride = new GetValueOverride(OnHasContentPropertyGetValue);
+			metadata.SetReadOnly();
+
+			HasContentProperty = DependencyProperty.Register("HasContent", typeof(bool), typeof(ContentControl), metadata);
+
+			#endregion HasContent
 		}
 
 		public ContentControl()
@@ -107,6 +140,21 @@ namespace System.Windows
 		{
 		}
 	
+		private static object OnContentPropertyGetValue(DependencyObject d)
+		{
+			return ((ContentControl)d).Content;
+		}
+	
+		private static void OnContentPropertyInvalidated(DependencyObject d)
+		{
+			((ContentControl)d)._contentDirty = true;
+		}
+
+		private static object OnHasContentPropertyGetValue(DependencyObject d)
+		{
+			return ((ContentControl)d).HasContent;
+		}
+
 		public static void SetContent(DependencyObject d, object content)
 		{
 			d.SetValue(ContentProperty, content);
@@ -129,32 +177,32 @@ namespace System.Windows
 		[BindableAttribute(true)]
 		public object Content
 		{
-			get { return GetValue(ContentProperty); }
+			get { if(_contentDirty) { _contentCache = GetValueBase(ContentProperty); _contentDirty = false; } return _contentCache; }
 			set { SetValue(ContentProperty, value); }
 		}
 
 		[BindableAttribute(true)] 
 		public DataTemplate ContentTemplate
 		{
-			get { return (DataTemplate)GetValue(ContentTemplateProperty); }
+			get { return GetValue(ContentTemplateProperty) as DataTemplate; }
 			set { SetValue(ContentTemplateProperty, value); }
 		}
 
 		[BindableAttribute(true)] 
 		public DataTemplateSelector ContentTemplateSelector
 		{
-			get { return (DataTemplateSelector)GetValue(ContentTemplateSelectorProperty); }
+			get { return GetValue(ContentTemplateSelectorProperty) as DataTemplateSelector; }
 			set { SetValue(ContentTemplateSelectorProperty, value); }
 		}
 
 		public bool HasContent
 		{
-			get { return (bool)GetValue(HasContentProperty); }
+			get { return Content != null; }
 		}
 
 		protected internal override IEnumerator LogicalChildren
 		{
-			get { throw new NotImplementedException(); }
+			get { return NullEnumerator.Instance; }
 		}
 
 		#endregion Properties
@@ -167,5 +215,12 @@ namespace System.Windows
 		public static readonly DependencyProperty HasContentProperty;
 
 		#endregion Properties (Dependency)
+
+		#region Fields
+
+		object						_contentCache;
+		bool						_contentDirty;
+
+		#endregion Fields
 	}
 }

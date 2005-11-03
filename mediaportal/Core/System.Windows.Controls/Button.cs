@@ -64,12 +64,6 @@ namespace System.Windows.Controls
 
 		#region Properties
 
-		public Brush Background
-		{
-			get { return _background; }
-			set { _background = value; }
-		}
-
 		public bool IsCancel
 		{
 			get { return (bool)GetValue(IsCancelProperty); }
@@ -97,11 +91,5 @@ namespace System.Windows.Controls
 		public static readonly DependencyProperty IsDefaultProperty;
 
 		#endregion Properties (Dependency)
-
-		#region Fields
-
-		Brush						_background;
-
-		#endregion Fields
 	}
 }

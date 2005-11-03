@@ -36,12 +36,12 @@ namespace System.Windows.Controls
 
 		static ButtonBase()
 		{
+			ClickEvent = EventManager.RegisterRoutedEvent("Click", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(Button));
+
 			ClickModeProperty = DependencyProperty.Register("ClickMode", typeof(ClickMode), typeof(ButtonBase), new PropertyMetadata(ClickMode.OnRelease));
 			CommandParameterProperty = DependencyProperty.Register("CommandParameter", typeof(object), typeof(ButtonBase));
 			CommandProperty = DependencyProperty.Register("Command", typeof(ICommand), typeof(ButtonBase), new PropertyMetadata(ClickMode.OnRelease));
 			IsPressedProperty = DependencyProperty.Register("IsPressed", typeof(bool), typeof(ButtonBase), new PropertyMetadata(false));
-
-			ClickEvent = EventManager.RegisterRoutedEvent("Click", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(Button));
 		}
 
 		protected ButtonBase()

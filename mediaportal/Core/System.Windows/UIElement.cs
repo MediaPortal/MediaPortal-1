@@ -56,8 +56,8 @@ namespace System.Windows
 
 			metadata = new UIPropertyMetadata();
 			metadata.DefaultValue = true;
-//			metadata.GetValueOverride = new GetValueOverride(OnIsEnabledPropertyGetValue);
-//			metadata.PropertyInvalidatedCallback = new PropertyInvalidatedCallback(OnIsEnabledPropertyInvalidated);
+			metadata.GetValueOverride = new GetValueOverride(OnIsEnabledPropertyGetValue);
+			metadata.PropertyInvalidatedCallback = new PropertyInvalidatedCallback(OnIsEnabledPropertyInvalidated);
 
 			IsEnabledProperty = DependencyProperty.Register("IsEnabled", typeof(bool), typeof(UIElement), metadata);
 	
@@ -318,6 +318,16 @@ namespace System.Windows
 			// no default implementation
 		}
 
+		private static object OnIsEnabledPropertyGetValue(DependencyObject d)
+		{
+			return ((UIElement)d).IsEnabled;
+		}
+
+		private static void OnIsEnabledPropertyInvalidated(DependencyObject d)
+		{
+			((UIElement)d)._isEnabledDirty = true;
+		}
+
 		private static object OnIsFocusedPropertyGetValue(DependencyObject d)
 		{
 			return ((UIElement)d).IsFocused;
@@ -333,6 +343,10 @@ namespace System.Windows
 			throw new NotImplementedException();
 		}
 		
+		protected internal virtual void OnIsKeyboardFocusWithinChanged(DependencyPropertyChangedEventArgs e)
+		{
+		}
+
 		protected virtual void OnMouseEnter(MouseEventArgs e)
 		{
 			// no default implementation
@@ -373,15 +387,23 @@ namespace System.Windows
 			throw new NotImplementedException();
 		}
 			
+		protected virtual void OnPreviewMouseLeftButtonDown(MouseButtonEventArgs e)
+		{
+		}
+			
+		protected virtual void OnPreviewMouseLeftButtonUp(MouseButtonEventArgs e)
+		{
+		}
+
+		protected virtual void OnPreviewMouseRightButtonDown(MouseButtonEventArgs e)
+		{
+		}
+			
 		protected override void OnPropertyInvalidated(DependencyProperty property, PropertyMetadata metadata)
 		{
 			// no default implementation?!?!?
 		}
-
-		protected internal virtual void OnIsKeyboardFocusWithinChanged(DependencyPropertyChangedEventArgs e)
-		{
-		}
-			
+		
 		protected virtual void OnQueryEnabled(object sender, QueryEnabledEventArgs e)
 		{
 			if(_commandBindings == null)
@@ -412,6 +434,8 @@ namespace System.Windows
 		private static void OnVisibilityPropertyInvalidated(DependencyObject d)
 		{
 			((UIElement)d)._visibilityDirty = true;
+
+
 		}
 
 		public void RaiseEvent(RoutedEventArgs e)
@@ -497,7 +521,7 @@ namespace System.Windows
 
 		protected virtual bool IsEnabledCore
 		{
-			get { return (bool)GetValue(IsEnabledProperty); }
+			get { if(_isEnabledDirty) { _isEnabledCache = (bool)GetValueBase(IsEnabledProperty); _isEnabledDirty = false; } return _isEnabledCache; }
 		}
 
 		public bool IsFocused
@@ -573,6 +597,8 @@ namespace System.Windows
 		Size						_desiredSize = Size.Empty;
 		EventHandlersStore			_eventHandlersStore;
 		bool						_isArrangeValid = false;
+		bool						_isEnabledCache;
+		bool						_isEnabledDirty = true;
 		bool						_isFocusedCache;
 		bool						_isFocusedDirty = true;
 		bool						_isMeasureValid = false;

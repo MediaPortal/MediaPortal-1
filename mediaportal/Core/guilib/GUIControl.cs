@@ -38,7 +38,7 @@ namespace MediaPortal.GUI.Library
 	/// <summary>
 	/// Base class for GUIControls.
 	/// </summary>
-	public abstract class GUIControl : FrameworkElement
+	public abstract class GUIControl : Control
 	{
 		[XMLSkinElement("subtype")]			protected string  m_strSubType = "";
 		[XMLSkinElement("onleft")]			protected int			m_dwControlLeft = 0;

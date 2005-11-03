@@ -2674,6 +2674,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Input\MouseButtonEventHandler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Input\MouseEventArgs.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
