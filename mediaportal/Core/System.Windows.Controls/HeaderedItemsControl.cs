@@ -37,9 +37,9 @@ namespace System.Windows.Controls
 		static HeaderedItemsControl()
 		{
 			HasHeaderProperty = DependencyProperty.Register("HasHeader", typeof(bool), typeof(HeaderedItemsControl));
-			HeaderProperty = DependencyProperty.Register("Header", typeof(DataTemplate), typeof(HeaderedItemsControl));
-			HeaderTemplateProperty = DependencyProperty.Register("HeaderTemplate", typeof(DataTemplateSelector), typeof(HeaderedItemsControl));
-			HeaderTemplateSelectorProperty = DependencyProperty.Register("HasHeader", typeof(bool), typeof(HeaderedItemsControl));
+			HeaderProperty = DependencyProperty.Register("Header", typeof(object), typeof(HeaderedItemsControl));
+			HeaderTemplateProperty = DependencyProperty.Register("HeaderTemplate", typeof(DataTemplate), typeof(HeaderedItemsControl));
+			HeaderTemplateSelectorProperty = DependencyProperty.Register("HeaderTemplateSelector", typeof(DataTemplateSelector), typeof(HeaderedItemsControl));
 		}
 
 		public HeaderedItemsControl()
