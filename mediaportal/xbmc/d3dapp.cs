@@ -647,7 +647,7 @@ namespace MediaPortal
         presentParams.PresentationInterval = PresentInterval.Immediate;
         presentParams.FullScreenRefreshRateInHz = 0;
         presentParams.SwapEffect = Direct3D.SwapEffect.Discard;
-        presentParams.PresentFlag = PresentFlag.LockableBackBuffer;
+        presentParams.PresentFlag = PresentFlag.Video;//PresentFlag.LockableBackBuffer;
         presentParams.DeviceWindow = ourRenderTarget;
         presentParams.Windowed = true;
         //presentParams.PresentationInterval = PresentInterval.Immediate;

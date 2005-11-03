@@ -499,7 +499,7 @@ namespace MediaPortal.Player
 
 				m_idebugstep=2;
 				
-				backBuffer=GUIGraphicsContext.DX9Device.GetBackBuffer(0,0,BackBufferType.Mono);
+//				backBuffer=GUIGraphicsContext.DX9Device.GetBackBuffer(0,0,BackBufferType.Mono);
 				//first time, fade in the video in 12 steps
 				int iMaxSteps = 12;
 				if (m_iFrame < iMaxSteps)
@@ -610,7 +610,7 @@ namespace MediaPortal.Player
 				}
 				GUIGraphicsContext.DX9Device.EndScene();
 				m_idebugstep=19;
-				if (GUIGraphicsContext.DirectXPresentParameters.Windowed)
+				/*if (GUIGraphicsContext.DirectXPresentParameters.Windowed)
 				{
 					if (GUIGraphicsContext.DirectXPresentParameters.PresentFlag == PresentFlag.LockableBackBuffer)
 					{
@@ -619,7 +619,7 @@ namespace MediaPortal.Player
 						}
 						backBuffer.UnlockRectangle();
 					}
-				}
+				}*/
 				GUIGraphicsContext.DX9Device.Present();
 				m_idebugstep=20;
 			}
@@ -676,7 +676,7 @@ namespace MediaPortal.Player
 
 
 				m_idebugstep=3;
-				backBuffer=GUIGraphicsContext.DX9Device.GetBackBuffer(0,0,BackBufferType.Mono);
+//				backBuffer=GUIGraphicsContext.DX9Device.GetBackBuffer(0,0,BackBufferType.Mono);
 				//first time, fade in the video in 12 steps
 				int iMaxSteps = 12;
 				if (m_iFrame < iMaxSteps)
@@ -781,7 +781,7 @@ namespace MediaPortal.Player
 				m_idebugstep=15;
 				GUIGraphicsContext.DX9Device.EndScene();
 				m_idebugstep=16;
-				if (GUIGraphicsContext.DirectXPresentParameters.Windowed)
+				/*if (GUIGraphicsContext.DirectXPresentParameters.Windowed)
 				{
 					if (GUIGraphicsContext.DirectXPresentParameters.PresentFlag == PresentFlag.LockableBackBuffer)
 					{
@@ -790,7 +790,7 @@ namespace MediaPortal.Player
 						}
 						backBuffer.UnlockRectangle();
 					}
-				}
+				}*/
 				GUIGraphicsContext.DX9Device.Present();
 				m_idebugstep=17;
 			}

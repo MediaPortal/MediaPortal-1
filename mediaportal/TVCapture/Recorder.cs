@@ -1300,7 +1300,6 @@ namespace MediaPortal.TV.Recording
 			if (radioStationName==String.Empty)  
 			{
 				Log.WriteFile(Log.LogType.Recorder,"Recorder:StartRadio() listening radioStation=empty");
-				return ;
 			}
 			if (_state!= State.Initialized)  
 			{
@@ -1486,6 +1485,7 @@ namespace MediaPortal.TV.Recording
 			if (_state!= State.Initialized)  
 			{
 				Log.WriteFile(Log.LogType.Recorder,"Recorder:Start TV viewing but recorder is not initalised");
+				Recorder.Start();
 				return ;
 			}
 
@@ -1800,7 +1800,11 @@ namespace MediaPortal.TV.Recording
 		/// </summary>
 		static public void Process()
 		{
-			if (_state!=State.Initialized) return;
+			if (_state!=State.Initialized) 
+			{
+				Recorder.Start();
+				return;
+			}
 			if (GUIGraphicsContext.InVmr9Render) return;
 			ProcessCards();
 			DiskManagement.Process();	
