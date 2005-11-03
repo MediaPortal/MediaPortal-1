@@ -125,6 +125,8 @@ namespace id3
 				bool apicFrame=false;
 				if (tag[0]==0x41 && tag[1]==0x50 && tag[2]==0x49 && tag[3] == 0x43)
 					apicFrame=true;
+				if (_tagHeader.Version==2&& tag[0]==0x50 && tag[1]==0x49 && tag[2] == 0x43)
+					apicFrame=true;
 
 				byte[] tagSize = new byte[5];    // I use this to read the bytes in from the file
 				int[] bytes = new int[5];      // for bit shifting

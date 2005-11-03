@@ -1810,7 +1810,7 @@ namespace MediaPortal.TV.Recording
 					m_channelFound=true;
 					m_currentChannel=ch;
 					m_selectedAudioPid=ch.AudioPid;
-					if(Tune(ch.Frequency,ch.Symbolrate,6,ch.Polarity,ch.LNBKHz,ch.DiSEqC,ch.AudioPid,ch.VideoPid,ch.LNBFrequency,ch.ECMPid,ch.TeletextPid,ch.PMTPid,chPCRPid,ch.AudioLanguage3,ch.Audio3,ch.ProgramNumber,ch)==false)
+					if(Tune(ch.Frequency,ch.Symbolrate,6,ch.Polarity,ch.LNBKHz,ch.DiSEqC,ch.AudioPid,ch.VideoPid,ch.LNBFrequency,ch.ECMPid,ch.TeletextPid,ch.PMTPid,ch.PCRPid,ch.AudioLanguage3,ch.Audio3,ch.ProgramNumber,ch)==false)
 					{
 						m_lastTuneError=true;
 						m_channelFound=false;
