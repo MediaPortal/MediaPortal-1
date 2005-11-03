@@ -197,6 +197,10 @@ namespace System.Windows
 //			else
 //				throw new NotImplementedException();
 
+
+			if(_animationStore == null)
+				return;
+
 			_animationStore.BeginAnimation(property, animation, handoffBehavior);
 		}
 
@@ -261,7 +265,7 @@ namespace System.Windows
 		
 		protected override object GetValueCore(DependencyProperty property, object baseValue, PropertyMetadata metadata)
 		{
-			if(_animationStore != null)
+			if(HasAnimatedProperties)
 				baseValue = _animationStore.GetValue(property, baseValue, metadata);
 
 			return base.GetValueCore(property, baseValue, metadata);

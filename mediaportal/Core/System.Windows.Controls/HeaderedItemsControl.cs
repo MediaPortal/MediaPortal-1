@@ -36,10 +36,10 @@ namespace System.Windows.Controls
 
 		static HeaderedItemsControl()
 		{
-			HasHeaderProperty = DependencyProperty.Register("HasHeader", typeof(bool), typeof(HeaderedItemsControl));
-			HeaderProperty = DependencyProperty.Register("Header", typeof(object), typeof(HeaderedItemsControl));
-			HeaderTemplateProperty = DependencyProperty.Register("HeaderTemplate", typeof(DataTemplate), typeof(HeaderedItemsControl));
-			HeaderTemplateSelectorProperty = DependencyProperty.Register("HeaderTemplateSelector", typeof(DataTemplateSelector), typeof(HeaderedItemsControl));
+			HasHeaderProperty = DependencyProperty.Register("HasHeader", typeof(bool), typeof(HeaderedItemsControl), new FrameworkPropertyMetadata());
+			HeaderProperty = DependencyProperty.Register("Header", typeof(object), typeof(HeaderedItemsControl), new FrameworkPropertyMetadata());
+			HeaderTemplateProperty = DependencyProperty.Register("HeaderTemplate", typeof(DataTemplate), typeof(HeaderedItemsControl), new FrameworkPropertyMetadata());
+			HeaderTemplateSelectorProperty = DependencyProperty.Register("HeaderTemplateSelector", typeof(DataTemplateSelector), typeof(HeaderedItemsControl), new FrameworkPropertyMetadata());
 		}
 
 		public HeaderedItemsControl()
@@ -80,7 +80,7 @@ namespace System.Windows.Controls
 		[BindableAttribute(true)] 
 		public object Header
 		{
-			get { return (object)GetValue(HeaderProperty); }
+			get { return GetValue(HeaderProperty); }
 			set { SetValue(HeaderProperty, value); }
 		}
 
