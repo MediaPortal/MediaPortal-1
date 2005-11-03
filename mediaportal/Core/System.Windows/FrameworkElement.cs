@@ -267,8 +267,8 @@ namespace System.Windows
 			if(_names != null)
 				namedObject = _names[name];
 
-			//			if(namedObject == null)
-			//				namedObject = LogicalTreeHelper.GetChildren(this);
+//			if(namedObject == null)
+//				namedObject = LogicalTreeHelper.GetChildren(this);
 
 			return namedObject;
 		}
@@ -286,13 +286,13 @@ namespace System.Windows
 			return resource;
 		}
 
-		//		protected internal override IAutomationPropertyProvider GetAutomationProvider ()
-		//		{
-		//		}
+//		protected internal override IAutomationPropertyProvider GetAutomationProvider ()
+//		{
+//		}
 
-		//		public BindingExpression GetBindingExpression(DependencyProperty dp)
-		//		{
-		//		}
+//		public BindingExpression GetBindingExpression(DependencyProperty dp)
+//		{
+//		}
 
 		public static FlowDirection GetFlowDirection(DependencyObject d)
 		{
@@ -322,7 +322,6 @@ namespace System.Windows
 	
 		protected override object GetValueCore(DependencyProperty property, object baseValue, PropertyMetadata metadata)
 		{
-			// no default implementation
 			return base.GetValueCore(property, baseValue, metadata);
 		}
 
@@ -352,8 +351,6 @@ namespace System.Windows
 
 			if(Initialized != null)
 				Initialized(this, EventArgs.Empty);
-
-			PrepareTriggers();
 		}
 
 		private static object OnFocusablePropertyGetValue(DependencyObject d)
@@ -395,32 +392,6 @@ namespace System.Windows
 
 		protected internal virtual void ParentLayoutInvalidated(UIElement child)
 		{
-		}
-
-		protected void PrepareTriggers()
-		{
-			if(_triggers == null)
-				return;
-
-			MediaPortal.GUI.Library.Log.Write("PrepareTriggers");
-
-			foreach(TriggerBase trigger in _triggers)
-			{
-				if(trigger is EventTrigger)
-					PrepareEventTrigger((EventTrigger)trigger);
-			}
-		}
-
-		private void PrepareEventTrigger(EventTrigger trigger)
-		{
-			//			MediaPortal.GUI.Library.Log.Write("PrepareTriggers: {0}", trigger.RoutedEvent.ToString());
-
-			//			if(trigger.RoutedEvent == Page.LoadedEvent)
-			//				MediaPortal.GUI.Library.Log.Write("FIRE FIRE FIRE IN THE WHOLE");
-
-			//			foreach(TriggerAction action in trigger.Actions)
-			//			{
-			//			}
 		}
 
 		protected internal void RemoveLogicalChild(object child)

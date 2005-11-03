@@ -156,24 +156,16 @@ namespace System.Windows
 			if(clock == null)
 			{
 				// if clock parameter is null we are to remove the animation from the property
-				if(_animatedProperties != null)
-					_animatedProperties.Remove(property);
+				if(_animationStore != null)
+					_animationStore.RemoveAnimationClock(property, clock);
 
 				return;
 			}
 
-			if(_animatedProperties == null)
-				_animatedProperties = new Hashtable();
+			if(_animationStore == null)
+				_animationStore = new AnimationStore();
 
-			ArrayList clocks = _animatedProperties[property] as ArrayList;
-
-			if(clocks == null)
-				_animatedProperties[property] = clocks = new ArrayList();
-
-			if(handoffBehavior == HandoffBehavior.SnapshotAndReplace)
-				clocks.Clear();
-			
-			clocks.Add(clock);
+			_animationStore.ApplyAnimationClock(property, clock, handoffBehavior);
 		}
 	
 		public void Arrange(Rect finalRect)
@@ -198,12 +190,14 @@ namespace System.Windows
 			// is given as NULL, all animations will be removed from the property and the property value 
 			// will revert back to its base value.
 
-			if(animation == null)
-				_animatedProperties.Remove(property);
-			else if(animation.BeginTime.HasValue)
-				throw new NotImplementedException();
-			else
-				throw new NotImplementedException();
+//			if(animation == null)
+//				_animatedStore.RemoveAnimations(property);
+//			else if(animation.BeginTime.HasValue)
+//				throw new NotImplementedException();
+//			else
+//				throw new NotImplementedException();
+
+			_animationStore.BeginAnimation(property, animation, handoffBehavior);
 		}
 
 		protected virtual bool BuildRouteCore(EventRoute route, RoutedEventArgs args)
@@ -250,13 +244,10 @@ namespace System.Windows
 
 		public object GetAnimationBaseValue(DependencyProperty property)
 		{
-			if(_animatedProperties != null && _animatedProperties.ContainsKey(property))
-				return GetValueBase(property);
-
-			return GetValue(property);
+			return GetValueBase(property);
 		}
 
-		//		protected internal virtual IAutomationPropertyProvider GetAutomationProvider()
+//		protected internal virtual IAutomationPropertyProvider GetAutomationProvider()
 
 		protected virtual Geometry GetLayoutClip(Size layoutSlotSize)
 		{
@@ -270,6 +261,9 @@ namespace System.Windows
 		
 		protected override object GetValueCore(DependencyProperty property, object baseValue, PropertyMetadata metadata)
 		{
+			if(_animationStore != null)
+				baseValue = _animationStore.GetValue(property, baseValue, metadata);
+
 			return base.GetValueCore(property, baseValue, metadata);
 		}
 
@@ -483,7 +477,7 @@ namespace System.Windows
 
 		public bool HasAnimatedProperties
 		{
-			get { return _animatedProperties != null && _animatedProperties.Count != 0; }
+			get { return _animationStore != null && _animationStore.HasAnimatedProperties; }
 		}
 
 		public bool IsArrangeValid
@@ -570,7 +564,7 @@ namespace System.Windows
 
 		#region Fields
 
-		Hashtable					_animatedProperties;
+		AnimationStore				_animationStore;
 		CommandBindingCollection	_commandBindings;
 		Size						_desiredSize = Size.Empty;
 		EventHandlersStore			_eventHandlersStore;

@@ -141,7 +141,9 @@ namespace System.Windows
 
 		public object ReadLocalValue(DependencyProperty property)
 		{
+			// this needs to be rewritten
 			throw new NotImplementedException();
+
 			if(property.DefaultMetadata != null && property.DefaultMetadata.ReadLocalValueOverride != null)
 				return property.DefaultMetadata.ReadLocalValueOverride(this);
 
@@ -190,7 +192,7 @@ namespace System.Windows
 			throw new NotImplementedException();
 		}
 
-		public void SetValueCommon(DependencyProperty property, PropertyMetadata metadata, object value)
+		protected void SetValueCommon(DependencyProperty property, PropertyMetadata metadata, object value)
 		{
 			_localValues[property.GlobalIndex] = value;
 

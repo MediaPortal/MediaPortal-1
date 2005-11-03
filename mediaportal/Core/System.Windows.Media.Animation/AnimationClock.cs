@@ -41,7 +41,8 @@ namespace System.Windows.Media.Animation
 
 		public object GetCurrentValue(object defaultOriginValue, object defaultDestinationValue)
 		{
-			throw new NotImplementedException();
+//			return ((IAnimatable)Timeline).GetCurrentValue(defaultDestinationValue, this);
+			return defaultDestinationValue;
 		}
 
 		#endregion Methods

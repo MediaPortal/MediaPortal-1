@@ -2714,7 +2714,22 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Media.Animation\AnimationClockCollection.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Media.Animation\AnimationStore.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Media.Animation\AnimationTimeline.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Media.Animation\AnimationTimelineCollection.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
