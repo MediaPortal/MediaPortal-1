@@ -43,6 +43,15 @@ namespace System.Windows
 		{
 			UIPropertyMetadata metadata;
 
+			GotKeyboardFocusEvent = EventManager.RegisterRoutedEvent("GotKeyboardFocus", RoutingStrategy.Direct, typeof(KeyboardFocusChangedEventHandler), typeof(UIElement));
+			LostKeyboardFocusEvent = EventManager.RegisterRoutedEvent("LostKeyboardFocus", RoutingStrategy.Direct, typeof(KeyboardFocusChangedEventHandler), typeof(UIElement));
+			IsEnabledChangedEvent = EventManager.RegisterRoutedEvent("IsEnabledChanged", RoutingStrategy.Direct, typeof(RoutedEventHandler), typeof(UIElement));
+			IsKeyboardFocusedChangedEvent = EventManager.RegisterRoutedEvent("IsKeyboardFocusedChanged", RoutingStrategy.Direct, typeof(RoutedEventHandler), typeof(UIElement));
+			IsKeyboardFocusWithinChangedEvent = EventManager.RegisterRoutedEvent("IsKeyboardFocusWithinChanged", RoutingStrategy.Direct, typeof(RoutedEventHandler), typeof(UIElement));
+			IsVisibleChangedEvent = EventManager.RegisterRoutedEvent("IsVisibleChanged", RoutingStrategy.Direct, typeof(RoutedEventHandler), typeof(UIElement));
+			PreviewLostKeyboardFocusEvent = EventManager.RegisterRoutedEvent("PreviewLostKeyboardFocus", RoutingStrategy.Direct, typeof(KeyboardFocusChangedEventHandler), typeof(UIElement));
+			LostKeyboardFocusEvent = EventManager.RegisterRoutedEvent("PreviewGotKeyboardFocus", RoutingStrategy.Direct, typeof(KeyboardFocusChangedEventHandler), typeof(UIElement));
+
 			#region IsEnabled
 
 			metadata = new UIPropertyMetadata();
@@ -68,7 +77,7 @@ namespace System.Windows
 			IsKeyboardFocusedPropertyKey = DependencyProperty.RegisterReadOnly("IsKeyboardFocused", typeof(bool), typeof(UIElement), new FrameworkPropertyMetadata(false));
 			IsKeyboardFocusedProperty = IsKeyboardFocusedPropertyKey.DependencyProperty;
 
-			IsKeyboardFocusWithinPropertyKey = DependencyProperty.RegisterReadOnly("IsKeyboardFocusWithinProperty", typeof(bool), typeof(UIElement), new FrameworkPropertyMetadata(false));
+			IsKeyboardFocusWithinPropertyKey = DependencyProperty.RegisterReadOnly("IsKeyboardFocusWithin", typeof(bool), typeof(UIElement), new FrameworkPropertyMetadata(false));
 			IsKeyboardFocusWithinProperty = IsKeyboardFocusWithinPropertyKey.DependencyProperty;
 			
 			IsVisiblePropertyKey = DependencyProperty.RegisterReadOnly("IsVisible", typeof(bool), typeof(UIElement), new FrameworkPropertyMetadata(true));
@@ -87,15 +96,6 @@ namespace System.Windows
 			VisibilityProperty = DependencyProperty.Register("Visibility", typeof(Visibility), typeof(UIElement), metadata);
 
 			#endregion IsFocused
-
-			GotKeyboardFocusEvent = EventManager.RegisterRoutedEvent("GotKeyboardFocus", RoutingStrategy.Direct, typeof(KeyboardFocusChangedEventHandler), typeof(UIElement));
-			LostKeyboardFocusEvent = EventManager.RegisterRoutedEvent("LostKeyboardFocus", RoutingStrategy.Direct, typeof(KeyboardFocusChangedEventHandler), typeof(UIElement));
-			IsEnabledChangedEvent = EventManager.RegisterRoutedEvent("IsEnabledChanged", RoutingStrategy.Direct, typeof(RoutedEventHandler), typeof(UIElement));
-			IsKeyboardFocusedChangedEvent = EventManager.RegisterRoutedEvent("IsEnabledChanged", RoutingStrategy.Direct, typeof(RoutedEventHandler), typeof(UIElement));
-			IsKeyboardFocusWithinChangedEvent = EventManager.RegisterRoutedEvent("IsEnabledChanged", RoutingStrategy.Direct, typeof(RoutedEventHandler), typeof(UIElement));
-			IsVisibleChangedEvent = EventManager.RegisterRoutedEvent("IsEnabledChanged", RoutingStrategy.Direct, typeof(RoutedEventHandler), typeof(UIElement));
-			PreviewLostKeyboardFocusEvent = EventManager.RegisterRoutedEvent("PreviewLostKeyboardFocus", RoutingStrategy.Direct, typeof(KeyboardFocusChangedEventHandler), typeof(UIElement));
-			LostKeyboardFocusEvent = EventManager.RegisterRoutedEvent("PreviewGotKeyboardFocus", RoutingStrategy.Direct, typeof(KeyboardFocusChangedEventHandler), typeof(UIElement));
 
 			//			EventManager.RegisterClassHandler(typeof(UIElement), Keyboard.KeyDownEvent, new KeyEventHandler(UIElement.OnKeyDownThunk));
 			//			EventManager.RegisterClassHandler(
