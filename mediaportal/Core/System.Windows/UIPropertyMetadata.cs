@@ -23,12 +23,12 @@
 
 #endregion
 
-using System;
-
 namespace System.Windows
 {
 	public class UIPropertyMetadata : PropertyMetadata
 	{
+		#region Constructors
+
 		public UIPropertyMetadata()
 		{
 		}
@@ -73,6 +73,8 @@ namespace System.Windows
 		{
 			_isAnimationProhibited = isAnimationProhibited;
 		}
+
+		#endregion Constructors
 
 		#region Methods
 

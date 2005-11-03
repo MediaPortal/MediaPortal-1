@@ -37,18 +37,12 @@ namespace System.Windows.Controls
 
 		static ContextMenu()
 		{
-//			CustomPopupPlacementCallbackProperty = DependencyProperty.Register("CustomPopupPlacementCallback", typeof(CustomPopupPlacementCallback), typeof(ContextMenu));
-			HasDropShadowProperty = DependencyProperty.Register("HasDropShadow", typeof(bool), typeof(ContextMenu), new PropertyMetadata(false));
-			HorizontalOffsetProperty = DependencyProperty.Register("HorizontalOffset", typeof(double), typeof(ContextMenu), new PropertyMetadata(0.0));
-			IsOpenProperty = DependencyProperty.Register("IsOpen", typeof(bool), typeof(ContextMenu), new PropertyMetadata(false));
-			PlacementProperty = DependencyProperty.Register("Placement", typeof(PlacementMode), typeof(ContextMenu), new PropertyMetadata(PlacementMode.Bottom));
-			PlacementRectangleProperty = DependencyProperty.Register("PlacementRectangle", typeof(Rect), typeof(ContextMenu), new PropertyMetadata(Rect.Empty));
-			PlacementTargetProperty = DependencyProperty.Register("PlacementTarget", typeof(UIElement), typeof(ContextMenu));
-			StaysOpenProperty = DependencyProperty.Register("StaysOpen", typeof(bool), typeof(ContextMenu), new PropertyMetadata(false));
-			VerticalOffsetProperty = DependencyProperty.Register("VerticalOffset", typeof(bool), typeof(ContextMenu), new PropertyMetadata(0.0));
-
-			ClosedEvent = EventManager.RegisterRoutedEvent("Closed", RoutingStrategy.Direct, typeof(RoutedEventHandler), typeof(ContextMenu));
-			OpenedEvent = EventManager.RegisterRoutedEvent("Opened", RoutingStrategy.Direct, typeof(RoutedEventHandler), typeof(ContextMenu));
+			HasDropShadowProperty = ContextMenuService.HasDropShadowProperty.AddOwner(typeof(ContextMenu));
+			HorizontalOffsetProperty = ContextMenuService.HorizontalOffsetProperty.AddOwner(typeof(ContextMenu));
+			PlacementProperty = ContextMenuService.PlacementProperty.AddOwner(typeof(ContextMenu));
+			PlacementRectangleProperty = ContextMenuService.PlacementRectangleProperty.AddOwner(typeof(ContextMenu));
+			PlacementTargetProperty = ContextMenuService.PlacementTargetProperty.AddOwner(typeof(UIElement));
+			VerticalOffsetProperty = ContextMenuService.VerticalOffsetProperty.AddOwner(typeof(ContextMenu));
 		}
 
 		public ContextMenu()

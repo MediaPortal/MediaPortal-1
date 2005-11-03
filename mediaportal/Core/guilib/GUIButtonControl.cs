@@ -22,9 +22,8 @@ using System;
 using System.Collections;
 using System.Drawing;
 using System.Diagnostics;
-
+using System.Windows;
 using System.Windows.Controls;
-
 
 namespace MediaPortal.GUI.Library
 {
@@ -208,7 +207,7 @@ namespace MediaPortal.GUI.Library
 			{
 				if (action.wID == Action.ActionType.ACTION_MOUSE_CLICK||action.wID == Action.ActionType.ACTION_SELECT_ITEM)
 				{
-					if(base.ContextMenu != null)
+					if(ContextMenu != null)
 						DoContextMenu();
 
 					// If this button contains scriptactions call the scriptactions.

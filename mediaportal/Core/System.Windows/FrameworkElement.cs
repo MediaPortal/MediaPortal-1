@@ -42,25 +42,72 @@ namespace System.Windows
 
 		static FrameworkElement()
 		{
-			ActualHeightProperty = DependencyProperty.Register("ActualHeight", typeof(double), typeof(FrameworkElement), new PropertyMetadata(0.0, new PropertyInvalidatedCallback(ActualHeightPropertyInvalidated)));
-			ActualWidthProperty = DependencyProperty.Register("ActualWidth", typeof(double), typeof(FrameworkElement), new PropertyMetadata(0.0, new PropertyInvalidatedCallback(ActualWidthPropertyInvalidated)));
-			ContextMenuProperty = DependencyProperty.Register("ContextMenu", typeof(ContextMenu), typeof(FrameworkElement));
-			FlowDirectionProperty = DependencyProperty.Register("FlowDirection", typeof(FlowDirection), typeof(FrameworkElement), new PropertyMetadata(FlowDirection.LeftToRight));
-			FocusableProperty = DependencyProperty.Register("Focusable", typeof(bool), typeof(FrameworkElement), new PropertyMetadata(true));
-			HeightProperty = DependencyProperty.Register("Height", typeof(double), typeof(FrameworkElement), new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsArrange));
+			FrameworkPropertyMetadata metadata;
+
+			ActualHeightProperty = DependencyProperty.Register("ActualHeight", typeof(double), typeof(FrameworkElement), new FrameworkPropertyMetadata(0.0, new PropertyInvalidatedCallback(ActualHeightPropertyInvalidated)));
+			ActualWidthProperty = DependencyProperty.Register("ActualWidth", typeof(double), typeof(FrameworkElement), new FrameworkPropertyMetadata(0.0, new PropertyInvalidatedCallback(ActualWidthPropertyInvalidated)));
+
+			#region ContextMenu
+
+			ContextMenuProperty = ContextMenuService.ContextMenuProperty.AddOwner(typeof(FrameworkElement));
+
+			#endregion ContextMenu
+
+			FlowDirectionProperty = DependencyProperty.Register("FlowDirection", typeof(FlowDirection), typeof(FrameworkElement), new FrameworkPropertyMetadata(FlowDirection.LeftToRight));
+
+			#region Focusable
+
+			metadata = new FrameworkPropertyMetadata();
+			metadata.DefaultValue = true;
+			metadata.PropertyInvalidatedCallback = new PropertyInvalidatedCallback(OnFocusablePropertyInvalidated);
+			metadata.GetValueOverride = new GetValueOverride(OnFocusablePropertyGetValue);
+
+			FocusableProperty = DependencyProperty.Register("Focusable", typeof(bool), typeof(FrameworkElement), metadata);
+
+			#endregion Focusable
+
+			#region HeightProperty
+
+			metadata = new FrameworkPropertyMetadata();
+			metadata.DefaultValue = 0.0;
+			metadata.PropertyInvalidatedCallback = new PropertyInvalidatedCallback(OnHeightPropertyInvalidated);
+			metadata.GetValueOverride = new GetValueOverride(OnHeightPropertyGetValue);
+			metadata.AffectsArrange = true;
+			metadata.AffectsMeasure = true;
+			metadata.AffectsParentArrange = true;
+			metadata.AffectsParentMeasure = true;
+
+			HeightProperty = DependencyProperty.Register("Height", typeof(double), typeof(FrameworkElement), metadata);
+
+			#endregion HeightProperty
+
 			HorizontalAlignmentProperty = DependencyProperty.Register("HorizontalAlignment", typeof(HorizontalAlignment), typeof(FrameworkElement), new FrameworkPropertyMetadata(HorizontalAlignment.Stretch, FrameworkPropertyMetadataOptions.AffectsArrange));
-			MarginProperty = DependencyProperty.Register("Margin", typeof(Thickness), typeof(FrameworkElement), new PropertyMetadata(Thickness.Empty));
-			NameProperty = DependencyProperty.Register("Name", typeof(string), typeof(FrameworkElement), new PropertyMetadata(string.Empty));
-			StyleProperty = DependencyProperty.Register("Style", typeof(Style), typeof(FrameworkElement));
-			VerticalAlignmentProperty = DependencyProperty.Register("VerticalAlignment", typeof(VerticalAlignment), typeof(FrameworkElement), new PropertyMetadata(VerticalAlignment.Stretch));
-			WidthProperty = DependencyProperty.Register("Width", typeof(double), typeof(FrameworkElement), new PropertyMetadata(0.0));
+			MarginProperty = DependencyProperty.Register("Margin", typeof(Thickness), typeof(FrameworkElement), new FrameworkPropertyMetadata(Thickness.Empty));
+			NameProperty = DependencyProperty.Register("Name", typeof(string), typeof(FrameworkElement), new FrameworkPropertyMetadata(string.Empty));
+			StyleProperty = DependencyProperty.Register("Style", typeof(Style), typeof(FrameworkElement), new FrameworkPropertyMetadata());
+			VerticalAlignmentProperty = DependencyProperty.Register("VerticalAlignment", typeof(VerticalAlignment), typeof(FrameworkElement), new FrameworkPropertyMetadata(VerticalAlignment.Stretch));
+
+			#region WidthProperty
+
+			metadata = new FrameworkPropertyMetadata();
+			metadata.DefaultValue = 0.0;
+			metadata.PropertyInvalidatedCallback = new PropertyInvalidatedCallback(OnWidthPropertyInvalidated);
+			metadata.GetValueOverride = new GetValueOverride(OnWidthPropertyGetValue);
+			metadata.AffectsArrange = true;
+			metadata.AffectsMeasure = true;
+			metadata.AffectsParentArrange = true;
+			metadata.AffectsParentMeasure = true;
+
+			WidthProperty = DependencyProperty.Register("Width", typeof(double), typeof(FrameworkElement), metadata);
+
+			#endregion WidthProperty
 
 			LoadedEvent = EventManager.RegisterRoutedEvent("Loaded", RoutingStrategy.Direct, typeof(RoutedEventHandler), typeof(FrameworkElement));
 			RequestBringIntoViewEvent = EventManager.RegisterRoutedEvent("RequestBringIntoView", RoutingStrategy.Direct, typeof(RequestBringIntoViewEventHandler), typeof(FrameworkElement));
 			SizeChangedEvent = EventManager.RegisterRoutedEvent("SizeChanged", RoutingStrategy.Direct, typeof(RoutedEventHandler), typeof(FrameworkElement));
 			UnloadedEvent = EventManager.RegisterRoutedEvent("Unloaded", RoutingStrategy.Direct, typeof(RoutedEventHandler), typeof(FrameworkElement));
-		}	
-			
+		}
+
 		public FrameworkElement()
 		{
 		}
@@ -273,10 +320,10 @@ namespace System.Windows
 			return this.VisualParent;
 		}
 	
-		protected override object GetValueCore(DependencyProperty dp, object baseValue, PropertyMetadata metadata)
+		protected override object GetValueCore(DependencyProperty property, object baseValue, PropertyMetadata metadata)
 		{
 			// no default implementation
-			return DependencyProperty.UnsetValue;
+			return base.GetValueCore(property, baseValue, metadata);
 		}
 
 		protected override sealed Size MeasureCore(Size availableSize)
@@ -289,6 +336,16 @@ namespace System.Windows
 			return availableSize;
 		}
 
+		private static object OnHeightPropertyGetValue(DependencyObject d)
+		{
+			return ((FrameworkElement)d).Height;
+		}
+
+		private static void OnHeightPropertyInvalidated(DependencyObject d)
+		{
+			((FrameworkElement)d)._heightDirty = true;
+		}
+
 		protected virtual void OnInitialized(EventArgs e)
 		{
 			_isInitialized = true;
@@ -297,6 +354,16 @@ namespace System.Windows
 				Initialized(this, EventArgs.Empty);
 
 			PrepareTriggers();
+		}
+
+		private static object OnFocusablePropertyGetValue(DependencyObject d)
+		{
+			return ((FrameworkElement)d)._focusableCache;
+		}
+			
+		private static void OnFocusablePropertyInvalidated(DependencyObject d)
+		{
+			((FrameworkElement)d)._focusableDirty = true;
 		}
 
 		protected override void OnPropertyInvalidated(DependencyProperty property, PropertyMetadata metadata)
@@ -316,6 +383,16 @@ namespace System.Windows
 			OnInitialized(EventArgs.Empty);
 		}
 			
+		private static object OnWidthPropertyGetValue(DependencyObject d)
+		{
+			return ((FrameworkElement)d).Width;
+		}
+
+		private static void OnWidthPropertyInvalidated(DependencyObject d)
+		{
+			((FrameworkElement)d)._widthDirty = true;
+		}
+
 		protected internal virtual void ParentLayoutInvalidated(UIElement child)
 		{
 		}
@@ -350,9 +427,9 @@ namespace System.Windows
 		{
 		}
 			
-		public static void SetFlowDirection(DependencyObject element, FlowDirection flowDirection)
+		public static void SetFlowDirection(DependencyObject d, FlowDirection flowDirection)
 		{
-			element.SetValue(FlowDirectionProperty, flowDirection);
+			d.SetValue(FlowDirectionProperty, flowDirection);
 		}
 
 		public void SetResourceReference(DependencyProperty property, object name)
@@ -367,19 +444,17 @@ namespace System.Windows
 		public virtual int ActualHeight
 		{
 			get { return (int)(double)GetValue(ActualHeightProperty); }
-			set { SetValue(ActualHeightProperty, (double)value); }
 		}
 
 		// TODO: should not be virtual and must be double
 		public virtual int ActualWidth
 		{
 			get { return (int)(double)GetValue(ActualWidthProperty); }
-			set { SetValue(ActualWidthProperty, (double)value); }
 		}
 
 		public ContextMenu ContextMenu
 		{
-			get { return (ContextMenu)GetValue(ContextMenuProperty); }
+			get { return GetValue(ContextMenuProperty) as ContextMenu; }
 			set { SetValue(ContextMenuProperty, value); }
 		}
 
@@ -391,14 +466,14 @@ namespace System.Windows
 
 		public bool Focusable
 		{
-			get { return (bool)GetValue(FocusableProperty); }
+			get { if(_focusableDirty) { _focusableCache = (bool)GetValueBase(FocusableProperty); _focusableDirty = false; } return _focusableCache; }
 			set { SetValue(FocusableProperty, value); }
 		}
-
+		
 		// TODO: should not be virtual and must be double
 		public virtual int Height
 		{
-			get { return (int)(double)GetValue(HeightProperty); }
+			get { if(_heightDirty) { _heightCache = (double)GetValueBase(HeightProperty); _heightDirty = false; } return (int)_heightCache; }
 			set { SetValue(HeightProperty, (double)value); }
 		}
 
@@ -489,7 +564,7 @@ namespace System.Windows
 		// TODO: should not be virtual and must be double
 		public virtual int Width
 		{
-			get { return (int)((double)GetValue(WidthProperty)); }
+			get { if(_widthDirty) { _widthCache = (double)GetValueBase(WidthProperty); _widthDirty = false; } return (int)_widthCache; }
 			set { SetValue(WidthProperty, (double)value); }
 		}
 
@@ -514,6 +589,10 @@ namespace System.Windows
 
 		#region Fields
 
+		bool						_focusableCache;
+		bool						_focusableDirty = true;
+		double						_heightCache;
+		bool						_heightDirty = true;
 		bool						_isInitialized = false;
 		bool						_isInitializing = false;
 		bool						_isLoaded = false;
@@ -523,6 +602,8 @@ namespace System.Windows
 		ResourceDictionary			_resources;
 		DependencyObject			_templatedParent = null;
 		TriggerCollection			_triggers;
+		double						_widthCache;
+		bool						_widthDirty = true;
 
 		#endregion Fields
 	}

@@ -41,8 +41,29 @@ namespace System.Windows
 
 		static UIElement()
 		{
-			IsEnabledProperty = DependencyProperty.Register("IsEnabled", typeof(bool), typeof(UIElement), new FrameworkPropertyMetadata(true));
-			IsFocusedProperty = DependencyProperty.Register("IsFocused", typeof(bool), typeof(UIElement), new FrameworkPropertyMetadata(false));
+			UIPropertyMetadata metadata;
+
+			#region IsEnabled
+
+			metadata = new UIPropertyMetadata();
+			metadata.DefaultValue = true;
+//			metadata.GetValueOverride = new GetValueOverride(OnIsEnabledPropertyGetValue);
+//			metadata.PropertyInvalidatedCallback = new PropertyInvalidatedCallback(OnIsEnabledPropertyInvalidated);
+
+			IsEnabledProperty = DependencyProperty.Register("IsEnabled", typeof(bool), typeof(UIElement), metadata);
+	
+			#endregion IsEnabled
+
+			#region IsFocused
+
+			metadata = new UIPropertyMetadata();
+			metadata.DefaultValue = false;
+			metadata.GetValueOverride = new GetValueOverride(OnIsFocusedPropertyGetValue);
+			metadata.PropertyInvalidatedCallback = new PropertyInvalidatedCallback(OnIsFocusedPropertyInvalidated);
+
+			IsFocusedProperty = DependencyProperty.Register("IsFocused", typeof(bool), typeof(UIElement), metadata);
+
+			#endregion IsFocused
 
 			IsKeyboardFocusedPropertyKey = DependencyProperty.RegisterReadOnly("IsKeyboardFocused", typeof(bool), typeof(UIElement), new FrameworkPropertyMetadata(false));
 			IsKeyboardFocusedProperty = IsKeyboardFocusedPropertyKey.DependencyProperty;
@@ -55,7 +76,17 @@ namespace System.Windows
 
 			OpacityMaskProperty = DependencyProperty.Register("OpacityMask", typeof(Brush), typeof(UIElement));
 			OpacityProperty = DependencyProperty.Register("Opacity", typeof(double), typeof(UIElement), new FrameworkPropertyMetadata(1.0));
-			VisibilityProperty = DependencyProperty.Register("Visibility", typeof(Visibility), typeof(UIElement), new FrameworkPropertyMetadata(Visibility.Visible));
+			
+			#region IsFocused
+
+			metadata = new UIPropertyMetadata();
+			metadata.DefaultValue = Visibility.Visible;
+			metadata.GetValueOverride = new GetValueOverride(OnVisibilityPropertyGetValue);
+			metadata.PropertyInvalidatedCallback = new PropertyInvalidatedCallback(OnVisibilityPropertyInvalidated);
+
+			VisibilityProperty = DependencyProperty.Register("Visibility", typeof(Visibility), typeof(UIElement), metadata);
+
+			#endregion IsFocused
 
 			GotKeyboardFocusEvent = EventManager.RegisterRoutedEvent("GotKeyboardFocus", RoutingStrategy.Direct, typeof(KeyboardFocusChangedEventHandler), typeof(UIElement));
 			LostKeyboardFocusEvent = EventManager.RegisterRoutedEvent("LostKeyboardFocus", RoutingStrategy.Direct, typeof(KeyboardFocusChangedEventHandler), typeof(UIElement));
@@ -66,8 +97,8 @@ namespace System.Windows
 			PreviewLostKeyboardFocusEvent = EventManager.RegisterRoutedEvent("PreviewLostKeyboardFocus", RoutingStrategy.Direct, typeof(KeyboardFocusChangedEventHandler), typeof(UIElement));
 			LostKeyboardFocusEvent = EventManager.RegisterRoutedEvent("PreviewGotKeyboardFocus", RoutingStrategy.Direct, typeof(KeyboardFocusChangedEventHandler), typeof(UIElement));
 
-//			EventManager.RegisterClassHandler(typeof(UIElement), Keyboard.KeyDownEvent, new KeyEventHandler(UIElement.OnKeyDownThunk));
-//			EventManager.RegisterClassHandler(
+			//			EventManager.RegisterClassHandler(typeof(UIElement), Keyboard.KeyDownEvent, new KeyEventHandler(UIElement.OnKeyDownThunk));
+			//			EventManager.RegisterClassHandler(
 		}
 
 		public UIElement()
@@ -117,9 +148,6 @@ namespace System.Windows
 
 		public void ApplyAnimationClock(DependencyProperty property, AnimationClock clock)
 		{
-			// Applies an animation to a specified dependency property on this element,
-			// with the behavior that any existing animations will be stopped and replaced with the new animation. 
-
 			ApplyAnimationClock(property, clock, HandoffBehavior.SnapshotAndReplace);
 		}
 
@@ -187,37 +215,37 @@ namespace System.Windows
 		{
 			return true;
 
-/*			if(IsFocused)
-				return true;
+			/*			if(IsFocused)
+							return true;
 
-			if(Focusable && IsEnabled)
-				return false;
+						if(Focusable && IsEnabled)
+							return false;
 
-			if(!IsKeyboardFocused)
-			{
-			}
+						if(!IsKeyboardFocused)
+						{
+						}
 
-			if(!IsKeyboardFocusWithin)
-			{
-				IsKeyboardFocusWithin = true;
+						if(!IsKeyboardFocusWithin)
+						{
+							IsKeyboardFocusWithin = true;
 
-				new RoutedEventArgs(UIElement.IsKeyboardFocusedChanged);
-				RaiseEvent();
+							new RoutedEventArgs(UIElement.IsKeyboardFocusedChanged);
+							RaiseEvent();
 	
-			}
+						}
 
-			IsKeyboardFocused = true;
-			IsKeyboardFocusWithin = true;
+						IsKeyboardFocused = true;
+						IsKeyboardFocusWithin = true;
 
-			// If the related properties were not already true, then calling this method may also 
-			// raise these events in the order given:
-			// PreviewLostKeyboardFocus
-			// PreviewGotKeyboardFocus (source is the new focus target)
-			// IsKeyboardFocusedChanged
-			// IsKeyboardFocusWithinChanged
-			// LostKeyboardFocus
-			// GotKeyboardFocus (source is the new focus target).
-*/
+						// If the related properties were not already true, then calling this method may also 
+						// raise these events in the order given:
+						// PreviewLostKeyboardFocus
+						// PreviewGotKeyboardFocus (source is the new focus target)
+						// IsKeyboardFocusedChanged
+						// IsKeyboardFocusWithinChanged
+						// LostKeyboardFocus
+						// GotKeyboardFocus (source is the new focus target).
+			*/
 		}			
 
 		public object GetAnimationBaseValue(DependencyProperty property)
@@ -228,7 +256,7 @@ namespace System.Windows
 			return GetValue(property);
 		}
 
-//		protected internal virtual IAutomationPropertyProvider GetAutomationProvider()
+		//		protected internal virtual IAutomationPropertyProvider GetAutomationProvider()
 
 		protected virtual Geometry GetLayoutClip(Size layoutSlotSize)
 		{
@@ -242,8 +270,7 @@ namespace System.Windows
 		
 		protected override object GetValueCore(DependencyProperty property, object baseValue, PropertyMetadata metadata)
 		{
-//			_animatedProperties[property];
-			return null;
+			return base.GetValueCore(property, baseValue, metadata);
 		}
 
 		public void InvalidateArrange()
@@ -293,6 +320,16 @@ namespace System.Windows
 			// no default implementation
 		}
 
+		private static object OnIsFocusedPropertyGetValue(DependencyObject d)
+		{
+			return ((UIElement)d).IsFocused;
+		}
+
+		private static void OnIsFocusedPropertyInvalidated(DependencyObject d)
+		{
+			((UIElement)d)._isFocusedDirty = true;
+		}
+
 		protected internal virtual void OnIsFocusWithinChanged(DependencyPropertyChangedEventArgs e)
 		{
 			throw new NotImplementedException();
@@ -340,8 +377,7 @@ namespace System.Windows
 			
 		protected override void OnPropertyInvalidated(DependencyProperty property, PropertyMetadata metadata)
 		{
-			// assume that this is used to set the dirty flag on cached properties?
-//			MediaPortal.GUI.Library.Log.Write("UIElement.OnPropertyInvalidated: {0}", dp.Name);
+			// no default implementation?!?!?
 		}
 
 		protected internal virtual void OnIsKeyboardFocusWithinChanged(DependencyPropertyChangedEventArgs e)
@@ -370,6 +406,16 @@ namespace System.Windows
 			// no default implementation
 		}
 			
+		private static object OnVisibilityPropertyGetValue(DependencyObject d)
+		{
+			return ((UIElement)d).Visibility;
+		}
+
+		private static void OnVisibilityPropertyInvalidated(DependencyObject d)
+		{
+			((UIElement)d)._visibilityDirty = true;
+		}
+
 		public void RaiseEvent(RoutedEventArgs e)
 		{
 			if(_eventHandlersStore == null)
@@ -458,7 +504,7 @@ namespace System.Windows
 
 		public bool IsFocused
 		{
-			get { return (bool)GetValue(IsFocusedProperty); }
+			get { if(_isFocusedDirty) { _isFocusedCache = (bool)GetValueBase(IsFocusedProperty); _isFocusedDirty = false; } return _isFocusedCache; }
 		}
 
 		public bool IsMeasureValid
@@ -475,8 +521,8 @@ namespace System.Windows
 		public bool IsVisible
 		{
 			// TODO: there should be no set accessor
-			get { return (Visibility)GetValue(VisibilityProperty) == Visibility.Visible; }
-			set { SetValue(VisibilityProperty, value ? Visibility.Visible : Visibility.Hidden); }
+			get { return Visibility == Visibility.Visible; }
+			set { Visibility = value ? Visibility.Visible : Visibility.Hidden; }
 		}
 
 		public virtual double Opacity
@@ -499,7 +545,7 @@ namespace System.Windows
 
 		public Visibility Visibility
 		{
-			get { return (Visibility)GetValue(VisibilityProperty); }
+			get { if(_visibilityDirty) { _visibilityCache = (Visibility)GetValueBase(VisibilityProperty); _visibilityDirty = false; } return _visibilityCache; }
 			set { SetValue(VisibilityProperty, value); }
 		}
 
@@ -529,8 +575,12 @@ namespace System.Windows
 		Size						_desiredSize = Size.Empty;
 		EventHandlersStore			_eventHandlersStore;
 		bool						_isArrangeValid = false;
+		bool						_isFocusedCache;
+		bool						_isFocusedDirty = true;
 		bool						_isMeasureValid = false;
 		Size						_renderSize = Size.Empty;
+		Visibility					_visibilityCache;
+		bool						_visibilityDirty = true;
 
 		#endregion Fields
 	}

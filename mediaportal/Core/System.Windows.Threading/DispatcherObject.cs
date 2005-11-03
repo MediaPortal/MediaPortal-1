@@ -52,7 +52,7 @@ namespace System.Windows.Threading
 
 		#region Fields
 
-		System.Windows.Dispatcher.Dispatcher _dispatcher;
+		System.Windows.Dispatcher.Dispatcher _dispatcher = null;
 
 		#endregion Fields
 	}

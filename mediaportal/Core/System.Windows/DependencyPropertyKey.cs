@@ -46,6 +46,7 @@ namespace System.Windows
 
 		public void OverrideMetadata(Type ownerType, PropertyMetadata metadata)
 		{
+			// somehow this isn't correct!
 			_dependencyProperty.OverrideMetadata(ownerType, metadata, this);
 		}
 

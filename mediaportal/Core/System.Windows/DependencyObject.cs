@@ -50,77 +50,102 @@ namespace System.Windows
 
 		public void ClearValue(DependencyProperty property)
 		{
-			_properties.Remove(property);
+			_localValues.Remove(property);
 		}
 
 		public void ClearValue(DependencyPropertyKey key)
 		{
-			_properties.Remove(key.DependencyProperty);
+			_localValues.Remove(key.DependencyProperty);
 		}
 
 		public LocalValueEnumerator GetLocalValueEnumerator()
 		{
-			return new LocalValueEnumerator(_properties);
+			return new LocalValueEnumerator(_localValues);
 		}
 
 		// http://www.64bit-world.com/forums/microsoft-public-developer-winfx-avalon/10124-xamlpad-exe-nullreferencexception-winfx-ctp-sept.html
 		public object GetValue(DependencyProperty property)
 		{
-			object value = _properties[property];
+			PropertyMetadata metadata = property.GetMetadata(this.GetType());
 
-			if(value == null && property.DefaultMetadata != null)
-				value = property.DefaultMetadata.DefaultValue;
+			if(metadata.GetValueOverride != null)
+				return metadata.GetValueOverride(this);
 
-			return value;
+			return GetValueCommon(property, metadata);
 		}
 
 		public object GetValueBase(DependencyProperty property)
 		{
-			// ms-help://MS.WinFXSDK.1033/Wcp_conceptual/html/1fbada8e-4867-4ed1-8d97-62c07dad7ebc.htm
-			// - Animations
-			// - Local
-			// - Property triggers (TemplatedParent, Template, Style, ThemeStyle)
-			// - TemplatedParent's template (ie, that template includes <Setter>s) 
-			// - Style property 
-			// - ThemeStyle 
-			// - Inheritance ("property inheritance" -- from your parent element, not your superclass) 
-			// - DefaultValue specified when you registered the property (or override metadata)
-
-			return GetValueCore(property, _properties[property], property.GetMetadata(this));
+			return GetValueCommon(property, property.GetMetadata(this.GetType()));
 		}
 
-		protected virtual object GetValueCommon(DependencyProperty property, PropertyMetadata metadata)
+		private object GetValueCommon(DependencyProperty property, PropertyMetadata metadata)
 		{
-			return GetValueCore(property, null, metadata);
+			object commonValue = DependencyProperty.UnsetValue;
+			
+			if(_localValues.ContainsKey(property.GlobalIndex))
+				commonValue = _localValues[property.GlobalIndex];
+
+			if(commonValue != DependencyProperty.UnsetValue)
+				return commonValue;
+
+			if(metadata.ReadLocalValueOverride != null)
+				commonValue = metadata.ReadLocalValueOverride(this);
+
+			if(commonValue != DependencyProperty.UnsetValue)
+				return commonValue;
+
+			commonValue = GetValueCore(property, commonValue, metadata);
+
+			if(commonValue != DependencyProperty.UnsetValue)
+				return commonValue;
+
+			return metadata.DefaultValue;
 		}
+
+		// ms-help://MS.WinFXSDK.1033/Wcp_conceptual/html/1fbada8e-4867-4ed1-8d97-62c07dad7ebc.htm
+		// - Animations
+		// - Local
+		// - Property triggers (TemplatedParent, Template, Style, ThemeStyle)
+		// - TemplatedParent's template (ie, that template includes <Setter>s) 
+		// - Style property 
+		// - ThemeStyle 
+		// - Inheritance ("property inheritance" -- from your parent element, not your superclass) 
+		// - DefaultValue specified when you registered the property (or override metadata)
 
 		protected virtual object GetValueCore(DependencyProperty property, object baseValue, PropertyMetadata metadata)
 		{
-			object value = _properties[property];
-
-			if(value == null && metadata != null)
-				value = metadata.DefaultValue;
-
-			return value;
+			return baseValue;
 		}
 
 		public void InvalidateProperty(DependencyProperty property)
 		{
-			OnPropertyInvalidated(property, property.DefaultMetadata);
+			InvalidateProperty(property, property.GetMetadata(GetType()));
+		}
+
+		private void InvalidateProperty(DependencyProperty property, PropertyMetadata metadata)
+		{
+			if(metadata != null)
+			{
+				if(metadata.PropertyInvalidatedCallback != null)
+					metadata.PropertyInvalidatedCallback(this);
+			}
+			
+			OnPropertyInvalidated(property, metadata);
 		}
 
 		protected virtual void OnPropertyInvalidated(DependencyProperty property, PropertyMetadata metadata)
 		{
-			if(metadata != null && metadata.PropertyInvalidatedCallback != null)
-				metadata.PropertyInvalidatedCallback(this);
+			// no default implementation
 		}
 
 		public object ReadLocalValue(DependencyProperty property)
 		{
+			throw new NotImplementedException();
 			if(property.DefaultMetadata != null && property.DefaultMetadata.ReadLocalValueOverride != null)
 				return property.DefaultMetadata.ReadLocalValueOverride(this);
 
-			object value = _properties[property];
+			object value = _localValues[property.GlobalIndex];
 
 			// should we really be returning default value here?
 			if(value == null && property.DefaultMetadata != null)
@@ -131,30 +156,45 @@ namespace System.Windows
 
 		public void SetValue(DependencyProperty property, object value)
 		{
-			SetValueBase(property, value);
+			PropertyMetadata metadata = property.GetMetadata(GetType());
+
+			if(metadata != null)
+			{
+				if(metadata.ReadOnly)
+					throw new InvalidOperationException(string.Format("DependencyProperty '{0}' has been declared read-only", property.Name));
+
+				if(metadata.SetValueOverride != null)
+				{
+					metadata.SetValueOverride(this, value);
+					return;
+				}
+			}
+
+			SetValueCommon(property, metadata, value);
 		}
 
 		public void SetValue(DependencyPropertyKey key, object value)
 		{
-			SetValueBase(key.DependencyProperty, value);
+			throw new NotImplementedException();
 		}
 
 		public void SetValueBase(DependencyProperty property, object value)
 		{
-			_properties[property] = value;
+			PropertyMetadata metadata = property.GetMetadata(GetType());
 
-			if(property.DefaultMetadata != null && property.DefaultMetadata.ReadOnly)
-				throw new InvalidOperationException(string.Format("DependencyProperty '{0}' has been declared read-only", property.Name));
-
-			if(property.DefaultMetadata != null && property.DefaultMetadata.SetValueOverride != null)
-				property.DefaultMetadata.SetValueOverride(this, value);
-
-			OnPropertyInvalidated(property, property.DefaultMetadata);			
+			SetValueCommon(property, metadata, value);
 		}
 
 		public void SetValueBase(DependencyPropertyKey key, object value)
 		{
-			SetValueBase(key.DependencyProperty, value);
+			throw new NotImplementedException();
+		}
+
+		public void SetValueCommon(DependencyProperty property, PropertyMetadata metadata, object value)
+		{
+			_localValues[property.GlobalIndex] = value;
+
+			InvalidateProperty(property, metadata);
 		}
 
 		#endregion Methods
@@ -172,7 +212,7 @@ namespace System.Windows
 
 		DependencyObjectType		_dependencyObjectType = null;
 		bool						_isCanBeUnbound = false;
-		Hashtable					_properties = new Hashtable();
+		Hashtable					_localValues = new Hashtable();
 
 		#endregion Fields
 	}

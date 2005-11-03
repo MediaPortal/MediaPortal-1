@@ -107,11 +107,12 @@ namespace System.Windows
 		
 		protected override void Merge(PropertyMetadata baseMetadata, DependencyProperty dp)
 		{
+			base.Merge(baseMetadata, dp);
 		}
-
 
 		protected override void OnApply(DependencyProperty dp, Type targetType)
 		{
+			base.OnApply(dp, targetType);
 		}
 
 		#endregion Methods
@@ -121,13 +122,13 @@ namespace System.Windows
 		public bool AffectsArrange
 		{
 			get { return _options[(int)FrameworkPropertyMetadataOptions.AffectsArrange]; }
-			set { }
+			set { _options[(int)FrameworkPropertyMetadataOptions.AffectsArrange] = value;}
 		}
 
 		public bool AffectsMeasure
 		{
 			get { return _options[(int)FrameworkPropertyMetadataOptions.AffectsMeasure]; }
-			set { }
+			set { _options[(int)FrameworkPropertyMetadataOptions.AffectsMeasure] = value;}
 		}
 		
 		public bool AffectsParentArrange

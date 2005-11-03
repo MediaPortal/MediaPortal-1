@@ -71,7 +71,9 @@ namespace System.Windows
 
 		public DependencyProperty AddOwner(Type ownerType, PropertyMetadata defaultMetadata)
 		{
-			return new DependencyProperty(this, defaultMetadata);
+			OverrideMetadata(ownerType, defaultMetadata);
+
+			return this;
 		}
 			
 		public static DependencyProperty FromName(string name, Type ownerType)
@@ -90,22 +92,22 @@ namespace System.Windows
 
 		public PropertyMetadata GetMetadata(DependencyObject d)
 		{
-			return GetMetadata(d.DependencyObjectType);
+			return GetMetadata(d.DependencyObjectType.SystemType);
 		}
 
 		public PropertyMetadata GetMetadata(DependencyObjectType type)
 		{
-			return _defaultMetadata;
+			return GetMetadata(type.SystemType);
 		}
 
 		public PropertyMetadata GetMetadata(Type ownerType)
 		{
-			DependencyProperty property = (DependencyProperty)_properties[_name + ownerType];
-			
-			if(property == null)
-				return null;
-			
-			return property._defaultMetadata;
+			PropertyMetadata metadata = _metadata[ownerType] as PropertyMetadata;
+
+			if(metadata == null)
+				return _defaultMetadata;
+
+			return metadata;
 		}
 
 		public bool IsValidType(object value)
@@ -118,25 +120,23 @@ namespace System.Windows
 			if(value == UnsetValue)
 				return false;
 
-			if(_validateValueCallback == null)
-				return true;
+			if(_validateValueCallback != null)
+				return _validateValueCallback(value);
 
-			return _validateValueCallback(value);
+			return true;
 		}
 
 		public void OverrideMetadata(Type ownerType, PropertyMetadata defaultMetadata)
 		{
-			OverrideMetadata(ownerType, defaultMetadata, null);
+			_metadata[ownerType] = defaultMetadata;
 		}
 
 		public void OverrideMetadata(Type ownerType, PropertyMetadata defaultMetadata, DependencyPropertyKey key)
 		{
-			DependencyProperty property = (DependencyProperty)_properties[_name + ownerType];
-			
-			if(property == null)
-				return;
+			if(key.DependencyProperty != this)
+				throw new InvalidOperationException();
 
-			property._defaultMetadata = defaultMetadata;
+			OverrideMetadata(ownerType, defaultMetadata);
 		}
 		
 		public static DependencyProperty Register(string name, Type propertyType, Type ownerType)
@@ -196,7 +196,7 @@ namespace System.Windows
 
 		public PropertyMetadata DefaultMetadata
 		{
-			get { return _defaultMetadata; }
+			get { if(_defaultMetadata == null) _defaultMetadata = new PropertyMetadata(); return _defaultMetadata; }
 		}
 
 		public int GlobalIndex
@@ -236,7 +236,7 @@ namespace System.Windows
 		static Hashtable			_properties = new Hashtable(100);
 		static Hashtable			_propertiesReadOnly = new Hashtable(100);
 		static Hashtable			_propertiesAttached = new Hashtable(100);
-		Hashtable					_metadata = new Hashtable();
+		Hashtable					_metadata = new Hashtable(100);
 		Type						_propertyType = null;
 		ValidateValueCallback		_validateValueCallback = null;
 

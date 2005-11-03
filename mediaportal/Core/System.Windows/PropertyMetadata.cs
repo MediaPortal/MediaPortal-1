@@ -23,8 +23,6 @@
 
 #endregion
 
-using System;
-
 namespace System.Windows
 {
 	public class PropertyMetadata
@@ -111,7 +109,7 @@ namespace System.Windows
 			return new PropertyMetadata();
 		}
 
-		protected virtual void Merge(PropertyMetadata baseMetadata, DependencyProperty dp)
+		protected virtual void Merge(PropertyMetadata baseMetadata, DependencyProperty property)
 		{
 		}
 
