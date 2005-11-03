@@ -293,7 +293,7 @@ namespace MediaPortal.TagReader.ID3
           ID3v1 id3v1 = new ID3v1();
           try
 					{
-						ParseFileName(filename);
+						//ParseFileName(filename);
             id3v1.Deserialize(s);
             idtag = id3v1.Tags;
             m_containsID3Information=true;
