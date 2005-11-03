@@ -208,7 +208,10 @@ namespace MediaPortal.GUI.Library
 				if (action.wID == Action.ActionType.ACTION_MOUSE_CLICK||action.wID == Action.ActionType.ACTION_SELECT_ITEM)
 				{
 					if(ContextMenu != null)
+					{
 						DoContextMenu();
+						return;
+					}
 
 					// If this button contains scriptactions call the scriptactions.
 					if (m_strApplication.Length!=0)
