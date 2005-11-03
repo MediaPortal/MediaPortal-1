@@ -53,7 +53,7 @@ namespace MediaPortal.WebEPG
 			if(strURL != m_strURL)
 			{
 				HTMLPage webPage = new HTMLPage(strURL);
-				m_strSource = webPage.SubPage();
+				m_strSource = webPage.GetPage();
 				m_strURL = strURL;
 			}
 			return new XMLProfiler(m_strSource, m_Data); 
