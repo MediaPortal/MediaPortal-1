@@ -86,6 +86,12 @@ namespace MediaPortal.GUI.WebBrowser
 					}
 					break;
 				}
+				case Action.ActionType.ACTION_PREVIOUS_MENU:
+				{
+					GUIWindowManager.ShowPreviousWindow();
+					return;
+				}
+
 			}
 			
 			base.OnAction(action);
@@ -166,6 +172,7 @@ namespace MediaPortal.GUI.WebBrowser
 						wb.Visible=false;						
 					}
 					break;
+
 				}
 				return base.OnMessage(message);
 			}
