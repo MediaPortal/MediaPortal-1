@@ -223,7 +223,7 @@
 			<id>106</id> 
 			<posX>160</posX> 
 			<posY>495</posY> 
-			<label>#TV.Record.current</label> 
+			<label>#TV.View.start</label> 
 			<align>right</align> 
 			<font>font16</font> 
 			<textcolor>FFFFFFFF</textcolor> 
@@ -234,7 +234,7 @@
 			<id>107</id> 
 			<posX>555</posX> 
 			<posY>495</posY> 
-			<label>#TV.Record.duration</label> 
+			<label>#TV.View.stop</label> 
 			<align>left</align> 
 			<font>font16</font> 
 			<textcolor>FFFFFFFF</textcolor> 
