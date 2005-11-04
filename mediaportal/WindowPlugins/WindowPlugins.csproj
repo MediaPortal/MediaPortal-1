@@ -239,6 +239,11 @@
                     Project = "{F7CB2A9F-004E-4667-BEAF-782F1C28E2D3}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
+                <Reference
+                    Name = "AxInterop.MOZILLACONTROLLib"
+                    AssemblyName = "AxInterop.MOZILLACONTROLLib"
+                    HintPath = "..\AxInterop.MOZILLACONTROLLib.dll"
+                />
             </References>
         </Build>
         <Files>
@@ -1528,6 +1533,31 @@
                     RelPath = "GUIWeather\GUIWindowWeather.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUIWebbrowser\GUIFavorites.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUIWebbrowser\GUIWebBrowser.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUIWebbrowser\INIFile.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUIWebbrowser\WebBrowserControl.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "GUIWebbrowser\WebBrowserControl.resx"
+                    DependentUpon = "WebBrowserControl.cs"
+                    BuildAction = "EmbeddedResource"
                 />
                 <File
                     RelPath = "GUIX10\ApplianceConfiguration.cs"

@@ -31,6 +31,8 @@ copy ..\..\..\Interop.DirectShowHelperLib.dll .
 copy ..\..\..\mfc71.dll .
 copy ..\..\..\msvcp71.dll .
 copy ..\..\..\msvcr71.dll .
+copy ..\..\..\AxInterop.MOZILLACONTROLLib.dll .
+copy ..\..\..\Interop.MOZILLACONTROLLib.dll .
 copy ..\..\..\Microsoft.ApplicationBlocks*.dll .
 copy ..\..\..\d3dx9_26.dll .
 copy ..\..\..\Microsoft.DirectX.Direct3D.dll .

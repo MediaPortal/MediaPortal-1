@@ -122,7 +122,8 @@ namespace MediaPortal.Topbar
     public override bool DoesPostRender()
     {
       if (!m_bEnabled) return false;
-      if (GUIGraphicsContext.IsFullScreenVideo) return false;
+			if (GUIGraphicsContext.IsFullScreenVideo) return false;
+			if (GUIWindowManager.ActiveWindow==(int)5500) return false;
       if (GUIWindowManager.ActiveWindow==(int)GUIWindow.Window.WINDOW_MOVIE_CALIBRATION) return false;
       if (GUIWindowManager.ActiveWindow==(int)GUIWindow.Window.WINDOW_UI_CALIBRATION) return false;
       if (GUIWindowManager.ActiveWindow==(int)GUIWindow.Window.WINDOW_SLIDESHOW) return false;

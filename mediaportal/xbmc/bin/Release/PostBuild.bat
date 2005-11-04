@@ -27,6 +27,8 @@ regsvr32 /s MPTSWriter.ax
 copy ..\..\..\core\directshowhelper\directshowhelper\release\dshowhelper.dll .
 copy ..\..\..\core\fontengine\fontengine\release\fontengine.dll .
 copy ..\..\..\Interop.DirectShowHelperLib.dll .
+copy ..\..\..\AxInterop.MOZILLACONTROLLib.dll .
+copy ..\..\..\Interop.MOZILLACONTROLLib.dll .
 copy ..\..\..\mfc71.dll .
 copy ..\..\..\msvcp71.dll .
 copy ..\..\..\msvcr71.dll .
