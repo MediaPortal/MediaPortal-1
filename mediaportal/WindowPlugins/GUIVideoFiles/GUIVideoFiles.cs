@@ -20,11 +20,13 @@
  */
 
 using System;
-using System.IO;
 using System.Collections;
+using System.ComponentModel;
+using System.IO;
 using System.Net;
 using System.Globalization;
 using System.Xml.Serialization;
+using MediaPortal.Dispatcher;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Video.Database;
@@ -92,7 +94,7 @@ namespace MediaPortal.GUI.Video
       }
     }
 
-		static IMDB								  imdb ;
+		static IMDB								  _imdb ;
 		DirectoryHistory					m_history = new DirectoryHistory();
 		string										currentFolder = String.Empty;
 		string										m_strDirectoryStart= String.Empty;
@@ -149,7 +151,7 @@ namespace MediaPortal.GUI.Video
 
 		public override bool Init()
 		{
-			imdb = new IMDB(this);
+			_imdb = new IMDB(this);
       g_Player.PlayBackStopped +=new MediaPortal.Player.g_Player.StoppedHandler(OnPlayBackStopped);
       g_Player.PlayBackEnded +=new MediaPortal.Player.g_Player.EndedHandler(OnPlayBackEnded);
       g_Player.PlayBackStarted +=new MediaPortal.Player.g_Player.StartedHandler(OnPlayBackStarted);
@@ -1033,8 +1035,23 @@ namespace MediaPortal.GUI.Video
     {
       GUIDialogProgress dlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
       AddFileToDatabase(movieFileName);
-      if (!VideoDatabase.HasMovieInfo(movieFileName))
+
+		if (!VideoDatabase.HasMovieInfo(movieFileName))
       {
+#if BACKGROUND_IMDB
+			Job job = new Job();
+
+		  job.Argument = new object[] { movieFileName, strMovieName, strPath };
+		  job.DoWork += new DoWorkEventHandler(BackgroundImdbWorker);
+		  job.Name = string.Format("Imdb: {0}", movieFileName);
+		  job.Priority = JobPriority.BelowNormal;
+		  job.RunWorkerCompleted += new RunWorkerCompletedEventHandler(BackgroundImdbCompleted);
+		  job.Dispatch();
+
+			return;
+
+#endif // BACKGROUND_IMDB
+
         // do IMDB lookup...
         if (dlgProgress != null)
         {
@@ -1047,14 +1064,14 @@ namespace MediaPortal.GUI.Video
         }
 
 
-        imdb.Find(strMovieName);
+        _imdb.Find(strMovieName);
               
-        int iMoviesFound = imdb.Count;
+        int iMoviesFound = _imdb.Count;
         if (iMoviesFound > 0)
         {
           IMDBMovie movieDetails = new IMDBMovie();
           movieDetails.SearchString = strMovieName;
-          IMDB.IMDBUrl url = imdb[0];
+          IMDB.IMDBUrl url = _imdb[0];
 
           // show dialog that we're downloading the movie info
           if (dlgProgress != null)
@@ -1067,7 +1084,7 @@ namespace MediaPortal.GUI.Video
             if (dlgProgress.IsCanceled) return;
           }
 
-          if (imdb.GetDetails(url, ref movieDetails))
+          if (_imdb.GetDetails(url, ref movieDetails))
           {
             // get & save thumbnail
 						AmazonImageSearch search = new AmazonImageSearch();
@@ -1343,12 +1360,12 @@ namespace MediaPortal.GUI.Video
           pDlgProgress.Progress();
 
           bool						bError = true;
-  		    imdb.Find(strMovieName);
-          if (imdb.Count > 0) 
+  		    _imdb.Find(strMovieName);
+          if (_imdb.Count > 0) 
           {
             pDlgProgress.Close();
 
-            int iMoviesFound = imdb.Count;
+            int iMoviesFound = _imdb.Count;
             if (iMoviesFound > 0)
             {
               int iSelectedMovie = 0;
@@ -1360,7 +1377,7 @@ namespace MediaPortal.GUI.Video
                 pDlgSelect.Reset();
                 for (int i = 0; i < iMoviesFound; ++i)
                 {
-                  IMDB.IMDBUrl url = imdb[i];
+                  IMDB.IMDBUrl url = _imdb[i];
                   pDlgSelect.Add(url.Title);
                 }
                 pDlgSelect.EnableButton(true);
@@ -1383,7 +1400,7 @@ namespace MediaPortal.GUI.Video
               {
                 movieDetails = new IMDBMovie();
                 movieDetails.SearchString = strFile;
-                IMDB.IMDBUrl url = imdb[iSelectedMovie];
+                IMDB.IMDBUrl url = _imdb[iSelectedMovie];
     				
                 // show dialog that we're downloading the movie info
                 pDlgProgress.SetHeading(198);
@@ -1392,7 +1409,7 @@ namespace MediaPortal.GUI.Video
                 pDlgProgress.SetLine(2, String.Empty);
                 pDlgProgress.StartModal(GUIWindowManager.ActiveWindow);
                 pDlgProgress.Progress();
-                if (imdb.GetDetails(url, ref movieDetails))
+                if (_imdb.GetDetails(url, ref movieDetails))
                 {
                   // got all movie details :-)
 									AmazonImageSearch search = new AmazonImageSearch();
@@ -2213,11 +2230,11 @@ namespace MediaPortal.GUI.Video
 			string strThumb = Utils.GetCoverArtName(Thumbs.MovieActors,actor);
 			if (!System.IO.File.Exists(strThumb))
 			{
-				imdb.FindActor(actor);
+				_imdb.FindActor(actor);
 				IMDBActor imdbActor=new IMDBActor();
-				for (int x=0; x < imdb.Count;++x)
+				for (int x=0; x < _imdb.Count;++x)
 				{
-					imdb.GetActorDetails(imdb[x],out imdbActor);
+					_imdb.GetActorDetails(_imdb[x],out imdbActor);
 					if (imdbActor.ThumbnailUrl!=null && imdbActor.ThumbnailUrl.Length>0) break;
 				}
 				if (imdbActor.ThumbnailUrl!=null)
@@ -2246,11 +2263,11 @@ namespace MediaPortal.GUI.Video
 					string strThumb = Utils.GetCoverArtName(Thumbs.MovieActors,actor);
 					if (!System.IO.File.Exists(strThumb))
 					{
-						imdb.FindActor(actor);
+						_imdb.FindActor(actor);
 						IMDBActor imdbActor=new IMDBActor();
-						for (int x=0; x < imdb.Count;++x)
+						for (int x=0; x < _imdb.Count;++x)
 						{
-							imdb.GetActorDetails(imdb[x],out imdbActor);
+							_imdb.GetActorDetails(_imdb[x],out imdbActor);
 							if (imdbActor.ThumbnailUrl!=null && imdbActor.ThumbnailUrl.Length>0) break;
 						}
 						if (imdbActor.ThumbnailUrl!=null)
@@ -3141,5 +3158,90 @@ namespace MediaPortal.GUI.Video
 		}
 
 		#endregion
+
+		private static void BackgroundImdbWorker(object sender, DoWorkEventArgs e)
+		{
+			using(WaitCursor wait = new WaitCursor())
+			{
+				IMDB imdb = new IMDB();
+
+				object[] args = (object[])e.Argument;
+
+				string movieFileName = (string)args[0];
+				string strMovieName = (string)args[1];
+				string strPath = (string)args[2];
+				
+				imdb.Find(strMovieName);
+
+				if(imdb.Count == 0)
+					return;
+	              
+				IMDBMovie movieDetails = new IMDBMovie();
+				movieDetails.SearchString = strMovieName;
+				IMDB.IMDBUrl url = imdb[0];
+
+				if(imdb.GetDetails(url, ref movieDetails) == false)
+					return;
+
+				// get & save thumbnail
+				AmazonImageSearch search = new AmazonImageSearch();
+
+				search.Search(movieDetails.Title);
+
+				if(search.Count == 0)
+					return;
+
+				movieDetails.ThumbURL=search[0];
+
+				VideoDatabase.SetMovieInfo(movieFileName, ref movieDetails);
+				
+				string strThumb = String.Empty;
+				string strImage = movieDetails.ThumbURL;
+					
+				if(strImage.Length > 0 && movieDetails.ThumbURL.Length > 0)
+				{ 
+					string LargeThumb=Utils.GetLargeCoverArtName(Thumbs.MovieTitle,movieDetails.Title);
+					strThumb = Utils.GetCoverArtName(Thumbs.MovieTitle,movieDetails.Title);
+					Utils.FileDelete(strThumb);
+					Utils.FileDelete(LargeThumb);
+		              
+					string strExtension = System.IO.Path.GetExtension(strImage);
+					if (strExtension.Length > 0)
+					{
+						string strTemp = "temp" + strExtension;
+
+						Utils.FileDelete(strTemp);
+						Utils.DownLoadImage(strImage, strTemp);
+						
+						if(System.IO.File.Exists(strTemp))
+						{
+							MediaPortal.Util.Picture.CreateThumbnail(strTemp, strThumb, 128, 128, 0);
+							MediaPortal.Util.Picture.CreateThumbnail(strTemp, LargeThumb, 512, 512, 0);
+						
+							if(strPath.Length > 0)
+							{
+								try
+								{
+									Utils.FileDelete(strPath+@"\folder.jpg");
+									System.IO.File.Copy(strThumb, strPath+@"\folder.jpg");
+								}
+								catch(Exception){ }
+							}
+						}
+						
+						Utils.FileDelete(strTemp);
+					}//if ( strExtension.Length>0)
+					else
+					{
+						Log.Write("image has no extension:{0}", strImage);
+					}
+				}
+			}
+		}
+
+		private static void BackgroundImdbCompleted(object sender, RunWorkerCompletedEventArgs e)
+		{
+			Log.Write("Completed Imdb lookup");
+		}
 	}
 }
