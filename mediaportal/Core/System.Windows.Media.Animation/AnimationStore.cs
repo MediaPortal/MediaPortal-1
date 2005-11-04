@@ -38,10 +38,10 @@ namespace System.Windows.Media.Animation
 			if(_clocks == null)
 				_clocks = new Hashtable();
 
-			AnimationClockCollection clocks = _clocks[property] as AnimationClockCollection;
+			AnimationClockCollection clocks = _clocks[property.GlobalIndex] as AnimationClockCollection;
 
 			if(clocks == null)
-				_clocks[property] = clocks = new AnimationClockCollection();
+				_clocks[property.GlobalIndex] = clocks = new AnimationClockCollection();
 
 			if(handoffBehavior == HandoffBehavior.SnapshotAndReplace)
 				clocks.Clear();
@@ -54,10 +54,12 @@ namespace System.Windows.Media.Animation
 			if(_animations == null)
 				_animations = new Hashtable();
 
-			AnimationTimelineCollection timelines = _animations[property] as AnimationTimelineCollection;
+			AnimationTimelineCollection timelines = _animations[property.GlobalIndex] as AnimationTimelineCollection;
 
 			if(timelines == null)
-				_animations[property] = timelines = new AnimationTimelineCollection();
+				_animations[property.GlobalIndex] = timelines = new AnimationTimelineCollection();
+
+			timelines.Add(animation);
 		}
 			
 		public object GetValue(DependencyProperty property, object baseValue, PropertyMetadata metadata)
@@ -65,7 +67,7 @@ namespace System.Windows.Media.Animation
 			if(_animations == null)
 				return baseValue;
 			
-			AnimationTimelineCollection timelines = _animations[property] as AnimationTimelineCollection;
+			AnimationTimelineCollection timelines = _animations[property.GlobalIndex] as AnimationTimelineCollection;
 			
 			if(timelines == null)
 				return baseValue;
@@ -92,7 +94,7 @@ namespace System.Windows.Media.Animation
 				return;
 			}
 		
-			AnimationClockCollection clocks = _clocks[property] as AnimationClockCollection;
+			AnimationClockCollection clocks = _clocks[property.GlobalIndex] as AnimationClockCollection;
 
 			clocks.Remove(clock);
 		}

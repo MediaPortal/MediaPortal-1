@@ -144,7 +144,7 @@ namespace System.Windows
 			// this needs to be rewritten
 			throw new NotImplementedException();
 
-			if(property.DefaultMetadata != null && property.DefaultMetadata.ReadLocalValueOverride != null)
+/*			if(property.DefaultMetadata != null && property.DefaultMetadata.ReadLocalValueOverride != null)
 				return property.DefaultMetadata.ReadLocalValueOverride(this);
 
 			object value = _localValues[property.GlobalIndex];
@@ -154,7 +154,7 @@ namespace System.Windows
 				value = property.DefaultMetadata.DefaultValue;
 
 			return value;
-		}
+*/		}
 
 		public void SetValue(DependencyProperty property, object value)
 		{

@@ -40,7 +40,7 @@ namespace System.Windows.Dispatcher
 		#region Events
 
 		public event EventHandler Aborted;
-		public event EventHandler Completed;
+//		public event EventHandler Completed;
 
 		#endregion Events
 

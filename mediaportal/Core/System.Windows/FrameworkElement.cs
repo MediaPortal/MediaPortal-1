@@ -227,6 +227,7 @@ namespace System.Windows
 			// be restarted after running once. Note that controlling an animation also requires
 			// that the storyboard be named or accessible as an instance in procedural code.
 
+
 		}
 
 		public void BringIntoView()
@@ -430,7 +431,21 @@ namespace System.Windows
 		public ContextMenu ContextMenu
 		{
 			get { return GetValue(ContextMenuProperty) as ContextMenu; }
-			set { SetValue(ContextMenuProperty, value); }
+			set { SetValue(ContextMenuProperty, value); InsertTestAnimation(); }
+		}
+
+		void InsertTestAnimation()
+		{
+			DoubleAnimation myDoubleAnimation = new DoubleAnimation();
+
+			myDoubleAnimation.From = 75;
+			myDoubleAnimation.To = 300;
+			myDoubleAnimation.Duration =  new Duration(TimeSpan.FromMilliseconds(20000));
+			myDoubleAnimation.AutoReverse = true;
+			myDoubleAnimation.RepeatBehavior = RepeatBehavior.Forever;
+	
+			BeginAnimation(WidthProperty, myDoubleAnimation);
+			ApplyAnimationClock(WidthProperty, myDoubleAnimation.CreateClock());
 		}
 
 		public FlowDirection FlowDirection

@@ -199,7 +199,7 @@ namespace System.Windows
 
 
 			if(_animationStore == null)
-				return;
+				_animationStore = new AnimationStore();
 
 			_animationStore.BeginAnimation(property, animation, handoffBehavior);
 		}

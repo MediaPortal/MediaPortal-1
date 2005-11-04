@@ -161,7 +161,7 @@ namespace System.Windows.Dispatcher
 				}
 			}
 
-			_currentDispatcher = null;
+//			_currentDispatcher = null;
 		}
 
 		public static void ValidatePriority(DispatcherPriority priority, string parameterName)
