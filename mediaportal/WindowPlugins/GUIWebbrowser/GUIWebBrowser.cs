@@ -108,6 +108,11 @@ namespace MediaPortal.GUI.WebBrowser
 						GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(4000));
 					
 						//make web browser visible			
+
+						string strName="www.google.nl";
+						wb.Browser.Navigate(strName);
+						GUIPropertyManager.SetProperty("#location.url", strName);
+						GUIPropertyManager.SetProperty("#location.name", string.Empty);						
 						wb.Visible=true;
 						wb.Focus();
 						return true;

@@ -67,6 +67,29 @@ namespace MediaPortal.GUI.WebBrowser
 				base.OnPageLoad();
 				LoadDirectory(FavoritesPath);
 			}
+		public override void OnAction(Action action)
+		{
+			switch (action.wID)
+			{
+				case Action.ActionType.ACTION_KEY_PRESSED:
+				{
+					//space bar
+					if(action.m_key.KeyChar == 32)
+					{	
+					
+					}
+					break;
+				}
+				case Action.ActionType.ACTION_PREVIOUS_MENU:
+				{
+					GUIWindowManager.ShowPreviousWindow();
+					return;
+				}
+
+			}
+			
+			base.OnAction(action);
+		}
 
 			public override bool OnMessage(GUIMessage message)
 			{
