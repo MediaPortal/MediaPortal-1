@@ -283,7 +283,7 @@ namespace MediaPortal.Video.Database
 		// make a searchstring out of the filename
 		string GetSearchString(string strMovie)
 		{
-			string strURL = System.IO.Path.GetFileNameWithoutExtension(strMovie);
+			string strURL = strMovie;
 			strURL = strURL.ToLower();
 			strURL = strURL.Trim();
 

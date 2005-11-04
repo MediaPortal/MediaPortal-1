@@ -3089,6 +3089,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Util\LevenshteinDistance.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Util\Picture.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

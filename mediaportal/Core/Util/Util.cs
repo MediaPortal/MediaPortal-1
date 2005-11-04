@@ -1260,11 +1260,16 @@ namespace MediaPortal.Util
 		}
 		static public string GetFilename(string strPath)
 		{
+			return GetFilename(strPath, false);
+		}
+
+		static public string GetFilename(string strPath, bool withoutExtension)
+		{
 			if (strPath==null) return String.Empty;
 			if (strPath.Length==0) return String.Empty;
 			try
 			{
-				if ( m_bHideExtensions)
+				if ( m_bHideExtensions || withoutExtension)
 					return  System.IO.Path.GetFileNameWithoutExtension(strPath);
 				else
 					return  System.IO.Path.GetFileName(strPath);     
@@ -1274,7 +1279,6 @@ namespace MediaPortal.Util
 			}
 			return strPath;
 		}
-
 
 		///<summary>
 		///Plays a sound from a byte array. 
