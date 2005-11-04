@@ -6304,4 +6304,107 @@
       </connections> 
     </tv> 
   </capturecard>
+
+  <capturecard commercialname="Twinhan DVB-T" capturename="TwinHan DVBT BDA Capture Filter" devid="ven_109e&amp;dev_0878&amp;subsys_00011822&amp;rev_11">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"  	checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="TwinHan DVBT BDA Tuner Filter"    	checkdevice="true"></filter>
+        <filter cat="capture"         name="TwinHan DVBT BDA Capture Filter"   	checkdevice="true"></filter>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Twinhan DVB-S" capturename="TwinHan DVBS BDA Capture Filter" devid="ven_109e&amp;dev_0878&amp;subsys_00011822&amp;rev_11">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBS Network Provider"  	checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="TwinHan DVBS BDA Tuner Filter"    	checkdevice="true"></filter>
+        <filter cat="capture"         name="TwinHan DVBS BDA Capture Filter"   	checkdevice="true"></filter>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Twinhan DVB-C" capturename="TwinHan DVBC BDA Capture Filter" devid="ven_109e&amp;dev_0878&amp;subsys_00011822&amp;rev_11">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBC Network Provider"  	checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="TwinHan DVBC BDA Tuner Filter"    	checkdevice="true"></filter>
+        <filter cat="capture"         name="TwinHan DVBC BDA Capture Filter"   	checkdevice="true"></filter>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Twinhan ATSC" capturename="TwinHan ATSC BDA Capture Filter" devid="ven_109e&amp;dev_0878&amp;subsys_00011822&amp;rev_11">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft ATSC Network Provider"  	checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="TwinHan ATSC BDA Tuner Filter"    	checkdevice="true"></filter>
+        <filter cat="capture"         name="TwinHan ATSC BDA Capture Filter"   	checkdevice="true"></filter>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="KNC-1 TV-Station DVR Digital" capturename="713x BDA Digital Capture" devid="ven_1131&amp;dev_7134&amp;subsys_a0061894&amp;rev_01">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"	checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="713x BDA DVBT Tuner"	checkdevice="true"></filter>
+        <filter cat="capture"         name="713x BDA Digital Capture"		checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="KNC-1 TV-Station DVR Analog" capturename="713x BDA Analog Capture" devid="ven_1131&amp;dev_7134&amp;subsys_a0061894&amp;rev_01">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"  name="713x BDA Analog TV Tuner"  checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="713x BDA Analog TV Audio"  checkdevice="true"></filter>
+        <filter cat="crossbar" name="713x BDA Analog Xbar" 	checkdevice="true"></filter>
+        <filter cat="capture"  name="713x BDA Analog Capture"  	checkdevice="true"></filter>
+        <filter cat="encoder"  name="713x BDA MPEG PS Encoder"  checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="3"></connection>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"  sinkpin="1"></connection>
+        <connection sourcefilter="capture"  sourcepin="4" sinkfilter="encoder"  sinkpin="0"></connection>
+        <connection sourcefilter="capture"  sourcepin="5" sinkfilter="encoder"  sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
 </capturecards>
