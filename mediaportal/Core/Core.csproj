@@ -1146,12 +1146,6 @@
     <Compile Include="System.Collections\PriorityQueue.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="System.ComponentModel\DependencyBinding.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.ComponentModel\ISynchronizeInvokeImpl.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="System.Threading\TimeoutLock.cs">
       <SubType>Code</SubType>
     </Compile>
