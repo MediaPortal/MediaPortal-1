@@ -22,6 +22,7 @@
 using System;
 using System.IO;
 using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
@@ -1463,7 +1464,7 @@ namespace MediaPortal.Configuration.Sections
 					if(show.CanceledSeries.Count>0)
 					{	
 						int canx_count = 0;
-						ArrayList get_show = (ArrayList)show.CanceledSeries;
+						List<long>get_show = show.CanceledSeries;
 						foreach(long canx_show in get_show)
 						{
 							channels.SetValue("Recording "+i.ToString(),"CANCELED SERIES CANCELEDTIME "+canx_count.ToString(),canx_show.ToString());

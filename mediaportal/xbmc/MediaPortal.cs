@@ -2201,13 +2201,16 @@ public class MediaPortalApp : D3DApp, IRender
     {
       doc.Load("mediaportal.exe.config");
       XmlNode node = doc.SelectSingleNode("/configuration/appStart/ClientApplicationInfo/appFolderName");
-      node.InnerText = System.IO.Directory.GetCurrentDirectory();
+      if (node !=null)
+        node.InnerText = System.IO.Directory.GetCurrentDirectory();
 
       node = doc.SelectSingleNode("/configuration/appUpdater/UpdaterConfiguration/application/client/baseDir");
-      node.InnerText = System.IO.Directory.GetCurrentDirectory();
+      if (node != null)
+        node.InnerText = System.IO.Directory.GetCurrentDirectory();
 
       node = doc.SelectSingleNode("/configuration/appUpdater/UpdaterConfiguration/application/client/tempDir");
-      node.InnerText = System.IO.Directory.GetCurrentDirectory();
+      if (node != null)
+        node.InnerText = System.IO.Directory.GetCurrentDirectory();
       doc.Save("Mediaportal.exe.config");
     }
     catch (Exception)

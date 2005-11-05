@@ -21,6 +21,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
@@ -204,7 +205,7 @@ namespace MediaPortal.GUI.TV
 		{
 			GUIControl.ClearControl(GetID,listPriorities.GetID);
 
-			ArrayList itemlist = new ArrayList();
+      List<TVRecording> itemlist = new List<TVRecording>();
 			TVDatabase.GetRecordings(ref itemlist);
 			itemlist.Sort(new TVRecording.PriorityComparer(true));
 			int total=0;

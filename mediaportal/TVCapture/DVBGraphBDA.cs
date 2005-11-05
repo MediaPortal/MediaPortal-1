@@ -25,6 +25,7 @@
 using System;
 using System.IO;
 using System.Collections;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using Microsoft.Win32;
@@ -4281,7 +4282,7 @@ namespace MediaPortal.TV.Recording
       Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA: StoreChannels() signal level:{0} signal quality:{1}", SignalStrength(), SignalQuality());
 
       //get list of current tv channels present in the database
-      ArrayList tvChannels = new ArrayList();
+      List<TVChannel> tvChannels = new List<TVChannel>();
       TVDatabase.GetChannels(ref tvChannels);
 
       DVBSections.Transponder transp;

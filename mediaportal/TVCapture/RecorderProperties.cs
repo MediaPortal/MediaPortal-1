@@ -20,6 +20,7 @@
  */
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using MediaPortal.Player;
 using MediaPortal.GUI.Library;
@@ -37,7 +38,7 @@ namespace MediaPortal.TV.Recording
     static TVChannel _currentTvChannel = null;
     static TVRecording _lastTvRecording = null;
     static TVProgram _lastProgramRecording = null;
-    static ArrayList _tvChannelList = new ArrayList();
+    static List<TVChannel> _tvChannelList = new List<TVChannel>();
     static long _programStart = -1;
     static public void Init()
     {
@@ -205,7 +206,7 @@ namespace MediaPortal.TV.Recording
       // for each tv-channel
       for (int i = 0; i < _tvChannelList.Count; ++i)
       {
-        TVChannel chan = (TVChannel)_tvChannelList[i];
+        TVChannel chan = _tvChannelList[i];
         if (chan.Name.Equals(tvChannelName))
         {
           _currentTvChannel = chan;

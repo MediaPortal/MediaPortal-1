@@ -19,6 +19,7 @@
  *
  */
 using System;
+using System.Collections.Generic;
 using System.Collections;
 using System.Globalization;
 using MediaPortal.GUI.Library;
@@ -31,7 +32,7 @@ namespace MediaPortal.TV.Database
 	/// </summary>
 	public class TVRecording
 	{
-		public class PriorityComparer : IComparer
+    public class PriorityComparer : System.Collections.Generic.IComparer<TVRecording>
 		{
 			bool _sortAscending=true;
 
@@ -41,10 +42,8 @@ namespace MediaPortal.TV.Database
 			}
 
 			#region IComparer Members
-			public int Compare(object x, object y)
+      public int Compare(TVRecording rec1, TVRecording rec2)
 			{
-				TVRecording rec1=(TVRecording)x;
-				TVRecording rec2=(TVRecording)y;
 				if (_sortAscending)
 				{
 					if (rec1.Priority>rec2.Priority) return -1;
@@ -112,7 +111,7 @@ namespace MediaPortal.TV.Database
 		int         m_iPaddingFront=-1, m_iPaddingEnd=-1;
 		int         episodesToKeep=Int32.MaxValue;//all
 		QualityType	m_iQuality=QualityType.NotSet;
-		ArrayList   m_canceledSeries = new ArrayList();
+    List<long> m_canceledSeries = new List<long>();
 		bool				announcementSend=false;
 		DateTime		keepDate=DateTime.MaxValue;
 		TVRecorded.KeepMethod  keepMethod=TVRecorded.KeepMethod.UntilSpaceNeeded;
@@ -156,7 +155,8 @@ namespace MediaPortal.TV.Database
 			m_bSeries=rec.m_bSeries;
 			m_iPriority=rec.m_iPriority;
 			m_iQuality=rec.m_iQuality;
-			m_canceledSeries=(ArrayList)rec.m_canceledSeries.Clone();
+      m_canceledSeries.Clear();
+      m_canceledSeries.AddRange(rec.m_canceledSeries);
 			EpisodesToKeep = rec.EpisodesToKeep;
 			PaddingFront=rec.PaddingFront;
 			PaddingEnd=rec.PaddingEnd;
@@ -828,7 +828,7 @@ namespace MediaPortal.TV.Database
 			m_canceledSeries.Add(datetime);
 		}
 
-		public ArrayList CanceledSeries
+		public List<long> CanceledSeries
 		{
 			get { return m_canceledSeries;}
 		}

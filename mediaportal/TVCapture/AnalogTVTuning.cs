@@ -20,6 +20,7 @@
  */
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using DShowNET;
 using MediaPortal.TV.Database;
@@ -137,11 +138,11 @@ namespace MediaPortal.TV.Recording
 		
 		public int MapToChannel(string channelName)
 		{
-			ArrayList channels=new ArrayList();
+      List<TVChannel> channels = new List<TVChannel>();
 			TVDatabase.GetChannels(ref channels);
 			for (int i=0; i < channels.Count;++i)
 			{
-				TVChannel chan = (TVChannel)channels[i];
+				TVChannel chan = channels[i];
 				if (chan.Name == channelName)
 				{
 					TVDatabase.SetChannelNumber(chan.Name,currentChannel);

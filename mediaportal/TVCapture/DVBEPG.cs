@@ -21,6 +21,7 @@
 using System;
 using System.Diagnostics;
 using System.Collections;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using MediaPortal.GUI.Library;
 using MediaPortal.TV.Database;
@@ -411,7 +412,7 @@ namespace MediaPortal.TV.Recording
       ArrayList eitList = new ArrayList();
       ArrayList tableList = new ArrayList();
       DVBSections tmpSections = new DVBSections();
-      ArrayList channels = new ArrayList();
+      List<TVChannel> channels = new List<TVChannel>();
       TVDatabase.GetChannels(ref channels);
 
       DateTime[] reGrabTimes = new DateTime[channels.Count];
@@ -567,7 +568,7 @@ namespace MediaPortal.TV.Recording
         {
           for (int i = 0; i < channels.Count; ++i)
           {
-            TVChannel chan = (TVChannel)channels[i];
+            TVChannel chan = channels[i];
             if (chan.Name.Equals(progName))
             {
               if (dateProgramEnd > reGrabTimes[i])
@@ -584,7 +585,7 @@ namespace MediaPortal.TV.Recording
       GC.Collect();
       for (int i = 0; i < reGrabTimes.Length; ++i)
       {
-        TVChannel ch = (TVChannel)channels[i];
+        TVChannel ch = channels[i];
         if (reGrabTimes[i] != DateTime.MinValue)
         {
           if (reGrabTimes[i] < reGrabTime || reGrabTime == DateTime.MinValue)
@@ -755,7 +756,7 @@ namespace MediaPortal.TV.Recording
       if (m_namesBuffer.Count < 1)
         return 0;
 
-      ArrayList channels1 = new ArrayList();
+      List<TVChannel> channels1 = new List<TVChannel>();
       TVDatabase.GetChannels(ref channels1);
       DateTime[] reGrabTimes = new DateTime[channels1.Count];
       for (int i = 0; i < reGrabTimes.Length; ++i)
@@ -865,7 +866,7 @@ namespace MediaPortal.TV.Recording
           {
             for (int i = 0; i < channels1.Count; ++i)
             {
-              TVChannel chan = (TVChannel)channels1[i];
+              TVChannel chan = channels1[i];
               if (chan.Name.Equals(channelName))
               {
                 if (dateProgramEnd > reGrabTimes[i])
@@ -894,7 +895,7 @@ namespace MediaPortal.TV.Recording
         //m_titleBuffer.Clear();
         for (int i = 0; i < reGrabTimes.Length; ++i)
         {
-          TVChannel ch = (TVChannel)channels1[i];
+          TVChannel ch = channels1[i];
           if (reGrabTimes[i] != DateTime.MinValue)
           {
             if (reGrabTimes[i] < reGrabTime || reGrabTime == DateTime.MinValue)
