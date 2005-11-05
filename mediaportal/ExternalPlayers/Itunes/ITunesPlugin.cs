@@ -50,6 +50,7 @@ namespace MediaPortal.ITunesPlayer
 		{
 			get {return "iTunes audio player";}
 		}
+
 		/// <summary>
 		/// This method returns the version number of the plugin
 		/// </summary>
@@ -57,6 +58,7 @@ namespace MediaPortal.ITunesPlayer
 		{
 			get {return "1.0";}
 		}
+
 		/// <summary>
 		/// This method returns the author of the external player
 		/// </summary>
@@ -65,6 +67,7 @@ namespace MediaPortal.ITunesPlayer
 		{
 			get { return "Frodo"; }
 		}
+
 		/// <summary>
 		/// Returns all the extensions that the external player supports.  
 		/// The return value is an array of extensions of the form: .wma, .mp3, etc...
@@ -75,6 +78,7 @@ namespace MediaPortal.ITunesPlayer
 			readConfig();
 			return m_supportedExtensions;
 		}
+
 
 		/// <summary>
 		/// Returns true or false depending if the filename passed is supported or not.
@@ -103,6 +107,7 @@ namespace MediaPortal.ITunesPlayer
 			// could not match the extension, so return false;
 			return false;
 		}
+
 		
 		private void readConfig()
 		{

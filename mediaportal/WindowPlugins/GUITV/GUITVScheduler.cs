@@ -728,15 +728,21 @@ namespace MediaPortal.GUI.TV
 			else
 			{
 				dlg.AddLocalizedString( 882);//Quality settings
-			}
+      }
+      dlg.AddLocalizedString(1048); // settings
 
       dlg.DoModal( GetID);
       if (dlg.SelectedLabel==-1) return;
       switch (dlg.SelectedId)
-			{
-				case 888:////Episodes management
-					GUITVPriorities.OnSetEpisodesToKeep(rec);
-					break;
+      {
+        case 888:////Episodes management
+          GUITVPriorities.OnSetEpisodesToKeep(rec);
+          break;
+
+        case 1048:////settings
+          GUITVProgramInfo.CurrentRecording = rec;
+          GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TV_PROGRAM_INFO);
+          return;
 				case 882:////Quality settings
 					GUITVPriorities.OnSetQuality(rec);
 				break;

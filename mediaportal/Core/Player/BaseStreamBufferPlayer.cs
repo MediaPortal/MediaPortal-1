@@ -127,6 +127,7 @@ namespace MediaPortal.Player
       {
         _isLive=true;
       }
+      
 
 			_minBackingFiles=6;
 			_maxBackingFiles=8;

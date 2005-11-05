@@ -50,6 +50,22 @@ namespace MediaPortal.GUI.TV
 			get { return currentProgram;}
 			set { currentProgram=value;}
 		}
+    static public TVRecording CurrentRecording
+    {
+      set
+      {
+        ArrayList programs = new ArrayList();
+        TVDatabase.GetProgramTitles(value.Start,Utils.datetolong(DateTime.Now.AddMonths(1)), ref programs);
+        foreach (TVProgram prog in programs)
+        {
+          if (value.IsRecordingProgram(prog,false))
+          {
+            CurrentProgram=prog;
+            break;
+          }
+        }
+      }
+    }
 
 		void UpdateProgramDescription(TVRecording rec)
 		{

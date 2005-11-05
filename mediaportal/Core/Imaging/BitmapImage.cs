@@ -92,7 +92,7 @@ namespace MediaPortal.Imaging
 		{
 			if(_uriSource.IsFile == false)
 			{
-				BackgroundWorker worker = new BackgroundWorker();
+                BackgroundWorker worker = new BackgroundWorker();
 
 				worker.DoWork += new DoWorkEventHandler(DownloadWorker);
 				worker.ProgressChanged += new ProgressChangedEventHandler(DownloadWorkerProgressChanged);

@@ -2136,10 +2136,14 @@ public class MediaPortalApp : D3DApp, IRender
 		// also set credentials to allow use with firewalls that require them
 		// this means we can use the .NET internet objects and not have
 		// to worry about proxies elsewhere in the code
-		System.Net.WebProxy proxy = System.Net.WebProxy.GetDefaultProxy();
-		proxy.Credentials = System.Net.CredentialCache.DefaultCredentials;
-		System.Net.GlobalProxySelection.Select = proxy;
-
+        try
+        {
+            //throws an exception in .net 2.0 if network cable is not plugged in
+            System.Net.WebProxy proxy = System.Net.WebProxy.GetDefaultProxy();
+            proxy.Credentials = System.Net.CredentialCache.DefaultCredentials;
+            System.Net.GlobalProxySelection.Select = proxy;
+        }
+        catch (Exception) { }
 		//register the playlistplayer for thread messages (like playback stopped,ended)
 		Log.Write("  Init playlist player");
 		PlayListPlayer.Init();

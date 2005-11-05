@@ -1696,6 +1696,7 @@ namespace MediaPortal.TV.Database
 						TVProgram prog=new TVProgram();
 						prog.Channel=DatabaseUtility.Get(results,i,"strchannel");
 						prog.Title=DatabaseUtility.Get(results,i,"strtitle");
+            prog.ID = DatabaseUtility.GetAsInt(results, i, "tblPrograms.idProgram");
 						progs.Add(prog);
 					}
 
