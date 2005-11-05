@@ -235,7 +235,7 @@ namespace MediaPortal.TV.Database
 				return recordings;
 			}
 
-			ArrayList programs=new ArrayList();
+      List<TVProgram> programs = new List<TVProgram>();
 			if (rec.RecType==TVRecording.RecordingType.EveryTimeOnThisChannel)
 				TVDatabase.SearchMinimalPrograms(Utils.datetolong(dtDay),Utils.datetolong(dtDay.AddDays(_days)),ref programs,3,rec.Title,rec.Channel);
 			else

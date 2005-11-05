@@ -4692,6 +4692,85 @@ namespace MediaPortal.TV.Database
       }
     }
 
+    static public bool SearchMinimalPrograms(long iStartTime, long iEndTime, ref List<TVProgram> progs, int SearchKind, string SearchCriteria, string channel)
+    {
+      DatabaseUtility.RemoveInvalidChars(ref SearchCriteria);
+      string strSQL = String.Empty;
+      string strOrder = " order by iStartTime";
+      switch (SearchKind)
+      {
+        case -1:
+          strSQL = String.Format("select channel.strChannel,tblPrograms.strTitle,tblPrograms.iStartTime,tblPrograms.iEndTime from channel,tblPrograms  where tblPrograms.idChannel=channel.idChannel ");
+          break;
+        case 0:
+          strSQL = String.Format("select channel.strChannel,tblPrograms.strTitle,tblPrograms.iStartTime,tblPrograms.iEndTime from channel,tblPrograms  where tblPrograms.idChannel=channel.idChannel and tblPrograms.strTitle like '{0}%' ", SearchCriteria);
+          break;
+        case 1:
+          strSQL = String.Format("select channel.strChannel,tblPrograms.strTitle,tblPrograms.iStartTime,tblPrograms.iEndTime from channel,tblPrograms where tblPrograms.idChannel=channel.idChannel and tblPrograms.strTitle like '%{0}%' ", SearchCriteria);
+          break;
+        case 2:
+          strSQL = String.Format("select channel.strChannel,tblPrograms.strTitle,tblPrograms.iStartTime,tblPrograms.iEndTime from channel,tblPrograms where tblPrograms.idChannel=channel.idChannel and tblPrograms.strTitle like '%{0}' ", SearchCriteria);
+          break;
+        case 3:
+          strSQL = String.Format("select channel.strChannel,tblPrograms.strTitle,tblPrograms.iStartTime,tblPrograms.iEndTime from channel,tblPrograms where tblPrograms.idChannel=channel.idChannel and tblPrograms.strTitle like '{0}' ", SearchCriteria);
+          break;
+      }
+      if (channel != String.Empty)
+      {
+        DatabaseUtility.RemoveInvalidChars(ref channel);
+        strSQL += String.Format(" and channel.strChannel like '{0}' ", channel);
+      }
+      return GetMinimalPrograms(iStartTime, iEndTime, strSQL, strOrder, ref progs);
+    }
+    static bool GetMinimalPrograms(long iStartTime, long iEndTime, string strSQL, string strOrder, ref List<TVProgram> progs)
+    {
+      lock (typeof(TVDatabase))
+      {
+        progs.Clear();
+        try
+        {
+          if (null == m_db) return false;
+
+          SQLiteResultSet results;
+          string where = String.Format(" and ( (tblPrograms.iEndTime>='{0}' and tblPrograms.iEndTime <='{1}') ", iStartTime, iEndTime);
+          where += String.Format(" or (tblPrograms.iStartTime>='{0}' and tblPrograms.iStartTime <= '{1}' ) ", iStartTime, iEndTime);
+          where += String.Format(" or (tblPrograms.iStartTime<='{0}' and tblPrograms.iEndTime >= '{1}') )", iStartTime, iEndTime);
+          strSQL += where;
+          strSQL += strOrder;
+          results = m_db.Execute(strSQL);
+          if (results.Rows.Count == 0) return false;
+
+          for (int i = 0; i < results.Rows.Count; ++i)
+          {
+            long iStart = DatabaseUtility.GetAsInt64(results, i, "tblPrograms.iStartTime");
+            long iEnd = DatabaseUtility.GetAsInt64(results, i, "tblPrograms.iEndTime");
+            bool bAdd = false;
+            if (iEnd >= iStartTime && iEnd <= iEndTime) bAdd = true;
+            if (iStart >= iStartTime && iStart <= iEndTime) bAdd = true;
+            if (iStart <= iStartTime && iEnd >= iEndTime) bAdd = true;
+            if (bAdd)
+            {
+              TVProgram prog = new TVProgram();
+              prog.Channel = DatabaseUtility.Get(results, i, "channel.strChannel");
+              prog.Start = iStart;
+              prog.End = iEnd;
+              prog.Title = DatabaseUtility.Get(results, i, "tblPrograms.strTitle");
+              progs.Add(prog);
+            }
+          }
+
+          return true;
+
+        }
+        catch (Exception ex)
+        {
+          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          Open();
+        }
+        return false;
+      }
+    }
+
     #endregion
   }//public class TVDatabase
 }//namespace MediaPortal.TV.Database
