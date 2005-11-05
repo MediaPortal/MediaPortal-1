@@ -20,6 +20,7 @@
  */
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using MediaPortal.Util;
 
 namespace MediaPortal.TV.Database
@@ -31,11 +32,11 @@ namespace MediaPortal.TV.Database
 	/// </summary>
 	public class TVUtil : IDisposable
 	{
-    TVProgram		m_currentProgram=null;
-    ArrayList		m_programs = new ArrayList();
-    string			m_strChannel="";
-		DateTime   	m_lastDateTime=DateTime.Now;
-		int         m_iDays=1;
+    TVProgram		_currentProgram=null;
+    List<TVProgram> _listPrograms = new List<TVProgram>();
+    string			_currentChannel="";
+		DateTime   	_lastDateTime=DateTime.Now;
+		int         _days=1;
     /// <summary>
     /// Constructor. 
     /// The constructor will load all programs from the TVDatabase
@@ -43,14 +44,14 @@ namespace MediaPortal.TV.Database
     ///
 		public TVUtil()
 		{
-			m_iDays=1;
+			_days=1;
 			OnProgramsChanged();
 			TVDatabase.OnProgramsChanged +=new MediaPortal.TV.Database.TVDatabase.OnChangedHandler(this.OnProgramsChanged);
 		}
 
     public TVUtil(int days)
 		{
-			m_iDays=days;
+			_days=days;
 			OnProgramsChanged();
 			TVDatabase.OnProgramsChanged +=new MediaPortal.TV.Database.TVDatabase.OnChangedHandler(this.OnProgramsChanged);
     }
@@ -63,8 +64,8 @@ namespace MediaPortal.TV.Database
     {
       get
       {
-        if(m_currentProgram==null) return false;
-        if (m_currentProgram.IsRunningAt(DateTime.Now)) return true;
+        if(_currentProgram==null) return false;
+        if (_currentProgram.IsRunningAt(DateTime.Now)) return true;
         return false;
       }
     }
@@ -74,10 +75,10 @@ namespace MediaPortal.TV.Database
     /// </summary>
 		void OnProgramsChanged()
 		{
-			m_programs.Clear();
+			_listPrograms.Clear();
 			DateTime dtNow=new DateTime(DateTime.Now.Year,DateTime.Now.Month,DateTime.Now.Day,0,0,0,0);
-			TVDatabase.GetPrograms(Utils.datetolong(dtNow),Utils.datetolong(dtNow.AddDays(m_iDays)),ref m_programs);
-			m_lastDateTime=DateTime.Now;
+			TVDatabase.GetPrograms(Utils.datetolong(dtNow),Utils.datetolong(dtNow.AddDays(_days)),ref _listPrograms);
+			_lastDateTime=DateTime.Now;
 		}
 
     /// <summary>
@@ -86,9 +87,9 @@ namespace MediaPortal.TV.Database
 		void CheckForProgramsUpdate()
 		{
 			// refresh the program list every 4 hours
-			TimeSpan ts=DateTime.Now - m_lastDateTime;
+			TimeSpan ts=DateTime.Now - _lastDateTime;
 			if ( ts.TotalHours > 4 ||
-					!DateTime.Now.Date.Equals(m_lastDateTime.Date) ) 
+					!DateTime.Now.Date.Equals(_lastDateTime.Date) ) 
 			{
 				OnProgramsChanged();
 			}
@@ -106,7 +107,7 @@ namespace MediaPortal.TV.Database
     {
 			CheckForProgramsUpdate();
 
-      foreach (TVProgram program in m_programs)
+      foreach (TVProgram program in _listPrograms)
       {
 				if (program.Channel.Equals(strChannel))
 				{
@@ -130,16 +131,16 @@ namespace MediaPortal.TV.Database
 			CheckForProgramsUpdate();
 
       if (strChannel==null) return null;
-      if ( !strChannel.Equals(m_strChannel) )
+      if ( !strChannel.Equals(_currentChannel) )
       {
-        m_currentProgram=null;
-        m_strChannel=strChannel;
+        _currentProgram=null;
+        _currentChannel=strChannel;
       }
 
-      if (IsRunning) return m_currentProgram;
-			m_currentProgram=null;
+      if (IsRunning) return _currentProgram;
+			_currentProgram=null;
 
-      return GetProgramAt(m_strChannel,DateTime.Now);
+      return GetProgramAt(_currentChannel,DateTime.Now);
 		}
 		
 
@@ -148,9 +149,9 @@ namespace MediaPortal.TV.Database
 		public void Dispose()
 		{
 			TVDatabase.OnProgramsChanged -=new MediaPortal.TV.Database.TVDatabase.OnChangedHandler(this.OnProgramsChanged);
-			m_currentProgram=null;
-			m_programs.Clear();
-			m_programs=null;
+			_currentProgram=null;
+			_listPrograms.Clear();
+			_listPrograms=null;
 		}
 
 		#endregion
@@ -170,7 +171,7 @@ namespace MediaPortal.TV.Database
 
 			if (rec.RecType==TVRecording.RecordingType.Daily)
 			{
-				for (int i=0; i < m_iDays;++i)
+				for (int i=0; i < _days;++i)
 				{
 					TVRecording recNew= new TVRecording(rec);
 					recNew.RecType=TVRecording.RecordingType.Once;
@@ -190,7 +191,7 @@ namespace MediaPortal.TV.Database
 
 			if (rec.RecType==TVRecording.RecordingType.WeekDays)
 			{
-				for (int i=0; i < m_iDays;++i)
+				for (int i=0; i < _days;++i)
 				{
 					if (dtDay.DayOfWeek != DayOfWeek.Saturday && dtDay.DayOfWeek != DayOfWeek.Sunday)
 					{
@@ -213,7 +214,7 @@ namespace MediaPortal.TV.Database
 			
 			if (rec.RecType==TVRecording.RecordingType.Weekly)
 			{
-				for (int i=0; i < m_iDays;++i)
+				for (int i=0; i < _days;++i)
 				{
 					if (dtDay.DayOfWeek ==rec.StartTime.DayOfWeek)
 					{
@@ -236,9 +237,9 @@ namespace MediaPortal.TV.Database
 
 			ArrayList programs=new ArrayList();
 			if (rec.RecType==TVRecording.RecordingType.EveryTimeOnThisChannel)
-				TVDatabase.SearchMinimalPrograms(Utils.datetolong(dtDay),Utils.datetolong(dtDay.AddDays(m_iDays)),ref programs,3,rec.Title,rec.Channel);
+				TVDatabase.SearchMinimalPrograms(Utils.datetolong(dtDay),Utils.datetolong(dtDay.AddDays(_days)),ref programs,3,rec.Title,rec.Channel);
 			else
-				TVDatabase.SearchMinimalPrograms(Utils.datetolong(dtDay),Utils.datetolong(dtDay.AddDays(m_iDays)),ref programs,3,rec.Title,String.Empty);
+				TVDatabase.SearchMinimalPrograms(Utils.datetolong(dtDay),Utils.datetolong(dtDay.AddDays(_days)),ref programs,3,rec.Title,String.Empty);
 			foreach (TVProgram prog in programs)
 			{
 				if (rec.IsRecordingProgram(prog,false))

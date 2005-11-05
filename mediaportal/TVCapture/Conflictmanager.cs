@@ -21,6 +21,7 @@
 using System;
 using System.Threading;
 using System.Collections;
+using System.Collections.Generic;
 using MediaPortal.GUI.Library;
 using MediaPortal.TV.Database;
 using MediaPortal.Util;
@@ -30,9 +31,9 @@ namespace MediaPortal.TV.Recording
   public class ConflictManager
   {
     static int[] cards;
-    static ArrayList recordings;
-    static TVUtil util = null;
-    static ArrayList conflictingRecordings = null;
+    static List<TVRecording> _recordings;
+    static TVUtil _util = null;
+    static List<TVRecording> _conflictingRecordings = null;
 
     public delegate void OnConflictsUpdatedHandler();
     static public event OnConflictsUpdatedHandler OnConflictsUpdated = null;
@@ -80,10 +81,10 @@ namespace MediaPortal.TV.Recording
 
     static void Initialize()
     {
-      util = new TVUtil(14);
-      recordings = new ArrayList();
-      conflictingRecordings = new ArrayList();
-      TVDatabase.GetRecordings(ref recordings);
+      _util = new TVUtil(14);
+      _recordings = new List<TVRecording>();
+      _conflictingRecordings = new List<TVRecording>();
+      TVDatabase.GetRecordings(ref _recordings);
       Thread WorkerThread = new Thread(new ThreadStart(WorkerThreadFunction));
       WorkerThread.Start();
     }
@@ -92,7 +93,7 @@ namespace MediaPortal.TV.Recording
     {
       System.Threading.Thread.CurrentThread.Priority = ThreadPriority.BelowNormal;
       DateTime dtStart = DateTime.Now;
-      foreach (TVRecording rec in recordings)
+      foreach (TVRecording rec in _recordings)
       {
         DetermineIsConflict(rec);
       }
@@ -103,11 +104,11 @@ namespace MediaPortal.TV.Recording
 
     static public bool IsConflict(TVRecording rec)
     {
-      if (recordings == null || util == null)
+      if (_recordings == null || _util == null)
       {
         Initialize();
       }
-      foreach (TVRecording conflict in conflictingRecordings)
+      foreach (TVRecording conflict in _conflictingRecordings)
       {
         if (conflict.ID == rec.ID) return true;
       }
@@ -119,21 +120,21 @@ namespace MediaPortal.TV.Recording
         return false;
       if (rec.Canceled > 0 || rec.IsDone()) return false;
 
-      if (recordings == null || util == null)
+      if (_recordings == null || _util == null)
       {
         Initialize();
       }
       cards = new int[Recorder.Count];
-      if (recordings.Count == 0) return false;
-      ArrayList episodes = util.GetRecordingTimes(rec);
+      if (_recordings.Count == 0) return false;
+      ArrayList episodes = _util.GetRecordingTimes(rec);
       foreach (TVRecording episode in episodes)
       {
         if (episode.Canceled != 0) continue;
         FreeCards();
         AllocateCard(episode.Channel);
-        foreach (TVRecording otherRecording in recordings)
+        foreach (TVRecording otherRecording in _recordings)
         {
-          ArrayList otherEpisodes = util.GetRecordingTimes(otherRecording);
+          ArrayList otherEpisodes = _util.GetRecordingTimes(otherRecording);
           foreach (TVRecording otherEpisode in otherEpisodes)
           {
             if (otherEpisode.Canceled != 0) continue;
@@ -149,7 +150,7 @@ namespace MediaPortal.TV.Recording
             {
               if (AllocateCard(otherEpisode.Channel))
               {
-                conflictingRecordings.Add(rec);
+                _conflictingRecordings.Add(rec);
                 return true;
               }
             }
@@ -164,14 +165,14 @@ namespace MediaPortal.TV.Recording
       recSeries.Clear();
       if (Recorder.Count <= 0) return;
 
-      if (recordings == null || util == null)
+      if (_recordings == null || _util == null)
       {
         Initialize();
       }
       cards = new int[Recorder.Count];
-      if (recordings.Count == 0) return;
+      if (_recordings.Count == 0) return;
 
-      ArrayList episodes = util.GetRecordingTimes(rec);
+      ArrayList episodes = _util.GetRecordingTimes(rec);
       foreach (TVRecording episode in episodes)
       {
         if (episode.Canceled != 0) continue;
@@ -179,9 +180,9 @@ namespace MediaPortal.TV.Recording
         bool epsiodeConflict = false;
         FreeCards();
         AllocateCard(episode.Channel);
-        foreach (TVRecording otherRecording in recordings)
+        foreach (TVRecording otherRecording in _recordings)
         {
-          ArrayList otherEpisodes = util.GetRecordingTimes(otherRecording);
+          ArrayList otherEpisodes = _util.GetRecordingTimes(otherRecording);
           foreach (TVRecording otherEpisode in otherEpisodes)
           {
             if (otherEpisode.Canceled != 0) continue;
@@ -215,19 +216,19 @@ namespace MediaPortal.TV.Recording
     {
       if (Recorder.Count <= 0) return null;
 
-      if (recordings == null || util == null)
+      if (_recordings == null || _util == null)
       {
         Initialize();
       }
       cards = new int[Recorder.Count];
-      if (recordings.Count == 0) return null;
+      if (_recordings.Count == 0) return null;
 
       ArrayList conflicts = new ArrayList();
       if (episode.Canceled != 0) return null;
 
-      foreach (TVRecording otherRecording in recordings)
+      foreach (TVRecording otherRecording in _recordings)
       {
-        ArrayList otherEpisodes = util.GetRecordingTimes(otherRecording);
+        ArrayList otherEpisodes = _util.GetRecordingTimes(otherRecording);
         foreach (TVRecording otherEpisode in otherEpisodes)
         {
           if (otherEpisode.Canceled != 0) continue;
@@ -255,9 +256,9 @@ namespace MediaPortal.TV.Recording
     {
       get
       {
-        if (util == null)
+        if (_util == null)
           Initialize();
-        return util;
+        return _util;
       }
     }
 
