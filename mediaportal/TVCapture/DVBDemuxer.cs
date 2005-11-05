@@ -192,7 +192,7 @@ int m_bufferPositionPMT=0;
 				static int m_currentDVBCard=0;
 				static NetworkType m_currentNetworkType;
 				bool m_packetsReceived=false;
-				DVBSectionHeader m_sectionHeader=new DVBSectionHeader();
+				//DVBSectionHeader m_sectionHeader=new DVBSectionHeader();
 				bool _grabTeletext=false;
 
 				
@@ -204,7 +204,7 @@ int m_bufferPositionPMT=0;
         TSHelperTools m_tsHelper = new TSHelperTools();
         
         DVBEPG m_epgClass = new DVBEPG();
-        AudioHeader m_usedAudioFormat = new AudioHeader();
+        //AudioHeader m_usedAudioFormat = new AudioHeader();
         #endregion
 
         #region Delegates/Events

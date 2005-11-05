@@ -468,7 +468,7 @@ namespace MediaPortal.Player
 			}
 			try
 			{
-				Direct3D.Surface backBuffer=null;
+				//Direct3D.Surface backBuffer=null;
 				m_idebugstep=0;
 				reentrant=true;
 				GUIGraphicsContext.InVmr9Render=true;
@@ -661,7 +661,7 @@ namespace MediaPortal.Player
 				//if we're stopping then just return
 				float timePassed=GUIGraphicsContext.TimePassed;
 				if (m_bStop) return;
-				Direct3D.Surface backBuffer=null;
+				//Direct3D.Surface backBuffer=null;
 				//sanity checks
 				if (GUIGraphicsContext.DX9Device==null) return;
 				if (GUIGraphicsContext.DX9Device.Disposed) return;

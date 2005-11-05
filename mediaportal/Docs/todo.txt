@@ -1,199 +1,21 @@
-Frodo's priority list:
-  -). fix    : any (new) bugs
-  -). new    : add support for DVB-T/C
-  -). click on overlay preview to goto fullscreen
-  -). batch DX9 commands for more speed
-  -). find a clean way for multiple threads to access MP's core
-  -). Pressing play when fast FF/RW recordings/video should reset to 1x = normal play.
-  -). add support for wireless keyboards
-  -). better volume control
-    
-MSN Messenger:
-      
-My Radio:
-    - Timeshifting & recording
-    - Use RDS signals in myRadio
-         
-My TV:
-  general
-    - Video network broadcasting...so we can send live video streams(from a capture device) to other networked computers..
-    - watch Live TV on two TVs if user has two Tuners
-	- option:fade in/out when switching between fullscreen video/tv<->gui
-	- option:show fullscreen TV when going to my tv (instead of windowed)
-	- option:show live tv in 'tv gfx' on home
-	- picture in picture
-	- TV-out through PVR 350
-    - Have a multichannel preview page (looks slyck!)
+MCE nice:
 
-  Fullscreen TV:
-  
-  TV OSD:
-     - record this program now option
-     - show now & later in TV osd
-     
-  Recorded tv:
-     - put recordings in several subfolders
-     - show actual time
-	 - After viewing a recorded program, the program list sorting is reset. 
-     
-  TVGuide:
-     - add to program favorites (will b highlighted next time)
-     - different views like View by : movies, news, Whats playing now... 
-     - show multiple red dots when recording series
-     - Indicate that recording is already busy when user tries to record something while recording is already started
-	 - Notify ME
-	 - in EPG you could select a tv-show and with a popup search the EPG buffer for all tv-shows having the same name!
-	 
-  Scheduled:
-     - remove all schedules button
-     - show actual time
-     
-  Recorder:
-    - A way to browse and resolve recording conflicts. 
-    - support for DVB-T/DVB-C digital capture cards (BDA tuners)
-    - support for timeshifting with SW encoding cards
-    - support for recording to mpeg with SW encoding cards
-    - recoding recordings to divx, mpeg,... or .dvr-ms -> .mpeg
-    - Let MP watch used diskspace, currently goes on till exeption occurs with full disk.
-    - 
-    
- TVSearch
-    - Make IMDB search possible on a movie title
-    - NOW button to get a list of all available programs currently on TV
-    - when searching, show more entries (now 4)
-    - when i want to record something on page 3 the coursor jumps back to the first site and the first entry
-    
- TVSetup
-    - make it possible to map an input to multiple channels/inputs. This wil make it possible to use the guide to make a recording from an analog input.
-    - Have a manual finetune 
-    - Manual tune ala autotune but let user enter channel and then allow finetune
-    - Make it possible to enter a name manualy for an autotuned found channel
+- watch tv fullscreen->insert dvd->dialog popped up of je DVD wil afspelen
+- tvgids
+    GIDS = kies genre, en tvgids laat programma's van dit genre zien
+    1-999= ga direct naar kanaal X
 
-My Music: (int_20h)
-  - auto-resume 
-  - show which songs are 'queued'
-  - highlight currently playing file somehow
-  - faster start of 1st song played
-  - gapless playback
-  - FF/RW control
-  - crossfading 
-  - repeat none, once, always
-  - cd ripper
-  - show time played/current playtime
-  - delete songs
-  
-My Video: 
-  - Make video streams possible (.asx)
-  - Queue stacked files in Zoomplayer using command line like:
-    zplayer.exe /Queue:movie-cd1.mpg /Queue:movie-cd2.mpg /F /PLAY /Q
-  - autowidescreen switching: play 4:3 movies in 4:3 mode and 16:9 movies in 16:9 mode
-  - OSD: when submenu is opened, dont use the osd timeout
-  - query info about actors from www.imdb.com
-  - favorite system to add a movie, actor, to your favorites
-  - add new window called favorites which shows you your favorites movie,actor or... and allows you to select & play one
-  - delete movie
-    
-My Pictures:
-  - Autohide info bar during zooming so it won't block the picture
-  - make custom slideshows including background music
-    - add pictures to a playlist and the first items on it r all music files for background music
-    - all this can be saved and loaded ofcourse
-  - custom text wich will be shown during slideshows. This can be saved in the database
-    
-Topbar:
-  - auto hide
-  - add new 'back' button for touchscreen users
-      
-Settings:
-  - all :-)
+- fullscreen tv:
+    - vorige / overslaan : snel seeken
+    - FF/RWD : meerdere keren drukken gaat van 2x/4x/8x
+    - meer info->gaat naar programma info scherm 
 
-new plugins:
-  - my files  
-  - my TV-series
-  - my DVD's
-  - caller ID
-  - my webbrowser
-  - system info / free HD space , memory usedd, temperature,...plugin
-  - teletext plugin
-  - winlirc
-  - web scheduler 
-  - comic viewer
-  
-DVD player:
-  - bookmarks
-  - auto-resume 
-  - VMR9
 
-My Weather:
-  - add support for multiple images / city
-    
-Skin engine:
-  - the possibility for the skinner to change the position of the album art
-  - fade in for controls
-  - transitions between windows
-  - more enhanced spincontrol consisting of an up & down texture and a background texture in the middle
-  - specify seperate topbar for each window
-  - make onscreen keyboard skinnable (at least x,y position)
-  - if a button/group has focus slide it in (left->right for example) and when its unfocused slide it out
-    (right->left for example)
-  - if a list/thumbnailpanel/filmstrip has focus make it grow so it fits the screen and when its unfocused 
-    shrink it again to its original size
-  - 
+Effecten:
+ - zoom in van GUI->fullscreen TV
+ - zoom out van fullscreen tv->GUI
 
-movieplayer:
-  - Audio switching support for Xvids / MKV / etc....
-  
-setup:
-  - custom zoommode, let people enter a zoom number (+ or -) and make this accessable using S
-  - advanced filter manager, let people make custom graphs for certain filetypes. See ZoomPlayer.
-  - Update paths of the setup project in CVS to point to the new location of the girder files.
-  - A Remote controlled Stetup wizard that runs the first time you run MediaPortal (no keyboard needed)
-  - Setup Wizard for the first run (see Sceneo / Meedio Beta)
-  - setup : add tooltips 
-  - setup :Auto Tune needs some work
-      - map S01 /k01 etc -> channel numbers
-      - map autotune <->xmltv
-  - Make it possible to use mixed antenna / cable tuning
-  - define your own freedb server
-  
-my programs:
-  - 
-
-General:
-  - autoplay for (s)vcd/cd
-  - Make it possible to browse to an image control and selecting enter will show it large drawn over the GUI
-  - Support for right to left languages
-  - Use Y to play a folder, this for video, music and pictures
-  - keymap.xml : add support for support ctrl, shift , alt keys
-  - ? button which shows tooltips & keyboard shortcuts
-  - Gui renderspeed slider in setup. COntrol how fast the GUI is rendered. Can save CPU, thus Temperature, thus noise.
-  - option to stop rendering the GUI and go blank. This to have MP use little CPU when playing music. Keeps CPU cool
-  - better cd/dvd handling like
-    - remove eject and "play DVD" buttons from myVideos
-    - remove eject button from myMusic
-    - the user has to add the desired drive(s) to his shares
-    - when he selects a drive in MP and hits ok a dialogbox appears which asks him:
-      "Play CD /DVD"
-      "Eject Drive"
-      "(Exit)" 
-  - integrated support for remote controls instead of using girder
-  - Screenshot taking
-  - A PPC client
-  - seperate frontend for client/server
-  - support for VFD/LCD displays
-  - change sort by button into same button as view by
-  - Option to auto switch between list and thumb based on availability of thumbs
-
-  - better mouse control 
-     - my tv: 
-         tvguide   : current time/day, scroll up/down, scroll left/right
-     - my music:
-         queue songs, get/view album info, prev/next song, pause, play, skip+/skip-,ff/rw
-     - my pictures:
-         zoom in/out, rotate,next/prev pic, info
-     - my movies:
-         queue movies, get/view imdb info, prev/next movie, pause, play, skip+/skip-,ff/rw
-     - general:
-       - general   : switch fullscreen<->windowed
-       - mouse wheel for scrolling
-       - autohide mouse cursor with no movement, auto show when mouse is moved
+Todo:
+- check TsFileSource
+- check twinhan CI
+- edit scheduled recordings

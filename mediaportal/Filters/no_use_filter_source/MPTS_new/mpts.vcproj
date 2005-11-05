@@ -46,7 +46,7 @@
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories="&quot;C:\DXSDK\Samples\c++\DirectShow\BaseClasses\Debug&quot;;&quot;C:\DXSDK\Samples\c++\DirectShow\BaseClasses\release&quot;;C:\DXSDK\Lib"
-				IgnoreDefaultLibraryNames=""
+				IgnoreDefaultLibraryNames="libcmtd.lib"
 				ModuleDefinitionFile=".\source\MPTSExports.def"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile=".\obj\Debug/MPTS.pdb"

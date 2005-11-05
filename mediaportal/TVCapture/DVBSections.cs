@@ -2546,7 +2546,7 @@ namespace MediaPortal.TV.Recording
 
 			EIT_Program_Info eit=new EIT_Program_Info();
 			eit.eitList=new ArrayList();
-			EITDescr descr=new EITDescr();
+			//EITDescr descr=new EITDescr();
 			bool startFlag=false;
 			int ret=-1;
 

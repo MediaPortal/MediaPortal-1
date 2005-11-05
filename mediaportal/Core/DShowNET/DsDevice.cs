@@ -37,8 +37,8 @@ namespace DShowNET.Device
 			int hr;
 			object comObj = null;
 			ICreateDevEnum enumDev = null;
-			UCOMIEnumMoniker enumMon = null;
-			UCOMIMoniker[] mon = new UCOMIMoniker[1];
+			System.Runtime.InteropServices.ComTypes.IEnumMoniker enumMon = null;
+			System.Runtime.InteropServices.ComTypes.IMoniker[] mon = new System.Runtime.InteropServices.ComTypes.IMoniker[1];
 			try {
 				Type	srvType = Type.GetTypeFromCLSID( Clsid.SystemDeviceEnum );
 				if( srvType == null )
@@ -50,10 +50,11 @@ namespace DShowNET.Device
 				if( hr != 0 )
 					throw new NotSupportedException( "No devices of the category" );
 
-				int f, count = 0;
+        IntPtr f = Marshal.AllocCoTaskMem(sizeof(int));
+				int  count = 0;
 				do
 				{
-					hr = enumMon.Next( 1, mon, out f );
+					hr = enumMon.Next( 1, mon, f );
 					if( (hr != 0) || (mon[0] == null) )
 						break;
 					DsDevice dev = new DsDevice();
@@ -65,6 +66,7 @@ namespace DShowNET.Device
 					count++;
 				}
 				while(true);
+        Marshal.FreeCoTaskMem(f);
 
 				return count > 0;
 			}
@@ -91,7 +93,7 @@ namespace DShowNET.Device
 
 		}
 
-		public static string GetFriendlyName( UCOMIMoniker mon )
+    public static string GetFriendlyName(System.Runtime.InteropServices.ComTypes.IMoniker mon)
 		{
 			object bagObj = null;
 			IPropertyBag bag = null;
@@ -126,7 +128,7 @@ namespace DShowNET.Device
 	public class DsDevice : IDisposable
 	{
 		public string			Name;
-		public UCOMIMoniker		Mon;
+    public System.Runtime.InteropServices.ComTypes.IMoniker Mon;
 		
 		public void Dispose()
 		{
@@ -149,7 +151,7 @@ public interface ICreateDevEnum
 		[PreserveSig]
 	int CreateClassEnumerator(
 		[In]											ref Guid			pType,
-		[Out]										out UCOMIEnumMoniker	ppEnumMoniker,
+   [Out]										out System.Runtime.InteropServices.ComTypes.IEnumMoniker ppEnumMoniker,
 		[In]											int					dwFlags );
 }
 
@@ -200,7 +202,7 @@ public interface IPropertyBag
 	
 		[PreserveSig]
 		int EnumMatchingFilters
-			(  out UCOMIEnumMoniker	ppEnumMoniker    // enumerator returned
+      (out System.Runtime.InteropServices.ComTypes.IEnumMoniker ppEnumMoniker    // enumerator returned
 			,       Int32 dwFlags                   // 0
 			,  [MarshalAs(UnmanagedType.Bool)]    bool bExactMatch                // don't match wildcards
 			,       Int32 dwMerit                   // at least this merit needed

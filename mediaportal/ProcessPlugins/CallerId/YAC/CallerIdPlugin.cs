@@ -147,12 +147,9 @@ namespace ProcessPlugins.CallerId
 			try
 			{
 
-				string hostIP = Dns.GetHostByName(Dns.GetHostName()).AddressList[0].ToString();
 				object[] oButtons = new Object[1]; 
-								
-				IPAddress localAddr = IPAddress.Parse(hostIP); 
-
-				System.Net.Sockets.TcpListener server = new TcpListener(localAddr, port);  
+				
+				System.Net.Sockets.TcpListener server = new TcpListener( port);  
 				// for simplicity, I'd rather be using the TcpListner constructor that only takes 
 				// (int port), but that's obsolete, according to http://msdn.microsoft.com/library/en-us/cpref/html/frlrfsystemnetsocketstcplistenerclassctortopic.asp.
 				// will my DNS-name code work properly on a home machine that may not always 

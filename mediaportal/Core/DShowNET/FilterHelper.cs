@@ -217,8 +217,8 @@ namespace DShowNET
 				int hResult;
 				object comObject = null;
 
-				UCOMIEnumMoniker enumMoniker = null;
-				UCOMIMoniker[] moniker = new UCOMIMoniker[1];
+				System.Runtime.InteropServices.ComTypes.IEnumMoniker enumMoniker = null;
+				System.Runtime.InteropServices.ComTypes.IMoniker[] moniker = new System.Runtime.InteropServices.ComTypes.IMoniker[1];
 
 				comObject = Activator.CreateInstance(filterMapperType);
 				IFilterMapper2 mapper = comObject as IFilterMapper2;
@@ -241,11 +241,11 @@ namespace DShowNET
 						new Guid[0],
 						IntPtr.Zero,
 						IntPtr.Zero);
-					
+
+          IntPtr dummy = Marshal.AllocCoTaskMem(sizeof(int));
 					do
 					{
-						int dummy;
-						hResult = enumMoniker.Next(1, moniker, out dummy);
+						hResult = enumMoniker.Next(1, moniker,  dummy);
 
 						if((moniker[0] == null))
 						{
@@ -258,6 +258,7 @@ namespace DShowNET
 						moniker[0] = null;
 					}
 					while(true);
+          Marshal.FreeCoTaskMem(dummy);
 				}
 			}
 

@@ -343,7 +343,7 @@ namespace MyMail
 									{
 										m_imailCount=0;
 									}
-									m_imailCount=m_imailCount;
+//									m_imailCount=m_imailCount;
 									m_mb.MailCount=m_imailCount;
 									Log.Write("mymail: there are {0} messages in the mailbox {1}",Convert.ToString(m_imailCount),m_mb.BoxLabel);
 									if(m_imailCount>0)
@@ -472,7 +472,7 @@ namespace MyMail
 		{
 			try
 			{
-				IPHostEntry hostIP = Dns.Resolve(mb.ServerAddress); 
+				IPHostEntry hostIP = Dns.GetHostEntry(mb.ServerAddress); 
 				IPAddress[] addr = hostIP.AddressList;
 			}
 			catch
@@ -485,7 +485,7 @@ namespace MyMail
 		{
 			try
 			{
-				IPHostEntry hostIP = Dns.Resolve(mb.ServerAddress); 
+				IPHostEntry hostIP = Dns.GetHostEntry(mb.ServerAddress); 
 				string []aliases = hostIP.Aliases; 
 				addr = hostIP.AddressList;
 			}

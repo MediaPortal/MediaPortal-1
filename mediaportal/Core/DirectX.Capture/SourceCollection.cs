@@ -170,7 +170,7 @@ namespace DirectX.Capture
 			ArrayList crossbars = new ArrayList();
 
 			Guid category = FindDirection.UpstreamOnly;
-			Guid type = new Guid();
+			//Guid type = new Guid();
 			Guid riid = typeof(IAMCrossbar).GUID;
 			int hr;
 

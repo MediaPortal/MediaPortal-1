@@ -365,7 +365,7 @@ namespace MediaPortal.GUI.Alarm
 			// 
 			// AlarmSetupForm
 			// 
-			this.AutoScale = false;
+			this.AutoScaleMode = AutoScaleMode.None;
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
 			this.ClientSize = new System.Drawing.Size(410, 312);
 			this.Controls.Add(this.groupBox1);

@@ -587,7 +587,7 @@ namespace DShowNET
 			{
 				return texture.GetObjectByValue(magicConstant);
 			}
-			public static string GetFriendlyName( UCOMIMoniker mon )
+    public static string GetFriendlyName(System.Runtime.InteropServices.ComTypes.IMoniker mon)
 			{
         if (mon==null) return String.Empty;
 				object bagObj = null;
@@ -893,8 +893,8 @@ public struct DsBITMAPINFOHEADER
       cookie = 0;
       if (graph==null) return false;
 			int hr = 0;
-			UCOMIRunningObjectTable rot = null;
-			UCOMIMoniker mk = null;
+      System.Runtime.InteropServices.ComTypes.IRunningObjectTable rot = null;
+			System.Runtime.InteropServices.ComTypes.IMoniker mk = null;
 			try {
 				hr = GetRunningObjectTable( 0, out rot );
 				if( hr < 0 )
@@ -909,7 +909,7 @@ public struct DsBITMAPINFOHEADER
 				if( hr < 0 )
 					Marshal.ThrowExceptionForHR( hr );
 				
-				rot.Register( ROTFLAGS_REGISTRATIONKEEPSALIVE, graph, mk, out cookie );
+				cookie =rot.Register( ROTFLAGS_REGISTRATIONKEEPSALIVE, graph, mk);
 				return true;
 			}
 			catch( Exception )
@@ -927,7 +927,7 @@ public struct DsBITMAPINFOHEADER
 
 		public static bool RemoveGraphFromRot( ref int cookie )
 		{
-			UCOMIRunningObjectTable rot = null;
+			System.Runtime.InteropServices.ComTypes.IRunningObjectTable rot = null;
 			try {
 				int hr = GetRunningObjectTable( 0, out rot );
 				if( hr < 0 )
@@ -952,11 +952,11 @@ public struct DsBITMAPINFOHEADER
 
 		[DllImport("ole32.dll", ExactSpelling=true) ]
 		private static extern int GetRunningObjectTable( int r,
-			out UCOMIRunningObjectTable pprot );
+      out System.Runtime.InteropServices.ComTypes.IRunningObjectTable pprot);
 
 		[DllImport("ole32.dll", CharSet=CharSet.Unicode, ExactSpelling=true) ]
 		private static extern int CreateItemMoniker( string delim,
-			string item, out UCOMIMoniker ppmk );
+      string item, out System.Runtime.InteropServices.ComTypes.IMoniker ppmk);
 
 		[DllImport("kernel32.dll", ExactSpelling=true) ]
 		private static extern int GetCurrentProcessId();

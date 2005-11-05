@@ -443,7 +443,7 @@ namespace MediaPortal.Core.Transcoding
 
 
 			//set output filename
-			AMMediaType mt = new AMMediaType();
+			//AMMediaType mt = new AMMediaType();
 			string outputFileName=System.IO.Path.ChangeExtension(info.file,".avi");
 			Log.Write("DVR2XVID: set output file to :{0}",outputFileName);				
 			hr=fileWriterFilter.SetFileName(outputFileName, IntPtr.Zero);

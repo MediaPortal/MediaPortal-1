@@ -51,12 +51,12 @@ namespace GUIRSSFeed
 		private System.Windows.Forms.TextBox textURL;
 		private System.Windows.Forms.OpenFileDialog openFileDialog1;
 		public int ID;
-		private SetupForm form;
+		//private SetupForm form;
 		public bool isNew;
 		public DetailsForm(SetupForm parent, int ID)
 		{
 			this.ID = ID;
-			this.form = form;
+			//this.form = form;
 			isNew = false;
 			//
 			// The InitializeComponent() call is required for Windows Forms designer support.

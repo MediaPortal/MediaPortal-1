@@ -34,7 +34,7 @@ namespace WindowPlugins.GUIPrograms
     int mTag = 0;
     XmlNode mXmlTag = null;
 
-    public int Tag
+    public new int Tag
     {
       get
       {

@@ -60,14 +60,14 @@ namespace DShowNET
 		}
 
 		/// <summary> Create a new filter from its moniker </summary>
-		internal Filter( UCOMIMoniker moniker )
+    internal Filter(System.Runtime.InteropServices.ComTypes.IMoniker moniker)
 		{
 			Name = getName( moniker );
 			MonikerString = getMonikerString( moniker );
 		}
 
 		/// <summary> Retrieve the a moniker's display name (i.e. it's unique string) </summary>
-		protected string getMonikerString(UCOMIMoniker moniker)
+    protected string getMonikerString(System.Runtime.InteropServices.ComTypes.IMoniker moniker)
 		{
 			string s;
 			moniker.GetDisplayName( null, null, out s );
@@ -75,7 +75,7 @@ namespace DShowNET
 		}
 
 		/// <summary> Retrieve the human-readable name of the filter </summary>
-		protected string getName(UCOMIMoniker moniker)
+    protected string getName(System.Runtime.InteropServices.ComTypes.IMoniker moniker)
 		{
 			object bagObj = null;
 			IPropertyBag bag = null;
@@ -108,8 +108,8 @@ namespace DShowNET
 		/// <summary> Get a moniker's human-readable name based on a moniker string. </summary>
 		protected string getName(string monikerString)
 		{
-			UCOMIMoniker parser = null; 
-			UCOMIMoniker moniker = null;
+			System.Runtime.InteropServices.ComTypes.IMoniker parser = null; 
+			System.Runtime.InteropServices.ComTypes.IMoniker moniker = null;
 			try
 			{
 				parser = getAnyMoniker();
@@ -127,24 +127,24 @@ namespace DShowNET
 		}
 
 		/// <summary>
-		///  This method gets a UCOMIMoniker object.
+		///  This method gets a System.Runtime.InteropServices.ComTypes.IMoniker object.
 		/// 
-		///  HACK: The only way to create a UCOMIMoniker from a moniker 
-		///  string is to use UCOMIMoniker.ParseDisplayName(). So I 
-		///  need ANY UCOMIMoniker object so that I can call 
+		///  HACK: The only way to create a System.Runtime.InteropServices.ComTypes.IMoniker from a moniker 
+		///  string is to use System.Runtime.InteropServices.ComTypes.IMoniker.ParseDisplayName(). So I 
+		///  need ANY System.Runtime.InteropServices.ComTypes.IMoniker object so that I can call 
 		///  ParseDisplayName(). Does anyone have a better solution?
 		/// 
 		///  This assumes there is at least one video compressor filter
 		///  installed on the system.
 		/// </summary>
-		protected UCOMIMoniker getAnyMoniker()
+    protected System.Runtime.InteropServices.ComTypes.IMoniker getAnyMoniker()
 		{
 			Guid				category = FilterCategory.VideoCompressorCategory;
 			int					hr;
 			object				comObj = null;
 			ICreateDevEnum		enumDev = null;
-			UCOMIEnumMoniker	enumMon = null;
-			UCOMIMoniker[]		mon = new UCOMIMoniker[1];
+      System.Runtime.InteropServices.ComTypes.IEnumMoniker enumMon = null;
+			System.Runtime.InteropServices.ComTypes.IMoniker[]		mon = new System.Runtime.InteropServices.ComTypes.IMoniker[1];
 
 			try 
 			{
@@ -161,12 +161,13 @@ namespace DShowNET
 					throw new NotSupportedException( "No devices of the category" );
 
 				// Get first filter
-				int f;
-				hr = enumMon.Next( 1, mon, out f );
+				IntPtr f=Marshal.AllocCoTaskMem(sizeof(int));
+				hr = enumMon.Next( 1, mon,  f );
 				if( (hr != 0) )
 					mon[0] = null;
 
-				return( mon[0] );
+        Marshal.FreeCoTaskMem(f);
+        return (mon[0]);
 			}
 			finally
 			{

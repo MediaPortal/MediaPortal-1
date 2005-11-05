@@ -47,8 +47,8 @@ namespace DShowNET
 			int					hr;
 			object				comObj = null;
 			ICreateDevEnum		enumDev = null;
-			UCOMIEnumMoniker	enumMon = null;
-			UCOMIMoniker[]		mon = new UCOMIMoniker[1];
+      System.Runtime.InteropServices.ComTypes.IEnumMoniker enumMon = null;
+      System.Runtime.InteropServices.ComTypes.IMoniker[] mon = new System.Runtime.InteropServices.ComTypes.IMoniker[1];
 
 			try 
 			{
@@ -66,11 +66,11 @@ namespace DShowNET
           return;//throw new NotSupportedException( "No devices of the category" );
         }
 				// Loop through the enumerator
-				int f;
+				IntPtr f = Marshal.AllocCoTaskMem(sizeof(int));
 				do
 				{
 					// Next filter
-					hr = enumMon.Next( 1, mon, out f );
+					hr = enumMon.Next( 1, mon,  f );
 					if( (hr != 0) || (mon[0] == null) )
 						break;
 					
@@ -83,6 +83,7 @@ namespace DShowNET
 					mon[0] = null;
 				}
 				while(true);
+        Marshal.FreeCoTaskMem(f);
 
 				// Sort
 				//InnerList.Sort();

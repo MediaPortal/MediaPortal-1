@@ -1085,7 +1085,7 @@ namespace MediaPortal.GUI.Video
 
 		public string cleanString(string s)
 		{
-			foreach (char c in System.IO.Path.InvalidPathChars)
+			foreach (char c in System.IO.Path.GetInvalidPathChars())
 				s = s.Replace(c, ' ');
 			return s.Replace('.', ' ')
 				.Replace(": ", " ")
@@ -1164,7 +1164,7 @@ namespace MediaPortal.GUI.Video
 
 		public string getFilennameFriendlyString(string input)
 		{
-			foreach(char c in System.IO.Path.InvalidPathChars)
+      foreach (char c in System.IO.Path.GetInvalidPathChars())
 			{
 				input = input.Replace(c,' ');
 			}

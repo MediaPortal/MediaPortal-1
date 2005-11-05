@@ -87,7 +87,7 @@ namespace ProcessPlugins.ExternalDisplay
         }
       }
       th = new Thread(new ThreadStart(CopySTA));
-      th.ApartmentState = ApartmentState.STA;
+      th.SetApartmentState(ApartmentState.STA);
       th.Start();
       th.Join();
     }

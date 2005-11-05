@@ -164,7 +164,7 @@ namespace MediaPortal.GUI.Library
       : base(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight)
     {
       // Please fix or remove this check: (dwPosY > dwPosY - always false)
-      if (dwPosY > dwPosY && dwSpinY < dwPosY + dwHeight) dwSpinY = dwPosY + dwHeight;
+      //if (dwPosY > dwPosY && dwSpinY < dwPosY + dwHeight) dwSpinY = dwPosY + dwHeight;
       m_strImageFolder = strImageIcon;
       m_strImageFolderFocus = strImageIconFocus;
       m_iItemWidth = dwitemWidth;

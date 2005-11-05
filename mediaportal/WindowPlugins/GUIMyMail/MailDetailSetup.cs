@@ -454,7 +454,7 @@ namespace MyMail
     {
       try
       {
-        IPHostEntry hostIP = Dns.Resolve(mb.ServerAddress); 
+        IPHostEntry hostIP = Dns.GetHostEntry(mb.ServerAddress); 
         IPAddress[] addr = hostIP.AddressList;
       }
       catch

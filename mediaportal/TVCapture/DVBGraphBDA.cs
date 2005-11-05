@@ -264,7 +264,7 @@ namespace MediaPortal.TV.Recording
 		DateTime								_signalLostTimer2=DateTime.Now;
 		int											_pmtRetyCount=0;
 		DateTime								_pmtTimer;
-		bool										_graphIsPaused;
+		//bool										_graphIsPaused;
 		
 #if DUMP
 		System.IO.FileStream fileout;
@@ -3045,7 +3045,7 @@ namespace MediaPortal.TV.Recording
 		{
 			int hr;
 			ICreateDevEnum		sysDevEnum	= null;
-			UCOMIEnumMoniker	enumMoniker	= null;
+			System.Runtime.InteropServices.ComTypes.IEnumMoniker	enumMoniker	= null;
 			
 			sysDevEnum = (ICreateDevEnum) Activator.CreateInstance(Type.GetTypeFromCLSID(Clsid.SystemDeviceEnum, true));
 			// Enumerate the filter category
@@ -3053,9 +3053,9 @@ namespace MediaPortal.TV.Recording
 			if( hr != 0 )
 				throw new NotSupportedException( "No devices in this category" );
 
-			int ulFetched = 0;
-			UCOMIMoniker[] deviceMoniker = new UCOMIMoniker[1];
-			while(enumMoniker.Next(1, deviceMoniker, out ulFetched) == 0) // while == S_OK
+			IntPtr ulFetched = Marshal.AllocCoTaskMem(sizeof(int));
+      System.Runtime.InteropServices.ComTypes.IMoniker[] deviceMoniker = new System.Runtime.InteropServices.ComTypes.IMoniker[1];
+			while(enumMoniker.Next(1, deviceMoniker, ulFetched) == 0) // while == S_OK
 			{
 				object bagObj = null;
 				Guid bagId = typeof( IPropertyBag ).GUID;
@@ -3078,12 +3078,14 @@ namespace MediaPortal.TV.Recording
 					{
 						Marshal.ReleaseComObject(deviceMoniker[0]);
 						Marshal.ReleaseComObject(enumMoniker);
+            Marshal.FreeCoTaskMem(ulFetched);
 						return true;
 					}
 				}//if(String.Compare(Name.ToLower(), FriendlyName.ToLower()) == 0) // If found
 				Marshal.ReleaseComObject(deviceMoniker[0]);
 			}//while(enumMoniker.Next(1, deviceMoniker, out ulFetched) == 0) // while == S_OK
 			Marshal.ReleaseComObject(enumMoniker);
+      Marshal.FreeCoTaskMem(ulFetched); ;
 			device = null;
 			return false;
 		}//private bool findNamedFilter(System.Guid ClassID, string FriendlyName, out object device) 
@@ -3649,7 +3651,7 @@ namespace MediaPortal.TV.Recording
 			//bool restartGraph=false;
 			_lastPMTVersion=-1;
 			_pmtRetyCount=0;
-			bool restartGraph=false;
+			//bool restartGraph=false;
 			try
 			{
 #if USEMTSWRITER
