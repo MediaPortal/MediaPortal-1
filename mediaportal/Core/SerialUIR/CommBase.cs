@@ -25,6 +25,8 @@ using System.Threading;
 using System.IO;
 using System.Xml.Serialization;
 
+using Microsoft.Win32.SafeHandles;
+
 //JH 1.1: Version 1.1 changes labelled thus.
 //JH 1.2: Version 1.2 changes labelled thus.
 //JH 1.3: Version 1.3 changes labelled thus.
@@ -539,9 +541,9 @@ namespace JH.CommBase
 			wo.Offset = 0;
 			wo.OffsetHigh = 0;
 			if (checkSends)
-				wo.hEvent = writeEvent.Handle;
+				wo.hEvent = writeEvent.SafeWaitHandle;
 			else
-				wo.hEvent = IntPtr.Zero;
+				wo.hEvent = null;
 
 			ptrUWO = Marshal.AllocHGlobal(Marshal.SizeOf(wo));
 
@@ -1094,7 +1096,7 @@ namespace JH.CommBase
 			uMask = Marshal.AllocHGlobal(Marshal.SizeOf(eventMask));
 
 			ov.Offset = 0; ov.OffsetHigh = 0;
-			ov.hEvent = sg.Handle;
+            ov.hEvent = sg.SafeWaitHandle;
 			Marshal.StructureToPtr(ov, unmanagedOv, true);
 
 			try
@@ -1499,7 +1501,7 @@ namespace JH.CommBase
 			internal UIntPtr InternalHigh;
 			internal UInt32 Offset;
 			internal UInt32 OffsetHigh;
-			internal IntPtr hEvent;
+            internal SafeWaitHandle hEvent;
 		}
 
 		[DllImport("kernel32.dll")]

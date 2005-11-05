@@ -1803,21 +1803,6 @@
     <Compile Include="System.Windows\WriteLocalValueOverride.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="System\INullable.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System\NullableDouble.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System\NullableDoubleConverter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System\NullableTimeSpan.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System\NullableTimeSpanConverter.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="TagReader\ITagReader.cs">
       <SubType>Code</SubType>
     </Compile>
