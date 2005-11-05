@@ -35,11 +35,14 @@ namespace MediaPortal.Player
 {
 	public class BaseStreamBufferPlayer : IPlayer
 	{
+		#region imports
 		[ComImport, Guid("FA8A68B2-C864-4ba2-AD53-D3876A87494B")]
 		protected class StreamBufferConfig {}
 		[DllImport("advapi32", CharSet=CharSet.Auto)]
 		protected  static extern ulong RegOpenKeyEx(IntPtr key, string subKey, uint ulOptions, uint sam, out IntPtr resultKey);
+		#endregion
 
+		#region enums
 		public enum PlayState
 		{
 			Init,
@@ -47,6 +50,8 @@ namespace MediaPortal.Player
 			Paused,
       Ended
 		}
+		#endregion
+		#region variables
 		protected int      iSpeed=1;
 		protected IStreamBufferConfigure2 streamConfig2 = null;
 		protected StreamBufferConfig m_StreamBufferConfig	=null;
@@ -109,11 +114,15 @@ namespace MediaPortal.Player
 		protected const int WS_CLIPSIBLINGS	= 0x04000000;
 		protected DateTime _updateTimer=DateTime.Now;
 		protected MediaPortal.GUI.Library.Geometry.Type             _geometry=MediaPortal.GUI.Library.Geometry.Type.Normal;
+		#endregion
 
+		#region ctor/dtor
 		public BaseStreamBufferPlayer()
 		{
 		}
+		#endregion
 
+		#region public members
 
 		public override bool Play(string strFile)
 		{
@@ -359,48 +368,10 @@ namespace MediaPortal.Player
 			m_VideoRect=rDest;
 		}
 
-		protected virtual void SetVideoPosition(System.Drawing.Rectangle rDest)
+		public override bool Ended
 		{
-			if (_videoWin!=null)
-			{
-				if (rDest.Left< 0 || rDest.Top<0 || rDest.Width<=0 || rDest.Height<=0) return;
-				_videoWin.SetWindowPosition(rDest.Left,rDest.Top,rDest.Width,rDest.Height);
-			}
+			get { return _state==PlayState.Ended;}
 		}
-
-		protected virtual void  SetSourceDestRectangles(System.Drawing.Rectangle rSource,System.Drawing.Rectangle rDest)
-		{
-			if (_basicVideo!=null)
-			{
-				if (rSource.Left< 0 || rSource.Top<0 || rSource.Width<=0 || rSource.Height<=0) return;
-				if (rDest.Width<=0 || rDest.Height<=0) return;
-				_basicVideo.SetSourcePosition(rSource.Left,rSource.Top,rSource.Width,rSource.Height);
-				_basicVideo.SetDestinationPosition(0,0,rDest.Width,rDest.Height);
-			}
-		}
-
-		void MovieEnded()
-		{
-			// this is triggered only if movie has ended
-			// ifso, stop the movie which will trigger MovieStopped
-			
-			Log.Write("StreamBufferPlayer:ended {0}", _currentFile);
-      if (!IsTimeShifting)
-      {
-        CloseInterfaces();
-        _state=PlayState.Ended;
-      }
-      else
-      {
-        SeekAsolutePercentage(99);
-      }
-		}
-
-
-    public override bool Ended
-    {
-      get { return _state==PlayState.Ended;}
-    }
 
 		public override void Process()
 		{
@@ -467,38 +438,181 @@ namespace MediaPortal.Player
 				DoFFRW();
 			}
 		}
-
-		void CheckVideoResolutionChanges()
+		public override bool IsTV
 		{
-			if (_videoWin==null || _basicVideo==null) return;
-			int aspectX, aspectY;
-			int videoWidth=1, videoHeight=1;
-			if (_basicVideo!=null)
+			get 
 			{
-				_basicVideo.GetVideoSize(out videoWidth, out videoHeight);
+				return true;
 			}
-			aspectX=videoWidth;
-			aspectY=videoHeight;
-			if (_basicVideo!=null)
-			{
-				_basicVideo.GetPreferredAspectRatio(out aspectX, out aspectY);
-			}
-			if (videoHeight!=_videoHeight || videoWidth != _videoWidth ||
-				  aspectX != _aspectX || aspectY != _aspectY)
-			{
+		}
+		public override bool IsTimeShifting
+		{
+			get {return _isLive;}
+		}      
+
+		public override bool Visible
+		{
+			get {return m_bIsVisible;}
+			set
+			{ 
+				if (value==m_bIsVisible) return;
+				m_bIsVisible=value;
 				_updateNeeded=true;
-				SetVideoWindow();
 			}
 		}
 
-		protected virtual void OnProcess()
+		public override int Speed
 		{
-			if (_vmr7!=null)
+			get 
+			{ 
+				if (_state==PlayState.Init) return 1;
+				if (_mediaSeeking==null) return 1;
+				if (_isUsingNvidiaCodec) return iSpeed;
+				switch ( _speedRate)
+				{
+					case -10000:
+						return -1;
+					case -15000:
+						return -2;
+					case -30000:
+						return -4;
+					case -45000:
+						return -8;
+					case -60000:
+						return -16;
+					case -75000:
+						return -32;
+
+					case 10000:
+						return 1;
+					case 15000:
+						return 2;
+					case 30000:
+						return 4;
+					case 45000:
+						return 8;
+					case 60000:
+						return 16;
+					default: 
+						return 32;
+				}
+			}
+			set 
 			{
-				_vmr7.Process();
+				if (_state!=PlayState.Init)
+				{
+					if (_isUsingNvidiaCodec)
+					{
+						if (iSpeed!=value)
+						{
+							iSpeed=value;
+							if (_mediaSeeking2!=null)
+							{
+								int hr=_mediaSeeking2.SetRateEx((double)iSpeed,25);
+								//Log.Write("VideoPlayer:SetRateEx to:{0} 25fps {1:X}", iSpeed,hr);
+								if (hr!=0)
+								{
+									IMediaSeeking oldMediaSeek=_graphBuilder as IMediaSeeking;
+									hr=oldMediaSeek.SetRate((double)iSpeed);
+									//Log.Write("VideoPlayer:SetRateOld to:{0} {1:X}", iSpeed,hr);
+								}
+							}
+							else
+							{
+								int hr=_mediaSeeking.SetRate((double)iSpeed);
+								//Log.Write("VideoPlayer:SetRate to:{0} {1:X}", iSpeed,hr);
+								if (hr!=0)
+								{
+									IMediaSeeking oldMediaSeek=_graphBuilder as IMediaSeeking;
+									hr=oldMediaSeek.SetRate((double)iSpeed);
+									//Log.Write("VideoPlayer:SetRateOld to:{0} {1:X}", iSpeed,hr);
+								}
+							}
+							if (iSpeed==1)
+							{
+								_mediaCtrl.Stop();
+								System.Windows.Forms.Application.DoEvents();
+								System.Threading.Thread.Sleep(200);
+								System.Windows.Forms.Application.DoEvents();
+								FilterState state;
+								_mediaCtrl.GetState(100,out state);
+								//Log.Write("state:{0}", state.ToString());
+								_mediaCtrl.Run();
+							}
+						}
+					}
+					else
+					{
+						switch ( (int)value)
+						{
+							case -1:  _speedRate=-10000;break;
+							case -2:  _speedRate=-15000;break;
+							case -4:  _speedRate=-30000;break;
+							case -8:  _speedRate=-45000;break;
+							case -16: _speedRate=-60000;break;
+							case -32: _speedRate=-75000;break;
+
+							case 1:  
+								_speedRate=10000;
+								_mediaCtrl.Run();
+								break;
+							case 2:  _speedRate=15000;break;
+							case 4:  _speedRate=30000;break;
+							case 8:  _speedRate=45000;break;
+							case 16: _speedRate=60000;break;
+							default: _speedRate=75000;break;
+						}
+					}
+				}
 			}
 		}
-    
+
+
+		public override void ContinueGraph()
+		{
+
+			if (_mediaCtrl==null) return;
+
+			Log.Write("StreamBufferPlayer:ContinueGraph");
+			//_mediaEvt.SetNotifyWindow( IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero );
+			//_mediaCtrl.Stop();
+
+			System.Windows.Forms.Application.DoEvents();
+			FilterState state;
+			_mediaCtrl.GetState(200,out state);
+			System.Windows.Forms.Application.DoEvents();
+			Log.Write("state:{0}", state.ToString());
+
+
+			IFileSourceFilter fileSource = (IFileSourceFilter) _bufferSource;
+			int hr = fileSource.Load(CurrentFile, IntPtr.Zero);
+			SeekAbsolute(0);
+			
+			_mediaCtrl.Run();
+			_mediaEvt.SetNotifyWindow( GUIGraphicsContext.ActiveForm, WM_GRAPHNOTIFY, IntPtr.Zero );
+			_state=PlayState.Playing;
+			_mediaCtrl.GetState(200,out state);
+			System.Windows.Forms.Application.DoEvents();
+			Log.Write("state:{0}", state.ToString());
+		}
+
+		public override void PauseGraph()
+		{
+			Log.Write("StreamBufferPlayer:Pause graph");
+			_mediaEvt.SetNotifyWindow( IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero );
+			_mediaCtrl.Stop();
+		}
+		public override void WndProc( ref Message m )
+		{
+			if( m.Msg == WM_GRAPHNOTIFY )
+			{
+				if( _mediaEvt != null )
+					OnGraphNotify();
+				return;
+			}
+			base.WndProc( ref m );
+		}
+
 
 		public override int PositionX
 		{
@@ -568,10 +682,10 @@ namespace MediaPortal.Player
 			}
 		}
 
-    public override double ContentStart
-    {
-      get {return _contentStart;}
-    }
+		public override double ContentStart
+		{
+			get {return _contentStart;}
+		}
 		public override bool FullScreen
 		{
 			get 
@@ -659,34 +773,34 @@ namespace MediaPortal.Player
 			}
 
 		}
-/*
-		public override int Speed
-		{
-			get
-			{
-				//lock (this)
-			{
-				return _speed;
-			}
-			}
-			set 
-			{
-				//lock (this)
-			{
-				if (_speed!=value)
+		/*
+				public override int Speed
 				{
-					_speed=value;
-					if (_mediaSeeking==null) return ;
-					double dRate=value;
-					int hr=_mediaSeeking.SetRate(dRate);
-					dRate=0;
-					_mediaSeeking.GetRate(out dRate);
-					Log.Write("StreamBufferPlayer:SetRate to:{0} hr:{1} {2}", value,hr, dRate);
+					get
+					{
+						//lock (this)
+					{
+						return _speed;
+					}
+					}
+					set 
+					{
+						//lock (this)
+					{
+						if (_speed!=value)
+						{
+							_speed=value;
+							if (_mediaSeeking==null) return ;
+							double dRate=value;
+							int hr=_mediaSeeking.SetRate(dRate);
+							dRate=0;
+							_mediaSeeking.GetRate(out dRate);
+							Log.Write("StreamBufferPlayer:SetRate to:{0} hr:{1} {2}", value,hr, dRate);
+						}
+					}
+					}
 				}
-			}
-			}
-		}
-*/
+		*/
 
 		public override int Volume
 		{
@@ -746,32 +860,151 @@ namespace MediaPortal.Player
 			if (_state!=PlayState.Init)
 			{
 				if (_mediaCtrl!=null && _mediaSeeking!=null)
-        {
-          if (dTimeInSecs<0.0d) dTimeInSecs=0.0d;
-          if (dTimeInSecs>Duration) dTimeInSecs=Duration;
+				{
+					if (dTimeInSecs<0.0d) dTimeInSecs=0.0d;
+					if (dTimeInSecs>Duration) dTimeInSecs=Duration;
 					dTimeInSecs=Math.Floor(dTimeInSecs);
-          Log.Write("StreamBufferPlayer: seekabs: {0} duration:{1} current pos:{2}", dTimeInSecs,Duration, CurrentPosition);
-          dTimeInSecs*=10000000d;
+					Log.Write("StreamBufferPlayer: seekabs: {0} duration:{1} current pos:{2}", dTimeInSecs,Duration, CurrentPosition);
+					dTimeInSecs*=10000000d;
 					long pStop=0;
-          long lContentStart,lContentEnd;
-          double fContentStart,fContentEnd;
-          _mediaSeeking.GetAvailable(out lContentStart, out lContentEnd);
-          fContentStart=lContentStart;
-          fContentEnd=lContentEnd;
+					long lContentStart,lContentEnd;
+					double fContentStart,fContentEnd;
+					_mediaSeeking.GetAvailable(out lContentStart, out lContentEnd);
+					fContentStart=lContentStart;
+					fContentEnd=lContentEnd;
 
-          dTimeInSecs+=fContentStart;
-          long lTime=(long)dTimeInSecs;
+					dTimeInSecs+=fContentStart;
+					long lTime=(long)dTimeInSecs;
 					int hr=_mediaSeeking.SetPositions(ref lTime, SeekingFlags.AbsolutePositioning,ref pStop, SeekingFlags.NoPositioning);
 					if (hr !=0)
 					{
 						Log.WriteFile(Log.LogType.Log,true,"seek failed->seek to 0 0x:{0:X}",hr);
 					}
 				}
-        UpdateCurrentPosition();
-        Log.Write("StreamBufferPlayer: current pos:{0}", CurrentPosition);
+				UpdateCurrentPosition();
+				Log.Write("StreamBufferPlayer: current pos:{0}", CurrentPosition);
 
 			}
 		}
+		
+
+		public override void SeekRelativePercentage(int iPercentage)
+		{
+			if (_state!=PlayState.Init)
+			{
+				if (_mediaCtrl!=null && _mediaSeeking!=null)
+				{
+					double dCurrentPos=this.CurrentPosition;
+					double dDuration=Duration;
+
+					double fCurPercent=(dCurrentPos/Duration)*100.0d;
+					double fOnePercent=Duration/100.0d;
+					fCurPercent=fCurPercent + (double)iPercentage;
+					fCurPercent*=fOnePercent;
+					if (fCurPercent<0.0d) fCurPercent=0.0d;
+					if (fCurPercent<Duration)
+					{
+						SeekAbsolute(fCurPercent);
+					}
+				}
+			}
+		}
+
+
+		public override void SeekAsolutePercentage(int iPercentage)
+		{
+			if (_state!=PlayState.Init)
+			{
+				if (_mediaCtrl!=null && _mediaSeeking!=null)
+				{
+
+					if (iPercentage<0) iPercentage=0;
+					if (iPercentage>=100) iPercentage=100;
+					double fPercent=Duration/100.0f;
+					fPercent*=(double)iPercentage;
+					SeekAbsolute(fPercent);
+				}
+			}
+		}
+
+    
+		public override bool HasVideo
+		{
+			get { return true;}
+		}
+
+
+		#endregion
+
+		#region private/protected members
+
+		protected virtual void SetVideoPosition(System.Drawing.Rectangle rDest)
+		{
+			if (_videoWin!=null)
+			{
+				if (rDest.Left< 0 || rDest.Top<0 || rDest.Width<=0 || rDest.Height<=0) return;
+				_videoWin.SetWindowPosition(rDest.Left,rDest.Top,rDest.Width,rDest.Height);
+			}
+		}
+
+		protected virtual void  SetSourceDestRectangles(System.Drawing.Rectangle rSource,System.Drawing.Rectangle rDest)
+		{
+			if (_basicVideo!=null)
+			{
+				if (rSource.Left< 0 || rSource.Top<0 || rSource.Width<=0 || rSource.Height<=0) return;
+				if (rDest.Width<=0 || rDest.Height<=0) return;
+				_basicVideo.SetSourcePosition(rSource.Left,rSource.Top,rSource.Width,rSource.Height);
+				_basicVideo.SetDestinationPosition(0,0,rDest.Width,rDest.Height);
+			}
+		}
+
+		void MovieEnded()
+		{
+			// this is triggered only if movie has ended
+			// ifso, stop the movie which will trigger MovieStopped
+			
+			Log.Write("StreamBufferPlayer:ended {0}", _currentFile);
+      if (!IsTimeShifting)
+      {
+        CloseInterfaces();
+        _state=PlayState.Ended;
+      }
+      else
+      {
+        SeekAsolutePercentage(99);
+      }
+		}
+		void CheckVideoResolutionChanges()
+		{
+			if (_videoWin==null || _basicVideo==null) return;
+			int aspectX, aspectY;
+			int videoWidth=1, videoHeight=1;
+			if (_basicVideo!=null)
+			{
+				_basicVideo.GetVideoSize(out videoWidth, out videoHeight);
+			}
+			aspectX=videoWidth;
+			aspectY=videoHeight;
+			if (_basicVideo!=null)
+			{
+				_basicVideo.GetPreferredAspectRatio(out aspectX, out aspectY);
+			}
+			if (videoHeight!=_videoHeight || videoWidth != _videoWidth ||
+				  aspectX != _aspectX || aspectY != _aspectY)
+			{
+				_updateNeeded=true;
+				SetVideoWindow();
+			}
+		}
+
+		protected virtual void OnProcess()
+		{
+			if (_vmr7!=null)
+			{
+				_vmr7.Process();
+			}
+		}
+    
 #if DEBUG
     static DateTime dtStart=DateTime.Now;
 #endif
@@ -826,51 +1059,6 @@ namespace MediaPortal.Player
 			_mediaSeeking.GetDuration(out lDuration); 
 			_duration=lDuration;
 			_duration/=10000000d;
-		}
-
-		public override void SeekRelativePercentage(int iPercentage)
-		{
-			if (_state!=PlayState.Init)
-			{
-				if (_mediaCtrl!=null && _mediaSeeking!=null)
-				{
-					double dCurrentPos=this.CurrentPosition;
-					double dDuration=Duration;
-
-					double fCurPercent=(dCurrentPos/Duration)*100.0d;
-					double fOnePercent=Duration/100.0d;
-					fCurPercent=fCurPercent + (double)iPercentage;
-					fCurPercent*=fOnePercent;
-					if (fCurPercent<0.0d) fCurPercent=0.0d;
-					if (fCurPercent<Duration)
-					{
-            SeekAbsolute(fCurPercent);
-					}
-				}
-			}
-		}
-
-
-		public override void SeekAsolutePercentage(int iPercentage)
-		{
-			if (_state!=PlayState.Init)
-			{
-				if (_mediaCtrl!=null && _mediaSeeking!=null)
-				{
-
-					if (iPercentage<0) iPercentage=0;
-					if (iPercentage>=100) iPercentage=100;
-					double fPercent=Duration/100.0f;
-					fPercent*=(double)iPercentage;
-          SeekAbsolute(fPercent);
-				}
-			}
-		}
-
-    
-		public override bool HasVideo
-		{
-			get { return true;}
 		}
 
 		/// <summary> create the used COM components and get the interfaces. </summary>
@@ -1091,17 +1279,6 @@ namespace MediaPortal.Player
 			//Log.Write("StreamBufferPlayer:cleanup done");
 		}
 
-		public override void WndProc( ref Message m )
-		{
-			if( m.Msg == WM_GRAPHNOTIFY )
-			{
-				if( _mediaEvt != null )
-					OnGraphNotify();
-				return;
-			}
-			base.WndProc( ref m );
-		}
-
 		void OnGraphNotify()
 		{
 			int p1, p2, hr = 0;
@@ -1174,171 +1351,6 @@ namespace MediaPortal.Player
 			while( hr == 0 && counter < 20);
 		}
 
-		public override bool IsTV
-		{
-			get 
-			{
-				return true;
-			}
-		}
-		public override bool IsTimeShifting
-		{
-			get {return _isLive;}
-		}      
-
-    public override bool Visible
-    {
-      get {return m_bIsVisible;}
-      set
-      { 
-        if (value==m_bIsVisible) return;
-        m_bIsVisible=value;
-        _updateNeeded=true;
-      }
-    }
-
-		public override int Speed
-		{
-			get 
-			{ 
-				if (_state==PlayState.Init) return 1;
-				if (_mediaSeeking==null) return 1;
-				if (_isUsingNvidiaCodec) return iSpeed;
-				switch ( _speedRate)
-				{
-					case -10000:
-						return -1;
-					case -15000:
-						return -2;
-					case -30000:
-						return -4;
-					case -45000:
-						return -8;
-					case -60000:
-						return -16;
-					case -75000:
-						return -32;
-
-					case 10000:
-						return 1;
-					case 15000:
-						return 2;
-					case 30000:
-						return 4;
-					case 45000:
-						return 8;
-					case 60000:
-						return 16;
-					default: 
-						return 32;
-				}
-			}
-			set 
-			{
-				if (_state!=PlayState.Init)
-				{
-					if (_isUsingNvidiaCodec)
-					{
-						if (iSpeed!=value)
-						{
-							iSpeed=value;
-							if (_mediaSeeking2!=null)
-							{
-								int hr=_mediaSeeking2.SetRateEx((double)iSpeed,25);
-								//Log.Write("VideoPlayer:SetRateEx to:{0} 25fps {1:X}", iSpeed,hr);
-								if (hr!=0)
-								{
-									IMediaSeeking oldMediaSeek=_graphBuilder as IMediaSeeking;
-									hr=oldMediaSeek.SetRate((double)iSpeed);
-									//Log.Write("VideoPlayer:SetRateOld to:{0} {1:X}", iSpeed,hr);
-								}
-							}
-							else
-							{
-								int hr=_mediaSeeking.SetRate((double)iSpeed);
-								//Log.Write("VideoPlayer:SetRate to:{0} {1:X}", iSpeed,hr);
-								if (hr!=0)
-								{
-									IMediaSeeking oldMediaSeek=_graphBuilder as IMediaSeeking;
-									hr=oldMediaSeek.SetRate((double)iSpeed);
-									//Log.Write("VideoPlayer:SetRateOld to:{0} {1:X}", iSpeed,hr);
-								}
-							}
-							if (iSpeed==1)
-							{
-								_mediaCtrl.Stop();
-								System.Windows.Forms.Application.DoEvents();
-								System.Threading.Thread.Sleep(200);
-								System.Windows.Forms.Application.DoEvents();
-								FilterState state;
-								_mediaCtrl.GetState(100,out state);
-								//Log.Write("state:{0}", state.ToString());
-								_mediaCtrl.Run();
-							}
-						}
-					}
-					else
-					{
-						switch ( (int)value)
-						{
-							case -1:  _speedRate=-10000;break;
-							case -2:  _speedRate=-15000;break;
-							case -4:  _speedRate=-30000;break;
-							case -8:  _speedRate=-45000;break;
-							case -16: _speedRate=-60000;break;
-							case -32: _speedRate=-75000;break;
-
-							case 1:  
-								_speedRate=10000;
-								_mediaCtrl.Run();
-								break;
-							case 2:  _speedRate=15000;break;
-							case 4:  _speedRate=30000;break;
-							case 8:  _speedRate=45000;break;
-							case 16: _speedRate=60000;break;
-							default: _speedRate=75000;break;
-						}
-					}
-				}
-			}
-		}
-
-
-		public override void ContinueGraph()
-		{
-
-			if (_mediaCtrl==null) return;
-
-			Log.Write("StreamBufferPlayer:ContinueGraph");
-			//_mediaEvt.SetNotifyWindow( IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero );
-			//_mediaCtrl.Stop();
-
-			System.Windows.Forms.Application.DoEvents();
-			FilterState state;
-			_mediaCtrl.GetState(200,out state);
-			System.Windows.Forms.Application.DoEvents();
-			Log.Write("state:{0}", state.ToString());
-
-
-			IFileSourceFilter fileSource = (IFileSourceFilter) _bufferSource;
-			int hr = fileSource.Load(CurrentFile, IntPtr.Zero);
-			SeekAbsolute(0);
-			
-			_mediaCtrl.Run();
-			_mediaEvt.SetNotifyWindow( GUIGraphicsContext.ActiveForm, WM_GRAPHNOTIFY, IntPtr.Zero );
-			_state=PlayState.Playing;
-			_mediaCtrl.GetState(200,out state);
-			System.Windows.Forms.Application.DoEvents();
-			Log.Write("state:{0}", state.ToString());
-		}
-
-		public override void PauseGraph()
-		{
-			Log.Write("StreamBufferPlayer:Pause graph");
-			_mediaEvt.SetNotifyWindow( IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero );
-			_mediaCtrl.Stop();
-		}
-		
 
 		protected virtual void OnInitialized()
 		{
@@ -1402,6 +1414,8 @@ namespace MediaPortal.Player
 
 			_elapsedTimer=DateTime.Now;
 		}
+
+		#endregion
 
 		#region IDisposable Members
 

@@ -34,15 +34,15 @@ namespace MediaPortal.TV.Recording
 	/// </summary>
 	public class RecorderProperties
 	{
-		static TVChannel     currentTvChannel=null;
-		static TVRecording	 lastTvRecording=null;
-		static TVProgram     lastProgramRecording=null;
-		static ArrayList     m_TVChannels=new ArrayList();
-		static long					 programStart=-1;
+		static TVChannel     _currentTvChannel=null;
+		static TVRecording	 _lastTvRecording=null;
+		static TVProgram     _lastProgramRecording=null;
+		static ArrayList     _tvChannelList=new ArrayList();
+		static long					 _programStart=-1;
 		static public void Init()
 		{
-			m_TVChannels.Clear();
-			TVDatabase.GetChannels(ref m_TVChannels);
+			_tvChannelList.Clear();
+			TVDatabase.GetChannels(ref _tvChannelList);
 
 			Recorder.OnTvChannelChanged +=new MediaPortal.TV.Recording.Recorder.OnTvChannelChangeHandler(Recorder_OnTvChannelChanged);
 			Recorder.OnTvRecordingChanged+=new MediaPortal.TV.Recording.Recorder.OnTvRecordingChangedHandler(Recorder_OnTvRecordingChanged);
@@ -59,44 +59,44 @@ namespace MediaPortal.TV.Recording
 		static public void UpdateRecordingProperties()
 		{
 			// handle properties...
-			if (currentTvChannel!=null)
+			if (_currentTvChannel!=null)
 			{
-				TVProgram currentTvProgram=currentTvChannel.CurrentProgram;
-				if (currentTvProgram!=null && currentTvProgram.Start!=programStart)
+				TVProgram currentTvProgram=_currentTvChannel.CurrentProgram;
+				if (currentTvProgram!=null && currentTvProgram.Start!=_programStart)
 				{
-					UpdateTvProgramProperties(currentTvChannel.Name);
+					UpdateTvProgramProperties(_currentTvChannel.Name);
 				}
 			}
 			if (Recorder.IsRecording())
 			{
 				DateTime dtStart,dtEnd,dtStarted;
-				if (lastProgramRecording !=null)
+				if (_lastProgramRecording !=null)
 				{
-					dtStart=lastProgramRecording.StartTime;
-					dtEnd=lastProgramRecording.EndTime;
+					dtStart=_lastProgramRecording.StartTime;
+					dtEnd=_lastProgramRecording.EndTime;
 					dtStarted=Recorder.TimeRecordingStarted;
 					if (dtStarted<dtStart) dtStarted=dtStart;
 					SetProgressBarProperties(dtStart,dtStarted,dtEnd);
 				}
 				else 
 				{
-					if (lastTvRecording!=null)
+					if (_lastTvRecording!=null)
 					{
-						dtStart=lastTvRecording.StartTime;
-						dtEnd=lastTvRecording.EndTime;
+						dtStart=_lastTvRecording.StartTime;
+						dtEnd=_lastTvRecording.EndTime;
 						dtStarted=Recorder.TimeRecordingStarted;
 						if (dtStarted<dtStart) dtStarted=dtStart;
 						SetProgressBarProperties(dtStart,dtStarted,dtEnd);
 					}
 				}
 			}
-			else if (Recorder.View && currentTvChannel!=null)
+			else if (Recorder.View && _currentTvChannel!=null)
 			{
-				if (currentTvChannel.CurrentProgram!=null)
+				if (_currentTvChannel.CurrentProgram!=null)
 				{
 					DateTime dtStart,dtEnd,dtStarted;
-					dtStart=currentTvChannel.CurrentProgram.StartTime;
-					dtEnd=currentTvChannel.CurrentProgram.EndTime;
+					dtStart=_currentTvChannel.CurrentProgram.StartTime;
+					dtEnd=_currentTvChannel.CurrentProgram.EndTime;
 					dtStarted=Recorder.TimeTimeshiftingStarted;
 					if (dtStarted<dtStart) dtStarted=dtStart;
 					SetProgressBarProperties(dtStart,dtStarted,dtEnd);
@@ -124,9 +124,9 @@ namespace MediaPortal.TV.Recording
 		/// </summary>
 		static public void Clean()
 		{
-			currentTvChannel=null;
-			lastTvRecording=null;
-			lastProgramRecording=null;
+			_currentTvChannel=null;
+			_lastTvRecording=null;
+			_lastProgramRecording=null;
 
 			GUIPropertyManager.SetProperty("#TV.View.channel",String.Empty);
 			GUIPropertyManager.SetProperty("#TV.View.thumb",  String.Empty);
@@ -201,14 +201,14 @@ namespace MediaPortal.TV.Recording
 		}
 		static void UpdateTvProgramProperties(string tvChannelName)
 		{
-			programStart=-1;
+			_programStart=-1;
 			// for each tv-channel
-			for (int i=0; i < m_TVChannels.Count;++i)
+			for (int i=0; i < _tvChannelList.Count;++i)
 			{
-				TVChannel chan =(TVChannel)m_TVChannels[i];
+				TVChannel chan =(TVChannel)_tvChannelList[i];
 				if (chan.Name.Equals(tvChannelName))
 				{
-					currentTvChannel=chan;
+					_currentTvChannel=chan;
 					break;
 				}
 			}
@@ -221,12 +221,12 @@ namespace MediaPortal.TV.Recording
 			GUIPropertyManager.SetProperty("#TV.View.description",String.Empty);
 			
 
-			if (currentTvChannel!=null)
+			if (_currentTvChannel!=null)
 			{
-				TVProgram prog=currentTvChannel.CurrentProgram;
+				TVProgram prog=_currentTvChannel.CurrentProgram;
 				if (prog!=null)
 				{
-					programStart=prog.Start;
+					_programStart=prog.Start;
 					GUIPropertyManager.SetProperty("#TV.View.start",prog.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
 					GUIPropertyManager.SetProperty("#TV.View.stop",prog.EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
 					GUIPropertyManager.SetProperty("#TV.View.remaining", Utils.SecondsToHMSString(prog.EndTime - prog.StartTime));
@@ -234,7 +234,7 @@ namespace MediaPortal.TV.Recording
 					GUIPropertyManager.SetProperty("#TV.View.title",prog.Title);
 					GUIPropertyManager.SetProperty("#TV.View.description",prog.Description);
 				}
-			}//if (currentTvChannel!=null)
+			}//if (_currentTvChannel!=null)
 
 			string strLogo=Utils.GetCoverArt(Thumbs.TVChannel,tvChannelName);
 			if (!System.IO.File.Exists(strLogo))
@@ -250,47 +250,47 @@ namespace MediaPortal.TV.Recording
 			Log.WriteFile(Log.LogType.Recorder,"Recorder: recording state changed");
 			if (Recorder.IsRecording())
 			{
-				if (lastTvRecording!=Recorder.CurrentTVRecording || lastProgramRecording!=Recorder.ProgramRecording)
+				if (_lastTvRecording!=Recorder.CurrentTVRecording || _lastProgramRecording!=Recorder.ProgramRecording)
 				{
-					lastTvRecording=Recorder.CurrentTVRecording;
-					lastProgramRecording=Recorder.ProgramRecording;
-					if (lastProgramRecording==null)
+					_lastTvRecording=Recorder.CurrentTVRecording;
+					_lastProgramRecording=Recorder.ProgramRecording;
+					if (_lastProgramRecording==null)
 					{
-						string strLogo=Utils.GetCoverArt(Thumbs.TVChannel,lastTvRecording.Channel);
+						string strLogo=Utils.GetCoverArt(Thumbs.TVChannel,_lastTvRecording.Channel);
 						if (!System.IO.File.Exists(strLogo))
 						{
 							strLogo="defaultVideoBig.png";
 						}
 						GUIPropertyManager.SetProperty("#TV.Record.thumb",strLogo);
-						GUIPropertyManager.SetProperty("#TV.Record.start",lastTvRecording.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
-						GUIPropertyManager.SetProperty("#TV.Record.stop",lastTvRecording.EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
+						GUIPropertyManager.SetProperty("#TV.Record.start",_lastTvRecording.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
+						GUIPropertyManager.SetProperty("#TV.Record.stop",_lastTvRecording.EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
 						GUIPropertyManager.SetProperty("#TV.Record.genre",String.Empty);
-						GUIPropertyManager.SetProperty("#TV.Record.title",lastTvRecording.Title);
+						GUIPropertyManager.SetProperty("#TV.Record.title",_lastTvRecording.Title);
 						GUIPropertyManager.SetProperty("#TV.Record.description",String.Empty);
 					}
 					else
 					{
-						string strLogo=Utils.GetCoverArt(Thumbs.TVChannel,lastProgramRecording.Channel);
+						string strLogo=Utils.GetCoverArt(Thumbs.TVChannel,_lastProgramRecording.Channel);
 						if (!System.IO.File.Exists(strLogo))
 						{
 							strLogo="defaultVideoBig.png";
 						}
 						GUIPropertyManager.SetProperty("#TV.Record.thumb",strLogo);
-						GUIPropertyManager.SetProperty("#TV.Record.channel",lastProgramRecording.Channel);
-						GUIPropertyManager.SetProperty("#TV.Record.start",lastProgramRecording.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
-						GUIPropertyManager.SetProperty("#TV.Record.stop" ,lastProgramRecording.EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
-						GUIPropertyManager.SetProperty("#TV.Record.genre",lastProgramRecording.Genre);
-						GUIPropertyManager.SetProperty("#TV.Record.title",lastProgramRecording.Title);
-						GUIPropertyManager.SetProperty("#TV.Record.description",lastProgramRecording.Description);
+						GUIPropertyManager.SetProperty("#TV.Record.channel",_lastProgramRecording.Channel);
+						GUIPropertyManager.SetProperty("#TV.Record.start",_lastProgramRecording.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
+						GUIPropertyManager.SetProperty("#TV.Record.stop" ,_lastProgramRecording.EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
+						GUIPropertyManager.SetProperty("#TV.Record.genre",_lastProgramRecording.Genre);
+						GUIPropertyManager.SetProperty("#TV.Record.title",_lastProgramRecording.Title);
+						GUIPropertyManager.SetProperty("#TV.Record.description",_lastProgramRecording.Description);
 					}
 				}
 			}
 			else // not recording.
 			{
-				if (lastTvRecording!=null)
+				if (_lastTvRecording!=null)
 				{
-					lastTvRecording=null;
-					lastProgramRecording=null;
+					_lastTvRecording=null;
+					_lastProgramRecording=null;
 					GUIPropertyManager.SetProperty("#TV.Record.channel",String.Empty);
 					GUIPropertyManager.SetProperty("#TV.Record.start",String.Empty);
 					GUIPropertyManager.SetProperty("#TV.Record.stop" ,String.Empty);
