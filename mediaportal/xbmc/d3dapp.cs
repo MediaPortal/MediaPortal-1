@@ -1662,15 +1662,19 @@ namespace MediaPortal
       Initialize();
       OnStartup();
 
-      // This pile of ugliness gives an external app a change to be notified when
-      // the appliction has reached the final stage of startup
-      EventWaitHandle handle = EventWaitHandle.OpenExisting("MediaPortalHandleCreated");
+      try
+      {
+          // give an external app a change to be notified when the appliction has reached the final stage of startup
+          EventWaitHandle handle = EventWaitHandle.OpenExisting("MediaPortalHandleCreated");
 
-      if(handle.SafeWaitHandle.IsInvalid)
-        return;
+          if (handle.SafeWaitHandle.IsInvalid)
+              return;
 
-        handle.Set();
-        handle.Close();
+          handle.Set();
+          handle.Close();
+      }
+      catch
+      { }
     }
 
 
