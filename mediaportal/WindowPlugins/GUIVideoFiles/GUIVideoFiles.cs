@@ -1022,6 +1022,8 @@ namespace MediaPortal.GUI.Video
       return!bCancel;
 		}
 
+
+
     /// <summary>
     /// Searches IMDB for a movie and if found gets the details about the 1st movie found
     /// details are put in the video database under the file mentioned by movieFileName
@@ -1910,7 +1912,6 @@ namespace MediaPortal.GUI.Video
 
 		protected override void OnShowContextMenu()
 		{
-			
 			GUIListItem item=facadeView.SelectedListItem;
 			int itemNo=facadeView.SelectedListItemIndex;
 			if (item==null) return;
@@ -3131,7 +3132,6 @@ namespace MediaPortal.GUI.Video
 			pDlgInfo.DoModal(GUIWindowManager.ActiveWindow);
 
 		}
-
 
 		#region IProgress Members
 

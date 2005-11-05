@@ -457,26 +457,30 @@ namespace MediaPortal.GUI.Library
 			if (System.IO.File.Exists(strCache))
       {
         bool bExists=true;
-        using (Stream r = File.Open(strCache+"_2.xml", FileMode.Open, FileAccess.Read))
+
+        if (File.Exists(strCache + "_2.xml"))
         {
-          // deserialize persons
-          SoapFormatter c = new SoapFormatter();
-          try
-          {
-            textureCoords = (float[,])c.Deserialize(r);
-          }
-          catch(Exception)
-          {
-            bExists=false;
-          }
-          int iLen=textureCoords.GetLength(0);
-          if (iLen != 10+_EndCharacter-_StartCharacter)
-          {
-            bExists=false;
-          }
-          r.Close();
+            using (Stream r = File.Open(strCache + "_2.xml", FileMode.Open, FileAccess.Read))
+            {
+                // deserialize persons
+                SoapFormatter c = new SoapFormatter();
+                try
+                {
+                    textureCoords = (float[,])c.Deserialize(r);
+                }
+                catch (Exception)
+                {
+                    bExists = false;
+                }
+                int iLen = textureCoords.GetLength(0);
+                if (iLen != 10 + _EndCharacter - _StartCharacter)
+                {
+                    bExists = false;
+                }
+                r.Close();
+            }
         }
-        if (bExists)
+        if (bExists && textureCoords != null)
         {
           bool SupportsCompressedTextures=Manager.CheckDeviceFormat(GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal, 
                                                                     GUIGraphicsContext.DX9Device.DeviceCaps.DeviceType, 

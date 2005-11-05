@@ -802,49 +802,54 @@ public class MediaPortalApp : D3DApp, IRender
 
     try
     {
-      //	Log.Write("app:render()");
-      reentrant = true;
-      // if there's no DX9 device (during resizing for exmaple) then just return
-      if (GUIGraphicsContext.DX9Device == null)
-      {
-        reentrant = false;
-        //Log.Write("dx9 device=null");//remove
-        return;
-      }
-
-
-      //Log.Write("render frame:{0}",frames);//remove
-      ++frames;
-      // clear the surface
-      GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, Color.Black, 1.0f, 0);
-      CreateStateBlock();
-      GUIGraphicsContext.DX9Device.BeginScene();
-
-      if (!GUIGraphicsContext.BlankScreen)
-      {
-        // ask the window manager to render the current active window
-        GUIWindowManager.Render(timePassed);
-        RenderStats();
-
-        GUIFontManager.Present();
-      }
-      GUIGraphicsContext.DX9Device.EndScene();
-      try
-      {
-        // Show the frame on the primary surface.
-        GUIGraphicsContext.DX9Device.Present();//SLOW
-      }
-      catch (DeviceLostException)
-      {
-        //Log.Write("device lost exception {0} {1} {2}", ex.Message,ex.Source,ex.StackTrace);//remove
-        g_Player.Stop();
-        deviceLost = true;
-      }
-      /*
-        catch (Exception ex) // remove
+        //	Log.Write("app:render()");
+        reentrant = true;
+        // if there's no DX9 device (during resizing for exmaple) then just return
+        if (GUIGraphicsContext.DX9Device == null)
         {
-          Log.Write("exception {0} {1} {2}", ex.Message,ex.Source,ex.StackTrace);
-        }*/
+            reentrant = false;
+            //Log.Write("dx9 device=null");//remove
+            return;
+        }
+
+
+        //Log.Write("render frame:{0}",frames);//remove
+        ++frames;
+        // clear the surface
+        GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, Color.Black, 1.0f, 0);
+        CreateStateBlock();
+        GUIGraphicsContext.DX9Device.BeginScene();
+
+        if (!GUIGraphicsContext.BlankScreen)
+        {
+            // ask the window manager to render the current active window
+            GUIWindowManager.Render(timePassed);
+            RenderStats();
+
+            GUIFontManager.Present();
+        }
+        GUIGraphicsContext.DX9Device.EndScene();
+        try
+        {
+            // Show the frame on the primary surface.
+            GUIGraphicsContext.DX9Device.Present();//SLOW
+        }
+        catch (DeviceLostException)
+        {
+            //Log.Write("device lost exception {0} {1} {2}", ex.Message,ex.Source,ex.StackTrace);//remove
+            g_Player.Stop();
+            deviceLost = true;
+        }
+        /*
+          catch (Exception ex) // remove
+          {
+            Log.Write("exception {0} {1} {2}", ex.Message,ex.Source,ex.StackTrace);
+          }*/
+    }
+
+    catch (Exception e)
+    {
+        bool b = true;
     }
     finally
     {

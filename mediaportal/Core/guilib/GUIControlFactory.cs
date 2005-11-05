@@ -213,7 +213,18 @@ namespace MediaPortal.GUI.Library
 								return Color.FromName(valueText).ToArgb();
 							}
 
-							return ColorTranslator.FromHtml('#' + valueText).ToArgb();
+                            try
+                            {
+                                Color color = ColorTranslator.FromHtml('#' + valueText);
+
+                                return color.ToArgb();
+                            }
+                            catch
+                            {
+                                Log.Write("GUIControlFactory.ConvertXmlStringToObject: Invalid color format '#{0}' reverting to White", valueText);
+
+                                return Color.White.ToArgb();
+                            }
 						}
 					}
 				}
