@@ -51,51 +51,51 @@ namespace MediaPortal
   /// </summary>
   public class D3DApp : System.Windows.Forms.Form
   {
-		class NativeGameLoop
-		{
-			public const int PMRemove=1;
-			[DllImport("user32.dll", CharSet=CharSet.Auto)]
-			public static extern bool PeekMessage([In, Out] ref NativeGameLoop.MSG msg, IntPtr hwnd, int msgMin, int msgMax, int remove);
- 
-			[DllImport("user32.dll", CharSet=CharSet.Unicode, ExactSpelling=true)]
-			public static extern bool GetMessageW([In, Out] ref NativeGameLoop.MSG msg, IntPtr hWnd, int uMsgFilterMin, int uMsgFilterMax);
- 
-			[DllImport("user32.dll", CharSet=CharSet.Ansi, ExactSpelling=true)]
-			public static extern bool GetMessageA([In, Out] ref NativeGameLoop.MSG msg, IntPtr hWnd, int uMsgFilterMin, int uMsgFilterMax);
- 
-			[DllImport("user32.dll", CharSet=CharSet.Auto, ExactSpelling=true)]
-			public static extern bool TranslateMessage([In, Out] ref NativeGameLoop.MSG msg);
- 
-			[DllImport("user32.dll", CharSet=CharSet.Unicode, ExactSpelling=true)]
-			public static extern IntPtr DispatchMessageW([In] ref NativeGameLoop.MSG msg);
+    class NativeGameLoop
+    {
+      public const int PMRemove = 1;
+      [DllImport("user32.dll", CharSet = CharSet.Auto)]
+      public static extern bool PeekMessage([In, Out] ref NativeGameLoop.MSG msg, IntPtr hwnd, int msgMin, int msgMax, int remove);
 
-			[DllImport("user32.dll", CharSet=CharSet.Ansi, ExactSpelling=true)]
-			public static extern IntPtr DispatchMessageA([In] ref NativeGameLoop.MSG msg);
+      [DllImport("user32.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
+      public static extern bool GetMessageW([In, Out] ref NativeGameLoop.MSG msg, IntPtr hWnd, int uMsgFilterMin, int uMsgFilterMax);
 
-			[DllImport("user32.dll", CharSet=CharSet.Auto, ExactSpelling=true)]
-			public static extern IntPtr GetParent(HandleRef hWnd);
- 
+      [DllImport("user32.dll", CharSet = CharSet.Ansi, ExactSpelling = true)]
+      public static extern bool GetMessageA([In, Out] ref NativeGameLoop.MSG msg, IntPtr hWnd, int uMsgFilterMin, int uMsgFilterMax);
 
-//      public static HandleRef NullHandleRef;
+      [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
+      public static extern bool TranslateMessage([In, Out] ref NativeGameLoop.MSG msg);
+
+      [DllImport("user32.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
+      public static extern IntPtr DispatchMessageW([In] ref NativeGameLoop.MSG msg);
+
+      [DllImport("user32.dll", CharSet = CharSet.Ansi, ExactSpelling = true)]
+      public static extern IntPtr DispatchMessageA([In] ref NativeGameLoop.MSG msg);
+
+      [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
+      public static extern IntPtr GetParent(HandleRef hWnd);
 
 
-			[StructLayout(LayoutKind.Sequential)]
-				public struct MSG
-			{
-				public IntPtr hwnd;
-				public int message;
-				public IntPtr wParam;
-				public IntPtr lParam;
-				public int time;
-				public int pt_x;
-				public int pt_y;
-			}
+      //      public static HandleRef NullHandleRef;
 
-		}
 
-	  // TODO: Remove when migrating to .NET 2 (can use EventWaitHandle.OpenExisting instead)
-	  [DllImport("kernel32.dll")]
-	  private static extern IntPtr OpenEvent(uint dwDesiredAccess, bool inheritHandle, string name);
+      [StructLayout(LayoutKind.Sequential)]
+      public struct MSG
+      {
+        public IntPtr hwnd;
+        public int message;
+        public IntPtr wParam;
+        public IntPtr lParam;
+        public int time;
+        public int pt_x;
+        public int pt_y;
+      }
+
+    }
+
+    // TODO: Remove when migrating to .NET 2 (can use EventWaitHandle.OpenExisting instead)
+    [DllImport("kernel32.dll")]
+    private static extern IntPtr OpenEvent(uint dwDesiredAccess, bool inheritHandle, string name);
 
     const int MILLI_SECONDS_TIMER = 1;
     protected string m_strSkin = "mce";
@@ -123,7 +123,7 @@ namespace MediaPortal
     // fps-limiting stuff
     long startFrame = 0;
     long endFrame = 0;
-       
+
     // We need to keep track of our enumeration settings
     protected D3DEnumeration enumerationSettings = new D3DEnumeration();
     protected D3DSettings graphicsSettings = new D3DSettings();
@@ -162,7 +162,7 @@ namespace MediaPortal
     // Variables for timing
     protected float appTime;             // Current time in seconds
     protected float elapsedTime;      // Time elapsed since last frame
-    protected float framePerSecond=25;              // Instanteous frame rate
+    protected float framePerSecond = 25;              // Instanteous frame rate
     protected string deviceStats;// String to hold D3D device stats
     protected string frameStats; // String to hold frame stats
 
@@ -181,7 +181,7 @@ namespace MediaPortal
     protected System.Drawing.Point storedLocation;
     private System.Windows.Forms.MenuItem menuItem1;
     private System.Windows.Forms.MenuItem menuItem2;
-    
+
     private System.ComponentModel.IContainer components;
     private System.Windows.Forms.MenuItem menuItem4;
     private System.Windows.Forms.MenuItem dvdMenuItem;
@@ -194,7 +194,7 @@ namespace MediaPortal
     private System.Windows.Forms.MenuItem menuItem3;
     private System.Windows.Forms.MenuItem menuItem5;
     private System.Windows.Forms.MenuItem menuItemFullscreen;
-		private System.Windows.Forms.Timer timer1;
+    private System.Windows.Forms.Timer timer1;
     protected Rectangle oldBounds;
 
     // Overridable functions for the 3D scene created by the app
@@ -272,7 +272,7 @@ namespace MediaPortal
 
       using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
       {
-        useExclusiveDirectXMode= xmlreader.GetValueAsBool("general", "exclusivemode", true);
+        useExclusiveDirectXMode = xmlreader.GetValueAsBool("general", "exclusivemode", true);
         autoHideTaskbar = xmlreader.GetValueAsBool("general", "hidetaskbar", true);
         alwaysOnTop = xmlreader.GetValueAsBool("general", "alwaysontop", false);
       }
@@ -455,9 +455,9 @@ namespace MediaPortal
         }
       }
 
-      EndWindowedDeviceComboSearch:
-        if (bestDeviceCombo == null)
-          return false;
+    EndWindowedDeviceComboSearch:
+      if (bestDeviceCombo == null)
+        return false;
 
       graphicsSettings.WindowedAdapterInfo = bestAdapterInfo;
       graphicsSettings.WindowedDeviceInfo = bestDeviceInfo;
@@ -545,9 +545,9 @@ namespace MediaPortal
         }
       }
 
-      EndFullscreenDeviceComboSearch:
-        if (bestDeviceCombo == null)
-          return false;
+    EndFullscreenDeviceComboSearch:
+      if (bestDeviceCombo == null)
+        return false;
 
       // Need to find a display mode on the best adapter that uses pBestDeviceCombo->AdapterFormat
       // and is as close to bestAdapterDesktopDisplayMode's res as possible
@@ -668,12 +668,12 @@ namespace MediaPortal
         presentParams.DeviceWindow = this;
         presentParams.Windowed = false;
       }
-      GUIGraphicsContext.DirectXPresentParameters=presentParams;
+      GUIGraphicsContext.DirectXPresentParameters = presentParams;
     }
 
     public bool SwitchFullScreenOrWindowed(bool bWindowed, bool bRemoveHandler)
     {
-      if (!useExclusiveDirectXMode) 
+      if (!useExclusiveDirectXMode)
         return true;
       if (bRemoveHandler)
         GUIGraphicsContext.DX9Device.DeviceReset -= new System.EventHandler(this.OnDeviceReset);
@@ -1031,7 +1031,7 @@ namespace MediaPortal
         graphicsSettings.DevType == DevTypeOld)
       {
         BuildPresentParamsFromSettings();
-        // Resize the 3D device
+      // Resize the 3D device
       RETRY:
         try
         {
@@ -1160,10 +1160,10 @@ namespace MediaPortal
     /// </summary>
     protected void FullRender()
     {
-      if (this.WindowState==FormWindowState.Minimized)
+      if (this.WindowState == FormWindowState.Minimized)
       {
         System.Threading.Thread.Sleep(100);
-        return;						
+        return;
       }
 
       if (GUIGraphicsContext.Vmr9Active)
@@ -1352,8 +1352,8 @@ namespace MediaPortal
           TimeSpan ts = DateTime.Now - _mouseTimeOutTimer;
           if (ts.TotalSeconds >= 3)
           {
-						//hide mouse
-						Cursor.Hide();
+            //hide mouse
+            Cursor.Hide();
             _showCursor = false;
             _needUpdate = true;
             Invalidate(true);
@@ -1400,8 +1400,8 @@ namespace MediaPortal
       // Update the scene stats once per second
       if (time - lastTime >= 1.0f)
       {
-        framePerSecond    = frames / (time - lastTime);
-        GUIGraphicsContext.CurrentFPS=framePerSecond;
+        framePerSecond = frames / (time - lastTime);
+        GUIGraphicsContext.CurrentFPS = framePerSecond;
         lastTime = time;
         frames = 0;
         //				if ( !GUIGraphicsContext.Vmr9Active )
@@ -1457,18 +1457,18 @@ namespace MediaPortal
           GetSleepingTime(), strFmt, strDepthFmt, strMultiSample, ShouldUseSleepingTime());
         if (GUIGraphicsContext.Vmr9Active)
           frameStats += String.Format(" VMR9 {0}", GUIGraphicsContext.Vmr9FPS.ToString("f2"));
-        string quality=String.Format("\nfps:{0} sync:{1} drawn:{2} dropped:{3} jitter:{4}",
+        string quality = String.Format("\nfps:{0} sync:{1} drawn:{2} dropped:{3} jitter:{4}",
           VideoRendererStatistics.AverageFrameRate.ToString("f2"),
           VideoRendererStatistics.AverageSyncOffset,
           VideoRendererStatistics.FramesDrawn,
           VideoRendererStatistics.FramesDropped,
           VideoRendererStatistics.Jitter);
-        frameStats+=quality;
+        frameStats += quality;
         //long lTotalMemory=GC.GetTotalMemory(false);
         //string memory=String.Format("\nTotal Memory allocated:{0}",Utils.GetSize(lTotalMemory) );
-							
+
         //frameStats+=memory;
-									
+
 
       }
     }
@@ -1657,27 +1657,27 @@ namespace MediaPortal
 
     private void D3DApp_Load(object sender, System.EventArgs e)
     {
-			System.Windows.Forms.Application.Idle+=new EventHandler(Application_Idle);
-			Initialize();
-			OnStartup();
+      System.Windows.Forms.Application.Idle += new EventHandler(Application_Idle);
+      Initialize();
+      OnStartup();
 
-		// TODO: When migrating to .NET 2 change to use EventWaitHandle.OpenExisting
+      // TODO: When migrating to .NET 2 change to use EventWaitHandle.OpenExisting
 
-		// This pile of ugliness gives an external app a change to be notified when
-		// the appliction has reached the final stage of startup
-		IntPtr handle = OpenEvent(2031619, false, "MediaPortalHandleCreated");
-			
-		if(handle == IntPtr.Zero)
-			return;
+      // This pile of ugliness gives an external app a change to be notified when
+      // the appliction has reached the final stage of startup
+      IntPtr handle = OpenEvent(2031619, false, "MediaPortalHandleCreated");
 
-		AutoResetEvent evnt = new AutoResetEvent(false);
+      if (handle == IntPtr.Zero)
+        return;
 
-		evnt.Close();
-		GC.ReRegisterForFinalize(evnt);
+      AutoResetEvent evnt = new AutoResetEvent(false);
 
-		evnt.Handle = handle; 
-		evnt.Set();
-		evnt.Close();
+      evnt.Close();
+      GC.ReRegisterForFinalize(evnt);
+
+      evnt.Handle = handle;
+      evnt.Set();
+      evnt.Close();
     }
 
 
@@ -1706,9 +1706,9 @@ namespace MediaPortal
     {
       Log.Write("App.ToggleFullWindowed()");
       isMaximized = !isMaximized;
-			GUITextureManager.CleanupThumbs();
-			GUITextureManager.Dispose();
-			GUIFontManager.Dispose();
+      GUITextureManager.CleanupThumbs();
+      GUITextureManager.Dispose();
+      GUIFontManager.Dispose();
       GUIGraphicsContext.DX9Device.DeviceReset -= new System.EventHandler(this.OnDeviceReset);
       if (isMaximized)
       {
@@ -1813,169 +1813,169 @@ namespace MediaPortal
     /// </summary>
     private void InitializeComponent()
     {
-			this.components = new System.ComponentModel.Container();
-			System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(D3DApp));
-			this.mnuMain = new System.Windows.Forms.MainMenu();
-			this.mnuFile = new System.Windows.Forms.MenuItem();
-			this.mnuChange = new System.Windows.Forms.MenuItem();
-			this.mnuBreak2 = new System.Windows.Forms.MenuItem();
-			this.mnuExit = new System.Windows.Forms.MenuItem();
-			this.menuItem1 = new System.Windows.Forms.MenuItem();
-			this.menuItemFullscreen = new System.Windows.Forms.MenuItem();
-			this.menuItem2 = new System.Windows.Forms.MenuItem();
-			this.menuItem4 = new System.Windows.Forms.MenuItem();
-			this.dvdMenuItem = new System.Windows.Forms.MenuItem();
-			this.moviesMenuItem = new System.Windows.Forms.MenuItem();
-			this.musicMenuItem = new System.Windows.Forms.MenuItem();
-			this.picturesMenuItem = new System.Windows.Forms.MenuItem();
-			this.televisionMenuItem = new System.Windows.Forms.MenuItem();
-			this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
-			this.contextMenu1 = new System.Windows.Forms.ContextMenu();
-			this.menuItem3 = new System.Windows.Forms.MenuItem();
-			this.menuItem5 = new System.Windows.Forms.MenuItem();
-			this.timer1 = new System.Windows.Forms.Timer(this.components);
-			// 
-			// mnuMain
-			// 
-			this.mnuMain.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+      this.components = new System.ComponentModel.Container();
+      System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(D3DApp));
+      this.mnuMain = new System.Windows.Forms.MainMenu();
+      this.mnuFile = new System.Windows.Forms.MenuItem();
+      this.mnuChange = new System.Windows.Forms.MenuItem();
+      this.mnuBreak2 = new System.Windows.Forms.MenuItem();
+      this.mnuExit = new System.Windows.Forms.MenuItem();
+      this.menuItem1 = new System.Windows.Forms.MenuItem();
+      this.menuItemFullscreen = new System.Windows.Forms.MenuItem();
+      this.menuItem2 = new System.Windows.Forms.MenuItem();
+      this.menuItem4 = new System.Windows.Forms.MenuItem();
+      this.dvdMenuItem = new System.Windows.Forms.MenuItem();
+      this.moviesMenuItem = new System.Windows.Forms.MenuItem();
+      this.musicMenuItem = new System.Windows.Forms.MenuItem();
+      this.picturesMenuItem = new System.Windows.Forms.MenuItem();
+      this.televisionMenuItem = new System.Windows.Forms.MenuItem();
+      this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
+      this.contextMenu1 = new System.Windows.Forms.ContextMenu();
+      this.menuItem3 = new System.Windows.Forms.MenuItem();
+      this.menuItem5 = new System.Windows.Forms.MenuItem();
+      this.timer1 = new System.Windows.Forms.Timer(this.components);
+      // 
+      // mnuMain
+      // 
+      this.mnuMain.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
 																																						this.mnuFile,
 																																						this.menuItem1,
 																																						this.menuItem4});
-			// 
-			// mnuFile
-			// 
-			this.mnuFile.Index = 0;
-			this.mnuFile.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+      // 
+      // mnuFile
+      // 
+      this.mnuFile.Index = 0;
+      this.mnuFile.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
 																																						this.mnuChange,
 																																						this.mnuBreak2,
 																																						this.mnuExit});
-			this.mnuFile.Text = "&File";
-			// 
-			// mnuChange
-			// 
-			this.mnuChange.Index = 0;
-			this.mnuChange.Text = "&Change Device...";
-			this.mnuChange.Click += new System.EventHandler(this.UserSelectNewDevice);
-			// 
-			// mnuBreak2
-			// 
-			this.mnuBreak2.Index = 1;
-			this.mnuBreak2.Text = "-";
-			// 
-			// mnuExit
-			// 
-			this.mnuExit.Index = 2;
-			this.mnuExit.Text = "Exit";
-			this.mnuExit.Click += new System.EventHandler(this.ExitSample);
-			// 
-			// menuItem1
-			// 
-			this.menuItem1.Index = 1;
-			this.menuItem1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+      this.mnuFile.Text = "&File";
+      // 
+      // mnuChange
+      // 
+      this.mnuChange.Index = 0;
+      this.mnuChange.Text = "&Change Device...";
+      this.mnuChange.Click += new System.EventHandler(this.UserSelectNewDevice);
+      // 
+      // mnuBreak2
+      // 
+      this.mnuBreak2.Index = 1;
+      this.mnuBreak2.Text = "-";
+      // 
+      // mnuExit
+      // 
+      this.mnuExit.Index = 2;
+      this.mnuExit.Text = "Exit";
+      this.mnuExit.Click += new System.EventHandler(this.ExitSample);
+      // 
+      // menuItem1
+      // 
+      this.menuItem1.Index = 1;
+      this.menuItem1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
 																																							this.menuItemFullscreen,
 																																							this.menuItem2});
-			this.menuItem1.Text = "&Options";
-			// 
-			// menuItemFullscreen
-			// 
-			this.menuItemFullscreen.Index = 0;
-			this.menuItemFullscreen.Text = "&Fullscreen";
-			this.menuItemFullscreen.Click += new System.EventHandler(this.menuItemFullscreen_Click);
-			// 
-			// menuItem2
-			// 
-			this.menuItem2.Index = 1;
-			this.menuItem2.Shortcut = System.Windows.Forms.Shortcut.F2;
-			this.menuItem2.Text = "&Configuration...";
-			this.menuItem2.Click += new System.EventHandler(this.menuItem2_Click);
-			// 
-			// menuItem4
-			// 
-			this.menuItem4.Index = 2;
-			this.menuItem4.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+      this.menuItem1.Text = "&Options";
+      // 
+      // menuItemFullscreen
+      // 
+      this.menuItemFullscreen.Index = 0;
+      this.menuItemFullscreen.Text = "&Fullscreen";
+      this.menuItemFullscreen.Click += new System.EventHandler(this.menuItemFullscreen_Click);
+      // 
+      // menuItem2
+      // 
+      this.menuItem2.Index = 1;
+      this.menuItem2.Shortcut = System.Windows.Forms.Shortcut.F2;
+      this.menuItem2.Text = "&Configuration...";
+      this.menuItem2.Click += new System.EventHandler(this.menuItem2_Click);
+      // 
+      // menuItem4
+      // 
+      this.menuItem4.Index = 2;
+      this.menuItem4.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
 																																							this.dvdMenuItem,
 																																							this.moviesMenuItem,
 																																							this.musicMenuItem,
 																																							this.picturesMenuItem,
 																																							this.televisionMenuItem});
-			this.menuItem4.Text = "Wizards";
-			// 
-			// dvdMenuItem
-			// 
-			this.dvdMenuItem.Index = 0;
-			this.dvdMenuItem.Text = "DVD";
-			this.dvdMenuItem.Click += new System.EventHandler(this.dvdMenuItem_Click);
-			// 
-			// moviesMenuItem
-			// 
-			this.moviesMenuItem.Index = 1;
-			this.moviesMenuItem.Text = "Movies";
-			this.moviesMenuItem.Click += new System.EventHandler(this.moviesMenuItem_Click);
-			// 
-			// musicMenuItem
-			// 
-			this.musicMenuItem.Index = 2;
-			this.musicMenuItem.Text = "Music";
-			this.musicMenuItem.Click += new System.EventHandler(this.musicMenuItem_Click);
-			// 
-			// picturesMenuItem
-			// 
-			this.picturesMenuItem.Index = 3;
-			this.picturesMenuItem.Text = "Pictures";
-			this.picturesMenuItem.Click += new System.EventHandler(this.picturesMenuItem_Click);
-			// 
-			// televisionMenuItem
-			// 
-			this.televisionMenuItem.Index = 4;
-			this.televisionMenuItem.Text = "Television";
-			this.televisionMenuItem.Click += new System.EventHandler(this.televisionMenuItem_Click);
-			// 
-			// notifyIcon1
-			// 
-			this.notifyIcon1.ContextMenu = this.contextMenu1;
-			this.notifyIcon1.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon1.Icon")));
-			this.notifyIcon1.Text = "MediaPortal";
-			this.notifyIcon1.DoubleClick += new System.EventHandler(this.Restore_OnClick);
-			// 
-			// contextMenu1
-			// 
-			this.contextMenu1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+      this.menuItem4.Text = "Wizards";
+      // 
+      // dvdMenuItem
+      // 
+      this.dvdMenuItem.Index = 0;
+      this.dvdMenuItem.Text = "DVD";
+      this.dvdMenuItem.Click += new System.EventHandler(this.dvdMenuItem_Click);
+      // 
+      // moviesMenuItem
+      // 
+      this.moviesMenuItem.Index = 1;
+      this.moviesMenuItem.Text = "Movies";
+      this.moviesMenuItem.Click += new System.EventHandler(this.moviesMenuItem_Click);
+      // 
+      // musicMenuItem
+      // 
+      this.musicMenuItem.Index = 2;
+      this.musicMenuItem.Text = "Music";
+      this.musicMenuItem.Click += new System.EventHandler(this.musicMenuItem_Click);
+      // 
+      // picturesMenuItem
+      // 
+      this.picturesMenuItem.Index = 3;
+      this.picturesMenuItem.Text = "Pictures";
+      this.picturesMenuItem.Click += new System.EventHandler(this.picturesMenuItem_Click);
+      // 
+      // televisionMenuItem
+      // 
+      this.televisionMenuItem.Index = 4;
+      this.televisionMenuItem.Text = "Television";
+      this.televisionMenuItem.Click += new System.EventHandler(this.televisionMenuItem_Click);
+      // 
+      // notifyIcon1
+      // 
+      this.notifyIcon1.ContextMenu = this.contextMenu1;
+      this.notifyIcon1.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon1.Icon")));
+      this.notifyIcon1.Text = "MediaPortal";
+      this.notifyIcon1.DoubleClick += new System.EventHandler(this.Restore_OnClick);
+      // 
+      // contextMenu1
+      // 
+      this.contextMenu1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
 																																								 this.menuItem3});
-			this.contextMenu1.Popup += new System.EventHandler(this.contextMenu1_Popup);
-			// 
-			// menuItem3
-			// 
-			this.menuItem3.Index = 0;
-			this.menuItem3.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+      this.contextMenu1.Popup += new System.EventHandler(this.contextMenu1_Popup);
+      // 
+      // menuItem3
+      // 
+      this.menuItem3.Index = 0;
+      this.menuItem3.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
 																																							this.menuItem5});
-			this.menuItem3.Text = "";
-			// 
-			// menuItem5
-			// 
-			this.menuItem5.Index = 0;
-			this.menuItem5.Text = "";
-			// 
-			// timer1
-			// 
-			this.timer1.Enabled = true;
-			this.timer1.Interval = 300;
-			// 
-			// D3DApp
-			// 
-			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-			this.ClientSize = new System.Drawing.Size(720, 576);
-			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-			this.KeyPreview = true;
-			this.MinimumSize = new System.Drawing.Size(100, 100);
-			this.Name = "D3DApp";
-			this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDown);
-			this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.D3DApp_Click);
-			this.Closing += new System.ComponentModel.CancelEventHandler(this.D3DApp_Closing);
-			this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.OnKeyPress);
-			this.Load += new System.EventHandler(this.D3DApp_Load);
-			this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.D3DApp_MouseMove);
+      this.menuItem3.Text = "";
+      // 
+      // menuItem5
+      // 
+      this.menuItem5.Index = 0;
+      this.menuItem5.Text = "";
+      // 
+      // timer1
+      // 
+      this.timer1.Enabled = true;
+      this.timer1.Interval = 300;
+      // 
+      // D3DApp
+      // 
+      this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+      this.ClientSize = new System.Drawing.Size(720, 576);
+      this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+      this.KeyPreview = true;
+      this.MinimumSize = new System.Drawing.Size(100, 100);
+      this.Name = "D3DApp";
+      this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDown);
+      this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.D3DApp_Click);
+      this.Closing += new System.ComponentModel.CancelEventHandler(this.D3DApp_Closing);
+      this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.OnKeyPress);
+      this.Load += new System.EventHandler(this.D3DApp_Load);
+      this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.D3DApp_MouseMove);
 
-		}
+    }
 
 
     /// <summary>
@@ -2024,7 +2024,7 @@ namespace MediaPortal
 
       this.OnResize(e);
       base.OnSizeChanged(e);
-      
+
       if (m_bRestoreTmp)
         m_bRestore = true;
     }
@@ -2124,8 +2124,8 @@ namespace MediaPortal
         lasty = e.Y;
         System.Windows.Forms.Cursor ourCursor = this.Cursor;
         if (!_showCursor)
-				{
-					Cursor.Show();
+        {
+          Cursor.Show();
           _showCursor = true;
           _needUpdate = true;
           Invalidate(true);
@@ -2139,7 +2139,7 @@ namespace MediaPortal
       System.Windows.Forms.Cursor ourCursor = this.Cursor;
       if (!_showCursor)
       {
-				Cursor.Show();
+        Cursor.Show();
         _showCursor = true;
         _needUpdate = true;
         Invalidate(true);
@@ -2236,54 +2236,54 @@ namespace MediaPortal
       System.Diagnostics.Process.Start("configuration.exe", @"/wizard /section=wizards\dvd.xml");
     }
 
-		NativeGameLoop.MSG msg1=new NativeGameLoop.MSG();
-		public void HandleMessage()
-		{
-			try
-			{
+    NativeGameLoop.MSG msg1 = new NativeGameLoop.MSG();
+    public void HandleMessage()
+    {
+      try
+      {
 
-				if (!NativeGameLoop.PeekMessage(ref msg1, IntPtr.Zero, 0, 0, 0))
-				{
-					return;
-				}
-				if (!NativeGameLoop.GetMessageA(ref msg1, IntPtr.Zero, 0, 0))
-				{
-					return;
-				}
-				NativeGameLoop.TranslateMessage(ref msg1);
-				NativeGameLoop.DispatchMessageA(ref msg1);
-				//	System.Windows.Forms.Application.DoEvents();//SLOW
-			}
+        if (!NativeGameLoop.PeekMessage(ref msg1, IntPtr.Zero, 0, 0, 0))
+        {
+          return;
+        }
+        if (!NativeGameLoop.GetMessageA(ref msg1, IntPtr.Zero, 0, 0))
+        {
+          return;
+        }
+        NativeGameLoop.TranslateMessage(ref msg1);
+        NativeGameLoop.DispatchMessageA(ref msg1);
+        //	System.Windows.Forms.Application.DoEvents();//SLOW
+      }
 #if DEBUG
       catch (Exception ex)
       {
           Log.Write("exception:{0}",ex.ToString());
 #else
-			catch (Exception)
-			{
+      catch (Exception)
+      {
 #endif
-			}
-		}
+      }
+    }
 
     void StartFrameClock()
     {
       NativeMethods.QueryPerformanceCounter(ref startFrame);
     }
-		bool ShouldWaitForFrameClock()
-		{
-			long timeElapsed = 0;
-			NativeMethods.QueryPerformanceCounter(ref endFrame);
-			timeElapsed = endFrame - startFrame;
-			if (timeElapsed < GUIGraphicsContext.DesiredFrameTime)
-			{
-				return true;
-			}
-			return false;
-		}
+    bool ShouldWaitForFrameClock()
+    {
+      long timeElapsed = 0;
+      NativeMethods.QueryPerformanceCounter(ref endFrame);
+      timeElapsed = endFrame - startFrame;
+      if (timeElapsed < GUIGraphicsContext.DesiredFrameTime)
+      {
+        return true;
+      }
+      return false;
+    }
 
     void WaitForFrameClock()
     {
-			//if (GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.Vmr9FPS>1f) return;
+      //if (GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.Vmr9FPS>1f) return;
       long milliSecondsLeft;
       long timeElapsed = 0;
 
@@ -2293,127 +2293,127 @@ namespace MediaPortal
       timeElapsed = endFrame - startFrame;
       if (timeElapsed < GUIGraphicsContext.DesiredFrameTime)
       {
-        milliSecondsLeft =(((GUIGraphicsContext.DesiredFrameTime - timeElapsed)*1000) / DXUtil.TicksPerSecond);
-        if(milliSecondsLeft > 0)
+        milliSecondsLeft = (((GUIGraphicsContext.DesiredFrameTime - timeElapsed) * 1000) / DXUtil.TicksPerSecond);
+        if (milliSecondsLeft > 0)
         {
           DoSleep((int)milliSecondsLeft);
         }
       }
     }
-/*
-    /// <summary>
-    /// Run the simulation
-    /// </summary>
-    public void Run()
-    {
-      // Now we're ready to recieve and process Windows messages.
-      System.Windows.Forms.Control mainWindow = this;
-
-      // If the render target is a form and *not* this form, use that form instead,
-      // otherwise, use the main form.
-      if ((ourRenderTarget is System.Windows.Forms.Form) && (ourRenderTarget != this))
-        mainWindow = ourRenderTarget;
-
-      mainWindow.Show();
-
-      // Get the first message		
-      storedSize = this.ClientSize;
-      storedLocation = this.Location;
-
-      GC.Collect();
-      GC.Collect();
-      GC.Collect();
-      GC.WaitForPendingFinalizers();
-      bool useFrameClock=false;
-      int  counter=0;
-      while (true)
-      {
-        if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
-          break;
-        try
+    /*
+        /// <summary>
+        /// Run the simulation
+        /// </summary>
+        public void Run()
         {
-					if (g_Player.Playing) 
-					{
-						System.Threading.Thread.Sleep(100);
-					//	HandleMessage();
+          // Now we're ready to recieve and process Windows messages.
+          System.Windows.Forms.Control mainWindow = this;
+
+          // If the render target is a form and *not* this form, use that form instead,
+          // otherwise, use the main form.
+          if ((ourRenderTarget is System.Windows.Forms.Form) && (ourRenderTarget != this))
+            mainWindow = ourRenderTarget;
+
+          mainWindow.Show();
+
+          // Get the first message		
+          storedSize = this.ClientSize;
+          storedLocation = this.Location;
+
+          GC.Collect();
+          GC.Collect();
+          GC.Collect();
+          GC.WaitForPendingFinalizers();
+          bool useFrameClock=false;
+          int  counter=0;
+          while (true)
+          {
+            if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
+              break;
+            try
+            {
+              if (g_Player.Playing) 
+              {
+                System.Threading.Thread.Sleep(100);
+              //	HandleMessage();
 						
-					}
-					else
-					{
-						useFrameClock=false;
+              }
+              else
+              {
+                useFrameClock=false;
 							
-						if (ShouldUseSleepingTime())
-						{
-							if (GUIGraphicsContext.IsFullScreenVideo&&  g_Player.Playing && g_Player.IsMusic && g_Player.HasVideo)
-							{
-								//dont sleep
-							}
-							else 
-							{
-								// Do some sleep....
-								useFrameClock=true;
-							}
-						}
-						else
-						{
-							if (GUIGraphicsContext.IsFullScreenVideo && g_Player.Playing && g_Player.IsMusic && g_Player.HasVideo)
-							{
-								//dont sleep
-							}
-							else
-							{
-								GUIGraphicsContext.CurrentFPS = 0f;
-								DoSleep(50);
-							}
-						}
-						FrameMove();
-						if (GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.Vmr9FPS<1f) 
-						{
-							if (VMR9Util.g_vmr9!=null)
-							{
-								VMR9Util.g_vmr9.Process();
-							}
-						}
-						if (GUIGraphicsContext.IsFullScreenVideo==false||g_Player.Speed!=1) counter=0;
-						if (counter==0)
-						{
-							OnProcess();
-							if (useFrameClock)
-								StartFrameClock();
-							FullRender();
-							if (useFrameClock)
-								WaitForFrameClock();
-						}
-						else if (counter==5 || counter==10 || counter==15||counter==20)
-						{
-							if (VMR7Util.g_vmr7!=null)
-								FullRender();
-						}
-						HandleMessage();
-						counter++;
-						if (counter>25) counter=0;
-					}
+                if (ShouldUseSleepingTime())
+                {
+                  if (GUIGraphicsContext.IsFullScreenVideo&&  g_Player.Playing && g_Player.IsMusic && g_Player.HasVideo)
+                  {
+                    //dont sleep
+                  }
+                  else 
+                  {
+                    // Do some sleep....
+                    useFrameClock=true;
+                  }
+                }
+                else
+                {
+                  if (GUIGraphicsContext.IsFullScreenVideo && g_Player.Playing && g_Player.IsMusic && g_Player.HasVideo)
+                  {
+                    //dont sleep
+                  }
+                  else
+                  {
+                    GUIGraphicsContext.CurrentFPS = 0f;
+                    DoSleep(50);
+                  }
+                }
+                FrameMove();
+                if (GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.Vmr9FPS<1f) 
+                {
+                  if (VMR9Util.g_vmr9!=null)
+                  {
+                    VMR9Util.g_vmr9.Process();
+                  }
+                }
+                if (GUIGraphicsContext.IsFullScreenVideo==false||g_Player.Speed!=1) counter=0;
+                if (counter==0)
+                {
+                  OnProcess();
+                  if (useFrameClock)
+                    StartFrameClock();
+                  FullRender();
+                  if (useFrameClock)
+                    WaitForFrameClock();
+                }
+                else if (counter==5 || counter==10 || counter==15||counter==20)
+                {
+                  if (VMR7Util.g_vmr7!=null)
+                    FullRender();
+                }
+                HandleMessage();
+                counter++;
+                if (counter>25) counter=0;
+              }
+            }
+            catch (Exception ex)
+            {
+              Log.WriteFile(Log.LogType.Log, true, "exception:{0}", ex.ToString());
+    #if DEBUG
+            throw ex;
+    #endif
+            }
+          }
+          OnExit();
+          try
+          {
+            if (UseMillisecondTiming) timeEndPeriod(MILLI_SECONDS_TIMER);
+          }
+          catch (Exception)
+          {
+          }
+          UseMillisecondTiming = false;
         }
-        catch (Exception ex)
-        {
-          Log.WriteFile(Log.LogType.Log, true, "exception:{0}", ex.ToString());
-#if DEBUG
-        throw ex;
-#endif
-        }
-      }
-      OnExit();
-      try
-      {
-        if (UseMillisecondTiming) timeEndPeriod(MILLI_SECONDS_TIMER);
-      }
-      catch (Exception)
-      {
-      }
-      UseMillisecondTiming = false;
-    }
 
-*/
+    */
     private void contextMenu1_Popup(object sender, System.EventArgs e)
     {
 
@@ -2450,37 +2450,37 @@ namespace MediaPortal
         dialogNotify.SetImage(String.Format(@"{0}\media\{1}", GUIGraphicsContext.Skin, "dialog_information.png"));
         dialogNotify.DoModal(GUIWindowManager.ActiveWindow);
       }
-		}
-		
-		private bool AppStillIdle()
-		{
-			bool result= NativeGameLoop.PeekMessage(ref msg1, IntPtr.Zero, 0, 0, 0);
-			if (result)
-			{
-				System.Diagnostics.Debug.WriteLine(String.Format("msg :hwnd:{0:X} msg:{1:x} wparm:{2:X} lparm:{3:X}", msg1.hwnd,msg1.message,msg1.wParam,msg1.lParam));
-			}
-			return !result;
-		}
+    }
 
-		private void Application_Idle(object sender, EventArgs e)
-		{
-			do
-			{
-				OnProcess();
-				FrameMove();
-				StartFrameClock();
-				FullRender();
-				WaitForFrameClock();
-				if (g_Player.Playing) 
-				{
-					if (!g_Player.IsRadio  || !g_Player.IsTimeShifting)
-						break;
-				}
-				if (GUIGraphicsContext.CurrentState==GUIGraphicsContext.State.STOPPING) break;
-			} while (AppStillIdle() );
+    private bool AppStillIdle()
+    {
+      bool result = NativeGameLoop.PeekMessage(ref msg1, IntPtr.Zero, 0, 0, 0);
+      if (result)
+      {
+        System.Diagnostics.Debug.WriteLine(String.Format("msg :hwnd:{0:X} msg:{1:x} wparm:{2:X} lparm:{3:X}", msg1.hwnd, msg1.message, msg1.wParam, msg1.lParam));
+      }
+      return !result;
+    }
 
-		}
-	}
+    private void Application_Idle(object sender, EventArgs e)
+    {
+      do
+      {
+        OnProcess();
+        FrameMove();
+        StartFrameClock();
+        FullRender();
+        WaitForFrameClock();
+        if (g_Player.Playing)
+        {
+          if (!g_Player.IsRadio || !g_Player.IsTimeShifting)
+            break;
+        }
+        if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING) break;
+      } while (AppStillIdle());
+
+    }
+  }
 
   #region Enums for D3D Applications
   /// <summary>
@@ -2666,7 +2666,7 @@ namespace MediaPortal
     }
     /// <summary>Window styles</summary>
     [Flags]
-      public enum WindowStyles : uint
+    public enum WindowStyles : uint
     {
       Overlapped = 0x00000000,
       Popup = 0x80000000,
@@ -2760,7 +2760,7 @@ namespace MediaPortal
 
     /// <summary>Windows Message</summary>
     [StructLayout(LayoutKind.Sequential)]
-      public struct Message
+    public struct Message
     {
       public IntPtr hWnd;
       public WindowMessage msg;
@@ -2772,7 +2772,7 @@ namespace MediaPortal
 
     /// <summary>MinMax Info structure</summary>
     [StructLayout(LayoutKind.Sequential)]
-      public struct MinMaxInformation
+    public struct MinMaxInformation
     {
       public System.Drawing.Point reserved;
       public System.Drawing.Point MaxSize;
@@ -2783,7 +2783,7 @@ namespace MediaPortal
 
     /// <summary>Monitor Info structure</summary>
     [StructLayout(LayoutKind.Sequential)]
-      public struct MonitorInformation
+    public struct MonitorInformation
     {
       public uint Size; // Size of this structure
       public System.Drawing.Rectangle MonitorRectangle;
@@ -2793,7 +2793,7 @@ namespace MediaPortal
 
     /// <summary>Window class structure</summary>
     [StructLayout(LayoutKind.Sequential)]
-      public struct WindowClass
+    public struct WindowClass
     {
       public int Styles;
       [MarshalAs(UnmanagedType.FunctionPtr)]

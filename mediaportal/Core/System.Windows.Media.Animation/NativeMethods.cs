@@ -63,12 +63,12 @@ namespace System.Windows.Media.Animation
 			if(window == windowForeground || SetForegroundWindow(window)) return true;
 			if(force == false) return false;
 			if(windowForeground == IntPtr.Zero) return false;
-			if(!AttachThreadInput(AppDomain.GetCurrentThreadId(), GetWindowThreadProcessId(windowForeground, 0), true)) return false;
+			if(!AttachThreadInput(System.Threading.Thread.CurrentThread.ManagedThreadId, GetWindowThreadProcessId(windowForeground, 0), true)) return false;
 
 			SetForegroundWindow(window);
 			BringWindowToTop(window);
 
-			AttachThreadInput(AppDomain.GetCurrentThreadId(), GetWindowThreadProcessId(windowForeground, 0), false);
+      AttachThreadInput(System.Threading.Thread.CurrentThread.ManagedThreadId, GetWindowThreadProcessId(windowForeground, 0), false);
 
 			return (GetForegroundWindow() == window);
 		}

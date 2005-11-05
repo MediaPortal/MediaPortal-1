@@ -179,7 +179,7 @@ public class MediaPortalApp : D3DApp, IRender
 		//form=null;
 
 #if !DEBUG
-		string version=ConfigurationSettings.AppSettings["version"];
+		string version=System.Configuration.ConfigurationManager.AppSettings["version"];
 		//ClientApplicationInfo clientInfo = ClientApplicationInfo.Deserialize("MediaPortal.exe.config");
 		splashScreen = new SplashScreen();
 		splashScreen.SetVersion(version);

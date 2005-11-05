@@ -309,7 +309,7 @@ namespace MediaPortal.EPG
 							return null;				// Guide starts on pervious day ignore these listings.
 
 						m_listingTime = (int) Expect.Morning;
-						goto case Expect.Morning;      // Pass into Morning Code
+						goto case (int)Expect.Morning;      // Pass into Morning Code
 
 					case (int) Expect.Morning:
 						if(m_LastStart > guideData.StartTime[0])
@@ -324,7 +324,7 @@ namespace MediaPortal.EPG
 
 						// Pass into Afternoon Code
 						//m_LastStart = 0;
-						goto case Expect.Afternoon;
+						goto case (int)Expect.Afternoon;
 
 					case (int) Expect.Afternoon:
 						if(guideData.StartTime[0] < 12)		// Site doesn't have correct time

@@ -138,6 +138,7 @@
     <Reference Include="System">
       <Name>system</Name>
     </Reference>
+    <Reference Include="System.configuration" />
     <Reference Include="System.Configuration.Install">
       <Name>System.Configuration.Install</Name>
     </Reference>

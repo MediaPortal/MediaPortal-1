@@ -284,14 +284,14 @@ namespace NZlib.Compression {
 				niceLength = lookahead;
 			}
 			
-			if (DeflaterConstants.DEBUGGING && strstart > 2*WSIZE - MIN_LOOKAHEAD) {
-			    throw new InvalidOperationException("need lookahead");
-			}
+//			if (DeflaterConstants.DEBUGGING && strstart > 2*WSIZE - MIN_LOOKAHEAD) {
+//			    throw new InvalidOperationException("need lookahead");
+//			}
 			
 			do {
-				if (DeflaterConstants.DEBUGGING && curMatch >= strstart) {
-					throw new InvalidOperationException("future match");
-				}
+//				if (DeflaterConstants.DEBUGGING && curMatch >= strstart) {
+//					throw new InvalidOperationException("future match");
+//				}
 				if (window[curMatch + best_len] != scan_end      || 
 				    window[curMatch + best_len - 1] != scan_end1 || 
 				    window[curMatch] != window[scan]             || 
@@ -336,9 +336,9 @@ namespace NZlib.Compression {
 		
 		public void SetDictionary(byte[] buffer, int offset, int length) 
 		{
-			if (DeflaterConstants.DEBUGGING && strstart != 1) {
-				throw new InvalidOperationException("strstart not 1");
-			}
+			//if (DeflaterConstants.DEBUGGING && strstart != 1) {
+			//	throw new InvalidOperationException("strstart not 1");
+			//}
 			adler.Update(buffer, offset, length);
 			if (length < MIN_MATCH) {
 				return;
@@ -469,9 +469,9 @@ namespace NZlib.Compression {
 					prevAvailable = false;
 					
 					/* We are flushing everything */
-					if (DeflaterConstants.DEBUGGING && !flush) {
-						throw new Exception("Not flushing, but no lookahead");
-					}
+					//if (DeflaterConstants.DEBUGGING && !flush) {
+					//	throw new Exception("Not flushing, but no lookahead");
+					//}
 					huffman.FlushBlock(window, blockStart, strstart - blockStart,
 					                   finish);
 					blockStart = strstart;

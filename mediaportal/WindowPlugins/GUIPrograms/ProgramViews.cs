@@ -92,7 +92,7 @@ namespace WindowPlugins.GUIPrograms
       {
         try
         {
-          if (true||SelectedIndex<0)
+          //if (true||SelectedIndex<0)
           {
             DataGridCell currentCell=Grid.CurrentCell;
 

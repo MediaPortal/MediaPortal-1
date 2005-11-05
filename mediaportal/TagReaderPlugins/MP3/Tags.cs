@@ -157,7 +157,7 @@ namespace id3
 					{
 						newSize  = (((UInt64)bytes[3]) |
 											((UInt64)bytes[2] << 8)  |
-							((UInt64)bytes[1] << 16));
+							        ((UInt64)bytes[1] << 16));
 					}
 					else
 						newSize  = (ulong)((tagSize[2])+(tagSize[1]<<8)+(tagSize[0]<<16));

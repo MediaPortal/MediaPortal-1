@@ -62,25 +62,25 @@ namespace NZlib.Compression {
 		
 		public void WriteByte(int b)
 		{
-			if (DeflaterConstants.DEBUGGING && start != 0)
-				throw new Exception();
+      //if (DeflaterConstants.DEBUGGING && start != 0)
+				//throw new Exception();
 			buf[end++] = (byte) b;
 		}
 		
 		public void WriteShort(int s)
 		{
-			if (DeflaterConstants.DEBUGGING && start != 0) {
-				throw new Exception();
-			}
+			//if (DeflaterConstants.DEBUGGING && start != 0) {
+			//	throw new Exception();
+      //}
 			buf[end++] = (byte) s;
 			buf[end++] = (byte) (s >> 8);
 		}
 		
 		public void WriteInt(int s)
 		{
-			if (DeflaterConstants.DEBUGGING && start != 0) {
-				throw new Exception();
-			}
+		//	if (DeflaterConstants.DEBUGGING && start != 0) {
+		//		throw new Exception();
+      //	}
 			buf[end++] = (byte) s;
 			buf[end++] = (byte) (s >> 8);
 			buf[end++] = (byte) (s >> 16);
@@ -89,9 +89,9 @@ namespace NZlib.Compression {
 		
 		public void WriteBlock(byte[] block, int offset, int len)
 		{
-			if (DeflaterConstants.DEBUGGING && start != 0) {
-				throw new Exception();
-			}
+			//if (DeflaterConstants.DEBUGGING && start != 0) {
+			//	throw new Exception();
+      //}
 			System.Array.Copy(block, offset, buf, end, len);
 			end += len;
 		}
@@ -104,9 +104,9 @@ namespace NZlib.Compression {
 		
 		public void AlignToByte() 
 		{
-			if (DeflaterConstants.DEBUGGING && start != 0) {
-				throw new Exception();
-			}
+			//if (DeflaterConstants.DEBUGGING && start != 0) {
+			//	throw new Exception();
+      //}
 			if (bitCount > 0) {
 				buf[end++] = (byte) bits;
 				if (bitCount > 8) {
@@ -119,9 +119,9 @@ namespace NZlib.Compression {
 		
 		public void WriteBits(int b, int count)
 		{
-			if (DeflaterConstants.DEBUGGING && start != 0) {
-				throw new Exception();
-			}
+			//if (DeflaterConstants.DEBUGGING && start != 0) {
+			//	throw new Exception();
+			//}
 //			if (DeflaterConstants.DEBUGGING) {
 //				Console.WriteLine("writeBits("+b+","+count+")");
 //			}
@@ -137,9 +137,9 @@ namespace NZlib.Compression {
 		
 		public void WriteShortMSB(int s) 
 		{
-			if (DeflaterConstants.DEBUGGING && start != 0) {
-				throw new Exception();
-			}
+			//if (DeflaterConstants.DEBUGGING && start != 0) {
+			//	throw new Exception();
+			//}
 			buf[end++] = (byte) (s >> 8);
 			buf[end++] = (byte) s;
 		}

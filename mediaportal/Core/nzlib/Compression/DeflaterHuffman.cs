@@ -145,9 +145,9 @@ namespace NZlib.Compression {
 //						                  +" nextCode: "+code); // HACK : Integer.toHexString(
 //					}
 				}
-				if (DeflaterConstants.DEBUGGING && code != 65536) {
-					throw new Exception("Inconsistent bl_counts!");
-				}
+        //	if (DeflaterConstants.DEBUGGING && code != 65536) {
+			//		throw new Exception("Inconsistent bl_counts!");
+			//	}
 				
 				for (int i=0; i < numCodes; i++) {
 					int bits = length[i];

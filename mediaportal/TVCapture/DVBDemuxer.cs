@@ -36,11 +36,11 @@ using System.Threading;
 
 namespace MediaPortal.TV.Recording
 {
-    public class DVBDemuxer : ISampleGrabberCB
-    {
-        
-        #region Global Arrays
-		readonly static int[,,] AudioBitrates = new int[,,]{{
+  public class DVBDemuxer : ISampleGrabberCB
+  {
+
+    #region Global Arrays
+    readonly static int[, ,] AudioBitrates = new int[,,]{{
 		{-1,8000,16000,24000,32000,40000,48000,56000,64000,
 		80000,96000,112000,128000,144000,160000,0 },		
 		{-1,8000,16000,24000,32000,40000,48000,56000,64000,
@@ -62,15 +62,15 @@ namespace MediaPortal.TV.Recording
 		{-1, 8000, 12000, 16000, 20000, 24000, 32000, 40000,    
 		48000, 560000, 64000, 80000, 96000, 112000, 128000, 0 }
 	}};
-	
-	readonly static int[,] AudioFrequencies = new int[,]{
+
+    readonly static int[,] AudioFrequencies = new int[,]{
 		{ 22050,24000,16000,0 },	
 		{ 44100,48000,32000,0 },	
 		{ 11025,12000,8000,0 }		
 	};
-	
-	readonly static double[] AudioTimes = new double[]{ 0.0,103680000.0,103680000.0,34560000.0 };
-	UInt32[] CRC32Data = new UInt32[]{0x00000000, 0x04c11db7, 0x09823b6e, 0x0d4326d9, 0x130476dc, 0x17c56b6b,
+
+    readonly static double[] AudioTimes = new double[] { 0.0, 103680000.0, 103680000.0, 34560000.0 };
+    UInt32[] CRC32Data = new UInt32[]{0x00000000, 0x04c11db7, 0x09823b6e, 0x0d4326d9, 0x130476dc, 0x17c56b6b,
 		 0x1a864db2, 0x1e475005, 0x2608edb8, 0x22c9f00f, 0x2f8ad6d6, 0x2b4bcb61,
 		 0x350c9b64, 0x31cd86d3, 0x3c8ea00a, 0x384fbdbd, 0x4c11db70, 0x48d0c6c7,
 		 0x4593e01e, 0x4152fda9, 0x5f15adac, 0x5bd4b01b, 0x569796c2, 0x52568b75,
@@ -113,69 +113,69 @@ namespace MediaPortal.TV.Recording
 		 0x89b8fd09, 0x8d79e0be, 0x803ac667, 0x84fbdbd0, 0x9abc8bd5, 0x9e7d9662,
 		 0x933eb0bb, 0x97ffad0c, 0xafb010b1, 0xab710d06, 0xa6322bdf, 0xa2f33668,
 		 0xbcb4666d, 0xb8757bda, 0xb5365d03, 0xb1f740b4};
-	#endregion
+    #endregion
 
-        #region Structs
-        public struct AudioHeader
-        {
-            //AudioHeader
-            public int ID;
-            public int Emphasis;
-            public int Layer;
-            public int ProtectionBit;
-            public int Bitrate;
-            public int SamplingFreq;
-            public int PaddingBit;
-            public int PrivateBit;
-            public int Mode;
-            public int ModeExtension;
-            public int Bound;
-            public int Channel;
-            public int Copyright;
-            public int Original;
-            public int TimeLength;
-            public int Size;
-            public int SizeBase;
-        } ;
+    #region Structs
+    public struct AudioHeader
+    {
+      //AudioHeader
+      public int ID;
+      public int Emphasis;
+      public int Layer;
+      public int ProtectionBit;
+      public int Bitrate;
+      public int SamplingFreq;
+      public int PaddingBit;
+      public int PrivateBit;
+      public int Mode;
+      public int ModeExtension;
+      public int Bound;
+      public int Channel;
+      public int Copyright;
+      public int Original;
+      public int TimeLength;
+      public int Size;
+      public int SizeBase;
+    } ;
 
-		//
-		// section header
-		public struct DVBSectionHeader
-		{
-			public int TableID;
-			public int SectionSyntaxIndicator;
-			public int SectionLength;
-			public int TableIDExtension;
-			public int VersionNumber;
-			public int CurrentNextIndicator;
-			public int SectionNumber;
-			public int LastSectionNumber;
-			public int HeaderExtB8B9;
-			public int HeaderExtB10B11;
-			public int HeaderExtB12;
-			public int HeaderExtB13;
-		}
-        #endregion
+    //
+    // section header
+    public struct DVBSectionHeader
+    {
+      public int TableID;
+      public int SectionSyntaxIndicator;
+      public int SectionLength;
+      public int TableIDExtension;
+      public int VersionNumber;
+      public int CurrentNextIndicator;
+      public int SectionNumber;
+      public int LastSectionNumber;
+      public int HeaderExtB8B9;
+      public int HeaderExtB10B11;
+      public int HeaderExtB12;
+      public int HeaderExtB13;
+    }
+    #endregion
 
-        #region Contructor/Destructor
-				public DVBDemuxer()
-				{
-				}
-        ~DVBDemuxer()
-        {
-        }
-        #endregion
+    #region Contructor/Destructor
+    public DVBDemuxer()
+    {
+    }
+    ~DVBDemuxer()
+    {
+    }
+    #endregion
 
-        #region global Vars
-				int m_teletextPid = 0;
-				int m_subtitlePid = 0;
-				int m_videoPid = 0;
-				int m_audioPid = 0;
-				int m_pmtPid = 0;
-				string m_channelName = "";
-				int _restBufferLen=0;
-				byte[] _restBuffer = new byte[200];
-				IntPtr _ptrRestBuffer=Marshal.AllocCoTaskMem(200);
+    #region global Vars
+    int m_teletextPid = 0;
+    int m_subtitlePid = 0;
+    int m_videoPid = 0;
+    int m_audioPid = 0;
+    int m_pmtPid = 0;
+    string m_channelName = "";
+    int _restBufferLen = 0;
+    byte[] _restBuffer = new byte[200];
+    IntPtr _ptrRestBuffer = Marshal.AllocCoTaskMem(200);
 #if GRABPPMT
 		// pmt
 		int m_currentPMTVersion=-1;
@@ -183,46 +183,46 @@ namespace MediaPortal.TV.Recording
 		byte[] m_tableBufferPMT=new byte[4096];
 int m_bufferPositionPMT=0;
 #endif
-				int m_programNumber=-1;
-				DateTime packetTimer=DateTime.MinValue;
-				bool     isReceivingPackets=false;
-				bool     isScrambled=false;
-				ulong    numberOfPacketsReceived=0;
-				// card
-				static int m_currentDVBCard=0;
-				static NetworkType m_currentNetworkType;
-				bool m_packetsReceived=false;
-				//DVBSectionHeader m_sectionHeader=new DVBSectionHeader();
-				bool _grabTeletext=false;
+    int m_programNumber = -1;
+    DateTime packetTimer = DateTime.MinValue;
+    bool isReceivingPackets = false;
+    bool isScrambled = false;
+    ulong numberOfPacketsReceived = 0;
+    // card
+    static int m_currentDVBCard = 0;
+    static NetworkType m_currentNetworkType;
+    bool m_packetsReceived = false;
+    //DVBSectionHeader m_sectionHeader=new DVBSectionHeader();
+    bool _grabTeletext = false;
 
-				
-        #endregion
 
-        #region global Objects
+    #endregion
 
-        TSHelperTools.TSHeader m_packetHeader = new TSHelperTools.TSHeader();
-        TSHelperTools m_tsHelper = new TSHelperTools();
-        
-        DVBEPG m_epgClass = new DVBEPG();
-        //AudioHeader m_usedAudioFormat = new AudioHeader();
-        #endregion
+    #region global Objects
 
-        #region Delegates/Events
-				// audio format
-				public delegate bool OnAudioChanged(AudioHeader audioFormat);
-				
+    TSHelperTools.TSHeader m_packetHeader = new TSHelperTools.TSHeader();
+    TSHelperTools m_tsHelper = new TSHelperTools();
+
+    DVBEPG m_epgClass = new DVBEPG();
+    //AudioHeader m_usedAudioFormat = new AudioHeader();
+    #endregion
+
+    #region Delegates/Events
+    // audio format
+    public delegate bool OnAudioChanged(AudioHeader audioFormat);
+
 #if GRABPPMT
 				// pmt handling
 				public delegate void OnPMTChanged(byte[] pmtTable);
 				public event OnPMTChanged OnPMTIsChanged;
 #endif
-				// grab table
-				public delegate void OnTableReceived(int pid,int tableID,ArrayList tableList);
-				#endregion
+    // grab table
+    public delegate void OnTableReceived(int pid, int tableID, ArrayList tableList);
+    #endregion
 
-        #region public functions
-		public void GetEPGSchedule(int tableID,int programID)
-		{
+    #region public functions
+    public void GetEPGSchedule(int tableID, int programID)
+    {
 #if GRABEPG
 			if(tableID<0x50 || tableID>0x6f)
 				return;
@@ -234,445 +234,445 @@ int m_bufferPositionPMT=0;
 			GetTable(0x12,tableID);// timeout 10 sec
 			Log.Write("start getting epg for table 0x{0:X}",tableID);
 #endif
-		}
-	
-		public void GrabTeletext(bool yesNo)
-		{
-			_grabTeletext=yesNo;
-		}
+    }
 
-			public void SetCardType(int cardType, NetworkType networkType)
-		{
-			m_currentDVBCard=cardType;
-			m_currentNetworkType=networkType;
-			m_epgClass=new DVBEPG(cardType,networkType);
-		}
+    public void GrabTeletext(bool yesNo)
+    {
+      _grabTeletext = yesNo;
+    }
 
-		public DVBSectionHeader GetSectionHeader(byte[] data)
-		{
-			return GetSectionHeader(data,0);
-		}
-		public DVBSectionHeader GetSectionHeader(byte[] data,int offset)
-		{
-			if(data==null)
-				return new DVBSectionHeader();
+    public void SetCardType(int cardType, NetworkType networkType)
+    {
+      m_currentDVBCard = cardType;
+      m_currentNetworkType = networkType;
+      m_epgClass = new DVBEPG(cardType, networkType);
+    }
 
-			if(data.Length<14 || data.Length<offset+14)
-				return new DVBSectionHeader();
+    public DVBSectionHeader GetSectionHeader(byte[] data)
+    {
+      return GetSectionHeader(data, 0);
+    }
+    public DVBSectionHeader GetSectionHeader(byte[] data, int offset)
+    {
+      if (data == null)
+        return new DVBSectionHeader();
 
-			DVBSectionHeader header=new DVBSectionHeader();
-			header.TableID = data[offset];
-			header.SectionSyntaxIndicator = (data[offset+1]>>7) & 1;
-			header.SectionLength = ((data[offset+1]& 0xF)<<8) + data[offset+2];
-			header.TableIDExtension = (data[offset+3]<<8)+data[offset+4];
-			header.VersionNumber = ((data[offset+5]>>1)&0x1F);
-			header.CurrentNextIndicator = data[offset+5] & 1;
-			header.SectionNumber = data[offset+6];
-			header.LastSectionNumber = data[offset+7];
-			header.HeaderExtB8B9=(data[offset+8]<<8)+data[offset+9];
-			header.HeaderExtB10B11 = (data[offset+10]<<8)+data[offset+11];
-			header.HeaderExtB12 = data[offset+12];
-			header.HeaderExtB13 = data[offset+13];
-			return header;
-		}
+      if (data.Length < 14 || data.Length < offset + 14)
+        return new DVBSectionHeader();
 
-		public void SetChannelData(int audio, int video, int teletext, int subtitle, string channelName,int pmtPid, int programnumber)
-		{
-			m_packetsReceived=false;
-			m_programNumber=-1;
-			if (programnumber>0)
-				m_programNumber=programnumber;
-			// audio
-			if (audio > 0x1FFF)
-				m_audioPid = -1;
-			else
-				m_audioPid = audio;
-			// video
-			if (video > 0x1FFF)
-				m_videoPid = -1;
-			else
-				m_videoPid = video;
-			// teletext
-			if (teletext > 0x1FFF)
-				m_teletextPid = -1;
-			else
-				m_teletextPid = teletext;
-			// subtitle
-			if (subtitle > 0x1FFF)
-				m_subtitlePid = -1;
-			else
-				m_subtitlePid = subtitle;
-			// pmt pid
-			if (pmtPid > 0x1FFF)
-				m_pmtPid = -1;
-			else
-				m_pmtPid = pmtPid;
-			// name
-			m_channelName = "";
-			if (channelName != null)
-				if (channelName != "")
-				{
-					m_channelName = channelName;
-				}
-			//
-			packetTimer=DateTime.MinValue;
+      DVBSectionHeader header = new DVBSectionHeader();
+      header.TableID = data[offset];
+      header.SectionSyntaxIndicator = (data[offset + 1] >> 7) & 1;
+      header.SectionLength = ((data[offset + 1] & 0xF) << 8) + data[offset + 2];
+      header.TableIDExtension = (data[offset + 3] << 8) + data[offset + 4];
+      header.VersionNumber = ((data[offset + 5] >> 1) & 0x1F);
+      header.CurrentNextIndicator = data[offset + 5] & 1;
+      header.SectionNumber = data[offset + 6];
+      header.LastSectionNumber = data[offset + 7];
+      header.HeaderExtB8B9 = (data[offset + 8] << 8) + data[offset + 9];
+      header.HeaderExtB10B11 = (data[offset + 10] << 8) + data[offset + 11];
+      header.HeaderExtB12 = data[offset + 12];
+      header.HeaderExtB13 = data[offset + 13];
+      return header;
+    }
 
-			
-			Log.Write("DVBDemuxer:{0} audio:{1:X} video:{2:X} teletext:{3:X} pmt:{4:X} subtitle:{5:X} program:{6}",
-				channelName,m_audioPid, m_videoPid, m_teletextPid, m_pmtPid,m_subtitlePid,m_programNumber);
-		
-		}
-		public bool RecevingPackets
-		{
-			get { return isReceivingPackets;}
-		}
-		public bool IsScrambled
-		{
-			get { return isScrambled;}
-		}
-		public void OnTuneNewChannel()
-		{
-			isScrambled=false;
-			isReceivingPackets=false;
-			numberOfPacketsReceived=0;
-		}
-		public void Process()
-		{
-			TimeSpan ts = DateTime.Now-packetTimer;
-			if (!isReceivingPackets && numberOfPacketsReceived>0)
-			{
-				isReceivingPackets =true;
-				Log.Write("DVBDemuxer:receiving DVB packets");
-			}
-			if (ts.TotalMilliseconds>=1000)
-			{
-				if (isReceivingPackets && numberOfPacketsReceived==0)
-				{
-					isReceivingPackets =false;
-					Log.Write("DVBDemuxer:stopped receiving DVB packets");
-				}
-				
-				//Log.Write("DVBDemuxer: receiving:{0} #:{1}", isReceivingPackets,numberOfPacketsReceived);
-
-				numberOfPacketsReceived=0;
-				packetTimer=DateTime.Now;
-			}
-		}
-
-        #endregion
-
-		#region functions
-		UInt32 GetCRC32(byte[] data)
-		{
-			UInt32 crc = 0xffffffff;
-			for (UInt32 i=0;i<data.Length-4;i++) 
-			{
-				crc = (crc << 8) ^ CRC32Data[((crc >> 24) ^ data[i]) & 0xff];
-			}
-			return crc;
-
-		}
-		UInt32 GetCRC32(byte[] data,UInt32 skip,UInt32 len)
-		{
-			UInt32 crc = 0xffffffff;
-			for (UInt32 i=skip;i<len;++i) 
-			{
-				crc = (crc << 8) ^ CRC32Data[((crc >> 24) ^ data[i]) & 0xff];
-			}
-			return crc;
-
-		}
-
-		UInt32 GetSectionCRCValue(byte[] data,int ptr)
-		{
-			if(data.Length<ptr+3)
-				return (UInt32)0;
-
-			
-			return (UInt32)((data[ptr]<<24)+(data[ptr+1]<<16)+(data[ptr+2]<<8)+data[ptr+3]);
-		}
-		bool ParseAudioHeader(byte[] data, ref AudioHeader header)
+    public void SetChannelData(int audio, int video, int teletext, int subtitle, string channelName, int pmtPid, int programnumber)
+    {
+      m_packetsReceived = false;
+      m_programNumber = -1;
+      if (programnumber > 0)
+        m_programNumber = programnumber;
+      // audio
+      if (audio > 0x1FFF)
+        m_audioPid = -1;
+      else
+        m_audioPid = audio;
+      // video
+      if (video > 0x1FFF)
+        m_videoPid = -1;
+      else
+        m_videoPid = video;
+      // teletext
+      if (teletext > 0x1FFF)
+        m_teletextPid = -1;
+      else
+        m_teletextPid = teletext;
+      // subtitle
+      if (subtitle > 0x1FFF)
+        m_subtitlePid = -1;
+      else
+        m_subtitlePid = subtitle;
+      // pmt pid
+      if (pmtPid > 0x1FFF)
+        m_pmtPid = -1;
+      else
+        m_pmtPid = pmtPid;
+      // name
+      m_channelName = "";
+      if (channelName != null)
+        if (channelName != "")
         {
+          m_channelName = channelName;
+        }
+      //
+      packetTimer = DateTime.MinValue;
 
-            header = new AudioHeader();
-            int limit = 32;
 
-            if ((data[0] & 0xFF) != 0xFF || (data[1] & 0xF0) != 0xF0)
-                return false;
+      Log.Write("DVBDemuxer:{0} audio:{1:X} video:{2:X} teletext:{3:X} pmt:{4:X} subtitle:{5:X} program:{6}",
+        channelName, m_audioPid, m_videoPid, m_teletextPid, m_pmtPid, m_subtitlePid, m_programNumber);
 
-            header.ID = ((data[1] >> 3) &0x01) ;
-            header.Emphasis = data[3] & 0x03;
+    }
+    public bool RecevingPackets
+    {
+      get { return isReceivingPackets; }
+    }
+    public bool IsScrambled
+    {
+      get { return isScrambled; }
+    }
+    public void OnTuneNewChannel()
+    {
+      isScrambled = false;
+      isReceivingPackets = false;
+      numberOfPacketsReceived = 0;
+    }
+    public void Process()
+    {
+      TimeSpan ts = DateTime.Now - packetTimer;
+      if (!isReceivingPackets && numberOfPacketsReceived > 0)
+      {
+        isReceivingPackets = true;
+        Log.Write("DVBDemuxer:receiving DVB packets");
+      }
+      if (ts.TotalMilliseconds >= 1000)
+      {
+        if (isReceivingPackets && numberOfPacketsReceived == 0)
+        {
+          isReceivingPackets = false;
+          Log.Write("DVBDemuxer:stopped receiving DVB packets");
+        }
 
-            if (header.ID == 1 && header.Emphasis == 2)
-                header.ID = 2;
-            header.Layer = ((data[1] >>1) &0x03);
+        //Log.Write("DVBDemuxer: receiving:{0} #:{1}", isReceivingPackets,numberOfPacketsReceived);
 
-            if (header.Layer < 1)
-                return false;
+        numberOfPacketsReceived = 0;
+        packetTimer = DateTime.Now;
+      }
+    }
 
-            header.ProtectionBit = (data[1] & 0x01) ^ 1;
-            header.Bitrate = AudioBitrates[header.ID, header.Layer - 1, ((data[2] >>4)& 0x0F)];
-            if (header.Bitrate < 1)
-                return false;
-            header.SamplingFreq = AudioFrequencies[header.ID, ((data[2] >>2)& 0x03)];
-            if (header.SamplingFreq == 0)
-                return false;
+    #endregion
 
-            header.PaddingBit = ((data[2] >>1)& 0x01) ;
-            header.PrivateBit = data[2] & 0x01;
+    #region functions
+    UInt32 GetCRC32(byte[] data)
+    {
+      UInt32 crc = 0xffffffff;
+      for (UInt32 i = 0; i < data.Length - 4; i++)
+      {
+        crc = (crc << 8) ^ CRC32Data[((crc >> 24) ^ data[i]) & 0xff];
+      }
+      return crc;
 
-            header.Mode = ((data[3] >>6)& 0x03) & 0x03;
-            header.ModeExtension = ((data[3] >>4)& 0x03) ;
-            if (header.Mode == 0)
-                header.ModeExtension = 0;
+    }
+    UInt32 GetCRC32(byte[] data, UInt32 skip, UInt32 len)
+    {
+      UInt32 crc = 0xffffffff;
+      for (UInt32 i = skip; i < len; ++i)
+      {
+        crc = (crc << 8) ^ CRC32Data[((crc >> 24) ^ data[i]) & 0xff];
+      }
+      return crc;
 
-            header.Bound = (header.Mode == 1) ? ((header.ModeExtension + 1) << 2) : limit;
-            header.Channel = (header.Mode == 3) ? 1 : 2;
-            header.Copyright = ((data[3]>>3) & 0x01);
-            header.Original = ((data[3] >>2)& 0x01) ;
-            header.TimeLength = (int)(AudioTimes[header.Layer] / header.SamplingFreq);
+    }
 
-            if (header.ID == 1 && header.Layer == 2)
-            {	
+    UInt32 GetSectionCRCValue(byte[] data, int ptr)
+    {
+      if (data.Length < ptr + 3)
+        return (UInt32)0;
 
-				if (header.Bitrate / header.Channel < 32000)
-                    return false;
-                if (header.Bitrate / header.Channel > 192000)
-                    return false;
 
-                if (header.Bitrate < 56000)
-                {
-                    if (header.SamplingFreq == 32000)
-                        limit = 12;
-                    else
-                        limit = 8;
-                }
-                else if (header.Bitrate < 96000)
-                    limit = 27;
-                else
-                {
-                    if (header.SamplingFreq == 48000)
-                        limit = 27;
-                    else
-                        limit = 30;
-                }
-                if (header.Bound > limit)
-                    header.Bound = limit;
-            }
-            else if (header.Layer == 2)  // MPEG-2
-            {
-                limit = 30;
-            }
+      return (UInt32)((data[ptr] << 24) + (data[ptr + 1] << 16) + (data[ptr + 2] << 8) + data[ptr + 3]);
+    }
+    bool ParseAudioHeader(byte[] data, ref AudioHeader header)
+    {
 
-            if (header.Layer < 3)
-            {
-                if (header.Bound > limit)
-                    header.Bound = limit;
-                header.Size = (header.SizeBase = 144 * header.Bitrate / header.SamplingFreq) + header.PaddingBit;
-                return true;
-            }
-            else
-            {
-                limit = 32;
-                header.Size = (header.SizeBase = (12 * header.Bitrate / header.SamplingFreq) * 4) + (4 * header.PaddingBit);
-                return true;
-            }
+      header = new AudioHeader();
+      int limit = 32;
+
+      if ((data[0] & 0xFF) != 0xFF || (data[1] & 0xF0) != 0xF0)
+        return false;
+
+      header.ID = ((data[1] >> 3) & 0x01);
+      header.Emphasis = data[3] & 0x03;
+
+      if (header.ID == 1 && header.Emphasis == 2)
+        header.ID = 2;
+      header.Layer = ((data[1] >> 1) & 0x03);
+
+      if (header.Layer < 1)
+        return false;
+
+      header.ProtectionBit = (data[1] & 0x01) ^ 1;
+      header.Bitrate = AudioBitrates[header.ID, header.Layer - 1, ((data[2] >> 4) & 0x0F)];
+      if (header.Bitrate < 1)
+        return false;
+      header.SamplingFreq = AudioFrequencies[header.ID, ((data[2] >> 2) & 0x03)];
+      if (header.SamplingFreq == 0)
+        return false;
+
+      header.PaddingBit = ((data[2] >> 1) & 0x01);
+      header.PrivateBit = data[2] & 0x01;
+
+      header.Mode = ((data[3] >> 6) & 0x03) & 0x03;
+      header.ModeExtension = ((data[3] >> 4) & 0x03);
+      if (header.Mode == 0)
+        header.ModeExtension = 0;
+
+      header.Bound = (header.Mode == 1) ? ((header.ModeExtension + 1) << 2) : limit;
+      header.Channel = (header.Mode == 3) ? 1 : 2;
+      header.Copyright = ((data[3] >> 3) & 0x01);
+      header.Original = ((data[3] >> 2) & 0x01);
+      header.TimeLength = (int)(AudioTimes[header.Layer] / header.SamplingFreq);
+
+      if (header.ID == 1 && header.Layer == 2)
+      {
+
+        if (header.Bitrate / header.Channel < 32000)
+          return false;
+        if (header.Bitrate / header.Channel > 192000)
+          return false;
+
+        if (header.Bitrate < 56000)
+        {
+          if (header.SamplingFreq == 32000)
+            limit = 12;
+          else
+            limit = 8;
+        }
+        else if (header.Bitrate < 96000)
+          limit = 27;
+        else
+        {
+          if (header.SamplingFreq == 48000)
+            limit = 27;
+          else
+            limit = 30;
+        }
+        if (header.Bound > limit)
+          header.Bound = limit;
+      }
+      else if (header.Layer == 2)  // MPEG-2
+      {
+        limit = 30;
+      }
+
+      if (header.Layer < 3)
+      {
+        if (header.Bound > limit)
+          header.Bound = limit;
+        header.Size = (header.SizeBase = 144 * header.Bitrate / header.SamplingFreq) + header.PaddingBit;
+        return true;
+      }
+      else
+      {
+        limit = 32;
+        header.Size = (header.SizeBase = (12 * header.Bitrate / header.SamplingFreq) * 4) + (4 * header.PaddingBit);
+        return true;
+      }
+
+    }
+    void SaveData(int pid, int tableID, byte[] data)
+    {
+      lock (data.SyncRoot)
+      {
+        if (pid == 0xd3)
+        {
+          if (tableID == 0x91)
+            m_epgClass.ParseChannels(data);
+          else if (tableID == 0x90)
+            m_epgClass.ParseSummaries(data);
+          else if (tableID == 0x92)
+            m_epgClass.ParseThemes(data);
 
         }
-		void SaveData(int pid,int tableID,byte[] data)
-		{
-			lock(data.SyncRoot)
-			{
-				if(pid==0xd3)
-				{
-					if(tableID==0x91)
-						m_epgClass.ParseChannels(data);
-					else if(tableID==0x90)
-						m_epgClass.ParseSummaries(data);
-					else if(tableID==0x92)
-						m_epgClass.ParseThemes(data);
-
-				}
-				if(pid==0xd2)
-				{
-					if(tableID==0x90)
-						m_epgClass.ParseTitles(data);
-				}
-
-			}
-		}
-
-        byte[] GetAudioHeader(byte[] data)
+        if (pid == 0xd2)
         {
-            int pos=0;
-            bool found = false;
-            for (; pos < data.Length; pos++)
-            {
-                if (data[pos] == 0 && data[pos + 1] == 0 && data[pos + 2] == 1)
-                {
-                    found = true;
-                    break;
-                }
-            }
-            if (found == false)
-                return new byte[184];
-
-
-            if ((data[pos+3] & 0xE0) == 0xC0)
-            {
-                if ((data[pos + 3] & 0xE0) == 0xC0)
-                {
-                    System.Array.Copy(data, pos, data, 0, data.Length - pos);
-                    return GetPES(data);
-                }
-
-            }
-            return new byte[184];
+          if (tableID == 0x90)
+            m_epgClass.ParseTitles(data);
         }
-        public byte[] GetPES(byte[] data)
+
+      }
+    }
+
+    byte[] GetAudioHeader(byte[] data)
+    {
+      int pos = 0;
+      bool found = false;
+      for (; pos < data.Length; pos++)
+      {
+        if (data[pos] == 0 && data[pos + 1] == 0 && data[pos + 2] == 1)
         {
-            byte[] pesData=new byte[184];
-            int ptr = 0; 
-            int offset = 0; 
-            bool isMPEG1=false;
-
-            int i = 0;
-            for (; i < data.Length; )
-            {
-                ptr = (0xFF & data[i + 4]) << 8 | (0xFF & data[i + 5]);
-                isMPEG1 = (0x80 & data[i + 6]) == 0 ? true : false;
-                offset = i + 6 + (!isMPEG1 ? 3 + (0xFF & data[i + 8]) : 0);
-
-                Array.Copy(data,offset,pesData,0, data.Length-offset);
-                i += 6 + ptr;
-            }
-
-            return pesData;
+          found = true;
+          break;
         }
-		#endregion
+      }
+      if (found == false)
+        return new byte[184];
 
-        #region Properties
 
-        #endregion
-
-        #region ISampleGrabberCB Members
-        #region Unused SampleCB()
-
-        public int SampleCB(double SampleTime, IMediaSample pSample)
+      if ((data[pos + 3] & 0xE0) == 0xC0)
+      {
+        if ((data[pos + 3] & 0xE0) == 0xC0)
         {
-            //throw new Exception("The method or operation is not implemented.");
-            return 0;
+          System.Array.Copy(data, pos, data, 0, data.Length - pos);
+          return GetPES(data);
         }
-        #endregion
-			
+
+      }
+      return new byte[184];
+    }
+    public byte[] GetPES(byte[] data)
+    {
+      byte[] pesData = new byte[184];
+      int ptr = 0;
+      int offset = 0;
+      bool isMPEG1 = false;
+
+      int i = 0;
+      for (; i < data.Length; )
+      {
+        ptr = (0xFF & data[i + 4]) << 8 | (0xFF & data[i + 5]);
+        isMPEG1 = (0x80 & data[i + 6]) == 0 ? true : false;
+        offset = i + 6 + (!isMPEG1 ? 3 + (0xFF & data[i + 8]) : 0);
+
+        Array.Copy(data, offset, pesData, 0, data.Length - offset);
+        i += 6 + ptr;
+      }
+
+      return pesData;
+    }
+    #endregion
+
+    #region Properties
+
+    #endregion
+
+    #region ISampleGrabberCB Members
+    #region Unused SampleCB()
+
+    public int SampleCB(double SampleTime, IMediaSample pSample)
+    {
+      //throw new Exception("The method or operation is not implemented.");
+      return 0;
+    }
+    #endregion
+
 #if MAKEDUMP
 		System.IO.BinaryWriter writer=null;
 		System.IO.FileStream stream=null;
 		ulong fileLen=0;
 #endif
-			public int BufferCB(double SampleTime, IntPtr pBuffer, int BufferLen)
-			{
-				int off=-1;
-				if (_restBufferLen>0)
-				{
-					int len=188-_restBufferLen;	//remaining bytes of packet
-					if (len>0 && len < BufferLen)
-					{
-						if (_restBufferLen>=0 && _restBufferLen+len < 200)
-						{
+    public int BufferCB(double SampleTime, IntPtr pBuffer, int BufferLen)
+    {
+      int off = -1;
+      if (_restBufferLen > 0)
+      {
+        int len = 188 - _restBufferLen;	//remaining bytes of packet
+        if (len > 0 && len < BufferLen)
+        {
+          if (_restBufferLen >= 0 && _restBufferLen + len < 200)
+          {
 
-							//copy the remaining bytes 
-							Marshal.Copy(pBuffer,_restBuffer,_restBufferLen,len);
-							Marshal.Copy(_restBuffer,0,_ptrRestBuffer,188);
+            //copy the remaining bytes 
+            Marshal.Copy(pBuffer, _restBuffer, _restBufferLen, len);
+            Marshal.Copy(_restBuffer, 0, _ptrRestBuffer, 188);
 
-							ProcessPacket(_ptrRestBuffer);
+            ProcessPacket(_ptrRestBuffer);
 
-							//set offset ...
-							if (Marshal.ReadByte(pBuffer,len)==0x47 && Marshal.ReadByte(pBuffer,len+188)==0x47 && Marshal.ReadByte(pBuffer,len+2*188)==0x47)
-							{
-								off=len;
-							}
-						}
-						else _restBufferLen=0;
-					}
-					else _restBufferLen=0;
-				}
-				if (off==-1)
-				{
-					//no then find first 3 transport packets in mediasample
-					for (int i=0; i < BufferLen-2*188;++i)
-					{
-						if (Marshal.ReadByte(pBuffer,i)==0x47 && Marshal.ReadByte(pBuffer,i+188)==0x47 && Marshal.ReadByte(pBuffer,i+2*188)==0x47)
-						{
-							//found first 3 ts packets
-							//set the offset
-							off=i;
-							break;
-						}
-					}
-				}
-				for(uint t=(uint)off;t<BufferLen;t+=188)
-				{
-					if (t+188 > BufferLen) break;
-					ProcessPacket((IntPtr)((int)pBuffer+t));
-				}
-				if (_restBufferLen>0)
-				{
-					_restBufferLen/=188;
-					_restBufferLen *=188;
-					_restBufferLen=(BufferLen-off)-_restBufferLen;
-					if (_restBufferLen>0 && _restBufferLen < 188)
-					{
-						//copy the incomplete packet in the rest buffer
-						Marshal.Copy((IntPtr)((int)pBuffer+BufferLen-_restBufferLen),_restBuffer,0,_restBufferLen);
-					}
-				}
-				return 0;
-			}
+            //set offset ...
+            if (Marshal.ReadByte(pBuffer, len) == 0x47 && Marshal.ReadByte(pBuffer, len + 188) == 0x47 && Marshal.ReadByte(pBuffer, len + 2 * 188) == 0x47)
+            {
+              off = len;
+            }
+          }
+          else _restBufferLen = 0;
+        }
+        else _restBufferLen = 0;
+      }
+      if (off == -1)
+      {
+        //no then find first 3 transport packets in mediasample
+        for (int i = 0; i < BufferLen - 2 * 188; ++i)
+        {
+          if (Marshal.ReadByte(pBuffer, i) == 0x47 && Marshal.ReadByte(pBuffer, i + 188) == 0x47 && Marshal.ReadByte(pBuffer, i + 2 * 188) == 0x47)
+          {
+            //found first 3 ts packets
+            //set the offset
+            off = i;
+            break;
+          }
+        }
+      }
+      for (uint t = (uint)off; t < BufferLen; t += 188)
+      {
+        if (t + 188 > BufferLen) break;
+        ProcessPacket((IntPtr)((int)pBuffer + t));
+      }
+      if (_restBufferLen > 0)
+      {
+        _restBufferLen /= 188;
+        _restBufferLen *= 188;
+        _restBufferLen = (BufferLen - off) - _restBufferLen;
+        if (_restBufferLen > 0 && _restBufferLen < 188)
+        {
+          //copy the incomplete packet in the rest buffer
+          Marshal.Copy((IntPtr)((int)pBuffer + BufferLen - _restBufferLen), _restBuffer, 0, _restBufferLen);
+        }
+      }
+      return 0;
+    }
 
-			public void ProcessPacket(IntPtr ptr)
-			{
-				if (ptr==IntPtr.Zero) return;
-				numberOfPacketsReceived++;
-				
-				m_packetHeader=m_tsHelper.GetHeader((IntPtr)ptr);
-				if(m_packetHeader.SyncByte!=0x47) 
-				{
-					return;
-				}
-				if(m_packetHeader.TransportError==true)
-				{
-					return;
-				}
-				if (m_packetHeader.Pid==m_videoPid)
-				{
-					if (m_packetHeader.TransportScrambling!=0)
-						isScrambled=true;
-					else
-						isScrambled=false;
-				}
+    public void ProcessPacket(IntPtr ptr)
+    {
+      if (ptr == IntPtr.Zero) return;
+      numberOfPacketsReceived++;
 
-				numberOfPacketsReceived++;
-				// teletext
-				if (_grabTeletext)
-				{
-					if (m_packetHeader.Pid==m_teletextPid && m_teletextPid>0)
-					{
-						TeletextGrabber.SaveData((IntPtr)ptr);
-					}
-				}
-
-				if(m_packetsReceived==false)
-				{
-					m_packetsReceived=true;
-				}
-
+      m_packetHeader = m_tsHelper.GetHeader((IntPtr)ptr);
+      if (m_packetHeader.SyncByte != 0x47)
+      {
+        return;
+      }
+      if (m_packetHeader.TransportError == true)
+      {
+        return;
+      }
+      if (m_packetHeader.Pid == m_videoPid)
+      {
+        if (m_packetHeader.TransportScrambling != 0)
+          isScrambled = true;
+        else
+          isScrambled = false;
       }
 
-        #endregion
+      numberOfPacketsReceived++;
+      // teletext
+      if (_grabTeletext)
+      {
+        if (m_packetHeader.Pid == m_teletextPid && m_teletextPid > 0)
+        {
+          TeletextGrabber.SaveData((IntPtr)ptr);
+        }
+      }
 
-		//
-		//
-	}//class dvbdemuxer
- 
+      if (m_packetsReceived == false)
+      {
+        m_packetsReceived = true;
+      }
+
+    }
+
+    #endregion
+
+    //
+    //
+  }//class dvbdemuxer
+
 }//namespace
