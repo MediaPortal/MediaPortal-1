@@ -23,6 +23,8 @@ using System;
 using System.Threading;
 using System.Runtime.InteropServices;
 
+using Microsoft.Win32.SafeHandles;
+
 namespace MediaPortal.PowerScheduler
 {
 	/// <summary>
@@ -35,17 +37,17 @@ namespace MediaPortal.PowerScheduler
 		/// <summary>
 		/// Wrap the system function <i>SetWaitableTimer</i>.
 		/// </summary>
-		[DllImport("Kernel32.dll", EntryPoint="SetWaitableTimer")] static extern private bool SetWaitableTimer(IntPtr hTimer, Int64 *pDue, Int32 lPeriod, IntPtr rNotify, IntPtr pArgs, bool bResume);
+		[DllImport("Kernel32.dll", EntryPoint="SetWaitableTimer")] static extern private bool SetWaitableTimer(SafeWaitHandle hTimer, Int64 *pDue, Int32 lPeriod, IntPtr rNotify, IntPtr pArgs, bool bResume);
 
 		/// <summary>
 		/// Wrap the system function <i>CreateWaitableTimer</i>.
 		/// </summary>
-		[DllImport("Kernel32.dll", EntryPoint="CreateWaitableTimer")] static extern private IntPtr CreateWaitableTimer(IntPtr pSec, bool bManual, string szName);
+		[DllImport("Kernel32.dll", EntryPoint="CreateWaitableTimer")] static extern private SafeWaitHandle CreateWaitableTimer(IntPtr pSec, bool bManual, string szName);
 
 		/// <summary>
 		/// Wrap the system function <i>CancelWaitableTimer</i>.
 		/// </summary>
-		[DllImport("Kernel32.dll", EntryPoint="CancelWaitableTimer")] static extern private bool CancelWaitableTimer(IntPtr hTimer);
+		[DllImport("Kernel32.dll", EntryPoint="CancelWaitableTimer")] static extern private bool CancelWaitableTimer(SafeWaitHandle hTimer);
 
 		/// <summary>
 		/// Wrap the system function <i>CloseHandle</i>.
@@ -86,10 +88,10 @@ namespace MediaPortal.PowerScheduler
 		public WaitableTimer()
 		{
 			// Create it
-			Handle = CreateWaitableTimer(IntPtr.Zero, false, null);
+            SafeWaitHandle = CreateWaitableTimer(IntPtr.Zero, false, null);
 
 			// Test
-			if ( Handle.Equals(IntPtr.Zero) ) throw new TimerException("Unable to create Waitable Timer");
+            if (SafeWaitHandle.Equals(IntPtr.Zero)) throw new TimerException("Unable to create Waitable Timer");
 		}
 
 		/// <summary>
@@ -152,7 +154,7 @@ namespace MediaPortal.PowerScheduler
 				else
 				{
 					// No timer
-					CancelWaitableTimer(Handle);
+                    CancelWaitableTimer(SafeWaitHandle);
 				}
 			}
 		}
@@ -174,7 +176,7 @@ namespace MediaPortal.PowerScheduler
 				long lInterval = m_Interval;
 
 				// Start timer
-				if ( !SetWaitableTimer(Handle, &lInterval, 0, IntPtr.Zero, IntPtr.Zero, true) ) throw new TimerException("Could not start Timer");
+                if (!SetWaitableTimer(SafeWaitHandle, &lInterval, 0, IntPtr.Zero, IntPtr.Zero, true)) throw new TimerException("Could not start Timer");
 
 				// Wait for the timer to expire
 				WaitOne();
