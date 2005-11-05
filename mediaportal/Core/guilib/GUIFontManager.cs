@@ -20,6 +20,7 @@
  */
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Xml;
 using System.Runtime.InteropServices;
 
@@ -37,7 +38,7 @@ namespace MediaPortal.GUI.Library
 		[DllImport("fontEngine.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
 		unsafe private static extern void FontEngineSetDevice(void* device);
 
-		static protected ArrayList m_fonts = new ArrayList();
+    static protected List<GUIFont> m_fonts = new List<GUIFont>();
 
 		// singleton. Dont allow any instance of this class
 		private GUIFontManager()
@@ -144,7 +145,7 @@ namespace MediaPortal.GUI.Library
 		/// <returns>A GUIFont instance representing the fontnumber or a default GUIFont if the number does not exists.</returns>
 		static public GUIFont GetFont( int iFont)
 		{
-			if (iFont>=0 && iFont < m_fonts.Count) return (GUIFont) m_fonts[ iFont];
+			if (iFont>=0 && iFont < m_fonts.Count) return  m_fonts[ iFont];
 			return GetFont("debug");
 		}
 
@@ -157,7 +158,7 @@ namespace MediaPortal.GUI.Library
 		{
 			for (int i=0; i < m_fonts.Count;++i)
 			{
-				GUIFont font=(GUIFont)m_fonts[i];
+				GUIFont font=m_fonts[i];
 				if (font.FontName==strFontName) return font;
 			}
 
@@ -171,7 +172,7 @@ namespace MediaPortal.GUI.Library
 			FontEnginePresentTextures();
 			for (int i=0; i < m_fonts.Count;++i)
 			{
-				GUIFont font=(GUIFont)m_fonts[i];
+				GUIFont font=m_fonts[i];
 				font.Present();
 			}
 		}

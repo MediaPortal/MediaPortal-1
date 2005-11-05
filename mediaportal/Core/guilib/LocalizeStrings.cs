@@ -21,6 +21,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 
@@ -34,7 +35,7 @@ namespace MediaPortal.GUI.Library
 	public class GUILocalizeStrings
 	{
 
-		static System.Collections.Hashtable m_mapStrings = new Hashtable();
+    static System.Collections.Generic.Dictionary<int, string> m_mapStrings = new System.Collections.Generic.Dictionary<int, string>();
 
     // singleton. Dont allow any instance of this class
     private GUILocalizeStrings()
@@ -62,7 +63,7 @@ namespace MediaPortal.GUI.Library
 		/// when false this function wont determine the total number of characters needed for this language.
 		/// </param>
 		/// <returns></returns>
-    static bool LoadMap(string strFileName, ref System.Collections.Hashtable map, bool bDetermineNumberOfChars)
+    static bool LoadMap(string strFileName, ref System.Collections.Generic.Dictionary<int, string> map, bool bDetermineNumberOfChars)
     {
 		bool isPrefixEnabled = true;
 
@@ -143,7 +144,7 @@ namespace MediaPortal.GUI.Library
 		{
 			if (strFileName==null) return false;
 			if (strFileName==String.Empty) return false;
-			System.Collections.Hashtable mapEnglish = new Hashtable();
+      System.Collections.Generic.Dictionary<int, string> mapEnglish = new System.Collections.Generic.Dictionary<int, string>();
       m_mapStrings.Clear();
 			Log.Write("  load localized strings from:{0}", strFileName);
 			// load the text for the current language
@@ -153,16 +154,18 @@ namespace MediaPortal.GUI.Library
 
 			// check if current language contains an entry for each textline found
 			// in the english version
-			foreach (DictionaryEntry d in mapEnglish)
-			{
-				if (!m_mapStrings.ContainsKey((int)d.Key))
-				{
-					//if current language does not contain a translation for this text
-					//then use the english variant
-					m_mapStrings[d.Key] = (string)d.Value;
-					Log.Write("language file:{0} is missing entry for id:{1} text:{2}", strFileName,(int)d.Key,(string)d.Value);
-				}
-			}
+
+      Dictionary<int, string>.KeyCollection keyColl = mapEnglish.Keys;
+      foreach (int key in keyColl)
+      {
+        if (!m_mapStrings.ContainsKey(key))
+        {
+          //if current language does not contain a translation for this text
+          //then use the english variant
+          m_mapStrings[key] = mapEnglish[key];
+          Log.Write("language file:{0} is missing entry for id:{1} text:{2}", strFileName, key, (string)mapEnglish[key]);
+        }
+      }
 			mapEnglish=null;
 			return true;
 		} 

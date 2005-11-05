@@ -23,6 +23,7 @@ using System;
 using Microsoft.Win32;
 using System.Drawing;
 using System.Collections;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using DShowNET;
 using MediaPortal;
@@ -2484,7 +2485,7 @@ namespace MediaPortal.TV.Recording
 
 
       //get list of current tv channels present in the database
-      ArrayList tvChannels = new ArrayList();
+      List<TVChannel> tvChannels = new List<TVChannel>();
       TVDatabase.GetChannels(ref tvChannels);
 
       m_analyzerInterface.ResetParser(); //analyser will map pids needed

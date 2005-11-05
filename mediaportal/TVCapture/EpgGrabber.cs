@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using DShowNET;
 using MediaPortal.GUI.Library;
@@ -36,7 +37,7 @@ namespace MediaPortal.TV.Recording
 		int							epgChannel=0;
 		uint						mhwEvent=0;
 		State						currentState=State.Idle;
-		ArrayList       mhwChannelCache;
+		List<CachedChannel>       mhwChannelCache;
 		#endregion
 
 		#region properties
@@ -100,7 +101,7 @@ namespace MediaPortal.TV.Recording
 				else
 				{
 					mhwEvent=0;
-					mhwChannelCache=new ArrayList();
+          mhwChannelCache = new List<CachedChannel>();
 					currentState=State.Grabbing;
 					Log.WriteFile(Log.LogType.EPG,"epg-grab: start MHW grabber");
 					if (MHWInterface!=null)
@@ -197,7 +198,7 @@ namespace MediaPortal.TV.Recording
 
 
 					// find channel in tvdatabase
-					ArrayList channels = new ArrayList();
+          List<TVChannel> channels = new List<TVChannel>();
 					TVDatabase.GetChannels(ref channels);
 					foreach (TVChannel chan in channels)
 					{
@@ -243,7 +244,7 @@ namespace MediaPortal.TV.Recording
 						}
 
 						Log.WriteFile(Log.LogType.EPG,"atsc-grab: {0} {1}-{2} {3}", tv.Channel,tv.Start,tv.End,tv.Title);
-						ArrayList programsInDatabase = new ArrayList();
+            List<TVProgram> programsInDatabase = new List<TVProgram>();
 						TVDatabase.GetProgramsPerChannel(tv.Channel,tv.Start+1,tv.End-1,ref programsInDatabase);
 						if(programsInDatabase.Count==0)
 						{
@@ -282,7 +283,7 @@ namespace MediaPortal.TV.Recording
 					}
 
 					//cache all channels...
-					ArrayList channels = new ArrayList();
+          List<TVChannel> channels = new List<TVChannel>();
 					TVDatabase.GetChannels(ref channels);
 					int freq, symbolrate,innerFec,modulation, ONID, TSID, SID,pcrPid;
 					int audioPid, videoPid, teletextPid, pmtPid,bandWidth;
