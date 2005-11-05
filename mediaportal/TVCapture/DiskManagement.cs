@@ -21,6 +21,7 @@
 using System;
 using System.IO;
 using System.Collections;
+using System.Collections.Generic;
 using System.Management;
 using System.Threading;
 using MediaPortal.GUI.Library;
@@ -94,7 +95,7 @@ namespace MediaPortal.TV.Recording
       {
         //dont import during recording...
         if (Recorder.IsAnyCardRecording()) return;
-        ArrayList recordings = new ArrayList();
+        List<TVRecorded> recordings = new List<TVRecorded>();
         TVDatabase.GetRecordedTV(ref recordings);
         for (int i = 0; i < Recorder.Count; i++)
         {
@@ -268,7 +269,7 @@ namespace MediaPortal.TV.Recording
         while (true)
         {
           bool deleted = false;
-          ArrayList recordings = new ArrayList();
+          List<TVRecorded> recordings = new List<TVRecorded>();
           TVDatabase.GetRecordedTV(ref recordings);
           foreach (TVRecorded rec in recordings)
           {
@@ -304,7 +305,7 @@ namespace MediaPortal.TV.Recording
       m_dtCheckDiskSpace = DateTime.Now;
 
       //first get all drives..
-      ArrayList drives = new ArrayList();
+      List<string> drives = new List<string>();
       for (int i = 0; i < Recorder.Count; ++i)
       {
         TVCaptureDevice dev = Recorder.Get(i);
@@ -323,7 +324,7 @@ namespace MediaPortal.TV.Recording
       }
 
       // for each drive get all recordings
-      ArrayList recordings = new ArrayList();
+      List<RecordingFileInfo> recordings = new List<RecordingFileInfo>();
       foreach (string drive in drives)
       {
         recordings.Clear();
@@ -372,7 +373,7 @@ namespace MediaPortal.TV.Recording
           while (totalSize > lMaxRecordingSize && recordings.Count > 0)
           {
             RecordingFileInfo fi = (RecordingFileInfo)recordings[0];
-            ArrayList tvrecs = new ArrayList();
+            List<TVRecorded> tvrecs = new List<TVRecorded>();
             TVDatabase.GetRecordedTV(ref tvrecs);
             foreach (TVRecorded tvrec in tvrecs)
             {
@@ -411,8 +412,8 @@ namespace MediaPortal.TV.Recording
       if (recording.RecType == TVRecording.RecordingType.Once) return;
 
       //check how many episodes we got
-      ArrayList recordings = new ArrayList();
-      TVDatabase.GetRecordings(ref recordings);
+      List<TVRecorded> recordings = new List<TVRecorded>();
+      TVDatabase.GetRecordedTV(ref recordings);
       while (true)
       {
         int recordingsFound = 0;

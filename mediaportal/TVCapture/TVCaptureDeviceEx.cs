@@ -26,6 +26,7 @@ using System.IO;
 using System.Management;
 using System.Drawing;
 using System.Collections;
+using System.Collections.Generic;
 using Microsoft.Win32;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
@@ -50,7 +51,7 @@ namespace MediaPortal.TV.Recording
   /// * IAMLine21Decoder - Used to control the display of closed captioning. 
   /// * IAMWstDecoder - Used to control the dislay of World Standard Teletext (WST).
   /// </summary>
-  class RecordingFileInfo : IComparable
+  public class RecordingFileInfo : IComparable<RecordingFileInfo>
   {
     public string filename;
     public FileInfo info;
@@ -58,9 +59,8 @@ namespace MediaPortal.TV.Recording
 
     #region IComparable Members
 
-    public int CompareTo(object obj)
+    public int CompareTo(RecordingFileInfo fi)
     {
-      RecordingFileInfo fi = (RecordingFileInfo)obj;
       if (info.CreationTime < fi.info.CreationTime) return -1;
       if (info.CreationTime > fi.info.CreationTime) return 1;
       return 0;
@@ -1521,7 +1521,7 @@ namespace MediaPortal.TV.Recording
         dtNow = DateTime.Now;
 
       TVProgram currentRunningProgram = null;
-      ArrayList channels = new ArrayList();
+      List<TVChannel> channels = new List<TVChannel>();
       TVDatabase.GetChannels(ref channels);
       foreach (TVChannel chan in channels)
       {
@@ -1606,7 +1606,7 @@ namespace MediaPortal.TV.Recording
 
     string GetFirstChannel()
     {
-      ArrayList channels = new ArrayList();
+      List<TVChannel> channels = new List<TVChannel>();
       TVDatabase.GetChannels(ref channels);
       foreach (TVChannel chan in channels)
       {
@@ -1635,7 +1635,7 @@ namespace MediaPortal.TV.Recording
       retChannel.TVStandard = AnalogVideoStandard.None;
       retChannel.Country = defaultCountryCode;
 
-      ArrayList channels = new ArrayList();
+      List<TVChannel> channels = new List<TVChannel>();
       TVDatabase.GetChannels(ref channels);
       foreach (TVChannel chan in channels)
       {
@@ -1887,7 +1887,7 @@ namespace MediaPortal.TV.Recording
       get { return currentRadioStationName; }
     }
 
-    public void GetRecordings(string drive, ref ArrayList recordings)
+    public void GetRecordings(string drive, ref List<RecordingFileInfo> recordings)
     {
       if (!DeleteOnLowDiskspace) return;
       if (RecordingPath.ToLower().Substring(0, 2) != drive.ToLower()) return;
