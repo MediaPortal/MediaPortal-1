@@ -149,12 +149,7 @@ namespace ProcessPlugins.CallerId
 
 				object[] oButtons = new Object[1]; 
 				
-				System.Net.Sockets.TcpListener server = new TcpListener( port);  
-				// for simplicity, I'd rather be using the TcpListner constructor that only takes 
-				// (int port), but that's obsolete, according to http://msdn.microsoft.com/library/en-us/cpref/html/frlrfsystemnetsocketstcplistenerclassctortopic.asp.
-				// will my DNS-name code work properly on a home machine that may not always 
-				// have access to a DNS server (will the client be smart enough to turn it's 
-				// name into an ip address?)
+				System.Net.Sockets.TcpListener server = new TcpListener(IPAddress.Any,  port);  
 
 				server.Start();	// Start listening for client requests.
 
