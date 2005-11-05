@@ -833,6 +833,20 @@
   <window>
     <id>600</id>
     <description>TV Guide</description>
+   
+    <action>
+      <id>77</id>
+      <key>F6</key>
+      <sound>click.wav</sound>
+      <description>increase time</description>
+    </action>
+    <action>
+      <id>78</id>
+      <key>F5</key>
+      <sound>click.wav</sound>
+      <description>decrease time</description>
+    </action>
+     
     <action>
       <id>86</id>
       <key>F8</key>

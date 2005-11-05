@@ -430,6 +430,16 @@ namespace MediaPortal.GUI.TV
 					SetFocus();
 				}
 					break;
+				case Action.ActionType.ACTION_MUSIC_REWIND:
+					m_dtTime=m_dtTime.AddHours(-3);
+					Update(false);
+					SetFocus();
+					break;
+				case Action.ActionType.ACTION_MUSIC_FORWARD:
+					m_dtTime=m_dtTime.AddHours(3);
+					Update(false);
+					SetFocus();
+					break;
 				case Action.ActionType.ACTION_DECREASE_TIMEBLOCK:
 				{
 					if (m_iBlockTime>15) m_iBlockTime-=15;
