@@ -1,6 +1,7 @@
 using System;
 using MediaPortal.Dialogs;
 using System.Collections;
+using System.Collections.Generic;
 using MediaPortal.GUI.Library;
 using MediaPortal.TV.Database;
 using MediaPortal.Util;
@@ -10,7 +11,7 @@ namespace WindowPlugins.GUISettings.TV
 	/// <summary>
 	/// Summary description for GUISettingsSortChannels.
 	/// </summary>
-	public class GUISettingsSortChannels : GUIWindow, IComparer
+	public class GUISettingsSortChannels : GUIWindow, IComparer<TVChannel>
 	{
 		[SkinControlAttribute(24)]		protected GUIButtonControl btnTvGroup=null;
 		[SkinControlAttribute(10)]		protected GUIUpDownListControl listChannels=null;
@@ -34,7 +35,7 @@ namespace WindowPlugins.GUISettings.TV
 
 		void UpdateList()
 		{
-			ArrayList tvChannels = new ArrayList();
+      List<TVChannel> tvChannels = new List<TVChannel>();
 			listChannels.Clear();
 			if (currentGroup==null)
 			{
@@ -175,7 +176,7 @@ namespace WindowPlugins.GUISettings.TV
 
 		void OnTvGroup()
 		{
-			ArrayList tvGroups = new ArrayList();
+      List<TVGroup> tvGroups = new List<TVGroup>();
 			TVDatabase.GetGroups(ref tvGroups);
 			GUIDialogMenu dlg=(GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
 			if (dlg!=null)
@@ -230,7 +231,7 @@ namespace WindowPlugins.GUISettings.TV
 		}
 		#region IComparer Members
 
-		public int Compare(object x, object y)
+    public int Compare(TVChannel x, TVChannel y)
 		{
 			TVChannel ch1=(TVChannel)x;
 			TVChannel ch2=(TVChannel)y;

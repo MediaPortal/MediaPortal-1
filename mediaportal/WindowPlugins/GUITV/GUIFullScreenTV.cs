@@ -23,6 +23,7 @@ using System;
 using System.Threading;
 using System.Diagnostics;
 using System.Collections;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using System.IO;
@@ -139,7 +140,7 @@ namespace MediaPortal.GUI.TV
 		, REC_LOGO=39
 		};
 
-		ArrayList m_channels = new ArrayList();
+    List<TVChannel> m_channels = new List<TVChannel>();
 		public GUIFullScreenTV()
 		{
 			GetID=(int)GUIWindow.Window.WINDOW_TVFULLSCREEN;

@@ -21,6 +21,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
@@ -311,7 +312,7 @@ namespace MediaPortal.GUI.TV
 			GUIControl.ClearControl(GetID,listAlbums.GetID);
 			GUIControl.ClearControl(GetID,listViews.GetID);
 
-			ArrayList recordings = new ArrayList();
+      List<TVRecorded> recordings = new List<TVRecorded>();
 			ArrayList itemlist = new ArrayList();
 			TVDatabase.GetRecordedTV(ref recordings);
 /*

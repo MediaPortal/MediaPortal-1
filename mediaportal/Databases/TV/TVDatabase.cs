@@ -4657,6 +4657,40 @@ namespace MediaPortal.TV.Database
         return false;
       }
     }
+    static public void GetGroups(ref List<TVGroup> groups)
+    {
+      groups.Clear();
+      lock (typeof(TVDatabase))
+      {
+        string strSQL;
+        try
+        {
+          if (null == m_db) return;
+          SQLiteResultSet results;
+          strSQL = String.Format("select * from tblGroups order by iSort");
+          results = m_db.Execute(strSQL);
+          if (results.Rows.Count == 0) return;
+          for (int i = 0; i < results.Rows.Count; ++i)
+          {
+            TVGroup group = new TVGroup();
+            group.ID = DatabaseUtility.GetAsInt(results, i, "idGroup");
+            group.Sort = DatabaseUtility.GetAsInt(results, i, "iSort");
+            group.Pincode = DatabaseUtility.GetAsInt(results, i, "Pincode");
+            group.GroupName = DatabaseUtility.Get(results, i, "strName");
+            groups.Add(group);
+          }
+          foreach (TVGroup group in groups)
+          {
+            GetTVChannelsForGroup(group);
+          }
+        }
+        catch (Exception ex)
+        {
+          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          Open();
+        }
+      }
+    }
 
     #endregion
   }//public class TVDatabase

@@ -22,6 +22,7 @@ using System;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using System.Collections;
+using System.Collections.Generic;
 using SQLite.NET;
 using DShowNET;
 namespace MediaPortal.TV.Database
@@ -59,7 +60,7 @@ namespace MediaPortal.TV.Database
 		public string GroupName;
 		public int    Sort;
 		public int    Pincode;
-		public ArrayList     tvChannels = new ArrayList();
+    public List<TVChannel> tvChannels = new List<TVChannel>();
 		public override string ToString()
 		{
 			return GroupName;
@@ -358,7 +359,7 @@ namespace MediaPortal.TV.Database
 			currentProgram=null;
 			nextProgram=null;
 			long lNow=Utils.datetolong(dt);
-			ArrayList progs = new ArrayList();
+      List<TVProgram> progs = new List<TVProgram>();
 			long starttime=Utils.datetolong( dt.AddDays(-2) );
 			long endtime  =Utils.datetolong( dt.AddDays(2));
 			TVDatabase.GetProgramsPerChannel(Name,starttime,endtime,ref progs);
@@ -407,7 +408,7 @@ namespace MediaPortal.TV.Database
 					return currentProgram;
 			}
 
-			ArrayList progs = new ArrayList();
+      List<TVProgram> progs = new List<TVProgram>();
 			long starttime=Utils.datetolong( dt.AddDays(-2) );
 			long endtime  =Utils.datetolong( dt.AddDays(2));
 			TVDatabase.GetProgramsPerChannel(Name,starttime,endtime,ref progs);

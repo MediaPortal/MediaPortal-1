@@ -22,6 +22,7 @@
 using System;
 using System.IO;
 using System.Collections;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.Windows.Forms;
@@ -906,7 +907,7 @@ namespace MediaPortal.GUI.TV
 	{
 		#region Private members
 
-		private ArrayList	m_groups = new ArrayList(); // Contains all channel groups (including an "all channels" group)
+    private List<TVGroup> m_groups = new List<TVGroup>(); // Contains all channel groups (including an "all channels" group)
 		private int				m_currentgroup = 0;
 		private string		m_currentchannel = String.Empty;
 		private DateTime	m_zaptime;
@@ -915,7 +916,7 @@ namespace MediaPortal.GUI.TV
 		private int				m_zapgroup = -1;
 		private string    lastViewedChannel = null; // saves the last viewed Channel  // mPod
 		private TVChannel m_currentTvChannel=null;
-		private ArrayList channels = new ArrayList();
+    private List<TVChannel> channels = new List<TVChannel>();
 		#endregion
 
 		#region Constructors
@@ -923,7 +924,7 @@ namespace MediaPortal.GUI.TV
 		public ChannelNavigator()
 		{
 			// Load all groups
-			ArrayList groups = new ArrayList();
+      List<TVGroup> groups = new List<TVGroup>();
 			TVDatabase.GetGroups(ref groups); // Put groups in a local variable to ensure the "All" group is first always
 
 			channels.Clear();
@@ -972,7 +973,7 @@ namespace MediaPortal.GUI.TV
 		/// <summary>
 		/// Gets the list of channel groups.
 		/// </summary>
-		public ArrayList Groups
+    public List<TVGroup> Groups
 		{
 			get { return m_groups; }
 		}
@@ -1118,7 +1119,7 @@ namespace MediaPortal.GUI.TV
 		/// <param name="useZapDelay">If true, the configured zap delay is used. Otherwise it zaps immediately.</param>
 		public void ZapToChannel(int channelNr, bool useZapDelay)
 		{
-			ArrayList channels = CurrentGroup.tvChannels;
+      List<TVChannel> channels = CurrentGroup.tvChannels;
 			channelNr--;
 			if (channelNr >= 0 && channelNr < channels.Count)
 			{
@@ -1260,7 +1261,7 @@ namespace MediaPortal.GUI.TV
 		{
 			// Load all groups
 			if (GUIGraphicsContext.DX9Device==null) return;
-			ArrayList groups = new ArrayList();
+      List<TVGroup> groups = new List<TVGroup>();
 			TVDatabase.GetGroups(ref groups); // Put groups in a local variable to ensure the "All" group is first always
 
 			channels.Clear();
