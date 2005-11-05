@@ -457,7 +457,7 @@ namespace MediaPortal.GUI.Library
 			if (System.IO.File.Exists(strCache))
       {
         bool bExists=true;
-        using (Stream r = File.Open(strCache+".xml", FileMode.Open, FileAccess.Read))
+        using (Stream r = File.Open(strCache+"_2.xml", FileMode.Open, FileAccess.Read))
         {
           // deserialize persons
           SoapFormatter c = new SoapFormatter();
@@ -602,10 +602,10 @@ namespace MediaPortal.GUI.Library
             textureCoords[_EndCharacter-_StartCharacter,0]=spacingPerChar;
             try
             {
-              System.IO.File.Delete(strCache+".xml");
+              System.IO.File.Delete(strCache + "_2.xml");
             }
             catch(Exception ){}
-            using (Stream s = File.Open(strCache+".xml", FileMode.CreateNew, FileAccess.ReadWrite))
+            using (Stream s = File.Open(strCache + "_2.xml", FileMode.CreateNew, FileAccess.ReadWrite))
             {
               // serialize persons
               SoapFormatter b = new SoapFormatter();

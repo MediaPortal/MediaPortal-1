@@ -173,7 +173,7 @@ namespace MediaPortal.GUI.Library
 
 		void SavePackedSkin(string skinName)
 		{
-			string packedXml=String.Format(@"{0}\packedgfx.xml",skinName);
+			string packedXml=String.Format(@"{0}\packedgfx2.xml",skinName);
 			using(FileStream fileStream = new FileStream(packedXml, FileMode.Create, FileAccess.Write, FileShare.Read))
 			{
 				SoapFormatter formatter = new SoapFormatter();
@@ -184,7 +184,7 @@ namespace MediaPortal.GUI.Library
 
 		bool LoadPackedSkin(string skinName)
 		{
-			string packedXml=String.Format(@"{0}\packedgfx.xml",skinName);
+			string packedXml=String.Format(@"{0}\packedgfx2.xml",skinName);
 			if(File.Exists(packedXml))
 			{
 				using(FileStream fileStream = new FileStream(packedXml, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
@@ -270,7 +270,7 @@ namespace MediaPortal.GUI.Library
 						}
 					}
 				}
-				string fileName=String.Format(@"{0}\packedgfx{1}.png",GUIGraphicsContext.Skin,packedTextures.Count);
+				string fileName=String.Format(@"{0}\packedgfx2{1}.png",GUIGraphicsContext.Skin,packedTextures.Count);
 				rootImage.Save(fileName, System.Drawing.Imaging.ImageFormat.Png);
 				rootImage.Dispose();
 				packedTextures.Add(bigOne);
@@ -290,7 +290,7 @@ namespace MediaPortal.GUI.Library
 			{
 				bigOne.textureNo=-1;
 
-				string fileName=String.Format(@"{0}\packedgfx{1}.png",GUIGraphicsContext.Skin,index);
+				string fileName=String.Format(@"{0}\packedgfx2{1}.png",GUIGraphicsContext.Skin,index);
 				ImageInformation info2 = new ImageInformation();
 				Texture tex = TextureLoader.FromFile(GUIGraphicsContext.DX9Device,
 					fileName,
