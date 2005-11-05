@@ -1294,17 +1294,23 @@ public class MediaPortalApp : D3DApp, IRender
 					case Action.ActionType.ACTION_MUSIC_FORWARD:
 						if (!GUIGraphicsContext.IsFullScreenVideo)
 						{
-							g_Player.Speed = Utils.GetNextForwardSpeed(g_Player.Speed);
-							return;
+							if (!g_Player.IsTV)
+							{
+								g_Player.Speed = Utils.GetNextForwardSpeed(g_Player.Speed);
+								return;
+							}
 						}
 						break;
 					case Action.ActionType.ACTION_REWIND:
 					case Action.ActionType.ACTION_MUSIC_REWIND:
 						if (!GUIGraphicsContext.IsFullScreenVideo)
 						{
-							Log.Write("***************************** rewind");
-							g_Player.Speed = Utils.GetNextRewindSpeed(g_Player.Speed);
-							return;
+							if (!g_Player.IsTV)
+							{
+								Log.Write("***************************** rewind");
+								g_Player.Speed = Utils.GetNextRewindSpeed(g_Player.Speed);
+								return;
+							}
 						}
 						break;
 				}
