@@ -541,9 +541,9 @@ namespace JH.CommBase
 			wo.Offset = 0;
 			wo.OffsetHigh = 0;
 			if (checkSends)
-				wo.hEvent = writeEvent.SafeWaitHandle;
+				wo.hEvent = writeEvent.SafeWaitHandle.DangerousGetHandle();
 			else
-				wo.hEvent = null;
+				wo.hEvent = IntPtr.Zero;
 
 			ptrUWO = Marshal.AllocHGlobal(Marshal.SizeOf(wo));
 
@@ -1096,7 +1096,7 @@ namespace JH.CommBase
 			uMask = Marshal.AllocHGlobal(Marshal.SizeOf(eventMask));
 
 			ov.Offset = 0; ov.OffsetHigh = 0;
-            ov.hEvent = sg.SafeWaitHandle;
+            ov.hEvent = sg.SafeWaitHandle.DangerousGetHandle();
 			Marshal.StructureToPtr(ov, unmanagedOv, true);
 
 			try
@@ -1501,7 +1501,7 @@ namespace JH.CommBase
 			internal UIntPtr InternalHigh;
 			internal UInt32 Offset;
 			internal UInt32 OffsetHigh;
-            internal SafeWaitHandle hEvent;
+            internal IntPtr hEvent;
 		}
 
 		[DllImport("kernel32.dll")]
