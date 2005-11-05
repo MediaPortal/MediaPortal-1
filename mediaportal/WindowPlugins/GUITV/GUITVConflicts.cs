@@ -21,6 +21,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
@@ -183,7 +184,7 @@ namespace MediaPortal.GUI.TV
 				listConflicts.Add(item);
 				if (currentEpisode==null && currentShow.RecType!=TVRecording.RecordingType.Once)
 				{
-					ArrayList showEpisode = new ArrayList();
+          List<TVRecording> showEpisode = new List<TVRecording>();
 					ConflictManager.GetConflictingSeries(currentShow, showEpisode);
 					foreach (TVRecording showSerie in showEpisode)
 					{
@@ -250,7 +251,7 @@ namespace MediaPortal.GUI.TV
 				SetLabels();
 				return;
 			}
-			ArrayList itemlist = new ArrayList();
+      List<TVRecording> itemlist = new List<TVRecording>();
 			TVDatabase.GetRecordings(ref itemlist);
 			foreach (TVRecording rec in itemlist)
 			{

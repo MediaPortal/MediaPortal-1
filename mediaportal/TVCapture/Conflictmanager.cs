@@ -126,7 +126,7 @@ namespace MediaPortal.TV.Recording
       }
       cards = new int[Recorder.Count];
       if (_recordings.Count == 0) return false;
-      ArrayList episodes = _util.GetRecordingTimes(rec);
+      List<TVRecording> episodes = _util.GetRecordingTimes(rec);
       foreach (TVRecording episode in episodes)
       {
         if (episode.Canceled != 0) continue;
@@ -134,7 +134,7 @@ namespace MediaPortal.TV.Recording
         AllocateCard(episode.Channel);
         foreach (TVRecording otherRecording in _recordings)
         {
-          ArrayList otherEpisodes = _util.GetRecordingTimes(otherRecording);
+          List<TVRecording> otherEpisodes = _util.GetRecordingTimes(otherRecording);
           foreach (TVRecording otherEpisode in otherEpisodes)
           {
             if (otherEpisode.Canceled != 0) continue;
@@ -160,7 +160,7 @@ namespace MediaPortal.TV.Recording
       return false;
     }
 
-    static public void GetConflictingSeries(TVRecording rec, ArrayList recSeries)
+    static public void GetConflictingSeries(TVRecording rec, List<TVRecording> recSeries)
     {
       recSeries.Clear();
       if (Recorder.Count <= 0) return;
@@ -172,7 +172,7 @@ namespace MediaPortal.TV.Recording
       cards = new int[Recorder.Count];
       if (_recordings.Count == 0) return;
 
-      ArrayList episodes = _util.GetRecordingTimes(rec);
+      List<TVRecording> episodes = _util.GetRecordingTimes(rec);
       foreach (TVRecording episode in episodes)
       {
         if (episode.Canceled != 0) continue;
@@ -182,7 +182,7 @@ namespace MediaPortal.TV.Recording
         AllocateCard(episode.Channel);
         foreach (TVRecording otherRecording in _recordings)
         {
-          ArrayList otherEpisodes = _util.GetRecordingTimes(otherRecording);
+          List<TVRecording> otherEpisodes = _util.GetRecordingTimes(otherRecording);
           foreach (TVRecording otherEpisode in otherEpisodes)
           {
             if (otherEpisode.Canceled != 0) continue;
@@ -223,12 +223,12 @@ namespace MediaPortal.TV.Recording
       cards = new int[Recorder.Count];
       if (_recordings.Count == 0) return null;
 
-      ArrayList conflicts = new ArrayList();
+      List<TVRecording> conflicts = new List<TVRecording>();
       if (episode.Canceled != 0) return null;
 
       foreach (TVRecording otherRecording in _recordings)
       {
-        ArrayList otherEpisodes = _util.GetRecordingTimes(otherRecording);
+        List<TVRecording> otherEpisodes = _util.GetRecordingTimes(otherRecording);
         foreach (TVRecording otherEpisode in otherEpisodes)
         {
           if (otherEpisode.Canceled != 0) continue;

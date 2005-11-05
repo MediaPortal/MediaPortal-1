@@ -4515,6 +4515,148 @@ namespace MediaPortal.TV.Database
         return false;
       }
     }
+    static public bool GetProgramsPerChannel(string strChannel1, long iStartTime, long iEndTime, ref List<TVProgram> progs)
+    {
+      lock (typeof(TVDatabase))
+      {
+
+        string strSQL = String.Empty;
+        progs.Clear();
+        try
+        {
+          if (null == m_db) return false;
+          if (strChannel1 == null) return false;
+          string strChannel = strChannel1;
+          DatabaseUtility.RemoveInvalidChars(ref strChannel);
+
+          string strOrder = " order by iStartTime";
+          strSQL = String.Format("select * from channel,tblPrograms,genre where genre.idGenre=tblPrograms.idGenre and tblPrograms.idChannel=channel.idChannel and channel.strChannel like '{0}' ",
+            strChannel);
+          string where = String.Format(" and ( (tblPrograms.iEndTime>='{0}' and tblPrograms.iEndTime <='{1}') ", iStartTime, iEndTime);
+          where += String.Format(" or (tblPrograms.iStartTime>='{0}' and tblPrograms.iStartTime <= '{1}' ) ", iStartTime, iEndTime);
+          where += String.Format(" or (tblPrograms.iStartTime<='{0}' and tblPrograms.iEndTime >= '{1}') )", iStartTime, iEndTime);
+          strSQL += where;
+          strSQL += strOrder;
+
+
+          SQLiteResultSet results;
+          results = m_db.Execute(strSQL);
+          if (results == null) return false;
+          if (results.Rows.Count == 0) return false;
+          for (int i = 0; i < results.Rows.Count; ++i)
+          {
+            long iStart = DatabaseUtility.GetAsInt64(results, i, "tblPrograms.iStartTime");
+            long iEnd = DatabaseUtility.GetAsInt64(results, i, "tblPrograms.iEndTime");
+            bool bAdd = false;
+            if (iEnd >= iStartTime && iEnd <= iEndTime) bAdd = true;
+            if (iStart >= iStartTime && iStart <= iEndTime) bAdd = true;
+            if (iStart <= iStartTime && iEnd >= iEndTime) bAdd = true;
+            if (bAdd)
+            {
+
+              TVProgram prog = new TVProgram();
+              prog.Channel = DatabaseUtility.Get(results, i, "channel.strChannel");
+              prog.Start = iStart;
+              prog.End = iEnd;
+              prog.Genre = DatabaseUtility.Get(results, i, "genre.strGenre");
+              prog.Title = DatabaseUtility.Get(results, i, "tblPrograms.strTitle");
+              prog.Description = DatabaseUtility.Get(results, i, "tblPrograms.strDescription");
+              prog.Episode = DatabaseUtility.Get(results, i, "tblPrograms.strEpisodeName");
+              prog.Repeat = DatabaseUtility.Get(results, i, "tblPrograms.strRepeat");
+              prog.ID = DatabaseUtility.GetAsInt(results, i, "tblPrograms.idProgram");
+              prog.SeriesNum = DatabaseUtility.Get(results, i, "tblPrograms.strSeriesNum");
+              prog.EpisodeNum = DatabaseUtility.Get(results, i, "tblPrograms.strEpisodeNum");
+              prog.EpisodePart = DatabaseUtility.Get(results, i, "tblPrograms.strEpisodePart");
+              prog.Date = DatabaseUtility.Get(results, i, "tblPrograms.strDate");
+              prog.StarRating = DatabaseUtility.Get(results, i, "tblPrograms.strStarRating");
+              prog.Classification = DatabaseUtility.Get(results, i, "tblPrograms.strClassification");
+              progs.Add(prog);
+            }
+          }
+
+          return true;
+
+        }
+        catch (Exception ex)
+        {
+          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1} {2}", ex.Message, ex.StackTrace, strSQL);
+          Open();
+        }
+        return false;
+      }
+    }
+
+    static public bool GetRecordedTV(ref List<TVRecorded> recordings)
+    {
+      lock (typeof(TVDatabase))
+      {
+        recordings.Clear();
+        try
+        {
+          if (null == m_db) return false;
+          string strSQL;
+          strSQL = String.Format("select * from channel,genre,recorded where recorded.idChannel=channel.idChannel and genre.idGenre=recorded.idGenre order by iStartTime");
+          SQLiteResultSet results;
+          results = m_db.Execute(strSQL);
+          if (results.Rows.Count == 0) return false;
+          for (int i = 0; i < results.Rows.Count; ++i)
+          {
+            long iStart = DatabaseUtility.GetAsInt64(results, i, "recorded.iStartTime");
+            long iEnd = DatabaseUtility.GetAsInt64(results, i, "recorded.iEndTime");
+            TVRecorded rec = new TVRecorded();
+            rec.Channel = DatabaseUtility.Get(results, i, "channel.strChannel");
+            rec.Start = iStart;
+            rec.End = iEnd;
+            rec.ID = DatabaseUtility.GetAsInt(results, i, "recorded.idRecorded");
+            rec.Title = DatabaseUtility.Get(results, i, "recorded.strProgram");
+            rec.Description = DatabaseUtility.Get(results, i, "recorded.strDescription");
+            rec.FileName = DatabaseUtility.Get(results, i, "recorded.strFileName");
+            rec.Genre = DatabaseUtility.Get(results, i, "genre.strGenre");
+            rec.Played = DatabaseUtility.GetAsInt(results, i, "recorded.iPlayed");
+            rec.KeepRecordingMethod = (TVRecorded.KeepMethod)DatabaseUtility.GetAsInt(results, i, "recorded.keepMethod");
+            long date = DatabaseUtility.GetAsInt64(results, i, "recorded.keepDate");
+            rec.KeepRecordingTill = Utils.longtodate(date);
+            recordings.Add(rec);
+          }
+
+          return true;
+        }
+        catch (Exception ex)
+        {
+          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          Open();
+        }
+        return false;
+      }
+    }
+    static public bool GetGenres(ref List<string> genres)
+    {
+      lock (typeof(TVDatabase))
+      {
+        genres.Clear();
+        try
+        {
+          if (null == m_db) return false;
+          string strSQL;
+          strSQL = String.Format("select * from genre");
+          SQLiteResultSet results;
+          results = m_db.Execute(strSQL);
+          if (results.Rows.Count == 0) return false;
+          for (int i = 0; i < results.Rows.Count; ++i)
+          {
+            genres.Add(DatabaseUtility.Get(results, i, "strGenre"));
+          }
+
+          return true;
+        }
+        catch (Exception ex)
+        {
+          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          Open();
+        }
+        return false;
+      }
+    }
 
     #endregion
   }//public class TVDatabase

@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using MediaPortal.Dialogs;
 using MediaPortal.Util;
@@ -55,7 +56,7 @@ namespace MediaPortal.GUI.TV
       set
       {
 				CurrentProgram=null;
-        ArrayList programs = new ArrayList();
+        List<TVProgram> programs = new List<TVProgram>();
         TVDatabase.GetPrograms(Utils.datetolong(DateTime.Now),Utils.datetolong(DateTime.Now.AddDays(10)), ref programs);
         foreach (TVProgram prog in programs)
         {
@@ -71,7 +72,7 @@ namespace MediaPortal.GUI.TV
 		void UpdateProgramDescription(TVRecording rec)
 		{
 			if (rec==null) return;
-			ArrayList progs = new ArrayList();
+      List<TVProgram> progs = new List<TVProgram>();
 			TVDatabase.GetProgramsPerChannel(rec.Channel,rec.Start,rec.End,ref progs);
 			if (progs.Count>0)
 			{
@@ -114,7 +115,7 @@ namespace MediaPortal.GUI.TV
 			lblProgramTitle.Label=currentProgram.Title;
 
 
-			ArrayList recordings = new ArrayList();
+      List<TVRecording> recordings = new List<TVRecording>();
 			TVDatabase.GetRecordings(ref recordings);
 			bool bRecording=false;
 			bool bSeries=false;
@@ -153,7 +154,7 @@ namespace MediaPortal.GUI.TV
 				btnPreRecord.Disabled=true;	
 				btnPostRecord.Disabled=true;
 			}
-			ArrayList notifies = new ArrayList();
+      List<TVNotify> notifies = new List<TVNotify>();
 			TVDatabase.GetNotifies(notifies,false);
 			bool showNotify=false;
 			foreach (TVNotify notify in notifies)
@@ -178,7 +179,7 @@ namespace MediaPortal.GUI.TV
 			recTmp.Start   = currentProgram.Start;
 			recTmp.End			= currentProgram.End;
 			recTmp.RecType = TVRecording.RecordingType.EveryTimeOnEveryChannel;
-			ArrayList recs = ConflictManager.Util.GetRecordingTimes(recTmp);
+      List<TVRecording> recs = ConflictManager.Util.GetRecordingTimes(recTmp);
 			foreach (TVRecording recSeries in recs)
 			{
 				GUIListItem item=new GUIListItem();
@@ -212,12 +213,12 @@ namespace MediaPortal.GUI.TV
 		bool IsRecordingSchedule(TVRecording rec, out TVRecording recOrg, bool filterOutCanceled)
 		{
 			recOrg=null;
-			ArrayList recordings = new ArrayList();
+      List<TVRecording> recordings = new List<TVRecording>();
 			TVDatabase.GetRecordings(ref recordings);
 			foreach (TVRecording record in recordings)
 			{
 				if (record.Canceled>0) continue;
-				ArrayList recs = ConflictManager.Util.GetRecordingTimes(record);
+        List<TVRecording> recs = ConflictManager.Util.GetRecordingTimes(record);
 				foreach (TVRecording recSeries in recs)
 				{
 					if (!record.IsSerieIsCanceled(recSeries.StartTime) || (filterOutCanceled==false) )
@@ -269,7 +270,7 @@ namespace MediaPortal.GUI.TV
 		{
 			bool bRecording=false;
 			TVRecording rec=null;
-			ArrayList recordings = new ArrayList();
+      List<TVRecording> recordings = new List<TVRecording>();
 			TVDatabase.GetRecordings(ref recordings);
 
 			foreach (TVRecording record in recordings)
@@ -311,7 +312,7 @@ namespace MediaPortal.GUI.TV
 		{
 			bool bRecording=false;
 			TVRecording rec=null;
-			ArrayList recordings = new ArrayList();
+      List<TVRecording> recordings = new List<TVRecording>();
 			TVDatabase.GetRecordings(ref recordings);
 
 			foreach (TVRecording record in recordings)
@@ -353,7 +354,7 @@ namespace MediaPortal.GUI.TV
 		{
 			bool bRecording=false;
 			TVRecording rec=null;
-			ArrayList recordings = new ArrayList();
+      List<TVRecording> recordings = new List<TVRecording>();
 			TVDatabase.GetRecordings(ref recordings);
 
 			foreach (TVRecording record in recordings)
@@ -377,7 +378,7 @@ namespace MediaPortal.GUI.TV
 		{
 			bool bRecording=false;
 			TVRecording rec=null;
-			ArrayList recordings = new ArrayList();
+      List<TVRecording> recordings = new List<TVRecording>();
 			TVDatabase.GetRecordings(ref recordings);
 
 			foreach (TVRecording record in recordings)
@@ -471,7 +472,7 @@ namespace MediaPortal.GUI.TV
 		{
 			bool bRecording=false;
 			TVRecording rec=null;
-			ArrayList recordings = new ArrayList();
+      List<TVRecording> recordings = new List<TVRecording>();
 			TVDatabase.GetRecordings(ref recordings);
 
 			foreach (TVRecording record in recordings)
@@ -624,7 +625,7 @@ namespace MediaPortal.GUI.TV
 
 				//check if this program is interrupted (for example by a news bulletin)
 				//ifso ask the user if he wants to record the 2nd part also
-				ArrayList programs=new ArrayList();
+        List<TVProgram> programs = new List<TVProgram>();
 				DateTime dtStart=rec.EndTime.AddMinutes(1);
 				DateTime dtEnd  =dtStart.AddHours(3);
 				long iStart=Utils.datetolong(dtStart);
@@ -682,7 +683,7 @@ namespace MediaPortal.GUI.TV
 		void OnNotify()
 		{
 			TVNotify notification=null;
-			ArrayList notifies = new ArrayList();
+      List<TVNotify> notifies = new List<TVNotify>();
 			TVDatabase.GetNotifies(notifies,false);
 			bool showNotify=false;
 			foreach (TVNotify notify in notifies)
@@ -709,7 +710,7 @@ namespace MediaPortal.GUI.TV
 		{
 			bool bRecording=false;
 			TVRecording rec=null;
-			ArrayList recordings = new ArrayList();
+      List<TVRecording> recordings = new List<TVRecording>();
 			TVDatabase.GetRecordings(ref recordings);
 
 			foreach (TVRecording record in recordings)

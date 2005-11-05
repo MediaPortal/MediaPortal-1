@@ -21,6 +21,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
@@ -427,14 +428,14 @@ namespace MediaPortal.GUI.TV
 		{
 			GUIControl.ClearControl(GetID,listSchedules.GetID);
 
-			ArrayList itemlist = new ArrayList();
+      List<TVRecording> itemlist = new List<TVRecording>();
 			TVDatabase.GetRecordings(ref itemlist);
 			int total=0;
 			if (currentShow==String.Empty)
 			{
 				foreach (TVRecording rec in itemlist)
 				{
-					ArrayList recs = ConflictManager.Util.GetRecordingTimes(rec);
+          List<TVRecording> recs = ConflictManager.Util.GetRecordingTimes(rec);
 					GUIListItem item= new GUIListItem();
 					item.Label		  = rec.Title;
 					item.TVTag			= rec;
@@ -487,7 +488,7 @@ namespace MediaPortal.GUI.TV
 				foreach (TVRecording rec in itemlist)
 				{
 					if (!rec.Title.Equals(currentShow)) continue;
-					ArrayList recs = ConflictManager.Util.GetRecordingTimes(rec);
+					List<TVRecording>  recs = ConflictManager.Util.GetRecordingTimes(rec);
 					if (recs.Count>= 1)
 					{
 						for (int x=0; x < recs.Count;++x)
@@ -928,7 +929,7 @@ namespace MediaPortal.GUI.TV
       
 			dlg.Reset();
 			dlg.SetHeading(GUILocalizeStrings.Get(891));//Select TV Channel
-			ArrayList channels = new ArrayList();
+      List<TVChannel> channels = new List<TVChannel>();
 			TVDatabase.GetChannels(ref channels);
 			foreach (TVChannel chan in channels)
 			{
@@ -1058,7 +1059,7 @@ namespace MediaPortal.GUI.TV
       if (dlg!=null)
       {
         int card;
-        ArrayList channels = new ArrayList();
+        List<TVChannel> channels = new List<TVChannel>();
         TVDatabase.GetChannels(ref channels);
         dlg.SetHeading(637);
         dlg.Items.Clear();
@@ -1119,7 +1120,7 @@ namespace MediaPortal.GUI.TV
     void OnCleanup()
     {
       int iCleaned=0;
-      ArrayList itemlist = new ArrayList();
+      List<TVRecording> itemlist = new List<TVRecording>();
       TVDatabase.GetRecordings(ref itemlist);
       foreach (TVRecording rec in itemlist)
       {

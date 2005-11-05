@@ -21,6 +21,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
@@ -329,12 +330,12 @@ namespace MediaPortal.GUI.TV
       GUIControl.ClearControl(GetID,listViews.GetID);
       
       int objects=0;
-      ArrayList itemlist = new ArrayList();
+      List<TVRecorded> itemlist = new List<TVRecorded>();
       TVDatabase.GetRecordedTV(ref itemlist);
       if (showRoot)
       {
         listAlbums.IsVisible=false;
-        ArrayList genres = new ArrayList();
+        List<string> genres = new List<string>();
         foreach (TVRecorded rec in itemlist)
         {
           bool add=true;
@@ -780,7 +781,7 @@ namespace MediaPortal.GUI.TV
       dlgYesNo.DoModal(GetID);
 
       if (!dlgYesNo.IsConfirmed) return;
-      ArrayList itemlist = new ArrayList();
+      List<TVRecorded> itemlist = new List<TVRecorded>();
       TVDatabase.GetRecordedTV(ref itemlist);
       foreach (TVRecorded rec in itemlist)
       {

@@ -156,11 +156,11 @@ namespace MediaPortal.TV.Database
 
 		#endregion
 
-	
 
-		public ArrayList GetRecordingTimes(TVRecording rec)
+
+    public List<TVRecording> GetRecordingTimes(TVRecording rec)
 		{
-			ArrayList recordings = new ArrayList();
+      List<TVRecording> recordings = new List<TVRecording>();
 			
 			DateTime dtDay=DateTime.Now;
 			if (rec.RecType==TVRecording.RecordingType.Once)
