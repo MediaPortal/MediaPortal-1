@@ -400,12 +400,12 @@ namespace MediaPortal.GUI.Library
 						return true;
 
 					case GUIMessage.MessageType.GUI_MSG_ENABLED : 
-						IsEnabled = false;
+						IsEnabled = true;
 						return true;
 					
 		      
 					case GUIMessage.MessageType.GUI_MSG_DISABLED : 
-						IsEnabled = true;
+						IsEnabled = false;
 						return true;
 					
 					case GUIMessage.MessageType.GUI_MSG_SELECTED : 
