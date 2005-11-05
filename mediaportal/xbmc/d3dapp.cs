@@ -34,6 +34,7 @@ using System.Threading;
 using System.Windows.Forms;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
+using Microsoft.Win32.SafeHandles;
 using DirectDraw = Microsoft.DirectX.DirectDraw;
 using Direct3D = Microsoft.DirectX.Direct3D;
 using MediaPortal.GUI.Library;
@@ -1661,23 +1662,15 @@ namespace MediaPortal
       Initialize();
       OnStartup();
 
-      // TODO: When migrating to .NET 2 change to use EventWaitHandle.OpenExisting
-
       // This pile of ugliness gives an external app a change to be notified when
       // the appliction has reached the final stage of startup
-      IntPtr handle = OpenEvent(2031619, false, "MediaPortalHandleCreated");
+      EventWaitHandle handle = EventWaitHandle.OpenExisting("MediaPortalHandleCreated");
 
-      if (handle == IntPtr.Zero)
+      if(handle.SafeWaitHandle.IsInvalid)
         return;
 
-      AutoResetEvent evnt = new AutoResetEvent(false);
-
-      evnt.Close();
-      GC.ReRegisterForFinalize(evnt);
-
-      evnt.Handle = handle;
-      evnt.Set();
-      evnt.Close();
+        handle.Set();
+        handle.Close();
     }
 
 
