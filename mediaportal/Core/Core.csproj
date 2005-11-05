@@ -834,27 +834,6 @@
     <Compile Include="guilib\XMLSkinElementAttribute.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Imaging\BitmapCacheOption.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Imaging\BitmapCreateOptions.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Imaging\BitmapImage.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Imaging\BitmapSource.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Imaging\DownloadProgressEventArgs.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Imaging\DownloadProgressEventHandler.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Imaging\Rotation.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Mixer\Mixer.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -1530,6 +1509,13 @@
     <Compile Include="System.Windows.Media.Animation\TweenHelper.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="System.Windows.Media.Imaging\BitmapCacheOption.cs" />
+    <Compile Include="System.Windows.Media.Imaging\BitmapCreateOptions.cs" />
+    <Compile Include="System.Windows.Media.Imaging\BitmapImage.cs" />
+    <Compile Include="System.Windows.Media.Imaging\BitmapSource.cs" />
+    <Compile Include="System.Windows.Media.Imaging\DownloadProgressEventArgs.cs" />
+    <Compile Include="System.Windows.Media.Imaging\DownloadProgressEventHandler.cs" />
+    <Compile Include="System.Windows.Media.Imaging\Rotation.cs" />
     <Compile Include="System.Windows.Serialization\IAddChild.cs">
       <SubType>Code</SubType>
     </Compile>
