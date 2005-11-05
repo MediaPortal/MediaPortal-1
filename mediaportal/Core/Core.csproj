@@ -1146,34 +1146,10 @@
     <Compile Include="System.Collections\PriorityQueue.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="System.ComponentModel\AsyncCompletedEventArgs.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="System.ComponentModel\DependencyBinding.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="System.ComponentModel\DoWorkEventArgs.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.ComponentModel\DoWorkEventHandler.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="System.ComponentModel\ISynchronizeInvokeImpl.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.ComponentModel\ProgressChangedEventArgs.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.ComponentModel\ProgressChangedEventHandler.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.ComponentModel\RunWorkerCompletedEventArgs.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.ComponentModel\RunWorkerCompletedEventHandler.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Threading\BackgroundWorker.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System.Threading\TimeoutLock.cs">
