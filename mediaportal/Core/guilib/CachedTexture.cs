@@ -93,10 +93,17 @@ namespace MediaPortal.GUI.Library
         set {
           if (_Image!=null) 
           {
-						if (logTextures) Log.Write("Frame:Image fontengine: remove texture:{0} {1}",_TextureNo.ToString(),imageName);
-						FontEngineRemoveTexture(_TextureNo);
-            if (!_Image.Disposed) 
-              _Image.Dispose();
+						try
+						{
+							if (logTextures) Log.Write("Frame:Image fontengine: remove texture:{0} {1}",_TextureNo.ToString(),imageName);
+							FontEngineRemoveTexture(_TextureNo);
+							if (!_Image.Disposed) 
+								_Image.Dispose();
+						}
+						catch(Exception)
+						{
+							//already disposed?
+						}
           }
           _Image=value;
 					
@@ -127,12 +134,19 @@ namespace MediaPortal.GUI.Library
       {
         if (_Image!=null)
         {
-					if (logTextures) Log.Write("Frame: dispose() fontengine: remove texture:"+_TextureNo.ToString());
-					FontEngineRemoveTexture(_TextureNo);
-					if (!_Image.Disposed)
-          {
-            _Image.Dispose();
-          }
+					try
+					{
+						if (logTextures) Log.Write("Frame: dispose() fontengine: remove texture:"+_TextureNo.ToString());
+						FontEngineRemoveTexture(_TextureNo);
+						if (!_Image.Disposed)
+						{
+							_Image.Dispose();
+						}
+					}
+					catch(Exception)
+					{
+						//image already disposed?
+					}
           _Image=null;
         }
       }
@@ -206,7 +220,14 @@ namespace MediaPortal.GUI.Library
       {
         if (m_Image!=null)
         {
-          m_Image.Dispose();
+					try
+					{
+						m_Image.Dispose();
+					}
+					catch(Exception)
+					{
+						//already disposed?
+					}
         }
         m_Image=value;
       }
@@ -283,7 +304,14 @@ namespace MediaPortal.GUI.Library
       m_Frames.Clear();
       if (m_Image!=null)
       {
-        m_Image.Dispose();
+				try
+				{
+					m_Image.Dispose();
+				}
+				catch(Exception)
+				{
+					//already disposed?
+				}
         m_Image=null;
       }
     }
