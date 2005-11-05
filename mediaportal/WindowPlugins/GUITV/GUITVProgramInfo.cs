@@ -54,14 +54,15 @@ namespace MediaPortal.GUI.TV
     {
       set
       {
+				CurrentProgram=null;
         ArrayList programs = new ArrayList();
-        TVDatabase.GetProgramTitles(value.Start,Utils.datetolong(DateTime.Now.AddMonths(1)), ref programs);
+        TVDatabase.GetPrograms(Utils.datetolong(DateTime.Now),Utils.datetolong(DateTime.Now.AddDays(10)), ref programs);
         foreach (TVProgram prog in programs)
         {
           if (value.IsRecordingProgram(prog,false))
           {
             CurrentProgram=prog;
-            break;
+            return;
           }
         }
       }

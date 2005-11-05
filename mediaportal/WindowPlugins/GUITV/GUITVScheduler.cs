@@ -438,6 +438,7 @@ namespace MediaPortal.GUI.TV
 					GUIListItem item= new GUIListItem();
 					item.Label		  = rec.Title;
 					item.TVTag			= rec;
+					item.MusicTag=rec;
 					if (recs.Count> 1)
 					{
 						item.IsFolder=true;
@@ -498,6 +499,7 @@ namespace MediaPortal.GUI.TV
 							item=new GUIListItem();
 							item.Label=recSeries.Title;
 							item.TVTag=recSeries;
+							item.MusicTag=rec;
 							string strLogo=Utils.GetCoverArt(Thumbs.TVChannel,recSeries.Channel);
 							if (!System.IO.File.Exists(strLogo))
 							{
@@ -740,8 +742,9 @@ namespace MediaPortal.GUI.TV
           break;
 
         case 1048:////settings
-          GUITVProgramInfo.CurrentRecording = rec;
-          GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TV_PROGRAM_INFO);
+          GUITVProgramInfo.CurrentRecording = item.MusicTag as TVRecording;
+					if (GUITVProgramInfo.CurrentProgram!=null)
+						GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TV_PROGRAM_INFO);
           return;
 				case 882:////Quality settings
 					GUITVPriorities.OnSetQuality(rec);
