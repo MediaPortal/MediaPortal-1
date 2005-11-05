@@ -26,6 +26,8 @@ using System.Windows.Forms;
 using System.Collections;
 using System.Threading;
 
+using Microsoft.Win32.SafeHandles;
+
 using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Devices
@@ -163,15 +165,15 @@ namespace MediaPortal.Devices
 			if(devicePath == null)
 				return;
 
-			IntPtr deviceHandle = CreateFile(devicePath, FileAccess.Read, FileShare.ReadWrite, 0, FileMode.Open, FileFlag.Overlapped, 0);
+			SafeFileHandle deviceHandle = CreateFile(devicePath, FileAccess.Read, FileShare.ReadWrite, 0, FileMode.Open, FileFlag.Overlapped, 0);
 
-			if(deviceHandle.ToInt32() == -1)
+			if(deviceHandle.IsInvalid)
 				throw new Exception(string.Format("Failed to open remote ({0})", GetLastError()));
 
 			_notifyWindow.RegisterDeviceRemoval(deviceHandle);
 
 			// open a stream from the device and begin an asynchronous read
-			_deviceStream = new FileStream(deviceHandle, FileAccess.Read, true, 128, true);
+			_deviceStream = new FileStream(deviceHandle, FileAccess.Read, 128, true);
 			_deviceStream.BeginRead(_deviceBuffer, 0, _deviceBuffer.Length, new AsyncCallback(OnReadComplete), null);
 		}
 
@@ -342,15 +344,15 @@ namespace MediaPortal.Devices
 			if(devicePath == null)
 				return;
 
-			IntPtr deviceHandle = CreateFile(devicePath, FileAccess.ReadWrite, FileShare.ReadWrite, 0, FileMode.Open, FileFlag.Overlapped, 0);
+			SafeFileHandle deviceHandle = CreateFile(devicePath, FileAccess.ReadWrite, FileShare.ReadWrite, 0, FileMode.Open, FileFlag.Overlapped, 0);
 
-			if(deviceHandle.ToInt32() == -1)
+			if(deviceHandle.IsInvalid)
 				throw new Exception(string.Format("Failed to open blaster ({0})", GetLastError()));
 
 			_notifyWindow.RegisterDeviceRemoval(deviceHandle);
 
 			// open a stream from the device and begin an asynchronous read
-			_deviceStream = new FileStream(deviceHandle, FileAccess.ReadWrite, true, _deviceBuffer.Length, true);
+			_deviceStream = new FileStream(deviceHandle, FileAccess.ReadWrite, _deviceBuffer.Length, true);
 		}
 
 		void OnReadComplete(IAsyncResult asyncResult)
@@ -635,7 +637,7 @@ namespace MediaPortal.Devices
 		#region Interop
 
 		[DllImport("kernel32", SetLastError=true)]
-		protected static extern IntPtr CreateFile(string FileName, [MarshalAs(UnmanagedType.U4)] FileAccess DesiredAccess, [MarshalAs(UnmanagedType.U4)] FileShare ShareMode, uint SecurityAttributes, [MarshalAs(UnmanagedType.U4)] FileMode CreationDisposition, FileFlag FlagsAndAttributes, int hTemplateFile);
+		protected static extern SafeFileHandle CreateFile(string FileName, [MarshalAs(UnmanagedType.U4)] FileAccess DesiredAccess, [MarshalAs(UnmanagedType.U4)] FileShare ShareMode, uint SecurityAttributes, [MarshalAs(UnmanagedType.U4)] FileMode CreationDisposition, FileFlag FlagsAndAttributes, int hTemplateFile);
 
 		[DllImport("kernel32", SetLastError=true)]
 		protected static extern bool CloseHandle(IntPtr hObject);
@@ -754,8 +756,8 @@ namespace MediaPortal.Devices
 			public int				Size;
 			public int				DeviceType;
 			public int				Reserved;
-			public IntPtr			Handle;
-			public IntPtr			HandleNotify;
+			public SafeFileHandle	Handle;
+			public SafeWaitHandle	HandleNotify;
 			public Guid				EventGuid;
 			public int				NameOffset;
 			public byte				Data;
@@ -774,7 +776,7 @@ namespace MediaPortal.Devices
 		static extern int GetLastError();
 
 		[DllImport("kernel32", SetLastError=true)]
-		static extern bool CancelIo(IntPtr handle);
+		static extern bool CancelIo(SafeFileHandle handle);
 
 		#endregion Interop
 
@@ -844,7 +846,7 @@ namespace MediaPortal.Devices
 				throw new Exception(string.Format("Failed in call to RegisterDeviceNotification ({0})", GetLastError()));
 		}
 
-		internal void RegisterDeviceRemoval(IntPtr deviceHandle)
+		internal void RegisterDeviceRemoval(SafeFileHandle deviceHandle)
 		{
 			DeviceBroadcastHandle dbh = new DeviceBroadcastHandle();
 
@@ -875,7 +877,7 @@ namespace MediaPortal.Devices
 
 			UnregisterDeviceNotification(_handleDeviceRemoval);
 			_handleDeviceRemoval = IntPtr.Zero;
-			_deviceHandle = IntPtr.Zero;
+			_deviceHandle = null;
 		}
 
 		void OnDeviceArrival(DeviceBroadcastHeader dbh, IntPtr ptr)
@@ -919,7 +921,7 @@ namespace MediaPortal.Devices
 
 		IntPtr						_handleDeviceArrival;
 		IntPtr						_handleDeviceRemoval;
-		IntPtr						_deviceHandle;
+		SafeFileHandle              _deviceHandle;
 		Guid						_deviceClass;
 
 		#endregion Members

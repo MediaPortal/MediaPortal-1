@@ -55,12 +55,6 @@ namespace System.Windows
 			set { if(string.Compare(_path, value, true) == 0) { _propertyInfoArray = null; } }
 		}
 
-//		public DependencyBindingCollection PathParameters
-//		public object[] PathParameters
-//		{
-//			get { if(_propertyInfoArray == null) _propertyInfoArray = InnerParse(_path); return _propertyInfoArray; }
-//		}
-
 		#endregion Properties
 
 		#region Fields

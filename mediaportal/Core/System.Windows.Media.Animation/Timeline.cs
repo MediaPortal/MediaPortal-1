@@ -47,15 +47,15 @@ namespace System.Windows.Media.Animation
 				CurrentTimeInvalidated(this, EventArgs.Empty);
 		}
 
-		protected Timeline(NullableTimeSpan beginTime) : this(beginTime, Duration.Automatic)
+		protected Timeline(Nullable<TimeSpan> beginTime) : this(beginTime, Duration.Automatic)
 		{
 		}
 
-		protected Timeline(NullableTimeSpan beginTime, Duration duration) : this(beginTime, duration, RepeatBehavior.Forever)
+		protected Timeline(Nullable<TimeSpan> beginTime, Duration duration) : this(beginTime, duration, RepeatBehavior.Forever)
 		{
 		}
 
-		protected Timeline(NullableTimeSpan beginTime, Duration duration, RepeatBehavior repeatBehavior)
+		protected Timeline(Nullable<TimeSpan> beginTime, Duration duration, RepeatBehavior repeatBehavior)
 		{
 			_beginTime = beginTime;
 			_duration = duration;
@@ -145,13 +145,13 @@ namespace System.Windows.Media.Animation
 			set { _isAutoReverse = value; }
 		}
 
-		public NullableTimeSpan BeginTime
+		public Nullable<TimeSpan> BeginTime
 		{
 			get { return _beginTime; }
 			set { _beginTime = value; }
 		}
 		
-		public NullableTimeSpan CutoffTime
+		public Nullable<TimeSpan> CutoffTime
 		{
 			get { return _cutoffTime; }
 			set { _cutoffTime = value; }
@@ -198,8 +198,8 @@ namespace System.Windows.Media.Animation
 		#region Fields
 
 		double						_accelerationRatio = 0;
-		NullableTimeSpan			_beginTime = NullableTimeSpan.Null;
-		NullableTimeSpan			_cutoffTime = NullableTimeSpan.Null;
+		Nullable<TimeSpan>			_beginTime;
+		Nullable<TimeSpan>			_cutoffTime;
 		double						_decelerationRatio = 0;
 		Duration					_duration = new Duration();
 		FillBehavior				_fillBehavior;

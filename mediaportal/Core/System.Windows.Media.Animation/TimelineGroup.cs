@@ -37,15 +37,15 @@ namespace System.Windows.Media.Animation
 		{
 		}
 
-		protected TimelineGroup(NullableTimeSpan beginTime) : base(beginTime)
+		protected TimelineGroup(Nullable<TimeSpan> beginTime) : base(beginTime)
 		{
 		}
 
-		protected TimelineGroup(NullableTimeSpan beginTime, Duration duration) : base(beginTime, duration)
+		protected TimelineGroup(Nullable<TimeSpan> beginTime, Duration duration) : base(beginTime, duration)
 		{
 		}
 
-		protected TimelineGroup(NullableTimeSpan beginTime, Duration duration, RepeatBehavior repeatBehavior) : base(beginTime, duration, repeatBehavior)
+		protected TimelineGroup(Nullable<TimeSpan> beginTime, Duration duration, RepeatBehavior repeatBehavior) : base(beginTime, duration, repeatBehavior)
 		{
 		}
 

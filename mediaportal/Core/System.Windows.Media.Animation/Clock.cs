@@ -94,7 +94,7 @@ namespace System.Windows.Media.Animation
 			get { return null; }
 		}
 
-		// should be Nullable<double> or NullableDouble
+		// should be Nullable<double> or Nullable<double>
 		public double CurrentGlobalSpeed
 		{
 			// if the clock is stopped this should return null (when using appropriate nullable type)

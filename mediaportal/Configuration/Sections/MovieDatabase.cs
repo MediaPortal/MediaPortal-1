@@ -1559,8 +1559,12 @@ namespace MediaPortal.Configuration.Sections
 			if (ext==".vob") return null;
 			IMDBMovie movieDetails=new IMDBMovie();
 			IMDB imdb = new IMDB(this);
-			int selectedItem=-1;
+
+			// if not fuzzy matching select the first match
+			int selectedItem = _isFuzzyMatching ? -1 : 0;
+
 			int id=VideoDatabase.GetMovieInfo(file,ref movieDetails);
+
 			if (id<0) 
 			{
 				string searchForMovie = Utils.GetFilename(file, true);
@@ -1574,7 +1578,7 @@ namespace MediaPortal.Configuration.Sections
 					if(_isFuzzyMatching)
 						selectedItem = MatchLevenshtein(searchForMovie, imdb);
 
-					if(selectedItem == -1)
+					if(_isFuzzyMatching == false || selectedItem == -1)
 					{
 						DlgMovieList dlg = new DlgMovieList();
 						dlg.imdb = imdb;
@@ -2367,7 +2371,7 @@ namespace MediaPortal.Configuration.Sections
 			int matchingIndex = -1;
 			int matchingDistance = int.MaxValue;
 			bool isAmbiguous = false;
-			
+
 			for(int index = 0; index < imdb.Count; ++index)
 			{
 				int distance = Levenshtein.Match(title, imdb[index].Title);

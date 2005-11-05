@@ -38,7 +38,7 @@ namespace System.Windows
 		{
 		}
 
-		public TemplateBindingExtension(DependencyBinding binding)
+		public TemplateBindingExtension(DependencyProperty property)
 		{
 		}
 
@@ -61,7 +61,7 @@ namespace System.Windows
 			set { throw new NotImplementedException(); }
 		}
 
-		public DependencyBinding Property
+		public DependencyProperty Property
 		{
 			get { throw new NotImplementedException(); }
 			set { throw new NotImplementedException(); }

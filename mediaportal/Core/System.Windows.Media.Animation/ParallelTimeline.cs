@@ -36,15 +36,15 @@ namespace System.Windows.Media.Animation
 		{
 		}
 
-		public ParallelTimeline(NullableTimeSpan beginTime) : base(beginTime)
+		public ParallelTimeline(Nullable<TimeSpan> beginTime) : base(beginTime)
 		{
 		}
 
-		public ParallelTimeline(NullableTimeSpan beginTime, Duration duration) : base(beginTime, duration)
+		public ParallelTimeline(Nullable<TimeSpan> beginTime, Duration duration) : base(beginTime, duration)
 		{
 		}
 
-		public ParallelTimeline(NullableTimeSpan beginTime, Duration duration, RepeatBehavior repeatBehavior) : base(beginTime, duration, repeatBehavior)
+		public ParallelTimeline(Nullable<TimeSpan> beginTime, Duration duration, RepeatBehavior repeatBehavior) : base(beginTime, duration, repeatBehavior)
 		{
 		}
 
