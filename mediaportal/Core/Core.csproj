@@ -1,3215 +1,2012 @@
-<VisualStudioProject>
-    <CSHARP
-        ProjectType = "Local"
-        ProductVersion = "7.10.3077"
-        SchemaVersion = "2.0"
-        ProjectGuid = "{02FFFC1F-2555-4B99-8B01-3432D0673855}"
-    >
-        <Build>
-            <Settings
-                ApplicationIcon = ""
-                AssemblyKeyContainerName = ""
-                AssemblyName = "Core"
-                AssemblyOriginatorKeyFile = ""
-                DefaultClientScript = "JScript"
-                DefaultHTMLPageLayout = "Grid"
-                DefaultTargetSchema = "IE50"
-                DelaySign = "false"
-                OutputType = "Library"
-                PreBuildEvent = ""
-                PostBuildEvent = ""
-                RootNamespace = "MediaPortal"
-                RunPostBuildEvent = "OnBuildSuccess"
-                StartupObject = ""
-            >
-                <Config
-                    Name = "Debug"
-                    AllowUnsafeBlocks = "true"
-                    BaseAddress = "285212672"
-                    CheckForOverflowUnderflow = "false"
-                    ConfigurationOverrideFile = ""
-                    DefineConstants = "DEBUG;TRACE;UseCaptureCardDefinitions;DOTNET1"
-                    DocumentationFile = ""
-                    DebugSymbols = "true"
-                    FileAlignment = "4096"
-                    IncrementalBuild = "false"
-                    NoStdLib = "false"
-                    NoWarn = ""
-                    Optimize = "false"
-                    OutputPath = "bin\Debug\"
-                    RegisterForComInterop = "false"
-                    RemoveIntegerChecks = "false"
-                    TreatWarningsAsErrors = "false"
-                    WarningLevel = "4"
-                />
-                <Config
-                    Name = "Release"
-                    AllowUnsafeBlocks = "true"
-                    BaseAddress = "285212672"
-                    CheckForOverflowUnderflow = "false"
-                    ConfigurationOverrideFile = ""
-                    DefineConstants = "TRACE;UseCaptureCardDefinitions;DOTNET1"
-                    DocumentationFile = ""
-                    DebugSymbols = "false"
-                    FileAlignment = "4096"
-                    IncrementalBuild = "false"
-                    NoStdLib = "false"
-                    NoWarn = ""
-                    Optimize = "false"
-                    OutputPath = "bin\Release\"
-                    RegisterForComInterop = "false"
-                    RemoveIntegerChecks = "false"
-                    TreatWarningsAsErrors = "false"
-                    WarningLevel = "4"
-                />
-                <Config
-                    Name = "UseCaptureCardDefinitions"
-                    AllowUnsafeBlocks = "true"
-                    BaseAddress = "285212672"
-                    CheckForOverflowUnderflow = "false"
-                    ConfigurationOverrideFile = ""
-                    DefineConstants = "DEBUG;TRACE;UseCaptureCardDefinitions"
-                    DocumentationFile = ""
-                    DebugSymbols = "true"
-                    FileAlignment = "4096"
-                    IncrementalBuild = "false"
-                    NoStdLib = "false"
-                    NoWarn = ""
-                    Optimize = "false"
-                    OutputPath = "bin\Debug\"
-                    RegisterForComInterop = "false"
-                    RemoveIntegerChecks = "false"
-                    TreatWarningsAsErrors = "false"
-                    WarningLevel = "4"
-                />
-                <Config
-                    Name = "UseCaptureDefintionsRelease"
-                    AllowUnsafeBlocks = "false"
-                    BaseAddress = "285212672"
-                    CheckForOverflowUnderflow = "false"
-                    ConfigurationOverrideFile = ""
-                    DefineConstants = "TRACE;UseCaptureCardDefinitions"
-                    DocumentationFile = ""
-                    DebugSymbols = "false"
-                    FileAlignment = "4096"
-                    IncrementalBuild = "false"
-                    NoStdLib = "false"
-                    NoWarn = ""
-                    Optimize = "true"
-                    OutputPath = "bin\Release\"
-                    RegisterForComInterop = "false"
-                    RemoveIntegerChecks = "false"
-                    TreatWarningsAsErrors = "false"
-                    WarningLevel = "4"
-                />
-                <Config
-                    Name = "Release (Standalone)"
-                    AllowUnsafeBlocks = "true"
-                    BaseAddress = "285212672"
-                    CheckForOverflowUnderflow = "false"
-                    ConfigurationOverrideFile = ""
-                    DefineConstants = "TRACE;UseCaptureCardDefinitions;DOTNET1"
-                    DocumentationFile = ""
-                    DebugSymbols = "true"
-                    FileAlignment = "4096"
-                    IncrementalBuild = "false"
-                    NoStdLib = "false"
-                    NoWarn = ""
-                    Optimize = "false"
-                    OutputPath = "bin\Release\"
-                    RegisterForComInterop = "false"
-                    RemoveIntegerChecks = "false"
-                    TreatWarningsAsErrors = "false"
-                    WarningLevel = "4"
-                />
-            </Settings>
-            <References>
-                <Reference
-                    Name = "System"
-                    AssemblyName = "System"
-                    HintPath = "..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.dll"
-                />
-                <Reference
-                    Name = "System.Data"
-                    AssemblyName = "System.Data"
-                    HintPath = "..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Data.dll"
-                />
-                <Reference
-                    Name = "System.XML"
-                    AssemblyName = "System.Xml"
-                    HintPath = "..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.XML.dll"
-                />
-                <Reference
-                    Name = "System.Drawing"
-                    AssemblyName = "System.Drawing"
-                    HintPath = "..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Drawing.dll"
-                />
-                <Reference
-                    Name = "System.Runtime.Serialization.Formatters.Soap"
-                    AssemblyName = "System.Runtime.Serialization.Formatters.Soap"
-                    HintPath = "..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Runtime.Serialization.Formatters.Soap.dll"
-                />
-                <Reference
-                    Name = "System.Windows.Forms"
-                    AssemblyName = "System.Windows.Forms"
-                    HintPath = "..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Windows.Forms.dll"
-                />
-                <Reference
-                    Name = "AxInterop.WMPLib"
-                    AssemblyName = "AxInterop.WMPLib"
-                    HintPath = "..\AxInterop.WMPLib.dll"
-                />
-                <Reference
-                    Name = "System.Management"
-                    AssemblyName = "System.Management"
-                    HintPath = "..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Management.dll"
-                />
-                <Reference
-                    Name = "System.Web"
-                    AssemblyName = "System.Web"
-                    HintPath = "..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Web.dll"
-                />
-                <Reference
-                    Name = "wmppia"
-                    AssemblyName = "wmppia"
-                    HintPath = "..\Setup\postsetup\wmppia.dll"
-                />
-                <Reference
-                    Name = "System.Web.Services"
-                    AssemblyName = "System.Web.Services"
-                    HintPath = "..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Web.Services.dll"
-                />
-                <Reference
-                    Name = "System.ServiceProcess"
-                    AssemblyName = "System.ServiceProcess"
-                    HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.ServiceProcess.dll"
-                />
-                <Reference
-                    Name = "edtftpnet-1.1.8"
-                    AssemblyName = "edtftpnet-1.1.8"
-                    HintPath = "..\edtftpnet-1.1.8.dll"
-                />
-                <Reference
-                    Name = "Interop.TunerLib"
-                    AssemblyName = "Interop.TunerLib"
-                    HintPath = "..\Interop.TunerLib.dll"
-                />
-                <Reference
-                    Name = "Microsoft.DirectX"
-                    AssemblyName = "Microsoft.DirectX"
-                    HintPath = "..\Microsoft.DirectX.dll"
-                />
-                <Reference
-                    Name = "Microsoft.DirectX.Direct3D"
-                    AssemblyName = "Microsoft.DirectX.Direct3D"
-                    HintPath = "..\Microsoft.DirectX.Direct3D.dll"
-                />
-                <Reference
-                    Name = "Microsoft.DirectX.Direct3DX"
-                    AssemblyName = "Microsoft.DirectX.Direct3DX"
-                    HintPath = "..\Microsoft.DirectX.Direct3DX.dll"
-                />
-                <Reference
-                    Name = "Microsoft.DirectX.DirectDraw"
-                    AssemblyName = "Microsoft.DirectX.DirectDraw"
-                    HintPath = "..\Microsoft.DirectX.DirectDraw.dll"
-                />
-            </References>
-        </Build>
-        <Files>
-            <Include>
-                <File
-                    RelPath = "Application.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "AssemblyInfo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "StringTokenizer.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DirectX.Capture\AudioCapabilities.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DirectX.Capture\AudioSource.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DirectX.Capture\Capture.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DirectX.Capture\CrossbarSource.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DirectX.Capture\DeviceInUseException.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DirectX.Capture\DirectShowPropertyPage.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DirectX.Capture\FilterPersist.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DirectX.Capture\PropertyPage.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DirectX.Capture\PropertyPageCollection.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DirectX.Capture\Source.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DirectX.Capture\SourceCollection.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DirectX.Capture\Tuner.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DirectX.Capture\VfwCompressorPropertyPage.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DirectX.Capture\VideoCapabilities.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DirectX.Capture\VideoProcAmp.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Dispatcher\Job.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Dispatcher\JobComparer.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Dispatcher\JobDispatcher.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Dispatcher\JobFlags.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Dispatcher\JobPriority.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing\AlignmentX.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing\AlignmentY.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing\Brush.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing\BrushConverter.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing\BrushFactory.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing\BrushMappingMode.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing\CombinedGeometry.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing\CombineMode.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing\DashStyle.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing\DashStyles.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing\DoubleCollection.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing\DrawingContext.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing\FillRule.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing\FormattedText.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing\Geometry.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing\GeometryCollection.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing\GeometryCombineMode.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing\GeometryConverter.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing\GeometryDrawing.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing\GeometryGroup.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing\GlyphRun.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing\GradientBrush.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing\GradientFactory.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing\GradientSpreadMethod.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing\GradientStop.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing\GradientStopCollection.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing\HorizontalAlignment.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing\ImageBrush.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing\ImageSource.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing\ImageSourceConverter.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing\Matrix.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing\Pen.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing\PenBase.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing\PenLineCap.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing\PenLineJoin.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing\Point.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing\PointCollection.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing\PointCollectionConverter.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing\PointConverter.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing\Rect.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing\RectangleGeometry.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing\RectConverter.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing\Size.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing\SizeConverter.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing\SolidColorBrush.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing\SolidColorBrushConverter.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing\Stretch.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing\StretchDirection.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing\StretchHelper.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing\Thickness.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing\ThicknessConverter.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing\TileBrush.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing\TileMode.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing\VerticalAlignment.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing.Layouts\DockLayout.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing.Layouts\GridLayout.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing.Layouts\ILayout.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing.Layouts\RingLayout.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing.Layouts\StackLayout.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing.Transforms\RotateTransform.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing.Transforms\ScaleTransform.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing.Transforms\Transform.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing.Transforms\TransformCollection.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing.Transforms\TransformConverter.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing.Transforms\TransformGroup.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Drawing.Transforms\TranslateTransform.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DShowNET\AudioMixerHelper.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DShowNET\BDAInterfaces.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DShowNET\BDAMedia.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DShowNET\BDATypes.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DShowNET\DirectShowUtil.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DShowNET\DirectShowVolume.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DShowNET\DirectVobSub.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DShowNET\DsBugWO.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DShowNET\DsControl.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DShowNET\DsCore.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DShowNET\DsDevice.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DShowNET\DsDVD.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DShowNET\DsExtend.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DShowNET\DsUtils.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DShowNET\DsUuids.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DShowNET\DsVmRender.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DShowNET\Filter.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DShowNET\FilterCollection.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DShowNET\FilterHelper.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DShowNET\Filters.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DShowNET\hauppauge.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DShowNET\IksPropertyUtils.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DShowNET\ivac.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DShowNET\MPEG2Demux.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DShowNET\PropertySet.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DShowNET\QEdit.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DShowNET\TunerCountry.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DShowNET\Twinhan.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DShowNET\VideoCaptureDevice.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DShowNET\VideoCaptureDeviceEx.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DShowNET\VideoCaptureProperties.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DShowNET\MetaData\AsfMetadataEditor.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DShowNET\MetaData\DvrmsMetadataEditor.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DShowNET\MetaData\MetadataEditor.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "FreeDB\CDInfo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "FreeDB\CDInfoDetail.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "FreeDB\CDTrackDetail.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "FreeDB\FreeDBFactory.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "FreeDB\FreeDBHttpImpl.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "FreeDB\FreeDBSite.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "FreeDB\IFreeDB.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "FreeDB\XMCDParser.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\Action.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\ActionTranslator.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\Animator.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\CachedTexture.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\CPosition.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\DownloadedImage.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\DXUtil.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\Error.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\Events.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\FilterDefinition.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\Geometry.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\GraphicContext.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\GUIAnimation.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\GUIButton3PartControl.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\GUIButtonControl.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\GUICheckButton.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\GUICheckListControl.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\GUICheckMarkControl.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\GUIControl.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\GUIControlCollection.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\GUIControlFactory.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\GUIFacadeViewControl.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\GUIFadeLabel.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\GUIFilmstripControl.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\GUIFont.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\GUIFontManager.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\GUIGroup.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\GUIHorizontalScrollbar.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\GUIImage.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\GUIImageList.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\GUILabelControl.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\GUIListControl.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\GUIListItem.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\GUIMessage.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\GUIOverlayWindow.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\GUIProgressControl.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\GUISelectButtonControl.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\GUISliderControl.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\GUISMSInputControl.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\GUISortButtonControl.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\GUISpinControl.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\GUIStatusbarControl.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\GUITextControl.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\GUITextScrollUpControl.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\GUITextureManager.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\GUIThumbnailPanel.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\GUIToggleButtonControl.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\GUITVProgressControl.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\GUIUpDownButton.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\GUIUpDownListControl.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\GUIVerticalScrollbar.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\GUIVideoControl.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\GUIVolumeBar.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\GUIWaitCursor.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\GUIWindow.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\GUIWindowManager.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\IDialogbox.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\IPlugin.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\IProfile.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\IRender.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\ISetupForm.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\IWakeable.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\key.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\LocalizeStrings.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\Log.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\PluginManager.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\PropertyManager.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\SkinControlAttribute.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\SortEventArgs.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\SortEventHandler.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\Strings.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\TexturePacker.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\Util.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\VideoRendererStatistics.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\ViewDefinition.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\WaitCursor.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\Win32Support.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\Xml.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "guilib\XMLSkinElementAttribute.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Imaging\BitmapCacheOption.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Imaging\BitmapCreateOptions.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Imaging\BitmapImage.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Imaging\BitmapSource.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Imaging\DownloadProgressEventArgs.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Imaging\DownloadProgressEventHandler.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Imaging\Rotation.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Mixer\Mixer.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Mixer\MixerCallback.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Mixer\MixerComponentType.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Mixer\MixerControlClass.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Mixer\MixerControlType.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Mixer\MixerControlUnits.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Mixer\MixerErrors.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Mixer\MixerEventArgs.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Mixer\MixerEventHandler.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Mixer\MixerEventListener.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Mixer\MixerFlags.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Mixer\MixerLineControlFlags.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Mixer\MixerLineFlags.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Mixer\MixerLineStatusFlags.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Mixer\MixerLineTarget.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Mixer\MixerMessages.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Mixer\MixerNativeMethods.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Mixer\MixerTargetType.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "mmedia\AudioWriters.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "mmedia\EditWaveWriter.cs"
-                    SubType = "UserControl"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "mmedia\EditWaveWriter.resx"
-                    DependentUpon = "EditWaveWriter.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "mmedia\InFormatEdit.cs"
-                    SubType = "UserControl"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "mmedia\InFormatEdit.resx"
-                    DependentUpon = "InFormatEdit.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "mmedia\NumericTextBox.cs"
-                    SubType = "Component"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "mmedia\NumericTextBox.resx"
-                    DependentUpon = "NumericTextBox.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "mmedia\WaveNative.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "mmedia\WaveStream.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "mmedia\WaveWriter.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "mmedia\Win32Functions.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "mmedia\WriterConfig.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "nzlib\ZipException.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "nzlib\Checksums\Adler32.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "nzlib\Checksums\Crc32.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "nzlib\Checksums\IChecksum.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "nzlib\Compression\Deflater.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "nzlib\Compression\DeflaterConstants.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "nzlib\Compression\DeflaterEngine.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "nzlib\Compression\DeflaterHuffman.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "nzlib\Compression\DeflaterPending.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "nzlib\Compression\Inflater.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "nzlib\Compression\InflaterDynHeader.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "nzlib\Compression\InflaterHuffmanTree.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "nzlib\Compression\PendingBuffer.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "nzlib\GZip\GZipConstants.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "nzlib\GZip\GZipInputStream.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "nzlib\GZip\GZipOutputStream.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "nzlib\Streams\DeflaterOutputStream.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "nzlib\Streams\InflaterInputStream.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "nzlib\Streams\OutputWindow.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "nzlib\Streams\StreamManipulator.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "nzlib\Zip\ZipConstants.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "nzlib\Zip\ZipEntry.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "nzlib\Zip\ZipFile.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "nzlib\Zip\ZipInputStream.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "nzlib\Zip\ZipOutputStream.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Player\AudioPlayerVMR.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Player\AudioPlayerWMP9.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Player\BaseStreamBufferPlayer.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Player\BaseStreamBufferPlayer.resx"
-                    DependentUpon = "BaseStreamBufferPlayer.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Player\BaseTStreamBufferPlayer.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Player\DVDPlayer.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Player\DVDPlayer9.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Player\g_player.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Player\IExternalPlayer.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Player\IPlayer.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Player\PlaneScene.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Player\PlayerFactory.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Player\RadioGraph.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Player\RadioTuner.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Player\StreamBufferPlayer9.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Player\StreamBufferPlayerVMR9wl.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Player\TSStreamBufferPlayer9.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Player\VideoPlayerVMR7.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Player\VideoPlayerVMR9.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Player\VideoPlayerVMR9wl.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Player\VMR7.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Player\VMR9.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Player\VolumeHandler.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Player\VolumeHandlerCustom.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "PlayList\PlayList.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "PlayList\PlayListb4S.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "PlayList\PlayListFactory.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "PlayList\PlayListM3U.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "PlayList\PlayListPlayer.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "PlayList\PlayListPLS.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "PlayList\PlayListWPL.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "RedEye\RedEye.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Ripper\AutoPlay.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Ripper\CDDrive.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Ripper\CDDriveEvents.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Ripper\RemovableDrive.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Ripper\Win32Functions.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "SerialUIR\CommBase.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "SerialUIR\SerialUIR.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "SubtitleReader\ISUbtitleReader.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "SubtitleReader\SubReader.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "SubtitleReader\SubTitles.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System\INullable.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System\NullableDouble.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System\NullableDoubleConverter.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System\NullableTimeSpan.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System\NullableTimeSpanConverter.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Collections\NullEnumerable.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Collections\NullEnumerator.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Collections\PriorityQueue.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.ComponentModel\AsyncCompletedEventArgs.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.ComponentModel\DependencyBinding.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.ComponentModel\DoWorkEventArgs.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.ComponentModel\DoWorkEventHandler.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.ComponentModel\ISynchronizeInvokeImpl.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.ComponentModel\ProgressChangedEventArgs.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.ComponentModel\ProgressChangedEventHandler.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.ComponentModel\RunWorkerCompletedEventArgs.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.ComponentModel\RunWorkerCompletedEventHandler.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Threading\BackgroundWorker.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Threading\TimeoutLock.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\ComponentResourceKey.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\ContentControl.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\ContentElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\DependencyObject.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\DependencyObjectType.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\DependencyProperty.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\DependencyPropertyAttribute.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\DependencyPropertyChangedEventArgs.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\DependencyPropertyChangedEventHandler.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\DependencyPropertyConverter.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\DependencyPropertyKey.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\DependencySource.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\EventHandlersStore.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\EventManager.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\EventPrivateKey.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\EventRoute.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\EventSetter.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\EventTrigger.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\FlowDirection.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\FrameworkContentElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\FrameworkElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\FrameworkElementFactory.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\FrameworkPropertyMetadata.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\FrameworkPropertyMetadataOptions.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\FrameworkTemplate.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\Freezable.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\GetValueOverride.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\IFrameworkInputElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\INameScope.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\IResourceHost.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\LocalValueEntry.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\LocalValueEnumerator.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\LogicalTreeHelper.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\PropertyInvalidatedCallback.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\PropertyMetadata.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\PropertyPath.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\PropertyPathConverter.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\ReadLocalValueOverride.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\RequestBringIntoViewEventArgs.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\RequestBringIntoViewHandler.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\ResourceDictionary.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\ResourceDictionaryCollection.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\ResourceKey.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\RoutedEvent.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\RoutedEventArgs.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\RoutedEventConverter.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\RoutedEventHandler.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\RoutedEventHandlerInfo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\RoutedEventHandlerInfoList.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\RoutedEventHandlerInfoStore.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\RoutingStrategy.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\Setter.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\SetterBase.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\SetterBaseCollection.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\SetValueOverride.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\SizeChangedEventArgs.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\SizeChangedEventHandler.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\SizeChangedInfo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\StaticResourceExtension.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\StaticResources.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\Style.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\SystemResourceHost.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\TemplateBindingExtension.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\Trigger.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\TriggerAction.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\TriggerActionCollection.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\TriggerBase.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\TriggerCollection.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\TriggerInvalidatedEventArgs.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\TriggerInvalidatedEventHandler.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\UIElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\UIElementCollection.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\UIPropertyMetadata.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\ValidateValueCallback.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\Visibility.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\Visual.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\VisualCollection.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\VisualOperations.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\VisualUtility.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\WindowState.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows\WriteLocalValueOverride.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Automation\AutomationPattern.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Automation\IInvokeProvider.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Automation\ToggleState.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Automation.Provider\ExpandCollapseState.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Automation.Provider\IAutomationPatternProvider.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Automation.Provider\IExpandCollapseProvider.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Automation.Provider\IToggleProvider.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Controls\Button.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Controls\ButtonBase.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Controls\Canvas.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Controls\ClickMode.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Controls\ColumnDefinition.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Controls\ColumnDefinitionCollection.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Controls\ContextMenu.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Controls\ContextMenuService.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Controls\Control.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Controls\ControlTemplate.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Controls\DataTemplate.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Controls\DataTemplateSelector.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Controls\DefinitionBase.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Controls\Dock.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Controls\DockPanel.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Controls\Grid.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Controls\GridLength.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Controls\GridLengthConverter.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Controls\GridUnitType.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Controls\HeaderedItemsControl.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Controls\Image.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Controls\IScrollInfo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Controls\ItemCollection.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Controls\ItemsControl.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Controls\Menu.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Controls\MenuBase.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Controls\MenuItem.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Controls\MenuItemMode.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Controls\MenuItemRole.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Controls\Orientation.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Controls\Page.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Controls\Panel.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Controls\PlacementMode.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Controls\RowDefinition.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Controls\RowDefinitionCollection.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Controls\StackPanel.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Data\Binding.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Data\IValueConverter.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Dispatcher\Dispatcher.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Dispatcher\DispatcherEventArgs.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Dispatcher\DispatcherFrame.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Dispatcher\DispatcherHookEventArgs.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Dispatcher\DispatcherHookEventHandler.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Dispatcher\DispatcherHooks.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Dispatcher\DispatcherOperation.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Dispatcher\DispatcherOperationStatus.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Dispatcher\DispatcherPriority.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Dispatcher\DispatcherProcessingDisabled.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Dispatcher\DispatcherSynchronizationContext.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Dispatcher\DispatcherTimer.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Dispatcher\DispatcherUnhandledExceptionEventArgs.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Dispatcher\DispatcherUnhandledExceptionEventHandler.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Dispatcher\DispatcherUnhandledExceptionFilterEventArgs.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Dispatcher\DispatcherUnhandledExceptionFilterEventHandler.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Input\ApplicationCommands.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Input\CommandBinding.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Input\CommandBindingCollection.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Input\CommandConverter.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Input\CommandManager.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Input\ExecuteEventArgs.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Input\ExecuteEventHandler.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Input\FocusManager.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Input\ICommand.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Input\IFrameworkInputElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Input\IInputElement.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Input\InputGestureCollection.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Input\KeyboardFocusChangedEventArgs.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Input\KeyboardFocusChangedEventHandler.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Input\KeyEventArgs.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Input\MouseButtonEventArgs.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Input\MouseButtonEventHandler.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Input\MouseEventArgs.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Input\MouseWheelEventArgs.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Input\QueryEnabledEventArgs.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Input\QueryEnabledEventHandler.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Input\RoutedCommand.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Input\UICommand.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Media.Animation\Animatable.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Media.Animation\AnimationClock.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Media.Animation\AnimationClockCollection.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Media.Animation\AnimationStore.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Media.Animation\AnimationTimeline.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Media.Animation\AnimationTimelineCollection.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Media.Animation\AnimationTimer.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Media.Animation\AnimationType.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Media.Animation\BeginAction.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Media.Animation\BeginStoryboard.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Media.Animation\Clock.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Media.Animation\ClockCollection.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Media.Animation\ClockController.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Media.Animation\ClockGroup.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Media.Animation\ClockState.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Media.Animation\DoubleAnimation.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Media.Animation\DoubleAnimationBase.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Media.Animation\Duration.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Media.Animation\DurationConverter.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Media.Animation\Easing.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Media.Animation\FillBehavior.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Media.Animation\HandoffBehavior.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Media.Animation\IAnimatable.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Media.Animation\IClock.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Media.Animation\NativeMethods.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Media.Animation\ParallelTimeline.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Media.Animation\PauseAction.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Media.Animation\RepeatBehavior.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Media.Animation\RepeatBehaviorConverter.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Media.Animation\ResumeAction.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Media.Animation\ReverseAction.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Media.Animation\SeekAction.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Media.Animation\SkipToFillAction.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Media.Animation\StopAction.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Media.Animation\Storyboard.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Media.Animation\StoryboardCollection.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Media.Animation\Timeline.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Media.Animation\TimelineAction.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Media.Animation\TimelineCollection.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Media.Animation\TimelineGroup.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Media.Animation\TimeManager.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Media.Animation\TimeSeekOrigin.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Media.Animation\TweenHelper.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Serialization\IAddChild.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Serialization\ICanAddNamespaceEntries.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Serialization\LocalizeExtension.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Serialization\MarkupExtension.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Serialization\TypeExtension.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Serialization\XamlParser.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Serialization\XamlParserException.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Threading\DispatcherObject.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "TagReader\ITagReader.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "TagReader\MusicTag.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "TagReader\TagReader.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Transcoding\Dvrms2Mpeg.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Transcoding\Dvrms2XVID.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Transcoding\ITranscode.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Transcoding\TranscodeFactory.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Transcoding\WMVEncoder.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "USBUIRT\USBUIRT.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Util\AmazonLookup.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Util\AmazonReference.cs"
-                    SubType = "code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Util\AudioMixerHelper.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Util\BitmapResize.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Util\ConditionChecker.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Util\CRCTool.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Util\DaemonTools.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Util\DirectoryHistory.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Util\ExifExtractor.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Util\FileInformation.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Util\FtpConnectionCache.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Util\GoogleImageSearch.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Util\HTMLTable.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Util\HtmlToText.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Util\HTMLUtil.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Util\ImageHandler.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Util\LevenshteinDistance.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Util\Picture.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Util\Share.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Util\Thumbs.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Util\Tokens.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Util\Util.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Util\VirtualDirectory.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Util\Win32API.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Util\WindowsController.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "WinLirc\WinLirc.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "wmfsdk\BufferTypes.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "wmfsdk\CommonTypes.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "wmfsdk\MediaTypes.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "wmfsdk\NSSBuffer.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "wmfsdk\ProfilesTypes.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "wmfsdk\ReaderTypes.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "wmfsdk\WmaStream.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "wmfsdk\WmaWriter.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "wmfsdk\WmaWriterConfig.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "wmfsdk\WMFFunctions.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "wmfsdk\WMHeaderInfo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "wmfsdk\WMProfile.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "wmfsdk\WMStreamConfig.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "wmfsdk\WriterTypes.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-            </Include>
-        </Files>
-    </CSHARP>
-</VisualStudioProject>
-
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{02FFFC1F-2555-4B99-8B01-3432D0673855}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ApplicationIcon>
+    </ApplicationIcon>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
+    <AssemblyName>Core</AssemblyName>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>Library</OutputType>
+    <RootNamespace>MediaPortal</RootNamespace>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <StartupObject>
+    </StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE;UseCaptureCardDefinitions;DOTNET1</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE;UseCaptureCardDefinitions;NET_2_0</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>false</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>none</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'UseCaptureCardDefinitions|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE;UseCaptureCardDefinitions</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'UseCaptureDefintionsRelease|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE;UseCaptureCardDefinitions</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>false</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>none</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release %28Standalone%29|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE;UseCaptureCardDefinitions;DOTNET1</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="AxInterop.WMPLib">
+      <Name>AxInterop.WMPLib</Name>
+      <HintPath>..\AxInterop.WMPLib.dll</HintPath>
+    </Reference>
+    <Reference Include="edtftpnet-1.1.8">
+      <Name>edtftpnet-1.1.8</Name>
+      <HintPath>..\edtftpnet-1.1.8.dll</HintPath>
+    </Reference>
+    <Reference Include="Interop.TunerLib">
+      <Name>Interop.TunerLib</Name>
+      <HintPath>..\Interop.TunerLib.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.DirectX">
+      <Name>Microsoft.DirectX</Name>
+      <HintPath>..\Microsoft.DirectX.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.DirectX.Direct3D">
+      <Name>Microsoft.DirectX.Direct3D</Name>
+      <HintPath>..\Microsoft.DirectX.Direct3D.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.DirectX.Direct3DX">
+      <Name>Microsoft.DirectX.Direct3DX</Name>
+      <HintPath>..\Microsoft.DirectX.Direct3DX.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.DirectX.DirectDraw">
+      <Name>Microsoft.DirectX.DirectDraw</Name>
+      <HintPath>..\Microsoft.DirectX.DirectDraw.dll</HintPath>
+    </Reference>
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.Data">
+      <Name>System.Data</Name>
+    </Reference>
+    <Reference Include="System.Drawing">
+      <Name>System.Drawing</Name>
+    </Reference>
+    <Reference Include="System.Management">
+      <Name>System.Management</Name>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization.Formatters.Soap">
+      <Name>System.Runtime.Serialization.Formatters.Soap</Name>
+    </Reference>
+    <Reference Include="System.ServiceProcess">
+      <Name>System.ServiceProcess</Name>
+    </Reference>
+    <Reference Include="System.Web">
+      <Name>System.Web</Name>
+    </Reference>
+    <Reference Include="System.Web.Services">
+      <Name>System.Web.Services</Name>
+    </Reference>
+    <Reference Include="System.Windows.Forms">
+      <Name>System.Windows.Forms</Name>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Name>System.XML</Name>
+    </Reference>
+    <Reference Include="wmppia">
+      <Name>wmppia</Name>
+      <HintPath>..\Setup\postsetup\wmppia.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Application.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DirectX.Capture\AudioCapabilities.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DirectX.Capture\AudioSource.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DirectX.Capture\Capture.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DirectX.Capture\CrossbarSource.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DirectX.Capture\DeviceInUseException.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DirectX.Capture\DirectShowPropertyPage.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DirectX.Capture\FilterPersist.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DirectX.Capture\PropertyPage.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DirectX.Capture\PropertyPageCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DirectX.Capture\Source.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DirectX.Capture\SourceCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DirectX.Capture\Tuner.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DirectX.Capture\VfwCompressorPropertyPage.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DirectX.Capture\VideoCapabilities.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DirectX.Capture\VideoProcAmp.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Dispatcher\Job.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Dispatcher\JobComparer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Dispatcher\JobDispatcher.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Dispatcher\JobFlags.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Dispatcher\JobPriority.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing.Layouts\DockLayout.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing.Layouts\GridLayout.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing.Layouts\ILayout.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing.Layouts\RingLayout.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing.Layouts\StackLayout.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing.Transforms\RotateTransform.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing.Transforms\ScaleTransform.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing.Transforms\Transform.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing.Transforms\TransformCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing.Transforms\TransformConverter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing.Transforms\TransformGroup.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing.Transforms\TranslateTransform.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\AlignmentX.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\AlignmentY.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\Brush.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\BrushConverter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\BrushFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\BrushMappingMode.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\CombinedGeometry.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\CombineMode.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\DashStyle.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\DashStyles.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\DoubleCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\DrawingContext.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\FillRule.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\FormattedText.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\Geometry.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\GeometryCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\GeometryCombineMode.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\GeometryConverter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\GeometryDrawing.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\GeometryGroup.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\GlyphRun.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\GradientBrush.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\GradientFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\GradientSpreadMethod.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\GradientStop.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\GradientStopCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\HorizontalAlignment.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\ImageBrush.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\ImageSource.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\ImageSourceConverter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\Matrix.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\Pen.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\PenBase.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\PenLineCap.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\PenLineJoin.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\Point.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\PointCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\PointCollectionConverter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\PointConverter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\Rect.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\RectangleGeometry.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\RectConverter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\Size.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\SizeConverter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\SolidColorBrush.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\SolidColorBrushConverter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\Stretch.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\StretchDirection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\StretchHelper.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\Thickness.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\ThicknessConverter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\TileBrush.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\TileMode.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Drawing\VerticalAlignment.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\AudioMixerHelper.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\BDAInterfaces.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\BDAMedia.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\BDATypes.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\DirectShowUtil.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\DirectShowVolume.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\DirectVobSub.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\DsBugWO.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\DsControl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\DsCore.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\DsDevice.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\DsDVD.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\DsExtend.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\DsUtils.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\DsUuids.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\DsVmRender.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\Filter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\FilterCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\FilterHelper.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\Filters.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\hauppauge.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\IksPropertyUtils.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\ivac.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\MetaData\AsfMetadataEditor.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\MetaData\DvrmsMetadataEditor.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\MetaData\MetadataEditor.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\MPEG2Demux.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\PropertySet.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\QEdit.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\TunerCountry.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\Twinhan.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\VideoCaptureDevice.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\VideoCaptureDeviceEx.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DShowNET\VideoCaptureProperties.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FreeDB\CDInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FreeDB\CDInfoDetail.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FreeDB\CDTrackDetail.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FreeDB\FreeDBFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FreeDB\FreeDBHttpImpl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FreeDB\FreeDBSite.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FreeDB\IFreeDB.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FreeDB\XMCDParser.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\Action.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\ActionTranslator.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\Animator.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\CachedTexture.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\CPosition.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\DownloadedImage.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\DXUtil.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\Error.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\Events.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\FilterDefinition.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\Geometry.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GraphicContext.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUIAnimation.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUIButton3PartControl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUIButtonControl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUICheckButton.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUICheckListControl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUICheckMarkControl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUIControl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUIControlCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUIControlFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUIFacadeViewControl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUIFadeLabel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUIFilmstripControl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUIFont.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUIFontManager.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUIGroup.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUIHorizontalScrollbar.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUIImage.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUIImageList.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUILabelControl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUIListControl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUIListItem.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUIMessage.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUIOverlayWindow.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUIProgressControl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUISelectButtonControl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUISliderControl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUISMSInputControl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUISortButtonControl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUISpinControl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUIStatusbarControl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUITextControl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUITextScrollUpControl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUITextureManager.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUIThumbnailPanel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUIToggleButtonControl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUITVProgressControl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUIUpDownButton.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUIUpDownListControl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUIVerticalScrollbar.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUIVideoControl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUIVolumeBar.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUIWaitCursor.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUIWindow.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\GUIWindowManager.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\IDialogbox.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\IPlugin.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\IProfile.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\IRender.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\ISetupForm.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\IWakeable.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\key.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\LocalizeStrings.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\Log.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\PluginManager.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\PropertyManager.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\SkinControlAttribute.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\SortEventArgs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\SortEventHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\Strings.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\TexturePacker.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\Util.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\VideoRendererStatistics.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\ViewDefinition.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\WaitCursor.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\Win32Support.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\Xml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="guilib\XMLSkinElementAttribute.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Imaging\BitmapCacheOption.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Imaging\BitmapCreateOptions.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Imaging\BitmapImage.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Imaging\BitmapSource.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Imaging\DownloadProgressEventArgs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Imaging\DownloadProgressEventHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Imaging\Rotation.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mixer\Mixer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mixer\MixerCallback.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mixer\MixerComponentType.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mixer\MixerControlClass.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mixer\MixerControlType.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mixer\MixerControlUnits.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mixer\MixerErrors.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mixer\MixerEventArgs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mixer\MixerEventHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mixer\MixerEventListener.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mixer\MixerFlags.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mixer\MixerLineControlFlags.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mixer\MixerLineFlags.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mixer\MixerLineStatusFlags.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mixer\MixerLineTarget.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mixer\MixerMessages.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mixer\MixerNativeMethods.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Mixer\MixerTargetType.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mmedia\AudioWriters.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mmedia\EditWaveWriter.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="mmedia\InFormatEdit.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="mmedia\NumericTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="mmedia\WaveNative.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mmedia\WaveStream.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mmedia\WaveWriter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mmedia\Win32Functions.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="mmedia\WriterConfig.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="nzlib\Checksums\Adler32.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="nzlib\Checksums\Crc32.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="nzlib\Checksums\IChecksum.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="nzlib\Compression\Deflater.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="nzlib\Compression\DeflaterConstants.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="nzlib\Compression\DeflaterEngine.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="nzlib\Compression\DeflaterHuffman.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="nzlib\Compression\DeflaterPending.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="nzlib\Compression\Inflater.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="nzlib\Compression\InflaterDynHeader.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="nzlib\Compression\InflaterHuffmanTree.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="nzlib\Compression\PendingBuffer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="nzlib\GZip\GZipConstants.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="nzlib\GZip\GZipInputStream.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="nzlib\GZip\GZipOutputStream.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="nzlib\Streams\DeflaterOutputStream.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="nzlib\Streams\InflaterInputStream.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="nzlib\Streams\OutputWindow.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="nzlib\Streams\StreamManipulator.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="nzlib\ZipException.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="nzlib\Zip\ZipConstants.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="nzlib\Zip\ZipEntry.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="nzlib\Zip\ZipFile.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="nzlib\Zip\ZipInputStream.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="nzlib\Zip\ZipOutputStream.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Player\AudioPlayerVMR.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Player\AudioPlayerWMP9.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Player\BaseStreamBufferPlayer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Player\BaseTStreamBufferPlayer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Player\DVDPlayer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Player\DVDPlayer9.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Player\g_player.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Player\IExternalPlayer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Player\IPlayer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Player\PlaneScene.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Player\PlayerFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Player\RadioGraph.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Player\RadioTuner.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Player\StreamBufferPlayer9.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Player\StreamBufferPlayerVMR9wl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Player\TSStreamBufferPlayer9.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Player\VideoPlayerVMR7.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Player\VideoPlayerVMR9.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Player\VideoPlayerVMR9wl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Player\VMR7.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Player\VMR9.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Player\VolumeHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Player\VolumeHandlerCustom.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PlayList\PlayList.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PlayList\PlayListb4S.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PlayList\PlayListFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PlayList\PlayListM3U.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PlayList\PlayListPlayer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PlayList\PlayListPLS.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PlayList\PlayListWPL.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="RedEye\RedEye.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Ripper\AutoPlay.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Ripper\CDDrive.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Ripper\CDDriveEvents.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Ripper\RemovableDrive.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Ripper\Win32Functions.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SerialUIR\CommBase.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SerialUIR\SerialUIR.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="StringTokenizer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SubtitleReader\ISUbtitleReader.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SubtitleReader\SubReader.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SubtitleReader\SubTitles.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Collections\NullEnumerable.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Collections\NullEnumerator.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Collections\PriorityQueue.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.ComponentModel\AsyncCompletedEventArgs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.ComponentModel\DependencyBinding.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.ComponentModel\DoWorkEventArgs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.ComponentModel\DoWorkEventHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.ComponentModel\ISynchronizeInvokeImpl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.ComponentModel\ProgressChangedEventArgs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.ComponentModel\ProgressChangedEventHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.ComponentModel\RunWorkerCompletedEventArgs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.ComponentModel\RunWorkerCompletedEventHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Threading\BackgroundWorker.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Threading\TimeoutLock.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Automation.Provider\ExpandCollapseState.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Automation.Provider\IAutomationPatternProvider.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Automation.Provider\IExpandCollapseProvider.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Automation.Provider\IToggleProvider.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Automation\AutomationPattern.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Automation\IInvokeProvider.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Automation\ToggleState.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\Button.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\ButtonBase.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\Canvas.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\ClickMode.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\ColumnDefinition.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\ColumnDefinitionCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\ContextMenu.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\ContextMenuService.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\Control.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\ControlTemplate.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\DataTemplate.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\DataTemplateSelector.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\DefinitionBase.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\Dock.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\DockPanel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\Grid.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\GridLength.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\GridLengthConverter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\GridUnitType.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\HeaderedItemsControl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\Image.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\IScrollInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\ItemCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\ItemsControl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\Menu.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\MenuBase.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\MenuItem.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\MenuItemMode.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\MenuItemRole.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\Orientation.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\Page.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\Panel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\PlacementMode.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\RowDefinition.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\RowDefinitionCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Controls\StackPanel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Data\Binding.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Data\IValueConverter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Dispatcher\Dispatcher.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Dispatcher\DispatcherEventArgs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Dispatcher\DispatcherFrame.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Dispatcher\DispatcherHookEventArgs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Dispatcher\DispatcherHookEventHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Dispatcher\DispatcherHooks.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Dispatcher\DispatcherOperation.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Dispatcher\DispatcherOperationStatus.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Dispatcher\DispatcherPriority.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Dispatcher\DispatcherProcessingDisabled.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Dispatcher\DispatcherSynchronizationContext.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Dispatcher\DispatcherTimer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Dispatcher\DispatcherUnhandledExceptionEventArgs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Dispatcher\DispatcherUnhandledExceptionEventHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Dispatcher\DispatcherUnhandledExceptionFilterEventArgs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Dispatcher\DispatcherUnhandledExceptionFilterEventHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Input\ApplicationCommands.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Input\CommandBinding.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Input\CommandBindingCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Input\CommandConverter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Input\CommandManager.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Input\ExecuteEventArgs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Input\ExecuteEventHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Input\FocusManager.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Input\ICommand.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Input\IFrameworkInputElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Input\IInputElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Input\InputGestureCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Input\KeyboardFocusChangedEventArgs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Input\KeyboardFocusChangedEventHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Input\KeyEventArgs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Input\MouseButtonEventArgs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Input\MouseButtonEventHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Input\MouseEventArgs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Input\MouseWheelEventArgs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Input\QueryEnabledEventArgs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Input\QueryEnabledEventHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Input\RoutedCommand.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Input\UICommand.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\Animatable.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\AnimationClock.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\AnimationClockCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\AnimationStore.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\AnimationTimeline.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\AnimationTimelineCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\AnimationTimer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\AnimationType.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\BeginAction.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\BeginStoryboard.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\Clock.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\ClockCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\ClockController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\ClockGroup.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\ClockState.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\DoubleAnimation.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\DoubleAnimationBase.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\Duration.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\DurationConverter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\Easing.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\FillBehavior.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\HandoffBehavior.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\IAnimatable.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\IClock.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\NativeMethods.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\ParallelTimeline.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\PauseAction.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\RepeatBehavior.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\RepeatBehaviorConverter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\ResumeAction.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\ReverseAction.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\SeekAction.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\SkipToFillAction.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\StopAction.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\Storyboard.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\StoryboardCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\Timeline.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\TimelineAction.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\TimelineCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\TimelineGroup.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\TimeManager.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\TimeSeekOrigin.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Media.Animation\TweenHelper.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Serialization\IAddChild.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Serialization\ICanAddNamespaceEntries.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Serialization\LocalizeExtension.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Serialization\MarkupExtension.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Serialization\TypeExtension.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Serialization\XamlParser.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Serialization\XamlParserException.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows.Threading\DispatcherObject.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\ComponentResourceKey.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\ContentControl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\ContentElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\DependencyObject.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\DependencyObjectType.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\DependencyProperty.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\DependencyPropertyAttribute.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\DependencyPropertyChangedEventArgs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\DependencyPropertyChangedEventHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\DependencyPropertyConverter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\DependencyPropertyKey.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\DependencySource.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\EventHandlersStore.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\EventManager.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\EventPrivateKey.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\EventRoute.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\EventSetter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\EventTrigger.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\FlowDirection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\FrameworkContentElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\FrameworkElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\FrameworkElementFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\FrameworkPropertyMetadata.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\FrameworkPropertyMetadataOptions.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\FrameworkTemplate.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\Freezable.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\GetValueOverride.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\IFrameworkInputElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\INameScope.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\IResourceHost.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\LocalValueEntry.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\LocalValueEnumerator.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\LogicalTreeHelper.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\PropertyInvalidatedCallback.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\PropertyMetadata.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\PropertyPath.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\PropertyPathConverter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\ReadLocalValueOverride.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\RequestBringIntoViewEventArgs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\RequestBringIntoViewHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\ResourceDictionary.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\ResourceDictionaryCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\ResourceKey.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\RoutedEvent.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\RoutedEventArgs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\RoutedEventConverter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\RoutedEventHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\RoutedEventHandlerInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\RoutedEventHandlerInfoList.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\RoutedEventHandlerInfoStore.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\RoutingStrategy.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\Setter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\SetterBase.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\SetterBaseCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\SetValueOverride.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\SizeChangedEventArgs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\SizeChangedEventHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\SizeChangedInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\StaticResourceExtension.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\StaticResources.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\Style.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\SystemResourceHost.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\TemplateBindingExtension.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\Trigger.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\TriggerAction.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\TriggerActionCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\TriggerBase.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\TriggerCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\TriggerInvalidatedEventArgs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\TriggerInvalidatedEventHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\UIElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\UIElementCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\UIPropertyMetadata.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\ValidateValueCallback.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\Visibility.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\Visual.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\VisualCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\VisualOperations.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\VisualUtility.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\WindowState.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System.Windows\WriteLocalValueOverride.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\INullable.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\NullableDouble.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\NullableDoubleConverter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\NullableTimeSpan.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="System\NullableTimeSpanConverter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TagReader\ITagReader.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TagReader\MusicTag.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TagReader\TagReader.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Transcoding\Dvrms2Mpeg.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Transcoding\Dvrms2XVID.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Transcoding\ITranscode.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Transcoding\TranscodeFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Transcoding\WMVEncoder.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="USBUIRT\USBUIRT.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Util\AmazonLookup.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Util\AmazonReference.cs">
+      <SubType>code</SubType>
+    </Compile>
+    <Compile Include="Util\AudioMixerHelper.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Util\BitmapResize.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Util\ConditionChecker.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Util\CRCTool.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Util\DaemonTools.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Util\DirectoryHistory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Util\ExifExtractor.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Util\FileInformation.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Util\FtpConnectionCache.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Util\GoogleImageSearch.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Util\HTMLTable.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Util\HtmlToText.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Util\HTMLUtil.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Util\ImageHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Util\LevenshteinDistance.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Util\Picture.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Util\Share.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Util\Thumbs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Util\Tokens.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Util\Util.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Util\VirtualDirectory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Util\Win32API.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Util\WindowsController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="WinLirc\WinLirc.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="wmfsdk\BufferTypes.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="wmfsdk\CommonTypes.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="wmfsdk\MediaTypes.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="wmfsdk\NSSBuffer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="wmfsdk\ProfilesTypes.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="wmfsdk\ReaderTypes.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="wmfsdk\WmaStream.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="wmfsdk\WmaWriter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="wmfsdk\WmaWriterConfig.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="wmfsdk\WMFFunctions.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="wmfsdk\WMHeaderInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="wmfsdk\WMProfile.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="wmfsdk\WMStreamConfig.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="wmfsdk\WriterTypes.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <EmbeddedResource Include="mmedia\EditWaveWriter.resx">
+      <DependentUpon>EditWaveWriter.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="mmedia\InFormatEdit.resx">
+      <DependentUpon>InFormatEdit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="mmedia\NumericTextBox.resx">
+      <DependentUpon>NumericTextBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Player\BaseStreamBufferPlayer.resx">
+      <DependentUpon>BaseStreamBufferPlayer.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>

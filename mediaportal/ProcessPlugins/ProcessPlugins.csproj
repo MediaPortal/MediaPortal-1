@@ -1,490 +1,371 @@
-<VisualStudioProject>
-    <CSHARP
-        ProjectType = "Local"
-        ProductVersion = "7.10.3077"
-        SchemaVersion = "2.0"
-        ProjectGuid = "{3333B71D-6304-452C-BEA5-D037E7B3AA6B}"
-    >
-        <Build>
-            <Settings
-                ApplicationIcon = ""
-                AssemblyKeyContainerName = ""
-                AssemblyName = "ProcessPlugins"
-                AssemblyOriginatorKeyFile = ""
-                DefaultClientScript = "JScript"
-                DefaultHTMLPageLayout = "Grid"
-                DefaultTargetSchema = "IE50"
-                DelaySign = "false"
-                OutputType = "Library"
-                PreBuildEvent = ""
-                PostBuildEvent = ""
-                RootNamespace = "ProcessPlugins"
-                RunPostBuildEvent = "OnBuildSuccess"
-                StartupObject = ""
-            >
-                <Config
-                    Name = "Debug"
-                    AllowUnsafeBlocks = "true"
-                    BaseAddress = "285212672"
-                    CheckForOverflowUnderflow = "false"
-                    ConfigurationOverrideFile = ""
-                    DefineConstants = "DEBUG;TRACE"
-                    DocumentationFile = ""
-                    DebugSymbols = "true"
-                    FileAlignment = "4096"
-                    IncrementalBuild = "false"
-                    NoStdLib = "false"
-                    NoWarn = ""
-                    Optimize = "false"
-                    OutputPath = "bin\Debug\"
-                    RegisterForComInterop = "false"
-                    RemoveIntegerChecks = "false"
-                    TreatWarningsAsErrors = "false"
-                    WarningLevel = "4"
-                />
-                <Config
-                    Name = "Release"
-                    AllowUnsafeBlocks = "true"
-                    BaseAddress = "285212672"
-                    CheckForOverflowUnderflow = "false"
-                    ConfigurationOverrideFile = ""
-                    DefineConstants = "TRACE"
-                    DocumentationFile = ""
-                    DebugSymbols = "false"
-                    FileAlignment = "4096"
-                    IncrementalBuild = "false"
-                    NoStdLib = "false"
-                    NoWarn = ""
-                    Optimize = "true"
-                    OutputPath = "bin\Release\"
-                    RegisterForComInterop = "false"
-                    RemoveIntegerChecks = "false"
-                    TreatWarningsAsErrors = "false"
-                    WarningLevel = "4"
-                />
-                <Config
-                    Name = "UseCaptureCardDefinitions"
-                    AllowUnsafeBlocks = "true"
-                    BaseAddress = "285212672"
-                    CheckForOverflowUnderflow = "false"
-                    ConfigurationOverrideFile = ""
-                    DefineConstants = "DEBUG;TRACE"
-                    DocumentationFile = ""
-                    DebugSymbols = "true"
-                    FileAlignment = "4096"
-                    IncrementalBuild = "false"
-                    NoStdLib = "false"
-                    NoWarn = ""
-                    Optimize = "false"
-                    OutputPath = "bin\Debug\"
-                    RegisterForComInterop = "false"
-                    RemoveIntegerChecks = "false"
-                    TreatWarningsAsErrors = "false"
-                    WarningLevel = "4"
-                />
-                <Config
-                    Name = "UseCaptureDefintionsRelease"
-                    AllowUnsafeBlocks = "true"
-                    BaseAddress = "285212672"
-                    CheckForOverflowUnderflow = "false"
-                    ConfigurationOverrideFile = ""
-                    DefineConstants = "TRACE;UseCaptureCardDefinitions"
-                    DocumentationFile = ""
-                    DebugSymbols = "false"
-                    FileAlignment = "4096"
-                    IncrementalBuild = "false"
-                    NoStdLib = "false"
-                    NoWarn = ""
-                    Optimize = "true"
-                    OutputPath = "bin\Release\"
-                    RegisterForComInterop = "false"
-                    RemoveIntegerChecks = "false"
-                    TreatWarningsAsErrors = "false"
-                    WarningLevel = "4"
-                />
-            </Settings>
-            <References>
-                <Reference
-                    Name = "TVCapture"
-                    Project = "{B5886774-5D2B-4F6C-A6B6-3998F4F5E60C}"
-                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
-                />
-                <Reference
-                    Name = "Databases"
-                    Project = "{C1BCEC3E-6074-4328-B5D9-391A457C8FFB}"
-                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
-                />
-                <Reference
-                    Name = "System.Windows.Forms"
-                    AssemblyName = "System.Windows.Forms"
-                    HintPath = "..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Windows.Forms.dll"
-                />
-                <Reference
-                    Name = "System.Data"
-                    AssemblyName = "System.Data"
-                    HintPath = "..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Data.dll"
-                />
-                <Reference
-                    Name = "System"
-                    AssemblyName = "System"
-                    HintPath = "..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.dll"
-                />
-                <Reference
-                    Name = "System.Drawing"
-                    AssemblyName = "System.Drawing"
-                    HintPath = "..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Drawing.dll"
-                />
-                <Reference
-                    Name = "System.Runtime.Serialization.Formatters.Soap"
-                    AssemblyName = "System.Runtime.Serialization.Formatters.Soap"
-                    HintPath = "..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Runtime.Serialization.Formatters.Soap.dll"
-                />
-                <Reference
-                    Name = "Core"
-                    Project = "{02FFFC1F-2555-4B99-8B01-3432D0673855}"
-                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
-                />
-                <Reference
-                    Name = "System.XML"
-                    AssemblyName = "System.Xml"
-                    HintPath = "..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.XML.dll"
-                />
-                <Reference
-                    Name = "System.Web"
-                    AssemblyName = "System.Web"
-                    HintPath = "..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Web.dll"
-                />
-                <Reference
-                    Name = "System.Web.Services"
-                    AssemblyName = "System.Web.Services"
-                    HintPath = "..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Web.Services.dll"
-                />
-                <Reference
-                    Name = "Communications"
-                    AssemblyName = "Communications"
-                    HintPath = "..\Communications.dll"
-                />
-                <Reference
-                    Name = "Interop.GIRDERLib"
-                    AssemblyName = "Interop.GIRDERLib"
-                    HintPath = "..\Interop.GIRDERLib.dll"
-                />
-                <Reference
-                    Name = "Microsoft.Office.Interop.Outlook"
-                    AssemblyName = "Microsoft.Office.Interop.Outlook"
-                    HintPath = "..\Microsoft.Office.Interop.Outlook.dll"
-                />
-                <Reference
-                    Name = "Dialogs"
-                    Project = "{396C5208-5D46-4A11-92C1-FD0F2F42D7DD}"
-                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
-                />
-                <Reference
-                    Name = "RemotePlugins"
-                    Project = "{0A234721-1F13-4DF8-9B1E-64D9E3111203}"
-                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
-                />
-            </References>
-        </Build>
-        <Files>
-            <Include>
-                <File
-                    RelPath = "AssemblyInfo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "CallerId\ISDN\CallerIdISDN.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "CallerId\ISDN\ISDNSetupForm.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "CallerId\ISDN\ISDNSetupForm.resx"
-                    DependentUpon = "ISDNSetupForm.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "CallerId\ISDN\ISDNWatch.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "CallerId\ISDN\OutlookHelper.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "CallerId\YAC\CallerIdPlugin.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ExternalDisplay\Clipboard.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ExternalDisplay\DebugForm.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ExternalDisplay\DebugForm.resx"
-                    DependentUpon = "DebugForm.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "ExternalDisplay\DisplayHandler.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ExternalDisplay\DLLInfo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ExternalDisplay\ExternalDisplay.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ExternalDisplay\Girder.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ExternalDisplay\HighPerformanceCounter.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ExternalDisplay\IDisplay.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ExternalDisplay\iMON.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ExternalDisplay\IO.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ExternalDisplay\LCDHypeWrapper.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ExternalDisplay\MediaPad.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ExternalDisplay\None.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ExternalDisplay\PropertyBrowser.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ExternalDisplay\PropertyBrowser.resx"
-                    DependentUpon = "PropertyBrowser.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "ExternalDisplay\Settings.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ExternalDisplay\SetupForm.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ExternalDisplay\SetupForm.resx"
-                    DependentUpon = "SetupForm.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "ExternalDisplay\Status.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ExternalDisplay\VLSYSLis2.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ExternalDisplay\Setting\Alignment.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ExternalDisplay\Setting\AndCondition.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ExternalDisplay\Setting\Condition.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ExternalDisplay\Setting\IsNullCondition.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ExternalDisplay\Setting\Line.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ExternalDisplay\Setting\Message.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ExternalDisplay\Setting\NotNullCondition.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ExternalDisplay\Setting\OrCondition.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ExternalDisplay\Setting\Parse.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ExternalDisplay\Setting\Property.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ExternalDisplay\Setting\Text.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ExternalDisplay\Setting\Value.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "HCWBlaster\HCWBlaster.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "HCWBlaster\HCWBlasterSetupForm.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "HCWBlaster\HCWBlasterSetupForm.resx"
-                    DependentUpon = "HCWBlasterSetupForm.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "HCWBlaster\HCWIRBlaster.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "MameDevice\MameDevice.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "MameDevice\MappingForm.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "MameDevice\MappingForm.resx"
-                    DependentUpon = "MappingForm.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "MPExTuneCmd\MPExTuneCmd.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "MPExTuneCmd\MPExTuneCmdForm.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "MPExTuneCmd\MPExTuneCmdForm.resx"
-                    DependentUpon = "MPExTuneCmdForm.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "MPExTuneCmd\MPExTunerCmdForm.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "MPExTuneCmd\MPExTunerCmdForm.resx"
-                    DependentUpon = "MPExTunerCmdForm.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "NVPPowerScheduler\NVPPowerScheduler.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "NVPPowerScheduler\PowerException.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "NVPPowerScheduler\PowerManager.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "NVPPowerScheduler\PowerSchedulerSetupForm.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "NVPPowerScheduler\PowerSchedulerSetupForm.resx"
-                    DependentUpon = "PowerSchedulerSetupForm.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "NVPPowerScheduler\TimerException.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "NVPPowerScheduler\WaitableTimer.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-            </Include>
-        </Files>
-    </CSHARP>
-</VisualStudioProject>
-
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{3333B71D-6304-452C-BEA5-D037E7B3AA6B}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ApplicationIcon>
+    </ApplicationIcon>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
+    <AssemblyName>ProcessPlugins</AssemblyName>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>Library</OutputType>
+    <RootNamespace>ProcessPlugins</RootNamespace>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <StartupObject>
+    </StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>false</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>none</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'UseCaptureCardDefinitions|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'UseCaptureDefintionsRelease|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE;UseCaptureCardDefinitions</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>false</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>none</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Core\Core.csproj">
+      <Name>Core</Name>
+      <Project>{02FFFC1F-2555-4B99-8B01-3432D0673855}</Project>
+      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    </ProjectReference>
+    <ProjectReference Include="..\Databases\Databases.csproj">
+      <Name>Databases</Name>
+      <Project>{C1BCEC3E-6074-4328-B5D9-391A457C8FFB}</Project>
+      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    </ProjectReference>
+    <ProjectReference Include="..\Dialogs\Dialogs.csproj">
+      <Name>Dialogs</Name>
+      <Project>{396C5208-5D46-4A11-92C1-FD0F2F42D7DD}</Project>
+      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    </ProjectReference>
+    <ProjectReference Include="..\RemotePlugins\RemotePlugins.csproj">
+      <Name>RemotePlugins</Name>
+      <Project>{0A234721-1F13-4DF8-9B1E-64D9E3111203}</Project>
+      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    </ProjectReference>
+    <ProjectReference Include="..\TVCapture\TVCapture.csproj">
+      <Name>TVCapture</Name>
+      <Project>{B5886774-5D2B-4F6C-A6B6-3998F4F5E60C}</Project>
+      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    </ProjectReference>
+    <Reference Include="Communications">
+      <Name>Communications</Name>
+      <HintPath>..\Communications.dll</HintPath>
+    </Reference>
+    <Reference Include="Interop.GIRDERLib">
+      <Name>Interop.GIRDERLib</Name>
+      <HintPath>..\Interop.GIRDERLib.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Office.Interop.Outlook">
+      <Name>Microsoft.Office.Interop.Outlook</Name>
+      <HintPath>..\Microsoft.Office.Interop.Outlook.dll</HintPath>
+    </Reference>
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.Data">
+      <Name>System.Data</Name>
+    </Reference>
+    <Reference Include="System.Drawing">
+      <Name>System.Drawing</Name>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization.Formatters.Soap">
+      <Name>System.Runtime.Serialization.Formatters.Soap</Name>
+    </Reference>
+    <Reference Include="System.Web">
+      <Name>System.Web</Name>
+    </Reference>
+    <Reference Include="System.Web.Services">
+      <Name>System.Web.Services</Name>
+    </Reference>
+    <Reference Include="System.Windows.Forms">
+      <Name>System.Windows.Forms</Name>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Name>System.XML</Name>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CallerId\ISDN\CallerIdISDN.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CallerId\ISDN\ISDNSetupForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CallerId\ISDN\ISDNWatch.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CallerId\ISDN\OutlookHelper.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CallerId\YAC\CallerIdPlugin.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ExternalDisplay\Clipboard.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ExternalDisplay\DebugForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ExternalDisplay\DisplayHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ExternalDisplay\DLLInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ExternalDisplay\ExternalDisplay.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ExternalDisplay\Girder.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ExternalDisplay\HighPerformanceCounter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ExternalDisplay\IDisplay.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ExternalDisplay\iMON.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ExternalDisplay\IO.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ExternalDisplay\LCDHypeWrapper.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ExternalDisplay\MediaPad.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ExternalDisplay\None.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ExternalDisplay\PropertyBrowser.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ExternalDisplay\Settings.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ExternalDisplay\Setting\Alignment.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ExternalDisplay\Setting\AndCondition.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ExternalDisplay\Setting\Condition.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ExternalDisplay\Setting\IsNullCondition.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ExternalDisplay\Setting\Line.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ExternalDisplay\Setting\Message.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ExternalDisplay\Setting\NotNullCondition.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ExternalDisplay\Setting\OrCondition.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ExternalDisplay\Setting\Parse.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ExternalDisplay\Setting\Property.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ExternalDisplay\Setting\Text.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ExternalDisplay\Setting\Value.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ExternalDisplay\SetupForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ExternalDisplay\Status.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ExternalDisplay\VLSYSLis2.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="HCWBlaster\HCWBlaster.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="HCWBlaster\HCWBlasterSetupForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="HCWBlaster\HCWIRBlaster.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MameDevice\MameDevice.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MameDevice\MappingForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MPExTuneCmd\MPExTuneCmd.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MPExTuneCmd\MPExTuneCmdForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MPExTuneCmd\MPExTunerCmdForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="NVPPowerScheduler\NVPPowerScheduler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="NVPPowerScheduler\PowerException.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="NVPPowerScheduler\PowerManager.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="NVPPowerScheduler\PowerSchedulerSetupForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="NVPPowerScheduler\TimerException.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="NVPPowerScheduler\WaitableTimer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <EmbeddedResource Include="CallerId\ISDN\ISDNSetupForm.resx">
+      <DependentUpon>ISDNSetupForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ExternalDisplay\DebugForm.resx">
+      <DependentUpon>DebugForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ExternalDisplay\PropertyBrowser.resx">
+      <DependentUpon>PropertyBrowser.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ExternalDisplay\SetupForm.resx">
+      <DependentUpon>SetupForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HCWBlaster\HCWBlasterSetupForm.resx">
+      <DependentUpon>HCWBlasterSetupForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MameDevice\MappingForm.resx">
+      <DependentUpon>MappingForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MPExTuneCmd\MPExTuneCmdForm.resx">
+      <DependentUpon>MPExTuneCmdForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MPExTuneCmd\MPExTunerCmdForm.resx">
+      <DependentUpon>MPExTunerCmdForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NVPPowerScheduler\PowerSchedulerSetupForm.resx">
+      <DependentUpon>PowerSchedulerSetupForm.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>
