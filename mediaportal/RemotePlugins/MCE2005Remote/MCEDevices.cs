@@ -840,10 +840,10 @@ namespace MediaPortal.Devices
 			dbi.DeviceType = 0x5;
 			dbi.ClassGuid = _deviceClass;
 
-			_handleDeviceArrival = RegisterDeviceNotification(Handle, ref dbi, 0);
+//			_handleDeviceArrival = RegisterDeviceNotification(Handle, ref dbi, 0);
 
-			if(_handleDeviceArrival == IntPtr.Zero)
-				throw new Exception(string.Format("Failed in call to RegisterDeviceNotification ({0})", GetLastError()));
+//			if(_handleDeviceArrival == IntPtr.Zero)
+//				throw new Exception(string.Format("Failed in call to RegisterDeviceNotification ({0})", GetLastError()));
 		}
 
 		internal void RegisterDeviceRemoval(SafeFileHandle deviceHandle)
@@ -855,10 +855,10 @@ namespace MediaPortal.Devices
 			dbh.Handle = deviceHandle;
 
 			_deviceHandle = deviceHandle;
-			_handleDeviceRemoval = RegisterDeviceNotification(Handle, ref dbh, 0);
+//			_handleDeviceRemoval = RegisterDeviceNotification(this.H, ref dbh, 0);
 
-			if(_handleDeviceRemoval == IntPtr.Zero)
-				throw new Exception(string.Format("Failed in call to RegisterDeviceNotification ({0})", GetLastError()));
+//			if(_handleDeviceRemoval == IntPtr.Zero)
+//				throw new Exception(string.Format("Failed in call to RegisterDeviceNotification ({0})", GetLastError()));
 		}
 
 		internal void UnregisterDeviceArrival()
