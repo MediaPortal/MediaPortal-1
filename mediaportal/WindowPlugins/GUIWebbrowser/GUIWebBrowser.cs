@@ -35,27 +35,13 @@ namespace MediaPortal.GUI.WebBrowser
 		WebBrowserControl wb;
 
 		#region Constructor
-			public GUIWebBrowser()
-			{
-				GetID=5500;
 
-                try
-                {
-                    wb = WebBrowserControl.Instance;
+        public GUIWebBrowser()
+		{
+			GetID=5500;
+		}
 
-                    GUIGraphicsContext.form.Controls.Add(wb);
-                    wb.Visible = false;
-                    wb.Browser.NavigateComplete2 += new AxMOZILLACONTROLLib.DWebBrowserEvents2_NavigateComplete2EventHandler(Browser_NavigateComplete2);
-                    wb.Browser.DownloadBegin += new EventHandler(Browser_DownloadBegin);
-                    wb.Browser.DownloadComplete += new EventHandler(Browser_DownloadComplete);
-                    wb.Browser.BeforeNavigate2 += new AxMOZILLACONTROLLib.DWebBrowserEvents2_BeforeNavigate2EventHandler(Browser_BeforeNavigate2);
-                    wb.Browser.StatusTextChange += new AxMOZILLACONTROLLib.DWebBrowserEvents2_StatusTextChangeEventHandler(Browser_StatusTextChange);
-                    wb.Browser.ProgressChange += new AxMOZILLACONTROLLib.DWebBrowserEvents2_ProgressChangeEventHandler(Browser_ProgressChange);
-                }
-                catch
-                { }
-			}
-		#endregion
+        #endregion
 
 		#region Private Enumerations
 			/// <summary>
@@ -75,10 +61,30 @@ namespace MediaPortal.GUI.WebBrowser
 		#endregion
 
 		#region Overrides
-			public override bool Init()
-			{
-				return Load (GUIGraphicsContext.Skin+@"\webbrowser.xml");
-			}
+
+        public override bool Init()
+        {
+            try
+            {
+                wb = WebBrowserControl.Instance;
+
+                GUIGraphicsContext.form.Controls.Add(wb);
+                wb.Visible = false;
+                wb.Browser.NavigateComplete2 += new AxMOZILLACONTROLLib.DWebBrowserEvents2_NavigateComplete2EventHandler(Browser_NavigateComplete2);
+                wb.Browser.DownloadBegin += new EventHandler(Browser_DownloadBegin);
+                wb.Browser.DownloadComplete += new EventHandler(Browser_DownloadComplete);
+                wb.Browser.BeforeNavigate2 += new AxMOZILLACONTROLLib.DWebBrowserEvents2_BeforeNavigate2EventHandler(Browser_BeforeNavigate2);
+                wb.Browser.StatusTextChange += new AxMOZILLACONTROLLib.DWebBrowserEvents2_StatusTextChangeEventHandler(Browser_StatusTextChange);
+                wb.Browser.ProgressChange += new AxMOZILLACONTROLLib.DWebBrowserEvents2_ProgressChangeEventHandler(Browser_ProgressChange);
+
+                return Load(GUIGraphicsContext.Skin + @"\webbrowser.xml");
+            }
+            catch
+            {
+            }
+
+            return false;
+        }
 
 		public override void OnAction(Action action)
 		{
@@ -112,6 +118,10 @@ namespace MediaPortal.GUI.WebBrowser
 					case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
 					{
 						base.OnMessage(message);
+
+                        if (wb == null)
+                            return false;
+
 						GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(4000));
 					
 						//make web browser visible			
@@ -180,8 +190,11 @@ namespace MediaPortal.GUI.WebBrowser
 					}
 					case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
 					{
-						//hide the browser
-						wb.Visible=false;						
+                        if (wb != null)
+                        {
+                            //hide the browser
+                            wb.Visible = false;
+                        }
 					}
 					break;
 
@@ -208,7 +221,6 @@ namespace MediaPortal.GUI.WebBrowser
 			}
 		}
 		
-
 		#region ISetupForm Members
 
 		public bool CanEnable()

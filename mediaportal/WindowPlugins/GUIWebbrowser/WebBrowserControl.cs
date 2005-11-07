@@ -15,8 +15,9 @@ namespace MediaPortal.GUI.WebBrowser
 	/// </summary>
 	public sealed class WebBrowserControl : System.Windows.Forms.UserControl
 	{
-        static readonly WebBrowserControl instance = new WebBrowserControl();
-		/// <summary>
+        static readonly WebBrowserControl instance;
+
+        /// <summary>
 		/// Enumeration for refresh constants
 		/// </summary>
 		public enum RefreshConstants 
@@ -35,6 +36,16 @@ namespace MediaPortal.GUI.WebBrowser
 		/// Required designer variable.
 		/// </summary>
 		private System.ComponentModel.Container components = null;
+
+        static WebBrowserControl()
+        {
+            try
+            {
+                instance = new WebBrowserControl();
+            }
+            catch
+            { }
+        }
 
 		private WebBrowserControl()
 		{
@@ -79,28 +90,34 @@ namespace MediaPortal.GUI.WebBrowser
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(WebBrowserControl));
-			this.axMozillaBrowser1 = new AxMOZILLACONTROLLib.AxMozillaBrowser();
-			((System.ComponentModel.ISupportInitialize)(this.axMozillaBrowser1)).BeginInit();
-			this.SuspendLayout();
-			// 
-			// axMozillaBrowser1
-			// 
-			this.axMozillaBrowser1.Enabled = true;
-			this.axMozillaBrowser1.Location = new System.Drawing.Point(0, 0);
-			this.axMozillaBrowser1.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("axMozillaBrowser1.OcxState")));
-			this.axMozillaBrowser1.Size = new System.Drawing.Size(720, 473);
-			this.axMozillaBrowser1.TabIndex = 0;
-			// 
-			// WebBrowserControl
-			// 
-			this.Controls.Add(this.axMozillaBrowser1);
-			this.Name = "WebBrowserControl";
-			this.Size = new System.Drawing.Size(720, 473);
-			this.Layout += new System.Windows.Forms.LayoutEventHandler(this.WebBrowserControl_Layout);
-			((System.ComponentModel.ISupportInitialize)(this.axMozillaBrowser1)).EndInit();
-			this.ResumeLayout(false);
-			this.KeyPress+=new KeyPressEventHandler(WebBrowserControl_KeyPress);
+            try
+            {
+                System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(WebBrowserControl));
+                this.axMozillaBrowser1 = new AxMOZILLACONTROLLib.AxMozillaBrowser();
+                ((System.ComponentModel.ISupportInitialize)(this.axMozillaBrowser1)).BeginInit();
+                this.SuspendLayout();
+                // 
+                // axMozillaBrowser1
+                // 
+                this.axMozillaBrowser1.Enabled = true;
+                this.axMozillaBrowser1.Location = new System.Drawing.Point(0, 0);
+                this.axMozillaBrowser1.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("axMozillaBrowser1.OcxState")));
+                this.axMozillaBrowser1.Size = new System.Drawing.Size(720, 473);
+                this.axMozillaBrowser1.TabIndex = 0;
+                // 
+                // WebBrowserControl
+                // 
+                this.Controls.Add(this.axMozillaBrowser1);
+                this.Name = "WebBrowserControl";
+                this.Size = new System.Drawing.Size(720, 473);
+                this.Layout += new System.Windows.Forms.LayoutEventHandler(this.WebBrowserControl_Layout);
+                ((System.ComponentModel.ISupportInitialize)(this.axMozillaBrowser1)).EndInit();
+                this.ResumeLayout(false);
+                this.KeyPress += new KeyPressEventHandler(WebBrowserControl_KeyPress);
+            }
+            catch
+            {
+            }
 
 		}
 		#endregion
