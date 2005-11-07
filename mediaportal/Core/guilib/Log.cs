@@ -78,9 +78,9 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Write a string to the logfile.
     /// </summary>
-    /// <param name="strFormat">The format of the string.</param>
+    /// <param name="format">The format of the string.</param>
     /// <param name="arg">An array containing the actual data of the string.</param>
-    static public void Write(string strFormat, params object[] arg)
+    static public void Write(string format, params object[] arg)
     {
 		// uncomment the following four lines to help identify the calling method, this
 		// is useful in situations where an unreported exception causes problems
@@ -89,7 +89,7 @@ namespace MediaPortal.GUI.Library
 //		MethodBase methodBase = stackFrame.GetMethod();
 //		WriteFile(LogType.Log, "{0}", methodBase.Name);
 
-		WriteFile(LogType.Log,strFormat,arg);
+		WriteFile(LogType.Log,format,arg);
     }
 
     static string GetFileName(LogType type)
@@ -113,14 +113,14 @@ namespace MediaPortal.GUI.Library
       return fname;
     }
 
-    static public void WriteFile(LogType type, bool isError, string strFormat, params object[] arg)
+    static public void WriteFile(LogType type, bool isError, string format, params object[] arg)
     {
-      WriteFile(type, strFormat, arg);
+      WriteFile(type, format, arg);
       if (isError)
-        WriteFile(LogType.Error, strFormat, arg);
+        WriteFile(LogType.Error, format, arg);
     }
 
-    static public void WriteFile(LogType type, string strFormat, params object[] arg)
+    static public void WriteFile(LogType type, string format, params object[] arg)
     {
       lock (typeof(Log))
       {
@@ -130,10 +130,10 @@ namespace MediaPortal.GUI.Library
           {
             writer.BaseStream.Seek(0, SeekOrigin.End); // set the file pointer to the end of 
             writer.Write(DateTime.Now.ToShortDateString()+ " "+DateTime.Now.ToLongTimeString()+ " ");
-            writer.WriteLine(strFormat,arg);
+            writer.WriteLine(format,arg);
             writer.Close();
           }
-          string strLine=String.Format(strFormat,arg);
+          string strLine=String.Format(format,arg);
           Debug.WriteLine(strLine);
         }
         catch(Exception)
@@ -143,7 +143,7 @@ namespace MediaPortal.GUI.Library
 
       //
       if (type != LogType.Log && type != LogType.Error&& type != LogType.EPG)
-        WriteFile(LogType.Log,strFormat,arg);
-    }//static public void WriteFile(LogType type, string strFormat, params object[] arg)
+        WriteFile(LogType.Log,format,arg);
+    }//static public void WriteFile(LogType type, string format, params object[] arg)
   }
 }

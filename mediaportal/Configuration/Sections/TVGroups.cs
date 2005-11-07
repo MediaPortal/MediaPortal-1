@@ -755,8 +755,7 @@ namespace MediaPortal.Configuration.Sections
 			listViewTVGroupChannels.Items.Clear();
 			if (group!=null)
 			{
-				TVDatabase.GetTVChannelsForGroup(group);
-				foreach (TVChannel chan in group.tvChannels)
+				foreach (TVChannel chan in group.TvChannels)
 				{
 					ListViewItem listItem = new ListViewItem(new string[] { chan.Name} );
 					listItem.Tag=chan;
@@ -844,9 +843,9 @@ namespace MediaPortal.Configuration.Sections
 			TVDatabase.DeleteChannelsFromGroup(group);
 			for(int index = 0; index < listViewTVGroupChannels.Items.Count; index++)
 			{
-				group.tvChannels.Clear();
+				group.TvChannels.Clear();
 				ListViewItem listItem = listViewTVGroupChannels.Items[index];
-				group.tvChannels.Add ((TVChannel)listItem.Tag );
+				group.TvChannels.Add ((TVChannel)listItem.Tag );
 				TVChannel ch=((TVChannel)listItem.Tag).Clone();
 				ch.Sort=index;
 				TVDatabase.MapChannelToGroup(group, ch);
@@ -885,9 +884,9 @@ namespace MediaPortal.Configuration.Sections
 			TVDatabase.DeleteChannelsFromGroup(group);
 			for(int index = 0; index < listViewTVGroupChannels.Items.Count; index++)
 			{
-				group.tvChannels.Clear();
+				group.TvChannels.Clear();
 				ListViewItem listItem = listViewTVGroupChannels.Items[index];
-				group.tvChannels.Add ((TVChannel)listItem.Tag);
+				group.TvChannels.Add ((TVChannel)listItem.Tag);
 				TVDatabase.MapChannelToGroup(group, (TVChannel)listItem.Tag);
 			}
 		

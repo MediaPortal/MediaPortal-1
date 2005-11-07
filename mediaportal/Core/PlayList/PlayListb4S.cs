@@ -51,19 +51,19 @@ namespace MediaPortal.Playlists
 		public PlayListB4S()
 		{
 		}
-		public override bool Load(string strFileName)
+		public override bool Load(string fileName)
 		{
 			Clear();
 
 			try
 			{
-				string strBasePath=System.IO.Path.GetDirectoryName(System.IO.Path.GetFullPath(strFileName));
+				string basePath=System.IO.Path.GetDirectoryName(System.IO.Path.GetFullPath(fileName));
 			
 				XmlDocument doc= new XmlDocument();
-				doc.Load(strFileName);
+				doc.Load(fileName);
 				if (doc.DocumentElement==null) return false;
-				string strRoot=doc.DocumentElement.Name;
-				if (strRoot!="WinampXML") return false;
+				string root=doc.DocumentElement.Name;
+				if (root!="WinampXML") return false;
 
 				XmlNode nodeRoot=doc.DocumentElement.SelectSingleNode("/WinampXML/playlist");
 				if (nodeRoot==null) return false;
@@ -75,15 +75,15 @@ namespace MediaPortal.Playlists
 					XmlNode nodeLength= node.SelectSingleNode("Length");
 					if (nodeFile != null && nodeName!=null && nodeLength!=null)
 					{
-						int iDuration=System.Int32.Parse(nodeLength.InnerText);
-						string strInfo=nodeName.InnerText;
-						string strFile=nodeFile.InnerText;
-						Utils.GetQualifiedFilename(strBasePath,ref strFile);
-						PlayListItem newItem = new PlayListItem(strInfo, strFile, iDuration);
-						if (strInfo.Length==0)
+						int duration=System.Int32.Parse(nodeLength.InnerText);
+						string infoLine=nodeName.InnerText;
+						string file=nodeFile.InnerText;
+						Utils.GetQualifiedFilename(basePath,ref file);
+						PlayListItem newItem = new PlayListItem(infoLine, file, duration);
+						if (infoLine.Length==0)
 						{
-							strInfo=System.IO.Path.GetFileName(strFile);
-							newItem.Description=strInfo;
+							infoLine=System.IO.Path.GetFileName(file);
+							newItem.Description=infoLine;
 						}
 						Add(newItem);
 					}
@@ -92,21 +92,21 @@ namespace MediaPortal.Playlists
 			}
 			catch (Exception ex)
 			{
-				Log.Write("exception loading playlist {0} err:{1} stack:{2}", strFileName, ex.Message,ex.StackTrace);
+				Log.Write("exception loading playlist {0} err:{1} stack:{2}", fileName, ex.Message,ex.StackTrace);
 			}
 			return false;
 		}
 
-		public override void 	Save(string strFileName)  
+		public override void 	Save(string fileName)  
 		{
-			using (StreamWriter writer = new StreamWriter(strFileName,true))
+			using (StreamWriter writer = new StreamWriter(fileName,true))
 			{
 				//writer.WriteLine("<?xml version=%c1.0%c encoding='UTF-8' standalone=%cyes%c?>\n");
 				writer.WriteLine("<WinampXML>");
-				writer.WriteLine("  <playlist num_entries=\"{0}\" label=\"{1}\">",m_items.Count,m_strPlayListName);
-				for (int i=0; i < m_items.Count;++i)
+				writer.WriteLine("  <playlist num_entries=\"{0}\" label=\"{1}\">",_listPlayListItems.Count,_playListName);
+				for (int i=0; i < _listPlayListItems.Count;++i)
 				{
-					PlayListItem item=(PlayListItem)m_items[i];
+					PlayListItem item=_listPlayListItems[i];
 					writer.WriteLine("    <entry Playstring=\"file:{0}\">", item.FileName );
 					writer.WriteLine("      <Name>{0}</Name>", item.Description);
 					writer.WriteLine("      <Length>{0}</Length>", item.Duration);

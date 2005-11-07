@@ -255,7 +255,7 @@ namespace MediaPortal.TV.Recording
 
       if (group == null)
         return;
-      if (group.tvChannels.Count < 2)
+      if (group.TvChannels.Count < 2)
         return;
       int positionActChannel = 0;
       int counter = 0;
@@ -263,7 +263,7 @@ namespace MediaPortal.TV.Recording
       m_timeout = 10000;
       m_osdRendered = OSD.ZapList;
 
-      foreach (TVChannel chan in group.tvChannels)
+      foreach (TVChannel chan in group.TvChannels)
       {
         string tvlogo = Utils.GetCoverArt(Thumbs.TVChannel, chan.Name);
         if (System.IO.File.Exists(tvlogo))
@@ -323,15 +323,15 @@ namespace MediaPortal.TV.Recording
       int startAt = positionActChannel - (channelCount / 2);
       Log.Write("start list at={0} position={1}", startAt, positionActChannel);
       // draw
-      if (group.tvChannels.Count < channelCount || positionActChannel < (channelCount / 2))
+      if (group.TvChannels.Count < channelCount || positionActChannel < (channelCount / 2))
         startAt = 0;
-      for (int i = startAt; i < group.tvChannels.Count; i++)
+      for (int i = startAt; i < group.TvChannels.Count; i++)
       {
         // stop render / continue
         if (i < 0) break;
         if (i > positionActChannel + channelCount) continue;
-        if (i >= group.tvChannels.Count) break;
-        TVChannel chan = (TVChannel)group.tvChannels[i];
+        if (i >= group.TvChannels.Count) break;
+        TVChannel chan = (TVChannel)group.TvChannels[i];
         if (chan == null) break;
 
         TVProgram prog = chan.GetProgramAt(DateTime.Now);

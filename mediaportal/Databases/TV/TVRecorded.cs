@@ -37,34 +37,34 @@ namespace MediaPortal.TV.Database
 			TillDate,
 			Always
 		};
-    long				m_iStartTime;
-    long				m_iEndTime;
-    string			m_strTitle;
-    string      m_strChannel;
-    string      m_strGenre;
-    string      m_strDescription;
-    string      m_strFilename;
-    int         m_iID=-1;
-    int         m_iPlayed=0;
-		DateTime		keepDate=DateTime.MaxValue;
-		KeepMethod  keepMethod=KeepMethod.UntilSpaceNeeded;
+    long				_startTime;
+    long				_endTime;
+    string			_title;
+    string      _channelName;
+    string      _genre;
+    string      _description;
+    string      _fileName;
+    int         _recordedId=-1;
+    int         _playedCounter=0;
+		DateTime		_keepUntilDate=DateTime.MaxValue;
+		KeepMethod  _keepUntilMethod=KeepMethod.UntilSpaceNeeded;
 
 		public DateTime KeepRecordingTill
 		{
 			get 
 			{
-				return keepDate;
+				return _keepUntilDate;
 			}
 			set 
 			{
-				keepDate=value;
+				_keepUntilDate=value;
 			}
 		}
 
 		public KeepMethod KeepRecordingMethod
 		{
-			get { return keepMethod;}
-			set { keepMethod=value;}
+			get { return _keepUntilMethod;}
+			set { _keepUntilMethod=value;}
 		}
 
     /// <summary>
@@ -72,8 +72,8 @@ namespace MediaPortal.TV.Database
     /// </summary>
     public string FileName
     {
-      get { return m_strFilename;}
-      set { m_strFilename=value;}
+      get { return _fileName;}
+      set { _fileName=value;}
     }
 
     /// <summary>
@@ -81,8 +81,8 @@ namespace MediaPortal.TV.Database
     /// </summary>
     public string Description
     {
-      get { return m_strDescription;}
-      set { m_strDescription=value;}
+      get { return _description;}
+      set { _description=value;}
     }
 
     /// <summary>
@@ -90,8 +90,8 @@ namespace MediaPortal.TV.Database
     /// </summary>
     public string Genre
     {
-      get { return m_strGenre;}
-      set { m_strGenre=value;}
+      get { return _genre;}
+      set { _genre=value;}
     }
 
     /// <summary>
@@ -99,8 +99,8 @@ namespace MediaPortal.TV.Database
     /// </summary>
     public string Channel
     {
-      get { return m_strChannel;}
-      set { m_strChannel=value;}
+      get { return _channelName;}
+      set { _channelName=value;}
     }
 
     /// <summary>
@@ -108,8 +108,8 @@ namespace MediaPortal.TV.Database
     /// </summary>
     public string Title
     {
-      get { return m_strTitle;}
-      set { m_strTitle=value;}
+      get { return _title;}
+      set { _title=value;}
     }
 
     /// <summary>
@@ -117,8 +117,8 @@ namespace MediaPortal.TV.Database
     /// </summary>
     public long Start
     {
-      get { return m_iStartTime;}
-      set { m_iStartTime=value;}
+      get { return _startTime;}
+      set { _startTime=value;}
     }
 
     /// <summary>
@@ -126,8 +126,8 @@ namespace MediaPortal.TV.Database
     /// </summary>
     public long End
     {
-      get { return m_iEndTime;}
-      set { m_iEndTime=value;}
+      get { return _endTime;}
+      set { _endTime=value;}
     }
 
     /// <summary>
@@ -135,7 +135,7 @@ namespace MediaPortal.TV.Database
     /// </summary>
     public DateTime StartTime
     {
-      get { return Utils.longtodate(m_iStartTime);}
+      get { return Utils.longtodate(_startTime);}
     }
 
     /// <summary>
@@ -143,7 +143,7 @@ namespace MediaPortal.TV.Database
     /// </summary>
     public DateTime EndTime
     {
-      get { return Utils.longtodate(m_iEndTime);}
+      get { return Utils.longtodate(_endTime);}
     }
 
     /// <summary>
@@ -151,8 +151,8 @@ namespace MediaPortal.TV.Database
     /// </summary>
     public int ID
     {
-      get { return m_iID;}
-      set { m_iID=value;}
+      get { return _recordedId;}
+      set { _recordedId=value;}
     }
 
     /// <summary>
@@ -160,8 +160,8 @@ namespace MediaPortal.TV.Database
     /// </summary>
     public int Played
     {
-      get { return m_iPlayed;}
-      set { m_iPlayed=value;}
+      get { return _playedCounter;}
+      set { _playedCounter=value;}
     }
 
 		public void SetProperties()

@@ -20,7 +20,7 @@
  */
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
@@ -30,19 +30,19 @@ namespace WindowPlugins.GUIPrograms
   /// <summary>
   /// Summary description for ProgramComparer.
   /// </summary>
-  public class ProgramComparer: IComparer
+  public class ProgramComparer : IComparer<GUIListItem>
   {
 
     private enum SortMethod
     {
       SORT_NAME = 0, SORT_DATE = 1, SORT_SIZE = 2
-    } 
+    }
 
     private SortMethod mCurrentSortMethod = SortMethod.SORT_NAME;
     public bool bAsc = true;
 
 
-    public ProgramComparer(){}
+    public ProgramComparer() { }
 
     public string currentSortMethodAsText
     {
@@ -89,7 +89,7 @@ namespace WindowPlugins.GUIPrograms
       {
         mCurrentSortMethod = (SortMethod)value;
       }
-      catch 
+      catch
       {
         mCurrentSortMethod = 0;
       }
@@ -115,23 +115,21 @@ namespace WindowPlugins.GUIPrograms
     }
 
 
-    public int Compare(object x, object y)
+    public int Compare(GUIListItem item1, GUIListItem item2)
     {
-      if (x == y)
+      if (item1 == item2)
         return 0;
-      GUIListItem item1 = (GUIListItem)x;
-      GUIListItem item2 = (GUIListItem)y;
 
       if (item1 == null)
-        return  - 1;
+        return -1;
       if (item2 == null)
-        return  - 1;
+        return -1;
       if (item1.IsFolder && item1.Label == "..")
-        return  - 1;
+        return -1;
       if (item2.IsFolder && item2.Label == "..")
-        return  - 1;
+        return -1;
       if (item1.IsFolder && !item2.IsFolder)
-        return  - 1;
+        return -1;
       else if (!item1.IsFolder && item2.IsFolder)
         return 1;
 
@@ -162,9 +160,9 @@ namespace WindowPlugins.GUIPrograms
 
         case SortMethod.SORT_DATE:
           if (item1.FileInfo == null)
-            return  - 1;
+            return -1;
           if (item2.FileInfo == null)
-            return  - 1;
+            return -1;
 
           item1.Label2 = item1.FileInfo.ModificationTime.ToShortDateString() + " " + item1.FileInfo.ModificationTime.ToString("t",
             CultureInfo.CurrentCulture.DateTimeFormat);
@@ -181,9 +179,9 @@ namespace WindowPlugins.GUIPrograms
 
         case SortMethod.SORT_SIZE:
           if (item1.FileInfo == null)
-            return  - 1;
+            return -1;
           if (item2.FileInfo == null)
-            return  - 1;
+            return -1;
           item1.Label2 = strSize1;
           item2.Label2 = strSize2;
           if (bAsc)

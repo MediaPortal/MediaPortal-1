@@ -22,10 +22,10 @@
 using System;
 using System.Diagnostics;
 using System.Drawing;
-using System.Collections;
+using System.Collections.Generic;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
-using Direct3D=Microsoft.DirectX.Direct3D;
+using Direct3D = Microsoft.DirectX.Direct3D;
 using System.Runtime.InteropServices;
 
 namespace MediaPortal.GUI.Library
@@ -34,285 +34,297 @@ namespace MediaPortal.GUI.Library
   /// A datastructure for caching textures.
   /// This is used by the GUITextureManager which keeps a cache of all textures in use
   /// </summary>
-  public class CachedTexture 
+  public class CachedTexture
   {
-		[DllImport("fontEngine.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
-		unsafe private static extern void FontEngineRemoveTexture(int textureNo);
+    #region imports
+    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    unsafe private static extern void FontEngineRemoveTexture(int textureNo);
 
-		[DllImport("fontEngine.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
-		unsafe private static extern int  FontEngineAddTexture(int hasCode,bool useAlphaBlend,void* fontTexture);
-		
-		[DllImport("fontEngine.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
-		unsafe private static extern int  FontEngineAddSurface(int hasCode,bool useAlphaBlend,void* fontTexture);
-		
-		[DllImport("fontEngine.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
-		unsafe private static extern void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax, int color);
+    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    unsafe private static extern int FontEngineAddTexture(int hasCode, bool useAlphaBlend, void* fontTexture);
 
-		[DllImport("fontEngine.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
-		unsafe private static extern void FontEnginePresentTextures();
+    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    unsafe private static extern int FontEngineAddSurface(int hasCode, bool useAlphaBlend, void* fontTexture);
 
-		/// <summary>
-		/// Class which contains a single frame
-		/// A cached texture can contain more then 1 frames for example when its an animated gif
-		/// </summary>
-    public class Frame 
+    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    unsafe private static extern void FontEngineDrawTexture(int textureNo, float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax, int color);
+
+    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    unsafe private static extern void FontEnginePresentTextures();
+    #endregion
+
+    #region Frame class
+    /// <summary>
+    /// Class which contains a single frame
+    /// A cached texture can contain more then 1 frames for example when its an animated gif
+    /// </summary>
+    public class Frame
     {
-      Texture								 _Image;			//texture of current frame
-      int										 _Duration;	//duration of current frame
-			int										 _TextureNo;
-			public readonly bool    UseNewTextureEngine=true;
-			string									imageName=String.Empty;
-			static private bool logTextures=false;
-      public Frame(string name,Texture image, int duration)
+      Texture _image;			//texture of current frame
+      int _duration;	//duration of current frame
+      int _textureNumber;
+      public readonly bool UseNewTextureEngine = true;
+      string _imageName = String.Empty;
+      static private bool logTextures = false;
+      public Frame(string name, Texture image, int duration)
       {
-				imageName=name;
-        _Image = image;
-        _Duration = duration;
-				if (image!=null)
-				{
-					unsafe
-					{
-						IntPtr ptr=DShowNET.DsUtils.GetUnmanagedTexture(_Image);
-						_TextureNo=FontEngineAddTexture(ptr.ToInt32(),true,(void*) ptr.ToPointer());
-						if (logTextures) Log.Write("Frame:ctor() fontengine: added texture:{0} {1}",_TextureNo.ToString(),imageName);
-					}
-				}
+        _imageName = name;
+        _image = image;
+        _duration = duration;
+        if (image != null)
+        {
+          unsafe
+          {
+            IntPtr ptr = DShowNET.DsUtils.GetUnmanagedTexture(_image);
+            _textureNumber = FontEngineAddTexture(ptr.ToInt32(), true, (void*)ptr.ToPointer());
+            if (logTextures) Log.Write("Frame:ctor() fontengine: added texture:{0} {1}", _textureNumber.ToString(), _imageName);
+          }
+        }
       }
-			public string ImageName
-			{
-				get { return imageName;}
-				set { imageName=value;}
-			}
+      public string ImageName
+      {
+        get { return _imageName; }
+        set { _imageName = value; }
+      }
 
-			/// <summary>
-			/// Property to get/set the texture
-			/// </summary>
+      /// <summary>
+      /// Property to get/set the texture
+      /// </summary>
       public Texture Image
       {
-        get { return _Image;}
-        set {
-          if (_Image!=null) 
+        get { return _image; }
+        set
+        {
+          if (_image != null)
           {
-						try
-						{
-							if (logTextures) Log.Write("Frame:Image fontengine: remove texture:{0} {1}",_TextureNo.ToString(),imageName);
-							FontEngineRemoveTexture(_TextureNo);
-							if (!_Image.Disposed) 
-								_Image.Dispose();
-						}
-						catch(Exception)
-						{
-							//already disposed?
-						}
+            try
+            {
+              if (logTextures) Log.Write("Frame:Image fontengine: remove texture:{0} {1}", _textureNumber.ToString(), _imageName);
+              FontEngineRemoveTexture(_textureNumber);
+              if (!_image.Disposed)
+                _image.Dispose();
+            }
+            catch (Exception)
+            {
+              //already disposed?
+            }
           }
-          _Image=value;
-					
-					if (_Image!=null)
-					{
-						unsafe
-						{
-							IntPtr ptr=DShowNET.DsUtils.GetUnmanagedTexture(_Image);
-							_TextureNo=FontEngineAddTexture(ptr.ToInt32(),true,(void*) ptr.ToPointer());
-							if (logTextures) Log.Write("Frame:Image fontengine: added texture:{0} {1}",_TextureNo.ToString(),imageName);
-						}
-					}
+          _image = value;
+
+          if (_image != null)
+          {
+            unsafe
+            {
+              IntPtr ptr = DShowNET.DsUtils.GetUnmanagedTexture(_image);
+              _textureNumber = FontEngineAddTexture(ptr.ToInt32(), true, (void*)ptr.ToPointer());
+              if (logTextures) Log.Write("Frame:Image fontengine: added texture:{0} {1}", _textureNumber.ToString(), _imageName);
+            }
+          }
         }
       }
 
-			/// <summary>
-			/// property to get/set the duration for this frame
-			/// (only usefull if the frame belongs to an animation, like an animated gif)
-			/// </summary>
+      /// <summary>
+      /// property to get/set the duration for this frame
+      /// (only usefull if the frame belongs to an animation, like an animated gif)
+      /// </summary>
       public int Duration
       {
-        get { return _Duration;}
-        set { _Duration=value;}
+        get { return _duration; }
+        set { _duration = value; }
       }
       #region IDisposable Members
 
       public void Dispose()
       {
-        if (_Image!=null)
+        if (_image != null)
         {
-					try
-					{
-						if (logTextures) Log.Write("Frame: dispose() fontengine: remove texture:"+_TextureNo.ToString());
-						FontEngineRemoveTexture(_TextureNo);
-						if (!_Image.Disposed)
-						{
-							_Image.Dispose();
-						}
-					}
-					catch(Exception)
-					{
-						//image already disposed?
-					}
-          _Image=null;
+          try
+          {
+            if (logTextures) Log.Write("Frame: dispose() fontengine: remove texture:" + _textureNumber.ToString());
+            FontEngineRemoveTexture(_textureNumber);
+            if (!_image.Disposed)
+            {
+              _image.Dispose();
+            }
+          }
+          catch (Exception)
+          {
+            //image already disposed?
+          }
+          _image = null;
         }
       }
 
       #endregion
 
-			public void Draw(float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax, int color)
-			{
-				//string logline=String.Format("draw:#{0} {1} {2} {3} {4}",_TextureNo,x,y,nw,nh);
-				//Trace.WriteLine(logline);
-				if (_TextureNo>=0)
-				{
-					FontEngineDrawTexture(_TextureNo,x, y, nw, nh, uoff, voff, umax, vmax, color);
-				}
-				else
-				{
-					if (logTextures) Log.Write("fontengine:Draw() ERROR. Texture is disposed:{0} {1}",_TextureNo.ToString(),imageName);
-				}
-			}
+      public void Draw(float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax, int color)
+      {
+        //string logline=String.Format("draw:#{0} {1} {2} {3} {4}",_textureNumber,x,y,nw,nh);
+        //Trace.WriteLine(logline);
+        if (_textureNumber >= 0)
+        {
+          FontEngineDrawTexture(_textureNumber, x, y, nw, nh, uoff, voff, umax, vmax, color);
+        }
+        else
+        {
+          if (logTextures) Log.Write("fontengine:Draw() ERROR. Texture is disposed:{0} {1}", _textureNumber.ToString(), _imageName);
+        }
+      }
     }
+    #endregion
 
-    string    m_strName="";								// filename of the texture
-    ArrayList m_Frames=new ArrayList();	  // array to hold all frames
-    int       m_iWidth=0;									// width of the texture
-    int       m_iHeight=0;								// height of the texture
-    int       m_iFrames=0;								// number of frames in the animation
-    Image     m_Image=null;								// GDI image of the texture
+    #region variables
+    string _fileName = "";								// filename of the texture
+    List<Frame> _listFrames = new List<Frame>();	  // array to hold all frames
+    int _textureWidth = 0;									// width of the texture
+    int _textureHeight = 0;								// height of the texture
+    int _frameCount = 0;								// number of frames in the animation
+    Image _gdiBitmap = null;								// GDI image of the texture
+    #endregion
 
-		/// <summary>
-		/// The (emtpy) constructor of the CachedTexture class.
-		/// </summary>
+    #region ctor/dtor
+    /// <summary>
+    /// The (emtpy) constructor of the CachedTexture class.
+    /// </summary>
     public CachedTexture()
     {
     }
+    #endregion
 
 
-		/// <summary>
-		/// Get/set the filename/location of the texture.
-		/// </summary>
+    #region properties
+    /// <summary>
+    /// Get/set the filename/location of the texture.
+    /// </summary>
     public string Name
     {
-      get { return m_strName;}
-      set { m_strName=value;}
+      get { return _fileName; }
+      set { _fileName = value; }
     }
 
-		/// <summary>
-		/// Get/set the DirectX texture for the 1st frame
-		/// </summary>
+    /// <summary>
+    /// Get/set the DirectX texture for the 1st frame
+    /// </summary>
     public Frame texture
     {
-      get 
-			{ 
-				if (m_Frames.Count==0) return null;
-				return (Frame )m_Frames[0];
-			}
-      set 
-			{ 
-          Dispose();      // cleanup..
-          m_Frames.Clear();
-          m_Frames.Add(value);
+      get
+      {
+        if (_listFrames.Count == 0) return null;
+        return _listFrames[0];
+      }
+      set
+      {
+        Dispose();      // cleanup..
+        _listFrames.Clear();
+        _listFrames.Add(value);
       }
     }
 
-		/// <summary>
-		/// Get/set the GDI Image 
-		/// </summary>
+    /// <summary>
+    /// Get/set the GDI Image 
+    /// </summary>
     public Image image
     {
-      get { return m_Image;}
-      set 
+      get { return _gdiBitmap; }
+      set
       {
-        if (m_Image!=null)
+        if (_gdiBitmap != null)
         {
-					try
-					{
-						m_Image.Dispose();
-					}
-					catch(Exception)
-					{
-						//already disposed?
-					}
+          try
+          {
+            _gdiBitmap.Dispose();
+          }
+          catch (Exception)
+          {
+            //already disposed?
+          }
         }
-        m_Image=value;
+        _gdiBitmap = value;
       }
     }
 
-		/// <summary>
-		/// Get/set the width of the texture.
-		/// </summary>
+    /// <summary>
+    /// Get/set the width of the texture.
+    /// </summary>
     public int Width
     {
-      get { return m_iWidth;}
-      set { m_iWidth=value;}
+      get { return _textureWidth; }
+      set { _textureWidth = value; }
     }
 
-		/// <summary>
-		/// Get/set the height of the texture.
-		/// </summary>
+    /// <summary>
+    /// Get/set the height of the texture.
+    /// </summary>
     public int Height
     {
-      get { return m_iHeight;}
-      set { m_iHeight=value;}
+      get { return _textureHeight; }
+      set { _textureHeight = value; }
     }
 
-		/// <summary>
-		/// Get/set the number of frames out of which the texture exsists.
-		/// </summary>
+    /// <summary>
+    /// Get/set the number of frames out of which the texture exsists.
+    /// </summary>
     public int Frames
     {
-      get { return m_iFrames;}
-      set { m_iFrames=value;}
+      get { return _frameCount; }
+      set { _frameCount = value; }
     }
 
-		/// <summary>
-		/// indexer to get a Frame or to set a Frame
-		/// </summary>
-    public Frame this [int index]
+    /// <summary>
+    /// indexer to get a Frame or to set a Frame
+    /// </summary>
+    public Frame this[int index]
     {
-      get 
+      get
       {
-				if (index <0 || index >= m_Frames.Count) return null;
-        return (Frame)m_Frames[index];
+        if (index < 0 || index >= _listFrames.Count) return null;
+        return _listFrames[index];
       }
-      set 
+      set
       {
-				if (index <0) return;
+        if (index < 0) return;
 
-        if (m_Frames.Count <= index)
-          m_Frames.Add(value);
+        if (_listFrames.Count <= index)
+          _listFrames.Add(value);
         else
         {
-          Frame frame=(Frame)m_Frames[index];
-          if (frame!=value)
+          Frame frame = _listFrames[index];
+          if (frame != value)
           {
             frame.Dispose();
-            m_Frames[index]=value;
+            _listFrames[index] = value;
           }
         }
       }
     }
+    #endregion
+
     #region IDisposable Members
-		/// <summary>
-		/// Releases the resources used by the texture.
-		/// </summary>
+    /// <summary>
+    /// Releases the resources used by the texture.
+    /// </summary>
     public void Dispose()
     {
 
-      foreach (Frame tex in m_Frames)
+      foreach (Frame tex in _listFrames)
       {
-				if (tex!=null)
-				{
-					tex.Dispose();
-				}
+        if (tex != null)
+        {
+          tex.Dispose();
+        }
       }
-      m_Frames.Clear();
-      if (m_Image!=null)
+      _listFrames.Clear();
+      if (_gdiBitmap != null)
       {
-				try
-				{
-					m_Image.Dispose();
-				}
-				catch(Exception)
-				{
-					//already disposed?
-				}
-        m_Image=null;
+        try
+        {
+          _gdiBitmap.Dispose();
+        }
+        catch (Exception)
+        {
+          //already disposed?
+        }
+        _gdiBitmap = null;
       }
     }
     #endregion

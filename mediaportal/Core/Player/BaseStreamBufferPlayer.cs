@@ -570,38 +570,20 @@ namespace MediaPortal.Player
 
 		public override void ContinueGraph()
 		{
-
-			if (_mediaCtrl==null) return;
-
-			Log.Write("StreamBufferPlayer:ContinueGraph");
-			//_mediaEvt.SetNotifyWindow( IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero );
-			//_mediaCtrl.Stop();
-
-			System.Windows.Forms.Application.DoEvents();
-			FilterState state;
-			_mediaCtrl.GetState(200,out state);
-			System.Windows.Forms.Application.DoEvents();
-			Log.Write("state:{0}", state.ToString());
-
-
-			IFileSourceFilter fileSource = (IFileSourceFilter) _bufferSource;
-			int hr = fileSource.Load(CurrentFile, IntPtr.Zero);
-			SeekAbsolute(0);
-			
+      if (_mediaCtrl == null) return;
+      Log.Write("StreamBufferPlayer:Continue graph");
 			_mediaCtrl.Run();
 			_mediaEvt.SetNotifyWindow( GUIGraphicsContext.ActiveForm, WM_GRAPHNOTIFY, IntPtr.Zero );
-			_state=PlayState.Playing;
-			_mediaCtrl.GetState(200,out state);
-			System.Windows.Forms.Application.DoEvents();
-			Log.Write("state:{0}", state.ToString());
 		}
 
 		public override void PauseGraph()
-		{
+    {
+      if (_mediaCtrl == null) return;
 			Log.Write("StreamBufferPlayer:Pause graph");
 			_mediaEvt.SetNotifyWindow( IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero );
-			_mediaCtrl.Stop();
+			_mediaCtrl.Pause();
 		}
+
 		public override void WndProc( ref Message m )
 		{
 			if( m.Msg == WM_GRAPHNOTIFY )

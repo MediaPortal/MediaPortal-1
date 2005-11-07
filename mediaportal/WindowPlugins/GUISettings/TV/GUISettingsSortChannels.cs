@@ -66,7 +66,7 @@ namespace WindowPlugins.GUISettings.TV
 			else
 			{
 				int count=0;
-				foreach (TVChannel chan in currentGroup.tvChannels)
+				foreach (TVChannel chan in currentGroup.TvChannels)
 				{
 					chan.Sort=count;
 					GUIListItem item = new GUIListItem();
@@ -133,7 +133,7 @@ namespace WindowPlugins.GUISettings.TV
 			}
 			else 
 			{
-				foreach (TVChannel ch in currentGroup.tvChannels)
+				foreach (TVChannel ch in currentGroup.TvChannels)
 				{
 					if (ch.Name==chan1.Name) ch.Sort=chan1.Sort;
 					if (ch.Name==chan2.Name) ch.Sort=chan2.Sort;
@@ -163,7 +163,7 @@ namespace WindowPlugins.GUISettings.TV
 			}
 			else 
 			{
-				foreach (TVChannel ch in currentGroup.tvChannels)
+				foreach (TVChannel ch in currentGroup.TvChannels)
 				{
 					if (ch.Name==chan1.Name) ch.Sort=chan1.Sort;
 					if (ch.Name==chan2.Name) ch.Sort=chan2.Sort;
@@ -216,13 +216,13 @@ namespace WindowPlugins.GUISettings.TV
 		void SaveGroup()
 		{
 			if (currentGroup==null) return;
-			foreach (TVChannel ch in currentGroup.tvChannels)
+			foreach (TVChannel ch in currentGroup.TvChannels)
 			{
 				TVDatabase.UnmapChannelFromGroup(currentGroup,ch);
 			}
-			currentGroup.tvChannels.Sort(this);
+			currentGroup.TvChannels.Sort(this);
 			int count=1;
-			foreach (TVChannel ch in currentGroup.tvChannels)
+			foreach (TVChannel ch in currentGroup.TvChannels)
 			{
 				ch.Sort=count;
 				TVDatabase.MapChannelToGroup(currentGroup,ch);

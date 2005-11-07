@@ -27,9 +27,9 @@ namespace MediaPortal.GUI.Library
 	/// </summary>
 	public class CPosition
 	{
-		private GUIControl m_control=null;		// control to which this structure applies
-		private int  m_iPosX=0;							  // x-coordinate of the control
-		private int  m_iPosY=0;								// y-coordinate of the control
+		private GUIControl _control=null;		// control to which this structure applies
+		private int  _positionX=0;							  // x-coordinate of the control
+		private int  _positionY=0;								// y-coordinate of the control
 
 		/// <summary>
 		/// The (empty) constructor of the CPosition class.
@@ -46,9 +46,9 @@ namespace MediaPortal.GUI.Library
 		/// <param name="y">The Y coordinate.</param>
 		public CPosition(ref GUIControl control, int x, int y)
 		{	
-			m_control=control;
-			m_iPosX=x;
-			m_iPosY=y;
+			_control=control;
+			_positionX=x;
+			_positionY=y;
 		}
 
 		/// <summary>
@@ -56,7 +56,7 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public int XPos
 		{
-			get {return m_iPosX;}
+			get {return _positionX;}
 		}
 
 		/// <summary>
@@ -64,7 +64,7 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public int YPos
 		{
-			get {return m_iPosY;}
+			get {return _positionY;}
     }
 
 		/// <summary>
@@ -72,7 +72,7 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
     public GUIControl control
     {
-      get {return m_control;}
+      get {return _control;}
     }
 	}
 }

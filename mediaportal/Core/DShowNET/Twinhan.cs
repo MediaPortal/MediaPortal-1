@@ -115,7 +115,7 @@ namespace DShowNET
     #endregion
     readonly Guid THBDA_TUNER = new Guid("E5644CC4-17A1-4eed-BD90-74FDA1D65423");
     readonly Guid GUID_THBDA_CMD = new Guid("255E0082-2017-4b03-90F8-856A62CB3D67");
-    readonly uint THBDA_IOCTL_CI_SEND_PMT = 0xaa000338;
+    //readonly uint THBDA_IOCTL_CI_SEND_PMT = 0xaa000338;
     readonly uint THBDA_IOCTL_CHECK_INTERFACE = 0xaa0001e4;
     readonly uint THBDA_IOCTL_CI_PARSER_PMT = 0xaa00033c;
 

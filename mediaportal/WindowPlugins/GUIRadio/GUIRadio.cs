@@ -21,6 +21,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Net;
 using System.Globalization;
 using MediaPortal.Player;
@@ -42,7 +43,7 @@ namespace MediaPortal.GUI.Radio
 	/// -class welke de list/thumbnail view combinatie doet
 	/// 
 	/// </summary>
-	public class GUIRadio: GUIWindow, IComparer,ISetupForm
+	public class GUIRadio: GUIWindow, IComparer<GUIListItem>,ISetupForm
 	{
 		[SkinControlAttribute(2)]			protected GUIButtonControl btnViewAs=null;
 		[SkinControlAttribute(3)]			protected GUISortButtonControl btnSortBy=null;
@@ -582,11 +583,9 @@ namespace MediaPortal.GUI.Radio
 			UpdateButtons();
 		}
 
-		public int Compare(object x, object y)
+    public int Compare(GUIListItem item1, GUIListItem item2)
 		{
-			if (x==y) return 0;
-			GUIListItem item1=(GUIListItem)x;
-			GUIListItem item2=(GUIListItem)y;
+			if (item1==item2) return 0;
 			if (item1==null) return -1;
 			if (item2==null) return -1;
 			if (item1.IsFolder && item1.Label=="..") return -1;

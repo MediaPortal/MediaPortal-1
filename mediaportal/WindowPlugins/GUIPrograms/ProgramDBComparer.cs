@@ -20,7 +20,7 @@
  */
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using MediaPortal.GUI.Library;
 using ProgramsDatabase;
 
@@ -29,18 +29,18 @@ namespace WindowPlugins.GUIPrograms
   /// <summary>
   /// Summary description for ProgramDBComparer.
   /// </summary>
-  public class ProgramDBComparer: IComparer
+  public class ProgramDBComparer : IComparer<GUIListItem>
   {
     enum SortMethod
     {
       SORT_NAME = 0, SORT_LAUNCHES = 1, SORT_RECENT = 2, SORT_RATING = 3
-    } 
+    }
 
     SortMethod mCurrentSortMethod = SortMethod.SORT_NAME;
     public bool sortAscending = true;
 
 
-    public ProgramDBComparer(){}
+    public ProgramDBComparer() { }
 
     public string currentSortMethodAsText
     {
@@ -72,7 +72,7 @@ namespace WindowPlugins.GUIPrograms
           strLine = GUILocalizeStrings.Get(103);
           break;
         case SortMethod.SORT_LAUNCHES:
-          strLine = GUILocalizeStrings.Get(13016); 
+          strLine = GUILocalizeStrings.Get(13016);
           break;
         case SortMethod.SORT_RECENT:
           strLine = GUILocalizeStrings.Get(13017);
@@ -90,7 +90,7 @@ namespace WindowPlugins.GUIPrograms
       {
         mCurrentSortMethod = (SortMethod)value;
       }
-      catch 
+      catch
       {
         mCurrentSortMethod = 0;
       }
@@ -126,28 +126,26 @@ namespace WindowPlugins.GUIPrograms
       }
     }
 
-    public int Compare(object x, object y)
+    public int Compare(GUIListItem item1, GUIListItem item2)
     {
       FileItem curFile1 = null;
       FileItem curFile2 = null;
-      if (x == y)
+      if (item1 == item2)
         return 0;
-      GUIListItem item1 = (GUIListItem)x;
-      GUIListItem item2 = (GUIListItem)y;
       if (item1 == null)
-        return  - 1;
+        return -1;
       if (item2 == null)
-        return  - 1;
+        return -1;
       if (item1.MusicTag == null)
-        return  - 1;
+        return -1;
       if (item2.MusicTag == null)
-        return  - 1;
+        return -1;
       if (item1.IsFolder && item1.Label == "..")
-        return  - 1;
+        return -1;
       if (item2.IsFolder && item2.Label == "..")
-        return  - 1;
+        return -1;
       if (item1.IsFolder && !item2.IsFolder)
-        return  - 1;
+        return -1;
       if (item1.IsFolder && item2.IsFolder)
         return 0;
       //don't sort folders!
@@ -160,9 +158,9 @@ namespace WindowPlugins.GUIPrograms
         curFile1 = (FileItem)item1.MusicTag;
         curFile2 = (FileItem)item2.MusicTag;
         if (curFile1 == null)
-          return  - 1;
+          return -1;
         if (curFile2 == null)
-          return  - 1;
+          return -1;
       }
 
       // ok let's start sorting :-)
@@ -192,7 +190,7 @@ namespace WindowPlugins.GUIPrograms
           {
             if (curFile1.LaunchCount < curFile2.LaunchCount)
             {
-              nTemp =  - 1;
+              nTemp = -1;
             }
             else
             {
@@ -204,7 +202,7 @@ namespace WindowPlugins.GUIPrograms
             }
             else
             {
-              return  - nTemp;
+              return -nTemp;
             }
           }
 
@@ -220,7 +218,7 @@ namespace WindowPlugins.GUIPrograms
           {
             if (curFile1.Rating < curFile2.Rating)
             {
-              nTemp =  - 1;
+              nTemp = -1;
             }
             else
             {
@@ -232,7 +230,7 @@ namespace WindowPlugins.GUIPrograms
             }
             else
             {
-              return  - nTemp;
+              return -nTemp;
             }
           }
 
@@ -263,7 +261,7 @@ namespace WindowPlugins.GUIPrograms
           {
             if (curFile1.LastTimeLaunched < curFile2.LastTimeLaunched)
             {
-              nTemp =  - 1;
+              nTemp = -1;
             }
             else
             {
@@ -275,7 +273,7 @@ namespace WindowPlugins.GUIPrograms
             }
             else
             {
-              return  - nTemp;
+              return -nTemp;
             }
           }
       }

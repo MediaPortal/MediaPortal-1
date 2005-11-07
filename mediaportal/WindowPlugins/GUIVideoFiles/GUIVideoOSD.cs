@@ -1018,11 +1018,11 @@ namespace MediaPortal.GUI.Video
       int iTop = GUIGraphicsContext.OverScanTop;
       int iMin=0;
 
-      foreach (CPosition pos in m_vecPositions)
+      foreach (CPosition pos in _listPositions)
       {
         pos.control.SetPosition((int)pos.XPos,(int)pos.YPos+iCalibrationY);
       }
-      foreach (CPosition pos in m_vecPositions)
+      foreach (CPosition pos in _listPositions)
       {
         GUIControl pControl= pos.control;
 
@@ -1040,7 +1040,7 @@ namespace MediaPortal.GUI.Video
       if (bOffScreen) 
       {
 
-        foreach (CPosition pos in m_vecPositions)
+        foreach (CPosition pos in _listPositions)
         {
           GUIControl pControl= pos.control;
           int dwPosX=pControl.XPosition;

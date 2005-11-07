@@ -171,7 +171,7 @@ namespace ProgramsDatabase
       index = index - 1;
       if (index < 0)
         index = Files.Count - 1;
-      return (FileItem) Files[index];
+      return (FileItem)Files[index];
     }
 
     public FileItem NextFile(FileItem curFile)
@@ -188,7 +188,7 @@ namespace ProgramsDatabase
       index = index + 1;
       if (index > Files.Count - 1)
         index = 0;
-      return (FileItem) Files[index];
+      return (FileItem)Files[index];
     }
 
     protected void LaunchGenericPlayer(string command, string filename)
@@ -221,7 +221,7 @@ namespace ProgramsDatabase
       if (Utils.IsVideo(filename))
       {
         GUIGraphicsContext.IsFullScreenVideo = true;
-        GUIWindowManager.ActivateWindow((int) GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
+        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
       }
       return;
     }
@@ -422,7 +422,7 @@ namespace ProgramsDatabase
           Log.Write("AppItem PrePost errors: {0}", errors);
         }
       }
-      
+
     }
 
     public virtual void LaunchFile(GUIListItem item)
@@ -433,7 +433,7 @@ namespace ProgramsDatabase
       {
         return;
       }
-      FileItem curFile = (FileItem) item.MusicTag;
+      FileItem curFile = (FileItem)item.MusicTag;
       if (curFile == null)
       {
         return;
@@ -476,7 +476,7 @@ namespace ProgramsDatabase
         {
           FileItem curFile = obj as FileItem;
           GUIListItem gli = new GUIListItem(curFile.Title);
-          gli.Label2 = curFile.Title2; 
+          gli.Label2 = curFile.Title2;
           gli.MusicTag = curFile;
           gli.IsFolder = curFile.IsFolder;
           gli.OnRetrieveArt += new MediaPortal.GUI.Library.GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
@@ -501,7 +501,7 @@ namespace ProgramsDatabase
     {
       if ((gli.MusicTag != null) && (gli.MusicTag is FileItem))
       {
-        FileItem curFile = (FileItem) gli.MusicTag;
+        FileItem curFile = (FileItem)gli.MusicTag;
         if (curFile.Imagefile != "")
         {
           gli.ThumbnailImage = curFile.Imagefile;
@@ -535,18 +535,18 @@ namespace ProgramsDatabase
 
     public virtual void OnSort(GUIFacadeControl view, bool doSwitchState)
     {
-/*
- *       if (!filesAreLoaded)
-      {
-        LoadFiles();
-      }
+      /*
+       *       if (!filesAreLoaded)
+            {
+              LoadFiles();
+            }
 
-      if (doSwitchState)
-      {
-        dbPc.updateState();
-      }
-      view.Sort(dbPc);
-*/      
+            if (doSwitchState)
+            {
+              dbPc.updateState();
+            }
+            view.Sort(dbPc);
+      */
     }
 
     public virtual void OnSortToggle(GUIFacadeControl view)
@@ -625,14 +625,14 @@ namespace ProgramsDatabase
 
     public virtual void OnInfo(GUIListItem item, ref bool isOverviewVisible, ref ProgramInfoAction modalResult, ref int selectedFileID)
     {
-      GUIFileInfo fileInfoDialog = (GUIFileInfo) GUIWindowManager.GetWindow(ProgramUtils.ProgramInfoID);
+      GUIFileInfo fileInfoDialog = (GUIFileInfo)GUIWindowManager.GetWindow(ProgramUtils.ProgramInfoID);
       if (null != fileInfoDialog)
       {
         if (item.MusicTag == null)
         {
           return;
         }
-        FileItem curFile = (FileItem) item.MusicTag;
+        FileItem curFile = (FileItem)item.MusicTag;
         fileInfoDialog.App = this;
         fileInfoDialog.File = curFile;
         fileInfoDialog.IsOverviewVisible = isOverviewVisible;
@@ -816,14 +816,14 @@ namespace ProgramsDatabase
 
     public string PreLaunch
     {
-      get { return preLaunch;}
-      set { preLaunch = value;}
+      get { return preLaunch; }
+      set { preLaunch = value; }
     }
 
     public string PostLaunch
     {
-      get { return postLaunch;}
-      set { postLaunch = value;}
+      get { return postLaunch; }
+      set { postLaunch = value; }
     }
 
 
@@ -864,12 +864,12 @@ namespace ProgramsDatabase
         SQLiteResultSet results;
         int res = 0;
         results = sqlDB.Execute("SELECT MAX(APPID) FROM application");
-        ArrayList arr = (ArrayList) results.Rows[0];
+        ArrayList arr = (ArrayList)results.Rows[0];
         if (arr[0] != null)
         {
           if ((string)arr[0] != "")
           {
-            res = Int32.Parse((string) arr[0]);
+            res = Int32.Parse((string)arr[0]);
           }
         }
         return res + 1;

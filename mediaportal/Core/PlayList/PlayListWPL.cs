@@ -38,16 +38,16 @@ namespace MediaPortal.Playlists
 			// TODO: Add constructor logic here
 			//
 		}
-		public override bool Load(string strFileName)
+		public override bool Load(string fileName)
 		{
 			Clear();
 
 			try
 			{
-				string strBasePath=System.IO.Path.GetDirectoryName(System.IO.Path.GetFullPath(strFileName));
+				string basePath=System.IO.Path.GetDirectoryName(System.IO.Path.GetFullPath(fileName));
 			
 				XmlDocument doc= new XmlDocument();
-				doc.Load(strFileName);
+				doc.Load(fileName);
 				if (doc.DocumentElement==null) return false;
 				XmlNode nodeRoot=doc.DocumentElement.SelectSingleNode("/smil/body/seq");
 				if (nodeRoot==null) return false;
@@ -61,13 +61,13 @@ namespace MediaPortal.Playlists
 						{
 							if (srcNode.InnerText.Length>0)
 							{
-								strFileName=srcNode.InnerText;
-								Utils.GetQualifiedFilename(strBasePath,ref strFileName);
-								PlayList.PlayListItem newItem = new PlayListItem(strFileName, strFileName, 0);
+								fileName=srcNode.InnerText;
+								Utils.GetQualifiedFilename(basePath,ref fileName);
+								PlayList.PlayListItem newItem = new PlayListItem(fileName, fileName, 0);
 								newItem.Type = PlayListItem.PlayListItemType.Audio;
-								string strDescription;
-								strDescription=System.IO.Path.GetFileName(strFileName);
-								newItem.Description=strDescription;
+								string description;
+								description=System.IO.Path.GetFileName(fileName);
+								newItem.Description=description;
 								Add(newItem);
 							}
 						}
@@ -77,13 +77,13 @@ namespace MediaPortal.Playlists
 			}
 			catch (Exception ex)
 			{
-				Log.Write("exception loading playlist {0} err:{1} stack:{2}", strFileName, ex.Message,ex.StackTrace);
+				Log.Write("exception loading playlist {0} err:{1} stack:{2}", fileName, ex.Message,ex.StackTrace);
 			}
 			return false;
 
 		}
 
-		public override void 	Save(string strFileName)  
+		public override void 	Save(string fileName)  
 		{
 		}
 

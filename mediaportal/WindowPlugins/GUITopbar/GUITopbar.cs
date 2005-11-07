@@ -85,7 +85,7 @@ namespace MediaPortal.Topbar
       }
 
       // Topbar region
-      foreach (CPosition pos in m_vecPositions)
+      foreach (CPosition pos in _listPositions)
       {
         if ((pos.YPos+pos.control.Height) > m_iTopbarRegion) m_iTopbarRegion=pos.YPos+pos.control.Height;
       }
@@ -150,7 +150,7 @@ namespace MediaPortal.Topbar
 
 				m_iMoveUp = 0;
 				if (m_bTopBarHidden) m_iMoveUp = m_iTopbarRegion;
-				foreach (CPosition pos in m_vecPositions)
+				foreach (CPosition pos in _listPositions)
 				{
 					int y=(int)pos.YPos - m_iMoveUp;
 					y+=GUIGraphicsContext.OverScanTop;
@@ -198,7 +198,7 @@ namespace MediaPortal.Topbar
             m_iMoveUp = 0;            
           }
 
-          foreach (CPosition pos in m_vecPositions)
+          foreach (CPosition pos in _listPositions)
 					{
 						int y=(int)pos.YPos - m_iMoveUp;
 						y+=GUIGraphicsContext.OverScanTop;
@@ -228,7 +228,7 @@ namespace MediaPortal.Topbar
             m_bTopBarHide = false;
           }
 
-          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS,GetID, 0,defaultControlId,0,0,null);
+          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS,GetID, 0,_defaultControlId,0,0,null);
           OnMessage(msg);
         }
         else

@@ -1875,7 +1875,8 @@ namespace MediaPortal.TV.Database
         try
         {
           if (null == m_db) return;
-          string strSQL = String.Format("update recorded set keepMethod={0}, keepDate='{1}' where idRecorded={2}", (int)rec.KeepRecordingMethod, Utils.datetolong(rec.KeepRecordingTill), rec.ID);
+          string strSQL = String.Format("update recorded set keepMethod={0}, keepDate='{1}' where idRecorded={2}", 
+              (int)rec.KeepRecordingMethod, Utils.datetolong(rec.KeepRecordingTill), rec.ID);
           m_db.Execute(strSQL);
         }
         catch (Exception ex)
@@ -3513,10 +3514,6 @@ namespace MediaPortal.TV.Database
             group.GroupName = DatabaseUtility.Get(results, i, "strName");
             groups.Add(group);
           }
-          foreach (TVGroup group in groups)
-          {
-            GetTVChannelsForGroup(group);
-          }
         }
         catch (Exception ex)
         {
@@ -3526,20 +3523,20 @@ namespace MediaPortal.TV.Database
       }
     }
 
-    static public void GetTVChannelsForGroup(TVGroup group)
+    static public void GetTVChannelsForGroup(int groupId, List<TVChannel> groupChannels)
     {
-      group.tvChannels.Clear();
+      groupChannels.Clear();
       lock (typeof(TVDatabase))
       {
         string strSQL;
         try
         {
-          ArrayList tvchannels = new ArrayList();
+          List<TVChannel> tvchannels = new List<TVChannel>();
           GetChannels(ref tvchannels);
 
           if (null == m_db) return;
           SQLiteResultSet results;
-          strSQL = String.Format("select * from tblGroupMapping,tblGroups where tblGroups.idGroup=tblGroupMapping.idGroup and tblGroupMapping.idGroup={0} order by tblGroupMapping.iSort", group.ID);
+          strSQL = String.Format("select * from tblGroups,tblGroupMapping where tblGroups.idGroup=tblGroupMapping.idGroup and tblGroups.idGroup={0} order by tblGroupMapping.iSort", groupId);
           results = m_db.Execute(strSQL);
           if (results.Rows.Count == 0) return;
           for (int i = 0; i < results.Rows.Count; ++i)
@@ -3549,7 +3546,7 @@ namespace MediaPortal.TV.Database
             {
               if (chan.ID == channelid)
               {
-                group.tvChannels.Add(chan);
+                groupChannels.Add(chan);
                 break;
               }
             }
@@ -4679,10 +4676,6 @@ namespace MediaPortal.TV.Database
             group.GroupName = DatabaseUtility.Get(results, i, "strName");
             groups.Add(group);
           }
-          foreach (TVGroup group in groups)
-          {
-            GetTVChannelsForGroup(group);
-          }
         }
         catch (Exception ex)
         {
@@ -4757,6 +4750,162 @@ namespace MediaPortal.TV.Database
               prog.Title = DatabaseUtility.Get(results, i, "tblPrograms.strTitle");
               progs.Add(prog);
             }
+          }
+
+          return true;
+
+        }
+        catch (Exception ex)
+        {
+          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          Open();
+        }
+        return false;
+      }
+    }
+
+    static public bool SearchProgramsByDescription(long iStartTime, long iEndTime, ref List<TVProgram> progs, int SearchKind, string SearchCriteria)
+    {
+      DatabaseUtility.RemoveInvalidChars(ref SearchCriteria);
+      string strSQL = String.Empty;
+      string strOrder = " order by iStartTime";
+      switch (SearchKind)
+      {
+        case -1:
+          strSQL = String.Format("select * from channel,tblPrograms,genre where genre.idGenre=tblPrograms.idGenre and tblPrograms.idChannel=channel.idChannel  ");
+          break;
+        case 0:
+          strSQL = String.Format("select * from channel,tblPrograms,genre where genre.idGenre=tblPrograms.idGenre and tblPrograms.idChannel=channel.idChannel and tblPrograms.strDescription like '{0}%' ", SearchCriteria);
+          break;
+        case 1:
+          strSQL = String.Format("select * from channel,tblPrograms,genre where genre.idGenre=tblPrograms.idGenre and tblPrograms.idChannel=channel.idChannel and tblPrograms.strDescription like '%{0}%' ", SearchCriteria);
+          break;
+        case 2:
+          strSQL = String.Format("select * from channel,tblPrograms,genre where genre.idGenre=tblPrograms.idGenre and tblPrograms.idChannel=channel.idChannel and tblPrograms.strDescription like '%{0}' ", SearchCriteria);
+          break;
+        case 3:
+          strSQL = String.Format("select * from channel,tblPrograms,genre where genre.idGenre=tblPrograms.idGenre and tblPrograms.idChannel=channel.idChannel and tblPrograms.strDescription like '{0}' ", SearchCriteria);
+          break;
+      }
+      return GetTVPrograms(iStartTime, iEndTime, strSQL, strOrder, ref progs);
+    }
+    static public bool SearchProgramsPerGenre(string genre1, List<TVProgram> progs, int SearchKind, string SearchCriteria)
+    {
+      progs.Clear();
+      if (genre1 == null) return false;
+      string genre = genre1;
+      DatabaseUtility.RemoveInvalidChars(ref genre);
+      DatabaseUtility.RemoveInvalidChars(ref SearchCriteria);
+      string strSQL = String.Empty;
+      string strOrder = " order by iStartTime";
+      switch (SearchKind)
+      {
+        case -1:
+          strSQL = String.Format("select * from channel,tblPrograms,genre where genre.idGenre=tblPrograms.idGenre and tblPrograms.idChannel=channel.idChannel and genre.strGenre like '{0}' ", genre);
+          break;
+        case 0:
+          strSQL = String.Format("select * from channel,tblPrograms,genre where genre.idGenre=tblPrograms.idGenre and tblPrograms.idChannel=channel.idChannel and genre.strGenre like '{0}' and tblPrograms.strTitle like '{1}%' ", genre, SearchCriteria);
+          break;
+
+        case 1:
+          strSQL = String.Format("select * from channel,tblPrograms,genre where genre.idGenre=tblPrograms.idGenre and tblPrograms.idChannel=channel.idChannel and genre.strGenre like '{0}' and tblPrograms.strTitle like '%{1}%' ", genre, SearchCriteria);
+          break;
+
+        case 2:
+          strSQL = String.Format("select * from channel,tblPrograms,genre where genre.idGenre=tblPrograms.idGenre and tblPrograms.idChannel=channel.idChannel and genre.strGenre like '{0}' and tblPrograms.strTitle like '%{1}' ", genre, SearchCriteria);
+          break;
+
+        case 3:
+          strSQL = String.Format("select * from channel,tblPrograms,genre where genre.idGenre=tblPrograms.idGenre and tblPrograms.idChannel=channel.idChannel and genre.strGenre like '{0}' and tblPrograms.strTitle like '{1}' ", genre, SearchCriteria);
+          break;
+
+      }
+      return GetTVProgramsByGenre(strSQL, strOrder, progs);
+    }
+
+    static public bool GetProgramsPerGenre(string genre1, List<TVProgram> progs)
+    {
+      return SearchProgramsPerGenre(genre1, progs, -1, String.Empty);
+    }
+
+    static bool GetTVProgramsByGenre(string strSQL, string strOrder, List<TVProgram> progs)
+    {
+      lock (typeof(TVDatabase))
+      {
+        try
+        {
+          if (null == m_db) return false;
+
+          strSQL += strOrder;
+          SQLiteResultSet results;
+          results = m_db.Execute(strSQL);
+          if (results.Rows.Count == 0) return false;
+          long lTimeStart = Utils.datetolong(DateTime.Now);
+          for (int i = 0; i < results.Rows.Count; ++i)
+          {
+            long iStart = DatabaseUtility.GetAsInt64(results, i, "tblPrograms.iStartTime");
+            long iEnd = DatabaseUtility.GetAsInt64(results, i, "tblPrograms.iEndTime");
+            bool bAdd = false;
+            if (iEnd >= lTimeStart) bAdd = true;
+            if (bAdd)
+            {
+              TVProgram prog = new TVProgram();
+              prog.Channel = DatabaseUtility.Get(results, i, "channel.strChannel");
+              prog.Start = iStart;
+              prog.End = iEnd;
+              prog.Genre = DatabaseUtility.Get(results, i, "genre.strGenre");
+              prog.Title = DatabaseUtility.Get(results, i, "tblPrograms.strTitle");
+              prog.Description = DatabaseUtility.Get(results, i, "tblPrograms.strDescription");
+              prog.Episode = DatabaseUtility.Get(results, i, "tblPrograms.strEpisodeName");
+              prog.Repeat = DatabaseUtility.Get(results, i, "tblPrograms.strRepeat");
+              prog.ID = DatabaseUtility.GetAsInt(results, i, "tblPrograms.idProgram");
+              prog.SeriesNum = DatabaseUtility.Get(results, i, "tblPrograms.strSeriesNum");
+              prog.EpisodeNum = DatabaseUtility.Get(results, i, "tblPrograms.strEpisodeNum");
+              prog.EpisodePart = DatabaseUtility.Get(results, i, "tblPrograms.strEpisodePart");
+              prog.Date = DatabaseUtility.Get(results, i, "tblPrograms.strDate");
+              prog.StarRating = DatabaseUtility.Get(results, i, "tblPrograms.strStarRating");
+              prog.Classification = DatabaseUtility.Get(results, i, "tblPrograms.strClassification");
+              progs.Add(prog);
+            }
+          }
+
+          return true;
+
+        }
+        catch (Exception ex)
+        {
+          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          Open();
+        }
+        return false;
+      }
+    }
+
+    static public bool GetProgramTitles(long iStartTime, long iEndTime, ref List<TVProgram> progs)
+    {
+      lock (typeof(TVDatabase))
+      {
+        progs.Clear();
+        try
+        {
+          if (null == m_db) return false;
+          string strSQL = "select distinct strtitle,strchannel from tblprograms,channel where tblprograms.idchannel=channel.idchannel ";
+
+          SQLiteResultSet results;
+          string where = String.Format(" and ( (tblPrograms.iEndTime>='{0}' and tblPrograms.iEndTime <='{1}') ", iStartTime, iEndTime);
+          where += String.Format(" or (tblPrograms.iStartTime>='{0}' and tblPrograms.iStartTime <= '{1}' ) ", iStartTime, iEndTime);
+          where += String.Format(" or (tblPrograms.iStartTime<='{0}' and tblPrograms.iEndTime >= '{1}') )", iStartTime, iEndTime);
+          strSQL += where;
+          results = m_db.Execute(strSQL);
+          if (results.Rows.Count == 0) return false;
+
+          for (int i = 0; i < results.Rows.Count; ++i)
+          {
+            TVProgram prog = new TVProgram();
+            prog.Channel = DatabaseUtility.Get(results, i, "strchannel");
+            prog.Title = DatabaseUtility.Get(results, i, "strtitle");
+            prog.ID = DatabaseUtility.GetAsInt(results, i, "tblPrograms.idProgram");
+            progs.Add(prog);
           }
 
           return true;

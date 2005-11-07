@@ -20,332 +20,332 @@
  */
 using System;
 
-namespace MediaPortal.WinampPlayer 
+namespace MediaPortal.WinampPlayer
 {
-	/// <summary>
-	/// Summary description for Class1.
-	/// </summary>
-	public class WinampPlugin : MediaPortal.Player.IExternalPlayer
-	{
-        private const string m_author = "int_20h";
-        private const string m_player = "Winamp";
-        private const string m_version = "1.0";
-        private bool         m_bStoppedManualy=false;
-        /*
-        private string[] m_supportedExtensions = new string[]{".cda", ".mid", ".midi", ".rmi", ".kar", ".miz", ".mod", ".mdz", ".nst",
-                                                              ".stm", ".stz", ".s3m", ".s3z", ".it", ".itz", ".xm", ".xmz", ".mtm", 
-                                                              ".ult", ".669", ".far", ".amf", ".okt", ".ptm", ".mp3", ".mp2", ".mp1",
-                                                              ".aac", ".m4a", ".mp4", ".nsa", ".ogg", ".wav", ".voc", ".au", ".snd",
-                                                              ".aif", ".aiff", ".wma", ".m3u", ".pls"};
-        */
-        private string[] m_supportedExtensions = new string[0];
+  /// <summary>
+  /// Summary description for Class1.
+  /// </summary>
+  public class WinampPlugin : MediaPortal.Player.IExternalPlayer
+  {
+    private const string m_author = "int_20h";
+    private const string m_player = "Winamp";
+    private const string m_version = "1.0";
+    private bool m_bStoppedManualy = false;
+    /*
+    private string[] m_supportedExtensions = new string[]{".cda", ".mid", ".midi", ".rmi", ".kar", ".miz", ".mod", ".mdz", ".nst",
+                                                          ".stm", ".stz", ".s3m", ".s3z", ".it", ".itz", ".xm", ".xmz", ".mtm", 
+                                                          ".ult", ".669", ".far", ".amf", ".okt", ".ptm", ".mp3", ".mp2", ".mp1",
+                                                          ".aac", ".m4a", ".mp4", ".nsa", ".ogg", ".wav", ".voc", ".au", ".snd",
+                                                          ".aif", ".aiff", ".wma", ".m3u", ".pls"};
+    */
+    private string[] m_supportedExtensions = new string[0];
 
-        private WinampController m_winampController = null;
-        private string m_strCurrentFile = null;
-        private int m_volume=100;
+    private WinampController m_winampController = null;
+    private string m_strCurrentFile = null;
+    private int m_volume = 100;
 
-		    public WinampPlugin()
-		    {
-		    }
+    public WinampPlugin()
+    {
+    }
 
-        public override void ShowPlugin()
+    public override void ShowPlugin()
+    {
+      ConfigurationForm confForm = new ConfigurationForm();
+      confForm.ShowDialog();
+    }
+
+    public override string Description()
+    {
+      if (m_supportedExtensions.Length == 0)
+      {
+        return "Winamp external player.  Press configure...";
+      }
+      return base.Description();
+    }
+
+    public override string AuthorName
+    {
+      get
+      {
+        return m_author;
+      }
+    }
+
+    public override string PlayerName
+    {
+      get
+      {
+        return m_player;
+      }
+    }
+
+    public override string VersionNumber
+    {
+      get
+      {
+        return m_version;
+      }
+    }
+    public override string[] GetAllSupportedExtensions()
+    {
+      readConfig();
+      return m_supportedExtensions;
+    }
+
+    public override bool SupportsFile(string filename)
+    {
+      readConfig();
+      string ext = null;
+      int dot = filename.LastIndexOf(".");    // couldn't find the dot to get the extension
+      if (dot == -1) return false;
+
+      ext = filename.Substring(dot).Trim();
+      if (ext.Length == 0) return false;   // no extension so return false;
+
+      ext = ext.ToLower();
+
+      for (int i = 0; i < m_supportedExtensions.Length; i++)
+      {
+        if (m_supportedExtensions[i].Equals(ext))
+          return true;
+      }
+
+      // could not match the extension, so return false;
+      return false;
+
+    }
+
+    private void readConfig()
+    {
+      string strExt = null;
+      using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      {
+        strExt = xmlreader.GetValueAsString("winampplugin", "enabledextensions", "");
+      }
+      if (strExt != null && strExt.Length > 0)
+      {
+        m_supportedExtensions = strExt.Split(new char[] { ':', ',' });
+        for (int i = 0; i < m_supportedExtensions.Length; i++)
         {
-          ConfigurationForm confForm = new ConfigurationForm();
-          confForm.ShowDialog();
+          m_supportedExtensions[i] = m_supportedExtensions[i].Trim();
         }
+      }
+    }
 
-        public override string Description()
+    public override bool Play(string strFile)
+    {
+      if (strFile.IndexOf(".cda") >= 0)
+      {
+        string strTrack = "";
+        int pos = strFile.IndexOf(".cda");
+        if (pos >= 0)
         {
-          if(m_supportedExtensions.Length == 0)
+          pos--;
+          while (Char.IsDigit(strFile[pos]) && pos > 0)
           {
-            return "Winamp external player.  Press configure...";
-          }
-          return base.Description();
-        }
-
-        public override string AuthorName
-        {
-            get
-            {
-                return m_author;
-            }
-        }
-
-        public override string PlayerName
-        {
-            get
-            {
-                return m_player;
-            }
-        }
-
-        public override string VersionNumber
-        {
-          get
-          {
-            return m_version;
-          }
-        }
-        public override string[] GetAllSupportedExtensions()
-        {
-            readConfig();
-            return m_supportedExtensions;
-        }
-
-        public override bool SupportsFile(string filename)
-        {
-            readConfig();
-            string ext = null;
-            int dot = filename.LastIndexOf(".");    // couldn't find the dot to get the extension
-            if(dot == -1) return false;
-
-            ext = filename.Substring(dot).Trim();
-            if(ext.Length == 0) return false;   // no extension so return false;
-
-            ext = ext.ToLower();
-
-            for(int i = 0; i < m_supportedExtensions.Length; i++)
-            {
-                if(m_supportedExtensions[i].Equals(ext))
-                    return true;
-            }
-
-            // could not match the extension, so return false;
-            return false;
-
-        }
-
-        private void readConfig()
-        {
-          string strExt = null;
-          using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
-          {
-            strExt = xmlreader.GetValueAsString("winampplugin", "enabledextensions","");
-          }
-          if(strExt != null && strExt.Length > 0)
-          {
-            m_supportedExtensions = strExt.Split(new char[]{':', ','});
-            for(int i = 0; i < m_supportedExtensions.Length; i++)
-            {
-              m_supportedExtensions[i] = m_supportedExtensions[i].Trim();
-            }
-          }
-        }
-
-        public override bool Play(string strFile)
-        {
-						if ( strFile.IndexOf(".cda")>=0 )
-						{
-							string strTrack="";
-							int pos=strFile.IndexOf(".cda");
-							if (pos >=0)
-							{
-								pos--;
-								while (Char.IsDigit(strFile[pos]) && pos>0) 
-								{
-									strTrack=strFile[pos]+strTrack;
-									pos--;
-								}
-							}
-
-							string strDrive = strFile.Substring(0,1);
-							strDrive += ":";
-							strFile=String.Format("{0}Track{1}.cda",strDrive,strTrack);
-						}
-
-            m_winampController = new WinampController();
-            m_bStoppedManualy=false;
-            if(m_winampController != null)
-            {
-                m_strCurrentFile = strFile;
-                m_winampController.ClearPlayList();
-                m_winampController.Volume = m_volume;
-                m_winampController.AppendToPlayList(strFile);
-                m_winampController.Play();
-                return true;
-            }
-            return false;
-        }
-
-        public override double Duration
-        {
-            get 
-            {
-                if(m_winampController != null)
-                {
-                    return m_winampController.GetCurrentSongDuration();
-                }
-                return 0.0d;
-            }
-        }
-
-        public override double CurrentPosition
-        {
-            get 
-            {
-                if(m_winampController != null)
-                {
-                    return m_winampController.Position;
-                }
-                return 0.0d;
-            }
-        }
-
-        public override void Pause()
-        {
-            if (m_winampController != null)
-            {
-                m_winampController.Pause();
-            }
-        }
-
-        public override bool Paused
-        {
-            get 
-            {
-                if(m_winampController != null)
-                {
-                    return (m_winampController.Status() == WinampController.PAUSED);
-                }
-                return false;
-
-            }
-        }
-
-        public override bool Playing
-        {
-            get 
-            { 
-                if(m_winampController != null)
-                {
-                    return (m_winampController.Status() == WinampController.PLAYING)
-                             || (m_winampController.Status() == WinampController.PAUSED);
-                }
-                return false;
-            }
-        }
-
-        public override bool Ended
-        {
-          get
-          {
-            if (m_bStoppedManualy) return false;
-            if(m_winampController != null)
-            {
-              return (m_winampController.Status() == WinampController.STOPPED);
-            }
-            return false;
+            strTrack = strFile[pos] + strTrack;
+            pos--;
           }
         }
 
-        public override bool Stopped
+        string strDrive = strFile.Substring(0, 1);
+        strDrive += ":";
+        strFile = String.Format("{0}Track{1}.cda", strDrive, strTrack);
+      }
+
+      m_winampController = new WinampController();
+      m_bStoppedManualy = false;
+      if (m_winampController != null)
+      {
+        m_strCurrentFile = strFile;
+        m_winampController.ClearPlayList();
+        m_winampController.Volume = m_volume;
+        m_winampController.AppendToPlayList(strFile);
+        m_winampController.Play();
+        return true;
+      }
+      return false;
+    }
+
+    public override double Duration
+    {
+      get
+      {
+        if (m_winampController != null)
         {
-            get 
-            { 
-                if (m_bStoppedManualy) 
-                {
-                  if(m_winampController != null)
-                  {
-                    return (m_winampController.Status() == WinampController.STOPPED);
-                  }
-                }
-                return false;
-            }
+          return m_winampController.GetCurrentSongDuration();
         }
+        return 0.0d;
+      }
+    }
 
-        public override string CurrentFile
+    public override double CurrentPosition
+    {
+      get
+      {
+        if (m_winampController != null)
         {
-            get { return m_strCurrentFile;}
+          return m_winampController.Position;
         }
+        return 0.0d;
+      }
+    }
 
-        public override void Stop()
+    public override void Pause()
+    {
+      if (m_winampController != null)
+      {
+        m_winampController.Pause();
+      }
+    }
+
+    public override bool Paused
+    {
+      get
+      {
+        if (m_winampController != null)
         {
-            if(m_winampController != null)
-            {
-                m_bStoppedManualy=true;
-                m_winampController.Stop();
-            }
+          return (m_winampController.Status() == WinampController.PAUSED);
         }
+        return false;
 
-        public override int Volume
+      }
+    }
+
+    public override bool Playing
+    {
+      get
+      {
+        if (m_winampController != null)
         {
-            get { return m_volume;}
-            set 
-            {
-                if (m_volume!=value)
-                {
-                    m_winampController.Volume = value;
-                    m_volume = value;
-                }
-            }
+          return (m_winampController.Status() == WinampController.PLAYING)
+                   || (m_winampController.Status() == WinampController.PAUSED);
         }
+        return false;
+      }
+    }
 
-        public override void SeekRelative(double dTime)
+    public override bool Ended
+    {
+      get
+      {
+        if (m_bStoppedManualy) return false;
+        if (m_winampController != null)
         {
-            double dCurTime=CurrentPosition;
-            dTime=dCurTime+dTime;
-            if (dTime<0.0d) dTime=0.0d;
-            if (dTime < Duration)
-            {
-                m_winampController.Position = dTime;
-            }
+          return (m_winampController.Status() == WinampController.STOPPED);
         }
+        return false;
+      }
+    }
 
-        public override void SeekAbsolute(double dTime)
+    public override bool Stopped
+    {
+      get
+      {
+        if (m_bStoppedManualy)
         {
-            if (dTime<0.0d) dTime=0.0d;
-            if (dTime < Duration)
-            {
-                m_winampController.Position = dTime;
-            }
+          if (m_winampController != null)
+          {
+            return (m_winampController.Status() == WinampController.STOPPED);
+          }
         }
+        return false;
+      }
+    }
 
-        public override void SeekRelativePercentage(int iPercentage)
+    public override string CurrentFile
+    {
+      get { return m_strCurrentFile; }
+    }
+
+    public override void Stop()
+    {
+      if (m_winampController != null)
+      {
+        m_bStoppedManualy = true;
+        m_winampController.Stop();
+      }
+    }
+
+    public override int Volume
+    {
+      get { return m_volume; }
+      set
+      {
+        if (m_volume != value)
         {
-            double dCurrentPos=CurrentPosition;
-            double dDuration=Duration;
-
-            double fCurPercent=(dCurrentPos/Duration)*100.0d;
-            double fOnePercent=Duration/100.0d;
-            fCurPercent=fCurPercent + (double)iPercentage;
-            fCurPercent*=fOnePercent;
-            if (fCurPercent<0.0d) fCurPercent=0.0d;
-            if (fCurPercent<Duration)
-            {
-                m_winampController.Position = fCurPercent;
-            }
+          m_winampController.Volume = value;
+          m_volume = value;
         }
+      }
+    }
+
+    public override void SeekRelative(double dTime)
+    {
+      double dCurTime = CurrentPosition;
+      dTime = dCurTime + dTime;
+      if (dTime < 0.0d) dTime = 0.0d;
+      if (dTime < Duration)
+      {
+        m_winampController.Position = dTime;
+      }
+    }
+
+    public override void SeekAbsolute(double dTime)
+    {
+      if (dTime < 0.0d) dTime = 0.0d;
+      if (dTime < Duration)
+      {
+        m_winampController.Position = dTime;
+      }
+    }
+
+    public override void SeekRelativePercentage(int iPercentage)
+    {
+      double dCurrentPos = CurrentPosition;
+      double dDuration = Duration;
+
+      double fCurPercent = (dCurrentPos / Duration) * 100.0d;
+      double fOnePercent = Duration / 100.0d;
+      fCurPercent = fCurPercent + (double)iPercentage;
+      fCurPercent *= fOnePercent;
+      if (fCurPercent < 0.0d) fCurPercent = 0.0d;
+      if (fCurPercent < Duration)
+      {
+        m_winampController.Position = fCurPercent;
+      }
+    }
 
 
-        public override void SeekAsolutePercentage(int iPercentage)
-        {
-            if (iPercentage<0) iPercentage=0;
-            if (iPercentage>=100) iPercentage=100;
-            double fPercent=Duration/100.0f;
-            fPercent*=(double)iPercentage;
-            m_winampController.Position = fPercent;
-        }
+    public override void SeekAsolutePercentage(int iPercentage)
+    {
+      if (iPercentage < 0) iPercentage = 0;
+      if (iPercentage >= 100) iPercentage = 100;
+      double fPercent = Duration / 100.0f;
+      fPercent *= (double)iPercentage;
+      m_winampController.Position = fPercent;
+    }
 
-        /// <summary>
-        /// The main entry point for the application.
-        /// </summary>
-        [STAThread]
-        static void Main(string[] args)
-        {
-            try
-            {
-                string filename = @"C:\WinApps\CDex\my music\George Winston\December\05-Carol Of The Bells.mp3";
-                WinampPlugin prog = new WinampPlugin();
-                prog.Play(filename);
-                //WinampPlugin.
-            }
-            catch (System.Exception e)
-            {
-                System.Console.Error.WriteLine(e);
-            }
-            System.Console.In.ReadLine();
-        }
+    /// <summary>
+    /// The main entry point for the application.
+    /// </summary>
+    [STAThread]
+    static void Main(string[] args)
+    {
+      try
+      {
+        string filename = @"C:\WinApps\CDex\my music\George Winston\December\05-Carol Of The Bells.mp3";
+        WinampPlugin prog = new WinampPlugin();
+        prog.Play(filename);
+        //WinampPlugin.
+      }
+      catch (System.Exception e)
+      {
+        System.Console.Error.WriteLine(e);
+      }
+      System.Console.In.ReadLine();
+    }
 
 
-	}
+  }
 }

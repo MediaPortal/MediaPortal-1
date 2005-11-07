@@ -20,6 +20,7 @@
  */
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms; // used for Keys definition
 using Microsoft.DirectX.Direct3D;
@@ -125,7 +126,7 @@ namespace MediaPortal.GUI.Library
 		int m_iThumbWidthLow = 0;
 		int m_iThumbHeightLow = 0;
 
-		ArrayList m_vecItems = new ArrayList();
+    List<GUIListItem> m_vecItems = new List<GUIListItem>();
 		int scroll_pos = 0;
 		int iScrollX = 0;
 		int iLastItem = -1;
@@ -259,7 +260,7 @@ namespace MediaPortal.GUI.Library
 			if (!IsVisible) return;
 			if (item >= 0 && item < m_vecItems.Count)
 			{
-				GUIListItem listitem = m_vecItems[item] as GUIListItem;
+				GUIListItem listitem = m_vecItems[item] ;
 				if (listitem != null) listitem.ItemSelected(this);
 			}
 
@@ -467,7 +468,7 @@ namespace MediaPortal.GUI.Library
 					if (iItem < iStartItem) iStartItem = iItem;
 					if (iItem > iEndItem) iEndItem = iItem;
 
-					GUIListItem pItem = (GUIListItem) m_vecItems[iItem];
+					GUIListItem pItem = m_vecItems[iItem];
 					RenderItem(timePassed, false, dwPosX, dwPosY, pItem);
 				}
 			}
@@ -482,7 +483,7 @@ namespace MediaPortal.GUI.Library
 					if (iItem < iStartItem) iStartItem = iItem;
 					if (iItem > iEndItem) iEndItem = iItem;
 
-					GUIListItem pItem = (GUIListItem) m_vecItems[iItem];
+					GUIListItem pItem = m_vecItems[iItem];
 					bool bFocus = (m_iCursorX == iCol);
 					RenderItem(timePassed, bFocus, dwPosX, dwPosY, pItem);
 				}
@@ -501,7 +502,7 @@ namespace MediaPortal.GUI.Library
 					if (iItem < iStartItem) iStartItem = iItem;
 					if (iItem > iEndItem) iEndItem = iItem;
 
-					GUIListItem pItem = (GUIListItem) m_vecItems[iItem];
+					GUIListItem pItem = m_vecItems[iItem];
 					RenderItem(timePassed, false, dwPosX, dwPosY, pItem);
 				}
 				m_iOffset --;
@@ -553,7 +554,7 @@ namespace MediaPortal.GUI.Library
 				{
 					if (i >= 0 && i < m_vecItems.Count)
 					{
-						GUIListItem pItem = m_vecItems[i] as GUIListItem;
+						GUIListItem pItem = m_vecItems[i] ;
 						if (null != pItem)
 						{
 							pItem.FreeMemory();
@@ -566,7 +567,7 @@ namespace MediaPortal.GUI.Library
 			{
 				if (i >= 0 && i < m_vecItems.Count)
 				{
-					GUIListItem pItem = m_vecItems[i] as GUIListItem;
+					GUIListItem pItem = m_vecItems[i] ;
 					if (null != pItem)
 					{
 						pItem.FreeMemory();
@@ -949,7 +950,7 @@ namespace MediaPortal.GUI.Library
 					if (iItem < 0) iItem = m_vecItems.Count - 1;
 				}
 
-				GUIListItem pItem = (GUIListItem) m_vecItems[iItem];
+				GUIListItem pItem = m_vecItems[iItem];
 				if (pItem.Label.ToUpper().StartsWith(SearchKey.ToUpper()) == true)
 				{
 					bItemFound = true;
@@ -1614,7 +1615,7 @@ namespace MediaPortal.GUI.Library
 			int iItem = m_iOffset + m_iCursorX;
 			if (iItem >= 0 && iItem < m_vecItems.Count)
 			{
-				GUIListItem pItem = m_vecItems[iItem] as GUIListItem;
+				GUIListItem pItem = m_vecItems[iItem] ;
 				if (pItem != null)
 				{
 					strLabel = pItem.Label;
@@ -1960,7 +1961,7 @@ namespace MediaPortal.GUI.Library
 			return true;
 		}
 
-		public void Sort(System.Collections.IComparer comparer)
+		public void Sort(System.Collections.Generic.IComparer<GUIListItem> comparer)
 		{
 			try
 			{
@@ -2238,7 +2239,7 @@ namespace MediaPortal.GUI.Library
 			get
 			{
 				if (index < 0 || index >= m_vecItems.Count) return null;
-				return (GUIListItem) m_vecItems[index];
+				return m_vecItems[index];
 			}
 		}
 
@@ -2249,7 +2250,7 @@ namespace MediaPortal.GUI.Library
 				int iItem = m_iOffset + m_iCursorX;
 				if (iItem >= 0 && iItem < m_vecItems.Count)
 				{
-					GUIListItem pItem = (GUIListItem) m_vecItems[iItem];
+					GUIListItem pItem = m_vecItems[iItem];
 					return pItem;
 				}
 				return null;

@@ -30,37 +30,37 @@ namespace MediaPortal.Playlists
 		public PlayListFactory()
 		{
 		}
-		static public PlayList Create(string strFileName)
+		static public PlayList Create(string fileName)
 		{
-			string strExtension=System.IO.Path.GetExtension(strFileName);
-			strExtension.ToLower();
-			if (strExtension==".m3u")
+			string extension=System.IO.Path.GetExtension(fileName);
+			extension.ToLower();
+			if (extension==".m3u")
 			{
 				return new PlayListM3U();
 			}
-			if (strExtension==".pls")
+			if (extension==".pls")
 			{
 				return new PlayListPLS();
 			}
-			if (strExtension==".b4s")
+			if (extension==".b4s")
 			{
 				return new PlayListB4S();
 			}
-			if (strExtension==".wpl")
+			if (extension==".wpl")
 			{
 				return new PlayListWPL();
 			}
 			return null;
 		}
 
-		static public bool IsPlayList(string strFileName)
+		static public bool IsPlayList(string fileName)
 		{
-			string strExtension=System.IO.Path.GetExtension(strFileName);
-			strExtension.ToLower();
-			if (strExtension==".m3u") return true;
-			if (strExtension==".pls") return true;
-			if (strExtension==".b4s") return true;
-			if (strExtension==".wpl") return true;
+			string extension=System.IO.Path.GetExtension(fileName);
+			extension.ToLower();
+			if (extension==".m3u") return true;
+			if (extension==".pls") return true;
+			if (extension==".b4s") return true;
+			if (extension==".wpl") return true;
 			return false;
 		}
 	}

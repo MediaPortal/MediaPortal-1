@@ -1403,7 +1403,7 @@ namespace MediaPortal.GUI.Music
 			dlg.Close();
 			// disable scan mode
 			m_bScan = false;
-			GUIGraphicsContext.Overlay = OverlayAllowed;
+			GUIGraphicsContext.Overlay = _isOverlayAllowed;
 		
 			LoadDirectory(m_strDirectory);
 		}

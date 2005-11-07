@@ -44,54 +44,54 @@ namespace MediaPortal.Playlists
 		{
 		}
 		
-		public override bool 	Load(string  strFileName)
+		public override bool 	Load(string  fileName)
 		{
-      if (strFileName==null) return false;
-			string strBasePath;
+      if (fileName==null) return false;
+			string basePath;
 			Clear();
       try
       {
-        m_strPlayListName=System.IO.Path.GetFileName(strFileName);
-        strBasePath=System.IO.Path.GetDirectoryName(System.IO.Path.GetFullPath(strFileName));
+        _playListName=System.IO.Path.GetFileName(fileName);
+        basePath=System.IO.Path.GetDirectoryName(System.IO.Path.GetFullPath(fileName));
 				
 				Encoding fileEncoding = Encoding.Default;
-				FileStream stream = File.Open(strFileName,FileMode.Open,FileAccess.Read,FileShare.Read);
+				FileStream stream = File.Open(fileName,FileMode.Open,FileAccess.Read,FileShare.Read);
 				StreamReader file = new StreamReader(stream);
-        //StreamReader file = File.OpenText(strFileName);
+        //StreamReader file = File.OpenText(fileName);
         if (file==null) 
         {
           return false;
         }
 
-        string szLine;
-        szLine=file.ReadLine();
-        if (szLine==null || szLine.Length==0)
+        string line;
+        line=file.ReadLine();
+        if (line==null || line.Length==0)
         {
           file.Close();
           return false;
         }
-        string strLine=szLine.Trim();
+        string strLine=line.Trim();
         //CUtil::RemoveCRLF(strLine);
         if (strLine != M3U_START_MARKER)
         {
-          strFileName=szLine;
-          //CUtil::RemoveCRLF(strFileName);
-          if (strFileName.Length>1)
+          fileName=line;
+          //CUtil::RemoveCRLF(fileName);
+          if (fileName.Length>1)
           {
-            Utils.GetQualifiedFilename(strBasePath,ref strFileName);
-            PlayList.PlayListItem newItem = new PlayListItem(strFileName, strFileName, 0);
+            Utils.GetQualifiedFilename(basePath,ref fileName);
+            PlayList.PlayListItem newItem = new PlayListItem(fileName, fileName, 0);
             newItem.Type = PlayListItem.PlayListItemType.Audio;
             string strDescription;
-            strDescription=System.IO.Path.GetFileName(strFileName);
+            strDescription=System.IO.Path.GetFileName(fileName);
             newItem.Description=strDescription;
             Add(newItem);
           }
         }
 
-        szLine=file.ReadLine();
-        while (szLine!=null  )
+        line=file.ReadLine();
+        while (line!=null  )
         {
-          strLine=szLine.Trim();
+          strLine=line.Trim();
           //CUtil::RemoveCRLF(strLine);
           if (strLine.StartsWith( M3U_INFO_MARKER) )
           {
@@ -107,19 +107,19 @@ namespace MediaPortal.Playlists
               int lDuration=System.Int32.Parse(strLength);
               //lDuration*=1000;
 
-              szLine=file.ReadLine();
-              if (szLine!=null && szLine.Length>0 )
+              line=file.ReadLine();
+              if (line!=null && line.Length>0 )
               {
-                strFileName=szLine.Trim();
-                //CUtil::RemoveCRLF(strFileName);
-                if (strFileName.Length>1)
+                fileName=line.Trim();
+                //CUtil::RemoveCRLF(fileName);
+                if (fileName.Length>1)
                 {
-                  Utils.GetQualifiedFilename(strBasePath,ref strFileName);
-                  PlayListItem newItem=new PlayListItem(strInfo,strFileName,lDuration);
+                  Utils.GetQualifiedFilename(basePath,ref fileName);
+                  PlayListItem newItem=new PlayListItem(strInfo,fileName,lDuration);
                   newItem.Type = PlayListItem.PlayListItemType.Audio;
                   if (strInfo.Length==0)
                   {
-                    strInfo=System.IO.Path.GetFileName(strFileName);
+                    strInfo=System.IO.Path.GetFileName(fileName);
                     newItem.Description=strInfo;
                   }
                   Add(newItem);
@@ -134,20 +134,20 @@ namespace MediaPortal.Playlists
           }
           else
           {
-            strFileName=szLine.Trim();
-            //CUtil::RemoveCRLF(strFileName);
-            if (strFileName.Length>1)
+            fileName=line.Trim();
+            //CUtil::RemoveCRLF(fileName);
+            if (fileName.Length>1)
             {
-              Utils.GetQualifiedFilename(strBasePath,ref strFileName);
-              PlayListItem newItem = new PlayListItem(strFileName, strFileName, 0);
+              Utils.GetQualifiedFilename(basePath,ref fileName);
+              PlayListItem newItem = new PlayListItem(fileName, fileName, 0);
               newItem.Type = PlayListItem.PlayListItemType.Audio;
               string strDescription;
-              strDescription=System.IO.Path.GetFileName(strFileName);
+              strDescription=System.IO.Path.GetFileName(fileName);
               newItem.Description=strDescription;
               Add(newItem);
             }
           }
-          szLine=file.ReadLine();
+          line=file.ReadLine();
         }
 
         file.Close();
@@ -159,16 +159,16 @@ namespace MediaPortal.Playlists
 			return true;
 		}
 
-		public override void 	Save(string strFileName)  
+		public override void 	Save(string fileName)  
 		{
       try
       {
-        using (StreamWriter writer = new StreamWriter(strFileName,true))
+        using (StreamWriter writer = new StreamWriter(fileName,true))
         {
           writer.WriteLine(M3U_START_MARKER);
-          for (int i=0; i < m_items.Count;++i)
+          for (int i=0; i < _listPlayListItems.Count;++i)
           {
-            PlayListItem item=(PlayListItem)m_items[i];
+            PlayListItem item=_listPlayListItems[i];
             writer.WriteLine("{0}:{1},{2}",M3U_INFO_MARKER, item.Duration/1000, item.Description);
             writer.WriteLine("{0}",item.FileName);
           }

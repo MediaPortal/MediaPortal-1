@@ -20,7 +20,7 @@
  */
 using System;
 using MediaPortal.GUI.Library;
-using System.Collections;
+using System.Collections.Generic;
 
 namespace MediaPortal.Playlists
 {
@@ -43,67 +43,67 @@ namespace MediaPortal.Playlists
         TV,
         Pictures
       }
-      protected string m_strFilename="";
-      protected string m_strDescription="";
-      protected int    m_iDuration=0;
-      protected object m_pMusicTag=null;
-      bool             m_bPlayed=false;
-      PlayListItemType m_Type=PlayListItemType.Unknown;
+      protected string _fileName="";
+      protected string _description="";
+      protected int    _duration=0;
+      protected object _musicTag=null;
+      bool             _isPlayed=false;
+      PlayListItemType _itemType=PlayListItemType.Unknown;
 
       public PlayListItem()
       {
       }
       
-      public PlayListItem(string strDescription, string strFileName)
+      public PlayListItem(string description, string fileName)
       {
-        if (strDescription==null) return;
-        if (strFileName==null) return;
-        m_strDescription=strDescription;
-        m_strFilename=strFileName;
-        m_iDuration=0;
+        if (description == null) return;
+        if (fileName == null) return;
+        _description = description;
+        _fileName = fileName;
+        _duration=0;
       }
 
-      public PlayListItem(string strDescription, string strFileName, int iDuration)
+      public PlayListItem(string description, string fileName, int duration)
       {
-        if (strDescription==null) return;
-        if (strFileName==null) return;
-        m_strDescription=strDescription;
-        m_strFilename=strFileName;
-        m_iDuration=iDuration;
+        if (description == null) return;
+        if (fileName == null) return;
+        _description = description;
+        _fileName = fileName;
+        _duration = duration;
       }
       
       public PlayListItem.PlayListItemType Type
       {
-        get { return m_Type;}
-        set { m_Type=value;}
+        get { return _itemType;}
+        set { _itemType=value;}
       }
 
       public string FileName
       {
-        get { return m_strFilename;}
+        get { return _fileName;}
         set 
         {  
           if (value==null) return;
-          m_strFilename=value;
+          _fileName=value;
         }
       }
       public string Description
       {
-        get { return m_strDescription;}
+        get { return _description;}
         set { 
           if (value==null) return;
-          m_strDescription=value;
+          _description=value;
         }
       }
       public int Duration
       {
-        get { return m_iDuration;}
-        set { m_iDuration=value;}
+        get { return _duration;}
+        set { _duration=value;}
       }
       public bool Played
       {
-        get { return m_bPlayed;}
-        set { m_bPlayed=value;}
+        get { return _isPlayed;}
+        set { _isPlayed=value;}
       }
 
       /// <summary>
@@ -111,21 +111,21 @@ namespace MediaPortal.Playlists
       /// </summary>
       public object MusicTag
       {
-        get { return m_pMusicTag;}
-        set {m_pMusicTag=value;}
+        get { return _musicTag;}
+        set {_musicTag=value;}
       }
     };
 
 
-    protected string		m_strPlayListName="";
-    protected ArrayList m_items   = new ArrayList();
+    protected string		_playListName="";
+    protected List<PlayListItem> _listPlayListItems = new List<PlayListItem>();
     public PlayList()
     {
     }
     
     public bool AllPlayed()
     {
-      foreach (PlayListItem item in m_items)
+      foreach (PlayListItem item in _listPlayListItems)
       {
         if (!item.Played) return false;
       }
@@ -134,7 +134,7 @@ namespace MediaPortal.Playlists
 
     public void ResetStatus()
     {
-      foreach (PlayListItem item in m_items)
+      foreach (PlayListItem item in _listPlayListItems)
       {
         item.Played=false;
       }
@@ -143,27 +143,27 @@ namespace MediaPortal.Playlists
     public void Add( PlayListItem item)
     {
       if (item==null) return;
-      m_items.Add(item);
+      _listPlayListItems.Add(item);
     }
 
     public string Name
     {
-      get { return m_strPlayListName;}
+      get { return _playListName;}
       set { 
         if (value==null) return ;
-        m_strPlayListName=value;
+        _playListName=value;
       }
     }
 
-    public int Remove( string strFileName)
+    public int Remove( string fileName)
     {
-      if (strFileName==null) return -1;
-      for (int i=0; i < m_items.Count;++i)
+      if (fileName==null) return -1;
+      for (int i=0; i < _listPlayListItems.Count;++i)
       {
-        PlayListItem item=(PlayListItem)m_items[i];
-        if (item.FileName==strFileName)
+        PlayListItem item=_listPlayListItems[i];
+        if (item.FileName == fileName)
         {
-          m_items.RemoveAt(i);
+          _listPlayListItems.RemoveAt(i);
           return i;
         }
       }
@@ -172,17 +172,17 @@ namespace MediaPortal.Playlists
 
     public void Clear()
     {
-      m_items.Clear();
+      _listPlayListItems.Clear();
     }
 
     public int Count
     {
-      get { return m_items.Count;}
+      get { return _listPlayListItems.Count;}
     }
 
     public Playlists.PlayList.PlayListItem this [int iItem]
     {
-      get { return (PlayListItem )m_items[iItem];}
+      get { return _listPlayListItems[iItem];}
     }
 
     
@@ -196,25 +196,25 @@ namespace MediaPortal.Playlists
     {
 
       Random r = new System.Random(DateTime.Now.Millisecond);
-      int nItemCount = Count;
+      
       // iterate through each catalogue item performing arbitrary swaps
-      for (int nItem=0; nItem < nItemCount; nItem++)
+      for (int item = 0; item < Count; item++)
       {
-        int nArbitrary = r.Next( nItemCount );
+        int nArbitrary = r.Next(Count);
 
-        PlayListItem anItem = (PlayListItem)m_items[nArbitrary];
-        m_items[nArbitrary] = m_items[nItem];
-        m_items[nItem] = anItem;
+        PlayListItem anItem = _listPlayListItems[nArbitrary];
+        _listPlayListItems[nArbitrary] = _listPlayListItems[item];
+        _listPlayListItems[item] = anItem;
       }
 
     }
     
-    public virtual bool 	Load(string strFileName)
+    public virtual bool 	Load(string filename)
     {
       return false;
     }
 
-    public virtual void Save(string strFileName) 
+    public virtual void Save(string filename) 
     {
     }
     

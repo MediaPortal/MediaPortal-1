@@ -1396,10 +1396,10 @@ namespace MediaPortal
     public void UpdateStats()
     {
       // Keep track of the frame count
+      if (frames < 10) return;
       float time = DXUtil.Timer(DirectXTimer.GetAbsoluteTime);
-
       // Update the scene stats once per second
-      if (time - lastTime >= 1.0f)
+      //if (time - lastTime >= 0.1f)
       {
         framePerSecond = frames / (time - lastTime);
         GUIGraphicsContext.CurrentFPS = framePerSecond;
@@ -2459,23 +2459,37 @@ namespace MediaPortal
       return !result;
     }
 
+    static int loopCount = 1;
+    static int sleepCount = 0;
     private void Application_Idle(object sender, EventArgs e)
     {
       do
       {
+
         OnProcess();
         FrameMove();
+        
         StartFrameClock();
         FullRender();
-        WaitForFrameClock();
-        if (g_Player.Playing)
+        if (g_Player.Playing && !g_Player.IsExternalPlayer && g_Player.IsMusic)
         {
-          if (!g_Player.IsRadio || !g_Player.IsTimeShifting)
-            break;
+          if (GUIGraphicsContext.CurrentFPS < GUIGraphicsContext.MaxFPS) loopCount++;
+          else if (loopCount > 0) loopCount--;
+          sleepCount++;
+          if (sleepCount >= loopCount)
+          {
+            WaitForFrameClock();
+            sleepCount = 0;
+          }
+        }
+        else
+        {
+          loopCount = 1;
+          WaitForFrameClock();
         }
         if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING) break;
-      } while (AppStillIdle());
-
+        UpdateStats();
+      } while (AppStillIdle() );
     }
   }
 

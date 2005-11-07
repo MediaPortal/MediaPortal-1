@@ -960,7 +960,7 @@ namespace MediaPortal.GUI.TV
 				{
 					dlg.Reset();
 					dlg.SetHeading(GUILocalizeStrings.Get(915));//TV Channels
-					foreach (TVChannel channel in GUITVHome.Navigator.CurrentGroup.tvChannels)
+					foreach (TVChannel channel in GUITVHome.Navigator.CurrentGroup.TvChannels)
 					{
 						GUIListItem pItem = new GUIListItem(channel.Name);
 						string strLogo=Utils.GetCoverArt(Thumbs.TVChannel,channel.Name);                   
@@ -979,9 +979,9 @@ namespace MediaPortal.GUI.TV
 
 					if (dlg.SelectedLabel==-1) return;
 					int tvChannelIndex=dlg.SelectedLabel;
-					if (tvChannelIndex>=0 && tvChannelIndex < GUITVHome.Navigator.CurrentGroup.tvChannels.Count)
+					if (tvChannelIndex>=0 && tvChannelIndex < GUITVHome.Navigator.CurrentGroup.TvChannels.Count)
 					{
-						TVChannel channel = (TVChannel )GUITVHome.Navigator.CurrentGroup.tvChannels[tvChannelIndex];
+						TVChannel channel = (TVChannel )GUITVHome.Navigator.CurrentGroup.TvChannels[tvChannelIndex];
 						Log.Write("tv fs choose chan:{0}",channel.Name);
 						GUITVHome.ViewChannel(channel.Name);
 					}

@@ -28,32 +28,32 @@ namespace MediaPortal.TV.Database
   /// <summary>
   /// Class which holds all details about a TV program
   /// </summary>
-  public class TVProgram : IComparable
-	{
-		string m_strChannel=String.Empty;
-    string m_strGenre=String.Empty;
-    string m_strTitle=String.Empty;
-    string m_strEpisode=String.Empty;
-    string m_strDescription=String.Empty;
-    string m_strRepeat=String.Empty;
-    string m_strDate=String.Empty;
-    string m_strSeriesNum=String.Empty;
-    string m_strEpisodeNum=String.Empty;
-    string m_strEpisodePart=String.Empty;
-    string m_strEpisodeFullDetails=String.Empty;
-    string m_strStarRating=String.Empty;
-    string m_strClassification=String.Empty;
-    long   m_iStartTime=0;
-    long   m_iEndTime=0;
-    int    m_iID=0;
-    string m_strDuration=String.Empty;
-    string m_strTimeFromNow=String.Empty;
+  public class TVProgram : IComparable, IComparable<TVProgram>
+  {
+    string _channelName = String.Empty;
+    string _genre = String.Empty;
+    string _title = String.Empty;
+    string _epsiode = String.Empty;
+    string _description = String.Empty;
+    string _repeat = String.Empty;
+    string _date = String.Empty;
+    string _serieNumber = String.Empty;
+    string _epsiodeNum = String.Empty;
+    string _epsiodePart = String.Empty;
+    string _epsiodeFullDetails = String.Empty;
+    string _starRating = String.Empty;
+    string _classification = String.Empty;
+    long _startTime = 0;
+    long _endTime = 0;
+    int _programId = 0;
+    string _duration = String.Empty;
+    string _timeFromNow = String.Empty;
     /// <summary>
     /// Constructor
     /// </summary>
     public TVProgram()
-		{
-		}
+    {
+    }
 
     /// <summary>
     /// Returns a new TVProgram instance which contains the same values
@@ -62,24 +62,24 @@ namespace MediaPortal.TV.Database
     public TVProgram Clone()
     {
       TVProgram prog = new TVProgram();
-      prog.ID=m_iID;
-			prog.m_strChannel=m_strChannel;
-      prog.m_strGenre=m_strGenre;
-      prog.m_strTitle=m_strTitle;
-	  prog.m_strEpisode=m_strEpisode;
-      prog.m_strDescription=m_strDescription;
-	  prog.m_strRepeat=m_strRepeat;
-      prog.m_iStartTime=m_iStartTime;
-      prog.m_iEndTime=m_iEndTime;
-      prog.m_strDate=m_strDate;
-      prog.m_strSeriesNum=m_strSeriesNum;
-      prog.m_strEpisodeNum=m_strEpisodeNum;
-      prog.m_strEpisodePart=m_strEpisodePart;
-      prog.m_strStarRating=m_strStarRating;
-      prog.m_strClassification=m_strClassification;
-      prog.m_strDuration=m_strDuration;
-      prog.m_strTimeFromNow=m_strTimeFromNow;
-      prog.m_strEpisodeFullDetails=m_strEpisodeFullDetails;
+      prog.ID = _programId;
+      prog._channelName = _channelName;
+      prog._genre = _genre;
+      prog._title = _title;
+      prog._epsiode = _epsiode;
+      prog._description = _description;
+      prog._repeat = _repeat;
+      prog._startTime = _startTime;
+      prog._endTime = _endTime;
+      prog._date = _date;
+      prog._serieNumber = _serieNumber;
+      prog._epsiodeNum = _epsiodeNum;
+      prog._epsiodePart = _epsiodePart;
+      prog._starRating = _starRating;
+      prog._classification = _classification;
+      prog._duration = _duration;
+      prog._timeFromNow = _timeFromNow;
+      prog._epsiodeFullDetails = _epsiodeFullDetails;
       return prog;
     }
 
@@ -90,26 +90,26 @@ namespace MediaPortal.TV.Database
     /// <returns>DateTime object containing the date/time</returns>
     DateTime longtodate(long ldate)
     {
-      if (ldate<=0) return DateTime.MinValue;
-      int year,month,day,hour,minute,sec;
-      sec=(int)(ldate%100L); ldate /=100L;
-      minute=(int)(ldate%100L); ldate /=100L;
-      hour=(int)(ldate%100L); ldate /=100L;
-      day=(int)(ldate%100L); ldate /=100L;
-      month=(int)(ldate%100L); ldate /=100L;
-      year=(int)ldate;
+      if (ldate <= 0) return DateTime.MinValue;
+      int year, month, day, hour, minute, sec;
+      sec = (int)(ldate % 100L); ldate /= 100L;
+      minute = (int)(ldate % 100L); ldate /= 100L;
+      hour = (int)(ldate % 100L); ldate /= 100L;
+      day = (int)(ldate % 100L); ldate /= 100L;
+      month = (int)(ldate % 100L); ldate /= 100L;
+      year = (int)ldate;
       if (day < 0 || day > 31) return DateTime.MinValue;
       if (month < 0 || month > 12) return DateTime.MinValue;
       if (year < 1900 || year > 2100) return DateTime.MinValue;
-      if (sec<0 || sec>59) return DateTime.MinValue;
-      if (minute<0 || minute>59) return DateTime.MinValue;
-      if (hour<0 || hour>23) return DateTime.MinValue;
+      if (sec < 0 || sec > 59) return DateTime.MinValue;
+      if (minute < 0 || minute > 59) return DateTime.MinValue;
+      if (hour < 0 || hour > 23) return DateTime.MinValue;
       try
       {
-        DateTime dt=new DateTime(year,month,day,hour,minute,0,0);
+        DateTime dt = new DateTime(year, month, day, hour, minute, 0, 0);
         return dt;
       }
-      catch(Exception)
+      catch (Exception)
       {
       }
       return DateTime.MinValue;
@@ -120,8 +120,8 @@ namespace MediaPortal.TV.Database
     /// </summary>
     public string Channel
     {
-      get { return m_strChannel;}
-      set { m_strChannel=value;}
+      get { return _channelName; }
+      set { _channelName = value; }
     }
 
     /// <summary>
@@ -129,8 +129,8 @@ namespace MediaPortal.TV.Database
     /// </summary>
     public string Genre
     {
-      get { return m_strGenre;}
-      set { m_strGenre=value;}
+      get { return _genre; }
+      set { _genre = value; }
     }
 
 
@@ -139,8 +139,8 @@ namespace MediaPortal.TV.Database
     /// </summary>
     public int ID
     {
-      get { return m_iID;}
-      set { m_iID=value;}
+      get { return _programId; }
+      set { _programId = value; }
     }
 
     /// <summary>
@@ -148,8 +148,8 @@ namespace MediaPortal.TV.Database
     /// </summary>
     public string Title
     {
-      get { return m_strTitle;}
-      set { m_strTitle=value;}
+      get { return _title; }
+      set { _title = value; }
     }
 
     /// <summary>
@@ -157,97 +157,97 @@ namespace MediaPortal.TV.Database
     /// </summary>
     public string Description
     {
-      get { return m_strDescription;}
-      set { m_strDescription=value;}
+      get { return _description; }
+      set { _description = value; }
     }
     /// <summary>
     /// Property to get/set the episode name of this tv program
     /// </summary>
-	public string Episode
-	{
-	  get { return m_strEpisode;}
-	  set { m_strEpisode=value;}
+    public string Episode
+    {
+      get { return _epsiode; }
+      set { _epsiode = value; }
     }
     /// <summary>
     /// Property to get/set whether this tv program is a repeat
     /// </summary>	
-	public string Repeat
-	{
-	  get { return m_strRepeat;}
-	  set { m_strRepeat=value;}
-	}
+    public string Repeat
+    {
+      get { return _repeat; }
+      set { _repeat = value; }
+    }
     /// <summary>
     /// Property to get/set the series number of this tv program
     /// </summary>
-  public string SeriesNum
-  {
-    get { return m_strSeriesNum;}
-    set { m_strSeriesNum=value;}
-  }
+    public string SeriesNum
+    {
+      get { return _serieNumber; }
+      set { _serieNumber = value; }
+    }
     /// <summary>
     /// Property to get/set the episode number of this tv program
     /// </summary>
-  public string EpisodeNum
-  {
-    get { return m_strEpisodeNum;}
-    set { m_strEpisodeNum=value;}
-  }
+    public string EpisodeNum
+    {
+      get { return _epsiodeNum; }
+      set { _epsiodeNum = value; }
+    }
     /// <summary>
     /// Property to get/set the episode part of this tv program eg: part 1 of 2
     /// </summary>
-  public string EpisodePart
-  {
-    get { return m_strEpisodePart;}
-    set { m_strEpisodePart=value;}
-  }  
+    public string EpisodePart
+    {
+      get { return _epsiodePart; }
+      set { _epsiodePart = value; }
+    }
     /// <summary>
     /// Property to get/set the original date of this tv program
     /// </summary>
-  public string Date
-  {
-    get { return m_strDate;}
-    set { m_strDate=value;}
-  }
-  /// <summary>
-  /// Property to get/set the star rating of this tv program(film)
-  /// </summary>
-  public string StarRating
-  {
-    get { return m_strStarRating;}
-    set { m_strStarRating=value;}
-  }
-  /// <summary>
-  /// Property to get/set the classification of this tv program(film eg: PG,18 etc)
-  /// </summary>
-  public string Classification
-  {
-    get { return m_strClassification;}
-    set { m_strClassification=value;}
-  }
-  /// <summary>
-  /// Property to get the duration of this tv program
-  /// </summary>
-  public string Duration
-  {
-    get
+    public string Date
     {
-      GetDuration();
-      return m_strDuration;
+      get { return _date; }
+      set { _date = value; }
     }
-  }
-  /// <summary>
-  /// <summary>
-  /// Property to get the start time relative to current time of this tv program
-  /// eg. Starts in 2 Hours 25 Minutes, Started 35 Minutes ago - 25 Minutes remaining
-  /// </summary>
-  public string TimeFromNow
-  {
-    get
+    /// <summary>
+    /// Property to get/set the star rating of this tv program(film)
+    /// </summary>
+    public string StarRating
     {
-      GetStartTimeFromNow();
-      return m_strTimeFromNow;
+      get { return _starRating; }
+      set { _starRating = value; }
     }
-  }
+    /// <summary>
+    /// Property to get/set the classification of this tv program(film eg: PG,18 etc)
+    /// </summary>
+    public string Classification
+    {
+      get { return _classification; }
+      set { _classification = value; }
+    }
+    /// <summary>
+    /// Property to get the duration of this tv program
+    /// </summary>
+    public string Duration
+    {
+      get
+      {
+        GetDuration();
+        return _duration;
+      }
+    }
+    /// <summary>
+    /// <summary>
+    /// Property to get the start time relative to current time of this tv program
+    /// eg. Starts in 2 Hours 25 Minutes, Started 35 Minutes ago - 25 Minutes remaining
+    /// </summary>
+    public string TimeFromNow
+    {
+      get
+      {
+        GetStartTimeFromNow();
+        return _timeFromNow;
+      }
+    }
     /// <summary>
     /// <summary>
     /// Property to get the full episode details of a tv program
@@ -258,15 +258,15 @@ namespace MediaPortal.TV.Database
       get
       {
         GetEpisodeDetail();
-        return m_strEpisodeFullDetails;
+        return _epsiodeFullDetails;
       }
     }
     /// Property to get/set the starttime in xmltv format (yyyymmddhhmmss) of this tv program
     /// </summary>
     public long Start
     {
-      get { return m_iStartTime;}
-      set { m_iStartTime=value;}
+      get { return _startTime; }
+      set { _startTime = value; }
     }
 
     /// <summary>
@@ -274,8 +274,8 @@ namespace MediaPortal.TV.Database
     /// </summary>
     public long End
     {
-      get { return m_iEndTime;}
-      set { m_iEndTime=value;}
+      get { return _endTime; }
+      set { _endTime = value; }
     }
 
     /// <summary>
@@ -283,7 +283,7 @@ namespace MediaPortal.TV.Database
     /// </summary>
     public DateTime StartTime
     {
-      get { return longtodate(m_iStartTime);}
+      get { return longtodate(_startTime); }
     }
 
     /// <summary>
@@ -291,7 +291,7 @@ namespace MediaPortal.TV.Database
     /// </summary>
     public DateTime EndTime
     {
-      get { return longtodate(m_iEndTime);}
+      get { return longtodate(_endTime); }
     }
     /// <summary>
     /// Checks if the program is running between the specified start and end time/dates
@@ -301,13 +301,13 @@ namespace MediaPortal.TV.Database
     /// <returns>true if program is running between tStartTime-tEndTime</returns>
     public bool RunningAt(DateTime tStartTime, DateTime tEndTime)
     {
-      DateTime dtStart=StartTime;
-      DateTime dtEnd=EndTime;
+      DateTime dtStart = StartTime;
+      DateTime dtEnd = EndTime;
 
-      bool bRunningAt=false;
-      if (dtEnd>=tStartTime && dtEnd <= tEndTime) bRunningAt=true;
-      if (dtStart >=tStartTime && dtStart <= tEndTime) bRunningAt=true;
-      if (dtStart <=tStartTime && dtEnd>=tEndTime) bRunningAt=true;
+      bool bRunningAt = false;
+      if (dtEnd >= tStartTime && dtEnd <= tEndTime) bRunningAt = true;
+      if (dtStart >= tStartTime && dtStart <= tEndTime) bRunningAt = true;
+      if (dtStart <= tStartTime && dtEnd >= tEndTime) bRunningAt = true;
       return bRunningAt;
     }
 
@@ -318,8 +318,8 @@ namespace MediaPortal.TV.Database
     /// <returns>true if program is running at tCurTime</returns>
     public bool IsRunningAt(DateTime tCurTime)
     {
-      bool bRunningAt=false;
-      if (tCurTime >=StartTime && tCurTime <= EndTime) bRunningAt=true;
+      bool bRunningAt = false;
+      if (tCurTime >= StartTime && tCurTime <= EndTime) bRunningAt = true;
       return bRunningAt;
     }
     /// <summary>
@@ -327,111 +327,111 @@ namespace MediaPortal.TV.Database
     /// </summary>
     private void GetDuration()
     {
-      if (m_strTitle == "No TVGuide data available") return;
+      if (_title == "No TVGuide data available") return;
       string space = " ";
-      DateTime progStart = longtodate(m_iStartTime);
-      DateTime progEnd = longtodate(m_iEndTime);
+      DateTime progStart = longtodate(_startTime);
+      DateTime progEnd = longtodate(_endTime);
       TimeSpan progDuration = progEnd.Subtract(progStart);
       switch (progDuration.Hours)
       {
         case 0:
-          m_strDuration = progDuration.Minutes+space+GUILocalizeStrings.Get(3004);
+          _duration = progDuration.Minutes + space + GUILocalizeStrings.Get(3004);
           break;
         case 1:
-          if (progDuration.Minutes==1) m_strDuration = progDuration.Hours+space+GUILocalizeStrings.Get(3001)+", "+progDuration.Minutes+space+GUILocalizeStrings.Get(3003);
-          else if (progDuration.Minutes>1) m_strDuration = progDuration.Hours+space+GUILocalizeStrings.Get(3001)+", "+progDuration.Minutes+space+GUILocalizeStrings.Get(3004);
-          else m_strDuration = progDuration.Hours+space+GUILocalizeStrings.Get(3001);
+          if (progDuration.Minutes == 1) _duration = progDuration.Hours + space + GUILocalizeStrings.Get(3001) + ", " + progDuration.Minutes + space + GUILocalizeStrings.Get(3003);
+          else if (progDuration.Minutes > 1) _duration = progDuration.Hours + space + GUILocalizeStrings.Get(3001) + ", " + progDuration.Minutes + space + GUILocalizeStrings.Get(3004);
+          else _duration = progDuration.Hours + space + GUILocalizeStrings.Get(3001);
           break;
-         default:
-           if (progDuration.Minutes==1) m_strDuration = progDuration.Hours+" Hours"+", "+progDuration.Minutes+space+GUILocalizeStrings.Get(3003);
-           else if (progDuration.Minutes>0) m_strDuration = progDuration.Hours+" Hours"+", "+progDuration.Minutes+space+GUILocalizeStrings.Get(3004);
-           else m_strDuration = progDuration.Hours+space+GUILocalizeStrings.Get(3002);
+        default:
+          if (progDuration.Minutes == 1) _duration = progDuration.Hours + " Hours" + ", " + progDuration.Minutes + space + GUILocalizeStrings.Get(3003);
+          else if (progDuration.Minutes > 0) _duration = progDuration.Hours + " Hours" + ", " + progDuration.Minutes + space + GUILocalizeStrings.Get(3004);
+          else _duration = progDuration.Hours + space + GUILocalizeStrings.Get(3002);
           break;
       }
     }
     /// <summary>
     /// Calculates how long from current time a program starts or started, set the TimeFromNow property
     /// </summary>
-    private void GetStartTimeFromNow() 
+    private void GetStartTimeFromNow()
     {
-      if (m_strTitle == "No TVGuide data available") return;
+      if (_title == "No TVGuide data available") return;
       string space = " ";
-      string strRemaining=String.Empty;
-      DateTime progStart = longtodate(m_iStartTime);
+      string strRemaining = String.Empty;
+      DateTime progStart = longtodate(_startTime);
       TimeSpan timeRelative = progStart.Subtract(DateTime.Now);
-      if (timeRelative.Days==0)
+      if (timeRelative.Days == 0)
       {
-        if (timeRelative.Hours>=0 && timeRelative.Minutes>=0)
+        if (timeRelative.Hours >= 0 && timeRelative.Minutes >= 0)
         {
           switch (timeRelative.Hours)
           {
             case 0:
-              if (timeRelative.Minutes==1) m_strTimeFromNow=GUILocalizeStrings.Get(3009)+" "+timeRelative.Minutes+space+GUILocalizeStrings.Get(3003);// starts in 1 minute
-              else if (timeRelative.Minutes>1) m_strTimeFromNow=GUILocalizeStrings.Get(3009)+" "+timeRelative.Minutes+space+GUILocalizeStrings.Get(3004);//starts in x minutes
-              else m_strTimeFromNow=GUILocalizeStrings.Get(3013);
+              if (timeRelative.Minutes == 1) _timeFromNow = GUILocalizeStrings.Get(3009) + " " + timeRelative.Minutes + space + GUILocalizeStrings.Get(3003);// starts in 1 minute
+              else if (timeRelative.Minutes > 1) _timeFromNow = GUILocalizeStrings.Get(3009) + " " + timeRelative.Minutes + space + GUILocalizeStrings.Get(3004);//starts in x minutes
+              else _timeFromNow = GUILocalizeStrings.Get(3013);
               break;
             case 1:
-              if (timeRelative.Minutes==1) m_strTimeFromNow=GUILocalizeStrings.Get(3009)+" "+timeRelative.Hours+space+GUILocalizeStrings.Get(3001)+", "+timeRelative.Minutes+space+GUILocalizeStrings.Get(3003);//starts in 1 hour, 1 minute
-              else if (timeRelative.Minutes>1) m_strTimeFromNow=GUILocalizeStrings.Get(3009)+" "+timeRelative.Hours+space+GUILocalizeStrings.Get(3001)+", "+timeRelative.Minutes+space+GUILocalizeStrings.Get(3004);//starts in 1 hour, x minutes
-              else m_strTimeFromNow=GUILocalizeStrings.Get(3009)+" "+timeRelative.Hours+GUILocalizeStrings.Get(3001);//starts in 1 hour
+              if (timeRelative.Minutes == 1) _timeFromNow = GUILocalizeStrings.Get(3009) + " " + timeRelative.Hours + space + GUILocalizeStrings.Get(3001) + ", " + timeRelative.Minutes + space + GUILocalizeStrings.Get(3003);//starts in 1 hour, 1 minute
+              else if (timeRelative.Minutes > 1) _timeFromNow = GUILocalizeStrings.Get(3009) + " " + timeRelative.Hours + space + GUILocalizeStrings.Get(3001) + ", " + timeRelative.Minutes + space + GUILocalizeStrings.Get(3004);//starts in 1 hour, x minutes
+              else _timeFromNow = GUILocalizeStrings.Get(3009) + " " + timeRelative.Hours + GUILocalizeStrings.Get(3001);//starts in 1 hour
               break;
             default:
-              if (timeRelative.Minutes==1) m_strTimeFromNow=GUILocalizeStrings.Get(3009)+" "+timeRelative.Hours+space+GUILocalizeStrings.Get(3002)+", "+timeRelative.Minutes+space+GUILocalizeStrings.Get(3003);//starts in x hours, 1 minute
-              else if (timeRelative.Minutes>1) m_strTimeFromNow=GUILocalizeStrings.Get(3009)+" "+timeRelative.Hours+space+GUILocalizeStrings.Get(3002)+", "+timeRelative.Minutes+space+GUILocalizeStrings.Get(3004);//starts in x hours, x minutes
-              else m_strTimeFromNow=GUILocalizeStrings.Get(3009)+" "+timeRelative.Hours+space+GUILocalizeStrings.Get(3002);//starts in x hours
+              if (timeRelative.Minutes == 1) _timeFromNow = GUILocalizeStrings.Get(3009) + " " + timeRelative.Hours + space + GUILocalizeStrings.Get(3002) + ", " + timeRelative.Minutes + space + GUILocalizeStrings.Get(3003);//starts in x hours, 1 minute
+              else if (timeRelative.Minutes > 1) _timeFromNow = GUILocalizeStrings.Get(3009) + " " + timeRelative.Hours + space + GUILocalizeStrings.Get(3002) + ", " + timeRelative.Minutes + space + GUILocalizeStrings.Get(3004);//starts in x hours, x minutes
+              else _timeFromNow = GUILocalizeStrings.Get(3009) + " " + timeRelative.Hours + space + GUILocalizeStrings.Get(3002);//starts in x hours
               break;
           }
         }
         else //already started
         {
-          DateTime progEnd = longtodate(m_iEndTime);
+          DateTime progEnd = longtodate(_endTime);
           TimeSpan tsRemaining = DateTime.Now.Subtract(progEnd);
-          if (tsRemaining.Minutes>0)
+          if (tsRemaining.Minutes > 0)
           {
-            m_strTimeFromNow=GUILocalizeStrings.Get(3016);
+            _timeFromNow = GUILocalizeStrings.Get(3016);
             return;
           }
           switch (tsRemaining.Hours)
           {
             case 0:
-              if (timeRelative.Minutes==1) strRemaining="("+ -tsRemaining.Minutes+space+GUILocalizeStrings.Get(3018)+")";//(1 Minute Remaining)
-              else strRemaining="("+ -tsRemaining.Minutes+space+GUILocalizeStrings.Get(3010)+")";//(x Minutes Remaining)
+              if (timeRelative.Minutes == 1) strRemaining = "(" + -tsRemaining.Minutes + space + GUILocalizeStrings.Get(3018) + ")";//(1 Minute Remaining)
+              else strRemaining = "(" + -tsRemaining.Minutes + space + GUILocalizeStrings.Get(3010) + ")";//(x Minutes Remaining)
               break;
             case -1:
-              if (timeRelative.Minutes==1) strRemaining="("+ -tsRemaining.Hours+space+GUILocalizeStrings.Get(3001)+", "+ -tsRemaining.Minutes+space+GUILocalizeStrings.Get(3018)+")";//(1 Hour,1 Minute Remaining)
-              else if (timeRelative.Minutes>1) strRemaining="("+ -tsRemaining.Hours+space+GUILocalizeStrings.Get(3001)+", "+ -tsRemaining.Minutes+space+GUILocalizeStrings.Get(3010)+")";//(1 Hour,x Minutes Remaining)
-              else strRemaining="("+ -tsRemaining.Hours+space+GUILocalizeStrings.Get(3012)+")";//(1 Hour Remaining)
+              if (timeRelative.Minutes == 1) strRemaining = "(" + -tsRemaining.Hours + space + GUILocalizeStrings.Get(3001) + ", " + -tsRemaining.Minutes + space + GUILocalizeStrings.Get(3018) + ")";//(1 Hour,1 Minute Remaining)
+              else if (timeRelative.Minutes > 1) strRemaining = "(" + -tsRemaining.Hours + space + GUILocalizeStrings.Get(3001) + ", " + -tsRemaining.Minutes + space + GUILocalizeStrings.Get(3010) + ")";//(1 Hour,x Minutes Remaining)
+              else strRemaining = "(" + -tsRemaining.Hours + space + GUILocalizeStrings.Get(3012) + ")";//(1 Hour Remaining)
               break;
             default:
-              if (timeRelative.Minutes==1) strRemaining="("+ -tsRemaining.Hours+space+GUILocalizeStrings.Get(3002)+", "+ -tsRemaining.Minutes+space+GUILocalizeStrings.Get(3018)+")";//(x Hours,1 Minute Remaining)
-              else if (timeRelative.Minutes>1) strRemaining="("+ -tsRemaining.Hours+space+GUILocalizeStrings.Get(3002)+", "+ -tsRemaining.Minutes+space+GUILocalizeStrings.Get(3010)+")";//(x Hours,x Minutes Remaining)
-              else strRemaining="("+ -tsRemaining.Hours+space+GUILocalizeStrings.Get(3012)+")";//(x Hours Remaining)
+              if (timeRelative.Minutes == 1) strRemaining = "(" + -tsRemaining.Hours + space + GUILocalizeStrings.Get(3002) + ", " + -tsRemaining.Minutes + space + GUILocalizeStrings.Get(3018) + ")";//(x Hours,1 Minute Remaining)
+              else if (timeRelative.Minutes > 1) strRemaining = "(" + -tsRemaining.Hours + space + GUILocalizeStrings.Get(3002) + ", " + -tsRemaining.Minutes + space + GUILocalizeStrings.Get(3010) + ")";//(x Hours,x Minutes Remaining)
+              else strRemaining = "(" + -tsRemaining.Hours + space + GUILocalizeStrings.Get(3012) + ")";//(x Hours Remaining)
               break;
           }
           switch (timeRelative.Hours)
           {
             case 0:
-              if (timeRelative.Minutes==-1) m_strTimeFromNow=GUILocalizeStrings.Get(3017)+ -timeRelative.Minutes+space+GUILocalizeStrings.Get(3007)+space+strRemaining;//Started 1 Minute ago
-              else if (timeRelative.Minutes<-1) m_strTimeFromNow=GUILocalizeStrings.Get(3017)+ -timeRelative.Minutes+space+GUILocalizeStrings.Get(3008)+space+strRemaining;//Started x Minutes ago
-              else m_strTimeFromNow=GUILocalizeStrings.Get(3013);//Starting Now
+              if (timeRelative.Minutes == -1) _timeFromNow = GUILocalizeStrings.Get(3017) + -timeRelative.Minutes + space + GUILocalizeStrings.Get(3007) + space + strRemaining;//Started 1 Minute ago
+              else if (timeRelative.Minutes < -1) _timeFromNow = GUILocalizeStrings.Get(3017) + -timeRelative.Minutes + space + GUILocalizeStrings.Get(3008) + space + strRemaining;//Started x Minutes ago
+              else _timeFromNow = GUILocalizeStrings.Get(3013);//Starting Now
               break;
             case -1:
-              if (timeRelative.Minutes==-1) m_strTimeFromNow=GUILocalizeStrings.Get(3017)+ -timeRelative.Hours+space+GUILocalizeStrings.Get(3001)+", "+ -timeRelative.Minutes+space+GUILocalizeStrings.Get(3007)+" "+strRemaining;//Started 1 Hour,1 Minute ago
-              else if (timeRelative.Minutes<-1) m_strTimeFromNow=GUILocalizeStrings.Get(3017)+ -timeRelative.Hours+space+GUILocalizeStrings.Get(3001)+", "+ -timeRelative.Minutes+space+GUILocalizeStrings.Get(3008)+" "+strRemaining;//Started 1 Hour,x Minutes ago
-              else m_strTimeFromNow=GUILocalizeStrings.Get(3017)+ -timeRelative.Hours+space+GUILocalizeStrings.Get(3005)+space+strRemaining;//Started 1 Hour ago
+              if (timeRelative.Minutes == -1) _timeFromNow = GUILocalizeStrings.Get(3017) + -timeRelative.Hours + space + GUILocalizeStrings.Get(3001) + ", " + -timeRelative.Minutes + space + GUILocalizeStrings.Get(3007) + " " + strRemaining;//Started 1 Hour,1 Minute ago
+              else if (timeRelative.Minutes < -1) _timeFromNow = GUILocalizeStrings.Get(3017) + -timeRelative.Hours + space + GUILocalizeStrings.Get(3001) + ", " + -timeRelative.Minutes + space + GUILocalizeStrings.Get(3008) + " " + strRemaining;//Started 1 Hour,x Minutes ago
+              else _timeFromNow = GUILocalizeStrings.Get(3017) + -timeRelative.Hours + space + GUILocalizeStrings.Get(3005) + space + strRemaining;//Started 1 Hour ago
               break;
             default:
-              if (timeRelative.Minutes==-1) m_strTimeFromNow=GUILocalizeStrings.Get(3017)+ -timeRelative.Hours+space+GUILocalizeStrings.Get(3006)+", "+ -timeRelative.Minutes+space+GUILocalizeStrings.Get(3008)+" "+strRemaining;//Started x Hours,1 Minute ago
-              else if (timeRelative.Minutes<-1) m_strTimeFromNow=GUILocalizeStrings.Get(3017)+ -timeRelative.Hours+space+GUILocalizeStrings.Get(3006)+", "+ -timeRelative.Minutes+space+GUILocalizeStrings.Get(3008)+" "+strRemaining;//Started x Hours,x Minutes ago
-              else m_strTimeFromNow=GUILocalizeStrings.Get(3017)+ -timeRelative.Hours+space+GUILocalizeStrings.Get(3006)+space+strRemaining;//Started x Hours ago
+              if (timeRelative.Minutes == -1) _timeFromNow = GUILocalizeStrings.Get(3017) + -timeRelative.Hours + space + GUILocalizeStrings.Get(3006) + ", " + -timeRelative.Minutes + space + GUILocalizeStrings.Get(3008) + " " + strRemaining;//Started x Hours,1 Minute ago
+              else if (timeRelative.Minutes < -1) _timeFromNow = GUILocalizeStrings.Get(3017) + -timeRelative.Hours + space + GUILocalizeStrings.Get(3006) + ", " + -timeRelative.Minutes + space + GUILocalizeStrings.Get(3008) + " " + strRemaining;//Started x Hours,x Minutes ago
+              else _timeFromNow = GUILocalizeStrings.Get(3017) + -timeRelative.Hours + space + GUILocalizeStrings.Get(3006) + space + strRemaining;//Started x Hours ago
               break;
-          }      
+          }
         }
       }
       else
       {
-        if (timeRelative.Days==1) m_strTimeFromNow=GUILocalizeStrings.Get(3009)+space+timeRelative.Days+space+GUILocalizeStrings.Get(3014);//Starts in 1 Day
-        else m_strTimeFromNow=GUILocalizeStrings.Get(3009)+space+timeRelative.Days+space+GUILocalizeStrings.Get(3015);//Starts in x Days
+        if (timeRelative.Days == 1) _timeFromNow = GUILocalizeStrings.Get(3009) + space + timeRelative.Days + space + GUILocalizeStrings.Get(3014);//Starts in 1 Day
+        else _timeFromNow = GUILocalizeStrings.Get(3009) + space + timeRelative.Days + space + GUILocalizeStrings.Get(3015);//Starts in x Days
       }
 
     }
@@ -439,24 +439,28 @@ namespace MediaPortal.TV.Database
     {
       string space = " ";
       StringBuilder epDetail = new StringBuilder();
-      if ((m_strEpisode != "-")&(m_strEpisode !=String.Empty)) epDetail.Append(m_strEpisode);
-      if ((m_strSeriesNum !="-")&(m_strSeriesNum !=String.Empty))
+      if ((_epsiode != "-") & (_epsiode != String.Empty)) epDetail.Append(_epsiode);
+      if ((_serieNumber != "-") & (_serieNumber != String.Empty))
       {
-        epDetail.Append(space+"()");
-        epDetail.Insert(epDetail.Length-1,GUILocalizeStrings.Get(3019)+space+m_strSeriesNum);
+        epDetail.Append(space + "()");
+        epDetail.Insert(epDetail.Length - 1, GUILocalizeStrings.Get(3019) + space + _serieNumber);
       }
-      if ((m_strEpisodeNum !="-")&(m_strEpisodeNum !=String.Empty)) epDetail.Insert(epDetail.Length-1,space+GUILocalizeStrings.Get(3020)+space+m_strEpisodeNum);
-      if ((m_strEpisodePart !="-")&(m_strEpisodePart !=String.Empty)) epDetail.Insert(epDetail.Length-1,space+GUILocalizeStrings.Get(3021)+space+m_strEpisodePart.Substring(0,1)+space+GUILocalizeStrings.Get(3022)+space+m_strEpisodePart.Substring(2,1));
-      m_strEpisodeFullDetails = epDetail.ToString();
-		}
-		#region IComparable Members
+      if ((_epsiodeNum != "-") & (_epsiodeNum != String.Empty)) epDetail.Insert(epDetail.Length - 1, space + GUILocalizeStrings.Get(3020) + space + _epsiodeNum);
+      if ((_epsiodePart != "-") & (_epsiodePart != String.Empty)) epDetail.Insert(epDetail.Length - 1, space + GUILocalizeStrings.Get(3021) + space + _epsiodePart.Substring(0, 1) + space + GUILocalizeStrings.Get(3022) + space + _epsiodePart.Substring(2, 1));
+      _epsiodeFullDetails = epDetail.ToString();
+    }
+    #region IComparable Members
 
-		public int CompareTo(object obj)
-		{
-			TVProgram prog = (TVProgram)obj;
-			return (Title.CompareTo(prog.Title) );
-		}
+    public int CompareTo(object obj)
+    {
+      TVProgram prog = (TVProgram)obj;
+      return (Title.CompareTo(prog.Title));
+    }
+    public int CompareTo(TVProgram prog)
+    {
+      return (Title.CompareTo(prog.Title));
+    }
 
-		#endregion
-	}
+    #endregion
+  }
 }

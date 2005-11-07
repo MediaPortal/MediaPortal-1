@@ -39,17 +39,17 @@ namespace MediaPortal.GUI.Library
 	/// </summary>
 	class DownloadedImage
 	{
-		string    _FileName;
-		string    _URL;
-		DateTime  _DateDownloaded=DateTime.MinValue;
-		int       _CacheTime = 60*30; //30minutes
+		string    _fileName;
+		string    _url;
+		DateTime  _dateDownloaded=DateTime.MinValue;
+		int       _cacheMinutes = 60*30; //30minutes
 
 		public DownloadedImage(string url)
 		{
 			URL=url;
 			int pos=url.LastIndexOf("/");
         
-			_FileName=GetTempFileName();
+			_fileName=GetTempFileName();
 		}
 
 		string GetTempFileName()
@@ -73,27 +73,27 @@ namespace MediaPortal.GUI.Library
       
 		public string FileName
 		{
-			get {return _FileName;}
-			set {_FileName=value;}
+			get {return _fileName;}
+			set {_fileName=value;}
 		}
       
 		public string URL
 		{
-			get { return _URL;}
-			set {_URL=value;}
+			get { return _url;}
+			set {_url=value;}
 		}
 
 		public int CacheTime
 		{
-			get { return _CacheTime;}
-			set { _CacheTime=value;}
+			get { return _cacheMinutes;}
+			set { _cacheMinutes=value;}
 		}
 
 		public bool ShouldDownLoad
 		{
 			get 
 			{
-				TimeSpan ts=DateTime.Now - _DateDownloaded;
+				TimeSpan ts=DateTime.Now - _dateDownloaded;
 				if (ts.TotalSeconds > CacheTime)
 				{
 					return true;
@@ -120,27 +120,27 @@ namespace MediaPortal.GUI.Library
 					client.DownloadFile(URL, FileName);
 					try
 					{
-						string strExt="";
-						string strContentType=client.ResponseHeaders["Content-type"].ToLower();
-						if (strContentType.IndexOf("gif")>=0) strExt=".gif";
-						if (strContentType.IndexOf("jpg")>=0) strExt=".jpg";
-						if (strContentType.IndexOf("jpeg")>=0) strExt=".jpg";
-						if (strContentType.IndexOf("bmp")>=0) strExt=".bmp";
-						if (strExt.Length>0)
+						string extension="";
+						string contentType=client.ResponseHeaders["Content-type"].ToLower();
+						if (contentType.IndexOf("gif")>=0) extension=".gif";
+						if (contentType.IndexOf("jpg")>=0) extension=".jpg";
+						if (contentType.IndexOf("jpeg")>=0) extension=".jpg";
+						if (contentType.IndexOf("bmp")>=0) extension=".bmp";
+						if (extension.Length>0)
 						{
-							string strNewFile=System.IO.Path.ChangeExtension(FileName,strExt);
-							if (!strNewFile.ToLower().Equals(FileName.ToLower()))
+							string newFile=System.IO.Path.ChangeExtension(FileName,extension);
+							if (!newFile.ToLower().Equals(FileName.ToLower()))
 							{
 								try
 								{
-									System.IO.File.Delete(strNewFile);
+									System.IO.File.Delete(newFile);
 								}
 								catch(Exception)
 								{
-									Log.Write("DownloadedImage:Download() Delete failed:{0}", strNewFile);
+									Log.Write("DownloadedImage:Download() Delete failed:{0}", newFile);
 								}
-								System.IO.File.Move(FileName,strNewFile);
-								FileName=strNewFile;
+								System.IO.File.Move(FileName,newFile);
+								FileName=newFile;
 							}
 						}
 					}
@@ -149,7 +149,7 @@ namespace MediaPortal.GUI.Library
 						Log.Write("DownloadedImage:Download() DownloadFile failed:{0}->{1}", URL,FileName);
 
 					}
-					_DateDownloaded=DateTime.Now;
+					_dateDownloaded=DateTime.Now;
 					return true;
 				} 
 				catch(Exception ex)

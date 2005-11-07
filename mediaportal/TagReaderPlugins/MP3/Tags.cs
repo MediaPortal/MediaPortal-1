@@ -155,9 +155,10 @@ namespace id3
 
 					if ( apicFrame==false&& (tagSize[2]&0x80)==0 &&  (tagSize[1]&0x80)==0 && (tagSize[0]&0x80)==0)
 					{
-						newSize  = (((UInt64)bytes[3]) |
-											((UInt64)bytes[2] << 8)  |
-							        ((UInt64)bytes[1] << 16));
+
+            newSize = (ulong)bytes[3];
+            newSize += (ulong)(bytes[2] << 8);
+            newSize += (ulong)(bytes[1] << 16);
 					}
 					else
 						newSize  = (ulong)((tagSize[2])+(tagSize[1]<<8)+(tagSize[0]<<16));
@@ -187,11 +188,10 @@ namespace id3
 
 					if ( apicFrame==false&&(tagSize[3]&0x80)==0 && (tagSize[2]&0x80)==0 &&  (tagSize[1]&0x80)==0 && (tagSize[0]&0x80)==0)
 					{
-						newSize  = (((UInt64)bytes[3]) |
-							((UInt64)bytes[2] << 8)  |
-							((UInt64)bytes[1] << 16) |
-							((UInt64)bytes[0] << 24)) ;
-						//End Dan Code
+            newSize = (ulong)bytes[3];
+            newSize += (ulong)(bytes[2] << 8);
+            newSize += (ulong)(bytes[1] << 16);
+            newSize += (ulong)(bytes[0] << 24);
 					}
 					else
 						newSize  = (ulong)((tagSize[3])+(tagSize[2]<<8)+(tagSize[1]<<16)+(tagSize[0]<<24));

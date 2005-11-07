@@ -398,9 +398,9 @@ namespace MediaPortal.GUI.TV
 				{
 					// Change current group and switch to first channel in group
 					Navigator.SetCurrentGroup(channel);
-					if(Navigator.CurrentGroup.tvChannels.Count > 0) 
+					if(Navigator.CurrentGroup.TvChannels.Count > 0) 
 					{
-						TVChannel chan = (TVChannel)Navigator.CurrentGroup.tvChannels[0];
+						TVChannel chan = (TVChannel)Navigator.CurrentGroup.TvChannels[0];
 						Log.Write("tv home btngroup:{0}",chan.Name);
 						ViewChannelAndCheck(chan.Name);
 						Navigator.UpdateCurrentChannel();
@@ -655,7 +655,7 @@ namespace MediaPortal.GUI.TV
 			// Update channel button
 			i=0;
 			GUIControl.ClearControl(GetID, btnChannel.GetID);
-			foreach (TVChannel chan in Navigator.CurrentGroup.tvChannels)
+			foreach (TVChannel chan in Navigator.CurrentGroup.TvChannels)
 			{
 				GUIControl.AddItemLabelControl(GetID,btnChannel.GetID,chan.Name);
 				if (chan.Name==Navigator.CurrentChannel)
@@ -933,7 +933,7 @@ namespace MediaPortal.GUI.TV
 			TVGroup tvgroup = new TVGroup();
 			tvgroup.GroupName = GUILocalizeStrings.Get(972); //all channels
 			foreach (TVChannel channel in channels)
-				tvgroup.tvChannels.Add(channel);
+				tvgroup.TvChannels.Add(channel);
 			m_groups.Add(tvgroup);
 
 			m_groups.AddRange(groups); // Add rest of the groups to the end of the list
@@ -1034,9 +1034,9 @@ namespace MediaPortal.GUI.TV
 					{
 						// Change current group and zap to the first channel of the group
 						m_currentgroup = m_zapgroup;
-						if(CurrentGroup.tvChannels.Count > 0) 
+						if(CurrentGroup.TvChannels.Count > 0) 
 						{
-							TVChannel chan = (TVChannel)CurrentGroup.tvChannels[0];
+							TVChannel chan = (TVChannel)CurrentGroup.TvChannels[0];
 							m_zapchannel = chan.Name;
 						}
 					}
@@ -1119,7 +1119,7 @@ namespace MediaPortal.GUI.TV
 		/// <param name="useZapDelay">If true, the configured zap delay is used. Otherwise it zaps immediately.</param>
 		public void ZapToChannel(int channelNr, bool useZapDelay)
 		{
-      List<TVChannel> channels = CurrentGroup.tvChannels;
+      List<TVChannel> channels = CurrentGroup.TvChannels;
 			channelNr--;
 			if (channelNr >= 0 && channelNr < channels.Count)
 			{
@@ -1148,9 +1148,9 @@ namespace MediaPortal.GUI.TV
 			}
 			// Step to next channel
 			currindex++;
-			if(currindex >= CurrentGroup.tvChannels.Count)
+			if(currindex >= CurrentGroup.TvChannels.Count)
 				currindex = 0;
-			TVChannel chan = (TVChannel) CurrentGroup.tvChannels[currindex];
+			TVChannel chan = (TVChannel) CurrentGroup.TvChannels[currindex];
 			m_zapchannel = chan.Name;
 
 			Log.Write("Navigator:ZapNext {0}->{1}", currentChan,m_zapchannel);
@@ -1188,9 +1188,9 @@ namespace MediaPortal.GUI.TV
 			// Step to previous channel
 			currindex--;
 			if(currindex < 0)
-				currindex = CurrentGroup.tvChannels.Count - 1;
+				currindex = CurrentGroup.TvChannels.Count - 1;
 
-			TVChannel chan = (TVChannel) CurrentGroup.tvChannels[currindex];
+			TVChannel chan = (TVChannel) CurrentGroup.TvChannels[currindex];
 			m_zapchannel = chan.Name;
 
 			Log.Write("Navigator:ZapPrevious {0}->{1}", currentChan,m_zapchannel);
@@ -1271,14 +1271,14 @@ namespace MediaPortal.GUI.TV
 			TVGroup tvgroup = new TVGroup();
 			tvgroup.GroupName = GUILocalizeStrings.Get(972); //all channels
 			foreach (TVChannel channel in channels)
-				tvgroup.tvChannels.Add(channel);
+				tvgroup.TvChannels.Add(channel);
 			m_groups.Add(tvgroup);
 			m_groups.AddRange(groups); // Add rest of the groups to the end of the list
 
 			if (m_currentchannel.Trim()==String.Empty)
 			{
 				TVGroup group=(TVGroup )m_groups[m_currentgroup];
-				m_currentchannel=((TVChannel)group.tvChannels[0]).Name;
+				m_currentchannel=((TVChannel)group.TvChannels[0]).Name;
 			}
 			m_currentTvChannel=GetTVChannel(m_currentchannel);
 
@@ -1290,9 +1290,9 @@ namespace MediaPortal.GUI.TV
 		/// <returns></returns>
 		private int GetChannelIndex(string channelName)
 		{
-			for (int i = 0; i < CurrentGroup.tvChannels.Count; i++)
+			for (int i = 0; i < CurrentGroup.TvChannels.Count; i++)
 			{
-				TVChannel chan = (TVChannel) CurrentGroup.tvChannels[i];
+				TVChannel chan = (TVChannel) CurrentGroup.TvChannels[i];
 				if (chan.Name == channelName)
 					return i;
 			}
@@ -1339,7 +1339,7 @@ namespace MediaPortal.GUI.TV
 			if (m_currentchannel.Trim()==String.Empty)
 			{
 				TVGroup group=(TVGroup )m_groups[m_currentgroup];
-				m_currentchannel=((TVChannel)group.tvChannels[0]).Name;
+				m_currentchannel=((TVChannel)group.TvChannels[0]).Name;
 			}
 
 			m_currentTvChannel=GetTVChannel(m_currentchannel);

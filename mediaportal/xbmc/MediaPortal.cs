@@ -408,7 +408,7 @@ public class MediaPortalApp : D3DApp, IRender
   #region RenderStats() method
   void RenderStats()
   {
-    UpdateStats();
+    //UpdateStats();
     if (m_bShowStats)
     {
       GUIFont font = GUIFontManager.GetFont(0);
@@ -847,9 +847,9 @@ public class MediaPortalApp : D3DApp, IRender
           }*/
     }
 
-    catch (Exception e)
+    catch (Exception )
     {
-        bool b = true;
+        //bool b = true;
     }
     finally
     {
@@ -1334,9 +1334,9 @@ public class MediaPortalApp : D3DApp, IRender
     }
   }
 
+  #region keypress handlers
   protected override void keypressed(System.Windows.Forms.KeyPressEventArgs e)
   {
-    screenSaverTimer = DateTime.Now;
     GUIGraphicsContext.BlankScreen = false;
     char keyc = e.KeyChar;
 
@@ -1345,33 +1345,28 @@ public class MediaPortalApp : D3DApp, IRender
     Action action = new Action();
     if (GUIWindowManager.IsRouted)
     {
+      screenSaverTimer = DateTime.Now;
       action = new Action(key, Action.ActionType.ACTION_KEY_PRESSED, 0, 0);
       GUIGraphicsContext.OnAction(action);
       return;
     }
 
-    if (key.KeyChar == 'f')
-    {
-      GUIGraphicsContext.SendMessage(new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 1, 0, 0));
-    }
-    if (key.KeyChar == 'n')
-    {
-      GUIGraphicsContext.SendMessage(new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, 0));
-    }
     if (key.KeyChar == '!')
     {
-      m_bShowStats = !m_bShowStats;
+       m_bShowStats = !m_bShowStats;
     }
-    if (key.KeyChar == '@')
-    {
-      GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_WELCOME);
-    }
-
     if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindowEx, key, ref action))
     {
+      if (action.ShouldDisableScreenSaver)
+        screenSaverTimer = DateTime.Now;
+
       if (action.SoundFileName.Length > 0)
         Utils.PlaySound(action.SoundFileName, false, true);
       GUIGraphicsContext.OnAction(action);
+    }
+    else
+    {
+        screenSaverTimer = DateTime.Now;
     }
     action = new Action(key, Action.ActionType.ACTION_KEY_PRESSED, 0, 0);
     GUIGraphicsContext.OnAction(action);
@@ -1390,8 +1385,9 @@ public class MediaPortalApp : D3DApp, IRender
       GUIGraphicsContext.OnAction(action);
     }
   }
+  #endregion
 
-
+  #region mouse event handlers
   protected override void OnMouseWheel(MouseEventArgs e)
   {
     screenSaverTimer = DateTime.Now;
@@ -1644,6 +1640,7 @@ public class MediaPortalApp : D3DApp, IRender
       }
     }
   }
+  #endregion
 
 #if AUTOUPDATE
   private void MediaPortal_Closed(object sender, EventArgs e)

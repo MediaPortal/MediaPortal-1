@@ -36,12 +36,12 @@ namespace ProgramsDatabase
   /// <summary>
   /// Summary description for appDirBrowse.
   /// </summary>
-  public class appItemDirBrowse: ProgramsDatabase.AppItem
+  public class appItemDirBrowse : ProgramsDatabase.AppItem
   {
     VirtualDirectory curDirectory = new VirtualDirectory();
     ProgramComparer pc = new ProgramComparer(); // slightly hacky: pc replaces the base.dbPc object....
 
-    public appItemDirBrowse(SQLiteClient initSqlDB): base(initSqlDB){}
+    public appItemDirBrowse(SQLiteClient initSqlDB) : base(initSqlDB) { }
 
     override public void LoadFiles()
     {
@@ -119,12 +119,12 @@ namespace ProgramsDatabase
     int LoadDirectory(string newDirectory, GUIFacadeControl facadeView)
     {
       ProgramUtils.SetFileExtensions(curDirectory, ValidExtensions);
-/*
-      ValidExtensions = ValidExtensions.Replace(" ", "");
-      ArrayList extensions = new ArrayList(this.ValidExtensions.Split(','));
-      // allow spaces between extensions...
-      curDirectory.SetExtensions(extensions);
-*/      
+      /*
+            ValidExtensions = ValidExtensions.Replace(" ", "");
+            ArrayList extensions = new ArrayList(this.ValidExtensions.Split(','));
+            // allow spaces between extensions...
+            curDirectory.SetExtensions(extensions);
+      */
       ArrayList curFiles = curDirectory.GetDirectory(newDirectory);
 
       int totalItems = 0;
@@ -160,7 +160,7 @@ namespace ProgramsDatabase
     {
       GUIFilmstripControl filmstrip = parent as GUIFilmstripControl;
       if (filmstrip == null)
-        return ;
+        return;
       string thumbName = "";
       if ((item.ThumbnailImage != GUIGraphicsContext.Skin + @"\media\DefaultFolderBig.png") && (item.ThumbnailImage != ""))
       {
@@ -207,7 +207,7 @@ namespace ProgramsDatabase
         {
           curFilename = " \"" + item.Path + "\"";
         }
-        if (procStart.Arguments.IndexOf("%FILE%") ==  - 1)
+        if (procStart.Arguments.IndexOf("%FILE%") == -1)
         {
           // no placeholder found => default handling: add the fileitem as the last argument
           procStart.Arguments = procStart.Arguments + curFilename;
@@ -224,7 +224,7 @@ namespace ProgramsDatabase
         procStart.FileName = item.Path;
       }
       procStart.WorkingDirectory = Startupdir;
-      if (procStart.WorkingDirectory.IndexOf("%FILEDIR%") !=  - 1)
+      if (procStart.WorkingDirectory.IndexOf("%FILEDIR%") != -1)
       {
         procStart.WorkingDirectory = procStart.WorkingDirectory.Replace("%FILEDIR%", Path.GetDirectoryName(item.Path));
       }

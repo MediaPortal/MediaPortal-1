@@ -64,7 +64,7 @@ namespace MediaPortal.TV.Database
 		
 		static public readonly int HighestPriority=Int32.MaxValue;
 		static public readonly int LowestPriority=0;
-		
+    #region enums
     /// <summary>
     /// Type of recording
     /// </summary>
@@ -97,41 +97,45 @@ namespace MediaPortal.TV.Database
       Finished,
       Canceled
     };
+    #endregion
 
-		long				m_iStartTime;
-		long				m_iEndTime;
-    long				m_iCancelTime=0;
-    string			m_strTitle;
-		string      m_strChannel;
-		RecordingType m_eType;
-		int				  m_iRecordId;
-		bool				m_bContentRecording=true;
-		bool        m_bSeries=false;
-		int         m_iPriority=0;
-		int         m_iPaddingFront=-1, m_iPaddingEnd=-1;
-		int         episodesToKeep=Int32.MaxValue;//all
-		QualityType	m_iQuality=QualityType.NotSet;
-    List<long> m_canceledSeries = new List<long>();
-		bool				announcementSend=false;
-		DateTime		keepDate=DateTime.MaxValue;
-		TVRecorded.KeepMethod  keepMethod=TVRecorded.KeepMethod.UntilSpaceNeeded;
+    #region variables
+    long				_startTime;
+		long				_endTime;
+    long				_timeCanceled=0;
+    string			_title;
+		string      _channelName;
+		RecordingType _recordingType;
+		int				  _recordingId;
+		bool				_isContentRecording=true;
+		bool        _isSeries=false;
+		int         _recordingPriority=0;
+		int         _paddingFrontInterval=-1, _paddingEndInterval=-1;
+		int         _numberOfEpisodesToKeep=Int32.MaxValue;//all
+		QualityType	_recordingQuality=QualityType.NotSet;
+    List<long> _listCanceledEpisodes = new List<long>();
+		bool				_isAnnouncementSend=false;
+		DateTime		_keepUntilDate=DateTime.MaxValue;
+		TVRecorded.KeepMethod  _keepMethod=TVRecorded.KeepMethod.UntilSpaceNeeded;
+    #endregion
 
-		public DateTime KeepRecordingTill
+    #region properties
+    public DateTime KeepRecordingTill
 		{
 			get 
 			{
-				return keepDate;
+				return _keepUntilDate;
 			}
 			set 
 			{
-				keepDate=value;
+				_keepUntilDate=value;
 			}
 		}
 
 		public TVRecorded.KeepMethod KeepRecordingMethod
 		{
-			get { return keepMethod;}
-			set { keepMethod=value;}
+			get { return _keepMethod;}
+			set { _keepMethod=value;}
 		}
 
     /// <summary>
@@ -139,56 +143,56 @@ namespace MediaPortal.TV.Database
     /// </summary>
 		public TVRecording()
 		{
-			m_bContentRecording=true;
+			_isContentRecording=true;
 		}
 		
 		public TVRecording(TVRecording rec)
 		{
-			m_iStartTime=rec.m_iStartTime;
-			m_iEndTime=rec.m_iEndTime;
-			m_iCancelTime=rec.m_iCancelTime;
-			m_strTitle=rec.m_strTitle;
-			m_strChannel=rec.m_strChannel;
-			m_eType=rec.m_eType;
-			m_iRecordId=rec.m_iRecordId;
-			m_bContentRecording=rec.m_bContentRecording;
-			m_bSeries=rec.m_bSeries;
-			m_iPriority=rec.m_iPriority;
-			m_iQuality=rec.m_iQuality;
-      m_canceledSeries.Clear();
-      m_canceledSeries.AddRange(rec.m_canceledSeries);
+			_startTime=rec._startTime;
+			_endTime=rec._endTime;
+			_timeCanceled=rec._timeCanceled;
+			_title=rec._title;
+			_channelName=rec._channelName;
+			_recordingType=rec._recordingType;
+			_recordingId=rec._recordingId;
+			_isContentRecording=rec._isContentRecording;
+			_isSeries=rec._isSeries;
+			_recordingPriority=rec._recordingPriority;
+			_recordingQuality=rec._recordingQuality;
+      _listCanceledEpisodes.Clear();
+      _listCanceledEpisodes.AddRange(rec._listCanceledEpisodes);
 			EpisodesToKeep = rec.EpisodesToKeep;
 			PaddingFront=rec.PaddingFront;
 			PaddingEnd=rec.PaddingEnd;
-			keepMethod=rec.keepMethod;
-			keepDate=rec.keepDate;
-			announcementSend=rec.announcementSend;
+			_keepMethod=rec._keepMethod;
+			_keepUntilDate=rec._keepUntilDate;
+			_isAnnouncementSend=rec._isAnnouncementSend;
 		}
 		
 		public int PaddingFront
 		{
-			get { return m_iPaddingFront;}
-			set { m_iPaddingFront=value;}
+			get { return _paddingFrontInterval;}
+			set { _paddingFrontInterval=value;}
 		}
 		
 		public int PaddingEnd
 		{
-			get { return m_iPaddingEnd;}
-			set { m_iPaddingEnd=value;}
+			get { return _paddingEndInterval;}
+			set { _paddingEndInterval=value;}
 		}
 
 		public bool IsAnnouncementSend
 		{
-			get { return announcementSend;}
-			set { announcementSend=value;}
+			get { return _isAnnouncementSend;}
+			set { _isAnnouncementSend=value;}
 		}
     /// <summary>
     /// Property to get/set the recording type
     /// </summary>
 		public RecordingType RecType
 		{
-			get { return m_eType;}
-			set { m_eType=value;}
+			get { return _recordingType;}
+			set { _recordingType=value;}
 		}
 
     /// <summary>
@@ -197,14 +201,14 @@ namespace MediaPortal.TV.Database
     /// <seealso cref="MediaPortal.TV.Recording.IGraph"/>
 		public bool IsContentRecording
 		{
-			get { return m_bContentRecording;}
-			set { m_bContentRecording=value;}
+			get { return _isContentRecording;}
+			set { _isContentRecording=value;}
 		}
 
 		public int EpisodesToKeep
 		{
-			get { return episodesToKeep;}
-			set { episodesToKeep=value;}
+			get { return _numberOfEpisodesToKeep;}
+			set { _numberOfEpisodesToKeep=value;}
 		}
 		
     /// <summary>
@@ -212,8 +216,8 @@ namespace MediaPortal.TV.Database
     /// </summary>
 		public string Channel
 		{
-			get { return m_strChannel;}
-			set { m_strChannel=value;}
+			get { return _channelName;}
+			set { _channelName=value;}
 		}
 
     /// <summary>
@@ -221,8 +225,8 @@ namespace MediaPortal.TV.Database
     /// </summary>
 		public string Title
 		{
-			get { return m_strTitle;}
-			set { m_strTitle=value;}
+			get { return _title;}
+			set { _title=value;}
 		}
 
     /// <summary>
@@ -230,8 +234,8 @@ namespace MediaPortal.TV.Database
     /// </summary>
 		public long Start
 		{
-			get { return m_iStartTime;}
-			set { m_iStartTime=value;}
+			get { return _startTime;}
+			set { _startTime=value;}
 		}
 
     /// <summary>
@@ -239,8 +243,8 @@ namespace MediaPortal.TV.Database
     /// </summary>
 		public long End
 		{
-			get { return m_iEndTime;}
-			set { m_iEndTime=value;}
+			get { return _endTime;}
+			set { _endTime=value;}
 		}
 
     /// <summary>
@@ -248,8 +252,8 @@ namespace MediaPortal.TV.Database
     /// </summary>
 		public int ID
 		{
-			get { return m_iRecordId;}
-			set { m_iRecordId=value;}
+			get { return _recordingId;}
+			set { _recordingId=value;}
 		}
 
     /// <summary>
@@ -257,7 +261,7 @@ namespace MediaPortal.TV.Database
     /// </summary>
 		public DateTime StartTime
 		{
-			get { return Utils.longtodate(m_iStartTime);}
+			get { return Utils.longtodate(_startTime);}
 		}
 
     /// <summary>
@@ -265,9 +269,12 @@ namespace MediaPortal.TV.Database
     /// </summary>
 		public DateTime EndTime
 		{
-			get { return Utils.longtodate(m_iEndTime);}
-		}
-	
+			get { return Utils.longtodate(_endTime);}
+    }
+
+    #endregion
+
+    #region methods
     /// <summary>
     /// Checks whether this recording is finished and can be deleted
     /// 
@@ -277,7 +284,7 @@ namespace MediaPortal.TV.Database
     /// </returns>
 		public bool IsDone()
 		{
-			if (m_eType != RecordingType.Once) return false;
+			if (_recordingType != RecordingType.Once) return false;
 			if (DateTime.Now > EndTime) return true;
 			return false;
 		}
@@ -311,7 +318,7 @@ namespace MediaPortal.TV.Database
     /// <seealso cref="MediaPortal.TV.Database.TVProgram"/>
 		public bool IsRecordingProgram(TVProgram program, bool filterCanceledRecordings)
 		{
-			switch (m_eType)
+			switch (_recordingType)
 			{
 				case RecordingType.Once:
 				{
@@ -772,8 +779,8 @@ namespace MediaPortal.TV.Database
     /// </summary>
     public long Canceled
     {
-      get { return m_iCancelTime;}
-      set { m_iCancelTime=value;}      
+      get { return _timeCanceled;}
+      set { _timeCanceled=value;}      
     }
 
     /// <summary>
@@ -781,7 +788,7 @@ namespace MediaPortal.TV.Database
     /// </summary>
     public DateTime CanceledTime
     {
-      get { return Utils.longtodate(m_iCancelTime);}
+      get { return Utils.longtodate(_timeCanceled);}
     }
 
     /// <summary>
@@ -801,8 +808,8 @@ namespace MediaPortal.TV.Database
 		/// </summary>
 		public bool Series
 		{
-			get { return m_bSeries;}
-			set { m_bSeries=value;}
+			get { return _isSeries;}
+			set { _isSeries=value;}
 		}
 
 
@@ -811,36 +818,36 @@ namespace MediaPortal.TV.Database
 		/// </summary>
 		public int Priority
 		{
-			get { return m_iPriority;}
-			set { m_iPriority=value;}
+			get { return _recordingPriority;}
+			set { _recordingPriority=value;}
 		}
 		/// <summary>
 		/// quality of this recording
 		/// </summary>
 		public QualityType Quality
 		{
-			get { return m_iQuality;}
-			set { m_iQuality=value;}
+			get { return _recordingQuality;}
+			set { _recordingQuality=value;}
 		}
 
 		public void CancelSerie(long datetime)
 		{
-			m_canceledSeries.Add(datetime);
+			_listCanceledEpisodes.Add(datetime);
 		}
 
 		public List<long> CanceledSeries
 		{
-			get { return m_canceledSeries;}
+			get { return _listCanceledEpisodes;}
 		}
 		
 		public void UnCancelSerie(DateTime datetime)
 		{
 			long dtProgram=Utils.datetolong(datetime);
-			foreach (long dtCanceled in m_canceledSeries)
+			foreach (long dtCanceled in _listCanceledEpisodes)
 			{
 				if (dtCanceled==dtProgram) 
 				{
-					m_canceledSeries.Remove(dtCanceled);
+					_listCanceledEpisodes.Remove(dtCanceled);
 					return;
 				}
 			}
@@ -849,7 +856,7 @@ namespace MediaPortal.TV.Database
 		public bool IsSerieIsCanceled(DateTime datetime)
 		{
 			long dtProgram=Utils.datetolong(datetime);
-			foreach (long dtCanceled in m_canceledSeries)
+			foreach (long dtCanceled in _listCanceledEpisodes)
 			{
 				if (dtCanceled==dtProgram) return true;
 			}
@@ -883,16 +890,17 @@ namespace MediaPortal.TV.Database
 			}
 
     
-			string strLogo=Utils.GetCoverArt(Thumbs.TVChannel,Channel);
-			if (System.IO.File.Exists(strLogo))
+			string logo=Utils.GetCoverArt(Thumbs.TVChannel,Channel);
+			if (System.IO.File.Exists(logo))
 			{
-				GUIPropertyManager.SetProperty("#TV.Scheduled.thumb",strLogo);
+				GUIPropertyManager.SetProperty("#TV.Scheduled.thumb",logo);
 			}
 			else
 			{
 				GUIPropertyManager.SetProperty("#TV.Scheduled.thumb","defaultVideoBig.png");
 			}
-		}
+    }
 
-	}
+    #endregion
+  }
 }

@@ -78,7 +78,9 @@ namespace SQLite.NET
 		internal static extern Int64 sqlite3_column_int64 (IntPtr pVm, int col);
 		[DllImport ("sqlite.dll")]
 		internal static extern double sqlite3_column_double (IntPtr pVm, int col);
-
+    [DllImport("sqlite.dll")]
+    internal static extern IntPtr sqlite3_libversion();
+		
 		// Fields
 		private int busyRetries=5;
 		private int busyRetryDelay=25;
@@ -147,6 +149,17 @@ namespace SQLite.NET
 			/// <value>sqlite_step() has finished executing</value>
 			DONE      = 101
 		}
+
+    static SQLiteClient()
+    {
+      string libVersion = "";
+      IntPtr pName = sqlite3_libversion();
+      if (pName != IntPtr.Zero)
+      {
+        libVersion = Marshal.PtrToStringAnsi(pName);
+        Log.Write("using sqlite {0}", libVersion);
+      }
+    }
 
 		// Methods
 		public SQLiteClient(string dbName)

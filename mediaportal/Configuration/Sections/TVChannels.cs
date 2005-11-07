@@ -1346,12 +1346,12 @@ namespace MediaPortal.Configuration.Sections
 							channels.SetValue("Group "+i.ToString(),"SORT",group.Sort.ToString());
 					
 							//Save total channels added to this group
-							TVDatabase.GetTVChannelsForGroup(group);
-							channels.SetValue("Group "+i.ToString(),"TOTAL CHANNELS",group.tvChannels.Count.ToString());
+							//TVDatabase.GetTVChannelsForGroup(group);
+							channels.SetValue("Group "+i.ToString(),"TOTAL CHANNELS",group.TvChannels.Count.ToString());
 							
 							//Save current channel ID's under this group
 							int channel_index=0;
-							foreach (TVChannel tvChan in group.tvChannels)
+							foreach (TVChannel tvChan in group.TvChannels)
 							{
 								channels.SetValue("Group "+i.ToString(),"CHANNEL "+channel_index.ToString(),tvChan.ID.ToString());
 								channel_index++;
@@ -1822,7 +1822,7 @@ namespace MediaPortal.Configuration.Sections
 											if(FindChan.ID==tmpID)
 											{
 												//Add channel to group
-												Import_Group.tvChannels.Add(FindChan);	
+												Import_Group.TvChannels.Add(FindChan);	
 											
 												//Have to re-grab group from database in order to map correctly :|
 												ArrayList GrabGroup = new ArrayList();

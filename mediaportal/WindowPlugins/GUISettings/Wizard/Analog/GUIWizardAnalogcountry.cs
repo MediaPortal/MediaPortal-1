@@ -1,5 +1,7 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
+
 using System.Xml;
 using MediaPortal.GUI.Library;
 
@@ -8,7 +10,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 	/// <summary>
 	/// Summary description for GUIWizardAnalogcountry.
 	/// </summary>
-	public class GUIWizardAnalogcountry:GUIWindow, IComparer
+	public class GUIWizardAnalogcountry:GUIWindow, IComparer<GUIListItem>
 	{
 		[SkinControlAttribute(24)]			protected GUIListControl listCountries=null;
 		[SkinControlAttribute(23)]			protected GUIButtonControl btnManual=null;
@@ -72,10 +74,8 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 			GUIPropertyManager.SetProperty("#WizardCountry",item.Label);
 		}
 
-		public int Compare(object x, object y)
+    public int Compare(GUIListItem item1, GUIListItem item2)
 		{
-			GUIListItem item1=(GUIListItem)x;
-			GUIListItem item2=(GUIListItem)y;
 			return String.Compare(item1.Label,item2.Label);
 		}
 	}

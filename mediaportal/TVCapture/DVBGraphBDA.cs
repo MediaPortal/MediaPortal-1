@@ -3652,7 +3652,7 @@ namespace MediaPortal.TV.Recording
       //bool restartGraph=false;
       _lastPMTVersion = -1;
       _pmtRetyCount = 0;
-      //bool restartGraph=false;
+      bool restartGraph=false;
       try
       {
 #if USEMTSWRITER
@@ -3666,6 +3666,13 @@ namespace MediaPortal.TV.Recording
 						_mediaControl.Stop();
 					}
 				}*/
+#else
+        string fname = Recorder.GetTimeShiftFileNameByCardId(_cardId);
+        if (g_Player.Playing && g_Player.CurrentFile == fname)
+        {
+          restartGraph = true;
+          g_Player.PauseGraph();
+        }
 #endif
         if (_vmr9 != null) _vmr9.Enable(false);
 
@@ -3952,6 +3959,9 @@ namespace MediaPortal.TV.Recording
 					StartTimeShifting(null,fname);
 					g_Player.ContinueGraph();
 				}*/
+#else
+				if (restartGraph)
+          g_Player.ContinueGraph();
 #endif
         if (_vmr9 != null) _vmr9.Enable(true);
         _signalLostTimer = DateTime.Now;

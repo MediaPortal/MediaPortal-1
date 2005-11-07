@@ -20,6 +20,7 @@
  */
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms; // used for Keys definition
 using Microsoft.DirectX.Direct3D;
@@ -85,7 +86,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("textureDownFocus")] protected string m_strDownFocus = "";
     [XMLSkinElement("imageFolder")] protected string m_strImageFolder = "";
     [XMLSkinElement("imageFolderFocus")] protected string m_strImageFolderFocus = "";
-    protected ArrayList m_button = null;
+    protected List<GUIButtonControl> m_button = null;
 
     int m_iThumbXPosLow = 0;
     int m_iThumbYPosLow = 0;
@@ -118,7 +119,7 @@ namespace MediaPortal.GUI.Library
     GUIFont m_pFont = null;
     GUISpinControl m_upDown = null;
 
-    ArrayList m_vecItems = new ArrayList();
+    List<GUIListItem> m_vecItems = new List<GUIListItem>();
     int scroll_pos = 0;
     int iScrollX = 0;
     int iLastItem = -1;
@@ -261,7 +262,7 @@ namespace MediaPortal.GUI.Library
 
       if (item >= 0 && item < m_vecItems.Count)
       {
-        GUIListItem listitem = m_vecItems[item] as GUIListItem;
+        GUIListItem listitem = m_vecItems[item] ;
         if (listitem != null) listitem.ItemSelected(this);
       }
       // ToDo: add searchstring property
@@ -274,7 +275,7 @@ namespace MediaPortal.GUI.Library
     {
       if (m_button == null) return;
       if (iButton < 0 || iButton >= m_button.Count) return;
-      GUIButtonControl btn = m_button[iButton] as GUIButtonControl;
+      GUIButtonControl btn = m_button[iButton] ;
       if (btn == null) return;
 
       float fTextPosY = (float) dwPosY + (float) m_iTextureHeight;
@@ -469,7 +470,7 @@ namespace MediaPortal.GUI.Library
         {
           for (int i = 0; i < iStartItem; ++i)
           {
-            GUIListItem pItem = (GUIListItem) m_vecItems[i];
+            GUIListItem pItem = m_vecItems[i];
             if (null != pItem)
             {
               pItem.FreeMemory();
@@ -479,7 +480,7 @@ namespace MediaPortal.GUI.Library
 
         for (int i = iEndItem + 1; i < m_vecItems.Count; ++i)
         {
-          GUIListItem pItem = (GUIListItem) m_vecItems[i];
+          GUIListItem pItem = m_vecItems[i];
           if (null != pItem)
           {
             pItem.FreeMemory();
@@ -500,7 +501,7 @@ namespace MediaPortal.GUI.Library
             int iItem = iCol + m_iOffset;
             if (iItem > 0 && iItem < m_vecItems.Count)
             {
-              GUIListItem pItem = (GUIListItem) m_vecItems[iItem];
+              GUIListItem pItem = m_vecItems[iItem];
               RenderItem(timePassed, 0, false, dwPosX, dwPosY, pItem, i == 0);
               if (iItem < iStartItem) iStartItem = iItem;
               if (iItem > iEndItem) iEndItem = iItem;
@@ -519,7 +520,7 @@ namespace MediaPortal.GUI.Library
             int iItem = iRow*m_iColumns + iCol + m_iOffset;
             if (iItem < m_vecItems.Count)
             {
-              GUIListItem pItem = (GUIListItem) m_vecItems[iItem];
+              GUIListItem pItem = m_vecItems[iItem];
               bool bFocus = (m_iCursorX == iCol && m_iCursorY == iRow);
               RenderItem(timePassed, iRow*m_iRows + iCol, bFocus, dwPosX, dwPosY, pItem, i == 0);
               if (iItem < iStartItem) iStartItem = iItem;
@@ -538,7 +539,7 @@ namespace MediaPortal.GUI.Library
             int iItem = m_iRows*m_iColumns + iCol + m_iOffset;
             if (iItem < m_vecItems.Count)
             {
-              GUIListItem pItem = (GUIListItem) m_vecItems[iItem];
+              GUIListItem pItem = m_vecItems[iItem];
               RenderItem(timePassed, 0, false, dwPosX, dwPosY, pItem, i == 0);
               if (iItem < iStartItem) iStartItem = iItem;
               if (iItem > iEndItem) iEndItem = iItem;
@@ -1030,7 +1031,7 @@ namespace MediaPortal.GUI.Library
           if (iItem < 0) iItem = m_vecItems.Count - 1;
         }
 
-        GUIListItem pItem = (GUIListItem) m_vecItems[iItem];
+        GUIListItem pItem = m_vecItems[iItem];
         if (pItem.Label.ToUpper().StartsWith(SearchKey.ToUpper()) == true)
         {
           bItemFound = true;
@@ -1242,14 +1243,14 @@ namespace MediaPortal.GUI.Library
       {
         for (int i = 0; i < m_button.Count; ++i)
         {
-          GUIButtonControl cntl = (GUIButtonControl) m_button[i];
+          GUIButtonControl cntl = m_button[i];
           cntl.FreeResources();
         }
       }
       m_button = null;
 
       // Create new buttoncontrols
-      m_button = new ArrayList(m_iColumns*m_iRows);
+      m_button = new List<GUIButtonControl>();
       for (int i = 0; i < m_iColumns*m_iRows; ++i)
       {
         GUIButtonControl btn = new GUIButtonControl(m_dwParentID, m_dwControlID, m_dwPosX, m_dwPosY, m_iTextureWidth, m_iTextureHeight, m_strImageFolderFocus, m_strImageFolder);
@@ -1278,7 +1279,7 @@ namespace MediaPortal.GUI.Library
       {
         for (int i = 0; i < m_button.Count; ++i)
         {
-          GUIButtonControl cntl = (GUIButtonControl) m_button[i];
+          GUIButtonControl cntl = m_button[i];
           cntl.FreeResources();
         }
       }
@@ -1729,7 +1730,7 @@ namespace MediaPortal.GUI.Library
       int iItem = m_iOffset + m_iCursorY*m_iColumns + m_iCursorX;
       if (iItem >= 0 && iItem < m_vecItems.Count)
       {
-        GUIListItem pItem = (GUIListItem) m_vecItems[iItem];
+        GUIListItem pItem = m_vecItems[iItem];
         strLabel = pItem.Label;
         strLabel2 = pItem.Label2;
         if (pItem.IsFolder)
@@ -2013,7 +2014,7 @@ namespace MediaPortal.GUI.Library
       return true;
     }
 
-    public void Sort(System.Collections.IComparer comparer)
+    public void Sort(System.Collections.Generic.IComparer<GUIListItem> comparer)
     {
       try
       {
@@ -2095,7 +2096,7 @@ namespace MediaPortal.GUI.Library
       get
       {
         if (index < 0 || index >= m_vecItems.Count) return null;
-        return (GUIListItem) m_vecItems[index];
+        return m_vecItems[index];
       }
     }
 
@@ -2106,7 +2107,7 @@ namespace MediaPortal.GUI.Library
         int iItem = m_iOffset + m_iCursorY*m_iColumns + m_iCursorX;
         if (iItem >= 0 && iItem < m_vecItems.Count)
         {
-          GUIListItem pItem = (GUIListItem) m_vecItems[iItem];
+          GUIListItem pItem = m_vecItems[iItem];
           return pItem;
         }
         return null;

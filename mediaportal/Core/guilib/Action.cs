@@ -27,8 +27,9 @@ namespace MediaPortal.GUI.Library
 	/// The class containing the different Actions that can be performed.
 	/// </summary>
 	public class Action
-	{
-		public enum ActionType
+  {
+    #region enums
+    public enum ActionType
 		{
 			// actions that we have defined...
        ACTION_INVALID=0
@@ -164,14 +165,19 @@ namespace MediaPortal.GUI.Library
 			,ACTION_SHOW_CURRENT_TV_INFO
 
 		};
-		public ActionType   wID=0;
+    #endregion
+
+    #region variables
+    public ActionType   wID=0;
 		public float        fAmount1=0.0f;
 		public float        fAmount2=0.0f;
 		public Key          m_key=null;
     public MouseButtons m_mouseButtons=MouseButtons.None;
     public string       m_SoundFileName="";
-		
-		/// <summary>
+    #endregion
+
+    #region ctor/dtor
+    /// <summary>
 		/// The (emtpy) constructur of the Action class.
 		/// </summary>
 		public Action()
@@ -206,8 +212,10 @@ namespace MediaPortal.GUI.Library
 			fAmount1=f1;
 			fAmount2=f2;
     }
+    #endregion 
 
-		/// <summary>
+    #region properties
+    /// <summary>
 		/// Gets and sets the state of the MouseButtons when the action occured.
 		/// </summary>
     public MouseButtons MouseButton
@@ -228,5 +236,22 @@ namespace MediaPortal.GUI.Library
 		{
 			return true;//all current actions are user actions
 		}
-	}
+    /// <summary>
+    /// This method tells if the action should remove the screensaver and start showing the GUI again
+    /// </summary>
+    public bool ShouldDisableScreenSaver
+    {
+      get
+      {
+        if (wID == ActionType.ACTION_NEXT_ITEM) return false;
+        if (wID == ActionType.ACTION_PREV_ITEM) return false;
+        if (wID == ActionType.ACTION_VOLUME_MUTE) return false;
+        if (wID == ActionType.ACTION_SHOW_VOLUME) return false;
+        if (wID == ActionType.ACTION_VOLUME_DOWN) return false;
+        if (wID == ActionType.ACTION_VOLUME_UP) return false;
+        return true;
+      }
+    }
+    #endregion
+  }
 }

@@ -51,32 +51,32 @@ namespace MediaPortal.Playlists
 			// TODO: Add constructor logic here
 			//
 		}
-		public override bool Load(string strFileName)
+		public override bool Load(string fileName)
 		{
-			string strBasePath;
-			string strExt=System.IO.Path.GetExtension(strFileName);
-			strExt.ToLower();
+			string basePath;
+			string extension=System.IO.Path.GetExtension(fileName);
+			extension.ToLower();
 
 			Clear();
-			m_strPlayListName=System.IO.Path.GetFileName(strFileName);
-			strBasePath=System.IO.Path.GetDirectoryName(System.IO.Path.GetFullPath(strFileName));
+			_playListName=System.IO.Path.GetFileName(fileName);
+			basePath=System.IO.Path.GetDirectoryName(System.IO.Path.GetFullPath(fileName));
 			Encoding fileEncoding = Encoding.Default;
-			FileStream stream = File.Open(strFileName,FileMode.Open,FileAccess.Read,FileShare.Read);
+			FileStream stream = File.Open(fileName,FileMode.Open,FileAccess.Read,FileShare.Read);
 			StreamReader file = new StreamReader(stream, fileEncoding, true);
 			if (file==null ) 
 			{
 				return false;
 			}
 
-			string szLine;
-			szLine=file.ReadLine();
-			if (szLine==null)
+			string line;
+			line=file.ReadLine();
+			if (line==null)
 			{
 				file.Close();
 				return false;
 			}
 
-			string strLine=szLine.Trim();
+			string strLine=line.Trim();
 			//CUtil::RemoveCRLF(strLine);
 			if (strLine != START_PLAYLIST_MARKER)
 			{
@@ -91,87 +91,87 @@ namespace MediaPortal.Playlists
 					return true;
 				}
 				fileEncoding = Encoding.Default;
-				stream = File.Open(strFileName,FileMode.Open,FileAccess.Read,FileShare.Read);
+				stream = File.Open(fileName,FileMode.Open,FileAccess.Read,FileShare.Read);
 				file = new StreamReader(stream, fileEncoding, true);
 
 				//file.Close();
 				//return false;
 			}
-			string strInfo="";
-			string strDuration="";
-			strFileName="";
-			szLine=file.ReadLine();
-			while (szLine!=null)
+			string infoLine="";
+			string durationLine="";
+			fileName="";
+			line=file.ReadLine();
+			while (line!=null)
 			{
-				strLine=szLine.Trim();
+				strLine=line.Trim();
 			//CUtil::RemoveCRLF(strLine);
-				int iPosEqual=strLine.IndexOf("=");
-				if (iPosEqual>0)
+				int equalPos=strLine.IndexOf("=");
+				if (equalPos>0)
 				{
-					string strLeft =strLine.Substring(0,iPosEqual);
-					iPosEqual++;
-					string strValue=strLine.Substring(iPosEqual);
-					strLeft=strLeft.ToLower();
-					if (strLeft.StartsWith("file"))
+					string leftPart =strLine.Substring(0,equalPos);
+					equalPos++;
+					string valuePart=strLine.Substring(equalPos);
+					leftPart=leftPart.ToLower();
+					if (leftPart.StartsWith("file"))
 					{	
-						if(strValue.Length > 0 && strValue[0] == '#')
+						if(valuePart.Length > 0 && valuePart[0] == '#')
 						{
-							szLine=file.ReadLine();
+							line=file.ReadLine();
 							continue;
 						}
 
-						if(strFileName.Length!=0)
+						if(fileName.Length!=0)
 						{
-							PlayListItem newItem=new PlayListItem(strInfo,strFileName,0);
+							PlayListItem newItem=new PlayListItem(infoLine,fileName,0);
 							Add(newItem);
-							strFileName="";
-							strInfo="";
-							strDuration="";
+							fileName="";
+							infoLine="";
+							durationLine="";
 						}
-						strFileName=strValue;
+						fileName=valuePart;
 					}
-					if (strLeft.StartsWith("title"))
+					if (leftPart.StartsWith("title"))
 					{	
-						strInfo=strValue;
+						infoLine=valuePart;
 					}
 					else 
 					{
-						if (strInfo=="") strInfo=System.IO.Path.GetFileName(strFileName);
+						if (infoLine=="") infoLine=System.IO.Path.GetFileName(fileName);
 					}
-					if (strLeft.StartsWith("length"))
+					if (leftPart.StartsWith("length"))
 					{	
-						strDuration=strValue;
+						durationLine=valuePart;
 					}
-					if (strLeft=="playlistname")
+					if (leftPart=="playlistname")
 					{
-						m_strPlayListName=strValue;
+						_playListName=valuePart;
 					}
 
-					if (strDuration.Length>0 && strInfo.Length>0 && strFileName.Length>0) 
+					if (durationLine.Length>0 && infoLine.Length>0 && fileName.Length>0) 
 					{
-						int lDuration=System.Int32.Parse(strDuration);
-						lDuration*=1000;
+						int duration=System.Int32.Parse(durationLine);
+						duration*=1000;
 
-            string strTmp=strFileName.ToLower();
-            PlayListItem newItem=new PlayListItem(strInfo,strFileName,lDuration);
-						if (strTmp.IndexOf("http:")<0 && strTmp.IndexOf("mms:")<0 && strTmp.IndexOf("rtp:")<0)
+            string tmp=fileName.ToLower();
+            PlayListItem newItem=new PlayListItem(infoLine,fileName,duration);
+						if (tmp.IndexOf("http:")<0 && tmp.IndexOf("mms:")<0 && tmp.IndexOf("rtp:")<0)
 						{
-							Utils.GetQualifiedFilename(strBasePath,ref strFileName);
+							Utils.GetQualifiedFilename(basePath,ref fileName);
 							newItem.Type = PlayListItem.PlayListItemType.AudioStream;
 						}
 						Add(newItem);
-						strFileName="";
-						strInfo="";
-						strDuration="";
+						fileName="";
+						infoLine="";
+						durationLine="";
 					}
 				}		
-				szLine=file.ReadLine();
+				line=file.ReadLine();
 			}
 			file.Close();
 
-			if (strFileName.Length>0)
+			if (fileName.Length>0)
 			{
-				PlayListItem newItem=new PlayListItem(strInfo,strFileName,0);
+				PlayListItem newItem=new PlayListItem(infoLine,fileName,0);
 			}
 
 
@@ -179,20 +179,20 @@ namespace MediaPortal.Playlists
 
 		}
 
-		public override void 	Save(string strFileName)  
+		public override void 	Save(string fileName)  
 		{
-			using (StreamWriter writer = new StreamWriter(strFileName,true))
+			using (StreamWriter writer = new StreamWriter(fileName,true))
 			{
 				writer.WriteLine(START_PLAYLIST_MARKER);
-				for (int i=0; i < m_items.Count;++i)
+				for (int i=0; i < _listPlayListItems.Count;++i)
 				{
-					PlayListItem item=(PlayListItem)m_items[i];
+					PlayListItem item=_listPlayListItems[i];
 					writer.WriteLine("File{0}={1}",i+1, item.FileName );
 					writer.WriteLine("Title{0}={1}",i+1, item.Description );
 					writer.WriteLine("Length{0}={1}",i+1, item.Duration/1000 );
 
 				}
-				writer.WriteLine("NumberOfEntries={0}",m_items.Count);
+        writer.WriteLine("NumberOfEntries={0}", _listPlayListItems.Count);
 				writer.WriteLine("Version=2");
 				writer.Close();
 			}

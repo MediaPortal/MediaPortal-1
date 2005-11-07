@@ -2307,20 +2307,6 @@ namespace MediaPortal.GUI.TV
     }
     void CheckRecordingConflicts()
     {
-      /*
-      ConflictManager manager = new ConflictManager();
-      ArrayList conflicts = new ArrayList();
-      manager.CheckRecordingsForConflicts(ref conflicts);
-      if (conflicts.Count==0) return; // no conflicts 
-      foreach (ConflictManager.RecordingConflict conflict in conflicts)
-      {
-        //present conflict on GUI somehow...				
-        //Log.Write("Recording on channel {0} title:{1} conflicts with the following shows:",conflict.Recording.Channel,conflict.Recording.Title);
-        //foreach (ConflictManager.CardAllocation alloc in conflict.CardAllocations)
-        //{
-          //Log.Write("  card:{0} channel{1} title:{2}",alloc.ID,alloc.Recording.Channel,alloc.Recording.Title);
-        //}
-      }*/
     }
 
     void OnPageUp()
@@ -2449,7 +2435,7 @@ namespace MediaPortal.GUI.TV
 
       try
       {
-        foreach (TVChannel chan in GUITVHome.Navigator.CurrentGroup.tvChannels)
+        foreach (TVChannel chan in GUITVHome.Navigator.CurrentGroup.TvChannels)
         {
           if (chan.VisibleInGuide)
           {
