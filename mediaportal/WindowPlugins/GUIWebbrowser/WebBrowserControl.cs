@@ -15,7 +15,7 @@ namespace MediaPortal.GUI.WebBrowser
 	/// </summary>
 	public sealed class WebBrowserControl : System.Windows.Forms.UserControl
 	{
-		static readonly WebBrowserControl instance = new WebBrowserControl();
+        static readonly WebBrowserControl instance = new WebBrowserControl();
 		/// <summary>
 		/// Enumeration for refresh constants
 		/// </summary>
@@ -38,17 +38,22 @@ namespace MediaPortal.GUI.WebBrowser
 
 		private WebBrowserControl()
 		{
-			// This call is required by the Windows.Forms Form Designer.
-			InitializeComponent();
-			this.Top=55;
-			this.Left=4;
+            try
+            {
+                // This call is required by the Windows.Forms Form Designer.
+                InitializeComponent();
+                this.Top = 55;
+                this.Left = 4;
+            }
+            catch
+            { }
 		}
 
 		public static WebBrowserControl Instance
 		{
 			get
 			{
-				return instance;
+                return instance;
 			}
 		}
 

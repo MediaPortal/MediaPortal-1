@@ -38,15 +38,22 @@ namespace MediaPortal.GUI.WebBrowser
 			public GUIWebBrowser()
 			{
 				GetID=5500;
-				wb = WebBrowserControl.Instance;
-				GUIGraphicsContext.form.Controls.Add(wb);
-				wb.Visible=false;
-				wb.Browser.NavigateComplete2+= new AxMOZILLACONTROLLib.DWebBrowserEvents2_NavigateComplete2EventHandler(Browser_NavigateComplete2);
-				wb.Browser.DownloadBegin+=new EventHandler(Browser_DownloadBegin);
-				wb.Browser.DownloadComplete+=new EventHandler(Browser_DownloadComplete);
-				wb.Browser.BeforeNavigate2+=new AxMOZILLACONTROLLib.DWebBrowserEvents2_BeforeNavigate2EventHandler(Browser_BeforeNavigate2);
-				wb.Browser.StatusTextChange+=new AxMOZILLACONTROLLib.DWebBrowserEvents2_StatusTextChangeEventHandler(Browser_StatusTextChange);
-				wb.Browser.ProgressChange+=new AxMOZILLACONTROLLib.DWebBrowserEvents2_ProgressChangeEventHandler(Browser_ProgressChange);
+
+                try
+                {
+                    wb = WebBrowserControl.Instance;
+
+                    GUIGraphicsContext.form.Controls.Add(wb);
+                    wb.Visible = false;
+                    wb.Browser.NavigateComplete2 += new AxMOZILLACONTROLLib.DWebBrowserEvents2_NavigateComplete2EventHandler(Browser_NavigateComplete2);
+                    wb.Browser.DownloadBegin += new EventHandler(Browser_DownloadBegin);
+                    wb.Browser.DownloadComplete += new EventHandler(Browser_DownloadComplete);
+                    wb.Browser.BeforeNavigate2 += new AxMOZILLACONTROLLib.DWebBrowserEvents2_BeforeNavigate2EventHandler(Browser_BeforeNavigate2);
+                    wb.Browser.StatusTextChange += new AxMOZILLACONTROLLib.DWebBrowserEvents2_StatusTextChangeEventHandler(Browser_StatusTextChange);
+                    wb.Browser.ProgressChange += new AxMOZILLACONTROLLib.DWebBrowserEvents2_ProgressChangeEventHandler(Browser_ProgressChange);
+                }
+                catch
+                { }
 			}
 		#endregion
 
@@ -206,7 +213,7 @@ namespace MediaPortal.GUI.WebBrowser
 
 		public bool CanEnable()
 		{
-			return true;
+			return wb != null;
 		}
 
 		public string Description()
@@ -216,7 +223,7 @@ namespace MediaPortal.GUI.WebBrowser
 
 		public bool DefaultEnabled()
 		{
-			return true;
+            return true;
 		}
 
 		public int GetWindowId()
