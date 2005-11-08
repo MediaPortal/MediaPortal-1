@@ -2684,8 +2684,8 @@ namespace MediaPortal.TV.Recording
 				newchannel.ProgramNumber = info.serviceID;
 				newchannel.FEC = info.fec;
 				newchannel.Polarity = m_currentTuningObject.Polarity;
-				newchannel.Bandwidth = m_currentTuningObject.Polarity;
-				newchannel.Modulation = m_currentTuningObject.Modulation;
+                newchannel.Bandwidth = m_currentTuningObject.Bandwidth;
+                newchannel.Modulation = m_currentTuningObject.Modulation;
 				newchannel.Symbolrate = m_currentTuningObject.Symbolrate;
 				newchannel.ServiceType = info.serviceType;//tv
 				newchannel.PCRPid = info.pcr_pid;

@@ -6450,16 +6450,18 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="Pinnacle PCTV 310e / MagicBox Pro" capturename="DTV-DVB USB Hybrid Digital" devid="vid_13d3&amp;pid_3211&amp;mi_03">
+  <capturecard commercialname="Pinnacle PCTV 310e / MagicBox Pro" capturename="DTV-DVB M9207 Digital Capture" devid="vid_13d3&amp;pid_3211&amp;mi_03">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
-      <interface cat="tunerdevice" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider"	checkdevice="false"></filter>
         <filter cat="tunerdevice"     name="DTV-DVB USB Hybrid Digital"			checkdevice="true"></filter>
+        <filter cat="capture"     name="DTV-DVB M9207 Digital Capture"			checkdevice="true"></filter>
       </filters>
       <connections>
 	<connection sourcefilter="networkprovider"	sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+	<connection sourcefilter="tunerdevice"	sourcepin="0" sinkfilter="capture" sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
