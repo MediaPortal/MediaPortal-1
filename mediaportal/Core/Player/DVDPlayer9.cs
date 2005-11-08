@@ -331,14 +331,6 @@ namespace MediaPortal.Player
 
     protected override void OnProcess()
     {
-			if (GUIGraphicsContext.Vmr9Active && _vmr9!=null)
-			{
-				_vmr9.Process();
-				if (GUIGraphicsContext.Vmr9FPS < 1f)
-				{
-					_vmr9.Repaint();// repaint vmr9
-				}
-			}
       //m_SourceRect=m_scene.SourceRect;
       //m_VideoRect=m_scene.DestRect;
     }

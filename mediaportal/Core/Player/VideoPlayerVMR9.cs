@@ -212,14 +212,6 @@ namespace MediaPortal.Player
 				m_iVideoWidth=Vmr9.VideoWidth;
 				m_iVideoHeight=Vmr9.VideoHeight;
 			}
-			if(GUIGraphicsContext.Vmr9Active && Vmr9!=null)
-			{
-				Vmr9.Process();
-				if (GUIGraphicsContext.Vmr9FPS < 1f)
-				{
-					Vmr9.Repaint();// repaint vmr9
-				}
-			}
 		}
 
 		/// <summary> do cleanup and release DirectShow. </summary>

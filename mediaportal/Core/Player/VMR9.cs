@@ -183,8 +183,6 @@ namespace MediaPortal.Player
 			m_mixerBitmap=VMR9Filter as IVMRMixerBitmap9;
 			m_graphBuilder=graphBuilder;			
 			instanceCounter++;
-			GUIGraphicsContext.Vmr9Active = true;
-			g_vmr9=this;
 			vmr9Initialized=true;
 			SetDeinterlacePrefs();
 			System.OperatingSystem os=Environment.OSVersion;
@@ -205,7 +203,9 @@ namespace MediaPortal.Player
 					}
 				}
 			}
-			Log.Write("VMR9Helper:Vmr9 Added");
+      GUIGraphicsContext.Vmr9Active = true;
+      g_vmr9 = this;
+      Log.Write("VMR9Helper:Vmr9 Added");
 		}
 
     public void Release()
@@ -352,13 +352,7 @@ namespace MediaPortal.Player
     public void Repaint()
     {
       if (!vmr9Initialized) return;
-      if (m_scene.Enabled == false) return;
-      if (currentVmr9State == Vmr9PlayState.Playing)
-      {
-        Log.Write("VMR9Helper: playing->repaint");
-        currentVmr9State = Vmr9PlayState.Repaint;
-				m_scene.DrawVideo=false;
-      }
+      if (currentVmr9State == Vmr9PlayState.Playing) return;
       m_scene.Repaint();
     }
 
@@ -385,18 +379,25 @@ namespace MediaPortal.Player
       if (ts.TotalMilliseconds >= 1000)
       {
         GUIGraphicsContext.Vmr9FPS = ((float)(frames*1000)) / ((float)ts.TotalMilliseconds);
-        //Log.Write("VMR9Helper:frames:{0} fps:{1} time:{2}", frames, GUIGraphicsContext.Vmr9FPS,ts.TotalMilliseconds);
-        repaintTimer = DateTime.Now;
+       // Log.Write("VMR9Helper:frames:{0} fps:{1} time:{2}", frames, GUIGraphicsContext.Vmr9FPS,ts.TotalMilliseconds);
         FrameCounter = 0;
-				VideoRendererStatistics.Update(quality);
+        VideoRendererStatistics.Update(quality);
+        repaintTimer = DateTime.Now;
       }
       if (currentVmr9State == Vmr9PlayState.Repaint && frames>0 )
       {
         Log.Write("VMR9Helper: repaint->playing {0}",frames);
-				if (GUIGraphicsContext.Vmr9FPS < 1f)
-					GUIGraphicsContext.Vmr9FPS = 5f;
+        GUIGraphicsContext.Vmr9FPS = 50f;
         currentVmr9State = Vmr9PlayState.Playing;
-				m_scene.DrawVideo=true;
+        m_scene.DrawVideo = true;
+        repaintTimer = DateTime.Now;
+      }
+      if (currentVmr9State == Vmr9PlayState.Playing && GUIGraphicsContext.Vmr9FPS<5f)
+      {
+        Log.Write("VMR9Helper: playing->repaint");
+        GUIGraphicsContext.Vmr9FPS = 0f;
+        currentVmr9State = Vmr9PlayState.Repaint;
+        m_scene.DrawVideo = false;
       }
     }
 	  /// <summary>
@@ -492,8 +493,14 @@ namespace MediaPortal.Player
     }
     public void Enable(bool onOff)
 		{
+      Log.Write("Vmr9:Enable:{0}", onOff);
 			if (!vmr9Initialized) return;
       if (m_scene != null) m_scene.Enabled = onOff;
+      if (onOff)
+      {
+        repaintTimer = DateTime.Now;
+        FrameCounter = 50;
+      }
     }
 
 		public bool SaveBitmap(System.Drawing.Bitmap bitmap,bool show,bool transparent,float alphaValue)

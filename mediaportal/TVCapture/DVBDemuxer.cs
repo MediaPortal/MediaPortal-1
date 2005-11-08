@@ -332,7 +332,7 @@ int m_bufferPositionPMT=0;
     }
     public void OnTuneNewChannel()
     {
-      isScrambled = false;
+      isScrambled = true;
       isReceivingPackets = false;
       numberOfPacketsReceived = 0;
     }
@@ -647,9 +647,17 @@ int m_bufferPositionPMT=0;
       if (m_packetHeader.Pid == m_videoPid)
       {
         if (m_packetHeader.TransportScrambling != 0)
+        {
+          if (!isScrambled)
+            Log.Write("demuxer:video pid:{0:X} is scrambled",m_videoPid);
           isScrambled = true;
+        }
         else
+        {
+          if (isScrambled)
+            Log.Write("demuxer:video pid:{0:X} is unscrambled", m_videoPid);
           isScrambled = false;
+        }
       }
 
       numberOfPacketsReceived++;

@@ -302,11 +302,7 @@ namespace MediaPortal.Player
 			{
 				_videoWidth=_vmr9.VideoWidth;
 				_videoHeight=_vmr9.VideoHeight;
-				_vmr9.Process();
-				if (GUIGraphicsContext.Vmr9FPS < 1f)
-				{
-					_vmr9.Repaint();// repaint _vmr9
-				}
+				
 			}
     }
 

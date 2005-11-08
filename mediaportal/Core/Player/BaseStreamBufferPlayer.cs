@@ -574,6 +574,9 @@ namespace MediaPortal.Player
       Log.Write("StreamBufferPlayer:Continue graph");
 			_mediaCtrl.Run();
 			_mediaEvt.SetNotifyWindow( GUIGraphicsContext.ActiveForm, WM_GRAPHNOTIFY, IntPtr.Zero );
+
+      if (VMR9Util.g_vmr9 != null)
+        VMR9Util.g_vmr9.Enable(true);
 		}
 
 		public override void PauseGraph()
@@ -582,6 +585,8 @@ namespace MediaPortal.Player
 			Log.Write("StreamBufferPlayer:Pause graph");
 			_mediaEvt.SetNotifyWindow( IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero );
 			_mediaCtrl.Pause();
+      if (VMR9Util.g_vmr9 != null)
+        VMR9Util.g_vmr9.Enable(false);
 		}
 
 		public override void WndProc( ref Message m )

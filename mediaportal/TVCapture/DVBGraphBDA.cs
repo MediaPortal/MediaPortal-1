@@ -21,6 +21,7 @@
 //#define HW_PID_FILTERING
 //#define DUMP
 //#define USEMTSWRITER
+#define COMPARE_PMT
 #if (UseCaptureCardDefinitions)
 using System;
 using System.IO;
@@ -223,7 +224,7 @@ namespace MediaPortal.TV.Recording
     IATSCGrabber _atscGrabberInterface = null;
     IBaseFilter _filterDvbAnalyzer = null;
     bool _graphPaused = false;
-    DateTime _graphPausedTimer = DateTime.Now;
+    
 #if USEMTSWRITER
 		IBaseFilter						  _filterTsWriter=null;
 		IMPTSWriter							_tsWriterInterface=null;
@@ -3098,6 +3099,7 @@ namespace MediaPortal.TV.Recording
     // send PMT to firedtv device
     bool SendPMT()
     {
+      
       try
       {
 
@@ -3503,15 +3505,6 @@ namespace MediaPortal.TV.Recording
       }
       else
       {
-        // we do receive packets. 
-        // did we receive a PMT ?
-        if (_lastPMTVersion == -1)
-        {
-          //no, then state = signal, but no video
-          VideoRendererStatistics.VideoState = VideoRendererStatistics.State.Signal;
-        }
-        else
-        {
           // we receive packets, got a PMT.
           // is channel scrambled ?
           if (_streamDemuxer.IsScrambled)
@@ -3520,34 +3513,12 @@ namespace MediaPortal.TV.Recording
           }
           else
             VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
-        }
       }
     }
 
     public void Process()
     {
       if (_graphState == State.None || _graphState == State.Created) return;
-
-      /*
-            if (_graphState==State.TimeShifting && _graphIsPaused)
-            {
-              string fileName=Recorder.GetTimeShiftFileNameByCardId(_cardId);
-              if (g_Player.Playing && g_Player.CurrentFile == fileName)
-              {		
-                  if (System.IO.File.Exists(fileName))
-                  {
-                    using (FileStream f = new FileStream(fileName,System.IO.FileMode.Open,FileAccess.Read,FileShare.ReadWrite))
-                    {
-                      if (f.Length>0)//100kb
-                      {
-                        g_Player.ContinueGraph();
-                        _graphIsPaused=false;
-                      }
-                    }
-                  }
-              }
-            }
-      */
       if (_streamDemuxer != null)
         _streamDemuxer.Process();
 
@@ -3570,80 +3541,80 @@ namespace MediaPortal.TV.Recording
         _updateTimer = DateTime.Now;
       }
 
-      if (_refreshPmtTable && Network() != NetworkType.ATSC)
+      if (_streamDemuxer.IsScrambled)
       {
-        bool gotPMT = false;
-        _refreshPmtTable = false;
-        //Log.Write("DVBGRAPHBDA:Get PMT");
-        IntPtr pmtMem = Marshal.AllocCoTaskMem(4096);// max. size for pmt
-        if (pmtMem != IntPtr.Zero)
+        if (_refreshPmtTable && Network() != NetworkType.ATSC)
         {
-          _analyzerInterface.SetPMTProgramNumber(_currentTuningObject.ProgramNumber);
-          int res = _analyzerInterface.GetPMTData(pmtMem);
-          if (res != -1)
+          bool gotPMT = false;
+          _refreshPmtTable = false;
+          //Log.Write("DVBGRAPHBDA:Get PMT");
+          IntPtr pmtMem = Marshal.AllocCoTaskMem(4096);// max. size for pmt
+          if (pmtMem != IntPtr.Zero)
           {
-            byte[] pmt = new byte[res];
-            int version = -1;
-            Marshal.Copy(pmtMem, pmt, 0, res);
-            version = ((pmt[5] >> 1) & 0x1F);
-            int pmtProgramNumber = (pmt[3] << 8) + pmt[4];
-            if (pmtProgramNumber == _currentTuningObject.ProgramNumber)
+            _analyzerInterface.SetPMTProgramNumber(_currentTuningObject.ProgramNumber);
+            int res = _analyzerInterface.GetPMTData(pmtMem);
+            if (res != -1)
             {
-              gotPMT = true;
-              if (_lastPMTVersion != version)
+              byte[] pmt = new byte[res];
+              int version = -1;
+              Marshal.Copy(pmtMem, pmt, 0, res);
+              version = ((pmt[5] >> 1) & 0x1F);
+              int pmtProgramNumber = (pmt[3] << 8) + pmt[4];
+              if (pmtProgramNumber == _currentTuningObject.ProgramNumber)
               {
-                Log.Write("DVBGRAPHBDA:Got PMT version:{0}", version);
-                _lastPMTVersion = version;
-                m_streamDemuxer_OnPMTIsChanged(pmt);
+                gotPMT = true;
+                if (_lastPMTVersion != version)
+                {
+                  Log.Write("DVBGRAPHBDA:Got PMT version:{0}", version);
+                  _lastPMTVersion = version;
+                  m_streamDemuxer_OnPMTIsChanged(pmt);
+                }
+                else
+                {
+                  //	Log.Write("DVBGRAPHBDA:Got old PMT version:{0} {1}",_lastPMTVersion,version);
+                }
               }
               else
               {
-                //	Log.Write("DVBGRAPHBDA:Got old PMT version:{0} {1}",_lastPMTVersion,version);
+                //ushort chcount = 0;
+                //_analyzerInterface.GetChannelCount(ref chcount);
+                //Log.Write("DVBGRAPHBDA:Got wrong PMT:{0} {1} channels:{2}", pmtProgramNumber, _currentTuningObject.ProgramNumber, chcount);
               }
+              pmt = null;
             }
-            else
-            {
-              ushort chcount = 0;
-              _analyzerInterface.GetChannelCount(ref chcount);
-              Log.Write("DVBGRAPHBDA:Got wrong PMT:{0} {1} channels:{2}", pmtProgramNumber, _currentTuningObject.ProgramNumber, chcount);
-            }
-            pmt = null;
+            Marshal.FreeCoTaskMem(pmtMem);
           }
-          Marshal.FreeCoTaskMem(pmtMem);
-        }
 
-        if (!gotPMT)
-        {
-          _refreshPmtTable = true;
-        }
-        else
-        {
-          SendPMT();
-          return;
+          if (!gotPMT)
+          {
+            _refreshPmtTable = true;
+          }
         }
       }
-      if (_graphPaused)
+      if (_graphPaused && !_streamDemuxer.IsScrambled)
       {
-        ts = DateTime.Now - _graphPausedTimer;
-        if (g_Player.CurrentPosition + 3d < g_Player.Duration)
+        
+        if (g_Player.CurrentPosition + 5d < g_Player.Duration)
         {
           g_Player.ContinueGraph();
-          if (g_Player.CurrentPosition+5d <g_Player.Duration )
-            g_Player.SeekAbsolute(g_Player.Duration);
+          g_Player.SeekAbsolute(g_Player.Duration-5d);
           _graphPaused = false;
         }
         return;
       }
 
-      if (GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.Vmr9FPS < 1f)
+      if (_streamDemuxer.IsScrambled)
       {
-        if (_lastPMTVersion >= 0 && _pmtRetyCount < 3)
+        if (GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.Vmr9FPS < 1f)
         {
-          ts = DateTime.Now - _pmtTimer;
-          if (ts.TotalSeconds >= 1)
+          if (_lastPMTVersion >= 0 && _pmtRetyCount < 3)
           {
-            _pmtRetyCount++;
-            SendPMT();
+            ts = DateTime.Now - _pmtTimer;
+            if (ts.TotalSeconds >= 3)
+            {
+              _pmtRetyCount++;
+              SendPMT();
+            }
           }
         }
       }
@@ -3683,7 +3654,7 @@ namespace MediaPortal.TV.Recording
         string fname = Recorder.GetTimeShiftFileNameByCardId(_cardId);
         if (g_Player.Playing && g_Player.CurrentFile == fname)
         {
-          if (g_Player.CurrentPosition + 3d >= g_Player.Duration)
+          //if (g_Player.CurrentPosition + 3d >= g_Player.Duration)
           {
             _graphPaused = true;
             restartGraph = true;
@@ -3982,7 +3953,7 @@ namespace MediaPortal.TV.Recording
 #endif
         if (_vmr9 != null) _vmr9.Enable(true);
         _signalLostTimer = DateTime.Now;
-        _graphPausedTimer = DateTime.Now;
+        
       }
     }//public void TuneChannel(AnalogVideoStandard standard,int iChannel,int country)
 
@@ -5185,6 +5156,7 @@ namespace MediaPortal.TV.Recording
         {
           _epgGrabber.GrabEPG(_currentTuningObject.HasEITSchedule == true);
         }
+        SendPMT();
       }
       catch (Exception ex)
       {
