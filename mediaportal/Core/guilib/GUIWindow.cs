@@ -326,6 +326,8 @@ namespace MediaPortal.GUI.Library
      ,
       WINDOW_SUNCLOCK = 8000
      , WINDOW_TRAILERS = 5900
+
+    , WINDOW_VIDEO_SERIESINFO = 3885 // inker - special video info page for episode info (tv.com parser)
     }
     #endregion
 
