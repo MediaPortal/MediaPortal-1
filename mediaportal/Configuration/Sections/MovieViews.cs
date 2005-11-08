@@ -163,7 +163,6 @@ namespace MediaPortal.Configuration.Sections
 				"List",
 				"Icons",
 				"Big Icons",
-				"Albums",
 				"Filmstrip",
 
 		};

@@ -166,10 +166,9 @@ namespace MediaPortal.Configuration.Sections
 				"List",
 				"Icons",
 				"Big Icons",
-				"Albums",
 				"Filmstrip",
-
 		};
+
     public MusicViews() : this("Music Views")
     {}
 
