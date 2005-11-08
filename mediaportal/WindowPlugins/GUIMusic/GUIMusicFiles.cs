@@ -21,6 +21,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Net;
 using System.Xml.Serialization;
 using System.Globalization;
@@ -580,7 +581,7 @@ namespace MediaPortal.GUI.Music
 				int nRemoteCount =0;
 				PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC_TEMP).Clear();
 				PlayListPlayer.Reset();
-				ArrayList queueItems = new ArrayList();
+        List<GUIListItem> queueItems = new List<GUIListItem>();
 				for (int i = 0; i < (int) facadeView.Count; i++) 
 				{
 					GUIListItem pItem = facadeView[i];
@@ -689,7 +690,7 @@ namespace MediaPortal.GUI.Music
 			
       string strObjects = String.Empty;
       GUIControl.ClearControl(GetID, facadeView.GetID);
-      ArrayList itemlist = new ArrayList();
+      List<GUIListItem> itemlist = new List<GUIListItem>();
       m_database.GetSongs(searchKind,strSearchText,ref itemlist);
       // this will set all to move up
       // from a search result
@@ -713,7 +714,7 @@ namespace MediaPortal.GUI.Music
       int iTotalItems = itemlist.Count;
       if (itemlist.Count > 0)
       {
-        GUIListItem rootItem = (GUIListItem)itemlist[0];
+        GUIListItem rootItem = itemlist[0];
         if (rootItem.Label == "..") iTotalItems--;
       }
 
@@ -781,7 +782,7 @@ namespace MediaPortal.GUI.Music
             
       string strObjects = String.Empty;
 
-      ArrayList itemlist = m_directory.GetDirectory(m_strDirectory);
+      List<GUIListItem> itemlist = m_directory.GetDirectoryExt(m_strDirectory);
       
       string strSelectedItem = m_history.Get(m_strDirectory);
       int iItem = 0;
@@ -807,7 +808,7 @@ namespace MediaPortal.GUI.Music
       int iTotalItems = itemlist.Count;
       if (itemlist.Count > 0)
       {
-        GUIListItem rootItem = (GUIListItem)itemlist[0];
+        GUIListItem rootItem = itemlist[0];
         if (rootItem.Label == "..") iTotalItems--;
       }
       strObjects = String.Format("{0} {1}", iTotalItems, GUILocalizeStrings.Get(632));
@@ -827,8 +828,8 @@ namespace MediaPortal.GUI.Music
         if (pItem.Label == "..") return;
         string strDirectory = m_strDirectory;
         m_strDirectory = pItem.Path;
-		    
-        ArrayList itemlist = m_directory.GetDirectory(m_strDirectory);
+
+        List<GUIListItem> itemlist = m_directory.GetDirectoryExt(m_strDirectory);
         OnRetrieveMusicInfo(ref itemlist);
         foreach (GUIListItem item in itemlist)
         {
@@ -841,7 +842,7 @@ namespace MediaPortal.GUI.Music
         //TODO
         if (Utils.IsAudio(pItem.Path) && !PlayListFactory.IsPlayList(pItem.Path))
         {
-					ArrayList list = new ArrayList();
+          List<GUIListItem> list = new List<GUIListItem>();
 					list.Add(pItem);
 					m_bScan=true;
 					OnRetrieveMusicInfo(ref list);
@@ -1012,9 +1013,9 @@ namespace MediaPortal.GUI.Music
 			if (window == (int)GUIWindow.Window.WINDOW_MUSIC_FAVORITES) return true;
 			return false;
 		}
-		
 
-		void OnRetrieveMusicInfo(ref ArrayList items)
+
+    void OnRetrieveMusicInfo(ref List<GUIListItem> items)
 		{
 			int nFolderCount = 0;
 			foreach (GUIListItem item in items)
@@ -1030,7 +1031,7 @@ namespace MediaPortal.GUI.Music
 
 			if (m_strDirectory.Length == 0) return;
 			//string strItem;
-			ArrayList songsMap = new ArrayList();
+      List<SongMap> songsMap = new List<SongMap>();
 			// get all information for all files in current directory from database 
 			m_database.GetSongsByPath2(m_strDirectory, ref songsMap);
 
@@ -1042,7 +1043,7 @@ namespace MediaPortal.GUI.Music
 			// for every file found, but skip folder
 			for (int i = 0; i < (int)items.Count; ++i)
 			{
-				GUIListItem pItem = (GUIListItem)items[i];
+				GUIListItem pItem = items[i];
 				if (pItem.IsRemote) continue;
 				if (pItem.IsFolder) continue;
 				if (pItem.Path.Length == 0) continue;
@@ -1319,7 +1320,7 @@ namespace MediaPortal.GUI.Music
 			}
 		}
 
-		bool DoScan(string strDir, ref ArrayList items)
+		bool DoScan(string strDir, ref List<GUIListItem> items)
 		{
 			GUIDialogProgress dlg = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
 			if (dlg != null)
@@ -1337,7 +1338,7 @@ namespace MediaPortal.GUI.Music
 			bool bCancel = false;
 			for (int i = 0; i < (int)items.Count; ++i)
 			{
-				GUIListItem pItem = (GUIListItem)items[i];
+				GUIListItem pItem = items[i];
 				if (pItem.IsRemote) continue;
 				if (dlg != null && dlg.IsCanceled)
 				{
@@ -1351,7 +1352,7 @@ namespace MediaPortal.GUI.Music
 						// load subfolder
 						string strPrevDir = m_strDirectory;
 						m_strDirectory = pItem.Path;
-						ArrayList subDirItems = m_directory.GetDirectory(m_strDirectory);
+            List<GUIListItem> subDirItems = m_directory.GetDirectoryExt(m_strDirectory);
 						if (!DoScan(m_strDirectory, ref subDirItems))
 						{
 							bCancel = true;
@@ -1371,7 +1372,7 @@ namespace MediaPortal.GUI.Music
 			GUIGraphicsContext.Overlay = false;
 
 			m_bScan = true;
-			ArrayList items = new ArrayList();
+      List<GUIListItem> items = new List<GUIListItem>();
 			for (int i = 0; i < facadeView.Count; ++i)
 			{
 				GUIListItem pItem=facadeView[i];
@@ -1415,7 +1416,7 @@ namespace MediaPortal.GUI.Music
 				string oldFolder=m_strDirectory;
 				VirtualDirectory dir = new VirtualDirectory();
 				dir.SetExtensions(Utils.AudioExtensions);
-				ArrayList items=dir.GetDirectoryUnProtected(pItem.Path,true);
+        List<GUIListItem> items = dir.GetDirectoryUnProtectedExt(pItem.Path, true);
 				if (items.Count<2)
 					return;
 				m_bScan=true;
@@ -1435,7 +1436,7 @@ namespace MediaPortal.GUI.Music
 			Song song = pItem.AlbumInfoTag as Song;
 			if (song==null)
 			{
-				ArrayList list = new ArrayList();
+        List<GUIListItem> list = new List<GUIListItem>();
 				list.Add(pItem);
 				m_bScan=true;
 				OnRetrieveMusicInfo(ref list);
@@ -1449,7 +1450,7 @@ namespace MediaPortal.GUI.Music
 			Song song = item.AlbumInfoTag as Song;
 			if (song==null)
 			{
-				ArrayList list = new ArrayList();
+        List<GUIListItem> list = new List<GUIListItem>();
 				list.Add(item);
 				m_bScan=true;
 				OnRetrieveMusicInfo(ref list);

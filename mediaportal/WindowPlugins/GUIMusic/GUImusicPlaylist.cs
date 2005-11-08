@@ -21,6 +21,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Player;
@@ -384,7 +385,7 @@ namespace MediaPortal.GUI.Music
 		}
 
 		
-		void OnRetrieveMusicInfo(ref ArrayList items)
+		void OnRetrieveMusicInfo(ref List<GUIListItem> items)
 		{
 			if (items.Count <= 0) return;
 			MusicDatabase dbs = new MusicDatabase();
@@ -427,7 +428,7 @@ namespace MediaPortal.GUI.Music
             
 			string strObjects = String.Empty;
 
-			ArrayList itemlist = new ArrayList();
+      List<GUIListItem> itemlist = new List<GUIListItem>();
 
 			PlayList playlist = PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC);
 			/* copy playlist from general playlist*/
@@ -512,7 +513,7 @@ namespace MediaPortal.GUI.Music
 			int iTotalItems = itemlist.Count;
 			if (itemlist.Count > 0)
 			{
-				GUIListItem rootItem = (GUIListItem)itemlist[0];
+				GUIListItem rootItem = itemlist[0];
 				if (rootItem.Label == "..") iTotalItems--;
 			}
 			strObjects = String.Format("{0} {1}", iTotalItems, GUILocalizeStrings.Get(632));
@@ -722,13 +723,13 @@ namespace MediaPortal.GUI.Music
 			Song song = new Song();	
 			//if not enough songs, add all available songs
 			if (dbs.GetNumOfSongs()<MaxNumPShuffleSongPredict)
-			{			
-				ArrayList songs = new ArrayList();
+			{
+        List<Song> songs = new List<Song>();
 				dbs.GetAllSongs(ref songs);
 				
 				for (i=0; i<songs.Count; i++)
 				{
-					song = (Song)songs[i];
+					song = songs[i];
 					AddRandomSongToPlaylist(ref song);
 				}
 			}

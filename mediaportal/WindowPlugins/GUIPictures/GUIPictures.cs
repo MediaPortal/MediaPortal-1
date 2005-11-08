@@ -776,8 +776,8 @@ namespace MediaPortal.GUI.Pictures
       {
         if (item.Label != "..")
         {
-          ArrayList items = new ArrayList();
-          items = virtualDirectory.GetDirectoryUnProtected(item.Path, false);
+          List<GUIListItem> items = new List<GUIListItem>();
+          items = virtualDirectory.GetDirectoryUnProtectedExt(item.Path, false);
           foreach (GUIListItem subItem in items)
           {
             DoDeleteItem(subItem);
@@ -890,7 +890,7 @@ namespace MediaPortal.GUI.Pictures
 
     void AddDir(GUISlideShow SlideShow, string strDir)
     {
-      ArrayList itemlist = virtualDirectory.GetDirectory(strDir);
+      List<GUIListItem> itemlist = virtualDirectory.GetDirectoryExt(strDir);
       Filter(ref itemlist);
       foreach (GUIListItem item in itemlist)
       {
@@ -1063,7 +1063,7 @@ namespace MediaPortal.GUI.Pictures
       CreateThumbnails();
       string objectCount = String.Empty;
 
-      ArrayList itemlist = virtualDirectory.GetDirectory(currentFolder);
+      List<GUIListItem> itemlist = virtualDirectory.GetDirectoryExt(currentFolder);
       Filter(ref itemlist);
 
       string strSelectedItem = folderHistory.Get(currentFolder);
@@ -1137,9 +1137,9 @@ namespace MediaPortal.GUI.Pictures
     void CreateFolderThumb(string path)
     {
       // find first 4 jpegs in this subfolder
-      ArrayList itemlist = virtualDirectory.GetDirectoryUnProtected(path, true);
+      List<GUIListItem> itemlist = virtualDirectory.GetDirectoryUnProtectedExt(path, true);
       Filter(ref itemlist);
-      ArrayList pictureList = new ArrayList();
+      List<string> pictureList = new List<string>();
       foreach (GUIListItem subitem in itemlist)
       {
         if (!subitem.IsFolder)
@@ -1253,7 +1253,7 @@ namespace MediaPortal.GUI.Pictures
       return img;
     }
 
-    void Filter(ref ArrayList itemlist)
+    void Filter(ref List<GUIListItem> itemlist)
     {
       bool isFound;
       do
@@ -1261,7 +1261,7 @@ namespace MediaPortal.GUI.Pictures
         isFound = false;
         for (int i = 0; i < itemlist.Count; ++i)
         {
-          GUIListItem item = (GUIListItem)itemlist[i];
+          GUIListItem item = itemlist[i];
           if (!item.IsFolder)
           {
             if (item.Path.IndexOf("folder.jpg") > 0)
@@ -1299,7 +1299,7 @@ namespace MediaPortal.GUI.Pictures
     void WorkerThreadFunction()
     {
       string path = currentFolder;
-      ArrayList itemlist = virtualDirectory.GetDirectoryUnProtected(path, true);
+      List<GUIListItem> itemlist = virtualDirectory.GetDirectoryUnProtectedExt(path, true);
       using (PictureDatabase dbs = new PictureDatabase())
       {
         foreach (GUIListItem item in itemlist)

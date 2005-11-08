@@ -680,11 +680,15 @@ namespace MediaPortal.GUI.TV
       dlgYesNo.SetDefaultToYes(true);
       dlgYesNo.DoModal(GetID);
 
-      if (!dlgYesNo.IsConfirmed) return;
+      if (!dlgYesNo.IsConfirmed)
+      {
+        return;
+      }
       TVDatabase.RemoveRecordedTV(rec);
       VideoDatabase.DeleteMovieInfo(rec.FileName);
       VideoDatabase.DeleteMovie(rec.FileName);
       DiskManagement.DeleteRecording(rec.FileName);
+
       LoadDirectory();
       while (m_iSelectedItem >= GetItemCount() && m_iSelectedItem > 0) m_iSelectedItem--;
       GUIControl.SelectItemControl(GetID, listViews.GetID, m_iSelectedItem);

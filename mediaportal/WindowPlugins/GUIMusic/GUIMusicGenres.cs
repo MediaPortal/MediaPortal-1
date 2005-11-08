@@ -21,6 +21,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Net;
 using System.Globalization;
 using MediaPortal.GUI.Library;
@@ -39,12 +40,10 @@ namespace MediaPortal.GUI.Music
   /// </summary>
   public class GUIMusicGenres: GUIMusicBaseWindow
   { 
-		class TrackComparer:IComparer	
+		class TrackComparer:IComparer<Song>	
 		{
-			public int Compare(object x, object y) 
+			public int Compare(Song s1,Song s2) 
 			{
-				Song s1=(Song)x;
-				Song s2=(Song)y;
 				return s1.Track-s2.Track;
 			}
 		}
@@ -412,7 +411,7 @@ namespace MediaPortal.GUI.Music
 			{
 				//queue
 				handler.Select(pItem.AlbumInfoTag as Song);
-				ArrayList songs = handler.Execute();
+        List<Song> songs = handler.Execute();
 				handler.CurrentLevel--;
 
 				//if current view is albums, then queue items by track
@@ -485,8 +484,8 @@ namespace MediaPortal.GUI.Music
             
       string strObjects=String.Empty;
 
-			ArrayList itemlist = new ArrayList();
-			ArrayList songs=handler.Execute();
+      List<GUIListItem> itemlist = new List<GUIListItem>();
+      List<Song> songs = handler.Execute();
 			if (handler.CurrentLevel>0)
 			{
 				GUIListItem pItem = new GUIListItem ("..");
@@ -537,7 +536,7 @@ namespace MediaPortal.GUI.Music
       int iTotalItems=itemlist.Count;
       if (itemlist.Count>0)
       {
-        GUIListItem rootItem=(GUIListItem)itemlist[0];
+        GUIListItem rootItem=itemlist[0];
         if (rootItem.Label=="..") iTotalItems--;
       }
       strObjects=String.Format("{0} {1}", iTotalItems, GUILocalizeStrings.Get(632));
@@ -594,8 +593,8 @@ namespace MediaPortal.GUI.Music
         if (pItem.Label == "..") return;
         string strDirectory=m_strDirectory;
         m_strDirectory=pItem.Path;
-		    
-        ArrayList itemlist=m_directory.GetDirectory(m_strDirectory);
+
+        List<GUIListItem> itemlist = m_directory.GetDirectoryExt(m_strDirectory);
         foreach (GUIListItem item in itemlist)
         {
           AddItemToPlayList(item);

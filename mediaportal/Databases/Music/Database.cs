@@ -22,6 +22,7 @@ using System;
 using System.Threading;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
+using System.Collections.Generic;
 using System.Collections;
 using SQLite.NET;
 using Core.Util;
@@ -476,9 +477,9 @@ namespace MediaPortal.Music.Database
 			return null;	
 		}
 
-	public void GetSongsByFilter(string sql, out ArrayList songs, bool artistTable, bool albumTable, bool songTable, bool genreTable)
+	public void GetSongsByFilter(string sql, out List<Song> songs, bool artistTable, bool albumTable, bool songTable, bool genreTable)
 		{
-			songs=new ArrayList();
+      songs = new List<Song>();
 			try
 			{
 				if (null == m_db) return ;
@@ -1020,7 +1021,7 @@ namespace MediaPortal.Music.Database
 	  }
     
 	  //added by Sam
-	public bool GetAllSongs(ref ArrayList songs)
+	public bool GetAllSongs(ref List<Song> songs)
 	  {
 		  try
 		  {
@@ -1115,7 +1116,7 @@ namespace MediaPortal.Music.Database
 	    return false;
     }
 	  //
-	public bool GetSongs(int searchKind,string strTitle1,ref ArrayList songs)
+	public bool GetSongs(int searchKind,string strTitle1,ref List<GUIListItem> songs)
 	  {
 		  try
 		  {
@@ -1256,7 +1257,7 @@ namespace MediaPortal.Music.Database
 	    return false;
     }
 
-    public bool GetAlbums(ref ArrayList albums)
+    public bool GetAlbums(ref List<AlbumInfo> albums)
     {
       try
       {
@@ -1802,7 +1803,7 @@ namespace MediaPortal.Music.Database
       return false;
     }
 
-	public bool GetSongsByPath2(string strPath1, ref ArrayList songs)
+	public bool GetSongsByPath2(string strPath1, ref List<SongMap> songs)
 		{
 		//Log.Write ("GetSongsByPath2 {0} ",strPath1);
 		

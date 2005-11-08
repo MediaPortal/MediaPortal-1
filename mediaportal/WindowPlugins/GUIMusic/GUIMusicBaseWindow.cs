@@ -21,6 +21,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Net;
 using System.Globalization;
 using MediaPortal.GUI.Library;
@@ -764,7 +765,7 @@ namespace MediaPortal.GUI.Music
       ArtistInfo artistinfo = new ArtistInfo();
       if (m_database.GetArtistInfo(artistName, ref artistinfo))
       {
-        ArrayList songs = new ArrayList();
+        List<Song> songs = new List<Song>();
         MusicArtistInfo artist = new MusicArtistInfo();
         artist.Set(artistinfo);
 
@@ -990,7 +991,7 @@ namespace MediaPortal.GUI.Music
       AlbumInfo albuminfo = new AlbumInfo();
       if (m_database.GetAlbumInfo(albumId, ref albuminfo))
       {
-        ArrayList songs = new ArrayList();
+        List<Song> songs = new List<Song>();
         MusicAlbumInfo album = new MusicAlbumInfo();
         album.Set(albuminfo);
 

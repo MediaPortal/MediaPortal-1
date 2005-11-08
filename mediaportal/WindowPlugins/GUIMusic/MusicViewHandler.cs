@@ -24,6 +24,7 @@ using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Soap;
 using System.Collections;
+using System.Collections.Generic;
 using SQLite.NET;
 using MediaPortal.GUI.View;
 using MediaPortal.GUI.Library;
@@ -41,7 +42,7 @@ namespace MediaPortal.GUI.Music
 		ViewDefinition currentView;
 		int						 currentLevel=0;
 		MusicDatabase	 database;
-		ArrayList      views=new ArrayList();					
+    List<ViewDefinition> views = new List<ViewDefinition>();					
 		public MusicViewHandler()
 		{
 			if (!System.IO.File.Exists("musicviews.xml"))
@@ -99,7 +100,7 @@ namespace MediaPortal.GUI.Music
 				filter1 = new FilterDefinition();filter1.Where="title";filter1.SqlOperator="";filter1.Restriction="";filter1.SortAscending=true;
 				viewAllSongs.Filters.Add(filter1);
 
-				ArrayList listViews = new ArrayList();
+        List<ViewDefinition> listViews = new List<ViewDefinition>();
 				listViews.Add(viewGenre);
 				listViews.Add(viewTop100);
 				listViews.Add(viewArtists);
@@ -122,7 +123,11 @@ namespace MediaPortal.GUI.Music
 				try
 				{
 					SoapFormatter formatter = new SoapFormatter();
-					views = (ArrayList)formatter.Deserialize(fileStream);
+          ArrayList viewlist = (ArrayList)formatter.Deserialize(fileStream);
+          foreach (ViewDefinition view in viewlist)
+          {
+            views.Add(view);
+          }
 					fileStream.Close();
 				}
 				catch
@@ -138,7 +143,7 @@ namespace MediaPortal.GUI.Music
 		}
 
 
-		public ArrayList Views
+		public List<ViewDefinition> Views
 		{
 			get { return views; }
 			set { views=value;}
@@ -183,10 +188,10 @@ namespace MediaPortal.GUI.Music
 			if (currentLevel+1 < currentView.Filters.Count) currentLevel++;
 
 		}
-		public ArrayList Execute()
+		public List<Song> Execute()
 		{
 			//build the query
-			ArrayList songs=new ArrayList();
+      List<Song> songs = new List<Song>();
 			string whereClause=String.Empty;
 			string orderClause=String.Empty;
 			if (CurrentLevel >0)
@@ -236,7 +241,7 @@ namespace MediaPortal.GUI.Music
 				}
 				else if (defRoot.Where=="year")
 				{
-					songs = new ArrayList();
+          songs = new List<Song>();
 					sql=String.Format("select distinct iYear from song ");
 					SQLiteResultSet results=database.GetResults(sql);
 					for (int i=0; i<results.Rows.Count; i++)
@@ -277,7 +282,7 @@ namespace MediaPortal.GUI.Music
 
         if (table == "album")
         {
-            ArrayList albums = new ArrayList();
+          List<AlbumInfo> albums = new List<AlbumInfo>();
             database.GetAlbums(ref albums);
             foreach (Song song in songs)
             {

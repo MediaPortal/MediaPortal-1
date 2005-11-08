@@ -1119,7 +1119,7 @@ namespace MediaPortal.TV.Recording
                 double duration = g_Player.Duration;
                 if (position < duration - 5d)
                 {
-                  g_Player.SeekAbsolute(g_Player.Duration-2d);
+                  g_Player.SeekAbsolute(g_Player.Duration-5d);
                 }
               }
             }
