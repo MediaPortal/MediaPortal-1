@@ -493,7 +493,7 @@ void Sections::FindPATPMT()
 							LogDebug("Sections::FindPatPMT() PMT decoded");
 							if (pids.VideoPid!=0) 
 							{
-								if (FindVideo())
+								if (true||FindVideo())
 								{
 									LogDebug("Sections::FindPatPMT() got video");
 									finished=true;

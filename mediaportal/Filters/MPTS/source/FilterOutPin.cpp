@@ -212,6 +212,7 @@ HRESULT CFilterOutPin::GetData(byte* pData, int lDataLength, bool allowedToWait)
 
 void CFilterOutPin::SeekIFrame()
 {
+	return;
 	try
 	{
 	if (m_pSections->pids.VideoPid<=0) return;

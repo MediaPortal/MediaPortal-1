@@ -135,8 +135,8 @@ namespace MediaPortal.TV.Database
       results = m_db.Execute("SELECT * FROM tblversion");
       if (results.Rows.Count >= 1)
       {
-        ArrayList row = (ArrayList)results.Rows[0];
-        versionNr = Int32.Parse((string)row[0]);
+        SQLiteResultSet.Row row = results.Rows[0];
+        versionNr = Int32.Parse(row.fields[0]);
       }
       else
       {
@@ -2541,8 +2541,8 @@ namespace MediaPortal.TV.Database
           results = m_db.Execute(strSQL);
           if (results.Rows.Count == 0) return "";
 
-          ArrayList arr = (ArrayList)results.Rows[0];
-          return ((string)arr[0]).Trim();
+          SQLiteResultSet.Row arr = results.Rows[0];
+          return (arr.fields[0]).Trim();
         }
         catch (Exception ex)
         {

@@ -79,10 +79,10 @@ namespace MediaPortal.Database
 			{
 				if (results.Rows.Count==1) 
 				{
-					ArrayList arr = (ArrayList)results.Rows[0];
-					if (arr.Count==1)
+					SQLiteResultSet.Row arr = results.Rows[0];
+					if (arr.fields.Count==1)
 					{
-						if ( (string)arr[0] == table) 
+						if ( arr.fields[0] == table) 
 						{
 							return true;
 						}
@@ -137,10 +137,10 @@ namespace MediaPortal.Database
 					if (results.Rows.Count==1) 
 					{
 						Log.Write(" check result:0");
-						ArrayList arr = (ArrayList)results.Rows[0];
-						if (arr.Count==1)
+            SQLiteResultSet.Row arr = results.Rows[0];
+						if (arr.fields.Count==1)
 						{
-							string tableName=((string)arr[0]).Trim();
+							string tableName=(arr.fields[0]).Trim();
 							if ( String.Compare(tableName,strTable,true)==0) 
 							{
 								//Log.Write(" table exists");
@@ -148,7 +148,7 @@ namespace MediaPortal.Database
 							}
 							Log.Write(" table has different name:[{0}[ [{1}]", tableName,strTable);
 						}
-						else Log.Write(" array contains:{0} items?", arr.Count);
+						else Log.Write(" array contains:{0} items?", arr.fields.Count);
 					}
 				}
 
@@ -200,13 +200,13 @@ namespace MediaPortal.Database
 		{
 			if (null == results) return String.Empty;
 			if (results.Rows.Count < iRecord) return String.Empty;
-			ArrayList arr = (ArrayList)results.Rows[iRecord];
+      SQLiteResultSet.Row arr = results.Rows[iRecord];
 			int iCol = 0;
 			if (results.ColumnIndices.ContainsKey(strColum))
 			{
 				iCol=(int)results.ColumnIndices[strColum];
-				if (arr[iCol]==null) return String.Empty;
-				string strLine = ((string)arr[iCol]).Trim();
+				if (arr.fields[iCol]==null) return String.Empty;
+				string strLine = (arr.fields[iCol]).Trim();
 				strLine = strLine.Replace("''","'");
 				return strLine;
 			}
@@ -216,8 +216,8 @@ namespace MediaPortal.Database
 			if (results.ColumnIndices.ContainsKey(strColum))
 			{
 				iCol=(int)results.ColumnIndices[strColum];
-				if (arr[iCol]==null) return String.Empty;
-				string strLine = ((string)arr[iCol]).Trim();
+				if (arr.fields[iCol]==null) return String.Empty;
+				string strLine = (arr.fields[iCol]).Trim();
 				strLine = strLine.Replace("''","'");
 				return strLine;
 			}
@@ -242,9 +242,9 @@ namespace MediaPortal.Database
 			if (null == results) return String.Empty;
 			if (results.Rows.Count < iRecord) return String.Empty;
 			if (column<0 || column>=results.ColumnNames.Count ) return String.Empty;
-			ArrayList arr = (ArrayList)results.Rows[iRecord];
-			if (arr[column]==null) return String.Empty;
-			string strLine = ((string)arr[column]).Trim();
+			SQLiteResultSet.Row arr = results.Rows[iRecord];
+			if (arr.fields[column]==null) return String.Empty;
+			string strLine = (arr.fields[column]).Trim();
 			strLine = strLine.Replace("''","'");
 			return strLine;;
 		}

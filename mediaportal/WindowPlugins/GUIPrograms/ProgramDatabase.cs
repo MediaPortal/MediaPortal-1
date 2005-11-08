@@ -102,10 +102,10 @@ namespace ProgramsDatabase
       {
         if (results.Rows.Count == 1)
         {
-          ArrayList arr = (ArrayList)results.Rows[0];
-          if (arr.Count == 1)
+          SQLiteResultSet.Row arr = results.Rows[0];
+          if (arr.fields.Count == 1)
           {
-            if ((string)arr[0] == strName)
+            if (arr.fields[0] == strName)
             {
               res = true;
             }

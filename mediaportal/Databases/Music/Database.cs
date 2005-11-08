@@ -495,21 +495,21 @@ namespace MediaPortal.Music.Database
 				for (int i=0; i<results.Rows.Count; i++)
 				{
 					song = new Song();
-					ArrayList fields = (ArrayList)results.Rows[i];
+          SQLiteResultSet.Row fields = results.Rows[i];
 					if (artistTable && !songTable)
 					{
-						song.Artist = (string)fields[1];
-						song.artistId= (int)Math.Floor(0.5d+Double.Parse((string)fields[0]));
+						song.Artist = fields.fields[1];
+            song.artistId = (int)Math.Floor(0.5d + Double.Parse(fields.fields[0]));
 						//Log.Write ("artisttable and not songtable, artistid={0}",song.artistId);
 					}
 					if (albumTable && !songTable)
 					{
-						song.Album =  (string)fields[2];
+						song.Album =  fields.fields[2];
 						///TFRO 11-6-2005
 						///The 2 lines below don't always give the right answer
 						///Todo: find out how to get a int from the db WITHOUT decimals
-						song.albumId = (int)Math.Floor(0.5d+Double.Parse((string)fields[0]));
-						song.artistId= (int)Math.Floor(0.5d+Double.Parse((string)fields[1]));
+						song.albumId = (int)Math.Floor(0.5d+Double.Parse(fields.fields[0]));
+            song.artistId = (int)Math.Floor(0.5d + Double.Parse(fields.fields[1]));
 						///So we replace this immediatly with some other code
 						NumberFormatInfo nfi = new CultureInfo( "en-US", false ).NumberFormat;
 						nfi.NumberDecimalSeparator = ".";
@@ -517,13 +517,13 @@ namespace MediaPortal.Music.Database
 						song.albumId=Convert.ToInt32(Math.Round(Double.Parse(DatabaseUtility.Get(results, i, "album.idAlbum"),nfi)));
 						song.artistId=Convert.ToInt32(Math.Round(Double.Parse(DatabaseUtility.Get(results, i, "album.idArtist"),nfi)));
 
-						if (fields.Count>=5)
-							song.Artist = (string)fields[4];
+						if (fields.fields.Count>=5)
+							song.Artist = fields.fields[4];
 					}
 					if (genreTable && !songTable)
 					{
-						song.Genre = (string)fields[1];
-						song.genreId = (int)Math.Floor(0.5d+Double.Parse((string)fields[0]));
+						song.Genre = fields.fields[1];
+						song.genreId = (int)Math.Floor(0.5d+Double.Parse(fields.fields[0]));
 						//Log.Write ("genretable and not songtable, genreid={0}",song.genreId);
 					}
 					if (songTable)
@@ -1006,8 +1006,8 @@ namespace MediaPortal.Music.Database
 			  strSQL = String.Format("select count(*) from song");
 			  SQLiteResultSet results;
 			  results = m_db.Execute(strSQL);
-			  ArrayList row = (ArrayList)results.Rows[0];
-			  NumOfSongs = Int32.Parse((string)row[0]);
+			  SQLiteResultSet.Row row = results.Rows[0];
+			  NumOfSongs = Int32.Parse(row.fields[0]);
 			  return NumOfSongs;
 		  }
 		  catch (Exception ex) 

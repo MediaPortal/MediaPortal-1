@@ -34,8 +34,9 @@ namespace SQLite.NET
 
 
 	public class SQLiteClient : IDisposable
-	{
-		[DllImport("sqlite.dll")]
+  {
+    #region imports
+    [DllImport("sqlite.dll")]
 		internal static extern int sqlite3_open16 ([MarshalAs(UnmanagedType.LPWStr)] string dbname, out IntPtr handle);
 
 		[DllImport("sqlite.dll")]
@@ -80,14 +81,19 @@ namespace SQLite.NET
 		internal static extern double sqlite3_column_double (IntPtr pVm, int col);
     [DllImport("sqlite.dll")]
     internal static extern IntPtr sqlite3_libversion();
-		
-		// Fields
+#endregion
+
+#region variables
+    // Fields
 		private int busyRetries=5;
 		private int busyRetryDelay=25;
 		IntPtr dbHandle=IntPtr.Zero;
 		string databaseName=String.Empty;
-		//private long dbHandleAdres=0;
-		// Nested Types
+    //private long dbHandleAdres=0;
+#endregion
+
+    #region enums
+    // Nested Types
 		public enum SqliteError : int 
 		{
 			/// <value>Successful result</value>
@@ -148,7 +154,8 @@ namespace SQLite.NET
 			ROW       = 100,
 			/// <value>sqlite_step() has finished executing</value>
 			DONE      = 101
-		}
+    }
+    #endregion
 
     static SQLiteClient()
     {
@@ -292,8 +299,8 @@ namespace SQLite.NET
 						set1.ColumnIndices[colName]=i;
 					}
 				}
-				
-				ArrayList row = new ArrayList();
+
+        SQLiteResultSet.Row row = new SQLiteResultSet.Row();
 				for (int i = 0; i < pN; i++) 
 				{
 					string colData = "";
@@ -302,7 +309,7 @@ namespace SQLite.NET
 					{
 						colData = Marshal.PtrToStringUni (pName);
 					}
-					row.Add(colData);
+					row.fields.Add(colData);
 				}
 				set1.Rows.Add(row);
 			}
@@ -313,7 +320,7 @@ namespace SQLite.NET
 			//Log.Write("dbs:{0} ~ctor()", databaseName);
 			this.Close();
 		}
- 
+ /*
 
 		public ArrayList GetAll(string query)
 		{
@@ -381,8 +388,19 @@ namespace SQLite.NET
 			return set1.GetRowHash(row);
 		}
  
+    */
+
+    public ArrayList GetColumn(string query)
+    {
+      return this.GetColumn(query, 0);
+    }
 
 
+    public ArrayList GetColumn(string query, int column)
+    {
+      SQLiteResultSet set1 = this.Execute(query);
+      return set1.GetColumn(column);
+    }
 
 		public int LastInsertID()
 		{

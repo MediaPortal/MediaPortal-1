@@ -1647,16 +1647,16 @@ namespace MediaPortal.Video.Database
 				for (int i=0; i<results.Rows.Count; i++)
 				{
 					movie = new IMDBMovie();
-					ArrayList fields = (ArrayList)results.Rows[i];
+					SQLiteResultSet.Row fields = results.Rows[i];
 					if (actorTable && !movieinfoTable)
 					{
-						movie.Actor = (string)fields[1];
-						movie.actorId= (int)Math.Floor(0.5d+Double.Parse((string)fields[0]));
+						movie.Actor = fields.fields[1];
+						movie.actorId= (int)Math.Floor(0.5d+Double.Parse(fields.fields[0]));
 					}
 					if (genreTable && !movieinfoTable)
 					{
-						movie.SingleGenre = (string)fields[1];
-						movie.genreId = (int)Math.Floor(0.5d+Double.Parse((string)fields[0]));
+						movie.SingleGenre = fields.fields[1];
+            movie.genreId = (int)Math.Floor(0.5d + Double.Parse(fields.fields[0]));
 					}
 					if (movieinfoTable)
 					{

@@ -92,8 +92,8 @@ namespace ProgramsDatabase
         this.AppID, this.FileID));
       if (results != null && results.Rows.Count > 0)
       {
-        ArrayList arr = (ArrayList)results.Rows[0];
-        res = Int32.Parse((string)arr[0]);
+        SQLiteResultSet.Row arr = results.Rows[0];
+        res = Int32.Parse(arr.fields[0]);
       }
       return (res > 0);
     }

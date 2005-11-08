@@ -30,7 +30,7 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-#ifndef DEBUG
+#ifdef DEBUG
 char *logbuffer=NULL; 
 void Log(const char *fmt, ...) 
 {
@@ -1140,6 +1140,7 @@ void Sections::GrabEPG()
 }
 bool Sections::IsEPGGrabbing()
 {
+	if (!m_bParseEPG) GrabEPG();
 	return m_bParseEPG;
 }
 bool Sections::IsEPGReady()

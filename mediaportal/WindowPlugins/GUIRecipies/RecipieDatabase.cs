@@ -137,7 +137,7 @@ namespace GUIRecipies
 			// look to exist key
 			string rSQL = String.Format("SELECT * FROM MAINTENANCE WHERE KEY = '{0}'",key);
 			SQLiteResultSet rs = m_db.Execute( rSQL );
-			BuildMaintenance( rs.GetRow( 0 ) );
+      BuildMaintenance((ArrayList)rs.RowsList[0]);
 			if (M_Key==key) return true;
 			else return false;
 		}
@@ -152,7 +152,7 @@ namespace GUIRecipies
 			M_Key=0;
 			string rSQL = String.Format("SELECT * FROM MAINTENANCE WHERE KEY = '{0}'",key.ToString() );
 			SQLiteResultSet rs = m_db.Execute( rSQL );
-			BuildMaintenance( rs.GetRow( 0 ) );
+      BuildMaintenance((ArrayList)rs.RowsList[0]);
 
 			rSQL = String.Format( "INSERT INTO MAINTENANCE VALUES ( null, '{0}', '{1}', '{2}', {3} )", key.ToString(),content,var1,var2);
 			rs = m_db.Execute( rSQL );
@@ -187,7 +187,7 @@ namespace GUIRecipies
 				SQLiteResultSet rs = m_db.Execute( cSQL );
 				string cId = "";
 
-				if( rs.Rows.Count > 0 ){
+				if( rs.RowsList.Count > 0 ){
 					// this category already exists
 					cId = rs.GetField( 0, 0 );
 				} else {
@@ -207,7 +207,7 @@ namespace GUIRecipies
 		{
 			string rSQL = String.Format("SELECT * FROM RECIPIE WHERE TITLE = '{0}'",title );
 			SQLiteResultSet rs = m_db.Execute( rSQL );
-			return BuildRecipie( rs.GetRow( 0 ) );
+      return BuildRecipie((ArrayList)rs.RowsList[0]);
 		}
 
 		private Recipie BuildRecipie(ArrayList row){
@@ -317,7 +317,7 @@ namespace GUIRecipies
 			}
 			SQLiteResultSet rs = m_db.Execute( rSQL );	
 
-			foreach( ArrayList row in rs.Rows ) {
+			foreach( ArrayList row in rs.RowsList ) {
 				recipies.Add( BuildCategorie( row  ));
 			}
 			return recipies;
@@ -328,7 +328,7 @@ namespace GUIRecipies
 			ArrayList recipies = new ArrayList();
 			string sql = String.Format( "Select * from favorite" );
 			SQLiteResultSet rs = m_db.Execute( sql );
-			foreach( ArrayList row in rs.Rows )
+			foreach( ArrayList row in rs.RowsList )
 			{
 				recipies.Add( BuildCategorie( row ));
 			}
@@ -342,7 +342,7 @@ namespace GUIRecipies
 			string categoryID = (string) rs.GetField(0,2); 
 			string sql2 = String.Format( "Select * from main_category where sub = {0}", categoryID );
 			rs = m_db.Execute( sql2 );
-			foreach( ArrayList row in rs.Rows ) {
+			foreach( ArrayList row in rs.RowsList ) {
 				recipies.Add( BuildCategorie( row ));
 			}
 			return recipies;
@@ -357,7 +357,7 @@ namespace GUIRecipies
 			string categoryID = rs.GetField(0,0).ToString(); 
 			string sql2 = String.Format( "Select recipie_id,title from recipie_category where category_id = {0}", categoryID );
 			rs = m_db.Execute( sql2 );
-			foreach( ArrayList row in rs.Rows )
+			foreach( ArrayList row in rs.RowsList )
 			{
 				recipies.Add( BuildCategorie( row ));
 			}

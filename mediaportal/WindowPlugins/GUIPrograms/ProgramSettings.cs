@@ -48,8 +48,8 @@ namespace ProgramsDatabase
       results = sqlDB.Execute(SQL);
       if (results != null && results.Rows.Count > 0)
       {
-        ArrayList arr = (ArrayList)results.Rows[0];
-        res = (string)arr[0];
+        SQLiteResultSet.Row arr = results.Rows[0];
+        res = arr.fields[0];
       }
       //Log.Write("dw read setting key:{0}\nvalue:{1}", Key, res);
       return res;
@@ -62,8 +62,8 @@ namespace ProgramsDatabase
       results = sqlDB.Execute("SELECT COUNT(*) FROM setting WHERE key ='" + Key + "'");
       if (results != null && results.Rows.Count > 0)
       {
-        ArrayList arr = (ArrayList)results.Rows[0];
-        res = Int32.Parse((string)arr[0]);
+        SQLiteResultSet.Row arr = results.Rows[0];
+        res = Int32.Parse(arr.fields[0]);
       }
       return res;
     }

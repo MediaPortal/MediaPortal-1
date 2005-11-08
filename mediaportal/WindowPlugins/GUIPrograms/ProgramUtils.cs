@@ -99,15 +99,15 @@ namespace Programs.Utils
         return "";
       if (results.Rows.Count < iRecord)
         return "";
-      ArrayList arr = (ArrayList)results.Rows[iRecord];
+      SQLiteResultSet.Row arr = results.Rows[iRecord];
       int iCol = 0;
       foreach (string columnName in results.ColumnNames)
       {
         if (strColumn == columnName)
         {
-          if (arr[iCol] == null)
+          if (arr.fields[iCol] == null)
             return "";
-          return ((string)arr[iCol]).Trim();
+          return (arr.fields[iCol]).Trim();
         }
         iCol++;
       }

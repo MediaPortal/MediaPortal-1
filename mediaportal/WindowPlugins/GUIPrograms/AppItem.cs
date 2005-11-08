@@ -864,12 +864,12 @@ namespace ProgramsDatabase
         SQLiteResultSet results;
         int res = 0;
         results = sqlDB.Execute("SELECT MAX(APPID) FROM application");
-        ArrayList arr = (ArrayList)results.Rows[0];
-        if (arr[0] != null)
+        SQLiteResultSet.Row arr = results.Rows[0];
+        if (arr.fields[0] != null)
         {
-          if ((string)arr[0] != "")
+          if (arr.fields[0] != "")
           {
-            res = Int32.Parse((string)arr[0]);
+            res = Int32.Parse(arr.fields[0]);
           }
         }
         return res + 1;

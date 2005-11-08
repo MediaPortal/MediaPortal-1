@@ -120,13 +120,13 @@ namespace MediaPortal.Util
     {
       if (null == results) return "";
       if (results.Rows.Count < iRecord) return "";
-      ArrayList arr = (ArrayList)results.Rows[iRecord];
+      SQLiteResultSet.Row arr = results.Rows[iRecord];
       int iCol = 0;
       foreach (string columnName in results.ColumnNames)
       {
         if (strColum == columnName)
         {
-          string strLine = ((string)arr[iCol]).Trim();
+          string strLine = arr.fields[iCol].Trim();
           strLine = strLine.Replace("''","'");
           return strLine;
         }
