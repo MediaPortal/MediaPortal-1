@@ -222,7 +222,8 @@ namespace MediaPortal.TV.Recording
     IMHWGrabber _mhwGrabberInterface = null;
     IATSCGrabber _atscGrabberInterface = null;
     IBaseFilter _filterDvbAnalyzer = null;
-
+    bool _graphPaused = false;
+    DateTime _graphPausedTimer = DateTime.Now;
 #if USEMTSWRITER
 		IBaseFilter						  _filterTsWriter=null;
 		IMPTSWriter							_tsWriterInterface=null;
@@ -3621,6 +3622,18 @@ namespace MediaPortal.TV.Recording
           return;
         }
       }
+      if (_graphPaused)
+      {
+        ts = DateTime.Now - _graphPausedTimer;
+        if (g_Player.CurrentPosition + 3d < g_Player.Duration)
+        {
+          g_Player.ContinueGraph();
+          if (g_Player.CurrentPosition+5d <g_Player.Duration )
+            g_Player.SeekAbsolute(g_Player.Duration);
+          _graphPaused = false;
+        }
+        return;
+      }
 
       if (GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.Vmr9FPS < 1f)
       {
@@ -3670,8 +3683,12 @@ namespace MediaPortal.TV.Recording
         string fname = Recorder.GetTimeShiftFileNameByCardId(_cardId);
         if (g_Player.Playing && g_Player.CurrentFile == fname)
         {
-          restartGraph = true;
-          g_Player.PauseGraph();
+          if (g_Player.CurrentPosition + 3d >= g_Player.Duration)
+          {
+            _graphPaused = true;
+            restartGraph = true;
+            g_Player.PauseGraph();
+          }
         }
 #endif
         if (_vmr9 != null) _vmr9.Enable(false);
@@ -3960,11 +3977,12 @@ namespace MediaPortal.TV.Recording
 					g_Player.ContinueGraph();
 				}*/
 #else
-				if (restartGraph)
-          g_Player.ContinueGraph();
+//				if (restartGraph)
+ //         g_Player.ContinueGraph();
 #endif
         if (_vmr9 != null) _vmr9.Enable(true);
         _signalLostTimer = DateTime.Now;
+        _graphPausedTimer = DateTime.Now;
       }
     }//public void TuneChannel(AnalogVideoStandard standard,int iChannel,int country)
 

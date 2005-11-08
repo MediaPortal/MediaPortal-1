@@ -1111,17 +1111,16 @@ namespace MediaPortal.TV.Recording
             timeTimeshiftingStarted = DateTime.Now;
 #if !USEMTSWRITER
             if (IsTimeShifting && !View)
-            {
+            {/*
               if (g_Player.Playing && g_Player.CurrentFile == Recorder.GetTimeShiftFileName(ID - 1))
               {
-                ;
                 double position = g_Player.CurrentPosition;
                 double duration = g_Player.Duration;
                 if (position < duration - 5d)
                 {
                   g_Player.SeekAbsolute(g_Player.Duration-5d);
                 }
-              }
+              }*/
             }
 #endif
           }
