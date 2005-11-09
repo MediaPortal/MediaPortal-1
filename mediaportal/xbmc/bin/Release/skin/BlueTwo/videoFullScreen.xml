@@ -172,6 +172,18 @@
 		<colordiffuse>White</colordiffuse> 
 	</control> 
 	<control>
+		<description>bar image</description> 
+		<type>image</type> 
+		<id>105</id> 
+		<posX>60</posX> 
+		<posY>474</posY>
+		<width>600</width> 
+		<texture>dialog_osd_background.png</texture> 
+		<colorkey>0</colorkey> 
+		<colordiffuse>White</colordiffuse> 
+		<visible>no</visible>
+	</control>
+	<control>
 		<description>background</description> 
 		<type>image</type> 
 		<id>104</id> 

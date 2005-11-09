@@ -174,6 +174,18 @@
 			<colordiffuse>ffffffff</colordiffuse> 
 		</control> 
 		<control>
+			<description>bar image</description> 
+			<type>image</type> 
+			<id>105</id> 
+			<posX>60</posX> 
+			<posY>474</posY>
+			<width>600</width> 
+			<texture>dialog_osd_background.png</texture> 
+			<colorkey>0</colorkey> 
+			<colordiffuse>White</colordiffuse> 
+			<visible>no</visible>
+		</control>
+		<control>
 			<description>background</description> 
 			<type>image</type> 
 			<id>104</id> 
@@ -202,7 +214,6 @@
 			<fillbackgroundtexture>-</fillbackgroundtexture>
 			<fillbgxoff>10</fillbgxoff>
 			<fillbgyoff>10</fillbgyoff>
-			
 			<filltexture1>osd_progress_mid_red.png</filltexture1>
 			<filltexture2>osd_progress_mid.png</filltexture2>
 			<filltexture3>osd_progress_mid_orange.png</filltexture3>
@@ -313,7 +324,6 @@
 			<textcolor>FFFFFFFF</textcolor> 
 			<visible>yes</visible> 
 		</control>
-
 		<control>
 			<type>image</type> 
 			<id>500</id> 
@@ -337,6 +347,5 @@
 			<colordiffuse>White</colordiffuse> 
 			<visible>no</visible>
 		</control>		
-
   </controls>
 </window>
