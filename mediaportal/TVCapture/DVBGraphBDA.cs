@@ -3526,6 +3526,7 @@ namespace MediaPortal.TV.Recording
       _epgGrabber.Process();
       if (_epgGrabber.Done)
       {
+        _epgGrabber.Reset();
         if (_graphState == State.Epg)
         {
           Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:EPG done");
@@ -3557,7 +3558,7 @@ namespace MediaPortal.TV.Recording
         }
       }
 
-      if (_streamDemuxer.IsScrambled)
+      //if (_streamDemuxer.IsScrambled)
       {
         if (_refreshPmtTable && Network() != NetworkType.ATSC)
         {
@@ -5156,42 +5157,46 @@ namespace MediaPortal.TV.Recording
           _currentTuningObject.ProgramNumber,
           (int)Network());
 #if COMPARE_PMT
-				if (System.IO.File.Exists(pmtName))
-				{
-					byte[] pmt=null;
-					using (System.IO.FileStream stream = new System.IO.FileStream(pmtName,System.IO.FileMode.Open,System.IO.FileAccess.Read,System.IO.FileShare.None))
-					{
-						long len=stream.Length;
-						if (len>6)
-						{
-							pmt = new byte[len];
-							stream.Read(pmt,0,(int)len);
-							stream.Close();
-							if (pmt.Length==pmtTable.Length)
-							{
-								bool isSame=true;
-								for (int i=0; i < pmt.Length;++i)
-								{
-									if (pmt[i]!=pmtTable[i]) isSame=false;
-								}
-								if (isSame) return;
-							}
-						}
-					}
-				}
-#endif
-        Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA: OnPMTIsChanged:{0}", pmtName);
-        using (System.IO.FileStream stream = new System.IO.FileStream(pmtName, System.IO.FileMode.Create, System.IO.FileAccess.Write, System.IO.FileShare.None))
+        bool isSame = true;
+        if (System.IO.File.Exists(pmtName))
         {
-          stream.Write(pmtTable, 0, pmtTable.Length);
-          stream.Close();
+          byte[] pmt = null;
+          using (System.IO.FileStream stream = new System.IO.FileStream(pmtName, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.None))
+          {
+            long len = stream.Length;
+            if (len > 6)
+            {
+              pmt = new byte[len];
+              stream.Read(pmt, 0, (int)len);
+              stream.Close();
+              if (pmt.Length == pmtTable.Length)
+              {
+                for (int i = 0; i < pmt.Length; ++i)
+                {
+                  if (pmt[i] != pmtTable[i]) isSame = false;
+                }
+              }
+            }
+          }
         }
-        _refreshPmtTable = true;
-        if (Recorder.IsCardViewing(_cardId))
+        else isSame = false;
+
+#endif
+        if (!isSame)
+        {
+          Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA: OnPMTIsChanged:{0}", pmtName);
+          using (System.IO.FileStream stream = new System.IO.FileStream(pmtName, System.IO.FileMode.Create, System.IO.FileAccess.Write, System.IO.FileShare.None))
+          {
+            stream.Write(pmtTable, 0, pmtTable.Length);
+            stream.Close();
+          }
+          _refreshPmtTable = true;
+          SendPMT();
+        }
+        if (Recorder.IsCardViewing(_cardId) || _graphState==State.Epg)
         {
           _epgGrabber.GrabEPG(_currentTuningObject.HasEITSchedule == true);
         }
-        SendPMT();
       }
       catch (Exception ex)
       {
@@ -5292,7 +5297,6 @@ namespace MediaPortal.TV.Recording
       }
       _isGraphRunning = true;
       _graphState = State.Epg;
-      _epgGrabber.GrabEPG(_currentTuningObject.HasEITSchedule == true);
     }
   }//public class DVBGraphBDA 
 

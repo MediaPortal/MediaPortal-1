@@ -1725,6 +1725,39 @@ namespace MediaPortal.TV.Recording
       return false;
     }
 
+    static void GrabEpg()
+    {
+      foreach (TVCaptureDevice card in _tvcards)
+      {
+        //card is empty
+        if (card.Network == NetworkType.Analog) continue;
+        if (card.IsEpgGrabbing) continue;
+        if (card.IsRadio || card.IsRecording || card.IsTimeShifting || card.View) continue;
+        if (!card.IsEpgGrabbing)
+        {
+          foreach (TVChannel chan in _tvChannelsList)
+          {
+            TimeSpan ts = DateTime.Now-chan.LastDateTimeEpgGrabbed;
+            if (ts.TotalHours > 2)
+            {
+              if (TVDatabase.CanCardViewTVChannel(chan.Name, card.ID) || _tvcards.Count == 1)
+              {
+                TVProgram prog = TVDatabase.GetLastProgramForChannel(chan);
+                if (prog.EndTime < DateTime.Now.AddHours(12))
+                {
+                  //grab the epg
+                  card.GrabEpg(chan);
+                  chan.LastDateTimeEpgGrabbed = DateTime.Now;
+                  break;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+
     /// <summary>
     /// ProcessCards()
     /// This method gets called regulary and will terminate all cards
@@ -1814,6 +1847,7 @@ namespace MediaPortal.TV.Recording
       }
       if (GUIGraphicsContext.InVmr9Render) return;
       ProcessCards();
+      GrabEpg();
       DiskManagement.Process();
       TimeSpan ts = DateTime.Now - _progressBarTimer;
       if (g_Player.Playing && (Math.Abs(g_Player.Duration - _duration) >= 1 || Math.Abs(g_Player.CurrentPosition - _lastPosition) >= 1))

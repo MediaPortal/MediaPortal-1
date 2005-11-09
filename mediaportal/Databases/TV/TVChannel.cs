@@ -220,6 +220,7 @@ namespace MediaPortal.TV.Database
 		private TVProgram _currentProgram=null;
 		private TVProgram _previousProgram=null;
 		private TVProgram _nextProgram=null;
+    private DateTime _lastTimeEpgGrabbed = DateTime.MinValue;
 
 		AnalogVideoStandard _TVStandard;
 
@@ -246,6 +247,11 @@ namespace MediaPortal.TV.Database
     #endregion
 
     #region properties
+    public DateTime LastDateTimeEpgGrabbed
+    {
+      get { return _lastTimeEpgGrabbed; }
+      set { _lastTimeEpgGrabbed = value; }
+    }
     /// <summary> 
 		/// Property to indicate if this channel is scrambled or not
 		/// </summary>

@@ -239,7 +239,8 @@ namespace MediaPortal.TV.Recording
       Idle,
       Grabbing,
       Parsing,
-      Updating
+      Updating,
+      Done
     }
     #endregion
 
@@ -305,6 +306,7 @@ namespace MediaPortal.TV.Recording
           _currentState = State.Grabbing;
           Log.WriteFile(Log.LogType.EPG, "epg-grab: start ATSC grabber");
           _atscInterface.GrabATSC();
+          _timeoutTimer = DateTime.Now;
         }
       }
       else
@@ -312,16 +314,26 @@ namespace MediaPortal.TV.Recording
         if (_grabEPG)
         {
           _currentState = State.Grabbing;
-          Log.WriteFile(Log.LogType.EPG, "epg-grab: start EPG grabber");
           if (_epgInterface != null)
+          {
+            Log.WriteFile(Log.LogType.EPG, "epg-grab: start EPG grabber");
             _epgInterface.GrabEPG();
+            _timeoutTimer = DateTime.Now;
+          }
+          else
+          {
+            Log.WriteFile(Log.LogType.EPG, "epg-grab: start EPG grabber:epginterface=null");
+          }
         }
         else
         {
           _currentState = State.Grabbing;
           Log.WriteFile(Log.LogType.EPG, "epg-grab: start MHW grabber");
           if (_mhwInterface != null)
+          {
             _mhwInterface.GrabMHW();
+            _timeoutTimer = DateTime.Now;
+          }
         }
       }
 
@@ -331,9 +343,9 @@ namespace MediaPortal.TV.Recording
       if (_currentState != State.Idle)
       {
         TimeSpan ts = DateTime.Now - _timeoutTimer;
-        if (ts.TotalMinutes >= 5)
+        if (ts.TotalMinutes >= 1)
         {
-          _currentState = State.Idle;
+          _currentState = State.Done;
         }
       }
       bool ready = false;
@@ -345,18 +357,32 @@ namespace MediaPortal.TV.Recording
             if (_atscInterface != null)
             {
               _atscInterface.IsATSCReady(out ready);
-              if (ready) _currentState = State.Parsing;
+              if (ready)
+              {
+                _timeoutTimer = DateTime.Now;
+                _currentState = State.Parsing;
+              }
             }
           }
           else if (_epgInterface != null && _grabEPG)
           {
             _epgInterface.IsEPGReady(out ready);
-            if (ready) _currentState = State.Parsing;
+            uint count;
+            _epgInterface.GetEPGChannelCount(out count); 
+            if (ready)
+            {
+              _timeoutTimer = DateTime.Now;
+              _currentState = State.Parsing;
+            }
           }
           else if (_mhwInterface != null && !_grabEPG)
           {
             _mhwInterface.IsMHWReady(out ready);
-            if (ready) _currentState = State.Parsing;
+            if (ready)
+            {
+              _timeoutTimer = DateTime.Now;
+              _currentState = State.Parsing;
+            }
           }
           break;
 
@@ -378,9 +404,13 @@ namespace MediaPortal.TV.Recording
           break;
       }
     }
+    public void Reset()
+    {
+      _currentState = State.Idle;
+    }
     public bool Done
     {
-      get { return _currentState==State.Idle; }
+      get { return _currentState==State.Done; }
     }
     #endregion
 
@@ -619,6 +649,7 @@ namespace MediaPortal.TV.Recording
 
       foreach (EPGChannel channel in events)
       {
+        _timeoutTimer = DateTime.Now;
         if (channel.TvChannel == null) continue;
 
         foreach (EPGEvent epgEvent in channel.EpgEvents)
@@ -657,7 +688,7 @@ namespace MediaPortal.TV.Recording
       }
       Log.WriteFile(Log.LogType.EPG, "epg-grab: done");
       TVDatabase.SupressEvents = false;
-      _currentState = State.Idle;
+      _currentState = State.Done;
     }
     #endregion
 
@@ -671,6 +702,7 @@ namespace MediaPortal.TV.Recording
       Log.WriteFile(Log.LogType.EPG, "mhw-grab: updating tv database");
       foreach (MHWEvent mhwEvent in events)
       {
+        _timeoutTimer = DateTime.Now;
         if (mhwEvent.TvChannel == null) continue;
         TVProgram tv = new TVProgram();
         tv.Start = Util.Utils.datetolong(mhwEvent.StartTime);
@@ -685,7 +717,7 @@ namespace MediaPortal.TV.Recording
         TVDatabase.UpdateProgram(tv);
 
       }
-      _currentState = State.Idle;
+      _currentState = State.Done;
 
     }
     #endregion
@@ -701,6 +733,7 @@ namespace MediaPortal.TV.Recording
       Log.WriteFile(Log.LogType.EPG, "atsc-grab: updating tv database");
       foreach (ATSCEvent atscEvent in events)
       {
+        _timeoutTimer = DateTime.Now;
         if (atscEvent.TvChannel == null) continue;
         TVProgram tv = new TVProgram();
         tv.Start = Util.Utils.datetolong(atscEvent.StartTime);
@@ -715,7 +748,7 @@ namespace MediaPortal.TV.Recording
         TVDatabase.UpdateProgram(tv);
 
       }
-      _currentState = State.Idle;
+      _currentState = State.Done;
     }
     #endregion
     #endregion
