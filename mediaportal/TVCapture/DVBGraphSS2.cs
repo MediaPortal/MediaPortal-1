@@ -114,7 +114,7 @@ namespace MediaPortal.TV.Recording
 			Recording,
 			Viewing,
 			Radio,
-			EPGGrab
+			Epg
 		};
 		/* tuner type from SDK
 			TUNER_SATELLITE = 0,
@@ -294,6 +294,8 @@ namespace MediaPortal.TV.Recording
 
 		bool m_lastTuneError = false;
 		NetworkType m_NetworkType = NetworkType.DVBS;
+    
+
 		#endregion
 
 
@@ -2365,7 +2367,20 @@ namespace MediaPortal.TV.Recording
 			//m_epgGrabber.GrabEPG(m_currentChannel.HasEITSchedule==true);
 			if (m_streamDemuxer != null) m_streamDemuxer.Process();
 			CheckVideoResolutionChanges();
-			m_epgGrabber.Process();
+
+      m_epgGrabber.Process();
+      if (m_epgGrabber.Done)
+      {
+        m_epgGrabber.Reset();
+        if (m_graphState == State.Epg)
+        {
+          Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2:EPG done");
+          m_mediaControl.Stop();
+          m_graphState= State.Created;
+          return;
+        }
+      }
+
 			UpdateVideoState();
 
 			if (m_currentChannel != null)
@@ -3327,11 +3342,27 @@ namespace MediaPortal.TV.Recording
     }
     public bool IsEpgGrabbing()
     {
-      return false;
+      return (m_graphState == State.Epg);
     }
 
-    public void GrabEpg(TVChannel chan)
+    public void GrabEpg(TVChannel channel)
     {
+      // tune to the correct channel
+      Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2:Grab epg for :{0}", channel.Name);
+      TuneChannel(channel);
+      //now start the graph
+      Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2: start graph");
+
+      if (m_mediaControl == null)
+      {
+        m_mediaControl = (IMediaControl)m_graphBuilder;
+      }
+      int hr = m_mediaControl.Run();
+      if (hr < 0)
+      {
+        Log.WriteFile(Log.LogType.Capture, true, "DVBGraphSS2: FAILED unable to start graph :0x{0:X}", hr);
+      }
+      m_graphState = State.Epg;
     }
 	}// class
 }// namespace

@@ -3672,7 +3672,7 @@ namespace MediaPortal.TV.Recording
       //bool restartGraph=false;
       _lastPMTVersion = -1;
       _pmtRetyCount = 0;
-      bool restartGraph=false;
+      //bool restartGraph=false;
       try
       {
 #if USEMTSWRITER
@@ -3693,7 +3693,6 @@ namespace MediaPortal.TV.Recording
           //if (g_Player.CurrentPosition + 3d >= g_Player.Duration)
           {
             _graphPaused = true;
-            restartGraph = true;
             g_Player.PauseGraph();
           }
         }
