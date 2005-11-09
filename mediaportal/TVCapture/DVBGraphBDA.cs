@@ -187,7 +187,8 @@ namespace MediaPortal.TV.Recording
       TimeShifting,
       Recording,
       Viewing,
-      Radio
+      Radio,
+      Epg
     };
     const int WS_CHILD = 0x40000000;
     const int WS_CLIPCHILDREN = 0x02000000;
@@ -3522,23 +3523,38 @@ namespace MediaPortal.TV.Recording
       if (_streamDemuxer != null)
         _streamDemuxer.Process();
 
-      UpdateVideoState();
-
       _epgGrabber.Process();
-
-      TimeSpan ts = DateTime.Now - _updateTimer;
-
-      if (ts.TotalMilliseconds > 800)
+      if (_epgGrabber.Done)
       {
-        if (!GUIGraphicsContext.Vmr9Active && !g_Player.Playing)
+        if (_graphState == State.Epg)
         {
-          CheckVideoResolutionChanges();
+          Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:EPG done");
+          _mediaControl.Stop();
+          _isGraphRunning = false;
+          _graphState = State.Created;
+          return;
         }
-        if (!GUIGraphicsContext.Vmr9Active && _vmr7 != null && _graphState == State.Viewing)
+      }
+
+      if (_graphState != State.Epg)
+      {
+        UpdateVideoState();
+
+
+        TimeSpan ts = DateTime.Now - _updateTimer;
+
+        if (ts.TotalMilliseconds > 800)
         {
-          _vmr7.Process();
+          if (!GUIGraphicsContext.Vmr9Active && !g_Player.Playing)
+          {
+            CheckVideoResolutionChanges();
+          }
+          if (!GUIGraphicsContext.Vmr9Active && _vmr7 != null && _graphState == State.Viewing)
+          {
+            _vmr7.Process();
+          }
+          _updateTimer = DateTime.Now;
         }
-        _updateTimer = DateTime.Now;
       }
 
       if (_streamDemuxer.IsScrambled)
@@ -3591,25 +3607,44 @@ namespace MediaPortal.TV.Recording
           }
         }
       }
-      if (_graphPaused && !_streamDemuxer.IsScrambled)
-      {
-        
-        if (g_Player.CurrentPosition + 5d < g_Player.Duration)
-        {
-          g_Player.ContinueGraph();
-          g_Player.SeekAbsolute(g_Player.Duration-5d);
-          _graphPaused = false;
-        }
-        return;
-      }
 
-      if (_streamDemuxer.IsScrambled)
+      if (_graphState != State.Epg)
       {
-        if (GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.Vmr9FPS < 1f)
+        if (_graphPaused && !_streamDemuxer.IsScrambled)
+        {
+
+          if (g_Player.CurrentPosition + 5d < g_Player.Duration)
+          {
+            g_Player.ContinueGraph();
+            g_Player.SeekAbsolute(g_Player.Duration - 5d);
+            _graphPaused = false;
+          }
+          return;
+        }
+
+        if (_streamDemuxer.IsScrambled)
+        {
+          if (GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.Vmr9FPS < 1f)
+          {
+            if (_lastPMTVersion >= 0 && _pmtRetyCount < 3)
+            {
+              TimeSpan ts = DateTime.Now - _pmtTimer;
+              if (ts.TotalSeconds >= 3)
+              {
+                _pmtRetyCount++;
+                SendPMT();
+              }
+            }
+          }
+        }
+      }
+      else
+      {
+        if (_streamDemuxer.IsScrambled)
         {
           if (_lastPMTVersion >= 0 && _pmtRetyCount < 3)
           {
-            ts = DateTime.Now - _pmtTimer;
+            TimeSpan ts = DateTime.Now - _pmtTimer;
             if (ts.TotalSeconds >= 3)
             {
               _pmtRetyCount++;
@@ -5232,6 +5267,32 @@ namespace MediaPortal.TV.Recording
     public bool IsTimeShifting()
     {
       return _graphState == State.TimeShifting;
+    }
+    public bool IsEpgGrabbing()
+    {
+      return (_graphState==State.Epg);
+    }
+
+    public void GrabEpg(TVChannel channel)
+    {
+      // tune to the correct channel
+      Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:Grab epg for :{0}",channel.Name);
+      TuneChannel(channel);
+      //now start the graph
+      Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA: start graph");
+
+      if (_mediaControl == null)
+      {
+        _mediaControl = (IMediaControl)_graphBuilder;
+      }
+      int hr = _mediaControl.Run();
+      if (hr < 0)
+      {
+        Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA: FAILED unable to start graph :0x{0:X}", hr);
+      }
+      _isGraphRunning = true;
+      _graphState = State.Epg;
+      _epgGrabber.GrabEPG(_currentTuningObject.HasEITSchedule == true);
     }
   }//public class DVBGraphBDA 
 

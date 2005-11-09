@@ -2182,5 +2182,12 @@ namespace MediaPortal.TV.Recording
     {
       return false;
     }
+    public bool IsEpgGrabbing()
+    {
+      return false;
+    }
+    public void GrabEpg(TVChannel chan)
+    {
+    }
   }
 }

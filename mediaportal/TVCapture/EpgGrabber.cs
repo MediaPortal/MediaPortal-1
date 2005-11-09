@@ -238,7 +238,8 @@ namespace MediaPortal.TV.Recording
     {
       Idle,
       Grabbing,
-      Parsing
+      Parsing,
+      Updating
     }
     #endregion
 
@@ -249,6 +250,7 @@ namespace MediaPortal.TV.Recording
     IStreamAnalyzer _analyzerInterface = null;
     NetworkType _networkType;
     bool _grabEPG = false;
+    DateTime _timeoutTimer = DateTime.Now;
 
     State _currentState = State.Idle;
     List<EPGChannel> _listChannels;
@@ -288,6 +290,7 @@ namespace MediaPortal.TV.Recording
 
     public void GrabEPG(bool epg)
     {
+      _timeoutTimer = DateTime.Now;
       using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
       {
         bool enabled = xmlreader.GetValueAsBool("xmltv", "epgdvb", true);
@@ -325,6 +328,14 @@ namespace MediaPortal.TV.Recording
     }
     public void Process()
     {
+      if (_currentState != State.Idle)
+      {
+        TimeSpan ts = DateTime.Now - _timeoutTimer;
+        if (ts.TotalMinutes >= 5)
+        {
+          _currentState = State.Idle;
+        }
+      }
       bool ready = false;
       switch (_currentState)
       {
@@ -362,9 +373,14 @@ namespace MediaPortal.TV.Recording
           {
             ParseMHW();
           }
-          _currentState = State.Idle;
+
+          _currentState = State.Updating;
           break;
       }
+    }
+    public bool Done
+    {
+      get { return _currentState==State.Idle; }
     }
     #endregion
 
@@ -590,6 +606,7 @@ namespace MediaPortal.TV.Recording
     void EpgBackgroundWorker(object sender, DoWorkEventArgs e)
     {
       System.Threading.Thread.CurrentThread.Priority = System.Threading.ThreadPriority.BelowNormal;
+      TVDatabase.RemoveOldPrograms();
       List<EPGChannel> events = _listChannels; 
       _listChannels = null;
       Log.WriteFile(Log.LogType.EPG, "epg-grab: updating tv database:{0}",events.Count);
@@ -640,6 +657,7 @@ namespace MediaPortal.TV.Recording
       }
       Log.WriteFile(Log.LogType.EPG, "epg-grab: done");
       TVDatabase.SupressEvents = false;
+      _currentState = State.Idle;
     }
     #endregion
 
@@ -647,6 +665,7 @@ namespace MediaPortal.TV.Recording
     void MhwBackgroundWorker(object sender, DoWorkEventArgs e)
     {
       System.Threading.Thread.CurrentThread.Priority = System.Threading.ThreadPriority.BelowNormal;
+      TVDatabase.RemoveOldPrograms();
       List<MHWEvent> events = _listMhwEvents;
       _listMhwEvents = null;
       Log.WriteFile(Log.LogType.EPG, "mhw-grab: updating tv database");
@@ -666,6 +685,8 @@ namespace MediaPortal.TV.Recording
         TVDatabase.UpdateProgram(tv);
 
       }
+      _currentState = State.Idle;
+
     }
     #endregion
 
@@ -674,6 +695,7 @@ namespace MediaPortal.TV.Recording
     void AtscBackgroundWorker(object sender, DoWorkEventArgs e)
     {
       System.Threading.Thread.CurrentThread.Priority = System.Threading.ThreadPriority.BelowNormal;
+      TVDatabase.RemoveOldPrograms();
       List<ATSCEvent> events = _listAtscEvents;
       _listAtscEvents = null;
       Log.WriteFile(Log.LogType.EPG, "atsc-grab: updating tv database");
@@ -693,6 +715,7 @@ namespace MediaPortal.TV.Recording
         TVDatabase.UpdateProgram(tv);
 
       }
+      _currentState = State.Idle;
     }
     #endregion
     #endregion

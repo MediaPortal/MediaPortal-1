@@ -1498,5 +1498,13 @@ namespace MediaPortal.TV.Recording
     {
       return m_graphState == State.TimeShifting;
     }
+
+    public bool IsEpgGrabbing()
+    {
+      return false;
+    }
+    public void GrabEpg(TVChannel chan)
+    {
+    }
   }
 }

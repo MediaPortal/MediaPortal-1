@@ -295,5 +295,7 @@ namespace MediaPortal.TV.Recording
 
 		IBaseFilter AudiodeviceFilter();
 		bool				IsTimeShifting();
-	}
+    bool IsEpgGrabbing();
+    void GrabEpg(TVChannel chan);
+  }
 }

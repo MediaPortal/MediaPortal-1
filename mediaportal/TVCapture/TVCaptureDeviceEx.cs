@@ -1001,6 +1001,25 @@ namespace MediaPortal.TV.Recording
       currentGraph.SetAudioLanguage(audioPid);
     }
 
+    public bool IsEpgGrabbing
+    {
+      get
+      {
+        if (currentGraph == null)
+        {
+          return false;
+        }
+        return currentGraph.IsEpgGrabbing();
+      }
+    }
+
+    public void GrabEpg(TVChannel channel)
+    {
+        if (CreateGraph())
+        {
+          currentGraph.GrabEpg(channel);
+        }
+    }
     /// <summary>
     /// Property which returns true if this card is currently timeshifting
     /// </summary>
@@ -1417,6 +1436,11 @@ namespace MediaPortal.TV.Recording
     /// </remarks>
     public bool StartTimeShifting()
     {
+      if (IsEpgGrabbing)
+      {
+        currentGraph.DeleteGraph();
+        currentGraph = null;
+      }
       if (IsRecording) return false;
 
       Log.WriteFile(Log.LogType.Capture, "Card:{0} start timeshifting :{1}", ID, currentTvChannelName);
@@ -1510,6 +1534,12 @@ namespace MediaPortal.TV.Recording
     /// </remarks>
     bool StartRecording(TVRecording recording)
     {
+
+      if (IsEpgGrabbing)
+      {
+        currentGraph.DeleteGraph();
+        currentGraph = null;
+      }
       Log.WriteFile(Log.LogType.Capture, "Card:{0} start recording content:{1}", ID, recording.IsContentRecording);
 
       TVProgram prog = null;
@@ -1692,6 +1722,11 @@ namespace MediaPortal.TV.Recording
       }
       set
       {
+        if (IsEpgGrabbing)
+        {
+          currentGraph.DeleteGraph();
+          currentGraph = null;
+        }
         if (value == false)
         {
           if (View)
@@ -1733,6 +1768,10 @@ namespace MediaPortal.TV.Recording
 
     public bool ViewChannel(TVChannel channel)
     {
+      if (IsEpgGrabbing)
+      {
+        DeleteGraph();
+      }
       if (currentGraph == null)
       {
         if (!CreateGraph()) return false;
