@@ -934,10 +934,43 @@ namespace MediaPortal.Configuration.Sections
 
 			if(_isColumnNumeric)
 			{
-				int xx = int.Parse(listviewX.SubItems[ColumnToSort].Text);
-				int yy = int.Parse(listviewY.SubItems[ColumnToSort].Text);
+                string xStr = listviewX.SubItems[ColumnToSort].Text;
+                string yStr = listviewY.SubItems[ColumnToSort].Text;
+                char[] delim = new char[] { '/' };
 
-				compareResult = xx.CompareTo(yy);
+                if (xStr.IndexOf("/") != -1)
+                {
+                    string[] split = xStr.Split(delim);
+
+                    if (split.Length > 0)
+                        xStr = split[split.Length - 1];
+                }
+
+                if (yStr.IndexOf("/") != -1)
+                {
+                    string[] split = yStr.Split(delim);
+
+                    if (split.Length > 0)
+                        yStr = split[split.Length - 1];
+                }
+
+                try
+                {
+                    int xx = int.Parse(xStr);
+                    int yy = int.Parse(yStr);
+
+                    compareResult = xx.CompareTo(yy);
+                }
+
+                catch
+                {
+                    compareResult = 0;
+                }
+
+                //int xx = int.Parse(listviewX.SubItems[ColumnToSort].Text);
+                //int yy = int.Parse(listviewY.SubItems[ColumnToSort].Text);
+
+                //compareResult = xx.CompareTo(yy);
 			}
 			else
 			{
