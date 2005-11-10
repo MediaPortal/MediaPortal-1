@@ -96,3 +96,5 @@ copy ..\..\..\WebEPG\WebEPG-xmltv\bin\Release\WebEPG-xmltv.exe WebEPG\WebEPG.exe
 copy ..\..\..\WebEPG\WebEPG-conf\bin\Release\WebEPG-conf.exe WebEPG\
 copy ..\..\..\WebEPG\WebEPG-channels\bin\Release\WebEPG-channels.exe WebEPG\
 copy ..\..\..\Utils\bin\Release\Utils.dll WebEPG\
+
+@if exist postbuild2.bat call postbuild2.bat
