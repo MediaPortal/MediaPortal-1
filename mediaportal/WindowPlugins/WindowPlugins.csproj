@@ -492,25 +492,13 @@
     <Compile Include="GUIRadio\GUIRadio.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="GUIRecipies\CatReader.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUIRecipies\GUIRecipies.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUIRecipies\Recipie.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUIRecipies\RecipieDatabase.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUIRecipies\RecipiePrinter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUIRecipies\RecipieReader.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUIRecipies\SetupForm.cs">
+    <Compile Include="GUIRecipes\CatReader.cs" />
+    <Compile Include="GUIRecipes\GUIRecipes.cs" />
+    <Compile Include="GUIRecipes\Recipe.cs" />
+    <Compile Include="GUIRecipes\RecipeDatabase.cs" />
+    <Compile Include="GUIRecipes\RecipePrinter.cs" />
+    <Compile Include="GUIRecipes\RecipeReader.cs" />
+    <Compile Include="GUIRecipes\SetupForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="GUIRSSFeed\DBBool.cs">
@@ -1008,8 +996,9 @@
     <EmbeddedResource Include="GUIPrograms\taggedMenuItem.resx">
       <DependentUpon>taggedMenuItem.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="GUIRecipies\SetupForm.resx">
+    <EmbeddedResource Include="GUIRecipes\SetupForm.resx">
       <DependentUpon>SetupForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="GUIRSSFeed\DetailsForm.resx">
       <DependentUpon>DetailsForm.cs</DependentUpon>
@@ -1054,6 +1043,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram1.cd" />
+    <None Include="GUIRecipes\CVS\Entries" />
+    <None Include="GUIRecipes\CVS\Entries.Extra" />
+    <None Include="GUIRecipes\CVS\Entries.Extra.Old" />
+    <None Include="GUIRecipes\CVS\Entries.Old" />
+    <None Include="GUIRecipes\CVS\Repository" />
+    <None Include="GUIRecipes\CVS\Root" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
