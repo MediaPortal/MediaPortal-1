@@ -35,11 +35,20 @@ namespace WindowPlugins.GUISettings.TV
         item.ThumbnailImage = Utils.GetCoverArt(Thumbs.TVChannel, chan.Name);
         item.IconImage = Utils.GetCoverArt(Thumbs.TVChannel, chan.Name);
         item.IconImageBig = Utils.GetCoverArt(Thumbs.TVChannel, chan.Name);
+        item.Selected = chan.AutoGrabEpg;
+        item.TVTag = chan;
         listChannels.Add(item);
       }
     }
     protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
     {
+      if (control == listChannels)
+      {
+        TVChannel chan = listChannels.SelectedListItem.TVTag as TVChannel;
+        chan.AutoGrabEpg = !chan.AutoGrabEpg;
+        listChannels.SelectedListItem.Selected = chan.AutoGrabEpg;
+        TVDatabase.UpdateChannel(chan,chan.Sort);
+      }
       base.OnClicked(controlId, control, actionType);
     }
   }

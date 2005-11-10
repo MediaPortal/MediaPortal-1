@@ -205,6 +205,7 @@ namespace MediaPortal.TV.Database
 
     #region variables
 
+    bool _autoGrabEpg = true;
     string _channelName;
 		int    _channelNumber;
 		int    _channelId;
@@ -389,6 +390,11 @@ namespace MediaPortal.TV.Database
 				Update();
 				return _currentProgram;
 			}
+    }
+    public bool AutoGrabEpg
+    {
+      get { return _autoGrabEpg; }
+      set { _autoGrabEpg = value; }
     }
     #endregion
 

@@ -649,6 +649,7 @@
     <Compile Include="GUISettings\MusicDatabaseReorg.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="GUISettings\TV\GUISettingsEpg.cs" />
     <Compile Include="GUISettings\TV\GUISettingsRecordings.cs">
       <SubType>Code</SubType>
     </Compile>
