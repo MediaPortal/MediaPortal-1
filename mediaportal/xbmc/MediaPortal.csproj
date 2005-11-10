@@ -19,8 +19,7 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>MediaPortal</RootNamespace>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
-    <StartupObject>
-    </StartupObject>
+    <StartupObject>MediaPortalApp</StartupObject>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <UpgradeBackupLocation>

@@ -17,7 +17,10 @@ namespace WindowPlugins.GUISettings.TV
 		[SkinControlAttribute(28)]			protected GUIButtonControl btnAspectRatio=null;
 		[SkinControlAttribute(29)]			protected GUIButtonControl btnTimeshiftBuffer=null;
 		[SkinControlAttribute(30)]			protected GUIButtonControl btnAutoTurnOnTv=null;
-		[SkinControlAttribute(33)]			protected GUIButtonControl btnAudioRenderer=null;
+    [SkinControlAttribute(33)]
+    protected GUIButtonControl btnAudioRenderer = null;
+    [SkinControlAttribute(34)]
+    protected GUIButtonControl btnEpg = null;
 		public GUISettingsTv()
 		{
 			GetID=(int)GUIWindow.Window.WINDOW_SETTINGS_TV;

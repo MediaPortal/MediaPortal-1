@@ -8,7 +8,7 @@
 		<import>common.settings.xml</import>
 		<control>
 			<type>group</type>
-			<layout>GridLayout(0, 6, 52, 8, 1)</layout>
+			<layout>GridLayout(2, 6, 52, 8, 1)</layout>
 			<posX>56</posX>
 			<posY>151</posY>
 			<control>
@@ -63,6 +63,12 @@
 				<label>Channel sorting</label>
 				<hyperlink>702</hyperlink>
 			</control>
+      <control>
+        <type>button</type>
+        <id>34</id>
+        <label>EPG</label>
+        <hyperlink>706</hyperlink>
+      </control>
 		</control>
 	</controls>
 </window>

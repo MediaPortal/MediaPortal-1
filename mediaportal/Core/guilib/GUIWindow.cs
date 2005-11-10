@@ -231,6 +231,7 @@ namespace MediaPortal.GUI.Library
       WINDOW_SETTINGS_DVD = 704
      ,
       WINDOW_SETTINGS_SKIN = 705
+      ,WINDOW_SETTINGS_TV_EPG = 706
 
 
 
@@ -325,9 +326,10 @@ namespace MediaPortal.GUI.Library
       WINDOW_DIALOG_TEXT = 7900
      ,
       WINDOW_SUNCLOCK = 8000
-     , WINDOW_TRAILERS = 5900
+     ,
+      WINDOW_TRAILERS = 5900
 
-    , WINDOW_VIDEO_SERIESINFO = 3885 // inker - special video info page for episode info (tv.com parser)
+   , WINDOW_VIDEO_SERIESINFO = 3885 // inker - special video info page for episode info (tv.com parser)
     }
     #endregion
 
