@@ -1170,7 +1170,7 @@ namespace MediaPortal.TV.Database
           string strSQL;
           strSQL = "select channel.idChannel,channel.iChannelNr,channel.frequency,channel.strChannel,";
           strSQL += "channel.bExternal,channel.Visible,channel.scrambled,channel.ExternalChannel,channel.standard,";
-          strSQL += "channel.Country,channel.iSort,tblDVBCMapping.strProvider,tblDVBSMapping.sProviderName,tblDVBTMapping.strProvider,tblATSCMapping.strProvider,channel.grabepg ";
+          strSQL += "channel.Country,channel.iSort,tblDVBCMapping.strProvider,tblDVBSMapping.sProviderName,tblDVBTMapping.strProvider,tblATSCMapping.strProvider,channel.grabEpg ";
           strSQL += "from channel left join tblDVBCMapping on tblDVBCMapping.iLCN=channel.idChannel ";
           strSQL += "left join tblDVBTMapping on tblDVBTMapping.iLCN=channel.idChannel ";
           strSQL += "left join tblDVBSMapping on tblDVBSMapping.idChannel=channel.idChannel ";
@@ -1298,7 +1298,7 @@ namespace MediaPortal.TV.Database
             if (scrambled != 0) chan.Scrambled = true;
             else chan.Scrambled = false;
 
-            int grabepg = DatabaseUtility.GetAsInt(results, i, "grabepg");
+            int grabepg = DatabaseUtility.GetAsInt(results, i, "grabEpg");
             if (grabepg != 0) chan.AutoGrabEpg = true;
             else chan.AutoGrabEpg = false;
             
@@ -3926,7 +3926,7 @@ namespace MediaPortal.TV.Database
             if (iVisible != 0) chan.VisibleInGuide = true;
             else chan.VisibleInGuide = false;
 
-            int grabepg = DatabaseUtility.GetAsInt(results, i, "channel.grabepg");
+            int grabepg = DatabaseUtility.GetAsInt(results, i, "channel.grabEpg");
             if (grabepg != 0) chan.AutoGrabEpg = true;
             else chan.AutoGrabEpg = false;
             
@@ -4313,7 +4313,7 @@ namespace MediaPortal.TV.Database
             else chan.Scrambled = false;
             chan.Sort = DatabaseUtility.GetAsInt(results, i, "iSort");
 
-            int grabepg = DatabaseUtility.GetAsInt(results, i, "grabepg");
+            int grabepg = DatabaseUtility.GetAsInt(results, i, "grabEpg");
             if (grabepg != 0) chan.AutoGrabEpg = true;
             else chan.AutoGrabEpg = false;
             
