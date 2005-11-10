@@ -271,7 +271,8 @@ namespace MediaPortal.GUI.RSS
 		void UpdateNews(bool bShowWarning)
 		{
 			GUIDialogProgress dlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
-			try
+
+            try
 			{
 				if (m_strSiteURL.ToLower().StartsWith("http://") ==false && m_strSiteURL.ToLower().StartsWith("file://") == false)
 				{
