@@ -68,18 +68,24 @@ typedef struct stDVBNetworkInfo
 
 }DVBNetworkInfo;
 
+typedef  struct stEPGLanguage
+{
+	DWORD language;
+	string event;
+	string text;
+} EPGLanguage;
+
 typedef struct stEPGEvent
 {
 	unsigned int eventid;
 	unsigned long dateMJD;
 	unsigned long timeUTC;
 	unsigned long duration;
-	unsigned long language;
 	unsigned int running_status;
 	unsigned int free_CA_mode;
-	string event;
-	string text;
 	string genre;
+	vector<EPGLanguage> vecLanguages;
+	typedef vector<EPGLanguage>::iterator ivecLanguages;
 }EPGEvent;
 
 typedef struct stEPGChannel
@@ -239,7 +245,8 @@ public:
 	ULONG	GetEPGChannelCount( );
 	ULONG	GetEPGEventCount( ULONG channel);
 	void	GetEPGChannel( ULONG channel,  WORD* networkId,  WORD* transportid, WORD* service_id  );
-	void	GetEPGEvent( ULONG channel,  ULONG event,ULONG* language, ULONG* dateMJD, ULONG* timeUTC, ULONG* duration, char** strevent,  char** strtext, char** strgenre    );
+	void	GetEPGEvent( ULONG channel,  ULONG event,ULONG* language, ULONG* dateMJD, ULONG* timeUTC, ULONG* duration, char** strgenre    );
+	void    GetEPGLanguage(ULONG channel, ULONG eventid,ULONG languageIndex,ULONG* language, char** eventText, char** eventDescription    );
 	void	DecodeEPG(byte* pbData,int len);
 
 	//decode
@@ -287,6 +294,10 @@ private:
 	DVBNetworkInfo m_nit;
 
     CCritSec					m_Lock;                // Main renderer critical section	
+	long	   m_prevChannelIndex;
+	long	   m_prevEventIndex;
+	EPGChannel m_prevChannel;
+	EPGEvent   m_prevEvent;
 };
 
 #endif

@@ -863,12 +863,16 @@ STDMETHODIMP CStreamAnalyzer::GetEPGChannel( ULONG channel,  WORD* networkId,  W
 	m_pSections->GetEPGChannel( channel,  networkId,  transportid, service_id  );
 	return S_OK;
 }
-STDMETHODIMP CStreamAnalyzer::GetEPGEvent( ULONG channel,  ULONG eventid,ULONG* language, ULONG* dateMJD, ULONG* timeUTC, ULONG* duration, char**event,  char** text, char** genre    )
+STDMETHODIMP CStreamAnalyzer::GetEPGEvent( ULONG channel,  ULONG eventid,ULONG* language, ULONG* dateMJD, ULONG* timeUTC, ULONG* duration, char** genre    )
 {
-	m_pSections->GetEPGEvent( channel,  eventid, language,dateMJD, timeUTC, duration, event,  text, genre    );
+	m_pSections->GetEPGEvent( channel,  eventid, language,dateMJD, timeUTC, duration, genre    );
 	return S_OK;
 }
-
+STDMETHODIMP CStreamAnalyzer::GetEPGLanguage(THIS_ ULONG channel, ULONG eventid,ULONG languageIndex,ULONG* language,char** eventText, char** eventDescription    )
+{
+	m_pSections->GetEPGLanguage( channel,  eventid, languageIndex,language,eventText,eventDescription    );
+	return S_OK;
+}
 
 STDMETHODIMP CStreamAnalyzer::GrabMHW()
 {
