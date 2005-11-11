@@ -1725,8 +1725,12 @@ namespace MediaPortal.TV.Recording
       return false;
     }
 
+    static DateTime epgTimer = DateTime.MinValue;
     static void GrabEpg()
     {
+      TimeSpan ts=DateTime.Now-epgTimer;
+      if (ts.TotalMilliseconds < 1000) return;
+
       foreach (TVCaptureDevice card in _tvcards)
       {
         //card is empty
@@ -1738,7 +1742,7 @@ namespace MediaPortal.TV.Recording
           foreach (TVChannel chan in _tvChannelsList)
           {
             if (!chan.AutoGrabEpg) continue;
-            TimeSpan ts = DateTime.Now-chan.LastDateTimeEpgGrabbed;
+            ts = DateTime.Now-chan.LastDateTimeEpgGrabbed;
             if (ts.TotalHours > 2)
             {
               if (TVDatabase.CanCardViewTVChannel(chan.Name, card.ID) || _tvcards.Count == 1)
@@ -1756,6 +1760,7 @@ namespace MediaPortal.TV.Recording
           }
         }
       }
+      epgTimer = DateTime.Now;
     }
 
 
