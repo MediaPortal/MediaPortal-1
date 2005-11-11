@@ -408,7 +408,7 @@ public class MediaPortalApp : D3DApp, IRender
   #region RenderStats() method
   void RenderStats()
   {
-    //UpdateStats();
+    UpdateStats();
     if (m_bShowStats)
     {
       GUIFont font = GUIFontManager.GetFont(0);
@@ -802,54 +802,54 @@ public class MediaPortalApp : D3DApp, IRender
 
     try
     {
-        //	Log.Write("app:render()");
-        reentrant = true;
-        // if there's no DX9 device (during resizing for exmaple) then just return
-        if (GUIGraphicsContext.DX9Device == null)
-        {
-            reentrant = false;
-            //Log.Write("dx9 device=null");//remove
-            return;
-        }
+      //	Log.Write("app:render()");
+      reentrant = true;
+      // if there's no DX9 device (during resizing for exmaple) then just return
+      if (GUIGraphicsContext.DX9Device == null)
+      {
+        reentrant = false;
+        //Log.Write("dx9 device=null");//remove
+        return;
+      }
 
 
-        //Log.Write("render frame:{0}",frames);//remove
-        ++frames;
-        // clear the surface
-        GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, Color.Black, 1.0f, 0);
-        CreateStateBlock();
-        GUIGraphicsContext.DX9Device.BeginScene();
+      //Log.Write("render frame:{0}",frames);//remove
+      ++frames;
+      // clear the surface
+      GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, Color.Black, 1.0f, 0);
+      CreateStateBlock();
+      GUIGraphicsContext.DX9Device.BeginScene();
 
-        if (!GUIGraphicsContext.BlankScreen)
-        {
-            // ask the window manager to render the current active window
-            GUIWindowManager.Render(timePassed);
-            RenderStats();
+      if (!GUIGraphicsContext.BlankScreen)
+      {
+        // ask the window manager to render the current active window
+        GUIWindowManager.Render(timePassed);
+        RenderStats();
 
-            GUIFontManager.Present();
-        }
-        GUIGraphicsContext.DX9Device.EndScene();
-        try
+        GUIFontManager.Present();
+      }
+      GUIGraphicsContext.DX9Device.EndScene();
+      try
+      {
+        // Show the frame on the primary surface.
+        GUIGraphicsContext.DX9Device.Present();//SLOW
+      }
+      catch (DeviceLostException)
+      {
+        //Log.Write("device lost exception {0} {1} {2}", ex.Message,ex.Source,ex.StackTrace);//remove
+        g_Player.Stop();
+        deviceLost = true;
+      }
+      /*
+        catch (Exception ex) // remove
         {
-            // Show the frame on the primary surface.
-            GUIGraphicsContext.DX9Device.Present();//SLOW
-        }
-        catch (DeviceLostException)
-        {
-            //Log.Write("device lost exception {0} {1} {2}", ex.Message,ex.Source,ex.StackTrace);//remove
-            g_Player.Stop();
-            deviceLost = true;
-        }
-        /*
-          catch (Exception ex) // remove
-          {
-            Log.Write("exception {0} {1} {2}", ex.Message,ex.Source,ex.StackTrace);
-          }*/
+          Log.Write("exception {0} {1} {2}", ex.Message,ex.Source,ex.StackTrace);
+        }*/
     }
 
-    catch (Exception )
+    catch (Exception)
     {
-        //bool b = true;
+      //bool b = true;
     }
     finally
     {
@@ -1353,7 +1353,7 @@ public class MediaPortalApp : D3DApp, IRender
 
     if (key.KeyChar == '!')
     {
-       m_bShowStats = !m_bShowStats;
+      m_bShowStats = !m_bShowStats;
     }
     if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindowEx, key, ref action))
     {
@@ -1366,7 +1366,7 @@ public class MediaPortalApp : D3DApp, IRender
     }
     else
     {
-        screenSaverTimer = DateTime.Now;
+      screenSaverTimer = DateTime.Now;
     }
     action = new Action(key, Action.ActionType.ACTION_KEY_PRESSED, 0, 0);
     GUIGraphicsContext.OnAction(action);
@@ -2203,7 +2203,7 @@ public class MediaPortalApp : D3DApp, IRender
     {
       doc.Load("mediaportal.exe.config");
       XmlNode node = doc.SelectSingleNode("/configuration/appStart/ClientApplicationInfo/appFolderName");
-      if (node !=null)
+      if (node != null)
         node.InnerText = System.IO.Directory.GetCurrentDirectory();
 
       node = doc.SelectSingleNode("/configuration/appUpdater/UpdaterConfiguration/application/client/baseDir");

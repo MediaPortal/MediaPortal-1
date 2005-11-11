@@ -3,15 +3,17 @@
    <defaultcontrol>10</defaultcontrol>
    <allowoverlay>yes</allowoverlay>
    <controls>
-      <control>
-         <type>image</type>
-         <description>BG</description>
-         <id>1</id>
-         <posX>0</posX>
-         <posY>0</posY>
-         <texture>background.png</texture>
-      </control>
-      <control>
+     <import>common.time.xml</import>
+     <control>
+       <type>image</type>
+       <description>BG</description>
+       <id>1</id>
+       <posX>0</posX>
+       <posY>0</posY>
+       <texture>background.png</texture>
+     </control>
+
+     <control>
          <type>image</type>
          <id>1</id>
          <posX>48</posX>
@@ -34,6 +36,32 @@
          <posY>96</posY>
          <label>TV Setup</label>
          <font>font18</font>
+      </control>
+      <control>
+         <type>group</type>
+         <layout>StackLayout</layout>
+         <description>group element</description>
+         <animation>FlyInFromLeft</animation>
+         <posX>60</posX>
+         <posY>120</posY>
+         <control>
+           <description>Select all</description>
+           <type>button</type>
+           <id>2</id>
+           <label>188</label>
+           <onup>0</onup>
+           <ondown>3</ondown>
+           <onright>10</onright>
+        </control>
+        <control>
+          <description>Select None</description>
+          <type>button</type>
+          <id>3</id>
+          <label>1448</label>
+          <onup>2</onup>
+          <ondown>99</ondown>
+          <onright>10</onright>
+        </control>
       </control>
      <control>
        <description>channel listcontrol</description>
@@ -60,7 +88,7 @@
        <keepaspectratio>no</keepaspectratio>
        <font2>font10</font2>
        <font3>font10</font3>
-       <onleft>10</onleft>
+       <onleft>2</onleft>
        <onright>10</onright>
        <onup>10</onup>
        <ondown>10</ondown>

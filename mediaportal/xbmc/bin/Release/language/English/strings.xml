@@ -3146,9 +3146,13 @@
 <string>
 	<id>1447</id>
 	<value>Recording stopped:</value>
-</string>	
+</string>
+ <string>
+   <id>1448</id>
+   <value>Select None</value>
+ </string>
 
-	<!-- My Status Strings -->
+   <!-- My Status Strings -->
 	<string Prefix="My "><id>1950</id><value>Status</value></string>
 	<string><id>1951</id><value>Harddisk</value></string>
 	<string><id>1952</id><value>Fan</value></string>

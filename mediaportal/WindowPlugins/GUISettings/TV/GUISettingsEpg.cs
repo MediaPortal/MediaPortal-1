@@ -11,6 +11,12 @@ namespace WindowPlugins.GUISettings.TV
     [SkinControlAttribute(10)]
     protected GUICheckListControl listChannels = null;
 
+    [SkinControlAttribute(2)]
+    protected GUIButtonControl btnSelectAll = null;
+
+    [SkinControlAttribute(3)]
+    protected GUIButtonControl btnSelectNone = null;
+
     public GUISettingsEpg()
     {
       GetID = (int)GUIWindow.Window.WINDOW_SETTINGS_TV_EPG;
@@ -24,6 +30,10 @@ namespace WindowPlugins.GUISettings.TV
     protected override void OnPageLoad()
     {
       base.OnPageLoad();
+      Update();
+    }
+    void Update()
+    {
       listChannels.Clear();
       List<TVChannel> channels = new List<TVChannel>();
       TVDatabase.GetChannels(ref channels);
@@ -47,7 +57,35 @@ namespace WindowPlugins.GUISettings.TV
         TVChannel chan = listChannels.SelectedListItem.TVTag as TVChannel;
         chan.AutoGrabEpg = !chan.AutoGrabEpg;
         listChannels.SelectedListItem.Selected = chan.AutoGrabEpg;
-        TVDatabase.UpdateChannel(chan,chan.Sort);
+        TVDatabase.UpdateChannel(chan, chan.Sort);
+      }
+      if (control == btnSelectAll)
+      {
+        List<TVChannel> channels = new List<TVChannel>();
+        TVDatabase.GetChannels(ref channels);
+        foreach (TVChannel chan in channels)
+        {
+          if (!chan.AutoGrabEpg)
+          {
+            chan.AutoGrabEpg = true;
+            TVDatabase.UpdateChannel(chan, chan.Sort);
+          }
+        }
+        Update();
+      }
+      if (control == btnSelectNone)
+      {
+        List<TVChannel> channels = new List<TVChannel>();
+        TVDatabase.GetChannels(ref channels);
+        foreach (TVChannel chan in channels)
+        {
+          if (chan.AutoGrabEpg)
+          {
+            chan.AutoGrabEpg = false;
+            TVDatabase.UpdateChannel(chan, chan.Sort);
+          }
+        }
+        Update();
       }
       base.OnClicked(controlId, control, actionType);
     }

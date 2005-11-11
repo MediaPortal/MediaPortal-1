@@ -74,6 +74,7 @@ namespace MediaPortal.TV.Recording
 
       UpdateStatus();
       ScanChannel();
+      captureCard.Process();
       if (captureCard.SignalPresent())
       {
         ScanChannels();
@@ -87,6 +88,7 @@ namespace MediaPortal.TV.Recording
 
         UpdateStatus();
         ScanChannel();
+      captureCard.Process();
         if (captureCard.SignalPresent())
         {
           ScanChannels();
@@ -148,6 +150,7 @@ namespace MediaPortal.TV.Recording
 
         UpdateStatus();
         ScanNextChannel();
+      captureCard.Process();
         if (captureCard.SignalPresent())
         {
           ScanChannels();
@@ -169,6 +172,7 @@ namespace MediaPortal.TV.Recording
       callback.OnStatus(description);
 
       System.Threading.Thread.Sleep(400);
+      captureCard.Process();
       callback.OnSignal(captureCard.SignalQuality, captureCard.SignalStrength);
       callback.OnStatus2(String.Format("new tv:{0} new radio:{1}", newChannels, newRadioChannels));
       captureCard.StoreTunedChannels(false, true, ref newChannels, ref updatedChannels, ref newRadioChannels, ref updatedRadioChannels);
@@ -216,8 +220,10 @@ namespace MediaPortal.TV.Recording
       captureCard.Tune(newchan, 0);
       System.Threading.Thread.Sleep(400);
 
+      captureCard.Process();
       if (captureCard.SignalQuality < 40)
         System.Threading.Thread.Sleep(400);
+      captureCard.Process();
       callback.OnSignal(captureCard.SignalQuality, captureCard.SignalStrength);
     }
     #endregion

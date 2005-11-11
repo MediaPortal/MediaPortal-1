@@ -1399,7 +1399,7 @@ namespace MediaPortal
       if (frames < 10) return;
       float time = DXUtil.Timer(DirectXTimer.GetAbsoluteTime);
       // Update the scene stats once per second
-      //if (time - lastTime >= 0.1f)
+      if (time - lastTime >= 0.5f)
       {
         framePerSecond = frames / (time - lastTime);
         GUIGraphicsContext.CurrentFPS = framePerSecond;
@@ -1664,14 +1664,14 @@ namespace MediaPortal
 
       try
       {
-          // give an external app a change to be notified when the appliction has reached the final stage of startup
-          EventWaitHandle handle = EventWaitHandle.OpenExisting("MediaPortalHandleCreated");
+        // give an external app a change to be notified when the appliction has reached the final stage of startup
+        EventWaitHandle handle = EventWaitHandle.OpenExisting("MediaPortalHandleCreated");
 
-          if (handle.SafeWaitHandle.IsInvalid)
-              return;
+        if (handle.SafeWaitHandle.IsInvalid)
+          return;
 
-          handle.Set();
-          handle.Close();
+        handle.Set();
+        handle.Close();
       }
       catch
       { }
@@ -2454,7 +2454,7 @@ namespace MediaPortal
       bool result = NativeGameLoop.PeekMessage(ref msg1, IntPtr.Zero, 0, 0, 0);
       if (result)
       {
-        System.Diagnostics.Debug.WriteLine(String.Format("msg :hwnd:{0:X} msg:{1:x} wparm:{2:X} lparm:{3:X}", msg1.hwnd, msg1.message, msg1.wParam, msg1.lParam));
+        //System.Diagnostics.Debug.WriteLine(String.Format("msg :hwnd:{0:X} msg:{1:x} wparm:{2:X} lparm:{3:X}", msg1.hwnd, msg1.message, msg1.wParam, msg1.lParam));
       }
       return !result;
     }
@@ -2468,7 +2468,7 @@ namespace MediaPortal
 
         OnProcess();
         FrameMove();
-        
+
         StartFrameClock();
         FullRender();
         if (g_Player.Playing && !g_Player.IsExternalPlayer && g_Player.IsMusic)
@@ -2480,6 +2480,7 @@ namespace MediaPortal
           {
             WaitForFrameClock();
             sleepCount = 0;
+            UpdateStats();
           }
         }
         else
@@ -2488,8 +2489,7 @@ namespace MediaPortal
           WaitForFrameClock();
         }
         if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING) break;
-        UpdateStats();
-      } while (AppStillIdle() );
+      } while (AppStillIdle());
     }
   }
 

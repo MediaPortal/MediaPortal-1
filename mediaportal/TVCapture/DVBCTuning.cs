@@ -177,6 +177,8 @@ namespace MediaPortal.TV.Recording
 
       UpdateStatus();
       ScanDVBCChannel();
+
+      captureCard.Process();
       if (captureCard.SignalPresent())
       {
         ScanChannels();
@@ -189,6 +191,8 @@ namespace MediaPortal.TV.Recording
         currentIndex--;
         UpdateStatus();
         ScanDVBCChannel();
+
+        captureCard.Process();
         if (captureCard.SignalPresent())
         {
           ScanChannels();
@@ -235,6 +239,7 @@ namespace MediaPortal.TV.Recording
 
         UpdateStatus();
         ScanNextDVBCChannel();
+        captureCard.Process();
         if (captureCard.SignalPresent())
         {
           ScanChannels();
@@ -254,6 +259,7 @@ namespace MediaPortal.TV.Recording
       string description = String.Format("Found signal for channel:{0} {1}, Scanning channels", currentIndex, chanDesc);
       callback.OnStatus(description);
       System.Threading.Thread.Sleep(400);
+      captureCard.Process();
       callback.OnSignal(captureCard.SignalQuality, captureCard.SignalStrength);
 
       callback.OnStatus2(String.Format("new tv:{0} new radio:{1}", newChannels, newRadioChannels));
@@ -297,10 +303,13 @@ namespace MediaPortal.TV.Recording
       newchan.FEC = (int)TunerLib.FECMethod.BDA_FEC_METHOD_NOT_SET;
       newchan.Frequency = dvbcChannels[currentIndex].frequency;
       captureCard.Tune(newchan, 0);
+      captureCard.Process();
       System.Threading.Thread.Sleep(400);
 
+      captureCard.Process();
       if (captureCard.SignalQuality < 40)
         System.Threading.Thread.Sleep(400);
+      captureCard.Process();
       callback.OnSignal(captureCard.SignalQuality, captureCard.SignalStrength);
     }
     #endregion

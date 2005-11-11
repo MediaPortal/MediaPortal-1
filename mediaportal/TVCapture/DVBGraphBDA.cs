@@ -225,7 +225,7 @@ namespace MediaPortal.TV.Recording
     IATSCGrabber _atscGrabberInterface = null;
     IBaseFilter _filterDvbAnalyzer = null;
     bool _graphPaused = false;
-    
+
 #if USEMTSWRITER
 		IBaseFilter						  _filterTsWriter=null;
 		IMPTSWriter							_tsWriterInterface=null;
@@ -267,6 +267,9 @@ namespace MediaPortal.TV.Recording
     DateTime _signalLostTimer = DateTime.Now;
     DateTime _signalLostTimer2 = DateTime.Now;
     int _pmtRetyCount = 0;
+    int _signalQuality;
+    int _signalLevel;
+    bool _signalPresent;
     DateTime _pmtTimer;
     //bool										_graphIsPaused;
 
@@ -2049,12 +2052,16 @@ namespace MediaPortal.TV.Recording
     /// </remarks>
     public bool SignalPresent()
     {
+      return _signalPresent;
+    }
+
+    void UpdateSignalPresent()
+    {
       //if we dont have an IBDA_SignalStatistics interface then return
-      if (_tunerStatistics == null) return false;
+      if (_tunerStatistics == null) return;
       bool isTunerLocked = false;
       bool isSignalPresent = false;
       long signalQuality = 0;
-
 
       for (int i = 0; i < _tunerStatistics.Count; i++)
       {
@@ -2108,19 +2115,26 @@ namespace MediaPortal.TV.Recording
 
       if (Network() == NetworkType.ATSC)
       {
-        if (isSignalPresent) return true;
-        return false;
+        if (isSignalPresent)
+          _signalPresent = true;
+        else
+          _signalPresent = false;
       }
       if (isTunerLocked || isSignalPresent || (signalQuality > 0))
       {
-        return true;
+        _signalPresent = true;
       }
-      return false;
+      _signalPresent = false;
     }//public bool SignalPresent()
+
     public int SignalQuality()
     {
-      if (_tunerStatistics == null) return -1;
-      if (_tunerStatistics.Count == 0) return -1;
+      return _signalQuality;
+    }
+    void UpdateSignalQuality()
+    {
+      if (_tunerStatistics == null) return;
+      if (_tunerStatistics.Count == 0) return;
       int signalQuality = -1;
       uint quality = 0;
       for (int i = 0; i < _tunerStatistics.Count; i++)
@@ -2140,12 +2154,17 @@ namespace MediaPortal.TV.Recording
         {
         }
       }
-      return signalQuality;
+      _signalQuality = signalQuality;
     }
+
     public int SignalStrength()
     {
-      if (_tunerStatistics == null) return -1;
-      if (_tunerStatistics.Count == 0) return -1;
+      return _signalLevel;
+    }
+    void UpdateSignalStrength()
+    {
+      if (_tunerStatistics == null) return;
+      if (_tunerStatistics.Count == 0) return;
       int signalStrength = -1;
       uint strength = 0;
 
@@ -2165,7 +2184,7 @@ namespace MediaPortal.TV.Recording
         {
         }
       }
-      return signalStrength;
+      _signalLevel = signalStrength;
     }
 
 
@@ -3100,7 +3119,7 @@ namespace MediaPortal.TV.Recording
     // send PMT to firedtv device
     bool SendPMT()
     {
-      
+
       try
       {
 
@@ -3506,20 +3525,25 @@ namespace MediaPortal.TV.Recording
       }
       else
       {
-          // we receive packets, got a PMT.
-          // is channel scrambled ?
-          if (_streamDemuxer.IsScrambled)
-          {
-            VideoRendererStatistics.VideoState = VideoRendererStatistics.State.Scrambled;
-          }
-          else
-            VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
+        // we receive packets, got a PMT.
+        // is channel scrambled ?
+        if (_streamDemuxer.IsScrambled)
+        {
+          VideoRendererStatistics.VideoState = VideoRendererStatistics.State.Scrambled;
+        }
+        else
+          VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
       }
     }
 
     public void Process()
     {
       if (_graphState == State.None || _graphState == State.Created) return;
+
+      UpdateSignalStrength();
+      UpdateSignalQuality();
+      UpdateSignalPresent();
+
       if (_streamDemuxer != null)
         _streamDemuxer.Process();
 
@@ -3693,7 +3717,7 @@ namespace MediaPortal.TV.Recording
           //if (g_Player.CurrentPosition + 3d >= g_Player.Duration)
           {
             _graphPaused = true;
-//            g_Player.PauseGraph();
+            //            g_Player.PauseGraph();
           }
         }
 #endif
@@ -3983,12 +4007,12 @@ namespace MediaPortal.TV.Recording
 					g_Player.ContinueGraph();
 				}*/
 #else
-//				if (restartGraph)
- //         g_Player.ContinueGraph();
+        //				if (restartGraph)
+        //         g_Player.ContinueGraph();
 #endif
         if (_vmr9 != null) _vmr9.Enable(true);
         _signalLostTimer = DateTime.Now;
-        
+
       }
     }//public void TuneChannel(AnalogVideoStandard standard,int iChannel,int country)
 
@@ -5192,7 +5216,7 @@ namespace MediaPortal.TV.Recording
           _refreshPmtTable = true;
           SendPMT();
         }
-        if (Recorder.IsCardViewing(_cardId) || _graphState==State.Epg)
+        if (Recorder.IsCardViewing(_cardId) || _graphState == State.Epg)
         {
           _epgGrabber.GrabEPG(_currentTuningObject.HasEITSchedule == true);
         }
@@ -5274,13 +5298,13 @@ namespace MediaPortal.TV.Recording
     }
     public bool IsEpgGrabbing()
     {
-      return (_graphState==State.Epg);
+      return (_graphState == State.Epg);
     }
 
     public void GrabEpg(TVChannel channel)
     {
       // tune to the correct channel
-      Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:Grab epg for :{0}",channel.Name);
+      Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:Grab epg for :{0}", channel.Name);
       TuneChannel(channel);
       //now start the graph
       Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA: start graph");

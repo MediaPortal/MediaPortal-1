@@ -18,6 +18,7 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+#region usings
 using System;
 using System.IO;
 using System.ComponentModel;
@@ -35,6 +36,7 @@ using MediaPortal.Video.Database;
 using MediaPortal.Radio.Database;
 using MediaPortal.Player;
 using MediaPortal.Dialogs;
+#endregion
 
 namespace MediaPortal.TV.Recording
 {
@@ -45,10 +47,12 @@ namespace MediaPortal.TV.Recording
   /// </summary>
   public class Recorder
   {
+    #region recorder commands
     enum RecorderCommandType
     {
-      StopAllViewing,
-      StopViewing,
+      StopAll,        // stop all activity on all cards
+      StopAllViewing, // stop any card which is currently viewing
+      StopViewing,    
       StartViewing,
       StartRadio,
       StopRadio,
@@ -96,8 +100,9 @@ namespace MediaPortal.TV.Recording
         get { return _recording; }
         set { _recording = value; }
       }
-
     }
+    #endregion
+
     #region variables
     enum State
     {
@@ -130,6 +135,7 @@ namespace MediaPortal.TV.Recording
     static double _lastPosition = 0;
     static DateTime _killTimeshiftingTimer;
     static List<RecorderCommand> _listCommands = new List<RecorderCommand>();
+    static BackgroundWorker _epgWorker;
     #endregion
 
     #region delegates and events
@@ -177,7 +183,7 @@ namespace MediaPortal.TV.Recording
         using (Stream r = File.Open(@"capturecards.xml", FileMode.Open, FileAccess.Read))
         {
           SoapFormatter c = new SoapFormatter();
-          ArrayList cards= (ArrayList)c.Deserialize(r);
+          ArrayList cards = (ArrayList)c.Deserialize(r);
           foreach (TVCaptureDevice dev in cards)
           {
             _tvcards.Add(dev);
@@ -253,9 +259,9 @@ namespace MediaPortal.TV.Recording
         win.SetObject(_vmr9Osd);
       TeletextGrabber.TeletextCache.ClearBuffer();
 
-      BackgroundWorker epgWorker = new BackgroundWorker();
-      epgWorker.DoWork += new DoWorkEventHandler(Recorder.ProcessThread);
-      epgWorker.RunWorkerAsync();
+      _epgWorker = new BackgroundWorker();
+      _epgWorker.DoWork += new DoWorkEventHandler(Recorder.ProcessThread);
+      _epgWorker.RunWorkerAsync();
     }//static public void Start()
 
     /// <summary>
@@ -266,24 +272,31 @@ namespace MediaPortal.TV.Recording
     {
       //todo
       if (_state != State.Initialized) return;
-      _state = State.Deinitializing;
       TVDatabase.OnRecordingsChanged -= new TVDatabase.OnRecordingChangedHandler(Recorder.OnRecordingsChanged);
       GUIWindowManager.Receivers -= new SendMessageHandler(Recorder.OnMessage);
-
-      StopViewing();
-
-      foreach (TVCaptureDevice dev in _tvcards)
-      {
-        dev.Stop();
-      }
       RecorderProperties.Clean();
       _recordingsListChanged = false;
-      _state = State.None;
+
+      lock (_listCommands)
+      {
+        RecorderCommand cmd = new RecorderCommand(RecorderCommandType.StopAll);
+        _listCommands.Add(cmd);
+      }
+      while (_state != State.None) System.Threading.Thread.Sleep(100);
     }//static public void Stop()
 
     #endregion
 
     #region recording
+    static void HandleStopAll()
+    {
+      foreach (TVCaptureDevice card in _tvcards)
+      {
+        card.Stop();
+      }
+      _state = State.None;
+
+    }
     /// <summary>
     /// Checks if a recording should be started and if so starts the recording
     /// This function gets called on a regular basis by the scheduler. It will
@@ -702,7 +715,10 @@ namespace MediaPortal.TV.Recording
 
       // not recording this yet
       Log.WriteFile(Log.LogType.Recorder, "Recorder: time to record '{0}' on channel:{1} from {2}-{3} id:{4} priority:{5} quality:{6} {7}", rec.Title, rec.Channel, rec.StartTime.ToLongTimeString(), rec.EndTime.ToLongTimeString(), rec.ID, rec.Priority, rec.Quality.ToString(), rec.RecType.ToString());
-      Log.WriteFile(Log.LogType.Recorder, "Recorder:  find free capture card");
+      if (currentProgram != null)
+      {
+        Log.WriteFile(Log.LogType.Recorder, "Recorder: program:{0}-{1}", currentProgram.StartTime.ToLongTimeString() , currentProgram.EndTime.ToLongTimeString());
+      }
       LogTvStatistics();
 
       // find free card we can use for recording
@@ -837,7 +853,7 @@ namespace MediaPortal.TV.Recording
 
     static public void StopRecording(TVRecording rec)
     {
-      Log.WriteFile(Log.LogType.Recorder, "Recorder:StopRecording({0})",rec.Title);
+      Log.WriteFile(Log.LogType.Recorder, "Recorder:StopRecording({0})", rec.Title);
       if (_state != State.Initialized) return;
       lock (_listCommands)
       {
@@ -915,17 +931,29 @@ namespace MediaPortal.TV.Recording
 
         if (dev.CurrentTVRecording.RecType == TVRecording.RecordingType.Once)
         {
+          Log.WriteFile(Log.LogType.Recorder, "Recorder: cancel recording");
           dev.CurrentTVRecording.Canceled = Utils.datetolong(DateTime.Now);
         }
         else
         {
           long datetime = Utils.datetolong(DateTime.Now);
           TVProgram prog = dev.CurrentProgramRecording;
-          if (prog != null) datetime = Utils.datetolong(prog.StartTime);
+          Log.WriteFile(Log.LogType.Recorder, "Recorder: cancel {0}", prog);
+
+          if (prog != null)
+          {
+            datetime = Utils.datetolong(prog.StartTime);
+            Log.WriteFile(Log.LogType.Recorder, "Recorder: cancel serie {0} {1} {2}", prog.Title,prog.StartTime.ToLongDateString(), prog.StartTime.ToLongTimeString());
+          }
+          else
+          {
+            Log.WriteFile(Log.LogType.Recorder, "Recorder: cancel series");
+          }
           dev.CurrentTVRecording.CanceledSeries.Add(datetime);
         }
         TVDatabase.UpdateRecording(dev.CurrentTVRecording, TVDatabase.RecordingChange.Canceled);
         dev.StopRecording();
+        _recordingsListChanged = true;
       }
       _startTimer = new DateTime(1971, 6, 11, 0, 0, 0, 0);
     }//static public void StopRecording()
@@ -1613,7 +1641,7 @@ namespace MediaPortal.TV.Recording
 
     static void HandleViewCommand(string channel, bool TVOnOff, bool timeshift)
     {
-      Log.WriteFile(Log.LogType.Recorder, "Recorder:HandleView {0} {1} {2}",channel,TVOnOff,timeshift);
+      Log.WriteFile(Log.LogType.Recorder, "Recorder:HandleView {0} {1} {2}", channel, TVOnOff, timeshift);
       // checks
       if (channel == null)
       {
@@ -1924,6 +1952,7 @@ namespace MediaPortal.TV.Recording
       {
         try
         {
+          System.Threading.Thread.Sleep(500);
           ProcessEpg();
           ProcessCards();
           Recorder.HandleRecordings();
@@ -1936,6 +1965,9 @@ namespace MediaPortal.TV.Recording
             {
               switch (cmd.CommandType)
               {
+                case RecorderCommandType.StopAll:
+                  HandleStopAll();
+                  break;
                 case RecorderCommandType.StartViewing:
                   HandleViewCommand(cmd.Channel, true, cmd.TimeShifting);
                   break;
@@ -2307,6 +2339,7 @@ namespace MediaPortal.TV.Recording
     {
       _notifiesListChanged = true;
     }
+
     static void HandleNotifies()
     {
       if (_notifiesListChanged)
