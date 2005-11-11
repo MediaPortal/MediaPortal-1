@@ -2111,7 +2111,7 @@ namespace MediaPortal.TV.Recording
       //on some signalpresent is only true when tuned to a channel
       //on others  signalpresent is true when tuned to a transponder
       //so we just look if any variables returns true
-      //	Log.WriteFile(Log.LogType.Capture,"  locked:{0} present:{1} quality:{2}",isTunerLocked ,isSignalPresent ,signalQuality); 
+     // 	Log.WriteFile(Log.LogType.Capture,"  locked:{0} present:{1} quality:{2}",isTunerLocked ,isSignalPresent ,signalQuality); 
 
       if (Network() == NetworkType.ATSC)
       {
@@ -2119,6 +2119,7 @@ namespace MediaPortal.TV.Recording
           _signalPresent = true;
         else
           _signalPresent = false;
+        return;
       }
       if (isTunerLocked || isSignalPresent || (signalQuality > 0))
       {
@@ -3539,11 +3540,12 @@ namespace MediaPortal.TV.Recording
 
     public void Process()
     {
-      if (_graphState == State.None || _graphState == State.Created) return;
+      if (_graphState == State.None) return;
 
       UpdateSignalStrength();
       UpdateSignalQuality();
       UpdateSignalPresent();
+      if(_graphState == State.Created) return;
 
       if (_streamDemuxer != null)
         _streamDemuxer.Process();

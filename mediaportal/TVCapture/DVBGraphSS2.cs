@@ -2364,8 +2364,9 @@ namespace MediaPortal.TV.Recording
 
     public void Process()
     {
-      if (m_graphState == State.None || m_graphState == State.Created) return;
       UpdateSignalQuality();
+      if (m_graphState == State.None || m_graphState == State.Created) return;
+     
       if (!GUIGraphicsContext.Vmr9Active && Vmr7 != null && m_graphState == State.Viewing)
       {
         Vmr7.Process();
