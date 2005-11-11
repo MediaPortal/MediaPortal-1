@@ -2123,6 +2123,7 @@ namespace MediaPortal.TV.Recording
       if (isTunerLocked || isSignalPresent || (signalQuality > 0))
       {
         _signalPresent = true;
+        return;
       }
       _signalPresent = false;
     }//public bool SignalPresent()

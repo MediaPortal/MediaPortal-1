@@ -571,7 +571,7 @@ namespace MediaPortal.TV.Recording
     /// </param>
     /// <returns>
     /// -1 : no card found
-    /// else card which can be used for recording</returns>
+    /// else card which can be usfed for recording</returns>
     /// <remarks>
     /// MP will first use the following algorithm to find a card to use for the recording:
     ///		- card must be able to record the selected channel
