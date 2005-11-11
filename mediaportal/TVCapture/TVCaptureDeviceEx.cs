@@ -1156,7 +1156,9 @@ namespace MediaPortal.TV.Recording
       if (g_Player.Playing && g_Player.CurrentFile == Recorder.GetTimeShiftFileName(ID - 1))
       {
         Log.WriteFile(Log.LogType.Capture, "TVCaptureDevice.Rebuildgraph() stop media");
-        g_Player.Stop();
+
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_STOP_FILE, 0, 0, 0, 0, 0, null);
+        GUIGraphicsContext.SendMessage(msg);
       }
 
       StopTimeShifting();

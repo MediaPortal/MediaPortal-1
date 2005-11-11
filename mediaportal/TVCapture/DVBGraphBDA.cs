@@ -3616,8 +3616,8 @@ namespace MediaPortal.TV.Recording
 
           if (g_Player.CurrentPosition + 5d < g_Player.Duration)
           {
-            g_Player.ContinueGraph();
-            g_Player.SeekAbsolute(g_Player.Duration - 5d);
+            //g_Player.ContinueGraph();
+            //g_Player.SeekAbsolute(g_Player.Duration - 5d);
             _graphPaused = false;
           }
           return;
@@ -3693,7 +3693,7 @@ namespace MediaPortal.TV.Recording
           //if (g_Player.CurrentPosition + 3d >= g_Player.Duration)
           {
             _graphPaused = true;
-            g_Player.PauseGraph();
+//            g_Player.PauseGraph();
           }
         }
 #endif
