@@ -735,7 +735,7 @@ namespace MediaPortal.GUI.TV
 			}
 			ViewChannel(channel);
 			if (Recorder.TVChannelName!=channel && _isTvOn)
-			{
+			{/*
 				GUIDialogOK pDlgOK	= (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
 				if (pDlgOK!=null)
 				{
@@ -743,7 +743,7 @@ namespace MediaPortal.GUI.TV
 					pDlgOK.SetLine(1,977);//there is no free card available
 					pDlgOK.SetLine(2,978);//which can watch this channel
 					pDlgOK.DoModal((int)GUIWindow.Window.WINDOW_TV);
-				}
+				}*/
 			}
 		}
 		static public void ViewChannel(string channel)
