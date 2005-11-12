@@ -212,7 +212,7 @@ namespace MediaPortal.TV.Recording
     IPin _pinDemuxerVideo = null;
     IPin _pinDemuxerAudio = null;
     protected IPin _pinDemuxerSections = null;
-    IStreamBufferSink m_IStreamBufferSink = null;
+    IStreamBufferSink3 m_IStreamBufferSink = null;
     IStreamBufferConfigure m_IStreamBufferConfig = null;
     IBaseFilter _filterTIF = null;			// Transport Information Filter
     IBaseFilter _filterNetworkProvider = null;			// BDA Network Provider
@@ -1038,7 +1038,7 @@ namespace MediaPortal.TV.Recording
         //=========================================================================================================
         m_StreamBufferSink = new StreamBufferSink();
         m_mpeg2Analyzer = new VideoAnalyzer();
-        m_IStreamBufferSink = (IStreamBufferSink)m_StreamBufferSink;
+        m_IStreamBufferSink = (IStreamBufferSink3)m_StreamBufferSink;
         _graphState = State.Created;
 
         GetTunerSignalStatistics();
@@ -3640,14 +3640,14 @@ namespace MediaPortal.TV.Recording
       {
         if (_graphPaused && !_streamDemuxer.IsScrambled)
         {
-
-          if (g_Player.CurrentPosition + 5d < g_Player.Duration)
-          {
-            //g_Player.ContinueGraph();
-            //g_Player.SeekAbsolute(g_Player.Duration - 5d);
             _graphPaused = false;
-          }
-          return;
+            if (m_IStreamBufferSink != null)
+            {
+              long refTime = 0;
+              m_IStreamBufferSink.SetAvailableFilter(ref refTime);
+              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SEEK_POSITION, 0, 0, 0, 0, 0, null);
+              GUIGraphicsContext.SendMessage(msg);
+            }
         }
 
         if (_streamDemuxer.IsScrambled)
@@ -3717,11 +3717,7 @@ namespace MediaPortal.TV.Recording
         string fname = Recorder.GetTimeShiftFileNameByCardId(_cardId);
         if (g_Player.Playing && g_Player.CurrentFile == fname)
         {
-          //if (g_Player.CurrentPosition + 3d >= g_Player.Duration)
-          {
             _graphPaused = true;
-            //            g_Player.PauseGraph();
-          }
         }
 #endif
         if (_vmr9 != null) _vmr9.Enable(false);
@@ -4015,7 +4011,11 @@ namespace MediaPortal.TV.Recording
 #endif
         if (_vmr9 != null) _vmr9.Enable(true);
         _signalLostTimer = DateTime.Now;
-
+        if (m_IStreamBufferSink != null)
+        {
+          long refTime = 0;
+          m_IStreamBufferSink.SetAvailableFilter(ref refTime);
+        }
       }
     }//public void TuneChannel(AnalogVideoStandard standard,int iChannel,int country)
 

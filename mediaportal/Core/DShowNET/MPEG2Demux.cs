@@ -73,7 +73,7 @@ namespace DShowNET
 		IBaseFilter           m_VidAnalyzer=null;
 		IBaseFilter           m_streamBuffer=null;
     
-    IStreamBufferSink     m_bSink=null;
+    IStreamBufferSink3     m_bSink=null;
     IStreamBufferConfigure m_pConfig=null;
     bool                  m_bRendered=false;
     bool                  m_bRunning=false;
@@ -575,7 +575,7 @@ namespace DShowNET
         (m_graphBuilder as IMediaFilter).SetSyncSource(m_mpeg2Multiplexer as IReferenceClock);
 
         //set filename
-        m_bSink = m_streamBuffer as IStreamBufferSink;
+        m_bSink = m_streamBuffer as IStreamBufferSink3;
         if (m_bSink ==null) Log.WriteFile(Log.LogType.Capture,"mpeg2:FAILED to get IStreamBufferSink interface");
 
 				int iTimeShiftBuffer=30;
@@ -1027,6 +1027,12 @@ namespace DShowNET
 
         }
       }
+    }
+    public void SetStartingPoint()
+    {
+      if (m_bSink == null) return;
+      long refTime = 0;
+      m_bSink.SetAvailableFilter(ref refTime);
     }
 	}
 }

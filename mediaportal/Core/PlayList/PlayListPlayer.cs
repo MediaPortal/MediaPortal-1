@@ -119,7 +119,7 @@ namespace MediaPortal.Playlists
             if (position < duration - 1d)
             {
               Log.Write("Playlistplayer.SeekEnd({0})", duration);
-              g_Player.SeekAbsolute(duration - 0.5d);
+              g_Player.SeekAbsolute(duration - 2d);
               Log.Write("Playlistplayer.SeekEnd({0}) done", g_Player.CurrentPosition);
             }
           }

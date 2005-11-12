@@ -251,7 +251,7 @@ namespace MediaPortal.TV.Recording
     protected IPin m_pinAC3Out = null;
     // stream buffer sink filter
     protected IStreamBufferConfigure m_config = null;
-    protected IStreamBufferSink m_sinkInterface = null;
+    protected IStreamBufferSink3 m_sinkInterface = null;
     protected IBaseFilter m_sinkFilter = null;
     protected IBaseFilter m_mpeg2Analyzer = null;
     protected IBaseFilter m_demux = null;
@@ -391,7 +391,7 @@ namespace MediaPortal.TV.Recording
 
         Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2:CreateGraph() create MPEG2 analyzer");
         m_mpeg2Analyzer = (IBaseFilter)Activator.CreateInstance(Type.GetTypeFromCLSID(DVBSkyStar2Helper.CLSID_Mpeg2VideoStreamAnalyzer, true));
-        m_sinkInterface = (IStreamBufferSink)m_sinkFilter;
+        m_sinkInterface = (IStreamBufferSink3)m_sinkFilter;
 
         Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2:CreateGraph() create MPEG2 demultiplexer");
         m_demux = (IBaseFilter)Activator.CreateInstance(Type.GetTypeFromCLSID(Clsid.Mpeg2Demultiplexer, true));
@@ -1848,6 +1848,11 @@ namespace MediaPortal.TV.Recording
       {
         if (Vmr9 != null) Vmr9.Enable(true);
         m_signalLostTimer = DateTime.Now;
+        if (m_sinkInterface != null)
+        {
+          long refTime = 0;
+          m_sinkInterface.SetAvailableFilter(ref refTime);
+        }
       }
     }
     void SetDemux(int audioPid, int videoPid, int ac3Pid)

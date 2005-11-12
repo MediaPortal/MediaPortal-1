@@ -677,6 +677,7 @@ namespace MediaPortal.TV.Recording
       bool restartGraph = false;
       try
       {
+        /*
         if (m_graphState == State.TimeShifting)
         {
           string fname = Recorder.GetTimeShiftFileNameByCardId(m_cardID);
@@ -686,7 +687,7 @@ namespace MediaPortal.TV.Recording
             g_Player.PauseGraph();
             m_mpeg2Demux.StopTimeShifting();
           }
-        }
+        }*/
 
         m_iChannelNr = channel.Number;
         m_iCountryCode = channel.Country;
@@ -763,12 +764,15 @@ namespace MediaPortal.TV.Recording
       }
       finally
       {
+        if (m_mpeg2Demux!=null)
+          m_mpeg2Demux.SetStartingPoint();
+        /*
         if (restartGraph)
         {
           string fname = Recorder.GetTimeShiftFileNameByCardId(m_cardID);
           m_mpeg2Demux.StartTimeshifting(fname);
           g_Player.ContinueGraph();
-        }
+        }*/
       }
       m_iPrevChannel = channel.Number;
       m_StartTime = DateTime.Now;
