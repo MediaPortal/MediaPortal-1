@@ -1047,7 +1047,6 @@
     <Content Include="GUIPrograms\ProgramSettingProfiles.xml" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="ClassDiagram1.cd" />
     <None Include="GUIRecipes\CVS\Entries" />
     <None Include="GUIRecipes\CVS\Entries.Extra" />
     <None Include="GUIRecipes\CVS\Entries.Extra.Old" />
