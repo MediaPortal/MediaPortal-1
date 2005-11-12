@@ -84,7 +84,7 @@
        <textureFocus>recording_background_focus.png</textureFocus>
        <textureNoFocus>recording_background_nofocus.png</textureNoFocus>
        <spaceBetweenItems>5</spaceBetweenItems>
-       <textureHeight>35</textureHeight>
+       <textureHeight>20</textureHeight>
        <keepaspectratio>no</keepaspectratio>
        <font2>font10</font2>
        <font3>font10</font3>
