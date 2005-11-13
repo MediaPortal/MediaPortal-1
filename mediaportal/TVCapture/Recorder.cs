@@ -48,16 +48,20 @@ namespace MediaPortal.TV.Recording
   public class Recorder
   {
     #region recorder commands
+    //The GUI can communicate with the process thread by sending Recorder Commands
+    //todo this, create a RecorderCommand object and add it to _listCommands.
+    //The process thread will execute it in the background
     enum RecorderCommandType
     {
       StopAll,        // stop all activity on all cards
-      StopAllViewing, // stop any card which is currently viewing
-      StopViewing,    
-      StartViewing,
-      StartRadio,
-      StopRadio,
-      StopRecording,
+      StopAllViewing, // stop any card which is currently viewing tv
+      StopViewing,    // stop viewing tv on current selected card
+      StartViewing,   // start viewing tv
+      StartRadio,     // start listening radio
+      StopRadio,      // stop listening radio
+      StopRecording,  // stop a recording
     }
+
     class RecorderCommand
     {
       RecorderCommandType _type;
@@ -106,36 +110,65 @@ namespace MediaPortal.TV.Recording
     #region variables
     enum State
     {
-      None,
-      Initializing,
-      Initialized,
-      Deinitializing
+      None,           //recorder is not initialized yet
+      Initializing,   //recorder is busy initializing
+      Initialized,    //recorder is initialized 
+      Deinitializing  //recorder is de-initializing
     }
 
-    static bool _recordingsListChanged = false;  // flag indicating that recordings have been added/changed/removed
-    static bool _notifiesListChanged = false;  // flag indicating that notifies have been added/changed/removed
-    static int _preRecordInterval = 0;
-    static int _postRecordInterval = 0;
+    // flag indicating that recordings have been added/changed/removed
+    static bool _recordingsListChanged = false;  
+    // flag indicating that notifies have been added/changed/removed
+    static bool _notifiesListChanged = false;  
+    // number of minutes we should start recording before the program starts
+    static int _preRecordInterval = 0;  
+    // number of minutes we keeprecording after the program starts
+    static int _postRecordInterval = 0; 
 
-    static string _tvChannel = String.Empty;
+    // current selected TV channel name
+    static string _tvChannel = String.Empty; 
 
-    static State _state = State.None;
+    // recorder state
+    static State _state = State.None; 
+    // list of all tv cards installed
     static List<TVCaptureDevice> _tvcards = new List<TVCaptureDevice>();
+
+    //list of all tv channels present in tv database
     static List<TVChannel> _tvChannelsList = new List<TVChannel>();
+
+    //list of all scheduled recordings
     static List<TVRecording> _recordingsList = new List<TVRecording>();
+
+    //list of all notifies (alert me 2 minutes before program starts)
     static List<TVNotify> _notifiesList = new List<TVNotify>();
 
     static DateTime _startTimer = DateTime.Now;
     static DateTime _progressBarTimer = DateTime.Now;
+
+    //current selected tv card used for watching tv
     static int _currentCardIndex = -1;
+
+    //specifies the number of minutes the notify should be send before a program starts
     static int _preRecordingWarningTime = 2;
+
+    // vmr9 osd class 
     static VMR9OSD _vmr9Osd = new VMR9OSD();
     static bool _useVmr9Zap = false;
+
+    // last duration of timeshifting buffer
     static double _duration = 0;
+
+    // last position in timeshifting buffer
     static double _lastPosition = 0;
+
+    // timer which is used to stop timeshifting on a card when player has stopped
     static DateTime _killTimeshiftingTimer;
+
+    // list of all recorder commands which the processthread should process
     static List<RecorderCommand> _listCommands = new List<RecorderCommand>();
-    static BackgroundWorker _epgWorker;
+
+    //handle to the processing thread
+    static BackgroundWorker _processThread;
     #endregion
 
     #region delegates and events
@@ -143,11 +176,24 @@ namespace MediaPortal.TV.Recording
     public delegate void OnTvChannelChangeHandler(string tvChannelName);
     public delegate void OnTvRecordingChangedHandler();
     public delegate void OnTvRecordingHandler(string recordingFilename, TVRecording recording, TVProgram program);
+
+    //event which gets called when the tv channel changes (due to zapping for example)
     static public event OnTvChannelChangeHandler OnTvChannelChanged = null;
+
+    //event which happens when the state of a recording changes (like started or stopped)
     static public event OnTvRecordingChangedHandler OnTvRecordingChanged = null;
+
+
+    //event which happens when a recording about to be recorded
     static public event OnTvRecordingHandler OnTvRecordingStarted = null;
+
+    //event which happens when a recording has ended
     static public event OnTvRecordingHandler OnTvRecordingEnded = null;
+
+    //event which happens when TV viewing is started
     static public event OnTvViewHandler OnTvViewingStarted = null;
+
+    //event which happens when TV viewing is stopped
     static public event OnTvViewHandler OnTvViewingStopped = null;
     #endregion
 
@@ -164,18 +210,21 @@ namespace MediaPortal.TV.Recording
     }
 
     /// <summary>
-    /// This method will Start the scheduler. It
-    /// Loads the capture cards from capturecards.xml (made by the setup)
-    /// Loads the recordings (programs scheduled to record) from the tvdatabase
-    /// Loads the TVchannels from the tvdatabase
+    /// This method will Start the recorder. It
+    ///   -Loads the capture cards from capturecards.xml (made by the setup)
+    ///   -Loads the recordings (programs scheduled to record) from the tvdatabase
+    ///   -Loads the TVchannels from the tvdatabase
+    ///   -starts the thread which handles all the tv cards
     /// </summary>
     static public void Start()
     {
-      if (_state != State.None) return;
+      if (_state != State.None) return;//if we are initialized already then no need todo anything
+
       _state = State.Initializing;
       RecorderProperties.Init();
       _recordingsListChanged = false;
 
+      //load the definitions for each tv capture card
       Log.WriteFile(Log.LogType.Recorder, "Recorder: Loading capture cards from capturecards.xml");
       _tvcards.Clear();
       try
@@ -199,6 +248,8 @@ namespace MediaPortal.TV.Recording
       {
         Log.WriteFile(Log.LogType.Recorder, "Recorder: no capture cards found. Use file->setup to setup tvcapture!");
       }
+
+      //subscribe to the recording events of each card
       for (int i = 0; i < _tvcards.Count; i++)
       {
         TVCaptureDevice card = _tvcards[i];
@@ -209,6 +260,7 @@ namespace MediaPortal.TV.Recording
                               card.ID, card.VideoDevice, card.UseForTV, card.UseForRecording, card.Priority);
       }
 
+      //load the TV settings
       _preRecordInterval = 0;
       _postRecordInterval = 0;
       //m_bAlwaysTimeshift=false;
@@ -222,6 +274,7 @@ namespace MediaPortal.TV.Recording
         _preRecordingWarningTime = xmlreader.GetValueAsInt("mytv", "recordwarningtime", 2);
       }
 
+      //clean up any old leftover timeshifting files from the last time
       for (int i = 0; i < _tvcards.Count; ++i)
       {
         try
@@ -234,22 +287,28 @@ namespace MediaPortal.TV.Recording
         catch (Exception) { }
       }
 
+      //import any recordings which are on disk, but not in the tv database
       DiskManagement.ImportDvrMsFiles();
 
+      //get all tv channels
       _tvChannelsList.Clear();
       TVDatabase.GetChannels(ref _tvChannelsList);
 
+      // get all the scheduled recordings
       _recordingsList.Clear();
-      _notifiesList.Clear();
       TVDatabase.GetRecordings(ref _recordingsList);
-      TVDatabase.GetNotifies(_notifiesList, true);
-
       TVDatabase.OnRecordingsChanged += new TVDatabase.OnRecordingChangedHandler(Recorder.OnRecordingsChanged);
+
+      //get all the notifies
+      _notifiesList.Clear();
+      TVDatabase.GetNotifies(_notifiesList, true);
       TVDatabase.OnNotifiesChanged += new MediaPortal.TV.Database.TVDatabase.OnChangedHandler(Recorder.OnNotifiesChanged);
 
+      //subscribe to window messages.
       GUIWindowManager.Receivers += new SendMessageHandler(Recorder.OnMessage);
       _state = State.Initialized;
 
+      
       _vmr9Osd.Mute = false;
       GUIWindow win = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
       if (win != null)
@@ -259,28 +318,41 @@ namespace MediaPortal.TV.Recording
         win.SetObject(_vmr9Osd);
       TeletextGrabber.TeletextCache.ClearBuffer();
 
-      _epgWorker = new BackgroundWorker();
-      _epgWorker.DoWork += new DoWorkEventHandler(Recorder.ProcessThread);
-      _epgWorker.RunWorkerAsync();
+      //start the processing thread
+      _processThread = new BackgroundWorker();
+      _processThread.DoWork += new DoWorkEventHandler(Recorder.ProcessThread);
+      _processThread.RunWorkerAsync();
+
+      //subscribe to window change notifications
       GUIWindowManager.OnActivateWindow += new GUIWindowManager.WindowActivationHandler(GUIWindowManager_OnActivateWindow);
 
     }
 
-    
+    /// <summary>
+    /// This callback gets called by the window manager when user switches to another window (plugin)
+    /// When the users enters the My TV plugin we want to enable Direct3d exclusive mode to prevent
+    /// any tearing. And when the users leaves the My Tv plugin we want to disable Direct3d exclusive mode 
+    /// again
+    /// </summary>
+    /// <param name="windowId">id of the window which is about to be activated</param>
     static void GUIWindowManager_OnActivateWindow(int windowId)
     {
+      //Note, because of a direct3d limitation we cannot switch between
+      //normal / exclusive mode when a file is playing
       if (g_Player.Playing) return;
       if (GUIGraphicsContext.IsTvWindow(windowId))
       {
+        // we enter my tv, enable exclusive mode
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 1, 0, null);
         GUIWindowManager.SendMessage(msg);
       }
       else
       {
+        // we leave my tv, disable exclusive mode
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
         GUIWindowManager.SendMessage(msg);
       }
-    }//static public void Start()
+    }//static public void GUIWindowManager_OnActivateWindow()
 
     /// <summary>
     /// Stops the scheduler. It will cleanup all resources allocated and free
@@ -288,26 +360,34 @@ namespace MediaPortal.TV.Recording
     /// </summary>
     static public void Stop()
     {
-      //todo
+
       if (_state != State.Initialized) return;
+      //unsubscribe from events
       TVDatabase.OnRecordingsChanged -= new TVDatabase.OnRecordingChangedHandler(Recorder.OnRecordingsChanged);
+      GUIWindowManager.OnActivateWindow -= new GUIWindowManager.WindowActivationHandler(GUIWindowManager_OnActivateWindow);
       GUIWindowManager.Receivers -= new SendMessageHandler(Recorder.OnMessage);
       RecorderProperties.Clean();
       _recordingsListChanged = false;
 
+      //tell process thread to stop
       lock (_listCommands)
       {
         RecorderCommand cmd = new RecorderCommand(RecorderCommandType.StopAll);
         _listCommands.Add(cmd);
       }
-      GUIWindowManager.OnActivateWindow -= new GUIWindowManager.WindowActivationHandler(GUIWindowManager_OnActivateWindow);
 
+      //wait until the process thread has stopped.
       while (_state != State.None) System.Threading.Thread.Sleep(100);
     }//static public void Stop()
 
     #endregion
 
     #region recording
+    /// <summary>
+    /// This method handles the StopAll recorder command
+    /// it will simply stop all activity on each tv card
+    /// and set the recorder state to None
+    /// </summary>
     static void HandleStopAll()
     {
       foreach (TVCaptureDevice card in _tvcards)
@@ -319,19 +399,24 @@ namespace MediaPortal.TV.Recording
     }
     /// <summary>
     /// Checks if a recording should be started and if so starts the recording
-    /// This function gets called on a regular basis by the scheduler. It will
+    /// This function gets called on a regular basis by the process thread. It will
     /// look if any of the recordings needs to be started. Ifso it will
     /// find a free tvcapture card and start the recording
+    /// 
+    /// It will also check if any notifications (alert me just before program starts) needs to be send
+    /// and ifso will send a message to the GUI so it can show the popup to the user
     /// </summary>
     static void HandleRecordings()
     {
       if (_state != State.Initialized) return;
 
       DateTime dtCurrentTime = DateTime.Now;
+    
       // no TV cards? then we cannot record anything, so just return
       if (_tvcards.Count == 0) return;
 
-      // If the recording schedules have been changed since last time
+      // If the scheduled recordings have been changed,deleted or added since last time
+      // then we need to re-load the recordings from the database
       if (_recordingsListChanged)
       {
         // then get (refresh) all recordings from the database
@@ -342,6 +427,8 @@ namespace MediaPortal.TV.Recording
         TVDatabase.GetRecordings(ref _recordingsList);
         TVDatabase.GetChannels(ref _tvChannelsList);
         _recordingsListChanged = false;
+
+        //remember if we already send a notification for this recording
         foreach (TVRecording recording in _recordingsList)
         {
           foreach (TVRecording oldrec in oldRecs)
@@ -353,6 +440,8 @@ namespace MediaPortal.TV.Recording
             }
           }
 
+          //if any card is busy recording a changed recording, then let the card know
+          //about the changes
           for (int i = 0; i < _tvcards.Count; ++i)
           {
             TVCaptureDevice dev = _tvcards[i];
@@ -385,18 +474,25 @@ namespace MediaPortal.TV.Recording
         for (int j = 0; j < _recordingsList.Count; ++j)
         {
           TVRecording rec = _recordingsList[j];
+          //if recording is not canceled
           if (rec.Canceled > 0) continue;
+
+          //and recording has not finished yet (already recorded)
           if (rec.IsDone()) continue;
+
+          //is this the correct channel for the recording
           if (rec.RecType == TVRecording.RecordingType.EveryTimeOnEveryChannel || chan.Name == rec.Channel)
           {
+            //Are we already recording this recording?
             if (!IsRecordingSchedule(rec, out card))
             {
+              //no, then check if its time to record it
               int paddingFront = rec.PaddingFront;
               int paddingEnd = rec.PaddingEnd;
               if (paddingFront < 0) paddingFront = _preRecordInterval;
               if (paddingEnd < 0) paddingEnd = _postRecordInterval;
 
-              // check which program is running 
+              // check which program is current running on this channel
               TVProgram prog = chan.GetProgramAt(dtCurrentTime.AddMinutes(1 + paddingFront));
 
               // if the recording should record the tv program
@@ -410,14 +506,18 @@ namespace MediaPortal.TV.Recording
               }
               else
               {
+                //not necessary to record, but maybe its time to send a notification
+                //first check if we didnt already send it
                 if (!rec.IsAnnouncementSend)
                 {
+                  //no, then check if a notification needs to be send
                   DateTime dtTime = DateTime.Now.AddMinutes(_preRecordingWarningTime);
                   TVProgram prog2Min = chan.GetProgramAt(dtTime.AddMinutes(1 + paddingFront));
 
                   // if the recording should record the tv program
                   if (rec.IsRecordingProgramAtTime(dtTime, prog2Min, paddingFront, paddingEnd))
                   {
+                    //then send the announcement that we are about to record this recording in 2 minutes from now
                     Log.WriteFile(Log.LogType.Recorder, "Recorder: Send announcement for recording:{0}", rec.ToString());
                     rec.IsAnnouncementSend = true;
                     GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_ABOUT_TO_START_RECORDING, 0, 0, 0, 0, 0, null);
@@ -433,10 +533,14 @@ namespace MediaPortal.TV.Recording
       }//for (int i=0; i < _tvChannelsList.Count;++i)
 
 
+      //check if any manually added recording should be recorded
       for (int j = 0; j < _recordingsList.Count; ++j)
       {
         TVRecording rec = _recordingsList[j];
+        //if recording has been canceled then skip it
         if (rec.Canceled > 0) continue;
+
+        //if recording has been recorded already, then skip it
         if (rec.IsDone()) continue;
 
         int paddingFront = rec.PaddingFront;
@@ -447,9 +551,10 @@ namespace MediaPortal.TV.Recording
         // 1st check if the recording itself should b recorded
         if (rec.IsRecordingProgramAtTime(DateTime.Now, null, paddingFront, paddingEnd))
         {
+          //yes, time to record it. Are we already recording it?
           if (!IsRecordingSchedule(rec, out card))
           {
-            // yes, then record it
+            // no, then start recording it now
             if (Record(dtCurrentTime, rec, null, paddingFront, paddingEnd))
             {
               // recording it
@@ -458,12 +563,18 @@ namespace MediaPortal.TV.Recording
         }
         else
         {
+          //no time yet to record this recording, 
+          //if we are going to record it within 2 minutes from now, then send an annoucement
+
+          //is announcement already sent?
           if (!rec.IsAnnouncementSend)
           {
+            //no, is the recording going to start within 2 mins?
             DateTime dtTime = DateTime.Now.AddMinutes(_preRecordingWarningTime);
             // if the recording should record the tv program
             if (rec.IsRecordingProgramAtTime(dtTime, null, paddingFront, paddingEnd))
             {
+              //yes, then send the announcement
               rec.IsAnnouncementSend = true;
               Log.WriteFile(Log.LogType.Recorder, "Recorder: Send announcement for recording:{0}", rec.ToString());
               GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_ABOUT_TO_START_RECORDING, 0, 0, 0, 0, 0, null);
@@ -479,8 +590,8 @@ namespace MediaPortal.TV.Recording
 
     /// <summary>
     /// NeedChannelSwitchForRecording()
-    /// This method determines if we need to switch to another tv channel if 
-    /// we want to record the TVRecording specified in rec
+    /// This method determines if we need to switch to tv channel A to tv channel B 
+    /// if we want to record the TVRecording specified in rec
     /// </summary>
     /// <param name="rec">TVRecording to record</param>
     /// <returns>
@@ -489,25 +600,34 @@ namespace MediaPortal.TV.Recording
     /// </returns>
     static public bool NeedChannelSwitchForRecording(TVRecording rec)
     {
+      //are we viewing the channel requested, then there is no need to switch
       if (IsViewing() && TVChannelName == rec.Channel) return false;
 
-      //check if there's another card which is free
+      //no, check if there's another card which is free. ifso we can use that one and
+      //there is no need to switch channels
       for (int i = 0; i < _tvcards.Count; ++i)
       {
         TVCaptureDevice dev = _tvcards[i] as TVCaptureDevice;
+        //is the card free?
         if (!dev.IsRecording && !dev.IsTimeShifting && !dev.View)
         {
+          //yes and can it receive the tv channel as well?
           if (TVDatabase.CanCardViewTVChannel(rec.Channel, dev.ID) || _tvcards.Count == 1)
+          {
+            //yes, then we need dont need to switch
             return false;
+          }
         }
       }
+      //we need to switch channels if we are going to record this recording
       return true;
     }
 
     /// <summary>
     /// Starts recording the specified tv channel immediately using a reference recording
-    /// When called this method starts an erference  recording on the channel specified
-    /// It will record the next 2 hours.
+    /// When called this method starts an reference recording on the channel specified
+    /// It will record the next 2 hours or if the epg guide contains data about the program
+    /// end/stop times, then we'll just record the current program
     /// </summary>
     /// <param name="strChannel">TVchannel to record</param>
     static public void RecordNow(string strChannel, bool manualStop)
@@ -562,6 +682,11 @@ namespace MediaPortal.TV.Recording
       HandleRecordings();
     }//static public void RecordNow(string strChannel)
 
+    /// <summary>
+    /// Adds a new recording to the tv database and arranges the priority 
+    /// </summary>
+    /// <param name="rec">new recording to add to the database</param>
+    /// <returns></returns>
     static public int AddRecording(ref TVRecording rec)
     {
       List<TVRecording> recs = new List<TVRecording>();
@@ -612,19 +737,23 @@ namespace MediaPortal.TV.Recording
     static private int FindFreeCardForRecording(string recordingChannel, bool stopRecordingsWithLowerPriority, int recordingPrio)
     {
       // if we are viewing a tv channel, and we want to record the program on this channel
-      // then just use the same card
+      // then just use the same card 
       if (_currentCardIndex >= 0 && _currentCardIndex < _tvcards.Count)
       {
         TVCaptureDevice dev = _tvcards[_currentCardIndex];
+        //is card viewing?
         if (dev.View && !dev.IsRecording)
         {
+          // is it viewing the channel we want to record?
           if (dev.TVChannel == recordingChannel)
           {
+            //then just use the current selected card
             if (dev.UseForRecording) return _currentCardIndex;
           }
         }
       }
 
+      //no, then find another card which is free
       int cardNo = 0;
       int highestPrio = -1;
       int highestCard = -1;
@@ -729,7 +858,11 @@ namespace MediaPortal.TV.Recording
       {
         if (dev.IsRecording)
         {
-          if (dev.CurrentTVRecording.ID == rec.ID) return false;
+          if (dev.CurrentTVRecording.ID == rec.ID)
+          {
+            //we are alreay recording this schedule, so we can return
+            return false;
+          }
         }
       }
 
@@ -746,17 +879,22 @@ namespace MediaPortal.TV.Recording
       if (cardNo < 0)
       {
         // no card found. 
+        //check if this recording has a higher priority then any recordings currently busy
         Log.WriteFile(Log.LogType.Recorder, "Recorder:  No card found, check if a card is recording a show which has a lower priority then priority:{0}", rec.Priority);
         cardNo = FindFreeCardForRecording(rec.Channel, true, rec.Priority);
         if (cardNo < 0)
         {
+          //no, other recordings have higher priority...
           Log.WriteFile(Log.LogType.Recorder, "Recorder:  no recordings have a lower priority then priority:{0}", rec.Priority);
           return false;
         }
       }
 
+      //did we find a free tv card for this recording?
       if (cardNo < 0)
       {
+        //no then show a recording conflict and let the user choose
+        //which recording to stop
         GUIDialogMenuBottomRight pDlgOK = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU_BOTTOM_RIGHT) as GUIDialogMenuBottomRight;
         pDlgOK.Reset();
         pDlgOK.SetHeading(879);//Recording Conflict
@@ -837,10 +975,13 @@ namespace MediaPortal.TV.Recording
           return false;//no card free
         }
       }
+
+      //now we have a free card
       TVCaptureDevice card = _tvcards[cardNo];
       Log.WriteFile(Log.LogType.Recorder, "Recorder:  using card:{0} prio:{1}", card.ID, card.Priority);
       if (card.IsRecording)
       {
+        //if its recording, we cancel it 
         Log.WriteFile(Log.LogType.Recorder, "Recorder:  card:{0} was recording. Now use it for recording new program", card.ID);
         Log.WriteFile(Log.LogType.Recorder, "Recorder: Stop recording card:{0} channel:{1}", card.ID, card.TVChannel);
         if (card.CurrentTVRecording.RecType == TVRecording.RecordingType.Once)
@@ -854,13 +995,16 @@ namespace MediaPortal.TV.Recording
           if (prog != null) datetime = Utils.datetolong(prog.StartTime);
           card.CurrentTVRecording.CanceledSeries.Add(datetime);
         }
+        //and stop the recording
         TVDatabase.UpdateRecording(card.CurrentTVRecording, TVDatabase.RecordingChange.Canceled);
         card.StopRecording();
       }
 
+      //finally start recording...
       TuneExternalChannel(rec.Channel, false);
       card.Record(rec, currentProgram, iPostRecordInterval, iPostRecordInterval);
 
+      //if the user was using this card to watch tv, then start watching it also
       if (_currentCardIndex == cardNo)
       {
         TVChannelName = rec.Channel;
@@ -871,8 +1015,14 @@ namespace MediaPortal.TV.Recording
     }//static bool Record(DateTime currentTime,TVRecording rec, TVProgram currentProgram,int iPreRecordInterval, int iPostRecordInterval)
 
 
+    /// <summary>
+    /// Tell the recorder to stop recording the schedule specified in rec
+    /// </summary>
+    /// <param name="rec">recording to stop</param>
     static public void StopRecording(TVRecording rec)
     {
+      //add a new RecorderCommand which holds 'rec'
+      //and tell the process thread to handle it
       Log.WriteFile(Log.LogType.Recorder, "Recorder:StopRecording({0})", rec.Title);
       if (_state != State.Initialized) return;
       lock (_listCommands)
@@ -881,17 +1031,27 @@ namespace MediaPortal.TV.Recording
         _listCommands.Add(cmd);
       }
     }
+    /// <summary>
+    /// This method is called by the process thread when it received a StopRecording() command
+    /// it will check which card is currently recording the specified recording
+    /// and tell it to stop it.
+    /// </summary>
+    /// <param name="rec">recording to cancel</param>
     static void HandleStopTvRecording(TVRecording rec)
     {
       Log.WriteFile(Log.LogType.Recorder, "Recorder:HandleStopTvRecording()");
       if (rec == null) return;
+      //find card which currently records the 'rec'
       for (int card = 0; card < _tvcards.Count; ++card)
       {
         TVCaptureDevice dev = _tvcards[card];
+        //is this card recording
         if (dev.IsRecording)
         {
+          //yes, is it recording the 'rec' ?
           if (dev.CurrentTVRecording.ID == rec.ID)
           {
+            //yep then cancel the recording
             if (rec.RecType == TVRecording.RecordingType.Once)
             {
               Log.WriteFile(Log.LogType.Recorder, "Recorder: Stop recording card:{0} channel:{1}", dev.ID, dev.TVChannel);
@@ -906,6 +1066,7 @@ namespace MediaPortal.TV.Recording
               rec.CanceledSeries.Add(datetime);
               rec.Canceled = 0;
             }
+            //and tell the card to stop recording
             TVDatabase.UpdateRecording(rec, TVDatabase.RecordingChange.Canceled);
             dev.StopRecording();
 
@@ -929,6 +1090,8 @@ namespace MediaPortal.TV.Recording
     /// </remarks>
     static public void StopRecording()
     {
+      //add a new RecorderCommand to tell the process thread
+      //that it must stop recording
       Log.WriteFile(Log.LogType.Recorder, "Recorder:StopRecording()");
       lock (_listCommands)
       {
@@ -936,16 +1099,23 @@ namespace MediaPortal.TV.Recording
         _listCommands.Add(cmd);
       }
     }
+    /// <summary>
+    /// this methods will be called by the process thread when it receives a stoprecording command
+    /// It will stop any recording on the currently selected card
+    /// </summary>
     static void HandleStopRecording()
     {
       if (_state != State.Initialized) return;
       Log.WriteFile(Log.LogType.Recorder, "Recorder:HandleStopRecording()");
 
+      //get the current selected card
       if (_currentCardIndex < 0 || _currentCardIndex >= _tvcards.Count) return;
       TVCaptureDevice dev = _tvcards[_currentCardIndex];
 
+      //is it recording?
       if (dev.IsRecording)
       {
+        //yes. then cancel the recording
         Log.WriteFile(Log.LogType.Recorder, "Recorder: Stop recording card:{0} channel:{1}", dev.ID, dev.TVChannel);
         int ID = dev.CurrentTVRecording.ID;
 
@@ -972,6 +1142,8 @@ namespace MediaPortal.TV.Recording
           dev.CurrentTVRecording.CanceledSeries.Add(datetime);
         }
         TVDatabase.UpdateRecording(dev.CurrentTVRecording, TVDatabase.RecordingChange.Canceled);
+
+        //and tell the card to stop the recording
         dev.StopRecording();
         _recordingsListChanged = true;
       }
@@ -982,7 +1154,7 @@ namespace MediaPortal.TV.Recording
 
     #region Properties
     /// <summary>
-    /// Property which returns if any card is recording
+    /// Property which returns if any tvcard is recording
     /// </summary>
     static public bool IsAnyCardRecording()
     {
@@ -994,7 +1166,7 @@ namespace MediaPortal.TV.Recording
     }//static public bool IsAnyCardRecording()
 
     /// <summary>
-    /// Property which returns if any card is recording the specified channel
+    /// Property which returns if any card is recording the specified tv channel
     /// </summary>
     static public bool IsRecordingChannel(string channel)
     {
@@ -1009,7 +1181,7 @@ namespace MediaPortal.TV.Recording
 
 
     /// <summary>
-    /// Property which returns if current card is recording
+    /// Property which returns if current selected card is recording
     /// </summary>
     static public bool IsRecording()
     {
@@ -1021,7 +1193,7 @@ namespace MediaPortal.TV.Recording
     }//static public bool IsRecording()
 
     /// <summary>
-    /// Property which returns if current channel has teletext or not
+    /// Property which returns if current tv channel has teletext or not
     /// </summary>
     static public bool HasTeletext()
     {
@@ -1032,7 +1204,7 @@ namespace MediaPortal.TV.Recording
     }
 
     /// <summary>
-    /// Property which returns if current card supports timeshifting
+    /// Property which returns if current selected card supports timeshifting
     /// </summary>
     static public bool DoesSupportTimeshifting()
     {
@@ -1043,6 +1215,11 @@ namespace MediaPortal.TV.Recording
       return dev.SupportsTimeShifting;
     }//static public bool DoesSupportTimeshifting()
 
+    /// <summary>
+    /// Property which returns the friendly name for a card
+    /// </summary>
+    /// <param name="card">tv card index</param>
+    /// <returns>string which contains the friendly name</returns>
     static public string GetFriendlyNameForCard(int card)
     {
       if (_state != State.Initialized) return String.Empty;
@@ -1052,7 +1229,7 @@ namespace MediaPortal.TV.Recording
     }//static public string GetFriendlyNameForCard(int card)
 
     /// <summary>
-    /// Returns the Channel name of the channel we're currently watching
+    /// Returns the tv hannel name of the channel we're currently watching
     /// </summary>
     /// <returns>
     /// Returns the Channel name of the channel we're currently watching
@@ -1082,29 +1259,35 @@ namespace MediaPortal.TV.Recording
     }//static public TVRecording GetTVRecording()
 
     /// <summary>
-    /// Checks if a tvcapture card is recording the TVRecording specified
+    /// Checks if a tv card is recording the TVRecording specified in 'rec
     /// </summary>
     /// <param name="rec">TVRecording <seealso cref="MediaPortal.TV.Database.TVRecording"/></param>
+    /// <param name="card">the card index which is currently recording the 'rec'></param>
     /// <returns>true if a card is recording the specified TVRecording, else false</returns>
     static public bool IsRecordingSchedule(TVRecording rec, out int card)
     {
       card = -1;
       if (rec == null) return false;
       if (_state != State.Initialized) return false;
+      //check all cards
       for (int i = 0; i < _tvcards.Count; ++i)
       {
         TVCaptureDevice dev = _tvcards[i];
+        // us it recording the schedule specified in 'rec'?
         if (dev.IsRecording && dev.CurrentTVRecording != null && dev.CurrentTVRecording.ID == rec.ID)
         {
+          //seems so, is the recording a series
           if (rec.Series == false)
           {
+            //no, then we now for sure its recording it
             card = i;
             return true;
           }
 
-          //check start/end times
+          //its a series, so we need to check start/end times of the current episode
           if (rec.StartTime <= DateTime.Now && rec.EndTime >= rec.StartTime)
           {
+            //yep, we're recording this episode, so return true
             card = i;
             return true;
           }
@@ -1114,7 +1297,8 @@ namespace MediaPortal.TV.Recording
     }//static public bool IsRecordingSchedule(TVRecording rec, out int card)
 
     /// <summary>
-    /// Property which returns the current program being recorded. If no programs are being recorded at the moment
+    /// Property which returns the current program being recorded. 
+    /// If no programs are being recorded at the moment
     /// it will return null;
     /// </summary>
     /// <seealso cref="MediaPortal.TV.Database.TVProgram"/>
@@ -1183,6 +1367,12 @@ namespace MediaPortal.TV.Recording
       return false;
     }//static public bool IsViewing()
 
+    /// <summary>
+    /// Property which returns true if the card specified by the 'cardId' is currently used
+    /// for viewing tv
+    /// </summary>
+    /// <param name="cardId">id of tv card to check</param>
+    /// <returns></returns>
     static public bool IsCardViewing(int cardId)
     {
       if (_state != State.Initialized) return false;
@@ -1206,18 +1396,24 @@ namespace MediaPortal.TV.Recording
     {
       get
       {
+        //return if we're viewing tv or not.
+        //if we're playing a timeshift file, then we're watching tv so return true
         if (g_Player.Playing && g_Player.IsTV && !g_Player.IsTVRecording) return true;
+
+        //if any card is in 'View' mode then return true also
         for (int i = 0; i < _tvcards.Count; ++i)
         {
           TVCaptureDevice dev = _tvcards[i];
           if (dev.View) return true;
         }
+
+        //no card is used for viewing tv
         return false;
       }
     }//static public bool View
 
     /// <summary>
-    /// property which returns the date&time the recording was started
+    /// property which returns the date&time the current recording was started
     /// </summary>
     static public DateTime TimeRecordingStarted
     {
@@ -1258,6 +1454,11 @@ namespace MediaPortal.TV.Recording
       get { return _tvcards.Count; }
     }
 
+    /// <summary>
+    /// Indexer which returns the TVCaptureDevice object for a given card
+    /// </summary>
+    /// <param name="index">card number (0-Count)</param>
+    /// <returns>TVCaptureDevice object</returns>
     static public TVCaptureDevice Get(int index)
     {
       if (index < 0 || index >= _tvcards.Count) return null;
@@ -1309,6 +1510,9 @@ namespace MediaPortal.TV.Recording
         _vmr9Osd.RenderZapOSD(channel, quality, level);
       }
     }
+    /// <summary>
+    /// Property which returns the Signal Strength of the current tv card used
+    /// </summary>
     static public int SignalStrength
     {
       get
@@ -1320,6 +1524,10 @@ namespace MediaPortal.TV.Recording
         return dev.SignalStrength;
       }
     }
+
+    /// <summary>
+    /// Property which returns the signal quality of the current tv card used
+    /// </summary>
     static public int SignalQuality
     {
       get
@@ -1332,6 +1540,11 @@ namespace MediaPortal.TV.Recording
       }
     }
 
+    /// <summary>
+    /// Property to get the recording filename for a given tv recording
+    /// </summary>
+    /// <param name="rec">recording</param>
+    /// <returns>filename for the recording</returns>
     static public string GetRecordingFileName(TVRecording rec)
     {
       int card;
@@ -1342,8 +1555,9 @@ namespace MediaPortal.TV.Recording
     }
 
     /// <summary>
-    /// Property which returns the timeshifting file for the current channel
+    /// Property which returns the timeshifting filename for the current selected card
     /// </summary>
+    /// <returns>filename of the timeshifting file</returns>
     static public string GetTimeShiftFileName()
     {
       if (_currentCardIndex < 0 || _currentCardIndex >= _tvcards.Count) return String.Empty;
@@ -1354,6 +1568,11 @@ namespace MediaPortal.TV.Recording
       return FileName;
     }
 
+    /// <summary>
+    /// Property which returns the timeshifting filename for a specific card
+    /// </summary>
+    /// <param name="card">card index</param>
+    /// <returns>filename of the timeshifting file</returns>
     static public string GetTimeShiftFileName(int card)
     {
       if (card < 0 || card >= _tvcards.Count) return String.Empty;
@@ -1361,6 +1580,12 @@ namespace MediaPortal.TV.Recording
       string FileName = String.Format(@"{0}\card{1}\{2}", dev.RecordingPath, card + 1, dev.TimeShiftFileName);
       return FileName;
     }
+
+    /// <summary>
+    /// Property which returns the timeshifting filename for a specific card id
+    /// </summary>
+    /// <param name="card">card id</param>
+    /// <returns>filename of the timeshifting file</returns>
     static public string GetTimeShiftFileNameByCardId(int cardId)
     {
       for (int i = 0; i < _tvcards.Count; ++i)
@@ -1381,6 +1606,10 @@ namespace MediaPortal.TV.Recording
     #endregion
 
     #region Radio
+    /// <summary>
+    /// Property which returns true if we currently listening to a radio station
+    /// </summary>
+    /// <returns>true if listening to radio</returns>
     static public bool IsRadio()
     {
       for (int i = 0; i < _tvcards.Count; ++i)
@@ -1394,6 +1623,10 @@ namespace MediaPortal.TV.Recording
       return false;
     }
 
+    /// <summary>
+    /// When listening to radio, this property returns the name of the current radio stations
+    /// </summary>
+    /// <returns>station name when listening to radio, else emty string</returns>
     static public string RadioStationName()
     {
       for (int i = 0; i < _tvcards.Count; ++i)
@@ -1407,14 +1640,22 @@ namespace MediaPortal.TV.Recording
       return string.Empty;
     }
 
+    /// <summary>
+    /// Stop listening to radio
+    /// </summary>
     static public void StopRadio()
     {
+      //Send command to process thread to stop listening to radio
       lock (_listCommands)
       {
         RecorderCommand cmd = new RecorderCommand(RecorderCommandType.StopRadio);
         _listCommands.Add(cmd);
       }
     }
+    /// <summary>
+    /// this method will be called by the process thread when it received a StopRadio command.
+    /// It will simply stop radio on any card
+    /// </summary>
     static void HandleStopRadio()
     {
       Log.Write("playing{0} radio:{1}", g_Player.Playing, g_Player.IsRadio);
@@ -1434,8 +1675,13 @@ namespace MediaPortal.TV.Recording
       _startTimer = new DateTime(1971, 6, 11, 0, 0, 0, 0);
     }//stopRadio()
 
+    /// <summary>
+    /// Start listening to a radio channel
+    /// </summary>
+    /// <param name="radioStationName"></param>
     static public void StartRadio(string radioStationName)
     {
+      //Send command to process thread to start listening to radio
       lock (_listCommands)
       {
         RecorderCommand cmd = new RecorderCommand(RecorderCommandType.StartRadio);
@@ -1443,6 +1689,11 @@ namespace MediaPortal.TV.Recording
         _listCommands.Add(cmd);
       }
     }
+    /// <summary>
+    /// this method will be called by the process thread when it received a StartRadio command.
+    /// It will find a card which can receive this radio station and when found tell the
+    /// card to tune to the radio station and play it
+    /// </summary>
     static void HandleStartRadio(string radioStationName)
     {
       if (radioStationName == null)
@@ -1515,14 +1766,20 @@ namespace MediaPortal.TV.Recording
     /// </summary>
     static public void StopViewing()
     {
+      //send Recorder command to process thread to stop viewing
       Log.WriteFile(Log.LogType.Recorder, "Recorder:Stopviewing()");
       lock (_listCommands)
       {
         RecorderCommand cmd = new RecorderCommand(RecorderCommandType.StopAllViewing);
         _listCommands.Add(cmd);
       }
+      //wait till thread finished this command
       while (_listCommands.Count > 0) System.Threading.Thread.Sleep(10);
     }
+    /// <summary>
+    /// This method gets called by the process thread when it receives a StopAllViewing command.
+    /// It will enumerate all tv cards and stop any card which is viewing tv
+    /// </summary>
     static void HandleStopAllViewing()
     {
       Log.WriteFile(Log.LogType.Recorder, "Recorder:StopAllViewing()");
@@ -1935,6 +2192,29 @@ namespace MediaPortal.TV.Recording
     }
     #endregion
 
+    /// <summary>
+    /// All things needed to handle the tv cards is done is this thread. We use a seperate thread
+    /// since some actions are time-consuming like starting/stopping a card. By using a seperate
+    /// thread the main GUI can continue doing rendering work
+    /// Things done in this thread:
+    ///   - auto epg grabber. 
+    ///       The auto epg grabber will grab the EPG from DVB cards when they are idle and update
+    ///       the epg database
+    ///   - disk management.
+    ///       Will delete any old recordings when space is needed and/or max. number of episodes for
+    ///       a recording has been reached
+    ///   - recordings
+    ///       it will check periodicaly if a new recording should be started (or stopped)
+    ///   - notifies
+    ///       it will send notifications to the GUI when a new program is about to start
+    ///   - recorder commands
+    ///       The gui can submit commands by adding them to _listCommands to for example
+    ///       start viewing tv, stop viewing tv, zap channels etc.
+    ///       These commands will be processed and handled by this thread
+    ///     
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     static void ProcessThread(object sender, DoWorkEventArgs e)
     {
       System.Threading.Thread.CurrentThread.Priority = System.Threading.ThreadPriority.BelowNormal;
@@ -1943,12 +2223,23 @@ namespace MediaPortal.TV.Recording
         try
         {
           System.Threading.Thread.Sleep(500);
+          //process auto epg grabber
           ProcessEpg();
+
+          //process all cards
           ProcessCards();
+
+          //handle the recordings
           Recorder.HandleRecordings();
+
+          //handle disk space management
           DiskManagement.CheckRecordingDiskSpace();
-          Recorder.HandleNotifies();
           DiskManagement.Process();
+
+          //handle the notifies
+          Recorder.HandleNotifies();
+
+          //process any recorder commands from the GUI
           lock (_listCommands)
           {
             foreach (RecorderCommand cmd in _listCommands)
@@ -1956,27 +2247,34 @@ namespace MediaPortal.TV.Recording
               switch (cmd.CommandType)
               {
                 case RecorderCommandType.StopAll:
+                  // stop all activity on all cards (used when MP stops)
                   HandleStopAll();
                   break;
                 case RecorderCommandType.StartViewing:
+                  //start viewing a tv channel
                   HandleViewCommand(cmd.Channel, true, cmd.TimeShifting);
                   break;
                 case RecorderCommandType.StopViewing:
+                  //stop viewing a tv channel
                   HandleViewCommand(cmd.Channel, false, cmd.TimeShifting);
                   break;
                 case RecorderCommandType.StopRecording:
+                  // stop recording a program
                   if (cmd.Recording == null)
                     HandleStopRecording();
                   else
                     HandleStopTvRecording(cmd.Recording);
                   break;
                 case RecorderCommandType.StopAllViewing:
+                  //stop viewing on any card
                   HandleStopAllViewing();
                   break;
                 case RecorderCommandType.StopRadio:
+                  //stop listening to radio
                   HandleStopRadio();
                   break;
                 case RecorderCommandType.StartRadio:
+                  //start listening to radio
                   HandleStartRadio(cmd.Channel);
                   break;
               }
@@ -1994,24 +2292,30 @@ namespace MediaPortal.TV.Recording
 
     /// <summary>
     /// ProcessCards()
-    /// This method gets called regulary and will terminate all cards
-    /// which are 
-    /// - not recording 
-    /// - timeshifting
-    /// - not being watched
+    /// This method gets called regulary and will stop timeshifting on any card
+    /// which is 
+    ///     - not recording 
+    ///     - timeshifting
+    ///     - not being watched
+    ///  Also it will start playback when the card is timeshifting but the
+    ///  timeshift player has not been started yet
     /// </summary>
     static void ProcessCards()
     {
-      //if we're not playing the timeshifting file, then start playing it...
+      // if a card is timeshifting, and the timeshift file exists
+      // and the player is not currently playing, then start playing the timeshift file
+      
+      //are we timeshifting and/or recording
       if (Recorder.IsTimeShifting() || Recorder.IsRecording())
       {
+        // and player is not playing?
         if (!g_Player.Playing)
         {
+          //are we in My TV 
           int windowId = GUIWindowManager.ActiveWindow;
           if (GUIGraphicsContext.IsTvWindow(windowId) || Recorder.IsRadio())
           {
-
-            //then try to start it
+            //check if timeshift file exists
             string fileName = Recorder.GetTimeShiftFileName();
             try
             {
@@ -2019,8 +2323,10 @@ namespace MediaPortal.TV.Recording
               {
                 using (FileStream f = new FileStream(fileName, System.IO.FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {
+                  //yes, if filesize > 10KByte
                   if (f.Length > 1024 * 10)
                   {
+                    //then we start playing the timeshift file
                     Log.Write("Recorder:filesize:{0} play timeshifting", f.Length);
                     GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAY_FILE, 0, 0, 0, 0, 0, null);
                     msg.Label = fileName;
@@ -2037,19 +2343,24 @@ namespace MediaPortal.TV.Recording
       }
 
 
+      //process all cards
       for (int i = 0; i < _tvcards.Count; ++i)
       {
         TVCaptureDevice dev = _tvcards[i];
         dev.Process();
+        //if card is timeshifting, but player has stopped, then stop the card also
         if (dev.IsTimeShifting && !dev.IsRecording && !dev.IsRadio)
         {
           if (_currentCardIndex == i)
           {
+            //player not playing?
             if (!g_Player.Playing)
             {
+              // for more then 10 secs?
               TimeSpan ts = DateTime.Now - _killTimeshiftingTimer;
               if (ts.TotalSeconds > 10)
               {
+                //then stop the card
                 dev.Stop();
                 _currentCardIndex = -1;
                 if (OnTvViewingStopped != null)
