@@ -116,6 +116,8 @@ namespace MediaPortal.GUI.TV
 		public override bool Init()
 		{
 			bool bResult= Load (GUIGraphicsContext.Skin+@"\mytvhome.xml");
+      LoadSettings();
+
 			return bResult;
 		}
 
@@ -288,7 +290,6 @@ namespace MediaPortal.GUI.TV
 			if (m_navigator ==null)
 			{
 				m_navigator = new ChannelNavigator();			// Create the channel navigator (it will load groups and channels)
-				LoadSettings();
 			}
 			base.OnPageLoad ();
 			/*
@@ -310,9 +311,27 @@ namespace MediaPortal.GUI.TV
 
 			// start viewing tv... 
 			GUIGraphicsContext.IsFullScreenVideo=false;
-				
-			Log.Write("tv home init:{0}",Navigator.CurrentChannel);
-			ViewChannel(Navigator.CurrentChannel);
+      string channelName = Navigator.CurrentChannel;
+      if (Navigator.CurrentChannel == String.Empty)
+      {
+        if (Navigator.CurrentGroup == null && Navigator.Groups.Count > 0)
+        {
+          Navigator.SetCurrentGroup(  Navigator.Groups[0].GroupName);
+        }
+        if (Navigator.CurrentGroup != null)
+        {
+          if (Navigator.CurrentGroup.TvChannels.Count > 0)
+          {
+            channelName = Navigator.CurrentGroup.TvChannels[0].Name;
+          }
+        }
+      }
+
+      if (channelName!=String.Empty)
+      {
+			  Log.Write("tv home init:{0}",Navigator.CurrentChannel);
+			  ViewChannel(Navigator.CurrentChannel);
+      }
       UpdateChannelButton();
 			UpdateStateOfButtons();
 			UpdateProgressPercentageBar();

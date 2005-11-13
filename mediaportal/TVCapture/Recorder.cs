@@ -1911,6 +1911,7 @@ namespace MediaPortal.TV.Recording
         {
           foreach (TVChannel chan in _tvChannelsList)
           {
+            if (_listCommands.Count > 0) break;
             if (!chan.AutoGrabEpg) continue;
             ts = DateTime.Now - chan.LastDateTimeEpgGrabbed;
             if (ts.TotalHours > 2)
