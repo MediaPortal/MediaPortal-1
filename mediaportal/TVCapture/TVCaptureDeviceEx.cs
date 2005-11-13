@@ -1163,7 +1163,7 @@ namespace MediaPortal.TV.Recording
     void RebuildGraph()
     {
       Log.WriteFile(Log.LogType.Capture, "Card:{0} rebuild graph", ID);
-      State state = _currentGraphState;
+
       //stop playback of this channel
       if (g_Player.Playing && g_Player.CurrentFile == Recorder.GetTimeShiftFileName(ID - 1))
       {
@@ -1173,22 +1173,22 @@ namespace MediaPortal.TV.Recording
         GUIGraphicsContext.SendMessage(msg);
       }
 
-      StopTimeShifting();
-      View = false;
-      DeleteGraph();
-      CreateGraph();
-      if (state == State.Timeshifting)
+      if (_currentGraph != null)
       {
-        StartTimeShifting();
-
-        Log.WriteFile(Log.LogType.Capture, "TVCaptureDevice.Rebuildgraph() play:{0}", Recorder.GetTimeShiftFileName(ID - 1));
-        //g_Player.Play(Recorder.GetTimeShiftFileName(ID-1));TESTTEST
+        _currentGraph.DeleteGraph();
+      }
+      TVChannel channel = GetChannel(_currentTvChannelName);
+      _currentGraph.CreateGraph(Quality);
+      if (_currentGraphState == State.Timeshifting)
+      {
+        _currentGraph.StartTimeShifting(channel, Recorder.GetTimeShiftFileName(ID - 1));
+        lastChannelChange = DateTime.Now;
       }
       else
       {
-        View = true;
+        _currentGraph.StartViewing(channel);
+        lastChannelChange = DateTime.Now;
       }
-      lastChannelChange = DateTime.Now;
       Log.WriteFile(Log.LogType.Capture, "Card:{0} rebuild graph done", ID);
     }
 
