@@ -423,6 +423,8 @@ namespace MediaPortal.GUI.Pictures
         public override void Render(float timePassed)
         {
             //Log.Write("Render:{0} {1} {2}", timePassed, _renderTimer, _frameCounter);
+          if (!_isPaused && !_isPictureZoomed)
+          {
             if (_frameCounter > 0)
             {
               _renderTimer += timePassed;
@@ -433,6 +435,7 @@ namespace MediaPortal.GUI.Pictures
               }
             }
             else _frameCounter = 1;
+          }
             int iSlides = _slideList.Count;
             if (0 == iSlides) return;
 
