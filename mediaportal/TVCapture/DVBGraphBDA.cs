@@ -5301,7 +5301,7 @@ namespace MediaPortal.TV.Recording
     }
     public bool IsEpgDone()
     {
-      if (_isGraphRunning == false) return true;
+      if (_graphState == State.Epg && _isGraphRunning == false) return true;
       return false;
     }
     public bool IsEpgGrabbing()
