@@ -3559,7 +3559,7 @@ namespace MediaPortal.TV.Recording
           Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:EPG done");
           _mediaControl.Stop();
           _isGraphRunning = false;
-          _graphState = State.Created;
+          //_graphState = State.Created;
           return;
         }
       }

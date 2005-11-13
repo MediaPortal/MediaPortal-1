@@ -612,11 +612,12 @@ namespace MediaPortal.GUI.TV
             GUISpinControl cntlDay = GetControl((int)Controls.SPINCONTROL_DAY) as GUISpinControl;
             if (cntlDay != null)
             {
+              DateTime dtNow = DateTime.Now;
               cntlDay.Reset();
               cntlDay.SetRange(0, MaxDaysInGuide - 1);
               for (int iDay = 0; iDay < MaxDaysInGuide; iDay++)
               {
-                DateTime dtTemp = m_dtTime.AddDays(iDay);
+                DateTime dtTemp = dtNow.AddDays(iDay);
                 string day;
                 switch (dtTemp.DayOfWeek)
                 {
