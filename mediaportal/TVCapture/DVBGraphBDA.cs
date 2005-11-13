@@ -1549,7 +1549,7 @@ namespace MediaPortal.TV.Recording
     public bool StartViewing(TVChannel channel)
     {
       if (_graphState != State.Created) return false;
-      Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:StartViewing()");
+      Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:StartViewing() {0}",channel.Name);
 
       _isOverlayVisible = true;
       // add VMR9 renderer to graph
@@ -1583,8 +1583,14 @@ namespace MediaPortal.TV.Recording
       }
 
       _isUsingAC3 = TVDatabase.DoesChannelHaveAC3(channel, Network() == NetworkType.DVBC, Network() == NetworkType.DVBT, Network() == NetworkType.DVBS, Network() == NetworkType.ATSC);
+      if (_isUsingAC3)
+        Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA: channel {0} uses AC3", channel.Name);
+      else
+        Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA: channel {0} uses MP2 audio", channel.Name)
+          ;
       if (!_isUsingAC3)
       {
+        Log.WriteFile(Log.LogType.Capture, false, "DVBGraphBDA:render MP2 audio pin");
         if (_graphBuilder.Render(_pinDemuxerAudio) != 0)
         {
           Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA:Failed to render audio out pin MPEG-2 Demultiplexer");
@@ -1594,6 +1600,7 @@ namespace MediaPortal.TV.Recording
       }
       else
       {
+        Log.WriteFile(Log.LogType.Capture, false, "DVBGraphBDA:render AC3 audio pin");
         if (_graphBuilder.Render(_pinAC3Out) != 0)
         {
           Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA:Failed to render AC3 pin MPEG-2 Demultiplexer");
@@ -1749,13 +1756,18 @@ namespace MediaPortal.TV.Recording
         _vmr7.RemoveVMR7();
         _vmr7 = null;
       }
-      Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:StartTimeShifting()");
+      Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:StartTimeShifting() {0}",channel.Name);
 
       bool _isUsingAC3 = false;
       if (channel != null)
       {
         TuneChannel(channel);
         _isUsingAC3 = TVDatabase.DoesChannelHaveAC3(channel, Network() == NetworkType.DVBC, Network() == NetworkType.DVBT, Network() == NetworkType.DVBS, Network() == NetworkType.ATSC);
+        if (_isUsingAC3)
+          Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA: channel {0} uses AC3",channel.Name);
+        else
+          Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA: channel {0} uses MP2 audio", channel.Name);
+
       }
       if (CreateSinkSource(strFileName, _isUsingAC3))
       {
@@ -2579,6 +2591,7 @@ namespace MediaPortal.TV.Recording
 
         if (!useAC3)
         {
+          Log.WriteFile(Log.LogType.Capture, false, "DVBGraphBDA:connect MP2 audio pin->SBE");
           //connect MPEG2 demuxer audio output ->StreamBufferSink Input #1
           //Get StreamBufferSink InputPin #1
           pinObj3 = DirectShowUtil.FindPinNr((IBaseFilter)m_StreamBufferSink, PinDirection.Input, 1);
@@ -2597,6 +2610,7 @@ namespace MediaPortal.TV.Recording
         else
         {
           //connect ac3 pin ->stream buffersink input #2
+          Log.WriteFile(Log.LogType.Capture, false, "DVBGraphBDA:connect AC3 audio pin->SBE");
           if (_pinAC3Out != null)
           {
             pinObj3 = DirectShowUtil.FindPinNr((IBaseFilter)m_StreamBufferSink, PinDirection.Input, 1);
@@ -2611,6 +2625,10 @@ namespace MediaPortal.TV.Recording
               Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA:FAILED to connect mpeg2 demuxer AC3 out->streambuffer sink in#2:{0:X}", hr);
               return false;
             }
+          }
+          else
+          {
+            Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA:FAILED ac3 pin not found?");
           }
         }
         int ipos = fileName.LastIndexOf(@"\");
@@ -3986,6 +4004,8 @@ namespace MediaPortal.TV.Recording
         _pmtRetyCount = 0;
         _analyzerInterface.ResetParser();
         SetupMTSDemuxerPin();
+        Log.WriteFile(Log.LogType.Capture, false, "DVBGraphBDA:set mpeg2demuxer video:0x{0:x} audio:0x{1:X} ac3:0x{2:X}",
+                        _currentTuningObject.VideoPid,_currentTuningObject.AudioPid,_currentTuningObject.AC3Pid);
         SetupDemuxer(_pinDemuxerVideo, _currentTuningObject.VideoPid, _pinDemuxerAudio, _currentTuningObject.AudioPid, _pinAC3Out, _currentTuningObject.AC3Pid);
 
         if (_streamDemuxer != null)
