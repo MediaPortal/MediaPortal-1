@@ -458,7 +458,7 @@ namespace MediaPortal.IR
                 }
             }
 
-            catch (System.DllNotFoundException ex)
+            catch (System.DllNotFoundException )
             {
                 //most users dont have the dll on their system so will get a exception here
                 Log.Write("USBUIRT:uuirtdrv.dll not found");
@@ -896,13 +896,13 @@ namespace MediaPortal.IR
                     Log.Write("USBUIRT:Unable to open USBUIRT driver");
             }
 
-            catch(System.DllNotFoundException ex)
+            catch(System.DllNotFoundException )
             {
                 //most users dont have the dll on their system so will get a exception here
                 Log.Write("USBUIRT:uuirtdrv.dll not found");
             }
 
-            catch(Exception e)
+            catch(Exception )
             {
                 //most users dont have the dll on their system so will get a exception here
             }

@@ -674,7 +674,7 @@ namespace MediaPortal.TV.Recording
     public void TuneChannel(TVChannel channel)
     {
       if (m_graphState != State.TimeShifting && m_graphState != State.Viewing) return;
-      bool restartGraph = false;
+      //bool restartGraph = false;
       try
       {
         /*

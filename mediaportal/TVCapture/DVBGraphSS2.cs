@@ -658,6 +658,9 @@ namespace MediaPortal.TV.Recording
     //
     private bool Tune(int Frequency, int SymbolRate, int FEC, int POL, int LNBKhz, int Diseq, int AudioPID, int VideoPID, int LNBFreq, int ecmPID, int ttxtPID, int pmtPID, int pcrPID, string pidText, int dvbsubPID, int programNumber, DVBChannel ch)
     {
+
+      Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2 Tune() freq:{0} SR:{1} FEC:{2} POL:{3} LNBKhz:{4} Diseq:{5} audiopid:{6:X} videopid:{7:X} LNBFreq:{8} ecmPid:{9:X} pmtPid:{10:X} pcrPid{11:X}",
+                    Frequency, SymbolRate, FEC, POL, LNBKhz, Diseq, AudioPID, VideoPID, LNBFreq, ecmPID, pmtPID, pcrPID);
       int hr = 0;				// the result
       int modulation = 5;		//QAM_64
       int guardinterval = 4;	//GUARD_INTERVAL_AUTO
@@ -674,44 +677,44 @@ namespace MediaPortal.TV.Recording
       hr = m_tunerCtrl.SetFrequency(Frequency);
       if (hr != 0)
       {
-        Log.WriteFile(Log.LogType.Capture, "Tune for SkyStar2 FAILED: on SetFrequency");
+        Log.WriteFile(Log.LogType.Capture, "Tune for SkyStar2 FAILED: on SetFrequency:0x{0:X}",hr);
         return false;	// *** FUNCTION EXIT POINT
       }
       hr = m_tunerCtrl.SetSymbolRate(SymbolRate);
       if (hr != 0)
       {
-        Log.WriteFile(Log.LogType.Capture, "Tune for SkyStar2 FAILED: on SetSymbolRate");
+        Log.WriteFile(Log.LogType.Capture, "Tune for SkyStar2 FAILED: on SetSymbolRate:0x{0:X}", hr);
         return false;	// *** FUNCTION EXIT POINT
       }
 
       hr = m_tunerCtrl.SetLnbFrequency(LNBFreq);
       if (hr != 0)
       {
-        Log.WriteFile(Log.LogType.Capture, "Tune for SkyStar2 FAILED: on SetLnbFrequency");
+        Log.WriteFile(Log.LogType.Capture, "Tune for SkyStar2 FAILED: on SetLnbFrequency:0x{0:X}", hr);
         return false;	// *** FUNCTION EXIT POINT
       }
       hr = m_tunerCtrl.SetFec(FEC);
       if (hr != 0)
       {
-        Log.WriteFile(Log.LogType.Capture, "Tune for SkyStar2 FAILED: on SetFec");
+        Log.WriteFile(Log.LogType.Capture, "Tune for SkyStar2 FAILED: on SetFec:0x{0:X}", hr);
         return false;	// *** FUNCTION EXIT POINT
       }
       hr = m_tunerCtrl.SetPolarity(POL);
       if (hr != 0)
       {
-        Log.WriteFile(Log.LogType.Capture, "Tune for SkyStar2 FAILED: on SetPolarity");
+        Log.WriteFile(Log.LogType.Capture, "Tune for SkyStar2 FAILED: on SetPolarity:0x{0:X}", hr);
         return false;	// *** FUNCTION EXIT POINT
       }
       hr = m_tunerCtrl.SetLnbKHz(LNBKhz);
       if (hr != 0)
       {
-        Log.WriteFile(Log.LogType.Capture, "Tune for SkyStar2 FAILED: on SetLnbKHz");
+        Log.WriteFile(Log.LogType.Capture, "Tune for SkyStar2 FAILED: on SetLnbKHz:0x{0:X}", hr);
         return false;	// *** FUNCTION EXIT POINT
       }
       hr = m_tunerCtrl.SetDiseqc(Diseq);
       if (hr != 0)
       {
-        Log.WriteFile(Log.LogType.Capture, "Tune for SkyStar2 FAILED: on SetDiseqc");
+        Log.WriteFile(Log.LogType.Capture, "Tune for SkyStar2 FAILED: on SetDiseqc:0x{0:X}", hr);
         return false;	// *** FUNCTION EXIT POINT
       }
       // cablestar
@@ -738,7 +741,7 @@ namespace MediaPortal.TV.Recording
         hr = m_tunerCtrl.SetModulation(modulation);
         if (hr != 0)
         {
-          Log.WriteFile(Log.LogType.Capture, "Tune for SkyStar2 FAILED: on SetModulation");
+          Log.WriteFile(Log.LogType.Capture, "Tune for SkyStar2 FAILED: on SetModulation:0x{0:X}", hr);
           return false;	// *** FUNCTION EXIT POINT
         }
       }
@@ -749,7 +752,7 @@ namespace MediaPortal.TV.Recording
         hr = m_tunerCtrl.SetGuardInterval(guardinterval);
         if (hr != 0)
         {
-          Log.WriteFile(Log.LogType.Capture, "Tune for SkyStar2 FAILED: on SetGuardInterval");
+          Log.WriteFile(Log.LogType.Capture, "Tune for SkyStar2 FAILED: on SetGuardInterval:0x{0:X}", hr);
           return false;	// *** FUNCTION EXIT POINT
         }
         // Set Channel Bandwidth (NOTE: Temporarily use polarity function to avoid having to 
@@ -758,15 +761,16 @@ namespace MediaPortal.TV.Recording
         hr = m_tunerCtrl.SetPolarity(ch.Bandwidth);
         if (hr != 0)
         {
-          Log.WriteFile(Log.LogType.Capture, "Tune for SkyStar2 FAILED: on SetBandwidth");
+          Log.WriteFile(Log.LogType.Capture, "Tune for SkyStar2 FAILED: on SetBandwidth:0x{0:X}", hr);
           return false;	// *** FUNCTION EXIT POINT
         }
       }
+
       // final
       hr = m_tunerCtrl.SetTunerStatus();
       if (hr != 0)
       {
-        Log.WriteFile(Log.LogType.Capture, "Tune for SkyStar2 FAILED: on SetTunerStatus");
+        Log.WriteFile(Log.LogType.Capture, "Tune for SkyStar2 FAILED: on SetTunerStatus:0x{0:X}", hr);
         return false;	// *** FUNCTION EXIT POINT
         //
       }
@@ -1481,6 +1485,8 @@ namespace MediaPortal.TV.Recording
 
       if (m_graphState != State.Created)
         return false;
+      Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2: Start timeshifting: {0}", channel.Name);
+
       int hr = 0;
 
       if (channel != null)
@@ -1570,7 +1576,7 @@ namespace MediaPortal.TV.Recording
     public bool StartRecording(Hashtable attribtutes, TVRecording recording, TVChannel channel, ref string strFilename, bool bContentRecording, DateTime timeProgStart)
     {
       if (m_graphState != State.TimeShifting) return false;
-
+      Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2: Start recording: {0}", channel.Name);
 #if USEMTSWRITER
 			if (m_tsRecordInterface==null) 
 			{
@@ -1725,7 +1731,7 @@ namespace MediaPortal.TV.Recording
       if (m_graphState != State.Recording)
         return;
 
-
+      Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2: Stop recording: ");
       if (m_recorderId >= 0)
       {
         DvrMsStop(m_recorderId);
@@ -1748,6 +1754,8 @@ namespace MediaPortal.TV.Recording
 
     public void TuneChannel(TVChannel channel)
     {
+
+      Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2: Tune: {0}", channel.Name);
       try
       {
         if (Vmr9 != null) Vmr9.Enable(false);
@@ -1967,7 +1975,7 @@ namespace MediaPortal.TV.Recording
     public bool StartViewing(TVChannel channel)
     {
       if (m_graphState != State.Created) return false;
-      Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2:StartViewing()");
+      Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2:StartViewing() {0}",channel.Name);
       TuneChannel(channel);
       int hr = 0;
       bool setVisFlag = false;
@@ -2284,6 +2292,8 @@ namespace MediaPortal.TV.Recording
     }
     void UpdateSignalQuality()
     {
+      if (m_graphState == State.None) return;
+      if (m_tunerCtrl==null) return;
       int level;
       int quality;
       GetSNR(m_tunerCtrl, out level, out quality);
@@ -2369,16 +2379,8 @@ namespace MediaPortal.TV.Recording
 
     public void Process()
     {
+      if (m_graphState == State.None) return;
       UpdateSignalQuality();
-      if (m_graphState == State.None || m_graphState == State.Created) return;
-     
-      if (!GUIGraphicsContext.Vmr9Active && Vmr7 != null && m_graphState == State.Viewing)
-      {
-        Vmr7.Process();
-      }
-      //m_epgGrabber.GrabEPG(m_currentChannel.HasEITSchedule==true);
-      if (m_streamDemuxer != null) m_streamDemuxer.Process();
-      CheckVideoResolutionChanges();
 
       m_epgGrabber.Process();
       if (m_epgGrabber.Done)
@@ -2392,6 +2394,16 @@ namespace MediaPortal.TV.Recording
           return;
         }
       }
+      if (m_graphState == State.Created) return;
+     
+      if (!GUIGraphicsContext.Vmr9Active && Vmr7 != null && m_graphState == State.Viewing)
+      {
+        Vmr7.Process();
+      }
+      //m_epgGrabber.GrabEPG(m_currentChannel.HasEITSchedule==true);
+      if (m_streamDemuxer != null) m_streamDemuxer.Process();
+      CheckVideoResolutionChanges();
+
 
       UpdateVideoState();
 
