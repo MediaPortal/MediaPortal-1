@@ -3374,7 +3374,7 @@ namespace MediaPortal.TV.Recording
     {
 
       if (m_graphState != State.Created)
-        return false;
+        return ;
       // tune to the correct channel
       Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2:Grab epg for :{0}", channel.Name);
       TuneChannel(channel);
@@ -3383,18 +3383,18 @@ namespace MediaPortal.TV.Recording
       // setup sampleGrabber and demuxer
       IPin samplePin = DirectShowUtil.FindPinNr(m_sampleGrabber, PinDirection.Input, 0);
       IPin demuxInPin = DirectShowUtil.FindPinNr(m_demux, PinDirection.Input, 0);
-      hr = m_graphBuilder.Connect(m_data0, samplePin); //SS2->sample grabber
+      int hr = m_graphBuilder.Connect(m_data0, samplePin); //SS2->sample grabber
       if (hr != 0)
       {
         Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2: failed to connect ss2->grabber");
-        return false;
+        return ;
       }
       samplePin = DirectShowUtil.FindPinNr(m_sampleGrabber, PinDirection.Output, 0);
       hr = m_graphBuilder.Connect(samplePin,demuxInPin); //sample grabber->demux
       if (hr != 0)
       {
         Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2: failed to connect grabber->demux");
-        return false;
+        return ;
       }
 
       //now start the graph
@@ -3404,7 +3404,7 @@ namespace MediaPortal.TV.Recording
       {
         m_mediaControl = (IMediaControl)m_graphBuilder;
       }
-      int hr = m_mediaControl.Run();
+      hr = m_mediaControl.Run();
       if (hr < 0)
       {
         Log.WriteFile(Log.LogType.Capture, true, "DVBGraphSS2: FAILED unable to start graph :0x{0:X}", hr);
