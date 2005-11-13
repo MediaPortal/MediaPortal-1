@@ -20,6 +20,7 @@
  */
 using System;
 using System.Text;
+using System.Xml;
 using System.IO;
 using System.Net;
 using System.Web;
@@ -29,16 +30,15 @@ namespace MediaPortal.Utils.Web
 {
     public class HTMLPage
     {
-		HTTPTransaction Page;
+		HTTPTransaction Page = new HTTPTransaction();
 		string m_strPageHead = string.Empty;
         string m_strPageSource = string.Empty;
-		string defaultEncode = "iso8859-1";
-		string m_Encoding;
+		string defaultEncode = "iso-8859-1";
+		string m_Encoding = string.Empty;
 		string m_Error;
 
         public HTMLPage()
         {
-			Page = new HTTPTransaction();
         }
 
         public HTMLPage(string strURL)
@@ -82,7 +82,7 @@ namespace MediaPortal.Utils.Web
 				byte[] pageData = Page.GetData();
 				int i;
 
-				if(m_Encoding != null)
+				if(m_Encoding != "")
 				{
 					strEncode = m_Encoding;
 				}
@@ -121,9 +121,39 @@ namespace MediaPortal.Utils.Web
             return m_strPageSource;
         }
 
-//        public string GetBody()
-//        {
-//            //return m_strPageSource.Substring(m_startIndex, m_endIndex - m_startIndex);
-//        }
+        public string GetBody()
+        {
+            //return m_strPageSource.Substring(m_startIndex, m_endIndex - m_startIndex);
+            //try
+            //{
+            //    XmlDocument xmlDoc = new XmlDocument();
+            //    xmlDoc.LoadXml(m_strPageSource);
+            //    XmlNode bodyNode = xmlDoc.DocumentElement.SelectSingleNode("//body");
+            //    return bodyNode.InnerText;
+            //}
+            //catch (System.Xml.XmlException ex)
+            //{
+            //    m_Error = "XML Error finding Body"; 
+            //}
+            int startIndex = m_strPageSource.ToLower().IndexOf("<body", 0);
+            if (startIndex == -1)
+            {
+                // report Error
+                m_Error = "No body start found"; 
+                return null;
+            }
+
+            int endIndex = m_strPageSource.ToLower().IndexOf("</body", startIndex);
+
+            if (endIndex == -1)
+            {
+                //report Error
+                m_Error = "No body end found";
+                endIndex = m_strPageSource.Length;
+            }
+
+            return m_strPageSource.Substring(startIndex, endIndex - startIndex);
+            
+        }
     }
 }

@@ -69,30 +69,37 @@ namespace MediaPortal.Utils.Web
 		override public Profiler GetPageProfiler(string strURL)
 		{
 			HTMLPage webPage = new HTMLPage(strURL, m_strEncoding);
-			string source = webPage.GetPage();
+			string source = webPage.GetBody();
+            HTMLProfiler retProfiler = null;
 
-			int startIndex = source.IndexOf(m_strPageStart, 0);
-			if(startIndex == -1)
-			{
-				// report Error
-				startIndex = 0;
-			}
-	
-			int endIndex = source.IndexOf(m_strPageEnd, startIndex);
+            if (source != null)
+            {
+                int startIndex = source.IndexOf(m_strPageStart, 0);
+                if (startIndex == -1)
+                {
+                    // report Error
+                    startIndex = 0;
+                }
 
-//			if(endIndex == -1)
-//			{
-//				// report Error
-//			}
+                int endIndex = source.IndexOf(m_strPageEnd, startIndex);
 
-//			webPage.SetStart(m_strPageStart);
-//			webPage.SetEnd(m_strPageEnd);
-////			if(!webPage.SetStart(m_strPageStart))
-////				//Log.WriteFile(Log.LogType.Log, true, "WebEPG: Start String not found");
-////			if(!webPage.SetEnd(m_strPageEnd))
-////				//Log.WriteFile(Log.LogType.Log, true, "WebEPG: End String not found");
-			HTMLProfiler retProfiler = new HTMLProfiler(source, m_strTags, ProfileString());
-			retProfiler.Template = GetProfileParser(0);
+                if (endIndex == -1)
+                {
+                    //report Error
+                    endIndex = source.Length;
+                }
+
+                source = source.Substring(startIndex, endIndex - startIndex);
+
+                //			webPage.SetStart(m_strPageStart);
+                //			webPage.SetEnd(m_strPageEnd);
+                ////			if(!webPage.SetStart(m_strPageStart))
+                ////				//Log.WriteFile(Log.LogType.Log, true, "WebEPG: Start String not found");
+                ////			if(!webPage.SetEnd(m_strPageEnd))
+                ////				//Log.WriteFile(Log.LogType.Log, true, "WebEPG: End String not found");
+                retProfiler = new HTMLProfiler(source, m_strTags, ProfileString());
+                retProfiler.Template = GetProfileParser(0);
+            }
 			return retProfiler;
 		}
 
