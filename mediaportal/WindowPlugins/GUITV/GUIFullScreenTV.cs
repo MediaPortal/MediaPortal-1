@@ -233,8 +233,8 @@ namespace MediaPortal.GUI.TV
 			//ACTION_SHOW_CURRENT_TV_INFO
 			if (action.wID==Action.ActionType.ACTION_SHOW_CURRENT_TV_INFO)
 			{
-				if(m_vmr9OSD!=null)
-					m_vmr9OSD.RenderCurrentShowInfo();
+				//if(m_vmr9OSD!=null)
+				//	m_vmr9OSD.RenderCurrentShowInfo();
 			}
 
 			if (action.wID==Action.ActionType.ACTION_MOUSE_CLICK && action.MouseButton == MouseButtons.Right)
@@ -494,8 +494,8 @@ namespace MediaPortal.GUI.TV
 
 				case Action.ActionType.ACTION_SHOW_GUI:
 					Log.Write("fullscreentv:show gui");
-					if(m_vmr9OSD!=null)
-						m_vmr9OSD.HideBitmap();
+					//if(m_vmr9OSD!=null)
+					//	m_vmr9OSD.HideBitmap();
 					GUIWindowManager.ShowPreviousWindow();
 					return;
 
@@ -1421,12 +1421,12 @@ namespace MediaPortal.GUI.TV
 				TimeSpan ts =DateTime.Now - m_dwZapTimer;
 				if ( ts.TotalMilliseconds > m_iZapTimeOut)
 				{
-					if(m_vmr9OSD!=null)
-						m_vmr9OSD.HideBitmap();
+					//if(m_vmr9OSD!=null)
+					//	m_vmr9OSD.HideBitmap();
 				}
 			}
-			if(m_vmr9OSD!=null)
-				m_vmr9OSD.CheckTimeOuts();
+			//if(m_vmr9OSD!=null)
+			//	m_vmr9OSD.CheckTimeOuts();
 				
 
 
@@ -1699,7 +1699,7 @@ namespace MediaPortal.GUI.TV
 			UpdateOSD();
 			if(m_useVMR9Zap==true && m_vmr9OSD!=null )
 			{
-				m_vmr9OSD.RenderChannelList(GUITVHome.Navigator.CurrentGroup,GUITVHome.Navigator.ZapChannel);
+				//m_vmr9OSD.RenderChannelList(GUITVHome.Navigator.CurrentGroup,GUITVHome.Navigator.ZapChannel);
 			}
 			m_dwZapTimer = DateTime.Now;
 		}
@@ -1710,7 +1710,7 @@ namespace MediaPortal.GUI.TV
 			UpdateOSD();
 			if(m_useVMR9Zap==true && m_vmr9OSD!=null )
 			{
-				m_vmr9OSD.RenderChannelList(GUITVHome.Navigator.CurrentGroup,GUITVHome.Navigator.ZapChannel);
+				//m_vmr9OSD.RenderChannelList(GUITVHome.Navigator.CurrentGroup,GUITVHome.Navigator.ZapChannel);
 			}
 
 			m_dwZapTimer = DateTime.Now;
