@@ -313,6 +313,7 @@ namespace MediaPortal.GUI.TV
 				
 			Log.Write("tv home init:{0}",Navigator.CurrentChannel);
 			ViewChannel(Navigator.CurrentChannel);
+      UpdateChannelButton();
 			UpdateStateOfButtons();
 			UpdateProgressPercentageBar();
 		}
@@ -493,8 +494,6 @@ namespace MediaPortal.GUI.TV
 			if(channelchanged)
       {
         UpdateChannelButton();
-        UpdateStateOfButtons();
-        UpdateProgressPercentageBar();
 			}
       
 			// if we're recording tv, update gui with info
