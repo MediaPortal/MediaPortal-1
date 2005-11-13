@@ -436,7 +436,7 @@ namespace MediaPortal.EPG
             {
 				Profiler guideProfile;
                 bool bMore = false;
-                int listingCount;
+                int listingCount = 0;
 
                 strURL = strURL.Replace("#LIST_OFFSET", offset.ToString());
 
@@ -447,8 +447,9 @@ namespace MediaPortal.EPG
 					XMLProfiler templateProfile = (XMLProfiler) m_templateProfile;
 					templateProfile.SetChannelID(strChannel);
 				}
-				guideProfile = m_templateProfile.GetPageProfiler(m_strURLbase + strURL); 
-				listingCount = guideProfile.subProfileCount();
+				guideProfile = m_templateProfile.GetPageProfiler(m_strURLbase + strURL);
+                if(guideProfile != null)
+                    listingCount = guideProfile.subProfileCount();
 
 				if(listingCount == 0)
 				{
