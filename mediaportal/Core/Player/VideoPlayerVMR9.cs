@@ -298,8 +298,13 @@ namespace MediaPortal.Player
       }
 
       //switch back to directx windowed mode
-      GUIMessage msg =new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED,0,0,0,0,0,null);
-      GUIWindowManager.SendMessage(msg);
+
+      if (!GUIGraphicsContext.IsTvWindow(GUIWindowManager.ActiveWindow))
+      {
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
+        GUIWindowManager.SendMessage(msg);
+      }
+
 		}
 	}
 }

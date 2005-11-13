@@ -104,7 +104,7 @@ namespace MediaPortal.GUI.TV
 			m_iSelectedItem=GetSelectedItemNo();
 			ConflictManager.OnConflictsUpdated-=new MediaPortal.TV.Recording.ConflictManager.OnConflictsUpdatedHandler(ConflictManager_OnConflictsUpdated);
 					
-			if ( !Recorder.IsTVWindow(newWindowId) )
+			if ( !GUIGraphicsContext.IsTvWindow(newWindowId) )
 			{
 				if (Recorder.IsViewing() && ! (Recorder.IsTimeShifting()||Recorder.IsRecording()) )
 				{

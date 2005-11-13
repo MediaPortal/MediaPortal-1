@@ -270,7 +270,7 @@ namespace MediaPortal.TV.Recording
     static void GUIWindowManager_OnActivateWindow(int windowId)
     {
       if (g_Player.Playing) return;
-      if (IsTVWindow(windowId))
+      if (GUIGraphicsContext.IsTvWindow(windowId))
       {
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 1, 0, null);
         GUIWindowManager.SendMessage(msg);
@@ -1890,38 +1890,6 @@ namespace MediaPortal.TV.Recording
     #endregion
 
     #region Process and properties
-    /// <summary>
-    /// Returns true if the specified window belongs to the my tv plugin
-    /// </summary>
-    /// <param name="windowId">id of window</param>
-    /// <returns>
-    /// true: belongs to the my tv plugin
-    /// false: does not belong to the my tv plugin</returns>
-    static public bool IsTVWindow(int windowId)
-    {
-      if (windowId == (int)GUIWindow.Window.WINDOW_TV) return true;
-      if (windowId == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN) return true;
-      if (windowId == (int)GUIWindow.Window.WINDOW_TVGUIDE) return true;
-      if (windowId == (int)GUIWindow.Window.WINDOW_RECORDEDTV) return true;
-      if (windowId == (int)GUIWindow.Window.WINDOW_RECORDEDTVCHANNEL) return true;
-      if (windowId == (int)GUIWindow.Window.WINDOW_RECORDEDTVGENRE) return true;
-      if (windowId == (int)GUIWindow.Window.WINDOW_SCHEDULER) return true;
-      if (windowId == (int)GUIWindow.Window.WINDOW_SEARCHTV) return true;
-      if (windowId == (int)GUIWindow.Window.WINDOW_TELETEXT) return true;
-      if (windowId == (int)GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT) return true;
-      if (windowId == (int)GUIWindow.Window.WINDOW_TV_SCHEDULER_PRIORITIES) return true;
-      if (windowId == (int)GUIWindow.Window.WINDOW_TV_CONFLICTS) return true;
-      if (windowId == (int)GUIWindow.Window.WINDOW_TV_COMPRESS_MAIN) return true;
-      if (windowId == (int)GUIWindow.Window.WINDOW_TV_COMPRESS_AUTO) return true;
-      if (windowId == (int)GUIWindow.Window.WINDOW_TV_COMPRESS_COMPRESS) return true;
-      if (windowId == (int)GUIWindow.Window.WINDOW_TV_COMPRESS_COMPRESS_STATUS) return true;
-      if (windowId == (int)GUIWindow.Window.WINDOW_TV_COMPRESS_SETTINGS) return true;
-      if (windowId == (int)GUIWindow.Window.WINDOW_TV_NO_SIGNAL) return true;
-      if (windowId == (int)GUIWindow.Window.WINDOW_TV_PROGRAM_INFO) return true;
-
-      return false;
-    }
-
     #region auto epg grabber
     static DateTime _epgTimer = DateTime.MinValue;
     static void ProcessEpg()
@@ -2039,7 +2007,7 @@ namespace MediaPortal.TV.Recording
         if (!g_Player.Playing)
         {
           int windowId = GUIWindowManager.ActiveWindow;
-          if (IsTVWindow(windowId) || Recorder.IsRadio())
+          if (GUIGraphicsContext.IsTvWindow(windowId) || Recorder.IsRadio())
           {
 
             //then try to start it

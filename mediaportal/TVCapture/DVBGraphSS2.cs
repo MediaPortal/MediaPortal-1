@@ -2004,8 +2004,6 @@ namespace MediaPortal.TV.Recording
       {
         if (_vmr9.UseVMR9inMYTV)
         {
-          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 1, 0, null);
-          GUIWindowManager.SendMessage(msg);
           _vmr9.AddVMR9(_graphBuilder);
           if (_vmr9.VMR9Filter == null)
           {
@@ -2271,8 +2269,6 @@ namespace MediaPortal.TV.Recording
       }
       _graphState = State.Created;
       DeleteGraph();
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
-      GUIWindowManager.SendMessage(msg);
 
       return true;
     }

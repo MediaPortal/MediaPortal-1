@@ -221,7 +221,7 @@ namespace MediaPortal.GUI.TV
     {
       m_iSelectedItem = GetSelectedItemNo();
       SaveSettings();
-      if (!Recorder.IsTVWindow(newWindowId))
+      if (!GUIGraphicsContext.IsTvWindow(newWindowId))
       {
         if (Recorder.IsViewing() && !(Recorder.IsTimeShifting() || Recorder.IsRecording()))
         {
@@ -947,7 +947,7 @@ namespace MediaPortal.GUI.TV
         VideoDatabase.SetMovieStopTime(movieid, stoptime);
       else
         VideoDatabase.DeleteMovieStopTime(movieid);
-      if (Recorder.IsTVWindow(GUIWindowManager.ActiveWindow))
+      if (GUIGraphicsContext.IsTvWindow(GUIWindowManager.ActiveWindow))
       {
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RESUME_TV, (int)GUIWindow.Window.WINDOW_TV, GetID, 0, 0, 0, null);
         msg.SendToTargetWindow = true;
