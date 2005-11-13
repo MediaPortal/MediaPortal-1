@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<!-- www.telemagazyn.com.pl -->
+
+<profile>
+
+  <section name="ChannelList">
+
+    <entry name="TVP1">TVP1</entry>	<!-- Full channel name here -->
+
+  </section>
+
+
+  <section name="Listing">
+
+    <entry name="BaseURL">http://www.telemagazyn.com.pl/</entry>
+    <entry name="SearchURL">?p=1&amp;dzien=#YYYY-#MM-#DD&amp;godzina=3&amp;nadawca=#ID&amp;kategoria=0&amp;x=53&amp;y=21</entry>
+
+    <entry name="Start">&#60;!-- naglowki programow koniec --&#62;</entry>
+
+    <entry name="End">&#60;!-- zamkniecie kolumn z programem koniec --&#62;</entry>
+
+    <entry name="Tags">DS</entry>
+
+    <entry name="Template">
+&#60;div&#62;&#60;span&#62;&#60;#START&#62;&#60;/span&#62;&#60;#TITLE&#62;-&#60;#GENRE&#62;,&#60;/div&#62;
+    </entry>
+  </section>
+</profile>
