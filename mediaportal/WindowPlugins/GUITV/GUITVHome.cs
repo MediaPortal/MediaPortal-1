@@ -313,7 +313,6 @@ namespace MediaPortal.GUI.TV
 				
 			Log.Write("tv home init:{0}",Navigator.CurrentChannel);
 			ViewChannel(Navigator.CurrentChannel);
-			UpdateChannelButton();
 			UpdateStateOfButtons();
 			UpdateProgressPercentageBar();
 		}
@@ -386,7 +385,6 @@ namespace MediaPortal.GUI.TV
 				Log.Write("tv home timeshift onoff:{0}",_isTimeShifting);
 				SaveSettings();
 				ViewChannelAndCheck(Navigator.CurrentChannel);
-				UpdateChannelButton();
 				UpdateStateOfButtons();
 				UpdateProgressPercentageBar();
 			}
@@ -403,12 +401,10 @@ namespace MediaPortal.GUI.TV
 						TVChannel chan = (TVChannel)Navigator.CurrentGroup.TvChannels[0];
 						Log.Write("tv home btngroup:{0}",chan.Name);
 						ViewChannelAndCheck(chan.Name);
-						Navigator.UpdateCurrentChannel();
 					}
 
 					UpdateStateOfButtons();
 					UpdateProgressPercentageBar();
-					UpdateChannelButton();
 					SaveSettings();
 				}
 			}
@@ -431,11 +427,12 @@ namespace MediaPortal.GUI.TV
 					_isTvOn=true;
 					Log.Write("tv home btnchan:{0}",channel);
 					ViewChannelAndCheck(channel);
-					Navigator.UpdateCurrentChannel();
+          
+					//Navigator.UpdateCurrentChannel();
 
 					UpdateStateOfButtons();
-					UpdateProgressPercentageBar();
-					UpdateChannelButton();
+          UpdateProgressPercentageBar();
+          //UpdateChannelButton();
 					SaveSettings();
 				}
 			}
@@ -479,7 +476,8 @@ namespace MediaPortal.GUI.TV
 		{ 
 			if (GUIGraphicsContext.InVmr9Render) return;
 
-			// Let the navigator zap channel if needed
+
+      // Let the navigator zap channel if needed
 			Navigator.CheckChannelChange();
 
 			// Update navigator with information from the Recorder
@@ -493,8 +491,10 @@ namespace MediaPortal.GUI.TV
 			UpdateProgressPercentageBar();
 			// Has the channel changed?
 			if(channelchanged)
-			{
-				UpdateChannelButton();
+      {
+        UpdateChannelButton();
+        UpdateStateOfButtons();
+        UpdateProgressPercentageBar();
 			}
       
 			// if we're recording tv, update gui with info
