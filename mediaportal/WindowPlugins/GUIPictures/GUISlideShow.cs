@@ -422,13 +422,17 @@ namespace MediaPortal.GUI.Pictures
         }
         public override void Render(float timePassed)
         {
-            float time = DXUtil.Timer(DirectXTimer.GetAbsoluteTime);
-            float diff = _renderTimer - time;
-            if (diff >= TIME_PER_FRAME)
+            //Log.Write("Render:{0} {1} {2}", timePassed, _renderTimer, _frameCounter);
+            if (_frameCounter > 0)
             {
+              _renderTimer += timePassed;
+              while (_renderTimer >= TIME_PER_FRAME)
+              {
                 _frameCounter++;
-                _renderTimer = time - (diff - TIME_PER_FRAME);
+                _renderTimer -= TIME_PER_FRAME;
+              }
             }
+            else _frameCounter = 1;
             int iSlides = _slideList.Count;
             if (0 == iSlides) return;
 
@@ -439,8 +443,8 @@ namespace MediaPortal.GUI.Pictures
                 {
                     if (_currentTexture == null)
                     {
-                        int dwTimeElapsed = ((int)(DateTime.Now.Ticks / 10000)) - _slideTime;
-                        if (dwTimeElapsed >= (_speed * 1000) || _backgroundTexture == null)
+                        int totalFrames = (_speed * (int)(1.0 / TIME_PER_FRAME)) + _slideShowTransistionFrames;
+                        if (_frameCounter >= totalFrames || _backgroundTexture == null)
                         {
                             if ((!_isPaused && !_isPictureZoomed) || _backgroundTexture == null)
                             {
@@ -495,6 +499,7 @@ namespace MediaPortal.GUI.Pictures
                         //						_transitionMethod=1;
                     }
 
+
                     //g_application.ResetScreenSaver();
                 }
 
@@ -513,6 +518,7 @@ namespace MediaPortal.GUI.Pictures
                     _backgroundSlideFileName = _currentSlideFileName;
                     _currentTexture = null;
                     _slideTime = (int)(DateTime.Now.Ticks / 10000);
+
                 }
             }
 
@@ -539,7 +545,7 @@ namespace MediaPortal.GUI.Pictures
             {
                 // render the new picture
                 bool bResult = false;
-
+                //Log.Write("method:{0} frame:{1}", _transitionMethod, _frameCounter);
                 switch (_transitionMethod)
                 {
                     case 0:
@@ -1191,7 +1197,10 @@ namespace MediaPortal.GUI.Pictures
                 iAlpha = 0xff;
                 bResult = true;
             }
-            //render background first
+
+
+            //Log.Write("method 10 count:{0} alpha:{1:X}", _frameCounter, iAlpha);
+          //render background first
             int lColorDiffuse = (0xff - iAlpha);
             lColorDiffuse <<= 24;
             lColorDiffuse |= 0xffffff;

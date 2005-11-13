@@ -1396,10 +1396,10 @@ namespace MediaPortal
     public void UpdateStats()
     {
       // Keep track of the frame count
-      if (frames < 10) return;
+      //if (frames < 10) return;
       float time = DXUtil.Timer(DirectXTimer.GetAbsoluteTime);
       // Update the scene stats once per second
-      if (time - lastTime >= 0.5f)
+      if (time - lastTime >= 1.0f)
       {
         framePerSecond = frames / (time - lastTime);
         GUIGraphicsContext.CurrentFPS = framePerSecond;
