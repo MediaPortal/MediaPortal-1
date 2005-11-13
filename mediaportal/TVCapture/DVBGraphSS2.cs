@@ -295,6 +295,7 @@ namespace MediaPortal.TV.Recording
     bool _lastTuneFailed = false;
     NetworkType _networkType = NetworkType.DVBS;
     int _signalQuality;
+    bool _isGraphRunning;
 
 
     #endregion
@@ -962,6 +963,7 @@ namespace MediaPortal.TV.Recording
 
 
       if (_interfaceMediaControl != null) _interfaceMediaControl.Stop();
+      _isGraphRunning = false; 
       _interfaceMediaControl = null;
       _interfaceBasicVideo = null;
       _pinVideo = null;
@@ -1521,6 +1523,7 @@ namespace MediaPortal.TV.Recording
 				_interfaceMediaControl=(IMediaControl)_graphBuilder;
 				hr=_interfaceMediaControl.Run();
 				_graphState = State.TimeShifting;
+        _isGraphRunning=true; 
 			}
 			else 
 			{
@@ -1533,6 +1536,7 @@ namespace MediaPortal.TV.Recording
         _interfaceMediaControl = (IMediaControl)_graphBuilder;
         hr = _interfaceMediaControl.Run();
         _graphState = State.TimeShifting;
+        _isGraphRunning = true; 
       }
       else
       {
@@ -1556,6 +1560,7 @@ namespace MediaPortal.TV.Recording
       DirectShowUtil.DebugWrite("DVBGraphSS2:StopTimeShifting()");
       if (_interfaceMediaControl != null)
         _interfaceMediaControl.Stop();
+      _isGraphRunning = false; 
       _graphState = State.Created;
       DeleteGraph();
       return true;
@@ -2172,6 +2177,7 @@ namespace MediaPortal.TV.Recording
       Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2:StartViewing() start graph");
 
       _interfaceMediaControl.Run();
+      _isGraphRunning = true; 
 
       if (setVisFlag)
       {
@@ -2261,6 +2267,7 @@ namespace MediaPortal.TV.Recording
       {
         _interfaceMediaControl.Stop();
         _interfaceMediaControl = null;
+        _isGraphRunning = false; 
       }
       _graphState = State.Created;
       DeleteGraph();
@@ -2397,6 +2404,7 @@ namespace MediaPortal.TV.Recording
         {
           Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2:EPG done");
           _interfaceMediaControl.Stop();
+          _isGraphRunning = false; 
           //_graphState = State.Created;
           return;
         }
@@ -2504,6 +2512,7 @@ namespace MediaPortal.TV.Recording
           _graphBuilder.Render(_pinData0);
           _interfaceMediaControl = _graphBuilder as IMediaControl;
           _interfaceMediaControl.Run();
+          _isGraphRunning = true; 
         }
       }
       catch { }
@@ -3234,6 +3243,7 @@ namespace MediaPortal.TV.Recording
         _graphState = State.Radio;
         //
         _interfaceMediaControl.Run();
+        _isGraphRunning = true; 
 
 
       }
@@ -3372,6 +3382,12 @@ namespace MediaPortal.TV.Recording
     {
       return _graphState == State.TimeShifting;
     }
+
+    public bool IsEpgDone()
+    {
+      if (_isGraphRunning == false) return true;
+      return false;
+    }
     public bool IsEpgGrabbing()
     {
       return (_graphState == State.Epg);
@@ -3421,6 +3437,7 @@ namespace MediaPortal.TV.Recording
         Log.WriteFile(Log.LogType.Capture, true, "DVBGraphSS2: FAILED unable to start graph :0x{0:X}", hr);
       }
       _graphState = State.Epg;
+      _isGraphRunning = true; 
     }
   }// class
 }// namespace

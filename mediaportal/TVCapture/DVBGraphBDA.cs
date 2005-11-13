@@ -5299,9 +5299,14 @@ namespace MediaPortal.TV.Recording
     {
       return _graphState == State.TimeShifting;
     }
+    public bool IsEpgDone()
+    {
+      if (_isGraphRunning == false) return true;
+      return false;
+    }
     public bool IsEpgGrabbing()
     {
-      return (_graphState == State.Epg);
+      return (_graphState == State.Epg );
     }
 
     public void GrabEpg(TVChannel channel)

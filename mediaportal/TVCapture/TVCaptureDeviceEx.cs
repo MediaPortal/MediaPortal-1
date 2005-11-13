@@ -1009,7 +1009,16 @@ namespace MediaPortal.TV.Recording
         {
           return false;
         }
-        return _currentGraph.IsEpgGrabbing();
+        bool result= _currentGraph.IsEpgGrabbing();
+        if (result)
+        {
+          if (_currentGraph.IsEpgDone())
+          {
+            DeleteGraph();
+            return false;
+          }
+        }
+        return result;
       }
     }
 

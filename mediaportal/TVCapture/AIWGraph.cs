@@ -1417,6 +1417,11 @@ namespace MediaPortal.TV.Recording
 		{
 			return false;
 		}
+
+    public bool IsEpgDone()
+    {
+      return true;
+    }
     public bool IsEpgGrabbing()
     {
       return false;

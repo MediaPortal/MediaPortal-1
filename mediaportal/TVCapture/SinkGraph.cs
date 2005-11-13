@@ -1503,6 +1503,10 @@ namespace MediaPortal.TV.Recording
       return m_graphState == State.TimeShifting;
     }
 
+    public bool IsEpgDone()
+    {
+      return true;
+    }
     public bool IsEpgGrabbing()
     {
       return false;
