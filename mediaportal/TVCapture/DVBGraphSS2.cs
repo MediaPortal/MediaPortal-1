@@ -1341,6 +1341,7 @@ namespace MediaPortal.TV.Recording
 #endif
     }
 
+
     private bool CreateSinkSource(string fileName, bool useAC3)
     {
       if (m_graphState != State.Created && m_graphState != State.TimeShifting)
@@ -3371,9 +3372,31 @@ namespace MediaPortal.TV.Recording
 
     public void GrabEpg(TVChannel channel)
     {
+
+      if (m_graphState != State.Created)
+        return false;
       // tune to the correct channel
       Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2:Grab epg for :{0}", channel.Name);
       TuneChannel(channel);
+
+
+      // setup sampleGrabber and demuxer
+      IPin samplePin = DirectShowUtil.FindPinNr(m_sampleGrabber, PinDirection.Input, 0);
+      IPin demuxInPin = DirectShowUtil.FindPinNr(m_demux, PinDirection.Input, 0);
+      hr = m_graphBuilder.Connect(m_data0, samplePin); //SS2->sample grabber
+      if (hr != 0)
+      {
+        Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2: failed to connect ss2->grabber");
+        return false;
+      }
+      samplePin = DirectShowUtil.FindPinNr(m_sampleGrabber, PinDirection.Output, 0);
+      hr = m_graphBuilder.Connect(samplePin,demuxInPin); //sample grabber->demux
+      if (hr != 0)
+      {
+        Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2: failed to connect grabber->demux");
+        return false;
+      }
+
       //now start the graph
       Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2: start graph");
 
