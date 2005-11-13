@@ -3,15 +3,101 @@
 
 <!-- www.telemagazyn.com.pl -->
 
+<!-- 
+English:
+Grabber was made by DragonGC and many thanks to James !!! Channels I added come from UPC cabel tv. If you want to add an own channels, and you don't know how to do it, write to me (PM on forum), I will try to help U.
+
+Polski:
+Grabber stworzony przez DragonGC z duża pomocą James-a. Kanały, które dodałem pochodzą z telewizji kablowej UPC Warszawa. Jeśli chcesz dodać własne kanały, a nie wiesz jak to zrobic, pisz do mnie (pm przez forum), postaram się pomóc.-->
 <profile>
 
   <section name="ChannelList">
 
-    <entry name="TVP1">TVP1</entry>	<!-- Full channel name here -->
-
+    <entry name="tvp1.pl">TVP1</entry>	
+    <!-- TVP 1 -->
+		<entry name="tvp2.pl">TVP2</entry>	
+    <!-- TVP 2 -->
+    <entry name="POLSAT.COM.pl">POLS</entry>	
+    <!-- POLSAT -->
+		<entry name="tvn.pl">TVN</entry>	
+    <!-- TVN -->
+    <entry name="tv4.pl">PTV4</entry>	
+    <!-- TV 4 -->
+    <entry name="tvn7.pl">RTL7</entry>	
+    <!-- TVN 7 -->
+    <entry name="tvpkultura.pl">TVKU</entry>	
+    <!-- TVP Kultura -->
+    <entry name="tvpolonia.com">TVPL</entry>	
+    <!-- TVP Polonia -->
+    <entry name="pulstv.pl">PULS</entry>	
+    <!-- TV Puls -->
+    <entry name="eurosport@eurosport.com">EUSP</entry>	
+    <!-- Eurosport -->
+    <entry name="eurosport2@eurosport.com">EU2P</entry>	
+    <!-- Eurosport 2 -->
+    <entry name="polsatsport.com.pl">PCSO</entry>	
+    <!-- Polsat Sport -->
+    <entry name="alekino.pl">ALEK</entry>	
+    <!-- Ale kino ! -->
+    <entry name="axn.pl">AXNP</entry>	
+    <!-- AXN -->
+    <entry name="europaeuropa.pl">WZJC</entry>	
+    <!-- Europa Europa -->
+    <entry name="hallmarkchannel.com">HLMK</entry>
+    <!-- Hallmark -->
+    <entry name="cartoonnetwork.pl">CANW</entry>	
+    <!-- Cartoon Network -->
+    <entry name="jetix.pl">FXKD</entry>	
+    <!-- Jetix -->
+    <entry name="tvnturbo.pl">TVTU</entry>	
+    <!-- TVN Turbo -->
+    <entry name="kinopolska.pl">KPTV</entry>	
+    <!-- Kino Polska -->
+    <entry name="tcm.pl">TCMP</entry>	
+    <!-- TCM -->
+    <entry name="warszawa@tvp3.pl">TRWA</entry>	
+    <!-- TVP 3 Warszawa -->
+    <entry name="discoverychannel.pl">DSCV</entry>	
+    <!-- Discovery -->
+    <entry name="civilisation@discoverychannel.pl">DSCC</entry>	
+    <!-- Discovery Civilisation -->
+    <entry name="Sci-Trek@discoverychannel.pl">DSCT</entry>	
+    <!-- Discovery Sci-Trek-->
+    <entry name="TravelandAdventure@discoverychannel.pl">DSTA</entry>	
+    <!-- Discovery Travel and Adventure -->
+    <entry name="animalplanet.com">ANPL</entry>	
+    <!-- Animal Planet -->
+    <entry name="nationalgeographic.com">NGEO</entry>	
+    <!-- National Geograpic -->
+    <entry name="travelchannel.com">TRVL</entry>	
+    <!-- Travel -->
+    <entry name="planete@planete.com">PLNT</entry>	
+    <!-- Planete -->
+    <entry name="realitytv.co.uk">RTV</entry>	
+    <!-- Reality TV -->
+    <entry name="polonia1.pl">PLN1</entry>	
+    <!-- Polonia 1 -->
+    <entry name="polsat2@polsat.com.pl">POL2</entry>	
+    <!-- Polsat 2 -->
+    <entry name="tmt.pl">TMTP</entry>	
+    <!-- TMT -->
+    <entry name="mtv.pl">MTVP</entry>	
+    <!-- MTV -->
+    <entry name="classic@mtv.pl">MTVC</entry>	
+    <!-- MTV Classic-->
+    <entry name="vivapolska.tv">VIPL</entry>	
+    <!-- Viva Polska -->
+    <entry name="romantica.pl">ROMN</entry>	
+    <!-- Romantica -->
+    <entry name="tvn24.pl">TV24</entry>	
+    <!-- TVN 24 -->
+    <entry name="club">WZCL</entry>	
+    <!-- Club -->
+    <entry name="extremesports.tv">WZES</entry>	
+    <!-- Extreme Sports -->
+    
   </section>
-
-
+  
   <section name="Listing">
 
     <entry name="BaseURL">http://www.telemagazyn.com.pl/</entry>
