@@ -1999,6 +1999,10 @@ namespace MediaPortal.TV.Recording
         return false;
       }
       AddPreferredCodecs(true, true);
+      if (_vmr9 == null)
+        _vmr9 = new VMR9Util("mytv");
+      if (_vmr7 == null)
+        _vmr7 = new VMR7Util();
 
       if (_vmr9 != null)
       {

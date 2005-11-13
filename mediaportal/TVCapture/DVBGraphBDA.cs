@@ -1554,6 +1554,11 @@ namespace MediaPortal.TV.Recording
 
       _isOverlayVisible = true;
       // add VMR9 renderer to graph
+      if (_vmr9 ==null)
+        _vmr9 = new VMR9Util("mytv");
+      if (_vmr7==null)
+        _vmr7 = new VMR7Util();
+
       if (_vmr9 != null)
       {
         if (_vmr9.UseVMR9inMYTV)
