@@ -2397,7 +2397,7 @@ namespace MediaPortal.TV.Recording
         {
           Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2:EPG done");
           _interfaceMediaControl.Stop();
-          _graphState = State.Created;
+          //_graphState = State.Created;
           return;
         }
       }
@@ -3379,7 +3379,6 @@ namespace MediaPortal.TV.Recording
 
     public void GrabEpg(TVChannel channel)
     {
-      DeleteGraph();
 
       // tune to the correct channel
       Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2:Grab epg for :{0}", channel.Name);
