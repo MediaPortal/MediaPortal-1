@@ -1176,16 +1176,19 @@ namespace MediaPortal.TV.Recording
       if (_currentGraph != null)
       {
         _currentGraph.DeleteGraph();
+        
       }
+
       TVChannel channel = GetChannel(_currentTvChannelName);
-      _currentGraph.CreateGraph(Quality);
       if (_currentGraphState == State.Timeshifting)
       {
+        _currentGraph.CreateGraph(Quality);
         _currentGraph.StartTimeShifting(channel, Recorder.GetTimeShiftFileName(ID - 1));
         lastChannelChange = DateTime.Now;
       }
       else
       {
+        _currentGraph.CreateGraph(Quality);
         _currentGraph.StartViewing(channel);
         lastChannelChange = DateTime.Now;
       }
@@ -1758,6 +1761,7 @@ namespace MediaPortal.TV.Recording
           if (View) return;
           if (IsRecording) return;
           DeleteGraph();
+
           if (CreateGraph())
           {
             Log.WriteFile(Log.LogType.Capture, "Card:{0} start viewing :{1}", ID, _currentTvChannelName);

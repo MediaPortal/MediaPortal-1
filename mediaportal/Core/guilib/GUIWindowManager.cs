@@ -41,11 +41,14 @@ namespace MediaPortal.GUI.Library
 		public delegate void OnCallBackHandler();
 		public delegate void PostRendererHandler(int level, float timePassed);
 		public delegate bool PostRenderActionHandler(Action action, GUIMessage msg, bool focus);
+    public delegate void WindowActivationHandler(int windowId);
 		static public event  SendMessageHandler Receivers;
 		static public event  OnActionHandler	  OnNewAction;
 		static public event  OnCallBackHandler  Callbacks;
 		static public event  PostRenderActionHandler  OnPostRenderAction;
 		static public event  PostRendererHandler  OnPostRender;
+    static public event WindowActivationHandler OnActivateWindow;
+    static public event WindowActivationHandler OnDeActivateWindow;
 
 		#endregion
 		#region variables
@@ -548,6 +551,8 @@ namespace MediaPortal.GUI.Library
           // deactivate active window
           msg =new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,pWindow.GetID,0,0,iWindowID,0,null);
           pWindow.OnMessage(msg);
+          if (OnDeActivateWindow != null)
+            OnDeActivateWindow(pWindow.GetID);
 
 					if (!bReplaceWindow)
 					{
@@ -568,7 +573,9 @@ namespace MediaPortal.GUI.Library
 						try
 						{
 							_activeWindowIndex=i;
-							_activeWindowId=iWindowID;
+              _activeWindowId = iWindowID;
+              if (OnActivateWindow != null)
+                OnActivateWindow(pWindow.GetID);
 							msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT,pWindow.GetID,0,0,_previousActiveWindowId,0,null);
 							pWindow.OnMessage(msg);		
 							return;
@@ -616,7 +623,9 @@ namespace MediaPortal.GUI.Library
 				// (re)load
         if (_activeWindowIndex<0 || _activeWindowIndex>=_windowCount) _activeWindowIndex=0;
         pWindow=_listWindows[_activeWindowIndex];
-        _activeWindowId=pWindow.GetID;
+        _activeWindowId = pWindow.GetID;
+        if (OnActivateWindow != null)
+          OnActivateWindow(pWindow.GetID);
         msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT,pWindow.GetID,0,0,_previousActiveWindowId,0,null);
         pWindow.OnMessage(msg);		
       }
@@ -673,7 +682,9 @@ namespace MediaPortal.GUI.Library
 					pWindow=_listWindows[_activeWindowIndex];
 
 					msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,pWindow.GetID,0,0,_previousActiveWindowId,0,null);
-					pWindow.OnMessage(msg);
+          pWindow.OnMessage(msg);
+          if (OnDeActivateWindow != null)
+            OnDeActivateWindow(pWindow.GetID);
 					_activeWindowIndex=-1;
 					_activeWindowId=-1;
 				}
@@ -691,7 +702,9 @@ namespace MediaPortal.GUI.Library
 							_previousActiveWindowId = (int)GUIWindow.Window.WINDOW_INVALID;
 							if (_listHistory.Count > 0) _previousActiveWindowId = (int)_listHistory[_listHistory.Count-1];
 							_activeWindowIndex=i;
-							_activeWindowId=pWindow.GetID;
+              _activeWindowId = pWindow.GetID;
+              if (OnActivateWindow != null)
+                OnActivateWindow(pWindow.GetID);
 							msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT,pWindow.GetID,0,0,fromWindowId,0,null);
 							pWindow.OnMessage(msg);
 							return;
@@ -719,7 +732,9 @@ namespace MediaPortal.GUI.Library
 				}
 
 				pWindow=_listWindows[_activeWindowIndex];
-				_activeWindowId=pWindow.GetID;
+        _activeWindowId = pWindow.GetID;
+        if (OnActivateWindow != null)
+          OnActivateWindow(pWindow.GetID);
 				msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT,pWindow.GetID,0,0,(int)GUIWindow.Window.WINDOW_INVALID,0,null);
 				pWindow.OnMessage(msg);
 			}

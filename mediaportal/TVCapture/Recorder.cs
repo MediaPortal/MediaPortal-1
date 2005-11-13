@@ -262,6 +262,24 @@ namespace MediaPortal.TV.Recording
       _epgWorker = new BackgroundWorker();
       _epgWorker.DoWork += new DoWorkEventHandler(Recorder.ProcessThread);
       _epgWorker.RunWorkerAsync();
+      GUIWindowManager.OnActivateWindow += new GUIWindowManager.WindowActivationHandler(GUIWindowManager_OnActivateWindow);
+
+    }
+
+    
+    static void GUIWindowManager_OnActivateWindow(int windowId)
+    {
+      if (g_Player.Playing) return;
+      if (IsTVWindow(windowId))
+      {
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 1, 0, null);
+        GUIWindowManager.SendMessage(msg);
+      }
+      else
+      {
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
+        GUIWindowManager.SendMessage(msg);
+      }
     }//static public void Start()
 
     /// <summary>
@@ -282,6 +300,8 @@ namespace MediaPortal.TV.Recording
         RecorderCommand cmd = new RecorderCommand(RecorderCommandType.StopAll);
         _listCommands.Add(cmd);
       }
+      GUIWindowManager.OnActivateWindow -= new GUIWindowManager.WindowActivationHandler(GUIWindowManager_OnActivateWindow);
+
       while (_state != State.None) System.Threading.Thread.Sleep(100);
     }//static public void Stop()
 
@@ -1501,6 +1521,7 @@ namespace MediaPortal.TV.Recording
         RecorderCommand cmd = new RecorderCommand(RecorderCommandType.StopAllViewing);
         _listCommands.Add(cmd);
       }
+      while (_listCommands.Count > 0) System.Threading.Thread.Sleep(10);
     }
     static void HandleStopAllViewing()
     {
