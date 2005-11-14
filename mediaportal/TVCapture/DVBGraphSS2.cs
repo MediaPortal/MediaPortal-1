@@ -3418,7 +3418,7 @@ namespace MediaPortal.TV.Recording
       int hr = _graphBuilder.Connect(_pinData0, samplePin);
       if (hr != 0)
       {
-        Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2:StartViewing() FAILED: cannot connect data0->samplepin");
+        Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2:GrabEpg() FAILED: cannot connect data0->samplepin");
         return ;
       }
 
@@ -3426,7 +3426,7 @@ namespace MediaPortal.TV.Recording
       IPin demuxInPin = DirectShowUtil.FindPinNr(_filterMpeg2Demuxer, PinDirection.Input, 0);
       if (demuxInPin == null)
       {
-        Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2:StartViewing() FAILED: cannot find demuxInPin");
+        Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2:GrabEpg() FAILED: cannot find demuxInPin");
         return ;
       }
 
