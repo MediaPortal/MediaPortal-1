@@ -290,7 +290,7 @@ namespace MediaPortal.EPG
 				}
 				else
 				{
-					if (guideData.Day != m_StartGrab.Day)
+                    if (guideData.Day != m_StartGrab.Day && m_listingTime != (int) Expect.Start)
 					{
 						m_GrabDay++;
 						m_StartGrab = m_StartGrab.AddDays(1);
@@ -315,6 +315,10 @@ namespace MediaPortal.EPG
 						if(m_LastStart > guideData.StartTime[0])
 						{
 							m_listingTime = (int) Expect.Afternoon;
+                            //if (m_bNextDay)
+                            //{
+                            //    m_GrabDay++;
+                            //} 
 						}
 						else
 						{
@@ -377,11 +381,11 @@ namespace MediaPortal.EPG
 					}
 					program.End = GetLongDateTime(dtEnd);
 
-					Log.WriteFile(Log.LogType.Log, false, "WebEPG: {0}:{1}/{2}-{3}:{4}/{5} - {6}", guideData.StartTime[0], guideData.StartTime[1], dtStart.Day, guideData.EndTime[0], guideData.EndTime[1], dtEnd.Day, guideData.Title);
+                    Log.WriteFile(Log.LogType.Log, false, "WebEPG: {0}:{1}/{2}-{3}:{4}/{5} [{6} {7}] - {8}", guideData.StartTime[0], guideData.StartTime[1], dtStart.Day, guideData.EndTime[0], guideData.EndTime[1], dtEnd.Day, m_GrabDay.ToString(), m_bNextDay.ToString(), guideData.Title);
 				}
 				else
 				{
-					Log.WriteFile(Log.LogType.Log, false, "WebEPG: {0}:{1}/{2} - {3}", guideData.StartTime[0], guideData.StartTime[1], dtStart.Day, guideData.Title);
+					Log.WriteFile(Log.LogType.Log, false, "WebEPG: {0}:{1}/{2} [{3} {4}] - {5}", guideData.StartTime[0], guideData.StartTime[1], dtStart.Day, m_GrabDay.ToString(), m_bNextDay.ToString(), guideData.Title);
 				}
 				
 				if (guideData.Description != "")
@@ -451,10 +455,13 @@ namespace MediaPortal.EPG
                 if(guideProfile != null)
                     listingCount = guideProfile.subProfileCount();
 
-				if(listingCount == 0)
+				if(listingCount == 0) // && m_maxListingCount == 0)
 				{
-					Log.WriteFile(Log.LogType.Log, true, "WebEPG: No Listings Found");
-					m_GrabDay++;
+                    if (m_maxListingCount == 0)
+                        Log.WriteFile(Log.LogType.Log, true, "WebEPG: No Listings Found");
+                    else
+                        Log.WriteFile(Log.LogType.Log, false, "WebEPG: Listing Count 0");
+                    //m_GrabDay++;
 				}
 				else
 				{
@@ -536,17 +543,17 @@ namespace MediaPortal.EPG
                             break;
                         offset += m_maxListingCount;
                     }
-
-					if (strURL != strURLid)
-					{
-						m_StartGrab = m_StartGrab.AddDays(1);
-						m_GrabDay++;
-					}
-					else
-					{ 
-						if(strURL.IndexOf("#LIST_OFFSET") == -1)
-							break;
-					}
+                    m_GrabDay++;
+                    //if (strURL != strURLid)
+                    //{
+                    //    m_StartGrab = m_StartGrab.AddDays(1);
+                    //    m_GrabDay++;
+                    //}
+                    //else
+                    //{ 
+                    //    if(strURL.IndexOf("#LIST_OFFSET") == -1)
+                    //        break;
+                    //}
                 }
              
                 return m_programs;
