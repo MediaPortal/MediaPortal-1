@@ -216,14 +216,14 @@
     <action>
       <id>25</id>
       <key>L</key>
-      <sound />
+      <sound>click.wav</sound>
       <description>Toggle Subtitles</description>
     </action>
     <action>
-      <id>25</id>
+      <id>26</id>
       <key>A</key>
-      <sound />
-      <description>Toggle Subtitles</description>
+      <sound>click.wav</sound>
+      <description>Cycle Audio Language or Type</description>
     </action>
     <action>
       <id>9982</id>
