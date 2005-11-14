@@ -19,6 +19,7 @@
  *
  */
 //#define USEMTSWRITER
+#region usings
 using System;
 using Microsoft.Win32;
 using System.Drawing;
@@ -34,8 +35,7 @@ using MediaPortal.TV.Database;
 using MediaPortal.Player;
 using MediaPortal.Radio.Database;
 using Toub.MediaCenter.Dvrms.Metadata;
-
-
+#endregion
 
 namespace MediaPortal.TV.Recording
 {
@@ -1878,6 +1878,7 @@ namespace MediaPortal.TV.Recording
     void SetDemux(int audioPid, int videoPid, int ac3Pid)
     {
 
+      Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2: SetDemux()");
       if (_filterMpeg2DemuxerInterface == null)
       {
         Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2: SetDemux FAILED: no Demux-Interface");
@@ -3395,33 +3396,69 @@ namespace MediaPortal.TV.Recording
 
     public void GrabEpg(TVChannel channel)
     {
-
+      if (_graphState != State.Created)
+      {
+        Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2:FAILED to Grab epg for :{0}, graph not created", channel.Name);
+        return;
+      }
       // tune to the correct channel
       Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2:Grab epg for :{0}", channel.Name);
       TuneChannel(channel);
 
 
       // setup sampleGrabber and demuxer
+      //connect capture->sample grabber
       IPin samplePin = DirectShowUtil.FindPinNr(_filterSampleGrabber, PinDirection.Input, 0);
+      if (samplePin == null)
+      {
+        Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2:GrabEpg() FAILED: cannot find samplePin");
+        return ;
+      }
+
+      int hr = _graphBuilder.Connect(_pinData0, samplePin);
+      if (hr != 0)
+      {
+        Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2:StartViewing() FAILED: cannot connect data0->samplepin");
+        return ;
+      }
+
+      //connect sample grabber->demuxer
       IPin demuxInPin = DirectShowUtil.FindPinNr(_filterMpeg2Demuxer, PinDirection.Input, 0);
-      int hr = _graphBuilder.Connect(_pinData0, samplePin); //SS2->sample grabber
-      if (hr != 0)
+      if (demuxInPin == null)
       {
-        Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2: failed to connect ss2->grabber");
-        return;
+        Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2:StartViewing() FAILED: cannot find demuxInPin");
+        return ;
       }
+
+      samplePin = null;
       samplePin = DirectShowUtil.FindPinNr(_filterSampleGrabber, PinDirection.Output, 0);
-      hr = _graphBuilder.Connect(samplePin, demuxInPin); //sample grabber->demux
+      if (samplePin == null)
+      {
+        Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2:GrabEpg() FAILED: cannot find sampleGrabber output pin");
+        return ;
+      }
+      hr = _graphBuilder.Connect(samplePin, demuxInPin);
       if (hr != 0)
       {
-        Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2: failed to connect grabber->demux");
-        return;
+        Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2:GrabEpg() FAILED: connect sample->demux");
+        return ;
       }
+
+      if (demuxInPin != null)
+        Marshal.ReleaseComObject(demuxInPin);
+      if (samplePin != null)
+        Marshal.ReleaseComObject(samplePin);
+
       if (_vmr9 != null)
       {
         _vmr9.RemoveVMR9();
         _vmr9.Release();
         _vmr9 = null;
+      }
+      if (_vmr7 != null)
+      {
+        _vmr7.RemoveVMR7();
+        _vmr7 = null;
       }
 
       //now start the graph
