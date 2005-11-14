@@ -940,7 +940,7 @@ namespace MediaPortal.TV.Recording
       if (_dvbDemuxer != null)
       {
         _dvbDemuxer.GrabTeletext(false);
-        _dvbDemuxer.SetChannelData(0, 0, 0, 0, "", 0, 0);
+        _dvbDemuxer.SetChannelData(0, 0, 0, 0,0, "", 0, 0);
       }
 
       if (_vmr9 != null)
@@ -1843,7 +1843,7 @@ namespace MediaPortal.TV.Recording
           if (_dvbDemuxer != null)
           {
             _dvbDemuxer.OnTuneNewChannel();
-            _dvbDemuxer.SetChannelData(ch.AudioPid, ch.VideoPid, ch.TeletextPid, ch.Audio3, ch.ServiceName, ch.PMTPid, ch.ProgramNumber);
+            _dvbDemuxer.SetChannelData(ch.AudioPid, ch.VideoPid,ch.AC3Pid, ch.TeletextPid, ch.Audio3, ch.ServiceName, ch.PMTPid, ch.ProgramNumber);
           }
           if (_interfaceMediaControl != null && _filterMpeg2DemuxerVideoPin != null && _filterMpeg2DemuxerAudioPin != null && _filterMpeg2Demuxer != null && _filterMpeg2DemuxerInterface != null)
           {
@@ -3144,7 +3144,7 @@ namespace MediaPortal.TV.Recording
       if (_dvbDemuxer != null)
       {
         _dvbDemuxer.OnTuneNewChannel();
-        _dvbDemuxer.SetChannelData(ch.AudioPid, ch.VideoPid, ch.TeletextPid, ch.Audio3, ch.ServiceName, ch.PMTPid, ch.ProgramNumber);
+        _dvbDemuxer.SetChannelData(ch.AudioPid, ch.VideoPid,ch.AC3Pid, ch.TeletextPid, ch.Audio3, ch.ServiceName, ch.PMTPid, ch.ProgramNumber);
       }
 
       if (_filterMpeg2DemuxerVideoPin != null && _filterMpeg2DemuxerAudioPin != null)
@@ -3290,7 +3290,7 @@ namespace MediaPortal.TV.Recording
         {
           _selectedAudioPid = audioPid;
           if (_dvbDemuxer != null)
-            _dvbDemuxer.SetChannelData(audioPid, _currentChannel.VideoPid, _currentChannel.TeletextPid, _currentChannel.Audio3, _currentChannel.ServiceName, _currentChannel.PMTPid, _currentChannel.ProgramNumber);
+            _dvbDemuxer.SetChannelData(audioPid, _currentChannel.VideoPid,_currentChannel.AC3Pid, _currentChannel.TeletextPid, _currentChannel.Audio3, _currentChannel.ServiceName, _currentChannel.PMTPid, _currentChannel.ProgramNumber);
 
         }
       }

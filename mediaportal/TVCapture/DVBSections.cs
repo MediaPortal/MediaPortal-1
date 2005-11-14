@@ -1033,6 +1033,7 @@ namespace MediaPortal.TV.Recording
       }
       for (int count = 0; count < loop; count++)
       {
+        if (buf.Length < 8+(count*4)) break;
         ChannelInfo ch = new ChannelInfo();
         System.Array.Copy(buf, 8 + (count * 4), b, 0, 4);
         ch.transportStreamID = transport_stream_id;
@@ -1128,10 +1129,13 @@ namespace MediaPortal.TV.Recording
 
       while (len2 > 0)
       {
+        if (pointer + 2 > buf.Length) break;
         int indicator = buf[pointer];
         x = 0;
         x = buf[pointer + 1] + 2;
         byte[] data = new byte[x];
+
+        if (pointer + x > buf.Length) break;
         System.Array.Copy(buf, pointer, data, 0, x);
         if (indicator == 0x9)
         {

@@ -1106,7 +1106,7 @@ namespace MediaPortal.TV.Recording
         if (_streamDemuxer != null)
         {
           _streamDemuxer.GrabTeletext(false);
-          _streamDemuxer.SetChannelData(0, 0, 0, 0, "", 0, 0);
+          _streamDemuxer.SetChannelData(0, 0, 0, 0,0, "", 0, 0);
         }
 
         if (_tunerStatistics != null)
@@ -3307,7 +3307,7 @@ namespace MediaPortal.TV.Recording
                 SetupDemuxerPin(_pinMPG1Out, _currentTuningObject.PCRPid, (int)MediaSampleContent.TransportPacket, false);
                 if (_streamDemuxer != null)
                 {
-                  _streamDemuxer.SetChannelData(_currentTuningObject.AudioPid, _currentTuningObject.VideoPid, _currentTuningObject.TeletextPid, _currentTuningObject.Audio3, _currentTuningObject.ServiceName, _currentTuningObject.PMTPid, _currentTuningObject.ProgramNumber);
+                  _streamDemuxer.SetChannelData(_currentTuningObject.AudioPid, _currentTuningObject.VideoPid, _currentTuningObject.AC3Pid, _currentTuningObject.TeletextPid, _currentTuningObject.Audio3, _currentTuningObject.ServiceName, _currentTuningObject.PMTPid, _currentTuningObject.ProgramNumber);
                 }
               }
               else
@@ -3319,7 +3319,7 @@ namespace MediaPortal.TV.Recording
                 SetupDemuxer(_pinDemuxerVideo, _currentTuningObject.VideoPid, _pinDemuxerAudio, _currentTuningObject.AudioPid, _pinAC3Out, _currentTuningObject.AC3Pid);
                 if (_streamDemuxer != null)
                 {
-                  _streamDemuxer.SetChannelData(_currentTuningObject.AudioPid, _currentTuningObject.VideoPid, _currentTuningObject.TeletextPid, _currentTuningObject.Audio3, _currentTuningObject.ServiceName, _currentTuningObject.PMTPid, _currentTuningObject.ProgramNumber);
+                  _streamDemuxer.SetChannelData(_currentTuningObject.AudioPid, _currentTuningObject.VideoPid, _currentTuningObject.AC3Pid, _currentTuningObject.TeletextPid, _currentTuningObject.Audio3, _currentTuningObject.ServiceName, _currentTuningObject.PMTPid, _currentTuningObject.ProgramNumber);
                 }
 
               }
@@ -4014,7 +4014,7 @@ namespace MediaPortal.TV.Recording
         if (_streamDemuxer != null)
         {
           _streamDemuxer.OnTuneNewChannel();
-          _streamDemuxer.SetChannelData(_currentTuningObject.AudioPid, _currentTuningObject.VideoPid, _currentTuningObject.TeletextPid, _currentTuningObject.Audio3, _currentTuningObject.ServiceName, _currentTuningObject.PMTPid, _currentTuningObject.ProgramNumber);
+          _streamDemuxer.SetChannelData(_currentTuningObject.AudioPid, _currentTuningObject.VideoPid, _currentTuningObject.AC3Pid, _currentTuningObject.TeletextPid, _currentTuningObject.Audio3, _currentTuningObject.ServiceName, _currentTuningObject.PMTPid, _currentTuningObject.ProgramNumber);
 
         }
 
@@ -5051,7 +5051,7 @@ namespace MediaPortal.TV.Recording
         if (_streamDemuxer != null)
         {
           _streamDemuxer.OnTuneNewChannel();
-          _streamDemuxer.SetChannelData(_currentTuningObject.AudioPid, _currentTuningObject.VideoPid, _currentTuningObject.TeletextPid, _currentTuningObject.Audio3, _currentTuningObject.ServiceName, _currentTuningObject.PMTPid, _currentTuningObject.ProgramNumber);
+          _streamDemuxer.SetChannelData(_currentTuningObject.AudioPid, _currentTuningObject.VideoPid, _currentTuningObject.AC3Pid, _currentTuningObject.TeletextPid, _currentTuningObject.Audio3, _currentTuningObject.ServiceName, _currentTuningObject.PMTPid, _currentTuningObject.ProgramNumber);
         }
         SendPMT();
 

@@ -167,12 +167,15 @@ namespace MediaPortal.TV.Recording
     #endregion
 
     #region global Vars
-    int m_teletextPid = 0;
-    int m_subtitlePid = 0;
-    int m_videoPid = 0;
-    int m_audioPid = 0;
-    int m_pmtPid = 0;
-    string m_channelName = "";
+    int _pidTeletext = 0;
+    int _pidSubtitle = 0;
+    int _pidVideo = 0;
+    int _pidMp2Audio = 0;
+    int _pidPmt = 0;
+		int _pidAc3;
+		bool	 _ac3Present=false;
+		DateTime _ac3Timer;
+    string _channelName = "";
     int _restBufferLen = 0;
     byte[] _restBuffer = new byte[200];
     IntPtr _ptrRestBuffer = Marshal.AllocCoTaskMem(200);
@@ -183,15 +186,15 @@ namespace MediaPortal.TV.Recording
 		byte[] m_tableBufferPMT=new byte[4096];
 int m_bufferPositionPMT=0;
 #endif
-    int m_programNumber = -1;
-    DateTime packetTimer = DateTime.MinValue;
-    bool isReceivingPackets = false;
-    bool isScrambled = false;
-    ulong numberOfPacketsReceived = 0;
+    int _programNumber = -1;
+    DateTime _packetTimer = DateTime.MinValue;
+    bool _isReceivingPackets = false;
+    bool _isScrambled = false;
+    ulong _numberOfPacketsReceived = 0;
     // card
-    static int m_currentDVBCard = 0;
-    static NetworkType m_currentNetworkType;
-    bool m_packetsReceived = false;
+    static int _currentDVBCard = 0;
+    static NetworkType _currentNetworkType;
+    bool _packetsReceived = false;
     //DVBSectionHeader m_sectionHeader=new DVBSectionHeader();
     bool _grabTeletext = false;
 
@@ -200,10 +203,10 @@ int m_bufferPositionPMT=0;
 
     #region global Objects
 
-    TSHelperTools.TSHeader m_packetHeader = new TSHelperTools.TSHeader();
+    TSHelperTools.TSHeader _packetHeader = new TSHelperTools.TSHeader();
     TSHelperTools m_tsHelper = new TSHelperTools();
 
-    DVBEPG m_epgClass = new DVBEPG();
+    DVBEPG _epgClass = new DVBEPG();
     //AudioHeader m_usedAudioFormat = new AudioHeader();
     #endregion
 
@@ -243,15 +246,16 @@ int m_bufferPositionPMT=0;
 
     public void SetCardType(int cardType, NetworkType networkType)
     {
-      m_currentDVBCard = cardType;
-      m_currentNetworkType = networkType;
-      m_epgClass = new DVBEPG(cardType, networkType);
+      _currentDVBCard = cardType;
+      _currentNetworkType = networkType;
+      _epgClass = new DVBEPG(cardType, networkType);
     }
 
     public DVBSectionHeader GetSectionHeader(byte[] data)
     {
       return GetSectionHeader(data, 0);
     }
+
     public DVBSectionHeader GetSectionHeader(byte[] data, int offset)
     {
       if (data == null)
@@ -276,87 +280,115 @@ int m_bufferPositionPMT=0;
       return header;
     }
 
-    public void SetChannelData(int audio, int video, int teletext, int subtitle, string channelName, int pmtPid, int programnumber)
+    public void SetChannelData(int audio, int video, int ac3,int teletext, int subtitle, string channelName, int pmtPid, int programnumber)
     {
-      m_packetsReceived = false;
-      m_programNumber = -1;
+      _packetsReceived = false;
+      _programNumber = -1;
       if (programnumber > 0)
-        m_programNumber = programnumber;
+        _programNumber = programnumber;
       // audio
       if (audio > 0x1FFF)
-        m_audioPid = -1;
+        _pidMp2Audio = -1;
       else
-        m_audioPid = audio;
+        _pidMp2Audio = audio;
       // video
       if (video > 0x1FFF)
-        m_videoPid = -1;
+        _pidVideo = -1;
       else
-        m_videoPid = video;
+        _pidVideo = video;
       // teletext
       if (teletext > 0x1FFF)
-        m_teletextPid = -1;
+        _pidTeletext = -1;
       else
-        m_teletextPid = teletext;
+        _pidTeletext = teletext;
       // subtitle
       if (subtitle > 0x1FFF)
-        m_subtitlePid = -1;
+        _pidSubtitle = -1;
       else
-        m_subtitlePid = subtitle;
+        _pidSubtitle = subtitle;
       // pmt pid
       if (pmtPid > 0x1FFF)
-        m_pmtPid = -1;
+        _pidPmt = -1;
       else
-        m_pmtPid = pmtPid;
+				_pidPmt = pmtPid;
+			// AC3
+			if (ac3 > 0x1FFF)
+				_pidAc3 = -1;
+			else
+				_pidAc3 = ac3;
+			_ac3Present=false;
+			_ac3Timer=DateTime.Now;
+
       // name
-      m_channelName = "";
+      _channelName = "";
       if (channelName != null)
         if (channelName != "")
         {
-          m_channelName = channelName;
+          _channelName = channelName;
         }
       //
-      packetTimer = DateTime.MinValue;
+      _packetTimer = DateTime.MinValue;
 
 
       Log.Write("DVBDemuxer:{0} audio:{1:X} video:{2:X} teletext:{3:X} pmt:{4:X} subtitle:{5:X} program:{6}",
-        channelName, m_audioPid, m_videoPid, m_teletextPid, m_pmtPid, m_subtitlePid, m_programNumber);
+        channelName, _pidMp2Audio, _pidVideo, _pidTeletext, _pidPmt, _pidSubtitle, _programNumber);
 
     }
     public bool RecevingPackets
     {
-      get { return isReceivingPackets; }
+      get { return _isReceivingPackets; }
     }
+
     public bool IsScrambled
     {
-      get { return isScrambled; }
+      get { return _isScrambled; }
     }
+
+		public bool Ac3AudioPresent
+		{
+			get
+			{
+				return _ac3Present;
+			}
+		}
     public void OnTuneNewChannel()
     {
-      isScrambled = true;
-      isReceivingPackets = false;
-      numberOfPacketsReceived = 0;
+      _isScrambled = true;
+      _isReceivingPackets = false;
+      _numberOfPacketsReceived = 0;
+			_ac3Present=false;
+			_ac3Timer=DateTime.Now;
     }
     public void Process()
     {
-      TimeSpan ts = DateTime.Now - packetTimer;
-      if (!isReceivingPackets && numberOfPacketsReceived > 0)
+      TimeSpan ts = DateTime.Now - _packetTimer;
+      if (!_isReceivingPackets && _numberOfPacketsReceived > 0)
       {
-        isReceivingPackets = true;
+        _isReceivingPackets = true;
         Log.Write("DVBDemuxer:receiving DVB packets");
       }
       if (ts.TotalMilliseconds >= 1000)
       {
-        if (isReceivingPackets && numberOfPacketsReceived == 0)
+        if (_isReceivingPackets && _numberOfPacketsReceived == 0)
         {
-          isReceivingPackets = false;
+          _isReceivingPackets = false;
           Log.Write("DVBDemuxer:stopped receiving DVB packets");
         }
 
-        //Log.Write("DVBDemuxer: receiving:{0} #:{1}", isReceivingPackets,numberOfPacketsReceived);
+        //Log.Write("DVBDemuxer: receiving:{0} #:{1}", _isReceivingPackets,_numberOfPacketsReceived);
 
-        numberOfPacketsReceived = 0;
-        packetTimer = DateTime.Now;
+        _numberOfPacketsReceived = 0;
+        _packetTimer = DateTime.Now;
       }
+
+			if (_ac3Present)
+			{
+				ts = DateTime.Now - _ac3Timer;
+				if (ts.TotalSeconds >= 2)
+				{
+					_ac3Present=false;
+				}
+			}
     }
 
     #endregion
@@ -486,17 +518,17 @@ int m_bufferPositionPMT=0;
         if (pid == 0xd3)
         {
           if (tableID == 0x91)
-            m_epgClass.ParseChannels(data);
+            _epgClass.ParseChannels(data);
           else if (tableID == 0x90)
-            m_epgClass.ParseSummaries(data);
+            _epgClass.ParseSummaries(data);
           else if (tableID == 0x92)
-            m_epgClass.ParseThemes(data);
+            _epgClass.ParseThemes(data);
 
         }
         if (pid == 0xd2)
         {
           if (tableID == 0x90)
-            m_epgClass.ParseTitles(data);
+            _epgClass.ParseTitles(data);
         }
 
       }
@@ -633,46 +665,52 @@ int m_bufferPositionPMT=0;
     public void ProcessPacket(IntPtr ptr)
     {
       if (ptr == IntPtr.Zero) return;
-      numberOfPacketsReceived++;
+      _numberOfPacketsReceived++;
 
-      m_packetHeader = m_tsHelper.GetHeader((IntPtr)ptr);
-      if (m_packetHeader.SyncByte != 0x47)
+      _packetHeader = m_tsHelper.GetHeader((IntPtr)ptr);
+      if (_packetHeader.SyncByte != 0x47)
       {
         return;
       }
-      if (m_packetHeader.TransportError == true)
+      if (_packetHeader.TransportError == true)
       {
         return;
       }
-      if (m_packetHeader.Pid == m_videoPid)
+			if (_packetHeader.Pid == _pidAc3)
+			{
+				_ac3Present=true;
+				_ac3Timer=DateTime.Now;
+			}
+
+      if (_packetHeader.Pid == _pidVideo)
       {
-        if (m_packetHeader.TransportScrambling != 0)
+        if (_packetHeader.TransportScrambling != 0)
         {
-          if (!isScrambled)
-            Log.Write("demuxer:video pid:{0:X} is scrambled",m_videoPid);
-          isScrambled = true;
+          if (!_isScrambled)
+            Log.Write("demuxer:video pid:{0:X} is scrambled",_pidVideo);
+          _isScrambled = true;
         }
         else
         {
-          if (isScrambled)
-            Log.Write("demuxer:video pid:{0:X} is unscrambled", m_videoPid);
-          isScrambled = false;
+          if (_isScrambled)
+            Log.Write("demuxer:video pid:{0:X} is unscrambled", _pidVideo);
+          _isScrambled = false;
         }
       }
 
-      numberOfPacketsReceived++;
+      _numberOfPacketsReceived++;
       // teletext
       if (_grabTeletext)
       {
-        if (m_packetHeader.Pid == m_teletextPid && m_teletextPid > 0)
+        if (_packetHeader.Pid == _pidTeletext && _pidTeletext > 0)
         {
           TeletextGrabber.SaveData((IntPtr)ptr);
         }
       }
 
-      if (m_packetsReceived == false)
+      if (_packetsReceived == false)
       {
-        m_packetsReceived = true;
+        _packetsReceived = true;
       }
 
     }
