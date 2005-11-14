@@ -1,0 +1,21 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TSSplitter", "TSMuxSplitter.vcproj", "{62D20BBE-BC16-4CFC-B96A-7E470D987F55}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{62D20BBE-BC16-4CFC-B96A-7E470D987F55}.Debug.ActiveCfg = Debug|Win32
+		{62D20BBE-BC16-4CFC-B96A-7E470D987F55}.Debug.Build.0 = Debug|Win32
+		{62D20BBE-BC16-4CFC-B96A-7E470D987F55}.Release.ActiveCfg = Release|Win32
+		{62D20BBE-BC16-4CFC-B96A-7E470D987F55}.Release.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

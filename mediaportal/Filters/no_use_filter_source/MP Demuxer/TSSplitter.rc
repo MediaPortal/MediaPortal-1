@@ -1,0 +1,149 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// Deutsch (Deutschland) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEU)
+#ifdef _WIN32
+LANGUAGE LANG_GERMAN, SUBLANG_GERMAN
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    IDS_TITLE               "MediaPortal Demultiplexer Filter"
+END
+
+#endif    // Deutsch (Deutschland) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// Englisch (USA) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_PROPPAGE_MEDIUM DIALOGEX 0, 0, 319, 181
+STYLE DS_SETFONT | DS_3DLOOK | DS_FIXEDSYS | WS_CHILD
+EXSTYLE WS_EX_STATICEDGE
+FONT 8, "MS Shell Dlg", 0, 0, 0x0
+BEGIN
+    GROUPBOX        " Output Pins: ",IDC_STATIC,6,12,138,54
+    LTEXT           "Video Stream Pid:",IDC_STATIC,12,44,60,12
+    LTEXT           "Audio Stream Pid:",IDC_STATIC,12,32,60,12
+    CONTROL         "Is AC3 Audio",IDC_CHECK1,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,156,96,66,9
+    GROUPBOX        " Video Info: ",IDC_STATIC,6,78,138,72
+    LTEXT           "Width:",IDC_STATIC,18,96,30,12
+    LTEXT           "Heigth:",IDC_STATIC,18,107,42,12
+    LTEXT           "Bitrate:",IDC_STATIC,18,118,48,13
+    LTEXT           "Aspect Ratio:",IDC_STATIC,18,129,54,12
+    GROUPBOX        " Audio Info: ",IDC_STATIC,150,78,144,72
+    EDITTEXT        IDC_EDIT1,78,94,60,12,ES_AUTOHSCROLL | NOT WS_BORDER,
+                    WS_EX_DLGMODALFRAME | WS_EX_TRANSPARENT
+    EDITTEXT        IDC_EDIT2,78,105,60,12,ES_AUTOHSCROLL | NOT WS_BORDER,
+                    WS_EX_DLGMODALFRAME | WS_EX_TRANSPARENT
+    EDITTEXT        IDC_EDIT3,78,116,60,12,ES_AUTOHSCROLL | NOT WS_BORDER,
+                    WS_EX_DLGMODALFRAME | WS_EX_TRANSPARENT
+    EDITTEXT        IDC_EDIT4,78,127,60,12,ES_AUTOHSCROLL | NOT WS_BORDER,
+                    WS_EX_DLGMODALFRAME | WS_EX_TRANSPARENT
+    LTEXT           "Bitrate:",IDC_STATIC,156,110,66,12
+    LTEXT           "Sampling Frequenzy:",IDC_STATIC,156,122,72,12
+    LTEXT           "Channels:",IDC_STATIC,156,134,66,12
+    EDITTEXT        IDC_EDIT5,228,108,60,12,ES_AUTOHSCROLL | NOT WS_BORDER,
+                    WS_EX_DLGMODALFRAME | WS_EX_TRANSPARENT
+    EDITTEXT        IDC_EDIT6,228,119,60,12,ES_AUTOHSCROLL | NOT WS_BORDER,
+                    WS_EX_DLGMODALFRAME | WS_EX_TRANSPARENT
+    EDITTEXT        IDC_EDIT7,228,130,60,12,ES_AUTOHSCROLL | NOT WS_BORDER,
+                    WS_EX_DLGMODALFRAME | WS_EX_TRANSPARENT
+    EDITTEXT        IDC_EDIT8,78,30,60,12,ES_AUTOHSCROLL | NOT WS_BORDER,
+                    WS_EX_DLGMODALFRAME | WS_EX_TRANSPARENT
+    EDITTEXT        IDC_EDIT9,78,41,60,12,ES_AUTOHSCROLL | NOT WS_BORDER,
+                    WS_EX_DLGMODALFRAME | WS_EX_TRANSPARENT
+    PUSHBUTTON      "Re-Check TS-File",IDC_BUTTON3,6,162,72,12
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_PROPPAGE_MEDIUM, DIALOG
+    BEGIN
+        RIGHTMARGIN, 241
+        BOTTOMMARGIN, 168
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+#endif    // Englisch (USA) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

@@ -1,0 +1,10 @@
+; SampleParser.def ; declares the exports
+
+LIBRARY         "SampleParser.dll"
+
+EXPORTS
+                DllGetClassObject PRIVATE
+				DllCanUnloadNow PRIVATE
+				DllRegisterServer PRIVATE
+                DllUnregisterServer PRIVATE
+
