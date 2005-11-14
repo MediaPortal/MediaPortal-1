@@ -398,9 +398,9 @@ public class MediaPortalApp : D3DApp, IRender
     Log.Write("  Check skin version");
     CheckSkinVersion();
 
-    System.Threading.Thread startThread = new Thread(new ThreadStart(DoStartupJobs));
-    startThread.Priority = ThreadPriority.BelowNormal;
-    startThread.Start();
+    DoStartupJobs();
+//    startThread.Priority = ThreadPriority.BelowNormal;
+    //    startThread.Start();
 
   }
   #endregion
@@ -2065,7 +2065,7 @@ public class MediaPortalApp : D3DApp, IRender
 
   void DoStartupJobs()
   {
-    Thread.CurrentThread.Priority = ThreadPriority.BelowNormal;
+    //Thread.CurrentThread.Priority = ThreadPriority.BelowNormal;
     // Stop MCE services
     Utils.StopMCEServices();
 

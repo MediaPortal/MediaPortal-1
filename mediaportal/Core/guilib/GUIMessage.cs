@@ -107,7 +107,9 @@ namespace MediaPortal.GUI.Library
 				GUI_MSG_RESTART_REMOTE_CONTROLS,
 				GetList,
 				GUI_MSG_SEEK_POSITION,
-				GUI_MSG_PLAYER_POSITION_CHANGED
+				GUI_MSG_PLAYER_POSITION_CHANGED,
+        GUI_MSG_RECORD
+
 		};
 
 		private string 				m_strLabel="";

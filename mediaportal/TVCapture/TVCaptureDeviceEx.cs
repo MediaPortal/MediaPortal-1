@@ -1176,18 +1176,20 @@ namespace MediaPortal.TV.Recording
       if (_currentGraph != null)
       {
         _currentGraph.DeleteGraph();
-        
+        _currentGraph = null;
       }
 
       TVChannel channel = GetChannel(_currentTvChannelName);
       if (_currentGraphState == State.Timeshifting)
       {
+        _currentGraph = GraphFactory.CreateGraph(this);
         _currentGraph.CreateGraph(Quality);
         _currentGraph.StartTimeShifting(channel, Recorder.GetTimeShiftFileName(ID - 1));
         lastChannelChange = DateTime.Now;
       }
       else
       {
+        _currentGraph = GraphFactory.CreateGraph(this);
         _currentGraph.CreateGraph(Quality);
         _currentGraph.StartViewing(channel);
         lastChannelChange = DateTime.Now;
@@ -1311,6 +1313,10 @@ namespace MediaPortal.TV.Recording
     public void Record(TVRecording recording, TVProgram currentProgram, int iPreRecordInterval, int iPostRecordInterval)
     {
       if (_currentGraphState != State.Initialized && _currentGraphState != State.Timeshifting)
+      {
+        DeleteGraph();
+      }
+      if (IsEpgGrabbing)
       {
         DeleteGraph();
       }
@@ -1458,8 +1464,7 @@ namespace MediaPortal.TV.Recording
     {
       if (IsEpgGrabbing)
       {
-        _currentGraph.DeleteGraph();
-        _currentGraph = null;
+        DeleteGraph();
       }
       if (IsRecording) return false;
 
@@ -1554,12 +1559,6 @@ namespace MediaPortal.TV.Recording
     /// </remarks>
     bool StartRecording(TVRecording recording)
     {
-
-      if (IsEpgGrabbing)
-      {
-        _currentGraph.DeleteGraph();
-        _currentGraph = null;
-      }
       Log.WriteFile(Log.LogType.Capture, "Card:{0} start recording content:{1}", ID, recording.IsContentRecording);
 
       TVProgram prog = null;
@@ -1744,12 +1743,11 @@ namespace MediaPortal.TV.Recording
       {
         if (IsEpgGrabbing)
         {
-          _currentGraph.DeleteGraph();
-          _currentGraph = null;
+          DeleteGraph();
         }
         if (value == false)
         {
-          if (View)
+          if (_currentGraphState == State.Viewing)
           {
             Log.WriteFile(Log.LogType.Capture, "Card:{0} stop viewing :{1}", ID, _currentTvChannelName);
             _currentGraph.StopViewing();
@@ -1758,7 +1756,7 @@ namespace MediaPortal.TV.Recording
         }
         else
         {
-          if (View) return;
+          if (_currentGraphState == State.Viewing) return;
           if (IsRecording) return;
           DeleteGraph();
 

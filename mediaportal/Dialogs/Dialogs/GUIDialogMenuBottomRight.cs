@@ -182,8 +182,9 @@ namespace MediaPortal.Dialogs
     public void DoModal(int dwParentId)
     {
       if (listItems.Count == 0)
+      {
         Close();
-
+      }
       m_dwParentWindowID=dwParentId;
       m_pParentWindow=GUIWindowManager.GetWindow( m_dwParentWindowID);
       if (null==m_pParentWindow)
@@ -230,6 +231,7 @@ namespace MediaPortal.Dialogs
 				int pos=selectedItemLabel.IndexOf(" ");
 				if (pos>0) selectedItemLabel=selectedItemLabel.Substring(pos+1);
         selectedId=listView.SelectedListItem.ItemId;
+
 				Close();
       }
       if (control==btnClose)
@@ -245,6 +247,7 @@ namespace MediaPortal.Dialogs
       {
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
 				{
+
 					m_pParentWindow=null;
 					m_bRunning=false;
           GUIGraphicsContext.Overlay=m_bPrevOverlay;

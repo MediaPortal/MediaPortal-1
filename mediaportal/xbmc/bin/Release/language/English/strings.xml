@@ -3151,6 +3151,14 @@
    <id>1448</id>
    <value>Select None</value>
  </string>
+   <string>
+     <id>1449</id>
+     <value>Stop recording</value>
+   </string>
+   <string>
+     <id>1450</id>
+     <value>Are you sure to stop recording?</value>
+   </string>
 
    <!-- My Status Strings -->
 	<string Prefix="My "><id>1950</id><value>Status</value></string>

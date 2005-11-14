@@ -646,7 +646,7 @@ namespace MediaPortal.TV.Recording
       for (int i = 0; i < _tvChannelsList.Count; ++i)
       {
         TVChannel chan = _tvChannelsList[i];
-        if (chan.Name.Equals(strChannel))
+        if (String.Compare(chan.Name,strChannel,false)==0)
         {
           program = chan.CurrentProgram;
           break;
@@ -667,7 +667,7 @@ namespace MediaPortal.TV.Recording
         //no tvguide data, just record the next 2 hours
         Log.WriteFile(Log.LogType.Recorder, "Recorder:record now:{0} for next 4 hours", strChannel);
         tmpRec.Start = Utils.datetolong(DateTime.Now);
-        tmpRec.End = Utils.datetolong(DateTime.Now.AddMinutes(4 * 60));
+        tmpRec.End = Utils.datetolong(DateTime.Now.AddHours(4));
         tmpRec.Title = GUILocalizeStrings.Get(413);
         if (program != null)
           tmpRec.Title = program.Title;
