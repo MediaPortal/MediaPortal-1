@@ -1230,8 +1230,19 @@ namespace MediaPortal.TV.Recording
         }
 
 
-        m_IStreamBufferConfig = null;
-        m_IStreamBufferSink = null;
+        if (m_IStreamBufferConfig != null)
+        {
+          while ((hr = Marshal.ReleaseComObject(m_IStreamBufferConfig)) > 0) ;
+          if (hr != 0) Log.Write("DVBGraphBDA:ReleaseComObject(m_IStreamBufferConfig):{0}", hr);
+          m_IStreamBufferConfig = null;
+        }
+
+        if (m_IStreamBufferSink != null)
+        {
+          while ((hr = Marshal.ReleaseComObject(m_IStreamBufferSink)) > 0) ;
+          if (hr != 0) Log.Write("DVBGraphBDA:ReleaseComObject(m_IStreamBufferSink):{0}", hr);
+          m_IStreamBufferSink = null;
+        }
 
         if (m_StreamBufferSink != null)
         {
@@ -1526,6 +1537,7 @@ namespace MediaPortal.TV.Recording
 #else
       if (m_recorderId >= 0)
       {
+        Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:stop recorder:{0}...", m_recorderId);
         DvrMsStop(m_recorderId);
         m_recorderId = -1;
 

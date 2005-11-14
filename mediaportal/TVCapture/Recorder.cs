@@ -679,7 +679,7 @@ namespace MediaPortal.TV.Recording
 
       AddRecording(ref tmpRec);
       _startTimer = new DateTime(1971, 6, 11, 0, 0, 0, 0);
-      HandleRecordings();
+      
     }//static public void RecordNow(string strChannel)
 
     /// <summary>

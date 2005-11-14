@@ -99,10 +99,11 @@ void Log(const char *fmt, ...)
 	if (fp!=NULL)
 	{
 		SYSTEMTIME systemTime;
-		GetSystemTime(&systemTime);
-		fprintf(fp,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d %s\n",
+		GetLocalTime(&systemTime);
+		fprintf(fp,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d [%x]%s\n",
 			systemTime.wDay, systemTime.wMonth, systemTime.wYear,
 			systemTime.wHour,systemTime.wMinute,systemTime.wSecond,
+			GetCurrentThreadId(),
 			buffer);
 		fclose(fp);
 	}
@@ -533,7 +534,12 @@ void DvrMsStop(LONG id)
 			if (!SUCCEEDED(hr))
 			{
 				Log("CStreamBufferRecorder::Stop() failed:%x", hr);
+				hr=it->second->Stop(0);
+				if (!SUCCEEDED(hr))
+				{
+					Log("CStreamBufferRecorder::Stop() failed 2nd time :%x", hr);
 				return ;
+				}
 			}
 			for (int x=0; x < 10;++x)
 			{
