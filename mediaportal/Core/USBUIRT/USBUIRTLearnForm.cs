@@ -49,7 +49,7 @@ namespace MediaPortal.IR
 								Action.ActionType.ACTION_VOLUME_MUTE,
 								Action.ActionType.ACTION_AUDIO_NEXT_LANGUAGE,
 								Action.ActionType.ACTION_SHOW_SUBTITLES,
-								Action.ActionType.ACTION_NEXT_SUBTITLE,
+								Action.ActionType.ACTION_NEXT_AUDIO,
 
 								Action.ActionType.ACTION_HIGHLIGHT_ITEM,
 								Action.ActionType.ACTION_PARENT_DIR,

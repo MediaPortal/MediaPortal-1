@@ -117,7 +117,9 @@ namespace MediaPortal.Configuration.Sections
 			items.Add(new ListViewItem(new string[] { "Fullscreen Video", "up", "Big step backward"}, -1));
 			items.Add(new ListViewItem(new string[] { "Fullscreen video", "Y", "Show/hide OSD"}, -1));
 			items.Add(new ListViewItem(new string[] { "Fullscreen video", "C", "Toggle MSN chat window"}, -1));
-			items.Add(new ListViewItem(new string[] { "Fullscreen video", "0-9", "Enter time"}, -1));
+            items.Add(new ListViewItem(new string[] { "Fullscreen video", "0-9", "Enter time" }, -1));
+            items.Add(new ListViewItem(new string[] { "Fullscreen video", "L", "Enable Subtitiles" }, -1));
+            items.Add(new ListViewItem(new string[] { "Fullscreen video", "A", "Switch Audio Language / Stream" }, -1));
 			items.Add(new ListViewItem(new string[] { "Movie Calibration", "enter", "Swap arrows"}, -1));
 			items.Add(new ListViewItem(new string[] { "Movie Calibration", "F1", "reset calibration"}, -1));
 			items.Add(new ListViewItem(new string[] { "GUI Calibration", "F1", "reset calibration"}, -1));
@@ -140,6 +142,8 @@ namespace MediaPortal.Configuration.Sections
 			items.Add(new ListViewItem(new string[] { "Fullscreen TV", "F7", "Previous TV channel"}, -1));
 			items.Add(new ListViewItem(new string[] { "Fullscreen TV", "F8", "Next TV channel"}, -1));
 			items.Add(new ListViewItem(new string[] { "Fullscreen TV", "C", "Show/hide MSN chat window"}, -1));
+            items.Add(new ListViewItem(new string[] { "Fullscreen TV", "L", "Enable Subtitiles" }, -1));
+            items.Add(new ListViewItem(new string[] { "Fullscreen TV", "A", "Switch Audio Language / Stream" }, -1));
 			items.Add(new ListViewItem(new string[] { "DVD", "D", "Show DVD menu"}, -1));
 			items.Add(new ListViewItem(new string[] { "DVD", "F7", "Previous chapter"}, -1));
 			items.Add(new ListViewItem(new string[] { "DVD", "F8", "Next chapter"}, -1));

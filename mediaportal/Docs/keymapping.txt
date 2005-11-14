@@ -76,6 +76,8 @@ Fullscreen video:
         down      = big step backward (-10%)
         Y         = show/hide OSD
 	x	  = Switch fullscreen/GUI
+	L	  = Enable Subtitles
+	A	  = Switch Audio Language / Stream
    OSD submenu:
         left      = value +
         right     = value -

@@ -60,7 +60,7 @@ namespace MediaPortal.GUI.Library
 			, ACTION_BIG_STEP_BACK          =23 // seek -10% in the movie. Can b used in VideoFullScreen.xml window id=2005 
 			, ACTION_SHOW_OSD               =24 // show/hide OSD. Can b used in VideoFullScreen.xml window id=2005 
 			, ACTION_SHOW_SUBTITLES         =25 // turn subtitles on/off. Can b used in VideoFullScreen.xml window id=2005 
-			, ACTION_NEXT_SUBTITLE          =26 // switch to next subtitle of movie. Can b used in VideoFullScreen.xml window id=2005 
+			, ACTION_NEXT_AUDIO             =26 // switch to next audio stream. Can b used in VideoFullScreen.xml window id=2005 
 			, ACTION_SHOW_CODEC             =27 // show information about file. Can b used in VideoFullScreen.xml window id=2005 and in slideshow.xml window id=2007
 			, ACTION_NEXT_PICTURE           =28 // show next picture of slideshow. Can b used in slideshow.xml window id=2007
 			, ACTION_PREV_PICTURE           =29 // show previous picture of slideshow. Can b used in slideshow.xml window id=2007
