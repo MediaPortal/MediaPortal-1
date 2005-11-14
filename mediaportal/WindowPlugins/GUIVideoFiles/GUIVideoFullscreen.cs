@@ -500,9 +500,11 @@ namespace MediaPortal.GUI.Video
 					break;
 
 
-				case Action.ActionType.ACTION_NEXT_SUBTITLE:
+				case Action.ActionType.ACTION_NEXT_AUDIO:
 				{
-					//g_application.m_pPlayer.SwitchToNextLanguage();
+                    Log.Write("GUIVideoFullscreen:switch audio");
+                    //need the g_Player method here
+                    //g_application.m_pPlayer.SwitchToNextLanguage();
 				}
 					break;
 
