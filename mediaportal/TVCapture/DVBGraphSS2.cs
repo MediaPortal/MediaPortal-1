@@ -1498,12 +1498,6 @@ namespace MediaPortal.TV.Recording
 
       int hr = 0;
 
-      if (channel != null)
-        TuneChannel(channel);
-
-      if (_channelFound == false)
-        return false;
-
       if (_vmr9 != null)
       {
         _vmr9.RemoveVMR9();
@@ -1515,6 +1509,12 @@ namespace MediaPortal.TV.Recording
         _vmr7.RemoveVMR7();
         _vmr7 = null;
       }
+      if (channel != null)
+        TuneChannel(channel);
+
+      if (_channelFound == false)
+        return false;
+
       _isUsingAc3 = TVDatabase.DoesChannelHaveAC3(channel, Network() == NetworkType.DVBC, Network() == NetworkType.DVBT, Network() == NetworkType.DVBS, Network() == NetworkType.ATSC);
 
 #if USEMTSWRITER
@@ -2332,6 +2332,8 @@ namespace MediaPortal.TV.Recording
 
     void CheckVideoResolutionChanges()
     {
+      if (_graphState == State.Created) return;
+      if (_graphState == State.Epg) return;
       if (GUIGraphicsContext.Vmr9Active) return;
       if (_graphState != State.Viewing) return;
       if (_interfaceVideoWindow == null || _interfaceBasicVideo == null) return;
@@ -2356,6 +2358,9 @@ namespace MediaPortal.TV.Recording
     }
     void UpdateVideoState()
     {
+      if (_graphState == State.Created) return;
+      if (_graphState == State.Epg) return;
+
       //check if this card is used for watching tv
       bool isViewing = Recorder.IsCardViewing(_cardId);
       if (!isViewing) return;
@@ -2410,8 +2415,6 @@ namespace MediaPortal.TV.Recording
           return;
         }
       }
-      if (_graphState == State.Created) return;
-      if (_graphState == State.Epg) return;
 
       if (!GUIGraphicsContext.Vmr9Active && _vmr7 != null && _graphState == State.Viewing)
       {
@@ -2446,6 +2449,7 @@ namespace MediaPortal.TV.Recording
               {
                 //decode pmt
                 _lastPmtVersion = version;
+                Log.Write("DVBGraphSS2:Process() got new PMT:{0}", version);
                 DVBSections sections = new DVBSections();
                 DVBSections.ChannelInfo info = new DVBSections.ChannelInfo();
                 if (sections.GetChannelInfoFromPMT(pmt, ref info))
@@ -2473,6 +2477,7 @@ namespace MediaPortal.TV.Recording
                         SetPidToPin(_interfaceB2C2DataCtrl, 0, (ushort)data.elementary_PID);
                       }
                     }
+                    Log.Write("DVBGraphSS2:Process() start grabbing epg");
                     _epgGrabber.GrabEPG(_currentChannel.HasEITSchedule == true);
                   }
                 }
@@ -3401,6 +3406,19 @@ namespace MediaPortal.TV.Recording
         Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2:FAILED to Grab epg for :{0}, graph not created", channel.Name);
         return;
       }
+
+      if (_vmr9 != null)
+      {
+        _vmr9.RemoveVMR9();
+        _vmr9.Release();
+        _vmr9 = null;
+      }
+      if (_vmr7 != null)
+      {
+        _vmr7.RemoveVMR7();
+        _vmr7 = null;
+      }
+
       // tune to the correct channel
       Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2:Grab epg for :{0}", channel.Name);
       TuneChannel(channel);
@@ -3449,18 +3467,6 @@ namespace MediaPortal.TV.Recording
       if (samplePin != null)
         Marshal.ReleaseComObject(samplePin);
 
-      if (_vmr9 != null)
-      {
-        _vmr9.RemoveVMR9();
-        _vmr9.Release();
-        _vmr9 = null;
-      }
-      if (_vmr7 != null)
-      {
-        _vmr7.RemoveVMR7();
-        _vmr7 = null;
-      }
-
       //now start the graph
       Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2: start graph");
 
@@ -3478,4 +3484,3 @@ namespace MediaPortal.TV.Recording
     }
   }// class
 }// namespace
-
