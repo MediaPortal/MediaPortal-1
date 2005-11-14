@@ -4,7 +4,7 @@
 	<allowoverlay>yes</allowoverlay>
 	<define>#header.label:4000</define>
 	<define>#header.image:browser_logo.png</define>
-	<define>#header.hover:hover_webbrowser.png</define>
+	<define>#header.hover:</define>
 	<controls>
 		<import>common.window.xml</import>
 		<control>

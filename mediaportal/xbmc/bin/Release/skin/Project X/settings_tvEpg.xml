@@ -1,0 +1,69 @@
+<window>
+	<id>706</id>
+	<defaultcontrol>10</defaultcontrol>
+	<allowoverlay>yes</allowoverlay>
+	<controls>
+		<control>
+			<type>image</type>
+			<description>BG</description>
+			<id>1</id>
+			<posX>0</posX>
+			<posY>0</posY>
+			<texture>background.png</texture>
+		</control>
+		<control>
+			<type>image</type>
+			<id>1</id>
+			<posX>48</posX>
+			<posY>390</posY>
+			<texture>Background_TV.png</texture>
+		</control>
+		<control>
+			<type>image</type>
+			<description>MP Logo</description>
+			<id>1</id>
+			<posX>32</posX>
+			<posY>24</posY>
+			<texture>mplogo.png</texture>
+		</control>
+		<control>
+			<type>label</type>
+			<description>Setup TV</description>
+			<id>1</id>
+			<posX>32</posX>
+			<posY>96</posY>
+			<label>TV Setup</label>
+			<font>font18</font>
+		</control>
+		<control>
+			<description>channel listcontrol</description>
+			<type>checklistcontrol</type>
+			<id>10</id>
+			<width>425</width>
+			<height>370</height>
+			<textXOff>50</textXOff>
+			<textYOff>2</textYOff>
+			<textXOff2>420</textXOff2>
+			<textYOff2>29</textYOff2>
+			<textXOff3>100</textXOff3>
+			<textYOff3>29</textYOff3>
+			<IconXOff>12</IconXOff>
+			<IconYOff>8</IconYOff>
+			<spinPosX>606</spinPosX>
+			<spinPosY>418</spinPosY>
+			<itemWidth>35</itemWidth>
+			<itemHeight>35</itemHeight>
+			<textureFocus>recording_background_focus.png</textureFocus>
+			<textureNoFocus>recording_background_nofocus.png</textureNoFocus>
+			<spaceBetweenItems>5</spaceBetweenItems>
+			<textureHeight>35</textureHeight>
+			<keepaspectratio>no</keepaspectratio>
+			<font2>font10</font2>
+			<font3>font10</font3>
+			<onleft>10</onleft>
+			<onright>10</onright>
+			<onup>10</onup>
+			<ondown>10</ondown>
+		</control>
+	</controls>
+</window>
