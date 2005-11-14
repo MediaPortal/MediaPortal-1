@@ -134,7 +134,6 @@ namespace MediaPortal.Configuration.Sections
 												new string[] { "general", "hidetaskbar", "true" },
 												new string[] { "general", "alwaysontop", "false" },
 												new string[] { "general", "exclusivemode", "false" },
-												new string[] { "general", "useVMR9ZapOSD", "false" },
 												new string[] { "general", "enableguisounds", "true" },
 												new string[] { "general", "screensaver", "true" }
 												};
@@ -160,7 +159,7 @@ namespace MediaPortal.Configuration.Sections
 				// Set language
 				//
 				languageComboBox.Text = xmlreader.GetValueAsString("skin", "language", languageComboBox.Text);
-				numericUpDown1.Value=xmlreader.GetValueAsInt("vmr9OSDSkin","alphaValue",10);
+				//numericUpDown1.Value=xmlreader.GetValueAsInt("vmr9OSDSkin","alphaValue",10);
 
 			}
 
@@ -189,7 +188,7 @@ namespace MediaPortal.Configuration.Sections
 				}
 				xmlwriter.SetValue("skin", "language", languageComboBox.Text);
         
-				xmlwriter.SetValue("vmr9OSDSkin","alphaValue",numericUpDown1.Value);
+				//xmlwriter.SetValue("vmr9OSDSkin","alphaValue",numericUpDown1.Value);
       }
 
 			try
@@ -311,7 +310,6 @@ namespace MediaPortal.Configuration.Sections
                                                                 "Hide taskbar in fullscreen mode",
                                                                 "MediaPortal always on top",
                                                                 "use Exclusive DirectX Mode for fullscreen tv/video",
-                                                                "use VMR9-ZapOSD (GUIZapOSD will not displayed then)",
                                                                 "enable GUI sound effects",
                                                                 "enable Screensaver in fullscreen mode"});
       this.settingsCheckedListBox.Location = new System.Drawing.Point(16, 24);
