@@ -2176,9 +2176,11 @@ namespace MediaPortal.TV.Recording
               if (TVDatabase.CanCardViewTVChannel(chan.Name, card.ID) || _tvcards.Count == 1)
               {
                 TVProgram prog = TVDatabase.GetLastProgramForChannel(chan);
-                if (prog.EndTime < DateTime.Now.AddHours(12))
+                if (prog.EndTime < DateTime.Now.AddHours(chan.EpgHours))
                 {
                   //grab the epg
+                  Log.WriteFile(Log.LogType.EPG, "auto-epg: grab epg for channel:{0} hours expected:{1}, last event in tv guide:{2} {3}",
+                                chan.Name, chan.EpgHours, prog.EndTime.ToShortDateString(), prog.EndTime.ToLongTimeString());
                   card.GrabEpg(chan);
                   chan.LastDateTimeEpgGrabbed = DateTime.Now;
                   break;

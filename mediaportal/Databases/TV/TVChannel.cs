@@ -205,6 +205,7 @@ namespace MediaPortal.TV.Database
 
     #region variables
 
+    int _epgHours = 1;
     bool _autoGrabEpg = true;
     string _channelName;
 		int    _channelNumber;
@@ -243,6 +244,8 @@ namespace MediaPortal.TV.Database
 			newChan.ProviderName=_providerName;
 			newChan.Scrambled=_isScrambled;
 			newChan.Sort=_sortIndex;
+      newChan.EpgHours = _epgHours;
+      newChan.AutoGrabEpg = _autoGrabEpg;
 			return newChan;
     }
     #endregion
@@ -395,6 +398,11 @@ namespace MediaPortal.TV.Database
     {
       get { return _autoGrabEpg; }
       set { _autoGrabEpg = value; }
+    }
+    public int EpgHours
+    {
+      get { return _epgHours; }
+      set { _epgHours = value; }
     }
     #endregion
 

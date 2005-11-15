@@ -257,6 +257,59 @@ namespace MediaPortal.TV.Recording
     }
     #endregion
 
+    #region TvChannelEpg class
+    class TvChannelEpg
+    {
+      string _channelName;
+      DateTime _firstEvent;
+      DateTime _lastEvent;
+
+      public TvChannelEpg(string channelName)
+      {
+        _channelName = channelName;
+        _firstEvent=DateTime.MinValue;
+        _lastEvent=DateTime.MinValue;
+      }
+      public string ChannelName
+      {
+        get { return _channelName; }
+      }
+      public void NewEvent(DateTime time)
+      {
+        if (_firstEvent == DateTime.MinValue)
+          _firstEvent = time;
+        if (_lastEvent == DateTime.MinValue)
+          _lastEvent = time;
+        if (time < _firstEvent)
+          _firstEvent = time;
+        if (time > _lastEvent)
+          _lastEvent = time;
+      }
+
+      public void Update()
+      {
+        if (_firstEvent==DateTime.MinValue) return;
+        if (_lastEvent==DateTime.MinValue) return;
+
+        TimeSpan ts = _lastEvent - _firstEvent;
+        int hours = (int)(ts.TotalHours - 2f);
+        if (hours < 0) return;
+        List<TVChannel> listChannels = new List<TVChannel>();
+        TVDatabase.GetChannels(ref listChannels);
+        foreach (TVChannel ch in listChannels)
+        {
+          if (ch.Name == _channelName)
+          {
+            Log.WriteFile(Log.LogType.EPG, "epg: channel:{0} received epg for : {1} days, {2} hours, {3} minutes", _channelName, ts.Days, ts.Hours, ts.Minutes);
+            ch.EpgHours = hours;
+            TVDatabase.UpdateChannel(ch,ch.Sort);
+            return;
+          }
+        }
+      }
+    }
+    #endregion
+
     #region enums
     enum State
     {
@@ -281,6 +334,7 @@ namespace MediaPortal.TV.Recording
     List<EPGChannel> _listChannels;
     List<MHWEvent> _listMhwEvents;
     List<ATSCEvent> _listAtscEvents;
+    List<TvChannelEpg> _epgChannels;
     #endregion
 
     #region properties
@@ -664,6 +718,7 @@ namespace MediaPortal.TV.Recording
     #region DVB EPG
     void EpgBackgroundWorker(object sender, DoWorkEventArgs e)
     {
+      _epgChannels = new List<TvChannelEpg>();
       System.Threading.Thread.CurrentThread.Priority = System.Threading.ThreadPriority.BelowNormal;
       TVDatabase.RemoveOldPrograms();
       List<EPGChannel> events = _listChannels;
@@ -676,6 +731,7 @@ namespace MediaPortal.TV.Recording
         languagesToGrab = xmlreader.GetValueAsString("epg-grabbing", "grabLanguages", "");
       }
 
+      
       foreach (EPGChannel channel in events)
       {
         _timeoutTimer = DateTime.Now;
@@ -721,10 +777,13 @@ namespace MediaPortal.TV.Recording
                       epgEvent.StartTime.ToLongDateString(),
                       epgEvent.StartTime.ToLongTimeString(), epgEvent.EndTime.ToLongTimeString(), epgLang.Title);
             TVDatabase.UpdateProgram(tv);
+            OnChannelEvent(tv.Channel, tv.StartTime, tv.EndTime);
           }
         }
       }
       Log.WriteFile(Log.LogType.EPG, "epg-grab: done");
+
+      UpdateChannels();
       TVDatabase.SupressEvents = false;
       _currentState = State.Done;
     }
@@ -733,7 +792,8 @@ namespace MediaPortal.TV.Recording
     #region MHW
     void MhwBackgroundWorker(object sender, DoWorkEventArgs e)
     {
-      System.Threading.Thread.CurrentThread.Priority = System.Threading.ThreadPriority.BelowNormal;
+      _epgChannels = new List<TvChannelEpg>();
+      System.Threading.Thread.CurrentThread.Priority = System.Threading.ThreadPriority.Normal;
       TVDatabase.RemoveOldPrograms();
       List<MHWEvent> events = _listMhwEvents;
       _listMhwEvents = null;
@@ -754,10 +814,13 @@ namespace MediaPortal.TV.Recording
 
           Log.WriteFile(Log.LogType.EPG, "mhw-grab: add: {0} {1} {2}-{3} {4}",
                     mhwEvent.TvChannel.Name, mhwEvent.StartTime.ToLongDateString(), mhwEvent.StartTime.ToLongTimeString(), mhwEvent.EndTime.ToLongTimeString(), mhwEvent.Languages[0].Title);
+
+          OnChannelEvent(tv.Channel, tv.StartTime, tv.EndTime);
           TVDatabase.UpdateProgram(tv);
         }
 
       }
+      UpdateChannels();
       _currentState = State.Done;
 
     }
@@ -767,6 +830,7 @@ namespace MediaPortal.TV.Recording
     #region ATSC
     void AtscBackgroundWorker(object sender, DoWorkEventArgs e)
     {
+      _epgChannels = new List<TvChannelEpg>();
       System.Threading.Thread.CurrentThread.Priority = System.Threading.ThreadPriority.BelowNormal;
       TVDatabase.RemoveOldPrograms();
       List<ATSCEvent> events = _listAtscEvents;
@@ -789,12 +853,41 @@ namespace MediaPortal.TV.Recording
           Log.WriteFile(Log.LogType.EPG, "atsc-grab: add: {0} {1} {2}-{3} {4}",
                     atscEvent.TvChannel.Name, atscEvent.StartTime.ToLongDateString(), atscEvent.StartTime.ToLongTimeString(), atscEvent.EndTime.ToLongTimeString(), atscEvent.Languages[0].Title);
           TVDatabase.UpdateProgram(tv);
+          OnChannelEvent(tv.Channel, tv.StartTime, tv.EndTime);
         }
 
       }
+      UpdateChannels();
       _currentState = State.Done;
     }
     #endregion
+
+    void OnChannelEvent(string channelName, DateTime timeStart, DateTime timeEnd)
+    {
+      foreach (TvChannelEpg ch in _epgChannels)
+      {
+        if (ch.ChannelName == channelName)
+        {
+          ch.NewEvent(timeStart);
+          ch.NewEvent(timeEnd);
+          return;
+        }
+      }
+      TvChannelEpg newChan = new TvChannelEpg(channelName);
+      newChan.NewEvent(timeStart);
+      newChan.NewEvent(timeEnd);
+      _epgChannels.Add(newChan);
+    }
+
+    void UpdateChannels()
+    {
+      foreach (TvChannelEpg ch in _epgChannels)
+      {
+        ch.Update();
+      }
+      _epgChannels.Clear();
+    }
+
     #endregion
   }
 
