@@ -188,11 +188,17 @@ STDMETHODIMP CMHWInputPin1::NewSegment(REFERENCE_TIME tStart,
 } // NewSegment
 
 bool CMHWInputPin1::IsReady()
-{	
+{
+	int passed=time(NULL)-timeoutTimer;
+	if (passed>30)
+	{
+		Parse();
+	}
 	return m_bParsed;
 }
 void CMHWInputPin1::Parse()
 {
+	Log("MHW1:timeout detected");
 	m_bParsed=true;
 	m_bGrabMHW=false;
 }
@@ -201,4 +207,5 @@ void CMHWInputPin1::GrabMHW()
 	Log("MHW1:Grab");
 	m_bGrabMHW=true;
 	ResetPids();
+	timeoutTimer=time(NULL);
 }
