@@ -1917,6 +1917,15 @@ namespace MediaPortal.TV.Recording
       }
     }
 
+    
+    static public bool IsBusyProcessingCommands
+    {
+      get
+      {
+        return (_listCommands.Count > 0);
+      }
+    }
+
     static void HandleViewCommand(string channel, bool TVOnOff, bool timeshift)
     {
       Log.WriteFile(Log.LogType.Recorder, "Recorder:HandleView {0} {1} {2}", channel, TVOnOff, timeshift);
