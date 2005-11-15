@@ -14,7 +14,7 @@ namespace MediaPortal.TV.Recording
   /// this class receives the EPG data for DVB from the MPSA directshow filter
   /// and will update the TV database with all new programs found
   /// </summary>
-  public class EpgGrabber
+  public class EpgGrabber 
   {
     #region EPGEvent class
     class EPGLanguage
@@ -192,6 +192,25 @@ namespace MediaPortal.TV.Recording
           }
           return _tvChannel;
         }
+      }
+    }
+
+    class MHWEventComparer : IComparer<MediaPortal.TV.Recording.EpgGrabber.MHWEvent>
+    {
+      public int Compare(MediaPortal.TV.Recording.EpgGrabber.MHWEvent show1,  MediaPortal.TV.Recording.EpgGrabber.MHWEvent show2)
+      {
+        if (show1.NetworkId < show2.NetworkId) return -1;
+        if (show1.NetworkId > show2.NetworkId) return 1;
+
+        if (show1.ServiceId < show2.ServiceId) return -1;
+        if (show1.ServiceId > show2.ServiceId) return 1;
+
+        if (show1.TransportId < show2.TransportId) return -1;
+        if (show1.TransportId > show2.TransportId) return 1;
+
+        if (show1.StartTime < show2.StartTime) return -1;
+        if (show1.StartTime > show2.StartTime) return 1;
+        return 0;
       }
     }
     #endregion
@@ -799,6 +818,9 @@ namespace MediaPortal.TV.Recording
       _listMhwEvents = null;
       Log.WriteFile(Log.LogType.EPG, "mhw-grab: updating tv database");
       TVDatabase.SupressEvents = true;
+      events.Sort( new MHWEventComparer());
+
+      List<MHWEvent> channelCache = new List<MHWEvent>();
       foreach (MHWEvent mhwEvent in events)
       {
         _timeoutTimer = DateTime.Now;
@@ -806,7 +828,28 @@ namespace MediaPortal.TV.Recording
         TVProgram tv = new TVProgram();
         tv.Start = Util.Utils.datetolong(mhwEvent.StartTime);
         tv.End = Util.Utils.datetolong(mhwEvent.EndTime);
-        tv.Channel = mhwEvent.TvChannel.Name;
+        
+        TVChannel tvChannel=null;
+        bool found=false;
+        foreach (MHWEvent chan in channelCache)
+        {
+          if (chan.NetworkId==mhwEvent.NetworkId &&
+              chan.TransportId==mhwEvent.NetworkId &&
+              chan.ServiceId==mhwEvent.ServiceId)
+          {
+            tvChannel=chan.TvChannel;
+            found=true;
+            break;
+          }
+        }
+        if (!found)
+        {
+          tvChannel=mhwEvent.TvChannel;
+          channelCache.Add( mhwEvent);
+        }
+        if (tvChannel==null) continue;
+
+        tv.Channel = tvChannel.Name;
         if (mhwEvent.Languages.Count > 0)
         {
           tv.Genre = mhwEvent.Genre;
@@ -814,12 +857,11 @@ namespace MediaPortal.TV.Recording
           tv.Description = mhwEvent.Languages[0].Description;
 
           Log.WriteFile(Log.LogType.EPG, "mhw-grab: add: {0} {1} {2}-{3} {4}",
-                    mhwEvent.TvChannel.Name, mhwEvent.StartTime.ToLongDateString(), mhwEvent.StartTime.ToLongTimeString(), mhwEvent.EndTime.ToLongTimeString(), mhwEvent.Languages[0].Title);
+                    tvChannel.Name, mhwEvent.StartTime.ToLongDateString(), mhwEvent.StartTime.ToLongTimeString(), mhwEvent.EndTime.ToLongTimeString(), mhwEvent.Languages[0].Title);
 
           OnChannelEvent(tv.Channel, tv.StartTime, tv.EndTime);
           TVDatabase.UpdateProgram(tv);
         }
-
       }
       UpdateChannels();
       TVDatabase.SupressEvents = false;
@@ -839,6 +881,7 @@ namespace MediaPortal.TV.Recording
       _listAtscEvents = null;
       Log.WriteFile(Log.LogType.EPG, "atsc-grab: updating tv database");
       TVDatabase.SupressEvents = true;
+      
       foreach (ATSCEvent atscEvent in events)
       {
         _timeoutTimer = DateTime.Now;
