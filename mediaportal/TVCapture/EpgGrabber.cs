@@ -822,13 +822,7 @@ namespace MediaPortal.TV.Recording
 
       List<MHWEvent> channelCache = new List<MHWEvent>();
       foreach (MHWEvent mhwEvent in events)
-      {
-        _timeoutTimer = DateTime.Now;
-        if (mhwEvent.TvChannel == null) continue;
-        TVProgram tv = new TVProgram();
-        tv.Start = Util.Utils.datetolong(mhwEvent.StartTime);
-        tv.End = Util.Utils.datetolong(mhwEvent.EndTime);
-        
+      { 
         TVChannel tvChannel=null;
         bool found=false;
         foreach (MHWEvent chan in channelCache)
@@ -849,6 +843,10 @@ namespace MediaPortal.TV.Recording
         }
         if (tvChannel==null) continue;
 
+        _timeoutTimer = DateTime.Now;
+        TVProgram tv = new TVProgram();
+        tv.Start = Util.Utils.datetolong(mhwEvent.StartTime);
+        tv.End = Util.Utils.datetolong(mhwEvent.EndTime);
         tv.Channel = tvChannel.Name;
         if (mhwEvent.Languages.Count > 0)
         {
