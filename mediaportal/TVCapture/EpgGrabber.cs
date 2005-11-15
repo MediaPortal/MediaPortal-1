@@ -811,59 +811,69 @@ namespace MediaPortal.TV.Recording
     #region MHW
     void MhwBackgroundWorker(object sender, DoWorkEventArgs e)
     {
-      _epgChannels = new List<TvChannelEpg>();
-      System.Threading.Thread.CurrentThread.Priority = System.Threading.ThreadPriority.Normal;
-      TVDatabase.RemoveOldPrograms();
-      List<MHWEvent> events = _listMhwEvents;
-      _listMhwEvents = null;
-      Log.WriteFile(Log.LogType.EPG, "mhw-grab: updating tv database");
-      TVDatabase.SupressEvents = true;
-      events.Sort( new MHWEventComparer());
+      try
+      {
+        _epgChannels = new List<TvChannelEpg>();
+        System.Threading.Thread.CurrentThread.Priority = System.Threading.ThreadPriority.Normal;
+        TVDatabase.RemoveOldPrograms();
+        List<MHWEvent> events = _listMhwEvents;
+        _listMhwEvents = null;
+        Log.WriteFile(Log.LogType.EPG, "mhw-grab: updating tv database");
+        TVDatabase.SupressEvents = true;
+        events.Sort(new MHWEventComparer());
 
-      List<MHWEvent> channelCache = new List<MHWEvent>();
-      foreach (MHWEvent mhwEvent in events)
-      { 
-        TVChannel tvChannel=null;
-        bool found=false;
-        foreach (MHWEvent chan in channelCache)
+        List<MHWEvent> channelCache = new List<MHWEvent>();
+        foreach (MHWEvent mhwEvent in events)
         {
-          if (chan.NetworkId==mhwEvent.NetworkId &&
-              chan.TransportId==mhwEvent.NetworkId &&
-              chan.ServiceId==mhwEvent.ServiceId)
+          TVChannel tvChannel = null;
+          bool found = false;
+          foreach (MHWEvent chan in channelCache)
           {
-            tvChannel=chan.TvChannel;
-            found=true;
-            break;
+            if (chan.NetworkId == mhwEvent.NetworkId &&
+                chan.TransportId == mhwEvent.NetworkId &&
+                chan.ServiceId == mhwEvent.ServiceId)
+            {
+              tvChannel = chan.TvChannel;
+              found = true;
+              break;
+            }
+          }
+          if (!found)
+          {
+            tvChannel = mhwEvent.TvChannel;
+            channelCache.Add(mhwEvent);
+          }
+          if (tvChannel == null) continue;
+
+          _timeoutTimer = DateTime.Now;
+          TVProgram tv = new TVProgram();
+          tv.Start = Util.Utils.datetolong(mhwEvent.StartTime);
+          tv.End = Util.Utils.datetolong(mhwEvent.EndTime);
+          tv.Channel = tvChannel.Name;
+          if (mhwEvent.Languages.Count > 0)
+          {
+            tv.Genre = mhwEvent.Genre;
+            tv.Title = mhwEvent.Languages[0].Title;
+            tv.Description = mhwEvent.Languages[0].Description;
+
+            Log.WriteFile(Log.LogType.EPG, "mhw-grab: add: {0} {1} {2}-{3} {4}",
+                      tvChannel.Name, mhwEvent.StartTime.ToLongDateString(), mhwEvent.StartTime.ToLongTimeString(), mhwEvent.EndTime.ToLongTimeString(), mhwEvent.Languages[0].Title);
+
+            OnChannelEvent(tv.Channel, tv.StartTime, tv.EndTime);
+            TVDatabase.UpdateProgram(tv);
           }
         }
-        if (!found)
-        {
-          tvChannel=mhwEvent.TvChannel;
-          channelCache.Add( mhwEvent);
-        }
-        if (tvChannel==null) continue;
-
-        _timeoutTimer = DateTime.Now;
-        TVProgram tv = new TVProgram();
-        tv.Start = Util.Utils.datetolong(mhwEvent.StartTime);
-        tv.End = Util.Utils.datetolong(mhwEvent.EndTime);
-        tv.Channel = tvChannel.Name;
-        if (mhwEvent.Languages.Count > 0)
-        {
-          tv.Genre = mhwEvent.Genre;
-          tv.Title = mhwEvent.Languages[0].Title;
-          tv.Description = mhwEvent.Languages[0].Description;
-
-          Log.WriteFile(Log.LogType.EPG, "mhw-grab: add: {0} {1} {2}-{3} {4}",
-                    tvChannel.Name, mhwEvent.StartTime.ToLongDateString(), mhwEvent.StartTime.ToLongTimeString(), mhwEvent.EndTime.ToLongTimeString(), mhwEvent.Languages[0].Title);
-
-          OnChannelEvent(tv.Channel, tv.StartTime, tv.EndTime);
-          TVDatabase.UpdateProgram(tv);
-        }
+        UpdateChannels();
       }
-      UpdateChannels();
-      TVDatabase.SupressEvents = false;
-      _currentState = State.Done;
+      catch (Exception ex)
+      {
+        Log.WriteFile(Log.LogType.EPG, true, "mhw-grab: exception:{0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
+      }
+      finally
+      {
+        TVDatabase.SupressEvents = false;
+        _currentState = State.Done;
+      }
 
     }
     #endregion
