@@ -798,6 +798,7 @@ namespace MediaPortal.TV.Recording
       List<MHWEvent> events = _listMhwEvents;
       _listMhwEvents = null;
       Log.WriteFile(Log.LogType.EPG, "mhw-grab: updating tv database");
+      TVDatabase.SupressEvents = true;
       foreach (MHWEvent mhwEvent in events)
       {
         _timeoutTimer = DateTime.Now;
@@ -821,6 +822,7 @@ namespace MediaPortal.TV.Recording
 
       }
       UpdateChannels();
+      TVDatabase.SupressEvents = false;
       _currentState = State.Done;
 
     }
@@ -836,6 +838,7 @@ namespace MediaPortal.TV.Recording
       List<ATSCEvent> events = _listAtscEvents;
       _listAtscEvents = null;
       Log.WriteFile(Log.LogType.EPG, "atsc-grab: updating tv database");
+      TVDatabase.SupressEvents = true;
       foreach (ATSCEvent atscEvent in events)
       {
         _timeoutTimer = DateTime.Now;
@@ -858,6 +861,7 @@ namespace MediaPortal.TV.Recording
 
       }
       UpdateChannels();
+      TVDatabase.SupressEvents = false;
       _currentState = State.Done;
     }
     #endregion
