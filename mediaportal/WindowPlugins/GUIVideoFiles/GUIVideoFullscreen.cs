@@ -153,6 +153,8 @@ namespace MediaPortal.GUI.Video
       string key = "movieplayer";
       if (g_Player.IsDVD)
         key = "dvdplayer";
+      if (g_Player.IsTVRecording)
+        key = "mytv";
 
       using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
       {
@@ -175,6 +177,8 @@ namespace MediaPortal.GUI.Video
         string strKey = "movieplayer";
         if (g_Player.IsDVD)
           strKey = "dvdplayer";
+        if (g_Player.IsTVRecording)
+          strKey = "mytv";
 
         switch (GUIGraphicsContext.ARType)
         {
