@@ -457,10 +457,15 @@ namespace MediaPortal.EPG
 
 				if(listingCount == 0) // && m_maxListingCount == 0)
 				{
-                    if (m_maxListingCount == 0)
+                    if (m_maxListingCount == 0 || (m_maxListingCount != 0 && offset == 0))
+                    {
                         Log.WriteFile(Log.LogType.Log, true, "WebEPG: No Listings Found");
+                        m_GrabDay++;
+                    }
                     else
+                    {
                         Log.WriteFile(Log.LogType.Log, false, "WebEPG: Listing Count 0");
+                    }
                     //m_GrabDay++;
 				}
 				else
@@ -543,17 +548,17 @@ namespace MediaPortal.EPG
                             break;
                         offset += m_maxListingCount;
                     }
-                    m_GrabDay++;
-                    //if (strURL != strURLid)
-                    //{
-                    //    m_StartGrab = m_StartGrab.AddDays(1);
-                    //    m_GrabDay++;
-                    //}
-                    //else
-                    //{ 
-                    //    if(strURL.IndexOf("#LIST_OFFSET") == -1)
-                    //        break;
-                    //}
+                    //m_GrabDay++;
+                    if (strURL != strURLid)
+                    {
+                        m_StartGrab = m_StartGrab.AddDays(1);
+                        m_GrabDay++;
+                    }
+                    else
+                    {
+                        if (strURL.IndexOf("#LIST_OFFSET") == -1)
+                            break;
+                    }
                 }
              
                 return m_programs;
