@@ -38,11 +38,11 @@ namespace MediaPortal.TV.Recording
   public class DiskManagement
   {
     static bool importing = false;
-    static DateTime m_dtCheckDiskSpace = DateTime.Now;
-    static DateTime m_dtRecordingTimer = DateTime.MinValue;
-    public DiskManagement()
+    static DateTime _diskSpaceCheckTimer = DateTime.Now;
+    static DateTime _deleteOldRecordingTimer = DateTime.MinValue;
+    static  DiskManagement()
     {
-      Recorder.OnTvRecordingEnded += new MediaPortal.TV.Recording.Recorder.OnTvRecordingHandler(Recorder_OnTvRecordingEnded);
+      Recorder.OnTvRecordingEnded += new MediaPortal.TV.Recording.Recorder.OnTvRecordingHandler(DiskManagement.Recorder_OnTvRecordingEnded);
     }
     #region dvr-ms importing
     static public void DeleteRecording(string recordingFilename)
@@ -56,19 +56,19 @@ namespace MediaPortal.TV.Recording
       if (pos >= 0)
         filename = filename.Substring(0, pos);
       filename = filename.ToLower();
-      string[] strFiles;
+      string[] files;
       try
       {
-        strFiles = System.IO.Directory.GetFiles(path);
-        foreach (string strFile in strFiles)
+        files = System.IO.Directory.GetFiles(path);
+        foreach (string fileName in files)
         {
           try
           {
-            if (strFile.ToLower().IndexOf(filename) >= 0)
+            if (fileName.ToLower().IndexOf(filename) >= 0)
             {
-              if (strFile.ToLower().IndexOf(".sbe") >= 0)
+              if (fileName.ToLower().IndexOf(".sbe") >= 0)
               {
-                System.IO.File.Delete(strFile);
+                System.IO.File.Delete(fileName);
               }
             }
           }
@@ -201,27 +201,27 @@ namespace MediaPortal.TV.Recording
     /// <summary>
     /// this method deleted any timeshifting files in the specified folder
     /// </summary>
-    /// <param name="strPath">folder name</param>
-    static public void DeleteOldTimeShiftFiles(string strPath)
+    /// <param name="path">folder name</param>
+    static public void DeleteOldTimeShiftFiles(string path)
     {
-      if (strPath == null) return;
-      if (strPath == String.Empty) return;
+      if (path == null) return;
+      if (path == String.Empty) return;
       // Remove any trailing slashes
-      strPath = Utils.RemoveTrailingSlash(strPath);
+      path = Utils.RemoveTrailingSlash(path);
 
 
       // clean the TempDVR\ folder
-      string strDir = String.Empty;
-      string[] strFiles;
+      string directory = String.Empty;
+      string[] files;
       try
       {
-        strDir = String.Format(@"{0}\TempDVR", strPath);
-        strFiles = System.IO.Directory.GetFiles(strDir, "*.tmp");
-        foreach (string strFile in strFiles)
+        directory = String.Format(@"{0}\TempDVR", path);
+        files = System.IO.Directory.GetFiles(directory, "*.tmp");
+        foreach (string fileName in files)
         {
           try
           {
-            System.IO.File.Delete(strFile);
+            System.IO.File.Delete(fileName);
           }
           catch (Exception) { }
         }
@@ -231,13 +231,13 @@ namespace MediaPortal.TV.Recording
       // clean the TempSBE\ folder
       try
       {
-        strDir = String.Format(@"{0}\TempSBE", strPath);
-        strFiles = System.IO.Directory.GetFiles(strDir, "*.tmp");
-        foreach (string strFile in strFiles)
+        directory = String.Format(@"{0}\TempSBE", path);
+        files = System.IO.Directory.GetFiles(directory, "*.tmp");
+        foreach (string fileName in files)
         {
           try
           {
-            System.IO.File.Delete(strFile);
+            System.IO.File.Delete(fileName);
           }
           catch (Exception) { }
         }
@@ -247,25 +247,25 @@ namespace MediaPortal.TV.Recording
       // delete *.tv
       try
       {
-        strDir = String.Format(@"{0}", strPath);
-        strFiles = System.IO.Directory.GetFiles(strDir, "*.tv");
-        foreach (string strFile in strFiles)
+        directory = String.Format(@"{0}", path);
+        files = System.IO.Directory.GetFiles(directory, "*.tv");
+        foreach (string fileName in files)
         {
           try
           {
-            System.IO.File.Delete(strFile);
+            System.IO.File.Delete(fileName);
           }
           catch (Exception) { }
         }
       }
       catch (Exception) { }
-    }//static void DeleteOldTimeShiftFiles(string strPath)
+    }//static void DeleteOldTimeShiftFiles(string path)
 
     static public void Process()
     {
-      if (DateTime.Now.Date != m_dtRecordingTimer.Date)
+      if (DateTime.Now.Date != _deleteOldRecordingTimer.Date)
       {
-        m_dtRecordingTimer = DateTime.Now;
+        _deleteOldRecordingTimer = DateTime.Now;
         while (true)
         {
           bool deleted = false;
@@ -299,10 +299,10 @@ namespace MediaPortal.TV.Recording
 
     static public void CheckRecordingDiskSpace()
     {
-      TimeSpan ts = DateTime.Now - m_dtCheckDiskSpace;
+      TimeSpan ts = DateTime.Now - _diskSpaceCheckTimer;
       if (ts.TotalMinutes < 1) return;
 
-      m_dtCheckDiskSpace = DateTime.Now;
+      _diskSpaceCheckTimer = DateTime.Now;
 
       //first get all drives..
       List<string> drives = new List<string>();
@@ -406,23 +406,28 @@ namespace MediaPortal.TV.Recording
     #endregion
 
     #region episode disk management
-    private void Recorder_OnTvRecordingEnded(string recordingFilename, TVRecording recording, TVProgram program)
+    static private void Recorder_OnTvRecordingEnded(string recordingFilename, TVRecording recording, TVProgram program)
     {
+      Log.WriteFile(Log.LogType.Recorder, "diskmanagement: recording {0} ended. type:{1} max episodes:{2}",
+          recording.Title,recording.RecType.ToString(), recording.EpisodesToKeep);
+
       if (recording.EpisodesToKeep == Int32.MaxValue) return;
       if (recording.RecType == TVRecording.RecordingType.Once) return;
 
       //check how many episodes we got
       List<TVRecorded> recordings = new List<TVRecorded>();
-      TVDatabase.GetRecordedTV(ref recordings);
       while (true)
       {
+        TVDatabase.GetRecordedTV(ref recordings);
+        Log.WriteFile(Log.LogType.Recorder, "got:{0} recordings", recordings.Count);
         int recordingsFound = 0;
         DateTime oldestRecording = DateTime.MaxValue;
         string oldestFileName = String.Empty;
         TVRecorded oldestRec = null;
         foreach (TVRecorded rec in recordings)
         {
-          if (rec.Title.ToLower().Equals(recording.Title.ToLower()))
+          Log.WriteFile(Log.LogType.Recorder, "check:{0}", rec.Title);
+          if (String.Compare(rec.Title,recording.Title,true)==0)
           {
             recordingsFound++;
             if (rec.StartTime < oldestRecording)
@@ -433,10 +438,16 @@ namespace MediaPortal.TV.Recording
             }
           }
         }
+        Log.WriteFile(Log.LogType.Recorder, "diskmanagement:   total episodes now:{0}", recordingsFound);
+        if (oldestRec!=null)
+        {
+          Log.WriteFile(Log.LogType.Recorder, "diskmanagement:   oldest episode:{0} {1}", oldestRec.StartTime.ToShortDateString(), oldestRec.StartTime.ToLongTimeString() );
+        }
+
         if (oldestRec == null) return;
         if (recordingsFound == 0) return;
         if (recordingsFound <= recording.EpisodesToKeep) return;
-        Log.WriteFile(Log.LogType.Recorder, false, "Delete episode {0} {1} {2} {3}",
+        Log.WriteFile(Log.LogType.Recorder, false, "diskmanagement:   Delete episode {0} {1} {2} {3}",
                              oldestRec.Channel,
                              oldestRec.Title,
                              oldestRec.StartTime.ToLongDateString(),
@@ -446,7 +457,6 @@ namespace MediaPortal.TV.Recording
         DeleteRecording(oldestFileName);
         VideoDatabase.DeleteMovie(oldestFileName);
         VideoDatabase.DeleteMovieInfo(oldestFileName);
-        recordings.Remove(oldestRec);
       }
     }
     #endregion
