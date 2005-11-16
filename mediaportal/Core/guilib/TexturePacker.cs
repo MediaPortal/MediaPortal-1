@@ -247,14 +247,14 @@ namespace MediaPortal.GUI.Library
 				files[off++] = files1[i];
 			for (int i=0; i < files2.Length;++i)
 				files[off++] = files2[i];
-
+      /*
 			for (int i=0; i < files3.Length;++i)
 				files[off++] = files3[i];
 			for (int i=0; i < files4.Length;++i)
 				files[off++] = files4[i];
 			for (int i=0; i < files5.Length;++i)
 				files[off++] = files5[i];
-
+      */
 			//Determine maximum texture dimensions
 			//We limit the max resolution to 2048x2048
 			Caps d3dcaps = GUIGraphicsContext.DX9Device.DeviceCaps;
@@ -274,6 +274,7 @@ namespace MediaPortal.GUI.Library
 				bigOne.root.Rect = new Rectangle(0,0,iMaxWidth, iMaxHeight);
 				for (int i=0; i < files.Length;++i)
 				{
+          if (files[i]==null) continue;
 					files[i]=files[i].ToLower();
 					if (files[i]!=String.Empty ) 
 					{
