@@ -657,6 +657,10 @@ namespace MediaPortal.GUI.Library
       // Check if skin file
       if (fullFileName.ToLower().IndexOf(@"skin\") >= 0)
       {
+        if (fullFileName.ToLower().IndexOf(@"media\animations\") >= 0)
+          return true;
+        if (fullFileName.ToLower().IndexOf(@"media\tetris\") >= 0)
+          return true;
         return false;
       }
       return true;
