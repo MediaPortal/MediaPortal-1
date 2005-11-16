@@ -309,10 +309,13 @@ namespace MediaPortal.GUI.Library
       string strSelected2 = "";
       string strThumb = "";
       int item = GetSelectedItem(ref strSelected, ref strSelected2, ref strThumb);
-      GUIPropertyManager.SetProperty("#selecteditem", strSelected);
-      GUIPropertyManager.SetProperty("#selecteditem2", strSelected2);
-      GUIPropertyManager.SetProperty("#selectedthumb", strThumb);
-      GUIPropertyManager.SetProperty("#highlightedbutton", strSelected);
+      if (!GUIWindowManager.IsRouted)
+      {
+        GUIPropertyManager.SetProperty("#selecteditem", strSelected);
+        GUIPropertyManager.SetProperty("#selecteditem2", strSelected2);
+        GUIPropertyManager.SetProperty("#selectedthumb", strThumb);
+        GUIPropertyManager.SetProperty("#highlightedbutton", strSelected);
+      }
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS_CHANGED, WindowId, GetID, ParentID, 0, 0, null);
       msg.SendToTargetWindow = true;
       GUIGraphicsContext.SendMessage(msg);

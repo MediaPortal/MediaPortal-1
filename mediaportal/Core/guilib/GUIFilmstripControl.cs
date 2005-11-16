@@ -253,10 +253,12 @@ namespace MediaPortal.GUI.Library
 			string strSelected2 = "";
 			string strThumb = "";
 			int item = GetSelectedItem(ref strSelected, ref strSelected2, ref strThumb);
-			GUIPropertyManager.SetProperty("#selecteditem", strSelected);
-			GUIPropertyManager.SetProperty("#selecteditem2", strSelected2);
-			GUIPropertyManager.SetProperty("#selectedthumb", strThumb);
-
+      if (!GUIWindowManager.IsRouted)
+      {
+        GUIPropertyManager.SetProperty("#selecteditem", strSelected);
+        GUIPropertyManager.SetProperty("#selecteditem2", strSelected2);
+        GUIPropertyManager.SetProperty("#selectedthumb", strThumb);
+      }
 			if (!IsVisible) return;
 			if (item >= 0 && item < m_vecItems.Count)
 			{
