@@ -1915,6 +1915,8 @@ namespace MediaPortal.TV.Recording
           _listCommands.Add(cmd);
         }
       }
+      //wait till thread finished this command
+      while (_listCommands.Count > 0) System.Threading.Thread.Sleep(10);
     }
 
     
