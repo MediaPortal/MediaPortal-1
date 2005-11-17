@@ -72,6 +72,7 @@ namespace MediaPortal.GUI.Library
       _properties["#thumb"] = String.Empty;
       _properties["#currentplaytime"] = String.Empty;
       _properties["#currentremaining"] = String.Empty;
+      _properties["#shortcurrentremaining"] = String.Empty;
       _properties["#shortcurrentplaytime"] = String.Empty;
       _properties["#duration"] = String.Empty;
       _properties["#shortduration"] = String.Empty;
