@@ -27,7 +27,7 @@ using System.Text;
 using System.Collections;
 using MediaPortal.Webepg.Profile;
 using MediaPortal.Webepg.GUI.Library;
-using MediaPortal.Webepg.TV.Database;
+using MediaPortal.TV.Database;
 using MediaPortal.WebEPG;
 
 namespace MediaPortal.EPG
@@ -63,7 +63,9 @@ namespace MediaPortal.EPG
 			int channelCount;
 			int programCount;
 
-			if (!File.Exists("WebEPG.xml")) 
+            string configFile = Environment.CurrentDirectory + "\\WebEPG\\WebEPG.xml";
+
+            if (!File.Exists(configFile)) 
 			{
 				Log.WriteFile(Log.LogType.Log, false, "File not found: WebEPG.xml");
 				return false;
@@ -73,15 +75,15 @@ namespace MediaPortal.EPG
 			ArrayList programs;
 			ArrayList channels = new ArrayList();
 			Hashtable idList = new Hashtable();
-			XMLTVExport xmltv = new XMLTVExport();
+			XMLTVExport xmltv = new XMLTVExport(Environment.CurrentDirectory + "\\xmltv\\");
 
 			xmltv.Open();
 
 			Log.WriteFile(Log.LogType.Log, false, "Loading ChannelMap: WebEPG.xml");
 
-			m_xmlreader = new MediaPortal.Webepg.Profile.Xml("WebEPG.xml");
+            m_xmlreader = new MediaPortal.Webepg.Profile.Xml(configFile);
 			maxGrabDays = m_xmlreader.GetValueAsInt("General", "MaxDays", 1);
-			grabberDir = m_xmlreader.GetValueAsString("General", "GrabberDir", Environment.CurrentDirectory + "\\grabbers\\");
+            grabberDir = m_xmlreader.GetValueAsString("General", "GrabberDir", Environment.CurrentDirectory + "\\WebEPG\\grabbers\\");
 			m_EPGGrabber = new WebListingGrabber(maxGrabDays, grabberDir);
            
 			channelCount = m_xmlreader.GetValueAsInt("ChannelMap", "Count", 0);

@@ -1,6 +1,9 @@
 Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebEPG", "WebEPG.csproj", "{F7CB2A9F-004E-4667-BEAF-782F1C28E2D3}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C1BCEC3E-6074-4328-B5D9-391A457C8FFB} = {C1BCEC3E-6074-4328-B5D9-391A457C8FFB}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebEPG-xmltv", "..\WebEPG-xmltv\WebEPG-xmltv.csproj", "{67D44FEB-AC41-4B93-AC1D-876318CDD16B}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -16,32 +19,89 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebEPG-channels", "..\WebEP
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utils", "..\..\Utils\Utils.csproj", "{6DA0E4DF-6230-4642-98B5-E690BB6942BB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Databases", "..\..\Databases\Databases.csproj", "{C1BCEC3E-6074-4328-B5D9-391A457C8FFB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "..\..\Core\Core.csproj", "{02FFFC1F-2555-4B99-8B01-3432D0673855}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		Release (Standalone)|Any CPU = Release (Standalone)|Any CPU
 		Release|Any CPU = Release|Any CPU
+		UseCaptureCardDefinitions|Any CPU = UseCaptureCardDefinitions|Any CPU
+		UseCaptureDefintionsRelease|Any CPU = UseCaptureDefintionsRelease|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{F7CB2A9F-004E-4667-BEAF-782F1C28E2D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F7CB2A9F-004E-4667-BEAF-782F1C28E2D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F7CB2A9F-004E-4667-BEAF-782F1C28E2D3}.Release (Standalone)|Any CPU.ActiveCfg = Release|Any CPU
+		{F7CB2A9F-004E-4667-BEAF-782F1C28E2D3}.Release (Standalone)|Any CPU.Build.0 = Release|Any CPU
 		{F7CB2A9F-004E-4667-BEAF-782F1C28E2D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F7CB2A9F-004E-4667-BEAF-782F1C28E2D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F7CB2A9F-004E-4667-BEAF-782F1C28E2D3}.UseCaptureCardDefinitions|Any CPU.ActiveCfg = Release|Any CPU
+		{F7CB2A9F-004E-4667-BEAF-782F1C28E2D3}.UseCaptureCardDefinitions|Any CPU.Build.0 = Release|Any CPU
+		{F7CB2A9F-004E-4667-BEAF-782F1C28E2D3}.UseCaptureDefintionsRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{F7CB2A9F-004E-4667-BEAF-782F1C28E2D3}.UseCaptureDefintionsRelease|Any CPU.Build.0 = Release|Any CPU
 		{67D44FEB-AC41-4B93-AC1D-876318CDD16B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{67D44FEB-AC41-4B93-AC1D-876318CDD16B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{67D44FEB-AC41-4B93-AC1D-876318CDD16B}.Release (Standalone)|Any CPU.ActiveCfg = Release|Any CPU
+		{67D44FEB-AC41-4B93-AC1D-876318CDD16B}.Release (Standalone)|Any CPU.Build.0 = Release|Any CPU
 		{67D44FEB-AC41-4B93-AC1D-876318CDD16B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{67D44FEB-AC41-4B93-AC1D-876318CDD16B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{67D44FEB-AC41-4B93-AC1D-876318CDD16B}.UseCaptureCardDefinitions|Any CPU.ActiveCfg = Release|Any CPU
+		{67D44FEB-AC41-4B93-AC1D-876318CDD16B}.UseCaptureCardDefinitions|Any CPU.Build.0 = Release|Any CPU
+		{67D44FEB-AC41-4B93-AC1D-876318CDD16B}.UseCaptureDefintionsRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{67D44FEB-AC41-4B93-AC1D-876318CDD16B}.UseCaptureDefintionsRelease|Any CPU.Build.0 = Release|Any CPU
 		{47B8906A-5EC9-4641-811E-8BC0EAF97DDD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{47B8906A-5EC9-4641-811E-8BC0EAF97DDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{47B8906A-5EC9-4641-811E-8BC0EAF97DDD}.Release (Standalone)|Any CPU.ActiveCfg = Release|Any CPU
+		{47B8906A-5EC9-4641-811E-8BC0EAF97DDD}.Release (Standalone)|Any CPU.Build.0 = Release|Any CPU
 		{47B8906A-5EC9-4641-811E-8BC0EAF97DDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{47B8906A-5EC9-4641-811E-8BC0EAF97DDD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{47B8906A-5EC9-4641-811E-8BC0EAF97DDD}.UseCaptureCardDefinitions|Any CPU.ActiveCfg = Release|Any CPU
+		{47B8906A-5EC9-4641-811E-8BC0EAF97DDD}.UseCaptureCardDefinitions|Any CPU.Build.0 = Release|Any CPU
+		{47B8906A-5EC9-4641-811E-8BC0EAF97DDD}.UseCaptureDefintionsRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{47B8906A-5EC9-4641-811E-8BC0EAF97DDD}.UseCaptureDefintionsRelease|Any CPU.Build.0 = Release|Any CPU
 		{21F2FA6E-4B52-442E-A5A8-64573061D571}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{21F2FA6E-4B52-442E-A5A8-64573061D571}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{21F2FA6E-4B52-442E-A5A8-64573061D571}.Release (Standalone)|Any CPU.ActiveCfg = Release|Any CPU
+		{21F2FA6E-4B52-442E-A5A8-64573061D571}.Release (Standalone)|Any CPU.Build.0 = Release|Any CPU
 		{21F2FA6E-4B52-442E-A5A8-64573061D571}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{21F2FA6E-4B52-442E-A5A8-64573061D571}.Release|Any CPU.Build.0 = Release|Any CPU
+		{21F2FA6E-4B52-442E-A5A8-64573061D571}.UseCaptureCardDefinitions|Any CPU.ActiveCfg = Release|Any CPU
+		{21F2FA6E-4B52-442E-A5A8-64573061D571}.UseCaptureCardDefinitions|Any CPU.Build.0 = Release|Any CPU
+		{21F2FA6E-4B52-442E-A5A8-64573061D571}.UseCaptureDefintionsRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{21F2FA6E-4B52-442E-A5A8-64573061D571}.UseCaptureDefintionsRelease|Any CPU.Build.0 = Release|Any CPU
 		{6DA0E4DF-6230-4642-98B5-E690BB6942BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6DA0E4DF-6230-4642-98B5-E690BB6942BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6DA0E4DF-6230-4642-98B5-E690BB6942BB}.Release (Standalone)|Any CPU.ActiveCfg = Release|Any CPU
+		{6DA0E4DF-6230-4642-98B5-E690BB6942BB}.Release (Standalone)|Any CPU.Build.0 = Release|Any CPU
 		{6DA0E4DF-6230-4642-98B5-E690BB6942BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6DA0E4DF-6230-4642-98B5-E690BB6942BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6DA0E4DF-6230-4642-98B5-E690BB6942BB}.UseCaptureCardDefinitions|Any CPU.ActiveCfg = Release|Any CPU
+		{6DA0E4DF-6230-4642-98B5-E690BB6942BB}.UseCaptureCardDefinitions|Any CPU.Build.0 = Release|Any CPU
+		{6DA0E4DF-6230-4642-98B5-E690BB6942BB}.UseCaptureDefintionsRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{6DA0E4DF-6230-4642-98B5-E690BB6942BB}.UseCaptureDefintionsRelease|Any CPU.Build.0 = Release|Any CPU
+		{C1BCEC3E-6074-4328-B5D9-391A457C8FFB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C1BCEC3E-6074-4328-B5D9-391A457C8FFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C1BCEC3E-6074-4328-B5D9-391A457C8FFB}.Release (Standalone)|Any CPU.ActiveCfg = Release|Any CPU
+		{C1BCEC3E-6074-4328-B5D9-391A457C8FFB}.Release (Standalone)|Any CPU.Build.0 = Release|Any CPU
+		{C1BCEC3E-6074-4328-B5D9-391A457C8FFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C1BCEC3E-6074-4328-B5D9-391A457C8FFB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C1BCEC3E-6074-4328-B5D9-391A457C8FFB}.UseCaptureCardDefinitions|Any CPU.ActiveCfg = UseCaptureCardDefinitions|Any CPU
+		{C1BCEC3E-6074-4328-B5D9-391A457C8FFB}.UseCaptureCardDefinitions|Any CPU.Build.0 = UseCaptureCardDefinitions|Any CPU
+		{C1BCEC3E-6074-4328-B5D9-391A457C8FFB}.UseCaptureDefintionsRelease|Any CPU.ActiveCfg = UseCaptureDefintionsRelease|Any CPU
+		{C1BCEC3E-6074-4328-B5D9-391A457C8FFB}.UseCaptureDefintionsRelease|Any CPU.Build.0 = UseCaptureDefintionsRelease|Any CPU
+		{02FFFC1F-2555-4B99-8B01-3432D0673855}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{02FFFC1F-2555-4B99-8B01-3432D0673855}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{02FFFC1F-2555-4B99-8B01-3432D0673855}.Release (Standalone)|Any CPU.ActiveCfg = Release (Standalone)|Any CPU
+		{02FFFC1F-2555-4B99-8B01-3432D0673855}.Release (Standalone)|Any CPU.Build.0 = Release (Standalone)|Any CPU
+		{02FFFC1F-2555-4B99-8B01-3432D0673855}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{02FFFC1F-2555-4B99-8B01-3432D0673855}.Release|Any CPU.Build.0 = Release|Any CPU
+		{02FFFC1F-2555-4B99-8B01-3432D0673855}.UseCaptureCardDefinitions|Any CPU.ActiveCfg = UseCaptureCardDefinitions|Any CPU
+		{02FFFC1F-2555-4B99-8B01-3432D0673855}.UseCaptureCardDefinitions|Any CPU.Build.0 = UseCaptureCardDefinitions|Any CPU
+		{02FFFC1F-2555-4B99-8B01-3432D0673855}.UseCaptureDefintionsRelease|Any CPU.ActiveCfg = UseCaptureDefintionsRelease|Any CPU
+		{02FFFC1F-2555-4B99-8B01-3432D0673855}.UseCaptureDefintionsRelease|Any CPU.Build.0 = UseCaptureDefintionsRelease|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

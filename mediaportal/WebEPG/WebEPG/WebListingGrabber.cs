@@ -29,7 +29,7 @@ using System.Collections;
 using System.Globalization;
 using MediaPortal.Webepg.Profile;
 using MediaPortal.Webepg.GUI.Library;
-using MediaPortal.Webepg.TV.Database;
+using MediaPortal.TV.Database;
 using MediaPortal.WebEPG;
 using MediaPortal.Utils.Web;
 
@@ -79,7 +79,9 @@ namespace MediaPortal.EPG
 			//Parser m_templateSubParser;
             MediaPortal.Webepg.Profile.Xml m_xmlreader;
             ArrayList m_programs;
+            ArrayList m_dbPrograms;
             DateTime m_StartGrab;
+            int m_dbLastProg;
             int m_MaxGrabDays;
             int m_GrabDay;
 
@@ -246,6 +248,35 @@ namespace MediaPortal.EPG
 				return lDatetime;
 			}
 
+            private bool dbProgram(string Title, long Start)
+            {
+                if (m_dbPrograms.Count > 0)
+                {
+                    for (int i = m_dbLastProg; i < m_dbPrograms.Count; i++)
+                    {
+                        TVProgram prog = (TVProgram) m_dbPrograms[i];
+
+                        if (prog.Title == Title && prog.Start == Start)
+                        {
+                            m_dbLastProg = i;
+                            return true;
+                        }
+                    }
+
+                    for (int i = 0; i < m_dbLastProg; i++)
+                    {
+                        TVProgram prog = (TVProgram) m_dbPrograms[i];
+
+                        if (prog.Title == Title && prog.Start == Start)
+                        {
+                            m_dbLastProg = i;
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
+
 			private TVProgram GetProgram(Profiler guideProfile, int index)
 			{
 				//Parser Listing = guideProfile.GetProfileParser(index);
@@ -305,8 +336,23 @@ namespace MediaPortal.EPG
 				switch(m_listingTime)
 				{
 					case (int) Expect.Start:
-						if(guideData.StartTime[0] >= 20)
-							return null;				// Guide starts on pervious day ignore these listings.
+                        if (m_GrabDay == 0)
+                        {
+                            if (guideData.StartTime[0] < m_StartGrab.Hour)
+                                return null;
+
+                            if (guideData.StartTime[0] <= 12)
+                            {
+                                m_listingTime = (int)Expect.Morning;
+                                goto case (int)Expect.Morning;
+                            }
+
+                            m_listingTime = (int)Expect.Afternoon;
+                            goto case (int)Expect.Afternoon;
+                        }
+
+                        if(guideData.StartTime[0] >= 20)
+						   return null;				// Guide starts on pervious day ignore these listings.
 
 						m_listingTime = (int) Expect.Morning;
 						goto case (int)Expect.Morning;      // Pass into Morning Code
@@ -363,6 +409,12 @@ namespace MediaPortal.EPG
 					dtStart = dtStart.AddDays(addDays);
 				program.Start = GetLongDateTime(dtStart);
 				m_LastStart = guideData.StartTime[0];
+
+                if(dbProgram(program.Title, program.Start))
+                {
+                    Log.WriteFile(Log.LogType.Log, false, "WebEPG: Program in db {0}:{1}/{2} [{3} {4}] - {5}", guideData.StartTime[0], guideData.StartTime[1], dtStart.Day, m_GrabDay.ToString(), m_bNextDay.ToString(), guideData.Title);
+                    return null;
+                }
 
 				if (guideData.EndTime != null)
 				{
@@ -436,11 +488,12 @@ namespace MediaPortal.EPG
 				return program;
 			}
 
-            private bool GetListing(string strURL, int offset, string strChannel)
+            private bool GetListing(string strURL, int offset, string strChannel, out bool error)
             {
 				Profiler guideProfile;
-                bool bMore = false;
                 int listingCount = 0;
+                bool bMore = false;
+                error = false;
 
                 strURL = strURL.Replace("#LIST_OFFSET", offset.ToString());
 
@@ -459,8 +512,9 @@ namespace MediaPortal.EPG
 				{
                     if (m_maxListingCount == 0 || (m_maxListingCount != 0 && offset == 0))
                     {
-                        Log.WriteFile(Log.LogType.Log, true, "WebEPG: No Listings Found");
+                        Log.WriteFile(Log.LogType.Log, false, "WebEPG: No Listings Found");
                         m_GrabDay++;
+                        error = true;
                     }
                     else
                     {
@@ -520,6 +574,22 @@ namespace MediaPortal.EPG
                 m_GrabDay = 0;
 				m_StartGrab = DateTime.Now;
 
+                //TVDatabase.BeginTransaction();
+                //TVDatabase.ClearCache();
+                //TVDatabase.RemoveOldPrograms();
+
+                int dbChannelId;
+                string dbChannelName;
+                m_dbPrograms = new ArrayList();
+                m_dbLastProg = 0;
+
+                if(TVDatabase.GetEPGMapping(strChannelID, out dbChannelId, out dbChannelName)) // (nodeId.InnerText, out idTvChannel, out strTvChannel);
+                {
+                    DateTime endGrab = m_StartGrab.AddDays(m_MaxGrabDays+1);
+                    TVDatabase.GetProgramsPerChannel(dbChannelName, GetLongDateTime(m_StartGrab), GetLongDateTime(endGrab), ref m_dbPrograms);
+                }
+
+
                 while (m_GrabDay < m_MaxGrabDays)
                 {
                     strURL = strURLid;
@@ -541,12 +611,18 @@ namespace MediaPortal.EPG
 					m_bNextDay = false;
 					m_listingTime = (int) Expect.Start;
 
-                    while (GetListing(strURL, offset, searchID))
+                    bool error;
+                    while (GetListing(strURL, offset, searchID, out error))
                     {
 						Thread.Sleep(m_grabDelay);
                         if (m_maxListingCount == 0)
                             break;
                         offset += m_maxListingCount;
+                    }
+                    if (error)
+                    {
+                        Log.WriteFile(Log.LogType.Log, true, "WebEPG: ChannelId: {0} grabber error", strChannelID);
+                        break;
                     }
                     //m_GrabDay++;
                     if (strURL != strURLid)
