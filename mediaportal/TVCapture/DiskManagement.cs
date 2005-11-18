@@ -416,9 +416,9 @@ namespace MediaPortal.TV.Recording
 
       //check how many episodes we got
       List<TVRecorded> recordings = new List<TVRecorded>();
+      TVDatabase.GetRecordedTV(ref recordings);
       while (true)
       {
-        TVDatabase.GetRecordedTV(ref recordings);
         Log.WriteFile(Log.LogType.Recorder, "got:{0} recordings", recordings.Count);
         int recordingsFound = 0;
         DateTime oldestRecording = DateTime.MaxValue;
@@ -457,6 +457,8 @@ namespace MediaPortal.TV.Recording
         DeleteRecording(oldestFileName);
         VideoDatabase.DeleteMovie(oldestFileName);
         VideoDatabase.DeleteMovieInfo(oldestFileName);
+        recordings.Remove(oldestRec);
+        TVDatabase.RemoveRecordedTV(oldestRec);
       }
     }
     #endregion
