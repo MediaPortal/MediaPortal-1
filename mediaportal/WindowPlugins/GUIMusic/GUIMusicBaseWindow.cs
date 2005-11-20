@@ -444,8 +444,11 @@ namespace MediaPortal.GUI.Music
     {
       if (m_database == null)
       {
-        handler = new MusicViewHandler();
         m_database = new MusicDatabase();
+      }
+      if (handler == null)
+      {
+        handler = new MusicViewHandler();
       }
       LoadSettings();
 

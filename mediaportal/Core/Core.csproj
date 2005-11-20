@@ -143,17 +143,21 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AxInterop.WMPLib">
-      <Name>AxInterop.WMPLib</Name>
+    <Reference Include="AxInterop.WMPLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\AxInterop.WMPLib.dll</HintPath>
     </Reference>
     <Reference Include="edtftpnet-1.1.8">
       <Name>edtftpnet-1.1.8</Name>
       <HintPath>..\edtftpnet-1.1.8.dll</HintPath>
     </Reference>
-    <Reference Include="Interop.TunerLib">
-      <Name>Interop.TunerLib</Name>
+    <Reference Include="Interop.TunerLib, Version=1.0.0.0, Culture=neutral">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Interop.TunerLib.dll</HintPath>
+    </Reference>
+    <Reference Include="Interop.WMPLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Interop.WMPLib.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.DirectX">
       <Name>Microsoft.DirectX</Name>
@@ -200,10 +204,6 @@
     </Reference>
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
-    </Reference>
-    <Reference Include="wmppia">
-      <Name>wmppia</Name>
-      <HintPath>..\Setup\postsetup\wmppia.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -1083,6 +1083,11 @@
     <Compile Include="RedEye\RedEye.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Resource1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resource1.resx</DependentUpon>
+    </Compile>
     <Compile Include="Ripper\AutoPlay.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -1944,6 +1949,11 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Player\BaseStreamBufferPlayer.resx">
       <DependentUpon>BaseStreamBufferPlayer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resource1.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resource1.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="USBUIRT\USBUIRTLearnForm.resx">
       <DependentUpon>USBUIRTLearnForm.cs</DependentUpon>
