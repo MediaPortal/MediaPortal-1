@@ -157,6 +157,9 @@ public class MediaPortalApp : D3DApp, IRender
   {
     Log.Write("Mediaportal is starting up");
 
+    System.Windows.Forms.Application.EnableVisualStyles();
+    System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
+
     //Set current directory
     string applicationPath = System.Windows.Forms.Application.ExecutablePath;
     applicationPath = System.IO.Path.GetFullPath(applicationPath);
@@ -248,18 +251,21 @@ public class MediaPortalApp : D3DApp, IRender
 
       // CHECK if Windows MediaPlayer 9 is installed
       Log.Write("  verify that windows mediaplayer 9 or 10 is installed");
-      subkey = hklm.OpenSubKey(@"Software\Microsoft\MediaPlayer\9.0");
-      if (subkey == null)
-        subkey = hklm.OpenSubKey(@"Software\Microsoft\MediaPlayer\10.0");
+      subkey = hklm.OpenSubKey(@"Software\Microsoft\Active Setup\Installed Components\{22d6f312-b0f6-11d0-94ab-0080c74c7e95}");
       if (subkey != null)
       {
+        if ( ((int)subkey.GetValue("IsInstalled")) == 1)
+        {
+          string wmpversion = (string )subkey.GetValue("Version");
+          Log.Write("Windows media player version:{0} installed", wmpversion);
+        }
         subkey.Close();
         subkey = null;
       }
       else
       {
-        string strLine = "Please install Windows Mediaplayer 9\r\n";
-        strLine = strLine + "Mediaportal cannot run without Windows Mediaplayer 9";
+        string strLine = "Please install Windows Mediaplayer 9/10\r\n";
+        strLine = strLine + "Mediaportal cannot run without Windows Mediaplayer 9/10";
         System.Windows.Forms.MessageBox.Show(strLine, "MediaPortal", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
         return;
       }
@@ -2271,4 +2277,5 @@ public class MediaPortalApp : D3DApp, IRender
     screenSaverTimer = DateTime.Now;
 
   }
+
 }
