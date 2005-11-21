@@ -147,9 +147,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\AxInterop.WMPLib.dll</HintPath>
     </Reference>
-    <Reference Include="edtftpnet-1.1.8">
-      <Name>edtftpnet-1.1.8</Name>
-      <HintPath>..\edtftpnet-1.1.8.dll</HintPath>
+    <Reference Include="edtftpnet-1.2.2, Version=1.2.2.0, Culture=neutral, PublicKeyToken=4b0c991f43097782">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\edtftpnet-1.2.2.dll</HintPath>
     </Reference>
     <Reference Include="Interop.TunerLib, Version=1.0.0.0, Culture=neutral">
       <SpecificVersion>False</SpecificVersion>
