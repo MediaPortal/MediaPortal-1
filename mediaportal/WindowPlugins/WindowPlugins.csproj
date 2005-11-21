@@ -755,6 +755,7 @@
     <Compile Include="GUITopbar\TopBarSetupForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="GUITrailers\GermanTrailers.cs" />
     <Compile Include="GUITrailers\GUITrailers.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -764,6 +765,8 @@
     <Compile Include="GUITrailers\GUITrailersSetupForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="GUITrailers\TrailersUtility.cs" />
+    <Compile Include="GUITrailers\YahooTrailers.cs" />
     <Compile Include="GUITVCom\TVcomSettings.cs">
       <SubType>Code</SubType>
     </Compile>
