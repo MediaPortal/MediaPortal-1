@@ -621,17 +621,15 @@ namespace MediaPortal.GUI.Music
 			
 			switch (message.Message)
 			{
-				case GUIMessage.MessageType.GUI_MSG_PLAYING_10SEC : 
-					if( GUIWindowManager.ActiveWindow != GetID ||
-						handler.CurrentView!="Top100")
+				case GUIMessage.MessageType.GUI_MSG_PLAYING_10SEC :
+          if (handler == null) return;
+					if( GUIWindowManager.ActiveWindow != GetID ||handler.CurrentView!="Top100")
 					{
 						string strFile = message.Label;
 						if (Utils.IsAudio(strFile))
 						{
-							if (GUIWindowManager.ActiveWindow != GetID)
-							{
-								m_database.IncrTop100CounterByFileName(strFile);
-							}
+              MusicDatabase dbs = new MusicDatabase();
+              dbs.IncrTop100CounterByFileName(strFile);
 						}
 					}
 					break;
