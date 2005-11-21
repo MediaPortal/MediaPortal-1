@@ -90,21 +90,34 @@ namespace MediaPortal.Utils.Web
 				{
 					encode = System.Text.Encoding.GetEncoding(defaultEncode);
 					m_strPageSource = encode.GetString(pageData);
-					if((i=m_strPageSource.IndexOf("charset"))!= -1)
-					{
-						strEncode = "";
-						i+=8;
-						for(;i<m_strPageSource.Length && m_strPageSource[i]!='\"';i++)
-							strEncode+=m_strPageSource[i];
-						m_Encoding = strEncode;
-					}
+                    int headEnd;
+                    if ((headEnd = m_strPageSource.ToLower().IndexOf("</head")) != -1)
+                    {
+                        if ((i = m_strPageSource.ToLower().IndexOf("charset", 0, headEnd)) != -1)
+                        {
+                            strEncode = "";
+                            i += 8;
+                            for (; i < m_strPageSource.Length && m_strPageSource[i] != '\"'; i++)
+                                strEncode += m_strPageSource[i];
+                            m_Encoding = strEncode;
+                        }
+
+                        if (strEncode == "")
+                            strEncode = defaultEncode;
+                    }
 				}
 
 				// Encoding: depends on selected page
 				if(m_strPageSource == "" || strEncode != defaultEncode)
 				{
-					encode = System.Text.Encoding.GetEncoding(strEncode);
-					m_strPageSource = encode.GetString(pageData);
+                    try
+                    { 
+                        encode = System.Text.Encoding.GetEncoding(strEncode);
+                        m_strPageSource = encode.GetString(pageData);
+                    }
+                    catch(System.ArgumentException)
+                    {
+                    }
 				}
 
 				if(HTMLCache.Caching)
