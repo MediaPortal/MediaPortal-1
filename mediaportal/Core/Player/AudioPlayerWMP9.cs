@@ -99,7 +99,14 @@ namespace MediaPortal.Player
         GUIGraphicsContext.form.Controls.Add(m_player);
 
 
-        m_player.EndInit();
+        try
+        {
+            m_player.EndInit();
+        }
+        catch (COMException)
+        {
+        }
+
         m_player.uiMode = "none";
         m_player.windowlessVideo = true;
 
