@@ -59,6 +59,7 @@ namespace MediaPortal.EPG
 			string m_strEpNum;
 			string m_strEpTotal;
 			string[] m_strDayNames = null;
+            string m_strWeekDay;
 			bool m_grabLinked;
             bool m_monthLookup;
 			bool m_searchRegex;
@@ -555,7 +556,9 @@ namespace MediaPortal.EPG
                 int offset = 0;
 
                 string searchID = m_xmlreader.GetValueAsString("ChannelList", strChannelID, "");
-				CultureInfo culture = new CultureInfo("en-US");
+                string searchLang = m_xmlreader.GetValueAsString("Listing", "SearchLanguage", "en-US");
+                m_strWeekDay = m_xmlreader.GetValueAsString("Listing", "WeekdayString", "dddd");
+				CultureInfo culture = new CultureInfo(searchLang);
 
 
                 if (searchID == "")
@@ -604,7 +607,7 @@ namespace MediaPortal.EPG
 					strURL = strURL.Replace("#MONTH", m_StartGrab.ToString("MMMM", culture));
                     strURL = strURL.Replace("#DD", String.Format("{0:00}", m_StartGrab.Day));
                     strURL = strURL.Replace("#_D", m_StartGrab.Day.ToString());
-					strURL = strURL.Replace("#WEEKDAY", m_StartGrab.ToString("dddd", culture));
+					strURL = strURL.Replace("#WEEKDAY", m_StartGrab.ToString(m_strWeekDay, culture));
 
                     offset = 0;
 					m_LastStart=0;
