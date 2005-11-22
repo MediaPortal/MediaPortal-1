@@ -2340,7 +2340,7 @@ namespace MediaPortal.Music.Database
           //Log.Write ("Song {0} will be updated with CRC={1}",song.FileName,dwCRC);
 
           string strSQL;
-          strSQL = String.Format("update song set idArtist={0},idAlbum={1},idGenre={2},idPath={3},strTitle='{4}',iTrack={5},iDuration={6},iYear={7},dwFileNameCRC like '{8}',strFileName='{9}' where idSong={10}",
+          strSQL = String.Format("update song set idArtist={0},idAlbum={1},idGenre={2},idPath={3},strTitle='{4}',iTrack={5},iDuration={6},iYear={7},dwFileNameCRC='{8}',strFileName='{9}' where idSong={10}",
             idArtist, idAlbum, idGenre, idPath,
             song.Title,
             song.Track, song.Duration, song.Year,
