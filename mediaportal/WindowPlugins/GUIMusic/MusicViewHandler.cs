@@ -60,6 +60,8 @@ namespace MediaPortal.GUI.Music
 				ViewDefinition viewTop100 = new ViewDefinition();
 				viewTop100.Name="Top100";
 				filter1 = new FilterDefinition();filter1.Where="timesplayed";filter1.SortAscending=false;filter1.Limit=100;
+        filter1.SqlOperator = ">";
+        filter1.Restriction = "0";
 				viewTop100.Filters.Add(filter1);
 
 				//artists
@@ -111,8 +113,11 @@ namespace MediaPortal.GUI.Music
 
 				using(FileStream fileStream = new FileStream("musicViews.xml", FileMode.Create, FileAccess.Write, FileShare.Read))
 				{
+          ArrayList list = new ArrayList();
+          foreach (ViewDefinition view in listViews)
+            list.Add(view);
 					SoapFormatter formatter = new SoapFormatter();
-					formatter.Serialize(fileStream, listViews);
+					formatter.Serialize(fileStream, list);
 					fileStream.Close();
 				}
 			}

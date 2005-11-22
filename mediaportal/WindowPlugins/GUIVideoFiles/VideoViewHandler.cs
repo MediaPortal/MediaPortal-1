@@ -83,10 +83,13 @@ namespace MediaPortal.GUI.Video
 				listViews.Add(viewYears);
 
 				using(FileStream fileStream = new FileStream("videoViews.xml", FileMode.Create, FileAccess.Write, FileShare.Read))
-				{
-					SoapFormatter formatter = new SoapFormatter();
-					formatter.Serialize(fileStream, listViews);
-					fileStream.Close();
+        {
+          ArrayList list = new ArrayList();
+          foreach (ViewDefinition view in listViews)
+            list.Add(view);
+          SoapFormatter formatter = new SoapFormatter();
+          formatter.Serialize(fileStream, list);
+          fileStream.Close();
 				}
 			}
 
