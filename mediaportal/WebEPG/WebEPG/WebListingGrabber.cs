@@ -32,10 +32,10 @@ using MediaPortal.Webepg.GUI.Library;
 using MediaPortal.TV.Database;
 using MediaPortal.WebEPG;
 using MediaPortal.Utils.Web;
+using MediaPortal.Utils;
 
 namespace MediaPortal.EPG
 {
-
 		public enum Expect
 		{
 			Start,
@@ -48,6 +48,7 @@ namespace MediaPortal.EPG
         /// </summary>
         public class WebListingGrabber
         {
+            WorldTimeZone m_SiteTimeZone = null;
             string m_strURLbase = string.Empty;
 			string m_strSubURL = string.Empty;
             string m_strURLsearch = string.Empty;
@@ -117,6 +118,24 @@ namespace MediaPortal.EPG
                 m_maxListingCount = m_xmlreader.GetValueAsInt("Listing", "MaxCount", 0);
 				m_offsetStart = m_xmlreader.GetValueAsInt("Listing", "OffsetStart", 0);
 				m_guideDays = m_xmlreader.GetValueAsInt("Info", "GuideDays", 0);
+                string strTimeZone = m_xmlreader.GetValueAsString("Info", "TimeZone", "");
+                if (strTimeZone != "")
+                {
+                    try
+                    {
+                        Log.WriteFile(Log.LogType.Log, false, "WebEPG: Site in TimeZone: {0}", strTimeZone);
+                        m_SiteTimeZone = new WorldTimeZone(strTimeZone);
+                    }
+                    catch (ArgumentException)
+                    {
+                        Log.WriteFile(Log.LogType.Log, true, "WebEPG: TimeZone Not valid");
+                        m_SiteTimeZone = null;
+                    }
+                }
+                else
+                {
+                    m_SiteTimeZone = null;
+                }
 
                 string ListingType = m_xmlreader.GetValueAsString("Listing", "ListingType", "");
 
@@ -278,10 +297,157 @@ namespace MediaPortal.EPG
                 return false;
             }
 
+            private bool AdjustTime(ref ProgramData guideData, ref TVProgram program)
+            {
+                int addDays = 1;
+
+                // Day
+                if (guideData.Day == 0)
+                {
+                    guideData.Day = m_StartGrab.Day;
+                }
+                else
+                {
+                    if (guideData.Day != m_StartGrab.Day && m_listingTime != (int)Expect.Start)
+                    {
+                        m_GrabDay++;
+                        m_StartGrab = m_StartGrab.AddDays(1);
+                        m_bNextDay = false;
+                        m_LastStart = 0;
+                        m_listingTime = (int)Expect.Morning;
+                    }
+                }
+
+                // Start Time
+                switch (m_listingTime)
+                {
+                    case (int)Expect.Start:
+                        if (m_GrabDay == 0)
+                        {
+                            if (guideData.StartTime[0] < m_StartGrab.Hour)
+                                return false;
+
+                            if (guideData.StartTime[0] <= 12)
+                            {
+                                m_listingTime = (int)Expect.Morning;
+                                goto case (int)Expect.Morning;
+                            }
+
+                            m_listingTime = (int)Expect.Afternoon;
+                            goto case (int)Expect.Afternoon;
+                        }
+
+                        if (guideData.StartTime[0] >= 20)
+                            return false;				// Guide starts on pervious day ignore these listings.
+
+                        m_listingTime = (int)Expect.Morning;
+                        goto case (int)Expect.Morning;      // Pass into Morning Code
+
+                    case (int)Expect.Morning:
+                        if (m_LastStart > guideData.StartTime[0])
+                        {
+                            m_listingTime = (int)Expect.Afternoon;
+                            //if (m_bNextDay)
+                            //{
+                            //    m_GrabDay++;
+                            //} 
+                        }
+                        else
+                        {
+                            if (guideData.StartTime[0] <= 12)
+                                break;						// Do nothing
+                        }
+
+                        // Pass into Afternoon Code
+                        //m_LastStart = 0;
+                        goto case (int)Expect.Afternoon;
+
+                    case (int)Expect.Afternoon:
+                        if (guideData.StartTime[0] < 12)		// Site doesn't have correct time
+                            guideData.StartTime[0] += 12;	// starts again at 1:00 with "pm"
+
+                        if (m_LastStart > guideData.StartTime[0])
+                        {
+                            guideData.StartTime[0] -= 12;
+                            if (m_bNextDay)
+                            {
+                                addDays++;
+                                m_GrabDay++;
+                                m_StartGrab = m_StartGrab.AddDays(1);
+                                //m_bNextDay = false;
+                            }
+                            else
+                            {
+                                m_bNextDay = true;
+                            }
+                            m_listingTime = (int)Expect.Morning;
+                            break;
+                        }
+
+                        break;
+
+                    default:
+                        break;
+                }
+
+                //Month
+                int month;
+                if (guideData.Month == "")
+                {
+                    month = m_StartGrab.Month;
+                }
+                else
+                {
+                    month = getMonth(guideData.Month);
+                }
+
+                // Create DateTime
+                DateTime dtStart = new DateTime(m_StartGrab.Year, month, guideData.Day, guideData.StartTime[0], guideData.StartTime[1], 0, 0);
+                if (m_bNextDay)
+                    dtStart = dtStart.AddDays(addDays);
+                // Check TimeZone 
+                if (m_SiteTimeZone != null && !m_SiteTimeZone.IsLocalTimeZone())
+                {
+                    Log.WriteFile(Log.LogType.Log, false, "WebEPG: Adjusting TimeZone To Local: {0}", m_SiteTimeZone.StandardName);
+                    dtStart = m_SiteTimeZone.ToLocalTime(dtStart);
+                }
+
+                program.Start = GetLongDateTime(dtStart);
+                m_LastStart = guideData.StartTime[0];
+
+                if (guideData.EndTime != null)
+                {
+                    DateTime dtEnd = new DateTime(m_StartGrab.Year, month, guideData.Day, guideData.EndTime[0], guideData.EndTime[1], 0, 0);
+                    if (m_bNextDay)
+                    {
+                        if (guideData.StartTime[0] > guideData.EndTime[0])
+                            dtEnd = dtEnd.AddDays(addDays + 1);
+                        else
+                            dtEnd = dtEnd.AddDays(addDays);
+                    }
+                    else
+                    {
+                        if (guideData.StartTime[0] > guideData.EndTime[0])
+                            dtEnd = dtEnd.AddDays(addDays);
+                    }
+                    if (m_SiteTimeZone != null && !m_SiteTimeZone.IsLocalTimeZone())
+                        dtEnd = m_SiteTimeZone.ToLocalTime(dtEnd);
+                    program.End = GetLongDateTime(dtEnd);
+
+                    Log.WriteFile(Log.LogType.Log, false, "WebEPG: {0}:{1}/{2}-{3}:{4}/{5} [{6} {7}] - {8}", guideData.StartTime[0], guideData.StartTime[1], dtStart.Day, guideData.EndTime[0], guideData.EndTime[1], dtEnd.Day, m_GrabDay.ToString(), m_bNextDay.ToString(), guideData.Title);
+                }
+                else
+                {
+                    Log.WriteFile(Log.LogType.Log, false, "WebEPG: {0}:{1}/{2} [{3} {4}] - {5}", guideData.StartTime[0], guideData.StartTime[1], dtStart.Day, m_GrabDay.ToString(), m_bNextDay.ToString(), guideData.Title);
+                }
+
+                return true;
+            }
+
 			private TVProgram GetProgram(Profiler guideProfile, int index)
 			{
 				//Parser Listing = guideProfile.GetProfileParser(index);
-				int addDays = 1;
+				
 				TVProgram program = new TVProgram();
 				HTMLProfiler htmlProf = null;
 				if(guideProfile is HTMLProfiler) 
@@ -305,141 +471,17 @@ namespace MediaPortal.EPG
 
 				program.Channel = m_strID;
 				program.Title = guideData.Title;
-				int month;
 
-				if (guideData.Month == "")
-				{
-					month = m_StartGrab.Month;
-				}
-				else
-				{
-					month = getMonth(guideData.Month);
-				}
-				
-				if (guideData.Day == 0)
-				{
-					guideData.Day = m_StartGrab.Day;
-				}
-				else
-				{
-                    if (guideData.Day != m_StartGrab.Day && m_listingTime != (int) Expect.Start)
-					{
-						m_GrabDay++;
-						m_StartGrab = m_StartGrab.AddDays(1);
-						m_bNextDay=false;
-						m_LastStart=0;
-						m_listingTime = (int) Expect.Morning;
-					}
-				}
-
-				//Log.WriteFile(Log.LogType.Log, false, "WebEPG: {0}:{1}/{2}", guideData.StartTime[0], guideData.StartTime[1], guideData.Day);
 				// Adjust Time 
-				switch(m_listingTime)
-				{
-					case (int) Expect.Start:
-                        if (m_GrabDay == 0)
-                        {
-                            if (guideData.StartTime[0] < m_StartGrab.Hour)
-                                return null;
+                if (!AdjustTime(ref guideData, ref program))
+                    return null;
 
-                            if (guideData.StartTime[0] <= 12)
-                            {
-                                m_listingTime = (int)Expect.Morning;
-                                goto case (int)Expect.Morning;
-                            }
-
-                            m_listingTime = (int)Expect.Afternoon;
-                            goto case (int)Expect.Afternoon;
-                        }
-
-                        if(guideData.StartTime[0] >= 20)
-						   return null;				// Guide starts on pervious day ignore these listings.
-
-						m_listingTime = (int) Expect.Morning;
-						goto case (int)Expect.Morning;      // Pass into Morning Code
-
-					case (int) Expect.Morning:
-						if(m_LastStart > guideData.StartTime[0])
-						{
-							m_listingTime = (int) Expect.Afternoon;
-                            //if (m_bNextDay)
-                            //{
-                            //    m_GrabDay++;
-                            //} 
-						}
-						else
-						{
-							if(guideData.StartTime[0] <= 12)
-								break;						// Do nothing
-						}
-
-						// Pass into Afternoon Code
-						//m_LastStart = 0;
-						goto case (int)Expect.Afternoon;
-
-					case (int) Expect.Afternoon:
-						if(guideData.StartTime[0] < 12)		// Site doesn't have correct time
-							guideData.StartTime[0] += 12;	// starts again at 1:00 with "pm"
-
-						if(m_LastStart > guideData.StartTime[0])
-						{
-							guideData.StartTime[0] -= 12;
-							if(m_bNextDay)
-							{
-								addDays++;
-								m_GrabDay++;
-								m_StartGrab = m_StartGrab.AddDays(1);
-								//m_bNextDay = false;
-							} 
-							else
-							{
-								m_bNextDay = true;
-							}
-							m_listingTime = (int) Expect.Morning;
-							break;
-						}
-
-						break;
-
-					default:
-						break;
-				}
-
-				DateTime dtStart = new DateTime(m_StartGrab.Year, month, guideData.Day, guideData.StartTime[0], guideData.StartTime[1], 0, 0);
-				if(m_bNextDay)
-					dtStart = dtStart.AddDays(addDays);
-				program.Start = GetLongDateTime(dtStart);
-				m_LastStart = guideData.StartTime[0];
-
-                if(dbProgram(program.Title, program.Start))
+                // Check TV db if program exists
+                if (dbProgram(program.Title, program.Start))
                 {
-                    Log.WriteFile(Log.LogType.Log, false, "WebEPG: Program in db {0}:{1}/{2} [{3} {4}] - {5}", guideData.StartTime[0], guideData.StartTime[1], dtStart.Day, m_GrabDay.ToString(), m_bNextDay.ToString(), guideData.Title);
+                    Log.WriteFile(Log.LogType.Log, false, "WebEPG: Program in db leaving out of xmltv");
                     return null;
                 }
-
-				if (guideData.EndTime != null)
-				{
-					DateTime dtEnd = new DateTime(m_StartGrab.Year, month, guideData.Day, guideData.EndTime[0], guideData.EndTime[1], 0, 0);
-					if(m_bNextDay)
-					{
-						if(guideData.StartTime[0] > guideData.EndTime[0])
-							dtEnd = dtEnd.AddDays(addDays+1);
-						else
-							dtEnd = dtEnd.AddDays(addDays);
-					}
-					else
-					{
-						if(guideData.StartTime[0] > guideData.EndTime[0])
-							dtEnd = dtEnd.AddDays(addDays);
-					}
-					program.End = GetLongDateTime(dtEnd);
-
-                    Log.WriteFile(Log.LogType.Log, false, "WebEPG: {0}:{1}/{2}-{3}:{4}/{5} [{6} {7}] - {8}", guideData.StartTime[0], guideData.StartTime[1], dtStart.Day, guideData.EndTime[0], guideData.EndTime[1], dtEnd.Day, m_GrabDay.ToString(), m_bNextDay.ToString(), guideData.Title);
-				}
-				else
-				{
-					Log.WriteFile(Log.LogType.Log, false, "WebEPG: {0}:{1}/{2} [{3} {4}] - {5}", guideData.StartTime[0], guideData.StartTime[1], dtStart.Day, m_GrabDay.ToString(), m_bNextDay.ToString(), guideData.Title);
-				}
 				
 				if (guideData.Description != "")
 					program.Description = guideData.Description;
@@ -447,6 +489,7 @@ namespace MediaPortal.EPG
 				if (guideData.Genre != "")
 					program.Genre = getGenre(guideData.Genre);
 
+                // SubLink
 				if(m_grabLinked && m_SubListingLink != "" 
 					&& guideData.StartTime[0] >= m_linkStart 
 					&& guideData.StartTime[0] <= m_linkEnd
