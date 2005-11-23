@@ -376,5 +376,6 @@
     <entry name="GuideDays">14</entry>
     <entry name="Lang">en</entry>
     <entry name="Description">MAIN</entry>
+    <entry name="TimeZone">GMT Standard Time</entry>
   </section>
 </profile>

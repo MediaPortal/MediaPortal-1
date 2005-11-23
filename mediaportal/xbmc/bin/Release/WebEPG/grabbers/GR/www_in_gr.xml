@@ -50,5 +50,6 @@
     <entry name="GuideDays">14</entry>
     <entry name="Lang">el</entry>
     <entry name="SiteDescription">Λαμβάνει το πρόγραμμα από τις σελίδες TV του in.gr (ΔΟΛ)</entry>
+    <entry name="TimeZone">Central European Standard Time</entry>
   </section>
 </profile>

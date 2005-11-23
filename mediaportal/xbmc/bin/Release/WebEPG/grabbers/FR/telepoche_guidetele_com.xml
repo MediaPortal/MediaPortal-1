@@ -202,5 +202,6 @@
   <section name="Info">
     <entry name="GuideDays">14</entry>
     <entry name="Lang">fr</entry>
+    <entry name="TimeZone">W. Europe Standard Time</entry>
   </section>
 </profile>

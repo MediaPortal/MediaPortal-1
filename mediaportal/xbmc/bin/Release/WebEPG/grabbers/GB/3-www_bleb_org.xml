@@ -102,4 +102,7 @@
     <entry name="DescEntry">desc</entry>
     <entry name="GenreEntry">type</entry>
   </section>
+  <section name="Info">
+    <entry name="TimeZone">GMT Standard Time</entry>
+  </section>
 </profile>

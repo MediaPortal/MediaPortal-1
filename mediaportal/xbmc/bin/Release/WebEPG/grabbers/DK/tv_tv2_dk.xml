@@ -64,5 +64,6 @@
   <section name="Info">
     <entry name="GuideDays">6</entry>
     <entry name="Lang">da</entry>
+    <entry name="TimeZone">W. Europe Standard Time</entry>
   </section>
 </profile>

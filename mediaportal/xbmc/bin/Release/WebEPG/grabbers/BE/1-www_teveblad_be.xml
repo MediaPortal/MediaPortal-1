@@ -109,5 +109,6 @@
     <entry name="GuideDays">3</entry>
     <entry name="Language">fr</entry>
     <entry name="SiteDescription">...</entry>
+    <entry name="TimeZone">W. Europe Standard Time</entry>
   </section>
 </profile>

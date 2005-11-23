@@ -178,5 +178,6 @@
     <entry name="GuideDays">14</entry>
     <entry name="Language">de</entry>
     <entry name="SiteDescription">Hauptseite: Sendungstitel, Unterseite: Beschreibung. Zur Zeit funktioniert das Grabben der Beschreibungen leider nicht einwandfrei.</entry>
+    <entry name="TimeZone">W. Europe Standard Time</entry>
   </section>
 </profile>

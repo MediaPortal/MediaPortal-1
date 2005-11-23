@@ -143,6 +143,7 @@
     <entry name="GuideDays">7</entry>
     <entry name="Language">nl</entry>
     <entry name="SiteDescription">Main page: Title only, Linked page: Description &amp; Genre</entry>
+    <entry name="TimeZone">W. Europe Standard Time</entry>
   </section>
 
   <section name="GenreMap">

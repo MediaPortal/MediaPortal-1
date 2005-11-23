@@ -84,4 +84,8 @@
     <entry name="TitleEntry">title</entry>
     <entry name="DescEntry">desc</entry>
   </section>
+
+  <section name="DateTime">
+    <entry name="TimeZone">New Zealand Standard Time</entry>
+  </section>
 </profile>

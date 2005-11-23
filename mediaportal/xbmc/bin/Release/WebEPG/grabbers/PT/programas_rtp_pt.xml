@@ -33,6 +33,7 @@
   </section>
   <section name="Info">
     <entry name="GuideDays">7</entry>
-    <entry name="Lang">fr</entry>
+    <entry name="Lang">pt</entry>
+    <entry name="TimeZone">GMT Standard Time</entry>
   </section>
 </profile>

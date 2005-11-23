@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 
 
 <!-- www.telemagazyn.com.pl -->
@@ -112,5 +112,8 @@ Grabber stworzony przez DragonGC z duża pomocą James-a. Kanały, które dodał
     <entry name="Template">
 &#60;div&#62;&#60;span&#62;&#60;#START&#62;&#60;/span&#62;&#60;#TITLE&#62;-&#60;#GENRE&#62;,&#60;/div&#62;
     </entry>
+  </section>
+  <section name="DateTime">
+    <entry name="TimeZone">Central European Standard Time</entry>
   </section>
 </profile>

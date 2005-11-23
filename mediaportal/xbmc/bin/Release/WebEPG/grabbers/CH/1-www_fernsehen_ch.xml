@@ -155,5 +155,6 @@
     <entry name="GuideDays">14</entry>
     <entry name="Lang">de</entry>
     <entry name="Description">MAIN</entry>
+    <entry name="TimeZone">W. Europe Standard Time</entry>
   </section>
 </profile>

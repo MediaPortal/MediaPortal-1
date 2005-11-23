@@ -152,6 +152,6 @@
   </section>
 
   <section name="DateTime">
-    <entry name="Months">no</entry>
+    <entry name="TimeZone">W. Europe Standard Time</entry>
   </section>
 </profile>

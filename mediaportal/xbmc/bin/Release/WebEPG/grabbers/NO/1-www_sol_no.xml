@@ -135,5 +135,6 @@
     <entry name="GuideDays">12</entry>
     <entry name="Lang">no</entry>
     <entry name="SiteDescription">www.sol.no has good "linked descriptions," and the server is stable and fast. Genre grabbing implemented. THE BEST grabber for Norway.</entry>
+    <entry name="TimeZone">W. Europe Standard Time</entry>
    </section>
 </profile>

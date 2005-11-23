@@ -26,5 +26,6 @@
   <section name="Info">
     <entry name="GuideDays">3</entry>
     <entry name="Language">de</entry>
+    <entry name="TimeZone">W. Europe Standard Time</entry>
   </section>
 </profile>

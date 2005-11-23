@@ -17,4 +17,10 @@
 &#60;tr&#62;&#60;td&#62;&#60;a &#62;&#60;#TITLE&#62;&#60;/a&#62;&#60;/td&#62;&#60;/tr&#62;
     </entry>
   </section>
+  <section name="Info">
+    <entry name="GuideDays">7</entry>
+    <entry name="Language">it</entry>
+    <entry name="SiteDescription">xxxx</entry>
+    <entry name="TimeZone">W. Europe Standard Time</entry>
+  </section>
 </profile>
