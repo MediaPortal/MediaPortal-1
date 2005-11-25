@@ -72,6 +72,7 @@
     <WarningLevel>4</WarningLevel>
     <DebugType>none</DebugType>
     <ErrorReport>prompt</ErrorReport>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'UseCaptureCardDefinitions|AnyCPU' ">
     <OutputPath>bin\Debug\</OutputPath>
@@ -834,6 +835,15 @@
     <Compile Include="guilib\XMLSkinElementAttribute.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="id3\StreamCopier.cs" />
+    <Compile Include="id3\TagBuilder.cs" />
+    <Compile Include="id3\TagCopier.cs" />
+    <Compile Include="id3\TagReader.cs" />
+    <Compile Include="id3\TagRemover.cs" />
+    <Compile Include="id3\Tags.cs" />
+    <Compile Include="id3\TagsException.cs" />
+    <Compile Include="id3\TagUtil.cs" />
+    <Compile Include="id3\TemporaryFile.cs" />
     <Compile Include="Mixer\Mixer.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -915,6 +925,12 @@
     <Compile Include="mmedia\WriterConfig.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="mp3\EditMp3Writer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="mp3\Lame.cs" />
+    <Compile Include="mp3\Mp3Writer.cs" />
+    <Compile Include="mp3\Mp3WriterConfig.cs" />
     <Compile Include="nzlib\Checksums\Adler32.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -1946,6 +1962,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="mmedia\NumericTextBox.resx">
       <DependentUpon>NumericTextBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="mp3\EditMp3Writer.resx">
+      <DependentUpon>EditMp3Writer.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Player\BaseStreamBufferPlayer.resx">
       <DependentUpon>BaseStreamBufferPlayer.cs</DependentUpon>
