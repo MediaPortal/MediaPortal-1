@@ -103,34 +103,16 @@ namespace MediaPortal.MusicImport
 
     public void EncodeTrack(GUIFacadeControl facadeView)
     {
-      m_CancelRipping = false;
-      GUIListItem item = facadeView.SelectedListItem;
-      TrackInfo trackInfo = new TrackInfo();
-      trackInfo.MusicTag = (TagReader.MusicTag)item.MusicTag;
-      trackInfo.TrackCount = facadeView.Count - 1;
-      trackInfo.Item = item;
-
-      char[] Drives = CDDrive.GetCDDriveLetters();
-
-      if ((Array.IndexOf(Drives, item.Path[0]) > -1) && (!item.IsFolder))
-        try
-        {
-          EncodeTrack(trackInfo);
-        }
-        catch { }
-    }
-
-    public void EncodeDisc(GUIFacadeControl facadeView)
-    {
-      m_CancelRipping = false;
-      char[] Drives = CDDrive.GetCDDriveLetters();
-      for (int i = 1; i < facadeView.Count; ++i)
+      if (File.Exists("lame_enc.dll"))
       {
-        GUIListItem item = facadeView[i];
+        m_CancelRipping = false;
+        GUIListItem item = facadeView.SelectedListItem;
         TrackInfo trackInfo = new TrackInfo();
         trackInfo.MusicTag = (TagReader.MusicTag)item.MusicTag;
         trackInfo.TrackCount = facadeView.Count - 1;
         trackInfo.Item = item;
+
+        char[] Drives = CDDrive.GetCDDriveLetters();
 
         if ((Array.IndexOf(Drives, item.Path[0]) > -1) && (!item.IsFolder))
           try
@@ -138,6 +120,30 @@ namespace MediaPortal.MusicImport
             EncodeTrack(trackInfo);
           }
           catch { }
+      }
+    }
+
+    public void EncodeDisc(GUIFacadeControl facadeView)
+    {
+      if (File.Exists("lame_enc.dll"))
+      {
+        m_CancelRipping = false;
+        char[] Drives = CDDrive.GetCDDriveLetters();
+        for (int i = 1; i < facadeView.Count; ++i)
+        {
+          GUIListItem item = facadeView[i];
+          TrackInfo trackInfo = new TrackInfo();
+          trackInfo.MusicTag = (TagReader.MusicTag)item.MusicTag;
+          trackInfo.TrackCount = facadeView.Count - 1;
+          trackInfo.Item = item;
+
+          if ((Array.IndexOf(Drives, item.Path[0]) > -1) && (!item.IsFolder))
+            try
+            {
+              EncodeTrack(trackInfo);
+            }
+            catch { }
+        }
       }
     }
 

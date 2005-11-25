@@ -24,6 +24,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
+using System.IO;
 using Yeti.MMedia;
 using Yeti.MMedia.Mp3;
 using WaveLib;
@@ -84,6 +85,10 @@ namespace MediaPortal.Configuration.Sections
 
     private const string Mpeg1BitRates = "128,160,192,224,256,320";
     private string[] Rates;
+    private TabPage tabPageMissing;
+    private GroupBox groupBoxMissing;
+    private LinkLabel linkLabel1;
+    private Label label1;
     private Preset[] Presets = new Preset[7];
 
     /// <summary>
@@ -104,6 +109,7 @@ namespace MediaPortal.Configuration.Sections
       InitializeComponent();
 
       groupBoxQuality.Location = groupBoxBitrate.Location;
+      groupBoxMissing.Location = groupBoxGeneralSettings.Location;
       Rates = Mpeg1BitRates.Split(',');
 
       Presets[0] = new Preset("245,220,260");
@@ -113,6 +119,15 @@ namespace MediaPortal.Configuration.Sections
       Presets[4] = new Preset("165,145,185");
       Presets[5] = new Preset("130,110,150");
       Presets[6] = new Preset("115,95,135");
+
+      if (!File.Exists("lame_enc.dll"))
+      {
+        tabPageEncoderSettings.Dispose();
+        tabPageImportSettings.Dispose();
+        buttonDefault.Visible = false;
+      }
+      else
+        tabPageMissing.Dispose();
     }
 
     /// <summary>
@@ -210,6 +225,10 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxMono = new System.Windows.Forms.CheckBox();
       this.radioButtonQuality = new System.Windows.Forms.RadioButton();
       this.radioButtonBitrate = new System.Windows.Forms.RadioButton();
+      this.tabPageMissing = new System.Windows.Forms.TabPage();
+      this.groupBoxMissing = new System.Windows.Forms.GroupBox();
+      this.linkLabel1 = new System.Windows.Forms.LinkLabel();
+      this.label1 = new System.Windows.Forms.Label();
       this.buttonDefault = new System.Windows.Forms.Button();
       this.tabControlMusicImport.SuspendLayout();
       this.tabPageImportSettings.SuspendLayout();
@@ -219,12 +238,15 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxQuality.SuspendLayout();
       this.groupBoxBitrate.SuspendLayout();
       this.groupBoxTarget.SuspendLayout();
+      this.tabPageMissing.SuspendLayout();
+      this.groupBoxMissing.SuspendLayout();
       this.SuspendLayout();
       // 
       // tabControlMusicImport
       // 
       this.tabControlMusicImport.Controls.Add(this.tabPageImportSettings);
       this.tabControlMusicImport.Controls.Add(this.tabPageEncoderSettings);
+      this.tabControlMusicImport.Controls.Add(this.tabPageMissing);
       this.tabControlMusicImport.Location = new System.Drawing.Point(0, 8);
       this.tabControlMusicImport.Name = "tabControlMusicImport";
       this.tabControlMusicImport.SelectedIndex = 0;
@@ -475,7 +497,7 @@ namespace MediaPortal.Configuration.Sections
       // checkBoxMono
       // 
       this.checkBoxMono.AutoSize = true;
-      this.checkBoxMono.Location = new System.Drawing.Point(16, 72);
+      this.checkBoxMono.Location = new System.Drawing.Point(20, 72);
       this.checkBoxMono.Name = "checkBoxMono";
       this.checkBoxMono.Size = new System.Drawing.Size(100, 17);
       this.checkBoxMono.TabIndex = 2;
@@ -485,7 +507,7 @@ namespace MediaPortal.Configuration.Sections
       // radioButtonQuality
       // 
       this.radioButtonQuality.AutoSize = true;
-      this.radioButtonQuality.Location = new System.Drawing.Point(16, 48);
+      this.radioButtonQuality.Location = new System.Drawing.Point(20, 48);
       this.radioButtonQuality.Name = "radioButtonQuality";
       this.radioButtonQuality.Size = new System.Drawing.Size(57, 17);
       this.radioButtonQuality.TabIndex = 1;
@@ -497,7 +519,7 @@ namespace MediaPortal.Configuration.Sections
       // radioButtonBitrate
       // 
       this.radioButtonBitrate.AutoSize = true;
-      this.radioButtonBitrate.Location = new System.Drawing.Point(16, 24);
+      this.radioButtonBitrate.Location = new System.Drawing.Point(20, 24);
       this.radioButtonBitrate.Name = "radioButtonBitrate";
       this.radioButtonBitrate.Size = new System.Drawing.Size(55, 17);
       this.radioButtonBitrate.TabIndex = 0;
@@ -505,6 +527,47 @@ namespace MediaPortal.Configuration.Sections
       this.radioButtonBitrate.Text = "Bitrate";
       this.radioButtonBitrate.UseVisualStyleBackColor = true;
       this.radioButtonBitrate.CheckedChanged += new System.EventHandler(this.radioButtonBitrate_CheckedChanged);
+      // 
+      // tabPageMissing
+      // 
+      this.tabPageMissing.Controls.Add(this.groupBoxMissing);
+      this.tabPageMissing.Location = new System.Drawing.Point(4, 22);
+      this.tabPageMissing.Name = "tabPageMissing";
+      this.tabPageMissing.Padding = new System.Windows.Forms.Padding(3);
+      this.tabPageMissing.Size = new System.Drawing.Size(464, 374);
+      this.tabPageMissing.TabIndex = 3;
+      this.tabPageMissing.Text = "Missing File";
+      this.tabPageMissing.UseVisualStyleBackColor = true;
+      // 
+      // groupBoxMissing
+      // 
+      this.groupBoxMissing.Controls.Add(this.linkLabel1);
+      this.groupBoxMissing.Controls.Add(this.label1);
+      this.groupBoxMissing.Location = new System.Drawing.Point(16, 16);
+      this.groupBoxMissing.Name = "groupBoxMissing";
+      this.groupBoxMissing.Size = new System.Drawing.Size(432, 176);
+      this.groupBoxMissing.TabIndex = 18;
+      this.groupBoxMissing.TabStop = false;
+      // 
+      // linkLabel1
+      // 
+      this.linkLabel1.AutoSize = true;
+      this.linkLabel1.Location = new System.Drawing.Point(120, 99);
+      this.linkLabel1.Name = "linkLabel1";
+      this.linkLabel1.Size = new System.Drawing.Size(207, 13);
+      this.linkLabel1.TabIndex = 1;
+      this.linkLabel1.TabStop = true;
+      this.linkLabel1.Text = "http://mitiok.maresweb.org/lame-3.97b.zip";
+      this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
+      // 
+      // label1
+      // 
+      this.label1.AutoSize = true;
+      this.label1.Location = new System.Drawing.Point(16, 24);
+      this.label1.Name = "label1";
+      this.label1.Size = new System.Drawing.Size(369, 130);
+      this.label1.TabIndex = 0;
+      this.label1.Text = resources.GetString("label1.Text");
       // 
       // buttonDefault
       // 
@@ -538,6 +601,9 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxBitrate.PerformLayout();
       this.groupBoxTarget.ResumeLayout(false);
       this.groupBoxTarget.PerformLayout();
+      this.tabPageMissing.ResumeLayout(false);
+      this.groupBoxMissing.ResumeLayout(false);
+      this.groupBoxMissing.PerformLayout();
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -604,6 +670,17 @@ namespace MediaPortal.Configuration.Sections
     private void hScrollBarQuality_Scroll(object sender, ScrollEventArgs e)
     {
       labelTarget.Text = "Bitrate: " + Presets[hScrollBarQuality.Value].Target + " kBps (" + Presets[hScrollBarQuality.Value].Minimum + "..." + Presets[hScrollBarQuality.Value].Maximum + ")";
+    }
+
+    private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+    {
+      if (linkLabel1.Text == null)
+        return;
+      if (linkLabel1.Text.Length > 0)
+      {
+        System.Diagnostics.ProcessStartInfo sInfo = new System.Diagnostics.ProcessStartInfo(linkLabel1.Text);
+        System.Diagnostics.Process.Start(sInfo);
+      }
     }
   }
 }

@@ -764,4 +764,16 @@
         /P9KS8P9uu4k8gAAAABJRU5ErkJggg==
 </value>
   </data>
+  <data name="label1.Text" xml:space="preserve">
+    <value>Audio import is disabled.
+
+Because of software patents, we cannot distribute MP3 encoding software
+ourselves. Follow these instructions to use the free LAME encoder to convert
+audio tracks to MP3 files with Media Portal.
+
+1. Download LAME:
+
+2. When you have finished downloading LAME, unzip it and put the file
+     lame_enc.dll into your Media Portal directory.</value>
+  </data>
 </root>
