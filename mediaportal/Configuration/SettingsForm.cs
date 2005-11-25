@@ -161,7 +161,10 @@ namespace MediaPortal.Configuration
       AddChildSection(music, new Sections.MusicDatabase());
 			Log.Write("  add music extension section");
 			AddChildSection(music, new Sections.MusicExtensions());
+      Log.Write("  add music views section");
 			AddChildSection(music, new Sections.MusicViews());
+      Log.Write("  add music import section");
+      AddChildSection(music, new Sections.MusicImport());
 
 			Log.Write("add pictures section");
       SectionSettings picture = new Sections.Pictures();
