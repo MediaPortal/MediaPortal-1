@@ -300,16 +300,16 @@ namespace MediaPortal.Music.Database
         DatabaseUtility.RemoveInvalidChars(ref strArtist);
 
         if (null == m_db) return -1;
-        string name2 = strArtist1.ToLower().Trim();
-        name2 = Regex.Replace(name2, @"[^a-z]*", string.Empty);
-        foreach (CArtistCache artist in m_artistCache)
+				string name2=strArtist1.ToLower().Trim();
+				name2 = Regex.Replace(name2,@"[^a-z0-9]*",string.Empty);
+				foreach (CArtistCache artist in m_artistCache)
         {
-          string name1 = artist.strArtist.ToLower().Trim();
-          name1 = Regex.Replace(name1, @"[^a-z]*", string.Empty);
-          if (name1.Equals(name2))
-          {
-            return artist.idArtist;
-          }
+					string name1=artist.strArtist.ToLower().Trim();
+					name1 = Regex.Replace(name1,@"[^a-z0-9]*",string.Empty);
+					if (name1.Equals(name2))
+					{
+						return artist.idArtist;
+					}
         }
         strSQL = String.Format("select * from artist where strArtist like '{0}'", strArtist);
         SQLiteResultSet results;
@@ -580,16 +580,16 @@ namespace MediaPortal.Music.Database
         DatabaseUtility.RemoveInvalidChars(ref strAlbum);
 
         if (null == m_db) return -1;
-        string name2 = strAlbum.ToLower().Trim();
-        name2 = Regex.Replace(name2, @"[^a-z]*", string.Empty);
-        foreach (AlbumInfoCache album in m_albumCache)
+				string name2=strAlbum.ToLower().Trim();
+				name2 = Regex.Replace(name2,@"[^a-z0-9]*",string.Empty);
+	      foreach (AlbumInfoCache album in m_albumCache)
         {
-          string name1 = album.Album.ToLower().Trim();
-          name1 = Regex.Replace(name1, @"[^a-z]*", string.Empty);
-          if (name1.Equals(name2))
-          {
-            return album.idAlbum;
-          }
+					string name1=album.Album.ToLower().Trim();
+					name1 = Regex.Replace(name1,@"[^a-z0-9]*",string.Empty);
+					if (name1.Equals(name2))
+					{
+						return album.idAlbum;
+					}
         }
 
         strSQL = String.Format("select * from album where strAlbum like '{0}'", strAlbum);

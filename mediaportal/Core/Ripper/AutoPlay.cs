@@ -37,8 +37,8 @@ namespace MediaPortal.Ripper
     
     static ArrayList m_vecList   = null;
     static Ripper.CDDrive [] m_drives=null;
-		static RemovableDrive m_removables=null;
-    static bool m_dvd=false;
+	static RemovableDrive m_removables=null;
+    static string m_dvd="No";
     static string m_audiocd="No";
 
     enum MediaType
@@ -49,7 +49,7 @@ namespace MediaPortal.Ripper
       PHOTOS       = 3,
       VIDEOS       = 4,
       AUDIO        = 5
-		}	
+	}	
 		
     #endregion
 		
@@ -66,7 +66,7 @@ namespace MediaPortal.Ripper
 		static AutoPlay()   
 		{
 			m_vecList   = new ArrayList();
-			m_dvd=false;
+			m_dvd="No";
 			m_audiocd="No";
 
 			// Start removable drive event handlers
@@ -123,9 +123,9 @@ namespace MediaPortal.Ripper
       {
         using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
         {
-          m_dvd=xmlreader.GetValueAsBool("dvdplayer","autoplay",true);
+          m_dvd=xmlreader.GetValueAsString("dvdplayer","autoplay","Ask");
           m_audiocd=xmlreader.GetValueAsString("audioplayer","autoplay","No");
-          if (m_dvd==false && m_audiocd=="No") return;
+          if (m_dvd=="No" && m_audiocd=="No") return;
 
           for (int i=0; i < 20; i++)
           {
@@ -297,7 +297,7 @@ namespace MediaPortal.Ripper
     static bool ShouldWeAutoPlay(MediaType iMedia)
     {
       Log.Write ("Check if we want to autoplay a {0}",iMedia);
-      if (GUIWindowManager.IsRouted) return false;
+	  if (GUIWindowManager.IsRouted) return false;
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ASKYESNO,0,0,0,0,0,null);
       msg.Param1=713;      
 			switch (iMedia)
@@ -344,25 +344,47 @@ namespace MediaPortal.Ripper
       {         
         case MediaType.DVD:
           Log.Write("DVD inserted into drive {0}",strDrive);
-          if (m_dvd)
+
+          bool PlayDVD = false;
+          if (m_dvd == "Yes")
+          {
+              // Automaticaly play the CD
+              PlayDVD = true;
+              Log.Write("DVD Autoplay = auto");
+          }
+          else if (m_dvd == "Ask") 
+          {
+              if (ShouldWeAutoPlay(MediaType.DVD))
+              {
+                  PlayDVD = true;
+                  Log.Write("DVD Autoplay = ask,answer = yes");
+              }
+              else
+              {
+                  Log.Write("DVD Autoplay = ask, answer = no");
+              }
+          }
+          if (PlayDVD)
           {
             // dont interrupt if we're already playing
-            if (g_Player.Playing && g_Player.IsDVD) return;
-            if (ShouldWeAutoPlay(MediaType.DVD)) 
-            {
-							Log.Write("Autoplay:start DVD in {0}",strDrive);
+             if (g_Player.Playing && g_Player.IsDVD) return;
+
+             // We are going to autoplay if..
+			  //Log.Write ("We seem to want to play the DVD");
+			  Log.Write("Autoplay:start DVD in {0}",strDrive);
               g_Player.PlayDVD(strDrive+@"\VIDEO_TS\VIDEO_TS.IFO");
-            }
           }
           break;                  
 
         case MediaType.AUDIO_CD:
           Log.Write("Audio CD inserted into drive {0}",strDrive);
+		  //m_audiocd tells us if we want to autoplay or not.
 		  bool PlayAudioCd = false;
 			if (m_audiocd=="Yes") 
-          {
+			{
+				// Automaticaly play the CD
 				PlayAudioCd = true;
-				Log.Write ("Autoplay = auto");
+				Log.Write ("CD Autoplay = auto");
 			}
 			else if ((m_audiocd=="Ask") && (ShouldWeAutoPlay(MediaType.AUDIO_CD)))
 			{
@@ -370,16 +392,20 @@ namespace MediaPortal.Ripper
 			}
 			if (PlayAudioCd)				  
 			{
-              if (g_Player.Playing) g_Player.Stop();
-              msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAY_AUDIO_CD,
-                (int)GUIWindow.Window.WINDOW_MUSIC_FILES,
-                GUIWindowManager.ActiveWindow,0,0,0,0);
-              msg.Label=strDrive;
-              msg.SendToTargetWindow=true;
+				// The user wants to play the Audio CD
+				if (g_Player.Playing) g_Player.Stop();
+
+				// Send a message with the drive to the message handler. 
+				// The message handler will play the CD
+				msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAY_AUDIO_CD,
+					(int)GUIWindow.Window.WINDOW_MUSIC_FILES,
+					GUIWindowManager.ActiveWindow,0,0,0,0);
+				msg.Label=strDrive;
+				msg.SendToTargetWindow=true;
 				msg.Label2 = m_audiocd;
 				Log.Write ("Autoplay = {0}",m_audiocd);
 				GUIWindowManager.SendThreadMessage(msg);
-          }
+			}
           break;                 
 
         case MediaType.PHOTOS:
@@ -420,16 +446,25 @@ namespace MediaPortal.Ripper
 			{         
 				case MediaType.DVD:
 					Log.Write("DVD volume inserted {0}",strDrive);
-					if (m_dvd)
+					if (m_dvd=="Yes")
 					{
 						// dont interrupt if we're already playing
 						if (g_Player.Playing && g_Player.IsDVD) return;
-						if (ShouldWeAutoPlay(MediaType.DVD)) 
-						{
-							Log.Write("Autoplay:start DVD in {0}",strDrive);
-							g_Player.PlayDVD(strDrive+@"\VIDEO_TS\VIDEO_TS.IFO");
-						}
-					}
+                        Log.Write("Autoplay: Yes, start DVD in {0}", strDrive);
+                        g_Player.PlayDVD(strDrive + @"\VIDEO_TS\VIDEO_TS.IFO");
+                    }
+                    if (m_dvd=="Ask")
+                    {
+                        if (ShouldWeAutoPlay(MediaType.DVD))
+                        {
+                            Log.Write("Autoplay: Answered yes, start DVD in {0}", strDrive);
+                            g_Player.PlayDVD(strDrive + @"\VIDEO_TS\VIDEO_TS.IFO");
+                        }
+                        else
+                        {
+                            Log.Write("Autoplay: Answered no, do not start DVD in {0}", strDrive);
+                        }
+                    }
 					break; 
                  
 				case MediaType.PHOTOS:
