@@ -286,6 +286,7 @@
     <Compile Include="GUIMSNPlugin\MessengerSetup.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="GUIMusic\MusicImport.cs" />
     <Compile Include="GUIMusic\GUIMusicArtistInfo.cs">
       <SubType>Code</SubType>
     </Compile>

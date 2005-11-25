@@ -32,6 +32,7 @@ using MediaPortal.Music.Database;
 using MediaPortal.TagReader;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.View;
+using MediaPortal.MusicImport;
 
 namespace MediaPortal.GUI.Music
 {
@@ -167,11 +168,30 @@ namespace MediaPortal.GUI.Music
         return false;
       }
     }
+
     public override void OnAction(Action action)
     {
       if (action.wID == Action.ActionType.ACTION_SHOW_PLAYLIST)
       {
         GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MUSIC_PLAYLIST);
+        return;
+      }
+      else if (action.wID == Action.ActionType.ACTION_IMPORT_TRACK)
+      {
+        MusicImport.MusicImport ripper = new MusicImport.MusicImport();
+        ripper.EncodeTrack(facadeView);
+        return;
+      }
+      else if (action.wID == Action.ActionType.ACTION_IMPORT_DISC)
+      {
+        MusicImport.MusicImport ripper = new MusicImport.MusicImport();
+        ripper.EncodeDisc(facadeView);
+        return;
+      }
+      else if (action.wID == Action.ActionType.ACTION_CANCEL_IMPORT)
+      {
+        MusicImport.MusicImport ripper = new MusicImport.MusicImport();
+        ripper.Cancel();
         return;
       }
       base.OnAction(action);
