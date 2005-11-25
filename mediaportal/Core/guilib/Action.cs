@@ -151,6 +151,9 @@ namespace MediaPortal.GUI.Library
       , ACTION_HOME                 =109  // home
       , ACTION_END                  =110  // end
       , ACTION_LAST_VIEWED_CHANNEL = 111  // switches TV to the last viewed channel / mPod
+      , ACTION_IMPORT_TRACK        = 112
+      , ACTION_IMPORT_DISC         = 113
+      , ACTION_CANCEL_IMPORT       = 114
       , ACTION_MOUSE_MOVE=2000
       , ACTION_MOUSE_CLICK=2001
       , ACTION_MOUSE_DOUBLECLICK=2002
