@@ -17,6 +17,8 @@ del /F /Q plugins\ExternalPlayers\*.*
 del /F /Q plugins\process\*.*
 del *.dll
 del *.ax
+
+copy ..\..\..\lame_enc.dll .
 copy ..\..\..\MPSA.ax .
 copy ..\..\..\TSFileSource.ax .
 copy ..\..\..\MPTSWriter.ax .
