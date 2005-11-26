@@ -1301,6 +1301,9 @@ namespace MediaPortal.GUI.Library
                 Log.Write("window:{0} init", this.ToString());
               }
               OnPageLoad();
+
+              TemporaryAnimationTrigger();
+
               id = GetFocusControlId();
               if (id >= 0) _previousFocusedControlId = id;
               return true;
@@ -1412,6 +1415,20 @@ namespace MediaPortal.GUI.Library
         }
       }
     }
+
+      void TemporaryAnimationTrigger()
+      {
+          if(_children == null)
+              return;
+
+          // this method is a temporary fix to Harley's animation not starting on subsequent selection of a page
+          foreach (UIElement element in _children)
+          {
+              if(element is GUIAnimation)
+                  ((GUIAnimation)element).Begin();
+          }
+      }
+    
     #endregion
 
     public UIElementCollection controlList
