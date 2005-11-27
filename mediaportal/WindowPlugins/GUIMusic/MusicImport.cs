@@ -21,6 +21,7 @@
 
 using System;
 using System.IO;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
@@ -54,6 +55,7 @@ namespace MediaPortal.MusicImport
     private static string mp3ImportDir = "C:";
     private static string[] Rates;
     private const string Mpeg1BitRates = "128,160,192,224,256,320";
+    private static Queue importQueue = new Queue();
 
     public class TrackInfo
     {
@@ -68,6 +70,8 @@ namespace MediaPortal.MusicImport
     {
       get { return m_Ripping; }
     }
+
+    Thread EncodeThread;
 
     public MusicImport()
     {
@@ -86,6 +90,11 @@ namespace MediaPortal.MusicImport
         mp3Database = xmlreader.GetValueAsBool("musicimport", "mp3database", true);
       }
       Rates = Mpeg1BitRates.Split(',');
+
+      EncodeThread = new Thread(new ThreadStart(MusicImport.ThreadEncodeTrack));
+      EncodeThread.Name = "CD Import";
+      EncodeThread.IsBackground = true;
+      EncodeThread.Priority = (ThreadPriority)mp3Priority;
     }
 
     public static void WriteWaveData(object sender, DataReadEventArgs ea)
@@ -134,7 +143,6 @@ namespace MediaPortal.MusicImport
     {
       if (File.Exists("lame_enc.dll"))
       {
-        m_CancelRipping = false;
         GUIListItem item = facadeView.SelectedListItem;
         TrackInfo trackInfo = new TrackInfo();
         trackInfo.MusicTag = (TagReader.MusicTag)item.MusicTag;
@@ -156,7 +164,6 @@ namespace MediaPortal.MusicImport
     {
       if (File.Exists("lame_enc.dll"))
       {
-        m_CancelRipping = false;
         char[] Drives = CDDrive.GetCDDriveLetters();
         for (int i = 1; i < facadeView.Count; ++i)
         {
@@ -191,83 +198,89 @@ namespace MediaPortal.MusicImport
       trackInfo.TempFileName = string.Format("temp/{0:00} " + FilterInvalidChars(trackInfo.MusicTag.Title) + ".mp3", trackInfo.MusicTag.Track);
       trackInfo.TargetFileName = string.Format(mp3TargetDir + "/{0:00} " + FilterInvalidChars(trackInfo.MusicTag.Title) + ".mp3", trackInfo.MusicTag.Track);
 
-      Thread encodeThread = new Thread(new ParameterizedThreadStart(MusicImport.ThreadEncodeTrack));
-      encodeThread.Name = "CD Import";
-      encodeThread.IsBackground = true;
-      encodeThread.Priority = (ThreadPriority)mp3Priority;
-      encodeThread.Start(trackInfo);
+      importQueue.Enqueue(trackInfo);
+
+      if (!m_Ripping)
+        EncodeThread.Start();
     }
 
-    static void ThreadEncodeTrack(object trackInfoPar)
+    static void ThreadEncodeTrack()
     {
-      TrackInfo trackInfo = (TrackInfo)trackInfoPar;
-      while ((m_Ripping) && !m_CancelRipping)
-        Thread.Sleep(500);
-      if (!m_CancelRipping)
+      m_Ripping = true;
+      GUIWaitCursor.Show();
+
+      while (importQueue.Count > 0)
       {
-        GUIWaitCursor.Show();
-        m_Ripping = true;
-        m_Drive = new CDDrive();
-        SaveTrack(trackInfo);
-        if (File.Exists(trackInfo.TempFileName) && !m_CancelRipping)
+        TrackInfo trackInfo = (TrackInfo)importQueue.Dequeue();
+        if (!m_CancelRipping)
         {
-          try
+          m_Drive = new CDDrive();
+          SaveTrack(trackInfo);
+          if (File.Exists(trackInfo.TempFileName) && !m_CancelRipping)
           {
-            Tags tags = Tags.FromFile(trackInfo.TempFileName);
-            tags["TRCK"] = trackInfo.MusicTag.Track.ToString() + "/" + trackInfo.TrackCount.ToString();
-            tags["TALB"] = trackInfo.MusicTag.Album;
-            tags["TPE1"] = trackInfo.MusicTag.Artist;
-            tags["TIT2"] = trackInfo.MusicTag.Title;
-            tags["TCON"] = trackInfo.MusicTag.Genre;
-            if (trackInfo.MusicTag.Year > 0)
-              tags["TYER"] = trackInfo.MusicTag.Year.ToString();
-            tags["TENC"] = "Media Portal / Lame";
-            tags.Save(trackInfo.TempFileName);
-          }
-          catch { }
-          try
-          {
-            if (File.Exists(trackInfo.TargetFileName))
-              if (mp3ReplaceExisting)
-                File.Delete(trackInfo.TargetFileName);
-
-            if (!File.Exists(trackInfo.TargetFileName))
-              File.Move(trackInfo.TempFileName, trackInfo.TargetFileName);
-
-            if (File.Exists(trackInfo.TargetFileName) && mp3Database)
+            #region Tagging
+            try
             {
-              MusicDatabase dbs = new MusicDatabase();
-              Song song = new Song();
-
-              song.FileName = trackInfo.TargetFileName;
-              song.Album = trackInfo.MusicTag.Album;
-              song.Artist = trackInfo.MusicTag.Artist;
-              song.Duration = trackInfo.MusicTag.Duration;
-              song.Genre = trackInfo.MusicTag.Genre;
-              song.Rating = trackInfo.MusicTag.Rating;
-              song.TimesPlayed = trackInfo.MusicTag.TimesPlayed;
-              song.Title = trackInfo.MusicTag.Title;
-              song.Track = trackInfo.MusicTag.Track;
-              song.Year = trackInfo.MusicTag.Year;
-              dbs.AddSong(song, true);
-
-              // what about???
-              // song.albumId;
-              // song.artistId;
-              // song.Favorite;
-              // song.genreId;
-              // song.songId;
-              // trackInfo.MusicTag.Comment;
+              Tags tags = Tags.FromFile(trackInfo.TempFileName);
+              tags["TRCK"] = trackInfo.MusicTag.Track.ToString() + "/" + trackInfo.TrackCount.ToString();
+              tags["TALB"] = trackInfo.MusicTag.Album;
+              tags["TPE1"] = trackInfo.MusicTag.Artist;
+              tags["TIT2"] = trackInfo.MusicTag.Title;
+              tags["TCON"] = trackInfo.MusicTag.Genre;
+              if (trackInfo.MusicTag.Year > 0)
+                tags["TYER"] = trackInfo.MusicTag.Year.ToString();
+              tags["TENC"] = "Media Portal / Lame";
+              tags.Save(trackInfo.TempFileName);
             }
-          }
-          catch
-          {
-            Log.Write("CDIMP: Error moving encoded file {0} to new location {1}", trackInfo.TempFileName, trackInfo.TargetFileName);
+            catch { }
+            #endregion
+            #region Database
+            try
+            {
+              if (File.Exists(trackInfo.TargetFileName))
+                if (mp3ReplaceExisting)
+                  File.Delete(trackInfo.TargetFileName);
+
+              if (!File.Exists(trackInfo.TargetFileName))
+                File.Move(trackInfo.TempFileName, trackInfo.TargetFileName);
+
+              if (File.Exists(trackInfo.TargetFileName) && mp3Database)
+              {
+                MusicDatabase dbs = new MusicDatabase();
+                Song song = new Song();
+
+                song.FileName = trackInfo.TargetFileName;
+                song.Album = trackInfo.MusicTag.Album;
+                song.Artist = trackInfo.MusicTag.Artist;
+                song.Duration = trackInfo.MusicTag.Duration;
+                song.Genre = trackInfo.MusicTag.Genre;
+                song.Rating = trackInfo.MusicTag.Rating;
+                song.TimesPlayed = trackInfo.MusicTag.TimesPlayed;
+                song.Title = trackInfo.MusicTag.Title;
+                song.Track = trackInfo.MusicTag.Track;
+                song.Year = trackInfo.MusicTag.Year;
+                dbs.AddSong(song, true);
+
+                // what about???
+                // song.albumId;
+                // song.artistId;
+                // song.Favorite;
+                // song.genreId;
+                // song.songId;
+                // trackInfo.MusicTag.Comment;
+              }
+            }
+            catch
+            {
+              Log.Write("CDIMP: Error moving encoded file {0} to new location {1}", trackInfo.TempFileName, trackInfo.TargetFileName);
+            }
+            #endregion
           }
         }
-        m_Ripping = false;
-        GUIWaitCursor.Hide();
       }
+      m_CancelRipping = false;
+      GUIWaitCursor.Hide();
+      m_Ripping = false;
     }
 
     private static void SaveTrack(TrackInfo trackInfo)
