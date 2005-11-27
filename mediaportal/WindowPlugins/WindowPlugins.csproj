@@ -714,6 +714,7 @@
     <Compile Include="GUISettings\Wizard\Epg\GUIWizardEpgSelect.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="GUISettings\Wizard\General\GUIWizardGeneral.cs" />
     <Compile Include="GUISettings\Wizard\GUIWizardCardsDetected.cs">
       <SubType>Code</SubType>
     </Compile>
