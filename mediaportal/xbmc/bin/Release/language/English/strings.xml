@@ -3114,6 +3114,12 @@
 	<value>Settings</value>
 </string>
 
+<!-- Music Import Strings -->
+<string><id>1100</id><value>Import CD</value></string>
+<string><id>1101</id><value>Import selected track</value></string>
+<string><id>1102</id><value>Cancel CD import</value></string>
+<!-- End Music Import Strings -->
+
 
 <string Prefix="My ">
 	<id>1440</id>

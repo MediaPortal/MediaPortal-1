@@ -64,6 +64,11 @@ namespace MediaPortal.MusicImport
       public GUIListItem Item;
     }
 
+    public static bool Ripping
+    {
+      get { return m_Ripping; }
+    }
+
     public MusicImport()
     {
       using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
@@ -94,6 +99,30 @@ namespace MediaPortal.MusicImport
       //ulong Percent = ((ulong)ea.BytesRead * 100) / ea.Bytes2Read;
       //progressBar1.Value = (int)Percent;
       ea.CancelRead |= m_CancelRipping;
+    }
+
+    private String FilterInvalidChars(String input)
+    {
+      String copy = String.Empty;
+      for (int i = 0; i < input.Length; i++)
+        switch (input[i])
+        {
+          case '\\':
+          case '/':
+          case ':':
+          case '*':
+          case '?':
+          case '"':
+          case '<':
+          case '>':
+          case '|':
+            Log.Write("CDIMP: removing \"" + input[i] + "\" from filename");
+            break;
+          default:
+            copy += input[i];
+            break;
+        }
+      return copy;
     }
 
     public void Cancel()
@@ -152,15 +181,15 @@ namespace MediaPortal.MusicImport
       string mp3TargetDir = mp3ImportDir;
       if (mp3Organize)
       {
-        mp3TargetDir = mp3ImportDir + "/" + trackInfo.MusicTag.Artist + "/";
+        mp3TargetDir = mp3ImportDir + "/" + FilterInvalidChars(trackInfo.MusicTag.Artist) + "/";
         if (!Directory.Exists(mp3TargetDir))
           Directory.CreateDirectory(mp3TargetDir);
-        mp3TargetDir = mp3TargetDir + trackInfo.MusicTag.Album;
+        mp3TargetDir = mp3TargetDir + FilterInvalidChars(trackInfo.MusicTag.Album);
         if (!Directory.Exists(mp3TargetDir))
           Directory.CreateDirectory(mp3TargetDir);
       }
-      trackInfo.TempFileName = string.Format("temp/{0:00} " + trackInfo.MusicTag.Title + ".mp3", trackInfo.MusicTag.Track);
-      trackInfo.TargetFileName = string.Format(mp3TargetDir.Replace('\\', '/') + "/{0:00} " + trackInfo.MusicTag.Title + ".mp3", trackInfo.MusicTag.Track);
+      trackInfo.TempFileName = string.Format("temp/{0:00} " + FilterInvalidChars(trackInfo.MusicTag.Title) + ".mp3", trackInfo.MusicTag.Track);
+      trackInfo.TargetFileName = string.Format(mp3TargetDir + "/{0:00} " + FilterInvalidChars(trackInfo.MusicTag.Title) + ".mp3", trackInfo.MusicTag.Track);
 
       Thread encodeThread = new Thread(new ParameterizedThreadStart(MusicImport.ThreadEncodeTrack));
       encodeThread.Name = "CD Import";
@@ -337,8 +366,12 @@ namespace MediaPortal.MusicImport
             //progressBar1.Value = 0;
           }
         }
-        if (m_CancelRipping && (File.Exists(trackInfo.TempFileName)))
-          File.Delete(trackInfo.TempFileName);
+        if (m_CancelRipping)
+        {
+          if (File.Exists(trackInfo.TempFileName))
+            File.Delete(trackInfo.TempFileName);
+          m_Drive.UnLockCD();
+        }
       }
     }
   }
