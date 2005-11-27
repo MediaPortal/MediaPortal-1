@@ -3118,6 +3118,9 @@
 <string><id>1100</id><value>Import CD</value></string>
 <string><id>1101</id><value>Import selected track</value></string>
 <string><id>1102</id><value>Cancel CD import</value></string>
+<string><id>1103</id><value>Importing Track</value></string>
+<string><id>1104</id><value>left</value></string>
+<string><id>1105</id><value>Importing Tracks</value></string>
 <!-- End Music Import Strings -->
 
 

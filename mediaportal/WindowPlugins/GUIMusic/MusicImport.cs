@@ -22,12 +22,12 @@
 using System;
 using System.IO;
 using System.Collections;
-using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using MediaPortal.GUI.Library;
 using MediaPortal.Ripper;
 using MediaPortal.Music.Database;
+using MediaPortal.Dialogs;
 using Yeti.MMedia;
 using Yeti.MMedia.Mp3;
 using Yeti.Lame;
@@ -48,6 +48,7 @@ namespace MediaPortal.MusicImport
     private static bool mp3FastMode = false;
     private static bool mp3Organize = true;
     private static bool mp3Database = true;
+    private static bool mp3Background = false;
     private static Mp3Writer m_Writer = null;
     private static int mp3Quality = 2;
     private static int mp3BitRate = 2;
@@ -56,6 +57,7 @@ namespace MediaPortal.MusicImport
     private static string[] Rates;
     private const string Mpeg1BitRates = "128,160,192,224,256,320";
     private static Queue importQueue = new Queue();
+    private static int GetID;
 
     public class TrackInfo
     {
@@ -88,6 +90,7 @@ namespace MediaPortal.MusicImport
         mp3ImportDir = xmlreader.GetValueAsString("musicimport", "mp3importdir", "C:");
         mp3Organize = xmlreader.GetValueAsBool("musicimport", "mp3organize", true);
         mp3Database = xmlreader.GetValueAsBool("musicimport", "mp3database", true);
+        mp3Background = xmlreader.GetValueAsBool("musicimport", "mp3background", false);
       }
       Rates = Mpeg1BitRates.Split(',');
 
@@ -95,6 +98,17 @@ namespace MediaPortal.MusicImport
       EncodeThread.Name = "CD Import";
       EncodeThread.IsBackground = true;
       EncodeThread.Priority = (ThreadPriority)mp3Priority;
+
+      dlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+
+      if (dlgProgress != null)
+      {
+        dlgProgress.SetHeading(1103);
+        dlgProgress.SetLine(1, "");
+        dlgProgress.SetLine(2, "");
+        dlgProgress.SetPercentage(0);
+        dlgProgress.ShowProgressBar(true);
+      }
     }
 
     public static void WriteWaveData(object sender, DataReadEventArgs ea)
@@ -105,8 +119,10 @@ namespace MediaPortal.MusicImport
 
     private static void CdReadProgress(object sender, ReadProgressEventArgs ea)
     {
-      //ulong Percent = ((ulong)ea.BytesRead * 100) / ea.Bytes2Read;
-      //progressBar1.Value = (int)Percent;
+      ulong Percent = ((ulong)ea.BytesRead * 100) / ea.Bytes2Read;
+      dlgProgress.SetPercentage((int)Percent);
+      if (dlgProgress.IsCanceled)
+        m_CancelRipping = true;
       ea.CancelRead |= m_CancelRipping;
     }
 
@@ -139,8 +155,9 @@ namespace MediaPortal.MusicImport
       m_CancelRipping = true;
     }
 
-    public void EncodeTrack(GUIFacadeControl facadeView)
+    public void EncodeTrack(GUIFacadeControl facadeView, int getID)
     {
+      GetID = getID;
       if (File.Exists("lame_enc.dll"))
       {
         GUIListItem item = facadeView.SelectedListItem;
@@ -160,8 +177,9 @@ namespace MediaPortal.MusicImport
       }
     }
 
-    public void EncodeDisc(GUIFacadeControl facadeView)
+    public void EncodeDisc(GUIFacadeControl facadeView, int getID)
     {
+      GetID = getID;
       if (File.Exists("lame_enc.dll"))
       {
         char[] Drives = CDDrive.GetCDDriveLetters();
@@ -200,18 +218,49 @@ namespace MediaPortal.MusicImport
 
       importQueue.Enqueue(trackInfo);
 
+      if (dlgProgress != null)
+      {
+        if (importQueue.Count > 1)
+          dlgProgress.SetHeading(string.Format(GUILocalizeStrings.Get(1105) + " ({0} " + GUILocalizeStrings.Get(1104) + ")", importQueue.Count));
+        else
+          dlgProgress.SetHeading(GUILocalizeStrings.Get(1103));
+      }
+
       if (!m_Ripping)
         EncodeThread.Start();
     }
 
+    static GUIDialogProgress dlgProgress;
+
     static void ThreadEncodeTrack()
     {
       m_Ripping = true;
-      GUIWaitCursor.Show();
+
+      if (mp3Background)
+        GUIWaitCursor.Show();
+      else if (dlgProgress != null)
+      {
+        dlgProgress.SetPercentage(0);
+        dlgProgress.StartModal(GetID);
+        dlgProgress.Progress();
+        dlgProgress.ShowProgressBar(true);
+      }
 
       while (importQueue.Count > 0)
       {
         TrackInfo trackInfo = (TrackInfo)importQueue.Dequeue();
+        if ((dlgProgress != null) && !mp3Background)
+        {
+          if (importQueue.Count > 0 )
+            dlgProgress.SetHeading(string.Format(GUILocalizeStrings.Get(1105) + " ({0} " + GUILocalizeStrings.Get(1104) + ")", importQueue.Count+1));
+          else
+            dlgProgress.SetHeading(GUILocalizeStrings.Get(1103));
+
+          dlgProgress.SetLine(2, string.Format("{0:00}. {1} - {2}", trackInfo.MusicTag.Track, trackInfo.MusicTag.Artist, trackInfo.MusicTag.Title));
+          if (dlgProgress.IsCanceled)
+            m_CancelRipping = true;
+        }
+
         if (!m_CancelRipping)
         {
           m_Drive = new CDDrive();
@@ -278,8 +327,11 @@ namespace MediaPortal.MusicImport
           }
         }
       }
+      if (mp3Background)
+        GUIWaitCursor.Hide();
+      else
+        dlgProgress.Close();
       m_CancelRipping = false;
-      GUIWaitCursor.Hide();
       m_Ripping = false;
     }
 
@@ -297,6 +349,8 @@ namespace MediaPortal.MusicImport
           try
           {
             m_Drive.LockCD();
+            if (dlgProgress.IsCanceled)
+              m_CancelRipping = true;
             if (!m_CancelRipping)
               try
               {
@@ -338,6 +392,8 @@ namespace MediaPortal.MusicImport
                       DateTime InitTime = DateTime.Now;
                       if (m_Drive.ReadTrack(trackInfo.MusicTag.Track, new CdDataReadEventHandler(WriteWaveData), new CdReadProgressEventHandler(CdReadProgress)) > 0)
                       {
+                        if (dlgProgress.IsCanceled)
+                          m_CancelRipping = true;
                         if (!m_CancelRipping)
                         {
                           TimeSpan Duration = DateTime.Now - InitTime;
@@ -379,6 +435,8 @@ namespace MediaPortal.MusicImport
             //progressBar1.Value = 0;
           }
         }
+        if (dlgProgress.IsCanceled)
+          m_CancelRipping = true;
         if (m_CancelRipping)
         {
           if (File.Exists(trackInfo.TempFileName))

@@ -179,13 +179,13 @@ namespace MediaPortal.GUI.Music
       else if (action.wID == Action.ActionType.ACTION_IMPORT_TRACK)
       {
         MusicImport.MusicImport ripper = new MusicImport.MusicImport();
-        ripper.EncodeTrack(facadeView);
+        ripper.EncodeTrack(facadeView, GetID);
         return;
       }
       else if (action.wID == Action.ActionType.ACTION_IMPORT_DISC)
       {
         MusicImport.MusicImport ripper = new MusicImport.MusicImport();
-        ripper.EncodeDisc(facadeView);
+        ripper.EncodeDisc(facadeView, GetID);
         return;
       }
       else if (action.wID == Action.ActionType.ACTION_CANCEL_IMPORT)

@@ -63,6 +63,7 @@ namespace MediaPortal.Configuration.Sections
     private CheckBox checkBoxOrganize;
     private CheckBox checkBoxReplace;
     private CheckBox checkBoxMono;
+    private CheckBox checkBoxBackground;
     private FolderBrowserDialog folderBrowserDialog;
     private GroupBox groupBoxQuality;
     private GroupBox groupBoxBitrate;
@@ -151,6 +152,7 @@ namespace MediaPortal.Configuration.Sections
         checkBoxCBR.Checked = xmlreader.GetValueAsBool("musicimport", "mp3cbr", false);
         checkBoxOrganize.Checked = xmlreader.GetValueAsBool("musicimport", "mp3organize", true);
         checkBoxDatabase.Checked = xmlreader.GetValueAsBool("musicimport", "mp3database", true);
+        checkBoxBackground.Checked = xmlreader.GetValueAsBool("musicimport", "mp3background", false);
         hScrollBarPriority.Value = xmlreader.GetValueAsInt("musicimport", "mp3priority", 0) * 10;
         hScrollBarBitrate.Value = xmlreader.GetValueAsInt("musicimport", "mp3bitrate", 2);
         hScrollBarQuality.Value = xmlreader.GetValueAsInt("musicimport", "mp3quality", 2);
@@ -181,6 +183,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("musicimport", "mp3fastmode", checkBoxFastMode.Checked);
         xmlwriter.SetValueAsBool("musicimport", "mp3organize", checkBoxOrganize.Checked);
         xmlwriter.SetValueAsBool("musicimport", "mp3database", checkBoxDatabase.Checked);
+        xmlwriter.SetValueAsBool("musicimport", "mp3background", checkBoxBackground.Checked);
       }
     }
 
@@ -242,6 +245,7 @@ namespace MediaPortal.Configuration.Sections
       this.buttonLocateLAME = new System.Windows.Forms.Button();
       this.linkLabelLAME = new System.Windows.Forms.LinkLabel();
       this.labelDisabled = new System.Windows.Forms.Label();
+      this.checkBoxBackground = new System.Windows.Forms.CheckBox();
       this.tabPageEncoderSettings.SuspendLayout();
       this.groupBoxQuality.SuspendLayout();
       this.groupBoxBitrate.SuspendLayout();
@@ -434,6 +438,7 @@ namespace MediaPortal.Configuration.Sections
       // groupBoxGeneralSettings
       // 
       this.groupBoxGeneralSettings.BackColor = System.Drawing.Color.Transparent;
+      this.groupBoxGeneralSettings.Controls.Add(this.checkBoxBackground);
       this.groupBoxGeneralSettings.Controls.Add(this.checkBoxDatabase);
       this.groupBoxGeneralSettings.Controls.Add(this.checkBoxOrganize);
       this.groupBoxGeneralSettings.Controls.Add(this.checkBoxReplace);
@@ -442,7 +447,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxGeneralSettings.Controls.Add(this.textBoxImportDir);
       this.groupBoxGeneralSettings.Location = new System.Drawing.Point(16, 16);
       this.groupBoxGeneralSettings.Name = "groupBoxGeneralSettings";
-      this.groupBoxGeneralSettings.Size = new System.Drawing.Size(432, 136);
+      this.groupBoxGeneralSettings.Size = new System.Drawing.Size(432, 160);
       this.groupBoxGeneralSettings.TabIndex = 16;
       this.groupBoxGeneralSettings.TabStop = false;
       this.groupBoxGeneralSettings.Text = "General Settings";
@@ -481,7 +486,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.labelLibraryFolder.AutoSize = true;
       this.labelLibraryFolder.BackColor = System.Drawing.Color.Transparent;
-      this.labelLibraryFolder.Location = new System.Drawing.Point(16, 104);
+      this.labelLibraryFolder.Location = new System.Drawing.Point(16, 128);
       this.labelLibraryFolder.Name = "labelLibraryFolder";
       this.labelLibraryFolder.Size = new System.Drawing.Size(73, 13);
       this.labelLibraryFolder.TabIndex = 7;
@@ -490,7 +495,7 @@ namespace MediaPortal.Configuration.Sections
       // buttonBrowse
       // 
       this.buttonBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonBrowse.Location = new System.Drawing.Point(344, 99);
+      this.buttonBrowse.Location = new System.Drawing.Point(344, 123);
       this.buttonBrowse.Name = "buttonBrowse";
       this.buttonBrowse.Size = new System.Drawing.Size(72, 22);
       this.buttonBrowse.TabIndex = 6;
@@ -501,7 +506,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.textBoxImportDir.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.textBoxImportDir.Location = new System.Drawing.Point(96, 100);
+      this.textBoxImportDir.Location = new System.Drawing.Point(96, 124);
       this.textBoxImportDir.Name = "textBoxImportDir";
       this.textBoxImportDir.Size = new System.Drawing.Size(240, 20);
       this.textBoxImportDir.TabIndex = 5;
@@ -511,7 +516,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxPerformance.Controls.Add(this.hScrollBarPriority);
       this.groupBoxPerformance.Controls.Add(this.labelFasterImport);
       this.groupBoxPerformance.Controls.Add(this.labelBetterResponse);
-      this.groupBoxPerformance.Location = new System.Drawing.Point(16, 160);
+      this.groupBoxPerformance.Location = new System.Drawing.Point(16, 184);
       this.groupBoxPerformance.Name = "groupBoxPerformance";
       this.groupBoxPerformance.Size = new System.Drawing.Size(432, 56);
       this.groupBoxPerformance.TabIndex = 8;
@@ -616,11 +621,21 @@ namespace MediaPortal.Configuration.Sections
       this.labelDisabled.TabIndex = 0;
       this.labelDisabled.Text = resources.GetString("labelDisabled.Text");
       // 
+      // checkBoxBackground
+      // 
+      this.checkBoxBackground.AutoSize = true;
+      this.checkBoxBackground.Location = new System.Drawing.Point(20, 96);
+      this.checkBoxBackground.Name = "checkBoxBackground";
+      this.checkBoxBackground.Size = new System.Drawing.Size(148, 17);
+      this.checkBoxBackground.TabIndex = 12;
+      this.checkBoxBackground.Text = "Background import (silent)";
+      this.checkBoxBackground.UseVisualStyleBackColor = true;
+      // 
       // MusicImport
       // 
       this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-      this.Controls.Add(this.tabControlMissing);
       this.Controls.Add(this.buttonDefault);
+      this.Controls.Add(this.tabControlMissing);
       this.Controls.Add(this.tabControlMusicImport);
       this.DoubleBuffered = true;
       this.Name = "MusicImport";
@@ -665,6 +680,7 @@ namespace MediaPortal.Configuration.Sections
       checkBoxFastMode.Checked = false;
       checkBoxOrganize.Checked = true;
       checkBoxDatabase.Checked = true;
+      checkBoxBackground.Checked = false;
       labelBitrate.Text = "Target Bitrate: " + Rates[hScrollBarBitrate.Value] + " kBps";
       labelTarget.Text = "Bitrate: " + Presets[hScrollBarQuality.Value].Target + " kBps (" + Presets[hScrollBarQuality.Value].Minimum + "..." + Presets[hScrollBarQuality.Value].Maximum + ")";
     }
