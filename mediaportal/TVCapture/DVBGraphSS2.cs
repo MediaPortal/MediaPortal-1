@@ -994,7 +994,7 @@ namespace MediaPortal.TV.Recording
       if (_filterDvbAnalyzer != null)
       {
         Log.Write("free dvbanalyzer");
-        hr = Marshal.ReleaseComObject(_filterDvbAnalyzer);
+        while ((hr = Marshal.ReleaseComObject(_filterDvbAnalyzer)) > 0);
         if (hr != 0) Log.Write("ReleaseComObject(_filterDvbAnalyzer):{0}", hr);
         _filterDvbAnalyzer = null;
       }
