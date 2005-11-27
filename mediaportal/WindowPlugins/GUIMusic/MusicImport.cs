@@ -63,6 +63,7 @@ namespace MediaPortal.MusicImport
     {
       public string TempFileName;
       public string TargetFileName;
+      public string TargetDir;
       public MediaPortal.TagReader.MusicTag MusicTag;
       public int TrackCount;
       public GUIListItem Item;
@@ -164,40 +165,9 @@ namespace MediaPortal.MusicImport
       if (File.Exists("lame_enc.dll"))
       {
         GUIListItem item = facadeView.SelectedListItem;
-        TrackInfo trackInfo = new TrackInfo();
-        if ((TagReader.MusicTag)item.MusicTag == null)
-        {
-          TagReader.MusicTag musicTag = new TagReader.MusicTag();
-          musicTag.Artist = "Unknown Artist";
-          musicTag.Album = "Unknown Album";
-          musicTag.Title = "Track " + item.Label.Substring(5);
-          musicTag.Track = Convert.ToInt16(item.Label.Substring(5));
-          item.MusicTag = musicTag;
-        }
-        trackInfo.MusicTag = (TagReader.MusicTag)item.MusicTag;
-        trackInfo.TrackCount = facadeView.Count - 1;
-        trackInfo.Item = item;
-
         char[] Drives = CDDrive.GetCDDriveLetters();
-
-        if ((item.Label != "..") && (Array.IndexOf(Drives, item.Path[0]) > -1) && (!item.IsFolder))
-          try
-          {
-            EncodeTrack(trackInfo);
-          }
-          catch { }
-      }
-    }
-
-    public void EncodeDisc(GUIFacadeControl facadeView, int getID)
-    {
-      GetID = getID;
-      if (File.Exists("lame_enc.dll"))
-      {
-        char[] Drives = CDDrive.GetCDDriveLetters();
-        for (int i = 1; i < facadeView.Count; ++i)
+        if ((!item.IsFolder) && (Array.IndexOf(Drives, item.Path[0]) > -1))
         {
-          GUIListItem item = facadeView[i];
           TrackInfo trackInfo = new TrackInfo();
           if ((TagReader.MusicTag)item.MusicTag == null)
           {
@@ -212,7 +182,7 @@ namespace MediaPortal.MusicImport
           trackInfo.TrackCount = facadeView.Count - 1;
           trackInfo.Item = item;
 
-          if ((Array.IndexOf(Drives, item.Path[0]) > -1) && (!item.IsFolder))
+          if (item.Label != "..")
             try
             {
               EncodeTrack(trackInfo);
@@ -222,31 +192,62 @@ namespace MediaPortal.MusicImport
       }
     }
 
+    public void EncodeDisc(GUIFacadeControl facadeView, int getID)
+    {
+      GetID = getID;
+      if (File.Exists("lame_enc.dll"))
+      {
+        char[] Drives = CDDrive.GetCDDriveLetters();
+        for (int i = 1; i < facadeView.Count; ++i)
+        {
+          GUIListItem item = facadeView[i];
+          if ((!item.IsFolder) && (Array.IndexOf(Drives, item.Path[0]) > -1))
+          {
+            TrackInfo trackInfo = new TrackInfo();
+            if ((TagReader.MusicTag)item.MusicTag == null)
+            {
+              TagReader.MusicTag musicTag = new TagReader.MusicTag();
+              musicTag.Artist = "Unknown Artist";
+              musicTag.Album = "Unknown Album";
+              musicTag.Title = "Track " + item.Label.Substring(5);
+              musicTag.Track = Convert.ToInt16(item.Label.Substring(5));
+              item.MusicTag = musicTag;
+            }
+            trackInfo.MusicTag = (TagReader.MusicTag)item.MusicTag;
+            trackInfo.TrackCount = facadeView.Count - 1;
+            trackInfo.Item = item;
+
+            try
+            {
+              EncodeTrack(trackInfo);
+            }
+            catch { }
+          }
+        }
+      }
+    }
+
     private void EncodeTrack(TrackInfo trackInfo)
     {
       string mp3TargetDir = mp3ImportDir;
+
       if (mp3Organize)
       {
         if ((trackInfo.MusicTag.Artist != "Unknown Artist") || (trackInfo.MusicTag.Album != "Unknown Album"))
-        {
           mp3TargetDir = mp3ImportDir + "\\" + FilterInvalidChars(trackInfo.MusicTag.Artist) + "\\";
-          if (!Directory.Exists(mp3TargetDir))
-            Directory.CreateDirectory(mp3TargetDir);
-        }
         else
           mp3TargetDir = mp3ImportDir + "\\";
         mp3TargetDir = mp3TargetDir + FilterInvalidChars(trackInfo.MusicTag.Album);
 
-        if ((trackInfo.MusicTag.Artist == "Unknown Artist") && (trackInfo.MusicTag.Album == "Unknown Album"))
+        if ((trackInfo.MusicTag.Artist == "Unknown Artist") && (trackInfo.MusicTag.Album == "Unknown Album") && Directory.Exists(mp3TargetDir))
         {
           int i = 1;
           while (Directory.Exists(string.Format("{0}-{1}", mp3TargetDir, i)))
             ++i;
           mp3TargetDir = string.Format("{0}-{1}", mp3TargetDir, i);
-        }
 
-        if (!Directory.Exists(mp3TargetDir))
-          Directory.CreateDirectory(mp3TargetDir);
+        }
+        trackInfo.TargetDir = mp3TargetDir;
       }
       trackInfo.TempFileName = string.Format("temp\\{0:00} " + FilterInvalidChars(trackInfo.MusicTag.Title) + ".mp3", trackInfo.MusicTag.Track);
       trackInfo.TargetFileName = string.Format(mp3TargetDir + "\\{0:00} " + FilterInvalidChars(trackInfo.MusicTag.Title) + ".mp3", trackInfo.MusicTag.Track);
@@ -286,8 +287,8 @@ namespace MediaPortal.MusicImport
         TrackInfo trackInfo = (TrackInfo)importQueue.Dequeue();
         if ((dlgProgress != null) && !mp3Background)
         {
-          if (importQueue.Count > 0 )
-            dlgProgress.SetHeading(string.Format(GUILocalizeStrings.Get(1105) + " ({0} " + GUILocalizeStrings.Get(1104) + ")", importQueue.Count+1));
+          if (importQueue.Count > 0)
+            dlgProgress.SetHeading(string.Format(GUILocalizeStrings.Get(1105) + " ({0} " + GUILocalizeStrings.Get(1104) + ")", importQueue.Count + 1));
           else
             dlgProgress.SetHeading(GUILocalizeStrings.Get(1103));
 
@@ -321,6 +322,9 @@ namespace MediaPortal.MusicImport
             #region Database
             try
             {
+              if (!Directory.Exists(trackInfo.TargetDir))
+                Directory.CreateDirectory(trackInfo.TargetDir);
+
               if (File.Exists(trackInfo.TargetFileName))
                 if (mp3ReplaceExisting)
                   File.Delete(trackInfo.TargetFileName);
