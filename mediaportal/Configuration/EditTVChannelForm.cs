@@ -276,7 +276,7 @@ namespace MediaPortal.Configuration
 			//
 			typeComboBox.SelectedIndex=0;
 			comboTvStandard.Text = "Default";
-			TunerCountry country = new TunerCountry(-1,"Default");
+			TunerCountry country = new TunerCountry(-1,"Default", "");
 			countryComboBox.Items.Add(country);
 			countryComboBox.Items.AddRange(TunerCountries.Countries);
 			comboBoxChannels.Items.Clear();
