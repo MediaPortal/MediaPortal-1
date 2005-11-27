@@ -305,7 +305,7 @@
     <Compile Include="GUIMusic\GUIMusicOverlay.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="GUIMusic\GUImusicPlaylist.cs">
+    <Compile Include="GUIMusic\GUIMusicPlaylist.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="GUIMusic\MusicSort.cs">

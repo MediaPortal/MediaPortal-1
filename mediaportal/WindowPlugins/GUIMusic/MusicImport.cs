@@ -120,9 +120,12 @@ namespace MediaPortal.MusicImport
     private static void CdReadProgress(object sender, ReadProgressEventArgs ea)
     {
       ulong Percent = ((ulong)ea.BytesRead * 100) / ea.Bytes2Read;
-      dlgProgress.SetPercentage((int)Percent);
-      if (dlgProgress.IsCanceled)
-        m_CancelRipping = true;
+      if (!mp3Background)
+      {
+        dlgProgress.SetPercentage((int)Percent);
+        if (dlgProgress.IsCanceled)
+          m_CancelRipping = true;
+      }
       ea.CancelRead |= m_CancelRipping;
     }
 
@@ -162,13 +165,22 @@ namespace MediaPortal.MusicImport
       {
         GUIListItem item = facadeView.SelectedListItem;
         TrackInfo trackInfo = new TrackInfo();
+        if ((TagReader.MusicTag)item.MusicTag == null)
+        {
+          TagReader.MusicTag musicTag = new TagReader.MusicTag();
+          musicTag.Artist = "Unknown Artist";
+          musicTag.Album = "Unknown Album";
+          musicTag.Title = "Track " + item.Label.Substring(5);
+          musicTag.Track = Convert.ToInt16(item.Label.Substring(5));
+          item.MusicTag = musicTag;
+        }
         trackInfo.MusicTag = (TagReader.MusicTag)item.MusicTag;
         trackInfo.TrackCount = facadeView.Count - 1;
         trackInfo.Item = item;
 
         char[] Drives = CDDrive.GetCDDriveLetters();
 
-        if ((Array.IndexOf(Drives, item.Path[0]) > -1) && (!item.IsFolder))
+        if ((item.Label != "..") && (Array.IndexOf(Drives, item.Path[0]) > -1) && (!item.IsFolder))
           try
           {
             EncodeTrack(trackInfo);
@@ -187,6 +199,15 @@ namespace MediaPortal.MusicImport
         {
           GUIListItem item = facadeView[i];
           TrackInfo trackInfo = new TrackInfo();
+          if ((TagReader.MusicTag)item.MusicTag == null)
+          {
+            TagReader.MusicTag musicTag = new TagReader.MusicTag();
+            musicTag.Artist = "Unknown Artist";
+            musicTag.Album = "Unknown Album";
+            musicTag.Title = "Track " + item.Label.Substring(5);
+            musicTag.Track = Convert.ToInt16(item.Label.Substring(5));
+            item.MusicTag = musicTag;
+          }
           trackInfo.MusicTag = (TagReader.MusicTag)item.MusicTag;
           trackInfo.TrackCount = facadeView.Count - 1;
           trackInfo.Item = item;
@@ -206,15 +227,29 @@ namespace MediaPortal.MusicImport
       string mp3TargetDir = mp3ImportDir;
       if (mp3Organize)
       {
-        mp3TargetDir = mp3ImportDir + "/" + FilterInvalidChars(trackInfo.MusicTag.Artist) + "/";
-        if (!Directory.Exists(mp3TargetDir))
-          Directory.CreateDirectory(mp3TargetDir);
+        if ((trackInfo.MusicTag.Artist != "Unknown Artist") || (trackInfo.MusicTag.Album != "Unknown Album"))
+        {
+          mp3TargetDir = mp3ImportDir + "\\" + FilterInvalidChars(trackInfo.MusicTag.Artist) + "\\";
+          if (!Directory.Exists(mp3TargetDir))
+            Directory.CreateDirectory(mp3TargetDir);
+        }
+        else
+          mp3TargetDir = mp3ImportDir + "\\";
         mp3TargetDir = mp3TargetDir + FilterInvalidChars(trackInfo.MusicTag.Album);
+
+        if ((trackInfo.MusicTag.Artist == "Unknown Artist") && (trackInfo.MusicTag.Album == "Unknown Album"))
+        {
+          int i = 1;
+          while (Directory.Exists(string.Format("{0}-{1}", mp3TargetDir, i)))
+            ++i;
+          mp3TargetDir = string.Format("{0}-{1}", mp3TargetDir, i);
+        }
+
         if (!Directory.Exists(mp3TargetDir))
           Directory.CreateDirectory(mp3TargetDir);
       }
-      trackInfo.TempFileName = string.Format("temp/{0:00} " + FilterInvalidChars(trackInfo.MusicTag.Title) + ".mp3", trackInfo.MusicTag.Track);
-      trackInfo.TargetFileName = string.Format(mp3TargetDir + "/{0:00} " + FilterInvalidChars(trackInfo.MusicTag.Title) + ".mp3", trackInfo.MusicTag.Track);
+      trackInfo.TempFileName = string.Format("temp\\{0:00} " + FilterInvalidChars(trackInfo.MusicTag.Title) + ".mp3", trackInfo.MusicTag.Track);
+      trackInfo.TargetFileName = string.Format(mp3TargetDir + "\\{0:00} " + FilterInvalidChars(trackInfo.MusicTag.Title) + ".mp3", trackInfo.MusicTag.Track);
 
       importQueue.Enqueue(trackInfo);
 
