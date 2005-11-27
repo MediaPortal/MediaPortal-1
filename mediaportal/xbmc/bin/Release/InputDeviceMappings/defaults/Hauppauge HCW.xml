@@ -115,6 +115,7 @@
 		</button>
 		<button name="Record" code="2055">
 			<action layer="0" condition="WINDOW" conproperty="600" command="ACTION" cmdproperty="7" sound="click.wav" />
+			<action layer="0" condition="WINDOW" conproperty="501" command="ACTION" cmdproperty="113" sound="click.wav" />
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="89" sound="click.wav" />
 		</button>
 		<button name="Stop" code="2054">
@@ -319,6 +320,7 @@
 		</button>
 		<button name="Record" code="1055">
 			<action layer="0" condition="WINDOW" conproperty="600" command="ACTION" cmdproperty="7" sound="click.wav" />
+			<action layer="0" condition="WINDOW" conproperty="501" command="ACTION" cmdproperty="113" sound="click.wav" />
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="89" sound="click.wav" />
 		</button>
 		<button name="Stop" code="1054">
