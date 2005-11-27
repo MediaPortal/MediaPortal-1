@@ -200,7 +200,7 @@ namespace MediaPortal.GUI.Settings.Wizard
 						{	
 							Log.Write("ScanNextCardType:goto analog");
 							GUIPropertyManager.SetProperty("#WizardCard",i.ToString());
-							GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_ANALOG_COUNTRY);
+							GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_ANALOG_CITY);
 							return;
 						}
 					}

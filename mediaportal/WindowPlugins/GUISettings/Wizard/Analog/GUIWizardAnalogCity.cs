@@ -11,10 +11,13 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
   /// </summary>
   public class GUIWizardAnalogCity : GUIWindow, IComparer<GUIListItem>
   {
-    [SkinControlAttribute(24)]
-    protected GUIListControl listCities = null;
     [SkinControlAttribute(23)]
     protected GUIListControl btnManual = null;
+    [SkinControlAttribute(26)]
+    protected GUILabelControl lblCountry = null;
+    [SkinControlAttribute(24)]
+    protected GUIListControl listCities = null;
+
     public GUIWizardAnalogCity()
     {
       GetID = (int)GUIWindow.Window.WINDOW_WIZARD_ANALOG_CITY;
@@ -32,32 +35,39 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 
     void LoadCities()
     {
-      string country = GUIPropertyManager.GetProperty("#WizardCountry");
-      listCities.Clear();
-      XmlDocument doc = new XmlDocument();
-      doc = new XmlDocument();
-      doc.Load("http://mediaportal.sourceforge.net/tvsetup/setup.xml");
-      XmlNodeList countries = doc.DocumentElement.SelectNodes("/mediaportal/country");
-      foreach (XmlNode nodeCountry in countries)
-      {
-        XmlNode nodeCountryName = nodeCountry.Attributes.GetNamedItem("name");
-        if (country == nodeCountryName.Value)
-        {
-          XmlNodeList cities = nodeCountry.SelectNodes("city");
-          foreach (XmlNode nodeCity in cities)
-          {
-            XmlNode listCitiesName = nodeCity.Attributes.GetNamedItem("name");
-            XmlNode urlName = nodeCity.SelectSingleNode("analog");
+        string country = GUIPropertyManager.GetProperty("#WizardCountry");
+        bool internetAccess = bool.Parse(GUIPropertyManager.GetProperty("#InternetAccess"));
 
-            GUIListItem item = new GUIListItem();
-            item.IsFolder = false;
-            item.Label = listCitiesName.Value;
-            item.Path = urlName.InnerText;
-            listCities.Add(item);
+      lblCountry.Label = country;
+
+      if (internetAccess)
+      {
+          listCities.Clear();
+          XmlDocument doc = new XmlDocument();
+          doc = new XmlDocument();
+          doc.Load("http://mediaportal.sourceforge.net/tvsetup/setup.xml");
+          XmlNodeList countries = doc.DocumentElement.SelectNodes("/mediaportal/country");
+          foreach (XmlNode nodeCountry in countries)
+          {
+              XmlNode nodeCountryName = nodeCountry.Attributes.GetNamedItem("name");
+              if (country == nodeCountryName.Value)
+              {
+                  XmlNodeList cities = nodeCountry.SelectNodes("city");
+                  foreach (XmlNode nodeCity in cities)
+                  {
+                      XmlNode listCitiesName = nodeCity.Attributes.GetNamedItem("name");
+                      XmlNode urlName = nodeCity.SelectSingleNode("analog");
+
+                      GUIListItem item = new GUIListItem();
+                      item.IsFolder = false;
+                      item.Label = listCitiesName.Value;
+                      item.Path = urlName.InnerText;
+                      listCities.Add(item);
+                  }
+              }
           }
-        }
+          listCities.Sort(this);
       }
-      listCities.Sort(this);
     }
     protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
     {
@@ -68,9 +78,9 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
         GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_ANALOG_IMPORTED);
         return;
       }
-      if (control == btnManual)
+      if (control.GetID == 23) //btnManual)  ??
       {
-        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_ANALOG_MANUAL_TUNE);
+          GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_ANALOG_TUNE); //MANUAL_TUNE);
       }
       base.OnClicked(controlId, control, actionType);
     }

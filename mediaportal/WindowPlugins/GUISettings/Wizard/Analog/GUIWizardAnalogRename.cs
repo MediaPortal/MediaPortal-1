@@ -35,22 +35,22 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 		protected override void OnPageLoad()
 		{
 			base.OnPageLoad ();
-			if(listChannelsFound.Count == 0)
-			{					
-				OnNextPage();		// no channels found skip renaming
-			}
-			else
-			{
-				UpdateList();
-				int card = Int32.Parse( GUIPropertyManager.GetProperty("#WizardCard"));
-				if (card >=0 && card < Recorder.Count)
-				{
-					captureCard =Recorder.Get(card);
-					TVChannel chan =(TVChannel )GUIWizardAnalogTune.TVChannelsFound[0];
-					captureCard.View=true;
-					captureCard.Tune(chan);
-				}
-			}
+
+		
+		    UpdateList();
+		    int card = Int32.Parse( GUIPropertyManager.GetProperty("#WizardCard"));
+		    if (card >=0 && card < Recorder.Count)
+		    {
+			    captureCard =Recorder.Get(card);
+			    TVChannel chan =(TVChannel )GUIWizardAnalogTune.TVChannelsFound[0];
+			    captureCard.View=true;
+			    captureCard.Tune(chan);
+		    }
+
+            if (listChannelsFound.Count == 0)
+            {
+                OnNextPage();		// no channels found skip renaming
+            }
 		}
 		protected override void OnPageDestroy(int newWindowId)
 		{

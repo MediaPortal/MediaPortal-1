@@ -20,6 +20,8 @@
  */
 
 using System;
+using System.IO;
+using System.Globalization;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
@@ -34,6 +36,8 @@ namespace MediaPortal.GUI.Library
 	/// </summary>
 	public class GUILocalizeStrings
 	{
+        const string LanguageDirectory = @"language\";
+        private static string[] m_Languages = null;
 
     static System.Collections.Generic.Dictionary<int, string> m_mapStrings = new System.Collections.Generic.Dictionary<int, string>();
 
@@ -209,5 +213,85 @@ namespace MediaPortal.GUI.Library
 		{
 			m_mapStrings.Clear();
 		}
+
+        public static string LocalSupported()
+        {
+            if (m_Languages == null)
+            {
+                LoadLanguages();
+            }
+
+            int numb = LanguageNumb(CultureInfo.CurrentCulture.EnglishName);
+
+            if (numb == -1 && CultureInfo.CurrentCulture.Parent.EnglishName != null)
+            {
+                numb = LanguageNumb(CultureInfo.CurrentCulture.Parent.EnglishName);
+            }
+
+            if (numb >= 0)
+                return m_Languages[numb];
+            else
+                return "English";
+
+        }
+
+        private static int LanguageNumb(string Language)
+        {
+
+            for (int i = 0; i < m_Languages.Length; i++)
+            {
+                if (m_Languages[i].ToLower() == Language.ToLower())
+                    return i;
+            }
+
+            return -1;
+        }
+
+        public static string[] SupportedLanguages()
+        {
+            if (m_Languages == null)
+            {
+                //// Get system language
+                //string strLongLanguage = CultureInfo.CurrentCulture.EnglishName;
+                //int iTrimIndex = strLongLanguage.IndexOf(" ", 0, strLongLanguage.Length);
+                //string strShortLanguage = strLongLanguage.Substring(0, iTrimIndex);
+                //bool bExactLanguageFound = false;
+                LoadLanguages();
+            }
+
+            return m_Languages;
+        }
+
+        private static void LoadLanguages()
+        {
+            if (Directory.Exists(LanguageDirectory))
+            {
+                string[] folders = Directory.GetDirectories(LanguageDirectory, "*.*");
+
+                ArrayList tempList = new ArrayList();
+
+                foreach (string folder in folders)
+                {
+                    string fileName = folder.Substring(@"language\".Length);
+
+                    //
+                    // Exclude cvs folder
+                    //
+                    if (fileName.ToLower() != "cvs")
+                    {
+                        if (fileName.Length > 0)
+                        {
+                            fileName = fileName.Substring(0, 1).ToUpper() + fileName.Substring(1);
+                            tempList.Add(fileName);
+                        }
+                    }
+                }
+                
+                m_Languages = new string[tempList.Count];
+
+                for(int i=0; i < tempList.Count; i++)
+                    m_Languages[i] = (string) tempList[i];
+            }
+        }
 	}
 }

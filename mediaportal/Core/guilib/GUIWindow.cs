@@ -218,6 +218,8 @@ namespace MediaPortal.GUI.Library
      ,
       WINDOW_WIZARD_EPG_SELECT = 635
      ,
+      WINDOW_WIZARD_GENERAL = 636
+     ,
       WINDOW_WIZARD_FINISHED = 699
      ,
       WINDOW_SETTINGS_TV = 700

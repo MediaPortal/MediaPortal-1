@@ -35,20 +35,19 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 		protected override void OnPageLoad()
 		{
 			base.OnPageLoad ();
-			if(listChannelsFound.Count == 0)
+
+		    UpdateList();
+		    int card = Int32.Parse( GUIPropertyManager.GetProperty("#WizardCard"));
+		    if (card >=0 && card < Recorder.Count)
+		    {
+			    captureCard =Recorder.Get(card);
+			    RadioStation chan =(RadioStation )GUIWizardAnalogTuneRadio.RadioStationsFound[0];
+			    captureCard.StartRadio(chan);
+		    }
+
+            if(listChannelsFound.Count == 0)
 			{					
 				OnNextPage();		// no channels found skip renaming
-			}
-			else
-			{
-				UpdateList();
-				int card = Int32.Parse( GUIPropertyManager.GetProperty("#WizardCard"));
-				if (card >=0 && card < Recorder.Count)
-				{
-					captureCard =Recorder.Get(card);
-					RadioStation chan =(RadioStation )GUIWizardAnalogTuneRadio.RadioStationsFound[0];
-					captureCard.StartRadio(chan);
-				}
 			}
 		}
 		protected override void OnPageDestroy(int newWindowId)

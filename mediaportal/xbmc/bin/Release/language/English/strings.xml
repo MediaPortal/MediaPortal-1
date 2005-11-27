@@ -3826,11 +3826,12 @@
 <string><id>200008</id><value>Setup - Remote control</value></string>
 <string><id>200009</id><value>Next&gt;</value></string>
 <string><id>200010</id><value>MediaPortal turns your PC in a very advanced Multi-Media Center / HTPC.</value></string>
-<string><id>200011</id><value>With MediaPortal you can enjoy your favorite music, radio</value></string>
-<string><id>200013</id><value>It allows you to listen to your favorite music &amp; radio, watch your video's and DVD's</value></string>
-<string><id>200014</id><value>photos, videos and view/record live TV and much more.</value></string>
-<string><id>200015</id><value>This wizard will help you to setup Mediaportal fast and easy. Please follow the steps through this </value></string>
-<string><id>200016</id><value>Press the Next button to begin</value></string>
+<string><id>200011</id><value>With MediaPortal you can enjoy listening to your favorite music, radio, viewing your digital photos,</value></string>
+<string><id>200012</id><value>watching Videos, DVDs and live TV and much more.</value></string>
+<string><id>200013</id><value>This wizard will help you to setup Mediaportal quickly and easily. Please follow all the steps, </value></string>
+<string><id>200014</id><value>and start by setting your language and location below:</value></string>
+<string><id>200015</id><value>Now press the Next button to begin</value></string>
+
 <string><id>200017</id><value>Welcome to MediaPortal. </value></string>
 <string><id>200018</id><value>Congratulations. Mediaportal is now setup and ready to use</value></string>
 <string><id>200019</id><value>Press the Finish button to close this wizard</value></string>
@@ -3839,6 +3840,22 @@
 <string><id>200022</id><value>MediaPortal has found the following tv-cards:</value></string>
 <string><id>200023</id><value>Press the Next button to configure these cards</value></string>
 <string><id>200024</id><value>TV Setup</value></string>
+
+<string><id>200025</id><value>Language</value></string>
+<string><id>200026</id><value>Country</value></string>
+
+<string><id>200027</id><value>Setup - General</value></string>
+<string><id>200028</id><value>Does this PC have Internet access?</value></string>
+<string><id>200029</id><value>Start Media Portal in full Screen mode?</value></string>
+<string><id>200030</id><value>Automatically start Media Portal when this PC starts?</value></string>
+<string><id>200031</id><value>Yes</value></string>
+<string><id>200032</id><value>No</value></string>
+
+<string><id>200033</id><value>TV Setup - Analog TV</value></string>
+<string><id>200034</id><value>Please select your city from the following list.</value></string>
+<string><id>200035</id><value>Note if your city is not listed then you will need to manual tune.</value></string>
+
+
 
 <!-- Web Browser Strings -->
 <string><id>4000</id><value>Web Browser</value></string>
