@@ -21,6 +21,7 @@
 using System;
 using System.ComponentModel;
 using System.Collections;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.Reflection;
@@ -58,7 +59,9 @@ namespace MediaPortal.GUI.Library
 					return;
 				Log.Write("  Loading references from {0}", referenceFile);
 				m_referenceNodesByControlType = new Hashtable();
-				XmlDocument doc = new XmlDocument();
+                _cachedStyleNodes = new Dictionary<string, XmlNode>();
+
+                XmlDocument doc = new XmlDocument();
 
 				doc.PreserveWhitespace = true;
 				doc.Load(referenceFile);
@@ -74,7 +77,16 @@ namespace MediaPortal.GUI.Library
 					if (GetControlType(controlNode) != null)
 						m_referenceNodesByControlType[GetControlType(controlNode)] = controlNode;
 				}
-			}
+
+                // cache the styles
+                foreach (XmlNode node in doc.DocumentElement.SelectNodes("/controls/style"))
+                {
+                    XmlAttribute styleNameAttribute = node.Attributes["Name"];
+
+                    if (styleNameAttribute != null)
+                        _cachedStyleNodes[styleNameAttribute.Value] = node;
+                }
+            }
 			catch (Exception ex)
 			{
 				Log.Write("exception loading references {0} err:{1} stack:{2}",
@@ -89,6 +101,7 @@ namespace MediaPortal.GUI.Library
 		public static void ClearReferences()
 		{
 			m_referenceNodesByControlType = null;
+            _cachedStyleNodes = null;
 		}
 
 		private static void ReadSkinSizeFromReferenceFile(XmlDocument doc)
@@ -275,8 +288,21 @@ namespace MediaPortal.GUI.Library
 				XmlNode referenceNode = 
 					(XmlNode) m_referenceNodesByControlType[typeOfControlToCreate];
 
-				if (referenceNode != null)
+                if (referenceNode != null)
 					UpdateControlWithXmlData(control,typeOfControlToCreate, referenceNode, defines);
+
+                XmlAttribute styleAttribute = pControlNode.Attributes["Style"];
+
+                if (styleAttribute != null)
+                {
+                    XmlNode styleNode = _cachedStyleNodes[styleAttribute.Value];
+
+                    if (styleNode != null)
+                    {
+                        Log.Write("Styling");
+                        UpdateControlWithXmlData(control, typeOfControlToCreate, styleNode, defines);
+                    }
+                }
 
 				UpdateControlWithXmlData(control,typeOfControlToCreate, pControlNode, defines);
 				
@@ -623,6 +649,9 @@ namespace MediaPortal.GUI.Library
 		/// A hashtable which contains the reflection results for every control.
 		/// </summary>
 		static Hashtable m_reflectionCacheByControlType = new Hashtable(20);
+
+        // same as above but for caching style nodes
+        static Dictionary<string, XmlNode> _cachedStyleNodes;
 
 		#endregion Fields
 	}
