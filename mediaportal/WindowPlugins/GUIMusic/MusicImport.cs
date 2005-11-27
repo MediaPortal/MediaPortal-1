@@ -247,8 +247,8 @@ namespace MediaPortal.MusicImport
           mp3TargetDir = string.Format("{0}-{1}", mp3TargetDir, i);
 
         }
-        trackInfo.TargetDir = mp3TargetDir;
       }
+      trackInfo.TargetDir = mp3TargetDir;
       trackInfo.TempFileName = string.Format("temp\\{0:00} " + FilterInvalidChars(trackInfo.MusicTag.Title) + ".mp3", trackInfo.MusicTag.Track);
       trackInfo.TargetFileName = string.Format(mp3TargetDir + "\\{0:00} " + FilterInvalidChars(trackInfo.MusicTag.Title) + ".mp3", trackInfo.MusicTag.Track);
 
