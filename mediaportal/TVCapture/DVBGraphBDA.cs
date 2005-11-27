@@ -4302,7 +4302,9 @@ namespace MediaPortal.TV.Recording
 
               if (myLocator == null)
               {
-                Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA:FAILED tuning to frequency:{0} KHz ONID:{1} TSID:{2}, SID:{3}. cannot get locator", ch.Frequency, ch.NetworkID, ch.TransportStreamID, ch.ProgramNumber);
+                Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA:FAILED tuning to frequency:{0} KHz ONID:{1} TSID:{2}, SID:{3}. cannot get locator {0} {1}", 
+                  ch.Frequency, ch.NetworkID, ch.TransportStreamID, ch.ProgramNumber, myTuneRequest.Locator.ToString(),
+                  myTuningSpace.DefaultLocator.ToString());
                 return;
               }
               //set the properties on the new tuning request
