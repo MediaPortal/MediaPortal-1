@@ -12,7 +12,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
   public class GUIWizardAnalogCity : GUIWindow, IComparer<GUIListItem>
   {
     [SkinControlAttribute(23)]
-    protected GUIListControl btnManual = null;
+      protected GUIButtonControl btnManual = null;
     [SkinControlAttribute(26)]
     protected GUILabelControl lblCountry = null;
     [SkinControlAttribute(24)]
@@ -78,7 +78,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
         GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_ANALOG_IMPORTED);
         return;
       }
-      if (control.GetID == 23) //btnManual)  ??
+      if (control == btnManual)
       {
           GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_ANALOG_TUNE); //MANUAL_TUNE);
       }
