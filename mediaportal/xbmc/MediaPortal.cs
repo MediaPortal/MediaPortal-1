@@ -1174,6 +1174,7 @@ public class MediaPortalApp : D3DApp, IRender
               dlg.AddLocalizedString(1030);//shutdown
               dlg.AddLocalizedString(1031);//Restart
               dlg.AddLocalizedString(1032);//Sleep
+              dlg.AddLocalizedString(1049);//Sleep
               dlg.DoModal(GUIWindowManager.ActiveWindow);
               RestartOptions option = RestartOptions.Suspend;
               if (dlg.SelectedId < 0) return;
@@ -1188,7 +1189,10 @@ public class MediaPortalApp : D3DApp, IRender
                 case 1032:
                   option = RestartOptions.Suspend;
                   break;
-              }
+                case 1049:
+                  option = RestartOptions.Hibernate;
+                  break;
+          }
               if (Recorder.IsAnyCardRecording())
               {
                 GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ASKYESNO, 0, 0, 0, 0, 0, 0);
