@@ -5374,8 +5374,8 @@
 
 <!--  Cards added after 0.1.3.0  -->
 
-  <capturecard commercialname="Hauppauge HVR-1300 Analogue" capturename="Hauppauge WinTV 88x Video Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_96000070&amp;rev_05">
-    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"></capabilities>
+  <capturecard commercialname="Hauppauge HVR-1300 Analogue" capturename="Hauppauge WinTV 88x Video Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_96000070&amp;rev_05">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"></capabilities>
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
       <filters>
@@ -6455,14 +6455,30 @@
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
-        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"	checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="DTV-DVB USB Hybrid Digital"			checkdevice="true"></filter>
-        <filter cat="capture"     name="DTV-DVB M9207 Digital Capture"			checkdevice="true"></filter>
+        <filter cat="networkprovider"	name="Microsoft DVBT Network Provider"	checkdevice="false"></filter>
+        <filter cat="tunerdevice"		name="DTV-DVB USB Hybrid Digital"		checkdevice="true"></filter>
+        <filter cat="capture"			name="DTV-DVB M9207 Digital Capture"	checkdevice="true"></filter>
       </filters>
       <connections>
-	<connection sourcefilter="networkprovider"	sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
-	<connection sourcefilter="tunerdevice"	sourcepin="0" sinkfilter="capture" sinkpin="0"></connection>
+		<connection sourcefilter="networkprovider"	sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"		sourcepin="0" sinkfilter="capture"		sinkpin="0"></connection>
       </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="TechnoTrend Budget T-1500" capturename="TechnoTrend BDA/DVB Capture" devid="ven_1131&amp;dev_7146&amp;subsys_101213c2&amp;rev_01">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+		<filter cat="networkprovider"	name="Microsoft DVBT Network Provider"	checkdevice="false"></filter>
+		<filter cat="tunerdevice"		name="TechnoTrend BDA/DVB-T Tuner"		checkdevice="true"></filter>
+		<filter cat="capture"			name="TechnoTrend BDA/DVB Capture"		checkdevice="true"></filter>
+	  </filters>
+	  <connections>
+	    <connection sourcefilter="networkprovider"	sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"></connection>
+	    <connection sourcefilter="tunerdevice"		sourcepin="0" sinkfilter="capture"		sinkpin="0"></connection>
+	  </connections>
     </tv>
   </capturecard>
 </capturecards>
