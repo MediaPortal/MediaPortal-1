@@ -32,7 +32,9 @@ namespace MediaPortal.Configuration.Sections
 {
 	public class USBUIRT : MediaPortal.Configuration.SectionSettings
 	{
-		private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
+        private const string USBUIRT_CONFIGVER = "1.13";
+        
+        private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
 		private MediaPortal.UserInterface.Controls.MPCheckBox inputCheckBox;
 		private MediaPortal.UserInterface.Controls.MPCheckBox outputCheckBox;
 		private MediaPortal.UserInterface.Controls.MPCheckBox digitCheckBox;
@@ -54,6 +56,8 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.TextBox testSendIrTxtBox;
 		private System.Windows.Forms.Button testSendIrBtn;
         private GroupBox groupBox3;
+        private Label lblUSBUIRTConfigVersion;
+        private Label label7;
 		private System.ComponentModel.IContainer components = null;
 
         #region Properties
@@ -79,7 +83,8 @@ namespace MediaPortal.Configuration.Sections
 				return;
 
 			lblUSBUIRTVersion.Text=MediaPortal.IR.USBUIRT.Instance.GetVersions();
-		}
+            lblUSBUIRTConfigVersion.Text = USBUIRT_CONFIGVER;
+        }
 
 		/// <summary>
 		/// Clean up any resources being used.
@@ -178,6 +183,8 @@ namespace MediaPortal.Configuration.Sections
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.label2 = new System.Windows.Forms.Label();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.lblUSBUIRTConfigVersion = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.SettingsPnl.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.interCommandDelayNumUpDn)).BeginInit();
@@ -194,7 +201,7 @@ namespace MediaPortal.Configuration.Sections
             this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(472, 219);
+            this.groupBox1.Size = new System.Drawing.Size(472, 209);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             // 
@@ -260,9 +267,10 @@ namespace MediaPortal.Configuration.Sections
             // 
             // label6
             // 
-            this.label6.Location = new System.Drawing.Point(24, 106);
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(24, 108);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(121, 20);
+            this.label6.Size = new System.Drawing.Size(121, 13);
             this.label6.TabIndex = 11;
             this.label6.Text = "Inter-command delay ms";
             this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -291,9 +299,10 @@ namespace MediaPortal.Configuration.Sections
             // 
             // label5
             // 
-            this.label5.Location = new System.Drawing.Point(24, 82);
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(24, 84);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(117, 20);
+            this.label5.Size = new System.Drawing.Size(117, 13);
             this.label5.TabIndex = 9;
             this.label5.Text = "Command repeat count";
             this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -366,7 +375,7 @@ namespace MediaPortal.Configuration.Sections
             // 
             this.lblUSBUIRTVersion.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblUSBUIRTVersion.Location = new System.Drawing.Point(200, 29);
+            this.lblUSBUIRTVersion.Location = new System.Drawing.Point(200, 24);
             this.lblUSBUIRTVersion.Name = "lblUSBUIRTVersion";
             this.lblUSBUIRTVersion.Size = new System.Drawing.Size(256, 32);
             this.lblUSBUIRTVersion.TabIndex = 6;
@@ -374,11 +383,11 @@ namespace MediaPortal.Configuration.Sections
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(16, 29);
+            this.label1.Location = new System.Drawing.Point(16, 24);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(144, 16);
             this.label1.TabIndex = 5;
-            this.label1.Text = "USBUIRT version detected:";
+            this.label1.Text = "USBUIRT driver version:";
             // 
             // label4
             // 
@@ -432,15 +441,38 @@ namespace MediaPortal.Configuration.Sections
             // 
             // groupBox3
             // 
+            this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox3.Controls.Add(this.lblUSBUIRTConfigVersion);
+            this.groupBox3.Controls.Add(this.label7);
             this.groupBox3.Controls.Add(this.lblUSBUIRTVersion);
             this.groupBox3.Controls.Add(this.label1);
             this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.groupBox3.Location = new System.Drawing.Point(0, 223);
+            this.groupBox3.Location = new System.Drawing.Point(0, 213);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(472, 73);
+            this.groupBox3.Size = new System.Drawing.Size(472, 83);
             this.groupBox3.TabIndex = 2;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Status";
+            // 
+            // lblUSBUIRTConfigVersion
+            // 
+            this.lblUSBUIRTConfigVersion.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblUSBUIRTConfigVersion.Location = new System.Drawing.Point(200, 60);
+            this.lblUSBUIRTConfigVersion.Name = "lblUSBUIRTConfigVersion";
+            this.lblUSBUIRTConfigVersion.Size = new System.Drawing.Size(256, 13);
+            this.lblUSBUIRTConfigVersion.TabIndex = 8;
+            this.lblUSBUIRTConfigVersion.Text = "Version";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(16, 60);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(159, 13);
+            this.label7.TabIndex = 7;
+            this.label7.Text = "USBUIRT configuration version:";
             // 
             // USBUIRT
             // 
@@ -457,6 +489,7 @@ namespace MediaPortal.Configuration.Sections
             ((System.ComponentModel.ISupportInitialize)(this.commandRepeatNumUpDn)).EndInit();
             this.groupBox2.ResumeLayout(false);
             this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
             this.ResumeLayout(false);
 
 		}

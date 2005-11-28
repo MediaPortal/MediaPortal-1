@@ -620,14 +620,18 @@ namespace MediaPortal.TV.Recording
             // to make sure that we found the right filter...
             if (fd.CheckDevice)
             {
+                /* FlipGer: Not necessary since captureDeviceDeviceName has to be used here
+                 * with this code always the first filter will be taken
+                 * not the one which is equal to the one for the card
               filter = al[0] as Filter;
               string filterMoniker = filter.MonikerString;
               int posTmp = filterMoniker.LastIndexOf("#");
-              if (posTmp >= 0) filterMoniker = filterMoniker.Substring(0, posTmp);
+              if (posTmp >= 0) filterMoniker = filterMoniker.Substring(0, posTmp);*/
 
               if (!filterFound)
               {
-                string moniker = FindUniqueFilter(filterMoniker, Instance);
+                  //string moniker = FindUniqueFilter(filterMoniker, Instance); <- This is wrong
+                string moniker = FindUniqueFilter(captureDeviceDeviceName, Instance); // <- This is right
                 for (int filterInst = 0; filterInst < al.Count; ++filterInst)
                 {
                   filter = al[filterInst] as Filter;

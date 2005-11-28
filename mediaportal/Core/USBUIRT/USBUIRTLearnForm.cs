@@ -26,21 +26,25 @@ namespace MediaPortal.IR
 								Action.ActionType.ACTION_SELECT_ITEM,            
 								Action.ActionType.ACTION_PREVIOUS_MENU,          
 								Action.ActionType.ACTION_SHOW_INFO,
+
+								Action.ActionType.ACTION_PLAY,
 								Action.ActionType.ACTION_PAUSE,
 								Action.ActionType.ACTION_STOP,
+								Action.ActionType.ACTION_RECORD,
 								Action.ActionType.ACTION_FORWARD,
 								Action.ActionType.ACTION_REWIND,
+
 								Action.ActionType.ACTION_SHOW_GUI,
 								Action.ActionType.ACTION_QUEUE_ITEM,
 								Action.ActionType.ACTION_EXIT,
 
 								Action.ActionType.ACTION_SHUTDOWN,
+								Action.ActionType.ACTION_REBOOT,
+
 								Action.ActionType.ACTION_ASPECT_RATIO,
-								Action.ActionType.ACTION_PLAY,
 								Action.ActionType.ACTION_EJECTCD,
 								Action.ActionType.ACTION_PREV_CHANNEL,
 								Action.ActionType.ACTION_NEXT_CHANNEL,
-								Action.ActionType.ACTION_RECORD,
 								Action.ActionType.ACTION_DVD_MENU,
 								Action.ActionType.ACTION_NEXT_CHAPTER,
 								Action.ActionType.ACTION_PREV_CHAPTER,
@@ -122,7 +126,6 @@ namespace MediaPortal.IR
 								Action.ActionType.ACTION_TVGUIDE_RESET,
 								Action.ActionType.ACTION_BACKGROUND_TOGGLE,
 								Action.ActionType.ACTION_TOGGLE_WINDOWED_FULSLCREEN,
-								Action.ActionType.ACTION_REBOOT,
 
 								USBUIRT.JumpToActionType.JUMP_TO_HOME,
 								USBUIRT.JumpToActionType.JUMP_TO_TV_GUIDE,
@@ -149,9 +152,9 @@ namespace MediaPortal.IR
 
         #region Controls
 
-        private System.Windows.Forms.Button internalCommandsButton;
+        private System.Windows.Forms.Button LearnEnabledMPCmdsBtn;
 		private System.Windows.Forms.CheckedListBox ActionsCheckList;
-		private System.Windows.Forms.Button LearnSelectedCommandBtn;
+		private System.Windows.Forms.Button LearnSingleMPCmdBtn;
 		private System.Windows.Forms.Panel MPCommandsPnl;
 		private System.Windows.Forms.Button CancelLearnBtn;
 		private System.Windows.Forms.ProgressBar LearnPrgBar;
@@ -161,14 +164,25 @@ namespace MediaPortal.IR
 		private System.Windows.Forms.Label statusLabel;
 		private System.Windows.Forms.Button SkipCodeBtn;
 		private System.Windows.Forms.Panel LearnStatusPnl;
-		private System.Windows.Forms.Button CancelBtn;
+		private System.Windows.Forms.Button CloseMPCmdsLearnFormBtn;
 		private System.Windows.Forms.GroupBox groupBox2;
-		private System.Windows.Forms.Label Code1ValueLbl;
-		private System.Windows.Forms.Label Code2ValueLbl;
+		private System.Windows.Forms.Label MPCode1ValueLbl;
+		private System.Windows.Forms.Label MPCode2ValueLbl;
 		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.Button ClearSelectedLearnedCommandsBtn;
-		private System.Windows.Forms.Button ClearAllLearnedCommandsBtn;
+		private System.Windows.Forms.Button ClearSingleLearnedMPCmdBtn;
+		private System.Windows.Forms.Button ClearAllLearnedMPCmdsBtn;
 		private System.Windows.Forms.StatusBar statusBar1;
+        private Panel STBComandsPnl;
+        private Label label2;
+        private GroupBox groupBox1;
+        private Label STBCode1ValueLbl;
+        private Label STBCode2ValueLbl;
+        private Button LearnEnabledSTBCmdsBtn;
+        private CheckedListBox StbCommandsChkLst;
+        private Button LearnSingleSTBCmdBtn;
+        private Button CloseSTBCmdsLearnFormBtn;
+        private Button ClearSingleLearnedSTBCmdBtn;
+        private Button ClearAllLearnedSTBCmdsBtn;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -176,6 +190,7 @@ namespace MediaPortal.IR
 
         #endregion
 
+        #region ctor and disposal
         public USBUIRTLearnForm(LearnType learnType)
 		{
 			InitializeComponent();
@@ -184,19 +199,16 @@ namespace MediaPortal.IR
 
 			if(learnType == LearnType.MediaPortalCommands)
 			{
-				MPCommandsPnl.BringToFront();
 				CreateButtonNames();
 				this.ActionsCheckList.Items.AddRange(buttonNames.ToArray());
-
 				MPCommandsPnl.BringToFront();
 				this.Text = "Media Portal Control Commands";
 			}
 
 			else
 			{
-				LearnStatusPnl.BringToFront();
-				this.Text = "Set Top Box Control Commands";
-				DoSetTopBoxCommandLearn();
+                STBComandsPnl.BringToFront();
+                this.Text = "Set Top Box Control Commands";
 			}
 		}
 
@@ -213,26 +225,27 @@ namespace MediaPortal.IR
 				}
 			}
 			base.Dispose( disposing );
-		}
+        }
+        #endregion
 
-		#region Windows Form Designer generated code
-		/// <summary>
+        #region Windows Form Designer generated code
+        /// <summary>
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
 		private void InitializeComponent()
 		{
-            this.internalCommandsButton = new System.Windows.Forms.Button();
+            this.LearnEnabledMPCmdsBtn = new System.Windows.Forms.Button();
             this.ActionsCheckList = new System.Windows.Forms.CheckedListBox();
-            this.LearnSelectedCommandBtn = new System.Windows.Forms.Button();
-            this.CancelBtn = new System.Windows.Forms.Button();
+            this.LearnSingleMPCmdBtn = new System.Windows.Forms.Button();
+            this.CloseMPCmdsLearnFormBtn = new System.Windows.Forms.Button();
             this.MPCommandsPnl = new System.Windows.Forms.Panel();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.Code1ValueLbl = new System.Windows.Forms.Label();
-            this.Code2ValueLbl = new System.Windows.Forms.Label();
-            this.ClearSelectedLearnedCommandsBtn = new System.Windows.Forms.Button();
-            this.ClearAllLearnedCommandsBtn = new System.Windows.Forms.Button();
+            this.MPCode1ValueLbl = new System.Windows.Forms.Label();
+            this.MPCode2ValueLbl = new System.Windows.Forms.Label();
+            this.ClearSingleLearnedMPCmdBtn = new System.Windows.Forms.Button();
+            this.ClearAllLearnedMPCmdsBtn = new System.Windows.Forms.Button();
             this.CancelLearnBtn = new System.Windows.Forms.Button();
             this.LearnPrgBar = new System.Windows.Forms.ProgressBar();
             this.LearnStatusLbl = new System.Windows.Forms.Label();
@@ -242,134 +255,169 @@ namespace MediaPortal.IR
             this.SkipCodeBtn = new System.Windows.Forms.Button();
             this.LearnStatusPnl = new System.Windows.Forms.Panel();
             this.statusBar1 = new System.Windows.Forms.StatusBar();
+            this.STBComandsPnl = new System.Windows.Forms.Panel();
+            this.label2 = new System.Windows.Forms.Label();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.STBCode1ValueLbl = new System.Windows.Forms.Label();
+            this.STBCode2ValueLbl = new System.Windows.Forms.Label();
+            this.LearnEnabledSTBCmdsBtn = new System.Windows.Forms.Button();
+            this.StbCommandsChkLst = new System.Windows.Forms.CheckedListBox();
+            this.LearnSingleSTBCmdBtn = new System.Windows.Forms.Button();
+            this.CloseSTBCmdsLearnFormBtn = new System.Windows.Forms.Button();
+            this.ClearSingleLearnedSTBCmdBtn = new System.Windows.Forms.Button();
+            this.ClearAllLearnedSTBCmdsBtn = new System.Windows.Forms.Button();
             this.MPCommandsPnl.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.panel2.SuspendLayout();
             this.LearnStatusPnl.SuspendLayout();
+            this.STBComandsPnl.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
-            // internalCommandsButton
+            // LearnEnabledMPCmdsBtn
             // 
-            this.internalCommandsButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.internalCommandsButton.Location = new System.Drawing.Point(302, 24);
-            this.internalCommandsButton.Name = "internalCommandsButton";
-            this.internalCommandsButton.Size = new System.Drawing.Size(140, 23);
-            this.internalCommandsButton.TabIndex = 19;
-            this.internalCommandsButton.Text = "Learn Enabled Commands";
-            this.internalCommandsButton.Click += new System.EventHandler(this.internalCommandsButton_Click);
+            this.LearnEnabledMPCmdsBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.LearnEnabledMPCmdsBtn.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.LearnEnabledMPCmdsBtn.Location = new System.Drawing.Point(302, 24);
+            this.LearnEnabledMPCmdsBtn.Name = "LearnEnabledMPCmdsBtn";
+            this.LearnEnabledMPCmdsBtn.Size = new System.Drawing.Size(140, 23);
+            this.LearnEnabledMPCmdsBtn.TabIndex = 2;
+            this.LearnEnabledMPCmdsBtn.Text = "Learn Enabled Commands";
+            this.LearnEnabledMPCmdsBtn.Click += new System.EventHandler(this.LearnEnabledMPCmdsBtn_Click);
             // 
             // ActionsCheckList
             // 
+            this.ActionsCheckList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.ActionsCheckList.Location = new System.Drawing.Point(14, 24);
             this.ActionsCheckList.Name = "ActionsCheckList";
             this.ActionsCheckList.Size = new System.Drawing.Size(270, 169);
-            this.ActionsCheckList.TabIndex = 0;
+            this.ActionsCheckList.TabIndex = 1;
             this.ActionsCheckList.SelectedIndexChanged += new System.EventHandler(this.ActionsCheckList_SelectedIndexChanged);
             // 
-            // LearnSelectedCommandBtn
+            // LearnSingleMPCmdBtn
             // 
-            this.LearnSelectedCommandBtn.Enabled = false;
-            this.LearnSelectedCommandBtn.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.LearnSelectedCommandBtn.Location = new System.Drawing.Point(302, 51);
-            this.LearnSelectedCommandBtn.Name = "LearnSelectedCommandBtn";
-            this.LearnSelectedCommandBtn.Size = new System.Drawing.Size(140, 23);
-            this.LearnSelectedCommandBtn.TabIndex = 19;
-            this.LearnSelectedCommandBtn.Text = "Learn Selected Command";
-            this.LearnSelectedCommandBtn.Click += new System.EventHandler(this.LearnSelectedCommandBtn_Click);
+            this.LearnSingleMPCmdBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.LearnSingleMPCmdBtn.Enabled = false;
+            this.LearnSingleMPCmdBtn.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.LearnSingleMPCmdBtn.Location = new System.Drawing.Point(302, 51);
+            this.LearnSingleMPCmdBtn.Name = "LearnSingleMPCmdBtn";
+            this.LearnSingleMPCmdBtn.Size = new System.Drawing.Size(140, 23);
+            this.LearnSingleMPCmdBtn.TabIndex = 3;
+            this.LearnSingleMPCmdBtn.Text = "Learn Selected Command";
+            this.LearnSingleMPCmdBtn.Click += new System.EventHandler(this.LearnSingleMPCmdBtn_Click);
             // 
-            // CancelBtn
+            // CloseMPCmdsLearnFormBtn
             // 
-            this.CancelBtn.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.CancelBtn.Location = new System.Drawing.Point(302, 240);
-            this.CancelBtn.Name = "CancelBtn";
-            this.CancelBtn.Size = new System.Drawing.Size(140, 23);
-            this.CancelBtn.TabIndex = 1;
-            this.CancelBtn.Text = "Close";
-            this.CancelBtn.Click += new System.EventHandler(this.CancelBtn_Click);
+            this.CloseMPCmdsLearnFormBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.CloseMPCmdsLearnFormBtn.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.CloseMPCmdsLearnFormBtn.Location = new System.Drawing.Point(302, 170);
+            this.CloseMPCmdsLearnFormBtn.Name = "CloseMPCmdsLearnFormBtn";
+            this.CloseMPCmdsLearnFormBtn.Size = new System.Drawing.Size(140, 23);
+            this.CloseMPCmdsLearnFormBtn.TabIndex = 6;
+            this.CloseMPCmdsLearnFormBtn.Text = "Close";
+            this.CloseMPCmdsLearnFormBtn.Click += new System.EventHandler(this.CloseMPCmdsLearnFormBtn_Click);
             // 
             // MPCommandsPnl
             // 
+            this.MPCommandsPnl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.MPCommandsPnl.Controls.Add(this.label1);
             this.MPCommandsPnl.Controls.Add(this.groupBox2);
-            this.MPCommandsPnl.Controls.Add(this.internalCommandsButton);
+            this.MPCommandsPnl.Controls.Add(this.LearnEnabledMPCmdsBtn);
             this.MPCommandsPnl.Controls.Add(this.ActionsCheckList);
-            this.MPCommandsPnl.Controls.Add(this.LearnSelectedCommandBtn);
-            this.MPCommandsPnl.Controls.Add(this.CancelBtn);
-            this.MPCommandsPnl.Controls.Add(this.ClearSelectedLearnedCommandsBtn);
-            this.MPCommandsPnl.Controls.Add(this.ClearAllLearnedCommandsBtn);
-            this.MPCommandsPnl.Location = new System.Drawing.Point(2, 0);
+            this.MPCommandsPnl.Controls.Add(this.LearnSingleMPCmdBtn);
+            this.MPCommandsPnl.Controls.Add(this.CloseMPCmdsLearnFormBtn);
+            this.MPCommandsPnl.Controls.Add(this.ClearSingleLearnedMPCmdBtn);
+            this.MPCommandsPnl.Controls.Add(this.ClearAllLearnedMPCmdsBtn);
+            this.MPCommandsPnl.Location = new System.Drawing.Point(0, 0);
             this.MPCommandsPnl.Name = "MPCommandsPnl";
-            this.MPCommandsPnl.Size = new System.Drawing.Size(456, 276);
-            this.MPCommandsPnl.TabIndex = 20;
+            this.MPCommandsPnl.Size = new System.Drawing.Size(456, 281);
+            this.MPCommandsPnl.TabIndex = 0;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(14, 8);
+            this.label1.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(14, 6);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(104, 13);
-            this.label1.TabIndex = 25;
+            this.label1.Size = new System.Drawing.Size(123, 13);
+            this.label1.TabIndex = 0;
             this.label1.Text = "Media Portal Actions";
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.Code1ValueLbl);
-            this.groupBox2.Controls.Add(this.Code2ValueLbl);
+            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox2.Controls.Add(this.MPCode1ValueLbl);
+            this.groupBox2.Controls.Add(this.MPCode2ValueLbl);
             this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.groupBox2.Location = new System.Drawing.Point(14, 196);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(270, 68);
+            this.groupBox2.Size = new System.Drawing.Size(428, 79);
             this.groupBox2.TabIndex = 24;
             this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Learned IR Code(s)";
+            this.groupBox2.Text = "Learned Receive IR Code(s)";
             // 
-            // Code1ValueLbl
+            // MPCode1ValueLbl
             // 
-            this.Code1ValueLbl.Location = new System.Drawing.Point(16, 24);
-            this.Code1ValueLbl.Name = "Code1ValueLbl";
-            this.Code1ValueLbl.Size = new System.Drawing.Size(240, 16);
-            this.Code1ValueLbl.TabIndex = 22;
+            this.MPCode1ValueLbl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.MPCode1ValueLbl.Location = new System.Drawing.Point(15, 22);
+            this.MPCode1ValueLbl.Name = "MPCode1ValueLbl";
+            this.MPCode1ValueLbl.Size = new System.Drawing.Size(398, 21);
+            this.MPCode1ValueLbl.TabIndex = 0;
             // 
-            // Code2ValueLbl
+            // MPCode2ValueLbl
             // 
-            this.Code2ValueLbl.Location = new System.Drawing.Point(16, 40);
-            this.Code2ValueLbl.Name = "Code2ValueLbl";
-            this.Code2ValueLbl.Size = new System.Drawing.Size(240, 16);
-            this.Code2ValueLbl.TabIndex = 22;
+            this.MPCode2ValueLbl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.MPCode2ValueLbl.ForeColor = System.Drawing.Color.DarkBlue;
+            this.MPCode2ValueLbl.Location = new System.Drawing.Point(15, 43);
+            this.MPCode2ValueLbl.Name = "MPCode2ValueLbl";
+            this.MPCode2ValueLbl.Size = new System.Drawing.Size(398, 21);
+            this.MPCode2ValueLbl.TabIndex = 1;
             // 
-            // ClearSelectedLearnedCommandsBtn
+            // ClearSingleLearnedMPCmdBtn
             // 
-            this.ClearSelectedLearnedCommandsBtn.Enabled = false;
-            this.ClearSelectedLearnedCommandsBtn.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.ClearSelectedLearnedCommandsBtn.Location = new System.Drawing.Point(302, 124);
-            this.ClearSelectedLearnedCommandsBtn.Name = "ClearSelectedLearnedCommandsBtn";
-            this.ClearSelectedLearnedCommandsBtn.Size = new System.Drawing.Size(140, 23);
-            this.ClearSelectedLearnedCommandsBtn.TabIndex = 19;
-            this.ClearSelectedLearnedCommandsBtn.Text = "Clear Selected Learn";
-            this.ClearSelectedLearnedCommandsBtn.Click += new System.EventHandler(this.ClearSelectedLearnedCommandsBtn_Click);
+            this.ClearSingleLearnedMPCmdBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.ClearSingleLearnedMPCmdBtn.Enabled = false;
+            this.ClearSingleLearnedMPCmdBtn.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.ClearSingleLearnedMPCmdBtn.Location = new System.Drawing.Point(302, 124);
+            this.ClearSingleLearnedMPCmdBtn.Name = "ClearSingleLearnedMPCmdBtn";
+            this.ClearSingleLearnedMPCmdBtn.Size = new System.Drawing.Size(140, 23);
+            this.ClearSingleLearnedMPCmdBtn.TabIndex = 5;
+            this.ClearSingleLearnedMPCmdBtn.Text = "Clear Selected Learn";
+            this.ClearSingleLearnedMPCmdBtn.Click += new System.EventHandler(this.ClearSingleLearnedMPCmdBtn_Click);
             // 
-            // ClearAllLearnedCommandsBtn
+            // ClearAllLearnedMPCmdsBtn
             // 
-            this.ClearAllLearnedCommandsBtn.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.ClearAllLearnedCommandsBtn.Location = new System.Drawing.Point(302, 96);
-            this.ClearAllLearnedCommandsBtn.Name = "ClearAllLearnedCommandsBtn";
-            this.ClearAllLearnedCommandsBtn.Size = new System.Drawing.Size(140, 23);
-            this.ClearAllLearnedCommandsBtn.TabIndex = 19;
-            this.ClearAllLearnedCommandsBtn.Text = "Clear All Learned";
-            this.ClearAllLearnedCommandsBtn.Click += new System.EventHandler(this.ClearAllLearnedCommandsBtn_Click);
+            this.ClearAllLearnedMPCmdsBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.ClearAllLearnedMPCmdsBtn.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.ClearAllLearnedMPCmdsBtn.Location = new System.Drawing.Point(302, 96);
+            this.ClearAllLearnedMPCmdsBtn.Name = "ClearAllLearnedMPCmdsBtn";
+            this.ClearAllLearnedMPCmdsBtn.Size = new System.Drawing.Size(140, 23);
+            this.ClearAllLearnedMPCmdsBtn.TabIndex = 4;
+            this.ClearAllLearnedMPCmdsBtn.Text = "Clear All Learned";
+            this.ClearAllLearnedMPCmdsBtn.Click += new System.EventHandler(this.ClearAllLearnedMPCmdsBtn_Click);
             // 
             // CancelLearnBtn
             // 
+            this.CancelLearnBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.CancelLearnBtn.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.CancelLearnBtn.Location = new System.Drawing.Point(344, 244);
             this.CancelLearnBtn.Name = "CancelLearnBtn";
             this.CancelLearnBtn.Size = new System.Drawing.Size(88, 23);
-            this.CancelLearnBtn.TabIndex = 3;
+            this.CancelLearnBtn.TabIndex = 4;
             this.CancelLearnBtn.Text = "Cancel Learn";
             this.CancelLearnBtn.Click += new System.EventHandler(this.CancelLearnBtn_Click);
             // 
             // LearnPrgBar
             // 
+            this.LearnPrgBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.LearnPrgBar.Location = new System.Drawing.Point(24, 224);
             this.LearnPrgBar.Name = "LearnPrgBar";
             this.LearnPrgBar.Size = new System.Drawing.Size(408, 12);
@@ -381,11 +429,14 @@ namespace MediaPortal.IR
             this.LearnStatusLbl.Location = new System.Drawing.Point(24, 16);
             this.LearnStatusLbl.Name = "LearnStatusLbl";
             this.LearnStatusLbl.Size = new System.Drawing.Size(408, 16);
-            this.LearnStatusLbl.TabIndex = 1;
+            this.LearnStatusLbl.TabIndex = 0;
             this.LearnStatusLbl.Text = "Learn Status:";
             // 
             // panel2
             // 
+            this.panel2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.panel2.BackColor = System.Drawing.SystemColors.Window;
             this.panel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel2.Controls.Add(this.receivedIrLbl);
@@ -394,27 +445,32 @@ namespace MediaPortal.IR
             this.panel2.Name = "panel2";
             this.panel2.Padding = new System.Windows.Forms.Padding(20);
             this.panel2.Size = new System.Drawing.Size(408, 188);
-            this.panel2.TabIndex = 0;
+            this.panel2.TabIndex = 1;
             // 
             // receivedIrLbl
             // 
+            this.receivedIrLbl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.receivedIrLbl.ForeColor = System.Drawing.SystemColors.ControlDark;
             this.receivedIrLbl.Location = new System.Drawing.Point(20, 152);
             this.receivedIrLbl.Name = "receivedIrLbl";
             this.receivedIrLbl.Size = new System.Drawing.Size(366, 28);
-            this.receivedIrLbl.TabIndex = 5;
+            this.receivedIrLbl.TabIndex = 1;
             // 
             // statusLabel
             // 
-            this.statusLabel.Dock = System.Windows.Forms.DockStyle.Top;
+            this.statusLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.statusLabel.Font = new System.Drawing.Font("Verdana", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.statusLabel.Location = new System.Drawing.Point(20, 20);
             this.statusLabel.Name = "statusLabel";
             this.statusLabel.Size = new System.Drawing.Size(366, 128);
-            this.statusLabel.TabIndex = 4;
+            this.statusLabel.TabIndex = 0;
             // 
             // SkipCodeBtn
             // 
+            this.SkipCodeBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.SkipCodeBtn.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.SkipCodeBtn.Location = new System.Drawing.Point(24, 244);
             this.SkipCodeBtn.Name = "SkipCodeBtn";
@@ -425,40 +481,188 @@ namespace MediaPortal.IR
             // 
             // LearnStatusPnl
             // 
+            this.LearnStatusPnl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.LearnStatusPnl.Controls.Add(this.CancelLearnBtn);
             this.LearnStatusPnl.Controls.Add(this.LearnPrgBar);
             this.LearnStatusPnl.Controls.Add(this.LearnStatusLbl);
             this.LearnStatusPnl.Controls.Add(this.panel2);
             this.LearnStatusPnl.Controls.Add(this.SkipCodeBtn);
-            this.LearnStatusPnl.Location = new System.Drawing.Point(2, 0);
+            this.LearnStatusPnl.Location = new System.Drawing.Point(0, 0);
             this.LearnStatusPnl.Name = "LearnStatusPnl";
-            this.LearnStatusPnl.Size = new System.Drawing.Size(456, 276);
+            this.LearnStatusPnl.Size = new System.Drawing.Size(456, 281);
             this.LearnStatusPnl.TabIndex = 21;
             // 
             // statusBar1
             // 
-            this.statusBar1.Location = new System.Drawing.Point(0, 278);
+            this.statusBar1.Location = new System.Drawing.Point(0, 285);
             this.statusBar1.Name = "statusBar1";
             this.statusBar1.Size = new System.Drawing.Size(460, 22);
-            this.statusBar1.SizingGrip = false;
             this.statusBar1.TabIndex = 22;
+            // 
+            // STBComandsPnl
+            // 
+            this.STBComandsPnl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.STBComandsPnl.Controls.Add(this.label2);
+            this.STBComandsPnl.Controls.Add(this.groupBox1);
+            this.STBComandsPnl.Controls.Add(this.LearnEnabledSTBCmdsBtn);
+            this.STBComandsPnl.Controls.Add(this.StbCommandsChkLst);
+            this.STBComandsPnl.Controls.Add(this.LearnSingleSTBCmdBtn);
+            this.STBComandsPnl.Controls.Add(this.CloseSTBCmdsLearnFormBtn);
+            this.STBComandsPnl.Controls.Add(this.ClearSingleLearnedSTBCmdBtn);
+            this.STBComandsPnl.Controls.Add(this.ClearAllLearnedSTBCmdsBtn);
+            this.STBComandsPnl.Location = new System.Drawing.Point(0, 0);
+            this.STBComandsPnl.Name = "STBComandsPnl";
+            this.STBComandsPnl.Size = new System.Drawing.Size(456, 281);
+            this.STBComandsPnl.TabIndex = 24;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Location = new System.Drawing.Point(14, 6);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(186, 13);
+            this.label2.TabIndex = 0;
+            this.label2.Text = "Set-top-box Control Commands";
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.STBCode1ValueLbl);
+            this.groupBox1.Controls.Add(this.STBCode2ValueLbl);
+            this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.groupBox1.Location = new System.Drawing.Point(14, 196);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(428, 79);
+            this.groupBox1.TabIndex = 24;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Learned Transmit IR Code(s)";
+            // 
+            // STBCode1ValueLbl
+            // 
+            this.STBCode1ValueLbl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.STBCode1ValueLbl.Location = new System.Drawing.Point(8, 18);
+            this.STBCode1ValueLbl.Name = "STBCode1ValueLbl";
+            this.STBCode1ValueLbl.Size = new System.Drawing.Size(412, 25);
+            this.STBCode1ValueLbl.TabIndex = 0;
+            this.STBCode1ValueLbl.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
+            // 
+            // STBCode2ValueLbl
+            // 
+            this.STBCode2ValueLbl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.STBCode2ValueLbl.ForeColor = System.Drawing.Color.DarkBlue;
+            this.STBCode2ValueLbl.Location = new System.Drawing.Point(8, 44);
+            this.STBCode2ValueLbl.Name = "STBCode2ValueLbl";
+            this.STBCode2ValueLbl.Size = new System.Drawing.Size(412, 25);
+            this.STBCode2ValueLbl.TabIndex = 1;
+            // 
+            // LearnEnabledSTBCmdsBtn
+            // 
+            this.LearnEnabledSTBCmdsBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.LearnEnabledSTBCmdsBtn.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.LearnEnabledSTBCmdsBtn.Location = new System.Drawing.Point(302, 24);
+            this.LearnEnabledSTBCmdsBtn.Name = "LearnEnabledSTBCmdsBtn";
+            this.LearnEnabledSTBCmdsBtn.Size = new System.Drawing.Size(140, 23);
+            this.LearnEnabledSTBCmdsBtn.TabIndex = 2;
+            this.LearnEnabledSTBCmdsBtn.Text = "Learn Enabled Commands";
+            this.LearnEnabledSTBCmdsBtn.Click += new System.EventHandler(this.LearnEnabledSTBCmdsBtn_Click);
+            // 
+            // StbCommandsChkLst
+            // 
+            this.StbCommandsChkLst.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.StbCommandsChkLst.Items.AddRange(new object[] {
+            "0",
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "Enter"});
+            this.StbCommandsChkLst.Location = new System.Drawing.Point(14, 24);
+            this.StbCommandsChkLst.Name = "StbCommandsChkLst";
+            this.StbCommandsChkLst.Size = new System.Drawing.Size(270, 169);
+            this.StbCommandsChkLst.TabIndex = 1;
+            this.StbCommandsChkLst.SelectedIndexChanged += new System.EventHandler(this.StbCommandsChkLst_SelectedIndexChanged);
+            // 
+            // LearnSingleSTBCmdBtn
+            // 
+            this.LearnSingleSTBCmdBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.LearnSingleSTBCmdBtn.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.LearnSingleSTBCmdBtn.Location = new System.Drawing.Point(302, 51);
+            this.LearnSingleSTBCmdBtn.Name = "LearnSingleSTBCmdBtn";
+            this.LearnSingleSTBCmdBtn.Size = new System.Drawing.Size(140, 23);
+            this.LearnSingleSTBCmdBtn.TabIndex = 3;
+            this.LearnSingleSTBCmdBtn.Text = "Learn Selected Command";
+            this.LearnSingleSTBCmdBtn.Click += new System.EventHandler(this.LearnSingleSTBCmdBtn_Click);
+            // 
+            // CloseSTBCmdsLearnFormBtn
+            // 
+            this.CloseSTBCmdsLearnFormBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.CloseSTBCmdsLearnFormBtn.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.CloseSTBCmdsLearnFormBtn.Location = new System.Drawing.Point(302, 170);
+            this.CloseSTBCmdsLearnFormBtn.Name = "CloseSTBCmdsLearnFormBtn";
+            this.CloseSTBCmdsLearnFormBtn.Size = new System.Drawing.Size(140, 23);
+            this.CloseSTBCmdsLearnFormBtn.TabIndex = 6;
+            this.CloseSTBCmdsLearnFormBtn.Text = "Close";
+            this.CloseSTBCmdsLearnFormBtn.Click += new System.EventHandler(this.CloseSTBCmdsLearnFormBtn_Click);
+            // 
+            // ClearSingleLearnedSTBCmdBtn
+            // 
+            this.ClearSingleLearnedSTBCmdBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.ClearSingleLearnedSTBCmdBtn.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.ClearSingleLearnedSTBCmdBtn.Location = new System.Drawing.Point(302, 124);
+            this.ClearSingleLearnedSTBCmdBtn.Name = "ClearSingleLearnedSTBCmdBtn";
+            this.ClearSingleLearnedSTBCmdBtn.Size = new System.Drawing.Size(140, 23);
+            this.ClearSingleLearnedSTBCmdBtn.TabIndex = 5;
+            this.ClearSingleLearnedSTBCmdBtn.Text = "Clear Selected Learn";
+            this.ClearSingleLearnedSTBCmdBtn.Click += new System.EventHandler(this.ClearSingleLearnedSTBCmdBtn_Click);
+            // 
+            // ClearAllLearnedSTBCmdsBtn
+            // 
+            this.ClearAllLearnedSTBCmdsBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.ClearAllLearnedSTBCmdsBtn.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.ClearAllLearnedSTBCmdsBtn.Location = new System.Drawing.Point(302, 96);
+            this.ClearAllLearnedSTBCmdsBtn.Name = "ClearAllLearnedSTBCmdsBtn";
+            this.ClearAllLearnedSTBCmdsBtn.Size = new System.Drawing.Size(140, 23);
+            this.ClearAllLearnedSTBCmdsBtn.TabIndex = 4;
+            this.ClearAllLearnedSTBCmdsBtn.Text = "Clear All Learned";
+            this.ClearAllLearnedSTBCmdsBtn.Click += new System.EventHandler(this.ClearAllLearnedSTBCmdsBtn_Click);
             // 
             // USBUIRTLearnForm
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-            this.ClientSize = new System.Drawing.Size(460, 300);
+            this.ClientSize = new System.Drawing.Size(460, 307);
             this.Controls.Add(this.statusBar1);
             this.Controls.Add(this.MPCommandsPnl);
             this.Controls.Add(this.LearnStatusPnl);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            this.Controls.Add(this.STBComandsPnl);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
+            this.MinimumSize = new System.Drawing.Size(468, 333);
             this.Name = "USBUIRTLearnForm";
             this.ShowInTaskbar = false;
+            this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.Text = " USBUIRTLearnForm";
             this.MPCommandsPnl.ResumeLayout(false);
             this.MPCommandsPnl.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
             this.LearnStatusPnl.ResumeLayout(false);
+            this.STBComandsPnl.ResumeLayout(false);
+            this.STBComandsPnl.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
             this.ResumeLayout(false);
 
 		}
@@ -468,8 +672,9 @@ namespace MediaPortal.IR
 		{
 			base.OnLoad (e);
 
-			ResetActionsCheckList();
-			Hashtable mpCommandsTable = MediaPortal.IR.USBUIRT.Instance.LearnedMediaPortalCodesTable;
+            // Set item checked for loaded MP commands
+            ResetCheckListItems(ActionsCheckList);
+            Hashtable mpCommandsTable = MediaPortal.IR.USBUIRT.Instance.LearnedMediaPortalCodesTable;
 
 			if(mpCommandsTable == null)
 			{
@@ -487,12 +692,31 @@ namespace MediaPortal.IR
 
 			if(ActionsCheckList.Items.Count > 0)
 				ActionsCheckList.SelectedIndex = 0;
-		}
 
-		private void ResetActionsCheckList()
+            // Set item checked for loaded STB control commands
+            ResetCheckListItems(StbCommandsChkLst);
+            Hashtable stbTunerCodesTable = MediaPortal.IR.USBUIRT.Instance.LearnedSTBCodesTable;
+
+            if (stbTunerCodesTable == null)
+            {
+                LoadDefaultSTBCommandSet();
+                return;
+            }
+
+            for (int i = 0; i < stbTunerCodesTable.Count; i++)
+            {
+                if(stbTunerCodesTable.ContainsKey(i))
+                    StbCommandsChkLst.SetItemChecked(i, true);
+            }
+
+            if (StbCommandsChkLst.Items.Count > 0)
+                StbCommandsChkLst.SelectedIndex = 0;
+        }
+
+        private void ResetCheckListItems(CheckedListBox chkLstBox)
 		{
-			for(int i = 0; i < ActionsCheckList.Items.Count; i++)
-				ActionsCheckList.SetItemChecked(i, false);
+            for (int i = 0; i < chkLstBox.Items.Count; i++)
+                chkLstBox.SetItemChecked(i, false);
 		}
 
 		private void EnableActionsCheckListItem(Action.ActionType action)
@@ -507,9 +731,45 @@ namespace MediaPortal.IR
 					break;
 				}
 			}
-		}
+        }
 
-		private void DoMediaPortalCommandLearn()
+        #region Misc
+        private void CreateButtonNames()
+        {
+            this.buttonNames.Clear();
+
+            for (int i = 0; i < commands.Length; i++)
+            {
+                string curCmd = string.Empty;
+
+                if (commands[i] is Action.ActionType)
+                {
+                    Action.ActionType curActionType = (Action.ActionType)commands[i];
+                    curCmd = curActionType.ToString().Replace("ACTION_", "");
+
+                    // hack to fix incorrectly spelled MP ActionType
+                    if (curCmd == "TOGGLE_WINDOWED_FULSLCREEN")
+                        curCmd = "TOGGLE_WINDOWED_FULLSCREEN";
+
+                    curCmd = curCmd.Replace("_", " ");
+                }
+
+                else if (commands[i] is USBUIRT.JumpToActionType)
+                {
+                    curCmd = commands[i].ToString();
+                    curCmd = curCmd.Replace("_", " ");
+                }
+
+                else
+                    continue;
+
+                buttonNames.Add(curCmd);
+            }
+        }
+        #endregion
+
+        #region Media Portal learn methods
+        private void DoMediaPortalCommandLearn()
 		{
 			int count =	ActionsCheckList.CheckedItems.Count;
 
@@ -533,83 +793,86 @@ namespace MediaPortal.IR
 			MediaPortal.IR.USBUIRT.Instance.BulkLearn(learncommands, learnbuttons);
 		}
 
-		private void DoSetTopBoxCommandLearn()
+        private void LearnSingleMPCmdBtn_Click(object sender, System.EventArgs e)
+        {
+            int selIndex = ActionsCheckList.SelectedIndex;
+
+            if (selIndex == -1 || !ActionsCheckList.GetItemChecked(selIndex))
+            {
+                MessageBox.Show(this, "No commands selected.  Please select a command.\t", "USBUIRT", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                return;
+            }
+
+            // Make sure we clear any existing ir code assignements for this action
+            if (MediaPortal.IR.USBUIRT.Instance.ClearLearnedCommand((Action.ActionType)commands[selIndex]))
+            {
+                ActionsCheckList_SelectedIndexChanged(null, null);
+            }
+
+            object[] learncommands = new object[1];
+            string[] learnbuttons = new string[1];
+
+            learncommands[0] = commands[selIndex];
+            learnbuttons[0] = (string)buttonNames[selIndex];
+
+            MediaPortal.IR.USBUIRT.Instance.StartLearning += new MediaPortal.IR.USBUIRT.StartLearningEventHandler(Instance_StartRxLearning);
+            MediaPortal.IR.USBUIRT.Instance.OnEventLearned += new MediaPortal.IR.USBUIRT.EventLearnedHandler(Instance_OnRxEventLearned);
+            MediaPortal.IR.USBUIRT.Instance.OnEndLearning += new MediaPortal.IR.USBUIRT.EndLearnedHandler(Instance_OnEndRxSingleCommandLearning);
+            MediaPortal.IR.USBUIRT.Instance.BulkLearn(learncommands, learnbuttons);
+        }
+        #endregion
+
+        #region STB learn methods
+        private void DoSetTopBoxCommandLearn()
 		{
 			MediaPortal.IR.USBUIRT.Instance.StartLearning += new MediaPortal.IR.USBUIRT.StartLearningEventHandler(Instance_StartTxLearning);
 			MediaPortal.IR.USBUIRT.Instance.OnEventLearned += new MediaPortal.IR.USBUIRT.EventLearnedHandler(Instance_OnTxEventLearned);
 			MediaPortal.IR.USBUIRT.Instance.OnEndLearning += new MediaPortal.IR.USBUIRT.EndLearnedHandler(Instance_OnTxEndLearning);
-			
-			MediaPortal.IR.USBUIRT.Instance.LearnTunerCodes();
+
+            ArrayList cmdList = new ArrayList();
+
+            for (int i = 0; i < StbCommandsChkLst.Items.Count; i++)
+            {
+                if (StbCommandsChkLst.GetItemChecked(i))
+                    cmdList.Add(i);
+            }
+
+            if (cmdList.Count > 0)
+            {
+                int[] cmds = (int[])cmdList.ToArray(typeof(int));
+                MediaPortal.IR.USBUIRT.Instance.LearnTunerCodes(cmds);
+            }
 		}
 
-		private void CreateButtonNames()
-		{
-			this.buttonNames.Clear();
+        private void DoSingleSetTopBoxCommandLearn()
+        {
+            int selIndex = StbCommandsChkLst.SelectedIndex;
 
-			for(int i = 0; i < commands.Length; i++)
-			{
-				string curCmd = string.Empty;
+            if (selIndex == -1 || !StbCommandsChkLst.GetItemChecked(selIndex))
+            {
+                MessageBox.Show(this, "No commands selected.  Please select a command.\t", "USBUIRT", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                return;
+            }
 
-				if(commands[i] is Action.ActionType) 
-				{
-					Action.ActionType curActionType = (Action.ActionType)commands[i];
-					curCmd = curActionType.ToString().Replace("ACTION_", "");
+            int[] cmds = new int[1];
+            cmds[0] = selIndex;
 
-					// hack to fix incorrectly spelled MP ActionType
-					if(curCmd == "TOGGLE_WINDOWED_FULSLCREEN")
-						curCmd = "TOGGLE_WINDOWED_FULLSCREEN";
+            MediaPortal.IR.USBUIRT.Instance.StartLearning += new MediaPortal.IR.USBUIRT.StartLearningEventHandler(Instance_StartTxLearning);
+            MediaPortal.IR.USBUIRT.Instance.OnEventLearned += new MediaPortal.IR.USBUIRT.EventLearnedHandler(Instance_OnTxEventLearned);
+            MediaPortal.IR.USBUIRT.Instance.OnEndLearning += new MediaPortal.IR.USBUIRT.EndLearnedHandler(Instance_OnTxEndSingleCommandLearning);
 
-					curCmd = curCmd.Replace("_", " ");
-				}
+            MediaPortal.IR.USBUIRT.Instance.LearnTunerCodes(cmds);
+        }
+        #endregion
 
-				else if(commands[i] is USBUIRT.JumpToActionType)
-				{
-					curCmd = commands[i].ToString();
-					curCmd = curCmd.Replace("_", " ");
-				}
+        #region MP Commands Learn button click handlers
 
-				else
-					continue;
-
-				buttonNames.Add(curCmd);
-			}		
-		}
-
-		private void internalCommandsButton_Click(object sender, System.EventArgs e)
+        private void LearnEnabledMPCmdsBtn_Click(object sender, System.EventArgs e)
 		{
 			DoMediaPortalCommandLearn();
 		}
 
-		private void LearnSelectedCommandBtn_Click(object sender, System.EventArgs e)
-		{
-			int selIndex = ActionsCheckList.SelectedIndex;
-
-			if(selIndex == -1 || !ActionsCheckList.GetItemChecked(selIndex))
-			{
-				MessageBox.Show(this, "No commands selected.  Please select a command.\t", "USBUIRT", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-				return;
-			}
-
-			// Make sure we clear any existing ir code assignements for this action
-			if(MediaPortal.IR.USBUIRT.Instance.ClearLearnedCommand((Action.ActionType)commands[selIndex]))
-			{
-				//ActionsCheckList.SetItemChecked(selIndex, false);
-				ActionsCheckList_SelectedIndexChanged(null, null);
-			}
-
-			object[] learncommands = new object[1];
-			string[] learnbuttons = new string[1];
-
-			learncommands[0] = commands[selIndex];
-			learnbuttons[0] = (string)buttonNames[selIndex];
-		
-			MediaPortal.IR.USBUIRT.Instance.StartLearning += new MediaPortal.IR.USBUIRT.StartLearningEventHandler(Instance_StartRxLearning);
-			MediaPortal.IR.USBUIRT.Instance.OnEventLearned += new MediaPortal.IR.USBUIRT.EventLearnedHandler(Instance_OnRxEventLearned);
-			MediaPortal.IR.USBUIRT.Instance.OnEndLearning += new MediaPortal.IR.USBUIRT.EndLearnedHandler(Instance_OnEndRxSingleCommandLearning);
-			MediaPortal.IR.USBUIRT.Instance.BulkLearn(learncommands, learnbuttons);
-		}
-
-		private void ClearAllLearnedCommandsBtn_Click(object sender, System.EventArgs e)
+        private void ClearAllLearnedMPCmdsBtn_Click(object sender, System.EventArgs e)
 		{
 			if(MediaPortal.IR.USBUIRT.Instance.LearnedMediaPortalCodesTable.Count == 0)
 			{
@@ -629,7 +892,7 @@ namespace MediaPortal.IR
 			}
 		}
 
-		private void ClearSelectedLearnedCommandsBtn_Click(object sender, System.EventArgs e)
+        private void ClearSingleLearnedMPCmdBtn_Click(object sender, System.EventArgs e)
 		{
 			int selIndex = ActionsCheckList.SelectedIndex;
 
@@ -662,50 +925,161 @@ namespace MediaPortal.IR
             }
 		}
 
+        private void CloseMPCmdsLearnFormBtn_Click(object sender, System.EventArgs e)
+        {
+            this.Close();
+        }
+
+        #endregion
+
+        #region STB Learn button click handlers
+
+        private void LearnEnabledSTBCmdsBtn_Click(object sender, EventArgs e)
+        {
+            DoSetTopBoxCommandLearn();
+        }
+
+        private void LearnSingleSTBCmdBtn_Click(object sender, EventArgs e)
+        {
+            DoSingleSetTopBoxCommandLearn();
+        }
+
+        private void ClearAllLearnedSTBCmdsBtn_Click(object sender, EventArgs e)
+        {
+            if (MediaPortal.IR.USBUIRT.Instance.LearnedSTBCodesTable.Count == 0)
+            {
+                MessageBox.Show(this, "No Set-top box control IR codes loaded.  Nothing to clear.\t", "USBUIRT", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            string msg = "You are about to clear all learned Set-top box codes.\t\r\n\r\nContinue?";
+
+            if (MessageBox.Show(this, msg, "USBUIRT", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes)
+            {
+                if (MediaPortal.IR.USBUIRT.Instance.ClearAllLearnedSTBCommands())
+                {
+                    StbCommandsChkLst_SelectedIndexChanged(null, null);
+                    MessageBox.Show(this, "All learned Set-top box control IR codes cleared.\t", "USBUIRT", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+        }
+
+        private void ClearSingleLearnedSTBCmdBtn_Click(object sender, EventArgs e)
+        {
+            int selIndex = StbCommandsChkLst.SelectedIndex;
+
+            if (selIndex != -1)
+            {
+                if (MediaPortal.IR.USBUIRT.Instance.ClearLearnedSTBCommand(selIndex))
+                {
+                    StbCommandsChkLst.SetItemChecked(selIndex, false);
+                    StbCommandsChkLst_SelectedIndexChanged(null, null);
+                    string msg = string.Format("Learned IR for Set-top box control [{0}] button cleared.\t", (selIndex < 10 ? selIndex.ToString() : "Enter"));
+                    MessageBox.Show(this, msg, "USBUIRT", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+
+                else
+                {
+                    string msg = string.Format("Learned IR not found for Set-top box control [{0}] button.\t", (selIndex < 10 ? selIndex.ToString() : "Enter"));
+                    MessageBox.Show(this, msg, "USBUIRT", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+        }
+
+        private void CloseSTBCmdsLearnFormBtn_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+        #endregion
+
+        #region CheckedList SelectedIndexChanged event handlers
+        private void StbCommandsChkLst_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            int selIndex = StbCommandsChkLst.SelectedIndex;
+
+            if (selIndex != -1)
+            {
+                LearnSingleSTBCmdBtn.Enabled = true;
+                ClearSingleLearnedSTBCmdBtn.Enabled = true;
+                string irCmd1 = string.Empty;
+                string irCmd2 = string.Empty;
+
+                if (MediaPortal.IR.USBUIRT.Instance.GetSTBCommandIrStrings(selIndex, ref irCmd1, ref irCmd2))
+                {
+                    STBCode1ValueLbl.ForeColor = SystemColors.ControlText;
+                    STBCode1ValueLbl.Text = irCmd1;
+                    STBCode2ValueLbl.Text = irCmd2;
+
+                    LearnSingleSTBCmdBtn.Text = "Relearn Selected Command";
+                }
+
+                else
+                {
+                    if (StbCommandsChkLst.GetItemChecked(selIndex))
+                        STBCode1ValueLbl.ForeColor = Color.Red;
+
+                    else
+                        STBCode1ValueLbl.ForeColor = SystemColors.ControlText;
+
+                    STBCode1ValueLbl.Text = "No code(s) Learned for this action";
+                    STBCode2ValueLbl.Text = "";
+
+                    LearnSingleSTBCmdBtn.Text = "Learn Selected Command";
+                }
+            }
+
+            else
+            {
+                LearnSingleSTBCmdBtn.Enabled = false;
+                ClearSingleLearnedSTBCmdBtn.Enabled = false;
+            }
+        }
+
 		private void ActionsCheckList_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
 			int selIndex = ActionsCheckList.SelectedIndex;
 
 			if(selIndex != -1)
 			{
-				LearnSelectedCommandBtn.Enabled = true;
-				ClearSelectedLearnedCommandsBtn.Enabled = true;
+				LearnSingleMPCmdBtn.Enabled = true;
+				ClearSingleLearnedMPCmdBtn.Enabled = true;
 				string irCmd1 = string.Empty;
 				string irCmd2 = string.Empty;
 
                 if(MediaPortal.IR.USBUIRT.Instance.GetCommandIrStrings((Action.ActionType)commands[selIndex], ref irCmd1, ref irCmd2))
 				{
-					Code1ValueLbl.ForeColor = SystemColors.ControlText;
-					Code1ValueLbl.Text = irCmd1;
-					Code2ValueLbl.Text = irCmd2;
+					MPCode1ValueLbl.ForeColor = SystemColors.ControlText;
+					MPCode1ValueLbl.Text = irCmd1;
+					MPCode2ValueLbl.Text = irCmd2;
 
-					LearnSelectedCommandBtn.Text = "Relearn Selected Command";
+					LearnSingleMPCmdBtn.Text = "Relearn Selected Command";
 				}
 
 				else
 				{
 					if(ActionsCheckList.GetItemChecked(selIndex))
-						Code1ValueLbl.ForeColor = Color.Red;
+						MPCode1ValueLbl.ForeColor = Color.Red;
 
 					else
-						Code1ValueLbl.ForeColor = SystemColors.ControlText;
+						MPCode1ValueLbl.ForeColor = SystemColors.ControlText;
 					
-					Code1ValueLbl.Text = "No code(s) Learned for this action";
-					Code2ValueLbl.Text = "";
+					MPCode1ValueLbl.Text = "No code(s) Learned for this action";
+					MPCode2ValueLbl.Text = "";
 
-					LearnSelectedCommandBtn.Text = "Learn Selected Command";
+					LearnSingleMPCmdBtn.Text = "Learn Selected Command";
 				}
 			}
 
 			else
 			{
-				LearnSelectedCommandBtn.Enabled = false;
-				ClearSelectedLearnedCommandsBtn.Enabled = false;
+				LearnSingleMPCmdBtn.Enabled = false;
+				ClearSingleLearnedMPCmdBtn.Enabled = false;
 			}
-		}
+        }
+        #endregion
 
-		#region RxLearningEvents
-		private void Instance_StartRxLearning(object sender, LearningEventArgs e)
+        #region RxLearningEvents
+        private void Instance_StartRxLearning(object sender, LearningEventArgs e)
 		{
             SetStartRxLearningStatus(e);
 		}
@@ -731,13 +1105,13 @@ namespace MediaPortal.IR
                 if (!e.IsToggledIrCode)
                 {
                     statusLabel.ForeColor = Color.DarkBlue;
-                    statusLabel.Text = "Step 1 of 2:\r\nPress and hold the '" + e.Button + "' button on your remote";
+                    statusLabel.Text = "Step 1 of 2:\r\nPress and hold the [" + e.Button + "] button on your remote";
                 }
 
                 else
                 {
                     statusLabel.ForeColor = Color.Red;
-                    statusLabel.Text = "Step 2 of 2:\r\nPress and hold the '" + e.Button + "' button on your remote";
+                    statusLabel.Text = "Step 2 of 2:\r\nPress and hold the [" + e.Button + "] button on your remote";
                 }
 
                 System.Windows.Forms.Application.DoEvents();
@@ -771,12 +1145,12 @@ namespace MediaPortal.IR
                     if (e.IsToggledIrCode)
                         passNumber = 2;
 
-                    msg = string.Format("Successfully learned IR code {0} of 2 for button:\r\n  '{1}'", passNumber, e.Button);
+                    msg = string.Format("Successfully learned IR code {0} of 2 for button:\t\r\n  [{1}]", passNumber, e.Button);
                 }
 
                 else
                 {
-                    msg = string.Format("Failed to learn IR code for button:\r\n  '{0}'", e.Button);
+                    msg = string.Format("Failed to learn IR code for button:\t\r\n  [{0}]", e.Button);
                 }
 
                 MediaPortal.IR.USBUIRT.Instance.ReceiveEnabled = false;
@@ -916,14 +1290,23 @@ namespace MediaPortal.IR
             else
             {
                 receivedIrLbl.Text = e.IrCode;
-                LearnStatusLbl.Text = string.Format("Learning Set Top Box Codes: {0} of {1}", e.CurrentCodeCount + 1, e.TotalCodeCount);
+                LearnStatusLbl.Text = string.Format("Learning Set-top Box Codes: {0} of {1}", e.CurrentCodeCount + 1, e.TotalCodeCount);
 
                 LearnPrgBar.Maximum = e.TotalCodeCount;
-                LearnPrgBar.Value = e.CurrentCodeCount;
-
                 LearnStatusPnl.BringToFront();
-                statusLabel.ForeColor = Color.DarkBlue;
-                statusLabel.Text = "Press and hold the '" + e.Button + "' button on your remote";
+
+                if (!e.IsToggledIrCode)
+                {
+                    statusLabel.ForeColor = Color.DarkBlue;
+                    statusLabel.Text = "Step 1 of 2:\r\nPress and hold the [" + e.Button + "] button on your Set-top box remote";
+                }
+
+                else
+                {
+                    statusLabel.ForeColor = Color.Red;
+                    statusLabel.Text = "Step 2 of 2:\r\nPress and hold the [" + e.Button + "] button on your Set-top box remote";
+                }
+
                 System.Windows.Forms.Application.DoEvents();
             }
         }
@@ -945,18 +1328,28 @@ namespace MediaPortal.IR
             else
             {
                 receivedIrLbl.Text = e.IrCode;
-                this.LearnPrgBar.Value = e.CurrentCodeCount;
+
+                if(e.IsToggledIrCode)
+                    this.LearnPrgBar.Value = e.CurrentCodeCount;
+                
+                System.Windows.Forms.Application.DoEvents();
+                
                 string msg;
                 MessageBoxIcon mbIcon = MessageBoxIcon.Information;
 
                 if (e.Succeeded)
                 {
-                    msg = string.Format("Successfully learned IR code for button:\r\n  {0}", e.Button);
+                    int passNumber = 1;
+
+                    if (e.IsToggledIrCode)
+                        passNumber = 2;
+
+                    msg = string.Format("Successfully learned IR code {0} of 2 for button:\t\r\n  [{1}]", passNumber, e.Button);
                 }
 
                 else
                 {
-                    msg = string.Format("Failed to learn IR code for button:\r\n  {0}", e.Button);
+                    msg = string.Format("Failed to learn IR code for button:\t\r\n  [{0}]", e.Button);
                     mbIcon = MessageBoxIcon.Exclamation;
                 }
 
@@ -1019,9 +1412,65 @@ namespace MediaPortal.IR
             }
         }
 
-		#endregion
 
-		private void Instance_OnRemoteCommandFeedback(object command, string irCode)
+        private void Instance_OnTxEndSingleCommandLearning(object sender, EventArgs e)
+        {
+            SetTxEndSingleCommandLearningStatus(e);
+        }
+
+        private void SetTxEndSingleCommandLearningStatus(EventArgs e)
+        {
+            // Make sure we're calling this method from the correct thread...
+            if (receivedIrLbl.InvokeRequired)
+            {
+                SetEndLearningCallback d = new SetEndLearningCallback(SetTxEndSingleCommandLearningStatus);
+                this.Invoke(d, new object[] { e });
+            }
+
+            else
+            {
+                statusLabel.Text = "";
+                receivedIrLbl.Text = "";
+                string msg = "";
+                MessageBoxIcon mbIcon = MessageBoxIcon.Information;
+
+                MediaPortal.IR.USBUIRT.Instance.StartLearning -= new MediaPortal.IR.USBUIRT.StartLearningEventHandler(Instance_StartTxLearning);
+                MediaPortal.IR.USBUIRT.Instance.OnEventLearned -= new MediaPortal.IR.USBUIRT.EventLearnedHandler(Instance_OnTxEventLearned);
+                MediaPortal.IR.USBUIRT.Instance.OnEndLearning -= new MediaPortal.IR.USBUIRT.EndLearnedHandler(Instance_OnTxEndSingleCommandLearning);
+
+                if (MediaPortal.IR.USBUIRT.Instance.AbortLearn)
+                {
+                    LearnPrgBar.Value = 0;
+                    msg = "Set top box IR training aborted by user.\t";
+                    mbIcon = MessageBoxIcon.Exclamation;
+                    LearnStatusLbl.Text = "Set top box IR training aborted by user!";
+                }
+
+                else if (MediaPortal.IR.USBUIRT.Instance.SaveTunerValues())
+                {
+                    LearnPrgBar.Value = LearnPrgBar.Maximum;
+                    msg = "Set top box IR training completed successfully.\t";
+                    mbIcon = MessageBoxIcon.Information;
+                    LearnStatusLbl.Text = "Set top box IR training completed successfully!";
+                }
+
+                else
+                {
+                    LearnPrgBar.Value = 0;
+                    msg = "Set top box IR training Failed: Unable to save IR code settings to file.\t";
+                    mbIcon = MessageBoxIcon.Exclamation;
+                    LearnStatusLbl.Text = "Set top box IR training Failed!";
+                }
+
+                MessageBox.Show(this, msg, "USBUIRT", MessageBoxButtons.OK, mbIcon);
+                this.Close();
+            }
+        }
+        
+        #endregion
+
+        #region StatusBar text display methods
+        private void Instance_OnRemoteCommandFeedback(object command, string irCode)
 		{
 			string actionDesc = "Unknown";
 		
@@ -1055,7 +1504,9 @@ namespace MediaPortal.IR
                 statusBar1.Text = text;
             }
         }
+        #endregion
 
+        #region Learn progress button click handlers
         private void SkipCodeBtn_Click(object sender, System.EventArgs e)
 		{
 			MediaPortal.IR.USBUIRT.Instance.SkipLearnForCurrentCode = true;		
@@ -1064,14 +1515,22 @@ namespace MediaPortal.IR
 		private void CancelLearnBtn_Click(object sender, System.EventArgs e)
 		{
 			MediaPortal.IR.USBUIRT.Instance.AbortLearn = true;
-		}
+        }
+        #endregion
 
-		private void CancelBtn_Click(object sender, System.EventArgs e)
-		{
-			this.Close();
-		}
+        #region MP command set presets
+        private void LoadDefaultSTBCommandSet()
+        {
+            for (int i = 0; i < StbCommandsChkLst.Items.Count; i++)
+            {
+                StbCommandsChkLst.SetItemChecked(i, true);
+            }
 
-		private void LoadBasicCommandSet()
+            if(!USBUIRT.Instance.NeedsEnter)
+                StbCommandsChkLst.SetItemChecked(StbCommandsChkLst.Items.Count - 1, false);
+        }
+
+        private void LoadBasicCommandSet()
 		{
 			for(int i = 0; i < ActionsCheckList.Items.Count; i++)
 			{
@@ -1092,7 +1551,8 @@ namespace MediaPortal.IR
 			for(int i = 0; i < ActionsCheckList.Items.Count; i++)
 			{
 				ActionsCheckList.SetItemChecked(i, true);
-			}		
-		}
-	}
+			}
+        }
+        #endregion
+    }
 }

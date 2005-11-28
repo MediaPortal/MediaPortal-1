@@ -124,10 +124,14 @@ namespace MediaPortal.Configuration.Sections
 
 		string[][] sectionEntries = new string[][] { 
 												new string[] { "general", "startfullscreen", "false" },
-												new string[] { "general", "autohidemouse", "false" },
+
+												new string[] { "general", "minimizeonstartup", "false" },
+                                                new string[] { "general", "minimizeonexit", "false" },
+
+                                                new string[] { "general", "autohidemouse", "false" },
 												new string[] { "general", "mousesupport", "true" }, 
-                        new string[] { "general", "hideextensions", "true" },
-                        new string[] { "general", "animations", "true" },
+                                                new string[] { "general", "hideextensions", "true" },
+                                                new string[] { "general", "animations", "true" },
 												new string[] { "general", "autostart", "false" },
 												new string[] { "general", "baloontips", "false" },
 												new string[] { "general", "dblclickasrightclick", "false" },
@@ -300,6 +304,8 @@ namespace MediaPortal.Configuration.Sections
         | System.Windows.Forms.AnchorStyles.Right)));
       this.settingsCheckedListBox.Items.AddRange(new object[] {
                                                                 "Start Media Portal in fullscreen mode",
+                                                                "Minimize to tray on start up",
+                                                                "Minimize to tray on GUI exit", 
                                                                 "Auto hide mouse cursor when inactive",
                                                                 "Show special mouse controls (scrollbars, etc)",
                                                                 "Dont show file extensions like .mp3, .avi, .mpg,...",

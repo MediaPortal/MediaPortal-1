@@ -158,16 +158,17 @@ namespace MediaPortal.IR
 		private bool 							is3DigitTuner = false;
 		private bool 							tunerNeedsEnter = false;
 		private static USBUIRT					instance = null;
-		private string[]						externalTunerCodes = new string[11]; // 10 digits + Enter
-		private Hashtable						commandsLearned = new Hashtable();
+        private Hashtable                       commandsLearned = new Hashtable();
+        private Hashtable                       stbCommandsLearned = new Hashtable();
+        private Hashtable                       stbToggleCommandsLearned = new Hashtable();
 		private Hashtable						jumpToCommands = null;
 		private DateTime						timestamp = DateTime.Now;
 		private bool							isLearning = false;
 
-
 		private int								currentButtonIndex = 0;
 		private string[]						controlCodeButtonNames;
 		private object[]						controlCodeCommands;
+        private int[]                           stbControlCodeCommands;
 		private bool							waitingForIrRxLearnEvent = false;
 		private bool							capturingToggledIrCode = false;
 		private bool							abortLearn = false;
@@ -177,7 +178,8 @@ namespace MediaPortal.IR
 		private int								commandRepeatCount = 1;
 		private int								interCommandDelay = 100;
 		private bool							tunerCodesLoaded = false;
-
+        private string                          lastIRCodeSent = string.Empty;
+        private bool                            lastIRCodeSentWasToggle = false;
 		#endregion
 
 		#region jumpTo enums
@@ -415,11 +417,13 @@ namespace MediaPortal.IR
 
 		public Hashtable LearnedMediaPortalCodesTable
 		{
-			get
-			{
-				return commandsLearned;
-			}
+			get{return commandsLearned;}
 		}
+
+        public Hashtable LearnedSTBCodesTable
+        {
+            get { return stbCommandsLearned; }
+        }
 
 		#endregion
 
@@ -584,46 +588,63 @@ namespace MediaPortal.IR
             tunerCodesLoaded = false;
 
             try
-			{
+            {
                 if (!System.IO.File.Exists(tunerfile))
                     return false;
 
                 System.Xml.XmlDocument xmlDoc = new System.Xml.XmlDocument();
-				xmlDoc.Load(tunerfile);
-				System.Xml.XmlNodeList entryNodes = xmlDoc.GetElementsByTagName("entry");
+                xmlDoc.Load(tunerfile);
+                System.Xml.XmlNodeList entryNodes = xmlDoc.GetElementsByTagName("entry");
 
-				Console.WriteLine(entryNodes.Count.ToString());
+                Console.WriteLine(entryNodes.Count.ToString());
 
-				foreach(System.Xml.XmlNode node in entryNodes)
-				{		
-					System.Xml.XmlAttributeCollection codeAttribs = node.Attributes;
-			
-					if(codeAttribs != null)
-					{
-						string remoteCode = node.InnerText;
-						string sIndex = codeAttribs["index"].InnerText;
+                foreach (System.Xml.XmlNode node in entryNodes)
+                {
+                    System.Xml.XmlAttributeCollection codeAttribs = node.Attributes;
 
-						if(sIndex.Length > 0)
-						{
-							int index = int.Parse(sIndex);
+                    if (codeAttribs != null)
+                    {
+                        string remoteCode = node.InnerText;
+                        string sIndex = string.Empty;
 
-							if(remoteCode.Length > 0)
-								tunerCodesLoaded = true;
-							
-							externalTunerCodes[index] = remoteCode;
-						}
-					}
-				}
-			}
+                        bool bIsToggle = false;
+                        string sIsToggle = string.Empty;
 
-			catch(Exception ex)
-			{
-				tunerCodesLoaded = false;
-				Console.WriteLine(ex.Message);
-			}
+                        if(codeAttribs["index"] != null)
+                            sIndex = codeAttribs["index"].InnerText;
+
+                        if(codeAttribs["istoggle"] != null)
+                            sIsToggle = codeAttribs["istoggle"].InnerText;
+
+                        if (sIsToggle.Length > 0)
+                            bIsToggle = bool.Parse(sIsToggle);
+
+                        if (sIndex.Length > 0)
+                        {
+                            int index = int.Parse(sIndex);
+
+                            if (remoteCode.Length > 0)
+                                tunerCodesLoaded = true;
+
+                            if(bIsToggle)
+                                stbToggleCommandsLearned[index] = remoteCode;
+
+                            else
+                                stbCommandsLearned[index] = remoteCode;
+                                //externalTunerCodes[index] = remoteCode;
+                        }
+                    }
+                }
+            }
+
+            catch (Exception ex)
+            {
+                tunerCodesLoaded = false;
+                Console.WriteLine(ex.Message);
+            }
 
             return tunerCodesLoaded;
-		}
+        }
 
 		public bool SaveInternalValues()
 		{
@@ -687,12 +708,37 @@ namespace MediaPortal.IR
 				writer.Formatting = System.Xml.Formatting.Indented;
 				writer.WriteStartElement("docElement");
 
-				for(int i=0; i<11; i++)
+				for(int i = 0; i < 11; i++)
 				{
+                    // Write the element and attributes for a "normal" code...
 					writer.WriteStartElement("entry");
 					writer.WriteAttributeString("index", i.ToString());
-					writer.WriteString(externalTunerCodes[i]);
+
+                    string irTxCode = string.Empty;
+
+                    if (stbCommandsLearned.ContainsKey(i))
+                    {
+                        writer.WriteAttributeString("istoggle", false.ToString());
+                        irTxCode = (string)stbCommandsLearned[i];
+                    }
+
+                    writer.WriteString(irTxCode);
 					writer.WriteEndElement();
+
+                    // Write the element and attributes for a "toggled" code...
+                    writer.WriteStartElement("entry");
+                    writer.WriteAttributeString("index", i.ToString());
+
+                    irTxCode = string.Empty;
+                    
+                    if (this.stbToggleCommandsLearned.ContainsKey(i))
+                    {
+                        writer.WriteAttributeString("istoggle", true.ToString());
+                        irTxCode = (string)stbToggleCommandsLearned[i];
+                    }
+
+                    writer.WriteString(irTxCode);
+                    writer.WriteEndElement();					
 				}
 
 				writer.WriteEndElement();
@@ -975,83 +1021,83 @@ namespace MediaPortal.IR
 			return true;
 		}
 
-		public void LearnTunerCodes()
-		{
+        public void LearnTunerCodes(int[] stbControlCodes)
+        {
+            stbControlCodeCommands = stbControlCodes;
+
 			System.Threading.ThreadStart learnThreadStarter = new ThreadStart(LearnTunerCodesAsync);
 			System.Threading.Thread learnThread = new System.Threading.Thread(learnThreadStarter);
 			learnThread.Start();
 		}
 
-		public void LearnTunerCodesAsync()
-		{
-			skipLearnForCurrentCode = false;
-			AbortLearn = false;
-			isLearning = true;
-			int retries = 3;
-			bool result;
-			int totCodeCount = externalTunerCodes.Length; 
+        public void LearnTunerCodesAsync()
+        {
+            if (stbControlCodeCommands.Length == 0)
+                return;
 
-			for (int i = 0; i < 10; i++) 
-			{
-				if(skipLearnForCurrentCode)
-				{
-					skipLearnForCurrentCode = false;
-					abort = 0;
-				}
+            bool result;
+            skipLearnForCurrentCode = false;
+            AbortLearn = false;
+            isLearning = true;
+            int retries = 3;
+            int totCodeCount = stbControlCodeCommands.Length;
+            string lastIrCodeLearned = string.Empty;
 
-				if(abortLearn)
-					break;
+            for(int i = 0; i < stbControlCodeCommands.Length; i++)
+            {
+                int keyVal = stbControlCodeCommands[i];
+                string btnName = (keyVal == 10 ? "Enter" : keyVal.ToString());
 
-				for(int retry = 0; retry < retries; retry++)
-				{
-					NotifyStartLearn(i.ToString(), totCodeCount, i);
-					result = IRLearn();
+                if (skipLearnForCurrentCode)
+                {
+                    skipLearnForCurrentCode = false;
+                    abort = 0;
+                }
 
-					if(abort == 1 || abortLearn || skipLearnForCurrentCode)
-						break;
+                if (abortLearn)
+                    break;
 
-					else
-						externalTunerCodes[i] = this.ircode.ToString();
+                for (int retry = 0; retry < retries * 2; retry++)
+                {
+                    NotifyStartLearn(btnName, totCodeCount, (capturingToggledIrCode ? i + 1 : i));
+                    result = IRLearn();
 
-					NotifyEventLearned(i.ToString(), this.ircode.ToString(), result, totCodeCount, i + 1);
-					
-					if(result) 
-						break;
-				}
-			}
+                    if (abort == 1 || abortLearn || skipLearnForCurrentCode)
+                        break;
 
-			// Always learn the "Enter" key. This will prevent having to re-learn all of the 
-			// codes if the user later enables "Send 'Enter' for changing channels".
-			//if(tunerNeedsEnter && !abortLearn)
-			if(!abortLearn)
-			{
-				for(int retry = 0; retry < 3; retry++)
-				{
-					if(skipLearnForCurrentCode)
-					{
-						skipLearnForCurrentCode = false;
-						abort = 0;
-					}
+                    else
+                    {
+                        string irCodeString = this.ircode.ToString();
+                        Console.WriteLine("Last Code Learned: " + lastIrCodeLearned);
+                        Console.WriteLine(" New Code Learned: " + irCodeString + "\r\n");
 
-					NotifyStartLearn("Enter", totCodeCount, totCodeCount - 1);
-					result = IRLearn();
+                        // Certain code formats such as Philips RC5 and RC6 toggle a bit on consecutive key presses.  
+                        // To catch these we need to capture 2 seperate button presses for each button...
+                        if (capturingToggledIrCode && irCodeString.CompareTo(lastIrCodeLearned) != 0)
+                            this.stbToggleCommandsLearned[keyVal] = irCodeString;
 
-					if(abort == 1 || abortLearn || skipLearnForCurrentCode)
-						break;
+                        else
+                            stbCommandsLearned[keyVal] = this.ircode.ToString();
 
-					else					
-						externalTunerCodes[10] = this.ircode.ToString();
+                        lastIrCodeLearned = irCodeString;
+                    }
 
-					NotifyEventLearned("Enter", this.ircode.ToString(), result, totCodeCount, totCodeCount - 1);
-					
-					if(result) 
-						break;
-				}
-			}
+                    NotifyEventLearned(btnName, this.ircode.ToString(), result, totCodeCount, i + 1);
 
-			isLearning = false;
-			NotifyTrainingComplete();
-		}
+                    if (result && capturingToggledIrCode)
+                    {
+                        capturingToggledIrCode = false;
+                        break;
+                    }
+
+                    else
+                        capturingToggledIrCode = true;
+                }
+            }
+
+            isLearning = false;
+            NotifyTrainingComplete();
+        }
 
 		public void BulkLearn(object[] commands, string[] buttonNames)
 		{
@@ -1084,7 +1130,8 @@ namespace MediaPortal.IR
 			// Certain code formats such as Philips RC5 and RC6 toggle a bit on consecutive key presses.  
 			// To catch these we need to capture 2 seperate button presses for each button...
 			capturingToggledIrCode = !capturingToggledIrCode;
-			NotifyStartLearn(controlCodeButtonNames[capturingToggledIrCode ? currentButtonIndex : ++currentButtonIndex], controlCodeCommands.Length, currentButtonIndex);
+			NotifyStartLearn(controlCodeButtonNames[capturingToggledIrCode ? currentButtonIndex : ++currentButtonIndex], 
+                controlCodeCommands.Length, currentButtonIndex);
 			
 			waitingForIrRxLearnEvent = true;
 			isLearning = true;
@@ -1103,43 +1150,96 @@ namespace MediaPortal.IR
 		
 		public void ChangeTunerChannel(string channel)
 		{
-			if(!isUsbUirtLoaded)
-				return;
+            if (!isUsbUirtLoaded)
+                return;
 
-			if (!TransmitEnabled) return;
+            if (!TransmitEnabled) return;
 
-			Log.Write("USBUIRT: NewChannel={0} LastChannel={1}", channel, lastchannel);
+            Log.Write("USBUIRT: NewChannel={0} LastChannel={1}", channel, lastchannel);
 
-			// Already tuned to this channel?
-			if(channel == lastchannel)
-				return;
-			int length = channel.Length;
-			
-			// Some STB's allow more than 3 digit channel numbers!
-			//if ((!this.Is3Digit && length >2) || (length >3))
-			if(this.Is3Digit && length > 3)
-			{
-				Log.Write("USBUIRT: invalid channel:{0}", channel);
-				return;
-			}
+            // Already tuned to this channel?
+            if (channel == lastchannel)
+                return;
+            int length = channel.Length;
 
-			for (int i = 0; i < length; i++ )
-			{
-				if (channel[i] < '0' || channel[i] > '9')
-					continue;
-				Log.Write("USBUIRT: send:{0}", channel[i]);
-				Transmit(this.externalTunerCodes[channel[i] - '0'], UUIRTDRV_IRFMT_UUIRT, commandRepeatCount);
-			}
+            // Some STB's allow more than 3 digit channel numbers!
+            //if ((!this.Is3Digit && length >2) || (length >3))
+            if (this.Is3Digit && length > 3)
+            {
+                Log.Write("USBUIRT: invalid channel:{0}", channel);
+                return;
+            }
 
-			if (this.NeedsEnter)
-			{
-				Log.Write("USBUIRT: send enter");
-				Transmit(this.externalTunerCodes[10], UUIRTDRV_IRFMT_UUIRT, commandRepeatCount);
-			}
-			
-			// All succeeded, remember last channel
-			lastchannel = channel;
-		}
+            for (int i = 0; i < length; i++)
+            {
+                if (channel[i] < '0' || channel[i] > '9')
+                    continue;
+
+                int codeIndex = channel[i] - '0';
+                bool isToggledCode = false;
+                string irTxString = GetSTBIrCode(codeIndex, ref isToggledCode);
+                Log.Write("USBUIRT: send:{0}{1}", channel[i], (isToggledCode ? " (toggled)" : ""));
+
+                if (irTxString.Length == 0)
+                {
+                    Log.Write(string.Format("USBUIRT: IR Code for [{0}] button is empty", codeIndex));
+                    continue;
+                }
+
+                Transmit(irTxString, UUIRTDRV_IRFMT_UUIRT, commandRepeatCount);
+            }
+
+            if (this.NeedsEnter)
+            {
+                int codeIndex = 10;
+                bool isToggledCode = false;
+                string irTxString = GetSTBIrCode(codeIndex, ref isToggledCode);
+                Log.Write("USBUIRT: send enter{0}", (isToggledCode ? " (toggled)" : ""));
+
+                if (irTxString.Length == 0)
+                {
+                    Log.Write("USBUIRT: IR Code for enter button is empty");
+                }
+
+                else
+                {
+                    Transmit(irTxString, UUIRTDRV_IRFMT_UUIRT, commandRepeatCount);
+                }
+            }
+
+            // All succeeded, remember last channel
+            lastchannel = channel;
+        }
+
+        private string GetSTBIrCode(int codeIndex, ref bool isToggledCode)
+        {
+            string irTxString = "";
+            string toggledIrTxString = "";
+            string irOut = "";
+
+            if (stbCommandsLearned.ContainsKey(codeIndex))
+                irTxString = stbCommandsLearned[codeIndex].ToString();
+
+            if (stbToggleCommandsLearned.ContainsKey(codeIndex))
+                toggledIrTxString = stbToggleCommandsLearned[codeIndex].ToString();
+
+            // is the code we're sending identical to the last one sent?
+            // If so, check if there's a toggled version of the code...
+            if (toggledIrTxString.Length > 0 && (lastIRCodeSent.CompareTo(irTxString) == 0))
+            {
+                isToggledCode = true;
+                irOut = toggledIrTxString;
+            }
+
+            else
+            {
+                isToggledCode = false;
+                irOut = irTxString;
+            }
+
+            lastIRCodeSent = irOut;
+            return irOut;
+        }
 
 		public void Transmit(string gIRCode, int gIRCodeFormat, int repeatCount)
 		{
@@ -1261,6 +1361,72 @@ namespace MediaPortal.IR
 
 			return result;
 		}
+
+        public bool ClearAllLearnedSTBCommands()
+        {
+            // is there anything to clear?
+            if (this.stbCommandsLearned.Count + this.stbToggleCommandsLearned.Count == 0)
+                return false;
+
+            stbCommandsLearned.Clear();
+            stbToggleCommandsLearned.Clear();
+
+            bool result = stbCommandsLearned.Count == 0 && stbToggleCommandsLearned.Count == 0;
+
+            if (result)
+                this.SaveTunerValues();
+
+            return result;
+        }
+
+        public bool ClearLearnedSTBCommand(int command)
+        {
+            bool result = false;
+
+            // no point interating through the hashtables if they don't
+            // contain this command
+            if (!stbCommandsLearned.ContainsKey(command) && !stbToggleCommandsLearned.ContainsKey(command))
+                return false;
+
+            // Key:		STB button number (10 == Enter)
+            // Value:	txIRString
+
+            if (stbCommandsLearned.ContainsKey(command))
+            {
+                stbCommandsLearned.Remove(command);
+                result = true;
+            }
+
+            if (stbToggleCommandsLearned.ContainsKey(command))
+            {
+                stbToggleCommandsLearned.Remove(command);
+                result = true;
+            }
+
+            if (result)
+                this.SaveTunerValues();
+
+            return result;
+        }
+
+        public bool GetSTBCommandIrStrings(int cmdNumber, ref string irCmd1, ref string irCmd2)
+        {
+            bool result = false;
+
+            if (stbCommandsLearned.ContainsKey(cmdNumber))
+            {
+                result = true;
+                irCmd1 = (string)stbCommandsLearned[cmdNumber];
+            }
+
+            if (stbToggleCommandsLearned.ContainsKey(cmdNumber))
+            {
+                result = true;
+                irCmd2 = (string)stbToggleCommandsLearned[cmdNumber];
+            }
+
+            return result;
+        }
 	
 		#endregion
 

@@ -111,6 +111,11 @@ namespace MediaPortal
     protected System.Windows.Forms.MenuItem mnuExit;
     #endregion
 
+    // Minimize to tray on startup and on gui exit
+    protected bool _minimizeOnStartup = false;
+    protected bool _minimizeOnGuiExit = false;
+    protected bool _shuttingDown = false;
+    protected bool _firstTimeWindowDisplayed = true;
     protected bool _autoHideMouse = false;
     protected bool _needUpdate = false;
     protected DateTime _mouseTimeOutTimer = DateTime.Now;
@@ -346,7 +351,7 @@ namespace MediaPortal
           string strStartFull = (string)xmlreader.GetValue("general", "startfullscreen");
           if (strStartFull != null && strStartFull == "yes")
           {
-            if (autoHideTaskbar)
+            if (autoHideTaskbar && !_minimizeOnStartup)
             {
               Win32API.EnableStartBar(false);
               Win32API.ShowStartBar(false);
@@ -1600,7 +1605,8 @@ namespace MediaPortal
     /// </summary>
     private void ExitSample(object sender, EventArgs e)
     {
-      this.Close();
+        this._shuttingDown = true;
+        this.Close();
     }
     #endregion
 
@@ -2089,6 +2095,18 @@ namespace MediaPortal
     /// </summary>
     protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
     {
+        if (this._minimizeOnGuiExit && !_shuttingDown)
+        {
+            if(WindowState != FormWindowState.Minimized)
+                Log.Write("Minimizing to tray on GUI exit");
+            
+            isClosing = false;
+            this.WindowState = FormWindowState.Minimized;
+            this.Hide();
+            e.Cancel = true;
+            return;
+        }
+        
       if (autoHideTaskbar)
       {
         Win32API.EnableStartBar(true);
@@ -2423,14 +2441,28 @@ namespace MediaPortal
 
     protected void Restore_OnClick(System.Object sender, System.EventArgs e)
     {
+      Log.Write("Restoring from tray");
+      
       Show();
       notifyIcon1.Visible = false;
       this.WindowState = FormWindowState.Normal;
       active = true;
+
+      // If the Minimize On Gui Exit option is set and we are restoring to fullscreen
+      // we should check whether the autoHideTaskbar option is set...
+
+      bool fullScreenMode = this.Menu == null;
+      if (fullScreenMode && autoHideTaskbar)
+      {
+          Win32API.EnableStartBar(false);
+          Win32API.ShowStartBar(false);
+          Log.Write("Hiding Start Bar");
+      }
     }
     protected void Exit_OnClick(System.Object sender, System.EventArgs e)
     {
-      GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STOPPING;
+        _shuttingDown = true;
+        GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STOPPING;
     }
 
 
@@ -2490,6 +2522,15 @@ namespace MediaPortal
         }
         if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING) break;
       } while (AppStillIdle());
+    }
+
+    protected void DoMinimizeOnStartup()
+    {
+        Log.Write("Minimizing to tray on startup");
+
+        WindowState = FormWindowState.Minimized;
+        Hide();
+        notifyIcon1.Visible = true;
     }
   }
 
