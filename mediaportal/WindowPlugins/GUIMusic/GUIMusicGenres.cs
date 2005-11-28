@@ -57,6 +57,8 @@ namespace MediaPortal.GUI.Music
 		bool[] sortasc    = new bool[50];
 		int[] sortby      = new int[50];
 
+    int _currentLevel;
+    ViewDefinition _currentView;
 
 		[SkinControlAttribute(9)]			protected GUIButtonControl btnSearch=null;
     #endregion
@@ -178,7 +180,14 @@ namespace MediaPortal.GUI.Music
 			if (view==String.Empty)
 				view=((ViewDefinition)handler.Views[0]).Name;
 
-			handler.CurrentView = view;
+      if (_currentView != null && _currentView.Name == view)
+      {
+        handler.Restore(_currentView, _currentLevel);
+      }
+      else
+      {
+        handler.CurrentView = view;
+      }
 			LoadDirectory(m_strDirectory);
 			if (facadeView.Count <=0)
 			{
@@ -187,7 +196,10 @@ namespace MediaPortal.GUI.Music
 		}
 		protected override void OnPageDestroy(int newWindowId)
 		{
+      _currentLevel = handler.CurrentLevel;
+      _currentView = handler.GetView();
 			m_iItemSelected=facadeView.SelectedListItemIndex;
+      
 			if (GUIMusicFiles.IsMusicWindow(newWindowId))
 			{
 				MusicState.StartWindow=newWindowId;

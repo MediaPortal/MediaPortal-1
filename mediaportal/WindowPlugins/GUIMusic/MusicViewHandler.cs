@@ -173,6 +173,16 @@ namespace MediaPortal.GUI.Music
 			}
 		}
 
+    public void Restore(ViewDefinition view, int level)
+    {
+      currentView = view;
+      currentLevel = level;
+    }
+    public ViewDefinition GetView()
+    {
+      return currentView;
+    }
+
 		public int CurrentLevel
 		{
 			get { return currentLevel;}
