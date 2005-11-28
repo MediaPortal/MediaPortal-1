@@ -704,6 +704,7 @@ namespace MediaPortal.GUI.TV
 				if ( (g_Player.IsMusic && g_Player.HasVideo) ) return;
 			}
 			ViewChannel(channel);
+      if (_isTvOn == false) return;
 			if (Recorder.TVChannelName!=channel && _isTvOn)
 			{
 				GUIDialogOK pDlgOK	= (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
@@ -732,7 +733,7 @@ namespace MediaPortal.GUI.TV
 
 			Recorder.StartViewing( channel, _isTvOn, _isTimeShifting) ;
 			Navigator.UpdateCurrentChannel();
-			_isTvOn=true;
+		//	_isTvOn=true;
 
 			if (GUIGraphicsContext.IsFullScreenVideo)
 			{
