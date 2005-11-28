@@ -277,7 +277,7 @@ namespace MediaPortal.Util
         if (PathId<0) return ;
 
         SQLiteResultSet results;
-        string strSQL = String.Format("select * from setting where idPath={0} and key='{1}'", PathId, KeyFiltered);
+        string strSQL = String.Format("select * from setting where idPath={0} and key like '{1}'", PathId, KeyFiltered);
         results=m_db.Execute(strSQL);
         if (results.Rows.Count == 0) 
         {

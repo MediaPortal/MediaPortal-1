@@ -467,6 +467,8 @@ namespace MediaPortal.GUI.Music
           break;
 
         case 136: // show playlist
+          m_iItemSelected = facadeView.SelectedListItemIndex;
+          SaveFolderSettings(m_strDirectory);
           GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MUSIC_PLAYLIST);
           break;
 
