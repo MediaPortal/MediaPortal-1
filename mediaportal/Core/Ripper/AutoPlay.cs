@@ -25,6 +25,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.Util;
+using Win32.Utils.Cd;
 
 namespace MediaPortal.Ripper
 {
@@ -35,9 +36,7 @@ namespace MediaPortal.Ripper
 	{
     #region base variables
     
-    static ArrayList m_vecList   = null;
-    static Ripper.CDDrive [] m_drives=null;
-	static RemovableDrive m_removables=null;
+    static DeviceVolumeMonitor _deviceMonitor;
     static string m_dvd="No";
     static string m_audiocd="No";
 
@@ -65,22 +64,15 @@ namespace MediaPortal.Ripper
 		/// </summary>
 		static AutoPlay()   
 		{
-			m_vecList   = new ArrayList();
 			m_dvd="No";
 			m_audiocd="No";
 
-			// Start removable drive event handlers
-			m_removables = new Ripper.RemovableDrive();
-			m_removables.VolumeInserted += new RemovableDrive.NotificationHandler(VolumeInserted);
-			m_removables.VolumeRemoved += new RemovableDrive.NotificationHandler(VolumeRemoved);
 		}
 
 		~AutoPlay()
 		{
-			if (m_removables != null)
-			{
-				m_removables.Dispose();
-			}
+      _deviceMonitor.Dispose();
+      _deviceMonitor = null;
 		}
 
     /// <summary>
@@ -98,102 +90,23 @@ namespace MediaPortal.Ripper
     public static void StopListening()
     {
       StopListeningForEvents();
-      CleanupDriveList();
+      
     }
     #region initialization + serialization
    
-    static void AddDrive (string Drive)
-    {
-			if (Drive==null) return;
-			if (Drive.Length<2) return;
-      string DriveLetter=Drive.Substring(0,2).ToLower();
-      foreach (string share in m_vecList)
-      {
-        string DriveLetterTmp = share.Substring(0,2).ToLower();
-        if (DriveLetterTmp.Equals(DriveLetter)) return;
-      }
-      m_vecList.Add(Drive);
-    }
-
+    
     private static void LoadSettings()
     {
-
-      m_vecList=new ArrayList();
-      try
-      {
-        using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
-        {
-          m_dvd=xmlreader.GetValueAsString("dvdplayer","autoplay","Ask");
-          m_audiocd=xmlreader.GetValueAsString("audioplayer","autoplay","No");
-          if (m_dvd=="No" && m_audiocd=="No") return;
-
-          for (int i=0; i < 20; i++)
-          {
-            string strShareName=String.Format("sharename{0}",i);
-            string strSharePath=String.Format("sharepath{0}",i);
-            string sharename=xmlreader.GetValueAsString("music", strShareName,"");
-            string sharepath=xmlreader.GetValueAsString("music", strSharePath,"");
-            // Drive found add drive to drivelist
-            if (Util.Utils.IsDVD(sharepath))
-            {
-              AddDrive(sharepath);
-            }
-          }
-          for (int i=0; i < 20; i++)
-          {
-            string strShareName=String.Format("sharename{0}",i);
-            string strSharePath=String.Format("sharepath{0}",i);
-            string sharename=xmlreader.GetValueAsString("movies", strShareName,"");
-            string sharepath=xmlreader.GetValueAsString("movies", strSharePath,"");
-            // Drive found add drive to drivelist
-            if (Util.Utils.IsDVD(sharepath))
-            {
-              AddDrive(sharepath);
-            }
-          }
-          for (int i=0; i < 20; i++)
-          {
-            string strShareName=String.Format("sharename{0}",i);
-            string strSharePath=String.Format("sharepath{0}",i);
-            string sharename=xmlreader.GetValueAsString("pictures", strShareName,"");
-            string sharepath=xmlreader.GetValueAsString("pictures", strSharePath,"");
-            // Drive found add drive to drivelist
-            if (Util.Utils.IsDVD(sharepath))
-            {
-              AddDrive(sharepath);
-            }
-          }
-          // read autoplay information
-        }
-      }
-      catch(Exception ex)
-      {
-        Log.Write("exception in AutoPlay.LoadSettings() {0} {1} {2}",  
-          ex.Message,ex.Source,ex.StackTrace);
-      }
     }
 
     private static void StartListeningForEvents()
     {
-			if (m_vecList==null) return;
-      int nrOfDrives=m_vecList.Count;      
-      if (nrOfDrives<=0) return;
-      try
-      {
-        m_drives=new Ripper.CDDrive[nrOfDrives];
-        for (int i=0;i<nrOfDrives;i++)
-        {
-          m_drives[i]=new CDDrive();
-          m_drives[i].Open(((string)m_vecList[i])[0]);
-          m_drives[i].CDInserted+=new CDDrive.CDNotificationHandler(CDInserted);
-          m_drives[i].CDRemoved+=new CDDrive.CDNotificationHandler(CDRemoved);
-        }
-      }
-      catch(Exception ex)
-      {
-        Log.Write("exception in AutoPlay.StartListeningForEvents() {0} {1} {2}",  
-                    ex.Message,ex.Source,ex.StackTrace);
-      }
+
+      _deviceMonitor = new DeviceVolumeMonitor(GUIGraphicsContext.form.Handle);
+      _deviceMonitor.OnVolumeInserted += new DeviceVolumeAction(VolumeInserted);
+      _deviceMonitor.OnVolumeRemoved += new DeviceVolumeAction(VolumeRemoved);
+      _deviceMonitor.AsynchronousEvents = true;
+      _deviceMonitor.Enabled = true;
     }
         
     #endregion
@@ -202,28 +115,11 @@ namespace MediaPortal.Ripper
 
     private static void StopListeningForEvents()
     {
-      if (m_drives==null) return;
-      try
-      {
-        for (int i=0;i<m_drives.Length;i++)
-        {
-          m_drives[i].Close();
-          m_drives[i].Dispose();
-        }
-                
-      }
-      catch(Exception ex)
-      {
-        Log.Write("exception in AutoPlay.StopListeningForEvents() {0} {1} {2}",  
-        ex.Message,ex.Source,ex.StackTrace);
-      }
+      if (_deviceMonitor!=null)
+      _deviceMonitor.Dispose();
+    _deviceMonitor = null;
     }
 
-    private static void CleanupDriveList()
-    {
-      m_drives=null;
-      m_vecList=null;
-    }
     #endregion
 
     #region capture events
@@ -233,7 +129,7 @@ namespace MediaPortal.Ripper
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private static void CDRemoved(char DriveLetter)
+    private static void CDRemoved(string DriveLetter)
     {
       Log.Write("media removed from drive {0}",DriveLetter);  
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CD_REMOVED,
@@ -246,7 +142,7 @@ namespace MediaPortal.Ripper
       msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CD_REMOVED,
         (int)GUIWindow.Window.WINDOW_VIDEOS,
         GUIWindowManager.ActiveWindow,0,0,0,0);
-      msg.Label=String.Format("{0}:", DriveLetter);
+      msg.Label = DriveLetter;
       msg.SendToTargetWindow=true;
       GUIWindowManager.SendThreadMessage(msg);
 
@@ -258,40 +154,46 @@ namespace MediaPortal.Ripper
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private static void CDInserted(char DriveLetter)
+    private static void CDInserted(string DriveLetter)
     {
       Log.Write("media inserted in drive {0}",DriveLetter);  
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CD_INSERTED,
                                             (int)0,
                                             GUIWindowManager.ActiveWindow,0,0,0,0);
-      msg.Label=String.Format("{0}:", DriveLetter);
+      msg.Label = DriveLetter;
       GUIWindowManager.SendThreadMessage(msg);
+      
     }
 
 		/// <summary>
 		/// The event that gets triggered whenever a new volume is removed.
 		/// </summary>	
-		private static void VolumeRemoved(char DriveLetter)
+		private static void VolumeRemoved(int bitMask)
 		{
-			Log.Write("volume removed drive {0}",DriveLetter);  
+      string driveLetter = _deviceMonitor.MaskToLogicalPaths(bitMask);
+
+      Log.Write("volume removed drive {0}", driveLetter);  
 			GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VOLUME_REMOVED,
-				(int)0,
-				GUIWindowManager.ActiveWindow,0,0,0,0);
-			msg.Label=String.Format("{0}:", DriveLetter);
+				                        (int)0,
+				                        GUIWindowManager.ActiveWindow,0,0,0,0);
+      msg.Label = driveLetter;
 			GUIWindowManager.SendThreadMessage(msg);
+      CDRemoved(driveLetter);
 		}
 
 		/// <summary>
 		/// The event that gets triggered whenever a new volume is inserted.
 		/// </summary>	
-		private static void VolumeInserted(char DriveLetter)
-		{
-			Log.Write("volume inserted drive {0}",DriveLetter);  
+		private static void VolumeInserted(int bitMask)
+    {
+      string driveLetter = _deviceMonitor.MaskToLogicalPaths(bitMask);
+      Log.Write("volume inserted drive {0}", driveLetter);  
 			GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VOLUME_INSERTED,
 				(int)0,
 				GUIWindowManager.ActiveWindow,0,0,0,0);
-			msg.Label=String.Format("{0}:", DriveLetter);
+      msg.Label = driveLetter;
 			GUIWindowManager.SendThreadMessage(msg);
+      CDInserted(driveLetter);
 		}
 
     static bool ShouldWeAutoPlay(MediaType iMedia)
@@ -338,7 +240,7 @@ namespace MediaPortal.Ripper
     {
 			if (strDrive==null) return;
 			if (strDrive.Length==0) return;
-      StopListening();
+      
       GUIMessage msg;
       switch(DetectMediaType(strDrive))       
       {         
