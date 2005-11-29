@@ -199,7 +199,7 @@ namespace MediaPortal.Configuration.Sections
 			{
 				RegistryKey hkcu=Registry.CurrentUser;
 				RegistryKey subkey;
-				if (settingsCheckedListBox.GetItemChecked(5))
+				if (settingsCheckedListBox.GetItemChecked(7))
 				{
 					string fileName=String.Format("\"{0}\"",System.IO.Path.GetFullPath("mediaportal.exe"));
 					subkey=hkcu.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run",true);
@@ -214,7 +214,7 @@ namespace MediaPortal.Configuration.Sections
 				}
 
 				Int32 iValue=1;
-				if (settingsCheckedListBox.GetItemChecked(6))
+				if (settingsCheckedListBox.GetItemChecked(8))
 				{
 					iValue=0;
 				}
