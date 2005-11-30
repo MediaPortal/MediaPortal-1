@@ -389,6 +389,8 @@ public class MediaPortalApp : D3DApp, IRender
         _autoHideMouse = xmlreader.GetValueAsBool("general", "autohidemouse", false);
         GUIGraphicsContext.MouseSupport = xmlreader.GetValueAsBool("general", "mousesupport", true);
         GUIGraphicsContext.DBLClickAsRightClick = xmlreader.GetValueAsBool("general", "dblclickasrightclick", false);
+            this._minimizeOnStartup = xmlreader.GetValueAsBool("general", "minimizeonstartup", false);
+            this._minimizeOnGuiExit = xmlreader.GetValueAsBool("general", "minimizeonexit", false);
       }
     }
     catch (Exception)
@@ -530,6 +532,18 @@ public class MediaPortalApp : D3DApp, IRender
     base.WndProc(ref msg);
   }
   #endregion
+
+  // Trap the OnShown event so we can hide the window if the mimimize on startup option is set
+    protected override void OnShown(EventArgs e)
+    {
+        if (_minimizeOnStartup && _firstTimeWindowDisplayed)
+        {
+            _firstTimeWindowDisplayed = false;
+            this.DoMinimizeOnStartup();
+        }
+
+        base.OnShown(e);
+    }
 
   #region process
   /// <summary>
@@ -1117,6 +1131,20 @@ public class MediaPortalApp : D3DApp, IRender
           return;
 
         case Action.ActionType.ACTION_EXIT:
+
+            // is the minimize on gui option set?  If so, minimize to tray...
+            if (_minimizeOnGuiExit && !_shuttingDown)
+            {
+                if (WindowState != FormWindowState.Minimized)
+                    Log.Write("Minimizing to tray on GUI exit and restoring Start Bar");
+
+                this.WindowState = FormWindowState.Minimized;
+                this.Hide();
+
+                Win32API.EnableStartBar(true);
+                Win32API.ShowStartBar(true);
+                return;
+            }
 
           if (Recorder.IsAnyCardRecording())
           {
