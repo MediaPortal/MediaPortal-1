@@ -275,7 +275,11 @@ namespace MediaPortal.Player
         _player = null;
       }
 
-      if (Utils.PlayDVD()) return true;
+      if (Utils.PlayDVD())
+      {
+        return true;
+      }
+      _isInitalized = true;
       int iUseVMR9 = 0;
       using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
       {
@@ -299,6 +303,7 @@ namespace MediaPortal.Player
       }
       else if (_player.Playing)
       {
+        _isInitalized = false;
         if (!_player.IsTV)
         {
           GUIGraphicsContext.IsFullScreenVideo = true;
@@ -471,6 +476,7 @@ namespace MediaPortal.Player
             _currentFilePlaying = _player.CurrentFile;
             OnStarted();
 
+            _isInitalized = false;
             GUIGraphicsContext.IsFullScreenVideo = true;
             GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
           }
@@ -553,8 +559,14 @@ namespace MediaPortal.Player
       {
         get
         {
-          if (_player == null) return false;
-          if (_isInitalized) return false;
+          if (_player == null)
+          {
+            return false;
+          }
+          if (_isInitalized)
+          {
+            return false;
+          }
           bool bResult = _player.Playing;
           return bResult;
         }

@@ -343,11 +343,13 @@ namespace MediaPortal.TV.Recording
       if (GUIGraphicsContext.IsTvWindow(windowId))
       {
         // we enter my tv, enable exclusive mode
+        Log.Write("Recorder:enable dx9 exclusive mode");
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 1, 0, null);
         GUIWindowManager.SendMessage(msg);
       }
       else
       {
+        Log.Write("Recorder:disable dx9 exclusive mode");
         // we leave my tv, disable exclusive mode
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
         GUIWindowManager.SendMessage(msg);

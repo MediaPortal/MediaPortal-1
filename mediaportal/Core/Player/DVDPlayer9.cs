@@ -78,6 +78,8 @@ namespace MediaPortal.Player
         if (displayMode=="4:3 pan scan") _videoPref=2;
         if (displayMode=="4:3 letterbox") _videoPref=3;
       }
+
+      Log.Write("DVD:enable dx9 exclusive mode");
 			GUIMessage msg =new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED,0,0,0,1,0,null);
 			GUIWindowManager.SendMessage(msg);
 
@@ -319,6 +321,7 @@ namespace MediaPortal.Player
 
         if (!GUIGraphicsContext.IsTvWindow(GUIWindowManager.ActiveWindow))
         {
+          Log.Write("DVD:disable dx9 exclusive mode");
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
           GUIWindowManager.SendMessage(msg);
         }

@@ -684,9 +684,9 @@ namespace MediaPortal
       if (bRemoveHandler)
         GUIGraphicsContext.DX9Device.DeviceReset -= new System.EventHandler(this.OnDeviceReset);
       if (bWindowed)
-        Log.Write("app:Switch to windowed mode ");
+        Log.Write("app:Switch to windowed mode {0}", g_Player.Playing);
       else
-        Log.Write("app:Switch to fullscreen mode ");
+        Log.Write("app:Switch to fullscreen mode {0}", g_Player.Playing);
       windowed = bWindowed;
       BuildPresentParamsFromSettings();
       try
