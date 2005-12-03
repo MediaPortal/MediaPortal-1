@@ -76,16 +76,17 @@
        <textXOff3>100</textXOff3>
        <textYOff3>29</textYOff3>
        <IconXOff>12</IconXOff>
-       <IconYOff>8</IconYOff>
+       <IconYOff>2</IconYOff>
        <spinPosX>606</spinPosX>
        <spinPosY>418</spinPosY>
-       <itemWidth>35</itemWidth>
-       <itemHeight>35</itemHeight>
+       <itemWidth>15</itemWidth>
+       <itemHeight>15</itemHeight>
        <textureFocus>recording_background_focus.png</textureFocus>
        <textureNoFocus>recording_background_nofocus.png</textureNoFocus>
        <spaceBetweenItems>5</spaceBetweenItems>
        <textureHeight>20</textureHeight>
        <keepaspectratio>no</keepaspectratio>
+       <MarkOffsetY>2</MarkOffsetY>
        <font2>font10</font2>
        <font3>font10</font3>
        <onleft>2</onleft>
