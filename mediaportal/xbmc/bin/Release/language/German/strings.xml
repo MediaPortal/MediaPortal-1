@@ -3107,12 +3107,26 @@
 </string>
 <string>
 	<id>1047</id>
-	<value>Starte im Vollbildmodus</value>
+	<value>Vollbildmodus</value>
 </string>
 <string>
 	<id>1048</id>
 	<value>Einstellungen</value>
 </string>
+<string>
+  <id>1049</id>
+  <value>Ruhezustand</value>
+</string>
+
+
+   <!-- Music Import Strings -->
+<string><id>1100</id><value>CD importieren</value></string>
+<string><id>1101</id><value>Gewählten Titel importieren</value></string>
+<string><id>1102</id><value>CD-Import abbrechen</value></string>
+<string><id>1103</id><value>Importiere Titel</value></string>
+<string><id>1104</id><value>verbleibend</value></string>
+<string><id>1105</id><value>Importiere Titel</value></string>
+<!-- End Music Import Strings -->
 
 
 <string>
@@ -3146,8 +3160,20 @@
 <string>
 	<id>1447</id>
 	<value>Aufnahme gestoppt: </value>
-</string>	
-
+</string>
+ <string>
+   <id>1448</id> 
+   <value>Nichts auswählen</value>
+ </string>
+   <string>
+     <id>1449</id>
+     <value>Aufnahme beenden</value>
+   </string>
+   <string>
+     <id>1450</id>
+     <value>Aufnahme wirklich beenden?</value>
+   </string>
+  
 	<!-- My Status Strings -->
 	<string><id>1950</id><value>Status</value></string>
 	<string><id>1951</id><value>Festplatte</value></string>
@@ -3338,7 +3364,7 @@
 	<!-- My Trailers Strings -->
 <string>
 	<id>5900</id>
-	<value>Kinovorschau</value>
+	<value>Kinotrailer</value>
 </string>
 <string>
 	<id>5901</id>
@@ -3362,7 +3388,7 @@
 </string>
 <string>
 	<id>5906</id>
-	<value>Vorschau</value>
+	<value>Kinotrailer</value>
 </string>
 <string>
 	<id>5907</id>
@@ -3406,7 +3432,7 @@
 </string>
 <string>
 	<id>5917</id>
-	<value>Deutsche Vorschau</value>
+	<value>Deutsche Trailer</value>
 </string>
 
 	<!-- End of My Trailers Strings -->
@@ -3765,8 +3791,6 @@
 <string><id>100758</id><value>Datei-Dialog</value></string>
 <string><id>100759</id><value>Info zu Aufnahmen</value></string>
 <string><id>100760</id><value>Brenner</value></string>
-
-
 <string><id>100770</id><value>Explorer</value></string>
 <string><id>101000</id><value>Tastatur</value></string>
 <string><id>102000</id><value>Auswahldialog</value></string>
@@ -3797,8 +3821,8 @@
 <string><id>107700</id><value>TV/Videotext</value></string>
 <string><id>107701</id><value>TV/Videotext</value></string>
 
-<string><id>200000</id><value>Bitte EPG Grabber auswählen. Beachten sie bitte</value></string>
-<string><id>200001</id><value>ist ihr Land nicht aufgelistet, müssen sie das EPG manuell einrichten</value></string>
+<string><id>200000</id><value>Bitte einen EPG-Grabber auswählen. Hinweis: Ist ihr Land nicht aufgeführt,</value></string>
+<string><id>200001</id><value>dann müssen sie den Programmführer manuell einrichten!</value></string>
 <string><id>200002</id><value>Sie können jetzt EPG-Kanäle ihren TV-Kanälen zuordnen</value></string>
 <string><id>200003</id><value>Wählen sie einen Kanal und drücken sie "Enter" um die Zurodnung zu ändern</value></string>
 <string><id>200004</id><value>Manuell eingerichtete tvguide.xml</value></string>
@@ -3808,7 +3832,8 @@
 <string><id>200008</id><value>Setup - Fernbedienung</value></string>
 <string><id>200009</id><value>Weiter &gt;</value></string>
 <string><id>200010</id><value>Media Portal verwandelt ihren PC in ein fortschrittliches Multi-Media-Center.</value></string>
-<string><id>200011</id><value>Mit Media Portal können sie ihre Lieblingsmusik geniessen</value></string>
+<string><id>200011</id><value>Mit Media Portal können sie Fernsehen, ihre Lieblingsmusik geniessen,</value></string>
+<string><id>200012</id><value>Videos und DVD abspielen und vieles mehr.</value></string>
 <string><id>200013</id><value>Sie können damit Musik &amp; Radio hören, ihre Filme, DVD, Fotos und</value></string>
 <string><id>200014</id><value>Videos ansehen, Fernsehen oder Sendungen aufnehmen und vieles mehr.</value></string>
 <string><id>200015</id><value>Der Assistent wird ihnen helfen, Media Portal schnell und einfach einzurichten.</value></string>
@@ -3822,8 +3847,28 @@
 <string><id>200023</id><value>Drücken sie den "Weiter" Knopf um die TV-Karten einzurichten</value></string>
 <string><id>200024</id><value>TV-Konfiguration</value></string>
 
+<string><id>200025</id><value>Sprache</value></string>
+<string><id>200026</id><value>Land</value></string>
+
+<string><id>200027</id><value>Konfiguration - Allgemein</value></string>
+<string><id>200028</id><value>Hat dieser PC eine Internetverbindung?</value></string>
+<string><id>200029</id><value>Media Portal im Vollbild-Modus starten?</value></string>
+<string><id>200030</id><value>Media Portal mit Windows starten?</value></string>
+<string><id>200031</id><value>Ja</value></string>
+<string><id>200032</id><value>Nein</value></string>
+
+<string><id>200033</id><value>TV-Konfiguration - Analog</value></string>
+<string><id>200034</id><value>Bitte wählen sie ihre Stadt aus der Liste aus:</value></string>
+<string><id>200035</id><value>Hinweis: Wenn ihre Stadt nicht aufgeführt wird, müssen sie den manuellen Sendersuchlauf verwenden.</value></string>
+
+
+
+
+
+
+
 <!-- Web Browser Strings -->
-<string><id>4000</id><value>Web-Browser</value></string>
+<string><id>4000</id><value>Internet</value></string>
 <string><id>4001</id><value>Lesezeichen</value></string>
 
 <string><id>666666</id><value>translated by "rtv" with many thanks to all helpers - please direct updates/issues to f1n4rf1n@gmx.de or drop me a PM in the forums!</value></string>
