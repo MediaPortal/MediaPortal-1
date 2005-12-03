@@ -337,7 +337,7 @@ namespace MediaPortal.Player
         GUIWindowManager.SendMessage(msg);
       }
 
-			Log.Write("StreamBufferPlayer9:cleanup done");
+      //Log.Write("StreamBufferPlayer9:cleanup done");
 		}
 
     protected override void OnProcess()

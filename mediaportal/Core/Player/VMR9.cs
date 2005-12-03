@@ -137,7 +137,7 @@ namespace MediaPortal.Player
     {
       if (!UseVMR9inMYTV) return;
       if (vmr9Initialized) return;
-			Log.Write("VMR9Helper:AddVmr9");
+			//Log.Write("VMR9Helper:AddVmr9");
 			if (instanceCounter != 0)
 			{
 				Log.WriteFile(Log.LogType.Log, true, "VMR9Helper:Multiple instances of VMR9 running!!!");
@@ -194,7 +194,7 @@ namespace MediaPortal.Player
 					IVMRMixerControl9 mixer = VMR9Filter as IVMRMixerControl9;
 					if (mixer!=null)
 					{
-						Log.Write("VMR9: enable YUV mixing");
+            //Log.Write("VMR9: enable YUV mixing");
 						uint dwPrefs;
 						mixer.GetMixingPrefs(out dwPrefs);
 						dwPrefs  &= ~MixerPref_RenderTargetMask; 
@@ -205,7 +205,7 @@ namespace MediaPortal.Player
 			}
       GUIGraphicsContext.Vmr9Active = true;
       g_vmr9 = this;
-      Log.Write("VMR9Helper:Vmr9 Added");
+      //Log.Write("VMR9Helper:Vmr9 Added");
 		}
 
     public void Release()
@@ -219,14 +219,14 @@ namespace MediaPortal.Player
     {
 			if (vmr9Initialized)
 			{
-				Log.Write("VMR9Helper:RemoveVMR9");
-				Log.Write("VMR9Helper:stop vmr9 helper");
+        //Log.Write("VMR9Helper:RemoveVMR9");
+        //Log.Write("VMR9Helper:stop vmr9 helper");
 				if (VMR9Filter != null)
 				{
 				
 					if (m_scene != null)
 					{
-						Log.Write("VMR9Helper:stop planescene");
+            //Log.Write("VMR9Helper:stop planescene");
 						m_scene.Stop();
 						instanceCounter--;
 						m_scene.Deinit();
@@ -364,7 +364,7 @@ namespace MediaPortal.Player
 		{
 			if (!vmr9Initialized) return;
 			if( !GUIGraphicsContext.Vmr9Active) return;
-			Log.Write("VMR9Helper: SetRepaint()");
+      //Log.Write("VMR9Helper: SetRepaint()");
 			FrameCounter=0;
 			repaintTimer=DateTime.Now;
 			currentVmr9State = Vmr9PlayState.Repaint;
@@ -447,7 +447,7 @@ namespace MediaPortal.Player
 					}
 					else
 					{
-						Log.Write("vmr9: pin:{0} is connected",i);
+            //Log.Write("vmr9: pin:{0} is connected",i);
 						if (pinIn!=null)
 							hr=Marshal.ReleaseComObject(pinIn);
 						if (pinConnected!=null)
@@ -493,7 +493,7 @@ namespace MediaPortal.Player
     }
     public void Enable(bool onOff)
 		{
-      Log.Write("Vmr9:Enable:{0}", onOff);
+      // Log.Write("Vmr9:Enable:{0}", onOff);
 			if (!vmr9Initialized) return;
       if (m_scene != null) m_scene.Enabled = onOff;
       if (onOff)

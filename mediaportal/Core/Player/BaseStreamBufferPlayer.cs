@@ -249,7 +249,7 @@ namespace MediaPortal.Player
 				double dPos=_duration-5;
 				if (dPos>=0 && CurrentPosition<dPos)
 				{
-					Log.Write("StreamBufferPlayer:Seek to end");
+					//Log.Write("StreamBufferPlayer:Seek to end");
 					SeekAbsolute(dPos);
 				}
 			}
@@ -270,7 +270,7 @@ namespace MediaPortal.Player
 				}
 			}
 
-			Log.Write("StreamBufferPlayer:playing duration:{0}",Utils.SecondsToHMSString( (int)_duration) );
+			//Log.Write("StreamBufferPlayer:playing duration:{0}",Utils.SecondsToHMSString( (int)_duration) );
 			_state=PlayState.Playing;
 			OnInitialized();
 			return true;
@@ -708,14 +708,14 @@ namespace MediaPortal.Player
 		{
 			if (_state==PlayState.Paused) 
 			{
-				Log.Write("BaseStreamBufferPlayer:resume");
+				//Log.Write("BaseStreamBufferPlayer:resume");
 				Speed=1;
 				_mediaCtrl.Run();
 				_state=PlayState.Playing;
 			}
 			else if (_state==PlayState.Playing) 
 			{
-				Log.Write("BaseStreamBufferPlayer:pause");
+				//Log.Write("BaseStreamBufferPlayer:pause");
 				_state=PlayState.Paused;
 				_mediaCtrl.Pause();
 			}
@@ -754,7 +754,7 @@ namespace MediaPortal.Player
 		{
 			if (_state!=PlayState.Init)
 			{
-				Log.Write("StreamBufferPlayer:stop");
+				//Log.Write("StreamBufferPlayer:stop");
 
 				CloseInterfaces();
 			}
@@ -851,7 +851,7 @@ namespace MediaPortal.Player
 					if (dTimeInSecs<0.0d) dTimeInSecs=0.0d;
 					if (dTimeInSecs>Duration) dTimeInSecs=Duration;
 					dTimeInSecs=Math.Floor(dTimeInSecs);
-					Log.Write("StreamBufferPlayer: seekabs: {0} duration:{1} current pos:{2}", dTimeInSecs,Duration, CurrentPosition);
+					//Log.Write("StreamBufferPlayer: seekabs: {0} duration:{1} current pos:{2}", dTimeInSecs,Duration, CurrentPosition);
 					dTimeInSecs*=10000000d;
 					long pStop=0;
 					long lContentStart,lContentEnd;
@@ -869,7 +869,7 @@ namespace MediaPortal.Player
 					}
 				}
 				UpdateCurrentPosition();
-				Log.Write("StreamBufferPlayer: current pos:{0}", CurrentPosition);
+				//Log.Write("StreamBufferPlayer: current pos:{0}", CurrentPosition);
 
 			}
 		}
@@ -950,7 +950,7 @@ namespace MediaPortal.Player
 			// this is triggered only if movie has ended
 			// ifso, stop the movie which will trigger MovieStopped
 			
-			Log.Write("StreamBufferPlayer:ended {0}", _currentFile);
+			//Log.Write("StreamBufferPlayer:ended {0}", _currentFile);
       if (!IsTimeShifting)
       {
         CloseInterfaces();
@@ -1185,7 +1185,7 @@ namespace MediaPortal.Player
 		{
 			int hr;
 			if (_graphBuilder==null) return;
-			Log.Write("StreamBufferPlayer:cleanup DShow graph");
+			//Log.Write("StreamBufferPlayer:cleanup DShow graph");
 			try 
 			{
 
@@ -1325,11 +1325,11 @@ namespace MediaPortal.Player
 						else */
 						if( code == DsEvCode.Complete || code== DsEvCode.ErrorAbort)
 						{
-							Log.Write("StreamBufferPlayer: event:{0} param1:{1} param2:{2} param1:0x{3:X} param2:0x{4:X}",code.ToString(),p1,p2,p1,p2);
+							//Log.Write("StreamBufferPlayer: event:{0} param1:{1} param2:{2} param1:0x{3:X} param2:0x{4:X}",code.ToString(),p1,p2,p1,p2);
 							MovieEnded();
 						}
-						else
-							Log.Write("StreamBufferPlayer: event:{0} 0x{1:X} param1:{2} param2:{3} param1:0x{4:X} param2:0x{5:X}",code.ToString(), (int)code,p1,p2,p1,p2);
+						//else
+							//Log.Write("StreamBufferPlayer: event:{0} 0x{1:X} param1:{2} param2:{3} param1:0x{4:X} param2:0x{5:X}",code.ToString(), (int)code,p1,p2,p1,p2);
 					}
 					else break;
         }

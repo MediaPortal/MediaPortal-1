@@ -104,7 +104,7 @@ namespace MediaPortal.Player
 
 		public PlaneScene(IRender renderer, VMR9Util util)
 		{
-			Log.Write("PlaneScene: ctor()");
+      //	Log.Write("PlaneScene: ctor()");
 			
 			m_surfAdr=0;
 			m_texAdr=0;
@@ -123,7 +123,7 @@ namespace MediaPortal.Player
 		/// </summary>
 		public void Stop()
 		{
-			Log.Write("PlaneScene: Stop()");
+      //Log.Write("PlaneScene: Stop()");
 			DrawVideo=false;
 			m_bStop = true;
 		}
@@ -132,7 +132,7 @@ namespace MediaPortal.Player
 			get { return drawVideoAllowed;}
 			set { 
 				drawVideoAllowed=value;
-				Log.Write("PlaneScene: video draw allowed:{0}", drawVideoAllowed);
+        //Log.Write("PlaneScene: video draw allowed:{0}", drawVideoAllowed);
 			}
 
 		}
@@ -175,7 +175,7 @@ namespace MediaPortal.Player
 		{
 			//lock(this) 
 			{
-				Log.Write("PlaneScene: deinit()");
+        //Log.Write("PlaneScene: deinit()");
 
 				if (rTarget!=null)
 				{
@@ -200,7 +200,7 @@ namespace MediaPortal.Player
 		/// <param name="device">Direct3d devices</param>
 		public void Init() 
 		{
-			Log.Write("PlaneScene: init()");
+      //Log.Write("PlaneScene: init()");
 			rTarget = GUIGraphicsContext.DX9Device.GetRenderTarget(0);
 		}
 
@@ -385,7 +385,7 @@ namespace MediaPortal.Player
 			get { return isEnabled;}
 			set { 
 				isEnabled=value;
-				Log.Write("planescene: enabled:{0}", isEnabled);
+        //Log.Write("planescene: enabled:{0}", isEnabled);
 			}
 		}
 
@@ -399,7 +399,7 @@ namespace MediaPortal.Player
 				m_texAdr=pTex;
 				if (pTex==0)
 				{
-					Log.Write("PlaneScene: dispose surfaces");
+          //Log.Write("PlaneScene: dispose surfaces");
 					m_surfAdr=0;
 					m_vmr9Util.VideoWidth=0;
 					m_vmr9Util.VideoHeight=0;
@@ -412,7 +412,7 @@ namespace MediaPortal.Player
 				if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING) return 0;
 				if (!drawVideoAllowed  || !isEnabled)
 				{
-					Log.Write("planescene:frame:{0} enabled:{1} allowed:{2}", m_vmr9Util.FrameCounter,isEnabled,drawVideoAllowed);
+          //Log.Write("planescene:frame:{0} enabled:{1} allowed:{2}", m_vmr9Util.FrameCounter,isEnabled,drawVideoAllowed);
 					m_vmr9Util.FrameCounter++;
 					return 0;
 				}
@@ -433,7 +433,7 @@ namespace MediaPortal.Player
 				m_surfAdr=pSurface;
 				if (pSurface==0)
 				{
-					Log.Write("PlaneScene: dispose surfaces");
+          //Log.Write("PlaneScene: dispose surfaces");
 					m_texAdr=0;
 					m_vmr9Util.VideoWidth=0;
 					m_vmr9Util.VideoHeight=0;
@@ -446,7 +446,7 @@ namespace MediaPortal.Player
 				if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING) return 0;
 				if (!drawVideoAllowed  || !isEnabled)
 				{
-					Log.Write("planescene:frame:{0} enabled:{1} allowed:{2}", m_vmr9Util.FrameCounter,isEnabled,drawVideoAllowed);
+          //Log.Write("planescene:frame:{0} enabled:{1} allowed:{2}", m_vmr9Util.FrameCounter,isEnabled,drawVideoAllowed);
 					m_vmr9Util.FrameCounter++;
 					return 0;
 				}

@@ -352,7 +352,7 @@ namespace MediaPortal.TV.Recording
 
     public int FindInstance(string monikerName)
     {
-      Log.Write("    FindInstance:{0}", monikerName);
+      //Log.Write("    FindInstance:{0}", monikerName);
 
       int pos1 = monikerName.IndexOf("#");
       int pos2 = monikerName.LastIndexOf("#");
@@ -365,26 +365,26 @@ namespace MediaPortal.TV.Recording
       if (registryKeyName.StartsWith(@"@device:pnp:\\?\"))
         registryKeyName = registryKeyName.Substring(@"@device:pnp:\\?\".Length);
       registryKeyName = @"SYSTEM\CurrentControlSet\Enum\" + registryKeyName;
-      Log.Write("      key:{0}", registryKeyName);
+      //Log.Write("      key:{0}", registryKeyName);
       RegistryKey hklm = Registry.LocalMachine;
       RegistryKey subkey = hklm.OpenSubKey(registryKeyName, false);
       if (subkey != null)
       {
         string serviceName = (string)subkey.GetValue("Service");
-        Log.Write("        serviceName:{0}", serviceName);
+        //Log.Write("        serviceName:{0}", serviceName);
         registryKeyName = @"SYSTEM\CurrentControlSet\Services\" + serviceName + @"\Enum";
-        Log.Write("        key:{0}", registryKeyName);
+        //Log.Write("        key:{0}", registryKeyName);
         subkey = hklm.OpenSubKey(registryKeyName, false);
         if (subkey != null)
         {
           Int32 count = (Int32)subkey.GetValue("Count");
-          Log.Write("        Number of cards:{0}", count);
+          //Log.Write("        Number of cards:{0}", count);
           for (int i = 0; i < count; i++)
           {
             string moniker = (string)subkey.GetValue(i.ToString());
             moniker = moniker.Replace(@"\", "#");
             moniker = moniker.Replace(@"/", "#");
-            Log.Write("          card#{0}={1}", i, moniker);
+            //Log.Write("          card#{0}={1}", i, moniker);
           }
           for (int i = 0; i < count; i++)
           {
@@ -393,7 +393,7 @@ namespace MediaPortal.TV.Recording
             moniker = moniker.Replace(@"/", "#");
             if (monikerName.ToLower().IndexOf(moniker.ToLower()) >= 0)
             {
-              Log.Write("        using card:#{0}", i);
+              //Log.Write("        using card:#{0}", i);
               subkey.Close();
               hklm.Close();
               return i;
@@ -402,7 +402,7 @@ namespace MediaPortal.TV.Recording
         }
         else
         {
-          Log.Write("        using card:0");
+          // Log.Write("        using card:0");
           hklm.Close();
           return -1;
         }
@@ -414,7 +414,7 @@ namespace MediaPortal.TV.Recording
 
     public string FindUniqueFilter(string monikerName, int instance)
     {
-      Log.Write("    FindUniqueFilter:card#{0} filter:{1}", instance, monikerName);
+      //Log.Write("    FindUniqueFilter:card#{0} filter:{1}", instance, monikerName);
 
       int pos1 = monikerName.IndexOf("#");
       int pos2 = monikerName.LastIndexOf("#");
@@ -428,31 +428,31 @@ namespace MediaPortal.TV.Recording
         registryKeyName = registryKeyName.Substring(@"@device:pnp:\\?\".Length);
 
       registryKeyName = @"SYSTEM\CurrentControlSet\Enum\" + registryKeyName;
-      Log.Write("        key:{0}", registryKeyName);
+      //Log.Write("        key:{0}", registryKeyName);
       RegistryKey hklm = Registry.LocalMachine;
       RegistryKey subkey = hklm.OpenSubKey(registryKeyName, false);
       if (subkey != null)
       {
         string serviceName = (string)subkey.GetValue("Service");
-        Log.Write("        serviceName:{0}", serviceName);
+        //Log.Write("        serviceName:{0}", serviceName);
         registryKeyName = @"SYSTEM\CurrentControlSet\Services\" + serviceName + @"\Enum";
-        Log.Write("        key:{0}", registryKeyName);
+        //Log.Write("        key:{0}", registryKeyName);
         subkey = hklm.OpenSubKey(registryKeyName, false);
         if (subkey != null)
         {
           Int32 count = (Int32)subkey.GetValue("Count");
-          Log.Write("        filters available:{0}", count);
+          //Log.Write("        filters available:{0}", count);
           for (int i = 0; i < count; ++i)
           {
             string moniker = (string)subkey.GetValue(i.ToString());
             moniker = moniker.Replace(@"\", "#");
             moniker = moniker.Replace(@"/", "#");
-            Log.Write("          filter#:{0}={1}", i, moniker);
+            //Log.Write("          filter#:{0}={1}", i, moniker);
           }
           string monikerToUse = (string)subkey.GetValue(instance.ToString());
           monikerToUse = monikerToUse.Replace(@"\", "#");
           monikerToUse = monikerToUse.Replace(@"/", "#");
-          Log.Write("        using filter #:{0}={1}", instance, monikerToUse);
+          //Log.Write("        using filter #:{0}={1}", instance, monikerToUse);
           subkey.Close();
           hklm.Close();
           return monikerToUse;
@@ -469,17 +469,17 @@ namespace MediaPortal.TV.Recording
 
     bool FilterBelongsToDevice(Filter filter, string deviceInstance)
     {
-      Log.Write("FilterBelongsToFilter");
-      Log.Write("device        :{0}", deviceInstance);
-      Log.Write("filter name   :{0}", filter.Name);
-      Log.Write("filter moniker:{0}", filter.MonikerString);
+      //Log.Write("FilterBelongsToFilter");
+      //Log.Write("device        :{0}", deviceInstance);
+      //Log.Write("filter name   :{0}", filter.Name);
+      //Log.Write("filter moniker:{0}", filter.MonikerString);
 
       int p1 = filter.MonikerString.IndexOf("{");
       int p2 = filter.MonikerString.IndexOf("}");
       string classid = filter.MonikerString.Substring(p1, (p2 - p1) + 1);
 
       string registryKeyName = String.Format(@"SYSTEM\CurrentControlSet\Control\DeviceClasses\{0}", classid);
-      Log.Write(" regkey:{0}", registryKeyName);
+      //Log.Write(" regkey:{0}", registryKeyName);
       RegistryKey hklm = Registry.LocalMachine;
       RegistryKey subkey = hklm.OpenSubKey(registryKeyName, false);
       if (subkey != null)
@@ -487,20 +487,20 @@ namespace MediaPortal.TV.Recording
         string[] subkeynames = subkey.GetSubKeyNames();
         for (int i = 0; i < subkeynames.Length; ++i)
         {
-          Log.Write("  subkey:{0}", subkeynames[i]);
+          //Log.Write("  subkey:{0}", subkeynames[i]);
           registryKeyName = String.Format(@"SYSTEM\CurrentControlSet\Control\DeviceClasses\{0}\{1}", classid, subkeynames[i]);
           subkey = hklm.OpenSubKey(registryKeyName, false);
           string instance = (string)subkey.GetValue("DeviceInstance");
 
           instance = instance.Replace(@"\", "#");
           instance = instance.Replace(@"/", "#");
-          Log.Write("    deviceinstance:{0}", instance);
+          //Log.Write("    deviceinstance:{0}", instance);
           if (deviceInstance.ToLower().IndexOf(instance.ToLower()) >= 0)
           {
             //found
             subkey.Close();
             hklm.Close();
-            Log.Write("   found");
+            //Log.Write("   found");
             return true;
           }
         }
@@ -519,7 +519,7 @@ namespace MediaPortal.TV.Recording
       if (_definitionLoaded) return (true);
       _definitionLoaded = true;
 
-      Log.WriteFile(Log.LogType.Capture, "LoadDefinitions() card:{0}", ID);
+      //Log.WriteFile(Log.LogType.Capture, "LoadDefinitions() card:{0}", ID);
       CaptureCardDefinitions captureCardDefinitions = CaptureCardDefinitions.Instance;
       if (CaptureCardDefinitions.CaptureCards.Count == 0)
       {
@@ -595,8 +595,8 @@ namespace MediaPortal.TV.Recording
       string captureDeviceDeviceName = m_strVideoDeviceMoniker;
       int pos = captureDeviceDeviceName.LastIndexOf("#");
       if (pos >= 0) captureDeviceDeviceName = captureDeviceDeviceName.Substring(0, pos);
-      Log.WriteFile(Log.LogType.Capture, " video device moniker   :{0}", m_strVideoDeviceMoniker);
-      Log.WriteFile(Log.LogType.Capture, " captureDeviceDeviceName:{0}", captureDeviceDeviceName);
+      //Log.WriteFile(Log.LogType.Capture, " video device moniker   :{0}", m_strVideoDeviceMoniker);
+      //Log.WriteFile(Log.LogType.Capture, " captureDeviceDeviceName:{0}", captureDeviceDeviceName);
 
       Instance = FindInstance(captureDeviceDeviceName);
       //Log.WriteFile(Log.LogType.Capture," Using card#{0}", Instance);
@@ -605,7 +605,7 @@ namespace MediaPortal.TV.Recording
       {
         FilterDefinition fd = _captureCardDefinition.Tv.FilterDefinitions[friendlyName] as FilterDefinition;
         bool filterFound = false;
-        Log.WriteFile(Log.LogType.Capture, "  filter {0}={1}", friendlyName, fd.FriendlyName);
+        //Log.WriteFile(Log.LogType.Capture, "  filter {0}={1}", friendlyName, fd.FriendlyName);
 
         //for each directshow filter present
         foreach (string key in AvailableFilters.Filters.Keys)
@@ -639,7 +639,7 @@ namespace MediaPortal.TV.Recording
                   tmpMoniker = tmpMoniker.Replace(@"/", "#");
                   if (tmpMoniker.ToLower().IndexOf(moniker.ToLower()) >= 0)
                   {
-                    Log.Write("use unique filter moniker");
+                    // Log.Write("use unique filter moniker");
                     filterFound = true;
                     break;
                   }
@@ -650,7 +650,7 @@ namespace MediaPortal.TV.Recording
               {
                 if (al.Count > 0)
                 {
-                  Log.Write("use global filter moniker");
+                  //Log.Write("use global filter moniker");
                   filter = al[0] as Filter;
                   filterFound = true;
                 }
@@ -661,7 +661,7 @@ namespace MediaPortal.TV.Recording
               }
               else
               {
-                Log.WriteFile(Log.LogType.Capture, "    Found {0}={1}", filter.Name, filter.MonikerString);
+                // Log.WriteFile(Log.LogType.Capture, "    Found {0}={1}", filter.Name, filter.MonikerString);
               }
             }
             else filterFound = true;
@@ -1110,6 +1110,7 @@ namespace MediaPortal.TV.Recording
 
         if (value.Equals(_currentTvChannelName)) return;
 
+        Log.Write("TVCapture: change channel to :{0}", value);
         if (!IsRecording)
         {
           bool isFullScreen = GUIGraphicsContext.IsFullScreenVideo;
@@ -1117,12 +1118,12 @@ namespace MediaPortal.TV.Recording
           if (_currentGraph != null)
           {
             TVChannel channel = GetChannel(_currentTvChannelName);
-            if (_currentGraph.ShouldRebuildGraph(channel))
+            if (_currentGraph.ShouldRebuildGraph(channel) )
             {
               RebuildGraph();
               // for ss2: restore full screen
-              if (m_strVideoDevice == "B2C2 MPEG-2 Source")
-                GUIGraphicsContext.IsFullScreenVideo = isFullScreen;
+              //if (m_strVideoDevice == "B2C2 MPEG-2 Source")
+              GUIGraphicsContext.IsFullScreenVideo = isFullScreen;
               lastChannelChange = DateTime.Now;
               return;
             }
@@ -1158,47 +1159,70 @@ namespace MediaPortal.TV.Recording
               }*/
             }
 #endif
-          }
-        }
+          }//if (_currentGraph != null)
+        }//if (!IsRecording)
       }
     }
 
 
     void RebuildGraph()
     {
-      Log.WriteFile(Log.LogType.Capture, "Card:{0} rebuild graph", ID);
+      Log.WriteFile(Log.LogType.Capture, "TvCaptureDevice:RebuildGraph() Card:{0} chan:{1}", ID, _currentTvChannelName);
 
       //stop playback of this channel
       if (g_Player.Playing && g_Player.CurrentFile == Recorder.GetTimeShiftFileName(ID - 1))
       {
-        Log.WriteFile(Log.LogType.Capture, "TVCaptureDevice.Rebuildgraph() stop media");
+        //Log.WriteFile(Log.LogType.Capture, "TVCaptureDevice.Rebuildgraph() stop media");
 
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_STOP_FILE, 0, 0, 0, 0, 0, null);
         GUIGraphicsContext.SendMessage(msg);
+
+        //wait till max 500msec until player has stopped...
+        int counter = 0;
+        while (g_Player.Playing && counter < 20)
+        {
+          System.Threading.Thread.Sleep(100);
+          counter++;
+        }
+        //Log.WriteFile(Log.LogType.Capture, "TvCaptureDevice:RebuildGraph() player stopped:{0}",
+                      //g_Player.Playing);
       }
 
       if (_currentGraph != null)
       {
+
+        //Log.WriteFile(Log.LogType.Capture, "TvCaptureDevice:RebuildGraph() delete graph");
         _currentGraph.DeleteGraph();
         _currentGraph = null;
+        //Log.WriteFile(Log.LogType.Capture, "TvCaptureDevice:RebuildGraph() graph deleted");
       }
 
       TVChannel channel = GetChannel(_currentTvChannelName);
       if (_currentGraphState == State.Timeshifting)
       {
+        //Log.WriteFile(Log.LogType.Capture, "TvCaptureDevice:RebuildGraph() recreate timeshifting graph");
         _currentGraph = GraphFactory.CreateGraph(this);
         _currentGraph.CreateGraph(Quality);
+        //Log.WriteFile(Log.LogType.Capture, "TvCaptureDevice:RebuildGraph() start timeshifting");
         _currentGraph.StartTimeShifting(channel, Recorder.GetTimeShiftFileName(ID - 1));
         lastChannelChange = DateTime.Now;
+
+        //play timeshift file again
+        //Log.WriteFile(Log.LogType.Capture, "TvCaptureDevice:RebuildGraph() start playing timeshift file");
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAY_FILE, 0, 0, 0, 0, 0, null);
+        msg.Label = Recorder.GetTimeShiftFileName(ID - 1);
+        GUIGraphicsContext.SendMessage(msg);
+
       }
       else
       {
+       // Log.WriteFile(Log.LogType.Capture, "TvCaptureDevice:RebuildGraph() recreate viewing graph");
         _currentGraph = GraphFactory.CreateGraph(this);
         _currentGraph.CreateGraph(Quality);
         _currentGraph.StartViewing(channel);
         lastChannelChange = DateTime.Now;
       }
-      Log.WriteFile(Log.LogType.Capture, "Card:{0} rebuild graph done", ID);
+     // Log.WriteFile(Log.LogType.Capture, "Card:{0} rebuild graph done", ID);
     }
 
     string StripIllegalChars(string recordingAttribute)
@@ -1245,7 +1269,7 @@ namespace MediaPortal.TV.Recording
     {
       if (!IsRecording) return;
 
-      Log.WriteFile(Log.LogType.Capture, "Card:{0} stop recording", ID);
+      Log.WriteFile(Log.LogType.Capture, "TVCapture.StopRecording() Card:{0}", ID);
       // todo : stop recorder
       _currentGraph.StopRecording();
 
@@ -1279,7 +1303,7 @@ namespace MediaPortal.TV.Recording
       {
         OnTvRecordingEnded(RecordingFileName, _currentTvRecording, _currentTvProgramRecording);
       }
-      Log.Write("dev.StopRecording():_currentTvProgramRecording=null");
+      //Log.Write("TVCapture.StopRecording():_currentTvProgramRecording=null");
       // cleanup...
       _currentTvProgramRecording = null;
       _currentTvRecording = null;
@@ -1328,13 +1352,13 @@ namespace MediaPortal.TV.Recording
 
       if (currentProgram != null)
         _currentTvProgramRecording = currentProgram.Clone();
-      Log.Write("dev.Record():_currentTvProgramRecording={0}", _currentTvProgramRecording);
+      //Log.Write("dev.Record():_currentTvProgramRecording={0}", _currentTvProgramRecording);
       _currentTvRecording = new TVRecording(recording);
       _preRecordInterval = iPreRecordInterval;
       _postRecordInterval = iPostRecordInterval;
       _currentTvChannelName = recording.Channel;
 
-      Log.WriteFile(Log.LogType.Capture, "Card:{0} record {1} on {2} from {3}-{4}", ID, recording.Title, _currentTvChannelName, recording.StartTime.ToLongTimeString(), recording.EndTime.ToLongTimeString());
+      Log.WriteFile(Log.LogType.Capture, "TVCapture.Record() Card:{0} {1} on {2} from {3}-{4}", ID, recording.Title, _currentTvChannelName, recording.StartTime.ToLongTimeString(), recording.EndTime.ToLongTimeString());
       // create sink graph
       if (CreateGraph())
       {
@@ -1392,7 +1416,7 @@ namespace MediaPortal.TV.Recording
           else
           {
             //recording ended
-            Log.WriteFile(Log.LogType.Capture, "Card:{0} recording has ended '{1}' on channel:{2} from {3}-{4} id:{5} priority:{6} quality:{7}",
+            Log.WriteFile(Log.LogType.Capture, "TVCapture.Proces() Card:{0} recording has ended '{1}' on channel:{2} from {3}-{4} id:{5} priority:{6} quality:{7}",
               ID,
               _currentTvRecording.Title, _currentTvRecording.Channel,
               _currentTvRecording.StartTime.ToLongTimeString(), _currentTvRecording.EndTime.ToLongTimeString(),
@@ -1415,7 +1439,7 @@ namespace MediaPortal.TV.Recording
     /// </summary>
     public void Stop()
     {
-      Log.WriteFile(Log.LogType.Capture, "Card:{0} stop", ID);
+      Log.WriteFile(Log.LogType.Capture, "TVCapture.Stop() Card:{0}", ID);
       StopRecording();
       StopTimeShifting();
       DeleteGraph();
@@ -1431,7 +1455,7 @@ namespace MediaPortal.TV.Recording
       if (_currentGraph == null)
       {
         LoadContrastGammaBrightnessSettings();
-        Log.WriteFile(Log.LogType.Capture, "Card:{0} CreateGraph", ID);
+        Log.WriteFile(Log.LogType.Capture, "TVCapture.CreateGraph() Card:{0}", ID);
         _currentGraph = GraphFactory.CreateGraph(this);
         if (_currentGraph == null) return false;
         return _currentGraph.CreateGraph(Quality);
@@ -1450,7 +1474,7 @@ namespace MediaPortal.TV.Recording
       if (_currentGraph != null)
       {
         SaveContrastGammaBrightnessSettings();
-        Log.WriteFile(Log.LogType.Capture, "Card:{0} DeleteGraph", ID);
+        Log.WriteFile(Log.LogType.Capture, "TVCapture.DeleteGraph() Card:{0}", ID);
         _currentGraph.DeleteGraph();
         _currentGraph = null;
       }
@@ -1472,7 +1496,7 @@ namespace MediaPortal.TV.Recording
       }
       if (IsRecording) return false;
 
-      Log.WriteFile(Log.LogType.Capture, "Card:{0} start timeshifting :{1}", ID, _currentTvChannelName);
+      Log.WriteFile(Log.LogType.Capture, "TVCapture.StartTimeShifting() Card:{0} :{1}", ID, _currentTvChannelName);
       TVChannel channel = GetChannel(_currentTvChannelName);
 
       if (_currentGraphState == State.Timeshifting)
@@ -1502,7 +1526,7 @@ namespace MediaPortal.TV.Recording
 
 
 
-      Log.WriteFile(Log.LogType.Capture, "Card:{0} timeshift to file:{1}", ID, strFileName);
+      //Log.WriteFile(Log.LogType.Capture, "Card:{0} timeshift to file:{1}", ID, strFileName);
       bool bResult = _currentGraph.StartTimeShifting(channel, strFileName);
       if (bResult == true)
       {
@@ -1526,7 +1550,7 @@ namespace MediaPortal.TV.Recording
       if (!IsTimeShifting) return false;
 
       //stopping timeshifting will also remove the live.tv file 
-      Log.WriteFile(Log.LogType.Capture, "Card:{0} stop timeshifting", ID);
+      Log.WriteFile(Log.LogType.Capture, "TVCapture.StopTimeShifting() Card:{0}", ID);
       _currentGraph.StopTimeShifting();
       string fileName = Recorder.GetTimeShiftFileName(ID - 1);
       Utils.FileDelete(fileName);
@@ -1563,7 +1587,7 @@ namespace MediaPortal.TV.Recording
     /// </remarks>
     bool StartRecording(TVRecording recording)
     {
-      Log.WriteFile(Log.LogType.Capture, "Card:{0} start recording content:{1}", ID, recording.IsContentRecording);
+      Log.WriteFile(Log.LogType.Capture, "TVCapture.StartRecording() Card:{0}  content:{1}", ID, recording.IsContentRecording);
 
       TVProgram prog = null;
       DateTime dtNow = DateTime.Now.AddMinutes(_preRecordInterval);
@@ -1614,7 +1638,7 @@ namespace MediaPortal.TV.Recording
 
 
       string strFileName = String.Format(@"{0}\{1}", RecordingPath, Utils.MakeFileName(strName));
-      Log.WriteFile(Log.LogType.Capture, "Card:{0} recording to file:{1}", ID, strFileName);
+      //Log.WriteFile(Log.LogType.Capture, "Card:{0} recording to file:{1}", ID, strFileName);
 
       TVChannel channel = GetChannel(_currentTvChannelName);
 
@@ -1730,7 +1754,8 @@ namespace MediaPortal.TV.Recording
     public void Tune(TVChannel channel)
     {
       if (_currentGraphState != State.Viewing) return;
-      _currentGraph.TuneChannel(channel);
+      Log.Write("TVCapture.Tune({0}", channel.Name);
+        _currentGraph.TuneChannel(channel);
       lastChannelChange = DateTime.Now;
     }
 
@@ -1753,7 +1778,7 @@ namespace MediaPortal.TV.Recording
         {
           if (_currentGraphState == State.Viewing)
           {
-            Log.WriteFile(Log.LogType.Capture, "Card:{0} stop viewing :{1}", ID, _currentTvChannelName);
+            Log.WriteFile(Log.LogType.Capture, "TVCapture.Stop Viewing() Card:{0} {1}", ID, _currentTvChannelName);
             _currentGraph.StopViewing();
             DeleteGraph();
           }
@@ -1766,7 +1791,7 @@ namespace MediaPortal.TV.Recording
 
           if (CreateGraph())
           {
-            Log.WriteFile(Log.LogType.Capture, "Card:{0} start viewing :{1}", ID, _currentTvChannelName);
+            Log.WriteFile(Log.LogType.Capture, "TVCapture.Start Viewing() Card:{0} :{1}", ID, _currentTvChannelName);
             TVChannel chan = GetChannel(_currentTvChannelName);
             _currentGraph.StartViewing(chan);
             SetTvSettings();

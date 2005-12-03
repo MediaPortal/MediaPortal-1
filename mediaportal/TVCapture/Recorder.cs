@@ -379,7 +379,11 @@ namespace MediaPortal.TV.Recording
       }
 
       //wait until the process thread has stopped.
-      while (_state != State.None) System.Threading.Thread.Sleep(100);
+      while (_state != State.None)
+      {
+        GUIWindowManager.Process();
+        System.Threading.Thread.Sleep(10);
+      }
     }//static public void Stop()
 
     #endregion
@@ -1766,17 +1770,32 @@ namespace MediaPortal.TV.Recording
     /// <summary>
     /// Stop viewing on all cards
     /// </summary>
+    static bool reEntrantStopViewing = false;
     static public void StopViewing()
     {
-      //send Recorder command to process thread to stop viewing
-      Log.WriteFile(Log.LogType.Recorder, "Recorder:Stopviewing()");
-      lock (_listCommands)
+      if (reEntrantStopViewing) return;
+      try
       {
-        RecorderCommand cmd = new RecorderCommand(RecorderCommandType.StopAllViewing);
-        _listCommands.Add(cmd);
+        reEntrantStopViewing = true;
+
+        //send Recorder command to process thread to stop viewing
+        Log.WriteFile(Log.LogType.Recorder, "Recorder:Stopviewing()");
+        lock (_listCommands)
+        {
+          RecorderCommand cmd = new RecorderCommand(RecorderCommandType.StopAllViewing);
+          _listCommands.Add(cmd);
+        }
+        //wait till thread finished this command
+        while (_listCommands.Count > 0)
+        {
+          GUIWindowManager.Process();
+          System.Threading.Thread.Sleep(10);
+        }
       }
-      //wait till thread finished this command
-      while (_listCommands.Count > 0) System.Threading.Thread.Sleep(10);
+      finally
+      {
+        reEntrantStopViewing = false;
+      }
     }
     /// <summary>
     /// This method gets called by the process thread when it receives a StopAllViewing command.
@@ -1896,29 +1915,44 @@ namespace MediaPortal.TV.Recording
     ///   - and can view the selected tv channel
     /// if it finds a card matching these criteria it will start viewing on the card found
     /// </remarks>
+    static bool reEntrantStartViewing = false;
     static public void StartViewing(string channel, bool TVOnOff, bool timeshift)
     {
-      if (TVOnOff)
+      if (reEntrantStartViewing) return;
+      try
       {
-        Log.WriteFile(Log.LogType.Recorder, "Recorder:StartViewing on:{0} {1} {2}", channel, TVOnOff, timeshift);
-        lock (_listCommands)
+        reEntrantStartViewing = true;
+        if (TVOnOff)
         {
-          RecorderCommand cmd = new RecorderCommand(RecorderCommandType.StartViewing, channel, timeshift);
-          _listCommands.Add(cmd);
+          Log.WriteFile(Log.LogType.Recorder, "Recorder:StartViewing on:{0} {1} {2}", channel, TVOnOff, timeshift);
+          lock (_listCommands)
+          {
+            RecorderCommand cmd = new RecorderCommand(RecorderCommandType.StartViewing, channel, timeshift);
+            _listCommands.Add(cmd);
+          }
         }
-      }
-      else
-      {
+        else
+        {
 
-        Log.WriteFile(Log.LogType.Recorder, "Recorder:StartViewing off:{0} {1} {2}", channel, TVOnOff, timeshift);
-        lock (_listCommands)
-        {
-          RecorderCommand cmd = new RecorderCommand(RecorderCommandType.StopViewing, channel, timeshift);
-          _listCommands.Add(cmd);
+          Log.WriteFile(Log.LogType.Recorder, "Recorder:StartViewing off:{0} {1} {2}", channel, TVOnOff, timeshift);
+          lock (_listCommands)
+          {
+            RecorderCommand cmd = new RecorderCommand(RecorderCommandType.StopViewing, channel, timeshift);
+            _listCommands.Add(cmd);
+          }
         }
+        //wait till thread finished this command
+        while (_listCommands.Count > 0)
+        {
+          GUIWindowManager.Process();
+          System.Threading.Thread.Sleep(10);
+        }
+        Log.WriteFile(Log.LogType.Recorder, "Recorder:StartViewing off:{0} {1} {2} done", channel, TVOnOff, timeshift);
       }
-      //wait till thread finished this command
-      while (_listCommands.Count > 0) System.Threading.Thread.Sleep(10);
+      finally
+      {
+        reEntrantStartViewing = false;
+      }
     }
 
     
