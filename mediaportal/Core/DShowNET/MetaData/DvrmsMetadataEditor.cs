@@ -157,7 +157,7 @@ namespace Toub.MediaCenter.Dvrms.Metadata
 			int hr=sourceFilter.Load(filepath, null);
 			if (hr!=0)
 			{
-				Log.WriteFile(Log.LogType.Recorder,true,"Unable to open:{0} hr:0x{1:X}",filepath,hr);
+				//Log.WriteFile(Log.LogType.Recorder,true,"Unable to open:{0} hr:0x{1:X}",filepath,hr);
 				return;
 			}
 			_editor = sourceFilter as Toub.MediaCenter.Dvrms.Metadata.IStreamBufferRecordingAttribute;

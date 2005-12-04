@@ -329,6 +329,7 @@ namespace MediaPortal.TV.Recording
         if (_graphState != State.None)
           return false;
         _currentTuningObject = null;
+        Log.Write("DVBGraphBDA:CreateGraph(). ac3=false");
         _isUsingAC3 = false;
         if (_streamDemuxer != null)
           _streamDemuxer.GrabTeletext(false);
@@ -1094,6 +1095,7 @@ namespace MediaPortal.TV.Recording
           return;
         int hr;
         _currentTuningObject = null;
+        Log.Write("DVBGraphBDA:DeleteGraph(). ac3=false");
         _isUsingAC3 = false;
 
         Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:DeleteGraph()");
@@ -1602,8 +1604,9 @@ namespace MediaPortal.TV.Recording
       if (_isUsingAC3)
         Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA: channel {0} uses AC3", channel.Name);
       else
-        Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA: channel {0} uses MP2 audio", channel.Name)
-          ;
+        Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA: channel {0} uses MP2 audio", channel.Name);
+      Log.Write("DVBGraphBDA:StartViewing(). : ac3={0}", _isUsingAC3);
+
       if (!_isUsingAC3)
       {
         //Log.WriteFile(Log.LogType.Capture, false, "DVBGraphBDA:render MP2 audio pin");
@@ -1773,7 +1776,7 @@ namespace MediaPortal.TV.Recording
       }
       Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:StartTimeShifting() {0}",channel.Name);
 
-      bool _isUsingAC3 = false;
+      _isUsingAC3 = false;
       if (channel != null)
       {
         TuneChannel(channel);
@@ -1782,8 +1785,8 @@ namespace MediaPortal.TV.Recording
           Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA: channel {0} uses AC3",channel.Name);
         else
           Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA: channel {0} uses MP2 audio", channel.Name);
-
       }
+      Log.Write("DVBGraphBDA:(). StartTimeShifting: ac3={0}", _isUsingAC3);
       if (CreateSinkSource(strFileName, _isUsingAC3))
       {
         if (_mediaControl == null)
