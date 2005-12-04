@@ -30,7 +30,7 @@ namespace MediaPortal.GUI.Library
   /// </summary>
   public class Log
   {
-
+    static DateTime _previousDate;
     public enum LogType
     {
       Log,
@@ -51,7 +51,11 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     static Log()
     {
+      _previousDate = DateTime.Now.Date;
       System.IO.Directory.CreateDirectory("log");
+    }
+    static void BackupLogFiles()
+    {
       Initialize(LogType.Capture);
       Initialize(LogType.Log);
       Initialize(LogType.Recorder);
@@ -126,6 +130,12 @@ namespace MediaPortal.GUI.Library
       {
         try
         {
+          if (_previousDate != DateTime.Now.Date)
+          {
+            _previousDate = DateTime.Now.Date;
+            BackupLogFiles();
+          }
+
           using (StreamWriter writer = new StreamWriter(GetFileName(type),true))
           {
             writer.BaseStream.Seek(0, SeekOrigin.End); // set the file pointer to the end of 
@@ -133,8 +143,6 @@ namespace MediaPortal.GUI.Library
             writer.WriteLine(format,arg);
             writer.Close();
           }
-          string strLine=String.Format(format,arg);
-          Debug.WriteLine(strLine);
         }
         catch(Exception)
         {

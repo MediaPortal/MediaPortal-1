@@ -122,7 +122,7 @@ namespace MediaPortal.TV.Recording
               }
               if (add)
               {
-                Log.WriteFile(Log.LogType.Recorder, "Recorder: import recording {0}", file);
+                //Log.WriteFile(Log.LogType.Recorder, "Recorder: import recording {0}", file);
                 try
                 {
                   System.Threading.Thread.Sleep(100);
@@ -165,20 +165,20 @@ namespace MediaPortal.TV.Recording
                         int id = TVDatabase.AddRecordedTV(newRec);
                         if (id < 0)
                         {
-                          Log.WriteFile(Log.LogType.Recorder, "Recorder: import recording {0} failed");
+                          //Log.WriteFile(Log.LogType.Recorder, "Recorder: import recording {0} failed");
                         }
                         recordings.Add(newRec);
                       }
                       else
                       {
-                        Log.WriteFile(Log.LogType.Recorder, "Recorder: import recording {0} failed, unknown tv channel", file);
+                        //Log.WriteFile(Log.LogType.Recorder, "Recorder: import recording {0} failed, unknown tv channel", file);
                       }
                     }
                   }//using (DvrmsMetadataEditor editor = new DvrmsMetadataEditor(file))
                 }
                 catch (Exception ex)
                 {
-                  Log.WriteFile(Log.LogType.Log, true, "Recorder:Unable to import {0} reason:{1} {2} {3}", file, ex.Message, ex.Source, ex.StackTrace);
+                  //Log.WriteFile(Log.LogType.Log, true, "Recorder:Unable to import {0} reason:{1} {2} {3}", file, ex.Message, ex.Source, ex.StackTrace);
                 }
               }//if (add)
             }//foreach (string file in files)
