@@ -1120,36 +1120,36 @@ namespace MediaPortal.TV.Database
           if (iChannelId < 0) return -1;
 
           //check if program is already in database
-          strSQL = String.Format("SELECT * FROM tblPrograms WHERE idChannel={0} AND idGenre={1} AND strTitle='{2}' AND iStartTime='{3}' AND iEndTime='{4}' AND strDescription='{5}'",
-            iChannelId, iGenreId, strTitle, prog.Start.ToString(),
-            prog.End.ToString(), strDescription);
-          SQLiteResultSet results;
-          results = m_db.Execute(strSQL);
-          if (results.Rows.Count > 0)
-          {
-            //						Log.WriteFile(Log.LogType.Log,true,"Program Exists Ignoring:{0} {1} {2}", strTitle,prog.Start.ToString(),prog.End.ToString());
-            return -1; //exit if the same program exists
-          }
           //check if other programs exist between the start - finish time of this program
-          strSQL = String.Format("SELECT strTitle,iStartTime,iEndTime FROM tblPrograms WHERE idChannel={0} AND iStartTime>='{1}' AND iEndTime<='{2}'",
-            iChannelId, prog.Start.ToString(), prog.End.ToString());
+          long endTime = Utils.datetolong(prog.EndTime.AddMinutes(-1));
+
+          strSQL = String.Format("SELECT * FROM tblPrograms WHERE idChannel={0} AND ",iChannelId);
+          strSQL += String.Format("  ( ('{0}' <= iStartTime and '{1}' >= iStartTime) or  ",
+                                prog.Start.ToString(), endTime.ToString());
+          strSQL += String.Format("    ('{0}' >= iStartTime and '{1}' >= iStartTime and '{2}' < iEndTime) )",
+                      prog.Start.ToString(), endTime.ToString(), prog.Start.ToString());
+        //  Log.WriteFile(Log.LogType.EPG, "sql:{0} {1}-{2} {3}", prog.Channel, prog.Start.ToString(), endTime.ToString(), strSQL);
           SQLiteResultSet results2;
           results2 = m_db.Execute(strSQL);
-          if (results2.Rows.Count > 0) //and delete them
+          if (results2.Rows.Count > 0)
+          {
+            long idProgram = DatabaseUtility.GetAsInt64(results2, 0, "idProgram");
+            return (int)idProgram;//program already exists
+            /*
+            //and delete them
             for (int i = 0; i < results2.Rows.Count; ++i)
             {
-              long iStart = DatabaseUtility.GetAsInt64(results2, i, "iStartTime");
-              long iEnd = DatabaseUtility.GetAsInt64(results2, i, "iEndTime");
-              //							Log.WriteFile(Log.LogType.Log,true,"Removing Program:{0} {1} {2}", DatabaseUtility.Get(results2,i,"strTitle"),iStart.ToString(),iEnd.ToString());
-              strSQL = String.Format("DELETE FROM tblPrograms WHERE idChannel={0} AND iStartTime='{1}' AND iEndTime='{2}'",
-                iChannelId, iStart, iEnd);
+               idProgram = DatabaseUtility.GetAsInt64(results2, i, "idProgram");
+              //Log.WriteFile(Log.LogType.EPG, "sql: del {0} id:{1} {2}-{3}", i, idProgram,DatabaseUtility.Get(results2, i, "iStartTime"), DatabaseUtility.Get(results2, i, "iEndTime"));
+              strSQL = String.Format("DELETE FROM tblPrograms WHERE idProgram={0}", idProgram);
               m_db.Execute(strSQL);
-            }
-
+            }*/
+          }
           // then add the new shows
           strSQL = String.Format("insert into tblPrograms (idProgram,idChannel,idGenre,strTitle,iStartTime,iEndTime,strDescription,strEpisodeName,strRepeat,strSeriesNum,strEpisodeNum,strEpisodePart,strDate,strStarRating,strClassification) values ( NULL, {0}, {1}, '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}', '{11}', '{12}', '{13}')",
             iChannelId, iGenreId, strTitle, prog.Start.ToString(),
             prog.End.ToString(), strDescription, strEpisode, strRepeat, strSeriesNum, strEpisodeNum, strEpisodePart, strDate, strStarRating, strClassification);
+//          Log.WriteFile(Log.LogType.EPG,strSQL);
           m_db.Execute(strSQL);
           lRetId = m_db.LastInsertID();
         }
