@@ -12,7 +12,9 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
   public class GUIWizardAnalogCity : GUIWindow, IComparer<GUIListItem>
   {
     [SkinControlAttribute(23)]
-      protected GUIButtonControl btnManual = null;
+    protected GUIButtonControl btnManual = null;
+    [SkinControlAttribute(27)]
+    protected GUIButtonControl btnSkip = null;
     [SkinControlAttribute(26)]
     protected GUILabelControl lblCountry = null;
     [SkinControlAttribute(24)]
@@ -66,6 +68,16 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
                   }
               }
           }
+          if (listCities.Count == 0)
+          {
+              GUIControl.FocusControl(GetID, btnManual.GetID);
+              GUIListItem item = new GUIListItem();
+              item.IsFolder = false;
+              item.Label = "No Cities Found";
+              item.Path = "none";
+              listCities.Add(item);
+          }
+
           listCities.Sort(this);
       }
     }
@@ -81,6 +93,11 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
       if (control == btnManual)
       {
           GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_ANALOG_TUNE); //MANUAL_TUNE);
+      }
+      if (control == btnSkip)
+      {
+          GUIPropertyManager.SetProperty("#Wizard.Analog.Done", "yes");
+          GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_EPG_SELECT);
       }
       base.OnClicked(controlId, control, actionType);
     }

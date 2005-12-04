@@ -84,20 +84,25 @@ namespace MediaPortal.GUI.Settings
             if (dlg.SelectedLabel < 0 || dlg.SelectedLabel >= TunerCountries.Countries.Length) 
                 return;
             lblCountry.Label = TunerCountries.Countries[dlg.SelectedLabel].Country;
-            lblCountry.Data = TunerCountries.Countries[dlg.SelectedLabel].Id.ToString();
+            lblCountry.Data = TunerCountries.Countries[dlg.SelectedLabel];
         }
 
         void OnNextPage()
         {
+            TunerCountry country = (TunerCountry)lblCountry.Data;
+
             using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
             {
-                xmlwriter.SetValue("capture", "countryname", lblCountry.Label);
-                xmlwriter.SetValue("capture", "country", (string) lblCountry.Data);
+                xmlwriter.SetValue("general", "country", country.CountryCode);
+                xmlwriter.SetValue("capture", "countryname", country.Country);
+                xmlwriter.SetValue("capture", "country", country.Id.ToString());
                 xmlwriter.SetValue("skin", "language", lblLanguage.Label);
             }
 
-            GUIPropertyManager.SetProperty("#WizardCard", (string)lblCountry.Data);
-            GUIPropertyManager.SetProperty("#WizardCountry", lblCountry.Label);
+            
+            GUIPropertyManager.SetProperty("#WizardCard", country.Id.ToString());
+            GUIPropertyManager.SetProperty("#WizardCountryCode", country.CountryCode);
+            GUIPropertyManager.SetProperty("#WizardCountry", country.Country);
 
             GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_GENERAL);
         }
@@ -125,31 +130,38 @@ namespace MediaPortal.GUI.Settings
 
         void LoadSettings()
         {
+            string countryCode = "";
+            string language = "";
+
             using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
             {
-                lblCountry.Label = xmlreader.GetValueAsString("capture", "countryname", "");
-                lblCountry.Data = xmlreader.GetValueAsString("capture", "country", "");
-                lblLanguage.Label = xmlreader.GetValueAsString("skin", "language", "");
-
-                if (lblCountry.Label == "")
-                    lblCountry.Label = CountryName(System.Globalization.RegionInfo.CurrentRegion.TwoLetterISORegionName);
-
-                if (lblLanguage.Label == "")
-                    lblLanguage.Label = GUILocalizeStrings.LocalSupported();
-
-                //lblCountry.Label = CountryName(System.Globalization.RegionInfo.CurrentRegion.TwoLetterISORegionName);
-                //lblCountry.Data = System.Globalization.RegionInfo.CurrentRegion.TwoLetterISORegionName;
+                countryCode = xmlreader.GetValueAsString("general", "country", "");
+                language = xmlreader.GetValueAsString("skin", "language", "");
             }
+
+            if (countryCode == "")
+                countryCode = System.Globalization.RegionInfo.CurrentRegion.TwoLetterISORegionName;
+
+            if (language == "")
+                language = GUILocalizeStrings.LocalSupported();
+
+            TunerCountry country = FindCountry(countryCode);
+
+            lblCountry.Label = country.Country;
+            lblCountry.Data = country;
+            lblLanguage.Label = language;
+
         }
 
-        private string CountryName(string ID)
+        private TunerCountry FindCountry(string ID)
         {
             for (int i = 0; i < TunerCountries.Countries.Length; ++i)
             {
                 if (TunerCountries.Countries[i].CountryCode == ID)
-                    return TunerCountries.Countries[i].Country;
+                    return TunerCountries.Countries[i];
             }
-            return "Unknown";
+            TunerCountry unknown = new TunerCountry(-1, "Unknown", "");
+            return unknown;
         }
 	}
 }

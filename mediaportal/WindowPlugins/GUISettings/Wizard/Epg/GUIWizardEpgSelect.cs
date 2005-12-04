@@ -9,6 +9,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.GUI.Settings.Wizard;
 using MediaPortal.TV.Database;
 using MediaPortal.EPG.config;
+using DShowNET;
 
 namespace WindowPlugins.GUISettings.Epg
 {
@@ -27,6 +28,8 @@ namespace WindowPlugins.GUISettings.Epg
     protected GUIButtonControl btnNext = null;
     [SkinControlAttribute(25)]
     protected GUIButtonControl btnBack = null;
+    [SkinControlAttribute(27)]
+    protected GUIButtonControl btnManual = null;
     bool epgGrabberSelected = false;
     ChannelsList _channelList;
     ArrayList _epgChannels;
@@ -59,6 +62,8 @@ namespace WindowPlugins.GUISettings.Epg
 
       string[] country = _channelList.GetCountries();
 
+      string localCountry = GUIPropertyManager.GetProperty("#WizardCountryCode");
+
       for (int i = 0; i < country.Length; i++)
       {
         try
@@ -67,6 +72,11 @@ namespace WindowPlugins.GUISettings.Epg
           GUIListItem item = new GUIListItem();
           item.Label = rInfo.DisplayName;
           item.Path = country[i];
+          if (localCountry == country[i])
+          {
+              OnGrabberSelected(item);
+              return;
+          }
           listGrabbers.Add(item);
         }
         catch (Exception)
@@ -74,10 +84,10 @@ namespace WindowPlugins.GUISettings.Epg
       }
 
       listGrabbers.Sort(this);
-      GUIListItem manualItem = new GUIListItem();
-      manualItem.Label = GUILocalizeStrings.Get(200004);//Manual supplied tvguide.xml
-      manualItem.Path = "";
-      listGrabbers.Add(manualItem);
+      //GUIListItem manualItem = new GUIListItem();
+      //manualItem.Label = GUILocalizeStrings.Get(200004);//Manual supplied tvguide.xml
+      //manualItem.Path = "";
+      //listGrabbers.Add(manualItem);
     }
 
     protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
@@ -97,6 +107,10 @@ namespace WindowPlugins.GUISettings.Epg
       {
         OnBack();
       }
+      if (control == btnManual)
+      {
+          OnManual();
+      }
       base.OnClicked(controlId, control, actionType);
     }
 
@@ -110,93 +124,105 @@ namespace WindowPlugins.GUISettings.Epg
       }
       GUIWindowManager.ShowPreviousWindow();
     }
+      void OnManual()
+      {
+          string _strTVGuideFile;
+          using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+          {
+              _strTVGuideFile = xmlreader.GetValueAsString("xmltv", "folder", "xmltv");
+              _strTVGuideFile = Utils.RemoveTrailingSlash(_strTVGuideFile);
+              _strTVGuideFile += @"\tvguide.xml";
+          }
+          if (!System.IO.File.Exists(_strTVGuideFile))
+          {
+              ShowError("Unable to open tvguide.xml from", _strTVGuideFile);
+              LoadGrabbers();
+              return;
+          }
+          //load tvguide.xml
+          XmlDocument xml = new XmlDocument();
+          xml.Load(_strTVGuideFile);
+          if (xml.DocumentElement == null)
+          {
+              ShowError("Unable to open tvguide.xml from", _strTVGuideFile);
+              LoadGrabbers();
+              return;
+          }
+          XmlNodeList channelList = xml.DocumentElement.SelectNodes("/tv/channel");
+          if (channelList == null)
+          {
+              ShowError("Invalid xmltv file", "no tv channels found");
+              LoadGrabbers();
+              return;
+          }
+          if (channelList.Count == 0)
+          {
+              ShowError("Invalid xmltv file", "no tv channels found");
+              LoadGrabbers();
+              return;
+          }
+          foreach (XmlNode nodeChannel in channelList)
+          {
+              if (nodeChannel.Attributes != null)
+              {
+                  XmlNode nodeId = nodeChannel.Attributes.GetNamedItem("id");
+                  XmlNode nodeName = nodeChannel.SelectSingleNode("display-name");
+                  if (nodeName == null)
+                      nodeName = nodeChannel.SelectSingleNode("Display-Name");
+                  if (nodeName != null && nodeName.InnerText != null)
+                  {
+                      GUIListItem ch = new GUIListItem();
+                      ch.Label = nodeName.InnerText;
+                      ch.Path = nodeId.InnerText;
+                      int idChannel;
+                      string strTvChannel;
+                      if (TVDatabase.GetEPGMapping(ch.Path, out idChannel, out strTvChannel))
+                      {
+                          ch.Label2 = strTvChannel;
+                          ch.ItemId = idChannel;
+                      }
+                      listGrabbers.Add(ch);
+                  }
+              }
+          }
+      }
 
     void OnGrabberSelected(GUIListItem item)
     {
-      if (item == null) return;
+      if (item == null) 
+          return;
+
       listGrabbers.Clear();
-      if (item.Path == String.Empty)
-      {
-        string _strTVGuideFile;
-        using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
-        {
-          _strTVGuideFile = xmlreader.GetValueAsString("xmltv", "folder", "xmltv");
-          _strTVGuideFile = Utils.RemoveTrailingSlash(_strTVGuideFile);
-          _strTVGuideFile += @"\tvguide.xml";
-        }
-        if (!System.IO.File.Exists(_strTVGuideFile))
-        {
-          ShowError("Unable to open tvguide.xml from", _strTVGuideFile);
-          LoadGrabbers();
-          return;
-        }
-        //load tvguide.xml
-        XmlDocument xml = new XmlDocument();
-        xml.Load(_strTVGuideFile);
-        if (xml.DocumentElement == null)
-        {
-          ShowError("Unable to open tvguide.xml from", _strTVGuideFile);
-          LoadGrabbers();
-          return;
-        }
-        XmlNodeList channelList = xml.DocumentElement.SelectNodes("/tv/channel");
-        if (channelList == null)
-        {
-          ShowError("Invalid xmltv file", "no tv channels found");
-          LoadGrabbers();
-          return;
-        }
-        if (channelList.Count == 0)
-        {
-          ShowError("Invalid xmltv file", "no tv channels found");
-          LoadGrabbers();
-          return;
-        }
-        foreach (XmlNode nodeChannel in channelList)
-        {
-          if (nodeChannel.Attributes != null)
-          {
-            XmlNode nodeId = nodeChannel.Attributes.GetNamedItem("id");
-            XmlNode nodeName = nodeChannel.SelectSingleNode("display-name");
-            if (nodeName == null)
-              nodeName = nodeChannel.SelectSingleNode("Display-Name");
-            if (nodeName != null && nodeName.InnerText != null)
-            {
-              GUIListItem ch = new GUIListItem();
-              ch.Label = nodeName.InnerText;
-              ch.Path = nodeId.InnerText;
-              int idChannel;
-              string strTvChannel;
-              if (TVDatabase.GetEPGMapping(ch.Path, out idChannel, out strTvChannel))
-              {
-                ch.Label2 = strTvChannel;
-                ch.ItemId = idChannel;
-              }
-              listGrabbers.Add(ch);
-            }
-          }
-        }
-      }
-      else
-      {
         // Channel List
         _epgChannels = _channelList.GetChannelArrayList(item.Path);
+        string country = GUIPropertyManager.GetProperty("#WizardCountryCode");
 
         ArrayList channels = new ArrayList();
         TVDatabase.GetChannels(ref channels);
+
+        GUIListItem ch; // = new GUIListItem();
+
         //channels.Sort (this);
 
         foreach (TVChannel chan in channels)
         {
-          GUIListItem ch = new GUIListItem();
+          ch = new GUIListItem();
           ch.Label = chan.Name;
           ch.Path = "";
+          
+          ChannelInfo chInfo = _channelList.FindChannel(chan.Name, country);
+          if (chInfo != null)
+          {
+                ch.Label2 = chInfo.FullName;
+                ch.Path = chInfo.ChannelID;
+                //item.ItemId
+          }
+
           listGrabbers.Add(ch);
         }
         listGrabbers.Sort(this);
 
         //setup and import epg...
-      }
       lblLine1.Label = GUILocalizeStrings.Get(200002);
       lblLine2.Label = GUILocalizeStrings.Get(200003);
       epgGrabberSelected = true;
@@ -244,6 +270,8 @@ namespace WindowPlugins.GUISettings.Epg
       dlg.SetHeading(GUILocalizeStrings.Get(924));//Menu
       dlg.ShowQuickNumbers = false;
 
+      dlg.Add("Delete");
+
       int selected = 0;
       int count = 0;
       foreach (ChannelInfo chan in _epgChannels)
@@ -256,12 +284,21 @@ namespace WindowPlugins.GUISettings.Epg
       dlg.SelectedLabel = selected;
       dlg.ShowQuickNumbers = false;
       dlg.DoModal(GetID);
-      if (dlg.SelectedLabel < 0 || dlg.SelectedLabel >= _epgChannels.Count) return;
-      ChannelInfo selChannel = (ChannelInfo)_epgChannels[dlg.SelectedLabel];
-      item.Label2 = selChannel.FullName;
-      item.Path = selChannel.ChannelID;
-      item.ItemId = dlg.SelectedLabel;
+      if (dlg.SelectedLabel < 0 || dlg.SelectedLabel >= _epgChannels.Count + 1) return;
+      if (dlg.SelectedLabel == 0)
+      {
+          item.Label2 = "";
+          item.Path = "";
+      }
+      else
+      {
+          ChannelInfo selChannel = (ChannelInfo)_epgChannels[dlg.SelectedLabel - 1];
+          item.Label2 = selChannel.FullName;
+          item.Path = selChannel.ChannelID;
+          item.ItemId = dlg.SelectedLabel;
+      }
     }
+
     void ShowError(string line1, string line2)
     {
       GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);

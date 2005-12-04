@@ -151,31 +151,34 @@ namespace MediaPortal.EPG.config
 
 		public void Save()
 		{
-			string confFile = _strPath + "\\WebEPG.xml";
-			if(System.IO.File.Exists(confFile))
-			{
-				System.IO.File.Delete(confFile.Replace(".xml",".bak"));
-				System.IO.File.Move(confFile,confFile.Replace(".xml",".bak"));
-			}
-			MediaPortal.Webepg.Profile.Xml xmlwriter = new MediaPortal.Webepg.Profile.Xml(confFile);
+            if (_ConfigList != null)
+            {
+                string confFile = _strPath + "\\WebEPG.xml";
+                if (System.IO.File.Exists(confFile))
+                {
+                    System.IO.File.Delete(confFile.Replace(".xml", ".bak"));
+                    System.IO.File.Move(confFile, confFile.Replace(".xml", ".bak"));
+                }
+                MediaPortal.Webepg.Profile.Xml xmlwriter = new MediaPortal.Webepg.Profile.Xml(confFile);
 
-			xmlwriter.SetValue("General", "MaxDays", _MaxGrab.ToString());
-			xmlwriter.SetValue("ChannelMap", "Count", _ConfigList.Count.ToString());
+                xmlwriter.SetValue("General", "MaxDays", _MaxGrab.ToString());
+                xmlwriter.SetValue("ChannelMap", "Count", _ConfigList.Count.ToString());
 
-			for(int i=0; i < _ConfigList.Count; i++)
-			{
-				EPGConfigData channel = (EPGConfigData) _ConfigList[i];
-				xmlwriter.SetValue((i+1).ToString(), "ChannelID", channel.ChannelID);
-				xmlwriter.SetValue((i+1).ToString(), "DisplayName", channel.DisplayName);
-				xmlwriter.SetValue((i+1).ToString(), "Grabber1", channel.PrimaryGrabberID);
-				if(channel.Linked)
-				{
-					xmlwriter.SetValueAsBool((i+1).ToString(), "Grabber1-Linked", channel.Linked);
-					xmlwriter.SetValue((i+1).ToString(), "Grabber1-Start", channel.linkStart);
-					xmlwriter.SetValue((i+1).ToString(), "Grabber1-End", channel.linkEnd);
-				}
-			}
-			xmlwriter.Save();
+                for (int i = 0; i < _ConfigList.Count; i++)
+                {
+                    EPGConfigData channel = (EPGConfigData)_ConfigList[i];
+                    xmlwriter.SetValue((i + 1).ToString(), "ChannelID", channel.ChannelID);
+                    xmlwriter.SetValue((i + 1).ToString(), "DisplayName", channel.DisplayName);
+                    xmlwriter.SetValue((i + 1).ToString(), "Grabber1", channel.PrimaryGrabberID);
+                    if (channel.Linked)
+                    {
+                        xmlwriter.SetValueAsBool((i + 1).ToString(), "Grabber1-Linked", channel.Linked);
+                        xmlwriter.SetValue((i + 1).ToString(), "Grabber1-Start", channel.linkStart);
+                        xmlwriter.SetValue((i + 1).ToString(), "Grabber1-End", channel.linkEnd);
+                    }
+                }
+                xmlwriter.Save();
+            }
 		}
 	}
 }

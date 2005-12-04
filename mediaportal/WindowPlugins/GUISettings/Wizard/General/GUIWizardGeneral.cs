@@ -33,6 +33,7 @@ namespace MediaPortal.GUI.Settings.Wizard
 		{
 			base.OnPageLoad ();
 			LoadSettings();
+            GUIControl.FocusControl(GetID, btnNext.GetID);
 		}
 
 		protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)

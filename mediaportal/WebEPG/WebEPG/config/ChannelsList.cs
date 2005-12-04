@@ -23,6 +23,7 @@ using System;
 using System.Xml;
 using System.Collections;
 using MediaPortal.Webepg.GUI.Library;
+using MediaPortal.Util;
 
 namespace MediaPortal.EPG.config
 {
@@ -33,8 +34,10 @@ namespace MediaPortal.EPG.config
 	{
 		string m_strGrabberDir;
 		string m_strChannelsFile;
+        const int MAX_COST = 2;
 
 		SortedList m_ChannelList = null;
+        string m_Country;
 
 		public ChannelsList(string BaseDir)
 		{
@@ -116,8 +119,99 @@ namespace MediaPortal.EPG.config
 			return ChannelArray;
 		}
 
+        public ChannelInfo FindChannel(string Name, string country)
+        {
+            ArrayList channels = GetChannelArrayList(country);
+
+            ChannelInfo retChan = null;
+
+            if (channels == null)
+                return retChan;
+
+            ChannelInfo ch;
+
+            int bestCost;
+            int cost;
+
+            bestCost = MAX_COST + 1;
+            for (int i = 0; i < channels.Count; i++)
+            {
+                ch = (ChannelInfo)channels[i];
+                if (Name == ch.FullName)
+                {
+                    retChan = ch;
+                    break;
+                }
+
+                if (ch.FullName.IndexOf(Name) != -1)
+                {
+                    retChan = ch;
+                    break;
+                }
+
+                cost = Levenshtein.Match(Name, ch.FullName);
+
+                if (cost < bestCost)
+                {
+                    retChan = ch;
+                    bestCost = cost;
+                }
+            }
+
+            return retChan;
+        }
+
+        public ChannelInfo[] FindChannels(string[] NameList, string country)
+        {
+            ArrayList channels = GetChannelArrayList(country);
+
+            ChannelInfo[] retList = new ChannelInfo[NameList.Length];
+
+            if (channels == null)
+                return retList;
+
+            ChannelInfo ch;
+
+            int bestCost;
+            int cost;
+
+            for(int k = 0; k < NameList.Length; k++)
+            {
+                bestCost = MAX_COST + 1;
+                for(int i = 0; i < channels.Count; i++)
+                {
+                    ch = (ChannelInfo) channels[i];
+                    if(NameList[k] == ch.FullName)
+                    {
+                         retList[k] = ch;
+                         break;
+                    }
+
+                    if (ch.FullName.IndexOf(NameList[k]) != -1)
+                    {
+                        retList[k] = ch;
+                        break;
+                    }
+
+                    cost = Levenshtein.Match(NameList[k], ch.FullName);
+
+                    if (cost < bestCost)
+                    {
+                        retList[k] = ch;
+                        bestCost = cost;
+                    }
+                }
+            }
+            return retList;
+        }
+
 		private void LoadChannels(string country)
 		{
+            if (country != m_Country)
+                m_ChannelList = new SortedList();
+            else
+                return;
+
 			if(System.IO.File.Exists(m_strChannelsFile))
 			{
 				//Log.WriteFile(Log.LogType.Log, false, "WebEPG Config: Loading Existing channels.xml");
@@ -140,6 +234,8 @@ namespace MediaPortal.EPG.config
 						if(channel.ChannelID != "")
 							m_ChannelList.Add(channel.ChannelID, channel);
 					}
+
+                    m_Country = country;
 				}
 			}
 		}
