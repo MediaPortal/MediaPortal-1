@@ -6513,4 +6513,119 @@
       </connections>
     </tv>
   </capturecard>
+
+  <capturecard commercialname="KWorld Creator TV - MCE TV 200 Deluxe" capturename="Video Capture Device" devid="ven_14f1&amp;dev_8800&amp;subsys_084017de&amp;rev_05">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"  name="Conexant 2388x Tuner"         checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="Conexant 2388x TvAudio"       checkdevice="true"></filter>
+        <filter cat="crossbar" name="Conexant 2388x Crossbar"      checkdevice="true"></filter>
+        <filter cat="capture"  name="Conexant 2388x Video Capture" checkdevice="true"></filter>
+        <filter cat="encoder"  name="Conexant 2388x MPEG Encoder"      checkdevice="true"></filter>
+      </filters>
+      <connections>
+		<connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="3"></connection>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"  sinkpin="1"></connection>
+        <connection sourcefilter="capture"  sourcepin="2" sinkfilter="encoder"  sinkpin="0"></connection>
+        <connection sourcefilter="capture"  sourcepin="3" sinkfilter="encoder"  sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="KWorld Creator TV - MCE TV 200 Deluxe" capturename="Video Capture Device" devid="ven_14f1&amp;dev_8800&amp;subsys_084217DE&amp;rev_05">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"  name="Conexant 2388x Tuner"         checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="Conexant 2388x TvAudio"       checkdevice="true"></filter>
+        <filter cat="crossbar" name="Conexant 2388x Crossbar"      checkdevice="true"></filter>
+        <filter cat="capture"  name="Conexant 2388x Video Capture" checkdevice="true"></filter>
+        <filter cat="encoder"  name="Conexant 2388x MPEG Encoder"      checkdevice="true"></filter>
+      </filters>
+      <connections>
+		<connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="3"></connection>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"  sinkpin="1"></connection>
+        <connection sourcefilter="capture"  sourcepin="2" sinkfilter="encoder"  sinkpin="0"></connection>
+        <connection sourcefilter="capture"  sourcepin="3" sinkfilter="encoder"  sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="KWorld Creator TV - MCE TV 200 Deluxe" capturename="Video Capture Device" devid="ven_14f1&amp;dev_8800&amp;subsys_084417DE&amp;rev_05">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"  name="Conexant 2388x Tuner"         checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="Conexant 2388x TvAudio"       checkdevice="true"></filter>
+        <filter cat="crossbar" name="Conexant 2388x Crossbar"      checkdevice="true"></filter>
+        <filter cat="capture"  name="Conexant 2388x Video Capture" checkdevice="true"></filter>
+        <filter cat="encoder"  name="Conexant 2388x MPEG Encoder"      checkdevice="true"></filter>
+      </filters>
+      <connections>
+		<connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="3"></connection>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"  sinkpin="1"></connection>
+        <connection sourcefilter="capture"  sourcepin="2" sinkfilter="encoder"  sinkpin="0"></connection>
+        <connection sourcefilter="capture"  sourcepin="3" sinkfilter="encoder"  sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="KWorld Creator TV - MCE TV 200 Deluxe" capturename="Video Capture Device" devid="ven_14f1&amp;dev_8800&amp;subsys_084117DE&amp;rev_05">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"  name="Conexant 2388x Tuner"         checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="Conexant 2388x TvAudio"       checkdevice="true"></filter>
+        <filter cat="crossbar" name="Conexant 2388x Crossbar"      checkdevice="true"></filter>
+        <filter cat="capture"  name="Conexant 2388x Video Capture" checkdevice="true"></filter>
+        <filter cat="encoder"  name="Conexant 2388x MPEG Encoder"      checkdevice="true"></filter>
+      </filters>
+      <connections>
+		<connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="3"></connection>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"  sinkpin="1"></connection>
+        <connection sourcefilter="capture"  sourcepin="2" sinkfilter="encoder"  sinkpin="0"></connection>
+        <connection sourcefilter="capture"  sourcepin="3" sinkfilter="encoder"  sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="KWorld Creator TV - MCE TV 200 Deluxe" capturename="Video Capture Device" devid="ven_14f1&amp;dev_8800&amp;subsys_084317DE&amp;rev_05">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"  name="Conexant 2388x Tuner"         checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="Conexant 2388x TvAudio"       checkdevice="true"></filter>
+        <filter cat="crossbar" name="Conexant 2388x Crossbar"      checkdevice="true"></filter>
+        <filter cat="capture"  name="Conexant 2388x Video Capture" checkdevice="true"></filter>
+        <filter cat="encoder"  name="Conexant 2388x MPEG Encoder"      checkdevice="true"></filter>
+      </filters>
+      <connections>
+		<connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"  sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="3"></connection>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"></connection>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"  sinkpin="1"></connection>
+        <connection sourcefilter="capture"  sourcepin="2" sinkfilter="encoder"  sinkpin="0"></connection>
+        <connection sourcefilter="capture"  sourcepin="3" sinkfilter="encoder"  sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
 </capturecards>
