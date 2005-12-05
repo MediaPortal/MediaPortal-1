@@ -2237,22 +2237,31 @@ namespace MediaPortal.TV.Recording
     #region Process and properties
     #region auto epg grabber
     static DateTime _epgTimer = DateTime.MinValue;
+    
     static void ProcessEpg()
     {
       TimeSpan ts = DateTime.Now - _epgTimer;
       if (ts.TotalMilliseconds < 1000) return;
-
+      
       foreach (TVCaptureDevice card in _tvcards)
       {
         //card is empty
         if (card.Network == NetworkType.Analog) continue;
+        if (card.IsRadio || card.IsRecording || card.IsTimeShifting || card.View) continue;
+
         if (card.IsEpgGrabbing)
         {
           card.Process();
-          continue;
+          if (card.IsEpgFinished)
+          {
+            card.DeleteGraph();
+
+            //reload tv channels...
+            _tvChannelsList.Clear();
+            TVDatabase.GetChannels(ref _tvChannelsList);
+          }
         }
-        if (card.IsRadio || card.IsRecording || card.IsTimeShifting || card.View) continue;
-        if (!card.IsEpgGrabbing)
+        else
         {
           foreach (TVChannel chan in _tvChannelsList)
           {
