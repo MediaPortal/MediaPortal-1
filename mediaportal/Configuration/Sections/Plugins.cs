@@ -39,7 +39,7 @@ namespace MediaPortal.Configuration.Sections
     {
       public string DLLName;
       public ISetupForm SetupForm;
-      public string strType;
+      public string strType = string.Empty;
       public int windowId = -1;
     } ;
 
