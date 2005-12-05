@@ -295,6 +295,7 @@ namespace MediaPortal.TV.Recording
       }
       public void NewEvent(DateTime time)
       {
+
         if (_firstEvent == DateTime.MinValue)
           _firstEvent = time;
         if (_lastEvent == DateTime.MinValue)
@@ -919,6 +920,7 @@ namespace MediaPortal.TV.Recording
 
     void OnChannelEvent(string channelName, DateTime timeStart, DateTime timeEnd)
     {
+      if (timeEnd < DateTime.Now) return;
       foreach (TvChannelEpg ch in _epgChannels)
       {
         if (ch.ChannelName == channelName)
