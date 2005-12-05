@@ -115,6 +115,7 @@ namespace WindowPlugins.GUISettings.Wizard.DVBT
       newRadioChannels = 0;
       updatedRadioChannels = 0;
       LoadFrequencies();
+      Recorder.Paused = true;
       TVCaptureDevice captureCard = null;
       if (card >= 0 && card < Recorder.Count)
       {
@@ -182,6 +183,7 @@ namespace WindowPlugins.GUISettings.Wizard.DVBT
         GUIControl.FocusControl(GetID, btnNext.GetID);
         GUIPropertyManager.SetProperty("#Wizard.DVBT.Done", "yes");
 
+        Recorder.Paused = false;
       }
     }
     void ScanChannels(TVCaptureDevice captureCard)

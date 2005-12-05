@@ -168,6 +168,7 @@ namespace WindowPlugins.GUISettings.Wizard.DVBS
 
     public void ScanThread()
     {
+      Recorder.Paused = true;
       newChannels = 0;
       updatedChannels = 0;
       newRadioChannels = 0;
@@ -235,6 +236,7 @@ namespace WindowPlugins.GUISettings.Wizard.DVBS
         GUIControl.FocusControl(GetID, btnNext.GetID);
         GUIPropertyManager.SetProperty("#Wizard.DVBS.Done", "yes");
 
+        Recorder.Paused = false;
       }
     }
     void ScanChannels(TVCaptureDevice captureCard)

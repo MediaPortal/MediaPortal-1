@@ -2040,20 +2040,25 @@ namespace MediaPortal
     /// </summary>
     protected override void OnResize(System.EventArgs e)
     {
-      if (notifyIcon1 != null)
+      try
       {
-        if (notifyIcon1.Visible == false && this.WindowState == FormWindowState.Minimized)
+        if (notifyIcon1 != null)
         {
-          notifyIcon1.Visible = true;
-          this.Hide();
-          return;
-        }
-        else if (notifyIcon1.Visible == true && this.WindowState != FormWindowState.Minimized)
-        {
-          notifyIcon1.Visible = false;
+          if (notifyIcon1.Visible == false && this.WindowState == FormWindowState.Minimized)
+          {
+            notifyIcon1.Visible = true;
+            this.Hide();
+            return;
+          }
+          else if (notifyIcon1.Visible == true && this.WindowState != FormWindowState.Minimized)
+          {
+            notifyIcon1.Visible = false;
+          }
         }
       }
-
+      catch (Exception)
+      {
+      }
       active = !(this.WindowState == System.Windows.Forms.FormWindowState.Minimized);
       base.OnResize(e);
     }

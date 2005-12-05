@@ -67,6 +67,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
     }
     public void ScanThread()
     {
+      Recorder.Paused = true;
       listTvChannels.Clear();
       newChannels = 0; ;
       TVCaptureDevice captureCard = null;
@@ -117,6 +118,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
         lblStatus.Label = "Press Next to continue the setup";
         GUIControl.FocusControl(GetID, btnNext.GetID);
         captureCard = null;
+        Recorder.Paused = false;
 
       }
     }

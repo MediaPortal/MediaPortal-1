@@ -65,6 +65,7 @@ namespace WindowPlugins.GUISettings.Wizard.ATSC
     }
     public void ScanThread()
     {
+      Recorder.Paused = true;
       newChannels = 0;
       updatedChannels = 0;
       newRadioChannels = 0;
@@ -116,6 +117,7 @@ namespace WindowPlugins.GUISettings.Wizard.ATSC
         GUIControl.FocusControl(GetID, btnNext.GetID);
         GUIPropertyManager.SetProperty("#Wizard.ATSC.Done", "yes");
         captureCard = null;
+        Recorder.Paused = false;
 
       }
     }

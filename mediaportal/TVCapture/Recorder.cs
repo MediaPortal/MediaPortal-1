@@ -53,6 +53,7 @@ namespace MediaPortal.TV.Recording
     //The process thread will execute it in the background
     enum RecorderCommandType
     {
+      Paused,
       StopAll,        // stop all activity on all cards
       StopAllViewing, // stop any card which is currently viewing tv
       StopViewing,    // stop viewing tv on current selected card
@@ -169,6 +170,7 @@ namespace MediaPortal.TV.Recording
 
     //handle to the processing thread
     static BackgroundWorker _processThread;
+    static bool _isPaused = false;
     #endregion
 
     #region delegates and events
@@ -318,6 +320,10 @@ namespace MediaPortal.TV.Recording
         win.SetObject(_vmr9Osd);
       TeletextGrabber.TeletextCache.ClearBuffer();
 
+      if (GUIGraphicsContext.DX9Device == null)
+      {
+        Paused = true;
+      }
       //start the processing thread
       _processThread = new BackgroundWorker();
       _processThread.DoWork += new DoWorkEventHandler(Recorder.ProcessThread);
@@ -379,6 +385,7 @@ namespace MediaPortal.TV.Recording
       }
 
       //wait until the process thread has stopped.
+      _isPaused = false;
       while (_state != State.None)
       {
         GUIWindowManager.Process();
@@ -401,7 +408,18 @@ namespace MediaPortal.TV.Recording
         card.Stop();
       }
       _state = State.None;
-
+    }
+    /// <summary>
+    /// This method handles the StopAll recorder command
+    /// it will simply stop all activity on each tv card
+    /// and set the recorder state to None
+    /// </summary>
+    static void HandlePaused()
+    {
+      foreach (TVCaptureDevice card in _tvcards)
+      {
+        card.Stop();
+      }
     }
     /// <summary>
     /// Checks if a recording should be started and if so starts the recording
@@ -1159,6 +1177,26 @@ namespace MediaPortal.TV.Recording
     #endregion
 
     #region Properties
+    static public bool Paused
+    {
+      get { return _isPaused; }
+      set
+      {
+        if (_isPaused == value) return;
+        if (value)
+        {
+          lock (_listCommands)
+          {
+            RecorderCommand cmd = new RecorderCommand(RecorderCommandType.Paused);
+            _listCommands.Add(cmd);
+          }
+          while (_listCommands.Count > 0)
+            System.Threading.Thread.Sleep(100);
+        }
+        _isPaused = value; 
+
+      }
+    }
     /// <summary>
     /// Property which returns if any tvcard is recording
     /// </summary>
@@ -1776,6 +1814,7 @@ namespace MediaPortal.TV.Recording
       if (reEntrantStopViewing) return;
       try
       {
+        if (_isPaused) return;
         reEntrantStopViewing = true;
 
         //send Recorder command to process thread to stop viewing
@@ -1921,6 +1960,8 @@ namespace MediaPortal.TV.Recording
       if (reEntrantStartViewing) return;
       try
       {
+
+        if (_isPaused) return;
         reEntrantStartViewing = true;
         if (TVOnOff)
         {
@@ -2272,6 +2313,9 @@ namespace MediaPortal.TV.Recording
         try
         {
           System.Threading.Thread.Sleep(500);
+
+          if (_isPaused) continue;
+
           //process auto epg grabber
           ProcessEpg();
 
@@ -2295,6 +2339,9 @@ namespace MediaPortal.TV.Recording
             {
               switch (cmd.CommandType)
               {
+                case RecorderCommandType.Paused:
+                  HandlePaused();
+                  break;
                 case RecorderCommandType.StopAll:
                   // stop all activity on all cards (used when MP stops)
                   HandleStopAll();
@@ -2441,6 +2488,7 @@ namespace MediaPortal.TV.Recording
         Recorder.Start();
         return;
       }
+      if (Paused) return;
       if (GUIGraphicsContext.InVmr9Render) return;
       TimeSpan ts = DateTime.Now - _progressBarTimer;
       if (g_Player.Playing && (Math.Abs(g_Player.Duration - _duration) >= 1 || Math.Abs(g_Player.CurrentPosition - _lastPosition) >= 1))

@@ -63,7 +63,8 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 			WorkerThread.Start();
 		}
 		public void ScanThread()
-		{
+    {
+      Recorder.Paused = true;
 			listRadioChannels.Clear();
 			newChannels=0;;
 			TVCaptureDevice captureCard=null;
@@ -115,6 +116,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 				GUIControl.FocusControl(GetID,btnNext.GetID);
 				captureCard=null;
 
+        Recorder.Paused = false;
 			}
 		}
 		void ScanChannels(TVCaptureDevice captureCard)
