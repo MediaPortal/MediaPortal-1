@@ -234,7 +234,17 @@ namespace MediaPortal.EPG
 				long epochtime; 
 				epochtime = ((((((ts.Days * 24) + ts.Hours) * 60) + ts.Minutes) * 60) + ts.Seconds); 
 				return epochtime; 
-			} 
+			}
+
+            public long GetEpochDate(DateTime dtCurTime)
+           	{
+                DateTime dtEpochStartTime = Convert.ToDateTime("1/1/1970 8:00:00 AM");
+                TimeSpan ts = dtCurTime.Subtract(dtEpochStartTime);
+
+                long epochtime;
+                epochtime = (ts.Days);
+                return epochtime;
+            }
 
 			private int getMonth(string month)
 			{
@@ -644,6 +654,7 @@ namespace MediaPortal.EPG
 
                     strURL = strURL.Replace("#DAY_OFFSET", (m_GrabDay+m_offsetStart).ToString());
 					strURL = strURL.Replace("#EPOCH_TIME", GetEpochTime(m_StartGrab).ToString());
+                    strURL = strURL.Replace("#EPOCH_DATE", GetEpochDate(m_StartGrab).ToString());
                     strURL = strURL.Replace("#YYYY", m_StartGrab.Year.ToString());
                     strURL = strURL.Replace("#MM", String.Format("{0:00}", m_StartGrab.Month));
                     strURL = strURL.Replace("#_M", m_StartGrab.Month.ToString());

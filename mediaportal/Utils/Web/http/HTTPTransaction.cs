@@ -82,9 +82,10 @@ namespace MediaPortal.Utils.Web
             try
             {
                 // Make the Webrequest
-                HttpWebRequest request = (HttpWebRequest) WebRequest.Create(strURL);
+                Uri Page = new Uri(strURL);
+                HttpWebRequest request = (HttpWebRequest) WebRequest.Create(Page);
 				request.UserAgent = m_Agent;
-
+                request.Credentials = HTTPAuth.Get(Page.Host);
 				request.CookieContainer = new CookieContainer();
 				if(m_Cookies != null)
 					request.CookieContainer.Add( m_Cookies );

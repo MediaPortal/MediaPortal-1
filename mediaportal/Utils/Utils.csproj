@@ -89,6 +89,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Time\WorldTimeZone.cs" />
+    <Compile Include="Web\http\HTTPAuth.cs" />
     <Compile Include="Web\http\HTMLCache.cs">
       <SubType>Code</SubType>
     </Compile>

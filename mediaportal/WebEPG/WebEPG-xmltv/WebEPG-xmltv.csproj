@@ -92,6 +92,10 @@
       <Project>{C1BCEC3E-6074-4328-B5D9-391A457C8FFB}</Project>
       <Name>Databases</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Utils\Utils.csproj">
+      <Project>{6DA0E4DF-6230-4642-98B5-E690BB6942BB}</Project>
+      <Name>Utils</Name>
+    </ProjectReference>
     <ProjectReference Include="..\WebEPG\WebEPG.csproj">
       <Name>WebEPG</Name>
       <Project>{F7CB2A9F-004E-4667-BEAF-782F1C28E2D3}</Project>

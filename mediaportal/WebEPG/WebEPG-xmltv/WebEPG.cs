@@ -29,6 +29,7 @@ using MediaPortal.Webepg.Profile;
 using MediaPortal.Webepg.GUI.Library;
 using MediaPortal.TV.Database;
 using MediaPortal.WebEPG;
+using MediaPortal.Utils;
 
 namespace MediaPortal.EPG
 {
@@ -85,7 +86,18 @@ namespace MediaPortal.EPG
 			maxGrabDays = m_xmlreader.GetValueAsInt("General", "MaxDays", 1);
             grabberDir = m_xmlreader.GetValueAsString("General", "GrabberDir", Environment.CurrentDirectory + "\\WebEPG\\grabbers\\");
 			m_EPGGrabber = new WebListingGrabber(maxGrabDays, grabberDir);
-           
+
+            int AuthCount = m_xmlreader.GetValueAsInt("AuthSites", "Count", 0);
+
+            for (int i = 1; i <= AuthCount; i++)
+            {
+                string site = m_xmlreader.GetValueAsString("Auth" + i.ToString(), "Site", "");
+                string login = m_xmlreader.GetValueAsString("Auth" + i.ToString(), "Login", "");
+                string password = m_xmlreader.GetValueAsString("Auth" + i.ToString(), "Password", "");
+                NetworkCredential auth = new NetworkCredential(login, password);
+                MediaPortal.Utils.Web.HTTPAuth.Add(site, auth);
+            }
+
 			channelCount = m_xmlreader.GetValueAsInt("ChannelMap", "Count", 0);
 
 			for (int i = 1; i <= channelCount; i++)
