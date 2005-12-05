@@ -278,7 +278,7 @@ namespace MediaPortal.TV.Recording
       string description = String.Format("frequency:{0:###.##} MHz. Bandwidth:{1} MHz", frequency, tmp[1]);
       callback.OnStatus(description);
 
-      Log.WriteFile(Log.LogType.Capture, "dvbt-scan:tune:{0} bandwidth:{1} offset:{2}", chan.Frequency, chan.Bandwidth, offset);
+      Log.WriteFile(Log.LogType.Capture, "dvbt-scan:tune to freq:{0} bandwidth:{1} offset:{2}", chan.Frequency, chan.Bandwidth, offset);
       captureCard.Tune(chan, 0);
       System.Threading.Thread.Sleep(400);
       captureCard.Process();
@@ -286,7 +286,9 @@ namespace MediaPortal.TV.Recording
         System.Threading.Thread.Sleep(400);
       captureCard.Process();
       callback.OnSignal(captureCard.SignalQuality, captureCard.SignalStrength);
-      Log.WriteFile(Log.LogType.Capture, "dvbt-scan:tuned");
+      captureCard.Process();
+      Log.WriteFile(Log.LogType.Capture, "dvbt-scan:locked:{0} tuned quality:{1} strength:{2}",
+              captureCard.SignalPresent(),captureCard.SignalQuality, captureCard.SignalStrength);
       return;
     }
 

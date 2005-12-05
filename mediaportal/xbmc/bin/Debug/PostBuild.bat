@@ -86,7 +86,7 @@ copy ..\..\..\ExternalPlayers\bin\debug\ExternalPlayers.dll plugins\ExternalPlay
 copy ..\..\..\ExternalPlayers\bin\debug\ExternalPlayers.pdb plugins\ExternalPlayers
 copy ..\..\..\WindowPlugins\bin\debug\WindowPlugins.dll plugins\Windows
 copy ..\..\..\WindowPlugins\bin\debug\WindowPlugins.pdb plugins\Windows
-copy ..\..\..\WindowPlugins\GUIMSNPlugin\DotMSN.dll plugins\Windows
+copy ..\..\..\XihSolutions.DotMSN.dll plugins\Windows
 copy ..\..\..\Dialogs\bin\debug\Dialogs.dll plugins\Windows
 copy ..\..\..\Dialogs\bin\debug\Dialogs.pdb plugins\Windows
 copy ..\..\..\ProcessPlugins\bin\debug\ProcessPlugins.dll plugins\process\

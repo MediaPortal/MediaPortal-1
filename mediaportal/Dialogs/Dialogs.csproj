@@ -165,6 +165,7 @@
     <Compile Include="Dialogs\VirtualSearchKeyboard.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Dialogs\VirtualWebKeyboard.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

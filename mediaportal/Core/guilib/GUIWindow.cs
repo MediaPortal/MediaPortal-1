@@ -259,7 +259,8 @@ namespace MediaPortal.GUI.Library
      ,
       WINDOW_VIRTUAL_KEYBOARD = 10002
      ,
-      WINDOW_VIRTUAL_SEARCH_KEYBOARD = 1001 // by Agree
+      WINDOW_VIRTUAL_SEARCH_KEYBOARD = 1001,// by Agree
+     WINDOW_VIRTUAL_WEB_KEYBOARD = 10003 // by Devo
      ,
       WINDOW_DIALOG_SELECT = 2000
      ,

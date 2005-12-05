@@ -21,7 +21,7 @@
 
 using System;
 using System.IO;
-using DotMSN;
+using XihSolutions.DotMSN;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Dialogs;
@@ -40,8 +40,8 @@ namespace MediaPortal.GUI.MSN
 			Input=51
     }
 
-    static int MessageIndex=0;
-    static string[] MessageList;
+    static int _messageIndex=0;
+    static string[] _messageList;
 
 		public GUIMSNChatWindow()
 		{
@@ -50,7 +50,7 @@ namespace MediaPortal.GUI.MSN
    
     public override bool Init()
     {
-      MessageList = new string[30];
+      _messageList = new string[30];
 
       return Load(GUIGraphicsContext.Skin + @"\my messenger chat.xml");
     }
@@ -94,14 +94,14 @@ namespace MediaPortal.GUI.MSN
           list.WordWrap=true;         
           
           GUIControl.ClearControl(GetID,(int)Controls.List);
-          int j=MessageIndex-30;
+          int j=_messageIndex-30;
           if (j<0) 
             j=0;
           for (int i=0; i < 30;++i)
           {
-            AddToList(MessageList[j]);
+            AddToList(_messageList[j]);
             j++;
-            if (j>MessageList.Length)
+            if (j>_messageList.Length)
               j=0;
           }
           list.ScrollToEnd();
@@ -139,17 +139,16 @@ namespace MediaPortal.GUI.MSN
 				case GUIMessage.MessageType.GUI_MSG_NEW_LINE_ENTERED:
           Conversation conversation=GUIMSNPlugin.CurrentConversation;
           if (conversation==null) return true;
-          if (conversation.Connected==false) return true;
-          conversation.SendMessage(message.Label);
+          conversation.Switchboard.SendTextMessage(new TextMessage(message.Label));
 
           string text=String.Format(">{0}", message.Label);
           AddToList(text);
 
           // Store
-          MessageList[MessageIndex] = text;
-          MessageIndex++;
-          if (MessageIndex >= MessageList.Length) 
-            MessageIndex = 0;
+          _messageList[_messageIndex] = text;
+          _messageIndex++;
+          if (_messageIndex >= _messageList.Length) 
+            _messageIndex = 0;
         break;
       }
       return base.OnMessage(message);
@@ -159,7 +158,6 @@ namespace MediaPortal.GUI.MSN
     {
       Conversation conversation=GUIMSNPlugin.CurrentConversation;
       if (conversation==null) return;
-      if (conversation.Connected==false) return;
 
 /*      if (GUIMSNPlugin.IsTyping)
       {
@@ -174,15 +172,7 @@ namespace MediaPortal.GUI.MSN
     public override void Process()
     {
       Conversation conversation=GUIMSNPlugin.CurrentConversation;
-      if (conversation!=null)
-      {
-        if (!conversation.Connected || !conversation.Messenger.Connected)
-        {
-          GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MSN);
-          return;
-        }
-      }
-      else
+      if (conversation==null)
       {
         GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MSN);
         return;
@@ -195,10 +185,10 @@ namespace MediaPortal.GUI.MSN
       AddToList(FormattedText);
 
       // Store
-      MessageList[MessageIndex] = FormattedText;
-      MessageIndex++;
-      if (MessageIndex >= MessageList.Length) 
-        MessageIndex = 0;
+      _messageList[_messageIndex] = FormattedText;
+      _messageIndex++;
+      if (_messageIndex >= _messageList.Length) 
+        _messageIndex = 0;
     }
     void AddToList(string text)
     {

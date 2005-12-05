@@ -3865,5 +3865,6 @@
 <!-- Web Browser Strings -->
 <string><id>4000</id><value>Web Browser</value></string>
 <string><id>4001</id><value>Favorites</value></string>
-
+<string><id>4002</id><value>Unable to load URL</value></string>
+<string><id>4003</id><value>Please specify a favorites folder in the setup.</value></string>
 </strings>

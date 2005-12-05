@@ -75,7 +75,7 @@ copy ..\..\..\SubtitlePlugins\bin\release\SubtitlePlugins.dll plugins\subtitle
 copy ..\..\..\TagReaderPlugins\bin\release\TagReaderPlugins.dll plugins\TagReaders
 copy ..\..\..\ExternalPlayers\bin\release\ExternalPlayers.dll plugins\ExternalPlayers
 copy ..\..\..\WindowPlugins\bin\release\WindowPlugins.dll plugins\Windows
-copy ..\..\..\WindowPlugins\GUIMSNPlugin\DotMSN.dll plugins\Windows
+copy ..\..\..\XihSolutions.DotMSN.dll plugins\Windows
 copy ..\..\..\ProcessPlugins\bin\release\ProcessPlugins.dll plugins\process\
 copy ..\..\..\Dialogs\bin\release\Dialogs.dll plugins\Windows
 copy ..\..\..\RemotePlugins\bin\release\RemotePlugins.dll .

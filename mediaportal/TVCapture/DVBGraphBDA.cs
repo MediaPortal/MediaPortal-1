@@ -329,14 +329,10 @@ namespace MediaPortal.TV.Recording
         if (_graphState != State.None)
           return false;
         _currentTuningObject = null;
-        Log.Write("DVBGraphBDA:CreateGraph(). ac3=false");
         _isUsingAC3 = false;
         if (_streamDemuxer != null)
           _streamDemuxer.GrabTeletext(false);
 
-#if DUMP
-				fileout = new System.IO.FileStream("audiodump.dat",System.IO.FileMode.OpenOrCreate,System.IO.FileAccess.Write,System.IO.FileShare.None);
-#endif
         _isGraphRunning = false;
         Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:CreateGraph(). ");
 
@@ -348,23 +344,23 @@ namespace MediaPortal.TV.Recording
         }
 
         //load card definition from CaptureCardDefinitions.xml
-        if (!_card.LoadDefinitions())											// Load configuration for this card
+        if (!_card.LoadDefinitions())										
         {
-          DirectShowUtil.DebugWrite("DVBGraphBDA: Loading card definitions for card {0} failed", _card.CaptureName);
+          Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA: Loading card definitions for card {0} failed", _card.CaptureName);
           return false;
         }
 
         //check if definition contains a tv filter graph
         if (_card.TvFilterDefinitions == null)
         {
-          Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA:card does not contain filters?");
+          Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA:FAILED card does not contain filters?");
           return false;
         }
 
         //check if definition contains <connections> for the tv filter graph
         if (_card.TvConnectionDefinitions == null)
         {
-          Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA:card does not contain connections for tv?");
+          Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA:FAILED card does not contain connections for tv?");
           return false;
         }
 
@@ -387,7 +383,7 @@ namespace MediaPortal.TV.Recording
         int hr = _captureGraphBuilderInterface.SetFiltergraph(_graphBuilder);
         if (hr < 0)
         {
-          Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA:link FAILED:0x{0:X}", hr);
+          Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA:FAILED link :0x{0:X}", hr);
           return false;
         }
         //Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Add graph to ROT table");
@@ -480,7 +476,7 @@ namespace MediaPortal.TV.Recording
           sourceFilter = _card.TvFilterDefinitions[((ConnectionDefinition)_card.TvConnectionDefinitions[i]).SourceCategory] as FilterDefinition;
           if (sourceFilter == null)
           {
-            Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA: Cannot find source filter for connection:{0}", i);
+            Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA:FAILED Cannot find source filter for connection:{0}", i);
             continue;
           }
 
@@ -488,7 +484,7 @@ namespace MediaPortal.TV.Recording
           sinkFilter = _card.TvFilterDefinitions[((ConnectionDefinition)_card.TvConnectionDefinitions[i]).SinkCategory] as FilterDefinition;
           if (sinkFilter == null)
           {
-            Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA: Cannot find sink filter for connection:{0}", i);
+            Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA:FAILED Cannot find sink filter for connection:{0}", i);
             continue;
           }
 
@@ -505,7 +501,7 @@ namespace MediaPortal.TV.Recording
             {
               sourcePin = DirectShowUtil.FindPinNr(sourceFilter.DSFilter, PinDirection.Output, Convert.ToInt32(strPinName));
               if (sourcePin == null)
-                Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA:   Unable to find sourcePin: <{0}>", strPinName);
+                Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA:FAILED   Unable to find sourcePin: <{0}>", strPinName);
               //else
               //	Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:   Found sourcePin: <{0}> <{1}>", strPinName, sourcePin.ToString());
             }
@@ -558,7 +554,7 @@ namespace MediaPortal.TV.Recording
           //	hr=1;
           if (hr != 0)
           {
-            Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:   unable to connect pins:0x{0:X}", hr);
+            Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:FAILED   unable to connect pins:0x{0:X}", hr);
             if (sourceFilter.Category == "tunerdevice" && sinkFilter.Category == "capture")
             {
               //Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:   try other instances");
@@ -597,7 +593,7 @@ namespace MediaPortal.TV.Recording
                       {
                         sinkPin = DirectShowUtil.FindPinNr(sinkFilter.DSFilter, PinDirection.Input, Convert.ToInt32(strPinName));
                         if (sinkPin == null)
-                          Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA:   Unable to find sinkPin: <{0}>", strPinName);
+                          Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA:FAILED   Unable to find sinkPin: <{0}>", strPinName);
                         //else
                         //  Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:   Found sinkPin: <{0}> <{1}>", strPinName, sinkPin.ToString());
                       }
@@ -613,7 +609,7 @@ namespace MediaPortal.TV.Recording
                       }
                       else
                       {
-                        Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:   cannot connect pins:0x{0:X}", hr);
+                        Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:FAILED   cannot connect pins:0x{0:X}", hr);
                         if (sinkPin != null)
                           Marshal.ReleaseComObject(sinkPin);
                         sinkPin = null;
@@ -838,7 +834,7 @@ namespace MediaPortal.TV.Recording
                     if (hr == 0)
                     {
                       connected = true;
-                      Log.Write("DVBGraphBDA:connected mpeg2 demux->stream analyzer");
+                      //Log.Write("DVBGraphBDA:connected mpeg2 demux->stream analyzer");
                     }
                     else
                     {
@@ -1043,6 +1039,10 @@ namespace MediaPortal.TV.Recording
         _graphState = State.Created;
 
         GetTunerSignalStatistics();
+        if (_tunerStatistics.Count == 0)
+        {
+          Log.Write("DVBGraphBda:Failed to get tuner statistics");
+        }
 
 
         //_streamDemuxer.OnAudioFormatChanged+=new MediaPortal.TV.Recording.DVBDemuxer.OnAudioChanged(m_streamDemuxer_OnAudioFormatChanged);
@@ -1117,9 +1117,8 @@ namespace MediaPortal.TV.Recording
           {
             if (_tunerStatistics[i] != null)
             {
-              IBDA_SignalStatistics stat = (IBDA_SignalStatistics)_tunerStatistics[i];
-              while ((hr = Marshal.ReleaseComObject(stat)) > 0) ;
-              //if (hr != 0) Log.Write("DVBGraphBDA:ReleaseComObject(tunerstat):{0}", hr);
+              while ((hr = Marshal.ReleaseComObject(_tunerStatistics[i])) > 0) ;
+              if (hr != 0) Log.Write("DVBGraphBDA:ReleaseComObject(tunerstat):{0}", hr);
             }
           }
           _tunerStatistics.Clear();
@@ -2199,6 +2198,7 @@ namespace MediaPortal.TV.Recording
     {
       return _signalLevel;
     }
+    
     void UpdateSignalStrength()
     {
       if (_tunerStatistics == null) return;
@@ -2326,8 +2326,10 @@ namespace MediaPortal.TV.Recording
       //no tuner filter? then return;
       _tunerStatistics = new ArrayList();
       if (_filterTunerDevice == null)
+      {
+        Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA: could not get IBDA_Topology since no tuner device");
         return;
-
+      }
       //get the IBDA_Topology from the tuner device
       //Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: get IBDA_Topology");
       IBDA_Topology topology = _filterTunerDevice as IBDA_Topology;

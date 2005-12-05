@@ -15,7 +15,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with GNU Make; see the file COPYING.  If not, write to
  *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
- *  http://www.gnu.org/copyleft/gpl.html
+ *  http://www.gnu.org/copyleft/gpl.html 
  *
  */
 
@@ -28,7 +28,10 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Dialogs;
 using MediaPortal.Util;
 using System.IO;
-using DotMSN;
+using XihSolutions.DotMSN;
+using XihSolutions.DotMSN.Core;
+using XihSolutions.DotMSN.DataTransfer;
+
 
 namespace MediaPortal.GUI.MSN
 {
@@ -37,6 +40,7 @@ namespace MediaPortal.GUI.MSN
   /// </summary>
   public class GUIMSNPlugin : GUIWindow, IComparer<GUIListItem>, ISetupForm
   {
+    #region enums
     enum Controls
     {
       CONTROL_BTNVIEWASICONS = 2,
@@ -52,25 +56,18 @@ namespace MediaPortal.GUI.MSN
       CONTROL_EJECT = 13
     }
 
-    enum MyMSNStatus
-    {
-      STATUS_ONLINE = 0,
-      STATUS_BUSY,
-      STATUS_BRB,
-      STATUS_AWAY,
-      STATUS_PHONE,
-      STATUS_LUNCH,
-      STATUS_HIDDEN,
-      STATUS_IDLE
-    }
+    
+    #endregion
 
+    #region  variables
     // this object will be the interface to the dotMSN library
-    static private DotMSN.Messenger messenger = null;
-    static private Conversation currentconversation = null;
-    static private MyMSNStatus currentStatus = MyMSNStatus.STATUS_ONLINE;
-    GUIDialogProgress dlgProgress;
-    bool m_bDialogVisible = false;
+    static private XihSolutions.DotMSN.Messenger _messenger = null;
+    static private Conversation _currentconversation = null;
+    static private PresenceStatus _currentStatus = PresenceStatus.Online;
+    GUIDialogProgress _dlgProgress;
+    bool _isDialogVisible = false;
     // bool m_bConnected=false;
+    #endregion
 
     #region Base variabeles
     enum SortMethod
@@ -88,7 +85,7 @@ namespace MediaPortal.GUI.MSN
     View currentView = View.VIEW_AS_LIST;
     SortMethod currentSortMethod = SortMethod.SORT_NAME;
     bool m_bSortAscending = true;
-    bool ReFillContactList = false;
+    bool _refreshContactList = false;
     static DateTime dateLastTyped = DateTime.MinValue;
     static string contactname = "";
     #endregion
@@ -113,9 +110,9 @@ namespace MediaPortal.GUI.MSN
         StartMSN(false);
     }
 
-    static public DotMSN.Messenger Messenger
+    static public XihSolutions.DotMSN.Messenger Messenger
     {
-      get { return messenger; }
+      get { return _messenger; }
     }
     static public Conversation CurrentConversation
     {
@@ -123,7 +120,9 @@ namespace MediaPortal.GUI.MSN
       {
         try
         {
-          return currentconversation;
+          if (_messenger == null) return null;
+          if (_messenger.Connected == false) return null;
+          return _currentconversation;
         }
         catch (Exception)
         {
@@ -133,7 +132,11 @@ namespace MediaPortal.GUI.MSN
     }
     static public void CloseConversation()
     {
-      currentconversation = null;
+      if (_currentconversation != null)
+      {
+        _currentconversation.Switchboard.Close();
+      }
+      _currentconversation = null;
       contactname = String.Empty;
     }
     static public bool IsTyping
@@ -167,17 +170,7 @@ namespace MediaPortal.GUI.MSN
       {
         case GUIMessage.MessageType.GUI_MSG_MSN_CLOSECONVERSATION:
           // Close conversation
-          if (GUIMSNPlugin.Messenger != null)
-          {
-            while (GUIMSNPlugin.Messenger.Conversations.Count > 0)
-            {
-              Conversation conversation = (Conversation)GUIMSNPlugin.Messenger.Conversations[0];
-              if (conversation == null) break;
-              if (conversation.Connected == false) break;
-              conversation.Close();
-            }
-            CloseConversation();
-          }
+           CloseConversation();
           break;
 
         case GUIMessage.MessageType.GUI_MSG_NEW_LINE_ENTERED:
@@ -199,15 +192,15 @@ namespace MediaPortal.GUI.MSN
           break;
 
         case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
-          m_bDialogVisible = false;
-          dlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+          _isDialogVisible = false;
+          _dlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
 
           base.OnMessage(message);
-          if (messenger == null)
+          if (_messenger == null)
           {
             try
             {
-              messenger = new Messenger();
+              _messenger = new Messenger();
             }
             catch (Exception)
             {
@@ -217,7 +210,7 @@ namespace MediaPortal.GUI.MSN
           }
           else
           {
-            ReFillContactList = true;
+            _refreshContactList = true;
           }
 
           ShowThumbPanel();
@@ -228,10 +221,10 @@ namespace MediaPortal.GUI.MSN
           return true;
 
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
-          if (m_bDialogVisible)
+          if (_isDialogVisible)
           {
-            m_bDialogVisible = false;
-            dlgProgress.Close();
+            _isDialogVisible = false;
+            _dlgProgress.Close();
           }
           break;
 
@@ -239,18 +232,18 @@ namespace MediaPortal.GUI.MSN
           int iControl = message.SenderControlId;
           if (iControl == (int)Controls.CONTROL_BTN_CONNECT)
           {
-            if (!messenger.Connected)
+            if (!_messenger.Connected)
             {
-              if (dlgProgress != null)
+              if (_dlgProgress != null)
               {
-                dlgProgress.SetHeading(901);
-                dlgProgress.SetLine(1, GUILocalizeStrings.Get(910));
-                dlgProgress.SetLine(2, "");
-                dlgProgress.SetLine(3, "");
-                dlgProgress.StartModal(GetID);
-                dlgProgress.Progress();
+                _dlgProgress.SetHeading(901);//MSN Messenger
+                _dlgProgress.SetLine(1, GUILocalizeStrings.Get(910));//Signing in...
+                _dlgProgress.SetLine(2, "");
+                _dlgProgress.SetLine(3, "");
+                _dlgProgress.StartModal(GetID);
+                _dlgProgress.Progress();
               }
-              m_bDialogVisible = true;
+              _isDialogVisible = true;
 
               StartMSN(true);
             }
@@ -324,7 +317,7 @@ namespace MediaPortal.GUI.MSN
 
           if (iControl == (int)Controls.CONTROL_BTNSTATUS) // Set new status
           {
-            currentStatus = (MyMSNStatus)GetControl((int)Controls.CONTROL_BTNSTATUS).SelectedItem;
+            _currentStatus = (PresenceStatus)GetControl((int)Controls.CONTROL_BTNSTATUS).SelectedItem;
             UpdateStatusButton();
           }
           break;
@@ -339,11 +332,11 @@ namespace MediaPortal.GUI.MSN
       switch (currentSortMethod)
       {
         case SortMethod.SORT_NAME:
-          strLine = GUILocalizeStrings.Get(103);
+          strLine = GUILocalizeStrings.Get(103);//Sort by: Name
           break;
 
         case SortMethod.SORT_STATUS:
-          strLine = GUILocalizeStrings.Get(685);
+          strLine = GUILocalizeStrings.Get(685);//Sort by: Status
           break;
       }
       GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTNSORTBY, strLine);
@@ -352,41 +345,41 @@ namespace MediaPortal.GUI.MSN
     void UpdateStatusButton()
     {
       string strLine = "";
-      if (messenger.Connected)
+      if (_messenger.Connected)
       {
-        switch (currentStatus)
+        switch (_currentStatus)
         {
-          case MyMSNStatus.STATUS_BUSY:
-            messenger.SetStatus(MSNStatus.Busy);
-            strLine = GUILocalizeStrings.Get(949);
+          case PresenceStatus.Busy:
+            _messenger.Nameserver.SetPresenceStatus(PresenceStatus.Busy);
+            strLine = GUILocalizeStrings.Get(949);//Busy
             break;
-          case MyMSNStatus.STATUS_BRB:
-            messenger.SetStatus(MSNStatus.BRB);
-            strLine = GUILocalizeStrings.Get(950);
+          case PresenceStatus.BRB:
+            _messenger.Nameserver.SetPresenceStatus(PresenceStatus.BRB);
+            strLine = GUILocalizeStrings.Get(950);//Be Right Back
             break;
-          case MyMSNStatus.STATUS_AWAY:
-            messenger.SetStatus(MSNStatus.Away);
-            strLine = GUILocalizeStrings.Get(951);
+          case PresenceStatus.Away:
+            _messenger.Nameserver.SetPresenceStatus(PresenceStatus.Away);
+            strLine = GUILocalizeStrings.Get(951);//Away
             break;
-          case MyMSNStatus.STATUS_PHONE:
-            messenger.SetStatus(MSNStatus.Phone);
-            strLine = GUILocalizeStrings.Get(952);
+          case PresenceStatus.Phone:
+            _messenger.Nameserver.SetPresenceStatus(PresenceStatus.Phone);
+            strLine = GUILocalizeStrings.Get(952);//Phone
             break;
-          case MyMSNStatus.STATUS_LUNCH:
-            messenger.SetStatus(MSNStatus.Lunch);
-            strLine = GUILocalizeStrings.Get(953);
+          case PresenceStatus.Lunch:
+            _messenger.Nameserver.SetPresenceStatus(PresenceStatus.Lunch);
+            strLine = GUILocalizeStrings.Get(953);//Lunch
             break;
-          case MyMSNStatus.STATUS_HIDDEN:
-            messenger.SetStatus(MSNStatus.Hidden);
-            strLine = GUILocalizeStrings.Get(954);
+          case PresenceStatus.Hidden:
+            _messenger.Nameserver.SetPresenceStatus(PresenceStatus.Hidden);
+            strLine = GUILocalizeStrings.Get(954);//Hidden
             break;
-          case MyMSNStatus.STATUS_ONLINE:
-            messenger.SetStatus(MSNStatus.Online);
-            strLine = GUILocalizeStrings.Get(948);
+          case PresenceStatus.Online:
+            _messenger.Nameserver.SetPresenceStatus(PresenceStatus.Online);
+            strLine = GUILocalizeStrings.Get(948);//Online
             break;
           default:
-            messenger.SetStatus(MSNStatus.Online);
-            strLine = GUILocalizeStrings.Get(948);
+            _messenger.Nameserver.SetPresenceStatus(PresenceStatus.Online);
+            strLine = GUILocalizeStrings.Get(948);//Online
             break;
         }
 
@@ -394,7 +387,7 @@ namespace MediaPortal.GUI.MSN
       }
       else
       {
-        GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTNSTATUS, GUILocalizeStrings.Get(961));
+        GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTNSTATUS, GUILocalizeStrings.Get(961));//MSN Status
       }
     }
 
@@ -529,26 +522,26 @@ namespace MediaPortal.GUI.MSN
 
     void Update()
     {
-      if (messenger != null && messenger.Connected)
+      if (_messenger != null && _messenger.Connected && _messenger.Nameserver.IsSignedIn)
       {
-        GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTN_CONNECT, GUILocalizeStrings.Get(904));
+        GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTN_CONNECT, GUILocalizeStrings.Get(904));//sign out
       }
       else
       {
-        GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTN_CONNECT, GUILocalizeStrings.Get(903));
+        GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTN_CONNECT, GUILocalizeStrings.Get(903));//Sign in
       }
 
     }
 
     void OnClick(int iItem)
     {
-      if (m_bDialogVisible) return;
+      if (_isDialogVisible) return;
 
       GUIListItem item = GetSelectedItem();
       if (item == null) return;
       if ((CurrentConversation != null) && (ContactName != ((Contact)item.AlbumInfoTag).Name)) return;
-      if (messenger == null) return;
-      if (!messenger.Connected) return;
+      if (_messenger == null) return;
+      if (!_messenger.Connected) return;
 
       Contact contact = (Contact)item.AlbumInfoTag;
 
@@ -558,18 +551,19 @@ namespace MediaPortal.GUI.MSN
       }
       else
       {
-        if (dlgProgress != null)
+        if (_dlgProgress != null)
         {
-          dlgProgress.SetHeading(901);
-          dlgProgress.SetLine(1, GUILocalizeStrings.Get(909));
-          dlgProgress.SetLine(2, contact.Name);
-          dlgProgress.SetLine(3, "");
-          dlgProgress.StartModal(GetID);
-          dlgProgress.Progress();
+          _dlgProgress.SetHeading(901);//MSN Messenger
+          _dlgProgress.SetLine(1, GUILocalizeStrings.Get(909));//Connecting...
+          _dlgProgress.SetLine(2, contact.Name);
+          _dlgProgress.SetLine(3, "");
+          _dlgProgress.StartModal(GetID);
+          _dlgProgress.Progress();
         }
 
-        m_bDialogVisible = true;
-        messenger.RequestConversation(contact.Mail);
+        _isDialogVisible = true;
+        _currentconversation=_messenger.CreateConversation();
+        _currentconversation.Invite(contact);
       }
     }
     #region Sort Members
@@ -633,7 +627,7 @@ namespace MediaPortal.GUI.MSN
 
     public override void Process()
     {
-      if (ReFillContactList) FillContactList();
+      if (_refreshContactList) FillContactList();
     }
 
     void FillContactList()
@@ -642,11 +636,11 @@ namespace MediaPortal.GUI.MSN
       GUIControl.ClearControl(GetID, (int)Controls.CONTROL_THUMBS);
 
       int iContacts = 0;
-      foreach (Contact contact in messenger.GetListEnumerator(MSNList.ForwardList))
+      foreach (Contact contact in _messenger.ContactList.All)
       {
         // if the contact is not offline we can send messages and we want to show
         // it in the contactlistview
-        if (contact.Status != MSNStatus.Offline)
+        if (contact.Status != PresenceStatus.Offline)
         {
           GUIListItem item = new GUIListItem(contact.Name);
           item.Label2 = contact.Status.ToString();
@@ -663,7 +657,7 @@ namespace MediaPortal.GUI.MSN
       string strObjects = String.Format("{0} {1}", iContacts, GUILocalizeStrings.Get(632));
       GUIPropertyManager.SetProperty("#itemcount", strObjects);
       GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABELFILES, strObjects);
-      ReFillContactList = false;
+      _refreshContactList = false;
 
       OnSort();
     }
@@ -671,11 +665,13 @@ namespace MediaPortal.GUI.MSN
 
     private void StopMSN()
     {
-      ReFillContactList = true;
-      if (messenger == null) return;
+      _refreshContactList = true;
+      if (_messenger == null) return;
       try
       {
-        messenger.CloseConnection();
+        if (_messenger.Connected)
+          _messenger.Disconnect();
+        _messenger = null;
       }
       catch (Exception)
       {
@@ -685,7 +681,7 @@ namespace MediaPortal.GUI.MSN
     // Called when the button 'Connected' is clicked
     private void StartMSN(bool showDialog)
     {
-      ReFillContactList = true;
+      _refreshContactList = true;
       string emailadres = "";
       string password = "";
       using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
@@ -694,14 +690,14 @@ namespace MediaPortal.GUI.MSN
         password = xmlreader.GetValueAsString("MSNmessenger", "password", "");
         switch (xmlreader.GetValueAsString("MSNmessenger", "initialstatus", "Online").ToLower())
         {
-          case "online": currentStatus = MyMSNStatus.STATUS_ONLINE; break;
-          case "busy": currentStatus = MyMSNStatus.STATUS_BUSY; break;
-          case "berightback": currentStatus = MyMSNStatus.STATUS_BRB; break;
-          case "away": currentStatus = MyMSNStatus.STATUS_AWAY; break;
-          case "phone": currentStatus = MyMSNStatus.STATUS_PHONE; break;
-          case "lunch": currentStatus = MyMSNStatus.STATUS_LUNCH; break;
-          case "hidden": currentStatus = MyMSNStatus.STATUS_HIDDEN; break;
-          case "idle": currentStatus = MyMSNStatus.STATUS_IDLE; break;
+          case "online": _currentStatus = PresenceStatus.Online; break;
+          case "busy": _currentStatus = PresenceStatus.Busy; break;
+          case "berightback": _currentStatus = PresenceStatus.BRB; break;
+          case "away": _currentStatus = PresenceStatus.Away; break;
+          case "phone": _currentStatus = PresenceStatus.Phone; break;
+          case "lunch": _currentStatus = PresenceStatus.Lunch; break;
+          case "hidden": _currentStatus = PresenceStatus.Hidden; break;
+          case "idle": _currentStatus = PresenceStatus.Idle; break;
         }
       }
       try
@@ -710,8 +706,8 @@ namespace MediaPortal.GUI.MSN
         if (emailadres == "")
         {
           if (!showDialog) return;
-          m_bDialogVisible = false;
-          dlgProgress.Close();
+          _isDialogVisible = false;
+          _dlgProgress.Close();
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SHOW_WARNING, GUIWindowManager.ActiveWindow, 0, 0, 0, 0, null);
           msg.Param1 = 905;
           msg.Param2 = 906;
@@ -722,71 +718,168 @@ namespace MediaPortal.GUI.MSN
         }
         else
         {
-          messenger = new Messenger();
+          _messenger = new XihSolutions.DotMSN.Messenger();
+          _messenger.Credentials.ClientID = emailadres;
+          _messenger.Credentials.ClientCode = password;
+          using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+          {
+            bool useProxy = xmlreader.GetValueAsBool("MSNmessenger", "useproxy", false);
+            if (useProxy)
+            {
+              //ConnectivitySettings settings = new ConnectivitySettings();
+              _messenger.Nameserver.ConnectivitySettings.ProxyHost = xmlreader.GetValueAsString("MSNmessenger", "proxyhost", "");
+              _messenger.Nameserver.ConnectivitySettings.ProxyPort = xmlreader.GetValueAsInt("MSNmessenger", "proxyport", 8080);
+              _messenger.Nameserver.ConnectivitySettings.ProxyUsername = xmlreader.GetValueAsString("MSNmessenger", "proxyusername", "");
+              _messenger.Nameserver.ConnectivitySettings.ProxyPassword = xmlreader.GetValueAsString("MSNmessenger", "proxypassword", "");
+              
+              int proxyType= xmlreader.GetValueAsInt("MSNmessenger", "proxytype", 1);
+              if (proxyType == 1) _messenger.Nameserver.ConnectivitySettings.ProxyType = ProxyType.Socks5;
+              else _messenger.Nameserver.ConnectivitySettings.ProxyType = ProxyType.Socks4;
+             // _messenger.Nameserver.ConnectivitySettings.ProxyType = settings;
+            }
+          }
+          _messenger.NameserverProcessor.ConnectionEstablished += new EventHandler(ConnectionEstablished);
+          _messenger.Nameserver.SignedIn += new EventHandler(Nameserver_SignedIn);
+          _messenger.Nameserver.SignedOff += new SignedOffEventHandler(Nameserver_SignedOff);
+          _messenger.NameserverProcessor.ConnectingException += new ProcessorExceptionEventHandler(NameserverProcessor_ConnectingException);
+          _messenger.Nameserver.ExceptionOccurred += new HandlerExceptionEventHandler(Nameserver_ExceptionOccurred);
+          _messenger.Nameserver.AuthenticationError += new HandlerExceptionEventHandler(Nameserver_AuthenticationError);
+          _messenger.Nameserver.ServerErrorReceived += new ErrorReceivedEventHandler(Nameserver_ServerErrorReceived);
+          _messenger.ConversationCreated += new ConversationCreatedEventHandler(ConversationCreated);
+//          _messenger.TransferInvitationReceived += new MSNSLPInvitationReceivedEventHandler(messenger_TransferInvitationReceived);
+
           // setup the callbacks
           // we log when someone goes online
-          messenger.ContactOnline += new Messenger.ContactOnlineHandler(ContactOnline);
-          messenger.ContactOffline += new DotMSN.Messenger.ContactOfflineHandler(ContactOffline);
-          messenger.ContactStatusChange += new DotMSN.Messenger.ContactStatusChangeHandler(ContactStatusChange);
-
-          // we want to do something when we have a conversation
-          messenger.ConversationCreated += new Messenger.ConversationCreatedHandler(ConversationCreated);
+          _messenger.Nameserver.ContactOnline +=new ContactChangedEventHandler(Nameserver_ContactOnline);
+          _messenger.Nameserver.ContactOffline+=new ContactChangedEventHandler(Nameserver_ContactOffline);
+          _messenger.Nameserver.ContactStatusChanged += new ContactStatusChangedEventHandler(Nameserver_ContactStatusChanged);
 
           // notify us when synchronization is completed
-          messenger.SynchronizationCompleted += new Messenger.SynchronizationCompletedHandler(OnSynchronizationCompleted);
-          messenger.ConnectionFailure += new DotMSN.Messenger.ConnectionFailureHandler(ConnectionFailure);
 
-          // everything is setup, now connect to the messenger service
-          messenger.Connect(emailadres, password);
+          _messenger.Connect();
 
-
-          // synchronize the whole list.
-          // remember you can only do this once per session!
-          // after synchronizing the initial status will be set.
-          messenger.SynchronizeList();
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
-        m_bDialogVisible = false;
-        dlgProgress.Close();
+        _isDialogVisible = false;
+        _dlgProgress.Close();
 
 
         if (!showDialog) return;
         // in case of an error, report this to the user (or developer)
         GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow(2002);
-        pDlgOK.SetHeading(GUILocalizeStrings.Get(901));
-        pDlgOK.SetLine(1, GUILocalizeStrings.Get(907));
+        pDlgOK.SetHeading(GUILocalizeStrings.Get(901));//MSN Messenger
+        pDlgOK.SetLine(1, GUILocalizeStrings.Get(907));//Could not connect to MSN
         pDlgOK.SetLine(2, "");
         pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
         return;
       }
     }
+    private void Nameserver_ServerErrorReceived(object sender, MSNErrorEventArgs e)
+    {
+      // when the MSN server sends an error code we want to be notified.
+      //MessageBox.Show(e.MSNError.ToString(), "Server error received");
+      //SetStatus("Server error received");
+    }
+
+    void Nameserver_ContactStatusChanged(object sender, ContactStatusChangeEventArgs e)
+    {
+      _refreshContactList = true;
+    }
+
+    void Nameserver_ContactOffline(object sender, ContactEventArgs e)
+    {
+      _refreshContactList = true;
+    }
+
+    void Nameserver_ContactOnline(object sender, ContactEventArgs e)
+    {
+      _refreshContactList = true;
+    }
+
 
     /// <summary>
-    /// Log when the connection is actually established between the two clients.
-    /// You can not yet send messages, the other contact must join first (if you have initiated the conversation)
+    /// Connected with MSN server
     /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private void ConnectionEstablished(Conversation sender, EventArgs e)
+    private void ConnectionEstablished(object sender, EventArgs e)
     {
       Log.Write("connection established.\r\n");
     }
 
-    // this is actually just annoying but it proves the concept
-    private void ContactTyping(Conversation sender, ContactEventArgs e)
+    /// <summary>
+    /// Signed in to MSN server
+    /// </summary>
+    private void Nameserver_SignedIn(object sender, EventArgs e)
     {
-      dateLastTyped = DateTime.Now;
-      //contactname=e.Contact.Name;
-      //MessageBox.Show(this, e.Contact.Name + " is typing");
+      _refreshContactList = true;
+    }
+    
+    /// <summary>
+    /// Signed off from MSN server
+    /// </summary>
+    private void Nameserver_SignedOff(object sender, SignedOffEventArgs e)
+    {
     }
 
-    // log the event when a contact goed online
-    private void ContactOnline(Messenger sender, ContactEventArgs e)
+    /// <summary>
+    /// Failed to connect/sign in to MSN server
+    /// </summary>
+    private void Nameserver_ExceptionOccurred(object sender, ExceptionEventArgs e)
     {
-      ReFillContactList = true;
+      // ignore the unauthorized exception, since we're handling that error in another method.
+      if (e.Exception is UnauthorizedException)
+        return;
+
+      if (_isDialogVisible)
+      {
+        _isDialogVisible = false;
+        _dlgProgress.Close();
+      }
+      GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow(2002);
+      pDlgOK.SetHeading(GUILocalizeStrings.Get(901));//MSN Messenger
+      pDlgOK.SetLine(1, GUILocalizeStrings.Get(907));//Could not connect to MSN
+      pDlgOK.SetLine(2, "");
+      pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
     }
+
+    /// <summary>
+    /// Failed to connect to MSN server
+    /// </summary>
+    private void NameserverProcessor_ConnectingException(object sender, ExceptionEventArgs e)
+    {
+      if (_isDialogVisible)
+      {
+        _isDialogVisible = false;
+        _dlgProgress.Close();
+      }
+      GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow(2002);
+      pDlgOK.SetHeading(GUILocalizeStrings.Get(901));//MSN Messenger
+      pDlgOK.SetLine(1, GUILocalizeStrings.Get(907));//Could not connect to MSN
+      pDlgOK.SetLine(2, "");
+      pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
+    }
+
+    /// <summary>
+    /// Failed to sign in username/pwd incorrect
+    /// </summary>
+    private void Nameserver_AuthenticationError(object sender, ExceptionEventArgs e)
+    {
+      if (_isDialogVisible)
+      {
+        _isDialogVisible = false;
+        _dlgProgress.Close();
+      }
+      GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow(2002);
+      pDlgOK.SetHeading(GUILocalizeStrings.Get(901));//MSN Messenger
+      pDlgOK.SetLine(1, GUILocalizeStrings.Get(907));//Could not connect to MSN
+      pDlgOK.SetLine(2, "");
+      pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
+    }
+
+
+
+
 
     /// <summary>
     /// When the MSN server responds we can setup a conversation (the other party agreed)
@@ -795,47 +888,38 @@ namespace MediaPortal.GUI.MSN
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void ConversationCreated(Messenger sender, ConversationEventArgs e)
+    private void ConversationCreated(object sender, ConversationCreatedEventArgs e)
     {
-      // we request a conversation or were asked one. Now log this
-      //Log.Write += "Conversation object created\r\n";
-
-      // remember there are not yet users in the conversation (except ourselves)
-      // they will join _after_ this event. We create another callback to handle this.
-      // When user(s) have joined we can start sending messages.
-      e.Conversation.ContactJoin += new Conversation.ContactJoinHandler(ContactJoined);
-      e.Conversation.ContactLeave += new Conversation.ContactLeaveHandler(ContactLeft);
-
-      // log the event when the two clients are connected
-      e.Conversation.ConnectionEstablished += new Conversation.ConnectionEstablishedHandler(ConnectionEstablished);
-
-      // notify us when the other contact is typing something
-      e.Conversation.UserTyping += new Conversation.UserTypingHandler(ContactTyping);
-
-      // notify when a new message is received
-      e.Conversation.MessageReceived += new Conversation.MessageReceivedHandler(MSNMessageReceived);
+      e.Conversation.Switchboard.TextMessageReceived += new TextMessageReceivedEventHandler(Switchboard_TextMessageReceived);
+      e.Conversation.Switchboard.SessionClosed += new SBChangedEventHandler(Switchboard_SessionClosed);
+      e.Conversation.Switchboard.ContactJoined += new ContactChangedEventHandler(Switchboard_ContactJoined);
+      e.Conversation.Switchboard.ContactLeft += new ContactChangedEventHandler(Switchboard_ContactLeft);
+      e.Conversation.Switchboard.UserTyping += new UserTypingEventHandler(Switchboard_UserTyping);
+      e.Conversation.Switchboard.AllContactsLeft += new SBChangedEventHandler(Switchboard_AllContactsLeft);
       // we want to be accept filetransfer invitations
       //e.Conversation.FileTransferHandler.InvitationReceived +=new DotMSN.FileTransferHandler.FileTransferInvitationHandler(FileTransferHandler_FileTransferInvitation);
       UpdateStatusButton();
     }
 
-    /// <summary>
-    /// Called when the synchronization is completed. When this happens
-    /// we want to fill the listbox on the form.
-    /// </summary>
-    /// <param name="sender">The messenger object</param>
-    /// <param name="e">Contains nothing important</param>
-    private void OnSynchronizationCompleted(Messenger sender, EventArgs e)
+    void Switchboard_AllContactsLeft(object sender, EventArgs e)
     {
-      if (m_bDialogVisible)
-      {
-        m_bDialogVisible = false;
-        dlgProgress.Close();
-      }
-
-      ReFillContactList = true;
-      UpdateStatusButton();
+      CloseConversation();
     }
+
+    private void Switchboard_SessionClosed(object sender, EventArgs e)
+    {
+      //conversation has stopped...
+      CloseConversation();
+    }
+
+    // this is actually just annoying but it proves the concept
+    void Switchboard_UserTyping(object sender, ContactEventArgs e)
+    {
+      dateLastTyped = DateTime.Now;
+      //contactname=e.Contact.Name;
+      //MessageBox.Show(this, e.Contact.Name + " is typing");
+    }
+
 
     /// <summary>
     /// After the first contact has joined you can actually send messages to the
@@ -843,53 +927,37 @@ namespace MediaPortal.GUI.MSN
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void ContactJoined(Conversation sender, ContactEventArgs e)
+    private void Switchboard_ContactJoined(object sender, ContactEventArgs e)
     {
       // someone joined our conversation! remember that this also occurs when you are
       // only talking to 1 other person. Log this event.
       //Log.Write += e.Contact.Name + " joined the conversation.\r\n";
 
-      if (m_bDialogVisible)
+      if (_isDialogVisible)
       {
-        m_bDialogVisible = false;
-        dlgProgress.Close();
+        _isDialogVisible = false;
+        _dlgProgress.Close();
       }
 
-      if (currentconversation == null)
+      if (_currentconversation == null)
       {
         // new conversation
-        currentconversation = sender;
         contactname = e.Contact.Name;
       }
-      //CurrentConversation.MessageReceived +=new DotMSN.Conversation.MessageReceivedHandler(MSNMessageReceived);		
-
+      
       if ((!GUIGraphicsContext.IsFullScreenVideo) && (GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_MSN_CHAT))
       {
         GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MSN_CHAT);
       }
 
       // Send message	
-      SendStatusMessage(e.Contact.Name, e.Contact.Mail, GUILocalizeStrings.Get(959));
+      SendStatusMessage(e.Contact.Name, e.Contact.Mail, GUILocalizeStrings.Get(959));//has joined the conversation
     }
 
-    private void ContactLeft(Conversation sender, ContactEventArgs e)
+    private void Switchboard_ContactLeft(object sender, ContactEventArgs e)
     {
       // Send message
-      SendStatusMessage(e.Contact.Name, e.Contact.Mail, GUILocalizeStrings.Get(960));
-
-      if (CurrentConversation != null)
-      {
-        if (CurrentConversation.Users.Count == 0)
-        {
-          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_MSN_CLOSECONVERSATION, GUIWindowManager.ActiveWindow, GetID, 0, 0, 0, null);
-          msg.SendToTargetWindow = true;
-          GUIGraphicsContext.SendMessage(msg);
-
-          // end conversation
-          CurrentConversation.MessageReceived -= new DotMSN.Conversation.MessageReceivedHandler(MSNMessageReceived);
-          CloseConversation();
-        }
-      }
+      SendStatusMessage(e.Contact.Name, e.Contact.Mail, GUILocalizeStrings.Get(960));//has left the conversation
     }
 
 
@@ -902,7 +970,7 @@ namespace MediaPortal.GUI.MSN
 
     public string Description()
     {
-      return "MSN messenger plugin";
+      return "MSN _messenger plugin";
     }
 
     public bool DefaultEnabled()
@@ -918,7 +986,7 @@ namespace MediaPortal.GUI.MSN
     public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
     {
       // TODO:  Add GUIMSNPlugin.GetHome implementation
-      strButtonText = GUILocalizeStrings.Get(901);
+      strButtonText = GUILocalizeStrings.Get(901);//MSN messenger
       strButtonImage = "";
       strButtonImageFocus = "";
       strPictureImage = "";
@@ -950,25 +1018,15 @@ namespace MediaPortal.GUI.MSN
 
     private void ContactOffline(Messenger sender, ContactEventArgs e)
     {
-      ReFillContactList = true;
+      _refreshContactList = true;
     }
 
     private void ContactStatusChange(Messenger sender, ContactStatusChangeEventArgs e)
     {
-      ReFillContactList = true;
+      _refreshContactList = true;
     }
 
-    private void ConnectionFailure(DotMSN.Messenger sender, ConnectionErrorEventArgs e)
-    {
-
-      if (m_bDialogVisible)
-      {
-        m_bDialogVisible = false;
-        dlgProgress.Close();
-      }
-    }
-
-    private void MSNMessageReceived(Conversation sender, MessageEventArgs e)
+    private void Switchboard_TextMessageReceived(object sender, TextMessageEventArgs e)
     {
       string FormattedText = String.Format("{0}:{1}", e.Sender.Name, e.Message.Text);
 

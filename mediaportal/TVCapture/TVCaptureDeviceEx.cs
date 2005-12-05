@@ -350,10 +350,33 @@ namespace MediaPortal.TV.Recording
       }
     }
 
-    public int FindInstance(string monikerName)
+    /// <summary>
+    /// This method:
+    /// 1. finds the device entry  in the registry key : SYSTEM\CurrentControlSet\Enum\[DEVICE moniker]
+    /// 2. looks at the 'Service' subkey which points to the service for this device.
+    /// 3. then looks at SYSTEM\CurrentControlSet\Services\[ServiceName]\Enum
+    /// 4. reads the 'Count' subkey which indicates how many instances there are of this device
+    /// 5. checks each instance in SYSTEM\CurrentControlSet\Services\[ServiceName]\Enum\
+    ///    to find the correct instance...
+    /// </summary>
+    /// <param name="monikerName">device moniker</param>
+    /// <example>ven_4444&dev_0016&subsys_40090070&rev_01#4&2e98101c&0&68f0</example>
+    /// <returns>instance for this device moniker (0-count)</returns>
+    /// 
+    /// Registry layout:
+    /// SYSTEM\CurrentControlSet\Enum\[DEVICE moniker]
+    ///     Service=[ServiceName]
+    ///     
+    /// SYSTEM\CurrentControlSet\Services\[ServiceName]\Enum\
+    ///     Count=[number of instances]
+    ///     0=[moniker of instance 0]
+    ///     1=[moniker of instance 1]
+    ///     ...
+    public int FindInstanceForDevice(string monikerName)
     {
       //Log.Write("    FindInstance:{0}", monikerName);
 
+      // find the device entry in SYSTEM\CurrentControlSet\Enum\[device moniker]
       int pos1 = monikerName.IndexOf("#");
       int pos2 = monikerName.LastIndexOf("#");
       string left = monikerName.Substring(0, pos1);
@@ -370,14 +393,19 @@ namespace MediaPortal.TV.Recording
       RegistryKey subkey = hklm.OpenSubKey(registryKeyName, false);
       if (subkey != null)
       {
+        //Get the name of the service which handles this device
         string serviceName = (string)subkey.GetValue("Service");
+
+        //next open the service entry in SYSTEM\CurrentControlSet\Services\[Service name\enum
         //Log.Write("        serviceName:{0}", serviceName);
         registryKeyName = @"SYSTEM\CurrentControlSet\Services\" + serviceName + @"\Enum";
         //Log.Write("        key:{0}", registryKeyName);
         subkey = hklm.OpenSubKey(registryKeyName, false);
         if (subkey != null)
         {
+          // get the number of instances for the device
           Int32 count = (Int32)subkey.GetValue("Count");
+
           //Log.Write("        Number of cards:{0}", count);
           for (int i = 0; i < count; i++)
           {
@@ -386,13 +414,19 @@ namespace MediaPortal.TV.Recording
             moniker = moniker.Replace(@"/", "#");
             //Log.Write("          card#{0}={1}", i, moniker);
           }
+
+          // for each instance
           for (int i = 0; i < count; i++)
           {
+            //get the moniker
             string moniker = (string)subkey.GetValue(i.ToString());
             moniker = moniker.Replace(@"\", "#");
             moniker = moniker.Replace(@"/", "#");
+
+            // and check if its the same as the device moniker
             if (monikerName.ToLower().IndexOf(moniker.ToLower()) >= 0)
             {
+              //yes then return this instance
               //Log.Write("        using card:#{0}", i);
               subkey.Close();
               hklm.Close();
@@ -411,7 +445,28 @@ namespace MediaPortal.TV.Recording
       hklm.Close();
       return -1;
     }
-
+    /// <summary>
+    /// This method:
+    /// 1. finds the device entry  in the registry key : SYSTEM\CurrentControlSet\Enum\[DEVICE moniker]
+    /// 2. looks at the 'Service' subkey which points to the service for this device.
+    /// 3. then looks at SYSTEM\CurrentControlSet\Services\[ServiceName]\Enum
+    /// 4. reads the 'Count' subkey which indicates how many instances there are of this device
+    /// 5. returns the moniker for the instance requested.
+    /// </summary>
+    /// <param name="monikerName">device moniker</param>
+    /// <example>ven_4444&dev_0016&subsys_40090070&rev_01#4&2e98101c&0&68f0</example>
+    /// <param name="monikerName">instance instance for this device moniker (0-count)</param>
+    /// <returns>moniker for this instance</returns>
+    /// 
+    /// Registry layout:
+    /// SYSTEM\CurrentControlSet\Enum\[DEVICE moniker]
+    ///     Service=[ServiceName]
+    ///     
+    /// SYSTEM\CurrentControlSet\Services\[ServiceName]\Enum\
+    ///     Count=[number of instances]
+    ///     0=[moniker of instance 0]
+    ///     1=[moniker of instance 1]
+    ///     ...
     public string FindUniqueFilter(string monikerName, int instance)
     {
       //Log.Write("    FindUniqueFilter:card#{0} filter:{1}", instance, monikerName);
@@ -467,48 +522,6 @@ namespace MediaPortal.TV.Recording
       return String.Empty;
     }
 
-    bool FilterBelongsToDevice(Filter filter, string deviceInstance)
-    {
-      //Log.Write("FilterBelongsToFilter");
-      //Log.Write("device        :{0}", deviceInstance);
-      //Log.Write("filter name   :{0}", filter.Name);
-      //Log.Write("filter moniker:{0}", filter.MonikerString);
-
-      int p1 = filter.MonikerString.IndexOf("{");
-      int p2 = filter.MonikerString.IndexOf("}");
-      string classid = filter.MonikerString.Substring(p1, (p2 - p1) + 1);
-
-      string registryKeyName = String.Format(@"SYSTEM\CurrentControlSet\Control\DeviceClasses\{0}", classid);
-      //Log.Write(" regkey:{0}", registryKeyName);
-      RegistryKey hklm = Registry.LocalMachine;
-      RegistryKey subkey = hklm.OpenSubKey(registryKeyName, false);
-      if (subkey != null)
-      {
-        string[] subkeynames = subkey.GetSubKeyNames();
-        for (int i = 0; i < subkeynames.Length; ++i)
-        {
-          //Log.Write("  subkey:{0}", subkeynames[i]);
-          registryKeyName = String.Format(@"SYSTEM\CurrentControlSet\Control\DeviceClasses\{0}\{1}", classid, subkeynames[i]);
-          subkey = hklm.OpenSubKey(registryKeyName, false);
-          string instance = (string)subkey.GetValue("DeviceInstance");
-
-          instance = instance.Replace(@"\", "#");
-          instance = instance.Replace(@"/", "#");
-          //Log.Write("    deviceinstance:{0}", instance);
-          if (deviceInstance.ToLower().IndexOf(instance.ToLower()) >= 0)
-          {
-            //found
-            subkey.Close();
-            hklm.Close();
-            //Log.Write("   found");
-            return true;
-          }
-        }
-        subkey.Close();
-      }
-      hklm.Close();
-      return false;
-    }
 
     /// <summary>
     /// #MW#
@@ -537,7 +550,8 @@ namespace MediaPortal.TV.Recording
       // Determine the deviceid "hidden" in the moniker of the capture device and use that to load
       // the definitions of the card... The id is between the first and second "#" character
       // example:
-      // @device:pnp:\\?\pci#ven_4444&dev_0016&subsys_40090070&rev_01#4&2e98101c&0&68f0#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\hauppauge wintv pvr pci ii capturez
+      //                     <------------------ ID ---------------->
+      // @device:pnp:\\?\pci#ven_4444&dev_0016&subsys_40090070&rev_01#4&2e98101c&0&68f0#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\hauppauge wintv pvr pci ii capture
       string deviceId = m_strVideoDeviceMoniker;
       string[] tmp1 = m_strVideoDeviceMoniker.Split((char[])"#".ToCharArray());
       if (tmp1.Length >= 2)
@@ -591,6 +605,7 @@ namespace MediaPortal.TV.Recording
 
       // Determine what PnP device the capture device is. This is done very, very simple by extracting
       // the first part of the moniker display name, which contains device specific information
+      // <-------------GET THIS PART-------------------------------------------------->        
       // @device:pnp:\\?\pci#ven_4444&dev_0016&subsys_40090070&rev_01#4&2e98101c&0&68f0#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\hauppauge wintv pvr pci ii capture
       string captureDeviceDeviceName = m_strVideoDeviceMoniker;
       int pos = captureDeviceDeviceName.LastIndexOf("#");
@@ -598,21 +613,23 @@ namespace MediaPortal.TV.Recording
       //Log.WriteFile(Log.LogType.Capture, " video device moniker   :{0}", m_strVideoDeviceMoniker);
       //Log.WriteFile(Log.LogType.Capture, " captureDeviceDeviceName:{0}", captureDeviceDeviceName);
 
-      Instance = FindInstance(captureDeviceDeviceName);
+
+      Instance = FindInstanceForDevice(captureDeviceDeviceName);
       //Log.WriteFile(Log.LogType.Capture," Using card#{0}", Instance);
-      //for each video filter we need
+      //for each tv filter we need for building the graph
       foreach (string friendlyName in _captureCardDefinition.Tv.FilterDefinitions.Keys)
       {
         FilterDefinition fd = _captureCardDefinition.Tv.FilterDefinitions[friendlyName] as FilterDefinition;
         bool filterFound = false;
         //Log.WriteFile(Log.LogType.Capture, "  filter {0}={1}", friendlyName, fd.FriendlyName);
 
-        //for each directshow filter present
+        //for each directshow filter available under windows
         foreach (string key in AvailableFilters.Filters.Keys)
         {
           Filter filter;
           ArrayList al = AvailableFilters.Filters[key] as System.Collections.ArrayList;
           filter = (Filter)al[0];
+         
           // if directshow filter name == video filter name
           if (filter.Name.Equals(fd.FriendlyName))
           {
@@ -620,18 +637,14 @@ namespace MediaPortal.TV.Recording
             // to make sure that we found the right filter...
             if (fd.CheckDevice)
             {
-                /* FlipGer: Not necessary since captureDeviceDeviceName has to be used here
-                 * with this code always the first filter will be taken
-                 * not the one which is equal to the one for the card
               filter = al[0] as Filter;
               string filterMoniker = filter.MonikerString;
               int posTmp = filterMoniker.LastIndexOf("#");
-              if (posTmp >= 0) filterMoniker = filterMoniker.Substring(0, posTmp);*/
+              if (posTmp >= 0) filterMoniker = filterMoniker.Substring(0, posTmp);
 
               if (!filterFound)
               {
-                  //string moniker = FindUniqueFilter(filterMoniker, Instance); <- This is wrong
-                string moniker = FindUniqueFilter(captureDeviceDeviceName, Instance); // <- This is right
+                string moniker = FindUniqueFilter(filterMoniker, Instance); 
                 for (int filterInst = 0; filterInst < al.Count; ++filterInst)
                 {
                   filter = al[filterInst] as Filter;
@@ -682,74 +695,7 @@ namespace MediaPortal.TV.Recording
           Log.WriteFile(Log.LogType.Capture, true, "  Filter {0} not found in definitions file", friendlyName);
           return (false);
         }
-      }
-      /*
-            // Same for Radio...
-            _captureCardDefinition.Radio									 = new DeviceDefinition();
-            _captureCardDefinition.Radio.FilterDefinitions = new Hashtable();
-            foreach(string filterKey in ccd.Radio.FilterDefinitions.Keys)
-            {
-              FilterDefinition fd = new FilterDefinition();
-              fd.FriendlyName       = ((FilterDefinition)ccd.Radio.FilterDefinitions[filterKey]).FriendlyName;
-              fd.Category           = ((FilterDefinition)ccd.Radio.FilterDefinitions[filterKey]).Category;
-              fd.CheckDevice        = ((FilterDefinition)ccd.Radio.FilterDefinitions[filterKey]).CheckDevice;
-              fd.DSFilter           = null;
-              fd.MonikerDisplayName = String.Empty;
-              _captureCardDefinition.Radio.FilterDefinitions.Add(filterKey, fd);
-            }
-            _captureCardDefinition.Radio.ConnectionDefinitions = ccd.Radio.ConnectionDefinitions;
-            _captureCardDefinition.Radio.InterfaceDefinition   = ccd.Radio.InterfaceDefinition;
-
-            //Log.WriteFile(Log.LogType.Capture,"TVCaptureDevice.LoadDefinition() check radio filters");
-            foreach (string friendlyName in _captureCardDefinition.Radio.FilterDefinitions.Keys)
-            {
-              //Log.WriteFile(Log.LogType.Capture,"TVCaptureDevice.LoadDefinition()   radio filter:{0}",friendlyName);
-              FilterDefinition fd = _captureCardDefinition.Radio.FilterDefinitions[friendlyName] as FilterDefinition;
-              bool filterFound         = false;
-              foreach (string key in AvailableFilters.Filters.Keys)
-              {
-                Filter    filter;
-                ArrayList al = AvailableFilters.Filters[key] as System.Collections.ArrayList;
-                filter    = (Filter)al[0];
-                if (filter.Name.Equals(fd.FriendlyName))
-                {
-                  // FriendlyName found. Now check if this name should be checked against a (PnP) device
-                  // to make sure that we found the right filter...
-                  if (fd.CheckDevice && al.Count>1)
-                  {
-                    // Check all filters with same name for capture card device...
-                    for (int i=0; i < al.Count; i++)
-                    {
-                      filter = al[i] as Filter;
-                      if (filter.MonikerString.IndexOf(captureDeviceDeviceName) > -1)
-                      {
-                        // Filter found matching the capture card device!!!!!!!!!!!!!!!
-                        filterFound = true;
-                        break;
-                      }
-                    } 
-                  }
-                  else filterFound = true;
-
-                  // For found filter, get the unique name, the moniker display name which contains not only
-                  // things like the type of device, but also a reference (in case of PnP hardware devices)
-                  // to the actual device number which makes it possible to distinqiush two identical cards!
-                  if (filterFound)
-                  {
-                    ((FilterDefinition)_captureCardDefinition.Radio.FilterDefinitions[friendlyName]).MonikerDisplayName = filter.MonikerString;
-                  }
-                }
-              }
-              // If no filter found thats in the definitions file, we obviously made a mistake defining it
-              // Log the error and return false...
-              if (!filterFound)
-              {
-                Log.WriteFile(Log.LogType.Capture,true,"TVCaptureDevice.LoadDefinition: Filter {0} not found in definitions file", friendlyName);
-                return (false);
-              }
-			
-              //Log.WriteFile(Log.LogType.Capture,"LoadDefinitions() card:{0} done",ID);}
-      */
+      }//foreach (string friendlyName in _captureCardDefinition.Tv.FilterDefinitions.Keys)
       return (true);
     }
 

@@ -5,7 +5,7 @@ using System.Text;
 namespace MediaPortal.GUI.WebBrowser
 {
 	/// <summary>
-	/// Summary description for INIFile.
+	/// Windows INI File Helper Class
 	/// </summary>
 	public class IniFile
 	{
@@ -53,7 +53,6 @@ namespace MediaPortal.GUI.WebBrowser
 			StringBuilder temp = new StringBuilder(255);
 			int i = GetPrivateProfileString(Section, Key, "", temp, 255, this.path);
 			return temp.ToString();
-
 		}
 	}
 }

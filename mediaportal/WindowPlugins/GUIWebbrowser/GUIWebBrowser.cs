@@ -16,7 +16,13 @@
  *  along with GNU Make; see the file COPYING.  If not, write to
  *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
  *  http://www.gnu.org/copyleft/gpl.html
- *
+ * 
+ * 
+ * Thanks to Adam Lock for making the Mozilla ActiveX Control
+ * Licensed under the MPL - http://www.mozilla.org/MPL/MPL-1.1.txt
+ * 
+ * http://www.iol.ie/~locka/mozilla/mozilla.htm
+ * 
  */
 
 using System;
@@ -24,30 +30,34 @@ using System.Collections;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Dialogs;
+using System.Windows.Forms;
 
 namespace MediaPortal.GUI.WebBrowser
 {
 	/// <summary>
 	/// A web browser plugin for mediaportal
 	/// </summary>
-	public class GUIWebBrowser : GUIWindow, ISetupForm
+	public class GUIWebBrowser : GUIWindow
 	{
-		WebBrowserControl wb;
+		public const int WINDOW_WEB_BROWSER = 5500;
 
+		private WebBrowserControl wb;
+		
 		#region Constructor
+			/// <summary>
+			/// Initializes a new instance of the <see cref="GUIWebBrowser"/> class.
+			/// </summary>
+			public GUIWebBrowser()
+			{
+				GetID=WINDOW_WEB_BROWSER;			
+			} 
+		#endregion
 
-        public GUIWebBrowser()
-		{
-			GetID=5500;
-		}
-
-        #endregion
-
-		#region Private Enumerations
+		#region Enumerations
 			/// <summary>
 			/// Gui Widgets
 			/// </summary>
-			enum Controls
+			public enum Controls
 			{
 				BackButton = 2,
 				ForwardButton = 3,
@@ -55,61 +65,74 @@ namespace MediaPortal.GUI.WebBrowser
 				StopButton = 5,
 				FavoritesButton = 6,
 				UrlButton = 7,
-				Progress = 8
+				Progress = 8,
+                HomeButton = 9
 			}
 
 		#endregion
 
 		#region Overrides
-
-        public override bool Init()
-        {
-            try
-            {
-                wb = WebBrowserControl.Instance;
-
-                GUIGraphicsContext.form.Controls.Add(wb);
-                wb.Visible = false;
-                wb.Browser.NavigateComplete2 += new AxMOZILLACONTROLLib.DWebBrowserEvents2_NavigateComplete2EventHandler(Browser_NavigateComplete2);
-                wb.Browser.DownloadBegin += new EventHandler(Browser_DownloadBegin);
-                wb.Browser.DownloadComplete += new EventHandler(Browser_DownloadComplete);
-                wb.Browser.BeforeNavigate2 += new AxMOZILLACONTROLLib.DWebBrowserEvents2_BeforeNavigate2EventHandler(Browser_BeforeNavigate2);
-                wb.Browser.StatusTextChange += new AxMOZILLACONTROLLib.DWebBrowserEvents2_StatusTextChangeEventHandler(Browser_StatusTextChange);
-                wb.Browser.ProgressChange += new AxMOZILLACONTROLLib.DWebBrowserEvents2_ProgressChangeEventHandler(Browser_ProgressChange);
-
-                return Load(GUIGraphicsContext.Skin + @"\webbrowser.xml");
-            }
-            catch
-            {
-            }
-
-            return false;
-        }
-
-		public override void OnAction(Action action)
-		{
-			switch (action.wID)
+			/// <summary>
+			/// Inits this instance.
+			/// </summary>
+			/// <returns></returns>
+			public override bool Init()
 			{
-				case Action.ActionType.ACTION_KEY_PRESSED:
-				{
-					//space bar
-					if(action.m_key.KeyChar == 32)
-					{	
-					
-					}
-					break;
-				}
-				case Action.ActionType.ACTION_PREVIOUS_MENU:
-				{
-					GUIWindowManager.ShowPreviousWindow();
-					return;
-				}
+                try
+                {
 
+                    wb = WebBrowserControl.Instance;
+                    GUIGraphicsContext.form.Controls.Add(wb);
+                    wb.Visible = false;
+                    wb.Browser.NavigateComplete2 += new AxMOZILLACONTROLLib.DWebBrowserEvents2_NavigateComplete2EventHandler(Browser_NavigateComplete2);
+                    wb.Browser.DownloadBegin += new EventHandler(Browser_DownloadBegin);
+                    wb.Browser.DownloadComplete += new EventHandler(Browser_DownloadComplete);
+                    wb.Browser.BeforeNavigate2 += new AxMOZILLACONTROLLib.DWebBrowserEvents2_BeforeNavigate2EventHandler(Browser_BeforeNavigate2);
+                    wb.Browser.StatusTextChange += new AxMOZILLACONTROLLib.DWebBrowserEvents2_StatusTextChangeEventHandler(Browser_StatusTextChange);
+                    wb.Browser.ProgressChange += new AxMOZILLACONTROLLib.DWebBrowserEvents2_ProgressChangeEventHandler(Browser_ProgressChange);
+                    return Load(GUIGraphicsContext.Skin + @"\webbrowser.xml");
+                }
+                catch
+                {
+                    Log.WriteFile(Log.LogType.Error, true, "Unable to load the web browser plugin, verify that Mozilla ActiveX Control is installed");
+                }
+                return false;
 			}
-			
-			base.OnAction(action);
-		}
 
+            public override void DeInit()
+            {
+                base.DeInit();
+                wb.Dispose();
+                WebBrowserControl.Instance.Dispose();
+            }
+
+			/// <summary>
+			/// Called when [action].
+			/// </summary>
+			/// <param name="action">The action.</param>
+			public override void OnAction(Action action)
+			{
+				switch (action.wID)
+				{
+                    case Action.ActionType.ACTION_SHOW_INFO:
+                    {
+                        GUIWindowManager.ActivateWindow(GUIFavorites.WINDOW_FAVORITES);
+                        break;
+                    }
+					case Action.ActionType.ACTION_CONTEXT_MENU:
+					{
+					    wb.ToggleMenu();
+						break;
+					}
+				}
+				base.OnAction(action);
+			}
+
+			/// <summary>
+			/// Called when [message].
+			/// </summary>
+			/// <param name="message">The message.</param>
+			/// <returns></returns>
 			public override bool OnMessage(GUIMessage message)
 			{
 				switch ( message.Message )
@@ -118,22 +141,11 @@ namespace MediaPortal.GUI.WebBrowser
 					case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
 					{
 						base.OnMessage(message);
-
-                        if (wb == null)
-                            return false;
-
 						GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(4000));
-					
 						//make web browser visible			
-
-						string strName="www.google.nl";
-						wb.Browser.Navigate(strName);
-						GUIPropertyManager.SetProperty("#location.url", strName);
-						GUIPropertyManager.SetProperty("#location.name", string.Empty);						
 						wb.Visible=true;
 						wb.Focus();
 						return true;
-
 					}
 					case GUIMessage.MessageType.GUI_MSG_CLICKED:
 					{
@@ -153,18 +165,24 @@ namespace MediaPortal.GUI.WebBrowser
 						}
 						if (iControl==(int)Controls.RefreshButton)
 						{
-							object refreshType = WebBrowserControl.RefreshConstants.REFRESH_COMPLETELY;
-							wb.Browser.Refresh2(ref refreshType);
+							wb.RefreshBrowser();
 							break;
 						}
 						if (iControl==(int)Controls.StopButton)
 						{
 							wb.Browser.Stop();
-							
+                            break;
 						}
+                        if (iControl == (int)Controls.HomeButton)
+                        {
+                            if (Common.HomePage.Length != 0)
+                                wb.Browser.Navigate(Common.HomePage);
+                            break;
+                        }
 						if(iControl == (int)Controls.FavoritesButton)
 						{
 							GUIWindowManager.ActivateWindow(GUIFavorites.WINDOW_FAVORITES);
+                            break;
 						}
 						if(iControl == (int)Controls.UrlButton)
 						{
@@ -172,7 +190,6 @@ namespace MediaPortal.GUI.WebBrowser
 							wb.Visible=false;
 							//set focus to main form to avoid browser caputuring entered text
 							GUIGraphicsContext.form.Focus();
-							///Utils.ApplicationContext.Focus();
 							wb.Enabled=false;
 							string strName= string.Empty;
 							GetStringFromKeyboard(ref strName);
@@ -190,125 +207,91 @@ namespace MediaPortal.GUI.WebBrowser
 					}
 					case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
 					{
-                        if (wb != null)
-                        {
-                            //hide the browser
-                            wb.Visible = false;
-                        }
+						//hide the browser
+						wb.Visible=false;
+                        GUIGraphicsContext.form.Focus();
 					}
 					break;
-
 				}
 				return base.OnMessage(message);
 			}
 		#endregion
 
-		/// <summary>
-		/// Gets the input from the virtual keyboard window
-		/// </summary>
-		/// <param name="strLine"></param>
-		private void GetStringFromKeyboard(ref string strLine)
-		{
-		
-			VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
-			if (null == keyboard) return;
-			keyboard.Reset();
-			keyboard.Text = strLine;
-			keyboard.DoModal(GetID);
-			if (keyboard.IsConfirmed)
-			{
-				strLine = keyboard.Text;
-			}
-		}
-		
-		#region ISetupForm Members
+        #region Private Methods
+             /// <summary>
+		    /// Gets the input from the virtual keyboard window
+		    /// </summary>
+		    /// <param name="strLine">The STR line.</param>
+		    private void GetStringFromKeyboard(ref string strLine)
+		    {
 
-		public bool CanEnable()
-		{
-			return wb != null;
-		}
+                VirtualWebKeyboard keyboard = (VirtualWebKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_WEB_KEYBOARD);
+                if (null == keyboard) return;
+                keyboard.Reset();
+                keyboard.Text = strLine;
+                keyboard.DoModal(GetID);
+                if (keyboard.IsConfirmed)
+                {
+                    strLine = keyboard.Text;
+                }
 
-		public string Description()
-		{
-			return "A web browser plugin for media portal.";
-		}
-
-		public bool DefaultEnabled()
-		{
-            return true;
-		}
-
-		public int GetWindowId()
-		{
-			return 5500;
-		}
-
-		public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
-		{
-			strButtonText = GUILocalizeStrings.Get(4000);
-			strButtonImage = "";
-			strButtonImageFocus = "";
-			strPictureImage = "hover_webbrowser.png";
-			return true;
-		}
-
-		public string Author()
-		{
-			return "Devo";
-		}
-
-		public string PluginName()
-		{
-			return GUILocalizeStrings.Get(4000);
-		}
-
-		public bool HasSetup()
-		{
-			return false;
-		}
-
-		public void ShowPlugin()
-		{
-			// TODO:  Add GUIWebBrowser.ShowPlugin implementation
-		}
-
-		#endregion
-
+                //VirtualKeyboardTest keyboard = (VirtualKeyboardTest)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_TEST_KEYBOARD);
+                //if (null == keyboard) return;
+                //keyboard.Reset();
+                //keyboard.Text = strLine;
+                //keyboard.DoModal(GetID);
+                //if (keyboard.IsConfirmed)
+                //{
+                //    strLine = keyboard.Text;
+                //}
+		    }
+        #endregion
+       
 		#region Browser Events
 			/// <summary>
-			/// 
+			/// Handles the NavigateComplete2 event of the Browser control.
 			/// </summary>
-			/// <param name="sender"></param>
-			/// <param name="e"></param>
+			/// <param name="sender">The sender.</param>
+			/// <param name="e">The e.</param>
 			private void Browser_NavigateComplete2(object sender, AxMOZILLACONTROLLib.DWebBrowserEvents2_NavigateComplete2Event e)
 			{
-				//GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(850) + @"/" + strName);
 				GUIPropertyManager.SetProperty("#location.name", wb.Browser.LocationName);
 				GUIPropertyManager.SetProperty("#location.url", wb.Browser.LocationURL);
-			
 			}
 			/// <summary>
-			/// 
+			/// Handles the DownloadBegin event of the Browser control.
 			/// </summary>
-			/// <param name="sender"></param>
-			/// <param name="e"></param>
+			/// <param name="sender">The source of the event.</param>
+			/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
 			private void Browser_DownloadBegin(object sender, EventArgs e)
 			{
 				GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VISIBLE,GetID,0, (int)Controls.Progress,0,0,null); 
 				OnMessage(msg);
 			}
-
+			/// <summary>
+			/// Handles the BeforeNavigate2 event of the Browser control.
+			/// </summary>
+			/// <param name="sender">The sender.</param>
+			/// <param name="e">The e.</param>
 			private void Browser_BeforeNavigate2(object sender, AxMOZILLACONTROLLib.DWebBrowserEvents2_BeforeNavigate2Event e)
 			{
 				GUIPropertyManager.SetProperty("#location.url",e.uRL.ToString());
 				GUIPropertyManager.SetProperty("#status", "Loading " + e.uRL.ToString());
 			}
-
+			/// <summary>
+			/// Handles the StatusTextChange event of the Browser control.
+			/// </summary>
+			/// <param name="sender">The sender.</param>
+			/// <param name="e">The e.</param>
 			private void Browser_StatusTextChange(object sender, AxMOZILLACONTROLLib.DWebBrowserEvents2_StatusTextChangeEvent e)
 			{
 				GUIPropertyManager.SetProperty("#status",e.text);
 			}
-
+			/// <summary>
+			/// Handles the ProgressChange event of the Browser control.
+			/// </summary>
+			/// <param name="sender">The sender.</param>
+			/// <param name="e">The e.</param>
 			private void Browser_ProgressChange(object sender, AxMOZILLACONTROLLib.DWebBrowserEvents2_ProgressChangeEvent e)
 			{
 				double Progress;	
@@ -316,11 +299,16 @@ namespace MediaPortal.GUI.WebBrowser
 				Progress = (e.progress * 100) / e.progressMax;
 				pControl.Percentage = Convert.ToInt32(Progress);
 			}
+			/// <summary>
+			/// Handles the DownloadComplete event of the Browser control.
+			/// </summary>
+			/// <param name="sender">The source of the event.</param>
+			/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
 			private void Browser_DownloadComplete(object sender, EventArgs e)
 			{
 				GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_HIDDEN,GetID,0, (int)Controls.Progress,0,0,null); 
 				OnMessage(msg);
 			}
-		#endregion
+		#endregion	
 	}
 }

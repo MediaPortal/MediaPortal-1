@@ -34,14 +34,14 @@ namespace MediaPortal.GUI.WebBrowser
 	{
 		public const int WINDOW_FAVORITES = 5501;
 
-		DirectoryHistory	m_history = new DirectoryHistory();
+		DirectoryHistory m_history = new DirectoryHistory();
 		string	currentFolder = String.Empty;
 		[SkinControlAttribute(50)]	protected GUIFacadeControl facadeView=null;
 
 		#region Constructor
 			public GUIFavorites()
 			{
-				GetID=5501;
+                GetID = WINDOW_FAVORITES;
 			}
 		#endregion
 
@@ -65,31 +65,17 @@ namespace MediaPortal.GUI.WebBrowser
 			protected override void OnPageLoad()
 			{
 				base.OnPageLoad();
-				LoadDirectory(FavoritesPath);
+                if (FavoritesPath.Length != 0)
+                {
+                    LoadDirectory(FavoritesPath);
+                }
+                else
+                {
+                    //no favorites folder specified.
+                    ShowErrorDialog(4003);
+                }
+				
 			}
-		public override void OnAction(Action action)
-		{
-			switch (action.wID)
-			{
-				case Action.ActionType.ACTION_KEY_PRESSED:
-				{
-					//space bar
-					if(action.m_key.KeyChar == 32)
-					{	
-					
-					}
-					break;
-				}
-				case Action.ActionType.ACTION_PREVIOUS_MENU:
-				{
-					GUIWindowManager.ShowPreviousWindow();
-					return;
-				}
-
-			}
-			
-			base.OnAction(action);
-		}
 
 			public override bool OnMessage(GUIMessage message)
 			{
@@ -122,12 +108,21 @@ namespace MediaPortal.GUI.WebBrowser
 							else
 							{
 								// The URL file is in standard "INI" format
-								IniFile objINI = new IniFile(facadeView.SelectedListItem.Path);
-								WebBrowserControl.Instance.Browser.Navigate(objINI.IniReadValue("InternetShortcut", "URL"));							
-								GUIWindowManager.ShowPreviousWindow();
-							}
-							
+                                if (facadeView.SelectedListItem != null)
+                                {
+                                    try
+                                    {
+                                        IniFile objINI = new IniFile(facadeView.SelectedListItem.Path);
+                                        WebBrowserControl.Instance.Browser.Navigate(objINI.IniReadValue("InternetShortcut", "URL"));
+                                        GUIWindowManager.ShowPreviousWindow();
 
+                                    }
+                                    catch
+                                    {
+                                        ShowErrorDialog(4002);
+                                    }
+                                }	
+							}
 							break;
 						}
 						
@@ -152,73 +147,74 @@ namespace MediaPortal.GUI.WebBrowser
 			
 		#endregion
 
-		/// <summary>
-		/// Gets the input from the virtual keyboard window
-		/// </summary>
-		/// <param name="strLine"></param>
-		private void GetStringFromKeyboard(ref string strLine)
-		{
-		
-			VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
-			if (null == keyboard) return;
-			keyboard.Reset();
-			keyboard.Text = strLine;
-			keyboard.DoModal(GetID);
-			if (keyboard.IsConfirmed)
-			{
-				strLine = keyboard.Text;
-			}
-		}	
+        #region Private Properties
+            /// <summary>
+		    /// Gets the Internet Favorites path selected by the user
+		    /// </summary>
+		    private static string FavoritesPath
+		    {
+			    get
+			    {
+                    using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+                    {
+                       return xmlreader.GetValueAsString("webbrowser", "favoritesFolder", string.Empty);
+                    }
+			     }
+		    }
+         #endregion
 
-		/// <summary>
-		/// Gets the Internet Explorer Favorites path for the current user 
-		/// from the Windows Registry.
-		/// </summary>
-		private string FavoritesPath
-		{
-			get
-			{
-				Microsoft.Win32.RegistryKey objRegKey = Microsoft.Win32.Registry.CurrentUser;
-				Microsoft.Win32.RegistryKey objFav = objRegKey.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders");
+        #region Private Methods
+            /// <summary>
+            /// Loads the directory.
+            /// </summary>
+            /// <param name="newFolderName">New name of the folder.</param>
+            private void LoadDirectory(string newFolderName)
+            {
+                GUIListItem selectedListItem = facadeView.SelectedListItem;
 
-				return (string)objFav.GetValue("Favorites");
-			 }
-		}
+                if (selectedListItem != null)
+                {
+                    if (selectedListItem.IsFolder && selectedListItem.Label != "..")
+                    {
+                        m_history.Set(selectedListItem.Label, currentFolder);
+                    }
+                }
+                currentFolder = newFolderName;
 
-		/// <summary>
-		/// Loads the directory.
-		/// </summary>
-		/// <param name="newFolderName">New name of the folder.</param>
-		private void LoadDirectory(string newFolderName)
-		{
-			GUIListItem selectedListItem = facadeView.SelectedListItem;
+                GUIControl.ClearControl(GetID, facadeView.GetID);
+                VirtualDirectory Directory;
+                ArrayList itemlist;
+                ArrayList UrlExtensions = new ArrayList();
+                UrlExtensions.Add(".url");
 
-			if (selectedListItem != null) 
-			{
-				if (selectedListItem.IsFolder && selectedListItem.Label != "..")
-				{
-					m_history.Set(selectedListItem.Label, currentFolder);
-				}
-			}
-			 currentFolder = newFolderName;
+                Directory = new VirtualDirectory();
+                Directory.SetExtensions(UrlExtensions);
 
+                itemlist = Directory.GetDirectory(currentFolder);
 
-			GUIControl.ClearControl(GetID, facadeView.GetID);
-			VirtualDirectory Directory;
-			ArrayList itemlist;
-			ArrayList UrlExtensions = new ArrayList();
-			UrlExtensions.Add(".url");
+                foreach (GUIListItem item in itemlist)
+                {
+                    GUIControl.AddListItemControl(GetID, facadeView.GetID, item);
+                }
+            }
 
-			Directory = new VirtualDirectory();
-			Directory.SetExtensions(UrlExtensions);
+            /// <summary>
+            /// Shows the Error Dialog
+            /// </summary>
+            private void ShowErrorDialog(int messsageNumber)
+            {
+                GUIDialogOK dlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+                if (dlgOK != null)
+                {
+                    dlgOK.SetHeading(257);
+                    dlgOK.SetLine(1, messsageNumber);
+                    dlgOK.SetLine(2, "");
+                    dlgOK.DoModal(GetID);
+                }
+                return;
+            }
 
-			itemlist = Directory.GetDirectory(currentFolder);
-					
-			foreach (GUIListItem item in itemlist)
-			{
-				GUIControl.AddListItemControl(GetID,facadeView.GetID,item);
-			}
-		}
-
+        #endregion
+ 
 	}
 }

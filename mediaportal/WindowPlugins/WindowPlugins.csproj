@@ -136,10 +136,6 @@
       <Name>Communications</Name>
       <HintPath>..\Communications.dll</HintPath>
     </Reference>
-    <Reference Include="DotMSN">
-      <Name>DotMSN</Name>
-      <HintPath>GUIMSNPlugin\DotMSN.dll</HintPath>
-    </Reference>
     <Reference Include="Interop.TunerLib">
       <Name>Interop.TunerLib</Name>
       <HintPath>..\Interop.TunerLib.dll</HintPath>
@@ -206,6 +202,10 @@
     <Reference Include="xAPTransport">
       <Name>xAPTransport</Name>
       <HintPath>..\xAPTransport.dll</HintPath>
+    </Reference>
+    <Reference Include="XihSolutions.DotMSN, Version=2.0.1.15051, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\XihSolutions.DotMSN.dll</HintPath>
     </Reference>
     <Reference Include="XPBurnComponent">
       <Name>XPBurnComponent</Name>
@@ -898,6 +898,7 @@
     <Compile Include="GUIWeather\GUIWindowWeather.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="GUIWebbrowser\Common.cs" />
     <Compile Include="GUIWebbrowser\GUIFavorites.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -909,6 +910,15 @@
     </Compile>
     <Compile Include="GUIWebbrowser\WebBrowserControl.cs">
       <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GUIWebbrowser\WebBrowserControl.designer.cs">
+      <DependentUpon>WebBrowserControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUIWebbrowser\WebBrowserSetup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUIWebbrowser\WebBrowserSetup.designer.cs">
+      <DependentUpon>WebBrowserSetup.cs</DependentUpon>
     </Compile>
     <Compile Include="GUIX10\ApplianceConfiguration.cs">
       <SubType>Code</SubType>
@@ -1035,6 +1045,11 @@
     </EmbeddedResource>
     <EmbeddedResource Include="GUIWebbrowser\WebBrowserControl.resx">
       <DependentUpon>WebBrowserControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUIWebbrowser\WebBrowserSetup.resx">
+      <DependentUpon>WebBrowserSetup.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="GUIX10\ApplianceForm.resx">
       <DependentUpon>ApplianceForm.cs</DependentUpon>
