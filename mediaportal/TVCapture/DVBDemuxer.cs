@@ -686,14 +686,14 @@ int m_bufferPositionPMT=0;
       {
         if (_packetHeader.TransportScrambling != 0)
         {
-          if (!_isScrambled)
-            Log.Write("demuxer:video pid:{0:X} is scrambled",_pidVideo);
+         // if (!_isScrambled)
+         //   Log.Write("demuxer:video pid:{0:X} is scrambled",_pidVideo);
           _isScrambled = true;
         }
         else
         {
-          if (_isScrambled)
-            Log.Write("demuxer:video pid:{0:X} is unscrambled", _pidVideo);
+         // if (_isScrambled)
+         //   Log.Write("demuxer:video pid:{0:X} is unscrambled", _pidVideo);
           _isScrambled = false;
         }
       }
