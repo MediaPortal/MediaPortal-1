@@ -2276,10 +2276,12 @@ namespace MediaPortal.TV.Recording
                 if (prog.EndTime < DateTime.Now.AddHours(chan.EpgHours))
                 {
                   //grab the epg
-                  Log.WriteFile(Log.LogType.EPG, "auto-epg: grab epg for channel:{0} hours expected:{1}, last event in tv guide:{2} {3}",
-                                chan.Name, chan.EpgHours, prog.EndTime.ToShortDateString(), prog.EndTime.ToLongTimeString());
+                  Log.WriteFile(Log.LogType.EPG, "auto-epg: grab epg for channel:{0} expected:{1} hours, last event in tv guide:{2} {3}, last grab :{4} {5}",
+                                chan.Name, chan.EpgHours, prog.EndTime.ToShortDateString(), prog.EndTime.ToLongTimeString(),
+                                 chan.LastDateTimeEpgGrabbed.Date.ToShortDateString(),chan.LastDateTimeEpgGrabbed.Date.ToLongTimeString() );
                   card.GrabEpg(chan);
                   chan.LastDateTimeEpgGrabbed = DateTime.Now;
+                  TVDatabase.UpdateChannel(chan, chan.Sort);
                   break;
                 }
               }

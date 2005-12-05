@@ -295,7 +295,6 @@ namespace MediaPortal.TV.Recording
       }
       public void NewEvent(DateTime time)
       {
-
         if (_firstEvent == DateTime.MinValue)
           _firstEvent = time;
         if (_lastEvent == DateTime.MinValue)
@@ -308,20 +307,24 @@ namespace MediaPortal.TV.Recording
 
       public void Update()
       {
-        if (_firstEvent==DateTime.MinValue) return;
-        if (_lastEvent==DateTime.MinValue) return;
-
-        TimeSpan ts = _lastEvent - _firstEvent;
-        int hours = (int)(ts.TotalHours - 2f);
-        if (hours < 0) return;
+        int hours = -1;
+        if (_firstEvent != DateTime.MinValue && _lastEvent != DateTime.MinValue)
+        {
+          TimeSpan ts = _lastEvent - _firstEvent;
+          hours = (int)(ts.TotalHours - 2f);
+        }
         List<TVChannel> listChannels = new List<TVChannel>();
         TVDatabase.GetChannels(ref listChannels);
         foreach (TVChannel ch in listChannels)
         {
           if (ch.Name == _channelName)
           {
-            Log.WriteFile(Log.LogType.EPG, "epg: channel:{0} received epg for : {1} days, {2} hours, {3} minutes", _channelName, ts.Days, ts.Hours, ts.Minutes);
-            ch.EpgHours = hours;
+            Log.WriteFile(Log.LogType.EPG, "epg: channel:{0} received epg for : {1} hours", _channelName, hours);
+            if (hours > 0)
+            {
+              ch.EpgHours = hours;
+            }
+            ch.LastDateTimeEpgGrabbed = DateTime.Now;
             TVDatabase.UpdateChannel(ch,ch.Sort);
             return;
           }
@@ -920,19 +923,23 @@ namespace MediaPortal.TV.Recording
 
     void OnChannelEvent(string channelName, DateTime timeStart, DateTime timeEnd)
     {
-      if (timeEnd < DateTime.Now) return;
       foreach (TvChannelEpg ch in _epgChannels)
       {
         if (ch.ChannelName == channelName)
         {
+          if (timeEnd < DateTime.Now) return;
           ch.NewEvent(timeStart);
           ch.NewEvent(timeEnd);
           return;
         }
       }
+
       TvChannelEpg newChan = new TvChannelEpg(channelName);
-      newChan.NewEvent(timeStart);
-      newChan.NewEvent(timeEnd);
+      if (timeEnd > DateTime.Now)
+      {
+        newChan.NewEvent(timeStart);
+        newChan.NewEvent(timeEnd);
+      }
       _epgChannels.Add(newChan);
     }
 

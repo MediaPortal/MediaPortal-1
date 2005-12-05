@@ -236,7 +236,21 @@ namespace MediaPortal.Database
 			catch(Exception)
 			{}
 			return 0;
-		}
+    }
+    
+    static public long GetAsInt64(SQLiteResultSet results, int iRecord, int column)
+    {
+      string result = Get(results, iRecord, column);
+      try
+      {
+        long longValue = Int64.Parse(result);
+        return longValue;
+      }
+      catch (Exception)
+      { }
+      return 0;
+    }
+
 		static public string Get(SQLiteResultSet results, int iRecord, int column)
 		{
 			if (null == results) return String.Empty;

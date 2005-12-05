@@ -126,7 +126,7 @@ namespace MediaPortal.TV.Database
 
     static public void UpdateFromPreviousVersion()
     {
-      int currentVersion = 7;
+      int currentVersion = 8;
       int versionNr = 0;
 
       AddTable("tblversion", "CREATE TABLE tblversion( idVersion integer)");
@@ -201,6 +201,11 @@ namespace MediaPortal.TV.Database
       {
         m_db.Execute("ALTER TABLE channel ADD COLUMN epgHours Integer");
         m_db.Execute("update channel set epgHours=1");
+      }
+      if (versionNr < 8)
+      {
+        m_db.Execute("ALTER TABLE channel ADD COLUMN epgLastUpdate text");
+        m_db.Execute("update channel set epgLastUpdate=''");
       }
       m_db.Execute(String.Format("update tblversion set idVersion={0}", currentVersion));
     }
@@ -890,10 +895,12 @@ namespace MediaPortal.TV.Database
           if (channel.AutoGrabEpg) grabEpg = 1;
 
 
-          strSQL = String.Format("update channel set iChannelNr={0}, frequency={1}, iSort={2},bExternal={3}, ExternalChannel='{4}',standard={5}, Visible={6}, Country={7},strChannel='{8}', scrambled={9},grabEpg={10},epgHours={11} where idChannel like {12}",
+          strSQL = String.Format("update channel set iChannelNr={0}, frequency={1}, iSort={2},bExternal={3}, ExternalChannel='{4}',standard={5}, Visible={6}, Country={7},strChannel='{8}', scrambled={9},grabEpg={10},epgHours={11},epgLastUpdate='{12}' where idChannel like {13}",
             channel.Number, channel.Frequency.ToString(),
             sort, iExternal, strExternal, (int)channel.TVStandard, iVisible, channel.Country,
-            strChannel, scrambled, grabEpg, channel.EpgHours,channel.ID);
+            strChannel, scrambled, grabEpg, channel.EpgHours,
+            Utils.datetolong(channel.LastDateTimeEpgGrabbed),
+            channel.ID);
           m_db.Execute(strSQL);
         }
         catch (Exception ex)
@@ -941,9 +948,10 @@ namespace MediaPortal.TV.Database
             int grabepg = 0;
             if (channel.AutoGrabEpg) grabepg = 1;
 
-            strSQL = String.Format("insert into channel (idChannel, strChannel,iChannelNr ,frequency,iSort, bExternal, ExternalChannel,standard, Visible, Country, scrambled,grabEpg,epgHours) values ( NULL, '{0}', {1}, {2}, {3}, {4},'{5}', {6}, {7}, {8}, {9},{10},{11} )",
+            strSQL = String.Format("insert into channel (idChannel, strChannel,iChannelNr ,frequency,iSort, bExternal, ExternalChannel,standard, Visible, Country, scrambled,grabEpg,epgHours,epgLastUpdate) values ( NULL, '{0}', {1}, {2}, {3}, {4},'{5}', {6}, {7}, {8}, {9},{10},{11},'{12}' )",
               strChannel, channel.Number, channel.Frequency.ToString(),
-              totalchannels + 1, iExternal, strExternal, (int)channel.TVStandard, iVisible, channel.Country, scrambled,grabepg,channel.EpgHours);
+              totalchannels + 1, iExternal, strExternal, (int)channel.TVStandard, iVisible, channel.Country, scrambled,grabepg,channel.EpgHours,
+              Utils.datetolong(channel.LastDateTimeEpgGrabbed) );
             m_db.Execute(strSQL);
             int iNewID = m_db.LastInsertID();
             CChannelCache chan = new CChannelCache();
@@ -1175,7 +1183,7 @@ namespace MediaPortal.TV.Database
           string strSQL;
           strSQL = "select channel.idChannel,channel.iChannelNr,channel.frequency,channel.strChannel,";
           strSQL += "channel.bExternal,channel.Visible,channel.scrambled,channel.ExternalChannel,channel.standard,";
-          strSQL += "channel.Country,channel.iSort,tblDVBCMapping.strProvider,tblDVBSMapping.sProviderName,tblDVBTMapping.strProvider,tblATSCMapping.strProvider,channel.grabEpg,channel.epgHours ";
+          strSQL += "channel.Country,channel.iSort,tblDVBCMapping.strProvider,tblDVBSMapping.sProviderName,tblDVBTMapping.strProvider,tblATSCMapping.strProvider,channel.grabEpg,channel.epgHours,channel.epgLastUpdate ";
           strSQL += "from channel left join tblDVBCMapping on tblDVBCMapping.iLCN=channel.idChannel ";
           strSQL += "left join tblDVBTMapping on tblDVBTMapping.iLCN=channel.idChannel ";
           strSQL += "left join tblDVBSMapping on tblDVBSMapping.idChannel=channel.idChannel ";
@@ -1221,6 +1229,7 @@ namespace MediaPortal.TV.Database
             else chan.AutoGrabEpg = false;
 
             chan.EpgHours = DatabaseUtility.GetAsInt(results, i, 16);
+            chan.LastDateTimeEpgGrabbed = Utils.longtodate(DatabaseUtility.GetAsInt64(results, i, 17));
 
             chan.ExternalTunerChannel = DatabaseUtility.Get(results, i, 7);
             chan.TVStandard = (AnalogVideoStandard)DatabaseUtility.GetAsInt(results, i, 8);
@@ -1310,6 +1319,7 @@ namespace MediaPortal.TV.Database
             else chan.AutoGrabEpg = false;
 
             chan.EpgHours = DatabaseUtility.GetAsInt(results, i, "epgHours");
+            chan.LastDateTimeEpgGrabbed = Utils.longtodate(DatabaseUtility.GetAsInt64(results, i, "epgLastUpdate"));
 
             chan.Sort = DatabaseUtility.GetAsInt(results, i, "iSort");
 
@@ -3940,6 +3950,7 @@ namespace MediaPortal.TV.Database
             else chan.AutoGrabEpg = false;
 
             chan.EpgHours = DatabaseUtility.GetAsInt(results, i, "channel.epgHours");
+            chan.LastDateTimeEpgGrabbed = Utils.longtodate(DatabaseUtility.GetAsInt64(results, i, "channel.epgLastUpdate"));
             
             chan.ExternalTunerChannel = DatabaseUtility.Get(results, i, "channel.ExternalChannel");
             chan.TVStandard = (AnalogVideoStandard)DatabaseUtility.GetAsInt(results, i, "channel.standard");
@@ -4329,6 +4340,7 @@ namespace MediaPortal.TV.Database
             else chan.AutoGrabEpg = false;
 
             chan.EpgHours = DatabaseUtility.GetAsInt(results, i, "epgHours");
+            chan.LastDateTimeEpgGrabbed = Utils.longtodate(DatabaseUtility.GetAsInt64(results, i, "epgLastUpdate"));
             
             chan.ExternalTunerChannel = DatabaseUtility.Get(results, i, "ExternalChannel");
             chan.TVStandard = (AnalogVideoStandard)DatabaseUtility.GetAsInt(results, i, "standard");
