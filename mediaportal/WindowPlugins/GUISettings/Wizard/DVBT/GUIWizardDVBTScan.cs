@@ -229,7 +229,8 @@ namespace WindowPlugins.GUISettings.Wizard.DVBT
 
       if (captureCard.SignalQuality < 40)
         System.Threading.Thread.Sleep(400);
-      Log.WriteFile(Log.LogType.Capture, "dvbt-scan:tuned");
+      Log.WriteFile(Log.LogType.Capture, "DVBT-scan:tuned locked:{0} level:{1} quality:{2}",
+                        captureCard.SignalPresent(), captureCard.SignalStrength, captureCard.SignalQuality);
       return;
     }
 
