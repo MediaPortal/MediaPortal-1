@@ -242,16 +242,17 @@ namespace WindowPlugins.GUISettings.Wizard.DVBC
       chan.FEC = (int)TunerLib.FECMethod.BDA_FEC_METHOD_NOT_SET;
       chan.Frequency = dvbcChannels[currentFrequencyIndex].frequency;
 
-      Log.WriteFile(Log.LogType.Capture, "DVBC-scan:tune:{0} bandwidth:{1} offset:{2}", chan.Frequency, chan.Bandwidth, offset);
+      Log.WriteFile(Log.LogType.Capture, "DVBC-scan:tune:{0} mod:{1} symbolrate:{2}", chan.Frequency, chan.Modulation, chan.Symbolrate);
 
       captureCard.Tune(chan, 0);
       captureCard.Process();
 
-      System.Threading.Thread.Sleep(400);
+      System.Threading.Thread.Sleep(600);
       captureCard.Process();
 
       if (captureCard.SignalQuality < 40)
-        System.Threading.Thread.Sleep(400);
+        System.Threading.Thread.Sleep(600);
+      captureCard.Process();
       Log.WriteFile(Log.LogType.Capture, "DVBC-scan:tuned locked:{0} level:{1} quality:{2}",
                         captureCard.SignalPresent(),captureCard.SignalStrength,captureCard.SignalQuality);
       return;
