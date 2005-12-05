@@ -47,13 +47,13 @@ namespace MediaPortal.Player
       Paused,
       Ended
     }
-    string m_strCurrentFile = "";
-    PlayState m_state = PlayState.Init;
-    bool m_bFullScreen = false;
-    int m_iPositionX = 10, m_iPositionY = 10, m_iWidth = 100, m_iHeight = 100;
-    static AxWMPLib.AxWindowsMediaPlayer m_player = null;
-    bool m_bUpdateNeeded = true;
-    bool m_bNotifyPlaying = true;
+    string _currentFile = "";
+    PlayState _graphState = PlayState.Init;
+    bool _isFullScreen = false;
+    int _positionX = 10, _positionY = 10, _videoWidth = 100, _videoHeight = 100;
+    static AxWMPLib.AxWindowsMediaPlayer _wmp10Player = null;
+    bool _needUpdate = true;
+    bool _notifyPlaying = true;
 
     public AudioPlayerWMP9()
     {
@@ -80,39 +80,39 @@ namespace MediaPortal.Player
       }
       catch (Exception) { }
 
-      if (m_player == null)
+      if (_wmp10Player == null)
       {
 
-        m_player = new AxWMPLib.AxWindowsMediaPlayer();
+        _wmp10Player = new AxWMPLib.AxWindowsMediaPlayer();
         
 
-        m_player.BeginInit();
+        _wmp10Player.BeginInit();
         GUIGraphicsContext.form.SuspendLayout();
-        m_player.Enabled = true;
+        _wmp10Player.Enabled = true;
 
         System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Resource1));
-        m_player.Location = new System.Drawing.Point(8, 16);
-        m_player.Name = "axWindowsMediaPlayer1";
-        m_player.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("axWindowsMediaPlayer1.OcxState")));
-        m_player.Size = new System.Drawing.Size(264, 240);
-        m_player.TabIndex = 0;
-        GUIGraphicsContext.form.Controls.Add(m_player);
+        _wmp10Player.Location = new System.Drawing.Point(8, 16);
+        _wmp10Player.Name = "axWindowsMediaPlayer1";
+        _wmp10Player.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("axWindowsMediaPlayer1.OcxState")));
+        _wmp10Player.Size = new System.Drawing.Size(264, 240);
+        _wmp10Player.TabIndex = 0;
+        GUIGraphicsContext.form.Controls.Add(_wmp10Player);
 
 
         try
         {
-            m_player.EndInit();
+            _wmp10Player.EndInit();
         }
         catch (COMException)
         {
         }
 
-        m_player.uiMode = "none";
-        m_player.windowlessVideo = true;
+        _wmp10Player.uiMode = "none";
+        _wmp10Player.windowlessVideo = true;
 
-        m_player.enableContextMenu = false;
-        m_player.Ctlenabled = false;
-        m_player.Visible = false;
+        _wmp10Player.enableContextMenu = false;
+        _wmp10Player.Ctlenabled = false;
+        _wmp10Player.Visible = false;
         GUIGraphicsContext.form.ResumeLayout(false);
 
       }
@@ -131,11 +131,11 @@ namespace MediaPortal.Player
       list.Add(item);
 
       CreateInstance();
-      if (m_player.cdromCollection.count <= 0) return list;
-      if (m_player.cdromCollection.count <= 0) return list;
+      if (_wmp10Player.cdromCollection.count <= 0) return list;
+      if (_wmp10Player.cdromCollection.count <= 0) return list;
 
 
-      WMPLib.IWMPCdrom cdrom = m_player.cdromCollection.Item(0);
+      WMPLib.IWMPCdrom cdrom = _wmp10Player.cdromCollection.Item(0);
 
       if (cdrom == null) return list;
       if (cdrom.Playlist == null) return list;
@@ -191,31 +191,31 @@ namespace MediaPortal.Player
 
     public override bool Play(string strFile)
     {
-      m_state = PlayState.Init;
-      m_strCurrentFile = strFile;
+      _graphState = PlayState.Init;
+      _currentFile = strFile;
 
-      m_bNotifyPlaying = true;
+      _notifyPlaying = true;
       GC.Collect();
       CreateInstance();
 
-      if (m_player == null) return false;
-      if (m_player.cdromCollection == null) return false;
+      if (_wmp10Player == null) return false;
+      if (_wmp10Player.cdromCollection == null) return false;
 
-      m_player.PlayStateChange += new AxWMPLib._WMPOCXEvents_PlayStateChangeEventHandler(OnPlayStateChange);
+      _wmp10Player.PlayStateChange += new AxWMPLib._WMPOCXEvents_PlayStateChangeEventHandler(OnPlayStateChange);
 
-      m_player.enableContextMenu = false;
-      m_player.Ctlenabled = false;
+      _wmp10Player.enableContextMenu = false;
+      _wmp10Player.Ctlenabled = false;
       if (strFile.IndexOf("cdda:") >= 0)
       {
         string strTrack = strFile.Substring(5);
         int iTrack = Convert.ToInt32(strTrack);
-        if (m_player.cdromCollection.count <= 0) return false;
-        if (m_player.cdromCollection.Item(0).Playlist == null) return false;
-        if (iTrack > m_player.cdromCollection.Item(0).Playlist.count) return false;
-        m_player.currentMedia = m_player.cdromCollection.Item(0).Playlist.get_Item(iTrack - 1);
-        if (m_player.currentMedia == null) return false;
+        if (_wmp10Player.cdromCollection.count <= 0) return false;
+        if (_wmp10Player.cdromCollection.Item(0).Playlist == null) return false;
+        if (iTrack > _wmp10Player.cdromCollection.Item(0).Playlist.count) return false;
+        _wmp10Player.currentMedia = _wmp10Player.cdromCollection.Item(0).Playlist.get_Item(iTrack - 1);
+        if (_wmp10Player.currentMedia == null) return false;
 
-        Log.Write("Audioplayer:play track:{0}/{1}", iTrack, m_player.cdromCollection.Item(0).Playlist.count);
+        Log.Write("Audioplayer:play track:{0}/{1}", iTrack, _wmp10Player.cdromCollection.Item(0).Playlist.count);
       }
       else if (strFile.IndexOf(".cda") >= 0)
       {
@@ -231,52 +231,52 @@ namespace MediaPortal.Player
           }
         }
 
-        if (m_player.cdromCollection.count <= 0) return false;
+        if (_wmp10Player.cdromCollection.count <= 0) return false;
         string strDrive = strFile.Substring(0, 1);
         strDrive += ":";
         int iCdRomDriveNr = 0;
-        while ((m_player.cdromCollection.Item(iCdRomDriveNr).driveSpecifier != strDrive) && (iCdRomDriveNr < m_player.cdromCollection.count))
+        while ((_wmp10Player.cdromCollection.Item(iCdRomDriveNr).driveSpecifier != strDrive) && (iCdRomDriveNr < _wmp10Player.cdromCollection.count))
         {
           iCdRomDriveNr++;
         }
 
         int iTrack = Convert.ToInt32(strTrack);
-        if (m_player.cdromCollection.Item(iCdRomDriveNr).Playlist == null) return false;
-        int tracks = m_player.cdromCollection.Item(iCdRomDriveNr).Playlist.count;
+        if (_wmp10Player.cdromCollection.Item(iCdRomDriveNr).Playlist == null) return false;
+        int tracks = _wmp10Player.cdromCollection.Item(iCdRomDriveNr).Playlist.count;
         if (iTrack > tracks) return false;
-        m_player.currentMedia = m_player.cdromCollection.Item(iCdRomDriveNr).Playlist.get_Item(iTrack - 1);
-        if (m_player.currentMedia == null) return false;
+        _wmp10Player.currentMedia = _wmp10Player.cdromCollection.Item(iCdRomDriveNr).Playlist.get_Item(iTrack - 1);
+        if (_wmp10Player.currentMedia == null) return false;
         /*
         string strStart=strFile.Substring(0,2)+@"\";
         int ipos=strFile.LastIndexOf("+");
         if (ipos >0) strStart += strFile.Substring(ipos+1);
         strFile=strStart;
-        m_strCurrentFile=strFile;
+        _currentFile=strFile;
         Log.Write("Audioplayer:play {0}", strFile);*/
-        //m_player.URL=strFile;
-        m_strCurrentFile = strFile;
+        //_wmp10Player.URL=strFile;
+        _currentFile = strFile;
       }
       else
       {
         Log.Write("Audioplayer:play {0}", strFile);
-        m_player.URL = strFile;
+        _wmp10Player.URL = strFile;
       }
-      m_player.Ctlcontrols.play();
-      m_player.Visible = false;
+      _wmp10Player.Ctlcontrols.play();
+      _wmp10Player.Visible = false;
 
 
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED, 0, 0, 0, 0, 0, null);
       msg.Label = strFile;
 
       GUIWindowManager.SendThreadMessage(msg);
-      m_state = PlayState.Playing;
+      _graphState = PlayState.Playing;
       GC.Collect();
-      m_bUpdateNeeded = true;
-      m_bFullScreen = GUIGraphicsContext.IsFullScreenVideo;
-      m_iPositionX = GUIGraphicsContext.VideoWindow.Left;
-      m_iPositionY = GUIGraphicsContext.VideoWindow.Top;
-      m_iWidth = GUIGraphicsContext.VideoWindow.Width;
-      m_iHeight = GUIGraphicsContext.VideoWindow.Height;
+      _needUpdate = true;
+      _isFullScreen = GUIGraphicsContext.IsFullScreenVideo;
+      _positionX = GUIGraphicsContext.VideoWindow.Left;
+      _positionY = GUIGraphicsContext.VideoWindow.Top;
+      _videoWidth = GUIGraphicsContext.VideoWindow.Width;
+      _videoHeight = GUIGraphicsContext.VideoWindow.Height;
 
       SetVideoWindow();
 
@@ -285,8 +285,8 @@ namespace MediaPortal.Player
 
     private void OnPlayStateChange(object sender, AxWMPLib._WMPOCXEvents_PlayStateChangeEvent e)
     {
-      if (m_player == null) return;
-      switch (m_player.playState)
+      if (_wmp10Player == null) return;
+      switch (_wmp10Player.playState)
       {
         case WMPLib.WMPPlayState.wmppsStopped:
           SongEnded(false);
@@ -299,22 +299,22 @@ namespace MediaPortal.Player
       // this is triggered only if movie has ended
       // ifso, stop the movie which will trigger MovieStopped
 
-      Log.Write("Audioplayer:ended {0} {1}", m_strCurrentFile, bManualStop);
-      m_strCurrentFile = "";
-      if (m_player != null)
+      Log.Write("Audioplayer:ended {0} {1}", _currentFile, bManualStop);
+      _currentFile = "";
+      if (_wmp10Player != null)
       {
-        m_player.Visible = false;
-        m_player.PlayStateChange -= new AxWMPLib._WMPOCXEvents_PlayStateChangeEventHandler(OnPlayStateChange);
+        _wmp10Player.Visible = false;
+        _wmp10Player.PlayStateChange -= new AxWMPLib._WMPOCXEvents_PlayStateChangeEventHandler(OnPlayStateChange);
       }
       //GUIGraphicsContext.IsFullScreenVideo=false;
       GUIGraphicsContext.IsPlaying = false;
       if (!bManualStop)
       {
-        m_state = PlayState.Ended;
+        _graphState = PlayState.Ended;
       }
       else
       {
-        m_state = PlayState.Init;
+        _graphState = PlayState.Init;
       }
       GC.Collect();
     }
@@ -322,16 +322,22 @@ namespace MediaPortal.Player
 
     public override bool Ended
     {
-      get { return m_state == PlayState.Ended; }
+      get { return _graphState == PlayState.Ended; }
     }
 
     public override double Duration
     {
       get
       {
-        if (m_state != PlayState.Init && m_player != null)
+        if (_graphState != PlayState.Init && _wmp10Player != null)
         {
-          return m_player.currentMedia.duration;
+          try
+          {
+            return _wmp10Player.currentMedia.duration;
+          }
+          catch (Exception)
+          {
+          }
         }
         return 0.0d;
       }
@@ -341,23 +347,30 @@ namespace MediaPortal.Player
     {
       get
       {
-        return m_player.Ctlcontrols.currentPosition;
+        try
+        {
+          return _wmp10Player.Ctlcontrols.currentPosition;
+        }
+        catch (Exception)
+        {
+        }
+        return 0.0d;
       }
     }
 
     public override void Pause()
     {
-      if (m_player == null) return;
-      if (m_state == PlayState.Paused)
+      if (_wmp10Player == null) return;
+      if (_graphState == PlayState.Paused)
       {
-        m_state = PlayState.Playing;
-        m_player.Ctlcontrols.play();
+        _graphState = PlayState.Playing;
+        _wmp10Player.Ctlcontrols.play();
       }
-      else if (m_state == PlayState.Playing)
+      else if (_graphState == PlayState.Playing)
       {
-        m_player.Ctlcontrols.pause();
-        if (m_player.playState == WMPLib.WMPPlayState.wmppsPaused)
-          m_state = PlayState.Paused;
+        _wmp10Player.Ctlcontrols.pause();
+        if (_wmp10Player.playState == WMPLib.WMPPlayState.wmppsPaused)
+          _graphState = PlayState.Paused;
       }
     }
 
@@ -365,7 +378,7 @@ namespace MediaPortal.Player
     {
       get
       {
-        return (m_state == PlayState.Paused);
+        return (_graphState == PlayState.Paused);
       }
     }
 
@@ -373,7 +386,7 @@ namespace MediaPortal.Player
     {
       get
       {
-        return (m_state == PlayState.Playing || m_state == PlayState.Paused);
+        return (_graphState == PlayState.Playing || _graphState == PlayState.Paused);
       }
     }
 
@@ -381,22 +394,22 @@ namespace MediaPortal.Player
     {
       get
       {
-        return (m_state == PlayState.Init);
+        return (_graphState == PlayState.Init);
       }
     }
 
     public override string CurrentFile
     {
-      get { return m_strCurrentFile; }
+      get { return _currentFile; }
     }
 
     public override void Stop()
     {
-      if (m_player == null) return;
-      if (m_state != PlayState.Init)
+      if (_wmp10Player == null) return;
+      if (_graphState != PlayState.Init)
       {
-        m_player.Ctlcontrols.stop();
-        m_player.Visible = false;
+        _wmp10Player.Ctlcontrols.stop();
+        _wmp10Player.Visible = false;
         SongEnded(true);
       }
     }
@@ -406,16 +419,16 @@ namespace MediaPortal.Player
       get
       {
 
-        if (m_player == null) return 100;
-        return m_player.settings.volume;
+        if (_wmp10Player == null) return 100;
+        return _wmp10Player.settings.volume;
       }
       set
       {
 
-        if (m_player == null) return;
-        if (m_player.settings.volume != value)
+        if (_wmp10Player == null) return;
+        if (_wmp10Player.settings.volume != value)
         {
-          m_player.settings.volume = value;
+          _wmp10Player.settings.volume = value;
         }
       }
     }
@@ -431,16 +444,16 @@ namespace MediaPortal.Player
 
     public override void Release()
     {
-      if (m_player == null) return;
-      m_player.Visible = false;
+      if (_wmp10Player == null) return;
+      _wmp10Player.Visible = false;
 
       try
       {
-        GUIGraphicsContext.form.Controls.Remove(m_player);
+        GUIGraphicsContext.form.Controls.Remove(_wmp10Player);
       }
       catch (Exception) { }
-      m_player.Dispose();
-      m_player = null;
+      _wmp10Player.Dispose();
+      _wmp10Player = null;
     }
     #endregion
 
@@ -452,60 +465,60 @@ namespace MediaPortal.Player
       }
       set
       {
-        if (value != m_bFullScreen)
+        if (value != _isFullScreen)
         {
-          m_bFullScreen = value;
-          m_bUpdateNeeded = true;
+          _isFullScreen = value;
+          _needUpdate = true;
         }
       }
     }
     public override int PositionX
     {
-      get { return m_iPositionX; }
+      get { return _positionX; }
       set
       {
-        if (value != m_iPositionX)
+        if (value != _positionX)
         {
-          m_iPositionX = value;
-          m_bUpdateNeeded = true;
+          _positionX = value;
+          _needUpdate = true;
         }
       }
     }
 
     public override int PositionY
     {
-      get { return m_iPositionY; }
+      get { return _positionY; }
       set
       {
-        if (value != m_iPositionY)
+        if (value != _positionY)
         {
-          m_iPositionY = value;
-          m_bUpdateNeeded = true;
+          _positionY = value;
+          _needUpdate = true;
         }
       }
     }
 
     public override int RenderWidth
     {
-      get { return m_iWidth; }
+      get { return _videoWidth; }
       set
       {
-        if (value != m_iWidth)
+        if (value != _videoWidth)
         {
-          m_iWidth = value;
-          m_bUpdateNeeded = true;
+          _videoWidth = value;
+          _needUpdate = true;
         }
       }
     }
     public override int RenderHeight
     {
-      get { return m_iHeight; }
+      get { return _videoHeight; }
       set
       {
-        if (value != m_iHeight)
+        if (value != _videoHeight)
         {
-          m_iHeight = value;
-          m_bUpdateNeeded = true;
+          _videoHeight = value;
+          _needUpdate = true;
         }
       }
     }
@@ -513,30 +526,30 @@ namespace MediaPortal.Player
     public override void Process()
     {
       if (!Playing) return;
-      if (m_player == null) return;
+      if (_wmp10Player == null) return;
       if (GUIGraphicsContext.BlankScreen || (GUIGraphicsContext.Overlay == false && GUIGraphicsContext.IsFullScreenVideo == false))
       {
-        if (m_player.Visible)
+        if (_wmp10Player.Visible)
         {
-          m_player.ClientSize = new Size(0, 0);
-          m_player.Visible = false;
-          m_player.uiMode = "invisible";
+          _wmp10Player.ClientSize = new Size(0, 0);
+          _wmp10Player.Visible = false;
+          _wmp10Player.uiMode = "invisible";
         }
       }
-      else if (!m_player.Visible)
+      else if (!_wmp10Player.Visible)
       {
-        m_bUpdateNeeded = true;
+        _needUpdate = true;
         SetVideoWindow();
-        m_player.uiMode = "none";
-        m_player.Visible = true;
+        _wmp10Player.uiMode = "none";
+        _wmp10Player.Visible = true;
       }
 
 
       if (CurrentPosition >= 10.0)
       {
-        if (m_bNotifyPlaying)
+        if (_notifyPlaying)
         {
-          m_bNotifyPlaying = false;
+          _notifyPlaying = false;
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYING_10SEC, 0, 0, 0, 0, 0, null);
           msg.Label = CurrentFile;
           GUIWindowManager.SendThreadMessage(msg);
@@ -547,72 +560,72 @@ namespace MediaPortal.Player
     public override void SetVideoWindow()
     {
 
-      if (m_player == null) return;
-      if (GUIGraphicsContext.IsFullScreenVideo != m_bFullScreen)
+      if (_wmp10Player == null) return;
+      if (GUIGraphicsContext.IsFullScreenVideo != _isFullScreen)
       {
-        m_bFullScreen = GUIGraphicsContext.IsFullScreenVideo;
-        m_bUpdateNeeded = true;
+        _isFullScreen = GUIGraphicsContext.IsFullScreenVideo;
+        _needUpdate = true;
       }
-      if (!m_bUpdateNeeded) return;
-      m_bUpdateNeeded = false;
+      if (!_needUpdate) return;
+      _needUpdate = false;
 
 
-      if (m_bFullScreen)
+      if (_isFullScreen)
       {
         Log.Write("AudioPlayer:Fullscreen");
 
-        m_iPositionX = GUIGraphicsContext.OverScanLeft;
-        m_iPositionY = GUIGraphicsContext.OverScanTop;
-        m_iWidth = GUIGraphicsContext.OverScanWidth;
-        m_iHeight = GUIGraphicsContext.OverScanHeight;
+        _positionX = GUIGraphicsContext.OverScanLeft;
+        _positionY = GUIGraphicsContext.OverScanTop;
+        _videoWidth = GUIGraphicsContext.OverScanWidth;
+        _videoHeight = GUIGraphicsContext.OverScanHeight;
 
-        m_player.Location = new Point(0, 0);
-        m_player.ClientSize = new System.Drawing.Size(GUIGraphicsContext.Width, GUIGraphicsContext.Height);
-        m_player.Size = new System.Drawing.Size(GUIGraphicsContext.Width, GUIGraphicsContext.Height);
+        _wmp10Player.Location = new Point(0, 0);
+        _wmp10Player.ClientSize = new System.Drawing.Size(GUIGraphicsContext.Width, GUIGraphicsContext.Height);
+        _wmp10Player.Size = new System.Drawing.Size(GUIGraphicsContext.Width, GUIGraphicsContext.Height);
 
-        m_VideoRect = new Rectangle(0, 0, m_player.ClientSize.Width, m_player.ClientSize.Height);
+        m_VideoRect = new Rectangle(0, 0, _wmp10Player.ClientSize.Width, _wmp10Player.ClientSize.Height);
         m_SourceRect = m_VideoRect;
 
-        //m_player.fullScreen=true;
-        m_player.stretchToFit = true;
+        //_wmp10Player.fullScreen=true;
+        _wmp10Player.stretchToFit = true;
         Log.Write("AudioPlayer:done");
         return;
       }
       else
       {
 
-        m_player.ClientSize = new System.Drawing.Size(m_iWidth, m_iHeight);
-        m_player.Location = new Point(m_iPositionX, m_iPositionY);
+        _wmp10Player.ClientSize = new System.Drawing.Size(_videoWidth, _videoHeight);
+        _wmp10Player.Location = new Point(_positionX, _positionY);
 
-        m_VideoRect = new Rectangle(m_iPositionX, m_iPositionY, m_player.ClientSize.Width, m_player.ClientSize.Height);
+        m_VideoRect = new Rectangle(_positionX, _positionY, _wmp10Player.ClientSize.Width, _wmp10Player.ClientSize.Height);
         m_SourceRect = m_VideoRect;
-        //Log.Write("AudioPlayer:set window:({0},{1})-({2},{3})",m_iPositionX,m_iPositionY,m_iPositionX+m_player.ClientSize.Width,m_iPositionY+m_player.ClientSize.Height);
+        //Log.Write("AudioPlayer:set window:({0},{1})-({2},{3})",_positionX,_positionY,_positionX+_wmp10Player.ClientSize.Width,_positionY+_wmp10Player.ClientSize.Height);
       }
-      m_player.uiMode = "none";
-      m_player.windowlessVideo = true;
-      m_player.enableContextMenu = false;
-      m_player.Ctlenabled = false;
+      _wmp10Player.uiMode = "none";
+      _wmp10Player.windowlessVideo = true;
+      _wmp10Player.enableContextMenu = false;
+      _wmp10Player.Ctlenabled = false;
       GUIGraphicsContext.form.Controls[0].Enabled = false;
     }
     /*
         public override int AudioStreams
         {
-          get { return m_player.Ctlcontrols.audioLanguageCount;}
+          get { return _wmp10Player.Ctlcontrols.audioLanguageCount;}
         }
         public override int CurrentAudioStream
         {
-          get { return m_player.Ctlcontrols.currentAudioLanguage;}
-          set { m_player.Ctlcontrols.currentAudioLanguage=value;}
+          get { return _wmp10Player.Ctlcontrols.currentAudioLanguage;}
+          set { _wmp10Player.Ctlcontrols.currentAudioLanguage=value;}
         }
         public override string AudioLanguage(int iStream)
         {
-          return m_player.controls.getLanguageName(iStream);
+          return _wmp10Player.controls.getLanguageName(iStream);
         }
     */
     public override void SeekRelative(double dTime)
     {
-      if (m_player == null) return;
-      if (m_state != PlayState.Init)
+      if (_wmp10Player == null) return;
+      if (_graphState != PlayState.Init)
       {
 
         double dCurTime = CurrentPosition;
@@ -620,28 +633,28 @@ namespace MediaPortal.Player
         if (dTime < 0.0d) dTime = 0.0d;
         if (dTime < Duration)
         {
-          m_player.Ctlcontrols.currentPosition = dTime;
+          _wmp10Player.Ctlcontrols.currentPosition = dTime;
         }
       }
     }
 
     public override void SeekAbsolute(double dTime)
     {
-      if (m_player == null) return;
-      if (m_state != PlayState.Init)
+      if (_wmp10Player == null) return;
+      if (_graphState != PlayState.Init)
       {
         if (dTime < 0.0d) dTime = 0.0d;
         if (dTime < Duration)
         {
-          m_player.Ctlcontrols.currentPosition = dTime;
+          _wmp10Player.Ctlcontrols.currentPosition = dTime;
         }
       }
     }
 
     public override void SeekRelativePercentage(int iPercentage)
     {
-      if (m_player == null) return;
-      if (m_state != PlayState.Init)
+      if (_wmp10Player == null) return;
+      if (_graphState != PlayState.Init)
       {
         double dCurrentPos = CurrentPosition;
         double dDuration = Duration;
@@ -653,7 +666,7 @@ namespace MediaPortal.Player
         if (fCurPercent < 0.0d) fCurPercent = 0.0d;
         if (fCurPercent < Duration)
         {
-          m_player.Ctlcontrols.currentPosition = fCurPercent;
+          _wmp10Player.Ctlcontrols.currentPosition = fCurPercent;
         }
       }
     }
@@ -661,32 +674,32 @@ namespace MediaPortal.Player
 
     public override void SeekAsolutePercentage(int iPercentage)
     {
-      if (m_player == null) return;
-      if (m_state != PlayState.Init)
+      if (_wmp10Player == null) return;
+      if (_graphState != PlayState.Init)
       {
         if (iPercentage < 0) iPercentage = 0;
         if (iPercentage >= 100) iPercentage = 100;
         double fPercent = Duration / 100.0f;
         fPercent *= (double)iPercentage;
-        m_player.Ctlcontrols.currentPosition = fPercent;
+        _wmp10Player.Ctlcontrols.currentPosition = fPercent;
       }
     }
     public override int Speed
     {
       get
       {
-        if (m_state == PlayState.Init) return 1;
-        if (m_player == null) return 1;
-        return (int)m_player.settings.rate;
+        if (_graphState == PlayState.Init) return 1;
+        if (_wmp10Player == null) return 1;
+        return (int)_wmp10Player.settings.rate;
       }
       set
       {
-        if (m_player == null) return;
-        if (m_state != PlayState.Init)
+        if (_wmp10Player == null) return;
+        if (_graphState != PlayState.Init)
         {
           try
           {
-            m_player.settings.rate = (double)value;
+            _wmp10Player.settings.rate = (double)value;
           }
           catch (Exception)
           {
@@ -699,12 +712,12 @@ namespace MediaPortal.Player
     {
       get
       {
-        if (m_strCurrentFile == null) return false;
+        if (_currentFile == null) return false;
         //TODO: this has to be changed if we are gonna support video streams in the future
-        if (m_strCurrentFile.ToLower().IndexOf("http:") >= 0) return true;
-        if (m_strCurrentFile.ToLower().IndexOf("https:") >= 0) return true;
-        if (m_strCurrentFile.ToLower().IndexOf("mms:") >= 0) return true;
-        if (m_strCurrentFile.ToLower().IndexOf("rtsp:") >= 0) return true;
+        if (_currentFile.ToLower().IndexOf("http:") >= 0) return true;
+        if (_currentFile.ToLower().IndexOf("https:") >= 0) return true;
+        if (_currentFile.ToLower().IndexOf("mms:") >= 0) return true;
+        if (_currentFile.ToLower().IndexOf("rtsp:") >= 0) return true;
         return false;
       }
     }
