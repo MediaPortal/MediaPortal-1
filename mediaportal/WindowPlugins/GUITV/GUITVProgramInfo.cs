@@ -591,6 +591,7 @@ namespace MediaPortal.GUI.TV
 					dlg.AddLocalizedString(i);
 				}
 				dlg.AddLocalizedString( 672);// 672=Record Mon-Fri
+                dlg.AddLocalizedString(1051);// 1051=Record Sat-Sun
 				
 				dlg.DoModal( GetID);
 				if (dlg.SelectedLabel==-1) return;
@@ -620,6 +621,9 @@ namespace MediaPortal.GUI.TV
 					case 672://Mo-Fi
 						rec.RecType=TVRecording.RecordingType.WeekDays;
 						break;
+                    case 1051://Record Sat-Sun
+                        rec.RecType = TVRecording.RecordingType.WeekEnds;
+                        break;
 				}
 				Recorder.AddRecording(ref rec);
 

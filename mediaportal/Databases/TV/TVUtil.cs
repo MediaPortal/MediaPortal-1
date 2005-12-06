@@ -211,7 +211,31 @@ namespace MediaPortal.TV.Database
 				}
 				return recordings;
 			}
+
+            if (rec.RecType == TVRecording.RecordingType.WeekEnds)
+            {
+                List<TVProgram> progList = new List<TVProgram>();
+			 	TVDatabase.SearchMinimalPrograms(Utils.datetolong(dtDay),Utils.datetolong(dtDay.AddDays(_days)),ref progList,3,rec.Title,rec.Channel);
 			
+			    foreach (TVProgram prog in progList)
+			    {
+				    if ((rec.IsRecordingProgram(prog,false)) && 
+                        (prog.StartTime.DayOfWeek == DayOfWeek.Saturday || prog.StartTime.DayOfWeek == DayOfWeek.Sunday))
+                    {
+                        TVRecording recNew = new TVRecording(rec);
+                        recNew.RecType = TVRecording.RecordingType.Once;
+                        recNew.Start = Utils.datetolong(prog.StartTime);
+                        recNew.End = Utils.datetolong(prog.EndTime);
+                        recNew.Series = true;
+
+                        if (rec.IsSerieIsCanceled(recNew.StartTime))
+                            recNew.Canceled = recNew.Start;
+                        recordings.Add(recNew);
+                    }
+                    
+                }
+                return recordings;
+            }
 			if (rec.RecType==TVRecording.RecordingType.Weekly)
 			{
 				for (int i=0; i < _days;++i)

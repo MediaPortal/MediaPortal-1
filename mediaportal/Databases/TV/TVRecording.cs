@@ -27,66 +27,67 @@ using MediaPortal.Util;
 
 namespace MediaPortal.TV.Database
 {
-	/// <summary>
-	/// Class which contains all information about a scheduled recording
-	/// </summary>
-	public class TVRecording
-	{
+  /// <summary>
+  /// Class which contains all information about a scheduled recording
+  /// </summary>
+  public class TVRecording
+  {
     public class PriorityComparer : System.Collections.Generic.IComparer<TVRecording>
-		{
-			bool _sortAscending=true;
+    {
+      bool _sortAscending = true;
 
-			public PriorityComparer(bool sortAscending)
-			{
-				_sortAscending=sortAscending;
-			}
+      public PriorityComparer(bool sortAscending)
+      {
+        _sortAscending = sortAscending;
+      }
 
-			#region IComparer Members
+      #region IComparer Members
       public int Compare(TVRecording rec1, TVRecording rec2)
-			{
-				if (_sortAscending)
-				{
-					if (rec1.Priority>rec2.Priority) return -1;
-					if (rec1.Priority<rec2.Priority) return 1;
-				}
-				else
-				{
-					if (rec1.Priority>rec2.Priority) return 1;
-					if (rec1.Priority<rec2.Priority) return -1;
-				}
-				return 0;
-			}
+      {
+        if (_sortAscending)
+        {
+          if (rec1.Priority > rec2.Priority) return -1;
+          if (rec1.Priority < rec2.Priority) return 1;
+        }
+        else
+        {
+          if (rec1.Priority > rec2.Priority) return 1;
+          if (rec1.Priority < rec2.Priority) return -1;
+        }
+        return 0;
+      }
 
-			#endregion
+      #endregion
 
-		}
+    }
 
-		
-		static public readonly int HighestPriority=Int32.MaxValue;
-		static public readonly int LowestPriority=0;
+
+    static public readonly int HighestPriority = Int32.MaxValue;
+    static public readonly int LowestPriority = 0;
     #region enums
     /// <summary>
     /// Type of recording
     /// </summary>
-		public enum RecordingType
-		{
-			Once,
-			EveryTimeOnThisChannel,
-			EveryTimeOnEveryChannel,
-			Daily,
-			Weekly,
-      WeekDays
-		};
+    public enum RecordingType
+    {
+      Once,
+      EveryTimeOnThisChannel,
+      EveryTimeOnEveryChannel,
+      Daily,
+      Weekly,
+      WeekDays,
+      WeekEnds
+    };
 
-		//quality of recording
-		public enum QualityType
-		{
-			NotSet,
-			Portable,
-			Low,
-			Medium,
-			High
-		}
+    //quality of recording
+    public enum QualityType
+    {
+      NotSet,
+      Portable,
+      Low,
+      Medium,
+      High
+    }
 
     /// <summary>
     /// Current recording status
@@ -100,176 +101,176 @@ namespace MediaPortal.TV.Database
     #endregion
 
     #region variables
-    long				_startTime;
-		long				_endTime;
-    long				_timeCanceled=0;
-    string			_title;
-		string      _channelName;
-		RecordingType _recordingType;
-		int				  _recordingId;
-		bool				_isContentRecording=true;
-		bool        _isSeries=false;
-		int         _recordingPriority=0;
-		int         _paddingFrontInterval=-1, _paddingEndInterval=-1;
-		int         _numberOfEpisodesToKeep=Int32.MaxValue;//all
-		QualityType	_recordingQuality=QualityType.NotSet;
+    long _startTime;
+    long _endTime;
+    long _timeCanceled = 0;
+    string _title;
+    string _channelName;
+    RecordingType _recordingType;
+    int _recordingId;
+    bool _isContentRecording = true;
+    bool _isSeries = false;
+    int _recordingPriority = 0;
+    int _paddingFrontInterval = -1, _paddingEndInterval = -1;
+    int _numberOfEpisodesToKeep = Int32.MaxValue;//all
+    QualityType _recordingQuality = QualityType.NotSet;
     List<long> _listCanceledEpisodes = new List<long>();
-		bool				_isAnnouncementSend=false;
-		DateTime		_keepUntilDate=DateTime.MaxValue;
-		TVRecorded.KeepMethod  _keepMethod=TVRecorded.KeepMethod.UntilSpaceNeeded;
+    bool _isAnnouncementSend = false;
+    DateTime _keepUntilDate = DateTime.MaxValue;
+    TVRecorded.KeepMethod _keepMethod = TVRecorded.KeepMethod.UntilSpaceNeeded;
     #endregion
 
     #region properties
     public DateTime KeepRecordingTill
-		{
-			get 
-			{
-				return _keepUntilDate;
-			}
-			set 
-			{
-				_keepUntilDate=value;
-			}
-		}
+    {
+      get
+      {
+        return _keepUntilDate;
+      }
+      set
+      {
+        _keepUntilDate = value;
+      }
+    }
 
-		public TVRecorded.KeepMethod KeepRecordingMethod
-		{
-			get { return _keepMethod;}
-			set { _keepMethod=value;}
-		}
+    public TVRecorded.KeepMethod KeepRecordingMethod
+    {
+      get { return _keepMethod; }
+      set { _keepMethod = value; }
+    }
 
     /// <summary>
     /// Constructor.
     /// </summary>
-		public TVRecording()
-		{
-			_isContentRecording=true;
-		}
-		
-		public TVRecording(TVRecording rec)
-		{
-			_startTime=rec._startTime;
-			_endTime=rec._endTime;
-			_timeCanceled=rec._timeCanceled;
-			_title=rec._title;
-			_channelName=rec._channelName;
-			_recordingType=rec._recordingType;
-			_recordingId=rec._recordingId;
-			_isContentRecording=rec._isContentRecording;
-			_isSeries=rec._isSeries;
-			_recordingPriority=rec._recordingPriority;
-			_recordingQuality=rec._recordingQuality;
+    public TVRecording()
+    {
+      _isContentRecording = true;
+    }
+
+    public TVRecording(TVRecording rec)
+    {
+      _startTime = rec._startTime;
+      _endTime = rec._endTime;
+      _timeCanceled = rec._timeCanceled;
+      _title = rec._title;
+      _channelName = rec._channelName;
+      _recordingType = rec._recordingType;
+      _recordingId = rec._recordingId;
+      _isContentRecording = rec._isContentRecording;
+      _isSeries = rec._isSeries;
+      _recordingPriority = rec._recordingPriority;
+      _recordingQuality = rec._recordingQuality;
       _listCanceledEpisodes.Clear();
       _listCanceledEpisodes.AddRange(rec._listCanceledEpisodes);
-			EpisodesToKeep = rec.EpisodesToKeep;
-			PaddingFront=rec.PaddingFront;
-			PaddingEnd=rec.PaddingEnd;
-			_keepMethod=rec._keepMethod;
-			_keepUntilDate=rec._keepUntilDate;
-			_isAnnouncementSend=rec._isAnnouncementSend;
-		}
-		
-		public int PaddingFront
-		{
-			get { return _paddingFrontInterval;}
-			set { _paddingFrontInterval=value;}
-		}
-		
-		public int PaddingEnd
-		{
-			get { return _paddingEndInterval;}
-			set { _paddingEndInterval=value;}
-		}
+      EpisodesToKeep = rec.EpisodesToKeep;
+      PaddingFront = rec.PaddingFront;
+      PaddingEnd = rec.PaddingEnd;
+      _keepMethod = rec._keepMethod;
+      _keepUntilDate = rec._keepUntilDate;
+      _isAnnouncementSend = rec._isAnnouncementSend;
+    }
 
-		public bool IsAnnouncementSend
-		{
-			get { return _isAnnouncementSend;}
-			set { _isAnnouncementSend=value;}
-		}
+    public int PaddingFront
+    {
+      get { return _paddingFrontInterval; }
+      set { _paddingFrontInterval = value; }
+    }
+
+    public int PaddingEnd
+    {
+      get { return _paddingEndInterval; }
+      set { _paddingEndInterval = value; }
+    }
+
+    public bool IsAnnouncementSend
+    {
+      get { return _isAnnouncementSend; }
+      set { _isAnnouncementSend = value; }
+    }
     /// <summary>
     /// Property to get/set the recording type
     /// </summary>
-		public RecordingType RecType
-		{
-			get { return _recordingType;}
-			set { _recordingType=value;}
-		}
+    public RecordingType RecType
+    {
+      get { return _recordingType; }
+      set { _recordingType = value; }
+    }
 
     /// <summary>
     /// Property to get/set whether this recording is a content or reference recording
     /// </summary>
     /// <seealso cref="MediaPortal.TV.Recording.IGraph"/>
-		public bool IsContentRecording
-		{
-			get { return _isContentRecording;}
-			set { _isContentRecording=value;}
-		}
+    public bool IsContentRecording
+    {
+      get { return _isContentRecording; }
+      set { _isContentRecording = value; }
+    }
 
-		public int EpisodesToKeep
-		{
-			get { return _numberOfEpisodesToKeep;}
-			set { _numberOfEpisodesToKeep=value;}
-		}
-		
+    public int EpisodesToKeep
+    {
+      get { return _numberOfEpisodesToKeep; }
+      set { _numberOfEpisodesToKeep = value; }
+    }
+
     /// <summary>
     /// Property to get/set the TV channel name on which the recording should be done
     /// </summary>
-		public string Channel
-		{
-			get { return _channelName;}
-			set { _channelName=value;}
-		}
+    public string Channel
+    {
+      get { return _channelName; }
+      set { _channelName = value; }
+    }
 
     /// <summary>
     /// Property to get/set the title of the program to record
     /// </summary>
-		public string Title
-		{
-			get { return _title;}
-			set { _title=value;}
-		}
+    public string Title
+    {
+      get { return _title; }
+      set { _title = value; }
+    }
 
     /// <summary>
     /// Property to get/set the starttime of the program to record in xmltv format: yyyymmddhhmmss
     /// </summary>
-		public long Start
-		{
-			get { return _startTime;}
-			set { _startTime=value;}
-		}
+    public long Start
+    {
+      get { return _startTime; }
+      set { _startTime = value; }
+    }
 
     /// <summary>
     /// Property to get/set the endtime of the program to record in xmltv format: yyyymmddhhmmss
     /// </summary>
-		public long End
-		{
-			get { return _endTime;}
-			set { _endTime=value;}
-		}
+    public long End
+    {
+      get { return _endTime; }
+      set { _endTime = value; }
+    }
 
     /// <summary>
     /// Property to get/set the database id of this recording 
     /// </summary>
-		public int ID
-		{
-			get { return _recordingId;}
-			set { _recordingId=value;}
-		}
+    public int ID
+    {
+      get { return _recordingId; }
+      set { _recordingId = value; }
+    }
 
     /// <summary>
     /// Property to get the  starttime of the program to record
     /// </summary>
-		public DateTime StartTime
-		{
-			get { return Utils.longtodate(_startTime);}
-		}
+    public DateTime StartTime
+    {
+      get { return Utils.longtodate(_startTime); }
+    }
 
     /// <summary>
     /// Property to get the endtime of the program to record
     /// </summary>
-		public DateTime EndTime
-		{
-			get { return Utils.longtodate(_endTime);}
+    public DateTime EndTime
+    {
+      get { return Utils.longtodate(_endTime); }
     }
 
     #endregion
@@ -282,12 +283,12 @@ namespace MediaPortal.TV.Database
     /// <returns>true:Recording is finished can be deleted
     ///          false:Recording is not done yet, or needs to be done multiple times
     /// </returns>
-		public bool IsDone()
-		{
-			if (_recordingType != RecordingType.Once) return false;
-			if (DateTime.Now > EndTime) return true;
-			return false;
-		}
+    public bool IsDone()
+    {
+      if (_recordingType != RecordingType.Once) return false;
+      if (DateTime.Now > EndTime) return true;
+      return false;
+    }
 
     /// <summary>
     /// Check is the recording should be started/running between the specified start/end time
@@ -295,115 +296,136 @@ namespace MediaPortal.TV.Database
     /// <param name="tStartTime">starttime</param>
     /// <param name="tEndTime">endtime</param>
     /// <returns>true if the recording should be running between starttime-endtime</returns>
-		public bool RunningAt(DateTime tStartTime, DateTime tEndTime)
-		{
-			DateTime dtStart=StartTime;
-			DateTime dtEnd=EndTime;
+    public bool RunningAt(DateTime tStartTime, DateTime tEndTime)
+    {
+      DateTime dtStart = StartTime;
+      DateTime dtEnd = EndTime;
 
-			bool bRunningAt=false;
-			if (dtEnd>=tStartTime && dtEnd <= tEndTime) bRunningAt=true;
-			if (dtStart >=tStartTime && dtStart <= tEndTime) bRunningAt=true;
-			if (dtStart <=tStartTime && dtEnd>=tEndTime) bRunningAt=true;
-			return bRunningAt;
-		}
+      bool bRunningAt = false;
+      if (dtEnd >= tStartTime && dtEnd <= tEndTime) bRunningAt = true;
+      if (dtStart >= tStartTime && dtStart <= tEndTime) bRunningAt = true;
+      if (dtStart <= tStartTime && dtEnd >= tEndTime) bRunningAt = true;
+      return bRunningAt;
+    }
 
     /// <summary>
     /// Checks if the recording should record the specified tvprogram
     /// </summary>
     /// <param name="program">TVProgram to check</param>
-		/// <returns>true if the specified tvprogram should be recorded</returns>
-		/// <returns>filterCanceledRecordings (true/false)
-		/// if true then  we'll return false if recording has been canceled for this program</returns>
-		/// if false then we'll return true if recording has been not for this program</returns>
+    /// <returns>true if the specified tvprogram should be recorded</returns>
+    /// <returns>filterCanceledRecordings (true/false)
+    /// if true then  we'll return false if recording has been canceled for this program</returns>
+    /// if false then we'll return true if recording has been not for this program</returns>
     /// <seealso cref="MediaPortal.TV.Database.TVProgram"/>
-		public bool IsRecordingProgram(TVProgram program, bool filterCanceledRecordings)
-		{
-			switch (_recordingType)
-			{
-				case RecordingType.Once:
-				{
-					if (program.Start==Start && program.End==End && program.Channel==Channel) 
-					{
-						if (filterCanceledRecordings && Canceled>0) return false;
-						return true;
-					}
-				}
-					break;
-				case RecordingType.EveryTimeOnEveryChannel:
-					if (program.Title==Title) 
-					{	
-						if (filterCanceledRecordings && IsSerieIsCanceled(program.StartTime) ) return false;
-						return true;
-					}
-					break;
-				case RecordingType.EveryTimeOnThisChannel:
-					if (program.Title==Title && program.Channel==Channel) 
-					{
-						if (filterCanceledRecordings && IsSerieIsCanceled(program.StartTime) ) return false;
-						return true;
-					}
-					break;
-				case RecordingType.Daily:
-					if (program.Channel==Channel)
-					{
-						int iHourProg=program.StartTime.Hour;
-						int iMinProg=program.StartTime.Minute;
-						if (iHourProg==StartTime.Hour && iMinProg==StartTime.Minute)
-						{
-							iHourProg=program.EndTime.Hour;
-							iMinProg=program.EndTime.Minute;
-							if (iHourProg==EndTime.Hour && iMinProg==EndTime.Minute) 
-							{	
-								if (filterCanceledRecordings && IsSerieIsCanceled(program.StartTime) ) return false;
-								return true;
-							}
-						}
-					}
-          break;
-        case RecordingType.WeekDays:
-          if (program.StartTime.DayOfWeek>=DayOfWeek.Monday && program.StartTime.DayOfWeek <= DayOfWeek.Friday)
+    public bool IsRecordingProgram(TVProgram program, bool filterCanceledRecordings)
+    {
+      switch (_recordingType)
+      {
+        case RecordingType.Once:
           {
-            if (program.Channel==Channel)
+            if (program.Start == Start && program.End == End && program.Channel == Channel)
             {
-              int iHourProg=program.StartTime.Hour;
-              int iMinProg=program.StartTime.Minute;
-              if (iHourProg==StartTime.Hour && iMinProg==StartTime.Minute)
+              if (filterCanceledRecordings && Canceled > 0) return false;
+              return true;
+            }
+          }
+          break;
+        case RecordingType.EveryTimeOnEveryChannel:
+          if (program.Title == Title)
+          {
+            if (filterCanceledRecordings && IsSerieIsCanceled(program.StartTime)) return false;
+            return true;
+          }
+          break;
+        case RecordingType.EveryTimeOnThisChannel:
+          if (program.Title == Title && program.Channel == Channel)
+          {
+            if (filterCanceledRecordings && IsSerieIsCanceled(program.StartTime)) return false;
+            return true;
+          }
+          break;
+        case RecordingType.Daily:
+          if (program.Channel == Channel)
+          {
+            int iHourProg = program.StartTime.Hour;
+            int iMinProg = program.StartTime.Minute;
+            if (iHourProg == StartTime.Hour && iMinProg == StartTime.Minute)
+            {
+              iHourProg = program.EndTime.Hour;
+              iMinProg = program.EndTime.Minute;
+              if (iHourProg == EndTime.Hour && iMinProg == EndTime.Minute)
               {
-                iHourProg=program.EndTime.Hour;
-                iMinProg=program.EndTime.Minute;
-								if (iHourProg==EndTime.Hour && iMinProg==EndTime.Minute) 
-								{
-									if (filterCanceledRecordings && IsSerieIsCanceled(program.StartTime) ) return false;
-									return true;
-								}
+                if (filterCanceledRecordings && IsSerieIsCanceled(program.StartTime)) return false;
+                return true;
               }
             }
           }
-          break;				
+          break;
+        case RecordingType.WeekDays:
+          if (program.StartTime.DayOfWeek >= DayOfWeek.Monday && program.StartTime.DayOfWeek <= DayOfWeek.Friday)
+          {
+            if (program.Channel == Channel)
+            {
+              int iHourProg = program.StartTime.Hour;
+              int iMinProg = program.StartTime.Minute;
+              if (iHourProg == StartTime.Hour && iMinProg == StartTime.Minute)
+              {
+                iHourProg = program.EndTime.Hour;
+                iMinProg = program.EndTime.Minute;
+                if (iHourProg == EndTime.Hour && iMinProg == EndTime.Minute)
+                {
+                  if (filterCanceledRecordings && IsSerieIsCanceled(program.StartTime)) return false;
+                  return true;
+                }
+              }
+            }
+          }
+          break;
 
-          case RecordingType.Weekly:
-					if (program.Channel==Channel)
-					{
-						int iHourProg=program.StartTime.Hour;
-						int iMinProg=program.StartTime.Minute;
-						if (iHourProg==StartTime.Hour && iMinProg==StartTime.Minute)
-						{
-							iHourProg=program.EndTime.Hour;
-							iMinProg=program.EndTime.Minute;
-							if (iHourProg==EndTime.Hour && iMinProg==EndTime.Minute) 
-							{
-								if (StartTime.DayOfWeek==program.StartTime.DayOfWeek)
-								{
-									if (filterCanceledRecordings && IsSerieIsCanceled(program.StartTime) ) return false;
-									return true;
-								}
-							}
-						}
-					}
-					break;
-			}
-			return false;
-		}//IsRecordingProgram(TVProgram program, bool filterCanceledRecordings)
+        case RecordingType.WeekEnds:
+          if (program.StartTime.DayOfWeek == DayOfWeek.Saturday || program.StartTime.DayOfWeek == DayOfWeek.Sunday)
+          {
+            if (program.Channel == Channel)
+            {
+              int iHourProg = program.StartTime.Hour;
+              int iMinProg = program.StartTime.Minute;
+              if (iHourProg == StartTime.Hour && iMinProg == StartTime.Minute)
+              {
+                iHourProg = program.EndTime.Hour;
+                iMinProg = program.EndTime.Minute;
+                if (iHourProg == EndTime.Hour && iMinProg == EndTime.Minute)
+                {
+                  if (filterCanceledRecordings && IsSerieIsCanceled(program.StartTime)) return false;
+                  return true;
+                }
+              }
+            }
+          }
+          break;
+
+        case RecordingType.Weekly:
+          if (program.Channel == Channel)
+          {
+            int iHourProg = program.StartTime.Hour;
+            int iMinProg = program.StartTime.Minute;
+            if (iHourProg == StartTime.Hour && iMinProg == StartTime.Minute)
+            {
+              iHourProg = program.EndTime.Hour;
+              iMinProg = program.EndTime.Minute;
+              if (iHourProg == EndTime.Hour && iMinProg == EndTime.Minute)
+              {
+                if (StartTime.DayOfWeek == program.StartTime.DayOfWeek)
+                {
+                  if (filterCanceledRecordings && IsSerieIsCanceled(program.StartTime)) return false;
+                  return true;
+                }
+              }
+            }
+          }
+          break;
+      }
+      return false;
+    }//IsRecordingProgram(TVProgram program, bool filterCanceledRecordings)
 
     /// <summary>
     /// Checks whether the recording should be recording at the specified time including the pre/post intervals
@@ -414,115 +436,132 @@ namespace MediaPortal.TV.Database
     /// <param name="iPostInterval">post record interval</param>
     /// <returns>true if the recording should record</returns>
     /// <seealso cref="MediaPortal.TV.Database.TVProgram"/>
-    public bool IsRecordingAtTime(DateTime dtTime,TVProgram currentProgram,  int iPreInterval, int iPostInterval)
+    public bool IsRecordingAtTime(DateTime dtTime, TVProgram currentProgram, int iPreInterval, int iPostInterval)
     {
       DateTime dtStart;
       DateTime dtEnd;
       switch (RecType)
       {
-          // record program just once
+        // record program just once
         case RecordingType.Once:
-          if (dtTime >= this.StartTime.AddMinutes(-iPreInterval) && dtTime <= this.EndTime.AddMinutes(iPostInterval) ) 
+          if (dtTime >= this.StartTime.AddMinutes(-iPreInterval) && dtTime <= this.EndTime.AddMinutes(iPostInterval))
           {
-            if (Canceled>0)
+            if (Canceled > 0)
             {
               return false;
             }
             return true;
           }
           break;
-				
-          // record program daily at same time & channel
+
+        // record program daily at same time & channel
         case RecordingType.Daily:
           // check if recording start/date time is correct
-          dtStart=new DateTime(dtTime.Year,dtTime.Month,dtTime.Day,this.StartTime.Hour,StartTime.Minute,0);
-          dtEnd  =new DateTime(dtTime.Year,dtTime.Month,dtTime.Day,this.EndTime.Hour  ,EndTime.Minute  ,0);
-          if (dtTime >= dtStart.AddMinutes(-iPreInterval) && dtTime <= dtEnd.AddMinutes(iPostInterval) ) 
+          dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.StartTime.Hour, StartTime.Minute, 0);
+          dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.EndTime.Hour, EndTime.Minute, 0);
+          if (dtTime >= dtStart.AddMinutes(-iPreInterval) && dtTime <= dtEnd.AddMinutes(iPostInterval))
           {
             // not canceled?
-						if (IsSerieIsCanceled(currentProgram.StartTime))
-						{
-							return false;
-						}
+            if (IsSerieIsCanceled(currentProgram.StartTime))
+            {
+              return false;
+            }
             return true;
           }
           break;
 
-          // record program daily at same time & channel
+        // record program daily at same time & channel
         case RecordingType.WeekDays:
           // check if recording start/date time is correct
-          dtStart=new DateTime(dtTime.Year,dtTime.Month,dtTime.Day,this.StartTime.Hour,StartTime.Minute,0);
-          dtEnd  =new DateTime(dtTime.Year,dtTime.Month,dtTime.Day,this.EndTime.Hour  ,EndTime.Minute  ,0);
-          if (dtStart.DayOfWeek>=DayOfWeek.Monday && dtStart.DayOfWeek<=DayOfWeek.Friday)
+          dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.StartTime.Hour, StartTime.Minute, 0);
+          dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.EndTime.Hour, EndTime.Minute, 0);
+          if (dtStart.DayOfWeek >= DayOfWeek.Monday && dtStart.DayOfWeek <= DayOfWeek.Friday)
           {
-            if (dtTime >= dtStart.AddMinutes(-iPreInterval) && dtTime <= dtEnd.AddMinutes(iPostInterval) ) 
+            if (dtTime >= dtStart.AddMinutes(-iPreInterval) && dtTime <= dtEnd.AddMinutes(iPostInterval))
             {
               // not canceled?
-							if (IsSerieIsCanceled(currentProgram.StartTime))
-							{
-								return false;
-							}
+              if (IsSerieIsCanceled(currentProgram.StartTime))
+              {
+                return false;
+              }
               return true;
             }
           }
           break;
 
-          // record program weekly at same time & channel
+        case RecordingType.WeekEnds:
+          // check if recording start/date time is correct
+          dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.StartTime.Hour, StartTime.Minute, 0);
+          dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.EndTime.Hour, EndTime.Minute, 0);
+          if (dtStart.DayOfWeek == DayOfWeek.Saturday || dtStart.DayOfWeek == DayOfWeek.Sunday)
+          {
+            if (dtTime >= dtStart.AddMinutes(-iPreInterval) && dtTime <= dtEnd.AddMinutes(iPostInterval))
+            {
+              // not canceled?
+              if (IsSerieIsCanceled(currentProgram.StartTime))
+              {
+                return false;
+              }
+              return true;
+            }
+          }
+          break;
+        // record program weekly at same time & channel
         case RecordingType.Weekly:
           // check if day of week of recording matches 
           if (this.StartTime.DayOfWeek == dtTime.DayOfWeek)
           {
             // check if start/end time of recording is correct
-            dtStart=new DateTime(dtTime.Year,dtTime.Month,dtTime.Day,this.StartTime.Hour,this.StartTime.Minute,0);
-            dtEnd  =new DateTime(dtTime.Year,dtTime.Month,dtTime.Day,this.EndTime.Hour  ,this.EndTime.Minute  ,0);
-            if (dtTime >= dtStart.AddMinutes(-iPreInterval) && dtTime <= dtEnd.AddMinutes(iPostInterval) ) 
+            dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.StartTime.Hour, this.StartTime.Minute, 0);
+            dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.EndTime.Hour, this.EndTime.Minute, 0);
+            if (dtTime >= dtStart.AddMinutes(-iPreInterval) && dtTime <= dtEnd.AddMinutes(iPostInterval))
             {
               // not canceled?
-							if (IsSerieIsCanceled(currentProgram.StartTime))
-							{
-								return false;
-							}
+              if (IsSerieIsCanceled(currentProgram.StartTime))
+              {
+                return false;
+              }
               return true;
             }
           }
           break;
-				
-          //record program everywhere
+
+        //record program everywhere
         case RecordingType.EveryTimeOnEveryChannel:
-          if (currentProgram==null) return false; // we need a program
-          if (currentProgram.Title==this.Title)  // check title
+          if (currentProgram == null) return false; // we need a program
+          if (currentProgram.Title == this.Title)  // check title
           {
             // check program time
-            if (dtTime >= currentProgram.StartTime.AddMinutes(-iPreInterval) && 
-                dtTime <= currentProgram.EndTime.AddMinutes(iPostInterval) ) 
+            if (dtTime >= currentProgram.StartTime.AddMinutes(-iPreInterval) &&
+                dtTime <= currentProgram.EndTime.AddMinutes(iPostInterval))
             {
               // not canceled?
-							if (IsSerieIsCanceled(currentProgram.StartTime))
-							{
-								return false;
-							}
+              if (IsSerieIsCanceled(currentProgram.StartTime))
+              {
+                return false;
+              }
               return true;
             }
           }
           break;
-				
-          //record program on this channel
+
+        //record program on this channel
         case RecordingType.EveryTimeOnThisChannel:
-          if (currentProgram==null) return false; // we need a channel
-          
+          if (currentProgram == null) return false; // we need a channel
+
           // check channel & title
-          if (currentProgram.Title==this.Title && currentProgram.Channel==this.Channel) 
+          if (currentProgram.Title == this.Title && currentProgram.Channel == this.Channel)
           {
             // check time
-            if (dtTime >= currentProgram.StartTime.AddMinutes(-iPreInterval) && 
-               dtTime <= currentProgram.EndTime.AddMinutes(iPostInterval) ) 
+            if (dtTime >= currentProgram.StartTime.AddMinutes(-iPreInterval) &&
+               dtTime <= currentProgram.EndTime.AddMinutes(iPostInterval))
             {
 
               // not canceled?
-							if (IsSerieIsCanceled(currentProgram.StartTime))
-							{
-								return false;
-							}
+              if (IsSerieIsCanceled(currentProgram.StartTime))
+              {
+                return false;
+              }
               return true;
             }
           }
@@ -541,174 +580,201 @@ namespace MediaPortal.TV.Database
     /// <param name="iPostInterval">post record interval</param>
     /// <returns>true if the recording should record</returns>
     /// <seealso cref="MediaPortal.TV.Database.TVProgram"/>
-		public bool IsRecordingProgramAtTime(DateTime dtTime,TVProgram currentProgram, int iPreInterval, int iPostInterval)
-		{
+    public bool IsRecordingProgramAtTime(DateTime dtTime, TVProgram currentProgram, int iPreInterval, int iPostInterval)
+    {
       DateTime dtStart;
       DateTime dtEnd;
-			switch (RecType)
-			{
+      switch (RecType)
+      {
         // record program just once
-				case RecordingType.Once:
-					if (dtTime >= this.StartTime.AddMinutes(-iPreInterval) && dtTime <= this.EndTime.AddMinutes(iPostInterval) ) 
-					{
-            if (Canceled>0)
+        case RecordingType.Once:
+          if (dtTime >= this.StartTime.AddMinutes(-iPreInterval) && dtTime <= this.EndTime.AddMinutes(iPostInterval))
+          {
+            if (Canceled > 0)
             {
               return false;
             }
-          
-            if (currentProgram!=null) 
+
+            if (currentProgram != null)
             {
-              if (currentProgram.Channel!=this.Channel)  return false;
-              if (dtTime >= currentProgram.StartTime.AddMinutes(-iPreInterval) && dtTime <= currentProgram.EndTime.AddMinutes(iPostInterval) ) 
+              if (currentProgram.Channel != this.Channel) return false;
+              if (dtTime >= currentProgram.StartTime.AddMinutes(-iPreInterval) && dtTime <= currentProgram.EndTime.AddMinutes(iPostInterval))
               {
                 return true;
               }
               return false;
             }
-            string strManual=GUILocalizeStrings.Get(413);
-						if (this.Title.Length==0 || String.Compare(this.Title,strManual,true)==0) return true;
-						
-						strManual=GUILocalizeStrings.Get(736);
-						if (this.Title.Length==0 || String.Compare(this.Title,strManual,true)==0) return true;
+            string strManual = GUILocalizeStrings.Get(413);
+            if (this.Title.Length == 0 || String.Compare(this.Title, strManual, true) == 0) return true;
+
+            strManual = GUILocalizeStrings.Get(736);
+            if (this.Title.Length == 0 || String.Compare(this.Title, strManual, true) == 0) return true;
             return false;
-					}
-				break;
-				
+          }
+          break;
+
         // record program daily at same time & channel
-				case RecordingType.WeekDays:
-          if (currentProgram==null) return false;   //we need a program
-          if (currentProgram.Channel==this.Channel) //check channel is correct
+        case RecordingType.WeekDays:
+          if (currentProgram == null) return false;   //we need a program
+          if (currentProgram.Channel == this.Channel) //check channel is correct
           {
             // check if program start/date time is correct
-            dtStart=new DateTime(dtTime.Year,dtTime.Month,dtTime.Day,currentProgram.StartTime.Hour,StartTime.Minute,0);
-            dtEnd  =new DateTime(dtTime.Year,dtTime.Month,dtTime.Day,currentProgram.EndTime.Hour  ,EndTime.Minute  ,0);
-            if (dtStart.DayOfWeek>=DayOfWeek.Monday && dtStart.DayOfWeek<=DayOfWeek.Friday)
+            dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, currentProgram.StartTime.Hour, StartTime.Minute, 0);
+            dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, currentProgram.EndTime.Hour, EndTime.Minute, 0);
+            if (dtStart.DayOfWeek >= DayOfWeek.Monday && dtStart.DayOfWeek <= DayOfWeek.Friday)
             {
-              if (dtTime >= dtStart.AddMinutes(-iPreInterval) && dtTime <= dtEnd.AddMinutes(iPostInterval) ) 
+              if (dtTime >= dtStart.AddMinutes(-iPreInterval) && dtTime <= dtEnd.AddMinutes(iPostInterval))
               {
                 // check if recording start/date time is correct
-                dtStart=new DateTime(dtTime.Year,dtTime.Month,dtTime.Day,this.StartTime.Hour,StartTime.Minute,0);
-                dtEnd  =new DateTime(dtTime.Year,dtTime.Month,dtTime.Day,this.EndTime.Hour  ,EndTime.Minute  ,0);
-                if (dtTime >= dtStart.AddMinutes(-iPreInterval) && dtTime <= dtEnd.AddMinutes(iPostInterval) ) 
+                dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.StartTime.Hour, StartTime.Minute, 0);
+                dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.EndTime.Hour, EndTime.Minute, 0);
+                if (dtTime >= dtStart.AddMinutes(-iPreInterval) && dtTime <= dtEnd.AddMinutes(iPostInterval))
                 {
                   // not canceled?
-									if (IsSerieIsCanceled(currentProgram.StartTime))
-									{
-										return false;
-									}
+                  if (IsSerieIsCanceled(currentProgram.StartTime))
+                  {
+                    return false;
+                  }
                   return true;
                 }
               }
             }
           }
-				break;
-
-        // record program daily at same time & channel
-				case RecordingType.Daily:
-          if (currentProgram==null) return false;   //we need a program
-          if (currentProgram.Channel==this.Channel) //check channel is correct
+          break;
+        // record program on the weekend at same time & channel
+        case RecordingType.WeekEnds:
+          if (currentProgram == null) return false;   //we need a program
+          if (currentProgram.Channel == this.Channel) //check channel is correct
           {
             // check if program start/date time is correct
-            dtStart=new DateTime(dtTime.Year,dtTime.Month,dtTime.Day,currentProgram.StartTime.Hour,StartTime.Minute,0);
-            dtEnd  =new DateTime(dtTime.Year,dtTime.Month,dtTime.Day,currentProgram.EndTime.Hour  ,EndTime.Minute  ,0);
-            if (dtTime >= dtStart.AddMinutes(-iPreInterval) && dtTime <= dtEnd.AddMinutes(iPostInterval) ) 
+            dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, currentProgram.StartTime.Hour, StartTime.Minute, 0);
+            dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, currentProgram.EndTime.Hour, EndTime.Minute, 0);
+            if (dtStart.DayOfWeek == DayOfWeek.Saturday || dtStart.DayOfWeek == DayOfWeek.Sunday)
+            {
+              if (dtTime >= dtStart.AddMinutes(-iPreInterval) && dtTime <= dtEnd.AddMinutes(iPostInterval))
+              {
+                // check if recording start/date time is correct
+                dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.StartTime.Hour, StartTime.Minute, 0);
+                dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.EndTime.Hour, EndTime.Minute, 0);
+                if (dtTime >= dtStart.AddMinutes(-iPreInterval) && dtTime <= dtEnd.AddMinutes(iPostInterval))
+                {
+                  // not canceled?
+                  if (IsSerieIsCanceled(currentProgram.StartTime))
+                  {
+                    return false;
+                  }
+                  return true;
+                }
+              }
+            }
+          }
+          break;
+        // record program daily at same time & channel
+        case RecordingType.Daily:
+          if (currentProgram == null) return false;   //we need a program
+          if (currentProgram.Channel == this.Channel) //check channel is correct
+          {
+            // check if program start/date time is correct
+            dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, currentProgram.StartTime.Hour, StartTime.Minute, 0);
+            dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, currentProgram.EndTime.Hour, EndTime.Minute, 0);
+            if (dtTime >= dtStart.AddMinutes(-iPreInterval) && dtTime <= dtEnd.AddMinutes(iPostInterval))
             {
               // check if recording start/date time is correct
-              dtStart=new DateTime(dtTime.Year,dtTime.Month,dtTime.Day,this.StartTime.Hour,StartTime.Minute,0);
-              dtEnd  =new DateTime(dtTime.Year,dtTime.Month,dtTime.Day,this.EndTime.Hour  ,EndTime.Minute  ,0);
-              if (dtTime >= dtStart.AddMinutes(-iPreInterval) && dtTime <= dtEnd.AddMinutes(iPostInterval) ) 
+              dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.StartTime.Hour, StartTime.Minute, 0);
+              dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.EndTime.Hour, EndTime.Minute, 0);
+              if (dtTime >= dtStart.AddMinutes(-iPreInterval) && dtTime <= dtEnd.AddMinutes(iPostInterval))
               {
                 // not canceled?
-								if (IsSerieIsCanceled(currentProgram.StartTime))
-								{
-									return false;
-								}
+                if (IsSerieIsCanceled(currentProgram.StartTime))
+                {
+                  return false;
+                }
                 return true;
               }
             }
           }
-				break;
-				
+          break;
+
         // record program weekly at same time & channel
-				case RecordingType.Weekly:
-          if (currentProgram==null) return false;   // we need a program
-          if (currentProgram.Channel==this.Channel) // check if channel is correct
+        case RecordingType.Weekly:
+          if (currentProgram == null) return false;   // we need a program
+          if (currentProgram.Channel == this.Channel) // check if channel is correct
           {
             // check if day of week of program matches 
-            if (currentProgram.StartTime.DayOfWeek== dtTime.DayOfWeek)
+            if (currentProgram.StartTime.DayOfWeek == dtTime.DayOfWeek)
             {
 
               // check if start/end time of program is correct
-              dtStart=new DateTime(dtTime.Year,dtTime.Month,dtTime.Day,currentProgram.StartTime.Hour,currentProgram.StartTime.Minute,0);
-              dtEnd  =new DateTime(dtTime.Year,dtTime.Month,dtTime.Day,currentProgram.EndTime.Hour  ,currentProgram.EndTime.Minute  ,0);
+              dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, currentProgram.StartTime.Hour, currentProgram.StartTime.Minute, 0);
+              dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, currentProgram.EndTime.Hour, currentProgram.EndTime.Minute, 0);
 
-              if (dtTime >= dtStart.AddMinutes(-iPreInterval) && dtTime <= dtEnd.AddMinutes(iPostInterval) ) 
+              if (dtTime >= dtStart.AddMinutes(-iPreInterval) && dtTime <= dtEnd.AddMinutes(iPostInterval))
               {
-                
+
                 // check if day of week of recording matches 
                 if (this.StartTime.DayOfWeek == dtTime.DayOfWeek)
                 {
                   // check if start/end time of recording is correct
-                  dtStart=new DateTime(dtTime.Year,dtTime.Month,dtTime.Day,this.StartTime.Hour,this.StartTime.Minute,0);
-                  dtEnd  =new DateTime(dtTime.Year,dtTime.Month,dtTime.Day,this.EndTime.Hour  ,this.EndTime.Minute  ,0);
-                  if (dtTime >= dtStart.AddMinutes(-iPreInterval) && dtTime <= dtEnd.AddMinutes(iPostInterval) ) 
+                  dtStart = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.StartTime.Hour, this.StartTime.Minute, 0);
+                  dtEnd = new DateTime(dtTime.Year, dtTime.Month, dtTime.Day, this.EndTime.Hour, this.EndTime.Minute, 0);
+                  if (dtTime >= dtStart.AddMinutes(-iPreInterval) && dtTime <= dtEnd.AddMinutes(iPostInterval))
                   {
                     // not canceled?
-										if (IsSerieIsCanceled(currentProgram.StartTime))
-										{
-											return false;
-										}
+                    if (IsSerieIsCanceled(currentProgram.StartTime))
+                    {
+                      return false;
+                    }
                     return true;
                   }
                 }
               }
             }
           }
-				break;
-				
+          break;
+
         //record program everywhere
-				case RecordingType.EveryTimeOnEveryChannel:
-          if (currentProgram==null) return false; // we need a program
-          if (currentProgram.Title==this.Title)  // check title
+        case RecordingType.EveryTimeOnEveryChannel:
+          if (currentProgram == null) return false; // we need a program
+          if (currentProgram.Title == this.Title)  // check title
           {
             // check program time
-            if (dtTime >= currentProgram.StartTime.AddMinutes(-iPreInterval) && 
-                dtTime <= currentProgram.EndTime.AddMinutes(iPostInterval) ) 
+            if (dtTime >= currentProgram.StartTime.AddMinutes(-iPreInterval) &&
+                dtTime <= currentProgram.EndTime.AddMinutes(iPostInterval))
             {
               // not canceled?
-							if (IsSerieIsCanceled(currentProgram.StartTime))
-							{
-								return false;
-							}
+              if (IsSerieIsCanceled(currentProgram.StartTime))
+              {
+                return false;
+              }
               return true;
             }
           }
-				break;
-				
-          //record program on this channel
-				case RecordingType.EveryTimeOnThisChannel:
-          if (currentProgram==null) return false; // we need a channel
-          
+          break;
+
+        //record program on this channel
+        case RecordingType.EveryTimeOnThisChannel:
+          if (currentProgram == null) return false; // we need a channel
+
           // check channel & title
-          if (currentProgram.Title==this.Title && currentProgram.Channel==this.Channel) 
+          if (currentProgram.Title == this.Title && currentProgram.Channel == this.Channel)
           {
             // check time
-            if (dtTime >= currentProgram.StartTime.AddMinutes(-iPreInterval) && 
-                dtTime <= currentProgram.EndTime.AddMinutes(iPostInterval) ) 
+            if (dtTime >= currentProgram.StartTime.AddMinutes(-iPreInterval) &&
+                dtTime <= currentProgram.EndTime.AddMinutes(iPostInterval))
             {
 
               // not canceled?
-							if (IsSerieIsCanceled(currentProgram.StartTime))
-							{
-								return false;
-							}
+              if (IsSerieIsCanceled(currentProgram.StartTime))
+              {
+                return false;
+              }
               return true;
             }
           }
-				break;
-			}
-			return false;
-		
+          break;
+      }
+      return false;
+
     }
 
     /// <summary>
@@ -717,60 +783,69 @@ namespace MediaPortal.TV.Database
     /// <returns>Returns a string describing the recording</returns>
     public override string ToString()
     {
-      string strLine=String.Empty;
+      string strLine = String.Empty;
       switch (RecType)
       {
         case RecordingType.Once:
-          strLine=String.Format("Record once {0} on {1} from {2} {3} - {4} {5}", 
-                            this.Title,this.Channel, 
+          strLine = String.Format("Record once {0} on {1} from {2} {3} - {4} {5}",
+                            this.Title, this.Channel,
                             StartTime.ToShortDateString(),
-                            StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat),
+                            StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
                             EndTime.ToShortDateString(),
-                            EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
+                            EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
           break;
 
         case RecordingType.WeekDays:
-          strLine=String.Format("{0} on {1} {2}-{3} from {4} - {5}", 
-            this.Title,this.Channel, 
+          strLine = String.Format("{0} on {1} {2}-{3} from {4} - {5}",
+            this.Title, this.Channel,
             GUILocalizeStrings.Get(657),//657=Mon
             GUILocalizeStrings.Get(661),//661=Fri
-            StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat),
-            EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
+            StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+            EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+          break;
+
+        case RecordingType.WeekEnds:
+          strLine = String.Format("{0} on {1} {2}-{3} from {4} - {5}",
+            this.Title, this.Channel,
+            GUILocalizeStrings.Get(662),//662=Sat
+            GUILocalizeStrings.Get(663),//663=Sun
+            StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+            EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
           break;
 
         case RecordingType.Daily:
-          strLine=String.Format("Record daily {0} on {1} from {2} - {3}", 
-                                        this.Title,this.Channel, 
-                                        StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat),
-                                        EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
+          strLine = String.Format("Record daily {0} on {1} from {2} - {3}",
+                                        this.Title, this.Channel,
+                                        StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                        EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
           break;
         case RecordingType.Weekly:
           string day;
           switch (StartTime.DayOfWeek)
           {
-            case DayOfWeek.Monday :	day = GUILocalizeStrings.Get(11);	break;
-            case DayOfWeek.Tuesday :	day = GUILocalizeStrings.Get(12);	break;
-            case DayOfWeek.Wednesday :	day = GUILocalizeStrings.Get(13);	break;
-            case DayOfWeek.Thursday :	day = GUILocalizeStrings.Get(14);	break;
-            case DayOfWeek.Friday :	day = GUILocalizeStrings.Get(15);	break;
-            case DayOfWeek.Saturday :	day = GUILocalizeStrings.Get(16);	break;
-            default:	day = GUILocalizeStrings.Get(17);	break;
+            case DayOfWeek.Monday: day = GUILocalizeStrings.Get(11); break;
+            case DayOfWeek.Tuesday: day = GUILocalizeStrings.Get(12); break;
+            case DayOfWeek.Wednesday: day = GUILocalizeStrings.Get(13); break;
+            case DayOfWeek.Thursday: day = GUILocalizeStrings.Get(14); break;
+            case DayOfWeek.Friday: day = GUILocalizeStrings.Get(15); break;
+            case DayOfWeek.Saturday: day = GUILocalizeStrings.Get(16); break;
+            default: day = GUILocalizeStrings.Get(17); break;
           }
-          strLine=String.Format("Record {0} on {1} every {2} from {3} - {4}", 
-                                  this.Title,this.Channel, 
+          strLine = String.Format("Record {0} on {1} every {2} from {3} - {4}",
+                                  this.Title, this.Channel,
                                   day,
-                                  StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat),
-                                  EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
+                                  StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                  EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
           break;
 
         case RecordingType.EveryTimeOnEveryChannel:
-          strLine=String.Format("Record {0} every time on any channel", Title);
-        break;
+          strLine = String.Format("Record {0} every time on any channel", Title);
+          break;
 
         case RecordingType.EveryTimeOnThisChannel:
-          strLine=String.Format("Record {0} every time on {1}", Title, Channel);
+          strLine = String.Format("Record {0} every time on {1}", Title, Channel);
           break;
-      }      
+      }
       return strLine;
     }
 
@@ -779,8 +854,8 @@ namespace MediaPortal.TV.Database
     /// </summary>
     public long Canceled
     {
-      get { return _timeCanceled;}
-      set { _timeCanceled=value;}      
+      get { return _timeCanceled; }
+      set { _timeCanceled = value; }
     }
 
     /// <summary>
@@ -788,7 +863,7 @@ namespace MediaPortal.TV.Database
     /// </summary>
     public DateTime CanceledTime
     {
-      get { return Utils.longtodate(_timeCanceled);}
+      get { return Utils.longtodate(_timeCanceled); }
     }
 
     /// <summary>
@@ -796,109 +871,109 @@ namespace MediaPortal.TV.Database
     /// </summary>
     public RecordingStatus Status
     {
-      get 
+      get
       {
-        if ( IsDone() ) return RecordingStatus.Finished;
-        if (Canceled>0) return RecordingStatus.Canceled;
-        return RecordingStatus.Waiting;        
+        if (IsDone()) return RecordingStatus.Finished;
+        if (Canceled > 0) return RecordingStatus.Canceled;
+        return RecordingStatus.Waiting;
       }
     }
-		/// <summary>
-		/// Property indicating if this recording belongs to a tv series or not
-		/// </summary>
-		public bool Series
-		{
-			get { return _isSeries;}
-			set { _isSeries=value;}
-		}
+    /// <summary>
+    /// Property indicating if this recording belongs to a tv series or not
+    /// </summary>
+    public bool Series
+    {
+      get { return _isSeries; }
+      set { _isSeries = value; }
+    }
 
 
-		/// <summary>
-		/// Priority of this recording (1-10) where 1=lowest, 10=highest
-		/// </summary>
-		public int Priority
-		{
-			get { return _recordingPriority;}
-			set { _recordingPriority=value;}
-		}
-		/// <summary>
-		/// quality of this recording
-		/// </summary>
-		public QualityType Quality
-		{
-			get { return _recordingQuality;}
-			set { _recordingQuality=value;}
-		}
+    /// <summary>
+    /// Priority of this recording (1-10) where 1=lowest, 10=highest
+    /// </summary>
+    public int Priority
+    {
+      get { return _recordingPriority; }
+      set { _recordingPriority = value; }
+    }
+    /// <summary>
+    /// quality of this recording
+    /// </summary>
+    public QualityType Quality
+    {
+      get { return _recordingQuality; }
+      set { _recordingQuality = value; }
+    }
 
-		public void CancelSerie(long datetime)
-		{
-			_listCanceledEpisodes.Add(datetime);
-		}
+    public void CancelSerie(long datetime)
+    {
+      _listCanceledEpisodes.Add(datetime);
+    }
 
-		public List<long> CanceledSeries
-		{
-			get { return _listCanceledEpisodes;}
-		}
-		
-		public void UnCancelSerie(DateTime datetime)
-		{
-			long dtProgram=Utils.datetolong(datetime);
-			foreach (long dtCanceled in _listCanceledEpisodes)
-			{
-				if (dtCanceled==dtProgram) 
-				{
-					_listCanceledEpisodes.Remove(dtCanceled);
-					return;
-				}
-			}
-			return ;
-		}
-		public bool IsSerieIsCanceled(DateTime datetime)
-		{
-			long dtProgram=Utils.datetolong(datetime);
-			foreach (long dtCanceled in _listCanceledEpisodes)
-			{
-				if (dtCanceled==dtProgram) return true;
-			}
-			return false;
-		}
-		
-		public void SetProperties(TVProgram prog)
-		{
-			GUIPropertyManager.SetProperty("#TV.Scheduled.Title",String.Empty);
-			GUIPropertyManager.SetProperty("#TV.Scheduled.Genre",String.Empty);
-			GUIPropertyManager.SetProperty("#TV.Scheduled.Time",String.Empty);
-			GUIPropertyManager.SetProperty("#TV.Scheduled.Description",String.Empty);
-			GUIPropertyManager.SetProperty("#TV.Scheduled.thumb",String.Empty);
+    public List<long> CanceledSeries
+    {
+      get { return _listCanceledEpisodes; }
+    }
 
-			string strTime=String.Format("{0} {1} - {2}", 
-				Utils.GetShortDayString(StartTime) , 
-				StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat),
-				EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat));
+    public void UnCancelSerie(DateTime datetime)
+    {
+      long dtProgram = Utils.datetolong(datetime);
+      foreach (long dtCanceled in _listCanceledEpisodes)
+      {
+        if (dtCanceled == dtProgram)
+        {
+          _listCanceledEpisodes.Remove(dtCanceled);
+          return;
+        }
+      }
+      return;
+    }
+    public bool IsSerieIsCanceled(DateTime datetime)
+    {
+      long dtProgram = Utils.datetolong(datetime);
+      foreach (long dtCanceled in _listCanceledEpisodes)
+      {
+        if (dtCanceled == dtProgram) return true;
+      }
+      return false;
+    }
 
-			GUIPropertyManager.SetProperty("#TV.Scheduled.Title",Title);
-			GUIPropertyManager.SetProperty("#TV.Scheduled.Time",strTime);
-			if (prog!=null)
-			{
-				GUIPropertyManager.SetProperty("#TV.Scheduled.Description",prog.Description);
-				GUIPropertyManager.SetProperty("#TV.Scheduled.Genre",prog.Genre);
-			}
-			else
-			{
-				GUIPropertyManager.SetProperty("#TV.Scheduled.Description",String.Empty);
-				GUIPropertyManager.SetProperty("#TV.Scheduled.Genre",String.Empty);
-			}
+    public void SetProperties(TVProgram prog)
+    {
+      GUIPropertyManager.SetProperty("#TV.Scheduled.Title", String.Empty);
+      GUIPropertyManager.SetProperty("#TV.Scheduled.Genre", String.Empty);
+      GUIPropertyManager.SetProperty("#TV.Scheduled.Time", String.Empty);
+      GUIPropertyManager.SetProperty("#TV.Scheduled.Description", String.Empty);
+      GUIPropertyManager.SetProperty("#TV.Scheduled.thumb", String.Empty);
 
-    
-			string logo=Utils.GetCoverArt(Thumbs.TVChannel,Channel);
-			if (System.IO.File.Exists(logo))
-			{
-				GUIPropertyManager.SetProperty("#TV.Scheduled.thumb",logo);
-			}
-			else
-			{
-				GUIPropertyManager.SetProperty("#TV.Scheduled.thumb","defaultVideoBig.png");
-			}
+      string strTime = String.Format("{0} {1} - {2}",
+        Utils.GetShortDayString(StartTime),
+        StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+        EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+
+      GUIPropertyManager.SetProperty("#TV.Scheduled.Title", Title);
+      GUIPropertyManager.SetProperty("#TV.Scheduled.Time", strTime);
+      if (prog != null)
+      {
+        GUIPropertyManager.SetProperty("#TV.Scheduled.Description", prog.Description);
+        GUIPropertyManager.SetProperty("#TV.Scheduled.Genre", prog.Genre);
+      }
+      else
+      {
+        GUIPropertyManager.SetProperty("#TV.Scheduled.Description", String.Empty);
+        GUIPropertyManager.SetProperty("#TV.Scheduled.Genre", String.Empty);
+      }
+
+
+      string logo = Utils.GetCoverArt(Thumbs.TVChannel, Channel);
+      if (System.IO.File.Exists(logo))
+      {
+        GUIPropertyManager.SetProperty("#TV.Scheduled.thumb", logo);
+      }
+      else
+      {
+        GUIPropertyManager.SetProperty("#TV.Scheduled.thumb", "defaultVideoBig.png");
+      }
     }
 
     #endregion

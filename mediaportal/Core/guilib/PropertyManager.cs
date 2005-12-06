@@ -223,7 +223,11 @@ namespace MediaPortal.GUI.Library
 
       if (tag.Equals("#currentmodule"))
       {
-        GUIGraphicsContext.form.Text = "Media Portal - " + tagvalue;
+        try
+        {
+          GUIGraphicsContext.form.Text = "Media Portal - " + tagvalue;
+        }
+        catch (Exception) { }
       }
       lock (_properties)
       {

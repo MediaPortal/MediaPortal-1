@@ -656,6 +656,15 @@ namespace MediaPortal.GUI.TV
                 item.Label2 = String.Format("{0} {1}", strType, strTime);
                 break;
 
+            case TVRecording.RecordingType.WeekEnds:
+                strTime = String.Format("{0}-{1} {2}-{3}",
+                  GUILocalizeStrings.Get(662),//662=Sat
+                  GUILocalizeStrings.Get(663),//663=Sun
+                  rec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                  rec.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+                strType = GUILocalizeStrings.Get(649);
+                item.Label2 = String.Format("{0} {1}", strType, strTime);
+                break;
               case TVRecording.RecordingType.Weekly:
                 string day;
                 switch (rec.StartTime.DayOfWeek)
@@ -863,6 +872,7 @@ namespace MediaPortal.GUI.TV
           dlg.Add(GUILocalizeStrings.Get(i));
         }
         dlg.Add(GUILocalizeStrings.Get(672));// 672=Record Mon-Fri
+        dlg.Add(GUILocalizeStrings.Get(1051));// 1051=Record Sat-Sun
         switch (rec.RecType)
         {
           case TVRecording.RecordingType.Once:
@@ -882,6 +892,9 @@ namespace MediaPortal.GUI.TV
             break;
           case TVRecording.RecordingType.WeekDays:
             dlg.SelectedLabel = 5;
+            break;
+          case TVRecording.RecordingType.WeekEnds:
+            dlg.SelectedLabel = 6;
             break;
         }
         dlg.DoModal(GetID);
@@ -910,6 +923,10 @@ namespace MediaPortal.GUI.TV
             break;
           case 5://Mo-Fi
             rec.RecType = TVRecording.RecordingType.WeekDays;
+            rec.Canceled = 0;
+            break;
+        case 6://Sat-Sun
+            rec.RecType = TVRecording.RecordingType.WeekEnds;
             rec.Canceled = 0;
             break;
         }
@@ -957,6 +974,7 @@ namespace MediaPortal.GUI.TV
         dlg.Add(GUILocalizeStrings.Get(i));
       }
       dlg.Add(GUILocalizeStrings.Get(672));// 672=Record Mon-Fri
+      dlg.Add(GUILocalizeStrings.Get(1051));// 1051=Record Sat-Sun
 
       dlg.DoModal(GetID);
       if (dlg.SelectedLabel == -1) return;
@@ -982,6 +1000,9 @@ namespace MediaPortal.GUI.TV
           break;
         case 5://Mo-Fi
           rec.RecType = TVRecording.RecordingType.WeekDays;
+          break;
+      case 6://Sat-Sun
+          rec.RecType = TVRecording.RecordingType.WeekEnds;
           break;
       }
       //Date
@@ -1111,6 +1132,9 @@ namespace MediaPortal.GUI.TV
           break;
         case TVRecording.RecordingType.WeekDays:
           strType = GUILocalizeStrings.Get(680);//Mon-Fri
+          break;
+      case TVRecording.RecordingType.WeekEnds:
+          strType = GUILocalizeStrings.Get(1050);//Sat-Sun
           break;
         case TVRecording.RecordingType.Weekly:
           strType = GUILocalizeStrings.Get(679);//Weekly

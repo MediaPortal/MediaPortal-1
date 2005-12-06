@@ -623,6 +623,8 @@ namespace MediaPortal.GUI.MSN
 
     public override void Process()
     {
+      if (_messenger == null) return;
+      if (_messenger.Connected == false) return;
       if (_refreshContactList)
       {
         if (_isDialogVisible)
@@ -643,6 +645,7 @@ namespace MediaPortal.GUI.MSN
       int iContacts = 0;
       foreach (Contact contact in _messenger.ContactList.All)
       {
+        if (contact.OnBlockedList) continue;
         // if the contact is not offline we can send messages and we want to show
         // it in the contactlistview
         if (contact.Status != PresenceStatus.Offline)
@@ -732,7 +735,7 @@ namespace MediaPortal.GUI.MSN
             bool useProxy = xmlreader.GetValueAsBool("MSNmessenger", "useproxy", false);
             if (useProxy)
             {
-              //ConnectivitySettings settings = new ConnectivitySettings();
+              _messenger.Nameserver.ConnectivitySettings = new ConnectivitySettings();
               _messenger.Nameserver.ConnectivitySettings.ProxyHost = xmlreader.GetValueAsString("MSNmessenger", "proxyhost", "");
               _messenger.Nameserver.ConnectivitySettings.ProxyPort = xmlreader.GetValueAsInt("MSNmessenger", "proxyport", 8080);
               _messenger.Nameserver.ConnectivitySettings.ProxyUsername = xmlreader.GetValueAsString("MSNmessenger", "proxyusername", "");

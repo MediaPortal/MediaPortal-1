@@ -540,8 +540,28 @@ namespace MediaPortal.PowerScheduler
 									tmpNextStarttime,recording.Channel,recording.Title);
 
 							break;
-						} 
-						case (TVRecording.RecordingType.Weekly):
+						}
+                        case (TVRecording.RecordingType.WeekEnds):
+                        {
+                            tmpNextStarttime = recording.StartTime.AddMinutes(-m_iPreRecordInterval);
+                            DateTime nextWeekDay = DateTime.Now;
+
+                            // Skip Weekend
+                            while (nextWeekDay.DayOfWeek != System.DayOfWeek.Saturday &&
+                                         nextWeekDay.DayOfWeek != System.DayOfWeek.Sunday)
+                            {
+                                nextWeekDay = nextWeekDay.AddDays(1);
+                            }
+                            tmpNextStarttime = new DateTime(nextWeekDay.Year, nextWeekDay.Month, nextWeekDay.Day,
+                                                                                          tmpNextStarttime.Hour, tmpNextStarttime.Minute, tmpNextStarttime.Second, 0);
+
+                            if (m_bExtensiveLog)
+                                Log.Write(" PowerScheduler:  Next date/time:{0} Type:WeekEnds  {1}  {2} ",
+                                    tmpNextStarttime, recording.Channel, recording.Title);
+
+                            break;
+                        } 						
+                        case (TVRecording.RecordingType.Weekly):
 						{
 							tmpNextStarttime = recording.StartTime.AddMinutes(- m_iPreRecordInterval);
 							DateTime nextWeekDay=DateTime.Now;

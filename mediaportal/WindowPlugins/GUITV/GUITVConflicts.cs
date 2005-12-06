@@ -314,6 +314,16 @@ namespace MediaPortal.GUI.TV
 						strType=GUILocalizeStrings.Get(648) ;
 						item.Label2=String.Format("{0} {1}",strType,strTime);
 						break;
+                    
+                    case TVRecording.RecordingType.WeekEnds:
+                        strTime = String.Format("{0}-{1} {2}-{3}",
+                            GUILocalizeStrings.Get(662),//662=Sat
+                            GUILocalizeStrings.Get(663),//663=Sun
+                            rec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                            rec.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+                        strType = GUILocalizeStrings.Get(649);
+                        item.Label2 = String.Format("{0} {1}", strType, strTime);
+                        break;
 
 					case TVRecording.RecordingType.Weekly:
 						string day;
@@ -416,6 +426,9 @@ namespace MediaPortal.GUI.TV
 					break;
 				case TVRecording.RecordingType.WeekDays:
 					strType=GUILocalizeStrings.Get(680);//Mon-Fri
+                    break;
+                case TVRecording.RecordingType.WeekEnds:
+                    strType = GUILocalizeStrings.Get(1050);//Sat-Sun
 					break;
 				case TVRecording.RecordingType.Weekly:
 					strType=GUILocalizeStrings.Get(679);//Weekly

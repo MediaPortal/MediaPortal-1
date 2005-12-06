@@ -3118,6 +3118,16 @@
   <value>Hibernate</value>
 </string>
 
+<!-- Recording Type: WeekEnds -->
+<string>
+	<id>1050</id>
+	<value>Sat-Sun</value>
+</string>	
+<string>
+	<id>1051</id>
+	<value>Record Sat-Sun</value>
+</string>	
+<!-- End Recording Type: WeekEnds -->
 
    <!-- Music Import Strings -->
 <string><id>1100</id><value>Import CD</value></string>

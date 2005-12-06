@@ -2154,6 +2154,7 @@ namespace MediaPortal.Configuration.Sections
 			if ((string)recType=="Daily") return TV.Database.TVRecording.RecordingType.Daily;
 			if ((string)recType=="Weekly") return TV.Database.TVRecording.RecordingType.Weekly;
 			if ((string)recType=="WeekDays") return TV.Database.TVRecording.RecordingType.WeekDays;
+            if ((string)recType=="WeekEnds") return TV.Database.TVRecording.RecordingType.WeekEnds;
       
 			//If nothing return Default
 			return TV.Database.TVRecording.RecordingType.Once;
