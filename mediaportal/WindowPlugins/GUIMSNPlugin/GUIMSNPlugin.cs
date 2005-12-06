@@ -631,6 +631,7 @@ namespace MediaPortal.GUI.MSN
           _dlgProgress.Close();
         }
         FillContactList();
+        Update();
       }
     }
 
