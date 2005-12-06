@@ -208,10 +208,6 @@ namespace MediaPortal.GUI.MSN
               return true;
             }
           }
-          else
-          {
-            _refreshContactList = true;
-          }
 
           ShowThumbPanel();
           UpdateButtons();
@@ -627,7 +623,15 @@ namespace MediaPortal.GUI.MSN
 
     public override void Process()
     {
-      if (_refreshContactList) FillContactList();
+      if (_refreshContactList)
+      {
+        if (_isDialogVisible)
+        {
+          _isDialogVisible = false;
+          _dlgProgress.Close();
+        }
+        FillContactList();
+      }
     }
 
     void FillContactList()
@@ -681,7 +685,6 @@ namespace MediaPortal.GUI.MSN
     // Called when the button 'Connected' is clicked
     private void StartMSN(bool showDialog)
     {
-      _refreshContactList = true;
       string emailadres = "";
       string password = "";
       using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
@@ -719,8 +722,10 @@ namespace MediaPortal.GUI.MSN
         else
         {
           _messenger = new XihSolutions.DotMSN.Messenger();
-          _messenger.Credentials.ClientID = emailadres;
-          _messenger.Credentials.ClientCode = password;
+          _messenger.Credentials.Account = emailadres;
+          _messenger.Credentials.Password = password;
+          _messenger.Credentials.ClientCode = "12345";
+          _messenger.Credentials.ClientID = "12345";
           using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
           {
             bool useProxy = xmlreader.GetValueAsBool("MSNmessenger", "useproxy", false);
