@@ -58,8 +58,7 @@
          <onright>23</onright>
          <onup>24</onup>
          <ondown>25</ondown>
-         <hyperlink>616</hyperlink>
-         <label>&lt; Back</label>
+         <label>200007</label>
          <width>96</width>
          <height>32</height>
       </control>
@@ -73,7 +72,7 @@
          <onright>27</onright>
          <onup>24</onup>
          <ondown>23</ondown>
-         <label>Manual Tune</label>
+         <label>200036</label>
          <width>126</width>
          <height>32</height>
       </control>
@@ -87,7 +86,7 @@
          <onright>27</onright>
          <onup>24</onup>
          <ondown>27</ondown>
-         <label>Skip &gt;</label>
+         <label>200037</label>
          <width>96</width>
          <height>32</height>
       </control>

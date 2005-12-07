@@ -3837,9 +3837,9 @@
 <string><id>200004</id><value>Manual supplied tvguide.xml</value></string>
 <string><id>200005</id><value>Please specify the remote control you use:</value></string>
 <string><id>200006</id><value>Press Next to continue the setup:</value></string>
-<string><id>200007</id><value>&lt;Back</value></string>
+<string><id>200007</id><value>&lt; Back</value></string>
 <string><id>200008</id><value>Setup - Remote control</value></string>
-<string><id>200009</id><value>Next&gt;</value></string>
+<string><id>200009</id><value>Next &gt;</value></string>
 <string><id>200010</id><value>MediaPortal turns your PC in a very advanced Multi-Media Center / HTPC.</value></string>
 <string><id>200011</id><value>With MediaPortal you can enjoy listening to your favorite music, radio, viewing your digital photos,</value></string>
 <string><id>200012</id><value>watching Videos, DVDs and live TV and much more.</value></string>
@@ -3870,6 +3870,8 @@
 <string><id>200034</id><value>Please select your city from the following list.</value></string>
 <string><id>200035</id><value>Note if your city is not listed then you will need to manual tune.</value></string>
 
+<string><id>200036</id><value>Manual Tune</value></string>
+<string><id>200037</id><value>Skip &gt;</value></string>
 
 
 <!-- Web Browser Strings -->
