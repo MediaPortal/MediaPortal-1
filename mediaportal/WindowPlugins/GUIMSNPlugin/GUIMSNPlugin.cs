@@ -636,7 +636,6 @@ namespace MediaPortal.GUI.MSN
           _dlgProgress.Close();
         }
         FillContactList();
-        Update();
       }
     }
 
@@ -646,28 +645,31 @@ namespace MediaPortal.GUI.MSN
       GUIControl.ClearControl(GetID, (int)Controls.CONTROL_LIST);
       GUIControl.ClearControl(GetID, (int)Controls.CONTROL_THUMBS);
 
-      if (_messenger == null) return;
-      if (_messenger.Connected == false) return;
-      if (_messenger.Nameserver.IsSignedIn==false) return;
       int iContacts = 0;
-      foreach (Contact contact in _messenger.ContactList.All)
+      if (_messenger != null)
       {
-        if (contact.OnBlockedList) continue;
-        // if the contact is not offline we can send messages and we want to show
-        // it in the contactlistview
-        Log.Write("Contact:{0} status:{1}", contact.Name, contact.Status.ToString());
-        if (contact.Status != PresenceStatus.Offline)
+        if (_messenger.Connected && _messenger.Nameserver.IsSignedIn)
         {
-          GUIListItem item = new GUIListItem(contact.Name);
-          item.Label2 = contact.Status.ToString();
-          item.IsFolder = false;
-          item.AlbumInfoTag = contact;
-          item.IconImage = "Messenger_Buddies.png";
-          item.IconImageBig = "Messenger_Buddies.png";
+          foreach (Contact contact in _messenger.ContactList.All)
+          {
+            if (contact.OnBlockedList) continue;
+            // if the contact is not offline we can send messages and we want to show
+            // it in the contactlistview
+            Log.Write("Contact:{0} status:{1}", contact.Name, contact.Status.ToString());
+            if (contact.Status != PresenceStatus.Offline)
+            {
+              GUIListItem item = new GUIListItem(contact.Name);
+              item.Label2 = contact.Status.ToString();
+              item.IsFolder = false;
+              item.AlbumInfoTag = contact;
+              item.IconImage = "Messenger_Buddies.png";
+              item.IconImageBig = "Messenger_Buddies.png";
 
-          GUIControl.AddListItemControl(GetID, (int)Controls.CONTROL_LIST, item);
-          GUIControl.AddListItemControl(GetID, (int)Controls.CONTROL_THUMBS, item);
-          iContacts++;
+              GUIControl.AddListItemControl(GetID, (int)Controls.CONTROL_LIST, item);
+              GUIControl.AddListItemControl(GetID, (int)Controls.CONTROL_THUMBS, item);
+              iContacts++;
+            }
+          }
         }
       }
       string strObjects = String.Format("{0} {1}", iContacts, GUILocalizeStrings.Get(632));
@@ -676,6 +678,8 @@ namespace MediaPortal.GUI.MSN
       
 
       OnSort();
+      UpdateStatusButton();
+      Update();
     }
 
 
@@ -693,6 +697,8 @@ namespace MediaPortal.GUI.MSN
       catch (Exception)
       {
       }
+      FillContactList();
+      Update();
     }
 
     // Called when the button 'Connected' is clicked
