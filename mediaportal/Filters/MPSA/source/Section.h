@@ -235,7 +235,7 @@ public:
 	virtual ~Sections();
 
 	//reset
-	void	Reset();
+	void	ResetPAT();
 
 	//epg
 	void	ResetEPG();

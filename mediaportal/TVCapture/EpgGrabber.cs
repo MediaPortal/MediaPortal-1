@@ -446,6 +446,7 @@ namespace MediaPortal.TV.Recording
         TimeSpan ts = DateTime.Now - _timeoutTimer;
         if (ts.TotalMinutes >= 1)
         {
+          Log.Write("epg-grab: timeout...");
           _currentState = State.Done;
         }
       }
@@ -472,6 +473,7 @@ namespace MediaPortal.TV.Recording
             _epgInterface.GetEPGChannelCount(out count);
             if (ready)
             {
+              Log.Write("epg-grab: EPG ready...");
               _timeoutTimer = DateTime.Now;
               _currentState = State.Parsing;
             }
@@ -481,8 +483,27 @@ namespace MediaPortal.TV.Recording
             _mhwInterface.IsMHWReady(out ready);
             if (ready)
             {
+              Log.Write("epg-grab: MHW ready...");
               _timeoutTimer = DateTime.Now;
-              _currentState = State.Parsing;
+              if (_epgInterface != null)
+              {
+                short titleCount;
+                _mhwInterface.GetMHWTitleCount(out titleCount);
+                if (titleCount <= 0)
+                {
+                  Log.Write("epg-grab: no MHW events, try DVB EPG");
+                  _grabEPG = true;
+                  _epgInterface.GrabEPG();
+                }
+                else
+                {
+                  _currentState = State.Parsing;
+                }
+              }
+              else
+              {
+                _currentState = State.Parsing;
+              }
             }
           }
           break;

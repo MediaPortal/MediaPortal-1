@@ -26,6 +26,7 @@ public:
 
 	SplitterSetup(Sections *pSections);
 	virtual ~SplitterSetup();
+	HRESULT 		SetSectionMapping();
 	STDMETHODIMP	SetDemuxPins(IFilterGraph *pGraph);
 	HRESULT 		SetupDefaultMapping();
 	HRESULT 		MapAdditionalPID(ULONG pid);
@@ -43,7 +44,6 @@ public:
 	BOOL 			SS2DeleteAllPIDs(long pin);
 protected:
 	HRESULT 		GetPSIMedia(AM_MEDIA_TYPE *pintype);
-	HRESULT 		SetSectionMapping();
 	HRESULT 		SetMHW1Mapping();
 	HRESULT 		SetMHW2Mapping();
 protected:

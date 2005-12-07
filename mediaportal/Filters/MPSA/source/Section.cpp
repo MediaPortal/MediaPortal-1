@@ -50,7 +50,7 @@ void Log(const char *fmt, ...)
 	if (fp!=NULL)
 	{
 		SYSTEMTIME systemTime;
-		GetSystemTime(&systemTime);
+		GetLocalTime(&systemTime);
 		fprintf(fp,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d %s\n",
 			systemTime.wDay, systemTime.wMonth, systemTime.wYear,
 			systemTime.wHour,systemTime.wMinute,systemTime.wSecond,
@@ -454,14 +454,44 @@ bool Sections::IsNewPat(BYTE *pData, int len)
 	int section_number = pData[6];
 	int last_section_number = pData[7];
 
+	if (transport_stream_id< 0 || transport_stream_id >=0x1fff) 
+	{
+		Log("newpat: invalid tsid", transport_stream_id);
+		return false; //invalid tsid
+	}
+
+	if(table_id!=0 || section_number!=0||last_section_number!=0) return false;//invalid table id
 	if (version_number==m_patTableVersion && 
 		transport_stream_id==m_patTSID && 
-		section_length==m_patSectionLen) return false;
-	if(table_id!=0 || section_number!=0||last_section_number!=0) return false;
-	Log("Found new PAT: version:%x==%x tsid:%x==%x len:%x==%x",
+		section_length==m_patSectionLen) return false; // same version number as before
+
+	int loop =(section_length - 9) / 4;
+	if ( ( (section_length-9) %4 ) !=0) 
+	{
+		Log("newpat: invalid section length:%d", section_length);
+		return false; // invalid length
+	}
+	if (loop < 1) 
+	{
+		Log("newpat: invalid loop<1 :%d", loop);
+		return false; // invalid number of channels
+	}
+
+	int pmtcount=0;
+	for(int i=0;i<loop;i++)
+	{
+		int offset=(8 +(i * 4));
+		int PMTPID=((pData[offset+2] & 0x1F)<<8)+pData[offset+3];
+		if (PMTPID < 0x12 || PMTPID >=0x1fff) 
+		{
+			Log("newpat: invalid pid:%x", PMTPID);
+			return false;
+		}
+	}
+	Log("Found new PAT: version:0x%x==0x%x tsid:0x%x==0x%x len:0x%x==0x%x channels:%d ssi:%x cni:%x",
 		version_number,m_patTableVersion, 
 		transport_stream_id,m_patTSID,
-		section_length,m_patSectionLen);
+		section_length,m_patSectionLen,loop,section_syntax_indicator,current_next_indicator);
 	return true;
 }
 void Sections::decodePAT(BYTE *pData,ChannelInfo chInfo[],int *channelCount, int len)
@@ -487,7 +517,7 @@ void Sections::decodePAT(BYTE *pData,ChannelInfo chInfo[],int *channelCount, int
 	m_patSectionLen=section_length;
 	*channelCount=loop;
 
-	Log("Decode pat:%x len:%x tsid:0x%x version:%x (%d/%d) channels:%d",
+	Log("Decode pat:0x%x len:0x%x tsid:0x%x version:0x%x (%d/%d) channels:%d",
 		table_id,section_length,transport_stream_id,version_number,section_number,last_section_number,(*channelCount));
 	ChannelInfo ch;
 	
@@ -797,30 +827,30 @@ void Sections::DecodeEPG(byte* buf,int len)
 				}
 				if (descriptor_tag ==0x4d)
 				{
-					Log("epg:     short event descriptor:%x len:%d start:%d",descriptor_tag,descriptor_len,start+off);
+					Log("epg:     short event descriptor:0x%x len:%d start:%d",descriptor_tag,descriptor_len,start+off);
 					DecodeShortEventDescriptor( &buf[start+off],epgEvent);
 				}
 				else if (descriptor_tag ==0x54)
 				{
-					Log("epg:     genre descriptor:%x len:%d start:%d",descriptor_tag,descriptor_len,start+off);
+					Log("epg:     genre descriptor:0x%x len:%d start:%d",descriptor_tag,descriptor_len,start+off);
 					DecodeContentDescription( &buf[start+off],epgEvent);
 				}
 				else if (descriptor_tag ==0x4e)
 				{
-					Log("epg:     description descriptor:%x len:%d start:%d",descriptor_tag,descriptor_len,start+off);
+					Log("epg:     description descriptor:0x%x len:%d start:%d",descriptor_tag,descriptor_len,start+off);
 					DecodeExtendedEvent(&buf[start+off],epgEvent);
 				}
 				else if (descriptor_tag ==0x55)
 				{
-					Log("epg:     parental rating descriptor:%x len:%d start:%d",descriptor_tag,descriptor_len,start+off);
+					Log("epg:     parental rating descriptor:0x%x len:%d start:%d",descriptor_tag,descriptor_len,start+off);
 				}
 				else if (descriptor_tag ==0x5f)
 				{
-					Log("epg:     private data descriptor:%x len:%d start:%d",descriptor_tag,descriptor_len,start+off);
+					Log("epg:     private data descriptor:0x%x len:%d start:%d",descriptor_tag,descriptor_len,start+off);
 				}
 				else
 				{
-					Log("epg:     descriptor:%x len:%d start:%d",descriptor_tag,descriptor_len,start+off);
+					Log("epg:     descriptor:0x%x len:%d start:%d",descriptor_tag,descriptor_len,start+off);
 				}
 
 			}
@@ -868,9 +898,9 @@ void Sections::DecodeExtendedEvent(byte* data, EPGEvent& epgEvent)
 
 		char* buffer= new char[item_description_length+10];
 		getString468A(&data[pointer+1], item_description_length,buffer);
+		string testText=buffer;
 		delete[] buffer;
 
-		string testText=buffer;
 		pointer += 1 + item_description_length;
 		if (testText.size()==0)
 			testText="-not avail.-";
@@ -946,7 +976,7 @@ void Sections::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent)
 
 	string eventText="";
 	string eventDescription="";
-	//Log("DecodeShortEventDescriptor: Lang:%x eventlen:%x",ISO_639_language_code,event_len);
+	//Log("DecodeShortEventDescriptor: Lang:0x%x eventlen:0x%x",ISO_639_language_code,event_len);
 	if (event_len >0)
 	{
 		if (6+event_len > descriptor_len+2)
@@ -962,7 +992,7 @@ void Sections::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent)
 	}
 	int off=6+event_len;
 	int text_len = buf[off];
-	//Log("DecodeShortEventDescriptor: text_len:%x",text_len);
+	//Log("DecodeShortEventDescriptor: text_len:0x%x",text_len);
 	if (text_len >0)
 	{
 		if (off+text_len > descriptor_len+2) 
@@ -1167,14 +1197,13 @@ void Sections::DecodeContentDescription(byte* buf,EPGEvent& epgEvent)
 
 void Sections::ResetEPG()
 {
-	Log("epg:reset");
+	Log("sections:reset epg");
 	m_mapEPG.clear();
 	m_bParseEPG=false;
 	m_bEpgDone=false;
-	
 	m_epgTimeout=time(NULL)+60;
 }
-void Sections::Reset()
+void Sections::ResetPAT()
 {
 	Log("sections::Reset");
 	m_patTSID=-1;

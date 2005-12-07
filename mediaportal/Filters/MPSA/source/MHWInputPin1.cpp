@@ -105,51 +105,58 @@ STDMETHODIMP CMHWInputPin1::ReceiveCanBlock()
 //
 STDMETHODIMP CMHWInputPin1::Receive(IMediaSample *pSample)
 {
-	if (m_bReset)
+	try
 	{
-		Log("mhw1:reset");
-		m_bReset=false;
-		m_bParsed=false;
-		m_MHWParser.Reset();
-		timeoutTimer=time(NULL);
-	}
-	if (!m_bGrabMHW) return S_OK; //test
-    CheckPointer(pSample,E_POINTER);
-
-    //CAutoLock lock(m_pReceiveLock);
-    PBYTE pbData=NULL;
-
-    // Has the filter been stopped yet?
-
-    REFERENCE_TIME tStart, tStop;
-    pSample->GetTime(&tStart, &tStop);
-
-    m_tLast = tStart;
-	long lDataLen=0;
-
-    HRESULT hr = pSample->GetPointer(&pbData);
-    if (FAILED(hr)) {
-        return hr;
-    }
-	
-	lDataLen=pSample->GetActualDataLength();
-
-	// decode
-	if(lDataLen>11)
-	{
-		if (pbData[0]==0x90 && (pbData[1] >=0x70 && pbData[1] <=0x7f) )
+		if (m_bReset)
 		{
-			if ( m_MHWParser.ParseTitles(pbData,lDataLen))
+			Log("mhw1:reset");
+			m_bReset=false;
+			m_bParsed=false;
+			m_MHWParser.Reset();
+			timeoutTimer=time(NULL);
+		}
+		if (!m_bGrabMHW) return S_OK; //test
+		CheckPointer(pSample,E_POINTER);
+
+		//CAutoLock lock(m_pReceiveLock);
+		PBYTE pbData=NULL;
+
+		// Has the filter been stopped yet?
+
+		REFERENCE_TIME tStart, tStop;
+		pSample->GetTime(&tStart, &tStop);
+
+		m_tLast = tStart;
+		long lDataLen=0;
+
+		HRESULT hr = pSample->GetPointer(&pbData);
+		if (FAILED(hr)) {
+			return hr;
+		}
+		
+		lDataLen=pSample->GetActualDataLength();
+
+		// decode
+		if(lDataLen>11)
+		{
+			if (pbData[0]==0x90 && (pbData[1] >=0x70 && pbData[1] <=0x7f) )
 			{
-				timeoutTimer=time(NULL);
+				if ( m_MHWParser.ParseTitles(pbData,lDataLen))
+				{
+					timeoutTimer=time(NULL);
+				}
 			}
 		}
+		
+		int passed=time(NULL)-timeoutTimer;
+		if (passed>30)
+		{
+			Parse();
+		}
 	}
-	
-	int passed=time(NULL)-timeoutTimer;
-	if (passed>30)
+	catch(...)
 	{
-		Parse();
+		Log("mhw1pin:--- UNHANDLED EXCEPTION ---");
 	}
     return S_OK;
 }
@@ -208,4 +215,8 @@ void CMHWInputPin1::GrabMHW()
 	m_bGrabMHW=true;
 	ResetPids();
 	timeoutTimer=time(NULL);
+}
+bool CMHWInputPin1::isGrabbing()
+{
+	return m_bGrabMHW;
 }

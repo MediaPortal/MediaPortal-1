@@ -41,6 +41,7 @@ public:
     STDMETHODIMP NewSegment(REFERENCE_TIME tStart,REFERENCE_TIME tStop,double dRate);
 	void ResetPids();
 	bool IsReady();
+	bool isGrabbing();
 	void GrabMHW();
 	CMHWParser   m_MHWParser;
 private:

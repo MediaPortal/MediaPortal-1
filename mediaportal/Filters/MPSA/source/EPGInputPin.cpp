@@ -101,38 +101,45 @@ STDMETHODIMP CEPGInputPin::ReceiveCanBlock()
 //
 STDMETHODIMP CEPGInputPin::Receive(IMediaSample *pSample)
 {
-	if (m_bReset)
+	try
 	{
-		Log("epg:reset");
-		m_bReset=false;
-		m_pDump->m_pSections->ResetEPG();
+		if (m_bReset)
+		{
+			Log("epg:reset");
+			m_bReset=false;
+			m_pDump->m_pSections->ResetEPG();
+		}
+		//Log("epg:Receive()");
+		CheckPointer(pSample,E_POINTER);
+
+	//    CAutoLock lock(m_pReceiveLock);
+		PBYTE pbData=NULL;
+
+		// Has the filter been stopped yet?
+
+		REFERENCE_TIME tStart, tStop;
+		pSample->GetTime(&tStart, &tStop);
+
+		m_tLast = tStart;
+		long lDataLen=0;
+
+		HRESULT hr = pSample->GetPointer(&pbData);
+		if (FAILED(hr)) {
+			Log("epg:Receive() err");
+			return hr;
+		}
+		
+		lDataLen=pSample->GetActualDataLength();
+		// decode
+		if(lDataLen>5)
+			m_pDump->ProcessEPG(pbData,lDataLen);
+
+		//Log("epgpin:Receive() done");
 	}
-	//Log("epg:Receive()");
-    CheckPointer(pSample,E_POINTER);
-
-//    CAutoLock lock(m_pReceiveLock);
-    PBYTE pbData=NULL;
-
-    // Has the filter been stopped yet?
-
-    REFERENCE_TIME tStart, tStop;
-    pSample->GetTime(&tStart, &tStop);
-
-    m_tLast = tStart;
-	long lDataLen=0;
-
-    HRESULT hr = pSample->GetPointer(&pbData);
-    if (FAILED(hr)) {
-		Log("epg:Receive() err");
-        return hr;
-    }
-	
-	lDataLen=pSample->GetActualDataLength();
-	// decode
-	if(lDataLen>5)
-		m_pDump->ProcessEPG(pbData,lDataLen);
-
-	//Log("epgpin:Receive() done");
+	catch(...)
+	{
+		Log("epgpin:--- UNHANDLED EXCEPTION ---");
+	}
     return S_OK;
 }
 

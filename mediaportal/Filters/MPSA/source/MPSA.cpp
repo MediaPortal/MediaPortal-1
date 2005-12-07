@@ -256,7 +256,7 @@ HRESULT CStreamAnalyzerSectionsPin::CheckMediaType(const CMediaType *pmt)
 //
 HRESULT CStreamAnalyzerSectionsPin::BreakConnect()
 {
-//	Log("Section:BreakConnect");
+//	Log("mpsa::Section:BreakConnect");
     return CRenderedInputPin::BreakConnect();
 }
 
@@ -322,7 +322,7 @@ void CStreamAnalyzerSectionsPin::ResetPids()
 STDMETHODIMP CStreamAnalyzerSectionsPin::EndOfStream(void)
 {
     CAutoLock lock(m_pReceiveLock);
-//	Log("Sections:end of stream");
+//	Log("mpsa::Sections:end of stream");
     return CRenderedInputPin::EndOfStream();
 
 } // EndOfStream
@@ -353,7 +353,9 @@ CStreamAnalyzer::CStreamAnalyzer(LPUNKNOWN pUnk, HRESULT *phr) :
 	m_patChannelsCount(0),m_pmtGrabProgNum(0),
 	m_currentPMTLen(0)
 {
-	Log("Initialize MPSA");
+	::DeleteFile("mpsa.log");
+	Log("----mpsa::Initialize MPSA v1.03 ----");
+
 	m_bDecodeATSC=false;
 	m_bReset=true;
     ASSERT(phr);
@@ -433,7 +435,7 @@ CStreamAnalyzer::CStreamAnalyzer(LPUNKNOWN pUnk, HRESULT *phr) :
 
 CStreamAnalyzer::~CStreamAnalyzer()
 {
-//	Log("~CStreamAnalyzer()");
+//	Log("mpsa::~CStreamAnalyzer()");
 	delete m_pDemuxer;
 	delete m_pSections;
 	delete m_pPin;
@@ -466,7 +468,7 @@ CUnknown * WINAPI CStreamAnalyzer::CreateInstance(LPUNKNOWN punk, HRESULT *phr)
 STDMETHODIMP CStreamAnalyzer::ResetParser()
 {
 	
-	Log("ResetParser");
+	Log("mpsa::ResetParser");
 	HRESULT hr=m_pDemuxer->UnMapAllPIDs();
 	m_pPin->ResetPids();
 	m_pMHWPin1->ResetPids();
@@ -486,24 +488,24 @@ STDMETHODIMP CStreamAnalyzer::NonDelegatingQueryInterface(REFIID riid, void ** p
     // Do we have this interface
 	if (riid == IID_IStreamAnalyzer)
 	{
-		Log("get IID_IStreamAnalyzer");
+		Log("mpsa::get IID_IStreamAnalyzer");
 		return GetInterface((IStreamAnalyzer*)this, ppv);
 	}
 	else if (riid == IID_IEPGGrabber)
 	{
-		Log("get IID_IEPGGrabber %x", (*ppv));
+		Log("mpsa::get IID_IEPGGrabber %x", (*ppv));
 		HRESULT hr= GetInterface((IEPGGrabber*)this, ppv);
-		Log("result:%x %x", hr, (*ppv));
+		Log("mpsa::result:%x %x", hr, (*ppv));
 		return hr;
 	}
 	else if (riid == IID_IMHWGrabber)
 	{
-		Log("get IID_IMHWGrabber");
+		Log("mpsa::get IID_IMHWGrabber");
 		return GetInterface((IMHWGrabber*)this, ppv);
 	}
 	else if (riid == IID_ATSCGrabber)
 	{
-		Log("get IID_ATSCGrabber");
+		Log("mpsa::get IID_ATSCGrabber");
 		return GetInterface((IATSCGrabber*)this, ppv);
 	}
     else if (riid == IID_IBaseFilter || riid == IID_IMediaFilter || riid == IID_IPersist)
@@ -520,7 +522,7 @@ STDMETHODIMP CStreamAnalyzer::NonDelegatingQueryInterface(REFIID riid, void ** p
 
 HRESULT CStreamAnalyzer::OnConnectSections()
 {
-//	Log("OnConnectSections");
+//	Log("mpsa::OnConnectSections");
 	m_pDemuxer->SetDemuxPins(m_pFilter->GetFilterGraph());
 	IPin *pin;
 	m_pPin->ConnectedTo(&pin);
@@ -528,13 +530,13 @@ HRESULT CStreamAnalyzer::OnConnectSections()
 	{
 		m_pDemuxer->SetSectionsPin(pin);
 	}	
-//	Log("OnConnectSections done");
+//	Log("mpsa::OnConnectSections done");
 	return S_OK;
 }
 
 HRESULT CStreamAnalyzer::OnConnectEPG()
 {
-//	Log("OnConnectEPG");
+//	Log("mpsa::OnConnectEPG");
 	m_pDemuxer->SetDemuxPins(m_pFilter->GetFilterGraph());
 	IPin *pin;
 	m_pEPGPin->ConnectedTo(&pin);
@@ -542,12 +544,12 @@ HRESULT CStreamAnalyzer::OnConnectEPG()
 	{
 		m_pDemuxer->SetEPGPin(pin);
 	}
-//	Log("OnConnectEPG done");
+//	Log("mpsa::OnConnectEPG done");
 	return S_OK;
 }
 HRESULT CStreamAnalyzer::OnConnectMHW1()
 {
-//	Log("OnConnectMHW1");
+//	Log("mpsa::OnConnectMHW1");
 	m_pDemuxer->SetDemuxPins(m_pFilter->GetFilterGraph());
 	IPin *pin;
 	m_pMHWPin1->ConnectedTo(&pin);
@@ -555,12 +557,12 @@ HRESULT CStreamAnalyzer::OnConnectMHW1()
 	{
 		m_pDemuxer->SetMHW1Pin(pin);
 	}
-//	Log("OnConnectMHW1 done");
+//	Log("mpsa::OnConnectMHW1 done");
 	return S_OK;
 }
 HRESULT CStreamAnalyzer::OnConnectMHW2()
 {
-//	Log("OnConnectMHW2");
+//	Log("mpsa::OnConnectMHW2");
 	m_pDemuxer->SetDemuxPins(m_pFilter->GetFilterGraph());
 	IPin *pin;
 	m_pMHWPin2->ConnectedTo(&pin);
@@ -568,12 +570,13 @@ HRESULT CStreamAnalyzer::OnConnectMHW2()
 	{
 		m_pDemuxer->SetMHW2Pin(pin);
 	}
-//	Log("OnConnectMHW2 done");
+//	Log("mpsa::OnConnectMHW2 done");
 	return S_OK;
 }
 	
 STDMETHODIMP CStreamAnalyzer::ResetPids()
 {
+	Log("mpsa::resetpids");
 	m_bReset=true;
     return NOERROR;
 }
@@ -593,15 +596,15 @@ HRESULT CStreamAnalyzer::ProcessEPG(BYTE *pbData,long len)
 			}
 			if (pbData[0]>=0x50 && pbData[0] <= 0x6f) //EPG
 			{
-				//Log("decode EPG");
+				//Log("mpsa::decode EPG");
 				m_pSections->DecodeEPG(pbData,len);
-				//Log("decode EPG done");
+				//Log("mpsa::decode EPG done");
 			}
 		}
 	}
 	catch(...)
 	{
-		Log("ProcessEPG exception");
+		Log("mpsa:--- PROCESSEPG UNHANDLED EXCEPTION ---");
 	}
 	return S_OK;
 }
@@ -612,12 +615,15 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 	{
 		if (m_bReset)
 		{
-			Log("Reset sections");
+			Log("mpsa::process() reset");
 			m_bReset=false;
 			m_pmtGrabProgNum=0;
 			m_patChannelsCount=0;
-			m_pSections->Reset();
-			m_atscParser.Reset();
+			m_pSections->ResetPAT();
+			if (m_bDecodeATSC)
+			{
+				m_atscParser.Reset();
+			}
 
 		}		
 		//CAutoLock lock(&m_Lock);
@@ -668,9 +674,9 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 				{
 					if (m_patTable[n].PMTReady==0)
 					{
-						//Log("decode PMT");
+						//Log("mpsa::decode PMT");
 						m_pSections->decodePMT(pbData,&m_patTable[n],len);
-						//Log("PMT decoded");
+						//Log("mpsa::PMT decoded");
 						//if(m_patTable[n].Pids.AudioPid1>0)
 						//	m_pDemuxer->MapAdditionalPayloadPID(m_patTable[n].Pids.AudioPid1);
 						//if(m_patTable[n].Pids.AudioPid2>0)
@@ -685,12 +691,13 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 							memset(m_pmtGrabData,0,4096);
 							memcpy(m_pmtGrabData,pbData,len);// save the pmt in the buffer
 							m_currentPMTLen=len;
-							Log("New PMT: map audio/video pids for SS2");
+							Log("mpsa::Received new/modified PMT for program:%d",m_pmtGrabProgNum);
 						}
 					}	
 				}
 			}
 		}
+
 		if(pbData[0]==0x00)// pat
 		{
 			// we need to check if we received a new PAT
@@ -701,28 +708,36 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 			{
 				if (m_patChannelsCount>0) 
 				{
-					Log("Found new PAT, decode");
-					ResetParser();
+					Log("mpsa::Found new PAT");
+					m_pDemuxer->SetSectionMapping();//unmap any section pids and map default pids for pat (0x0,0x10,0x11)
+					m_pmtGrabProgNum=0;
+					m_patChannelsCount=0;
+					m_pSections->ResetPAT();//reset PAT...
+					if (m_bDecodeATSC)
+					{
+						m_atscParser.Reset();
+					}
 				}
-				//m_pDemuxer->UnMapSectionPIDs();
-				//Log("decode pat");
+				//Log("mpsa::decode pat");
 				m_pSections->decodePAT(pbData,m_patTable,&m_patChannelsCount,len);
-				Log("PAT decoded and found %d channels, map pids", m_patChannelsCount);
+				Log("mpsa::PAT decoded and found %d channels, map pids", m_patChannelsCount);
 				for(int n=0;n<m_patChannelsCount;n++)
 				{
 					m_pDemuxer->MapAdditionalPID(m_patTable[n].ProgrammPMTPID);
 				}
-				//Log("PAT decoded and pids mapped");
+				bool grabMHW=m_pMHWPin1->isGrabbing() || m_pMHWPin2->isGrabbing();
+				bool grabEPG=m_pSections->IsEPGGrabbing();						
+				Log("mpsa::PAT decoded and pids mapped (epg:%d mhw:%d)", grabEPG,grabMHW);
 			}
 		}
 		if(pbData[0]==0x42)// sdt
 		{
-			//Log("decode SDT");
+			//Log("mpsa::decode SDT");
 			if (m_patChannelsCount>0)
 			{
 				m_pSections->decodeSDT(pbData,m_patTable,m_patChannelsCount,len);
 			}
-			//Log("SDT decoded");
+			//Log("mpsa::SDT decoded");
 		}
 		if (pbData[0]==0x40) //NIT
 		{
@@ -734,7 +749,7 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 	}
 	catch(...)
 	{
-		Log("Section:process() exception");
+		Log("mpsa:--- PROCESS UNHANDLED EXCEPTION ---");
 	}
 	return S_OK;
 }
@@ -748,19 +763,19 @@ STDMETHODIMP CStreamAnalyzer::GetLCN(WORD channel, WORD* networkId, WORD* transp
 
 STDMETHODIMP CStreamAnalyzer::IsChannelReady(ULONG channel)
 {
-	Log("IsChannelReady:%d channels:%d", channel,m_patChannelsCount);
+	Log("mpsa::IsChannelReady:%d channels:%d", channel,m_patChannelsCount);
 	if(channel<0 || channel >= (ULONG)m_patChannelsCount)
 	{
-		Log("IsChannelReady:%d channels:%d failed, invalid channel", channel,m_patChannelsCount);
+		Log("mpsa::IsChannelReady:%d channels:%d failed, invalid channel", channel,m_patChannelsCount);
 		return S_FALSE;
 	}
 	if(m_patTable[channel].SDTReady!=0 && m_patTable[channel].PMTReady!=0)
 	{
-		Log("IsChannelReady:%d returns true",channel);
+		Log("mpsa::IsChannelReady:%d returns true",channel);
 		return S_OK;
 	}
 		
-	Log("IsChannelReady:%d returns false SDT:%d PMT:%d", channel, m_patTable[channel].SDTReady,m_patTable[channel].PMTReady);
+	Log("mpsa::IsChannelReady:%d returns false SDT:%d PMT:%d", channel, m_patTable[channel].SDTReady,m_patTable[channel].PMTReady);
 	return S_FALSE;
 }
 STDMETHODIMP CStreamAnalyzer::get_IPin (IPin **ppPin)
@@ -826,9 +841,9 @@ STDMETHODIMP CStreamAnalyzer::UseATSC(BOOL yesNo)
 	m_bDecodeATSC=yesNo;
 	m_pDemuxer->UseATSC(yesNo);
 	if (m_bDecodeATSC)
-		Log("use ATSC:yes");
+		Log("mpsa::use ATSC:yes");
 	else
-		Log("use ATSC:no");
+		Log("mpsa::use ATSC:no");
 	
 	return S_OK;
 }
@@ -839,7 +854,7 @@ STDMETHODIMP CStreamAnalyzer::IsATSCUsed(BOOL* yesNo)
 }
 STDMETHODIMP CStreamAnalyzer::GrabEPG()
 {
-//	Log("StreamAnalyzer:GrabEPG");
+//	Log("mpsa::StreamAnalyzer:GrabEPG");
 	m_pSections->GrabEPG();
 	return S_OK;
 }
@@ -951,25 +966,25 @@ STDMETHODIMP CStreamAnalyzer::GetPMTData(BYTE *data)
 STDMETHODIMP CStreamAnalyzer::GetChannel(WORD channel,BYTE *ch)
 {
 	
-	Log("GetChannel(%d) channels found:%d size:%d", channel, m_patChannelsCount,m_pSections->CISize());
+	Log("mpsa::GetChannel(%d) channels found:%d size:%d", channel, m_patChannelsCount,m_pSections->CISize());
 
 	if(channel>=0 && channel < m_patChannelsCount && m_patChannelsCount>0)
 	{
 		memcpy(ch,&m_patTable[channel],m_pSections->CISize());
 		if(m_patTable[channel].SDTReady==0 || m_patTable[channel].PMTReady==0)
 		{
-			Log("GetChannel(%d) not ready",channel);
+			Log("mpsa::GetChannel(%d) not ready",channel);
 			if (m_patTable[channel].SDTReady==0)
-				Log("GetChannel(%d) SDT not found");
+				Log("mpsa::GetChannel(%d) SDT not found");
 			if (m_patTable[channel].PMTReady==0)
-				Log("GetChannel(%d) PMT not found");
+				Log("mpsa::GetChannel(%d) PMT not found");
 			return S_FALSE;
 		}
 	
-		Log("GetChannel(%d) found ok",channel);
+		Log("mpsa::GetChannel(%d) found ok",channel);
 		return S_OK;
 	}
-	Log("GetChannel(%d) invalid channel");
+	Log("mpsa::GetChannel(%d) invalid channel");
 	return S_FALSE;
 }
 STDMETHODIMP CStreamAnalyzer::GetCISize(WORD *size)

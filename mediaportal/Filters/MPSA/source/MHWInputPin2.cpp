@@ -105,64 +105,71 @@ STDMETHODIMP CMHWInputPin2::ReceiveCanBlock()
 //
 STDMETHODIMP CMHWInputPin2::Receive(IMediaSample *pSample)
 {
-	if (m_bReset)
+	try
 	{
-		Log("mhw2:reset");
-		m_bReset=false;
-		m_bParsed=false;
-		m_MHWParser.Reset();
-		timeoutTimer=time(NULL);
+		if (m_bReset)
+		{
+			Log("mhw2:reset");
+			m_bReset=false;
+			m_bParsed=false;
+			m_MHWParser.Reset();
+			timeoutTimer=time(NULL);
+		}
+		if (!m_bGrabMHW) return S_OK; //test
+		CheckPointer(pSample,E_POINTER);
+
+	//    CAutoLock lock(m_pReceiveLock);
+		PBYTE pbData=NULL;
+
+		// Has the filter been stopped yet?
+
+		REFERENCE_TIME tStart, tStop;
+		pSample->GetTime(&tStart, &tStop);
+
+		m_tLast = tStart;
+		long lDataLen=0;
+
+		HRESULT hr = pSample->GetPointer(&pbData);
+		if (FAILED(hr)) {
+			return hr;
+		}
+		
+		lDataLen=pSample->GetActualDataLength();
+		// decode
+		// decode
+		if(lDataLen>5)
+		{
+			if (pbData[0]==0x90)
+			{
+				if (m_MHWParser.ParseSummaries(pbData,lDataLen))
+				{
+					timeoutTimer=time(NULL);
+				}
+			}
+			if (pbData[0]==0x91)
+			{
+				if (m_MHWParser.ParseChannels(pbData,lDataLen))
+				{
+					timeoutTimer=time(NULL);
+				}
+			}
+			if (pbData[0]==0x92)
+			{
+				if (m_MHWParser.ParseThemes(pbData,lDataLen))
+				{
+					timeoutTimer=time(NULL);
+				}
+			}
+		}
+		int passed=time(NULL)-timeoutTimer;
+		if (passed>30)
+		{
+			Parse();
+		}
 	}
-	if (!m_bGrabMHW) return S_OK; //test
-    CheckPointer(pSample,E_POINTER);
-
-//    CAutoLock lock(m_pReceiveLock);
-    PBYTE pbData=NULL;
-
-    // Has the filter been stopped yet?
-
-    REFERENCE_TIME tStart, tStop;
-    pSample->GetTime(&tStart, &tStop);
-
-    m_tLast = tStart;
-	long lDataLen=0;
-
-    HRESULT hr = pSample->GetPointer(&pbData);
-    if (FAILED(hr)) {
-        return hr;
-    }
-	
-	lDataLen=pSample->GetActualDataLength();
-	// decode
-	// decode
-	if(lDataLen>5)
+	catch(...)
 	{
-		if (pbData[0]==0x90)
-		{
-			if (m_MHWParser.ParseSummaries(pbData,lDataLen))
-			{
-				timeoutTimer=time(NULL);
-			}
-		}
-		if (pbData[0]==0x91)
-		{
-			if (m_MHWParser.ParseChannels(pbData,lDataLen))
-			{
-				timeoutTimer=time(NULL);
-			}
-		}
-		if (pbData[0]==0x92)
-		{
-			if (m_MHWParser.ParseThemes(pbData,lDataLen))
-			{
-				timeoutTimer=time(NULL);
-			}
-		}
-	}
-	int passed=time(NULL)-timeoutTimer;
-	if (passed>30)
-	{
-		Parse();
+		Log("mhw2pin:--- UNHANDLED EXCEPTION ---");
 	}
     return S_OK;
 }
@@ -223,4 +230,8 @@ void CMHWInputPin2::GrabMHW()
 	m_bGrabMHW=true;
 	ResetPids();
 	timeoutTimer=time(NULL);
+}
+bool CMHWInputPin2::isGrabbing()
+{
+	return m_bGrabMHW;
 }
