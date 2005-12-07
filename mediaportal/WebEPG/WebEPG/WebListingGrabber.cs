@@ -278,7 +278,7 @@ namespace MediaPortal.EPG
 				return lDatetime;
 			}
 
-            private bool dbProgram(string Title, long Start)
+            private TVProgram dbProgram(string Title, long Start)
             {
                 if (m_dbPrograms.Count > 0)
                 {
@@ -289,7 +289,7 @@ namespace MediaPortal.EPG
                         if (prog.Title == Title && prog.Start == Start)
                         {
                             m_dbLastProg = i;
-                            return true;
+                            return prog;
                         }
                     }
 
@@ -300,11 +300,11 @@ namespace MediaPortal.EPG
                         if (prog.Title == Title && prog.Start == Start)
                         {
                             m_dbLastProg = i;
-                            return true;
+                            return prog;
                         }
                     }
                 }
-                return false;
+                return null;
             }
 
             private bool AdjustTime(ref ProgramData guideData, ref TVProgram program)
@@ -487,10 +487,11 @@ namespace MediaPortal.EPG
                     return null;
 
                 // Check TV db if program exists
-                if (dbProgram(program.Title, program.Start))
+                TVProgram dbProg = dbProgram(program.Title, program.Start);
+                if (dbProg != null)
                 {
-                    Log.WriteFile(Log.LogType.Log, false, "WebEPG: Program in db leaving out of xmltv");
-                    return null;
+                    Log.WriteFile(Log.LogType.Log, false, "WebEPG: Program in db copying it");
+                    return dbProg;
                 }
 				
 				if (guideData.Description != "")
@@ -642,7 +643,8 @@ namespace MediaPortal.EPG
                 if(TVDatabase.GetEPGMapping(strChannelID, out dbChannelId, out dbChannelName)) // (nodeId.InnerText, out idTvChannel, out strTvChannel);
                 {
                     DateTime endGrab = m_StartGrab.AddDays(m_MaxGrabDays+1);
-                    TVDatabase.GetProgramsPerChannel(dbChannelName, GetLongDateTime(m_StartGrab), GetLongDateTime(endGrab), ref m_dbPrograms);
+                    DateTime startGrab = m_StartGrab.AddHours(-1);
+                    TVDatabase.GetProgramsPerChannel(dbChannelName, GetLongDateTime(startGrab), GetLongDateTime(endGrab), ref m_dbPrograms);
                 }
 
 
