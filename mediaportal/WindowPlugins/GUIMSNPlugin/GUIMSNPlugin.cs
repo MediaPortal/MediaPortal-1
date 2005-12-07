@@ -648,7 +648,7 @@ namespace MediaPortal.GUI.MSN
 
       if (_messenger == null) return;
       if (_messenger.Connected == false) return;
-      if (_messenger.Nameserver.SignedIn==false) return;
+      if (_messenger.Nameserver.IsSignedIn==false) return;
       int iContacts = 0;
       foreach (Contact contact in _messenger.ContactList.All)
       {
