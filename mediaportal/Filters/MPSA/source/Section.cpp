@@ -1,3 +1,4 @@
+
 /* 
  *	Copyright (C) 2005 Media Portal
  *  Author: Agree
@@ -482,7 +483,7 @@ bool Sections::IsNewPat(BYTE *pData, int len)
 	{
 		int offset=(8 +(i * 4));
 		int PMTPID=((pData[offset+2] & 0x1F)<<8)+pData[offset+3];
-		if (PMTPID < 0x12 || PMTPID >=0x1fff) 
+		if (PMTPID < 0x10 || PMTPID >=0x1fff) 
 		{
 			Log("newpat: invalid pid:%x", PMTPID);
 			return false;

@@ -353,8 +353,8 @@ CStreamAnalyzer::CStreamAnalyzer(LPUNKNOWN pUnk, HRESULT *phr) :
 	m_patChannelsCount(0),m_pmtGrabProgNum(0),
 	m_currentPMTLen(0)
 {
-	::DeleteFile("mpsa.log");
-	Log("----mpsa::Initialize MPSA v1.03 ----");
+	//::DeleteFile("mpsa.log");
+	Log("----mpsa::Initialize MPSA v1.04 ----");
 
 	m_bDecodeATSC=false;
 	m_bReset=true;
@@ -854,7 +854,7 @@ STDMETHODIMP CStreamAnalyzer::IsATSCUsed(BOOL* yesNo)
 }
 STDMETHODIMP CStreamAnalyzer::GrabEPG()
 {
-//	Log("mpsa::StreamAnalyzer:GrabEPG");
+	Log("mpsa::StreamAnalyzer:GrabEPG");
 	m_pSections->GrabEPG();
 	return S_OK;
 }
@@ -891,6 +891,7 @@ STDMETHODIMP CStreamAnalyzer::GetEPGLanguage(THIS_ ULONG channel, ULONG eventid,
 
 STDMETHODIMP CStreamAnalyzer::GrabMHW()
 {
+	Log("MPSA:GrabMhw()");
 	m_pMHWPin1->GrabMHW();
 	m_pMHWPin2->GrabMHW();
 	return S_OK;

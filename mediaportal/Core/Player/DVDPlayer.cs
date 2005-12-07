@@ -1320,48 +1320,55 @@ namespace MediaPortal.Player
     
 		public override bool GetResumeState(out byte[] resumeData)
 		{
-			Log.Write("DVDPlayer::GetResumeState() begin");
-			resumeData = null;
-			IDvdState dvdState;
-			int hr = _dvdInfo.GetState(out dvdState);
-			if (hr != 0)
-			{
-				Log.WriteFile(Log.LogType.Log,true,"DVDPlayer:GetResumeState() _dvdInfo.GetState failed");
-				return false;
-			}
+      try
+      {
+        Log.Write("DVDPlayer::GetResumeState() begin");
+        resumeData = null;
+        IDvdState dvdState;
+        int hr = _dvdInfo.GetState(out dvdState);
+        if (hr != 0)
+        {
+          Log.WriteFile(Log.LogType.Log, true, "DVDPlayer:GetResumeState() _dvdInfo.GetState failed");
+          return false;
+        }
 
-			IPersistMemory dvdStatePersistMemory = (IPersistMemory)dvdState;
-			if (dvdStatePersistMemory == null)
-			{
-				Log.Write("DVDPlayer::GetResumeState() could not get IPersistMemory");
-				Marshal.ReleaseComObject(dvdState);
-				return false;
-			}
-			uint resumeSize = 0;
-			dvdStatePersistMemory.GetSizeMax(out resumeSize);
-			if (resumeSize <= 0)
-			{
-				Log.Write("DVDPlayer::GetResumeState() failed resumeSize={0}", resumeSize);
-				Marshal.ReleaseComObject(dvdStatePersistMemory);
-				Marshal.ReleaseComObject(dvdState);
-				return false;
-			}
-			IntPtr stateData = Marshal.AllocCoTaskMem((int)resumeSize); 
+        IPersistMemory dvdStatePersistMemory = (IPersistMemory)dvdState;
+        if (dvdStatePersistMemory == null)
+        {
+          Log.Write("DVDPlayer::GetResumeState() could not get IPersistMemory");
+          Marshal.ReleaseComObject(dvdState);
+          return false;
+        }
+        uint resumeSize = 0;
+        dvdStatePersistMemory.GetSizeMax(out resumeSize);
+        if (resumeSize <= 0)
+        {
+          Log.Write("DVDPlayer::GetResumeState() failed resumeSize={0}", resumeSize);
+          Marshal.ReleaseComObject(dvdStatePersistMemory);
+          Marshal.ReleaseComObject(dvdState);
+          return false;
+        }
+        IntPtr stateData = Marshal.AllocCoTaskMem((int)resumeSize);
 
-			try
-			{
-				dvdStatePersistMemory.Save(stateData, true, resumeSize);
-				resumeData = new byte[resumeSize];
-				Marshal.Copy(stateData, resumeData, 0, (int)resumeSize);
-			}
-			catch (Exception ex)
-			{
-				Log.Write("DVDPlayer::GetResumeState() failed {0} {1} {2}", ex.Message,ex.Source,ex.StackTrace);
-			}
-			
-			Marshal.FreeCoTaskMem(stateData);
-			Marshal.ReleaseComObject(dvdStatePersistMemory);
-			Marshal.ReleaseComObject(dvdState);
+        try
+        {
+          dvdStatePersistMemory.Save(stateData, true, resumeSize);
+          resumeData = new byte[resumeSize];
+          Marshal.Copy(stateData, resumeData, 0, (int)resumeSize);
+        }
+        catch (Exception ex)
+        {
+          Log.Write("DVDPlayer::GetResumeState() failed {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
+        }
+
+        Marshal.FreeCoTaskMem(stateData);
+        Marshal.ReleaseComObject(dvdStatePersistMemory);
+        Marshal.ReleaseComObject(dvdState);
+      }
+      catch (Exception)
+      {
+        resumeData = null;
+      }
 			return true;
 		}
 
