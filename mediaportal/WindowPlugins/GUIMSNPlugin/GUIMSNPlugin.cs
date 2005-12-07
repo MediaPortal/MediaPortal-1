@@ -343,8 +343,13 @@ namespace MediaPortal.GUI.MSN
 
     void UpdateStatusButton()
     {
+      if (_messenger==null)
+      {
+        GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTNSTATUS, GUILocalizeStrings.Get(961));//MSN Status
+        return;
+      }
       string strLine = "";
-      if (_messenger.Connected)
+      if (_messenger.Connected && _messenger.Nameserver.IsSignedIn)
       {
         switch (_currentStatus)
         {
