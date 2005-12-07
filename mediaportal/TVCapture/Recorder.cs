@@ -171,6 +171,7 @@ namespace MediaPortal.TV.Recording
     //handle to the processing thread
     static BackgroundWorker _processThread;
     static bool _isPaused = false;
+    static bool _autoGrabEpg = false;
     #endregion
 
     #region delegates and events
@@ -268,6 +269,7 @@ namespace MediaPortal.TV.Recording
       //m_bAlwaysTimeshift=false;
       using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
       {
+        _autoGrabEpg = xmlreader.GetValueAsBool("xmltv", "epgdvb", true);
         _preRecordInterval = xmlreader.GetValueAsInt("capture", "prerecord", 5);
         _postRecordInterval = xmlreader.GetValueAsInt("capture", "postrecord", 5);
         //m_bAlwaysTimeshift   = xmlreader.GetValueAsBool("mytv","alwaystimeshift",false);
@@ -2328,7 +2330,8 @@ namespace MediaPortal.TV.Recording
           if (_isPaused) continue;
 
           //process auto epg grabber
-          ProcessEpg();
+          if (_autoGrabEpg)
+            ProcessEpg();
 
           //process all cards
           ProcessCards();
