@@ -19,6 +19,8 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
     protected GUILabelControl lblCountry = null;
     [SkinControlAttribute(24)]
     protected GUIListControl listCities = null;
+    [SkinControlAttribute(25)]
+    protected GUIButtonControl btnBack = null;
 
     public GUIWizardAnalogCity()
     {
@@ -99,6 +101,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
           GUIPropertyManager.SetProperty("#Wizard.Analog.Done", "yes");
           GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_EPG_SELECT);
       }
+      if (btnBack == control) GUIWindowManager.ShowPreviousWindow();
       base.OnClicked(controlId, control, actionType);
     }
 

@@ -15,8 +15,9 @@ namespace MediaPortal.GUI.Settings.Wizard
 	/// </summary>
 	public class GUIWizardCardsDetected: GUIWindow
 	{
-		[SkinControlAttribute(24)]			protected GUITextControl tbCards=null;
-		[SkinControlAttribute(5)]				protected GUIButtonControl btnNext=null;
+		[SkinControlAttribute(24)]		protected GUITextControl tbCards = null;
+		[SkinControlAttribute(5)]  		protected GUIButtonControl btnNext = null;
+        [SkinControlAttribute(25)]      protected GUIButtonControl btnBack = null;
 
 		public GUIWizardCardsDetected()
 		{
@@ -144,6 +145,7 @@ namespace MediaPortal.GUI.Settings.Wizard
 				return;
 
 			}
+            if (btnBack == control) GUIWindowManager.ShowPreviousWindow();
 			base.OnClicked (controlId, control, actionType);
 		}
 		static public void ScanNextCardType()

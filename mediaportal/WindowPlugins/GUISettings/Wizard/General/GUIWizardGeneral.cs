@@ -16,7 +16,8 @@ namespace MediaPortal.GUI.Settings.Wizard
         [SkinControlAttribute(9)]       protected GUICheckMarkControl cmAutoStartNo = null;
         //[SkinControlAttribute(6)]       protected GUICheckMarkControl cmDeadicatedYes = null;
         //[SkinControlAttribute(7)]       protected GUICheckMarkControl cmDeadicatedNo = null;
-		[SkinControlAttribute(26)]		protected GUIButtonControl    btnNext=null;
+		[SkinControlAttribute(26)]		protected GUIButtonControl    btnNext = null;
+        [SkinControlAttribute(25)]      protected GUIButtonControl    btnBack = null;
 		//[SkinControlAttribute(10)]		protected GUIImage				imgHTPC=null;
 
 		public  GUIWizardGeneral()
@@ -42,7 +43,8 @@ namespace MediaPortal.GUI.Settings.Wizard
             if (cmInternetNo == control)    OnInternetAccess(false);
             if (cmFullScreenYes == control) OnFullScreen(true);
             if (cmFullScreenNo == control)  OnFullScreen(false);
-			if (btnNext==control) OnNextPage();
+			if (btnNext == control) OnNextPage();
+            if (btnBack == control) GUIWindowManager.ShowPreviousWindow();
 			base.OnClicked (controlId, control, actionType);
 		}
 

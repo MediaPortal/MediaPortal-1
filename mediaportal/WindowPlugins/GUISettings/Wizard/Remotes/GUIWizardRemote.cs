@@ -8,13 +8,14 @@ namespace MediaPortal.GUI.Settings.Wizard
 	/// </summary>
 	public class  GUIWizardRemote : GUIWindow
 	{
-		[SkinControlAttribute(4)]			protected GUICheckMarkControl cmMicrosoftUSA=null;
-		[SkinControlAttribute(5)]			protected GUICheckMarkControl cmMicrosoftEU=null;
-		[SkinControlAttribute(6)]			protected GUICheckMarkControl cmHauppauge=null;
-		[SkinControlAttribute(7)]			protected GUICheckMarkControl cmFireDTV=null;
-		[SkinControlAttribute(8)]			protected GUICheckMarkControl cmOther=null;
+		[SkinControlAttribute(4)]		protected GUICheckMarkControl cmMicrosoftUSA=null;
+		[SkinControlAttribute(5)]		protected GUICheckMarkControl cmMicrosoftEU=null;
+		[SkinControlAttribute(6)]		protected GUICheckMarkControl cmHauppauge=null;
+		[SkinControlAttribute(7)]		protected GUICheckMarkControl cmFireDTV=null;
+		[SkinControlAttribute(8)]		protected GUICheckMarkControl cmOther=null;
 		[SkinControlAttribute(26)]		protected GUIButtonControl		btnNext=null;
-		[SkinControlAttribute(10)]		protected GUIImage						imgRemote=null;
+        [SkinControlAttribute(25)]      protected GUIButtonControl btnBack = null;
+		[SkinControlAttribute(10)]		protected GUIImage			imgRemote=null;
 
 		public  GUIWizardRemote()
 		{
@@ -41,6 +42,7 @@ namespace MediaPortal.GUI.Settings.Wizard
 			if (cmFireDTV==control) OnFireDTV();
 			if (cmOther==control) OnOther();
 			if (btnNext==control) OnNextPage();
+            if (btnBack == control) GUIWindowManager.ShowPreviousWindow();
 			base.OnClicked (controlId, control, actionType);
 		}
 
