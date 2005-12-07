@@ -63,6 +63,7 @@ namespace MediaPortal.Player
     static void CreateInstance()
     {
       // disable auto windows mediaplayer auto cd-play
+      if (_wmp10Player != null) return;
       try
       {
         UInt32 dwValue = (UInt32)0;
@@ -80,43 +81,39 @@ namespace MediaPortal.Player
       }
       catch (Exception) { }
 
-      if (_wmp10Player == null)
+      _wmp10Player = new AxWMPLib.AxWindowsMediaPlayer();
+      
+
+      _wmp10Player.BeginInit();
+      GUIGraphicsContext.form.SuspendLayout();
+      _wmp10Player.Enabled = true;
+
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Resource1));
+      _wmp10Player.Location = new System.Drawing.Point(8, 16);
+      _wmp10Player.Name = "axWindowsMediaPlayer1";
+      _wmp10Player.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("axWindowsMediaPlayer1.OcxState")));
+      _wmp10Player.Size = new System.Drawing.Size(264, 240);
+      _wmp10Player.TabIndex = 0;
+      GUIGraphicsContext.form.Controls.Add(_wmp10Player);
+
+
+      try
       {
-
-        _wmp10Player = new AxWMPLib.AxWindowsMediaPlayer();
-        
-
-        _wmp10Player.BeginInit();
-        GUIGraphicsContext.form.SuspendLayout();
-        _wmp10Player.Enabled = true;
-
-        System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Resource1));
-        _wmp10Player.Location = new System.Drawing.Point(8, 16);
-        _wmp10Player.Name = "axWindowsMediaPlayer1";
-        _wmp10Player.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("axWindowsMediaPlayer1.OcxState")));
-        _wmp10Player.Size = new System.Drawing.Size(264, 240);
-        _wmp10Player.TabIndex = 0;
-        GUIGraphicsContext.form.Controls.Add(_wmp10Player);
-
-
-        try
-        {
-            _wmp10Player.EndInit();
-        }
-        catch (COMException)
-        {
-        }
-
-        _wmp10Player.uiMode = "none";
-        _wmp10Player.windowlessVideo = true;
-
-        _wmp10Player.enableContextMenu = false;
-        _wmp10Player.Ctlenabled = false;
-        _wmp10Player.Visible = false;
-        GUIGraphicsContext.form.ResumeLayout(false);
-
+          _wmp10Player.EndInit();
       }
+      catch (COMException)
+      {
+      }
+
+      _wmp10Player.uiMode = "none";
+      _wmp10Player.windowlessVideo = true;
+
+      _wmp10Player.enableContextMenu = false;
+      _wmp10Player.Ctlenabled = false;
+      _wmp10Player.Visible = false;
+      GUIGraphicsContext.form.ResumeLayout(false);
     }
+
     static public ArrayList GetCDTracks()
     {
       GUIListItem item;
