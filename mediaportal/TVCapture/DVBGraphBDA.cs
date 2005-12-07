@@ -5268,7 +5268,7 @@ namespace MediaPortal.TV.Recording
         }
         if (Recorder.IsCardViewing(_cardId) || _graphState == State.Epg)
         {
-
+          Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA: grab epg");
           _epgGrabber.GrabEPG(_currentTuningObject.HasEITSchedule == true);
         }
       }

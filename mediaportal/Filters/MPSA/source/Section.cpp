@@ -1004,7 +1004,7 @@ void Sections::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent)
 		getString468A(&buf[off+1],text_len,buffer);
 		eventDescription=buffer;
 		delete [] buffer;
-		//Log("  text:%s",event.text.c_str());
+		Log("  text:%s",eventDescription.c_str() );
 	}
 	EPGEvent::ivecLanguages it;
 	for (it=epgEvent.vecLanguages.begin(); it != epgEvent.vecLanguages.end();++it)
