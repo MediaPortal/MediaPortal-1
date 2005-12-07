@@ -353,7 +353,7 @@ CStreamAnalyzer::CStreamAnalyzer(LPUNKNOWN pUnk, HRESULT *phr) :
 	m_patChannelsCount(0),m_pmtGrabProgNum(0),
 	m_currentPMTLen(0)
 {
-	//::DeleteFile("mpsa.log");
+	::DeleteFile("mpsa.log");
 	Log("----mpsa::Initialize MPSA v1.04 ----");
 
 	m_bDecodeATSC=false;

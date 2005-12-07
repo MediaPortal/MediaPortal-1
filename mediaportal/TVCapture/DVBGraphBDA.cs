@@ -3651,6 +3651,7 @@ namespace MediaPortal.TV.Recording
               if (pmtProgramNumber == _currentTuningObject.ProgramNumber)
               {
                 gotPMT = true;
+                //Log.Write("DVBGRAPHBDA:Got PMT version:{0} {1}", version, _lastPMTVersion);
                 if (_lastPMTVersion != version)
                 {
                   Log.Write("DVBGRAPHBDA:Got PMT version:{0}", version);
@@ -5267,6 +5268,7 @@ namespace MediaPortal.TV.Recording
         }
         if (Recorder.IsCardViewing(_cardId) || _graphState == State.Epg)
         {
+
           _epgGrabber.GrabEPG(_currentTuningObject.HasEITSchedule == true);
         }
       }

@@ -81,7 +81,6 @@ ULONG Sections::GetCRC32(BYTE *pData,WORD len)
 }
 Sections::Sections()
 {
-	DeleteFile("MPSA.log");
 	m_patTSID=-1;
 	m_patSectionLen=-1;
 	m_patTableVersion=-1;
@@ -457,7 +456,7 @@ bool Sections::IsNewPat(BYTE *pData, int len)
 
 	if (transport_stream_id< 0 || transport_stream_id >=0x1fff) 
 	{
-		Log("newpat: invalid tsid", transport_stream_id);
+	//	Log("newpat: invalid tsid", transport_stream_id);
 		return false; //invalid tsid
 	}
 
