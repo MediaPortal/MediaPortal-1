@@ -401,7 +401,7 @@ namespace MediaPortal.TV.Recording
         }
         // Loop through configured filters for this card, bind them and add them to the graph
         // Note that while adding filters to a graph, some connections may already be created...
-        //Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: Adding configured filters...");
+        Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: Adding configured filters...");
         foreach (string catName in _card.TvFilterDefinitions.Keys)
         {
           FilterDefinition dsFilter = _card.TvFilterDefinitions[catName] as FilterDefinition;
@@ -410,7 +410,7 @@ namespace MediaPortal.TV.Recording
           hr = _graphBuilder.AddFilter(dsFilter.DSFilter, dsFilter.FriendlyName);
           if (hr == 0)
           {
-//            Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:  Added filter <{0}> with moniker <{1}>", dsFilter.FriendlyName, dsFilter.MonikerDisplayName);
+            Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:  Added filter <{0}> with moniker <{1}>", dsFilter.FriendlyName, dsFilter.MonikerDisplayName);
           }
           else
           {
@@ -434,7 +434,7 @@ namespace MediaPortal.TV.Recording
           if (dsFilter.Category == "capture") _filterCaptureDevice = dsFilter.DSFilter;
         }//foreach (string catName in _card.TvFilterDefinitions.Keys)
 
-        //Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: Adding configured filters...DONE");
+        Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: Adding configured filters...DONE");
 
         //no network provider specified? then we cannot build the graph
         if (_filterNetworkProvider == null)
@@ -469,7 +469,7 @@ namespace MediaPortal.TV.Recording
         //
         // The code assumes method 1 is used. If that fails, method 2 is tried...
 
-        //Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA: Adding configured pin connections...");
+        Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA: Adding configured pin connections...");
         for (int i = 0; i < _card.TvConnectionDefinitions.Count; i++)
         {
           //get the source filter for the connection
@@ -488,9 +488,9 @@ namespace MediaPortal.TV.Recording
             continue;
           }
 
-          //Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:  Connecting <{0}>:{1} with <{2}>:{3}",
-          //  sourceFilter.FriendlyName, ((ConnectionDefinition)_card.TvConnectionDefinitions[i]).SourcePinName,
-          // sinkFilter.FriendlyName, ((ConnectionDefinition)_card.TvConnectionDefinitions[i]).SinkPinName);
+          Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:  Connecting <{0}>:{1} with <{2}>:{3}",
+            sourceFilter.FriendlyName, ((ConnectionDefinition)_card.TvConnectionDefinitions[i]).SourcePinName,
+           sinkFilter.FriendlyName, ((ConnectionDefinition)_card.TvConnectionDefinitions[i]).SinkPinName);
 
           //find the pin of the source filter
           sourcePin = DirectShowUtil.FindPin(sourceFilter.DSFilter, PinDirection.Output, ((ConnectionDefinition)_card.TvConnectionDefinitions[i]).SourcePinName);
@@ -502,12 +502,12 @@ namespace MediaPortal.TV.Recording
               sourcePin = DirectShowUtil.FindPinNr(sourceFilter.DSFilter, PinDirection.Output, Convert.ToInt32(strPinName));
               if (sourcePin == null)
                 Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA:FAILED   Unable to find sourcePin: <{0}>", strPinName);
-              //else
-              //	Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:   Found sourcePin: <{0}> <{1}>", strPinName, sourcePin.ToString());
+              else
+              	Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:   Found sourcePin: <{0}> <{1}>", strPinName, sourcePin.ToString());
             }
           }
-          //else
-          //	Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:   Found sourcePin: <{0}> ", ((ConnectionDefinition)_card.TvConnectionDefinitions[i]).SourcePinName);
+          else
+          	Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:   Found sourcePin: <{0}> ", ((ConnectionDefinition)_card.TvConnectionDefinitions[i]).SourcePinName);
 
           //find the pin of the sink filter
           sinkPin = DirectShowUtil.FindPin(sinkFilter.DSFilter, PinDirection.Input, ((ConnectionDefinition)_card.TvConnectionDefinitions[i]).SinkPinName);
@@ -519,12 +519,12 @@ namespace MediaPortal.TV.Recording
               sinkPin = DirectShowUtil.FindPinNr(sinkFilter.DSFilter, PinDirection.Input, Convert.ToInt32(strPinName));
               if (sinkPin == null)
                 Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA:   Unable to find sinkPin: <{0}>", strPinName);
-              //else
-              //	Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:   Found sinkPin: <{0}> <{1}>", strPinName, sinkPin.ToString());
+              else
+              	Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:   Found sinkPin: <{0}> <{1}>", strPinName, sinkPin.ToString());
             }
           }
-          //else
-          //	Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:   Found sinkPin: <{0}> ", ((ConnectionDefinition)_card.TvConnectionDefinitions[i]).SinkPinName);
+          else
+          	Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:   Found sinkPin: <{0}> ", ((ConnectionDefinition)_card.TvConnectionDefinitions[i]).SinkPinName);
 
           //if we have both pins
           if (sourcePin != null && sinkPin != null)
@@ -534,13 +534,13 @@ namespace MediaPortal.TV.Recording
             hr = sourcePin.ConnectedTo(out conPin);
             if (hr != 0)
               hr = _graphBuilder.Connect(sourcePin, sinkPin);
-            //if (hr == 0)
-            //	Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:   Pins connected...");
+            if (hr == 0)
+              Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:   Pins connected...");
 
             // Give warning and release pin...
             if (conPin != null)
             {
-              //Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:   (Pin was already connected...)");
+              Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:   (Pin was already connected...)");
               Marshal.ReleaseComObject(conPin as Object);
               conPin = null;
               hr = 0;
@@ -557,7 +557,7 @@ namespace MediaPortal.TV.Recording
             Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:FAILED   unable to connect pins:0x{0:X}", hr);
             if (sourceFilter.Category == "tunerdevice" && sinkFilter.Category == "capture")
             {
-              //Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:   try other instances");
+              Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:   try other instances");
               if (sinkPin != null)
                 Marshal.ReleaseComObject(sinkPin);
               sinkPin = null;
@@ -576,11 +576,11 @@ namespace MediaPortal.TV.Recording
                 filter = (Filter)al[0];
                 if (filter.Name.Equals(sinkFilter.FriendlyName))
                 {
-                  //Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:   found {0} instances", al.Count);
+                  Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:   found {0} instances", al.Count);
                   for (int filterInstance = 0; filterInstance < al.Count; ++filterInstance)
                   {
                     filter = (Filter)al[filterInstance];
-                    //Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:   try:{0}", filter.MonikerString);
+                    Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:   try:{0}", filter.MonikerString);
                     sinkFilter.MonikerDisplayName = filter.MonikerString;
                     sinkFilter.DSFilter = Marshal.BindToMoniker(sinkFilter.MonikerDisplayName) as IBaseFilter;
                     hr = _graphBuilder.AddFilter(sinkFilter.DSFilter, sinkFilter.FriendlyName);
@@ -594,8 +594,8 @@ namespace MediaPortal.TV.Recording
                         sinkPin = DirectShowUtil.FindPinNr(sinkFilter.DSFilter, PinDirection.Input, Convert.ToInt32(strPinName));
                         if (sinkPin == null)
                           Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA:FAILED   Unable to find sinkPin: <{0}>", strPinName);
-                        //else
-                        //  Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:   Found sinkPin: <{0}> <{1}>", strPinName, sinkPin.ToString());
+                        else
+                          Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:   Found sinkPin: <{0}> <{1}>", strPinName, sinkPin.ToString());
                       }
                     }
                     if (sinkPin != null)
@@ -603,7 +603,7 @@ namespace MediaPortal.TV.Recording
                       hr = _graphBuilder.Connect(sourcePin, sinkPin);
                       if (hr == 0)
                       {
-                        //Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:   Pins connected...");
+                        Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:   Pins connected...");
                         _filterCaptureDevice = sinkFilter.DSFilter;
                         break;
                       }
