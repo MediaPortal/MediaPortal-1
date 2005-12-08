@@ -491,6 +491,7 @@ namespace MediaPortal.EPG
                 if (dbProg != null)
                 {
                     Log.WriteFile(Log.LogType.Log, false, "WebEPG: Program in db copying it");
+                    dbProg.Channel = m_strID;
                     return dbProg;
                 }
 				
