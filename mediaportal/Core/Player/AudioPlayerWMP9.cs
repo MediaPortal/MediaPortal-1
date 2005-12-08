@@ -530,14 +530,14 @@ namespace MediaPortal.Player
         {
           _wmp10Player.ClientSize = new Size(0, 0);
           _wmp10Player.Visible = false;
-          _wmp10Player.uiMode = "invisible";
+          //_wmp10Player.uiMode = "invisible";
         }
       }
       else if (!_wmp10Player.Visible)
       {
         _needUpdate = true;
         SetVideoWindow();
-        _wmp10Player.uiMode = "none";
+        //_wmp10Player.uiMode = "none";
         _wmp10Player.Visible = true;
       }
 
@@ -598,7 +598,7 @@ namespace MediaPortal.Player
         m_SourceRect = m_VideoRect;
         //Log.Write("AudioPlayer:set window:({0},{1})-({2},{3})",_positionX,_positionY,_positionX+_wmp10Player.ClientSize.Width,_positionY+_wmp10Player.ClientSize.Height);
       }
-      _wmp10Player.uiMode = "none";
+      //_wmp10Player.uiMode = "none";
       _wmp10Player.windowlessVideo = true;
       _wmp10Player.enableContextMenu = false;
       _wmp10Player.Ctlenabled = false;

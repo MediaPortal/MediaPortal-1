@@ -68,40 +68,6 @@ typedef struct stDVBNetworkInfo
 
 }DVBNetworkInfo;
 
-typedef  struct stEPGLanguage
-{
-	DWORD language;
-	string event;
-	string text;
-} EPGLanguage;
-
-typedef struct stEPGEvent
-{
-	unsigned int eventid;
-	unsigned long dateMJD;
-	unsigned long timeUTC;
-	unsigned long duration;
-	unsigned int running_status;
-	unsigned int free_CA_mode;
-	string genre;
-	vector<EPGLanguage> vecLanguages;
-	typedef vector<EPGLanguage>::iterator ivecLanguages;
-}EPGEvent;
-
-typedef struct stEPGChannel
-{
-	bool allSectionsReceived;
-	int last_section_number;
-	int original_network_id;
-	int transport_id;
-	int service_id;
-	map<unsigned int,EPGEvent> mapEvents;
-	typedef map<unsigned int,EPGEvent>::iterator imapEvents;
-
-	map<int,bool> mapSectionsReceived;
-	typedef map<int,bool>::iterator imapSectionsReceived;
-}EPGChannel;
-
 typedef struct staudioHeader
 {
     //AudioHeader
@@ -237,17 +203,6 @@ public:
 	//reset
 	void	ResetPAT();
 
-	//epg
-	void	ResetEPG();
-	void	GrabEPG();
-	bool	IsEPGReady();
-	bool	IsEPGGrabbing();
-	ULONG	GetEPGChannelCount( );
-	ULONG	GetEPGEventCount( ULONG channel);
-	void	GetEPGChannel( ULONG channel,  WORD* networkId,  WORD* transportid, WORD* service_id  );
-	void	GetEPGEvent( ULONG channel,  ULONG event,ULONG* language, ULONG* dateMJD, ULONG* timeUTC, ULONG* duration, char** strgenre    );
-	void    GetEPGLanguage(ULONG channel, ULONG eventid,ULONG languageIndex,ULONG* language, char** eventText, char** eventDescription    );
-	void	DecodeEPG(byte* pbData,int len);
 
 	//decode
 	bool	IsNewPat(BYTE *pData, int len);
@@ -270,23 +225,15 @@ public:
 	void	PTSToPTSTime(ULONGLONG pts,PTSTime* ptsTime);
 	HRESULT CurrentPTS(BYTE *pData,ULONGLONG *ptsValue,int *streamType);
 	void	DVB_GetService(BYTE *b,ServiceData *sd);
-	void	getString468A(BYTE *b, int l1,char *text);
+	static void	getString468A(BYTE *b, int l1,char *text);
 	void	DVB_GetLogicalChannelNumber(int original_network_id,int transport_stream_id,byte* b,ChannelInfo *channels, int channelCount);
 	void	DVB_GetSatDelivSys(byte* b, int maxLen);
 	void	DVB_GetTerrestrialDelivSys(byte*b , int maxLen);
 	void	DVB_GetCableDelivSys(byte* b, int maxLen);
 	//pes
 	void GetPES(BYTE *data,ULONG len,BYTE *pes);
-	void DecodeShortEventDescriptor(byte* buf,EPGEvent& event);
-	void DecodeContentDescription(byte* buf,EPGEvent& event);
-	void DecodeExtendedEvent(byte* buf, EPGEvent& event);
 
 private:
-	map<unsigned long,EPGChannel> m_mapEPG;
-	typedef map<unsigned long,EPGChannel>::iterator imapEPG;
-	bool	m_bParseEPG;
-	bool	m_bEpgDone;
-	time_t  m_epgTimeout;
 	int     m_patTableVersion;
 	int     m_patTSID;
 	int     m_patSectionLen;
@@ -294,10 +241,6 @@ private:
 	DVBNetworkInfo m_nit;
 
     CCritSec					m_Lock;                // Main renderer critical section	
-	long	   m_prevChannelIndex;
-	long	   m_prevEventIndex;
-	EPGChannel m_prevChannel;
-	EPGEvent   m_prevEvent;
 };
 
 #endif

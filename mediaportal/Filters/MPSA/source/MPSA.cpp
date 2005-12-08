@@ -580,34 +580,6 @@ STDMETHODIMP CStreamAnalyzer::ResetPids()
 	m_bReset=true;
     return NOERROR;
 }
-HRESULT CStreamAnalyzer::ProcessEPG(BYTE *pbData,long len)
-{
-	if (pbData==NULL) return S_OK;
-	if (len <=3) return S_OK;
-	try
-	{
-		if (m_bDecodeATSC) return S_OK;
-		if (m_pSections->IsEPGGrabbing())
-		{
-			if(pbData[0]==0x00 && pbData[1]==0x00 && pbData[2]==0x01)
-			{
-				//PES PACKET
-				return S_OK;
-			}
-			if (pbData[0]>=0x50 && pbData[0] <= 0x6f) //EPG
-			{
-				//Log("mpsa::decode EPG");
-				m_pSections->DecodeEPG(pbData,len);
-				//Log("mpsa::decode EPG done");
-			}
-		}
-	}
-	catch(...)
-	{
-		Log("mpsa:--- PROCESSEPG UNHANDLED EXCEPTION ---");
-	}
-	return S_OK;
-}
 HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 {
 	
@@ -726,7 +698,7 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 					m_pDemuxer->MapAdditionalPID(m_patTable[n].ProgrammPMTPID);
 				}
 				bool grabMHW=m_pMHWPin1->isGrabbing() || m_pMHWPin2->isGrabbing();
-				bool grabEPG=m_pSections->IsEPGGrabbing();						
+				bool grabEPG=m_pEPGPin->isGrabbing();						
 				Log("mpsa::PAT decoded and pids mapped (epg:%d mhw:%d)", grabEPG,grabMHW);
 			}
 		}
@@ -855,37 +827,37 @@ STDMETHODIMP CStreamAnalyzer::IsATSCUsed(BOOL* yesNo)
 STDMETHODIMP CStreamAnalyzer::GrabEPG()
 {
 	Log("mpsa::StreamAnalyzer:GrabEPG");
-	m_pSections->GrabEPG();
+	m_pEPGPin->GrabEPG();
 	return S_OK;
 }
 STDMETHODIMP CStreamAnalyzer::IsEPGReady(BOOL* yesNo)
 {
-	*yesNo=m_pSections->IsEPGReady();
+	*yesNo=m_pEPGPin->IsEPGReady();
 	return S_OK;
 }
 STDMETHODIMP CStreamAnalyzer::GetEPGChannelCount( ULONG* channelCount)
 {
-	*channelCount=m_pSections->GetEPGChannelCount( );
+	*channelCount=m_pEPGPin->GetEPGChannelCount( );
 	return S_OK;
 }
 STDMETHODIMP CStreamAnalyzer::GetEPGEventCount( ULONG channel,  ULONG* eventCount)
 {
-	*eventCount=m_pSections->GetEPGEventCount( channel);
+	*eventCount=m_pEPGPin->GetEPGEventCount( channel);
 	return S_OK;
 }
 STDMETHODIMP CStreamAnalyzer::GetEPGChannel( ULONG channel,  WORD* networkId,  WORD* transportid, WORD* service_id  )
 {
-	m_pSections->GetEPGChannel( channel,  networkId,  transportid, service_id  );
+	m_pEPGPin->GetEPGChannel( channel,  networkId,  transportid, service_id  );
 	return S_OK;
 }
 STDMETHODIMP CStreamAnalyzer::GetEPGEvent( ULONG channel,  ULONG eventid,ULONG* language, ULONG* dateMJD, ULONG* timeUTC, ULONG* duration, char** genre    )
 {
-	m_pSections->GetEPGEvent( channel,  eventid, language,dateMJD, timeUTC, duration, genre    );
+	m_pEPGPin->GetEPGEvent( channel,  eventid, language,dateMJD, timeUTC, duration, genre    );
 	return S_OK;
 }
 STDMETHODIMP CStreamAnalyzer::GetEPGLanguage(THIS_ ULONG channel, ULONG eventid,ULONG languageIndex,ULONG* language,char** eventText, char** eventDescription    )
 {
-	m_pSections->GetEPGLanguage( channel,  eventid, languageIndex,language,eventText,eventDescription    );
+	m_pEPGPin->GetEPGLanguage( channel,  eventid, languageIndex,language,eventText,eventDescription    );
 	return S_OK;
 }
 

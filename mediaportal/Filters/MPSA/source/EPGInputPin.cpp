@@ -105,9 +105,9 @@ STDMETHODIMP CEPGInputPin::Receive(IMediaSample *pSample)
 	{
 		if (m_bReset)
 		{
-			Log("epg:reset");
+			Log("epgpin:reset");
 			m_bReset=false;
-			m_pDump->m_pSections->ResetEPG();
+			m_parser.ResetEPG();
 		}
 		//Log("epg:Receive()");
 		CheckPointer(pSample,E_POINTER);
@@ -125,15 +125,16 @@ STDMETHODIMP CEPGInputPin::Receive(IMediaSample *pSample)
 
 		HRESULT hr = pSample->GetPointer(&pbData);
 		if (FAILED(hr)) {
-			Log("epg:Receive() err");
+			Log("epgpin:Receive() err");
 			return hr;
 		}
 		
 		lDataLen=pSample->GetActualDataLength();
 		// decode
 		if(lDataLen>5)
-			m_pDump->ProcessEPG(pbData,lDataLen);
-
+		{
+			ProcessEPG(pbData,lDataLen);
+		}
 		//Log("epgpin:Receive() done");
 	}
 	catch(...)
@@ -175,3 +176,68 @@ STDMETHODIMP CEPGInputPin::NewSegment(REFERENCE_TIME tStart,
 
 } // NewSegment
 
+
+HRESULT CEPGInputPin::ProcessEPG(BYTE *pbData,long len)
+{
+	if (pbData==NULL) return S_OK;
+	if (len <=3) return S_OK;
+	try
+	{
+		if (m_parser.IsEPGGrabbing())
+		{
+			if(pbData[0]==0x00 && pbData[1]==0x00 && pbData[2]==0x01)
+			{
+				//PES PACKET
+				return S_OK;
+			}
+			if (pbData[0]>=0x50 && pbData[0] <= 0x6f) //EPG
+			{
+				//Log("mpsa::decode EPG");
+				m_parser.DecodeEPG(pbData,len);
+				//Log("mpsa::decode EPG done");
+			}
+		}
+	}
+	catch(...)
+	{
+		Log("epgpin:--- PROCESSEPG UNHANDLED EXCEPTION ---");
+	}
+	return S_OK;
+}
+
+
+
+bool CEPGInputPin::isGrabbing()
+{
+	return m_parser.IsEPGGrabbing();
+}
+
+void CEPGInputPin::GrabEPG()
+{
+	m_parser.GrabEPG();
+}
+ULONG CEPGInputPin::GetEPGChannelCount( )
+{
+	return m_parser.GetEPGChannelCount( );
+}
+ULONG CEPGInputPin::GetEPGEventCount( ULONG channel)
+{	
+	return m_parser.GetEPGEventCount( channel);
+}
+void CEPGInputPin::GetEPGChannel( ULONG channel,  WORD* networkId,  WORD* transportid, WORD* service_id  )
+{
+	 m_parser.GetEPGChannel( channel,  networkId,  transportid, service_id  );
+}
+void CEPGInputPin::GetEPGEvent( ULONG channel,  ULONG event,ULONG* language, ULONG* dateMJD, ULONG* timeUTC, ULONG* duration, char** strgenre    )
+{
+	m_parser.GetEPGEvent( channel,  event,language, dateMJD, timeUTC, duration, strgenre    );
+}
+void CEPGInputPin::GetEPGLanguage(ULONG channel, ULONG eventid,ULONG languageIndex,ULONG* language, char** eventText, char** eventDescription    )
+{
+	m_parser.GetEPGLanguage(channel, eventid,languageIndex,language, eventText, eventDescription    );
+}
+
+bool CEPGInputPin::IsEPGReady()
+{
+	return m_parser.IsEPGReady();
+}

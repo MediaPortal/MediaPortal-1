@@ -55,7 +55,7 @@ void TableGrabber::OnPacket(byte* pbData,long lDataLen)
 {
 	
 	if (m_bSectionGrabbed) return;
-	int secsTimeOut=time(NULL)-timeoutTimer;
+	int secsTimeOut=(time(NULL)-timeoutTimer);
 	if (secsTimeOut>15) 
 	{
 		Log("mhw-epg: timeout for pid:%x",m_pid);
