@@ -92,16 +92,16 @@ namespace MediaPortal.WebEPG
                 m_writer.WriteEndElement();
 
 				string desc = "";
-				if (program.Episode != String.Empty)
+                if (program.Episode != String.Empty && program.Episode != "unknown")
 					desc += program.Episode + " ";
 
-                if (program.Description != String.Empty)
+                if (program.Description != String.Empty && program.Description != "unknown")
 					desc += program.Description;
 
 				if(desc != "")
                    m_writer.WriteElementString("desc", desc);
 
-				if (program.Genre != String.Empty)
+				if (program.Genre != String.Empty && program.Genre != "-")
 					m_writer.WriteElementString("category", program.Genre);
 
                 /*
