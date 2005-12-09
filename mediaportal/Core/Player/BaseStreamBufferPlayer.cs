@@ -1010,7 +1010,7 @@ namespace MediaPortal.Player
 #if DEBUG
     static DateTime dtStart=DateTime.Now;
 #endif
-    void UpdateCurrentPosition()
+    protected void UpdateCurrentPosition()
     {
       if (_mediaSeeking==null) return;
       //GetCurrentPosition(): Returns stream position. 

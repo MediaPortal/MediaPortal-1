@@ -350,5 +350,55 @@ namespace MediaPortal.Player
     }
 
 
+    public override void SeekAbsolute(double dTimeInSecs)
+    {
+      if (IsTimeShifting && IsTV && dTimeInSecs == 0)
+      {
+        if (Duration < 5)
+        {
+          if (_vmr9 != null)
+          {
+            _vmr9.Enable(false);
+          }
+          _seekToBegin = true;
+          return;
+        }
+      }
+      _seekToBegin = false;
+
+      if (_vmr9 != null)
+      {
+        _vmr9.Enable(true);
+      }
+      if (_state != PlayState.Init)
+      {
+        if (_mediaCtrl != null && _mediaSeeking != null)
+        {
+          if (dTimeInSecs < 0.0d) dTimeInSecs = 0.0d;
+          if (dTimeInSecs > Duration) dTimeInSecs = Duration;
+          dTimeInSecs = Math.Floor(dTimeInSecs);
+          //Log.Write("StreamBufferPlayer: seekabs: {0} duration:{1} current pos:{2}", dTimeInSecs,Duration, CurrentPosition);
+          dTimeInSecs *= 10000000d;
+          long pStop = 0;
+          long lContentStart, lContentEnd;
+          double fContentStart, fContentEnd;
+          _mediaSeeking.GetAvailable(out lContentStart, out lContentEnd);
+          fContentStart = lContentStart;
+          fContentEnd = lContentEnd;
+
+          dTimeInSecs += fContentStart;
+          long lTime = (long)dTimeInSecs;
+          int hr = _mediaSeeking.SetPositions(ref lTime, SeekingFlags.AbsolutePositioning, ref pStop, SeekingFlags.NoPositioning);
+          if (hr != 0)
+          {
+            Log.WriteFile(Log.LogType.Log, true, "seek failed->seek to 0 0x:{0:X}", hr);
+          }
+        }
+        UpdateCurrentPosition();
+        //Log.Write("StreamBufferPlayer: current pos:{0}", CurrentPosition);
+
+      }
+    }
+		
   }
 }
