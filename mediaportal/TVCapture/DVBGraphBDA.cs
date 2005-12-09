@@ -3361,6 +3361,7 @@ namespace MediaPortal.TV.Recording
         // send the PMT table to the device
         _pmtTimer = DateTime.Now;
         Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:Process() send PMT version {0} to device", pmtVersion);
+        _streamDemuxer.DumpPMT(pmt);
         if (props.SendPMT(_currentTuningObject.VideoPid, _currentTuningObject.AudioPid, pmt, (int)pmt.Length))
         {
           Log.Write("DVBGraphBDA:SendPMT() signal strength:{0} signal quality:{1}", SignalStrength(), SignalQuality());

@@ -169,6 +169,8 @@ namespace MediaPortal.Database
 		static public int GetAsInt(SQLiteResultSet results, int iRecord, string strColum)
 		{
 			string result=Get(results, iRecord, strColum);
+      if (result == null) return 0;
+      if (result.Length==0) return 0;
 			int returnValue=-1;
 			try
 			{
@@ -183,7 +185,9 @@ namespace MediaPortal.Database
 		}
 		static public long GetAsInt64(SQLiteResultSet results, int iRecord, string strColum)
 		{
-			string result=Get(results, iRecord, strColum);
+      string result = Get(results, iRecord, strColum);
+      if (result == null) return 0;
+      if (result.Length == 0) return 0;
 			long returnValue=-1;
 			try
 			{

@@ -717,6 +717,38 @@ int m_bufferPositionPMT=0;
 
     #endregion
 
+    public void DumpPMT(byte[] pmt)
+    {
+      DVBSections sections = new DVBSections();
+      DVBSections.ChannelInfo info = new DVBSections.ChannelInfo();
+      if (!sections.GetChannelInfoFromPMT(pmt, ref info))
+      {
+        Log.Write("PMT:invalid"); 
+        return;
+      }
+      Log.Write("PMT: program number:{0}", info.program_number);
+      if (info.pid_list != null)
+      {
+        for (int pids = 0; pids < info.pid_list.Count; pids++)
+        {
+          DVBSections.PMTData data = (DVBSections.PMTData)info.pid_list[pids];
+          if (data.isVideo)
+            Log.Write(" video pid:0x{0:X}", data.elementary_PID);
+          else if (data.isAudio)
+            Log.Write(" audio pid:0x{0:X}", data.elementary_PID);
+          else if (data.isAC3Audio)
+            Log.Write(" ac3 pid:0x{0:X}", data.elementary_PID);
+          else if (data.isDVBSubtitle)
+            Log.Write(" dvb subtitle pid:0x{0:X}", data.elementary_PID);
+          else if (data.isTeletext)
+            Log.Write(" teletext pid:0x{0:X}", data.elementary_PID);
+          else
+            Log.Write(" unknown pid:0x{0:X}", data.elementary_PID);
+        }
+        Log.Write(" pcr pid:0x{0:X}", info.pcr_pid);
+        
+      }
+    }
     //
     //
   }//class dvbdemuxer
