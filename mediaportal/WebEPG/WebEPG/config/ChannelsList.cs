@@ -119,11 +119,11 @@ namespace MediaPortal.EPG.config
 			return ChannelArray;
 		}
 
-        public ChannelInfo FindChannel(string Name, string country)
+        public int FindChannel(string Name, string country)
         {
             ArrayList channels = GetChannelArrayList(country);
 
-            ChannelInfo retChan = null;
+            int retChan = -1;
 
             if (channels == null)
                 return retChan;
@@ -139,13 +139,13 @@ namespace MediaPortal.EPG.config
                 ch = (ChannelInfo)channels[i];
                 if (Name == ch.FullName)
                 {
-                    retChan = ch;
+                    retChan = i;
                     break;
                 }
 
                 if (ch.FullName.IndexOf(Name) != -1)
                 {
-                    retChan = ch;
+                    retChan = i;
                     break;
                 }
 
@@ -153,7 +153,7 @@ namespace MediaPortal.EPG.config
 
                 if (cost < bestCost)
                 {
-                    retChan = ch;
+                    retChan = i;
                     bestCost = cost;
                 }
             }

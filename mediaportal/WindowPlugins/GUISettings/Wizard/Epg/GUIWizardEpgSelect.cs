@@ -210,12 +210,13 @@ namespace WindowPlugins.GUISettings.Epg
           ch.Label = chan.Name;
           ch.Path = "";
           
-          ChannelInfo chInfo = _channelList.FindChannel(chan.Name, country);
-          if (chInfo != null)
+          int chID = _channelList.FindChannel(chan.Name, country);
+          if (chID != -1)
           {
-                ch.Label2 = chInfo.FullName;
-                ch.Path = chInfo.ChannelID;
-                //item.ItemId
+              ChannelInfo chInfo = (ChannelInfo)_epgChannels[chID];
+              ch.Label2 = chInfo.FullName;
+              ch.Path = chInfo.ChannelID;
+              ch.ItemId = chID;
           }
 
           listGrabbers.Add(ch);
@@ -295,7 +296,7 @@ namespace WindowPlugins.GUISettings.Epg
           ChannelInfo selChannel = (ChannelInfo)_epgChannels[dlg.SelectedLabel - 1];
           item.Label2 = selChannel.FullName;
           item.Path = selChannel.ChannelID;
-          item.ItemId = dlg.SelectedLabel;
+          item.ItemId = dlg.SelectedLabel - 1;
       }
     }
 
