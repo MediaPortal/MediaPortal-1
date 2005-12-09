@@ -114,6 +114,7 @@ namespace MediaPortal.Player
 		protected const int WS_CLIPSIBLINGS	= 0x04000000;
 		protected DateTime _updateTimer=DateTime.Now;
 		protected MediaPortal.GUI.Library.Geometry.Type             _geometry=MediaPortal.GUI.Library.Geometry.Type.Normal;
+    protected bool _seekToBegin = false;
 		#endregion
 
 		#region ctor/dtor
@@ -242,11 +243,11 @@ namespace MediaPortal.Player
 					UpdateDuration();
 					System.Windows.Forms.Application.DoEvents();						
 					TimeSpan ts=DateTime.Now-dt;
-					if (ts.TotalSeconds>=2) break;
-				} while (_duration<1);
+					if (ts.TotalSeconds>=5) break;
+				} while (_duration<4);
 
 				UpdateCurrentPosition();
-				double dPos=_duration-5;
+				double dPos=_duration-2;
 				if (dPos>=0 && CurrentPosition<dPos)
 				{
 					//Log.Write("StreamBufferPlayer:Seek to end");
@@ -386,6 +387,10 @@ namespace MediaPortal.Player
 					
 				_updateTimer=DateTime.Now;
 			}
+      if (_seekToBegin)
+      {
+        SeekAbsolute(0);
+      }
 
 			if (IsTimeShifting)
 			{
@@ -844,6 +849,16 @@ namespace MediaPortal.Player
 
 		public override void SeekAbsolute(double dTimeInSecs)
 		{
+      if (IsTimeShifting && IsTV && dTimeInSecs == 0)
+      {
+        if (Duration < 5)
+        {
+          _seekToBegin = true;
+          return;
+        }
+      }
+      _seekToBegin = false;
+
 			if (_state!=PlayState.Init)
 			{
 				if (_mediaCtrl!=null && _mediaSeeking!=null)

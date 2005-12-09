@@ -1097,16 +1097,6 @@ namespace MediaPortal.TV.Recording
             {
               GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SEEK_POSITION, 0, 0, 0, 0, 0, null);
               GUIGraphicsContext.SendMessage(msg);
-              /*
-              if (g_Player.Playing && g_Player.CurrentFile == Recorder.GetTimeShiftFileName(ID - 1))
-              {
-                double position = g_Player.CurrentPosition;
-                double duration = g_Player.Duration;
-                if (position < duration - 5d)
-                {
-                  g_Player.SeekAbsolute(g_Player.Duration-5d);
-                }
-              }*/
             }
 #endif
           }//if (_currentGraph != null)
