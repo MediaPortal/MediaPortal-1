@@ -6660,4 +6660,68 @@
       </connections>
     </tv>
   </capturecard>
+
+  <capturecard commercialname="Leadtek WinFast LR6650" capturename="WinFast LR6650 BDA Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_018714f1&amp;rev_05">
+	<capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+	<tv> 
+	  <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+	  <filters> 
+		<filter cat="networkprovider" 	name="Microsoft DVBT Network Provider" 							checkdevice="false"></filter> 
+		<filter cat="tunerdevice" 		name="WinFast LR6650 BDA DVB-T Tuner/Demod (Thomson DTT7579)"	checkdevice="true"></filter> 
+		<filter cat="capture" 			name="WinFast LR6650 BDA Transport Stream Capture"				checkdevice="true"></filter> 
+	  </filters> 
+	  <connections> 
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection> 
+		<connection sourcefilter="tunerdevice" sourcepin="0" sinkfilter="capture" sinkpin="0"></connection> 
+	  </connections>
+	</tv> 
+  </capturecard>
+
+  <capturecard commercialname="Leadtek WinFast DTV 1000T" capturename="WinFast DTV 1000T BDA Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_018714f1&amp;rev_05"> 
+	<capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities> 
+	<tv> 
+	  <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+	  <filters> 
+		<filter cat="networkprovider"	name="Microsoft DVBT Network Provider"								checkdevice="false"></filter> 
+		<filter cat="tunerdevice"		name="WinFast DTV 1000T BDA DVB-T Tuner/Demod (Thomson DTT7579)"	checkdevice="true"></filter> 
+		<filter cat="capture"			name="WinFast DTV 1000T BDA Transport Stream Capture"				checkdevice="true"></filter> 
+	  </filters> 
+	  <connections> 
+		<connection sourcefilter="networkprovider"	sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"></connection> 
+		<connection sourcefilter="tunerdevice"		sourcepin="0" sinkfilter="capture"		sinkpin="0"></connection> 
+	  </connections> 
+	</tv> 
+  </capturecard>
+
+  <capturecard commercialname="Leadtek WinFast DTV1000 T" capturename="WinFast DTV1000 T BDA Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_018714f1&amp;rev_05"> 
+	<capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities> 
+	<tv> 
+	  <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface> 
+	  <filters> 
+		<filter cat="networkprovider"	name="Microsoft DVBT Network Provider"								checkdevice="false"></filter> 
+		<filter cat="tunerdevice"		name="WinFast DTV1000 T BDA DVB-T Tuner/Demod (Thomson DTT7579)"	checkdevice="true"></filter> 
+		<filter cat="capture"			name="WinFast DTV1000 T BDA Transport Stream Capture"				checkdevice="true"></filter> 
+	  </filters> 
+	  <connections> 
+		<connection sourcefilter="networkprovider"	sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"></connection> 
+		<connection sourcefilter="tunerdevice"		sourcepin="0" sinkfilter="capture"		sinkpin="0"></connection> 
+	  </connections> 
+	</tv> 
+  </capturecard>
+
+  <capturecard commercialname="Leadtek WinFast DTV2000 H" capturename="WinFast DTV2000 H BDA Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_018714f1&amp;rev_05"> 
+	<capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities> 
+	<tv> 
+	  <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface> 
+	  <filters> 
+		<filter cat="networkprovider"	name="Microsoft DVBT Network Provider"								checkdevice="false"></filter> 
+		<filter cat="tunerdevice"		name="WinFast DTV2000 H BDA DVB-T Tuner/Demod (Philips FMD1216ME)"	checkdevice="true"></filter> 
+		<filter cat="capture"			name="WinFast DTV2000 H BDA Transport Stream Capture"				checkdevice="true"></filter> 
+	  </filters> 
+	  <connections> 
+		<connection sourcefilter="networkprovider"	sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"></connection> 
+		<connection sourcefilter="tunerdevice"		sourcepin="0" sinkfilter="capture"		sinkpin="0"></connection> 
+		</connections> 
+	</tv> 
+  </capturecard>
 </capturecards>
