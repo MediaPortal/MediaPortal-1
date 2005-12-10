@@ -6611,11 +6611,11 @@
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"  name="Conexant 2388x Tuner"         checkdevice="true"></filter>
-        <filter cat="tvaudio"  name="Conexant 2388x TvAudio"       checkdevice="true"></filter>
-        <filter cat="crossbar" name="Conexant 2388x Crossbar"      checkdevice="true"></filter>
-        <filter cat="capture"  name="Conexant 2388x Video Capture" checkdevice="true"></filter>
-        <filter cat="encoder"  name="Conexant 2388x MPEG Encoder"      checkdevice="true"></filter>
+        <filter cat="tvtuner"  name="Conexant 2388x Tuner"			checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="Conexant 2388x TvAudio"		checkdevice="true"></filter>
+        <filter cat="crossbar" name="Conexant 2388x Crossbar"		checkdevice="true"></filter>
+        <filter cat="capture"  name="Conexant 2388x Video Capture"	checkdevice="true"></filter>
+        <filter cat="encoder"  name="Conexant 2388x MPEG Encoder"	checkdevice="true"></filter>
       </filters>
       <connections>
 		<connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="0"></connection>
@@ -6625,6 +6625,38 @@
         <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"  sinkpin="1"></connection>
         <connection sourcefilter="capture"  sourcepin="2" sinkfilter="encoder"  sinkpin="0"></connection>
         <connection sourcefilter="capture"  sourcepin="3" sinkfilter="encoder"  sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Card Easy TV PCI Digital Terrestrial" capturename="Easy TV PCI Digital Terrestrial AVStream TS Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_230012ab&amp;rev_05">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
+      <filters>
+        <filter cat="networkprovider"	name="Microsoft DVBT Network Provider"							checkdevice="false"></filter>
+        <filter cat="tunerdevice"		name="Easy TV PCI Digital Terrestrial BDA DVB-T Tuner/Demod"	checkdevice="true"></filter>
+        <filter cat="capture"			name="Easy TV PCI Digital Terrestrial AVStream TS Capture"		checkdevice="true"></filter>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" 	sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice" 		sourcepin="0" sinkfilter="capture"		sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="ADS MiniDigital DVB-T USB (PTV-337)" capturename="Mini DigitalTV USB, Capture" devid="vid_06e1&amp;pid_a337">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider"	name="Microsoft DVBT Network Provider"	checkdevice="false"></filter>
+        <filter cat="tunerdevice"		name="Mini DigitalTV USB, Tuner"		checkdevice="true"></filter>
+        <filter cat="capture"     		name="Mini DigitalTV USB, Capture"		checkdevice="true"></filter>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice" sourcepin="0" sinkfilter="capture" sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
