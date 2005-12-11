@@ -771,6 +771,7 @@ namespace MediaPortal.Configuration.Sections
           }
         }
       }
+      Directory.SetCurrentDirectory(currDir);
     }
   }
 }
