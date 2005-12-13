@@ -6725,16 +6725,16 @@
 	</tv> 
   </capturecard>
 
-  <capturecard commercialname="Avermedia ODM M104" capturename="AVerMedia AverTV Video Capture (AF2)" devid="ven_4444&amp;dev_0016&amp;subsys_c1361461&amp;rev_01">
+  <capturecard commercialname="AVerMedia AVerTV Video Capture (M104)" capturename="AVerMedia AVerTV Video Capture (AF2)" devid="ven_4444&amp;dev_0016&amp;subsys_c1361461&amp;rev_01">
     <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"></capabilities>
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"  name="AVerMedia AverTV TvTuner (AF2)" 		checkdevice="true"></filter>
-        <filter cat="tvaudio"  name="AVerMedia AverTV TvAudio (AF2)"		checkdevice="true"></filter>
-        <filter cat="crossbar" name="AVerMedia AverTV Crossbar (AF2)"		checkdevice="true"></filter>
-        <filter cat="capture"  name="AVerMedia AverTV Video Capture (AF2)"	checkdevice="true"></filter>
-        <filter cat="encoder"  name="AVerMedia AverTV Encoder (AF2)"		checkdevice="true"></filter>
+        <filter cat="tvtuner"  name="AVerMedia AVerTV Tuner (AF2)" 		checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="AVerMedia AVerTV TvAudio (AF2)"		checkdevice="true"></filter>
+        <filter cat="crossbar" name="AVerMedia AVerTV Crossbar (AF2)"		checkdevice="true"></filter>
+        <filter cat="capture"  name="AVerMedia AVerTV Video Capture (AF2)"	checkdevice="true"></filter>
+        <filter cat="encoder"  name="AVerMedia AVerTV Encoder (AF2)"		checkdevice="true"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar"	sinkpin="0"></connection>
