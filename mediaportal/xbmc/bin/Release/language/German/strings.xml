@@ -3118,6 +3118,16 @@
   <value>Ruhezustand</value>
 </string>
 
+<!-- Recording Type: WeekEnds -->
+<string>
+	<id>1050</id>
+	<value>Sa-So</value>
+</string>	
+<string>
+	<id>1051</id>
+	<value>Sa-So aufnehmen</value>
+</string>	
+<!-- End Recording Type: WeekEnds -->
 
    <!-- Music Import Strings -->
 <string><id>1100</id><value>CD importieren</value></string>
@@ -3832,12 +3842,12 @@
 <string><id>200008</id><value>Setup - Fernbedienung</value></string>
 <string><id>200009</id><value>Weiter &gt;</value></string>
 <string><id>200010</id><value>Media Portal verwandelt ihren PC in ein fortschrittliches Multi-Media-Center.</value></string>
-<string><id>200011</id><value>Mit Media Portal können sie Fernsehen, ihre Lieblingsmusik geniessen,</value></string>
-<string><id>200012</id><value>Videos und DVD abspielen und vieles mehr.</value></string>
-<string><id>200013</id><value>Sie können damit Musik &amp; Radio hören, ihre Filme, DVD, Fotos und</value></string>
-<string><id>200014</id><value>Videos ansehen, Fernsehen oder Sendungen aufnehmen und vieles mehr.</value></string>
-<string><id>200015</id><value>Der Assistent wird ihnen helfen, Media Portal schnell und einfach einzurichten.</value></string>
-<string><id>200016</id><value>Drücken sie den "Weiter" Knopf um fortzufahren</value></string>
+<string><id>200011</id><value>Mit Media Portal können sie Fernsehen oder ihre Lieblingsmusik geniessen</value></string>
+<string><id>200012</id><value>Videos oder DVD abspielen und vieles mehr.</value></string>
+<string><id>200013</id><value>Dieser Assistent wird ihnen helfen, Media Portal schnell und einfach einzurichten.</value></string>
+<string><id>200014</id><value>Folgen sie dazu einfach den weiteren Schritten:</value></string>
+<string><id>200015</id><value>Klicken sie nun "Weiter" um zu beginnen.</value></string>
+
 <string><id>200017</id><value>Willkommen bei Media Portal. </value></string>
 <string><id>200018</id><value>Herzlichen Glückwunsch - Media Portal ist jetzt fertig eingerichtet!</value></string>
 <string><id>200019</id><value>Klicken sie auf "Fertig" um den Assistenten zu schliessen</value></string>
@@ -3863,15 +3873,11 @@
 
 
 
-
-
-
-
 <!-- Web Browser Strings -->
 <string><id>4000</id><value>Internet</value></string>
 <string><id>4001</id><value>Lesezeichen</value></string>
+<string><id>4002</id><value>Seite kann nicht geladen werden</value></string>
+<string><id>4003</id><value>Bitte legen sie in den Einstellungen einen Ordner für die Lesezeichen fest.</value></string>
 
 <string><id>666666</id><value>translated by "rtv" with many thanks to all helpers - please direct updates/issues to f1n4rf1n@gmx.de or drop me a PM in the forums!</value></string>
-
-
 </strings>
