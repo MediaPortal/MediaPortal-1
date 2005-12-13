@@ -396,7 +396,11 @@ namespace MediaPortal.TV.Recording
       using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
       {
         bool enabled = xmlreader.GetValueAsBool("xmltv", "epgdvb", true);
-        if (!enabled) return;
+        if (!enabled)
+        {
+          Log.WriteFile(Log.LogType.EPG, "epg-grab: EPG grabber disabled");
+          return;
+        }
       }
 
       _grabEPG = epg;
@@ -429,110 +433,129 @@ namespace MediaPortal.TV.Recording
         else
         {
           _currentState = State.Grabbing;
-          Log.WriteFile(Log.LogType.EPG, "epg-grab: start MHW grabber");
           if (_mhwInterface != null)
           {
+            Log.WriteFile(Log.LogType.EPG, "epg-grab: start MHW grabber");
             _mhwInterface.GrabMHW();
             _timeoutTimer = DateTime.Now;
           }
+          else
+          {
+            Log.WriteFile(Log.LogType.EPG, "epg-grab: start MHW grabber:MHWinterface=null");
+          }
         }
       }
-
     }
+
     public void Process()
     {
-      if (_currentState != State.Idle)
+      try
       {
-        TimeSpan ts = DateTime.Now - _timeoutTimer;
-        if (ts.TotalMinutes >= 1)
+        if (_currentState != State.Idle)
         {
-          Log.Write("epg-grab: timeout...");
-          _currentState = State.Done;
-        }
-      }
-      bool ready = false;
-      switch (_currentState)
-      {
-        case State.Grabbing:
-          if (Network == NetworkType.ATSC)
+          TimeSpan ts = DateTime.Now - _timeoutTimer;
+          if (ts.TotalMinutes >= 1)
           {
-            if (_atscInterface != null)
+            Log.Write("epg-grab: timeout...");
+            _currentState = State.Done;
+          }
+        }
+        bool ready = false;
+        switch (_currentState)
+        {
+          case State.Grabbing:
+            if (Network == NetworkType.ATSC)
             {
-              _atscInterface.IsATSCReady(out ready);
+              if (_atscInterface != null)
+              {
+                _atscInterface.IsATSCReady(out ready);
+                if (ready)
+                {
+                  Log.Write("epg-grab: ATSC EPG ready...");
+                  _timeoutTimer = DateTime.Now;
+                  _currentState = State.Parsing;
+                }
+              }
+            }
+            else if (_epgInterface != null && _grabEPG)
+            {
+              _epgInterface.IsEPGReady(out ready);
+              uint count;
+              _epgInterface.GetEPGChannelCount(out count);
               if (ready)
               {
+                Log.Write("epg-grab: EPG ready...");
                 _timeoutTimer = DateTime.Now;
                 _currentState = State.Parsing;
               }
             }
-          }
-          else if (_epgInterface != null && _grabEPG)
-          {
-            _epgInterface.IsEPGReady(out ready);
-            uint count;
-            _epgInterface.GetEPGChannelCount(out count);
-            if (ready)
+            else if (_mhwInterface != null && !_grabEPG)
             {
-              Log.Write("epg-grab: EPG ready...");
-              _timeoutTimer = DateTime.Now;
-              _currentState = State.Parsing;
-            }
-          }
-          else if (_mhwInterface != null && !_grabEPG)
-          {
-            _mhwInterface.IsMHWReady(out ready);
-            if (ready)
-            {
-              Log.Write("epg-grab: MHW ready...");
-              _timeoutTimer = DateTime.Now;
-              if (_epgInterface != null)
+              _mhwInterface.IsMHWReady(out ready);
+              if (ready)
               {
-                short titleCount;
-                _mhwInterface.GetMHWTitleCount(out titleCount);
-                if (titleCount <= 0)
+                Log.Write("epg-grab: MHW ready...");
+                _timeoutTimer = DateTime.Now;
+                if (_epgInterface != null)
                 {
-                  Log.Write("epg-grab: no MHW events, try DVB EPG");
-                  _grabEPG = true;
-                  _epgInterface.GrabEPG();
+                  short titleCount;
+                  _mhwInterface.GetMHWTitleCount(out titleCount);
+                  if (titleCount <= 0)
+                  {
+                    Log.Write("epg-grab: no MHW events, try DVB EPG");
+                    _grabEPG = true;
+                    _epgInterface.GrabEPG();
+                  }
+                  else
+                  {
+                    _currentState = State.Parsing;
+                  }
                 }
                 else
                 {
                   _currentState = State.Parsing;
                 }
               }
-              else
-              {
-                _currentState = State.Parsing;
-              }
             }
-          }
-          break;
+            break;
 
-        case State.Parsing:
-          if (Network == NetworkType.ATSC)
-          {
-            ParseATSC();
-          }
-          else if (_grabEPG)
-          {
-            ParseEPG();
-          }
-          else
-          {
-            ParseMHW();
-          }
+          case State.Parsing:
+            if (Network == NetworkType.ATSC)
+            {
+              Log.Write("epg-grab: ATSC parsing...");
+              ParseATSC();
+            }
+            else if (_grabEPG)
+            {
+              Log.Write("epg-grab: EPG parsing...");
+              ParseEPG();
+            }
+            else
+            {
+              Log.Write("epg-grab: MHW parsing...");
+              ParseMHW();
+            }
 
-          _currentState = State.Updating;
-          break;
+            _currentState = State.Updating;
+            break;
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Write("epg-grab: exception :{0} {1} {2}",ex.Message,ex.Source,ex.StackTrace);
       }
     }
+
     public void Reset()
     {
+      Log.WriteFile(Log.LogType.EPG, "epg-grab: reset");
       _currentState = State.Idle;
     }
     public bool Done
     {
-      get { return _currentState == State.Done; }
+      get { 
+        return _currentState == State.Done; 
+      }
     }
     #endregion
 
@@ -762,72 +785,80 @@ namespace MediaPortal.TV.Recording
     #region DVB EPG
     void EpgBackgroundWorker(object sender, DoWorkEventArgs e)
     {
-      _epgChannels = new List<TvChannelEpg>();
-      System.Threading.Thread.CurrentThread.Priority = System.Threading.ThreadPriority.BelowNormal;
-      TVDatabase.RemoveOldPrograms();
-      List<EPGChannel> events = _listChannels;
-      _listChannels = null;
-      Log.WriteFile(Log.LogType.EPG, "epg-grab: updating tv database:{0}", events.Count);
-      TVDatabase.SupressEvents = true;
-      string languagesToGrab = String.Empty;
-      using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      Log.WriteFile(Log.LogType.EPG, "epg: update database");
+      try
       {
-        languagesToGrab = xmlreader.GetValueAsString("epg-grabbing", "grabLanguages", "");
-      }
-
-      
-      foreach (EPGChannel channel in events)
-      {
-        _timeoutTimer = DateTime.Now;
-        if (channel.TvChannel == null) continue;
-        channel.Sort();
-        foreach (EPGEvent epgEvent in channel.EpgEvents)
+        _epgChannels = new List<TvChannelEpg>();
+        System.Threading.Thread.CurrentThread.Priority = System.Threading.ThreadPriority.BelowNormal;
+        TVDatabase.RemoveOldPrograms();
+        List<EPGChannel> events = _listChannels;
+        _listChannels = null;
+        Log.WriteFile(Log.LogType.EPG, "epg-grab: updating tv database:{0}", events.Count);
+        TVDatabase.SupressEvents = true;
+        string languagesToGrab = String.Empty;
+        using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
         {
-          foreach (EPGLanguage epgLang in epgEvent.Languages)
-          {
-            bool grabLanguage = false;
-            if (languagesToGrab != "")
-            {
-              string[] langs = languagesToGrab.Split(new char[] { '/' });
-              foreach (string lang in langs)
-              {
-                if (lang == String.Empty) continue;
-                // Smirnoff: made this case-insensitive as per bug reports
-                if (string.Compare(epgLang.Language, lang, true) == 0) grabLanguage = true;
-                if (epgLang.Language == String.Empty) grabLanguage = true;
-              }
-            }
-            else grabLanguage = true;
-            if (!grabLanguage)
-            {
-              Log.WriteFile(Log.LogType.EPG, "epg-grab: disregard language:'{0}' {1} {2} {3}-{4} {5}",
-                      epgLang.Language,
-                      channel.TvChannel.Name,
-                      epgEvent.StartTime.ToLongDateString(),
-                      epgEvent.StartTime.ToLongTimeString(), epgEvent.EndTime.ToLongTimeString(), epgLang.Title);
-              continue;
-            }
-            TVProgram tv = new TVProgram();
-            tv.Start = Util.Utils.datetolong(epgEvent.StartTime);
-            tv.End = Util.Utils.datetolong(epgEvent.EndTime);
-            tv.Channel = channel.TvChannel.Name;
-            tv.Genre = epgEvent.Genre;
-            tv.Title = epgLang.Title;
-            tv.Description = epgLang.Description;
+          languagesToGrab = xmlreader.GetValueAsString("epg-grabbing", "grabLanguages", "");
+        }
 
-            Log.WriteFile(Log.LogType.EPG, "epg-grab: add:'{0}' {1} {2} {3}-{4} {5}",
-                      epgLang.Language,
-                      channel.TvChannel.Name,
-                      epgEvent.StartTime.ToLongDateString(),
-                      epgEvent.StartTime.ToLongTimeString(), epgEvent.EndTime.ToLongTimeString(), epgLang.Title);
-            TVDatabase.UpdateProgram(tv);
-            OnChannelEvent(tv.Channel, tv.StartTime, tv.EndTime);
+
+        foreach (EPGChannel channel in events)
+        {
+          _timeoutTimer = DateTime.Now;
+          if (channel.TvChannel == null) continue;
+          channel.Sort();
+          foreach (EPGEvent epgEvent in channel.EpgEvents)
+          {
+            foreach (EPGLanguage epgLang in epgEvent.Languages)
+            {
+              bool grabLanguage = false;
+              if (languagesToGrab != "")
+              {
+                string[] langs = languagesToGrab.Split(new char[] { '/' });
+                foreach (string lang in langs)
+                {
+                  if (lang == String.Empty) continue;
+                  // Smirnoff: made this case-insensitive as per bug reports
+                  if (string.Compare(epgLang.Language, lang, true) == 0) grabLanguage = true;
+                  if (epgLang.Language == String.Empty) grabLanguage = true;
+                }
+              }
+              else grabLanguage = true;
+              if (!grabLanguage)
+              {
+                Log.WriteFile(Log.LogType.EPG, "epg-grab: disregard language:'{0}' {1} {2} {3}-{4} {5}",
+                        epgLang.Language,
+                        channel.TvChannel.Name,
+                        epgEvent.StartTime.ToLongDateString(),
+                        epgEvent.StartTime.ToLongTimeString(), epgEvent.EndTime.ToLongTimeString(), epgLang.Title);
+                continue;
+              }
+              TVProgram tv = new TVProgram();
+              tv.Start = Util.Utils.datetolong(epgEvent.StartTime);
+              tv.End = Util.Utils.datetolong(epgEvent.EndTime);
+              tv.Channel = channel.TvChannel.Name;
+              tv.Genre = epgEvent.Genre;
+              tv.Title = epgLang.Title;
+              tv.Description = epgLang.Description;
+
+              Log.WriteFile(Log.LogType.EPG, "epg-grab: add:'{0}' {1} {2} {3}-{4} {5}",
+                        epgLang.Language,
+                        channel.TvChannel.Name,
+                        epgEvent.StartTime.ToLongDateString(),
+                        epgEvent.StartTime.ToLongTimeString(), epgEvent.EndTime.ToLongTimeString(), epgLang.Title);
+              TVDatabase.UpdateProgram(tv);
+              OnChannelEvent(tv.Channel, tv.StartTime, tv.EndTime);
+            }
           }
         }
+
+        UpdateChannels();
+      }
+      catch (Exception ex)
+      {
+        Log.WriteFile(Log.LogType.EPG, "epg-grab: exception:{0} {1} {2}",ex.Message,ex.Source,ex.StackTrace);
       }
       Log.WriteFile(Log.LogType.EPG, "epg-grab: done");
-
-      UpdateChannels();
       TVDatabase.SupressEvents = false;
       _currentState = State.Done;
     }
@@ -838,12 +869,12 @@ namespace MediaPortal.TV.Recording
     {
       try
       {
+        Log.WriteFile(Log.LogType.EPG, "mhw-grab: updating tv database");
         _epgChannels = new List<TvChannelEpg>();
         System.Threading.Thread.CurrentThread.Priority = System.Threading.ThreadPriority.Normal;
         TVDatabase.RemoveOldPrograms();
         List<MHWEvent> events = _listMhwEvents;
         _listMhwEvents = null;
-        Log.WriteFile(Log.LogType.EPG, "mhw-grab: updating tv database");
         TVDatabase.SupressEvents = true;
         events.Sort(new MHWEventComparer());
 
@@ -898,8 +929,8 @@ namespace MediaPortal.TV.Recording
       {
         TVDatabase.SupressEvents = false;
         _currentState = State.Done;
+        Log.WriteFile(Log.LogType.EPG, "mhw-grab: updating tv database done");
       }
-
     }
     #endregion
 
@@ -907,38 +938,46 @@ namespace MediaPortal.TV.Recording
     #region ATSC
     void AtscBackgroundWorker(object sender, DoWorkEventArgs e)
     {
-      _epgChannels = new List<TvChannelEpg>();
-      System.Threading.Thread.CurrentThread.Priority = System.Threading.ThreadPriority.BelowNormal;
-      TVDatabase.RemoveOldPrograms();
-      List<ATSCEvent> events = _listAtscEvents;
-      _listAtscEvents = null;
-      Log.WriteFile(Log.LogType.EPG, "atsc-grab: updating tv database");
-      TVDatabase.SupressEvents = true;
-      
-      foreach (ATSCEvent atscEvent in events)
+      try
       {
-        _timeoutTimer = DateTime.Now;
-        if (atscEvent.TvChannel == null) continue;
-        TVProgram tv = new TVProgram();
-        tv.Start = Util.Utils.datetolong(atscEvent.StartTime);
-        tv.End = Util.Utils.datetolong(atscEvent.EndTime);
-        tv.Channel = atscEvent.TvChannel.Name;
-        tv.Genre = atscEvent.Genre;
-        if (atscEvent.Languages.Count > 0)
+        Log.WriteFile(Log.LogType.EPG, "atsc-grab: updating tv database");
+        _epgChannels = new List<TvChannelEpg>();
+        System.Threading.Thread.CurrentThread.Priority = System.Threading.ThreadPriority.BelowNormal;
+        TVDatabase.RemoveOldPrograms();
+        List<ATSCEvent> events = _listAtscEvents;
+        _listAtscEvents = null;
+        TVDatabase.SupressEvents = true;
+        
+        foreach (ATSCEvent atscEvent in events)
         {
-          tv.Title = atscEvent.Languages[0].Title;
-          tv.Description = atscEvent.Languages[0].Description;
+          _timeoutTimer = DateTime.Now;
+          if (atscEvent.TvChannel == null) continue;
+          TVProgram tv = new TVProgram();
+          tv.Start = Util.Utils.datetolong(atscEvent.StartTime);
+          tv.End = Util.Utils.datetolong(atscEvent.EndTime);
+          tv.Channel = atscEvent.TvChannel.Name;
+          tv.Genre = atscEvent.Genre;
+          if (atscEvent.Languages.Count > 0)
+          {
+            tv.Title = atscEvent.Languages[0].Title;
+            tv.Description = atscEvent.Languages[0].Description;
 
-          Log.WriteFile(Log.LogType.EPG, "atsc-grab: add: {0} {1} {2}-{3} {4}",
-                    atscEvent.TvChannel.Name, atscEvent.StartTime.ToLongDateString(), atscEvent.StartTime.ToLongTimeString(), atscEvent.EndTime.ToLongTimeString(), atscEvent.Languages[0].Title);
-          TVDatabase.UpdateProgram(tv);
-          OnChannelEvent(tv.Channel, tv.StartTime, tv.EndTime);
+            Log.WriteFile(Log.LogType.EPG, "atsc-grab: add: {0} {1} {2}-{3} {4}",
+                      atscEvent.TvChannel.Name, atscEvent.StartTime.ToLongDateString(), atscEvent.StartTime.ToLongTimeString(), atscEvent.EndTime.ToLongTimeString(), atscEvent.Languages[0].Title);
+            TVDatabase.UpdateProgram(tv);
+            OnChannelEvent(tv.Channel, tv.StartTime, tv.EndTime);
+          }
+
         }
-
+      }
+      catch (Exception ex)
+      {
+        Log.WriteFile(Log.LogType.EPG, "epg-grab: exception:{0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
       }
       UpdateChannels();
       TVDatabase.SupressEvents = false;
       _currentState = State.Done;
+      Log.WriteFile(Log.LogType.EPG, "atsc-grab: updating tv database done");
     }
     #endregion
 
