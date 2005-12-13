@@ -2297,6 +2297,10 @@
 	<id>750</id>
 	<value>Images</value>
 </string>
+ <string>
+   <id>751</id>
+   <value>Show all songs from this artist</value>
+ </string>
 <string>
 	<id>800</id>
 	<value>Starts with</value>

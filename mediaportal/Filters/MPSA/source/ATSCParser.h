@@ -29,7 +29,7 @@ class ATSCParser
 	}ETMEvent;
 
 public:
-	ATSCParser(void);
+	ATSCParser(IPin* pPin);
 	~ATSCParser(void);
 	void SetDemuxer(SplitterSetup* demuxer);
 
@@ -56,6 +56,7 @@ private:
 	int  			mgSectionNumber;
 	int  			mgLastSectionNumber;
 	SplitterSetup*	m_demuxer;
+	IPin*			m_pPin;
 	time_t			m_epgTimeout;
 	CCritSec m_Lock;
 

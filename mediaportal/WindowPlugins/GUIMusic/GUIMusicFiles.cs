@@ -446,6 +446,15 @@ namespace MediaPortal.GUI.Music
           dlg.AddLocalizedString(500); // FileMenu
       }
 
+      if (g_Player.Playing && g_Player.IsMusic)
+      {
+        string artist = GUIPropertyManager.GetProperty("#Play.Current.Artist");
+        if (artist.Length > 0)
+        {
+          dlg.AddLocalizedString(751); // Show all songs of this artist
+        }
+      }
+
       dlg.DoModal(GetID);
       if (dlg.SelectedId == -1) return;
       switch (dlg.SelectedId)
@@ -516,6 +525,43 @@ namespace MediaPortal.GUI.Music
 
         case 1102: // Cancel CD import
           OnAction(new Action(Action.ActionType.ACTION_CANCEL_IMPORT, 0, 0));
+          break;
+
+        case 751:
+          {
+            string artist = GUIPropertyManager.GetProperty("#Play.Current.Artist");
+            int viewNr=-1;
+            for (int x = 0; x < handler.Views.Count; ++x)
+            {
+              ViewDefinition view = (ViewDefinition)handler.Views[x];
+              if (view.Name.ToLower().IndexOf("artist") >= 0)
+              {
+                viewNr = x;
+              }
+            }
+            if (viewNr < 0) return;
+            ViewDefinition selectedView = (ViewDefinition)handler.Views[viewNr];
+            handler.CurrentView = selectedView.Name;
+            MusicState.View = selectedView.Name;
+            GUIMusicGenres.SelectArtist(artist);
+            int nNewWindow = (int)GUIWindow.Window.WINDOW_MUSIC_GENRE;
+            if (GetID != nNewWindow)
+            {
+              MusicState.StartWindow = nNewWindow;
+              if (nNewWindow != GetID)
+              {
+                GUIWindowManager.ReplaceWindow(nNewWindow);
+              }
+            }
+            else
+            {
+              LoadDirectory(String.Empty);
+              if (facadeView.Count <= 0)
+              {
+                GUIControl.FocusControl(GetID, btnViewAs.GetID);
+              }
+            }
+          }
           break;
       }
     }

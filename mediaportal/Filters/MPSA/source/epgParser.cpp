@@ -24,15 +24,17 @@ void CEPGParser::DecodeEPG(byte* buf,int len)
 	//30-08-2005 19:54:38 DecodeEPG() check section 0 (50 f0 0f 2e e3 c9 d32ff20)
 	//Log("DecodeEPG():%d",len);
 	if (!m_bParseEPG) return;
+	if (m_bEpgDone) return;
 	if (buf==NULL) return;
 
 	time_t currentTime=time(NULL);
 	time_t timespan=currentTime-m_epgTimeout;
 	if (timespan>10)
 	{
-		Log("EPG:timeout");
+		Log("EPG:timeout ch:%d",m_mapEPG.size());
 		m_bParseEPG=false;
 		m_bEpgDone=true;
+		return;
 	}
 	if (len<=14) return;
 	int tableid = buf[0];
@@ -493,7 +495,7 @@ void CEPGParser::DecodeContentDescription(byte* buf,EPGEvent& epgEvent)
 
 void CEPGParser::ResetEPG()
 {
-	Log("epg:reset epg");
+	Log("epg:ResetEPG()");
 	m_mapEPG.clear();
 	m_bParseEPG=false;
 	m_bEpgDone=false;
@@ -502,7 +504,7 @@ void CEPGParser::ResetEPG()
 
 void CEPGParser::GrabEPG()
 {
-	Log("epg:GrabEPG");
+	Log("epg:GrabEPG()");
 	m_prevChannelIndex=-1;
 	m_mapEPG.clear();
 	m_bParseEPG=true;
@@ -515,14 +517,11 @@ bool CEPGParser::IsEPGGrabbing()
 }
 bool CEPGParser::IsEPGReady()
 {
-	bool ready=m_bEpgDone;
-	if (ready) 
+	if (m_bEpgDone)
 	{
-		Log("epg:done");
-		m_bParseEPG=false;
-		m_bEpgDone=false;
+		Log("CEPGParser::IsEPGReady() ->yes");
 	}
-	return ready;
+	return m_bEpgDone;
 }
 ULONG CEPGParser::GetEPGChannelCount( )
 {

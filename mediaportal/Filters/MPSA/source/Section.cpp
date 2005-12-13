@@ -452,12 +452,6 @@ bool Sections::IsNewPat(BYTE *pData, int len)
 	int section_number = pData[6];
 	int last_section_number = pData[7];
 
-	if (transport_stream_id< 0 || transport_stream_id >=0x1fff) 
-	{
-	//	Log("newpat: invalid tsid", transport_stream_id);
-		return false; //invalid tsid
-	}
-
 	if(table_id!=0 || section_number!=0||last_section_number!=0) return false;//invalid table id
 	if (version_number==m_patTableVersion && 
 		transport_stream_id==m_patTSID && 

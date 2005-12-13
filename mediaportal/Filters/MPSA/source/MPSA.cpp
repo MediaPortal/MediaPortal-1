@@ -263,7 +263,6 @@ HRESULT CStreamAnalyzerSectionsPin::BreakConnect()
 HRESULT CStreamAnalyzerSectionsPin::CompleteConnect(IPin *pPin)
 {
 	HRESULT hr=CBasePin::CompleteConnect(pPin);
-	m_pDump->OnConnectSections();
 	return hr;
 }
 
@@ -274,7 +273,7 @@ HRESULT CStreamAnalyzerSectionsPin::CompleteConnect(IPin *pPin)
 //
 STDMETHODIMP CStreamAnalyzerSectionsPin::ReceiveCanBlock()
 {
-    return S_FALSE;
+    return S_OK;
 }
 
 
@@ -354,7 +353,7 @@ CStreamAnalyzer::CStreamAnalyzer(LPUNKNOWN pUnk, HRESULT *phr) :
 	m_currentPMTLen(0)
 {
 	//::DeleteFile("mpsa.log");
-	Log("----mpsa::Initialize MPSA v1.04 ----");
+	Log("----mpsa::Initialize MPSA v1.05 ----");
 
 	m_bDecodeATSC=false;
 	m_bReset=true;
@@ -426,7 +425,8 @@ CStreamAnalyzer::CStreamAnalyzer(LPUNKNOWN pUnk, HRESULT *phr) :
             *phr = E_OUTOFMEMORY;
         return;
     }
-	m_atscParser.SetDemuxer(m_pDemuxer);
+	m_pAtscParser = new ATSCParser(m_pPin);
+	m_pAtscParser ->SetDemuxer(m_pDemuxer);
 }
 
 
@@ -443,6 +443,7 @@ CStreamAnalyzer::~CStreamAnalyzer()
 	delete m_pMHWPin2;
 	delete m_pEPGPin;
 	delete m_pFilter;
+	delete m_pAtscParser ;
 
 }
 
@@ -469,7 +470,7 @@ STDMETHODIMP CStreamAnalyzer::ResetParser()
 {
 	
 	Log("mpsa::ResetParser");
-	HRESULT hr=m_pDemuxer->UnMapAllPIDs();
+	HRESULT hr=m_pDemuxer->SetSectionMapping(m_pPin);
 	m_pPin->ResetPids();
 	m_pMHWPin1->ResetPids();
 	m_pMHWPin2->ResetPids();
@@ -520,59 +521,6 @@ STDMETHODIMP CStreamAnalyzer::NonDelegatingQueryInterface(REFIID riid, void ** p
 
 } // NonDelegatingQueryInterface
 
-HRESULT CStreamAnalyzer::OnConnectSections()
-{
-//	Log("mpsa::OnConnectSections");
-	m_pDemuxer->SetDemuxPins(m_pFilter->GetFilterGraph());
-	IPin *pin;
-	m_pPin->ConnectedTo(&pin);
-	if(pin!=NULL)
-	{
-		m_pDemuxer->SetSectionsPin(pin);
-	}	
-//	Log("mpsa::OnConnectSections done");
-	return S_OK;
-}
-
-HRESULT CStreamAnalyzer::OnConnectEPG()
-{
-//	Log("mpsa::OnConnectEPG");
-	m_pDemuxer->SetDemuxPins(m_pFilter->GetFilterGraph());
-	IPin *pin;
-	m_pEPGPin->ConnectedTo(&pin);
-	if(pin!=NULL)
-	{
-		m_pDemuxer->SetEPGPin(pin);
-	}
-//	Log("mpsa::OnConnectEPG done");
-	return S_OK;
-}
-HRESULT CStreamAnalyzer::OnConnectMHW1()
-{
-//	Log("mpsa::OnConnectMHW1");
-	m_pDemuxer->SetDemuxPins(m_pFilter->GetFilterGraph());
-	IPin *pin;
-	m_pMHWPin1->ConnectedTo(&pin);
-	if(pin!=NULL)
-	{
-		m_pDemuxer->SetMHW1Pin(pin);
-	}
-//	Log("mpsa::OnConnectMHW1 done");
-	return S_OK;
-}
-HRESULT CStreamAnalyzer::OnConnectMHW2()
-{
-//	Log("mpsa::OnConnectMHW2");
-	m_pDemuxer->SetDemuxPins(m_pFilter->GetFilterGraph());
-	IPin *pin;
-	m_pMHWPin2->ConnectedTo(&pin);
-	if(pin!=NULL)
-	{
-		m_pDemuxer->SetMHW2Pin(pin);
-	}
-//	Log("mpsa::OnConnectMHW2 done");
-	return S_OK;
-}
 	
 STDMETHODIMP CStreamAnalyzer::ResetPids()
 {
@@ -594,7 +542,7 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 			m_pSections->ResetPAT();
 			if (m_bDecodeATSC)
 			{
-				m_atscParser.Reset();
+				m_pAtscParser->Reset();
 			}
 
 		}		
@@ -619,20 +567,20 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 		{
 			if (pbData[0]==0xc7)
 			{
-				m_atscParser.ATSCDecodeMasterGuideTable(pbData,len,&m_patChannelsCount);
+				m_pAtscParser->ATSCDecodeMasterGuideTable(pbData,len,&m_patChannelsCount);
 			}
 			if (pbData[0]==0xc8 || pbData[0]==0xc9)
 			{
 				if (m_patChannelsCount==0)
 				{
 					//decode ATSC: Virtual Channel Table (pid 0xc8 / 0xc9)
-					m_atscParser.ATSCDecodeChannelTable(pbData,m_patTable, &m_patChannelsCount,len);
+					m_pAtscParser->ATSCDecodeChannelTable(pbData,m_patTable, &m_patChannelsCount,len);
 				}
 			}
 
 			//decode ATSC: EPG
 			if (m_patChannelsCount>0)
-				m_atscParser.ATSCDecodeEPG(pbData,len);
+				m_pAtscParser->ATSCDecodeEPG(pbData,len);
 			return S_OK;
 		}
 		
@@ -681,13 +629,13 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 				if (m_patChannelsCount>0) 
 				{
 					Log("mpsa::Found new PAT");
-					m_pDemuxer->SetSectionMapping();//unmap any section pids and map default pids for pat (0x0,0x10,0x11)
+					m_pDemuxer->SetSectionMapping(m_pPin);//unmap any section pids and map default pids for pat (0x0,0x10,0x11)
 					m_pmtGrabProgNum=0;
 					m_patChannelsCount=0;
 					m_pSections->ResetPAT();//reset PAT...
 					if (m_bDecodeATSC)
 					{
-						m_atscParser.Reset();
+						m_pAtscParser->Reset();
 					}
 				}
 				//Log("mpsa::decode pat");
@@ -695,7 +643,7 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 				Log("mpsa::PAT decoded and found %d channels, map pids", m_patChannelsCount);
 				for(int n=0;n<m_patChannelsCount;n++)
 				{
-					m_pDemuxer->MapAdditionalPID(m_patTable[n].ProgrammPMTPID);
+					m_pDemuxer->MapAdditionalPID(m_pPin,m_patTable[n].ProgrammPMTPID);
 				}
 				bool grabMHW=m_pMHWPin1->isGrabbing() || m_pMHWPin2->isGrabbing();
 				bool grabEPG=m_pEPGPin->isGrabbing();						
@@ -833,6 +781,10 @@ STDMETHODIMP CStreamAnalyzer::GrabEPG()
 STDMETHODIMP CStreamAnalyzer::IsEPGReady(BOOL* yesNo)
 {
 	*yesNo=m_pEPGPin->IsEPGReady();
+	if (*yesNo)
+	{
+		Log("CStreamAnalyzer:IsEPGReady() ->yes");
+	}
 	return S_OK;
 }
 STDMETHODIMP CStreamAnalyzer::GetEPGChannelCount( ULONG* channelCount)
@@ -905,22 +857,22 @@ STDMETHODIMP CStreamAnalyzer::GetMHWTheme(WORD themeId, char** theme)
 }
 STDMETHODIMP CStreamAnalyzer::GrabATSC()
 {
-	m_atscParser.Reset();
+	m_pAtscParser->Reset();
 	return S_OK;
 }
 STDMETHODIMP CStreamAnalyzer::IsATSCReady (BOOL* yesNo)
 {
-	*yesNo = m_atscParser.IsReady();
+	*yesNo = m_pAtscParser->IsReady();
 	return S_OK;
 }
 STDMETHODIMP CStreamAnalyzer::GetATSCTitleCount(WORD* count)
 {
-	*count=m_atscParser.GetEPGCount();
+	*count=m_pAtscParser->GetEPGCount();
 	return S_OK;
 }
 STDMETHODIMP CStreamAnalyzer::GetATSCTitle(WORD no, WORD* source_id, ULONG* starttime, WORD* length_in_secs, char** title, char** description)
 {
-	m_atscParser.GetEPGTitle(no, source_id, starttime, length_in_secs, title, description);
+	m_pAtscParser->GetEPGTitle(no, source_id, starttime, length_in_secs, title, description);
 	return S_OK;
 }
 

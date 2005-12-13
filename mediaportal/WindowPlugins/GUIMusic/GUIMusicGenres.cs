@@ -56,6 +56,7 @@ namespace MediaPortal.GUI.Music
 		int[]  views      = new int[50];
 		bool[] sortasc    = new bool[50];
 		int[] sortby      = new int[50];
+    static string _showArtist = String.Empty;
 
     int _currentLevel;
     ViewDefinition _currentView;
@@ -193,6 +194,23 @@ namespace MediaPortal.GUI.Music
 			{
 				GUIControl.FocusControl(GetID, btnViewAs.GetID);
 			}
+      if (_showArtist != String.Empty)
+      {
+        for (int i = 0; i < facadeView.Count; ++i)
+        {
+          GUIListItem item = facadeView[i];
+          MusicTag tag = item.MusicTag as MusicTag;
+          if (tag != null)
+          {
+            if (String.Compare(tag.Artist, _showArtist, true) == 0)
+            {
+              OnClick(i);
+              break;
+            }
+          }
+        }
+      }
+      _showArtist = String.Empty;
 		}
 		protected override void OnPageDestroy(int newWindowId)
 		{
@@ -647,5 +665,10 @@ namespace MediaPortal.GUI.Music
 					break;
 			}
 		}
+
+    static public void SelectArtist(string artist)
+    {
+      _showArtist = artist;
+    }
   }
 }

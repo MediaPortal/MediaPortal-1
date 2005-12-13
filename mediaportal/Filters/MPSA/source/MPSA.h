@@ -199,10 +199,6 @@ public:
 
 	HRESULT 	 Process(BYTE *pbData,long len);
 	HRESULT 	 ProcessEPG(BYTE *pbData,long len);
-	HRESULT 	 OnConnectSections();
-	HRESULT 	 OnConnectMHW1();
-	HRESULT 	 OnConnectMHW2();
-	HRESULT 	 OnConnectEPG();
 	STDMETHODIMP ResetPids();
     STDMETHODIMP get_IPin (IPin **ppPin) ;
     STDMETHODIMP put_MediaType(CMediaType *pmt);
@@ -255,7 +251,7 @@ public:
 	BYTE					m_pmtGrabData[4096];
 	long					m_currentPMTLen;
 	BOOL					m_bDecodeATSC;
-	ATSCParser				m_atscParser;
+	ATSCParser*				m_pAtscParser;
 private:
     // Overriden to say what interfaces we support where
     STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void ** ppv);

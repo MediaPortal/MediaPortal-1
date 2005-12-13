@@ -21,10 +21,15 @@
  */
 
 #include <windows.h>
-#include <time.h>
 #include <commdlg.h>
+#include <xprtdefs.h>
+#include <ksuuids.h>
 #include <streams.h>
+#include <bdaiface.h>
+#include <commctrl.h>
 #include <initguid.h>
+#include <time.h>
+
 #include "Section.h"
 #include "MPSA.h"
 #include "SplitterSetup.h"
@@ -83,9 +88,42 @@ HRESULT CMHWInputPin1::CompleteConnect(IPin *pPin)
 {
 //	Log("mhwpin1:CompleteConnect()");
 	HRESULT hr=CBasePin::CompleteConnect(pPin);
-	m_pDump->OnConnectMHW1();
+
+	IMPEG2PIDMap	*pMap=NULL;
+	IEnumPIDMap		*pPidEnum=NULL;
+	ULONG			pid;
+	PID_MAP			pm;
+	ULONG			count;
+	ULONG			umPid;
+
+	//setup demuxer to map pid 0xd2
+	hr=pPin->QueryInterface(IID_IMPEG2PIDMap,(void**)&pMap);
+	if(SUCCEEDED(hr) && pMap!=NULL)
+	{
+		hr=pMap->EnumPIDMap(&pPidEnum);
+		if(SUCCEEDED(hr) && pPidEnum!=NULL)
+		{
+			while(pPidEnum->Next(1,&pm,&count)== S_OK)
+			{
+				if (count!=1) break;
+					
+				umPid=pm.ulPID;
+				hr=pMap->UnmapPID(1,&umPid);
+				if(FAILED(hr))
+				{	
+					break;
+				}
+			}
+			pid = (ULONG)0xd2;// EIT
+			hr=pMap->MapPID(1,&pid,MEDIA_MPEG2_PSI); // tv
+
+			pPidEnum->Release();
+		}
+		pMap->Release();
+	}
 	return hr;
 }
+
 
 //
 // ReceiveCanBlock
@@ -94,7 +132,7 @@ HRESULT CMHWInputPin1::CompleteConnect(IPin *pPin)
 //
 STDMETHODIMP CMHWInputPin1::ReceiveCanBlock()
 {
-    return S_FALSE;
+    return S_OK;
 }
 
 

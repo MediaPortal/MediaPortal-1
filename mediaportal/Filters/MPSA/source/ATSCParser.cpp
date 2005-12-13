@@ -24,8 +24,9 @@
 #include ".\atscparser.h"
 
 extern void Log(const char *fmt, ...) ;
-ATSCParser::ATSCParser(void)
+ATSCParser::ATSCParser(IPin* pPin)
 {
+	m_pPin=pPin;
 	m_demuxer=NULL;
 	masterGuideTableDecoded=false;
 }
@@ -43,7 +44,7 @@ void ATSCParser::Reset()
 	masterGuideTableDecoded=false;
 	if (m_demuxer!=NULL) 
 	{
-		m_demuxer->UnMapSectionPIDs();
+		m_demuxer->SetSectionMapping(m_pPin);
 	}
 }
 
@@ -80,7 +81,7 @@ void ATSCParser::ATSCDecodeMasterGuideTable(byte* buf, int len,int* channelsFoun
 	}
 			
 	Log("ATSCDecodeMasterGuideTable()");
-	if (m_demuxer!=NULL) m_demuxer->UnMapSectionPIDs();
+	if (m_demuxer!=NULL) m_demuxer->SetSectionMapping(m_pPin);
 	mgLastSectionNumber=last_section_number;
 	mgSectionNumber=section_number;
 	mgSectionLength=section_length;
@@ -122,13 +123,13 @@ void ATSCParser::ATSCDecodeMasterGuideTable(byte* buf, int len,int* channelsFoun
 		if (m_demuxer!=NULL) 
 		{
 			if (table_type >=0x100 && table_type  <= 0x17f)			//EIT
-				m_demuxer->MapAdditionalPID(table_type_PID);
+				m_demuxer->MapAdditionalPID(m_pPin,table_type_PID);
 			else if (table_type >=0x200 && table_type  <= 0x27F)	//ETT
-				m_demuxer->MapAdditionalPID(table_type_PID);
+				m_demuxer->MapAdditionalPID(m_pPin,table_type_PID);
 			else if (table_type >=0x0301 && table_type  <= 0x03FF)	//RTT
-				m_demuxer->MapAdditionalPID(table_type_PID);
+				m_demuxer->MapAdditionalPID(m_pPin,table_type_PID);
 			else if (table_type == 0x0004)							//channel ETT
-				m_demuxer->MapAdditionalPID(table_type_PID);
+				m_demuxer->MapAdditionalPID(m_pPin,table_type_PID);
 		}
 		while (pos < table_type_descriptors_len)
 		{
