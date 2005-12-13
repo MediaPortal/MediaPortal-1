@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="iso-8859-1" ?>
- <strings>
+<?xml version="1.0" encoding="iso-8859-1"?>
+<strings>
 	<characters>255</characters>
 	<string>
 		<id>0</id>
@@ -83,7 +83,7 @@
 	</string>
 	<string>
 		<id>23</id>
-		<value>March</value>
+		<value>Març</value>
 	</string>
 	<string>
 		<id>24</id>
@@ -120,6 +120,10 @@
 	<string>
 		<id>32</id>
 		<value>Desembre</value>
+	</string>
+	<string>
+		<id>50</id>
+		<value>DVDs</value>
 	</string>
 	<string>
 		<id>100</id>
@@ -203,15 +207,15 @@
 	</string>
 	<string>
 		<id>120</id>
-		<value>Confirmar còpia d'arxiu</value>
+		<value>Confirmar còpia d&apos;arxiu</value>
 	</string>
 	<string>
 		<id>121</id>
-		<value>Confirmar canvi d'arxiu</value>
+		<value>Confirmar canvi d&apos;arxiu</value>
 	</string>
 	<string>
 		<id>122</id>
-		<value>Confirmar esborrat d'arxiu</value>
+		<value>Confirmar esborrat d&apos;arxiu</value>
 	</string>
 	<string>
 		<id>123</id>
@@ -367,7 +371,7 @@
 	</string>
 	<string>
 		<id>161</id>
-		<value>´No disponible</value>
+		<value>No disponible</value>
 	</string>
 	<string>
 		<id>162</id>
@@ -379,7 +383,7 @@
 	</string>
 	<string>
 		<id>164</id>
-		<value>No Hi ha Disc</value>
+		<value>Cap Disc</value>
 	</string>
 	<string>
 		<id>165</id>
@@ -415,7 +419,7 @@
 	</string>
 	<string>
 		<id>173</id>
-		<value>Grau:</value>
+		<value>Valoració:</value>
 	</string>
 	<string>
 		<id>174</id>
@@ -539,7 +543,7 @@
 	</string>
 	<string>
 		<id>204</id>
-		<value>Grau:</value>
+		<value>Valoració:</value>
 	</string>
 	<string>
 		<id>205</id>
@@ -547,7 +551,7 @@
 	</string>
 	<string>
 		<id>206</id>
-		<value>Repartiment</value>
+		<value>Actuen</value>
 	</string>
 	<string>
 		<id>207</id>
@@ -559,7 +563,7 @@
 	</string>
 	<string>
 		<id>209</id>
-		<value>Següent </value>
+		<value>Següent</value>
 	</string>
 	<string>
 		<id>210</id>
@@ -635,7 +639,7 @@
 	</string>
 	<string>
 		<id>228</id>
-		<value>Barrejar llista de reproducció a l'inici</value>
+		<value>Barrejar llista de reproducció a l&apos;inici</value>
 	</string>
 	<string>
 		<id>229</id>
@@ -843,11 +847,11 @@
 	</string>
 	<string>
 		<id>281</id>
-		<value>Comprovar l'arxiu de .xml</value>
+		<value>Comprovar l&apos;arxiu de .xml</value>
 	</string>
 	<string>
 		<id>282</id>
-		<value>%i articles trobats </value>
+		<value>%i articles trobats</value>
 	</string>
 	<string>
 		<id>283</id>
@@ -912,6 +916,10 @@
 	<string>
 		<id>298</id>
 		<value>Slider</value>
+	</string>
+	<string>
+		<id>299</id>
+		<value>Durada:</value>
 	</string>
 	<string>
 		<id>300</id>
@@ -1263,7 +1271,35 @@
 	</string>
 	<string>
 		<id>387</id>
-		<value>D'hora</value>
+		<value>D&apos;hora</value>
+	</string>
+	<string>
+		<id>388</id>
+		<value>i</value>
+	</string>
+	<string>
+		<id>389</id>
+		<value>Boira</value>
+	</string>
+	<string>
+		<id>390</id>
+		<value>Boirina</value>
+	</string>
+	<string>
+		<id>391</id>
+		<value>Ventós</value>
+	</string>
+	<string>
+		<id>392</id>
+		<value>Plugim</value>
+	</string>
+	<string>
+		<id>393</id>
+		<value>Gelada</value>
+	</string>
+	<string>
+		<id>394</id>
+		<value>N.D.</value>
 	</string>
 	<string>
 		<id>396</id>
@@ -1367,7 +1403,7 @@
 	</string>
 	<string>
 		<id>422</id>
-		<value>Esborrar informació d'àlbum</value>
+		<value>Esborrar informació d&apos;àlbum</value>
 	</string>
 	<string>
 		<id>423</id>
@@ -1379,7 +1415,7 @@
 	</string>
 	<string>
 		<id>425</id>
-		<value>Informació d'àlbum no trobada.</value>
+		<value>Informació d&apos;àlbum no trobada.</value>
 	</string>
 	<string>
 		<id>426</id>
@@ -1587,7 +1623,7 @@
 	</string>
 	<string>
 		<id>477</id>
-		<value>No s'ha pogut carregar la llista per a tocar</value>
+		<value>No s&apos;ha pogut carregar la llista per a tocar</value>
 	</string>
 	<string>
 		<id>478</id>
@@ -1599,11 +1635,11 @@
 	</string>
 	<string>
 		<id>480</id>
-		<value>Interface d'Usuari</value>
+		<value>Interface d&apos;Usuari</value>
 	</string>
 	<string>
 		<id>481</id>
-		<value>Opcions d'audio</value>
+		<value>Opcions d&apos;audio</value>
 	</string>
 	<string>
 		<id>482</id>
@@ -1644,6 +1680,106 @@
 	<string>
 		<id>491</id>
 		<value>Usar icones grans</value>
+	</string>
+	<string>
+		<id>492</id>
+		<value>Pista Audio</value>
+	</string>
+	<string>
+		<id>493</id>
+		<value>Actor:</value>
+	</string>
+	<string>
+		<id>500</id>
+		<value>Menú d&apos;arxiu</value>
+	</string>
+	<string>
+		<id>501</id>
+		<value>Seleccionar com a destí</value>
+	</string>
+	<string>
+		<id>502</id>
+		<value>Impossible completar l&apos;acció</value>
+	</string>
+	<string>
+		<id>503</id>
+		<value>Esborrar el directori</value>
+	</string>
+	<string>
+		<id>504</id>
+		<value>Anar a destí</value>
+	</string>
+	<string>
+		<id>505</id>
+		<value>Calculant</value>
+	</string>
+	<string>
+		<id>506</id>
+		<value>Esteu segur(a)?</value>
+	</string>
+	<string>
+		<id>507</id>
+		<value>items</value>
+	</string>
+	<string>
+		<id>508</id>
+		<value>A</value>
+	</string>
+	<string>
+		<id>509</id>
+		<value>Arxiu destí existeix. Sobreescriure?</value>
+	</string>
+	<string>
+		<id>510</id>
+		<value>Cancel·lar</value>
+	</string>
+	<string>
+		<id>511</id>
+		<value>Sempre</value>
+	</string>
+	<string>
+		<id>512</id>
+		<value>Mai</value>
+	</string>
+	<string>
+		<id>513</id>
+		<value>Item protegit, acció no completada</value>
+	</string>
+	<string>
+		<id>514</id>
+		<value>Error creant directori, acció no completada</value>
+	</string>
+	<string>
+		<id>515</id>
+		<value>Error esborrant directori, acció no completada</value>
+	</string>
+	<string>
+		<id>516</id>
+		<value>Impossible esborrar arxiu destí, acció no completada</value>
+	</string>
+	<string>
+		<id>517</id>
+		<value>Error fatal, acció no completada</value>
+	</string>
+	<string>
+		<id>518</id>
+		<value>Esborrar la cançó?</value>
+	</string>
+	<string>
+		<id>530</id>
+		<value>Disc de fotos inserit, voleu obrir-lo?</value>
+	</string>
+	<string>
+		<id>531</id>
+		<value>Disc de vídeo inserit, voleu obrir-lo?</value>
+	</string>
+	<string>
+		<id>532</id>
+		<value>Disc d&apos;àudio inserit, voleu obrir-lo?</value>
+	</string>
+	<string>
+		<id>550</id>
+		<value>Retallar</value>
 	</string>
 	<string>
 		<id>600</id>
@@ -1924,27 +2060,27 @@
 	<string>
 		<id>669</id>
 		<value>Ordenar per Gènere</value>
-	</string>	
+	</string>
 	<string>
 		<id>670</id>
 		<value>Ordenar per Bitrate</value>
-	</string>	
+	</string>
 	<string>
 		<id>671</id>
 		<value>Ordenar per Vists</value>
-	</string>	
+	</string>
 	<string>
 		<id>672</id>
 		<value>Gravar Dilluns-Divendres</value>
-	</string>	
+	</string>
 	<string>
 		<id>673</id>
 		<value>Velocitat del scroll</value>
-	</string>	
+	</string>
 	<string>
 		<id>674</id>
 		<value>Configuració GUI</value>
-	</string>	
+	</string>
 	<string>
 		<id>675</id>
 		<value>Exemple:</value>
@@ -1952,566 +2088,2757 @@
 	<string>
 		<id>676</id>
 		<value>Esborrar els enregistraments vists?</value>
-	</string>	
+	</string>
 	<string>
 		<id>677</id>
 		<value>vegades</value>
-	</string>	
+	</string>
 	<string>
 		<id>678</id>
 		<value>Ordenar per Gènere</value>
-	</string>	
+	</string>
 	<string>
 		<id>679</id>
 		<value>Setmanal</value>
-	</string>	
+	</string>
 	<string>
 		<id>680</id>
 		<value>Dilluns-Divendres</value>
-	</string>	
+	</string>
 	<string>
 		<id>681</id>
 		<value>Esperant</value>
-	</string>	
+	</string>
 	<string>
 		<id>682</id>
 		<value>Gravant</value>
-	</string>	
+	</string>
 	<string>
 		<id>683</id>
 		<value>Acabat</value>
-	</string>	
+	</string>
 	<string>
 		<id>684</id>
 		<value>Cancel·lat</value>
-	</string>	
+	</string>
 	<string>
 		<id>685</id>
 		<value>Ordernar per Estatus</value>
-	</string>		
-<string><id>686</id><value>Nascut(da)</value></string>
-<string><id>687</id><value>Anys Actius</value></string>
-<string><id>688</id><value>Instruments</value></string>
-<string><id>689</id><value>Biografia</value></string>
-<string><id>690</id><value>Discografia (àlbums)</value></string>
-<string><id>691</id><value>Discografia (recopilatoris)</value></string>
-<string><id>700</id><value>Discografia (singles)</value></string>
-<string><id>701</id><value>Discografia (videos, entrevistes)</value></string>
-<string><id>702</id><value>Cap artista trobat!</value></string>
-<string><id>703</id><value>No hi ha connexió a internet!</value></string>
-<string><id>704</id><value>Retrobant Feed</value></string>
-<string><id>705</id><value>Retrobant RSS Feed de </value></string>
-<string><id>706</id><value>Elegir Feed</value></string>
-<string><id>707</id><value>Tele Encesa/apagada</value></string>
-<string><id>708</id><value>Timeshifting</value></string>
-<string><id>709</id><value>Auto actualitzar</value></string>
-<string><id>710</id><value>Nova versió disponible</value></string>
-<string><id>711</id><value>Actualitzar de #vold ->v#new ?</value></string>
-<string><id>712</id><value>Enrere</value></string>
-<string><id>713</id><value>Autocomençar</value></string>
-<string><id>714</id><value>Disc inserit, vols reproduïr-lo?</value></string>
-<string><id>715</id><value>CD inserit, vols reproduïr-lo?</value></string>
-<string><id>716</id><value>Satèl·lit</value></string>
-<string><id>717</id><value>El Temps</value></string>
-<string><id>718</id><value>Esborrar Top 100</value></string>
-<string><id>719</id><value>Segur que vols esborrar la llista de Top 100</value></string>
-<string><id>720</id><value>Show: Durada</value></string>
-<string><id>721</id><value>Show: Vegades vist</value></string>
-<string><id>722</id><value>No es pot reproduïr el disc</value></string>
-<string><id>723</id><value>Has inserit un disc?</value></string>
-<string><id>724</id><value>Buscar a la Guia de TV</value></string>
-<string><id>725</id><value>Gènere</value></string>
-<string><id>726</id><value>Títol</value></string>
-<string><id>727</id><value>TV viu al fons</value></string>
-<string><id>728</id><value>No es pot començar</value></string>
-<string><id>729</id><value>Asseguri's que està utilitzant VMR9 i hi ha alguna cosa reproduïnt</value></string>
-<string><id>730</id><value>Aquest programa està gravant. Si vostè esborra</value></string>
-<string><id>731</id><value>el programa, llavors es para l'enregistrament.</value></string>
-<string><id>732</id><value>Està segur?</value></string>
-<string><id>733</id><value>Veure: Filmstrip</value></string>
-<string><id>734</id><value>Imatge:</value></string>
-<string><id>735</id><value>Rotar</value></string>
-<string>
-	<id>736</id>
-	<value>Dades de guia de TV no disponibles</value>
-</string>
-<string><id>800</id><value>Comença amb</value></string>
-<string><id>801</id><value>Conté</value></string>
-<string><id>802</id><value>Acaba en</value></string>
-<string><id>803</id><value>  És  </value></string>
-<string><id>804</id><value>Fet</value></string>
-<string><id>805</id><value>Esborrar</value></string>
-<string><id>806</id><value>Títol</value></string>
-<string><id>807</id><value>Rendiment</value></string>
-<string><id>808</id><value>Ingredients</value></string>
-<string><id>809</id><value>Adreces</value></string>
-<string><id>810</id><value>Cartes</value></string>
-<string><id>850</id><value>Alarmes</value></string>
-<string><id>851</id><value>Llista de rep.</value></string>
-<string><id>852</id><value>Alarma encesa/apagada</value></string>
-<string><id>853</id><value>Nom:</value></string>
-<string><id>854</id><value>Activat aquests dies</value></string>
-<string><id>855</id><value>Hora de l'alarma</value></string>
-<string><id>856</id><value>Hora de dormir</value></string>
-<string><id>857</id><value>Esperar</value></string>
-<string><id>858</id><value>Hora d'esperar</value></string>
-<string><id>859</id><value>Hora de dormir</value></string>
-<string><id>860</id><value>Apujar volum paulatinament</value></string>
-<string>
-	<id>861</id>
-	<value>Detalls Alarma</value>
-</string>
-<string>
-	<id>862</id>
-	<value>Ràdio</value>
-</string>
-<string>
-	<id>863</id>
-	<value>Arxiu</value>
-</string>
-<string>
-	<id>864</id>
-	<value>Tipus de medi</value>
-</string>
-
-<string>
-	<id>865</id>
-	<value>Número minuts fins dormir:</value>
-</string>
-<string>
-	<id>866</id>
-	<value>Abaixar volum paulatinament</value>
-</string>
-<string>
-	<id>867</id>
-	<value>Apagar ordinador</value>
-</string>
-<string>
-	<id>868</id>
-	<value>Reiniciar</value>
-</string>
-<!-- End My Alarm Strings -->
-<string>
-	<id>900</id>
-	<value>Reprendre pel·lícula des de l'últim cop?</value>
-</string>
-<string>
-	<id>901</id>
-	<value>MSN Messenger</value>
-</string>
-<string>
-	<id>902</id>
-	<value>Contactes Online</value>
-</string>
-<string>
-	<id>903</id>
-	<value>Entrar</value>
-</string>
-<string>
-	<id>904</id>
-	<value>Sortir</value>
-</string>
-<string>
-	<id>905</id>
-	<value>Necessiteu configurar el plugin primer</value>
-</string>
-<string>
-	<id>906</id>
-	<value>Entreu l'adreça email al setup</value>
-</string>
-<string>
-	<id>907</id>
-	<value>No es pot connectar amb MSN</value>
-</string>
-<string>
-	<id>908</id>
-	<value>escriu un missatge...</value>
-</string>
-<string>
-	<id>909</id>
-	<value>Connectant...</value>
-</string>
-<string>
-	<id>910</id>
-	<value>Entrant...</value>
-</string>
-<string>
-	<id>911</id>
-	<value>Cap Canal</value>
-</string>
-<string>
-	<id>912</id>
-	<value>Impossible descarregar últimes notícies</value>
-</string>
-<string>
-	<id>913</id>
-	<value>Plugins</value>
-</string>
-<string>
-	<id>914</id>
-	<value>Gravacions</value>
-</string>
-<string>
-	<id>915</id>
-	<value>Canals Tv</value>
-</string>
-<string>
-	<id>916</id>
-	<value>Arxiu remot</value>
-</string>
-<string>
-	<id>917</id>
-	<value>Aquest arxiu està en una unitat remota</value>
-</string>
-<string>
-	<id>918</id>
-	<value>Descarregar com a defecte?</value>
-</string>
-<string>
-	<id>919</id>
-	<value>carpeta local?</value>
-</string>
-<string>
-	<id>920</id>
-	<value>Impossible descarregar arxiu remot</value>
-</string>
-<string>
-	<id>921</id>
-	<value>Arxiu descarregant-se</value>
-</string>
-<string>
-	<id>922</id>
-	<value>Descripció</value>
-</string>
-<string>
-	<id>923</id>
-	<value>Mostra</value>
-</string>
-<string>
-	<id>924</id>
-	<value>Menú</value>
-</string>
-<string>
-	<id>925</id>
-	<value>Esborrar pel·lícula</value>
-</string>
-<string>
-	<id>926</id>
-	<value>Afegir a llista</value>
-</string>
-<string>
-	<id>927</id>
-	<value>Atenció</value>
-</string>
-<string>
-	<id>928</id>
-	<value>Buscar caràtula</value>
-</string>
-<string>
-	<id>929</id>
-	<value>Tancar menú</value>
-</string>
-<string>
-	<id>930</id>
-	<value>Afegir a preferits</value>
-</string>
-<string>
-	<id>931</id>
-	<value>Puntuació</value>
-</string>
-<string>
-	<id>932</id>
-	<value>Preferits</value>
-</string>
-<string>
-	<id>933</id>
-	<value>Treure de preferits</value>
-</string>
-<string>
-	<id>934</id>
-	<value>Puntuar</value>
-</string>
-<string>
-	<id>935</id>
-	<value>Mostra: Puntuació</value>
-</string>
-<string>
-	<id>936</id>
-	<value>Reprendre de:</value>
-</string>
-<string>
-	<id>937</id>
-	<value>Importar Guia TV</value>
-</string>
-<string>
-	<id>938</id>
-	<value>Veure aquest canal</value>
-</string>
-<string>
-	<id>939</id>
-	<value>Canviar mode</value>
-</string>
-	<!-- My Status Strings -->
-	<string><id>1950</id><value>Status</value></string>
-	<string><id>1951</id><value>Disc Dur</value></string>
-	<string><id>1952</id><value>Vent.</value></string>
-	<string><id>1953</id><value>Lliure</value></string>
-	<string><id>1954</id><value>Temperatura</value></string>
-	<string><id>1955</id><value>ºC</value></string>
-	<string><id>1956</id><value>Seleccionar so alarma </value></string>
-	<string><id>1957</id><value>Preferències</value></string>
-	<string><id>1958</id><value>CPU util.</value></string>
-	<string><id>1959</id><value>Voltatge</value></string>
-	<string><id>1960</id><value>Volts</value></string>
-	<string><id>1961</id><value>Freqüència</value></string>
-	<string><id>1962</id><value>Preferències</value></string>
-	<string><id>1963</id><value>Sensor detalls</value></string>
-	<string><id>1964</id><value>Sensor alarma</value></string>
-	<string><id>1965</id><value>Valor més alt</value></string>
-	<string><id>1966</id><value>Valor més baix</value></string>
-	<string><id>1967</id><value>Nivell superior alarma</value></string>
-	<string><id>1968</id><value>Nivell inferior alarma</value></string>
-	<string><id>1969</id><value>Test so</value></string>
-	<string><id>1970</id><value>Alarma interval (segons)</value></string>
-	<string><id>1971</id><value>Apagar en alerta</value></string>
-	<string><id>1972</id><value>Status detalls</value></string>
-	<string><id>1973</id><value>de</value>	</string>
-	<string><id>1974</id><value>Memòria</value></string>
-	<string><id>1975</id><value>Pag. Seg.</value></string>
-	<!-- My Recipie Strings -->
-	<string><id>2005</id><value>Esborrar</value></string>
-	<string><id>2006</id><value>Títol</value></string>
-	<string><id>2007</id><value>Rendiment</value></string>
-	<string><id>2008</id><value>Ingredients</value></string>
-	<string><id>2009</id><value>Instruccions</value></string>
-	<string><id>2010</id><value>Carta</value></string>
-	<string><id>2011</id><value>Imprimir</value></string>
-	<string><id>2012</id><value>Esborrar</value></string>
-	<string><id>2013</id><value>Preferits</value></string>
-	<string><id>2014</id><value>Desconegut</value></string>
-	<string><id>2015</id><value>per ració</value></string>
-	<string><id>2016</id><value>petit</value></string>
-	<string><id>2017</id><value>fl.oz</value></string>
-	<string><id>2018</id><value>cup</value></string>
-	<string><id>2019</id><value>pinta</value></string>
-	<string><id>2020</id><value>mitja</value></string>
-	<string><id>2021</id><value>gran</value></string>
-	<string><id>2022</id><value>llauna</value></string>
-	<string><id>2023</id><value>paquet</value></string>
-	<string><id>2024</id><value>pols</value></string>
-	<string><id>2025</id><value>gota</value></string>
-	<string><id>2026</id><value>dash</value></string>
-	<string><id>2027</id><value>cartró</value></string>
-	<string><id>2028</id><value>grapat</value></string>
-	<string><id>2029</id><value>tall</value></string>
-	<string><id>2030</id><value>cada</value></string>
-	<string><id>2031</id><value>culleradeta</value></string>
-	<string><id>2032</id><value>culleradeta</value></string>
-	<string><id>2033</id><value>cullerada</value></string>
-	<string><id>2034</id><value>cullerada</value></string>
-	<string><id>2035</id><value>quart</value></string>
-	<string><id>2036</id><value>gallon</value></string>
-	<string><id>2037</id><value>ounce</value></string>
-	<string><id>2038</id><value>lliura</value></string>
-	<string><id>2039</id><value>ml</value></string>
-	<string><id>2040</id><value>ml</value></string>
-	<string><id>2041</id><value>cl</value></string>
-	<string><id>2042</id><value>dl</value></string>
-	<string><id>2043</id><value>lt</value></string>
-	<string><id>2044</id><value>mg</value></string>
-	<string><id>2045</id><value>cg</value></string>
-	<string><id>2046</id><value>dg</value></string>
-	<string><id>2047</id><value>gr</value></string>
-	<string><id>2048</id><value>kg</value></string>
-	<string><id>2049</id><value>Esborrar la recepta?</value></string>
-	<string><id>2050</id><value>Esborrar categoria?</value></string>
-	<string><id>2051</id><value>Cercar títol</value></string>
-	<string><id>2052</id><value>Cercar recepta</value></string>
-	<string><id>2053</id><value>Categoria</value></string>
-	<string><id>2054</id><value>Cap entrada</value></string>
-<string><id>8000</id><value>Correu</value></string>
-<string><id>8001</id><value>Revisar Correu</value></string>
-<string><id>8002</id><value>No Auto Revisar</value></string>
-<string><id>8003</id><value>Auto Revisar</value></string>
-<string><id>8004</id><value>Tens Correu!</value></string>
-<string><id>8005</id><value>Revisant Correu</value></string>
-<string><id>8007</id><value>Auto Revisar</value></string>
-<string><id>8008</id><value>Enrere</value></string>
-<string><id>8009</id><value>Marcar tots no llegit</value></string>
-<string><id>8010</id><value>Correu no definit</value></string>
-<string><id>8011</id><value>Vagi per favor a setup i a definir</value></string>
-<string><id>8012</id><value>almenys 1 Compte per a usar el Mail-Plugin.</value></string>
-<string><id>8013</id><value>El servidor no respon</value></string>
-<string><id>8014</id><value>El servidor '{0}' no respon!</value></string>
-<string><id>8015</id><value>Revisi la configuració del correu '{0}'</value></string>
-<string><id>8016</id><value>De</value></string>
-<string><id>8017</id><value>A</value></string>
-<string><id>8018</id><value>Tema</value></string>
-<string><id>8019</id><value>Missatge</value></string>
-<string><id>8020</id><value>Esborrar mail</value></string>
-<string><id>8021</id><value>Marcar Llegit</value></string>
-<string><id>8022</id><value>Deixar veure attachment</value></string>
-<string><id>8023</id><value>Nou correu</value></string>
-<string><id>8024</id><value>Veure Missatge</value></string>
-<string><id>8025</id><value>Analitzant Missatge</value></string>
-<string><id>8030</id><value>Connectat al servidor</value></string>
-<string><id>8031</id><value>Obtenint número de missatges</value></string>
-<string><id>8033</id><value>Progrés</value></string>
-<string>
-	<id>9000</id>
-	<value>Dimensions imatge:</value>
-</string>
-<string>
-	<id>9001</id>
-	<value>Resolució:</value>
-</string>
-<string>
-	<id>9002</id>
-	<value>Flash:</value>
-</string>
-<string>
-	<id>9003</id>
-	<value>Mode mesura:</value>
-</string>
-<string>
-	<id>9004</id>
-	<value>Compensació exposició:</value>
-</string>
-<string>
-	<id>9005</id>
-	<value>Velocitat obturador:</value>
-</string>
-<string>
-	<id>9006</id>
-	<value>Data:</value>
-</string>
-<string>
-	<id>9007</id>
-	<value>Fstop:</value>
-</string>
-<string>
-	<id>9008</id>
-	<value>Temps exposició:</value>
-</string>
-<string>
-	<id>9009</id>
-	<value>Model de Càmera:</value>
-</string>
-<string>
-	<id>9010</id>
-	<value>Marca equip:</value>
-</string>
-<string>
-	<id>9011</id>
-	<value>Veure comentaris:</value>
-</string><string><id>13000</id><value>Sistema:</value></string>
-<string><id>13001</id><value>Fabricant:</value></string>
-<string><id>13002</id><value>Executar</value></string>
-<string><id>13003</id><value>Important arxiu *.mlf</value></string>
-<string><id>13004</id><value>Important arxiu *.my</value></string>
-<string><id>13005</id><value>Darrer arxiu importat:</value></string>
-<string>
-	<id>13006</id>
-	<value>Imatge petita</value>
-</string>
-<string>
-	<id>13007</id>
-	<value>Imatge gran</value>
-</string>
-<string>
-	<id>13008</id>
-	<value>Efecte Ken Burns</value>
-</string>
-<string>
-	<id>13009</id>
-	<value>Transicions aleatòries</value>
-</string>
-<string>
-	<id>13010</id>
-	<value>Transicions X-fade</value>
-</string>
-<string>
-	<id>13011</id>
-	<value>Velocitat Ken Burns</value>
-</string>
-<string>
-	<id>1440</id>
-	<value>TeleText</value>
-</string>
-<string>
-	<id>16001</id>
-	<value>Selecció per a Festa</value>
-</string>
-
-<string><id>100000</id><value>Casa</value></string>
-<string><id>100001</id><value>Tele</value></string>
-<string><id>100002</id><value>Imatges</value></string>
-<string><id>100003</id><value>Arxius</value></string>
-<string><id>100004</id><value>Configuració</value></string>
-<string><id>100005</id><value>Música</value></string>
-<string><id>100006</id><value>Videos</value></string>
-<string><id>100007</id><value>Informació Sistema</value></string>
-<string><id>100008</id><value>Configuració->General</value></string>
-<string><id>100009</id><value>Configuració->Pantalla</value></string>
-<string><id>100010</id><value>Configuració->Pantalla->Calibratge UI</value></string>
-<string><id>100011</id><value>Configuració->Pantalla->Calibratge de Pantalla</value></string>
-<string><id>100012</id><value>Configuració->SlideShow</value></string>
-<string><id>100013</id><value>Configuració->Screen->Filtres</value></string>
-<string><id>100014</id><value>Configuració->Música</value></string>
-<string><id>100015</id><value>Configuració->Pantalla->Subtítols</value></string>
-<string><id>100016</id><value>Configuració->Pantalla->Salvapantalla</value></string>
-<string><id>100017</id><value>Configuració->El Temps</value></string>
-<string><id>100020</id><value>Configuració->Scripts</value></string>
-<string><id>100021</id><value>Videos/gènere</value></string>
-<string><id>100022</id><value>Videos/actor</value></string>
-<string><id>100023</id><value>Videos/any</value></string>
-<string><id>100024</id><value>Configuració->Programes</value></string>
-<string><id>100025</id><value>Videos/títol</value></string>
-<string><id>100026</id><value>Configuració->General->Cache</value></string>
-<string><id>100027</id><value>Configuració->General->Autocomençar</value></string>
-<string><id>100028</id><value>Videos/llista rep.</value></string>
-<string><id>100029</id><value>Configuració->General->LCD</value></string>
-<string><id>100030</id><value>Ràdio</value></string>
-<string><id>100031</id><value>Configuració->Pantalla->velocitat scroll</value></string>
-<string><id>100032</id><value>MSN Messenger</value></string>
-<string><id>100033</id><value>MSN Messenger chat</value></string>
-<string><id>100034</id><value>Plugins</value></string>
-<string><id>100100</id><value>Finestra Sí/No</value></string>
-<string><id>100101</id><value>Finestra de Progrés</value></string>
-<string><id>100500</id><value>Música/llista rep.</value></string>
-<string><id>100501</id><value>Música/arxius</value></string>
-<string><id>100502</id><value>Música/albums</value></string>
-<string><id>100503</id><value>Música/artistes</value></string>
-<string><id>100504</id><value>Música/gèneres</value></string>
-<string><id>100505</id><value>Música/top100</value></string>
-<string><id>100506</id><value>Music/Preferits</value></string>
-<string><id>100600</id><value>Tele/Guia</value></string>
-<string><id>100601</id><value>Tele/Programador</value></string>
-<string><id>100602</id><value>Tele/Pantalla completa</value></string>
-<string><id>100603</id><value>Tele/Gravats TV</value></string>
-<string><id>100604</id><value>Tele/Cercar</value></string>
-<string><id>100605</id><value>Tele/Gravats TV/Gènere</value></string>
-<string><id>100606</id><value>Tele/Gravats TV/Canals</value></string>
-<string><id>100750</id><value>Receptes</value></string>
-<string><id>100755</id><value>Status</value></string>
-<string><id>100756</id><value>Detalls de Status</value></string>
-<string><id>100757</id><value>Preferències de Status</value></string>
-<string><id>101000</id><value>teclat</value></string>
-<string><id>102000</id><value>Seleccionar finestra</value></string>
-<string><id>102001</id><value>Música/informació</value></string>
-<string><id>102002</id><value>Finestra OK</value></string>
-<string><id>102003</id><value>Videos/informació</value></string>
-<string><id>102004</id><value>Scripts/informació</value></string>
-<string><id>102005</id><value>Video pantalla completa</value></string>
-<string><id>102006</id><value>Audio visualització</value></string>
-<string><id>102007</id><value>Imatges/slideshow</value></string>
-<string><id>102008</id><value>Finestra d'enllaç de fitxers</value></string>
-<string><id>102010</id><value>Data/Hora</value></string>
-<string><id>102011</id><value>Info Artista</value></string>
-<string><id>102012</id><value>Menú contexte</value></string>
-<string><id>102013</id><value>Puntuar</value></string>
-<string><id>102600</id><value>El Temps</value></string>
-<string><id>102900</id><value>Salvapantalla</value></string>
-<string><id>102901</id><value>OSD pantalla completa</value></string>
-
+	</string>
+	<string>
+		<id>686</id>
+		<value>Nascut(da)</value>
+	</string>
+	<string>
+		<id>687</id>
+		<value>Anys Actius</value>
+	</string>
+	<string>
+		<id>688</id>
+		<value>Instruments</value>
+	</string>
+	<string>
+		<id>689</id>
+		<value>Biografia</value>
+	</string>
+	<string>
+		<id>690</id>
+		<value>Discografia (àlbums)</value>
+	</string>
+	<string>
+		<id>691</id>
+		<value>Discografia (recopilatoris)</value>
+	</string>
+	<string>
+		<id>700</id>
+		<value>Discografia (singles)</value>
+	</string>
+	<string>
+		<id>701</id>
+		<value>Discografia (videos, entrevistes)</value>
+	</string>
+	<string>
+		<id>702</id>
+		<value>Cap artista trobat!</value>
+	</string>
+	<string>
+		<id>703</id>
+		<value>No hi ha connexió a internet!</value>
+	</string>
+	<string>
+		<id>704</id>
+		<value>Retrobant Feed</value>
+	</string>
+	<string>
+		<id>705</id>
+		<value>Retrobant RSS Feed de</value>
+	</string>
+	<string>
+		<id>706</id>
+		<value>Elegir Feed</value>
+	</string>
+	<string>
+		<id>707</id>
+		<value>Tele Encesa/apagada</value>
+	</string>
+	<string>
+		<id>708</id>
+		<value>Timeshifting</value>
+	</string>
+	<string>
+		<id>709</id>
+		<value>Auto actualitzar</value>
+	</string>
+	<string>
+		<id>710</id>
+		<value>Nova versió disponible</value>
+	</string>
+	<string>
+		<id>711</id>
+		<value>Actualitzar de #vold -&gt;v#new ?</value>
+	</string>
+	<string>
+		<id>712</id>
+		<value>Enrere</value>
+	</string>
+	<string>
+		<id>713</id>
+		<value>Autocomençar</value>
+	</string>
+	<string>
+		<id>714</id>
+		<value>Disc inserit, vols reproduïr-lo?</value>
+	</string>
+	<string>
+		<id>715</id>
+		<value>CD inserit, vols reproduïr-lo?</value>
+	</string>
+	<string>
+		<id>716</id>
+		<value>Satèl·lit</value>
+	</string>
+	<string>
+		<id>717</id>
+		<value>El Temps</value>
+	</string>
+	<string>
+		<id>718</id>
+		<value>Esborrar Top 100</value>
+	</string>
+	<string>
+		<id>719</id>
+		<value>Segur que vols esborrar la llista de Top 100</value>
+	</string>
+	<string>
+		<id>720</id>
+		<value>Show: Durada</value>
+	</string>
+	<string>
+		<id>721</id>
+		<value>Show: Vegades vist</value>
+	</string>
+	<string>
+		<id>722</id>
+		<value>No es pot reproduïr el disc</value>
+	</string>
+	<string>
+		<id>723</id>
+		<value>Has inserit un disc?</value>
+	</string>
+	<string>
+		<id>724</id>
+		<value>Buscar a la Guia de TV</value>
+	</string>
+	<string>
+		<id>725</id>
+		<value>Gènere</value>
+	</string>
+	<string>
+		<id>726</id>
+		<value>Títol</value>
+	</string>
+	<string>
+		<id>727</id>
+		<value>TV viu al fons</value>
+	</string>
+	<string>
+		<id>728</id>
+		<value>No es pot començar</value>
+	</string>
+	<string>
+		<id>729</id>
+		<value>Asseguri&apos;que està utilitzant VMR9 i hi ha alguna cosa reproduïnt</value>
+	</string>
+	<string>
+		<id>730</id>
+		<value>Aquest programa està gravant. Si vostè esborra</value>
+	</string>
+	<string>
+		<id>731</id>
+		<value>el programa, llavors es para l&apos;enregistrament.</value>
+	</string>
+	<string>
+		<id>732</id>
+		<value>Està segur?</value>
+	</string>
+	<string>
+		<id>733</id>
+		<value>Veure: Filmstrip</value>
+	</string>
+	<string>
+		<id>734</id>
+		<value>Imatge:</value>
+	</string>
+	<string>
+		<id>735</id>
+		<value>Rotar</value>
+	</string>
+	<string>
+		<id>736</id>
+		<value>Dades de guia de TV no disponibles</value>
+	</string>
+	<string>
+		<id>737</id>
+		<value>Veure: Satèl·lit</value>
+	</string>
+	<string>
+		<id>738</id>
+		<value>Veure: Temperatura</value>
+	</string>
+	<string>
+		<id>739</id>
+		<value>Veure: Index UV</value>
+	</string>
+	<string>
+		<id>740</id>
+		<value>Veure: Vent</value>
+	</string>
+	<string>
+		<id>741</id>
+		<value>Veure: Humitat</value>
+	</string>
+	<string>
+		<id>742</id>
+		<value>Veure: Precipitacions</value>
+	</string>
+	<string>
+		<id>743</id>
+		<value>Previsió mig termini</value>
+	</string>
+	<string>
+		<id>744</id>
+		<value>Alba</value>
+	</string>
+	<string>
+		<id>745</id>
+		<value>Capvespre</value>
+	</string>
+	<string>
+		<id>746</id>
+		<value>Màxima</value>
+	</string>
+	<string>
+		<id>747</id>
+		<value>Mínima</value>
+	</string>
+	<string>
+		<id>748</id>
+		<value>Precipitacions</value>
+	</string>
+	<string>
+		<id>750</id>
+		<value>Imatges</value>
+	</string>
+	<string>
+		<id>800</id>
+		<value>Comença amb</value>
+	</string>
+	<string>
+		<id>801</id>
+		<value>Conté</value>
+	</string>
+	<string>
+		<id>802</id>
+		<value>Acaba en</value>
+	</string>
+	<string>
+		<id>803</id>
+		<value>És</value>
+	</string>
+	<string>
+		<id>804</id>
+		<value>Fet</value>
+	</string>
+	<string>
+		<id>805</id>
+		<value>Esborrar</value>
+	</string>
+	<string>
+		<id>806</id>
+		<value>Títol</value>
+	</string>
+	<string>
+		<id>807</id>
+		<value>Rendiment</value>
+	</string>
+	<string>
+		<id>808</id>
+		<value>Ingredients</value>
+	</string>
+	<string>
+		<id>809</id>
+		<value>Adreces</value>
+	</string>
+	<string>
+		<id>810</id>
+		<value>Cartes</value>
+	</string>
+	<string>
+		<id>850</id>
+		<value>Alarmes</value>
+	</string>
+	<string>
+		<id>851</id>
+		<value>Llista de rep.</value>
+	</string>
+	<string>
+		<id>852</id>
+		<value>Alarma encesa/apagada</value>
+	</string>
+	<string>
+		<id>853</id>
+		<value>Nom:</value>
+	</string>
+	<string>
+		<id>854</id>
+		<value>Activat aquests dies</value>
+	</string>
+	<string>
+		<id>855</id>
+		<value>Hora de l&apos;alarma</value>
+	</string>
+	<string>
+		<id>856</id>
+		<value>Hora de dormir</value>
+	</string>
+	<string>
+		<id>857</id>
+		<value>Esperar</value>
+	</string>
+	<string>
+		<id>858</id>
+		<value>Hora d&apos;esperar</value>
+	</string>
+	<string>
+		<id>859</id>
+		<value>Hora de dormir</value>
+	</string>
+	<string>
+		<id>860</id>
+		<value>Apujar volum paulatinament</value>
+	</string>
+	<string>
+		<id>861</id>
+		<value>Detalls Alarma</value>
+	</string>
+	<string>
+		<id>862</id>
+		<value>Ràdio</value>
+	</string>
+	<string>
+		<id>863</id>
+		<value>Arxiu</value>
+	</string>
+	<string>
+		<id>864</id>
+		<value>Tipus de medi</value>
+	</string>
+	<string>
+		<id>865</id>
+		<value>Número minuts fins dormir:</value>
+	</string>
+	<string>
+		<id>866</id>
+		<value>Abaixar volum paulatinament</value>
+	</string>
+	<string>
+		<id>867</id>
+		<value>Apagar ordinador</value>
+	</string>
+	<string>
+		<id>868</id>
+		<value>Reiniciar</value>
+	</string>
+	<string>
+		<id>869</id>
+		<value>NovaAlarma</value>
+	</string>
+	<string>
+		<id>870</id>
+		<value>Recurrent</value>
+	</string>
+	<string>
+		<id>871</id>
+		<value>Encendre ordinador per aquesta alarma</value>
+	</string>
+	<string>
+		<id>872</id>
+		<value>Comença amb</value>
+	</string>
+	<string>
+		<id>873</id>
+		<value>Programa TV</value>
+	</string>
+	<string>
+		<id>874</id>
+		<value>Episodi</value>
+	</string>
+	<string>
+		<id>875</id>
+		<value>Programa actual</value>
+	</string>
+	<string>
+		<id>876</id>
+		<value>Fins aturada manual</value>
+	</string>
+	<string>
+		<id>877</id>
+		<value>Prioritats</value>
+	</string>
+	<string>
+		<id>878</id>
+		<value>Emmagatzematge</value>
+	</string>
+	<string>
+		<id>879</id>
+		<value>Conflicte de gravacions</value>
+	</string>
+	<string>
+		<id>880</id>
+		<value>Temps a gravar:</value>
+	</string>
+	<string>
+		<id>881</id>
+		<value>Escollir gravació a aturar:</value>
+	</string>
+	<string>
+		<id>882</id>
+		<value>Nivell de qualitat</value>
+	</string>
+	<string>
+		<id>883</id>
+		<value>Baix</value>
+	</string>
+	<string>
+		<id>884</id>
+		<value>Mig</value>
+	</string>
+	<string>
+		<id>885</id>
+		<value>Alt</value>
+	</string>
+	<string>
+		<id>886</id>
+		<value>Per Defecte</value>
+	</string>
+	<string>
+		<id>887</id>
+		<value>Especificar número d&apos;episodis a guardar</value>
+	</string>
+	<string>
+		<id>888</id>
+		<value>Gestió d&apos;episodis</value>
+	</string>
+	<string>
+		<id>889</id>
+		<value>Tots els episodis</value>
+	</string>
+	<string>
+		<id>890</id>
+		<value>Reproduïr CD</value>
+	</string>
+	<string>
+		<id>891</id>
+		<value>Seleccionar canal</value>
+	</string>
+	<string>
+		<id>892</id>
+		<value>Conflictes</value>
+	</string>
+	<string>
+		<id>893</id>
+		<value>Portàtil</value>
+	</string>
+	<string>
+		<id>894</id>
+		<value>Comprimir TV gravada</value>
+	</string>
+	<string>
+		<id>895</id>
+		<value>Auto-comprimir</value>
+	</string>
+	<string>
+		<id>896</id>
+		<value>Comprimir</value>
+	</string>
+	<string>
+		<id>897</id>
+		<value>Opcions</value>
+	</string>
+	<string>
+		<id>898</id>
+		<value>MPEG-2</value>
+	</string>
+	<string>
+		<id>899</id>
+		<value>WMV</value>
+	</string>
+	<string>
+		<id>900</id>
+		<value>Reprendre pel·lícula des de l&apos;últim cop?</value>
+	</string>
+	<string>
+		<id>901</id>
+		<value>MSN Messenger</value>
+	</string>
+	<string>
+		<id>902</id>
+		<value>Contactes Online</value>
+	</string>
+	<string>
+		<id>903</id>
+		<value>Entrar</value>
+	</string>
+	<string>
+		<id>904</id>
+		<value>Sortir</value>
+	</string>
+	<string>
+		<id>905</id>
+		<value>Necessiteu configurar el plugin primer</value>
+	</string>
+	<string>
+		<id>906</id>
+		<value>Entreu l&apos;adreça email al setup</value>
+	</string>
+	<string>
+		<id>907</id>
+		<value>No es pot connectar amb MSN</value>
+	</string>
+	<string>
+		<id>908</id>
+		<value>escriu un missatge...</value>
+	</string>
+	<string>
+		<id>909</id>
+		<value>Connectant...</value>
+	</string>
+	<string>
+		<id>910</id>
+		<value>Entrant...</value>
+	</string>
+	<string>
+		<id>911</id>
+		<value>Cap Canal</value>
+	</string>
+	<string>
+		<id>912</id>
+		<value>Impossible descarregar últimes notícies</value>
+	</string>
+	<string>
+		<id>913</id>
+		<value>Plugins</value>
+	</string>
+	<string>
+		<id>914</id>
+		<value>Gravacions</value>
+	</string>
+	<string>
+		<id>915</id>
+		<value>Canals Tv</value>
+	</string>
+	<string>
+		<id>916</id>
+		<value>Arxiu remot</value>
+	</string>
+	<string>
+		<id>917</id>
+		<value>Aquest arxiu està en una unitat remota</value>
+	</string>
+	<string>
+		<id>918</id>
+		<value>Descarregar com a defecte?</value>
+	</string>
+	<string>
+		<id>919</id>
+		<value>carpeta local?</value>
+	</string>
+	<string>
+		<id>920</id>
+		<value>Impossible descarregar arxiu remot</value>
+	</string>
+	<string>
+		<id>921</id>
+		<value>Arxiu descarregant-se</value>
+	</string>
+	<string>
+		<id>922</id>
+		<value>Descripció</value>
+	</string>
+	<string>
+		<id>923</id>
+		<value>Mostra</value>
+	</string>
+	<string>
+		<id>924</id>
+		<value>Menú</value>
+	</string>
+	<string>
+		<id>925</id>
+		<value>Esborrar pel·lícula</value>
+	</string>
+	<string>
+		<id>926</id>
+		<value>Afegir a llista</value>
+	</string>
+	<string>
+		<id>927</id>
+		<value>Atenció</value>
+	</string>
+	<string>
+		<id>928</id>
+		<value>Buscar caràtula</value>
+	</string>
+	<string>
+		<id>929</id>
+		<value>Tancar menú</value>
+	</string>
+	<string>
+		<id>930</id>
+		<value>Afegir a preferits</value>
+	</string>
+	<string>
+		<id>931</id>
+		<value>Puntuació</value>
+	</string>
+	<string>
+		<id>932</id>
+		<value>Preferits</value>
+	</string>
+	<string>
+		<id>933</id>
+		<value>Treure de preferits</value>
+	</string>
+	<string>
+		<id>934</id>
+		<value>Puntuar</value>
+	</string>
+	<string>
+		<id>935</id>
+		<value>Mostra: Puntuació</value>
+	</string>
+	<string>
+		<id>936</id>
+		<value>Reprendre de:</value>
+	</string>
+	<string>
+		<id>937</id>
+		<value>Importar Guia TV</value>
+	</string>
+	<string>
+		<id>938</id>
+		<value>Veure aquest canal</value>
+	</string>
+	<string>
+		<id>939</id>
+		<value>Canviar mode</value>
+	</string>
+	<string>
+		<id>940</id>
+		<value>Propietats</value>
+	</string>
+	<string>
+		<id>941</id>
+		<value>Canviar relació d&apos;aspecte</value>
+	</string>
+	<string>
+		<id>942</id>
+		<value>Estirar</value>
+	</string>
+	<string>
+		<id>943</id>
+		<value>Normal</value>
+	</string>
+	<string>
+		<id>944</id>
+		<value>Original</value>
+	</string>
+	<string>
+		<id>945</id>
+		<value>Bandes negres</value>
+	</string>
+	<string>
+		<id>946</id>
+		<value>Panoràmica</value>
+	</string>
+	<string>
+		<id>947</id>
+		<value>Zoom</value>
+	</string>
+	<string>
+		<id>948</id>
+		<value>Connectat</value>
+	</string>
+	<string>
+		<id>949</id>
+		<value>Ocupat</value>
+	</string>
+	<string>
+		<id>950</id>
+		<value>Torna en un moment</value>
+	</string>
+	<string>
+		<id>951</id>
+		<value>Absent</value>
+	</string>
+	<string>
+		<id>952</id>
+		<value>Telèfon</value>
+	</string>
+	<string>
+		<id>953</id>
+		<value>Menjant</value>
+	</string>
+	<string>
+		<id>954</id>
+		<value>Incògnit</value>
+	</string>
+	<string>
+		<id>955</id>
+		<value>Inactiu</value>
+	</string>
+	<string>
+		<id>956</id>
+		<value>Connectat</value>
+	</string>
+	<string>
+		<id>957</id>
+		<value>MSN Messenger</value>
+	</string>
+	<string>
+		<id>958</id>
+		<value>Parlant amb</value>
+	</string>
+	<string>
+		<id>959</id>
+		<value>ha entrat en la conversa</value>
+	</string>
+	<string>
+		<id>960</id>
+		<value>ha sortit de la conversa</value>
+	</string>
+	<string>
+		<id>961</id>
+		<value>Status MSN</value>
+	</string>
+	<string>
+		<id>970</id>
+		<value>Finestra anterior</value>
+	</string>
+	<string>
+		<id>971</id>
+		<value>Grup</value>
+	</string>
+	<string>
+		<id>972</id>
+		<value>Tots els canals</value>
+	</string>
+	<string>
+		<id>973</id>
+		<value>FPS màxim</value>
+	</string>
+	<string>
+		<id>974</id>
+		<value>Menú principal</value>
+	</string>
+	<string>
+		<id>975</id>
+		<value>Capítol anterior</value>
+	</string>
+	<string>
+		<id>976</id>
+		<value>Capítol següent</value>
+	</string>
+	<string>
+		<id>977</id>
+		<value>No hi ha cap targeta lliure</value>
+	</string>
+	<string>
+		<id>978</id>
+		<value>per a veure aquest canal</value>
+	</string>
+	<string>
+		<id>979</id>
+		<value>Reproduïr des del començament</value>
+	</string>
+	<string>
+		<id>980</id>
+		<value>Reproduïr des de directe</value>
+	</string>
+	<string>
+		<id>981</id>
+		<value>Cancel·lar programa</value>
+	</string>
+	<string>
+		<id>982</id>
+		<value>Esborrar gravació sencera</value>
+	</string>
+	<string>
+		<id>983</id>
+		<value>Llistes</value>
+	</string>
+	<string>
+		<id>984</id>
+		<value>Baixant llista de pel·lícules</value>
+	</string>
+	<string>
+		<id>985</id>
+		<value>Baixant detalls de pel·lícules</value>
+	</string>
+	<string>
+		<id>986</id>
+		<value>Baixant actor</value>
+	</string>
+	<string>
+		<id>987</id>
+		<value>Anys</value>
+	</string>
+	<string>
+		<id>988</id>
+		<value>Qualitat</value>
+	</string>
+	<string>
+		<id>989</id>
+		<value>FPS</value>
+	</string>
+	<string>
+		<id>990</id>
+		<value>Bitrate</value>
+	</string>
+	<string>
+		<id>991</id>
+		<value>Prioritat</value>
+	</string>
+	<string>
+		<id>992</id>
+		<value>Esborrar arxiu original</value>
+	</string>
+	<string>
+		<id>993</id>
+		<value>Personalitzat</value>
+	</string>
+	<string>
+		<id>994</id>
+		<value>Activar auto compressió</value>
+	</string>
+	<string>
+		<id>995</id>
+		<value>Esteu segur de voler comprimir</value>
+	</string>
+	<string>
+		<id>996</id>
+		<value>les gravacions seleccionades?</value>
+	</string>
+	<string>
+		<id>997</id>
+		<value>Completat</value>
+	</string>
+	<string>
+		<id>998</id>
+		<value>XviD</value>
+	</string>
+	<string>
+		<id>999</id>
+		<value>Aquest plugin permet de transformar les</value>
+	</string>
+	<string>
+		<id>1000</id>
+		<value>gravacions de TV des de dvr-ms a mpg, xvid o wmv</value>
+	</string>
+	<string>
+		<id>1001</id>
+		<value>Tingueu en compte que necessiteu</value>
+	</string>
+	<string>
+		<id>1002</id>
+		<value>el codec vídeo Elecard MPEG2 instal·lat</value>
+	</string>
+	<string>
+		<id>1003</id>
+		<value>per transformar en xvid</value>
+	</string>
+	<string>
+		<id>1004</id>
+		<value>A punt de gravar</value>
+	</string>
+	<string>
+		<id>1005</id>
+		<value>el canal</value>
+	</string>
+	<string>
+		<id>1006</id>
+		<value>Permetre de començar la gravació</value>
+	</string>
+	<string>
+		<id>1007</id>
+		<value>Cancel·lar gravació i seguir veient TV</value>
+	</string>
+	<string>
+		<id>1008</id>
+		<value>Cua</value>
+	</string>
+	<string>
+		<id>1009</id>
+		<value>Baixant caràtula</value>
+	</string>
+	<string>
+		<id>1010</id>
+		<value>Vist</value>
+	</string>
+	<string>
+		<id>1011</id>
+		<value>Biografia</value>
+	</string>
+	<string>
+		<id>1012</id>
+		<value>Aquest programa serà interromput per</value>
+	</string>
+	<string>
+		<id>1013</id>
+		<value>Voleu gravar també la segona part?</value>
+	</string>
+	<string>
+		<id>1014</id>
+		<value>Avisar-me quan comenci el programa</value>
+	</string>
+	<string>
+		<id>1015</id>
+		<value>No avisar-me quan comenci el programa</value>
+	</string>
+	<string>
+		<id>1016</id>
+		<value>El programa comença en 5 minuts</value>
+	</string>
+	<string>
+		<id>1017</id>
+		<value>Ordenar per: Durada</value>
+	</string>
+	<string>
+		<id>1020</id>
+		<value>Informació</value>
+	</string>
+	<string>
+		<id>1021</id>
+		<value>Prémer Alt+Enter per a</value>
+	</string>
+	<string>
+		<id>1022</id>
+		<value>tornar a mode finestra</value>
+	</string>
+	<string>
+		<id>1023</id>
+		<value>Trucada entrant</value>
+	</string>
+	<string>
+		<id>1024</id>
+		<value>de</value>
+	</string>
+	<string>
+		<id>1025</id>
+		<value>Hi ha hagut un error.</value>
+	</string>
+	<string>
+		<id>1026</id>
+		<value>Veure registre per a més detalls</value>
+	</string>
+	<string>
+		<id>1027</id>
+		<value>DVD</value>
+	</string>
+	<string>
+		<id>1028</id>
+		<value>Ciutat</value>
+	</string>
+	<string>
+		<id>1029</id>
+		<value>Idioma subtítols</value>
+	</string>
+	<string>
+		<id>1030</id>
+		<value>Apagar</value>
+	</string>
+	<string>
+		<id>1031</id>
+		<value>Reiniciar</value>
+	</string>
+	<string>
+		<id>1032</id>
+		<value>Dormir</value>
+	</string>
+	<string>
+		<id>1033</id>
+		<value>S&apos;està gravant un programa ara mateix</value>
+	</string>
+	<string>
+		<id>1034</id>
+		<value>Cap senyal</value>
+	</string>
+	<string>
+		<id>1035</id>
+		<value>El canal TV està codificat!</value>
+	</string>
+	<string>
+		<id>1036</id>
+		<value>Cap vídeo trobat</value>
+	</string>
+	<string>
+		<id>1037</id>
+		<value>Informació del programa</value>
+	</string>
+	<string>
+		<id>1038</id>
+		<value>Gravació avançada</value>
+	</string>
+	<string>
+		<id>1039</id>
+		<value>No gravar</value>
+	</string>
+	<string>
+		<id>1040</id>
+		<value>Alertar-me</value>
+	</string>
+	<string>
+		<id>1041</id>
+		<value>Propers episodis</value>
+	</string>
+	<string>
+		<id>1042</id>
+		<value>Guardar fins</value>
+	</string>
+	<string>
+		<id>1043</id>
+		<value>Fins vist</value>
+	</string>
+	<string>
+		<id>1044</id>
+		<value>Fins necessitat d&apos;espai</value>
+	</string>
+	<string>
+		<id>1045</id>
+		<value>Fins data</value>
+	</string>
+	<string>
+		<id>1046</id>
+		<value>Sempre</value>
+	</string>
+	<string>
+		<id>1047</id>
+		<value>Començar en pantalla completa</value>
+	</string>
+	<string>
+		<id>1048</id>
+		<value>Opcions</value>
+	</string>
+	<string>
+		<id>1440</id>
+		<value>TeleText</value>
+	</string>
+	<string>
+		<id>1441</id>
+		<value>TeleText</value>
+	</string>
+	<string>
+		<id>1442</id>
+		<value>Velocitat scroll horitzontal</value>
+	</string>
+	<string>
+		<id>1443</id>
+		<value>Velocitat scroll vertical</value>
+	</string>
+	<string>
+		<id>1444</id>
+		<value>Pre-gravat</value>
+	</string>
+	<string>
+		<id>1445</id>
+		<value>Post-gravat</value>
+	</string>
+	<string>
+		<id>1446</id>
+		<value>Gravació començada:</value>
+	</string>
+	<string>
+		<id>1447</id>
+		<value>Gravació parada:</value>
+	</string>
+	<string>
+		<id>1950</id>
+		<value>Status</value>
+	</string>
+	<string>
+		<id>1951</id>
+		<value>Disc Dur</value>
+	</string>
+	<string>
+		<id>1952</id>
+		<value>Vent.</value>
+	</string>
+	<string>
+		<id>1953</id>
+		<value>Lliure</value>
+	</string>
+	<string>
+		<id>1954</id>
+		<value>Temperatura</value>
+	</string>
+	<string>
+		<id>1955</id>
+		<value>ºC</value>
+	</string>
+	<string>
+		<id>1956</id>
+		<value>Seleccionar so alarma</value>
+	</string>
+	<string>
+		<id>1957</id>
+		<value>Preferències</value>
+	</string>
+	<string>
+		<id>1958</id>
+		<value>CPU util.</value>
+	</string>
+	<string>
+		<id>1959</id>
+		<value>Voltatge</value>
+	</string>
+	<string>
+		<id>1960</id>
+		<value>Volts</value>
+	</string>
+	<string>
+		<id>1961</id>
+		<value>Freqüència</value>
+	</string>
+	<string>
+		<id>1962</id>
+		<value>Preferències</value>
+	</string>
+	<string>
+		<id>1963</id>
+		<value>Sensor detalls</value>
+	</string>
+	<string>
+		<id>1964</id>
+		<value>Sensor alarma</value>
+	</string>
+	<string>
+		<id>1965</id>
+		<value>Valor més alt</value>
+	</string>
+	<string>
+		<id>1966</id>
+		<value>Valor més baix</value>
+	</string>
+	<string>
+		<id>1967</id>
+		<value>Nivell superior alarma</value>
+	</string>
+	<string>
+		<id>1968</id>
+		<value>Nivell inferior alarma</value>
+	</string>
+	<string>
+		<id>1969</id>
+		<value>Test so</value>
+	</string>
+	<string>
+		<id>1970</id>
+		<value>Alarma interval (segons)</value>
+	</string>
+	<string>
+		<id>1971</id>
+		<value>Apagar en alerta</value>
+	</string>
+	<string>
+		<id>1972</id>
+		<value>Status detalls</value>
+	</string>
+	<string>
+		<id>1973</id>
+		<value>de</value>
+	</string>
+	<string>
+		<id>1974</id>
+		<value>Memòria</value>
+	</string>
+	<string>
+		<id>1975</id>
+		<value>Pag. Seg.</value>
+	</string>
+	<string>
+		<id>1976</id>
+		<value>rpm</value>
+	</string>
+	<string>
+		<id>1977</id>
+		<value>Sistema arxiu</value>
+	</string>
+	<string>
+		<id>1978</id>
+		<value>MemVirtual</value>
+	</string>
+	<string>
+		<id>2005</id>
+		<value>Esborrar</value>
+	</string>
+	<string>
+		<id>2006</id>
+		<value>Títol</value>
+	</string>
+	<string>
+		<id>2007</id>
+		<value>Rendiment</value>
+	</string>
+	<string>
+		<id>2008</id>
+		<value>Ingredients</value>
+	</string>
+	<string>
+		<id>2009</id>
+		<value>Instruccions</value>
+	</string>
+	<string>
+		<id>2010</id>
+		<value>Carta</value>
+	</string>
+	<string>
+		<id>2011</id>
+		<value>Imprimir</value>
+	</string>
+	<string>
+		<id>2012</id>
+		<value>Esborrar</value>
+	</string>
+	<string>
+		<id>2013</id>
+		<value>Preferits</value>
+	</string>
+	<string>
+		<id>2014</id>
+		<value>Desconegut</value>
+	</string>
+	<string>
+		<id>2015</id>
+		<value>per ració</value>
+	</string>
+	<string>
+		<id>2016</id>
+		<value>petit</value>
+	</string>
+	<string>
+		<id>2017</id>
+		<value>fl.oz</value>
+	</string>
+	<string>
+		<id>2018</id>
+		<value>cup</value>
+	</string>
+	<string>
+		<id>2019</id>
+		<value>pinta</value>
+	</string>
+	<string>
+		<id>2020</id>
+		<value>mitja</value>
+	</string>
+	<string>
+		<id>2021</id>
+		<value>gran</value>
+	</string>
+	<string>
+		<id>2022</id>
+		<value>llauna</value>
+	</string>
+	<string>
+		<id>2023</id>
+		<value>paquet</value>
+	</string>
+	<string>
+		<id>2024</id>
+		<value>pols</value>
+	</string>
+	<string>
+		<id>2025</id>
+		<value>gota</value>
+	</string>
+	<string>
+		<id>2026</id>
+		<value>dash</value>
+	</string>
+	<string>
+		<id>2027</id>
+		<value>cartró</value>
+	</string>
+	<string>
+		<id>2028</id>
+		<value>grapat</value>
+	</string>
+	<string>
+		<id>2029</id>
+		<value>tall</value>
+	</string>
+	<string>
+		<id>2030</id>
+		<value>cada</value>
+	</string>
+	<string>
+		<id>2031</id>
+		<value>culleradeta</value>
+	</string>
+	<string>
+		<id>2032</id>
+		<value>culleradeta</value>
+	</string>
+	<string>
+		<id>2033</id>
+		<value>cullerada</value>
+	</string>
+	<string>
+		<id>2034</id>
+		<value>cullerada</value>
+	</string>
+	<string>
+		<id>2035</id>
+		<value>quart</value>
+	</string>
+	<string>
+		<id>2036</id>
+		<value>gallon</value>
+	</string>
+	<string>
+		<id>2037</id>
+		<value>ounce</value>
+	</string>
+	<string>
+		<id>2038</id>
+		<value>lliura</value>
+	</string>
+	<string>
+		<id>2039</id>
+		<value>ml</value>
+	</string>
+	<string>
+		<id>2040</id>
+		<value>ml</value>
+	</string>
+	<string>
+		<id>2041</id>
+		<value>cl</value>
+	</string>
+	<string>
+		<id>2042</id>
+		<value>dl</value>
+	</string>
+	<string>
+		<id>2043</id>
+		<value>lt</value>
+	</string>
+	<string>
+		<id>2044</id>
+		<value>mg</value>
+	</string>
+	<string>
+		<id>2045</id>
+		<value>cg</value>
+	</string>
+	<string>
+		<id>2046</id>
+		<value>dg</value>
+	</string>
+	<string>
+		<id>2047</id>
+		<value>gr</value>
+	</string>
+	<string>
+		<id>2048</id>
+		<value>kg</value>
+	</string>
+	<string>
+		<id>2049</id>
+		<value>Esborrar la recepta?</value>
+	</string>
+	<string>
+		<id>2050</id>
+		<value>Esborrar categoria?</value>
+	</string>
+	<string>
+		<id>2051</id>
+		<value>Cercar títol</value>
+	</string>
+	<string>
+		<id>2052</id>
+		<value>Cercar recepta</value>
+	</string>
+	<string>
+		<id>2053</id>
+		<value>Categoria</value>
+	</string>
+	<string>
+		<id>2054</id>
+		<value>Cap entrada</value>
+	</string>
+	<string>
+		<id>2100</id>
+		<value>Gravadora</value>
+	</string>
+	<string>
+		<id>2101</id>
+		<value>Copiar CD/DVD</value>
+	</string>
+	<string>
+		<id>2102</id>
+		<value>Crear Audio-CD</value>
+	</string>
+	<string>
+		<id>2103</id>
+		<value>Crear Video-CD</value>
+	</string>
+	<string>
+		<id>2104</id>
+		<value>Crear DVD vídeo</value>
+	</string>
+	<string>
+		<id>2105</id>
+		<value>Crear CD de dades</value>
+	</string>
+	<string>
+		<id>2106</id>
+		<value>Crear DVD de dades</value>
+	</string>
+	<string>
+		<id>2107</id>
+		<value>Començar còpia</value>
+	</string>
+	<string>
+		<id>2108</id>
+		<value>Inserir CD/DVD buit</value>
+	</string>
+	<string>
+		<id>2109</id>
+		<value>i prémer OK</value>
+	</string>
+	<string>
+		<id>2110</id>
+		<value>Inserir CD/DVD original</value>
+	</string>
+	<string>
+		<id>2111</id>
+		<value>Acabat !</value>
+	</string>
+	<string>
+		<id>2112</id>
+		<value>Esperant CD/DVD</value>
+	</string>
+	<string>
+		<id>2113</id>
+		<value>Copiar tot</value>
+	</string>
+	<string>
+		<id>2114</id>
+		<value>Esborrar disc</value>
+	</string>
+	<string>
+		<id>2115</id>
+		<value>Inserir CD/DVD RW</value>
+	</string>
+	<string>
+		<id>2116</id>
+		<value>Unitat no preparada</value>
+	</string>
+	<string>
+		<id>2117</id>
+		<value>Error fatal!</value>
+	</string>
+	<string>
+		<id>2118</id>
+		<value>Convertir DVR-MS</value>
+	</string>
+	<string>
+		<id>2119</id>
+		<value>Començar conversió</value>
+	</string>
+	<string>
+		<id>2120</id>
+		<value>Convertint arxiu(s)...</value>
+	</string>
+	<string>
+		<id>2121</id>
+		<value>No s&apos;ha pogut convertir l&apos;arxiu(s)!</value>
+	</string>
+	<string>
+		<id>2122</id>
+		<value>comença!</value>
+	</string>
+	<string>
+		<id>2123</id>
+		<value>Info disc</value>
+	</string>
+	<string>
+		<id>2124</id>
+		<value>No es pot esborrar: Mitjà no gravable</value>
+	</string>
+	<string>
+		<id>2125</id>
+		<value>Esborrant disc...</value>
+	</string>
+	<string>
+		<id>2126</id>
+		<value>Treure CD</value>
+	</string>
+	<string>
+		<id>2127</id>
+		<value>El CD no és gravable</value>
+	</string>
+	<string>
+		<id>2128</id>
+		<value>Preparant escriptura; temps estimat:</value>
+	</string>
+	<string>
+		<id>2129</id>
+		<value>Preparant escriptura</value>
+	</string>
+	<string>
+		<id>2130</id>
+		<value>Bloc</value>
+	</string>
+	<string>
+		<id>2131</id>
+		<value>de</value>
+	</string>
+	<string>
+		<id>2132</id>
+		<value>Tancant disc; temps estimat:</value>
+	</string>
+	<string>
+		<id>2133</id>
+		<value>TV-gravacions</value>
+	</string>
+	<string>
+		<id>2134</id>
+		<value>Video</value>
+	</string>
+	<string>
+		<id>2135</id>
+		<value>Audio</value>
+	</string>
+	<string>
+		<id>2136</id>
+		<value>Dades</value>
+	</string>
+	<string>
+		<id>2137</id>
+		<value>Convertir</value>
+	</string>
+	<string>
+		<id>2138</id>
+		<value>Tallar</value>
+	</string>
+	<string>
+		<id>2139</id>
+		<value>Fer CD-MP3</value>
+	</string>
+	<string>
+		<id>2140</id>
+		<value>Fer DVD-MP3</value>
+	</string>
+	<string>
+		<id>2141</id>
+		<value>MPEG2 -&gt;DivX</value>
+	</string>
+	<string>
+		<id>2142</id>
+		<value>MPEG2 -&gt;MPEG4</value>
+	</string>
+	<string>
+		<id>2143</id>
+		<value>Inici</value>
+	</string>
+	<string>
+		<id>2200</id>
+		<value>Explorador</value>
+	</string>
+	<string>
+		<id>2201</id>
+		<value>Seleccionar font</value>
+	</string>
+	<string>
+		<id>2202</id>
+		<value>Seleccionar destí</value>
+	</string>
+	<string>
+		<id>2203</id>
+		<value>Copiar dades</value>
+	</string>
+	<string>
+		<id>2204</id>
+		<value>Crear carpeta</value>
+	</string>
+	<string>
+		<id>2205</id>
+		<value>Restaurar selecció</value>
+	</string>
+	<string>
+		<id>2206</id>
+		<value>Seleccionar tot</value>
+	</string>
+	<string>
+		<id>2207</id>
+		<value>Voleu procedir a</value>
+	</string>
+	<string>
+		<id>2208</id>
+		<value>crear la carpeta?</value>
+	</string>
+	<string>
+		<id>2209</id>
+		<value>Voleu copiar els arxius?</value>
+	</string>
+	<string>
+		<id>2210</id>
+		<value>Arxius copiats!</value>
+	</string>
+	<string>
+		<id>2211</id>
+		<value>Espereu, còpia en procés.</value>
+	</string>
+	<string>
+		<id>2212</id>
+		<value>Esborrar</value>
+	</string>
+	<string>
+		<id>2213</id>
+		<value>Moure</value>
+	</string>
+	<string>
+		<id>2214</id>
+		<value>Voleu moure els arxius seleccionats?</value>
+	</string>
+	<string>
+		<id>2215</id>
+		<value>Espereu, movent arxius...</value>
+	</string>
+	<string>
+		<id>2216</id>
+		<value>Arxius moguts!</value>
+	</string>
+	<string>
+		<id>2217</id>
+		<value>Arxiu destí ja existent!</value>
+	</string>
+	<string>
+		<id>2218</id>
+		<value>Sobreescriure?</value>
+	</string>
+	<string>
+		<id>2219</id>
+		<value>No es pot moure des de la unitat seleccionada!</value>
+	</string>
+	<string>
+		<id>2220</id>
+		<value>Copiar l&apos;arxiu seleccionat?</value>
+	</string>
+	<string>
+		<id>2221</id>
+		<value>Voleu esborrar els arxius seleccionats?</value>
+	</string>
+	<string>
+		<id>2222</id>
+		<value>Arxius esborrats</value>
+	</string>
+	<string>
+		<id>2223</id>
+		<value>Paperera</value>
+	</string>
+	<string>
+		<id>2224</id>
+		<value>Carpeta ja existent!</value>
+	</string>
+	<string>
+		<id>2225</id>
+		<value>Carpeta creada</value>
+	</string>
+	<string>
+		<id>3000</id>
+		<value>Opcions de programa</value>
+	</string>
+	<string>
+		<id>3001</id>
+		<value>Hora</value>
+	</string>
+	<string>
+		<id>3002</id>
+		<value>Hores</value>
+	</string>
+	<string>
+		<id>3003</id>
+		<value>Minut</value>
+	</string>
+	<string>
+		<id>3004</id>
+		<value>Minuts</value>
+	</string>
+	<string>
+		<id>3005</id>
+		<value>Hora abans</value>
+	</string>
+	<string>
+		<id>3006</id>
+		<value>Hores abans</value>
+	</string>
+	<string>
+		<id>3007</id>
+		<value>Minut abans</value>
+	</string>
+	<string>
+		<id>3008</id>
+		<value>Minuts abans</value>
+	</string>
+	<string>
+		<id>3009</id>
+		<value>Comença en</value>
+	</string>
+	<string>
+		<id>3010</id>
+		<value>Minuts restants</value>
+	</string>
+	<string>
+		<id>3011</id>
+		<value>Hora restant</value>
+	</string>
+	<string>
+		<id>3012</id>
+		<value>Hores restants</value>
+	</string>
+	<string>
+		<id>3013</id>
+		<value>Començant ara</value>
+	</string>
+	<string>
+		<id>3014</id>
+		<value>Dia</value>
+	</string>
+	<string>
+		<id>3015</id>
+		<value>Dies</value>
+	</string>
+	<string>
+		<id>3016</id>
+		<value>Ja acabat</value>
+	</string>
+	<string>
+		<id>3017</id>
+		<value>Començat</value>
+	</string>
+	<string>
+		<id>3018</id>
+		<value>Minut restant</value>
+	</string>
+	<string>
+		<id>3019</id>
+		<value>Sèrie</value>
+	</string>
+	<string>
+		<id>3020</id>
+		<value>Episodi</value>
+	</string>
+	<string>
+		<id>3021</id>
+		<value>Part</value>
+	</string>
+	<string>
+		<id>3022</id>
+		<value>de</value>
+	</string>
+	<string>
+		<id>5900</id>
+		<value>Trailers</value>
+	</string>
+	<string>
+		<id>5901</id>
+		<value>Mostrar vídeos</value>
+	</string>
+	<string>
+		<id>5902</id>
+		<value>Mostrar quins vídeos?</value>
+	</string>
+	<string>
+		<id>5903</id>
+		<value>Vídeos recentment afegits</value>
+	</string>
+	<string>
+		<id>5904</id>
+		<value>Vídeos més vists</value>
+	</string>
+	<string>
+		<id>5905</id>
+		<value>Tots els vídeos</value>
+	</string>
+	<string>
+		<id>5906</id>
+		<value>Trailers</value>
+	</string>
+	<string>
+		<id>5907</id>
+		<value>Clips</value>
+	</string>
+	<string>
+		<id>5908</id>
+		<value>Més</value>
+	</string>
+	<string>
+		<id>5909</id>
+		<value>No es pot transferir el vídeo!</value>
+	</string>
+	<string>
+		<id>5910</id>
+		<value>Retrobant info del vídeo</value>
+	</string>
+	<string>
+		<id>5911</id>
+		<value>Nou en Cartellera</value>
+	</string>
+	<string>
+		<id>5912</id>
+		<value>Setmana anterior</value>
+	</string>
+	<string>
+		<id>5913</id>
+		<value>Aquesta setmana</value>
+	</string>
+	<string>
+		<id>5914</id>
+		<value>Setmana següent</value>
+	</string>
+	<string>
+		<id>5915</id>
+		<value>Cap crítica de pel·lícula encara</value>
+	</string>
+	<string>
+		<id>5916</id>
+		<value>Cap trailer trobat</value>
+	</string>
+	<string>
+		<id>5917</id>
+		<value>Trailers alemanys</value>
+	</string>
+	<string>
+		<id>8000</id>
+		<value>Correu</value>
+	</string>
+	<string>
+		<id>8001</id>
+		<value>Revisar Correu</value>
+	</string>
+	<string>
+		<id>8002</id>
+		<value>No Auto Revisar</value>
+	</string>
+	<string>
+		<id>8003</id>
+		<value>Auto Revisar</value>
+	</string>
+	<string>
+		<id>8004</id>
+		<value>Tens Correu!</value>
+	</string>
+	<string>
+		<id>8005</id>
+		<value>Revisant Correu</value>
+	</string>
+	<string>
+		<id>8007</id>
+		<value>Auto Revisar</value>
+	</string>
+	<string>
+		<id>8008</id>
+		<value>Enrere</value>
+	</string>
+	<string>
+		<id>8009</id>
+		<value>Marcar tots no llegit</value>
+	</string>
+	<string>
+		<id>8010</id>
+		<value>Correu no definit</value>
+	</string>
+	<string>
+		<id>8011</id>
+		<value>Vagi per favor a setup i a definir</value>
+	</string>
+	<string>
+		<id>8012</id>
+		<value>almenys 1 Compte per a usar el Mail-Plugin.</value>
+	</string>
+	<string>
+		<id>8013</id>
+		<value>El servidor no respon</value>
+	</string>
+	<string>
+		<id>8014</id>
+		<value>El servidor&apos;{0}&apos;no respon!</value>
+	</string>
+	<string>
+		<id>8015</id>
+		<value>Revisi la configuració del correu&apos;{0}&apos;</value>
+	</string>
+	<string>
+		<id>8016</id>
+		<value>De</value>
+	</string>
+	<string>
+		<id>8017</id>
+		<value>A</value>
+	</string>
+	<string>
+		<id>8018</id>
+		<value>Tema</value>
+	</string>
+	<string>
+		<id>8019</id>
+		<value>Missatge</value>
+	</string>
+	<string>
+		<id>8020</id>
+		<value>Esborrar mail</value>
+	</string>
+	<string>
+		<id>8021</id>
+		<value>Marcar Llegit</value>
+	</string>
+	<string>
+		<id>8022</id>
+		<value>Deixar veure attachment</value>
+	</string>
+	<string>
+		<id>8023</id>
+		<value>Nou correu</value>
+	</string>
+	<string>
+		<id>8024</id>
+		<value>Veure Missatge</value>
+	</string>
+	<string>
+		<id>8025</id>
+		<value>Analitzant Missatge</value>
+	</string>
+	<string>
+		<id>8030</id>
+		<value>Connectat al servidor</value>
+	</string>
+	<string>
+		<id>8031</id>
+		<value>Obtenint número de missatges</value>
+	</string>
+	<string>
+		<id>8033</id>
+		<value>Progrés</value>
+	</string>
+	<string>
+		<id>8034</id>
+		<value>Mostrar HTML</value>
+	</string>
+	<string>
+		<id>9000</id>
+		<value>Dimensions imatge:</value>
+	</string>
+	<string>
+		<id>9001</id>
+		<value>Resolució:</value>
+	</string>
+	<string>
+		<id>9002</id>
+		<value>Flash:</value>
+	</string>
+	<string>
+		<id>9003</id>
+		<value>Mode mesura:</value>
+	</string>
+	<string>
+		<id>9004</id>
+		<value>Compensació exposició:</value>
+	</string>
+	<string>
+		<id>9005</id>
+		<value>Velocitat obturador:</value>
+	</string>
+	<string>
+		<id>9006</id>
+		<value>Data:</value>
+	</string>
+	<string>
+		<id>9007</id>
+		<value>Fstop:</value>
+	</string>
+	<string>
+		<id>9008</id>
+		<value>Temps exposició:</value>
+	</string>
+	<string>
+		<id>9009</id>
+		<value>Model de Càmera:</value>
+	</string>
+	<string>
+		<id>9010</id>
+		<value>Marca equip:</value>
+	</string>
+	<string>
+		<id>9011</id>
+		<value>Veure comentaris:</value>
+	</string>
+	<string>
+		<id>99845</id>
+		<value>Buscant a TV.com</value>
+	</string>
+	<string>
+		<id>12902</id>
+		<value>Menú MSN Messenger</value>
+	</string>
+	<string>
+		<id>13000</id>
+		<value>Sistema:</value>
+	</string>
+	<string>
+		<id>13001</id>
+		<value>Fabricant:</value>
+	</string>
+	<string>
+		<id>13002</id>
+		<value>Executar</value>
+	</string>
+	<string>
+		<id>13003</id>
+		<value>Important arxiu *.mlf</value>
+	</string>
+	<string>
+		<id>13004</id>
+		<value>Important arxiu *.my</value>
+	</string>
+	<string>
+		<id>13005</id>
+		<value>Darrer arxiu importat:</value>
+	</string>
+	<string>
+		<id>13006</id>
+		<value>Imatge petita</value>
+	</string>
+	<string>
+		<id>13007</id>
+		<value>Imatge gran</value>
+	</string>
+	<string>
+		<id>13008</id>
+		<value>Efecte Ken Burns</value>
+	</string>
+	<string>
+		<id>13009</id>
+		<value>Transicions aleatòries</value>
+	</string>
+	<string>
+		<id>13010</id>
+		<value>Transicions X-fade</value>
+	</string>
+	<string>
+		<id>13011</id>
+		<value>Velocitat Ken Burns</value>
+	</string>
+	<string>
+		<id>13012</id>
+		<value>Carregant imatge, espereu sisplau</value>
+	</string>
+	<string>
+		<id>13013</id>
+		<value>Carregant vídeo, espereu sisplau</value>
+	</string>
+	<string>
+		<id>13014</id>
+		<value>Explorant directori</value>
+	</string>
+	<string>
+		<id>13015</id>
+		<value>Important gamebase</value>
+	</string>
+	<string>
+		<id>13016</id>
+		<value>Ordenar per: Llançaments</value>
+	</string>
+	<string>
+		<id>13017</id>
+		<value>Ordenar per: Recents</value>
+	</string>
+	<string>
+		<id>13018</id>
+		<value>Ordenar per: Valoració</value>
+	</string>
+	<string>
+		<id>16001</id>
+		<value>Selecció per a Festa</value>
+	</string>
+	<string>
+		<id>25001</id>
+		<value>Esperant pàgina {0:X}...!</value>
+	</string>
+	<string>
+		<id>19001</id>
+		<value>Tetris</value>
+	</string>
+	<string>
+		<id>19002</id>
+		<value>Nou Joc</value>
+	</string>
+	<string>
+		<id>19003</id>
+		<value>Música</value>
+	</string>
+	<string>
+		<id>19004</id>
+		<value>So</value>
+	</string>
+	<string>
+		<id>19005</id>
+		<value>Punts</value>
+	</string>
+	<string>
+		<id>19006</id>
+		<value>Nivell</value>
+	</string>
+	<string>
+		<id>19007</id>
+		<value>Línies</value>
+	</string>
+	<string>
+		<id>19008</id>
+		<value>Punts màx.</value>
+	</string>
+	<string>
+		<id>19009</id>
+		<value>Següent</value>
+	</string>
+	<string>
+		<id>19010</id>
+		<value>Prémer o fer clic per començar..</value>
+	</string>
+	<string>
+		<id>19011</id>
+		<value>Pausat</value>
+	</string>
+	<string>
+		<id>19012</id>
+		<value>Game Over</value>
+	</string>
+	<string>
+		<id>19100</id>
+		<value>GeoClock</value>
+	</string>
+	<string>
+		<id>100000</id>
+		<value>Inici</value>
+	</string>
+	<string>
+		<id>100001</id>
+		<value>Tele</value>
+	</string>
+	<string>
+		<id>100002</id>
+		<value>Imatges</value>
+	</string>
+	<string>
+		<id>100003</id>
+		<value>Arxius</value>
+	</string>
+	<string>
+		<id>100004</id>
+		<value>Configuració</value>
+	</string>
+	<string>
+		<id>100005</id>
+		<value>Música</value>
+	</string>
+	<string>
+		<id>100006</id>
+		<value>Videos</value>
+	</string>
+	<string>
+		<id>100007</id>
+		<value>Informació Sistema</value>
+	</string>
+	<string>
+		<id>100008</id>
+		<value>Configuració-&gt;General</value>
+	</string>
+	<string>
+		<id>100009</id>
+		<value>Configuració-&gt;Pantalla</value>
+	</string>
+	<string>
+		<id>100010</id>
+		<value>Configuració-&gt;Pantalla-&gt;Calibratge UI</value>
+	</string>
+	<string>
+		<id>100011</id>
+		<value>Configuració-&gt;Pantalla-&gt;Calibratge de Pantalla</value>
+	</string>
+	<string>
+		<id>100012</id>
+		<value>Configuració-&gt;SlideShow</value>
+	</string>
+	<string>
+		<id>100013</id>
+		<value>Configuració-&gt;Screen-&gt;Filtres</value>
+	</string>
+	<string>
+		<id>100014</id>
+		<value>Configuració-&gt;Música</value>
+	</string>
+	<string>
+		<id>100015</id>
+		<value>Configuració-&gt;Pantalla-&gt;Subtítols</value>
+	</string>
+	<string>
+		<id>100016</id>
+		<value>Configuració-&gt;Pantalla-&gt;Salvapantalla</value>
+	</string>
+	<string>
+		<id>100017</id>
+		<value>Configuració-&gt;El Temps</value>
+	</string>
+	<string>
+		<id>100020</id>
+		<value>Configuració-&gt;Scripts</value>
+	</string>
+	<string>
+		<id>100021</id>
+		<value>Videos/gènere</value>
+	</string>
+	<string>
+		<id>100022</id>
+		<value>Videos/actor</value>
+	</string>
+	<string>
+		<id>100023</id>
+		<value>Videos/any</value>
+	</string>
+	<string>
+		<id>100024</id>
+		<value>Configuració-&gt;Programes</value>
+	</string>
+	<string>
+		<id>100025</id>
+		<value>Videos/títol</value>
+	</string>
+	<string>
+		<id>100026</id>
+		<value>Configuració-&gt;General-&gt;Cache</value>
+	</string>
+	<string>
+		<id>100027</id>
+		<value>Configuració-&gt;General-&gt;Autocomençar</value>
+	</string>
+	<string>
+		<id>100028</id>
+		<value>Videos/llista rep.</value>
+	</string>
+	<string>
+		<id>100029</id>
+		<value>Configuració-&gt;General-&gt;LCD</value>
+	</string>
+	<string>
+		<id>100030</id>
+		<value>Ràdio</value>
+	</string>
+	<string>
+		<id>100031</id>
+		<value>Configuració-&gt;Pantalla-&gt;velocitat scroll</value>
+	</string>
+	<string>
+		<id>100032</id>
+		<value>MSN Messenger</value>
+	</string>
+	<string>
+		<id>100033</id>
+		<value>MSN Messenger chat</value>
+	</string>
+	<string>
+		<id>100034</id>
+		<value>Plugins</value>
+	</string>
+	<string>
+		<id>100100</id>
+		<value>Finestra Sí/No</value>
+	</string>
+	<string>
+		<id>100101</id>
+		<value>Finestra de Progrés</value>
+	</string>
+	<string>
+		<id>100500</id>
+		<value>Música/llista rep.</value>
+	</string>
+	<string>
+		<id>100501</id>
+		<value>Música/arxius</value>
+	</string>
+	<string>
+		<id>100502</id>
+		<value>Música/albums</value>
+	</string>
+	<string>
+		<id>100503</id>
+		<value>Música/artistes</value>
+	</string>
+	<string>
+		<id>100504</id>
+		<value>Música/gèneres</value>
+	</string>
+	<string>
+		<id>100505</id>
+		<value>Música/top100</value>
+	</string>
+	<string>
+		<id>100506</id>
+		<value>Music/Preferits</value>
+	</string>
+	<string>
+		<id>100600</id>
+		<value>Tele/Guia</value>
+	</string>
+	<string>
+		<id>100601</id>
+		<value>Tele/Programador</value>
+	</string>
+	<string>
+		<id>100602</id>
+		<value>Tele/Pantalla completa</value>
+	</string>
+	<string>
+		<id>100603</id>
+		<value>Tele/Gravats TV</value>
+	</string>
+	<string>
+		<id>100604</id>
+		<value>Tele/Cercar</value>
+	</string>
+	<string>
+		<id>100605</id>
+		<value>Tele/Gravats TV/Gènere</value>
+	</string>
+	<string>
+		<id>100606</id>
+		<value>Tele/Gravats TV/Canals</value>
+	</string>
+	<string>
+		<id>100607</id>
+		<value>TV/Programador/Prioritats</value>
+	</string>
+	<string>
+		<id>100608</id>
+		<value>TV/Programador/Conflictes</value>
+	</string>
+	<string>
+		<id>100609</id>
+		<value>TV/Compressió/Principal</value>
+	</string>
+	<string>
+		<id>100610</id>
+		<value>TV/Compressió/Opcions</value>
+	</string>
+	<string>
+		<id>100611</id>
+		<value>TV/Compressió/Auto</value>
+	</string>
+	<string>
+		<id>100612</id>
+		<value>TV/Compressió/Compressió</value>
+	</string>
+	<string>
+		<id>100613</id>
+		<value>TV/Compressió/Status</value>
+	</string>
+	<string>
+		<id>100614</id>
+		<value>Info Artista Vídeo</value>
+	</string>
+	<string>
+		<id>100615</id>
+		<value>Ajudant/Benvingut</value>
+	</string>
+	<string>
+		<id>100616</id>
+		<value>Ajudant/Targetes detectades</value>
+	</string>
+	<string>
+		<id>100617</id>
+		<value>Ajudant/País</value>
+	</string>
+	<string>
+		<id>100618</id>
+		<value>Ajudant/Scan</value>
+	</string>
+	<string>
+		<id>100619</id>
+		<value>Ajudant/DVBC/País</value>
+	</string>
+	<string>
+		<id>100620</id>
+		<value>Ajudant/DVBC/Scan</value>
+	</string>
+	<string>
+		<id>100621</id>
+		<value>Ajudant/DVBS/LNB</value>
+	</string>
+	<string>
+		<id>100622</id>
+		<value>Ajudant/DVBS/Detalls LNB</value>
+	</string>
+	<string>
+		<id>100623</id>
+		<value>Ajudant/DVBS/Transponder</value>
+	</string>
+	<string>
+		<id>100624</id>
+		<value>Ajudant/DVBS/Scan</value>
+	</string>
+	<string>
+		<id>100625</id>
+		<value>Ajudant/ATSC/Scan</value>
+	</string>
+	<string>
+		<id>100626</id>
+		<value>Ajudant/Analògic/País</value>
+	</string>
+	<string>
+		<id>100627</id>
+		<value>Ajudant/Analògic/Ciutat</value>
+	</string>
+	<string>
+		<id>100628</id>
+		<value>Ajudant/Analògic/Importat</value>
+	</string>
+	<string>
+		<id>100629</id>
+		<value>Ajudant/Analògic/Manual</value>
+	</string>
+	<string>
+		<id>100630</id>
+		<value>Ajudant/Analògic/Scan</value>
+	</string>
+	<string>
+		<id>100631</id>
+		<value>Ajudant/Analògic/Renombrar</value>
+	</string>
+	<string>
+		<id>100632</id>
+		<value>Ajudant/Analògic/Ràdio</value>
+	</string>
+	<string>
+		<id>100633</id>
+		<value>Ajudant/Analògic/Renombrar Ràdio</value>
+	</string>
+	<string>
+		<id>100634</id>
+		<value>Ajudant/Comandament dist.</value>
+	</string>
+	<string>
+		<id>100635</id>
+		<value>Ajudant/EPG</value>
+	</string>
+	<string>
+		<id>100699</id>
+		<value>Ajudant/Acabat</value>
+	</string>
+	<string>
+		<id>100700</id>
+		<value>Opcions TV</value>
+	</string>
+	<string>
+		<id>100701</id>
+		<value>Opcions Gravar TV</value>
+	</string>
+	<string>
+		<id>100702</id>
+		<value>Ordenar canals TV</value>
+	</string>
+	<string>
+		<id>100703</id>
+		<value>Opcions vídeo TV</value>
+	</string>
+	<string>
+		<id>100704</id>
+		<value>Opcions DVD</value>
+	</string>
+	<string>
+		<id>100705</id>
+		<value>Opcions pell</value>
+	</string>
+	<string>
+		<id>100748</id>
+		<value>Info programa</value>
+	</string>
+	<string>
+		<id>100749</id>
+		<value>TV/Cap senyal</value>
+	</string>
+	<string>
+		<id>100750</id>
+		<value>Receptes</value>
+	</string>
+	<string>
+		<id>100755</id>
+		<value>Status</value>
+	</string>
+	<string>
+		<id>100756</id>
+		<value>Detalls de Status</value>
+	</string>
+	<string>
+		<id>100757</id>
+		<value>Preferències de Status</value>
+	</string>
+	<string>
+		<id>100758</id>
+		<value>Arxiu</value>
+	</string>
+	<string>
+		<id>100759</id>
+		<value>Info TV gravada</value>
+	</string>
+	<string>
+		<id>100760</id>
+		<value>Gravadora</value>
+	</string>
+	<string>
+		<id>100770</id>
+		<value>Explorador</value>
+	</string>
+	<string>
+		<id>101000</id>
+		<value>teclat</value>
+	</string>
+	<string>
+		<id>102000</id>
+		<value>Selecció</value>
+	</string>
+	<string>
+		<id>102001</id>
+		<value>Música/informació</value>
+	</string>
+	<string>
+		<id>102002</id>
+		<value>Finestra OK</value>
+	</string>
+	<string>
+		<id>102003</id>
+		<value>Videos/informació</value>
+	</string>
+	<string>
+		<id>102004</id>
+		<value>Scripts/informació</value>
+	</string>
+	<string>
+		<id>102005</id>
+		<value>Video pantalla completa</value>
+	</string>
+	<string>
+		<id>102006</id>
+		<value>Audio visualització</value>
+	</string>
+	<string>
+		<id>102007</id>
+		<value>Imatges/slideshow</value>
+	</string>
+	<string>
+		<id>102008</id>
+		<value>Finestra d&apos;enllaç de fitxers</value>
+	</string>
+	<string>
+		<id>102009</id>
+		<value>Selecció</value>
+	</string>
+	<string>
+		<id>102010</id>
+		<value>Data/Hora</value>
+	</string>
+	<string>
+		<id>102011</id>
+		<value>Info Artista</value>
+	</string>
+	<string>
+		<id>102012</id>
+		<value>Menú contexte</value>
+	</string>
+	<string>
+		<id>102013</id>
+		<value>Puntuar</value>
+	</string>
+	<string>
+		<id>102014</id>
+		<value>Info Imatge</value>
+	</string>
+	<string>
+		<id>102015</id>
+		<value>Mini Menu</value>
+	</string>
+	<string>
+		<id>102016</id>
+		<value>Notificació</value>
+	</string>
+	<string>
+		<id>102600</id>
+		<value>El Temps</value>
+	</string>
+	<string>
+		<id>102700</id>
+		<value>Notícies</value>
+	</string>
+	<string>
+		<id>102900</id>
+		<value>Salvapantalla</value>
+	</string>
+	<string>
+		<id>102901</id>
+		<value>OSD pantalla completa</value>
+	</string>
+	<string>
+		<id>103003</id>
+		<value>TV/OSD</value>
+	</string>
+	<string>
+		<id>103006</id>
+		<value>TV/MSN</value>
+	</string>
+	<string>
+		<id>103007</id>
+		<value>TV/Zap</value>
+	</string>
+	<string>
+		<id>107700</id>
+		<value>TV/Teletext</value>
+	</string>
+	<string>
+		<id>107701</id>
+		<value>TV/Teletext</value>
+	</string>
+	<string>
+		<id>200000</id>
+		<value>Sisplau seleccionar font d&apos;EPG. Nota: si el vostre país</value>
+	</string>
+	<string>
+		<id>200001</id>
+		<value>no està en llista llavors haureu d&apos;entrar el EPG manualment</value>
+	</string>
+	<string>
+		<id>200002</id>
+		<value>Ara podeu assignar els canals EPG als vostres canals TV</value>
+	</string>
+	<string>
+		<id>200003</id>
+		<value>seleccionar canal i prémer enter per a canviar assignació</value>
+	</string>
+	<string>
+		<id>200004</id>
+		<value>Tvguide.xml entrat manualment</value>
+	</string>
+	<string>
+		<id>200005</id>
+		<value>Sisplau especificar el comandament a distància:</value>
+	</string>
+	<string>
+		<id>200006</id>
+		<value>Prémer Següent per a continuar la configuració</value>
+	</string>
+	<string>
+		<id>200007</id>
+		<value>&lt;Enrera</value>
+	</string>
+	<string>
+		<id>200008</id>
+		<value>Configuració - Comandament a distància</value>
+	</string>
+	<string>
+		<id>200009</id>
+		<value>Següent&gt;</value>
+	</string>
+	<string>
+		<id>200010</id>
+		<value>MediaPortal converteix el vostre PC en un avançat Centre Multimedia / Home Cinema</value>
+	</string>
+	<string>
+		<id>200011</id>
+		<value>Amb MediaPortal podeu disfrutar de la vostra música preferida, ràdio</value>
+	</string>
+	<string>
+		<id>200013</id>
+		<value>Us permet d&apos;escoltar la vostra música / ràdio preferida, veure els vostres vídeos i DVDs</value>
+	</string>
+	<string>
+		<id>200014</id>
+		<value>fotos, vídeos i veure / gravar TV en viu i molt més.</value>
+	</string>
+	<string>
+		<id>200015</id>
+		<value>Aquest ajudant us guiarà en la configuració de MediaPortal. Sisplau seguiu els passos</value>
+	</string>
+	<string>
+		<id>200016</id>
+		<value>Prémer&apos;Següent&apos;per a començar</value>
+	</string>
+	<string>
+		<id>200017</id>
+		<value>Benvingut a MediaPortal.</value>
+	</string>
+	<string>
+		<id>200018</id>
+		<value>Felicitats. MediaPortal està ara configurat i preparat per l&apos;ús.</value>
+	</string>
+	<string>
+		<id>200019</id>
+		<value>Prémer&apos;Finalitzar&apos;per tancar l&apos;ajudant</value>
+	</string>
+	<string>
+		<id>200020</id>
+		<value>Acabar</value>
+	</string>
+	<string>
+		<id>200021</id>
+		<value>Configuració TV - EPG</value>
+	</string>
+	<string>
+		<id>200022</id>
+		<value>MediaPortal ha trobat les capturadores-TV següents:</value>
+	</string>
+	<string>
+		<id>200023</id>
+		<value>Prémer&apos;Següent&apos;per configurar-les</value>
+	</string>
+	<string>
+		<id>200024</id>
+		<value>Configuració TV</value>
+	</string>
+	<string>
+		<id>4000</id>
+		<value>Navegador Web</value>
+	</string>
+	<string>
+		<id>4001</id>
+		<value>Preferits</value>
+	</string>
 </strings>

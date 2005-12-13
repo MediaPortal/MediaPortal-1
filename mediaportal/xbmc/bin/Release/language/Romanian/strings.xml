@@ -1,289 +1,289 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="iso-8859-2"?>
 <strings>
-	<characters>255</characters>
+	<characters>512</characters>
 	<string>
 		<id>0</id>
-		<value>Mina Program</value>
+		<value>Programe</value>
 	</string>
 	<string>
 		<id>1</id>
-		<value>Mina Bilder</value>
+		<value>Fotografii</value>
 	</string>
 	<string>
 		<id>2</id>
-		<value>Min Musik</value>
+		<value>Muzicã</value>
 	</string>
 	<string>
 		<id>3</id>
-		<value>Mina Filmer</value>
+		<value>Video</value>
 	</string>
 	<string>
 		<id>4</id>
-		<value>TV-tablå</value>
+		<value>Ghid TV</value>
 	</string>
 	<string>
 		<id>5</id>
-		<value>Inställningar</value>
+		<value>Setãri</value>
 	</string>
 	<string>
 		<id>6</id>
-		<value>MediaPortal CVS build</value>
+		<value>XBOX Media Center CVS build</value>
 	</string>
 	<string>
 		<id>7</id>
-		<value>Mina Filer</value>
+		<value>Fiºiere</value>
 	</string>
 	<string>
 		<id>8</id>
-		<value>Mitt Väder</value>
+		<value>Meteo</value>
 	</string>
 	<string>
 		<id>9</id>
-		<value>Mina Nyheter</value>
+		<value>ªtiri</value>
 	</string>
 	<string>
 		<id>10</id>
-		<value>Mina Recept</value>
+		<value>Culinare</value>
 	</string>
 	<string>
 		<id>11</id>
-		<value>Måndag</value>
+		<value>Luni</value>
 	</string>
 	<string>
 		<id>12</id>
-		<value>Tisdag</value>
+		<value>Marþi</value>
 	</string>
 	<string>
 		<id>13</id>
-		<value>Onsdag</value>
+		<value>Miercuri</value>
 	</string>
 	<string>
 		<id>14</id>
-		<value>Torsdag</value>
+		<value>Joi</value>
 	</string>
 	<string>
 		<id>15</id>
-		<value>Fredag</value>
+		<value>Vineri</value>
 	</string>
 	<string>
 		<id>16</id>
-		<value>Lördag</value>
+		<value>Sâmbãtã</value>
 	</string>
 	<string>
 		<id>17</id>
-		<value>Söndag</value>
+		<value>Duminicã</value>
 	</string>
 	<string>
 		<id>21</id>
-		<value>januari</value>
+		<value>Ianuarie</value>
 	</string>
 	<string>
 		<id>22</id>
-		<value>februari</value>
+		<value>Februarie</value>
 	</string>
 	<string>
 		<id>23</id>
-		<value>mars</value>
+		<value>Martie</value>
 	</string>
 	<string>
 		<id>24</id>
-		<value>april</value>
+		<value>Aprilie</value>
 	</string>
 	<string>
 		<id>25</id>
-		<value>maj</value>
+		<value>Mai</value>
 	</string>
 	<string>
 		<id>26</id>
-		<value>juni</value>
+		<value>Iunie</value>
 	</string>
 	<string>
 		<id>27</id>
-		<value>juli</value>
+		<value>Iulie</value>
 	</string>
 	<string>
 		<id>28</id>
-		<value>augusti</value>
+		<value>August</value>
 	</string>
 	<string>
 		<id>29</id>
-		<value>september</value>
+		<value>Septembrie</value>
 	</string>
 	<string>
 		<id>30</id>
-		<value>oktober</value>
+		<value>Octombrie</value>
 	</string>
 	<string>
 		<id>31</id>
-		<value>november</value>
+		<value>Noiembrie</value>
 	</string>
 	<string>
 		<id>32</id>
-		<value>december</value>
+		<value>Decembrie</value>
 	</string>
 	<string>
 		<id>50</id>
-		<value>Mina DVD-filmer</value>
+		<value>DVD-uri</value>
 	</string>
 	<string>
 		<id>100</id>
-		<value>Visa: Ikoner</value>
+		<value>Miniaturi</value>
 	</string>
 	<string>
 		<id>101</id>
-		<value>Visa: Lista</value>
+		<value>Lista</value>
 	</string>
 	<string>
 		<id>102</id>
-		<value>Skanna</value>
+		<value>Scan</value>
 	</string>
 	<string>
 		<id>103</id>
-		<value>Sortera efter: Namn</value>
+		<value>Sortare dupã: Nume</value>
 	</string>
 	<string>
 		<id>104</id>
-		<value>Sortera efter: Datum</value>
+		<value>Sortare dupã: Data</value>
 	</string>
 	<string>
 		<id>105</id>
-		<value>Sortera efter: Storlek</value>
+		<value>Sortare dupã: Marime</value>
 	</string>
 	<string>
 		<id>106</id>
-		<value>Nej</value>
+		<value>Nu</value>
 	</string>
 	<string>
 		<id>107</id>
-		<value>Ja</value>
+		<value>Da</value>
 	</string>
 	<string>
 		<id>108</id>
-		<value>Bildspel</value>
+		<value>Diapozitive</value>
 	</string>
 	<string>
 		<id>109</id>
-		<value>Skapa miniatyr</value>
+		<value>Creazã Miniaturi</value>
 	</string>
 	<string>
 		<id>110</id>
-		<value>Skapa miniatyr</value>
+		<value>Creazã Miniaturi</value>
 	</string>
 	<string>
 		<id>111</id>
-		<value>Genvägar</value>
+		<value>Acces Direct</value>
 	</string>
 	<string>
 		<id>112</id>
-		<value>PAUSAD</value>
+		<value>PAUZA</value>
 	</string>
 	<string>
 		<id>113</id>
-		<value>Mina Filer : Källa</value>
+		<value>Fiºiere : Sursã</value>
 	</string>
 	<string>
 		<id>114</id>
-		<value>Mina Filer : Destination</value>
+		<value>Fiºiere : Destinaþie</value>
 	</string>
 	<string>
 		<id>115</id>
-		<value>Kopiera</value>
+		<value>Copiere</value>
 	</string>
 	<string>
 		<id>116</id>
-		<value>Flytta</value>
+		<value>Mutare</value>
 	</string>
 	<string>
 		<id>117</id>
-		<value>Ta bort</value>
+		<value>ªtergere</value>
 	</string>
 	<string>
 		<id>118</id>
-		<value>Byt namn</value>
+		<value>Re-denumire</value>
 	</string>
 	<string>
 		<id>119</id>
-		<value>Ny mapp</value>
+		<value>Director nou</value>
 	</string>
 	<string>
 		<id>120</id>
-		<value>Bekräfta kopiera fil</value>
+		<value>Confirmã copierea</value>
 	</string>
 	<string>
 		<id>121</id>
-		<value>Bekräfta flytta fil</value>
+		<value>Confirmã mutarea</value>
 	</string>
 	<string>
 		<id>122</id>
-		<value>Bekräfta ta bort fil</value>
+		<value>Confirmã ºtergerea</value>
 	</string>
 	<string>
 		<id>123</id>
-		<value>Kopiera dessa filer?</value>
+		<value>Copiaþi fiºierele?</value>
 	</string>
 	<string>
 		<id>124</id>
-		<value>Flytta dessa filer?</value>
+		<value>Mutaþi fiºierele?</value>
 	</string>
 	<string>
 		<id>125</id>
-		<value>Ta bort dessa filer?</value>
+		<value>Stergeþi fiºierele?</value>
 	</string>
 	<string>
 		<id>126</id>
-		<value>Status</value>
+		<value>Stare</value>
 	</string>
 	<string>
 		<id>127</id>
-		<value>Objekt</value>
+		<value>Elemente</value>
 	</string>
 	<string>
 		<id>128</id>
-		<value>Allmänt</value>
+		<value>General</value>
 	</string>
 	<string>
 		<id>129</id>
-		<value>Bildspel</value>
+		<value>Diapozitive</value>
 	</string>
 	<string>
 		<id>130</id>
-		<value>Systeminfo</value>
+		<value>Informatii Sistem</value>
 	</string>
 	<string>
 		<id>131</id>
-		<value>Skärm</value>
+		<value>Ecran</value>
 	</string>
 	<string>
 		<id>132</id>
-		<value>Album</value>
+		<value>Albume</value>
 	</string>
 	<string>
 		<id>133</id>
-		<value>Artister</value>
+		<value>Artiºti</value>
 	</string>
 	<string>
 		<id>134</id>
-		<value>Låtar</value>
+		<value>Locatii Comune</value>
 	</string>
 	<string>
 		<id>135</id>
-		<value>Genrer</value>
+		<value>Genuri</value>
 	</string>
 	<string>
 		<id>136</id>
-		<value>Spellistor</value>
+		<value>Listã Redare</value>
 	</string>
 	<string>
 		<id>137</id>
-		<value>Sök</value>
+		<value>Cautã</value>
 	</string>
 	<string>
 		<id>138</id>
-		<value>SYSTEMINFORMATION</value>
+		<value>INFORMATII SISTEM</value>
 	</string>
 	<string>
 		<id>139</id>
-		<value>Temperaturer:</value>
+		<value>Temperaturã:</value>
 	</string>
 	<string>
 		<id>140</id>
@@ -295,27 +295,27 @@
 	</string>
 	<string>
 		<id>142</id>
-		<value>Tid:</value>
+		<value>Timp:</value>
 	</string>
 	<string>
 		<id>143</id>
-		<value>Aktuell:</value>
+		<value>Curent:</value>
 	</string>
 	<string>
 		<id>144</id>
-		<value>Build:</value>
+		<value>Versiune:</value>
 	</string>
 	<string>
 		<id>145</id>
-		<value>Nätverk:</value>
+		<value>Reþea:</value>
 	</string>
 	<string>
 		<id>146</id>
-		<value>Typ:</value>
+		<value>Tip:</value>
 	</string>
 	<string>
 		<id>147</id>
-		<value>Statisk</value>
+		<value>Static</value>
 	</string>
 	<string>
 		<id>148</id>
@@ -331,27 +331,27 @@
 	</string>
 	<string>
 		<id>151</id>
-		<value>Länk:</value>
+		<value>Link:</value>
 	</string>
 	<string>
 		<id>152</id>
-		<value>Halv duplex</value>
+		<value>Semi duplex</value>
 	</string>
 	<string>
 		<id>153</id>
-		<value>Full duplex</value>
+		<value>Duplex</value>
 	</string>
 	<string>
 		<id>154</id>
-		<value>Lagring</value>
+		<value>Unitate Stocare</value>
 	</string>
 	<string>
 		<id>155</id>
-		<value>Enhet</value>
+		<value>Disc</value>
 	</string>
 	<string>
 		<id>156</id>
-		<value>Ledigt</value>
+		<value>Liber</value>
 	</string>
 	<string>
 		<id>157</id>
@@ -359,51 +359,51 @@
 	</string>
 	<string>
 		<id>158</id>
-		<value>Ledigt minne</value>
+		<value>Memorie Liberã</value>
 	</string>
 	<string>
 		<id>159</id>
-		<value>Ingen länk</value>
+		<value>Fãrã conexiune</value>
 	</string>
 	<string>
 		<id>160</id>
-		<value>Ledigt</value>
+		<value>Liber</value>
 	</string>
 	<string>
 		<id>161</id>
-		<value>Otillgänglig</value>
+		<value>Indisponibil</value>
 	</string>
 	<string>
 		<id>162</id>
-		<value>Släde öppen</value>
+		<value>CD Deschis</value>
 	</string>
 	<string>
 		<id>163</id>
-		<value>Läser</value>
+		<value>Acces disc</value>
 	</string>
 	<string>
 		<id>164</id>
-		<value>Ingen disk</value>
+		<value>Disc Absent</value>
 	</string>
 	<string>
 		<id>165</id>
-		<value>Disk presenterad</value>
+		<value>Disc Prezent</value>
 	</string>
 	<string>
 		<id>166</id>
-		<value>Skal:</value>
+		<value>Interfaþã:</value>
 	</string>
 	<string>
 		<id>167</id>
-		<value>FTP-server:</value>
+		<value>Server FTP:</value>
 	</string>
 	<string>
 		<id>168</id>
-		<value>Synkronisera tid:</value>
+		<value>Sincronizare Orã:</value>
 	</string>
 	<string>
 		<id>169</id>
-		<value>Upplösning:</value>
+		<value>Rezoluþie Ecran:</value>
 	</string>
 	<string>
 		<id>170</id>
@@ -415,59 +415,59 @@
 	</string>
 	<string>
 		<id>172</id>
-		<value>Releasedatum:</value>
+		<value>Data Apariþiei:</value>
 	</string>
 	<string>
 		<id>173</id>
-		<value>Betyg:</value>
+		<value>Rating:</value>
 	</string>
 	<string>
 		<id>174</id>
-		<value>Genre:</value>
+		<value>Gen:</value>
 	</string>
 	<string>
 		<id>175</id>
-		<value>Tones:</value>
+		<value>Tonuri:</value>
 	</string>
 	<string>
 		<id>176</id>
-		<value>Stil:</value>
+		<value>Stiluri:</value>
 	</string>
 	<string>
 		<id>177</id>
-		<value>Recension:</value>
+		<value>Opinie:</value>
 	</string>
 	<string>
 		<id>178</id>
-		<value>Spår:</value>
+		<value>Piste:</value>
 	</string>
 	<string>
 		<id>179</id>
-		<value>Låt</value>
+		<value>Cântec</value>
 	</string>
 	<string>
 		<id>180</id>
-		<value>Längd</value>
+		<value>Duratã</value>
 	</string>
 	<string>
 		<id>181</id>
-		<value>Välj album</value>
+		<value>Selectare album</value>
 	</string>
 	<string>
 		<id>182</id>
-		<value>Spår</value>
+		<value>Piste</value>
 	</string>
 	<string>
 		<id>183</id>
-		<value>Recension</value>
+		<value>Opinie</value>
 	</string>
 	<string>
 		<id>184</id>
-		<value>Uppdatera</value>
+		<value>Actualizare</value>
 	</string>
 	<string>
 		<id>185</id>
-		<value>Söker album</value>
+		<value>Cãutare album</value>
 	</string>
 	<string>
 		<id>186</id>
@@ -475,115 +475,115 @@
 	</string>
 	<string>
 		<id>187</id>
-		<value>Hittade inga album!</value>
+		<value>Album negasit!</value>
 	</string>
 	<string>
 		<id>188</id>
-		<value>Välj alla</value>
+		<value>Selecteazã toate</value>
 	</string>
 	<string>
 		<id>189</id>
-		<value>Söker mediainfo</value>
+		<value>Interogare Informaþii</value>
 	</string>
 	<string>
 		<id>190</id>
-		<value>Spara</value>
+		<value>Salvare</value>
 	</string>
 	<string>
 		<id>191</id>
-		<value>Mix</value>
+		<value>Aleator</value>
 	</string>
 	<string>
 		<id>192</id>
-		<value>Städa</value>
+		<value>ªterge</value>
 	</string>
 	<string>
 		<id>193</id>
-		<value>Skanna</value>
+		<value>Scan</value>
 	</string>
 	<string>
 		<id>194</id>
-		<value>Söker...</value>
+		<value>Se cautã...</value>
 	</string>
 	<string>
 		<id>195</id>
-		<value>Ingen IMDB-info hittades!</value>
+		<value>Informaþie IMDB nedisponibilã!</value>
 	</string>
 	<string>
 		<id>196</id>
-		<value>Välj film:</value>
+		<value>Selectare film:</value>
 	</string>
 	<string>
 		<id>197</id>
-		<value>Frågar IMDB efter info</value>
+		<value>Interogare informaþie IMDB</value>
 	</string>
 	<string>
 		<id>198</id>
-		<value>Laddar fildetaljer</value>
+		<value>Se cautã informaþii film</value>
 	</string>
 	<string>
 		<id>199</id>
-		<value>Regissör:</value>
+		<value>Regizor:</value>
 	</string>
 	<string>
 		<id>200</id>
-		<value>Författare:</value>
+		<value>Scenarist:</value>
 	</string>
 	<string>
 		<id>201</id>
-		<value>År:</value>
+		<value>An:</value>
 	</string>
 	<string>
 		<id>202</id>
-		<value>Beteckning:</value>
+		<value>Tagline:</value>
 	</string>
 	<string>
 		<id>203</id>
-		<value>Handling sammanf.:</value>
+		<value>Plot outline:</value>
 	</string>
 	<string>
 		<id>204</id>
-		<value>Betyg:</value>
+		<value>Opinii:</value>
 	</string>
 	<string>
 		<id>205</id>
-		<value>Röster:</value>
+		<value>Voturi:</value>
 	</string>
 	<string>
 		<id>206</id>
-		<value>Rollista</value>
+		<value>Distribuþie</value>
 	</string>
 	<string>
 		<id>207</id>
-		<value>Handling</value>
+		<value>Plot</value>
 	</string>
 	<string>
 		<id>208</id>
-		<value>Spela</value>
+		<value>Redare</value>
 	</string>
 	<string>
 		<id>209</id>
-		<value>Nästa</value>
+		<value>Urmator</value>
 	</string>
 	<string>
 		<id>210</id>
-		<value>Föregående</value>
+		<value>Precedent</value>
 	</string>
 	<string>
 		<id>211</id>
-		<value>Söker efter program</value>
+		<value>Se cautã aplicaþiile</value>
 	</string>
 	<string>
 		<id>212</id>
-		<value>program funna</value>
+		<value>aplicaþii gãsite</value>
 	</string>
 	<string>
 		<id>213</id>
-		<value>UI Kalibrering</value>
+		<value>Calibrare</value>
 	</string>
 	<string>
 		<id>214</id>
-		<value>Skärmkalibrering</value>
+		<value>Calib. Ecran</value>
 	</string>
 	<string>
 		<id>215</id>
@@ -591,75 +591,75 @@
 	</string>
 	<string>
 		<id>216</id>
-		<value>Zoom</value>
+		<value>Mãrire/Micºorare</value>
 	</string>
 	<string>
 		<id>217</id>
-		<value>Stretch</value>
+		<value>Extindere la ecran</value>
 	</string>
 	<string>
 		<id>218</id>
-		<value>DVD-enhet</value>
+		<value>Unitate DVD</value>
 	</string>
 	<string>
 		<id>219</id>
-		<value>Sätt i en skiva</value>
+		<value>Va rog introduceþi discul</value>
 	</string>
 	<string>
 		<id>220</id>
-		<value>Remote Share</value>
+		<value>Locaþie în reþea</value>
 	</string>
 	<string>
 		<id>221</id>
-		<value>Nätverket är anslutet</value>
+		<value>Reþeaua nu este funcþionalã</value>
 	</string>
 	<string>
 		<id>222</id>
-		<value>Avbryt</value>
+		<value>Anulare</value>
 	</string>
 	<string>
 		<id>223</id>
-		<value>Automatisk bredbild</value>
+		<value>Auto-comutare ecran lat</value>
 	</string>
 	<string>
 		<id>224</id>
-		<value>Hastighet</value>
+		<value>Vitezã</value>
 	</string>
 	<string>
 		<id>225</id>
-		<value>Varaktighet för övergång</value>
+		<value>Duratã tranziþie</value>
 	</string>
 	<string>
 		<id>226</id>
-		<value>Aktivera PAL60</value>
+		<value>Activare PAL60</value>
 	</string>
 	<string>
 		<id>227</id>
-		<value>Aktivera CDDB</value>
+		<value>Activare CDDB</value>
 	</string>
 	<string>
 		<id>228</id>
-		<value>Blanda spellista vid laddning</value>
+		<value>Se încarcã Playlist - Aleator</value>
 	</string>
 	<string>
 		<id>229</id>
-		<value>HD-nedspinningstid (minuter)</value>
+		<value>Timp oprire disc (min.)</value>
 	</string>
 	<string>
 		<id>230</id>
-		<value>Filter</value>
+		<value>Filtre</value>
 	</string>
 	<string>
 		<id>231</id>
-		<value>Ingen</value>
+		<value>Nimic</value>
 	</string>
 	<string>
 		<id>232</id>
-		<value>Point</value>
+		<value>Punct</value>
 	</string>
 	<string>
 		<id>233</id>
-		<value>Linjär</value>
+		<value>Liniar</value>
 	</string>
 	<string>
 		<id>234</id>
@@ -671,75 +671,75 @@
 	</string>
 	<string>
 		<id>236</id>
-		<value>Gaussian Cubic</value>
+		<value>Cubic Gausian</value>
 	</string>
 	<string>
 		<id>237</id>
-		<value>Minification:</value>
+		<value>Micºorare:</value>
 	</string>
 	<string>
 		<id>238</id>
-		<value>Magnification:</value>
+		<value>Mãrire:</value>
 	</string>
 	<string>
 		<id>240</id>
-		<value>Autostarta DVD-Video</value>
+		<value>Auto-start DVD-Video</value>
 	</string>
 	<string>
 		<id>241</id>
-		<value>Autostarta VCD/SVCD</value>
+		<value>Auto-start VideoCD/SVCD</value>
 	</string>
 	<string>
 		<id>242</id>
-		<value>Autostarta Ljud-CD</value>
+		<value>Auto-start Audio-CD</value>
 	</string>
 	<string>
 		<id>243</id>
-		<value>Autostarta XBOX-spel</value>
+		<value>Auto-start Joc XBOX</value>
 	</string>
 	<string>
 		<id>244</id>
-		<value>Autostarta videor</value>
+		<value>Auto-start Video</value>
 	</string>
 	<string>
 		<id>245</id>
-		<value>Autostarta musik</value>
+		<value>Auto-start Muzicã</value>
 	</string>
 	<string>
 		<id>246</id>
-		<value>Autostarta bilder</value>
+		<value>Auto-start Fotografii</value>
 	</string>
 	<string>
 		<id>247</id>
-		<value>Skript</value>
+		<value>Scenarii (Scripturi)</value>
 	</string>
 	<string>
 		<id>248</id>
-		<value>Språk</value>
+		<value>Limbã</value>
 	</string>
 	<string>
 		<id>249</id>
-		<value>Musik</value>
+		<value>Muzicã</value>
 	</string>
 	<string>
 		<id>250</id>
-		<value>Visualisering</value>
+		<value>Vizualizare</value>
 	</string>
 	<string>
 		<id>251</id>
-		<value>Välj målmapp</value>
+		<value>Selectaþi directorul destinaþie</value>
 	</string>
 	<string>
 		<id>252</id>
-		<value>Mata ut till alla högtalare</value>
+		<value>Audio pe toate difuzoarele</value>
 	</string>
 	<string>
 		<id>253</id>
-		<value>Antal kanaler</value>
+		<value>Numãr canale</value>
 	</string>
 	<string>
 		<id>254</id>
-		<value>DD Stereo Passthrough</value>
+		<value>DD Stereo</value>
 	</string>
 	<string>
 		<id>255</id>
@@ -747,143 +747,143 @@
 	</string>
 	<string>
 		<id>256</id>
-		<value>Frågar FreeDB efter CDDB-info</value>
+		<value>Interogare Internet pentru CDDB</value>
 	</string>
 	<string>
 		<id>257</id>
-		<value>Fel</value>
+		<value>Eroare</value>
 	</string>
 	<string>
 		<id>258</id>
-		<value>Aktivera ID3-taggar</value>
+		<value>Activare ID3</value>
 	</string>
 	<string>
 		<id>259</id>
-		<value>Öppnar</value>
+		<value>Deschidere</value>
 	</string>
 	<string>
 		<id>260</id>
-		<value>Shoutcast</value>
+		<value>Radio Internet (Shoutcast)</value>
 	</string>
 	<string>
 		<id>261</id>
-		<value>Väntar på start....</value>
+		<value>Vã rog asteptaþi....</value>
 	</string>
 	<string>
 		<id>262</id>
-		<value>Skript output</value>
+		<value>Rezultate Scripturi</value>
 	</string>
 	<string>
 		<id>263</id>
-		<value>HTTP-server:</value>
+		<value>Server HTTP:</value>
 	</string>
 	<string>
 		<id>264</id>
-		<value>Spela in</value>
+		<value>Înregistrare</value>
 	</string>
 	<string>
 		<id>265</id>
-		<value>Stoppa Insp.</value>
+		<value>Stop Înreg.</value>
 	</string>
 	<string>
 		<id>266</id>
-		<value>Sortera efter: Spår</value>
+		<value>Sortare dupã: Pistã</value>
 	</string>
 	<string>
 		<id>267</id>
-		<value>Sortera efter: Tid</value>
+		<value>Sortare dupã: Duratã</value>
 	</string>
 	<string>
 		<id>268</id>
-		<value>Sortera efter: Titel</value>
+		<value>Sortare dupã: Titlu</value>
 	</string>
 	<string>
 		<id>269</id>
-		<value>Sortera efter: Artist</value>
+		<value>Sortare dupã: Artist</value>
 	</string>
 	<string>
 		<id>270</id>
-		<value>Sortera efter: Album</value>
+		<value>Sortare dupã: Album</value>
 	</string>
 	<string>
 		<id>271</id>
-		<value>Topp 100</value>
+		<value>Top 100</value>
 	</string>
 	<string>
 		<id>272</id>
-		<value>Top Left Overscan Compensation</value>
+		<value>Compensare Overscan Stanga-Sus</value>
 	</string>
 	<string>
 		<id>273</id>
-		<value>Bottom Right Overscan Compensation</value>
+		<value>Compensare Overscan Dreapta-Jos</value>
 	</string>
 	<string>
 		<id>274</id>
-		<value>Undertextposition</value>
+		<value>Poziþie Subtitrare</value>
 	</string>
 	<string>
 		<id>275</id>
-		<value>Justering av pixel ratio</value>
+		<value>Ajustare Raport Pixel</value>
 	</string>
 	<string>
 		<id>276</id>
-		<value>Ändra hur mycket överskanning du vill ha genom att flytta pilen</value>
+		<value>-ATENTIE!- Lasati la 0,0 pentru cea mai buna calitate, modificaþi pentru încadrare optimã.</value>
 	</string>
 	<string>
 		<id>277</id>
-		<value>Placera textningen genom att flytta rutan</value>
+		<value>Mutaþi bara pentru a modifica poziþia subtitrarii</value>
 	</string>
 	<string>
 		<id>278</id>
-		<value>Ändra rektangeln så att den är helt kvadratisk</value>
+		<value>-Important!- pentru cea mai bunã calitate, modificaþi dreptunghiul în pãtrat</value>
 	</string>
 	<string>
 		<id>279</id>
-		<value>Kan inte ladda inställningarna</value>
+		<value>Nu se pot încarca setarile</value>
 	</string>
 	<string>
 		<id>280</id>
-		<value>använder standardinställningar</value>
+		<value>folosind setãri implicite (sigure)</value>
 	</string>
 	<string>
 		<id>281</id>
-		<value>Var vänlig kolla .xml-filerna</value>
+		<value>Verificaþi fiºierele .xml</value>
 	</string>
 	<string>
 		<id>282</id>
-		<value>hittade %i poster</value>
+		<value>%i elemente gãsite</value>
 	</string>
 	<string>
 		<id>283</id>
-		<value>Sökresultat</value>
+		<value>Rezultatul Cãutãrii</value>
 	</string>
 	<string>
 		<id>284</id>
-		<value>Inga resultat funna</value>
+		<value>Nici un rezultat gãsit</value>
 	</string>
 	<string>
 		<id>285</id>
-		<value>Deinterlace filter</value>
+		<value>Filtru Deinterlace</value>
 	</string>
 	<string>
 		<id>286</id>
-		<value>Postprocessing filter</value>
+		<value>Filtru Post-procesare</value>
 	</string>
 	<string>
 		<id>287</id>
-		<value>Textning</value>
+		<value>Subtitrãri</value>
 	</string>
 	<string>
 		<id>288</id>
-		<value>Typsnitt</value>
+		<value>Font</value>
 	</string>
 	<string>
 		<id>289</id>
-		<value>Storlek</value>
+		<value>Mãrime</value>
 	</string>
 	<string>
 		<id>290</id>
-		<value>Volymförstärkning (dB)</value>
+		<value>Amplificare Volum(dB)</value>
 	</string>
 	<string>
 		<id>291</id>
@@ -891,63 +891,63 @@
 	</string>
 	<string>
 		<id>292</id>
-		<value>Ljud</value>
+		<value>Audio</value>
 	</string>
 	<string>
 		<id>293</id>
-		<value>Undertexter</value>
+		<value>Subtitrãri</value>
 	</string>
 	<string>
 		<id>294</id>
-		<value>Skapa bokmärken</value>
+		<value>Creare Semn Capitol</value>
 	</string>
 	<string>
 		<id>295</id>
-		<value>Spela bokmärken i följd</value>
+		<value>Parcurgere Semne Capitol</value>
 	</string>
 	<string>
 		<id>296</id>
-		<value>Rensa bokmärken</value>
+		<value>Stergere Semne Capitol</value>
 	</string>
 	<string>
 		<id>297</id>
-		<value>AV-fördröjning</value>
+		<value>Intarziere AV</value>
 	</string>
 	<string>
 		<id>298</id>
-		<value>Slider</value>
+		<value>Reglaj</value>
 	</string>
 	<string>
 		<id>299</id>
-		<value>Speltid:</value>
+		<value>Timp Rulare:</value>
 	</string>
 	<string>
 		<id>300</id>
-		<value>1. Språk</value>
+		<value>1. Limba</value>
 	</string>
 	<string>
 		<id>301</id>
-		<value>2. Volym</value>
+		<value>2. Volum</value>
 	</string>
 	<string>
 		<id>302</id>
-		<value>3. Strömma</value>
+		<value>3. Canal A/V</value>
 	</string>
 	<string>
 		<id>303</id>
-		<value>Fördröjning</value>
+		<value>Întârziere</value>
 	</string>
 	<string>
 		<id>304</id>
-		<value>Språk</value>
+		<value>Limbã</value>
 	</string>
 	<string>
 		<id>305</id>
-		<value>Aktiverat</value>
+		<value>Activare</value>
 	</string>
 	<string>
 		<id>306</id>
-		<value>Non-Interleaved</value>
+		<value>Ne-Întreþesut</value>
 	</string>
 	<string>
 		<id>307</id>
@@ -955,15 +955,15 @@
 	</string>
 	<string>
 		<id>308</id>
-		<value>vertical deblocking filter</value>
+		<value>filtru deblocare verticalã</value>
 	</string>
 	<string>
 		<id>309</id>
-		<value>horizontal deblocking filter</value>
+		<value>filtru deblocare orizontalã</value>
 	</string>
 	<string>
 		<id>310</id>
-		<value>Automatisk ljusstyrka/kontrast</value>
+		<value>Auto Luminozitate/Contrast</value>
 	</string>
 	<string>
 		<id>311</id>
@@ -975,103 +975,103 @@
 	</string>
 	<string>
 		<id>313</id>
-		<value>Omorganisera databasen</value>
+		<value>Reorganizare date</value>
 	</string>
 	<string>
 		<id>314</id>
-		<value>Förbereder...</value>
+		<value>Pregãtire...</value>
 	</string>
 	<string>
 		<id>315</id>
-		<value>Databasfel</value>
+		<value>Eroare bazã de date</value>
 	</string>
 	<string>
 		<id>316</id>
-		<value>Söker låtar...</value>
+		<value>Cãutare cântece...</value>
 	</string>
 	<string>
 		<id>317</id>
-		<value>Omorganisationen lyckades</value>
+		<value>Reorganizare terminatã</value>
 	</string>
 	<string>
 		<id>318</id>
-		<value>Markerar raderade låtar</value>
+		<value>Se selecteazã cântecele ºterse</value>
 	</string>
 	<string>
 		<id>319</id>
-		<value>Fel vid omorganisering av låtar</value>
+		<value>Eroare la reorganizarea cântecelor</value>
 	</string>
 	<string>
 		<id>320</id>
-		<value>Söker artister...</value>
+		<value>Cãutare artiºti...</value>
 	</string>
 	<string>
 		<id>321</id>
-		<value>Fel vid omorganisering av artister</value>
+		<value>Eroare la reorganizarea artiºtilor</value>
 	</string>
 	<string>
 		<id>322</id>
-		<value>Söker genrer...</value>
+		<value>Cãutare genuri...</value>
 	</string>
 	<string>
 		<id>323</id>
-		<value>Fel vid omorganisering av genrer</value>
+		<value>Eroare la reorganizare genuri</value>
 	</string>
 	<string>
 		<id>324</id>
-		<value>Söker sökvägar...</value>
+		<value>Cãutare fiºiere/albume...</value>
 	</string>
 	<string>
 		<id>325</id>
-		<value>Fel vid omorganisation av sökvägar</value>
+		<value>Eroate la reorganizare fiºiere/albume</value>
 	</string>
 	<string>
 		<id>326</id>
-		<value>Söker album...</value>
+		<value>Cãutare albume...</value>
 	</string>
 	<string>
 		<id>327</id>
-		<value>Fel vid omorganisering av album</value>
+		<value>Eroare la reorganizare albume</value>
 	</string>
 	<string>
 		<id>328</id>
-		<value>Skriver ändringar...</value>
+		<value>Se salveazã modificãrile...</value>
 	</string>
 	<string>
 		<id>329</id>
-		<value>Fel vid skrivning av ändringar</value>
+		<value>Eroare la salvarea modificãrilor</value>
 	</string>
 	<string>
 		<id>330</id>
-		<value>Detta tar en stund...</value>
+		<value>Vã rog aºteptaþi...</value>
 	</string>
 	<string>
 		<id>331</id>
-		<value>Komprimerar databasen...</value>
+		<value>Compactare bazã de date...</value>
 	</string>
 	<string>
 		<id>332</id>
-		<value>Fel vid komprimering av databasen</value>
+		<value>Eroare la compactarea bazei de date</value>
 	</string>
 	<string>
 		<id>333</id>
-		<value>Vill du omorganisera musikdatabasen?</value>
+		<value>Doriþi reorganizarea fiºierelor de muzicã?</value>
 	</string>
 	<string>
 		<id>334</id>
-		<value>Omorganisera musikdatabas</value>
+		<value>Reorganizare informati muzicã</value>
 	</string>
 	<string>
 		<id>335</id>
-		<value>Starta</value>
+		<value>Start</value>
 	</string>
 	<string>
 		<id>336</id>
-		<value>Jus. Framerate</value>
+		<value>Ajust. cadre/sec</value>
 	</string>
 	<string>
 		<id>337</id>
-		<value>Audio Output:</value>
+		<value>Ieºire Audio:</value>
 	</string>
 	<string>
 		<id>338</id>
@@ -1083,59 +1083,59 @@
 	</string>
 	<string>
 		<id>340</id>
-		<value>Blandade artister</value>
+		<value>Artiºti Diverºi</value>
 	</string>
 	<string>
 		<id>341</id>
-		<value>Spela DVD</value>
+		<value>Redare DVD</value>
 	</string>
 	<string>
 		<id>342</id>
-		<value>Filmer</value>
+		<value>Filme</value>
 	</string>
 	<string>
 		<id>343</id>
-		<value>Justera framerate</value>
+		<value>Ajust. Cadre/sec</value>
 	</string>
 	<string>
 		<id>344</id>
-		<value>Skådespelare</value>
+		<value>Actori</value>
 	</string>
 	<string>
 		<id>345</id>
-		<value>År</value>
+		<value>An</value>
 	</string>
 	<string>
 		<id>346</id>
-		<value>Gruppera</value>
+		<value>Adaugã (Stack)</value>
 	</string>
 	<string>
 		<id>347</id>
-		<value>Avgruppera</value>
+		<value>Eliminã (Unstack)</value>
 	</string>
 	<string>
 		<id>348</id>
-		<value>Platta ut mappstrukturen</value>
+		<value>Eliminã Structurã Directori</value>
 	</string>
 	<string>
 		<id>349</id>
-		<value>Visa endast Default.xbe</value>
+		<value>Aratã doar Default.xbe</value>
 	</string>
 	<string>
 		<id>350</id>
-		<value>Program</value>
+		<value>Programe</value>
 	</string>
 	<string>
 		<id>351</id>
-		<value>Av</value>
+		<value>Oprit</value>
 	</string>
 	<string>
 		<id>352</id>
-		<value>Dimma</value>
+		<value>Dim</value>
 	</string>
 	<string>
 		<id>353</id>
-		<value>Svart</value>
+		<value>Negru</value>
 	</string>
 	<string>
 		<id>354</id>
@@ -1143,39 +1143,39 @@
 	</string>
 	<string>
 		<id>355</id>
-		<value>Skärmsläckarfördröjning</value>
+		<value>Timp pornire Screensaver</value>
 	</string>
 	<string>
 		<id>356</id>
-		<value>Skärmsläckarläge</value>
+		<value>Mod Screensaver</value>
 	</string>
 	<string>
 		<id>357</id>
-		<value>Avstängningsfördröjning</value>
+		<value>Timp Închidere Automatã</value>
 	</string>
 	<string>
 		<id>358</id>
-		<value>Alla album</value>
+		<value>Toate albumele</value>
 	</string>
 	<string>
 		<id>359</id>
-		<value>Senaste album</value>
+		<value>Albume Recente</value>
 	</string>
 	<string>
 		<id>360</id>
-		<value>Skärmsläckare</value>
+		<value>Screensaver</value>
 	</string>
 	<string>
 		<id>361</id>
-		<value>Bildspel med undermappar</value>
+		<value>SlideShow Recursiv</value>
 	</string>
 	<string>
 		<id>362</id>
-		<value>Skärmsläckare toningsnivå (%)</value>
+		<value>Nivel traniþie Screensaver(%)</value>
 	</string>
 	<string>
 		<id>363</id>
-		<value>Sortera efter: Fil</value>
+		<value>Sortare dupã: Fiºier</value>
 	</string>
 	<string>
 		<id>364</id>
@@ -1183,15 +1183,15 @@
 	</string>
 	<string>
 		<id>365</id>
-		<value>Sortera efter: Namn</value>
+		<value>Sortare dupã: Nume</value>
 	</string>
 	<string>
 		<id>366</id>
-		<value>Sortera efter: År</value>
+		<value>Sortare dupã: An</value>
 	</string>
 	<string>
 		<id>367</id>
-		<value>Sortera efter: Betyg</value>
+		<value>Sortare dupã: Rating</value>
 	</string>
 	<string>
 		<id>368</id>
@@ -1199,39 +1199,39 @@
 	</string>
 	<string>
 		<id>369</id>
-		<value>Titel</value>
+		<value>Titlu</value>
 	</string>
 	<string>
 		<id>370</id>
-		<value>åska</value>
+		<value>Furtunã (descãrcari electrice)</value>
 	</string>
 	<string>
 		<id>371</id>
-		<value>delvis</value>
+		<value>Partial</value>
 	</string>
 	<string>
 		<id>372</id>
-		<value>mestadels</value>
+		<value>În Cea Mai Mare Parte</value>
 	</string>
 	<string>
 		<id>373</id>
-		<value>soligt</value>
+		<value>Însorit</value>
 	</string>
 	<string>
 		<id>374</id>
-		<value>molnigt</value>
+		<value>Noros</value>
 	</string>
 	<string>
 		<id>375</id>
-		<value>snö</value>
+		<value>Ninsoare</value>
 	</string>
 	<string>
 		<id>376</id>
-		<value>regn</value>
+		<value>Ploaie</value>
 	</string>
 	<string>
 		<id>377</id>
-		<value>lätt</value>
+		<value>Luminã</value>
 	</string>
 	<string>
 		<id>378</id>
@@ -1243,231 +1243,231 @@
 	</string>
 	<string>
 		<id>380</id>
-		<value>skurar</value>
+		<value>Ploaie Torenþialã</value>
 	</string>
 	<string>
 		<id>381</id>
-		<value>få</value>
+		<value>Puþin</value>
 	</string>
 	<string>
 		<id>382</id>
-		<value>spridda</value>
+		<value>Împrãºtiaþi</value>
 	</string>
 	<string>
 		<id>383</id>
-		<value>vind</value>
+		<value>Vânt</value>
 	</string>
 	<string>
 		<id>384</id>
-		<value>stark</value>
+		<value>Puternic</value>
 	</string>
 	<string>
 		<id>385</id>
-		<value>lagom</value>
+		<value>Plãcut</value>
 	</string>
 	<string>
 		<id>386</id>
-		<value>klart</value>
+		<value>Senin</value>
 	</string>
 	<string>
 		<id>387</id>
-		<value>tidig</value>
+		<value>Devreme</value>
 	</string>
 	<string>
 		<id>388</id>
-		<value>och</value>
+		<value>ºi</value>
 	</string>
 	<string>
 		<id>389</id>
-		<value>dimma</value>
+		<value>Ceaþã</value>
 	</string>
 	<string>
 		<id>390</id>
-		<value>dis</value>
+		<value>Ceatþã uºoarã</value>
 	</string>
 	<string>
 		<id>391</id>
-		<value>blåsigt</value>
+		<value>Vântos</value>
 	</string>
 	<string>
 		<id>392</id>
-		<value>duggregn</value>
+		<value>Burniþã</value>
 	</string>
 	<string>
 		<id>393</id>
-		<value>frost</value>
+		<value>Îngheþ</value>
 	</string>
 	<string>
 		<id>394</id>
-		<value>saknas</value>
+		<value>Nedisponibil</value>
 	</string>
 	<string>
 		<id>396</id>
-		<value>Välj plats</value>
+		<value>Selectare Localitate</value>
 	</string>
 	<string>
 		<id>397</id>
-		<value>Intervall</value>
+		<value>Actualizare Info Meteo</value>
 	</string>
 	<string>
 		<id>398</id>
-		<value>Temperaturenheter</value>
+		<value>Temperatura (Unitãþi)</value>
 	</string>
 	<string>
 		<id>399</id>
-		<value>Hastighetsenheter</value>
+		<value>Viteza (Unitãþi)</value>
 	</string>
 	<string>
 		<id>400</id>
-		<value>Väder</value>
+		<value>Meteo</value>
 	</string>
 	<string>
 		<id>401</id>
-		<value>Temperatur</value>
+		<value>Temp</value>
 	</string>
 	<string>
 		<id>402</id>
-		<value>Känns som</value>
+		<value>Temp. Aparentã</value>
 	</string>
 	<string>
 		<id>403</id>
-		<value>UV Index</value>
+		<value>Index UV</value>
 	</string>
 	<string>
 		<id>404</id>
-		<value>Vind</value>
+		<value>Vânt</value>
 	</string>
 	<string>
 		<id>405</id>
-		<value>Daggpunkt</value>
+		<value>Punct de Rouã</value>
 	</string>
 	<string>
 		<id>406</id>
-		<value>Luftfuktighet</value>
+		<value>Umiditate</value>
 	</string>
 	<string>
 		<id>407</id>
-		<value>från</value>
+		<value>De la</value>
 	</string>
 	<string>
 		<id>408</id>
-		<value>på</value>
+		<value>la</value>
 	</string>
 	<string>
 		<id>410</id>
-		<value>Hämtar från Weather.com</value>
+		<value>Interogare Weather.com</value>
 	</string>
 	<string>
 		<id>411</id>
-		<value>Hämtar väder för:</value>
+		<value>Actualizare Vreme Pentru:</value>
 	</string>
 	<string>
 		<id>412</id>
-		<value>Kunde inte hämta väderdata</value>
+		<value>Nu se pot actualiza informatiile meteo</value>
 	</string>
 	<string>
 		<id>413</id>
-		<value>Manuell</value>
+		<value>Manual</value>
 	</string>
 	<string>
 		<id>414</id>
-		<value>Detta album saknar recension</value>
+		<value>Nu exista opinii ptr. acest album</value>
 	</string>
 	<string>
 		<id>415</id>
-		<value>Laddar miniatyr...</value>
+		<value>Actualizare Imagine...</value>
 	</string>
 	<string>
 		<id>416</id>
-		<value>Ej tillgänglig</value>
+		<value>Nedisponibil</value>
 	</string>
 	<string>
 		<id>417</id>
-		<value>Visa: Stora ikoner</value>
+		<value>Vizualizare: Imagini mari</value>
 	</string>
 	<string>
 		<id>418</id>
-		<value>Mina filmer/Genrer</value>
+		<value>Video/Genuri</value>
 	</string>
 	<string>
 		<id>419</id>
-		<value>Mina filmer/Skådespelare</value>
+		<value>Video/Actori</value>
 	</string>
 	<string>
 		<id>420</id>
-		<value>Mina filmer/År</value>
+		<value>Video/Ani</value>
 	</string>
 	<string>
 		<id>421</id>
-		<value>Mina filmer/Titel</value>
+		<value>Video/Titluri</value>
 	</string>
 	<string>
 		<id>422</id>
-		<value>Ta bort albuminfo</value>
+		<value>ªtergere Info Album</value>
 	</string>
 	<string>
 		<id>423</id>
-		<value>Ta bort CDDB-info</value>
+		<value>ªtergere Info CDDB</value>
 	</string>
 	<string>
 		<id>424</id>
-		<value>Välj</value>
+		<value>Selectare</value>
 	</string>
 	<string>
 		<id>425</id>
-		<value>Ingen albuminfo hittad</value>
+		<value>Informaþie Indisponibilã</value>
 	</string>
 	<string>
 		<id>426</id>
-		<value>Ingen CDDB-info hittad</value>
+		<value>Informaþie CDDB Indisponibilã</value>
 	</string>
 	<string>
 		<id>427</id>
-		<value>Disk:</value>
+		<value>Disc:</value>
 	</string>
 	<string>
 		<id>428</id>
-		<value>Sätt i rätt CD/DVD</value>
+		<value>Introduceþi discul CD/DVD corect</value>
 	</string>
 	<string>
 		<id>429</id>
-		<value>Sätt i följande CD/DVD</value>
+		<value>Introduceþi urmatorul CD/DVD</value>
 	</string>
 	<string>
 		<id>430</id>
-		<value>Sortera efter: DVD#</value>
+		<value>Sortare dupã: DVD#</value>
 	</string>
 	<string>
 		<id>431</id>
-		<value>Ingen cache</value>
+		<value>Fara cache</value>
 	</string>
 	<string>
 		<id>432</id>
-		<value>Radera film från databasen</value>
+		<value>ªtergere film</value>
 	</string>
 	<string>
 		<id>433</id>
-		<value>Är du säker på att du vill radera</value>
+		<value>Sunteþi sigur de ºtergerea</value>
 	</string>
 	<string>
 		<id>434</id>
-		<value>filmen?</value>
+		<value>filmului?</value>
 	</string>
 	<string>
 		<id>435</id>
-		<value>Spår</value>
+		<value>Pistã</value>
 	</string>
 	<string>
 		<id>436</id>
-		<value>År:</value>
+		<value>An:</value>
 	</string>
 	<string>
 		<id>437</id>
-		<value>Längd:</value>
+		<value>Duratã:</value>
 	</string>
 	<string>
 		<id>438</id>
-		<value>Öppnar fil</value>
+		<value>Accesare Fiºier</value>
 	</string>
 	<string>
 		<id>439</id>
@@ -1475,7 +1475,7 @@
 	</string>
 	<string>
 		<id>440</id>
-		<value>Hårddisk</value>
+		<value>Harddisk</value>
 	</string>
 	<string>
 		<id>441</id>
@@ -1483,7 +1483,7 @@
 	</string>
 	<string>
 		<id>442</id>
-		<value>LAN</value>
+		<value>Reþea</value>
 	</string>
 	<string>
 		<id>443</id>
@@ -1495,7 +1495,7 @@
 	</string>
 	<string>
 		<id>445</id>
-		<value>ljud</value>
+		<value>audio</value>
 	</string>
 	<string>
 		<id>446</id>
@@ -1503,7 +1503,7 @@
 	</string>
 	<string>
 		<id>447</id>
-		<value>Autostart</value>
+		<value>Auto-lansare</value>
 	</string>
 	<string>
 		<id>448</id>
@@ -1511,71 +1511,71 @@
 	</string>
 	<string>
 		<id>449</id>
-		<value>Aktiverad</value>
+		<value>Activat</value>
 	</string>
 	<string>
 		<id>450</id>
-		<value>Kolumner</value>
+		<value>Coloane</value>
 	</string>
 	<string>
 		<id>451</id>
-		<value>Kolumn 1 adress:</value>
+		<value>Adresã Rând 1:</value>
 	</string>
 	<string>
 		<id>452</id>
-		<value>Kolumn 2 adress:</value>
+		<value>Adresã Rând 2:</value>
 	</string>
 	<string>
 		<id>453</id>
-		<value>Kolumn 3 adress:</value>
+		<value>Adresã Rând 3:</value>
 	</string>
 	<string>
 		<id>454</id>
-		<value>Kolumn 4 adress:</value>
+		<value>Adresã Rând 4:</value>
 	</string>
 	<string>
 		<id>455</id>
-		<value>Kolumner:</value>
+		<value>Rânduri:</value>
 	</string>
 	<string>
 		<id>456</id>
-		<value>Stil:</value>
+		<value>Mod:</value>
 	</string>
 	<string>
 		<id>457</id>
-		<value>Ändra vy</value>
+		<value>Comutare</value>
 	</string>
 	<string>
 		<id>458</id>
-		<value>B/Mark</value>
+		<value>Semn Capitol</value>
 	</string>
 	<string>
 		<id>459</id>
-		<value>Texter</value>
+		<value>Subs</value>
 	</string>
 	<string>
 		<id>460</id>
-		<value>Ljudström</value>
+		<value>Flux Audio</value>
 	</string>
 	<string>
 		<id>461</id>
-		<value>[aktiv]</value>
+		<value>[activ]</value>
 	</string>
 	<string>
 		<id>462</id>
-		<value>Textning</value>
+		<value>Subtitrare</value>
 	</string>
 	<string>
 		<id>463</id>
-		<value>Bakgrundsbelysning</value>
+		<value>Iluminare Spate</value>
 	</string>
 	<string>
 		<id>464</id>
-		<value>Ljusstyrka</value>
+		<value>Luminozitate</value>
 	</string>
 	<string>
 		<id>465</id>
-		<value>Kontrast</value>
+		<value>Contrast</value>
 	</string>
 	<string>
 		<id>466</id>
@@ -1583,19 +1583,19 @@
 	</string>
 	<string>
 		<id>467</id>
-		<value>Typ</value>
+		<value>Tip</value>
 	</string>
 	<string>
 		<id>468</id>
-		<value>Flytta rektangeln för att ändra OSD-placering</value>
+		<value>Mutaþi cursorul pentru a ajusta poziþia OSD</value>
 	</string>
 	<string>
 		<id>469</id>
-		<value>OSD-placering</value>
+		<value>Poziþie OSD</value>
 	</string>
 	<string>
 		<id>470</id>
-		<value>Credits</value>
+		<value>Mulþumiri</value>
 	</string>
 	<string>
 		<id>471</id>
@@ -1603,27 +1603,27 @@
 	</string>
 	<string>
 		<id>472</id>
-		<value>OSD-timeout</value>
+		<value>Timeout OSD</value>
 	</string>
 	<string>
 		<id>473</id>
-		<value>High Quality Resampling</value>
+		<value>Re-eºantionare HiQ</value>
 	</string>
 	<string>
 		<id>474</id>
-		<value>Av</value>
+		<value>Oprit</value>
 	</string>
 	<string>
 		<id>475</id>
-		<value>Endast musik</value>
+		<value>Doar Muzicã</value>
 	</string>
 	<string>
 		<id>476</id>
-		<value>Musik&amp;video</value>
+		<value>Muzicã&amp;Video</value>
 	</string>
 	<string>
 		<id>477</id>
-		<value>Kan inte ladda spellista</value>
+		<value>Nu se poate încãrca playlist-ul</value>
 	</string>
 	<string>
 		<id>478</id>
@@ -1631,19 +1631,19 @@
 	</string>
 	<string>
 		<id>479</id>
-		<value>Skal och språk</value>
+		<value>Interfaþã ºi Limbã</value>
 	</string>
 	<string>
 		<id>480</id>
-		<value>Användargränssnitt</value>
+		<value>Interfaþã</value>
 	</string>
 	<string>
 		<id>481</id>
-		<value>Ljudalternativ</value>
+		<value>Opþiuni Audio</value>
 	</string>
 	<string>
 		<id>482</id>
-		<value>Om XBMC</value>
+		<value>Despre XBMC</value>
 	</string>
 	<string>
 		<id>483</id>
@@ -1655,771 +1655,771 @@
 	</string>
 	<string>
 		<id>485</id>
-		<value>Ta bort album</value>
+		<value>ªtergere album</value>
 	</string>
 	<string>
 		<id>486</id>
-		<value>Repetera</value>
+		<value>Repetã</value>
 	</string>
 	<string>
 		<id>487</id>
-		<value>Repetera en</value>
+		<value>Repetã Odatã</value>
 	</string>
 	<string>
 		<id>488</id>
-		<value>Repetera mapp spellista</value>
+		<value>Repetã playlist-ul directorului</value>
 	</string>
 	<string>
 		<id>489</id>
-		<value>Använd spellistor i låtar</value>
+		<value>Foloseºte playlist în cântece</value>
 	</string>
 	<string>
 		<id>490</id>
-		<value>Växla autom. listor och ikoner i låtar</value>
+		<value>Auto-comutare listã ºi imagini în cântece</value>
 	</string>
 	<string>
 		<id>491</id>
-		<value>Använd stora ikoner</value>
+		<value>Imagini mari</value>
 	</string>
 	<string>
 		<id>492</id>
-		<value>Ljud/språk</value>
+		<value>Limbã Audio</value>
 	</string>
 	<string>
 		<id>493</id>
-		<value>Skådespelare</value>
+		<value>Actor</value>
 	</string>
 	<string>
 		<id>500</id>
-		<value>Filmeny</value>
+		<value>Menu Fisiere</value>
 	</string>
 	<string>
 		<id>501</id>
-		<value>Välj som mål</value>
+		<value>Selectare ca destinaþie</value>
 	</string>
 	<string>
 		<id>502</id>
-		<value>Kunde inte slutföra åtgärden</value>
+		<value>Nu se poate executa</value>
 	</string>
 	<string>
 		<id>503</id>
-		<value>Ta bort denna mapp</value>
+		<value>Stergere director</value>
 	</string>
 	<string>
 		<id>504</id>
-		<value>Gå till målet</value>
+		<value>Selectare destinaþie</value>
 	</string>
 	<string>
 		<id>505</id>
-		<value>Beräknar</value>
+		<value>Se calculeazã</value>
 	</string>
 	<string>
 		<id>506</id>
-		<value>Är du säker?</value>
+		<value>Sunteþi sigur?</value>
 	</string>
 	<string>
 		<id>507</id>
-		<value>delar</value>
+		<value>elemente</value>
 	</string>
 	<string>
 		<id>508</id>
-		<value>Till</value>
+		<value>Cãtre</value>
 	</string>
 	<string>
 		<id>509</id>
-		<value>Det finns redan en fil med detta namn, Vill du skriva över den?</value>
+		<value>Fiºierul Destinaþie existã. Suprascrieþi?</value>
 	</string>
 	<string>
 		<id>510</id>
-		<value>Avbryt</value>
+		<value>Anulare</value>
 	</string>
 	<string>
 		<id>511</id>
-		<value>Alltid</value>
+		<value>Întotdeauna</value>
 	</string>
 	<string>
 		<id>512</id>
-		<value>Aldrig</value>
+		<value>Nici odatã</value>
 	</string>
 	<string>
 		<id>513</id>
-		<value>Filen är skrivskyddad, åtgärden ej genomförd</value>
+		<value>Elementul este protejat, acþiunea nu se poate executa</value>
 	</string>
 	<string>
 		<id>514</id>
-		<value>Fel vid skapande av mapp, åtgärden ej genomförd</value>
+		<value>Eroare la crearea directorului, acþiunea nu se poate executa</value>
 	</string>
 	<string>
 		<id>515</id>
-		<value>Fel vid radering av mapp, åtgärden ej genomförd</value>
+		<value>Eroare la ºtergerea directorului, acþiunea nu se poate executa</value>
 	</string>
 	<string>
 		<id>516</id>
-		<value>Kunde inte radera målfilen, åtgärden ej genomförd</value>
+		<value>Nu se poate ºterge fiºierul destinaþie, acþiunea nu se poate executa</value>
 	</string>
 	<string>
 		<id>517</id>
-		<value>Allvarligt fel, åtgärden ej genomförd</value>
+		<value>Eroare fatalã, acþiunea nu se poate executa</value>
 	</string>
 	<string>
 		<id>518</id>
-		<value>Radera denna låt?</value>
+		<value>Stergeþi acest cântec?</value>
 	</string>
 	<string>
 		<id>530</id>
-		<value>Fotoskiva isatt, vill du öppna den?</value>
+		<value>Photo-disc detectat, doriþi pornirea lui?</value>
 	</string>
 	<string>
 		<id>531</id>
-		<value>Filmskiva isatt, vill du öppna den?</value>
+		<value>Video-disc detectat, doriþi pornirea lui?</value>
 	</string>
 	<string>
 		<id>532</id>
-		<value>Ljudskiva isatt, vill du öppna den?</value>
+		<value>Audio-disc detectat, doriþi pornirea lui?</value>
 	</string>
 	<string>
 		<id>550</id>
-		<value>Beskär</value>
+		<value>Tãiere</value>
 	</string>
 	<string>
 		<id>600</id>
-		<value>TV-tablå</value>
+		<value>Ghid TV</value>
 	</string>
 	<string>
 		<id>601</id>
-		<value>Spela in nu</value>
+		<value>Înregistreazã Acum</value>
 	</string>
 	<string>
 		<id>602</id>
-		<value>Kanal:</value>
+		<value>Canal</value>
 	</string>
 	<string>
 		<id>603</id>
-		<value>Planerade inspelningar</value>
+		<value>Programat</value>
 	</string>
 	<string>
 		<id>604</id>
-		<value>Inspelad TV</value>
+		<value>Programe TV Înregistrate</value>
 	</string>
 	<string>
 		<id>605</id>
-		<value>Min TV</value>
+		<value>TV</value>
 	</string>
 	<string>
 		<id>606</id>
-		<value>Laddar ny TV-tablå</value>
+		<value>Actualizare Ghid TV</value>
 	</string>
 	<string>
 		<id>607</id>
-		<value>Ladda</value>
+		<value>Încarcare</value>
 	</string>
 	<string>
 		<id>608</id>
-		<value>Import av TV-tablå misslyckades</value>
+		<value>Actualizarea Ghidului TV a eºuat</value>
 	</string>
 	<string>
 		<id>609</id>
-		<value>Import av TV-tablå klar</value>
+		<value>Ghidul TV s-a actualizat</value>
 	</string>
 	<string>
 		<id>610</id>
-		<value>Ingen</value>
+		<value>Nu înregistra</value>
 	</string>
 	<string>
 		<id>611</id>
-		<value>Spela in en gång</value>
+		<value>Înregistreazã o datã</value>
 	</string>
 	<string>
 		<id>612</id>
-		<value>Spela alltid in på denna kanal</value>
+		<value>Înregistreazã de fiecare datã pe acest canal</value>
 	</string>
 	<string>
 		<id>613</id>
-		<value>Spela alltid in oavsett kanal</value>
+		<value>Înregistreazã de fiecare datã pe orice canal</value>
 	</string>
 	<string>
 		<id>614</id>
-		<value>Spela in varje vecka vid denna tid</value>
+		<value>Înregistrazã în fiecare sãptãmânã la aceastã orã</value>
 	</string>
 	<string>
 		<id>615</id>
-		<value>Spela in varje dag vid denna tid</value>
+		<value>Înregistrazã în fiecare zi la aceastã orã</value>
 	</string>
 	<string>
 		<id>616</id>
-		<value>Välj inspelningstyp</value>
+		<value>Selectaþi Tipul de Înregistrare</value>
 	</string>
 	<string>
 		<id>617</id>
-		<value>Ny</value>
+		<value>Nou</value>
 	</string>
 	<string>
 		<id>618</id>
-		<value>Ta bort</value>
+		<value>ªtergere</value>
 	</string>
 	<string>
 		<id>619</id>
-		<value>Redigera datum/tid</value>
+		<value>Editare Datã/Orã</value>
 	</string>
 	<string>
 		<id>620</id>
-		<value>Sortera efter: Kanal</value>
+		<value>Sortare dupã: Canal</value>
 	</string>
 	<string>
 		<id>621</id>
-		<value>Sortera efter: Datum</value>
+		<value>Sortare dupã: Datã</value>
 	</string>
 	<string>
 		<id>622</id>
-		<value>Sortera efter: Namn</value>
+		<value>Sortare dupã: Nume</value>
 	</string>
 	<string>
 		<id>623</id>
-		<value>Sortera efter: Typ</value>
+		<value>Sortare dupã: Tip</value>
 	</string>
 	<string>
 		<id>624</id>
-		<value>Städa</value>
+		<value>Curãþare (Cleanup)</value>
 	</string>
 	<string>
 		<id>625</id>
-		<value>Planerade insp. raderade:</value>
+		<value>Programãri eliminate:</value>
 	</string>
 	<string>
 		<id>626</id>
-		<value>Ändra typ</value>
+		<value>Modificã tipul</value>
 	</string>
 	<string>
 		<id>627</id>
-		<value>Kanaler:</value>
+		<value>Canale:</value>
 	</string>
 	<string>
 		<id>628</id>
-		<value>Program:</value>
+		<value>Programe:</value>
 	</string>
 	<string>
 		<id>629</id>
-		<value>Stoppa Insp.</value>
+		<value>Stop Înregistrare</value>
 	</string>
 	<string>
 		<id>630</id>
-		<value>Vill du starta om datorn?</value>
+		<value>Doriþi repornirea Sistemului HomeTheater PC?</value>
 	</string>
 	<string>
 		<id>631</id>
-		<value>Vill du stänga av datorn?</value>
+		<value>Doriþi oprirea Sistemului HomeTheater PC?</value>
 	</string>
 	<string>
 		<id>632</id>
-		<value>Objekt</value>
+		<value>Obiecte</value>
 	</string>
 	<string>
 		<id>633</id>
-		<value>Startdatum/tid</value>
+		<value>Start Datã/Orã</value>
 	</string>
 	<string>
 		<id>634</id>
-		<value>Stoppdatum/tid</value>
+		<value>Sfârºit Datã/Orã</value>
 	</string>
 	<string>
 		<id>635</id>
-		<value>Tid</value>
+		<value>Orã</value>
 	</string>
 	<string>
 		<id>636</id>
-		<value>Datum</value>
+		<value>Datã</value>
 	</string>
 	<string>
 		<id>637</id>
-		<value>Ändra inspelning</value>
+		<value>Editare Înregistrare</value>
 	</string>
 	<string>
 		<id>638</id>
-		<value>Ny inspelning</value>
+		<value>Înregistrare Nouã</value>
 	</string>
 	<string>
 		<id>639</id>
-		<value>Album av</value>
+		<value>Albume:</value>
 	</string>
 	<string>
 		<id>640</id>
-		<value>Mättnad</value>
+		<value>Saturaþie</value>
 	</string>
 	<string>
 		<id>641</id>
-		<value>Skärpa</value>
+		<value>Strãlucire</value>
 	</string>
 	<string>
 		<id>642</id>
-		<value>Laddar TV-kanaler</value>
+		<value>Se încarcã canalele TV</value>
 	</string>
 	<string>
 		<id>643</id>
-		<value>Laddar TV-program</value>
+		<value>Se încarcã programele TV</value>
 	</string>
 	<string>
 		<id>644</id>
-		<value>Sorterar TV-program</value>
+		<value>Se ordoneazã programele TV</value>
 	</string>
 	<string>
 		<id>645</id>
-		<value>Laddar XML-fil</value>
+		<value>Se încarcã fiºierul XML</value>
 	</string>
 	<string>
 		<id>646</id>
-		<value>Planerade inspelningar</value>
+		<value>Înregistrãri Programate</value>
 	</string>
 	<string>
 		<id>647</id>
-		<value>En gång</value>
+		<value>O datã</value>
 	</string>
 	<string>
 		<id>648</id>
-		<value>Dagligen</value>
+		<value>Zilnic</value>
 	</string>
 	<string>
 		<id>649</id>
-		<value>Varje</value>
+		<value>În Fiecare</value>
 	</string>
 	<string>
 		<id>650</id>
-		<value>Varje gång på denna kanal</value>
+		<value>De fiecare datã pe acest canal</value>
 	</string>
 	<string>
 		<id>651</id>
-		<value>Varje gång på någon kanal</value>
+		<value>De fiecare datã pe orice canal</value>
 	</string>
 	<string>
 		<id>652</id>
-		<value>Inspelad TV</value>
+		<value>Programe TV Înregistrate</value>
 	</string>
 	<string>
 		<id>653</id>
-		<value>Radera denna inspelning?</value>
+		<value>Stergeþi aceastã înregistrare?</value>
 	</string>
 	<string>
 		<id>654</id>
-		<value>Mata ut</value>
+		<value>Deschide CD</value>
 	</string>
 	<string>
 		<id>655</id>
-		<value>Spela upp inspelad TV</value>
+		<value>Redã înregistrare TV</value>
 	</string>
 	<string>
 		<id>656</id>
-		<value>Radera inspelad TV</value>
+		<value>ªterge înregistrare TV</value>
 	</string>
 	<string>
 		<id>657</id>
-		<value>Mån</value>
+		<value>Luni</value>
 	</string>
 	<string>
 		<id>658</id>
-		<value>Tis</value>
+		<value>Mar</value>
 	</string>
 	<string>
 		<id>659</id>
-		<value>Ons</value>
+		<value>Mie</value>
 	</string>
 	<string>
 		<id>660</id>
-		<value>Tor</value>
+		<value>Joi</value>
 	</string>
 	<string>
 		<id>661</id>
-		<value>Fre</value>
+		<value>Vin</value>
 	</string>
 	<string>
 		<id>662</id>
-		<value>Lör</value>
+		<value>Sâm</value>
 	</string>
 	<string>
 		<id>663</id>
-		<value>Sön</value>
+		<value>Dum</value>
 	</string>
 	<string>
 		<id>664</id>
-		<value>Radera denna bild?</value>
+		<value>Stergeþi aceastã imagine?</value>
 	</string>
 	<string>
 		<id>665</id>
-		<value>Min Radio</value>
+		<value>Radio</value>
 	</string>
 	<string>
 		<id>666</id>
-		<value>Stationer</value>
+		<value>Staþii</value>
 	</string>
 	<string>
 		<id>667</id>
-		<value>Autosök</value>
+		<value>Auto Tune</value>
 	</string>
 	<string>
 		<id>668</id>
-		<value>Sortera efter: Typ</value>
+		<value>Sortare dupã: Tip</value>
 	</string>
 	<string>
 		<id>669</id>
-		<value>Sortera efter: Genre</value>
+		<value>Sortare dupã: Gen</value>
 	</string>
 	<string>
 		<id>670</id>
-		<value>Sortera efter: Bitrate</value>
+		<value>Sortare dupã: Laþime bandã</value>
 	</string>
 	<string>
 		<id>671</id>
-		<value>Sortera efter: Sedda</value>
+		<value>Sortare dupã: Vãzute</value>
 	</string>
 	<string>
 		<id>672</id>
-		<value>Spela in varje vardag</value>
+		<value>Înregistrare Lun-Vin</value>
 	</string>
 	<string>
 		<id>673</id>
-		<value>Scroll-hastighet</value>
+		<value>Vitezã scroll</value>
 	</string>
 	<string>
 		<id>674</id>
-		<value>GUI Inst.</value>
+		<value>Setãri Interfaþã</value>
 	</string>
 	<string>
 		<id>675</id>
-		<value>Exempel:</value>
+		<value>Exemple:</value>
 	</string>
 	<string>
 		<id>676</id>
-		<value>Ta bort sedda inspelningar?</value>
+		<value>ªtergeþi înregistrãrile vãzute?</value>
 	</string>
 	<string>
 		<id>677</id>
-		<value>tider</value>
+		<value>ori</value>
 	</string>
 	<string>
 		<id>678</id>
-		<value>Sortera efter: Genre</value>
+		<value>Sortare dupã: Gen</value>
 	</string>
 	<string>
 		<id>679</id>
-		<value>Veckovis</value>
+		<value>Sãptamînal</value>
 	</string>
 	<string>
 		<id>680</id>
-		<value>Vardagar</value>
+		<value>Lun-Vin</value>
 	</string>
 	<string>
 		<id>681</id>
-		<value>Väntar</value>
+		<value>Aºteptaþi</value>
 	</string>
 	<string>
 		<id>682</id>
-		<value>Inspelning</value>
+		<value>Se înregistreazã</value>
 	</string>
 	<string>
 		<id>683</id>
-		<value>Klar</value>
+		<value>Terminat</value>
 	</string>
 	<string>
 		<id>684</id>
-		<value>Avbruten</value>
+		<value>Anulat</value>
 	</string>
 	<string>
 		<id>685</id>
-		<value>Sortera efter: Status</value>
+		<value>Sortare dupã: Stare</value>
 	</string>
 	<string>
 		<id>686</id>
-		<value>Född</value>
+		<value>Nãscut</value>
 	</string>
 	<string>
 		<id>687</id>
-		<value>Aktiva år</value>
+		<value>Ani de Activitate</value>
 	</string>
 	<string>
 		<id>688</id>
-		<value>Instrument</value>
+		<value>Instrumente</value>
 	</string>
 	<string>
 		<id>689</id>
-		<value>Biografi</value>
+		<value>Bio.</value>
 	</string>
 	<string>
 		<id>690</id>
-		<value>Diskografi (skivor)</value>
+		<value>Discografie (Albume)</value>
 	</string>
 	<string>
 		<id>691</id>
-		<value>Diskografi (samlingar, boxar)</value>
+		<value>Discografie (compilaþii)</value>
 	</string>
 	<string>
 		<id>700</id>
-		<value>Diskografi (EP, singlar)</value>
+		<value>Discografie (Single-uri)</value>
 	</string>
 	<string>
 		<id>701</id>
-		<value>Diskografi (bootlegs, videor, intervjuer)</value>
+		<value>Discografie (video, interviuri)</value>
 	</string>
 	<string>
 		<id>702</id>
-		<value>Ingen artist hittades!</value>
+		<value>Artist negãsit</value>
 	</string>
 	<string>
 		<id>703</id>
-		<value>Inte ansluten till Internet!</value>
+		<value>Nu existã conexiune la Internet!</value>
 	</string>
 	<string>
 		<id>704</id>
-		<value>Tar emot feed</value>
+		<value>Cãutare ªtiri</value>
 	</string>
 	<string>
 		<id>705</id>
-		<value>Hämtar RSS-feed för</value>
+		<value>Se încarcã RSS Feed pentru</value>
 	</string>
 	<string>
 		<id>706</id>
-		<value>Välj feed</value>
+		<value>Selectaþi RSS Feed</value>
 	</string>
 	<string>
 		<id>707</id>
-		<value>TV på</value>
+		<value>TV Pornit</value>
 	</string>
 	<string>
 		<id>708</id>
-		<value>Timeshifting på</value>
+		<value>Timeshifting</value>
 	</string>
 	<string>
 		<id>709</id>
-		<value>Autouppdatering</value>
+		<value>Auto-actualizare</value>
 	</string>
 	<string>
 		<id>710</id>
-		<value>En ny version finns tillgänglig</value>
+		<value>O nouã versiune este disponibilã</value>
 	</string>
 	<string>
 		<id>711</id>
-		<value>Upgradera från v#old -&gt;v#new ?</value>
+		<value>Actualizaþi de la v#old -&gt;v#new ?</value>
 	</string>
 	<string>
 		<id>712</id>
-		<value>Tillbaka</value>
+		<value>Înapoi</value>
 	</string>
 	<string>
 		<id>713</id>
-		<value>Autostarta</value>
+		<value>Auto-redare</value>
 	</string>
 	<string>
 		<id>714</id>
-		<value>DVD laddad. Spela upp?</value>
+		<value>Disc detectat, doriþi pornirea lui?</value>
 	</string>
 	<string>
 		<id>715</id>
-		<value>CD laddad. Spela upp?</value>
+		<value>CD detectat, doriþi pornirea lui?</value>
 	</string>
 	<string>
 		<id>716</id>
-		<value>Satellit</value>
+		<value>Satelit</value>
 	</string>
 	<string>
 		<id>717</id>
-		<value>Väder</value>
+		<value>Meteo</value>
 	</string>
 	<string>
 		<id>718</id>
-		<value>Rensa Topp 100</value>
+		<value>Sterge Top100</value>
 	</string>
 	<string>
 		<id>719</id>
-		<value>Är du säker på att du vill rensa Topp 100?</value>
+		<value>Sunteþi sigur cã doriþi ºtergerea listei Top 100?</value>
 	</string>
 	<string>
 		<id>720</id>
-		<value>Program: Längd</value>
+		<value>Show: Duratã</value>
 	</string>
 	<string>
 		<id>721</id>
-		<value>Program: Antal ggr visad</value>
+		<value>Show: Numãr vizualizãri</value>
 	</string>
 	<string>
 		<id>722</id>
-		<value>Kan inte spela upp skivan</value>
+		<value>Nu se poate reda discul</value>
 	</string>
 	<string>
 		<id>723</id>
-		<value>Satte du i en skiva?</value>
+		<value>Aþi introdus un Disc?</value>
 	</string>
 	<string>
 		<id>724</id>
-		<value>Sök i TV-tablån</value>
+		<value>Cautã în Ghid TV</value>
 	</string>
 	<string>
 		<id>725</id>
-		<value>Genrer</value>
+		<value>Genuri</value>
 	</string>
 	<string>
 		<id>726</id>
-		<value>Titel</value>
+		<value>Titluri</value>
 	</string>
 	<string>
 		<id>727</id>
-		<value>Live-TV som bakgrund</value>
+		<value>TV în fundal</value>
 	</string>
 	<string>
 		<id>728</id>
-		<value>Kunde ej starta</value>
+		<value>Nu se redã Video/TV</value>
 	</string>
 	<string>
 		<id>729</id>
-		<value>Kolla att du använder VMR9 och att något spelas upp</value>
+		<value>Fiþi sigur cã folosiþi VMR9 ºi se ruleazã Video/TV</value>
 	</string>
 	<string>
 		<id>730</id>
-		<value>Denna inspelning pågår. Om du raderar den</value>
+		<value>Aceastã programare se înregistreazã. Dacã ºtergeþi</value>
 	</string>
 	<string>
 		<id>731</id>
-		<value>så kommer den att avbrytas.</value>
+		<value>programarea atunci înregistrarea se opreºte.</value>
 	</string>
 	<string>
 		<id>732</id>
-		<value>Är du säker?</value>
+		<value>Sunteþi sigur?</value>
 	</string>
 	<string>
 		<id>733</id>
-		<value>Visa: Filmremsa</value>
+		<value>Vizualizare: Filmstrip</value>
 	</string>
 	<string>
 		<id>734</id>
-		<value>Bild:</value>
+		<value>Imagine:</value>
 	</string>
 	<string>
 		<id>735</id>
-		<value>Rotera</value>
+		<value>Roteºte</value>
 	</string>
 	<string>
 		<id>736</id>
-		<value>Ingen TV-tablådata finns</value>
+		<value>Ghid TV nedisponibil</value>
 	</string>
 	<string>
 		<id>737</id>
-		<value>Visa: Satellit</value>
+		<value>Vizualizare: Satelit</value>
 	</string>
 	<string>
 		<id>738</id>
-		<value>Visa: Temperatur</value>
+		<value>Vizualizare: Temperaturã</value>
 	</string>
 	<string>
 		<id>739</id>
-		<value>Visa: UV Index</value>
+		<value>Vizualizare: Index UV</value>
 	</string>
 	<string>
 		<id>740</id>
-		<value>Visa: Vindar</value>
+		<value>Vizualizare: Vânt</value>
 	</string>
 	<string>
 		<id>741</id>
-		<value>Visa: Luftfuktighet</value>
+		<value>Vizualizare: Umiditate</value>
 	</string>
 	<string>
 		<id>742</id>
-		<value>Visa: Nederbörd</value>
+		<value>Vizualizare: Precipitaþii</value>
 	</string>
 	<string>
 		<id>743</id>
-		<value>4-dagarsprognos</value>
+		<value>Prognoza pe 4 zile</value>
 	</string>
 	<string>
 		<id>744</id>
-		<value>Soluppgång</value>
+		<value>Soarele rãsare la</value>
 	</string>
 	<string>
 		<id>745</id>
-		<value>Solnedgång</value>
+		<value>Soarele apune la</value>
 	</string>
 	<string>
 		<id>746</id>
-		<value>Hög</value>
+		<value>Maxim</value>
 	</string>
 	<string>
 		<id>747</id>
-		<value>Låg</value>
+		<value>Minim</value>
 	</string>
 	<string>
 		<id>748</id>
-		<value>Nederbörd</value>
+		<value>Precipitaþii</value>
 	</string>
 	<string>
 		<id>750</id>
-		<value>Bilder</value>
+		<value>Imagini</value>
 	</string>
 	<string>
 		<id>800</id>
-		<value>Startar med</value>
+		<value>Începe cu</value>
 	</string>
 	<string>
 		<id>801</id>
-		<value>Innehåller</value>
+		<value>Conþine</value>
 	</string>
 	<string>
 		<id>802</id>
-		<value>Slutar med</value>
+		<value>Se terminã cu</value>
 	</string>
 	<string>
 		<id>803</id>
-		<value>År</value>
+		<value>Este</value>
 	</string>
 	<string>
 		<id>804</id>
-		<value>Klar</value>
+		<value>Terminat</value>
 	</string>
 	<string>
 		<id>805</id>
-		<value>Städa</value>
+		<value>Senin (Clear)</value>
 	</string>
 	<string>
 		<id>806</id>
-		<value>Titel</value>
+		<value>Titlu</value>
 	</string>
 	<string>
 		<id>807</id>
-		<value>Göra</value>
+		<value>Produs (Yield)</value>
 	</string>
 	<string>
 		<id>808</id>
-		<value>Ingredienser</value>
+		<value>Ingrediente</value>
 	</string>
 	<string>
 		<id>809</id>
-		<value>Sökvägar</value>
+		<value>Direcþii</value>
 	</string>
 	<string>
 		<id>810</id>
-		<value>Kort</value>
+		<value>Card</value>
 	</string>
 	<string>
 		<id>850</id>
-		<value>Mitt Alarm</value>
+		<value>Alarme</value>
 	</string>
 	<string>
 		<id>851</id>
-		<value>Spellista</value>
+		<value>Playlist</value>
 	</string>
 	<string>
 		<id>852</id>
-		<value>Alarm på</value>
+		<value>Alarmã Pornit/Oprit</value>
 	</string>
 	<string>
 		<id>853</id>
-		<value>Välj spellista</value>
+		<value>Nume:</value>
 	</string>
 	<string>
 		<id>854</id>
-		<value>Gäller dessa dagar</value>
+		<value>Activatã în aceste zile</value>
 	</string>
 	<string>
 		<id>855</id>
-		<value>Alarmtid</value>
+		<value>Orã Alarmã</value>
 	</string>
 	<string>
 		<id>856</id>
-		<value>Insomningstimer På</value>
+		<value>Sleep Timer Pornit</value>
 	</string>
 	<string>
 		<id>857</id>
@@ -2427,19 +2427,19 @@
 	</string>
 	<string>
 		<id>858</id>
-		<value>Snooze-tid</value>
+		<value>Timp Snooze</value>
 	</string>
 	<string>
 		<id>859</id>
-		<value>Sovtid</value>
+		<value>Sleep Timer</value>
 	</string>
 	<string>
 		<id>860</id>
-		<value>Volym tona in/ut</value>
+		<value>Creºtere Volum</value>
 	</string>
 	<string>
 		<id>861</id>
-		<value>Alarmdetaljer</value>
+		<value>Detalii Alarmã</value>
 	</string>
 	<string>
 		<id>862</id>
@@ -2447,23 +2447,23 @@
 	</string>
 	<string>
 		<id>863</id>
-		<value>Fil</value>
+		<value>Fiºier</value>
 	</string>
 	<string>
 		<id>864</id>
-		<value>Mediatyp</value>
+		<value>Tip Media</value>
 	</string>
 	<string>
 		<id>865</id>
-		<value>Antal minuter till insomning:</value>
+		<value>Numãr de minute pânã la sleep:</value>
 	</string>
 	<string>
 		<id>866</id>
-		<value>Sänk volymen under tiden</value>
+		<value>Micºorare volum</value>
 	</string>
 	<string>
 		<id>867</id>
-		<value>Stäng av datorn</value>
+		<value>Oprire computer</value>
 	</string>
 	<string>
 		<id>868</id>
@@ -2471,119 +2471,119 @@
 	</string>
 	<string>
 		<id>869</id>
-		<value>Nytt alarm</value>
+		<value>Alarmã Nouã</value>
 	</string>
 	<string>
 		<id>870</id>
-		<value>Återkommande</value>
+		<value>Repetare</value>
 	</string>
 	<string>
 		<id>871</id>
-		<value>Starta PC</value>
+		<value>Porneste PC ptr. aceastã alarmã</value>
 	</string>
 	<string>
 		<id>872</id>
-		<value>Starta med</value>
+		<value>Începe cu</value>
 	</string>
 	<string>
 		<id>873</id>
-		<value>TV-program</value>
+		<value>Program TV</value>
 	</string>
 	<string>
 		<id>874</id>
-		<value>Avsnitt</value>
+		<value>Episod</value>
 	</string>
 	<string>
 		<id>875</id>
-		<value>Aktuellt program</value>
+		<value>Program curent</value>
 	</string>
 	<string>
 		<id>876</id>
-		<value>Till manuellt stopp</value>
+		<value>Pânã la oprire manualã</value>
 	</string>
 	<string>
 		<id>877</id>
-		<value>Prioriteringar</value>
+		<value>Prioritãþi</value>
 	</string>
 	<string>
 		<id>878</id>
-		<value>Lagring</value>
+		<value>Storage</value>
 	</string>
 	<string>
 		<id>879</id>
-		<value>Inspelningskonflikt</value>
+		<value>Conflict Înregistrãri</value>
 	</string>
 	<string>
 		<id>880</id>
-		<value>Inspelningstid:</value>
+		<value>Timp ptr. înregistrare:</value>
 	</string>
 	<string>
 		<id>881</id>
-		<value>Välj inspelning att avsluta:</value>
+		<value>Selectaþi înregistrarea de oprit:</value>
 	</string>
 	<string>
 		<id>882</id>
-		<value>Kvalitetsinställning</value>
+		<value>Configurare calitate</value>
 	</string>
 	<string>
 		<id>883</id>
-		<value>Låg</value>
+		<value>Minim</value>
 	</string>
 	<string>
 		<id>884</id>
-		<value>Medium</value>
+		<value>Mediu</value>
 	</string>
 	<string>
 		<id>885</id>
-		<value>Hög</value>
+		<value>Maxim</value>
 	</string>
 	<string>
 		<id>886</id>
-		<value>Standard</value>
+		<value>Implicitã</value>
 	</string>
 	<string>
 		<id>887</id>
-		<value>Ange antal avsnitt som ska sparas</value>
+		<value>Specifcaþi numãrul de episoade de pãstrat</value>
 	</string>
 	<string>
 		<id>888</id>
-		<value>Avsnittshantering</value>
+		<value>Administrarea Episoadelor</value>
 	</string>
 	<string>
 		<id>889</id>
-		<value>Alla avsnitt</value>
+		<value>Toate episoadele</value>
 	</string>
 	<string>
 		<id>890</id>
-		<value>Spela CD</value>
+		<value>Reda CD</value>
 	</string>
 	<string>
 		<id>891</id>
-		<value>Välj TV-kanal</value>
+		<value>Selectaþi Canalul TV</value>
 	</string>
 	<string>
 		<id>892</id>
-		<value>Konflikter</value>
+		<value>Conflicte</value>
 	</string>
 	<string>
 		<id>893</id>
-		<value>Portabel</value>
+		<value>Portabil</value>
 	</string>
 	<string>
 		<id>894</id>
-		<value>Komprimera TV-inspelningar</value>
+		<value>Compactaþi Înregistrãrile TV</value>
 	</string>
 	<string>
 		<id>895</id>
-		<value>Autokomprimera</value>
+		<value>Auto compactare</value>
 	</string>
 	<string>
 		<id>896</id>
-		<value>Komprimera</value>
+		<value>Compactare</value>
 	</string>
 	<string>
 		<id>897</id>
-		<value>Inställningar</value>
+		<value>Setãri</value>
 	</string>
 	<string>
 		<id>898</id>
@@ -2595,7 +2595,7 @@
 	</string>
 	<string>
 		<id>900</id>
-		<value>Fortsätta filmen där den stannade senast?</value>
+		<value>Reluaþi filmul de ultima datã?</value>
 	</string>
 	<string>
 		<id>901</id>
@@ -2603,167 +2603,167 @@
 	</string>
 	<string>
 		<id>902</id>
-		<value>Online kontakter</value>
+		<value>Contacte Online</value>
 	</string>
 	<string>
 		<id>903</id>
-		<value>Logga in</value>
+		<value>Pornire</value>
 	</string>
 	<string>
 		<id>904</id>
-		<value>Logga ut</value>
+		<value>Oprire</value>
 	</string>
 	<string>
 		<id>905</id>
-		<value>Du måste konfigurera denna plugin först</value>
+		<value>Întâi trebuie sã configuraþi acest modul</value>
 	</string>
 	<string>
 		<id>906</id>
-		<value>Fyll i din e-post adress i setupen</value>
+		<value>Introduceþi adresa de e-mail la configurare</value>
 	</string>
 	<string>
 		<id>907</id>
-		<value>Kunde inte ansluta till MSN</value>
+		<value>Nu vã puteþi conecta la MSN</value>
 	</string>
 	<string>
 		<id>908</id>
-		<value>skriver ett meddelande...</value>
+		<value>tasteazã un mesaj...</value>
 	</string>
 	<string>
 		<id>909</id>
-		<value>Ansluter...</value>
+		<value>Conectare...</value>
 	</string>
 	<string>
 		<id>910</id>
-		<value>Loggar in...</value>
+		<value>Signing in...</value>
 	</string>
 	<string>
 		<id>911</id>
-		<value>Inga kanaler</value>
+		<value>Canale indisponibile</value>
 	</string>
 	<string>
 		<id>912</id>
-		<value>Kunde inte ladda ner senaste nyheterna</value>
+		<value>Nu se pot descãrca ultimele ºtiri</value>
 	</string>
 	<string>
 		<id>913</id>
-		<value>Mina Plugins</value>
+		<value>Module</value>
 	</string>
 	<string>
 		<id>914</id>
-		<value>Inspelad TV</value>
+		<value>Înregistrãri</value>
 	</string>
 	<string>
 		<id>915</id>
-		<value>TV-kanaler</value>
+		<value>Canale TV</value>
 	</string>
 	<string>
 		<id>916</id>
-		<value>Fjärrfil</value>
+		<value>Fisiere la distanþã</value>
 	</string>
 	<string>
 		<id>917</id>
-		<value>Denna fil finns i en fjärrmapp</value>
+		<value>Acest fiºier este localizat în reþea</value>
 	</string>
 	<string>
 		<id>918</id>
-		<value>Vill du ladda ner det till din vanliga</value>
+		<value>Doriþi sã-l descarcaþi într-un</value>
 	</string>
 	<string>
 		<id>919</id>
-		<value>lokala share?</value>
+		<value>local?</value>
 	</string>
 	<string>
 		<id>920</id>
-		<value>Kunde inte ladda ner fjärrfil</value>
+		<value>Nu se poate descãrca fiºierul</value>
 	</string>
 	<string>
 		<id>921</id>
-		<value>Filen laddas ner</value>
+		<value>Fiºierul se descarcã</value>
 	</string>
 	<string>
 		<id>922</id>
-		<value>Beskrivning</value>
+		<value>Descriere</value>
 	</string>
 	<string>
 		<id>923</id>
-		<value>Visa</value>
+		<value>Show</value>
 	</string>
 	<string>
 		<id>924</id>
-		<value>Meny</value>
+		<value>Menu</value>
 	</string>
 	<string>
 		<id>925</id>
-		<value>Ta bort denna film</value>
+		<value>ªterge acest film</value>
 	</string>
 	<string>
 		<id>926</id>
-		<value>Lägg till i spellistan</value>
+		<value>Adaugã la playlist</value>
 	</string>
 	<string>
 		<id>927</id>
-		<value>Varning!</value>
+		<value>Atenþie</value>
 	</string>
 	<string>
 		<id>928</id>
-		<value>Hitta omslag</value>
+		<value>Se cautã imagini coperþi</value>
 	</string>
 	<string>
 		<id>929</id>
-		<value>Stäng menyn</value>
+		<value>Închidere</value>
 	</string>
 	<string>
 		<id>930</id>
-		<value>Lägg till favoriter</value>
+		<value>Adaugã la favorite</value>
 	</string>
 	<string>
 		<id>931</id>
-		<value>Betyg</value>
+		<value>Rating</value>
 	</string>
 	<string>
 		<id>932</id>
-		<value>Favoriter</value>
+		<value>Favorite</value>
 	</string>
 	<string>
 		<id>933</id>
-		<value>Ta bort från favoriter</value>
+		<value>ªterge din favorite</value>
 	</string>
 	<string>
 		<id>934</id>
-		<value>Sätt betyg</value>
+		<value>Setare rating</value>
 	</string>
 	<string>
 		<id>935</id>
-		<value>Visa: Betyg</value>
+		<value>Aratã: Rating</value>
 	</string>
 	<string>
 		<id>936</id>
-		<value>Fortsätt från:</value>
+		<value>Reia de la:</value>
 	</string>
 	<string>
 		<id>937</id>
-		<value>Importera TV-tablå</value>
+		<value>Se încarcã Ghidul TV</value>
 	</string>
 	<string>
 		<id>938</id>
-		<value>Titta på denna kanal</value>
+		<value>Selecteazã acest canal</value>
 	</string>
 	<string>
 		<id>939</id>
-		<value>Byt tablåvy</value>
+		<value>Comutã Modul</value>
 	</string>
 	<string>
 		<id>940</id>
-		<value>Egenskaper</value>
+		<value>Caracteristici</value>
 	</string>
 	<string>
 		<id>941</id>
-		<value>Ändra bildproportioner</value>
+		<value>Modificã raport ecran</value>
 	</string>
 	<string>
 		<id>942</id>
-		<value>Utsträckt</value>
+		<value>Stretch</value>
 	</string>
 	<string>
 		<id>943</id>
@@ -2771,11 +2771,11 @@
 	</string>
 	<string>
 		<id>944</id>
-		<value>1:1</value>
+		<value>Original</value>
 	</string>
 	<string>
 		<id>945</id>
-		<value>Brevlådeformat</value>
+		<value>Letterbox</value>
 	</string>
 	<string>
 		<id>946</id>
@@ -2783,43 +2783,43 @@
 	</string>
 	<string>
 		<id>947</id>
-		<value>Zoomad</value>
+		<value>Zoom</value>
 	</string>
 	<string>
 		<id>948</id>
-		<value>Online</value>
+		<value>Conectat</value>
 	</string>
 	<string>
 		<id>949</id>
-		<value>Upptagen</value>
+		<value>Ocupat</value>
 	</string>
 	<string>
 		<id>950</id>
-		<value>Snart tillbaka</value>
+		<value>Mã întorc imediat</value>
 	</string>
 	<string>
 		<id>951</id>
-		<value>Inte vid datorn</value>
+		<value>Plecat</value>
 	</string>
 	<string>
 		<id>952</id>
-		<value>Telefon</value>
+		<value>La telefon</value>
 	</string>
 	<string>
 		<id>953</id>
-		<value>Lunch</value>
+		<value>La masã</value>
 	</string>
 	<string>
 		<id>954</id>
-		<value>Osynlig</value>
+		<value>Ascuns</value>
 	</string>
 	<string>
 		<id>955</id>
-		<value>Upptagen</value>
+		<value>Inactiv</value>
 	</string>
 	<string>
 		<id>956</id>
-		<value>Online</value>
+		<value>Conectat</value>
 	</string>
 	<string>
 		<id>957</id>
@@ -2827,95 +2827,95 @@
 	</string>
 	<string>
 		<id>958</id>
-		<value>Pratar med</value>
+		<value>Se comunicã cu</value>
 	</string>
 	<string>
 		<id>959</id>
-		<value>har anslutit till konversationen</value>
+		<value>s-a alãturat conversaþiei</value>
 	</string>
 	<string>
 		<id>960</id>
-		<value>har lämnat konversationen</value>
+		<value>a pãrãsit conversaþia</value>
 	</string>
 	<string>
 		<id>961</id>
-		<value>MSN Status</value>
+		<value>Stare MSN</value>
 	</string>
 	<string>
 		<id>970</id>
-		<value>Föregående fönster</value>
+		<value>Ecran Precedent</value>
 	</string>
 	<string>
 		<id>971</id>
-		<value>Välj kanalgrupp</value>
+		<value>Grup</value>
 	</string>
 	<string>
 		<id>972</id>
-		<value>Alla Kanaler</value>
+		<value>Toate Canalele</value>
 	</string>
 	<string>
 		<id>973</id>
-		<value>Maximal FPS</value>
+		<value>FPS Maxim</value>
 	</string>
 	<string>
 		<id>974</id>
-		<value>Rotmeny</value>
+		<value>Menu Principal</value>
 	</string>
 	<string>
 		<id>975</id>
-		<value>Föregående kapitel</value>
+		<value>Capitolul Precedent</value>
 	</string>
 	<string>
 		<id>976</id>
-		<value>Nästa kapitel</value>
+		<value>Capitolul Urmãtor</value>
 	</string>
 	<string>
 		<id>977</id>
-		<value>Det finns inget ledigt kort tillgänligt</value>
+		<value>Nu existã un free card disponibil</value>
 	</string>
 	<string>
 		<id>978</id>
-		<value>som kan visa denna kanalen</value>
+		<value>care poate reda acest canal</value>
 	</string>
 	<string>
 		<id>979</id>
-		<value>Spela upp inspelningen från början</value>
+		<value>Redã înregistrarea de la început</value>
 	</string>
 	<string>
 		<id>980</id>
-		<value>Spela upp inspelningen från "nutid"</value>
+		<value>Redã înregistrarea din punctul live</value>
 	</string>
 	<string>
 		<id>981</id>
-		<value>Avbryt detta program</value>
+		<value>Anuleazã acest program</value>
 	</string>
 	<string>
 		<id>982</id>
-		<value>Radera denna inspelning</value>
+		<value>ªterge toatã înregistrarea</value>
 	</string>
 	<string>
 		<id>983</id>
-		<value>Mina spellistor</value>
+		<value>Playlist</value>
 	</string>
 	<string>
 		<id>984</id>
-		<value>Tar emot filmer</value>
+		<value>Se descarcã lista de filme</value>
 	</string>
 	<string>
 		<id>985</id>
-		<value>Tar emot filminfo</value>
+		<value>Se descarcã detalii despre film</value>
 	</string>
 	<string>
 		<id>986</id>
-		<value>Tar emot skådespelare</value>
+		<value>Se descarcã informaþii actori</value>
 	</string>
 	<string>
 		<id>987</id>
-		<value>År</value>
+		<value>Ani</value>
 	</string>
 	<string>
 		<id>988</id>
-		<value>Kvalitet</value>
+		<value>Calitate</value>
 	</string>
 	<string>
 		<id>989</id>
@@ -2927,31 +2927,31 @@
 	</string>
 	<string>
 		<id>991</id>
-		<value>Prioritet</value>
+		<value>Prioritate</value>
 	</string>
 	<string>
 		<id>992</id>
-		<value>Ta bort orginalfilen</value>
+		<value>Sterge fiºierul original</value>
 	</string>
 	<string>
 		<id>993</id>
-		<value>Egen inställning</value>
+		<value>Personalizat</value>
 	</string>
 	<string>
 		<id>994</id>
-		<value>Aktivera autokomprimering</value>
+		<value>Activare Auto-compactare</value>
 	</string>
 	<string>
 		<id>995</id>
-		<value>Är det säkert att du vill komprimera?</value>
+		<value>Sunteþi sigur cã doriþi sã compactaþi</value>
 	</string>
 	<string>
 		<id>996</id>
-		<value>de valda inspelningarna?</value>
+		<value>înregistrãrile selectate?</value>
 	</string>
 	<string>
 		<id>997</id>
-		<value>Klart!</value>
+		<value>Complet</value>
 	</string>
 	<string>
 		<id>998</id>
@@ -2959,243 +2959,247 @@
 	</string>
 	<string>
 		<id>999</id>
-		<value>Denna plugin låter dig omvandla dina</value>
+		<value>Acest modul va permite sã transcodaþi</value>
 	</string>
 	<string>
 		<id>1000</id>
-		<value>TV-inspelningar från dvr-ms till mpg, xvid eller wmv.</value>
+		<value>Înregistrãrile TV de la formatul dvr-ms la mpg, xvid sau wmv</value>
 	</string>
 	<string>
 		<id>1001</id>
-		<value>Observera att du måste ha</value>
+		<value>Atenþie. Va trebui sã aveþi</value>
 	</string>
 	<string>
 		<id>1002</id>
-		<value>Elecard MPEG2-video decoder installerad</value>
+		<value>video decoder-ul Elecard MPEG2 instalat</value>
 	</string>
 	<string>
 		<id>1003</id>
-		<value>för att kunna koda om till xvid.</value>
+		<value>pentru transcodare la xvid</value>
 	</string>
 	<string>
 		<id>1004</id>
-		<value>Inspelning ska påbörjas</value>
+		<value>Va porni înregistrarea</value>
 	</string>
 	<string>
 		<id>1005</id>
-		<value>av kanal</value>
+		<value>pe canalul</value>
 	</string>
 	<string>
 		<id>1006</id>
-		<value>Tillåt start av inspelning</value>
+		<value>Permiteþi pornirea înregistrãrii</value>
 	</string>
 	<string>
 		<id>1007</id>
-		<value>Avbryt inspelning och fortsätt titta på TV</value>
+		<value>Anulaþi înregistrarea ºi urmãriþi programul TV în continuare</value>
 	</string>
 	<string>
 		<id>1008</id>
-		<value>Köa</value>
+		<value>Listã</value>
 	</string>
 	<string>
 		<id>1009</id>
-		<value>Ladda ner omslag</value>
+		<value>Se descarcã imagini</value>
 	</string>
 	<string>
 		<id>1010</id>
-		<value>Sedd</value>
+		<value>Vizualizat</value>
 	</string>
 	<string>
 		<id>1011</id>
-		<value>Biografi</value>
+		<value>Biografie</value>
 	</string>
 	<string>
 		<id>1012</id>
-		<value>Detta program kommer att avbrytas av</value>
+		<value>Acest program va fi întrerupt de</value>
 	</string>
 	<string>
 		<id>1013</id>
-		<value>Vill du spela in den andra delen också?</value>
+		<value>Doriþi sã înregistraþi ºi partea a doua?</value>
 	</string>
 	<string>
 		<id>1014</id>
-		<value>Påminn om programstart</value>
+		<value>Anunþã-mã când începe programul</value>
 	</string>
 	<string>
 		<id>1015</id>
-		<value>Påminn INTE om programstart</value>
+		<value>Nu mã anunþa când începe programul</value>
 	</string>
 	<string>
 		<id>1016</id>
-		<value>Program börjar om fem minuter</value>
+		<value>Programul începe în 5 minute</value>
 	</string>
 	<string>
 		<id>1017</id>
-		<value>Sortera efter: Längd</value>
+		<value>Sortare dupã: Duratã</value>
 	</string>
 	<string>
 		<id>1020</id>
-		<value>Information</value>
+		<value>Informaþii</value>
 	</string>
 	<string>
 		<id>1021</id>
-		<value>Tryck på Alt+Enter för att</value>
+		<value>Apãsaþi Atl+Enter pentru</value>
 	</string>
 	<string>
 		<id>1022</id>
-		<value>återvända till fönsterläge</value>
+		<value>a reveni în mod fereastrã</value>
 	</string>
 	<string>
 		<id>1023</id>
-		<value>Det ringer</value>
+		<value>Apel Primit</value>
 	</string>
 	<string>
 		<id>1024</id>
-		<value>från</value>
+		<value>de la</value>
 	</string>
 	<string>
 		<id>1025</id>
-		<value>Ett fel uppstod</value>
+		<value>A apãrut o eroare</value>
 	</string>
 	<string>
 		<id>1026</id>
-		<value>Detaljer finns i logfilen</value>
+		<value>Vedeþi logfile pentru detalii</value>
 	</string>
 	<string>
 		<id>1027</id>
-		<value>Mina DVD-filmer</value>
+		<value>DVD</value>
 	</string>
 	<string>
 		<id>1028</id>
-		<value>Stad</value>
+		<value>Oraº</value>
 	</string>
 	<string>
 		<id>1029</id>
-		<value>Textningsspråk</value>
+		<value>Limbã Subtitrare</value>
 	</string>
 	<string>
 		<id>1030</id>
-		<value>Stäng av</value>
+		<value>Oprire PC</value>
 	</string>
 	<string>
 		<id>1031</id>
-		<value>Omstart</value>
+		<value>Restart PC</value>
 	</string>
 	<string>
 		<id>1032</id>
-		<value>Viloläge</value>
+		<value>Sleep</value>
 	</string>
 	<string>
 		<id>1033</id>
-		<value>Program spelas in just nu</value>
+		<value>Programul TV se înregistreazã acum</value>
 	</string>
 	<string>
 		<id>1034</id>
-		<value>Ingen signal!</value>
+		<value>Semnal Absent!</value>
 	</string>
 	<string>
 		<id>1035</id>
-		<value>TV-kanalen är krypterad!</value>
+		<value>Canalul TV este codificat!</value>
 	</string>
 	<string>
 		<id>1036</id>
-		<value>Ingen videosignal</value>
+		<value>Video nedisponibil</value>
 	</string>
 	<string>
 		<id>1037</id>
-		<value>Min TV - Programinformation</value>
+		<value>TV - Informaþii programe</value>
 	</string>
 	<string>
 		<id>1038</id>
-		<value>Avancerad inspelning</value>
+		<value>Înregistrare avansatã</value>
 	</string>
 	<string>
 		<id>1039</id>
-		<value>Spela inte in</value>
+		<value>Nu se înregistreazã</value>
 	</string>
 	<string>
 		<id>1040</id>
-		<value>Påminn mig</value>
+		<value>Anunþã-mã</value>
 	</string>
 	<string>
 		<id>1041</id>
-		<value>Kommande avsnitt</value>
+		<value>Episoade urmãtoare</value>
 	</string>
 	<string>
 		<id>1042</id>
-		<value>Spara tills</value>
+		<value>Pãstreazã pânã</value>
 	</string>
 	<string>
 		<id>1043</id>
-		<value>tills sedd</value>
+		<value>Pânã a fost vãzut</value>
 	</string>
 	<string>
 		<id>1044</id>
-		<value>tills utrymme behövs</value>
+		<value>Pânã e nevoie de spaþiu de înregistrare</value>
 	</string>
 	<string>
 		<id>1045</id>
-		<value>till datum</value>
+		<value>Pânã în data de</value>
 	</string>
 	<string>
 		<id>1046</id>
-		<value>alltid</value>
+		<value>Mereu</value>
 	</string>
 	<string>
 		<id>1047</id>
-		<value>Starta i fullskärmsläge</value>
+		<value>Porneºte mod Full-Screen</value>
+	</string>
+	<string>
+		<id>1048</id>
+		<value>Setari</value>
 	</string>
 	<string>
 		<id>1440</id>
-		<value>Min text-TV</value>
+		<value>TeleText</value>
 	</string>
 	<string>
 		<id>1441</id>
-		<value>Text-TV</value>
+		<value>TeleText</value>
 	</string>
 	<string>
 		<id>1442</id>
-		<value>Scroll-hastighet</value>
+		<value>Vitezã defilare (orizontalã)</value>
 	</string>
 	<string>
 		<id>1443</id>
-		<value>Scroll-hastighet (Vertikal)</value>
+		<value>Vitezã defilare (verticalã)</value>
 	</string>
 	<string>
 		<id>1444</id>
-		<value>Spela in före</value>
+		<value>Pre-înregistrare</value>
 	</string>
 	<string>
 		<id>1445</id>
-		<value>Spela in efter</value>
+		<value>Post-înregistrare</value>
 	</string>
 	<string>
 		<id>1446</id>
-		<value>Inspelning startad:</value>
+		<value>Înregistrare pornitã:</value>
 	</string>
 	<string>
 		<id>1447</id>
-		<value>Inspelning stoppad:</value>
+		<value>Înregistrare opritã:</value>
 	</string>
 	<string>
 		<id>1950</id>
-		<value>Min status</value>
+		<value>Stare</value>
 	</string>
 	<string>
 		<id>1951</id>
-		<value>Hårddisk</value>
+		<value>Harddisk</value>
 	</string>
 	<string>
 		<id>1952</id>
-		<value>Fläkt</value>
+		<value>Ventilator</value>
 	</string>
 	<string>
 		<id>1953</id>
-		<value>Ledigt</value>
+		<value>Liber</value>
 	</string>
 	<string>
 		<id>1954</id>
-		<value>Temperatur</value>
+		<value>Temperaturã</value>
 	</string>
 	<string>
 		<id>1955</id>
@@ -3203,19 +3207,19 @@
 	</string>
 	<string>
 		<id>1956</id>
-		<value>Välj alarmsignal</value>
+		<value>Selectaþi sunet alarmã</value>
 	</string>
 	<string>
 		<id>1957</id>
-		<value>Egenskaper</value>
+		<value>Preferinþe</value>
 	</string>
 	<string>
 		<id>1958</id>
-		<value>CPU-användning</value>
+		<value>Utilizare Procesor</value>
 	</string>
 	<string>
 		<id>1959</id>
-		<value>Spänning</value>
+		<value>Voltaj</value>
 	</string>
 	<string>
 		<id>1960</id>
@@ -3223,63 +3227,63 @@
 	</string>
 	<string>
 		<id>1961</id>
-		<value>Klockfrekvens</value>
+		<value>Frecvenþã Ceas</value>
 	</string>
 	<string>
 		<id>1962</id>
-		<value>Egenskaper</value>
+		<value>Preferinþe</value>
 	</string>
 	<string>
 		<id>1963</id>
-		<value>Sensorfinesser</value>
+		<value>Detalii Senzor</value>
 	</string>
 	<string>
 		<id>1964</id>
-		<value>Sensor alarm</value>
+		<value>Alarmã Senzor</value>
 	</string>
 	<string>
 		<id>1965</id>
-		<value>Högsta Värde</value>
+		<value>Valoare Maximã</value>
 	</string>
 	<string>
 		<id>1966</id>
-		<value>Lägsta Värde</value>
+		<value>Valoare Minimã</value>
 	</string>
 	<string>
 		<id>1967</id>
-		<value>Övre alarmgräns</value>
+		<value>marjã superioarã alarmã</value>
 	</string>
 	<string>
 		<id>1968</id>
-		<value>Nedre alarmgräns</value>
+		<value>marjã inferioarã alarmã</value>
 	</string>
 	<string>
 		<id>1969</id>
-		<value>Testa ljudet</value>
+		<value>Testare sunet</value>
 	</string>
 	<string>
 		<id>1970</id>
-		<value>Alarmintervall (i sekunder)</value>
+		<value>Interval Alarmã (în secunde)</value>
 	</string>
 	<string>
 		<id>1971</id>
-		<value>Stäng ner vid larm</value>
+		<value>Oprire la alarmã</value>
 	</string>
 	<string>
 		<id>1972</id>
-		<value>Status detaljer</value>
+		<value>Detalii Stare</value>
 	</string>
 	<string>
 		<id>1973</id>
-		<value>av</value>
+		<value>(of)</value>
 	</string>
 	<string>
 		<id>1974</id>
-		<value>Minne</value>
+		<value>Memorie</value>
 	</string>
 	<string>
 		<id>1975</id>
-		<value>Nästa Sida</value>
+		<value>Pagina Urmãtoare</value>
 	</string>
 	<string>
 		<id>1976</id>
@@ -3287,171 +3291,171 @@
 	</string>
 	<string>
 		<id>1977</id>
-		<value>Filsystem</value>
+		<value>Sistem Fisiere</value>
 	</string>
 	<string>
 		<id>1978</id>
-		<value>Virtuellt minne</value>
+		<value>VirtualMem</value>
 	</string>
 	<string>
 		<id>2005</id>
-		<value>Ta bort</value>
+		<value>Sterge</value>
 	</string>
 	<string>
 		<id>2006</id>
-		<value>Titel</value>
+		<value>Titlu</value>
 	</string>
 	<string>
 		<id>2007</id>
-		<value>Yield</value>
+		<value>(Yield)</value>
 	</string>
 	<string>
 		<id>2008</id>
-		<value>Ingredienser</value>
+		<value>Ingrediente</value>
 	</string>
 	<string>
 		<id>2009</id>
-		<value>Riktningar</value>
+		<value>Directii</value>
 	</string>
 	<string>
 		<id>2010</id>
-		<value>Kort</value>
+		<value>Card</value>
 	</string>
 	<string>
 		<id>2011</id>
-		<value>Skriv Ut</value>
+		<value>Tipãrire</value>
 	</string>
 	<string>
 		<id>2012</id>
-		<value>Ta bort</value>
+		<value>ªterge</value>
 	</string>
 	<string>
 		<id>2013</id>
-		<value>Favoriter</value>
+		<value>Favorite</value>
 	</string>
 	<string>
 		<id>2014</id>
-		<value>Okänd</value>
+		<value>Necunoscut</value>
 	</string>
 	<string>
 		<id>2015</id>
-		<value>per portion</value>
+		<value>pe Porþie</value>
 	</string>
 	<string>
 		<id>2016</id>
-		<value>liten</value>
+		<value>mic</value>
 	</string>
 	<string>
 		<id>2017</id>
-		<value>flytande ounce</value>
+		<value>fluid ounce</value>
 	</string>
 	<string>
 		<id>2018</id>
-		<value>kopp</value>
+		<value>ceaºcã</value>
 	</string>
 	<string>
 		<id>2019</id>
-		<value>pint</value>
+		<value>pintã (0,568 l)</value>
 	</string>
 	<string>
 		<id>2020</id>
-		<value>medium</value>
+		<value>mediu</value>
 	</string>
 	<string>
 		<id>2021</id>
-		<value>stor</value>
+		<value>mare</value>
 	</string>
 	<string>
 		<id>2022</id>
-		<value>burk</value>
+		<value>conservã (cutie, bidon)</value>
 	</string>
 	<string>
 		<id>2023</id>
-		<value>paket</value>
+		<value>pachet</value>
 	</string>
 	<string>
 		<id>2024</id>
-		<value>nypa</value>
+		<value>pinch (cât se poate lua cu degetele)</value>
 	</string>
 	<string>
 		<id>2025</id>
-		<value>droppe</value>
+		<value>picurã</value>
 	</string>
 	<string>
 		<id>2026</id>
-		<value>skvätt</value>
+		<value>sparge</value>
 	</string>
 	<string>
 		<id>2027</id>
-		<value>låda</value>
+		<value>carton</value>
 	</string>
 	<string>
 		<id>2028</id>
-		<value>knippe</value>
+		<value>bunch</value>
 	</string>
 	<string>
 		<id>2029</id>
-		<value>skiva</value>
+		<value>felie</value>
 	</string>
 	<string>
 		<id>2030</id>
-		<value>varje</value>
+		<value>fiecare</value>
 	</string>
 	<string>
 		<id>2031</id>
-		<value>tesked</value>
+		<value>linguriþã</value>
 	</string>
 	<string>
 		<id>2032</id>
-		<value>tesked</value>
+		<value>linguriþã</value>
 	</string>
 	<string>
 		<id>2033</id>
-		<value>matsked</value>
+		<value>lingurã</value>
 	</string>
 	<string>
 		<id>2034</id>
-		<value>matsked</value>
+		<value>lingurã</value>
 	</string>
 	<string>
 		<id>2035</id>
-		<value>quart</value>
+		<value>quart (un sfert de galon - 1,136 l)</value>
 	</string>
 	<string>
 		<id>2036</id>
-		<value>gallon</value>
+		<value>galon (4,45 l)</value>
 	</string>
 	<string>
 		<id>2037</id>
-		<value>ounce</value>
+		<value>uncie</value>
 	</string>
 	<string>
 		<id>2038</id>
-		<value>pound</value>
+		<value>livrã (453,6 g)</value>
 	</string>
 	<string>
 		<id>2039</id>
-		<value>milliliter</value>
+		<value>mili-litru</value>
 	</string>
 	<string>
 		<id>2040</id>
-		<value>milliliter</value>
+		<value>mili-litru</value>
 	</string>
 	<string>
 		<id>2041</id>
-		<value>centiliter</value>
+		<value>centi-litru</value>
 	</string>
 	<string>
 		<id>2042</id>
-		<value>deciliter</value>
+		<value>deci-litru</value>
 	</string>
 	<string>
 		<id>2043</id>
-		<value>liter</value>
+		<value>litru</value>
 	</string>
 	<string>
 		<id>2044</id>
-		<value>milligram</value>
+		<value>miligram</value>
 	</string>
 	<string>
 		<id>2045</id>
@@ -3471,163 +3475,163 @@
 	</string>
 	<string>
 		<id>2049</id>
-		<value>Ta bort detta recept?</value>
+		<value>ªtergeþi acestã reþetã?</value>
 	</string>
 	<string>
 		<id>2050</id>
-		<value>Ta bort denna kategori?</value>
+		<value>ªtergeþi acestã Categorie?</value>
 	</string>
 	<string>
 		<id>2051</id>
-		<value>Sök på titeln</value>
+		<value>Cãutare în Titluri</value>
 	</string>
 	<string>
 		<id>2052</id>
-		<value>Sök i recept</value>
+		<value>Cãutare în Reþete</value>
 	</string>
 	<string>
 		<id>2053</id>
-		<value>Kategori</value>
+		<value>Categorie</value>
 	</string>
 	<string>
 		<id>2054</id>
-		<value>Ingen träff!</value>
+		<value>Inexistent!</value>
 	</string>
 	<string>
 		<id>2100</id>
-		<value>Min brännare</value>
+		<value>Burner</value>
 	</string>
 	<string>
 		<id>2101</id>
-		<value>Kopiera CD/DVD</value>
+		<value>Copiere CD/DVD</value>
 	</string>
 	<string>
 		<id>2102</id>
-		<value>Skapa ljud-CD</value>
+		<value>Creare Audio-CD</value>
 	</string>
 	<string>
 		<id>2103</id>
-		<value>Skapa video-CD</value>
+		<value>Creare Video-CD</value>
 	</string>
 	<string>
 		<id>2104</id>
-		<value>Skapa video-DVD</value>
+		<value>Creare Video-DVD</value>
 	</string>
 	<string>
 		<id>2105</id>
-		<value>Skapa data-CD</value>
+		<value>Creare Data-CD</value>
 	</string>
 	<string>
 		<id>2106</id>
-		<value>Skapa data-DVD</value>
+		<value>Creare Data-DVD</value>
 	</string>
 	<string>
 		<id>2107</id>
-		<value>Starta kopiering</value>
+		<value>Start copiere</value>
 	</string>
 	<string>
 		<id>2108</id>
-		<value>Sätt i en tom CD/DVD</value>
+		<value>Introduceþi un CD/DVD gol</value>
 	</string>
 	<string>
 		<id>2109</id>
-		<value>tryck sen på OK</value>
+		<value>apoi apãsaþi OK</value>
 	</string>
 	<string>
 		<id>2110</id>
-		<value>Sätt i original-CD/DVD</value>
+		<value>Introduceþi CD/DVD-ul original</value>
 	</string>
 	<string>
 		<id>2111</id>
-		<value>Klar!</value>
+		<value>Terminat!</value>
 	</string>
 	<string>
 		<id>2112</id>
-		<value>Väntar på CD/DVD</value>
+		<value>Se aºteaptã CD/DVD-ul</value>
 	</string>
 	<string>
 		<id>2113</id>
-		<value>Kopiera allt</value>
+		<value>Copiazã toate</value>
 	</string>
 	<string>
 		<id>2114</id>
-		<value>Radera skiva</value>
+		<value>ªterge disc</value>
 	</string>
 	<string>
 		<id>2115</id>
-		<value>Sätt i CD/DVD-RW</value>
+		<value>Introduceþi un CD/DVD RW</value>
 	</string>
 	<string>
 		<id>2116</id>
-		<value>Enhet ej redo</value>
+		<value>Unitatea opticã nu este pregãtitã</value>
 	</string>
 	<string>
 		<id>2117</id>
-		<value>Ett allvarligt fel har inträffat!</value>
+		<value>a apãrut o eroare critiã!</value>
 	</string>
 	<string>
 		<id>2118</id>
-		<value>Konvertera DVR-MS</value>
+		<value>Se converteºte DVR-MS</value>
 	</string>
 	<string>
 		<id>2119</id>
-		<value>Starta konvertering</value>
+		<value>Start conversie</value>
 	</string>
 	<string>
 		<id>2120</id>
-		<value>Konverterar fil(er)...</value>
+		<value>Se convertesc fiºierele...</value>
 	</string>
 	<string>
 		<id>2121</id>
-		<value>Kunde inte konvertera fil (er)!</value>
+		<value>Fiºierele nu se pot converti!</value>
 	</string>
 	<string>
 		<id>2122</id>
-		<value>Startar!</value>
+		<value>start!</value>
 	</string>
 	<string>
 		<id>2123</id>
-		<value>Diskinfo</value>
+		<value>Info Disc</value>
 	</string>
 	<string>
 		<id>2124</id>
-		<value>Kan ej radera: Media är inte skrivbart</value>
+		<value>Nu se poate ºterge: Discul nu este inscriptibil</value>
 	</string>
 	<string>
 		<id>2125</id>
-		<value>Raderar Disk....</value>
+		<value>Se ºterge discul....</value>
 	</string>
 	<string>
 		<id>2126</id>
-		<value>Mata Ut CD</value>
+		<value>Eject CD</value>
 	</string>
 	<string>
 		<id>2127</id>
-		<value>CD:n är inte skrivbar</value>
+		<value>CD-ul nu este inscriptibil</value>
 	</string>
 	<string>
 		<id>2128</id>
-		<value>Förbereder bränning: beräknad tid:</value>
+		<value>Se pregãteºte inscripþionarea: timp estimat:</value>
 	</string>
 	<string>
 		<id>2129</id>
-		<value>Förbereder bränning</value>
+		<value>Se pregãteºte inscripþionarea</value>
 	</string>
 	<string>
 		<id>2130</id>
-		<value>Blockera</value>
+		<value>Bloc</value>
 	</string>
 	<string>
 		<id>2131</id>
-		<value>av</value>
+		<value>of</value>
 	</string>
 	<string>
 		<id>2132</id>
-		<value>Stänger skiva: beräknad tid:</value>
+		<value>Discul se închide: timp estimat:</value>
 	</string>
 	<string>
 		<id>2133</id>
-		<value>TV-inspelningar</value>
+		<value>Înregistrãri TV</value>
 	</string>
 	<string>
 		<id>2134</id>
@@ -3635,7 +3639,7 @@
 	</string>
 	<string>
 		<id>2135</id>
-		<value>Ljud</value>
+		<value>Audio</value>
 	</string>
 	<string>
 		<id>2136</id>
@@ -3643,19 +3647,19 @@
 	</string>
 	<string>
 		<id>2137</id>
-		<value>Konvertera</value>
+		<value>Conversie</value>
 	</string>
 	<string>
 		<id>2138</id>
-		<value>Klippa</value>
+		<value>Taie</value>
 	</string>
 	<string>
 		<id>2139</id>
-		<value>Skapa MP3-CD</value>
+		<value>Creare MP3-CD</value>
 	</string>
 	<string>
 		<id>2140</id>
-		<value>Skapa MP3-DVD</value>
+		<value>Create MP3-DVD</value>
 	</string>
 	<string>
 		<id>2141</id>
@@ -3667,7 +3671,7 @@
 	</string>
 	<string>
 		<id>2143</id>
-		<value>Hem</value>
+		<value>Acasã</value>
 	</string>
 	<string>
 		<id>2200</id>
@@ -3675,435 +3679,435 @@
 	</string>
 	<string>
 		<id>2201</id>
-		<value>Välj källa</value>
+		<value>Selectaþi sursa</value>
 	</string>
 	<string>
 		<id>2202</id>
-		<value>Välj mål</value>
+		<value>Selectaþi destinatia</value>
 	</string>
 	<string>
 		<id>2203</id>
-		<value>Kopiera data</value>
+		<value>Copiere date</value>
 	</string>
 	<string>
 		<id>2204</id>
-		<value>Skapa mapp</value>
+		<value>Creare director</value>
 	</string>
 	<string>
 		<id>2205</id>
-		<value>Återställ markerat</value>
+		<value>Refacere selectie</value>
 	</string>
 	<string>
 		<id>2206</id>
-		<value>Välj alla</value>
+		<value>Se selecteazã toate</value>
 	</string>
 	<string>
 		<id>2207</id>
-		<value>Vill du</value>
+		<value>Doriþi sã</value>
 	</string>
 	<string>
 		<id>2208</id>
-		<value>skapa mappen?</value>
+		<value>creaþi directorul?</value>
 	</string>
 	<string>
 		<id>2209</id>
-		<value>Vill du kopiera filerna?</value>
+		<value>Doriþi sã copiaþi fiºierele?</value>
 	</string>
 	<string>
 		<id>2210</id>
-		<value>Filer kopierade!</value>
+		<value>Fiºiere copiate!</value>
 	</string>
 	<string>
 		<id>2211</id>
-		<value>Vänta, filer kopieras.</value>
+		<value>Vã rog aºteptaþi, fiºierele se copiazã.</value>
 	</string>
 	<string>
 		<id>2212</id>
-		<value>Ta bort</value>
+		<value>ªtergere</value>
 	</string>
 	<string>
 		<id>2213</id>
-		<value>Flytta</value>
+		<value>Mutare</value>
 	</string>
 	<string>
 		<id>2214</id>
-		<value>Vill du flytta de markerade filerna?</value>
+		<value>Doriþi sã mutaþi fiºierele selectate?</value>
 	</string>
 	<string>
 		<id>2215</id>
-		<value>Vänta, flyttar filer.</value>
+		<value>Vã rog aºteptaþi, fiºierele se mutã.</value>
 	</string>
 	<string>
 		<id>2216</id>
-		<value>Filer flyttade!</value>
+		<value>Fiºiere mutate!</value>
 	</string>
 	<string>
 		<id>2217</id>
-		<value>Det finns redan en fil med det namnet!</value>
+		<value>Fiºierele destinaþie existã!</value>
 	</string>
 	<string>
 		<id>2218</id>
-		<value>Skriva över filen?</value>
+		<value>Suprascrieþi fiºierele?</value>
 	</string>
 	<string>
 		<id>2219</id>
-		<value>Kan inte flytta från vald enhet!</value>
+		<value>Nu se pot muta de pe unitatea selectatã!</value>
 	</string>
 	<string>
 		<id>2220</id>
-		<value>Vill du kopiera markerade filer?</value>
+		<value>Copiaþi fiºierele selectate?</value>
 	</string>
 	<string>
 		<id>2221</id>
-		<value>Vill du ta bort valda filer?</value>
+		<value>Doriþi sã ºtergeþi fiºierele selectate?</value>
 	</string>
 	<string>
 		<id>2222</id>
-		<value>Filer borttagna!</value>
+		<value>Fiºiere ºterse!</value>
 	</string>
 	<string>
 		<id>2223</id>
-		<value>Papperskorg</value>
+		<value>Coº de gunoi</value>
 	</string>
 	<string>
 		<id>2224</id>
-		<value>Mappen finns redan!</value>
+		<value>Directorii existã!</value>
 	</string>
 	<string>
 		<id>2225</id>
-		<value>Mappen skapad!</value>
+		<value>Director creat</value>
 	</string>
 	<string>
 		<id>3000</id>
-		<value>Programalternativ</value>
+		<value>Opþiuni program</value>
 	</string>
 	<string>
 		<id>3001</id>
-		<value>timme</value>
+		<value>Orã</value>
 	</string>
 	<string>
 		<id>3002</id>
-		<value>timmar</value>
+		<value>Ore</value>
 	</string>
 	<string>
 		<id>3003</id>
-		<value>minut</value>
+		<value>Minut</value>
 	</string>
 	<string>
 		<id>3004</id>
-		<value>minuter</value>
+		<value>Minute</value>
 	</string>
 	<string>
 		<id>3005</id>
-		<value>timme sen</value>
+		<value>Orã mai devreme</value>
 	</string>
 	<string>
 		<id>3006</id>
-		<value>timmar sen</value>
+		<value>Ore mai devreme</value>
 	</string>
 	<string>
 		<id>3007</id>
-		<value>minut sen</value>
+		<value>Minut mai devreme</value>
 	</string>
 	<string>
 		<id>3008</id>
-		<value>minuter sen</value>
+		<value>Minute mai devreme</value>
 	</string>
 	<string>
 		<id>3009</id>
-		<value>Startar om</value>
+		<value>Începe în</value>
 	</string>
 	<string>
 		<id>3010</id>
-		<value>Minuter kvar</value>
+		<value>Minute Rãmase</value>
 	</string>
 	<string>
 		<id>3011</id>
-		<value>Timme kvar</value>
+		<value>Orã Rãmasã</value>
 	</string>
 	<string>
 		<id>3012</id>
-		<value>Timmar kvar</value>
+		<value>Ore Rãmase</value>
 	</string>
 	<string>
 		<id>3013</id>
-		<value>Startar nu</value>
+		<value>Începe acum</value>
 	</string>
 	<string>
 		<id>3014</id>
-		<value>Dag</value>
+		<value>Zi</value>
 	</string>
 	<string>
 		<id>3015</id>
-		<value>Dagar</value>
+		<value>Zile</value>
 	</string>
 	<string>
 		<id>3016</id>
-		<value>Redan slut</value>
+		<value>Terminat Deja</value>
 	</string>
 	<string>
 		<id>3017</id>
-		<value>Startad</value>
+		<value>Început</value>
 	</string>
 	<string>
 		<id>3018</id>
-		<value>Minut kvar</value>
+		<value>Minut rãmas</value>
 	</string>
 	<string>
 		<id>3019</id>
-		<value>Serie</value>
+		<value>Serial</value>
 	</string>
 	<string>
 		<id>3020</id>
-		<value>Avsnitt</value>
+		<value>Episod</value>
 	</string>
 	<string>
 		<id>3021</id>
-		<value>Del</value>
+		<value>Parte</value>
 	</string>
 	<string>
 		<id>3022</id>
-		<value>av</value>
+		<value>(of)</value>
 	</string>
 	<string>
 		<id>5900</id>
-		<value>Mina Trailers</value>
+		<value>Trailer-e</value>
 	</string>
 	<string>
 		<id>5901</id>
-		<value>Visa Filmer</value>
+		<value>Aratã Filme</value>
 	</string>
 	<string>
 		<id>5902</id>
-		<value>Visa vilka filmer?</value>
+		<value>Aratã care filme?</value>
 	</string>
 	<string>
 		<id>5903</id>
-		<value>Nyligen släppta filmer</value>
+		<value>Filme noi adãugate</value>
 	</string>
 	<string>
 		<id>5904</id>
-		<value>Mest sedda filmer</value>
+		<value>Filmele cele mai vãzute</value>
 	</string>
 	<string>
 		<id>5905</id>
-		<value>Alla filmer</value>
+		<value>Toate filmele</value>
 	</string>
 	<string>
 		<id>5906</id>
-		<value>Trailers</value>
+		<value>Trailer-e</value>
 	</string>
 	<string>
 		<id>5907</id>
-		<value>Clips</value>
+		<value>Video-Clipuri</value>
 	</string>
 	<string>
 		<id>5908</id>
-		<value>Mer material</value>
+		<value>Mai multe</value>
 	</string>
 	<string>
 		<id>5909</id>
-		<value>Kan inte spela film!</value>
+		<value>Nu pot transcoda filmul ptr. streaming</value>
 	</string>
 	<string>
 		<id>5910</id>
-		<value>Hämtar film information</value>
+		<value>Actializare Informaþii Film</value>
 	</string>
 	<string>
 		<id>5911</id>
-		<value>Nytt på biograferna</value>
+		<value>Filme noi în cinematografe</value>
 	</string>
 	<string>
 		<id>5912</id>
-		<value>Tidigare vecka</value>
+		<value>Sãptãmâna trecutã</value>
 	</string>
 	<string>
 		<id>5913</id>
-		<value>Denna vecka</value>
+		<value>Sãptãmâna aceasta</value>
 	</string>
 	<string>
 		<id>5914</id>
-		<value>Nästa vecka</value>
+		<value>Sãptãmâna viitoare</value>
 	</string>
 	<string>
 		<id>5915</id>
-		<value>Inga film recensioner än</value>
+		<value>Nu existã review-uri ptr. film încã</value>
 	</string>
 	<string>
 		<id>5916</id>
-		<value>Inga trailers hittade</value>
+		<value>Nu s-au gãsit trailer-e</value>
 	</string>
 	<string>
 		<id>5917</id>
-		<value>Tyska trailers</value>
+		<value>Trailer-e Germane</value>
 	</string>
 	<string>
 		<id>8000</id>
-		<value>Min e-post</value>
+		<value>E-Mail</value>
 	</string>
 	<string>
 		<id>8001</id>
-		<value>Kolla brevlådan</value>
+		<value>Verificare Mesaje</value>
 	</string>
 	<string>
 		<id>8002</id>
-		<value>Autokoll Av</value>
+		<value>Auto-verificare opritã</value>
 	</string>
 	<string>
 		<id>8003</id>
-		<value>Autokoll På</value>
+		<value>Auto-verificare pornitã</value>
 	</string>
 	<string>
 		<id>8004</id>
-		<value>Du har ny e-post!</value>
+		<value>Aveþi mesaje noi!</value>
 	</string>
 	<string>
 		<id>8005</id>
-		<value>Uppdaterar brevlådan</value>
+		<value>Se verificã mesajele</value>
 	</string>
 	<string>
 		<id>8007</id>
-		<value>Autokoll På</value>
+		<value>Auto-verificare</value>
 	</string>
 	<string>
 		<id>8008</id>
-		<value>Back</value>
+		<value>Înapoi</value>
 	</string>
 	<string>
 		<id>8009</id>
-		<value>Markera alla olästa</value>
+		<value>Marcheazã toate ca ne-citite</value>
 	</string>
 	<string>
 		<id>8010</id>
-		<value>Ingen brevlåda skapad</value>
+		<value>Nu existã casuþã de mesaje creatã</value>
 	</string>
 	<string>
 		<id>8011</id>
-		<value>Gå till Setup och skapa</value>
+		<value>Mergeþi la Setup ºi creaþi</value>
 	</string>
 	<string>
 		<id>8012</id>
-		<value>minst en brevlåda för att använda Mail-Pluginen.</value>
+		<value>cel puþin o cãsuþã de mesaje ptr. a folosi modulul E-Mail.</value>
 	</string>
 	<string>
 		<id>8013</id>
-		<value>Servern svarar ej</value>
+		<value>Server-ul nu rãspunde</value>
 	</string>
 	<string>
 		<id>8014</id>
-		<value>Servern&apos;{0}&apos;varar ej!</value>
+		<value>Server-ul&apos;{0}&apos;nu rãspunde!</value>
 	</string>
 	<string>
 		<id>8015</id>
-		<value>Kolla inst. för brevlådan&apos;{0}&apos;</value>
+		<value>Verificaþi configurãrile ptr. cãsuþa de mesaje&apos;{0}&apos;</value>
 	</string>
 	<string>
 		<id>8016</id>
-		<value>Från</value>
+		<value>De la</value>
 	</string>
 	<string>
 		<id>8017</id>
-		<value>Till</value>
+		<value>Pentru</value>
 	</string>
 	<string>
 		<id>8018</id>
-		<value>Ämne</value>
+		<value>Subiect</value>
 	</string>
 	<string>
 		<id>8019</id>
-		<value>Meddelande</value>
+		<value>Mesaj</value>
 	</string>
 	<string>
 		<id>8020</id>
-		<value>Ta bort e-post</value>
+		<value>Sterge Mesaj</value>
 	</string>
 	<string>
 		<id>8021</id>
-		<value>Markera som läst</value>
+		<value>Marcheazã ca citit</value>
 	</string>
 	<string>
 		<id>8022</id>
-		<value>Visa bifogade filer</value>
+		<value>Aratã Documente Ataºate</value>
 	</string>
 	<string>
 		<id>8023</id>
-		<value>Nya meddelanden mottagna</value>
+		<value>Aveþi Mesaje Noi</value>
 	</string>
 	<string>
 		<id>8024</id>
-		<value>Visa meddelande</value>
+		<value>Aratã Mesaj</value>
 	</string>
 	<string>
 		<id>8025</id>
-		<value>Behandlar meddelande</value>
+		<value>Prelucrare Mesaj</value>
 	</string>
 	<string>
 		<id>8030</id>
-		<value>Ansluten till server</value>
+		<value>Conectat la server</value>
 	</string>
 	<string>
 		<id>8031</id>
-		<value>Tar emot antal brev</value>
+		<value>Se preia mesajul</value>
 	</string>
 	<string>
 		<id>8033</id>
-		<value>Hämtar</value>
+		<value>Progres</value>
 	</string>
 	<string>
 		<id>8034</id>
-		<value>Visa HTML</value>
+		<value>Aratã HTML</value>
 	</string>
 	<string>
 		<id>9000</id>
-		<value>Bildstorlek:</value>
+		<value>Dimensiuni Imagine:</value>
 	</string>
 	<string>
 		<id>9001</id>
-		<value>Upplösning:</value>
+		<value>Rezolutie:</value>
 	</string>
 	<string>
 		<id>9002</id>
-		<value>Blixt:</value>
+		<value>Flash:</value>
 	</string>
 	<string>
 		<id>9003</id>
-		<value>Avståndsläge:</value>
+		<value>Mod Metering:</value>
 	</string>
 	<string>
 		<id>9004</id>
-		<value>Exponeringskompensation:</value>
+		<value>Compensare:</value>
 	</string>
 	<string>
 		<id>9005</id>
-		<value>Slutarhastighet:</value>
+		<value>Vitezã Shutter:</value>
 	</string>
 	<string>
 		<id>9006</id>
-		<value>Datum när bilden togs:</value>
+		<value>Fotografiat în Data:</value>
 	</string>
 	<string>
 		<id>9007</id>
-		<value>Bländare:</value>
+		<value>Fstop:</value>
 	</string>
 	<string>
 		<id>9008</id>
-		<value>Exponeringstid:</value>
+		<value>Timp Expunere:</value>
 	</string>
 	<string>
 		<id>9009</id>
-		<value>Kameramodell:</value>
+		<value>Model Camera Foto:</value>
 	</string>
 	<string>
 		<id>9010</id>
-		<value>Tillverkare:</value>
+		<value>Producator:</value>
 	</string>
 	<string>
 		<id>9011</id>
-		<value>Visa kommentarer:</value>
+		<value>Vezi comentarii:</value>
 	</string>
 	<string>
 		<id>99845</id>
-		<value>Sök i TV.com</value>
+		<value>Interogare TV.com</value>
 	</string>
 	<string>
 		<id>12902</id>
@@ -4111,135 +4115,135 @@
 	</string>
 	<string>
 		<id>13000</id>
-		<value>System:</value>
+		<value>Sistem:</value>
 	</string>
 	<string>
 		<id>13001</id>
-		<value>Tillverkare:</value>
+		<value>Producator:</value>
 	</string>
 	<string>
 		<id>13002</id>
-		<value>Launch</value>
+		<value>Lansat</value>
 	</string>
 	<string>
 		<id>13003</id>
-		<value>Importerar *.mlf fil</value>
+		<value>Se importã fisierul *.mlf</value>
 	</string>
 	<string>
 		<id>13004</id>
-		<value>Importerar *.my fil</value>
+		<value>Se importã fisierul *.my</value>
 	</string>
 	<string>
 		<id>13005</id>
-		<value>Senast Importerad fil:</value>
+		<value>Ultimul fiºier importat:</value>
 	</string>
 	<string>
 		<id>13006</id>
-		<value>Liten Bild</value>
+		<value>Imagini Mici</value>
 	</string>
 	<string>
 		<id>13007</id>
-		<value>Stor Bild</value>
+		<value>Imagini Mari</value>
 	</string>
 	<string>
 		<id>13008</id>
-		<value>Ken Burns-effekt</value>
+		<value>Efect Ken Burns</value>
 	</string>
 	<string>
 		<id>13009</id>
-		<value>Slumpmässig övergångar</value>
+		<value>Tranziþii aleatoare</value>
 	</string>
 	<string>
 		<id>13010</id>
-		<value>Tonade övergångar</value>
+		<value>Tranziþii dizolvare (X-fade)</value>
 	</string>
 	<string>
 		<id>13011</id>
-		<value>Ken Burns-hastighet</value>
+		<value>Vitezã Ken Burns</value>
 	</string>
 	<string>
 		<id>13012</id>
-		<value>Laddar bild, vänta lite</value>
+		<value>Se încarcã imaginea, vã rog aºteptaþi</value>
 	</string>
 	<string>
 		<id>13013</id>
-		<value>Laddar video, vänta lite</value>
+		<value>Se încarcã video, vã rog aºteptaþi</value>
 	</string>
 	<string>
 		<id>13014</id>
-		<value>Söker genom mapp</value>
+		<value>Cãutare in director</value>
 	</string>
 	<string>
 		<id>13015</id>
-		<value>Importerar gamebase</value>
+		<value>Se importã fisierul (gamebase)</value>
 	</string>
 	<string>
 		<id>13016</id>
-		<value>Sortera efter: Antal starter</value>
+		<value>Sortare dupã: Lansãri</value>
 	</string>
 	<string>
 		<id>13017</id>
-		<value>Sortera efter: Senaste</value>
+		<value>Sortare dupã: Recent</value>
 	</string>
 	<string>
 		<id>13018</id>
-		<value>Sortera efter: Rating</value>
+		<value>Sortare dupã: Rating</value>
 	</string>
 	<string>
 		<id>16001</id>
-		<value>Partyblanda</value>
+		<value>Petrecere: Shuffle</value>
 	</string>
 	<string>
 		<id>25001</id>
-		<value>Väntar på sida {0:X}...!</value>
+		<value>Se aºteaptã pagina {0:X}...!</value>
 	</string>
 	<string>
 		<id>19001</id>
-		<value>Mitt Tetris</value>
+		<value>Tetris</value>
 	</string>
 	<string>
 		<id>19002</id>
-		<value>Nytt Spel</value>
+		<value>Joc Nou</value>
 	</string>
 	<string>
 		<id>19003</id>
-		<value>Musik</value>
+		<value>Muzicã</value>
 	</string>
 	<string>
 		<id>19004</id>
-		<value>Ljud</value>
+		<value>Sunete</value>
 	</string>
 	<string>
 		<id>19005</id>
-		<value>Poäng</value>
+		<value>Scor</value>
 	</string>
 	<string>
 		<id>19006</id>
-		<value>Nivå</value>
+		<value>Nivel</value>
 	</string>
 	<string>
 		<id>19007</id>
-		<value>Rader</value>
+		<value>Linii</value>
 	</string>
 	<string>
 		<id>19008</id>
-		<value>Rekord</value>
+		<value>Score Maxim</value>
 	</string>
 	<string>
 		<id>19009</id>
-		<value>Nästa</value>
+		<value>Urmãtorul</value>
 	</string>
 	<string>
 		<id>19010</id>
-		<value>Tryck eller klicka för att starta...</value>
+		<value>Apãsaþi sau click pentru a începe...</value>
 	</string>
 	<string>
 		<id>19011</id>
-		<value>Pausad</value>
+		<value>Pauzã</value>
 	</string>
 	<string>
 		<id>19012</id>
-		<value>Game Over</value>
+		<value>Sfârºit Joc</value>
 	</string>
 	<string>
 		<id>19100</id>
@@ -4247,123 +4251,123 @@
 	</string>
 	<string>
 		<id>100000</id>
-		<value>Hem</value>
+		<value>Acasã</value>
 	</string>
 	<string>
 		<id>100001</id>
-		<value>Mina Program</value>
+		<value>Programe TV</value>
 	</string>
 	<string>
 		<id>100002</id>
-		<value>Mina Bilder</value>
+		<value>Fotografii/Imagini</value>
 	</string>
 	<string>
 		<id>100003</id>
-		<value>Mina Filer</value>
+		<value>Fiºiere</value>
 	</string>
 	<string>
 		<id>100004</id>
-		<value>Inställningar</value>
+		<value>Setãri</value>
 	</string>
 	<string>
 		<id>100005</id>
-		<value>Min Musik</value>
+		<value>Muzicã</value>
 	</string>
 	<string>
 		<id>100006</id>
-		<value>Mina Filmer</value>
+		<value>Video</value>
 	</string>
 	<string>
 		<id>100007</id>
-		<value>Systeminformation</value>
+		<value>Informaþii sistem</value>
 	</string>
 	<string>
 		<id>100008</id>
-		<value>Inställningar-&gt;Generella</value>
+		<value>Setãri-&gt;General</value>
 	</string>
 	<string>
 		<id>100009</id>
-		<value>Inställningar-&gt;Skärm</value>
+		<value>Setãri-&gt;Ecran</value>
 	</string>
 	<string>
 		<id>100010</id>
-		<value>Inställningar-&gt;Skärm-&gt;UI Kalibrering</value>
+		<value>Setãri-&gt;Ecran-&gt;Calibrare Interfaþã</value>
 	</string>
 	<string>
 		<id>100011</id>
-		<value>Inställningar-&gt;Skärm-&gt;Skärm Kalibrering</value>
+		<value>Setãri-&gt;Ecran-&gt;Calibrare Ecran</value>
 	</string>
 	<string>
 		<id>100012</id>
-		<value>Inställningar-&gt;Bildspel</value>
+		<value>Setãri-&gt;SlideShow</value>
 	</string>
 	<string>
 		<id>100013</id>
-		<value>Inställningar-&gt;Skärm-&gt;Filter</value>
+		<value>Setãri-&gt;Ecran-&gt;Filtre</value>
 	</string>
 	<string>
 		<id>100014</id>
-		<value>Inställningar-&gt;Musik</value>
+		<value>Setãri-&gt;Muzicã</value>
 	</string>
 	<string>
 		<id>100015</id>
-		<value>Inställningar-&gt;Skärm-&gt;Textning</value>
+		<value>Setãri-&gt;Ecran-&gt;Subtitrãri</value>
 	</string>
 	<string>
 		<id>100016</id>
-		<value>Inställningar-&gt;Skärm-&gt;Skärmsläckare</value>
+		<value>Setãri-&gt;Ecran-&gt;Screensaver</value>
 	</string>
 	<string>
 		<id>100017</id>
-		<value>Inställningar-&gt;Väder</value>
+		<value>Setãri-&gt;Meteo</value>
 	</string>
 	<string>
 		<id>100020</id>
-		<value>Inställningar-&gt;Script</value>
+		<value>Setãri-&gt;Scripturi</value>
 	</string>
 	<string>
 		<id>100021</id>
-		<value>Mina Videor/genre</value>
+		<value>Video/genuri</value>
 	</string>
 	<string>
 		<id>100022</id>
-		<value>Mina Videor/skådesp.</value>
+		<value>Video/actori</value>
 	</string>
 	<string>
 		<id>100023</id>
-		<value>Mina Videor/år</value>
+		<value>Video/ani</value>
 	</string>
 	<string>
 		<id>100024</id>
-		<value>Inställningar-&gt;Program</value>
+		<value>Setãri-&gt;Programe</value>
 	</string>
 	<string>
 		<id>100025</id>
-		<value>Mina Videor/titel</value>
+		<value>Video/titluri</value>
 	</string>
 	<string>
 		<id>100026</id>
-		<value>Inställningar-&gt;Generella-&gt;Cache</value>
+		<value>Setãri-&gt;General-&gt;Cache</value>
 	</string>
 	<string>
 		<id>100027</id>
-		<value>Inställningar-&gt;Generella-&gt;Autouppsp.</value>
+		<value>Setãri-&gt;General-&gt;Auto-start</value>
 	</string>
 	<string>
 		<id>100028</id>
-		<value>Mina Videor/spellista</value>
+		<value>Video/playlist</value>
 	</string>
 	<string>
 		<id>100029</id>
-		<value>Inställningar-&gt;Generella-&gt;LCD</value>
+		<value>Setãri-&gt;General-&gt;LCD</value>
 	</string>
 	<string>
 		<id>100030</id>
-		<value>Min Radio</value>
+		<value>Radio</value>
 	</string>
 	<string>
 		<id>100031</id>
-		<value>Inställningar-&gt;Skärm-&gt;scroll-hastighet</value>
+		<value>Setãri-&gt;Ecran-&gt;scroll speed</value>
 	</string>
 	<string>
 		<id>100032</id>
@@ -4375,11 +4379,11 @@
 	</string>
 	<string>
 		<id>100034</id>
-		<value>Mina Plugins</value>
+		<value>My Plugins</value>
 	</string>
 	<string>
 		<id>100100</id>
-		<value>ja/nej-dialog</value>
+		<value>Yes/no dialog</value>
 	</string>
 	<string>
 		<id>100101</id>
@@ -4387,239 +4391,239 @@
 	</string>
 	<string>
 		<id>100500</id>
-		<value>Min Musik/spellista</value>
+		<value>Muzicã/playlist</value>
 	</string>
 	<string>
 		<id>100501</id>
-		<value>Min Musik/filer</value>
+		<value>Muzicã/locaþii</value>
 	</string>
 	<string>
 		<id>100502</id>
-		<value>Min Musik/album</value>
+		<value>Muzicã/albume</value>
 	</string>
 	<string>
 		<id>100503</id>
-		<value>Min Musik/artister</value>
+		<value>Muzicã/artiºti</value>
 	</string>
 	<string>
 		<id>100504</id>
-		<value>Min Musik/genrer</value>
+		<value>Muzicã/genuri</value>
 	</string>
 	<string>
 		<id>100505</id>
-		<value>Min Musik/top100</value>
+		<value>Muzicã/top100</value>
 	</string>
 	<string>
 		<id>100506</id>
-		<value>Min Musik/Favoriter</value>
+		<value>Muzicã/Favorite</value>
 	</string>
 	<string>
 		<id>100600</id>
-		<value>Min TV/Tablå</value>
+		<value>TV/Ghid</value>
 	</string>
 	<string>
 		<id>100601</id>
-		<value>Min TV/Planerade inspelningar</value>
+		<value>TV/Programãri</value>
 	</string>
 	<string>
 		<id>100602</id>
-		<value>Min TV/Fullskärm</value>
+		<value>TV/fullscreen</value>
 	</string>
 	<string>
 		<id>100603</id>
-		<value>Min TV/Inspelad TV</value>
+		<value>TV/Înregistrãri TV</value>
 	</string>
 	<string>
 		<id>100604</id>
-		<value>Min TV/Sök</value>
+		<value>TV/Cãutare</value>
 	</string>
 	<string>
 		<id>100605</id>
-		<value>Min TV/Inpelad Tv/Genre</value>
+		<value>TV/Înregistrãri TV/Genuri</value>
 	</string>
 	<string>
 		<id>100606</id>
-		<value>Min TV/Inspelad Tv/kanaler</value>
+		<value>TV/Înregistrãri TV/canale</value>
 	</string>
 	<string>
 		<id>100607</id>
-		<value>TV/Schemaläggare/Prioriteter</value>
+		<value>TV/Programator/Prioritati</value>
 	</string>
 	<string>
 		<id>100608</id>
-		<value>TV/Schemaläggare/Konflikter</value>
+		<value>TV/Programator/Conflicte</value>
 	</string>
 	<string>
 		<id>100609</id>
-		<value>TV/Koprimera/Översikt</value>
+		<value>TV/Comprima/Principal</value>
 	</string>
 	<string>
 		<id>100610</id>
-		<value>TV/Koprimera/Inställningar</value>
+		<value>TV/Comprima/Setari</value>
 	</string>
 	<string>
 		<id>100611</id>
-		<value>TV/Koprimera/Automatiskt</value>
+		<value>TV/Comprima/Auto</value>
 	</string>
 	<string>
 		<id>100612</id>
-		<value>TV/Koprimera/Komprimera</value>
+		<value>TV/Comprima/Comprima</value>
 	</string>
 	<string>
 		<id>100613</id>
-		<value>TV/Koprimera/Status</value>
+		<value>TV/Comprima/Stare</value>
 	</string>
 	<string>
 		<id>100614</id>
-		<value>Video Artist Info</value>
+		<value>Informatie artist video</value>
 	</string>
 	<string>
 		<id>100615</id>
-		<value>Guide/Välkommen</value>
+		<value>Ghid/Bun venit</value>
 	</string>
 	<string>
 		<id>100616</id>
-		<value>Guide/Upptäckta kort</value>
+		<value>Ghid/Carduri detectate</value>
 	</string>
 	<string>
 		<id>100617</id>
-		<value>Guide/Land</value>
+		<value>Ghid/Tara</value>
 	</string>
 	<string>
 		<id>100618</id>
-		<value>Guide/Skanna</value>
+		<value>Ghid/Scaneaza</value>
 	</string>
 	<string>
 		<id>100619</id>
-		<value>Guide/DVBC/Land</value>
+		<value>Ghid/DVBC/Tara</value>
 	</string>
 	<string>
 		<id>100620</id>
-		<value>Guide/DVBC/Skanna</value>
+		<value>Ghid/DVBC/Scaneaza</value>
 	</string>
 	<string>
 		<id>100621</id>
-		<value>Guide/DVBC/LNB</value>
+		<value>Ghid/DVBS/LNB</value>
 	</string>
 	<string>
 		<id>100622</id>
-		<value>Guide/DVBC/LNB detaljer</value>
+		<value>Ghid/DVBS/Detalii LNB</value>
 	</string>
 	<string>
 		<id>100623</id>
-		<value>Guide/DVBC/Transponder</value>
+		<value>Ghid/DVBS/Transponder</value>
 	</string>
 	<string>
 		<id>100624</id>
-		<value>Guide/DVBC/Skanna</value>
+		<value>Ghid/DVBS/Scaneaza</value>
 	</string>
 	<string>
 		<id>100625</id>
-		<value>Guide/ATSC/Skanna</value>
+		<value>Ghid/ATSC/Scaneaza</value>
 	</string>
 	<string>
 		<id>100626</id>
-		<value>Guide/Analog/Land</value>
+		<value>Ghid/Analog/Tara</value>
 	</string>
 	<string>
 		<id>100627</id>
-		<value>Guide/Analog/Stad</value>
+		<value>Ghid/Analog/Oras</value>
 	</string>
 	<string>
 		<id>100628</id>
-		<value>Guide/Analog/Importerad</value>
+		<value>Ghid/Analog/Importat</value>
 	</string>
 	<string>
 		<id>100629</id>
-		<value>Guide/Analog/Användarhandledning</value>
+		<value>Ghid/Analog/Manual</value>
 	</string>
 	<string>
 		<id>100630</id>
-		<value>Guide/Analog/Skanna</value>
+		<value>Ghid/Analog/Scaneaza</value>
 	</string>
 	<string>
 		<id>100631</id>
-		<value>Guide/Analog/Byt namn</value>
+		<value>Ghid/Analog/Redenumeste</value>
 	</string>
 	<string>
 		<id>100632</id>
-		<value>Guide/Analog/Radio</value>
+		<value>Ghid/Analog/Radio</value>
 	</string>
 	<string>
 		<id>100633</id>
-		<value>Guide/Analog/Byt namn på radio</value>
+		<value>Ghid/Analog/Redenumeste Radio</value>
 	</string>
 	<string>
 		<id>100634</id>
-		<value>Guide/Fjärr</value>
+		<value>Ghid/De la distanta</value>
 	</string>
 	<string>
 		<id>100635</id>
-		<value>Guide/EPG</value>
+		<value>Ghid/EPG</value>
 	</string>
 	<string>
 		<id>100699</id>
-		<value>Guide/Avslutad</value>
+		<value>Ghid/Finalizat</value>
 	</string>
 	<string>
 		<id>100700</id>
-		<value>TV-inställningar</value>
+		<value>Setari TV</value>
 	</string>
 	<string>
 		<id>100701</id>
-		<value>TV inspelningsinställningar</value>
+		<value>Setari inregistrare TV</value>
 	</string>
 	<string>
 		<id>100702</id>
-		<value>TV sortera kanaler</value>
+		<value>Sortare canale TV</value>
 	</string>
 	<string>
 		<id>100703</id>
-		<value>TV filminställningar</value>
+		<value>Setari filme TV</value>
 	</string>
 	<string>
 		<id>100704</id>
-		<value>DVD-inställningar</value>
+		<value>Setari DVD</value>
 	</string>
 	<string>
 		<id>100705</id>
-		<value>Skinninställningar</value>
+		<value>Setari interfata</value>
 	</string>
 	<string>
 		<id>100748</id>
-		<value>Programinformation</value>
+		<value>Informatie programe</value>
 	</string>
 	<string>
 		<id>100749</id>
-		<value>TV/Ingen signal</value>
+		<value>TV/Fara semnal</value>
 	</string>
 	<string>
 		<id>100750</id>
-		<value>Mina Recept</value>
+		<value>Reþete</value>
 	</string>
 	<string>
 		<id>100755</id>
-		<value>Min Status</value>
+		<value>Stare</value>
 	</string>
 	<string>
 		<id>100756</id>
-		<value>Min Status detaljer</value>
+		<value>Stare: Detalii</value>
 	</string>
 	<string>
 		<id>100757</id>
-		<value>Min Status inställningar</value>
+		<value>Stare: Preferinþe</value>
 	</string>
 	<string>
 		<id>100758</id>
-		<value>Fildialog</value>
+		<value>File dialog</value>
 	</string>
 	<string>
 		<id>100759</id>
-		<value>Inspelad TV information</value>
+		<value>Informatie TV inregistrata</value>
 	</string>
 	<string>
 		<id>100760</id>
-		<value>Min Brännare</value>
+		<value>CD-DVD Burner</value>
 	</string>
 	<string>
 		<id>100770</id>
@@ -4627,15 +4631,15 @@
 	</string>
 	<string>
 		<id>101000</id>
-		<value>tangentbord</value>
+		<value>tastaturã</value>
 	</string>
 	<string>
 		<id>102000</id>
-		<value>Välj Dialog</value>
+		<value>Select dialog</value>
 	</string>
 	<string>
 		<id>102001</id>
-		<value>Min Musik/info</value>
+		<value>Muzicã/info</value>
 	</string>
 	<string>
 		<id>102002</id>
@@ -4643,198 +4647,198 @@
 	</string>
 	<string>
 		<id>102003</id>
-		<value>Mina Filmer/info</value>
+		<value>Video/Info</value>
 	</string>
 	<string>
 		<id>102004</id>
-		<value>Mina Script/info</value>
+		<value>Scripts/Info</value>
 	</string>
 	<string>
 		<id>102005</id>
-		<value>Fullskärmsvideo</value>
+		<value>Video Fullscreen</value>
 	</string>
 	<string>
 		<id>102006</id>
-		<value>Ljudvisualisering</value>
+		<value>Vizualizare Audio</value>
 	</string>
 	<string>
 		<id>102007</id>
-		<value>Mina Bilder/bildspel</value>
+		<value>Fotografii/slideshow</value>
 	</string>
 	<string>
 		<id>102008</id>
-		<value>Filgrupperings dialog</value>
+		<value>Filestacking dialog</value>
 	</string>
 	<string>
 		<id>102009</id>
-		<value>Valdialog</value>
+		<value>Selection dialog</value>
 	</string>
 	<string>
 		<id>102010</id>
-		<value>Datum/tid</value>
+		<value>Date/Time</value>
 	</string>
 	<string>
 		<id>102011</id>
-		<value>Artistinfo</value>
+		<value>Artis info</value>
 	</string>
 	<string>
 		<id>102012</id>
-		<value>Snabbvalsmeny</value>
+		<value>Context menu</value>
 	</string>
 	<string>
 		<id>102013</id>
-		<value>Sätt betyg</value>
+		<value>Set Rating</value>
 	</string>
 	<string>
 		<id>102014</id>
-		<value>Bildinfo</value>
+		<value>Info Imagini</value>
 	</string>
 	<string>
 		<id>102015</id>
-		<value>Minimeny</value>
+		<value>Mini Menu</value>
 	</string>
 	<string>
 		<id>102016</id>
-		<value>Upplysning</value>
+		<value>Notificaþii</value>
 	</string>
 	<string>
 		<id>102600</id>
-		<value>Mitt Väder</value>
+		<value>Meteo</value>
 	</string>
 	<string>
 		<id>102700</id>
-		<value>Mina Nyheter</value>
+		<value>ªtiri</value>
 	</string>
 	<string>
 		<id>102900</id>
-		<value>Skärmsläckare</value>
+		<value>Screensaver</value>
 	</string>
 	<string>
 		<id>102901</id>
-		<value>Fullskärm OSD</value>
+		<value>Fullscreen OSD</value>
 	</string>
 	<string>
 		<id>103003</id>
-		<value>Min TV/OSD</value>
+		<value>TV/OSD</value>
 	</string>
 	<string>
 		<id>103006</id>
-		<value>Min TV/MSN OSD</value>
+		<value>TV/MSN OSD</value>
 	</string>
 	<string>
 		<id>103007</id>
-		<value>Min TV/Zap OSD</value>
+		<value>TV/Zap OSD</value>
 	</string>
 	<string>
 		<id>107700</id>
-		<value>Min TV/Text-TV</value>
+		<value>TV/Teletext</value>
 	</string>
 	<string>
 		<id>107701</id>
-		<value>Min TV/Text-TV</value>
+		<value>TV/Teletext</value>
 	</string>
 	<string>
 		<id>200000</id>
-		<value>Var god ange vilken EPG grabber du använder. Om ditt land inte</value>
+		<value>Vã rog selectaþi procesorul EPG. Dacã þara nu este</value>
 	</string>
 	<string>
 		<id>200001</id>
-		<value>finns på listan måste du tillföra EPG:n manuellt</value>
+		<value>în listã, va trebui sã introduceþi EPG manual</value>
 	</string>
 	<string>
 		<id>200002</id>
-		<value>Nu kan du mappa EPG-kanalerna till dina TV-kanaler</value>
+		<value>Acum puteþi face legãtura între canalele EPG ºi canalele TV</value>
 	</string>
 	<string>
 		<id>200003</id>
-		<value>Välj kanal och tryck Enter för att ändra mappningen</value>
+		<value>selectaþi un canal ºi apasaþi Enter pentru a schimba legãtura</value>
 	</string>
 	<string>
 		<id>200004</id>
-		<value>Manuellt tillförd tvguide.xml</value>
+		<value>Fiºier tvguide.xml preluat manual</value>
 	</string>
 	<string>
 		<id>200005</id>
-		<value>Var god ange vilken fjärrkontroll du använder:</value>
+		<value>Vã rog specificaþi telecomanda folositã</value>
 	</string>
 	<string>
 		<id>200006</id>
-		<value>Tryck Nästa för att fortsätta</value>
+		<value>Apãsaþi Înainte ptr. a continua configurarea</value>
 	</string>
 	<string>
 		<id>200007</id>
-		<value>&lt;Bakåt</value>
+		<value>&lt;Înapoi</value>
 	</string>
 	<string>
 		<id>200008</id>
-		<value>Inställning - Fjärrkontroll</value>
+		<value>Configurare - Telecomandã</value>
 	</string>
 	<string>
 		<id>200009</id>
-		<value>Nästa&gt;</value>
+		<value>Înainte&gt;</value>
 	</string>
 	<string>
 		<id>200010</id>
-		<value>MediaPortal förvandlar din PC till en HTPC - ett väldigt avancerat multimediacenter</value>
+		<value>MediaPortal transformã PC-ul dvs. într-un sistem Multi-Media Center / HomeTheather avansat</value>
 	</string>
 	<string>
 		<id>200011</id>
-		<value>Med MediaPortal kan du njuta av din favoritmusik, radio</value>
+		<value>Cu MediaPortal, vã puteþi bucura de muzica favoritã ºi posturile de radio preferate</value>
 	</string>
 	<string>
 		<id>200013</id>
-		<value>MediaPortal gör så att du kan lyssna på din favoritmusik och radio, titta på video och DVD-filmer</value>
+		<value>Vã permite sã ascultaþi muzica si radio preferate, sã vedeþi filme is DVD-uri,</value>
 	</string>
 	<string>
 		<id>200014</id>
-		<value>foton, videor och titta på samt spela in TV och mycket mer</value>
+		<value>albume foto, ºi sã urmãriþi ºi sã înregistraþi programele TV preferate, ºi multe altele.</value>
 	</string>
 	<string>
 		<id>200015</id>
-		<value>Den här guiden kommer att hjälpa dig att komma igång med MediaPortal snabbt och lätt. Följ stegen</value>
+		<value>Acest program vã va ajuta sã configuraþi MediaPortal uºor. Vã rog continuaþi cu paºii urmãtori</value>
 	</string>
 	<string>
 		<id>200016</id>
-		<value>Tryck på Nästa för att fortsätta</value>
+		<value>Apãsaþi butonul Next ptr. a începe</value>
 	</string>
 	<string>
 		<id>200017</id>
-		<value>Välkommen till MediaPortal</value>
+		<value>Fiþi bineveniþi in MediaPortal</value>
 	</string>
 	<string>
 		<id>200018</id>
-		<value>Gratulerar! MediaPortal är nu färdig att användas</value>
+		<value>Felicitãri. MediaPortal este configurat si poate fi folosit</value>
 	</string>
 	<string>
 		<id>200019</id>
-		<value>Tryck på Avsluta för att stänga denna guide</value>
+		<value>Apãsaþi butonul Finish pentru a termina configurarea</value>
 	</string>
 	<string>
 		<id>200020</id>
-		<value>Avsluta</value>
+		<value>Finish</value>
 	</string>
 	<string>
 		<id>200021</id>
-		<value>TV Inställning - EPG</value>
+		<value>Configurare TV - EPG</value>
 	</string>
 	<string>
 		<id>200022</id>
-		<value>MediaPortal har hittat dessa tv-kort:</value>
+		<value>MediaPortal a identificat urmatoarele tunere TV:</value>
 	</string>
 	<string>
 		<id>200023</id>
-		<value>Tryck på Nästa för att konfigurera dessa kort</value>
+		<value>Apãsaþi butonul Next ptr. a configura aceste tunere</value>
 	</string>
 	<string>
 		<id>200024</id>
-		<value>TV Inställning</value>
+		<value>Configurare TV</value>
 	</string>
 	<string>
 		<id>4000</id>
-		<value>Webbläsare</value>
+		<value>Browser web</value>
 	</string>
 	<string>
 		<id>4001</id>
-		<value>Favoriter</value>
+		<value>Favorite</value>
 	</string>
 </strings>

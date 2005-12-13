@@ -1,0 +1,2508 @@
+<?xml version="1.0" encoding="iso-8859-2"?>
+<strings>
+	<characters></characters>
+	<string>
+		<id>0</id>
+		<value>Programy</value>
+	</string>
+	<string>
+		<id>1</id>
+		<value>Obrázky</value>
+	</string>
+	<string>
+		<id>2</id>
+		<value>Hudba</value>
+	</string>
+	<string>
+		<id>3</id>
+		<value>Video</value>
+	</string>
+	<string>
+		<id>4</id>
+		<value>TV program</value>
+	</string>
+	<string>
+		<id>5</id>
+		<value>Nastavenia</value>
+	</string>
+	<string>
+		<id>7</id>
+		<value>Súbory</value>
+	</string>
+	<string>
+		<id>8</id>
+		<value>Počasie</value>
+	</string>
+	<string>
+		<id>9</id>
+		<value>Správy</value>
+	</string>
+	<string>
+		<id>10</id>
+		<value>Recepty</value>
+	</string>
+	<string>
+		<id>11</id>
+		<value>Pondelok</value>
+	</string>
+	<string>
+		<id>12</id>
+		<value>Utorok</value>
+	</string>
+	<string>
+		<id>13</id>
+		<value>Streda</value>
+	</string>
+	<string>
+		<id>14</id>
+		<value>Štvrtok</value>
+	</string>
+	<string>
+		<id>15</id>
+		<value>Piatok</value>
+	</string>
+	<string>
+		<id>16</id>
+		<value>Sobota</value>
+	</string>
+	<string>
+		<id>17</id>
+		<value>Nedeľa</value>
+	</string>
+	<string>
+		<id>21</id>
+		<value>Január</value>
+	</string>
+	<string>
+		<id>22</id>
+		<value>Február</value>
+	</string>
+	<string>
+		<id>23</id>
+		<value>Marec</value>
+	</string>
+	<string>
+		<id>24</id>
+		<value>Apríl</value>
+	</string>
+	<string>
+		<id>25</id>
+		<value>Máj</value>
+	</string>
+	<string>
+		<id>26</id>
+		<value>Jún</value>
+	</string>
+	<string>
+		<id>27</id>
+		<value>Júl</value>
+	</string>
+	<string>
+		<id>28</id>
+		<value>August</value>
+	</string>
+	<string>
+		<id>29</id>
+		<value>September</value>
+	</string>
+	<string>
+		<id>30</id>
+		<value>Október</value>
+	</string>
+	<string>
+		<id>31</id>
+		<value>November</value>
+	</string>
+	<string>
+		<id>32</id>
+		<value>December</value>
+	</string>
+	<string>
+		<id>50</id>
+		<value>DVD-čka</value>
+	</string>
+	<string>
+		<id>100</id>
+		<value>Zobrazenie: Ikony</value>
+	</string>
+	<string>
+		<id>101</id>
+		<value>Zobrazenie: Zoznam</value>
+	</string>
+	<string>
+		<id>102</id>
+		<value>Prehľadaj</value>
+	</string>
+	<string>
+		<id>103</id>
+		<value>Triedenie podľa: Meno</value>
+	</string>
+	<string>
+		<id>104</id>
+		<value>Triedenie podľa: Dátum</value>
+	</string>
+	<string>
+		<id>105</id>
+		<value>Triedenie podľa: Veľkosť</value>
+	</string>
+	<string>
+		<id>106</id>
+		<value>Nie</value>
+	</string>
+	<string>
+		<id>107</id>
+		<value>Ano</value>
+	</string>
+	<string>
+		<id>108</id>
+		<value>Prezentácia</value>
+	</string>
+	<string>
+		<id>109</id>
+		<value>Vytvor prehľad</value>
+	</string>
+	<string>
+		<id>110</id>
+		<value>Vytvor náhľady</value>
+	</string>
+	<string>
+		<id>111</id>
+		<value>Zástupci</value>
+	</string>
+	<string>
+		<id>112</id>
+		<value>ZASTAVENÉ</value>
+	</string>
+	<string>
+		<id>113</id>
+		<value>Súbory: Zdroj</value>
+	</string>
+	<string>
+		<id>114</id>
+		<value>Súbory: Cieľ</value>
+	</string>
+	<string>
+		<id>115</id>
+		<value>Kopíruj</value>
+	</string>
+	<string>
+		<id>116</id>
+		<value>Presuň</value>
+	</string>
+	<string>
+		<id>117</id>
+		<value>Vymaž</value>
+	</string>
+	<string>
+		<id>118</id>
+		<value>Premenuj</value>
+	</string>
+	<string>
+		<id>119</id>
+		<value>Nová zložka</value>
+	</string>
+	<string>
+		<id>120</id>
+		<value>Potvrď kopírovanie súboru</value>
+	</string>
+	<string>
+		<id>121</id>
+		<value>Potvrď presun súboru</value>
+	</string>
+	<string>
+		<id>122</id>
+		<value>Potvrď vymazanie súboru</value>
+	</string>
+	<string>
+		<id>123</id>
+		<value>Kopírovať tieto súbory?</value>
+	</string>
+	<string>
+		<id>124</id>
+		<value>Presunúť tieto súbory?</value>
+	</string>
+	<string>
+		<id>125</id>
+		<value>Vymazať tieto súbory:</value>
+	</string>
+	<string>
+		<id>126</id>
+		<value>Stav</value>
+	</string>
+	<string>
+		<id>127</id>
+		<value>Objekty</value>
+	</string>
+	<string>
+		<id>128</id>
+		<value>Všeobecne</value>
+	</string>
+	<string>
+		<id>129</id>
+		<value>prezentácia</value>
+	</string>
+	<string>
+		<id>130</id>
+		<value>Systémové informácie</value>
+	</string>
+	<string>
+		<id>131</id>
+		<value>Obrazovka</value>
+	</string>
+	<string>
+		<id>132</id>
+		<value>Albumy</value>
+	</string>
+	<string>
+		<id>133</id>
+		<value>Umelci</value>
+	</string>
+	<string>
+		<id>135</id>
+		<value>Žánre</value>
+	</string>
+	<string>
+		<id>137</id>
+		<value>Vyhľadať</value>
+	</string>
+	<string>
+		<id>138</id>
+		<value>SYSTÉMOVÉ INFORMÁCIE</value>
+	</string>
+	<string>
+		<id>139</id>
+		<value>Teploty:</value>
+	</string>
+	<string>
+		<id>140</id>
+		<value>Procesor</value>
+	</string>
+	<string>
+		<id>141</id>
+		<value>Grafika</value>
+	</string>
+	<string>
+		<id>142</id>
+		<value>Čas:</value>
+	</string>
+	<string>
+		<id>143</id>
+		<value>Súčasný:</value>
+	</string>
+	<string>
+		<id>145</id>
+		<value>Sieť:</value>
+	</string>
+	<string>
+		<id>146</id>
+		<value>Typ:</value>
+	</string>
+	<string>
+		<id>147</id>
+		<value>Statická</value>
+	</string>
+	<string>
+		<id>148</id>
+		<value>DHCP</value>
+	</string>
+	<string>
+		<id>149</id>
+		<value>MAC</value>
+	</string>
+	<string>
+		<id>150</id>
+		<value>IP:</value>
+	</string>
+	<string>
+		<id>151</id>
+		<value>Linka:</value>
+	</string>
+	<string>
+		<id>152</id>
+		<value>Poloduplex</value>
+	</string>
+	<string>
+		<id>153</id>
+		<value>Plny duplex</value>
+	</string>
+	<string>
+		<id>154</id>
+		<value>Úložisko</value>
+	</string>
+	<string>
+		<id>155</id>
+		<value>Disk</value>
+	</string>
+	<string>
+		<id>156</id>
+		<value>Voľný</value>
+	</string>
+	<string>
+		<id>157</id>
+		<value>Video</value>
+	</string>
+	<string>
+		<id>158</id>
+		<value>Voľná pamäť</value>
+	</string>
+	<string>
+		<id>159</id>
+		<value>Chýba pripojenie</value>
+	</string>
+	<string>
+		<id>160</id>
+		<value>Voľných</value>
+	</string>
+	<string>
+		<id>161</id>
+		<value>Nedostupné</value>
+	</string>
+	<string>
+		<id>162</id>
+		<value>Jednotka otvorená</value>
+	</string>
+	<string>
+		<id>163</id>
+		<value>Čítanie</value>
+	</string>
+	<string>
+		<id>164</id>
+		<value>Bez disku</value>
+	</string>
+	<string>
+		<id>165</id>
+		<value>Disk vložený</value>
+	</string>
+	<string>
+		<id>166</id>
+		<value>Vzhľad:</value>
+	</string>
+	<string>
+		<id>167</id>
+		<value>FTP server:</value>
+	</string>
+	<string>
+		<id>168</id>
+		<value>Synchronizácia času:</value>
+	</string>
+	<string>
+		<id>169</id>
+		<value>Rozlíšenie:</value>
+	</string>
+	<string>
+		<id>170</id>
+		<value>Album:</value>
+	</string>
+	<string>
+		<id>171</id>
+		<value>Umelec:</value>
+	</string>
+	<string>
+		<id>172</id>
+		<value>Dátum vydania:</value>
+	</string>
+	<string>
+		<id>173</id>
+		<value>Hodnotenie:</value>
+	</string>
+	<string>
+		<id>174</id>
+		<value>Žáner:</value>
+	</string>
+	<string>
+		<id>176</id>
+		<value>Štýl:</value>
+	</string>
+	<string>
+		<id>177</id>
+		<value>Recenzia:</value>
+	</string>
+	<string>
+		<id>178</id>
+		<value>Stopy:</value>
+	</string>
+	<string>
+		<id>179</id>
+		<value>Pieseň</value>
+	</string>
+	<string>
+		<id>180</id>
+		<value>Trvanie:</value>
+	</string>
+	<string>
+		<id>181</id>
+		<value>Vyber album</value>
+	</string>
+	<string>
+		<id>182</id>
+		<value>Stopy</value>
+	</string>
+	<string>
+		<id>183</id>
+		<value>Recenzia</value>
+	</string>
+	<string>
+		<id>184</id>
+		<value>Obnoviť</value>
+	</string>
+	<string>
+		<id>185</id>
+		<value>Hľadanie albumu</value>
+	</string>
+	<string>
+		<id>186</id>
+		<value>OK</value>
+	</string>
+	<string>
+		<id>187</id>
+		<value>Album nenájdený!</value>
+	</string>
+	<string>
+		<id>188</id>
+		<value>Vyber všetko</value>
+	</string>
+	<string>
+		<id>189</id>
+		<value>Načítanie informácií o médiu</value>
+	</string>
+	<string>
+		<id>190</id>
+		<value>Uložiť</value>
+	</string>
+	<string>
+		<id>191</id>
+		<value>Náhodne</value>
+	</string>
+	<string>
+		<id>192</id>
+		<value>Vyčisti</value>
+	</string>
+	<string>
+		<id>193</id>
+		<value>Prehľadaj</value>
+	</string>
+	<string>
+		<id>194</id>
+		<value>Hľadanie...</value>
+	</string>
+	<string>
+		<id>195</id>
+		<value>Nenájdené IMDB info!</value>
+	</string>
+	<string>
+		<id>196</id>
+		<value>Vyber film:</value>
+	</string>
+	<string>
+		<id>197</id>
+		<value>Zisťovanie IMDB informácie</value>
+	</string>
+	<string>
+		<id>198</id>
+		<value>Sťahovanie detailov filmu</value>
+	</string>
+	<string>
+		<id>199</id>
+		<value>Réžia:</value>
+	</string>
+	<string>
+		<id>200</id>
+		<value>Scenár:</value>
+	</string>
+	<string>
+		<id>201</id>
+		<value>Rok:</value>
+	</string>
+	<string>
+		<id>204</id>
+		<value>Hodnotenie:</value>
+	</string>
+	<string>
+		<id>205</id>
+		<value>Hlasov:</value>
+	</string>
+	<string>
+		<id>206</id>
+		<value>Obsadenie:</value>
+	</string>
+	<string>
+		<id>207</id>
+		<value>Dej:</value>
+	</string>
+	<string>
+		<id>208</id>
+		<value>Spusti</value>
+	</string>
+	<string>
+		<id>209</id>
+		<value>Ďalší</value>
+	</string>
+	<string>
+		<id>210</id>
+		<value>Predchádzajúci</value>
+	</string>
+	<string>
+		<id>211</id>
+		<value>Hľadanie aplikácií</value>
+	</string>
+	<string>
+		<id>212</id>
+		<value>aplikácie nájdené</value>
+	</string>
+	<string>
+		<id>213</id>
+		<value>Kalibrácia UI</value>
+	</string>
+	<string>
+		<id>214</id>
+		<value>Kalibrácia obrazu</value>
+	</string>
+	<string>
+		<id>215</id>
+		<value>Zmäkčenie</value>
+	</string>
+	<string>
+		<id>216</id>
+		<value>Zväčšenie</value>
+	</string>
+	<string>
+		<id>217</id>
+		<value>Roztiahni</value>
+	</string>
+	<string>
+		<id>218</id>
+		<value>DVD jednotka</value>
+	</string>
+	<string>
+		<id>219</id>
+		<value>Prosím vlož disk</value>
+	</string>
+	<string>
+		<id>220</id>
+		<value>Vzdialené zdiľanie</value>
+	</string>
+	<string>
+		<id>221</id>
+		<value>Sieť nepripojená</value>
+	</string>
+	<string>
+		<id>222</id>
+		<value>Zrušiť</value>
+	</string>
+	<string>
+		<id>223</id>
+		<value>Automatické prepínanie obrazu</value>
+	</string>
+	<string>
+		<id>224</id>
+		<value>Rýchlosť</value>
+	</string>
+	<string>
+		<id>225</id>
+		<value>Čas prechodu</value>
+	</string>
+	<string>
+		<id>226</id>
+		<value>Povoľ PAL60</value>
+	</string>
+	<string>
+		<id>227</id>
+		<value>Povoľ CDDB</value>
+	</string>
+	<string>
+		<id>228</id>
+		<value>Náhodne načitaj playlist</value>
+	</string>
+	<string>
+		<id>229</id>
+		<value>Čas vypnutia HD (min)</value>
+	</string>
+	<string>
+		<id>230</id>
+		<value>Filtre</value>
+	</string>
+	<string>
+		<id>231</id>
+		<value>Žiadne</value>
+	</string>
+	<string>
+		<id>232</id>
+		<value>Bod</value>
+	</string>
+	<string>
+		<id>233</id>
+		<value>Lineárny</value>
+	</string>
+	<string>
+		<id>234</id>
+		<value>Anizotropné</value>
+	</string>
+	<string>
+		<id>237</id>
+		<value>Zmenšenie:</value>
+	</string>
+	<string>
+		<id>238</id>
+		<value>Zväčšenie:</value>
+	</string>
+	<string>
+		<id>240</id>
+		<value>Automatické spustenie DVD-Video</value>
+	</string>
+	<string>
+		<id>247</id>
+		<value>Skripty</value>
+	</string>
+	<string>
+		<id>248</id>
+		<value>Jazyk</value>
+	</string>
+	<string>
+		<id>249</id>
+		<value>Hudba</value>
+	</string>
+	<string>
+		<id>250</id>
+		<value>Vizualizácia</value>
+	</string>
+	<string>
+		<id>251</id>
+		<value>Vyber cieľový adresár</value>
+	</string>
+	<string>
+		<id>252</id>
+		<value>Výstup na všetky reproduktory</value>
+	</string>
+	<string>
+		<id>253</id>
+		<value>Počet kanálov</value>
+	</string>
+	<string>
+		<id>257</id>
+		<value>Chyba</value>
+	</string>
+	<string>
+		<id>258</id>
+		<value>Povoľ ID3 značky</value>
+	</string>
+	<string>
+		<id>259</id>
+		<value>Otvorenie</value>
+	</string>
+	<string>
+		<id>261</id>
+		<value>Čakanie na štart...</value>
+	</string>
+	<string>
+		<id>263</id>
+		<value>HTTP server:</value>
+	</string>
+	<string>
+		<id>264</id>
+		<value>Záznam</value>
+	</string>
+	<string>
+		<id>265</id>
+		<value>Stop záznamu</value>
+	</string>
+	<string>
+		<id>266</id>
+		<value>Triedenie: Stopa</value>
+	</string>
+	<string>
+		<id>267</id>
+		<value>Triedenie: Čas</value>
+	</string>
+	<string>
+		<id>268</id>
+		<value>Triedenie: Názov</value>
+	</string>
+	<string>
+		<id>269</id>
+		<value>Triedenie: Umelec</value>
+	</string>
+	<string>
+		<id>270</id>
+		<value>Triedenie: Album</value>
+	</string>
+	<string>
+		<id>272</id>
+		<value>Kopmpenzácia preskenovania hore-vľavo</value>
+	</string>
+	<string>
+		<id>273</id>
+		<value>Kopmpenzácia preskenovania vpravo-dole</value>
+	</string>
+	<string>
+		<id>274</id>
+		<value>Pozícia titulkov</value>
+	</string>
+	<string>
+		<id>275</id>
+		<value>Nastavenie pomeru strán</value>
+	</string>
+	<string>
+		<id>276</id>
+		<value>VAROVANIE-ponechaj 0,0 pre najlepšiu kvalitu,zmena zmenší video</value>
+	</string>
+	<string>
+		<id>277</id>
+		<value>Posuň pruh na zmenu polohy titulkov</value>
+	</string>
+	<string>
+		<id>278</id>
+		<value>Dôležité! - pre najlepšiu kvalitu zmeň na presný štvorec</value>
+	</string>
+	<string>
+		<id>279</id>
+		<value>Nemožné načítať nastavenie</value>
+	</string>
+	<string>
+		<id>280</id>
+		<value>použitie pôvodného nastavenia</value>
+	</string>
+	<string>
+		<id>281</id>
+		<value>Skontroluj .xml súbory</value>
+	</string>
+	<string>
+		<id>282</id>
+		<value>nájdené %i prvkov</value>
+	</string>
+	<string>
+		<id>283</id>
+		<value>Výsledky vyhľadávania</value>
+	</string>
+	<string>
+		<id>284</id>
+		<value>Nenájdený žiaden záznam</value>
+	</string>
+	<string>
+		<id>287</id>
+		<value>Titulky</value>
+	</string>
+	<string>
+		<id>288</id>
+		<value>Font</value>
+	</string>
+	<string>
+		<id>289</id>
+		<value>Veľkosť</value>
+	</string>
+	<string>
+		<id>290</id>
+		<value>Zosilenie zvuku (dB)</value>
+	</string>
+	<string>
+		<id>291</id>
+		<value>Video</value>
+	</string>
+	<string>
+		<id>292</id>
+		<value>Zvuk</value>
+	</string>
+	<string>
+		<id>293</id>
+		<value>Titulky</value>
+	</string>
+	<string>
+		<id>294</id>
+		<value>Vytvor zarážku</value>
+	</string>
+	<string>
+		<id>295</id>
+		<value>prechádzaj zarážkami</value>
+	</string>
+	<string>
+		<id>296</id>
+		<value>Vymaž zarážky</value>
+	</string>
+	<string>
+		<id>297</id>
+		<value>Opozdenie AV</value>
+	</string>
+	<string>
+		<id>298</id>
+		<value>Pravítko</value>
+	</string>
+	<string>
+		<id>299</id>
+		<value>Čas behu:</value>
+	</string>
+	<string>
+		<id>300</id>
+		<value>1. jazyk</value>
+	</string>
+	<string>
+		<id>301</id>
+		<value>2. hlasitosť</value>
+	</string>
+	<string>
+		<id>302</id>
+		<value>3. tok</value>
+	</string>
+	<string>
+		<id>303</id>
+		<value>Opozdenie</value>
+	</string>
+	<string>
+		<id>304</id>
+		<value>Jazyk</value>
+	</string>
+	<string>
+		<id>305</id>
+		<value>Povolené</value>
+	</string>
+	<string>
+		<id>306</id>
+		<value>Neprekladané</value>
+	</string>
+	<string>
+		<id>307</id>
+		<value>Automatické</value>
+	</string>
+	<string>
+		<id>308</id>
+		<value>vertikálny deblokačný filter</value>
+	</string>
+	<string>
+		<id>309</id>
+		<value>horizontálny deblokačný filter</value>
+	</string>
+	<string>
+		<id>310</id>
+		<value>Automatický jas-kontrast</value>
+	</string>
+	<string>
+		<id>313</id>
+		<value>Reorganizuj databázu</value>
+	</string>
+	<string>
+		<id>314</id>
+		<value>Príprava...</value>
+	</string>
+	<string>
+		<id>315</id>
+		<value>Chyba v databáze</value>
+	</string>
+	<string>
+		<id>316</id>
+		<value>Hľadanie piesne...</value>
+	</string>
+	<string>
+		<id>317</id>
+		<value>Reorganizácia úspešná</value>
+	</string>
+	<string>
+		<id>318</id>
+		<value>Označenie vymazaných piesní</value>
+	</string>
+	<string>
+		<id>319</id>
+		<value>Chyba reorganizácie piesní</value>
+	</string>
+	<string>
+		<id>320</id>
+		<value>Hľadanie umelcov...</value>
+	</string>
+	<string>
+		<id>321</id>
+		<value>Chyba reorganizácie umelcov</value>
+	</string>
+	<string>
+		<id>322</id>
+		<value>Hľadanie žánrov</value>
+	</string>
+	<string>
+		<id>323</id>
+		<value>Chyba reorganizácie žánrov</value>
+	</string>
+	<string>
+		<id>324</id>
+		<value>Hľadanie ciest...</value>
+	</string>
+	<string>
+		<id>325</id>
+		<value>Chyba reorganizácie ciest</value>
+	</string>
+	<string>
+		<id>326</id>
+		<value>Hľadanie albumov...</value>
+	</string>
+	<string>
+		<id>327</id>
+		<value>Chyna reorganizácie albumov</value>
+	</string>
+	<string>
+		<id>328</id>
+		<value>Zápis zmien...</value>
+	</string>
+	<string>
+		<id>329</id>
+		<value>Chyba zápisu zmien</value>
+	</string>
+	<string>
+		<id>330</id>
+		<value>Toto môže chvíľu trvať...</value>
+	</string>
+	<string>
+		<id>331</id>
+		<value>Kompresia databázy</value>
+	</string>
+	<string>
+		<id>332</id>
+		<value>Chyba kompresie databázy</value>
+	</string>
+	<string>
+		<id>333</id>
+		<value>Chceš reorganizovať databázu hudby?</value>
+	</string>
+	<string>
+		<id>334</id>
+		<value>Reorganizácia databázy hudby</value>
+	</string>
+	<string>
+		<id>335</id>
+		<value>Štart</value>
+	</string>
+	<string>
+		<id>336</id>
+		<value>Nast.framerate</value>
+	</string>
+	<string>
+		<id>337</id>
+		<value>Zvukový výstup</value>
+	</string>
+	<string>
+		<id>338</id>
+		<value>Analógový</value>
+	</string>
+	<string>
+		<id>339</id>
+		<value>Digitálny</value>
+	</string>
+	<string>
+		<id>340</id>
+		<value>Rôzni umelci</value>
+	</string>
+	<string>
+		<id>341</id>
+		<value>Prehraj DVD</value>
+	</string>
+	<string>
+		<id>342</id>
+		<value>Flmy</value>
+	</string>
+	<string>
+		<id>343</id>
+		<value>Nastav framerate</value>
+	</string>
+	<string>
+		<id>344</id>
+		<value>Herci</value>
+	</string>
+	<string>
+		<id>345</id>
+		<value>Rok</value>
+	</string>
+	<string>
+		<id>346</id>
+		<value>Naskladaj</value>
+	</string>
+	<string>
+		<id>347</id>
+		<value>Rozlož</value>
+	</string>
+	<string>
+		<id>348</id>
+		<value>Splošti hierarchiu adresárov</value>
+	</string>
+	<string>
+		<id>349</id>
+		<value>Zobraz len pôvodné Default.xbe</value>
+	</string>
+	<string>
+		<id>350</id>
+		<value>Programy</value>
+	</string>
+	<string>
+		<id>351</id>
+		<value>Vypni</value>
+	</string>
+	<string>
+		<id>352</id>
+		<value>Ztmaviť</value>
+	</string>
+	<string>
+		<id>353</id>
+		<value>Čierny</value>
+	</string>
+	<string>
+		<id>355</id>
+		<value>Doba spozdenia šetriča</value>
+	</string>
+	<string>
+		<id>356</id>
+		<value>Mód šetriča</value>
+	</string>
+	<string>
+		<id>357</id>
+		<value>Spozdenie vypnutia</value>
+	</string>
+	<string>
+		<id>358</id>
+		<value>Všetky albumy</value>
+	</string>
+	<string>
+		<id>359</id>
+		<value>Ostatné albumy</value>
+	</string>
+	<string>
+		<id>360</id>
+		<value>šetrič obrazovky</value>
+	</string>
+	<string>
+		<id>361</id>
+		<value>Ostatná prezentácia</value>
+	</string>
+	<string>
+		<id>362</id>
+		<value>Úroveň zoslabenia šetriča (%)</value>
+	</string>
+	<string>
+		<id>363</id>
+		<value>Triedenie: Súbor</value>
+	</string>
+	<string>
+		<id>364</id>
+		<value>DD/DTS viackanálový prechod</value>
+	</string>
+	<string>
+		<id>365</id>
+		<value>Triedenie: Meno</value>
+	</string>
+	<string>
+		<id>366</id>
+		<value>Triedenie: Rok</value>
+	</string>
+	<string>
+		<id>367</id>
+		<value>Triedenie: Hodnotenie</value>
+	</string>
+	<string>
+		<id>369</id>
+		<value>Názov</value>
+	</string>
+	<string>
+		<id>370</id>
+		<value>Búrky</value>
+	</string>
+	<string>
+		<id>371</id>
+		<value>Čiastočne</value>
+	</string>
+	<string>
+		<id>372</id>
+		<value>Zväčša</value>
+	</string>
+	<string>
+		<id>373</id>
+		<value>Slnečno</value>
+	</string>
+	<string>
+		<id>374</id>
+		<value>Zamračené</value>
+	</string>
+	<string>
+		<id>375</id>
+		<value>Sneženie</value>
+	</string>
+	<string>
+		<id>376</id>
+		<value>Dážď</value>
+	</string>
+	<string>
+		<id>377</id>
+		<value>Slabý</value>
+	</string>
+	<string>
+		<id>378</id>
+		<value>doobeda</value>
+	</string>
+	<string>
+		<id>379</id>
+		<value>poobede</value>
+	</string>
+	<string>
+		<id>380</id>
+		<value>Prehánky</value>
+	</string>
+	<string>
+		<id>381</id>
+		<value>Občasné</value>
+	</string>
+	<string>
+		<id>382</id>
+		<value>Rozptýlené</value>
+	</string>
+	<string>
+		<id>383</id>
+		<value>Vietor</value>
+	</string>
+	<string>
+		<id>384</id>
+		<value>Silný</value>
+	</string>
+	<string>
+		<id>385</id>
+		<value>pekný</value>
+	</string>
+	<string>
+		<id>386</id>
+		<value>Jasno</value>
+	</string>
+	<string>
+		<id>387</id>
+		<value>Ranné</value>
+	</string>
+	<string>
+		<id>388</id>
+		<value>a</value>
+	</string>
+	<string>
+		<id>389</id>
+		<value>Hmla</value>
+	</string>
+	<string>
+		<id>390</id>
+		<value>Opar</value>
+	</string>
+	<string>
+		<id>391</id>
+		<value>Veterno</value>
+	</string>
+	<string>
+		<id>392</id>
+		<value>Mrholenie</value>
+	</string>
+	<string>
+		<id>393</id>
+		<value>Mrznutie</value>
+	</string>
+	<string>
+		<id>394</id>
+		<value>neznáme</value>
+	</string>
+	<string>
+		<id>396</id>
+		<value>Vyber lokalitu</value>
+	</string>
+	<string>
+		<id>397</id>
+		<value>Čas obnovenia</value>
+	</string>
+	<string>
+		<id>398</id>
+		<value>Jednotka teploty</value>
+	</string>
+	<string>
+		<id>399</id>
+		<value>Jednotka rýchlosti</value>
+	</string>
+	<string>
+		<id>400</id>
+		<value>Počasie</value>
+	</string>
+	<string>
+		<id>401</id>
+		<value>Teplota</value>
+	</string>
+	<string>
+		<id>402</id>
+		<value>Pocit ako</value>
+	</string>
+	<string>
+		<id>404</id>
+		<value>Vietor</value>
+	</string>
+	<string>
+		<id>405</id>
+		<value>Rosný bod</value>
+	</string>
+	<string>
+		<id>406</id>
+		<value>Vlhkosť</value>
+	</string>
+	<string>
+		<id>407</id>
+		<value>Od</value>
+	</string>
+	<string>
+		<id>408</id>
+		<value>na</value>
+	</string>
+	<string>
+		<id>410</id>
+		<value>Pripojovanie na Weather.com</value>
+	</string>
+	<string>
+		<id>411</id>
+		<value>Získavnaie počasia pre:</value>
+	</string>
+	<string>
+		<id>412</id>
+		<value>Nemožné získať údaje o počasí:</value>
+	</string>
+	<string>
+		<id>413</id>
+		<value>Manuálne</value>
+	</string>
+	<string>
+		<id>414</id>
+		<value>Recenzia nedostupná pre tento album</value>
+	</string>
+	<string>
+		<id>415</id>
+		<value>Sťahovanie náhľadu...</value>
+	</string>
+	<string>
+		<id>416</id>
+		<value>Nedostupné</value>
+	</string>
+	<string>
+		<id>417</id>
+		<value>Zobrazenie: Veľké ikony</value>
+	</string>
+	<string>
+		<id>418</id>
+		<value>Video / Žánre</value>
+	</string>
+	<string>
+		<id>419</id>
+		<value>Video / Herci</value>
+	</string>
+	<string>
+		<id>420</id>
+		<value>Video / Rok</value>
+	</string>
+	<string>
+		<id>421</id>
+		<value>Video / Názov</value>
+	</string>
+	<string>
+		<id>422</id>
+		<value>Vymaž info o albume</value>
+	</string>
+	<string>
+		<id>423</id>
+		<value>Vymaž CDDB info</value>
+	</string>
+	<string>
+		<id>424</id>
+		<value>Vyber</value>
+	</string>
+	<string>
+		<id>425</id>
+		<value>Nenájdené info o albume</value>
+	</string>
+	<string>
+		<id>426</id>
+		<value>Nenájdené CDDB info</value>
+	</string>
+	<string>
+		<id>427</id>
+		<value>Disk:</value>
+	</string>
+	<string>
+		<id>428</id>
+		<value>Vlož správne CD/DVD</value>
+	</string>
+	<string>
+		<id>429</id>
+		<value>Prosím vlož nasledujúce CD/DVD</value>
+	</string>
+	<string>
+		<id>430</id>
+		<value>Triedenie: DVD#</value>
+	</string>
+	<string>
+		<id>432</id>
+		<value>Vymaž film z databázy</value>
+	</string>
+	<string>
+		<id>433</id>
+		<value>Si si istý s výmazom</value>
+	</string>
+	<string>
+		<id>434</id>
+		<value>filmu?</value>
+	</string>
+	<string>
+		<id>435</id>
+		<value>Stopa</value>
+	</string>
+	<string>
+		<id>436</id>
+		<value>Rok:</value>
+	</string>
+	<string>
+		<id>437</id>
+		<value>Trvanie:</value>
+	</string>
+	<string>
+		<id>438</id>
+		<value>Otváranie súboru</value>
+	</string>
+	<string>
+		<id>445</id>
+		<value>zvuk</value>
+	</string>
+	<string>
+		<id>449</id>
+		<value>Povolené</value>
+	</string>
+	<string>
+		<id>450</id>
+		<value>Stĺpce</value>
+	</string>
+	<string>
+		<id>451</id>
+		<value>Riadok 1 adresa:</value>
+	</string>
+	<string>
+		<id>452</id>
+		<value>Riadok 2 adresa:</value>
+	</string>
+	<string>
+		<id>453</id>
+		<value>Riadok 3 adresa:</value>
+	</string>
+	<string>
+		<id>454</id>
+		<value>Riadok 4 adresa:</value>
+	</string>
+	<string>
+		<id>455</id>
+		<value>Riadky:</value>
+	</string>
+	<string>
+		<id>456</id>
+		<value>Mód:</value>
+	</string>
+	<string>
+		<id>457</id>
+		<value>Prepni pohľad</value>
+	</string>
+	<string>
+		<id>459</id>
+		<value>Titulky</value>
+	</string>
+	<string>
+		<id>462</id>
+		<value>Titulky</value>
+	</string>
+	<string>
+		<id>463</id>
+		<value>Podsvietenie</value>
+	</string>
+	<string>
+		<id>464</id>
+		<value>Jas</value>
+	</string>
+	<string>
+		<id>465</id>
+		<value>Kontrast</value>
+	</string>
+	<string>
+		<id>467</id>
+		<value>Typ</value>
+	</string>
+	<string>
+		<id>468</id>
+		<value>Posuň lištu na zmenu pozície OSD</value>
+	</string>
+	<string>
+		<id>469</id>
+		<value>Pozícia OSD</value>
+	</string>
+	<string>
+		<id>470</id>
+		<value>Kredity</value>
+	</string>
+	<string>
+		<id>472</id>
+		<value>Čas zobrazenia OSD</value>
+	</string>
+	<string>
+		<id>474</id>
+		<value>Vypnuté</value>
+	</string>
+	<string>
+		<id>475</id>
+		<value>Iba hudba</value>
+	</string>
+	<string>
+		<id>476</id>
+		<value>Hudba a video</value>
+	</string>
+	<string>
+		<id>477</id>
+		<value>Nemožné nahrať playlist</value>
+	</string>
+	<string>
+		<id>478</id>
+		<value>OSD</value>
+	</string>
+	<string>
+		<id>479</id>
+		<value>Vzhľad a jazyk</value>
+	</string>
+	<string>
+		<id>480</id>
+		<value>Uživateľské rozhranie</value>
+	</string>
+	<string>
+		<id>481</id>
+		<value>Možnosti zvuku</value>
+	</string>
+	<string>
+		<id>483</id>
+		<value>Album</value>
+	</string>
+	<string>
+		<id>484</id>
+		<value>Umelec</value>
+	</string>
+	<string>
+		<id>485</id>
+		<value>Vymaž album</value>
+	</string>
+	<string>
+		<id>486</id>
+		<value>Opakuj</value>
+	</string>
+	<string>
+		<id>487</id>
+		<value>Opakuj jedno</value>
+	</string>
+	<string>
+		<id>488</id>
+		<value>Opakuj playlist záložky</value>
+	</string>
+	<string>
+		<id>491</id>
+		<value>Použi veľké ikony</value>
+	</string>
+	<string>
+		<id>492</id>
+		<value>Jazyk zvuku</value>
+	</string>
+	<string>
+		<id>493</id>
+		<value>Herec:</value>
+	</string>
+	<string>
+		<id>500</id>
+		<value>Menu súborov</value>
+	</string>
+	<string>
+		<id>501</id>
+		<value>Nastav ako cieľ</value>
+	</string>
+	<string>
+		<id>502</id>
+		<value>Nemožné ukončiť akciu</value>
+	</string>
+	<string>
+		<id>503</id>
+		<value>Vymaž túto záložku</value>
+	</string>
+	<string>
+		<id>504</id>
+		<value>Choď na cieľ</value>
+	</string>
+	<string>
+		<id>505</id>
+		<value>Kalkulujem</value>
+	</string>
+	<string>
+		<id>506</id>
+		<value>Si si istý?</value>
+	</string>
+	<string>
+		<id>507</id>
+		<value>prvky</value>
+	</string>
+	<string>
+		<id>508</id>
+		<value>Do</value>
+	</string>
+	<string>
+		<id>509</id>
+		<value>Cieľový súbor existuje. Prepísať?</value>
+	</string>
+	<string>
+		<id>510</id>
+		<value>Zrušiť</value>
+	</string>
+	<string>
+		<id>511</id>
+		<value>Vždy</value>
+	</string>
+	<string>
+		<id>512</id>
+		<value>Nikdy</value>
+	</string>
+	<string>
+		<id>513</id>
+		<value>Prvok je chránený, akcia nekúspešná</value>
+	</string>
+	<string>
+		<id>514</id>
+		<value>Chyba pri tvorbe záložky, akcia nekúspešná</value>
+	</string>
+	<string>
+		<id>515</id>
+		<value>Chyba pri mazaní záložky, akcia nekúspešná</value>
+	</string>
+	<string>
+		<id>516</id>
+		<value>Nemôžem vymazať cieľový súbor, akcia nekúspešná</value>
+	</string>
+	<string>
+		<id>517</id>
+		<value>Závažná chyba, akcia nekúspešná</value>
+	</string>
+	<string>
+		<id>518</id>
+		<value>Vymazať túto pieseň?</value>
+	</string>
+	<string>
+		<id>530</id>
+		<value>Foto disk vložený, cheš to otvoriť?</value>
+	</string>
+	<string>
+		<id>531</id>
+		<value>Filmový disk vložený, cheš to otvoriť?</value>
+	</string>
+	<string>
+		<id>532</id>
+		<value>Audio disk vložený, cheš to otvoriť?</value>
+	</string>
+	<string>
+		<id>550</id>
+		<value>Vyrež</value>
+	</string>
+	<string>
+		<id>600</id>
+		<value>TV sprievodca</value>
+	</string>
+	<string>
+		<id>601</id>
+		<value>Nahraj teraz</value>
+	</string>
+	<string>
+		<id>602</id>
+		<value>Kanál:</value>
+	</string>
+	<string>
+		<id>603</id>
+		<value>Plánované</value>
+	</string>
+	<string>
+		<id>604</id>
+		<value>Nahraté TV</value>
+	</string>
+	<string>
+		<id>606</id>
+		<value>Načítavam nového TV sprievodcu</value>
+	</string>
+	<string>
+		<id>607</id>
+		<value>Nahraj</value>
+	</string>
+	<string>
+		<id>608</id>
+		<value>Nahrávanie TV sprievodcu neúspešné</value>
+	</string>
+	<string>
+		<id>609</id>
+		<value>Nahrávanie TV sprievodcu ukončené</value>
+	</string>
+	<string>
+		<id>610</id>
+		<value>Nezaznamenaj</value>
+	</string>
+	<string>
+		<id>611</id>
+		<value>Zaznamenaj raz</value>
+	</string>
+	<string>
+		<id>612</id>
+		<value>Zaznamenaj vždy na tomto kanáli</value>
+	</string>
+	<string>
+		<id>613</id>
+		<value>Zaznamenaj vždy na každom kanáli</value>
+	</string>
+	<string>
+		<id>614</id>
+		<value>Zaznamenaj každý týždeň o tomto čase</value>
+	</string>
+	<string>
+		<id>615</id>
+		<value>Zaznamenaj každý deň o tomto čase</value>
+	</string>
+	<string>
+		<id>616</id>
+		<value>Vyber typ záznamu</value>
+	</string>
+	<string>
+		<id>617</id>
+		<value>Nový</value>
+	</string>
+	<string>
+		<id>618</id>
+		<value>Vymaž</value>
+	</string>
+	<string>
+		<id>619</id>
+		<value>Zmeň dátum / čas</value>
+	</string>
+	<string>
+		<id>620</id>
+		<value>Triedenie: Kanál</value>
+	</string>
+	<string>
+		<id>621</id>
+		<value>Triedenie: Dátum</value>
+	</string>
+	<string>
+		<id>622</id>
+		<value>Triedenie: Meno</value>
+	</string>
+	<string>
+		<id>623</id>
+		<value>Triedenie: Typ</value>
+	</string>
+	<string>
+		<id>624</id>
+		<value>Vyčisti</value>
+	</string>
+	<string>
+		<id>625</id>
+		<value>Naplánované odstránené:</value>
+	</string>
+	<string>
+		<id>626</id>
+		<value>Zmeň typ</value>
+	</string>
+	<string>
+		<id>627</id>
+		<value>Kanály:</value>
+	</string>
+	<string>
+		<id>628</id>
+		<value>Programy:</value>
+	</string>
+	<string>
+		<id>629</id>
+		<value>Zastav zaznamenávanie</value>
+	</string>
+	<string>
+		<id>630</id>
+		<value>Cheš reštartovať?</value>
+	</string>
+	<string>
+		<id>631</id>
+		<value>Chceš ukončiť a vypnúť?</value>
+	</string>
+	<string>
+		<id>632</id>
+		<value>Objekty</value>
+	</string>
+	<string>
+		<id>633</id>
+		<value>Začiatočný dátum / čas</value>
+	</string>
+	<string>
+		<id>634</id>
+		<value>Dátum / čas ukončenia</value>
+	</string>
+	<string>
+		<id>635</id>
+		<value>Čas</value>
+	</string>
+	<string>
+		<id>636</id>
+		<value>Dátum</value>
+	</string>
+	<string>
+		<id>637</id>
+		<value>Uprav záznam</value>
+	</string>
+	<string>
+		<id>638</id>
+		<value>Nový záznam</value>
+	</string>
+	<string>
+		<id>640</id>
+		<value>Saturácia</value>
+	</string>
+	<string>
+		<id>641</id>
+		<value>Ostrosť</value>
+	</string>
+	<string>
+		<id>642</id>
+		<value>Nahrávam TV kanály</value>
+	</string>
+	<string>
+		<id>643</id>
+		<value>Nahrávam TV programy</value>
+	</string>
+	<string>
+		<id>644</id>
+		<value>Triedenie TV programov</value>
+	</string>
+	<string>
+		<id>645</id>
+		<value>Nahrávam XML súbor</value>
+	</string>
+	<string>
+		<id>646</id>
+		<value>Naplánované záznamy</value>
+	</string>
+	<string>
+		<id>647</id>
+		<value>Raz</value>
+	</string>
+	<string>
+		<id>648</id>
+		<value>Denne</value>
+	</string>
+	<string>
+		<id>649</id>
+		<value>Každý/vždy</value>
+	</string>
+	<string>
+		<id>650</id>
+		<value>Vždy na tomto kanáli</value>
+	</string>
+	<string>
+		<id>651</id>
+		<value>vždy na hociktorom kanáli</value>
+	</string>
+	<string>
+		<id>652</id>
+		<value>Zaznamenané TV</value>
+	</string>
+	<string>
+		<id>653</id>
+		<value>Vymazať tento záznam?</value>
+	</string>
+	<string>
+		<id>654</id>
+		<value>Vysuň</value>
+	</string>
+	<string>
+		<id>655</id>
+		<value>Prehraj zaznamenané TV</value>
+	</string>
+	<string>
+		<id>656</id>
+		<value>Vymaž zaznamenané TV</value>
+	</string>
+	<string>
+		<id>657</id>
+		<value>Pon</value>
+	</string>
+	<string>
+		<id>658</id>
+		<value>Ut</value>
+	</string>
+	<string>
+		<id>659</id>
+		<value>Str</value>
+	</string>
+	<string>
+		<id>660</id>
+		<value>Stv</value>
+	</string>
+	<string>
+		<id>661</id>
+		<value>Pia</value>
+	</string>
+	<string>
+		<id>662</id>
+		<value>So</value>
+	</string>
+	<string>
+		<id>663</id>
+		<value>Ne</value>
+	</string>
+	<string>
+		<id>664</id>
+		<value>Vymazať tento obrázok?</value>
+	</string>
+	<string>
+		<id>665</id>
+		<value>Rádio</value>
+	</string>
+	<string>
+		<id>666</id>
+		<value>Stanice</value>
+	</string>
+	<string>
+		<id>667</id>
+		<value>Autoladenie</value>
+	</string>
+	<string>
+		<id>668</id>
+		<value>Triedenie: Typ</value>
+	</string>
+	<string>
+		<id>669</id>
+		<value>Triedenie: Žáner</value>
+	</string>
+	<string>
+		<id>670</id>
+		<value>Triedenie: Bitrate</value>
+	</string>
+	<string>
+		<id>671</id>
+		<value>Triedenie: Pozreté</value>
+	</string>
+	<string>
+		<id>672</id>
+		<value>Zaznamenaj Po-Pia</value>
+	</string>
+	<string>
+		<id>673</id>
+		<value>Rýchlosť rolovania</value>
+	</string>
+	<string>
+		<id>674</id>
+		<value>Nastavenie GUI</value>
+	</string>
+	<string>
+		<id>675</id>
+		<value>Príklad:</value>
+	</string>
+	<string>
+		<id>676</id>
+		<value>Vymazať pozreté záznamy?</value>
+	</string>
+	<string>
+		<id>678</id>
+		<value>Triedenie: Žáner</value>
+	</string>
+	<string>
+		<id>679</id>
+		<value>Týždenne</value>
+	</string>
+	<string>
+		<id>680</id>
+		<value>Po-Pia</value>
+	</string>
+	<string>
+		<id>681</id>
+		<value>Čakám</value>
+	</string>
+	<string>
+		<id>682</id>
+		<value>Záznam</value>
+	</string>
+	<string>
+		<id>683</id>
+		<value>Ukončený</value>
+	</string>
+	<string>
+		<id>684</id>
+		<value>Zrušený</value>
+	</string>
+	<string>
+		<id>685</id>
+		<value>Triedenie: Status</value>
+	</string>
+	<string>
+		<id>686</id>
+		<value>Narodený</value>
+	</string>
+	<string>
+		<id>687</id>
+		<value>Aktívny rokov</value>
+	</string>
+	<string>
+		<id>688</id>
+		<value>Nástroje</value>
+	</string>
+	<string>
+		<id>690</id>
+		<value>Diskokrafia (Albumy)</value>
+	</string>
+	<string>
+		<id>691</id>
+		<value>Diskografia (compilations, boxes)</value>
+	</string>
+	<string>
+		<id>700</id>
+		<value>Diskografia (EP, single)</value>
+	</string>
+	<string>
+		<id>701</id>
+		<value>Diskografia (bootlegs, videos, interviews)</value>
+	</string>
+	<string>
+		<id>702</id>
+		<value>Nenájdený umelec!</value>
+	</string>
+	<string>
+		<id>703</id>
+		<value>Neripojený do Internetu!</value>
+	</string>
+	<string>
+		<id>704</id>
+		<value>Sťahovanie feedu</value>
+	</string>
+	<string>
+		<id>705</id>
+		<value>Získavanie RSS feedu pre</value>
+	</string>
+	<string>
+		<id>706</id>
+		<value>Vyber feed</value>
+	</string>
+	<string>
+		<id>708</id>
+		<value>4asový posun</value>
+	</string>
+	<string>
+		<id>710</id>
+		<value>Nová verzia dostupná</value>
+	</string>
+	<string>
+		<id>711</id>
+		<value>Upgrade z v#old -&gt;v#new ?</value>
+	</string>
+	<string>
+		<id>712</id>
+		<value>Naspäť</value>
+	</string>
+	<string>
+		<id>714</id>
+		<value>Disk vložený, prehrať?</value>
+	</string>
+	<string>
+		<id>715</id>
+		<value>CD vložené, prehrať?</value>
+	</string>
+	<string>
+		<id>716</id>
+		<value>Satelit</value>
+	</string>
+	<string>
+		<id>717</id>
+		<value>Počasie</value>
+	</string>
+	<string>
+		<id>718</id>
+		<value>Vymaž TOP100</value>
+	</string>
+	<string>
+		<id>719</id>
+		<value>Si si istý s vymazaním TOP100 zoznamu?</value>
+	</string>
+	<string>
+		<id>720</id>
+		<value>Zobraz: Trvanie</value>
+	</string>
+	<string>
+		<id>721</id>
+		<value>Zobraz: Počet prehratí</value>
+	</string>
+	<string>
+		<id>722</id>
+		<value>Nemožné prehrať disk</value>
+	</string>
+	<string>
+		<id>723</id>
+		<value>Je disk vložený?</value>
+	</string>
+	<string>
+		<id>724</id>
+		<value>Prehľadaj TV sprievodcu</value>
+	</string>
+	<string>
+		<id>725</id>
+		<value>Žánre</value>
+	</string>
+	<string>
+		<id>726</id>
+		<value>Názvy</value>
+	</string>
+	<string>
+		<id>727</id>
+		<value>Živé TV vysielanie na pozadí</value>
+	</string>
+	<string>
+		<id>728</id>
+		<value>Bez videa/TV prehrávania</value>
+	</string>
+	<string>
+		<id>732</id>
+		<value>Určite?</value>
+	</string>
+	<string>
+		<id>733</id>
+		<value>Zobraz: Filmová stopa</value>
+	</string>
+	<string>
+		<id>734</id>
+		<value>Obraz:</value>
+	</string>
+	<string>
+		<id>735</id>
+		<value>Otoč</value>
+	</string>
+	<string>
+		<id>736</id>
+		<value>Dáta TV sprievodcu nedostupné</value>
+	</string>
+	<string>
+		<id>737</id>
+		<value>Zobraz: Satelit</value>
+	</string>
+	<string>
+		<id>738</id>
+		<value>Zobraz: Teplota</value>
+	</string>
+	<string>
+		<id>739</id>
+		<value>Zobraz: UV Index</value>
+	</string>
+	<string>
+		<id>740</id>
+		<value>Zobraz: Vietor</value>
+	</string>
+	<string>
+		<id>741</id>
+		<value>Zobraz: Vlhkosť</value>
+	</string>
+	<string>
+		<id>742</id>
+		<value>Zobraz: Zrážky</value>
+	</string>
+	<string>
+		<id>743</id>
+		<value>4-dňoá predpoveď</value>
+	</string>
+	<string>
+		<id>744</id>
+		<value>Východ slnka</value>
+	</string>
+	<string>
+		<id>745</id>
+		<value>Západ slnka</value>
+	</string>
+	<string>
+		<id>746</id>
+		<value>Najvyššie</value>
+	</string>
+	<string>
+		<id>747</id>
+		<value>najnižšie</value>
+	</string>
+	<string>
+		<id>748</id>
+		<value>Zrážky</value>
+	</string>
+	<string>
+		<id>750</id>
+		<value>Obrázky</value>
+	</string>
+	<string>
+		<id>800</id>
+		<value>Začína s</value>
+	</string>
+	<string>
+		<id>801</id>
+		<value>Obsahuje</value>
+	</string>
+	<string>
+		<id>802</id>
+		<value>Končí s</value>
+	</string>
+	<string>
+		<id>803</id>
+		<value>je</value>
+	</string>
+	<string>
+		<id>804</id>
+		<value>Urobené</value>
+	</string>
+	<string>
+		<id>805</id>
+		<value>Vymaž</value>
+	</string>
+	<string>
+		<id>806</id>
+		<value>Názov</value>
+	</string>
+	<string>
+		<id>807</id>
+		<value>Zisk</value>
+	</string>
+	<string>
+		<id>808</id>
+		<value>Prísady</value>
+	</string>
+	<string>
+		<id>810</id>
+		<value>Karta</value>
+	</string>
+	<string>
+		<id>850</id>
+		<value>Budík</value>
+	</string>
+	<string>
+		<id>852</id>
+		<value>Budík zapnutý</value>
+	</string>
+	<string>
+		<id>853</id>
+		<value>Meno:</value>
+	</string>
+	<string>
+		<id>854</id>
+		<value>Povolené tieto dni</value>
+	</string>
+	<string>
+		<id>855</id>
+		<value>Čas budíu</value>
+	</string>
+	<string>
+		<id>856</id>
+		<value>Časovač zapnutý</value>
+	</string>
+	<string>
+		<id>857</id>
+		<value>Umlč</value>
+	</string>
+	<string>
+		<id>858</id>
+		<value>Čas umplčania</value>
+	</string>
+	<string>
+		<id>859</id>
+		<value>Časovač uspania</value>
+	</string>
+	<string>
+		<id>860</id>
+		<value>Hlasitosť fade-in</value>
+	</string>
+	<string>
+		<id>861</id>
+		<value>Detail budíku</value>
+	</string>
+	<string>
+		<id>862</id>
+		<value>Rádio</value>
+	</string>
+	<string>
+		<id>863</id>
+		<value>Súbor</value>
+	</string>
+	<string>
+		<id>864</id>
+		<value>Typ média</value>
+	</string>
+	<string>
+		<id>865</id>
+		<value>Minút do uspania</value>
+	</string>
+	<string>
+		<id>866</id>
+		<value>Hlasitosť umlčovania</value>
+	</string>
+	<string>
+		<id>867</id>
+		<value>Vypnúť počítač</value>
+	</string>
+	<string>
+		<id>869</id>
+		<value>Nový budíček</value>
+	</string>
+	<string>
+		<id>870</id>
+		<value>Opakovane</value>
+	</string>
+	<string>
+		<id>871</id>
+		<value>Naštartuj počítač pre tento budíček</value>
+	</string>
+	<string>
+		<id>872</id>
+		<value>Začni s</value>
+	</string>
+	<string>
+		<id>874</id>
+		<value>Epizóda</value>
+	</string>
+	<string>
+		<id>875</id>
+		<value>Súčasný program</value>
+	</string>
+	<string>
+		<id>876</id>
+		<value>Po manuálne zatavenie</value>
+	</string>
+	<string>
+		<id>877</id>
+		<value>Priority</value>
+	</string>
+	<string>
+		<id>878</id>
+		<value>Úložisko</value>
+	</string>
+	<string>
+		<id>879</id>
+		<value>Konflikt záznamu</value>
+	</string>
+	<string>
+		<id>880</id>
+		<value>Čas na záznam:</value>
+	</string>
+	<string>
+		<id>881</id>
+		<value>Vyber záznamu na zastavenie:</value>
+	</string>
+	<string>
+		<id>882</id>
+		<value>Nastavenie kvality:</value>
+	</string>
+	<string>
+		<id>883</id>
+		<value>Nízka</value>
+	</string>
+	<string>
+		<id>884</id>
+		<value>Stredná</value>
+	</string>
+	<string>
+		<id>885</id>
+		<value>Vysoká</value>
+	</string>
+	<string>
+		<id>886</id>
+		<value>Prednastavená</value>
+	</string>
+	<string>
+		<id>887</id>
+		<value>Počet ponechaných dielov</value>
+	</string>
+	<string>
+		<id>888</id>
+		<value>Manažment dielov</value>
+	</string>
+	<string>
+		<id>889</id>
+		<value>Všetky diely</value>
+	</string>
+	<string>
+		<id>890</id>
+		<value>Prehraj CD</value>
+	</string>
+	<string>
+		<id>891</id>
+		<value>Vyber TV kanál</value>
+	</string>
+	<string>
+		<id>892</id>
+		<value>Konflikt</value>
+	</string>
+	<string>
+		<id>893</id>
+		<value>Prenosné</value>
+	</string>
+	<string>
+		<id>894</id>
+		<value>Urob kompresiu TV záznamu</value>
+	</string>
+	<string>
+		<id>895</id>
+		<value>Automatická kompresia</value>
+	</string>
+	<string>
+		<id>897</id>
+		<value>Nastavenie</value>
+	</string>
+	<string>
+		<id>900</id>
+		<value>Spusť tam kde naposledy skončil film?</value>
+	</string>
+	<string>
+		<id>902</id>
+		<value>Online kontakty</value>
+	</string>
+	<string>
+		<id>905</id>
+		<value>Plugin musí byť najskôr nakonfigurovaný</value>
+	</string>
+	<string>
+		<id>906</id>
+		<value>Napíš svoju e-mailovú adresu</value>
+	</string>
+	<string>
+		<id>907</id>
+		<value>Nedá sa spojiť s MSN</value>
+	</string>
+	<string>
+		<id>908</id>
+		<value>píše správu...</value>
+	</string>
+	<string>
+		<id>909</id>
+		<value>Pripájanie...</value>
+	</string>
+	<string>
+		<id>910</id>
+		<value>Prihlasovanie...</value>
+	</string>
+	<string>
+		<id>912</id>
+		<value>Nedá sa stiahnuť najnovšie správy</value>
+	</string>
+	<string>
+		<id>913</id>
+		<value>Pluginy</value>
+	</string>
+	<string>
+		<id>914</id>
+		<value>Záznamy</value>
+	</string>
+	<string>
+		<id>915</id>
+		<value>TV kanály</value>
+	</string>
+	<string>
+		<id>916</id>
+		<value>Vzdialený súbor</value>
+	</string>
+	<string>
+		<id>102010</id>
+		<value>Dátum/čas</value>
+	</string>
+	<string>
+		<id>102011</id>
+		<value>Informácia o uelcovi</value>
+	</string>
+	<string>
+		<id>102013</id>
+		<value>Ohodnoť</value>
+	</string>
+	<string>
+		<id>102014</id>
+		<value>Info o obrázku</value>
+	</string>
+	<string>
+		<id>102016</id>
+		<value>Oznam</value>
+	</string>
+	<string>
+		<id>102600</id>
+		<value>Počasie</value>
+	</string>
+	<string>
+		<id>102700</id>
+		<value>Správy&amp;</value>
+	</string>
+	<string>
+		<id>102900</id>
+		<value>Šetrič</value>
+	</string>
+	<string>
+		<id>200005</id>
+		<value>Prosím špecifikuj typ diaľkového ovládača:&amp;</value>
+	</string>
+	<string>
+		<id>200006</id>
+		<value>Stlač ďalej na pokračovanie nastavenia:</value>
+	</string>
+	<string>
+		<id>200007</id>
+		<value>&lt;Späť</value>
+	</string>
+	<string>
+		<id>200008</id>
+		<value>Nastavenie-diaľkový ovládač</value>
+	</string>
+	<string>
+		<id>200009</id>
+		<value>Ďalej&gt;</value>
+	</string>
+	<string>
+		<id>200010</id>
+		<value>MediaPortal premní tvoje PC na dokonalé multimediálne centrum.</value>
+	</string>
+	<string>
+		<id>200011</id>
+		<value>S MediaPortalom si môžeš užívať obľúbenú hudbu, rádio</value>
+	</string>
+	<string>
+		<id>200013</id>
+		<value>Umožňuje počúvať obľubenú hudbu a rádio, pozerať video a DVD</value>
+	</string>
+	<string>
+		<id>200014</id>
+		<value>fotografie, video a pozerať/nahrávať TV a oveľa viac.</value>
+	</string>
+	<string>
+		<id>200015</id>
+		<value>Wizard ti pomôže nastaviť Mediaportal. Prosím sleduj pokyny.</value>
+	</string>
+	<string>
+		<id>200016</id>
+		<value>Stlač tlačidlo Ďalej na začatie</value>
+	</string>
+	<string>
+		<id>200017</id>
+		<value>Vitaj v MediPortali.</value>
+	</string>
+	<string>
+		<id>200018</id>
+		<value>Gratulujem! MediaPortal je nakonfigurovaný a pripravený na použitie.</value>
+	</string>
+	<string>
+		<id>200019</id>
+		<value>Stlač tlačítko Koniec na ukončenie wizardu</value>
+	</string>
+	<string>
+		<id>200020</id>
+		<value>Koniec</value>
+	</string>
+	<string>
+		<id>200021</id>
+		<value>Nastavnie TV - programu</value>
+	</string>
+	<string>
+		<id>200022</id>
+		<value>MediaPortal našiel nasledujúce TV karty:</value>
+	</string>
+	<string>
+		<id>200023</id>
+		<value>Stlač tlačidlo Next na konfiguráciu týchto kárt</value>
+	</string>
+	<string>
+		<id>200024</id>
+		<value>Nastavenie TV</value>
+	</string>
+	<string>
+		<id>4000</id>
+		<value>Prehliadač</value>
+	</string>
+	<string>
+		<id>4001</id>
+		<value>Obľúbené</value>
+	</string>
+</strings>

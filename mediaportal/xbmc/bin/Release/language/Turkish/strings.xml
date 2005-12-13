@@ -1,289 +1,289 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="iso-8859-9"?>
 <strings>
-	<characters>255</characters>
+	<characters></characters>
 	<string>
 		<id>0</id>
-		<value>Mina Program</value>
+		<value>Programlar</value>
 	</string>
 	<string>
 		<id>1</id>
-		<value>Mina Bilder</value>
+		<value>Resimler</value>
 	</string>
 	<string>
 		<id>2</id>
-		<value>Min Musik</value>
+		<value>Müzik</value>
 	</string>
 	<string>
 		<id>3</id>
-		<value>Mina Filmer</value>
+		<value>Vidyolar</value>
 	</string>
 	<string>
 		<id>4</id>
-		<value>TV-tablå</value>
+		<value>TV Rehberi</value>
 	</string>
 	<string>
 		<id>5</id>
-		<value>Inställningar</value>
+		<value>Ayarlar</value>
 	</string>
 	<string>
 		<id>6</id>
-		<value>MediaPortal CVS build</value>
+		<value>XBOX Medya Merkezi CVS versiyonu</value>
 	</string>
 	<string>
 		<id>7</id>
-		<value>Mina Filer</value>
+		<value>Dosyalar</value>
 	</string>
 	<string>
 		<id>8</id>
-		<value>Mitt Väder</value>
+		<value>Hava Durumu</value>
 	</string>
 	<string>
 		<id>9</id>
-		<value>Mina Nyheter</value>
+		<value>Haberler</value>
 	</string>
 	<string>
 		<id>10</id>
-		<value>Mina Recept</value>
+		<value>Yemek Tarifleri</value>
 	</string>
 	<string>
 		<id>11</id>
-		<value>Måndag</value>
+		<value>Pazartesi</value>
 	</string>
 	<string>
 		<id>12</id>
-		<value>Tisdag</value>
+		<value>Salý</value>
 	</string>
 	<string>
 		<id>13</id>
-		<value>Onsdag</value>
+		<value>Çarþamba</value>
 	</string>
 	<string>
 		<id>14</id>
-		<value>Torsdag</value>
+		<value>Perþembe</value>
 	</string>
 	<string>
 		<id>15</id>
-		<value>Fredag</value>
+		<value>Cuma</value>
 	</string>
 	<string>
 		<id>16</id>
-		<value>Lördag</value>
+		<value>Cumartesi</value>
 	</string>
 	<string>
 		<id>17</id>
-		<value>Söndag</value>
+		<value>Pazar</value>
 	</string>
 	<string>
 		<id>21</id>
-		<value>januari</value>
+		<value>Ocak</value>
 	</string>
 	<string>
 		<id>22</id>
-		<value>februari</value>
+		<value>Þubat</value>
 	</string>
 	<string>
 		<id>23</id>
-		<value>mars</value>
+		<value>Mart</value>
 	</string>
 	<string>
 		<id>24</id>
-		<value>april</value>
+		<value>Nisan</value>
 	</string>
 	<string>
 		<id>25</id>
-		<value>maj</value>
+		<value>Mayýs</value>
 	</string>
 	<string>
 		<id>26</id>
-		<value>juni</value>
+		<value>Haziran</value>
 	</string>
 	<string>
 		<id>27</id>
-		<value>juli</value>
+		<value>Temmuz</value>
 	</string>
 	<string>
 		<id>28</id>
-		<value>augusti</value>
+		<value>Aðustos</value>
 	</string>
 	<string>
 		<id>29</id>
-		<value>september</value>
+		<value>Eylül</value>
 	</string>
 	<string>
 		<id>30</id>
-		<value>oktober</value>
+		<value>Ekim</value>
 	</string>
 	<string>
 		<id>31</id>
-		<value>november</value>
+		<value>Kasým</value>
 	</string>
 	<string>
 		<id>32</id>
-		<value>december</value>
+		<value>Aralýk</value>
 	</string>
 	<string>
 		<id>50</id>
-		<value>Mina DVD-filmer</value>
+		<value>DVD&apos;ler</value>
 	</string>
 	<string>
 		<id>100</id>
-		<value>Visa: Ikoner</value>
+		<value>Görünüm: Simge</value>
 	</string>
 	<string>
 		<id>101</id>
-		<value>Visa: Lista</value>
+		<value>Görünüm: Liste</value>
 	</string>
 	<string>
 		<id>102</id>
-		<value>Skanna</value>
+		<value>Tara</value>
 	</string>
 	<string>
 		<id>103</id>
-		<value>Sortera efter: Namn</value>
+		<value>Simge Düzeni: Ad</value>
 	</string>
 	<string>
 		<id>104</id>
-		<value>Sortera efter: Datum</value>
+		<value>Simge Düzeni: Tarih</value>
 	</string>
 	<string>
 		<id>105</id>
-		<value>Sortera efter: Storlek</value>
+		<value>Simge Düzeni: Boyut</value>
 	</string>
 	<string>
 		<id>106</id>
-		<value>Nej</value>
+		<value>Hayýr</value>
 	</string>
 	<string>
 		<id>107</id>
-		<value>Ja</value>
+		<value>Evet</value>
 	</string>
 	<string>
 		<id>108</id>
-		<value>Bildspel</value>
+		<value>Slayt Gösterisi</value>
 	</string>
 	<string>
 		<id>109</id>
-		<value>Skapa miniatyr</value>
+		<value>Resim simgelerini oluþtur</value>
 	</string>
 	<string>
 		<id>110</id>
-		<value>Skapa miniatyr</value>
+		<value>Resim simgelerini oluþturma</value>
 	</string>
 	<string>
 		<id>111</id>
-		<value>Genvägar</value>
+		<value>Kýsayollar</value>
 	</string>
 	<string>
 		<id>112</id>
-		<value>PAUSAD</value>
+		<value>DURDU</value>
 	</string>
 	<string>
 		<id>113</id>
-		<value>Mina Filer : Källa</value>
+		<value>Dosyalar : Kaynak</value>
 	</string>
 	<string>
 		<id>114</id>
-		<value>Mina Filer : Destination</value>
+		<value>Dosyalar : Yer</value>
 	</string>
 	<string>
 		<id>115</id>
-		<value>Kopiera</value>
+		<value>Kopyala</value>
 	</string>
 	<string>
 		<id>116</id>
-		<value>Flytta</value>
+		<value>Taþý</value>
 	</string>
 	<string>
 		<id>117</id>
-		<value>Ta bort</value>
+		<value>Sil</value>
 	</string>
 	<string>
 		<id>118</id>
-		<value>Byt namn</value>
+		<value>Yeniden isimlendir</value>
 	</string>
 	<string>
 		<id>119</id>
-		<value>Ny mapp</value>
+		<value>Yeni Klasör</value>
 	</string>
 	<string>
 		<id>120</id>
-		<value>Bekräfta kopiera fil</value>
+		<value>Kopyalamayý onaylayýn</value>
 	</string>
 	<string>
 		<id>121</id>
-		<value>Bekräfta flytta fil</value>
+		<value>Taþýmayý onaylayýn</value>
 	</string>
 	<string>
 		<id>122</id>
-		<value>Bekräfta ta bort fil</value>
+		<value>Silmeyi onaylayýn</value>
 	</string>
 	<string>
 		<id>123</id>
-		<value>Kopiera dessa filer?</value>
+		<value>Bu dosyalar kopyalansýn mý?</value>
 	</string>
 	<string>
 		<id>124</id>
-		<value>Flytta dessa filer?</value>
+		<value>Bu dosyalar taþýnsýn mý?</value>
 	</string>
 	<string>
 		<id>125</id>
-		<value>Ta bort dessa filer?</value>
+		<value>Bu dosyalar silinsin mi?</value>
 	</string>
 	<string>
 		<id>126</id>
-		<value>Status</value>
+		<value>Durum</value>
 	</string>
 	<string>
 		<id>127</id>
-		<value>Objekt</value>
+		<value>Nesne</value>
 	</string>
 	<string>
 		<id>128</id>
-		<value>Allmänt</value>
+		<value>Genel</value>
 	</string>
 	<string>
 		<id>129</id>
-		<value>Bildspel</value>
+		<value>Slayt Gösterisi</value>
 	</string>
 	<string>
 		<id>130</id>
-		<value>Systeminfo</value>
+		<value>Sistem bilgisi</value>
 	</string>
 	<string>
 		<id>131</id>
-		<value>Skärm</value>
+		<value>Ekran</value>
 	</string>
 	<string>
 		<id>132</id>
-		<value>Album</value>
+		<value>Albümler</value>
 	</string>
 	<string>
 		<id>133</id>
-		<value>Artister</value>
+		<value>Sanatçýlar</value>
 	</string>
 	<string>
 		<id>134</id>
-		<value>Låtar</value>
+		<value>Paylaþýmlar</value>
 	</string>
 	<string>
 		<id>135</id>
-		<value>Genrer</value>
+		<value>Tarzlar</value>
 	</string>
 	<string>
 		<id>136</id>
-		<value>Spellistor</value>
+		<value>Oynatma Listesi</value>
 	</string>
 	<string>
 		<id>137</id>
-		<value>Sök</value>
+		<value>Ara</value>
 	</string>
 	<string>
 		<id>138</id>
-		<value>SYSTEMINFORMATION</value>
+		<value>SÝSTEM BÝLGÝSÝ</value>
 	</string>
 	<string>
 		<id>139</id>
-		<value>Temperaturer:</value>
+		<value>Sýcaklýk Derecesi:</value>
 	</string>
 	<string>
 		<id>140</id>
@@ -295,31 +295,31 @@
 	</string>
 	<string>
 		<id>142</id>
-		<value>Tid:</value>
+		<value>Zaman:</value>
 	</string>
 	<string>
 		<id>143</id>
-		<value>Aktuell:</value>
+		<value>Geçerli:</value>
 	</string>
 	<string>
 		<id>144</id>
-		<value>Build:</value>
+		<value>Versiyon:</value>
 	</string>
 	<string>
 		<id>145</id>
-		<value>Nätverk:</value>
+		<value>Að:</value>
 	</string>
 	<string>
 		<id>146</id>
-		<value>Typ:</value>
+		<value>Tür:</value>
 	</string>
 	<string>
 		<id>147</id>
-		<value>Statisk</value>
+		<value>Ýstatistik</value>
 	</string>
 	<string>
 		<id>148</id>
-		<value>DHCP</value>
+		<value>DHPC</value>
 	</string>
 	<string>
 		<id>149</id>
@@ -331,27 +331,27 @@
 	</string>
 	<string>
 		<id>151</id>
-		<value>Länk:</value>
+		<value>Link:</value>
 	</string>
 	<string>
 		<id>152</id>
-		<value>Halv duplex</value>
+		<value>Yarým Dubleks</value>
 	</string>
 	<string>
 		<id>153</id>
-		<value>Full duplex</value>
+		<value>Tam Dubleks</value>
 	</string>
 	<string>
 		<id>154</id>
-		<value>Lagring</value>
+		<value>Depo</value>
 	</string>
 	<string>
 		<id>155</id>
-		<value>Enhet</value>
+		<value>Sürücü</value>
 	</string>
 	<string>
 		<id>156</id>
-		<value>Ledigt</value>
+		<value>Boþ</value>
 	</string>
 	<string>
 		<id>157</id>
@@ -359,407 +359,407 @@
 	</string>
 	<string>
 		<id>158</id>
-		<value>Ledigt minne</value>
+		<value>Boþ Hafýza</value>
 	</string>
 	<string>
 		<id>159</id>
-		<value>Ingen länk</value>
+		<value>Baðlantý yok</value>
 	</string>
 	<string>
 		<id>160</id>
-		<value>Ledigt</value>
+		<value>Boþ</value>
 	</string>
 	<string>
 		<id>161</id>
-		<value>Otillgänglig</value>
+		<value>Eriþilemez</value>
 	</string>
 	<string>
 		<id>162</id>
-		<value>Släde öppen</value>
+		<value>Kapak Açýk</value>
 	</string>
 	<string>
 		<id>163</id>
-		<value>Läser</value>
+		<value>Okunuyor</value>
 	</string>
 	<string>
 		<id>164</id>
-		<value>Ingen disk</value>
+		<value>Disk yok</value>
 	</string>
 	<string>
 		<id>165</id>
-		<value>Disk presenterad</value>
+		<value>Disk Hazýr</value>
 	</string>
 	<string>
 		<id>166</id>
-		<value>Skal:</value>
+		<value>Deri:</value>
 	</string>
 	<string>
 		<id>167</id>
-		<value>FTP-server:</value>
+		<value>FTP server:</value>
 	</string>
 	<string>
 		<id>168</id>
-		<value>Synkronisera tid:</value>
+		<value>Zaman Ayarý</value>
 	</string>
 	<string>
 		<id>169</id>
-		<value>Upplösning:</value>
+		<value>Çözünürlülük:</value>
 	</string>
 	<string>
 		<id>170</id>
-		<value>Album:</value>
+		<value>Albüm:</value>
 	</string>
 	<string>
 		<id>171</id>
-		<value>Artist:</value>
+		<value>Sanatçý:</value>
 	</string>
 	<string>
 		<id>172</id>
-		<value>Releasedatum:</value>
+		<value>Yayýn Tarihi:</value>
 	</string>
 	<string>
 		<id>173</id>
-		<value>Betyg:</value>
+		<value>Reyting:</value>
 	</string>
 	<string>
 		<id>174</id>
-		<value>Genre:</value>
+		<value>Tür:</value>
 	</string>
 	<string>
 		<id>175</id>
-		<value>Tones:</value>
+		<value>Tonlar:</value>
 	</string>
 	<string>
 		<id>176</id>
-		<value>Stil:</value>
+		<value>Tarzlar:</value>
 	</string>
 	<string>
 		<id>177</id>
-		<value>Recension:</value>
+		<value>Gözden Geçir:</value>
 	</string>
 	<string>
 		<id>178</id>
-		<value>Spår:</value>
+		<value>Parçalar:</value>
 	</string>
 	<string>
 		<id>179</id>
-		<value>Låt</value>
+		<value>Þarký</value>
 	</string>
 	<string>
 		<id>180</id>
-		<value>Längd</value>
+		<value>Süre</value>
 	</string>
 	<string>
 		<id>181</id>
-		<value>Välj album</value>
+		<value>Albüm seç</value>
 	</string>
 	<string>
 		<id>182</id>
-		<value>Spår</value>
+		<value>Parçalar</value>
 	</string>
 	<string>
 		<id>183</id>
-		<value>Recension</value>
+		<value>Gözden Geçir</value>
 	</string>
 	<string>
 		<id>184</id>
-		<value>Uppdatera</value>
+		<value>Yenile</value>
 	</string>
 	<string>
 		<id>185</id>
-		<value>Söker album</value>
+		<value>Albüm aranýyor</value>
 	</string>
 	<string>
 		<id>186</id>
-		<value>OK</value>
+		<value>Tamam</value>
 	</string>
 	<string>
 		<id>187</id>
-		<value>Hittade inga album!</value>
+		<value>Albüm bulunamadý!</value>
 	</string>
 	<string>
 		<id>188</id>
-		<value>Välj alla</value>
+		<value>Hepsini seç</value>
 	</string>
 	<string>
 		<id>189</id>
-		<value>Söker mediainfo</value>
+		<value>Medya bilgileri taranýyor</value>
 	</string>
 	<string>
 		<id>190</id>
-		<value>Spara</value>
+		<value>Kaydet</value>
 	</string>
 	<string>
 		<id>191</id>
-		<value>Mix</value>
+		<value>Karýþtýr</value>
 	</string>
 	<string>
 		<id>192</id>
-		<value>Städa</value>
+		<value>Temizle</value>
 	</string>
 	<string>
 		<id>193</id>
-		<value>Skanna</value>
+		<value>Tara</value>
 	</string>
 	<string>
 		<id>194</id>
-		<value>Söker...</value>
+		<value>Aranýyor...</value>
 	</string>
 	<string>
 		<id>195</id>
-		<value>Ingen IMDB-info hittades!</value>
+		<value>IMDB (internet film bilgisi) bulunamadý!</value>
 	</string>
 	<string>
 		<id>196</id>
-		<value>Välj film:</value>
+		<value>Filmi seç:</value>
 	</string>
 	<string>
 		<id>197</id>
-		<value>Frågar IMDB efter info</value>
+		<value>IMDB (intenet film bilgisi) sorgulanýyor</value>
 	</string>
 	<string>
 		<id>198</id>
-		<value>Laddar fildetaljer</value>
+		<value>Film detaylarý alýnýyor</value>
 	</string>
 	<string>
 		<id>199</id>
-		<value>Regissör:</value>
+		<value>Yönetmen:</value>
 	</string>
 	<string>
 		<id>200</id>
-		<value>Författare:</value>
+		<value>Yazar:</value>
 	</string>
 	<string>
 		<id>201</id>
-		<value>År:</value>
+		<value>Yýl:</value>
 	</string>
 	<string>
 		<id>202</id>
-		<value>Beteckning:</value>
+		<value>Slogan:</value>
 	</string>
 	<string>
 		<id>203</id>
-		<value>Handling sammanf.:</value>
+		<value>Özet:</value>
 	</string>
 	<string>
 		<id>204</id>
-		<value>Betyg:</value>
+		<value>Reyting:</value>
 	</string>
 	<string>
 		<id>205</id>
-		<value>Röster:</value>
+		<value>Oy:</value>
 	</string>
 	<string>
 		<id>206</id>
-		<value>Rollista</value>
+		<value>Daðýlým</value>
 	</string>
 	<string>
 		<id>207</id>
-		<value>Handling</value>
+		<value>Olay</value>
 	</string>
 	<string>
 		<id>208</id>
-		<value>Spela</value>
+		<value>Oynat</value>
 	</string>
 	<string>
 		<id>209</id>
-		<value>Nästa</value>
+		<value>Sonraki</value>
 	</string>
 	<string>
 		<id>210</id>
-		<value>Föregående</value>
+		<value>Önceki</value>
 	</string>
 	<string>
 		<id>211</id>
-		<value>Söker efter program</value>
+		<value>Uygulamalar aranýyor</value>
 	</string>
 	<string>
 		<id>212</id>
-		<value>program funna</value>
+		<value>Uygulamalar bulundu</value>
 	</string>
 	<string>
 		<id>213</id>
-		<value>UI Kalibrering</value>
+		<value>UI Kalibrasyonu</value>
 	</string>
 	<string>
 		<id>214</id>
-		<value>Skärmkalibrering</value>
+		<value>Ekran Kalibrasyonu</value>
 	</string>
 	<string>
 		<id>215</id>
-		<value>Soften</value>
+		<value>Yumuþat</value>
 	</string>
 	<string>
 		<id>216</id>
-		<value>Zoom</value>
+		<value>Yakýnlaþ</value>
 	</string>
 	<string>
 		<id>217</id>
-		<value>Stretch</value>
+		<value>Kapla</value>
 	</string>
 	<string>
 		<id>218</id>
-		<value>DVD-enhet</value>
+		<value>DVD Sürücü</value>
 	</string>
 	<string>
 		<id>219</id>
-		<value>Sätt i en skiva</value>
+		<value>Lütfen diski takýn</value>
 	</string>
 	<string>
 		<id>220</id>
-		<value>Remote Share</value>
+		<value>Uzak Paylaþým</value>
 	</string>
 	<string>
 		<id>221</id>
-		<value>Nätverket är anslutet</value>
+		<value>Að baðlantýsý bulunamadý</value>
 	</string>
 	<string>
 		<id>222</id>
-		<value>Avbryt</value>
+		<value>Ýptal</value>
 	</string>
 	<string>
 		<id>223</id>
-		<value>Automatisk bredbild</value>
+		<value>Geniþ ekrana otomatik geçiþ</value>
 	</string>
 	<string>
 		<id>224</id>
-		<value>Hastighet</value>
+		<value>Hýz</value>
 	</string>
 	<string>
 		<id>225</id>
-		<value>Varaktighet för övergång</value>
+		<value>Geçiþ zamaný</value>
 	</string>
 	<string>
 		<id>226</id>
-		<value>Aktivera PAL60</value>
+		<value>PAL60 Aktif</value>
 	</string>
 	<string>
 		<id>227</id>
-		<value>Aktivera CDDB</value>
+		<value>CDDB (compact disk verisi) Aktif</value>
 	</string>
 	<string>
 		<id>228</id>
-		<value>Blanda spellista vid laddning</value>
+		<value>Yüklerken Oynatma Listesini Karýþtýr</value>
 	</string>
 	<string>
 		<id>229</id>
-		<value>HD-nedspinningstid (minuter)</value>
+		<value>HD aský süresi (dakika)</value>
 	</string>
 	<string>
 		<id>230</id>
-		<value>Filter</value>
+		<value>Filtreler</value>
 	</string>
 	<string>
 		<id>231</id>
-		<value>Ingen</value>
+		<value>Hiçbiri</value>
 	</string>
 	<string>
 		<id>232</id>
-		<value>Point</value>
+		<value>Nokta</value>
 	</string>
 	<string>
 		<id>233</id>
-		<value>Linjär</value>
+		<value>Doðrusal</value>
 	</string>
 	<string>
 		<id>234</id>
-		<value>Anisotropic</value>
+		<value>Eþyönsüz</value>
 	</string>
 	<string>
 		<id>235</id>
-		<value>Quincunx</value>
+		<value>Karesel Biçem</value>
 	</string>
 	<string>
 		<id>236</id>
-		<value>Gaussian Cubic</value>
+		<value>Küp Biçem</value>
 	</string>
 	<string>
 		<id>237</id>
-		<value>Minification:</value>
+		<value>Küçültme</value>
 	</string>
 	<string>
 		<id>238</id>
-		<value>Magnification:</value>
+		<value>Büyütme</value>
 	</string>
 	<string>
 		<id>240</id>
-		<value>Autostarta DVD-Video</value>
+		<value>DVD Vidyo&apos;larý otomatik oynat</value>
 	</string>
 	<string>
 		<id>241</id>
-		<value>Autostarta VCD/SVCD</value>
+		<value>VCD/SVCD&apos;yi otomatik oynat</value>
 	</string>
 	<string>
 		<id>242</id>
-		<value>Autostarta Ljud-CD</value>
+		<value>Ses CD&apos;lerini otomatik oynat</value>
 	</string>
 	<string>
 		<id>243</id>
-		<value>Autostarta XBOX-spel</value>
+		<value>XBOX oyunlarý otomatik oynat</value>
 	</string>
 	<string>
 		<id>244</id>
-		<value>Autostarta videor</value>
+		<value>Vidyolarý otomatik aç</value>
 	</string>
 	<string>
 		<id>245</id>
-		<value>Autostarta musik</value>
+		<value>Müzikleri otomatik aç</value>
 	</string>
 	<string>
 		<id>246</id>
-		<value>Autostarta bilder</value>
+		<value>Resimleri otomatik aç</value>
 	</string>
 	<string>
 		<id>247</id>
-		<value>Skript</value>
+		<value>Script&apos;ler</value>
 	</string>
 	<string>
 		<id>248</id>
-		<value>Språk</value>
+		<value>Dil</value>
 	</string>
 	<string>
 		<id>249</id>
-		<value>Musik</value>
+		<value>Müzik</value>
 	</string>
 	<string>
 		<id>250</id>
-		<value>Visualisering</value>
+		<value>Görselleþtirme</value>
 	</string>
 	<string>
 		<id>251</id>
-		<value>Välj målmapp</value>
+		<value>Yer yönünü seç</value>
 	</string>
 	<string>
 		<id>252</id>
-		<value>Mata ut till alla högtalare</value>
+		<value>Tüm hoparlörlere çýkýþ</value>
 	</string>
 	<string>
 		<id>253</id>
-		<value>Antal kanaler</value>
+		<value>Kanal sayýsý</value>
 	</string>
 	<string>
 		<id>254</id>
-		<value>DD Stereo Passthrough</value>
+		<value>Dolby Dijital Stereo geçiþi</value>
 	</string>
 	<string>
 		<id>255</id>
-		<value>CDDB</value>
+		<value>CDDB (compact disk verisi)</value>
 	</string>
 	<string>
 		<id>256</id>
-		<value>Frågar FreeDB efter CDDB-info</value>
+		<value>CDDB (compact disk verisi) sorgulama</value>
 	</string>
 	<string>
 		<id>257</id>
-		<value>Fel</value>
+		<value>Hata</value>
 	</string>
 	<string>
 		<id>258</id>
-		<value>Aktivera ID3-taggar</value>
+		<value>ID3 taglarý aktif</value>
 	</string>
 	<string>
 		<id>259</id>
-		<value>Öppnar</value>
+		<value>Açýlýyor</value>
 	</string>
 	<string>
 		<id>260</id>
@@ -767,47 +767,47 @@
 	</string>
 	<string>
 		<id>261</id>
-		<value>Väntar på start....</value>
+		<value>Baþlamak için bekleniyor...</value>
 	</string>
 	<string>
 		<id>262</id>
-		<value>Skript output</value>
+		<value>Script çýktýsý</value>
 	</string>
 	<string>
 		<id>263</id>
-		<value>HTTP-server:</value>
+		<value>HTTP server:</value>
 	</string>
 	<string>
 		<id>264</id>
-		<value>Spela in</value>
+		<value>Kayýt</value>
 	</string>
 	<string>
 		<id>265</id>
-		<value>Stoppa Insp.</value>
+		<value>Kaydý durdur</value>
 	</string>
 	<string>
 		<id>266</id>
-		<value>Sortera efter: Spår</value>
+		<value>Düzenleme: Parça</value>
 	</string>
 	<string>
 		<id>267</id>
-		<value>Sortera efter: Tid</value>
+		<value>Düzenleme: Tarih</value>
 	</string>
 	<string>
 		<id>268</id>
-		<value>Sortera efter: Titel</value>
+		<value>Düzenleme: Baþlýk</value>
 	</string>
 	<string>
 		<id>269</id>
-		<value>Sortera efter: Artist</value>
+		<value>Düzenleme: Sanatçý</value>
 	</string>
 	<string>
 		<id>270</id>
-		<value>Sortera efter: Album</value>
+		<value>Düzenleme: Albüm</value>
 	</string>
 	<string>
 		<id>271</id>
-		<value>Topp 100</value>
+		<value>Top 100</value>
 	</string>
 	<string>
 		<id>272</id>
@@ -819,131 +819,131 @@
 	</string>
 	<string>
 		<id>274</id>
-		<value>Undertextposition</value>
+		<value>Altyazý Pozisyonu</value>
 	</string>
 	<string>
 		<id>275</id>
-		<value>Justering av pixel ratio</value>
+		<value>Görüntü Oran Ayarý</value>
 	</string>
 	<string>
 		<id>276</id>
-		<value>Ändra hur mycket överskanning du vill ha genom att flytta pilen</value>
+		<value>-UYARI!- En uygun deðer=0,0</value>
 	</string>
 	<string>
 		<id>277</id>
-		<value>Placera textningen genom att flytta rutan</value>
+		<value>Altyazý pozisyonunu deðiþtirmek için bar&apos;ý taþýyýnýz</value>
 	</string>
 	<string>
 		<id>278</id>
-		<value>Ändra rektangeln så att den är helt kvadratisk</value>
+		<value>-Önemli!- en iyi kalite için, dikdörtgeni deðiþtirerek mükemmel kareler alabilirsiniz.</value>
 	</string>
 	<string>
 		<id>279</id>
-		<value>Kan inte ladda inställningarna</value>
+		<value>Öntanýmlý yükleme  ile</value>
 	</string>
 	<string>
 		<id>280</id>
-		<value>använder standardinställningar</value>
+		<value>ayarlar yüklenemiyor</value>
 	</string>
 	<string>
 		<id>281</id>
-		<value>Var vänlig kolla .xml-filerna</value>
+		<value>Lütfen .xml dosyasýný kontrol ediniz</value>
 	</string>
 	<string>
 		<id>282</id>
-		<value>hittade %i poster</value>
+		<value>%i baþlýk bulundu</value>
 	</string>
 	<string>
 		<id>283</id>
-		<value>Sökresultat</value>
+		<value>Sonuçlar Aranýyor</value>
 	</string>
 	<string>
 		<id>284</id>
-		<value>Inga resultat funna</value>
+		<value>Sonuç bulunamadý</value>
 	</string>
 	<string>
 		<id>285</id>
-		<value>Deinterlace filter</value>
+		<value>Deinterlace filtresi</value>
 	</string>
 	<string>
 		<id>286</id>
-		<value>Postprocessing filter</value>
+		<value>Postprocessing filtresi</value>
 	</string>
 	<string>
 		<id>287</id>
-		<value>Textning</value>
+		<value>Altyazýlar</value>
 	</string>
 	<string>
 		<id>288</id>
-		<value>Typsnitt</value>
+		<value>Font</value>
 	</string>
 	<string>
 		<id>289</id>
-		<value>Storlek</value>
+		<value>Boyut</value>
 	</string>
 	<string>
 		<id>290</id>
-		<value>Volymförstärkning (dB)</value>
+		<value>Ses þiddeti (dB)</value>
 	</string>
 	<string>
 		<id>291</id>
-		<value>Video</value>
+		<value>Vidyo</value>
 	</string>
 	<string>
 		<id>292</id>
-		<value>Ljud</value>
+		<value>Ses</value>
 	</string>
 	<string>
 		<id>293</id>
-		<value>Undertexter</value>
+		<value>Altyazýlar</value>
 	</string>
 	<string>
 		<id>294</id>
-		<value>Skapa bokmärken</value>
+		<value>Kýsayol oluþtur</value>
 	</string>
 	<string>
 		<id>295</id>
-		<value>Spela bokmärken i följd</value>
+		<value>Kýsayollarý Dolaþ</value>
 	</string>
 	<string>
 		<id>296</id>
-		<value>Rensa bokmärken</value>
+		<value>Kýsayollarý temizle</value>
 	</string>
 	<string>
 		<id>297</id>
-		<value>AV-fördröjning</value>
+		<value>AV geçikmesi</value>
 	</string>
 	<string>
 		<id>298</id>
-		<value>Slider</value>
+		<value>Kaydýraç</value>
 	</string>
 	<string>
 		<id>299</id>
-		<value>Speltid:</value>
+		<value>Süre:</value>
 	</string>
 	<string>
 		<id>300</id>
-		<value>1. Språk</value>
+		<value>1.Dil</value>
 	</string>
 	<string>
 		<id>301</id>
-		<value>2. Volym</value>
+		<value>2.Hacim</value>
 	</string>
 	<string>
 		<id>302</id>
-		<value>3. Strömma</value>
+		<value>3. Akýþ</value>
 	</string>
 	<string>
 		<id>303</id>
-		<value>Fördröjning</value>
+		<value>Gecikme</value>
 	</string>
 	<string>
 		<id>304</id>
-		<value>Språk</value>
+		<value>Dil</value>
 	</string>
 	<string>
 		<id>305</id>
-		<value>Aktiverat</value>
+		<value>Aktif</value>
 	</string>
 	<string>
 		<id>306</id>
@@ -951,19 +951,19 @@
 	</string>
 	<string>
 		<id>307</id>
-		<value>Auto</value>
+		<value>Otomatik</value>
 	</string>
 	<string>
 		<id>308</id>
-		<value>vertical deblocking filter</value>
+		<value>dikey deblocking filtresi</value>
 	</string>
 	<string>
 		<id>309</id>
-		<value>horizontal deblocking filter</value>
+		<value>düþey deblocking filtresi</value>
 	</string>
 	<string>
 		<id>310</id>
-		<value>Automatisk ljusstyrka/kontrast</value>
+		<value>Otomatik parlaklýk / kontrast</value>
 	</string>
 	<string>
 		<id>311</id>
@@ -971,107 +971,107 @@
 	</string>
 	<string>
 		<id>312</id>
-		<value>(0=auto)</value>
+		<value>(0=otomatik)</value>
 	</string>
 	<string>
 		<id>313</id>
-		<value>Omorganisera databasen</value>
+		<value>Veritabanýný yeniden düzenle</value>
 	</string>
 	<string>
 		<id>314</id>
-		<value>Förbereder...</value>
+		<value>Hazýrlanýyor...</value>
 	</string>
 	<string>
 		<id>315</id>
-		<value>Databasfel</value>
+		<value>Veritabaný hatasý</value>
 	</string>
 	<string>
 		<id>316</id>
-		<value>Söker låtar...</value>
+		<value>Þarkýlar aranýyor</value>
 	</string>
 	<string>
 		<id>317</id>
-		<value>Omorganisationen lyckades</value>
+		<value>Düzenleme baþarýlý</value>
 	</string>
 	<string>
 		<id>318</id>
-		<value>Markerar raderade låtar</value>
+		<value>Silinen þarkýlarý iþaretleme</value>
 	</string>
 	<string>
 		<id>319</id>
-		<value>Fel vid omorganisering av låtar</value>
+		<value>Yeni þarký düzenleme hatalý</value>
 	</string>
 	<string>
 		<id>320</id>
-		<value>Söker artister...</value>
+		<value>Sanatçýlar aranýyor...</value>
 	</string>
 	<string>
 		<id>321</id>
-		<value>Fel vid omorganisering av artister</value>
+		<value>Yeni sanatçý düzenleme hatalý</value>
 	</string>
 	<string>
 		<id>322</id>
-		<value>Söker genrer...</value>
+		<value>Türler aranýyor</value>
 	</string>
 	<string>
 		<id>323</id>
-		<value>Fel vid omorganisering av genrer</value>
+		<value>Yeni tarz düzenleme hatalý</value>
 	</string>
 	<string>
 		<id>324</id>
-		<value>Söker sökvägar...</value>
+		<value>Dizinler aranýyor...</value>
 	</string>
 	<string>
 		<id>325</id>
-		<value>Fel vid omorganisation av sökvägar</value>
+		<value>Yeni dizin düzenleme hatalý</value>
 	</string>
 	<string>
 		<id>326</id>
-		<value>Söker album...</value>
+		<value>Albümler aranýyor...</value>
 	</string>
 	<string>
 		<id>327</id>
-		<value>Fel vid omorganisering av album</value>
+		<value>Yeni albüm düzenleme hatalý</value>
 	</string>
 	<string>
 		<id>328</id>
-		<value>Skriver ändringar...</value>
+		<value>Deðiþiklikler yazýlýyor...</value>
 	</string>
 	<string>
 		<id>329</id>
-		<value>Fel vid skrivning av ändringar</value>
+		<value>Deðiþiklikler kaydedilemedi</value>
 	</string>
 	<string>
 		<id>330</id>
-		<value>Detta tar en stund...</value>
+		<value>Bu iþlem bir süre devam edecek...</value>
 	</string>
 	<string>
 		<id>331</id>
-		<value>Komprimerar databasen...</value>
+		<value>Veritabaný sýkýþtýrýlýyor...</value>
 	</string>
 	<string>
 		<id>332</id>
-		<value>Fel vid komprimering av databasen</value>
+		<value>Veritabaný sýkýþtýrma hatasý</value>
 	</string>
 	<string>
 		<id>333</id>
-		<value>Vill du omorganisera musikdatabasen?</value>
+		<value>Müzik veritabanýný yeniden düzenlensin mi?</value>
 	</string>
 	<string>
 		<id>334</id>
-		<value>Omorganisera musikdatabas</value>
+		<value>Müzik veritabanýný düzenle</value>
 	</string>
 	<string>
 		<id>335</id>
-		<value>Starta</value>
+		<value>Baþla</value>
 	</string>
 	<string>
 		<id>336</id>
-		<value>Jus. Framerate</value>
+		<value>Framerate Ayarý</value>
 	</string>
 	<string>
 		<id>337</id>
-		<value>Audio Output:</value>
+		<value>Ses Çýkýþý:</value>
 	</string>
 	<string>
 		<id>338</id>
@@ -1079,347 +1079,347 @@
 	</string>
 	<string>
 		<id>339</id>
-		<value>Digital</value>
+		<value>Dijital</value>
 	</string>
 	<string>
 		<id>340</id>
-		<value>Blandade artister</value>
+		<value>Çeþitli Sanatçýlar</value>
 	</string>
 	<string>
 		<id>341</id>
-		<value>Spela DVD</value>
+		<value>DVD Oynat</value>
 	</string>
 	<string>
 		<id>342</id>
-		<value>Filmer</value>
+		<value>Filmler</value>
 	</string>
 	<string>
 		<id>343</id>
-		<value>Justera framerate</value>
+		<value>Framrete Ayarý</value>
 	</string>
 	<string>
 		<id>344</id>
-		<value>Skådespelare</value>
+		<value>Oyuncular</value>
 	</string>
 	<string>
 		<id>345</id>
-		<value>År</value>
+		<value>Yýl</value>
 	</string>
 	<string>
 		<id>346</id>
-		<value>Gruppera</value>
+		<value>Depola</value>
 	</string>
 	<string>
 		<id>347</id>
-		<value>Avgruppera</value>
+		<value>Depolama</value>
 	</string>
 	<string>
 		<id>348</id>
-		<value>Platta ut mappstrukturen</value>
+		<value>Dizin Hiyeralþini Düzleþtir</value>
 	</string>
 	<string>
 		<id>349</id>
-		<value>Visa endast Default.xbe</value>
+		<value>Yalnýz geçerli .xbe&apos;yi göster</value>
 	</string>
 	<string>
 		<id>350</id>
-		<value>Program</value>
+		<value>Programlar</value>
 	</string>
 	<string>
 		<id>351</id>
-		<value>Av</value>
+		<value>Kapalý</value>
 	</string>
 	<string>
 		<id>352</id>
-		<value>Dimma</value>
+		<value>Loþ</value>
 	</string>
 	<string>
 		<id>353</id>
-		<value>Svart</value>
+		<value>Kara</value>
 	</string>
 	<string>
 		<id>354</id>
-		<value>Matrix Trails</value>
+		<value>Matrix Fragmaný</value>
 	</string>
 	<string>
 		<id>355</id>
-		<value>Skärmsläckarfördröjning</value>
+		<value>Ekran Koruyucu için zaman aþýmý</value>
 	</string>
 	<string>
 		<id>356</id>
-		<value>Skärmsläckarläge</value>
+		<value>Ekran Koruyucu Modu</value>
 	</string>
 	<string>
 		<id>357</id>
-		<value>Avstängningsfördröjning</value>
+		<value>Kapatma için Zaman Aþýmý</value>
 	</string>
 	<string>
 		<id>358</id>
-		<value>Alla album</value>
+		<value>Tüm albümler</value>
 	</string>
 	<string>
 		<id>359</id>
-		<value>Senaste album</value>
+		<value>Son kullanýlan albümler</value>
 	</string>
 	<string>
 		<id>360</id>
-		<value>Skärmsläckare</value>
+		<value>Ekran Koruyucu</value>
 	</string>
 	<string>
 		<id>361</id>
-		<value>Bildspel med undermappar</value>
+		<value>R.SlideShow</value>
 	</string>
 	<string>
 		<id>362</id>
-		<value>Skärmsläckare toningsnivå (%)</value>
+		<value>Ekran Koruyucu Solma Düzeyi (%)</value>
 	</string>
 	<string>
 		<id>363</id>
-		<value>Sortera efter: Fil</value>
+		<value>Düzenleme: Dosya</value>
 	</string>
 	<string>
 		<id>364</id>
-		<value>DD/DTS Multichannel Passthrough</value>
+		<value>DD/DTS Multikanal Geçiþi</value>
 	</string>
 	<string>
 		<id>365</id>
-		<value>Sortera efter: Namn</value>
+		<value>Düzenleme: Ýsim</value>
 	</string>
 	<string>
 		<id>366</id>
-		<value>Sortera efter: År</value>
+		<value>Düzenleme: Yýl</value>
 	</string>
 	<string>
 		<id>367</id>
-		<value>Sortera efter: Betyg</value>
+		<value>Düzenleme: Reyting</value>
 	</string>
 	<string>
 		<id>368</id>
-		<value>IMDB</value>
+		<value>IMDB (Internet Film Bilgisi)</value>
 	</string>
 	<string>
 		<id>369</id>
-		<value>Titel</value>
+		<value>Baþlýk</value>
 	</string>
 	<string>
 		<id>370</id>
-		<value>åska</value>
+		<value>Fýrtýna</value>
 	</string>
 	<string>
 		<id>371</id>
-		<value>delvis</value>
+		<value>Parçalý</value>
 	</string>
 	<string>
 		<id>372</id>
-		<value>mestadels</value>
+		<value>Çok</value>
 	</string>
 	<string>
 		<id>373</id>
-		<value>soligt</value>
+		<value>Güneþli</value>
 	</string>
 	<string>
 		<id>374</id>
-		<value>molnigt</value>
+		<value>Bulutlu</value>
 	</string>
 	<string>
 		<id>375</id>
-		<value>snö</value>
+		<value>Kar</value>
 	</string>
 	<string>
 		<id>376</id>
-		<value>regn</value>
+		<value>Yaðmur</value>
 	</string>
 	<string>
 		<id>377</id>
-		<value>lätt</value>
+		<value>Açýk</value>
 	</string>
 	<string>
 		<id>378</id>
-		<value>AM</value>
+		<value>ÖÖ</value>
 	</string>
 	<string>
 		<id>379</id>
-		<value>PM</value>
+		<value>ÖS</value>
 	</string>
 	<string>
 		<id>380</id>
-		<value>skurar</value>
+		<value>Saðanak</value>
 	</string>
 	<string>
 		<id>381</id>
-		<value>få</value>
+		<value>Az</value>
 	</string>
 	<string>
 		<id>382</id>
-		<value>spridda</value>
+		<value>Daðýnýk</value>
 	</string>
 	<string>
 		<id>383</id>
-		<value>vind</value>
+		<value>Rüzgar</value>
 	</string>
 	<string>
 		<id>384</id>
-		<value>stark</value>
+		<value>Güçlü</value>
 	</string>
 	<string>
 		<id>385</id>
-		<value>lagom</value>
+		<value>Zayýf</value>
 	</string>
 	<string>
 		<id>386</id>
-		<value>klart</value>
+		<value>Açýk</value>
 	</string>
 	<string>
 		<id>387</id>
-		<value>tidig</value>
+		<value>Erken</value>
 	</string>
 	<string>
 		<id>388</id>
-		<value>och</value>
+		<value>ve</value>
 	</string>
 	<string>
 		<id>389</id>
-		<value>dimma</value>
+		<value>Sis</value>
 	</string>
 	<string>
 		<id>390</id>
-		<value>dis</value>
+		<value>Bulanýk</value>
 	</string>
 	<string>
 		<id>391</id>
-		<value>blåsigt</value>
+		<value>Rüzgarlý</value>
 	</string>
 	<string>
 		<id>392</id>
-		<value>duggregn</value>
+		<value>Çisenti</value>
 	</string>
 	<string>
 		<id>393</id>
-		<value>frost</value>
+		<value>Don</value>
 	</string>
 	<string>
 		<id>394</id>
-		<value>saknas</value>
+		<value>N/A</value>
 	</string>
 	<string>
 		<id>396</id>
-		<value>Välj plats</value>
+		<value>Yeri seçin</value>
 	</string>
 	<string>
 		<id>397</id>
-		<value>Intervall</value>
+		<value>Zamaný tazele</value>
 	</string>
 	<string>
 		<id>398</id>
-		<value>Temperaturenheter</value>
+		<value>Sýcaklýk Ölçü Birimi</value>
 	</string>
 	<string>
 		<id>399</id>
-		<value>Hastighetsenheter</value>
+		<value>Hýz Ölçü Birimi</value>
 	</string>
 	<string>
 		<id>400</id>
-		<value>Väder</value>
+		<value>Hava Durumu</value>
 	</string>
 	<string>
 		<id>401</id>
-		<value>Temperatur</value>
+		<value>Derece</value>
 	</string>
 	<string>
 		<id>402</id>
-		<value>Känns som</value>
+		<value>Hissedilen</value>
 	</string>
 	<string>
 		<id>403</id>
-		<value>UV Index</value>
+		<value>UV Ýndeksi</value>
 	</string>
 	<string>
 		<id>404</id>
-		<value>Vind</value>
+		<value>Rüzgar</value>
 	</string>
 	<string>
 		<id>405</id>
-		<value>Daggpunkt</value>
+		<value>Çið Tabaný</value>
 	</string>
 	<string>
 		<id>406</id>
-		<value>Luftfuktighet</value>
+		<value>Nem Oraný</value>
 	</string>
 	<string>
 		<id>407</id>
-		<value>från</value>
+		<value>Yön</value>
 	</string>
 	<string>
 		<id>408</id>
-		<value>på</value>
+		<value>alaný</value>
 	</string>
 	<string>
 		<id>410</id>
-		<value>Hämtar från Weather.com</value>
+		<value>Weather.com&apos;a Giriliyor</value>
 	</string>
 	<string>
 		<id>411</id>
-		<value>Hämtar väder för:</value>
+		<value>Hava Tahmini Yeri:</value>
 	</string>
 	<string>
 		<id>412</id>
-		<value>Kunde inte hämta väderdata</value>
+		<value>Hava verisine eriþilemiyor</value>
 	</string>
 	<string>
 		<id>413</id>
-		<value>Manuell</value>
+		<value>El ile yapýlandýrma</value>
 	</string>
 	<string>
 		<id>414</id>
-		<value>Detta album saknar recension</value>
+		<value>Bu album için inceleme yok</value>
 	</string>
 	<string>
 		<id>415</id>
-		<value>Laddar miniatyr...</value>
+		<value>Simgesel imajlar indiriliyor...</value>
 	</string>
 	<string>
 		<id>416</id>
-		<value>Ej tillgänglig</value>
+		<value>Eriþilemez</value>
 	</string>
 	<string>
 		<id>417</id>
-		<value>Visa: Stora ikoner</value>
+		<value>Görünüm: Büyük simge</value>
 	</string>
 	<string>
 		<id>418</id>
-		<value>Mina filmer/Genrer</value>
+		<value>Vidyo / Tür</value>
 	</string>
 	<string>
 		<id>419</id>
-		<value>Mina filmer/Skådespelare</value>
+		<value>Vidyo / Oyuncu</value>
 	</string>
 	<string>
 		<id>420</id>
-		<value>Mina filmer/År</value>
+		<value>Vidyo / Yýl</value>
 	</string>
 	<string>
 		<id>421</id>
-		<value>Mina filmer/Titel</value>
+		<value>Vidyo / Baþlýk</value>
 	</string>
 	<string>
 		<id>422</id>
-		<value>Ta bort albuminfo</value>
+		<value>Albüm bilgisini sil</value>
 	</string>
 	<string>
 		<id>423</id>
-		<value>Ta bort CDDB-info</value>
+		<value>CDDB (Compact Disk Verisi)  sil</value>
 	</string>
 	<string>
 		<id>424</id>
-		<value>Välj</value>
+		<value>Seç</value>
 	</string>
 	<string>
 		<id>425</id>
-		<value>Ingen albuminfo hittad</value>
+		<value>Albüm bilgisi bulanamadý.</value>
 	</string>
 	<string>
 		<id>426</id>
-		<value>Ingen CDDB-info hittad</value>
+		<value>CDDB (Compackt Disk Verisi)  bulamadý.</value>
 	</string>
 	<string>
 		<id>427</id>
@@ -1427,55 +1427,55 @@
 	</string>
 	<string>
 		<id>428</id>
-		<value>Sätt i rätt CD/DVD</value>
+		<value>Doðru CD/DVD takýnýz</value>
 	</string>
 	<string>
 		<id>429</id>
-		<value>Sätt i följande CD/DVD</value>
+		<value>Sonraki CD/DVD&apos;yi takýnýz</value>
 	</string>
 	<string>
 		<id>430</id>
-		<value>Sortera efter: DVD#</value>
+		<value>Düzenleme: DVD#</value>
 	</string>
 	<string>
 		<id>431</id>
-		<value>Ingen cache</value>
+		<value>Önbellek yok</value>
 	</string>
 	<string>
 		<id>432</id>
-		<value>Radera film från databasen</value>
+		<value>Filmi veritabanýntan sil</value>
 	</string>
 	<string>
 		<id>433</id>
-		<value>Är du säker på att du vill radera</value>
+		<value>Silmek istediðinize emin misiniz?</value>
 	</string>
 	<string>
 		<id>434</id>
-		<value>filmen?</value>
+		<value>film?</value>
 	</string>
 	<string>
 		<id>435</id>
-		<value>Spår</value>
+		<value>Parça</value>
 	</string>
 	<string>
 		<id>436</id>
-		<value>År:</value>
+		<value>Yýl:</value>
 	</string>
 	<string>
 		<id>437</id>
-		<value>Längd:</value>
+		<value>Süre:</value>
 	</string>
 	<string>
 		<id>438</id>
-		<value>Öppnar fil</value>
+		<value>Dosya açýlýyor</value>
 	</string>
 	<string>
 		<id>439</id>
-		<value>Cache</value>
+		<value>Önbellek</value>
 	</string>
 	<string>
 		<id>440</id>
-		<value>Hårddisk</value>
+		<value>Sabit Disk</value>
 	</string>
 	<string>
 		<id>441</id>
@@ -1487,15 +1487,15 @@
 	</string>
 	<string>
 		<id>443</id>
-		<value>Internet</value>
+		<value>Ýnternet</value>
 	</string>
 	<string>
 		<id>444</id>
-		<value>video</value>
+		<value>vidyo</value>
 	</string>
 	<string>
 		<id>445</id>
-		<value>ljud</value>
+		<value>ses</value>
 	</string>
 	<string>
 		<id>446</id>
@@ -1503,7 +1503,7 @@
 	</string>
 	<string>
 		<id>447</id>
-		<value>Autostart</value>
+		<value>Otoçalýþma</value>
 	</string>
 	<string>
 		<id>448</id>
@@ -1511,67 +1511,67 @@
 	</string>
 	<string>
 		<id>449</id>
-		<value>Aktiverad</value>
+		<value>Geçerli</value>
 	</string>
 	<string>
 		<id>450</id>
-		<value>Kolumner</value>
+		<value>Kolonlar</value>
 	</string>
 	<string>
 		<id>451</id>
-		<value>Kolumn 1 adress:</value>
+		<value>Adres satýrý 1:</value>
 	</string>
 	<string>
 		<id>452</id>
-		<value>Kolumn 2 adress:</value>
+		<value>Adres satýrý 2:</value>
 	</string>
 	<string>
 		<id>453</id>
-		<value>Kolumn 3 adress:</value>
+		<value>Adres satýrý 3:</value>
 	</string>
 	<string>
 		<id>454</id>
-		<value>Kolumn 4 adress:</value>
+		<value>Adres satýrý 4:</value>
 	</string>
 	<string>
 		<id>455</id>
-		<value>Kolumner:</value>
+		<value>Satýrlar:</value>
 	</string>
 	<string>
 		<id>456</id>
-		<value>Stil:</value>
+		<value>Mod:</value>
 	</string>
 	<string>
 		<id>457</id>
-		<value>Ändra vy</value>
+		<value>Görünümü deðiþtir</value>
 	</string>
 	<string>
 		<id>458</id>
-		<value>B/Mark</value>
+		<value>B/ Mark</value>
 	</string>
 	<string>
 		<id>459</id>
-		<value>Texter</value>
+		<value>Altyazý</value>
 	</string>
 	<string>
 		<id>460</id>
-		<value>Ljudström</value>
+		<value>Ses Akýþý</value>
 	</string>
 	<string>
 		<id>461</id>
-		<value>[aktiv]</value>
+		<value>[aktif]</value>
 	</string>
 	<string>
 		<id>462</id>
-		<value>Textning</value>
+		<value>Altyazý</value>
 	</string>
 	<string>
 		<id>463</id>
-		<value>Bakgrundsbelysning</value>
+		<value>Arka ýþýk</value>
 	</string>
 	<string>
 		<id>464</id>
-		<value>Ljusstyrka</value>
+		<value>Parlaklýk</value>
 	</string>
 	<string>
 		<id>465</id>
@@ -1583,19 +1583,19 @@
 	</string>
 	<string>
 		<id>467</id>
-		<value>Typ</value>
+		<value>Tür</value>
 	</string>
 	<string>
 		<id>468</id>
-		<value>Flytta rektangeln för att ändra OSD-placering</value>
+		<value>Osd pozisyonunu deðiþtirmek için barý taþýyýn</value>
 	</string>
 	<string>
 		<id>469</id>
-		<value>OSD-placering</value>
+		<value>OSD Pozisyonu</value>
 	</string>
 	<string>
 		<id>470</id>
-		<value>Credits</value>
+		<value>Hazýrlayan</value>
 	</string>
 	<string>
 		<id>471</id>
@@ -1603,27 +1603,27 @@
 	</string>
 	<string>
 		<id>472</id>
-		<value>OSD-timeout</value>
+		<value>OSD Zaman Aþýmý</value>
 	</string>
 	<string>
 		<id>473</id>
-		<value>High Quality Resampling</value>
+		<value>Yüksek Kalite Örnekleme</value>
 	</string>
 	<string>
 		<id>474</id>
-		<value>Av</value>
+		<value>Kapalý</value>
 	</string>
 	<string>
 		<id>475</id>
-		<value>Endast musik</value>
+		<value>Yalnýz Müzik</value>
 	</string>
 	<string>
 		<id>476</id>
-		<value>Musik&amp;video</value>
+		<value>Müzik&amp;Vidyo</value>
 	</string>
 	<string>
 		<id>477</id>
-		<value>Kan inte ladda spellista</value>
+		<value>Oynatma listesi yüklenemiyor</value>
 	</string>
 	<string>
 		<id>478</id>
@@ -1631,163 +1631,163 @@
 	</string>
 	<string>
 		<id>479</id>
-		<value>Skal och språk</value>
+		<value>Deri ve Dil</value>
 	</string>
 	<string>
 		<id>480</id>
-		<value>Användargränssnitt</value>
+		<value>Kullanýcý Arayüzü</value>
 	</string>
 	<string>
 		<id>481</id>
-		<value>Ljudalternativ</value>
+		<value>Ses Seçenekleri</value>
 	</string>
 	<string>
 		<id>482</id>
-		<value>Om XBMC</value>
+		<value>XBMC Hakkýnda</value>
 	</string>
 	<string>
 		<id>483</id>
-		<value>Album</value>
+		<value>Albüm</value>
 	</string>
 	<string>
 		<id>484</id>
-		<value>Artist</value>
+		<value>Sanatçý</value>
 	</string>
 	<string>
 		<id>485</id>
-		<value>Ta bort album</value>
+		<value>Albüm sil</value>
 	</string>
 	<string>
 		<id>486</id>
-		<value>Repetera</value>
+		<value>Tekrarla</value>
 	</string>
 	<string>
 		<id>487</id>
-		<value>Repetera en</value>
+		<value>Birkere Tekrarla</value>
 	</string>
 	<string>
 		<id>488</id>
-		<value>Repetera mapp spellista</value>
+		<value>Oynatma listesini tekrarla</value>
 	</string>
 	<string>
 		<id>489</id>
-		<value>Använd spellistor i låtar</value>
+		<value>Þarkýlarda oynt. listesini kullan</value>
 	</string>
 	<string>
 		<id>490</id>
-		<value>Växla autom. listor och ikoner i låtar</value>
+		<value>Listeye ve simgelere otomatik geç</value>
 	</string>
 	<string>
 		<id>491</id>
-		<value>Använd stora ikoner</value>
+		<value>Büyük simge kullan</value>
 	</string>
 	<string>
 		<id>492</id>
-		<value>Ljud/språk</value>
+		<value>Ses dili</value>
 	</string>
 	<string>
 		<id>493</id>
-		<value>Skådespelare</value>
+		<value>Oyuncu:</value>
 	</string>
 	<string>
 		<id>500</id>
-		<value>Filmeny</value>
+		<value>Dosya Mönüsü</value>
 	</string>
 	<string>
 		<id>501</id>
-		<value>Välj som mål</value>
+		<value>Yolu belirle</value>
 	</string>
 	<string>
 		<id>502</id>
-		<value>Kunde inte slutföra åtgärden</value>
+		<value>Tamamlanamadý</value>
 	</string>
 	<string>
 		<id>503</id>
-		<value>Ta bort denna mapp</value>
+		<value>Bu klasörü sil</value>
 	</string>
 	<string>
 		<id>504</id>
-		<value>Gå till målet</value>
+		<value>Hedefe git</value>
 	</string>
 	<string>
 		<id>505</id>
-		<value>Beräknar</value>
+		<value>Hesaplama</value>
 	</string>
 	<string>
 		<id>506</id>
-		<value>Är du säker?</value>
+		<value>Emin misiniz?</value>
 	</string>
 	<string>
 		<id>507</id>
-		<value>delar</value>
+		<value>baþlýklar</value>
 	</string>
 	<string>
 		<id>508</id>
-		<value>Till</value>
+		<value>buraya</value>
 	</string>
 	<string>
 		<id>509</id>
-		<value>Det finns redan en fil med detta namn, Vill du skriva över den?</value>
+		<value>Dosya zaten var, üzerine yazýlsýn mý?</value>
 	</string>
 	<string>
 		<id>510</id>
-		<value>Avbryt</value>
+		<value>Ýptal</value>
 	</string>
 	<string>
 		<id>511</id>
-		<value>Alltid</value>
+		<value>Herzaman</value>
 	</string>
 	<string>
 		<id>512</id>
-		<value>Aldrig</value>
+		<value>Hiçbirzaman</value>
 	</string>
 	<string>
 		<id>513</id>
-		<value>Filen är skrivskyddad, åtgärden ej genomförd</value>
+		<value>Ýþlem tamamlanamýyor</value>
 	</string>
 	<string>
 		<id>514</id>
-		<value>Fel vid skapande av mapp, åtgärden ej genomförd</value>
+		<value>Dosya oluþturma hatalý, iþlem tamamlanamadý</value>
 	</string>
 	<string>
 		<id>515</id>
-		<value>Fel vid radering av mapp, åtgärden ej genomförd</value>
+		<value>Klasör silme iþlemi hatalý, iþlem tamamlanamadý</value>
 	</string>
 	<string>
 		<id>516</id>
-		<value>Kunde inte radera målfilen, åtgärden ej genomförd</value>
+		<value>Belirtilen dosya silinemedi, iþlem tamamlanamadý</value>
 	</string>
 	<string>
 		<id>517</id>
-		<value>Allvarligt fel, åtgärden ej genomförd</value>
+		<value>Ölümcül hata, iþlem tamamlanamadý</value>
 	</string>
 	<string>
 		<id>518</id>
-		<value>Radera denna låt?</value>
+		<value>Bu þarkýyý sil?</value>
 	</string>
 	<string>
 		<id>530</id>
-		<value>Fotoskiva isatt, vill du öppna den?</value>
+		<value>Resim diski takýldý, açýlsýn mý?</value>
 	</string>
 	<string>
 		<id>531</id>
-		<value>Filmskiva isatt, vill du öppna den?</value>
+		<value>Film diski takýldý, açýlsýn mý?</value>
 	</string>
 	<string>
 		<id>532</id>
-		<value>Ljudskiva isatt, vill du öppna den?</value>
+		<value>Ses diski takýldý, açýlsýn mý?</value>
 	</string>
 	<string>
 		<id>550</id>
-		<value>Beskär</value>
+		<value>Kes</value>
 	</string>
 	<string>
 		<id>600</id>
-		<value>TV-tablå</value>
+		<value>TV Rehberi</value>
 	</string>
 	<string>
 		<id>601</id>
-		<value>Spela in nu</value>
+		<value>Þimdi Kaydet</value>
 	</string>
 	<string>
 		<id>602</id>
@@ -1795,795 +1795,795 @@
 	</string>
 	<string>
 		<id>603</id>
-		<value>Planerade inspelningar</value>
+		<value>Programlama</value>
 	</string>
 	<string>
 		<id>604</id>
-		<value>Inspelad TV</value>
+		<value>TV Kayýtlarý</value>
 	</string>
 	<string>
 		<id>605</id>
-		<value>Min TV</value>
+		<value>TV</value>
 	</string>
 	<string>
 		<id>606</id>
-		<value>Laddar ny TV-tablå</value>
+		<value>Yeni TV rehberi yükleniyor</value>
 	</string>
 	<string>
 		<id>607</id>
-		<value>Ladda</value>
+		<value>Yükle</value>
 	</string>
 	<string>
 		<id>608</id>
-		<value>Import av TV-tablå misslyckades</value>
+		<value>TV Rehberi alým baþarýsýz</value>
 	</string>
 	<string>
 		<id>609</id>
-		<value>Import av TV-tablå klar</value>
+		<value>TV Rehberi alým tamamladý</value>
 	</string>
 	<string>
 		<id>610</id>
-		<value>Ingen</value>
+		<value>Kaydetme</value>
 	</string>
 	<string>
 		<id>611</id>
-		<value>Spela in en gång</value>
+		<value>Bir defa kaydet</value>
 	</string>
 	<string>
 		<id>612</id>
-		<value>Spela alltid in på denna kanal</value>
+		<value>Her seferinde bu kanalda kaydet</value>
 	</string>
 	<string>
 		<id>613</id>
-		<value>Spela alltid in oavsett kanal</value>
+		<value>Herzaman her kanalda kaydet</value>
 	</string>
 	<string>
 		<id>614</id>
-		<value>Spela in varje vecka vid denna tid</value>
+		<value>Her hafta bu anda kaydet</value>
 	</string>
 	<string>
 		<id>615</id>
-		<value>Spela in varje dag vid denna tid</value>
+		<value>Hergün bu anda keydet</value>
 	</string>
 	<string>
 		<id>616</id>
-		<value>Välj inspelningstyp</value>
+		<value>Kayýt türünü seçin</value>
 	</string>
 	<string>
 		<id>617</id>
-		<value>Ny</value>
+		<value>Yeni</value>
 	</string>
 	<string>
 		<id>618</id>
-		<value>Ta bort</value>
+		<value>Sil</value>
 	</string>
 	<string>
 		<id>619</id>
-		<value>Redigera datum/tid</value>
+		<value>Tarih/Saat Ayarý</value>
 	</string>
 	<string>
 		<id>620</id>
-		<value>Sortera efter: Kanal</value>
+		<value>Düzenleme: Kanal</value>
 	</string>
 	<string>
 		<id>621</id>
-		<value>Sortera efter: Datum</value>
+		<value>Düzenleme: Tarih</value>
 	</string>
 	<string>
 		<id>622</id>
-		<value>Sortera efter: Namn</value>
+		<value>Düzenleme: Ýsim</value>
 	</string>
 	<string>
 		<id>623</id>
-		<value>Sortera efter: Typ</value>
+		<value>Düzenleme: Tür</value>
 	</string>
 	<string>
 		<id>624</id>
-		<value>Städa</value>
+		<value>Programalama Silme</value>
 	</string>
 	<string>
 		<id>625</id>
-		<value>Planerade insp. raderade:</value>
+		<value>Silinen Programlama Sayýsý:</value>
 	</string>
 	<string>
 		<id>626</id>
-		<value>Ändra typ</value>
+		<value>Türü deðiþtir</value>
 	</string>
 	<string>
 		<id>627</id>
-		<value>Kanaler:</value>
+		<value>Kanallar:</value>
 	</string>
 	<string>
 		<id>628</id>
-		<value>Program:</value>
+		<value>Programlar:</value>
 	</string>
 	<string>
 		<id>629</id>
-		<value>Stoppa Insp.</value>
+		<value>Kaydý Durdur</value>
 	</string>
 	<string>
 		<id>630</id>
-		<value>Vill du starta om datorn?</value>
+		<value>Yeniden baþlatmak istiyor musunuz?</value>
 	</string>
 	<string>
 		<id>631</id>
-		<value>Vill du stänga av datorn?</value>
+		<value>Kapatmak istiyor misiniz?</value>
 	</string>
 	<string>
 		<id>632</id>
-		<value>Objekt</value>
+		<value>Nesne</value>
 	</string>
 	<string>
 		<id>633</id>
-		<value>Startdatum/tid</value>
+		<value>Tarih/Saat Baþlangýç</value>
 	</string>
 	<string>
 		<id>634</id>
-		<value>Stoppdatum/tid</value>
+		<value>Tarih/Saat Bitiþ</value>
 	</string>
 	<string>
 		<id>635</id>
-		<value>Tid</value>
+		<value>Saat</value>
 	</string>
 	<string>
 		<id>636</id>
-		<value>Datum</value>
+		<value>Tarih</value>
 	</string>
 	<string>
 		<id>637</id>
-		<value>Ändra inspelning</value>
+		<value>Kayýt Düzenle</value>
 	</string>
 	<string>
 		<id>638</id>
-		<value>Ny inspelning</value>
+		<value>Yeni Kayýt</value>
 	</string>
 	<string>
 		<id>639</id>
-		<value>Album av</value>
+		<value>Albüm:</value>
 	</string>
 	<string>
 		<id>640</id>
-		<value>Mättnad</value>
+		<value>Doyma</value>
 	</string>
 	<string>
 		<id>641</id>
-		<value>Skärpa</value>
+		<value>Netlik</value>
 	</string>
 	<string>
 		<id>642</id>
-		<value>Laddar TV-kanaler</value>
+		<value>TV kanallarý yükleniyor</value>
 	</string>
 	<string>
 		<id>643</id>
-		<value>Laddar TV-program</value>
+		<value>TV programlarý yükleniyor</value>
 	</string>
 	<string>
 		<id>644</id>
-		<value>Sorterar TV-program</value>
+		<value>TV programlarý sýnýflandýrýlýyor</value>
 	</string>
 	<string>
 		<id>645</id>
-		<value>Laddar XML-fil</value>
+		<value>XML dosyasý yükleniyor</value>
 	</string>
 	<string>
 		<id>646</id>
-		<value>Planerade inspelningar</value>
+		<value>Programlanan kayýtlar</value>
 	</string>
 	<string>
 		<id>647</id>
-		<value>En gång</value>
+		<value>Birkere</value>
 	</string>
 	<string>
 		<id>648</id>
-		<value>Dagligen</value>
+		<value>Günlük</value>
 	</string>
 	<string>
 		<id>649</id>
-		<value>Varje</value>
+		<value>Her defa</value>
 	</string>
 	<string>
 		<id>650</id>
-		<value>Varje gång på denna kanal</value>
+		<value>Her defa  bu kanalda</value>
 	</string>
 	<string>
 		<id>651</id>
-		<value>Varje gång på någon kanal</value>
+		<value>Herzaman bu kanalda</value>
 	</string>
 	<string>
 		<id>652</id>
-		<value>Inspelad TV</value>
+		<value>TV Kayýtlarý</value>
 	</string>
 	<string>
 		<id>653</id>
-		<value>Radera denna inspelning?</value>
+		<value>Bu kaydý sil?</value>
 	</string>
 	<string>
 		<id>654</id>
-		<value>Mata ut</value>
+		<value>Çýkart</value>
 	</string>
 	<string>
 		<id>655</id>
-		<value>Spela upp inspelad TV</value>
+		<value>Tv kaydýný oynat</value>
 	</string>
 	<string>
 		<id>656</id>
-		<value>Radera inspelad TV</value>
+		<value>Tv kaydýný sil</value>
 	</string>
 	<string>
 		<id>657</id>
-		<value>Mån</value>
+		<value>Pzt</value>
 	</string>
 	<string>
 		<id>658</id>
-		<value>Tis</value>
+		<value>Sal</value>
 	</string>
 	<string>
 		<id>659</id>
-		<value>Ons</value>
+		<value>Çar</value>
 	</string>
 	<string>
 		<id>660</id>
-		<value>Tor</value>
+		<value>Per</value>
 	</string>
 	<string>
 		<id>661</id>
-		<value>Fre</value>
+		<value>Cum</value>
 	</string>
 	<string>
 		<id>662</id>
-		<value>Lör</value>
+		<value>Cmt</value>
 	</string>
 	<string>
 		<id>663</id>
-		<value>Sön</value>
+		<value>Paz</value>
 	</string>
 	<string>
 		<id>664</id>
-		<value>Radera denna bild?</value>
+		<value>Bu resmi sil?</value>
 	</string>
 	<string>
 		<id>665</id>
-		<value>Min Radio</value>
+		<value>Radyo</value>
 	</string>
 	<string>
 		<id>666</id>
-		<value>Stationer</value>
+		<value>Ýstasyonlar</value>
 	</string>
 	<string>
 		<id>667</id>
-		<value>Autosök</value>
+		<value>Kanalý otomatik aç</value>
 	</string>
 	<string>
 		<id>668</id>
-		<value>Sortera efter: Typ</value>
+		<value>Düzenleme: Tür</value>
 	</string>
 	<string>
 		<id>669</id>
-		<value>Sortera efter: Genre</value>
+		<value>Düzenleme: Tarz</value>
 	</string>
 	<string>
 		<id>670</id>
-		<value>Sortera efter: Bitrate</value>
+		<value>Düzenleme: Kapasite</value>
 	</string>
 	<string>
 		<id>671</id>
-		<value>Sortera efter: Sedda</value>
+		<value>Düzenleme: Ýzlenen</value>
 	</string>
 	<string>
 		<id>672</id>
-		<value>Spela in varje vardag</value>
+		<value>Pzt-Cum Kaydet</value>
 	</string>
 	<string>
 		<id>673</id>
-		<value>Scroll-hastighet</value>
+		<value>Kayma hýzý</value>
 	</string>
 	<string>
 		<id>674</id>
-		<value>GUI Inst.</value>
+		<value>GUI Ayarý</value>
 	</string>
 	<string>
 		<id>675</id>
-		<value>Exempel:</value>
+		<value>Örnek:</value>
 	</string>
 	<string>
 		<id>676</id>
-		<value>Ta bort sedda inspelningar?</value>
+		<value>Ýzlenen kayýtlar silinsin mi?</value>
 	</string>
 	<string>
 		<id>677</id>
-		<value>tider</value>
+		<value>saatler</value>
 	</string>
 	<string>
 		<id>678</id>
-		<value>Sortera efter: Genre</value>
+		<value>Düzenleme: Tarz</value>
 	</string>
 	<string>
 		<id>679</id>
-		<value>Veckovis</value>
+		<value>Haftalýk</value>
 	</string>
 	<string>
 		<id>680</id>
-		<value>Vardagar</value>
+		<value>Pzt-Cum</value>
 	</string>
 	<string>
 		<id>681</id>
-		<value>Väntar</value>
+		<value>Bekleniyor</value>
 	</string>
 	<string>
 		<id>682</id>
-		<value>Inspelning</value>
+		<value>Kaydediliyor</value>
 	</string>
 	<string>
 		<id>683</id>
-		<value>Klar</value>
+		<value>Bitti</value>
 	</string>
 	<string>
 		<id>684</id>
-		<value>Avbruten</value>
+		<value>Ýptal edildi</value>
 	</string>
 	<string>
 		<id>685</id>
-		<value>Sortera efter: Status</value>
+		<value>Düzenleme: Durum</value>
 	</string>
 	<string>
 		<id>686</id>
-		<value>Född</value>
+		<value>Doðum</value>
 	</string>
 	<string>
 		<id>687</id>
-		<value>Aktiva år</value>
+		<value>Yýllar aktif</value>
 	</string>
 	<string>
 		<id>688</id>
-		<value>Instrument</value>
+		<value>Enstrümanlar</value>
 	</string>
 	<string>
 		<id>689</id>
-		<value>Biografi</value>
+		<value>Bio.</value>
 	</string>
 	<string>
 		<id>690</id>
-		<value>Diskografi (skivor)</value>
+		<value>Parça kollleksiyonu (Albümler)</value>
 	</string>
 	<string>
 		<id>691</id>
-		<value>Diskografi (samlingar, boxar)</value>
+		<value>Parça kolleksiyonu (derleme)</value>
 	</string>
 	<string>
 		<id>700</id>
-		<value>Diskografi (EP, singlar)</value>
+		<value>Parça kolleksiyonu (tek parçalar)</value>
 	</string>
 	<string>
 		<id>701</id>
-		<value>Diskografi (bootlegs, videor, intervjuer)</value>
+		<value>Parça kolleksiyonu (vidyo, röportaj)</value>
 	</string>
 	<string>
 		<id>702</id>
-		<value>Ingen artist hittades!</value>
+		<value>Sanatçý bulunamadý!</value>
 	</string>
 	<string>
 		<id>703</id>
-		<value>Inte ansluten till Internet!</value>
+		<value>Ýnternete baðlý deðil!</value>
 	</string>
 	<string>
 		<id>704</id>
-		<value>Tar emot feed</value>
+		<value>Feed Bilgi Çekme</value>
 	</string>
 	<string>
 		<id>705</id>
-		<value>Hämtar RSS-feed för</value>
+		<value>RSS Feed ne için alýndýðý:</value>
 	</string>
 	<string>
 		<id>706</id>
-		<value>Välj feed</value>
+		<value>Feed Seçin</value>
 	</string>
 	<string>
 		<id>707</id>
-		<value>TV på</value>
+		<value>TV Açýk</value>
 	</string>
 	<string>
 		<id>708</id>
-		<value>Timeshifting på</value>
+		<value>Arabellek</value>
 	</string>
 	<string>
 		<id>709</id>
-		<value>Autouppdatering</value>
+		<value>Otomatik güncelleme</value>
 	</string>
 	<string>
 		<id>710</id>
-		<value>En ny version finns tillgänglig</value>
+		<value>Yeni bir versiyon çýktý</value>
 	</string>
 	<string>
 		<id>711</id>
-		<value>Upgradera från v#old -&gt;v#new ?</value>
+		<value>v#eski -&gt;v#yeni güncelle ?</value>
 	</string>
 	<string>
 		<id>712</id>
-		<value>Tillbaka</value>
+		<value>Geri</value>
 	</string>
 	<string>
 		<id>713</id>
-		<value>Autostarta</value>
+		<value>Oto oynatma</value>
 	</string>
 	<string>
 		<id>714</id>
-		<value>DVD laddad. Spela upp?</value>
+		<value>Disk takýldýi oynatýlsýn mý?</value>
 	</string>
 	<string>
 		<id>715</id>
-		<value>CD laddad. Spela upp?</value>
+		<value>CD takýldý, oynatýlsýn mý?</value>
 	</string>
 	<string>
 		<id>716</id>
-		<value>Satellit</value>
+		<value>Uydu</value>
 	</string>
 	<string>
 		<id>717</id>
-		<value>Väder</value>
+		<value>Hava Durumu</value>
 	</string>
 	<string>
 		<id>718</id>
-		<value>Rensa Topp 100</value>
+		<value>Top 100&apos;ü temizle</value>
 	</string>
 	<string>
 		<id>719</id>
-		<value>Är du säker på att du vill rensa Topp 100?</value>
+		<value>Top 100 ayarýný sýfýrlamak istiyor musunuz?</value>
 	</string>
 	<string>
 		<id>720</id>
-		<value>Program: Längd</value>
+		<value>Göster: Süre</value>
 	</string>
 	<string>
 		<id>721</id>
-		<value>Program: Antal ggr visad</value>
+		<value>Göster: Oynanan zaman</value>
 	</string>
 	<string>
 		<id>722</id>
-		<value>Kan inte spela upp skivan</value>
+		<value>Disk oynatýlamýyor</value>
 	</string>
 	<string>
 		<id>723</id>
-		<value>Satte du i en skiva?</value>
+		<value>Diski taktýnýz mý?</value>
 	</string>
 	<string>
 		<id>724</id>
-		<value>Sök i TV-tablån</value>
+		<value>TV Rehberini Ara</value>
 	</string>
 	<string>
 		<id>725</id>
-		<value>Genrer</value>
+		<value>Tarzlar</value>
 	</string>
 	<string>
 		<id>726</id>
-		<value>Titel</value>
+		<value>Baþlýk</value>
 	</string>
 	<string>
 		<id>727</id>
-		<value>Live-TV som bakgrund</value>
+		<value>Arkaplanda TV</value>
 	</string>
 	<string>
 		<id>728</id>
-		<value>Kunde ej starta</value>
+		<value>Oynatýlacak Vidyo/TV yok</value>
 	</string>
 	<string>
 		<id>729</id>
-		<value>Kolla att du använder VMR9 och att något spelas upp</value>
+		<value>VMR9 kullanýldýðýndan ve birþey çalýndýðdýðýnda emin olun</value>
 	</string>
 	<string>
 		<id>730</id>
-		<value>Denna inspelning pågår. Om du raderar den</value>
+		<value>Bu programlama kaydediliyor. Eðer bu</value>
 	</string>
 	<string>
 		<id>731</id>
-		<value>så kommer den att avbrytas.</value>
+		<value>programlamayý silerseniz kayýt durur.</value>
 	</string>
 	<string>
 		<id>732</id>
-		<value>Är du säker?</value>
+		<value>Emin misiniz?</value>
 	</string>
 	<string>
 		<id>733</id>
-		<value>Visa: Filmremsa</value>
+		<value>Görünüm: Filmþeridi</value>
 	</string>
 	<string>
 		<id>734</id>
-		<value>Bild:</value>
+		<value>Resim:</value>
 	</string>
 	<string>
 		<id>735</id>
-		<value>Rotera</value>
+		<value>Döndür</value>
 	</string>
 	<string>
 		<id>736</id>
-		<value>Ingen TV-tablådata finns</value>
+		<value>TV Rehber verisi yok</value>
 	</string>
 	<string>
 		<id>737</id>
-		<value>Visa: Satellit</value>
+		<value>Görünüm: Uydu</value>
 	</string>
 	<string>
 		<id>738</id>
-		<value>Visa: Temperatur</value>
+		<value>Görünüm: Sýcaklýk</value>
 	</string>
 	<string>
 		<id>739</id>
-		<value>Visa: UV Index</value>
+		<value>Görünüm: UV Ýndeksi</value>
 	</string>
 	<string>
 		<id>740</id>
-		<value>Visa: Vindar</value>
+		<value>Görünüm: Rüzgar</value>
 	</string>
 	<string>
 		<id>741</id>
-		<value>Visa: Luftfuktighet</value>
+		<value>Görünüm: Nem</value>
 	</string>
 	<string>
 		<id>742</id>
-		<value>Visa: Nederbörd</value>
+		<value>Görünüm: Yaðýþ</value>
 	</string>
 	<string>
 		<id>743</id>
-		<value>4-dagarsprognos</value>
+		<value>4 Günlük Hava Tahmini</value>
 	</string>
 	<string>
 		<id>744</id>
-		<value>Soluppgång</value>
+		<value>Gün Doðuþu</value>
 	</string>
 	<string>
 		<id>745</id>
-		<value>Solnedgång</value>
+		<value>Gün Batýþý</value>
 	</string>
 	<string>
 		<id>746</id>
-		<value>Hög</value>
+		<value>Yüksek</value>
 	</string>
 	<string>
 		<id>747</id>
-		<value>Låg</value>
+		<value>Düþük</value>
 	</string>
 	<string>
 		<id>748</id>
-		<value>Nederbörd</value>
+		<value>Yaðýþ</value>
 	</string>
 	<string>
 		<id>750</id>
-		<value>Bilder</value>
+		<value>Resimler</value>
 	</string>
 	<string>
 		<id>800</id>
-		<value>Startar med</value>
+		<value>Starts with</value>
 	</string>
 	<string>
 		<id>801</id>
-		<value>Innehåller</value>
+		<value>Contains</value>
 	</string>
 	<string>
 		<id>802</id>
-		<value>Slutar med</value>
+		<value>Ends with</value>
 	</string>
 	<string>
 		<id>803</id>
-		<value>År</value>
+		<value>is</value>
 	</string>
 	<string>
 		<id>804</id>
-		<value>Klar</value>
+		<value>Tamam</value>
 	</string>
 	<string>
 		<id>805</id>
-		<value>Städa</value>
+		<value>Temizle</value>
 	</string>
 	<string>
 		<id>806</id>
-		<value>Titel</value>
+		<value>Baþlýk</value>
 	</string>
 	<string>
 		<id>807</id>
-		<value>Göra</value>
+		<value>Yield</value>
 	</string>
 	<string>
 		<id>808</id>
-		<value>Ingredienser</value>
+		<value>Ýçindekiler</value>
 	</string>
 	<string>
 		<id>809</id>
-		<value>Sökvägar</value>
+		<value>Yönler</value>
 	</string>
 	<string>
 		<id>810</id>
-		<value>Kort</value>
+		<value>Kart</value>
 	</string>
 	<string>
 		<id>850</id>
-		<value>Mitt Alarm</value>
+		<value>Alarm</value>
 	</string>
 	<string>
 		<id>851</id>
-		<value>Spellista</value>
+		<value>Oynatma Listesi</value>
 	</string>
 	<string>
 		<id>852</id>
-		<value>Alarm på</value>
+		<value>Alarm Açýk</value>
 	</string>
 	<string>
 		<id>853</id>
-		<value>Välj spellista</value>
+		<value>Ýsim:</value>
 	</string>
 	<string>
 		<id>854</id>
-		<value>Gäller dessa dagar</value>
+		<value>Aktif günler</value>
 	</string>
 	<string>
 		<id>855</id>
-		<value>Alarmtid</value>
+		<value>Alarm Saati</value>
 	</string>
 	<string>
 		<id>856</id>
-		<value>Insomningstimer På</value>
+		<value>Uyku Zamanlayýcý Açýk</value>
 	</string>
 	<string>
 		<id>857</id>
-		<value>Snooze</value>
+		<value>Þekerleme</value>
 	</string>
 	<string>
 		<id>858</id>
-		<value>Snooze-tid</value>
+		<value>Þekerleme Zamaný</value>
 	</string>
 	<string>
 		<id>859</id>
-		<value>Sovtid</value>
+		<value>Uyku Zamanlayýcý</value>
 	</string>
 	<string>
 		<id>860</id>
-		<value>Volym tona in/ut</value>
+		<value>Güçlenme Düzeyi</value>
 	</string>
 	<string>
 		<id>861</id>
-		<value>Alarmdetaljer</value>
+		<value>Alarm Detaylarý</value>
 	</string>
 	<string>
 		<id>862</id>
-		<value>Radio</value>
+		<value>Radyo</value>
 	</string>
 	<string>
 		<id>863</id>
-		<value>Fil</value>
+		<value>Dosya</value>
 	</string>
 	<string>
 		<id>864</id>
-		<value>Mediatyp</value>
+		<value>Medya türü</value>
 	</string>
 	<string>
 		<id>865</id>
-		<value>Antal minuter till insomning:</value>
+		<value>Uyku Zamanlayýcý için kalan dakika:</value>
 	</string>
 	<string>
 		<id>866</id>
-		<value>Sänk volymen under tiden</value>
+		<value>Zayýflama Düzeyi</value>
 	</string>
 	<string>
 		<id>867</id>
-		<value>Stäng av datorn</value>
+		<value>Bilgisayarý kapat</value>
 	</string>
 	<string>
 		<id>868</id>
-		<value>Reset</value>
+		<value>Baþa Al</value>
 	</string>
 	<string>
 		<id>869</id>
-		<value>Nytt alarm</value>
+		<value>Yeni Alarm</value>
 	</string>
 	<string>
 		<id>870</id>
-		<value>Återkommande</value>
+		<value>Yineleme</value>
 	</string>
 	<string>
 		<id>871</id>
-		<value>Starta PC</value>
+		<value>Bu alarmla bilgisayarý uyandýr</value>
 	</string>
 	<string>
 		<id>872</id>
-		<value>Starta med</value>
+		<value>Baþlama:</value>
 	</string>
 	<string>
 		<id>873</id>
-		<value>TV-program</value>
+		<value>TV Gösterisi</value>
 	</string>
 	<string>
 		<id>874</id>
-		<value>Avsnitt</value>
+		<value>Bölüm</value>
 	</string>
 	<string>
 		<id>875</id>
-		<value>Aktuellt program</value>
+		<value>Þuanki program</value>
 	</string>
 	<string>
 		<id>876</id>
-		<value>Till manuellt stopp</value>
+		<value>Manuel durduruncaya kadar</value>
 	</string>
 	<string>
 		<id>877</id>
-		<value>Prioriteringar</value>
+		<value>Öncelikler</value>
 	</string>
 	<string>
 		<id>878</id>
-		<value>Lagring</value>
+		<value>Depo</value>
 	</string>
 	<string>
 		<id>879</id>
-		<value>Inspelningskonflikt</value>
+		<value>Uyuþmazlýk kaydediliyor</value>
 	</string>
 	<string>
 		<id>880</id>
-		<value>Inspelningstid:</value>
+		<value>Kayda kalan zaman:</value>
 	</string>
 	<string>
 		<id>881</id>
-		<value>Välj inspelning att avsluta:</value>
+		<value>Durdurulacak kaydý seç:</value>
 	</string>
 	<string>
 		<id>882</id>
-		<value>Kvalitetsinställning</value>
+		<value>Kalite ayarý</value>
 	</string>
 	<string>
 		<id>883</id>
-		<value>Låg</value>
+		<value>Düþük</value>
 	</string>
 	<string>
 		<id>884</id>
-		<value>Medium</value>
+		<value>Orta</value>
 	</string>
 	<string>
 		<id>885</id>
-		<value>Hög</value>
+		<value>Yüksek</value>
 	</string>
 	<string>
 		<id>886</id>
-		<value>Standard</value>
+		<value>Varsayýlan</value>
 	</string>
 	<string>
 		<id>887</id>
-		<value>Ange antal avsnitt som ska sparas</value>
+		<value>Bölümler için özel numara girin</value>
 	</string>
 	<string>
 		<id>888</id>
-		<value>Avsnittshantering</value>
+		<value>Bölüm Yönetimi</value>
 	</string>
 	<string>
 		<id>889</id>
-		<value>Alla avsnitt</value>
+		<value>Tüm Bölümler</value>
 	</string>
 	<string>
 		<id>890</id>
-		<value>Spela CD</value>
+		<value>CD Oynat</value>
 	</string>
 	<string>
 		<id>891</id>
-		<value>Välj TV-kanal</value>
+		<value>TV Kanalý Seç</value>
 	</string>
 	<string>
 		<id>892</id>
-		<value>Konflikter</value>
+		<value>Uyuþmazlýklar</value>
 	</string>
 	<string>
 		<id>893</id>
-		<value>Portabel</value>
+		<value>Taþýnabilir</value>
 	</string>
 	<string>
 		<id>894</id>
-		<value>Komprimera TV-inspelningar</value>
+		<value>TV Kayýtlarýný Sýkýþtýr</value>
 	</string>
 	<string>
 		<id>895</id>
-		<value>Autokomprimera</value>
+		<value>Oto Sýkýþtýrma</value>
 	</string>
 	<string>
 		<id>896</id>
-		<value>Komprimera</value>
+		<value>Sýkýþtýr</value>
 	</string>
 	<string>
 		<id>897</id>
-		<value>Inställningar</value>
+		<value>Ayarlar</value>
 	</string>
 	<string>
 		<id>898</id>
@@ -2595,7 +2595,7 @@
 	</string>
 	<string>
 		<id>900</id>
-		<value>Fortsätta filmen där den stannade senast?</value>
+		<value>Filme kalan zamandan devam et?</value>
 	</string>
 	<string>
 		<id>901</id>
@@ -2603,167 +2603,167 @@
 	</string>
 	<string>
 		<id>902</id>
-		<value>Online kontakter</value>
+		<value>Çevrimiçi</value>
 	</string>
 	<string>
 		<id>903</id>
-		<value>Logga in</value>
+		<value>Oturum Aç</value>
 	</string>
 	<string>
 		<id>904</id>
-		<value>Logga ut</value>
+		<value>Oturumu Kapat</value>
 	</string>
 	<string>
 		<id>905</id>
-		<value>Du måste konfigurera denna plugin först</value>
+		<value>Bu özelliði kullanmak için Plugin ayarlarýný yapýnýz.</value>
 	</string>
 	<string>
 		<id>906</id>
-		<value>Fyll i din e-post adress i setupen</value>
+		<value>e-mail adresinizi plugin ayarlarýna kaydetmeniz gerekli.</value>
 	</string>
 	<string>
 		<id>907</id>
-		<value>Kunde inte ansluta till MSN</value>
+		<value>MSN&apos;ye baðlanýlamadý</value>
 	</string>
 	<string>
 		<id>908</id>
-		<value>skriver ett meddelande...</value>
+		<value>mesaj yazýyor...</value>
 	</string>
 	<string>
 		<id>909</id>
-		<value>Ansluter...</value>
+		<value>Baðlanýyor...</value>
 	</string>
 	<string>
 		<id>910</id>
-		<value>Loggar in...</value>
+		<value>Oturum açýlýyor...</value>
 	</string>
 	<string>
 		<id>911</id>
-		<value>Inga kanaler</value>
+		<value>Kanal yok</value>
 	</string>
 	<string>
 		<id>912</id>
-		<value>Kunde inte ladda ner senaste nyheterna</value>
+		<value>Haber alýnamýyor</value>
 	</string>
 	<string>
 		<id>913</id>
-		<value>Mina Plugins</value>
+		<value>Plugin&apos;ler</value>
 	</string>
 	<string>
 		<id>914</id>
-		<value>Inspelad TV</value>
+		<value>Kayýtlar</value>
 	</string>
 	<string>
 		<id>915</id>
-		<value>TV-kanaler</value>
+		<value>TC Kanallarý</value>
 	</string>
 	<string>
 		<id>916</id>
-		<value>Fjärrfil</value>
+		<value>Uzak dosya</value>
 	</string>
 	<string>
 		<id>917</id>
-		<value>Denna fil finns i en fjärrmapp</value>
+		<value>Bu dosya uzak bir paylaþýmda</value>
 	</string>
 	<string>
 		<id>918</id>
-		<value>Vill du ladda ner det till din vanliga</value>
+		<value>Varsayýlan yerel paylaþýmýnýza</value>
 	</string>
 	<string>
 		<id>919</id>
-		<value>lokala share?</value>
+		<value>indirmek ister misiniz?</value>
 	</string>
 	<string>
 		<id>920</id>
-		<value>Kunde inte ladda ner fjärrfil</value>
+		<value>Uzak dosya indirilemiyor</value>
 	</string>
 	<string>
 		<id>921</id>
-		<value>Filen laddas ner</value>
+		<value>Dosya indirilmeye baþlandý</value>
 	</string>
 	<string>
 		<id>922</id>
-		<value>Beskrivning</value>
+		<value>Açýklama</value>
 	</string>
 	<string>
 		<id>923</id>
-		<value>Visa</value>
+		<value>Göster</value>
 	</string>
 	<string>
 		<id>924</id>
-		<value>Meny</value>
+		<value>Mönü</value>
 	</string>
 	<string>
 		<id>925</id>
-		<value>Ta bort denna film</value>
+		<value>Bu filmi sil</value>
 	</string>
 	<string>
 		<id>926</id>
-		<value>Lägg till i spellistan</value>
+		<value>Oynatma listesine ekle</value>
 	</string>
 	<string>
 		<id>927</id>
-		<value>Varning!</value>
+		<value>Uyarý</value>
 	</string>
 	<string>
 		<id>928</id>
-		<value>Hitta omslag</value>
+		<value>Grafiksel kapak bul</value>
 	</string>
 	<string>
 		<id>929</id>
-		<value>Stäng menyn</value>
+		<value>Mönüyü kapat</value>
 	</string>
 	<string>
 		<id>930</id>
-		<value>Lägg till favoriter</value>
+		<value>Favorilere ekle</value>
 	</string>
 	<string>
 		<id>931</id>
-		<value>Betyg</value>
+		<value>Reyting</value>
 	</string>
 	<string>
 		<id>932</id>
-		<value>Favoriter</value>
+		<value>Favoriler</value>
 	</string>
 	<string>
 		<id>933</id>
-		<value>Ta bort från favoriter</value>
+		<value>Favorilerden kaldýr</value>
 	</string>
 	<string>
 		<id>934</id>
-		<value>Sätt betyg</value>
+		<value>Reytin belirle</value>
 	</string>
 	<string>
 		<id>935</id>
-		<value>Visa: Betyg</value>
+		<value>Göster: Reyting</value>
 	</string>
 	<string>
 		<id>936</id>
-		<value>Fortsätt från:</value>
+		<value>Devam et:</value>
 	</string>
 	<string>
 		<id>937</id>
-		<value>Importera TV-tablå</value>
+		<value>TV Rehberi alýmý</value>
 	</string>
 	<string>
 		<id>938</id>
-		<value>Titta på denna kanal</value>
+		<value>Bu kanalý göster</value>
 	</string>
 	<string>
 		<id>939</id>
-		<value>Byt tablåvy</value>
+		<value>Geçiþ modu</value>
 	</string>
 	<string>
 		<id>940</id>
-		<value>Egenskaper</value>
+		<value>Özellikler</value>
 	</string>
 	<string>
 		<id>941</id>
-		<value>Ändra bildproportioner</value>
+		<value>Görünüþ oranýný deðiþtir</value>
 	</string>
 	<string>
 		<id>942</id>
-		<value>Utsträckt</value>
+		<value>Kapla</value>
 	</string>
 	<string>
 		<id>943</id>
@@ -2771,55 +2771,55 @@
 	</string>
 	<string>
 		<id>944</id>
-		<value>1:1</value>
+		<value>Orjinal</value>
 	</string>
 	<string>
 		<id>945</id>
-		<value>Brevlådeformat</value>
+		<value>Mektup kutusu</value>
 	</string>
 	<string>
 		<id>946</id>
-		<value>Pan and Scan</value>
+		<value>Ele ve Tara</value>
 	</string>
 	<string>
 		<id>947</id>
-		<value>Zoomad</value>
+		<value>Yakýnlaþ</value>
 	</string>
 	<string>
 		<id>948</id>
-		<value>Online</value>
+		<value>Çevrimiçi</value>
 	</string>
 	<string>
 		<id>949</id>
-		<value>Upptagen</value>
+		<value>Meþgul</value>
 	</string>
 	<string>
 		<id>950</id>
-		<value>Snart tillbaka</value>
+		<value>Hemen dönecek</value>
 	</string>
 	<string>
 		<id>951</id>
-		<value>Inte vid datorn</value>
+		<value>Dýþarýda</value>
 	</string>
 	<string>
 		<id>952</id>
-		<value>Telefon</value>
+		<value>Telefonda</value>
 	</string>
 	<string>
 		<id>953</id>
-		<value>Lunch</value>
+		<value>Yemekte</value>
 	</string>
 	<string>
 		<id>954</id>
-		<value>Osynlig</value>
+		<value>Çevrimdýþý</value>
 	</string>
 	<string>
 		<id>955</id>
-		<value>Upptagen</value>
+		<value>Boþta</value>
 	</string>
 	<string>
 		<id>956</id>
-		<value>Online</value>
+		<value>Çevrimiçi</value>
 	</string>
 	<string>
 		<id>957</id>
@@ -2827,95 +2827,95 @@
 	</string>
 	<string>
 		<id>958</id>
-		<value>Pratar med</value>
+		<value>Ýleti Gönder:</value>
 	</string>
 	<string>
 		<id>959</id>
-		<value>har anslutit till konversationen</value>
+		<value>sohbete katýldý</value>
 	</string>
 	<string>
 		<id>960</id>
-		<value>har lämnat konversationen</value>
+		<value>sohbetten ayrýldý</value>
 	</string>
 	<string>
 		<id>961</id>
-		<value>MSN Status</value>
+		<value>MSN Durumu</value>
 	</string>
 	<string>
 		<id>970</id>
-		<value>Föregående fönster</value>
+		<value>Önceki pencere</value>
 	</string>
 	<string>
 		<id>971</id>
-		<value>Välj kanalgrupp</value>
+		<value>Grup</value>
 	</string>
 	<string>
 		<id>972</id>
-		<value>Alla Kanaler</value>
+		<value>Tüm Kanallar</value>
 	</string>
 	<string>
 		<id>973</id>
-		<value>Maximal FPS</value>
+		<value>Maksimum FPS</value>
 	</string>
 	<string>
 		<id>974</id>
-		<value>Rotmeny</value>
+		<value>Ana Mönü</value>
 	</string>
 	<string>
 		<id>975</id>
-		<value>Föregående kapitel</value>
+		<value>Önceki bölüm</value>
 	</string>
 	<string>
 		<id>976</id>
-		<value>Nästa kapitel</value>
+		<value>Sonraki bölüm</value>
 	</string>
 	<string>
 		<id>977</id>
-		<value>Det finns inget ledigt kort tillgänligt</value>
+		<value>Bu kanalý seyretmek için</value>
 	</string>
 	<string>
 		<id>978</id>
-		<value>som kan visa denna kanalen</value>
+		<value>boþ kart yok</value>
 	</string>
 	<string>
 		<id>979</id>
-		<value>Spela upp inspelningen från början</value>
+		<value>Kaydý oynatmaya buradan baþla</value>
 	</string>
 	<string>
 		<id>980</id>
-		<value>Spela upp inspelningen från "nutid"</value>
+		<value>Kaydý canlý kaynaktan oynat</value>
 	</string>
 	<string>
 		<id>981</id>
-		<value>Avbryt detta program</value>
+		<value>Ýptal et</value>
 	</string>
 	<string>
 		<id>982</id>
-		<value>Radera denna inspelning</value>
+		<value>Bu kaydý sil</value>
 	</string>
 	<string>
 		<id>983</id>
-		<value>Mina spellistor</value>
+		<value>Oynatma Listesi</value>
 	</string>
 	<string>
 		<id>984</id>
-		<value>Tar emot filmer</value>
+		<value>Film Listesi indiriliyor</value>
 	</string>
 	<string>
 		<id>985</id>
-		<value>Tar emot filminfo</value>
+		<value>Filmlerin detaylarý alýnýyor</value>
 	</string>
 	<string>
 		<id>986</id>
-		<value>Tar emot skådespelare</value>
+		<value>Oyuncu alýnýyor</value>
 	</string>
 	<string>
 		<id>987</id>
-		<value>År</value>
+		<value>Yýllar</value>
 	</string>
 	<string>
 		<id>988</id>
-		<value>Kvalitet</value>
+		<value>Kalite</value>
 	</string>
 	<string>
 		<id>989</id>
@@ -2923,35 +2923,35 @@
 	</string>
 	<string>
 		<id>990</id>
-		<value>Bitrate</value>
+		<value>Bit Deðer</value>
 	</string>
 	<string>
 		<id>991</id>
-		<value>Prioritet</value>
+		<value>Öncelik</value>
 	</string>
 	<string>
 		<id>992</id>
-		<value>Ta bort orginalfilen</value>
+		<value>Orjinal dosyayý sil</value>
 	</string>
 	<string>
 		<id>993</id>
-		<value>Egen inställning</value>
+		<value>Rastgele</value>
 	</string>
 	<string>
 		<id>994</id>
-		<value>Aktivera autokomprimering</value>
+		<value>Oto sýkýþtýrma aktif</value>
 	</string>
 	<string>
 		<id>995</id>
-		<value>Är det säkert att du vill komprimera?</value>
+		<value>Seçili kayýtlarý sýkýþtýrmak</value>
 	</string>
 	<string>
 		<id>996</id>
-		<value>de valda inspelningarna?</value>
+		<value>ister misniz?</value>
 	</string>
 	<string>
 		<id>997</id>
-		<value>Klart!</value>
+		<value>Tamamlandý</value>
 	</string>
 	<string>
 		<id>998</id>
@@ -2959,51 +2959,51 @@
 	</string>
 	<string>
 		<id>999</id>
-		<value>Denna plugin låter dig omvandla dina</value>
+		<value>Bu plugin  Tv kayýtlarýnýzý dvr-ms</value>
 	</string>
 	<string>
 		<id>1000</id>
-		<value>TV-inspelningar från dvr-ms till mpg, xvid eller wmv.</value>
+		<value>formatýndan mpg, xvid veya wmv formatýna çevirmenize saðlar</value>
 	</string>
 	<string>
 		<id>1001</id>
-		<value>Observera att du måste ha</value>
+		<value>xvid formatýna dönüþtürmek için</value>
 	</string>
 	<string>
 		<id>1002</id>
-		<value>Elecard MPEG2-video decoder installerad</value>
+		<value>Elecard MPEG2 video decoder isimli programý</value>
 	</string>
 	<string>
 		<id>1003</id>
-		<value>för att kunna koda om till xvid.</value>
+		<value>yüklemiþ olmanýz gereklidir</value>
 	</string>
 	<string>
 		<id>1004</id>
-		<value>Inspelning ska påbörjas</value>
+		<value>Kayda baþlamak için</value>
 	</string>
 	<string>
 		<id>1005</id>
-		<value>av kanal</value>
+		<value>kanal üstünde</value>
 	</string>
 	<string>
 		<id>1006</id>
-		<value>Tillåt start av inspelning</value>
+		<value>kaydýn baþlamýsýný saðlayýn</value>
 	</string>
 	<string>
 		<id>1007</id>
-		<value>Avbryt inspelning och fortsätt titta på TV</value>
+		<value>Kaydý iptal et ve TV&apos;yi izlemeye devam et</value>
 	</string>
 	<string>
 		<id>1008</id>
-		<value>Köa</value>
+		<value>Kuyruktaki iþ</value>
 	</string>
 	<string>
 		<id>1009</id>
-		<value>Ladda ner omslag</value>
+		<value>Grafiksel Kapak indiriliyor</value>
 	</string>
 	<string>
 		<id>1010</id>
-		<value>Sedd</value>
+		<value>Ýzlendi</value>
 	</string>
 	<string>
 		<id>1011</id>
@@ -3011,191 +3011,191 @@
 	</string>
 	<string>
 		<id>1012</id>
-		<value>Detta program kommer att avbrytas av</value>
+		<value>Bu programý engelleyen:</value>
 	</string>
 	<string>
 		<id>1013</id>
-		<value>Vill du spela in den andra delen också?</value>
+		<value>Ýkinci bölümü de kaydetmek ister misiniz?</value>
 	</string>
 	<string>
 		<id>1014</id>
-		<value>Påminn om programstart</value>
+		<value>Program baþlayýnca beni uyar</value>
 	</string>
 	<string>
 		<id>1015</id>
-		<value>Påminn INTE om programstart</value>
+		<value>Proram baþlayýnca uyarý yapma</value>
 	</string>
 	<string>
 		<id>1016</id>
-		<value>Program börjar om fem minuter</value>
+		<value>Program 5 dakika içinde baþlayacak</value>
 	</string>
 	<string>
 		<id>1017</id>
-		<value>Sortera efter: Längd</value>
+		<value>Düzenleme: Süre</value>
 	</string>
 	<string>
 		<id>1020</id>
-		<value>Information</value>
+		<value>Bilgi</value>
 	</string>
 	<string>
 		<id>1021</id>
-		<value>Tryck på Alt+Enter för att</value>
+		<value>Alt+Enter&apos;a basarak</value>
 	</string>
 	<string>
 		<id>1022</id>
-		<value>återvända till fönsterläge</value>
+		<value>pencere moduna geçilir.</value>
 	</string>
 	<string>
 		<id>1023</id>
-		<value>Det ringer</value>
+		<value>Gelen arama</value>
 	</string>
 	<string>
 		<id>1024</id>
-		<value>från</value>
+		<value>kimden:</value>
 	</string>
 	<string>
 		<id>1025</id>
-		<value>Ett fel uppstod</value>
+		<value>Bir hata oluþtu.</value>
 	</string>
 	<string>
 		<id>1026</id>
-		<value>Detaljer finns i logfilen</value>
+		<value>Detaylar için kayýt dosyalrýna bakýnýz.</value>
 	</string>
 	<string>
 		<id>1027</id>
-		<value>Mina DVD-filmer</value>
+		<value>DVD</value>
 	</string>
 	<string>
 		<id>1028</id>
-		<value>Stad</value>
+		<value>Þehir</value>
 	</string>
 	<string>
 		<id>1029</id>
-		<value>Textningsspråk</value>
+		<value>Altyazý Dili</value>
 	</string>
 	<string>
 		<id>1030</id>
-		<value>Stäng av</value>
+		<value>Kapat</value>
 	</string>
 	<string>
 		<id>1031</id>
-		<value>Omstart</value>
+		<value>Yeniden Baþlat</value>
 	</string>
 	<string>
 		<id>1032</id>
-		<value>Viloläge</value>
+		<value>Bekleme Modu</value>
 	</string>
 	<string>
 		<id>1033</id>
-		<value>Program spelas in just nu</value>
+		<value>Þimdi biten kayýtlarý göster</value>
 	</string>
 	<string>
 		<id>1034</id>
-		<value>Ingen signal!</value>
+		<value>Sinyal yok</value>
 	</string>
 	<string>
 		<id>1035</id>
-		<value>TV-kanalen är krypterad!</value>
+		<value>Kanal þifreli!</value>
 	</string>
 	<string>
 		<id>1036</id>
-		<value>Ingen videosignal</value>
+		<value>Vidyo bulunamadý</value>
 	</string>
 	<string>
 		<id>1037</id>
-		<value>Min TV - Programinformation</value>
+		<value>TV - Program Bilgisi</value>
 	</string>
 	<string>
 		<id>1038</id>
-		<value>Avancerad inspelning</value>
+		<value>Geliþmiþ kayýt</value>
 	</string>
 	<string>
 		<id>1039</id>
-		<value>Spela inte in</value>
+		<value>Kaydetme</value>
 	</string>
 	<string>
 		<id>1040</id>
-		<value>Påminn mig</value>
+		<value>Beni uyar</value>
 	</string>
 	<string>
 		<id>1041</id>
-		<value>Kommande avsnitt</value>
+		<value>Oluþan bölümleri</value>
 	</string>
 	<string>
 		<id>1042</id>
-		<value>Spara tills</value>
+		<value>izlenene kadar</value>
 	</string>
 	<string>
 		<id>1043</id>
-		<value>tills sedd</value>
+		<value>koruma</value>
 	</string>
 	<string>
 		<id>1044</id>
-		<value>tills utrymme behövs</value>
+		<value>Gereken boþ alana kadar</value>
 	</string>
 	<string>
 		<id>1045</id>
-		<value>till datum</value>
+		<value>Tarihe kadar</value>
 	</string>
 	<string>
 		<id>1046</id>
-		<value>alltid</value>
+		<value>Herzaman</value>
 	</string>
 	<string>
 		<id>1047</id>
-		<value>Starta i fullskärmsläge</value>
+		<value>Tam ekranda baþlat</value>
 	</string>
 	<string>
 		<id>1440</id>
-		<value>Min text-TV</value>
+		<value>TeleTekxt</value>
 	</string>
 	<string>
 		<id>1441</id>
-		<value>Text-TV</value>
+		<value>TeleText</value>
 	</string>
 	<string>
 		<id>1442</id>
-		<value>Scroll-hastighet</value>
+		<value>Kayma hýzý (yatay)</value>
 	</string>
 	<string>
 		<id>1443</id>
-		<value>Scroll-hastighet (Vertikal)</value>
+		<value>Kayma hýzý (dikey)</value>
 	</string>
 	<string>
 		<id>1444</id>
-		<value>Spela in före</value>
+		<value>Kayýt-baþý</value>
 	</string>
 	<string>
 		<id>1445</id>
-		<value>Spela in efter</value>
+		<value>Kayýt-sonu</value>
 	</string>
 	<string>
 		<id>1446</id>
-		<value>Inspelning startad:</value>
+		<value>Kayýt baþladý:</value>
 	</string>
 	<string>
 		<id>1447</id>
-		<value>Inspelning stoppad:</value>
+		<value>Kayýt durduruldu:</value>
 	</string>
 	<string>
 		<id>1950</id>
-		<value>Min status</value>
+		<value>Durum</value>
 	</string>
 	<string>
 		<id>1951</id>
-		<value>Hårddisk</value>
+		<value>Sabit disk</value>
 	</string>
 	<string>
 		<id>1952</id>
-		<value>Fläkt</value>
+		<value>Fan</value>
 	</string>
 	<string>
 		<id>1953</id>
-		<value>Ledigt</value>
+		<value>Boþ</value>
 	</string>
 	<string>
 		<id>1954</id>
-		<value>Temperatur</value>
+		<value>Sýcaklýk</value>
 	</string>
 	<string>
 		<id>1955</id>
@@ -3203,19 +3203,19 @@
 	</string>
 	<string>
 		<id>1956</id>
-		<value>Välj alarmsignal</value>
+		<value>Alarm sesi seç</value>
 	</string>
 	<string>
 		<id>1957</id>
-		<value>Egenskaper</value>
+		<value>Tercihler</value>
 	</string>
 	<string>
 		<id>1958</id>
-		<value>CPU-användning</value>
+		<value>CPU kullanýmý</value>
 	</string>
 	<string>
 		<id>1959</id>
-		<value>Spänning</value>
+		<value>Voltaj</value>
 	</string>
 	<string>
 		<id>1960</id>
@@ -3223,63 +3223,63 @@
 	</string>
 	<string>
 		<id>1961</id>
-		<value>Klockfrekvens</value>
+		<value>Saat frekansý</value>
 	</string>
 	<string>
 		<id>1962</id>
-		<value>Egenskaper</value>
+		<value>Tercihler</value>
 	</string>
 	<string>
 		<id>1963</id>
-		<value>Sensorfinesser</value>
+		<value>Sensör detaylarý</value>
 	</string>
 	<string>
 		<id>1964</id>
-		<value>Sensor alarm</value>
+		<value>Sensör alarmý</value>
 	</string>
 	<string>
 		<id>1965</id>
-		<value>Högsta Värde</value>
+		<value>En yüksek deðer</value>
 	</string>
 	<string>
 		<id>1966</id>
-		<value>Lägsta Värde</value>
+		<value>En düþük deðer</value>
 	</string>
 	<string>
 		<id>1967</id>
-		<value>Övre alarmgräns</value>
+		<value>Tavan alarm eþiði</value>
 	</string>
 	<string>
 		<id>1968</id>
-		<value>Nedre alarmgräns</value>
+		<value>Taban alarm eþiði</value>
 	</string>
 	<string>
 		<id>1969</id>
-		<value>Testa ljudet</value>
+		<value>Sesi test et</value>
 	</string>
 	<string>
 		<id>1970</id>
-		<value>Alarmintervall (i sekunder)</value>
+		<value>Alarm müddeti (saniye)</value>
 	</string>
 	<string>
 		<id>1971</id>
-		<value>Stäng ner vid larm</value>
+		<value>Kapatýrken uyar</value>
 	</string>
 	<string>
 		<id>1972</id>
-		<value>Status detaljer</value>
+		<value>Durum detayý</value>
 	</string>
 	<string>
 		<id>1973</id>
-		<value>av</value>
+		<value>/</value>
 	</string>
 	<string>
 		<id>1974</id>
-		<value>Minne</value>
+		<value>Bellek</value>
 	</string>
 	<string>
 		<id>1975</id>
-		<value>Nästa Sida</value>
+		<value>Sonraki sayfa</value>
 	</string>
 	<string>
 		<id>1976</id>
@@ -3287,83 +3287,83 @@
 	</string>
 	<string>
 		<id>1977</id>
-		<value>Filsystem</value>
+		<value>Dosya sistemi</value>
 	</string>
 	<string>
 		<id>1978</id>
-		<value>Virtuellt minne</value>
+		<value>Sanal bellek</value>
 	</string>
 	<string>
 		<id>2005</id>
-		<value>Ta bort</value>
+		<value>Sil</value>
 	</string>
 	<string>
 		<id>2006</id>
-		<value>Titel</value>
+		<value>Baþlýk</value>
 	</string>
 	<string>
 		<id>2007</id>
-		<value>Yield</value>
+		<value>Verim</value>
 	</string>
 	<string>
 		<id>2008</id>
-		<value>Ingredienser</value>
+		<value>Ýçindekiler</value>
 	</string>
 	<string>
 		<id>2009</id>
-		<value>Riktningar</value>
+		<value>Yönler</value>
 	</string>
 	<string>
 		<id>2010</id>
-		<value>Kort</value>
+		<value>Kart</value>
 	</string>
 	<string>
 		<id>2011</id>
-		<value>Skriv Ut</value>
+		<value>Yazdýr</value>
 	</string>
 	<string>
 		<id>2012</id>
-		<value>Ta bort</value>
+		<value>Sil</value>
 	</string>
 	<string>
 		<id>2013</id>
-		<value>Favoriter</value>
+		<value>Favoriler</value>
 	</string>
 	<string>
 		<id>2014</id>
-		<value>Okänd</value>
+		<value>Bilinmeyen</value>
 	</string>
 	<string>
 		<id>2015</id>
-		<value>per portion</value>
+		<value>Servis baþýna</value>
 	</string>
 	<string>
 		<id>2016</id>
-		<value>liten</value>
+		<value>ufak</value>
 	</string>
 	<string>
 		<id>2017</id>
-		<value>flytande ounce</value>
+		<value>~ 30 ml</value>
 	</string>
 	<string>
 		<id>2018</id>
-		<value>kopp</value>
+		<value>fincan</value>
 	</string>
 	<string>
 		<id>2019</id>
-		<value>pint</value>
+		<value>yarým litre</value>
 	</string>
 	<string>
 		<id>2020</id>
-		<value>medium</value>
+		<value>orta</value>
 	</string>
 	<string>
 		<id>2021</id>
-		<value>stor</value>
+		<value>geniþ</value>
 	</string>
 	<string>
 		<id>2022</id>
-		<value>burk</value>
+		<value>kutu</value>
 	</string>
 	<string>
 		<id>2023</id>
@@ -3371,95 +3371,95 @@
 	</string>
 	<string>
 		<id>2024</id>
-		<value>nypa</value>
+		<value>tutam</value>
 	</string>
 	<string>
 		<id>2025</id>
-		<value>droppe</value>
+		<value>damla</value>
 	</string>
 	<string>
 		<id>2026</id>
-		<value>skvätt</value>
+		<value>bir tutam</value>
 	</string>
 	<string>
 		<id>2027</id>
-		<value>låda</value>
+		<value>karton</value>
 	</string>
 	<string>
 		<id>2028</id>
-		<value>knippe</value>
+		<value>demet</value>
 	</string>
 	<string>
 		<id>2029</id>
-		<value>skiva</value>
+		<value>dilim</value>
 	</string>
 	<string>
 		<id>2030</id>
-		<value>varje</value>
+		<value>her biri</value>
 	</string>
 	<string>
 		<id>2031</id>
-		<value>tesked</value>
+		<value>çaykaþýðý</value>
 	</string>
 	<string>
 		<id>2032</id>
-		<value>tesked</value>
+		<value>çaykaþýðý</value>
 	</string>
 	<string>
 		<id>2033</id>
-		<value>matsked</value>
+		<value>çorbakaþýðý</value>
 	</string>
 	<string>
 		<id>2034</id>
-		<value>matsked</value>
+		<value>çorbakaþýðý</value>
 	</string>
 	<string>
 		<id>2035</id>
-		<value>quart</value>
+		<value>bir litreye yakýn</value>
 	</string>
 	<string>
 		<id>2036</id>
-		<value>gallon</value>
+		<value>3.6 Litre</value>
 	</string>
 	<string>
 		<id>2037</id>
-		<value>ounce</value>
+		<value>~ 30 Gram</value>
 	</string>
 	<string>
 		<id>2038</id>
-		<value>pound</value>
+		<value>~ 450 Gram</value>
 	</string>
 	<string>
 		<id>2039</id>
-		<value>milliliter</value>
+		<value>militre</value>
 	</string>
 	<string>
 		<id>2040</id>
-		<value>milliliter</value>
+		<value>mililitre</value>
 	</string>
 	<string>
 		<id>2041</id>
-		<value>centiliter</value>
+		<value>10 ml</value>
 	</string>
 	<string>
 		<id>2042</id>
-		<value>deciliter</value>
+		<value>100 ml</value>
 	</string>
 	<string>
 		<id>2043</id>
-		<value>liter</value>
+		<value>litre</value>
 	</string>
 	<string>
 		<id>2044</id>
-		<value>milligram</value>
+		<value>miligram</value>
 	</string>
 	<string>
 		<id>2045</id>
-		<value>centigram</value>
+		<value>1/100 Gram</value>
 	</string>
 	<string>
 		<id>2046</id>
-		<value>decigram</value>
+		<value>1/10 Gram</value>
 	</string>
 	<string>
 		<id>2047</id>
@@ -3471,19 +3471,19 @@
 	</string>
 	<string>
 		<id>2049</id>
-		<value>Ta bort detta recept?</value>
+		<value>Bu tarifeyi sil?</value>
 	</string>
 	<string>
 		<id>2050</id>
-		<value>Ta bort denna kategori?</value>
+		<value>Bu katogeriyi sil?</value>
 	</string>
 	<string>
 		<id>2051</id>
-		<value>Sök på titeln</value>
+		<value>Baþlýk ara</value>
 	</string>
 	<string>
 		<id>2052</id>
-		<value>Sök i recept</value>
+		<value>Tarif ara</value>
 	</string>
 	<string>
 		<id>2053</id>
@@ -3491,151 +3491,151 @@
 	</string>
 	<string>
 		<id>2054</id>
-		<value>Ingen träff!</value>
+		<value>Giriþ yok!</value>
 	</string>
 	<string>
 		<id>2100</id>
-		<value>Min brännare</value>
+		<value>CD/DVD Yazýcý</value>
 	</string>
 	<string>
 		<id>2101</id>
-		<value>Kopiera CD/DVD</value>
+		<value>CD/DVD Kopyala</value>
 	</string>
 	<string>
 		<id>2102</id>
-		<value>Skapa ljud-CD</value>
+		<value>Ses CD&apos;i oluþtur</value>
 	</string>
 	<string>
 		<id>2103</id>
-		<value>Skapa video-CD</value>
+		<value>Vidyo CD oluþtur</value>
 	</string>
 	<string>
 		<id>2104</id>
-		<value>Skapa video-DVD</value>
+		<value>Vidyo DVD oluþtur</value>
 	</string>
 	<string>
 		<id>2105</id>
-		<value>Skapa data-CD</value>
+		<value>Data CD oluþtur</value>
 	</string>
 	<string>
 		<id>2106</id>
-		<value>Skapa data-DVD</value>
+		<value>Data DVD oluþtur</value>
 	</string>
 	<string>
 		<id>2107</id>
-		<value>Starta kopiering</value>
+		<value>Kopyalamaya baþla</value>
 	</string>
 	<string>
 		<id>2108</id>
-		<value>Sätt i en tom CD/DVD</value>
+		<value>Boþ CD/DVD takýn</value>
 	</string>
 	<string>
 		<id>2109</id>
-		<value>tryck sen på OK</value>
+		<value>daha sonra Ok&apos;e basýn</value>
 	</string>
 	<string>
 		<id>2110</id>
-		<value>Sätt i original-CD/DVD</value>
+		<value>orjinal CD/DVD TAKIN</value>
 	</string>
 	<string>
 		<id>2111</id>
-		<value>Klar!</value>
+		<value>Bitti!</value>
 	</string>
 	<string>
 		<id>2112</id>
-		<value>Väntar på CD/DVD</value>
+		<value>CD/DVD için bekleniyor</value>
 	</string>
 	<string>
 		<id>2113</id>
-		<value>Kopiera allt</value>
+		<value>Hepsini kopyala</value>
 	</string>
 	<string>
 		<id>2114</id>
-		<value>Radera skiva</value>
+		<value>Diski sil</value>
 	</string>
 	<string>
 		<id>2115</id>
-		<value>Sätt i CD/DVD-RW</value>
+		<value>RW CD/DVD takýn</value>
 	</string>
 	<string>
 		<id>2116</id>
-		<value>Enhet ej redo</value>
+		<value>Sürücü hazýr deðil</value>
 	</string>
 	<string>
 		<id>2117</id>
-		<value>Ett allvarligt fel har inträffat!</value>
+		<value>ölümcül hata oluþtu!</value>
 	</string>
 	<string>
 		<id>2118</id>
-		<value>Konvertera DVR-MS</value>
+		<value>DVR-MS Dönüþtür</value>
 	</string>
 	<string>
 		<id>2119</id>
-		<value>Starta konvertering</value>
+		<value>Dönüþtürmeye baþla</value>
 	</string>
 	<string>
 		<id>2120</id>
-		<value>Konverterar fil(er)...</value>
+		<value>Dosya(lar) dönüþtürülüyor...</value>
 	</string>
 	<string>
 		<id>2121</id>
-		<value>Kunde inte konvertera fil (er)!</value>
+		<value>Dosya(lar) dönüþtürülemedi!</value>
 	</string>
 	<string>
 		<id>2122</id>
-		<value>Startar!</value>
+		<value>baþla!</value>
 	</string>
 	<string>
 		<id>2123</id>
-		<value>Diskinfo</value>
+		<value>Disk bilgisi</value>
 	</string>
 	<string>
 		<id>2124</id>
-		<value>Kan ej radera: Media är inte skrivbart</value>
+		<value>Silinemiyor: Yazýlabilir medya deðil</value>
 	</string>
 	<string>
 		<id>2125</id>
-		<value>Raderar Disk....</value>
+		<value>Diski sil...</value>
 	</string>
 	<string>
 		<id>2126</id>
-		<value>Mata Ut CD</value>
+		<value>Diski çýkart</value>
 	</string>
 	<string>
 		<id>2127</id>
-		<value>CD:n är inte skrivbar</value>
+		<value>Yazýlabilir CD deðil</value>
 	</string>
 	<string>
 		<id>2128</id>
-		<value>Förbereder bränning: beräknad tid:</value>
+		<value>Yazmaya hazýlanýlýyor: kalan zaman:</value>
 	</string>
 	<string>
 		<id>2129</id>
-		<value>Förbereder bränning</value>
+		<value>Yazmaya hazýrlanýlýyor</value>
 	</string>
 	<string>
 		<id>2130</id>
-		<value>Blockera</value>
+		<value>Blok</value>
 	</string>
 	<string>
 		<id>2131</id>
-		<value>av</value>
+		<value>**:</value>
 	</string>
 	<string>
 		<id>2132</id>
-		<value>Stänger skiva: beräknad tid:</value>
+		<value>Disk kapatýlýyor: kalan zaman:</value>
 	</string>
 	<string>
 		<id>2133</id>
-		<value>TV-inspelningar</value>
+		<value>TV-Kayýtlarý</value>
 	</string>
 	<string>
 		<id>2134</id>
-		<value>Video</value>
+		<value>Vidyo</value>
 	</string>
 	<string>
 		<id>2135</id>
-		<value>Ljud</value>
+		<value>Ses</value>
 	</string>
 	<string>
 		<id>2136</id>
@@ -3643,19 +3643,19 @@
 	</string>
 	<string>
 		<id>2137</id>
-		<value>Konvertera</value>
+		<value>Dosya Dönüþtür</value>
 	</string>
 	<string>
 		<id>2138</id>
-		<value>Klippa</value>
+		<value>Kes</value>
 	</string>
 	<string>
 		<id>2139</id>
-		<value>Skapa MP3-CD</value>
+		<value>MP-3 CD&apos;i oluþtur</value>
 	</string>
 	<string>
 		<id>2140</id>
-		<value>Skapa MP3-DVD</value>
+		<value>MP3-DVD oluþtur</value>
 	</string>
 	<string>
 		<id>2141</id>
@@ -3667,7 +3667,7 @@
 	</string>
 	<string>
 		<id>2143</id>
-		<value>Hem</value>
+		<value>Giriþ</value>
 	</string>
 	<string>
 		<id>2200</id>
@@ -3675,695 +3675,695 @@
 	</string>
 	<string>
 		<id>2201</id>
-		<value>Välj källa</value>
+		<value>Kaynak seç</value>
 	</string>
 	<string>
 		<id>2202</id>
-		<value>Välj mål</value>
+		<value>Yol seç</value>
 	</string>
 	<string>
 		<id>2203</id>
-		<value>Kopiera data</value>
+		<value>Data kopyala</value>
 	</string>
 	<string>
 		<id>2204</id>
-		<value>Skapa mapp</value>
+		<value>Klasör oluþtur</value>
 	</string>
 	<string>
 		<id>2205</id>
-		<value>Återställ markerat</value>
+		<value>Seçimi geri yükle</value>
 	</string>
 	<string>
 		<id>2206</id>
-		<value>Välj alla</value>
+		<value>Hepsini seç</value>
 	</string>
 	<string>
 		<id>2207</id>
-		<value>Vill du</value>
+		<value>Ýþlemi onaylayýn.</value>
 	</string>
 	<string>
 		<id>2208</id>
-		<value>skapa mappen?</value>
+		<value>isimli dosya oluþturulsun mu?</value>
 	</string>
 	<string>
 		<id>2209</id>
-		<value>Vill du kopiera filerna?</value>
+		<value>Dosya kopyalanacak mý?</value>
 	</string>
 	<string>
 		<id>2210</id>
-		<value>Filer kopierade!</value>
+		<value>Dosyalar kopyalandý!</value>
 	</string>
 	<string>
 		<id>2211</id>
-		<value>Vänta, filer kopieras.</value>
+		<value>Lütfen bekleyin, dosyalar kopyalanýyor.</value>
 	</string>
 	<string>
 		<id>2212</id>
-		<value>Ta bort</value>
+		<value>Sil</value>
 	</string>
 	<string>
 		<id>2213</id>
-		<value>Flytta</value>
+		<value>Taþý</value>
 	</string>
 	<string>
 		<id>2214</id>
-		<value>Vill du flytta de markerade filerna?</value>
+		<value>Seçilen dosyalarý taþýmak istiyor musunuz?</value>
 	</string>
 	<string>
 		<id>2215</id>
-		<value>Vänta, flyttar filer.</value>
+		<value>Lütfen bekleyin, dosyalar taþýnýyor.</value>
 	</string>
 	<string>
 		<id>2216</id>
-		<value>Filer flyttade!</value>
+		<value>Dosyalar kopyalandý!</value>
 	</string>
 	<string>
 		<id>2217</id>
-		<value>Det finns redan en fil med det namnet!</value>
+		<value>Dosya zaten var!</value>
 	</string>
 	<string>
 		<id>2218</id>
-		<value>Skriva över filen?</value>
+		<value>Üzerine yazýlsýn mý?</value>
 	</string>
 	<string>
 		<id>2219</id>
-		<value>Kan inte flytta från vald enhet!</value>
+		<value>Seçilen sürücüden taþýnamaz!</value>
 	</string>
 	<string>
 		<id>2220</id>
-		<value>Vill du kopiera markerade filer?</value>
+		<value>Seçili dosya kopyalansýn mý?</value>
 	</string>
 	<string>
 		<id>2221</id>
-		<value>Vill du ta bort valda filer?</value>
+		<value>Seçili dosyayý silmek istiyor musunuz?</value>
 	</string>
 	<string>
 		<id>2222</id>
-		<value>Filer borttagna!</value>
+		<value>Dosyalar silindi!</value>
 	</string>
 	<string>
 		<id>2223</id>
-		<value>Papperskorg</value>
+		<value>Çöp Kutusu</value>
 	</string>
 	<string>
 		<id>2224</id>
-		<value>Mappen finns redan!</value>
+		<value>Klasör zaten var!</value>
 	</string>
 	<string>
 		<id>2225</id>
-		<value>Mappen skapad!</value>
+		<value>Klasör oluþturuldu</value>
 	</string>
 	<string>
 		<id>3000</id>
-		<value>Programalternativ</value>
+		<value>Program Seçenekleri</value>
 	</string>
 	<string>
 		<id>3001</id>
-		<value>timme</value>
+		<value>Saat</value>
 	</string>
 	<string>
 		<id>3002</id>
-		<value>timmar</value>
+		<value>Saat</value>
 	</string>
 	<string>
 		<id>3003</id>
-		<value>minut</value>
+		<value>Dakika</value>
 	</string>
 	<string>
 		<id>3004</id>
-		<value>minuter</value>
+		<value>Dakika</value>
 	</string>
 	<string>
 		<id>3005</id>
-		<value>timme sen</value>
+		<value>Saat önce</value>
 	</string>
 	<string>
 		<id>3006</id>
-		<value>timmar sen</value>
+		<value>Saat önce</value>
 	</string>
 	<string>
 		<id>3007</id>
-		<value>minut sen</value>
+		<value>Dakika önce</value>
 	</string>
 	<string>
 		<id>3008</id>
-		<value>minuter sen</value>
+		<value>Dakika önce</value>
 	</string>
 	<string>
 		<id>3009</id>
-		<value>Startar om</value>
+		<value>Baþlamaya:</value>
 	</string>
 	<string>
 		<id>3010</id>
-		<value>Minuter kvar</value>
+		<value>Dakika Kaldý</value>
 	</string>
 	<string>
 		<id>3011</id>
-		<value>Timme kvar</value>
+		<value>Saat Kaldý</value>
 	</string>
 	<string>
 		<id>3012</id>
-		<value>Timmar kvar</value>
+		<value>Saat Kaldý</value>
 	</string>
 	<string>
 		<id>3013</id>
-		<value>Startar nu</value>
+		<value>Þimdi Baþlýyor</value>
 	</string>
 	<string>
 		<id>3014</id>
-		<value>Dag</value>
+		<value>Gün</value>
 	</string>
 	<string>
 		<id>3015</id>
-		<value>Dagar</value>
+		<value>Gün</value>
 	</string>
 	<string>
 		<id>3016</id>
-		<value>Redan slut</value>
+		<value>Þimdi Sonlandý</value>
 	</string>
 	<string>
 		<id>3017</id>
-		<value>Startad</value>
+		<value>Baþladý</value>
 	</string>
 	<string>
 		<id>3018</id>
-		<value>Minut kvar</value>
+		<value>Kalan Dakika</value>
 	</string>
 	<string>
 		<id>3019</id>
-		<value>Serie</value>
+		<value>Seri</value>
 	</string>
 	<string>
 		<id>3020</id>
-		<value>Avsnitt</value>
+		<value>Bölüm</value>
 	</string>
 	<string>
 		<id>3021</id>
-		<value>Del</value>
+		<value>Parça</value>
 	</string>
 	<string>
 		<id>3022</id>
-		<value>av</value>
+		<value>:</value>
 	</string>
 	<string>
 		<id>5900</id>
-		<value>Mina Trailers</value>
+		<value>Fragmaný</value>
 	</string>
 	<string>
 		<id>5901</id>
-		<value>Visa Filmer</value>
+		<value>Filmleri Göster</value>
 	</string>
 	<string>
 		<id>5902</id>
-		<value>Visa vilka filmer?</value>
+		<value>Hangi Filmleri gösterilecek?</value>
 	</string>
 	<string>
 		<id>5903</id>
-		<value>Nyligen släppta filmer</value>
+		<value>Þimdi eklenen filmleri</value>
 	</string>
 	<string>
 		<id>5904</id>
-		<value>Mest sedda filmer</value>
+		<value>En çok izlenen filmleri</value>
 	</string>
 	<string>
 		<id>5905</id>
-		<value>Alla filmer</value>
+		<value>Tüm filmleri</value>
 	</string>
 	<string>
 		<id>5906</id>
-		<value>Trailers</value>
+		<value>Fragmanlar</value>
 	</string>
 	<string>
 		<id>5907</id>
-		<value>Clips</value>
+		<value>Klipler</value>
 	</string>
 	<string>
 		<id>5908</id>
-		<value>Mer material</value>
+		<value>Daha fazla</value>
 	</string>
 	<string>
 		<id>5909</id>
-		<value>Kan inte spela film!</value>
+		<value>Film oynatýlamýyor!</value>
 	</string>
 	<string>
 		<id>5910</id>
-		<value>Hämtar film information</value>
+		<value>Film bilgisi alýnýyor</value>
 	</string>
 	<string>
 		<id>5911</id>
-		<value>Nytt på biograferna</value>
+		<value>Yeni olaylar</value>
 	</string>
 	<string>
 		<id>5912</id>
-		<value>Tidigare vecka</value>
+		<value>Önceki hafta</value>
 	</string>
 	<string>
 		<id>5913</id>
-		<value>Denna vecka</value>
+		<value>Bu hafta</value>
 	</string>
 	<string>
 		<id>5914</id>
-		<value>Nästa vecka</value>
+		<value>Gelecek hafta</value>
 	</string>
 	<string>
 		<id>5915</id>
-		<value>Inga film recensioner än</value>
+		<value>Henüz film incelemesi yok</value>
 	</string>
 	<string>
 		<id>5916</id>
-		<value>Inga trailers hittade</value>
+		<value>Fragman bulunamadý.</value>
 	</string>
 	<string>
 		<id>5917</id>
-		<value>Tyska trailers</value>
+		<value>Alman Fragmanlar</value>
 	</string>
 	<string>
 		<id>8000</id>
-		<value>Min e-post</value>
+		<value>Posta</value>
 	</string>
 	<string>
 		<id>8001</id>
-		<value>Kolla brevlådan</value>
+		<value>Posta Kutusunu Kontrol Et</value>
 	</string>
 	<string>
 		<id>8002</id>
-		<value>Autokoll Av</value>
+		<value>Otokontrol kapalý</value>
 	</string>
 	<string>
 		<id>8003</id>
-		<value>Autokoll På</value>
+		<value>Otokontrol açýk</value>
 	</string>
 	<string>
 		<id>8004</id>
-		<value>Du har ny e-post!</value>
+		<value>Yeni postanýz var!</value>
 	</string>
 	<string>
 		<id>8005</id>
-		<value>Uppdaterar brevlådan</value>
+		<value>Posta Kutusunu Tazele</value>
 	</string>
 	<string>
 		<id>8007</id>
-		<value>Autokoll På</value>
+		<value>Otokontrol</value>
 	</string>
 	<string>
 		<id>8008</id>
-		<value>Back</value>
+		<value>Geri</value>
 	</string>
 	<string>
 		<id>8009</id>
-		<value>Markera alla olästa</value>
+		<value>Okunmamýþ iþaratle</value>
 	</string>
 	<string>
 		<id>8010</id>
-		<value>Ingen brevlåda skapad</value>
+		<value>Tanýmlanmýþ MailBox yok</value>
 	</string>
 	<string>
 		<id>8011</id>
-		<value>Gå till Setup och skapa</value>
+		<value>Mail-Plugin&apos;i kullanmak için ayarlardan</value>
 	</string>
 	<string>
 		<id>8012</id>
-		<value>minst en brevlåda för att använda Mail-Pluginen.</value>
+		<value>1 MailBox (Posta Kutusu)  tanýmlanýz gereklidir.</value>
 	</string>
 	<string>
 		<id>8013</id>
-		<value>Servern svarar ej</value>
+		<value>Server yanýt vermiyor</value>
 	</string>
 	<string>
 		<id>8014</id>
-		<value>Servern&apos;{0}&apos;varar ej!</value>
+		<value>Server&apos;{0}&apos;yanýt vermedi!</value>
 	</string>
 	<string>
 		<id>8015</id>
-		<value>Kolla inst. för brevlådan&apos;{0}&apos;</value>
+		<value>MailBox&apos;{0}&apos;ayarlarýnýzý kontrol edin</value>
 	</string>
 	<string>
 		<id>8016</id>
-		<value>Från</value>
+		<value>Kimden</value>
 	</string>
 	<string>
 		<id>8017</id>
-		<value>Till</value>
+		<value>Kime</value>
 	</string>
 	<string>
 		<id>8018</id>
-		<value>Ämne</value>
+		<value>Konu</value>
 	</string>
 	<string>
 		<id>8019</id>
-		<value>Meddelande</value>
+		<value>Mesaj</value>
 	</string>
 	<string>
 		<id>8020</id>
-		<value>Ta bort e-post</value>
+		<value>Postayý sil</value>
 	</string>
 	<string>
 		<id>8021</id>
-		<value>Markera som läst</value>
+		<value>Okundu iþaratle</value>
 	</string>
 	<string>
 		<id>8022</id>
-		<value>Visa bifogade filer</value>
+		<value>Ekleri Göster</value>
 	</string>
 	<string>
 		<id>8023</id>
-		<value>Nya meddelanden mottagna</value>
+		<value>Yeni Mesaj geldi</value>
 	</string>
 	<string>
 		<id>8024</id>
-		<value>Visa meddelande</value>
+		<value>Mesajý Göster</value>
 	</string>
 	<string>
 		<id>8025</id>
-		<value>Behandlar meddelande</value>
+		<value>Mesaj Ýnceleniyor</value>
 	</string>
 	<string>
 		<id>8030</id>
-		<value>Ansluten till server</value>
+		<value>server&apos;a baðlandý</value>
 	</string>
 	<string>
 		<id>8031</id>
-		<value>Tar emot antal brev</value>
+		<value>Posta sayýsý alýnýyor</value>
 	</string>
 	<string>
 		<id>8033</id>
-		<value>Hämtar</value>
+		<value>Ýlerleme</value>
 	</string>
 	<string>
 		<id>8034</id>
-		<value>Visa HTML</value>
+		<value>Gösterim HTML</value>
 	</string>
 	<string>
 		<id>9000</id>
-		<value>Bildstorlek:</value>
+		<value>Ýmaj boyutu</value>
 	</string>
 	<string>
 		<id>9001</id>
-		<value>Upplösning:</value>
+		<value>Netlik:</value>
 	</string>
 	<string>
 		<id>9002</id>
-		<value>Blixt:</value>
+		<value>Flash:</value>
 	</string>
 	<string>
 		<id>9003</id>
-		<value>Avståndsläge:</value>
+		<value>Ölçme Modu:</value>
 	</string>
 	<string>
 		<id>9004</id>
-		<value>Exponeringskompensation:</value>
+		<value>Telafi:</value>
 	</string>
 	<string>
 		<id>9005</id>
-		<value>Slutarhastighet:</value>
+		<value>Lens kapak hýzý</value>
 	</string>
 	<string>
 		<id>9006</id>
-		<value>Datum när bilden togs:</value>
+		<value>Gün:</value>
 	</string>
 	<string>
 		<id>9007</id>
-		<value>Bländare:</value>
+		<value>Diyafram:</value>
 	</string>
 	<string>
 		<id>9008</id>
-		<value>Exponeringstid:</value>
+		<value>Çýkarma zamaný:</value>
 	</string>
 	<string>
 		<id>9009</id>
-		<value>Kameramodell:</value>
+		<value>Kamera Modeli:</value>
 	</string>
 	<string>
 		<id>9010</id>
-		<value>Tillverkare:</value>
+		<value>Ekipman Yapýsý</value>
 	</string>
 	<string>
 		<id>9011</id>
-		<value>Visa kommentarer:</value>
+		<value>Yorumlara bak:</value>
 	</string>
 	<string>
 		<id>99845</id>
-		<value>Sök i TV.com</value>
+		<value>TV.com&apos;a gözat</value>
 	</string>
 	<string>
 		<id>12902</id>
-		<value>MSN Messenger OSD</value>
+		<value>MSN Mesenger osd</value>
 	</string>
 	<string>
 		<id>13000</id>
-		<value>System:</value>
+		<value>Sistem:</value>
 	</string>
 	<string>
 		<id>13001</id>
-		<value>Tillverkare:</value>
+		<value>Yapýmcý:</value>
 	</string>
 	<string>
 		<id>13002</id>
-		<value>Launch</value>
+		<value>Baþlat</value>
 	</string>
 	<string>
 		<id>13003</id>
-		<value>Importerar *.mlf fil</value>
+		<value>*.mlf dosyasý alýnýyor</value>
 	</string>
 	<string>
 		<id>13004</id>
-		<value>Importerar *.my fil</value>
+		<value>*.my dosyasý alýnýyor</value>
 	</string>
 	<string>
 		<id>13005</id>
-		<value>Senast Importerad fil:</value>
+		<value>Son alýnan dosya</value>
 	</string>
 	<string>
 		<id>13006</id>
-		<value>Liten Bild</value>
+		<value>Küçük Resim</value>
 	</string>
 	<string>
 		<id>13007</id>
-		<value>Stor Bild</value>
+		<value>Büyük Resim</value>
 	</string>
 	<string>
 		<id>13008</id>
-		<value>Ken Burns-effekt</value>
+		<value>Ken Burns efekti</value>
 	</string>
 	<string>
 		<id>13009</id>
-		<value>Slumpmässig övergångar</value>
+		<value>Rastgele geçiþler</value>
 	</string>
 	<string>
 		<id>13010</id>
-		<value>Tonade övergångar</value>
+		<value>X-fade geçiþler</value>
 	</string>
 	<string>
 		<id>13011</id>
-		<value>Ken Burns-hastighet</value>
+		<value>Ken Burns hýzý</value>
 	</string>
 	<string>
 		<id>13012</id>
-		<value>Laddar bild, vänta lite</value>
+		<value>Resim yükleniyor, lütfen bekleyin</value>
 	</string>
 	<string>
 		<id>13013</id>
-		<value>Laddar video, vänta lite</value>
+		<value>Vidyo yükleniyor, lütfen bekleyin</value>
 	</string>
 	<string>
 		<id>13014</id>
-		<value>Söker genom mapp</value>
+		<value>Dizin taranýyor</value>
 	</string>
 	<string>
 		<id>13015</id>
-		<value>Importerar gamebase</value>
+		<value>oyun dosyasý alýnýyor</value>
 	</string>
 	<string>
 		<id>13016</id>
-		<value>Sortera efter: Antal starter</value>
+		<value>Düzeneleme: Çalýþtýrmalar</value>
 	</string>
 	<string>
 		<id>13017</id>
-		<value>Sortera efter: Senaste</value>
+		<value>Düzenleme: Son Kullanýlanlar</value>
 	</string>
 	<string>
 		<id>13018</id>
-		<value>Sortera efter: Rating</value>
+		<value>Düzenleme: Reyting</value>
 	</string>
 	<string>
 		<id>16001</id>
-		<value>Partyblanda</value>
+		<value>Parçalý Karýþtýr</value>
 	</string>
 	<string>
 		<id>25001</id>
-		<value>Väntar på sida {0:X}...!</value>
+		<value>Sayfa bekleniyor {0:X}...!</value>
 	</string>
 	<string>
 		<id>19001</id>
-		<value>Mitt Tetris</value>
+		<value>Tetris</value>
 	</string>
 	<string>
 		<id>19002</id>
-		<value>Nytt Spel</value>
+		<value>Yeni Oyun</value>
 	</string>
 	<string>
 		<id>19003</id>
-		<value>Musik</value>
+		<value>Müzik</value>
 	</string>
 	<string>
 		<id>19004</id>
-		<value>Ljud</value>
+		<value>Sesli</value>
 	</string>
 	<string>
 		<id>19005</id>
-		<value>Poäng</value>
+		<value>Skor</value>
 	</string>
 	<string>
 		<id>19006</id>
-		<value>Nivå</value>
+		<value>Düzey</value>
 	</string>
 	<string>
 		<id>19007</id>
-		<value>Rader</value>
+		<value>Hatlar</value>
 	</string>
 	<string>
 		<id>19008</id>
-		<value>Rekord</value>
+		<value>Yüksek Skor</value>
 	</string>
 	<string>
 		<id>19009</id>
-		<value>Nästa</value>
+		<value>Sonraki</value>
 	</string>
 	<string>
 		<id>19010</id>
-		<value>Tryck eller klicka för att starta...</value>
+		<value>Baþlamak için start&apos;a basýn...</value>
 	</string>
 	<string>
 		<id>19011</id>
-		<value>Pausad</value>
+		<value>Durduruldu</value>
 	</string>
 	<string>
 		<id>19012</id>
-		<value>Game Over</value>
+		<value>Oyun Sonu</value>
 	</string>
 	<string>
 		<id>19100</id>
-		<value>GeoClock</value>
+		<value>IþýkSaati</value>
 	</string>
 	<string>
 		<id>100000</id>
-		<value>Hem</value>
+		<value>Giriþ</value>
 	</string>
 	<string>
 		<id>100001</id>
-		<value>Mina Program</value>
+		<value>TV</value>
 	</string>
 	<string>
 		<id>100002</id>
-		<value>Mina Bilder</value>
+		<value>Resimler</value>
 	</string>
 	<string>
 		<id>100003</id>
-		<value>Mina Filer</value>
+		<value>Dosyalar</value>
 	</string>
 	<string>
 		<id>100004</id>
-		<value>Inställningar</value>
+		<value>Ayarlar</value>
 	</string>
 	<string>
 		<id>100005</id>
-		<value>Min Musik</value>
+		<value>Müzik</value>
 	</string>
 	<string>
 		<id>100006</id>
-		<value>Mina Filmer</value>
+		<value>Vidyolar</value>
 	</string>
 	<string>
 		<id>100007</id>
-		<value>Systeminformation</value>
+		<value>Sistem Bilgisi</value>
 	</string>
 	<string>
 		<id>100008</id>
-		<value>Inställningar-&gt;Generella</value>
+		<value>Ayarlar-&gt;Genel</value>
 	</string>
 	<string>
 		<id>100009</id>
-		<value>Inställningar-&gt;Skärm</value>
+		<value>Ayarlar-&gt;Ekran</value>
 	</string>
 	<string>
 		<id>100010</id>
-		<value>Inställningar-&gt;Skärm-&gt;UI Kalibrering</value>
+		<value>Ayarlar-&gt;Ekran-&gt;UI Kalibrasyonu</value>
 	</string>
 	<string>
 		<id>100011</id>
-		<value>Inställningar-&gt;Skärm-&gt;Skärm Kalibrering</value>
+		<value>Ayarlar-&gt;Ekran-&gt;Ekran Kalibrasyonu</value>
 	</string>
 	<string>
 		<id>100012</id>
-		<value>Inställningar-&gt;Bildspel</value>
+		<value>Ayarlar-&gt;Slayt Gösterisi</value>
 	</string>
 	<string>
 		<id>100013</id>
-		<value>Inställningar-&gt;Skärm-&gt;Filter</value>
+		<value>Ayarlar-&gt;Ekran-&gt;Filtreler</value>
 	</string>
 	<string>
 		<id>100014</id>
-		<value>Inställningar-&gt;Musik</value>
+		<value>Ayarlar-&gt;Müzik</value>
 	</string>
 	<string>
 		<id>100015</id>
-		<value>Inställningar-&gt;Skärm-&gt;Textning</value>
+		<value>Ayarlar-&gt;Ekran-&gt;Altyazýlar</value>
 	</string>
 	<string>
 		<id>100016</id>
-		<value>Inställningar-&gt;Skärm-&gt;Skärmsläckare</value>
+		<value>Ayarlar-&gt;Ekran-&gt;Ekran Koruyucu</value>
 	</string>
 	<string>
 		<id>100017</id>
-		<value>Inställningar-&gt;Väder</value>
+		<value>Ayarlar-&gt;Hava Durumu</value>
 	</string>
 	<string>
 		<id>100020</id>
-		<value>Inställningar-&gt;Script</value>
+		<value>Ayarlar-&gt;Scripts</value>
 	</string>
 	<string>
 		<id>100021</id>
-		<value>Mina Videor/genre</value>
+		<value>Vidyolar / tarz</value>
 	</string>
 	<string>
 		<id>100022</id>
-		<value>Mina Videor/skådesp.</value>
+		<value>Vidyolar / Oyuncu</value>
 	</string>
 	<string>
 		<id>100023</id>
-		<value>Mina Videor/år</value>
+		<value>Vidyolar / yýl</value>
 	</string>
 	<string>
 		<id>100024</id>
-		<value>Inställningar-&gt;Program</value>
+		<value>Ayarlar-&gt;Programlar</value>
 	</string>
 	<string>
 		<id>100025</id>
-		<value>Mina Videor/titel</value>
+		<value>Vidyolar / baþlýk</value>
 	</string>
 	<string>
 		<id>100026</id>
-		<value>Inställningar-&gt;Generella-&gt;Cache</value>
+		<value>Ayarlar-&gt;Genel-&gt;Önbellek</value>
 	</string>
 	<string>
 		<id>100027</id>
-		<value>Inställningar-&gt;Generella-&gt;Autouppsp.</value>
+		<value>Ayarlar-&gt;Genel-Oto Çalýþtýrma</value>
 	</string>
 	<string>
 		<id>100028</id>
-		<value>Mina Videor/spellista</value>
+		<value>Vidyolar / Oynatma Listesi</value>
 	</string>
 	<string>
 		<id>100029</id>
-		<value>Inställningar-&gt;Generella-&gt;LCD</value>
+		<value>Ayarlar-&gt;Genel-&gt;LCD</value>
 	</string>
 	<string>
 		<id>100030</id>
-		<value>Min Radio</value>
+		<value>Radyo</value>
 	</string>
 	<string>
 		<id>100031</id>
-		<value>Inställningar-&gt;Skärm-&gt;scroll-hastighet</value>
+		<value>Ayarlar-&gt;Ekran-&gt;kayma hýzý</value>
 	</string>
 	<string>
 		<id>100032</id>
@@ -4371,255 +4371,251 @@
 	</string>
 	<string>
 		<id>100033</id>
-		<value>MSN Messenger chat</value>
+		<value>Msn Messenger chat</value>
 	</string>
 	<string>
 		<id>100034</id>
-		<value>Mina Plugins</value>
+		<value>Plugin&apos;ler</value>
 	</string>
 	<string>
 		<id>100100</id>
-		<value>ja/nej-dialog</value>
+		<value>Evet / hayýr diyaloðu</value>
 	</string>
 	<string>
 		<id>100101</id>
-		<value>Progress dialog</value>
+		<value>Ýlerleme diyaloðu</value>
 	</string>
 	<string>
 		<id>100500</id>
-		<value>Min Musik/spellista</value>
+		<value>Müzik / oynatma listesi</value>
 	</string>
 	<string>
 		<id>100501</id>
-		<value>Min Musik/filer</value>
+		<value>Müzik / paylaþýmlar</value>
 	</string>
 	<string>
 		<id>100502</id>
-		<value>Min Musik/album</value>
+		<value>Müzik / albümler</value>
 	</string>
 	<string>
 		<id>100503</id>
-		<value>Min Musik/artister</value>
+		<value>Müzik / sanatçýlar</value>
 	</string>
 	<string>
 		<id>100504</id>
-		<value>Min Musik/genrer</value>
+		<value>Müzik / tarzlar</value>
 	</string>
 	<string>
 		<id>100505</id>
-		<value>Min Musik/top100</value>
+		<value>Müzik / top 100</value>
 	</string>
 	<string>
 		<id>100506</id>
-		<value>Min Musik/Favoriter</value>
+		<value>Müzik / Favoriler</value>
 	</string>
 	<string>
 		<id>100600</id>
-		<value>Min TV/Tablå</value>
+		<value>TV / Rehber</value>
 	</string>
 	<string>
 		<id>100601</id>
-		<value>Min TV/Planerade inspelningar</value>
+		<value>TV / Programlama</value>
 	</string>
 	<string>
 		<id>100602</id>
-		<value>Min TV/Fullskärm</value>
+		<value>TV / tam ekran</value>
 	</string>
 	<string>
 		<id>100603</id>
-		<value>Min TV/Inspelad TV</value>
+		<value>TV / Kaydedilen TV</value>
 	</string>
 	<string>
 		<id>100604</id>
-		<value>Min TV/Sök</value>
+		<value>TV / Arama</value>
 	</string>
 	<string>
 		<id>100605</id>
-		<value>Min TV/Inpelad Tv/Genre</value>
+		<value>TV/ Kaydedilen TV / Tarz</value>
 	</string>
 	<string>
 		<id>100606</id>
-		<value>Min TV/Inspelad Tv/kanaler</value>
+		<value>TV / Kaydedilen Tv / Kanallar</value>
 	</string>
 	<string>
 		<id>100607</id>
-		<value>TV/Schemaläggare/Prioriteter</value>
+		<value>TV/Programlama/Öncelikler</value>
 	</string>
 	<string>
 		<id>100608</id>
-		<value>TV/Schemaläggare/Konflikter</value>
+		<value>TV/Programlama/Uyuþmazlýklar</value>
 	</string>
 	<string>
 		<id>100609</id>
-		<value>TV/Koprimera/Översikt</value>
+		<value>TV/Sýkýþtýrma/Genel</value>
 	</string>
 	<string>
 		<id>100610</id>
-		<value>TV/Koprimera/Inställningar</value>
+		<value>TV/Sýkýþtýrma/Ayarlar</value>
 	</string>
 	<string>
 		<id>100611</id>
-		<value>TV/Koprimera/Automatiskt</value>
+		<value>TV/Sýkýþtýrma/Oto</value>
 	</string>
 	<string>
 		<id>100612</id>
-		<value>TV/Koprimera/Komprimera</value>
+		<value>TV/Sýkýþtýrma/Sýkýþtýrma</value>
 	</string>
 	<string>
 		<id>100613</id>
-		<value>TV/Koprimera/Status</value>
+		<value>TV/Sýkýþtýrma/Durum</value>
 	</string>
 	<string>
 		<id>100614</id>
-		<value>Video Artist Info</value>
+		<value>Vidyo Oyuncu Bilgisi</value>
 	</string>
 	<string>
 		<id>100615</id>
-		<value>Guide/Välkommen</value>
+		<value>Sihirbaz/Hoþgeldiniz</value>
 	</string>
 	<string>
 		<id>100616</id>
-		<value>Guide/Upptäckta kort</value>
+		<value>Sihirbaz/Algýlanan Kartlar</value>
 	</string>
 	<string>
 		<id>100617</id>
-		<value>Guide/Land</value>
+		<value>Sihirbaz/Ülke</value>
 	</string>
 	<string>
 		<id>100618</id>
-		<value>Guide/Skanna</value>
+		<value>Sihirbaz/Tarama</value>
 	</string>
 	<string>
 		<id>100619</id>
-		<value>Guide/DVBC/Land</value>
+		<value>Sihirbaz/DVBC/Ülke</value>
 	</string>
 	<string>
 		<id>100620</id>
-		<value>Guide/DVBC/Skanna</value>
+		<value>Sihirbaz/DVBC/Tarama</value>
 	</string>
 	<string>
 		<id>100621</id>
-		<value>Guide/DVBC/LNB</value>
+		<value>Sihirbaz/DVBS/LNB</value>
 	</string>
 	<string>
 		<id>100622</id>
-		<value>Guide/DVBC/LNB detaljer</value>
+		<value>Sihirbaz/DVBS/LNB detayý</value>
 	</string>
 	<string>
 		<id>100623</id>
-		<value>Guide/DVBC/Transponder</value>
+		<value>Sihirbaz/DVBS/Transporder</value>
 	</string>
 	<string>
 		<id>100624</id>
-		<value>Guide/DVBC/Skanna</value>
+		<value>Sihirbaz/DVBS/Tarama</value>
 	</string>
 	<string>
 		<id>100625</id>
-		<value>Guide/ATSC/Skanna</value>
+		<value>Sihirbaz/ATSC/Tarama</value>
 	</string>
 	<string>
 		<id>100626</id>
-		<value>Guide/Analog/Land</value>
+		<value>Sihirbaz/Analog/Ülke</value>
 	</string>
 	<string>
 		<id>100627</id>
-		<value>Guide/Analog/Stad</value>
+		<value>Sihirbaz/Analog/Þehir</value>
 	</string>
 	<string>
 		<id>100628</id>
-		<value>Guide/Analog/Importerad</value>
+		<value>Sihirbaz/Analog/Alýnan</value>
 	</string>
 	<string>
 		<id>100629</id>
-		<value>Guide/Analog/Användarhandledning</value>
+		<value>Sihirbaz/Analog/Manuel</value>
 	</string>
 	<string>
 		<id>100630</id>
-		<value>Guide/Analog/Skanna</value>
+		<value>Sihirbaz/Analog/Tarama</value>
 	</string>
 	<string>
 		<id>100631</id>
-		<value>Guide/Analog/Byt namn</value>
+		<value>Sihirbaz/Analog/Yeniden Ýsimlendir</value>
 	</string>
 	<string>
 		<id>100632</id>
-		<value>Guide/Analog/Radio</value>
+		<value>Sihirbaz/Analog/Radyo</value>
 	</string>
 	<string>
 		<id>100633</id>
-		<value>Guide/Analog/Byt namn på radio</value>
+		<value>Sihirbaz/Analog/Radyoyu Yeniden Adlandýr</value>
 	</string>
 	<string>
 		<id>100634</id>
-		<value>Guide/Fjärr</value>
+		<value>Sihirbaz/Uzaktan Kumanda</value>
 	</string>
 	<string>
 		<id>100635</id>
-		<value>Guide/EPG</value>
+		<value>Sihirbaz/EPG (Elk.Prog.Rehb.)</value>
 	</string>
 	<string>
 		<id>100699</id>
-		<value>Guide/Avslutad</value>
+		<value>Sihirbaz/Bitti</value>
 	</string>
 	<string>
 		<id>100700</id>
-		<value>TV-inställningar</value>
+		<value>TV Ayarlarý</value>
 	</string>
 	<string>
 		<id>100701</id>
-		<value>TV inspelningsinställningar</value>
+		<value>TV Kayýt Ayarlarý</value>
 	</string>
 	<string>
 		<id>100702</id>
-		<value>TV sortera kanaler</value>
+		<value>TV Kanal Düzeni</value>
 	</string>
 	<string>
 		<id>100703</id>
-		<value>TV filminställningar</value>
+		<value>TV Film Ayarlarý</value>
 	</string>
 	<string>
 		<id>100704</id>
-		<value>DVD-inställningar</value>
+		<value>DVD ayarlarý</value>
 	</string>
 	<string>
 		<id>100705</id>
-		<value>Skinninställningar</value>
+		<value>Deri ayarlarý</value>
 	</string>
 	<string>
 		<id>100748</id>
-		<value>Programinformation</value>
+		<value>Program bilgisi</value>
 	</string>
 	<string>
 		<id>100749</id>
-		<value>TV/Ingen signal</value>
+		<value>TV/Sinyal yok</value>
 	</string>
 	<string>
 		<id>100750</id>
-		<value>Mina Recept</value>
+		<value>Yemek Tarifleri</value>
 	</string>
 	<string>
 		<id>100755</id>
-		<value>Min Status</value>
+		<value>Durum</value>
 	</string>
 	<string>
 		<id>100756</id>
-		<value>Min Status detaljer</value>
+		<value>Durum Detaylarý</value>
 	</string>
 	<string>
 		<id>100757</id>
-		<value>Min Status inställningar</value>
+		<value>Durum özellikleri</value>
 	</string>
 	<string>
 		<id>100758</id>
-		<value>Fildialog</value>
-	</string>
-	<string>
-		<id>100759</id>
-		<value>Inspelad TV information</value>
+		<value>Dosya diyaloðu</value>
 	</string>
 	<string>
 		<id>100760</id>
-		<value>Min Brännare</value>
+		<value>CD/DVD Yazýcý</value>
 	</string>
 	<string>
 		<id>100770</id>
@@ -4627,214 +4623,214 @@
 	</string>
 	<string>
 		<id>101000</id>
-		<value>tangentbord</value>
+		<value>klavye</value>
 	</string>
 	<string>
 		<id>102000</id>
-		<value>Välj Dialog</value>
+		<value>Diyaloðu seç</value>
 	</string>
 	<string>
 		<id>102001</id>
-		<value>Min Musik/info</value>
+		<value>Müzik/bilgi</value>
 	</string>
 	<string>
 		<id>102002</id>
-		<value>Dialog OK</value>
+		<value>Diyalog OK</value>
 	</string>
 	<string>
 		<id>102003</id>
-		<value>Mina Filmer/info</value>
+		<value>Vidyo/Bilgi</value>
 	</string>
 	<string>
 		<id>102004</id>
-		<value>Mina Script/info</value>
+		<value>Scripts/Bilgi</value>
 	</string>
 	<string>
 		<id>102005</id>
-		<value>Fullskärmsvideo</value>
+		<value>Tam Ekran Vidyo</value>
 	</string>
 	<string>
 		<id>102006</id>
-		<value>Ljudvisualisering</value>
+		<value>Ses görselliði</value>
 	</string>
 	<string>
 		<id>102007</id>
-		<value>Mina Bilder/bildspel</value>
+		<value>Resim / Slayt Gösterisi</value>
 	</string>
 	<string>
 		<id>102008</id>
-		<value>Filgrupperings dialog</value>
+		<value>Yýðýn diyaloðu</value>
 	</string>
 	<string>
 		<id>102009</id>
-		<value>Valdialog</value>
+		<value>Seçme diyaloðu</value>
 	</string>
 	<string>
 		<id>102010</id>
-		<value>Datum/tid</value>
+		<value>Tarih/Zaman</value>
 	</string>
 	<string>
 		<id>102011</id>
-		<value>Artistinfo</value>
+		<value>Sanatçý bilgi</value>
 	</string>
 	<string>
 		<id>102012</id>
-		<value>Snabbvalsmeny</value>
+		<value>Genel mönü</value>
 	</string>
 	<string>
 		<id>102013</id>
-		<value>Sätt betyg</value>
+		<value>Reytin ayarla</value>
 	</string>
 	<string>
 		<id>102014</id>
-		<value>Bildinfo</value>
+		<value>Resim bilgisi</value>
 	</string>
 	<string>
 		<id>102015</id>
-		<value>Minimeny</value>
+		<value>Mini Mönü</value>
 	</string>
 	<string>
 		<id>102016</id>
-		<value>Upplysning</value>
+		<value>Bildiri</value>
 	</string>
 	<string>
 		<id>102600</id>
-		<value>Mitt Väder</value>
+		<value>Hava Durumu</value>
 	</string>
 	<string>
 		<id>102700</id>
-		<value>Mina Nyheter</value>
+		<value>Haberler</value>
 	</string>
 	<string>
 		<id>102900</id>
-		<value>Skärmsläckare</value>
+		<value>Ekran Koruyucu</value>
 	</string>
 	<string>
 		<id>102901</id>
-		<value>Fullskärm OSD</value>
+		<value>Tam Ekram OSD</value>
 	</string>
 	<string>
 		<id>103003</id>
-		<value>Min TV/OSD</value>
+		<value>TV / OSD</value>
 	</string>
 	<string>
 		<id>103006</id>
-		<value>Min TV/MSN OSD</value>
+		<value>TV/ MSN OSD</value>
 	</string>
 	<string>
 		<id>103007</id>
-		<value>Min TV/Zap OSD</value>
+		<value>TV / Zap OSD</value>
 	</string>
 	<string>
 		<id>107700</id>
-		<value>Min TV/Text-TV</value>
+		<value>TV / Teletext</value>
 	</string>
 	<string>
 		<id>107701</id>
-		<value>Min TV/Text-TV</value>
+		<value>TV / Teletext</value>
 	</string>
 	<string>
 		<id>200000</id>
-		<value>Var god ange vilken EPG grabber du använder. Om ditt land inte</value>
+		<value>Lütfen EPG (Elektronik Program Rehberi) uygulamanýzý seçin.</value>
 	</string>
 	<string>
 		<id>200001</id>
-		<value>finns på listan måste du tillföra EPG:n manuellt</value>
+		<value>Listede ülkeniz yoksa daha sonra manuel tanýmlayýnýz</value>
 	</string>
 	<string>
 		<id>200002</id>
-		<value>Nu kan du mappa EPG-kanalerna till dina TV-kanaler</value>
+		<value>Þimdi EPG&apos;ye (Elekt.Program Rehberi) sahip kanallarý Tv kanallarýnýzda listeleyebilirsiniz.</value>
 	</string>
 	<string>
 		<id>200003</id>
-		<value>Välj kanal och tryck Enter för att ändra mappningen</value>
+		<value>listeyi deðiþtirmek için bir kanal seçin ve enter&apos;a basýn</value>
 	</string>
 	<string>
 		<id>200004</id>
-		<value>Manuellt tillförd tvguide.xml</value>
+		<value>tvguide.xml Dosyasýný manuel saðla</value>
 	</string>
 	<string>
 		<id>200005</id>
-		<value>Var god ange vilken fjärrkontroll du använder:</value>
+		<value>Lütfen kullandýðýnýz kumandayý belirtin:</value>
 	</string>
 	<string>
 		<id>200006</id>
-		<value>Tryck Nästa för att fortsätta</value>
+		<value>Devam etmek için Ýleri&apos;ye basýn:</value>
 	</string>
 	<string>
 		<id>200007</id>
-		<value>&lt;Bakåt</value>
+		<value>&lt;Geri</value>
 	</string>
 	<string>
 		<id>200008</id>
-		<value>Inställning - Fjärrkontroll</value>
+		<value>Ayar - Kumanda Kontrolü</value>
 	</string>
 	<string>
 		<id>200009</id>
-		<value>Nästa&gt;</value>
+		<value>Ýleri&gt;</value>
 	</string>
 	<string>
 		<id>200010</id>
-		<value>MediaPortal förvandlar din PC till en HTPC - ett väldigt avancerat multimediacenter</value>
+		<value>MediaPortal bilgisayarýnýzý geliþmiþ bir Multi-Medya Merkezi yapar.</value>
 	</string>
 	<string>
 		<id>200011</id>
-		<value>Med MediaPortal kan du njuta av din favoritmusik, radio</value>
+		<value>MediaPortal ile favori müzikleriniz ve radyonuzla doyasýya eðlenin</value>
 	</string>
 	<string>
 		<id>200013</id>
-		<value>MediaPortal gör så att du kan lyssna på din favoritmusik och radio, titta på video och DVD-filmer</value>
+		<value>MediaPortal size sevdiðiniz müzik ve radyolarý dinleme;</value>
 	</string>
 	<string>
 		<id>200014</id>
-		<value>foton, videor och titta på samt spela in TV och mycket mer</value>
+		<value>vidyo, DVD, fotoðraf ve TV izleme / kaydetme  imkaný ve daha birçok özellik sunar.</value>
 	</string>
 	<string>
 		<id>200015</id>
-		<value>Den här guiden kommer att hjälpa dig att komma igång med MediaPortal snabbt och lätt. Följ stegen</value>
+		<value>Bu sihirbaz size MediaPortal&apos;ý hýzlý ve kolayca yüklemenize yardýmcý olacak. Lütfen bölümler</value>
 	</string>
 	<string>
 		<id>200016</id>
-		<value>Tryck på Nästa för att fortsätta</value>
+		<value>arasýnda geçiþ yapmak  için Ýleri butonuna týklayýnýz.</value>
 	</string>
 	<string>
 		<id>200017</id>
-		<value>Välkommen till MediaPortal</value>
+		<value>MediaPortal&apos;a Hoþ Geldiniz.</value>
 	</string>
 	<string>
 		<id>200018</id>
-		<value>Gratulerar! MediaPortal är nu färdig att användas</value>
+		<value>Tebrikler. Mediaportal kurulumu tamamlandý ve kullanýma hazýr.</value>
 	</string>
 	<string>
 		<id>200019</id>
-		<value>Tryck på Avsluta för att stänga denna guide</value>
+		<value>Bu sihirbazý kapatmak için Bitir butonuna týklayýnýz.</value>
 	</string>
 	<string>
 		<id>200020</id>
-		<value>Avsluta</value>
+		<value>Bitir</value>
 	</string>
 	<string>
 		<id>200021</id>
-		<value>TV Inställning - EPG</value>
+		<value>TV Ayarlama -EPG (Elektronik Program Rehberi)</value>
 	</string>
 	<string>
 		<id>200022</id>
-		<value>MediaPortal har hittat dessa tv-kort:</value>
+		<value>MediaPortal bulduðu tv-kartlarý:</value>
 	</string>
 	<string>
 		<id>200023</id>
-		<value>Tryck på Nästa för att konfigurera dessa kort</value>
+		<value>Bu kartlarý ayarlamak için Ýleri butonuna týklayýnýz</value>
 	</string>
 	<string>
 		<id>200024</id>
-		<value>TV Inställning</value>
+		<value>TV Ayarlama</value>
 	</string>
 	<string>
 		<id>4000</id>
-		<value>Webbläsare</value>
+		<value>Web Tarayýcý</value>
 	</string>
 	<string>
 		<id>4001</id>
-		<value>Favoriter</value>
+		<value>Favoriler</value>
 	</string>
 </strings>

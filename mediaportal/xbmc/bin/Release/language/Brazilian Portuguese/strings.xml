@@ -3,231 +3,231 @@
 	<characters>255</characters>
 	<string>
 		<id>0</id>
-		<value>Mina Program</value>
+		<value>Programas</value>
 	</string>
 	<string>
 		<id>1</id>
-		<value>Mina Bilder</value>
+		<value>Imagens</value>
 	</string>
 	<string>
 		<id>2</id>
-		<value>Min Musik</value>
+		<value>Música</value>
 	</string>
 	<string>
 		<id>3</id>
-		<value>Mina Filmer</value>
+		<value>Vídeos</value>
 	</string>
 	<string>
 		<id>4</id>
-		<value>TV-tablå</value>
+		<value>Guia da TV</value>
 	</string>
 	<string>
 		<id>5</id>
-		<value>Inställningar</value>
+		<value>Ajustes</value>
 	</string>
 	<string>
 		<id>6</id>
-		<value>MediaPortal CVS build</value>
+		<value>Build CVS do XBOX Media Center</value>
 	</string>
 	<string>
 		<id>7</id>
-		<value>Mina Filer</value>
+		<value>Arquivos</value>
 	</string>
 	<string>
 		<id>8</id>
-		<value>Mitt Väder</value>
+		<value>Tempo</value>
 	</string>
 	<string>
 		<id>9</id>
-		<value>Mina Nyheter</value>
+		<value>Notícias</value>
 	</string>
 	<string>
 		<id>10</id>
-		<value>Mina Recept</value>
+		<value>Receitas</value>
 	</string>
 	<string>
 		<id>11</id>
-		<value>Måndag</value>
+		<value>segunda-feira</value>
 	</string>
 	<string>
 		<id>12</id>
-		<value>Tisdag</value>
+		<value>terça-feira</value>
 	</string>
 	<string>
 		<id>13</id>
-		<value>Onsdag</value>
+		<value>quarta-feira</value>
 	</string>
 	<string>
 		<id>14</id>
-		<value>Torsdag</value>
+		<value>quinta-feira</value>
 	</string>
 	<string>
 		<id>15</id>
-		<value>Fredag</value>
+		<value>sexta-feira</value>
 	</string>
 	<string>
 		<id>16</id>
-		<value>Lördag</value>
+		<value>sábado</value>
 	</string>
 	<string>
 		<id>17</id>
-		<value>Söndag</value>
+		<value>domingo</value>
 	</string>
 	<string>
 		<id>21</id>
-		<value>januari</value>
+		<value>janeiro</value>
 	</string>
 	<string>
 		<id>22</id>
-		<value>februari</value>
+		<value>fevereiro</value>
 	</string>
 	<string>
 		<id>23</id>
-		<value>mars</value>
+		<value>março</value>
 	</string>
 	<string>
 		<id>24</id>
-		<value>april</value>
+		<value>abril</value>
 	</string>
 	<string>
 		<id>25</id>
-		<value>maj</value>
+		<value>maio</value>
 	</string>
 	<string>
 		<id>26</id>
-		<value>juni</value>
+		<value>junho</value>
 	</string>
 	<string>
 		<id>27</id>
-		<value>juli</value>
+		<value>julho</value>
 	</string>
 	<string>
 		<id>28</id>
-		<value>augusti</value>
+		<value>agosto</value>
 	</string>
 	<string>
 		<id>29</id>
-		<value>september</value>
+		<value>setembro</value>
 	</string>
 	<string>
 		<id>30</id>
-		<value>oktober</value>
+		<value>outubro</value>
 	</string>
 	<string>
 		<id>31</id>
-		<value>november</value>
+		<value>novembro</value>
 	</string>
 	<string>
 		<id>32</id>
-		<value>december</value>
+		<value>dezembro</value>
 	</string>
 	<string>
 		<id>50</id>
-		<value>Mina DVD-filmer</value>
+		<value>DVDs</value>
 	</string>
 	<string>
 		<id>100</id>
-		<value>Visa: Ikoner</value>
+		<value>Exibir: ícones</value>
 	</string>
 	<string>
 		<id>101</id>
-		<value>Visa: Lista</value>
+		<value>Exibir: lista</value>
 	</string>
 	<string>
 		<id>102</id>
-		<value>Skanna</value>
+		<value>Buscar arquivos</value>
 	</string>
 	<string>
 		<id>103</id>
-		<value>Sortera efter: Namn</value>
+		<value>Ordenar por: nome</value>
 	</string>
 	<string>
 		<id>104</id>
-		<value>Sortera efter: Datum</value>
+		<value>Ordenar por: data</value>
 	</string>
 	<string>
 		<id>105</id>
-		<value>Sortera efter: Storlek</value>
+		<value>Ordenar por: tamanho</value>
 	</string>
 	<string>
 		<id>106</id>
-		<value>Nej</value>
+		<value>Não</value>
 	</string>
 	<string>
 		<id>107</id>
-		<value>Ja</value>
+		<value>Sim</value>
 	</string>
 	<string>
 		<id>108</id>
-		<value>Bildspel</value>
+		<value>Slideshow</value>
 	</string>
 	<string>
 		<id>109</id>
-		<value>Skapa miniatyr</value>
+		<value>Criar miniaturas</value>
 	</string>
 	<string>
 		<id>110</id>
-		<value>Skapa miniatyr</value>
+		<value>Criar fotos pequenas</value>
 	</string>
 	<string>
 		<id>111</id>
-		<value>Genvägar</value>
+		<value>Atalhos</value>
 	</string>
 	<string>
 		<id>112</id>
-		<value>PAUSAD</value>
+		<value>PAUSA</value>
 	</string>
 	<string>
 		<id>113</id>
-		<value>Mina Filer : Källa</value>
+		<value>Arquivos: origem</value>
 	</string>
 	<string>
 		<id>114</id>
-		<value>Mina Filer : Destination</value>
+		<value>Arquivos: destino</value>
 	</string>
 	<string>
 		<id>115</id>
-		<value>Kopiera</value>
+		<value>Copiar</value>
 	</string>
 	<string>
 		<id>116</id>
-		<value>Flytta</value>
+		<value>Mover</value>
 	</string>
 	<string>
 		<id>117</id>
-		<value>Ta bort</value>
+		<value>Apagar</value>
 	</string>
 	<string>
 		<id>118</id>
-		<value>Byt namn</value>
+		<value>Renomear</value>
 	</string>
 	<string>
 		<id>119</id>
-		<value>Ny mapp</value>
+		<value>Nova pasta</value>
 	</string>
 	<string>
 		<id>120</id>
-		<value>Bekräfta kopiera fil</value>
+		<value>Confirmar cópia de arquivo</value>
 	</string>
 	<string>
 		<id>121</id>
-		<value>Bekräfta flytta fil</value>
+		<value>Confirmar movimento de arquivo</value>
 	</string>
 	<string>
 		<id>122</id>
-		<value>Bekräfta ta bort fil</value>
+		<value>Confirmar remoção de arquivo</value>
 	</string>
 	<string>
 		<id>123</id>
-		<value>Kopiera dessa filer?</value>
+		<value>Copiar estes arquivos?</value>
 	</string>
 	<string>
 		<id>124</id>
-		<value>Flytta dessa filer?</value>
+		<value>Mover estes arquivos?</value>
 	</string>
 	<string>
 		<id>125</id>
-		<value>Ta bort dessa filer?</value>
+		<value>Apagar estes arquivos?</value>
 	</string>
 	<string>
 		<id>126</id>
@@ -235,55 +235,55 @@
 	</string>
 	<string>
 		<id>127</id>
-		<value>Objekt</value>
+		<value>Objetos</value>
 	</string>
 	<string>
 		<id>128</id>
-		<value>Allmänt</value>
+		<value>Geral</value>
 	</string>
 	<string>
 		<id>129</id>
-		<value>Bildspel</value>
+		<value>Slideshow</value>
 	</string>
 	<string>
 		<id>130</id>
-		<value>Systeminfo</value>
+		<value>Informações do sistema</value>
 	</string>
 	<string>
 		<id>131</id>
-		<value>Skärm</value>
+		<value>Tela</value>
 	</string>
 	<string>
 		<id>132</id>
-		<value>Album</value>
+		<value>Álbuns</value>
 	</string>
 	<string>
 		<id>133</id>
-		<value>Artister</value>
+		<value>Artistas</value>
 	</string>
 	<string>
 		<id>134</id>
-		<value>Låtar</value>
+		<value>Compartilhamentos</value>
 	</string>
 	<string>
 		<id>135</id>
-		<value>Genrer</value>
+		<value>Gêneros</value>
 	</string>
 	<string>
 		<id>136</id>
-		<value>Spellistor</value>
+		<value>Playlist</value>
 	</string>
 	<string>
 		<id>137</id>
-		<value>Sök</value>
+		<value>Procurar</value>
 	</string>
 	<string>
 		<id>138</id>
-		<value>SYSTEMINFORMATION</value>
+		<value>INFORMAÇÕES DO SISTEMA</value>
 	</string>
 	<string>
 		<id>139</id>
-		<value>Temperaturer:</value>
+		<value>Temperaturas:</value>
 	</string>
 	<string>
 		<id>140</id>
@@ -295,11 +295,11 @@
 	</string>
 	<string>
 		<id>142</id>
-		<value>Tid:</value>
+		<value>Hora:</value>
 	</string>
 	<string>
 		<id>143</id>
-		<value>Aktuell:</value>
+		<value>Atual:</value>
 	</string>
 	<string>
 		<id>144</id>
@@ -307,15 +307,15 @@
 	</string>
 	<string>
 		<id>145</id>
-		<value>Nätverk:</value>
+		<value>Rede:</value>
 	</string>
 	<string>
 		<id>146</id>
-		<value>Typ:</value>
+		<value>Tipo:</value>
 	</string>
 	<string>
 		<id>147</id>
-		<value>Statisk</value>
+		<value>Estático</value>
 	</string>
 	<string>
 		<id>148</id>
@@ -331,11 +331,11 @@
 	</string>
 	<string>
 		<id>151</id>
-		<value>Länk:</value>
+		<value>Link:</value>
 	</string>
 	<string>
 		<id>152</id>
-		<value>Halv duplex</value>
+		<value>Half duplex</value>
 	</string>
 	<string>
 		<id>153</id>
@@ -343,131 +343,131 @@
 	</string>
 	<string>
 		<id>154</id>
-		<value>Lagring</value>
+		<value>Armazenamento</value>
 	</string>
 	<string>
 		<id>155</id>
-		<value>Enhet</value>
+		<value>Drive</value>
 	</string>
 	<string>
 		<id>156</id>
-		<value>Ledigt</value>
+		<value>Livre</value>
 	</string>
 	<string>
 		<id>157</id>
-		<value>Video</value>
+		<value>Vídeo</value>
 	</string>
 	<string>
 		<id>158</id>
-		<value>Ledigt minne</value>
+		<value>Memória livre</value>
 	</string>
 	<string>
 		<id>159</id>
-		<value>Ingen länk</value>
+		<value>Sem link</value>
 	</string>
 	<string>
 		<id>160</id>
-		<value>Ledigt</value>
+		<value>Livre</value>
 	</string>
 	<string>
 		<id>161</id>
-		<value>Otillgänglig</value>
+		<value>Indisponível</value>
 	</string>
 	<string>
 		<id>162</id>
-		<value>Släde öppen</value>
+		<value>Bandeja aberta</value>
 	</string>
 	<string>
 		<id>163</id>
-		<value>Läser</value>
+		<value>Lendo</value>
 	</string>
 	<string>
 		<id>164</id>
-		<value>Ingen disk</value>
+		<value>Sem disco</value>
 	</string>
 	<string>
 		<id>165</id>
-		<value>Disk presenterad</value>
+		<value>Disco presente</value>
 	</string>
 	<string>
 		<id>166</id>
-		<value>Skal:</value>
+		<value>Skin:</value>
 	</string>
 	<string>
 		<id>167</id>
-		<value>FTP-server:</value>
+		<value>Servidor FTP:</value>
 	</string>
 	<string>
 		<id>168</id>
-		<value>Synkronisera tid:</value>
+		<value>Sicronizar hora:</value>
 	</string>
 	<string>
 		<id>169</id>
-		<value>Upplösning:</value>
+		<value>Resolução:</value>
 	</string>
 	<string>
 		<id>170</id>
-		<value>Album:</value>
+		<value>Álbum:</value>
 	</string>
 	<string>
 		<id>171</id>
-		<value>Artist:</value>
+		<value>Artista:</value>
 	</string>
 	<string>
 		<id>172</id>
-		<value>Releasedatum:</value>
+		<value>Data de lançamento:</value>
 	</string>
 	<string>
 		<id>173</id>
-		<value>Betyg:</value>
+		<value>Class. etária:</value>
 	</string>
 	<string>
 		<id>174</id>
-		<value>Genre:</value>
+		<value>Gênero:</value>
 	</string>
 	<string>
 		<id>175</id>
-		<value>Tones:</value>
+		<value>Tons:</value>
 	</string>
 	<string>
 		<id>176</id>
-		<value>Stil:</value>
+		<value>Estilos:</value>
 	</string>
 	<string>
 		<id>177</id>
-		<value>Recension:</value>
+		<value>Avaliação:</value>
 	</string>
 	<string>
 		<id>178</id>
-		<value>Spår:</value>
+		<value>Trilhas:</value>
 	</string>
 	<string>
 		<id>179</id>
-		<value>Låt</value>
+		<value>Música</value>
 	</string>
 	<string>
 		<id>180</id>
-		<value>Längd</value>
+		<value>Duração</value>
 	</string>
 	<string>
 		<id>181</id>
-		<value>Välj album</value>
+		<value>Selecionar álbum</value>
 	</string>
 	<string>
 		<id>182</id>
-		<value>Spår</value>
+		<value>Trilhas</value>
 	</string>
 	<string>
 		<id>183</id>
-		<value>Recension</value>
+		<value>Avaliação</value>
 	</string>
 	<string>
 		<id>184</id>
-		<value>Uppdatera</value>
+		<value>Atualizar</value>
 	</string>
 	<string>
 		<id>185</id>
-		<value>Söker album</value>
+		<value>Procurando álbum</value>
 	</string>
 	<string>
 		<id>186</id>
@@ -475,119 +475,119 @@
 	</string>
 	<string>
 		<id>187</id>
-		<value>Hittade inga album!</value>
+		<value>Nenhum álbum encontrado!</value>
 	</string>
 	<string>
 		<id>188</id>
-		<value>Välj alla</value>
+		<value>Selecionar tudo</value>
 	</string>
 	<string>
 		<id>189</id>
-		<value>Söker mediainfo</value>
+		<value>Procurando dados de mídia</value>
 	</string>
 	<string>
 		<id>190</id>
-		<value>Spara</value>
+		<value>Salvar</value>
 	</string>
 	<string>
 		<id>191</id>
-		<value>Mix</value>
+		<value>Embaralhar</value>
 	</string>
 	<string>
 		<id>192</id>
-		<value>Städa</value>
+		<value>Apagar</value>
 	</string>
 	<string>
 		<id>193</id>
-		<value>Skanna</value>
+		<value>Buscar</value>
 	</string>
 	<string>
 		<id>194</id>
-		<value>Söker...</value>
+		<value>Procurando...</value>
 	</string>
 	<string>
 		<id>195</id>
-		<value>Ingen IMDB-info hittades!</value>
+		<value>Dados de IMDB não encontrados!</value>
 	</string>
 	<string>
 		<id>196</id>
-		<value>Välj film:</value>
+		<value>Selecionar filme:</value>
 	</string>
 	<string>
 		<id>197</id>
-		<value>Frågar IMDB efter info</value>
+		<value>Obtendo dados de IMDB</value>
 	</string>
 	<string>
 		<id>198</id>
-		<value>Laddar fildetaljer</value>
+		<value>Baixando detalhes do filme</value>
 	</string>
 	<string>
 		<id>199</id>
-		<value>Regissör:</value>
+		<value>Direção:</value>
 	</string>
 	<string>
 		<id>200</id>
-		<value>Författare:</value>
+		<value>Escritor:</value>
 	</string>
 	<string>
 		<id>201</id>
-		<value>År:</value>
+		<value>Ano:</value>
 	</string>
 	<string>
 		<id>202</id>
-		<value>Beteckning:</value>
+		<value>Marca:</value>
 	</string>
 	<string>
 		<id>203</id>
-		<value>Handling sammanf.:</value>
+		<value>Resumo do enredo:</value>
 	</string>
 	<string>
 		<id>204</id>
-		<value>Betyg:</value>
+		<value>Class. etária:</value>
 	</string>
 	<string>
 		<id>205</id>
-		<value>Röster:</value>
+		<value>Votos:</value>
 	</string>
 	<string>
 		<id>206</id>
-		<value>Rollista</value>
+		<value>Elenco</value>
 	</string>
 	<string>
 		<id>207</id>
-		<value>Handling</value>
+		<value>Enredo</value>
 	</string>
 	<string>
 		<id>208</id>
-		<value>Spela</value>
+		<value>Peça</value>
 	</string>
 	<string>
 		<id>209</id>
-		<value>Nästa</value>
+		<value>Próximo</value>
 	</string>
 	<string>
 		<id>210</id>
-		<value>Föregående</value>
+		<value>Anterior</value>
 	</string>
 	<string>
 		<id>211</id>
-		<value>Söker efter program</value>
+		<value>Procurando aplicações</value>
 	</string>
 	<string>
 		<id>212</id>
-		<value>program funna</value>
+		<value>aplicações encontradas</value>
 	</string>
 	<string>
 		<id>213</id>
-		<value>UI Kalibrering</value>
+		<value>Calibração da IU</value>
 	</string>
 	<string>
 		<id>214</id>
-		<value>Skärmkalibrering</value>
+		<value>Calibração da tela</value>
 	</string>
 	<string>
 		<id>215</id>
-		<value>Soften</value>
+		<value>Suavizar</value>
 	</string>
 	<string>
 		<id>216</id>
@@ -595,75 +595,75 @@
 	</string>
 	<string>
 		<id>217</id>
-		<value>Stretch</value>
+		<value>Esticar</value>
 	</string>
 	<string>
 		<id>218</id>
-		<value>DVD-enhet</value>
+		<value>Drive de DVD</value>
 	</string>
 	<string>
 		<id>219</id>
-		<value>Sätt i en skiva</value>
+		<value>Favor inserir disco</value>
 	</string>
 	<string>
 		<id>220</id>
-		<value>Remote Share</value>
+		<value>Compartilhamento remoto</value>
 	</string>
 	<string>
 		<id>221</id>
-		<value>Nätverket är anslutet</value>
+		<value>A rede não está conectada</value>
 	</string>
 	<string>
 		<id>222</id>
-		<value>Avbryt</value>
+		<value>Cancelar</value>
 	</string>
 	<string>
 		<id>223</id>
-		<value>Automatisk bredbild</value>
+		<value>Comutação widescreen automática</value>
 	</string>
 	<string>
 		<id>224</id>
-		<value>Hastighet</value>
+		<value>Velocidade</value>
 	</string>
 	<string>
 		<id>225</id>
-		<value>Varaktighet för övergång</value>
+		<value>Tempo de transição</value>
 	</string>
 	<string>
 		<id>226</id>
-		<value>Aktivera PAL60</value>
+		<value>Ativar PAL60</value>
 	</string>
 	<string>
 		<id>227</id>
-		<value>Aktivera CDDB</value>
+		<value>Ativar CDDB</value>
 	</string>
 	<string>
 		<id>228</id>
-		<value>Blanda spellista vid laddning</value>
+		<value>Embaralhar playlist ao carregar</value>
 	</string>
 	<string>
 		<id>229</id>
-		<value>HD-nedspinningstid (minuter)</value>
+		<value>Tempo para spindown do HD (min)</value>
 	</string>
 	<string>
 		<id>230</id>
-		<value>Filter</value>
+		<value>Filtros</value>
 	</string>
 	<string>
 		<id>231</id>
-		<value>Ingen</value>
+		<value>Nenhum</value>
 	</string>
 	<string>
 		<id>232</id>
-		<value>Point</value>
+		<value>Ponto</value>
 	</string>
 	<string>
 		<id>233</id>
-		<value>Linjär</value>
+		<value>Linear</value>
 	</string>
 	<string>
 		<id>234</id>
-		<value>Anisotropic</value>
+		<value>Anisotrópico</value>
 	</string>
 	<string>
 		<id>235</id>
@@ -671,75 +671,75 @@
 	</string>
 	<string>
 		<id>236</id>
-		<value>Gaussian Cubic</value>
+		<value>Cúbico gaussiano</value>
 	</string>
 	<string>
 		<id>237</id>
-		<value>Minification:</value>
+		<value>Minificação:</value>
 	</string>
 	<string>
 		<id>238</id>
-		<value>Magnification:</value>
+		<value>Magnificação:</value>
 	</string>
 	<string>
 		<id>240</id>
-		<value>Autostarta DVD-Video</value>
+		<value>Auto-tocar DVD-Video</value>
 	</string>
 	<string>
 		<id>241</id>
-		<value>Autostarta VCD/SVCD</value>
+		<value>Auto-tocar VCD/SVCD</value>
 	</string>
 	<string>
 		<id>242</id>
-		<value>Autostarta Ljud-CD</value>
+		<value>Auto-tocar CD de áudio</value>
 	</string>
 	<string>
 		<id>243</id>
-		<value>Autostarta XBOX-spel</value>
+		<value>Auto-tocar jogos de XBOX</value>
 	</string>
 	<string>
 		<id>244</id>
-		<value>Autostarta videor</value>
+		<value>Auto-tocar vídeos</value>
 	</string>
 	<string>
 		<id>245</id>
-		<value>Autostarta musik</value>
+		<value>Auto-tocar música</value>
 	</string>
 	<string>
 		<id>246</id>
-		<value>Autostarta bilder</value>
+		<value>Auto-tocar imagens</value>
 	</string>
 	<string>
 		<id>247</id>
-		<value>Skript</value>
+		<value>Scripts</value>
 	</string>
 	<string>
 		<id>248</id>
-		<value>Språk</value>
+		<value>Linguagem</value>
 	</string>
 	<string>
 		<id>249</id>
-		<value>Musik</value>
+		<value>Música</value>
 	</string>
 	<string>
 		<id>250</id>
-		<value>Visualisering</value>
+		<value>Visualização</value>
 	</string>
 	<string>
 		<id>251</id>
-		<value>Välj målmapp</value>
+		<value>Selecionar pasta de destino</value>
 	</string>
 	<string>
 		<id>252</id>
-		<value>Mata ut till alla högtalare</value>
+		<value>Saída para todos os auto-falantes</value>
 	</string>
 	<string>
 		<id>253</id>
-		<value>Antal kanaler</value>
+		<value>Número de canais</value>
 	</string>
 	<string>
 		<id>254</id>
-		<value>DD Stereo Passthrough</value>
+		<value>DD stereo transparente</value>
 	</string>
 	<string>
 		<id>255</id>
@@ -747,19 +747,19 @@
 	</string>
 	<string>
 		<id>256</id>
-		<value>Frågar FreeDB efter CDDB-info</value>
+		<value>Buscando informação CDDB no freedb</value>
 	</string>
 	<string>
 		<id>257</id>
-		<value>Fel</value>
+		<value>Erro</value>
 	</string>
 	<string>
 		<id>258</id>
-		<value>Aktivera ID3-taggar</value>
+		<value>Ativar marcas ID3</value>
 	</string>
 	<string>
 		<id>259</id>
-		<value>Öppnar</value>
+		<value>Abrindo</value>
 	</string>
 	<string>
 		<id>260</id>
@@ -767,187 +767,187 @@
 	</string>
 	<string>
 		<id>261</id>
-		<value>Väntar på start....</value>
+		<value>Esperando pelo começo...</value>
 	</string>
 	<string>
 		<id>262</id>
-		<value>Skript output</value>
+		<value>Saída de scripts</value>
 	</string>
 	<string>
 		<id>263</id>
-		<value>HTTP-server:</value>
+		<value>Servidor HTTP:</value>
 	</string>
 	<string>
 		<id>264</id>
-		<value>Spela in</value>
+		<value>Gravar</value>
 	</string>
 	<string>
 		<id>265</id>
-		<value>Stoppa Insp.</value>
+		<value>Parar gravação</value>
 	</string>
 	<string>
 		<id>266</id>
-		<value>Sortera efter: Spår</value>
+		<value>Ordenar por: trilha</value>
 	</string>
 	<string>
 		<id>267</id>
-		<value>Sortera efter: Tid</value>
+		<value>Ordenar por: data</value>
 	</string>
 	<string>
 		<id>268</id>
-		<value>Sortera efter: Titel</value>
+		<value>Ordenar por: título</value>
 	</string>
 	<string>
 		<id>269</id>
-		<value>Sortera efter: Artist</value>
+		<value>Ordenar por: artista</value>
 	</string>
 	<string>
 		<id>270</id>
-		<value>Sortera efter: Album</value>
+		<value>Ordenar por: álbum</value>
 	</string>
 	<string>
 		<id>271</id>
-		<value>Topp 100</value>
+		<value>100 melhores</value>
 	</string>
 	<string>
 		<id>272</id>
-		<value>Top Left Overscan Compensation</value>
+		<value>Compensação de overscan superior esquerdo</value>
 	</string>
 	<string>
 		<id>273</id>
-		<value>Bottom Right Overscan Compensation</value>
+		<value>Compensação de overscan inferior direito</value>
 	</string>
 	<string>
 		<id>274</id>
-		<value>Undertextposition</value>
+		<value>Posição das legendas</value>
 	</string>
 	<string>
 		<id>275</id>
-		<value>Justering av pixel ratio</value>
+		<value>Ajuste de altura/largura</value>
 	</string>
 	<string>
 		<id>276</id>
-		<value>Ändra hur mycket överskanning du vill ha genom att flytta pilen</value>
+		<value>-ATENÇÂO!- Deixe em 0,0 para melhor qualidade, mude para encaixar vídeo diminuído.</value>
 	</string>
 	<string>
 		<id>277</id>
-		<value>Placera textningen genom att flytta rutan</value>
+		<value>Mova a barra para mudar a posição das legendas</value>
 	</string>
 	<string>
 		<id>278</id>
-		<value>Ändra rektangeln så att den är helt kvadratisk</value>
+		<value>-IMPORTANTE!- Para melhor qualidade, ajuste o retângulo para ser um quadrado perfeito</value>
 	</string>
 	<string>
 		<id>279</id>
-		<value>Kan inte ladda inställningarna</value>
+		<value>Impossível carregar configurações</value>
 	</string>
 	<string>
 		<id>280</id>
-		<value>använder standardinställningar</value>
+		<value>usando configurações de fábrica</value>
 	</string>
 	<string>
 		<id>281</id>
-		<value>Var vänlig kolla .xml-filerna</value>
+		<value>Favor verificar os arquivos .xml</value>
 	</string>
 	<string>
 		<id>282</id>
-		<value>hittade %i poster</value>
+		<value>%i ítens encontrados</value>
 	</string>
 	<string>
 		<id>283</id>
-		<value>Sökresultat</value>
+		<value>Resultados da busca</value>
 	</string>
 	<string>
 		<id>284</id>
-		<value>Inga resultat funna</value>
+		<value>Nenhum resultado encontrado</value>
 	</string>
 	<string>
 		<id>285</id>
-		<value>Deinterlace filter</value>
+		<value>Filtro deinterlace</value>
 	</string>
 	<string>
 		<id>286</id>
-		<value>Postprocessing filter</value>
+		<value>Filtro pós-processamento</value>
 	</string>
 	<string>
 		<id>287</id>
-		<value>Textning</value>
+		<value>Legendas</value>
 	</string>
 	<string>
 		<id>288</id>
-		<value>Typsnitt</value>
+		<value>Fonte</value>
 	</string>
 	<string>
 		<id>289</id>
-		<value>Storlek</value>
+		<value>Tamanho</value>
 	</string>
 	<string>
 		<id>290</id>
-		<value>Volymförstärkning (dB)</value>
+		<value>Amplificação do volume (dB)</value>
 	</string>
 	<string>
 		<id>291</id>
-		<value>Video</value>
+		<value>Vídeo</value>
 	</string>
 	<string>
 		<id>292</id>
-		<value>Ljud</value>
+		<value>Áudio</value>
 	</string>
 	<string>
 		<id>293</id>
-		<value>Undertexter</value>
+		<value>Legendas</value>
 	</string>
 	<string>
 		<id>294</id>
-		<value>Skapa bokmärken</value>
+		<value>Criar marcador</value>
 	</string>
 	<string>
 		<id>295</id>
-		<value>Spela bokmärken i följd</value>
+		<value>Circular entre marcadores</value>
 	</string>
 	<string>
 		<id>296</id>
-		<value>Rensa bokmärken</value>
+		<value>Limpar marcadores</value>
 	</string>
 	<string>
 		<id>297</id>
-		<value>AV-fördröjning</value>
+		<value>AVDelay</value>
 	</string>
 	<string>
 		<id>298</id>
-		<value>Slider</value>
+		<value>Barra</value>
 	</string>
 	<string>
 		<id>299</id>
-		<value>Speltid:</value>
+		<value>Tempo real:</value>
 	</string>
 	<string>
 		<id>300</id>
-		<value>1. Språk</value>
+		<value>1. Linguagem</value>
 	</string>
 	<string>
 		<id>301</id>
-		<value>2. Volym</value>
+		<value>2. Volume</value>
 	</string>
 	<string>
 		<id>302</id>
-		<value>3. Strömma</value>
+		<value>3. Stream</value>
 	</string>
 	<string>
 		<id>303</id>
-		<value>Fördröjning</value>
+		<value>Atraso</value>
 	</string>
 	<string>
 		<id>304</id>
-		<value>Språk</value>
+		<value>Linguagem</value>
 	</string>
 	<string>
 		<id>305</id>
-		<value>Aktiverat</value>
+		<value>Ativado</value>
 	</string>
 	<string>
 		<id>306</id>
-		<value>Non-Interleaved</value>
+		<value>Não-entrelaçado</value>
 	</string>
 	<string>
 		<id>307</id>
@@ -955,15 +955,15 @@
 	</string>
 	<string>
 		<id>308</id>
-		<value>vertical deblocking filter</value>
+		<value>filtro de deblocking vertical</value>
 	</string>
 	<string>
 		<id>309</id>
-		<value>horizontal deblocking filter</value>
+		<value>filtro de deblocking horizontal</value>
 	</string>
 	<string>
 		<id>310</id>
-		<value>Automatisk ljusstyrka/kontrast</value>
+		<value>Auto brilho/contraste</value>
 	</string>
 	<string>
 		<id>311</id>
@@ -975,107 +975,107 @@
 	</string>
 	<string>
 		<id>313</id>
-		<value>Omorganisera databasen</value>
+		<value>Reorganizar banco de dados</value>
 	</string>
 	<string>
 		<id>314</id>
-		<value>Förbereder...</value>
+		<value>Preparando...</value>
 	</string>
 	<string>
 		<id>315</id>
-		<value>Databasfel</value>
+		<value>Erro no banco de dados</value>
 	</string>
 	<string>
 		<id>316</id>
-		<value>Söker låtar...</value>
+		<value>Procurando músicas...</value>
 	</string>
 	<string>
 		<id>317</id>
-		<value>Omorganisationen lyckades</value>
+		<value>Reorganização concluída</value>
 	</string>
 	<string>
 		<id>318</id>
-		<value>Markerar raderade låtar</value>
+		<value>Marcando músicas apagadas</value>
 	</string>
 	<string>
 		<id>319</id>
-		<value>Fel vid omorganisering av låtar</value>
+		<value>Erro ao reorganizar músicas</value>
 	</string>
 	<string>
 		<id>320</id>
-		<value>Söker artister...</value>
+		<value>Procurando artistas...</value>
 	</string>
 	<string>
 		<id>321</id>
-		<value>Fel vid omorganisering av artister</value>
+		<value>Erro ao reorganizar artistas</value>
 	</string>
 	<string>
 		<id>322</id>
-		<value>Söker genrer...</value>
+		<value>Procurando gêneros...</value>
 	</string>
 	<string>
 		<id>323</id>
-		<value>Fel vid omorganisering av genrer</value>
+		<value>Erro ao reorganizar gêneros</value>
 	</string>
 	<string>
 		<id>324</id>
-		<value>Söker sökvägar...</value>
+		<value>Procurando caminhos...</value>
 	</string>
 	<string>
 		<id>325</id>
-		<value>Fel vid omorganisation av sökvägar</value>
+		<value>Erro ao reorganizar caminhos</value>
 	</string>
 	<string>
 		<id>326</id>
-		<value>Söker album...</value>
+		<value>Procurando álbuns...</value>
 	</string>
 	<string>
 		<id>327</id>
-		<value>Fel vid omorganisering av album</value>
+		<value>Erro a reorganizar álbuns</value>
 	</string>
 	<string>
 		<id>328</id>
-		<value>Skriver ändringar...</value>
+		<value>Salvando alterações...</value>
 	</string>
 	<string>
 		<id>329</id>
-		<value>Fel vid skrivning av ändringar</value>
+		<value>Erro ao salvar alterações</value>
 	</string>
 	<string>
 		<id>330</id>
-		<value>Detta tar en stund...</value>
+		<value>Isto pode levar algum tempo...</value>
 	</string>
 	<string>
 		<id>331</id>
-		<value>Komprimerar databasen...</value>
+		<value>Comprimindo banco de dados...</value>
 	</string>
 	<string>
 		<id>332</id>
-		<value>Fel vid komprimering av databasen</value>
+		<value>Erro a comprimir banco de dados</value>
 	</string>
 	<string>
 		<id>333</id>
-		<value>Vill du omorganisera musikdatabasen?</value>
+		<value>Quer reorganizar o banco de dados de músicas?</value>
 	</string>
 	<string>
 		<id>334</id>
-		<value>Omorganisera musikdatabas</value>
+		<value>Reorganizar o banco de dados de músicas</value>
 	</string>
 	<string>
 		<id>335</id>
-		<value>Starta</value>
+		<value>Iniciar</value>
 	</string>
 	<string>
 		<id>336</id>
-		<value>Jus. Framerate</value>
+		<value>Aj. framerate</value>
 	</string>
 	<string>
 		<id>337</id>
-		<value>Audio Output:</value>
+		<value>Saida de áudio:</value>
 	</string>
 	<string>
 		<id>338</id>
-		<value>Analog</value>
+		<value>Analógica</value>
 	</string>
 	<string>
 		<id>339</id>
@@ -1083,115 +1083,115 @@
 	</string>
 	<string>
 		<id>340</id>
-		<value>Blandade artister</value>
+		<value>Vários artistas</value>
 	</string>
 	<string>
 		<id>341</id>
-		<value>Spela DVD</value>
+		<value>Tocar DVD</value>
 	</string>
 	<string>
 		<id>342</id>
-		<value>Filmer</value>
+		<value>Filmes</value>
 	</string>
 	<string>
 		<id>343</id>
-		<value>Justera framerate</value>
+		<value>Ajustar framerate</value>
 	</string>
 	<string>
 		<id>344</id>
-		<value>Skådespelare</value>
+		<value>Atores</value>
 	</string>
 	<string>
 		<id>345</id>
-		<value>År</value>
+		<value>Ano</value>
 	</string>
 	<string>
 		<id>346</id>
-		<value>Gruppera</value>
+		<value>Empilhar</value>
 	</string>
 	<string>
 		<id>347</id>
-		<value>Avgruppera</value>
+		<value>Desempilhar</value>
 	</string>
 	<string>
 		<id>348</id>
-		<value>Platta ut mappstrukturen</value>
+		<value>Planificar hierarquia de pastas</value>
 	</string>
 	<string>
 		<id>349</id>
-		<value>Visa endast Default.xbe</value>
+		<value>Exibir apenas Default.xbe</value>
 	</string>
 	<string>
 		<id>350</id>
-		<value>Program</value>
+		<value>Programas</value>
 	</string>
 	<string>
 		<id>351</id>
-		<value>Av</value>
+		<value>Desligado</value>
 	</string>
 	<string>
 		<id>352</id>
-		<value>Dimma</value>
+		<value>Dim</value>
 	</string>
 	<string>
 		<id>353</id>
-		<value>Svart</value>
+		<value>Preto</value>
 	</string>
 	<string>
 		<id>354</id>
-		<value>Matrix Trails</value>
+		<value>Trilhas de Matrix</value>
 	</string>
 	<string>
 		<id>355</id>
-		<value>Skärmsläckarfördröjning</value>
+		<value>Intervalo para acionar protetor de tela</value>
 	</string>
 	<string>
 		<id>356</id>
-		<value>Skärmsläckarläge</value>
+		<value>Modo protetor de tela</value>
 	</string>
 	<string>
 		<id>357</id>
-		<value>Avstängningsfördröjning</value>
+		<value>Tempo de espera para desligar</value>
 	</string>
 	<string>
 		<id>358</id>
-		<value>Alla album</value>
+		<value>Todos os álbuns</value>
 	</string>
 	<string>
 		<id>359</id>
-		<value>Senaste album</value>
+		<value>Álbuns recentes</value>
 	</string>
 	<string>
 		<id>360</id>
-		<value>Skärmsläckare</value>
+		<value>Protetor de tela</value>
 	</string>
 	<string>
 		<id>361</id>
-		<value>Bildspel med undermappar</value>
+		<value>R. slideshow</value>
 	</string>
 	<string>
 		<id>362</id>
-		<value>Skärmsläckare toningsnivå (%)</value>
+		<value>Nível de fade do protetor de tela (%)</value>
 	</string>
 	<string>
 		<id>363</id>
-		<value>Sortera efter: Fil</value>
+		<value>Ordenar por: arquivo</value>
 	</string>
 	<string>
 		<id>364</id>
-		<value>DD/DTS Multichannel Passthrough</value>
+		<value>DD/DTS multi-canal transparente</value>
 	</string>
 	<string>
 		<id>365</id>
-		<value>Sortera efter: Namn</value>
+		<value>Ordenar por: nome</value>
 	</string>
 	<string>
 		<id>366</id>
-		<value>Sortera efter: År</value>
+		<value>Ordenar por: ano</value>
 	</string>
 	<string>
 		<id>367</id>
-		<value>Sortera efter: Betyg</value>
+		<value>Ordenar por: class. etária</value>
 	</string>
 	<string>
 		<id>368</id>
@@ -1199,39 +1199,39 @@
 	</string>
 	<string>
 		<id>369</id>
-		<value>Titel</value>
+		<value>Título</value>
 	</string>
 	<string>
 		<id>370</id>
-		<value>åska</value>
+		<value>tempestades</value>
 	</string>
 	<string>
 		<id>371</id>
-		<value>delvis</value>
+		<value>parcial.</value>
 	</string>
 	<string>
 		<id>372</id>
-		<value>mestadels</value>
+		<value>predom.</value>
 	</string>
 	<string>
 		<id>373</id>
-		<value>soligt</value>
+		<value>ensolarado</value>
 	</string>
 	<string>
 		<id>374</id>
-		<value>molnigt</value>
+		<value>nublado</value>
 	</string>
 	<string>
 		<id>375</id>
-		<value>snö</value>
+		<value>neve</value>
 	</string>
 	<string>
 		<id>376</id>
-		<value>regn</value>
+		<value>chuva</value>
 	</string>
 	<string>
 		<id>377</id>
-		<value>lätt</value>
+		<value>leve</value>
 	</string>
 	<string>
 		<id>378</id>
@@ -1243,231 +1243,231 @@
 	</string>
 	<string>
 		<id>380</id>
-		<value>skurar</value>
+		<value>aguaceiros</value>
 	</string>
 	<string>
 		<id>381</id>
-		<value>få</value>
+		<value>pouco</value>
 	</string>
 	<string>
 		<id>382</id>
-		<value>spridda</value>
+		<value>disperso(a)s</value>
 	</string>
 	<string>
 		<id>383</id>
-		<value>vind</value>
+		<value>vento</value>
 	</string>
 	<string>
 		<id>384</id>
-		<value>stark</value>
+		<value>forte</value>
 	</string>
 	<string>
 		<id>385</id>
-		<value>lagom</value>
+		<value>moderado</value>
 	</string>
 	<string>
 		<id>386</id>
-		<value>klart</value>
+		<value>limpo</value>
 	</string>
 	<string>
 		<id>387</id>
-		<value>tidig</value>
+		<value>cedo</value>
 	</string>
 	<string>
 		<id>388</id>
-		<value>och</value>
+		<value>e</value>
 	</string>
 	<string>
 		<id>389</id>
-		<value>dimma</value>
+		<value>neblina</value>
 	</string>
 	<string>
 		<id>390</id>
-		<value>dis</value>
+		<value>nevoeiro</value>
 	</string>
 	<string>
 		<id>391</id>
-		<value>blåsigt</value>
+		<value>brisa</value>
 	</string>
 	<string>
 		<id>392</id>
-		<value>duggregn</value>
+		<value>chuviscos</value>
 	</string>
 	<string>
 		<id>393</id>
-		<value>frost</value>
+		<value>congelante</value>
 	</string>
 	<string>
 		<id>394</id>
-		<value>saknas</value>
+		<value>N/D</value>
 	</string>
 	<string>
 		<id>396</id>
-		<value>Välj plats</value>
+		<value>Selecionar local</value>
 	</string>
 	<string>
 		<id>397</id>
-		<value>Intervall</value>
+		<value>Atualizar hora</value>
 	</string>
 	<string>
 		<id>398</id>
-		<value>Temperaturenheter</value>
+		<value>Unidade de temperatura</value>
 	</string>
 	<string>
 		<id>399</id>
-		<value>Hastighetsenheter</value>
+		<value>Unidade de velocidade</value>
 	</string>
 	<string>
 		<id>400</id>
-		<value>Väder</value>
+		<value>Tempo</value>
 	</string>
 	<string>
 		<id>401</id>
-		<value>Temperatur</value>
+		<value>Temperatura</value>
 	</string>
 	<string>
 		<id>402</id>
-		<value>Känns som</value>
+		<value>Sensação</value>
 	</string>
 	<string>
 		<id>403</id>
-		<value>UV Index</value>
+		<value>Índice UV</value>
 	</string>
 	<string>
 		<id>404</id>
-		<value>Vind</value>
+		<value>Vento</value>
 	</string>
 	<string>
 		<id>405</id>
-		<value>Daggpunkt</value>
+		<value>P. de orvalho</value>
 	</string>
 	<string>
 		<id>406</id>
-		<value>Luftfuktighet</value>
+		<value>Umidade</value>
 	</string>
 	<string>
 		<id>407</id>
-		<value>från</value>
+		<value>de</value>
 	</string>
 	<string>
 		<id>408</id>
-		<value>på</value>
+		<value>a</value>
 	</string>
 	<string>
 		<id>410</id>
-		<value>Hämtar från Weather.com</value>
+		<value>Acessando Weather.com</value>
 	</string>
 	<string>
 		<id>411</id>
-		<value>Hämtar väder för:</value>
+		<value>Obtendo condições do tempo para:</value>
 	</string>
 	<string>
 		<id>412</id>
-		<value>Kunde inte hämta väderdata</value>
+		<value>Impossivel obter dados</value>
 	</string>
 	<string>
 		<id>413</id>
-		<value>Manuell</value>
+		<value>Manual</value>
 	</string>
 	<string>
 		<id>414</id>
-		<value>Detta album saknar recension</value>
+		<value>Álbum sem avaliação</value>
 	</string>
 	<string>
 		<id>415</id>
-		<value>Laddar miniatyr...</value>
+		<value>Carregando miniatura...</value>
 	</string>
 	<string>
 		<id>416</id>
-		<value>Ej tillgänglig</value>
+		<value>Não disponível</value>
 	</string>
 	<string>
 		<id>417</id>
-		<value>Visa: Stora ikoner</value>
+		<value>Exibir: ícones grandes</value>
 	</string>
 	<string>
 		<id>418</id>
-		<value>Mina filmer/Genrer</value>
+		<value>Vídeos/gêneros</value>
 	</string>
 	<string>
 		<id>419</id>
-		<value>Mina filmer/Skådespelare</value>
+		<value>Vídeos/atores</value>
 	</string>
 	<string>
 		<id>420</id>
-		<value>Mina filmer/År</value>
+		<value>Vídeos/anos</value>
 	</string>
 	<string>
 		<id>421</id>
-		<value>Mina filmer/Titel</value>
+		<value>Vídeos/título</value>
 	</string>
 	<string>
 		<id>422</id>
-		<value>Ta bort albuminfo</value>
+		<value>Apagar informação do álbum</value>
 	</string>
 	<string>
 		<id>423</id>
-		<value>Ta bort CDDB-info</value>
+		<value>Apagar informação CDDB</value>
 	</string>
 	<string>
 		<id>424</id>
-		<value>Välj</value>
+		<value>Selecionar</value>
 	</string>
 	<string>
 		<id>425</id>
-		<value>Ingen albuminfo hittad</value>
+		<value>Informação do álbum não encontrada.</value>
 	</string>
 	<string>
 		<id>426</id>
-		<value>Ingen CDDB-info hittad</value>
+		<value>Informação CDDB não encontrada.</value>
 	</string>
 	<string>
 		<id>427</id>
-		<value>Disk:</value>
+		<value>Disco:</value>
 	</string>
 	<string>
 		<id>428</id>
-		<value>Sätt i rätt CD/DVD</value>
+		<value>Inserir CD/DVD correto</value>
 	</string>
 	<string>
 		<id>429</id>
-		<value>Sätt i följande CD/DVD</value>
+		<value>Favor inserir o seguinte CD/DVD</value>
 	</string>
 	<string>
 		<id>430</id>
-		<value>Sortera efter: DVD#</value>
+		<value>Ordenar por: DVD#</value>
 	</string>
 	<string>
 		<id>431</id>
-		<value>Ingen cache</value>
+		<value>Sem cache</value>
 	</string>
 	<string>
 		<id>432</id>
-		<value>Radera film från databasen</value>
+		<value>Apagar filme do banco de dados</value>
 	</string>
 	<string>
 		<id>433</id>
-		<value>Är du säker på att du vill radera</value>
+		<value>Quer mesmo remover</value>
 	</string>
 	<string>
 		<id>434</id>
-		<value>filmen?</value>
+		<value>o filme?</value>
 	</string>
 	<string>
 		<id>435</id>
-		<value>Spår</value>
+		<value>Trilha</value>
 	</string>
 	<string>
 		<id>436</id>
-		<value>År:</value>
+		<value>Ano:</value>
 	</string>
 	<string>
 		<id>437</id>
-		<value>Längd:</value>
+		<value>Duração:</value>
 	</string>
 	<string>
 		<id>438</id>
-		<value>Öppnar fil</value>
+		<value>Abrindo arquivo</value>
 	</string>
 	<string>
 		<id>439</id>
@@ -1475,7 +1475,7 @@
 	</string>
 	<string>
 		<id>440</id>
-		<value>Hårddisk</value>
+		<value>Disco rígido</value>
 	</string>
 	<string>
 		<id>441</id>
@@ -1491,11 +1491,11 @@
 	</string>
 	<string>
 		<id>444</id>
-		<value>video</value>
+		<value>vídeo</value>
 	</string>
 	<string>
 		<id>445</id>
-		<value>ljud</value>
+		<value>áudio</value>
 	</string>
 	<string>
 		<id>446</id>
@@ -1503,7 +1503,7 @@
 	</string>
 	<string>
 		<id>447</id>
-		<value>Autostart</value>
+		<value>Auto-tocar</value>
 	</string>
 	<string>
 		<id>448</id>
@@ -1511,39 +1511,39 @@
 	</string>
 	<string>
 		<id>449</id>
-		<value>Aktiverad</value>
+		<value>Ativo</value>
 	</string>
 	<string>
 		<id>450</id>
-		<value>Kolumner</value>
+		<value>Colunas</value>
 	</string>
 	<string>
 		<id>451</id>
-		<value>Kolumn 1 adress:</value>
+		<value>Endereço da linha 1:</value>
 	</string>
 	<string>
 		<id>452</id>
-		<value>Kolumn 2 adress:</value>
+		<value>Endereço da linha 2:</value>
 	</string>
 	<string>
 		<id>453</id>
-		<value>Kolumn 3 adress:</value>
+		<value>Endereço da linha 3:</value>
 	</string>
 	<string>
 		<id>454</id>
-		<value>Kolumn 4 adress:</value>
+		<value>Endereço da linha 4:</value>
 	</string>
 	<string>
 		<id>455</id>
-		<value>Kolumner:</value>
+		<value>Linhas:</value>
 	</string>
 	<string>
 		<id>456</id>
-		<value>Stil:</value>
+		<value>Modo:</value>
 	</string>
 	<string>
 		<id>457</id>
-		<value>Ändra vy</value>
+		<value>Trocar visualização</value>
 	</string>
 	<string>
 		<id>458</id>
@@ -1551,51 +1551,51 @@
 	</string>
 	<string>
 		<id>459</id>
-		<value>Texter</value>
+		<value>Subs</value>
 	</string>
 	<string>
 		<id>460</id>
-		<value>Ljudström</value>
+		<value>Stream de áudio</value>
 	</string>
 	<string>
 		<id>461</id>
-		<value>[aktiv]</value>
+		<value>[ativo]</value>
 	</string>
 	<string>
 		<id>462</id>
-		<value>Textning</value>
+		<value>Legenda</value>
 	</string>
 	<string>
 		<id>463</id>
-		<value>Bakgrundsbelysning</value>
+		<value>Backlight</value>
 	</string>
 	<string>
 		<id>464</id>
-		<value>Ljusstyrka</value>
+		<value>Brilho</value>
 	</string>
 	<string>
 		<id>465</id>
-		<value>Kontrast</value>
+		<value>Contraste</value>
 	</string>
 	<string>
 		<id>466</id>
-		<value>Gamma</value>
+		<value>Gama</value>
 	</string>
 	<string>
 		<id>467</id>
-		<value>Typ</value>
+		<value>Tipo</value>
 	</string>
 	<string>
 		<id>468</id>
-		<value>Flytta rektangeln för att ändra OSD-placering</value>
+		<value>Mova a barra para mudar a posição do OSD</value>
 	</string>
 	<string>
 		<id>469</id>
-		<value>OSD-placering</value>
+		<value>Posição do OSD</value>
 	</string>
 	<string>
 		<id>470</id>
-		<value>Credits</value>
+		<value>Créditos</value>
 	</string>
 	<string>
 		<id>471</id>
@@ -1603,27 +1603,27 @@
 	</string>
 	<string>
 		<id>472</id>
-		<value>OSD-timeout</value>
+		<value>Timeout do OSD</value>
 	</string>
 	<string>
 		<id>473</id>
-		<value>High Quality Resampling</value>
+		<value>Resampling de alta qualidade</value>
 	</string>
 	<string>
 		<id>474</id>
-		<value>Av</value>
+		<value>Desligado</value>
 	</string>
 	<string>
 		<id>475</id>
-		<value>Endast musik</value>
+		<value>Só música</value>
 	</string>
 	<string>
 		<id>476</id>
-		<value>Musik&amp;video</value>
+		<value>Música&amp;vídeo</value>
 	</string>
 	<string>
 		<id>477</id>
-		<value>Kan inte ladda spellista</value>
+		<value>Impossível carregar playlist</value>
 	</string>
 	<string>
 		<id>478</id>
@@ -1631,959 +1631,959 @@
 	</string>
 	<string>
 		<id>479</id>
-		<value>Skal och språk</value>
+		<value>Skin e linguagem</value>
 	</string>
 	<string>
 		<id>480</id>
-		<value>Användargränssnitt</value>
+		<value>Interface do usuário</value>
 	</string>
 	<string>
 		<id>481</id>
-		<value>Ljudalternativ</value>
+		<value>Opções de áudio</value>
 	</string>
 	<string>
 		<id>482</id>
-		<value>Om XBMC</value>
+		<value>Sobre XBMC</value>
 	</string>
 	<string>
 		<id>483</id>
-		<value>Album</value>
+		<value>Álbum</value>
 	</string>
 	<string>
 		<id>484</id>
-		<value>Artist</value>
+		<value>Artista</value>
 	</string>
 	<string>
 		<id>485</id>
-		<value>Ta bort album</value>
+		<value>Apagar álbum</value>
 	</string>
 	<string>
 		<id>486</id>
-		<value>Repetera</value>
+		<value>Repetir</value>
 	</string>
 	<string>
 		<id>487</id>
-		<value>Repetera en</value>
+		<value>Repetir uma vez</value>
 	</string>
 	<string>
 		<id>488</id>
-		<value>Repetera mapp spellista</value>
+		<value>Repetir playlist da pasta</value>
 	</string>
 	<string>
 		<id>489</id>
-		<value>Använd spellistor i låtar</value>
+		<value>Usar playlist nas músicas</value>
 	</string>
 	<string>
 		<id>490</id>
-		<value>Växla autom. listor och ikoner i låtar</value>
+		<value>Comutar automaticamente lista/ícones nas músicas</value>
 	</string>
 	<string>
 		<id>491</id>
-		<value>Använd stora ikoner</value>
+		<value>Usar ícones grandes</value>
 	</string>
 	<string>
 		<id>492</id>
-		<value>Ljud/språk</value>
+		<value>Linguagem de áudio</value>
 	</string>
 	<string>
 		<id>493</id>
-		<value>Skådespelare</value>
+		<value>Ator</value>
 	</string>
 	<string>
 		<id>500</id>
-		<value>Filmeny</value>
+		<value>Menu de arquivo</value>
 	</string>
 	<string>
 		<id>501</id>
-		<value>Välj som mål</value>
+		<value>Definir como destino</value>
 	</string>
 	<string>
 		<id>502</id>
-		<value>Kunde inte slutföra åtgärden</value>
+		<value>Impossível concluir a ação</value>
 	</string>
 	<string>
 		<id>503</id>
-		<value>Ta bort denna mapp</value>
+		<value>Apagar essa pasta</value>
 	</string>
 	<string>
 		<id>504</id>
-		<value>Gå till målet</value>
+		<value>Ir ao destino</value>
 	</string>
 	<string>
 		<id>505</id>
-		<value>Beräknar</value>
+		<value>Calculando</value>
 	</string>
 	<string>
 		<id>506</id>
-		<value>Är du säker?</value>
+		<value>Você tem certeza?</value>
 	</string>
 	<string>
 		<id>507</id>
-		<value>delar</value>
+		<value>ítens</value>
 	</string>
 	<string>
 		<id>508</id>
-		<value>Till</value>
+		<value>para</value>
 	</string>
 	<string>
 		<id>509</id>
-		<value>Det finns redan en fil med detta namn, Vill du skriva över den?</value>
+		<value>Arquivo de destino existe, deseja sobreescrevê-lo?</value>
 	</string>
 	<string>
 		<id>510</id>
-		<value>Avbryt</value>
+		<value>Cancelar</value>
 	</string>
 	<string>
 		<id>511</id>
-		<value>Alltid</value>
+		<value>Sempre</value>
 	</string>
 	<string>
 		<id>512</id>
-		<value>Aldrig</value>
+		<value>Nunca</value>
 	</string>
 	<string>
 		<id>513</id>
-		<value>Filen är skrivskyddad, åtgärden ej genomförd</value>
+		<value>Ítem protegido, ação não foi concluída</value>
 	</string>
 	<string>
 		<id>514</id>
-		<value>Fel vid skapande av mapp, åtgärden ej genomförd</value>
+		<value>Erro ao criar pasta, ação não foi concluída</value>
 	</string>
 	<string>
 		<id>515</id>
-		<value>Fel vid radering av mapp, åtgärden ej genomförd</value>
+		<value>Erro ao apagar pasta, ação não foi concluída</value>
 	</string>
 	<string>
 		<id>516</id>
-		<value>Kunde inte radera målfilen, åtgärden ej genomförd</value>
+		<value>Incapaz de apagar pasta de destino, ação não foi concluída</value>
 	</string>
 	<string>
 		<id>517</id>
-		<value>Allvarligt fel, åtgärden ej genomförd</value>
+		<value>Erro fatal, ação não foi concluída</value>
 	</string>
 	<string>
 		<id>518</id>
-		<value>Radera denna låt?</value>
+		<value>Apagar essa música?</value>
 	</string>
 	<string>
 		<id>530</id>
-		<value>Fotoskiva isatt, vill du öppna den?</value>
+		<value>Disco com fotos inserido, deseja abrí-lo?</value>
 	</string>
 	<string>
 		<id>531</id>
-		<value>Filmskiva isatt, vill du öppna den?</value>
+		<value>Disco com filmes inserido, deseja abrí-lo?</value>
 	</string>
 	<string>
 		<id>532</id>
-		<value>Ljudskiva isatt, vill du öppna den?</value>
+		<value>Disco de áudio inserido, deseja abrí-lo?</value>
 	</string>
 	<string>
 		<id>550</id>
-		<value>Beskär</value>
+		<value>Recortar</value>
 	</string>
 	<string>
 		<id>600</id>
-		<value>TV-tablå</value>
+		<value>Guia da TV</value>
 	</string>
 	<string>
 		<id>601</id>
-		<value>Spela in nu</value>
+		<value>Gravar agora</value>
 	</string>
 	<string>
 		<id>602</id>
-		<value>Kanal:</value>
+		<value>Canal:</value>
 	</string>
 	<string>
 		<id>603</id>
-		<value>Planerade inspelningar</value>
+		<value>Agendado</value>
 	</string>
 	<string>
 		<id>604</id>
-		<value>Inspelad TV</value>
+		<value>Gravações</value>
 	</string>
 	<string>
 		<id>605</id>
-		<value>Min TV</value>
+		<value>Televisão</value>
 	</string>
 	<string>
 		<id>606</id>
-		<value>Laddar ny TV-tablå</value>
+		<value>Lendo novo guia da TV</value>
 	</string>
 	<string>
 		<id>607</id>
-		<value>Ladda</value>
+		<value>Carregar</value>
 	</string>
 	<string>
 		<id>608</id>
-		<value>Import av TV-tablå misslyckades</value>
+		<value>Falha ao importar guia da TV</value>
 	</string>
 	<string>
 		<id>609</id>
-		<value>Import av TV-tablå klar</value>
+		<value>Guia da TV importado</value>
 	</string>
 	<string>
 		<id>610</id>
-		<value>Ingen</value>
+		<value>Não gravar</value>
 	</string>
 	<string>
 		<id>611</id>
-		<value>Spela in en gång</value>
+		<value>Gravar uma vez</value>
 	</string>
 	<string>
 		<id>612</id>
-		<value>Spela alltid in på denna kanal</value>
+		<value>Gravar sempre neste canal</value>
 	</string>
 	<string>
 		<id>613</id>
-		<value>Spela alltid in oavsett kanal</value>
+		<value>Gravar sempre em qualquer canal</value>
 	</string>
 	<string>
 		<id>614</id>
-		<value>Spela in varje vecka vid denna tid</value>
+		<value>Gravar todas as semanas a esta hora</value>
 	</string>
 	<string>
 		<id>615</id>
-		<value>Spela in varje dag vid denna tid</value>
+		<value>Gravar todos os dias a esta hora</value>
 	</string>
 	<string>
 		<id>616</id>
-		<value>Välj inspelningstyp</value>
+		<value>Selecionar tipo de gravação</value>
 	</string>
 	<string>
 		<id>617</id>
-		<value>Ny</value>
+		<value>Novo</value>
 	</string>
 	<string>
 		<id>618</id>
-		<value>Ta bort</value>
+		<value>Apagar</value>
 	</string>
 	<string>
 		<id>619</id>
-		<value>Redigera datum/tid</value>
+		<value>Editar data/hora</value>
 	</string>
 	<string>
 		<id>620</id>
-		<value>Sortera efter: Kanal</value>
+		<value>Ordenar por: canal</value>
 	</string>
 	<string>
 		<id>621</id>
-		<value>Sortera efter: Datum</value>
+		<value>Ordenar por: data</value>
 	</string>
 	<string>
 		<id>622</id>
-		<value>Sortera efter: Namn</value>
+		<value>Ordenar por: nome</value>
 	</string>
 	<string>
 		<id>623</id>
-		<value>Sortera efter: Typ</value>
+		<value>Ordenar por: tipo</value>
 	</string>
 	<string>
 		<id>624</id>
-		<value>Städa</value>
+		<value>Limpar</value>
 	</string>
 	<string>
 		<id>625</id>
-		<value>Planerade insp. raderade:</value>
+		<value>Agendamentos removidos:</value>
 	</string>
 	<string>
 		<id>626</id>
-		<value>Ändra typ</value>
+		<value>Mudar tipo</value>
 	</string>
 	<string>
 		<id>627</id>
-		<value>Kanaler:</value>
+		<value>Canais:</value>
 	</string>
 	<string>
 		<id>628</id>
-		<value>Program:</value>
+		<value>Programas:</value>
 	</string>
 	<string>
 		<id>629</id>
-		<value>Stoppa Insp.</value>
+		<value>Parar gravação</value>
 	</string>
 	<string>
 		<id>630</id>
-		<value>Vill du starta om datorn?</value>
+		<value>Deseja reiniciar?</value>
 	</string>
 	<string>
 		<id>631</id>
-		<value>Vill du stänga av datorn?</value>
+		<value>Deseja desligar?</value>
 	</string>
 	<string>
 		<id>632</id>
-		<value>Objekt</value>
+		<value>Objetos</value>
 	</string>
 	<string>
 		<id>633</id>
-		<value>Startdatum/tid</value>
+		<value>Iniciar na data/hora</value>
 	</string>
 	<string>
 		<id>634</id>
-		<value>Stoppdatum/tid</value>
+		<value>Terminar na data/hora</value>
 	</string>
 	<string>
 		<id>635</id>
-		<value>Tid</value>
+		<value>Hora</value>
 	</string>
 	<string>
 		<id>636</id>
-		<value>Datum</value>
+		<value>Data</value>
 	</string>
 	<string>
 		<id>637</id>
-		<value>Ändra inspelning</value>
+		<value>Editar gravação</value>
 	</string>
 	<string>
 		<id>638</id>
-		<value>Ny inspelning</value>
+		<value>Nova gravação</value>
 	</string>
 	<string>
 		<id>639</id>
-		<value>Album av</value>
+		<value>Álbums de</value>
 	</string>
 	<string>
 		<id>640</id>
-		<value>Mättnad</value>
+		<value>Saturação</value>
 	</string>
 	<string>
 		<id>641</id>
-		<value>Skärpa</value>
+		<value>Nitidez</value>
 	</string>
 	<string>
 		<id>642</id>
-		<value>Laddar TV-kanaler</value>
+		<value>Carregando canais de TV</value>
 	</string>
 	<string>
 		<id>643</id>
-		<value>Laddar TV-program</value>
+		<value>Carregando programas de TV</value>
 	</string>
 	<string>
 		<id>644</id>
-		<value>Sorterar TV-program</value>
+		<value>Ordenando programas de TV</value>
 	</string>
 	<string>
 		<id>645</id>
-		<value>Laddar XML-fil</value>
+		<value>Carregando arquivo XML</value>
 	</string>
 	<string>
 		<id>646</id>
-		<value>Planerade inspelningar</value>
+		<value>Agendando gravações</value>
 	</string>
 	<string>
 		<id>647</id>
-		<value>En gång</value>
+		<value>Uma vez</value>
 	</string>
 	<string>
 		<id>648</id>
-		<value>Dagligen</value>
+		<value>Diário</value>
 	</string>
 	<string>
 		<id>649</id>
-		<value>Varje</value>
+		<value>Todos</value>
 	</string>
 	<string>
 		<id>650</id>
-		<value>Varje gång på denna kanal</value>
+		<value>Sempre neste canal</value>
 	</string>
 	<string>
 		<id>651</id>
-		<value>Varje gång på någon kanal</value>
+		<value>Sempre em qualquer canal</value>
 	</string>
 	<string>
 		<id>652</id>
-		<value>Inspelad TV</value>
+		<value>TV gravada</value>
 	</string>
 	<string>
 		<id>653</id>
-		<value>Radera denna inspelning?</value>
+		<value>Apagar esta gravação?</value>
 	</string>
 	<string>
 		<id>654</id>
-		<value>Mata ut</value>
+		<value>Ejetar</value>
 	</string>
 	<string>
 		<id>655</id>
-		<value>Spela upp inspelad TV</value>
+		<value>Tocar gravação de TV</value>
 	</string>
 	<string>
 		<id>656</id>
-		<value>Radera inspelad TV</value>
+		<value>Apagar gravação de TV</value>
 	</string>
 	<string>
 		<id>657</id>
-		<value>Mån</value>
+		<value>seg</value>
 	</string>
 	<string>
 		<id>658</id>
-		<value>Tis</value>
+		<value>ter</value>
 	</string>
 	<string>
 		<id>659</id>
-		<value>Ons</value>
+		<value>qua</value>
 	</string>
 	<string>
 		<id>660</id>
-		<value>Tor</value>
+		<value>qui</value>
 	</string>
 	<string>
 		<id>661</id>
-		<value>Fre</value>
+		<value>sex</value>
 	</string>
 	<string>
 		<id>662</id>
-		<value>Lör</value>
+		<value>sáb</value>
 	</string>
 	<string>
 		<id>663</id>
-		<value>Sön</value>
+		<value>dom</value>
 	</string>
 	<string>
 		<id>664</id>
-		<value>Radera denna bild?</value>
+		<value>Apagar esta imagem?</value>
 	</string>
 	<string>
 		<id>665</id>
-		<value>Min Radio</value>
+		<value>Rádio</value>
 	</string>
 	<string>
 		<id>666</id>
-		<value>Stationer</value>
+		<value>Estações</value>
 	</string>
 	<string>
 		<id>667</id>
-		<value>Autosök</value>
+		<value>Auto-sintonia</value>
 	</string>
 	<string>
 		<id>668</id>
-		<value>Sortera efter: Typ</value>
+		<value>Ordenar por: tipo</value>
 	</string>
 	<string>
 		<id>669</id>
-		<value>Sortera efter: Genre</value>
+		<value>Ordenar por: gênero</value>
 	</string>
 	<string>
 		<id>670</id>
-		<value>Sortera efter: Bitrate</value>
+		<value>Ordenar por: bitrate</value>
 	</string>
 	<string>
 		<id>671</id>
-		<value>Sortera efter: Sedda</value>
+		<value>Ordenar por: visualização</value>
 	</string>
 	<string>
 		<id>672</id>
-		<value>Spela in varje vardag</value>
+		<value>Gravar seg-sex</value>
 	</string>
 	<string>
 		<id>673</id>
-		<value>Scroll-hastighet</value>
+		<value>Velocidade de rolagem</value>
 	</string>
 	<string>
 		<id>674</id>
-		<value>GUI Inst.</value>
+		<value>Ajustes da GUI</value>
 	</string>
 	<string>
 		<id>675</id>
-		<value>Exempel:</value>
+		<value>Exemplo:</value>
 	</string>
 	<string>
 		<id>676</id>
-		<value>Ta bort sedda inspelningar?</value>
+		<value>Apagar gravações já assistidas?</value>
 	</string>
 	<string>
 		<id>677</id>
-		<value>tider</value>
+		<value>vezes</value>
 	</string>
 	<string>
 		<id>678</id>
-		<value>Sortera efter: Genre</value>
+		<value>Ordenar por: gênero</value>
 	</string>
 	<string>
 		<id>679</id>
-		<value>Veckovis</value>
+		<value>Semanal</value>
 	</string>
 	<string>
 		<id>680</id>
-		<value>Vardagar</value>
+		<value>Seg-sex</value>
 	</string>
 	<string>
 		<id>681</id>
-		<value>Väntar</value>
+		<value>Aguardando</value>
 	</string>
 	<string>
 		<id>682</id>
-		<value>Inspelning</value>
+		<value>Gravando</value>
 	</string>
 	<string>
 		<id>683</id>
-		<value>Klar</value>
+		<value>Terminado</value>
 	</string>
 	<string>
 		<id>684</id>
-		<value>Avbruten</value>
+		<value>Cancelado</value>
 	</string>
 	<string>
 		<id>685</id>
-		<value>Sortera efter: Status</value>
+		<value>Ordenado por: status</value>
 	</string>
 	<string>
 		<id>686</id>
-		<value>Född</value>
+		<value>Nascimento</value>
 	</string>
 	<string>
 		<id>687</id>
-		<value>Aktiva år</value>
+		<value>Anos ativo</value>
 	</string>
 	<string>
 		<id>688</id>
-		<value>Instrument</value>
+		<value>Instrumentos</value>
 	</string>
 	<string>
 		<id>689</id>
-		<value>Biografi</value>
+		<value>Bio.</value>
 	</string>
 	<string>
 		<id>690</id>
-		<value>Diskografi (skivor)</value>
+		<value>Discografia (álbuns)</value>
 	</string>
 	<string>
 		<id>691</id>
-		<value>Diskografi (samlingar, boxar)</value>
+		<value>Discografia (compilações, caixas)</value>
 	</string>
 	<string>
 		<id>700</id>
-		<value>Diskografi (EP, singlar)</value>
+		<value>Discografia (eps, singles)</value>
 	</string>
 	<string>
 		<id>701</id>
-		<value>Diskografi (bootlegs, videor, intervjuer)</value>
+		<value>Discografia (bootlegs, vídeos, entrevistas)</value>
 	</string>
 	<string>
 		<id>702</id>
-		<value>Ingen artist hittades!</value>
+		<value>Nenhum artista encontrado!</value>
 	</string>
 	<string>
 		<id>703</id>
-		<value>Inte ansluten till Internet!</value>
+		<value>Não está conectado à Internet!</value>
 	</string>
 	<string>
 		<id>704</id>
-		<value>Tar emot feed</value>
+		<value>Obtenção de fonte</value>
 	</string>
 	<string>
 		<id>705</id>
-		<value>Hämtar RSS-feed för</value>
+		<value>Obtendo fonte RSS para</value>
 	</string>
 	<string>
 		<id>706</id>
-		<value>Välj feed</value>
+		<value>Selecionar fonte</value>
 	</string>
 	<string>
 		<id>707</id>
-		<value>TV på</value>
+		<value>TV ligada</value>
 	</string>
 	<string>
 		<id>708</id>
-		<value>Timeshifting på</value>
+		<value>Timeshifting</value>
 	</string>
 	<string>
 		<id>709</id>
-		<value>Autouppdatering</value>
+		<value>Auto atualização</value>
 	</string>
 	<string>
 		<id>710</id>
-		<value>En ny version finns tillgänglig</value>
+		<value>Uma nova versão está disponível</value>
 	</string>
 	<string>
 		<id>711</id>
-		<value>Upgradera från v#old -&gt;v#new ?</value>
+		<value>Atualizar de v#old para v#new ?</value>
 	</string>
 	<string>
 		<id>712</id>
-		<value>Tillbaka</value>
+		<value>Voltar</value>
 	</string>
 	<string>
 		<id>713</id>
-		<value>Autostarta</value>
+		<value>Auto-tocar</value>
 	</string>
 	<string>
 		<id>714</id>
-		<value>DVD laddad. Spela upp?</value>
+		<value>Disco inserido, quer tocá-lo?</value>
 	</string>
 	<string>
 		<id>715</id>
-		<value>CD laddad. Spela upp?</value>
+		<value>CD inserido, quer tocá-lo?</value>
 	</string>
 	<string>
 		<id>716</id>
-		<value>Satellit</value>
+		<value>Satélite</value>
 	</string>
 	<string>
 		<id>717</id>
-		<value>Väder</value>
+		<value>Tempo</value>
 	</string>
 	<string>
 		<id>718</id>
-		<value>Rensa Topp 100</value>
+		<value>Limpar lista dos 100 melhores</value>
 	</string>
 	<string>
 		<id>719</id>
-		<value>Är du säker på att du vill rensa Topp 100?</value>
+		<value>Quer mesmo limpar a lista dos 100 melhores?</value>
 	</string>
 	<string>
 		<id>720</id>
-		<value>Program: Längd</value>
+		<value>Exibir: duração</value>
 	</string>
 	<string>
 		<id>721</id>
-		<value>Program: Antal ggr visad</value>
+		<value>Exibir: quantas vezes tocado</value>
 	</string>
 	<string>
 		<id>722</id>
-		<value>Kan inte spela upp skivan</value>
+		<value>Impossível tocar disco</value>
 	</string>
 	<string>
 		<id>723</id>
-		<value>Satte du i en skiva?</value>
+		<value>Você inseriu um disco?</value>
 	</string>
 	<string>
 		<id>724</id>
-		<value>Sök i TV-tablån</value>
+		<value>Procurar no guia da TV</value>
 	</string>
 	<string>
 		<id>725</id>
-		<value>Genrer</value>
+		<value>Gêneros</value>
 	</string>
 	<string>
 		<id>726</id>
-		<value>Titel</value>
+		<value>Título</value>
 	</string>
 	<string>
 		<id>727</id>
-		<value>Live-TV som bakgrund</value>
+		<value>TV ao vivo no fundo</value>
 	</string>
 	<string>
 		<id>728</id>
-		<value>Kunde ej starta</value>
+		<value>Nenhum vídeo/TV tocando</value>
 	</string>
 	<string>
 		<id>729</id>
-		<value>Kolla att du använder VMR9 och att något spelas upp</value>
+		<value>Certifique-se de que está usando VMR9 e que algo está tocando</value>
 	</string>
 	<string>
 		<id>730</id>
-		<value>Denna inspelning pågår. Om du raderar den</value>
+		<value>Esta programação está sendo gravada. Se apagar</value>
 	</string>
 	<string>
 		<id>731</id>
-		<value>så kommer den att avbrytas.</value>
+		<value>a programação, a gravação será interrompida.</value>
 	</string>
 	<string>
 		<id>732</id>
-		<value>Är du säker?</value>
+		<value>Tem certeza?</value>
 	</string>
 	<string>
 		<id>733</id>
-		<value>Visa: Filmremsa</value>
+		<value>Exibir: amostra</value>
 	</string>
 	<string>
 		<id>734</id>
-		<value>Bild:</value>
+		<value>Imagem:</value>
 	</string>
 	<string>
 		<id>735</id>
-		<value>Rotera</value>
+		<value>Girar</value>
 	</string>
 	<string>
 		<id>736</id>
-		<value>Ingen TV-tablådata finns</value>
+		<value>Não existem dados do guia da TV</value>
 	</string>
 	<string>
 		<id>737</id>
-		<value>Visa: Satellit</value>
+		<value>Exibir: satélite</value>
 	</string>
 	<string>
 		<id>738</id>
-		<value>Visa: Temperatur</value>
+		<value>Exibir: temperatura</value>
 	</string>
 	<string>
 		<id>739</id>
-		<value>Visa: UV Index</value>
+		<value>Exibir: índice UV</value>
 	</string>
 	<string>
 		<id>740</id>
-		<value>Visa: Vindar</value>
+		<value>Exibir: ventos</value>
 	</string>
 	<string>
 		<id>741</id>
-		<value>Visa: Luftfuktighet</value>
+		<value>Exibir: umidade</value>
 	</string>
 	<string>
 		<id>742</id>
-		<value>Visa: Nederbörd</value>
+		<value>Exibir: precipitação</value>
 	</string>
 	<string>
 		<id>743</id>
-		<value>4-dagarsprognos</value>
+		<value>Previsão para 4 dias</value>
 	</string>
 	<string>
 		<id>744</id>
-		<value>Soluppgång</value>
+		<value>Nascer do sol</value>
 	</string>
 	<string>
 		<id>745</id>
-		<value>Solnedgång</value>
+		<value>Pôr do sol</value>
 	</string>
 	<string>
 		<id>746</id>
-		<value>Hög</value>
+		<value>Alto</value>
 	</string>
 	<string>
 		<id>747</id>
-		<value>Låg</value>
+		<value>Baixo</value>
 	</string>
 	<string>
 		<id>748</id>
-		<value>Nederbörd</value>
+		<value>Precipitação</value>
 	</string>
 	<string>
 		<id>750</id>
-		<value>Bilder</value>
+		<value>Imagens</value>
 	</string>
 	<string>
 		<id>800</id>
-		<value>Startar med</value>
+		<value>Começa com</value>
 	</string>
 	<string>
 		<id>801</id>
-		<value>Innehåller</value>
+		<value>Contém</value>
 	</string>
 	<string>
 		<id>802</id>
-		<value>Slutar med</value>
+		<value>Acaba com</value>
 	</string>
 	<string>
 		<id>803</id>
-		<value>År</value>
+		<value>É</value>
 	</string>
 	<string>
 		<id>804</id>
-		<value>Klar</value>
+		<value>OK</value>
 	</string>
 	<string>
 		<id>805</id>
-		<value>Städa</value>
+		<value>Limpo</value>
 	</string>
 	<string>
 		<id>806</id>
-		<value>Titel</value>
+		<value>Título</value>
 	</string>
 	<string>
 		<id>807</id>
-		<value>Göra</value>
+		<value>Rendimento</value>
 	</string>
 	<string>
 		<id>808</id>
-		<value>Ingredienser</value>
+		<value>Ingredientes</value>
 	</string>
 	<string>
 		<id>809</id>
-		<value>Sökvägar</value>
+		<value>Direções</value>
 	</string>
 	<string>
 		<id>810</id>
-		<value>Kort</value>
+		<value>Cartão</value>
 	</string>
 	<string>
 		<id>850</id>
-		<value>Mitt Alarm</value>
+		<value>Alarme</value>
 	</string>
 	<string>
 		<id>851</id>
-		<value>Spellista</value>
+		<value>Playlist</value>
 	</string>
 	<string>
 		<id>852</id>
-		<value>Alarm på</value>
+		<value>Alarme ligado</value>
 	</string>
 	<string>
 		<id>853</id>
-		<value>Välj spellista</value>
+		<value>Nome:</value>
 	</string>
 	<string>
 		<id>854</id>
-		<value>Gäller dessa dagar</value>
+		<value>Ativar nestes dias</value>
 	</string>
 	<string>
 		<id>855</id>
-		<value>Alarmtid</value>
+		<value>Hora para alarme</value>
 	</string>
 	<string>
 		<id>856</id>
-		<value>Insomningstimer På</value>
+		<value>Sleep timer ligado</value>
 	</string>
 	<string>
 		<id>857</id>
-		<value>Snooze</value>
+		<value>Soneca</value>
 	</string>
 	<string>
 		<id>858</id>
-		<value>Snooze-tid</value>
+		<value>Tempo de soneca</value>
 	</string>
 	<string>
 		<id>859</id>
-		<value>Sovtid</value>
+		<value>Sleep timer</value>
 	</string>
 	<string>
 		<id>860</id>
-		<value>Volym tona in/ut</value>
+		<value>Aumentar volume com o tempo</value>
 	</string>
 	<string>
 		<id>861</id>
-		<value>Alarmdetaljer</value>
+		<value>Detalhes do alarme</value>
 	</string>
 	<string>
 		<id>862</id>
-		<value>Radio</value>
+		<value>Rádio</value>
 	</string>
 	<string>
 		<id>863</id>
-		<value>Fil</value>
+		<value>Arquivo</value>
 	</string>
 	<string>
 		<id>864</id>
-		<value>Mediatyp</value>
+		<value>Tipo de mídia</value>
 	</string>
 	<string>
 		<id>865</id>
-		<value>Antal minuter till insomning:</value>
+		<value>Quantos minutos até adormecer:</value>
 	</string>
 	<string>
 		<id>866</id>
-		<value>Sänk volymen under tiden</value>
+		<value>Baixar volume com o tempo</value>
 	</string>
 	<string>
 		<id>867</id>
-		<value>Stäng av datorn</value>
+		<value>Desligar computador</value>
 	</string>
 	<string>
 		<id>868</id>
-		<value>Reset</value>
+		<value>Resetar</value>
 	</string>
 	<string>
 		<id>869</id>
-		<value>Nytt alarm</value>
+		<value>Novo alarme</value>
 	</string>
 	<string>
 		<id>870</id>
-		<value>Återkommande</value>
+		<value>Recorrente</value>
 	</string>
 	<string>
 		<id>871</id>
-		<value>Starta PC</value>
+		<value>Acordar PC para este alarme</value>
 	</string>
 	<string>
 		<id>872</id>
-		<value>Starta med</value>
+		<value>Começa com</value>
 	</string>
 	<string>
 		<id>873</id>
-		<value>TV-program</value>
+		<value>Programa de TV</value>
 	</string>
 	<string>
 		<id>874</id>
-		<value>Avsnitt</value>
+		<value>Episódio</value>
 	</string>
 	<string>
 		<id>875</id>
-		<value>Aktuellt program</value>
+		<value>Programa atual</value>
 	</string>
 	<string>
 		<id>876</id>
-		<value>Till manuellt stopp</value>
+		<value>Até parar manualmente</value>
 	</string>
 	<string>
 		<id>877</id>
-		<value>Prioriteringar</value>
+		<value>Prioridades</value>
 	</string>
 	<string>
 		<id>878</id>
-		<value>Lagring</value>
+		<value>Armazenamento</value>
 	</string>
 	<string>
 		<id>879</id>
-		<value>Inspelningskonflikt</value>
+		<value>Conflito de gravação</value>
 	</string>
 	<string>
 		<id>880</id>
-		<value>Inspelningstid:</value>
+		<value>Hora para gravar:</value>
 	</string>
 	<string>
 		<id>881</id>
-		<value>Välj inspelning att avsluta:</value>
+		<value>Escolher qual gravação interromper:</value>
 	</string>
 	<string>
 		<id>882</id>
-		<value>Kvalitetsinställning</value>
+		<value>Ajuste de qualidade</value>
 	</string>
 	<string>
 		<id>883</id>
-		<value>Låg</value>
+		<value>Baixo</value>
 	</string>
 	<string>
 		<id>884</id>
-		<value>Medium</value>
+		<value>Médio</value>
 	</string>
 	<string>
 		<id>885</id>
-		<value>Hög</value>
+		<value>Alto</value>
 	</string>
 	<string>
 		<id>886</id>
-		<value>Standard</value>
+		<value>Padrão</value>
 	</string>
 	<string>
 		<id>887</id>
-		<value>Ange antal avsnitt som ska sparas</value>
+		<value>Especificar quantos episódios manter</value>
 	</string>
 	<string>
 		<id>888</id>
-		<value>Avsnittshantering</value>
+		<value>Gerenciamento de episódios</value>
 	</string>
 	<string>
 		<id>889</id>
-		<value>Alla avsnitt</value>
+		<value>Todos os episódios</value>
 	</string>
 	<string>
 		<id>890</id>
-		<value>Spela CD</value>
+		<value>Tocar CD</value>
 	</string>
 	<string>
 		<id>891</id>
-		<value>Välj TV-kanal</value>
+		<value>Escolher canal de TV</value>
 	</string>
 	<string>
 		<id>892</id>
-		<value>Konflikter</value>
+		<value>Conflitos</value>
 	</string>
 	<string>
 		<id>893</id>
-		<value>Portabel</value>
+		<value>Portátil</value>
 	</string>
 	<string>
 		<id>894</id>
-		<value>Komprimera TV-inspelningar</value>
+		<value>Comprimir gravações de TV</value>
 	</string>
 	<string>
 		<id>895</id>
-		<value>Autokomprimera</value>
+		<value>Auto-compressão</value>
 	</string>
 	<string>
 		<id>896</id>
-		<value>Komprimera</value>
+		<value>Comprimir</value>
 	</string>
 	<string>
 		<id>897</id>
-		<value>Inställningar</value>
+		<value>Ajustes</value>
 	</string>
 	<string>
 		<id>898</id>
@@ -2595,7 +2595,7 @@
 	</string>
 	<string>
 		<id>900</id>
-		<value>Fortsätta filmen där den stannade senast?</value>
+		<value>Continuar filme a partir de onde parou antes?</value>
 	</string>
 	<string>
 		<id>901</id>
@@ -2603,167 +2603,167 @@
 	</string>
 	<string>
 		<id>902</id>
-		<value>Online kontakter</value>
+		<value>Contatos online</value>
 	</string>
 	<string>
 		<id>903</id>
-		<value>Logga in</value>
+		<value>Entrar</value>
 	</string>
 	<string>
 		<id>904</id>
-		<value>Logga ut</value>
+		<value>Sair</value>
 	</string>
 	<string>
 		<id>905</id>
-		<value>Du måste konfigurera denna plugin först</value>
+		<value>É preciso configurar o plugin primeiro</value>
 	</string>
 	<string>
 		<id>906</id>
-		<value>Fyll i din e-post adress i setupen</value>
+		<value>Preencha seu endereço de email no&apos;Setup&apos;</value>
 	</string>
 	<string>
 		<id>907</id>
-		<value>Kunde inte ansluta till MSN</value>
+		<value>Não é possível conectar-se ao MSN</value>
 	</string>
 	<string>
 		<id>908</id>
-		<value>skriver ett meddelande...</value>
+		<value>está escrevendo uma mensagem ...</value>
 	</string>
 	<string>
 		<id>909</id>
-		<value>Ansluter...</value>
+		<value>Conectando ...</value>
 	</string>
 	<string>
 		<id>910</id>
-		<value>Loggar in...</value>
+		<value>Entrando ...</value>
 	</string>
 	<string>
 		<id>911</id>
-		<value>Inga kanaler</value>
+		<value>Sem canais</value>
 	</string>
 	<string>
 		<id>912</id>
-		<value>Kunde inte ladda ner senaste nyheterna</value>
+		<value>Não é possível carregar as últimas notícias</value>
 	</string>
 	<string>
 		<id>913</id>
-		<value>Mina Plugins</value>
+		<value>Plugins</value>
 	</string>
 	<string>
 		<id>914</id>
-		<value>Inspelad TV</value>
+		<value>Gravações</value>
 	</string>
 	<string>
 		<id>915</id>
-		<value>TV-kanaler</value>
+		<value>Canais de TV</value>
 	</string>
 	<string>
 		<id>916</id>
-		<value>Fjärrfil</value>
+		<value>Arquivo remoto</value>
 	</string>
 	<string>
 		<id>917</id>
-		<value>Denna fil finns i en fjärrmapp</value>
+		<value>Este arquivo está numa partilha remota</value>
 	</string>
 	<string>
 		<id>918</id>
-		<value>Vill du ladda ner det till din vanliga</value>
+		<value>Devo baixá-lo para sua</value>
 	</string>
 	<string>
 		<id>919</id>
-		<value>lokala share?</value>
+		<value>partilha local?</value>
 	</string>
 	<string>
 		<id>920</id>
-		<value>Kunde inte ladda ner fjärrfil</value>
+		<value>Impossível baixar arquivo remoto</value>
 	</string>
 	<string>
 		<id>921</id>
-		<value>Filen laddas ner</value>
+		<value>Arquivo está sendo baixado</value>
 	</string>
 	<string>
 		<id>922</id>
-		<value>Beskrivning</value>
+		<value>Descrição</value>
 	</string>
 	<string>
 		<id>923</id>
-		<value>Visa</value>
+		<value>Exibir</value>
 	</string>
 	<string>
 		<id>924</id>
-		<value>Meny</value>
+		<value>Menu</value>
 	</string>
 	<string>
 		<id>925</id>
-		<value>Ta bort denna film</value>
+		<value>Apagar este filme</value>
 	</string>
 	<string>
 		<id>926</id>
-		<value>Lägg till i spellistan</value>
+		<value>Adicionar à playlist</value>
 	</string>
 	<string>
 		<id>927</id>
-		<value>Varning!</value>
+		<value>Atenção</value>
 	</string>
 	<string>
 		<id>928</id>
-		<value>Hitta omslag</value>
+		<value>Procurar capa</value>
 	</string>
 	<string>
 		<id>929</id>
-		<value>Stäng menyn</value>
+		<value>Fechar menu</value>
 	</string>
 	<string>
 		<id>930</id>
-		<value>Lägg till favoriter</value>
+		<value>Adicionar aos favoritos</value>
 	</string>
 	<string>
 		<id>931</id>
-		<value>Betyg</value>
+		<value>Class. etária</value>
 	</string>
 	<string>
 		<id>932</id>
-		<value>Favoriter</value>
+		<value>Favoritos</value>
 	</string>
 	<string>
 		<id>933</id>
-		<value>Ta bort från favoriter</value>
+		<value>Remover dos favoritos</value>
 	</string>
 	<string>
 		<id>934</id>
-		<value>Sätt betyg</value>
+		<value>Definir class. etária</value>
 	</string>
 	<string>
 		<id>935</id>
-		<value>Visa: Betyg</value>
+		<value>Exibir: class. etária</value>
 	</string>
 	<string>
 		<id>936</id>
-		<value>Fortsätt från:</value>
+		<value>Tocar a partir de:</value>
 	</string>
 	<string>
 		<id>937</id>
-		<value>Importera TV-tablå</value>
+		<value>Importar guia da TV</value>
 	</string>
 	<string>
 		<id>938</id>
-		<value>Titta på denna kanal</value>
+		<value>Assistir este canal</value>
 	</string>
 	<string>
 		<id>939</id>
-		<value>Byt tablåvy</value>
+		<value>Trocar modo</value>
 	</string>
 	<string>
 		<id>940</id>
-		<value>Egenskaper</value>
+		<value>Propriedades</value>
 	</string>
 	<string>
 		<id>941</id>
-		<value>Ändra bildproportioner</value>
+		<value>Mudar altura/largura</value>
 	</string>
 	<string>
 		<id>942</id>
-		<value>Utsträckt</value>
+		<value>Esticar</value>
 	</string>
 	<string>
 		<id>943</id>
@@ -2771,19 +2771,19 @@
 	</string>
 	<string>
 		<id>944</id>
-		<value>1:1</value>
+		<value>Original</value>
 	</string>
 	<string>
 		<id>945</id>
-		<value>Brevlådeformat</value>
+		<value>Letterbox</value>
 	</string>
 	<string>
 		<id>946</id>
-		<value>Pan and Scan</value>
+		<value>Pan and scan</value>
 	</string>
 	<string>
 		<id>947</id>
-		<value>Zoomad</value>
+		<value>Zoom</value>
 	</string>
 	<string>
 		<id>948</id>
@@ -2791,31 +2791,31 @@
 	</string>
 	<string>
 		<id>949</id>
-		<value>Upptagen</value>
+		<value>Ocupado</value>
 	</string>
 	<string>
 		<id>950</id>
-		<value>Snart tillbaka</value>
+		<value>Volto já</value>
 	</string>
 	<string>
 		<id>951</id>
-		<value>Inte vid datorn</value>
+		<value>Estou fora</value>
 	</string>
 	<string>
 		<id>952</id>
-		<value>Telefon</value>
+		<value>Ao telefone</value>
 	</string>
 	<string>
 		<id>953</id>
-		<value>Lunch</value>
+		<value>Comendo</value>
 	</string>
 	<string>
 		<id>954</id>
-		<value>Osynlig</value>
+		<value>Escondido</value>
 	</string>
 	<string>
 		<id>955</id>
-		<value>Upptagen</value>
+		<value>Inativo</value>
 	</string>
 	<string>
 		<id>956</id>
@@ -2827,95 +2827,95 @@
 	</string>
 	<string>
 		<id>958</id>
-		<value>Pratar med</value>
+		<value>Falando com</value>
 	</string>
 	<string>
 		<id>959</id>
-		<value>har anslutit till konversationen</value>
+		<value>juntou-se à conversa</value>
 	</string>
 	<string>
 		<id>960</id>
-		<value>har lämnat konversationen</value>
+		<value>deixou a conversa</value>
 	</string>
 	<string>
 		<id>961</id>
-		<value>MSN Status</value>
+		<value>Status do Messenger</value>
 	</string>
 	<string>
 		<id>970</id>
-		<value>Föregående fönster</value>
+		<value>Janela anterior</value>
 	</string>
 	<string>
 		<id>971</id>
-		<value>Välj kanalgrupp</value>
+		<value>Grupo</value>
 	</string>
 	<string>
 		<id>972</id>
-		<value>Alla Kanaler</value>
+		<value>Todos os canais</value>
 	</string>
 	<string>
 		<id>973</id>
-		<value>Maximal FPS</value>
+		<value>FPS máximo</value>
 	</string>
 	<string>
 		<id>974</id>
-		<value>Rotmeny</value>
+		<value>Menu raiz</value>
 	</string>
 	<string>
 		<id>975</id>
-		<value>Föregående kapitel</value>
+		<value>Capítulo anterior</value>
 	</string>
 	<string>
 		<id>976</id>
-		<value>Nästa kapitel</value>
+		<value>Próximo capítulo</value>
 	</string>
 	<string>
 		<id>977</id>
-		<value>Det finns inget ledigt kort tillgänligt</value>
+		<value>Não há cartão disponível</value>
 	</string>
 	<string>
 		<id>978</id>
-		<value>som kan visa denna kanalen</value>
+		<value>para assistir este canal</value>
 	</string>
 	<string>
 		<id>979</id>
-		<value>Spela upp inspelningen från början</value>
+		<value>Tocar gravação desde o início</value>
 	</string>
 	<string>
 		<id>980</id>
-		<value>Spela upp inspelningen från "nutid"</value>
+		<value>Tocar gravação desde o ponto ao vivo</value>
 	</string>
 	<string>
 		<id>981</id>
-		<value>Avbryt detta program</value>
+		<value>Cancelar este programa</value>
 	</string>
 	<string>
 		<id>982</id>
-		<value>Radera denna inspelning</value>
+		<value>Apagar toda esta gravação</value>
 	</string>
 	<string>
 		<id>983</id>
-		<value>Mina spellistor</value>
+		<value>Playlists</value>
 	</string>
 	<string>
 		<id>984</id>
-		<value>Tar emot filmer</value>
+		<value>Baixando lista de filmes</value>
 	</string>
 	<string>
 		<id>985</id>
-		<value>Tar emot filminfo</value>
+		<value>Baixando detalhes dos filmes</value>
 	</string>
 	<string>
 		<id>986</id>
-		<value>Tar emot skådespelare</value>
+		<value>Baixando ator</value>
 	</string>
 	<string>
 		<id>987</id>
-		<value>År</value>
+		<value>Anos</value>
 	</string>
 	<string>
 		<id>988</id>
-		<value>Kvalitet</value>
+		<value>Qualidade</value>
 	</string>
 	<string>
 		<id>989</id>
@@ -2927,31 +2927,31 @@
 	</string>
 	<string>
 		<id>991</id>
-		<value>Prioritet</value>
+		<value>Prioridade</value>
 	</string>
 	<string>
 		<id>992</id>
-		<value>Ta bort orginalfilen</value>
+		<value>Apagar arquivo original</value>
 	</string>
 	<string>
 		<id>993</id>
-		<value>Egen inställning</value>
+		<value>Personalizado</value>
 	</string>
 	<string>
 		<id>994</id>
-		<value>Aktivera autokomprimering</value>
+		<value>Ligar auto-compressão</value>
 	</string>
 	<string>
 		<id>995</id>
-		<value>Är det säkert att du vill komprimera?</value>
+		<value>Quer mesmo comprimir</value>
 	</string>
 	<string>
 		<id>996</id>
-		<value>de valda inspelningarna?</value>
+		<value>as gravações selecionadas?</value>
 	</string>
 	<string>
 		<id>997</id>
-		<value>Klart!</value>
+		<value>Completado</value>
 	</string>
 	<string>
 		<id>998</id>
@@ -2959,243 +2959,295 @@
 	</string>
 	<string>
 		<id>999</id>
-		<value>Denna plugin låter dig omvandla dina</value>
+		<value>Esse plugin lhe permite transcodificar suas</value>
 	</string>
 	<string>
 		<id>1000</id>
-		<value>TV-inspelningar från dvr-ms till mpg, xvid eller wmv.</value>
+		<value>gravações de dvr-ms para mpg, xvid ou wmv</value>
 	</string>
 	<string>
 		<id>1001</id>
-		<value>Observera att du måste ha</value>
+		<value>Favor observar que você precisará do</value>
 	</string>
 	<string>
 		<id>1002</id>
-		<value>Elecard MPEG2-video decoder installerad</value>
+		<value>decodificador de vídeo Elecard MPEG2 instalado</value>
 	</string>
 	<string>
 		<id>1003</id>
-		<value>för att kunna koda om till xvid.</value>
+		<value>para transcodificar para xvid</value>
 	</string>
 	<string>
 		<id>1004</id>
-		<value>Inspelning ska påbörjas</value>
+		<value>Gravação está para começar</value>
 	</string>
 	<string>
 		<id>1005</id>
-		<value>av kanal</value>
+		<value>no canal</value>
 	</string>
 	<string>
 		<id>1006</id>
-		<value>Tillåt start av inspelning</value>
+		<value>Permitir que a gravação comece</value>
 	</string>
 	<string>
 		<id>1007</id>
-		<value>Avbryt inspelning och fortsätt titta på TV</value>
+		<value>Cancelar gravação e continuar assistindo tv</value>
 	</string>
 	<string>
 		<id>1008</id>
-		<value>Köa</value>
+		<value>Fila</value>
 	</string>
 	<string>
 		<id>1009</id>
-		<value>Ladda ner omslag</value>
+		<value>Baixando capa</value>
 	</string>
 	<string>
 		<id>1010</id>
-		<value>Sedd</value>
+		<value>Assistido</value>
 	</string>
 	<string>
 		<id>1011</id>
-		<value>Biografi</value>
+		<value>Biografia</value>
 	</string>
 	<string>
 		<id>1012</id>
-		<value>Detta program kommer att avbrytas av</value>
+		<value>Este programa será interrompido por</value>
 	</string>
 	<string>
 		<id>1013</id>
-		<value>Vill du spela in den andra delen också?</value>
+		<value>Você gostaria de gravar também a segunda parte?</value>
 	</string>
 	<string>
 		<id>1014</id>
-		<value>Påminn om programstart</value>
+		<value>Me avise quando o programa começar</value>
 	</string>
 	<string>
 		<id>1015</id>
-		<value>Påminn INTE om programstart</value>
+		<value>Não me avise quando o programa começar</value>
 	</string>
 	<string>
 		<id>1016</id>
-		<value>Program börjar om fem minuter</value>
+		<value>O programa começa em 5 min</value>
 	</string>
 	<string>
 		<id>1017</id>
-		<value>Sortera efter: Längd</value>
+		<value>Ordenar por: duração</value>
 	</string>
 	<string>
 		<id>1020</id>
-		<value>Information</value>
+		<value>Informação</value>
 	</string>
 	<string>
 		<id>1021</id>
-		<value>Tryck på Alt+Enter för att</value>
+		<value>Aperte Alt+Enter para</value>
 	</string>
 	<string>
 		<id>1022</id>
-		<value>återvända till fönsterläge</value>
+		<value>voltar ao modo janela.</value>
 	</string>
 	<string>
 		<id>1023</id>
-		<value>Det ringer</value>
+		<value>Chamada</value>
 	</string>
 	<string>
 		<id>1024</id>
-		<value>från</value>
+		<value>de</value>
 	</string>
 	<string>
 		<id>1025</id>
-		<value>Ett fel uppstod</value>
+		<value>Um erro ocorreu.</value>
 	</string>
 	<string>
 		<id>1026</id>
-		<value>Detaljer finns i logfilen</value>
+		<value>Veja os logs para mais detalhes.</value>
 	</string>
 	<string>
 		<id>1027</id>
-		<value>Mina DVD-filmer</value>
+		<value>DVD</value>
 	</string>
 	<string>
 		<id>1028</id>
-		<value>Stad</value>
+		<value>Cidade</value>
 	</string>
 	<string>
 		<id>1029</id>
-		<value>Textningsspråk</value>
+		<value>Linguagem de legenda</value>
 	</string>
 	<string>
 		<id>1030</id>
-		<value>Stäng av</value>
+		<value>Desligar</value>
 	</string>
 	<string>
 		<id>1031</id>
-		<value>Omstart</value>
+		<value>Reiniciar</value>
 	</string>
 	<string>
 		<id>1032</id>
-		<value>Viloläge</value>
+		<value>Dormir</value>
 	</string>
 	<string>
 		<id>1033</id>
-		<value>Program spelas in just nu</value>
+		<value>Programas estão sendo gravados no momento</value>
 	</string>
 	<string>
 		<id>1034</id>
-		<value>Ingen signal!</value>
+		<value>Nenhum sinal detectado</value>
 	</string>
 	<string>
 		<id>1035</id>
-		<value>TV-kanalen är krypterad!</value>
+		<value>Canal de TV está codificado!</value>
 	</string>
 	<string>
 		<id>1036</id>
-		<value>Ingen videosignal</value>
+		<value>Nenhum vídeo encontrado</value>
 	</string>
 	<string>
 		<id>1037</id>
-		<value>Min TV - Programinformation</value>
+		<value>TV - informação do programa</value>
 	</string>
 	<string>
 		<id>1038</id>
-		<value>Avancerad inspelning</value>
+		<value>Gravação avançada</value>
 	</string>
 	<string>
 		<id>1039</id>
-		<value>Spela inte in</value>
+		<value>Não gravar</value>
 	</string>
 	<string>
 		<id>1040</id>
-		<value>Påminn mig</value>
+		<value>Me alertar</value>
 	</string>
 	<string>
 		<id>1041</id>
-		<value>Kommande avsnitt</value>
+		<value>Episódios seguintes</value>
 	</string>
 	<string>
 		<id>1042</id>
-		<value>Spara tills</value>
+		<value>Manter até</value>
 	</string>
 	<string>
 		<id>1043</id>
-		<value>tills sedd</value>
+		<value>Até assistido</value>
 	</string>
 	<string>
 		<id>1044</id>
-		<value>tills utrymme behövs</value>
+		<value>Até precisar de espaço</value>
 	</string>
 	<string>
 		<id>1045</id>
-		<value>till datum</value>
+		<value>Até a data</value>
 	</string>
 	<string>
 		<id>1046</id>
-		<value>alltid</value>
+		<value>Sempre</value>
 	</string>
 	<string>
 		<id>1047</id>
-		<value>Starta i fullskärmsläge</value>
+		<value>Começar em modo de tela cheia</value>
+	</string>
+	<string>
+		<id>1048</id>
+		<value>Ajustes</value>
+	</string>
+	<string>
+		<id>1049</id>
+		<value>Hibernar</value>
+	</string>
+	<string>
+		<id>1050</id>
+		<value>sáb-dom</value>
+	</string>
+	<string>
+		<id>1051</id>
+		<value>Gravar sáb-dom</value>
+	</string>
+	<string>
+		<id>1100</id>
+		<value>Importar CD</value>
+	</string>
+	<string>
+		<id>1101</id>
+		<value>Importar trilha escolhida</value>
+	</string>
+	<string>
+		<id>1102</id>
+		<value>Cancelar importação de CD</value>
+	</string>
+	<string>
+		<id>1103</id>
+		<value>Importando trilha</value>
+	</string>
+	<string>
+		<id>1104</id>
+		<value>restantes</value>
+	</string>
+	<string>
+		<id>1105</id>
+		<value>Importando trilhas</value>
 	</string>
 	<string>
 		<id>1440</id>
-		<value>Min text-TV</value>
+		<value>Teletexto</value>
 	</string>
 	<string>
 		<id>1441</id>
-		<value>Text-TV</value>
+		<value>Teletexto</value>
 	</string>
 	<string>
 		<id>1442</id>
-		<value>Scroll-hastighet</value>
+		<value>Vel. de rolagem (horizontal)</value>
 	</string>
 	<string>
 		<id>1443</id>
-		<value>Scroll-hastighet (Vertikal)</value>
+		<value>Vel. de rolagem (vertical)</value>
 	</string>
 	<string>
 		<id>1444</id>
-		<value>Spela in före</value>
+		<value>Pré-gravar</value>
 	</string>
 	<string>
 		<id>1445</id>
-		<value>Spela in efter</value>
+		<value>Pós-gravar</value>
 	</string>
 	<string>
 		<id>1446</id>
-		<value>Inspelning startad:</value>
+		<value>Gravação iniciada em:</value>
 	</string>
 	<string>
 		<id>1447</id>
-		<value>Inspelning stoppad:</value>
+		<value>Gravação terminada em:</value>
+	</string>
+	<string>
+		<id>1448</id>
+		<value>Selecionar nenhum</value>
+	</string>
+	<string>
+		<id>1449</id>
+		<value>Parar gravação</value>
+	</string>
+	<string>
+		<id>1450</id>
+		<value>Tem certeza de que quer parar gravação?</value>
 	</string>
 	<string>
 		<id>1950</id>
-		<value>Min status</value>
+		<value>Status</value>
 	</string>
 	<string>
 		<id>1951</id>
-		<value>Hårddisk</value>
+		<value>Disco rígido</value>
 	</string>
 	<string>
 		<id>1952</id>
-		<value>Fläkt</value>
+		<value>Ventoinha</value>
 	</string>
 	<string>
 		<id>1953</id>
-		<value>Ledigt</value>
+		<value>Livre</value>
 	</string>
 	<string>
 		<id>1954</id>
-		<value>Temperatur</value>
+		<value>Temperatura</value>
 	</string>
 	<string>
 		<id>1955</id>
@@ -3203,19 +3255,19 @@
 	</string>
 	<string>
 		<id>1956</id>
-		<value>Välj alarmsignal</value>
+		<value>Selecionar som de alarme</value>
 	</string>
 	<string>
 		<id>1957</id>
-		<value>Egenskaper</value>
+		<value>Opções</value>
 	</string>
 	<string>
 		<id>1958</id>
-		<value>CPU-användning</value>
+		<value>Uso do CPU</value>
 	</string>
 	<string>
 		<id>1959</id>
-		<value>Spänning</value>
+		<value>Tensão</value>
 	</string>
 	<string>
 		<id>1960</id>
@@ -3223,63 +3275,63 @@
 	</string>
 	<string>
 		<id>1961</id>
-		<value>Klockfrekvens</value>
+		<value>Freqüência do relógio</value>
 	</string>
 	<string>
 		<id>1962</id>
-		<value>Egenskaper</value>
+		<value>Opções</value>
 	</string>
 	<string>
 		<id>1963</id>
-		<value>Sensorfinesser</value>
+		<value>Detalhes do sensor</value>
 	</string>
 	<string>
 		<id>1964</id>
-		<value>Sensor alarm</value>
+		<value>Alarme do sensor</value>
 	</string>
 	<string>
 		<id>1965</id>
-		<value>Högsta Värde</value>
+		<value>Maior valor</value>
 	</string>
 	<string>
 		<id>1966</id>
-		<value>Lägsta Värde</value>
+		<value>Menor valor</value>
 	</string>
 	<string>
 		<id>1967</id>
-		<value>Övre alarmgräns</value>
+		<value>Limite max. do alarme</value>
 	</string>
 	<string>
 		<id>1968</id>
-		<value>Nedre alarmgräns</value>
+		<value>Limite min. do alarme</value>
 	</string>
 	<string>
 		<id>1969</id>
-		<value>Testa ljudet</value>
+		<value>Som de teste</value>
 	</string>
 	<string>
 		<id>1970</id>
-		<value>Alarmintervall (i sekunder)</value>
+		<value>Intervalo do alarme (em segundos)</value>
 	</string>
 	<string>
 		<id>1971</id>
-		<value>Stäng ner vid larm</value>
+		<value>Desligar no alerta</value>
 	</string>
 	<string>
 		<id>1972</id>
-		<value>Status detaljer</value>
+		<value>Detalhes do status</value>
 	</string>
 	<string>
 		<id>1973</id>
-		<value>av</value>
+		<value>em</value>
 	</string>
 	<string>
 		<id>1974</id>
-		<value>Minne</value>
+		<value>Memória</value>
 	</string>
 	<string>
 		<id>1975</id>
-		<value>Nästa Sida</value>
+		<value>Próxima página</value>
 	</string>
 	<string>
 		<id>1976</id>
@@ -3287,375 +3339,375 @@
 	</string>
 	<string>
 		<id>1977</id>
-		<value>Filsystem</value>
+		<value>Sis. arquivos</value>
 	</string>
 	<string>
 		<id>1978</id>
-		<value>Virtuellt minne</value>
+		<value>Mem. Virtual</value>
 	</string>
 	<string>
 		<id>2005</id>
-		<value>Ta bort</value>
+		<value>Apagar</value>
 	</string>
 	<string>
 		<id>2006</id>
-		<value>Titel</value>
+		<value>Título</value>
 	</string>
 	<string>
 		<id>2007</id>
-		<value>Yield</value>
+		<value>Rendimento</value>
 	</string>
 	<string>
 		<id>2008</id>
-		<value>Ingredienser</value>
+		<value>Ingredientes</value>
 	</string>
 	<string>
 		<id>2009</id>
-		<value>Riktningar</value>
+		<value>Instruções</value>
 	</string>
 	<string>
 		<id>2010</id>
-		<value>Kort</value>
+		<value>Cartão</value>
 	</string>
 	<string>
 		<id>2011</id>
-		<value>Skriv Ut</value>
+		<value>Imprimir</value>
 	</string>
 	<string>
 		<id>2012</id>
-		<value>Ta bort</value>
+		<value>Apagar</value>
 	</string>
 	<string>
 		<id>2013</id>
-		<value>Favoriter</value>
+		<value>Favoritos</value>
 	</string>
 	<string>
 		<id>2014</id>
-		<value>Okänd</value>
+		<value>Desconhecido</value>
 	</string>
 	<string>
 		<id>2015</id>
-		<value>per portion</value>
+		<value>por porção</value>
 	</string>
 	<string>
 		<id>2016</id>
-		<value>liten</value>
+		<value>pequeno</value>
 	</string>
 	<string>
 		<id>2017</id>
-		<value>flytande ounce</value>
+		<value>onça líquida</value>
 	</string>
 	<string>
 		<id>2018</id>
-		<value>kopp</value>
+		<value>copo</value>
 	</string>
 	<string>
 		<id>2019</id>
-		<value>pint</value>
+		<value>pitada</value>
 	</string>
 	<string>
 		<id>2020</id>
-		<value>medium</value>
+		<value>médio</value>
 	</string>
 	<string>
 		<id>2021</id>
-		<value>stor</value>
+		<value>grande</value>
 	</string>
 	<string>
 		<id>2022</id>
-		<value>burk</value>
+		<value>lata</value>
 	</string>
 	<string>
 		<id>2023</id>
-		<value>paket</value>
+		<value>pacote</value>
 	</string>
 	<string>
 		<id>2024</id>
-		<value>nypa</value>
+		<value>pitada</value>
 	</string>
 	<string>
 		<id>2025</id>
-		<value>droppe</value>
+		<value>gota</value>
 	</string>
 	<string>
 		<id>2026</id>
-		<value>skvätt</value>
+		<value>porção</value>
 	</string>
 	<string>
 		<id>2027</id>
-		<value>låda</value>
+		<value>caixa</value>
 	</string>
 	<string>
 		<id>2028</id>
-		<value>knippe</value>
+		<value>monte</value>
 	</string>
 	<string>
 		<id>2029</id>
-		<value>skiva</value>
+		<value>corte</value>
 	</string>
 	<string>
 		<id>2030</id>
-		<value>varje</value>
+		<value>cada</value>
 	</string>
 	<string>
 		<id>2031</id>
-		<value>tesked</value>
+		<value>colher de chá</value>
 	</string>
 	<string>
 		<id>2032</id>
-		<value>tesked</value>
+		<value>colher de chá</value>
 	</string>
 	<string>
 		<id>2033</id>
-		<value>matsked</value>
+		<value>colher de sopa</value>
 	</string>
 	<string>
 		<id>2034</id>
-		<value>matsked</value>
+		<value>colher de sopa</value>
 	</string>
 	<string>
 		<id>2035</id>
-		<value>quart</value>
+		<value>quarto</value>
 	</string>
 	<string>
 		<id>2036</id>
-		<value>gallon</value>
+		<value>galão</value>
 	</string>
 	<string>
 		<id>2037</id>
-		<value>ounce</value>
+		<value>onça</value>
 	</string>
 	<string>
 		<id>2038</id>
-		<value>pound</value>
+		<value>libra</value>
 	</string>
 	<string>
 		<id>2039</id>
-		<value>milliliter</value>
+		<value>mililitro</value>
 	</string>
 	<string>
 		<id>2040</id>
-		<value>milliliter</value>
+		<value>mililitro</value>
 	</string>
 	<string>
 		<id>2041</id>
-		<value>centiliter</value>
+		<value>centilitro</value>
 	</string>
 	<string>
 		<id>2042</id>
-		<value>deciliter</value>
+		<value>decilitro</value>
 	</string>
 	<string>
 		<id>2043</id>
-		<value>liter</value>
+		<value>litro</value>
 	</string>
 	<string>
 		<id>2044</id>
-		<value>milligram</value>
+		<value>milligrama</value>
 	</string>
 	<string>
 		<id>2045</id>
-		<value>centigram</value>
+		<value>centigrama</value>
 	</string>
 	<string>
 		<id>2046</id>
-		<value>decigram</value>
+		<value>decigrama</value>
 	</string>
 	<string>
 		<id>2047</id>
-		<value>gram</value>
+		<value>grama</value>
 	</string>
 	<string>
 		<id>2048</id>
-		<value>kilogram</value>
+		<value>kilograma</value>
 	</string>
 	<string>
 		<id>2049</id>
-		<value>Ta bort detta recept?</value>
+		<value>Apagar esta receita?</value>
 	</string>
 	<string>
 		<id>2050</id>
-		<value>Ta bort denna kategori?</value>
+		<value>Apagar esta categoria?</value>
 	</string>
 	<string>
 		<id>2051</id>
-		<value>Sök på titeln</value>
+		<value>Procurar em títulos</value>
 	</string>
 	<string>
 		<id>2052</id>
-		<value>Sök i recept</value>
+		<value>Procurar nas receitas</value>
 	</string>
 	<string>
 		<id>2053</id>
-		<value>Kategori</value>
+		<value>Categoria</value>
 	</string>
 	<string>
 		<id>2054</id>
-		<value>Ingen träff!</value>
+		<value>Sem entrada!</value>
 	</string>
 	<string>
 		<id>2100</id>
-		<value>Min brännare</value>
+		<value>Queimar</value>
 	</string>
 	<string>
 		<id>2101</id>
-		<value>Kopiera CD/DVD</value>
+		<value>Copiar CD/DVD</value>
 	</string>
 	<string>
 		<id>2102</id>
-		<value>Skapa ljud-CD</value>
+		<value>Criar Áudio-CD</value>
 	</string>
 	<string>
 		<id>2103</id>
-		<value>Skapa video-CD</value>
+		<value>Criar Vídeo-CD</value>
 	</string>
 	<string>
 		<id>2104</id>
-		<value>Skapa video-DVD</value>
+		<value>Criar Vídeo-DVD</value>
 	</string>
 	<string>
 		<id>2105</id>
-		<value>Skapa data-CD</value>
+		<value>Criar Data-CD</value>
 	</string>
 	<string>
 		<id>2106</id>
-		<value>Skapa data-DVD</value>
+		<value>Criar Data-DVD</value>
 	</string>
 	<string>
 		<id>2107</id>
-		<value>Starta kopiering</value>
+		<value>Iniciar cópia</value>
 	</string>
 	<string>
 		<id>2108</id>
-		<value>Sätt i en tom CD/DVD</value>
+		<value>Inserir CD/DVD virgem</value>
 	</string>
 	<string>
 		<id>2109</id>
-		<value>tryck sen på OK</value>
+		<value>depois apertar OK</value>
 	</string>
 	<string>
 		<id>2110</id>
-		<value>Sätt i original-CD/DVD</value>
+		<value>Inserir CD/DVD original</value>
 	</string>
 	<string>
 		<id>2111</id>
-		<value>Klar!</value>
+		<value>Concluído!</value>
 	</string>
 	<string>
 		<id>2112</id>
-		<value>Väntar på CD/DVD</value>
+		<value>Aguardando CD/DVD</value>
 	</string>
 	<string>
 		<id>2113</id>
-		<value>Kopiera allt</value>
+		<value>Copiar tudo</value>
 	</string>
 	<string>
 		<id>2114</id>
-		<value>Radera skiva</value>
+		<value>Apagar disco</value>
 	</string>
 	<string>
 		<id>2115</id>
-		<value>Sätt i CD/DVD-RW</value>
+		<value>Inserir CD/DVD RW</value>
 	</string>
 	<string>
 		<id>2116</id>
-		<value>Enhet ej redo</value>
+		<value>Dispositivo não está pronto</value>
 	</string>
 	<string>
 		<id>2117</id>
-		<value>Ett allvarligt fel har inträffat!</value>
+		<value>ocorreu um erro fatal!</value>
 	</string>
 	<string>
 		<id>2118</id>
-		<value>Konvertera DVR-MS</value>
+		<value>Converter DVR-MS</value>
 	</string>
 	<string>
 		<id>2119</id>
-		<value>Starta konvertering</value>
+		<value>Iniciar conversão</value>
 	</string>
 	<string>
 		<id>2120</id>
-		<value>Konverterar fil(er)...</value>
+		<value>Convertendo arquivo(s) ...</value>
 	</string>
 	<string>
 		<id>2121</id>
-		<value>Kunde inte konvertera fil (er)!</value>
+		<value>Impossível converter arquivo(s)!</value>
 	</string>
 	<string>
 		<id>2122</id>
-		<value>Startar!</value>
+		<value>começa!</value>
 	</string>
 	<string>
 		<id>2123</id>
-		<value>Diskinfo</value>
+		<value>Disco (info)</value>
 	</string>
 	<string>
 		<id>2124</id>
-		<value>Kan ej radera: Media är inte skrivbart</value>
+		<value>Impossível apagar: mídia não suporta escrita</value>
 	</string>
 	<string>
 		<id>2125</id>
-		<value>Raderar Disk....</value>
+		<value>Apagar disco ...</value>
 	</string>
 	<string>
 		<id>2126</id>
-		<value>Mata Ut CD</value>
+		<value>Ejetar CD</value>
 	</string>
 	<string>
 		<id>2127</id>
-		<value>CD:n är inte skrivbar</value>
+		<value>O CD não suporta escrita</value>
 	</string>
 	<string>
 		<id>2128</id>
-		<value>Förbereder bränning: beräknad tid:</value>
+		<value>Preparando p/ queimar: tempo estimado:</value>
 	</string>
 	<string>
 		<id>2129</id>
-		<value>Förbereder bränning</value>
+		<value>Preparando p/ queimar</value>
 	</string>
 	<string>
 		<id>2130</id>
-		<value>Blockera</value>
+		<value>Bloco</value>
 	</string>
 	<string>
 		<id>2131</id>
-		<value>av</value>
+		<value>de</value>
 	</string>
 	<string>
 		<id>2132</id>
-		<value>Stänger skiva: beräknad tid:</value>
+		<value>Fechando disco: tempo estimado:</value>
 	</string>
 	<string>
 		<id>2133</id>
-		<value>TV-inspelningar</value>
+		<value>Gravações de TV</value>
 	</string>
 	<string>
 		<id>2134</id>
-		<value>Video</value>
+		<value>Vídeo</value>
 	</string>
 	<string>
 		<id>2135</id>
-		<value>Ljud</value>
+		<value>Áudio</value>
 	</string>
 	<string>
 		<id>2136</id>
-		<value>Data</value>
+		<value>Dados</value>
 	</string>
 	<string>
 		<id>2137</id>
-		<value>Konvertera</value>
+		<value>Converter</value>
 	</string>
 	<string>
 		<id>2138</id>
-		<value>Klippa</value>
+		<value>Cortar</value>
 	</string>
 	<string>
 		<id>2139</id>
-		<value>Skapa MP3-CD</value>
+		<value>Fazer MP3-CD</value>
 	</string>
 	<string>
 		<id>2140</id>
-		<value>Skapa MP3-DVD</value>
+		<value>Fazer MP3-DVD</value>
 	</string>
 	<string>
 		<id>2141</id>
@@ -3667,7 +3719,7 @@
 	</string>
 	<string>
 		<id>2143</id>
-		<value>Hem</value>
+		<value>Topo</value>
 	</string>
 	<string>
 		<id>2200</id>
@@ -3675,219 +3727,219 @@
 	</string>
 	<string>
 		<id>2201</id>
-		<value>Välj källa</value>
+		<value>Selecionar fonte</value>
 	</string>
 	<string>
 		<id>2202</id>
-		<value>Välj mål</value>
+		<value>Selecionar destino</value>
 	</string>
 	<string>
 		<id>2203</id>
-		<value>Kopiera data</value>
+		<value>Copiar dados</value>
 	</string>
 	<string>
 		<id>2204</id>
-		<value>Skapa mapp</value>
+		<value>Criar pasta</value>
 	</string>
 	<string>
 		<id>2205</id>
-		<value>Återställ markerat</value>
+		<value>Restaurar seleção</value>
 	</string>
 	<string>
 		<id>2206</id>
-		<value>Välj alla</value>
+		<value>Selecionar tudo</value>
 	</string>
 	<string>
 		<id>2207</id>
-		<value>Vill du</value>
+		<value>Deseja</value>
 	</string>
 	<string>
 		<id>2208</id>
-		<value>skapa mappen?</value>
+		<value>criar a pasta?</value>
 	</string>
 	<string>
 		<id>2209</id>
-		<value>Vill du kopiera filerna?</value>
+		<value>Deseja copiar os arquivos?</value>
 	</string>
 	<string>
 		<id>2210</id>
-		<value>Filer kopierade!</value>
+		<value>Arquivos copiados!</value>
 	</string>
 	<string>
 		<id>2211</id>
-		<value>Vänta, filer kopieras.</value>
+		<value>Aguarde, copiando arquivos.</value>
 	</string>
 	<string>
 		<id>2212</id>
-		<value>Ta bort</value>
+		<value>Remover</value>
 	</string>
 	<string>
 		<id>2213</id>
-		<value>Flytta</value>
+		<value>Mover</value>
 	</string>
 	<string>
 		<id>2214</id>
-		<value>Vill du flytta de markerade filerna?</value>
+		<value>Deseja mover os arquivos selecionados?</value>
 	</string>
 	<string>
 		<id>2215</id>
-		<value>Vänta, flyttar filer.</value>
+		<value>Aguarde, movendo arquivos.</value>
 	</string>
 	<string>
 		<id>2216</id>
-		<value>Filer flyttade!</value>
+		<value>Arquivos movidos!</value>
 	</string>
 	<string>
 		<id>2217</id>
-		<value>Det finns redan en fil med det namnet!</value>
+		<value>Arquivo de destino já existe!</value>
 	</string>
 	<string>
 		<id>2218</id>
-		<value>Skriva över filen?</value>
+		<value>Sobreescrevê-lo?</value>
 	</string>
 	<string>
 		<id>2219</id>
-		<value>Kan inte flytta från vald enhet!</value>
+		<value>Impossível mover do dispositivo selecionado!</value>
 	</string>
 	<string>
 		<id>2220</id>
-		<value>Vill du kopiera markerade filer?</value>
+		<value>Copiar arquivos selecionados?</value>
 	</string>
 	<string>
 		<id>2221</id>
-		<value>Vill du ta bort valda filer?</value>
+		<value>Quer mesmo apagar arquivos selecionados?</value>
 	</string>
 	<string>
 		<id>2222</id>
-		<value>Filer borttagna!</value>
+		<value>Arquivos apagados!</value>
 	</string>
 	<string>
 		<id>2223</id>
-		<value>Papperskorg</value>
+		<value>Lata de lixo</value>
 	</string>
 	<string>
 		<id>2224</id>
-		<value>Mappen finns redan!</value>
+		<value>Pasta existe!</value>
 	</string>
 	<string>
 		<id>2225</id>
-		<value>Mappen skapad!</value>
+		<value>Pasta criada</value>
 	</string>
 	<string>
 		<id>3000</id>
-		<value>Programalternativ</value>
+		<value>Opções do programa</value>
 	</string>
 	<string>
 		<id>3001</id>
-		<value>timme</value>
+		<value>hora</value>
 	</string>
 	<string>
 		<id>3002</id>
-		<value>timmar</value>
+		<value>horas</value>
 	</string>
 	<string>
 		<id>3003</id>
-		<value>minut</value>
+		<value>minuto</value>
 	</string>
 	<string>
 		<id>3004</id>
-		<value>minuter</value>
+		<value>minutos</value>
 	</string>
 	<string>
 		<id>3005</id>
-		<value>timme sen</value>
+		<value>hora atrás</value>
 	</string>
 	<string>
 		<id>3006</id>
-		<value>timmar sen</value>
+		<value>horas atrás</value>
 	</string>
 	<string>
 		<id>3007</id>
-		<value>minut sen</value>
+		<value>minuto atrás</value>
 	</string>
 	<string>
 		<id>3008</id>
-		<value>minuter sen</value>
+		<value>minutos atrás</value>
 	</string>
 	<string>
 		<id>3009</id>
-		<value>Startar om</value>
+		<value>Começa em</value>
 	</string>
 	<string>
 		<id>3010</id>
-		<value>Minuter kvar</value>
+		<value>minutos restantes</value>
 	</string>
 	<string>
 		<id>3011</id>
-		<value>Timme kvar</value>
+		<value>hora restante</value>
 	</string>
 	<string>
 		<id>3012</id>
-		<value>Timmar kvar</value>
+		<value>horas restantes</value>
 	</string>
 	<string>
 		<id>3013</id>
-		<value>Startar nu</value>
+		<value>Começando agora</value>
 	</string>
 	<string>
 		<id>3014</id>
-		<value>Dag</value>
+		<value>dia</value>
 	</string>
 	<string>
 		<id>3015</id>
-		<value>Dagar</value>
+		<value>dias</value>
 	</string>
 	<string>
 		<id>3016</id>
-		<value>Redan slut</value>
+		<value>Já acabou</value>
 	</string>
 	<string>
 		<id>3017</id>
-		<value>Startad</value>
+		<value>Iniciou</value>
 	</string>
 	<string>
 		<id>3018</id>
-		<value>Minut kvar</value>
+		<value>minuto restante</value>
 	</string>
 	<string>
 		<id>3019</id>
-		<value>Serie</value>
+		<value>séries</value>
 	</string>
 	<string>
 		<id>3020</id>
-		<value>Avsnitt</value>
+		<value>episódio</value>
 	</string>
 	<string>
 		<id>3021</id>
-		<value>Del</value>
+		<value>parte</value>
 	</string>
 	<string>
 		<id>3022</id>
-		<value>av</value>
+		<value>de</value>
 	</string>
 	<string>
 		<id>5900</id>
-		<value>Mina Trailers</value>
+		<value>trailers</value>
 	</string>
 	<string>
 		<id>5901</id>
-		<value>Visa Filmer</value>
+		<value>Exibir filmes</value>
 	</string>
 	<string>
 		<id>5902</id>
-		<value>Visa vilka filmer?</value>
+		<value>Exibir quais filmes?</value>
 	</string>
 	<string>
 		<id>5903</id>
-		<value>Nyligen släppta filmer</value>
+		<value>Filmes adicionados recentemente</value>
 	</string>
 	<string>
 		<id>5904</id>
-		<value>Mest sedda filmer</value>
+		<value>Filmes mais assistidos</value>
 	</string>
 	<string>
 		<id>5905</id>
-		<value>Alla filmer</value>
+		<value>Todos os filmes</value>
 	</string>
 	<string>
 		<id>5906</id>
@@ -3895,351 +3947,351 @@
 	</string>
 	<string>
 		<id>5907</id>
-		<value>Clips</value>
+		<value>Clipes</value>
 	</string>
 	<string>
 		<id>5908</id>
-		<value>Mer material</value>
+		<value>Mais</value>
 	</string>
 	<string>
 		<id>5909</id>
-		<value>Kan inte spela film!</value>
+		<value>Impossível transmitir filme!</value>
 	</string>
 	<string>
 		<id>5910</id>
-		<value>Hämtar film information</value>
+		<value>Obtendo dados do filme</value>
 	</string>
 	<string>
 		<id>5911</id>
-		<value>Nytt på biograferna</value>
+		<value>Estréias</value>
 	</string>
 	<string>
 		<id>5912</id>
-		<value>Tidigare vecka</value>
+		<value>Semana passada</value>
 	</string>
 	<string>
 		<id>5913</id>
-		<value>Denna vecka</value>
+		<value>Essa semana</value>
 	</string>
 	<string>
 		<id>5914</id>
-		<value>Nästa vecka</value>
+		<value>Próxima semana</value>
 	</string>
 	<string>
 		<id>5915</id>
-		<value>Inga film recensioner än</value>
+		<value>Nenhuma crítica de filmes ainda</value>
 	</string>
 	<string>
 		<id>5916</id>
-		<value>Inga trailers hittade</value>
+		<value>Nenhum trailer encontrado.</value>
 	</string>
 	<string>
 		<id>5917</id>
-		<value>Tyska trailers</value>
+		<value>Trailers alemães</value>
 	</string>
 	<string>
 		<id>8000</id>
-		<value>Min e-post</value>
+		<value>Correio</value>
 	</string>
 	<string>
 		<id>8001</id>
-		<value>Kolla brevlådan</value>
+		<value>Verificar caixa</value>
 	</string>
 	<string>
 		<id>8002</id>
-		<value>Autokoll Av</value>
+		<value>Auto-verificar desligado</value>
 	</string>
 	<string>
 		<id>8003</id>
-		<value>Autokoll På</value>
+		<value>Auto-verificar ligado</value>
 	</string>
 	<string>
 		<id>8004</id>
-		<value>Du har ny e-post!</value>
+		<value>Você tem correio!</value>
 	</string>
 	<string>
 		<id>8005</id>
-		<value>Uppdaterar brevlådan</value>
+		<value>Atualizar caixa</value>
 	</string>
 	<string>
 		<id>8007</id>
-		<value>Autokoll På</value>
+		<value>Auto-verificar</value>
 	</string>
 	<string>
 		<id>8008</id>
-		<value>Back</value>
+		<value>Voltar</value>
 	</string>
 	<string>
 		<id>8009</id>
-		<value>Markera alla olästa</value>
+		<value>Marcar todos como não lido</value>
 	</string>
 	<string>
 		<id>8010</id>
-		<value>Ingen brevlåda skapad</value>
+		<value>Nenhuma caixa definida</value>
 	</string>
 	<string>
 		<id>8011</id>
-		<value>Gå till Setup och skapa</value>
+		<value>Por favor defina em Setup</value>
 	</string>
 	<string>
 		<id>8012</id>
-		<value>minst en brevlåda för att använda Mail-Pluginen.</value>
+		<value>pelo menos 1 caixa para usar esse plugin.</value>
 	</string>
 	<string>
 		<id>8013</id>
-		<value>Servern svarar ej</value>
+		<value>Sem resposta do servidor</value>
 	</string>
 	<string>
 		<id>8014</id>
-		<value>Servern&apos;{0}&apos;varar ej!</value>
+		<value>O servidor&apos;{0}&apos;não responde!</value>
 	</string>
 	<string>
 		<id>8015</id>
-		<value>Kolla inst. för brevlådan&apos;{0}&apos;</value>
+		<value>Verifique as configurações para a caixa&apos;{0}&apos;</value>
 	</string>
 	<string>
 		<id>8016</id>
-		<value>Från</value>
+		<value>De</value>
 	</string>
 	<string>
 		<id>8017</id>
-		<value>Till</value>
+		<value>Para</value>
 	</string>
 	<string>
 		<id>8018</id>
-		<value>Ämne</value>
+		<value>Assunto</value>
 	</string>
 	<string>
 		<id>8019</id>
-		<value>Meddelande</value>
+		<value>Mensagem</value>
 	</string>
 	<string>
 		<id>8020</id>
-		<value>Ta bort e-post</value>
+		<value>Apagar mensagem</value>
 	</string>
 	<string>
 		<id>8021</id>
-		<value>Markera som läst</value>
+		<value>Marcar como lida</value>
 	</string>
 	<string>
 		<id>8022</id>
-		<value>Visa bifogade filer</value>
+		<value>Exibir anexos</value>
 	</string>
 	<string>
 		<id>8023</id>
-		<value>Nya meddelanden mottagna</value>
+		<value>Chegou nova mensagem</value>
 	</string>
 	<string>
 		<id>8024</id>
-		<value>Visa meddelande</value>
+		<value>Exibir mensagem</value>
 	</string>
 	<string>
 		<id>8025</id>
-		<value>Behandlar meddelande</value>
+		<value>Analisando mensagens</value>
 	</string>
 	<string>
 		<id>8030</id>
-		<value>Ansluten till server</value>
+		<value>Ligado ao servidor</value>
 	</string>
 	<string>
 		<id>8031</id>
-		<value>Tar emot antal brev</value>
+		<value>Obtendo nº de mensagens</value>
 	</string>
 	<string>
 		<id>8033</id>
-		<value>Hämtar</value>
+		<value>Progresso</value>
 	</string>
 	<string>
 		<id>8034</id>
-		<value>Visa HTML</value>
+		<value>Exibir HTML</value>
 	</string>
 	<string>
 		<id>9000</id>
-		<value>Bildstorlek:</value>
+		<value>Dimensöes:</value>
 	</string>
 	<string>
 		<id>9001</id>
-		<value>Upplösning:</value>
+		<value>Resolução:</value>
 	</string>
 	<string>
 		<id>9002</id>
-		<value>Blixt:</value>
+		<value>Flash:</value>
 	</string>
 	<string>
 		<id>9003</id>
-		<value>Avståndsläge:</value>
+		<value>Modo de medição:</value>
 	</string>
 	<string>
 		<id>9004</id>
-		<value>Exponeringskompensation:</value>
+		<value>Compensação de exposição:</value>
 	</string>
 	<string>
 		<id>9005</id>
-		<value>Slutarhastighet:</value>
+		<value>Velocidade do obturador:</value>
 	</string>
 	<string>
 		<id>9006</id>
-		<value>Datum när bilden togs:</value>
+		<value>Data da foto:</value>
 	</string>
 	<string>
 		<id>9007</id>
-		<value>Bländare:</value>
+		<value>Fstop:</value>
 	</string>
 	<string>
 		<id>9008</id>
-		<value>Exponeringstid:</value>
+		<value>Exposição:</value>
 	</string>
 	<string>
 		<id>9009</id>
-		<value>Kameramodell:</value>
+		<value>Modelo da câmera:</value>
 	</string>
 	<string>
 		<id>9010</id>
-		<value>Tillverkare:</value>
+		<value>Equipamento:</value>
 	</string>
 	<string>
 		<id>9011</id>
-		<value>Visa kommentarer:</value>
+		<value>Ver comentários:</value>
 	</string>
 	<string>
 		<id>99845</id>
-		<value>Sök i TV.com</value>
+		<value>Verificar TV.com</value>
 	</string>
 	<string>
 		<id>12902</id>
-		<value>MSN Messenger OSD</value>
+		<value>OSD do MSN Messenger</value>
 	</string>
 	<string>
 		<id>13000</id>
-		<value>System:</value>
+		<value>Sistema:</value>
 	</string>
 	<string>
 		<id>13001</id>
-		<value>Tillverkare:</value>
+		<value>Fabricante:</value>
 	</string>
 	<string>
 		<id>13002</id>
-		<value>Launch</value>
+		<value>Iniciar</value>
 	</string>
 	<string>
 		<id>13003</id>
-		<value>Importerar *.mlf fil</value>
+		<value>Importando arquivo *.mlf</value>
 	</string>
 	<string>
 		<id>13004</id>
-		<value>Importerar *.my fil</value>
+		<value>Importando arquivo *.my</value>
 	</string>
 	<string>
 		<id>13005</id>
-		<value>Senast Importerad fil:</value>
+		<value>Último arquivo importado:</value>
 	</string>
 	<string>
 		<id>13006</id>
-		<value>Liten Bild</value>
+		<value>Imagem pequena</value>
 	</string>
 	<string>
 		<id>13007</id>
-		<value>Stor Bild</value>
+		<value>Imagem grande</value>
 	</string>
 	<string>
 		<id>13008</id>
-		<value>Ken Burns-effekt</value>
+		<value>Efeito Ken Burns</value>
 	</string>
 	<string>
 		<id>13009</id>
-		<value>Slumpmässig övergångar</value>
+		<value>Transições aleatórias</value>
 	</string>
 	<string>
 		<id>13010</id>
-		<value>Tonade övergångar</value>
+		<value>Transições X-fade</value>
 	</string>
 	<string>
 		<id>13011</id>
-		<value>Ken Burns-hastighet</value>
+		<value>Vel. Ken Burns</value>
 	</string>
 	<string>
 		<id>13012</id>
-		<value>Laddar bild, vänta lite</value>
+		<value>Carregando imagem, favor aguardar</value>
 	</string>
 	<string>
 		<id>13013</id>
-		<value>Laddar video, vänta lite</value>
+		<value>Carregando vídeo, favor aguardar</value>
 	</string>
 	<string>
 		<id>13014</id>
-		<value>Söker genom mapp</value>
+		<value>Buscando diretório</value>
 	</string>
 	<string>
 		<id>13015</id>
-		<value>Importerar gamebase</value>
+		<value>Importando arquivo gamebase</value>
 	</string>
 	<string>
 		<id>13016</id>
-		<value>Sortera efter: Antal starter</value>
+		<value>Ordenar por: vezes rodado</value>
 	</string>
 	<string>
 		<id>13017</id>
-		<value>Sortera efter: Senaste</value>
+		<value>Ordenar por: data</value>
 	</string>
 	<string>
 		<id>13018</id>
-		<value>Sortera efter: Rating</value>
+		<value>Ordenar por: classificação</value>
 	</string>
 	<string>
 		<id>16001</id>
-		<value>Partyblanda</value>
+		<value>"Party Shuffle"</value>
 	</string>
 	<string>
 		<id>25001</id>
-		<value>Väntar på sida {0:X}...!</value>
+		<value>Aguardando página {0:X} ...!</value>
 	</string>
 	<string>
 		<id>19001</id>
-		<value>Mitt Tetris</value>
+		<value>Tetris</value>
 	</string>
 	<string>
 		<id>19002</id>
-		<value>Nytt Spel</value>
+		<value>Novo jogo</value>
 	</string>
 	<string>
 		<id>19003</id>
-		<value>Musik</value>
+		<value>Música</value>
 	</string>
 	<string>
 		<id>19004</id>
-		<value>Ljud</value>
+		<value>Sons</value>
 	</string>
 	<string>
 		<id>19005</id>
-		<value>Poäng</value>
+		<value>Pontuação</value>
 	</string>
 	<string>
 		<id>19006</id>
-		<value>Nivå</value>
+		<value>Nível</value>
 	</string>
 	<string>
 		<id>19007</id>
-		<value>Rader</value>
+		<value>Linhas</value>
 	</string>
 	<string>
 		<id>19008</id>
-		<value>Rekord</value>
+		<value>Pontuações</value>
 	</string>
 	<string>
 		<id>19009</id>
-		<value>Nästa</value>
+		<value>Próximo</value>
 	</string>
 	<string>
 		<id>19010</id>
-		<value>Tryck eller klicka för att starta...</value>
+		<value>Clique para começar ...</value>
 	</string>
 	<string>
 		<id>19011</id>
-		<value>Pausad</value>
+		<value>Pausa</value>
 	</string>
 	<string>
 		<id>19012</id>
-		<value>Game Over</value>
+		<value>Fim do jogo</value>
 	</string>
 	<string>
 		<id>19100</id>
@@ -4247,123 +4299,123 @@
 	</string>
 	<string>
 		<id>100000</id>
-		<value>Hem</value>
+		<value>Topo</value>
 	</string>
 	<string>
 		<id>100001</id>
-		<value>Mina Program</value>
+		<value>TV</value>
 	</string>
 	<string>
 		<id>100002</id>
-		<value>Mina Bilder</value>
+		<value>Imagens</value>
 	</string>
 	<string>
 		<id>100003</id>
-		<value>Mina Filer</value>
+		<value>Arquivos</value>
 	</string>
 	<string>
 		<id>100004</id>
-		<value>Inställningar</value>
+		<value>Ajustes</value>
 	</string>
 	<string>
 		<id>100005</id>
-		<value>Min Musik</value>
+		<value>Músicas</value>
 	</string>
 	<string>
 		<id>100006</id>
-		<value>Mina Filmer</value>
+		<value>Vídeos</value>
 	</string>
 	<string>
 		<id>100007</id>
-		<value>Systeminformation</value>
+		<value>Dados do sistema</value>
 	</string>
 	<string>
 		<id>100008</id>
-		<value>Inställningar-&gt;Generella</value>
+		<value>Ajustes-&gt;Geral</value>
 	</string>
 	<string>
 		<id>100009</id>
-		<value>Inställningar-&gt;Skärm</value>
+		<value>Ajustes-&gt;Tela</value>
 	</string>
 	<string>
 		<id>100010</id>
-		<value>Inställningar-&gt;Skärm-&gt;UI Kalibrering</value>
+		<value>Ajustes-&gt;Tela-&gt;Calibração da UI</value>
 	</string>
 	<string>
 		<id>100011</id>
-		<value>Inställningar-&gt;Skärm-&gt;Skärm Kalibrering</value>
+		<value>Ajustes-&gt;Tela-&gt;Calibração da tela</value>
 	</string>
 	<string>
 		<id>100012</id>
-		<value>Inställningar-&gt;Bildspel</value>
+		<value>Ajustes-&gt;Slideshow</value>
 	</string>
 	<string>
 		<id>100013</id>
-		<value>Inställningar-&gt;Skärm-&gt;Filter</value>
+		<value>Ajustes-&gt;Tela-&gt;Filtros</value>
 	</string>
 	<string>
 		<id>100014</id>
-		<value>Inställningar-&gt;Musik</value>
+		<value>Ajustes-&gt;Música</value>
 	</string>
 	<string>
 		<id>100015</id>
-		<value>Inställningar-&gt;Skärm-&gt;Textning</value>
+		<value>Ajustes-&gt;Tela-&gt;Legendas</value>
 	</string>
 	<string>
 		<id>100016</id>
-		<value>Inställningar-&gt;Skärm-&gt;Skärmsläckare</value>
+		<value>Ajustes-&gt;Tela-&gt;Protetor de tela</value>
 	</string>
 	<string>
 		<id>100017</id>
-		<value>Inställningar-&gt;Väder</value>
+		<value>Ajustes-&gt;Tempo</value>
 	</string>
 	<string>
 		<id>100020</id>
-		<value>Inställningar-&gt;Script</value>
+		<value>Ajustes-&gt;Scripts</value>
 	</string>
 	<string>
 		<id>100021</id>
-		<value>Mina Videor/genre</value>
+		<value>Vídeos/gênero</value>
 	</string>
 	<string>
 		<id>100022</id>
-		<value>Mina Videor/skådesp.</value>
+		<value>Vídeos/ator</value>
 	</string>
 	<string>
 		<id>100023</id>
-		<value>Mina Videor/år</value>
+		<value>Vídeos/ano</value>
 	</string>
 	<string>
 		<id>100024</id>
-		<value>Inställningar-&gt;Program</value>
+		<value>Ajustes-&gt;Programas</value>
 	</string>
 	<string>
 		<id>100025</id>
-		<value>Mina Videor/titel</value>
+		<value>Vídeos/título</value>
 	</string>
 	<string>
 		<id>100026</id>
-		<value>Inställningar-&gt;Generella-&gt;Cache</value>
+		<value>Ajustes-&gt;Geral-&gt;Cache</value>
 	</string>
 	<string>
 		<id>100027</id>
-		<value>Inställningar-&gt;Generella-&gt;Autouppsp.</value>
+		<value>Ajustes-&gt;Geral-&gt;Auto-tocar</value>
 	</string>
 	<string>
 		<id>100028</id>
-		<value>Mina Videor/spellista</value>
+		<value>Vídeos/playlist</value>
 	</string>
 	<string>
 		<id>100029</id>
-		<value>Inställningar-&gt;Generella-&gt;LCD</value>
+		<value>Ajustes-&gt;Geral-&gt;LCD</value>
 	</string>
 	<string>
 		<id>100030</id>
-		<value>Min Radio</value>
+		<value>Rádio</value>
 	</string>
 	<string>
 		<id>100031</id>
-		<value>Inställningar-&gt;Skärm-&gt;scroll-hastighet</value>
+		<value>Ajustes-&gt;Tela-&gt;velocidade de rolagem</value>
 	</string>
 	<string>
 		<id>100032</id>
@@ -4371,255 +4423,255 @@
 	</string>
 	<string>
 		<id>100033</id>
-		<value>MSN Messenger chat</value>
+		<value>Bate-papo no MSN Messenger</value>
 	</string>
 	<string>
 		<id>100034</id>
-		<value>Mina Plugins</value>
+		<value>Plugins</value>
 	</string>
 	<string>
 		<id>100100</id>
-		<value>ja/nej-dialog</value>
+		<value>Diálogo de sim/não</value>
 	</string>
 	<string>
 		<id>100101</id>
-		<value>Progress dialog</value>
+		<value>Diálogo de progresso</value>
 	</string>
 	<string>
 		<id>100500</id>
-		<value>Min Musik/spellista</value>
+		<value>Música/playlist</value>
 	</string>
 	<string>
 		<id>100501</id>
-		<value>Min Musik/filer</value>
+		<value>Música/arquivos</value>
 	</string>
 	<string>
 		<id>100502</id>
-		<value>Min Musik/album</value>
+		<value>Música/álbuns</value>
 	</string>
 	<string>
 		<id>100503</id>
-		<value>Min Musik/artister</value>
+		<value>Música/artistas</value>
 	</string>
 	<string>
 		<id>100504</id>
-		<value>Min Musik/genrer</value>
+		<value>Música/gêneros</value>
 	</string>
 	<string>
 		<id>100505</id>
-		<value>Min Musik/top100</value>
+		<value>Música/100 melhores</value>
 	</string>
 	<string>
 		<id>100506</id>
-		<value>Min Musik/Favoriter</value>
+		<value>Música/Favoritos</value>
 	</string>
 	<string>
 		<id>100600</id>
-		<value>Min TV/Tablå</value>
+		<value>TV/Guia</value>
 	</string>
 	<string>
 		<id>100601</id>
-		<value>Min TV/Planerade inspelningar</value>
+		<value>TV/Agenda</value>
 	</string>
 	<string>
 		<id>100602</id>
-		<value>Min TV/Fullskärm</value>
+		<value>TV/Tela cheia</value>
 	</string>
 	<string>
 		<id>100603</id>
-		<value>Min TV/Inspelad TV</value>
+		<value>TV/TV gravada</value>
 	</string>
 	<string>
 		<id>100604</id>
-		<value>Min TV/Sök</value>
+		<value>TV/Busca</value>
 	</string>
 	<string>
 		<id>100605</id>
-		<value>Min TV/Inpelad Tv/Genre</value>
+		<value>TV/TV gravada/Gênero</value>
 	</string>
 	<string>
 		<id>100606</id>
-		<value>Min TV/Inspelad Tv/kanaler</value>
+		<value>TV/TV gravada/Canais</value>
 	</string>
 	<string>
 		<id>100607</id>
-		<value>TV/Schemaläggare/Prioriteter</value>
+		<value>TV/Agenda/Prioridades</value>
 	</string>
 	<string>
 		<id>100608</id>
-		<value>TV/Schemaläggare/Konflikter</value>
+		<value>TV/Agenda/Conflitos</value>
 	</string>
 	<string>
 		<id>100609</id>
-		<value>TV/Koprimera/Översikt</value>
+		<value>TV/Compressão/Principal</value>
 	</string>
 	<string>
 		<id>100610</id>
-		<value>TV/Koprimera/Inställningar</value>
+		<value>TV/Compressão/Ajustes</value>
 	</string>
 	<string>
 		<id>100611</id>
-		<value>TV/Koprimera/Automatiskt</value>
+		<value>TV/Compressão/Auto</value>
 	</string>
 	<string>
 		<id>100612</id>
-		<value>TV/Koprimera/Komprimera</value>
+		<value>TV/Compressão/Compressão</value>
 	</string>
 	<string>
 		<id>100613</id>
-		<value>TV/Koprimera/Status</value>
+		<value>TV/Compressão/Status</value>
 	</string>
 	<string>
 		<id>100614</id>
-		<value>Video Artist Info</value>
+		<value>Dados do artista de vídeo</value>
 	</string>
 	<string>
 		<id>100615</id>
-		<value>Guide/Välkommen</value>
+		<value>Assistente/Bem-vindo</value>
 	</string>
 	<string>
 		<id>100616</id>
-		<value>Guide/Upptäckta kort</value>
+		<value>Assistente/Placas detectadas</value>
 	</string>
 	<string>
 		<id>100617</id>
-		<value>Guide/Land</value>
+		<value>Assistente/País</value>
 	</string>
 	<string>
 		<id>100618</id>
-		<value>Guide/Skanna</value>
+		<value>Assistente/Varredura</value>
 	</string>
 	<string>
 		<id>100619</id>
-		<value>Guide/DVBC/Land</value>
+		<value>Assistente/DVBC/País</value>
 	</string>
 	<string>
 		<id>100620</id>
-		<value>Guide/DVBC/Skanna</value>
+		<value>Assistente/DVBC/Varredura</value>
 	</string>
 	<string>
 		<id>100621</id>
-		<value>Guide/DVBC/LNB</value>
+		<value>Assistente/DVBS/LNB</value>
 	</string>
 	<string>
 		<id>100622</id>
-		<value>Guide/DVBC/LNB detaljer</value>
+		<value>Assistente/DVBS/Detalhes LNB</value>
 	</string>
 	<string>
 		<id>100623</id>
-		<value>Guide/DVBC/Transponder</value>
+		<value>Assistente/DVBS/Transponder</value>
 	</string>
 	<string>
 		<id>100624</id>
-		<value>Guide/DVBC/Skanna</value>
+		<value>Assistente/DVBS/Varredura</value>
 	</string>
 	<string>
 		<id>100625</id>
-		<value>Guide/ATSC/Skanna</value>
+		<value>Assistente/ATSC/Varredura</value>
 	</string>
 	<string>
 		<id>100626</id>
-		<value>Guide/Analog/Land</value>
+		<value>Assistente/Analógico/País</value>
 	</string>
 	<string>
 		<id>100627</id>
-		<value>Guide/Analog/Stad</value>
+		<value>Assistente/Analógico/Cidade</value>
 	</string>
 	<string>
 		<id>100628</id>
-		<value>Guide/Analog/Importerad</value>
+		<value>Assistente/Analógico/Importado</value>
 	</string>
 	<string>
 		<id>100629</id>
-		<value>Guide/Analog/Användarhandledning</value>
+		<value>Assistente/Analógico/Manual</value>
 	</string>
 	<string>
 		<id>100630</id>
-		<value>Guide/Analog/Skanna</value>
+		<value>Assistente/Analógico/Varredura</value>
 	</string>
 	<string>
 		<id>100631</id>
-		<value>Guide/Analog/Byt namn</value>
+		<value>Assistente/Analógico/Renomear</value>
 	</string>
 	<string>
 		<id>100632</id>
-		<value>Guide/Analog/Radio</value>
+		<value>Assistente/Analógico/Rádio</value>
 	</string>
 	<string>
 		<id>100633</id>
-		<value>Guide/Analog/Byt namn på radio</value>
+		<value>Assistente/Analógico/Renomear rádio</value>
 	</string>
 	<string>
 		<id>100634</id>
-		<value>Guide/Fjärr</value>
+		<value>Assistente/Controle remoto</value>
 	</string>
 	<string>
 		<id>100635</id>
-		<value>Guide/EPG</value>
+		<value>Assistente/Guia de programação</value>
 	</string>
 	<string>
 		<id>100699</id>
-		<value>Guide/Avslutad</value>
+		<value>Assistente/Concluído</value>
 	</string>
 	<string>
 		<id>100700</id>
-		<value>TV-inställningar</value>
+		<value>Ajustes da TV</value>
 	</string>
 	<string>
 		<id>100701</id>
-		<value>TV inspelningsinställningar</value>
+		<value>Ajustes de gravação da TV</value>
 	</string>
 	<string>
 		<id>100702</id>
-		<value>TV sortera kanaler</value>
+		<value>Ordenar canais da TV</value>
 	</string>
 	<string>
 		<id>100703</id>
-		<value>TV filminställningar</value>
+		<value>Ajustes de filmes da TV</value>
 	</string>
 	<string>
 		<id>100704</id>
-		<value>DVD-inställningar</value>
+		<value>Ajustes de DVD</value>
 	</string>
 	<string>
 		<id>100705</id>
-		<value>Skinninställningar</value>
+		<value>Ajustes de skin</value>
 	</string>
 	<string>
 		<id>100748</id>
-		<value>Programinformation</value>
+		<value>Dados do programa</value>
 	</string>
 	<string>
 		<id>100749</id>
-		<value>TV/Ingen signal</value>
+		<value>TV/Sem sinal</value>
 	</string>
 	<string>
 		<id>100750</id>
-		<value>Mina Recept</value>
+		<value>Receitas</value>
 	</string>
 	<string>
 		<id>100755</id>
-		<value>Min Status</value>
+		<value>Status</value>
 	</string>
 	<string>
 		<id>100756</id>
-		<value>Min Status detaljer</value>
+		<value>Detalhes do status</value>
 	</string>
 	<string>
 		<id>100757</id>
-		<value>Min Status inställningar</value>
+		<value>Configurações do status</value>
 	</string>
 	<string>
 		<id>100758</id>
-		<value>Fildialog</value>
+		<value>Diálogo do arquivo</value>
 	</string>
 	<string>
 		<id>100759</id>
-		<value>Inspelad TV information</value>
+		<value>Dados da TV gravada</value>
 	</string>
 	<string>
 		<id>100760</id>
-		<value>Min Brännare</value>
+		<value>Queimador</value>
 	</string>
 	<string>
 		<id>100770</id>
@@ -4627,214 +4679,274 @@
 	</string>
 	<string>
 		<id>101000</id>
-		<value>tangentbord</value>
+		<value>teclado</value>
 	</string>
 	<string>
 		<id>102000</id>
-		<value>Välj Dialog</value>
+		<value>Selecionar diálogo</value>
 	</string>
 	<string>
 		<id>102001</id>
-		<value>Min Musik/info</value>
+		<value>Música/dados</value>
 	</string>
 	<string>
 		<id>102002</id>
-		<value>Dialog OK</value>
+		<value>Diálogo OK</value>
 	</string>
 	<string>
 		<id>102003</id>
-		<value>Mina Filmer/info</value>
+		<value>Vídeos/Dados</value>
 	</string>
 	<string>
 		<id>102004</id>
-		<value>Mina Script/info</value>
+		<value>Scripts/Dados</value>
 	</string>
 	<string>
 		<id>102005</id>
-		<value>Fullskärmsvideo</value>
+		<value>Vídeo em tela cheia</value>
 	</string>
 	<string>
 		<id>102006</id>
-		<value>Ljudvisualisering</value>
+		<value>Visualização do áudio</value>
 	</string>
 	<string>
 		<id>102007</id>
-		<value>Mina Bilder/bildspel</value>
+		<value>Imagem/slideshow</value>
 	</string>
 	<string>
 		<id>102008</id>
-		<value>Filgrupperings dialog</value>
+		<value>Diálogo de "filestacking"</value>
 	</string>
 	<string>
 		<id>102009</id>
-		<value>Valdialog</value>
+		<value>Diálogo de seleção</value>
 	</string>
 	<string>
 		<id>102010</id>
-		<value>Datum/tid</value>
+		<value>Data/Hora</value>
 	</string>
 	<string>
 		<id>102011</id>
-		<value>Artistinfo</value>
+		<value>Dados do artista</value>
 	</string>
 	<string>
 		<id>102012</id>
-		<value>Snabbvalsmeny</value>
+		<value>Menu de contexto</value>
 	</string>
 	<string>
 		<id>102013</id>
-		<value>Sätt betyg</value>
+		<value>Definir classificação</value>
 	</string>
 	<string>
 		<id>102014</id>
-		<value>Bildinfo</value>
+		<value>Dados da imagem</value>
 	</string>
 	<string>
 		<id>102015</id>
-		<value>Minimeny</value>
+		<value>Mini menu</value>
 	</string>
 	<string>
 		<id>102016</id>
-		<value>Upplysning</value>
+		<value>Notificação</value>
 	</string>
 	<string>
 		<id>102600</id>
-		<value>Mitt Väder</value>
+		<value>Tempo</value>
 	</string>
 	<string>
 		<id>102700</id>
-		<value>Mina Nyheter</value>
+		<value>Notícias</value>
 	</string>
 	<string>
 		<id>102900</id>
-		<value>Skärmsläckare</value>
+		<value>Protetor de tela</value>
 	</string>
 	<string>
 		<id>102901</id>
-		<value>Fullskärm OSD</value>
+		<value>OSD de tela cheia</value>
 	</string>
 	<string>
 		<id>103003</id>
-		<value>Min TV/OSD</value>
+		<value>TV/OSD</value>
 	</string>
 	<string>
 		<id>103006</id>
-		<value>Min TV/MSN OSD</value>
+		<value>TV/OSD do MSN</value>
 	</string>
 	<string>
 		<id>103007</id>
-		<value>Min TV/Zap OSD</value>
+		<value>TV/OSD do Zap</value>
 	</string>
 	<string>
 		<id>107700</id>
-		<value>Min TV/Text-TV</value>
+		<value>TV/Teletexto</value>
 	</string>
 	<string>
 		<id>107701</id>
-		<value>Min TV/Text-TV</value>
+		<value>TV/Teletexto</value>
 	</string>
 	<string>
 		<id>200000</id>
-		<value>Var god ange vilken EPG grabber du använder. Om ditt land inte</value>
+		<value>Favor escolher seu "grabber" do guia de programação. Se seu país</value>
 	</string>
 	<string>
 		<id>200001</id>
-		<value>finns på listan måste du tillföra EPG:n manuellt</value>
+		<value>não estiver listado, você deverá fornecer a programação da TV manualmente.</value>
 	</string>
 	<string>
 		<id>200002</id>
-		<value>Nu kan du mappa EPG-kanalerna till dina TV-kanaler</value>
+		<value>Agora você pode assinalar os canais da programação aos canais de sua TV</value>
 	</string>
 	<string>
 		<id>200003</id>
-		<value>Välj kanal och tryck Enter för att ändra mappningen</value>
+		<value>Escolha um canal e tecle Enter para mudar seu mapeamento</value>
 	</string>
 	<string>
 		<id>200004</id>
-		<value>Manuellt tillförd tvguide.xml</value>
+		<value>tvguide.xml fornecido manualmente</value>
 	</string>
 	<string>
 		<id>200005</id>
-		<value>Var god ange vilken fjärrkontroll du använder:</value>
+		<value>Favor especificar qual controle remoto você usa:</value>
 	</string>
 	<string>
 		<id>200006</id>
-		<value>Tryck Nästa för att fortsätta</value>
+		<value>Pressione Avançar para continuar a configuração:</value>
 	</string>
 	<string>
 		<id>200007</id>
-		<value>&lt;Bakåt</value>
+		<value>&lt;Voltar</value>
 	</string>
 	<string>
 		<id>200008</id>
-		<value>Inställning - Fjärrkontroll</value>
+		<value>Ajustes - Controle remoto</value>
 	</string>
 	<string>
 		<id>200009</id>
-		<value>Nästa&gt;</value>
+		<value>Avançar&gt;</value>
 	</string>
 	<string>
 		<id>200010</id>
-		<value>MediaPortal förvandlar din PC till en HTPC - ett väldigt avancerat multimediacenter</value>
+		<value>MediaPortal torna o seu PC numa central multimídia avançada.</value>
 	</string>
 	<string>
 		<id>200011</id>
-		<value>Med MediaPortal kan du njuta av din favoritmusik, radio</value>
+		<value>Com MediaPortal você pode curtir sua música favorita, rádio, ver fotos digitais</value>
+	</string>
+	<string>
+		<id>200012</id>
+		<value>assistir vídeos, DVDs, TV ao vivo e muito mais.</value>
 	</string>
 	<string>
 		<id>200013</id>
-		<value>MediaPortal gör så att du kan lyssna på din favoritmusik och radio, titta på video och DVD-filmer</value>
+		<value>Este assistente irá ajudá-lo a configurar o MediaPortal rápido e facilmente. Por favor siga todos os passos,</value>
 	</string>
 	<string>
 		<id>200014</id>
-		<value>foton, videor och titta på samt spela in TV och mycket mer</value>
+		<value>e comece escolhendo sua linguagem e localidade abaixo:</value>
 	</string>
 	<string>
 		<id>200015</id>
-		<value>Den här guiden kommer att hjälpa dig att komma igång med MediaPortal snabbt och lätt. Följ stegen</value>
-	</string>
-	<string>
-		<id>200016</id>
-		<value>Tryck på Nästa för att fortsätta</value>
+		<value>Agora pressione o botão Avançar para começar</value>
 	</string>
 	<string>
 		<id>200017</id>
-		<value>Välkommen till MediaPortal</value>
+		<value>Seja bem-vindo ao MediaPortal.</value>
 	</string>
 	<string>
 		<id>200018</id>
-		<value>Gratulerar! MediaPortal är nu färdig att användas</value>
+		<value>Parabéns, MediaPortal agora está configurado e pronto para usar</value>
 	</string>
 	<string>
 		<id>200019</id>
-		<value>Tryck på Avsluta för att stänga denna guide</value>
+		<value>Pressione o botão Concluir para fechar esse assistente</value>
 	</string>
 	<string>
 		<id>200020</id>
-		<value>Avsluta</value>
+		<value>Concluir</value>
 	</string>
 	<string>
 		<id>200021</id>
-		<value>TV Inställning - EPG</value>
+		<value>Ajustes de TV - Guia de programação</value>
 	</string>
 	<string>
 		<id>200022</id>
-		<value>MediaPortal har hittat dessa tv-kort:</value>
+		<value>MediaPortal encontrou as seguintes placas de TV:</value>
 	</string>
 	<string>
 		<id>200023</id>
-		<value>Tryck på Nästa för att konfigurera dessa kort</value>
+		<value>Pressione o botão Avançar para configurar essas placas</value>
 	</string>
 	<string>
 		<id>200024</id>
-		<value>TV Inställning</value>
+		<value>Ajustes da TV</value>
+	</string>
+	<string>
+		<id>200025</id>
+		<value>Linguagem</value>
+	</string>
+	<string>
+		<id>200026</id>
+		<value>País</value>
+	</string>
+	<string>
+		<id>200027</id>
+		<value>Ajustes - Geral</value>
+	</string>
+	<string>
+		<id>200028</id>
+		<value>Esse PC tem acesso à Internet?</value>
+	</string>
+	<string>
+		<id>200029</id>
+		<value>Iniciar o Media Portal em modo tela cheia?</value>
+	</string>
+	<string>
+		<id>200030</id>
+		<value>Iniciar o Media Portal automaticamente quando iniciar o PC?</value>
+	</string>
+	<string>
+		<id>200031</id>
+		<value>Sim</value>
+	</string>
+	<string>
+		<id>200032</id>
+		<value>Não</value>
+	</string>
+	<string>
+		<id>200033</id>
+		<value>Ajustes da TV - TV análoga</value>
+	</string>
+	<string>
+		<id>200034</id>
+		<value>Favor escolher sua cidade da lista abaixo.</value>
+	</string>
+	<string>
+		<id>200035</id>
+		<value>Se sua cidade não estiver listada, você precisará sintonizar manualmente.</value>
+	</string>
+	<string>
+		<id>200036</id>
+		<value>Sintonia manual</value>
+	</string>
+	<string>
+		<id>200037</id>
+		<value>Pular&gt;</value>
 	</string>
 	<string>
 		<id>4000</id>
-		<value>Webbläsare</value>
+		<value>Navegador</value>
 	</string>
 	<string>
 		<id>4001</id>
-		<value>Favoriter</value>
+		<value>Favoritos</value>
+	</string>
+	<string>
+		<id>4002</id>
+		<value>Impossível carregar URL</value>
+	</string>
+	<string>
+		<id>4003</id>
+		<value>Favor especificar uma pasta de favoritos na configuração.</value>
 	</string>
 </strings>

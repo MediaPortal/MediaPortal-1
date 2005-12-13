@@ -1,289 +1,289 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="iso-8859-14"?>
 <strings>
-	<characters>255</characters>
+	<characters></characters>
 	<string>
 		<id>0</id>
-		<value>Mina Program</value>
+		<value>Rhaglenni</value>
 	</string>
 	<string>
 		<id>1</id>
-		<value>Mina Bilder</value>
+		<value>Lluniau</value>
 	</string>
 	<string>
 		<id>2</id>
-		<value>Min Musik</value>
+		<value>Cerddoriaeth</value>
 	</string>
 	<string>
 		<id>3</id>
-		<value>Mina Filmer</value>
+		<value>Fideo</value>
 	</string>
 	<string>
 		<id>4</id>
-		<value>TV-tablå</value>
+		<value>Rhaglen Teledu</value>
 	</string>
 	<string>
 		<id>5</id>
-		<value>Inställningar</value>
+		<value>Gosodiadau</value>
 	</string>
 	<string>
 		<id>6</id>
-		<value>MediaPortal CVS build</value>
+		<value>Adeiledd CVS Canolfan Cyfrwng XBOX</value>
 	</string>
 	<string>
 		<id>7</id>
-		<value>Mina Filer</value>
+		<value>Ffeiliau</value>
 	</string>
 	<string>
 		<id>8</id>
-		<value>Mitt Väder</value>
+		<value>Tywydd</value>
 	</string>
 	<string>
 		<id>9</id>
-		<value>Mina Nyheter</value>
+		<value>Newyddion</value>
 	</string>
 	<string>
 		<id>10</id>
-		<value>Mina Recept</value>
+		<value>Ryseitiau</value>
 	</string>
 	<string>
 		<id>11</id>
-		<value>Måndag</value>
+		<value>Llun</value>
 	</string>
 	<string>
 		<id>12</id>
-		<value>Tisdag</value>
+		<value>Mawrth</value>
 	</string>
 	<string>
 		<id>13</id>
-		<value>Onsdag</value>
+		<value>Mercher</value>
 	</string>
 	<string>
 		<id>14</id>
-		<value>Torsdag</value>
+		<value>Iau</value>
 	</string>
 	<string>
 		<id>15</id>
-		<value>Fredag</value>
+		<value>Gwener</value>
 	</string>
 	<string>
 		<id>16</id>
-		<value>Lördag</value>
+		<value>Sadwrn</value>
 	</string>
 	<string>
 		<id>17</id>
-		<value>Söndag</value>
+		<value>Sul</value>
 	</string>
 	<string>
 		<id>21</id>
-		<value>januari</value>
+		<value>Ionawr</value>
 	</string>
 	<string>
 		<id>22</id>
-		<value>februari</value>
+		<value>Chwefror</value>
 	</string>
 	<string>
 		<id>23</id>
-		<value>mars</value>
+		<value>Mawrth</value>
 	</string>
 	<string>
 		<id>24</id>
-		<value>april</value>
+		<value>Ebrill</value>
 	</string>
 	<string>
 		<id>25</id>
-		<value>maj</value>
+		<value>Mai</value>
 	</string>
 	<string>
 		<id>26</id>
-		<value>juni</value>
+		<value>Mehefin</value>
 	</string>
 	<string>
 		<id>27</id>
-		<value>juli</value>
+		<value>Gorffennaf</value>
 	</string>
 	<string>
 		<id>28</id>
-		<value>augusti</value>
+		<value>Awst</value>
 	</string>
 	<string>
 		<id>29</id>
-		<value>september</value>
+		<value>Medi</value>
 	</string>
 	<string>
 		<id>30</id>
-		<value>oktober</value>
+		<value>Hydref</value>
 	</string>
 	<string>
 		<id>31</id>
-		<value>november</value>
+		<value>Tachwee</value>
 	</string>
 	<string>
 		<id>32</id>
-		<value>december</value>
+		<value>Rhagfyr</value>
 	</string>
 	<string>
 		<id>50</id>
-		<value>Mina DVD-filmer</value>
+		<value>DVD</value>
 	</string>
 	<string>
 		<id>100</id>
-		<value>Visa: Ikoner</value>
+		<value>Golwg: Eicon</value>
 	</string>
 	<string>
 		<id>101</id>
-		<value>Visa: Lista</value>
+		<value>Golwg: Rhestr</value>
 	</string>
 	<string>
 		<id>102</id>
-		<value>Skanna</value>
+		<value>Sganio</value>
 	</string>
 	<string>
 		<id>103</id>
-		<value>Sortera efter: Namn</value>
+		<value>Trefnu: Enw</value>
 	</string>
 	<string>
 		<id>104</id>
-		<value>Sortera efter: Datum</value>
+		<value>Trefnu: Dyddiad</value>
 	</string>
 	<string>
 		<id>105</id>
-		<value>Sortera efter: Storlek</value>
+		<value>Trefnu: Maint</value>
 	</string>
 	<string>
 		<id>106</id>
-		<value>Nej</value>
+		<value>Na</value>
 	</string>
 	<string>
 		<id>107</id>
-		<value>Ja</value>
+		<value>Iawn</value>
 	</string>
 	<string>
 		<id>108</id>
-		<value>Bildspel</value>
+		<value>SioeSleidiau</value>
 	</string>
 	<string>
 		<id>109</id>
-		<value>Skapa miniatyr</value>
+		<value>Creu Lluniau</value>
 	</string>
 	<string>
 		<id>110</id>
-		<value>Skapa miniatyr</value>
+		<value>Creu Lluniau Bach</value>
 	</string>
 	<string>
 		<id>111</id>
-		<value>Genvägar</value>
+		<value>Llwybrau Byr</value>
 	</string>
 	<string>
 		<id>112</id>
-		<value>PAUSAD</value>
+		<value>OEDWYD</value>
 	</string>
 	<string>
 		<id>113</id>
-		<value>Mina Filer : Källa</value>
+		<value>Ffeil: Ffynhonnell</value>
 	</string>
 	<string>
 		<id>114</id>
-		<value>Mina Filer : Destination</value>
+		<value>Ffeil: Cyrchfan</value>
 	</string>
 	<string>
 		<id>115</id>
-		<value>Kopiera</value>
+		<value>Copi</value>
 	</string>
 	<string>
 		<id>116</id>
-		<value>Flytta</value>
+		<value>Symud</value>
 	</string>
 	<string>
 		<id>117</id>
-		<value>Ta bort</value>
+		<value>Dileu</value>
 	</string>
 	<string>
 		<id>118</id>
-		<value>Byt namn</value>
+		<value>Ailenwi</value>
 	</string>
 	<string>
 		<id>119</id>
-		<value>Ny mapp</value>
+		<value>Ffolder Newydd</value>
 	</string>
 	<string>
 		<id>120</id>
-		<value>Bekräfta kopiera fil</value>
+		<value>Cadarnhau copïo ffeil</value>
 	</string>
 	<string>
 		<id>121</id>
-		<value>Bekräfta flytta fil</value>
+		<value>Cadarnhau symud ffeil</value>
 	</string>
 	<string>
 		<id>122</id>
-		<value>Bekräfta ta bort fil</value>
+		<value>Cadarnhau dileu ffeil</value>
 	</string>
 	<string>
 		<id>123</id>
-		<value>Kopiera dessa filer?</value>
+		<value>Copio&apos;r ffeiliau hyn?</value>
 	</string>
 	<string>
 		<id>124</id>
-		<value>Flytta dessa filer?</value>
+		<value>Symud y ffeiliau hyn?</value>
 	</string>
 	<string>
 		<id>125</id>
-		<value>Ta bort dessa filer?</value>
+		<value>Dileu&apos;r ffeiliau hyn?</value>
 	</string>
 	<string>
 		<id>126</id>
-		<value>Status</value>
+		<value>Statws</value>
 	</string>
 	<string>
 		<id>127</id>
-		<value>Objekt</value>
+		<value>Gwrthrychau</value>
 	</string>
 	<string>
 		<id>128</id>
-		<value>Allmänt</value>
+		<value>Cyffredinol</value>
 	</string>
 	<string>
 		<id>129</id>
-		<value>Bildspel</value>
+		<value>SioeSleidiau</value>
 	</string>
 	<string>
 		<id>130</id>
-		<value>Systeminfo</value>
+		<value>Gwyb. System</value>
 	</string>
 	<string>
 		<id>131</id>
-		<value>Skärm</value>
+		<value>Sgrin</value>
 	</string>
 	<string>
 		<id>132</id>
-		<value>Album</value>
+		<value>Albumau</value>
 	</string>
 	<string>
 		<id>133</id>
-		<value>Artister</value>
+		<value>Artistiaid</value>
 	</string>
 	<string>
 		<id>134</id>
-		<value>Låtar</value>
+		<value>Rhannau</value>
 	</string>
 	<string>
 		<id>135</id>
-		<value>Genrer</value>
+		<value>Genres</value>
 	</string>
 	<string>
 		<id>136</id>
-		<value>Spellistor</value>
+		<value>Rhest Chwarae</value>
 	</string>
 	<string>
 		<id>137</id>
-		<value>Sök</value>
+		<value>Chwilio</value>
 	</string>
 	<string>
 		<id>138</id>
-		<value>SYSTEMINFORMATION</value>
+		<value>GWYBODAETH SYSTEM</value>
 	</string>
 	<string>
 		<id>139</id>
-		<value>Temperaturer:</value>
+		<value>Tymheredd:</value>
 	</string>
 	<string>
 		<id>140</id>
@@ -295,27 +295,27 @@
 	</string>
 	<string>
 		<id>142</id>
-		<value>Tid:</value>
+		<value>Amser</value>
 	</string>
 	<string>
 		<id>143</id>
-		<value>Aktuell:</value>
+		<value>Cyfredol:</value>
 	</string>
 	<string>
 		<id>144</id>
-		<value>Build:</value>
+		<value>Adeiledd:</value>
 	</string>
 	<string>
 		<id>145</id>
-		<value>Nätverk:</value>
+		<value>Rhwydwaith</value>
 	</string>
 	<string>
 		<id>146</id>
-		<value>Typ:</value>
+		<value>Math:</value>
 	</string>
 	<string>
 		<id>147</id>
-		<value>Statisk</value>
+		<value>Statig</value>
 	</string>
 	<string>
 		<id>148</id>
@@ -331,79 +331,79 @@
 	</string>
 	<string>
 		<id>151</id>
-		<value>Länk:</value>
+		<value>Cyswllt:</value>
 	</string>
 	<string>
 		<id>152</id>
-		<value>Halv duplex</value>
+		<value>Hanner duplex</value>
 	</string>
 	<string>
 		<id>153</id>
-		<value>Full duplex</value>
+		<value>Duplex llawn</value>
 	</string>
 	<string>
 		<id>154</id>
-		<value>Lagring</value>
+		<value>Storio</value>
 	</string>
 	<string>
 		<id>155</id>
-		<value>Enhet</value>
+		<value>Gyrrwr</value>
 	</string>
 	<string>
 		<id>156</id>
-		<value>Ledigt</value>
+		<value>Rhydd</value>
 	</string>
 	<string>
 		<id>157</id>
-		<value>Video</value>
+		<value>Fideo</value>
 	</string>
 	<string>
 		<id>158</id>
-		<value>Ledigt minne</value>
+		<value>Coff Rhydd</value>
 	</string>
 	<string>
 		<id>159</id>
-		<value>Ingen länk</value>
+		<value>Dim cyswllt</value>
 	</string>
 	<string>
 		<id>160</id>
-		<value>Ledigt</value>
+		<value>Rhydd</value>
 	</string>
 	<string>
 		<id>161</id>
-		<value>Otillgänglig</value>
+		<value>Dim ar gael</value>
 	</string>
 	<string>
 		<id>162</id>
-		<value>Släde öppen</value>
+		<value>Dror ar agor</value>
 	</string>
 	<string>
 		<id>163</id>
-		<value>Läser</value>
+		<value>Darllen</value>
 	</string>
 	<string>
 		<id>164</id>
-		<value>Ingen disk</value>
+		<value>Dim Disg</value>
 	</string>
 	<string>
 		<id>165</id>
-		<value>Disk presenterad</value>
+		<value>Disg ar Gael</value>
 	</string>
 	<string>
 		<id>166</id>
-		<value>Skal:</value>
+		<value>Croen:</value>
 	</string>
 	<string>
 		<id>167</id>
-		<value>FTP-server:</value>
+		<value>Gweinydd FTP:</value>
 	</string>
 	<string>
 		<id>168</id>
-		<value>Synkronisera tid:</value>
+		<value>Cydweddu Amser:</value>
 	</string>
 	<string>
 		<id>169</id>
-		<value>Upplösning:</value>
+		<value>Cydraniad:</value>
 	</string>
 	<string>
 		<id>170</id>
@@ -415,11 +415,11 @@
 	</string>
 	<string>
 		<id>172</id>
-		<value>Releasedatum:</value>
+		<value>Dyddiad Ryddhad</value>
 	</string>
 	<string>
 		<id>173</id>
-		<value>Betyg:</value>
+		<value>Pobplgrwydd:</value>
 	</string>
 	<string>
 		<id>174</id>
@@ -427,243 +427,243 @@
 	</string>
 	<string>
 		<id>175</id>
-		<value>Tones:</value>
+		<value>Tôn:</value>
 	</string>
 	<string>
 		<id>176</id>
-		<value>Stil:</value>
+		<value>Arddulliau:</value>
 	</string>
 	<string>
 		<id>177</id>
-		<value>Recension:</value>
+		<value>Adolygiad:</value>
 	</string>
 	<string>
 		<id>178</id>
-		<value>Spår:</value>
+		<value>Traciau:</value>
 	</string>
 	<string>
 		<id>179</id>
-		<value>Låt</value>
+		<value>Cân</value>
 	</string>
 	<string>
 		<id>180</id>
-		<value>Längd</value>
+		<value>Hyd</value>
 	</string>
 	<string>
 		<id>181</id>
-		<value>Välj album</value>
+		<value>Dewis album</value>
 	</string>
 	<string>
 		<id>182</id>
-		<value>Spår</value>
+		<value>Traciau</value>
 	</string>
 	<string>
 		<id>183</id>
-		<value>Recension</value>
+		<value>Adolygiad</value>
 	</string>
 	<string>
 		<id>184</id>
-		<value>Uppdatera</value>
+		<value>Adnewyddu</value>
 	</string>
 	<string>
 		<id>185</id>
-		<value>Söker album</value>
+		<value>Chwilio album</value>
 	</string>
 	<string>
 		<id>186</id>
-		<value>OK</value>
+		<value>Iawn</value>
 	</string>
 	<string>
 		<id>187</id>
-		<value>Hittade inga album!</value>
+		<value>Heb ganfod album!</value>
 	</string>
 	<string>
 		<id>188</id>
-		<value>Välj alla</value>
+		<value>Dewis popeth</value>
 	</string>
 	<string>
 		<id>189</id>
-		<value>Söker mediainfo</value>
+		<value>Sganio gwybodaeth cyfrwng</value>
 	</string>
 	<string>
 		<id>190</id>
-		<value>Spara</value>
+		<value>Cadw</value>
 	</string>
 	<string>
 		<id>191</id>
-		<value>Mix</value>
+		<value>Cymysgu</value>
 	</string>
 	<string>
 		<id>192</id>
-		<value>Städa</value>
+		<value>Clirio</value>
 	</string>
 	<string>
 		<id>193</id>
-		<value>Skanna</value>
+		<value>Sganio</value>
 	</string>
 	<string>
 		<id>194</id>
-		<value>Söker...</value>
+		<value>Chwilio...</value>
 	</string>
 	<string>
 		<id>195</id>
-		<value>Ingen IMDB-info hittades!</value>
+		<value>Heb ganfod gwybodaeth IMDB</value>
 	</string>
 	<string>
 		<id>196</id>
-		<value>Välj film:</value>
+		<value>Dewis ffilm:</value>
 	</string>
 	<string>
 		<id>197</id>
-		<value>Frågar IMDB efter info</value>
+		<value>Ymholi gwybodaeth IMDB</value>
 	</string>
 	<string>
 		<id>198</id>
-		<value>Laddar fildetaljer</value>
+		<value>Estyn manylion y Ffilm</value>
 	</string>
 	<string>
 		<id>199</id>
-		<value>Regissör:</value>
+		<value>Cyfarwyddwr:</value>
 	</string>
 	<string>
 		<id>200</id>
-		<value>Författare:</value>
+		<value>Awdur:</value>
 	</string>
 	<string>
 		<id>201</id>
-		<value>År:</value>
+		<value>Blwyddyn:</value>
 	</string>
 	<string>
 		<id>202</id>
-		<value>Beteckning:</value>
+		<value>Broliant?</value>
 	</string>
 	<string>
 		<id>203</id>
-		<value>Handling sammanf.:</value>
+		<value>Amlinelliad o&apos;r stori:</value>
 	</string>
 	<string>
 		<id>204</id>
-		<value>Betyg:</value>
+		<value>Canmoliaeth:</value>
 	</string>
 	<string>
 		<id>205</id>
-		<value>Röster:</value>
+		<value>Pleidleisiau:</value>
 	</string>
 	<string>
 		<id>206</id>
-		<value>Rollista</value>
+		<value>Cast</value>
 	</string>
 	<string>
 		<id>207</id>
-		<value>Handling</value>
+		<value>Stori</value>
 	</string>
 	<string>
 		<id>208</id>
-		<value>Spela</value>
+		<value>Chwarae</value>
 	</string>
 	<string>
 		<id>209</id>
-		<value>Nästa</value>
+		<value>Nesaf</value>
 	</string>
 	<string>
 		<id>210</id>
-		<value>Föregående</value>
+		<value>Blaenorol</value>
 	</string>
 	<string>
 		<id>211</id>
-		<value>Söker efter program</value>
+		<value>Chwilio am raglen</value>
 	</string>
 	<string>
 		<id>212</id>
-		<value>program funna</value>
+		<value>rhaglen wedi canfod</value>
 	</string>
 	<string>
 		<id>213</id>
-		<value>UI Kalibrering</value>
+		<value>Calibro&apos;r Rhyngwyneb</value>
 	</string>
 	<string>
 		<id>214</id>
-		<value>Skärmkalibrering</value>
+		<value>Calibro&apos;r Sgrin</value>
 	</string>
 	<string>
 		<id>215</id>
-		<value>Soften</value>
+		<value>Meddalu</value>
 	</string>
 	<string>
 		<id>216</id>
-		<value>Zoom</value>
+		<value>Chwyddo</value>
 	</string>
 	<string>
 		<id>217</id>
-		<value>Stretch</value>
+		<value>Ymestyn</value>
 	</string>
 	<string>
 		<id>218</id>
-		<value>DVD-enhet</value>
+		<value>Gyrrwr DVD</value>
 	</string>
 	<string>
 		<id>219</id>
-		<value>Sätt i en skiva</value>
+		<value>Rhowch y ddisg i fewn</value>
 	</string>
 	<string>
 		<id>220</id>
-		<value>Remote Share</value>
+		<value>Rhan Pell</value>
 	</string>
 	<string>
 		<id>221</id>
-		<value>Nätverket är anslutet</value>
+		<value>Rhwydwaith heb ei gysylltu</value>
 	</string>
 	<string>
 		<id>222</id>
-		<value>Avbryt</value>
+		<value>Diddymu</value>
 	</string>
 	<string>
 		<id>223</id>
-		<value>Automatisk bredbild</value>
+		<value>Newid sgrin llydan awtomatig</value>
 	</string>
 	<string>
 		<id>224</id>
-		<value>Hastighet</value>
+		<value>Cyflymder</value>
 	</string>
 	<string>
 		<id>225</id>
-		<value>Varaktighet för övergång</value>
+		<value>Amser newid</value>
 	</string>
 	<string>
 		<id>226</id>
-		<value>Aktivera PAL60</value>
+		<value>Galluogi PAL60</value>
 	</string>
 	<string>
 		<id>227</id>
-		<value>Aktivera CDDB</value>
+		<value>Galluogi CDDB</value>
 	</string>
 	<string>
 		<id>228</id>
-		<value>Blanda spellista vid laddning</value>
+		<value>Cymysgu&apos;r Rhestr Chwarae wrth gychwyn</value>
 	</string>
 	<string>
 		<id>229</id>
-		<value>HD-nedspinningstid (minuter)</value>
+		<value>Amser arafu&apos;r Disg Caled (mun)</value>
 	</string>
 	<string>
 		<id>230</id>
-		<value>Filter</value>
+		<value>Hidlau</value>
 	</string>
 	<string>
 		<id>231</id>
-		<value>Ingen</value>
+		<value>Dim</value>
 	</string>
 	<string>
 		<id>232</id>
-		<value>Point</value>
+		<value>Pwynt</value>
 	</string>
 	<string>
 		<id>233</id>
-		<value>Linjär</value>
+		<value>Llinellol</value>
 	</string>
 	<string>
 		<id>234</id>
-		<value>Anisotropic</value>
+		<value>Anistropig</value>
 	</string>
 	<string>
 		<id>235</id>
@@ -671,75 +671,75 @@
 	</string>
 	<string>
 		<id>236</id>
-		<value>Gaussian Cubic</value>
+		<value>Ciwbig Gauseaidd</value>
 	</string>
 	<string>
 		<id>237</id>
-		<value>Minification:</value>
+		<value>Lleihad:</value>
 	</string>
 	<string>
 		<id>238</id>
-		<value>Magnification:</value>
+		<value>Chwyddhad:</value>
 	</string>
 	<string>
 		<id>240</id>
-		<value>Autostarta DVD-Video</value>
+		<value>Awtoredeg DVD-Video</value>
 	</string>
 	<string>
 		<id>241</id>
-		<value>Autostarta VCD/SVCD</value>
+		<value>Awtoredeg VCD/SVCD</value>
 	</string>
 	<string>
 		<id>242</id>
-		<value>Autostarta Ljud-CD</value>
+		<value>Awtoredeg CD Sain</value>
 	</string>
 	<string>
 		<id>243</id>
-		<value>Autostarta XBOX-spel</value>
+		<value>Awtoredeg Gemau XBOX</value>
 	</string>
 	<string>
 		<id>244</id>
-		<value>Autostarta videor</value>
+		<value>Awtoredeg Fideo</value>
 	</string>
 	<string>
 		<id>245</id>
-		<value>Autostarta musik</value>
+		<value>Awtoredeg Cerddoriaeth</value>
 	</string>
 	<string>
 		<id>246</id>
-		<value>Autostarta bilder</value>
+		<value>Awtoredeg Lluniau</value>
 	</string>
 	<string>
 		<id>247</id>
-		<value>Skript</value>
+		<value>Sgriptiau</value>
 	</string>
 	<string>
 		<id>248</id>
-		<value>Språk</value>
+		<value>Iaith</value>
 	</string>
 	<string>
 		<id>249</id>
-		<value>Musik</value>
+		<value>Cerddoriaeth</value>
 	</string>
 	<string>
 		<id>250</id>
-		<value>Visualisering</value>
+		<value>Delweddiad</value>
 	</string>
 	<string>
 		<id>251</id>
-		<value>Välj målmapp</value>
+		<value>Dewis cyfeiriadur cyrchfan</value>
 	</string>
 	<string>
 		<id>252</id>
-		<value>Mata ut till alla högtalare</value>
+		<value>Allbwn i&apos;r holl seinyddion</value>
 	</string>
 	<string>
 		<id>253</id>
-		<value>Antal kanaler</value>
+		<value>Nifer o sianeli</value>
 	</string>
 	<string>
 		<id>254</id>
-		<value>DD Stereo Passthrough</value>
+		<value>Pasio drwodd Stereo DD</value>
 	</string>
 	<string>
 		<id>255</id>
@@ -747,19 +747,19 @@
 	</string>
 	<string>
 		<id>256</id>
-		<value>Frågar FreeDB efter CDDB-info</value>
+		<value>Holi freedb am wybodaeth CDDB</value>
 	</string>
 	<string>
 		<id>257</id>
-		<value>Fel</value>
+		<value>Gwall</value>
 	</string>
 	<string>
 		<id>258</id>
-		<value>Aktivera ID3-taggar</value>
+		<value>Galluogi tagiau ID3</value>
 	</string>
 	<string>
 		<id>259</id>
-		<value>Öppnar</value>
+		<value>Agor</value>
 	</string>
 	<string>
 		<id>260</id>
@@ -767,203 +767,203 @@
 	</string>
 	<string>
 		<id>261</id>
-		<value>Väntar på start....</value>
+		<value>Aros i gychwyn...</value>
 	</string>
 	<string>
 		<id>262</id>
-		<value>Skript output</value>
+		<value>Allbwn sgriptiau</value>
 	</string>
 	<string>
 		<id>263</id>
-		<value>HTTP-server:</value>
+		<value>Gweinydd HTTP:</value>
 	</string>
 	<string>
 		<id>264</id>
-		<value>Spela in</value>
+		<value>Recordio</value>
 	</string>
 	<string>
 		<id>265</id>
-		<value>Stoppa Insp.</value>
+		<value>Atal Rec.</value>
 	</string>
 	<string>
 		<id>266</id>
-		<value>Sortera efter: Spår</value>
+		<value>Trefnu: Traciau</value>
 	</string>
 	<string>
 		<id>267</id>
-		<value>Sortera efter: Tid</value>
+		<value>Trefnu: Amser</value>
 	</string>
 	<string>
 		<id>268</id>
-		<value>Sortera efter: Titel</value>
+		<value>Trefnu: Teitl</value>
 	</string>
 	<string>
 		<id>269</id>
-		<value>Sortera efter: Artist</value>
+		<value>Trefn: Artist</value>
 	</string>
 	<string>
 		<id>270</id>
-		<value>Sortera efter: Album</value>
+		<value>Trefn: Album</value>
 	</string>
 	<string>
 		<id>271</id>
-		<value>Topp 100</value>
+		<value>100 Uchaf</value>
 	</string>
 	<string>
 		<id>272</id>
-		<value>Top Left Overscan Compensation</value>
+		<value>Cywiro Gorsgan Brig Chwith</value>
 	</string>
 	<string>
 		<id>273</id>
-		<value>Bottom Right Overscan Compensation</value>
+		<value>Cywiro Gorsgan Gwaelod De</value>
 	</string>
 	<string>
 		<id>274</id>
-		<value>Undertextposition</value>
+		<value>Safle&apos;r Is-deitlau</value>
 	</string>
 	<string>
 		<id>275</id>
-		<value>Justering av pixel ratio</value>
+		<value>Newid Cyfradd Picseli</value>
 	</string>
 	<string>
 		<id>276</id>
-		<value>Ändra hur mycket överskanning du vill ha genom att flytta pilen</value>
+		<value>-RHYBUDD!- Gadewch ar 0,0 am yr ansawdd gorau, newid i leihau fideo i ffitio.</value>
 	</string>
 	<string>
 		<id>277</id>
-		<value>Placera textningen genom att flytta rutan</value>
+		<value>Symudwch y bar i newid safle&apos;r is-deitlau</value>
 	</string>
 	<string>
 		<id>278</id>
-		<value>Ändra rektangeln så att den är helt kvadratisk</value>
+		<value>-Pwysig!- am yr ansawdd gorau, newidiwch yr hirsgwar nes ei fod yn gwbl sgwar</value>
 	</string>
 	<string>
 		<id>279</id>
-		<value>Kan inte ladda inställningarna</value>
+		<value>Methu llwytho gosodiadau</value>
 	</string>
 	<string>
 		<id>280</id>
-		<value>använder standardinställningar</value>
+		<value>defnyddio&apos;r cyn-osodiadau rhagosodedig</value>
 	</string>
 	<string>
 		<id>281</id>
-		<value>Var vänlig kolla .xml-filerna</value>
+		<value>Gwiriwch y ffeil .xml</value>
 	</string>
 	<string>
 		<id>282</id>
-		<value>hittade %i poster</value>
+		<value>wedi canfod %i eitem</value>
 	</string>
 	<string>
 		<id>283</id>
-		<value>Sökresultat</value>
+		<value>Canlyniadau Chwilio</value>
 	</string>
 	<string>
 		<id>284</id>
-		<value>Inga resultat funna</value>
+		<value>Dim canlyniad</value>
 	</string>
 	<string>
 		<id>285</id>
-		<value>Deinterlace filter</value>
+		<value>Hidl dadblethu</value>
 	</string>
 	<string>
 		<id>286</id>
-		<value>Postprocessing filter</value>
+		<value>Hidl ôlbrosesu</value>
 	</string>
 	<string>
 		<id>287</id>
-		<value>Textning</value>
+		<value>Is-deitlau</value>
 	</string>
 	<string>
 		<id>288</id>
-		<value>Typsnitt</value>
+		<value>Ffont</value>
 	</string>
 	<string>
 		<id>289</id>
-		<value>Storlek</value>
+		<value>Maint</value>
 	</string>
 	<string>
 		<id>290</id>
-		<value>Volymförstärkning (dB)</value>
+		<value>Chwyddo sain (dB)</value>
 	</string>
 	<string>
 		<id>291</id>
-		<value>Video</value>
+		<value>Fideo</value>
 	</string>
 	<string>
 		<id>292</id>
-		<value>Ljud</value>
+		<value>Sain</value>
 	</string>
 	<string>
 		<id>293</id>
-		<value>Undertexter</value>
+		<value>Is-deitlau</value>
 	</string>
 	<string>
 		<id>294</id>
-		<value>Skapa bokmärken</value>
+		<value>Creu nodau tudalen</value>
 	</string>
 	<string>
 		<id>295</id>
-		<value>Spela bokmärken i följd</value>
+		<value>Cylchu nodau tudalen</value>
 	</string>
 	<string>
 		<id>296</id>
-		<value>Rensa bokmärken</value>
+		<value>Clirio nodau tudalen</value>
 	</string>
 	<string>
 		<id>297</id>
-		<value>AV-fördröjning</value>
+		<value>AVDelay</value>
 	</string>
 	<string>
 		<id>298</id>
-		<value>Slider</value>
+		<value>Llithrwr</value>
 	</string>
 	<string>
 		<id>299</id>
-		<value>Speltid:</value>
+		<value>Amser Rhedeg:</value>
 	</string>
 	<string>
 		<id>300</id>
-		<value>1. Språk</value>
+		<value>1. Iaith</value>
 	</string>
 	<string>
 		<id>301</id>
-		<value>2. Volym</value>
+		<value>2. Sain</value>
 	</string>
 	<string>
 		<id>302</id>
-		<value>3. Strömma</value>
+		<value>3. Llif</value>
 	</string>
 	<string>
 		<id>303</id>
-		<value>Fördröjning</value>
+		<value>Oedi</value>
 	</string>
 	<string>
 		<id>304</id>
-		<value>Språk</value>
+		<value>Iaith</value>
 	</string>
 	<string>
 		<id>305</id>
-		<value>Aktiverat</value>
+		<value>Galluogwyd</value>
 	</string>
 	<string>
 		<id>306</id>
-		<value>Non-Interleaved</value>
+		<value>Anrhyngleswyd</value>
 	</string>
 	<string>
 		<id>307</id>
-		<value>Auto</value>
+		<value>Awto</value>
 	</string>
 	<string>
 		<id>308</id>
-		<value>vertical deblocking filter</value>
+		<value>hidlau dadflocio fertigol</value>
 	</string>
 	<string>
 		<id>309</id>
-		<value>horizontal deblocking filter</value>
+		<value>hidl dadflocio llorweddol</value>
 	</string>
 	<string>
 		<id>310</id>
-		<value>Automatisk ljusstyrka/kontrast</value>
+		<value>Awtoddisgleirdeb/cyferbyniad</value>
 	</string>
 	<string>
 		<id>311</id>
@@ -971,107 +971,107 @@
 	</string>
 	<string>
 		<id>312</id>
-		<value>(0=auto)</value>
+		<value>(0=awto)</value>
 	</string>
 	<string>
 		<id>313</id>
-		<value>Omorganisera databasen</value>
+		<value>Ad-drefnu&apos;r gronfa ddata</value>
 	</string>
 	<string>
 		<id>314</id>
-		<value>Förbereder...</value>
+		<value>Paratoi...</value>
 	</string>
 	<string>
 		<id>315</id>
-		<value>Databasfel</value>
+		<value>Gwall cronfa ddata</value>
 	</string>
 	<string>
 		<id>316</id>
-		<value>Söker låtar...</value>
+		<value>Chwilio drwy&apos;r caneuon...</value>
 	</string>
 	<string>
 		<id>317</id>
-		<value>Omorganisationen lyckades</value>
+		<value>Ad-drefnu llwyddiannus</value>
 	</string>
 	<string>
 		<id>318</id>
-		<value>Markerar raderade låtar</value>
+		<value>Marcio caneuon wedi eu dileu</value>
 	</string>
 	<string>
 		<id>319</id>
-		<value>Fel vid omorganisering av låtar</value>
+		<value>Gwall wrth ad-drefnu caneuon</value>
 	</string>
 	<string>
 		<id>320</id>
-		<value>Söker artister...</value>
+		<value>Chwilio drwy&apos;r artistiaid...</value>
 	</string>
 	<string>
 		<id>321</id>
-		<value>Fel vid omorganisering av artister</value>
+		<value>Gwall wrth ad-drefnu artistiaid</value>
 	</string>
 	<string>
 		<id>322</id>
-		<value>Söker genrer...</value>
+		<value>Chwilio drwy&apos;r genres...</value>
 	</string>
 	<string>
 		<id>323</id>
-		<value>Fel vid omorganisering av genrer</value>
+		<value>Gwall wrth ad-drefnu genres</value>
 	</string>
 	<string>
 		<id>324</id>
-		<value>Söker sökvägar...</value>
+		<value>Chwilio drwy&apos;r pathes...</value>
 	</string>
 	<string>
 		<id>325</id>
-		<value>Fel vid omorganisation av sökvägar</value>
+		<value>Gwall wrth ad-drefnu pathes</value>
 	</string>
 	<string>
 		<id>326</id>
-		<value>Söker album...</value>
+		<value>Chwilio drwy&apos;r albums...</value>
 	</string>
 	<string>
 		<id>327</id>
-		<value>Fel vid omorganisering av album</value>
+		<value>Gwall wrth ad-drefnu albums</value>
 	</string>
 	<string>
 		<id>328</id>
-		<value>Skriver ändringar...</value>
+		<value>Ysgrifennu&apos;r newidiadau...</value>
 	</string>
 	<string>
 		<id>329</id>
-		<value>Fel vid skrivning av ändringar</value>
+		<value>Gwall wrth ysgrifennu&apos;r newid</value>
 	</string>
 	<string>
 		<id>330</id>
-		<value>Detta tar en stund...</value>
+		<value>Gall hyn gymryd amser...</value>
 	</string>
 	<string>
 		<id>331</id>
-		<value>Komprimerar databasen...</value>
+		<value>Cywasgu&apos;r gronfa ddata...</value>
 	</string>
 	<string>
 		<id>332</id>
-		<value>Fel vid komprimering av databasen</value>
+		<value>Gwall wrth gywasgu&apos;r gronfa ddata</value>
 	</string>
 	<string>
 		<id>333</id>
-		<value>Vill du omorganisera musikdatabasen?</value>
+		<value>Hoffech chi ad-drefnu cronfa ddata cerddoriaeth?</value>
 	</string>
 	<string>
 		<id>334</id>
-		<value>Omorganisera musikdatabas</value>
+		<value>Ad-drefnu&apos;r gronfa ddata</value>
 	</string>
 	<string>
 		<id>335</id>
-		<value>Starta</value>
+		<value>Cychwyn</value>
 	</string>
 	<string>
 		<id>336</id>
-		<value>Jus. Framerate</value>
+		<value>Newid graddfa fframiau</value>
 	</string>
 	<string>
 		<id>337</id>
-		<value>Audio Output:</value>
+		<value>Allbwn sain:</value>
 	</string>
 	<string>
 		<id>338</id>
@@ -1079,119 +1079,119 @@
 	</string>
 	<string>
 		<id>339</id>
-		<value>Digital</value>
+		<value>Digidol</value>
 	</string>
 	<string>
 		<id>340</id>
-		<value>Blandade artister</value>
+		<value>Artistiaid Amrywiol</value>
 	</string>
 	<string>
 		<id>341</id>
-		<value>Spela DVD</value>
+		<value>Chwarae DVD</value>
 	</string>
 	<string>
 		<id>342</id>
-		<value>Filmer</value>
+		<value>Ffilmiau</value>
 	</string>
 	<string>
 		<id>343</id>
-		<value>Justera framerate</value>
+		<value>Newid graddfa fframiau</value>
 	</string>
 	<string>
 		<id>344</id>
-		<value>Skådespelare</value>
+		<value>Actorion</value>
 	</string>
 	<string>
 		<id>345</id>
-		<value>År</value>
+		<value>Blwyddyn</value>
 	</string>
 	<string>
 		<id>346</id>
-		<value>Gruppera</value>
+		<value>Stacio</value>
 	</string>
 	<string>
 		<id>347</id>
-		<value>Avgruppera</value>
+		<value>Dadstacio</value>
 	</string>
 	<string>
 		<id>348</id>
-		<value>Platta ut mappstrukturen</value>
+		<value>Gwastatau Hierarchaeth Strwythur</value>
 	</string>
 	<string>
 		<id>349</id>
-		<value>Visa endast Default.xbe</value>
+		<value>Dangos dim ond y Default.xb</value>
 	</string>
 	<string>
 		<id>350</id>
-		<value>Program</value>
+		<value>Rhaglenni</value>
 	</string>
 	<string>
 		<id>351</id>
-		<value>Av</value>
+		<value>Diffodd</value>
 	</string>
 	<string>
 		<id>352</id>
-		<value>Dimma</value>
+		<value>Pylu</value>
 	</string>
 	<string>
 		<id>353</id>
-		<value>Svart</value>
+		<value>Du</value>
 	</string>
 	<string>
 		<id>354</id>
-		<value>Matrix Trails</value>
+		<value>Matrix Trails?</value>
 	</string>
 	<string>
 		<id>355</id>
-		<value>Skärmsläckarfördröjning</value>
+		<value>Amser Allan Oedi&apos;r Arbedwr Sgrin</value>
 	</string>
 	<string>
 		<id>356</id>
-		<value>Skärmsläckarläge</value>
+		<value>Modd Arbedwr Sgrin</value>
 	</string>
 	<string>
 		<id>357</id>
-		<value>Avstängningsfördröjning</value>
+		<value>Amser Allan Oedi cyn Cau</value>
 	</string>
 	<string>
 		<id>358</id>
-		<value>Alla album</value>
+		<value>Pob albu</value>
 	</string>
 	<string>
 		<id>359</id>
-		<value>Senaste album</value>
+		<value>Albums diweddar</value>
 	</string>
 	<string>
 		<id>360</id>
-		<value>Skärmsläckare</value>
+		<value>Arbedwr Sgrin</value>
 	</string>
 	<string>
 		<id>361</id>
-		<value>Bildspel med undermappar</value>
+		<value>Sioe Lluniau</value>
 	</string>
 	<string>
 		<id>362</id>
-		<value>Skärmsläckare toningsnivå (%)</value>
+		<value>Lefel Pylu&apos;r Arbedwr Sgrin (%)</value>
 	</string>
 	<string>
 		<id>363</id>
-		<value>Sortera efter: Fil</value>
+		<value>Trefnu: Ffeil</value>
 	</string>
 	<string>
 		<id>364</id>
-		<value>DD/DTS Multichannel Passthrough</value>
+		<value>Pasio Drwodd DD/DTS Amlsianel</value>
 	</string>
 	<string>
 		<id>365</id>
-		<value>Sortera efter: Namn</value>
+		<value>Trefnu: Enw&lt;</value>
 	</string>
 	<string>
 		<id>366</id>
-		<value>Sortera efter: År</value>
+		<value>Trefnu: Blwyddyn</value>
 	</string>
 	<string>
 		<id>367</id>
-		<value>Sortera efter: Betyg</value>
+		<value>Trefn: Cyfraddiad</value>
 	</string>
 	<string>
 		<id>368</id>
@@ -1199,287 +1199,287 @@
 	</string>
 	<string>
 		<id>369</id>
-		<value>Titel</value>
+		<value>Teitl</value>
 	</string>
 	<string>
 		<id>370</id>
-		<value>åska</value>
+		<value>Taranau</value>
 	</string>
 	<string>
 		<id>371</id>
-		<value>delvis</value>
+		<value>Rhannol</value>
 	</string>
 	<string>
 		<id>372</id>
-		<value>mestadels</value>
+		<value>Mwyaf</value>
 	</string>
 	<string>
 		<id>373</id>
-		<value>soligt</value>
+		<value>Heulog</value>
 	</string>
 	<string>
 		<id>374</id>
-		<value>molnigt</value>
+		<value>Cymylog</value>
 	</string>
 	<string>
 		<id>375</id>
-		<value>snö</value>
+		<value>Eira</value>
 	</string>
 	<string>
 		<id>376</id>
-		<value>regn</value>
+		<value>Glaw</value>
 	</string>
 	<string>
 		<id>377</id>
-		<value>lätt</value>
+		<value>Ysgafn</value>
 	</string>
 	<string>
 		<id>378</id>
-		<value>AM</value>
+		<value>Bore</value>
 	</string>
 	<string>
 		<id>379</id>
-		<value>PM</value>
+		<value>Pnawn</value>
 	</string>
 	<string>
 		<id>380</id>
-		<value>skurar</value>
+		<value>Cawodydd</value>
 	</string>
 	<string>
 		<id>381</id>
-		<value>få</value>
+		<value>Ychydig</value>
 	</string>
 	<string>
 		<id>382</id>
-		<value>spridda</value>
+		<value>Gwasgarog</value>
 	</string>
 	<string>
 		<id>383</id>
-		<value>vind</value>
+		<value>Gwynt</value>
 	</string>
 	<string>
 		<id>384</id>
-		<value>stark</value>
+		<value>Cryf</value>
 	</string>
 	<string>
 		<id>385</id>
-		<value>lagom</value>
+		<value>Teg</value>
 	</string>
 	<string>
 		<id>386</id>
-		<value>klart</value>
+		<value>Clir</value>
 	</string>
 	<string>
 		<id>387</id>
-		<value>tidig</value>
+		<value>Cynnar</value>
 	</string>
 	<string>
 		<id>388</id>
-		<value>och</value>
+		<value>a</value>
 	</string>
 	<string>
 		<id>389</id>
-		<value>dimma</value>
+		<value>Niwl</value>
 	</string>
 	<string>
 		<id>390</id>
-		<value>dis</value>
+		<value>Tarth</value>
 	</string>
 	<string>
 		<id>391</id>
-		<value>blåsigt</value>
+		<value>Gwyntog</value>
 	</string>
 	<string>
 		<id>392</id>
-		<value>duggregn</value>
+		<value>Glaw Mân</value>
 	</string>
 	<string>
 		<id>393</id>
-		<value>frost</value>
+		<value>Rhewi</value>
 	</string>
 	<string>
 		<id>394</id>
-		<value>saknas</value>
+		<value>Anhysbys</value>
 	</string>
 	<string>
 		<id>396</id>
-		<value>Välj plats</value>
+		<value>Dewis Lleoliad</value>
 	</string>
 	<string>
 		<id>397</id>
-		<value>Intervall</value>
+		<value>Amser Adnewyddu</value>
 	</string>
 	<string>
 		<id>398</id>
-		<value>Temperaturenheter</value>
+		<value>Uned Tymheredd</value>
 	</string>
 	<string>
 		<id>399</id>
-		<value>Hastighetsenheter</value>
+		<value>Uned Cyflymder</value>
 	</string>
 	<string>
 		<id>400</id>
-		<value>Väder</value>
+		<value>Tywydd</value>
 	</string>
 	<string>
 		<id>401</id>
-		<value>Temperatur</value>
+		<value>Tymheredd</value>
 	</string>
 	<string>
 		<id>402</id>
-		<value>Känns som</value>
+		<value>Teimlo fel</value>
 	</string>
 	<string>
 		<id>403</id>
-		<value>UV Index</value>
+		<value>Mynegai UV</value>
 	</string>
 	<string>
 		<id>404</id>
-		<value>Vind</value>
+		<value>Gwynt</value>
 	</string>
 	<string>
 		<id>405</id>
-		<value>Daggpunkt</value>
+		<value>Pwynt Gwlith</value>
 	</string>
 	<string>
 		<id>406</id>
-		<value>Luftfuktighet</value>
+		<value>Lleithder</value>
 	</string>
 	<string>
 		<id>407</id>
-		<value>från</value>
+		<value>O</value>
 	</string>
 	<string>
 		<id>408</id>
-		<value>på</value>
+		<value>at</value>
 	</string>
 	<string>
 		<id>410</id>
-		<value>Hämtar från Weather.com</value>
+		<value>Gan Weather.com</value>
 	</string>
 	<string>
 		<id>411</id>
-		<value>Hämtar väder för:</value>
+		<value>Estyn Tywydd am:</value>
 	</string>
 	<string>
 		<id>412</id>
-		<value>Kunde inte hämta väderdata</value>
+		<value>Methu estyn data tywydd:</value>
 	</string>
 	<string>
 		<id>413</id>
-		<value>Manuell</value>
+		<value>Gyda llaw</value>
 	</string>
 	<string>
 		<id>414</id>
-		<value>Detta album saknar recension</value>
+		<value>Dim adolygiad i&apos;r album</value>
 	</string>
 	<string>
 		<id>415</id>
-		<value>Laddar miniatyr...</value>
+		<value>Llwytho llun bach i lawr...</value>
 	</string>
 	<string>
 		<id>416</id>
-		<value>Ej tillgänglig</value>
+		<value>Dim ar gael</value>
 	</string>
 	<string>
 		<id>417</id>
-		<value>Visa: Stora ikoner</value>
+		<value>Golwg: Eicon Mawr</value>
 	</string>
 	<string>
 		<id>418</id>
-		<value>Mina filmer/Genrer</value>
+		<value>Fideo/Genres</value>
 	</string>
 	<string>
 		<id>419</id>
-		<value>Mina filmer/Skådespelare</value>
+		<value>Fideo/Actorion</value>
 	</string>
 	<string>
 		<id>420</id>
-		<value>Mina filmer/År</value>
+		<value>Fideo/Blwyddyn</value>
 	</string>
 	<string>
 		<id>421</id>
-		<value>Mina filmer/Titel</value>
+		<value>Fideo/Teitl</value>
 	</string>
 	<string>
 		<id>422</id>
-		<value>Ta bort albuminfo</value>
+		<value>Dileu gwybodaeth album</value>
 	</string>
 	<string>
 		<id>423</id>
-		<value>Ta bort CDDB-info</value>
+		<value>Dileu gwybodaeth CDDB</value>
 	</string>
 	<string>
 		<id>424</id>
-		<value>Välj</value>
+		<value>Dewis</value>
 	</string>
 	<string>
 		<id>425</id>
-		<value>Ingen albuminfo hittad</value>
+		<value>Heb ganfod gwybodaeth album.</value>
 	</string>
 	<string>
 		<id>426</id>
-		<value>Ingen CDDB-info hittad</value>
+		<value>Heb ganfod gwybodaeth CDDB.</value>
 	</string>
 	<string>
 		<id>427</id>
-		<value>Disk:</value>
+		<value>Disg:</value>
 	</string>
 	<string>
 		<id>428</id>
-		<value>Sätt i rätt CD/DVD</value>
+		<value>Rhowch y CD/DVD cywir i mewn</value>
 	</string>
 	<string>
 		<id>429</id>
-		<value>Sätt i följande CD/DVD</value>
+		<value>Rhowch y CD/DVD canlynol i mewn</value>
 	</string>
 	<string>
 		<id>430</id>
-		<value>Sortera efter: DVD#</value>
+		<value>Trefn: DVD#</value>
 	</string>
 	<string>
 		<id>431</id>
-		<value>Ingen cache</value>
+		<value>Dim Storfa</value>
 	</string>
 	<string>
 		<id>432</id>
-		<value>Radera film från databasen</value>
+		<value>Dileu&apos;r ffilm o&apos;r gronfa ddata</value>
 	</string>
 	<string>
 		<id>433</id>
-		<value>Är du säker på att du vill radera</value>
+		<value>Ydych chi&apos;n siðr eich bod</value>
 	</string>
 	<string>
 		<id>434</id>
-		<value>filmen?</value>
+		<value>am dynnu&apos;r ffilm?</value>
 	</string>
 	<string>
 		<id>435</id>
-		<value>Spår</value>
+		<value>Trac</value>
 	</string>
 	<string>
 		<id>436</id>
-		<value>År:</value>
+		<value>Blwyddyn:</value>
 	</string>
 	<string>
 		<id>437</id>
-		<value>Längd:</value>
+		<value>Hyd:</value>
 	</string>
 	<string>
 		<id>438</id>
-		<value>Öppnar fil</value>
+		<value>Agor y ffeil</value>
 	</string>
 	<string>
 		<id>439</id>
-		<value>Cache</value>
+		<value>Storfa</value>
 	</string>
 	<string>
 		<id>440</id>
-		<value>Hårddisk</value>
+		<value>Disg Caled</value>
 	</string>
 	<string>
 		<id>441</id>
-		<value>UDF</value>
+		<value>UDF&lt;</value>
 	</string>
 	<string>
 		<id>442</id>
@@ -1487,15 +1487,15 @@
 	</string>
 	<string>
 		<id>443</id>
-		<value>Internet</value>
+		<value>Rhyngrwyd</value>
 	</string>
 	<string>
 		<id>444</id>
-		<value>video</value>
+		<value>fideo</value>
 	</string>
 	<string>
 		<id>445</id>
-		<value>ljud</value>
+		<value>sain</value>
 	</string>
 	<string>
 		<id>446</id>
@@ -1503,7 +1503,7 @@
 	</string>
 	<string>
 		<id>447</id>
-		<value>Autostart</value>
+		<value>Awtoredeg</value>
 	</string>
 	<string>
 		<id>448</id>
@@ -1511,39 +1511,39 @@
 	</string>
 	<string>
 		<id>449</id>
-		<value>Aktiverad</value>
+		<value>Galluogwyd</value>
 	</string>
 	<string>
 		<id>450</id>
-		<value>Kolumner</value>
+		<value>Colofnau</value>
 	</string>
 	<string>
 		<id>451</id>
-		<value>Kolumn 1 adress:</value>
+		<value>Cyfeiriad rhes 1:</value>
 	</string>
 	<string>
 		<id>452</id>
-		<value>Kolumn 2 adress:</value>
+		<value>Cyfeiriad rhes 2:</value>
 	</string>
 	<string>
 		<id>453</id>
-		<value>Kolumn 3 adress:</value>
+		<value>Cyfeiriad rhes 3:</value>
 	</string>
 	<string>
 		<id>454</id>
-		<value>Kolumn 4 adress:</value>
+		<value>Cyfeiriad rhes 4:</value>
 	</string>
 	<string>
 		<id>455</id>
-		<value>Kolumner:</value>
+		<value>Rhesi:</value>
 	</string>
 	<string>
 		<id>456</id>
-		<value>Stil:</value>
+		<value>Modd</value>
 	</string>
 	<string>
 		<id>457</id>
-		<value>Ändra vy</value>
+		<value>Newid golwg</value>
 	</string>
 	<string>
 		<id>458</id>
@@ -1551,31 +1551,31 @@
 	</string>
 	<string>
 		<id>459</id>
-		<value>Texter</value>
+		<value>Subs</value>
 	</string>
 	<string>
 		<id>460</id>
-		<value>Ljudström</value>
+		<value>Llif sain</value>
 	</string>
 	<string>
 		<id>461</id>
-		<value>[aktiv]</value>
+		<value>[gweithredol]</value>
 	</string>
 	<string>
 		<id>462</id>
-		<value>Textning</value>
+		<value>Is-deitl</value>
 	</string>
 	<string>
 		<id>463</id>
-		<value>Bakgrundsbelysning</value>
+		<value>Golau o&apos;r cefn</value>
 	</string>
 	<string>
 		<id>464</id>
-		<value>Ljusstyrka</value>
+		<value>Disgleirdeb</value>
 	</string>
 	<string>
 		<id>465</id>
-		<value>Kontrast</value>
+		<value>Cyferbyniad</value>
 	</string>
 	<string>
 		<id>466</id>
@@ -1583,19 +1583,19 @@
 	</string>
 	<string>
 		<id>467</id>
-		<value>Typ</value>
+		<value>Math</value>
 	</string>
 	<string>
 		<id>468</id>
-		<value>Flytta rektangeln för att ändra OSD-placering</value>
+		<value>Symudwch y bar i newid safle&apos;r osd</value>
 	</string>
 	<string>
 		<id>469</id>
-		<value>OSD-placering</value>
+		<value>Safle&apos;r OSD</value>
 	</string>
 	<string>
 		<id>470</id>
-		<value>Credits</value>
+		<value>Diolchiadau</value>
 	</string>
 	<string>
 		<id>471</id>
@@ -1603,27 +1603,27 @@
 	</string>
 	<string>
 		<id>472</id>
-		<value>OSD-timeout</value>
+		<value>Amser allan OSD</value>
 	</string>
 	<string>
 		<id>473</id>
-		<value>High Quality Resampling</value>
+		<value>Ail samplo o Safon Uchel</value>
 	</string>
 	<string>
 		<id>474</id>
-		<value>Av</value>
+		<value>Diffodd</value>
 	</string>
 	<string>
 		<id>475</id>
-		<value>Endast musik</value>
+		<value>Cerddoriaeth yn unig</value>
 	</string>
 	<string>
 		<id>476</id>
-		<value>Musik&amp;video</value>
+		<value>Cerddoriaeth a Fideo</value>
 	</string>
 	<string>
 		<id>477</id>
-		<value>Kan inte ladda spellista</value>
+		<value>Methu llwytho&apos;r rhestr chwarae</value>
 	</string>
 	<string>
 		<id>478</id>
@@ -1631,19 +1631,19 @@
 	</string>
 	<string>
 		<id>479</id>
-		<value>Skal och språk</value>
+		<value>Croen ac Iaith</value>
 	</string>
 	<string>
 		<id>480</id>
-		<value>Användargränssnitt</value>
+		<value>Rhyngwyneb Defnyddiwr</value>
 	</string>
 	<string>
 		<id>481</id>
-		<value>Ljudalternativ</value>
+		<value>Dewisiadau Sain</value>
 	</string>
 	<string>
 		<id>482</id>
-		<value>Om XBMC</value>
+		<value>Ynghylch XBMC</value>
 	</string>
 	<string>
 		<id>483</id>
@@ -1655,791 +1655,791 @@
 	</string>
 	<string>
 		<id>485</id>
-		<value>Ta bort album</value>
+		<value>Dileu&apos;r album</value>
 	</string>
 	<string>
 		<id>486</id>
-		<value>Repetera</value>
+		<value>Ailadrodd</value>
 	</string>
 	<string>
 		<id>487</id>
-		<value>Repetera en</value>
+		<value>Ailadrodd Un</value>
 	</string>
 	<string>
 		<id>488</id>
-		<value>Repetera mapp spellista</value>
+		<value>Ailadrodd folder y rhestr chwarae</value>
 	</string>
 	<string>
 		<id>489</id>
-		<value>Använd spellistor i låtar</value>
+		<value>Defnyddio&apos;r rhestr chwarae gyda&apos;r caneuon</value>
 	</string>
 	<string>
 		<id>490</id>
-		<value>Växla autom. listor och ikoner i låtar</value>
+		<value>Awtonewid rhestr ac eiconau gyda&apos;r caneuon</value>
 	</string>
 	<string>
 		<id>491</id>
-		<value>Använd stora ikoner</value>
+		<value>Defnyddio eiconau mawr</value>
 	</string>
 	<string>
 		<id>492</id>
-		<value>Ljud/språk</value>
+		<value>Iaith sain</value>
 	</string>
 	<string>
 		<id>493</id>
-		<value>Skådespelare</value>
+		<value>Actorion</value>
 	</string>
 	<string>
 		<id>500</id>
-		<value>Filmeny</value>
+		<value>Dewislen ffeil</value>
 	</string>
 	<string>
 		<id>501</id>
-		<value>Välj som mål</value>
+		<value>Gosod fel cyrchfan</value>
 	</string>
 	<string>
 		<id>502</id>
-		<value>Kunde inte slutföra åtgärden</value>
+		<value>Methu cwblhau&apos;r weithred</value>
 	</string>
 	<string>
 		<id>503</id>
-		<value>Ta bort denna mapp</value>
+		<value>Dileu&apos;r ffolder</value>
 	</string>
 	<string>
 		<id>504</id>
-		<value>Gå till målet</value>
+		<value>Mynd i&apos;r cyrchfan</value>
 	</string>
 	<string>
 		<id>505</id>
-		<value>Beräknar</value>
+		<value>Cyfrifo</value>
 	</string>
 	<string>
 		<id>506</id>
-		<value>Är du säker?</value>
+		<value>Ydych chi&apos;n siðr?</value>
 	</string>
 	<string>
 		<id>507</id>
-		<value>delar</value>
+		<value>eitemau</value>
 	</string>
 	<string>
 		<id>508</id>
-		<value>Till</value>
+		<value>At</value>
 	</string>
 	<string>
 		<id>509</id>
-		<value>Det finns redan en fil med detta namn, Vill du skriva över den?</value>
+		<value>Ffeil cyrchfan yn bodoli. Ysgrifennu dros y ffeil?</value>
 	</string>
 	<string>
 		<id>510</id>
-		<value>Avbryt</value>
+		<value>Diddymu</value>
 	</string>
 	<string>
 		<id>511</id>
-		<value>Alltid</value>
+		<value>Pob Tro</value>
 	</string>
 	<string>
 		<id>512</id>
-		<value>Aldrig</value>
+		<value>Byth</value>
 	</string>
 	<string>
 		<id>513</id>
-		<value>Filen är skrivskyddad, åtgärden ej genomförd</value>
+		<value>Mae&apos;r eitem wedi ei hamddiffyn, heb gwblhau&apos;r weithred</value>
 	</string>
 	<string>
 		<id>514</id>
-		<value>Fel vid skapande av mapp, åtgärden ej genomförd</value>
+		<value>Gwall wrth greu ffolder, heb gwblhau&apos;r weithred</value>
 	</string>
 	<string>
 		<id>515</id>
-		<value>Fel vid radering av mapp, åtgärden ej genomförd</value>
+		<value>Gwall dileu&apos;r ffolder, heb gwblhau&apos;r weithred</value>
 	</string>
 	<string>
 		<id>516</id>
-		<value>Kunde inte radera målfilen, åtgärden ej genomförd</value>
+		<value>Methu dileu&apos;r ffeil cyrchfan, heb gwblhau&apos;r weithred</value>
 	</string>
 	<string>
 		<id>517</id>
-		<value>Allvarligt fel, åtgärden ej genomförd</value>
+		<value>Gwall terfynol, heb gwblhau&apos;r weithred</value>
 	</string>
 	<string>
 		<id>518</id>
-		<value>Radera denna låt?</value>
+		<value>Dileu&apos;r gân?</value>
 	</string>
 	<string>
 		<id>530</id>
-		<value>Fotoskiva isatt, vill du öppna den?</value>
+		<value>Disg lluniau wedi ei mewnosod, ei hagor?</value>
 	</string>
 	<string>
 		<id>531</id>
-		<value>Filmskiva isatt, vill du öppna den?</value>
+		<value>Disg ffilm wedi ei mewnosod, ei hagor?</value>
 	</string>
 	<string>
 		<id>532</id>
-		<value>Ljudskiva isatt, vill du öppna den?</value>
+		<value>Disg sain wedi ei mewnosod, ei hagor?</value>
 	</string>
 	<string>
 		<id>550</id>
-		<value>Beskär</value>
+		<value>Tocio</value>
 	</string>
 	<string>
 		<id>600</id>
-		<value>TV-tablå</value>
+		<value>Amserlen Teledu</value>
 	</string>
 	<string>
 		<id>601</id>
-		<value>Spela in nu</value>
+		<value>Recordio Nawr</value>
 	</string>
 	<string>
 		<id>602</id>
-		<value>Kanal:</value>
+		<value>Sianel</value>
 	</string>
 	<string>
 		<id>603</id>
-		<value>Planerade inspelningar</value>
+		<value>Amserlenwyd</value>
 	</string>
 	<string>
 		<id>604</id>
-		<value>Inspelad TV</value>
+		<value>Teledu a Recordiwyd</value>
 	</string>
 	<string>
 		<id>605</id>
-		<value>Min TV</value>
+		<value>Teledu</value>
 	</string>
 	<string>
 		<id>606</id>
-		<value>Laddar ny TV-tablå</value>
+		<value>Llwytho Amserlen Teledu Newydd</value>
 	</string>
 	<string>
 		<id>607</id>
-		<value>Ladda</value>
+		<value>Llwytho</value>
 	</string>
 	<string>
 		<id>608</id>
-		<value>Import av TV-tablå misslyckades</value>
+		<value>Methodd mewnforio&apos;r Amserlen Teledu</value>
 	</string>
 	<string>
 		<id>609</id>
-		<value>Import av TV-tablå klar</value>
+		<value>Cwblhau Mewnforio&apos;r Amserlen Teledu</value>
 	</string>
 	<string>
 		<id>610</id>
-		<value>Ingen</value>
+		<value>Peidio recordio</value>
 	</string>
 	<string>
 		<id>611</id>
-		<value>Spela in en gång</value>
+		<value>Recordio unwaith</value>
 	</string>
 	<string>
 		<id>612</id>
-		<value>Spela alltid in på denna kanal</value>
+		<value>Recordio bob tro ar y sianel yma</value>
 	</string>
 	<string>
 		<id>613</id>
-		<value>Spela alltid in oavsett kanal</value>
+		<value>Recordio bob tro ar bob sianel</value>
 	</string>
 	<string>
 		<id>614</id>
-		<value>Spela in varje vecka vid denna tid</value>
+		<value>Recordio pob wythnos ar yr amser yma</value>
 	</string>
 	<string>
 		<id>615</id>
-		<value>Spela in varje dag vid denna tid</value>
+		<value>Recordio pob dydd ar yr amser yma</value>
 	</string>
 	<string>
 		<id>616</id>
-		<value>Välj inspelningstyp</value>
+		<value>Dewis y math o recordio</value>
 	</string>
 	<string>
 		<id>617</id>
-		<value>Ny</value>
+		<value>Newydd</value>
 	</string>
 	<string>
 		<id>618</id>
-		<value>Ta bort</value>
+		<value>Dileu</value>
 	</string>
 	<string>
 		<id>619</id>
-		<value>Redigera datum/tid</value>
+		<value>Golygu&apos;r Dyddiad/Amser</value>
 	</string>
 	<string>
 		<id>620</id>
-		<value>Sortera efter: Kanal</value>
+		<value>Trefnu: Sianel</value>
 	</string>
 	<string>
 		<id>621</id>
-		<value>Sortera efter: Datum</value>
+		<value>Trefnu: Dyddiad</value>
 	</string>
 	<string>
 		<id>622</id>
-		<value>Sortera efter: Namn</value>
+		<value>Trefnu: Enw</value>
 	</string>
 	<string>
 		<id>623</id>
-		<value>Sortera efter: Typ</value>
+		<value>Trefn: Math</value>
 	</string>
 	<string>
 		<id>624</id>
-		<value>Städa</value>
+		<value>Glanhau</value>
 	</string>
 	<string>
 		<id>625</id>
-		<value>Planerade insp. raderade:</value>
+		<value>Tynnu&apos;r amserlenni:</value>
 	</string>
 	<string>
 		<id>626</id>
-		<value>Ändra typ</value>
+		<value>Newid math</value>
 	</string>
 	<string>
 		<id>627</id>
-		<value>Kanaler:</value>
+		<value>Sianeli:</value>
 	</string>
 	<string>
 		<id>628</id>
-		<value>Program:</value>
+		<value>Rhaglenni:</value>
 	</string>
 	<string>
 		<id>629</id>
-		<value>Stoppa Insp.</value>
+		<value>Atal Recordio</value>
 	</string>
 	<string>
 		<id>630</id>
-		<value>Vill du starta om datorn?</value>
+		<value>Hoffech chi ailgychwyn?</value>
 	</string>
 	<string>
 		<id>631</id>
-		<value>Vill du stänga av datorn?</value>
+		<value>Hoffech chi gau?</value>
 	</string>
 	<string>
 		<id>632</id>
-		<value>Objekt</value>
+		<value>Eitem</value>
 	</string>
 	<string>
 		<id>633</id>
-		<value>Startdatum/tid</value>
+		<value>Cychwyn</value>
 	</string>
 	<string>
 		<id>634</id>
-		<value>Stoppdatum/tid</value>
+		<value>Gorffen</value>
 	</string>
 	<string>
 		<id>635</id>
-		<value>Tid</value>
+		<value>Amser</value>
 	</string>
 	<string>
 		<id>636</id>
-		<value>Datum</value>
+		<value>Dyddiad</value>
 	</string>
 	<string>
 		<id>637</id>
-		<value>Ändra inspelning</value>
+		<value>Golygu&apos;r Recordiadau</value>
 	</string>
 	<string>
 		<id>638</id>
-		<value>Ny inspelning</value>
+		<value>Recordiadau Newydd</value>
 	</string>
 	<string>
 		<id>639</id>
-		<value>Album av</value>
+		<value>Albums</value>
 	</string>
 	<string>
 		<id>640</id>
-		<value>Mättnad</value>
+		<value>Dirlawnder</value>
 	</string>
 	<string>
 		<id>641</id>
-		<value>Skärpa</value>
+		<value>Siarprwydd</value>
 	</string>
 	<string>
 		<id>642</id>
-		<value>Laddar TV-kanaler</value>
+		<value>Llwytho sianel Teledu</value>
 	</string>
 	<string>
 		<id>643</id>
-		<value>Laddar TV-program</value>
+		<value>Llwytho rhaglenni Teledu</value>
 	</string>
 	<string>
 		<id>644</id>
-		<value>Sorterar TV-program</value>
+		<value>Trefn rhaglenni Teledu</value>
 	</string>
 	<string>
 		<id>645</id>
-		<value>Laddar XML-fil</value>
+		<value>Lwytho ffeil XML</value>
 	</string>
 	<string>
 		<id>646</id>
-		<value>Planerade inspelningar</value>
+		<value>Recordiadau wedi eu hamserlenni</value>
 	</string>
 	<string>
 		<id>647</id>
-		<value>En gång</value>
+		<value>Unwaith</value>
 	</string>
 	<string>
 		<id>648</id>
-		<value>Dagligen</value>
+		<value>Dyddiol</value>
 	</string>
 	<string>
 		<id>649</id>
-		<value>Varje</value>
+		<value>Pob</value>
 	</string>
 	<string>
 		<id>650</id>
-		<value>Varje gång på denna kanal</value>
+		<value>Pob tro ar y sianel yma</value>
 	</string>
 	<string>
 		<id>651</id>
-		<value>Varje gång på någon kanal</value>
+		<value>Bob tro ar unrhyw sianel</value>
 	</string>
 	<string>
 		<id>652</id>
-		<value>Inspelad TV</value>
+		<value>Teledu wedi ei recordio</value>
 	</string>
 	<string>
 		<id>653</id>
-		<value>Radera denna inspelning?</value>
+		<value>Dileu&apos;r recordiad?</value>
 	</string>
 	<string>
 		<id>654</id>
-		<value>Mata ut</value>
+		<value>Bwrw allan?</value>
 	</string>
 	<string>
 		<id>655</id>
-		<value>Spela upp inspelad TV</value>
+		<value>Chwarae teledu wedi ei recordio</value>
 	</string>
 	<string>
 		<id>656</id>
-		<value>Radera inspelad TV</value>
+		<value>Dileu teledu wedi ei recordio</value>
 	</string>
 	<string>
 		<id>657</id>
-		<value>Mån</value>
+		<value>Llun</value>
 	</string>
 	<string>
 		<id>658</id>
-		<value>Tis</value>
+		<value>Maw</value>
 	</string>
 	<string>
 		<id>659</id>
-		<value>Ons</value>
+		<value>Mer</value>
 	</string>
 	<string>
 		<id>660</id>
-		<value>Tor</value>
+		<value>Iau</value>
 	</string>
 	<string>
 		<id>661</id>
-		<value>Fre</value>
+		<value>Gwe</value>
 	</string>
 	<string>
 		<id>662</id>
-		<value>Lör</value>
+		<value>Sad</value>
 	</string>
 	<string>
 		<id>663</id>
-		<value>Sön</value>
+		<value>Sul</value>
 	</string>
 	<string>
 		<id>664</id>
-		<value>Radera denna bild?</value>
+		<value>Dileu&apos;r llun?</value>
 	</string>
 	<string>
 		<id>665</id>
-		<value>Min Radio</value>
+		<value>Radio</value>
 	</string>
 	<string>
 		<id>666</id>
-		<value>Stationer</value>
+		<value>Gorsafoedd</value>
 	</string>
 	<string>
 		<id>667</id>
-		<value>Autosök</value>
+		<value>AwtoTiwnio</value>
 	</string>
 	<string>
 		<id>668</id>
-		<value>Sortera efter: Typ</value>
+		<value>Trefnu: Math</value>
 	</string>
 	<string>
 		<id>669</id>
-		<value>Sortera efter: Genre</value>
+		<value>Trefnu: Genre</value>
 	</string>
 	<string>
 		<id>670</id>
-		<value>Sortera efter: Bitrate</value>
+		<value>Trefn: Didradd</value>
 	</string>
 	<string>
 		<id>671</id>
-		<value>Sortera efter: Sedda</value>
+		<value>Trefnu: Gwyliwyd</value>
 	</string>
 	<string>
 		<id>672</id>
-		<value>Spela in varje vardag</value>
+		<value>Recordio Llun-Gwe</value>
 	</string>
 	<string>
 		<id>673</id>
-		<value>Scroll-hastighet</value>
+		<value>Cyflymder Sgrolio</value>
 	</string>
 	<string>
 		<id>674</id>
-		<value>GUI Inst.</value>
+		<value>Gosodiadau&apos;r Rhyngwyneb</value>
 	</string>
 	<string>
 		<id>675</id>
-		<value>Exempel:</value>
+		<value>Esiampl:</value>
 	</string>
 	<string>
 		<id>676</id>
-		<value>Ta bort sedda inspelningar?</value>
+		<value>Dileu recordiadau wedi eu gwylio?</value>
 	</string>
 	<string>
 		<id>677</id>
-		<value>tider</value>
+		<value>amserau</value>
 	</string>
 	<string>
 		<id>678</id>
-		<value>Sortera efter: Genre</value>
+		<value>Trefnu: Genre</value>
 	</string>
 	<string>
 		<id>679</id>
-		<value>Veckovis</value>
+		<value>Wythnosol</value>
 	</string>
 	<string>
 		<id>680</id>
-		<value>Vardagar</value>
+		<value>Llun-Gwe</value>
 	</string>
 	<string>
 		<id>681</id>
-		<value>Väntar</value>
+		<value>Aros</value>
 	</string>
 	<string>
 		<id>682</id>
-		<value>Inspelning</value>
+		<value>Recordio</value>
 	</string>
 	<string>
 		<id>683</id>
-		<value>Klar</value>
+		<value>Gorffennwyd</value>
 	</string>
 	<string>
 		<id>684</id>
-		<value>Avbruten</value>
+		<value>Dilëwyd</value>
 	</string>
 	<string>
 		<id>685</id>
-		<value>Sortera efter: Status</value>
+		<value>Trefnu: Statws</value>
 	</string>
 	<string>
 		<id>686</id>
-		<value>Född</value>
+		<value>Ganwyd</value>
 	</string>
 	<string>
 		<id>687</id>
-		<value>Aktiva år</value>
+		<value>Bly. Creadigol</value>
 	</string>
 	<string>
 		<id>688</id>
-		<value>Instrument</value>
+		<value>Offerynnau</value>
 	</string>
 	<string>
 		<id>689</id>
-		<value>Biografi</value>
+		<value>Hanes</value>
 	</string>
 	<string>
 		<id>690</id>
-		<value>Diskografi (skivor)</value>
+		<value>Disgyddiaeth (Albums)</value>
 	</string>
 	<string>
 		<id>691</id>
-		<value>Diskografi (samlingar, boxar)</value>
+		<value>Disgyddiaeth (casgliadau, ac ati)</value>
 	</string>
 	<string>
 		<id>700</id>
-		<value>Diskografi (EP, singlar)</value>
+		<value>Disgyddiaeth (eps, senglau)</value>
 	</string>
 	<string>
 		<id>701</id>
-		<value>Diskografi (bootlegs, videor, intervjuer)</value>
+		<value>Disgyddiaeth (bootlegs, fideos, cyfweliadau)</value>
 	</string>
 	<string>
 		<id>702</id>
-		<value>Ingen artist hittades!</value>
+		<value>Heb ganfod artist!</value>
 	</string>
 	<string>
 		<id>703</id>
-		<value>Inte ansluten till Internet!</value>
+		<value>Dim cyswllt â&apos;r Rhyngrwyd!</value>
 	</string>
 	<string>
 		<id>704</id>
-		<value>Tar emot feed</value>
+		<value>Estyn Llif</value>
 	</string>
 	<string>
 		<id>705</id>
-		<value>Hämtar RSS-feed för</value>
+		<value>Estyn Llif RSS am</value>
 	</string>
 	<string>
 		<id>706</id>
-		<value>Välj feed</value>
+		<value>Dewis Llif</value>
 	</string>
 	<string>
 		<id>707</id>
-		<value>TV på</value>
+		<value>Teledu Ymlaen</value>
 	</string>
 	<string>
 		<id>708</id>
-		<value>Timeshifting på</value>
+		<value>Newid Amser</value>
 	</string>
 	<string>
 		<id>709</id>
-		<value>Autouppdatering</value>
+		<value>Awto diweddaru</value>
 	</string>
 	<string>
 		<id>710</id>
-		<value>En ny version finns tillgänglig</value>
+		<value>Mae fersiwn newydd ar gael</value>
 	</string>
 	<string>
 		<id>711</id>
-		<value>Upgradera från v#old -&gt;v#new ?</value>
+		<value>Diweddaru o v#old -&amp;gt;v#new ?</value>
 	</string>
 	<string>
 		<id>712</id>
-		<value>Tillbaka</value>
+		<value>Nôl</value>
 	</string>
 	<string>
 		<id>713</id>
-		<value>Autostarta</value>
+		<value>Awtochwarae</value>
 	</string>
 	<string>
 		<id>714</id>
-		<value>DVD laddad. Spela upp?</value>
+		<value>Disg yn y dror, chwarae?</value>
 	</string>
 	<string>
 		<id>715</id>
-		<value>CD laddad. Spela upp?</value>
+		<value>CD yn y dror, chwarae?</value>
 	</string>
 	<string>
 		<id>716</id>
-		<value>Satellit</value>
+		<value>Lloeren</value>
 	</string>
 	<string>
 		<id>717</id>
-		<value>Väder</value>
+		<value>Tywydd</value>
 	</string>
 	<string>
 		<id>718</id>
-		<value>Rensa Topp 100</value>
+		<value>Clirio&apos;r 100 Uchaf</value>
 	</string>
 	<string>
 		<id>719</id>
-		<value>Är du säker på att du vill rensa Topp 100?</value>
+		<value>Ydych chi am ail osod y 100 Uchaf?</value>
 	</string>
 	<string>
 		<id>720</id>
-		<value>Program: Längd</value>
+		<value>Dangos: Hyd</value>
 	</string>
 	<string>
 		<id>721</id>
-		<value>Program: Antal ggr visad</value>
+		<value>Dangos: Chwaraewyd</value>
 	</string>
 	<string>
 		<id>722</id>
-		<value>Kan inte spela upp skivan</value>
+		<value>Methu chwarae Disg:</value>
 	</string>
 	<string>
 		<id>723</id>
-		<value>Satte du i en skiva?</value>
+		<value>Ydy&apos;r ddisg yn y dror?</value>
 	</string>
 	<string>
 		<id>724</id>
-		<value>Sök i TV-tablån</value>
+		<value>Chwilio&apos;r Amserlen Teledu</value>
 	</string>
 	<string>
 		<id>725</id>
-		<value>Genrer</value>
+		<value>Genres</value>
 	</string>
 	<string>
 		<id>726</id>
-		<value>Titel</value>
+		<value>Teitl</value>
 	</string>
 	<string>
 		<id>727</id>
-		<value>Live-TV som bakgrund</value>
+		<value>Teledu byw yn y cefndir</value>
 	</string>
 	<string>
 		<id>728</id>
-		<value>Kunde ej starta</value>
+		<value>Dim Video/Teledu&apos;n</value>
 	</string>
 	<string>
 		<id>729</id>
-		<value>Kolla att du använder VMR9 och att något spelas upp</value>
+		<value>Defnyddiwch VMR9 a bod rhywbeth yn chwarae</value>
 	</string>
 	<string>
 		<id>730</id>
-		<value>Denna inspelning pågår. Om du raderar den</value>
+		<value>Mae&apos;r trefniant yma&apos;n recordio. Os byddwch yn dileu&apos;r</value>
 	</string>
 	<string>
 		<id>731</id>
-		<value>så kommer den att avbrytas.</value>
+		<value>trefniant bydd y recordiad yn cael ei atal.</value>
 	</string>
 	<string>
 		<id>732</id>
-		<value>Är du säker?</value>
+		<value>Ydych chi&apos;n siðr?</value>
 	</string>
 	<string>
 		<id>733</id>
-		<value>Visa: Filmremsa</value>
+		<value>Gweld: Filmstrip</value>
 	</string>
 	<string>
 		<id>734</id>
-		<value>Bild:</value>
+		<value>Delwedd:</value>
 	</string>
 	<string>
 		<id>735</id>
-		<value>Rotera</value>
+		<value>Cylchdroi</value>
 	</string>
 	<string>
 		<id>736</id>
-		<value>Ingen TV-tablådata finns</value>
+		<value>Dim data Amserlen Teledu ar gael</value>
 	</string>
 	<string>
 		<id>737</id>
-		<value>Visa: Satellit</value>
+		<value>Gweld: Lloeren</value>
 	</string>
 	<string>
 		<id>738</id>
-		<value>Visa: Temperatur</value>
+		<value>Gweld: Tymheredd</value>
 	</string>
 	<string>
 		<id>739</id>
-		<value>Visa: UV Index</value>
+		<value>Gweld: Mynegai UV</value>
 	</string>
 	<string>
 		<id>740</id>
-		<value>Visa: Vindar</value>
+		<value>Gweld: Gwyntoed</value>
 	</string>
 	<string>
 		<id>741</id>
-		<value>Visa: Luftfuktighet</value>
+		<value>Gweld: Lleithder</value>
 	</string>
 	<string>
 		<id>742</id>
-		<value>Visa: Nederbörd</value>
+		<value>Gweld: Dyddodiad</value>
 	</string>
 	<string>
 		<id>743</id>
-		<value>4-dagarsprognos</value>
+		<value>Rhagolwg 4 Diwrnod</value>
 	</string>
 	<string>
 		<id>744</id>
-		<value>Soluppgång</value>
+		<value>Codiad Haul</value>
 	</string>
 	<string>
 		<id>745</id>
-		<value>Solnedgång</value>
+		<value>Machlud Haul</value>
 	</string>
 	<string>
 		<id>746</id>
-		<value>Hög</value>
+		<value>Uchel</value>
 	</string>
 	<string>
 		<id>747</id>
-		<value>Låg</value>
+		<value>Isel</value>
 	</string>
 	<string>
 		<id>748</id>
-		<value>Nederbörd</value>
+		<value>Ddyddodiad</value>
 	</string>
 	<string>
 		<id>750</id>
-		<value>Bilder</value>
+		<value>Delweddau</value>
 	</string>
 	<string>
 		<id>800</id>
-		<value>Startar med</value>
+		<value>Cychwyn gyda</value>
 	</string>
 	<string>
 		<id>801</id>
-		<value>Innehåller</value>
+		<value>Cynnwys</value>
 	</string>
 	<string>
 		<id>802</id>
-		<value>Slutar med</value>
+		<value>Gorffen gyda</value>
 	</string>
 	<string>
 		<id>803</id>
-		<value>År</value>
+		<value>Yn</value>
 	</string>
 	<string>
 		<id>804</id>
-		<value>Klar</value>
+		<value>Gorffen</value>
 	</string>
 	<string>
 		<id>805</id>
-		<value>Städa</value>
+		<value>Clir</value>
 	</string>
 	<string>
 		<id>806</id>
-		<value>Titel</value>
+		<value>Teitl</value>
 	</string>
 	<string>
 		<id>807</id>
-		<value>Göra</value>
+		<value>Cynnyrch</value>
 	</string>
 	<string>
 		<id>808</id>
-		<value>Ingredienser</value>
+		<value>Cynnwys</value>
 	</string>
 	<string>
 		<id>809</id>
-		<value>Sökvägar</value>
+		<value>Cyfarwyddiadau</value>
 	</string>
 	<string>
 		<id>810</id>
-		<value>Kort</value>
+		<value>Cerdyn</value>
 	</string>
 	<string>
 		<id>850</id>
-		<value>Mitt Alarm</value>
+		<value>Larwm</value>
 	</string>
 	<string>
 		<id>851</id>
-		<value>Spellista</value>
+		<value>Rhestr Chwarae</value>
 	</string>
 	<string>
 		<id>852</id>
-		<value>Alarm på</value>
+		<value>Larwm Ymlaen</value>
 	</string>
 	<string>
 		<id>853</id>
-		<value>Välj spellista</value>
+		<value>Enw</value>
 	</string>
 	<string>
 		<id>854</id>
-		<value>Gäller dessa dagar</value>
+		<value>Ar gyfer...</value>
 	</string>
 	<string>
 		<id>855</id>
-		<value>Alarmtid</value>
+		<value>Amser Larwm</value>
 	</string>
 	<string>
 		<id>856</id>
-		<value>Insomningstimer På</value>
+		<value>Cloc Cysgu Ymlaen</value>
 	</string>
 	<string>
 		<id>857</id>
-		<value>Snooze</value>
+		<value>Hepian</value>
 	</string>
 	<string>
 		<id>858</id>
-		<value>Snooze-tid</value>
+		<value>Amser Hepian</value>
 	</string>
 	<string>
 		<id>859</id>
-		<value>Sovtid</value>
+		<value>Cloc Cysgu</value>
 	</string>
 	<string>
 		<id>860</id>
-		<value>Volym tona in/ut</value>
+		<value>Cynyddu&apos;r sain</value>
 	</string>
 	<string>
 		<id>861</id>
-		<value>Alarmdetaljer</value>
+		<value>Manylion Larwm</value>
 	</string>
 	<string>
 		<id>862</id>
@@ -2447,143 +2447,143 @@
 	</string>
 	<string>
 		<id>863</id>
-		<value>Fil</value>
+		<value>Ffeil</value>
 	</string>
 	<string>
 		<id>864</id>
-		<value>Mediatyp</value>
+		<value>Math o Gyfrwng</value>
 	</string>
 	<string>
 		<id>865</id>
-		<value>Antal minuter till insomning:</value>
+		<value>Nifer o funudau cyn cysgu:</value>
 	</string>
 	<string>
 		<id>866</id>
-		<value>Sänk volymen under tiden</value>
+		<value>Lleihau&apos;r sain</value>
 	</string>
 	<string>
 		<id>867</id>
-		<value>Stäng av datorn</value>
+		<value>Cau&apos;r cyfrifiadur</value>
 	</string>
 	<string>
 		<id>868</id>
-		<value>Reset</value>
+		<value>Ailosod</value>
 	</string>
 	<string>
 		<id>869</id>
-		<value>Nytt alarm</value>
+		<value>Larwm Newydd</value>
 	</string>
 	<string>
 		<id>870</id>
-		<value>Återkommande</value>
+		<value>Ailadrodd</value>
 	</string>
 	<string>
 		<id>871</id>
-		<value>Starta PC</value>
+		<value>Deffro&apos;r cyfrifiadur ar gyfer y larwm</value>
 	</string>
 	<string>
 		<id>872</id>
-		<value>Starta med</value>
+		<value>Cychwyn gyda</value>
 	</string>
 	<string>
 		<id>873</id>
-		<value>TV-program</value>
+		<value>Sioe Deledu</value>
 	</string>
 	<string>
 		<id>874</id>
-		<value>Avsnitt</value>
+		<value>Rhifyn</value>
 	</string>
 	<string>
 		<id>875</id>
-		<value>Aktuellt program</value>
+		<value>Rhaglen bresennol</value>
 	</string>
 	<string>
 		<id>876</id>
-		<value>Till manuellt stopp</value>
+		<value>Tan atal â llaw</value>
 	</string>
 	<string>
 		<id>877</id>
-		<value>Prioriteringar</value>
+		<value>Blaenoroaethau</value>
 	</string>
 	<string>
 		<id>878</id>
-		<value>Lagring</value>
+		<value>Storfa</value>
 	</string>
 	<string>
 		<id>879</id>
-		<value>Inspelningskonflikt</value>
+		<value>Gwrthdaro rhaglenni</value>
 	</string>
 	<string>
 		<id>880</id>
-		<value>Inspelningstid:</value>
+		<value>Amser i&apos;w recordio</value>
 	</string>
 	<string>
 		<id>881</id>
-		<value>Välj inspelning att avsluta:</value>
+		<value>Dewis pa recordiad i&apos;w atal:</value>
 	</string>
 	<string>
 		<id>882</id>
-		<value>Kvalitetsinställning</value>
+		<value>Gosodiad ansawdd</value>
 	</string>
 	<string>
 		<id>883</id>
-		<value>Låg</value>
+		<value>Isel</value>
 	</string>
 	<string>
 		<id>884</id>
-		<value>Medium</value>
+		<value>Canolig</value>
 	</string>
 	<string>
 		<id>885</id>
-		<value>Hög</value>
+		<value>Uchel</value>
 	</string>
 	<string>
 		<id>886</id>
-		<value>Standard</value>
+		<value>Rhagosodedig</value>
 	</string>
 	<string>
 		<id>887</id>
-		<value>Ange antal avsnitt som ska sparas</value>
+		<value>Pennu&apos;r nifer o rifynnau i&apos;w cadw</value>
 	</string>
 	<string>
 		<id>888</id>
-		<value>Avsnittshantering</value>
+		<value>Rheoli Rhifynnau</value>
 	</string>
 	<string>
 		<id>889</id>
-		<value>Alla avsnitt</value>
+		<value>Pob rhifyn</value>
 	</string>
 	<string>
 		<id>890</id>
-		<value>Spela CD</value>
+		<value>Chwarae CD</value>
 	</string>
 	<string>
 		<id>891</id>
-		<value>Välj TV-kanal</value>
+		<value>Dewis Sianel Deledu</value>
 	</string>
 	<string>
 		<id>892</id>
-		<value>Konflikter</value>
+		<value>Gwrthdaro</value>
 	</string>
 	<string>
 		<id>893</id>
-		<value>Portabel</value>
+		<value>Cludadwy</value>
 	</string>
 	<string>
 		<id>894</id>
-		<value>Komprimera TV-inspelningar</value>
+		<value>Cywasgu Recordiadau&apos;r Teledu</value>
 	</string>
 	<string>
 		<id>895</id>
-		<value>Autokomprimera</value>
+		<value>Awtogywasgu</value>
 	</string>
 	<string>
 		<id>896</id>
-		<value>Komprimera</value>
+		<value>Cywasgu</value>
 	</string>
 	<string>
 		<id>897</id>
-		<value>Inställningar</value>
+		<value>Gosodiadau</value>
 	</string>
 	<string>
 		<id>898</id>
@@ -2595,7 +2595,7 @@
 	</string>
 	<string>
 		<id>900</id>
-		<value>Fortsätta filmen där den stannade senast?</value>
+		<value>Ailgychwyn y ffilm ers tro diwethaf</value>
 	</string>
 	<string>
 		<id>901</id>
@@ -2603,167 +2603,167 @@
 	</string>
 	<string>
 		<id>902</id>
-		<value>Online kontakter</value>
+		<value>Cysylltiadau ar-lein</value>
 	</string>
 	<string>
 		<id>903</id>
-		<value>Logga in</value>
+		<value>Mewngofnodi</value>
 	</string>
 	<string>
 		<id>904</id>
-		<value>Logga ut</value>
+		<value>Allgofnodi</value>
 	</string>
 	<string>
 		<id>905</id>
-		<value>Du måste konfigurera denna plugin först</value>
+		<value>Rhaid ffurfweddu&apos;r ategyn yn gyntaf</value>
 	</string>
 	<string>
 		<id>906</id>
-		<value>Fyll i din e-post adress i setupen</value>
+		<value>Rhowch eich cyfeiriad e-bost er mwyn gosod</value>
 	</string>
 	<string>
 		<id>907</id>
-		<value>Kunde inte ansluta till MSN</value>
+		<value>Methu cysylltu ag MSN</value>
 	</string>
 	<string>
 		<id>908</id>
-		<value>skriver ett meddelande...</value>
+		<value>yn teipio neges...</value>
 	</string>
 	<string>
 		<id>909</id>
-		<value>Ansluter...</value>
+		<value>Cysylltu...</value>
 	</string>
 	<string>
 		<id>910</id>
-		<value>Loggar in...</value>
+		<value>Mewngofnodi...</value>
 	</string>
 	<string>
 		<id>911</id>
-		<value>Inga kanaler</value>
+		<value>Dim sianel</value>
 	</string>
 	<string>
 		<id>912</id>
-		<value>Kunde inte ladda ner senaste nyheterna</value>
+		<value>Methu estyn y newyddion diweddaraf</value>
 	</string>
 	<string>
 		<id>913</id>
-		<value>Mina Plugins</value>
+		<value>Ategynnau</value>
 	</string>
 	<string>
 		<id>914</id>
-		<value>Inspelad TV</value>
+		<value>Recordiadau</value>
 	</string>
 	<string>
 		<id>915</id>
-		<value>TV-kanaler</value>
+		<value>Sianeli Teledu</value>
 	</string>
 	<string>
 		<id>916</id>
-		<value>Fjärrfil</value>
+		<value>Ffeil bell</value>
 	</string>
 	<string>
 		<id>917</id>
-		<value>Denna fil finns i en fjärrmapp</value>
+		<value>Mae&apos;r ffeil wedi ei lleoli ar rannu pell</value>
 	</string>
 	<string>
 		<id>918</id>
-		<value>Vill du ladda ner det till din vanliga</value>
+		<value>A ddylwn ei lwytho i lawr i&apos;ch rhagosodedig?</value>
 	</string>
 	<string>
 		<id>919</id>
-		<value>lokala share?</value>
+		<value>rhannu lleol?</value>
 	</string>
 	<string>
 		<id>920</id>
-		<value>Kunde inte ladda ner fjärrfil</value>
+		<value>Methu llwytho ffeiliau pell i lawr</value>
 	</string>
 	<string>
 		<id>921</id>
-		<value>Filen laddas ner</value>
+		<value>Mae&apos;r ffeil yn cael ei lwytho i fyny</value>
 	</string>
 	<string>
 		<id>922</id>
-		<value>Beskrivning</value>
+		<value>Disgrifiad</value>
 	</string>
 	<string>
 		<id>923</id>
-		<value>Visa</value>
+		<value>Dangos</value>
 	</string>
 	<string>
 		<id>924</id>
-		<value>Meny</value>
+		<value>Dewislen</value>
 	</string>
 	<string>
 		<id>925</id>
-		<value>Ta bort denna film</value>
+		<value>Dileu&apos;r ffilm</value>
 	</string>
 	<string>
 		<id>926</id>
-		<value>Lägg till i spellistan</value>
+		<value>Ychwanegu at y rhestr chwarae</value>
 	</string>
 	<string>
 		<id>927</id>
-		<value>Varning!</value>
+		<value>Rhybudd</value>
 	</string>
 	<string>
 		<id>928</id>
-		<value>Hitta omslag</value>
+		<value>Canfod celf y clawr</value>
 	</string>
 	<string>
 		<id>929</id>
-		<value>Stäng menyn</value>
+		<value>Cau&apos;r ddewislen</value>
 	</string>
 	<string>
 		<id>930</id>
-		<value>Lägg till favoriter</value>
+		<value>Ychwanegu at ffefrynnau</value>
 	</string>
 	<string>
 		<id>931</id>
-		<value>Betyg</value>
+		<value>Cyfraddiad</value>
 	</string>
 	<string>
 		<id>932</id>
-		<value>Favoriter</value>
+		<value>Ffefrynnau</value>
 	</string>
 	<string>
 		<id>933</id>
-		<value>Ta bort från favoriter</value>
+		<value>Tynnu o ffefrynnau</value>
 	</string>
 	<string>
 		<id>934</id>
-		<value>Sätt betyg</value>
+		<value>Gosod cyfraddiad</value>
 	</string>
 	<string>
 		<id>935</id>
-		<value>Visa: Betyg</value>
+		<value>Dangos: Cyfraddiad</value>
 	</string>
 	<string>
 		<id>936</id>
-		<value>Fortsätt från:</value>
+		<value>Ailgychwyn o:</value>
 	</string>
 	<string>
 		<id>937</id>
-		<value>Importera TV-tablå</value>
+		<value>Mewnforio Amserlen Teledu</value>
 	</string>
 	<string>
 		<id>938</id>
-		<value>Titta på denna kanal</value>
+		<value>Gwylio&apos;r sianel hon</value>
 	</string>
 	<string>
 		<id>939</id>
-		<value>Byt tablåvy</value>
+		<value>Newid modd</value>
 	</string>
 	<string>
 		<id>940</id>
-		<value>Egenskaper</value>
+		<value>Priodweddau</value>
 	</string>
 	<string>
 		<id>941</id>
-		<value>Ändra bildproportioner</value>
+		<value>Newid cyfradd agwedd</value>
 	</string>
 	<string>
 		<id>942</id>
-		<value>Utsträckt</value>
+		<value>Ymestyn</value>
 	</string>
 	<string>
 		<id>943</id>
@@ -2771,55 +2771,55 @@
 	</string>
 	<string>
 		<id>944</id>
-		<value>1:1</value>
+		<value>Gwreiddiol</value>
 	</string>
 	<string>
 		<id>945</id>
-		<value>Brevlådeformat</value>
+		<value>Blwch Llythyr</value>
 	</string>
 	<string>
 		<id>946</id>
-		<value>Pan and Scan</value>
+		<value>Pan a Sgan</value>
 	</string>
 	<string>
 		<id>947</id>
-		<value>Zoomad</value>
+		<value>Chwyddo</value>
 	</string>
 	<string>
 		<id>948</id>
-		<value>Online</value>
+		<value>Ar-lein</value>
 	</string>
 	<string>
 		<id>949</id>
-		<value>Upptagen</value>
+		<value>Prysur</value>
 	</string>
 	<string>
 		<id>950</id>
-		<value>Snart tillbaka</value>
+		<value>Nôl Mewn Munud</value>
 	</string>
 	<string>
 		<id>951</id>
-		<value>Inte vid datorn</value>
+		<value>Allan</value>
 	</string>
 	<string>
 		<id>952</id>
-		<value>Telefon</value>
+		<value>Ffôn</value>
 	</string>
 	<string>
 		<id>953</id>
-		<value>Lunch</value>
+		<value>Cinio</value>
 	</string>
 	<string>
 		<id>954</id>
-		<value>Osynlig</value>
+		<value>Cudd</value>
 	</string>
 	<string>
 		<id>955</id>
-		<value>Upptagen</value>
+		<value>Segur</value>
 	</string>
 	<string>
 		<id>956</id>
-		<value>Online</value>
+		<value>Ar-lein</value>
 	</string>
 	<string>
 		<id>957</id>
@@ -2827,95 +2827,91 @@
 	</string>
 	<string>
 		<id>958</id>
-		<value>Pratar med</value>
+		<value>Siarad gyda</value>
 	</string>
 	<string>
 		<id>959</id>
-		<value>har anslutit till konversationen</value>
+		<value>wedi ymuno a&apos;r sgwrs</value>
 	</string>
 	<string>
 		<id>960</id>
-		<value>har lämnat konversationen</value>
+		<value>wedi gadael y sgwrs</value>
 	</string>
 	<string>
 		<id>961</id>
-		<value>MSN Status</value>
+		<value>Statws MSN</value>
 	</string>
 	<string>
 		<id>970</id>
-		<value>Föregående fönster</value>
+		<value>Ffenestr flaenorol</value>
 	</string>
 	<string>
 		<id>971</id>
-		<value>Välj kanalgrupp</value>
+		<value>Grðp</value>
 	</string>
 	<string>
 		<id>972</id>
-		<value>Alla Kanaler</value>
-	</string>
-	<string>
-		<id>973</id>
-		<value>Maximal FPS</value>
+		<value>Pob Sianel</value>
 	</string>
 	<string>
 		<id>974</id>
-		<value>Rotmeny</value>
+		<value>Dewislen Gwraidd</value>
 	</string>
 	<string>
 		<id>975</id>
-		<value>Föregående kapitel</value>
+		<value>Pennod flaenorol</value>
 	</string>
 	<string>
 		<id>976</id>
-		<value>Nästa kapitel</value>
+		<value>Pennod nesaf</value>
 	</string>
 	<string>
 		<id>977</id>
-		<value>Det finns inget ledigt kort tillgänligt</value>
+		<value>Nid oes cerdyn rhydd ar gael</value>
 	</string>
 	<string>
 		<id>978</id>
-		<value>som kan visa denna kanalen</value>
+		<value>sy&apos;n gallu gwylio&apos;r sianel yma</value>
 	</string>
 	<string>
 		<id>979</id>
-		<value>Spela upp inspelningen från början</value>
+		<value>Chwarae&apos;r recordiad o&apos;r cychwyn</value>
 	</string>
 	<string>
 		<id>980</id>
-		<value>Spela upp inspelningen från "nutid"</value>
+		<value>Chwarae&apos;r recordiad o&apos;r pwynt byw</value>
 	</string>
 	<string>
 		<id>981</id>
-		<value>Avbryt detta program</value>
+		<value>Diddymu&apos;r sioe</value>
 	</string>
 	<string>
 		<id>982</id>
-		<value>Radera denna inspelning</value>
+		<value>Dileu&apos;r recordiad cyfan</value>
 	</string>
 	<string>
 		<id>983</id>
-		<value>Mina spellistor</value>
+		<value>Rhestrau Chwarae</value>
 	</string>
 	<string>
 		<id>984</id>
-		<value>Tar emot filmer</value>
+		<value>Estyn rhestr ffilmiau</value>
 	</string>
 	<string>
 		<id>985</id>
-		<value>Tar emot filminfo</value>
+		<value>Estyn manylion ffilmiau</value>
 	</string>
 	<string>
 		<id>986</id>
-		<value>Tar emot skådespelare</value>
+		<value>Estyn manylion actor</value>
 	</string>
 	<string>
 		<id>987</id>
-		<value>År</value>
+		<value>Blynyddoedd</value>
 	</string>
 	<string>
 		<id>988</id>
-		<value>Kvalitet</value>
+		<value>Ansawdd</value>
 	</string>
 	<string>
 		<id>989</id>
@@ -2923,35 +2919,35 @@
 	</string>
 	<string>
 		<id>990</id>
-		<value>Bitrate</value>
+		<value>Didradd</value>
 	</string>
 	<string>
 		<id>991</id>
-		<value>Prioritet</value>
+		<value>Blaenoriaeth</value>
 	</string>
 	<string>
 		<id>992</id>
-		<value>Ta bort orginalfilen</value>
+		<value>Dileu&apos;r ffeil wreiddiol</value>
 	</string>
 	<string>
 		<id>993</id>
-		<value>Egen inställning</value>
+		<value>Addasu</value>
 	</string>
 	<string>
 		<id>994</id>
-		<value>Aktivera autokomprimering</value>
+		<value>Galluogi Awtogywasgu</value>
 	</string>
 	<string>
 		<id>995</id>
-		<value>Är det säkert att du vill komprimera?</value>
+		<value>Ydych chi wir am gywasgu&apos;r</value>
 	</string>
 	<string>
 		<id>996</id>
-		<value>de valda inspelningarna?</value>
+		<value>recordiadau hyn?</value>
 	</string>
 	<string>
 		<id>997</id>
-		<value>Klart!</value>
+		<value>Cwblhawyd</value>
 	</string>
 	<string>
 		<id>998</id>
@@ -2959,495 +2955,499 @@
 	</string>
 	<string>
 		<id>999</id>
-		<value>Denna plugin låter dig omvandla dina</value>
+		<value>Mae&apos;r ategyn yn caniatáu i chi drawsgodio eich</value>
 	</string>
 	<string>
 		<id>1000</id>
-		<value>TV-inspelningar från dvr-ms till mpg, xvid eller wmv.</value>
+		<value>Recordiadau Teledu o vr-ms i mpg, xvid neu wmv</value>
 	</string>
 	<string>
 		<id>1001</id>
-		<value>Observera att du måste ha</value>
+		<value>Sylwch. Rhaid fod cerdyn dadcodio</value>
 	</string>
 	<string>
 		<id>1002</id>
-		<value>Elecard MPEG2-video decoder installerad</value>
+		<value>MPEG2 Elecard wedi ei osod</value>
 	</string>
 	<string>
 		<id>1003</id>
-		<value>för att kunna koda om till xvid.</value>
+		<value>ar gyfer trawsgodio i xvid</value>
 	</string>
 	<string>
 		<id>1004</id>
-		<value>Inspelning ska påbörjas</value>
+		<value>Ar fin cychwyn redordio</value>
 	</string>
 	<string>
 		<id>1005</id>
-		<value>av kanal</value>
+		<value>ar sianel</value>
 	</string>
 	<string>
 		<id>1006</id>
-		<value>Tillåt start av inspelning</value>
+		<value>Caniatáu i recordio gychwyn</value>
 	</string>
 	<string>
 		<id>1007</id>
-		<value>Avbryt inspelning och fortsätt titta på TV</value>
+		<value>Diddymu recordio a pharhau i wylio&apos;r teledu</value>
 	</string>
 	<string>
 		<id>1008</id>
-		<value>Köa</value>
+		<value>Ciw</value>
 	</string>
 	<string>
 		<id>1009</id>
-		<value>Ladda ner omslag</value>
+		<value>Estyn celf clawr</value>
 	</string>
 	<string>
 		<id>1010</id>
-		<value>Sedd</value>
+		<value>Gwyliwyd</value>
 	</string>
 	<string>
 		<id>1011</id>
-		<value>Biografi</value>
+		<value>Hanes bywyd</value>
 	</string>
 	<string>
 		<id>1012</id>
-		<value>Detta program kommer att avbrytas av</value>
+		<value>Byd y rhaglen yn cael ei atal gan</value>
 	</string>
 	<string>
 		<id>1013</id>
-		<value>Vill du spela in den andra delen också?</value>
+		<value>Hoffech chi recordio&apos;r ail ran hefyd?</value>
 	</string>
 	<string>
 		<id>1014</id>
-		<value>Påminn om programstart</value>
+		<value>Dweud wrthyf pan fydd y rhaglen yn cychwyn</value>
 	</string>
 	<string>
 		<id>1015</id>
-		<value>Påminn INTE om programstart</value>
+		<value>Peidio dweud wrthyf pan fydd y rhaglen yn cychwyn</value>
 	</string>
 	<string>
 		<id>1016</id>
-		<value>Program börjar om fem minuter</value>
+		<value>Rhaglen yn cychwyn mewn 5 munud</value>
 	</string>
 	<string>
 		<id>1017</id>
-		<value>Sortera efter: Längd</value>
+		<value>Trefnu: Hyd</value>
 	</string>
 	<string>
 		<id>1020</id>
-		<value>Information</value>
+		<value>Gwybodaeth</value>
 	</string>
 	<string>
 		<id>1021</id>
-		<value>Tryck på Alt+Enter för att</value>
+		<value>Pwyswch Alt+Enter i</value>
 	</string>
 	<string>
 		<id>1022</id>
-		<value>återvända till fönsterläge</value>
+		<value>ddychwelyd i&apos;r modd ffenestr</value>
 	</string>
 	<string>
 		<id>1023</id>
-		<value>Det ringer</value>
+		<value>Galwad</value>
 	</string>
 	<string>
 		<id>1024</id>
-		<value>från</value>
+		<value>gan</value>
 	</string>
 	<string>
 		<id>1025</id>
-		<value>Ett fel uppstod</value>
+		<value>Digwyddodd gwall</value>
 	</string>
 	<string>
 		<id>1026</id>
-		<value>Detaljer finns i logfilen</value>
+		<value>Gweler y ffeiliau cofnod am fanylion</value>
 	</string>
 	<string>
 		<id>1027</id>
-		<value>Mina DVD-filmer</value>
+		<value>DVD</value>
 	</string>
 	<string>
 		<id>1028</id>
-		<value>Stad</value>
+		<value>Dinas</value>
 	</string>
 	<string>
 		<id>1029</id>
-		<value>Textningsspråk</value>
+		<value>Iaith Is-deitlau</value>
 	</string>
 	<string>
 		<id>1030</id>
-		<value>Stäng av</value>
+		<value>Cau</value>
 	</string>
 	<string>
 		<id>1031</id>
-		<value>Omstart</value>
+		<value>Ailgychwyn</value>
 	</string>
 	<string>
 		<id>1032</id>
-		<value>Viloläge</value>
+		<value>Cysgu</value>
 	</string>
 	<string>
 		<id>1033</id>
-		<value>Program spelas in just nu</value>
+		<value>Mae rhaglenni&apos;n cael eu recordio</value>
 	</string>
 	<string>
 		<id>1034</id>
-		<value>Ingen signal!</value>
+		<value>Heb ganfod signal</value>
 	</string>
 	<string>
 		<id>1035</id>
-		<value>TV-kanalen är krypterad!</value>
+		<value>Mae&apos;r sianel teledu&apos;n chwil!</value>
 	</string>
 	<string>
 		<id>1036</id>
-		<value>Ingen videosignal</value>
+		<value>Heb ganfod fideo</value>
 	</string>
 	<string>
 		<id>1037</id>
-		<value>Min TV - Programinformation</value>
+		<value>Teledu - Gwybodaeth am raglenni</value>
 	</string>
 	<string>
 		<id>1038</id>
-		<value>Avancerad inspelning</value>
+		<value>Recordio uwch</value>
 	</string>
 	<string>
 		<id>1039</id>
-		<value>Spela inte in</value>
+		<value>Peidio recordio</value>
 	</string>
 	<string>
 		<id>1040</id>
-		<value>Påminn mig</value>
+		<value>Rhybuddio fi</value>
 	</string>
 	<string>
 		<id>1041</id>
-		<value>Kommande avsnitt</value>
+		<value>Rhifynnau i ddod</value>
 	</string>
 	<string>
 		<id>1042</id>
-		<value>Spara tills</value>
+		<value>Cadw tan</value>
 	</string>
 	<string>
 		<id>1043</id>
-		<value>tills sedd</value>
+		<value>Tan ei wylio</value>
 	</string>
 	<string>
 		<id>1044</id>
-		<value>tills utrymme behövs</value>
+		<value>Tan bod angen y lle</value>
 	</string>
 	<string>
 		<id>1045</id>
-		<value>till datum</value>
+		<value>Tan ddyddiad</value>
 	</string>
 	<string>
 		<id>1046</id>
-		<value>alltid</value>
+		<value>Bob tro</value>
 	</string>
 	<string>
 		<id>1047</id>
-		<value>Starta i fullskärmsläge</value>
+		<value>Cychwyn ym modd sgrin llawn</value>
+	</string>
+	<string>
+		<id>1048</id>
+		<value>Gosodiadau</value>
 	</string>
 	<string>
 		<id>1440</id>
-		<value>Min text-TV</value>
+		<value>TeleTestun</value>
 	</string>
 	<string>
 		<id>1441</id>
-		<value>Text-TV</value>
+		<value>TeleTestun</value>
 	</string>
 	<string>
 		<id>1442</id>
-		<value>Scroll-hastighet</value>
+		<value>Cyflymder sgrolio (llorweddol)</value>
 	</string>
 	<string>
 		<id>1443</id>
-		<value>Scroll-hastighet (Vertikal)</value>
+		<value>Cyflymder sgrolio (fertigol)</value>
 	</string>
 	<string>
 		<id>1444</id>
-		<value>Spela in före</value>
+		<value>Cyn-recordio</value>
 	</string>
 	<string>
 		<id>1445</id>
-		<value>Spela in efter</value>
+		<value>Ôl-recordio</value>
 	</string>
 	<string>
 		<id>1446</id>
-		<value>Inspelning startad:</value>
+		<value>Cychwyn recordio:</value>
 	</string>
 	<string>
 		<id>1447</id>
-		<value>Inspelning stoppad:</value>
+		<value>Atal recordio:</value>
 	</string>
 	<string>
 		<id>1950</id>
-		<value>Min status</value>
+		<value>Statws</value>
 	</string>
 	<string>
 		<id>1951</id>
-		<value>Hårddisk</value>
+		<value>Disg Caled</value>
 	</string>
 	<string>
 		<id>1952</id>
-		<value>Fläkt</value>
+		<value>Ffan</value>
 	</string>
 	<string>
 		<id>1953</id>
-		<value>Ledigt</value>
+		<value>Rhydd</value>
 	</string>
 	<string>
 		<id>1954</id>
-		<value>Temperatur</value>
+		<value>Tymheredd</value>
 	</string>
 	<string>
 		<id>1955</id>
-		<value>C</value>
+		<value>c</value>
 	</string>
 	<string>
 		<id>1956</id>
-		<value>Välj alarmsignal</value>
+		<value>Dewis sain y larwm</value>
 	</string>
 	<string>
 		<id>1957</id>
-		<value>Egenskaper</value>
+		<value>Dewisiadau</value>
 	</string>
 	<string>
 		<id>1958</id>
-		<value>CPU-användning</value>
+		<value>Defnydd</value>
 	</string>
 	<string>
 		<id>1959</id>
-		<value>Spänning</value>
+		<value>Foltedd</value>
 	</string>
 	<string>
 		<id>1960</id>
-		<value>Volt</value>
+		<value>Folt</value>
 	</string>
 	<string>
 		<id>1961</id>
-		<value>Klockfrekvens</value>
+		<value>Amledd y Cloc</value>
 	</string>
 	<string>
 		<id>1962</id>
-		<value>Egenskaper</value>
+		<value>Dewisiadau</value>
 	</string>
 	<string>
 		<id>1963</id>
-		<value>Sensorfinesser</value>
+		<value>Manylion y synhwyrydd</value>
 	</string>
 	<string>
 		<id>1964</id>
-		<value>Sensor alarm</value>
+		<value>Larwm y synhwyrydd</value>
 	</string>
 	<string>
 		<id>1965</id>
-		<value>Högsta Värde</value>
+		<value>Gwerth Uchaf</value>
 	</string>
 	<string>
 		<id>1966</id>
-		<value>Lägsta Värde</value>
+		<value>Gwerth Isa</value>
 	</string>
 	<string>
 		<id>1967</id>
-		<value>Övre alarmgräns</value>
+		<value>trothwy uchaf y larwm</value>
 	</string>
 	<string>
 		<id>1968</id>
-		<value>Nedre alarmgräns</value>
+		<value>trothwy isaf y larwm</value>
 	</string>
 	<string>
 		<id>1969</id>
-		<value>Testa ljudet</value>
+		<value>Sain prawf</value>
 	</string>
 	<string>
 		<id>1970</id>
-		<value>Alarmintervall (i sekunder)</value>
+		<value>Cyfnod larwm (eil.)</value>
 	</string>
 	<string>
 		<id>1971</id>
-		<value>Stäng ner vid larm</value>
+		<value>Cau yn sgil rhybudd</value>
 	</string>
 	<string>
 		<id>1972</id>
-		<value>Status detaljer</value>
+		<value>Manylion statws</value>
 	</string>
 	<string>
 		<id>1973</id>
-		<value>av</value>
+		<value>o&apos;r</value>
 	</string>
 	<string>
 		<id>1974</id>
-		<value>Minne</value>
+		<value>Cof</value>
 	</string>
 	<string>
 		<id>1975</id>
-		<value>Nästa Sida</value>
+		<value>Tudalen nesaf</value>
 	</string>
 	<string>
 		<id>1976</id>
-		<value>rpm</value>
+		<value>cylch y funud</value>
 	</string>
 	<string>
 		<id>1977</id>
-		<value>Filsystem</value>
+		<value>System ffei</value>
 	</string>
 	<string>
 		<id>1978</id>
-		<value>Virtuellt minne</value>
+		<value>VirtualMem</value>
 	</string>
 	<string>
 		<id>2005</id>
-		<value>Ta bort</value>
+		<value>Dileu</value>
 	</string>
 	<string>
 		<id>2006</id>
-		<value>Titel</value>
+		<value>Teitl</value>
 	</string>
 	<string>
 		<id>2007</id>
-		<value>Yield</value>
+		<value>Cynnyrc</value>
 	</string>
 	<string>
 		<id>2008</id>
-		<value>Ingredienser</value>
+		<value>Cynhwysion</value>
 	</string>
 	<string>
 		<id>2009</id>
-		<value>Riktningar</value>
+		<value>Cyfarwyddiadau</value>
 	</string>
 	<string>
 		<id>2010</id>
-		<value>Kort</value>
+		<value>Cerdyn</value>
 	</string>
 	<string>
 		<id>2011</id>
-		<value>Skriv Ut</value>
+		<value>Argraffu</value>
 	</string>
 	<string>
 		<id>2012</id>
-		<value>Ta bort</value>
+		<value>Dileu</value>
 	</string>
 	<string>
 		<id>2013</id>
-		<value>Favoriter</value>
+		<value>Ffefrynnau</value>
 	</string>
 	<string>
 		<id>2014</id>
-		<value>Okänd</value>
+		<value>Anhysbys</value>
 	</string>
 	<string>
 		<id>2015</id>
-		<value>per portion</value>
+		<value>y pryd</value>
 	</string>
 	<string>
 		<id>2016</id>
-		<value>liten</value>
+		<value>bach</value>
 	</string>
 	<string>
 		<id>2017</id>
-		<value>flytande ounce</value>
+		<value>owns hylifol</value>
 	</string>
 	<string>
 		<id>2018</id>
-		<value>kopp</value>
+		<value>cwpan</value>
 	</string>
 	<string>
 		<id>2019</id>
-		<value>pint</value>
+		<value>peint</value>
 	</string>
 	<string>
 		<id>2020</id>
-		<value>medium</value>
+		<value>canolig</value>
 	</string>
 	<string>
 		<id>2021</id>
-		<value>stor</value>
+		<value>mawr</value>
 	</string>
 	<string>
 		<id>2022</id>
-		<value>burk</value>
+		<value>can</value>
 	</string>
 	<string>
 		<id>2023</id>
-		<value>paket</value>
+		<value>pecyn</value>
 	</string>
 	<string>
 		<id>2024</id>
-		<value>nypa</value>
+		<value>pinsiad</value>
 	</string>
 	<string>
 		<id>2025</id>
-		<value>droppe</value>
+		<value>dropyn</value>
 	</string>
 	<string>
 		<id>2026</id>
-		<value>skvätt</value>
+		<value>dash?</value>
 	</string>
 	<string>
 		<id>2027</id>
-		<value>låda</value>
+		<value>carton</value>
 	</string>
 	<string>
 		<id>2028</id>
-		<value>knippe</value>
+		<value>bwnsh</value>
 	</string>
 	<string>
 		<id>2029</id>
-		<value>skiva</value>
+		<value>sleisen</value>
 	</string>
 	<string>
 		<id>2030</id>
-		<value>varje</value>
+		<value>yr un</value>
 	</string>
 	<string>
 		<id>2031</id>
-		<value>tesked</value>
+		<value>llwy de</value>
 	</string>
 	<string>
 		<id>2032</id>
-		<value>tesked</value>
+		<value>llwy de</value>
 	</string>
 	<string>
 		<id>2033</id>
-		<value>matsked</value>
+		<value>llwy fwrdd</value>
 	</string>
 	<string>
 		<id>2034</id>
-		<value>matsked</value>
+		<value>llwy fwrdd</value>
 	</string>
 	<string>
 		<id>2035</id>
-		<value>quart</value>
+		<value>cwart</value>
 	</string>
 	<string>
 		<id>2036</id>
-		<value>gallon</value>
+		<value>galwyn</value>
 	</string>
 	<string>
 		<id>2037</id>
-		<value>ounce</value>
+		<value>owns</value>
 	</string>
 	<string>
 		<id>2038</id>
-		<value>pound</value>
+		<value>pwys</value>
 	</string>
 	<string>
 		<id>2039</id>
-		<value>milliliter</value>
+		<value>mililitr</value>
 	</string>
 	<string>
 		<id>2040</id>
-		<value>milliliter</value>
+		<value>mililitr</value>
 	</string>
 	<string>
 		<id>2041</id>
-		<value>centiliter</value>
+		<value>centilitr</value>
 	</string>
 	<string>
 		<id>2042</id>
-		<value>deciliter</value>
+		<value>decilitr</value>
 	</string>
 	<string>
 		<id>2043</id>
-		<value>liter</value>
+		<value>litr</value>
 	</string>
 	<string>
 		<id>2044</id>
@@ -3455,7 +3455,7 @@
 	</string>
 	<string>
 		<id>2045</id>
-		<value>centigram</value>
+		<value>milligram</value>
 	</string>
 	<string>
 		<id>2046</id>
@@ -3471,171 +3471,171 @@
 	</string>
 	<string>
 		<id>2049</id>
-		<value>Ta bort detta recept?</value>
+		<value>Dileu&apos;r Rysait?</value>
 	</string>
 	<string>
 		<id>2050</id>
-		<value>Ta bort denna kategori?</value>
+		<value>Dileu&apos;r Categori?</value>
 	</string>
 	<string>
 		<id>2051</id>
-		<value>Sök på titeln</value>
+		<value>Chwilio yn y Teitl</value>
 	</string>
 	<string>
 		<id>2052</id>
-		<value>Sök i recept</value>
+		<value>Chwilio yn y Rysait</value>
 	</string>
 	<string>
 		<id>2053</id>
-		<value>Kategori</value>
+		<value>Categori</value>
 	</string>
 	<string>
 		<id>2054</id>
-		<value>Ingen träff!</value>
+		<value>Dim Mynediad!</value>
 	</string>
 	<string>
 		<id>2100</id>
-		<value>Min brännare</value>
+		<value>Llosgi</value>
 	</string>
 	<string>
 		<id>2101</id>
-		<value>Kopiera CD/DVD</value>
+		<value>Copïo&apos;r CD/DVD</value>
 	</string>
 	<string>
 		<id>2102</id>
-		<value>Skapa ljud-CD</value>
+		<value>Creu CD Sain</value>
 	</string>
 	<string>
 		<id>2103</id>
-		<value>Skapa video-CD</value>
+		<value>Creu CD Fideo</value>
 	</string>
 	<string>
 		<id>2104</id>
-		<value>Skapa video-DVD</value>
+		<value>Creu DVD Fideo</value>
 	</string>
 	<string>
 		<id>2105</id>
-		<value>Skapa data-CD</value>
+		<value>Creu CD Data</value>
 	</string>
 	<string>
 		<id>2106</id>
-		<value>Skapa data-DVD</value>
+		<value>Creu DVD Data</value>
 	</string>
 	<string>
 		<id>2107</id>
-		<value>Starta kopiering</value>
+		<value>Cychwyn copïo</value>
 	</string>
 	<string>
 		<id>2108</id>
-		<value>Sätt i en tom CD/DVD</value>
+		<value>Mewnosod CD/DVD gwag</value>
 	</string>
 	<string>
 		<id>2109</id>
-		<value>tryck sen på OK</value>
+		<value>yna clicio Iawn</value>
 	</string>
 	<string>
 		<id>2110</id>
-		<value>Sätt i original-CD/DVD</value>
+		<value>Mewnosod y CD/DVD wreiddiol</value>
 	</string>
 	<string>
 		<id>2111</id>
-		<value>Klar!</value>
+		<value>Gorffen !</value>
 	</string>
 	<string>
 		<id>2112</id>
-		<value>Väntar på CD/DVD</value>
+		<value>Aros am CD/DVD</value>
 	</string>
 	<string>
 		<id>2113</id>
-		<value>Kopiera allt</value>
+		<value>Copio&apos;r cyfan</value>
 	</string>
 	<string>
 		<id>2114</id>
-		<value>Radera skiva</value>
+		<value>Dileu&apos;r ddisg</value>
 	</string>
 	<string>
 		<id>2115</id>
-		<value>Sätt i CD/DVD-RW</value>
+		<value>Mewnosod CD/DVD RW</value>
 	</string>
 	<string>
 		<id>2116</id>
-		<value>Enhet ej redo</value>
+		<value>Nid yw&apos;r gyrrwr yn barod</value>
 	</string>
 	<string>
 		<id>2117</id>
-		<value>Ett allvarligt fel har inträffat!</value>
+		<value>digwyddodd gwall terfynol!</value>
 	</string>
 	<string>
 		<id>2118</id>
-		<value>Konvertera DVR-MS</value>
+		<value>Trosi DVR-MS</value>
 	</string>
 	<string>
 		<id>2119</id>
-		<value>Starta konvertering</value>
+		<value>Cychwyn trosi</value>
 	</string>
 	<string>
 		<id>2120</id>
-		<value>Konverterar fil(er)...</value>
+		<value>Trosi ffeil(iau)...</value>
 	</string>
 	<string>
 		<id>2121</id>
-		<value>Kunde inte konvertera fil (er)!</value>
+		<value>Methu trosi ffeil(iau)!</value>
 	</string>
 	<string>
 		<id>2122</id>
-		<value>Startar!</value>
+		<value>cychwyn!</value>
 	</string>
 	<string>
 		<id>2123</id>
-		<value>Diskinfo</value>
+		<value>Gwybodaeth am y ddisg</value>
 	</string>
 	<string>
 		<id>2124</id>
-		<value>Kan ej radera: Media är inte skrivbart</value>
+		<value>Methu Dileu: Methu ysgrifennu ar y cyfrwng</value>
 	</string>
 	<string>
 		<id>2125</id>
-		<value>Raderar Disk....</value>
+		<value>Dileu&apos;r Ddisg...</value>
 	</string>
 	<string>
 		<id>2126</id>
-		<value>Mata Ut CD</value>
+		<value>Bwrw allan CD</value>
 	</string>
 	<string>
 		<id>2127</id>
-		<value>CD:n är inte skrivbar</value>
+		<value>Methu ysgrifennu ar y CD</value>
 	</string>
 	<string>
 		<id>2128</id>
-		<value>Förbereder bränning: beräknad tid:</value>
+		<value>Paratoi i Losgi: amcan amser:</value>
 	</string>
 	<string>
 		<id>2129</id>
-		<value>Förbereder bränning</value>
+		<value>Paratoi i Losgi</value>
 	</string>
 	<string>
 		<id>2130</id>
-		<value>Blockera</value>
+		<value>Bloc</value>
 	</string>
 	<string>
 		<id>2131</id>
-		<value>av</value>
+		<value>o</value>
 	</string>
 	<string>
 		<id>2132</id>
-		<value>Stänger skiva: beräknad tid:</value>
+		<value>Cau&apos;r ddisg: amcan amser:</value>
 	</string>
 	<string>
 		<id>2133</id>
-		<value>TV-inspelningar</value>
+		<value>Recordiadau o&apos;r Teledu</value>
 	</string>
 	<string>
 		<id>2134</id>
-		<value>Video</value>
+		<value>Fideo</value>
 	</string>
 	<string>
 		<id>2135</id>
-		<value>Ljud</value>
+		<value>Sain</value>
 	</string>
 	<string>
 		<id>2136</id>
@@ -3643,19 +3643,19 @@
 	</string>
 	<string>
 		<id>2137</id>
-		<value>Konvertera</value>
+		<value>Trosi</value>
 	</string>
 	<string>
 		<id>2138</id>
-		<value>Klippa</value>
+		<value>Torri</value>
 	</string>
 	<string>
 		<id>2139</id>
-		<value>Skapa MP3-CD</value>
+		<value>Creu CD MP3</value>
 	</string>
 	<string>
 		<id>2140</id>
-		<value>Skapa MP3-DVD</value>
+		<value>Creu DVD MP3</value>
 	</string>
 	<string>
 		<id>2141</id>
@@ -3667,7 +3667,7 @@
 	</string>
 	<string>
 		<id>2143</id>
-		<value>Hem</value>
+		<value>Cartref</value>
 	</string>
 	<string>
 		<id>2200</id>
@@ -3675,439 +3675,439 @@
 	</string>
 	<string>
 		<id>2201</id>
-		<value>Välj källa</value>
+		<value>Dewis ffynhonnell</value>
 	</string>
 	<string>
 		<id>2202</id>
-		<value>Välj mål</value>
+		<value>Dewis cyrchfan</value>
 	</string>
 	<string>
 		<id>2203</id>
-		<value>Kopiera data</value>
+		<value>Copïo data</value>
 	</string>
 	<string>
 		<id>2204</id>
-		<value>Skapa mapp</value>
+		<value>Creu ffolder</value>
 	</string>
 	<string>
 		<id>2205</id>
-		<value>Återställ markerat</value>
+		<value>Adfer y dewis</value>
 	</string>
 	<string>
 		<id>2206</id>
-		<value>Välj alla</value>
+		<value>Dewis popeth</value>
 	</string>
 	<string>
 		<id>2207</id>
-		<value>Vill du</value>
+		<value>Hoffech chi</value>
 	</string>
 	<string>
 		<id>2208</id>
-		<value>skapa mappen?</value>
+		<value>greu ffolder?</value>
 	</string>
 	<string>
 		<id>2209</id>
-		<value>Vill du kopiera filerna?</value>
+		<value>Hoffech chi gopïo&apos;r ffeiliau?</value>
 	</string>
 	<string>
 		<id>2210</id>
-		<value>Filer kopierade!</value>
+		<value>Wedi copïo&apos;r ffeiliau!</value>
 	</string>
 	<string>
 		<id>2211</id>
-		<value>Vänta, filer kopieras.</value>
+		<value>Arhoswch, mae&apos;r ffeiliau&apos;n cael eu copïo.</value>
 	</string>
 	<string>
 		<id>2212</id>
-		<value>Ta bort</value>
+		<value>Dileu</value>
 	</string>
 	<string>
 		<id>2213</id>
-		<value>Flytta</value>
+		<value>Symud</value>
 	</string>
 	<string>
 		<id>2214</id>
-		<value>Vill du flytta de markerade filerna?</value>
+		<value>Hoffech chi symud y ffeiliau hyn?</value>
 	</string>
 	<string>
 		<id>2215</id>
-		<value>Vänta, flyttar filer.</value>
+		<value>Arhoswch, symud ffeiliau.</value>
 	</string>
 	<string>
 		<id>2216</id>
-		<value>Filer flyttade!</value>
+		<value>Wedi symud ffeiliau!</value>
 	</string>
 	<string>
 		<id>2217</id>
-		<value>Det finns redan en fil med det namnet!</value>
+		<value>Ffeil Cyrchfan yn bodoli!</value>
 	</string>
 	<string>
 		<id>2218</id>
-		<value>Skriva över filen?</value>
+		<value>Ysgrifennu dros y ffeil?</value>
 	</string>
 	<string>
 		<id>2219</id>
-		<value>Kan inte flytta från vald enhet!</value>
+		<value>Methu symud o&apos;r gyrrwr!</value>
 	</string>
 	<string>
 		<id>2220</id>
-		<value>Vill du kopiera markerade filer?</value>
+		<value>Copïo&apos;r ffeil?</value>
 	</string>
 	<string>
 		<id>2221</id>
-		<value>Vill du ta bort valda filer?</value>
+		<value>Hoffech chi ddileu&apos;r ffeiliau?</value>
 	</string>
 	<string>
 		<id>2222</id>
-		<value>Filer borttagna!</value>
+		<value>Ffeiliau wedi eu dileu!</value>
 	</string>
 	<string>
 		<id>2223</id>
-		<value>Papperskorg</value>
+		<value>Sbwriel</value>
 	</string>
 	<string>
 		<id>2224</id>
-		<value>Mappen finns redan!</value>
+		<value>Ffolder yn bodoli!</value>
 	</string>
 	<string>
 		<id>2225</id>
-		<value>Mappen skapad!</value>
+		<value>Ffolder wedi ei greu</value>
 	</string>
 	<string>
 		<id>3000</id>
-		<value>Programalternativ</value>
+		<value>Dewisiadau&apos;r Rhaglen</value>
 	</string>
 	<string>
 		<id>3001</id>
-		<value>timme</value>
+		<value>Awr</value>
 	</string>
 	<string>
 		<id>3002</id>
-		<value>timmar</value>
+		<value>Awr</value>
 	</string>
 	<string>
 		<id>3003</id>
-		<value>minut</value>
+		<value>Munud</value>
 	</string>
 	<string>
 		<id>3004</id>
-		<value>minuter</value>
+		<value>Munud</value>
 	</string>
 	<string>
 		<id>3005</id>
-		<value>timme sen</value>
+		<value>Awr yn ôl</value>
 	</string>
 	<string>
 		<id>3006</id>
-		<value>timmar sen</value>
+		<value>Awr yn ôl</value>
 	</string>
 	<string>
 		<id>3007</id>
-		<value>minut sen</value>
+		<value>Munud yn ôl</value>
 	</string>
 	<string>
 		<id>3008</id>
-		<value>minuter sen</value>
+		<value>Munud yn ôl</value>
 	</string>
 	<string>
 		<id>3009</id>
-		<value>Startar om</value>
+		<value>Cychwyn ymhen</value>
 	</string>
 	<string>
 		<id>3010</id>
-		<value>Minuter kvar</value>
+		<value>Munud yn weddill</value>
 	</string>
 	<string>
 		<id>3011</id>
-		<value>Timme kvar</value>
+		<value>Awr yn weddill</value>
 	</string>
 	<string>
 		<id>3012</id>
-		<value>Timmar kvar</value>
+		<value>Awr yn weddill</value>
 	</string>
 	<string>
 		<id>3013</id>
-		<value>Startar nu</value>
+		<value>Cychwyn nawr</value>
 	</string>
 	<string>
 		<id>3014</id>
-		<value>Dag</value>
+		<value>Diwrnod</value>
 	</string>
 	<string>
 		<id>3015</id>
-		<value>Dagar</value>
+		<value>Diwrnod</value>
 	</string>
 	<string>
 		<id>3016</id>
-		<value>Redan slut</value>
+		<value>Gorffen yn barod</value>
 	</string>
 	<string>
 		<id>3017</id>
-		<value>Startad</value>
+		<value>Cychwynwyd</value>
 	</string>
 	<string>
 		<id>3018</id>
-		<value>Minut kvar</value>
+		<value>Munud yn weddill</value>
 	</string>
 	<string>
 		<id>3019</id>
-		<value>Serie</value>
+		<value>Cyfres</value>
 	</string>
 	<string>
 		<id>3020</id>
-		<value>Avsnitt</value>
+		<value>Rhifyn</value>
 	</string>
 	<string>
 		<id>3021</id>
-		<value>Del</value>
+		<value>Rhan</value>
 	</string>
 	<string>
 		<id>3022</id>
-		<value>av</value>
+		<value>o</value>
 	</string>
 	<string>
 		<id>5900</id>
-		<value>Mina Trailers</value>
+		<value>Rhagflas</value>
 	</string>
 	<string>
 		<id>5901</id>
-		<value>Visa Filmer</value>
+		<value>Dangos ffilmiau</value>
 	</string>
 	<string>
 		<id>5902</id>
-		<value>Visa vilka filmer?</value>
+		<value>Dangos pa ffilm?</value>
 	</string>
 	<string>
 		<id>5903</id>
-		<value>Nyligen släppta filmer</value>
+		<value>Ffilmiau ychwanegwyd</value>
 	</string>
 	<string>
 		<id>5904</id>
-		<value>Mest sedda filmer</value>
+		<value>Ffilm mwyaf poblogaidd</value>
 	</string>
 	<string>
 		<id>5905</id>
-		<value>Alla filmer</value>
+		<value>Pob ffilm</value>
 	</string>
 	<string>
 		<id>5906</id>
-		<value>Trailers</value>
+		<value>Rhagflas</value>
 	</string>
 	<string>
 		<id>5907</id>
-		<value>Clips</value>
+		<value>Clip</value>
 	</string>
 	<string>
 		<id>5908</id>
-		<value>Mer material</value>
+		<value>Rhagor</value>
 	</string>
 	<string>
 		<id>5909</id>
-		<value>Kan inte spela film!</value>
+		<value>Methu creu llif ffilm!</value>
 	</string>
 	<string>
 		<id>5910</id>
-		<value>Hämtar film information</value>
+		<value>Estyn gwybodaeth ffilm</value>
 	</string>
 	<string>
 		<id>5911</id>
-		<value>Nytt på biograferna</value>
+		<value>Newydd mewn theatrau</value>
 	</string>
 	<string>
 		<id>5912</id>
-		<value>Tidigare vecka</value>
+		<value>Yr wythnos flaenorol</value>
 	</string>
 	<string>
 		<id>5913</id>
-		<value>Denna vecka</value>
+		<value>Yr wythnos hon</value>
 	</string>
 	<string>
 		<id>5914</id>
-		<value>Nästa vecka</value>
+		<value>Wythnos nesaf</value>
 	</string>
 	<string>
 		<id>5915</id>
-		<value>Inga film recensioner än</value>
+		<value>Dim adolygiadau ffilm eto</value>
 	</string>
 	<string>
 		<id>5916</id>
-		<value>Inga trailers hittade</value>
+		<value>Heb ganfod rhagflas</value>
 	</string>
 	<string>
 		<id>5917</id>
-		<value>Tyska trailers</value>
+		<value>Rhagflas Almaenig</value>
 	</string>
 	<string>
 		<id>8000</id>
-		<value>Min e-post</value>
+		<value>E-bost</value>
 	</string>
 	<string>
 		<id>8001</id>
-		<value>Kolla brevlådan</value>
+		<value>Gwirio&apos;r Bwlch E-bost</value>
 	</string>
 	<string>
 		<id>8002</id>
-		<value>Autokoll Av</value>
+		<value>Diffod Awtogwirio</value>
 	</string>
 	<string>
 		<id>8003</id>
-		<value>Autokoll På</value>
+		<value>Awtogwirio Ymlaen</value>
 	</string>
 	<string>
 		<id>8004</id>
-		<value>Du har ny e-post!</value>
+		<value>Mae gennych e-bost newydd!</value>
 	</string>
 	<string>
 		<id>8005</id>
-		<value>Uppdaterar brevlådan</value>
+		<value>Adnewyddu&apos;r Blwch E-bost</value>
 	</string>
 	<string>
 		<id>8007</id>
-		<value>Autokoll På</value>
+		<value>Awtogwirio</value>
 	</string>
 	<string>
 		<id>8008</id>
-		<value>Back</value>
+		<value>Nôl</value>
 	</string>
 	<string>
 		<id>8009</id>
-		<value>Markera alla olästa</value>
+		<value>Marcio popeth heb eu darllen</value>
 	</string>
 	<string>
 		<id>8010</id>
-		<value>Ingen brevlåda skapad</value>
+		<value>Heb ddiffinio Blwch E-bost</value>
 	</string>
 	<string>
 		<id>8011</id>
-		<value>Gå till Setup och skapa</value>
+		<value>Ewch i&apos;r Gosod a diffinio o leiaf un</value>
 	</string>
 	<string>
 		<id>8012</id>
-		<value>minst en brevlåda för att använda Mail-Pluginen.</value>
+		<value>Blwch E-bost i ddefnyddio&apos;r Ategyn E-bost.</value>
 	</string>
 	<string>
 		<id>8013</id>
-		<value>Servern svarar ej</value>
+		<value>Dim ymateb gan y Gweinydd</value>
 	</string>
 	<string>
 		<id>8014</id>
-		<value>Servern&apos;{0}&apos;varar ej!</value>
+		<value>Nid yw Gweinydd&apos;{0}&apos;yn ymateb!</value>
 	</string>
 	<string>
 		<id>8015</id>
-		<value>Kolla inst. för brevlådan&apos;{0}&apos;</value>
+		<value>Gwiriwch ffurfweddiad eich Blwch E-bost&apos;{0}&apos;</value>
 	</string>
 	<string>
 		<id>8016</id>
-		<value>Från</value>
+		<value>Oddi wrth</value>
 	</string>
 	<string>
 		<id>8017</id>
-		<value>Till</value>
+		<value>At</value>
 	</string>
 	<string>
 		<id>8018</id>
-		<value>Ämne</value>
+		<value>Pwnc</value>
 	</string>
 	<string>
 		<id>8019</id>
-		<value>Meddelande</value>
+		<value>Neges</value>
 	</string>
 	<string>
 		<id>8020</id>
-		<value>Ta bort e-post</value>
+		<value>Dileu E-bost</value>
 	</string>
 	<string>
 		<id>8021</id>
-		<value>Markera som läst</value>
+		<value>Gosod wedi darllen</value>
 	</string>
 	<string>
 		<id>8022</id>
-		<value>Visa bifogade filer</value>
+		<value>Dangos Atodiadau</value>
 	</string>
 	<string>
 		<id>8023</id>
-		<value>Nya meddelanden mottagna</value>
+		<value>Neges newydd wedi cyrraedd</value>
 	</string>
 	<string>
 		<id>8024</id>
-		<value>Visa meddelande</value>
+		<value>Dangos y Neges</value>
 	</string>
 	<string>
 		<id>8025</id>
-		<value>Behandlar meddelande</value>
+		<value>Dosrannu&apos;r Negeseuon</value>
 	</string>
 	<string>
 		<id>8030</id>
-		<value>Ansluten till server</value>
+		<value>Cysylltwyd â&apos;r gweinydd</value>
 	</string>
 	<string>
 		<id>8031</id>
-		<value>Tar emot antal brev</value>
+		<value>Estyn rhif e-bost</value>
 	</string>
 	<string>
 		<id>8033</id>
-		<value>Hämtar</value>
+		<value>Cynnydd</value>
 	</string>
 	<string>
 		<id>8034</id>
-		<value>Visa HTML</value>
+		<value>Dangos HTML</value>
 	</string>
 	<string>
 		<id>9000</id>
-		<value>Bildstorlek:</value>
+		<value>Maint y ddelwedd:</value>
 	</string>
 	<string>
 		<id>9001</id>
-		<value>Upplösning:</value>
+		<value>Cydraniad:</value>
 	</string>
 	<string>
 		<id>9002</id>
-		<value>Blixt:</value>
+		<value>Flash:</value>
 	</string>
 	<string>
 		<id>9003</id>
-		<value>Avståndsläge:</value>
+		<value>Modd Mesur:</value>
 	</string>
 	<string>
 		<id>9004</id>
-		<value>Exponeringskompensation:</value>
+		<value>Cywiro:</value>
 	</string>
 	<string>
 		<id>9005</id>
-		<value>Slutarhastighet:</value>
+		<value>Cyflymder y Caead</value>
 	</string>
 	<string>
 		<id>9006</id>
-		<value>Datum när bilden togs:</value>
+		<value>Dyddiad crëwyd</value>
 	</string>
 	<string>
 		<id>9007</id>
-		<value>Bländare:</value>
+		<value>Fstop:</value>
 	</string>
 	<string>
 		<id>9008</id>
-		<value>Exponeringstid:</value>
+		<value>Amser dinoethiad</value>
 	</string>
 	<string>
 		<id>9009</id>
-		<value>Kameramodell:</value>
+		<value>Model y Camera</value>
 	</string>
 	<string>
 		<id>9010</id>
-		<value>Tillverkare:</value>
+		<value>Marc Cynhyrchydd:</value>
 	</string>
 	<string>
 		<id>9011</id>
-		<value>Visa kommentarer:</value>
+		<value>Darllen Sylwadau:</value>
 	</string>
 	<string>
 		<id>99845</id>
-		<value>Sök i TV.com</value>
+		<value>Gwybodaeth gan TV.com</value>
 	</string>
 	<string>
 		<id>12902</id>
-		<value>MSN Messenger OSD</value>
+		<value>Rheolwr MSN Messenger</value>
 	</string>
 	<string>
 		<id>13000</id>
@@ -4115,255 +4115,255 @@
 	</string>
 	<string>
 		<id>13001</id>
-		<value>Tillverkare:</value>
+		<value>Gwneuthurwr;</value>
 	</string>
 	<string>
 		<id>13002</id>
-		<value>Launch</value>
+		<value>Cychwyn</value>
 	</string>
 	<string>
 		<id>13003</id>
-		<value>Importerar *.mlf fil</value>
+		<value>Mewnforio ffeil *.mlf</value>
 	</string>
 	<string>
 		<id>13004</id>
-		<value>Importerar *.my fil</value>
+		<value>Mewnforio ffeil *.my</value>
 	</string>
 	<string>
 		<id>13005</id>
-		<value>Senast Importerad fil:</value>
+		<value>Ffeil wedi ei mewnforio diwethaf</value>
 	</string>
 	<string>
 		<id>13006</id>
-		<value>Liten Bild</value>
+		<value>Llun Bach</value>
 	</string>
 	<string>
 		<id>13007</id>
-		<value>Stor Bild</value>
+		<value>Llun Mawr</value>
 	</string>
 	<string>
 		<id>13008</id>
-		<value>Ken Burns-effekt</value>
+		<value>Effaith Ken Burns</value>
 	</string>
 	<string>
 		<id>13009</id>
-		<value>Slumpmässig övergångar</value>
+		<value>Hap trawsnewid</value>
 	</string>
 	<string>
 		<id>13010</id>
-		<value>Tonade övergångar</value>
+		<value>Trawsnewid X-fade</value>
 	</string>
 	<string>
 		<id>13011</id>
-		<value>Ken Burns-hastighet</value>
+		<value>Cyflymder Ken Burns</value>
 	</string>
 	<string>
 		<id>13012</id>
-		<value>Laddar bild, vänta lite</value>
+		<value>Llwytho llun, arhoswch</value>
 	</string>
 	<string>
 		<id>13013</id>
-		<value>Laddar video, vänta lite</value>
+		<value>Llwytho fideo, arhoswch</value>
 	</string>
 	<string>
 		<id>13014</id>
-		<value>Söker genom mapp</value>
+		<value>Sganio cyfeiriadur</value>
 	</string>
 	<string>
 		<id>13015</id>
-		<value>Importerar gamebase</value>
+		<value>Mewnforio ffeil gamebase</value>
 	</string>
 	<string>
 		<id>13016</id>
-		<value>Sortera efter: Antal starter</value>
+		<value>Trefnu: Cychwyn</value>
 	</string>
 	<string>
 		<id>13017</id>
-		<value>Sortera efter: Senaste</value>
+		<value>Trefnu: Diweddar</value>
 	</string>
 	<string>
 		<id>13018</id>
-		<value>Sortera efter: Rating</value>
+		<value>Trefnu: Poblogrwydd</value>
 	</string>
 	<string>
 		<id>16001</id>
-		<value>Partyblanda</value>
+		<value>Cymysgu Parti</value>
 	</string>
 	<string>
 		<id>25001</id>
-		<value>Väntar på sida {0:X}...!</value>
+		<value>Aros am Dudalen {0:X}...!</value>
 	</string>
 	<string>
 		<id>19001</id>
-		<value>Mitt Tetris</value>
+		<value>Tetris</value>
 	</string>
 	<string>
 		<id>19002</id>
-		<value>Nytt Spel</value>
+		<value>Gêm Newydd</value>
 	</string>
 	<string>
 		<id>19003</id>
-		<value>Musik</value>
+		<value>Cerddoriaeth</value>
 	</string>
 	<string>
 		<id>19004</id>
-		<value>Ljud</value>
+		<value>Seiniau</value>
 	</string>
 	<string>
 		<id>19005</id>
-		<value>Poäng</value>
+		<value>Sgôr</value>
 	</string>
 	<string>
 		<id>19006</id>
-		<value>Nivå</value>
+		<value>Lefel</value>
 	</string>
 	<string>
 		<id>19007</id>
-		<value>Rader</value>
+		<value>Llinell</value>
 	</string>
 	<string>
 		<id>19008</id>
-		<value>Rekord</value>
+		<value>Sgôr Uchel</value>
 	</string>
 	<string>
 		<id>19009</id>
-		<value>Nästa</value>
+		<value>Nesaf</value>
 	</string>
 	<string>
 		<id>19010</id>
-		<value>Tryck eller klicka för att starta...</value>
+		<value>Clicio i gychwyn...</value>
 	</string>
 	<string>
 		<id>19011</id>
-		<value>Pausad</value>
+		<value>Oedwyd</value>
 	</string>
 	<string>
 		<id>19012</id>
-		<value>Game Over</value>
+		<value>Gêm Drosodd</value>
 	</string>
 	<string>
 		<id>19100</id>
-		<value>GeoClock</value>
+		<value>GeoCloc</value>
 	</string>
 	<string>
 		<id>100000</id>
-		<value>Hem</value>
+		<value>Cartref</value>
 	</string>
 	<string>
 		<id>100001</id>
-		<value>Mina Program</value>
+		<value>Teledu</value>
 	</string>
 	<string>
 		<id>100002</id>
-		<value>Mina Bilder</value>
+		<value>Lluniau</value>
 	</string>
 	<string>
 		<id>100003</id>
-		<value>Mina Filer</value>
+		<value>Ffeiliau</value>
 	</string>
 	<string>
 		<id>100004</id>
-		<value>Inställningar</value>
+		<value>Gosodiadau</value>
 	</string>
 	<string>
 		<id>100005</id>
-		<value>Min Musik</value>
+		<value>Cerddoriaeth</value>
 	</string>
 	<string>
 		<id>100006</id>
-		<value>Mina Filmer</value>
+		<value>Fideos</value>
 	</string>
 	<string>
 		<id>100007</id>
-		<value>Systeminformation</value>
+		<value>Gwybodaeth System</value>
 	</string>
 	<string>
 		<id>100008</id>
-		<value>Inställningar-&gt;Generella</value>
+		<value>Gosodiadau-&gt;Cyffredinol</value>
 	</string>
 	<string>
 		<id>100009</id>
-		<value>Inställningar-&gt;Skärm</value>
+		<value>Gosodiadau-&gt;Sgrin</value>
 	</string>
 	<string>
 		<id>100010</id>
-		<value>Inställningar-&gt;Skärm-&gt;UI Kalibrering</value>
+		<value>Gosodiadau-&gt;Sgrin-&gt;Calibro&apos;r Rhyngwyneb</value>
 	</string>
 	<string>
 		<id>100011</id>
-		<value>Inställningar-&gt;Skärm-&gt;Skärm Kalibrering</value>
+		<value>Gosodiadau-&gt;Sgrin-&gt;Calibro&apos;r Sgrin</value>
 	</string>
 	<string>
 		<id>100012</id>
-		<value>Inställningar-&gt;Bildspel</value>
+		<value>Gosodiadau-&gt;SioeSleidiau</value>
 	</string>
 	<string>
 		<id>100013</id>
-		<value>Inställningar-&gt;Skärm-&gt;Filter</value>
+		<value>Gosodiadau-&gt;Sgrin-&gt;Hidlau</value>
 	</string>
 	<string>
 		<id>100014</id>
-		<value>Inställningar-&gt;Musik</value>
+		<value>Gosodiadau-&gt;Cerddoriaeth</value>
 	</string>
 	<string>
 		<id>100015</id>
-		<value>Inställningar-&gt;Skärm-&gt;Textning</value>
+		<value>Gosodiadau-&gt;Sgrin-&gt;Is-deitlau</value>
 	</string>
 	<string>
 		<id>100016</id>
-		<value>Inställningar-&gt;Skärm-&gt;Skärmsläckare</value>
+		<value>Gosodiadau-&gt;Sgrin-&gt;Arbedwr Sgrin</value>
 	</string>
 	<string>
 		<id>100017</id>
-		<value>Inställningar-&gt;Väder</value>
+		<value>Gosodiadau-&gt;Tywydd</value>
 	</string>
 	<string>
 		<id>100020</id>
-		<value>Inställningar-&gt;Script</value>
+		<value>Gosodiadau-&gt;Sgriptiau</value>
 	</string>
 	<string>
 		<id>100021</id>
-		<value>Mina Videor/genre</value>
+		<value>Fideos/genre</value>
 	</string>
 	<string>
 		<id>100022</id>
-		<value>Mina Videor/skådesp.</value>
+		<value>Fideos/actor</value>
 	</string>
 	<string>
 		<id>100023</id>
-		<value>Mina Videor/år</value>
+		<value>Fideos/blwyddyn</value>
 	</string>
 	<string>
 		<id>100024</id>
-		<value>Inställningar-&gt;Program</value>
+		<value>osodiadau-&gt;Rhaglenni</value>
 	</string>
 	<string>
 		<id>100025</id>
-		<value>Mina Videor/titel</value>
+		<value>Fideos/teitl</value>
 	</string>
 	<string>
 		<id>100026</id>
-		<value>Inställningar-&gt;Generella-&gt;Cache</value>
+		<value>Gosodiadau-&gt;Cyffredinol-&gt;Storfa</value>
 	</string>
 	<string>
 		<id>100027</id>
-		<value>Inställningar-&gt;Generella-&gt;Autouppsp.</value>
+		<value>Gosodiadau-&gt;Cyffredinol-&gt;Awtoredeg</value>
 	</string>
 	<string>
 		<id>100028</id>
-		<value>Mina Videor/spellista</value>
+		<value>Fideos/rhestr chwarae</value>
 	</string>
 	<string>
 		<id>100029</id>
-		<value>Inställningar-&gt;Generella-&gt;LCD</value>
+		<value>Gosodiadau-&gt;Cyffredinol-&gt;LCD</value>
 	</string>
 	<string>
 		<id>100030</id>
-		<value>Min Radio</value>
+		<value>Radio</value>
 	</string>
 	<string>
 		<id>100031</id>
-		<value>Inställningar-&gt;Skärm-&gt;scroll-hastighet</value>
+		<value>Gosodiadau-&gt;Sgrin-&gt;cyflymder sgrolio</value>
 	</string>
 	<string>
 		<id>100032</id>
@@ -4371,255 +4371,255 @@
 	</string>
 	<string>
 		<id>100033</id>
-		<value>MSN Messenger chat</value>
+		<value>Sgwrs MSN Messenger</value>
 	</string>
 	<string>
 		<id>100034</id>
-		<value>Mina Plugins</value>
+		<value>Ategynna</value>
 	</string>
 	<string>
 		<id>100100</id>
-		<value>ja/nej-dialog</value>
+		<value>Deialog Iawn/Na</value>
 	</string>
 	<string>
 		<id>100101</id>
-		<value>Progress dialog</value>
+		<value>Deialog cynnydd</value>
 	</string>
 	<string>
 		<id>100500</id>
-		<value>Min Musik/spellista</value>
+		<value>Cerddoriaeth/rhestr chwarae</value>
 	</string>
 	<string>
 		<id>100501</id>
-		<value>Min Musik/filer</value>
+		<value>Cerddoriaeth/ffeiliau</value>
 	</string>
 	<string>
 		<id>100502</id>
-		<value>Min Musik/album</value>
+		<value>Cerddoriaeth/album</value>
 	</string>
 	<string>
 		<id>100503</id>
-		<value>Min Musik/artister</value>
+		<value>Cerddoriaeth/artistiaid</value>
 	</string>
 	<string>
 		<id>100504</id>
-		<value>Min Musik/genrer</value>
+		<value>Cerddoriaeth/genres</value>
 	</string>
 	<string>
 		<id>100505</id>
-		<value>Min Musik/top100</value>
+		<value>Cerddoriaeth/100 Uchaf</value>
 	</string>
 	<string>
 		<id>100506</id>
-		<value>Min Musik/Favoriter</value>
+		<value>Cerddoriaeth/Ffefrynnau</value>
 	</string>
 	<string>
 		<id>100600</id>
-		<value>Min TV/Tablå</value>
+		<value>Teledu/Amserlen</value>
 	</string>
 	<string>
 		<id>100601</id>
-		<value>Min TV/Planerade inspelningar</value>
+		<value>Teledu/Trefnydd</value>
 	</string>
 	<string>
 		<id>100602</id>
-		<value>Min TV/Fullskärm</value>
+		<value>Teledu/sgrin lawn</value>
 	</string>
 	<string>
 		<id>100603</id>
-		<value>Min TV/Inspelad TV</value>
+		<value>Teledu/Teledu Recordiwyd</value>
 	</string>
 	<string>
 		<id>100604</id>
-		<value>Min TV/Sök</value>
+		<value>Teledu/Chwilio</value>
 	</string>
 	<string>
 		<id>100605</id>
-		<value>Min TV/Inpelad Tv/Genre</value>
+		<value>Teledu/Teledu Recordiwyd/Genre</value>
 	</string>
 	<string>
 		<id>100606</id>
-		<value>Min TV/Inspelad Tv/kanaler</value>
+		<value>Teledu/Teledu Recordiwyd/Sianeli</value>
 	</string>
 	<string>
 		<id>100607</id>
-		<value>TV/Schemaläggare/Prioriteter</value>
+		<value>Teledu/Trefnydd/Blaenoriaethau</value>
 	</string>
 	<string>
 		<id>100608</id>
-		<value>TV/Schemaläggare/Konflikter</value>
+		<value>Teledu/Trefnydd/Gwrthdaro</value>
 	</string>
 	<string>
 		<id>100609</id>
-		<value>TV/Koprimera/Översikt</value>
+		<value>Teledu/Cywasgu/Prif</value>
 	</string>
 	<string>
 		<id>100610</id>
-		<value>TV/Koprimera/Inställningar</value>
+		<value>Teledu/Cywasgu/Gosodiadau</value>
 	</string>
 	<string>
 		<id>100611</id>
-		<value>TV/Koprimera/Automatiskt</value>
+		<value>Teledu/Cywasgu/Awto</value>
 	</string>
 	<string>
 		<id>100612</id>
-		<value>TV/Koprimera/Komprimera</value>
+		<value>Teledu/Cywasgu/Cywasgu</value>
 	</string>
 	<string>
 		<id>100613</id>
-		<value>TV/Koprimera/Status</value>
+		<value>Teledu/Cywasgu/Statws</value>
 	</string>
 	<string>
 		<id>100614</id>
-		<value>Video Artist Info</value>
+		<value>Gwybodaeth Artist Fideo</value>
 	</string>
 	<string>
 		<id>100615</id>
-		<value>Guide/Välkommen</value>
+		<value>Dewin/Croeso</value>
 	</string>
 	<string>
 		<id>100616</id>
-		<value>Guide/Upptäckta kort</value>
+		<value>Dewin/Canfod cardiau</value>
 	</string>
 	<string>
 		<id>100617</id>
-		<value>Guide/Land</value>
+		<value>Dewin/Gwlad</value>
 	</string>
 	<string>
 		<id>100618</id>
-		<value>Guide/Skanna</value>
+		<value>Dewin/Sganio</value>
 	</string>
 	<string>
 		<id>100619</id>
-		<value>Guide/DVBC/Land</value>
+		<value>Dewin/DVBC/Gwlad</value>
 	</string>
 	<string>
 		<id>100620</id>
-		<value>Guide/DVBC/Skanna</value>
+		<value>Dewin/DVBC/Sganio</value>
 	</string>
 	<string>
 		<id>100621</id>
-		<value>Guide/DVBC/LNB</value>
+		<value>Dewin/DVBS/LNB</value>
 	</string>
 	<string>
 		<id>100622</id>
-		<value>Guide/DVBC/LNB detaljer</value>
+		<value>Dewin/DVBS/manylion LNB</value>
 	</string>
 	<string>
 		<id>100623</id>
-		<value>Guide/DVBC/Transponder</value>
+		<value>Dewin/DVBS/Trawsymatebydd</value>
 	</string>
 	<string>
 		<id>100624</id>
-		<value>Guide/DVBC/Skanna</value>
+		<value>Dewin/DVBS/Scanio</value>
 	</string>
 	<string>
 		<id>100625</id>
-		<value>Guide/ATSC/Skanna</value>
+		<value>Dewin/ATSC/Scanio</value>
 	</string>
 	<string>
 		<id>100626</id>
-		<value>Guide/Analog/Land</value>
+		<value>Dewin/Analog/Gwlad</value>
 	</string>
 	<string>
 		<id>100627</id>
-		<value>Guide/Analog/Stad</value>
+		<value>Dewin/Analog/Tref</value>
 	</string>
 	<string>
 		<id>100628</id>
-		<value>Guide/Analog/Importerad</value>
+		<value>Dewin/Analog/Mewnforiwyd</value>
 	</string>
 	<string>
 		<id>100629</id>
-		<value>Guide/Analog/Användarhandledning</value>
+		<value>Dewin/Analog/Gyda Llaw</value>
 	</string>
 	<string>
 		<id>100630</id>
-		<value>Guide/Analog/Skanna</value>
+		<value>Dewin/Analog/Sganio</value>
 	</string>
 	<string>
 		<id>100631</id>
-		<value>Guide/Analog/Byt namn</value>
+		<value>Dewin/Analog/Ailenwi</value>
 	</string>
 	<string>
 		<id>100632</id>
-		<value>Guide/Analog/Radio</value>
+		<value>Dewin/Analog/Radio</value>
 	</string>
 	<string>
 		<id>100633</id>
-		<value>Guide/Analog/Byt namn på radio</value>
+		<value>Dewin/Analog/Ailenwi Radio</value>
 	</string>
 	<string>
 		<id>100634</id>
-		<value>Guide/Fjärr</value>
+		<value>Dewin/Pell</value>
 	</string>
 	<string>
 		<id>100635</id>
-		<value>Guide/EPG</value>
+		<value>Dewin/Rhaglenni</value>
 	</string>
 	<string>
 		<id>100699</id>
-		<value>Guide/Avslutad</value>
+		<value>Dewin/Gorffen</value>
 	</string>
 	<string>
 		<id>100700</id>
-		<value>TV-inställningar</value>
+		<value>Gosidiadau Teledu</value>
 	</string>
 	<string>
 		<id>100701</id>
-		<value>TV inspelningsinställningar</value>
+		<value>Gosodiadau Recordio Teledu</value>
 	</string>
 	<string>
 		<id>100702</id>
-		<value>TV sortera kanaler</value>
+		<value>Trefnu sianeli</value>
 	</string>
 	<string>
 		<id>100703</id>
-		<value>TV filminställningar</value>
+		<value>Gosodiadau ffilmiau telrdu</value>
 	</string>
 	<string>
 		<id>100704</id>
-		<value>DVD-inställningar</value>
+		<value>Gosodiadau DVD</value>
 	</string>
 	<string>
 		<id>100705</id>
-		<value>Skinninställningar</value>
+		<value>Gosodiadau Crwyn</value>
 	</string>
 	<string>
 		<id>100748</id>
-		<value>Programinformation</value>
+		<value>Gwybodaeth rhaglenni</value>
 	</string>
 	<string>
 		<id>100749</id>
-		<value>TV/Ingen signal</value>
+		<value>Teledu/dim signal</value>
 	</string>
 	<string>
 		<id>100750</id>
-		<value>Mina Recept</value>
+		<value>Ryseitiau</value>
 	</string>
 	<string>
 		<id>100755</id>
-		<value>Min Status</value>
+		<value>Statws</value>
 	</string>
 	<string>
 		<id>100756</id>
-		<value>Min Status detaljer</value>
+		<value>Manylion Statws</value>
 	</string>
 	<string>
 		<id>100757</id>
-		<value>Min Status inställningar</value>
+		<value>Dewisiadau Statws</value>
 	</string>
 	<string>
 		<id>100758</id>
-		<value>Fildialog</value>
+		<value>Deialog ffeil</value>
 	</string>
 	<string>
 		<id>100759</id>
-		<value>Inspelad TV information</value>
+		<value>Gwybodaeth Teledu Recordiwyd</value>
 	</string>
 	<string>
 		<id>100760</id>
-		<value>Min Brännare</value>
+		<value>Llosgwr</value>
 	</string>
 	<string>
 		<id>100770</id>
@@ -4627,214 +4627,274 @@
 	</string>
 	<string>
 		<id>101000</id>
-		<value>tangentbord</value>
+		<value>bysellfwrdd</value>
 	</string>
 	<string>
 		<id>102000</id>
-		<value>Välj Dialog</value>
+		<value>Dewis deialog</value>
 	</string>
 	<string>
 		<id>102001</id>
-		<value>Min Musik/info</value>
+		<value>Cerddoriaeth/gwyb</value>
 	</string>
 	<string>
 		<id>102002</id>
-		<value>Dialog OK</value>
+		<value>Deialog Iawn</value>
 	</string>
 	<string>
 		<id>102003</id>
-		<value>Mina Filmer/info</value>
+		<value>Fideo/Info</value>
 	</string>
 	<string>
 		<id>102004</id>
-		<value>Mina Script/info</value>
+		<value>Sgriptiau/Gwyb</value>
 	</string>
 	<string>
 		<id>102005</id>
-		<value>Fullskärmsvideo</value>
+		<value>Fideo Sgrin Lawn</value>
 	</string>
 	<string>
 		<id>102006</id>
-		<value>Ljudvisualisering</value>
+		<value>Delweddu Sain</value>
 	</string>
 	<string>
 		<id>102007</id>
-		<value>Mina Bilder/bildspel</value>
+		<value>Lluniau/SioeSleidiau</value>
 	</string>
 	<string>
 		<id>102008</id>
-		<value>Filgrupperings dialog</value>
+		<value>Deialog Stacio Ffeiliau</value>
 	</string>
 	<string>
 		<id>102009</id>
-		<value>Valdialog</value>
+		<value>Deialog dewis</value>
 	</string>
 	<string>
 		<id>102010</id>
-		<value>Datum/tid</value>
+		<value>Dyddiad/Amser</value>
 	</string>
 	<string>
 		<id>102011</id>
-		<value>Artistinfo</value>
+		<value>Gwyg.Artis</value>
 	</string>
 	<string>
 		<id>102012</id>
-		<value>Snabbvalsmeny</value>
+		<value>Dewislen cyd-destun</value>
 	</string>
 	<string>
 		<id>102013</id>
-		<value>Sätt betyg</value>
+		<value>Gosod Cyfraddiad</value>
 	</string>
 	<string>
 		<id>102014</id>
-		<value>Bildinfo</value>
+		<value>Gwyb. Llun</value>
 	</string>
 	<string>
 		<id>102015</id>
-		<value>Minimeny</value>
+		<value>Dewislen Fach</value>
 	</string>
 	<string>
 		<id>102016</id>
-		<value>Upplysning</value>
+		<value>Hysbysiad</value>
 	</string>
 	<string>
 		<id>102600</id>
-		<value>Mitt Väder</value>
+		<value>Tywydd</value>
 	</string>
 	<string>
 		<id>102700</id>
-		<value>Mina Nyheter</value>
+		<value>Newyddion</value>
 	</string>
 	<string>
 		<id>102900</id>
-		<value>Skärmsläckare</value>
+		<value>Arbedwr Sgrin</value>
 	</string>
 	<string>
 		<id>102901</id>
-		<value>Fullskärm OSD</value>
+		<value>Rheolwr Sgrin Lawn</value>
 	</string>
 	<string>
 		<id>103003</id>
-		<value>Min TV/OSD</value>
+		<value>Teledu/Rheolwr</value>
 	</string>
 	<string>
 		<id>103006</id>
-		<value>Min TV/MSN OSD</value>
+		<value>Teledu/Rheolwr MSN</value>
 	</string>
 	<string>
 		<id>103007</id>
-		<value>Min TV/Zap OSD</value>
+		<value>Teledu/Rheolwr Zap</value>
 	</string>
 	<string>
 		<id>107700</id>
-		<value>Min TV/Text-TV</value>
+		<value>Teledu/TeleTestun</value>
 	</string>
 	<string>
 		<id>107701</id>
-		<value>Min TV/Text-TV</value>
+		<value>Teledu/TeleTestun</value>
 	</string>
 	<string>
 		<id>200000</id>
-		<value>Var god ange vilken EPG grabber du använder. Om ditt land inte</value>
+		<value>Dewiswch eich cipiwr EPG. Sylwch os nad yw eich gwlad</value>
 	</string>
 	<string>
 		<id>200001</id>
-		<value>finns på listan måste du tillföra EPG:n manuellt</value>
+		<value>wedi ei restru byd rhaid gosod yr EPG gyda llaw</value>
 	</string>
 	<string>
 		<id>200002</id>
-		<value>Nu kan du mappa EPG-kanalerna till dina TV-kanaler</value>
+		<value>allwch fapio sianeli&apos;r EPG i&apos;ch sianeli teledu</value>
 	</string>
 	<string>
 		<id>200003</id>
-		<value>Välj kanal och tryck Enter för att ändra mappningen</value>
+		<value>dewiswch sianel a phwyso Enter i newid y mapio</value>
 	</string>
 	<string>
 		<id>200004</id>
-		<value>Manuellt tillförd tvguide.xml</value>
+		<value>Darparwyd tvguide.xml</value>
 	</string>
 	<string>
 		<id>200005</id>
-		<value>Var god ange vilken fjärrkontroll du använder:</value>
+		<value>Manylion eich rheolydd pell:</value>
 	</string>
 	<string>
 		<id>200006</id>
-		<value>Tryck Nästa för att fortsätta</value>
+		<value>Cliciwch Nesaf i barhau</value>
 	</string>
 	<string>
 		<id>200007</id>
-		<value>&lt;Bakåt</value>
+		<value>&lt;Nôl</value>
 	</string>
 	<string>
 		<id>200008</id>
-		<value>Inställning - Fjärrkontroll</value>
+		<value>Gosod - Rheolwr pell</value>
 	</string>
 	<string>
 		<id>200009</id>
-		<value>Nästa&gt;</value>
+		<value>Nesaf-&gt;</value>
 	</string>
 	<string>
 		<id>200010</id>
-		<value>MediaPortal förvandlar din PC till en HTPC - ett väldigt avancerat multimediacenter</value>
+		<value>Mae MediaPortal yn troi eich PC yn Ganolfan Aml Gyfrwng grymus iawn.&lt;</value>
 	</string>
 	<string>
 		<id>200011</id>
-		<value>Med MediaPortal kan du njuta av din favoritmusik, radio</value>
+		<value>Gyda MediaPortal gallwch fwynhau eich hoff gerddoriaeth, radio</value>
+	</string>
+	<string>
+		<id>200012</id>
+		<value>gwylio Fideo, DVD, teledu byw a rhagor.</value>
 	</string>
 	<string>
 		<id>200013</id>
-		<value>MediaPortal gör så att du kan lyssna på din favoritmusik och radio, titta på video och DVD-filmer</value>
+		<value>Mae&apos;n caniatáu i chi wrando ar eich hoff gerddoriaeth, radio, gwylio eich fideos a DVDs</value>
 	</string>
 	<string>
 		<id>200014</id>
-		<value>foton, videor och titta på samt spela in TV och mycket mer</value>
+		<value>lluniau, fideos a gwylio/recordio teledu byw a llawer mwy</value>
 	</string>
 	<string>
 		<id>200015</id>
-		<value>Den här guiden kommer att hjälpa dig att komma igång med MediaPortal snabbt och lätt. Följ stegen</value>
-	</string>
-	<string>
-		<id>200016</id>
-		<value>Tryck på Nästa för att fortsätta</value>
+		<value>Bydd y dewin yma&apos;n eich cynorthwyo i osod Mediaportal yn gyflym a hawdd. Dilynwch y camau hyn</value>
 	</string>
 	<string>
 		<id>200017</id>
-		<value>Välkommen till MediaPortal</value>
+		<value>Croeso i MediaPortal.</value>
 	</string>
 	<string>
 		<id>200018</id>
-		<value>Gratulerar! MediaPortal är nu färdig att användas</value>
+		<value>Llongyfarchiadau. Mae Mediaportal wedi ei osod ac yn barod i&apos;w ddefnyddio</value>
 	</string>
 	<string>
 		<id>200019</id>
-		<value>Tryck på Avsluta för att stänga denna guide</value>
+		<value>Cliciwch Gorffen i gau&apos;r dewin</value>
 	</string>
 	<string>
 		<id>200020</id>
-		<value>Avsluta</value>
+		<value>Gorffen</value>
 	</string>
 	<string>
 		<id>200021</id>
-		<value>TV Inställning - EPG</value>
+		<value>Gosod y Teledu - EPG</value>
 	</string>
 	<string>
 		<id>200022</id>
-		<value>MediaPortal har hittat dessa tv-kort:</value>
+		<value>Mae MediaPortal wedi canfod y cardiau teledu canlynol:</value>
 	</string>
 	<string>
 		<id>200023</id>
-		<value>Tryck på Nästa för att konfigurera dessa kort</value>
+		<value>Cliciwch Nesaf i ffurfweddu&apos;r cardiau hyn</value>
 	</string>
 	<string>
 		<id>200024</id>
-		<value>TV Inställning</value>
+		<value>Gosod y Teledu</value>
+	</string>
+	<string>
+		<id>200025</id>
+		<value>Iaith</value>
+	</string>
+	<string>
+		<id>200026</id>
+		<value>Gwlad</value>
+	</string>
+	<string>
+		<id>200027</id>
+		<value>Gosod - Cyffredinol</value>
+	</string>
+	<string>
+		<id>200028</id>
+		<value>Oes gan y cyfrifiadur fynediad i&apos;r We?</value>
+	</string>
+	<string>
+		<id>200029</id>
+		<value>Cychwyn Media Portal ym modd Sgrin Lawn?</value>
+	</string>
+	<string>
+		<id>200030</id>
+		<value>Cychwyn Media Portal wrth gychwyn y cyfrifiadur?</value>
+	</string>
+	<string>
+		<id>200031</id>
+		<value>Iawn</value>
+	</string>
+	<string>
+		<id>200032</id>
+		<value>Na</value>
+	</string>
+	<string>
+		<id>200033</id>
+		<value>Gosodiad Teledu - Teledu Analog</value>
+	</string>
+	<string>
+		<id>200034</id>
+		<value>Dewiswch eich lleoliad o&apos;r rhestr</value>
+	</string>
+	<string>
+		<id>200035</id>
+		<value>Sylwch oso nad yw eich lleoliad wedi ei restri bydd yn rhaid ei diwnio a llaw.</value>
+	</string>
+	<string>
+		<id>200036</id>
+		<value>Tiwnio a llaw</value>
+	</string>
+	<string>
+		<id>200037</id>
+		<value>Hepgor &gt;</value>
 	</string>
 	<string>
 		<id>4000</id>
-		<value>Webbläsare</value>
+		<value>Porwr Gwe</value>
 	</string>
 	<string>
 		<id>4001</id>
-		<value>Favoriter</value>
+		<value>Ffefrynnau</value>
+	</string>
+	<string>
+		<id>4002</id>
+		<value>Methu llwytho&apos;r URL</value>
+	</string>
+	<string>
+		<id>4003</id>
+		<value>Enwch ffolder ffefrynnau wrth osod</value>
 	</string>
 </strings>
