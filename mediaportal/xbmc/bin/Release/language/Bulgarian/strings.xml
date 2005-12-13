@@ -1,0 +1,1272 @@
+<?xml version="1.0" encoding="iso-8859-5"?>
+<strings>
+	<characters></characters>
+	<string>
+		<id>0</id>
+		<value>Програми</value>
+	</string>
+	<string>
+		<id>1</id>
+		<value>Снимки</value>
+	</string>
+	<string>
+		<id>2</id>
+		<value>Музика</value>
+	</string>
+	<string>
+		<id>3</id>
+		<value>Видео</value>
+	</string>
+	<string>
+		<id>4</id>
+		<value>Телевизия</value>
+	</string>
+	<string>
+		<id>5</id>
+		<value>Настройки</value>
+	</string>
+	<string>
+		<id>6</id>
+		<value>XBOX Media Center CVS build</value>
+	</string>
+	<string>
+		<id>7</id>
+		<value>Файлове</value>
+	</string>
+	<string>
+		<id>8</id>
+		<value>Времето</value>
+	</string>
+	<string>
+		<id>9</id>
+		<value>Новини</value>
+	</string>
+	<string>
+		<id>10</id>
+		<value>Рецепти</value>
+	</string>
+	<string>
+		<id>11</id>
+		<value>Понеделник</value>
+	</string>
+	<string>
+		<id>12</id>
+		<value>Вторник</value>
+	</string>
+	<string>
+		<id>13</id>
+		<value>Сряда</value>
+	</string>
+	<string>
+		<id>14</id>
+		<value>Четвъртък</value>
+	</string>
+	<string>
+		<id>15</id>
+		<value>Петък</value>
+	</string>
+	<string>
+		<id>16</id>
+		<value>Събота</value>
+	</string>
+	<string>
+		<id>17</id>
+		<value>Неделя</value>
+	</string>
+	<string>
+		<id>21</id>
+		<value>Януари</value>
+	</string>
+	<string>
+		<id>22</id>
+		<value>Февруари</value>
+	</string>
+	<string>
+		<id>23</id>
+		<value>Март</value>
+	</string>
+	<string>
+		<id>24</id>
+		<value>Април</value>
+	</string>
+	<string>
+		<id>25</id>
+		<value>Май</value>
+	</string>
+	<string>
+		<id>26</id>
+		<value>Юни</value>
+	</string>
+	<string>
+		<id>27</id>
+		<value>Юли</value>
+	</string>
+	<string>
+		<id>28</id>
+		<value>Август</value>
+	</string>
+	<string>
+		<id>29</id>
+		<value>Септември</value>
+	</string>
+	<string>
+		<id>30</id>
+		<value>Октомври</value>
+	</string>
+	<string>
+		<id>31</id>
+		<value>Ноември</value>
+	</string>
+	<string>
+		<id>32</id>
+		<value>Декември</value>
+	</string>
+	<string>
+		<id>50</id>
+		<value>ДВД</value>
+	</string>
+	<string>
+		<id>100</id>
+		<value>Икони</value>
+	</string>
+	<string>
+		<id>101</id>
+		<value>Списък</value>
+	</string>
+	<string>
+		<id>102</id>
+		<value>Сканиране</value>
+	</string>
+	<string>
+		<id>103</id>
+		<value>Подреди по: Име</value>
+	</string>
+	<string>
+		<id>104</id>
+		<value>Подреди по: Дата</value>
+	</string>
+	<string>
+		<id>105</id>
+		<value>Подреди по: Размер</value>
+	</string>
+	<string>
+		<id>106</id>
+		<value>Не</value>
+	</string>
+	<string>
+		<id>107</id>
+		<value>Да</value>
+	</string>
+	<string>
+		<id>108</id>
+		<value>Презентация</value>
+	</string>
+	<string>
+		<id>109</id>
+		<value>Създай указател</value>
+	</string>
+	<string>
+		<id>110</id>
+		<value>Създай указатели</value>
+	</string>
+	<string>
+		<id>111</id>
+		<value>Горещи клавиши</value>
+	</string>
+	<string>
+		<id>112</id>
+		<value>ПАУЗА</value>
+	</string>
+	<string>
+		<id>113</id>
+		<value>Файлове: Източник</value>
+	</string>
+	<string>
+		<id>114</id>
+		<value>Файлове: Направление</value>
+	</string>
+	<string>
+		<id>115</id>
+		<value>Копирай</value>
+	</string>
+	<string>
+		<id>116</id>
+		<value>Премести</value>
+	</string>
+	<string>
+		<id>117</id>
+		<value>Изтрий</value>
+	</string>
+	<string>
+		<id>118</id>
+		<value>Преименувай</value>
+	</string>
+	<string>
+		<id>119</id>
+		<value>Нова папка</value>
+	</string>
+	<string>
+		<id>120</id>
+		<value>Потвърди копиране</value>
+	</string>
+	<string>
+		<id>121</id>
+		<value>Потвърди преместване</value>
+	</string>
+	<string>
+		<id>122</id>
+		<value>Потвърди изтриване</value>
+	</string>
+	<string>
+		<id>123</id>
+		<value>Да копирам ли тези файлове?</value>
+	</string>
+	<string>
+		<id>124</id>
+		<value>Да преместя ли тези файлове?</value>
+	</string>
+	<string>
+		<id>125</id>
+		<value>Да изтрия ли тези файлове?</value>
+	</string>
+	<string>
+		<id>126</id>
+		<value>Статус</value>
+	</string>
+	<string>
+		<id>127</id>
+		<value>Обекти</value>
+	</string>
+	<string>
+		<id>128</id>
+		<value>Общи</value>
+	</string>
+	<string>
+		<id>129</id>
+		<value>Презентация</value>
+	</string>
+	<string>
+		<id>130</id>
+		<value>Системна информация</value>
+	</string>
+	<string>
+		<id>131</id>
+		<value>Екран</value>
+	</string>
+	<string>
+		<id>132</id>
+		<value>Албуми</value>
+	</string>
+	<string>
+		<id>133</id>
+		<value>Артисти</value>
+	</string>
+	<string>
+		<id>134</id>
+		<value>Споделени</value>
+	</string>
+	<string>
+		<id>135</id>
+		<value>Жанрове</value>
+	</string>
+	<string>
+		<id>136</id>
+		<value>Плейлист</value>
+	</string>
+	<string>
+		<id>137</id>
+		<value>Търсене</value>
+	</string>
+	<string>
+		<id>138</id>
+		<value>СИСТЕМНА ИНФОРМАЦИЯ</value>
+	</string>
+	<string>
+		<id>139</id>
+		<value>Температури:</value>
+	</string>
+	<string>
+		<id>140</id>
+		<value>Процесор:</value>
+	</string>
+	<string>
+		<id>141</id>
+		<value>GPU:</value>
+	</string>
+	<string>
+		<id>142</id>
+		<value>Време:</value>
+	</string>
+	<string>
+		<id>143</id>
+		<value>В момента:</value>
+	</string>
+	<string>
+		<id>144</id>
+		<value>Създаден:</value>
+	</string>
+	<string>
+		<id>145</id>
+		<value>Мрежа:</value>
+	</string>
+	<string>
+		<id>146</id>
+		<value>Тип:</value>
+	</string>
+	<string>
+		<id>147</id>
+		<value>Постоянен</value>
+	</string>
+	<string>
+		<id>148</id>
+		<value>DHCP</value>
+	</string>
+	<string>
+		<id>149</id>
+		<value>MAC</value>
+	</string>
+	<string>
+		<id>150</id>
+		<value>IP:</value>
+	</string>
+	<string>
+		<id>151</id>
+		<value>Препратка:</value>
+	</string>
+	<string>
+		<id>152</id>
+		<value>Полу-дуплекс</value>
+	</string>
+	<string>
+		<id>153</id>
+		<value>Пълен-дуплекс</value>
+	</string>
+	<string>
+		<id>154</id>
+		<value>Капацитет</value>
+	</string>
+	<string>
+		<id>155</id>
+		<value>Диск</value>
+	</string>
+	<string>
+		<id>156</id>
+		<value>Свободни</value>
+	</string>
+	<string>
+		<id>157</id>
+		<value>Видео</value>
+	</string>
+	<string>
+		<id>158</id>
+		<value>Свободна памет</value>
+	</string>
+	<string>
+		<id>159</id>
+		<value>Няма препратка</value>
+	</string>
+	<string>
+		<id>160</id>
+		<value>Свободни</value>
+	</string>
+	<string>
+		<id>161</id>
+		<value>Недостъпен</value>
+	</string>
+	<string>
+		<id>163</id>
+		<value>Четене</value>
+	</string>
+	<string>
+		<id>164</id>
+		<value>Няма диск</value>
+	</string>
+	<string>
+		<id>165</id>
+		<value>Диск в наличност</value>
+	</string>
+	<string>
+		<id>166</id>
+		<value>Облик:</value>
+	</string>
+	<string>
+		<id>167</id>
+		<value>FTP сървър:</value>
+	</string>
+	<string>
+		<id>168</id>
+		<value>Синхронизиране на времето:</value>
+	</string>
+	<string>
+		<id>169</id>
+		<value>Резолюция:</value>
+	</string>
+	<string>
+		<id>170</id>
+		<value>Албум:</value>
+	</string>
+	<string>
+		<id>171</id>
+		<value>Артист:</value>
+	</string>
+	<string>
+		<id>172</id>
+		<value>Дата на издаване:</value>
+	</string>
+	<string>
+		<id>173</id>
+		<value>Рейтинг:</value>
+	</string>
+	<string>
+		<id>174</id>
+		<value>Жанр:</value>
+	</string>
+	<string>
+		<id>176</id>
+		<value>Стилове:</value>
+	</string>
+	<string>
+		<id>177</id>
+		<value>Преглед:</value>
+	</string>
+	<string>
+		<id>178</id>
+		<value>Песни:</value>
+	</string>
+	<string>
+		<id>179</id>
+		<value>Песен</value>
+	</string>
+	<string>
+		<id>180</id>
+		<value>Продължителност</value>
+	</string>
+	<string>
+		<id>181</id>
+		<value>Избери албум</value>
+	</string>
+	<string>
+		<id>182</id>
+		<value>Песни</value>
+	</string>
+	<string>
+		<id>183</id>
+		<value>Преглед</value>
+	</string>
+	<string>
+		<id>184</id>
+		<value>Опресни</value>
+	</string>
+	<string>
+		<id>185</id>
+		<value>Търсене на аблум</value>
+	</string>
+	<string>
+		<id>187</id>
+		<value>Няма намерени албум(и)</value>
+	</string>
+	<string>
+		<id>188</id>
+		<value>Избери всичко</value>
+	</string>
+	<string>
+		<id>189</id>
+		<value>Търсене на медийна информация</value>
+	</string>
+	<string>
+		<id>190</id>
+		<value>Запази</value>
+	</string>
+	<string>
+		<id>191</id>
+		<value>Ръзбъркан ред</value>
+	</string>
+	<string>
+		<id>192</id>
+		<value>Изчисти</value>
+	</string>
+	<string>
+		<id>193</id>
+		<value>Сканиране</value>
+	</string>
+	<string>
+		<id>194</id>
+		<value>Търсене...</value>
+	</string>
+	<string>
+		<id>195</id>
+		<value>Няма информация от IMDB</value>
+	</string>
+	<string>
+		<id>196</id>
+		<value>Избери филм:</value>
+	</string>
+	<string>
+		<id>197</id>
+		<value>Запитване за информация от IMDB</value>
+	</string>
+	<string>
+		<id>198</id>
+		<value>Детайли за сваляне на филма</value>
+	</string>
+	<string>
+		<id>199</id>
+		<value>Режисьор:</value>
+	</string>
+	<string>
+		<id>200</id>
+		<value>Автор:</value>
+	</string>
+	<string>
+		<id>201</id>
+		<value>Година:</value>
+	</string>
+	<string>
+		<id>203</id>
+		<value>Сюжет обобщено</value>
+	</string>
+	<string>
+		<id>204</id>
+		<value>Рейтинг:</value>
+	</string>
+	<string>
+		<id>205</id>
+		<value>Гласове:</value>
+	</string>
+	<string>
+		<id>206</id>
+		<value>Актьорски състав</value>
+	</string>
+	<string>
+		<id>207</id>
+		<value>Сюжет</value>
+	</string>
+	<string>
+		<id>208</id>
+		<value>Пусни</value>
+	</string>
+	<string>
+		<id>209</id>
+		<value>Следващ</value>
+	</string>
+	<string>
+		<id>210</id>
+		<value>Предишен</value>
+	</string>
+	<string>
+		<id>211</id>
+		<value>Търсене за програми</value>
+	</string>
+	<string>
+		<id>212</id>
+		<value>програмата намерена</value>
+	</string>
+	<string>
+		<id>214</id>
+		<value>Калибровка на екрана</value>
+	</string>
+	<string>
+		<id>217</id>
+		<value>Разтегли</value>
+	</string>
+	<string>
+		<id>219</id>
+		<value>Моля, поставете диск</value>
+	</string>
+	<string>
+		<id>221</id>
+		<value>Не е свързан към мрежата</value>
+	</string>
+	<string>
+		<id>222</id>
+		<value>Прекъсни</value>
+	</string>
+	<string>
+		<id>223</id>
+		<value>Автоматино превключване в широкоекранен режим</value>
+	</string>
+	<string>
+		<id>224</id>
+		<value>Скорост</value>
+	</string>
+	<string>
+		<id>226</id>
+		<value>Разреши PAL60</value>
+	</string>
+	<string>
+		<id>227</id>
+		<value>Разреши CDDB</value>
+	</string>
+	<string>
+		<id>228</id>
+		<value>Разбъркай плейлистата при стартиране</value>
+	</string>
+	<string>
+		<id>230</id>
+		<value>Филтри</value>
+	</string>
+	<string>
+		<id>231</id>
+		<value>Няма</value>
+	</string>
+	<string>
+		<id>241</id>
+		<value>Автоматично стартиране на VCD/SVCD</value>
+	</string>
+	<string>
+		<id>242</id>
+		<value>Автоматично стартиране на Audio-CD</value>
+	</string>
+	<string>
+		<id>243</id>
+		<value>Автоматично стартиране на XBOX игри</value>
+	</string>
+	<string>
+		<id>244</id>
+		<value>Автоматично стартиране на Видео</value>
+	</string>
+	<string>
+		<id>245</id>
+		<value>Автоматично стартиране на Музика</value>
+	</string>
+	<string>
+		<id>246</id>
+		<value>Автоматично стартиране на Снимки</value>
+	</string>
+	<string>
+		<id>247</id>
+		<value>Скриптове</value>
+	</string>
+	<string>
+		<id>248</id>
+		<value>Език</value>
+	</string>
+	<string>
+		<id>249</id>
+		<value>Музика</value>
+	</string>
+	<string>
+		<id>250</id>
+		<value>Визуализации</value>
+	</string>
+	<string>
+		<id>252</id>
+		<value>Изход към всички говорители</value>
+	</string>
+	<string>
+		<id>253</id>
+		<value>Брой канали</value>
+	</string>
+	<string>
+		<id>257</id>
+		<value>Грешка</value>
+	</string>
+	<string>
+		<id>258</id>
+		<value>Разреши ID3 тагове</value>
+	</string>
+	<string>
+		<id>259</id>
+		<value>Отварям</value>
+	</string>
+	<string>
+		<id>261</id>
+		<value>В очакване за стартиране...</value>
+	</string>
+	<string>
+		<id>263</id>
+		<value>HTTP сървър:</value>
+	</string>
+	<string>
+		<id>264</id>
+		<value>Запис</value>
+	</string>
+	<string>
+		<id>265</id>
+		<value>Спри Запис</value>
+	</string>
+	<string>
+		<id>266</id>
+		<value>Подреди по: Песен</value>
+	</string>
+	<string>
+		<id>267</id>
+		<value>Подреди по: Време</value>
+	</string>
+	<string>
+		<id>268</id>
+		<value>Подреди по: Заглавие</value>
+	</string>
+	<string>
+		<id>269</id>
+		<value>Подреди по: Изпълнител</value>
+	</string>
+	<string>
+		<id>270</id>
+		<value>Подреди по: Албум</value>
+	</string>
+	<string>
+		<id>271</id>
+		<value>Топ 100</value>
+	</string>
+	<string>
+		<id>274</id>
+		<value>Позиция на субтитрите</value>
+	</string>
+	<string>
+		<id>279</id>
+		<value>Не мога да заредя настройките</value>
+	</string>
+	<string>
+		<id>281</id>
+		<value>Моля, проверете .xml файловете</value>
+	</string>
+	<string>
+		<id>282</id>
+		<value>намерени %i</value>
+	</string>
+	<string>
+		<id>283</id>
+		<value>Резултати от търсенето</value>
+	</string>
+	<string>
+		<id>284</id>
+		<value>Няма намерени съвпадения</value>
+	</string>
+	<string>
+		<id>287</id>
+		<value>Субтитри</value>
+	</string>
+	<string>
+		<id>288</id>
+		<value>Големина</value>
+	</string>
+	<string>
+		<id>289</id>
+		<value>Размер</value>
+	</string>
+	<string>
+		<id>291</id>
+		<value>Видео</value>
+	</string>
+	<string>
+		<id>292</id>
+		<value>Звук</value>
+	</string>
+	<string>
+		<id>293</id>
+		<value>Субтитри</value>
+	</string>
+	<string>
+		<id>294</id>
+		<value>Създай отметка</value>
+	</string>
+	<string>
+		<id>295</id>
+		<value>Виж отметки</value>
+	</string>
+	<string>
+		<id>296</id>
+		<value>Изчисти отметки</value>
+	</string>
+	<string>
+		<id>299</id>
+		<value>Общо време:</value>
+	</string>
+	<string>
+		<id>300</id>
+		<value>1. Език</value>
+	</string>
+	<string>
+		<id>301</id>
+		<value>2. Звук</value>
+	</string>
+	<string>
+		<id>302</id>
+		<value>3. Поток</value>
+	</string>
+	<string>
+		<id>303</id>
+		<value>Закъснение</value>
+	</string>
+	<string>
+		<id>304</id>
+		<value>Език</value>
+	</string>
+	<string>
+		<id>305</id>
+		<value>Разрешено</value>
+	</string>
+	<string>
+		<id>312</id>
+		<value>(0=автоматично)</value>
+	</string>
+	<string>
+		<id>314</id>
+		<value>Подготовка....</value>
+	</string>
+	<string>
+		<id>315</id>
+		<value>Грешка в базата данни</value>
+	</string>
+	<string>
+		<id>316</id>
+		<value>Търся песни...</value>
+	</string>
+	<string>
+		<id>318</id>
+		<value>Отбелязване на изтритите песни</value>
+	</string>
+	<string>
+		<id>320</id>
+		<value>Търся артисти...</value>
+	</string>
+	<string>
+		<id>322</id>
+		<value>Търся жанрове...</value>
+	</string>
+	<string>
+		<id>324</id>
+		<value>Търся път...</value>
+	</string>
+	<string>
+		<id>326</id>
+		<value>Търся албуми...</value>
+	</string>
+	<string>
+		<id>328</id>
+		<value>Записване на промените....</value>
+	</string>
+	<string>
+		<id>329</id>
+		<value>Грешка при записване на промените</value>
+	</string>
+	<string>
+		<id>330</id>
+		<value>Това може да отнеме известно време....</value>
+	</string>
+	<string>
+		<id>331</id>
+		<value>Компресиране на базата данни...</value>
+	</string>
+	<string>
+		<id>332</id>
+		<value>Грешка при компресиране на базата данни...</value>
+	</string>
+	<string>
+		<id>335</id>
+		<value>Начало</value>
+	</string>
+	<string>
+		<id>341</id>
+		<value>Пусни DVD</value>
+	</string>
+	<string>
+		<id>342</id>
+		<value>Филми</value>
+	</string>
+	<string>
+		<id>344</id>
+		<value>Актьори</value>
+	</string>
+	<string>
+		<id>345</id>
+		<value>Година</value>
+	</string>
+	<string>
+		<id>350</id>
+		<value>Програми</value>
+	</string>
+	<string>
+		<id>351</id>
+		<value>Изключено</value>
+	</string>
+	<string>
+		<id>353</id>
+		<value>Черно</value>
+	</string>
+	<string>
+		<id>355</id>
+		<value>Време за изчакване на Screensaver</value>
+	</string>
+	<string>
+		<id>356</id>
+		<value>Тип Screensaver</value>
+	</string>
+	<string>
+		<id>357</id>
+		<value>Автоматично изключване</value>
+	</string>
+	<string>
+		<id>358</id>
+		<value>Всички албуми</value>
+	</string>
+	<string>
+		<id>359</id>
+		<value>Последни албуми</value>
+	</string>
+	<string>
+		<id>363</id>
+		<value>Подреди по: Файл</value>
+	</string>
+	<string>
+		<id>365</id>
+		<value>Подреди по: Име</value>
+	</string>
+	<string>
+		<id>366</id>
+		<value>Подреди по: Година</value>
+	</string>
+	<string>
+		<id>367</id>
+		<value>Подреди по: Рейтинг</value>
+	</string>
+	<string>
+		<id>369</id>
+		<value>Заглавие</value>
+	</string>
+	<string>
+		<id>373</id>
+		<value>Слънчево</value>
+	</string>
+	<string>
+		<id>374</id>
+		<value>Облачно</value>
+	</string>
+	<string>
+		<id>375</id>
+		<value>Сняг</value>
+	</string>
+	<string>
+		<id>376</id>
+		<value>Дъжд</value>
+	</string>
+	<string>
+		<id>383</id>
+		<value>Вятър</value>
+	</string>
+	<string>
+		<id>388</id>
+		<value>и</value>
+	</string>
+	<string>
+		<id>389</id>
+		<value>Мъгла</value>
+	</string>
+	<string>
+		<id>396</id>
+		<value>Изберете местоположение</value>
+	</string>
+	<string>
+		<id>397</id>
+		<value>Време за опресняване</value>
+	</string>
+	<string>
+		<id>398</id>
+		<value>Скала на температурата</value>
+	</string>
+	<string>
+		<id>399</id>
+		<value>Скала за скорост</value>
+	</string>
+	<string>
+		<id>400</id>
+		<value>Времето</value>
+	</string>
+	<string>
+		<id>401</id>
+		<value>Температура</value>
+	</string>
+	<string>
+		<id>403</id>
+		<value>UV Индекс</value>
+	</string>
+	<string>
+		<id>404</id>
+		<value>Вятър</value>
+	</string>
+	<string>
+		<id>406</id>
+		<value>Влажност</value>
+	</string>
+	<string>
+		<id>407</id>
+		<value>От</value>
+	</string>
+	<string>
+		<id>408</id>
+		<value>на</value>
+	</string>
+	<string>
+		<id>410</id>
+		<value>Свърване с Weather.com</value>
+	</string>
+	<string>
+		<id>411</id>
+		<value>Получавам прогнозата за:</value>
+	</string>
+	<string>
+		<id>412</id>
+		<value>Не мога да взема прогнозата</value>
+	</string>
+	<string>
+		<id>414</id>
+		<value>Няма рецензия за този албум</value>
+	</string>
+	<string>
+		<id>417</id>
+		<value>Виж: Големи икони</value>
+	</string>
+	<string>
+		<id>418</id>
+		<value>Видео/Жанрове</value>
+	</string>
+	<string>
+		<id>419</id>
+		<value>Видео/Актьори</value>
+	</string>
+	<string>
+		<id>420</id>
+		<value>Видео/Години</value>
+	</string>
+	<string>
+		<id>421</id>
+		<value>Видео/Заглавие</value>
+	</string>
+	<string>
+		<id>424</id>
+		<value>Избери</value>
+	</string>
+	<string>
+		<id>425</id>
+		<value>Няма намерени данни за албума.</value>
+	</string>
+	<string>
+		<id>427</id>
+		<value>Диск:</value>
+	</string>
+	<string>
+		<id>428</id>
+		<value>Поставете коректно CD/DVD</value>
+	</string>
+	<string>
+		<id>429</id>
+		<value>Моля, поставете това CD/DVD</value>
+	</string>
+	<string>
+		<id>430</id>
+		<value>Подреди по: DVD#</value>
+	</string>
+	<string>
+		<id>432</id>
+		<value>Изтрий филма от базата данни</value>
+	</string>
+	<string>
+		<id>433</id>
+		<value>Сигурен ли, че искате да премахнете</value>
+	</string>
+	<string>
+		<id>434</id>
+		<value>филмът?</value>
+	</string>
+	<string>
+		<id>435</id>
+		<value>Песен</value>
+	</string>
+	<string>
+		<id>436</id>
+		<value>Година:</value>
+	</string>
+	<string>
+		<id>437</id>
+		<value>Продължителност:</value>
+	</string>
+	<string>
+		<id>443</id>
+		<value>Интернет</value>
+	</string>
+	<string>
+		<id>444</id>
+		<value>видео</value>
+	</string>
+	<string>
+		<id>445</id>
+		<value>аудио</value>
+	</string>
+	<string>
+		<id>446</id>
+		<value>DVD</value>
+	</string>
+	<string>
+		<id>447</id>
+		<value>Автоматично стартиране</value>
+	</string>
+	<string>
+		<id>449</id>
+		<value>Разрешено</value>
+	</string>
+	<string>
+		<id>450</id>
+		<value>Колони</value>
+	</string>
+	<string>
+		<id>451</id>
+		<value>Адрес (1):</value>
+	</string>
+	<string>
+		<id>452</id>
+		<value>Адрес (2):</value>
+	</string>
+	<string>
+		<id>453</id>
+		<value>Адрес (3):</value>
+	</string>
+	<string>
+		<id>454</id>
+		<value>Адрес (4):</value>
+	</string>
+	<string>
+		<id>455</id>
+		<value>Редове</value>
+	</string>
+	<string>
+		<id>456</id>
+		<value>Вид:</value>
+	</string>
+	<string>
+		<id>457</id>
+		<value>Смени изглед</value>
+	</string>
+	<string>
+		<id>459</id>
+		<value>Субтитри</value>
+	</string>
+	<string>
+		<id>460</id>
+		<value>Звуков поток</value>
+	</string>
+	<string>
+		<id>461</id>
+		<value>[активно]</value>
+	</string>
+	<string>
+		<id>462</id>
+		<value>Субтитри</value>
+	</string>
+	<string>
+		<id>464</id>
+		<value>Яркост</value>
+	</string>
+	<string>
+		<id>465</id>
+		<value>Контраст</value>
+	</string>
+	<string>
+		<id>466</id>
+		<value>Гама</value>
+	</string>
+	<string>
+		<id>467</id>
+		<value>Тип</value>
+	</string>
+	<string>
+		<id>474</id>
+		<value>Изключено</value>
+	</string>
+	<string>
+		<id>475</id>
+		<value>Само Музика</value>
+	</string>
+	<string>
+		<id>476</id>
+		<value>Музика&amp;Видео</value>
+	</string>
+	<string>
+		<id>477</id>
+		<value>Не мога да заредя плейлиста</value>
+	</string>
+	<string>
+		<id>486</id>
+		<value>Повтори</value>
+	</string>
+	<string>
+		<id>200004</id>
+		<value>Ръчно предоставено tvguide.xml</value>
+	</string>
+	<string>
+		<id>200005</id>
+		<value>Моля, изберете типа дистанционно, което използвате:</value>
+	</string>
+	<string>
+		<id>200006</id>
+		<value>Натисни бутона Продължи за продължение</value>
+	</string>
+	<string>
+		<id>200007</id>
+		<value>Върни&gt;</value>
+	</string>
+	<string>
+		<id>200008</id>
+		<value>Настройки - Дистанционно</value>
+	</string>
+	<string>
+		<id>200009</id>
+		<value>Продължи&gt;</value>
+	</string>
+	<string>
+		<id>200015</id>
+		<value>Натисни бутона Продължи за начало</value>
+	</string>
+	<string>
+		<id>200017</id>
+		<value>Добре дошли в MediaPortal.</value>
+	</string>
+	<string>
+		<id>200018</id>
+		<value>Поздравления. MediaPortal е настроен и готов за използване.</value>
+	</string>
+	<string>
+		<id>200024</id>
+		<value>Настройка TВ</value>
+	</string>
+	<string>
+		<id>200025</id>
+		<value>Език</value>
+	</string>
+	<string>
+		<id>200026</id>
+		<value>Страна</value>
+	</string>
+	<string>
+		<id>200027</id>
+		<value>Настройки - Общи</value>
+	</string>
+	<string>
+		<id>200028</id>
+		<value>Този компютър притежава ли достъп до Интернет?</value>
+	</string>
+	<string>
+		<id>200030</id>
+		<value>Стартирай автоматично Media Portal, когато се стартира компютърът</value>
+	</string>
+	<string>
+		<id>200031</id>
+		<value>Да</value>
+	</string>
+	<string>
+		<id>200032</id>
+		<value>Не</value>
+	</string>
+	<string>
+		<id>4000</id>
+		<value>Уеб Броузер</value>
+	</string>
+	<string>
+		<id>4001</id>
+		<value>Любими</value>
+	</string>
+	<string>
+		<id>4002</id>
+		<value>Не мога да заредя този адрес</value>
+	</string>
+</strings>
