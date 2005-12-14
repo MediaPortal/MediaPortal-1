@@ -141,7 +141,7 @@ namespace MediaPortal.TV.Recording
 
       ScanNextFrequency(0);
       captureCard.Process();
-      if (captureCard.SignalPresent())
+      if (captureCard.SignalPresent() || captureCard.SignalQuality>50)
       {
         ScanChannels();
       }
@@ -155,7 +155,7 @@ namespace MediaPortal.TV.Recording
         UpdateStatus();
         ScanNextFrequency(0);
         captureCard.Process();
-        if (captureCard.SignalPresent())
+        if (captureCard.SignalPresent() || captureCard.SignalQuality > 50)
         {
           ScanChannels();
         }
@@ -211,7 +211,7 @@ namespace MediaPortal.TV.Recording
         UpdateStatus();
         ScanNextFrequency(0);
         captureCard.Process();
-        if (captureCard.SignalPresent())
+        if (captureCard.SignalPresent() || captureCard.SignalQuality > 50)
         {
           ScanChannels();
         }
@@ -220,13 +220,13 @@ namespace MediaPortal.TV.Recording
         {
           ScanNextFrequency(-scanOffset);
           captureCard.Process();
-          if (captureCard.SignalPresent())
+          if (captureCard.SignalPresent() || captureCard.SignalQuality > 50)
           {
             ScanChannels();
           }
           ScanNextFrequency(scanOffset);
           captureCard.Process();
-          if (captureCard.SignalPresent())
+          if (captureCard.SignalPresent() || captureCard.SignalQuality > 50)
           {
             ScanChannels();
           }
