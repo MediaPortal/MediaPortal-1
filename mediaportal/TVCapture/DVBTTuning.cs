@@ -191,11 +191,14 @@ namespace MediaPortal.TV.Recording
       string description = String.Format("frequency:{0:###.##} MHz. Bandwidth:{1} MHz", frequency, tmp[1]);
       callback.OnStatus(description);
     }
+    bool reentrant = false;
     private void timer1_Tick(object sender, System.EventArgs e)
     {
+      if (reentrant) return;
       timer1.Enabled = false;
       try
       {
+        reentrant = true;
         if (currentFrequencyIndex >= frequencies.Count)
         {
           Log.Write("dvbt-scan:finished");
@@ -234,8 +237,11 @@ namespace MediaPortal.TV.Recording
       {
         Log.Write("Exception:{0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
       }
-
-      timer1.Enabled = true;
+      finally
+      {
+        timer1.Enabled = true;
+        reentrant = false;
+      }
     }
 
     void ScanChannels()
@@ -280,10 +286,9 @@ namespace MediaPortal.TV.Recording
 
       Log.WriteFile(Log.LogType.Capture, "dvbt-scan:tune to freq:{0} bandwidth:{1} offset:{2}", chan.Frequency, chan.Bandwidth, offset);
       captureCard.Tune(chan, 0);
-      System.Threading.Thread.Sleep(400);
+      System.Threading.Thread.Sleep(500);
       captureCard.Process();
-      if (captureCard.SignalQuality < 40)
-        System.Threading.Thread.Sleep(400);
+        System.Threading.Thread.Sleep(500);
       captureCard.Process();
       callback.OnSignal(captureCard.SignalQuality, captureCard.SignalStrength);
       captureCard.Process();
