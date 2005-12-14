@@ -454,7 +454,7 @@ namespace MediaPortal.TV.Recording
         if (_currentState != State.Idle)
         {
           TimeSpan ts = DateTime.Now - _timeoutTimer;
-          if (ts.TotalMinutes >= 5)
+          if (ts.TotalMinutes >= 10)
           {
             Log.Write("epg-grab: timeout...");
             _currentState = State.Done;
