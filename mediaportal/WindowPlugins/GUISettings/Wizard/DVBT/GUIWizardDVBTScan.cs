@@ -146,7 +146,7 @@ namespace WindowPlugins.GUISettings.Wizard.DVBT
           ScanNextFrequency(captureCard, 0);
           captureCard.Process();
 
-          if (captureCard.SignalPresent())
+          if (captureCard.SignalPresent() || captureCard.SignalQuality > 50)
           {
             ScanChannels(captureCard);
           }
@@ -156,14 +156,14 @@ namespace WindowPlugins.GUISettings.Wizard.DVBT
             ScanNextFrequency(captureCard, -scanOffset);
             captureCard.Process();
 
-            if (captureCard.SignalPresent())
+            if (captureCard.SignalPresent() || captureCard.SignalQuality > 50)
             {
               ScanChannels(captureCard);
             }
             ScanNextFrequency(captureCard, scanOffset);
             captureCard.Process();
 
-            if (captureCard.SignalPresent())
+            if (captureCard.SignalPresent() || captureCard.SignalQuality > 50)
             {
               ScanChannels(captureCard);
             }
