@@ -45,6 +45,7 @@ namespace MediaPortal.TV.Recording
     int newChannels, updatedChannels;
     int newRadioChannels, updatedRadioChannels;
 
+    bool reentrant = false;
     public DVBTTuning()
     {
     }
@@ -140,8 +141,7 @@ namespace MediaPortal.TV.Recording
       UpdateStatus();
 
       ScanNextFrequency(0);
-      captureCard.Process();
-      if (captureCard.SignalPresent() || captureCard.SignalQuality>50)
+      if (captureCard.SignalPresent())
       {
         ScanChannels();
       }
@@ -154,8 +154,7 @@ namespace MediaPortal.TV.Recording
 
         UpdateStatus();
         ScanNextFrequency(0);
-        captureCard.Process();
-        if (captureCard.SignalPresent() || captureCard.SignalQuality > 50)
+        if (captureCard.SignalPresent() )
         {
           ScanChannels();
         }
@@ -191,11 +190,9 @@ namespace MediaPortal.TV.Recording
       string description = String.Format("frequency:{0:###.##} MHz. Bandwidth:{1} MHz", frequency, tmp[1]);
       callback.OnStatus(description);
     }
-    bool reentrant = false;
     private void timer1_Tick(object sender, System.EventArgs e)
     {
       if (reentrant) return;
-      timer1.Enabled = false;
       try
       {
         reentrant = true;
@@ -210,8 +207,7 @@ namespace MediaPortal.TV.Recording
 
         UpdateStatus();
         ScanNextFrequency(0);
-        captureCard.Process();
-        if (captureCard.SignalPresent() || captureCard.SignalQuality > 50)
+        if (captureCard.SignalPresent())
         {
           ScanChannels();
         }
@@ -219,14 +215,12 @@ namespace MediaPortal.TV.Recording
         if (scanOffset != 0)
         {
           ScanNextFrequency(-scanOffset);
-          captureCard.Process();
-          if (captureCard.SignalPresent() || captureCard.SignalQuality > 50)
+          if (captureCard.SignalPresent() )
           {
             ScanChannels();
           }
           ScanNextFrequency(scanOffset);
-          captureCard.Process();
-          if (captureCard.SignalPresent() || captureCard.SignalQuality > 50)
+          if (captureCard.SignalPresent() )
           {
             ScanChannels();
           }
@@ -235,11 +229,14 @@ namespace MediaPortal.TV.Recording
       }
       catch (Exception ex)
       {
-        Log.Write("Exception:{0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
+        Log.WriteFile(Log.LogType.Log,true,"Exception:{0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
       }
       finally
       {
-        timer1.Enabled = true;
+        if (currentFrequencyIndex >= frequencies.Count)
+        {
+          timer1.Enabled = false;
+        }
         reentrant = false;
       }
     }

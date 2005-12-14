@@ -344,7 +344,7 @@ namespace MediaPortal.TV.Recording
         }
 
         //load card definition from CaptureCardDefinitions.xml
-        if (!_card.LoadDefinitions())										
+        if (!_card.LoadDefinitions())
         {
           Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA: Loading card definitions for card {0} failed", _card.CaptureName);
           return false;
@@ -401,7 +401,7 @@ namespace MediaPortal.TV.Recording
         }
         // Loop through configured filters for this card, bind them and add them to the graph
         // Note that while adding filters to a graph, some connections may already be created...
-        Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: Adding configured filters...");
+        Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA: Adding configured filters...");
         foreach (string catName in _card.TvFilterDefinitions.Keys)
         {
           FilterDefinition dsFilter = _card.TvFilterDefinitions[catName] as FilterDefinition;
@@ -434,7 +434,7 @@ namespace MediaPortal.TV.Recording
           if (dsFilter.Category == "capture") _filterCaptureDevice = dsFilter.DSFilter;
         }//foreach (string catName in _card.TvFilterDefinitions.Keys)
 
-        Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: Adding configured filters...DONE");
+        Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA: Adding configured filters...DONE");
 
         //no network provider specified? then we cannot build the graph
         if (_filterNetworkProvider == null)
@@ -503,11 +503,11 @@ namespace MediaPortal.TV.Recording
               if (sourcePin == null)
                 Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA:FAILED   Unable to find sourcePin: <{0}>", strPinName);
               else
-              	Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:   Found sourcePin: <{0}> <{1}>", strPinName, sourcePin.ToString());
+                Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:   Found sourcePin: <{0}> <{1}>", strPinName, sourcePin.ToString());
             }
           }
           else
-          	Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:   Found sourcePin: <{0}> ", ((ConnectionDefinition)_card.TvConnectionDefinitions[i]).SourcePinName);
+            Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:   Found sourcePin: <{0}> ", ((ConnectionDefinition)_card.TvConnectionDefinitions[i]).SourcePinName);
 
           //find the pin of the sink filter
           sinkPin = DirectShowUtil.FindPin(sinkFilter.DSFilter, PinDirection.Input, ((ConnectionDefinition)_card.TvConnectionDefinitions[i]).SinkPinName);
@@ -520,11 +520,11 @@ namespace MediaPortal.TV.Recording
               if (sinkPin == null)
                 Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA:   Unable to find sinkPin: <{0}>", strPinName);
               else
-              	Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:   Found sinkPin: <{0}> <{1}>", strPinName, sinkPin.ToString());
+                Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:   Found sinkPin: <{0}> <{1}>", strPinName, sinkPin.ToString());
             }
           }
           else
-          	Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:   Found sinkPin: <{0}> ", ((ConnectionDefinition)_card.TvConnectionDefinitions[i]).SinkPinName);
+            Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:   Found sinkPin: <{0}> ", ((ConnectionDefinition)_card.TvConnectionDefinitions[i]).SinkPinName);
 
           //if we have both pins
           if (sourcePin != null && sinkPin != null)
@@ -535,7 +535,7 @@ namespace MediaPortal.TV.Recording
             if (hr != 0)
               hr = _graphBuilder.Connect(sourcePin, sinkPin);
             if (hr == 0)
-              Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:   Pins connected...");
+              Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:   Pins connected...");
 
             // Give warning and release pin...
             if (conPin != null)
@@ -1043,6 +1043,7 @@ namespace MediaPortal.TV.Recording
         {
           Log.Write("DVBGraphBda:Failed to get tuner statistics");
         }
+        Log.Write("DVBGraphBda:got {0} tuner statistics", _tunerStatistics.Count);
 
 
         //_streamDemuxer.OnAudioFormatChanged+=new MediaPortal.TV.Recording.DVBDemuxer.OnAudioChanged(m_streamDemuxer_OnAudioFormatChanged);
@@ -1108,7 +1109,7 @@ namespace MediaPortal.TV.Recording
         if (_streamDemuxer != null)
         {
           _streamDemuxer.GrabTeletext(false);
-          _streamDemuxer.SetChannelData(0, 0, 0, 0,0, "", 0, 0);
+          _streamDemuxer.SetChannelData(0, 0, 0, 0, 0, "", 0, 0);
         }
 
         if (_tunerStatistics != null)
@@ -1563,13 +1564,13 @@ namespace MediaPortal.TV.Recording
     public bool StartViewing(TVChannel channel)
     {
       if (_graphState != State.Created) return false;
-      Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:StartViewing() {0}",channel.Name);
+      Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:StartViewing() {0}", channel.Name);
 
       _isOverlayVisible = true;
       // add VMR9 renderer to graph
-      if (_vmr9 ==null)
+      if (_vmr9 == null)
         _vmr9 = new VMR9Util("mytv");
-      if (_vmr7==null)
+      if (_vmr7 == null)
         _vmr7 = new VMR7Util();
 
       if (_vmr9 != null)
@@ -1773,7 +1774,7 @@ namespace MediaPortal.TV.Recording
         _vmr7.RemoveVMR7();
         _vmr7 = null;
       }
-      Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:StartTimeShifting() {0}",channel.Name);
+      Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:StartTimeShifting() {0}", channel.Name);
 
       _isUsingAC3 = false;
       if (channel != null)
@@ -1781,7 +1782,7 @@ namespace MediaPortal.TV.Recording
         TuneChannel(channel);
         _isUsingAC3 = TVDatabase.DoesChannelHaveAC3(channel, Network() == NetworkType.DVBC, Network() == NetworkType.DVBT, Network() == NetworkType.DVBS, Network() == NetworkType.ATSC);
         if (_isUsingAC3)
-          Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA: channel {0} uses AC3",channel.Name);
+          Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA: channel {0} uses AC3", channel.Name);
         else
           Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA: channel {0} uses MP2 audio", channel.Name);
       }
@@ -2093,7 +2094,16 @@ namespace MediaPortal.TV.Recording
     void UpdateSignalPresent()
     {
       //if we dont have an IBDA_SignalStatistics interface then return
-      if (_tunerStatistics == null) return;
+      if (_tunerStatistics == null)
+      {
+        Log.WriteFile(Log.LogType.Log,true, "DVBGraphBDA:UpdateSignalPresent() no tuner stat interfaces");
+        return;
+      }
+      if (_tunerStatistics.Count == 0)
+      {
+        Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:UpdateSignalPresent() no tuner stat interfaces");
+        return;
+      }
       bool isTunerLocked = false;
       bool isSignalPresent = false;
       long signalQuality = 0;
@@ -2103,17 +2113,20 @@ namespace MediaPortal.TV.Recording
         IBDA_SignalStatistics stat = (IBDA_SignalStatistics)_tunerStatistics[i];
         bool isLocked = false;
         bool isPresent = false;
+        uint quality = 0;
         try
         {
           //is the tuner locked?
           stat.get_SignalLocked(ref isLocked);
           isTunerLocked |= isLocked;
         }
-        catch (COMException)
+        catch (COMException ex)
         {
+          Log.WriteFile(Log.LogType.Log,true, "DVBGraphBDA:UpdateSignalPresent() locked :{0}", ex.Message);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+          Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:UpdateSignalPresent() locked :{0}", ex.Message);
         }
         try
         {
@@ -2121,33 +2134,38 @@ namespace MediaPortal.TV.Recording
           stat.get_SignalPresent(ref isPresent);
           isSignalPresent |= isPresent;
         }
-        catch (COMException)
+        catch (COMException ex)
         {
+          Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:UpdateSignalPresent() present :{0}", ex.Message);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+          Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:UpdateSignalPresent() present :{0}", ex.Message);
         }
         try
         {
           //is a signal quality ok?
-          uint quality = 0;
           stat.get_SignalQuality(ref quality); //1-100
           if (quality > 0) signalQuality += quality;
         }
-        catch (COMException)
+        catch (COMException ex)
         {
+          Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:UpdateSignalPresent() quality :{0}", ex.Message);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+          Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:UpdateSignalPresent() quality :{0}", ex.Message);
         }
+
+        if (GUIGraphicsContext.DX9Device == null)
+          Log.WriteFile(Log.LogType.Capture, "  #{0}  locked:{1} present:{2} quality:{3}", i, isLocked, isPresent, quality);
       }
 
       //some devices give different results about signal status
       //on some signalpresent is only true when tuned to a channel
       //on others  signalpresent is true when tuned to a transponder
       //so we just look if any variables returns true
-     // 	Log.WriteFile(Log.LogType.Capture,"  locked:{0} present:{1} quality:{2}",isTunerLocked ,isSignalPresent ,signalQuality); 
-
+      
       if (Network() == NetworkType.ATSC)
       {
         if (isSignalPresent)
@@ -2156,11 +2174,17 @@ namespace MediaPortal.TV.Recording
           _signalPresent = false;
         return;
       }
+      if (GUIGraphicsContext.DX9Device == null)
+        Log.WriteFile(Log.LogType.Capture, "  locked:{0} present:{1} quality:{2}", isTunerLocked, isSignalPresent, signalQuality);
       if (isTunerLocked || isSignalPresent || (signalQuality > 0))
       {
         _signalPresent = true;
+        if (GUIGraphicsContext.DX9Device == null)
+          Log.WriteFile(Log.LogType.Log, "DVBGraphBDA:UpdateSignalPresent() signal=present");
         return;
       }
+      if (GUIGraphicsContext.DX9Device==null)
+        Log.WriteFile(Log.LogType.Log, "DVBGraphBDA:UpdateSignalPresent() signal=not present");
       _signalPresent = false;
     }//public bool SignalPresent()
 
@@ -2170,59 +2194,74 @@ namespace MediaPortal.TV.Recording
     }
     void UpdateSignalQuality()
     {
-      if (_tunerStatistics == null) return;
-      if (_tunerStatistics.Count == 0) return;
-      int signalQuality = -1;
-      uint quality = 0;
-      for (int i = 0; i < _tunerStatistics.Count; i++)
+      try
       {
-        IBDA_SignalStatistics stat = (IBDA_SignalStatistics)_tunerStatistics[i];
+        if (_tunerStatistics == null) return;
+        if (_tunerStatistics.Count == 0) return;
+        int signalQuality = -1;
+        uint quality = 0;
+        for (int i = 0; i < _tunerStatistics.Count; i++)
+        {
+          IBDA_SignalStatistics stat = (IBDA_SignalStatistics)_tunerStatistics[i];
 
-        try
-        {
-          quality = 0;
-          stat.get_SignalQuality(ref quality); //1-100
-          if (quality > 0 && quality > signalQuality) signalQuality = (int)quality;
+          try
+          {
+            quality = 0;
+            stat.get_SignalQuality(ref quality); //1-100
+            if (quality > 0 && quality > signalQuality) signalQuality = (int)quality;
+          }
+          catch (COMException)
+          {
+          }
+          catch (Exception)
+          {
+          }
         }
-        catch (COMException)
-        {
-        }
-        catch (Exception)
-        {
-        }
+        _signalQuality = signalQuality;
       }
-      _signalQuality = signalQuality;
+      catch (Exception ex)
+      {
+        Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:UpdateSignalQuality() {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
+      }
     }
 
     public int SignalStrength()
     {
       return _signalLevel;
     }
-    
+
     void UpdateSignalStrength()
     {
-      if (_tunerStatistics == null) return;
-      if (_tunerStatistics.Count == 0) return;
-      int signalStrength = -1;
-      uint strength = 0;
-
-      for (int i = 0; i < _tunerStatistics.Count; i++)
+      try
       {
-        IBDA_SignalStatistics stat = (IBDA_SignalStatistics)_tunerStatistics[i];
-        try
+        if (_tunerStatistics == null) return;
+        if (_tunerStatistics.Count == 0) return;
+        int signalStrength = -1;
+        uint strength = 0;
+
+        for (int i = 0; i < _tunerStatistics.Count; i++)
         {
-          strength = 0;
-          stat.get_SignalStrength(ref strength); //1-100
-          if (strength > 0 && strength > signalStrength) signalStrength = (int)strength;
+          IBDA_SignalStatistics stat = (IBDA_SignalStatistics)_tunerStatistics[i];
+          try
+          {
+            strength = 0;
+            stat.get_SignalStrength(ref strength); //1-100
+            if (strength > 0 && strength > signalStrength) signalStrength = (int)strength;
+          }
+          catch (COMException)
+          {
+          }
+          catch (Exception)
+          {
+          }
         }
-        catch (COMException)
-        {
-        }
-        catch (Exception)
-        {
-        }
+        _signalLevel = signalStrength;
       }
-      _signalLevel = signalStrength;
+      catch (Exception ex)
+      {
+        Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:UpdateSignalStrength() {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
+      }
+
     }
 
 
@@ -3590,7 +3629,7 @@ namespace MediaPortal.TV.Recording
       UpdateSignalStrength();
       UpdateSignalQuality();
       UpdateSignalPresent();
-      if(_graphState == State.Created) return;
+      if (_graphState == State.Created) return;
 
       if (_streamDemuxer != null)
         _streamDemuxer.Process();
@@ -3686,14 +3725,14 @@ namespace MediaPortal.TV.Recording
       {
         if (_graphPaused && !_streamDemuxer.IsScrambled)
         {
-            _graphPaused = false;
-            if (m_IStreamBufferSink != null)
-            {
-              long refTime = 0;
-              m_IStreamBufferSink.SetAvailableFilter(ref refTime);
-              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SEEK_POSITION, 0, 0, 0, 0, 0, null);
-              GUIGraphicsContext.SendMessage(msg);
-            }
+          _graphPaused = false;
+          if (m_IStreamBufferSink != null)
+          {
+            long refTime = 0;
+            m_IStreamBufferSink.SetAvailableFilter(ref refTime);
+            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SEEK_POSITION, 0, 0, 0, 0, 0, null);
+            GUIGraphicsContext.SendMessage(msg);
+          }
         }
 
         if (_streamDemuxer.IsScrambled)
@@ -3763,7 +3802,7 @@ namespace MediaPortal.TV.Recording
         string fname = Recorder.GetTimeShiftFileNameByCardId(_cardId);
         if (g_Player.Playing && g_Player.CurrentFile == fname)
         {
-            _graphPaused = true;
+          _graphPaused = true;
         }
 #endif
         if (_vmr9 != null) _vmr9.Enable(false);
@@ -4033,7 +4072,7 @@ namespace MediaPortal.TV.Recording
         _analyzerInterface.ResetParser();
         SetupMTSDemuxerPin();
         Log.WriteFile(Log.LogType.Capture, false, "DVBGraphBDA:set mpeg2demuxer video:0x{0:x} audio:0x{1:X} ac3:0x{2:X}",
-                        _currentTuningObject.VideoPid,_currentTuningObject.AudioPid,_currentTuningObject.AC3Pid);
+                        _currentTuningObject.VideoPid, _currentTuningObject.AudioPid, _currentTuningObject.AC3Pid);
         SetupDemuxer(_pinDemuxerVideo, _currentTuningObject.VideoPid, _pinDemuxerAudio, _currentTuningObject.AudioPid, _pinAC3Out, _currentTuningObject.AC3Pid);
 
         if (_streamDemuxer != null)
@@ -5355,7 +5394,7 @@ namespace MediaPortal.TV.Recording
     }
     public bool IsEpgGrabbing()
     {
-      return (_graphState == State.Epg );
+      return (_graphState == State.Epg);
     }
 
     public void GrabEpg(TVChannel channel)
