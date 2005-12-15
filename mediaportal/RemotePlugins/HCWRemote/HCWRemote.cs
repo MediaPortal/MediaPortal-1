@@ -29,6 +29,7 @@ using System.Windows.Forms;
 using Microsoft.Win32;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
+using irremote;
 
 namespace MediaPortal
 {
@@ -44,10 +45,11 @@ namespace MediaPortal
     bool logVerbose;                // Verbose logging
     int repeatDelay;                // Repeat delay
     bool restartIRApp     = false;  // Restart Haupp. IR-app. after MP quit
-    IntPtr handlerIR;               // Window handler
+    //IntPtr handlerIR;               // Window handler
     DateTime lastTime;              // Timestamp of last execution
     int lastCommand;                // Last executed command
     HCWHandler hcwHandler;
+    NetHelper.Connection connection = new NetHelper.Connection();
 
     const int IR_NOKEY               = 0x1FFF;  // No key received
     const int HCWPVR2                = 0x001E;  // 43-Button Remote
@@ -63,74 +65,6 @@ namespace MediaPortal
       
     const int PBT_APMRESUMEAUTOMATIC = 0x0012;
     const int PBT_APMRESUMECRITICAL  = 0x0006;
-
-    #region DLL-Imports
-
-    /// <summary>
-    /// The SetDllDirectory function adds a directory to the search path used to locate DLLs for the application.
-    /// http://msdn.microsoft.com/library/en-us/dllproc/base/setdlldirectory.asp
-    /// </summary>
-    /// <param name="PathName">Pointer to a null-terminated string that specifies the directory to be added to the search path.</param>
-    /// <returns></returns>
-    [DllImport("kernel32.dll")]
-    static extern bool SetDllDirectory(
-      string PathName);
-
-    /// <summary>
-    /// The GetLongPathName function converts the specified path to its long form.
-    /// If no long path is found, this function simply returns the specified name.
-    /// http://msdn.microsoft.com/library/en-us/fileio/fs/getlongpathname.asp
-    /// </summary>
-    /// <param name="ShortPath">Pointer to a null-terminated path to be converted.</param>
-    /// <param name="LongPath">Pointer to the buffer to receive the long path.</param>
-    /// <param name="Buffer">Size of the buffer.</param>
-    /// <returns></returns>
-    [DllImport("kernel32.dll", SetLastError=true, CharSet=CharSet.Auto)]
-    static extern uint GetLongPathName(
-      string ShortPath,
-      [Out] StringBuilder LongPath,
-      uint Buffer);
-
-    /// <summary>
-    /// Registers window handle with Hauppauge IR driver
-    /// </summary>
-    /// <param name="WindowHandle"></param>
-    /// <param name="Msg"></param>
-    /// <param name="Verbose"></param>
-    /// <param name="IRPort"></param>
-    /// <returns></returns>
-    [DllImport("irremote.dll")]
-    static extern bool IR_Open(
-      IntPtr WindowHandle,
-      uint Msg,
-      bool Verbose,
-      uint IRPort);
-
-    /// <summary>
-    /// Gets the received key code (new version, works for PVR-150 as well)
-    /// </summary>
-    /// <param name="RepeatCount"></param>
-    /// <param name="RemoteCode"></param>
-    /// <param name="KeyCode"></param>
-    /// <returns></returns>
-    [DllImport("irremote.dll")]
-    static extern bool IR_GetSystemKeyCode(
-      ref IntPtr RepeatCount,
-      ref IntPtr RemoteCode,
-      ref IntPtr KeyCode);
-
-    /// <summary>
-    /// Unregisters window handle from Hauppauge IR driver
-    /// </summary>
-    /// <param name="WindowHandle"></param>
-    /// <param name="Msg"></param>
-    /// <returns></returns>
-    [DllImport("irremote.dll")]
-    static extern bool IR_Close(
-      IntPtr WindowHandle,
-      uint Msg);
-
-    #endregion
 
     /// <summary>
     /// HCW control enabled
@@ -158,6 +92,8 @@ namespace MediaPortal
 
       if (controlEnabled)
       {
+        Process.Start(System.Windows.Forms.Application.StartupPath + @"\HCWHelper.exe");
+
         if (allowExternal)
         {
           Utils.OnStartExternal  += new Utils.UtilEventHandler(OnStartExternal);
@@ -165,15 +101,15 @@ namespace MediaPortal
         }
         if (logVerbose) Log.Write("HCW: Repeat-delay: {0}", repeatDelay);
 
-        try
-        {
-          if (!SetDllDirectory(GetDllPath()))
-            Log.Write("HCW: Set DLL path failed!");
-        }
-        catch (Exception e)
-        {
-          if (logVerbose) Log.Write("HCW Exception: SetDllDirectory: " + e.Message);
-        }
+        //try
+        //{
+        //  if (!irremote.irremote.IRSetDllDirectory(GetDllPath()))
+        //    Log.Write("HCW: Set DLL path failed!");
+        //}
+        //catch (Exception e)
+        //{
+        //  if (logVerbose) Log.Write("HCW Exception: SetDllDirectory: " + e.Message);
+        //}
       }
       try
       {
@@ -202,25 +138,31 @@ namespace MediaPortal
 
       try
       {
-        if (Process.GetProcessesByName("Ir").Length != 0)
-        {
-          int i = 0;
-          while ((Process.GetProcessesByName("Ir").Length != 0) && (i < 15))
-          {
-            i++;
-            if (logVerbose) Log.Write("HCW: Terminating external control: attempt #{0}", i);
-            if (Process.GetProcessesByName("Ir").Length != 0)
-            {
-              Process.Start(GetHCWPath() + "Ir.exe", "/QUIT");
-              Thread.Sleep(200);
-            }
-          }
-          if (Process.GetProcessesByName("Ir").Length != 0)
-          {
-            Log.Write("HCW: External control could not be terminated!");
-          }
-        }
-        StartHCW();
+        //if (Process.GetProcessesByName("Ir").Length != 0)
+        //{
+        //  int i = 0;
+        //  while ((Process.GetProcessesByName("Ir").Length != 0) && (i < 15))
+        //  {
+        //    i++;
+        //    if (logVerbose) Log.Write("HCW: Terminating external control: attempt #{0}", i);
+        //    if (Process.GetProcessesByName("Ir").Length != 0)
+        //    {
+        //      Process.Start(GetHCWPath() + "Ir.exe", "/QUIT");
+        //      Thread.Sleep(200);
+        //    }
+        //  }
+        //  if (Process.GetProcessesByName("Ir").Length != 0)
+        //  {
+        //    Log.Write("HCW: External control could not be terminated!");
+        //  }
+        //}
+        
+
+        connection.Connect(2110);
+        connection.ReceiveEvent += new NetHelper.Connection.ReceiveEventHandler(OnReceive);
+        connection.Send("LOG", logVerbose.ToString());
+
+        //StartHCW();
       }
       catch (Exception e)
       {
@@ -242,8 +184,10 @@ namespace MediaPortal
           Utils.OnStartExternal -= new Utils.UtilEventHandler(OnStartExternal);
           Utils.OnStopExternal -= new Utils.UtilEventHandler(OnStopExternal);
         }
-        StopHCW();
       }
+      connection.ReceiveEvent -= new NetHelper.Connection.ReceiveEventHandler(OnReceive);
+      connection.Send("APP", "SHUTDOWN");
+      connection = null;
     }
 
 
@@ -252,19 +196,7 @@ namespace MediaPortal
     /// </summary>
     public void StartHCW()
     {
-      if (!IR_Close(handlerIR, 0))
-      {
-        Log.Write("HCW: Internal control could not be terminated!");
-      }
-      handlerIR = GUIGraphicsContext.ActiveForm;
-      if (!IR_Open(handlerIR, 0, false, 0))
-      {
-        Log.Write("HCW: Enabling internal control failed!");
-      }
-      else
-      {
-        if (logVerbose) Log.Write("HCW: Internal control enabled");
-      }
+      connection.Send("APP", "IR_START");
     }
 
 
@@ -273,25 +205,42 @@ namespace MediaPortal
     /// </summary>
     public void StopHCW()
     {
-      try
+      connection.Send("APP", "IR_STOP");
+
+      if ((Process.GetProcessesByName("Ir").Length == 0) && (restartIRApp))
       {
-        if (!IR_Close(handlerIR, 0))
-        {
-          Log.Write("HCW: Internal control could not be terminated!");
-        }
-        else if ((Process.GetProcessesByName("Ir").Length == 0) && (restartIRApp))
-        {
-          Thread.Sleep(500);
-          if (logVerbose) Log.Write("HCW: Enabling external control");
-          Process.Start(GetHCWPath() + "Ir.exe", "/QUIET");
-        }
-      }
-      catch (Exception e)
-      {
-        if (logVerbose) Log.Write("HCW Exception: StopHCW: " + e.Message);
+        connection.Send("HCWAPP", "START");
       }
     }
 
+
+    void OnReceive(object sender, NetHelper.Connection.EventArguments e)
+    {
+      TimeSpan elapsed = DateTime.Now - e.Timestamp;
+
+      switch (e.Message.Split('|')[0])
+      {
+        case "CMD":
+          {
+            int remoteCommand = Convert.ToInt16(e.Message.Split('|')[1]);
+
+            if (((lastTime.AddMilliseconds(repeatDelay)) <= e.Timestamp) ||
+                      (lastCommand != remoteCommand) ||
+                      (repeatDelay == 0))
+            {
+              lastTime = e.Timestamp;
+              lastCommand = remoteCommand;
+              hcwHandler.MapAction(remoteCommand);
+            }
+          }
+          break;
+        case "LOG":
+          {
+            Log.Write("HCWHelper: {0}", e.message.Split('|')[1]);
+          }
+          break;
+      }
+    }
 
     /// <summary>
     /// External process (e.g. myPrograms) started
@@ -311,7 +260,7 @@ namespace MediaPortal
     /// <param name="waitForExit"></param>
     public void OnStopExternal(Process proc, bool waitForExit)
     {
-      Init();
+      StartHCW();
     }
 
 
@@ -322,132 +271,29 @@ namespace MediaPortal
     public void WndProc(Message msg)
     {
       if (controlEnabled)
-      switch (msg.Msg)
-      {
-        case WM_POWERBROADCAST:
-          if (msg.WParam.ToInt32() == PBT_APMRESUMEAUTOMATIC)
-            StartHCW();
-          break;
+        switch (msg.Msg)
+        {
+          case WM_POWERBROADCAST:
+            if (msg.WParam.ToInt32() == PBT_APMRESUMEAUTOMATIC)
+              StartHCW();
+            break;
 
-        case WM_ACTIVATE:
-          if (allowExternal && !keepControl)
-          {
-            switch ((int)msg.WParam)
+          case WM_ACTIVATE:
+            if (allowExternal && !keepControl)
             {
-              case WA_INACTIVE:
-                DeInit();
-                break;
-              case WA_ACTIVE:
-              case WA_CLICKACTIVE:
-                Init();
-                break;
-            }
-          }
-          break;
-
-//          if (((int)msg.WParam != 0) && allowExternal && !keepControl)
-//          {
-//            appActive = !appActive;
-//            if (appActive)
-//              Init();
-//            else
-//              DeInit();
-//          }
-//          break;
-
-        case WM_TIMER:
-          IntPtr repeatCount = new IntPtr();
-          IntPtr remoteCode  = new IntPtr();
-          IntPtr keyCode     = new IntPtr();
-          try
-          {
-            if (IR_GetSystemKeyCode(ref repeatCount, ref remoteCode, ref keyCode))
-            {
-              if (logVerbose) Log.Write("HCW: Repeat Count: {0}", repeatCount.ToString());
-              if (logVerbose) Log.Write("HCW: Remote Code : {0}", remoteCode.ToString());
-              if (logVerbose) Log.Write("HCW: Key Code    : {0}", keyCode.ToString());
-              int remoteCommand = 0;
-              switch ((int) remoteCode)
+              switch ((int)msg.WParam)
               {
-                case HCWPVR:
-                  remoteCommand = ((int)keyCode) + 1000;
+                case WA_INACTIVE:
+                  StopHCW();
                   break;
-                case HCWPVR2:
-                  remoteCommand = ((int)keyCode) + 2000;
+                case WA_ACTIVE:
+                case WA_CLICKACTIVE:
+                  StartHCW();
                   break;
               }
-              if (((lastTime.AddMilliseconds(repeatDelay)) <= DateTime.Now) ||
-                (lastCommand != remoteCommand) ||
-                (repeatDelay == 0))
-              {
-                lastTime = DateTime.Now;
-                lastCommand = remoteCommand;
-                hcwHandler.MapAction(remoteCommand);
-              }
             }
-          }
-          catch (Exception ex)
-          {
-            if (logVerbose) Log.Write("HCW: Driver exception: {0}", ex.Message);
-          }
-          break;
-      }
+            break;
+       }
     }
-
-
-    #region Helper
-
-    /// <summary>
-    /// Converts a short to a long path.
-    /// </summary>
-    /// <param name="shortName">Short path</param>
-    /// <returns>Long path</returns>
-    static string LongPathName(string shortName)
-    {
-      StringBuilder longNameBuffer = new StringBuilder(256);
-      uint bufferSize = (uint)longNameBuffer.Capacity;
-      GetLongPathName(shortName, longNameBuffer, bufferSize);
-      return longNameBuffer.ToString();
-    }
-
-    /// <summary>
-    /// Get the Hauppauge IR components installation path from the windows registry.
-    /// </summary>
-    /// <returns>Installation path of the Hauppauge IR components</returns>
-    public static string GetHCWPath()
-    {
-      string dllPath = null;
-      try
-      {
-        RegistryKey rkey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Hauppauge WinTV Infrared Remote");
-        dllPath = rkey.GetValue("UninstallString").ToString();
-        if (dllPath.IndexOf("UNir32") > 0)
-          dllPath = dllPath.Substring(0, dllPath.IndexOf("UNir32"));
-        else if (dllPath.IndexOf("UNIR32") > 0)
-          dllPath = dllPath.Substring(0, dllPath.IndexOf("UNIR32"));
-      }
-      catch (System.NullReferenceException)
-      {
-        Log.Write("HCW: Could not find registry entries for driver components! (Not installed?)");
-      }
-      return dllPath;
-    }
-
-    /// <summary>
-    /// Returns the path of the DLL component
-    /// </summary>
-    /// <returns>DLL path</returns>
-    public static string GetDllPath()
-    {
-      string dllPath = GetHCWPath();
-      if (!File.Exists(dllPath + "irremote.DLL"))
-      {
-        dllPath = null;
-      }
-      return dllPath;
-    }
-
-    #endregion
-
   }
 }
