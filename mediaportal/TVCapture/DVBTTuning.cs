@@ -202,6 +202,7 @@ namespace MediaPortal.TV.Recording
           callback.OnProgress(100);
           callback.OnEnded();
           callback.OnStatus("Finished");
+          timer1.Enabled = false;
           return;
         }
 
@@ -233,10 +234,6 @@ namespace MediaPortal.TV.Recording
       }
       finally
       {
-        if (currentFrequencyIndex >= frequencies.Count)
-        {
-          timer1.Enabled = false;
-        }
         reentrant = false;
       }
     }
