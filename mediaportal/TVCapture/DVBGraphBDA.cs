@@ -2096,7 +2096,7 @@ namespace MediaPortal.TV.Recording
       //if we dont have an IBDA_SignalStatistics interface then return
       if (_tunerStatistics == null)
       {
-        Log.WriteFile(Log.LogType.Log,true, "DVBGraphBDA:UpdateSignalPresent() no tuner stat interfaces");
+        Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:UpdateSignalPresent() no tuner stat interfaces");
         return;
       }
       if (_tunerStatistics.Count == 0)
@@ -2107,6 +2107,7 @@ namespace MediaPortal.TV.Recording
       bool isTunerLocked = false;
       bool isSignalPresent = false;
       long signalQuality = 0;
+      long signalStrength = 0;
 
       for (int i = 0; i < _tunerStatistics.Count; i++)
       {
@@ -2114,6 +2115,7 @@ namespace MediaPortal.TV.Recording
         bool isLocked = false;
         bool isPresent = false;
         uint quality = 0;
+        uint strength = 0;
         try
         {
           //is the tuner locked?
@@ -2122,7 +2124,7 @@ namespace MediaPortal.TV.Recording
         }
         catch (COMException ex)
         {
-          Log.WriteFile(Log.LogType.Log,true, "DVBGraphBDA:UpdateSignalPresent() locked :{0}", ex.Message);
+          Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:UpdateSignalPresent() locked :{0}", ex.Message);
         }
         catch (Exception ex)
         {
@@ -2156,16 +2158,33 @@ namespace MediaPortal.TV.Recording
         {
           Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:UpdateSignalPresent() quality :{0}", ex.Message);
         }
+        try
+        {
+          //is a signal strength ok?
+          stat.get_SignalStrength(ref strength); //1-100
+          if (strength > 0) signalStrength += strength;
+        }
+        catch (COMException ex)
+        {
+          Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:UpdateSignalPresent() quality :{0}", ex.Message);
+        }
+        catch (Exception ex)
+        {
+          Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:UpdateSignalPresent() quality :{0}", ex.Message);
+        }
 
         if (GUIGraphicsContext.DX9Device == null)
           Log.WriteFile(Log.LogType.Capture, "  #{0}  locked:{1} present:{2} quality:{3}", i, isLocked, isPresent, quality);
       }
 
+      _signalQuality = (int)signalQuality;
+      _signalLevel = (int)signalStrength;
+
       //some devices give different results about signal status
       //on some signalpresent is only true when tuned to a channel
       //on others  signalpresent is true when tuned to a transponder
       //so we just look if any variables returns true
-      
+
       if (Network() == NetworkType.ATSC)
       {
         if (isSignalPresent)
@@ -2176,14 +2195,14 @@ namespace MediaPortal.TV.Recording
       }
       if (GUIGraphicsContext.DX9Device == null)
         Log.WriteFile(Log.LogType.Capture, "  locked:{0} present:{1} quality:{2}", isTunerLocked, isSignalPresent, signalQuality);
-      if (isTunerLocked || isSignalPresent || (signalQuality > 0))
+      if (isTunerLocked || isSignalPresent || (_signalQuality > 0))
       {
         _signalPresent = true;
         if (GUIGraphicsContext.DX9Device == null)
           Log.WriteFile(Log.LogType.Log, "DVBGraphBDA:UpdateSignalPresent() signal=present");
         return;
       }
-      if (GUIGraphicsContext.DX9Device==null)
+      if (GUIGraphicsContext.DX9Device == null)
         Log.WriteFile(Log.LogType.Log, "DVBGraphBDA:UpdateSignalPresent() signal=not present");
       _signalPresent = false;
     }//public bool SignalPresent()
@@ -2192,77 +2211,12 @@ namespace MediaPortal.TV.Recording
     {
       return _signalQuality;
     }
-    void UpdateSignalQuality()
-    {
-      try
-      {
-        if (_tunerStatistics == null) return;
-        if (_tunerStatistics.Count == 0) return;
-        int signalQuality = -1;
-        uint quality = 0;
-        for (int i = 0; i < _tunerStatistics.Count; i++)
-        {
-          IBDA_SignalStatistics stat = (IBDA_SignalStatistics)_tunerStatistics[i];
-
-          try
-          {
-            quality = 0;
-            stat.get_SignalQuality(ref quality); //1-100
-            if (quality > 0 && quality > signalQuality) signalQuality = (int)quality;
-          }
-          catch (COMException)
-          {
-          }
-          catch (Exception)
-          {
-          }
-        }
-        _signalQuality = signalQuality;
-      }
-      catch (Exception ex)
-      {
-        Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:UpdateSignalQuality() {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
-      }
-    }
 
     public int SignalStrength()
     {
       return _signalLevel;
     }
 
-    void UpdateSignalStrength()
-    {
-      try
-      {
-        if (_tunerStatistics == null) return;
-        if (_tunerStatistics.Count == 0) return;
-        int signalStrength = -1;
-        uint strength = 0;
-
-        for (int i = 0; i < _tunerStatistics.Count; i++)
-        {
-          IBDA_SignalStatistics stat = (IBDA_SignalStatistics)_tunerStatistics[i];
-          try
-          {
-            strength = 0;
-            stat.get_SignalStrength(ref strength); //1-100
-            if (strength > 0 && strength > signalStrength) signalStrength = (int)strength;
-          }
-          catch (COMException)
-          {
-          }
-          catch (Exception)
-          {
-          }
-        }
-        _signalLevel = signalStrength;
-      }
-      catch (Exception ex)
-      {
-        Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:UpdateSignalStrength() {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
-      }
-
-    }
 
 
     /// <summary>
@@ -3626,8 +3580,6 @@ namespace MediaPortal.TV.Recording
     {
       if (_graphState == State.None) return;
 
-      UpdateSignalStrength();
-      UpdateSignalQuality();
       UpdateSignalPresent();
       if (_graphState == State.Created) return;
 
