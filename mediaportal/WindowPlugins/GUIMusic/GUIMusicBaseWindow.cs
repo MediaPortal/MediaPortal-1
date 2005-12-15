@@ -75,6 +75,15 @@ namespace MediaPortal.GUI.Music
     [SkinControlAttribute(6)]
     protected GUIButtonControl btnViews = null;
 
+    const string defaultTrackTag = "[%track%. ][%artist% - ][%title%]";
+    const string albumTrackTag = "[%track%. ][%artist% - ][%title%]";
+    string[] _sortModes = { "Name", "Date", "Size", "Track", "Duration", "Title", "Artist", "Album", "Filename", "Rating" };
+    string[] _defaultSortTags1 = { defaultTrackTag, defaultTrackTag, defaultTrackTag, defaultTrackTag, defaultTrackTag, defaultTrackTag, defaultTrackTag, albumTrackTag, defaultTrackTag, defaultTrackTag };
+    string[] _defaultSortTags2 = { "%duration%", "%year%", "%filesize%", "%duration%", "%duration%", "%duration%", "%duration%", "%duration%", "%filesize%", "%rating%" };
+
+    string[] _sortTags1 = new string[20];
+    string[] _sortTags2 = new string[20];
+
     public GUIMusicBaseWindow()
     {
     }
@@ -129,8 +138,13 @@ namespace MediaPortal.GUI.Music
         m_bSortAscending = xmlreader.GetValueAsBool(SerializeName, "sortasc", true);
         m_bSortAscendingRoot = xmlreader.GetValueAsBool(SerializeName, "sortascroot", true);
         m_bUseID3 = xmlreader.GetValueAsBool("musicfiles", "showid3", true);
-      }
 
+        for (int i = 0; i < _sortModes.Length; ++i)
+        {
+          _sortTags1[i] = xmlreader.GetValueAsString("mymusic", _sortModes[i] + "1", _defaultSortTags1[i]);
+          _sortTags2[i] = xmlreader.GetValueAsString("mymusic", _sortModes[i] + "2", _defaultSortTags2[i]);
+        }
+      }
       SwitchView();
     }
 
@@ -561,70 +575,96 @@ namespace MediaPortal.GUI.Music
         MusicTag tag = (MusicTag)item.MusicTag;
         if (tag != null)
         {
-          if (tag.Title.Length > 0)
-          {
-            if (tag.Artist.Length > 0)
-            {
-              if (tag.Track > 0)
-                item.Label = String.Format("{0:00}. {1} - {2}", tag.Track, tag.Artist, tag.Title);
-              else
-                item.Label = String.Format("{0} - {1}", tag.Artist, tag.Title);
-            }
-            else
-            {
-              if (tag.Track > 0)
-                item.Label = String.Format("{0:00}. {1} ", tag.Track, tag.Title);
-              else
-                item.Label = String.Format("{0}", tag.Title);
-            }
-            if (method == MusicSort.SortMethod.Album)
-            {
-              if (tag.Album.Length > 0 && tag.Title.Length > 0)
-              {
-                item.Label = String.Format("{0} - {1}", tag.Album, tag.Title);
-              }
-            }
-            if (method == MusicSort.SortMethod.Rating)
-            {
-              item.Label2 = String.Format("{0}", tag.Rating);
-            }
-          }
+          string trackNr = String.Format("{0:00}", tag.Track);
+          string fileSize = Utils.GetSize(item.Size);
+          string year = tag.Year.ToString();
+          string filename = Utils.GetFilename(item.Path);
+          string duration = Utils.SecondsToHMSString(tag.Duration);
+          string rating = tag.Rating.ToString();
+          if (tag.Track <= 0) trackNr = "";
+          if (tag.Year < 1900) year = "";
+          string date = item.FileInfo.ModificationTime.ToShortDateString() + " " + item.FileInfo.ModificationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat); ;
+
+          string line1 = _sortTags1[(int)method];
+          string line2 = _sortTags2[(int)method];
+          line1 = Utils.ReplaceTag(line1, "%track%", trackNr); line2 = Utils.ReplaceTag(line2, "%track%", trackNr);
+          line1 = Utils.ReplaceTag(line1, "%filesize%", fileSize); line2 = Utils.ReplaceTag(line2, "%filesize%", fileSize);
+          line1 = Utils.ReplaceTag(line1, "%artist%", tag.Artist); line2 = Utils.ReplaceTag(line2, "%artist%", tag.Artist);
+          line1 = Utils.ReplaceTag(line1, "%album%", tag.Album); line2 = Utils.ReplaceTag(line2, "%album%", tag.Album);
+          line1 = Utils.ReplaceTag(line1, "%title%", tag.Title); line2 = Utils.ReplaceTag(line2, "%title%", tag.Title);
+          line1 = Utils.ReplaceTag(line1, "%year%", year); line2 = Utils.ReplaceTag(line2, "%year%", year);
+          line1 = Utils.ReplaceTag(line1, "%filename%", filename); line2 = Utils.ReplaceTag(line2, "%filename%", filename);
+          line1 = Utils.ReplaceTag(line1, "%rating%", rating); line2 = Utils.ReplaceTag(line2, "%rating%", rating);
+          line1 = Utils.ReplaceTag(line1, "%duration%", duration); line2 = Utils.ReplaceTag(line2, "%duration%", duration);
+          line1 = Utils.ReplaceTag(line1, "%date%", date); line2 = Utils.ReplaceTag(line2, "%date%", date);
+          item.Label = line1;
+          item.Label2 = line2;
         }
-
-
-        if (method == MusicSort.SortMethod.Size || method == MusicSort.SortMethod.Filename)
+        /*
+        if (tag.Title.Length > 0)
         {
-          if (item.IsFolder) item.Label2 = String.Empty;
+          if (tag.Artist.Length > 0)
+          {
+            if (tag.Track > 0)
+              item.Label = String.Format("{0:00}. {1} - {2}", tag.Track, tag.Artist, tag.Title);
+            else
+              item.Label = String.Format("{0} - {1}", tag.Artist, tag.Title);
+          }
           else
           {
-            if (item.Size > 0)
-            {
-              item.Label2 = Utils.GetSize(item.Size);
-            }
-            if (method == MusicSort.SortMethod.Filename)
-            {
-              item.Label = Utils.GetFilename(item.Path);
-            }
+            if (tag.Track > 0)
+              item.Label = String.Format("{0:00}. {1} ", tag.Track, tag.Title);
+            else
+              item.Label = String.Format("{0}", tag.Title);
           }
-        }
-        else if (method == MusicSort.SortMethod.Date)
-        {
-          if (item.FileInfo != null)
+          if (method == MusicSort.SortMethod.Album)
           {
-            item.Label2 = item.FileInfo.ModificationTime.ToShortDateString() + " " + item.FileInfo.ModificationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
-          }
-        }
-        else if (method != MusicSort.SortMethod.Rating)
-        {
-          if (tag != null)
-          {
-            int nDuration = tag.Duration;
-            if (nDuration > 0)
+            if (tag.Album.Length > 0 && tag.Title.Length > 0)
             {
-              item.Label2 = Utils.SecondsToHMSString(nDuration);
+              item.Label = String.Format("{0} - {1}", tag.Album, tag.Title);
             }
           }
+          if (method == MusicSort.SortMethod.Rating)
+          {
+            item.Label2 = String.Format("{0}", tag.Rating);
+          }
         }
+      }
+
+
+      if (method == MusicSort.SortMethod.Size || method == MusicSort.SortMethod.Filename)
+      {
+        if (item.IsFolder) item.Label2 = String.Empty;
+        else
+        {
+          if (item.Size > 0)
+          {
+            item.Label2 = Utils.GetSize(item.Size);
+          }
+          if (method == MusicSort.SortMethod.Filename)
+          {
+            item.Label = Utils.GetFilename(item.Path);
+          }
+        }
+      }
+      else if (method == MusicSort.SortMethod.Date)
+      {
+        if (item.FileInfo != null)
+        {
+          item.Label2 = item.FileInfo.ModificationTime.ToShortDateString() + " " + item.FileInfo.ModificationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
+        }
+      }
+      else if (method != MusicSort.SortMethod.Rating)
+      {
+        if (tag != null)
+        {
+          int nDuration = tag.Duration;
+          if (nDuration > 0)
+          {
+            item.Label2 = Utils.SecondsToHMSString(nDuration);
+          }
+        }
+      }*/
       }
     }
     protected void SwitchView()

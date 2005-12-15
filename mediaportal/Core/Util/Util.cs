@@ -1707,7 +1707,31 @@ namespace MediaPortal.Util
 				Log.Write("Util.ExportEmbeddedResource: {0}", e.Message);
 			}
 		}
-	}
+
+    public static string ReplaceTag(string line, string tag, string value)
+    {
+      Regex r = new Regex(String.Format(@"\[[^%]*{0}[^\]]*[\]]",tag));
+      if (value == String.Empty)
+      {
+        Match match = r.Match(line);
+        if (match != null && match.Length > 0)
+        {
+          line = line.Remove(match.Index,match.Length);
+        }
+      }
+      else
+      {
+        Match match = r.Match(line);
+        if (match != null && match.Length>0)
+        {
+          line = line.Remove(match.Index, match.Length);
+          string m = match.Value.Substring(1, match.Value.Length - 2);
+          line=line.Insert(match.Index, m);
+        }
+      }
+      return line.Replace(tag,value);
+    }
+  }
 
 }
 

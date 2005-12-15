@@ -97,7 +97,7 @@
       <Name>Utils</Name>
     </ProjectReference>
     <ProjectReference Include="..\WebEPG\WebEPG.csproj">
-      <Name>WebEPG</Name>
+      <Name>WebEPG %28WebEPG\WebEPG%29</Name>
       <Project>{F7CB2A9F-004E-4667-BEAF-782F1C28E2D3}</Project>
       <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
     </ProjectReference>

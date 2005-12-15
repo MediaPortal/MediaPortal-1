@@ -377,6 +377,9 @@
     <Compile Include="Sections\MusicShares.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Sections\MusicSort.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Sections\MusicViews.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -646,6 +649,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\MusicExtensions.resx">
       <DependentUpon>MusicExtensions.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\MusicSort.resx">
+      <DependentUpon>MusicSort.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\MusicViews.resx">
       <DependentUpon>MusicViews.cs</DependentUpon>
