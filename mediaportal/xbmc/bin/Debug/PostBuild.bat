@@ -18,6 +18,7 @@ del /F /Q plugins\process\*.*
 del *.dll
 del *.ax
 
+copy ..\..\..\lame_enc.dll .
 copy ..\..\..\MPSA.ax .
 copy ..\..\..\TSFileSource.ax .
 copy ..\..\..\MPTSWriter.ax .
@@ -25,6 +26,10 @@ regsvr32 /s MPSA.ax
 regsvr32 /s TSFileSource.ax
 regsvr32 /s MPTSWriter.ax
 
+copy ..\..\..\HCWHelper\HCWHelper\bin\debug\HCWHelper.exe .
+copy ..\..\..\HCWHelper\HCWHelper\bin\debug\HCWHelper.pdb .
+copy ..\..\..\HCWHelper\NetHelper\bin\debug\NetHelper.dll .
+copy ..\..\..\HCWHelper\NetHelper\bin\debug\NetHelper.pdb .
 copy ..\..\..\core\directshowhelper\directshowhelper\release\dshowhelper.dll .
 copy ..\..\..\core\fontengine\fontengine\debug\fontengine.dll .
 copy ..\..\..\core\fontengine\fontengine\debug\fontengine.pdb .
