@@ -87,4 +87,8 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <PropertyGroup>
+    <PostBuildEvent>copy HCWHelper.exe ..\..\..\..\..\xbmc\bin\Release\.
+copy NetHelper.dll ..\..\..\..\..\xbmc\bin\Release\.</PostBuildEvent>
+  </PropertyGroup>
 </Project>
