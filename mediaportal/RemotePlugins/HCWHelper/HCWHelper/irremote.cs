@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 
 namespace irremote
 {
-  static class irremote
+  class irremote
   {
     #region DLL-Imports
 
@@ -80,22 +80,22 @@ namespace irremote
       return GetLongPathName(ShortPath, LongPath, Buffer);
     }
 
-    public static bool IRClose(IntPtr WindowHandle, uint Msg)
+    public bool IRClose(IntPtr WindowHandle, uint Msg)
     {
       return IR_Close(WindowHandle, Msg);
     }
 
-    public static bool IRGetSystemKeyCode(ref IntPtr RepeatCount, ref IntPtr RemoteCode, ref IntPtr KeyCode)
+    public bool IRGetSystemKeyCode(ref IntPtr RepeatCount, ref IntPtr RemoteCode, ref IntPtr KeyCode)
     {
       return IR_GetSystemKeyCode(ref RepeatCount, ref RemoteCode, ref KeyCode);
     }
 
-    public static bool IROpen(IntPtr WindowHandle, uint Msg, bool Verbose, uint IRPort)
+    public bool IROpen(IntPtr WindowHandle, uint Msg, bool Verbose, uint IRPort)
     {
       return IR_Open(WindowHandle, Msg, Verbose, IRPort);
     }
 
-    public static bool IRSetDllDirectory(string PathName)
+    public bool IRSetDllDirectory(string PathName)
     {
       return SetDllDirectory(PathName);
     }

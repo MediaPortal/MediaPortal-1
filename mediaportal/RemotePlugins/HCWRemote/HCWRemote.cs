@@ -29,7 +29,7 @@ using System.Windows.Forms;
 using Microsoft.Win32;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
-using irremote;
+
 
 namespace MediaPortal
 {
