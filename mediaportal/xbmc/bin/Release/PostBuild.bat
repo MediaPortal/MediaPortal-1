@@ -18,8 +18,8 @@ del /F /Q plugins\process\*.*
 del *.dll
 del *.ax
 
-copy ..\..\..\HCWHelper\HCWHelper\bin\Release\HCWHelper.exe .
-copy ..\..\..\HCWHelper\HCWHelper\bin\Release\NetHelper.dll .
+copy ..\..\..\RemotePlugins\HCWHelper\HCWHelper\bin\Release\HCWHelper.exe .
+copy ..\..\..\RemotePlugins\HCWHelper\HCWHelper\bin\Release\NetHelper.dll .
 copy ..\..\..\lame_enc.dll .
 copy ..\..\..\MPSA.ax .
 copy ..\..\..\TsFileSource.ax .
