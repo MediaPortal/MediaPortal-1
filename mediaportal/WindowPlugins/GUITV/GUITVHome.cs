@@ -307,6 +307,7 @@ namespace MediaPortal.GUI.TV
 			}
 
 
+      SaveSettings();
 			base.OnPageDestroy (newWindowId);
 		}
 
@@ -986,6 +987,16 @@ namespace MediaPortal.GUI.TV
 
 		#region Public methods
 
+
+    public void ZapNow()
+    {
+      m_zaptime = DateTime.Now.AddSeconds(-1);
+      //Log.WriteFile(Log.LogType.Error, "zapnow group:{0} current group:{0}", m_zapgroup, m_currentgroup);
+      //if (m_zapchannel == null)
+      //  Log.WriteFile(Log.LogType.Error, "zapchannel==null");
+      //else
+      //  Log.WriteFile(Log.LogType.Error, "zapchannel=={0}",m_zapchannel);
+    }
 		/// <summary>
 		/// Checks if it is time to zap to a different channel. This is called during Process().
 		/// </summary>
@@ -1015,7 +1026,8 @@ namespace MediaPortal.GUI.TV
 
 					lastViewedChannel = m_currentchannel;
 					// Zap to desired channel
-					Log.Write("Channel change:{0}",m_zapchannel);
+          Log.Write("Channel change:{0}", m_zapchannel);
+          //Log.WriteFile(Log.LogType.Error,"Channel change:{0}", m_zapchannel);
 					GUITVHome.ViewChannel(m_zapchannel);
 					m_zapchannel = null;
 					return true;

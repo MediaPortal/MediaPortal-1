@@ -360,13 +360,23 @@ namespace MediaPortal.GUI.TV
 					_zapOsdVisible=false;
 					
 				}
-			}
+      }
+      //Log.WriteFile(Log.LogType.Error, "action:{0}",action.wID);
 			switch (action.wID)
 			{
 					case Action.ActionType.ACTION_SELECT_ITEM:
 					{
-						if (!GUIWindowManager.IsRouted)
-							GUITVHome.OnLastViewedChannel();
+            if (_zapOsdVisible)
+            {
+              GUITVHome.Navigator.ZapNow();
+            }
+            else
+            {
+              if (!GUIWindowManager.IsRouted)
+              {
+                GUITVHome.OnLastViewedChannel();
+              }
+            }
 					}
 					break;
 
