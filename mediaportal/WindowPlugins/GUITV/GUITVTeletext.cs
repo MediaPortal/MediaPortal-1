@@ -50,6 +50,7 @@ namespace MediaPortal.GUI.TV
 		[SkinControlAttribute(504)]				protected GUIButtonControl btnPage300=null;
 		[SkinControlAttribute(505)]				protected GUIToggleButtonControl btnHidden=null;
 		[SkinControlAttribute(506)]				protected GUISelectButtonControl btnSubPage=null;
+    [SkinControlAttribute(507)]       protected GUIButtonControl btnFullscreen = null;
 
 		Bitmap	bitmapTeletextPage;
 		string	inputLine="";
@@ -225,6 +226,10 @@ namespace MediaPortal.GUI.TV
 					GetNewPage();
 				}
 			}
+      if (control == btnFullscreen)
+      {
+        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT);
+      }
 		}
 
 		void GetNewPage()

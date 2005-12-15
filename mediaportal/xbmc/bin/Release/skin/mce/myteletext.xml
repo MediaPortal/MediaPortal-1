@@ -126,7 +126,7 @@
 				<width>170</width>
 				<height>32</height>
 				<onup>505</onup>
-				<ondown>506</ondown>
+				<ondown>507</ondown>
 				<onright>506</onright>
 				<subitems>
 					<subitem>Subpage 0</subitem>
@@ -166,6 +166,19 @@
 					<subitem>Subpage 34</subitem>
 					<subitem>Subpage 35</subitem>
 				</subitems>
+			</control>
+			<control>
+				<description>Fullscreen</description>
+				<type>button</type>
+				<id>507</id>
+				<posX>60</posX>
+				<posY>267</posY>
+				<label>Fullscreen</label>
+				<width>170</width>
+				<height>32</height>
+				<onup>506</onup>
+				<ondown>502</ondown>
+				<onright>507</onright>
 			</control>
 	</control>
 	<control>
