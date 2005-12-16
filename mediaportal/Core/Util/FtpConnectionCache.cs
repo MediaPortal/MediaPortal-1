@@ -83,7 +83,7 @@ namespace Core.Util
       {
         BytesTransferred=0;
         BytesOffset=0;
-        ftp.Connection.TransferComplete += new EventHandler(OnTransferComplete);
+        ftp.Connection.TransferCompleteEx += new TransferHandler(Connection_TransferCompleteEx);
         ftp.Connection.BytesTransferred +=new BytesTransferredHandler(OnBytesTransferred);
         ftp.Connection.TransferType=FTPTransferType.BINARY;
 
@@ -105,6 +105,7 @@ namespace Core.Util
 
         ftp.Connection.Get(ftp.localFile,ftp.remoteFile);
       }
+
 
 			/// <summary>
 			/// Function to start a download
@@ -201,7 +202,9 @@ namespace Core.Util
         newConnection.Password=password;
         newConnection.Port=port;
         newConnection.Busy=false;
-        newConnection.Connection = new FTPClient(hostname,port);
+        newConnection.Connection = new FTPClient();
+        newConnection.HostName=hostname;
+        newConnection.Port = port;
         newConnection.Connection.Login(login,password);
         newConnection.Connection.ConnectMode=FTPConnectMode.ACTIVE;
         ftpConnections.Add(newConnection);
@@ -290,14 +293,14 @@ namespace Core.Util
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-    private static void OnTransferComplete(object sender, EventArgs e)
+    static void Connection_TransferCompleteEx(object sender, TransferEventArgs e)
     {
       FTPClient ftpclient=sender as FTPClient;
       foreach (FtpConnection client in ftpConnections)
       {
         if (client.Connection==ftpclient)
         {
-          client.Connection.TransferComplete -= new EventHandler(OnTransferComplete);
+          client.Connection.TransferCompleteEx -= new TransferHandler(Connection_TransferCompleteEx);
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_FILE_DOWNLOADED,0,0,0,0,0,null);
           msg.Label=client.originalRemoteFile;
           msg.Label2=client.localFile;

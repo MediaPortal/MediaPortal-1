@@ -113,7 +113,6 @@ namespace MediaPortal.Player
       _wmp10Player.Visible = false;
       GUIGraphicsContext.form.ResumeLayout(false);
 
-      _wmp10Player.PlayStateChange += new AxWMPLib._WMPOCXEvents_PlayStateChangeEventHandler(OnPlayStateChange);
 
     }
 
@@ -201,6 +200,7 @@ namespace MediaPortal.Player
       if (_wmp10Player == null) return false;
       if (_wmp10Player.cdromCollection == null) return false;
 
+      _wmp10Player.PlayStateChange += new AxWMPLib._WMPOCXEvents_PlayStateChangeEventHandler(OnPlayStateChange);
 
       //_wmp10Player.enableContextMenu = false;
       //_wmp10Player.Ctlenabled = false;
@@ -303,7 +303,7 @@ namespace MediaPortal.Player
       if (_wmp10Player != null)
       {
         _wmp10Player.Visible = false;
-        //_wmp10Player.PlayStateChange -= new AxWMPLib._WMPOCXEvents_PlayStateChangeEventHandler(OnPlayStateChange);
+        _wmp10Player.PlayStateChange -= new AxWMPLib._WMPOCXEvents_PlayStateChangeEventHandler(OnPlayStateChange);
       }
       //GUIGraphicsContext.IsFullScreenVideo=false;
       GUIGraphicsContext.IsPlaying = false;
