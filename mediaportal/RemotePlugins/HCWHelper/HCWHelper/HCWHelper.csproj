@@ -88,9 +88,7 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>copy HCWHelper.exe ..\..\..\..\..\xbmc\bin\$(ConfigurationName)\.
-copy NetHelper.dll ..\..\..\..\..\xbmc\bin\$(ConfigurationName)\.
-if exist ..\..\..\..\..\xbmc\bin\Release\NetHelper.pdb del ..\Release\NetHelper.dll ..\..\..\..\..\xbmc\bin\Release\NetHelper.pdb
-</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
 </Project>
