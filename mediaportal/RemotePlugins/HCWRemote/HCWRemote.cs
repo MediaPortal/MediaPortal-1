@@ -20,15 +20,12 @@
  */
 
 using System;
-using System.Text;
-using System.Runtime.InteropServices;
 using System.Diagnostics;
-using System.Threading;
-using System.IO;
 using System.Windows.Forms;
-using Microsoft.Win32;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
+using System.Threading;
+using System.Collections;
 
 
 namespace MediaPortal
@@ -44,33 +41,70 @@ namespace MediaPortal
     bool keepControl;               // Keep control, if MP loses focus
     bool logVerbose;                // Verbose logging
     int repeatDelay;                // Repeat delay
-    bool restartIRApp     = false;  // Restart Haupp. IR-app. after MP quit
-    //IntPtr handlerIR;               // Window handler
+    bool restartIRApp = false;  // Restart Haupp. IR-app. after MP quit
     DateTime lastTime;              // Timestamp of last execution
     int lastCommand;                // Last executed command
     HCWHandler hcwHandler;
     NetHelper.Connection connection = new NetHelper.Connection();
+    Thread bufferThread;
 
-    const int IR_NOKEY               = 0x1FFF;  // No key received
-    const int HCWPVR2                = 0x001E;  // 43-Button Remote
-    const int HCWPVR                 = 0x001F;  // 34-Button Remote
+    const int WM_ACTIVATE = 0x0006;
+    const int WM_POWERBROADCAST = 0x0218;
+    const int WA_INACTIVE = 0;
+    const int WA_ACTIVE = 1;
+    const int WA_CLICKACTIVE = 2;
 
-    const int WM_TIMER               = 0x0113;
-    const int WM_ACTIVATEAPP         = 0x001C;
-    const int WM_ACTIVATE            = 0x0006;
-    const int WM_POWERBROADCAST      = 0x0218;
-    const int WA_INACTIVE            = 0;
-    const int WA_ACTIVE              = 1;
-    const int WA_CLICKACTIVE         = 2;
-      
     const int PBT_APMRESUMEAUTOMATIC = 0x0012;
-    const int PBT_APMRESUMECRITICAL  = 0x0006;
+    const int PBT_APMRESUMECRITICAL = 0x0006;
+
+    private static class Buffer
+    {
+      static string buffer = string.Empty;
+      static Stack bufferStack = new Stack();
+
+      public static string Add
+      {
+        set
+        {
+          string str = value;
+          string packet = string.Empty;
+          do
+          {
+            packet = str.Split('~')[0];
+            str = str.Substring(packet.Length + 1);
+            bufferStack.Push(packet);
+          }
+          while (str.IndexOf('~') != str.LastIndexOf('~'));
+        }
+      }
+
+      public static string Get
+      {
+        get
+        {
+          if (bufferStack.Count > 0)
+            return (string)bufferStack.Pop();
+          else
+            return string.Empty;
+        }
+      }
+
+      public static bool IsFilled
+      {
+        get
+        {
+          return (bufferStack.Count > 0);
+        }
+      }
+    }
+
 
     /// <summary>
     /// HCW control enabled
     /// </summary>
     /// <returns>Returns true/false.</returns>
     public bool Enabled { get { return controlEnabled; } }
+
 
     /// <summary>
     /// Constructor: Initializes remote control settings
@@ -80,10 +114,10 @@ namespace MediaPortal
       using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
       {
         controlEnabled = xmlreader.GetValueAsBool("remote", "HCW", false);
-        allowExternal  = xmlreader.GetValueAsBool("remote", "HCWAllowExternal", false);
-        keepControl    = xmlreader.GetValueAsBool("remote", "HCWKeepControl", false);
-        logVerbose     = xmlreader.GetValueAsBool("remote", "HCWVerboseLog", false);
-        repeatDelay    = xmlreader.GetValueAsInt ("remote", "HCWDelay", 0);
+        allowExternal = xmlreader.GetValueAsBool("remote", "HCWAllowExternal", false);
+        keepControl = xmlreader.GetValueAsBool("remote", "HCWKeepControl", false);
+        logVerbose = xmlreader.GetValueAsBool("remote", "HCWVerboseLog", false);
+        repeatDelay = xmlreader.GetValueAsInt("remote", "HCWDelay", 0);
       }
       bool result = false;
       if (controlEnabled)
@@ -96,37 +130,27 @@ namespace MediaPortal
 
         if (allowExternal)
         {
-          Utils.OnStartExternal  += new Utils.UtilEventHandler(OnStartExternal);
-          Utils.OnStopExternal  += new Utils.UtilEventHandler(OnStopExternal);
+          Utils.OnStartExternal += new Utils.UtilEventHandler(OnStartExternal);
+          Utils.OnStopExternal += new Utils.UtilEventHandler(OnStopExternal);
         }
         if (logVerbose) Log.Write("HCW: Repeat-delay: {0}", repeatDelay);
-
-        //try
-        //{
-        //  if (!irremote.irremote.IRSetDllDirectory(GetDllPath()))
-        //    Log.Write("HCW: Set DLL path failed!");
-        //}
-        //catch (Exception e)
-        //{
-        //  if (logVerbose) Log.Write("HCW Exception: SetDllDirectory: " + e.Message);
-        //}
       }
       try
       {
         if (Process.GetProcessesByName("Ir").Length != 0)
-        {
           restartIRApp = true;
-        }
       }
       catch
       {
       }
     }
-    
+
+
     public void Init(IntPtr hwnd)
     {
       Init();
     }
+
 
     /// <summary>
     /// Stop IR.exe and initiate HCW start
@@ -138,36 +162,14 @@ namespace MediaPortal
 
       try
       {
-        //if (Process.GetProcessesByName("Ir").Length != 0)
-        //{
-        //  int i = 0;
-        //  while ((Process.GetProcessesByName("Ir").Length != 0) && (i < 15))
-        //  {
-        //    i++;
-        //    if (logVerbose) Log.Write("HCW: Terminating external control: attempt #{0}", i);
-        //    if (Process.GetProcessesByName("Ir").Length != 0)
-        //    {
-        //      Process.Start(GetHCWPath() + "Ir.exe", "/QUIT");
-        //      Thread.Sleep(200);
-        //    }
-        //  }
-        //  if (Process.GetProcessesByName("Ir").Length != 0)
-        //  {
-        //    Log.Write("HCW: External control could not be terminated!");
-        //  }
-        //}
-        
-
         connection.Connect(2110);
         connection.ReceiveEvent += new NetHelper.Connection.ReceiveEventHandler(OnReceive);
         connection.Send("LOG", logVerbose.ToString());
-
-        //StartHCW();
       }
-      catch (Exception e)
+      catch (Exception ex)
       {
         Log.Write("HCW: Failed to start driver components! (Not installed?)");
-        if (logVerbose) Log.Write("HCW Exception: StartHCW: " + e.Message);
+        if (logVerbose) Log.Write("HCW Exception: StartHCW: " + ex.Message);
       }
     }
 
@@ -177,17 +179,21 @@ namespace MediaPortal
     /// </summary>
     public void DeInit()
     {
-      if (controlEnabled)
+      try
       {
-        if (allowExternal)
+        if (controlEnabled && allowExternal)
         {
           Utils.OnStartExternal -= new Utils.UtilEventHandler(OnStartExternal);
           Utils.OnStopExternal -= new Utils.UtilEventHandler(OnStopExternal);
         }
+        connection.ReceiveEvent -= new NetHelper.Connection.ReceiveEventHandler(OnReceive);
+        connection.Send("APP", "SHUTDOWN");
+        connection = null;
       }
-      connection.ReceiveEvent -= new NetHelper.Connection.ReceiveEventHandler(OnReceive);
-      connection.Send("APP", "SHUTDOWN");
-      connection = null;
+      catch (Exception ex)
+      {
+        Log.Write("HCW: Exception: {0}", ex.Message);
+      }
     }
 
 
@@ -196,7 +202,14 @@ namespace MediaPortal
     /// </summary>
     public void StartHCW()
     {
-      connection.Send("APP", "IR_START");
+      try
+      {
+        connection.Send("APP", "IR_START");
+      }
+      catch (Exception ex)
+      {
+        Log.Write("HCW: Exception: {0}", ex.Message);
+      }
     }
 
 
@@ -205,42 +218,79 @@ namespace MediaPortal
     /// </summary>
     public void StopHCW()
     {
-      connection.Send("APP", "IR_STOP");
-
-      if ((Process.GetProcessesByName("Ir").Length == 0) && (restartIRApp))
+      try
       {
-        connection.Send("HCWAPP", "START");
+        if (restartIRApp)
+        {
+          connection.Send("HCWAPP", "START");
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Write("HCW: Exception: {0}", ex.Message);
+      }
+    }
+
+
+    void BufferThread()
+    {
+      while (Buffer.IsFilled)
+      {
+        string msg = Buffer.Get;
+        try
+        {
+          switch (msg.Split('|')[0])
+          {
+            case "CMD":
+              {
+                int remoteCommand = Convert.ToInt16(msg.Split('|')[1]);
+
+                if (((lastTime.AddMilliseconds(repeatDelay)) <= DateTime.Now) ||
+                          (lastCommand != remoteCommand) ||
+                          (repeatDelay == 0))
+                {
+                  lastTime = DateTime.Now;
+                  lastCommand = remoteCommand;
+                  hcwHandler.MapAction(remoteCommand);
+                }
+              }
+              break;
+            case "LOG":
+              {
+                Log.Write("HCWHelper: {0}", msg.Split('|')[1]);
+              }
+              break;
+          }
+        }
+        catch (Exception ex)
+        {
+          Log.Write("HCW: Exception: {0}", ex.Message);
+          Log.Write("HCW: Received: {0}", msg);
+        }
+        Thread.Sleep(10);
       }
     }
 
 
     void OnReceive(object sender, NetHelper.Connection.EventArguments e)
     {
-      TimeSpan elapsed = DateTime.Now - e.Timestamp;
-
-      switch (e.Message.Split('|')[0])
+      //TimeSpan elapsed = DateTime.Now - e.Timestamp;
+      try
       {
-        case "CMD":
-          {
-            int remoteCommand = Convert.ToInt16(e.Message.Split('|')[1]);
-
-            if (((lastTime.AddMilliseconds(repeatDelay)) <= e.Timestamp) ||
-                      (lastCommand != remoteCommand) ||
-                      (repeatDelay == 0))
-            {
-              lastTime = e.Timestamp;
-              lastCommand = remoteCommand;
-              hcwHandler.MapAction(remoteCommand);
-            }
-          }
-          break;
-        case "LOG":
-          {
-            Log.Write("HCWHelper: {0}", e.message.Split('|')[1]);
-          }
-          break;
+        Buffer.Add = e.Message;
+        if ((bufferThread == null) || (bufferThread.ThreadState != System.Threading.ThreadState.Running))
+        {
+          bufferThread = new Thread(new ThreadStart(BufferThread));
+          bufferThread.Start();
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Write("HCW: Exception: {0}", ex.Message);
+        Log.Write("HCW: Received: {0}", e.Message);
       }
     }
+
 
     /// <summary>
     /// External process (e.g. myPrograms) started
@@ -293,7 +343,7 @@ namespace MediaPortal
               }
             }
             break;
-       }
+        }
     }
   }
 }

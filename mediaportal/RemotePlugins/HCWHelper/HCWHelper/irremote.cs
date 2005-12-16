@@ -1,3 +1,24 @@
+/* 
+ *	Copyright (C) 2005 Media Portal
+ *	http://mediaportal.sourceforge.net
+ *
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *   
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *   
+ *  You should have received a copy of the GNU General Public License
+ *  along with GNU Make; see the file COPYING.  If not, write to
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  http://www.gnu.org/copyleft/gpl.html
+ *
+ */
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -77,27 +98,62 @@ namespace irremote
 
     public static uint IRGetLongPathName(string ShortPath, [Out] StringBuilder LongPath, uint Buffer)
     {
-      return GetLongPathName(ShortPath, LongPath, Buffer);
+      try
+      {
+        return GetLongPathName(ShortPath, LongPath, Buffer);
+      }
+      catch
+      {
+        return 0;
+      }
     }
 
     public bool IRClose(IntPtr WindowHandle, uint Msg)
     {
-      return IR_Close(WindowHandle, Msg);
+      try
+      {
+        return IR_Close(WindowHandle, Msg);
+      }
+      catch
+      {
+        return false;
+      }
     }
 
     public bool IRGetSystemKeyCode(ref IntPtr RepeatCount, ref IntPtr RemoteCode, ref IntPtr KeyCode)
     {
-      return IR_GetSystemKeyCode(ref RepeatCount, ref RemoteCode, ref KeyCode);
+      try
+      {
+        return IR_GetSystemKeyCode(ref RepeatCount, ref RemoteCode, ref KeyCode);
+      }
+      catch
+      {
+        return false;
+      }
     }
 
     public bool IROpen(IntPtr WindowHandle, uint Msg, bool Verbose, uint IRPort)
     {
-      return IR_Open(WindowHandle, Msg, Verbose, IRPort);
+      try
+      {
+        return IR_Open(WindowHandle, Msg, Verbose, IRPort);
+      }
+      catch
+      {
+        return false;
+      }
     }
 
     public bool IRSetDllDirectory(string PathName)
     {
-      return SetDllDirectory(PathName);
+      try
+      {
+        return SetDllDirectory(PathName);
+      }
+      catch
+      {
+        return false;
+      }
     }
   }
 }
