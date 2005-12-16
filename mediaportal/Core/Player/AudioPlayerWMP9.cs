@@ -112,6 +112,9 @@ namespace MediaPortal.Player
       _wmp10Player.Ctlenabled = false;
       _wmp10Player.Visible = false;
       GUIGraphicsContext.form.ResumeLayout(false);
+
+      _wmp10Player.PlayStateChange += new AxWMPLib._WMPOCXEvents_PlayStateChangeEventHandler(OnPlayStateChange);
+
     }
 
     static public ArrayList GetCDTracks()
@@ -198,10 +201,9 @@ namespace MediaPortal.Player
       if (_wmp10Player == null) return false;
       if (_wmp10Player.cdromCollection == null) return false;
 
-      _wmp10Player.PlayStateChange += new AxWMPLib._WMPOCXEvents_PlayStateChangeEventHandler(OnPlayStateChange);
 
-      _wmp10Player.enableContextMenu = false;
-      _wmp10Player.Ctlenabled = false;
+      //_wmp10Player.enableContextMenu = false;
+      //_wmp10Player.Ctlenabled = false;
       if (strFile.IndexOf("cdda:") >= 0)
       {
         string strTrack = strFile.Substring(5);
@@ -301,7 +303,7 @@ namespace MediaPortal.Player
       if (_wmp10Player != null)
       {
         _wmp10Player.Visible = false;
-        _wmp10Player.PlayStateChange -= new AxWMPLib._WMPOCXEvents_PlayStateChangeEventHandler(OnPlayStateChange);
+        //_wmp10Player.PlayStateChange -= new AxWMPLib._WMPOCXEvents_PlayStateChangeEventHandler(OnPlayStateChange);
       }
       //GUIGraphicsContext.IsFullScreenVideo=false;
       GUIGraphicsContext.IsPlaying = false;
@@ -441,6 +443,7 @@ namespace MediaPortal.Player
 
     public override void Release()
     {
+      /*
       if (_wmp10Player == null) return;
       _wmp10Player.Visible = false;
 
@@ -451,6 +454,7 @@ namespace MediaPortal.Player
       catch (Exception) { }
       _wmp10Player.Dispose();
       _wmp10Player = null;
+       * */
     }
     #endregion
 
@@ -599,9 +603,9 @@ namespace MediaPortal.Player
         //Log.Write("AudioPlayer:set window:({0},{1})-({2},{3})",_positionX,_positionY,_positionX+_wmp10Player.ClientSize.Width,_positionY+_wmp10Player.ClientSize.Height);
       }
       //_wmp10Player.uiMode = "none";
-      _wmp10Player.windowlessVideo = true;
-      _wmp10Player.enableContextMenu = false;
-      _wmp10Player.Ctlenabled = false;
+      //_wmp10Player.windowlessVideo = true;
+      //_wmp10Player.enableContextMenu = false;
+      //_wmp10Player.Ctlenabled = false;
       GUIGraphicsContext.form.Controls[0].Enabled = false;
     }
     /*
