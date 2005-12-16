@@ -217,7 +217,7 @@ namespace NetHelper
       try
       {
         if (clientSocket != null)
-          clientSocket.Send(Encoding.UTF8.GetBytes(type + "|" + send));
+          clientSocket.Send(Encoding.UTF8.GetBytes(type + "|" + send + "|"));
       }
       catch (SocketException se)
       {
