@@ -64,6 +64,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HCWHelper", "RemotePlugins\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetHelper", "RemotePlugins\HCWHelper\NetHelper\NetHelper.csproj", "{25048311-34C0-48F6-8352-5D6C90DADAED}"
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Setup", "Setup\Setup.vdproj", "{0769C7F8-04C0-42D1-90F6-8C03CDBC12C1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -282,6 +284,16 @@ Global
 		{25048311-34C0-48F6-8352-5D6C90DADAED}.UseCaptureCardDefinitions|Any CPU.Build.0 = Release|Any CPU
 		{25048311-34C0-48F6-8352-5D6C90DADAED}.UseCaptureDefintionsRelease|Any CPU.ActiveCfg = Release|Any CPU
 		{25048311-34C0-48F6-8352-5D6C90DADAED}.UseCaptureDefintionsRelease|Any CPU.Build.0 = Release|Any CPU
+		{0769C7F8-04C0-42D1-90F6-8C03CDBC12C1}.Debug|Any CPU.ActiveCfg = Debug
+		{0769C7F8-04C0-42D1-90F6-8C03CDBC12C1}.Debug|Any CPU.Build.0 = Debug
+		{0769C7F8-04C0-42D1-90F6-8C03CDBC12C1}.Release (Standalone)|Any CPU.ActiveCfg = Release
+		{0769C7F8-04C0-42D1-90F6-8C03CDBC12C1}.Release (Standalone)|Any CPU.Build.0 = Release
+		{0769C7F8-04C0-42D1-90F6-8C03CDBC12C1}.Release|Any CPU.ActiveCfg = Release
+		{0769C7F8-04C0-42D1-90F6-8C03CDBC12C1}.Release|Any CPU.Build.0 = Release
+		{0769C7F8-04C0-42D1-90F6-8C03CDBC12C1}.UseCaptureCardDefinitions|Any CPU.ActiveCfg = UseCaptureCardDefinitions
+		{0769C7F8-04C0-42D1-90F6-8C03CDBC12C1}.UseCaptureCardDefinitions|Any CPU.Build.0 = UseCaptureCardDefinitions
+		{0769C7F8-04C0-42D1-90F6-8C03CDBC12C1}.UseCaptureDefintionsRelease|Any CPU.ActiveCfg = UseCaptureDefintionsRelease
+		{0769C7F8-04C0-42D1-90F6-8C03CDBC12C1}.UseCaptureDefintionsRelease|Any CPU.Build.0 = UseCaptureDefintionsRelease
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
