@@ -72,6 +72,11 @@ namespace MediaPortal.GUI.WebBrowser
     #endregion
 
     #region Overrides
+
+            public override bool SupportsDelayedLoad
+            {
+                get { return true; }
+            }
     /// <summary>
     /// Inits this instance.
     /// </summary>
@@ -84,6 +89,9 @@ namespace MediaPortal.GUI.WebBrowser
         wb = WebBrowserControl.Instance;
         GUIGraphicsContext.form.Controls.Add(wb);
         wb.Visible = false;
+                    wb.Enabled = false;
+                    //set focus back to the form after loading web browser
+                    GUIGraphicsContext.form.Focus();
         wb.Browser.NavigateComplete2 += new AxMOZILLACONTROLLib.DWebBrowserEvents2_NavigateComplete2EventHandler(Browser_NavigateComplete2);
         wb.Browser.DownloadBegin += new EventHandler(Browser_DownloadBegin);
         wb.Browser.DownloadComplete += new EventHandler(Browser_DownloadComplete);
@@ -144,6 +152,7 @@ namespace MediaPortal.GUI.WebBrowser
             GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(4000));
             //make web browser visible			
             wb.Visible = true;
+                        wb.Enabled = true;
             wb.Focus();
             return true;
           }
@@ -245,15 +254,6 @@ namespace MediaPortal.GUI.WebBrowser
         strLine = keyboard.Text;
       }
 
-      //VirtualKeyboardTest keyboard = (VirtualKeyboardTest)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_TEST_KEYBOARD);
-      //if (null == keyboard) return;
-      //keyboard.Reset();
-      //keyboard.Text = strLine;
-      //keyboard.DoModal(GetID);
-      //if (keyboard.IsConfirmed)
-      //{
-      //    strLine = keyboard.Text;
-      //}
     }
     #endregion
 
