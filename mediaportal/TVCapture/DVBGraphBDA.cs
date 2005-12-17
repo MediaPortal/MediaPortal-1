@@ -2122,13 +2122,13 @@ namespace MediaPortal.TV.Recording
           stat.get_SignalLocked(ref isLocked);
           isTunerLocked |= isLocked;
         }
-        catch (COMException ex)
+        catch (COMException )
         {
-          Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:UpdateSignalPresent() locked :{0}", ex.Message);
+          //Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:UpdateSignalPresent() locked :{0}", ex.Message);
         }
-        catch (Exception ex)
+        catch (Exception )
         {
-          Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:UpdateSignalPresent() locked :{0}", ex.Message);
+          //Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:UpdateSignalPresent() locked :{0}", ex.Message);
         }
         try
         {
@@ -2136,13 +2136,13 @@ namespace MediaPortal.TV.Recording
           stat.get_SignalPresent(ref isPresent);
           isSignalPresent |= isPresent;
         }
-        catch (COMException ex)
+        catch (COMException )
         {
-          Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:UpdateSignalPresent() present :{0}", ex.Message);
+          //Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:UpdateSignalPresent() present :{0}", ex.Message);
         }
-        catch (Exception ex)
+        catch (Exception )
         {
-          Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:UpdateSignalPresent() present :{0}", ex.Message);
+          // Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:UpdateSignalPresent() present :{0}", ex.Message);
         }
         try
         {
@@ -2150,13 +2150,13 @@ namespace MediaPortal.TV.Recording
           stat.get_SignalQuality(ref quality); //1-100
           if (quality > 0) signalQuality += quality;
         }
-        catch (COMException ex)
+        catch (COMException )
         {
-          Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:UpdateSignalPresent() quality :{0}", ex.Message);
+          //Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:UpdateSignalPresent() quality :{0}", ex.Message);
         }
-        catch (Exception ex)
+        catch (Exception )
         {
-          Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:UpdateSignalPresent() quality :{0}", ex.Message);
+          //Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:UpdateSignalPresent() quality :{0}", ex.Message);
         }
         try
         {
@@ -2164,13 +2164,13 @@ namespace MediaPortal.TV.Recording
           stat.get_SignalStrength(ref strength); //1-100
           if (strength > 0) signalStrength += strength;
         }
-        catch (COMException ex)
+        catch (COMException )
         {
-          Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:UpdateSignalPresent() quality :{0}", ex.Message);
+          //Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:UpdateSignalPresent() quality :{0}", ex.Message);
         }
-        catch (Exception ex)
+        catch (Exception )
         {
-          Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:UpdateSignalPresent() quality :{0}", ex.Message);
+          //Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:UpdateSignalPresent() quality :{0}", ex.Message);
         }
 
         if (GUIGraphicsContext.DX9Device == null)

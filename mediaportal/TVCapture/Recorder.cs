@@ -61,6 +61,7 @@ namespace MediaPortal.TV.Recording
       StartRadio,     // start listening radio
       StopRadio,      // stop listening radio
       StopRecording,  // stop a recording
+      HandleRecording
     }
 
     class RecorderCommand
@@ -143,7 +144,6 @@ namespace MediaPortal.TV.Recording
     //list of all notifies (alert me 2 minutes before program starts)
     static List<TVNotify> _notifiesList = new List<TVNotify>();
 
-    static DateTime _startTimer = DateTime.Now;
     static DateTime _progressBarTimer = DateTime.Now;
 
     //current selected tv card used for watching tv
@@ -704,7 +704,11 @@ namespace MediaPortal.TV.Recording
       Log.WriteFile(Log.LogType.Recorder, "Recorder:   end  : {0} {1}", tmpRec.EndTime.ToShortDateString(), tmpRec.EndTime.ToShortTimeString());
 
       AddRecording(ref tmpRec);
-      _startTimer = new DateTime(1971, 6, 11, 0, 0, 0, 0);
+      lock (_listCommands)
+      {
+        RecorderCommand cmd = new RecorderCommand(RecorderCommandType.HandleRecording);
+        _listCommands.Add(cmd);
+      }
       
     }//static public void RecordNow(string strChannel)
 
@@ -1036,7 +1040,6 @@ namespace MediaPortal.TV.Recording
         TVChannelName = rec.Channel;
         HandleViewCommand(rec.Channel, true, true);
       }
-      _startTimer = new DateTime(1971, 6, 11, 0, 0, 0, 0);
       return true;
     }//static bool Record(DateTime currentTime,TVRecording rec, TVProgram currentProgram,int iPreRecordInterval, int iPostRecordInterval)
 
@@ -1105,7 +1108,6 @@ namespace MediaPortal.TV.Recording
           }
         }
       }
-      _startTimer = new DateTime(1971, 6, 11, 0, 0, 0, 0);
     }//StopRecording
 
     /// <summary>
@@ -1173,7 +1175,6 @@ namespace MediaPortal.TV.Recording
         dev.StopRecording();
         _recordingsListChanged = true;
       }
-      _startTimer = new DateTime(1971, 6, 11, 0, 0, 0, 0);
     }//static public void StopRecording()
 
     #endregion
@@ -1718,7 +1719,6 @@ namespace MediaPortal.TV.Recording
           dev.Stop();
         }
       }
-      _startTimer = new DateTime(1971, 6, 11, 0, 0, 0, 0);
     }//stopRadio()
 
     /// <summary>
@@ -1796,7 +1796,6 @@ namespace MediaPortal.TV.Recording
               Log.WriteFile(Log.LogType.Recorder,"Recorder:  currentfile:{0} newfile:{1}", g_Player.CurrentFile,strTimeShiftFileName);
               g_Player.Play(strTimeShiftFileName);
             }*/
-            _startTimer = new DateTime(1971, 6, 11, 0, 0, 0, 0); ;
             return;
           }
         }
@@ -1880,7 +1879,6 @@ namespace MediaPortal.TV.Recording
         }
       }
       _currentCardIndex = -1;
-      _startTimer = new DateTime(1971, 6, 11, 0, 0, 0, 0);
     }//static public void StopViewing()
 
 
@@ -1897,7 +1895,6 @@ namespace MediaPortal.TV.Recording
     /// </remarks>
     static private void TurnTvOff(int exceptCard)
     {
-      _startTimer = new DateTime(1971, 6, 11, 0, 0, 0, 0);
       for (int i = 0; i < _tvcards.Count; ++i)
       {
         if (i == exceptCard) continue;
@@ -2112,7 +2109,6 @@ namespace MediaPortal.TV.Recording
             msg.Label = strTimeShiftFileName;
             GUIGraphicsContext.SendMessage(msg);
           }
-          _startTimer = new DateTime(1971, 6, 11, 0, 0, 0, 0);
           if (OnTvViewingStarted != null)
             OnTvViewingStarted(_currentCardIndex, dev);
           _killTimeshiftingTimer = DateTime.Now;
@@ -2139,7 +2135,6 @@ namespace MediaPortal.TV.Recording
             dev.TVChannel = channel;
           }
           dev.View = true;
-          _startTimer = new DateTime(1971, 6, 11, 0, 0, 0, 0);
           if (OnTvViewingStarted != null)
             OnTvViewingStarted(_currentCardIndex, dev);
           _killTimeshiftingTimer = DateTime.Now;
@@ -2212,7 +2207,6 @@ namespace MediaPortal.TV.Recording
             msg.Label = strTimeShiftFileName;
             GUIGraphicsContext.SendMessage(msg);
           }
-          _startTimer = new DateTime(1971, 6, 11, 0, 0, 0, 0);
           if (OnTvViewingStarted != null)
             OnTvViewingStarted(_currentCardIndex, dev);
           _killTimeshiftingTimer = DateTime.Now;
@@ -2228,7 +2222,6 @@ namespace MediaPortal.TV.Recording
       dev.TVChannel = channel;
       dev.View = true;
       TVChannelName = channel;
-      _startTimer = new DateTime(1971, 6, 11, 0, 0, 0, 0);
       if (OnTvViewingStarted != null)
         OnTvViewingStarted(_currentCardIndex, dev);
       _killTimeshiftingTimer = DateTime.Now;
@@ -2328,6 +2321,8 @@ namespace MediaPortal.TV.Recording
     static void ProcessThread(object sender, DoWorkEventArgs e)
     {
       System.Threading.Thread.CurrentThread.Priority = System.Threading.ThreadPriority.BelowNormal;
+      DateTime recTimer = DateTime.Now;
+      DateTime diskTimer = DateTime.Now;
       while (_state == State.Initialized)
       {
         try
@@ -2343,12 +2338,22 @@ namespace MediaPortal.TV.Recording
           //process all cards
           ProcessCards();
 
-          //handle the recordings
-          Recorder.HandleRecordings();
+          //handle the recordings every 10 secs
+          TimeSpan ts = DateTime.Now - recTimer;
+          if (ts.TotalSeconds >= 10 || _recordingsListChanged)
+          {
+            Recorder.HandleRecordings();
+            recTimer = DateTime.Now;
+          }
 
-          //handle disk space management
-          DiskManagement.CheckRecordingDiskSpace();
-          DiskManagement.Process();
+          //handle disk space management every 5 minutes
+          ts = DateTime.Now - diskTimer;
+          if (ts.TotalMinutes >= 5)
+          {
+            DiskManagement.CheckRecordingDiskSpace();
+            DiskManagement.Process();
+            diskTimer = DateTime.Now;
+          }
 
           //handle the notifies
           Recorder.HandleNotifies();
@@ -2382,6 +2387,7 @@ namespace MediaPortal.TV.Recording
                     HandleStopRecording();
                   else
                     HandleStopTvRecording(cmd.Recording);
+                  HandleRecordings();
                   break;
                 case RecorderCommandType.StopAllViewing:
                   //stop viewing on any card
@@ -2394,6 +2400,9 @@ namespace MediaPortal.TV.Recording
                 case RecorderCommandType.StartRadio:
                   //start listening to radio
                   HandleStartRadio(cmd.Channel);
+                  break;
+                case RecorderCommandType.HandleRecording:
+                  HandleRecordings();
                   break;
               }
             }
@@ -2542,7 +2551,6 @@ namespace MediaPortal.TV.Recording
     {
       if (_state != State.Initialized) return;
       _recordingsListChanged = true;
-      _startTimer = new DateTime(1971, 11, 6, 20, 0, 0, 0);
     }
 
     /// <summary>
