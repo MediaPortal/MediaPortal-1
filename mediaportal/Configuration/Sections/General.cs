@@ -253,8 +253,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox1
       // 
-      this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox1.Controls.Add(this.languageComboBox);
       this.mpGroupBox1.Controls.Add(this.label2);
       this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
@@ -267,8 +267,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // languageComboBox
       // 
-      this.languageComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
+      this.languageComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.languageComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.languageComboBox.Location = new System.Drawing.Point(168, 20);
       this.languageComboBox.Name = "languageComboBox";
@@ -285,9 +285,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-        | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.settingsCheckedListBox);
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox1.Location = new System.Drawing.Point(0, 64);
@@ -299,25 +299,25 @@ namespace MediaPortal.Configuration.Sections
       // 
       // settingsCheckedListBox
       // 
-      this.settingsCheckedListBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-        | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
+      this.settingsCheckedListBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.settingsCheckedListBox.Items.AddRange(new object[] {
-                                                                "Start Media Portal in fullscreen mode",
-                                                                "Minimize to tray on start up",
-                                                                "Minimize to tray on GUI exit", 
-                                                                "Auto hide mouse cursor when inactive",
-                                                                "Show special mouse controls (scrollbars, etc)",
-                                                                "Dont show file extensions like .mp3, .avi, .mpg,...",
-                                                                "Enable animations",
-                                                                "Autostart Mediaportal when windows starts",
-                                                                "Disable Windows XP balloon tips",
-                                                                "Use mouse left double click as right click",
-                                                                "Hide taskbar in fullscreen mode",
-                                                                "MediaPortal always on top",
-                                                                "use Exclusive DirectX Mode for fullscreen tv/video",
-                                                                "enable GUI sound effects",
-                                                                "enable Screensaver in fullscreen mode"});
+            "Start Media Portal in fullscreen mode",
+            "Minimize to tray on start up",
+            "Minimize to tray on GUI exit",
+            "Auto hide mouse cursor when inactive",
+            "Show special mouse controls (scrollbars, etc)",
+            "Dont show file extensions like .mp3, .avi, .mpg,...",
+            "Enable animations",
+            "Autostart Mediaportal when windows starts",
+            "Disable Windows XP balloon tips",
+            "Use mouse left double click as right click",
+            "Hide taskbar in fullscreen mode",
+            "MediaPortal always on top",
+            "use Exclusive DirectX Mode for fullscreen tv/video",
+            "enable GUI sound effects",
+            "enable Screensaver in fullscreen mode"});
       this.settingsCheckedListBox.Location = new System.Drawing.Point(16, 24);
       this.settingsCheckedListBox.Name = "settingsCheckedListBox";
       this.settingsCheckedListBox.Size = new System.Drawing.Size(440, 214);
@@ -325,8 +325,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox2
       // 
-      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox2.Controls.Add(this.label1);
       this.groupBox2.Controls.Add(this.numericUpDown1);
       this.groupBox2.Controls.Add(this.label3);
@@ -337,6 +337,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2.TabIndex = 2;
       this.groupBox2.TabStop = false;
       this.groupBox2.Text = "VMR9 OSD Settings";
+      this.groupBox2.Visible = false;
       // 
       // label1
       // 
@@ -346,25 +347,27 @@ namespace MediaPortal.Configuration.Sections
       this.label1.Size = new System.Drawing.Size(96, 16);
       this.label1.TabIndex = 0;
       this.label1.Text = "OSD Alpha level:";
+      this.label1.Visible = false;
       // 
       // numericUpDown1
       // 
-      this.numericUpDown1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
+      this.numericUpDown1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.numericUpDown1.Location = new System.Drawing.Point(168, 20);
-      this.numericUpDown1.Maximum = new System.Decimal(new int[] {
-                                                                   10,
-                                                                   0,
-                                                                   0,
-                                                                   0});
+      this.numericUpDown1.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
       this.numericUpDown1.Name = "numericUpDown1";
       this.numericUpDown1.Size = new System.Drawing.Size(168, 20);
       this.numericUpDown1.TabIndex = 1;
-      this.numericUpDown1.Value = new System.Decimal(new int[] {
-                                                                 10,
-                                                                 0,
-                                                                 0,
-                                                                 0});
+      this.numericUpDown1.Value = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+      this.numericUpDown1.Visible = false;
       // 
       // label3
       // 
@@ -375,6 +378,7 @@ namespace MediaPortal.Configuration.Sections
       this.label3.TabIndex = 2;
       this.label3.Text = "(10 = solid, 0 = invisible)";
       this.label3.TextAlign = System.Drawing.ContentAlignment.TopRight;
+      this.label3.Visible = false;
       // 
       // General
       // 
