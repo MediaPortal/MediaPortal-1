@@ -165,11 +165,31 @@ namespace MediaPortal
         connection.Connect(2110);
         connection.ReceiveEvent += new NetHelper.Connection.ReceiveEventHandler(OnReceive);
         connection.Send("LOG", logVerbose.ToString());
+
+        Thread checkThread = new Thread(new ThreadStart(CheckThread));
+        checkThread.IsBackground = true;
+        checkThread.Start();
       }
       catch (Exception ex)
       {
         Log.Write("HCW: Failed to start driver components! (Not installed?)");
         if (logVerbose) Log.Write("HCW Exception: StartHCW: " + ex.Message);
+      }
+    }
+
+
+    private void CheckThread()
+    {
+      while (true)
+      {
+        Thread.Sleep(1000);
+        while (Process.GetProcessesByName("HCWHelper").Length > 0)
+        {
+          Thread.Sleep(1000);
+        }
+        Process.Start(System.Windows.Forms.Application.StartupPath + @"\HCWHelper.exe");
+        Thread.Sleep(3000);
+        connection.Send("LOG", logVerbose.ToString());
       }
     }
 
@@ -281,6 +301,7 @@ namespace MediaPortal
         if ((bufferThread == null) || (bufferThread.ThreadState != System.Threading.ThreadState.Running))
         {
           bufferThread = new Thread(new ThreadStart(BufferThread));
+          bufferThread.IsBackground = true;
           bufferThread.Start();
         }
       }

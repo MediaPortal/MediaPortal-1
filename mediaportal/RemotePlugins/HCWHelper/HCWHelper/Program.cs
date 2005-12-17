@@ -22,6 +22,7 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using System.Diagnostics;
 
 namespace HCWHelper
 {
@@ -33,9 +34,12 @@ namespace HCWHelper
     [STAThread]
     static void Main()
     {
-      Application.EnableVisualStyles();
-      Application.SetCompatibleTextRenderingDefault(false);
-      Application.Run(new HCWHelper());
+      if ((Process.GetProcessesByName("HCWHelper").Length == 1) && (Process.GetProcessesByName("MediaPortal").Length > 0))
+      {
+        Application.EnableVisualStyles();
+        Application.SetCompatibleTextRenderingDefault(false);
+        Application.Run(new HCWHelper());
+      }
     }
   }
 }

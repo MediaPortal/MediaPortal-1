@@ -210,6 +210,7 @@ namespace MediaPortal
       return DoMapAction(btnCode, -1);
     }
 
+
     /// <summary>
     /// Evaluates the button number, gets its mapping and executes the action with an optional paramter
     /// </summary>

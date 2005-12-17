@@ -46,9 +46,6 @@ namespace HCWHelper
     private static NetHelper.Connection connection = new NetHelper.Connection();
     private irremote.irremote irremote = new irremote.irremote();
 
-    class ReceiveBuffer
-    {
-    }
 
     /// <summary>
     /// Initialization
@@ -58,15 +55,35 @@ namespace HCWHelper
       InitializeComponent();
       notifyIcon.Visible = true;
 
-      connection.Connect(2110);
-      connection.ReceiveEvent += new NetHelper.Connection.ReceiveEventHandler(OnReceive);
+      if (connection.Connect(2110))
+      {
+        irremote.IRSetDllDirectory(GetDllPath());
 
-      irremote.IRSetDllDirectory(GetDllPath());
+        Thread waitThread = new Thread(new ThreadStart(WaitForConnect));
+        waitThread.Start();
 
-      Thread waitThread = new Thread(new ThreadStart(WaitForConnect));
-      waitThread.Start();
+        Thread checkThread = new Thread(new ThreadStart(CheckThread));
+        checkThread.IsBackground = true;
+        checkThread.Start();
+
+        connection.ReceiveEvent += new NetHelper.Connection.ReceiveEventHandler(OnReceive);
+      }
+      else
+      {
+        notifyIcon.Icon = notifyIconRed.Icon;
+        this.Close();
+      }
     }
 
+    private void CheckThread()
+    {
+      while (Process.GetProcessesByName("MediaPortal").Length > 0)
+      {
+        Thread.Sleep(1000);
+      }
+      notifyIcon.Icon = notifyIconRed.Icon;
+      Application.Exit();
+    }
 
     /// <summary>
     /// MP-Log
@@ -84,14 +101,20 @@ namespace HCWHelper
     /// <param name="winHandle"></param>
     private void WaitForConnect()
     {
-      if (connection.IsOnline)
-        notifyIcon.Icon = notifyIconYellow.Icon;
-      while (!cancelWait && !connection.IsConnected)
+      if (!connection.IsOnline)
       {
-        Thread.Sleep(200);
+        notifyIcon.Icon = notifyIconRed.Icon;
+        Application.Exit();
       }
-      if (!cancelWait)
-        StartIR();
+      else
+      {
+        notifyIcon.Icon = notifyIconYellow.Icon;
+        do
+          Thread.Sleep(200);
+        while (!cancelWait && !connection.IsConnected);
+        if (!cancelWait)
+          StartIR();
+      }
     }
 
 
@@ -122,6 +145,7 @@ namespace HCWHelper
       {
         notifyIcon.Icon = notifyIconRed.Icon;
         Log("Connect to IR failed");
+        Application.Exit();
       }
       else
         notifyIcon.Icon = notifyIconGreen.Icon;
@@ -133,7 +157,13 @@ namespace HCWHelper
     /// </summary>
     private void StopIR()
     {
-      irremote.IRClose(this.Handle, 0);
+      try
+      {
+        irremote.IRClose(this.Handle, 0);
+      }
+      catch
+      {
+      }
       notifyIcon.Icon = notifyIconYellow.Icon;
     }
 
