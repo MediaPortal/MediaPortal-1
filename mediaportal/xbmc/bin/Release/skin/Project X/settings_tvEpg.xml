@@ -36,6 +36,32 @@
 			<font>font18</font>
 		</control>
 		<control>
+			<type>group</type>
+			<layout>StackLayout</layout>
+			<description>group element</description>
+			<animation>FlyInFromLeft</animation>
+			<posX>60</posX>
+			<posY>120</posY>
+			<control>
+				<description>Select all</description>
+				<type>button</type>
+				<id>2</id>
+				<label>188</label>
+				<onup>0</onup>
+				<ondown>3</ondown>
+				<onright>10</onright>
+			</control>
+			<control>
+				<description>Select None</description>
+				<type>button</type>
+				<id>3</id>
+				<label>1448</label>
+				<onup>2</onup>
+				<ondown>99</ondown>
+				<onright>10</onright>
+			</control>
+		</control>
+		<control>
 			<description>channel listcontrol</description>
 			<type>checklistcontrol</type>
 			<id>10</id>
@@ -48,16 +74,17 @@
 			<textXOff3>100</textXOff3>
 			<textYOff3>29</textYOff3>
 			<IconXOff>12</IconXOff>
-			<IconYOff>8</IconYOff>
+			<IconYOff>2</IconYOff>
 			<spinPosX>606</spinPosX>
 			<spinPosY>418</spinPosY>
-			<itemWidth>35</itemWidth>
-			<itemHeight>35</itemHeight>
+			<itemWidth>15</itemWidth>
+			<itemHeight>15</itemHeight>
 			<textureFocus>recording_background_focus.png</textureFocus>
 			<textureNoFocus>recording_background_nofocus.png</textureNoFocus>
 			<spaceBetweenItems>5</spaceBetweenItems>
-			<textureHeight>35</textureHeight>
+			<textureHeight>20</textureHeight>
 			<keepaspectratio>no</keepaspectratio>
+			<MarkOffsetY>2</MarkOffsetY>
 			<font2>font10</font2>
 			<font3>font10</font3>
 			<onleft>10</onleft>

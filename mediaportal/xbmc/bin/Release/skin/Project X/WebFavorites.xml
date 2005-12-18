@@ -2,7 +2,7 @@
 	<id>5501</id>
 	<defaultcontrol>3</defaultcontrol>
 	<allowoverlay>yes</allowoverlay>
-	<define>#header.label:4000</define>
+	<define>#header.label:4001</define>
 	<define>#header.image:browser_logo.png</define>
 	<define>#header.hover:Background_webbrowser.png</define>
 	<controls>

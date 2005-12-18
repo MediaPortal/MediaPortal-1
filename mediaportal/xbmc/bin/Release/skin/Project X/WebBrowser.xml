@@ -1,9 +1,8 @@
 <window>
 	<id>5500</id>
-	<defaultcontrol>3</defaultcontrol> 
+	<defaultcontrol>2</defaultcontrol>
 	<allowoverlay>no</allowoverlay>
 	<controls>
-	
 		<control>
 			<description>background image</description>
 			<type>image</type>
@@ -32,10 +31,8 @@
 			<label>-</label>
 			<textureFocus>nav_back_focus.png</textureFocus>
 			<textureNoFocus>nav_back_nofocus.png</textureNoFocus>
-			<onright>5</onright> 
-			<onleft>5</onleft>
-			<onup>17</onup>
-			<ondown>4</ondown>
+			<onright>3</onright>
+			<onleft>7</onleft>
 		</control>
 		<control>
 			<description>Forward button</description>
@@ -48,10 +45,8 @@
 			<height>42</height>
 			<textureFocus>nav_forward_focus.png</textureFocus>
 			<textureNoFocus>nav_forward_nofocus.png</textureNoFocus>
-			<onright>5</onright> 
-			<onleft>5</onleft>
-			<onup>17</onup>
-			<ondown>4</ondown>
+			<onright>4</onright>
+			<onleft>2</onleft>
 		</control>
 		<control>
 			<description>Refresh button</description>
@@ -64,10 +59,8 @@
 			<label>-</label>
 			<textureFocus>nav_refresh_focus.png</textureFocus>
 			<textureNoFocus>nav_refresh_nofocus1.png</textureNoFocus>
-			<onright>5</onright> 
-			<onleft>5</onleft>
-			<onup>17</onup>
-			<ondown>4</ondown>
+			<onright>5</onright>
+			<onleft>3</onleft>
 		</control>
 		<control>
 			<description>Stop button</description>
@@ -80,42 +73,36 @@
 			<label>-</label>
 			<textureFocus>stop_enabled.png</textureFocus>
 			<textureNoFocus>stop_disabled.png</textureNoFocus>
-			<onright>5</onright> 
-			<onleft>5</onleft>
-			<onup>17</onup>
-			<ondown>4</ondown>
+			<onright>9</onright>
+			<onleft>4</onleft>
 		</control>
 		<control>
 			<description>Favorites Button</description>
 			<type>button</type>
 			<id>6</id>
-			<posX>245</posX>
+			<posX>295</posX>
 			<posY>5</posY>
 			<width>42</width>
 			<height>42</height>
 			<label>-</label>
 			<textureFocus>nav_favorites_focus.png</textureFocus>
 			<textureNoFocus>nav_favorites_nofocus.png</textureNoFocus>
-			<onright>5</onright> 
-			<onleft>5</onleft>
-			<onup>17</onup>
-			<ondown>4</ondown>
+			<onright>7</onright>
+			<onleft>9</onleft>
 		</control>
 		<control>
 			<description>URL button</description>
 			<type>button</type>
 			<id>7</id>
-			<posX>295</posX>
+			<posX>345</posX>
 			<posY>5</posY>
 			<label>-</label>
 			<textureFocus>nav_url_focus.png</textureFocus>
 			<textureNoFocus>nav_url_nofocus.png</textureNoFocus>
-			<onright>5</onright> 
-			<onleft>5</onleft>
+			<onright>2</onright>
+			<onleft>6</onleft>
 			<width>42</width>
 			<height>42</height>
-			<onup>17</onup>
-			<ondown>4</ondown>
 		</control>
 		<control>
 			<description>Status label</description>
@@ -129,12 +116,12 @@
 			<textcolor>ffffffff</textcolor>
 		</control>
 		<control>
-			<description>progress control</description> 
-			<type>progress</type> 
-			<id>8</id> 
-			<posX>590</posX> 
+			<description>progress control</description>
+			<type>progress</type>
+			<id>8</id>
+			<posX>590</posX>
 			<posY>552</posY>
-			<width>135</width> 
+			<width>135</width>
 			<height>25</height>
 		</control>
 	</controls>
