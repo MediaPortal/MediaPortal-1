@@ -59,7 +59,7 @@ namespace Mpe
 				try {
 					DirectoryInfo dir = new DirectoryInfo(value);
 					if (dir == null || dir.Exists == false) {
-						throw new ArgumentException("Invalid Media Portal directory.  The given directory does not exist.");
+						throw new ArgumentException("Invalid MediaPortal directory.  The given directory does not exist.");
 					}
 					if (dir.GetDirectories("skin").Length != 1) {
 						throw new ArgumentException("Invalid MediaPortal directiry. Missing skin folder.");

@@ -1,6 +1,6 @@
 /* 
- *	Copyright (C) 2005 Media Portal
- *	http://mediaportal.sourceforge.net
+ *	Copyright (C) 2005 Team MediaPortal
+ *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -94,7 +94,7 @@ namespace MediaPortal.Configuration
 			//
 			// Set caption
 			//
-			this.Text = "Media Portal - Setup";
+			this.Text = "MediaPortal - Setup";
 
 			//
 			// Build options tree

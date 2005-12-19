@@ -34,7 +34,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 			listCountries.Clear();
 			XmlDocument doc= new XmlDocument();
 			doc = new XmlDocument();
-			doc.Load("http://mediaportal.sourceforge.net/tvsetup/setup.xml");
+			doc.Load("http://www.team-mediaportal.com/tvsetup/setup.xml");
 			XmlNodeList countries = doc.DocumentElement.SelectNodes("/mediaportal/country");
 			foreach (XmlNode nodeCountry in countries)
 			{

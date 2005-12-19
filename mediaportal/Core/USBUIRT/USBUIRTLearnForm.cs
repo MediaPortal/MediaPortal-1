@@ -202,7 +202,7 @@ namespace MediaPortal.IR
 				CreateButtonNames();
 				this.ActionsCheckList.Items.AddRange(buttonNames.ToArray());
 				MPCommandsPnl.BringToFront();
-				this.Text = "Media Portal Control Commands";
+				this.Text = "MediaPortal Control Commands";
 			}
 
 			else
@@ -344,7 +344,7 @@ namespace MediaPortal.IR
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(123, 13);
             this.label1.TabIndex = 0;
-            this.label1.Text = "Media Portal Actions";
+            this.label1.Text = "MediaPortal Actions";
             // 
             // groupBox2
             // 
@@ -768,7 +768,7 @@ namespace MediaPortal.IR
         }
         #endregion
 
-        #region Media Portal learn methods
+        #region MediaPortal learn methods
         private void DoMediaPortalCommandLearn()
 		{
 			int count =	ActionsCheckList.CheckedItems.Count;
@@ -876,7 +876,7 @@ namespace MediaPortal.IR
 		{
 			if(MediaPortal.IR.USBUIRT.Instance.LearnedMediaPortalCodesTable.Count == 0)
 			{
-				MessageBox.Show(this, "No Media Portal control IR codes loaded.  Nothing to clear.\t", "USBUIRT", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				MessageBox.Show(this, "No MediaPortal control IR codes loaded.  Nothing to clear.\t", "USBUIRT", MessageBoxButtons.OK, MessageBoxIcon.Information);
 				return;
 			}
 
@@ -887,7 +887,7 @@ namespace MediaPortal.IR
 				if(MediaPortal.IR.USBUIRT.Instance.ClearAllLearnedCommands())
 				{
 					ActionsCheckList_SelectedIndexChanged(null, null);
-					MessageBox.Show(this, "All learned Media Portal control IR codes cleared.\t", "USBUIRT", MessageBoxButtons.OK, MessageBoxIcon.Information);
+					MessageBox.Show(this, "All learned MediaPortal control IR codes cleared.\t", "USBUIRT", MessageBoxButtons.OK, MessageBoxIcon.Information);
 				}
 			}
 		}
@@ -913,13 +913,13 @@ namespace MediaPortal.IR
                 {
                     ActionsCheckList.SetItemChecked(selIndex, false);
                     ActionsCheckList_SelectedIndexChanged(null, null);
-                    string msg = string.Format("Learned IR for [{0}] Media Portal action cleared.\t", cmdName);
+                    string msg = string.Format("Learned IR for [{0}] MediaPortal action cleared.\t", cmdName);
                     MessageBox.Show(this, msg, "USBUIRT", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
 
                 else
                 {
-                    string msg = string.Format("Learned IR not found for [{0}] Media Portal action.\t", cmdName);
+                    string msg = string.Format("Learned IR not found for [{0}] MediaPortal action.\t", cmdName);
                     MessageBox.Show(this, msg, "USBUIRT", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
@@ -1096,7 +1096,7 @@ namespace MediaPortal.IR
             else
             {
                 receivedIrLbl.Text = e.IrCode;
-                LearnStatusLbl.Text = string.Format("Learning Media Portal Control Command: {0} of {1}", e.CurrentCodeCount + 1, e.TotalCodeCount);
+                LearnStatusLbl.Text = string.Format("Learning MediaPortal Control Command: {0} of {1}", e.CurrentCodeCount + 1, e.TotalCodeCount);
 
                 LearnPrgBar.Maximum = e.TotalCodeCount;
                 LearnPrgBar.Value = e.CurrentCodeCount;
@@ -1189,25 +1189,25 @@ namespace MediaPortal.IR
                 if (MediaPortal.IR.USBUIRT.Instance.AbortLearn)
                 {
                     LearnPrgBar.Value = 0;
-                    msg = "Media Portal Control IR training aborted by user.\t";
+                    msg = "MediaPortal Control IR training aborted by user.\t";
                     mbIcon = MessageBoxIcon.Exclamation;
-                    LearnStatusLbl.Text = "Media Portal Control IR training aborted by user!";
+                    LearnStatusLbl.Text = "MediaPortal Control IR training aborted by user!";
                 }
 
                 else if (MediaPortal.IR.USBUIRT.Instance.SaveInternalValues())
                 {
                     LearnPrgBar.Value = LearnPrgBar.Maximum;
-                    msg = "Media Portal Control IR training completed successfully.\t";
+                    msg = "MediaPortal Control IR training completed successfully.\t";
                     mbIcon = MessageBoxIcon.Information;
-                    LearnStatusLbl.Text = "Media Portal Control IR training completed successfully!";
+                    LearnStatusLbl.Text = "MediaPortal Control IR training completed successfully!";
                 }
 
                 else
                 {
                     LearnPrgBar.Value = 0;
-                    msg = "Media Portal Control IR training Failed: Unable to save IR code settings to file.\t";
+                    msg = "MediaPortal Control IR training Failed: Unable to save IR code settings to file.\t";
                     mbIcon = MessageBoxIcon.Exclamation;
-                    LearnStatusLbl.Text = "Media Portal Control IR training Failed!";
+                    LearnStatusLbl.Text = "MediaPortal Control IR training Failed!";
                 }
 
                 MessageBox.Show(this, msg, "USBUIRT", MessageBoxButtons.OK, mbIcon);
@@ -1244,25 +1244,25 @@ namespace MediaPortal.IR
                 if (MediaPortal.IR.USBUIRT.Instance.AbortLearn)
                 {
                     LearnPrgBar.Value = 0;
-                    msg = "Media Portal Control IR training aborted by user.\t";
+                    msg = "MediaPortal Control IR training aborted by user.\t";
                     mbIcon = MessageBoxIcon.Exclamation;
-                    LearnStatusLbl.Text = "Media Portal Control IR training aborted by user!";
+                    LearnStatusLbl.Text = "MediaPortal Control IR training aborted by user!";
                 }
 
                 else if (MediaPortal.IR.USBUIRT.Instance.SaveInternalValues())
                 {
                     LearnPrgBar.Value = LearnPrgBar.Maximum;
-                    msg = "Media Portal Control IR training completed successfully.\t";
+                    msg = "MediaPortal Control IR training completed successfully.\t";
                     mbIcon = MessageBoxIcon.Information;
-                    LearnStatusLbl.Text = "Media Portal Control IR training completed successfully!";
+                    LearnStatusLbl.Text = "MediaPortal Control IR training completed successfully!";
                 }
 
                 else
                 {
                     LearnPrgBar.Value = 0;
-                    msg = "Media Portal Control IR training Failed: Unable to save IR code settings to file.\t";
+                    msg = "MediaPortal Control IR training Failed: Unable to save IR code settings to file.\t";
                     mbIcon = MessageBoxIcon.Exclamation;
-                    LearnStatusLbl.Text = "Media Portal Control IR training Failed!";
+                    LearnStatusLbl.Text = "MediaPortal Control IR training Failed!";
                 }
 
                 ActionsCheckList_SelectedIndexChanged(null, null);

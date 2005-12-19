@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("NetHelper")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Team Media Portal")]
-[assembly: AssemblyProduct("Media Portal")]
-[assembly: AssemblyCopyright("Copyright ©  2005 Team Media Portal / mPod")]
+[assembly: AssemblyCompany("Team MediaPortal")]
+[assembly: AssemblyProduct("MediaPortal")]
+[assembly: AssemblyCopyright("Copyright ©  2005 Team MediaPortal / mPod")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

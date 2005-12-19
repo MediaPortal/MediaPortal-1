@@ -1,6 +1,6 @@
 /* 
- *	Copyright (C) 2005 Media Portal
- *	http://mediaportal.sourceforge.net
+ *	Copyright (C) 2005 Team MediaPortal
+ *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ using MediaPortal.Player;
 namespace ProcessPlugins.CallerId
 {
   /// <summary>
-  /// Media Portal IPlugin (Process) / by mPod
+  /// MediaPortal IPlugin (Process) / by mPod
   /// Caller-ID for ISDN incl. caller-details lookup
   /// 
   /// relies on:

@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("HCWHelper")]
-[assembly: AssemblyDescription("Media Portal Helper Application for Hauppauge Remote Controls")]
+[assembly: AssemblyDescription("MediaPortal Helper Application for Hauppauge Remote Controls")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Team Media Portal")]
-[assembly: AssemblyProduct("Media Portal")]
-[assembly: AssemblyCopyright("Copyright ©  2005 Team Media Portal / mPod")]
+[assembly: AssemblyCompany("Team MediaPortal")]
+[assembly: AssemblyProduct("MediaPortal")]
+[assembly: AssemblyCopyright("Copyright ©  2005 Team MediaPortal / mPod")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

@@ -73,7 +73,7 @@ namespace MediaPortal.GUI.WebBrowser
 
         #region Private Methods
             /// <summary>
-            /// Rescales & Reszies the browser and control when Media Portal changes its size
+            /// Rescales & Reszies the browser and control when MediaPortal changes its size
             /// </summary>
             private void ResizeBrowser()
             {

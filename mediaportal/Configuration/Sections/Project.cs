@@ -1,6 +1,6 @@
 /* 
- *	Copyright (C) 2005 Media Portal
- *	http://mediaportal.sourceforge.net
+ *	Copyright (C) 2005 Team MediaPortal
+ *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -99,8 +99,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.label8);
       this.groupBox1.Controls.Add(this.label1);
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
@@ -112,30 +112,30 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label8
       // 
-      this.label8.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
+      this.label8.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.label8.Location = new System.Drawing.Point(16, 56);
       this.label8.Name = "label8";
       this.label8.Size = new System.Drawing.Size(440, 30);
       this.label8.TabIndex = 1;
       this.label8.Text = "It allows you to listen to your favorite music and radio, watch your videos and D" +
-        "VDs, view, schedule and record live TV and much more!";
+          "VDs, view, schedule and record live TV and much more!";
       // 
       // label1
       // 
-      this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
+      this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.label1.Location = new System.Drawing.Point(16, 24);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(440, 32);
       this.label1.TabIndex = 0;
       this.label1.Text = "MediaPortal is an OpenSource project, hosted at SourceForge, that will turn your " +
-        "home computer into a fully fledged multi media center (HTPC).";
+          "home computer into a fully fledged multi media center (HTPC).";
       // 
       // groupBox2
       // 
-      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox2.Controls.Add(this.linkLabel4);
       this.groupBox2.Controls.Add(this.label7);
       this.groupBox2.Controls.Add(this.linkLabel3);
@@ -176,10 +176,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.linkLabel3.Location = new System.Drawing.Point(24, 120);
       this.linkLabel3.Name = "linkLabel3";
-      this.linkLabel3.Size = new System.Drawing.Size(192, 16);
+      this.linkLabel3.Size = new System.Drawing.Size(216, 16);
       this.linkLabel3.TabIndex = 5;
       this.linkLabel3.TabStop = true;
-      this.linkLabel3.Text = "http://www.maisenbachers.de/dokuw";
+      this.linkLabel3.Text = "http://www.team-mediaportal.com/dokuw";
       this.linkLabel3.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel3_LinkClicked);
       // 
       // label6
@@ -231,7 +231,7 @@ namespace MediaPortal.Configuration.Sections
       this.linkLabel1.Size = new System.Drawing.Size(176, 16);
       this.linkLabel1.TabIndex = 1;
       this.linkLabel1.TabStop = true;
-      this.linkLabel1.Text = "http://mediaportal.sourceforge.net";
+      this.linkLabel1.Text = "http://www.team-mediaportal.com";
       this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
       // 
       // label2

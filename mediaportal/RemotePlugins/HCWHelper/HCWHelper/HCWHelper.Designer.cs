@@ -1,6 +1,6 @@
 /* 
- *	Copyright (C) 2005 Media Portal
- *	http://mediaportal.sourceforge.net
+ *	Copyright (C) 2005 Team MediaPortal
+ *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -67,7 +67,7 @@ namespace HCWHelper
       // 
       this.notifyIcon.ContextMenuStrip = this.contextMenuStrip;
       this.notifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon.Icon")));
-      this.notifyIcon.Text = "Media Portal HCW Control";
+      this.notifyIcon.Text = "MediaPortal HCW Control";
       // 
       // contextMenuStrip
       // 
@@ -109,19 +109,19 @@ namespace HCWHelper
       // 
       this.notifyIconGreen.ContextMenuStrip = this.contextMenuStrip;
       this.notifyIconGreen.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIconGreen.Icon")));
-      this.notifyIconGreen.Text = "Media Portal HCW Control";
+      this.notifyIconGreen.Text = "MediaPortal HCW Control";
       // 
       // notifyIconRed
       // 
       this.notifyIconRed.ContextMenuStrip = this.contextMenuStrip;
       this.notifyIconRed.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIconRed.Icon")));
-      this.notifyIconRed.Text = "Media Portal HCW Control";
+      this.notifyIconRed.Text = "MediaPortal HCW Control";
       // 
       // notifyIconYellow
       // 
       this.notifyIconYellow.ContextMenuStrip = this.contextMenuStrip;
       this.notifyIconYellow.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIconYellow.Icon")));
-      this.notifyIconYellow.Text = "Media Portal HCW Control";
+      this.notifyIconYellow.Text = "MediaPortal HCW Control";
       // 
       // HCWHelper
       // 
@@ -130,7 +130,7 @@ namespace HCWHelper
       this.ClientSize = new System.Drawing.Size(292, 266);
       this.Name = "HCWHelper";
       this.ShowInTaskbar = false;
-      this.Text = "Media Portal HCW Control";
+      this.Text = "MediaPortal HCW Control";
       this.WindowState = System.Windows.Forms.FormWindowState.Minimized;
       this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Sender_FormClosing);
       this.contextMenuStrip.ResumeLayout(false);

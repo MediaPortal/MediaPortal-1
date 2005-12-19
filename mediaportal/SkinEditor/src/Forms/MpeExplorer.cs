@@ -382,7 +382,7 @@ namespace Mpe.Forms {
 					MpeLog.Debug(ee);
 					if (ee.Message.IndexOf("being used by another process") > 0) {
 						MpeLog.Warn("The image file cannot be renamed because it is locked by another process.");
-						MessageBox.Show(this, "The image cannot be renamed because it is locked by another process.\n\nIf the image is currently open inside the Media Portal Editor, please close the image, and try again.", "Error Renaming File", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+						MessageBox.Show(this, "The image cannot be renamed because it is locked by another process.\n\nIf the image is currently open inside the MediaPortal Editor, please close the image, and try again.", "Error Renaming File", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 					} else if (ee.Message.IndexOf("already exists") > 0) {
 						MpeLog.Warn("An image file with the name [" + e.Label + "] already exists.");
 						MessageBox.Show(this, "An image file with the name \"" + e.Label + "\" already exists.", "Error Renaming File", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -411,7 +411,7 @@ namespace Mpe.Forms {
 					MpeLog.Debug(ee);
 					if (ee.Message.IndexOf("being used by another process") > 0) {
 						MpeLog.Warn("The screen file cannot be renamed because it is locked by another process.");
-						MessageBox.Show(this, "The screen cannot be renamed because it is locked by another process.\n\nIf the screen is currently open inside the Media Portal Editor, please close the screen, and try again.", "Error Renaming File", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+						MessageBox.Show(this, "The screen cannot be renamed because it is locked by another process.\n\nIf the screen is currently open inside the MediaPortal Editor, please close the screen, and try again.", "Error Renaming File", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 					} else if (ee.Message.IndexOf("already exists") > 0) {
 						MpeLog.Warn("A screen file with the name [" + e.Label + "] already exists.");
 						MessageBox.Show(this, "A screen file with the name \"" + e.Label + "\" already exists.", "Error Renaming File", MessageBoxButtons.OK, MessageBoxIcon.Warning);

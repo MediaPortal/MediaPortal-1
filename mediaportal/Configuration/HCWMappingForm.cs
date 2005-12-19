@@ -1,6 +1,6 @@
 /* 
- *	Copyright (C) 2005 Media Portal
- *	http://mediaportal.sourceforge.net
+ *	Copyright (C) 2005 Team MediaPortal
+ *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -538,7 +538,7 @@ namespace MediaPortal.Configuration
       this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
       this.Name = "HCWMappingForm";
       this.ShowInTaskbar = false;
-      this.Text = "Media Portal - Setup";
+      this.Text = "MediaPortal - Setup";
       this.groupBoxCondition.ResumeLayout(false);
       this.groupBoxAction.ResumeLayout(false);
       this.groupBoxLayer.ResumeLayout(false);
@@ -649,7 +649,7 @@ namespace MediaPortal.Configuration
               switch (cmdProperty)
               {
                 case "EXIT":
-                  commandString = "Exit Media Portal";
+                  commandString = "Exit MediaPortal";
                   break;
                 case "REBOOT":
                   commandString = "Reboot Windows";
@@ -1122,7 +1122,7 @@ namespace MediaPortal.Configuration
       switch (data.Value)
       {
         case "EXIT":
-          node.Text = "Exit Media Portal";
+          node.Text = "Exit MediaPortal";
           break;
         case "REBOOT":
           node.Text = "Reboot Windows";
@@ -1203,7 +1203,7 @@ namespace MediaPortal.Configuration
           switch ((string)comboBoxCmdProperty.SelectedItem)
           {
             case "EXIT":
-              node.Text = "Exit Media Portal";
+              node.Text = "Exit MediaPortal";
               break;
             case "REBOOT":
               node.Text = "Reboot Windows";

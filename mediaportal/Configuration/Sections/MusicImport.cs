@@ -1,6 +1,6 @@
 /* 
- *	Copyright (C) 2005 Media Portal
- *	http://mediaportal.sourceforge.net
+ *	Copyright (C) 2005 Team MediaPortal
+ *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -228,6 +228,7 @@ namespace MediaPortal.Configuration.Sections
       this.radioButtonBitrate = new System.Windows.Forms.RadioButton();
       this.tabPageImportSettings = new System.Windows.Forms.TabPage();
       this.groupBoxGeneralSettings = new System.Windows.Forms.GroupBox();
+      this.checkBoxBackground = new System.Windows.Forms.CheckBox();
       this.checkBoxDatabase = new System.Windows.Forms.CheckBox();
       this.checkBoxOrganize = new System.Windows.Forms.CheckBox();
       this.checkBoxReplace = new System.Windows.Forms.CheckBox();
@@ -245,7 +246,6 @@ namespace MediaPortal.Configuration.Sections
       this.buttonLocateLAME = new System.Windows.Forms.Button();
       this.linkLabelLAME = new System.Windows.Forms.LinkLabel();
       this.labelDisabled = new System.Windows.Forms.Label();
-      this.checkBoxBackground = new System.Windows.Forms.CheckBox();
       this.tabPageEncoderSettings.SuspendLayout();
       this.groupBoxQuality.SuspendLayout();
       this.groupBoxBitrate.SuspendLayout();
@@ -452,6 +452,16 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxGeneralSettings.TabStop = false;
       this.groupBoxGeneralSettings.Text = "General Settings";
       // 
+      // checkBoxBackground
+      // 
+      this.checkBoxBackground.AutoSize = true;
+      this.checkBoxBackground.Location = new System.Drawing.Point(20, 96);
+      this.checkBoxBackground.Name = "checkBoxBackground";
+      this.checkBoxBackground.Size = new System.Drawing.Size(148, 17);
+      this.checkBoxBackground.TabIndex = 12;
+      this.checkBoxBackground.Text = "Background import (silent)";
+      this.checkBoxBackground.UseVisualStyleBackColor = true;
+      // 
       // checkBoxDatabase
       // 
       this.checkBoxDatabase.AutoSize = true;
@@ -620,16 +630,6 @@ namespace MediaPortal.Configuration.Sections
       this.labelDisabled.Size = new System.Drawing.Size(373, 130);
       this.labelDisabled.TabIndex = 0;
       this.labelDisabled.Text = resources.GetString("labelDisabled.Text");
-      // 
-      // checkBoxBackground
-      // 
-      this.checkBoxBackground.AutoSize = true;
-      this.checkBoxBackground.Location = new System.Drawing.Point(20, 96);
-      this.checkBoxBackground.Name = "checkBoxBackground";
-      this.checkBoxBackground.Size = new System.Drawing.Size(148, 17);
-      this.checkBoxBackground.TabIndex = 12;
-      this.checkBoxBackground.Text = "Background import (silent)";
-      this.checkBoxBackground.UseVisualStyleBackColor = true;
       // 
       // MusicImport
       // 

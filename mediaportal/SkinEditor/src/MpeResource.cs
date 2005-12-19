@@ -4,7 +4,7 @@ using System.Xml.XPath;
 
 namespace Mpe.Controls {
 	/// <summary>
-	/// All items that can be editted by the Media Portal Editor must implement this interface
+	/// All items that can be editted by the MediaPortal Editor must implement this interface
 	/// </summary>
 	public interface MpeResource {
 

@@ -1,6 +1,6 @@
 /* 
- *	Copyright (C) 2005 Media Portal
- *	http://mediaportal.sourceforge.net
+ *	Copyright (C) 2005 Team MediaPortal
+ *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -401,7 +401,7 @@ namespace MediaPortal.GUI.Alarm
 
 		public string Description()
 		{
-			return "An alarm plugin for Media Portal";
+			return "An alarm plugin for MediaPortal";
 		}
 
 		public bool DefaultEnabled()

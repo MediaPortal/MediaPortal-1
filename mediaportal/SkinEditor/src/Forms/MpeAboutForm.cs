@@ -116,7 +116,7 @@ namespace Mpe.Forms
 			this.Name = "MpeAboutForm";
 			this.ShowInTaskbar = false;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-			this.Text = "Media Portal - Skin Editor";
+			this.Text = "MediaPortal - Skin Editor";
 			this.Load += new System.EventHandler(this.AboutForm_Load);
 			this.ResumeLayout(false);
 

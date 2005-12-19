@@ -4,7 +4,7 @@ conditions reported by internet weather services. These images
 were originally created for use with Serious Samurize.
 http://www.samurize.com
 And now are included in MediaPortal, an open source media centre software.
-http://mediaportal.sourceforge.net
+http://www.team-mediaportal.com
 
 
 Changes:

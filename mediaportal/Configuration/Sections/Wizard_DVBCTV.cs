@@ -1,6 +1,6 @@
 /* 
- *	Copyright (C) 2005 Media Portal
- *	http://mediaportal.sourceforge.net
+ *	Copyright (C) 2005 Team MediaPortal
+ *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -140,7 +140,7 @@ namespace MediaPortal.Configuration.Sections
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(440, 56);
       this.label3.TabIndex = 6;
-      this.label3.Text = @"NOTE: If your country is not present or if Media Portal is unable to find any channels, Media Portal probably doesn't know which frequencies to scan for your country. Edit the .dvbc file in the ""TuningParameters"" subfolder and fill in all the frequencies needed for your country.";
+      this.label3.Text = @"NOTE: If your country is not present or if MediaPortal is unable to find any channels, MediaPortal probably doesn't know which frequencies to scan for your country. Edit the .dvbc file in the ""TuningParameters"" subfolder and fill in all the frequencies needed for your country.";
       // 
       // panel1
       // 

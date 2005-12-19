@@ -50,7 +50,7 @@ BEGIN
     LTEXT           "Provider",IDC_STATIC,181,119,32,8
     EDITTEXT        IDC_EDIT7,211,104,43,12,ES_AUTOHSCROLL
     EDITTEXT        IDC_EDIT8,211,117,43,12,ES_AUTOHSCROLL
-    CTEXT           "http://mediaportal.sourceforge.net/",IDC_STATIC,10,210,
+    CTEXT           "http://www.team-mediaportal.com/",IDC_STATIC,10,210,
                     246,14,SS_CENTERIMAGE | SS_SUNKEN
     CONTROL         "Use ATSC Decode",IDC_CHECK1,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,183,169,70,10

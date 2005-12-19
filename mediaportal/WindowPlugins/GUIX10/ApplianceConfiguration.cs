@@ -1,6 +1,6 @@
 /* 
- *	Copyright (C) 2005 Media Portal
- *	http://mediaportal.sourceforge.net
+ *	Copyright (C) 2005 Team MediaPortal
+ *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -84,8 +84,8 @@ namespace MediaPortal.GUI.X10Plugin
 				if(m_X10Appliances.Count < 1)
 				{
 					SmallUrl surl = new SmallUrl();
-					surl.m_strLocation="Media Portal";
-					surl.m_strUrl="http://mediaportal.sourceforge.net";
+					surl.m_strLocation="MediaPortal";
+					surl.m_strUrl="http://www.team-mediaportal.com";
 					m_SmallUrls.Add(surl);
 					surl = new SmallUrl();
 					surl.m_strLocation="Microsoft";

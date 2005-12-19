@@ -3865,8 +3865,8 @@
 
 <string><id>200027</id><value>Setup - General</value></string>
 <string><id>200028</id><value>Does this PC have Internet access?</value></string>
-<string><id>200029</id><value>Start Media Portal in full Screen mode?</value></string>
-<string><id>200030</id><value>Automatically start Media Portal when this PC starts?</value></string>
+<string><id>200029</id><value>Start MediaPortal in full Screen mode?</value></string>
+<string><id>200030</id><value>Automatically start MediaPortal when this PC starts?</value></string>
 <string><id>200031</id><value>Yes</value></string>
 <string><id>200032</id><value>No</value></string>
 

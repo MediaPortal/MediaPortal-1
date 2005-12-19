@@ -1,8 +1,8 @@
 
 /* 
- *	Copyright (C) 2005 Media Portal
+ *	Copyright (C) 2005 Team MediaPortal
  *  Author: Agree
- *	http://mediaportal.sourceforge.net
+ *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by

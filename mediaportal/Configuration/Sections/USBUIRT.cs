@@ -1,6 +1,6 @@
 /* 
- *	Copyright (C) 2005 Media Portal
- *	http://mediaportal.sourceforge.net
+ *	Copyright (C) 2005 Team MediaPortal
+ *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -326,7 +326,7 @@ namespace MediaPortal.Configuration.Sections
             this.internalCommandsButton.Name = "internalCommandsButton";
             this.internalCommandsButton.Size = new System.Drawing.Size(160, 23);
             this.internalCommandsButton.TabIndex = 7;
-            this.internalCommandsButton.Text = "Learn Media Portal commands";
+            this.internalCommandsButton.Text = "Learn MediaPortal commands";
             this.internalCommandsButton.Click += new System.EventHandler(this.internalCommandsButton_Click);
             // 
             // enterCheckBox
@@ -358,7 +358,7 @@ namespace MediaPortal.Configuration.Sections
             this.outputCheckBox.Name = "outputCheckBox";
             this.outputCheckBox.Size = new System.Drawing.Size(208, 16);
             this.outputCheckBox.TabIndex = 1;
-            this.outputCheckBox.Text = "Let Media Portal control your settopbox";
+            this.outputCheckBox.Text = "Let MediaPortal control your settopbox";
             this.outputCheckBox.CheckedChanged += new System.EventHandler(this.outputCheckBox_CheckedChanged);
             // 
             // inputCheckBox
@@ -368,7 +368,7 @@ namespace MediaPortal.Configuration.Sections
             this.inputCheckBox.Name = "inputCheckBox";
             this.inputCheckBox.Size = new System.Drawing.Size(208, 16);
             this.inputCheckBox.TabIndex = 0;
-            this.inputCheckBox.Text = "Use your remote to control Media Portal";
+            this.inputCheckBox.Text = "Use your remote to control MediaPortal";
             this.inputCheckBox.CheckedChanged += new System.EventHandler(this.inputCheckBox_CheckedChanged);
             // 
             // lblUSBUIRTVersion

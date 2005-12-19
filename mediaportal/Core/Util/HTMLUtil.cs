@@ -1,6 +1,6 @@
 /* 
- *	Copyright (C) 2005 Media Portal
- *	http://mediaportal.sourceforge.net
+ *	Copyright (C) 2005 Team MediaPortal
+ *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -137,7 +137,9 @@ namespace MediaPortal.Util
 	    }
 	    //int iAnsiPos=0;
       StringWriter writer = new StringWriter ( );
+
       System.Web.HttpUtility.HtmlDecode( strHTML, writer );
+
       String DecodedString = writer.ToString ( );
       strStripped = DecodedString.Replace("<br>","\n");
       if(true)

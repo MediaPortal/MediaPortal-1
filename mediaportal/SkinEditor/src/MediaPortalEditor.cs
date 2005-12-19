@@ -415,7 +415,7 @@ namespace Mpe {
 					}
 				}
 			}
-			MpeLog.Info("Media Portal Editor");
+			MpeLog.Info("MediaPortal Editor");
 			Cursor = Cursors.Default;
 		}
 		protected void OnClosing(object sender, System.ComponentModel.CancelEventArgs e) {
@@ -733,7 +733,7 @@ namespace Mpe {
 			this.ClientSize = new System.Drawing.Size(704, 518);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "MediaPortalEditor";
-			this.Text = "Media Portal - Skin Editor";
+			this.Text = "MediaPortal - Skin Editor";
 			this.Closing += new System.ComponentModel.CancelEventHandler(this.OnClosing);
 			this.Load += new System.EventHandler(this.OnLoad);
 			this.Closed += new System.EventHandler(this.OnClosed);

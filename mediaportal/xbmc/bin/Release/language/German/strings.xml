@@ -26,7 +26,7 @@
 	</string>
 	<string>
 		<id>6</id>
-		<value>Media Portal CVS Version</value>
+		<value>MediaPortal CVS Version</value>
 	</string>
 	<string>
 		<id>7</id>
@@ -1642,7 +1642,7 @@
 	</string>
 	<string>
 		<id>482</id>
-		<value>Über Media Portal</value>
+		<value>Über MediaPortal</value>
 	</string>
 	<string>
 		<id>483</id>
@@ -2435,7 +2435,7 @@
 </string>
 <string>
 	<id>871</id>
-	<value>Media Portal aufwecken</value>
+	<value>MediaPortal aufwecken</value>
 </string>
 <string>
 	<id>872</id>
@@ -3845,19 +3845,19 @@
 <string><id>200007</id><value>&lt;Zurück</value></string>
 <string><id>200008</id><value>Setup - Fernbedienung</value></string>
 <string><id>200009</id><value>Weiter &gt;</value></string>
-<string><id>200010</id><value>Media Portal verwandelt ihren PC in ein fortschrittliches Multi-Media-Center.</value></string>
-<string><id>200011</id><value>Mit Media Portal können sie Fernsehen oder ihre Lieblingsmusik geniessen</value></string>
+<string><id>200010</id><value>MediaPortal verwandelt ihren PC in ein fortschrittliches Multi-Media-Center.</value></string>
+<string><id>200011</id><value>Mit MediaPortal können sie Fernsehen oder ihre Lieblingsmusik geniessen</value></string>
 <string><id>200012</id><value>Videos oder DVD abspielen und vieles mehr.</value></string>
-<string><id>200013</id><value>Dieser Assistent wird ihnen helfen, Media Portal schnell und einfach einzurichten.</value></string>
+<string><id>200013</id><value>Dieser Assistent wird ihnen helfen, MediaPortal schnell und einfach einzurichten.</value></string>
 <string><id>200014</id><value>Folgen sie dazu einfach den weiteren Schritten:</value></string>
 <string><id>200015</id><value>Klicken sie nun "Weiter" um zu beginnen.</value></string>
 
-<string><id>200017</id><value>Willkommen bei Media Portal. </value></string>
-<string><id>200018</id><value>Herzlichen Glückwunsch - Media Portal ist jetzt fertig eingerichtet!</value></string>
+<string><id>200017</id><value>Willkommen bei MediaPortal. </value></string>
+<string><id>200018</id><value>Herzlichen Glückwunsch - MediaPortal ist jetzt fertig eingerichtet!</value></string>
 <string><id>200019</id><value>Klicken sie auf "Fertig" um den Assistenten zu schliessen</value></string>
 <string><id>200020</id><value>Fertig</value></string>
 <string><id>200021</id><value>TV-Konfiguration - EPG</value></string>
-<string><id>200022</id><value>Media Portal hat folgende TV-Karten gefunden: </value></string>
+<string><id>200022</id><value>MediaPortal hat folgende TV-Karten gefunden: </value></string>
 <string><id>200023</id><value>Drücken sie den "Weiter" Knopf um die TV-Karten einzurichten</value></string>
 <string><id>200024</id><value>TV-Konfiguration</value></string>
 
@@ -3866,8 +3866,8 @@
 
 <string><id>200027</id><value>Konfiguration - Allgemein</value></string>
 <string><id>200028</id><value>Hat dieser PC eine Internetverbindung?</value></string>
-<string><id>200029</id><value>Media Portal im Vollbild-Modus starten?</value></string>
-<string><id>200030</id><value>Media Portal mit Windows starten?</value></string>
+<string><id>200029</id><value>MediaPortal im Vollbild-Modus starten?</value></string>
+<string><id>200030</id><value>MediaPortal mit Windows starten?</value></string>
 <string><id>200031</id><value>Ja</value></string>
 <string><id>200032</id><value>Nein</value></string>
 

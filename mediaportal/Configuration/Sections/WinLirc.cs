@@ -1,6 +1,6 @@
 /* 
- *	Copyright (C) 2005 Media Portal
- *	http://mediaportal.sourceforge.net
+ *	Copyright (C) 2005 Team MediaPortal
+ *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -296,7 +296,7 @@ namespace MediaPortal.Configuration.Sections
 												 "> You should use short names for remotes (like CABLE or AMP).",
 												 "> All remotes should be in 1 config file.",
 												 "",
-												 "::Media Portal::",
+												 "::MediaPortal::",
 												 "Set-up your external channels in this format...",
 												 "  Remote1:Repeat:Code1[,Code2[,Code...]]|Remote2:Repeat:Code1[,Code2[,Code...]]",
 												 "Examples...",

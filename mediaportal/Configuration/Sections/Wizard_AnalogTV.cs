@@ -1,6 +1,6 @@
 /* 
- *	Copyright (C) 2005 Media Portal
- *	http://mediaportal.sourceforge.net
+ *	Copyright (C) 2005 Team MediaPortal
+ *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -245,7 +245,7 @@ namespace MediaPortal.Configuration.Sections
 			cbCountries.Items.Clear();
 			cbCities.Items.Clear();
 			docSetup = new XmlDocument();
-			docSetup.Load("http://mediaportal.sourceforge.net/tvsetup/setup.xml");
+			docSetup.Load("http://www.team-mediaportal.com/tvsetup/setup.xml");
 			XmlNodeList listCountries = docSetup.DocumentElement.SelectNodes("/mediaportal/country");
 			foreach (XmlNode nodeCountry in listCountries)
 			{
@@ -298,7 +298,7 @@ namespace MediaPortal.Configuration.Sections
 			string country=(string)cbCountries.SelectedItem;
 			string city=(string)cbCities.SelectedItem;
 			XmlDocument doc = new XmlDocument();
-			doc.Load("http://mediaportal.sourceforge.net/tvsetup/setup.xml");
+			doc.Load("http://www.team-mediaportal.com/tvsetup/setup.xml");
 			XmlNodeList listCountries = doc.DocumentElement.SelectNodes("/mediaportal/country");
 			foreach (XmlNode nodeCountry in listCountries)
 			{
