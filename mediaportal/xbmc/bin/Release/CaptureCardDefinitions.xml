@@ -6762,4 +6762,36 @@
 		</connections> 
 	</tv> 
   </capturecard>
+
+  <capturecard commercialname="Dvico FusionHDTV Dual 1" capturename="FusionHDTV, Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_db5018ac&amp;rev_05">
+	<capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+	<tv>
+	  <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
+	  <filters>
+		<filter cat="networkprovider"	name="Microsoft DVBT Network Provider"		checkdevice="false"></filter>
+		<filter cat="tunerdevice"		name="FusionHDTV, BDA Tuner"				checkdevice="true"></filter>
+		<filter cat="capture"			name="FusionHDTV, Transport Stream Capture"	checkdevice="true"></filter>
+	  </filters>
+	  <connections>
+		<connection sourcefilter="networkprovider"	sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"		sourcepin="0" sinkfilter="capture"		sinkpin="0"></connection>
+	  </connections>
+	</tv>
+  </capturecard>
+
+  <capturecard commercialname="Dvico FusionHDTV Dual 2" capturename="Bluebird, WDM TsCapture" devid="vid_0fe9&amp;pid_db50">
+	<capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+	<tv>
+	  <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
+	  <filters>
+		<filter cat="networkprovider"	name="Microsoft DVBT Network Provider"	checkdevice="false"></filter>
+		<filter cat="tunerdevice"		name="Bluebird, BDA Tuner"				checkdevice="true"></filter> 
+		<filter cat="capture"			name="Bluebird, WDM TsCapture"			checkdevice="true"></filter>
+	  </filters>
+	  <connections>
+		<connection sourcefilter="networkprovider"	sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"></connection> 
+		<connection sourcefilter="tunerdevice"		sourcepin="0" sinkfilter="capture"		sinkpin="0"></connection> 
+	  </connections>
+	</tv>
+  </capturecard>
 </capturecards>
