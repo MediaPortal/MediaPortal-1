@@ -1567,14 +1567,31 @@ namespace MediaPortal.TV.Recording
                                   recEngineExt);
         timeProgStart = currentRunningProgram.StartTime;
 
+        bool isMovie = false;
+
+        if (recording.RecType == TVRecording.RecordingType.Once)
+          isMovie = true;
+
+        string strInput = string.Empty;
+
+        using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+          if (isMovie)
+            strInput = xmlreader.GetValueAsString("capture", "moviesformat", string.Empty);
+          else
+            strInput = xmlreader.GetValueAsString("capture", "seriesformat", string.Empty);
+
         string recFileFormat = string.Empty;
         string recDirFormat = string.Empty;
 
-        using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+        int index = strInput.LastIndexOf('\\');
+
+        if (index != -1)
         {
-          recFileFormat = xmlreader.GetValueAsString("capture", "recordingsfileformat", string.Empty);
-          recDirFormat = xmlreader.GetValueAsString("capture", "recordingsdirectoryformat", string.Empty);
+          recDirFormat = strInput.Substring(0, index);
+          recFileFormat = strInput.Substring(index + 1);
         }
+        else
+          recFileFormat = strInput;
 
         if (recDirFormat != string.Empty)
         {
@@ -1587,6 +1604,7 @@ namespace MediaPortal.TV.Recording
           strDirectory = Utils.ReplaceTag(strDirectory, "%date%", currentRunningProgram.StartTime.Date.ToShortDateString(), "unknown");
           strDirectory = Utils.ReplaceTag(strDirectory, "%start%", currentRunningProgram.StartTime.ToShortTimeString(), "unknown");
           strDirectory = Utils.ReplaceTag(strDirectory, "%end%", currentRunningProgram.EndTime.ToShortTimeString(), "unknown");
+          strDirectory = Utils.ReplaceTag(strDirectory, "%genre%", currentRunningProgram.Genre, "unknown");
           strDirectory = Utils.MakeDirectoryPath(strDirectory);
           if (!Directory.Exists(RecordingPath + "\\" + strDirectory))
             Directory.CreateDirectory(RecordingPath + "\\" + strDirectory);
@@ -1603,6 +1621,7 @@ namespace MediaPortal.TV.Recording
           strName = Utils.ReplaceTag(strName, "%date%", currentRunningProgram.StartTime.Date.ToShortDateString(), "unknown");
           strName = Utils.ReplaceTag(strName, "%start%", currentRunningProgram.StartTime.ToShortTimeString(), "unknown");
           strName = Utils.ReplaceTag(strName, "%end%", currentRunningProgram.EndTime.ToShortTimeString(), "unknown");
+          strName = Utils.ReplaceTag(strName, "%genre%", currentRunningProgram.Genre, "unknown");
           strName = Utils.MakeFileName(strName);
           if (File.Exists(RecordingPath + "\\" + strDirectory + "\\" + strName + recEngineExt))
           {
