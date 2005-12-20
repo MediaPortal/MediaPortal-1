@@ -53,6 +53,7 @@ namespace MediaPortal.Configuration.Sections
     private Label label6;
     private Label labelSampleSeries;
     private Label label8;
+    private Label label7;
     private System.ComponentModel.IContainer components = null;
 
     public TVRecording()
@@ -113,6 +114,7 @@ namespace MediaPortal.Configuration.Sections
       this.label39 = new System.Windows.Forms.Label();
       this.label38 = new System.Windows.Forms.Label();
       this.textBoxSeries = new System.Windows.Forms.TextBox();
+      this.label7 = new System.Windows.Forms.Label();
       this.groupBox1.SuspendLayout();
       this.groupBox2.SuspendLayout();
       this.SuspendLayout();
@@ -213,6 +215,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox2
       // 
+      this.groupBox2.Controls.Add(this.label7);
       this.groupBox2.Controls.Add(this.labelSampleSeries);
       this.groupBox2.Controls.Add(this.label8);
       this.groupBox2.Controls.Add(this.labelSampleMovies);
@@ -237,7 +240,7 @@ namespace MediaPortal.Configuration.Sections
       this.labelSampleSeries.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
       this.labelSampleSeries.Location = new System.Drawing.Point(64, 232);
       this.labelSampleSeries.Name = "labelSampleSeries";
-      this.labelSampleSeries.Size = new System.Drawing.Size(376, 26);
+      this.labelSampleSeries.Size = new System.Drawing.Size(392, 26);
       this.labelSampleSeries.TabIndex = 69;
       this.labelSampleSeries.Text = "line1\r\nline2";
       // 
@@ -255,7 +258,7 @@ namespace MediaPortal.Configuration.Sections
       this.labelSampleMovies.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
       this.labelSampleMovies.Location = new System.Drawing.Point(64, 160);
       this.labelSampleMovies.Name = "labelSampleMovies";
-      this.labelSampleMovies.Size = new System.Drawing.Size(376, 26);
+      this.labelSampleMovies.Size = new System.Drawing.Size(392, 26);
       this.labelSampleMovies.TabIndex = 67;
       this.labelSampleMovies.Text = "line1\r\nline2";
       // 
@@ -271,7 +274,7 @@ namespace MediaPortal.Configuration.Sections
       // label5
       // 
       this.label5.AutoSize = true;
-      this.label5.Location = new System.Drawing.Point(64, 24);
+      this.label5.Location = new System.Drawing.Point(16, 24);
       this.label5.Name = "label5";
       this.label5.Size = new System.Drawing.Size(368, 13);
       this.label5.TabIndex = 65;
@@ -280,7 +283,7 @@ namespace MediaPortal.Configuration.Sections
       // label41
       // 
       this.label41.AutoSize = true;
-      this.label41.Location = new System.Drawing.Point(224, 48);
+      this.label41.Location = new System.Drawing.Point(176, 48);
       this.label41.Name = "label41";
       this.label41.Size = new System.Drawing.Size(147, 65);
       this.label41.TabIndex = 63;
@@ -290,7 +293,7 @@ namespace MediaPortal.Configuration.Sections
       // label40
       // 
       this.label40.AutoSize = true;
-      this.label40.Location = new System.Drawing.Point(64, 48);
+      this.label40.Location = new System.Drawing.Point(16, 48);
       this.label40.Name = "label40";
       this.label40.Size = new System.Drawing.Size(140, 65);
       this.label40.TabIndex = 62;
@@ -301,7 +304,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.textBoxMovies.Location = new System.Drawing.Point(64, 128);
       this.textBoxMovies.Name = "textBoxMovies";
-      this.textBoxMovies.Size = new System.Drawing.Size(376, 20);
+      this.textBoxMovies.Size = new System.Drawing.Size(392, 20);
       this.textBoxMovies.TabIndex = 61;
       this.textBoxMovies.TextChanged += new System.EventHandler(this.textBoxMovies_TextChanged);
       // 
@@ -327,9 +330,19 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.textBoxSeries.Location = new System.Drawing.Point(64, 200);
       this.textBoxSeries.Name = "textBoxSeries";
-      this.textBoxSeries.Size = new System.Drawing.Size(376, 20);
+      this.textBoxSeries.Size = new System.Drawing.Size(392, 20);
       this.textBoxSeries.TabIndex = 58;
       this.textBoxSeries.TextChanged += new System.EventHandler(this.textBoxSeries_TextChanged);
+      // 
+      // label7
+      // 
+      this.label7.AutoSize = true;
+      this.label7.Location = new System.Drawing.Point(344, 48);
+      this.label7.Name = "label7";
+      this.label7.Size = new System.Drawing.Size(112, 65);
+      this.label7.TabIndex = 70;
+      this.label7.Text = "Note: A recording is\r\nbeing considered as\r\na movie, if the re-\r\ncording type is m" +
+          "anual\r\nor single recording.";
       // 
       // TVRecording
       // 
@@ -408,17 +421,26 @@ namespace MediaPortal.Configuration.Sections
 
         int index = strInput.LastIndexOf('\\');
 
-        if (index != -1)
+        switch (index)
         {
-          strDirectory = strInput.Substring(0, index);
-          strName = strInput.Substring(index + 1);
+          case -1:
+            strName = strInput;
+            break;
+          case 0:
+            strName = strInput.Substring(1);
+            break;
+          default:
+            {
+              strDirectory = "\\" + strInput.Substring(0, index);
+              strName = strInput.Substring(index + 1);
+            }
+            break;
         }
-        else
-          strName = strInput;
 
         strDirectory = Utils.MakeDirectoryPath(strDirectory);
         strName = Utils.MakeFileName(strName);
       }
+
       if (strName == string.Empty)
         strName = strDefaultName;
 
