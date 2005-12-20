@@ -32,7 +32,7 @@ namespace MediaPortal.Configuration.Sections
 {
 	public class USBUIRT : MediaPortal.Configuration.SectionSettings
 	{
-        private const string USBUIRT_CONFIGVER = "1.13";
+        private const string USBUIRT_CONFIGVER = "1.14";
         
         private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
 		private MediaPortal.UserInterface.Controls.MPCheckBox inputCheckBox;

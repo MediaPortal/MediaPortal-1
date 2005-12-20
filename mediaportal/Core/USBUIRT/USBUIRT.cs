@@ -1,6 +1,6 @@
 /* 
- *	Copyright (C) 2005 Team MediaPortal
- *	http://www.team-mediaportal.com
+ *	Copyright (C) 2005 Media Portal
+ *	http://mediaportal.sourceforge.net
  *
  *  This Program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -68,9 +68,18 @@ namespace MediaPortal.IR
 	#endregion
 
 	public class USBUIRT : IDisposable, IComparer
-	{
-		#region USBUIRT imports
-		[StructLayout(LayoutKind.Sequential)]
+    {
+        #region Win API imports
+
+        const int WM_KEYDOWN = 0x0100;
+
+        [DllImport("user32.dll")]
+        public static extern void PostMessage(IntPtr window, int message, int wparam, int lparam);
+
+        #endregion
+
+        #region USBUIRT imports
+        [StructLayout(LayoutKind.Sequential)]
 			struct UUINFO
 		{
 			public int fwVersion;
@@ -135,6 +144,8 @@ namespace MediaPortal.IR
 		public delegate void IRLearnCallbackDelegate( uint val, uint val2, ulong val3);
 		public delegate void OnRemoteCommand(object command);
 
+        private delegate void ThreadSafeSendMessageDelegate(int wmMsg, int wparam, int lparam);
+
 		#endregion
 
 		#region constants
@@ -179,7 +190,7 @@ namespace MediaPortal.IR
 		private int								interCommandDelay = 100;
 		private bool							tunerCodesLoaded = false;
         private string                          lastIRCodeSent = string.Empty;
-        private bool                            lastIRCodeSentWasToggle = false;
+        //private bool                            lastIRCodeSentWasToggle = false;
 		#endregion
 
 		#region jumpTo enums
@@ -828,8 +839,17 @@ namespace MediaPortal.IR
 
 					if(cmdVal < (int)JumpToActionType.JUMP_TO_INVALID)
 					{
-						if(remoteCommandCallback != null)
-							remoteCommandCallback(command);
+                        // If one of the romote numeric keys was presses, mimic a keyboard keydown message...
+                        if (cmdVal >= (int)Action.ActionType.REMOTE_0 && cmdVal <= (int)Action.ActionType.REMOTE_9)
+                        {
+                            int digit = cmdVal - (int)Action.ActionType.REMOTE_0;
+                            System.Windows.Forms.Keys keyVal = (System.Windows.Forms.Keys)((int)System.Windows.Forms.Keys.D0 + digit);
+
+                            ThreadSafeSendMessage(WM_KEYDOWN, (int)keyVal, 0);
+                        }
+
+                        else if (remoteCommandCallback != null)
+                                remoteCommandCallback(command);
 					}
 
 					else if(cmdVal > (int)JumpToActionType.JUMP_TO_INVALID && cmdVal < (int)JumpToActionType.JUMP_TO_LASTINVALID)
@@ -1427,7 +1447,21 @@ namespace MediaPortal.IR
 
             return result;
         }
-	
+
+        private void ThreadSafeSendMessage(int wmMsg, int wparam, int lparam)
+        {
+            if (GUIGraphicsContext.form.InvokeRequired)
+            {
+                ThreadSafeSendMessageDelegate d = new ThreadSafeSendMessageDelegate(ThreadSafeSendMessage);
+                GUIGraphicsContext.form.Invoke(d, new object[] { wmMsg, wparam, lparam });
+            }
+
+            else
+            {
+                PostMessage(GUIGraphicsContext.form.Handle, wmMsg, wparam, lparam);
+            }
+        }
+
 		#endregion
 
 		#region IComparer Members
