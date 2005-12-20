@@ -155,19 +155,33 @@ namespace MediaPortal.GUI.Music
         GUIListItem item = facadeView[0];
         if (item!=null && item.IsFolder)
 				{
-					if (item.Label=="..")
-					{
-						if (item.Path!=String.Empty)
-						{
-							// Remove selection
-							LoadDirectory(m_strDirectory);
-						}
-						else 
-						{
-							handler.CurrentLevel--;							
-							LoadDirectory(item.Path);							
-						}
-					}
+
+                    if (item.Label == ".." && item.Path != String.Empty)
+                    {
+                        // Remove selection
+                        m_iItemSelected = -1;
+                        LoadDirectory(m_strDirectory);
+                    }
+                    else
+                    {
+                        if (item.Label == "..")
+                        {
+                            handler.CurrentLevel--;
+                        }
+                        else
+                            handler.Select(item.AlbumInfoTag as Song);
+
+                        m_iItemSelected = -1;
+                        //set level if no path is set
+                        if (item.Path == "")
+                        {
+                            LoadDirectory((handler.CurrentLevel + 1).ToString());
+                        }
+                        else
+                        {
+                            LoadDirectory(item.Path);
+                        }
+                    }	
         }
         return;
       }
@@ -308,11 +322,11 @@ namespace MediaPortal.GUI.Music
 		
 		protected override void OnClick(int iItem)
 		{
-			GUIListItem item = facadeView.SelectedListItem;
+            GUIListItem item = facadeView.SelectedListItem;
 			if (item==null) return;
 			if (item.IsFolder)
 			{
-				if (item.Label==".." && item.Path!=String.Empty)
+                if (item.Label==".." && item.Path!=String.Empty)
 				{
 					// Remove selection
 					m_iItemSelected=-1;
@@ -327,17 +341,17 @@ namespace MediaPortal.GUI.Music
 					else
 						handler.Select(item.AlbumInfoTag as Song);
 					
-					m_iItemSelected=-1;
-          //set level if no path is set
-          if (item.Path == "")
-          {
-            LoadDirectory((handler.CurrentLevel + 1).ToString());
-          }
-          else
-          {
-            LoadDirectory(item.Path);
-          }
-				}				
+					    m_iItemSelected=-1;
+                        //set level if no path is set
+                        if (item.Path == "")
+                        {
+                            LoadDirectory((handler.CurrentLevel + 1).ToString());
+                        }
+                        else
+                        {
+                            LoadDirectory(item.Path);
+                        }
+				    }				
 			}
 			else
 			{
@@ -556,7 +570,7 @@ namespace MediaPortal.GUI.Music
      
 
       
-      string strSelectedItem=m_history.Get(m_strDirectory);	
+      string strSelectedItem=m_history.Get(m_strDirectory);
       int iItem=0;
       foreach (GUIListItem item in itemlist)
       {

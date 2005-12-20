@@ -1325,11 +1325,11 @@ namespace MediaPortal.GUI.Library
                 FreeResources();
                 DeInitControls();
                 GUITextureManager.CleanupThumbs();
-                GC.Collect();
-                GC.Collect();
-                GC.Collect();
-                long lTotalMemory = GC.GetTotalMemory(true);
-                Log.Write("Total Memory allocated:{0}", MediaPortal.Util.Utils.GetSize(lTotalMemory));
+                //GC.Collect();
+                //GC.Collect();
+                //GC.Collect();
+                //long lTotalMemory = GC.GetTotalMemory(true);
+                //Log.Write("Total Memory allocated:{0}", MediaPortal.Util.Utils.GetSize(lTotalMemory));
                 return true;
               }
 

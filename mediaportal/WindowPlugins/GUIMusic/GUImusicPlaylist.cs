@@ -500,6 +500,15 @@ namespace MediaPortal.GUI.Music
 					item.Selected = true;
 				}
 			}
+            int iTotalItems = itemlist.Count;
+            if (itemlist.Count > 0)
+            {
+                GUIListItem rootItem = itemlist[0];
+                if (rootItem.Label == "..") iTotalItems--;
+            }
+            strObjects = String.Format("{0} {1}", iTotalItems, GUILocalizeStrings.Get(632));
+            GUIPropertyManager.SetProperty("#itemcount", strObjects);
+            SetLabels();
 			for (int i = 0; i < facadeView.Count; ++i)
 			{
 				GUIListItem item = facadeView[i];
@@ -510,15 +519,6 @@ namespace MediaPortal.GUI.Music
 				}
 				iItem++;
 			}
-			int iTotalItems = itemlist.Count;
-			if (itemlist.Count > 0)
-			{
-				GUIListItem rootItem = itemlist[0];
-				if (rootItem.Label == "..") iTotalItems--;
-			}
-			strObjects = String.Format("{0} {1}", iTotalItems, GUILocalizeStrings.Get(632));
-			GUIPropertyManager.SetProperty("#itemcount", strObjects);
-      SetLabels();
       UpdateButtonStates();
 		}
 
@@ -706,6 +706,18 @@ namespace MediaPortal.GUI.Music
 			playlistItem.FileName = song.FileName ;
 			playlistItem.Description = song.Track + ". " + song.Artist + " - " + song.Title ;
 			playlistItem.Duration = song.Duration ;
+
+            MusicTag tag = new MusicTag();
+            tag.Title = song.Title;
+            tag.Album = song.Album;
+            tag.Artist = song.Artist;
+            tag.Duration = song.Duration;
+            tag.Genre = song.Genre;
+            tag.Track = song.Track;
+            tag.Year = song.Year;
+            tag.Rating = song.Rating;
+
+            playlistItem.MusicTag = tag;
 
 			PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC).Add(playlistItem);
 

@@ -583,8 +583,10 @@ namespace MediaPortal.GUI.Music
           string rating = tag.Rating.ToString();
           if (tag.Track <= 0) trackNr = "";
           if (tag.Year < 1900) year = "";
-          string date = item.FileInfo.ModificationTime.ToShortDateString() + " " + item.FileInfo.ModificationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat); ;
 
+        string date = "";
+          if (item.FileInfo != null) date = item.FileInfo.ModificationTime.ToShortDateString() + " " + item.FileInfo.ModificationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat); ;
+            
           string line1 = _sortTags1[(int)method];
           string line2 = _sortTags2[(int)method];
           line1 = Utils.ReplaceTag(line1, "%track%", trackNr); line2 = Utils.ReplaceTag(line2, "%track%", trackNr);

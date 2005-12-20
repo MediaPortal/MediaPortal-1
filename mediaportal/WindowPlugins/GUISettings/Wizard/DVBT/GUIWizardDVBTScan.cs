@@ -191,7 +191,7 @@ namespace WindowPlugins.GUISettings.Wizard.DVBT
       Log.Write("dvbt-scan:ScanChannels() {0}/{1}", currentFrequencyIndex, frequencies.Count);
       if (currentFrequencyIndex < 0 || currentFrequencyIndex >= frequencies.Count) return;
       int[] tmp;
-      tmp = (int[])frequencies[currientFrequencyIndex];
+      tmp = (int[])frequencies[currentFrequencyIndex];
       string description = String.Format("Found signal at frequency:{0:###.##} MHz. Scanning channels", tmp[0] / 1000);
       lblChannelsFound.Label = description;
       System.Threading.Thread.Sleep(400);
