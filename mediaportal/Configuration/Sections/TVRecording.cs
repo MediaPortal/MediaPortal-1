@@ -24,7 +24,8 @@ using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Management; 
+using System.Management;
+using MediaPortal.Util;
 
 namespace MediaPortal.Configuration.Sections
 {
@@ -40,6 +41,17 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
 		private System.Windows.Forms.CheckBox cbDeleteWatchedShows;
 		private System.Windows.Forms.CheckBox cbAddRecordingsToMovie;
+    private GroupBox groupBox2;
+    private Label label42;
+    private Label label41;
+    private Label label40;
+    private TextBox textBoxRecFileFormat;
+    private Label label39;
+    private Label label38;
+    private TextBox textBoxRecDirectoryFormat;
+    private Label label5;
+    private Label labelSample;
+    private Label label6;
 		private System.ComponentModel.IContainer components = null;
 
 		public TVRecording() : this("Recording")
@@ -86,13 +98,25 @@ namespace MediaPortal.Configuration.Sections
       this.label1 = new System.Windows.Forms.Label();
       this.cbDeleteWatchedShows = new System.Windows.Forms.CheckBox();
       this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
+      this.groupBox2 = new System.Windows.Forms.GroupBox();
+      this.labelSample = new System.Windows.Forms.Label();
+      this.label6 = new System.Windows.Forms.Label();
+      this.label5 = new System.Windows.Forms.Label();
+      this.label42 = new System.Windows.Forms.Label();
+      this.label41 = new System.Windows.Forms.Label();
+      this.label40 = new System.Windows.Forms.Label();
+      this.textBoxRecFileFormat = new System.Windows.Forms.TextBox();
+      this.label39 = new System.Windows.Forms.Label();
+      this.label38 = new System.Windows.Forms.Label();
+      this.textBoxRecDirectoryFormat = new System.Windows.Forms.TextBox();
       this.groupBox1.SuspendLayout();
+      this.groupBox2.SuspendLayout();
       this.SuspendLayout();
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.cbAddRecordingsToMovie);
       this.groupBox1.Controls.Add(this.endTextBox);
       this.groupBox1.Controls.Add(this.startTextBox);
@@ -120,26 +144,24 @@ namespace MediaPortal.Configuration.Sections
       // 
       // endTextBox
       // 
-      this.endTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
+      this.endTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.endTextBox.Location = new System.Drawing.Point(112, 44);
       this.endTextBox.MaxLength = 3;
       this.endTextBox.Name = "endTextBox";
       this.endTextBox.Size = new System.Drawing.Size(176, 20);
       this.endTextBox.TabIndex = 4;
-      this.endTextBox.Text = "";
       this.endTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.endTextBox_KeyPress);
       // 
       // startTextBox
       // 
-      this.startTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
+      this.startTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.startTextBox.Location = new System.Drawing.Point(112, 20);
       this.startTextBox.MaxLength = 3;
       this.startTextBox.Name = "startTextBox";
       this.startTextBox.Size = new System.Drawing.Size(176, 20);
       this.startTextBox.TabIndex = 1;
-      this.startTextBox.Text = "";
       this.startTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.startTextBox_KeyPress);
       // 
       // label4
@@ -185,16 +207,187 @@ namespace MediaPortal.Configuration.Sections
       this.cbDeleteWatchedShows.TabIndex = 6;
       this.cbDeleteWatchedShows.Text = "Automaticly delete recordings after watching";
       // 
+      // groupBox2
+      // 
+      this.groupBox2.Controls.Add(this.labelSample);
+      this.groupBox2.Controls.Add(this.label6);
+      this.groupBox2.Controls.Add(this.label5);
+      this.groupBox2.Controls.Add(this.label42);
+      this.groupBox2.Controls.Add(this.label41);
+      this.groupBox2.Controls.Add(this.label40);
+      this.groupBox2.Controls.Add(this.textBoxRecFileFormat);
+      this.groupBox2.Controls.Add(this.label39);
+      this.groupBox2.Controls.Add(this.label38);
+      this.groupBox2.Controls.Add(this.textBoxRecDirectoryFormat);
+      this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.groupBox2.Location = new System.Drawing.Point(0, 144);
+      this.groupBox2.Name = "groupBox2";
+      this.groupBox2.Size = new System.Drawing.Size(472, 216);
+      this.groupBox2.TabIndex = 63;
+      this.groupBox2.TabStop = false;
+      this.groupBox2.Text = "Filenames:";
+      // 
+      // labelSample
+      // 
+      this.labelSample.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+      this.labelSample.Location = new System.Drawing.Point(80, 104);
+      this.labelSample.Name = "labelSample";
+      this.labelSample.Size = new System.Drawing.Size(376, 40);
+      this.labelSample.TabIndex = 67;
+      this.labelSample.Text = "label4";
+      // 
+      // label6
+      // 
+      this.label6.AutoSize = true;
+      this.label6.Location = new System.Drawing.Point(16, 104);
+      this.label6.Name = "label6";
+      this.label6.Size = new System.Drawing.Size(50, 13);
+      this.label6.TabIndex = 66;
+      this.label6.Text = "Example:";
+      // 
+      // label5
+      // 
+      this.label5.AutoSize = true;
+      this.label5.Location = new System.Drawing.Point(80, 24);
+      this.label5.Name = "label5";
+      this.label5.Size = new System.Drawing.Size(368, 13);
+      this.label5.TabIndex = 65;
+      this.label5.Text = "Leave empty for classic naming. Use blockquotes [] to specify optional fields.";
+      // 
+      // label42
+      // 
+      this.label42.AutoSize = true;
+      this.label42.Location = new System.Drawing.Point(352, 160);
+      this.label42.Name = "label42";
+      this.label42.Size = new System.Drawing.Size(97, 39);
+      this.label42.TabIndex = 64;
+      this.label42.Text = "%date% = date\r\n%start% = start time\r\n%end% = end time";
+      // 
+      // label41
+      // 
+      this.label41.AutoSize = true;
+      this.label41.Location = new System.Drawing.Point(184, 160);
+      this.label41.Name = "label41";
+      this.label41.Size = new System.Drawing.Size(147, 39);
+      this.label41.TabIndex = 63;
+      this.label41.Text = "%series% = series number\r\n%episode% = episode number\r\n%part% = episode part";
+      // 
+      // label40
+      // 
+      this.label40.AutoSize = true;
+      this.label40.Location = new System.Drawing.Point(40, 160);
+      this.label40.Name = "label40";
+      this.label40.Size = new System.Drawing.Size(127, 39);
+      this.label40.TabIndex = 62;
+      this.label40.Text = "%channel% = chnl. name\r\n%title% = title\r\n%name% = episode name";
+      // 
+      // textBoxRecFileFormat
+      // 
+      this.textBoxRecFileFormat.Location = new System.Drawing.Point(80, 48);
+      this.textBoxRecFileFormat.Name = "textBoxRecFileFormat";
+      this.textBoxRecFileFormat.Size = new System.Drawing.Size(376, 20);
+      this.textBoxRecFileFormat.TabIndex = 61;
+      this.textBoxRecFileFormat.TextChanged += new System.EventHandler(this.textBoxRecFileFormat_TextChanged);
+      // 
+      // label39
+      // 
+      this.label39.AutoSize = true;
+      this.label39.Location = new System.Drawing.Point(16, 72);
+      this.label39.Name = "label39";
+      this.label39.Size = new System.Drawing.Size(60, 13);
+      this.label39.TabIndex = 60;
+      this.label39.Text = "Directories:";
+      // 
+      // label38
+      // 
+      this.label38.AutoSize = true;
+      this.label38.Location = new System.Drawing.Point(16, 48);
+      this.label38.Name = "label38";
+      this.label38.Size = new System.Drawing.Size(31, 13);
+      this.label38.TabIndex = 59;
+      this.label38.Text = "Files:";
+      // 
+      // textBoxRecDirectoryFormat
+      // 
+      this.textBoxRecDirectoryFormat.Location = new System.Drawing.Point(80, 72);
+      this.textBoxRecDirectoryFormat.Name = "textBoxRecDirectoryFormat";
+      this.textBoxRecDirectoryFormat.Size = new System.Drawing.Size(376, 20);
+      this.textBoxRecDirectoryFormat.TabIndex = 58;
+      this.textBoxRecDirectoryFormat.TextChanged += new System.EventHandler(this.textBoxRecDirectoryFormat_TextChanged);
+      // 
       // TVRecording
       // 
+      this.Controls.Add(this.groupBox2);
       this.Controls.Add(this.groupBox1);
       this.Name = "TVRecording";
       this.Size = new System.Drawing.Size(472, 408);
       this.groupBox1.ResumeLayout(false);
+      this.groupBox1.PerformLayout();
+      this.groupBox2.ResumeLayout(false);
+      this.groupBox2.PerformLayout();
       this.ResumeLayout(false);
 
     }
 		#endregion
+
+    void ShowExample()
+    {
+      string channel = "ABC";
+      string title = "Friends";
+      string episode = "Joey's Birthday";
+      string seriesNum = "4";
+      string episodeNum = "32";
+      string episodePart = "part 1 of 1";
+      DateTime startDate = DateTime.Parse("20.12.2005 20:15");
+      DateTime endDate = DateTime.Parse("20.12.2005 20:45");
+
+      string strName = string.Empty;
+      string strDirectory = string.Empty;
+
+      string recDirFormat = textBoxRecDirectoryFormat.Text;
+
+      strName = String.Format("{0}_{1}_{2}{3:00}{4:00}{5:00}{6:00}p{7}{8}",
+                                  channel, title,
+                                  startDate.Year, startDate.Month, startDate.Day,
+                                  startDate.Hour,
+                                  startDate.Minute,
+                                  DateTime.Now.Minute, DateTime.Now.Second);
+
+      if (recDirFormat != string.Empty)
+      {
+        strDirectory = Utils.ReplaceTag(recDirFormat, "%channel%", channel, "unknown");
+        strDirectory = Utils.ReplaceTag(strDirectory, "%title%", title, "unknown");
+        strDirectory = Utils.ReplaceTag(strDirectory, "%name%", episode, "unknown");
+        strDirectory = Utils.ReplaceTag(strDirectory, "%series%", seriesNum, "unknown");
+        strDirectory = Utils.ReplaceTag(strDirectory, "%episode%", episodeNum, "unknown");
+        strDirectory = Utils.ReplaceTag(strDirectory, "%part%", episodePart, "unknown");
+        strDirectory = Utils.ReplaceTag(strDirectory, "%date%", startDate.ToShortDateString(), "unknown");
+        strDirectory = Utils.ReplaceTag(strDirectory, "%start%", startDate.ToShortTimeString(), "unknown");
+        strDirectory = Utils.ReplaceTag(strDirectory, "%end%", endDate.ToShortTimeString(), "unknown");
+        strDirectory = Utils.MakeDirectoryPath(strDirectory);
+      }
+
+      string recFileFormat = textBoxRecFileFormat.Text;
+
+      if (recFileFormat != string.Empty)
+      {
+        strName = Utils.ReplaceTag(recFileFormat, "%channel%", channel, "unknown");
+        strName = Utils.ReplaceTag(strName, "%title%", title, "unknown");
+        strName = Utils.ReplaceTag(strName, "%name%", episode, "unknown");
+        strName = Utils.ReplaceTag(strName, "%series%", seriesNum, "unknown");
+        strName = Utils.ReplaceTag(strName, "%episode%", episodeNum, "unknown");
+        strName = Utils.ReplaceTag(strName, "%part%", episodePart, "unknown");
+        strName = Utils.ReplaceTag(strName, "%date%", startDate.ToShortDateString(), "unknown");
+        strName = Utils.ReplaceTag(strName, "%start%", startDate.ToShortTimeString(), "unknown");
+        strName = Utils.ReplaceTag(strName, "%end%", endDate.ToShortTimeString(), "unknown");
+        strName = Utils.MakeFileName(strName);
+      }
+
+      labelSample.Text = strDirectory;
+      if (strDirectory != string.Empty)
+        labelSample.Text += "\\";
+      labelSample.Text += strName + ".dvr-ms";
+    }
 
 		public override void LoadSettings()
 		{
@@ -204,7 +397,8 @@ namespace MediaPortal.Configuration.Sections
 				endTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("capture", "postrecord", 5));				
 				cbDeleteWatchedShows.Checked= xmlreader.GetValueAsBool("capture", "deletewatchedshows", false);
 				cbAddRecordingsToMovie.Checked= xmlreader.GetValueAsBool("capture", "addrecordingstomoviedatabase", true);
-
+        textBoxRecFileFormat.Text = xmlreader.GetValueAsString("capture", "recordingsfileformat", string.Empty);
+        textBoxRecDirectoryFormat.Text = xmlreader.GetValueAsString("capture", "recordingsdirectoryformat", string.Empty);
 			}		
 		}
 
@@ -217,6 +411,9 @@ namespace MediaPortal.Configuration.Sections
 
 				xmlwriter.SetValueAsBool("capture", "deletewatchedshows", cbDeleteWatchedShows.Checked);
 				xmlwriter.SetValueAsBool("capture", "addrecordingstomoviedatabase", cbAddRecordingsToMovie.Checked);
+
+        xmlwriter.SetValue("capture", "recordingsfileformat", textBoxRecFileFormat.Text);
+        xmlwriter.SetValue("capture", "recordingsdirectoryformat", textBoxRecDirectoryFormat.Text);
 			}
 		}
 
@@ -236,8 +433,15 @@ namespace MediaPortal.Configuration.Sections
 			}
 		}
 
+    private void textBoxRecFileFormat_TextChanged(object sender, EventArgs e)
+    {
+      ShowExample();
+    }
 
-		
+    private void textBoxRecDirectoryFormat_TextChanged(object sender, EventArgs e)
+    {
+      ShowExample();
+    }
 	}
 }
 

@@ -1060,6 +1060,7 @@ namespace MediaPortal.Util
 			}
 			return 0;
 		}
+
 		static public string MakeFileName(string strText)
 		{
 			if (strText==null) return String.Empty;
@@ -1074,8 +1075,21 @@ namespace MediaPortal.Util
 			strFName=strFName.Replace('>', '_');
 			strFName=strFName.Replace('|', '_');
 			return strFName;
-
 		}
+
+    static public string MakeDirectoryPath(string strText)
+    {
+      if (strText == null) return String.Empty;
+      if (strText.Length == 0) return String.Empty;
+      string strFName = strText.Replace('*', '_');
+      strFName = strFName.Replace('?', '_');
+      strFName = strFName.Replace('\"', '_');
+      strFName = strFName.Replace('<', '_'); ;
+      strFName = strFName.Replace('>', '_');
+      strFName = strFName.Replace('|', '_');
+      return strFName;
+    }
+
 		static public bool FileDelete(string strFile)
 		{
 			if (strFile==null) return true;
@@ -1708,28 +1722,33 @@ namespace MediaPortal.Util
 			}
 		}
 
-    public static string ReplaceTag(string line, string tag, string value)
+    public static string ReplaceTag(string line, string tag, string value, string empty)
     {
-      Regex r = new Regex(String.Format(@"\[[^%]*{0}[^\]]*[\]]",tag));
-      if (value == String.Empty)
+      Regex r = new Regex(String.Format(@"\[[^%]*{0}[^\]]*[\]]", tag));
+      if (value == empty)
       {
         Match match = r.Match(line);
         if (match != null && match.Length > 0)
         {
-          line = line.Remove(match.Index,match.Length);
+          line = line.Remove(match.Index, match.Length);
         }
       }
       else
       {
         Match match = r.Match(line);
-        if (match != null && match.Length>0)
+        if (match != null && match.Length > 0)
         {
           line = line.Remove(match.Index, match.Length);
           string m = match.Value.Substring(1, match.Value.Length - 2);
-          line=line.Insert(match.Index, m);
+          line = line.Insert(match.Index, m);
         }
       }
-      return line.Replace(tag,value);
+      return line.Replace(tag, value);
+    }
+
+    public static string ReplaceTag(string line, string tag, string value)
+    {
+      return ReplaceTag(line, tag, value, string.Empty);
     }
   }
 

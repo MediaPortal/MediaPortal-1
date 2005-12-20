@@ -72,6 +72,8 @@ namespace MediaPortal.TV.Recording
   [Serializable]
   public class TVCaptureDevice
   {
+    const string recEngineExt = ".dvr-ms";  // Change extension here when switching to TS enginge!!!
+
     class RecordingFinished
     {
       public string fileName = String.Empty;
@@ -436,7 +438,7 @@ namespace MediaPortal.TV.Recording
         }
         else
         {
-           Log.Write("        using card:0");
+          Log.Write("        using card:0");
           hklm.Close();
           return -1;
         }
@@ -629,7 +631,7 @@ namespace MediaPortal.TV.Recording
           Filter filter;
           ArrayList al = AvailableFilters.Filters[key] as System.Collections.ArrayList;
           filter = (Filter)al[0];
-         
+
           // if directshow filter name == video filter name
           if (filter.Name.Equals(fd.FriendlyName))
           {
@@ -644,7 +646,7 @@ namespace MediaPortal.TV.Recording
 
               if (!filterFound)
               {
-                string moniker = FindUniqueFilter(filterMoniker, Instance); 
+                string moniker = FindUniqueFilter(filterMoniker, Instance);
                 for (int filterInst = 0; filterInst < al.Count; ++filterInst)
                 {
                   filter = al[filterInst] as Filter;
@@ -959,7 +961,7 @@ namespace MediaPortal.TV.Recording
         {
           return false;
         }
-        bool result= _currentGraph.IsEpgGrabbing();
+        bool result = _currentGraph.IsEpgGrabbing();
         return result;
       }
     }
@@ -1068,7 +1070,7 @@ namespace MediaPortal.TV.Recording
           if (_currentGraph != null)
           {
             TVChannel channel = GetChannel(_currentTvChannelName);
-            if (_currentGraph.ShouldRebuildGraph(channel) )
+            if (_currentGraph.ShouldRebuildGraph(channel))
             {
               RebuildGraph();
               // for ss2: restore full screen
@@ -1125,7 +1127,7 @@ namespace MediaPortal.TV.Recording
           counter++;
         }
         //Log.WriteFile(Log.LogType.Capture, "TvCaptureDevice:RebuildGraph() player stopped:{0}",
-                      //g_Player.Playing);
+        //g_Player.Playing);
       }
 
       if (_currentGraph != null)
@@ -1156,13 +1158,13 @@ namespace MediaPortal.TV.Recording
       }
       else
       {
-       // Log.WriteFile(Log.LogType.Capture, "TvCaptureDevice:RebuildGraph() recreate viewing graph");
+        // Log.WriteFile(Log.LogType.Capture, "TvCaptureDevice:RebuildGraph() recreate viewing graph");
         _currentGraph = GraphFactory.CreateGraph(this);
         _currentGraph.CreateGraph(Quality);
         _currentGraph.StartViewing(channel);
         lastChannelChange = DateTime.Now;
       }
-     // Log.WriteFile(Log.LogType.Capture, "Card:{0} rebuild graph done", ID);
+      // Log.WriteFile(Log.LogType.Capture, "Card:{0} rebuild graph done", ID);
     }
 
     string StripIllegalChars(string recordingAttribute)
@@ -1551,7 +1553,8 @@ namespace MediaPortal.TV.Recording
 
 
       DateTime timeProgStart = new DateTime(1971, 11, 6, 20, 0, 0, 0);
-      string strName;
+      string strName = string.Empty ;
+      string strDirectory = string.Empty;
       if (currentRunningProgram != null)
       {
         DateTime dt = currentRunningProgram.StartTime;
@@ -1561,8 +1564,55 @@ namespace MediaPortal.TV.Recording
                                   dt.Hour,
                                   dt.Minute,
                                   DateTime.Now.Minute, DateTime.Now.Second,
-                                  ".dvr-ms");
+                                  recEngineExt);
         timeProgStart = currentRunningProgram.StartTime;
+
+        string recFileFormat = string.Empty;
+        string recDirFormat = string.Empty;
+
+        using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+        {
+          recFileFormat = xmlreader.GetValueAsString("capture", "recordingsfileformat", string.Empty);
+          recDirFormat = xmlreader.GetValueAsString("capture", "recordingsdirectoryformat", string.Empty);
+        }
+
+        if (recDirFormat != string.Empty)
+        {
+          strDirectory = Utils.ReplaceTag(recDirFormat, "%channel%", currentRunningProgram.Channel, "unknown");
+          strDirectory = Utils.ReplaceTag(strDirectory, "%title%", currentRunningProgram.Title, "unknown");
+          strDirectory = Utils.ReplaceTag(strDirectory, "%name%", currentRunningProgram.Episode, "unknown");
+          strDirectory = Utils.ReplaceTag(strDirectory, "%series%", currentRunningProgram.SeriesNum, "unknown");
+          strDirectory = Utils.ReplaceTag(strDirectory, "%episode%", currentRunningProgram.EpisodeNum, "unknown");
+          strDirectory = Utils.ReplaceTag(strDirectory, "%part%", currentRunningProgram.EpisodePart, "unknown");
+          strDirectory = Utils.ReplaceTag(strDirectory, "%date%", currentRunningProgram.StartTime.Date.ToShortDateString(), "unknown");
+          strDirectory = Utils.ReplaceTag(strDirectory, "%start%", currentRunningProgram.StartTime.ToShortTimeString(), "unknown");
+          strDirectory = Utils.ReplaceTag(strDirectory, "%end%", currentRunningProgram.EndTime.ToShortTimeString(), "unknown");
+          strDirectory = Utils.MakeDirectoryPath(strDirectory);
+          if (!Directory.Exists(RecordingPath + "\\" + strDirectory))
+            Directory.CreateDirectory(RecordingPath + "\\" + strDirectory);
+        }
+
+        if (recFileFormat != string.Empty)
+        {
+          strName = Utils.ReplaceTag(recFileFormat, "%channel%", currentRunningProgram.Channel, "unknown");
+          strName = Utils.ReplaceTag(strName, "%title%", currentRunningProgram.Title, "unknown");
+          strName = Utils.ReplaceTag(strName, "%name%", currentRunningProgram.Episode, "unknown");
+          strName = Utils.ReplaceTag(strName, "%series%", currentRunningProgram.SeriesNum, "unknown");
+          strName = Utils.ReplaceTag(strName, "%episode%", currentRunningProgram.EpisodeNum, "unknown");
+          strName = Utils.ReplaceTag(strName, "%part%", currentRunningProgram.EpisodePart, "unknown");
+          strName = Utils.ReplaceTag(strName, "%date%", currentRunningProgram.StartTime.Date.ToShortDateString(), "unknown");
+          strName = Utils.ReplaceTag(strName, "%start%", currentRunningProgram.StartTime.ToShortTimeString(), "unknown");
+          strName = Utils.ReplaceTag(strName, "%end%", currentRunningProgram.EndTime.ToShortTimeString(), "unknown");
+          strName = Utils.MakeFileName(strName);
+          if (File.Exists(RecordingPath + "\\" + strDirectory + "\\" + strName + recEngineExt))
+          {
+            int i = 1;
+            while (File.Exists(RecordingPath + "\\" + strDirectory + "\\" + strName + "_" + i.ToString() + recEngineExt))
+              ++i;
+            strName += "_" + i.ToString();
+          }
+          strName += recEngineExt;
+        }
       }
       else
       {
@@ -1573,11 +1623,12 @@ namespace MediaPortal.TV.Recording
           dt.Hour,
           dt.Minute,
           DateTime.Now.Minute, DateTime.Now.Second,
-          ".dvr-ms");
+          recEngineExt);
       }
 
+      Log.Write("Recorder: recording to {0}\\{1}", RecordingPath + "\\" + strDirectory, strName);
 
-      string strFileName = String.Format(@"{0}\{1}", RecordingPath, Utils.MakeFileName(strName));
+      string strFileName = String.Format(@"{0}\{1}", RecordingPath + "\\" + strDirectory, Utils.MakeFileName(strName));
       //Log.WriteFile(Log.LogType.Capture, "Card:{0} recording to file:{1}", ID, strFileName);
 
       TVChannel channel = GetChannel(_currentTvChannelName);
@@ -1695,7 +1746,7 @@ namespace MediaPortal.TV.Recording
     {
       if (_currentGraphState != State.Viewing) return;
       Log.Write("TVCapture.Tune({0}", channel.Name);
-        _currentGraph.TuneChannel(channel);
+      _currentGraph.TuneChannel(channel);
       lastChannelChange = DateTime.Now;
     }
 
@@ -1919,7 +1970,7 @@ namespace MediaPortal.TV.Recording
       if (RecordingPath.ToLower().Substring(0, 2) != drive.ToLower()) return;
       try
       {
-        string[] fileNames = System.IO.Directory.GetFiles(RecordingPath, "*.dvr-ms");
+        string[] fileNames = System.IO.Directory.GetFiles(RecordingPath, "*" + recEngineExt);
         for (int i = 0; i < fileNames.Length; ++i)
         {
           bool add = true;
