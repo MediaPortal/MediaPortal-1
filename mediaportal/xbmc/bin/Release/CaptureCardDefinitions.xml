@@ -6677,14 +6677,14 @@
 	</tv> 
   </capturecard>
 
-  <capturecard commercialname="Leadtek WinFast DTV 1000T" capturename="WinFast DTV 1000T BDA Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_018714f1&amp;rev_05"> 
+  <capturecard commercialname="Leadtek WinFast DTV 1000T" capturename="WinFast DTV1000T BDA Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_018714f1&amp;rev_05"> 
 	<capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities> 
 	<tv> 
 	  <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
 	  <filters> 
 		<filter cat="networkprovider"	name="Microsoft DVBT Network Provider"								checkdevice="false"></filter> 
-		<filter cat="tunerdevice"		name="WinFast DTV 1000T BDA DVB-T Tuner/Demod (Thomson DTT7579)"	checkdevice="true"></filter> 
-		<filter cat="capture"			name="WinFast DTV 1000T BDA Transport Stream Capture"				checkdevice="true"></filter> 
+		<filter cat="tunerdevice"		name="WinFast DTV1000T BDA DVB-T Tuner/Demod (Thomson DTT7579)"	checkdevice="true"></filter> 
+		<filter cat="capture"			name="WinFast DTV1000T BDA Transport Stream Capture"				checkdevice="true"></filter> 
 	  </filters> 
 	  <connections> 
 		<connection sourcefilter="networkprovider"	sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"></connection> 
@@ -6730,7 +6730,7 @@
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"  name="AVerMedia AVerTV Tuner (AF2)" 		checkdevice="true"></filter>
+        <filter cat="tvtuner"  name="AVerMedia AVerTV Tuner (AF2)" 			checkdevice="true"></filter>
         <filter cat="tvaudio"  name="AVerMedia AVerTV TvAudio (AF2)"		checkdevice="true"></filter>
         <filter cat="crossbar" name="AVerMedia AVerTV Crossbar (AF2)"		checkdevice="true"></filter>
         <filter cat="capture"  name="AVerMedia AVerTV Video Capture (AF2)"	checkdevice="true"></filter>
@@ -6759,7 +6759,7 @@
 	  <connections> 
 		<connection sourcefilter="networkprovider"	sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"></connection> 
 		<connection sourcefilter="tunerdevice"		sourcepin="0" sinkfilter="capture"		sinkpin="0"></connection> 
-		</connections> 
+	  </connections> 
 	</tv> 
   </capturecard>
 
@@ -6797,33 +6797,49 @@
 
   <capturecard commercialname="TechnoTrend DVB-T USB 2.0 Stick" capturename="USB 2.0 BDA DVB Capture" devid="vid_0b48&amp;pid_3004">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
-      <tv>
-        <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
-        <filters>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
 		<filter cat="networkprovider" name="Microsoft DVBT Network Provider"	checkdevice="false"></filter>
-		<filter cat="tunerdevice"     name="USB 2.0 BDA DVB-T Tuner"		checkdevice="true"></filter>
-		<filter cat="capture"         name="USB 2.0 BDA DVB Capture"		checkdevice="true"></filter>
-        </filters>
-        <connections>
+		<filter cat="tunerdevice"     name="USB 2.0 BDA DVB-T Tuner"			checkdevice="true"></filter>
+		<filter cat="capture"         name="USB 2.0 BDA DVB Capture"			checkdevice="true"></filter>
+      </filters>
+      <connections>
 		<connection sourcefilter="networkprovider" 	sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"></connection>
-		<connection sourcefilter="tunerdevice" 		sourcepin="0" sinkfilter="capture" 	sinkpin="0"></connection>
-        </connections>
+		<connection sourcefilter="tunerdevice" 		sourcepin="0" sinkfilter="capture"		sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Winfast DTV 1000T" capturename="Winfast DTV1000T BDA Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_665f107d&amp;rev_05">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+		<filter cat="networkprovider" name="Microsoft DVBT Network Provider"							checkdevice="false"></filter>
+		<filter cat="tunerdevice"     name="WinFast DTV1000T BDA DVB-T Tuner/Demod (Thomson DTT7579)"	checkdevice="true"></filter>
+		<filter cat="capture"         name="WinFast DTV1000T BDA Transport Stream Capture"				checkdevice="true"></filter>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" 	sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice" 		sourcepin="0" sinkfilter="capture"		sinkpin="0"></connection>
+      </connections>
       </tv>
   </capturecard>
 
-  <capturecard commercialname="Winfast DTV 1000T" capturename="Winfast DTV 1000T BDA Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_665f107d&amp;rev_05">
+  <capturecard commercialname="Winfast DTV 2000H" capturename="WinFast DTV2000 BDA Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_6651107d&amp;rev_05">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
-      <tv>
-        <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
-        <filters>
-		<filter cat="networkprovider" name="Microsoft DVBT Network Provider"	checkdevice="false"></filter>
-		<filter cat="tunerdevice"     name="Winfast DTV 1000T BDA DVB-T Tuner/Demod (Thompson DTT7579)"		checkdevice="true"></filter>
-		<filter cat="capture"         name="Winfast DTV 1000T BDA Transport Stream Capture"		checkdevice="true"></filter>
-        </filters>
-        <connections>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+		<filter cat="networkprovider" name="Microsoft DVBT Network Provider"							checkdevice="false"></filter>
+		<filter cat="tunerdevice"     name="WinFast DTV2000 BDA DVB-T Tuner/Demod (XCeive XC3028)"	checkdevice="true"></filter>
+		<filter cat="capture"         name="WinFast DTV2000 BDA Transport Stream Capture"				checkdevice="true"></filter>
+      </filters>
+      <connections>
 		<connection sourcefilter="networkprovider" 	sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"></connection>
-		<connection sourcefilter="tunerdevice" 		sourcepin="0" sinkfilter="capture" 	sinkpin="0"></connection>
-        </connections>
+		<connection sourcefilter="tunerdevice" 		sourcepin="0" sinkfilter="capture"		sinkpin="0"></connection>
+      </connections>
       </tv>
   </capturecard>
 </capturecards>
