@@ -151,7 +151,7 @@
 
   <section name="Listing">
 
-    <entry name="BaseURL">http://www.tvinfo.de/</entry>
+    <entry name="BaseURL">http://www03.tvinfo.de/</entry>
     <entry name="SearchURL">exe.php3?target=senderlist.inc&amp;newD=#_D&amp;newM=#_M&amp;newY=#YYYY&amp;showSenderID=#ID</entry>
     <entry name="Tags">TA</entry>
     <entry name="Template">
