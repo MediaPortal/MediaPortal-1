@@ -6811,7 +6811,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="Winfast DTV 1000T" capturename="Winfast DTV1000T BDA Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_665f107d&amp;rev_05">
+  <capturecard commercialname="Winfast DTV 1000T" capturename="WinFast DTV1000T BDA Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_665f107d&amp;rev_05">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
