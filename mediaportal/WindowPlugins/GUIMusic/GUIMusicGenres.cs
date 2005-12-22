@@ -47,7 +47,7 @@ namespace MediaPortal.GUI.Music
 				return s1.Track-s2.Track;
 			}
 		}
-    #region Base variabeles
+    #region Base variables
 
     DirectoryHistory  m_history = new DirectoryHistory();
     string            m_strDirectory=String.Empty;
@@ -231,11 +231,16 @@ namespace MediaPortal.GUI.Music
       _currentLevel = handler.CurrentLevel;
       _currentView = handler.GetView();
 			m_iItemSelected=facadeView.SelectedListItemIndex;
-      
-			if (GUIMusicFiles.IsMusicWindow(newWindowId))
-			{
-				MusicState.StartWindow=newWindowId;
-			}
+
+            if (GUIMusicFiles.IsMusicWindow(newWindowId))
+            {
+                MusicState.StartWindow = newWindowId;
+            }
+            else
+            {
+                MusicState.StartWindow = GetID;
+            }
+
 			base.OnPageDestroy (newWindowId);
 		}
 		protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
@@ -447,63 +452,79 @@ namespace MediaPortal.GUI.Music
 			}
 		}
 
-		protected override  void OnQueueItem(int iItem)
-		{
-			// add item 2 playlist
-			GUIListItem pItem=facadeView[iItem];
-			if (handler.CurrentLevel < handler.MaxLevels-1)
-			{
-				//queue
-				handler.Select(pItem.AlbumInfoTag as Song);
-        List<Song> songs = handler.Execute();
-				handler.CurrentLevel--;
+      protected override void OnQueueItem(int iItem)
+      {
+          CreatePlaylist((Song)((GUIListItem)facadeView[iItem]).AlbumInfoTag);
+          
+          //move to next item and start playing
+          GUIControl.SelectItemControl(GetID, facadeView.GetID, iItem + 1);
+          if (PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC).Count > 0 && !g_Player.Playing)
+          {
+              PlayListPlayer.Reset();
+              PlayListPlayer.CurrentPlaylist = PlayListPlayer.PlayListType.PLAYLIST_MUSIC;
+              PlayListPlayer.Play(0);
+          }
+      }
 
-				//if current view is albums, then queue items by track
-				FilterDefinition def=(FilterDefinition)handler.View.Filters[handler.CurrentLevel];
-				if (def.Where=="album")
-				{
-					songs.Sort(new TrackComparer() );
-				}
-				foreach (Song song in songs)
-				{
-					if (song.songId>0)
-					{
-						MusicTag tag = new MusicTag();
-						tag.Album=song.Album;
-						tag.Artist=song.Artist;
-						tag.Duration=song.Duration;
-						tag.Genre=song.Genre;
-						tag.Rating=song.Rating;
-						tag.TimesPlayed=song.TimesPlayed;
-						tag.Title=song.Title;
-						tag.Track=song.Track;
-						tag.Year=song.Year;
-						
-						GUIListItem item = new GUIListItem();
-						item.Path=song.FileName;
-						item.Label=song.Title;
-						item.Duration=song.Duration;
-						item.IsFolder=false;
-						item.MusicTag = tag;
-						AddItemToPlayList(item);
-					}
-				}
-			}
-			else
-			{
-				AddItemToPlayList(pItem);
-			}
-			
-			//move to next item and start playing
-			GUIControl.SelectItemControl(GetID, facadeView.GetID,iItem+1);
-			if (PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC).Count > 0 &&  !g_Player.Playing)
-			{
-				PlayListPlayer.Reset();
-				PlayListPlayer.CurrentPlaylist = PlayListPlayer.PlayListType.PLAYLIST_MUSIC;
-				PlayListPlayer.Play(0);
-			}
-		}
+      protected void CreatePlaylist(Song song)
+      {
+         // if not at the maxlevel
+          if (handler.CurrentLevel < handler.MaxLevels - 1)
+          {
+              // load all items of next level
+              handler.Select(song);
+              List<Song> songs = handler.Execute();
+                    
+
+              //if current view is albums, then queue items by track
+              FilterDefinition def = (FilterDefinition)handler.View.Filters[handler.CurrentLevel];
+              if (def.Where == "title")
+              {
+                  songs.Sort(new TrackComparer());
+              }
+
+              //loop through each song recursively
+              for (int i = 0; i < songs.Count; ++i)
+              {
+                  CreatePlaylist(songs[i]);
+              }
+                  
+              handler.CurrentLevel--;
+              return;
+           }
+              
+          else
+           {
+              if (song.songId > 0) AddItemToPlayList(song);
+           }
+      }
 		#endregion
+
+      protected void AddItemToPlayList(Song song)
+      {
+          if (Utils.IsAudio(song.FileName) && !PlayListFactory.IsPlayList(song.FileName))
+          {
+              PlayList.PlayListItem playlistItem = new PlayList.PlayListItem();
+              playlistItem.Type = Playlists.PlayList.PlayListItem.PlayListItemType.Audio;
+              playlistItem.FileName = song.FileName;
+              playlistItem.Description = song.Title;
+              playlistItem.Duration = song.Duration;
+
+              MusicTag tag = new MusicTag();
+              tag.Album = song.Album;
+              tag.Artist = song.Artist;
+              tag.Duration = song.Duration;
+              tag.Genre = song.Genre;
+              tag.Rating = song.Rating;
+              tag.TimesPlayed = song.TimesPlayed;
+              tag.Title = song.Title;
+              tag.Track = song.Track;
+              tag.Year = song.Year;
+              playlistItem.MusicTag = tag;
+
+              PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC).Add(playlistItem);
+          }
+      }
 
 	  void keyboard_TextChanged(int kindOfSearch,string data)
 	  {
@@ -528,7 +549,6 @@ namespace MediaPortal.GUI.Music
             
       string strObjects=String.Empty;
 
-      List<GUIListItem> itemlist = new List<GUIListItem>();
       List<Song> songs = handler.Execute();
 			if (handler.CurrentLevel>0)
 			{
@@ -536,12 +556,13 @@ namespace MediaPortal.GUI.Music
 				pItem.Path=String.Empty;
 				pItem.IsFolder=true;
 				Utils.SetDefaultIcons(pItem);
-				itemlist.Add(pItem);
+				facadeView.Add(pItem);
 			}
 
-			foreach (Song song in songs)
+            for (int i = 0; i < songs.Count; ++i)
 			{
-					GUIListItem item=new GUIListItem();
+                Song song = songs[i];	
+                GUIListItem item=new GUIListItem();
 					item.Label=song.Title;
 					if (handler.CurrentLevel+1 < handler.MaxLevels)
 						item.IsFolder=true;
@@ -565,22 +586,16 @@ namespace MediaPortal.GUI.Music
 					item.AlbumInfoTag = song;
 					item.MusicTag=tag;
           item.OnRetrieveArt +=new MediaPortal.GUI.Library.GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
-					itemlist.Add(item);
+					facadeView.Add(item);
 			}
-     
-
-      
+           
       string strSelectedItem=m_history.Get(m_strDirectory);
       int iItem=0;
-      foreach (GUIListItem item in itemlist)
-      {
-				facadeView.Add(item);
-      }
 
-      int iTotalItems=itemlist.Count;
-      if (itemlist.Count>0)
+      int iTotalItems=facadeView.Count;
+      if (facadeView.Count>0)
       {
-        GUIListItem rootItem=itemlist[0];
+        GUIListItem rootItem=facadeView[0];
         if (rootItem.Label=="..") iTotalItems--;
       }
       strObjects=String.Format("{0} {1}", iTotalItems, GUILocalizeStrings.Get(632));
@@ -628,37 +643,6 @@ namespace MediaPortal.GUI.Music
 				handler.SetLabel(item.AlbumInfoTag as Song, ref item);
 			}
 		}
-
-    void AddItemToPlayList(GUIListItem pItem) 
-    {
-      if (pItem.IsFolder)
-      {
-        // recursive
-        if (pItem.Label == "..") return;
-        string strDirectory=m_strDirectory;
-        m_strDirectory=pItem.Path;
-
-        List<GUIListItem> itemlist = m_directory.GetDirectoryExt(m_strDirectory);
-        foreach (GUIListItem item in itemlist)
-        {
-          AddItemToPlayList(item);
-        }
-      }
-      else
-      {
-        //TODO
-        if (Utils.IsAudio(pItem.Path) && !PlayListFactory.IsPlayList(pItem.Path))
-        {
-          PlayList.PlayListItem playlistItem =new PlayList.PlayListItem();
-          playlistItem.Type = Playlists.PlayList.PlayListItem.PlayListItemType.Audio;
-          playlistItem.FileName=pItem.Path;
-          playlistItem.Description=pItem.Label;
-          playlistItem.Duration=pItem.Duration;
-					playlistItem.MusicTag=pItem.MusicTag;
-          PlayListPlayer.GetPlaylist( PlayListPlayer.PlayListType.PLAYLIST_MUSIC ).Add(playlistItem);
-        }
-      }
-    }
 
 		void OnThreadMessage(GUIMessage message)
 		{
