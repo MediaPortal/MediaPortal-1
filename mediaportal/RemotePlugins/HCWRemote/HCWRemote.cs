@@ -47,6 +47,7 @@ namespace MediaPortal
     HCWHandler hcwHandler;
     NetHelper.Connection connection = new NetHelper.Connection();
     Thread bufferThread;
+    bool exit = false;
 
     const int WM_ACTIVATE = 0x0006;
     const int WM_POWERBROADCAST = 0x0218;
@@ -180,10 +181,10 @@ namespace MediaPortal
 
     private void CheckThread()
     {
-      while (true)
+      while (!exit)
       {
         Thread.Sleep(1000);
-        while (Process.GetProcessesByName("HCWHelper").Length > 0)
+        while (!exit && (Process.GetProcessesByName("HCWHelper").Length > 0))
         {
           Thread.Sleep(1000);
         }
@@ -199,6 +200,7 @@ namespace MediaPortal
     /// </summary>
     public void DeInit()
     {
+      exit = true;
       try
       {
         if (controlEnabled && allowExternal)

@@ -34,12 +34,18 @@ namespace HCWHelper
     [STAThread]
     static void Main()
     {
-      if ((Process.GetProcessesByName("HCWHelper").Length == 1) && (Process.GetProcessesByName("MediaPortal").Length > 0))
+      try
       {
-        Application.EnableVisualStyles();
-        Application.SetCompatibleTextRenderingDefault(false);
-        Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.RealTime;
-        Application.Run(new HCWHelper());
+        if ((Process.GetProcessesByName("HCWHelper").Length == 1) && (Process.GetProcessesByName("MediaPortal").Length > 0))
+        {
+          Application.EnableVisualStyles();
+          Application.SetCompatibleTextRenderingDefault(false);
+          Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.RealTime;
+          Application.Run(new HCWHelper());
+        }
+      }
+      catch
+      {
       }
     }
   }
