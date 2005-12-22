@@ -279,10 +279,19 @@ namespace MediaPortal.TV.Recording
       get { return _captureCardDefinition.Capabilities; }
     }
 
+    public FilterDefinition GetTvFilterDefinition(string filterCategory)
+    {
+      foreach (FilterDefinition fd in TvFilterDefinitions)
+      {
+        if (String.Compare(fd.Category, filterCategory, true) == 0) return fd;
+      }
+      return null;
+    }
     /// <summary>
     /// #MW#
     /// </summary>
-    public Hashtable TvFilterDefinitions
+
+    public ArrayList TvFilterDefinitions
     {
       get
       {
@@ -319,7 +328,7 @@ namespace MediaPortal.TV.Recording
     /// <summary>
     /// #MW#
     /// </summary>
-    public Hashtable RadioFilterDefinitions
+    public ArrayList RadioFilterDefinitions
     {
       get
       {
@@ -534,7 +543,7 @@ namespace MediaPortal.TV.Recording
       if (_definitionLoaded) return (true);
       _definitionLoaded = true;
 
-      //Log.WriteFile(Log.LogType.Capture, "LoadDefinitions() card:{0}", ID);
+      Log.WriteFile(Log.LogType.Capture, "LoadDefinitions() card:{0} {1}", ID,this.FriendlyName);
       CaptureCardDefinitions captureCardDefinitions = CaptureCardDefinitions.Instance;
       if (CaptureCardDefinitions.CaptureCards.Count == 0)
       {
@@ -588,16 +597,12 @@ namespace MediaPortal.TV.Recording
       _captureCardDefinition.Capabilities = ccd.Capabilities;
 
       _captureCardDefinition.Tv = new DeviceDefinition();
-      _captureCardDefinition.Tv.FilterDefinitions = new Hashtable();
-      foreach (string filterKey in ccd.Tv.FilterDefinitions.Keys)
+      _captureCardDefinition.Tv.FilterDefinitions = new ArrayList();
+      foreach (FilterDefinition fd in ccd.Tv.FilterDefinitions)
       {
-        FilterDefinition fd = new FilterDefinition();
-        fd.FriendlyName = ((FilterDefinition)ccd.Tv.FilterDefinitions[filterKey]).FriendlyName;
-        fd.Category = ((FilterDefinition)ccd.Tv.FilterDefinitions[filterKey]).Category;
-        fd.CheckDevice = ((FilterDefinition)ccd.Tv.FilterDefinitions[filterKey]).CheckDevice;
         fd.DSFilter = null;
         fd.MonikerDisplayName = String.Empty;
-        _captureCardDefinition.Tv.FilterDefinitions.Add(filterKey, fd);
+        _captureCardDefinition.Tv.FilterDefinitions.Add(fd);
       }
       _captureCardDefinition.Tv.ConnectionDefinitions = ccd.Tv.ConnectionDefinitions;
       _captureCardDefinition.Tv.InterfaceDefinition = ccd.Tv.InterfaceDefinition;
@@ -612,16 +617,16 @@ namespace MediaPortal.TV.Recording
       string captureDeviceDeviceName = m_strVideoDeviceMoniker;
       int pos = captureDeviceDeviceName.LastIndexOf("#");
       if (pos >= 0) captureDeviceDeviceName = captureDeviceDeviceName.Substring(0, pos);
-      //Log.WriteFile(Log.LogType.Capture, " video device moniker   :{0}", m_strVideoDeviceMoniker);
-      //Log.WriteFile(Log.LogType.Capture, " captureDeviceDeviceName:{0}", captureDeviceDeviceName);
+      Log.WriteFile(Log.LogType.Capture, " video device moniker   :{0}", m_strVideoDeviceMoniker);
+      Log.WriteFile(Log.LogType.Capture, " captureDeviceDeviceName:{0}", captureDeviceDeviceName);
 
 
       Instance = FindInstanceForDevice(captureDeviceDeviceName);
-      //Log.WriteFile(Log.LogType.Capture," Using card#{0}", Instance);
+      Log.WriteFile(Log.LogType.Capture," Using card#{0}", Instance);
       //for each tv filter we need for building the graph
-      foreach (string friendlyName in _captureCardDefinition.Tv.FilterDefinitions.Keys)
+      foreach (FilterDefinition fd in _captureCardDefinition.Tv.FilterDefinitions)
       {
-        FilterDefinition fd = _captureCardDefinition.Tv.FilterDefinitions[friendlyName] as FilterDefinition;
+        string friendlyName = fd.Category;
         bool filterFound = false;
         //Log.WriteFile(Log.LogType.Capture, "  filter {0}={1}", friendlyName, fd.FriendlyName);
 
@@ -654,7 +659,7 @@ namespace MediaPortal.TV.Recording
                   tmpMoniker = tmpMoniker.Replace(@"/", "#");
                   if (tmpMoniker.ToLower().IndexOf(moniker.ToLower()) >= 0)
                   {
-                    // Log.Write("use unique filter moniker");
+                    Log.Write("use unique filter moniker");
                     filterFound = true;
                     break;
                   }
@@ -665,7 +670,7 @@ namespace MediaPortal.TV.Recording
               {
                 if (al.Count > 0)
                 {
-                  //Log.Write("use global filter moniker");
+                  Log.Write("use global filter moniker");
                   filter = al[0] as Filter;
                   filterFound = true;
                 }
@@ -676,7 +681,7 @@ namespace MediaPortal.TV.Recording
               }
               else
               {
-                // Log.WriteFile(Log.LogType.Capture, "    Found {0}={1}", filter.Name, filter.MonikerString);
+                 Log.WriteFile(Log.LogType.Capture, "    Found {0}={1}", filter.Name, filter.MonikerString);
               }
             }
             else filterFound = true;
@@ -686,7 +691,7 @@ namespace MediaPortal.TV.Recording
             // to the actual device number which makes it possible to distinqiush two identical cards!
             if (filterFound)
             {
-              ((FilterDefinition)_captureCardDefinition.Tv.FilterDefinitions[friendlyName]).MonikerDisplayName = filter.MonikerString;
+              fd.MonikerDisplayName = filter.MonikerString;
             }
           }//if (filter.Name.Equals(fd.FriendlyName))
         }//foreach (string key in AvailableFilters.Filters.Keys)
