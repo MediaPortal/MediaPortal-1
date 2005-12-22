@@ -60,6 +60,7 @@ namespace HCWHelper
         irremote.IRSetDllDirectory(GetDllPath());
 
         Thread waitThread = new Thread(new ThreadStart(WaitForConnect));
+        waitThread.IsBackground = true;
         waitThread.Start();
 
         Thread checkThread = new Thread(new ThreadStart(CheckThread));
@@ -67,6 +68,7 @@ namespace HCWHelper
         checkThread.Start();
 
         connection.ReceiveEvent += new NetHelper.Connection.ReceiveEventHandler(OnReceive);
+        connection.DisconnectEvent += new NetHelper.Connection.DisconnectHandler(OnDisconnect);
       }
       else
       {
@@ -75,13 +77,25 @@ namespace HCWHelper
       }
     }
 
+
+    private void OnDisconnect(object sender, NetHelper.Connection.EventArguments e)
+    {
+      StopIR();
+      Thread waitThread = new Thread(new ThreadStart(WaitForConnect));
+      waitThread.IsBackground = true;
+      waitThread.Start();
+    }
+
+
     private void CheckThread()
     {
+      //while (true)
       while (Process.GetProcessesByName("MediaPortal").Length > 0)
       {
         Thread.Sleep(1000);
       }
       notifyIcon.Icon = notifyIconRed.Icon;
+      StopIR();
       Application.Exit();
     }
 

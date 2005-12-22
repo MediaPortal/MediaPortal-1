@@ -24,6 +24,7 @@ using System.Text;
 using System.Net.Sockets;
 using System.Net;
 using System.Net.NetworkInformation;
+using System.Threading;
 
 namespace NetHelper
 {
@@ -58,8 +59,10 @@ namespace NetHelper
 
     public delegate void ReceiveEventHandler(object sender, EventArguments e);
     public delegate void ErrorHandler(object sender, EventArguments e);
+    public delegate void DisconnectHandler(object sender, EventArguments e);
     public event ReceiveEventHandler ReceiveEvent;
     public event ErrorHandler ErrorEvent;
+    public event DisconnectHandler DisconnectEvent;
 
 
     public class EventArguments : EventArgs
@@ -72,6 +75,12 @@ namespace NetHelper
       public EventArguments(string msg)
       {
         message = msg;
+        timestamp = DateTime.Now;
+      }
+
+      public EventArguments()
+      {
+        message = string.Empty;
         timestamp = DateTime.Now;
       }
     }
@@ -116,7 +125,13 @@ namespace NetHelper
 
     private void OnRemoteDisconnected()
     {
+      if (DisconnectEvent != null)
+      {
+        EventArguments e = new EventArguments();
+        DisconnectEvent(this, e);
+      }
       Close();
+      Thread.Sleep(200);
       Connect(tcpPort);
     }
 
@@ -150,7 +165,6 @@ namespace NetHelper
         SocketPacket socketData = (SocketPacket)asyn.AsyncState;
         int iRx = socketData.Socket.EndReceive(asyn);
         OnReceive(Encoding.UTF8.GetString(socketData.dataBuffer, 0, iRx));
-        //OnReceive(Encoding.UTF8.GetString(socketData.dataBuffer));
         WaitForData(socketData.Socket);
       }
       catch (ObjectDisposedException)
