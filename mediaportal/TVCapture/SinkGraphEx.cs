@@ -147,9 +147,10 @@ namespace MediaPortal.TV.Recording
         // Loop through configured filters for this card, bind them and add them to the graph
         // Note that while adding filters to a graph, some connections may already be created...
         Log.WriteFile(Log.LogType.Capture, "SinkGraphEx: Adding configured filters...");
-        foreach (string catName in mCard.TvFilterDefinitions.Keys)
+        foreach (FilterDefinition dsFilter in mCard.TvFilterDefinitions)
         {
-          FilterDefinition dsFilter = mCard.TvFilterDefinitions[catName] as FilterDefinition;
+          string catName = dsFilter.Category;
+          //FilterDefinition dsFilter = mCard.TvFilterDefinitions[catName] as FilterDefinition;
           Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  adding filter <{0}> with moniker <{1}>", dsFilter.FriendlyName, dsFilter.MonikerDisplayName);
           dsFilter.DSFilter = Marshal.BindToMoniker(dsFilter.MonikerDisplayName) as IBaseFilter;
           hr = m_graphBuilder.AddFilter(dsFilter.DSFilter, dsFilter.FriendlyName);
@@ -203,8 +204,8 @@ namespace MediaPortal.TV.Recording
         Log.WriteFile(Log.LogType.Capture, "SinkGraphEx: Adding configured pin connections...");
         for (int i = 0; i < mCard.TvConnectionDefinitions.Count; i++)
         {
-          sourceFilter = mCard.TvFilterDefinitions[((ConnectionDefinition)mCard.TvConnectionDefinitions[i]).SourceCategory] as FilterDefinition;
-          sinkFilter = mCard.TvFilterDefinitions[((ConnectionDefinition)mCard.TvConnectionDefinitions[i]).SinkCategory] as FilterDefinition;
+          sourceFilter = mCard.GetTvFilterDefinition(((ConnectionDefinition)mCard.TvConnectionDefinitions[i]).SourceCategory);
+          sinkFilter = mCard.GetTvFilterDefinition(((ConnectionDefinition)mCard.TvConnectionDefinitions[i]).SinkCategory);
           if (sourceFilter == null)
           {
             Log.WriteFile(Log.LogType.Capture, true, "SinkGraphEx: Cannot find source filter for connection:{0}", i);
@@ -307,7 +308,7 @@ namespace MediaPortal.TV.Recording
         // This should be changed in the future, to allow custom graph endings (mux/no mux) using the
         // video and audio pins to connect to the rest of the graph (SBE, overlay etc.)
         // This might be needed by the ATI AIW cards (waiting for ob2 to release...)
-        FilterDefinition lastFilter = mCard.TvFilterDefinitions[mCard.TvInterfaceDefinition.FilterCategory] as FilterDefinition;
+        FilterDefinition lastFilter = mCard.GetTvFilterDefinition(mCard.TvInterfaceDefinition.FilterCategory);
 
 
 
@@ -431,8 +432,8 @@ namespace MediaPortal.TV.Recording
       IPin sourcePin = null;
       IPin sinkPin = null;
 
-      sourceFilter = mCard.TvFilterDefinitions[((ConnectionDefinition)mCard.TvConnectionDefinitions[instance]).SourceCategory] as FilterDefinition;
-      sinkFilter = mCard.TvFilterDefinitions[((ConnectionDefinition)mCard.TvConnectionDefinitions[instance]).SinkCategory] as FilterDefinition;
+      sourceFilter = mCard.GetTvFilterDefinition(((ConnectionDefinition)mCard.TvConnectionDefinitions[instance]).SourceCategory);
+      sinkFilter = mCard.GetTvFilterDefinition(((ConnectionDefinition)mCard.TvConnectionDefinitions[instance]).SinkCategory);
       if (sourceFilter == null)
       {
         Log.WriteFile(Log.LogType.Capture, true, "SinkGraphEx: Cannot find source filter for connection:{0}", instance);
@@ -607,13 +608,14 @@ namespace MediaPortal.TV.Recording
         DsROT.RemoveGraphFromRot(ref m_rotCookie); m_rotCookie = 0;
 
 
-      foreach (string strfName in mCard.TvFilterDefinitions.Keys)
+      foreach (FilterDefinition dsFilter in mCard.TvFilterDefinitions)
       {
-        FilterDefinition dsFilter = mCard.TvFilterDefinitions[strfName] as FilterDefinition;
+        //string strfName = dsFilter.Category;
+        //FilterDefinition dsFilter = mCard.TvFilterDefinitions[strfName] as FilterDefinition;
         if (dsFilter.DSFilter != null)
           Marshal.ReleaseComObject(dsFilter.DSFilter);
-        ((FilterDefinition)mCard.TvFilterDefinitions[strfName]).DSFilter = null;
-        dsFilter = null;
+        //((FilterDefinition)mCard.TvFilterDefinitions[strfName]).DSFilter = null;
+        //dsFilter = null;
       }
 
       if (m_captureGraphBuilder != null)

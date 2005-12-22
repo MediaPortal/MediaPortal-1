@@ -402,10 +402,10 @@ namespace MediaPortal.TV.Recording
         // Loop through configured filters for this card, bind them and add them to the graph
         // Note that while adding filters to a graph, some connections may already be created...
         Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA: Adding configured filters...");
-        foreach (string catName in _card.TvFilterDefinitions.Keys)
+        foreach (FilterDefinition dsFilter in _card.TvFilterDefinitions)
         {
-          FilterDefinition dsFilter = _card.TvFilterDefinitions[catName] as FilterDefinition;
-          //Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:  Adding filter <{0}> with moniker <{1}>", dsFilter.FriendlyName, dsFilter.MonikerDisplayName);
+          string catName = dsFilter.Category;
+          Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:  Adding filter <{0}> with moniker <{1}>", dsFilter.FriendlyName, dsFilter.MonikerDisplayName);
           dsFilter.DSFilter = Marshal.BindToMoniker(dsFilter.MonikerDisplayName) as IBaseFilter;
           hr = _graphBuilder.AddFilter(dsFilter.DSFilter, dsFilter.FriendlyName);
           if (hr == 0)
@@ -473,7 +473,7 @@ namespace MediaPortal.TV.Recording
         for (int i = 0; i < _card.TvConnectionDefinitions.Count; i++)
         {
           //get the source filter for the connection
-          sourceFilter = _card.TvFilterDefinitions[((ConnectionDefinition)_card.TvConnectionDefinitions[i]).SourceCategory] as FilterDefinition;
+          sourceFilter = _card.GetTvFilterDefinition(((ConnectionDefinition)_card.TvConnectionDefinitions[i]).SourceCategory) ;
           if (sourceFilter == null)
           {
             Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA:FAILED Cannot find source filter for connection:{0}", i);
@@ -481,7 +481,7 @@ namespace MediaPortal.TV.Recording
           }
 
           //get the destination/sink filter for the connection
-          sinkFilter = _card.TvFilterDefinitions[((ConnectionDefinition)_card.TvConnectionDefinitions[i]).SinkCategory] as FilterDefinition;
+          sinkFilter = _card.GetTvFilterDefinition(((ConnectionDefinition)_card.TvConnectionDefinitions[i]).SinkCategory);
           if (sinkFilter == null)
           {
             Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA:FAILED Cannot find sink filter for connection:{0}", i);
@@ -644,7 +644,7 @@ namespace MediaPortal.TV.Recording
         // This should be changed in the future, to allow custom graph endings (mux/no mux) using the
         // video and audio pins to connect to the rest of the graph (SBE, overlay etc.)
         // This might be needed by the ATI AIW cards (waiting for ob2 to release...)
-        FilterDefinition lastFilter = _card.TvFilterDefinitions[_card.TvInterfaceDefinition.FilterCategory] as FilterDefinition;
+        FilterDefinition lastFilter = _card.GetTvFilterDefinition(_card.TvInterfaceDefinition.FilterCategory);
 
         // no interface defined or interface not found? then return
         if (lastFilter == null)
@@ -1300,12 +1300,10 @@ namespace MediaPortal.TV.Recording
 
 
         //Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: clean filters");
-        foreach (string strfileName in _card.TvFilterDefinitions.Keys)
+        foreach (FilterDefinition dsFilter in _card.TvFilterDefinitions)
         {
-          FilterDefinition dsFilter = _card.TvFilterDefinitions[strfileName] as FilterDefinition;
+          string strfileName = dsFilter.Category;
           dsFilter.DSFilter = null;
-          ((FilterDefinition)_card.TvFilterDefinitions[strfileName]).DSFilter = null;
-          dsFilter = null;
         }
 
 
@@ -2251,9 +2249,9 @@ namespace MediaPortal.TV.Recording
       {
         if (_card.LoadDefinitions())
         {
-          foreach (string catName in _card.TvFilterDefinitions.Keys)
+          foreach (FilterDefinition dsFilter in _card.TvFilterDefinitions)
           {
-            FilterDefinition dsFilter = _card.TvFilterDefinitions[catName] as FilterDefinition;
+            string catName = dsFilter.Category;
             if (dsFilter.MonikerDisplayName == @"@device:sw:{71985F4B-1CA1-11D3-9CC8-00C04F7971E0}\Microsoft DVBC Network Provider")
             {
               _networkType = NetworkType.DVBC;

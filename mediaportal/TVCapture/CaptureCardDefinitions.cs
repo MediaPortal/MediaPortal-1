@@ -75,7 +75,7 @@ namespace TVCapture
 
   public class DeviceDefinition
   {
-    public Hashtable FilterDefinitions;
+    public ArrayList FilterDefinitions;
     public ArrayList ConnectionDefinitions;
     public InterfaceDefinition InterfaceDefinition;
   }
@@ -293,10 +293,10 @@ namespace TVCapture
             cardConfig.Capabilities = new CapabilityDefinition();
             cardConfig.Tv = new DeviceDefinition();
             cardConfig.Radio = new DeviceDefinition();
-            cardConfig.Tv.FilterDefinitions = new System.Collections.Hashtable();
+            cardConfig.Tv.FilterDefinitions = new ArrayList();
             cardConfig.Tv.ConnectionDefinitions = new System.Collections.ArrayList();
             cardConfig.Tv.InterfaceDefinition = new InterfaceDefinition();
-            cardConfig.Radio.FilterDefinitions = new System.Collections.Hashtable();
+            cardConfig.Radio.FilterDefinitions = new ArrayList();
             cardConfig.Radio.ConnectionDefinitions = new System.Collections.ArrayList();
             cardConfig.Radio.InterfaceDefinition = new InterfaceDefinition();
 
@@ -359,7 +359,7 @@ namespace TVCapture
                 dsfilter.FriendlyName = ff.Attributes.GetNamedItem(@"name").InnerText;
                 strstr = ff.Attributes.GetNamedItem(@"checkdevice").InnerText;
                 dsfilter.CheckDevice = XmlConvert.ToBoolean(strstr);
-                cardConfig.Tv.FilterDefinitions.Add(dsfilter.Category, dsfilter);
+                cardConfig.Tv.FilterDefinitions.Add(dsfilter);
               }
 
               XmlNode connections = tvNode.SelectSingleNode(@"connections");
@@ -411,7 +411,7 @@ namespace TVCapture
                 dsfilter.FriendlyName = ff.Attributes.GetNamedItem(@"name").InnerText;
                 strstr = ff.Attributes.GetNamedItem(@"checkdevice").InnerText;
                 dsfilter.CheckDevice = XmlConvert.ToBoolean(strstr);
-                cardConfig.Radio.FilterDefinitions.Add(dsfilter.Category, dsfilter);
+                cardConfig.Radio.FilterDefinitions.Add(dsfilter);
               }
 
               XmlNode connections = radioNode.SelectSingleNode(@"connections");

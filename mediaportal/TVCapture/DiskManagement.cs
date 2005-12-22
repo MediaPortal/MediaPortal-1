@@ -176,7 +176,7 @@ namespace MediaPortal.TV.Recording
                     }
                   }//using (DvrmsMetadataEditor editor = new DvrmsMetadataEditor(file))
                 }
-                catch (Exception ex)
+                catch (Exception )
                 {
                   //Log.WriteFile(Log.LogType.Log, true, "Recorder:Unable to import {0} reason:{1} {2} {3}", file, ex.Message, ex.Source, ex.StackTrace);
                 }
