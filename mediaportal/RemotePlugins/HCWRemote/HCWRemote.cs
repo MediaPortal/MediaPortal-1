@@ -287,7 +287,7 @@ namespace MediaPortal
           Log.Write("HCW: Exception: {0}", ex.Message);
           Log.Write("HCW: Received: {0}", msg);
         }
-        Thread.Sleep(10);
+        Thread.Sleep(100);
       }
     }
 

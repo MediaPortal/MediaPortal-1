@@ -218,6 +218,7 @@ namespace HCWHelper
             logVerbose = System.Convert.ToBoolean(msg.Split('|')[1]);
             break;
         }
+        Thread.Sleep(100);
       }
     }
 

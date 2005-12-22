@@ -38,6 +38,7 @@ namespace HCWHelper
       {
         Application.EnableVisualStyles();
         Application.SetCompatibleTextRenderingDefault(false);
+        Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.RealTime;
         Application.Run(new HCWHelper());
       }
     }
