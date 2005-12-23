@@ -1610,6 +1610,16 @@ namespace MediaPortal.TV.Recording
           strDirectory = Utils.ReplaceTag(strDirectory, "%start%", currentRunningProgram.StartTime.ToShortTimeString(), "unknown");
           strDirectory = Utils.ReplaceTag(strDirectory, "%end%", currentRunningProgram.EndTime.ToShortTimeString(), "unknown");
           strDirectory = Utils.ReplaceTag(strDirectory, "%genre%", currentRunningProgram.Genre, "unknown");
+          strDirectory = Utils.ReplaceTag(strDirectory, "%startday%", currentRunningProgram.StartTime.Day.ToString(), "unknown");
+          strDirectory = Utils.ReplaceTag(strDirectory, "%startmonth%", currentRunningProgram.StartTime.Month.ToString(), "unknown");
+          strDirectory = Utils.ReplaceTag(strDirectory, "%startyear%", currentRunningProgram.StartTime.Year.ToString(), "unknown");
+          strDirectory = Utils.ReplaceTag(strDirectory, "%starthh%", currentRunningProgram.StartTime.Hour.ToString(), "unknown");
+          strDirectory = Utils.ReplaceTag(strDirectory, "%startmm%", currentRunningProgram.StartTime.Minute.ToString(), "unknown");
+          strDirectory = Utils.ReplaceTag(strDirectory, "%endday%", currentRunningProgram.EndTime.Day.ToString(), "unknown");
+          strDirectory = Utils.ReplaceTag(strDirectory, "%endmonth%", currentRunningProgram.EndTime.Month.ToString(), "unknown");
+          strDirectory = Utils.ReplaceTag(strDirectory, "%startyear%", currentRunningProgram.EndTime.Year.ToString(), "unknown");
+          strDirectory = Utils.ReplaceTag(strDirectory, "%endhh%", currentRunningProgram.EndTime.Hour.ToString(), "unknown");
+          strDirectory = Utils.ReplaceTag(strDirectory, "%endmm%", currentRunningProgram.EndTime.Minute.ToString(), "unknown");
           strDirectory = Utils.MakeDirectoryPath(strDirectory);
           if (!Directory.Exists(RecordingPath + "\\" + strDirectory))
             Directory.CreateDirectory(RecordingPath + "\\" + strDirectory);
@@ -1627,6 +1637,16 @@ namespace MediaPortal.TV.Recording
           strName = Utils.ReplaceTag(strName, "%start%", currentRunningProgram.StartTime.ToShortTimeString(), "unknown");
           strName = Utils.ReplaceTag(strName, "%end%", currentRunningProgram.EndTime.ToShortTimeString(), "unknown");
           strName = Utils.ReplaceTag(strName, "%genre%", currentRunningProgram.Genre, "unknown");
+          strName = Utils.ReplaceTag(strName, "%startday%", currentRunningProgram.StartTime.Day.ToString(), "unknown");
+          strName = Utils.ReplaceTag(strName, "%startmonth%", currentRunningProgram.StartTime.Month.ToString(), "unknown");
+          strName = Utils.ReplaceTag(strName, "%startyear%", currentRunningProgram.StartTime.Year.ToString(), "unknown");
+          strName = Utils.ReplaceTag(strName, "%starthh%", currentRunningProgram.StartTime.Hour.ToString(), "unknown");
+          strName = Utils.ReplaceTag(strName, "%startmm%", currentRunningProgram.StartTime.Minute.ToString(), "unknown");
+          strName = Utils.ReplaceTag(strName, "%endday%", currentRunningProgram.EndTime.Day.ToString(), "unknown");
+          strName = Utils.ReplaceTag(strName, "%endmonth%", currentRunningProgram.EndTime.Month.ToString(), "unknown");
+          strName = Utils.ReplaceTag(strName, "%startyear%", currentRunningProgram.EndTime.Year.ToString(), "unknown");
+          strName = Utils.ReplaceTag(strName, "%endhh%", currentRunningProgram.EndTime.Hour.ToString(), "unknown");
+          strName = Utils.ReplaceTag(strName, "%endmm%", currentRunningProgram.EndTime.Minute.ToString(), "unknown");
           strName = Utils.MakeFileName(strName);
           if (File.Exists(RecordingPath + "\\" + strDirectory + "\\" + strName + recEngineExt))
           {

@@ -120,6 +120,30 @@
   <metadata name="folderBrowserDialog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
+  <data name="label41.Text" xml:space="preserve">
+    <value>%startday% = start day
+%startmonth% = start month
+%startyear% = start year
+%starthh% = start hours
+%startmm% = start minutes
+%endday% = end day
+%endmonth% = end month
+%endyear% = end year
+%endhh% = end hours
+%endmm% = end minutes</value>
+  </data>
+  <data name="label40.Text" xml:space="preserve">
+    <value>%channel% = channel name
+%title% = title
+%name% = episode name
+%genre% = genre
+%series% = series number
+%episode% = episode number
+%part% = episode part
+%date% = date
+%start% = start time
+%end% = end time</value>
+  </data>
   <metadata name="$this.DrawGrid" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
