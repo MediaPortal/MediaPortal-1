@@ -1082,6 +1082,7 @@ namespace MediaPortal.Util
       if (strText == null) return String.Empty;
       if (strText.Length == 0) return String.Empty;
       string strFName = strText.Replace('*', '_');
+      strFName = strFName.Replace(':', '_');
       strFName = strFName.Replace('?', '_');
       strFName = strFName.Replace('\"', '_');
       strFName = strFName.Replace('<', '_'); ;
