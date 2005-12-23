@@ -2014,29 +2014,39 @@ namespace MediaPortal.TV.Recording
       if (RecordingPath.ToLower().Substring(0, 2) != drive.ToLower()) return;
       try
       {
-        string[] fileNames = System.IO.Directory.GetFiles(RecordingPath, "*" + recEngineExt);
-        for (int i = 0; i < fileNames.Length; ++i)
+        string[] directories = System.IO.Directory.GetDirectories(RecordingPath, "*", SearchOption.AllDirectories);
+        foreach (string directory in directories)
         {
-          bool add = true;
-          foreach (RecordingFileInfo fi in recordings)
+          int index = directory.IndexOf("card");
+          if ((index == -1) || ((index != -1) && ((directory.Substring(index - 1, 1) != "\\"))))
           {
-            if (fi.filename.ToLower() == fileNames[i].ToLower())
+            string[] fileNames = System.IO.Directory.GetFiles(directory, "*" + recEngineExt);
+            for (int i = 0; i < fileNames.Length; ++i)
             {
-              add = false;
+              bool add = true;
+              foreach (RecordingFileInfo fi in recordings)
+              {
+                if (fi.filename.ToLower() == fileNames[i].ToLower())
+                {
+                  add = false;
+                }
+              }
+              if (add)
+              {
+                FileInfo info = new FileInfo(fileNames[i]);
+                RecordingFileInfo fi = new RecordingFileInfo();
+                fi.info = info;
+                fi.filename = fileNames[i];
+                recordings.Add(fi);
+              }
+              Log.Write("found: {0}", fileNames[i]);
             }
-          }
-          if (add)
-          {
-            FileInfo info = new FileInfo(fileNames[i]);
-            RecordingFileInfo fi = new RecordingFileInfo();
-            fi.info = info;
-            fi.filename = fileNames[i];
-            recordings.Add(fi);
           }
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.Write("GetRecordings: {0}", ex.Message);
       }
     }
     public string TimeShiftFileName

@@ -103,85 +103,93 @@ namespace MediaPortal.TV.Recording
           if (dev == null) continue;
           try
           {
-            string[] files = System.IO.Directory.GetFiles(dev.RecordingPath, "*.dvr-ms");
-            foreach (string file in files)
+            string[] directories = System.IO.Directory.GetDirectories(dev.RecordingPath, "*", SearchOption.AllDirectories);
+            foreach (string directory in directories)
             {
-              System.Threading.Thread.Sleep(100);
-              bool add = true;
-              foreach (TVRecorded rec in recordings)
+              int index = directory.IndexOf("card");
+              if ((index == -1) || ((index != -1) && ((directory.Substring(index - 1, 1) != "\\"))))
               {
-                if (Recorder.IsAnyCardRecording()) return;
-                if (rec.FileName != null)
-                {
-                  if (rec.FileName.ToLower() == file.ToLower())
-                  {
-                    add = false;
-                    break;
-                  }
-                }
-              }
-              if (add)
-              {
-                //Log.WriteFile(Log.LogType.Recorder, "Recorder: import recording {0}", file);
-                try
+                string[] files = System.IO.Directory.GetFiles(directory, "*.dvr-ms");
+                foreach (string file in files)
                 {
                   System.Threading.Thread.Sleep(100);
-                  using (DvrmsMetadataEditor editor = new DvrmsMetadataEditor(file))
+                  bool add = true;
+                  foreach (TVRecorded rec in recordings)
                   {
-                    IDictionary dict = editor.GetAttributes();
-                    if (dict != null)
+                    if (Recorder.IsAnyCardRecording()) return;
+                    if (rec.FileName != null)
                     {
-                      TVRecorded newRec = new TVRecorded();
-                      newRec.FileName = file;
-                      foreach (MetadataItem item in dict.Values)
+                      if (rec.FileName.ToLower() == file.ToLower())
                       {
-                        if (item == null) continue;
-                        if (item.Name == null) continue;
-                        //Log.WriteFile(Log.LogType.Recorder,"attribute:{0} value:{1}", item.Name,item.Value.ToString());
-                        try { if (item.Name.ToLower() == "channel") newRec.Channel = (string)item.Value.ToString(); }
-                        catch (Exception) { }
-                        try { if (item.Name.ToLower() == "title") newRec.Title = (string)item.Value.ToString(); }
-                        catch (Exception) { }
-                        try { if (item.Name.ToLower() == "programtitle") newRec.Title = (string)item.Value.ToString(); }
-                        catch (Exception) { }
-                        try { if (item.Name.ToLower() == "genre") newRec.Genre = (string)item.Value.ToString(); }
-                        catch (Exception) { }
-                        try { if (item.Name.ToLower() == "details") newRec.Description = (string)item.Value.ToString(); }
-                        catch (Exception) { }
-                        try { if (item.Name.ToLower() == "start") newRec.Start = (long)UInt64.Parse(item.Value.ToString()); }
-                        catch (Exception) { }
-                        try { if (item.Name.ToLower() == "end") newRec.End = (long)UInt64.Parse(item.Value.ToString()); }
-                        catch (Exception) { }
-                      }
-                      if (newRec.Channel == null)
-                      {
-                        string name = Utils.GetFilename(file);
-                        string[] parts = name.Split('_');
-                        if (parts.Length > 0)
-                          newRec.Channel = parts[0];
-                      }
-                      if (newRec.Channel != null && newRec.Channel.Length > 0)
-                      {
-                        int id = TVDatabase.AddRecordedTV(newRec);
-                        if (id < 0)
-                        {
-                          //Log.WriteFile(Log.LogType.Recorder, "Recorder: import recording {0} failed");
-                        }
-                        recordings.Add(newRec);
-                      }
-                      else
-                      {
-                        //Log.WriteFile(Log.LogType.Recorder, "Recorder: import recording {0} failed, unknown tv channel", file);
+                        add = false;
+                        break;
                       }
                     }
-                  }//using (DvrmsMetadataEditor editor = new DvrmsMetadataEditor(file))
-                }
-                catch (Exception )
-                {
-                  //Log.WriteFile(Log.LogType.Log, true, "Recorder:Unable to import {0} reason:{1} {2} {3}", file, ex.Message, ex.Source, ex.StackTrace);
-                }
-              }//if (add)
-            }//foreach (string file in files)
+                  }
+                  if (add)
+                  {
+                    //Log.WriteFile(Log.LogType.Recorder, "Recorder: import recording {0}", file);
+                    try
+                    {
+                      System.Threading.Thread.Sleep(100);
+                      using (DvrmsMetadataEditor editor = new DvrmsMetadataEditor(file))
+                      {
+                        IDictionary dict = editor.GetAttributes();
+                        if (dict != null)
+                        {
+                          TVRecorded newRec = new TVRecorded();
+                          newRec.FileName = file;
+                          foreach (MetadataItem item in dict.Values)
+                          {
+                            if (item == null) continue;
+                            if (item.Name == null) continue;
+                            //Log.WriteFile(Log.LogType.Recorder,"attribute:{0} value:{1}", item.Name,item.Value.ToString());
+                            try { if (item.Name.ToLower() == "channel") newRec.Channel = (string)item.Value.ToString(); }
+                            catch (Exception) { }
+                            try { if (item.Name.ToLower() == "title") newRec.Title = (string)item.Value.ToString(); }
+                            catch (Exception) { }
+                            try { if (item.Name.ToLower() == "programtitle") newRec.Title = (string)item.Value.ToString(); }
+                            catch (Exception) { }
+                            try { if (item.Name.ToLower() == "genre") newRec.Genre = (string)item.Value.ToString(); }
+                            catch (Exception) { }
+                            try { if (item.Name.ToLower() == "details") newRec.Description = (string)item.Value.ToString(); }
+                            catch (Exception) { }
+                            try { if (item.Name.ToLower() == "start") newRec.Start = (long)UInt64.Parse(item.Value.ToString()); }
+                            catch (Exception) { }
+                            try { if (item.Name.ToLower() == "end") newRec.End = (long)UInt64.Parse(item.Value.ToString()); }
+                            catch (Exception) { }
+                          }
+                          if (newRec.Channel == null)
+                          {
+                            string name = Utils.GetFilename(file);
+                            string[] parts = name.Split('_');
+                            if (parts.Length > 0)
+                              newRec.Channel = parts[0];
+                          }
+                          if (newRec.Channel != null && newRec.Channel.Length > 0)
+                          {
+                            int id = TVDatabase.AddRecordedTV(newRec);
+                            if (id < 0)
+                            {
+                              //Log.WriteFile(Log.LogType.Recorder, "Recorder: import recording {0} failed");
+                            }
+                            recordings.Add(newRec);
+                          }
+                          else
+                          {
+                            //Log.WriteFile(Log.LogType.Recorder, "Recorder: import recording {0} failed, unknown tv channel", file);
+                          }
+                        }
+                      }//using (DvrmsMetadataEditor editor = new DvrmsMetadataEditor(file))
+                    }
+                    catch (Exception)
+                    {
+                      //Log.WriteFile(Log.LogType.Log, true, "Recorder:Unable to import {0} reason:{1} {2} {3}", file, ex.Message, ex.Source, ex.StackTrace);
+                    }
+                  }//if (add)
+                }//foreach (string file in files)
+              }//if ((index == -1)
+            }//foreach (string directory in directories)
           }
           catch (Exception ex)
           {
@@ -192,6 +200,7 @@ namespace MediaPortal.TV.Recording
       catch (Exception)
       {
       }
+    
       importing = false;
     } //static void ImportDvrMsFiles()
     #endregion
