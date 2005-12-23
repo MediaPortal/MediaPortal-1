@@ -27,7 +27,6 @@ using System.Windows.Forms;
 using System.Management;
 using System.Globalization;
 using MediaPortal.Util;
-using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Configuration.Sections
 {
@@ -382,8 +381,8 @@ namespace MediaPortal.Configuration.Sections
         episodeNum = "unknown";
         episodePart = "unknown";
         IFormatProvider culture = new CultureInfo("en-US");
-        startDate = DateTime.Parse("12/23/2005 08:15pm", culture);
-        endDate = DateTime.Parse("12/23/2005 10:45pm", culture);
+        startDate = DateTime.Parse("12/23/2005 08:15 PM", culture);
+        endDate = DateTime.Parse("12/23/2005 10:45 PM", culture);
         genre = "Drama";
       }
       else
@@ -395,8 +394,8 @@ namespace MediaPortal.Configuration.Sections
         episodeNum = "32";
         episodePart = "part 1 of 1";
         IFormatProvider culture = new CultureInfo("en-US");
-        startDate = DateTime.Parse("12/23/2005 08:15pm", culture);
-        endDate = DateTime.Parse("12/23/2005 10:45pm", culture);
+        startDate = DateTime.Parse("12/23/2005 08:15 PM", culture);
+        endDate = DateTime.Parse("12/23/2005 08:45 PM", culture);
         genre = "Comedy";
       }
 
