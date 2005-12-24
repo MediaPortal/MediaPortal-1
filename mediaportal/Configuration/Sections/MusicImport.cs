@@ -621,6 +621,7 @@ namespace MediaPortal.Configuration.Sections
       this.linkLabelLAME.TabIndex = 1;
       this.linkLabelLAME.TabStop = true;
       this.linkLabelLAME.Text = "http://mitiok.maresweb.org/lame-3.97b.zip";
+      this.linkLabelLAME.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelLAME_LinkClicked);
       // 
       // labelDisabled
       // 
@@ -773,5 +774,6 @@ namespace MediaPortal.Configuration.Sections
       }
       Directory.SetCurrentDirectory(currDir);
     }
+
   }
 }
