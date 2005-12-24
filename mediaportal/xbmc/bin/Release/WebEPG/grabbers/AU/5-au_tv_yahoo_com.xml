@@ -62,6 +62,16 @@
 	<entry name="sbs@sbs.com.au">264617</entry>				<!-- SBS -->
 	<entry name="sbs2@sbs.com.au">272787</entry>				<!-- SBS 2 -->
 
+  	<entry name="abc-wa@abc.net.au">249832</entry>				<!-- ABC WA -->
+	<entry name="abc2@abc.net.au">283793</entry>				<!-- ABC2 -->
+	<entry name="7-wa-metro@seven.com.au">86178</entry>			<!-- Seven Metro WA -->
+	<entry name="9-wa-metro@ninemsn.com.au">96115</entry>			<!-- Nine(WIN) Metro WA -->
+	<entry name="10-wa-metro@ten.com.au">16173</entry>			<!-- Ten Metro WA -->
+	<entry name="sbs-wa@sbs.com.au">259107</entry>				<!-- SBS WA-->
+	<entry name="sbs2@sbs.com.au">272787</entry>				<!-- SBS 2 -->
+
+
+
   </section>
 
 <!-- Formating of Listing -->
