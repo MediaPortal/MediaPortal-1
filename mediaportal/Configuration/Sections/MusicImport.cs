@@ -20,16 +20,9 @@
  */
 
 using System;
-using System.Collections;
-using System.ComponentModel;
-using System.Drawing;
 using System.Windows.Forms;
 using System.IO;
-using Yeti.MMedia;
-using Yeti.MMedia.Mp3;
-using WaveLib;
-using Yeti.Lame;
-using MediaPortal.GUI.Library;
+using MediaPortal.Util;
 
 namespace MediaPortal.Configuration.Sections
 {
@@ -60,7 +53,6 @@ namespace MediaPortal.Configuration.Sections
     private CheckBox checkBoxFastMode;
     private CheckBox checkBoxCBR;
     private CheckBox checkBoxDatabase;
-    private CheckBox checkBoxOrganize;
     private CheckBox checkBoxReplace;
     private CheckBox checkBoxMono;
     private CheckBox checkBoxBackground;
@@ -88,11 +80,23 @@ namespace MediaPortal.Configuration.Sections
     private TabControl tabControlMissing;
     private TabPage tabPageMissing;
     private TabPage tabPageEncoderSettings;
+    private TabPage tabPageFilenames;
     private TabPage tabPageImportSettings;
     private TextBox textBoxImportDir;
+    private GroupBox groupBox2;
+    private GroupBox groupBox1;
+    private Label label12;
+    private Label label10;
+    private Label label9;
+    private Label label11;
+    private TextBox textBoxSample;
+    private Label label7;
+    private Label label6;
+    private TextBox textBoxFormat;
+    private Label label38;
+    private CheckBox checkBoxUnknown;
 
     private Preset[] Presets = new Preset[7];
-
     private const string Mpeg1BitRates = "128,160,192,224,256,320";
     private string[] Rates;
     private string LameDir;
@@ -150,7 +154,6 @@ namespace MediaPortal.Configuration.Sections
         checkBoxReplace.Checked = xmlreader.GetValueAsBool("musicimport", "mp3replaceexisting", true);
         checkBoxMono.Checked = xmlreader.GetValueAsBool("musicimport", "mp3mono", false);
         checkBoxCBR.Checked = xmlreader.GetValueAsBool("musicimport", "mp3cbr", false);
-        checkBoxOrganize.Checked = xmlreader.GetValueAsBool("musicimport", "mp3organize", true);
         checkBoxDatabase.Checked = xmlreader.GetValueAsBool("musicimport", "mp3database", true);
         checkBoxBackground.Checked = xmlreader.GetValueAsBool("musicimport", "mp3background", false);
         hScrollBarPriority.Value = xmlreader.GetValueAsInt("musicimport", "mp3priority", 0) * 10;
@@ -162,7 +165,11 @@ namespace MediaPortal.Configuration.Sections
         checkBoxFastMode.Checked = xmlreader.GetValueAsBool("musicimport", "mp3fastmode", false);
         labelTarget.Text = "Bitrate: " + Presets[hScrollBarQuality.Value].Target + " kBps (" + Presets[hScrollBarQuality.Value].Minimum + "..." + Presets[hScrollBarQuality.Value].Maximum + ")";
         labelBitrate.Text = "Target Bitrate: " + Rates[hScrollBarBitrate.Value] + " kBps";
+        textBoxFormat.Text = xmlreader.GetValueAsString("musicimport", "format", "%artist%\\%album%\\%track% %title%");
+        checkBoxUnknown.Enabled = checkBoxDatabase.Checked;
+        checkBoxUnknown.Checked = !xmlreader.GetValueAsBool("musicimport", "importunknown", true);
       }
+      textBoxSample.Text = ShowExample(textBoxFormat.Text);
     }
 
     /// <summary>
@@ -181,9 +188,13 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("musicimport", "mp3mono", checkBoxMono.Checked);
         xmlwriter.SetValueAsBool("musicimport", "mp3cbr", checkBoxCBR.Checked);
         xmlwriter.SetValueAsBool("musicimport", "mp3fastmode", checkBoxFastMode.Checked);
-        xmlwriter.SetValueAsBool("musicimport", "mp3organize", checkBoxOrganize.Checked);
         xmlwriter.SetValueAsBool("musicimport", "mp3database", checkBoxDatabase.Checked);
         xmlwriter.SetValueAsBool("musicimport", "mp3background", checkBoxBackground.Checked);
+        xmlwriter.SetValueAsBool("musicimport", "importunknown", !checkBoxUnknown.Checked);
+        if (textBoxFormat.Text != string.Empty)
+          xmlwriter.SetValue("musicimport", "format", textBoxFormat.Text);
+        else
+          xmlwriter.SetValue("musicimport", "format", "%artist%\\%album%\\%track% %title%");
       }
     }
 
@@ -228,9 +239,9 @@ namespace MediaPortal.Configuration.Sections
       this.radioButtonBitrate = new System.Windows.Forms.RadioButton();
       this.tabPageImportSettings = new System.Windows.Forms.TabPage();
       this.groupBoxGeneralSettings = new System.Windows.Forms.GroupBox();
+      this.checkBoxUnknown = new System.Windows.Forms.CheckBox();
       this.checkBoxBackground = new System.Windows.Forms.CheckBox();
       this.checkBoxDatabase = new System.Windows.Forms.CheckBox();
-      this.checkBoxOrganize = new System.Windows.Forms.CheckBox();
       this.checkBoxReplace = new System.Windows.Forms.CheckBox();
       this.labelLibraryFolder = new System.Windows.Forms.Label();
       this.buttonBrowse = new System.Windows.Forms.Button();
@@ -240,6 +251,18 @@ namespace MediaPortal.Configuration.Sections
       this.labelFasterImport = new System.Windows.Forms.Label();
       this.labelBetterResponse = new System.Windows.Forms.Label();
       this.tabControlMusicImport = new System.Windows.Forms.TabControl();
+      this.tabPageFilenames = new System.Windows.Forms.TabPage();
+      this.groupBox2 = new System.Windows.Forms.GroupBox();
+      this.groupBox1 = new System.Windows.Forms.GroupBox();
+      this.label12 = new System.Windows.Forms.Label();
+      this.label10 = new System.Windows.Forms.Label();
+      this.label9 = new System.Windows.Forms.Label();
+      this.label11 = new System.Windows.Forms.Label();
+      this.textBoxSample = new System.Windows.Forms.TextBox();
+      this.label7 = new System.Windows.Forms.Label();
+      this.label6 = new System.Windows.Forms.Label();
+      this.textBoxFormat = new System.Windows.Forms.TextBox();
+      this.label38 = new System.Windows.Forms.Label();
       this.tabControlMissing = new System.Windows.Forms.TabControl();
       this.tabPageMissing = new System.Windows.Forms.TabPage();
       this.groupBoxMissing = new System.Windows.Forms.GroupBox();
@@ -254,6 +277,9 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxGeneralSettings.SuspendLayout();
       this.groupBoxPerformance.SuspendLayout();
       this.tabControlMusicImport.SuspendLayout();
+      this.tabPageFilenames.SuspendLayout();
+      this.groupBox2.SuspendLayout();
+      this.groupBox1.SuspendLayout();
       this.tabControlMissing.SuspendLayout();
       this.tabPageMissing.SuspendLayout();
       this.groupBoxMissing.SuspendLayout();
@@ -438,9 +464,9 @@ namespace MediaPortal.Configuration.Sections
       // groupBoxGeneralSettings
       // 
       this.groupBoxGeneralSettings.BackColor = System.Drawing.Color.Transparent;
+      this.groupBoxGeneralSettings.Controls.Add(this.checkBoxUnknown);
       this.groupBoxGeneralSettings.Controls.Add(this.checkBoxBackground);
       this.groupBoxGeneralSettings.Controls.Add(this.checkBoxDatabase);
-      this.groupBoxGeneralSettings.Controls.Add(this.checkBoxOrganize);
       this.groupBoxGeneralSettings.Controls.Add(this.checkBoxReplace);
       this.groupBoxGeneralSettings.Controls.Add(this.labelLibraryFolder);
       this.groupBoxGeneralSettings.Controls.Add(this.buttonBrowse);
@@ -451,6 +477,16 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxGeneralSettings.TabIndex = 16;
       this.groupBoxGeneralSettings.TabStop = false;
       this.groupBoxGeneralSettings.Text = "General Settings";
+      // 
+      // checkBoxUnknown
+      // 
+      this.checkBoxUnknown.AutoSize = true;
+      this.checkBoxUnknown.Location = new System.Drawing.Point(20, 72);
+      this.checkBoxUnknown.Name = "checkBoxUnknown";
+      this.checkBoxUnknown.Size = new System.Drawing.Size(220, 17);
+      this.checkBoxUnknown.TabIndex = 13;
+      this.checkBoxUnknown.Text = "Don\'t import unknown tracks to database";
+      this.checkBoxUnknown.UseVisualStyleBackColor = true;
       // 
       // checkBoxBackground
       // 
@@ -465,22 +501,13 @@ namespace MediaPortal.Configuration.Sections
       // checkBoxDatabase
       // 
       this.checkBoxDatabase.AutoSize = true;
-      this.checkBoxDatabase.Location = new System.Drawing.Point(20, 72);
+      this.checkBoxDatabase.Location = new System.Drawing.Point(20, 48);
       this.checkBoxDatabase.Name = "checkBoxDatabase";
       this.checkBoxDatabase.Size = new System.Drawing.Size(122, 17);
       this.checkBoxDatabase.TabIndex = 11;
       this.checkBoxDatabase.Text = "Import into database";
       this.checkBoxDatabase.UseVisualStyleBackColor = true;
-      // 
-      // checkBoxOrganize
-      // 
-      this.checkBoxOrganize.AutoSize = true;
-      this.checkBoxOrganize.Location = new System.Drawing.Point(20, 48);
-      this.checkBoxOrganize.Name = "checkBoxOrganize";
-      this.checkBoxOrganize.Size = new System.Drawing.Size(99, 17);
-      this.checkBoxOrganize.TabIndex = 10;
-      this.checkBoxOrganize.Text = "Organize songs";
-      this.checkBoxOrganize.UseVisualStyleBackColor = true;
+      this.checkBoxDatabase.CheckedChanged += new System.EventHandler(this.checkBoxDatabase_CheckedChanged);
       // 
       // checkBoxReplace
       // 
@@ -563,12 +590,140 @@ namespace MediaPortal.Configuration.Sections
       // tabControlMusicImport
       // 
       this.tabControlMusicImport.Controls.Add(this.tabPageImportSettings);
+      this.tabControlMusicImport.Controls.Add(this.tabPageFilenames);
       this.tabControlMusicImport.Controls.Add(this.tabPageEncoderSettings);
       this.tabControlMusicImport.Location = new System.Drawing.Point(0, 8);
       this.tabControlMusicImport.Name = "tabControlMusicImport";
       this.tabControlMusicImport.SelectedIndex = 0;
       this.tabControlMusicImport.Size = new System.Drawing.Size(472, 400);
       this.tabControlMusicImport.TabIndex = 0;
+      // 
+      // tabPageFilenames
+      // 
+      this.tabPageFilenames.Controls.Add(this.groupBox2);
+      this.tabPageFilenames.Location = new System.Drawing.Point(4, 22);
+      this.tabPageFilenames.Name = "tabPageFilenames";
+      this.tabPageFilenames.Padding = new System.Windows.Forms.Padding(3);
+      this.tabPageFilenames.Size = new System.Drawing.Size(464, 374);
+      this.tabPageFilenames.TabIndex = 3;
+      this.tabPageFilenames.Text = "Custom Paths and Filenames";
+      this.tabPageFilenames.UseVisualStyleBackColor = true;
+      // 
+      // groupBox2
+      // 
+      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox2.Controls.Add(this.groupBox1);
+      this.groupBox2.Controls.Add(this.textBoxSample);
+      this.groupBox2.Controls.Add(this.label7);
+      this.groupBox2.Controls.Add(this.label6);
+      this.groupBox2.Controls.Add(this.textBoxFormat);
+      this.groupBox2.Controls.Add(this.label38);
+      this.groupBox2.Location = new System.Drawing.Point(16, 16);
+      this.groupBox2.Name = "groupBox2";
+      this.groupBox2.Size = new System.Drawing.Size(432, 212);
+      this.groupBox2.TabIndex = 2;
+      this.groupBox2.TabStop = false;
+      // 
+      // groupBox1
+      // 
+      this.groupBox1.Controls.Add(this.label12);
+      this.groupBox1.Controls.Add(this.label10);
+      this.groupBox1.Controls.Add(this.label9);
+      this.groupBox1.Controls.Add(this.label11);
+      this.groupBox1.Location = new System.Drawing.Point(80, 116);
+      this.groupBox1.Name = "groupBox1";
+      this.groupBox1.Size = new System.Drawing.Size(336, 80);
+      this.groupBox1.TabIndex = 21;
+      this.groupBox1.TabStop = false;
+      this.groupBox1.Text = "Available Tags";
+      // 
+      // label12
+      // 
+      this.label12.AutoSize = true;
+      this.label12.Location = new System.Drawing.Point(216, 24);
+      this.label12.Name = "label12";
+      this.label12.Size = new System.Drawing.Size(104, 39);
+      this.label12.TabIndex = 15;
+      this.label12.Text = "tracknumber of song\r\nyear of song\r\ngenre of song";
+      // 
+      // label10
+      // 
+      this.label10.AutoSize = true;
+      this.label10.Location = new System.Drawing.Point(74, 24);
+      this.label10.Name = "label10";
+      this.label10.Size = new System.Drawing.Size(76, 39);
+      this.label10.TabIndex = 13;
+      this.label10.Text = "name of artist\r\nsong title\r\nname of album";
+      // 
+      // label9
+      // 
+      this.label9.AutoSize = true;
+      this.label9.Location = new System.Drawing.Point(9, 24);
+      this.label9.Name = "label9";
+      this.label9.Size = new System.Drawing.Size(60, 52);
+      this.label9.TabIndex = 12;
+      this.label9.Text = "%artist% =\r\n%title% =\r\n%album% =\r\n\r\n";
+      this.label9.TextAlign = System.Drawing.ContentAlignment.TopRight;
+      // 
+      // label11
+      // 
+      this.label11.AutoSize = true;
+      this.label11.Location = new System.Drawing.Point(153, 24);
+      this.label11.Name = "label11";
+      this.label11.Size = new System.Drawing.Size(59, 39);
+      this.label11.TabIndex = 14;
+      this.label11.Text = "%track% =\r\n%year% =\r\n%genre% =\r\n";
+      this.label11.TextAlign = System.Drawing.ContentAlignment.TopRight;
+      // 
+      // textBoxSample
+      // 
+      this.textBoxSample.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxSample.BackColor = System.Drawing.SystemColors.ControlLight;
+      this.textBoxSample.Location = new System.Drawing.Point(80, 76);
+      this.textBoxSample.Name = "textBoxSample";
+      this.textBoxSample.ReadOnly = true;
+      this.textBoxSample.Size = new System.Drawing.Size(336, 20);
+      this.textBoxSample.TabIndex = 19;
+      // 
+      // label7
+      // 
+      this.label7.AutoSize = true;
+      this.label7.Location = new System.Drawing.Point(80, 24);
+      this.label7.Name = "label7";
+      this.label7.Size = new System.Drawing.Size(327, 13);
+      this.label7.TabIndex = 0;
+      this.label7.Text = "Use blockquotes [ ] to specify optional fields and \\ for relative paths.";
+      // 
+      // label6
+      // 
+      this.label6.AutoSize = true;
+      this.label6.Location = new System.Drawing.Point(16, 80);
+      this.label6.Name = "label6";
+      this.label6.Size = new System.Drawing.Size(45, 13);
+      this.label6.TabIndex = 5;
+      this.label6.Text = "Sample:";
+      // 
+      // textBoxFormat
+      // 
+      this.textBoxFormat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxFormat.Location = new System.Drawing.Point(80, 48);
+      this.textBoxFormat.Name = "textBoxFormat";
+      this.textBoxFormat.Size = new System.Drawing.Size(336, 20);
+      this.textBoxFormat.TabIndex = 4;
+      this.textBoxFormat.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxFormat_KeyPress);
+      this.textBoxFormat.TextChanged += new System.EventHandler(this.textBoxFormat_TextChanged);
+      // 
+      // label38
+      // 
+      this.label38.AutoSize = true;
+      this.label38.Location = new System.Drawing.Point(16, 52);
+      this.label38.Name = "label38";
+      this.label38.Size = new System.Drawing.Size(42, 13);
+      this.label38.TabIndex = 3;
+      this.label38.Text = "Format:";
       // 
       // tabControlMissing
       // 
@@ -635,9 +790,9 @@ namespace MediaPortal.Configuration.Sections
       // MusicImport
       // 
       this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+      this.Controls.Add(this.tabControlMusicImport);
       this.Controls.Add(this.buttonDefault);
       this.Controls.Add(this.tabControlMissing);
-      this.Controls.Add(this.tabControlMusicImport);
       this.DoubleBuffered = true;
       this.Name = "MusicImport";
       this.Size = new System.Drawing.Size(472, 408);
@@ -654,6 +809,11 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxPerformance.ResumeLayout(false);
       this.groupBoxPerformance.PerformLayout();
       this.tabControlMusicImport.ResumeLayout(false);
+      this.tabPageFilenames.ResumeLayout(false);
+      this.groupBox2.ResumeLayout(false);
+      this.groupBox2.PerformLayout();
+      this.groupBox1.ResumeLayout(false);
+      this.groupBox1.PerformLayout();
       this.tabControlMissing.ResumeLayout(false);
       this.tabPageMissing.ResumeLayout(false);
       this.groupBoxMissing.ResumeLayout(false);
@@ -679,7 +839,6 @@ namespace MediaPortal.Configuration.Sections
       checkBoxCBR.Checked = false;
       hScrollBarQuality.Value = 2;
       checkBoxFastMode.Checked = false;
-      checkBoxOrganize.Checked = true;
       checkBoxDatabase.Checked = true;
       checkBoxBackground.Checked = false;
       labelBitrate.Text = "Target Bitrate: " + Rates[hScrollBarBitrate.Value] + " kBps";
@@ -773,6 +932,72 @@ namespace MediaPortal.Configuration.Sections
         }
       }
       Directory.SetCurrentDirectory(currDir);
+    }
+
+    private string ShowExample(string strInput)
+    {
+      string artist = "Queen";
+      string album = "Greatest Hits";
+      string title = "Barcelona";
+      string trackNr = "03";
+      string year = "1973";
+      string genre = "Pop";
+      string strName = string.Empty;
+      string strDirectory = string.Empty;
+      string strDefault = "%artist%\\%album%\\%track% %title%";
+
+      if (strInput == string.Empty)
+        strInput = strDefault;
+      strInput = Utils.ReplaceTag(strInput, "%artist%", artist, "unknown");
+      strInput = Utils.ReplaceTag(strInput, "%title%", title, "unknown");
+      strInput = Utils.ReplaceTag(strInput, "%album%", album, "unknown");
+      strInput = Utils.ReplaceTag(strInput, "%track%", trackNr, "unknown");
+      strInput = Utils.ReplaceTag(strInput, "%year%", year, "unknown");
+      strInput = Utils.ReplaceTag(strInput, "%genre%", genre, "unknown");
+
+      int index = strInput.LastIndexOf('\\');
+      switch (index)
+      {
+        case -1:
+          strName = strInput;
+          break;
+        case 0:
+          strName = strInput.Substring(1);
+          break;
+        default:
+          {
+            strDirectory = "\\" + strInput.Substring(0, index);
+            strName = strInput.Substring(index + 1);
+          }
+          break;
+      }
+      strDirectory = Utils.MakeDirectoryPath(strDirectory);
+      strName = Utils.MakeFileName(strName);
+      string strReturn = strDirectory;
+      if (strDirectory != string.Empty)
+        strReturn += "\\";
+      strReturn += strName + ".mp3";
+      return strReturn;
+    }
+
+    private void textBoxFormat_TextChanged(object sender, EventArgs e)
+    {
+      textBoxSample.Text = ShowExample(textBoxFormat.Text);
+    }
+
+    private void checkBoxDatabase_CheckedChanged(object sender, EventArgs e)
+    {
+      checkBoxUnknown.Enabled = checkBoxDatabase.Checked;
+    }
+
+    private void textBoxFormat_KeyPress(object sender, KeyPressEventArgs e)
+    {
+      if ((e.KeyChar == '/') || (e.KeyChar == ':') || (e.KeyChar == '*') ||
+        (e.KeyChar == '?') || (e.KeyChar == '\"') || (e.KeyChar == '<') ||
+        (e.KeyChar == '>') || (e.KeyChar == '|'))
+      {
+        e.Handled = true;
+      }
     }
 
   }

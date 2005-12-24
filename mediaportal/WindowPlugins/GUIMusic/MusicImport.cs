@@ -28,11 +28,13 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Ripper;
 using MediaPortal.Music.Database;
 using MediaPortal.Dialogs;
+using MediaPortal.Util;
 using Yeti.MMedia;
 using Yeti.MMedia.Mp3;
 using Yeti.Lame;
 using WaveLib;
 using Roger.ID3;
+//using iTunesLib;
 
 namespace MediaPortal.MusicImport
 {
@@ -46,7 +48,6 @@ namespace MediaPortal.MusicImport
     private static bool mp3MONO = false;
     private static bool mp3CBR = false;
     private static bool mp3FastMode = false;
-    private static bool mp3Organize = true;
     private static bool mp3Database = true;
     private static bool mp3Background = false;
     private static Mp3Writer m_Writer = null;
@@ -58,6 +59,10 @@ namespace MediaPortal.MusicImport
     private const string Mpeg1BitRates = "128,160,192,224,256,320";
     private static Queue importQueue = new Queue();
     private static int GetID;
+    string format;
+    static bool importUnknown = true;
+
+    //private static iTunesLib.IiTunes iTunesApp = null;
 
     public class TrackInfo
     {
@@ -89,9 +94,10 @@ namespace MediaPortal.MusicImport
         mp3Quality = xmlreader.GetValueAsInt("musicimport", "mp3quality", 2);
         mp3Priority = xmlreader.GetValueAsInt("musicimport", "mp3priority", 0);
         mp3ImportDir = xmlreader.GetValueAsString("musicimport", "mp3importdir", "C:");
-        mp3Organize = xmlreader.GetValueAsBool("musicimport", "mp3organize", true);
         mp3Database = xmlreader.GetValueAsBool("musicimport", "mp3database", true);
         mp3Background = xmlreader.GetValueAsBool("musicimport", "mp3background", false);
+        importUnknown = xmlreader.GetValueAsBool("musicimport", "importunknown", true);
+        format = xmlreader.GetValueAsString("musicimport", "format", "%artist%\\%album%\\%track%. %title%");
       }
       Rates = Mpeg1BitRates.Split(',');
 
@@ -128,30 +134,6 @@ namespace MediaPortal.MusicImport
           m_CancelRipping = true;
       }
       ea.CancelRead |= m_CancelRipping;
-    }
-
-    private String FilterInvalidChars(String input)
-    {
-      String copy = String.Empty;
-      for (int i = 0; i < input.Length; i++)
-        switch (input[i])
-        {
-          case '\\':
-          case '/':
-          case ':':
-          case '*':
-          case '?':
-          case '"':
-          case '<':
-          case '>':
-          case '|':
-            Log.Write("CDIMP: removing \"" + input[i] + "\" from filename");
-            break;
-          default:
-            copy += input[i];
-            break;
-        }
-      return copy;
     }
 
     public void Cancel()
@@ -209,8 +191,8 @@ namespace MediaPortal.MusicImport
               TagReader.MusicTag musicTag = new TagReader.MusicTag();
               musicTag.Artist = "Unknown Artist";
               musicTag.Album = "Unknown Album";
-              musicTag.Title = "Track " + item.Label.Substring(5);
               musicTag.Track = Convert.ToInt16(item.Label.Substring(5));
+              musicTag.Title = string.Format("Track {0:00}", musicTag.Track);
               item.MusicTag = musicTag;
             }
             trackInfo.MusicTag = (TagReader.MusicTag)item.MusicTag;
@@ -229,28 +211,56 @@ namespace MediaPortal.MusicImport
 
     private void EncodeTrack(TrackInfo trackInfo)
     {
-      string mp3TargetDir = mp3ImportDir;
+      string strInput = string.Empty;
 
-      if (mp3Organize)
+      using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+        strInput = xmlreader.GetValueAsString("musicimport", "format", "%artist%\\%album%\\%track% %title%");
+
+      string fileFormat = string.Empty;
+      string dirFormat = string.Empty;
+
+      strInput = Utils.ReplaceTag(strInput, "%artist%", Utils.MakeFileName(trackInfo.MusicTag.Artist), "Unknown Artist");
+      strInput = Utils.ReplaceTag(strInput, "%title%", Utils.MakeFileName(trackInfo.MusicTag.Title), string.Format("Track {0:00}", trackInfo.MusicTag.Track));
+      strInput = Utils.ReplaceTag(strInput, "%album%", Utils.MakeFileName(trackInfo.MusicTag.Album), "Unknown Album");
+      strInput = Utils.ReplaceTag(strInput, "%track%", Utils.MakeFileName(string.Format("{0:00}", trackInfo.MusicTag.Track)), "");
+      strInput = Utils.ReplaceTag(strInput, "%year%", Utils.MakeFileName(trackInfo.MusicTag.Year.ToString()), "0");
+      strInput = Utils.ReplaceTag(strInput, "%genre%", Utils.MakeFileName(trackInfo.MusicTag.Genre), "");
+
+      string strName = string.Empty;
+      string strDirectory = string.Empty;
+      int index = strInput.LastIndexOf('\\');
+
+      if (index != -1)
       {
-        if ((trackInfo.MusicTag.Artist != "Unknown Artist") || (trackInfo.MusicTag.Album != "Unknown Album"))
-          mp3TargetDir = mp3ImportDir + "\\" + FilterInvalidChars(trackInfo.MusicTag.Artist) + "\\";
-        else
-          mp3TargetDir = mp3ImportDir + "\\";
-        mp3TargetDir = mp3TargetDir + FilterInvalidChars(trackInfo.MusicTag.Album);
-
-        if ((trackInfo.MusicTag.Artist == "Unknown Artist") && (trackInfo.MusicTag.Album == "Unknown Album") && Directory.Exists(mp3TargetDir))
-        {
-          int i = 1;
-          while (Directory.Exists(string.Format("{0}-{1}", mp3TargetDir, i)))
-            ++i;
-          mp3TargetDir = string.Format("{0}-{1}", mp3TargetDir, i);
-
-        }
+        strDirectory = strInput.Substring(0, index);
+        strName = strInput.Substring(index + 1);
       }
-      trackInfo.TargetDir = mp3TargetDir;
-      trackInfo.TempFileName = string.Format("temp\\{0:00} " + FilterInvalidChars(trackInfo.MusicTag.Title) + ".mp3", trackInfo.MusicTag.Track);
-      trackInfo.TargetFileName = string.Format(mp3TargetDir + "\\{0:00} " + FilterInvalidChars(trackInfo.MusicTag.Title) + ".mp3", trackInfo.MusicTag.Track);
+      else
+        strName = strInput;
+
+      if (strDirectory != string.Empty)
+      {
+        strDirectory = Utils.MakeDirectoryPath(strDirectory);
+        if (!Directory.Exists(mp3ImportDir + "\\" + strDirectory))
+          Directory.CreateDirectory(mp3ImportDir + "\\" + strDirectory);
+      }
+
+      if (strName.Trim() == string.Empty)
+        strName = string.Format("{0:00} " + Utils.MakeFileName(trackInfo.MusicTag.Title), trackInfo.MusicTag.Track);
+
+      strName = Utils.MakeFileName(strName);
+      if (File.Exists(mp3ImportDir + "\\" + strDirectory + "\\" + strName + ".mp3"))
+      {
+        int i = 1;
+        while (File.Exists(mp3ImportDir + "\\" + strDirectory + "\\" + strName + "_" + i.ToString() + ".mp3"))
+          ++i;
+        strName += "_" + i.ToString();
+      }
+      strName += ".mp3";
+
+      trackInfo.TargetDir = mp3ImportDir + "\\" + strDirectory;
+      trackInfo.TempFileName = strName;
+      trackInfo.TargetFileName = mp3ImportDir + "\\" + strDirectory + "\\" + strName;
 
       importQueue.Enqueue(trackInfo);
 
@@ -292,7 +302,8 @@ namespace MediaPortal.MusicImport
           else
             dlgProgress.SetHeading(GUILocalizeStrings.Get(1103));
 
-          dlgProgress.SetLine(2, string.Format("{0:00}. {1} - {2}", trackInfo.MusicTag.Track, trackInfo.MusicTag.Artist, trackInfo.MusicTag.Title));
+          //dlgProgress.SetLine(2, string.Format("{0:00}. {1} - {2}", trackInfo.MusicTag.Track, trackInfo.MusicTag.Artist, trackInfo.MusicTag.Title));
+          dlgProgress.SetLine(2, trackInfo.TempFileName);
           if (dlgProgress.IsCanceled)
             m_CancelRipping = true;
         }
@@ -334,20 +345,31 @@ namespace MediaPortal.MusicImport
 
               if (File.Exists(trackInfo.TargetFileName) && mp3Database)
               {
-                MusicDatabase dbs = new MusicDatabase();
-                Song song = new Song();
+                if (importUnknown || (trackInfo.MusicTag.Artist != "Unknown Artist") || (trackInfo.MusicTag.Album != "Unknown Album"))
+                {
+                  MusicDatabase dbs = new MusicDatabase();
+                  Song song = new Song();
 
-                song.FileName = trackInfo.TargetFileName;
-                song.Album = trackInfo.MusicTag.Album;
-                song.Artist = trackInfo.MusicTag.Artist;
-                song.Duration = trackInfo.MusicTag.Duration;
-                song.Genre = trackInfo.MusicTag.Genre;
-                song.Rating = trackInfo.MusicTag.Rating;
-                song.TimesPlayed = trackInfo.MusicTag.TimesPlayed;
-                song.Title = trackInfo.MusicTag.Title;
-                song.Track = trackInfo.MusicTag.Track;
-                song.Year = trackInfo.MusicTag.Year;
-                dbs.AddSong(song, true);
+                  song.FileName = trackInfo.TargetFileName;
+                  song.Album = trackInfo.MusicTag.Album;
+                  song.Artist = trackInfo.MusicTag.Artist;
+                  song.Duration = trackInfo.MusicTag.Duration;
+                  song.Genre = trackInfo.MusicTag.Genre;
+                  song.Rating = trackInfo.MusicTag.Rating;
+                  song.TimesPlayed = trackInfo.MusicTag.TimesPlayed;
+                  song.Title = trackInfo.MusicTag.Title;
+                  song.Track = trackInfo.MusicTag.Track;
+                  song.Year = trackInfo.MusicTag.Year;
+                  dbs.AddSong(song, true);
+                }
+
+                //if (iTunesApp == null)
+                //{
+                //  iTunesApp = new iTunesLib.iTunesAppClass();
+                //}
+                //IITLibraryPlaylist mainLibrary = iTunesApp.LibraryPlaylist;
+                //mainLibrary.AddFile(trackInfo.TargetFileName);
+
 
                 // what about???
                 // song.albumId;
@@ -484,5 +506,6 @@ namespace MediaPortal.MusicImport
         }
       }
     }
+
   }
 }

@@ -39,6 +39,7 @@ using TVCapture;
 using DirectX.Capture;
 using Toub.MediaCenter.Dvrms.Metadata;
 using System.Threading;
+
 namespace MediaPortal.TV.Recording
 {
   /// <summary>
@@ -543,7 +544,7 @@ namespace MediaPortal.TV.Recording
       if (_definitionLoaded) return (true);
       _definitionLoaded = true;
 
-      Log.WriteFile(Log.LogType.Capture, "LoadDefinitions() card:{0} {1}", ID,this.FriendlyName);
+      Log.WriteFile(Log.LogType.Capture, "LoadDefinitions() card:{0} {1}", ID, this.FriendlyName);
       CaptureCardDefinitions captureCardDefinitions = CaptureCardDefinitions.Instance;
       if (CaptureCardDefinitions.CaptureCards.Count == 0)
       {
@@ -622,7 +623,7 @@ namespace MediaPortal.TV.Recording
 
 
       Instance = FindInstanceForDevice(captureDeviceDeviceName);
-      Log.WriteFile(Log.LogType.Capture," Using card#{0}", Instance);
+      Log.WriteFile(Log.LogType.Capture, " Using card#{0}", Instance);
       //for each tv filter we need for building the graph
       foreach (FilterDefinition fd in _captureCardDefinition.Tv.FilterDefinitions)
       {
@@ -681,7 +682,7 @@ namespace MediaPortal.TV.Recording
               }
               else
               {
-                 Log.WriteFile(Log.LogType.Capture, "    Found {0}={1}", filter.Name, filter.MonikerString);
+                Log.WriteFile(Log.LogType.Capture, "    Found {0}={1}", filter.Name, filter.MonikerString);
               }
             }
             else filterFound = true;
@@ -1558,26 +1559,18 @@ namespace MediaPortal.TV.Recording
 
 
       DateTime timeProgStart = new DateTime(1971, 11, 6, 20, 0, 0, 0);
-      string strName = string.Empty ;
+      string strName = string.Empty;
       string strDirectory = string.Empty;
       if (currentRunningProgram != null)
       {
-        DateTime dt = currentRunningProgram.StartTime;
-        strName = String.Format("{0}_{1}_{2}{3:00}{4:00}{5:00}{6:00}p{7}{8}{9}",
-                                  currentRunningProgram.Channel, currentRunningProgram.Title,
-                                  dt.Year, dt.Month, dt.Day,
-                                  dt.Hour,
-                                  dt.Minute,
-                                  DateTime.Now.Minute, DateTime.Now.Second,
-                                  recEngineExt);
-        timeProgStart = currentRunningProgram.StartTime;
-
+        string strInput = string.Empty;
+        string recFileFormat = string.Empty;
+        string recDirFormat = string.Empty;
         bool isMovie = false;
-
         if (recording.RecType == TVRecording.RecordingType.Once)
           isMovie = true;
 
-        string strInput = string.Empty;
+        timeProgStart = currentRunningProgram.StartTime;
 
         using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
           if (isMovie)
@@ -1585,78 +1578,61 @@ namespace MediaPortal.TV.Recording
           else
             strInput = xmlreader.GetValueAsString("capture", "seriesformat", string.Empty);
 
-        string recFileFormat = string.Empty;
-        string recDirFormat = string.Empty;
+        strInput = Utils.ReplaceTag(strInput, "%channel%", Utils.MakeFileName(currentRunningProgram.Channel), "unknown");
+        strInput = Utils.ReplaceTag(strInput, "%title%", Utils.MakeFileName(currentRunningProgram.Title), "unknown");
+        strInput = Utils.ReplaceTag(strInput, "%name%", Utils.MakeFileName(currentRunningProgram.Episode), "unknown");
+        strInput = Utils.ReplaceTag(strInput, "%series%", Utils.MakeFileName(currentRunningProgram.SeriesNum), "unknown");
+        strInput = Utils.ReplaceTag(strInput, "%episode%", Utils.MakeFileName(currentRunningProgram.EpisodeNum), "unknown");
+        strInput = Utils.ReplaceTag(strInput, "%part%", Utils.MakeFileName(currentRunningProgram.EpisodePart), "unknown");
+        strInput = Utils.ReplaceTag(strInput, "%date%", Utils.MakeFileName(currentRunningProgram.StartTime.Date.ToShortDateString()), "unknown");
+        strInput = Utils.ReplaceTag(strInput, "%start%", Utils.MakeFileName(currentRunningProgram.StartTime.ToShortTimeString()), "unknown");
+        strInput = Utils.ReplaceTag(strInput, "%end%", Utils.MakeFileName(currentRunningProgram.EndTime.ToShortTimeString()), "unknown");
+        strInput = Utils.ReplaceTag(strInput, "%genre%", Utils.MakeFileName(currentRunningProgram.Genre), "unknown");
+        strInput = Utils.ReplaceTag(strInput, "%startday%", Utils.MakeFileName(currentRunningProgram.StartTime.Day.ToString()), "unknown");
+        strInput = Utils.ReplaceTag(strInput, "%startmonth%", Utils.MakeFileName(currentRunningProgram.StartTime.Month.ToString()), "unknown");
+        strInput = Utils.ReplaceTag(strInput, "%startyear%", Utils.MakeFileName(currentRunningProgram.StartTime.Year.ToString()), "unknown");
+        strInput = Utils.ReplaceTag(strInput, "%starthh%", Utils.MakeFileName(currentRunningProgram.StartTime.Hour.ToString()), "unknown");
+        strInput = Utils.ReplaceTag(strInput, "%startmm%", Utils.MakeFileName(currentRunningProgram.StartTime.Minute.ToString()), "unknown");
+        strInput = Utils.ReplaceTag(strInput, "%endday%", Utils.MakeFileName(currentRunningProgram.EndTime.Day.ToString()), "unknown");
+        strInput = Utils.ReplaceTag(strInput, "%endmonth%", Utils.MakeFileName(currentRunningProgram.EndTime.Month.ToString()), "unknown");
+        strInput = Utils.ReplaceTag(strInput, "%startyear%", Utils.MakeFileName(currentRunningProgram.EndTime.Year.ToString()), "unknown");
+        strInput = Utils.ReplaceTag(strInput, "%endhh%", Utils.MakeFileName(currentRunningProgram.EndTime.Hour.ToString()), "unknown");
+        strInput = Utils.ReplaceTag(strInput, "%endmm%", Utils.MakeFileName(currentRunningProgram.EndTime.Minute.ToString()), "unknown");
 
         int index = strInput.LastIndexOf('\\');
-
         if (index != -1)
         {
-          recDirFormat = strInput.Substring(0, index);
-          recFileFormat = strInput.Substring(index + 1);
+          strDirectory = strInput.Substring(0, index);
+          strName = strInput.Substring(index + 1);
         }
         else
-          recFileFormat = strInput;
+          strName = strInput;
 
-        if (recDirFormat != string.Empty)
+        if (strDirectory != string.Empty)
         {
-          strDirectory = Utils.ReplaceTag(recDirFormat, "%channel%", currentRunningProgram.Channel, "unknown");
-          strDirectory = Utils.ReplaceTag(strDirectory, "%title%", currentRunningProgram.Title, "unknown");
-          strDirectory = Utils.ReplaceTag(strDirectory, "%name%", currentRunningProgram.Episode, "unknown");
-          strDirectory = Utils.ReplaceTag(strDirectory, "%series%", currentRunningProgram.SeriesNum, "unknown");
-          strDirectory = Utils.ReplaceTag(strDirectory, "%episode%", currentRunningProgram.EpisodeNum, "unknown");
-          strDirectory = Utils.ReplaceTag(strDirectory, "%part%", currentRunningProgram.EpisodePart, "unknown");
-          strDirectory = Utils.ReplaceTag(strDirectory, "%date%", currentRunningProgram.StartTime.Date.ToShortDateString(), "unknown");
-          strDirectory = Utils.ReplaceTag(strDirectory, "%start%", currentRunningProgram.StartTime.ToShortTimeString(), "unknown");
-          strDirectory = Utils.ReplaceTag(strDirectory, "%end%", currentRunningProgram.EndTime.ToShortTimeString(), "unknown");
-          strDirectory = Utils.ReplaceTag(strDirectory, "%genre%", currentRunningProgram.Genre, "unknown");
-          strDirectory = Utils.ReplaceTag(strDirectory, "%startday%", currentRunningProgram.StartTime.Day.ToString(), "unknown");
-          strDirectory = Utils.ReplaceTag(strDirectory, "%startmonth%", currentRunningProgram.StartTime.Month.ToString(), "unknown");
-          strDirectory = Utils.ReplaceTag(strDirectory, "%startyear%", currentRunningProgram.StartTime.Year.ToString(), "unknown");
-          strDirectory = Utils.ReplaceTag(strDirectory, "%starthh%", currentRunningProgram.StartTime.Hour.ToString(), "unknown");
-          strDirectory = Utils.ReplaceTag(strDirectory, "%startmm%", currentRunningProgram.StartTime.Minute.ToString(), "unknown");
-          strDirectory = Utils.ReplaceTag(strDirectory, "%endday%", currentRunningProgram.EndTime.Day.ToString(), "unknown");
-          strDirectory = Utils.ReplaceTag(strDirectory, "%endmonth%", currentRunningProgram.EndTime.Month.ToString(), "unknown");
-          strDirectory = Utils.ReplaceTag(strDirectory, "%startyear%", currentRunningProgram.EndTime.Year.ToString(), "unknown");
-          strDirectory = Utils.ReplaceTag(strDirectory, "%endhh%", currentRunningProgram.EndTime.Hour.ToString(), "unknown");
-          strDirectory = Utils.ReplaceTag(strDirectory, "%endmm%", currentRunningProgram.EndTime.Minute.ToString(), "unknown");
           strDirectory = Utils.MakeDirectoryPath(strDirectory);
           if (!Directory.Exists(RecordingPath + "\\" + strDirectory))
             Directory.CreateDirectory(RecordingPath + "\\" + strDirectory);
         }
-
-        if (recFileFormat != string.Empty)
+        if (strName == string.Empty)
         {
-          strName = Utils.ReplaceTag(recFileFormat, "%channel%", currentRunningProgram.Channel, "unknown");
-          strName = Utils.ReplaceTag(strName, "%title%", currentRunningProgram.Title, "unknown");
-          strName = Utils.ReplaceTag(strName, "%name%", currentRunningProgram.Episode, "unknown");
-          strName = Utils.ReplaceTag(strName, "%series%", currentRunningProgram.SeriesNum, "unknown");
-          strName = Utils.ReplaceTag(strName, "%episode%", currentRunningProgram.EpisodeNum, "unknown");
-          strName = Utils.ReplaceTag(strName, "%part%", currentRunningProgram.EpisodePart, "unknown");
-          strName = Utils.ReplaceTag(strName, "%date%", currentRunningProgram.StartTime.Date.ToShortDateString(), "unknown");
-          strName = Utils.ReplaceTag(strName, "%start%", currentRunningProgram.StartTime.ToShortTimeString(), "unknown");
-          strName = Utils.ReplaceTag(strName, "%end%", currentRunningProgram.EndTime.ToShortTimeString(), "unknown");
-          strName = Utils.ReplaceTag(strName, "%genre%", currentRunningProgram.Genre, "unknown");
-          strName = Utils.ReplaceTag(strName, "%startday%", currentRunningProgram.StartTime.Day.ToString(), "unknown");
-          strName = Utils.ReplaceTag(strName, "%startmonth%", currentRunningProgram.StartTime.Month.ToString(), "unknown");
-          strName = Utils.ReplaceTag(strName, "%startyear%", currentRunningProgram.StartTime.Year.ToString(), "unknown");
-          strName = Utils.ReplaceTag(strName, "%starthh%", currentRunningProgram.StartTime.Hour.ToString(), "unknown");
-          strName = Utils.ReplaceTag(strName, "%startmm%", currentRunningProgram.StartTime.Minute.ToString(), "unknown");
-          strName = Utils.ReplaceTag(strName, "%endday%", currentRunningProgram.EndTime.Day.ToString(), "unknown");
-          strName = Utils.ReplaceTag(strName, "%endmonth%", currentRunningProgram.EndTime.Month.ToString(), "unknown");
-          strName = Utils.ReplaceTag(strName, "%startyear%", currentRunningProgram.EndTime.Year.ToString(), "unknown");
-          strName = Utils.ReplaceTag(strName, "%endhh%", currentRunningProgram.EndTime.Hour.ToString(), "unknown");
-          strName = Utils.ReplaceTag(strName, "%endmm%", currentRunningProgram.EndTime.Minute.ToString(), "unknown");
-          strName = Utils.MakeFileName(strName);
-          if (File.Exists(RecordingPath + "\\" + strDirectory + "\\" + strName + recEngineExt))
-          {
-            int i = 1;
-            while (File.Exists(RecordingPath + "\\" + strDirectory + "\\" + strName + "_" + i.ToString() + recEngineExt))
-              ++i;
-            strName += "_" + i.ToString();
-          }
-          strName += recEngineExt;
+          DateTime dt = currentRunningProgram.StartTime;
+          strName = String.Format("{0}_{1}_{2}{3:00}{4:00}{5:00}{6:00}p{7}{8}",
+                                    currentRunningProgram.Channel, currentRunningProgram.Title,
+                                    dt.Year, dt.Month, dt.Day,
+                                    dt.Hour,
+                                    dt.Minute,
+                                    DateTime.Now.Minute, DateTime.Now.Second);
         }
+        strName = Utils.MakeFileName(strName);
+        if (File.Exists(RecordingPath + "\\" + strDirectory + "\\" + strName + recEngineExt))
+        {
+          int i = 1;
+          while (File.Exists(RecordingPath + "\\" + strDirectory + "\\" + strName + "_" + i.ToString() + recEngineExt))
+            ++i;
+          strName += "_" + i.ToString();
+        }
+        strName += recEngineExt;
       }
       else
       {
@@ -1676,7 +1652,6 @@ namespace MediaPortal.TV.Recording
       //Log.WriteFile(Log.LogType.Capture, "Card:{0} recording to file:{1}", ID, strFileName);
 
       TVChannel channel = GetChannel(_currentTvChannelName);
-
 
       _recordedTvObject = new TVRecorded();
       _recordedTvObject.Start = Utils.datetolong(DateTime.Now);
@@ -2083,7 +2058,6 @@ namespace MediaPortal.TV.Recording
         return _currentGraph.AudiodeviceFilter();
       }
     }
-
 
   }
 }
