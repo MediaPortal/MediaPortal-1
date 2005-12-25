@@ -2268,16 +2268,16 @@ namespace MediaPortal.TV.Recording
             {
               if (TVDatabase.CanCardViewTVChannel(chan.Name, card.ID) == false) continue;
             }
-            ts = DateTime.Now - chan.LastDateTimeEpgGrabbed;
 
             //Log.WriteFile(Log.LogType.EPG, "  card:{0} ch:{1} epg hrs:{2} last:{3} {4} hrs:{5}", card.ID,chan.Name,chan.EpgHours, chan.LastDateTimeEpgGrabbed.ToShortDateString(), chan.LastDateTimeEpgGrabbed.ToLongTimeString(),ts.TotalHours);
-            if (ts.TotalHours > 2)
+            TVProgram prog = TVDatabase.GetLastProgramForChannel(chan);
+            //Log.WriteFile(Log.LogType.EPG, "last prog in tvguide:{0} {1}", prog.EndTime.ToShortDateString(), prog.EndTime.ToLongTimeString());
+            if (prog.EndTime < DateTime.Now.AddHours(chan.EpgHours))
             {
-              TVProgram prog = TVDatabase.GetLastProgramForChannel(chan);
-              //Log.WriteFile(Log.LogType.EPG, "last prog in tvguide:{0} {1}", prog.EndTime.ToShortDateString(), prog.EndTime.ToLongTimeString());
-              if (prog.EndTime < DateTime.Now.AddHours(chan.EpgHours))
+              ts = DateTime.Now - chan.LastDateTimeEpgGrabbed;
+              if (ts.TotalHours > 2 || prog.EndTime < DateTime.Now.AddDays(-5) )
               {
-                //grab the epg
+                  //grab the epg
                   Log.WriteFile(Log.LogType.EPG, "auto-epg: card:{0} grab epg for channel:{1} expected:{2} hours, last event in tv guide:{3} {4}, last grab :{5} {6}",
                               card.ID,
                               chan.Name, chan.EpgHours, prog.EndTime.ToShortDateString(), prog.EndTime.ToLongTimeString(),

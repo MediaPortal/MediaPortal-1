@@ -841,11 +841,16 @@ namespace MediaPortal.TV.Recording
               tv.Title = epgLang.Title;
               tv.Description = epgLang.Description;
 
+              //string desc = epgLang.Description;
+              //if (desc.Length>0) desc = desc.Replace('\r', ' ');
+              //              if (desc.Length > 0) desc = desc.Replace('\n', ' ');
               Log.WriteFile(Log.LogType.EPG, "epg-grab: add:'{0}' {1} {2} {3}-{4} {5}",
                         epgLang.Language,
                         channel.TvChannel.Name,
                         epgEvent.StartTime.ToLongDateString(),
                         epgEvent.StartTime.ToLongTimeString(), epgEvent.EndTime.ToLongTimeString(), epgLang.Title);
+//              if (desc.Length>0) 
+//                Log.WriteFile(Log.LogType.EPG, "epg-grab:     {0}", desc);
               TVDatabase.UpdateProgram(tv);
               OnChannelEvent(tv.Channel, tv.StartTime, tv.EndTime);
             }

@@ -541,171 +541,179 @@ namespace MediaPortal.TV.Recording
     /// <returns></returns>
     public bool LoadDefinitions()
     {
-      if (_definitionLoaded) return (true);
-      _definitionLoaded = true;
-
-      Log.WriteFile(Log.LogType.Capture, "LoadDefinitions() card:{0} {1}", ID, this.FriendlyName);
-      CaptureCardDefinitions captureCardDefinitions = CaptureCardDefinitions.Instance;
-      if (CaptureCardDefinitions.CaptureCards.Count == 0)
+      try
       {
-        // Load failed!!!
-        Log.WriteFile(Log.LogType.Capture, " No capturecards defined, or load failed");
-        return (false);
-      }
+        if (_definitionLoaded) return (true);
+        _definitionLoaded = true;
 
-      if (m_strVideoDeviceMoniker == null)
-      {
-        Log.WriteFile(Log.LogType.Capture, " No video device moniker specified");
-        return true;
-      }
-
-      // Determine the deviceid "hidden" in the moniker of the capture device and use that to load
-      // the definitions of the card... The id is between the first and second "#" character
-      // example:
-      //                     <------------------ ID ---------------->
-      // @device:pnp:\\?\pci#ven_4444&dev_0016&subsys_40090070&rev_01#4&2e98101c&0&68f0#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\hauppauge wintv pvr pci ii capture
-      string deviceId = m_strVideoDeviceMoniker;
-      string[] tmp1 = m_strVideoDeviceMoniker.Split((char[])"#".ToCharArray());
-      if (tmp1.Length >= 2)
-        deviceId = tmp1[1].ToLower();
-
-      CaptureCardDefinition ccd = null;
-      foreach (CaptureCardDefinition cd in CaptureCardDefinitions.CaptureCards)
-      {
-        if (cd.DeviceId.IndexOf(deviceId) == 0 && cd.CaptureName == VideoDevice && cd.CommercialName == CommercialName)
+        Log.WriteFile(Log.LogType.Capture, "LoadDefinitions() card:{0} {1}", ID, this.FriendlyName);
+        CaptureCardDefinitions captureCardDefinitions = CaptureCardDefinitions.Instance;
+        if (CaptureCardDefinitions.CaptureCards.Count == 0)
         {
-          ccd = cd;
-          break;
-        }
-      }
-      //
-      // If card is unsupported, simply return
-      if (_captureCardDefinition == null)
-        _captureCardDefinition = new CaptureCardDefinition();
-      if (ccd == null)
-      {
-        Log.WriteFile(Log.LogType.Capture, true, " CaptureCard {0} NOT supported, no definitions found", m_strVideoDevice);
-        return (false);
-      }
-      _captureCardDefinition.CaptureName = ccd.CaptureName;
-      _captureCardDefinition.CommercialName = ccd.CommercialName;
-      _captureCardDefinition.DeviceId = ccd.DeviceId.ToLower();
-
-      _captureCardDefinition.Capabilities = ccd.Capabilities;
-      this.IsMCECard = _captureCardDefinition.Capabilities.IsMceDevice;
-      this.IsBDACard = _captureCardDefinition.Capabilities.IsBDADevice;
-      this.SupportsMPEG2 = _captureCardDefinition.Capabilities.IsMpeg2Device;
-      _captureCardDefinition.Capabilities = ccd.Capabilities;
-
-      _captureCardDefinition.Tv = new DeviceDefinition();
-      _captureCardDefinition.Tv.FilterDefinitions = new ArrayList();
-      foreach (FilterDefinition fd in ccd.Tv.FilterDefinitions)
-      {
-        fd.DSFilter = null;
-        fd.MonikerDisplayName = String.Empty;
-        _captureCardDefinition.Tv.FilterDefinitions.Add(fd);
-      }
-      _captureCardDefinition.Tv.ConnectionDefinitions = ccd.Tv.ConnectionDefinitions;
-      _captureCardDefinition.Tv.InterfaceDefinition = ccd.Tv.InterfaceDefinition;
-      int Instance = -1;
-
-      AvailableFilters af = AvailableFilters.Instance;
-
-      // Determine what PnP device the capture device is. This is done very, very simple by extracting
-      // the first part of the moniker display name, which contains device specific information
-      // <-------------GET THIS PART-------------------------------------------------->        
-      // @device:pnp:\\?\pci#ven_4444&dev_0016&subsys_40090070&rev_01#4&2e98101c&0&68f0#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\hauppauge wintv pvr pci ii capture
-      string captureDeviceDeviceName = m_strVideoDeviceMoniker;
-      int pos = captureDeviceDeviceName.LastIndexOf("#");
-      if (pos >= 0) captureDeviceDeviceName = captureDeviceDeviceName.Substring(0, pos);
-      Log.WriteFile(Log.LogType.Capture, " video device moniker   :{0}", m_strVideoDeviceMoniker);
-      Log.WriteFile(Log.LogType.Capture, " captureDeviceDeviceName:{0}", captureDeviceDeviceName);
-
-
-      Instance = FindInstanceForDevice(captureDeviceDeviceName);
-      Log.WriteFile(Log.LogType.Capture, " Using card#{0}", Instance);
-      //for each tv filter we need for building the graph
-      foreach (FilterDefinition fd in _captureCardDefinition.Tv.FilterDefinitions)
-      {
-        string friendlyName = fd.Category;
-        bool filterFound = false;
-        Log.WriteFile(Log.LogType.Capture, "  filter {0}={1} check:{2}", friendlyName, fd.FriendlyName,fd.CheckDevice);
-
-        //for each directshow filter available under windows
-        foreach (string key in AvailableFilters.Filters.Keys)
-        {
-          Filter filter;
-          ArrayList al = AvailableFilters.Filters[key] as System.Collections.ArrayList;
-          filter = (Filter)al[0];
-
-          // if directshow filter name == video filter name
-          if (filter.Name.Equals(fd.FriendlyName))
-          {
-            // FriendlyName found. Now check if this name should be checked against a (PnP) device
-            // to make sure that we found the right filter...
-            if (fd.CheckDevice)
-            {
-              filter = al[0] as Filter;
-              string filterMoniker = filter.MonikerString;
-              int posTmp = filterMoniker.LastIndexOf("#");
-              if (posTmp >= 0) filterMoniker = filterMoniker.Substring(0, posTmp);
-
-              Log.WriteFile(Log.LogType.Capture, "  CheckDevice:{0}", filterMoniker);
-              if (!filterFound)
-              {
-                string moniker = FindUniqueFilter(filterMoniker, Instance);
-                for (int filterInst = 0; filterInst < al.Count; ++filterInst)
-                {
-                  filter = al[filterInst] as Filter;
-                  string tmpMoniker = filter.MonikerString.Replace(@"\", "#");
-                  tmpMoniker = tmpMoniker.Replace(@"/", "#");
-                  if (tmpMoniker.ToLower().IndexOf(moniker.ToLower()) >= 0)
-                  {
-                    Log.Write("use unique filter moniker:{0}",filter.MonikerString);
-                    filterFound = true;
-                    break;
-                  }
-                }
-              }
-
-              if (!filterFound)
-              {
-                if (al.Count > 0)
-                {
-                  Log.Write("use global filter moniker");
-                  filter = al[0] as Filter;
-                  filterFound = true;
-                }
-              }
-              if (!filterFound)
-              {
-                Log.WriteFile(Log.LogType.Capture, true, "  ERROR Cannot find unique filter for filter:{0}", filter.Name);
-              }
-              else
-              {
-                Log.WriteFile(Log.LogType.Capture, "    Found {0}={1}", filter.Name, filter.MonikerString);
-              }
-            }
-            else filterFound = true;
-
-            // For found filter, get the unique name, the moniker display name which contains not only
-            // things like the type of device, but also a reference (in case of PnP hardware devices)
-            // to the actual device number which makes it possible to distinqiush two identical cards!
-            if (filterFound)
-            {
-              fd.MonikerDisplayName = filter.MonikerString;
-              break;
-            }
-          }//if (filter.Name.Equals(fd.FriendlyName))
-        }//foreach (string key in AvailableFilters.Filters.Keys)
-        // If no filter found thats in the definitions file, we obviously made a mistake defining it
-        // Log the error and return false...
-        if (!filterFound)
-        {
-          Log.WriteFile(Log.LogType.Capture, true, "  Filter {0} not found in definitions file", friendlyName);
+          // Load failed!!!
+          Log.WriteFile(Log.LogType.Capture, " No capturecards defined, or load failed");
           return (false);
         }
-      }//foreach (string friendlyName in _captureCardDefinition.Tv.FilterDefinitions.Keys)
+
+        if (m_strVideoDeviceMoniker == null)
+        {
+          Log.WriteFile(Log.LogType.Capture, " No video device moniker specified");
+          return true;
+        }
+
+        // Determine the deviceid "hidden" in the moniker of the capture device and use that to load
+        // the definitions of the card... The id is between the first and second "#" character
+        // example:
+        //                     <------------------ ID ---------------->
+        // @device:pnp:\\?\pci#ven_4444&dev_0016&subsys_40090070&rev_01#4&2e98101c&0&68f0#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\hauppauge wintv pvr pci ii capture
+        string deviceId = m_strVideoDeviceMoniker;
+        string[] tmp1 = m_strVideoDeviceMoniker.Split((char[])"#".ToCharArray());
+        if (tmp1.Length >= 2)
+          deviceId = tmp1[1].ToLower();
+
+        CaptureCardDefinition ccd = null;
+        foreach (CaptureCardDefinition cd in CaptureCardDefinitions.CaptureCards)
+        {
+          if (cd.DeviceId.IndexOf(deviceId) == 0 && cd.CaptureName == VideoDevice && cd.CommercialName == CommercialName)
+          {
+            ccd = cd;
+            break;
+          }
+        }
+        //
+        // If card is unsupported, simply return
+        if (_captureCardDefinition == null)
+          _captureCardDefinition = new CaptureCardDefinition();
+        if (ccd == null)
+        {
+          Log.WriteFile(Log.LogType.Capture, true, " CaptureCard {0} NOT supported, no definitions found", m_strVideoDevice);
+          return (false);
+        }
+        _captureCardDefinition.CaptureName = ccd.CaptureName;
+        _captureCardDefinition.CommercialName = ccd.CommercialName;
+        _captureCardDefinition.DeviceId = ccd.DeviceId.ToLower();
+
+        _captureCardDefinition.Capabilities = ccd.Capabilities;
+        this.IsMCECard = _captureCardDefinition.Capabilities.IsMceDevice;
+        this.IsBDACard = _captureCardDefinition.Capabilities.IsBDADevice;
+        this.SupportsMPEG2 = _captureCardDefinition.Capabilities.IsMpeg2Device;
+        _captureCardDefinition.Capabilities = ccd.Capabilities;
+
+        _captureCardDefinition.Tv = new DeviceDefinition();
+        _captureCardDefinition.Tv.FilterDefinitions = new ArrayList();
+        foreach (FilterDefinition fd in ccd.Tv.FilterDefinitions)
+        {
+          fd.DSFilter = null;
+          fd.MonikerDisplayName = String.Empty;
+          _captureCardDefinition.Tv.FilterDefinitions.Add(fd);
+        }
+        _captureCardDefinition.Tv.ConnectionDefinitions = ccd.Tv.ConnectionDefinitions;
+        _captureCardDefinition.Tv.InterfaceDefinition = ccd.Tv.InterfaceDefinition;
+        int Instance = -1;
+
+        AvailableFilters af = AvailableFilters.Instance;
+
+        // Determine what PnP device the capture device is. This is done very, very simple by extracting
+        // the first part of the moniker display name, which contains device specific information
+        // <-------------GET THIS PART-------------------------------------------------->        
+        // @device:pnp:\\?\pci#ven_4444&dev_0016&subsys_40090070&rev_01#4&2e98101c&0&68f0#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\hauppauge wintv pvr pci ii capture
+        string captureDeviceDeviceName = m_strVideoDeviceMoniker;
+        int pos = captureDeviceDeviceName.LastIndexOf("#");
+        if (pos >= 0) captureDeviceDeviceName = captureDeviceDeviceName.Substring(0, pos);
+        Log.WriteFile(Log.LogType.Capture, " video device moniker   :{0}", m_strVideoDeviceMoniker);
+        Log.WriteFile(Log.LogType.Capture, " captureDeviceDeviceName:{0}", captureDeviceDeviceName);
+
+
+        Instance = FindInstanceForDevice(captureDeviceDeviceName);
+        Log.WriteFile(Log.LogType.Capture, " Using card#{0}", Instance);
+        //for each tv filter we need for building the graph
+        foreach (FilterDefinition fd in _captureCardDefinition.Tv.FilterDefinitions)
+        {
+          string friendlyName = fd.Category;
+          bool filterFound = false;
+          Log.WriteFile(Log.LogType.Capture, "  filter {0}={1} check:{2}", friendlyName, fd.FriendlyName, fd.CheckDevice);
+
+          //for each directshow filter available under windows
+          foreach (string key in AvailableFilters.Filters.Keys)
+          {
+            Filter filter;
+            ArrayList al = AvailableFilters.Filters[key] as System.Collections.ArrayList;
+            filter = (Filter)al[0];
+
+            // if directshow filter name == video filter name
+            if (filter.Name.Equals(fd.FriendlyName))
+            {
+              // FriendlyName found. Now check if this name should be checked against a (PnP) device
+              // to make sure that we found the right filter...
+              if (fd.CheckDevice)
+              {
+                filter = al[0] as Filter;
+                string filterMoniker = filter.MonikerString;
+                int posTmp = filterMoniker.LastIndexOf("#");
+                if (posTmp >= 0) filterMoniker = filterMoniker.Substring(0, posTmp);
+
+                Log.WriteFile(Log.LogType.Capture, "  CheckDevice:{0}", filterMoniker);
+                if (!filterFound)
+                {
+                  string moniker = FindUniqueFilter(filterMoniker, Instance);
+                  for (int filterInst = 0; filterInst < al.Count; ++filterInst)
+                  {
+                    filter = al[filterInst] as Filter;
+                    string tmpMoniker = filter.MonikerString.Replace(@"\", "#");
+                    tmpMoniker = tmpMoniker.Replace(@"/", "#");
+                    if (tmpMoniker.ToLower().IndexOf(moniker.ToLower()) >= 0)
+                    {
+                      Log.Write("use unique filter moniker:{0}", filter.MonikerString);
+                      filterFound = true;
+                      break;
+                    }
+                  }
+                }
+
+                if (!filterFound)
+                {
+                  if (al.Count > 0)
+                  {
+                    Log.Write("use global filter moniker");
+                    filter = al[0] as Filter;
+                    filterFound = true;
+                  }
+                }
+                if (!filterFound)
+                {
+                  Log.WriteFile(Log.LogType.Capture, true, "  ERROR Cannot find unique filter for filter:{0}", filter.Name);
+                }
+                else
+                {
+                  Log.WriteFile(Log.LogType.Capture, "    Found {0}={1}", filter.Name, filter.MonikerString);
+                }
+              }
+              else filterFound = true;
+
+              // For found filter, get the unique name, the moniker display name which contains not only
+              // things like the type of device, but also a reference (in case of PnP hardware devices)
+              // to the actual device number which makes it possible to distinqiush two identical cards!
+              if (filterFound)
+              {
+                fd.MonikerDisplayName = filter.MonikerString;
+                break;
+              }
+            }//if (filter.Name.Equals(fd.FriendlyName))
+          }//foreach (string key in AvailableFilters.Filters.Keys)
+          // If no filter found thats in the definitions file, we obviously made a mistake defining it
+          // Log the error and return false...
+          if (!filterFound)
+          {
+            Log.WriteFile(Log.LogType.Capture, true, "  Filter {0} not found in definitions file", friendlyName);
+            return (false);
+          }
+        }//foreach (string friendlyName in _captureCardDefinition.Tv.FilterDefinitions.Keys)
+      }
+      catch (Exception ex)
+      {
+        Log.WriteFile(Log.LogType.Capture, true, "  ex:{0} {1} {2}", ex.Message,ex.Source,ex.StackTrace);
+        return (false);
+      }
       return (true);
     }
 
