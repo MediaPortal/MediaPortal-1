@@ -448,9 +448,9 @@ namespace MediaPortal.TV.Recording
         }
         else
         {
-          Log.Write("        using card:0");
+          Log.Write("        using default card:0 (subkey not found)");
           hklm.Close();
-          return -1;
+          return 0;
         }
         subkey.Close();
       }
@@ -629,7 +629,7 @@ namespace MediaPortal.TV.Recording
       {
         string friendlyName = fd.Category;
         bool filterFound = false;
-        //Log.WriteFile(Log.LogType.Capture, "  filter {0}={1}", friendlyName, fd.FriendlyName);
+        Log.WriteFile(Log.LogType.Capture, "  filter {0}={1} check:{2}", friendlyName, fd.FriendlyName,fd.CheckDevice);
 
         //for each directshow filter available under windows
         foreach (string key in AvailableFilters.Filters.Keys)
@@ -650,6 +650,7 @@ namespace MediaPortal.TV.Recording
               int posTmp = filterMoniker.LastIndexOf("#");
               if (posTmp >= 0) filterMoniker = filterMoniker.Substring(0, posTmp);
 
+              Log.WriteFile(Log.LogType.Capture, "  CheckDevice:{0}", filterMoniker);
               if (!filterFound)
               {
                 string moniker = FindUniqueFilter(filterMoniker, Instance);
@@ -660,7 +661,7 @@ namespace MediaPortal.TV.Recording
                   tmpMoniker = tmpMoniker.Replace(@"/", "#");
                   if (tmpMoniker.ToLower().IndexOf(moniker.ToLower()) >= 0)
                   {
-                    Log.Write("use unique filter moniker");
+                    Log.Write("use unique filter moniker:{0}",filter.MonikerString);
                     filterFound = true;
                     break;
                   }
@@ -693,6 +694,7 @@ namespace MediaPortal.TV.Recording
             if (filterFound)
             {
               fd.MonikerDisplayName = filter.MonikerString;
+              break;
             }
           }//if (filter.Name.Equals(fd.FriendlyName))
         }//foreach (string key in AvailableFilters.Filters.Keys)
