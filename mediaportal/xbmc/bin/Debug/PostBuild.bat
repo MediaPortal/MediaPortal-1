@@ -62,6 +62,7 @@ copy ..\..\..\xAPMessage.dll .
 copy ..\..\..\xAPTransport.dll .
 copy ..\..\..\Configuration\Wizards\*.* Wizards
 copy ..\..\..\Configuration\bin\debug\Configuration.exe .
+copy ..\..\..\Configuration\bin\debug\Configuration.exe.config .
 copy ..\..\..\Configuration\bin\debug\Configuration.pdb .
 copy ..\..\..\TVGuideScheduler\bin\debug\TVGuideScheduler.exe .
 copy ..\..\..\TVGuideScheduler\bin\debug\TVGuideScheduler.pdb .

@@ -123,13 +123,13 @@ namespace MediaPortal.Configuration
 
 		private static System.Reflection.Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
 		{
-			if(args.Name.IndexOf(".resources") < 0)
-			{
-				MessageBox.Show("Failed to locate assembly '" + args.Name + "'." + Environment.NewLine + "Note that the configuration program must be executed from/reside in the MediaPortal folder, the execution will now end.", "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
-				System.Windows.Forms.Application.Exit();
-			}
-				
-			return null;
+            if (args.Name.Contains(".resources"))
+                return null;
+            if (args.Name.Contains(".XmlSerializers"))
+                return null;
+    		MessageBox.Show("Failed to locate assembly '" + args.Name + "'." + Environment.NewLine + "Note that the configuration program must be executed from/reside in the MediaPortal folder, the execution will now end.", "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
+			System.Windows.Forms.Application.Exit();
+            return null;
 		}
 	}
 }

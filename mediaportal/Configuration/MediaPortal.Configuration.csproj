@@ -773,6 +773,9 @@
     <Content Include="Wizards\wizard_television.png" />
     <Content Include="wizard_background.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>

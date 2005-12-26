@@ -70,6 +70,7 @@ copy ..\..\..\XPBurnComponent.dll .
 
 copy ..\..\..\Configuration\Wizards\*.* Wizards
 copy ..\..\..\Configuration\bin\Release\Configuration.exe .
+copy ..\..\..\Configuration\bin\Release\Configuration.exe.config .
 copy ..\..\..\TVGuideScheduler\bin\Release\TVGuideScheduler.exe .
 
 copy ..\..\..\core\bin\Release\Core.dll .
