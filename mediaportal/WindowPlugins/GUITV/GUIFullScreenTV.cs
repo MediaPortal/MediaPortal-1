@@ -1689,7 +1689,9 @@ namespace MediaPortal.GUI.TV
 
 		public void UpdateOSD()
 		{
+
 			if (GUIWindowManager.ActiveWindow!=GetID) return;
+      Log.Write("UpdateOSD()");
 			if (_isOsdVisible)
 			{
 				_osdWindow.UpdateChannelInfo();
@@ -1820,6 +1822,8 @@ namespace MediaPortal.GUI.TV
 
 		void ChangeChannelNr(int channelNr)
 		{
+
+      Log.Write("ChangeChannelNr()");
 			GUITVHome.Navigator.ZapToChannel(channelNr, false);
 			UpdateOSD();
 			_zapTimeOutTimer=DateTime.Now;
@@ -1827,7 +1831,8 @@ namespace MediaPortal.GUI.TV
 		}
 
 		public void ZapPreviousChannel()
-		{
+    {
+      Log.Write("ZapPreviousChannel()");
 			GUITVHome.Navigator.ZapToPreviousChannel(true);
 			UpdateOSD();
 			if(_useVMR9Zap==true && _vmr9OSD!=null )
@@ -1839,6 +1844,7 @@ namespace MediaPortal.GUI.TV
 
 		public void ZapNextChannel()
 		{
+      Log.Write("ZapNextChannel()");
 			GUITVHome.Navigator.ZapToNextChannel(true);
 			UpdateOSD();
 			if(_useVMR9Zap==true && _vmr9OSD!=null )

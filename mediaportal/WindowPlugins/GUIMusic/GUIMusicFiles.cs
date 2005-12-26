@@ -850,6 +850,7 @@ namespace MediaPortal.GUI.Music
       GUIControl.ClearControl(GetID, facadeView.GetID);
 
       string strObjects = String.Empty;
+      TimeSpan totalPlayingTime = new TimeSpan();
 
       List<GUIListItem> itemlist = m_directory.GetDirectoryExt(m_strDirectory);
 
@@ -858,6 +859,12 @@ namespace MediaPortal.GUI.Music
       OnRetrieveMusicInfo(ref itemlist);
       foreach (GUIListItem item in itemlist)
       {
+        MusicTag tag = item.MusicTag as MusicTag;
+        if (tag != null)
+        {
+          if (tag.Duration > 0)
+            totalPlayingTime = totalPlayingTime.Add(new TimeSpan(0, 0, tag.Duration));
+        }
         if (item.Label == ".." && m_strDirectory == m_strPlayListPath) continue;
         item.OnRetrieveArt += new MediaPortal.GUI.Library.GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
         item.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(item_OnItemSelected);
@@ -881,6 +888,12 @@ namespace MediaPortal.GUI.Music
         if (rootItem.Label == "..") iTotalItems--;
       }
       strObjects = String.Format("{0} {1}", iTotalItems, GUILocalizeStrings.Get(632));
+      if (totalPlayingTime.Seconds > 0)
+      {
+        strObjects = String.Format("{0} {1}, {2}", iTotalItems, GUILocalizeStrings.Get(1052),
+                    Utils.SecondsToHMSString((int)totalPlayingTime.TotalSeconds));//songs
+      }
+
       GUIPropertyManager.SetProperty("#itemcount", strObjects);
 
       if (m_iItemSelected >= 0)
