@@ -42,6 +42,8 @@ namespace ProcessPlugins.ExternalDisplay
       this.dllFile = dllFile;
       string[] tmp = dllFile.Split('/','.','\\');
       name = tmp[tmp.Length-2];
+      if (!ExternalDisplay.VerifyDriverLynxDriver())
+          return;
       CreateLCDHypeWrapper();
       GetDllInfo();
     }
@@ -69,19 +71,21 @@ namespace ProcessPlugins.ExternalDisplay
 
     private string m_Description = null;
 
-    public string Description
-    {
-      get
+      public string Description
       {
-        if (m_Description==null)
-        {
-          int i=0;
-          for(;i<256 && info.IDArray[i]!=0;i++);
-          m_Description = new string(info.IDArray, 0, i);
-        }
-        return m_Description;
+          get
+          {
+              if (m_Description == null)
+              {
+                  if (info.IDArray == null)
+                      return Name + " (disabled)";
+                  int i = 0;
+                  for (; i < 256 && info.IDArray[i] != 0; i++) ;
+                  m_Description = new string(info.IDArray, 0, i);
+              }
+              return m_Description;
+          }
       }
-    }
 
     public bool SupportsText
     {
