@@ -500,9 +500,9 @@ namespace ProcessPlugins.ExternalDisplay
       msg = new Message();
       msg.Status = Status.PlayingMusic;
       line = new Line();
-      line.values.Add(new Property("#title"));
-      line.values.Add(new Parse(" by #artist", new NotNullCondition("#artist")));
-      line.values.Add(new Parse(", from the album #album", new NotNullCondition("#album")));
+      line.values.Add(new Property("#Play.Current.Title"));
+      line.values.Add(new Parse(" by #Play.Current.Artist", new NotNullCondition("#Play.Current.Artist")));
+      line.values.Add(new Parse(", from the album #Play.Current.Album", new NotNullCondition("#Play.Current.Album")));
       msg.Lines.Add(line);
       line = new Line();
       line.values.Add(new Parse("#currentplaytime/#duration"));
@@ -541,7 +541,7 @@ namespace ProcessPlugins.ExternalDisplay
       //
       msg = new Message();
       msg.Status = Status.PlayingVideo;
-      msg.Lines.Add(new Line(new Property("#title")));
+      msg.Lines.Add(new Line(new Property("#Play.Current.Title")));
       line = new Line();
       line.values.Add(new Parse("#currentplaytime/#duration"));
       line.values.Add(new Text(" (#112)", new NotNullCondition("#paused")));
