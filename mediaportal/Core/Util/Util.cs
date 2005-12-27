@@ -1578,7 +1578,9 @@ namespace MediaPortal.Util
 			string[] strFiles;
 			try
 			{
-				strFiles=System.IO.Directory.GetFiles(strDir,strPattern);
+				if (!System.IO.Directory.Exists(strDir))
+                    return;
+                strFiles=System.IO.Directory.GetFiles(strDir,strPattern);
 				foreach (string strFile in strFiles)
 				{
 					try

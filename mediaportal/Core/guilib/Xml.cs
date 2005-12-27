@@ -79,8 +79,8 @@ namespace MediaPortal.Profile
 			if (document.DocumentElement.ChildNodes==null) return;
 			try
 			{
-				System.IO.File.Delete(filename+".bak");
-				System.IO.File.Move(filename, filename+".bak");
+				if (File.Exists(filename+".bak")) File.Delete(filename+".bak");
+				if (File.Exists(filename)) File.Move(filename, filename+".bak");
 			}
 			catch (Exception) {}
 
