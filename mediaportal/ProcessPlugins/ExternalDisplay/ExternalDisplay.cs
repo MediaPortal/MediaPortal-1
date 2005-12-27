@@ -39,8 +39,7 @@ namespace ProcessPlugins.ExternalDisplay
   {
     private const int WindowID        = 9876;               //The ID for this plugin
     private IDisplay display          = null;
-    private bool stopRequested        = false;              //already started?
-    private bool powerEventSubscribed = false;              //subscribed to power event?
+    private bool stopRequested        = false;
     private DisplayHandler handler;
     private Status status             = Status.Idle;
     private DateTime lastAction       = DateTime.MinValue;  //Keeps track of when last action occurred
@@ -54,39 +53,28 @@ namespace ProcessPlugins.ExternalDisplay
     /// </summary>
     public void Start()
     {
-      if (t!=null && t.IsAlive) //Already started?
-      {
-        return;
-      }
-      //Start the background thread
-      t = new Thread(new ThreadStart(Run));
-      t.Start();
-      //subscribe for action notification
-      GUIWindowManager.OnNewAction += new OnActionHandler(GUIWindowManager_OnNewAction);
       //Subscribe to the PowerModeChanged event
-      if (!powerEventSubscribed)
-      {
-        SystemEvents.PowerModeChanged += new PowerModeChangedEventHandler(SystemEvents_PowerModeChanged);
-        powerEventSubscribed = true;
-      }
+      SystemEvents.PowerModeChanged += new PowerModeChangedEventHandler(SystemEvents_PowerModeChanged);
       if (Settings.Instance.ShowPropertyBrowser)
       {
         browser = new PropertyBrowser();
         browser.Show();
       }
+      DoStart();
     }
 
-    /// <summary>
-    /// Background thread for steering the display
-    /// </summary>
-    public void Run()
+    private void DoStart()
     {
+      if (t != null && t.IsAlive) //Already started?
+      {
+        return;
+      }
       Log.Write("ExternalDisplay plugin starting...");
       try
       {
         //Initialize display
         display = Settings.Instance.LCDType;
-        if (display==null)
+        if (display == null)
         {
           Log.Write("ExternalDisplay: Requested display type not found.  Plugin not started!!!");
           return;
@@ -97,6 +85,30 @@ namespace ProcessPlugins.ExternalDisplay
           return;
         }
         display.Initialize(Settings.Instance.Port, Settings.Instance.TextHeight, Settings.Instance.TextWidth, Settings.Instance.TextComDelay, Settings.Instance.GraphicHeight, Settings.Instance.GraphicWidth, Settings.Instance.GraphicComDelay, Settings.Instance.BackLight, Settings.Instance.Contrast);
+        //Start the background thread
+        stopRequested = false;
+        t = new Thread(new ThreadStart(Run));
+        t.Start();
+        //subscribe for action notification
+        GUIWindowManager.OnNewAction += new OnActionHandler(GUIWindowManager_OnNewAction);
+      }
+      catch (Exception ex)
+      {
+        Log.Write("ExternalDisplay.DoStart: Exception while starting plugin: " + ex.Message);
+        if (t != null && t.IsAlive)
+          t.Abort();
+        t = null;
+      }
+    }
+
+
+    /// <summary>
+    /// Background thread for steering the display
+    /// </summary>
+    public void Run()
+    {
+      try
+      {
         handler = new DisplayHandler(display);
         handler.Start();
         //Start property browser if needed
@@ -108,13 +120,10 @@ namespace ProcessPlugins.ExternalDisplay
         }
         //stop display handler
         handler.Stop();
-        //stop display
-        display.Dispose();
-        display = null; //to avoid calling after it is disposed
       }
       catch (Exception ex)
       {
-        Log.Write("ExternalDisplay.Start: " + ex.Message);
+        Log.Write("ExternalDisplay.Run: " + ex.Message);
       }
     }
 
@@ -123,26 +132,34 @@ namespace ProcessPlugins.ExternalDisplay
     /// </summary>
     public void Stop()
     {
+      SystemEvents.PowerModeChanged += new PowerModeChangedEventHandler(SystemEvents_PowerModeChanged);
+      DoStop();
+      //stop display
+      display.Dispose();
+      display = null; //to avoid calling after it is disposed
+    }
+
+    private void DoStop()
+    {
       try
       {
-        if (t==null || !t.IsAlive)
+        if (t == null || !t.IsAlive)
         {
           return;
         }
-        stopRequested=true;
-        while(t.IsAlive)
+        stopRequested = true;
+        while (t.IsAlive)
         {
           System.Windows.Forms.Application.DoEvents();
           Thread.Sleep(100);
         }
-
+        t = null;
       }
       catch (Exception ex)
       {
         Log.Write("ExternalDisplay.Stop: " + ex.Message);
       }
     }
-
     #endregion
 
     #region ISetupForm implementation
@@ -346,10 +363,12 @@ namespace ProcessPlugins.ExternalDisplay
       switch (e.Mode)
       {
         case PowerModes.Suspend:
-          Stop();
+          Log.Write("ExternalDisplay: Suspend or Hibernation detected, shutting down plugin");
+          DoStop();
           break;
         case PowerModes.Resume:
-          Start();
+          Log.Write("ExternalDisplay: Resume from Suspend or Hibernation detected, starting plugin");
+          DoStart();
           break;
       }
     }

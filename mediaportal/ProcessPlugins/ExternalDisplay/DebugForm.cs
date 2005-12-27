@@ -37,6 +37,7 @@ namespace ProcessPlugins.ExternalDisplay
     /// </summary>
     private Container components = null;
     private TextBox[] textLines = null;
+    private delegate void SetLineDelegate(int _line, string _message);
     
     public DebugForm()
     {
@@ -109,6 +110,11 @@ namespace ProcessPlugins.ExternalDisplay
     /// </summary>
     public void Start()
     {
+      if (InvokeRequired)
+      {
+        this.Invoke(new MethodInvoker(Start));
+        return;
+      }
       this.Show();
     }
 
@@ -117,6 +123,11 @@ namespace ProcessPlugins.ExternalDisplay
     /// </summary>
     public void Stop()
     {
+      if (InvokeRequired)
+      {
+        this.Invoke(new MethodInvoker(Stop));
+        return;
+      }
       this.Close();
     }
 
@@ -127,8 +138,13 @@ namespace ProcessPlugins.ExternalDisplay
     /// <param name="_message">The text to display</param>
     public void SetLine(int _line, string _message)
     {
+      if (InvokeRequired)
+      {
+        this.Invoke(new SetLineDelegate(SetLine), _line, _message);
+        return;
+      }
       textLines[_line].Text = _message;
-      System.Windows.Forms.Application.DoEvents(); //Give this form some time to repain itself...
+      this.Update(); //Give this form the time to repaint itself...
     }
 
     #endregion
@@ -155,12 +171,20 @@ namespace ProcessPlugins.ExternalDisplay
     /// <param name="_contrast">ignored</param>
     public void Initialize(string _port, int _lines, int _cols, int _time, int _linesG, int _colsG, int _timeG, bool _backLight, int _contrast)
     {
-      this.Show();
+      if (InvokeRequired)
+        Invoke(new MethodInvoker(Show));
+      else
+        this.Show();
       Clear();
     }
 
     public void Clear()
     {
+      if (InvokeRequired)
+      {
+        Invoke(new MethodInvoker(Clear));
+        return;
+      }
       for(int i=0; i<Settings.Instance.TextHeight; i++)
         textLines[i].Text=new string(' ',Settings.Instance.TextWidth);
     }
