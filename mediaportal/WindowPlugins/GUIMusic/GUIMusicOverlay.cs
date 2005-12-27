@@ -292,7 +292,7 @@ namespace MediaPortal.GUI.Music
       float fy;
 
 
-      if (g_Player.IsRadio)
+      if (g_Player.IsRadio || Recorder.IsRadio())
       {
         HideControl( (int)Controls.CONTROL_PLAYTIME);
         HideControl( (int)Controls.CONTROL_BIG_PLAYTIME);
