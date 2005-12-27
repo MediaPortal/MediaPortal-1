@@ -4643,13 +4643,13 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="VBox DTA-150" capturename="VBox Bic951 Capture" devid="ven_11d1&amp;dev_01f9&amp;subsys_a15014f3&amp;rev_03">
+ <capturecard commercialname="VBox DTA-150" capturename="VBox Bic951 Capture" devid="ven_11d1&amp;dev_01f9&amp;subsys_a15014f3&amp;rev_03">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
         <filter cat="networkprovider" name="Microsoft ATSC Network Provider"	checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="VBox TV Tuner (DTF8600)"			checkdevice="true"></filter>
+        <filter cat="tunerdevice"     name="VBox TV Tuner (DTF8600 - ATSC)"			checkdevice="true"></filter>
         <filter cat="capture"         name="VBox Bic951 Capture"				checkdevice="true"></filter>
       </filters>
       <connections>
