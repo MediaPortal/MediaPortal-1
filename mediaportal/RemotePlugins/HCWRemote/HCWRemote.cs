@@ -119,6 +119,8 @@ namespace MediaPortal
         keepControl = xmlreader.GetValueAsBool("remote", "HCWKeepControl", false);
         logVerbose = xmlreader.GetValueAsBool("remote", "HCWVerboseLog", false);
         repeatDelay = xmlreader.GetValueAsInt("remote", "HCWDelay", 0);
+
+        logVerbose = true;  // For debugging some user problems
       }
       bool result = false;
       if (controlEnabled)
@@ -165,6 +167,7 @@ namespace MediaPortal
       {
         connection.Connect(2110);
         connection.ReceiveEvent += new NetHelper.Connection.ReceiveEventHandler(OnReceive);
+        connection.LogEvent += new NetHelper.Connection.LogHandler(OnLog);
         connection.Send("LOG", logVerbose.ToString());
 
         Thread checkThread = new Thread(new ThreadStart(CheckThread));
@@ -210,6 +213,7 @@ namespace MediaPortal
         }
         connection.ReceiveEvent -= new NetHelper.Connection.ReceiveEventHandler(OnReceive);
         connection.Send("APP", "SHUTDOWN");
+        connection.LogEvent -= new NetHelper.Connection.LogHandler(OnLog);
         connection = null;
       }
       catch (Exception ex)
@@ -294,7 +298,13 @@ namespace MediaPortal
     }
 
 
-    void OnReceive(object sender, NetHelper.Connection.EventArguments e)
+    void OnLog(string strLog)
+    {
+      Log.Write("NetHelper: {0}", strLog);
+    }
+
+
+    void OnReceive(NetHelper.Connection.EventArguments e)
     {
       //TimeSpan elapsed = DateTime.Now - e.Timestamp;
       try

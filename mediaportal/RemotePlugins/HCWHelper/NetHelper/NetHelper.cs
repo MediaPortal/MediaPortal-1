@@ -1,3 +1,5 @@
+#region Copyright (C) 2005 Team MediaPortal
+
 /* 
  *	Copyright (C) 2005 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.Text;
@@ -57,18 +61,19 @@ namespace NetHelper
     #endregion
     #region Events
 
-    public delegate void ReceiveEventHandler(object sender, EventArguments e);
-    public delegate void ErrorHandler(object sender, EventArguments e);
-    public delegate void DisconnectHandler(object sender, EventArguments e);
+    public delegate void ReceiveEventHandler(EventArguments e);
+    public delegate void LogHandler(string strLog);
+    public delegate void DisconnectHandler();
     public event ReceiveEventHandler ReceiveEvent;
-    public event ErrorHandler ErrorEvent;
+    public event LogHandler LogEvent;
     public event DisconnectHandler DisconnectEvent;
 
 
-    public class EventArguments : EventArgs
+    public class EventArguments
     {
       private string message;
       private DateTime timestamp;
+
       public string Message { get { return message; } }
       public DateTime Timestamp { get { return timestamp; } }
 
@@ -77,21 +82,14 @@ namespace NetHelper
         message = msg;
         timestamp = DateTime.Now;
       }
-
-      public EventArguments()
-      {
-        message = string.Empty;
-        timestamp = DateTime.Now;
-      }
     }
 
     
-    protected virtual void OnError(string strError)
+    protected virtual void OnLog(string strLog)
     {
-      if (ErrorEvent != null)
+      if (LogEvent != null)
       {
-        EventArguments e = new EventArguments(strError);
-        ErrorEvent(this, e);
+        LogEvent(strLog);
       }
     }
 
@@ -100,8 +98,7 @@ namespace NetHelper
     {
       if (ReceiveEvent != null)
       {
-        EventArguments e = new EventArguments(strReceived);
-        ReceiveEvent(this, e);
+        ReceiveEvent(new EventArguments(strReceived));
       }
     }
 
@@ -113,22 +110,23 @@ namespace NetHelper
     private class SocketPacket
     {
       public System.Net.Sockets.Socket Socket;
-      public byte[] dataBuffer = new byte[100];
+      public byte[] dataBuffer = new byte[65535];
     }
 
 
     ~Connection()
     {
+      OnLog("Shutdown connection");
       Close();
     }
 
 
     private void OnRemoteDisconnected()
     {
+      OnLog("Remote disconnected");
       if (DisconnectEvent != null)
       {
-        EventArguments e = new EventArguments();
-        DisconnectEvent(this, e);
+        DisconnectEvent();
       }
       Close();
       Thread.Sleep(200);
@@ -138,6 +136,7 @@ namespace NetHelper
 
     private void OnClientConnect(IAsyncResult asyn)
     {
+      OnLog("Remote connected.");
       try
       {
         if (serverSocket != null)
@@ -149,17 +148,18 @@ namespace NetHelper
       }
       catch (ObjectDisposedException)
       {
-        OnError("OnClientConnect: Socket has been closed");
+        OnLog("OnClientConnect: Socket has been closed");
       }
       catch (SocketException se)
       {
-        OnError("OnClientConnect: " + se.Message);
+        OnLog("OnClientConnect: " + se.Message);
       }
     }
 
 
     private void OnDataReceived(IAsyncResult asyn)
     {
+      OnLog("Data received");
       try
       {
         SocketPacket socketData = (SocketPacket)asyn.AsyncState;
@@ -169,20 +169,21 @@ namespace NetHelper
       }
       catch (ObjectDisposedException)
       {
-        OnError("OnDataReceived: Socket has been closed");
+        OnLog("OnDataReceived: Socket has been closed");
       }
       catch (SocketException se)
       {
         if (se.ErrorCode == 10054)
           OnRemoteDisconnected();
         else
-          OnError("OnDataReceived: " + se.Message);
+          OnLog("OnDataReceived: " + se.Message);
       }
     }
 
 
     private void WaitForData(System.Net.Sockets.Socket socket)
     {
+      OnLog("Wait for data");
       try
       {
         if (callBackMethod == null)
@@ -193,13 +194,14 @@ namespace NetHelper
       }
       catch (SocketException se)
       {
-        OnError("WaitForData: " + se.Message);
+        OnLog("WaitForData: " + se.Message);
       }
     }
 
 
     public bool Connect(int port)
     {
+      OnLog("Connect");
       IPGlobalProperties properties = IPGlobalProperties.GetIPGlobalProperties();
       TcpConnectionInformation[] connections = properties.GetActiveTcpConnections();
 
@@ -241,7 +243,7 @@ namespace NetHelper
       }
       catch (SocketException se)
       {
-        OnError("Connection failed: " + se.Message);
+        OnLog("Connection failed: " + se.Message);
         Close();
         isOnline = false;
         return false;
@@ -257,12 +259,13 @@ namespace NetHelper
       }
       catch (SocketException se)
       {
-        OnError("Send: " + se.Message);
+        OnLog("Send: " + se.Message);
       }
     }
 
     private void Close()
     {
+      OnLog("Close");
       if (clientSocket != null)
       {
         clientSocket.Close();

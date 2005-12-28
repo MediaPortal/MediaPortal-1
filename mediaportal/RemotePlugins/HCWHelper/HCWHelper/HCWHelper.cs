@@ -57,6 +57,7 @@ namespace HCWHelper
 
       if (connection.Connect(2110))
       {
+        Log("Connected");
         irremote.IRSetDllDirectory(GetDllPath());
 
         Thread waitThread = new Thread(new ThreadStart(WaitForConnect));
@@ -78,8 +79,19 @@ namespace HCWHelper
     }
 
 
-    private void OnDisconnect(object sender, NetHelper.Connection.EventArguments e)
+    protected override void OnClosing(CancelEventArgs e)
     {
+      notifyIcon.Icon = notifyIconRed.Icon;
+      connection.ReceiveEvent -= new NetHelper.Connection.ReceiveEventHandler(OnReceive);
+      connection.DisconnectEvent -= new NetHelper.Connection.DisconnectHandler(OnDisconnect);
+      StopIR();
+      base.OnClosing(e);
+    }
+
+
+    private void OnDisconnect()
+    {
+      Log("Remote disconnected");
       StopIR();
       Thread waitThread = new Thread(new ThreadStart(WaitForConnect));
       waitThread.IsBackground = true;
@@ -89,7 +101,6 @@ namespace HCWHelper
 
     private void CheckThread()
     {
-      //while (true)
       while (Process.GetProcessesByName("MediaPortal").Length > 0)
       {
         Thread.Sleep(1000);
@@ -117,11 +128,13 @@ namespace HCWHelper
     {
       if (!connection.IsOnline)
       {
+        Log("Connection not online");
         notifyIcon.Icon = notifyIconRed.Icon;
         Application.Exit();
       }
       else
       {
+        Log("Waiting for connect");
         notifyIcon.Icon = notifyIconYellow.Icon;
         do
           Thread.Sleep(200);
@@ -174,9 +187,11 @@ namespace HCWHelper
       try
       {
         irremote.IRClose(this.Handle, 0);
+        Log("Closing driver successful");
       }
       catch
       {
+        Log("Closing driver failed");
       }
       notifyIcon.Icon = notifyIconYellow.Icon;
     }
@@ -185,8 +200,9 @@ namespace HCWHelper
     /// <summary>
     /// Receive Commands from MP
     /// </summary>
-    private void OnReceive(object sender, NetHelper.Connection.EventArguments e)
+    private void OnReceive(NetHelper.Connection.EventArguments e)
     {
+      Log("Data received");
       foreach (string msg in e.Message.Split('~'))
       {
         switch (msg.Split('|')[0])
@@ -242,6 +258,7 @@ namespace HCWHelper
     /// </summary>
     private void Sender_FormClosing(object sender, FormClosingEventArgs e)
     {
+      Log("Closing form");
       cancelWait = true;
       StopIR();
       connection.ReceiveEvent -= new NetHelper.Connection.ReceiveEventHandler(OnReceive);
@@ -276,11 +293,17 @@ namespace HCWHelper
                   break;
               }
               if (connection.IsConnected)
+              {
                 connection.Send("CMD", remoteCommand.ToString());
+                Log("Command sent");
+              }
+              else
+                Log("Command not sent - No connection");
             }
           }
-          catch (Exception)
+          catch (Exception ex)
           {
+            Log(string.Format("Exception {0}", ex.Message));
           }
           break;
       }
