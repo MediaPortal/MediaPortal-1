@@ -540,6 +540,7 @@
     </Compile>
     <EmbeddedResource Include="AnalogTVTuningForm.resx">
       <DependentUpon>AnalogTVTuningForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="AutoTuningForm.resx">
       <DependentUpon>AutoTuningForm.cs</DependentUpon>
@@ -561,6 +562,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="EditCaptureCardForm.resx">
       <DependentUpon>EditCaptureCardForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="EditGroupForm.resx">
       <DependentUpon>EditGroupForm.cs</DependentUpon>
@@ -793,6 +795,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="SettingsForm.resx">
       <DependentUpon>SettingsForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="WizardForm.resx">
       <DependentUpon>WizardForm.cs</DependentUpon>

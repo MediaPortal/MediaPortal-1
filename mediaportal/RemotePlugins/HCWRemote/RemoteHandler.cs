@@ -1,3 +1,5 @@
+#region Copyright (C) 2005 Team MediaPortal
+
 /* 
  *	Copyright (C) 2005 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.Diagnostics;

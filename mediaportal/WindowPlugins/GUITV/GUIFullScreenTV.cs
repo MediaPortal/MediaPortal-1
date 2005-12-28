@@ -1,3 +1,5 @@
+#region Copyright (C) 2005 Team MediaPortal
+
 /* 
  *	Copyright (C) 2005 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -18,6 +20,9 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
+
 #region usings
 using System;
 using System.Threading;
@@ -227,6 +232,10 @@ namespace MediaPortal.GUI.TV
 		public override void OnAction(Action action)
 		{
 			_needToClearScreen=true;
+
+      if ((action.wID >= Action.ActionType.REMOTE_0) && (action.wID <= Action.ActionType.REMOTE_9))
+        OnKeyCode((char)(action.wID - Action.ActionType.REMOTE_0 + 48));
+
 			if (action.wID==Action.ActionType.ACTION_SHOW_VOLUME)
 			{
 				_volumeTimer=DateTime.Now;
