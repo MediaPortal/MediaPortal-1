@@ -1,10 +1,10 @@
 <window>
 	<id>5501</id>
-	<defaultcontrol>3</defaultcontrol>
+	<defaultcontrol>3</defaultcontrol> 
 	<allowoverlay>yes</allowoverlay>
-	<define>#header.label:4000</define>
-	<define>#header.image:browser_logo.png</define>
-	<define>#header.hover:</define>
+	<define>#header.label:4001</define>
+	<define>#header.image:alarm_logo.png</define>
+	<define>#header.hover:hover_web browser.png</define>
 	<controls>
 		<import>common.window.xml</import>
 		<control>
@@ -21,7 +21,7 @@
 				<posX>60</posX>
 				<posY>97</posY>
 				<label>712</label>
-				<onright>50</onright>
+				<onright>50</onright> 
 				<onleft>50</onleft>
 				<onup>4</onup>
 				<ondown>4</ondown>

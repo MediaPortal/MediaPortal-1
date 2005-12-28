@@ -18,10 +18,9 @@
          <posX>448</posX>
          <posY>504</posY>
          <onleft>25</onleft>
-         <onright>25</onright>
+         <onright>5</onright>
          <onup>25</onup>
          <ondown>25</ondown>
-         <hyperlink>615</hyperlink>
          <label>200007</label>
          <width>96</width>
          <height>32</height>
