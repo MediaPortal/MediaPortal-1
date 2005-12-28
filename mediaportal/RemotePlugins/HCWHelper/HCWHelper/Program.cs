@@ -23,6 +23,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Diagnostics;
+using System.Threading;
 
 namespace HCWHelper
 {
@@ -36,6 +37,7 @@ namespace HCWHelper
     {
       try
       {
+        Thread.CurrentThread.Priority = ThreadPriority.Highest;
         if ((Process.GetProcessesByName("HCWHelper").Length == 1) && (Process.GetProcessesByName("MediaPortal").Length > 0))
         {
           Application.EnableVisualStyles();

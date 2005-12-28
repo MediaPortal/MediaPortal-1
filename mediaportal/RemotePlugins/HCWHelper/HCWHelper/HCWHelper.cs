@@ -62,10 +62,12 @@ namespace HCWHelper
 
         Thread waitThread = new Thread(new ThreadStart(WaitForConnect));
         waitThread.IsBackground = true;
+        waitThread.Priority = ThreadPriority.Highest;
         waitThread.Start();
 
         Thread checkThread = new Thread(new ThreadStart(CheckThread));
         checkThread.IsBackground = true;
+        checkThread.Priority = ThreadPriority.Highest;
         checkThread.Start();
 
         connection.ReceiveEvent += new NetHelper.Connection.ReceiveEventHandler(OnReceive);
@@ -95,6 +97,7 @@ namespace HCWHelper
       StopIR();
       Thread waitThread = new Thread(new ThreadStart(WaitForConnect));
       waitThread.IsBackground = true;
+      waitThread.Priority = ThreadPriority.Highest;
       waitThread.Start();
     }
 

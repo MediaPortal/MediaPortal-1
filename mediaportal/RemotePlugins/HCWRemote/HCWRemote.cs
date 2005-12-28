@@ -172,6 +172,7 @@ namespace MediaPortal
 
         Thread checkThread = new Thread(new ThreadStart(CheckThread));
         checkThread.IsBackground = true;
+        checkThread.Priority = ThreadPriority.Highest;
         checkThread.Start();
       }
       catch (Exception ex)
@@ -314,6 +315,7 @@ namespace MediaPortal
         {
           bufferThread = new Thread(new ThreadStart(BufferThread));
           bufferThread.IsBackground = true;
+          bufferThread.Priority = ThreadPriority.Highest;
           bufferThread.Start();
         }
       }
