@@ -40,14 +40,14 @@ namespace MediaPortal
     bool allowExternal;             // External processes are controlled by the Hauppauge app
     bool keepControl;               // Keep control, if MP loses focus
     bool logVerbose;                // Verbose logging
-    int repeatDelay;                // Repeat delay
+    static int repeatDelay;                // Repeat delay
     bool restartIRApp = false;  // Restart Haupp. IR-app. after MP quit
-    DateTime lastTime;              // Timestamp of last execution
-    int lastCommand;                // Last executed command
-    HCWHandler hcwHandler;
+    static DateTime lastTime;              // Timestamp of last execution
+    static int lastCommand;                // Last executed command
+    static HCWHandler hcwHandler;
     NetHelper.Connection connection = new NetHelper.Connection();
-    Thread bufferThread;
-    bool exit = false;
+    static Thread bufferThread;
+    static bool exit = false;
 
     const int WM_ACTIVATE = 0x0006;
     const int WM_POWERBROADCAST = 0x0218;
@@ -192,9 +192,12 @@ namespace MediaPortal
         {
           Thread.Sleep(1000);
         }
-        Process.Start(System.Windows.Forms.Application.StartupPath + @"\HCWHelper.exe");
-        Thread.Sleep(3000);
-        connection.Send("LOG", logVerbose.ToString());
+        if (!exit)
+        {
+          Process.Start(System.Windows.Forms.Application.StartupPath + @"\HCWHelper.exe");
+          Thread.Sleep(3000);
+          connection.Send("LOG", logVerbose.ToString());
+        }
       }
     }
 
@@ -259,7 +262,7 @@ namespace MediaPortal
     }
 
 
-    void BufferThread()
+    static void BufferThread()
     {
       while (Buffer.IsFilled)
       {
@@ -305,7 +308,7 @@ namespace MediaPortal
     }
 
 
-    void OnReceive(NetHelper.Connection.EventArguments e)
+    static void OnReceive(NetHelper.Connection.EventArguments e)
     {
       //TimeSpan elapsed = DateTime.Now - e.Timestamp;
       try
