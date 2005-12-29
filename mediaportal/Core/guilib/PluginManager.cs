@@ -132,6 +132,7 @@ namespace MediaPortal.GUI.Library
       Log.Write("  PlugInManager.Stop()");
       foreach (IPlugin plugin in _NonGUIPlugins)
       {
+        Log.Write("PluginManager: stopping {0}", plugin.ToString());
         plugin.Stop();
       }
       _Started=false;
