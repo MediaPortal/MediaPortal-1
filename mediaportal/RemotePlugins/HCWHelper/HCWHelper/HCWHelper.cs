@@ -136,6 +136,7 @@ namespace HCWHelper
     /// <param name="winHandle"></param>
     private void WaitForConnect()
     {
+      Thread.Sleep(1000);
       if (!connection.IsOnline)
       {
         Log("Connection not online");
@@ -146,9 +147,10 @@ namespace HCWHelper
       {
         Log("Waiting for connect");
         notifyIcon.Icon = notifyIconYellow.Icon;
-        do
+        while (!cancelWait && !connection.IsConnected)
+        {
           Thread.Sleep(200);
-        while (!cancelWait && !connection.IsConnected);
+        }
         if (!cancelWait)
           StartIR();
       }

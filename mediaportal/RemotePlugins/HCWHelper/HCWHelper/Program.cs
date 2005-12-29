@@ -42,7 +42,7 @@ namespace HCWHelper
       try
       {
         Thread.CurrentThread.Priority = ThreadPriority.Highest;
-        if ((Process.GetProcessesByName("HCWHelper").Length == 1) && (Process.GetProcessesByName("MediaPortal").Length > 0) && (Process.GetProcessesByName("MediaPortal.vshost").Length > 0))
+        if ((Process.GetProcessesByName("HCWHelper").Length == 1) && (Process.GetProcessesByName("MediaPortal").Length > 0))
         {
           Application.EnableVisualStyles();
           Application.SetCompatibleTextRenderingDefault(false);

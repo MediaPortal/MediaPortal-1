@@ -216,18 +216,26 @@ namespace MediaPortal
     /// </summary>
     public void DeInit()
     {
+      Log.Write("HCW: DeInit");
       exit = true;
       try
       {
         if (controlEnabled && allowExternal)
         {
+          Log.Write("HCW: remove MP events");
           Utils.OnStartExternal -= new Utils.UtilEventHandler(OnStartExternal);
           Utils.OnStopExternal -= new Utils.UtilEventHandler(OnStopExternal);
+          Log.Write("HCW: done");
         }
+        Log.Write("HCW: remove HCW events");
         connection.ReceiveEvent -= new NetHelper.Connection.ReceiveEventHandler(OnReceive);
+        Log.Write("HCW: remove HCW events");
         connection.Send("APP", "SHUTDOWN");
+        Log.Write("HCW: send shutdown done");
         connection.LogEvent -= new NetHelper.Connection.LogHandler(OnLog);
+        Log.Write("HCW: remove log events done");
         connection = null;
+        Log.Write("HCW: connection terminated");
       }
       catch (Exception ex)
       {
