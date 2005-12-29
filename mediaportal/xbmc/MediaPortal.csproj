@@ -291,7 +291,7 @@
     <Content Include="mp.ico" />
     <Content Include="mplogo.gif" />
     <Content Include="mplogo.png" />
-    <None Include="mplogo_new.png" />
+    <Content Include="mplogo_new.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
