@@ -402,7 +402,9 @@ namespace MediaPortal.GUI.Library
             if (gotFocus)
               btn.ColourDiffuse = 0xffffffff;
             else
+            {
               btn.ColourDiffuse = Color.FromArgb(_unfocusedAlpha, Color.White).ToArgb();
+            }
             btn.Focus = gotFocus;
             btn.SetPosition(x, y);
             btn.Render(timePassed);

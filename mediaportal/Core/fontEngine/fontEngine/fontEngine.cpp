@@ -176,7 +176,7 @@ void FontEngineRemoveTexture(int textureNo)
 	textureData[textureNo].vertices=NULL;
 	if ( textureData[textureNo].pTexture!=NULL)
 	{
-		textureData[textureNo].pTexture->Release();
+		//textureData[textureNo].pTexture->Release();
 	}
 	textureData[textureNo].pTexture=NULL;
 	textureData[textureNo].updateVertexBuffer=true;

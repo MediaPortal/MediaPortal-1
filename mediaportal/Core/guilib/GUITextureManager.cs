@@ -141,7 +141,7 @@ namespace MediaPortal.GUI.Library
       {
         foreach (DownloadedImage image in _cacheDownload)
         {
-          if (image.URL.Equals(fileName))
+          if (String.Compare(image.URL,fileName,true)==0)
           {
             if (image.ShouldDownLoad)
             {
@@ -173,7 +173,7 @@ namespace MediaPortal.GUI.Library
       {
         CachedTexture cached = (CachedTexture)_cache[i];
 
-        if (cached.Name == fileName)
+        if (String.Compare(cached.Name ,fileName,true)==0)
         {
           return cached.Frames;
         }
@@ -284,7 +284,7 @@ namespace MediaPortal.GUI.Library
       {
         CachedTexture cached = (CachedTexture)_cache[i];
 
-        if (cached.Name == "#useMemoryImage")
+        if (String.Compare(cached.Name ,"#useMemoryImage",true)==0)
         {
           return cached.Frames;
         }
@@ -494,7 +494,7 @@ namespace MediaPortal.GUI.Library
       for (int i = 0; i < _cache.Count; ++i)
       {
         CachedTexture cached = (CachedTexture)_cache[i];
-        if (cached.Name == fileName)
+        if (String.Compare(cached.Name ,fileName,true)==0)
         {
           if (cached.image != null)
             return cached.image;
@@ -556,7 +556,7 @@ namespace MediaPortal.GUI.Library
       for (int i = 0; i < _cache.Count; ++i)
       {
         CachedTexture cached = (CachedTexture)_cache[i];
-        if (cached.Name == fileName)
+        if (String.Compare(cached.Name ,fileName,true)==0)
         {
           iTextureWidth = cached.Width;
           iTextureHeight = cached.Height;
@@ -581,7 +581,7 @@ namespace MediaPortal.GUI.Library
           continueRemoving = false;
           foreach (CachedTexture cached in _cache)
           {
-            if (cached.Name.Equals(fileName))
+            if (String.Compare(cached.Name,fileName,true)==0)
             {
               Log.Write("texturemanager:dispose:{0} frames:{1} total:{2} mem left:{3}", cached.Name, cached.Frames, _cache.Count, GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString());
               _cache.Remove(cached);

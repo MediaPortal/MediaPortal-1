@@ -138,10 +138,9 @@ namespace MediaPortal.GUI.Library
       {
         if (_image != null)
         {
+          if (logTextures) Log.Write("Frame: dispose() fontengine: remove texture:" + _textureNumber.ToString());
           try
           {
-            if (logTextures) Log.Write("Frame: dispose() fontengine: remove texture:" + _textureNumber.ToString());
-            FontEngineRemoveTexture(_textureNumber);
             if (!_image.Disposed)
             {
               _image.Dispose();
@@ -152,6 +151,7 @@ namespace MediaPortal.GUI.Library
             //image already disposed?
           }
           _image = null;
+          FontEngineRemoveTexture(_textureNumber);
         }
       }
 
