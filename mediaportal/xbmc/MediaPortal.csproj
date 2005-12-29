@@ -274,6 +274,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MediaPortal.resx">
       <DependentUpon>MediaPortal.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="OldSkinForm.resx">
       <DependentUpon>OldSkinForm.cs</DependentUpon>
@@ -285,10 +286,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="SplashScreen.resx">
       <DependentUpon>SplashScreen.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <Content Include="mp.ico" />
     <Content Include="mplogo.gif" />
     <Content Include="mplogo.png" />
+    <None Include="mplogo_new.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

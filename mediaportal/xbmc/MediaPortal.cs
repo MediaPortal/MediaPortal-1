@@ -1,3 +1,5 @@
+#region Copyright (C) 2005 Team MediaPortal
+
 /* 
  *	Copyright (C) 2005 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 #region usings
 using System;
@@ -188,6 +192,7 @@ public class MediaPortalApp : D3DApp, IRender
     splashScreen.SetVersion(version);
     splashScreen.Show();
     splashScreen.Update();
+    splashScreen.FadeIn();
     //clientInfo=null;
 #endif
 
@@ -626,6 +631,7 @@ public class MediaPortalApp : D3DApp, IRender
     //
     if (splashScreen != null)
     {
+      splashScreen.FadeOut();
       splashScreen.Close();
       splashScreen.Dispose();
       splashScreen = null;

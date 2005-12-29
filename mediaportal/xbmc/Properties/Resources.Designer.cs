@@ -59,5 +59,12 @@ namespace MediaPortal.Properties {
                 resourceCulture = value;
             }
         }
+        
+        internal static System.Drawing.Bitmap mplogo_new {
+            get {
+                object obj = ResourceManager.GetObject("mplogo_new", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
     }
 }
