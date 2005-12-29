@@ -194,7 +194,10 @@ namespace NetHelper
       }
       catch (SocketException se)
       {
-        OnLog("WaitForData: " + se.Message);
+        if (se.ErrorCode == 10054)
+          OnRemoteDisconnected();
+        else
+          OnLog("WaitForData: " + se.Message);
       }
     }
 

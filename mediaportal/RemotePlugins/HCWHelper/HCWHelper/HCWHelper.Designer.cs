@@ -129,6 +129,7 @@ namespace HCWHelper
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.ClientSize = new System.Drawing.Size(292, 266);
       this.Name = "HCWHelper";
+      this.Opacity = 0;
       this.ShowInTaskbar = false;
       this.Text = "MediaPortal HCW Control";
       this.WindowState = System.Windows.Forms.FormWindowState.Minimized;

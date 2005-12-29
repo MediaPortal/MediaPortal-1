@@ -1,3 +1,5 @@
+#region Copyright (C) 2005 Team MediaPortal
+
 /* 
  *	Copyright (C) 2005 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.Collections.Generic;
@@ -95,16 +99,19 @@ namespace HCWHelper
     {
       Log("Remote disconnected");
       StopIR();
-      Thread waitThread = new Thread(new ThreadStart(WaitForConnect));
-      waitThread.IsBackground = true;
-      waitThread.Priority = ThreadPriority.Highest;
-      waitThread.Start();
+      if (!cancelWait)
+      {
+        Thread waitThread = new Thread(new ThreadStart(WaitForConnect));
+        waitThread.IsBackground = true;
+        waitThread.Priority = ThreadPriority.Highest;
+        waitThread.Start();
+      }
     }
 
 
     private void CheckThread()
     {
-      while (Process.GetProcessesByName("MediaPortal").Length > 0)
+      while (!cancelWait && (Process.GetProcessesByName("MediaPortal").Length > 0))
       {
         Thread.Sleep(1000);
       }

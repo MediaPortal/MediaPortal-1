@@ -1,3 +1,5 @@
+#region Copyright (C) 2005 Team MediaPortal
+
 /* 
  *	Copyright (C) 2005 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.Diagnostics;
@@ -185,20 +189,25 @@ namespace MediaPortal
 
     private void CheckThread()
     {
-      while (!exit)
+      do
       {
+        Log.Write("HCW: waiting for HCWHelper");
         Thread.Sleep(1000);
         while (!exit && (Process.GetProcessesByName("HCWHelper").Length > 0))
         {
+          Log.Write("HCW: HCWHelper is running...");
           Thread.Sleep(1000);
         }
         if (!exit)
         {
+          Log.Write("HCW: starting HCWHelper");
           Process.Start(System.Windows.Forms.Application.StartupPath + @"\HCWHelper.exe");
+          Log.Write("HCW: HCWHelper started");
           Thread.Sleep(3000);
           connection.Send("LOG", logVerbose.ToString());
         }
       }
+      while (!exit);
     }
 
 
