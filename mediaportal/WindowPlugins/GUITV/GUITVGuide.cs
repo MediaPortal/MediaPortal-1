@@ -829,7 +829,7 @@ namespace MediaPortal.GUI.TV
         GUISpinControl cntlDay = GetControl((int)Controls.SPINCONTROL_DAY) as GUISpinControl;
 
         // Find first day in TVGuide and set spincontrol position 
-        int iDay = _viewingTime.DayOfYear - DateTime.Now.DayOfYear;
+        int iDay = CalcDays();
         for (; iDay < 0; ++iDay)
         {
           _viewingTime = _viewingTime.AddDays(1.0);
@@ -1935,7 +1935,7 @@ namespace MediaPortal.GUI.TV
       {
         _viewingTime = _viewingTime.AddMinutes(-_timePerBlock);
         // Check new day
-        int iDay = _viewingTime.DayOfYear - DateTime.Now.DayOfYear;
+        int iDay = CalcDays();
         if (iDay < 0)
           _viewingTime = _viewingTime.AddMinutes(+_timePerBlock);
       }
@@ -1998,7 +1998,7 @@ namespace MediaPortal.GUI.TV
       {
         _viewingTime = _viewingTime.AddMinutes(_timePerBlock);
         // Check new day
-        int iDay = _viewingTime.DayOfYear - DateTime.Now.DayOfYear;
+        int iDay = CalcDays();
         if (iDay >= MaxDaysInGuide)
           _viewingTime = _viewingTime.AddMinutes(-_timePerBlock);
       }
@@ -2570,6 +2570,17 @@ namespace MediaPortal.GUI.TV
       }
       return false;
     }
+
+      protected int CalcDays()
+      {
+          int iDay = _viewingTime.DayOfYear - DateTime.Now.DayOfYear;
+          if (_viewingTime.Year > DateTime.Now.Year)
+          {
+              iDay += (new DateTime(DateTime.Now.Year, 12, 31)).DayOfYear;
+          }
+          return iDay;
+      }
+
 
     #region TV Database callbacks
     private void TVDatabase_On_notifyListChanged()
