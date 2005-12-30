@@ -1594,24 +1594,28 @@ namespace MediaPortal.Util
 
 		}
 
-		static public void StopMCEServices()
-		{
-      // Stop MCE ehRecvr and ehSched services
+    static public void StopMCEServices()
+    {
       bool ehRecvrExist = false;
-      try
-      {
-        string dummy = ehRecvr.ServiceName;
-        ehRecvrExist = true;
-      }
-      catch {}
       bool ehSchedExist = false;
-      try
+      // Check for existance of MCE services without throwing/catching exceptions
+      ServiceController[] services = ServiceController.GetServices();
+      foreach (ServiceController srv in services)
       {
-        string dummy = ehSched.ServiceName;
-        ehSchedExist = true;
+        if (srv.ServiceName == "ehRecvr")
+        {
+          ehRecvrExist = true;
+          if (ehSchedExist) //Found both services
+            break;
+        }
+        if (srv.ServiceName == "ehSched")
+        {
+          ehSchedExist = true;
+          if (ehRecvrExist) //Found both services
+            break;
+        }
       }
-      catch {}
-
+      // Stop MCE ehRecvr and ehSched services
       if ((ehRecvrExist && (ehRecvr.Status != ServiceControllerStatus.Stopped) && (ehRecvr.Status != ServiceControllerStatus.StopPending))
         || (ehSchedExist && (ehSched.Status != ServiceControllerStatus.Stopped) && (ehSched.Status != ServiceControllerStatus.StopPending)))
       {
@@ -1641,7 +1645,7 @@ namespace MediaPortal.Util
           Log.Write("Error stopping MCE service \"ehSched\"");
         }
       }
-		}
+    }
 
     static public void RestartMCEServices()
     {
