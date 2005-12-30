@@ -1319,11 +1319,12 @@ namespace MediaPortal.GUI.TV
 			if(m_currentgroup < 0 || m_currentgroup >= m_groups.Count)		// Group no longer exists?
 				m_currentgroup = 0;
 
-			if (m_currentchannel.Trim()==String.Empty)
-			{
-				TVGroup group=(TVGroup )m_groups[m_currentgroup];
-				m_currentchannel=((TVChannel)group.TvChannels[0]).Name;
-			}
+      if (m_currentchannel.Trim() == String.Empty)
+      {
+        TVGroup group = (TVGroup)m_groups[m_currentgroup];
+        if (group.TvChannels.Count > 0)
+          m_currentchannel = ((TVChannel)group.TvChannels[0]).Name;
+      }
 
 			m_currentTvChannel=GetTVChannel(m_currentchannel);
 		}
