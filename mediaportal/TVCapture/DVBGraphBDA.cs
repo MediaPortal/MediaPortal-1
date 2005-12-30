@@ -3372,7 +3372,15 @@ namespace MediaPortal.TV.Recording
       return false;
     }//SendPMT()
 
-    void LoadLNBSettings(ref DVBChannel ch, out int lowOsc, out int hiOsc, out int diseqcUsed)
+    /// <summary>
+    /// GetDisEqcSettings()
+    /// This method gets the disEqc settings for the tv channel specified
+    /// </summary>
+    /// <param name="ch">tvchannel</param>
+    /// <param name="lowOsc">[out] low oscillator</param>
+    /// <param name="hiOsc">[out] high oscillator</param>
+    /// <param name="diseqcUsed">[out] diseqc used for this channel (0-6)</param>
+    void GetDisEqcSettings(ref DVBChannel ch, out int lowOsc, out int hiOsc, out int diseqcUsed)
     {
       diseqcUsed = 0;
       lowOsc = 9750;
@@ -3453,9 +3461,16 @@ namespace MediaPortal.TV.Recording
       catch (Exception)
       {
       }
-    } //void LoadLNBSettings(TunerLib.IDVBTuneRequest tuneRequest)
+    } //void GetDisEqcSettings(TunerLib.IDVBTuneRequest tuneRequest)
 
-    void SetLNBSettings(int disEqcUsed, TunerLib.IDVBSTuningSpace dvbSpace)
+    /// <summary>
+    /// SetDVBSInputRangeParameter()
+    /// This method will set the BDA IDVBSTuningSpace.InputRange parameter
+    /// based on the disEqc number specified
+    /// </summary>
+    /// <param name="disEqcUsed">disEqc number (0-6)</param>
+    /// <param name="dvbSpace">DVB tuningspace</param>
+    void SetDVBSInputRangeParameter(int disEqcUsed, TunerLib.IDVBSTuningSpace dvbSpace)
     {
       try
       {
@@ -4207,7 +4222,7 @@ namespace MediaPortal.TV.Recording
               if (ch.DiSEqC < 1) ch.DiSEqC = 1;
               if (ch.DiSEqC > 4) ch.DiSEqC = 4;
 
-              LoadLNBSettings(ref ch, out lowOsc, out hiOsc, out diseqcUsed);
+              GetDisEqcSettings(ref ch, out lowOsc, out hiOsc, out diseqcUsed);
               TunerLib.IDVBSTuningSpace dvbSpace = myTuner.TuningSpace as TunerLib.IDVBSTuningSpace;
               if (dvbSpace == null)
               {
@@ -4221,7 +4236,7 @@ namespace MediaPortal.TV.Recording
               dvbSpace.LowOscillator = lowOsc * 1000;
               dvbSpace.HighOscillator = hiOsc * 1000;
 
-              SetLNBSettings(diseqcUsed, dvbSpace);
+              SetDVBSInputRangeParameter(diseqcUsed, dvbSpace);
 
               newTuneRequest = dvbSpace.CreateTuneRequest();
               if (newTuneRequest == null)

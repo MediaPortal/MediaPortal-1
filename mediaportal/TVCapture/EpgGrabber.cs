@@ -319,14 +319,17 @@ namespace MediaPortal.TV.Recording
         {
           if (ch.Name == _channelName)
           {
-            Log.WriteFile(Log.LogType.EPG, "epg: channel:{0} received epg for : {1} hours", _channelName, hours);
-            if (hours > 0)
+            if (ch.LastDateTimeEpgGrabbed < DateTime.Now.AddHours(-2))
             {
-              ch.EpgHours = hours;
+              Log.WriteFile(Log.LogType.EPG, "epg: channel:{0} received epg for : {1} hours", _channelName, hours);
+              if (hours > 0)
+              {
+                ch.EpgHours = hours;
+              }
+              ch.LastDateTimeEpgGrabbed = DateTime.Now;
+              TVDatabase.UpdateChannel(ch, ch.Sort);
+              return;
             }
-            ch.LastDateTimeEpgGrabbed = DateTime.Now;
-            TVDatabase.UpdateChannel(ch,ch.Sort);
-            return;
           }
         }
       }
@@ -806,6 +809,7 @@ namespace MediaPortal.TV.Recording
         {
           _timeoutTimer = DateTime.Now;
           if (channel.TvChannel == null) continue;
+          if (channel.TvChannel.LastDateTimeEpgGrabbed >= DateTime.Now.AddHours(-2)) continue;
           channel.Sort();
           foreach (EPGEvent epgEvent in channel.EpgEvents)
           {
@@ -856,7 +860,6 @@ namespace MediaPortal.TV.Recording
             }
           }
         }
-
         UpdateChannels();
       }
       catch (Exception ex)
@@ -905,6 +908,7 @@ namespace MediaPortal.TV.Recording
             channelCache.Add(mhwEvent);
           }
           if (tvChannel == null) continue;
+          if (tvChannel.LastDateTimeEpgGrabbed >= DateTime.Now.AddHours(-2)) continue;
 
           _timeoutTimer = DateTime.Now;
           TVProgram tv = new TVProgram();
