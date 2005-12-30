@@ -2251,7 +2251,6 @@ namespace MediaPortal.TV.Recording
           if (card.IsEpgFinished)
           {
             card.DeleteGraph();
-
             //reload tv channels...
             _tvChannelsList.Clear();
             TVDatabase.GetChannels(ref _tvChannelsList);

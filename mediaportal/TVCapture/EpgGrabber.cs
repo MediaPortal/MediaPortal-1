@@ -14,7 +14,7 @@ namespace MediaPortal.TV.Recording
   /// this class receives the EPG data for DVB from the MPSA directshow filter
   /// and will update the TV database with all new programs found
   /// </summary>
-  public class EpgGrabber 
+  public class EpgGrabber
   {
     #region EPGEvent class
     class EPGLanguage
@@ -163,7 +163,7 @@ namespace MediaPortal.TV.Recording
         _networkId = networkId;
         _serviceId = serviceId;
         _transportId = transportId;
-        Languages.Add(new EPGLanguage(String.Empty,title,description));
+        Languages.Add(new EPGLanguage(String.Empty, title, description));
       }
       public NetworkType Network
       {
@@ -197,7 +197,7 @@ namespace MediaPortal.TV.Recording
 
     class MHWEventComparer : IComparer<MediaPortal.TV.Recording.EpgGrabber.MHWEvent>
     {
-      public int Compare(MediaPortal.TV.Recording.EpgGrabber.MHWEvent show1,  MediaPortal.TV.Recording.EpgGrabber.MHWEvent show2)
+      public int Compare(MediaPortal.TV.Recording.EpgGrabber.MHWEvent show1, MediaPortal.TV.Recording.EpgGrabber.MHWEvent show2)
       {
         if (show1.NetworkId < show2.NetworkId) return -1;
         if (show1.NetworkId > show2.NetworkId) return 1;
@@ -286,8 +286,8 @@ namespace MediaPortal.TV.Recording
       public TvChannelEpg(string channelName)
       {
         _channelName = channelName;
-        _firstEvent=DateTime.MinValue;
-        _lastEvent=DateTime.MinValue;
+        _firstEvent = DateTime.MinValue;
+        _lastEvent = DateTime.MinValue;
       }
       public string ChannelName
       {
@@ -361,6 +361,7 @@ namespace MediaPortal.TV.Recording
     List<MHWEvent> _listMhwEvents;
     List<ATSCEvent> _listAtscEvents;
     List<TvChannelEpg> _epgChannels;
+    string _epgTvChannelName = String.Empty;
     #endregion
 
     #region properties
@@ -393,8 +394,9 @@ namespace MediaPortal.TV.Recording
 
     #region public methods
 
-    public void GrabEPG(bool epg)
+    public void GrabEPG(string tvChannelName, bool epg)
     {
+      _epgTvChannelName = tvChannelName;
       _timeoutTimer = DateTime.Now;
       using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
       {
@@ -460,6 +462,7 @@ namespace MediaPortal.TV.Recording
           if (ts.TotalMinutes >= 10)
           {
             Log.Write("epg-grab: timeout...");
+            OnDone();
             _currentState = State.Done;
           }
         }
@@ -545,7 +548,7 @@ namespace MediaPortal.TV.Recording
       }
       catch (Exception ex)
       {
-        Log.Write("epg-grab: exception :{0} {1} {2}",ex.Message,ex.Source,ex.StackTrace);
+        Log.Write("epg-grab: exception :{0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
       }
     }
 
@@ -556,8 +559,9 @@ namespace MediaPortal.TV.Recording
     }
     public bool Done
     {
-      get { 
-        return _currentState == State.Done; 
+      get
+      {
+        return _currentState == State.Done;
       }
     }
     #endregion
@@ -712,12 +716,12 @@ namespace MediaPortal.TV.Recording
         _epgInterface.GetEPGEventCount((uint)x, out eventCount);
         for (uint i = 0; i < eventCount; ++i)
         {
-          uint start_time_MJD = 0, start_time_UTC = 0, duration = 0, languageId = 0, languageCount=0;
+          uint start_time_MJD = 0, start_time_UTC = 0, duration = 0, languageId = 0, languageCount = 0;
           string title, description, genre;
           IntPtr ptrTitle = IntPtr.Zero;
           IntPtr ptrDesc = IntPtr.Zero;
           IntPtr ptrGenre = IntPtr.Zero;
-          _epgInterface.GetEPGEvent((uint)x, (uint)i, out languageCount, out start_time_MJD, out start_time_UTC, out duration,  out ptrGenre);
+          _epgInterface.GetEPGEvent((uint)x, (uint)i, out languageCount, out start_time_MJD, out start_time_UTC, out duration, out ptrGenre);
           genre = Marshal.PtrToStringAnsi(ptrGenre);
 
           int duration_hh = getUTC((int)((duration >> 16)) & 255);
@@ -853,8 +857,8 @@ namespace MediaPortal.TV.Recording
                         channel.TvChannel.Name,
                         epgEvent.StartTime.ToLongDateString(),
                         epgEvent.StartTime.ToLongTimeString(), epgEvent.EndTime.ToLongTimeString(), epgLang.Title);
-//              if (desc.Length>0) 
-//                Log.WriteFile(Log.LogType.EPG, "epg-grab:     {0}", desc);
+              //              if (desc.Length>0) 
+              //                Log.WriteFile(Log.LogType.EPG, "epg-grab:     {0}", desc);
               TVDatabase.UpdateProgram(tv);
               OnChannelEvent(tv.Channel, tv.StartTime, tv.EndTime);
             }
@@ -864,10 +868,11 @@ namespace MediaPortal.TV.Recording
       }
       catch (Exception ex)
       {
-        Log.WriteFile(Log.LogType.EPG, "epg-grab: exception:{0} {1} {2}",ex.Message,ex.Source,ex.StackTrace);
+        Log.WriteFile(Log.LogType.EPG, "epg-grab: exception:{0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
       }
       Log.WriteFile(Log.LogType.EPG, "epg-grab: done");
       TVDatabase.SupressEvents = false;
+      OnDone();
       _currentState = State.Done;
     }
     #endregion
@@ -937,6 +942,7 @@ namespace MediaPortal.TV.Recording
       finally
       {
         TVDatabase.SupressEvents = false;
+        OnDone();
         _currentState = State.Done;
         Log.WriteFile(Log.LogType.EPG, "mhw-grab: updating tv database done");
       }
@@ -956,7 +962,7 @@ namespace MediaPortal.TV.Recording
         List<ATSCEvent> events = _listAtscEvents;
         _listAtscEvents = null;
         TVDatabase.SupressEvents = true;
-        
+
         foreach (ATSCEvent atscEvent in events)
         {
           _timeoutTimer = DateTime.Now;
@@ -985,6 +991,7 @@ namespace MediaPortal.TV.Recording
       }
       UpdateChannels();
       TVDatabase.SupressEvents = false;
+      OnDone();
       _currentState = State.Done;
       Log.WriteFile(Log.LogType.EPG, "atsc-grab: updating tv database done");
     }
@@ -1021,6 +1028,22 @@ namespace MediaPortal.TV.Recording
       _epgChannels.Clear();
     }
 
+    void OnDone()
+    {
+      List<TVChannel> channels = new List<TVChannel>();
+      TVDatabase.GetChannels(ref channels);
+      foreach (TVChannel ch in channels)
+      {
+        if (String.Compare(ch.Name, _epgTvChannelName, true) == 0)
+        {
+          ch.LastDateTimeEpgGrabbed = DateTime.Now;
+          TVDatabase.UpdateChannel(ch, ch.Sort);
+          Log.WriteFile(Log.LogType.EPG, "epg-grab: channel:{0} epg grabbed at {1} {2}",
+                  ch.LastDateTimeEpgGrabbed.ToShortDateString(), ch.LastDateTimeEpgGrabbed.ToShortTimeString());
+          return;
+        }
+      }
+    }
     #endregion
   }
 

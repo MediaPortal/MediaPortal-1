@@ -5273,8 +5273,8 @@ namespace MediaPortal.TV.Recording
         }
         if (Recorder.IsCardViewing(_cardId) || _graphState == State.Epg)
         {
-          Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA: grab epg");
-          _epgGrabber.GrabEPG(_currentTuningObject.HasEITSchedule == true);
+          Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA: grab epg for {0}", _currentTuningObject.ServiceName);
+          _epgGrabber.GrabEPG(_currentTuningObject.ServiceName,_currentTuningObject.HasEITSchedule == true);
         }
       }
       catch (Exception ex)

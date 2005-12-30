@@ -2478,7 +2478,7 @@ namespace MediaPortal.TV.Recording
                       }
                     }
                     Log.Write("DVBGraphSS2:Process() start grabbing epg");
-                    _epgGrabber.GrabEPG(_currentChannel.HasEITSchedule == true);
+                    _epgGrabber.GrabEPG( _currentTuningObject.ServiceName,_currentChannel.HasEITSchedule == true);
                   }
                 }
               }
