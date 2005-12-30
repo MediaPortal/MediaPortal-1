@@ -87,6 +87,7 @@ public class MediaPortalApp : D3DApp, IRender
   DateTime screenSaverTimer = DateTime.Now;
   bool useScreenSaver = true;
   bool restoreTopMost = false;
+  bool startWithBasicHome = false;
 #if AUTOUPDATE
     string m_strNewVersion = "";
     bool m_bNewVersionAvailable = false;
@@ -740,7 +741,15 @@ public class MediaPortalApp : D3DApp, IRender
     GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
 
     Log.Write("  WindowManager.ActivateWindow");
-    GUIWindowManager.ActivateWindow(GUIWindowManager.ActiveWindow);
+    // Edit Michel
+    using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+    {
+        startWithBasicHome = xmlreader.GetValueAsBool("general", "startbasichome", false);
+    }
+    if ((startWithBasicHome) && (File.Exists(GUIGraphicsContext.Skin + @"\basichome.xml")))
+        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SECOND_HOME);
+    else
+        GUIWindowManager.ActivateWindow(GUIWindowManager.ActiveWindow);
 
     Log.Write("  skin initialized");
     if (GUIGraphicsContext.DX9Device != null)

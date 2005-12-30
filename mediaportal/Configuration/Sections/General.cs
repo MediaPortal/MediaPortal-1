@@ -122,7 +122,7 @@ namespace MediaPortal.Configuration.Sections
 			base.Dispose( disposing );
 		}
 
-		string[][] sectionEntries = new string[][] { 
+        string[][] sectionEntries = new string[][] { 
 												new string[] { "general", "startfullscreen", "false" },
 
 												new string[] { "general", "minimizeonstartup", "false" },
@@ -139,7 +139,8 @@ namespace MediaPortal.Configuration.Sections
 												new string[] { "general", "alwaysontop", "false" },
 												new string[] { "general", "exclusivemode", "false" },
 												new string[] { "general", "enableguisounds", "true" },
-												new string[] { "general", "screensaver", "true" }
+												new string[] { "general", "screensaver", "true" },
+												new string[] { "general", "startbasichome", "false" }
 												};
 
 		/// <summary>
@@ -303,21 +304,22 @@ namespace MediaPortal.Configuration.Sections
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.settingsCheckedListBox.Items.AddRange(new object[] {
-            "Start MediaPortal in fullscreen mode",
-            "Minimize to tray on start up",
-            "Minimize to tray on GUI exit",
-            "Auto hide mouse cursor when inactive",
-            "Show special mouse controls (scrollbars, etc)",
-            "Dont show file extensions like .mp3, .avi, .mpg,...",
-            "Enable animations",
-            "Autostart Mediaportal when windows starts",
-            "Disable Windows XP balloon tips",
-            "Use mouse left double click as right click",
-            "Hide taskbar in fullscreen mode",
-            "MediaPortal always on top",
-            "use Exclusive DirectX Mode for fullscreen tv/video",
-            "enable GUI sound effects",
-            "enable Screensaver in fullscreen mode"});
+                                                                "Start Media Portal in fullscreen mode",
+                                                                "Minimize to tray on start up",
+                                                                "Minimize to tray on GUI exit", 
+                                                                "Auto hide mouse cursor when inactive",
+                                                                "Show special mouse controls (scrollbars, etc)",
+                                                                "Dont show file extensions like .mp3, .avi, .mpg,...",
+                                                                "Enable animations",
+                                                                "Autostart Mediaportal when windows starts",
+                                                                "Disable Windows XP balloon tips",
+                                                                "Use mouse left double click as right click",
+                                                                "Hide taskbar in fullscreen mode",
+                                                                "MediaPortal always on top",
+                                                                "use Exclusive DirectX Mode for fullscreen tv/video",
+                                                                "enable GUI sound effects",
+                                                                "enable Screensaver in fullscreen mode",
+                                                                "start with basic home screen"});
       this.settingsCheckedListBox.Location = new System.Drawing.Point(16, 24);
       this.settingsCheckedListBox.Name = "settingsCheckedListBox";
       this.settingsCheckedListBox.Size = new System.Drawing.Size(440, 214);

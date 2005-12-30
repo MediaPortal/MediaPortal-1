@@ -154,6 +154,7 @@ namespace MediaPortal.GUI.Library
       , ACTION_IMPORT_TRACK        = 112
       , ACTION_IMPORT_DISC         = 113
       , ACTION_CANCEL_IMPORT       = 114
+      , ACTION_SWITCH_HOME         = 115  // allow switching between regular / basic home
       , ACTION_MOUSE_MOVE=2000
       , ACTION_MOUSE_CLICK=2001
       , ACTION_MOUSE_DOUBLECLICK=2002
