@@ -28,6 +28,7 @@ using System.Xml.Serialization;
 using ExternalDisplay.Setting;
 using MediaPortal.GUI.Library;
 using ProcessPlugins.ExternalDisplay.Setting;
+using System.Collections.Generic;
 
 namespace ProcessPlugins.ExternalDisplay
 {
@@ -316,7 +317,7 @@ namespace ProcessPlugins.ExternalDisplay
     /// <summary>
     /// List of message rules
     /// </summary>
-    [XmlElement("Message", typeof (Message))] public IList Messages = new ArrayList();
+    [XmlElement("Message", typeof (Message))] public List<Message> Messages = new List<Message>();
 
     private IDisplay[] m_Drivers = null;
     /// <summary>
@@ -466,7 +467,7 @@ namespace ProcessPlugins.ExternalDisplay
       //
       msg = new Message();
       msg.Status = Status.Action;
-      msg.Windows.Add(GUIWindow.Window.WINDOW_TV);
+      msg.Windows.Add((int)GUIWindow.Window.WINDOW_TV);
       msg.Lines.Add(new Line(new Property("#currentmodule")));
       line = new Line();
       line.values.Add(new Property("#TV.View.channel"));

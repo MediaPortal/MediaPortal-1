@@ -329,7 +329,7 @@ namespace ProcessPlugins.ExternalDisplay
         foreach (Message msg in Settings.Instance.Messages)
         {
           if ((msg.Status == Status.Any || msg.Status == status) &&
-            (msg.Windows.Count == 0 || msg.Windows.Contains((int) activeWindow)))
+            (msg.Windows.Count == 0 || msg.Windows.Contains((int)activeWindow)))
           {
             if (msg.Process(handler))
             {

@@ -19,9 +19,10 @@
  *
  */
 
-using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Xml.Serialization;
+using MediaPortal.GUI.Library;
 
 namespace ProcessPlugins.ExternalDisplay.Setting
 {
@@ -45,14 +46,14 @@ namespace ProcessPlugins.ExternalDisplay.Setting
     /// <summary>
     /// List of active windows that will trigger this message
     /// </summary>
-    [XmlElement("Window",typeof(int))]
-    public IList Windows = new ArrayList();
+    [XmlElement("Window", typeof(int))]
+    public List<int> Windows = new List<int>();
 
     /// <summary>
     /// List of lines that this message contains
     /// </summary>
     [XmlElement("Line",typeof(Line))]
-    public IList Lines = new ArrayList();
+    public List<Line> Lines = new List<Line>();
 
     /// <summary>
     /// Condition for this message

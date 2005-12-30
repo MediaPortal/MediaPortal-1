@@ -23,6 +23,7 @@ using System.Collections;
 using System.Text;
 using System.Xml.Serialization;
 using ExternalDisplay.Setting;
+using System.Collections.Generic;
 
 namespace ProcessPlugins.ExternalDisplay.Setting
 {
@@ -68,7 +69,7 @@ namespace ProcessPlugins.ExternalDisplay.Setting
 /// </summary>
     [XmlElement("Text", typeof (Text))]
     [XmlElement("Property", typeof (Property))]
-    [XmlElement("Parse", typeof (Parse))] public IList values = new ArrayList();
+    [XmlElement("Parse", typeof (Parse))] public List<Value> values = new List<Value>();
 
     /// <summary>
     /// Process the line
