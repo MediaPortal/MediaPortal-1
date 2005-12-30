@@ -381,6 +381,7 @@ namespace MadMouse.FireDTV
 			return -1;
 		}
 		#region Initialization
+    [System.Diagnostics.DebuggerStepThrough]
 		internal void InitializeFireDTVLibrary()
 		{
 			if (!LibrayInitialized)
@@ -465,7 +466,8 @@ namespace MadMouse.FireDTV
 			}
 		}
 
-		internal void RegisterGeneralNotifications()
+		[System.Diagnostics.DebuggerStepThrough]
+    internal void RegisterGeneralNotifications()
 		{
 			if (!NotificationsRegistered)
 			{

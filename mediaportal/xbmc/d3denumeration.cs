@@ -224,6 +224,7 @@ namespace MediaPortal
     /// <summary>
     /// Enumerates D3D devices for a particular adapter
     /// </summary>
+    [System.Diagnostics.DebuggerStepThrough]
     protected void EnumerateDevices(GraphicsAdapterInfo adapterInfo, ArrayList adapterFormatList)
     {
       DeviceType[] devTypeArray = new DeviceType[] 
