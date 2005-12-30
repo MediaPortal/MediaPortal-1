@@ -2274,7 +2274,7 @@ namespace MediaPortal.TV.Recording
             if (prog.EndTime < DateTime.Now.AddHours(chan.EpgHours))
             {
               ts = DateTime.Now - chan.LastDateTimeEpgGrabbed;
-              if (ts.TotalHours > 2 || prog.EndTime < DateTime.Now.AddDays(-5) )
+              if (ts.TotalHours > 2  )
               {
                   //grab the epg
                   Log.WriteFile(Log.LogType.EPG, "auto-epg: card:{0} grab epg for channel:{1} expected:{2} hours, last event in tv guide:{3} {4}, last grab :{5} {6}",

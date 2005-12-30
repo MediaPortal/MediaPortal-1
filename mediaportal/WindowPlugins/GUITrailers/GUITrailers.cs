@@ -91,9 +91,13 @@ namespace MediaPortal.GUI.Video
 		public static string pcast;
 		public static double prating;
 
+        string[] MainListMenu = new String[10];  //Decause the number of menu item is dynamic.
+
 		// Get from mediaportal.xml
 		public static string bitrate = string.Empty;
 		bool Show_GT = false;
+        bool Show_TSR = false;
+        public static string TSRbitrate = string.Empty;
         
 
 		// BackGroundworker
@@ -521,92 +525,150 @@ namespace MediaPortal.GUI.Video
                 //    listview.Visible = false;
 
                 //}
-				if(itemindex==3) // german trailers
+               	if(itemindex>=3) 
 				{
-					mainview=false;
-					GermanTrailers.G_viewWoche = true;
-					SelectedItem[0] = listview.SelectedListItemIndex;
-					ShowListView(GermanTrailers.Woche, 5911, 5915);
+                    if (MainListMenu[itemindex] == "GERMAN")// german trailers
+                    {
+                        mainview = false;
+                        GermanTrailers.G_viewWoche = true;
+                        SelectedItem[0] = listview.SelectedListItemIndex;
+                        ShowListView(GermanTrailers.Woche, 5911, 5915);
+                    }
+                    if (MainListMenu[itemindex] == "TSRVOD") // TSR VOD
+                    {
+                        mainview = false;
+                        TSRVodTrailers.menuview = true;
+                        SelectedItem[0] = listview.SelectedListItemIndex;
+                        if (TSRVodTrailers.MenuName[0] == null)
+                        { TSRVodTrailers.GetMenu(); }
+                        ShowListView(TSRVodTrailers.MenuName, "TSR VOD",false);
+                    }
 				}
+
+                /*if (itemindex == 3) // TSR VOD
+                {
+                    mainview = false;
+                    TSRVodTrailers.menuview = true;
+                    SelectedItem[0] = listview.SelectedListItemIndex;
+                    if (TSRVodTrailers.MenuName[0] == null)
+                    { TSRVodTrailers.GetMenu(); }
+                    ShowListView(TSRVodTrailers.MenuName, 5903);
+                }*/
 				
 			}
-				// German Trailerview Woche
-			else if(GermanTrailers.G_viewWoche==true)
-			{
-				if(itemindex==0)
-				{
-					GermanTrailers.G_viewWoche = false;
-                    mainview=true;
-					ShowMainListView();
-					listview.SelectedListItemIndex = SelectedItem[0];
-				}
-				if(itemindex==1)
-				{
-					GermanTrailers.G_viewWoche = false;
-					GermanTrailers.G_viewMovie = true;
-					SelectedItem[1] = listview.SelectedListItemIndex;
-					GermanTrailers.GetGermanTrailers("http://de.movies.yahoo.com/mvsl.html");
-					ShowListView(GermanTrailers.GermanMovieName, 5911, 5915);
-				}
-				if(itemindex==2)
-				{
-					GermanTrailers.G_viewWoche = false;
-					GermanTrailers.G_viewMovie = true;
-					SelectedItem[1] = listview.SelectedListItemIndex;
-					GermanTrailers.GetGermanTrailers("http://de.movies.yahoo.com/neu_im_kino.html");
-					ShowListView(GermanTrailers.GermanMovieName, 5911, 5915);
-				}
-				if(itemindex==3)
-				{
-					GermanTrailers.G_viewWoche = false;
-					GermanTrailers.G_viewMovie = true;
-					SelectedItem[1] = listview.SelectedListItemIndex;
-					GermanTrailers.GetGermanTrailers("http://de.movies.yahoo.com/mvsn.html");
-					ShowListView(GermanTrailers.GermanMovieName, 5911, 5915);
-				}
-					
-			}
-				// German TrailerMovies view
-			else if(GermanTrailers.G_viewMovie==true)
-			{
-				if(itemindex==0)
-				{
-					GermanTrailers.G_viewWoche = true;
-					GermanTrailers.G_viewMovie = false;
-					ShowListView(GermanTrailers.Woche, 5911, 5915);
-					listview.SelectedListItemIndex = SelectedItem[1];
-				}
-				else
-				{
-					SelectedItem[2] = listview.SelectedListItemIndex;
-					GermanTrailers.G_viewMovie=false;
-					GermanTrailers.G_viewInfoAndTrailer=true;
-					GermanTrailers.GermanSelected = itemindex;
-					Prev_SelectedItem = itemindex+1;
-					GermanTrailers.SetProperties(GermanTrailers.GermanMovieName[itemindex-1], itemindex-1);
-					ShowMovieInfo(GermanTrailers.GermanMovieName[itemindex-1], GermanTrailers.G_PosterUrl[itemindex-1]);
-					ShowListViewAndInfo(GermanTrailers.GermanMovieName[itemindex-1], GermanTrailers.GermanTrailerURL[itemindex-1]);
-					label2.Visible=false; //runtime info not available
-				}
-			}
-				// German movie info and single trailer view
-			else if(GermanTrailers.G_viewInfoAndTrailer==true)
-			{
-				if(itemindex==0)
-				{
-					ShowLabelsFalse();
-					GermanTrailers.G_viewMovie=true;
-					GermanTrailers.G_viewInfoAndTrailer=false;
-					ShowListView(GermanTrailers.GermanMovieName, false);
-					listview.SelectedListItemIndex = SelectedItem[2];
-				}
-				if(itemindex==1)
-				{
-					if(GermanTrailers.GermanTrailerURL[GermanTrailers.GermanSelected]!=null)
-						Prev_SelectedItem = listview.SelectedListItemIndex;
-					GermanTrailers.PlayGermanTrailer(GermanTrailers.GermanTrailerURL[GermanTrailers.GermanSelected]);
-				}
-			}
+            else if (TSRVodTrailers.menuview == true)
+            {
+                if (itemindex == 0)
+                {
+                    TSRVodTrailers.menuview = false;
+                    mainview = true;
+                    ShowMainListView();
+                    listview.SelectedListItemIndex = SelectedItem[0];
+                }
+                else
+                {
+                    TSRVodTrailers.menuview = false;
+                    TSRVodTrailers.submenuview = true;
+                    TSRVodTrailers.GetSubMenu(TSRVodTrailers.MenuURL[itemindex - 1],TSRbitrate);
+                    listview.SelectedListItemIndex = itemindex;
+                    ShowListView(TSRVodTrailers.SubMenuName, TSRVodTrailers.MenuName[itemindex - 1], false);
+                }
+            }
+            else if (TSRVodTrailers.submenuview == true)
+            {
+                if (itemindex == 0)
+                {
+                    TSRVodTrailers.submenuview = false;
+                    TSRVodTrailers.menuview = true;
+                    ShowListView(TSRVodTrailers.MenuName, 5903);
+                    listview.SelectedListItemIndex = SelectedItem[0];
+                }
+                else
+                {
+                    //Play VOD
+                    GUIGraphicsContext.IsFullScreenVideo = true;
+                    GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
+                    g_Player.FullScreen = true;
+                    g_Player.Play(TSRVodTrailers.SubMenuURL[itemindex - 1]);
+                }
+            }
+            // German Trailerview Woche
+            else if (GermanTrailers.G_viewWoche == true)
+            {
+                if (itemindex == 0)
+                {
+                    GermanTrailers.G_viewWoche = false;
+                    mainview = true;
+                    ShowMainListView();
+                    listview.SelectedListItemIndex = SelectedItem[0];
+                }
+                if (itemindex == 1)
+                {
+                    GermanTrailers.G_viewWoche = false;
+                    GermanTrailers.G_viewMovie = true;
+                    SelectedItem[1] = listview.SelectedListItemIndex;
+                    GermanTrailers.GetGermanTrailers("http://de.movies.yahoo.com/mvsl.html");
+                    ShowListView(GermanTrailers.GermanMovieName, 5911, 5915);
+                }
+                if (itemindex == 2)
+                {
+                    GermanTrailers.G_viewWoche = false;
+                    GermanTrailers.G_viewMovie = true;
+                    SelectedItem[1] = listview.SelectedListItemIndex;
+                    GermanTrailers.GetGermanTrailers("http://de.movies.yahoo.com/neu_im_kino.html");
+                    ShowListView(GermanTrailers.GermanMovieName, 5911, 5915);
+                }
+                if (itemindex == 3)
+                {
+                    GermanTrailers.G_viewWoche = false;
+                    GermanTrailers.G_viewMovie = true;
+                    SelectedItem[1] = listview.SelectedListItemIndex;
+                    GermanTrailers.GetGermanTrailers("http://de.movies.yahoo.com/mvsn.html");
+                    ShowListView(GermanTrailers.GermanMovieName, 5911, 5915);
+                }
+
+            }
+            // German TrailerMovies view
+            else if (GermanTrailers.G_viewMovie == true)
+            {
+                if (itemindex == 0)
+                {
+                    GermanTrailers.G_viewWoche = true;
+                    GermanTrailers.G_viewMovie = false;
+                    ShowListView(GermanTrailers.Woche, 5911, 5915);
+                    listview.SelectedListItemIndex = SelectedItem[1];
+                }
+                else
+                {
+                    SelectedItem[2] = listview.SelectedListItemIndex;
+                    GermanTrailers.G_viewMovie = false;
+                    GermanTrailers.G_viewInfoAndTrailer = true;
+                    GermanTrailers.GermanSelected = itemindex;
+                    Prev_SelectedItem = itemindex + 1;
+                    GermanTrailers.SetProperties(GermanTrailers.GermanMovieName[itemindex - 1], itemindex - 1);
+                    ShowMovieInfo(GermanTrailers.GermanMovieName[itemindex - 1], GermanTrailers.G_PosterUrl[itemindex - 1]);
+                    ShowListViewAndInfo(GermanTrailers.GermanMovieName[itemindex - 1], GermanTrailers.GermanTrailerURL[itemindex - 1]);
+                    label2.Visible = false; //runtime info not available
+                }
+            }
+            // German movie info and single trailer view
+            else if (GermanTrailers.G_viewInfoAndTrailer == true)
+            {
+                if (itemindex == 0)
+                {
+                    ShowLabelsFalse();
+                    GermanTrailers.G_viewMovie = true;
+                    GermanTrailers.G_viewInfoAndTrailer = false;
+                    ShowListView(GermanTrailers.GermanMovieName, false);
+                    listview.SelectedListItemIndex = SelectedItem[2];
+                }
+                if (itemindex == 1)
+                {
+                    if (GermanTrailers.GermanTrailerURL[GermanTrailers.GermanSelected] != null)
+                        Prev_SelectedItem = listview.SelectedListItemIndex;
+                    GermanTrailers.PlayGermanTrailer(GermanTrailers.GermanTrailerURL[GermanTrailers.GermanSelected]);
+                }
+            }
             //else if(GameTrailers.newgameview==true)
             //{
             //    if(itemindex==0)
@@ -639,16 +701,30 @@ namespace MediaPortal.GUI.Video
 
 			string[] MainListOptions = new string[10];
 			MainListOptions[0] = GUILocalizeStrings.Get(5903);
+            MainListMenu[0] = MainListOptions[0];
 			MainListOptions[1] = GUILocalizeStrings.Get(5904);
-			MainListOptions[2] = GUILocalizeStrings.Get(5905);
-			//MainListOptions[3] = "GameTrailers";
+            MainListMenu[1] = MainListOptions[1];
+            MainListOptions[2] = GUILocalizeStrings.Get(5905);
+            MainListMenu[2] = MainListOptions[2];
+            //MainListOptions[3] = "GameTrailers";
 			string language="";
 			using(MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml")) 
 			{
 				language = xmlreader.GetValue("skin","language");
 			}
-			if(language.Equals("German")==true || Show_GT==true)
-				MainListOptions[3] = GUILocalizeStrings.Get(5917);
+            int iNextItem = 3;
+            if (language.Equals("German") == true || Show_GT == true)
+            {
+                MainListOptions[iNextItem] = GUILocalizeStrings.Get(5917);
+                MainListMenu[iNextItem] = "GERMAN";
+                iNextItem++;
+            }
+            if (Show_TSR == true)
+            {
+                MainListOptions[iNextItem] = "TSR VOD";//GUILocalizeStrings.Get(5917);
+                MainListMenu[iNextItem] = "TSRVOD";
+                iNextItem++;
+            }
 
 			listview.Clear();
 			int i = 0;
@@ -797,6 +873,8 @@ namespace MediaPortal.GUI.Video
 			{
 				bitrate = xmlreader.GetValue("mytrailers","speed");
 				Show_GT = xmlreader.GetValueAsBool("mytrailers","Show german trailers",false);
+                Show_TSR = xmlreader.GetValueAsBool("mytrailers", "Show tsr vod", false);
+                TSRbitrate = xmlreader.GetValue("mytrailers", "TSR speed");
                 YahooTrailers.server = xmlreader.GetValue("mytrailers", "YahooServer");
 			}
 

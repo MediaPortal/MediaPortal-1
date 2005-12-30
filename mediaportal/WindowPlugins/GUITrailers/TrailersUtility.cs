@@ -57,8 +57,8 @@ namespace MediaPortal.GUI.Video
 				byte[] HTMLBuffer;
 
 				HTMLBuffer = wc.DownloadData((string)e.Argument);
-				
-				_downloadedText = Encoding.ASCII.GetString(HTMLBuffer);
+
+                _downloadedText = Encoding.UTF8.GetString(HTMLBuffer);//wc.DownloadString((string)e.Argument);//
 			}
 			catch(Exception ex)
 			{

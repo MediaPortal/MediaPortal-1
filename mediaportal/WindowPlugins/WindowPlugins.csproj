@@ -810,6 +810,7 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="GUITrailers\TrailersUtility.cs" />
+    <Compile Include="GUITrailers\TSRVodTrailers.cs" />
     <Compile Include="GUITrailers\YahooTrailers.cs" />
     <Compile Include="GUITVCom\TVcomSettings.cs">
       <SubType>Code</SubType>

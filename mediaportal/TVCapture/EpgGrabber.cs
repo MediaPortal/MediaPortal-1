@@ -414,7 +414,7 @@ namespace MediaPortal.TV.Recording
         if (_atscInterface != null)
         {
           _currentState = State.Grabbing;
-          Log.WriteFile(Log.LogType.EPG, "epg-grab: start ATSC grabber");
+          Log.WriteFile(Log.LogType.EPG, "epg-grab: start ATSC grabber:{0}", _epgTvChannelName);
           _atscInterface.GrabATSC();
           _timeoutTimer = DateTime.Now;
         }
@@ -426,7 +426,7 @@ namespace MediaPortal.TV.Recording
           _currentState = State.Grabbing;
           if (_epgInterface != null)
           {
-            Log.WriteFile(Log.LogType.EPG, "epg-grab: start EPG grabber");
+            Log.WriteFile(Log.LogType.EPG, "epg-grab: start EPG grabber:{0}", _epgTvChannelName);
             _epgInterface.GrabEPG();
             _timeoutTimer = DateTime.Now;
           }
@@ -440,7 +440,7 @@ namespace MediaPortal.TV.Recording
           _currentState = State.Grabbing;
           if (_mhwInterface != null)
           {
-            Log.WriteFile(Log.LogType.EPG, "epg-grab: start MHW grabber");
+            Log.WriteFile(Log.LogType.EPG, "epg-grab: start MHW grabber:{0}", _epgTvChannelName);
             _mhwInterface.GrabMHW();
             _timeoutTimer = DateTime.Now;
           }
@@ -508,7 +508,7 @@ namespace MediaPortal.TV.Recording
                   _mhwInterface.GetMHWTitleCount(out titleCount);
                   if (titleCount <= 0)
                   {
-                    Log.Write("epg-grab: no MHW events, try DVB EPG");
+                    Log.Write("epg-grab: no MHW events, try DVB EPG:{0}", _epgTvChannelName);
                     _grabEPG = true;
                     _epgInterface.GrabEPG();
                   }
@@ -870,9 +870,9 @@ namespace MediaPortal.TV.Recording
       {
         Log.WriteFile(Log.LogType.EPG, "epg-grab: exception:{0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
       }
-      Log.WriteFile(Log.LogType.EPG, "epg-grab: done");
       TVDatabase.SupressEvents = false;
       OnDone();
+      Log.WriteFile(Log.LogType.EPG, "epg-grab: done");
       _currentState = State.Done;
     }
     #endregion
@@ -1029,17 +1029,15 @@ namespace MediaPortal.TV.Recording
     }
 
     void OnDone()
-    {
+    { 
       List<TVChannel> channels = new List<TVChannel>();
       TVDatabase.GetChannels(ref channels);
       foreach (TVChannel ch in channels)
-      {
+      { 
         if (String.Compare(ch.Name, _epgTvChannelName, true) == 0)
-        {
+        { 
           ch.LastDateTimeEpgGrabbed = DateTime.Now;
-          TVDatabase.UpdateChannel(ch, ch.Sort);
-          Log.WriteFile(Log.LogType.EPG, "epg-grab: channel:{0} epg grabbed at {1} {2}",
-                  ch.LastDateTimeEpgGrabbed.ToShortDateString(), ch.LastDateTimeEpgGrabbed.ToShortTimeString());
+          TVDatabase.UpdateChannel(ch, ch.Sort); 
           return;
         }
       }
