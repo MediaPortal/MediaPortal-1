@@ -682,34 +682,35 @@ namespace MediaPortal.Configuration.Sections
 						if(tvChannel != null)
 						{
 							channel.Name = tvChannel.Name;
-							channel.Number = tvChannel.Channel;
-              channel.VisibleInGuide = tvChannel.VisibleInGuide;
-							channel.Country=tvChannel.Country;
-							channel.ID=tvChannel.ID;
-							
-							//
-							// Calculate frequency
-							//
-							if(tvChannel.Frequency.Herz < 1000)
-								tvChannel.Frequency.Herz *= 1000000L;
-
-							channel.Frequency = tvChannel.Frequency.Herz;
-              
-              channel.External = tvChannel.External;
-              channel.ExternalTunerChannel = tvChannel.ExternalTunerChannel;
-              channel.TVStandard = tvChannel.standard;
-							channel.Scrambled=tvChannel.Scrambled;
 
 							//does channel already exists in database?
 							bool exists=false;
-							foreach (TVChannel chan in channels)
+              foreach (TVChannel chan in channels)
 							{
-								if (chan.Name.ToLower() == channel.Name.ToLower())
+								if (String.Compare(chan.Name,channel.Name,true)==0)
 								{
 									exists=true;
+                  channel = chan.Clone();
 									break;
 								}
 							}
+              channel.Number = tvChannel.Channel;
+              channel.VisibleInGuide = tvChannel.VisibleInGuide;
+              channel.Country = tvChannel.Country;
+              channel.ID = tvChannel.ID;
+
+              //
+              // Calculate frequency
+              //
+              if (tvChannel.Frequency.Herz < 1000)
+                tvChannel.Frequency.Herz *= 1000000L;
+
+              channel.Frequency = tvChannel.Frequency.Herz;
+
+              channel.External = tvChannel.External;
+              channel.ExternalTunerChannel = tvChannel.ExternalTunerChannel;
+              channel.TVStandard = tvChannel.standard;
+              channel.Scrambled = tvChannel.Scrambled;
 							
 							if (exists)
 							{

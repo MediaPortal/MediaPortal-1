@@ -246,6 +246,7 @@ namespace MediaPortal.TV.Database
 			newChan.Sort=_sortIndex;
       newChan.EpgHours = _epgHours;
       newChan.AutoGrabEpg = _autoGrabEpg;
+      newChan.LastDateTimeEpgGrabbed = LastDateTimeEpgGrabbed;
 			return newChan;
     }
     #endregion
