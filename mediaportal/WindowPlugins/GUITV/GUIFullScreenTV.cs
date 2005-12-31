@@ -233,8 +233,8 @@ namespace MediaPortal.GUI.TV
 		{
 			_needToClearScreen=true;
 
-      if ((action.wID >= Action.ActionType.REMOTE_0) && (action.wID <= Action.ActionType.REMOTE_9))
-        OnKeyCode((char)(action.wID - Action.ActionType.REMOTE_0 + 48));
+      //if ((action.wID >= Action.ActionType.REMOTE_0) && (action.wID <= Action.ActionType.REMOTE_9))
+      //  OnKeyCode((char)(action.wID - Action.ActionType.REMOTE_0 + 48));
 
 			if (action.wID==Action.ActionType.ACTION_SHOW_VOLUME)
 			{
