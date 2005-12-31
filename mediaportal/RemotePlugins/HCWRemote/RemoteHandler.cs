@@ -144,7 +144,7 @@ namespace MediaPortal
     /// <param name="xmlFile">XML mapping file</param>
     public HCWHandler(string xmlFile, out bool result)
     {
-      string path = "";
+      string path = string.Empty;
       string pathCustom = "InputDeviceMappings\\custom\\" + xmlFile + ".xml";
       string pathDefault = "InputDeviceMappings\\defaults\\" + xmlFile + ".xml";
 
@@ -241,7 +241,7 @@ namespace MediaPortal
       Mapping map = GetMapping(btnCode);
       if (map == null) return false;  // No mapping found
       Action action;
-      if (map.Sound != "")
+      if (map.Sound != string.Empty)
         Utils.PlaySound(map.Sound, false, true);
       switch (map.Command)
       {

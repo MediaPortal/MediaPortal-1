@@ -159,7 +159,7 @@ namespace NetHelper
 
     private void OnDataReceived(IAsyncResult asyn)
     {
-      OnLog("Data received");
+      //OnLog("Data received");
       try
       {
         SocketPacket socketData = (SocketPacket)asyn.AsyncState;
@@ -183,7 +183,7 @@ namespace NetHelper
 
     private void WaitForData(System.Net.Sockets.Socket socket)
     {
-      OnLog("Wait for data");
+      //OnLog("Wait for data");
       try
       {
         if (callBackMethod == null)
@@ -268,7 +268,7 @@ namespace NetHelper
 
     private void Close()
     {
-      OnLog("Close");
+      //OnLog("Close");
       if (clientSocket != null)
       {
         clientSocket.Close();

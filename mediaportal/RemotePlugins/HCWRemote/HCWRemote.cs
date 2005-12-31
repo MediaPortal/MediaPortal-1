@@ -191,18 +191,18 @@ namespace MediaPortal
     {
       do
       {
-        Log.Write("HCW: waiting for HCWHelper");
+        //Log.Write("HCW: waiting for HCWHelper");
         Thread.Sleep(1000);
         while (!exit && (Process.GetProcessesByName("HCWHelper").Length > 0))
         {
-          Log.Write("HCW: HCWHelper is running...");
+          //Log.Write("HCW: HCWHelper is running...");
           Thread.Sleep(1000);
         }
         if (!exit)
         {
-          Log.Write("HCW: starting HCWHelper");
+          //Log.Write("HCW: starting HCWHelper");
           Process.Start(System.Windows.Forms.Application.StartupPath + @"\HCWHelper.exe");
-          Log.Write("HCW: HCWHelper started");
+          //Log.Write("HCW: HCWHelper started");
           Thread.Sleep(3000);
           connection.Send("LOG", logVerbose.ToString());
         }
@@ -216,26 +216,26 @@ namespace MediaPortal
     /// </summary>
     public void DeInit()
     {
-      Log.Write("HCW: DeInit");
+      //Log.Write("HCW: DeInit");
       exit = true;
       try
       {
         if (controlEnabled && allowExternal)
         {
-          Log.Write("HCW: remove MP events");
+          //Log.Write("HCW: remove MP events");
           Utils.OnStartExternal -= new Utils.UtilEventHandler(OnStartExternal);
           Utils.OnStopExternal -= new Utils.UtilEventHandler(OnStopExternal);
-          Log.Write("HCW: done");
+          //Log.Write("HCW: done");
         }
-        Log.Write("HCW: remove HCW events");
+        //Log.Write("HCW: remove HCW events");
         connection.ReceiveEvent -= new NetHelper.Connection.ReceiveEventHandler(OnReceive);
-        Log.Write("HCW: remove HCW events");
+        //Log.Write("HCW: remove HCW events");
         connection.Send("APP", "SHUTDOWN");
-        Log.Write("HCW: send shutdown done");
+        //Log.Write("HCW: send shutdown done");
         connection.LogEvent -= new NetHelper.Connection.LogHandler(OnLog);
-        Log.Write("HCW: remove log events done");
+        //Log.Write("HCW: remove log events done");
         connection = null;
-        Log.Write("HCW: connection terminated");
+        //Log.Write("HCW: connection terminated");
       }
       catch (Exception ex)
       {

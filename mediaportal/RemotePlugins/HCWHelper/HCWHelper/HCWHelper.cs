@@ -214,7 +214,7 @@ namespace HCWHelper
     /// </summary>
     private void OnReceive(NetHelper.Connection.EventArguments e)
     {
-      Log("Data received");
+      //Log("Data received");
       foreach (string msg in e.Message.Split('~'))
       {
         switch (msg.Split('|')[0])
