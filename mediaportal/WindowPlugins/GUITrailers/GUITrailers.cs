@@ -643,7 +643,7 @@ namespace MediaPortal.GUI.Video
                     SelectedItem[2] = listview.SelectedListItemIndex;
                     GermanTrailers.G_viewMovie = false;
                     GermanTrailers.G_viewInfoAndTrailer = true;
-                    GermanTrailers.GermanSelected = itemindex;
+                    GermanTrailers.GermanSelected = itemindex - 1;
                     Prev_SelectedItem = itemindex + 1;
                     GermanTrailers.SetProperties(GermanTrailers.GermanMovieName[itemindex - 1], itemindex - 1);
                     ShowMovieInfo(GermanTrailers.GermanMovieName[itemindex - 1], GermanTrailers.G_PosterUrl[itemindex - 1]);
