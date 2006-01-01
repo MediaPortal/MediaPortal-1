@@ -12,7 +12,7 @@ CEPGParser::CEPGParser()
 {
 	m_bParseEPG=false;
 	m_bEpgDone=false;
-	
+
 	m_epgTimeout=time(NULL)+60;
 }
 CEPGParser::~CEPGParser()
@@ -31,14 +31,14 @@ void CEPGParser::DecodeEPG(byte* buf,int len)
 	time_t timespan=currentTime-m_epgTimeout;
 	if (timespan>10)
 	{
-//		Log("EPG:timeout ch:%d",m_mapEPG.size());
+		//		Log("EPG:timeout ch:%d",m_mapEPG.size());
 		m_bParseEPG=false;
 		m_bEpgDone=true;
 		return;
 	}
 	if (len<=14) return;
 	int tableid = buf[0];
-	
+
 	if (tableid < 0x50 || tableid > 0x6f) return;
 	int section_length = ((buf[1]& 0xF)<<8) + buf[2];
 
@@ -67,7 +67,7 @@ void CEPGParser::DecodeEPG(byte* buf,int len)
 		newChannel.allSectionsReceived=false;
 		m_mapEPG[key]=newChannel;
 		it=m_mapEPG.find(key);
-//		Log("epg:add new channel table:0x%x onid:0x%x tsid:0x%x sid:0x%x",tableid,network_id,transport_id,service_id);
+		//		Log("epg:add new channel table:0x%x onid:0x%x tsid:0x%x sid:0x%x",tableid,network_id,transport_id,service_id);
 	}
 	if (it==m_mapEPG.end()) return;
 	EPGChannel& channel=it->second; 
@@ -80,10 +80,10 @@ void CEPGParser::DecodeEPG(byte* buf,int len)
 	if (itSec!=channel.mapSectionsReceived.end()) return; //yes
 	channel.mapSectionsReceived[key]=true;
 
-//	Log("epg: tid:0x%x len:%d %d (%d/%d) sid:0x%x tsid:0x%x onid:0x%x slsn:%d last table id:0x%x cn:%d version:%d", 
-//		buf[0],len,section_length,section_number,last_section_number, 
-//		service_id,transport_id,network_id,segment_last_section_number,last_table_id,
-//		current_next_indicator,version_number);
+	//	Log("epg: tid:0x%x len:%d %d (%d/%d) sid:0x%x tsid:0x%x onid:0x%x slsn:%d last table id:0x%x cn:%d version:%d", 
+	//		buf[0],len,section_length,section_number,last_section_number, 
+	//		service_id,transport_id,network_id,segment_last_section_number,last_table_id,
+	//		current_next_indicator,version_number);
 
 	m_epgTimeout=time(NULL);
 	int start=14;
@@ -111,10 +111,10 @@ void CEPGParser::DecodeEPG(byte* buf,int len)
 			itEvent=channel.mapEvents.find(event_id);
 		}
 		EPGEvent& epgEvent=itEvent->second;
-		
+
 		start=start+12;
 		int off=0;
-//		Log("epg:    onid:0x%x tsid:0x%x sid:0x%x event:0x%x date:0x%x time:0x%x duration:0x%x running:%d free:%d start:%d desclen:%d",network_id,transport_id,service_id, event_id,dateMJD,timeUTC,duration,running_status,free_CA_mode,start,descriptors_len);
+		//		Log("epg:    onid:0x%x tsid:0x%x sid:0x%x event:0x%x date:0x%x time:0x%x duration:0x%x running:%d free:%d start:%d desclen:%d",network_id,transport_id,service_id, event_id,dateMJD,timeUTC,duration,running_status,free_CA_mode,start,descriptors_len);
 		while (off < descriptors_len)
 		{
 			if (start+off+1>len) return;
@@ -129,30 +129,30 @@ void CEPGParser::DecodeEPG(byte* buf,int len)
 				}
 				if (descriptor_tag ==0x4d)
 				{
-//					Log("epg:     short event descriptor:0x%x len:%d start:%d",descriptor_tag,descriptor_len,start+off);
+					//					Log("epg:     short event descriptor:0x%x len:%d start:%d",descriptor_tag,descriptor_len,start+off);
 					DecodeShortEventDescriptor( &buf[start+off],epgEvent);
 				}
 				else if (descriptor_tag ==0x54)
 				{
-//					Log("epg:     genre descriptor:0x%x len:%d start:%d",descriptor_tag,descriptor_len,start+off);
+					//					Log("epg:     genre descriptor:0x%x len:%d start:%d",descriptor_tag,descriptor_len,start+off);
 					DecodeContentDescription( &buf[start+off],epgEvent);
 				}
 				else if (descriptor_tag ==0x4e)
 				{
-//					Log("epg:     description descriptor:0x%x len:%d start:%d",descriptor_tag,descriptor_len,start+off);
+					//					Log("epg:     description descriptor:0x%x len:%d start:%d",descriptor_tag,descriptor_len,start+off);
 					DecodeExtendedEvent(&buf[start+off],epgEvent);
 				}
 				else if (descriptor_tag ==0x55)
 				{
-//					Log("epg:     parental rating descriptor:0x%x len:%d start:%d",descriptor_tag,descriptor_len,start+off);
+					//					Log("epg:     parental rating descriptor:0x%x len:%d start:%d",descriptor_tag,descriptor_len,start+off);
 				}
 				else if (descriptor_tag ==0x5f)
 				{
-//					Log("epg:     private data descriptor:0x%x len:%d start:%d",descriptor_tag,descriptor_len,start+off);
+					//					Log("epg:     private data descriptor:0x%x len:%d start:%d",descriptor_tag,descriptor_len,start+off);
 				}
 				else
 				{
-//					Log("epg:     descriptor:0x%x len:%d start:%d",descriptor_tag,descriptor_len,start+off);
+					//					Log("epg:     descriptor:0x%x len:%d start:%d",descriptor_tag,descriptor_len,start+off);
 				}
 
 			}
@@ -172,12 +172,12 @@ void CEPGParser::DecodeExtendedEvent(byte* data, EPGEvent& epgEvent)
 	int length_of_items;
 
 	string text = "";
+	string item = "";
 	int pointer = 0;
 	int lenB;
 	int len1;
 	int item_description_length;
 	int item_length;
-	string item = "";
 
 	descriptor_tag = data[0];
 	descriptor_length = data[1];
@@ -189,86 +189,98 @@ void CEPGParser::DecodeExtendedEvent(byte* data, EPGEvent& epgEvent)
 	lenB = descriptor_length - 5;
 	len1 = length_of_items;
 
-//	Log("grabext: tag:%x len:%d lang:%x lengthofitems:%x %d/%d", 
-//		descriptor_tag,descriptor_length,language,length_of_items,descriptor_number,last_descriptor_number);
+	//	Log("grabext: tag:%x len:%d lang:%x lengthofitems:%x %d/%d", 
+	//		descriptor_tag,descriptor_length,language,length_of_items,descriptor_number,last_descriptor_number);
 	while (len1 > 0)
 	{
 		item_description_length = data[pointer];
-		if (pointer+item_description_length > descriptor_length+2) 
+		if (item_description_length< 0 || pointer+item_description_length > descriptor_length+2) 
 		{
 			Log("*** epg:DecodeExtendedEvent check 1");
 			return;
 		}
-//		Log("  1: %d item_description_length:[%d]",pointer,data[pointer]);
-
+		//		Log("  1: %d item_description_length:[%d]",pointer,data[pointer]);
+		/*
+		if (item_description_length>0)
+		{
 		CAutoString buffer (item_description_length+10);
 		Sections::getString468A(&data[pointer+1], item_description_length,buffer.GetBuffer());
 		string testText=buffer.GetBuffer();
-
+		if (testText.size()==0)
+		testText="-not avail.-";
+		}
+		*/
 
 		pointer += (1 + item_description_length);
-		if (testText.size()==0)
-			testText="-not avail.-";
 
-//		Log("  1: %d [%s]",pointer,testText.c_str() );
+		//		Log("  1: %d [%s]",pointer,testText.c_str() );
 
 		item_length = data[pointer];
-		if (pointer+item_length>descriptor_length+2) 
+		if (item_length < 0 || pointer+item_length>descriptor_length+2) 
 		{
 			Log("*** epg:DecodeExtendedEvent check 2");
 			return;
 		}
 
-//		Log("  1: %d item_length:[%d]",pointer,item_length);
+		if (item_length>0)
+		{
+			//		Log("  1: %d item_length:[%d]",pointer,item_length);
 
-		CAutoString buffer2 (item_length+10);
-		Sections::getString468A(&data[pointer+1], item_length,buffer2.GetBuffer());
-		item = buffer2.GetBuffer();
-		
-//		Log("  1: %d item_length:[%s]",pointer,item.c_str());
+			CAutoString buffer2 (item_length+10);
+			Sections::getString468A(&data[pointer+1], item_length,buffer2.GetBuffer());
+			item = buffer2.GetBuffer();
+		}
+
+		//		Log("  1: %d item_length:[%s]",pointer,item.c_str());
 
 		pointer += (1 + item_length);
 		len1 -= (2 + item_description_length + item_length);
 		lenB -= (2 + item_description_length + item_length);
 	};
-	
+
 	pointer=7+length_of_items;
 	text_length = data[pointer];
-//	Log("  2: %d text_length:[%d]",pointer,text_length);
+	//	Log("  2: %d text_length:[%d]",pointer,text_length);
 	pointer += 1;
-	if (pointer+text_length>descriptor_length+2) 
+	if (text_length< 0 || pointer+text_length>descriptor_length+2) 
 	{
 		Log("*** epg:DecodeExtendedEvent check 3");
 		return;
 	}
-		
-	CAutoString buffer (text_length+10);
-	Sections::getString468A(&data[pointer], text_length,buffer.GetBuffer());
-	text = buffer.GetBuffer();
-	
-//	Log("  2: %d [%s]",pointer,text.c_str());
 
+	if (text_length>0)
+	{
+		CAutoString buffer (text_length+10);
+		Sections::getString468A(&data[pointer], text_length,buffer.GetBuffer());
+		text = buffer.GetBuffer();
+	}
+
+	//	Log("  2: %d [%s]",pointer,text.c_str());
+
+	//find language...
 	EPGEvent::ivecLanguages it = epgEvent.vecLanguages.begin();
 	for (it != epgEvent.vecLanguages.begin(); it != epgEvent.vecLanguages.end();++it)
 	{
 		EPGLanguage& lang=*it;
 		if (lang.language==language)
 		{
+			//found.
 			if (item.size()>0)
 				lang.event+=item;
 			if (text.size()>0)
 				lang.text+=text;
-//			Log("epg grab ext:[%s][%s]", lang.event.c_str(),lang.text.c_str());
+			//			Log("epg grab ext:[%s][%s]", lang.event.c_str(),lang.text.c_str());
 			return;
 		}
 	}
+	//add new language...
 	EPGLanguage lang;
 	lang.language=language;
 	if (item.size()>0)
 		lang.event+=item;
 	if (text.size()>0)
 		lang.text+=text;
-//	Log("epg grab ext:[%s][%s]", lang.event.c_str(),lang.text.c_str());
+	//	Log("epg grab ext:[%s][%s]", lang.event.c_str(),lang.text.c_str());
 	epgEvent.vecLanguages.push_back(lang);
 }
 
@@ -303,7 +315,12 @@ void CEPGParser::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent)
 		CAutoString buffer(event_len+10);
 		Sections::getString468A(&buf[6],event_len,buffer.GetBuffer());
 		eventText=buffer.GetBuffer();
-//		Log("  event:%s",eventText.c_str());
+		//		Log("  event:%s",eventText.c_str());
+	}
+	else if (event_len<0)
+	{
+		Log("*** DecodeShortEventDescriptor: check1a: %d %d",event_len,descriptor_len);
+		return;
 	}
 	int off=6+event_len;
 	int text_len = buf[off];
@@ -318,7 +335,12 @@ void CEPGParser::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent)
 		CAutoString buffer (text_len+10);
 		Sections::getString468A(&buf[off+1],text_len,buffer.GetBuffer());
 		eventDescription=buffer.GetBuffer();
-//		Log("  text:%s",eventDescription.c_str() );
+		//		Log("  text:%s",eventDescription.c_str() );
+	}
+	else if (text_len<0)
+	{
+		Log("*** DecodeShortEventDescriptor: check2a: %d %d",event_len,descriptor_len);
+		return;
 	}
 	EPGEvent::ivecLanguages it;
 	for (it=epgEvent.vecLanguages.begin(); it != epgEvent.vecLanguages.end();++it)
@@ -330,7 +352,7 @@ void CEPGParser::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent)
 				lang.event=eventText;
 			if (eventDescription.size()>0)
 				lang.text=eventDescription;
-			Log("epg grab short:[%s][%s]", lang.event.c_str(),lang.text.c_str());
+			//Log("epg grab short:[%s][%s]", lang.event.c_str(),lang.text.c_str());
 			return;
 		}
 	}
@@ -340,7 +362,7 @@ void CEPGParser::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent)
 		lang.event=eventText;
 	if (eventDescription.size()>0)
 		lang.text=eventDescription;
-	Log("epg grab short:[%s][%s]", lang.event.c_str(),lang.text.c_str());
+	//Log("epg grab short:[%s][%s]", lang.event.c_str(),lang.text.c_str());
 	epgEvent.vecLanguages.push_back(lang);
 }
 
@@ -514,6 +536,14 @@ void CEPGParser::DecodeContentDescription(byte* buf,EPGEvent& epgEvent)
 void CEPGParser::ResetEPG()
 {
 	Log("epg:ResetEPG()");
+	EPGChannel ch;
+	EPGEvent evt;
+
+	m_prevChannel=ch;
+	m_prevChannelIndex=0;
+	m_prevEvent = evt;
+	m_prevEventIndex=0;
+
 	m_mapEPG.clear();
 	m_bParseEPG=false;
 	m_bEpgDone=false;
@@ -523,7 +553,14 @@ void CEPGParser::ResetEPG()
 void CEPGParser::GrabEPG()
 {
 	Log("epg:GrabEPG()");
-	m_prevChannelIndex=-1;
+	EPGChannel ch;
+	EPGEvent evt;
+
+	m_prevChannel=ch;
+	m_prevChannelIndex=0;
+	m_prevEvent = evt;
+	m_prevEventIndex=0;
+
 	m_mapEPG.clear();
 	m_bParseEPG=true;
 	m_bEpgDone=false;
@@ -543,41 +580,50 @@ bool CEPGParser::IsEPGReady()
 }
 ULONG CEPGParser::GetEPGChannelCount( )
 {
-//	Log("GetEPGChannelCount:%d",m_mapEPG.size());
+	//	Log("GetEPGChannelCount:%d",m_mapEPG.size());
 	return m_mapEPG.size();
 }
+bool CEPGParser::GetChannelByindex(ULONG channelIndex, EPGChannel& epgChannel)
+{
+	EPGEvent evt;
+	m_prevEventIndex=-1;
+	m_prevEvent=evt;
+
+	if (channelIndex>=m_mapEPG.size()) 
+		return false;
+	ULONG count=0;
+	imapEPG it =m_mapEPG.begin();
+	while (count < channelIndex) 
+	{ 
+		it++; 
+		count++;
+	}
+	epgChannel=it->second;
+	m_prevChannel=epgChannel;
+	m_prevChannelIndex=channelIndex;
+
+	return true;
+}
+
 ULONG  CEPGParser::GetEPGEventCount( ULONG channel)
 {
-	if (channel>=m_mapEPG.size()) return 0;
-	int count=0;
-	imapEPG it =m_mapEPG.begin();
-	while (count < (int)channel) { it++; count++;}
-	EPGChannel& epgChannel=it->second;
-
-	m_prevChannel=epgChannel;
-	m_prevChannelIndex=channel;
+	EPGChannel epgChannel;
+	if (!GetChannelByindex(channel,epgChannel)) return 0;
 	return epgChannel.mapEvents.size();
 }
 void CEPGParser::GetEPGChannel( ULONG channel,  WORD* networkId,  WORD* transportid, WORD* service_id  )
 {
+	*networkId=0;
+	*transportid=0;
+	*service_id=0;
 	if (channel!=m_prevChannelIndex)
 	{
-		if (channel>=m_mapEPG.size()) return;
-		ULONG count=0;
-		imapEPG it =m_mapEPG.begin();
-		while (count < (int)channel && it!=m_mapEPG.end()) { it++; count++;}
-		if (it==m_mapEPG.end())
-		{
-			return;
-		}
-		EPGChannel& epgChannel=it->second;
+		EPGChannel epgChannel;
+		if (!GetChannelByindex(channel,epgChannel)) return ;
 		*networkId=epgChannel.original_network_id;
 		*transportid=epgChannel.transport_id;
 		*service_id=epgChannel.service_id;
-		m_prevChannel=epgChannel;
-		m_prevChannelIndex=channel;
 	}
-
 	else
 	{
 		*networkId=m_prevChannel.original_network_id;
@@ -587,90 +633,68 @@ void CEPGParser::GetEPGChannel( ULONG channel,  WORD* networkId,  WORD* transpor
 }
 void CEPGParser::GetEPGEvent( ULONG channel,  ULONG eventid,ULONG* languageCount, ULONG* dateMJD, ULONG* timeUTC, ULONG* duration, char** genre    )
 {
+	*languageCount=0;
 	*dateMJD=0;
 	*timeUTC=0;
 	*duration=0;
-	
-	int count=0;
+	*genre = (char*)"";
 	if (channel!=m_prevChannelIndex)
 	{
-		if (channel>=m_mapEPG.size()) return;
-		imapEPG it =m_mapEPG.begin();
-		while (count < (int)channel) { it++; count++;}
-		EPGChannel& epgChannel=it->second;
-		m_prevChannel=epgChannel;
-		m_prevChannelIndex=channel;
+		EPGChannel epgChannel;
+		if (!GetChannelByindex(channel,epgChannel)) return ;
+	}
+	if (eventid >= m_prevChannel.mapEvents.size()) return;
 
-		if (eventid >= epgChannel.mapEvents.size()) return;
-		count=0;
-		EPGChannel::imapEvents itEvent=epgChannel.mapEvents.begin();
-		while (count < (int)eventid) { itEvent++; count++;}
-		EPGEvent& epgEvent=itEvent->second;
-		*dateMJD=epgEvent.dateMJD;
-		*timeUTC=epgEvent.timeUTC;
-		*duration=epgEvent.duration;
-		*genre=(char*)epgEvent.genre.c_str() ;
-		*languageCount=epgEvent.vecLanguages.size();
-		m_prevEventIndex=eventid;
-		m_prevEvent=epgEvent;
+	ULONG count=0;
+	EPGChannel::imapEvents itEvent=m_prevChannel.mapEvents.begin();
+	while (count < eventid) 
+	{ 
+		itEvent++; 
+		count++;
 	}
-	else
-	{
-		if (eventid >= m_prevChannel.mapEvents.size()) return;
-		count=0;
-		EPGChannel::imapEvents itEvent=m_prevChannel.mapEvents.begin();
-		while (count < (int)eventid) { itEvent++; count++;}
-		EPGEvent& epgEvent=itEvent->second;
-		*dateMJD=epgEvent.dateMJD;
-		*timeUTC=epgEvent.timeUTC;
-		*duration=epgEvent.duration;
-		*genre=(char*)epgEvent.genre.c_str() ;
-		*languageCount=epgEvent.vecLanguages.size();
-		m_prevEventIndex=eventid;
-		m_prevEvent=epgEvent;
-	}
+	EPGEvent& epgEvent=itEvent->second;
+	m_prevEventIndex=eventid;
+	m_prevEvent=epgEvent;
+
+	*languageCount=epgEvent.vecLanguages.size();
+	*dateMJD=epgEvent.dateMJD;
+	*timeUTC=epgEvent.timeUTC;
+	*duration=epgEvent.duration;
+	*genre=(char*)epgEvent.genre.c_str() ;
 }
 void CEPGParser::GetEPGLanguage(ULONG channel, ULONG eventid,ULONG languageIndex,ULONG* language,char** eventText, char** eventDescription    )
 {
 	*language=0;
 	*eventText=(char*)"";
 	*eventDescription=(char*)"";
-	if (channel!=m_prevChannelIndex || eventid != m_prevEventIndex)
+	if (channel!=m_prevChannelIndex)
 	{
-		if (channel>=m_mapEPG.size()) return;
-		int count=0;
-		imapEPG it =m_mapEPG.begin();
-		while (count < (int)channel) { it++; count++;}
-		EPGChannel& epgChannel=it->second;
-		m_prevChannel=epgChannel;
-		m_prevChannelIndex=channel;
+		EPGChannel epgChannel;
+		if (!GetChannelByindex(channel,epgChannel)) return ;
+	}
 
-		if (eventid >= epgChannel.mapEvents.size()) return;
-		count=0;
-		EPGChannel::imapEvents itEvent=epgChannel.mapEvents.begin();
-		while (count < (int)eventid) { itEvent++; count++;}
-		EPGEvent& epgEvent=itEvent->second;
-		if (languageIndex >=0 && languageIndex < epgEvent.vecLanguages.size())
-		{
-			EPGLanguage& lang= epgEvent.vecLanguages[languageIndex];
-			*eventText=(char*)lang.event.c_str();
-			*eventDescription=(char*)lang.text.c_str();
-			*language=lang.language;
-			Log("epg:get->[%s][%s]", lang.event.c_str(),lang.text.c_str());
+	if (m_prevEventIndex!=eventid)
+	{
+		if (eventid >= m_prevChannel.mapEvents.size()) return;
+		ULONG count=0;
+		EPGChannel::imapEvents itEvent=m_prevChannel.mapEvents.begin();
+		while (count < eventid) 
+		{ 
+			itEvent++; 
+			count++;
 		}
+		EPGEvent& epgEvent=itEvent->second;
 		m_prevEventIndex=eventid;
 		m_prevEvent=epgEvent;
 	}
-	else
+	
+	if (languageIndex >=0 && languageIndex < m_prevEvent.vecLanguages.size())
 	{
-		if (languageIndex >=0 && languageIndex < m_prevEvent.vecLanguages.size())
-		{
-			EPGLanguage& lang= m_prevEvent.vecLanguages[languageIndex];
-			*eventText=(char*)lang.event.c_str();
-			*eventDescription=(char*)lang.text.c_str();
-			*language=lang.language;
-			Log("epg:get->[%s][%s]", lang.event.c_str(),lang.text.c_str());
-		}
+		EPGLanguage& lang= m_prevEvent.vecLanguages[languageIndex];
+		*eventText=(char*)lang.event.c_str();
+		*eventDescription=(char*)lang.text.c_str();
+		*language=lang.language;
+		//Log("epg:get->[%s][%s]", lang.event.c_str(),lang.text.c_str());
 	}
 }
 

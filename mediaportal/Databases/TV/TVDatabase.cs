@@ -204,8 +204,9 @@ namespace MediaPortal.TV.Database
       }
       if (versionNr < 8)
       {
+        DateTime dtStart = new DateTime(1971, 11, 6);
         m_db.Execute("ALTER TABLE channel ADD COLUMN epgLastUpdate text");
-        m_db.Execute("update channel set epgLastUpdate=''");
+        m_db.Execute(String.Format("update channel set epglastupdate='{0}'", Utils.datetolong(dtStart)));
       }
       m_db.Execute(String.Format("update tblversion set idVersion={0}", currentVersion));
     }
@@ -1430,7 +1431,9 @@ namespace MediaPortal.TV.Database
         try
         {
           if (null == m_db) return;
+          DateTime dtStart = new DateTime(1971, 11, 6);
           m_db.Execute("delete from tblPrograms");
+          m_db.Execute(String.Format("update channel set epglastupdate='{0}'", Utils.datetolong(dtStart)));
         }
         catch (Exception ex)
         {
@@ -2599,6 +2602,7 @@ namespace MediaPortal.TV.Database
     /// </summary>
     static public void RemoveOldPrograms()
     {
+      Log.WriteFile(Log.LogType.EPG, false, "RemoveOldPrograms()");
       if (m_db == null) return;
       lock (typeof(TVDatabase))
       {
@@ -2609,9 +2613,13 @@ namespace MediaPortal.TV.Database
           System.DateTime yesterday = System.DateTime.Today.AddDays(-1);
           long longYesterday = Utils.datetolong(yesterday);
           strSQL = String.Format("DELETE FROM tblPrograms WHERE iEndTime < '{0}'", longYesterday);
+
+          Log.WriteFile(Log.LogType.EPG, false, "sql:{0}", strSQL);
           m_db.Execute(strSQL);
           strSQL = String.Format("DELETE FROM canceledseries where iCancelTime < '{0}'", longYesterday);
+          Log.WriteFile(Log.LogType.EPG, false, "sql:{0}", strSQL);
           m_db.Execute(strSQL);
+          Log.WriteFile(Log.LogType.EPG, false, "RemoveOldPrograms done");
         }
         catch (Exception ex)
         {

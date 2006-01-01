@@ -305,7 +305,7 @@ namespace MediaPortal.TV.Recording
           _lastEvent = time;
       }
 
-      public void Update()
+      public void Update(ref List<TVChannel> listChannels)
       {
         int hours = -1;
         if (_firstEvent != DateTime.MinValue && _lastEvent != DateTime.MinValue)
@@ -313,11 +313,9 @@ namespace MediaPortal.TV.Recording
           TimeSpan ts = _lastEvent - _firstEvent;
           hours = (int)(ts.TotalHours - 2f);
         }
-        List<TVChannel> listChannels = new List<TVChannel>();
-        TVDatabase.GetChannels(ref listChannels);
         foreach (TVChannel ch in listChannels)
         {
-          if (ch.Name == _channelName)
+          if (String.Compare(ch.Name ,_channelName,true)==0)
           {
             if (ch.LastDateTimeEpgGrabbed < DateTime.Now.AddHours(-2))
             {
@@ -328,8 +326,8 @@ namespace MediaPortal.TV.Recording
               }
               ch.LastDateTimeEpgGrabbed = DateTime.Now;
               TVDatabase.UpdateChannel(ch, ch.Sort);
-              return;
             }
+            return;
           }
         }
       }
@@ -797,7 +795,9 @@ namespace MediaPortal.TV.Recording
       {
         _epgChannels = new List<TvChannelEpg>();
         System.Threading.Thread.CurrentThread.Priority = System.Threading.ThreadPriority.BelowNormal;
+        Log.WriteFile(Log.LogType.EPG, "epg: remove old programs");
         TVDatabase.RemoveOldPrograms();
+        Log.WriteFile(Log.LogType.EPG, "epg: old programs removed");
         List<EPGChannel> events = _listChannels;
         _listChannels = null;
         Log.WriteFile(Log.LogType.EPG, "epg-grab: updating tv database:{0}", events.Count);
@@ -808,12 +808,13 @@ namespace MediaPortal.TV.Recording
           languagesToGrab = xmlreader.GetValueAsString("epg-grabbing", "grabLanguages", "");
         }
 
-
+        Log.WriteFile(Log.LogType.EPG, "epg-grab: adding new programs");
         foreach (EPGChannel channel in events)
         {
           _timeoutTimer = DateTime.Now;
           if (channel.TvChannel == null) continue;
           if (channel.TvChannel.LastDateTimeEpgGrabbed >= DateTime.Now.AddHours(-2)) continue;
+          Log.WriteFile(Log.LogType.EPG, "epg-grab: add:'{0}' ", channel.TvChannel.Name);
           channel.Sort();
           foreach (EPGEvent epgEvent in channel.EpgEvents)
           {
@@ -852,11 +853,11 @@ namespace MediaPortal.TV.Recording
               //string desc = epgLang.Description;
               //if (desc.Length>0) desc = desc.Replace('\r', ' ');
               //              if (desc.Length > 0) desc = desc.Replace('\n', ' ');
-              Log.WriteFile(Log.LogType.EPG, "epg-grab: add:'{0}' {1} {2} {3}-{4} {5}",
-                        epgLang.Language,
-                        channel.TvChannel.Name,
-                        epgEvent.StartTime.ToLongDateString(),
-                        epgEvent.StartTime.ToLongTimeString(), epgEvent.EndTime.ToLongTimeString(), epgLang.Title);
+              //Log.WriteFile(Log.LogType.EPG, "epg-grab: add:'{0}' {1} {2} {3}-{4} {5}",
+              //          epgLang.Language,
+              //          channel.TvChannel.Name,
+              //          epgEvent.StartTime.ToLongDateString(),
+              //          epgEvent.StartTime.ToLongTimeString(), epgEvent.EndTime.ToLongTimeString(), epgLang.Title);
               //              if (desc.Length>0) 
               //                Log.WriteFile(Log.LogType.EPG, "epg-grab:     {0}", desc);
               TVDatabase.UpdateProgram(tv);
@@ -864,6 +865,7 @@ namespace MediaPortal.TV.Recording
             }
           }
         }
+
         UpdateChannels();
       }
       catch (Exception ex)
@@ -1021,21 +1023,29 @@ namespace MediaPortal.TV.Recording
 
     void UpdateChannels()
     {
+      if (_epgChannels.Count == null) return;
+      if (_epgChannels.Count == 0) return;
+      Log.WriteFile(Log.LogType.EPG, "epg-grab: update {0} channels",_epgChannels.Count);
+
+      List<TVChannel> listChannels = new List<TVChannel>();
+      TVDatabase.GetChannels(ref listChannels);
       foreach (TvChannelEpg ch in _epgChannels)
       {
-        ch.Update();
+        ch.Update(ref listChannels);
       }
       _epgChannels.Clear();
     }
 
     void OnDone()
-    { 
+    {
+      Log.WriteFile(Log.LogType.EPG, "epg-grab: OnDone({0})", _epgTvChannelName);
       List<TVChannel> channels = new List<TVChannel>();
       TVDatabase.GetChannels(ref channels);
       foreach (TVChannel ch in channels)
       { 
         if (String.Compare(ch.Name, _epgTvChannelName, true) == 0)
-        { 
+        {
+          Log.WriteFile(Log.LogType.EPG, "epg-grab: set last update for {0}", _epgTvChannelName);
           ch.LastDateTimeEpgGrabbed = DateTime.Now;
           TVDatabase.UpdateChannel(ch, ch.Sort); 
           return;

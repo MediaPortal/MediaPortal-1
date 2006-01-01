@@ -58,6 +58,7 @@ public:
 	void	DecodeEPG(byte* pbData,int len);
 
 private:
+	bool GetChannelByindex(ULONG channel, EPGChannel& epgChannel);
 	void DecodeShortEventDescriptor(byte* buf,EPGEvent& event);
 	void DecodeContentDescription(byte* buf,EPGEvent& event);
 	void DecodeExtendedEvent(byte* buf, EPGEvent& event);
