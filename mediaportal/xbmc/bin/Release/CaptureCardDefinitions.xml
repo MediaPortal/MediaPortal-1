@@ -6874,4 +6874,27 @@
       </connections>
     </tv>
   </capturecard>
+
+  <capturecard commercialname="AVerMedia M115 Analogue" capturename="AVerMedia BDA Analog Capture" devid="ven_1131&amp;dev_7133&amp;subsys_a8361461&amp;rev_d1">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"  name="AVerMedia BDA Analog TV Tuner" checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="AVerMedia BDA Analog TV Audio"	checkdevice="true"></filter>
+        <filter cat="crossbar" name="AVerMedia BDA Analog Xbar"		checkdevice="true"></filter>
+        <filter cat="capture"  name="AVerMedia BDA Analog Capture"	checkdevice="true"></filter>
+        <filter cat="encoder"  name="AVerMedia BDA MPEG PS Encoder"	checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar"	sinkpin="0"></connection>
+        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar"	sinkpin="3"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"	sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"	sinkpin="1"></connection>
+        <connection sourcefilter="capture"	sourcepin="4" sinkfilter="encoder"	sinkpin="0"></connection>
+        <connection sourcefilter="capture"	sourcepin="5" sinkfilter="encoder"	sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
 </capturecards>
