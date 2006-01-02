@@ -145,7 +145,8 @@ namespace MediaPortal.TV.Recording
     private DateTime _timeTimeshiftingStarted;
     [NonSerialized]
     private string _currentRadioStationName = String.Empty;
-
+    [NonSerialized]
+    DateTime _epgTimeOutTimer=DateTime.Now;
 
     /// <summary>
     /// #MW#
@@ -989,6 +990,8 @@ namespace MediaPortal.TV.Recording
         {
           return true;
         }
+        TimeSpan ts = DateTime.Now - _epgTimeOutTimer;
+        if (ts.TotalMinutes >= 10) return true;
         bool result = _currentGraph.IsEpgDone();
         return result;
       }
@@ -999,6 +1002,7 @@ namespace MediaPortal.TV.Recording
       if (CreateGraph())
       {
         _currentGraph.GrabEpg(channel);
+        _epgTimeOutTimer = DateTime.Now;
       }
     }
     /// <summary>
