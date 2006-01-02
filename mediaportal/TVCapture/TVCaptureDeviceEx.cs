@@ -1,6 +1,6 @@
 /* 
- *	Copyright (C) 2005 Team MediaPortal
- *	http://www.team-mediaportal.com
+ *	Copyright (C) 2005 Media Portal
+ *	http://mediaportal.sourceforge.net
  *
  *  This Program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -39,7 +39,6 @@ using TVCapture;
 using DirectX.Capture;
 using Toub.MediaCenter.Dvrms.Metadata;
 using System.Threading;
-
 namespace MediaPortal.TV.Recording
 {
   /// <summary>
@@ -73,8 +72,6 @@ namespace MediaPortal.TV.Recording
   [Serializable]
   public class TVCaptureDevice
   {
-    const string recEngineExt = ".dvr-ms";  // Change extension here when switching to TS enginge!!!
-
     class RecordingFinished
     {
       public string fileName = String.Empty;
@@ -281,19 +278,10 @@ namespace MediaPortal.TV.Recording
       get { return _captureCardDefinition.Capabilities; }
     }
 
-    public FilterDefinition GetTvFilterDefinition(string filterCategory)
-    {
-      foreach (FilterDefinition fd in TvFilterDefinitions)
-      {
-        if (String.Compare(fd.Category, filterCategory, true) == 0) return fd;
-      }
-      return null;
-    }
     /// <summary>
     /// #MW#
     /// </summary>
-
-    public ArrayList TvFilterDefinitions
+    public Hashtable TvFilterDefinitions
     {
       get
       {
@@ -330,7 +318,7 @@ namespace MediaPortal.TV.Recording
     /// <summary>
     /// #MW#
     /// </summary>
-    public ArrayList RadioFilterDefinitions
+    public Hashtable RadioFilterDefinitions
     {
       get
       {
@@ -449,9 +437,9 @@ namespace MediaPortal.TV.Recording
         }
         else
         {
-          Log.Write("        using default card:0 (subkey not found)");
+           Log.Write("        using card:0");
           hklm.Close();
-          return 0;
+          return -1;
         }
         subkey.Close();
       }
@@ -542,179 +530,168 @@ namespace MediaPortal.TV.Recording
     /// <returns></returns>
     public bool LoadDefinitions()
     {
-      try
+      if (_definitionLoaded) return (true);
+      _definitionLoaded = true;
+
+      //Log.WriteFile(Log.LogType.Capture, "LoadDefinitions() card:{0}", ID);
+      CaptureCardDefinitions captureCardDefinitions = CaptureCardDefinitions.Instance;
+      if (CaptureCardDefinitions.CaptureCards.Count == 0)
       {
-        if (_definitionLoaded) return (true);
-        _definitionLoaded = true;
-
-        Log.WriteFile(Log.LogType.Capture, "LoadDefinitions() card:{0} {1}", ID, this.FriendlyName);
-        CaptureCardDefinitions captureCardDefinitions = CaptureCardDefinitions.Instance;
-        if (CaptureCardDefinitions.CaptureCards.Count == 0)
-        {
-          // Load failed!!!
-          Log.WriteFile(Log.LogType.Capture, " No capturecards defined, or load failed");
-          return (false);
-        }
-
-        if (m_strVideoDeviceMoniker == null)
-        {
-          Log.WriteFile(Log.LogType.Capture, " No video device moniker specified");
-          return true;
-        }
-
-        // Determine the deviceid "hidden" in the moniker of the capture device and use that to load
-        // the definitions of the card... The id is between the first and second "#" character
-        // example:
-        //                     <------------------ ID ---------------->
-        // @device:pnp:\\?\pci#ven_4444&dev_0016&subsys_40090070&rev_01#4&2e98101c&0&68f0#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\hauppauge wintv pvr pci ii capture
-        string deviceId = m_strVideoDeviceMoniker;
-        string[] tmp1 = m_strVideoDeviceMoniker.Split((char[])"#".ToCharArray());
-        if (tmp1.Length >= 2)
-          deviceId = tmp1[1].ToLower();
-
-        CaptureCardDefinition ccd = null;
-        foreach (CaptureCardDefinition cd in CaptureCardDefinitions.CaptureCards)
-        {
-          if (cd.DeviceId.IndexOf(deviceId) == 0 && cd.CaptureName == VideoDevice && cd.CommercialName == CommercialName)
-          {
-            ccd = cd;
-            break;
-          }
-        }
-        //
-        // If card is unsupported, simply return
-        if (_captureCardDefinition == null)
-          _captureCardDefinition = new CaptureCardDefinition();
-        if (ccd == null)
-        {
-          Log.WriteFile(Log.LogType.Capture, true, " CaptureCard {0} NOT supported, no definitions found", m_strVideoDevice);
-          return (false);
-        }
-        _captureCardDefinition.CaptureName = ccd.CaptureName;
-        _captureCardDefinition.CommercialName = ccd.CommercialName;
-        _captureCardDefinition.DeviceId = ccd.DeviceId.ToLower();
-
-        _captureCardDefinition.Capabilities = ccd.Capabilities;
-        this.IsMCECard = _captureCardDefinition.Capabilities.IsMceDevice;
-        this.IsBDACard = _captureCardDefinition.Capabilities.IsBDADevice;
-        this.SupportsMPEG2 = _captureCardDefinition.Capabilities.IsMpeg2Device;
-        _captureCardDefinition.Capabilities = ccd.Capabilities;
-
-        _captureCardDefinition.Tv = new DeviceDefinition();
-        _captureCardDefinition.Tv.FilterDefinitions = new ArrayList();
-        foreach (FilterDefinition fd in ccd.Tv.FilterDefinitions)
-        {
-          fd.DSFilter = null;
-          fd.MonikerDisplayName = String.Empty;
-          _captureCardDefinition.Tv.FilterDefinitions.Add(fd);
-        }
-        _captureCardDefinition.Tv.ConnectionDefinitions = ccd.Tv.ConnectionDefinitions;
-        _captureCardDefinition.Tv.InterfaceDefinition = ccd.Tv.InterfaceDefinition;
-        int Instance = -1;
-
-        AvailableFilters af = AvailableFilters.Instance;
-
-        // Determine what PnP device the capture device is. This is done very, very simple by extracting
-        // the first part of the moniker display name, which contains device specific information
-        // <-------------GET THIS PART-------------------------------------------------->        
-        // @device:pnp:\\?\pci#ven_4444&dev_0016&subsys_40090070&rev_01#4&2e98101c&0&68f0#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\hauppauge wintv pvr pci ii capture
-        string captureDeviceDeviceName = m_strVideoDeviceMoniker;
-        int pos = captureDeviceDeviceName.LastIndexOf("#");
-        if (pos >= 0) captureDeviceDeviceName = captureDeviceDeviceName.Substring(0, pos);
-        Log.WriteFile(Log.LogType.Capture, " video device moniker   :{0}", m_strVideoDeviceMoniker);
-        Log.WriteFile(Log.LogType.Capture, " captureDeviceDeviceName:{0}", captureDeviceDeviceName);
-
-
-        Instance = FindInstanceForDevice(captureDeviceDeviceName);
-        Log.WriteFile(Log.LogType.Capture, " Using card#{0}", Instance);
-        //for each tv filter we need for building the graph
-        foreach (FilterDefinition fd in _captureCardDefinition.Tv.FilterDefinitions)
-        {
-          string friendlyName = fd.Category;
-          bool filterFound = false;
-          Log.WriteFile(Log.LogType.Capture, "  filter {0}={1} check:{2}", friendlyName, fd.FriendlyName, fd.CheckDevice);
-
-          //for each directshow filter available under windows
-          foreach (string key in AvailableFilters.Filters.Keys)
-          {
-            Filter filter;
-            ArrayList al = AvailableFilters.Filters[key] as System.Collections.ArrayList;
-            filter = (Filter)al[0];
-
-            // if directshow filter name == video filter name
-            if (filter.Name.Equals(fd.FriendlyName))
-            {
-              // FriendlyName found. Now check if this name should be checked against a (PnP) device
-              // to make sure that we found the right filter...
-              if (fd.CheckDevice)
-              {
-                filter = al[0] as Filter;
-                string filterMoniker = filter.MonikerString;
-                int posTmp = filterMoniker.LastIndexOf("#");
-                if (posTmp >= 0) filterMoniker = filterMoniker.Substring(0, posTmp);
-
-                Log.WriteFile(Log.LogType.Capture, "  CheckDevice:{0}", filterMoniker);
-                if (!filterFound)
-                {
-                  string moniker = FindUniqueFilter(filterMoniker, Instance);
-                  for (int filterInst = 0; filterInst < al.Count; ++filterInst)
-                  {
-                    filter = al[filterInst] as Filter;
-                    string tmpMoniker = filter.MonikerString.Replace(@"\", "#");
-                    tmpMoniker = tmpMoniker.Replace(@"/", "#");
-                    if (tmpMoniker.ToLower().IndexOf(moniker.ToLower()) >= 0)
-                    {
-                      Log.Write("use unique filter moniker:{0}", filter.MonikerString);
-                      filterFound = true;
-                      break;
-                    }
-                  }
-                }
-
-                if (!filterFound)
-                {
-                  if (al.Count > 0)
-                  {
-                    Log.Write("use global filter moniker");
-                    filter = al[0] as Filter;
-                    filterFound = true;
-                  }
-                }
-                if (!filterFound)
-                {
-                  Log.WriteFile(Log.LogType.Capture, true, "  ERROR Cannot find unique filter for filter:{0}", filter.Name);
-                }
-                else
-                {
-                  Log.WriteFile(Log.LogType.Capture, "    Found {0}={1}", filter.Name, filter.MonikerString);
-                }
-              }
-              else filterFound = true;
-
-              // For found filter, get the unique name, the moniker display name which contains not only
-              // things like the type of device, but also a reference (in case of PnP hardware devices)
-              // to the actual device number which makes it possible to distinqiush two identical cards!
-              if (filterFound)
-              {
-                fd.MonikerDisplayName = filter.MonikerString;
-                break;
-              }
-            }//if (filter.Name.Equals(fd.FriendlyName))
-          }//foreach (string key in AvailableFilters.Filters.Keys)
-          // If no filter found thats in the definitions file, we obviously made a mistake defining it
-          // Log the error and return false...
-          if (!filterFound)
-          {
-            Log.WriteFile(Log.LogType.Capture, true, "  Filter {0} not found in definitions file", friendlyName);
-            return (false);
-          }
-        }//foreach (string friendlyName in _captureCardDefinition.Tv.FilterDefinitions.Keys)
-      }
-      catch (Exception ex)
-      {
-        Log.WriteFile(Log.LogType.Capture, true, "  ex:{0} {1} {2}", ex.Message,ex.Source,ex.StackTrace);
+        // Load failed!!!
+        Log.WriteFile(Log.LogType.Capture, " No capturecards defined, or load failed");
         return (false);
       }
+
+      if (m_strVideoDeviceMoniker == null)
+      {
+        Log.WriteFile(Log.LogType.Capture, " No video device moniker specified");
+        return true;
+      }
+
+      // Determine the deviceid "hidden" in the moniker of the capture device and use that to load
+      // the definitions of the card... The id is between the first and second "#" character
+      // example:
+      //                     <------------------ ID ---------------->
+      // @device:pnp:\\?\pci#ven_4444&dev_0016&subsys_40090070&rev_01#4&2e98101c&0&68f0#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\hauppauge wintv pvr pci ii capture
+      string deviceId = m_strVideoDeviceMoniker;
+      string[] tmp1 = m_strVideoDeviceMoniker.Split((char[])"#".ToCharArray());
+      if (tmp1.Length >= 2)
+        deviceId = tmp1[1].ToLower();
+
+      CaptureCardDefinition ccd = null;
+      foreach (CaptureCardDefinition cd in CaptureCardDefinitions.CaptureCards)
+      {
+        if (cd.DeviceId.IndexOf(deviceId) == 0 && cd.CaptureName == VideoDevice && cd.CommercialName == CommercialName)
+        {
+          ccd = cd;
+          break;
+        }
+      }
+      //
+      // If card is unsupported, simply return
+      if (_captureCardDefinition == null)
+        _captureCardDefinition = new CaptureCardDefinition();
+      if (ccd == null)
+      {
+        Log.WriteFile(Log.LogType.Capture, true, " CaptureCard {0} NOT supported, no definitions found", m_strVideoDevice);
+        return (false);
+      }
+      _captureCardDefinition.CaptureName = ccd.CaptureName;
+      _captureCardDefinition.CommercialName = ccd.CommercialName;
+      _captureCardDefinition.DeviceId = ccd.DeviceId.ToLower();
+
+      _captureCardDefinition.Capabilities = ccd.Capabilities;
+      this.IsMCECard = _captureCardDefinition.Capabilities.IsMceDevice;
+      this.IsBDACard = _captureCardDefinition.Capabilities.IsBDADevice;
+      this.SupportsMPEG2 = _captureCardDefinition.Capabilities.IsMpeg2Device;
+      _captureCardDefinition.Capabilities = ccd.Capabilities;
+
+      _captureCardDefinition.Tv = new DeviceDefinition();
+      _captureCardDefinition.Tv.FilterDefinitions = new Hashtable();
+      foreach (string filterKey in ccd.Tv.FilterDefinitions.Keys)
+      {
+        FilterDefinition fd = new FilterDefinition();
+        fd.FriendlyName = ((FilterDefinition)ccd.Tv.FilterDefinitions[filterKey]).FriendlyName;
+        fd.Category = ((FilterDefinition)ccd.Tv.FilterDefinitions[filterKey]).Category;
+        fd.CheckDevice = ((FilterDefinition)ccd.Tv.FilterDefinitions[filterKey]).CheckDevice;
+        fd.DSFilter = null;
+        fd.MonikerDisplayName = String.Empty;
+        _captureCardDefinition.Tv.FilterDefinitions.Add(filterKey, fd);
+      }
+      _captureCardDefinition.Tv.ConnectionDefinitions = ccd.Tv.ConnectionDefinitions;
+      _captureCardDefinition.Tv.InterfaceDefinition = ccd.Tv.InterfaceDefinition;
+      int Instance = -1;
+
+      AvailableFilters af = AvailableFilters.Instance;
+
+      // Determine what PnP device the capture device is. This is done very, very simple by extracting
+      // the first part of the moniker display name, which contains device specific information
+      // <-------------GET THIS PART-------------------------------------------------->        
+      // @device:pnp:\\?\pci#ven_4444&dev_0016&subsys_40090070&rev_01#4&2e98101c&0&68f0#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\hauppauge wintv pvr pci ii capture
+      string captureDeviceDeviceName = m_strVideoDeviceMoniker;
+      int pos = captureDeviceDeviceName.LastIndexOf("#");
+      if (pos >= 0) captureDeviceDeviceName = captureDeviceDeviceName.Substring(0, pos);
+      //Log.WriteFile(Log.LogType.Capture, " video device moniker   :{0}", m_strVideoDeviceMoniker);
+      //Log.WriteFile(Log.LogType.Capture, " captureDeviceDeviceName:{0}", captureDeviceDeviceName);
+
+
+      Instance = FindInstanceForDevice(captureDeviceDeviceName);
+      //Log.WriteFile(Log.LogType.Capture," Using card#{0}", Instance);
+      //for each tv filter we need for building the graph
+      foreach (string friendlyName in _captureCardDefinition.Tv.FilterDefinitions.Keys)
+      {
+        FilterDefinition fd = _captureCardDefinition.Tv.FilterDefinitions[friendlyName] as FilterDefinition;
+        bool filterFound = false;
+        //Log.WriteFile(Log.LogType.Capture, "  filter {0}={1}", friendlyName, fd.FriendlyName);
+
+        //for each directshow filter available under windows
+        foreach (string key in AvailableFilters.Filters.Keys)
+        {
+          Filter filter;
+          ArrayList al = AvailableFilters.Filters[key] as System.Collections.ArrayList;
+          filter = (Filter)al[0];
+         
+          // if directshow filter name == video filter name
+          if (filter.Name.Equals(fd.FriendlyName))
+          {
+            // FriendlyName found. Now check if this name should be checked against a (PnP) device
+            // to make sure that we found the right filter...
+            if (fd.CheckDevice)
+            {
+              if (!filterFound)
+              {
+                string moniker = FindUniqueFilter(captureDeviceDeviceName, Instance); 
+                for (int filterInst = 0; filterInst < al.Count; ++filterInst)
+                {
+                  filter = al[filterInst] as Filter;
+                  string tmpMoniker = filter.MonikerString.Replace(@"\", "#");
+                  tmpMoniker = tmpMoniker.Replace(@"/", "#");
+                  if (tmpMoniker.ToLower().IndexOf(moniker.ToLower()) >= 0)
+                  {
+                    // Log.Write("use unique filter moniker");
+                    filterFound = true;
+                    break;
+                  }
+                }
+              }
+
+              if (!filterFound)
+              {
+                if (al.Count > 0)
+                {
+                  //Log.Write("use global filter moniker");
+                  filter = al[0] as Filter;
+                  filterFound = true;
+                }
+              }
+              if (!filterFound)
+              {
+                Log.WriteFile(Log.LogType.Capture, true, "  ERROR Cannot find unique filter for filter:{0}", filter.Name);
+              }
+              else
+              {
+                // Log.WriteFile(Log.LogType.Capture, "    Found {0}={1}", filter.Name, filter.MonikerString);
+              }
+            }
+            else filterFound = true;
+
+            // For found filter, get the unique name, the moniker display name which contains not only
+            // things like the type of device, but also a reference (in case of PnP hardware devices)
+            // to the actual device number which makes it possible to distinqiush two identical cards!
+            if (filterFound)
+            {
+              ((FilterDefinition)_captureCardDefinition.Tv.FilterDefinitions[friendlyName]).MonikerDisplayName = filter.MonikerString;
+            }
+          }//if (filter.Name.Equals(fd.FriendlyName))
+        }//foreach (string key in AvailableFilters.Filters.Keys)
+        // If no filter found thats in the definitions file, we obviously made a mistake defining it
+        // Log the error and return false...
+        if (!filterFound)
+        {
+          Log.WriteFile(Log.LogType.Capture, true, "  Filter {0} not found in definitions file", friendlyName);
+          return (false);
+        }
+      }//foreach (string friendlyName in _captureCardDefinition.Tv.FilterDefinitions.Keys)
       return (true);
     }
 
@@ -978,7 +955,7 @@ namespace MediaPortal.TV.Recording
         {
           return false;
         }
-        bool result = _currentGraph.IsEpgGrabbing();
+        bool result= _currentGraph.IsEpgGrabbing();
         return result;
       }
     }
@@ -1090,7 +1067,7 @@ namespace MediaPortal.TV.Recording
           if (_currentGraph != null)
           {
             TVChannel channel = GetChannel(_currentTvChannelName);
-            if (_currentGraph.ShouldRebuildGraph(channel))
+            if (_currentGraph.ShouldRebuildGraph(channel) )
             {
               RebuildGraph();
               // for ss2: restore full screen
@@ -1147,7 +1124,7 @@ namespace MediaPortal.TV.Recording
           counter++;
         }
         //Log.WriteFile(Log.LogType.Capture, "TvCaptureDevice:RebuildGraph() player stopped:{0}",
-        //g_Player.Playing);
+                      //g_Player.Playing);
       }
 
       if (_currentGraph != null)
@@ -1178,13 +1155,13 @@ namespace MediaPortal.TV.Recording
       }
       else
       {
-        // Log.WriteFile(Log.LogType.Capture, "TvCaptureDevice:RebuildGraph() recreate viewing graph");
+       // Log.WriteFile(Log.LogType.Capture, "TvCaptureDevice:RebuildGraph() recreate viewing graph");
         _currentGraph = GraphFactory.CreateGraph(this);
         _currentGraph.CreateGraph(Quality);
         _currentGraph.StartViewing(channel);
         lastChannelChange = DateTime.Now;
       }
-      // Log.WriteFile(Log.LogType.Capture, "Card:{0} rebuild graph done", ID);
+     // Log.WriteFile(Log.LogType.Capture, "Card:{0} rebuild graph done", ID);
     }
 
     string StripIllegalChars(string recordingAttribute)
@@ -1573,80 +1550,18 @@ namespace MediaPortal.TV.Recording
 
 
       DateTime timeProgStart = new DateTime(1971, 11, 6, 20, 0, 0, 0);
-      string strName = string.Empty;
-      string strDirectory = string.Empty;
+      string strName;
       if (currentRunningProgram != null)
       {
-        string strInput = string.Empty;
-        string recFileFormat = string.Empty;
-        string recDirFormat = string.Empty;
-        bool isMovie = false;
-        if (recording.RecType == TVRecording.RecordingType.Once)
-          isMovie = true;
-
+        DateTime dt = currentRunningProgram.StartTime;
+        strName = String.Format("{0}_{1}_{2}{3:00}{4:00}{5:00}{6:00}p{7}{8}{9}",
+                                  currentRunningProgram.Channel, currentRunningProgram.Title,
+                                  dt.Year, dt.Month, dt.Day,
+                                  dt.Hour,
+                                  dt.Minute,
+                                  DateTime.Now.Minute, DateTime.Now.Second,
+                                  ".dvr-ms");
         timeProgStart = currentRunningProgram.StartTime;
-
-        using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
-          if (isMovie)
-            strInput = xmlreader.GetValueAsString("capture", "moviesformat", string.Empty);
-          else
-            strInput = xmlreader.GetValueAsString("capture", "seriesformat", string.Empty);
-
-        strInput = Utils.ReplaceTag(strInput, "%channel%", Utils.MakeFileName(currentRunningProgram.Channel), "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%title%", Utils.MakeFileName(currentRunningProgram.Title), "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%name%", Utils.MakeFileName(currentRunningProgram.Episode), "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%series%", Utils.MakeFileName(currentRunningProgram.SeriesNum), "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%episode%", Utils.MakeFileName(currentRunningProgram.EpisodeNum), "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%part%", Utils.MakeFileName(currentRunningProgram.EpisodePart), "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%date%", Utils.MakeFileName(currentRunningProgram.StartTime.Date.ToShortDateString()), "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%start%", Utils.MakeFileName(currentRunningProgram.StartTime.ToShortTimeString()), "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%end%", Utils.MakeFileName(currentRunningProgram.EndTime.ToShortTimeString()), "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%genre%", Utils.MakeFileName(currentRunningProgram.Genre), "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%startday%", Utils.MakeFileName(currentRunningProgram.StartTime.Day.ToString()), "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%startmonth%", Utils.MakeFileName(currentRunningProgram.StartTime.Month.ToString()), "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%startyear%", Utils.MakeFileName(currentRunningProgram.StartTime.Year.ToString()), "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%starthh%", Utils.MakeFileName(currentRunningProgram.StartTime.Hour.ToString()), "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%startmm%", Utils.MakeFileName(currentRunningProgram.StartTime.Minute.ToString()), "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%endday%", Utils.MakeFileName(currentRunningProgram.EndTime.Day.ToString()), "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%endmonth%", Utils.MakeFileName(currentRunningProgram.EndTime.Month.ToString()), "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%startyear%", Utils.MakeFileName(currentRunningProgram.EndTime.Year.ToString()), "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%endhh%", Utils.MakeFileName(currentRunningProgram.EndTime.Hour.ToString()), "unknown");
-        strInput = Utils.ReplaceTag(strInput, "%endmm%", Utils.MakeFileName(currentRunningProgram.EndTime.Minute.ToString()), "unknown");
-
-        int index = strInput.LastIndexOf('\\');
-        if (index != -1)
-        {
-          strDirectory = strInput.Substring(0, index);
-          strName = strInput.Substring(index + 1);
-        }
-        else
-          strName = strInput;
-
-        if (strDirectory != string.Empty)
-        {
-          strDirectory = Utils.MakeDirectoryPath(strDirectory);
-          if (!Directory.Exists(RecordingPath + "\\" + strDirectory))
-            Directory.CreateDirectory(RecordingPath + "\\" + strDirectory);
-        }
-        if (strName == string.Empty)
-        {
-          DateTime dt = currentRunningProgram.StartTime;
-          strName = String.Format("{0}_{1}_{2}{3:00}{4:00}{5:00}{6:00}p{7}{8}",
-                                    currentRunningProgram.Channel, currentRunningProgram.Title,
-                                    dt.Year, dt.Month, dt.Day,
-                                    dt.Hour,
-                                    dt.Minute,
-                                    DateTime.Now.Minute, DateTime.Now.Second);
-        }
-        strName = Utils.MakeFileName(strName);
-        if (File.Exists(RecordingPath + "\\" + strDirectory + "\\" + strName + recEngineExt))
-        {
-          int i = 1;
-          while (File.Exists(RecordingPath + "\\" + strDirectory + "\\" + strName + "_" + i.ToString() + recEngineExt))
-            ++i;
-          strName += "_" + i.ToString();
-        }
-        strName += recEngineExt;
       }
       else
       {
@@ -1657,15 +1572,15 @@ namespace MediaPortal.TV.Recording
           dt.Hour,
           dt.Minute,
           DateTime.Now.Minute, DateTime.Now.Second,
-          recEngineExt);
+          ".dvr-ms");
       }
 
-      Log.Write("Recorder: recording to {0}\\{1}", RecordingPath + "\\" + strDirectory, strName);
 
-      string strFileName = String.Format(@"{0}\{1}", RecordingPath + "\\" + strDirectory, Utils.MakeFileName(strName));
+      string strFileName = String.Format(@"{0}\{1}", RecordingPath, Utils.MakeFileName(strName));
       //Log.WriteFile(Log.LogType.Capture, "Card:{0} recording to file:{1}", ID, strFileName);
 
       TVChannel channel = GetChannel(_currentTvChannelName);
+
 
       _recordedTvObject = new TVRecorded();
       _recordedTvObject.Start = Utils.datetolong(DateTime.Now);
@@ -1779,7 +1694,7 @@ namespace MediaPortal.TV.Recording
     {
       if (_currentGraphState != State.Viewing) return;
       Log.Write("TVCapture.Tune({0}", channel.Name);
-      _currentGraph.TuneChannel(channel);
+        _currentGraph.TuneChannel(channel);
       lastChannelChange = DateTime.Now;
     }
 
@@ -2003,39 +1918,29 @@ namespace MediaPortal.TV.Recording
       if (RecordingPath.ToLower().Substring(0, 2) != drive.ToLower()) return;
       try
       {
-        string[] directories = System.IO.Directory.GetDirectories(RecordingPath, "*", SearchOption.AllDirectories);
-        foreach (string directory in directories)
+        string[] fileNames = System.IO.Directory.GetFiles(RecordingPath, "*.dvr-ms");
+        for (int i = 0; i < fileNames.Length; ++i)
         {
-          int index = directory.IndexOf("card");
-          if ((index == -1) || ((index != -1) && ((directory.Substring(index - 1, 1) != "\\"))))
+          bool add = true;
+          foreach (RecordingFileInfo fi in recordings)
           {
-            string[] fileNames = System.IO.Directory.GetFiles(directory, "*" + recEngineExt);
-            for (int i = 0; i < fileNames.Length; ++i)
+            if (fi.filename.ToLower() == fileNames[i].ToLower())
             {
-              bool add = true;
-              foreach (RecordingFileInfo fi in recordings)
-              {
-                if (fi.filename.ToLower() == fileNames[i].ToLower())
-                {
-                  add = false;
-                }
-              }
-              if (add)
-              {
-                FileInfo info = new FileInfo(fileNames[i]);
-                RecordingFileInfo fi = new RecordingFileInfo();
-                fi.info = info;
-                fi.filename = fileNames[i];
-                recordings.Add(fi);
-              }
-              Log.Write("found: {0}", fileNames[i]);
+              add = false;
             }
+          }
+          if (add)
+          {
+            FileInfo info = new FileInfo(fileNames[i]);
+            RecordingFileInfo fi = new RecordingFileInfo();
+            fi.info = info;
+            fi.filename = fileNames[i];
+            recordings.Add(fi);
           }
         }
       }
-      catch (Exception ex)
+      catch (Exception)
       {
-        Log.Write("GetRecordings: {0}", ex.Message);
       }
     }
     public string TimeShiftFileName
@@ -2072,6 +1977,7 @@ namespace MediaPortal.TV.Recording
         return _currentGraph.AudiodeviceFilter();
       }
     }
+
 
   }
 }
