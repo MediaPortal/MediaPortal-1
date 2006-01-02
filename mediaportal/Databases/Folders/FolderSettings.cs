@@ -51,7 +51,9 @@ namespace MediaPortal.Util
 				m_db.Execute("PRAGMA synchronous='OFF';\n");
 				m_db.Execute("PRAGMA count_changes=1;\n");
 				m_db.Execute("PRAGMA full_column_names=0;\n");
-				m_db.Execute("PRAGMA short_column_names=0;\n");
+        m_db.Execute("PRAGMA short_column_names=0;\n");
+        m_db.Execute("PRAGMA auto_vacuum=1;\n");
+        m_db.Execute("vacuum");
 				AddTable("path","CREATE TABLE path ( idPath integer primary key, strPath text);\n");
 				AddTable("setting","CREATE TABLE setting ( idSetting integer primary key, idPath integer , key text, value text);\n");
 

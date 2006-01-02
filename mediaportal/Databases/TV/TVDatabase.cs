@@ -112,6 +112,8 @@ namespace MediaPortal.TV.Database
             m_db.Execute("PRAGMA count_changes=1;\n");
             m_db.Execute("PRAGMA full_column_names=0;\n");
             m_db.Execute("PRAGMA short_column_names=0;\n");
+            m_db.Execute("PRAGMA auto_vacuum=1;\n");
+            m_db.Execute("vacuum");
           }
           UpdateFromPreviousVersion();
 
@@ -2620,6 +2622,8 @@ namespace MediaPortal.TV.Database
           Log.WriteFile(Log.LogType.EPG, false, "sql:{0}", strSQL);
           m_db.Execute(strSQL);
           Log.WriteFile(Log.LogType.EPG, false, "RemoveOldPrograms done");
+          m_db.Execute("vacuum");
+          Log.WriteFile(Log.LogType.EPG, false, "vacuum done");
         }
         catch (Exception ex)
         {

@@ -156,6 +156,8 @@ namespace MediaPortal.Music.Database
         m_db.Execute("PRAGMA count_changes=1;\n");
         m_db.Execute("PRAGMA full_column_names=0;\n");
         m_db.Execute("PRAGMA short_column_names=0;\n");
+        m_db.Execute("PRAGMA auto_vacuum=1;\n");
+        m_db.Execute("vacuum");
         AddTable("artist", "CREATE TABLE artist ( idArtist integer primary key, strArtist text);\n");
         AddTable("album", "CREATE TABLE album ( idAlbum integer primary key, idArtist integer, strAlbum text);\n");
         AddTable("genre", "CREATE TABLE genre ( idGenre integer primary key, strGenre text);\n");

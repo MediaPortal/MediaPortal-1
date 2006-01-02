@@ -64,7 +64,9 @@ namespace MediaPortal.Video.Database
 				m_db.Execute("PRAGMA synchronous='OFF';\n");
 				m_db.Execute("PRAGMA count_changes=1;\n");
 				m_db.Execute("PRAGMA full_column_names=0;\n");
-				m_db.Execute("PRAGMA short_column_names=0;\n");
+        m_db.Execute("PRAGMA short_column_names=0;\n");
+        m_db.Execute("PRAGMA auto_vacuum=1;\n");
+        m_db.Execute("vacuum");
 				CreateTables();
 
 
