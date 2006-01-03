@@ -218,6 +218,7 @@ namespace MediaPortal.TV.Teletext
     #region rendering
     public System.Drawing.Bitmap GetPage(int page, int subpage)
     {
+
       string sPage = "0x" + page.ToString();
       string sSubPage = "0x" + subpage.ToString();
 
@@ -249,14 +250,21 @@ namespace MediaPortal.TV.Teletext
 
         Assembly assm = Assembly.GetExecutingAssembly();
         string[] names = assm.GetManifestResourceNames();
-        Stream stream = assm.GetManifestResourceStream("TVCapture.LogoPage");
-        using (BinaryReader reader = new BinaryReader(stream))
+        //for (int x = 0; x < names.Length; x++)
+        //  Log.Write("res:{0}", names[x]);
+
+        Stream stream = assm.GetManifestResourceStream("TVCapture.teletext.LogoPage");
+        if (stream != null)
         {
-          byte[] logoPage = new byte[stream.Length];
-          reader.Read(logoPage, 0, (int)stream.Length);
-          _fastTextDecoder.Decode(logoPage);
-          return _renderer.RenderPage(logoPage, 0xFFFF, 0xFFFF);
+          using (BinaryReader reader = new BinaryReader(stream))
+          {
+            byte[] logoPage = new byte[stream.Length];
+            reader.Read(logoPage, 0, (int)stream.Length);
+            _fastTextDecoder.Decode(logoPage);
+            return _renderer.RenderPage(logoPage, 0xFFFF, 0xFFFF);
+          }
         }
+        return null;
       }
     }
     #endregion
@@ -318,7 +326,7 @@ namespace MediaPortal.TV.Teletext
 
     public int NumberOfSubpages(int currentPageNumber)
     {
-      return _pageCache.NumberOfSubpages(currentPageNumber);
+        return _pageCache.NumberOfSubpages(currentPageNumber);
     }
   }// class
 }// namespace
