@@ -32,7 +32,7 @@ namespace MediaPortal.MameDevice
     const int WM_KEYDOWN             = 0x0100;
     const int WM_SYSKEYDOWN          = 0x0104;
 
-    HCWHandler MameMapper;
+    InputHandler MameMapper;
 
 		public MameDevice()
 		{
@@ -124,7 +124,7 @@ namespace MediaPortal.MameDevice
     public void Start()
     {
       bool result = false;
-      MameMapper = new HCWHandler("MameDevice", out result);
+      MameMapper = new InputHandler("MameDevice", out result);
     }
 
     public void Stop()

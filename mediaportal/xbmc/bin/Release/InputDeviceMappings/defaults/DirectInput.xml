@@ -1,5 +1,5 @@
-﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<mappings version="2">
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<mappings version="3">
 	<remote family="DirectInput Joystick / Gamepad">
 		<button name="axisX Up" code="3000">
 			<action layer="0" condition="*" conproperty="-1" command="KEY" cmdproperty="{RIGHT}" sound="" />
@@ -13,42 +13,30 @@
 		<button name="axisY Down" code="3003">
 			<action layer="0" condition="*" conproperty="-1" command="KEY" cmdproperty="{UP}" sound="" />
 		</button>
-		<button name="axisZ Up" code="3004">
-		</button>
-		<button name="axisZ Down" code="3005">
-		</button>
-		<button name="rotationX Up" code="3010">
-		</button>
-		<button name="rotationX Down" code="3011">
-		</button>
-		<button name="rotationY Up" code="3012">
-		</button>
-		<button name="rotationY Down" code="3013">
-		</button>
-		<button name="rotationZ Up" code="3014">
-		</button>
-		<button name="rotationZ Down" code="3015">
-		</button>
+		<button name="axisZ Up" code="3004" />
+		<button name="axisZ Down" code="3005" />
+		<button name="rotationX Up" code="3010" />
+		<button name="rotationX Down" code="3011" />
+		<button name="rotationY Up" code="3012" />
+		<button name="rotationY Down" code="3013" />
+		<button name="rotationZ Up" code="3014" />
+		<button name="rotationZ Down" code="3015" />
 		<button name="pov N" code="3020">
 			<action layer="0" condition="*" conproperty="-1" command="KEY" cmdproperty="{UP}" sound="" />
 		</button>
-		<button name="pov NE" code="3021">
-		</button>
+		<button name="pov NE" code="3021" />
 		<button name="pov E" code="3022">
 			<action layer="0" condition="*" conproperty="-1" command="KEY" cmdproperty="{RIGHT}" sound="" />
 		</button>
-		<button name="pov SE" code="3023">
-		</button>
+		<button name="pov SE" code="3023" />
 		<button name="pov S" code="3024">
 			<action layer="0" condition="*" conproperty="-1" command="KEY" cmdproperty="{DOWN}" sound="" />
 		</button>
-		<button name="pov SW" code="3025">
-		</button>
+		<button name="pov SW" code="3025" />
 		<button name="pov W" code="3026">
 			<action layer="0" condition="*" conproperty="-1" command="KEY" cmdproperty="{LEFT}" sound="" />
 		</button>
-		<button name="pov NW" code="3027">
-		</button>
+		<button name="pov NW" code="3027" />
 		<button name="Button 1" code="3030">
 			<action layer="0" condition="WINDOW" conproperty="11" command="ACTION" cmdproperty="47" sound="click.wav" />
 			<action layer="0" condition="WINDOW" conproperty="10" command="ACTION" cmdproperty="10" sound="back.wav" />
@@ -60,40 +48,23 @@
 		<button name="Button 3" code="3032">
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="13" sound="click.wav" />
 		</button>
-		<button name="Button 4" code="3033">
-		</button>
-		<button name="Button 5" code="3034">
-		</button>
-		<button name="Button 6" code="3035">
-		</button>
-		<button name="Button 7" code="3036">
-		</button>
-		<button name="Button 8" code="3037">
-		</button>
-		<button name="Button 9" code="3038">
-		</button>
-		<button name="Button 10" code="3039">
-		</button>
-		<button name="Button 11" code="3040">
-		</button>
-		<button name="Button 12" code="3041">
-		</button>
-		<button name="Button 13" code="3042">
-		</button>
-		<button name="Button 14" code="3043">
-		</button>
-		<button name="Button 15" code="3044">
-		</button>
-		<button name="Button 16" code="3045">
-		</button>
-		<button name="Button 17" code="3046">
-		</button>
-		<button name="Button 18" code="3047">
-		</button>
-		<button name="Button 19" code="3048">
-		</button>
-		<button name="Button 20" code="3049">
-		</button>
+		<button name="Button 4" code="3033" />
+		<button name="Button 5" code="3034" />
+		<button name="Button 6" code="3035" />
+		<button name="Button 7" code="3036" />
+		<button name="Button 8" code="3037" />
+		<button name="Button 9" code="3038" />
+		<button name="Button 10" code="3039" />
+		<button name="Button 11" code="3040" />
+		<button name="Button 12" code="3041" />
+		<button name="Button 13" code="3042" />
+		<button name="Button 14" code="3043" />
+		<button name="Button 15" code="3044" />
+		<button name="Button 16" code="3045" />
+		<button name="Button 17" code="3046" />
+		<button name="Button 18" code="3047" />
+		<button name="Button 19" code="3048" />
+		<button name="Button 20" code="3049" />
 		<button name="ComboKillProcess" code="4000">
 			<action layer="0" condition="*" conproperty="-1" command="PROCESS" cmdproperty="KILL" sound="" />
 		</button>

@@ -31,9 +31,9 @@ using MediaPortal.GUI.Library;
 namespace MediaPortal.Configuration
 {
   /// <summary>
-  /// Summary description for HCWMappingForm.
+  /// Summary description for ButtonMappingForm.
   /// </summary>
-  public class HCWMappingForm : System.Windows.Forms.Form
+  public class InputMappingForm : System.Windows.Forms.Form
   {
     Array    windowsList    = Enum.GetValues(typeof(GUIWindow.Window));
     Array    actionList     = Enum.GetValues(typeof(Action.ActionType));
@@ -51,27 +51,31 @@ namespace MediaPortal.Configuration
 
     string inputClassName;
 
+    bool changedSettings = false;
+
     class Data
     {
       string type;
-      string value;
-      string parameter;
+      object value;
+      object parameter;
 
       public Data (object newType, object newParameter, object newValue)
       {
         if (newValue == null)
-          newValue = "";
+          newValue = string.Empty;
         if (newParameter == null)
-          newParameter = "";
+          newParameter = string.Empty;
         type = (string)newType;
-        value = newValue.ToString();
-        parameter = (string)newParameter;
+        value = newValue;
+        parameter = newParameter;
       }
 
       public string Type { get { return type; } }
-      public string Value { get { return value; } }
-      public string Parameter { get { return parameter; } }
+      public object Value { get { return value; } }
+      public object Parameter { get { return parameter; } }
     }
+
+    #region Controls
 
     private System.Windows.Forms.TreeView treeMapping;
     private System.Windows.Forms.RadioButton radioButtonWindow;
@@ -82,7 +86,6 @@ namespace MediaPortal.Configuration
     private System.Windows.Forms.ComboBox comboBoxCmdProperty;
     private System.Windows.Forms.GroupBox groupBoxCondition;
     private System.Windows.Forms.RadioButton radioButtonAction;
-    private System.Windows.Forms.RadioButton radioButtonKey;
     private System.Windows.Forms.RadioButton radioButtonActWindow;
     private System.Windows.Forms.RadioButton radioButtonToggle;
     private System.Windows.Forms.RadioButton radioButtonPower;
@@ -103,12 +106,19 @@ namespace MediaPortal.Configuration
     private System.Windows.Forms.Button buttonDefault;
     private System.Windows.Forms.GroupBox groupBoxLayer;
     private System.Windows.Forms.RadioButton radioButtonProcess;
+    private Label label1;
+    private TextBox textBoxKeyChar;
+    private TextBox textBoxKeyCode;
+
+    #endregion
+    private Label label2;
+
     /// <summary>
     /// Required designer variable.
     /// </summary>
     private System.ComponentModel.Container components = null;
 
-    public HCWMappingForm(string name)
+    public InputMappingForm(string name)
     {
       //
       // Required for Windows Form Designer support
@@ -143,7 +153,7 @@ namespace MediaPortal.Configuration
     /// </summary>
     private void InitializeComponent()
     {
-      System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(HCWMappingForm));
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(InputMappingForm));
       this.treeMapping = new System.Windows.Forms.TreeView();
       this.radioButtonWindow = new System.Windows.Forms.RadioButton();
       this.radioButtonFullscreen = new System.Windows.Forms.RadioButton();
@@ -153,18 +163,19 @@ namespace MediaPortal.Configuration
       this.comboBoxCmdProperty = new System.Windows.Forms.ComboBox();
       this.groupBoxCondition = new System.Windows.Forms.GroupBox();
       this.radioButtonAction = new System.Windows.Forms.RadioButton();
-      this.radioButtonKey = new System.Windows.Forms.RadioButton();
       this.radioButtonActWindow = new System.Windows.Forms.RadioButton();
       this.radioButtonToggle = new System.Windows.Forms.RadioButton();
       this.radioButtonPower = new System.Windows.Forms.RadioButton();
       this.groupBoxAction = new System.Windows.Forms.GroupBox();
+      this.textBoxKeyCode = new System.Windows.Forms.TextBox();
+      this.label1 = new System.Windows.Forms.Label();
+      this.textBoxKeyChar = new System.Windows.Forms.TextBox();
+      this.radioButtonProcess = new System.Windows.Forms.RadioButton();
       this.labelSound = new System.Windows.Forms.Label();
       this.comboBoxSound = new System.Windows.Forms.ComboBox();
-      this.headerLabel = new MediaPortal.UserInterface.Controls.MPGradientLabel();
       this.applyButton = new System.Windows.Forms.Button();
       this.okButton = new System.Windows.Forms.Button();
       this.cancelButton = new System.Windows.Forms.Button();
-      this.beveledLine1 = new MediaPortal.UserInterface.Controls.MPBeveledLine();
       this.groupBoxLayer = new System.Windows.Forms.GroupBox();
       this.comboBoxLayer = new System.Windows.Forms.ComboBox();
       this.labelLayer = new System.Windows.Forms.Label();
@@ -173,7 +184,9 @@ namespace MediaPortal.Configuration
       this.buttonNew = new System.Windows.Forms.Button();
       this.buttonRemove = new System.Windows.Forms.Button();
       this.buttonDefault = new System.Windows.Forms.Button();
-      this.radioButtonProcess = new System.Windows.Forms.RadioButton();
+      this.label2 = new System.Windows.Forms.Label();
+      this.beveledLine1 = new MediaPortal.UserInterface.Controls.MPBeveledLine();
+      this.headerLabel = new MediaPortal.UserInterface.Controls.MPGradientLabel();
       this.groupBoxCondition.SuspendLayout();
       this.groupBoxAction.SuspendLayout();
       this.groupBoxLayer.SuspendLayout();
@@ -182,14 +195,12 @@ namespace MediaPortal.Configuration
       // treeMapping
       // 
       this.treeMapping.AllowDrop = true;
-      this.treeMapping.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-        | System.Windows.Forms.AnchorStyles.Left)));
+      this.treeMapping.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)));
       this.treeMapping.FullRowSelect = true;
       this.treeMapping.HideSelection = false;
-      this.treeMapping.ImageIndex = -1;
       this.treeMapping.Location = new System.Drawing.Point(16, 56);
       this.treeMapping.Name = "treeMapping";
-      this.treeMapping.SelectedImageIndex = -1;
       this.treeMapping.Size = new System.Drawing.Size(312, 330);
       this.treeMapping.TabIndex = 1;
       this.treeMapping.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeMapping_AfterSelect);
@@ -197,7 +208,7 @@ namespace MediaPortal.Configuration
       // radioButtonWindow
       // 
       this.radioButtonWindow.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.radioButtonWindow.Location = new System.Drawing.Point(24, 24);
+      this.radioButtonWindow.Location = new System.Drawing.Point(24, 20);
       this.radioButtonWindow.Name = "radioButtonWindow";
       this.radioButtonWindow.Size = new System.Drawing.Size(88, 16);
       this.radioButtonWindow.TabIndex = 9;
@@ -207,7 +218,7 @@ namespace MediaPortal.Configuration
       // radioButtonFullscreen
       // 
       this.radioButtonFullscreen.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.radioButtonFullscreen.Location = new System.Drawing.Point(112, 24);
+      this.radioButtonFullscreen.Location = new System.Drawing.Point(112, 20);
       this.radioButtonFullscreen.Name = "radioButtonFullscreen";
       this.radioButtonFullscreen.Size = new System.Drawing.Size(88, 16);
       this.radioButtonFullscreen.TabIndex = 10;
@@ -217,7 +228,7 @@ namespace MediaPortal.Configuration
       // radioButtonPlaying
       // 
       this.radioButtonPlaying.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.radioButtonPlaying.Location = new System.Drawing.Point(24, 48);
+      this.radioButtonPlaying.Location = new System.Drawing.Point(24, 44);
       this.radioButtonPlaying.Name = "radioButtonPlaying";
       this.radioButtonPlaying.Size = new System.Drawing.Size(88, 16);
       this.radioButtonPlaying.TabIndex = 11;
@@ -227,7 +238,7 @@ namespace MediaPortal.Configuration
       // radioButtonNoCondition
       // 
       this.radioButtonNoCondition.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.radioButtonNoCondition.Location = new System.Drawing.Point(112, 48);
+      this.radioButtonNoCondition.Location = new System.Drawing.Point(112, 44);
       this.radioButtonNoCondition.Name = "radioButtonNoCondition";
       this.radioButtonNoCondition.Size = new System.Drawing.Size(88, 16);
       this.radioButtonNoCondition.TabIndex = 12;
@@ -238,23 +249,23 @@ namespace MediaPortal.Configuration
       // 
       this.comboBoxCondProperty.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxCondProperty.ForeColor = System.Drawing.Color.Blue;
-      this.comboBoxCondProperty.Location = new System.Drawing.Point(24, 72);
+      this.comboBoxCondProperty.Location = new System.Drawing.Point(24, 68);
       this.comboBoxCondProperty.Name = "comboBoxCondProperty";
       this.comboBoxCondProperty.Size = new System.Drawing.Size(176, 21);
       this.comboBoxCondProperty.Sorted = true;
       this.comboBoxCondProperty.TabIndex = 13;
-      this.comboBoxCondProperty.SelectedIndexChanged += new System.EventHandler(this.comboBoxCondProperty_SelectedIndexChanged);
+      this.comboBoxCondProperty.SelectionChangeCommitted += new System.EventHandler(this.comboBoxCondProperty_SelectionChangeCommitted);
       // 
       // comboBoxCmdProperty
       // 
       this.comboBoxCmdProperty.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxCmdProperty.ForeColor = System.Drawing.Color.DarkGreen;
-      this.comboBoxCmdProperty.Location = new System.Drawing.Point(24, 96);
+      this.comboBoxCmdProperty.Location = new System.Drawing.Point(24, 92);
       this.comboBoxCmdProperty.Name = "comboBoxCmdProperty";
       this.comboBoxCmdProperty.Size = new System.Drawing.Size(176, 21);
       this.comboBoxCmdProperty.Sorted = true;
       this.comboBoxCmdProperty.TabIndex = 14;
-      this.comboBoxCmdProperty.SelectedIndexChanged += new System.EventHandler(this.comboBoxCmdProperty_SelectedIndexChanged);
+      this.comboBoxCmdProperty.SelectionChangeCommitted += new System.EventHandler(this.comboBoxCmdProperty_SelectionChangeCommitted);
       // 
       // groupBoxCondition
       // 
@@ -266,9 +277,9 @@ namespace MediaPortal.Configuration
       this.groupBoxCondition.Controls.Add(this.comboBoxCondProperty);
       this.groupBoxCondition.Enabled = false;
       this.groupBoxCondition.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.groupBoxCondition.Location = new System.Drawing.Point(352, 120);
+      this.groupBoxCondition.Location = new System.Drawing.Point(352, 108);
       this.groupBoxCondition.Name = "groupBoxCondition";
-      this.groupBoxCondition.Size = new System.Drawing.Size(224, 112);
+      this.groupBoxCondition.Size = new System.Drawing.Size(224, 100);
       this.groupBoxCondition.TabIndex = 15;
       this.groupBoxCondition.TabStop = false;
       this.groupBoxCondition.Text = "Condition";
@@ -276,27 +287,17 @@ namespace MediaPortal.Configuration
       // radioButtonAction
       // 
       this.radioButtonAction.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.radioButtonAction.Location = new System.Drawing.Point(24, 24);
+      this.radioButtonAction.Location = new System.Drawing.Point(24, 20);
       this.radioButtonAction.Name = "radioButtonAction";
       this.radioButtonAction.Size = new System.Drawing.Size(88, 16);
       this.radioButtonAction.TabIndex = 14;
       this.radioButtonAction.Text = "Action";
       this.radioButtonAction.Click += new System.EventHandler(this.radioButtonAction_Click);
       // 
-      // radioButtonKey
-      // 
-      this.radioButtonKey.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.radioButtonKey.Location = new System.Drawing.Point(112, 24);
-      this.radioButtonKey.Name = "radioButtonKey";
-      this.radioButtonKey.Size = new System.Drawing.Size(88, 16);
-      this.radioButtonKey.TabIndex = 16;
-      this.radioButtonKey.Text = "Keystroke";
-      this.radioButtonKey.Click += new System.EventHandler(this.radioButtonKey_Click);
-      // 
       // radioButtonActWindow
       // 
       this.radioButtonActWindow.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.radioButtonActWindow.Location = new System.Drawing.Point(24, 48);
+      this.radioButtonActWindow.Location = new System.Drawing.Point(112, 20);
       this.radioButtonActWindow.Name = "radioButtonActWindow";
       this.radioButtonActWindow.Size = new System.Drawing.Size(88, 16);
       this.radioButtonActWindow.TabIndex = 14;
@@ -306,7 +307,7 @@ namespace MediaPortal.Configuration
       // radioButtonToggle
       // 
       this.radioButtonToggle.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.radioButtonToggle.Location = new System.Drawing.Point(112, 48);
+      this.radioButtonToggle.Location = new System.Drawing.Point(112, 44);
       this.radioButtonToggle.Name = "radioButtonToggle";
       this.radioButtonToggle.Size = new System.Drawing.Size(88, 16);
       this.radioButtonToggle.TabIndex = 17;
@@ -316,7 +317,7 @@ namespace MediaPortal.Configuration
       // radioButtonPower
       // 
       this.radioButtonPower.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.radioButtonPower.Location = new System.Drawing.Point(24, 72);
+      this.radioButtonPower.Location = new System.Drawing.Point(24, 44);
       this.radioButtonPower.Name = "radioButtonPower";
       this.radioButtonPower.Size = new System.Drawing.Size(80, 16);
       this.radioButtonPower.TabIndex = 18;
@@ -326,29 +327,73 @@ namespace MediaPortal.Configuration
       // groupBoxAction
       // 
       this.groupBoxAction.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxAction.Controls.Add(this.textBoxKeyCode);
+      this.groupBoxAction.Controls.Add(this.label1);
+      this.groupBoxAction.Controls.Add(this.textBoxKeyChar);
       this.groupBoxAction.Controls.Add(this.radioButtonProcess);
       this.groupBoxAction.Controls.Add(this.labelSound);
       this.groupBoxAction.Controls.Add(this.comboBoxSound);
       this.groupBoxAction.Controls.Add(this.radioButtonAction);
-      this.groupBoxAction.Controls.Add(this.radioButtonKey);
       this.groupBoxAction.Controls.Add(this.radioButtonActWindow);
       this.groupBoxAction.Controls.Add(this.radioButtonToggle);
       this.groupBoxAction.Controls.Add(this.radioButtonPower);
       this.groupBoxAction.Controls.Add(this.comboBoxCmdProperty);
       this.groupBoxAction.Enabled = false;
       this.groupBoxAction.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.groupBoxAction.Location = new System.Drawing.Point(352, 240);
+      this.groupBoxAction.Location = new System.Drawing.Point(352, 216);
       this.groupBoxAction.Name = "groupBoxAction";
-      this.groupBoxAction.Size = new System.Drawing.Size(224, 168);
+      this.groupBoxAction.Size = new System.Drawing.Size(224, 192);
       this.groupBoxAction.TabIndex = 16;
       this.groupBoxAction.TabStop = false;
       this.groupBoxAction.Text = "Action";
       // 
+      // textBoxKeyCode
+      // 
+      this.textBoxKeyCode.Enabled = false;
+      this.textBoxKeyCode.Location = new System.Drawing.Point(152, 124);
+      this.textBoxKeyCode.MaxLength = 3;
+      this.textBoxKeyCode.Name = "textBoxKeyCode";
+      this.textBoxKeyCode.Size = new System.Drawing.Size(48, 20);
+      this.textBoxKeyCode.TabIndex = 24;
+      this.textBoxKeyCode.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textBoxKeyCode_KeyUp);
+      this.textBoxKeyCode.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxKeyCode_KeyPress);
+      // 
+      // label1
+      // 
+      this.label1.AutoSize = true;
+      this.label1.Location = new System.Drawing.Point(24, 128);
+      this.label1.Name = "label1";
+      this.label1.Size = new System.Drawing.Size(28, 13);
+      this.label1.TabIndex = 23;
+      this.label1.Text = "Key:";
+      // 
+      // textBoxKeyChar
+      // 
+      this.textBoxKeyChar.Enabled = false;
+      this.textBoxKeyChar.Location = new System.Drawing.Point(72, 124);
+      this.textBoxKeyChar.MaxLength = 3;
+      this.textBoxKeyChar.Name = "textBoxKeyChar";
+      this.textBoxKeyChar.Size = new System.Drawing.Size(80, 20);
+      this.textBoxKeyChar.TabIndex = 22;
+      this.textBoxKeyChar.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textBoxKeyChar_KeyUp);
+      this.textBoxKeyChar.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxKeyChar_KeyPress);
+      // 
+      // radioButtonProcess
+      // 
+      this.radioButtonProcess.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.radioButtonProcess.Location = new System.Drawing.Point(24, 68);
+      this.radioButtonProcess.Name = "radioButtonProcess";
+      this.radioButtonProcess.Size = new System.Drawing.Size(80, 16);
+      this.radioButtonProcess.TabIndex = 21;
+      this.radioButtonProcess.Text = "Process";
+      this.radioButtonProcess.Click += new System.EventHandler(this.radioButtonProcess_Click);
+      // 
       // labelSound
       // 
-      this.labelSound.Location = new System.Drawing.Point(24, 131);
+      this.labelSound.AutoSize = true;
+      this.labelSound.Location = new System.Drawing.Point(24, 156);
       this.labelSound.Name = "labelSound";
-      this.labelSound.Size = new System.Drawing.Size(40, 16);
+      this.labelSound.Size = new System.Drawing.Size(41, 13);
       this.labelSound.TabIndex = 20;
       this.labelSound.Text = "Sound:";
       // 
@@ -356,27 +401,11 @@ namespace MediaPortal.Configuration
       // 
       this.comboBoxSound.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxSound.ForeColor = System.Drawing.Color.DarkRed;
-      this.comboBoxSound.Location = new System.Drawing.Point(72, 128);
+      this.comboBoxSound.Location = new System.Drawing.Point(72, 153);
       this.comboBoxSound.Name = "comboBoxSound";
       this.comboBoxSound.Size = new System.Drawing.Size(128, 21);
       this.comboBoxSound.TabIndex = 19;
-      this.comboBoxSound.SelectedIndexChanged += new System.EventHandler(this.comboBoxSound_SelectedIndexChanged);
-      // 
-      // headerLabel
-      // 
-      this.headerLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.headerLabel.Caption = "";
-      this.headerLabel.FirstColor = System.Drawing.SystemColors.InactiveCaption;
-      this.headerLabel.Font = new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-      this.headerLabel.LastColor = System.Drawing.Color.WhiteSmoke;
-      this.headerLabel.Location = new System.Drawing.Point(16, 16);
-      this.headerLabel.Name = "headerLabel";
-      this.headerLabel.PaddingLeft = 2;
-      this.headerLabel.Size = new System.Drawing.Size(560, 24);
-      this.headerLabel.TabIndex = 17;
-      this.headerLabel.TextColor = System.Drawing.Color.WhiteSmoke;
-      this.headerLabel.TextFont = new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+      this.comboBoxSound.SelectionChangeCommitted += new System.EventHandler(this.comboBoxSound_SelectionChangeCommitted);
       // 
       // applyButton
       // 
@@ -384,6 +413,7 @@ namespace MediaPortal.Configuration
       this.applyButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.applyButton.Location = new System.Drawing.Point(348, 437);
       this.applyButton.Name = "applyButton";
+      this.applyButton.Size = new System.Drawing.Size(75, 23);
       this.applyButton.TabIndex = 20;
       this.applyButton.Text = "Apply";
       this.applyButton.Click += new System.EventHandler(this.applyButton_Click);
@@ -394,6 +424,7 @@ namespace MediaPortal.Configuration
       this.okButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.okButton.Location = new System.Drawing.Point(428, 437);
       this.okButton.Name = "okButton";
+      this.okButton.Size = new System.Drawing.Size(75, 23);
       this.okButton.TabIndex = 19;
       this.okButton.Text = "OK";
       this.okButton.Click += new System.EventHandler(this.okButton_Click);
@@ -405,17 +436,9 @@ namespace MediaPortal.Configuration
       this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.cancelButton.Location = new System.Drawing.Point(507, 437);
       this.cancelButton.Name = "cancelButton";
+      this.cancelButton.Size = new System.Drawing.Size(75, 23);
       this.cancelButton.TabIndex = 18;
       this.cancelButton.Text = "Cancel";
-      // 
-      // beveledLine1
-      // 
-      this.beveledLine1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.beveledLine1.Location = new System.Drawing.Point(8, 427);
-      this.beveledLine1.Name = "beveledLine1";
-      this.beveledLine1.Size = new System.Drawing.Size(574, 2);
-      this.beveledLine1.TabIndex = 21;
       // 
       // groupBoxLayer
       // 
@@ -426,7 +449,7 @@ namespace MediaPortal.Configuration
       this.groupBoxLayer.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBoxLayer.Location = new System.Drawing.Point(352, 48);
       this.groupBoxLayer.Name = "groupBoxLayer";
-      this.groupBoxLayer.Size = new System.Drawing.Size(224, 64);
+      this.groupBoxLayer.Size = new System.Drawing.Size(224, 52);
       this.groupBoxLayer.TabIndex = 22;
       this.groupBoxLayer.TabStop = false;
       this.groupBoxLayer.Text = "Layer";
@@ -435,17 +458,18 @@ namespace MediaPortal.Configuration
       // 
       this.comboBoxLayer.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxLayer.ForeColor = System.Drawing.Color.DimGray;
-      this.comboBoxLayer.Location = new System.Drawing.Point(80, 24);
+      this.comboBoxLayer.Location = new System.Drawing.Point(80, 20);
       this.comboBoxLayer.Name = "comboBoxLayer";
       this.comboBoxLayer.Size = new System.Drawing.Size(121, 21);
       this.comboBoxLayer.TabIndex = 25;
-      this.comboBoxLayer.SelectedIndexChanged += new System.EventHandler(this.comboBoxLayer_SelectedIndexChanged);
+      this.comboBoxLayer.SelectionChangeCommitted += new System.EventHandler(this.comboBoxLayer_SelectionChangeCommitted);
       // 
       // labelLayer
       // 
-      this.labelLayer.Location = new System.Drawing.Point(24, 27);
+      this.labelLayer.AutoSize = true;
+      this.labelLayer.Location = new System.Drawing.Point(24, 23);
       this.labelLayer.Name = "labelLayer";
-      this.labelLayer.Size = new System.Drawing.Size(40, 16);
+      this.labelLayer.Size = new System.Drawing.Size(36, 13);
       this.labelLayer.TabIndex = 16;
       this.labelLayer.Text = "Layer:";
       // 
@@ -504,23 +528,48 @@ namespace MediaPortal.Configuration
       this.buttonDefault.Text = "Default";
       this.buttonDefault.Click += new System.EventHandler(this.buttonReset_Click);
       // 
-      // radioButtonProcess
+      // label2
       // 
-      this.radioButtonProcess.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.radioButtonProcess.Location = new System.Drawing.Point(112, 72);
-      this.radioButtonProcess.Name = "radioButtonProcess";
-      this.radioButtonProcess.Size = new System.Drawing.Size(80, 16);
-      this.radioButtonProcess.TabIndex = 21;
-      this.radioButtonProcess.Text = "Process";
-      this.radioButtonProcess.Click += new System.EventHandler(this.radioButtonProcess_Click);
+      this.label2.AutoSize = true;
+      this.label2.BackColor = System.Drawing.Color.Transparent;
+      this.label2.Location = new System.Drawing.Point(328, 374);
+      this.label2.Name = "label2";
+      this.label2.Size = new System.Drawing.Size(13, 13);
+      this.label2.TabIndex = 29;
+      this.label2.Text = "+";
+      this.label2.Click += new System.EventHandler(this.label2_Click);
       // 
-      // HCWMappingForm
+      // beveledLine1
       // 
-      this.AcceptButton = this.okButton;
+      this.beveledLine1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.beveledLine1.Location = new System.Drawing.Point(8, 427);
+      this.beveledLine1.Name = "beveledLine1";
+      this.beveledLine1.Size = new System.Drawing.Size(574, 2);
+      this.beveledLine1.TabIndex = 21;
+      // 
+      // headerLabel
+      // 
+      this.headerLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.headerLabel.Caption = "";
+      this.headerLabel.FirstColor = System.Drawing.SystemColors.InactiveCaption;
+      this.headerLabel.Font = new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.headerLabel.LastColor = System.Drawing.Color.WhiteSmoke;
+      this.headerLabel.Location = new System.Drawing.Point(16, 16);
+      this.headerLabel.Name = "headerLabel";
+      this.headerLabel.PaddingLeft = 2;
+      this.headerLabel.Size = new System.Drawing.Size(560, 24);
+      this.headerLabel.TabIndex = 17;
+      this.headerLabel.TextColor = System.Drawing.Color.WhiteSmoke;
+      this.headerLabel.TextFont = new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      // 
+      // InputMappingForm
+      // 
       this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
       this.AutoScroll = true;
-      this.CancelButton = this.cancelButton;
       this.ClientSize = new System.Drawing.Size(592, 470);
+      this.Controls.Add(this.label2);
       this.Controls.Add(this.treeMapping);
       this.Controls.Add(this.buttonDefault);
       this.Controls.Add(this.buttonRemove);
@@ -536,13 +585,16 @@ namespace MediaPortal.Configuration
       this.Controls.Add(this.groupBoxCondition);
       this.Controls.Add(this.groupBoxLayer);
       this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-      this.Name = "HCWMappingForm";
+      this.Name = "InputMappingForm";
       this.ShowInTaskbar = false;
       this.Text = "MediaPortal - Setup";
       this.groupBoxCondition.ResumeLayout(false);
       this.groupBoxAction.ResumeLayout(false);
+      this.groupBoxAction.PerformLayout();
       this.groupBoxLayer.ResumeLayout(false);
+      this.groupBoxLayer.PerformLayout();
       this.ResumeLayout(false);
+      this.PerformLayout();
 
     }
     #endregion
@@ -586,8 +638,8 @@ namespace MediaPortal.Configuration
         
           foreach (XmlNode nodeAction in listActions)
           {
-            string conditionString = "";
-            string commandString = "";
+            string conditionString = string.Empty;
+            string commandString = string.Empty;
 
             string condition   = nodeAction.Attributes["condition"].Value.ToUpper();
             string conProperty = nodeAction.Attributes["conproperty"].Value.ToUpper();
@@ -681,16 +733,32 @@ namespace MediaPortal.Configuration
             #endregion
 
             TreeNode conditionNode = new TreeNode(conditionString);
-            TreeNode commandNode = new TreeNode(commandString);
             conditionNode.Tag = new Data("CONDITION", nodeAction.Attributes["condition"].Value, nodeAction.Attributes["conproperty"].Value);
-            commandNode.Tag = new Data("COMMAND", nodeAction.Attributes["command"].Value, nodeAction.Attributes["cmdproperty"].Value);
-            commandNode.ForeColor = Color.DarkGreen;
-            conditionNode.ForeColor = Color.Blue;
-            conditionNode.Nodes.Add(commandNode);
-          
+            if (commandString == "ACTION_KEY_PRESSED")
+            {
+              string cmdKeyChar = nodeAction.Attributes["cmdkeychar"].Value;
+              string cmdKeyCode = nodeAction.Attributes["cmdkeycode"].Value;
+              TreeNode commandNode = new TreeNode(string.Format("ACTION_KEY_PRESSED: {0} [{1}]", cmdKeyChar, cmdKeyCode));
+
+              Key key = new Key(Convert.ToInt32(cmdKeyChar), Convert.ToInt32(cmdKeyCode));
+
+              commandNode.Tag = new Data("COMMAND", "KEY", key);
+              commandNode.ForeColor = Color.DarkGreen;
+              conditionNode.ForeColor = Color.Blue;
+              conditionNode.Nodes.Add(commandNode);
+            }
+            else
+            {
+              TreeNode commandNode = new TreeNode(commandString);
+              commandNode.Tag = new Data("COMMAND", nodeAction.Attributes["command"].Value, nodeAction.Attributes["cmdproperty"].Value);
+              commandNode.ForeColor = Color.DarkGreen;
+              conditionNode.ForeColor = Color.Blue;
+              conditionNode.Nodes.Add(commandNode);
+            }
+
             TreeNode soundNode = new TreeNode(sound);
             soundNode.Tag = new Data("SOUND", null, nodeAction.Attributes["sound"].Value);
-            if (soundNode.Text == "")
+            if (soundNode.Text == string.Empty)
               soundNode.Text = "No Sound";
             soundNode.ForeColor = Color.DarkRed;
             conditionNode.Nodes.Add(soundNode);
@@ -707,21 +775,25 @@ namespace MediaPortal.Configuration
         if (listRemotes.Count == 1)
           remoteNode.Expand();
       }
+      changedSettings = false;
     }
 
     bool SaveMapping(string xmlFile)
     {
+#if !DEBUG
       try
+#endif
       {
         DirectoryInfo dir = Directory.CreateDirectory("InputDeviceMappings\\custom");
       }
+#if !DEBUG
       catch
       {
         Log.Write("MAP: Error accessing directory \"InputDeviceMappings\\custom\"");
       }
-      DialogResult result = MessageBox.Show(this, "Information:\n\nThere is no plausibility check implemented in this version.\nMake sure your mappings are correct.\n\nThis is just an information, settings will be saved.",
-        "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
       try
+#endif
       {
         XmlTextWriter writer = new XmlTextWriter("InputDeviceMappings\\custom\\" + xmlFile, System.Text.Encoding.UTF8);
         writer.Formatting = Formatting.Indented;
@@ -729,16 +801,16 @@ namespace MediaPortal.Configuration
         writer.IndentChar = (char)9;
         writer.WriteStartDocument(true);
         writer.WriteStartElement("mappings"); // <mappings>
-        writer.WriteAttributeString("version", "2");
+        writer.WriteAttributeString("version", "3");
         foreach (TreeNode remoteNode in treeMapping.Nodes)
         {
           writer.WriteStartElement("remote"); // <remote>
-          writer.WriteAttributeString("family", ((Data)remoteNode.Tag).Value);
+          writer.WriteAttributeString("family", (string)((Data)remoteNode.Tag).Value);
           foreach (TreeNode buttonNode in remoteNode.Nodes)
           {
             writer.WriteStartElement("button"); // <button>
-            writer.WriteAttributeString("name", ((Data)buttonNode.Tag).Parameter);
-            writer.WriteAttributeString("code", ((Data)buttonNode.Tag).Value);
+            writer.WriteAttributeString("name", (string)((Data)buttonNode.Tag).Parameter);
+            writer.WriteAttributeString("code", (string)((Data)buttonNode.Tag).Value);
 
             foreach (TreeNode layerNode in buttonNode.Nodes)
             {
@@ -747,30 +819,64 @@ namespace MediaPortal.Configuration
                 string layer;
                 string condition;
                 string conProperty;
-                string command = "";
-                string cmdProperty = "";
-                string sound = "";
+                string command = string.Empty;
+                string cmdProperty = string.Empty;
+                string cmdKeyChar = string.Empty;
+                string cmdKeyCode = string.Empty;
+                string sound = string.Empty;
                 foreach (TreeNode commandNode in conditionNode.Nodes)
                 {
-                  if (((Data)commandNode.Tag).Type == "COMMAND")
+                  switch (((Data)commandNode.Tag).Type)
                   {
-                    command = ((Data)commandNode.Tag).Parameter;
-                    cmdProperty = ((Data)commandNode.Tag).Value;
-                  }
-                  else
-                  {
-                    sound = ((Data)commandNode.Tag).Value;
+                    case "COMMAND":
+                      {
+                        command = (string)((Data)commandNode.Tag).Parameter;
+                        if (command != "KEY")
+                          cmdProperty = (string)((Data)commandNode.Tag).Value;
+                        else
+                        {
+                          command = "ACTION";
+                          Key key = (Key)((Data)commandNode.Tag).Value;
+                          cmdProperty = "93";
+                          cmdKeyChar = key.KeyChar.ToString();
+                          cmdKeyCode = key.KeyCode.ToString();
+                        }
+                      }
+                      break;
+                    case "SOUND":
+                      sound = (string)((Data)commandNode.Tag).Value;
+                      break;
                   }
                 }
-                condition = ((Data)conditionNode.Tag).Parameter;
-                conProperty = ((Data)conditionNode.Tag).Value;
-                layer = ((Data)layerNode.Tag).Value;
+                condition = (string)((Data)conditionNode.Tag).Parameter;
+                conProperty = (string)((Data)conditionNode.Tag).Value;
+                layer = (string)((Data)layerNode.Tag).Value;
                 writer.WriteStartElement("action"); // <action>
                 writer.WriteAttributeString("layer",       layer);
                 writer.WriteAttributeString("condition",   condition);
                 writer.WriteAttributeString("conproperty", conProperty);
                 writer.WriteAttributeString("command",     command);
                 writer.WriteAttributeString("cmdproperty", cmdProperty);
+                if (cmdProperty == Convert.ToInt32(Action.ActionType.ACTION_KEY_PRESSED).ToString())
+                {
+                  if (cmdKeyChar != string.Empty)
+                  {
+                    writer.WriteAttributeString("cmdkeychar", cmdKeyChar);
+                  }
+                  else
+                  {
+                    writer.WriteAttributeString("cmdkeychar", "0");
+                  }
+                  if (cmdKeyCode != string.Empty)
+                  {
+                    writer.WriteAttributeString("cmdkeycode", cmdKeyCode);
+                  }
+                  else
+                  {
+                    writer.WriteAttributeString("cmdkeychar", "0");
+                  }
+                  
+                }
                 writer.WriteAttributeString("sound",       sound);
                 writer.WriteEndElement(); // </action>
               }
@@ -782,13 +888,16 @@ namespace MediaPortal.Configuration
         writer.WriteEndElement(); // </mapping>
         writer.WriteEndDocument();
         writer.Close();
+        changedSettings = false;
         return true;
       }
-      catch
+#if !DEBUG
+      catch (Exception ex)
       {
-        Log.Write("MAP: Error saving mapping to XML file");
+        Log.Write("MAP: Error saving mapping to XML file: {0}", ex.Message);
         return false;
       }
+#endif
     }
 
     TreeNode getNode(string type)
@@ -802,7 +911,7 @@ namespace MediaPortal.Configuration
       switch (type)
       {
         case "COMMAND":
-          if (data.Type == "SOUND")
+          if ((data.Type == "SOUND") || (data.Type == "KEY"))
           {
             node = node.Parent;
             foreach (TreeNode subNode in node.Nodes)
@@ -823,7 +932,7 @@ namespace MediaPortal.Configuration
           }
           break;
         case "SOUND":
-          if (data.Type == "COMMAND")
+          if ((data.Type == "COMMAND") || (data.Type == "KEY"))
           {
             node = node.Parent;
             foreach (TreeNode subNode in node.Nodes)
@@ -844,17 +953,17 @@ namespace MediaPortal.Configuration
           }
           break;
         case "CONDITION":
-          if ((data.Type == "SOUND") || (data.Type == "COMMAND"))
+          if ((data.Type == "SOUND") || (data.Type == "COMMAND") || (data.Type == "KEY"))
             return node.Parent;
           break;
         case "LAYER":
-          if ((data.Type == "SOUND") || (data.Type == "COMMAND"))
+          if ((data.Type == "SOUND") || (data.Type == "COMMAND") || (data.Type == "KEY"))
             return node.Parent.Parent;
           else if (data.Type == "CONDITION")
             return node.Parent;
           break;
         case "BUTTON":
-          if ((data.Type == "SOUND") || (data.Type == "COMMAND"))
+          if ((data.Type == "SOUND") || (data.Type == "COMMAND") || (data.Type == "KEY"))
             return node.Parent.Parent.Parent;
           else if (data.Type == "CONDITION")
             return node.Parent.Parent;
@@ -862,7 +971,7 @@ namespace MediaPortal.Configuration
             return node.Parent;
           break;
         case "REMOTE":
-          if ((data.Type == "SOUND") || (data.Type == "COMMAND"))
+          if ((data.Type == "SOUND") || (data.Type == "COMMAND") || (data.Type == "KEY"))
             return node.Parent.Parent.Parent.Parent;
           else if (data.Type == "CONDITION")
             return node.Parent.Parent.Parent;
@@ -874,7 +983,7 @@ namespace MediaPortal.Configuration
       }
 
       #endregion
-      return node;
+      return null;
     }
 
     private void treeMapping_AfterSelect(object sender, System.Windows.Forms.TreeViewEventArgs e)
@@ -907,6 +1016,7 @@ namespace MediaPortal.Configuration
           return;
         case "COMMAND":
         case "SOUND":
+        case "KEY":
         case "CONDITION":
         {
           groupBoxCondition.Enabled = true;
@@ -921,7 +1031,7 @@ namespace MediaPortal.Configuration
           else
             comboBoxLayer.SelectedIndex = Convert.ToInt32(((Data)node.Parent.Tag).Value);
 
-          switch (data.Parameter)
+          switch ((string)data.Parameter)
           {
             case "WINDOW":
               radioButtonWindow.Checked = true;
@@ -939,7 +1049,7 @@ namespace MediaPortal.Configuration
             case "PLAYER":
               radioButtonPlaying.Checked = true;
               comboBoxCondProperty.Enabled = true;
-              UpdateCombo(ref comboBoxCondProperty, playerList, data.Value);
+              UpdateCombo(ref comboBoxCondProperty, playerList, (string)data.Value);
               break;
             case "*":
               comboBoxCondProperty.Text = "none";
@@ -954,56 +1064,78 @@ namespace MediaPortal.Configuration
             switch (data.Type)
             {
               case "SOUND":
-                if (data.Value != "")
+                if ((string)data.Value != string.Empty)
                   comboBoxSound.SelectedItem = data.Value;
                 else
                   comboBoxSound.SelectedItem = "none";
                 break;
               case "COMMAND":
-              switch (data.Parameter)
+                switch ((string)data.Parameter)
               {
                 case "ACTION":
                   comboBoxCmdProperty.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
                   radioButtonAction.Checked = true;
                   comboBoxSound.Enabled = true;
                   comboBoxCmdProperty.Enabled = true;
+                  textBoxKeyChar.Enabled = false;
+                  textBoxKeyCode.Enabled = false;
+                  textBoxKeyChar.Text = "";
+                  textBoxKeyCode.Text = "";
                   UpdateCombo(ref comboBoxCmdProperty, actionList, Enum.GetName(typeof(Action.ActionType), Convert.ToInt32(data.Value)));
                   break;
                 case "KEY":
-                  comboBoxCmdProperty.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDown;
-                  radioButtonKey.Checked = true;
-                  comboBoxSound.Enabled = false;
-                  comboBoxSound.Text = "none";
+                  comboBoxCmdProperty.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+                  radioButtonAction.Checked = true;
+                  textBoxKeyChar.Enabled = true;
+                  textBoxKeyCode.Enabled = true;
+                  textBoxKeyChar.Text = ((Key)data.Value).KeyChar.ToString();
+                  textBoxKeyCode.Text = ((Key)data.Value).KeyCode.ToString();
                   comboBoxCmdProperty.Enabled = true;
-                  UpdateCombo(ref comboBoxCmdProperty, keyList, data.Value);
+                  UpdateCombo(ref comboBoxCmdProperty, actionList, "ACTION_KEY_PRESSED");
                   break;
                 case "WINDOW":
                   comboBoxCmdProperty.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
                   radioButtonActWindow.Checked = true;
                   comboBoxSound.Enabled = true;
                   comboBoxCmdProperty.Enabled = true;
+                  textBoxKeyChar.Enabled = false;
+                  textBoxKeyCode.Enabled = false;
+                  textBoxKeyChar.Text = "";
+                  textBoxKeyCode.Text = "";
                   UpdateCombo(ref comboBoxCmdProperty, windowsList, Enum.GetName(typeof(GUIWindow.Window), Convert.ToInt32(data.Value)));
                   break;
                 case "TOGGLE":
                   radioButtonToggle.Checked = true;
                   comboBoxSound.Enabled = true;
                   comboBoxCmdProperty.Enabled = false;
+                  textBoxKeyChar.Enabled = false;
+                  textBoxKeyCode.Enabled = false;
+                  textBoxKeyChar.Text = "";
+                  textBoxKeyCode.Text = "";
                   comboBoxCmdProperty.Items.Clear();
-                  comboBoxCmdProperty.Text = "";
+                  comboBoxCmdProperty.Text = string.Empty;
                   break;
                 case "POWER":
                   comboBoxCmdProperty.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
                   radioButtonPower.Checked = true;
                   comboBoxSound.Enabled = true;
                   comboBoxCmdProperty.Enabled = true;
-                  UpdateCombo(ref comboBoxCmdProperty, powerList, data.Value);
+                  textBoxKeyChar.Enabled = false;
+                  textBoxKeyCode.Enabled = false;
+                  textBoxKeyChar.Text = "";
+                  textBoxKeyCode.Text = "";
+                  UpdateCombo(ref comboBoxCmdProperty, powerList, (string)data.Value);
                   break;
                 case "PROCESS":
                   comboBoxCmdProperty.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
                   radioButtonProcess.Checked = true;
                   comboBoxSound.Enabled = true;
                   comboBoxCmdProperty.Enabled = true;
-                  UpdateCombo(ref comboBoxCmdProperty, processList, data.Value);
+                  textBoxKeyChar.Enabled = false;
+                  textBoxKeyCode.Enabled = false;
+                  textBoxKeyChar.Text = "";
+                  textBoxKeyCode.Text = "";
+                  UpdateCombo(ref comboBoxCmdProperty, processList, (string)data.Value);
                   break;
               }
                 break;
@@ -1031,6 +1163,7 @@ namespace MediaPortal.Configuration
       Data data = new Data("CONDITION", "WINDOW", "-1");
       node.Tag = data;
       UpdateCombo(ref comboBoxCondProperty, windowsList, Enum.GetName(typeof(GUIWindow.Window), Convert.ToInt32(data.Value)));
+      changedSettings = true;
     }
 
     private void radioButtonFullscreen_Click(object sender, System.EventArgs e)
@@ -1040,6 +1173,7 @@ namespace MediaPortal.Configuration
       Data data = new Data("CONDITION", "FULLSCREEN", "true");
       node.Tag = data;
       UpdateCombo(ref comboBoxCondProperty, fullScreenList, "Fullscreen");
+      changedSettings = true;
     }
 
     private void radioButtonPlaying_Click(object sender, System.EventArgs e)
@@ -1049,6 +1183,7 @@ namespace MediaPortal.Configuration
       Data data = new Data("CONDITION", "PLAYER", "TV");
       node.Tag = data;
       UpdateCombo(ref comboBoxCondProperty, playerList, "TV");
+      changedSettings = true;
     }
 
     private void radioButtonNoCondition_Click(object sender, System.EventArgs e)
@@ -1060,6 +1195,7 @@ namespace MediaPortal.Configuration
       Data data = new Data("CONDITION", "*", null);
       node.Tag = data;
       node.Text = "No Condition";
+      changedSettings = true;
     }
 
     private void radioButtonAction_Click(object sender, System.EventArgs e)
@@ -1071,6 +1207,7 @@ namespace MediaPortal.Configuration
       Data data = new Data("COMMAND", "ACTION", "0");
       node.Tag = data;
       UpdateCombo(ref comboBoxCmdProperty, actionList, Enum.GetName(typeof(Action.ActionType), Convert.ToInt32(data.Value)));
+      changedSettings = true;
     }
 
     private void radioButtonActWindow_Click(object sender, System.EventArgs e)
@@ -1082,21 +1219,7 @@ namespace MediaPortal.Configuration
       Data data = new Data("COMMAND", "WINDOW", "-1");
       node.Tag = data;
       UpdateCombo(ref comboBoxCmdProperty, windowsList, Enum.GetName(typeof(GUIWindow.Window), Convert.ToInt32(data.Value)));
-    }
-
-    private void radioButtonKey_Click(object sender, System.EventArgs e)
-    {
-      comboBoxCmdProperty.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDown;
-      comboBoxSound.Enabled = false;
-      comboBoxSound.Text = "none";
-      comboBoxCmdProperty.Enabled = true;
-      TreeNode node = getNode("COMMAND");
-      Data data = new Data("COMMAND", "KEY", "{ENTER}");
-      node.Tag = data;
-      UpdateCombo(ref comboBoxCmdProperty, keyList, data.Value);
-      node = getNode("SOUND");
-      node.Tag = new Data("SOUND", null, "");
-      node.Text = "No Sound";
+      changedSettings = true;
     }
 
     private void radioButtonToggle_Click(object sender, System.EventArgs e)
@@ -1109,6 +1232,7 @@ namespace MediaPortal.Configuration
       Data data = new Data("COMMAND", "TOGGLE", "-1");
       node.Tag = data;
       node.Text = "Toggle Layer";
+      changedSettings = true;
     }
 
     private void radioButtonPower_Click(object sender, System.EventArgs e)
@@ -1119,7 +1243,7 @@ namespace MediaPortal.Configuration
       TreeNode node = getNode("COMMAND");
       Data data = new Data("COMMAND", "POWER", "EXIT");
       node.Tag = data;
-      switch (data.Value)
+      switch ((string)data.Value)
       {
         case "EXIT":
           node.Text = "Exit MediaPortal";
@@ -1137,7 +1261,8 @@ namespace MediaPortal.Configuration
           node.Text = "Hibernate Windows";
           break;
       }
-      UpdateCombo(ref comboBoxCmdProperty, powerList, data.Value);
+      UpdateCombo(ref comboBoxCmdProperty, powerList, (string)data.Value);
+      changedSettings = true;
     }
 
     private void radioButtonProcess_Click(object sender, System.EventArgs e)
@@ -1148,7 +1273,7 @@ namespace MediaPortal.Configuration
       TreeNode node = getNode("COMMAND");
       Data data = new Data("COMMAND", "PROCESS", "CLOSE");
       node.Tag = data;
-      switch (data.Value)
+      switch ((string)data.Value)
       {
         case "CLOSE":
           node.Text = "Close Process";
@@ -1157,139 +1282,21 @@ namespace MediaPortal.Configuration
           node.Text = "Kill Process";
           break;
       }
-      UpdateCombo(ref comboBoxCmdProperty, processList, data.Value);
+      UpdateCombo(ref comboBoxCmdProperty, processList, (string)data.Value);
+      changedSettings = true;
     }
 
     private void okButton_Click(object sender, System.EventArgs e)
     {
-      SaveMapping(inputClassName + ".xml");
+      if (changedSettings)
+        SaveMapping(inputClassName + ".xml");
       this.Close();
-    }
-
-    private void comboBoxSound_SelectedIndexChanged(object sender, System.EventArgs e)
-    {
-      if (comboBoxSound.Enabled)
-      {
-        TreeNode node = getNode("SOUND");
-        node.Text = (string)comboBoxSound.SelectedItem;
-        if (node.Text == "No Sound")
-          node.Tag = new Data("SOUND", null, "");
-        else
-          node.Tag = new Data("SOUND", null, (string)comboBoxSound.SelectedItem);
-      }
-    }
-
-    private void comboBoxCmdProperty_SelectedIndexChanged(object sender, System.EventArgs e)
-    {
-      TreeNode node = getNode("COMMAND");
-      Data data = (Data)node.Tag;
-      switch (data.Parameter)
-      {
-        case "ACTION":
-          node.Tag = new Data("COMMAND", "ACTION", (int)Enum.Parse(typeof(Action.ActionType), (string)comboBoxCmdProperty.SelectedItem));
-          node.Text = (string)comboBoxCmdProperty.SelectedItem;
-          break;
-        case "WINDOW":
-          node.Tag = new Data("COMMAND", "WINDOW", (int)Enum.Parse(typeof(GUIWindow.Window), (string)comboBoxCmdProperty.SelectedItem));
-          node.Text = (string)comboBoxCmdProperty.SelectedItem;
-          break;
-        case "KEY":
-          node.Tag = new Data("COMMAND", "KEY", (string)comboBoxCmdProperty.SelectedItem);
-          node.Text = "Key \"" + (string)comboBoxCmdProperty.SelectedItem + "\"";
-          break;
-        case "POWER":
-        {
-          node.Tag = new Data("COMMAND", "POWER", (string)comboBoxCmdProperty.SelectedItem);
-          switch ((string)comboBoxCmdProperty.SelectedItem)
-          {
-            case "EXIT":
-              node.Text = "Exit MediaPortal";
-              break;
-            case "REBOOT":
-              node.Text = "Reboot Windows";
-              break;
-            case "SHUTDOWN":
-              node.Text = "Shutdown Windows";
-              break;
-            case "STANDBY":
-              node.Text = "Suspend Windows (Standby)";
-              break;
-            case "HIBERNATE":
-              node.Text = "Hibernate Windows";
-              break;
-          }
-          break;
-        }
-        case "PROCESS":
-        {
-          switch ((string)comboBoxCmdProperty.SelectedItem)
-          {
-            case "CLOSE":
-              node.Tag = new Data("COMMAND", "PROCESS", "CLOSE");
-              node.Text = "Close Process";
-              break;
-            case "KILL":
-              node.Tag = new Data("COMMAND", "PROCESS", "KILL");
-              node.Text = "Kill Process";
-              break;
-          }
-          break;
-        }
-      }
-    }
-
-    private void comboBoxCondProperty_SelectedIndexChanged(object sender, System.EventArgs e)
-    {
-      TreeNode node = getNode("CONDITION");
-      Data data = (Data)node.Tag;
-      switch (data.Parameter)
-      {
-        case "WINDOW":
-          node.Tag = new Data("CONDITION", "WINDOW", (int)Enum.Parse(typeof(GUIWindow.Window), (string)comboBoxCondProperty.SelectedItem));
-          node.Text = (string)comboBoxCondProperty.SelectedItem;
-          break;
-        case "FULLSCREEN":
-          if ((string)comboBoxCondProperty.SelectedItem == "Fullscreen")
-            node.Tag = new Data("CONDITION", "FULLSCREEN", "true");
-          else
-            node.Tag = new Data("CONDITION", "FULLSCREEN", "false");
-          node.Text = (string)comboBoxCondProperty.SelectedItem;
-          break;
-        case "PLAYER":
-        {
-          node.Tag = new Data("CONDITION", "PLAYER", (string)comboBoxCondProperty.SelectedItem);
-          switch ((string)comboBoxCondProperty.SelectedItem)
-          {
-            case "TV":
-              node.Text = "TV Playing";
-              break;
-            case "DVD":
-              node.Text = "DVD Playing";
-              break;
-            case "MEDIA":
-              node.Text = "Media Playing";
-              break;
-          }
-          break;
-        }
-        case "*":
-          break;
-      }
-    }
-
-    private void comboBoxLayer_SelectedIndexChanged(object sender, System.EventArgs e)
-    {
-      TreeNode node = getNode("LAYER");
-      node.Tag = new Data("LAYER", null, comboBoxLayer.SelectedIndex);
-      if (comboBoxLayer.SelectedIndex == 0)
-        node.Text = "All Layers";
-      else
-        node.Text = "Layer " + comboBoxLayer.SelectedIndex.ToString();
     }
 
     private void applyButton_Click(object sender, System.EventArgs e)
     {
-      SaveMapping(inputClassName + ".xml");
+      if (changedSettings)
+        SaveMapping(inputClassName + ".xml");
     }
 
     private void buttonUp_Click(object sender, System.EventArgs e)
@@ -1348,10 +1355,16 @@ namespace MediaPortal.Configuration
     {
       TreeNode node = treeMapping.SelectedNode;
       Data data = (Data)node.Tag;
+      if ((data.Type == "COMMAND") || (data.Type == "SOUND") || (data.Type == "CONDITION"))
+      {
+        node = getNode("CONDITION");
+        data = (Data)node.Tag;
+      }
       DialogResult result = MessageBox.Show(this, "Are you sure you want to remove this " + data.Type.ToLower() + "?", "Remove " + data.Type.ToLower(),
         MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
       if (result == DialogResult.Yes)
-        treeMapping.SelectedNode.Remove();
+        node.Remove();
+        //treeMapping.SelectedNode.Remove();
     }
 
     private void buttonNew_Click(object sender, System.EventArgs e)
@@ -1372,7 +1385,7 @@ namespace MediaPortal.Configuration
       newCommand.ForeColor = Color.DarkGreen;
 
       TreeNode newSound = new TreeNode("No Sound");
-      newSound.Tag = new Data("SOUND", "", "");
+      newSound.Tag = new Data("SOUND", string.Empty, string.Empty);
       newSound.ForeColor = Color.DarkRed;
 
       switch (data.Type)
@@ -1416,6 +1429,180 @@ namespace MediaPortal.Configuration
       LoadMapping(inputClassName + ".xml", true);
     }
 
+    private void textBoxKeyCode_KeyPress(object sender, KeyPressEventArgs e)
+    {
+      if (!char.IsNumber(e.KeyChar) && e.KeyChar != 8)
+      {
+        e.Handled = true;
+      }
+    }
+
+    private void textBoxKeyChar_KeyPress(object sender, KeyPressEventArgs e)
+    {
+      if (!char.IsNumber(e.KeyChar) && e.KeyChar != 8)
+      {
+        e.Handled = true;
+      }
+    }
+
+    private void comboBoxLayer_SelectionChangeCommitted(object sender, EventArgs e)
+    {
+      TreeNode node = getNode("LAYER");
+      node.Tag = new Data("LAYER", null, comboBoxLayer.SelectedIndex);
+      if (comboBoxLayer.SelectedIndex == 0)
+        node.Text = "All Layers";
+      else
+        node.Text = "Layer " + comboBoxLayer.SelectedIndex.ToString();
+      changedSettings = true;
+    }
+
+    private void comboBoxCondProperty_SelectionChangeCommitted(object sender, EventArgs e)
+    {
+      TreeNode node = getNode("CONDITION");
+      Data data = (Data)node.Tag;
+      switch ((string)data.Parameter)
+      {
+        case "WINDOW":
+          node.Tag = new Data("CONDITION", "WINDOW", (int)Enum.Parse(typeof(GUIWindow.Window), (string)comboBoxCondProperty.SelectedItem));
+          node.Text = (string)comboBoxCondProperty.SelectedItem;
+          break;
+        case "FULLSCREEN":
+          if ((string)comboBoxCondProperty.SelectedItem == "Fullscreen")
+            node.Tag = new Data("CONDITION", "FULLSCREEN", "true");
+          else
+            node.Tag = new Data("CONDITION", "FULLSCREEN", "false");
+          node.Text = (string)comboBoxCondProperty.SelectedItem;
+          break;
+        case "PLAYER":
+          {
+            node.Tag = new Data("CONDITION", "PLAYER", (string)comboBoxCondProperty.SelectedItem);
+            switch ((string)comboBoxCondProperty.SelectedItem)
+            {
+              case "TV":
+                node.Text = "TV Playing";
+                break;
+              case "DVD":
+                node.Text = "DVD Playing";
+                break;
+              case "MEDIA":
+                node.Text = "Media Playing";
+                break;
+            }
+            break;
+          }
+        case "*":
+          break;
+      }
+      changedSettings = true;
+    }
+
+    private void comboBoxCmdProperty_SelectionChangeCommitted(object sender, EventArgs e)
+    {
+      if ((string)comboBoxCmdProperty.SelectedItem == "ACTION_KEY_PRESSED")
+      {
+        textBoxKeyChar.Enabled = true;
+        textBoxKeyCode.Enabled = true;
+      }
+      else
+      {
+        textBoxKeyChar.Enabled = false;
+        textBoxKeyCode.Enabled = false;
+      }
+
+      TreeNode node = getNode("COMMAND");
+      Data data = (Data)node.Tag;
+      switch ((string)data.Parameter)
+      {
+        case "ACTION":
+          if ((string)comboBoxCmdProperty.SelectedItem != "ACTION_KEY_PRESSED")
+          {
+            node.Tag = new Data("COMMAND", "ACTION", (int)Enum.Parse(typeof(Action.ActionType), (string)comboBoxCmdProperty.SelectedItem));
+            node.Text = (string)comboBoxCmdProperty.SelectedItem;
+          }
+          else
+          {
+            textBoxKeyChar.Text = "0";
+            textBoxKeyCode.Text = "0";
+            Key key = new Key(Convert.ToInt32(textBoxKeyChar.Text), Convert.ToInt32(textBoxKeyCode.Text));
+            node.Tag = new Data("COMMAND", "KEY", key);
+            node.Text = string.Format("ACTION_KEY_PRESSED: {0} [{1}]", textBoxKeyChar.Text, textBoxKeyCode.Text);
+          }
+          break;
+        case "WINDOW":
+          node.Tag = new Data("COMMAND", "WINDOW", (int)Enum.Parse(typeof(GUIWindow.Window), (string)comboBoxCmdProperty.SelectedItem));
+          node.Text = (string)comboBoxCmdProperty.SelectedItem;
+          break;
+        case "POWER":
+          node.Tag = new Data("COMMAND", "POWER", (string)comboBoxCmdProperty.SelectedItem);
+          switch ((string)comboBoxCmdProperty.SelectedItem)
+          {
+            case "EXIT":
+              node.Text = "Exit MediaPortal";
+              break;
+            case "REBOOT":
+              node.Text = "Reboot Windows";
+              break;
+            case "SHUTDOWN":
+              node.Text = "Shutdown Windows";
+              break;
+            case "STANDBY":
+              node.Text = "Suspend Windows (Standby)";
+              break;
+            case "HIBERNATE":
+              node.Text = "Hibernate Windows";
+              break;
+          }
+          break;
+        case "PROCESS":
+          switch ((string)comboBoxCmdProperty.SelectedItem)
+          {
+            case "CLOSE":
+              node.Tag = new Data("COMMAND", "PROCESS", "CLOSE");
+              node.Text = "Close Process";
+              break;
+            case "KILL":
+              node.Tag = new Data("COMMAND", "PROCESS", "KILL");
+              node.Text = "Kill Process";
+              break;
+          }
+          break;
+      }
+      changedSettings = true;
+    }
+
+    private void comboBoxSound_SelectionChangeCommitted(object sender, EventArgs e)
+    {
+      TreeNode node = getNode("SOUND");
+      node.Text = (string)comboBoxSound.SelectedItem;
+      if (node.Text == "No Sound")
+        node.Tag = new Data("SOUND", null, string.Empty);
+      else
+        node.Tag = new Data("SOUND", null, (string)comboBoxSound.SelectedItem);
+    }
+
+    private void textBoxKeyChar_KeyUp(object sender, KeyEventArgs e)
+    {
+      string keyChar = textBoxKeyChar.Text;
+      string keyCode = textBoxKeyCode.Text;
+      TreeNode node = getNode("COMMAND");
+      if (keyChar == string.Empty)
+        keyChar = "0";
+      if (keyCode == string.Empty)
+        keyCode = "0";
+      Key key = new Key(Convert.ToInt32(keyChar), Convert.ToInt32(keyCode));
+      node.Tag = new Data("COMMAND", "KEY", key);
+      node.Text = string.Format("ACTION_KEY_PRESSED: {0} [{1}]", keyChar, keyCode);
+    }
+
+    private void textBoxKeyCode_KeyUp(object sender, KeyEventArgs e)
+    {
+      textBoxKeyChar_KeyUp(sender, e);
+    }
+
+    private void label2_Click(object sender, EventArgs e)
+    {
+      treeMapping.SelectedNode.ExpandAll();
+    }
 
 
 //    private TreeNode tn;

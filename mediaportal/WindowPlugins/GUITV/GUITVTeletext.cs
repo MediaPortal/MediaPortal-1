@@ -93,42 +93,10 @@ namespace MediaPortal.GUI.TV
 				case Action.ActionType.ACTION_KEY_PRESSED:
 					if (action.m_key!=null)
 					{
-						if ((char)action.m_key.KeyChar < '0' || (char)action.m_key.KeyChar > '9')
+						if ((char)action.m_key.KeyChar >= '0' || (char)action.m_key.KeyChar <= '9')
 							OnKeyPressed((char)action.m_key.KeyChar);
 					}
 					break;
-
-				case Action.ActionType.REMOTE_0:
-				OnKeyPressed((char)'0');
-				break;
-				case Action.ActionType.REMOTE_1:
-				OnKeyPressed((char)'1');
-				break;
-				case Action.ActionType.REMOTE_2:
-				OnKeyPressed((char)'2');
-				break;
-				case Action.ActionType.REMOTE_3:
-				OnKeyPressed((char)'3');
-				break;
-				case Action.ActionType.REMOTE_4:
-				OnKeyPressed((char)'4');
-				break;
-				case Action.ActionType.REMOTE_5:
-				OnKeyPressed((char)'5');
-				break;
-				case Action.ActionType.REMOTE_6:
-				OnKeyPressed((char)'6');
-				break;
-				case Action.ActionType.REMOTE_7:
-				OnKeyPressed((char)'7');
-				break;
-				case Action.ActionType.REMOTE_8:
-				OnKeyPressed((char)'8');
-				break;
-				case Action.ActionType.REMOTE_9:
-				OnKeyPressed((char)'9');
-				break;
-
 				case Action.ActionType.ACTION_REMOTE_RED_BUTTON:
 					OnKeyPressed((char)'h');
 					break;

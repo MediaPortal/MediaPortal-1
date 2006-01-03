@@ -1,7 +1,7 @@
-#region Copyright (C) 2005 Team MediaPortal
+#region Copyright (C) 2005-2006 Team MediaPortal - Author: mPod
 
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal - Author: mPod
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -34,21 +34,19 @@ using System.Threading;
 using System.IO;
 using System.Diagnostics;
 using Microsoft.Win32;
-using irremote;
+using MediaPortal.GUI.Library;
 
 namespace HCWHelper
 {
   public partial class HCWHelper : Form
   {
-    const int HCWPVR2 = 0x001E;  // 43-Button Remote
-    const int HCWPVR = 0x001F;  // 34-Button Remote
+    const int HCWPVR2  = 0x001E;  // 43-Button Remote
+    const int HCWPVR   = 0x001F;  // 34-Button Remote
     const int WM_TIMER = 0x0113;
 
     private bool cancelWait = false;
     private bool logVerbose = false;
-
-    private static NetHelper.Connection connection = new NetHelper.Connection();
-    private irremote.irremote irremote = new irremote.irremote();
+    private NetHelper.Connection connection;
 
 
     /// <summary>
@@ -58,22 +56,23 @@ namespace HCWHelper
     {
       InitializeComponent();
       notifyIcon.Visible = true;
-
+      using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      {
+        logVerbose = xmlreader.GetValueAsBool("remote", "HCWVerboseLog", false);
+      }
+      connection = new NetHelper.Connection(logVerbose);
       if (connection.Connect(2110))
       {
-        Log("Connected");
+        if (logVerbose) MediaPortal.GUI.Library.Log.Write("HCW Helper: connected");
         irremote.IRSetDllDirectory(GetDllPath());
-
         Thread waitThread = new Thread(new ThreadStart(WaitForConnect));
         waitThread.IsBackground = true;
         waitThread.Priority = ThreadPriority.Highest;
         waitThread.Start();
-
         Thread checkThread = new Thread(new ThreadStart(CheckThread));
         checkThread.IsBackground = true;
         checkThread.Priority = ThreadPriority.Highest;
         checkThread.Start();
-
         connection.ReceiveEvent += new NetHelper.Connection.ReceiveEventHandler(OnReceive);
         connection.DisconnectEvent += new NetHelper.Connection.DisconnectHandler(OnDisconnect);
       }
@@ -87,6 +86,7 @@ namespace HCWHelper
 
     protected override void OnClosing(CancelEventArgs e)
     {
+      if (logVerbose) MediaPortal.GUI.Library.Log.Write("HCW Helper: OnClosing");
       notifyIcon.Icon = notifyIconRed.Icon;
       connection.ReceiveEvent -= new NetHelper.Connection.ReceiveEventHandler(OnReceive);
       connection.DisconnectEvent -= new NetHelper.Connection.DisconnectHandler(OnDisconnect);
@@ -97,7 +97,7 @@ namespace HCWHelper
 
     private void OnDisconnect()
     {
-      Log("Remote disconnected");
+      if (logVerbose) MediaPortal.GUI.Library.Log.Write("HCW Helper: remote disconnected");
       StopIR();
       if (!cancelWait)
       {
@@ -112,21 +112,11 @@ namespace HCWHelper
     private void CheckThread()
     {
       while (!cancelWait && (Process.GetProcessesByName("MediaPortal").Length > 0))
-      {
         Thread.Sleep(1000);
-      }
-      notifyIcon.Icon = notifyIconRed.Icon;
-      StopIR();
-      Application.Exit();
-    }
 
-    /// <summary>
-    /// MP-Log
-    /// </summary>
-    /// <param name="entry"></param>
-    private static void Log(string entry)
-    {
-      connection.Send("LOG", entry);
+      if (logVerbose) MediaPortal.GUI.Library.Log.Write("HCW Helper: MediaPortal is not running");
+      notifyIcon.Icon = notifyIconRed.Icon;
+      this.Close();
     }
 
 
@@ -139,18 +129,17 @@ namespace HCWHelper
       Thread.Sleep(1000);
       if (!connection.IsOnline)
       {
-        Log("Connection not online");
+        MediaPortal.GUI.Library.Log.Write("HCW Helper: connection not online - exiting");
         notifyIcon.Icon = notifyIconRed.Icon;
         Application.Exit();
       }
       else
       {
-        Log("Waiting for connect");
+        if (logVerbose) MediaPortal.GUI.Library.Log.Write("HCW Helper: waiting for connect");
         notifyIcon.Icon = notifyIconYellow.Icon;
         while (!cancelWait && !connection.IsConnected)
-        {
           Thread.Sleep(200);
-        }
+
         if (!cancelWait)
           StartIR();
       }
@@ -168,8 +157,7 @@ namespace HCWHelper
         while ((Process.GetProcessesByName("Ir").Length != 0) && (i < 15))
         {
           i++;
-          if (logVerbose)
-            Log(string.Format("Terminating external control: attempt #{0}", i));
+          if (logVerbose) MediaPortal.GUI.Library.Log.Write("HCW Helper: terminating external control: attempt #{0}", i);
           if (Process.GetProcessesByName("Ir").Length != 0)
           {
             Process.Start(GetHCWPath() + "Ir.exe", "/QUIT");
@@ -177,13 +165,12 @@ namespace HCWHelper
           }
         }
         if (Process.GetProcessesByName("Ir").Length != 0)
-          Log("External control could not be terminated!");
+          MediaPortal.GUI.Library.Log.Write("HCW Helper: external control could not be terminated!");
       }
-
       if (!irremote.IROpen(this.Handle, 0, false, 0))
       {
         notifyIcon.Icon = notifyIconRed.Icon;
-        Log("Connect to IR failed");
+        MediaPortal.GUI.Library.Log.Write("HCW Helper: connect to IR failed");
         Application.Exit();
       }
       else
@@ -192,18 +179,17 @@ namespace HCWHelper
 
 
     /// <summary>
-    /// Unregister app with HCW driver
+    /// Unregister app from HCW driver
     /// </summary>
     private void StopIR()
     {
       try
       {
-        irremote.IRClose(this.Handle, 0);
-        Log("Closing driver successful");
+        if (irremote.IRClose(this.Handle, 0) && logVerbose) MediaPortal.GUI.Library.Log.Write("HCW Helper: closing driver successful");
       }
       catch
       {
-        Log("Closing driver failed");
+        MediaPortal.GUI.Library.Log.Write("HCW Helper: closing driver failed");
       }
       notifyIcon.Icon = notifyIconYellow.Icon;
     }
@@ -214,7 +200,7 @@ namespace HCWHelper
     /// </summary>
     private void OnReceive(NetHelper.Connection.EventArguments e)
     {
-      //Log("Data received");
+      if (logVerbose) MediaPortal.GUI.Library.Log.Write("HCW Helper: received {0}", e.Message);
       foreach (string msg in e.Message.Split('~'))
       {
         switch (msg.Split('|')[0])
@@ -250,31 +236,13 @@ namespace HCWHelper
                 }
                 catch (Exception ex)
                 {
-                  if (logVerbose) Log("Exception: " + ex.Message);
+                  MediaPortal.GUI.Library.Log.Write("HCW Helper: Exception: {0}", ex.Message);
                 }
                 break;
             }
             break;
-
-          case "LOG":
-            logVerbose = System.Convert.ToBoolean(msg.Split('|')[1]);
-            break;
         }
-        Thread.Sleep(100);
       }
-    }
-
-
-    /// <summary>
-    /// Clean up the mess
-    /// </summary>
-    private void Sender_FormClosing(object sender, FormClosingEventArgs e)
-    {
-      Log("Closing form");
-      cancelWait = true;
-      StopIR();
-      connection.ReceiveEvent -= new NetHelper.Connection.ReceiveEventHandler(OnReceive);
-      connection = null;
     }
 
 
@@ -288,8 +256,8 @@ namespace HCWHelper
       {
         case WM_TIMER:
           IntPtr repeatCount = new IntPtr();
-          IntPtr remoteCode = new IntPtr();
-          IntPtr keyCode = new IntPtr();
+          IntPtr remoteCode  = new IntPtr();
+          IntPtr keyCode     = new IntPtr();
           try
           {
             if (irremote.IRGetSystemKeyCode(ref repeatCount, ref remoteCode, ref keyCode))
@@ -307,15 +275,15 @@ namespace HCWHelper
               if (connection.IsConnected)
               {
                 connection.Send("CMD", remoteCommand.ToString());
-                Log("Command sent");
+                if (logVerbose) MediaPortal.GUI.Library.Log.Write("HCW Helper: command sent: {0}", remoteCommand);
               }
               else
-                Log("Command not sent - No connection");
+                MediaPortal.GUI.Library.Log.Write("HCW Helper: command not sent - no connection");
             }
           }
           catch (Exception ex)
           {
-            Log(string.Format("Exception {0}", ex.Message));
+            MediaPortal.GUI.Library.Log.Write("HCW Helper: Exception {0}", ex.Message);
           }
           break;
       }
@@ -375,7 +343,7 @@ namespace HCWHelper
       }
       catch (System.NullReferenceException)
       {
-        Log("Could not find registry entries for driver components! (Not installed?)");
+        MediaPortal.GUI.Library.Log.Write("HCW Helper: Could not find registry entries for driver components! (Not installed?)");
       }
       return dllPath;
     }

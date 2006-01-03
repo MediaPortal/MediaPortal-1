@@ -428,7 +428,7 @@ namespace MediaPortal.Configuration.Sections
 
     private void btnMapping_Click(object sender, System.EventArgs e)
     {
-      HCWMappingForm dlg = new HCWMappingForm("DirectInput");
+      InputMappingForm dlg = new InputMappingForm("DirectInput");
       dlg.ShowDialog(this);    
     }
 

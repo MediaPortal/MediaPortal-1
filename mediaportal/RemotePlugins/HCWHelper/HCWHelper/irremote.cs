@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal - Author: mPod
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal - Author: mPod
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -19,14 +21,16 @@
  *
  */
 
+#endregion
+
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Runtime.InteropServices;
 
-namespace irremote
+namespace HCWHelper
 {
-  class irremote
+  static class irremote
   {
     #region DLL-Imports
 
@@ -108,7 +112,7 @@ namespace irremote
       }
     }
 
-    public bool IRClose(IntPtr WindowHandle, uint Msg)
+    public static bool IRClose(IntPtr WindowHandle, uint Msg)
     {
       try
       {
@@ -120,7 +124,7 @@ namespace irremote
       }
     }
 
-    public bool IRGetSystemKeyCode(ref IntPtr RepeatCount, ref IntPtr RemoteCode, ref IntPtr KeyCode)
+    public static bool IRGetSystemKeyCode(ref IntPtr RepeatCount, ref IntPtr RemoteCode, ref IntPtr KeyCode)
     {
       try
       {
@@ -132,7 +136,7 @@ namespace irremote
       }
     }
 
-    public bool IROpen(IntPtr WindowHandle, uint Msg, bool Verbose, uint IRPort)
+    public static bool IROpen(IntPtr WindowHandle, uint Msg, bool Verbose, uint IRPort)
     {
       try
       {
@@ -144,7 +148,7 @@ namespace irremote
       }
     }
 
-    public bool IRSetDllDirectory(string PathName)
+    public static bool IRSetDllDirectory(string PathName)
     {
       try
       {

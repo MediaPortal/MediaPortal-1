@@ -1,7 +1,7 @@
-#region Copyright (C) 2005 Team MediaPortal
+#region Copyright (C) 2005-2006 Team MediaPortal - Author: mPod
 
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal - Author: mPod
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -29,6 +29,7 @@ using System.Net.Sockets;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Threading;
+using MediaPortal.GUI.Library;
 
 namespace NetHelper
 {
@@ -41,6 +42,7 @@ namespace NetHelper
     private AsyncCallback callBackMethod;
     private int tcpPort;
     private bool isOnline;
+    private bool logVerbose = false;
 
     #endregion
     #region Labels
@@ -62,38 +64,23 @@ namespace NetHelper
     #region Events
 
     public delegate void ReceiveEventHandler(EventArguments e);
-    public delegate void LogHandler(string strLog);
     public delegate void DisconnectHandler();
     public event ReceiveEventHandler ReceiveEvent;
-    public event LogHandler LogEvent;
     public event DisconnectHandler DisconnectEvent;
 
 
     public class EventArguments
     {
       private string message;
-      private DateTime timestamp;
-
       public string Message { get { return message; } }
-      public DateTime Timestamp { get { return timestamp; } }
 
       public EventArguments(string msg)
       {
         message = msg;
-        timestamp = DateTime.Now;
       }
     }
 
     
-    protected virtual void OnLog(string strLog)
-    {
-      if (LogEvent != null)
-      {
-        LogEvent(strLog);
-      }
-    }
-
-
     protected virtual void OnReceive(string strReceived)
     {
       if (ReceiveEvent != null)
@@ -102,10 +89,8 @@ namespace NetHelper
       }
     }
 
-
     #endregion
     #region
-
 
     private class SocketPacket
     {
@@ -116,14 +101,20 @@ namespace NetHelper
 
     ~Connection()
     {
-      OnLog("Shutdown connection");
+      if (logVerbose) MediaPortal.GUI.Library.Log.Write("NetHelper: shutting down connection");
       Close();
+    }
+
+
+    public Connection(bool log)
+    {
+      logVerbose = log;
     }
 
 
     private void OnRemoteDisconnected()
     {
-      OnLog("Remote disconnected");
+      if (logVerbose) MediaPortal.GUI.Library.Log.Write("NetHelper: peer disconnected");
       if (DisconnectEvent != null)
       {
         DisconnectEvent();
@@ -136,7 +127,7 @@ namespace NetHelper
 
     private void OnClientConnect(IAsyncResult asyn)
     {
-      OnLog("Remote connected.");
+      if (logVerbose) MediaPortal.GUI.Library.Log.Write("NetHelper: client connected");
       try
       {
         if (serverSocket != null)
@@ -148,18 +139,17 @@ namespace NetHelper
       }
       catch (ObjectDisposedException)
       {
-        OnLog("OnClientConnect: Socket has been closed");
+        if (logVerbose) MediaPortal.GUI.Library.Log.Write("NetHelper: OnClientConnect: socket has been closed");
       }
       catch (SocketException se)
       {
-        OnLog("OnClientConnect: " + se.Message);
+        MediaPortal.GUI.Library.Log.Write("NetHelper: OnClientConnect: {0}", se.Message);
       }
     }
 
 
     private void OnDataReceived(IAsyncResult asyn)
     {
-      //OnLog("Data received");
       try
       {
         SocketPacket socketData = (SocketPacket)asyn.AsyncState;
@@ -169,21 +159,20 @@ namespace NetHelper
       }
       catch (ObjectDisposedException)
       {
-        OnLog("OnDataReceived: Socket has been closed");
+        if (logVerbose) MediaPortal.GUI.Library.Log.Write("NetHelper: OnDataReceived: socket has been closed");
       }
       catch (SocketException se)
       {
         if (se.ErrorCode == 10054)
           OnRemoteDisconnected();
         else
-          OnLog("OnDataReceived: " + se.Message);
+          MediaPortal.GUI.Library.Log.Write("NetHelper: OnDataReceived: {0}", se.Message);
       }
     }
 
 
     private void WaitForData(System.Net.Sockets.Socket socket)
     {
-      //OnLog("Wait for data");
       try
       {
         if (callBackMethod == null)
@@ -197,14 +186,14 @@ namespace NetHelper
         if (se.ErrorCode == 10054)
           OnRemoteDisconnected();
         else
-          OnLog("WaitForData: " + se.Message);
+          MediaPortal.GUI.Library.Log.Write("NetHelper: WaitForData: {0}", se.Message);
       }
     }
 
 
     public bool Connect(int port)
     {
-      OnLog("Connect");
+      if (logVerbose) MediaPortal.GUI.Library.Log.Write("NetHelper: connecting");
       IPGlobalProperties properties = IPGlobalProperties.GetIPGlobalProperties();
       TcpConnectionInformation[] connections = properties.GetActiveTcpConnections();
 
@@ -214,24 +203,31 @@ namespace NetHelper
           isOnline = false;
           return false;
         }
-
       tcpPort = port;
       IPAddress hostIP = (Dns.GetHostEntry("localhost")).AddressList[0];
       IPEndPoint ep = new IPEndPoint(hostIP, tcpPort);
-
       try
       {
         clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         clientSocket.Connect(ep);
-
         if (clientSocket.Connected)
           WaitForData(clientSocket);
         isOnline = true;
         return true;
       }
-      catch (SocketException)
+      catch (SocketException se)
       {
-
+        switch (se.ErrorCode)
+        {
+          case 10054:
+            OnRemoteDisconnected();
+            break;
+          case 10061:
+            break;
+          default:
+            MediaPortal.GUI.Library.Log.Write("NetHelper: Connect: {1} - {0}", se.Message, se.ErrorCode);
+            break;
+        }
       }
       clientSocket.Close();
       clientSocket = null;
@@ -246,29 +242,30 @@ namespace NetHelper
       }
       catch (SocketException se)
       {
-        OnLog("Connection failed: " + se.Message);
+        MediaPortal.GUI.Library.Log.Write("NetHelper: Connection failed: {0}", se.Message);
         Close();
         isOnline = false;
         return false;
       }
     }
 
+
     public void Send(string type, string send)
     {
       try
       {
         if (clientSocket != null)
-          clientSocket.Send(Encoding.UTF8.GetBytes(string.Format("{0}|{1}~", type, send)));
+          clientSocket.Send(Encoding.UTF8.GetBytes(string.Format("{0}|{1}|{2}~", type, send, DateTime.Now.ToBinary())));
       }
       catch (SocketException se)
       {
-        OnLog("Send: " + se.Message);
+        MediaPortal.GUI.Library.Log.Write("NetHelper: Send: {0}", se.Message);
       }
     }
 
+
     private void Close()
     {
-      //OnLog("Close");
       if (clientSocket != null)
       {
         clientSocket.Close();

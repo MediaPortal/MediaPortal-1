@@ -1,7 +1,7 @@
-#region Copyright (C) 2005 Team MediaPortal
+#region Copyright (C) 2005-2006 Team MediaPortal - Author: mPod
 
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal - Author: mPod
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Threading;
+using MediaPortal.GUI.Library;
 
 namespace HCWHelper
 {
@@ -41,6 +42,7 @@ namespace HCWHelper
     {
       try
       {
+        MediaPortal.GUI.Library.Log.Write("HCW Helper: Starting up");
         Thread.CurrentThread.Priority = ThreadPriority.Highest;
         if ((Process.GetProcessesByName("HCWHelper").Length == 1) && (Process.GetProcessesByName("MediaPortal").Length > 0))
         {
@@ -49,9 +51,12 @@ namespace HCWHelper
           Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.RealTime;
           Application.Run(new HCWHelper());
         }
+        else
+          MediaPortal.GUI.Library.Log.Write("HCW Helper: MediaPortal not running - exiting");
       }
-      catch
+      catch (Exception ex)
       {
+        MediaPortal.GUI.Library.Log.Write("HCW Helper: Main: {0}", ex.Message);
       }
     }
   }

@@ -1,7 +1,7 @@
-#region Copyright (C) 2005 Team MediaPortal
+#region Copyright (C) 2005-2006 Team MediaPortal - Author: mPod
 
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal - Author: mPod
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -41,9 +41,9 @@ namespace MediaPortal
   /// Expects an XML file with mappings on construction
   /// Maps button code numbers to conditions and actions
   /// </summary>
-  public class HCWHandler
+  public class InputHandler
   {
-    int xmlVersion = 2;
+    int xmlVersion = 3;
     ArrayList remote;
     int currentLayer = 1;
 
@@ -63,6 +63,8 @@ namespace MediaPortal
       int    layer;
       string command;
       string cmdProperty;
+      int    cmdKeyChar;
+      int    cmdKeyCode;
       string sound;
 
       public int    Layer       { get { return layer;       } }
@@ -70,15 +72,21 @@ namespace MediaPortal
       public string ConProperty { get { return conProperty; } }
       public string Command     { get { return command;     } }
       public string CmdProperty { get { return cmdProperty; } }
+      public int    CmdKeyChar  { get { return cmdKeyChar;  } }
+      public int    CmdKeyCode  { get { return cmdKeyCode;  } }
       public string Sound       { get { return sound;       } }
 
-      public Mapping(int newLayer, string newCondition, string newConProperty, string newCommand, string newCmdProperty, string newSound)
+      public Mapping(string newLayer, string newCondition, string newConProperty, string newCommand, string newCmdProperty, string newCmdKeyChar, string newCmdKeyCode, string newSound)
       {
-        layer       = newLayer;
+        layer       = Convert.ToInt32(newLayer);
         condition   = newCondition;
         conProperty = newConProperty;
         command     = newCommand;
         cmdProperty = newCmdProperty;
+        if (newCmdKeyChar != string.Empty)
+          cmdKeyChar  = Convert.ToInt32(newCmdKeyChar);
+        if (newCmdKeyCode != string.Empty)
+          cmdKeyCode  = Convert.ToInt32(newCmdKeyCode);
         sound       = newSound;
       }
     }
@@ -142,7 +150,7 @@ namespace MediaPortal
     /// Constructor: Initializes mappings from XML file
     /// </summary>
     /// <param name="xmlFile">XML mapping file</param>
-    public HCWHandler(string xmlFile, out bool result)
+    public InputHandler(string xmlFile, out bool result)
     {
       string path = string.Empty;
       string pathCustom = "InputDeviceMappings\\custom\\" + xmlFile + ".xml";
@@ -180,13 +188,20 @@ namespace MediaPortal
           XmlNodeList listActions = nodeButton.SelectNodes("action");
           foreach (XmlNode nodeAction in listActions)
           {
+            string cmdKeyChar = string.Empty;
+            string cmdKeyCode = string.Empty;
             string condition   = nodeAction.Attributes["condition"].Value.ToUpper();
             string conProperty = nodeAction.Attributes["conproperty"].Value.ToUpper();
             string command     = nodeAction.Attributes["command"].Value.ToUpper();
             string cmdProperty = nodeAction.Attributes["cmdproperty"].Value.ToUpper();
+            if ((command == "ACTION") && (cmdProperty == "93"))
+            {
+              cmdKeyChar = nodeAction.Attributes["cmdkeychar"].Value;
+              cmdKeyCode = nodeAction.Attributes["cmdkeycode"].Value;
+            }
             string sound       = nodeAction.Attributes["sound"].Value;
-            int    layer       = Convert.ToInt32(nodeAction.Attributes["layer"].Value);
-            Mapping conditionMap = new Mapping(layer, condition, conProperty, command, cmdProperty, sound);
+            string layer       = nodeAction.Attributes["layer"].Value;
+            Mapping conditionMap = new Mapping(layer, condition, conProperty, command, cmdProperty, cmdKeyChar, cmdKeyCode, sound);
             mapping.Add(conditionMap);
           }
           RemoteMap remoteMap = new RemoteMap(value, name, mapping);
@@ -246,7 +261,13 @@ namespace MediaPortal
       switch (map.Command)
       {
         case "ACTION":  // execute Action x
-          action = new Action((Action.ActionType)Convert.ToInt32(map.CmdProperty), 0, 0);
+          if (Convert.ToInt32(map.CmdProperty) == Convert.ToInt32(Action.ActionType.ACTION_KEY_PRESSED))
+          {
+            Key key = new Key(map.CmdKeyChar, map.CmdKeyCode);
+            action = new Action(key, (Action.ActionType)Convert.ToInt32(map.CmdProperty), 0, 0);
+          }
+          else 
+            action = new Action((Action.ActionType)Convert.ToInt32(map.CmdProperty), 0, 0);
           GUIGraphicsContext.OnAction(action);
           break;
         case "KEY": // send Key x

@@ -156,7 +156,7 @@
     <Compile Include="HCWRemote\HCWRemote.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="HCWRemote\RemoteHandler.cs">
+    <Compile Include="HCWRemote\InputHandler.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="HID\HIDListener.cs">

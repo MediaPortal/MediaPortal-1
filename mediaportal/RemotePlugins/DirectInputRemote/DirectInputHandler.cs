@@ -40,7 +40,7 @@ namespace MediaPortal
     DirectInputListener diListener = null;
     DeviceList deviceList = null;
     string selectedDeviceGUID = "";
-    HCWHandler diMapper = null;
+    InputHandler diMapper = null;
 
     ArrayList deviceNames = new ArrayList();
     ArrayList deviceGUIDs = new ArrayList();
@@ -684,7 +684,7 @@ namespace MediaPortal
     void CreateMapper()
     {
       bool result;
-      diMapper = new HCWHandler("DirectInput", out result);
+      diMapper = new InputHandler("DirectInput", out result);
     }
 
     void AttachHandlers()

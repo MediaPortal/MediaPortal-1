@@ -53,9 +53,9 @@ namespace MediaPortal.GUI.Library
     {
       _previousDate = DateTime.Now.Date;
       System.IO.Directory.CreateDirectory("log");
-      BackupLogFiles();
+      //BackupLogFiles();
     }
-    static void BackupLogFiles()
+    public static void BackupLogFiles()
     {
       Initialize(LogType.Capture);
       Initialize(LogType.Log);

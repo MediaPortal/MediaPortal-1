@@ -160,7 +160,8 @@ public class MediaPortalApp : D3DApp, IRender
   [STAThread]
   public static void Main()
   {
-    Log.Write("Mediaportal is starting up");
+    Log.BackupLogFiles();
+    Log.Write("MediaPortal is starting up");
 
     System.Windows.Forms.Application.EnableVisualStyles();
     System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);

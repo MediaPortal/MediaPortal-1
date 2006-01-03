@@ -177,21 +177,6 @@ namespace MediaPortal.GUI.Library
             return;
           }
 
-        case Action.ActionType.REMOTE_0:
-        case Action.ActionType.REMOTE_1:
-        case Action.ActionType.REMOTE_2:
-        case Action.ActionType.REMOTE_3:
-        case Action.ActionType.REMOTE_4:
-        case Action.ActionType.REMOTE_5:
-        case Action.ActionType.REMOTE_6:
-        case Action.ActionType.REMOTE_7:
-        case Action.ActionType.REMOTE_8:
-        case Action.ActionType.REMOTE_9:
-          {
-            Press((char)(action.wID - Action.ActionType.REMOTE_0 + 48));
-          }
-          break;
-
         case Action.ActionType.ACTION_KEY_PRESSED:
           if (action.m_key != null)
           {

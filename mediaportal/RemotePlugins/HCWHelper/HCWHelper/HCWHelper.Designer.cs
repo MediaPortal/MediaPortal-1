@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal - Author: mPod
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal - Author: mPod
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 namespace HCWHelper
 {
@@ -133,7 +137,6 @@ namespace HCWHelper
       this.ShowInTaskbar = false;
       this.Text = "MediaPortal HCW Control";
       this.WindowState = System.Windows.Forms.FormWindowState.Minimized;
-      this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Sender_FormClosing);
       this.contextMenuStrip.ResumeLayout(false);
       this.ResumeLayout(false);
 

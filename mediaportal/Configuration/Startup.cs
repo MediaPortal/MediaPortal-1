@@ -77,6 +77,7 @@ namespace MediaPortal.Configuration
 		/// </summary>
 		public void Start()
 		{
+      Log.BackupLogFiles();
 			Form applicationForm = null;
 
 			switch(startupMode)
