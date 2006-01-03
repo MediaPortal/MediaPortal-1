@@ -239,29 +239,41 @@ namespace MediaPortal.GUI.TV
 
 				if(TeletextGrabber.TeletextCache==null)
 					return;
-				
+
+        int hexPage = 0;
 				string topButton=new string(chKey,1);
 				switch(topButton.ToLower())
 				{
 					case "h":
-						acutalPageNumber=TeletextGrabber.TeletextCache.PageRed;
+            hexPage = TeletextGrabber.TeletextCache.PageRed;
 						break;
 					case "j":
-						acutalPageNumber=TeletextGrabber.TeletextCache.PageGreen;
+            hexPage = TeletextGrabber.TeletextCache.PageGreen;
 						break;
 					case "k":
-						acutalPageNumber=TeletextGrabber.TeletextCache.PageYellow;
+            hexPage = TeletextGrabber.TeletextCache.PageYellow;
 						break;
 					case "l":
-						acutalPageNumber=TeletextGrabber.TeletextCache.PageBlue;
+            hexPage = TeletextGrabber.TeletextCache.PageBlue;
 						break;
 				}
-				actualSubPageNumber=0;
-				bmpTeletextPage=TeletextGrabber.TeletextCache.GetPage(acutalPageNumber,actualSubPageNumber);
-				Redraw();
-				Log.Write("dvb-teletext: select page {0} / subpage {1}",Convert.ToString(acutalPageNumber),Convert.ToString(actualSubPageNumber));
-				inputLine="";
-				return;
+        int mag = hexPage / 0x100;
+        hexPage -= mag * 0x100;
+
+        int tens = hexPage / 0x10;
+        hexPage -= tens * 0x10;
+
+        int pageNr = mag*100+tens*10+hexPage;
+        if (pageNr >= 100 && pageNr <= 899)
+        {
+          acutalPageNumber = pageNr;
+          actualSubPageNumber = 0;
+          bmpTeletextPage = TeletextGrabber.TeletextCache.GetPage(acutalPageNumber, actualSubPageNumber);
+          Redraw();
+          Log.Write("dvb-teletext: select page {0} / subpage {1}", Convert.ToString(acutalPageNumber), Convert.ToString(actualSubPageNumber));
+          inputLine = "";
+          return;
+        }
 			}
 			if((chKey>='0'&& chKey <='9') || (chKey=='+' || chKey=='-')) //navigation
 			{
