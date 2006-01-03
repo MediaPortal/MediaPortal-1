@@ -73,6 +73,13 @@ namespace MediaPortal.TV.Teletext
 
         if (packetNumber == 0)
         {
+          if (PageUpdatedEvent != null)
+          {
+            if (_magazineCurrentPageNr[magazine] != -1 && _magazineCurrentSubPage[magazine] != -1)
+            {
+              PageUpdatedEvent(_magazineCurrentPageNr[magazine], _magazineCurrentSubPage[magazine]);
+            }
+          }
           // start of new teletext page...
           bool headerError = false;
           for (int i = 2; i <= 9; ++i)
@@ -163,8 +170,6 @@ namespace MediaPortal.TV.Teletext
             if (ptrPage != IntPtr.Zero)
             {
               Marshal.Copy(rowData, off, new IntPtr(ptrPage.ToInt32() + (packetNumber * 42)), 42);
-              if (PageUpdatedEvent != null)
-                PageUpdatedEvent(_magazineCurrentPageNr[magazine], _magazineCurrentSubPage[magazine]);
             }
           }
         }

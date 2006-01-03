@@ -52,7 +52,7 @@ namespace MediaPortal.TV.Teletext
     FastTextDecoder _fastTextDecoder = new FastTextDecoder();
     ToptextDecoder _topTextDecoder = new ToptextDecoder();
 
-    int _currentPageNumber = 0;
+    int _currentPageNumber = 0x100;
     int _currentSubPageNumber = 0;
 
     byte[] analogBuffer = new byte[2048];
