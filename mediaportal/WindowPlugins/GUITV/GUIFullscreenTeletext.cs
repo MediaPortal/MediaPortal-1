@@ -170,12 +170,13 @@ namespace MediaPortal.GUI.TV
 		{
 			base.OnPageLoad ();
 
-			
+      acutalPageNumber = 100;
+      actualSubPageNumber = 0;
 			TeletextGrabber.Grab=true;
 			TeletextGrabber.TeletextCache.PageUpdatedEvent+=new MediaPortal.TV.Teletext.DVBTeletext.PageUpdated(dvbTeletextParser_PageUpdatedEvent);
 			TeletextGrabber.TeletextCache.TransparentMode=true;
-	
-			ShowMessage(100,0);
+
+      ShowMessage(acutalPageNumber, actualSubPageNumber);
 					
 			
 			if(imgTeletext!=null)
@@ -186,8 +187,6 @@ namespace MediaPortal.GUI.TV
 				imgTeletext.YPosition=GUIGraphicsContext.OverScanTop;
 				TeletextGrabber.TeletextCache.SetPageSize(imgTeletext.Width,imgTeletext.Height);
 			}
-			acutalPageNumber=100;
-			actualSubPageNumber=0;
 			GetNewPage();
 		}
 
@@ -364,6 +363,8 @@ namespace MediaPortal.GUI.TV
 		{
 			if(isPageDirty==true)
 			{
+        if (actualSubPageNumber < 100) actualSubPageNumber = 100;
+        if (actualSubPageNumber > 899) actualSubPageNumber = 899;
 				Log.Write("dvb-teletext page updated. {0:X}/{1}",acutalPageNumber,actualSubPageNumber);
 				int NumberOfSubpages=TeletextGrabber.TeletextCache.NumberOfSubpages(acutalPageNumber);
 				if (NumberOfSubpages>actualSubPageNumber)

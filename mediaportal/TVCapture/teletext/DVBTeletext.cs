@@ -326,7 +326,9 @@ namespace MediaPortal.TV.Teletext
 
     public int NumberOfSubpages(int currentPageNumber)
     {
-        return _pageCache.NumberOfSubpages(currentPageNumber);
+      string sPage = "0x" + currentPageNumber.ToString();
+      int hexPage = Convert.ToInt16(sPage, 16);
+      return _pageCache.NumberOfSubpages(hexPage);
     }
   }// class
 }// namespace

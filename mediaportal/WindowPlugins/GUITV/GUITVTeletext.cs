@@ -171,14 +171,16 @@ namespace MediaPortal.GUI.TV
 			base.OnPageLoad ();
 			TeletextGrabber.Grab=true;
 			btnSubPage.RestoreSelection=false;
+      currentPageNumber = 100;
+      currentSubPageNumber = 0;
 
-			ShowMessage(100,0);
+      ShowMessage(currentPageNumber, currentSubPageNumber);
 			TeletextGrabber.TeletextCache.PageSelectText="";
 			if(imgTeletextPage!=null && TeletextGrabber.TeletextCache!=null)
 			{
 				TeletextGrabber.TeletextCache.SetPageSize(imgTeletextPage.Width,imgTeletextPage.Height);
 			}
-			TeletextGrabber.TeletextCache.GetPage(100,0);
+      TeletextGrabber.TeletextCache.GetPage(currentPageNumber, currentSubPageNumber);
 			if(btnHidden!=null && TeletextGrabber.TeletextCache!=null)
 			{
 				TeletextGrabber.TeletextCache.HiddenMode=true;
@@ -396,7 +398,9 @@ namespace MediaPortal.GUI.TV
 		{
 			if(isPageDirty==true)
 			{
-				TeletextGrabber.TeletextCache.PageSelectText=Convert.ToString(currentPageNumber);
+        if (currentPageNumber < 100) currentPageNumber = 100;
+        if (currentPageNumber > 899) currentPageNumber = 899;
+        TeletextGrabber.TeletextCache.PageSelectText = Convert.ToString(currentPageNumber);
 				int NumberOfSubpages=TeletextGrabber.TeletextCache.NumberOfSubpages(currentPageNumber);
 				if (NumberOfSubpages>currentSubPageNumber)
 				{

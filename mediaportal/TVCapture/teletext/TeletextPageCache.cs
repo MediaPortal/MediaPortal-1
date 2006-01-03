@@ -36,7 +36,7 @@ namespace MediaPortal.TV.Teletext
     public int NumberOfSubpages(int pageNumber)
     {
       if (pageNumber < MIN_PAGE || pageNumber >= MAX_PAGE)
-        throw new ArgumentOutOfRangeException("page");
+        throw new ArgumentOutOfRangeException(String.Format("page is invalid:0x{0:X}",pageNumber));
       int totalSubPages = 0;
       for (int subPageNr = 0; subPageNr < MAX_SUB_PAGES; subPageNr++)
       {
