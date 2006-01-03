@@ -222,7 +222,7 @@
     <Compile Include="AIWGraph.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="AnalogTVTuning.cs">
+    <Compile Include="Scanning\AnalogTVTuning.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="AssemblyInfo.cs">
@@ -231,25 +231,25 @@
     <Compile Include="ATSCSections.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ATSCTuning.cs">
+    <Compile Include="Scanning\ATSCTuning.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="CaptureCardDefinitions.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Conflictmanager.cs">
+    <Compile Include="Scheduler\Conflictmanager.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DiskManagement.cs">
+    <Compile Include="DiskManagement\DiskManagement.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DVBCTuning.cs">
+    <Compile Include="Scanning\DVBCTuning.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DVBDemuxer.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DVBEPG.cs">
+    <Compile Include="EPG\DVBEPG.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DVBGraphBDA.cs">
@@ -267,16 +267,16 @@
     <Compile Include="DVBSSelectTPLForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="DVBSTuning.cs">
+    <Compile Include="Scanning\DVBSTuning.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="teletext\DVBTeletext.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DVBTTuning.cs">
+    <Compile Include="Scanning\DVBTTuning.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="EpgGrabber.cs">
+    <Compile Include="EPG\EpgGrabber.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="FormCountry.cs">
@@ -290,7 +290,7 @@
     <Compile Include="IGraph.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ITuning.cs">
+    <Compile Include="Scanning\ITuning.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="MCESinkGraph.cs">
@@ -318,7 +318,7 @@
     <Compile Include="teletext\TeletextPageCache.cs" />
     <Compile Include="teletext\TeletextPageRenderer.cs" />
     <Compile Include="teletext\ToptextDecoder.cs" />
-    <Compile Include="Transcoder.cs">
+    <Compile Include="Transcoding\Transcoder.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="TSHelperTools.cs">
