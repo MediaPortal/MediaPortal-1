@@ -270,7 +270,7 @@
     <Compile Include="DVBSTuning.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DVBTeletext.cs">
+    <Compile Include="teletext\DVBTeletext.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DVBTTuning.cs">
@@ -285,6 +285,8 @@
     <Compile Include="GraphFactory.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="teletext\FastTextDecoder.cs" />
+    <Compile Include="teletext\Hamming.cs" />
     <Compile Include="IGraph.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -309,9 +311,13 @@
     <Compile Include="SWEncodingGraph.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="TeletextGrabber.cs">
+    <Compile Include="teletext\TeletextDecoder.cs" />
+    <Compile Include="teletext\TeletextGrabber.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="teletext\TeletextPageCache.cs" />
+    <Compile Include="teletext\TeletextPageRenderer.cs" />
+    <Compile Include="teletext\ToptextDecoder.cs" />
     <Compile Include="Transcoder.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -330,6 +336,9 @@
     <EmbeddedResource Include="FormCountry.resx">
       <DependentUpon>FormCountry.cs</DependentUpon>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="teletext\LogoPage" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

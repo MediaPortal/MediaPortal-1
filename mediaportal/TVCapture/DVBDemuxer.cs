@@ -33,6 +33,7 @@ using Toub.MediaCenter.Dvrms.Metadata;
 using System.Collections;
 using System.Runtime.InteropServices;
 using System.Threading;
+using MediaPortal.TV.Teletext;
 
 namespace MediaPortal.TV.Recording
 {

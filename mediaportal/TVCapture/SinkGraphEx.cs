@@ -37,6 +37,7 @@ using Microsoft.Win32;
 using System.Xml;
 using TVCapture;
 using DirectX.Capture;
+using MediaPortal.TV.Teletext;
 
 
 namespace MediaPortal.TV.Recording

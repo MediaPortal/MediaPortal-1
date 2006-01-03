@@ -34,7 +34,7 @@ using MediaPortal.Player;
 using MediaPortal.TV.Recording;
 using MediaPortal.TV.Database;
 using MediaPortal.GUI.Pictures;
-
+using MediaPortal.TV.Teletext;
 
 namespace MediaPortal.GUI.TV
 {
@@ -149,7 +149,7 @@ namespace MediaPortal.GUI.TV
 		{
 			
 			TeletextGrabber.Grab=false;
-			TeletextGrabber.TeletextCache.PageUpdatedEvent-=new MediaPortal.TV.Recording.DVBTeletext.PageUpdated(dvbTeletextParser_PageUpdatedEvent);
+			TeletextGrabber.TeletextCache.PageUpdatedEvent-=new MediaPortal.TV.Teletext.DVBTeletext.PageUpdated(dvbTeletextParser_PageUpdatedEvent);
 
 			if ( !GUIGraphicsContext.IsTvWindow(newWindowId) )
 			{
@@ -185,7 +185,7 @@ namespace MediaPortal.GUI.TV
 				btnHidden.Selected=true;
 				GetNewPage();
 			}
-			TeletextGrabber.TeletextCache.PageUpdatedEvent+=new MediaPortal.TV.Recording.DVBTeletext.PageUpdated(dvbTeletextParser_PageUpdatedEvent);
+			TeletextGrabber.TeletextCache.PageUpdatedEvent+=new MediaPortal.TV.Teletext.DVBTeletext.PageUpdated(dvbTeletextParser_PageUpdatedEvent);
 			TeletextGrabber.TeletextCache.TransparentMode=false;
 
 		}

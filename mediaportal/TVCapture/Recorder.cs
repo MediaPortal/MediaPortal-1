@@ -36,6 +36,7 @@ using MediaPortal.Video.Database;
 using MediaPortal.Radio.Database;
 using MediaPortal.Player;
 using MediaPortal.Dialogs;
+using MediaPortal.TV.Teletext;
 #endregion
 
 namespace MediaPortal.TV.Recording
