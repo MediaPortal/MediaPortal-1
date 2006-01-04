@@ -2,7 +2,8 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <StartAction>Program</StartAction>
     <StartProgram>C:\erwin\NUnit-2.2.5-net-2.0\bin\nunit-gui.exe</StartProgram>
-    <StartWorkingDirectory>C:\erwin\mediaportal\mediaportal\TVCapture\TVCapture.nUnit\bin\Release\</StartWorkingDirectory>
+    <StartWorkingDirectory>
+    </StartWorkingDirectory>
     <EnableUnmanagedDebugging>true</EnableUnmanagedDebugging>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
