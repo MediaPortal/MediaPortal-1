@@ -177,7 +177,7 @@ namespace MediaPortal.TV.DiskSpace
         TVCaptureDevice dev = Recorder.Get(i);
         if (dev.RecordingPath == null) continue;
         if (dev.RecordingPath.Length < 2) continue;
-        string drive = dev.RecordingPath.Substring(0, 2);
+        string drive = dev.RecordingPath.Substring(0, 2).ToLower();
         bool newDrive = true;
         foreach (string tmpDrive in drives)
         {
@@ -222,7 +222,7 @@ namespace MediaPortal.TV.DiskSpace
       ulong minimiumFreeDiskSpace = 0;
       using (MediaPortal.Profile.Xml xmlReader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
       {
-        string quotaText = xmlReader.GetValueAsString("freediskspace", drive[0].ToString(), "0");
+        string quotaText = xmlReader.GetValueAsString("freediskspace", drive[0].ToString()+":", "0");
         minimiumFreeDiskSpace = (ulong)Int32.Parse(quotaText);
         if (minimiumFreeDiskSpace <= 0) return;
         minimiumFreeDiskSpace *= 1024;

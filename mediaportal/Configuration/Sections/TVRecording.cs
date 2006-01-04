@@ -752,14 +752,14 @@ namespace MediaPortal.Configuration.Sections
         {
           long longQuota = (long)quota;
           longQuota /= 1024; // kbyte
-          xmlwriter.SetValue("freediskspace", drive, longQuota.ToString());
+          xmlwriter.SetValue("freediskspace", drive[0].ToString(), longQuota.ToString());
         }
       }
       else
       {
         using (MediaPortal.Profile.Xml xmlReader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
         {
-          string quotaText = xmlReader.GetValueAsString("freediskspace", drive, "0");
+          string quotaText = xmlReader.GetValueAsString("freediskspace", drive[0].ToString(), "0");
           float quota = (float)Int32.Parse(quotaText);
           quota *= 1024;//kbyte
           labelQuota.Text = Utils.GetSize((long)quota);
