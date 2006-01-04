@@ -57,6 +57,17 @@ namespace MediaPortal.Configuration.Sections
     private GroupBox groupBox1;
 
     private string[] formatKind = { "Movies", "Series" };
+    private TabPage tabPage1;
+    private GroupBox groupBox4;
+    private Label label5;
+    private ComboBox comboDrives;
+    private Label lblTotalSpace;
+    private Label label8;
+    private Label label13;
+    private Label lblFreeDiskSpace;
+    private Label labelQuota;
+    private TrackBar trackBar1;
+    private Label label15;
     private string[] formatString = { string.Empty, string.Empty };
 
     public TVRecording()
@@ -69,6 +80,7 @@ namespace MediaPortal.Configuration.Sections
     {
       // This call is required by the Windows Form Designer.
       InitializeComponent();
+      comboDrives.SelectedIndexChanged += new EventHandler(comboDrives_SelectedIndexChanged);
 
       // TODO: Add any initialization after the InitializeComponent call
     }
@@ -121,12 +133,26 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageSettings = new System.Windows.Forms.TabPage();
       this.groupBox3 = new System.Windows.Forms.GroupBox();
       this.tabPage2 = new System.Windows.Forms.TabPage();
+      this.tabPage1 = new System.Windows.Forms.TabPage();
+      this.groupBox4 = new System.Windows.Forms.GroupBox();
+      this.comboDrives = new System.Windows.Forms.ComboBox();
+      this.label5 = new System.Windows.Forms.Label();
+      this.label8 = new System.Windows.Forms.Label();
+      this.lblTotalSpace = new System.Windows.Forms.Label();
+      this.label13 = new System.Windows.Forms.Label();
+      this.lblFreeDiskSpace = new System.Windows.Forms.Label();
+      this.label15 = new System.Windows.Forms.Label();
+      this.trackBar1 = new System.Windows.Forms.TrackBar();
+      this.labelQuota = new System.Windows.Forms.Label();
       this.groupBox2.SuspendLayout();
       this.groupBox1.SuspendLayout();
       this.tabControl1.SuspendLayout();
       this.tabPageSettings.SuspendLayout();
       this.groupBox3.SuspendLayout();
       this.tabPage2.SuspendLayout();
+      this.tabPage1.SuspendLayout();
+      this.groupBox4.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
       this.SuspendLayout();
       // 
       // cbAddRecordingsToMovie
@@ -358,6 +384,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.tabControl1.Controls.Add(this.tabPageSettings);
       this.tabControl1.Controls.Add(this.tabPage2);
+      this.tabControl1.Controls.Add(this.tabPage1);
       this.tabControl1.Location = new System.Drawing.Point(0, 8);
       this.tabControl1.Name = "tabControl1";
       this.tabControl1.SelectedIndex = 0;
@@ -402,6 +429,115 @@ namespace MediaPortal.Configuration.Sections
       this.tabPage2.Text = "Custom Paths and Filenames";
       this.tabPage2.UseVisualStyleBackColor = true;
       // 
+      // tabPage1
+      // 
+      this.tabPage1.Controls.Add(this.groupBox4);
+      this.tabPage1.Location = new System.Drawing.Point(4, 22);
+      this.tabPage1.Name = "tabPage1";
+      this.tabPage1.Size = new System.Drawing.Size(464, 374);
+      this.tabPage1.TabIndex = 2;
+      this.tabPage1.Text = "Disk quota";
+      this.tabPage1.UseVisualStyleBackColor = true;
+      // 
+      // groupBox4
+      // 
+      this.groupBox4.Controls.Add(this.labelQuota);
+      this.groupBox4.Controls.Add(this.trackBar1);
+      this.groupBox4.Controls.Add(this.label15);
+      this.groupBox4.Controls.Add(this.lblFreeDiskSpace);
+      this.groupBox4.Controls.Add(this.label13);
+      this.groupBox4.Controls.Add(this.lblTotalSpace);
+      this.groupBox4.Controls.Add(this.label8);
+      this.groupBox4.Controls.Add(this.label5);
+      this.groupBox4.Controls.Add(this.comboDrives);
+      this.groupBox4.Location = new System.Drawing.Point(3, 14);
+      this.groupBox4.Name = "groupBox4";
+      this.groupBox4.Size = new System.Drawing.Size(446, 334);
+      this.groupBox4.TabIndex = 0;
+      this.groupBox4.TabStop = false;
+      // 
+      // comboDrives
+      // 
+      this.comboDrives.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.comboDrives.FormattingEnabled = true;
+      this.comboDrives.Location = new System.Drawing.Point(78, 20);
+      this.comboDrives.Name = "comboDrives";
+      this.comboDrives.Size = new System.Drawing.Size(121, 21);
+      this.comboDrives.TabIndex = 0;
+      // 
+      // label5
+      // 
+      this.label5.AutoSize = true;
+      this.label5.Location = new System.Drawing.Point(27, 23);
+      this.label5.Name = "label5";
+      this.label5.Size = new System.Drawing.Size(35, 13);
+      this.label5.TabIndex = 1;
+      this.label5.Text = "Drive:";
+      // 
+      // label8
+      // 
+      this.label8.AutoSize = true;
+      this.label8.Location = new System.Drawing.Point(27, 68);
+      this.label8.Name = "label8";
+      this.label8.Size = new System.Drawing.Size(85, 13);
+      this.label8.TabIndex = 2;
+      this.label8.Text = "Total diskspace:";
+      // 
+      // lblTotalSpace
+      // 
+      this.lblTotalSpace.AutoSize = true;
+      this.lblTotalSpace.Location = new System.Drawing.Point(118, 68);
+      this.lblTotalSpace.Name = "lblTotalSpace";
+      this.lblTotalSpace.Size = new System.Drawing.Size(49, 13);
+      this.lblTotalSpace.TabIndex = 3;
+      this.lblTotalSpace.Text = "total disk";
+      // 
+      // label13
+      // 
+      this.label13.AutoSize = true;
+      this.label13.Location = new System.Drawing.Point(27, 95);
+      this.label13.Name = "label13";
+      this.label13.Size = new System.Drawing.Size(85, 13);
+      this.label13.TabIndex = 4;
+      this.label13.Text = "Free diskspace::";
+      // 
+      // lblFreeDiskSpace
+      // 
+      this.lblFreeDiskSpace.AutoSize = true;
+      this.lblFreeDiskSpace.Location = new System.Drawing.Point(118, 95);
+      this.lblFreeDiskSpace.Name = "lblFreeDiskSpace";
+      this.lblFreeDiskSpace.Size = new System.Drawing.Size(41, 13);
+      this.lblFreeDiskSpace.TabIndex = 5;
+      this.lblFreeDiskSpace.Text = "label15";
+      // 
+      // label15
+      // 
+      this.label15.AutoSize = true;
+      this.label15.Location = new System.Drawing.Point(27, 134);
+      this.label15.Name = "label15";
+      this.label15.Size = new System.Drawing.Size(201, 13);
+      this.label15.TabIndex = 6;
+      this.label15.Text = "Delete recordings when there is less then";
+      // 
+      // trackBar1
+      // 
+      this.trackBar1.Location = new System.Drawing.Point(30, 162);
+      this.trackBar1.Maximum = 100;
+      this.trackBar1.Name = "trackBar1";
+      this.trackBar1.Size = new System.Drawing.Size(340, 45);
+      this.trackBar1.TabIndex = 7;
+      this.trackBar1.Scroll += new System.EventHandler(this.trackBar1_Scroll);
+      // 
+      // labelQuota
+      // 
+      this.labelQuota.AutoSize = true;
+      this.labelQuota.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.labelQuota.Location = new System.Drawing.Point(234, 134);
+      this.labelQuota.Name = "labelQuota";
+      this.labelQuota.Size = new System.Drawing.Size(48, 13);
+      this.labelQuota.TabIndex = 8;
+      this.labelQuota.Text = "label16";
+      // 
       // TVRecording
       // 
       this.Controls.Add(this.tabControl1);
@@ -416,6 +552,10 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox3.ResumeLayout(false);
       this.groupBox3.PerformLayout();
       this.tabPage2.ResumeLayout(false);
+      this.tabPage1.ResumeLayout(false);
+      this.groupBox4.ResumeLayout(false);
+      this.groupBox4.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
       this.ResumeLayout(false);
 
     }
@@ -527,6 +667,19 @@ namespace MediaPortal.Configuration.Sections
       }
       comboBoxRecording.SelectedIndex = 0;
       textBoxSample.Text = ShowExample(formatString[comboBoxRecording.SelectedIndex], comboBoxRecording.SelectedIndex);
+
+      
+      comboDrives.Items.Clear();
+      for (char drive = 'a'; drive <= 'z'; drive++)
+      {
+        string driveLetter = String.Format("{0}:", drive);
+        if (Utils.getDriveType(driveLetter) == 3)
+        {
+          comboDrives.Items.Add(driveLetter);
+        }
+      }
+      comboDrives.SelectedIndex = 0;
+      UpdateDriveInfo(false);
     }
 
     public override void SaveSettings()
@@ -579,6 +732,54 @@ namespace MediaPortal.Configuration.Sections
       {
         e.Handled = true;
       }
+    }
+    void UpdateDriveInfo(bool save)
+    {
+      string drive = (string)comboDrives.SelectedItem;
+      ulong freeSpace=Utils.GetFreeDiskSpace(drive);
+      long totalSpace = Utils.GetDiskSize(drive);
+      lblFreeDiskSpace.Text = Utils.GetSize((long)freeSpace);
+      lblTotalSpace.Text = Utils.GetSize((long)totalSpace);
+
+      if (save)
+      {
+        float percent = (float)trackBar1.Value;
+        percent /= 100f;
+        float quota = percent * ((float)totalSpace);
+
+        labelQuota.Text = Utils.GetSize((long)quota);
+        using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+        {
+          long longQuota = (long)quota;
+          longQuota /= 1024; // kbyte
+          xmlwriter.SetValue("freediskspace", drive, longQuota.ToString());
+        }
+      }
+      else
+      {
+        using (MediaPortal.Profile.Xml xmlReader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+        {
+          string quotaText = xmlReader.GetValueAsString("freediskspace", drive, "0");
+          float quota = (float)Int32.Parse(quotaText);
+          quota *= 1024;//kbyte
+          labelQuota.Text = Utils.GetSize((long)quota);
+
+          float percent = quota / ((float)totalSpace);
+          percent *= 100f;
+          trackBar1.Value = (int)percent;
+
+        }
+      }
+    }
+
+    private void trackBar1_Scroll(object sender, EventArgs e)
+    {
+      UpdateDriveInfo(true);
+    }
+
+    void comboDrives_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      UpdateDriveInfo(false);
     }
   }
 }

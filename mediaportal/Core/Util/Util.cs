@@ -20,6 +20,7 @@
  */
 using System;
 using System.Drawing;
+using System.Management;
 using System.IO;
 using System.Net;
 using System.Text.RegularExpressions;
@@ -43,6 +44,14 @@ namespace MediaPortal.Util
 	/// </summary>
 	public class Utils
 	{
+
+    [DllImport("kernel32.dll")]
+    extern static bool GetDiskFreeSpaceEx(
+            string lpDirectoryName,
+            out UInt64 lpFreeBytesAvailable,
+            out UInt64 lpTotalNumberOfBytes,
+            out UInt64 lpTotalNumberOfFreeBytes);
+
 		[DllImport("Kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
 		extern static bool GetVolumeInformation(
 			string RootPathName,
@@ -192,7 +201,25 @@ namespace MediaPortal.Util
 			if((GetDriveType(drive) & 4)==4)return 4;//remote disk
 			if((GetDriveType(drive) & 6)==6)return 6;//ram disk
 			return 0;
-		}
+    }
+    static public long GetDiskSize(string drive)
+    {
+      long diskSize = 0;
+      try
+      {
+        string cmd = String.Format("win32_logicaldisk.deviceid=\"{0}:\"", drive[0]);
+        using (ManagementObject disk = new ManagementObject(cmd))
+        {
+          disk.Get();
+          diskSize = Int64.Parse(disk["Size"].ToString());
+        }
+      }
+      catch (Exception)
+      {
+        return -1;
+      }
+      return diskSize;
+    }
 
 		static public string GetSize(long dwFileSize)
 		{
@@ -1756,6 +1783,19 @@ namespace MediaPortal.Util
     public static string ReplaceTag(string line, string tag, string value)
     {
       return ReplaceTag(line, tag, value, string.Empty);
+    }
+    public static ulong GetFreeDiskSpace(string drive)
+    {
+      ulong freeBytesAvailable = 0;
+      ulong totalNumberOfBytes = 0;
+      ulong totalNumberOfFreeBytes = 0;
+
+      GetDiskFreeSpaceEx(
+         drive[0]+@":\",
+         out freeBytesAvailable,
+         out totalNumberOfBytes,
+         out totalNumberOfFreeBytes);
+      return freeBytesAvailable;
     }
   }
 

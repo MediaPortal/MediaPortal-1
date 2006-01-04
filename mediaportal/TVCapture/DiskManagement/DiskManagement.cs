@@ -22,7 +22,6 @@ using System;
 using System.IO;
 using System.Collections;
 using System.Collections.Generic;
-using System.Management;
 using System.Threading;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
@@ -39,7 +38,7 @@ namespace MediaPortal.TV.DiskSpace
   {
     static DateTime _diskSpaceCheckTimer = DateTime.MinValue;
     static DateTime _deleteOldRecordingTimer = DateTime.MinValue;
-    static  DiskManagement()
+    static DiskManagement()
     {
       Recorder.OnTvRecordingEnded += new MediaPortal.TV.Recording.Recorder.OnTvRecordingHandler(DiskManagement.Recorder_OnTvRecordingEnded);
     }
@@ -136,7 +135,7 @@ namespace MediaPortal.TV.DiskSpace
       }
       catch (Exception) { }
     }//static void DeleteOldTimeShiftFiles(string path)
-    #endregion    
+    #endregion
 
     #region diskmanagement
     /// <summary>
@@ -187,7 +186,7 @@ namespace MediaPortal.TV.DiskSpace
             newDrive = false;
           }
         }
-        if (newDrive) 
+        if (newDrive)
           drives.Add(drive);
       }
       return drives;
@@ -204,7 +203,7 @@ namespace MediaPortal.TV.DiskSpace
     {
       //check diskspace every 15 minutes...
       TimeSpan ts = DateTime.Now - _diskSpaceCheckTimer;
-      if (ts.TotalMinutes < 15) return; 
+      if (ts.TotalMinutes < 15) return;
       _diskSpaceCheckTimer = DateTime.Now;
 
       //first get all drives..
@@ -213,50 +212,33 @@ namespace MediaPortal.TV.DiskSpace
       // next check diskspace on each drive.
       foreach (string drive in drives)
       {
-        CheckDriveSpace(drive);      
+        CheckDriveFreeDiskSpace(drive);
       }
     }
-    static long GetDiskSize(string drive)
-    {
-      long diskSize = 0;
-      try
-      {
-        string cmd = String.Format("win32_logicaldisk.deviceid=\"{0}:\"", drive[0]);
-        using (ManagementObject disk = new ManagementObject(cmd))
-        {
-          disk.Get();
-          diskSize = Int64.Parse(disk["Size"].ToString());
-        }
-      }
-      catch (Exception)
-      {
-        return -1;
-      }
-      return diskSize;
-    }
 
-    static void CheckDriveSpace(string drive)
+    static void CheckDriveFreeDiskSpace(string drive)
     {
-      float diskSize = (float)GetDiskSize(drive);
-      if (diskSize < 0) return;
-
       //get disk quota to use
-      long recordingDiskQuota = 0;
+      ulong minimiumFreeDiskSpace = 0;
+      using (MediaPortal.Profile.Xml xmlReader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      {
+        string quotaText = xmlReader.GetValueAsString("freediskspace", drive[0].ToString(), "0");
+        minimiumFreeDiskSpace = (ulong)Int32.Parse(quotaText);
+        if (minimiumFreeDiskSpace <= 0) return;
+        minimiumFreeDiskSpace *= 1024;
+      }
+      if (minimiumFreeDiskSpace <= 0) return;
+      ulong freeDiskSpace = Utils.GetFreeDiskSpace(drive);
+      if (freeDiskSpace > minimiumFreeDiskSpace) return;
+
       List<RecordingFileInfo> recordings = new List<RecordingFileInfo>();
       for (int i = 0; i < Recorder.Count; ++i)
       {
         TVCaptureDevice dev = Recorder.Get(i);
-        if (!dev.RecordingPath.ToLower().StartsWith(drive.ToLower())) continue;
+        if (dev.RecordingPath.ToLower()[0] != drive.ToLower()[0]) continue;
         dev.GetRecordings(drive, ref recordings);
-
-        float percentage = (float)dev.MaxSizeLimit;
-        percentage /= 100.0f;
-        float cardLimitQuota = diskSize * percentage;
-        if (cardLimitQuota > recordingDiskQuota)
-          recordingDiskQuota = (long)cardLimitQuota;
       }//foreach (TVCaptureDevice dev in m_tvcards)
 
-      if (recordingDiskQuota <= 0) return;
 
       //calculate disk space currently used by recordings.
       long diskSpaceUsedByRecordings = 0;
@@ -264,17 +246,18 @@ namespace MediaPortal.TV.DiskSpace
       {
         diskSpaceUsedByRecordings += info.info.Length;
       }
-      if (diskSpaceUsedByRecordings < recordingDiskQuota) return;
 
-      Log.WriteFile(Log.LogType.Recorder, "Recorder: exceeded diskspace quota for recordings on drive:{0}", drive);
-      Log.WriteFile(Log.LogType.Recorder, "Recorder:   {0} recordings contain {1} while limit is {2}",
-                                            recordings.Count, Utils.GetSize(diskSpaceUsedByRecordings), Utils.GetSize((long)recordingDiskQuota));
+      Log.WriteFile(Log.LogType.Recorder, "Recorder: not enough free space on drive:{0}. Currently free:{1}", drive, Utils.GetSize((long)freeDiskSpace));
+      Log.WriteFile(Log.LogType.Recorder, "Recorder:   {0} recordings use {1} while minimum free space is {2}",
+                                            recordings.Count, 
+                                            Utils.GetSize(diskSpaceUsedByRecordings), 
+                                            Utils.GetSize((long)minimiumFreeDiskSpace));
 
-      // we exceeded the disk spacee quota
+      // Not enough free diskspace
       // start deleting recordings (oldest ones first)
       // until we have enough free disk space again
       recordings.Sort();
-      while (diskSpaceUsedByRecordings > recordingDiskQuota && recordings.Count > 0)
+      while (freeDiskSpace <= minimiumFreeDiskSpace && recordings.Count > 0)
       {
         RecordingFileInfo fi = (RecordingFileInfo)recordings[0];
         List<TVRecorded> tvrecs = new List<TVRecorded>();
@@ -289,16 +272,16 @@ namespace MediaPortal.TV.DiskSpace
                                               fi.info.CreationTime.ToShortDateString(), fi.info.CreationTime.ToShortTimeString());
           if (Utils.FileDelete(fi.filename))
           {
-            diskSpaceUsedByRecordings -= fi.info.Length;
             TVDatabase.RemoveRecordedTV(tvrec);
             DeleteRecording(fi.filename);
             VideoDatabase.DeleteMovie(fi.filename);
             VideoDatabase.DeleteMovieInfo(fi.filename);
           }
+          freeDiskSpace = Utils.GetFreeDiskSpace(drive);
           break;
         }//foreach (TVRecorded tvrec in tvrecs)
         recordings.RemoveAt(0);
-      }//while (diskSpaceUsedByRecordings > m_recordingDiskQuota && files.Count>0)
+      }//while (diskSpaceUsedByRecordings > m_minimiumFreeDiskSpace && files.Count>0)
     }
 
     #endregion
@@ -307,7 +290,7 @@ namespace MediaPortal.TV.DiskSpace
     static private void Recorder_OnTvRecordingEnded(string recordingFilename, TVRecording recording, TVProgram program)
     {
       Log.WriteFile(Log.LogType.Recorder, "diskmanagement: recording {0} ended. type:{1} max episodes:{2}",
-          recording.Title,recording.RecType.ToString(), recording.EpisodesToKeep);
+          recording.Title, recording.RecType.ToString(), recording.EpisodesToKeep);
 
       if (recording.EpisodesToKeep == Int32.MaxValue) return;
       if (recording.RecType == TVRecording.RecordingType.Once) return;
@@ -325,7 +308,7 @@ namespace MediaPortal.TV.DiskSpace
         foreach (TVRecorded rec in recordings)
         {
           Log.WriteFile(Log.LogType.Recorder, "check:{0}", rec.Title);
-          if (String.Compare(rec.Title,recording.Title,true)==0)
+          if (String.Compare(rec.Title, recording.Title, true) == 0)
           {
             recordingsFound++;
             if (rec.StartTime < oldestRecording)
@@ -337,9 +320,9 @@ namespace MediaPortal.TV.DiskSpace
           }
         }
         Log.WriteFile(Log.LogType.Recorder, "diskmanagement:   total episodes now:{0}", recordingsFound);
-        if (oldestRec!=null)
+        if (oldestRec != null)
         {
-          Log.WriteFile(Log.LogType.Recorder, "diskmanagement:   oldest episode:{0} {1}", oldestRec.StartTime.ToShortDateString(), oldestRec.StartTime.ToLongTimeString() );
+          Log.WriteFile(Log.LogType.Recorder, "diskmanagement:   oldest episode:{0} {1}", oldestRec.StartTime.ToShortDateString(), oldestRec.StartTime.ToLongTimeString());
         }
 
         if (oldestRec == null) return;
