@@ -37,7 +37,7 @@ namespace MediaPortal.TV.DiskSpace
     {
       Recorder.OnTvRecordingEnded += new MediaPortal.TV.Recording.Recorder.OnTvRecordingHandler(EpisodeManagement.Recorder_OnTvRecordingEnded);
     }
-    static bool DoesUseEpisodeManagement(TVRecording recording)
+    static public bool DoesUseEpisodeManagement(TVRecording recording)
     {
       if (recording.RecType == TVRecording.RecordingType.Once) return false;
       if (recording.EpisodesToKeep == Int32.MaxValue) return false;
@@ -45,7 +45,7 @@ namespace MediaPortal.TV.DiskSpace
       return true;
     }
 
-    static List<TVRecorded> GetEpisodes(string title, List<TVRecorded> recordings)
+    static public List<TVRecorded> GetEpisodes(string title, List<TVRecorded> recordings)
     {
       List<TVRecorded> episodes = new List<TVRecorded>();
       foreach (TVRecorded recording in recordings)
@@ -58,11 +58,11 @@ namespace MediaPortal.TV.DiskSpace
       return episodes;
     }
 
-    static TVRecorded GetOldestEpisode(List<TVRecorded> recordings)
+    static public TVRecorded GetOldestEpisode(List<TVRecorded> episodes)
     {
       TVRecorded oldestEpisode = null;
       DateTime oldestDateTime = DateTime.MaxValue;
-      foreach (TVRecorded rec in recordings)
+      foreach (TVRecorded rec in episodes)
       {
         if (rec.StartTime < oldestDateTime)
         {
