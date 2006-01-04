@@ -31,8 +31,85 @@ namespace MediaPortal.TV.Teletext
     int[] _pageType = new int[900];
     int[] _pageSubCount = new int[900];
     string[] _pageDescription = new string[900];
+    int _pageRed = -1;
+    int _pageGreen = -1;
+    int _pageYellow = -1;
+    int _pageBlue = -1;
+    byte[] _row24 = new byte[42];
     #endregion
 
+    public int Red
+    {
+      get
+      {
+        return _pageRed;
+      }
+    }
+    public int Green
+    {
+      get
+      {
+        return _pageGreen;
+      }
+    }
+    public int Yellow
+    {
+      get
+      {
+        return _pageYellow;
+      }
+    }
+    public int Blue
+    {
+      get
+      {
+        return _pageBlue;
+      }
+    }
+
+    public byte[] Row24
+    {
+      get
+      {
+        return (byte[])_row24.Clone();
+      }
+    }
+    int ConvertToHex(int number)
+    {
+      if (number < 0) return -1;
+      string hexnumber = String.Format("0x{0:X}", number);
+      return Int32.Parse(hexnumber);
+    }
+    public bool Decode(TeletextPageCache cache, int pageNumber)
+    {
+      int red, green, yellow, blue;
+      string nextGroup, nextBlock;
+      if (!GetPageLinks(cache, pageNumber, out red, out green, out yellow, out blue, out nextGroup, out nextBlock)) return false;
+      _pageRed = ConvertToHex(red);
+      _pageGreen = ConvertToHex(green);
+      _pageYellow = ConvertToHex(yellow);
+      _pageBlue = ConvertToHex(blue);
+      if (nextGroup == String.Empty) nextGroup = yellow.ToString();
+      if (nextBlock == String.Empty) nextBlock = green.ToString();
+
+      Hamming.SetPacketNumber(0, ref _row24, pageNumber, 24);
+      int spaces = 40 - (nextGroup.Length + nextBlock.Length + 3 + 3);
+      spaces /= 3;
+      string line = red.ToString();
+      for (int x = 0; x < spaces; x++) line += " ";
+      
+      line += nextGroup;
+      for (int x = 0; x < spaces; x++) line += " ";
+
+      line += nextBlock;
+      for (int x = 0; x < spaces; x++) line += " ";
+      line += blue.ToString();
+      for (int i = 0; i < line.Length && i <= 40;++i )
+      {
+        _row24[2 + i] = (byte)line[i];
+      }
+      return true;
+    }
     public bool GetPageLinks(TeletextPageCache cache, int pageNumber, out int redPage, out int greenPage, out int yellowPage, out int bluePage, out string nextGroup, out string nextBlock)
     {
       //red   = previous page in current
@@ -40,8 +117,8 @@ namespace MediaPortal.TV.Teletext
       //yellow= first page of next block
       //blue  = next page
       int mag = pageNumber / 0x100;
-      int tens = (pageNumber -mag*0x100) / 0x10;
-      int units = (pageNumber - mag * 0x100) -tens*0x10;
+      int tens = (pageNumber - mag * 0x100) / 0x10;
+      int units = (pageNumber - mag * 0x100) - tens * 0x10;
       int decimalPage = mag * 100 + tens * 10 + units;
 
       Clear();
@@ -52,7 +129,7 @@ namespace MediaPortal.TV.Teletext
       DecodeBasicPage(cache);
       DecodeMultiPage(cache);
       DecodeAdditionalPages(cache);
-      
+
       //red: prev page
       for (int page = decimalPage - 1; page > 100; page--)
       {
@@ -73,8 +150,8 @@ namespace MediaPortal.TV.Teletext
           }
         }
       }
-      
-      for (int page=decimalPage+1; page <= 899;page++)
+
+      for (int page = decimalPage + 1; page <= 899; page++)
       {
         if (yellowPage == -1)
         {
@@ -147,6 +224,12 @@ namespace MediaPortal.TV.Teletext
 
     public void Clear()
     {
+      for (int x = 0; x < _row24.Length; x++)
+        _row24[x] = 32;
+      _pageRed = -1;
+      _pageGreen = -1;
+      _pageYellow = -1;
+      _pageBlue = -1;
       _pageType = new int[900];
       _pageSubCount = new int[900];
       _pageDescription = new string[900];

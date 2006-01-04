@@ -37,7 +37,13 @@ namespace TVCapture.nUnit
       Assert.AreEqual(nextGroup, "sec1");
       Assert.AreEqual(nextBlock, "chap3");
 
+      Assert.IsTrue(decoder.Decode(cache, 0x100));
+      Assert.AreEqual(decoder.Red, 0x888);
+      Assert.AreEqual(decoder.Blue, 0x101);
+      Assert.AreEqual(decoder.Yellow, 0x110);
+      Assert.AreEqual(decoder.Green, 0x201);
     }
+
     void AddPage43(int pageNr, int subNr, ref TeletextPageCache cache, string resourceName)
     {
       Assembly assm = Assembly.GetExecutingAssembly();

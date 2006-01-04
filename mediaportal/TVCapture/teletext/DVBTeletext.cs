@@ -95,7 +95,7 @@ namespace MediaPortal.TV.Teletext
     {
       get {
         if (_fastTextDecoder.Red > 0) return _fastTextDecoder.Red;
-        return 0; 
+        return _topTextDecoder.Red; 
       }
     }
     public int PageGreen
@@ -103,7 +103,7 @@ namespace MediaPortal.TV.Teletext
       get
       {
         if (_fastTextDecoder.Green > 0) return _fastTextDecoder.Green;
-        return 0;
+        return _topTextDecoder.Green;
       }
     }
     public int PageYellow
@@ -111,7 +111,7 @@ namespace MediaPortal.TV.Teletext
       get
       {
         if (_fastTextDecoder.Yellow > 0) return _fastTextDecoder.Yellow;
-        return 0;
+        return _topTextDecoder.Yellow;
       }
     }
     public int PageBlue
@@ -119,7 +119,7 @@ namespace MediaPortal.TV.Teletext
       get
       {
         if (_fastTextDecoder.Blue > 0) return _fastTextDecoder.Blue;
-        return 0;
+        return _topTextDecoder.Blue;
       }
     }
     public string PageSelectText
@@ -216,6 +216,27 @@ namespace MediaPortal.TV.Teletext
 
 
     #region rendering
+    void AddTopTextRow24(ref byte[] byPage)
+    {
+      int offsetRow24=-1;
+      int maxRows = byPage.Length / 42;
+      for (int row = 0; row < maxRows; ++row)
+      {
+        int packetNr = Hamming.GetPacketNumber(row * 42, ref byPage);
+        if (packetNr == 24 || packetNr<0)
+        {
+          offsetRow24 = row * 42;
+          break;
+        }
+      }
+      if (offsetRow24 < 0) return;
+      byte[] row24 = _topTextDecoder.Row24;
+      for (int i = 0; i < 42; ++i)
+      {
+        byPage[i + offsetRow24] = row24[i];
+      }
+    }
+
     public System.Drawing.Bitmap GetPage(int page, int subpage)
     {
 
@@ -233,6 +254,10 @@ namespace MediaPortal.TV.Teletext
       {
         byte[] byPage = _pageCache.GetPage(_currentPageNumber, _currentSubPageNumber);
         _fastTextDecoder.Decode(byPage);
+        if (_topTextDecoder.Decode(_pageCache, _currentPageNumber))
+        {
+          AddTopTextRow24(ref byPage);
+        }
         return _renderer.RenderPage(byPage, _currentPageNumber, _currentSubPageNumber);
       }
       else
@@ -244,6 +269,10 @@ namespace MediaPortal.TV.Teletext
             _currentSubPageNumber = sub;
             byte[] byPage = _pageCache.GetPage(_currentPageNumber, _currentSubPageNumber);
             _fastTextDecoder.Decode(byPage);
+            if (_topTextDecoder.Decode(_pageCache, _currentPageNumber))
+            {
+              AddTopTextRow24(ref byPage);
+            }
             return _renderer.RenderPage(byPage, _currentPageNumber, _currentSubPageNumber);
           }
         }
@@ -261,7 +290,8 @@ namespace MediaPortal.TV.Teletext
             byte[] logoPage = new byte[stream.Length];
             reader.Read(logoPage, 0, (int)stream.Length);
             _fastTextDecoder.Decode(logoPage);
-            return _renderer.RenderPage(logoPage, 0xFFFF, 0xFFFF);
+            _topTextDecoder.Clear();
+            return _renderer.RenderPage(logoPage, _currentPageNumber, 0);
           }
         }
         return null;
