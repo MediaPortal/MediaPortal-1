@@ -351,11 +351,15 @@ namespace MediaPortal.TV.DiskSpace
                              oldestRec.StartTime.ToLongDateString(),
                              oldestRec.StartTime.ToLongTimeString());
 
-        DeleteRecording(oldestFileName);
-        VideoDatabase.DeleteMovie(oldestFileName);
-        VideoDatabase.DeleteMovieInfo(oldestFileName);
-        recordings.Remove(oldestRec);
-        TVDatabase.RemoveRecordedTV(oldestRec);
+        if (Utils.FileDelete(oldestFileName))
+        {
+          DeleteRecording(oldestFileName);
+
+          VideoDatabase.DeleteMovie(oldestFileName);
+          VideoDatabase.DeleteMovieInfo(oldestFileName);
+          recordings.Remove(oldestRec);
+          TVDatabase.RemoveRecordedTV(oldestRec);
+        }
       }
     }
     #endregion
