@@ -78,7 +78,7 @@ namespace MediaPortal.TV.Teletext
     {
       if (number < 0) return -1;
       string hexnumber = String.Format("0x{0:X}", number);
-      return Int32.Parse(hexnumber);
+      return Convert.ToInt32(hexnumber,16);
     }
     public bool Decode(TeletextPageCache cache, int pageNumber)
     {

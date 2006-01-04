@@ -35,7 +35,7 @@ namespace TVCapture.nUnit
       { }
       Assembly assm = Assembly.GetExecutingAssembly();
       string[] names=assm.GetManifestResourceNames();
-      Stream stream = assm.GetManifestResourceStream("TVCapture.nUnit."+resourceName);
+      Stream stream = assm.GetManifestResourceStream("MediaPortal.Tests.TVCapture.Teletext." + resourceName);
       BinaryReader reader = new BinaryReader(stream);
       byte[] byPage = new byte[stream.Length];
       reader.Read(byPage, 0, (int)stream.Length);
