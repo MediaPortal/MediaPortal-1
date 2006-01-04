@@ -169,27 +169,32 @@ namespace MediaPortal.TV.DiskSpace
       }
     }
 
-    static List<string> GetRecordingDisks()
+    static List<string> GetDisks()
     {
       List<string> drives = new List<string>();
-      for (int i = 0; i < Recorder.Count; ++i)
+      for (char drive = 'a'; drive <= 'z'; drive++)
       {
-        TVCaptureDevice dev = Recorder.Get(i);
-        if (dev.RecordingPath == null) continue;
-        if (dev.RecordingPath.Length < 2) continue;
-        string drive = dev.RecordingPath.Substring(0, 2).ToLower();
-        bool newDrive = true;
-        foreach (string tmpDrive in drives)
+        string driveLetter = String.Format("{0}:", drive);
+        if (Utils.getDriveType(driveLetter) == 3)
         {
-          if (String.Compare(drive, tmpDrive, true) == 0)
+          bool newDrive = true;
+          foreach (string tmpDrive in drives)
           {
-            newDrive = false;
+            if (String.Compare(drive.ToString(), tmpDrive, true) == 0)
+            {
+              newDrive = false;
+            }
           }
+          if (newDrive)
+            drives.Add(drive.ToString());
         }
-        if (newDrive)
-          drives.Add(drive);
       }
       return drives;
+    }
+
+    static public void ResetTimer()
+    {
+      _diskSpaceCheckTimer = DateTime.MinValue;
     }
 
     /// <summary>
@@ -207,7 +212,7 @@ namespace MediaPortal.TV.DiskSpace
       _diskSpaceCheckTimer = DateTime.Now;
 
       //first get all drives..
-      List<string> drives = GetRecordingDisks();
+      List<string> drives = GetDisks();
 
       // next check diskspace on each drive.
       foreach (string drive in drives)
@@ -222,7 +227,7 @@ namespace MediaPortal.TV.DiskSpace
       ulong minimiumFreeDiskSpace = 0;
       using (MediaPortal.Profile.Xml xmlReader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
       {
-        string quotaText = xmlReader.GetValueAsString("freediskspace", drive[0].ToString()+":", "0");
+        string quotaText = xmlReader.GetValueAsString("freediskspace", drive[0].ToString(), "0");
         minimiumFreeDiskSpace = (ulong)Int32.Parse(quotaText);
         if (minimiumFreeDiskSpace <= 0) return;
         minimiumFreeDiskSpace *= 1024;
@@ -232,13 +237,30 @@ namespace MediaPortal.TV.DiskSpace
       if (freeDiskSpace > minimiumFreeDiskSpace) return;
 
       List<RecordingFileInfo> recordings = new List<RecordingFileInfo>();
-      for (int i = 0; i < Recorder.Count; ++i)
+      List<TVRecorded> recordedTvShows = new List<TVRecorded>();
+      TVDatabase.GetRecordedTV(ref recordedTvShows);
+      foreach (TVRecorded recorded in recordedTvShows)
       {
-        TVCaptureDevice dev = Recorder.Get(i);
-        if (dev.RecordingPath.ToLower()[0] != drive.ToLower()[0]) continue;
-        dev.GetRecordings(drive, ref recordings);
-      }//foreach (TVCaptureDevice dev in m_tvcards)
+        if (recorded.FileName.ToLower()[0] != drive.ToLower()[0]) continue;
 
+        bool add = true;
+        foreach (RecordingFileInfo fi in recordings)
+        {
+          if (String.Compare(fi.filename, recorded.FileName, true) == 0)
+          {
+            add = false;
+          }
+        }
+        if (add)
+        {
+          FileInfo info = new FileInfo(recorded.FileName);
+          RecordingFileInfo fi = new RecordingFileInfo();
+          fi.info = info;
+          fi.filename = recorded.FileName;
+          recordings.Add(fi);
+        }
+      }
+      
 
       //calculate disk space currently used by recordings.
       long diskSpaceUsedByRecordings = 0;
@@ -257,7 +279,7 @@ namespace MediaPortal.TV.DiskSpace
       // start deleting recordings (oldest ones first)
       // until we have enough free disk space again
       recordings.Sort();
-      while (freeDiskSpace <= minimiumFreeDiskSpace && recordings.Count > 0)
+      while (freeDiskSpace < minimiumFreeDiskSpace && recordings.Count > 0)
       {
         RecordingFileInfo fi = (RecordingFileInfo)recordings[0];
         List<TVRecorded> tvrecs = new List<TVRecorded>();

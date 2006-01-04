@@ -2000,7 +2000,7 @@ namespace MediaPortal.TV.Recording
     public void GetRecordings(string drive, ref List<RecordingFileInfo> recordings)
     {
       if (!DeleteOnLowDiskspace) return;
-      if (RecordingPath.ToLower().Substring(0, 2) != drive.ToLower()) return;
+      if (RecordingPath.ToLower()[0] != drive.ToLower()[0]) return;
       try
       {
         string[] directories = System.IO.Directory.GetDirectories(RecordingPath, "*", SearchOption.AllDirectories);

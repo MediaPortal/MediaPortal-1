@@ -4985,5 +4985,10 @@ namespace MediaPortal.TV.Database
     }
 
     #endregion
+
+    public static void DeleteAllRecordedTv()
+    {
+      m_db.Execute("delete from recorded");
+    }
   }//public class TVDatabase
 }//namespace MediaPortal.TV.Database

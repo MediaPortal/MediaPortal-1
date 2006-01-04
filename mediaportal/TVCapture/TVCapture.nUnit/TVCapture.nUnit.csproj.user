@@ -9,6 +9,6 @@
     <EnableUnmanagedDebugging>true</EnableUnmanagedDebugging>
     <StartAction>Program</StartAction>
     <StartProgram>C:\erwin\NUnit-2.2.5-net-2.0\bin\nunit-gui.exe</StartProgram>
-    <StartWorkingDirectory>C:\erwin\mediaportal\mediaportal\TVCapture\TVCapture.nUnit\bin\Debug\</StartWorkingDirectory>
+    <StartWorkingDirectory>C:\erwin\mediaportal\mediaportal\xbmc\bin\Debug</StartWorkingDirectory>
   </PropertyGroup>
 </Project>
