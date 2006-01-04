@@ -22,6 +22,7 @@ using System;
 using System.IO;
 using System.Text;
 using MediaPortal.Util;
+using MediaPortal.GUI.Library;
 // example m3u file:
 //			#EXTM3U
 //			#EXTINF:5,demo1
@@ -79,7 +80,7 @@ namespace MediaPortal.Playlists
           if (fileName.Length>1)
           {
             Utils.GetQualifiedFilename(basePath,ref fileName);
-            PlayList.PlayListItem newItem = new PlayListItem(fileName, fileName, 0);
+            PlayListItem newItem = new PlayListItem(fileName, fileName, 0);
             newItem.Type = PlayListItem.PlayListItemType.Audio;
             string strDescription;
             strDescription=System.IO.Path.GetFileName(fileName);
@@ -175,8 +176,9 @@ namespace MediaPortal.Playlists
           writer.Close();
         }
       }
-      catch (Exception)
+      catch (Exception e)
       {
+        Log.Write( "failed to save a playlist {0}. err: {1} stack: {2}", fileName, e.Message, e.StackTrace );
       }
 		}
 

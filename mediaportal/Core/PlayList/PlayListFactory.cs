@@ -19,6 +19,7 @@
  *
  */
 using System;
+using System.IO;
 
 namespace MediaPortal.Playlists
 {
@@ -32,7 +33,7 @@ namespace MediaPortal.Playlists
 		}
 		static public PlayList Create(string fileName)
 		{
-			string extension=System.IO.Path.GetExtension(fileName);
+			string extension=Path.GetExtension(fileName);
 			extension.ToLower();
 			if (extension==".m3u")
 			{
@@ -55,7 +56,7 @@ namespace MediaPortal.Playlists
 
 		static public bool IsPlayList(string fileName)
 		{
-			string extension=System.IO.Path.GetExtension(fileName);
+			string extension=Path.GetExtension(fileName);
 			extension.ToLower();
 			if (extension==".m3u") return true;
 			if (extension==".pls") return true;

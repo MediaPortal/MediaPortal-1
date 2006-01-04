@@ -527,25 +527,25 @@ namespace MediaPortal.GUI.Music
       }
 
       // clear current playlist
-      PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC).Clear();
+      PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Clear();
 
       // add each item of the playlist to the playlistplayer
       for (int i = 0; i < playlist.Count; ++i)
       {
-        PlayList.PlayListItem playListItem = playlist[i];
-        PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC).Add(playListItem);
+        PlayListItem playListItem = playlist[i];
+        PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Add(playListItem);
       }
 
 
       // if we got a playlist
-      if (PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC).Count > 0)
+      if (PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Count > 0)
       {
         // then get 1st song
-        playlist = PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC);
-        PlayList.PlayListItem item = playlist[0];
+        playlist = PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
+        PlayListItem item = playlist[0];
 
         // and start playing it
-        PlayListPlayer.CurrentPlaylist = PlayListPlayer.PlayListType.PLAYLIST_MUSIC;
+        PlayListPlayer.CurrentPlaylist = PlayListType.PLAYLIST_MUSIC;
         PlayListPlayer.Reset();
         PlayListPlayer.Play(0);
 

@@ -225,7 +225,7 @@ namespace MediaPortal
     bool m_bRestore = false;
     double m_dCurrentPos = 0;
     string m_strCurrentFile;
-    PlayListPlayer.PlayListType m_currentPlayList = PlayListPlayer.PlayListType.PLAYLIST_NONE;
+    PlayListType m_currentPlayList = PlayListType.PLAYLIST_NONE;
     int m_iSleepingTime = 50;
     bool autoHideTaskbar = true;
     bool alwaysOnTop = false;
@@ -1320,8 +1320,8 @@ namespace MediaPortal
 
             // If a single file was played, play only that file - don't
             // try to restore the playlist - otherwise restore the PlayListPlayer
-            if (m_currentPlayList == PlayListPlayer.PlayListType.PLAYLIST_MUSIC_TEMP
-              || m_currentPlayList == PlayListPlayer.PlayListType.PLAYLIST_VIDEO_TEMP)
+            if (m_currentPlayList == PlayListType.PLAYLIST_MUSIC_TEMP
+              || m_currentPlayList == PlayListType.PLAYLIST_VIDEO_TEMP)
             {
               g_Player.Play(m_strCurrentFile);
             }

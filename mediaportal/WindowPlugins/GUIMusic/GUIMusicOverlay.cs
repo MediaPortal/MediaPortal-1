@@ -628,7 +628,7 @@ namespace MediaPortal.GUI.Music
         // if all fail check playlist for information
         if (tag==null)
         {
-          PlayList.PlayListItem item = PlayListPlayer.GetCurrentItem();
+          PlayListItem item = PlayListPlayer.GetCurrentItem();
           if (item != null) tag = (MusicTag)item.MusicTag;
         }        
       }// if (!bFound )

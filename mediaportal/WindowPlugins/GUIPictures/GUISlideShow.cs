@@ -2038,15 +2038,15 @@ namespace MediaPortal.GUI.Pictures
 
                 try
                 {
-                    PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC_TEMP).Clear();
+                    PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC_TEMP).Clear();
                     PlayListPlayer.Reset();
-                    PlayListPlayer.CurrentPlaylist = PlayListPlayer.PlayListType.PLAYLIST_MUSIC_TEMP;
+                    PlayListPlayer.CurrentPlaylist = PlayListType.PLAYLIST_MUSIC_TEMP;
 
-                    PlayList.PlayListItem playlistItem = new PlayList.PlayListItem();
+                    PlayListItem playlistItem = new PlayListItem();
 
-                    playlistItem.Type = Playlists.PlayList.PlayListItem.PlayListItemType.Audio;
+                    playlistItem.Type = Playlists.PlayListItem.PlayListItemType.Audio;
                     playlistItem.FileName = filename;
-                    PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC_TEMP).Add(playlistItem);
+                    PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC_TEMP).Add(playlistItem);
                     PlayListPlayer.Play(0);
 
                     _isBackgroundMusicPlaying = true;

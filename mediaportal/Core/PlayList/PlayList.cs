@@ -21,108 +21,16 @@
 using System;
 using MediaPortal.GUI.Library;
 using System.Collections.Generic;
+using MediaPortal.TagReader;
+using System.Collections;
 
 namespace MediaPortal.Playlists
 {
-	/// <summary>
-	/// 
-	/// </summary>
-	public class PlayList
+	public abstract class PlayList 
 	{
-    public class PlayListItem
-    {
-      public enum PlayListItemType
-      {
-        Unknown,
-        Audio,
-        Radio,
-        AudioStream,
-        VideoStream,
-        Video,
-        DVD,
-        TV,
-        Pictures
-      }
-      protected string _fileName="";
-      protected string _description="";
-      protected int    _duration=0;
-      protected object _musicTag=null;
-      bool             _isPlayed=false;
-      PlayListItemType _itemType=PlayListItemType.Unknown;
-
-      public PlayListItem()
-      {
-      }
-      
-      public PlayListItem(string description, string fileName)
-      {
-        if (description == null) return;
-        if (fileName == null) return;
-        _description = description;
-        _fileName = fileName;
-        _duration=0;
-      }
-
-      public PlayListItem(string description, string fileName, int duration)
-      {
-        if (description == null) return;
-        if (fileName == null) return;
-        _description = description;
-        _fileName = fileName;
-        _duration = duration;
-      }
-      
-      public PlayListItem.PlayListItemType Type
-      {
-        get { return _itemType;}
-        set { _itemType=value;}
-      }
-
-      public string FileName
-      {
-        get { return _fileName;}
-        set 
-        {  
-          if (value==null) return;
-          _fileName=value;
-        }
-      }
-      public string Description
-      {
-        get { return _description;}
-        set { 
-          if (value==null) return;
-          _description=value;
-        }
-      }
-      public int Duration
-      {
-        get { return _duration;}
-        set { _duration=value;}
-      }
-      public bool Played
-      {
-        get { return _isPlayed;}
-        set { _isPlayed=value;}
-      }
-
-      /// <summary>
-      /// Get/set the object containing the tag info of a music file (e.g., id3 tag).
-      /// </summary>
-      public object MusicTag
-      {
-        get { return _musicTag;}
-        set {_musicTag=value;}
-      }
-    };
-
-
-    protected string		_playListName="";
+    protected string _playListName="";
     protected List<PlayListItem> _listPlayListItems = new List<PlayListItem>();
-    public PlayList()
-    {
-    }
-    
+   
     public bool AllPlayed()
     {
       foreach (PlayListItem item in _listPlayListItems)
@@ -158,6 +66,7 @@ namespace MediaPortal.Playlists
     public int Remove( string fileName)
     {
       if (fileName==null) return -1;
+      
       for (int i=0; i < _listPlayListItems.Count;++i)
       {
         PlayListItem item=_listPlayListItems[i];
@@ -180,7 +89,7 @@ namespace MediaPortal.Playlists
       get { return _listPlayListItems.Count;}
     }
 
-    public Playlists.PlayList.PlayListItem this [int iItem]
+    public PlayListItem this [int iItem]
     {
       get { return _listPlayListItems[iItem];}
     }
@@ -194,7 +103,6 @@ namespace MediaPortal.Playlists
      
     public virtual void Shuffle()
     {
-
       Random r = new System.Random(DateTime.Now.Millisecond);
       
       // iterate through each catalogue item performing arbitrary swaps
@@ -206,17 +114,10 @@ namespace MediaPortal.Playlists
         _listPlayListItems[nArbitrary] = _listPlayListItems[item];
         _listPlayListItems[item] = anItem;
       }
-
     }
     
-    public virtual bool 	Load(string filename)
-    {
-      return false;
-    }
+    public abstract bool Load(string filename);
 
-    public virtual void Save(string filename) 
-    {
-    }
-    
-	}
+    public abstract void Save( string filename );
+  }
 }

@@ -1178,8 +1178,8 @@ namespace MediaPortal.GUI.Video
       }
       if (!g_Player.Playing)
       {
-        if (PlayListPlayer.CurrentPlaylist == PlayListPlayer.PlayListType.PLAYLIST_MUSIC ||
-          PlayListPlayer.CurrentPlaylist == PlayListPlayer.PlayListType.PLAYLIST_MUSIC_TEMP)
+        if (PlayListPlayer.CurrentPlaylist == PlayListType.PLAYLIST_MUSIC ||
+          PlayListPlayer.CurrentPlaylist == PlayListType.PLAYLIST_MUSIC_TEMP)
         {
           return;
         }

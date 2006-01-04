@@ -271,24 +271,24 @@ namespace MediaPortal.GUI.Radio
 				
 				case GUIMessage.MessageType.GUI_MSG_PLAY_RADIO_STATION:
 					if (message.Label.Length==0) return true;
-					PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC_TEMP).Clear();
+					PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC_TEMP).Clear();
 					PlayListPlayer.Reset();
 
 					ArrayList stations = new ArrayList();
 					RadioDatabase.GetStations(ref stations);
 					foreach (RadioStation station in stations)
 					{
-						PlayList.PlayListItem playlistItem = new Playlists.PlayList.PlayListItem();
+						PlayListItem playlistItem = new Playlists.PlayListItem();
 						if (station.URL==String.Empty)
-							playlistItem.Type = Playlists.PlayList.PlayListItem.PlayListItemType.Radio;
+							playlistItem.Type = Playlists.PlayListItem.PlayListItemType.Radio;
 						else
-							playlistItem.Type = Playlists.PlayList.PlayListItem.PlayListItemType.AudioStream;
+							playlistItem.Type = Playlists.PlayListItem.PlayListItemType.AudioStream;
 						playlistItem.FileName = GetPlayPath(station);
 						playlistItem.Description = station.Name;
 						playlistItem.Duration = 0;
-						PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC_TEMP).Add(playlistItem);
+						PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC_TEMP).Add(playlistItem);
 					}
-					PlayListPlayer.CurrentPlaylist = PlayListPlayer.PlayListType.PLAYLIST_MUSIC_TEMP;
+					PlayListPlayer.CurrentPlaylist = PlayListType.PLAYLIST_MUSIC_TEMP;
 					foreach (RadioStation station in stations)
 					{
 						if ( station.Name.Equals(message.Label))
@@ -730,7 +730,7 @@ namespace MediaPortal.GUI.Radio
 
 		void FillPlayList()
 		{
-			PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC_TEMP).Clear();
+			PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC_TEMP).Clear();
 			PlayListPlayer.Reset();
 
 			// are we looking @ a playlist
@@ -739,12 +739,12 @@ namespace MediaPortal.GUI.Radio
 				//yes, then add current playlist to playlist player
 				for (int i=0; i < currentPlayList.Count;++i)
 				{
-					PlayList.PlayListItem playlistItem = new Playlists.PlayList.PlayListItem();
+					PlayListItem playlistItem = new Playlists.PlayListItem();
 					playlistItem.Type = currentPlayList[i].Type;
 					playlistItem.FileName = currentPlayList[i].FileName;
 					playlistItem.Description = currentPlayList[i].Description;
 					playlistItem.Duration = currentPlayList[i].Duration;
-					PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC_TEMP).Add(playlistItem);
+					PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC_TEMP).Add(playlistItem);
 				}
 			}
 			else
@@ -767,12 +767,12 @@ namespace MediaPortal.GUI.Radio
 							if (playlist.Count>0)
 							{
 								// then add the 1st item to the playlist player
-								PlayList.PlayListItem playlistItem = new Playlists.PlayList.PlayListItem();
+								PlayListItem playlistItem = new Playlists.PlayListItem();
 								playlistItem.FileName = playlist[0].FileName;
 								playlistItem.Description = playlist[0].Description;
 								playlistItem.Duration = playlist[0].Duration;
 								playlistItem.Type = playlist[0].Type;
-								PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC_TEMP).Add(playlistItem);
+								PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC_TEMP).Add(playlistItem);
 							}
 						}
 					}
@@ -781,25 +781,25 @@ namespace MediaPortal.GUI.Radio
 						// item is just a normal file like .asx, .pls
 						// or a radio station from the setup.
 						RadioStation station = item.MusicTag as RadioStation;
-						PlayList.PlayListItem playlistItem = new Playlists.PlayList.PlayListItem();
+						PlayListItem playlistItem = new Playlists.PlayListItem();
 						if (station!=null)
 						{
 							playlistItem.FileName = GetPlayPath(station);
-							if (station.URL==String.Empty) playlistItem.Type=Playlists.PlayList.PlayListItem.PlayListItemType.Radio;
-							else playlistItem.Type=Playlists.PlayList.PlayListItem.PlayListItemType.AudioStream;
+							if (station.URL==String.Empty) playlistItem.Type=Playlists.PlayListItem.PlayListItemType.Radio;
+							else playlistItem.Type=Playlists.PlayListItem.PlayListItemType.AudioStream;
 						}
 						else
 						{
-							playlistItem.Type=Playlists.PlayList.PlayListItem.PlayListItemType.AudioStream;
+							playlistItem.Type=Playlists.PlayListItem.PlayListItemType.AudioStream;
 							playlistItem.FileName = item.Path;
 						}
 						playlistItem.Description = item.Label;
 						playlistItem.Duration = 0;
-						PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC_TEMP).Add(playlistItem);
+						PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC_TEMP).Add(playlistItem);
 					}
 				}
 			}
-			PlayListPlayer.CurrentPlaylist = PlayListPlayer.PlayListType.PLAYLIST_MUSIC_TEMP;
+			PlayListPlayer.CurrentPlaylist = PlayListType.PLAYLIST_MUSIC_TEMP;
 		}
     
 		void Play(GUIListItem item)
@@ -841,10 +841,10 @@ namespace MediaPortal.GUI.Radio
 				RadioStation station = item.MusicTag as RadioStation;
 				FillPlayList();
 
-				PlayList playlist=PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC_TEMP);
+				PlayList playlist=PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC_TEMP);
 				for (int i=0; i < playlist.Count;++i)
 				{
-					PlayList.PlayListItem playItem=playlist[i];
+					PlayListItem playItem=playlist[i];
 					if (playItem.Description.Equals(item.Label))
 					{
 						PlayListPlayer.Play (i);

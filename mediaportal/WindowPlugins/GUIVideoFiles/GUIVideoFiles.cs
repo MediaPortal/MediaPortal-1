@@ -708,15 +708,15 @@ namespace MediaPortal.GUI.Video
 						AddFileToDatabase((string)movies[0]);
 					}
 					PlayListPlayer.Reset();
-					PlayListPlayer.CurrentPlaylist = PlayListPlayer.PlayListType.PLAYLIST_VIDEO_TEMP;
-					PlayList playlist = PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_VIDEO_TEMP);
+					PlayListPlayer.CurrentPlaylist = PlayListType.PLAYLIST_VIDEO_TEMP;
+					PlayList playlist = PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO_TEMP);
 					playlist.Clear();
 					for (int i = 0; i < (int)movies.Count; ++i)
 					{
 						movieFileName = (string)movies[i];
-						PlayList.PlayListItem itemNew = new PlayList.PlayListItem();
+						PlayListItem itemNew = new PlayListItem();
 						itemNew.FileName = movieFileName;
-            itemNew.Type = Playlists.PlayList.PlayListItem.PlayListItemType.Video;
+            itemNew.Type = Playlists.PlayListItem.PlayListItemType.Video;
 						playlist.Add(itemNew);
 					}
 
@@ -729,12 +729,12 @@ namespace MediaPortal.GUI.Video
 				AddFileToDatabase(movieFileName);
 
         PlayListPlayer.Reset();
-        PlayListPlayer.CurrentPlaylist = PlayListPlayer.PlayListType.PLAYLIST_VIDEO_TEMP;
-        PlayList newPlayList = PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_VIDEO_TEMP);
+        PlayListPlayer.CurrentPlaylist = PlayListType.PLAYLIST_VIDEO_TEMP;
+        PlayList newPlayList = PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO_TEMP);
         newPlayList.Clear();
-        PlayList.PlayListItem NewItem = new PlayList.PlayListItem();
+        PlayListItem NewItem = new PlayListItem();
         NewItem.FileName = movieFileName;
-        NewItem.Type = Playlists.PlayList.PlayListItem.PlayListItemType.Video;
+        NewItem.Type = Playlists.PlayListItem.PlayListItemType.Video;
         newPlayList.Add(NewItem);
         PlayMovieFromPlayList(true);
 /*
@@ -789,12 +789,12 @@ namespace MediaPortal.GUI.Video
 				//TODO
 				if (Utils.IsVideo(listItem.Path) && !PlayListFactory.IsPlayList(listItem.Path))
 				{
-					PlayList.PlayListItem playlistItem = new PlayList.PlayListItem();
+					PlayListItem playlistItem = new PlayListItem();
 					playlistItem.FileName = listItem.Path;
 					playlistItem.Description = listItem.Label;
 					playlistItem.Duration = listItem.Duration;
-          playlistItem.Type = Playlists.PlayList.PlayListItem.PlayListItemType.Video;
-					PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_VIDEO).Add(playlistItem);
+          playlistItem.Type = Playlists.PlayListItem.PlayListItemType.Video;
+					PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO).Add(playlistItem);
 				}
 			}
 		}
@@ -832,25 +832,25 @@ namespace MediaPortal.GUI.Video
 			}
 
 			// clear current playlist
-			PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_VIDEO).Clear();
+			PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO).Clear();
 
 			// add each item of the playlist to the playlistplayer
 			for (int i = 0; i < playlist.Count; ++i)
 			{
-				PlayList.PlayListItem playListItem = playlist[i];
-				PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_VIDEO).Add(playListItem);
+				PlayListItem playListItem = playlist[i];
+				PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO).Add(playListItem);
 			}
 
 			
 			// if we got a playlist
-			if (PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_VIDEO).Count > 0)
+			if (PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO).Count > 0)
 			{
 				// then get 1st song
-				playlist = PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_VIDEO);
-				PlayList.PlayListItem item = playlist[0];
+				playlist = PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO);
+				PlayListItem item = playlist[0];
 
 				// and start playing it
-				PlayListPlayer.CurrentPlaylist = PlayListPlayer.PlayListType.PLAYLIST_VIDEO;
+				PlayListPlayer.CurrentPlaylist = PlayListType.PLAYLIST_VIDEO;
 				PlayListPlayer.Reset();
 				PlayListPlayer.Play(0);
 
@@ -1827,13 +1827,13 @@ namespace MediaPortal.GUI.Video
 				if (System.IO.File.Exists(strDir + @"\VIDEO_TS\VIDEO_TS.IFO"))
 				{
 					PlayListPlayer.Reset();
-					PlayListPlayer.CurrentPlaylist = PlayListPlayer.PlayListType.PLAYLIST_VIDEO_TEMP;
-					PlayList playlist = PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_VIDEO_TEMP);
+					PlayListPlayer.CurrentPlaylist = PlayListType.PLAYLIST_VIDEO_TEMP;
+					PlayList playlist = PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO_TEMP);
 					playlist.Clear();
 
-					PlayList.PlayListItem newitem = new PlayList.PlayListItem();
+					PlayListItem newitem = new PlayListItem();
 					newitem.FileName = strDir + @"\VIDEO_TS\VIDEO_TS.IFO";
-					newitem.Type = Playlists.PlayList.PlayListItem.PlayListItemType.Video;
+					newitem.Type = Playlists.PlayListItem.PlayListItemType.Video;
 					playlist.Add(newitem);
 
 					Log.Write("\"Autoplaying\" DVD image mounted on {0}",strDir);
@@ -2434,15 +2434,15 @@ namespace MediaPortal.GUI.Video
 			}
     
 			PlayListPlayer.Reset();
-			PlayListPlayer.CurrentPlaylist = PlayListPlayer.PlayListType.PLAYLIST_VIDEO_TEMP;
-			PlayList playlist = PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_VIDEO_TEMP);
+			PlayListPlayer.CurrentPlaylist = PlayListType.PLAYLIST_VIDEO_TEMP;
+			PlayList playlist = PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO_TEMP);
 			playlist.Clear();
 			for (int i = selectedFileIndex - 1; i < movies.Count; ++i)
 			{
 				string movieFileName = (string)movies[i];
-				PlayList.PlayListItem newitem = new PlayList.PlayListItem();
+				PlayListItem newitem = new PlayListItem();
 				newitem.FileName = movieFileName;
-				newitem.Type = Playlists.PlayList.PlayListItem.PlayListItemType.Video;
+				newitem.Type = Playlists.PlayListItem.PlayListItemType.Video;
 				playlist.Add(newitem);
 			}
 

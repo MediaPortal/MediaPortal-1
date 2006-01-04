@@ -403,12 +403,12 @@ namespace MediaPortal.GUI.Alarm
 						}
 						for(int i=0; i<playlist.Count; ++i)
 						{
-							PlayList.PlayListItem playListItem = playlist[i];
-							PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC).Add(playListItem);
+							PlayListItem playListItem = playlist[i];
+							PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Add(playListItem);
 						}
-						if(PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC).Count>0)
+						if(PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Count>0)
 						{
-							PlayListPlayer.CurrentPlaylist = PlayListPlayer.PlayListType.PLAYLIST_MUSIC;
+							PlayListPlayer.CurrentPlaylist = PlayListType.PLAYLIST_MUSIC;
 							PlayListPlayer.Reset();
 						
 							PlayListPlayer.Play(0);

@@ -364,7 +364,7 @@ namespace MediaPortal.GUI.Music
         // play item
         //play and add current directory to temporary playlist
         int nFolderCount = 0;
-        PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC_TEMP).Clear();
+        PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC_TEMP).Clear();
         PlayListPlayer.Reset();
         for (int i = 0; i < (int)facadeView.Count; i++)
         {
@@ -374,8 +374,8 @@ namespace MediaPortal.GUI.Music
             nFolderCount++;
             continue;
           }
-          PlayList.PlayListItem playlistItem = new Playlists.PlayList.PlayListItem();
-          playlistItem.Type = Playlists.PlayList.PlayListItem.PlayListItemType.Audio;
+          PlayListItem playlistItem = new Playlists.PlayListItem();
+          playlistItem.Type = Playlists.PlayListItem.PlayListItemType.Audio;
           playlistItem.FileName = pItem.Path;
           playlistItem.Description = pItem.Label;
           int iDuration = 0;
@@ -383,14 +383,14 @@ namespace MediaPortal.GUI.Music
           if (tag != null) iDuration = tag.Duration;
           playlistItem.Duration = iDuration;
           playlistItem.MusicTag = tag;
-          PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC_TEMP).Add(playlistItem);
+          PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC_TEMP).Add(playlistItem);
         }
 
         //	Save current window and directory to know where the selected item was
         MusicState.TempPlaylistWindow = GetID;
         MusicState.TempPlaylistDirectory = m_strDirectory;
 
-        PlayListPlayer.CurrentPlaylist = PlayListPlayer.PlayListType.PLAYLIST_MUSIC_TEMP;
+        PlayListPlayer.CurrentPlaylist = PlayListType.PLAYLIST_MUSIC_TEMP;
         PlayListPlayer.Play(iItem - nFolderCount);
       }
     }
@@ -459,10 +459,10 @@ namespace MediaPortal.GUI.Music
 
       //move to next item and start playing
       GUIControl.SelectItemControl(GetID, facadeView.GetID, iItem + 1);
-      if (PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC).Count > 0 && !g_Player.Playing)
+      if (PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Count > 0 && !g_Player.Playing)
       {
         PlayListPlayer.Reset();
-        PlayListPlayer.CurrentPlaylist = PlayListPlayer.PlayListType.PLAYLIST_MUSIC;
+        PlayListPlayer.CurrentPlaylist = PlayListType.PLAYLIST_MUSIC;
         PlayListPlayer.Play(0);
       }
     }
@@ -505,8 +505,8 @@ namespace MediaPortal.GUI.Music
     {
       if (Utils.IsAudio(song.FileName) && !PlayListFactory.IsPlayList(song.FileName))
       {
-        PlayList.PlayListItem playlistItem = new PlayList.PlayListItem();
-        playlistItem.Type = Playlists.PlayList.PlayListItem.PlayListItemType.Audio;
+        PlayListItem playlistItem = new PlayListItem();
+        playlistItem.Type = Playlists.PlayListItem.PlayListItemType.Audio;
         playlistItem.FileName = song.FileName;
         playlistItem.Description = song.Title;
         playlistItem.Duration = song.Duration;
@@ -523,7 +523,7 @@ namespace MediaPortal.GUI.Music
         tag.Year = song.Year;
         playlistItem.MusicTag = tag;
 
-        PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC).Add(playlistItem);
+        PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Add(playlistItem);
       }
     }
 

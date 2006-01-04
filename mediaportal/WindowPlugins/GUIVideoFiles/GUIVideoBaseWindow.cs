@@ -586,12 +586,12 @@ namespace MediaPortal.GUI.Video
         //TODO
         if (Utils.IsVideo(pItem.Path) && !PlayListFactory.IsPlayList(pItem.Path))
         {
-          PlayList.PlayListItem playlistItem = new PlayList.PlayListItem();
-          playlistItem.Type = Playlists.PlayList.PlayListItem.PlayListItemType.Video;
+          PlayListItem playlistItem = new PlayListItem();
+          playlistItem.Type = PlayListItem.PlayListItemType.Video;
           playlistItem.FileName = pItem.Path;
           playlistItem.Description = pItem.Label;
           playlistItem.Duration = pItem.Duration;
-          PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_VIDEO).Add(playlistItem);
+          PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO).Add(playlistItem);
         }
       }
     }

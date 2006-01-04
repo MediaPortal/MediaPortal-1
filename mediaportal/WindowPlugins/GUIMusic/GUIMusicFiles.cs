@@ -648,7 +648,7 @@ namespace MediaPortal.GUI.Music
         //play and add current directory to temporary playlist
         int nFolderCount = 0;
         int nRemoteCount = 0;
-        PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC_TEMP).Clear();
+        PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC_TEMP).Clear();
         PlayListPlayer.Reset();
         List<GUIListItem> queueItems = new List<GUIListItem>();
         for (int i = 0; i < (int)facadeView.Count; i++)
@@ -681,20 +681,20 @@ namespace MediaPortal.GUI.Music
 
         foreach (GUIListItem queueItem in queueItems)
         {
-          PlayList.PlayListItem playlistItem = new Playlists.PlayList.PlayListItem();
-          playlistItem.Type = Playlists.PlayList.PlayListItem.PlayListItemType.Audio;
+          PlayListItem playlistItem = new Playlists.PlayListItem();
+          playlistItem.Type = Playlists.PlayListItem.PlayListItemType.Audio;
           playlistItem.FileName = queueItem.Path;
           playlistItem.Description = queueItem.Label;
           playlistItem.Duration = queueItem.Duration;
           playlistItem.MusicTag = queueItem.MusicTag;
-          PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC_TEMP).Add(playlistItem);
+          PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC_TEMP).Add(playlistItem);
         }
 
         //	Save current window and directory to know where the selected item was
         MusicState.TempPlaylistWindow = GetID;
         MusicState.TempPlaylistDirectory = m_strDirectory;
 
-        PlayListPlayer.CurrentPlaylist = PlayListPlayer.PlayListType.PLAYLIST_MUSIC_TEMP;
+        PlayListPlayer.CurrentPlaylist = PlayListType.PLAYLIST_MUSIC_TEMP;
         PlayListPlayer.Play(item.Path);
       }
     }
@@ -714,10 +714,10 @@ namespace MediaPortal.GUI.Music
 
       //move to next item
       GUIControl.SelectItemControl(GetID, facadeView.GetID, iItem + 1);
-      if (PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC).Count > 0 && !g_Player.Playing)
+      if (PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Count > 0 && !g_Player.Playing)
       {
         PlayListPlayer.Reset();
-        PlayListPlayer.CurrentPlaylist = PlayListPlayer.PlayListType.PLAYLIST_MUSIC;
+        PlayListPlayer.CurrentPlaylist = PlayListType.PLAYLIST_MUSIC;
         PlayListPlayer.Play(0);
       }
 
@@ -729,10 +729,10 @@ namespace MediaPortal.GUI.Music
     void OnPlayCD(string strDriveLetter, bool AskForAlbum)
     {
       // start playing current CD        
-      PlayList list = PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC_TEMP);
+      PlayList list = PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC_TEMP);
       list.Clear();
 
-      list = PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC);
+      list = PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
       list.Clear();
 
       GUIListItem pItem = new GUIListItem();
@@ -741,7 +741,7 @@ namespace MediaPortal.GUI.Music
       m_bScan = AskForAlbum;
       AddItemToPlayList(pItem);
       m_bScan = false;
-      if (PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC).Count > 0)
+      if (PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Count > 0)
       {
         // waeberd: mantis #470
         if (g_Player.Playing)
@@ -749,7 +749,7 @@ namespace MediaPortal.GUI.Music
           g_Player.Stop();
         }
         PlayListPlayer.Reset();
-        PlayListPlayer.CurrentPlaylist = PlayListPlayer.PlayListType.PLAYLIST_MUSIC;
+        PlayListPlayer.CurrentPlaylist = PlayListType.PLAYLIST_MUSIC;
         PlayListPlayer.Play(0);
       }
     }
@@ -931,13 +931,13 @@ namespace MediaPortal.GUI.Music
           m_database.CheckVariousArtistsAndCoverArt();
           m_bScan = false;
 
-          PlayList.PlayListItem playlistItem = new PlayList.PlayListItem();
-          playlistItem.Type = Playlists.PlayList.PlayListItem.PlayListItemType.Audio;
+          PlayListItem playlistItem = new PlayListItem();
+          playlistItem.Type = Playlists.PlayListItem.PlayListItemType.Audio;
           playlistItem.FileName = pItem.Path;
           playlistItem.Description = pItem.Label;
           playlistItem.Duration = pItem.Duration;
           playlistItem.MusicTag = pItem.MusicTag;
-          PlayListPlayer.GetPlaylist(PlayListPlayer.PlayListType.PLAYLIST_MUSIC).Add(playlistItem);
+          PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Add(playlistItem);
         }
       }
     }

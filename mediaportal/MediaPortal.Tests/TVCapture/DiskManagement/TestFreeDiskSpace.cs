@@ -16,6 +16,7 @@ namespace MediaPortal.Tests.Disk
 {
   [TestFixture]
   [Category("DiskManagement")]
+  [Ignore("Not finished")]
   public class TestFreeDiskSpace
   {
     void SetupDatabase()

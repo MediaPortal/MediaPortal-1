@@ -42,78 +42,123 @@ using MediaPortal.Util;
 
 namespace MediaPortal.Playlists
 {
-	/// <summary>
-	/// 
-	/// </summary>
-	public class PlayListB4S : PlayList
-	{
+    public class PlayListB4S : PlayList
+    {
+        private bool LoadXml(string fileName, out XmlNodeList nodeEntries)
+        {
+            nodeEntries = null;
 
-		public PlayListB4S()
-		{
-		}
-		public override bool Load(string fileName)
-		{
-			Clear();
+            XmlDocument doc = new XmlDocument();
+            doc.Load(fileName);
+            if (doc.DocumentElement == null) return false;
+            string root = doc.DocumentElement.Name;
+            if (root != "WinampXML") return false;
 
-			try
-			{
-				string basePath=System.IO.Path.GetDirectoryName(System.IO.Path.GetFullPath(fileName));
-			
-				XmlDocument doc= new XmlDocument();
-				doc.Load(fileName);
-				if (doc.DocumentElement==null) return false;
-				string root=doc.DocumentElement.Name;
-				if (root!="WinampXML") return false;
+            XmlNode nodeRoot = doc.DocumentElement.SelectSingleNode("/WinampXML/playlist");
+            if (nodeRoot == null) return false;
+            nodeEntries = nodeRoot.SelectNodes("entry");
+            return true;
+        }
 
-				XmlNode nodeRoot=doc.DocumentElement.SelectSingleNode("/WinampXML/playlist");
-				if (nodeRoot==null) return false;
-				XmlNodeList nodeEntries=nodeRoot.SelectNodes("entry");
-				foreach (XmlNode node in nodeEntries)
-				{
-					XmlNode nodeFile  = node.Attributes.GetNamedItem("Playstring");
-					XmlNode nodeName  = node.SelectSingleNode("Name");
-					XmlNode nodeLength= node.SelectSingleNode("Length");
-					if (nodeFile != null && nodeName!=null && nodeLength!=null)
-					{
-						int duration=System.Int32.Parse(nodeLength.InnerText);
-						string infoLine=nodeName.InnerText;
-						string file=nodeFile.InnerText;
-						Utils.GetQualifiedFilename(basePath,ref file);
-						PlayListItem newItem = new PlayListItem(infoLine, file, duration);
-						if (infoLine.Length==0)
-						{
-							infoLine=System.IO.Path.GetFileName(file);
-							newItem.Description=infoLine;
-						}
-						Add(newItem);
-					}
-				}
-				return true;
-			}
-			catch (Exception ex)
-			{
-				Log.Write("exception loading playlist {0} err:{1} stack:{2}", fileName, ex.Message,ex.StackTrace);
-			}
-			return false;
-		}
+        public override bool Load(string fileName)
+        {
+            Clear();
+            XmlNodeList nodeEntries;
 
-		public override void 	Save(string fileName)  
-		{
-			using (StreamWriter writer = new StreamWriter(fileName,true))
-			{
-				//writer.WriteLine("<?xml version=%c1.0%c encoding='UTF-8' standalone=%cyes%c?>\n");
-				writer.WriteLine("<WinampXML>");
-				writer.WriteLine("  <playlist num_entries=\"{0}\" label=\"{1}\">",_listPlayListItems.Count,_playListName);
-				for (int i=0; i < _listPlayListItems.Count;++i)
-				{
-					PlayListItem item=_listPlayListItems[i];
-					writer.WriteLine("    <entry Playstring=\"file:{0}\">", item.FileName );
-					writer.WriteLine("      <Name>{0}</Name>", item.Description);
-					writer.WriteLine("      <Length>{0}</Length>", item.Duration);
-				}
-				writer.WriteLine("  </playlist>");
-				writer.WriteLine("</WinampXML>");
-			}
-		}
-	}
+            if (!LoadXml(fileName, out nodeEntries))
+                return false;
+
+            try
+            {
+                string basePath = Path.GetDirectoryName(Path.GetFullPath(fileName));
+                foreach (XmlNode node in nodeEntries)
+                {
+                    string file = ReadFileName(node);
+
+                    if (file == null)
+                        return false;
+
+                    string infoLine = ReadInfoLine(node, file);
+                    int duration = ReadLength(node);
+
+                    Utils.GetQualifiedFilename(basePath, ref file);
+                    PlayListItem newItem = new PlayListItem(infoLine, file, duration);
+                    Add(newItem);
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Log.Write("exception loading playlist {0} err:{1} stack:{2}", fileName, ex.Message, ex.StackTrace);
+                return false;
+            }
+        }
+
+        private static int ReadLength(XmlNode node)
+        {
+            XmlNode nodeLength = node.SelectSingleNode("Length");
+            if (nodeLength == null)
+                return 0;
+            return Int32.Parse(nodeLength.InnerText);
+        }
+
+        private static string ReadInfoLine(XmlNode node, string file)
+        {
+            string infoLine;
+            XmlNode nodeName = node.SelectSingleNode("Name");
+            if (nodeName == null)
+                infoLine = Path.GetFileName(file);
+            else
+                infoLine = nodeName.InnerText;
+            return infoLine;
+        }
+
+        private static string ReadFileName(XmlNode node)
+        {
+            string file = node.Attributes["Playstring"].Value;
+
+            if (file == null)
+                return null;
+
+            file = RemovePrefix(file, "file:");
+            return file;
+        }
+
+        private static string RemovePrefix(string file, string prefix)
+        {
+            if (file.StartsWith(prefix))
+                file = file.Substring(prefix.Length);
+            return file;
+        }
+
+
+        public override void Save(string fileName)
+        {
+            XmlWriterSettings settings = new XmlWriterSettings();
+            settings.Indent = true;
+            settings.OmitXmlDeclaration = true;
+            using (XmlWriter writer = XmlWriter.Create(fileName, settings))
+            {
+                writer.WriteStartElement("WinampXML");
+                writer.WriteStartElement("playlist");
+                writer.WriteAttributeString("num_entries", _listPlayListItems.Count.ToString());
+                writer.WriteAttributeString("label", _playListName);
+
+                foreach (PlayListItem item in _listPlayListItems)
+                {
+                    writer.WriteStartElement("entry");
+                    writer.WriteAttributeString("Playstring", "file:" + item.FileName);
+                    writer.WriteElementString("Name", item.Description);
+                    writer.WriteElementString("Length", item.Duration.ToString());
+                    writer.WriteEndElement();
+                }
+
+                writer.WriteEndElement();
+                writer.WriteEndElement();
+            }
+
+        }
+        
+        
+    }
 }
