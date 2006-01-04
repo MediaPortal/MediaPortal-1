@@ -37,7 +37,7 @@ namespace MediaPortal.TV.DiskSpace
   /// </summary>
   public class DiskManagement
   {
-    static DateTime _diskSpaceCheckTimer = DateTime.Now;
+    static DateTime _diskSpaceCheckTimer = DateTime.MinValue;
     static DateTime _deleteOldRecordingTimer = DateTime.MinValue;
     static  DiskManagement()
     {
@@ -193,6 +193,13 @@ namespace MediaPortal.TV.DiskSpace
       return drives;
     }
 
+    /// <summary>
+    /// This method checks the diskspace on each harddisk
+    /// if the diskspace used by recordings exceeds the disk quota set on the drive
+    /// then this method will delete recordings until the disk quota is not exceeded anymore
+    /// </summary>
+    /// <remarks>Note, this method will run once every 15 minutes
+    /// </remarks>
     static public void CheckFreeDiskSpace()
     {
       //check diskspace every 15 minutes...

@@ -326,7 +326,7 @@ namespace MediaPortal.TV.Recording
 
       if (GUIGraphicsContext.DX9Device == null)
       {
-        Paused = true;
+        _isPaused = true;
       }
       //start the processing thread
       _processThread = new BackgroundWorker();
@@ -2330,7 +2330,6 @@ namespace MediaPortal.TV.Recording
     {
       System.Threading.Thread.CurrentThread.Priority = System.Threading.ThreadPriority.BelowNormal;
       DateTime recTimer = DateTime.Now;
-      DateTime diskTimer = DateTime.Now;
       while (_state == State.Initialized)
       {
         try
@@ -2354,14 +2353,8 @@ namespace MediaPortal.TV.Recording
             recTimer = DateTime.Now;
           }
 
-          //handle disk space management every 5 minutes
-          ts = DateTime.Now - diskTimer;
-          if (ts.TotalMinutes >= 5)
-          {
-            DiskManagement.DeleteOldRecordings();
-            DiskManagement.CheckFreeDiskSpace();
-            diskTimer = DateTime.Now;
-          }
+          DiskManagement.DeleteOldRecordings();
+          DiskManagement.CheckFreeDiskSpace();
 
           //handle the notifies
           Recorder.HandleNotifies();
