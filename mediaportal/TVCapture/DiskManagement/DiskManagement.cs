@@ -37,13 +37,20 @@ namespace MediaPortal.TV.DiskSpace
   public class DiskManagement
   {
     static DateTime _diskSpaceCheckTimer = DateTime.MinValue;
-    static DateTime _deleteOldRecordingTimer = DateTime.MinValue;
     static DiskManagement()
     {
-      Recorder.OnTvRecordingEnded += new MediaPortal.TV.Recording.Recorder.OnTvRecordingHandler(DiskManagement.Recorder_OnTvRecordingEnded);
     }
 
     #region recording/timeshift file delete methods
+
+    static public void DeleteRecording(TVRecorded rec)
+    {
+      DiskManagement.DeleteRecording(rec.FileName);
+      TVDatabase.RemoveRecordedTV(rec);
+      VideoDatabase.DeleteMovie(rec.FileName);
+      VideoDatabase.DeleteMovieInfo(rec.FileName);
+    }
+
     static public void DeleteRecording(string recordingFilename)
     {
       Utils.FileDelete(recordingFilename);
@@ -137,37 +144,6 @@ namespace MediaPortal.TV.DiskSpace
     }//static void DeleteOldTimeShiftFiles(string path)
     #endregion
 
-    #region diskmanagement
-    /// <summary>
-    /// This method will get all the tv-recordings present in the tv database
-    /// For each recording it looks at the Keep until settings. If the recording should be
-    /// deleted by date, then it will delete the recording from the database, and harddisk
-    /// if the the current date > keep until date
-    /// </summary>
-    /// <remarks>Note, this method will only work after a day-change has occured(and at startup)
-    /// </remarks>
-    static public void DeleteOldRecordings()
-    {
-      if (DateTime.Now.Date == _deleteOldRecordingTimer.Date) return;
-      _deleteOldRecordingTimer = DateTime.Now;
-
-      List<TVRecorded> recordings = new List<TVRecorded>();
-      TVDatabase.GetRecordedTV(ref recordings);
-      foreach (TVRecorded rec in recordings)
-      {
-        if (rec.KeepRecordingMethod != TVRecorded.KeepMethod.TillDate) continue;
-        if (rec.KeepRecordingTill.Date > DateTime.Now.Date) continue;
-
-        Log.WriteFile(Log.LogType.Recorder, "Recorder: delete old recording:{0} date:{1}",
-                          rec.FileName,
-                          rec.StartTime.ToShortDateString());
-
-        DeleteRecording(rec.FileName);
-        TVDatabase.RemoveRecordedTV(rec);
-        VideoDatabase.DeleteMovie(rec.FileName);
-        VideoDatabase.DeleteMovieInfo(rec.FileName);
-      }
-    }
 
     static List<string> GetDisks()
     {
@@ -306,67 +282,5 @@ namespace MediaPortal.TV.DiskSpace
       }//while (diskSpaceUsedByRecordings > m_minimiumFreeDiskSpace && files.Count>0)
     }
 
-    #endregion
-
-    #region episode disk management
-    static private void Recorder_OnTvRecordingEnded(string recordingFilename, TVRecording recording, TVProgram program)
-    {
-      Log.WriteFile(Log.LogType.Recorder, "diskmanagement: recording {0} ended. type:{1} max episodes:{2}",
-          recording.Title, recording.RecType.ToString(), recording.EpisodesToKeep);
-
-      if (recording.EpisodesToKeep == Int32.MaxValue) return;
-      if (recording.RecType == TVRecording.RecordingType.Once) return;
-
-      //check how many episodes we got
-      List<TVRecorded> recordings = new List<TVRecorded>();
-      TVDatabase.GetRecordedTV(ref recordings);
-      while (true)
-      {
-        Log.WriteFile(Log.LogType.Recorder, "got:{0} recordings", recordings.Count);
-        int recordingsFound = 0;
-        DateTime oldestRecording = DateTime.MaxValue;
-        string oldestFileName = String.Empty;
-        TVRecorded oldestRec = null;
-        foreach (TVRecorded rec in recordings)
-        {
-          Log.WriteFile(Log.LogType.Recorder, "check:{0}", rec.Title);
-          if (String.Compare(rec.Title, recording.Title, true) == 0)
-          {
-            recordingsFound++;
-            if (rec.StartTime < oldestRecording)
-            {
-              oldestRecording = rec.StartTime;
-              oldestFileName = rec.FileName;
-              oldestRec = rec;
-            }
-          }
-        }
-        Log.WriteFile(Log.LogType.Recorder, "diskmanagement:   total episodes now:{0}", recordingsFound);
-        if (oldestRec != null)
-        {
-          Log.WriteFile(Log.LogType.Recorder, "diskmanagement:   oldest episode:{0} {1}", oldestRec.StartTime.ToShortDateString(), oldestRec.StartTime.ToLongTimeString());
-        }
-
-        if (oldestRec == null) return;
-        if (recordingsFound == 0) return;
-        if (recordingsFound <= recording.EpisodesToKeep) return;
-        Log.WriteFile(Log.LogType.Recorder, false, "diskmanagement:   Delete episode {0} {1} {2} {3}",
-                             oldestRec.Channel,
-                             oldestRec.Title,
-                             oldestRec.StartTime.ToLongDateString(),
-                             oldestRec.StartTime.ToLongTimeString());
-
-        if (Utils.FileDelete(oldestFileName))
-        {
-          DeleteRecording(oldestFileName);
-
-          VideoDatabase.DeleteMovie(oldestFileName);
-          VideoDatabase.DeleteMovieInfo(oldestFileName);
-          recordings.Remove(oldestRec);
-          TVDatabase.RemoveRecordedTV(oldestRec);
-        }
-      }
-    }
-    #endregion
   }
 }

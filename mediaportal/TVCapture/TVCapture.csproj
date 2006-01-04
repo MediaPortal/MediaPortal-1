@@ -222,7 +222,9 @@
     <Compile Include="AIWGraph.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="DiskManagement\EpisodeManagement.cs" />
     <Compile Include="DiskManagement\RecordingImporterWorker.cs" />
+    <Compile Include="DiskManagement\RecordingManagement.cs" />
     <Compile Include="Scanning\AnalogTVTuning.cs">
       <SubType>Code</SubType>
     </Compile>

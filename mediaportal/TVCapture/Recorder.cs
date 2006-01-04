@@ -2353,7 +2353,7 @@ namespace MediaPortal.TV.Recording
             recTimer = DateTime.Now;
           }
 
-          DiskManagement.DeleteOldRecordings();
+          RecordingManagement.DeleteOldRecordings();
           DiskManagement.CheckFreeDiskSpace();
 
           //handle the notifies
