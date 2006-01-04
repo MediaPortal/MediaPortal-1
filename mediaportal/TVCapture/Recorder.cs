@@ -2358,8 +2358,8 @@ namespace MediaPortal.TV.Recording
           ts = DateTime.Now - diskTimer;
           if (ts.TotalMinutes >= 5)
           {
-            DiskManagement.CheckRecordingDiskSpace();
-            DiskManagement.Process();
+            DiskManagement.DeleteOldRecordings();
+            DiskManagement.CheckFreeDiskSpace();
             diskTimer = DateTime.Now;
           }
 

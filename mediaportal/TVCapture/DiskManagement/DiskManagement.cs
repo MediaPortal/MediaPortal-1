@@ -44,9 +44,11 @@ namespace MediaPortal.TV.DiskSpace
       Recorder.OnTvRecordingEnded += new MediaPortal.TV.Recording.Recorder.OnTvRecordingHandler(DiskManagement.Recorder_OnTvRecordingEnded);
     }
 
+    #region recording/timeshift file delete methods
     static public void DeleteRecording(string recordingFilename)
     {
       Utils.FileDelete(recordingFilename);
+
       int pos = recordingFilename.LastIndexOf(@"\");
       if (pos < 0) return;
       string path = recordingFilename.Substring(0, pos);
@@ -76,13 +78,6 @@ namespace MediaPortal.TV.DiskSpace
       }
       catch (Exception) { }
     }
-    
-
-    #region diskmanagement
-    /// <summary>
-    /// this method deleted any timeshifting files in the specified folder
-    /// </summary>
-    /// <param name="path">folder name</param>
     static public void DeleteOldTimeShiftFiles(string path)
     {
       if (path == null) return;
@@ -141,51 +136,42 @@ namespace MediaPortal.TV.DiskSpace
       }
       catch (Exception) { }
     }//static void DeleteOldTimeShiftFiles(string path)
+    #endregion    
 
-    static public void Process()
+    #region diskmanagement
+    /// <summary>
+    /// This method will get all the tv-recordings present in the tv database
+    /// For each recording it looks at the Keep until settings. If the recording should be
+    /// deleted by date, then it will delete the recording from the database, and harddisk
+    /// if the the current date > keep until date
+    /// </summary>
+    /// <remarks>Note, this method will only work after a day-change has occured(and at startup)
+    /// </remarks>
+    static public void DeleteOldRecordings()
     {
-      if (DateTime.Now.Date != _deleteOldRecordingTimer.Date)
+      if (DateTime.Now.Date == _deleteOldRecordingTimer.Date) return;
+      _deleteOldRecordingTimer = DateTime.Now;
+
+      List<TVRecorded> recordings = new List<TVRecorded>();
+      TVDatabase.GetRecordedTV(ref recordings);
+      foreach (TVRecorded rec in recordings)
       {
-        _deleteOldRecordingTimer = DateTime.Now;
-        while (true)
-        {
-          bool deleted = false;
-          List<TVRecorded> recordings = new List<TVRecorded>();
-          TVDatabase.GetRecordedTV(ref recordings);
-          foreach (TVRecorded rec in recordings)
-          {
-            if (rec.KeepRecordingMethod == TVRecorded.KeepMethod.TillDate)
-            {
-              if (rec.KeepRecordingTill.Date <= DateTime.Now.Date)
-              {
-                if (Utils.FileDelete(rec.FileName))
-                {
-                  Log.WriteFile(Log.LogType.Recorder, "Recorder: delete old recording:{0} date:{1}",
-                                    rec.FileName,
-                                    rec.StartTime.ToShortTimeString());
-                  TVDatabase.RemoveRecordedTV(rec);
-                  DeleteRecording(rec.FileName);
-                  VideoDatabase.DeleteMovie(rec.FileName);
-                  VideoDatabase.DeleteMovieInfo(rec.FileName);
-                  deleted = true;
-                  break;
-                }
-              }
-            }
-          }
-          if (!deleted) return;
-        }
+        if (rec.KeepRecordingMethod != TVRecorded.KeepMethod.TillDate) continue;
+        if (rec.KeepRecordingTill.Date > DateTime.Now.Date) continue;
+
+        Log.WriteFile(Log.LogType.Recorder, "Recorder: delete old recording:{0} date:{1}",
+                          rec.FileName,
+                          rec.StartTime.ToShortDateString());
+
+        DeleteRecording(rec.FileName);
+        TVDatabase.RemoveRecordedTV(rec);
+        VideoDatabase.DeleteMovie(rec.FileName);
+        VideoDatabase.DeleteMovieInfo(rec.FileName);
       }
     }
 
-    static public void CheckRecordingDiskSpace()
+    static List<string> GetRecordingDisks()
     {
-      TimeSpan ts = DateTime.Now - _diskSpaceCheckTimer;
-      if (ts.TotalMinutes < 1) return;
-
-      _diskSpaceCheckTimer = DateTime.Now;
-
-      //first get all drives..
       List<string> drives = new List<string>();
       for (int i = 0; i < Recorder.Count; ++i)
       {
@@ -196,93 +182,117 @@ namespace MediaPortal.TV.DiskSpace
         bool newDrive = true;
         foreach (string tmpDrive in drives)
         {
-          if (drive.ToLower() == tmpDrive.ToLower())
+          if (String.Compare(drive, tmpDrive, true) == 0)
           {
             newDrive = false;
           }
         }
-        if (newDrive) drives.Add(drive);
+        if (newDrive) 
+          drives.Add(drive);
       }
+      return drives;
+    }
 
-      // for each drive get all recordings
-      List<RecordingFileInfo> recordings = new List<RecordingFileInfo>();
+    static public void CheckFreeDiskSpace()
+    {
+      //check diskspace every 15 minutes...
+      TimeSpan ts = DateTime.Now - _diskSpaceCheckTimer;
+      if (ts.TotalMinutes < 15) return; 
+      _diskSpaceCheckTimer = DateTime.Now;
+
+      //first get all drives..
+      List<string> drives = GetRecordingDisks();
+
+      // next check diskspace on each drive.
       foreach (string drive in drives)
       {
-        recordings.Clear();
-        long lMaxRecordingSize = 0;
-        long diskSize = 0;
-        try
+        CheckDriveSpace(drive);      
+      }
+    }
+    static long GetDiskSize(string drive)
+    {
+      long diskSize = 0;
+      try
+      {
+        string cmd = String.Format("win32_logicaldisk.deviceid=\"{0}:\"", drive[0]);
+        using (ManagementObject disk = new ManagementObject(cmd))
         {
-          string cmd = String.Format("win32_logicaldisk.deviceid=\"{0}:\"", drive[0]);
-          using (ManagementObject disk = new ManagementObject(cmd))
+          disk.Get();
+          diskSize = Int64.Parse(disk["Size"].ToString());
+        }
+      }
+      catch (Exception)
+      {
+        return -1;
+      }
+      return diskSize;
+    }
+
+    static void CheckDriveSpace(string drive)
+    {
+      float diskSize = (float)GetDiskSize(drive);
+      if (diskSize < 0) return;
+
+      //get disk quota to use
+      long recordingDiskQuota = 0;
+      List<RecordingFileInfo> recordings = new List<RecordingFileInfo>();
+      for (int i = 0; i < Recorder.Count; ++i)
+      {
+        TVCaptureDevice dev = Recorder.Get(i);
+        if (!dev.RecordingPath.ToLower().StartsWith(drive.ToLower())) continue;
+        dev.GetRecordings(drive, ref recordings);
+
+        float percentage = (float)dev.MaxSizeLimit;
+        percentage /= 100.0f;
+        float cardLimitQuota = diskSize * percentage;
+        if (cardLimitQuota > recordingDiskQuota)
+          recordingDiskQuota = (long)cardLimitQuota;
+      }//foreach (TVCaptureDevice dev in m_tvcards)
+
+      if (recordingDiskQuota <= 0) return;
+
+      //calculate disk space currently used by recordings.
+      long diskSpaceUsedByRecordings = 0;
+      foreach (RecordingFileInfo info in recordings)
+      {
+        diskSpaceUsedByRecordings += info.info.Length;
+      }
+      if (diskSpaceUsedByRecordings < recordingDiskQuota) return;
+
+      Log.WriteFile(Log.LogType.Recorder, "Recorder: exceeded diskspace quota for recordings on drive:{0}", drive);
+      Log.WriteFile(Log.LogType.Recorder, "Recorder:   {0} recordings contain {1} while limit is {2}",
+                                            recordings.Count, Utils.GetSize(diskSpaceUsedByRecordings), Utils.GetSize((long)recordingDiskQuota));
+
+      // we exceeded the disk spacee quota
+      // start deleting recordings (oldest ones first)
+      // until we have enough free disk space again
+      recordings.Sort();
+      while (diskSpaceUsedByRecordings > recordingDiskQuota && recordings.Count > 0)
+      {
+        RecordingFileInfo fi = (RecordingFileInfo)recordings[0];
+        List<TVRecorded> tvrecs = new List<TVRecorded>();
+        TVDatabase.GetRecordedTV(ref tvrecs);
+        foreach (TVRecorded tvrec in tvrecs)
+        {
+          if (String.Compare(tvrec.FileName, fi.filename, true) != 0) continue;
+          if (tvrec.KeepRecordingMethod != TVRecorded.KeepMethod.UntilSpaceNeeded) continue;
+          Log.WriteFile(Log.LogType.Recorder, "Recorder: delete old recording:{0} size:{1} date:{2} {3}",
+                                              fi.filename,
+                                              Utils.GetSize(fi.info.Length),
+                                              fi.info.CreationTime.ToShortDateString(), fi.info.CreationTime.ToShortTimeString());
+          if (Utils.FileDelete(fi.filename))
           {
-            disk.Get();
-            diskSize = Int64.Parse(disk["Size"].ToString());
+            diskSpaceUsedByRecordings -= fi.info.Length;
+            TVDatabase.RemoveRecordedTV(tvrec);
+            DeleteRecording(fi.filename);
+            VideoDatabase.DeleteMovie(fi.filename);
+            VideoDatabase.DeleteMovieInfo(fi.filename);
           }
-        }
-        catch (Exception)
-        {
-          continue;
-        }
-
-        for (int i = 0; i < Recorder.Count; ++i)
-        {
-          TVCaptureDevice dev = Recorder.Get(i);
-          dev.GetRecordings(drive, ref recordings);
-
-          int percentage = dev.MaxSizeLimit;
-          long lMaxSize = (long)(((float)diskSize) * (((float)percentage) / 100f));
-          if (lMaxSize > lMaxRecordingSize)
-            lMaxRecordingSize = lMaxSize;
-        }//foreach (TVCaptureDevice dev in m_tvcards)
-
-        long totalSize = 0;
-        foreach (RecordingFileInfo info in recordings)
-        {
-          totalSize += info.info.Length;
-        }
-
-        if (totalSize >= lMaxRecordingSize && lMaxRecordingSize > 0)
-        {
-          Log.WriteFile(Log.LogType.Recorder, "Recorder: exceeded diskspace limit for recordings on drive:{0}", drive);
-          Log.WriteFile(Log.LogType.Recorder, "Recorder:   {0} recordings contain {1} while limit is {2}",
-                                                recordings.Count, Utils.GetSize(totalSize), Utils.GetSize(lMaxRecordingSize));
-
-          // we exceeded the diskspace
-          //delete oldest files...
-          recordings.Sort();
-          while (totalSize > lMaxRecordingSize && recordings.Count > 0)
-          {
-            RecordingFileInfo fi = (RecordingFileInfo)recordings[0];
-            List<TVRecorded> tvrecs = new List<TVRecorded>();
-            TVDatabase.GetRecordedTV(ref tvrecs);
-            foreach (TVRecorded tvrec in tvrecs)
-            {
-              if (tvrec.FileName.ToLower() == fi.filename.ToLower())
-              {
-                if (tvrec.KeepRecordingMethod == TVRecorded.KeepMethod.UntilSpaceNeeded)
-                {
-                  Log.WriteFile(Log.LogType.Recorder, "Recorder: delete old recording:{0} size:{1} date:{2} {3}",
-                                                      fi.filename,
-                                                      Utils.GetSize(fi.info.Length),
-                                                      fi.info.CreationTime.ToShortDateString(), fi.info.CreationTime.ToShortTimeString());
-                  totalSize -= fi.info.Length;
-                  if (Utils.FileDelete(fi.filename))
-                  {
-                    TVDatabase.RemoveRecordedTV(tvrec);
-                    DeleteRecording(fi.filename);
-                    VideoDatabase.DeleteMovie(fi.filename);
-                    VideoDatabase.DeleteMovieInfo(fi.filename);
-                  }
-                }
-                break;
-              }//if (tvrec.FileName.ToLower()==fi.filename.ToLower())
-            }//foreach (TVRecorded tvrec in tvrecs)
-            recordings.RemoveAt(0);
-          }//while (totalSize > m_lMaxRecordingSize && files.Count>0)
-        }//if (totalSize >= lMaxRecordingSize && lMaxRecordingSize >0) 
-      }//foreach (string drive in drives)
-    }//static void CheckRecordingDiskSpace()
+          break;
+        }//foreach (TVRecorded tvrec in tvrecs)
+        recordings.RemoveAt(0);
+      }//while (diskSpaceUsedByRecordings > m_recordingDiskQuota && files.Count>0)
+    }
 
     #endregion
 
@@ -334,7 +344,6 @@ namespace MediaPortal.TV.DiskSpace
                              oldestRec.StartTime.ToLongDateString(),
                              oldestRec.StartTime.ToLongTimeString());
 
-        Utils.FileDelete(oldestFileName);
         DeleteRecording(oldestFileName);
         VideoDatabase.DeleteMovie(oldestFileName);
         VideoDatabase.DeleteMovieInfo(oldestFileName);
