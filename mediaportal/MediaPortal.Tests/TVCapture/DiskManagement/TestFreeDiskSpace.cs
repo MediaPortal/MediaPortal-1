@@ -12,7 +12,7 @@ using MediaPortal.TV.Recording;
 using MediaPortal.TV.Database;
 using MediaPortal.TV.DiskSpace;
 
-namespace TVCapture.nUnit
+namespace MediaPortal.Tests.Disk
 {
   [TestFixture]
   [Category("DiskManagement")]

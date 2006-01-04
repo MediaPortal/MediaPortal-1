@@ -7,7 +7,7 @@ using System.Reflection;
 using MediaPortal.TV.Teletext;
 using NUnit.Framework;
 
-namespace TVCapture.nUnit
+namespace MediaPortal.Tests.Teletext
 {
   [TestFixture]
   [Category("Teletext")]
