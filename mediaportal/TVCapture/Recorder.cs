@@ -37,6 +37,7 @@ using MediaPortal.Radio.Database;
 using MediaPortal.Player;
 using MediaPortal.Dialogs;
 using MediaPortal.TV.Teletext;
+using MediaPortal.TV.DiskSpace;
 #endregion
 
 namespace MediaPortal.TV.Recording
@@ -293,7 +294,7 @@ namespace MediaPortal.TV.Recording
       }
 
       //import any recordings which are on disk, but not in the tv database
-      DiskManagement.ImportDvrMsFiles();
+      RecordingImporterWorker.ImportDvrMsFiles();
 
       //get all tv channels
       _tvChannelsList.Clear();

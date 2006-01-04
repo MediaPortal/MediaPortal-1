@@ -30,6 +30,8 @@ using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
 using MediaPortal.Player;
 using MediaPortal.Video.Database;
+using MediaPortal.TV.DiskSpace;
+
 namespace MediaPortal.GUI.TV
 {
   /// <summary>

@@ -222,6 +222,7 @@
     <Compile Include="AIWGraph.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="DiskManagement\RecordingImporterWorker.cs" />
     <Compile Include="Scanning\AnalogTVTuning.cs">
       <SubType>Code</SubType>
     </Compile>
