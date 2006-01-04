@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal - Author: mPod
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal - Author: mPod
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.Drawing;
@@ -1323,6 +1327,7 @@ namespace MediaPortal.Configuration
         parentNode.Nodes.Insert(index, tmpNode);
         treeMapping.SelectedNode = tmpNode;
       }
+      changedSettings = true;
     }
 
     private void buttonDown_Click(object sender, System.EventArgs e)
@@ -1349,6 +1354,7 @@ namespace MediaPortal.Configuration
         parentNode.Nodes.Insert(index, tmpNode);
         treeMapping.SelectedNode = tmpNode;
       }
+      changedSettings = true;
     }
 
     private void buttonRemove_Click(object sender, System.EventArgs e)
@@ -1363,8 +1369,10 @@ namespace MediaPortal.Configuration
       DialogResult result = MessageBox.Show(this, "Are you sure you want to remove this " + data.Type.ToLower() + "?", "Remove " + data.Type.ToLower(),
         MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
       if (result == DialogResult.Yes)
+      {
         node.Remove();
-        //treeMapping.SelectedNode.Remove();
+        changedSettings = true;
+      }
     }
 
     private void buttonNew_Click(object sender, System.EventArgs e)
@@ -1422,6 +1430,7 @@ namespace MediaPortal.Configuration
           treeMapping.SelectedNode = newLayer;
           break;
       }
+      changedSettings = true;
     }
 
     private void buttonReset_Click(object sender, System.EventArgs e)
@@ -1578,6 +1587,7 @@ namespace MediaPortal.Configuration
         node.Tag = new Data("SOUND", null, string.Empty);
       else
         node.Tag = new Data("SOUND", null, (string)comboBoxSound.SelectedItem);
+      changedSettings = true;
     }
 
     private void textBoxKeyChar_KeyUp(object sender, KeyEventArgs e)
@@ -1592,6 +1602,7 @@ namespace MediaPortal.Configuration
       Key key = new Key(Convert.ToInt32(keyChar), Convert.ToInt32(keyCode));
       node.Tag = new Data("COMMAND", "KEY", key);
       node.Text = string.Format("ACTION_KEY_PRESSED: {0} [{1}]", keyChar, keyCode);
+      changedSettings = true;
     }
 
     private void textBoxKeyCode_KeyUp(object sender, KeyEventArgs e)

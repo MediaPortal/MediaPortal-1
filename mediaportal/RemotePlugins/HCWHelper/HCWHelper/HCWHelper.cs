@@ -262,6 +262,8 @@ namespace HCWHelper
           {
             if (irremote.IRGetSystemKeyCode(ref repeatCount, ref remoteCode, ref keyCode))
             {
+              DateTime attackTime = DateTime.Now;
+
               int remoteCommand = 0;
               switch ((int)remoteCode)
               {
@@ -274,7 +276,7 @@ namespace HCWHelper
               }
               if (connection.IsConnected)
               {
-                connection.Send("CMD", remoteCommand.ToString());
+                connection.Send("CMD", remoteCommand.ToString(), attackTime);
                 if (logVerbose) MediaPortal.GUI.Library.Log.Write("HCW Helper: command sent: {0}", remoteCommand);
               }
               else

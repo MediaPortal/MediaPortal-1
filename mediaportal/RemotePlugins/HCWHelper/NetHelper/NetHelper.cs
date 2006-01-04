@@ -250,12 +250,12 @@ namespace NetHelper
     }
 
 
-    public void Send(string type, string send)
+    public void Send(string type, string send, DateTime timeStamp)
     {
       try
       {
         if (clientSocket != null)
-          clientSocket.Send(Encoding.UTF8.GetBytes(string.Format("{0}|{1}|{2}~", type, send, DateTime.Now.ToBinary())));
+          clientSocket.Send(Encoding.UTF8.GetBytes(string.Format("{0}|{1}|{2}~", type, send, timeStamp.ToBinary())));
       }
       catch (SocketException se)
       {
