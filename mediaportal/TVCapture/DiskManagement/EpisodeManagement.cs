@@ -37,6 +37,41 @@ namespace MediaPortal.TV.DiskSpace
     {
       Recorder.OnTvRecordingEnded += new MediaPortal.TV.Recording.Recorder.OnTvRecordingHandler(EpisodeManagement.Recorder_OnTvRecordingEnded);
     }
+    static bool DoesUseEpisodeManagement(TVRecording recording)
+    {
+      if (recording.RecType == TVRecording.RecordingType.Once) return false;
+      if (recording.EpisodesToKeep == Int32.MaxValue) return false;
+      if (recording.EpisodesToKeep < 1) return false;
+      return true;
+    }
+
+    static List<TVRecorded> GetEpisodes(string title, List<TVRecorded> recordings)
+    {
+      List<TVRecorded> episodes = new List<TVRecorded>();
+      foreach (TVRecorded recording in recordings)
+      {
+        if (String.Compare(title, recording.Title, true) == 0)
+        {
+          episodes.Add(recording);
+        }
+      }
+      return episodes;
+    }
+
+    static TVRecorded GetOldestEpisode(List<TVRecorded> recordings)
+    {
+      TVRecorded oldestEpisode = null;
+      DateTime oldestDateTime = DateTime.MaxValue;
+      foreach (TVRecorded rec in recordings)
+      {
+        if (rec.StartTime < oldestDateTime)
+        {
+          oldestDateTime = rec.StartTime;
+          oldestEpisode = rec;
+        }
+      }
+      return oldestEpisode;
+    }
 
     #region episode disk management
     static private void Recorder_OnTvRecordingEnded(string recordingFilename, TVRecording recording, TVProgram program)
@@ -44,57 +79,26 @@ namespace MediaPortal.TV.DiskSpace
       Log.WriteFile(Log.LogType.Recorder, "diskmanagement: recording {0} ended. type:{1} max episodes:{2}",
           recording.Title, recording.RecType.ToString(), recording.EpisodesToKeep);
 
-      if (recording.EpisodesToKeep == Int32.MaxValue) return;
-      if (recording.RecType == TVRecording.RecordingType.Once) return;
+      if (!DoesUseEpisodeManagement(recording)) return;
 
       //check how many episodes we got
-      List<TVRecorded> recordings = new List<TVRecorded>();
-      TVDatabase.GetRecordedTV(ref recordings);
       while (true)
       {
-        Log.WriteFile(Log.LogType.Recorder, "got:{0} recordings", recordings.Count);
-        int recordingsFound = 0;
-        DateTime oldestRecording = DateTime.MaxValue;
-        string oldestFileName = String.Empty;
-        TVRecorded oldestRec = null;
-        foreach (TVRecorded rec in recordings)
-        {
-          Log.WriteFile(Log.LogType.Recorder, "check:{0}", rec.Title);
-          if (String.Compare(rec.Title, recording.Title, true) == 0)
-          {
-            recordingsFound++;
-            if (rec.StartTime < oldestRecording)
-            {
-              oldestRecording = rec.StartTime;
-              oldestFileName = rec.FileName;
-              oldestRec = rec;
-            }
-          }
-        }
-        Log.WriteFile(Log.LogType.Recorder, "diskmanagement:   total episodes now:{0}", recordingsFound);
-        if (oldestRec != null)
-        {
-          Log.WriteFile(Log.LogType.Recorder, "diskmanagement:   oldest episode:{0} {1}", oldestRec.StartTime.ToShortDateString(), oldestRec.StartTime.ToLongTimeString());
-        }
+        List<TVRecorded> recordings = new List<TVRecorded>();
+        TVDatabase.GetRecordedTV(ref recordings);
 
-        if (oldestRec == null) return;
-        if (recordingsFound == 0) return;
-        if (recordingsFound <= recording.EpisodesToKeep) return;
+        List<TVRecorded> episodes = GetEpisodes(recording.Title, recordings);
+        if (episodes.Count <= recording.EpisodesToKeep) return;
+
+        TVRecorded oldestEpisode = GetOldestEpisode(episodes);
+        if (oldestEpisode == null) return;
         Log.WriteFile(Log.LogType.Recorder, false, "diskmanagement:   Delete episode {0} {1} {2} {3}",
-                             oldestRec.Channel,
-                             oldestRec.Title,
-                             oldestRec.StartTime.ToLongDateString(),
-                             oldestRec.StartTime.ToLongTimeString());
+                             oldestEpisode.Channel,
+                             oldestEpisode.Title,
+                             oldestEpisode.StartTime.ToLongDateString(),
+                             oldestEpisode.StartTime.ToLongTimeString());
 
-        if (Utils.FileDelete(oldestFileName))
-        {
-          DiskManagement.DeleteRecording(oldestFileName);
-
-          VideoDatabase.DeleteMovie(oldestFileName);
-          VideoDatabase.DeleteMovieInfo(oldestFileName);
-          recordings.Remove(oldestRec);
-          TVDatabase.RemoveRecordedTV(oldestRec);
-        }
+        DiskManagement.DeleteRecording(oldestEpisode);
       }
     }
     #endregion
