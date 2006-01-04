@@ -273,7 +273,7 @@
     <Compile Include="Scanning\DVBSTuning.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="teletext\DVBTeletext.cs">
+    <Compile Include="Scheduler\teletext\DVBTeletext.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Scanning\DVBTTuning.cs">
@@ -288,8 +288,8 @@
     <Compile Include="GraphFactory.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="teletext\FastTextDecoder.cs" />
-    <Compile Include="teletext\Hamming.cs" />
+    <Compile Include="Scheduler\teletext\FastTextDecoder.cs" />
+    <Compile Include="Scheduler\teletext\Hamming.cs" />
     <Compile Include="IGraph.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -314,13 +314,13 @@
     <Compile Include="SWEncodingGraph.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="teletext\TeletextDecoder.cs" />
-    <Compile Include="teletext\TeletextGrabber.cs">
+    <Compile Include="Scheduler\teletext\TeletextDecoder.cs" />
+    <Compile Include="Scheduler\teletext\TeletextGrabber.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="teletext\TeletextPageCache.cs" />
-    <Compile Include="teletext\TeletextPageRenderer.cs" />
-    <Compile Include="teletext\ToptextDecoder.cs" />
+    <Compile Include="Scheduler\teletext\TeletextPageCache.cs" />
+    <Compile Include="Scheduler\teletext\TeletextPageRenderer.cs" />
+    <Compile Include="Scheduler\teletext\ToptextDecoder.cs" />
     <Compile Include="Transcoding\Transcoder.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -341,7 +341,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="teletext\LogoPage" />
+    <EmbeddedResource Include="Scheduler\teletext\LogoPage" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

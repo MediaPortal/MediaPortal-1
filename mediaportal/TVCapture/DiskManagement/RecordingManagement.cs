@@ -59,14 +59,14 @@ namespace MediaPortal.TV.DiskSpace
       }
     }
 
-    static bool TimeToDeleteOldRecordings(DateTime dateTime)
+    static public bool TimeToDeleteOldRecordings(DateTime dateTime)
     {
       if (dateTime.Date == _deleteOldRecordingTimer.Date) return false;
       _deleteOldRecordingTimer = dateTime;
       return true;
     }
 
-    static bool ShouldDeleteRecording(TVRecorded rec)
+    static public bool ShouldDeleteRecording(TVRecorded rec)
     {
       if (rec.KeepRecordingMethod != TVRecorded.KeepMethod.TillDate) return false;
       if (rec.KeepRecordingTill.Date > DateTime.Now.Date) return false;

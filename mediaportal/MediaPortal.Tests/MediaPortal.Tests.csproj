@@ -44,6 +44,7 @@
     <Compile Include="Core\Playlists\PlayListPLSTest.cs" />
     <Compile Include="Core\Playlists\PlayListTest.cs" />
     <Compile Include="Core\Playlists\PlayListWPLTest.cs" />
+    <Compile Include="TVCapture\DiskManagement\DeleteOldRecordings.cs" />
     <Compile Include="TVCapture\Teletext\RendererTest.cs" />
     <Compile Include="TVCapture\Teletext\TeletextDecoder.cs" />
     <Compile Include="TVCapture\Teletext\TeletextPageCache.cs" />
