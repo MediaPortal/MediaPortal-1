@@ -19,14 +19,14 @@ namespace MediaPortal.Tests.Disk
   public class TestEpisodeManagement
   {
     [Test]
-    void DoNotUseEpsiodeManagementForSingleRecordings()
+    public void DoNotUseEpsiodeManagementForSingleRecordings()
     {
       TVRecording rec = new TVRecording();
       rec.RecType = TVRecording.RecordingType.Once;
       Assert.IsFalse(EpisodeManagement.DoesUseEpisodeManagement(rec));
     }
     [Test]
-    void DoNotUseEpsiodeManagementForUnsetRecordings()
+    public void DoNotUseEpsiodeManagementForUnsetRecordings()
     {
       TVRecording rec = new TVRecording();
       rec.RecType = TVRecording.RecordingType.Daily;
@@ -34,7 +34,7 @@ namespace MediaPortal.Tests.Disk
       Assert.IsFalse(EpisodeManagement.DoesUseEpisodeManagement(rec));
     }
     [Test]
-    void DoNotUseEpsiodeManagementForSingleEpsiode()
+    public void DoNotUseEpsiodeManagementForSingleEpsiode()
     {
       TVRecording rec = new TVRecording();
       rec.RecType = TVRecording.RecordingType.Daily;
@@ -42,7 +42,7 @@ namespace MediaPortal.Tests.Disk
       Assert.IsFalse(EpisodeManagement.DoesUseEpisodeManagement(rec));
     }
     [Test]
-    void UseEpsiodeManagementForRest()
+    public void UseEpsiodeManagementForRest()
     {
       TVRecording rec = new TVRecording();
       rec.RecType = TVRecording.RecordingType.WeekDays;
@@ -50,7 +50,7 @@ namespace MediaPortal.Tests.Disk
       Assert.IsTrue(EpisodeManagement.DoesUseEpisodeManagement(rec));
     }
     [Test] 
-    void FilterEpisodes()
+    public void FilterEpisodes()
     {
       TVRecorded rec;
       List<TVRecorded> recordings = new List<TVRecorded>();
@@ -66,9 +66,22 @@ namespace MediaPortal.Tests.Disk
       Assert.AreEqual(episodes[0].Start, 20051223200000);
       Assert.AreEqual(episodes[1].Start, 20051225200000);
       Assert.AreEqual(episodes[2].Start, 20051228200000);
+    }
+
+    [Test]
+    public void GetOldestEpisode()
+    {
+      TVRecorded rec;
+      List<TVRecorded> episodes = new List<TVRecorded>();
+      rec = new TVRecorded(); rec.Title = "title1"; rec.Start = 20051223200000; episodes.Add(rec);
+      rec = new TVRecorded(); rec.Title = "title2"; rec.Start = 20051224200000; episodes.Add(rec);
+      rec = new TVRecorded(); rec.Title = "title3"; rec.Start = 20051225200000; episodes.Add(rec);
+      rec = new TVRecorded(); rec.Title = "title4"; rec.Start = 20051222200000; episodes.Add(rec);//oldest
+      rec = new TVRecorded(); rec.Title = "title5"; rec.Start = 20051227200000; episodes.Add(rec);
+      rec = new TVRecorded(); rec.Title = "title6"; rec.Start = 20051228200000; episodes.Add(rec);
 
       rec = EpisodeManagement.GetOldestEpisode(episodes);
-      Assert.AreEqual(rec.Start, 20051223200000);
+      Assert.AreEqual(rec.Start, 20051222200000);
     }
   }
 }
