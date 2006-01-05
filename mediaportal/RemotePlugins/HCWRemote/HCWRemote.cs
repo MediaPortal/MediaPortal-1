@@ -45,18 +45,19 @@ namespace MediaPortal
     bool keepControl;                         // Keep control, if MP loses focus
     static bool logVerbose;                   // Verbose logging
     bool restartIRApp = false;                // Restart Haupp. IR-app. after MP quit
-    static DateTime lastTime = DateTime.Now;  // Timestamp of last recieved keycode from remote
-    static int sameCommandCount = 0;          // Counts how many times a button has been pressed (used to get progressive repetition delay, first time, long delay, then short delay)
-    static int lastExecutedCommandCount = 0;
-    static int lastCommand;                   // Last executed command
-    static InputHandler hcwHandler;
+    DateTime lastTime = DateTime.Now;  // Timestamp of last recieved keycode from remote
+    int sameCommandCount = 0;          // Counts how many times a button has been pressed (used to get progressive repetition delay, first time, long delay, then short delay)
+    int lastExecutedCommandCount = 0;
+    int lastCommand;                   // Last executed command
+    InputHandler hcwHandler;
     NetHelper.Connection connection;
-    static bool exit = false;
+    bool exit = false;
+    int port = 2110;
 
-    static TimeSpan buttonRelease;
-    static int repeatFilter;
-    static int repeatSpeed;
-    static bool filterDoubleKlicks;
+    TimeSpan buttonRelease;
+    int repeatFilter;
+    int repeatSpeed;
+    bool filterDoubleKlicks;
 
     const int WM_ACTIVATE = 0x0006;
     const int WM_POWERBROADCAST = 0x0218;
@@ -90,6 +91,7 @@ namespace MediaPortal
         repeatFilter = xmlreader.GetValueAsInt("remote", "HCWRepeatFilter", 2);
         repeatSpeed = xmlreader.GetValueAsInt("remote", "HCWRepeatSpeed", 1);
         filterDoubleKlicks = xmlreader.GetValueAsBool("remote", "HCWFilterDoubleKlicks", false);
+        port = xmlreader.GetValueAsInt("remote", "HCWHelperPort", 2110);
       }
       bool result = false;
       if (controlEnabled)
@@ -133,7 +135,7 @@ namespace MediaPortal
 
       try
       {
-        connection.Connect(2110);
+        connection.Connect(port);
         connection.ReceiveEvent += new NetHelper.Connection.ReceiveEventHandler(OnReceive);
         Thread checkThread = new Thread(new ThreadStart(CheckThread));
         checkThread.IsBackground = true;
@@ -171,21 +173,24 @@ namespace MediaPortal
     /// </summary>
     public void DeInit()
     {
-      exit = true;
-      try
+      if (controlEnabled)
       {
-        if (controlEnabled && allowExternal)
+        exit = true;
+        try
         {
-          Utils.OnStartExternal -= new Utils.UtilEventHandler(OnStartExternal);
-          Utils.OnStopExternal -= new Utils.UtilEventHandler(OnStopExternal);
+          if (allowExternal)
+          {
+            Utils.OnStartExternal -= new Utils.UtilEventHandler(OnStartExternal);
+            Utils.OnStopExternal -= new Utils.UtilEventHandler(OnStopExternal);
+          }
+          connection.ReceiveEvent -= new NetHelper.Connection.ReceiveEventHandler(OnReceive);
+          connection.Send("APP", "SHUTDOWN", DateTime.Now);
+          connection = null;
         }
-        connection.ReceiveEvent -= new NetHelper.Connection.ReceiveEventHandler(OnReceive);
-        connection.Send("APP", "SHUTDOWN", DateTime.Now);
-        connection = null;
-      }
-      catch (Exception ex)
-      {
-        Log.Write("HCW: Exception: {0}", ex.Message);
+        catch (Exception ex)
+        {
+          Log.Write("HCW: Exception: {0}", ex.Message);
+        }
       }
     }
 
@@ -225,7 +230,7 @@ namespace MediaPortal
     }
 
 
-    static void OnReceive(NetHelper.Connection.EventArguments e)
+    void OnReceive(NetHelper.Connection.EventArguments e)
     {
       if (logVerbose) Log.Write("HCW: received: {0}", e.Message);
 

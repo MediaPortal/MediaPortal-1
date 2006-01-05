@@ -692,9 +692,9 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxVerboseLog.AutoSize = true;
       this.checkBoxVerboseLog.Location = new System.Drawing.Point(288, 48);
       this.checkBoxVerboseLog.Name = "checkBoxVerboseLog";
-      this.checkBoxVerboseLog.Size = new System.Drawing.Size(112, 17);
+      this.checkBoxVerboseLog.Size = new System.Drawing.Size(108, 17);
       this.checkBoxVerboseLog.TabIndex = 3;
-      this.checkBoxVerboseLog.Text = "Extended Logging";
+      this.checkBoxVerboseLog.Text = "Extended logging";
       // 
       // tabPageFireDTV
       // 

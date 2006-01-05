@@ -47,6 +47,7 @@ namespace HCWHelper
     private bool cancelWait = false;
     private bool logVerbose = false;
     private NetHelper.Connection connection;
+    private int port = 2110;
 
 
     /// <summary>
@@ -59,9 +60,10 @@ namespace HCWHelper
       using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
       {
         logVerbose = xmlreader.GetValueAsBool("remote", "HCWVerboseLog", false);
+        port = xmlreader.GetValueAsInt("remote", "HCWHelperPort", 2110);
       }
       connection = new NetHelper.Connection(logVerbose);
-      if (connection.Connect(2110))
+      if (connection.Connect(port))
       {
         if (logVerbose) MediaPortal.GUI.Library.Log.Write("HCW Helper: connected");
         irremote.IRSetDllDirectory(GetDllPath());
