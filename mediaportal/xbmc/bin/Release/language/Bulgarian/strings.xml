@@ -996,20 +996,7 @@
 	<string>
 		<id>408</id>
 		<value>на</value>
-	</string>
-	<string>
-		<id>410</id>
-		<value>Свърване с Weather.com</value>
-	</string>
-	<string>
-		<id>411</id>
-		<value>Получавам прогнозата за:</value>
-	</string>
-	<string>
-		<id>412</id>
-		<value>Не мога да взема прогнозата</value>
-	</string>
-	<string>
+	</stg>
 		<id>414</id>
 		<value>Няма рецензия за този албум</value>
 	</string>
@@ -1186,8 +1173,332 @@
 		<value>Не мога да заредя плейлиста</value>
 	</string>
 	<string>
+		<id>479</id>
+		<value>Облик и език</value>
+	</string>
+	<string>
+		<id>480</id>
+		<value>Потребителски интерфейс</value>
+	</string>
+	<string>
+		<id>481</id>
+		<value>Опции: Аудио</value>
+	</string>
+	<string>
+		<id>483</id>
+		<value>Албум</value>
+	</string>
+	<string>
+		<id>484</id>
+		<value>Артист</value>
+	</string>
+	<string>
+		<id>485</id>
+		<value>Изтрий албум</value>
+	</string>
+	<string>
 		<id>486</id>
 		<value>Повтори</value>
+	</string>
+	<string>
+		<id>487</id>
+		<value>Повтори една</value>
+	</string>
+	<string>
+		<id>488</id>
+		<value>Повтори плейлиста папки</value>
+	</string>
+	<string>
+		<id>491</id>
+		<value>Използвай големи икони</value>
+	</string>
+	<string>
+		<id>493</id>
+		<value>Актьор:</value>
+	</string>
+	<string>
+		<id>502</id>
+		<value>Не мога да завърша това действие</value>
+	</string>
+	<string>
+		<id>503</id>
+		<value>Изтрий тази папка</value>
+	</string>
+	<string>
+		<id>505</id>
+		<value>Калкулиране</value>
+	</string>
+	<string>
+		<id>506</id>
+		<value>Сигурни ли сте?</value>
+	</string>
+	<string>
+		<id>508</id>
+		<value>Към</value>
+	</string>
+	<string>
+		<id>509</id>
+		<value>Файла съществува. Презаписване ?</value>
+	</string>
+	<string>
+		<id>510</id>
+		<value>Прекъсни</value>
+	</string>
+	<string>
+		<id>511</id>
+		<value>Винаги</value>
+	</string>
+	<string>
+		<id>512</id>
+		<value>Никога</value>
+	</string>
+	<string>
+		<id>513</id>
+		<value>Файла е защитен, действието е прекъснато</value>
+	</string>
+	<string>
+		<id>514</id>
+		<value>Грешка при създаването на папка, действието е прекъснато</value>
+	</string>
+	<string>
+		<id>515</id>
+		<value>Грешка при изтриването на папка, действието е прекъснато</value>
+	</string>
+	<string>
+		<id>516</id>
+		<value>Грешка при изтриването на файла, действието е прекъснато</value>
+	</string>
+	<string>
+		<id>517</id>
+		<value>Грешка, действието е прекъснато</value>
+	</string>
+	<string>
+		<id>518</id>
+		<value>Изтрий тази песен</value>
+	</string>
+	<string>
+		<id>601</id>
+		<value>Запиши</value>
+	</string>
+	<string>
+		<id>602</id>
+		<value>Канал:</value>
+	</string>
+	<string>
+		<id>605</id>
+		<value>ТВ</value>
+	</string>
+	<string>
+		<id>606</id>
+		<value>Зареждане на новата програма</value>
+	</string>
+	<string>
+		<id>607</id>
+		<value>Зареди</value>
+	</string>
+	<string>
+		<id>610</id>
+		<value>НЕ записвай</value>
+	</string>
+	<string>
+		<id>611</id>
+		<value>Запиши веднъж</value>
+	</string>
+	<string>
+		<id>612</id>
+		<value>Записвай всеки път на този канал</value>
+	</string>
+	<string>
+		<id>613</id>
+		<value>Записвай всеки път на всеки канал</value>
+	</string>
+	<string>
+		<id>614</id>
+		<value>Записвай всяка седмица по това време</value>
+	</string>
+	<string>
+		<id>615</id>
+		<value>Записвай всеки ден по това време</value>
+	</string>
+	<string>
+		<id>616</id>
+		<value>Изберете тип запис</value>
+	</string>
+	<string>
+		<id>617</id>
+		<value>Нов</value>
+	</string>
+	<string>
+		<id>618</id>
+		<value>Изтрий</value>
+	</string>
+	<string>
+		<id>619</id>
+		<value>Редактирай Дата/Време</value>
+	</string>
+	<string>
+		<id>620</id>
+		<value>Сортирай: Канал</value>
+	</string>
+	<string>
+		<id>621</id>
+		<value>Сортирай: Дата</value>
+	</string>
+	<string>
+		<id>622</id>
+		<value>Сортирай: Име</value>
+	</string>
+	<string>
+		<id>623</id>
+		<value>Сортирай: Тип</value>
+	</string>
+	<string>
+		<id>624</id>
+		<value>Изчисти</value>
+	</string>
+	<string>
+		<id>626</id>
+		<value>Промени тип:</value>
+	</string>
+	<string>
+		<id>627</id>
+		<value>Канали:</value>
+	</string>
+	<string>
+		<id>628</id>
+		<value>Програми:</value>
+	</string>
+	<string>
+		<id>629</id>
+		<value>Спри запис</value>
+	</string>
+	<string>
+		<id>630</id>
+		<value>Искаш ли да рестартираш?</value>
+	</string>
+	<string>
+		<id>631</id>
+		<value>Искаш ли да изключиш компютъра?</value>
+	</string>
+	<string>
+		<id>632</id>
+		<value>Обекти</value>
+	</string>
+	<string>
+		<id>633</id>
+		<value>Начало Дата/Време</value>
+	</string>
+	<string>
+		<id>634</id>
+		<value>Край Дата/Време</value>
+	</string>
+	<string>
+		<id>635</id>
+		<value>Време</value>
+	</string>
+	<string>
+		<id>636</id>
+		<value>Дата</value>
+	</string>
+	<string>
+		<id>639</id>
+		<value>Албуми от</value>
+	</string>
+	<string>
+		<id>647</id>
+		<value>Еднократно</value>
+	</string>
+	<string>
+		<id>648</id>
+		<value>Дневно</value>
+	</string>
+	<string>
+		<id>649</id>
+		<value>Всеки</value>
+	</string>
+	<string>
+		<id>650</id>
+		<value>Всеки път на този канал</value>
+	</string>
+	<string>
+		<id>651</id>
+		<value>Всеки път на който и да е канал</value>
+	</string>
+	<string>
+		<id>653</id>
+		<value>Изтрий този запис?</value>
+	</string>
+	<string>
+		<id>654</id>
+		<value>Извади</value>
+	</string>
+	<string>
+		<id>657</id>
+		<value>Пон</value>
+	</string>
+	<string>
+		<id>658</id>
+		<value>Вто</value>
+	</string>
+	<string>
+		<id>659</id>
+		<value>Сря</value>
+	</string>
+	<string>
+		<id>660</id>
+		<value>Чет</value>
+	</string>
+	<string>
+		<id>661</id>
+		<value>Пет</value>
+	</string>
+	<string>
+		<id>662</id>
+		<value>Съб</value>
+	</string>
+	<string>
+		<id>663</id>
+		<value>Нед</value>
+	</string>
+	<string>
+		<id>664</id>
+		<value>Изтрий тази снимка?</value>
+	</string>
+	<string>
+		<id>665</id>
+		<value>Радио</value>
+	</string>
+	<string>
+		<id>666</id>
+		<value>Станции</value>
+	</string>
+	<string>
+		<id>720</id>
+		<value>Покажи: Продължителност</value>
+	</string>
+	<string>
+		<id>721</id>
+		<value>Покажи: Пъти показвано</value>
+	</string>
+	<string>
+		<id>722</id>
+		<value>Не мога да пусна диска</value>
+	</string>
+	<string>
+		<id>723</id>
+		<value>Поставихте ли диск?</value>
+	</string>
+	<string>
+		<id>724</id>
+		<value>Търсене ТВ Програма</value>
+	</string>
+	<string>
+		<id>725</id>
+		<value>Жанрове</value>
+	</string>
+	<string>
+		<id>726</id>
+		<value>Заглавие</value>
 	</string>
 	<string>
 		<id>200004</id>
@@ -1247,7 +1558,7 @@
 	</string>
 	<string>
 		<id>200030</id>
-		<value>Стартирай автоматично MediaPortal, когато се стартира компютърът</value>
+		<value>Стартирай автоматично Media Portal, когато се стартира компютърът</value>
 	</string>
 	<string>
 		<id>200031</id>
@@ -1256,6 +1567,22 @@
 	<string>
 		<id>200032</id>
 		<value>Не</value>
+	</string>
+	<string>
+		<id>200034</id>
+		<value>Моля, изберете вашият град от списъка по-долу.</value>
+	</string>
+	<string>
+		<id>200035</id>
+		<value>Ако вашият град не е в списъка, тогава ще се наложи да направите ръчна настройка.</value>
+	</string>
+	<string>
+		<id>200036</id>
+		<value>Ръчна настойка</value>
+	</string>
+	<string>
+		<id>200037</id>
+		<value>Пропусни&gt;</value>
 	</string>
 	<string>
 		<id>4000</id>

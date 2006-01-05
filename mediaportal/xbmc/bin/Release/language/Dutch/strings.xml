@@ -27,7 +27,7 @@
 	</string>
 	<string>
 		<id>6</id>
-		<value>MediaPortal CVS build</value>
+		<value>Media Portal CVS build</value>
 	</string>
 	<string>
 		<id>7</id>
@@ -1643,7 +1643,7 @@
 	</string>
 	<string>
 		<id>482</id>
-		<value>Over MediaPortal</value>
+		<value>Over Media Portal</value>
 	</string>
 	<string>
 		<id>483</id>
@@ -2171,7 +2171,7 @@
 	</string>
 	<string>
 		<id>705</id>
-		<value>Nieuws ophalen voor</value>
+		<value>Nieuws ophalen van</value>
 	</string>
 	<string>
 		<id>706</id>
@@ -2195,7 +2195,7 @@
 	</string>
 	<string>
 		<id>711</id>
-		<value>Opwaarderen van v#old -&gt; v#new?</value>
+		<value>Opwaarderen van v#old -&gt;v#new?</value>
 	</string>
 	<string>
 		<id>712</id>
@@ -2895,7 +2895,7 @@
 	</string>
 	<string>
 		<id>983</id>
-		<value>Ga naar afspeellijst</value>
+		<value>Kies afspeellijst</value>
 	</string>
 	<string>
 		<id>984</id>
@@ -3150,6 +3150,42 @@
 		<value>Instellingen</value>
 	</string>
 	<string>
+		<id>1049</id>
+		<value>Slaapstand</value>
+	</string>
+	<string>
+		<id>1050</id>
+		<value>Za/zo</value>
+	</string>
+	<string>
+		<id>1051</id>
+		<value>Opnemen za/zo</value>
+	</string>
+	<string>
+		<id>1100</id>
+		<value>Importeer CD</value>
+	</string>
+	<string>
+		<id>1101</id>
+		<value>Importeer geselecteerde track</value>
+	</string>
+	<string>
+		<id>1102</id>
+		<value>CD-import afbreken</value>
+	</string>
+	<string>
+		<id>1103</id>
+		<value>Track aan het importeren</value>
+	</string>
+	<string>
+		<id>1104</id>
+		<value>over</value>
+	</string>
+	<string>
+		<id>1105</id>
+		<value>Tracks aan het importeren</value>
+	</string>
+	<string>
 		<id>1440</id>
 		<value>Teletekst</value>
 	</string>
@@ -3180,6 +3216,18 @@
 	<string>
 		<id>1447</id>
 		<value>Opname gestopt:</value>
+	</string>
+	<string>
+		<id>1448</id>
+		<value>Selectie opheffen</value>
+	</string>
+	<string>
+		<id>1449</id>
+		<value>Opname stoppen</value>
+	</string>
+	<string>
+		<id>1450</id>
+		<value>Wilt u de opname beëindigen?</value>
 	</string>
 	<string>
 		<id>1950</id>
@@ -3951,11 +3999,11 @@
 	</string>
 	<string>
 		<id>8002</id>
-		<value>Automatisch kontroleren uit</value>
+		<value>Automatisch controleren uit</value>
 	</string>
 	<string>
 		<id>8003</id>
-		<value>Automatisch kontroleren aan</value>
+		<value>Automatisch controleren aan</value>
 	</string>
 	<string>
 		<id>8004</id>
@@ -3967,7 +4015,7 @@
 	</string>
 	<string>
 		<id>8007</id>
-		<value>Automatisch kontroleren</value>
+		<value>Automatisch controleren</value>
 	</string>
 	<string>
 		<id>8008</id>
@@ -4786,20 +4834,20 @@
 		<value>Met MediaPortal kunt u genieten van uw favoriete muziek, radio</value>
 	</string>
 	<string>
+		<id>200012</id>
+		<value>video-opnamen, DVD&apos;, televisie en nog veel meer.</value>
+	</string>
+	<string>
 		<id>200013</id>
-		<value>Het stelt u in staat om te luisteren naar uw favoriete muziek en radio, te kijken naar uw video&apos; en dvd&apos;</value>
+		<value>Deze installatiehulp helpt u om MediaPortal snel en makkelijk in te stellen. Volg de stappen.</value>
 	</string>
 	<string>
 		<id>200014</id>
-		<value>foto&apos;, video&apos; en bekijk of neem TV op en nog veel meer.</value>
+		<value>Selecteer eerst hieronder uw taal en locatie:</value>
 	</string>
 	<string>
 		<id>200015</id>
-		<value>Deze wizard zal u helpen om MediaPortal snel en makkelijk in te stellen. Volg de stappen.</value>
-	</string>
-	<string>
-		<id>200016</id>
-		<value>Druk op VOLGENDE om te beginnen</value>
+		<value>Druk op de knop&apos;Volgende&apos;om te beginnen</value>
 	</string>
 	<string>
 		<id>200017</id>
@@ -4834,11 +4882,71 @@
 		<value>TV Instellingen</value>
 	</string>
 	<string>
+		<id>200025</id>
+		<value>Taal</value>
+	</string>
+	<string>
+		<id>200026</id>
+		<value>Land</value>
+	</string>
+	<string>
+		<id>200027</id>
+		<value>Installatie - Algemeen</value>
+	</string>
+	<string>
+		<id>200028</id>
+		<value>Heeft deze PC toegang tot internet?</value>
+	</string>
+	<string>
+		<id>200029</id>
+		<value>Wilt u Mediaportal beeldvulend starten?</value>
+	</string>
+	<string>
+		<id>200030</id>
+		<value>Moet Mediaportal automatisch beginnen als de PC wordt aangezet?</value>
+	</string>
+	<string>
+		<id>200031</id>
+		<value>Ja</value>
+	</string>
+	<string>
+		<id>200032</id>
+		<value>Nee</value>
+	</string>
+	<string>
+		<id>200033</id>
+		<value>TV installatie - Analoge ontvangst</value>
+	</string>
+	<string>
+		<id>200034</id>
+		<value>Selecteer uw woonplaats in onderstaande lijst.</value>
+	</string>
+	<string>
+		<id>200035</id>
+		<value>Als uw woonplaats ontbreekt, moet u de kanalen handmatig instellen.</value>
+	</string>
+	<string>
+		<id>200036</id>
+		<value>Handmatig instellen</value>
+	</string>
+	<string>
+		<id>200037</id>
+		<value>Overslaan&gt;</value>
+	</string>
+	<string>
 		<id>4000</id>
 		<value>Web Browser</value>
 	</string>
 	<string>
 		<id>4001</id>
 		<value>Favorieten</value>
+	</string>
+	<string>
+		<id>4002</id>
+		<value>URL kan niet geladen worden</value>
+	</string>
+	<string>
+		<id>4003</id>
+		<value>Selecteer a.u.b. map voor favorieten in setup</value>
 	</string>
 </strings>

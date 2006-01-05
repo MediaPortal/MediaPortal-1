@@ -47,6 +47,10 @@
 	</string>
 	<string>
 		<id>13</id>
+		<value>星		<value>星期二</value>
+	</string>
+	<string>
+		<id>13</id>
 		<value>星期三</value>
 	</string>
 	<string>
@@ -150,6 +154,18 @@
 		<value>是</value>
 	</string>
 	<string>
+		<id>108</id>
+		<value>連續播放</value>
+	</string>
+	<string>
+		<id>109</id>
+		<value>建立縮圖</value>
+	</string>
+	<string>
+		<id>110</id>
+		<value>建立縮圖</value>
+	</string>
+	<string>
 		<id>111</id>
 		<value>捷徑</value>
 	</string>
@@ -210,8 +226,44 @@
 		<value>要刪除這些檔案嗎?</value>
 	</string>
 	<string>
+		<id>128</id>
+		<value>一般</value>
+	</string>
+	<string>
+		<id>129</id>
+		<value>連續播放</value>
+	</string>
+	<string>
 		<id>130</id>
-		<value>系統資料</value>
+		<value>系統資訓</value>
+	</string>
+	<string>
+		<id>132</id>
+		<value>專輯</value>
+	</string>
+	<string>
+		<id>133</id>
+		<value>演出者</value>
+	</string>
+	<string>
+		<id>135</id>
+		<value>樂曲類型</value>
+	</string>
+	<string>
+		<id>136</id>
+		<value>播放列表</value>
+	</string>
+	<string>
+		<id>137</id>
+		<value>搜尋</value>
+	</string>
+	<string>
+		<id>138</id>
+		<value>系統資訓</value>
+	</string>
+	<string>
+		<id>139</id>
+		<value>溫度計:</value>
 	</string>
 	<string>
 		<id>140</id>
@@ -230,16 +282,72 @@
 		<value>現在:</value>
 	</string>
 	<string>
+		<id>144</id>
+		<value>版本</value>
+	</string>
+	<string>
 		<id>145</id>
 		<value>網絡:</value>
+	</string>
+	<string>
+		<id>147</id>
+		<value>固定</value>
+	</string>
+	<string>
+		<id>148</id>
+		<value>DHCP</value>
+	</string>
+	<string>
+		<id>149</id>
+		<value>MAC</value>
+	</string>
+	<string>
+		<id>150</id>
+		<value>IP:</value>
+	</string>
+	<string>
+		<id>158</id>
+		<value>可用記憶體</value>
+	</string>
+	<string>
+		<id>163</id>
+		<value>讀取中</value>
 	</string>
 	<string>
 		<id>167</id>
 		<value>FTP 伺服器:</value>
 	</string>
 	<string>
+		<id>169</id>
+		<value>解析度</value>
+	</string>
+	<string>
+		<id>170</id>
+		<value>專輯:</value>
+	</string>
+	<string>
 		<id>171</id>
 		<value>演出者:</value>
+	</string>
+	<string>
+		<id>172</id>
+		<value>發行日期:</value>
+	</string>
+	<string>
+		<id>174</id>
+		<value>樂曲類型</value>
+	</string>
+	<string>
+		<id>179</id>
+		<value>歌曲</value>
+	</string>
+	<string>
+		<id>180</id>
+		<value>播放時間</value>
+	</string>
+	<string>
+		<id>181</id>
+		<value>選擇專輯</value>
 	</string>
 	<string>
 		<id>184</id>
@@ -254,8 +362,24 @@
 		<value>全選</value>
 	</string>
 	<string>
+		<id>199</id>
+		<value>導演:</value>
+	</string>
+	<string>
 		<id>201</id>
 		<value>年份:</value>
+	</string>
+	<string>
+		<id>203</id>
+		<value>劇情摘要:</value>
+	</string>
+	<string>
+		<id>208</id>
+		<value>播放</value>
+	</string>
+	<string>
+		<id>219</id>
+		<value>請插入光碟</value>
 	</string>
 	<string>
 		<id>222</id>
@@ -270,6 +394,18 @@
 		<value>無</value>
 	</string>
 	<string>
+		<id>240</id>
+		<value>自動播放DVD</value>
+	</string>
+	<string>
+		<id>241</id>
+		<value>自動播放VCD/SVCD</value>
+	</string>
+	<string>
+		<id>242</id>
+		<value>自動播放音樂光碟</value>
+	</string>
+	<string>
 		<id>248</id>
 		<value>語言</value>
 	</string>
@@ -278,12 +414,32 @@
 		<value>音樂</value>
 	</string>
 	<string>
+		<id>250</id>
+		<value>視覺效果</value>
+	</string>
+	<string>
 		<id>257</id>
 		<value>錯誤</value>
 	</string>
 	<string>
 		<id>263</id>
 		<value>HTTP 伺服器:</value>
+	</string>
+	<string>
+		<id>267</id>
+		<value>依播放時間排列</value>
+	</string>
+	<string>
+		<id>268</id>
+		<value>依歌曲名稱排列</value>
+	</string>
+	<string>
+		<id>269</id>
+		<value>依演出者排列</value>
+	</string>
+	<string>
+		<id>270</id>
+		<value>依專輯排列</value>
 	</string>
 	<string>
 		<id>279</id>
@@ -314,6 +470,14 @@
 		<value>大小</value>
 	</string>
 	<string>
+		<id>293</id>
+		<value>字幕</value>
+	</string>
+	<string>
+		<id>299</id>
+		<value>播放時間</value>
+	</string>
+	<string>
 		<id>300</id>
 		<value>1. 語言</value>
 	</string>
@@ -322,12 +486,44 @@
 		<value>2. 音量</value>
 	</string>
 	<string>
+		<id>304</id>
+		<value>語言</value>
+	</string>
+	<string>
 		<id>335</id>
 		<value>開始</value>
 	</string>
 	<string>
+		<id>338</id>
+		<value>類比</value>
+	</string>
+	<string>
+		<id>339</id>
+		<value>數位</value>
+	</string>
+	<string>
+		<id>341</id>
+		<value>播放DVD</value>
+	</string>
+	<string>
+		<id>344</id>
+		<value>演員</value>
+	</string>
+	<string>
 		<id>351</id>
 		<value>關閉</value>
+	</string>
+	<string>
+		<id>360</id>
+		<value>螢幕保護裝置</value>
+	</string>
+	<string>
+		<id>365</id>
+		<value>依電影名稱排列</value>
+	</string>
+	<string>
+		<id>366</id>
+		<value>依年份排列</value>
 	</string>
 	<string>
 		<id>371</id>
@@ -347,11 +543,67 @@
 	</string>
 	<string>
 		<id>375</id>
-		<value>下雪</value>
+		<value>雪</value>
 	</string>
 	<string>
 		<id>376</id>
-		<value>下雨</value>
+		<value>雨</value>
+	</string>
+	<string>
+		<id>377</id>
+		<value>小</value>
+	</string>
+	<string>
+		<id>378</id>
+		<value>上午</value>
+	</string>
+	<string>
+		<id>379</id>
+		<value>下午</value>
+	</string>
+	<string>
+		<id>383</id>
+		<value>風</value>
+	</string>
+	<string>
+		<id>384</id>
+		<value>強</value>
+	</string>
+	<string>
+		<id>386</id>
+		<value>晴</value>
+	</string>
+	<string>
+		<id>387</id>
+		<value>早</value>
+	</string>
+	<string>
+		<id>389</id>
+		<value>霧</value>
+	</string>
+	<string>
+		<id>398</id>
+		<value>溫度單位</value>
+	</string>
+	<string>
+		<id>399</id>
+		<value>速度單位</value>
+	</string>
+	<string>
+		<id>401</id>
+		<value>溫度</value>
+	</string>
+	<string>
+		<id>406</id>
+		<value>濕度</value>
+	</string>
+	<string>
+		<id>442</id>
+		<value>區域網路(LAN)</value>
+	</string>
+	<string>
+		<id>443</id>
+		<value>網際網路</value>
 	</string>
 	<string>
 		<id>446</id>
@@ -363,6 +615,226 @@
 	</string>
 	<string>
 		<id>448</id>
-		<value>液晶髒顯示器</value>
+		<value>液晶顯顯示器</value>
+	</string>
+	<string>
+		<id>1049</id>
+		<value>休眠</value>
+	</string>
+	<string>
+		<id>1954</id>
+		<value>溫度</value>
+	</string>
+	<string>
+		<id>2031</id>
+		<value>茶匙</value>
+	</string>
+	<string>
+		<id>2032</id>
+		<value>茶匙</value>
+	</string>
+	<string>
+		<id>2033</id>
+		<value>大湯匙</value>
+	</string>
+	<string>
+		<id>2034</id>
+		<value>大湯匙</value>
+	</string>
+	<string>
+		<id>2035</id>
+		<value>誇脫</value>
+	</string>
+	<string>
+		<id>2036</id>
+		<value>加侖</value>
+	</string>
+	<string>
+		<id>2037</id>
+		<value>盎司</value>
+	</string>
+	<string>
+		<id>2038</id>
+		<value>英鎊</value>
+	</string>
+	<string>
+		<id>2039</id>
+		<value>毫升</value>
+	</string>
+	<string>
+		<id>2040</id>
+		<value>毫升</value>
+	</string>
+	<string>
+		<id>2041</id>
+		<value>釐升</value>
+	</string>
+	<string>
+		<id>2042</id>
+		<value>分升</value>
+	</string>
+	<string>
+		<id>2043</id>
+		<value>公升</value>
+	</string>
+	<string>
+		<id>2044</id>
+		<value>毫克</value>
+	</string>
+	<string>
+		<id>2045</id>
+		<value>釐克</value>
+	</string>
+	<string>
+		<id>2046</id>
+		<value>分克</value>
+	</string>
+	<string>
+		<id>2047</id>
+		<value>公克</value>
+	</string>
+	<string>
+		<id>2048</id>
+		<value>千克</value>
+	</string>
+	<string>
+		<id>3001</id>
+		<value>時</value>
+	</string>
+	<string>
+		<id>3003</id>
+		<value>分</value>
+	</string>
+	<string>
+		<id>102014</id>
+		<value>影像資訊</value>
+	</string>
+	<string>
+		<id>102015</id>
+		<value>迷你主目錄</value>
+	</string>
+	<string>
+		<id>102600</id>
+		<value>氣象報告</value>
+	</string>
+	<string>
+		<id>102700</id>
+		<value>頭條新聞</value>
+	</string>
+	<string>
+		<id>200005</id>
+		<value>請選擇您所用的遙控器</value>
+	</string>
+	<string>
+		<id>200006</id>
+		<value>請按「下一步」繼續安裝:</value>
+	</string>
+	<string>
+		<id>200007</id>
+		<value>&lt;上一步</value>
+	</string>
+	<string>
+		<id>200008</id>
+		<value>設定 - 遙控器</value>
+	</string>
+	<string>
+		<id>200009</id>
+		<value>下一步&gt;</value>
+	</string>
+	<string>
+		<id>200010</id>
+		<value>MediaPortal 可以將您的電腦轉變成為很高級的多媒體娛樂中心，</value>
+	</string>
+	<string>
+		<id>200013</id>
+		<value>此精靈會幫您輕鬆安裝與設定 MediaPortal。</value>
+	</string>
+	<string>
+		<id>200014</id>
+		<value>首先，請選擇您的的地區及語言:</value>
+	</string>
+	<string>
+		<id>200015</id>
+		<value>請按「下一步」</value>
+	</string>
+	<string>
+		<id>200017</id>
+		<value>歡迎使用 MediaPortal</value>
+	</string>
+	<string>
+		<id>200019</id>
+		<value>請按「完成」，關閉此精靈</value>
+	</string>
+	<string>
+		<id>200020</id>
+		<value>完成</value>
+	</string>
+	<string>
+		<id>200022</id>
+		<value>MediaPortal 在您的電腦中找到以下的電視卡:</value>
+	</string>
+	<string>
+		<id>200023</id>
+		<value>請按「下一步」，設定該電視卡</value>
+	</string>
+	<string>
+		<id>200024</id>
+		<value>設定電視</value>
+	</string>
+	<string>
+		<id>200025</id>
+		<value>語言</value>
+	</string>
+	<string>
+		<id>200026</id>
+		<value>國家</value>
+	</string>
+	<string>
+		<id>200027</id>
+		<value>設定 - 一般</value>
+	</string>
+	<string>
+		<id>200030</id>
+		<value>開機後自動啟動 MediaPortal?</value>
+	</string>
+	<string>
+		<id>200031</id>
+		<value>是</value>
+	</string>
+	<string>
+		<id>200032</id>
+		<value>否</value>
+	</string>
+	<string>
+		<id>200033</id>
+		<value>設定電視 - 類比電視</value>
+	</string>
+	<string>
+		<id>200034</id>
+		<value>請在底下的清單中選擇您所在的都市</value>
+	</string>
+	<string>
+		<id>200035</id>
+		<value>若您所在的都市不在底下的清單中，您需要手動設定</value>
+	</string>
+	<string>
+		<id>200036</id>
+		<value>手動設定</value>
+	</string>
+	<string>
+		<id>200037</id>
+		<value>略過&gt;</value>
+	</string>
+	<string>
+		<id>4000</id>
+		<value>網路瀏覽器</value>
+	</string>
+	<string>
+		<id>4001</id>
+		<value>我的最愛</value>
+	</string>
+	<string>
+		<id>4002</id>
+		<value>無法顯示網頁</value>
 	</string>
 </strings>

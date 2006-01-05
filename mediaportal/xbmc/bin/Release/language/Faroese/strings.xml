@@ -11,7 +11,11 @@
 	</string>
 	<string>
 		<id>2</id>
-		<value>Tónleik</value>
+		<value>Tónleikur</value>
+	</string>
+	<string>
+		<id>3</id>
+		<value>Filmar</value>
 	</string>
 	<string>
 		<id>4</id>
@@ -19,7 +23,11 @@
 	</string>
 	<string>
 		<id>5</id>
-		<value>Skipanir</value>
+		<value>Uppsetan</value>
+	</string>
+	<string>
+		<id>6</id>
+		<value>XBOX Milðastøð (CVS)</value>
 	</string>
 	<string>
 		<id>7</id>
@@ -114,6 +122,30 @@
 		<value>Desember</value>
 	</string>
 	<string>
+		<id>50</id>
+		<value>DVD&apos;ir</value>
+	</string>
+	<string>
+		<id>100</id>
+		<value>Sjá: Ímyndir</value>
+	</string>
+	<string>
+		<id>101</id>
+		<value>Sjá: Lista</value>
+	</string>
+	<string>
+		<id>103</id>
+		<value>Sortera eftir: Navni</value>
+	</string>
+	<string>
+		<id>104</id>
+		<value>Sortera eftir: Dato</value>
+	</string>
+	<string>
+		<id>105</id>
+		<value>Sortera eftir: Stødd</value>
+	</string>
+	<string>
 		<id>106</id>
 		<value>Nei</value>
 	</string>
@@ -122,15 +154,71 @@
 		<value>Ja</value>
 	</string>
 	<string>
+		<id>108</id>
+		<value>Myndarøð</value>
+	</string>
+	<string>
+		<id>112</id>
+		<value>STEÐGA</value>
+	</string>
+	<string>
+		<id>113</id>
+		<value>Fíla: Kjelda</value>
+	</string>
+	<string>
+		<id>114</id>
+		<value>Fíla: Til-stað</value>
+	</string>
+	<string>
+		<id>115</id>
+		<value>Margfalda</value>
+	</string>
+	<string>
+		<id>116</id>
+		<value>Flyta</value>
+	</string>
+	<string>
+		<id>117</id>
+		<value>Sletta</value>
+	</string>
+	<string>
 		<id>118</id>
-		<value>Endurdoypa</value>
+		<value>Umdoypa</value>
+	</string>
+	<string>
+		<id>119</id>
+		<value>Nýggjan faldara</value>
+	</string>
+	<string>
+		<id>120</id>
+		<value>Vátta fíla margfaldan</value>
 	</string>
 	<string>
 		<id>121</id>
-		<value>Vátta fílu flyting</value>
+		<value>Vátta fíla flyting</value>
+	</string>
+	<string>
+		<id>122</id>
+		<value>Vátta fíla sletting</value>
+	</string>
+	<string>
+		<id>123</id>
+		<value>Margfalda hesar fílur</value>
+	</string>
+	<string>
+		<id>124</id>
+		<value>Flyt hesar fílur?</value>
+	</string>
+	<string>
+		<id>125</id>
+		<value>Sletta hesa fílur?</value>
 	</string>
 	<string>
 		<id>137</id>
 		<value>Leita</value>
+	</string>
+	<string>
+		<id>142</id>
+		<value>Tíð:</value>
 	</string>
 </strings>

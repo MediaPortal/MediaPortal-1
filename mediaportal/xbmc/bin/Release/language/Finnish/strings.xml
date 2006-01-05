@@ -2350,6 +2350,10 @@
 		<value>Kuvat</value>
 	</string>
 	<string>
+		<id>751</id>
+		<value>N‰yt‰ kaikki artistin kappaleet</value>
+	</string>
+	<string>
 		<id>800</id>
 		<value>Alkaa kirjaimella</value>
 	</string>
@@ -3150,6 +3154,46 @@
 		<value>Asetukset</value>
 	</string>
 	<string>
+		<id>1049</id>
+		<value>Unitila</value>
+	</string>
+	<string>
+		<id>1050</id>
+		<value>La -Su</value>
+	</string>
+	<string>
+		<id>1051</id>
+		<value>Tallenna La -Su</value>
+	</string>
+	<string>
+		<id>1052</id>
+		<value>Kappaleet</value>
+	</string>
+	<string>
+		<id>1100</id>
+		<value>Tuo CD</value>
+	</string>
+	<string>
+		<id>1101</id>
+		<value>Tuo valittu kappale</value>
+	</string>
+	<string>
+		<id>1102</id>
+		<value>Peruuta CD:n tuonti</value>
+	</string>
+	<string>
+		<id>1103</id>
+		<value>Tuon kappaletta</value>
+	</string>
+	<string>
+		<id>1104</id>
+		<value>vasen</value>
+	</string>
+	<string>
+		<id>1105</id>
+		<value>Tuon kappaleita</value>
+	</string>
+	<string>
 		<id>1440</id>
 		<value>Teksti-tv</value>
 	</string>
@@ -3180,6 +3224,18 @@
 	<string>
 		<id>1447</id>
 		<value>Tallennus lopetettu:</value>
+	</string>
+	<string>
+		<id>1448</id>
+		<value>Tyhj‰‰ valinnat</value>
+	</string>
+	<string>
+		<id>1449</id>
+		<value>Lopeta tallennus</value>
+	</string>
+	<string>
+		<id>1450</id>
+		<value>Hakuatko varmasti pys‰ytt‰‰ tallennuksen?</value>
 	</string>
 	<string>
 		<id>1950</id>

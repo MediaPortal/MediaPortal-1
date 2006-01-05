@@ -2350,6 +2350,10 @@
 		<value>Immagini</value>
 	</string>
 	<string>
+		<id>751</id>
+		<value>Mostra tutti i brani di questo autore</value>
+	</string>
+	<string>
 		<id>800</id>
 		<value>Comincia con</value>
 	</string>
@@ -3152,6 +3156,14 @@
 	<string>
 		<id>1049</id>
 		<value>Sospendi</value>
+	</string>
+	<string>
+		<id>1050</id>
+		<value>Sab-Dom</value>
+	</string>
+	<string>
+		<id>1051</id>
+		<value>Registra Sab-Dom</value>
 	</string>
 	<string>
 		<id>1100</id>
@@ -4803,7 +4815,7 @@
 	</string>
 	<string>
 		<id>200006</id>
-		<value>Premi su Avanti&gt;per continuare il setup</value>
+		<value>Premi su Avanti per continuare il setup</value>
 	</string>
 	<string>
 		<id>200007</id>
@@ -4811,7 +4823,7 @@
 	</string>
 	<string>
 		<id>200008</id>
-		<value>Setup - Telecomando</value>
+		<value>Impostazioni - Telecomando</value>
 	</string>
 	<string>
 		<id>200009</id>
@@ -4823,7 +4835,7 @@
 	</string>
 	<string>
 		<id>200011</id>
-		<value>Con MediaPortal puoi godere la tua musica, le radio, vedere le tue foto digitali,</value>
+		<value>Con MediaPortal puoi goderti la tua musica, le radio, vedere le tue foto digitali,</value>
 	</string>
 	<string>
 		<id>200012</id>
@@ -4831,15 +4843,15 @@
 	</string>
 	<string>
 		<id>200013</id>
-		<value>Ti consente di ascoltare la tua musica, la radio, i tuoi video e i tuoi DVD</value>
+		<value>Questo wizard ti aiuterà a configurare MediaPortal in modo facile e veloce. Segui i passi</value>
 	</string>
 	<string>
 		<id>200014</id>
-		<value>foto,video e guardare o registrare TV dal vivo e molto altro.</value>
+		<value>e comincia impostando la tua lingua e la tua località qui sotto:</value>
 	</string>
 	<string>
 		<id>200015</id>
-		<value>Questo wizard ti aiuterà a configurare MediaPortal in modo facile e veloce. Segui i passi</value>
+		<value>Premi il pulsante Avanti per continuare</value>
 	</string>
 	<string>
 		<id>200017</id>
@@ -4851,7 +4863,7 @@
 	</string>
 	<string>
 		<id>200019</id>
-		<value>Premi il pulsante Finish èer chiudere questo wizard</value>
+		<value>Premi il pulsante Finish per chiudere questo wizard</value>
 	</string>
 	<string>
 		<id>200020</id>
@@ -4891,11 +4903,11 @@
 	</string>
 	<string>
 		<id>200029</id>
-		<value>Avvia MediaPortal a tutto schermo?</value>
+		<value>Avvia Media Portal a tutto schermo?</value>
 	</string>
 	<string>
 		<id>200030</id>
-		<value>Avvia automaticamente MediaPortal all&apos;avvio del computer?</value>
+		<value>Avvia automaticamente Media Portal all&apos;avvio del computer?</value>
 	</string>
 	<string>
 		<id>200031</id>
@@ -4915,11 +4927,11 @@
 	</string>
 	<string>
 		<id>200035</id>
-		<value>Nota se la tua città non è presente nella lista dovrai regolare manualmente</value>
+		<value>Nota se la tua città non è presente nella lista dovrai sintonizzare manualmente</value>
 	</string>
 	<string>
 		<id>200036</id>
-		<value>Regolazione manuale</value>
+		<value>Sintonia manuale</value>
 	</string>
 	<string>
 		<id>200037</id>

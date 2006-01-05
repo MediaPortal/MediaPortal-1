@@ -3154,6 +3154,34 @@
 		<value>Refreshing Mailbox</value>
 	</string>
 	<string>
+		id>
+		<value>Files moved!</value>
+	</string>
+	<string>
+		<id>8000</id>
+		<value>My Mail</value>
+	</string>
+	<string>
+		<id>8001</id>
+		<value>Check Mailbox</value>
+	</string>
+	<string>
+		<id>8002</id>
+		<value>Autocheck off</value>
+	</string>
+	<string>
+		<id>8003</id>
+		<value>Autocheck on</value>
+	</string>
+	<string>
+		<id>8004</id>
+		<value>You have new Mail!</value>
+	</string>
+	<string>
+		<id>8005</id>
+		<value>Refreshing Mailbox</value>
+	</string>
+	<string>
 		<id>8007</id>
 		<value>Autocheck</value>
 	</string>
@@ -3402,10 +3430,6 @@
 		<value>J‰rgmine&gt;</value>
 	</string>
 	<string>
-		<id>200016</id>
-		<value>Alustamiseks vajuta nupule J‰rgmine</value>
-	</string>
-	<string>
 		<id>200017</id>
 		<value>Tere tulemast MediaPortali.</value>
 	</string>
@@ -3422,7 +3446,55 @@
 		<value>Lıpeta</value>
 	</string>
 	<string>
+		<id>200022</id>
+		<value>MediaPortal on leidnud j‰rmised TV-kaarid:</value>
+	</string>
+	<string>
+		<id>200024</id>
+		<value>TV seadistamine</value>
+	</string>
+	<string>
+		<id>200025</id>
+		<value>Keel</value>
+	</string>
+	<string>
+		<id>200028</id>
+		<value>Kas sellel arvuitil on ligip‰‰s Internetile?</value>
+	</string>
+	<string>
+		<id>200029</id>
+		<value>K‰ivitada MediaPortal t‰isekraani reæiimis?</value>
+	</string>
+	<string>
+		<id>200030</id>
+		<value>K‰ivitada MediaPortal automaatselt arvuti k‰ivitamisel?</value>
+	</string>
+	<string>
+		<id>200031</id>
+		<value>Jah</value>
+	</string>
+	<string>
+		<id>200032</id>
+		<value>Ei</value>
+	</string>
+	<string>
+		<id>200034</id>
+		<value>Palun vali oma linn j‰rgnevast nimekirjast</value>
+	</string>
+	<string>
+		<id>200036</id>
+		<value>K‰sitsi seadistamine</value>
+	</string>
+	<string>
+		<id>4000</id>
+		<value>Veebisirvija</value>
+	</string>
+	<string>
 		<id>4001</id>
 		<value>J‰rjehoidjad</value>
+	</string>
+	<string>
+		<id>4002</id>
+		<value>Vıimatu laadida URLi</value>
 	</string>
 </strings>

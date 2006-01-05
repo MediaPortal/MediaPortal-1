@@ -2350,6 +2350,10 @@
 		<value>Imagens</value>
 	</string>
 	<string>
+		<id>751</id>
+		<value>Exibir todas as músicas desse artista</value>
+	</string>
+	<string>
 		<id>800</id>
 		<value>Começa com</value>
 	</string>
@@ -4047,7 +4051,7 @@
 	</string>
 	<string>
 		<id>8015</id>
-		<value>Verifique as configurações para a caixa&apos;{0}&apos;</value>
+		<value>Verifique as configurações para a caixa &apos;{0}&apos;</value>
 	</string>
 	<string>
 		<id>8016</id>
@@ -4899,11 +4903,11 @@
 	</string>
 	<string>
 		<id>200029</id>
-		<value>Iniciar o MediaPortal em modo tela cheia?</value>
+		<value>Iniciar o Media Portal em modo tela cheia?</value>
 	</string>
 	<string>
 		<id>200030</id>
-		<value>Iniciar o MediaPortal automaticamente quando iniciar o PC?</value>
+		<value>Iniciar o Media Portal automaticamente quando iniciar o PC?</value>
 	</string>
 	<string>
 		<id>200031</id>

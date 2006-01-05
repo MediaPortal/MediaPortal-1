@@ -1169,6 +1169,207 @@
 		<id>2111</id>
 		<value>סיים!</value>
 	</string>
+ring>
+	<string>
+		<id>1104</id>
+		<value>נשאר</value>
+	</string>
+	<string>
+		<id>1440</id>
+		<value>טלטקסט</value>
+	</string>
+	<string>
+		<id>1441</id>
+		<value>טלטקסט</value>
+	</string>
+	<string>
+		<id>1449</id>
+		<value>הפסק הקלטה</value>
+	</string>
+	<string>
+		<id>1950</id>
+		<value>סטטוס</value>
+	</string>
+	<string>
+		<id>1951</id>
+		<value>כונן קשיח</value>
+	</string>
+	<string>
+		<id>1952</id>
+		<value>מאוור</value>
+	</string>
+	<string>
+		<id>1953</id>
+		<value>פנוי</value>
+	</string>
+	<string>
+		<id>1954</id>
+		<value>טמפרטורה</value>
+	</string>
+	<string>
+		<id>1965</id>
+		<value>הערך הגבוה ביותר</value>
+	</string>
+	<string>
+		<id>1966</id>
+		<value>הערך הנמוך ביותר</value>
+	</string>
+	<string>
+		<id>1974</id>
+		<value>זיכרון</value>
+	</string>
+	<string>
+		<id>2005</id>
+		<value>מחיקה</value>
+	</string>
+	<string>
+		<id>2008</id>
+		<value>מצרכים</value>
+	</string>
+	<string>
+		<id>2009</id>
+		<value>אופן ההכנה</value>
+	</string>
+	<string>
+		<id>2010</id>
+		<value>כרטיס</value>
+	</string>
+	<string>
+		<id>2011</id>
+		<value>הדפסה</value>
+	</string>
+	<string>
+		<id>2012</id>
+		<value>מחיקה</value>
+	</string>
+	<string>
+		<id>2013</id>
+		<value>מועדפים</value>
+	</string>
+	<string>
+		<id>2014</id>
+		<value>לא ידוע</value>
+	</string>
+	<string>
+		<id>2015</id>
+		<value>עבור מנה</value>
+	</string>
+	<string>
+		<id>2016</id>
+		<value>קטן</value>
+	</string>
+	<string>
+		<id>2018</id>
+		<value>כוס</value>
+	</string>
+	<string>
+		<id>2019</id>
+		<value>חצי ליטר</value>
+	</string>
+	<string>
+		<id>2020</id>
+		<value>בינוני</value>
+	</string>
+	<string>
+		<id>2021</id>
+		<value>גדול</value>
+	</string>
+	<string>
+		<id>2022</id>
+		<value>פחית</value>
+	</string>
+	<string>
+		<id>2023</id>
+		<value>חבילה</value>
+	</string>
+	<string>
+		<id>2024</id>
+		<value>קמצוץ</value>
+	</string>
+	<string>
+		<id>2025</id>
+		<value>טיפה</value>
+	</string>
+	<string>
+		<id>2029</id>
+		<value>פרוסה</value>
+	</string>
+	<string>
+		<id>2030</id>
+		<value>כל</value>
+	</string>
+	<string>
+		<id>2031</id>
+		<value>כפית</value>
+	</string>
+	<string>
+		<id>2032</id>
+		<value>כפית</value>
+	</string>
+	<string>
+		<id>2033</id>
+		<value>כף</value>
+	</string>
+	<string>
+		<id>2034</id>
+		<value>כף</value>
+	</string>
+	<string>
+		<id>2036</id>
+		<value>גלון</value>
+	</string>
+	<string>
+		<id>2037</id>
+		<value>אונקיה</value>
+	</string>
+	<string>
+		<id>2043</id>
+		<value>ליטר</value>
+	</string>
+	<string>
+		<id>2044</id>
+		<value>מיליגרם</value>
+	</string>
+	<string>
+		<id>2047</id>
+		<value>גרם</value>
+	</string>
+	<string>
+		<id>2048</id>
+		<value>קילוגרם</value>
+	</string>
+	<string>
+		<id>2049</id>
+		<value>מחק מתכון זה?</value>
+	</string>
+	<string>
+		<id>2050</id>
+		<value>מחק קטגוריה זו?</value>
+	</string>
+	<string>
+		<id>2052</id>
+		<value>חפש במתכונים</value>
+	</string>
+	<string>
+		<id>2053</id>
+		<value>קטגוריה</value>
+	</string>
+	<string>
+		<id>2054</id>
+		<value>אין כניסה!</value>
+	</string>
+	<string>
+		<id>2100</id>
+		<value>צורב</value>
+	</string>
+	<string>
+		<id>2107</id>
+		<value>התחל חהעתיק</value>
+	</string>
+	<string>
+		<id>2111</id>
+		<value>סיים!</value>
+	</string>
 	<string>
 		<id>2113</id>
 		<value>העתק הכל</value>
@@ -1182,12 +1383,20 @@
 		<value>הכונן לא מוכן</value>
 	</string>
 	<string>
+		<id>2117</id>
+		<value>קרתה תקלה פטאלית!</value>
+	</string>
+	<string>
 		<id>2119</id>
 		<value>התחל המרה</value>
 	</string>
 	<string>
 		<id>2120</id>
 		<value>ממיר קבצים...</value>
+	</string>
+	<string>
+		<id>2122</id>
+		<value>מתחיל!</value>
 	</string>
 	<string>
 		<id>2123</id>
@@ -1264,6 +1473,22 @@
 	<string>
 		<id>2207</id>
 		<value>האם היית מעוניין</value>
+	</string>
+	<string>
+		<id>2208</id>
+		<value>צור את התיקייה?</value>
+	</string>
+	<string>
+		<id>2209</id>
+		<value>האם היית מעוניין להעתיק את הקבצים?</value>
+	</string>
+	<string>
+		<id>2210</id>
+		<value>הקבצים הועתקו!</value>
+	</string>
+	<string>
+		<id>2211</id>
+		<value>אנא המתן, הקבצים נמצאים בהעתקה.</value>
 	</string>
 	<string>
 		<id>2212</id>
@@ -1448,10 +1673,6 @@
 	<string>
 		<id>100030</id>
 		<value>רדיו</value>
-	</string>
-	<string>
-		<id>200016</id>
-		<value>לחץ על כפתור הבא על מנת להמשיך</value>
 	</string>
 	<string>
 		<id>200017</id>

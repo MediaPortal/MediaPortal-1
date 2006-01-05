@@ -2350,6 +2350,10 @@
 		<value>Obrazy</value>
 	</string>
 	<string>
+		<id>751</id>
+		<value>Poka¿ wszystkie piosenki dla tego artysty</value>
+	</string>
+	<string>
 		<id>800</id>
 		<value>Rozpoczyna</value>
 	</string>
@@ -3208,6 +3212,10 @@
 	<string>
 		<id>1447</id>
 		<value>Nagrywanie zatrzymane</value>
+	</string>
+	<string>
+		<id>1448</id>
+		<value>Wybierz ¯aden</value>
 	</string>
 	<string>
 		<id>1449</id>
@@ -4883,11 +4891,11 @@
 	</string>
 	<string>
 		<id>200029</id>
-		<value>Czy uruchamiaæ MediaPortal w trybie pe³no ekranowym</value>
+		<value>Czy uruchamiaæ Media Portal w trybie pe³no ekranowym</value>
 	</string>
 	<string>
 		<id>200030</id>
-		<value>Czy uruchamiaæ MediaPortal wraz ze startem systemu ?</value>
+		<value>Czy uruchamiaæ Media Portal wraz ze startem systemu ?</value>
 	</string>
 	<string>
 		<id>200031</id>
@@ -4919,10 +4927,14 @@
 	</string>
 	<string>
 		<id>4000</id>
-		<value>Przegl±darka Internetowa</value>
+		<value>Przegl±darka WWW</value>
 	</string>
 	<string>
 		<id>4001</id>
 		<value>Ulubione</value>
+	</string>
+	<string>
+		<id>4002</id>
+		<value>Nie mo¿na pobraæ URL</value>
 	</string>
 </strings>

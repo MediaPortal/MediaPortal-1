@@ -2267,7 +2267,7 @@
 	</string>
 	<string>
 		<id>729</id>
-		<value>VMR9 kullanýldýðýndan ve birþey çalýndýðdýðýnda emin olun</value>
+		<value>VMR9 kullanýldýðýndan ve birþey çalýndýðýndan emin olun</value>
 	</string>
 	<string>
 		<id>730</id>
@@ -2275,7 +2275,7 @@
 	</string>
 	<string>
 		<id>731</id>
-		<value>programlamayý silerseniz kayýt durur.</value>
+		<value>programlamayý silerseniz kayýt iþlemi durdurulur.</value>
 	</string>
 	<string>
 		<id>732</id>
@@ -2348,6 +2348,10 @@
 	<string>
 		<id>750</id>
 		<value>Resimler</value>
+	</string>
+	<string>
+		<id>751</id>
+		<value>Bu sanatçýnýn tüm þarkýlarýný göster</value>
 	</string>
 	<string>
 		<id>800</id>
@@ -2543,7 +2547,7 @@
 	</string>
 	<string>
 		<id>887</id>
-		<value>Bölümler için özel numara girin</value>
+		<value>Bölüm  için özel numara girin</value>
 	</string>
 	<string>
 		<id>888</id>
@@ -3123,19 +3127,19 @@
 	</string>
 	<string>
 		<id>1042</id>
-		<value>izlenene kadar</value>
+		<value>Sakla</value>
 	</string>
 	<string>
 		<id>1043</id>
-		<value>koruma</value>
+		<value>Ýzlenene kadar</value>
 	</string>
 	<string>
 		<id>1044</id>
-		<value>Gereken boþ alana kadar</value>
+		<value>Boþ alan gerekinceye kadar</value>
 	</string>
 	<string>
 		<id>1045</id>
-		<value>Tarihe kadar</value>
+		<value>Tarihe göre</value>
 	</string>
 	<string>
 		<id>1046</id>
@@ -3144,6 +3148,50 @@
 	<string>
 		<id>1047</id>
 		<value>Tam ekranda baþlat</value>
+	</string>
+	<string>
+		<id>1048</id>
+		<value>Ayarlar</value>
+	</string>
+	<string>
+		<id>1049</id>
+		<value>Hibernate</value>
+	</string>
+	<string>
+		<id>1050</id>
+		<value>Cmt-Paz</value>
+	</string>
+	<string>
+		<id>1051</id>
+		<value>Cmt-Paz Kaydet</value>
+	</string>
+	<string>
+		<id>1052</id>
+		<value>Þarkýlar</value>
+	</string>
+	<string>
+		<id>1100</id>
+		<value>CD&apos;den al</value>
+	</string>
+	<string>
+		<id>1101</id>
+		<value>Seçili parçayý al</value>
+	</string>
+	<string>
+		<id>1102</id>
+		<value>CD&apos;den almayý iptal et.</value>
+	</string>
+	<string>
+		<id>1103</id>
+		<value>Parça Alýnýyor</value>
+	</string>
+	<string>
+		<id>1104</id>
+		<value>sol</value>
+	</string>
+	<string>
+		<id>1105</id>
+		<value>Parçalar Alýnýyor</value>
 	</string>
 	<string>
 		<id>1440</id>
@@ -3176,6 +3224,18 @@
 	<string>
 		<id>1447</id>
 		<value>Kayýt durduruldu:</value>
+	</string>
+	<string>
+		<id>1448</id>
+		<value>Hiçbirini Seçme</value>
+	</string>
+	<string>
+		<id>1449</id>
+		<value>Kaydý Durdur</value>
+	</string>
+	<string>
+		<id>1450</id>
+		<value>Kaydý durdurmak istiyor musunuz?</value>
 	</string>
 	<string>
 		<id>1950</id>
@@ -3711,7 +3771,7 @@
 	</string>
 	<string>
 		<id>2210</id>
-		<value>Dosyalar kopyalandý!</value>
+		<value>Dosya kopyalandý!</value>
 	</string>
 	<string>
 		<id>2211</id>
@@ -3735,7 +3795,7 @@
 	</string>
 	<string>
 		<id>2216</id>
-		<value>Dosyalar kopyalandý!</value>
+		<value>Dosya kopyalandý!</value>
 	</string>
 	<string>
 		<id>2217</id>
@@ -3979,7 +4039,7 @@
 	</string>
 	<string>
 		<id>8011</id>
-		<value>Mail-Plugin&apos;i kullanmak için ayarlardan</value>
+		<value>Mail-Plugini kullanmak için ayarlardan</value>
 	</string>
 	<string>
 		<id>8012</id>
@@ -4039,7 +4099,7 @@
 	</string>
 	<string>
 		<id>8030</id>
-		<value>server&apos;a baðlandý</value>
+		<value>server için baðlandý</value>
 	</string>
 	<string>
 		<id>8031</id>
@@ -4143,7 +4203,7 @@
 	</string>
 	<string>
 		<id>13008</id>
-		<value>Ken Burns efekti</value>
+		<value>Ken Burns efekti (slayt)</value>
 	</string>
 	<string>
 		<id>13009</id>
@@ -4155,7 +4215,7 @@
 	</string>
 	<string>
 		<id>13011</id>
-		<value>Ken Burns hýzý</value>
+		<value>Ken Burns hýzý (slayt)</value>
 	</string>
 	<string>
 		<id>13012</id>
@@ -4231,7 +4291,7 @@
 	</string>
 	<string>
 		<id>19010</id>
-		<value>Baþlamak için start&apos;a basýn...</value>
+		<value>Baþlamak için start tuþuna basýn...</value>
 	</string>
 	<string>
 		<id>19011</id>
@@ -4375,7 +4435,7 @@
 	</string>
 	<string>
 		<id>100034</id>
-		<value>Plugin&apos;ler</value>
+		<value>Pluginler</value>
 	</string>
 	<string>
 		<id>100100</id>
@@ -4503,7 +4563,7 @@
 	</string>
 	<string>
 		<id>100622</id>
-		<value>Sihirbaz/DVBS/LNB detayý</value>
+		<value>Sihirbaz/DVBS/LNB detaylarý</value>
 	</string>
 	<string>
 		<id>100623</id>
@@ -4612,6 +4672,10 @@
 	<string>
 		<id>100758</id>
 		<value>Dosya diyaloðu</value>
+	</string>
+	<string>
+		<id>100759</id>
+		<value>Tv Kayýt Bilgisi</value>
 	</string>
 	<string>
 		<id>100760</id>
@@ -4739,7 +4803,7 @@
 	</string>
 	<string>
 		<id>200002</id>
-		<value>Þimdi EPG&apos;ye (Elekt.Program Rehberi) sahip kanallarý Tv kanallarýnýzda listeleyebilirsiniz.</value>
+		<value>Þimdi EPG ye (Elekt.Program Rehberi) sahip kanallarý Tv kanallarýnýzda listeleyebilirsiniz.</value>
 	</string>
 	<string>
 		<id>200003</id>
@@ -4755,7 +4819,7 @@
 	</string>
 	<string>
 		<id>200006</id>
-		<value>Devam etmek için Ýleri&apos;ye basýn:</value>
+		<value>Devam etmek için Ýleri butonuna basýn:</value>
 	</string>
 	<string>
 		<id>200007</id>
@@ -4771,31 +4835,31 @@
 	</string>
 	<string>
 		<id>200010</id>
-		<value>MediaPortal bilgisayarýnýzý geliþmiþ bir Multi-Medya Merkezi yapar.</value>
+		<value>MediaPortal bilgisayarýnýzý geliþmiþ bir Multi-Medya Merkezi / HTPC yapacak.</value>
 	</string>
 	<string>
 		<id>200011</id>
-		<value>MediaPortal ile favori müzikleriniz ve radyonuzla doyasýya eðlenin</value>
+		<value>MediaPortal ile favori müziklerinizi ve radyonuzu dinleyebilir, digital fotoðraflarýnýzý izleyebilir,</value>
+	</string>
+	<string>
+		<id>200012</id>
+		<value>Video, DVD ve TV kanallarýnýzý seyredebilirsiniz.</value>
 	</string>
 	<string>
 		<id>200013</id>
-		<value>MediaPortal size sevdiðiniz müzik ve radyolarý dinleme;</value>
+		<value>Bu sihirbaz size MediaPortalý hýzlý ve kolayca yüklemenize yardýmcý olacak. Lütfen aþaðýdaki</value>
 	</string>
 	<string>
 		<id>200014</id>
-		<value>vidyo, DVD, fotoðraf ve TV izleme / kaydetme  imkaný ve daha birçok özellik sunar.</value>
+		<value>dil ve bölge ayarlarýnýzdan baþlayarak tüm adýmlarý takip edin:</value>
 	</string>
 	<string>
 		<id>200015</id>
-		<value>Bu sihirbaz size MediaPortal&apos;ý hýzlý ve kolayca yüklemenize yardýmcý olacak. Lütfen bölümler</value>
-	</string>
-	<string>
-		<id>200016</id>
-		<value>arasýnda geçiþ yapmak  için Ýleri butonuna týklayýnýz.</value>
+		<value>Þimdi baþlamak için Ýleri Butonuna týklayýn</value>
 	</string>
 	<string>
 		<id>200017</id>
-		<value>MediaPortal&apos;a Hoþ Geldiniz.</value>
+		<value>MediaPortal programýna Hoþ Geldiniz.</value>
 	</string>
 	<string>
 		<id>200018</id>
@@ -4815,7 +4879,7 @@
 	</string>
 	<string>
 		<id>200022</id>
-		<value>MediaPortal bulduðu tv-kartlarý:</value>
+		<value>MediaPortal tarafýndan algýlanan tv-kartlarý:</value>
 	</string>
 	<string>
 		<id>200023</id>
@@ -4826,11 +4890,71 @@
 		<value>TV Ayarlama</value>
 	</string>
 	<string>
+		<id>200025</id>
+		<value>Dil</value>
+	</string>
+	<string>
+		<id>200026</id>
+		<value>Ülke</value>
+	</string>
+	<string>
+		<id>200027</id>
+		<value>Ayar - Genel</value>
+	</string>
+	<string>
+		<id>200028</id>
+		<value>Bu PC&apos;nin internet eriþimi varmý?</value>
+	</string>
+	<string>
+		<id>200029</id>
+		<value>MediaPortal tam ekran modunda baþlasýn mý?</value>
+	</string>
+	<string>
+		<id>200030</id>
+		<value>MediaPortal PC açýlýþýnda otomatik çalýþsýn mý?</value>
+	</string>
+	<string>
+		<id>200031</id>
+		<value>Evet</value>
+	</string>
+	<string>
+		<id>200032</id>
+		<value>Hayýr</value>
+	</string>
+	<string>
+		<id>200033</id>
+		<value>TV Ayar - Analog TV</value>
+	</string>
+	<string>
+		<id>200034</id>
+		<value>Lütfen aþaðýdaki listeden þehrinizi seçiniz.</value>
+	</string>
+	<string>
+		<id>200035</id>
+		<value>Eðer listede þehriniz yoksa daha sonra manuel ayarlayýnýz.</value>
+	</string>
+	<string>
+		<id>200036</id>
+		<value>Manuel Ayar</value>
+	</string>
+	<string>
+		<id>200037</id>
+		<value>Geç</value>
+	</string>
+	<string>
 		<id>4000</id>
 		<value>Web Tarayýcý</value>
 	</string>
 	<string>
 		<id>4001</id>
 		<value>Favoriler</value>
+	</string>
+	<string>
+		<id>4002</id>
+		<value>URL yüklenemiyor</value>
+	</string>
+	<string>
+		<id>4003</id>
+		<value>Lütfen favori dosyanýzý ayar bölümüne giriniz.</value>
 	</string>
 </strings>

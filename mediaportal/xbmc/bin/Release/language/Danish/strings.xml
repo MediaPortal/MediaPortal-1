@@ -335,11 +335,11 @@
 	</string>
 	<string>
 		<id>152</id>
-		<value>Half duplex</value>
+		<value>Halv duplex</value>
 	</string>
 	<string>
 		<id>153</id>
-		<value>Full duplex</value>
+		<value>Fuld duplex</value>
 	</string>
 	<string>
 		<id>154</id>
@@ -3182,6 +3182,14 @@
 		<value>Optagelse stoppet:</value>
 	</string>
 	<string>
+		<id>1449</id>
+		<value>Stop optagelse</value>
+	</string>
+	<string>
+		<id>1450</id>
+		<value>Er du sikker på du vil stoppe optagelse?</value>
+	</string>
+	<string>
 		<id>1950</id>
 		<value>Status</value>
 	</string>
@@ -3907,7 +3915,7 @@
 	</string>
 	<string>
 		<id>5909</id>
-		<value>Film kan ikke</value>
+		<value>Film kan ikke streames</value>
 	</string>
 	<string>
 		<id>5910</id>
@@ -3931,11 +3939,11 @@
 	</string>
 	<string>
 		<id>5915</id>
-		<value>Ingen filmanmeldelse endnu</value>
+		<value>Ingen filmanmeldelser endnu</value>
 	</string>
 	<string>
 		<id>5916</id>
-		<value>Ingen trailere blev fundet</value>
+		<value>Ingen trailere blev fundet.</value>
 	</string>
 	<string>
 		<id>5917</id>
@@ -3995,11 +4003,11 @@
 	</string>
 	<string>
 		<id>8014</id>
-		<value>Serveren&apos;{0}&apos;varer ikke!</value>
+		<value>Serveren &apos;{0}&apos; svarer ikke!</value>
 	</string>
 	<string>
 		<id>8015</id>
-		<value>Kontroller opsætning for&apos;{0}&apos;postkassen</value>
+		<value>Kontroller opsætning for &apos;{0}&apos; postkassen</value>
 	</string>
 	<string>
 		<id>8016</id>
@@ -4446,8 +4454,80 @@
 		<value>TV/Optagelser/kanaler</value>
 	</string>
 	<string>
+		<id>100610</id>
+		<value>TV/Kompression/Indstillinger</value>
+	</string>
+	<string>
+		<id>100612</id>
+		<value>TV/Kompression/Komprimer</value>
+	</string>
+	<string>
+		<id>100613</id>
+		<value>TV/Kompression/Status</value>
+	</string>
+	<string>
+		<id>100615</id>
+		<value>Wizard/Velkommen</value>
+	</string>
+	<string>
+		<id>100616</id>
+		<value>Wizard/Detekterede kort</value>
+	</string>
+	<string>
+		<id>100617</id>
+		<value>Wizard/Land</value>
+	</string>
+	<string>
+		<id>100619</id>
+		<value>Wizard/DVBC/Land</value>
+	</string>
+	<string>
+		<id>100623</id>
+		<value>Wizard/DVBS/Transponder</value>
+	</string>
+	<string>
+		<id>100626</id>
+		<value>Wizard/Analog/Land</value>
+	</string>
+	<string>
+		<id>100627</id>
+		<value>Wizard/Analog/By</value>
+	</string>
+	<string>
+		<id>100631</id>
+		<value>Wizard/Analog/Omdøb</value>
+	</string>
+	<string>
+		<id>100632</id>
+		<value>Wizard/Analog/Radio</value>
+	</string>
+	<string>
+		<id>100633</id>
+		<value>Wizard/Analog/Omdøb radio</value>
+	</string>
+	<string>
 		<id>100700</id>
 		<value>TV Indstillinger</value>
+	</string>
+	<string>
+		<id>100701</id>
+		<value>Indstillinger for TV optagelser</value>
+	</string>
+	<string>
+		<id>100703</id>
+		<value>Indstilliner for TV Film</value>
+	</string>
+	<string>
+		<id>100704</id>
+		<value>DVD indstillinger</value>
+	</string>
+	<string>
+		<id>100748</id>
+		<value>Program information</value>
+	</string>
+	<string>
+		<id>100749</id>
+		<value>TV/Intet signal</value>
 	</string>
 	<string>
 		<id>100750</id>
@@ -4619,7 +4699,7 @@
 	</string>
 	<string>
 		<id>200007</id>
-		<value>Tilbage</value>
+		<value>&lt;Tilbage</value>
 	</string>
 	<string>
 		<id>200008</id>
@@ -4627,7 +4707,7 @@
 	</string>
 	<string>
 		<id>200009</id>
-		<value>Næste</value>
+		<value>Næste&gt;</value>
 	</string>
 	<string>
 		<id>200010</id>
@@ -4635,23 +4715,23 @@
 	</string>
 	<string>
 		<id>200011</id>
-		<value>Med MediaPortal kan du høre din fortrukne musik, radio</value>
+		<value>Med MediaPortal kan du høre din fortrukne musik, radio, se dine digitale foto,</value>
+	</string>
+	<string>
+		<id>200012</id>
+		<value>videoer, DVDer og direkte TV samet meget mere</value>
 	</string>
 	<string>
 		<id>200013</id>
-		<value>Du kan høre din fortrukne musik og radio, se video´er og DVD´er.</value>
+		<value>Denne guide vil hjælpe dig med at indstille MediaPortal hurtigt og nemt. Følg venligst hele guiden,</value>
 	</string>
 	<string>
 		<id>200014</id>
-		<value>foto, video´er og se/optage live TV og meget mere.</value>
+		<value>start med at sætte dit sprog og din placering herunder:</value>
 	</string>
 	<string>
 		<id>200015</id>
-		<value>Denne guide vil hjælpe dig med at opsætte Mediaportal hurtigt og nemt. Følg venligst vejledningen her</value>
-	</string>
-	<string>
-		<id>200016</id>
-		<value>Tryk Næste for at starte</value>
+		<value>Tryk på Næste for at begynde</value>
 	</string>
 	<string>
 		<id>200017</id>
@@ -4679,11 +4759,63 @@
 	</string>
 	<string>
 		<id>200023</id>
-		<value>Tryk på Næste for at indstille disse 	kort</value>
+		<value>Tryk på Næste for at indstille disse kort</value>
 	</string>
 	<string>
 		<id>200024</id>
 		<value>TV opsætning</value>
+	</string>
+	<string>
+		<id>200025</id>
+		<value>Sprog</value>
+	</string>
+	<string>
+		<id>200026</id>
+		<value>Land</value>
+	</string>
+	<string>
+		<id>200027</id>
+		<value>Setup - generel</value>
+	</string>
+	<string>
+		<id>200028</id>
+		<value>Har denne PC internetadgang?</value>
+	</string>
+	<string>
+		<id>200029</id>
+		<value>Start MediaPortal som helskærm</value>
+	</string>
+	<string>
+		<id>200030</id>
+		<value>Start MediaPortal når PCen tændes?</value>
+	</string>
+	<string>
+		<id>200031</id>
+		<value>Ja</value>
+	</string>
+	<string>
+		<id>200032</id>
+		<value>Nej</value>
+	</string>
+	<string>
+		<id>200033</id>
+		<value>TV Setup - Analog TV</value>
+	</string>
+	<string>
+		<id>200034</id>
+		<value>Vælg venligst by fra listen:</value>
+	</string>
+	<string>
+		<id>200035</id>
+		<value>Hvis din by ikke findes på listen skal du manuelt indstille kanaler</value>
+	</string>
+	<string>
+		<id>200036</id>
+		<value>Manuel indstilling</value>
+	</string>
+	<string>
+		<id>200037</id>
+		<value>Spring over&gt;</value>
 	</string>
 	<string>
 		<id>4000</id>
@@ -4692,5 +4824,13 @@
 	<string>
 		<id>4001</id>
 		<value>Favoritter</value>
+	</string>
+	<string>
+		<id>4002</id>
+		<value>Ude af stand til at åbne URL</value>
+	</string>
+	<string>
+		<id>4003</id>
+		<value>Angiv venligst en favorit folder i opsætningen.</value>
 	</string>
 </strings>

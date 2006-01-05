@@ -35,7 +35,7 @@
 	</string>
 	<string>
 		<id>8</id>
-		<value>Mi Clima</value>
+		<value>Mi Tiempo</value>
 	</string>
 	<string>
 		<id>9</id>
@@ -235,7 +235,7 @@
 	</string>
 	<string>
 		<id>127</id>
-		<value>Objectos</value>
+		<value>Objetos</value>
 	</string>
 	<string>
 		<id>128</id>
@@ -247,7 +247,7 @@
 	</string>
 	<string>
 		<id>130</id>
-		<value>informaciónrmación del sistema</value>
+		<value>Información del sistema</value>
 	</string>
 	<string>
 		<id>131</id>
@@ -643,7 +643,7 @@
 	</string>
 	<string>
 		<id>229</id>
-		<value>Desconexión de disco duro (min.)</value>
+		<value>Desconexión de disco duro (mins.)</value>
 	</string>
 	<string>
 		<id>230</id>
@@ -727,7 +727,7 @@
 	</string>
 	<string>
 		<id>251</id>
-		<value>Seleccionar el directory de destino</value>
+		<value>Seleccionar el directorio de destino</value>
 	</string>
 	<string>
 		<id>252</id>
@@ -835,7 +835,7 @@
 	</string>
 	<string>
 		<id>278</id>
-		<value>¡IMPORTANTE! Para la mejor calidad, cambiar el rectangulo para que sea un cuadrado perfecto</value>
+		<value>¡IMPORTANTE! Para la mejor calidad, cambiar el rectángulo para que sea un cuadrado perfecto</value>
 	</string>
 	<string>
 		<id>279</id>
@@ -923,7 +923,7 @@
 	</string>
 	<string>
 		<id>300</id>
-		<value>1. Lenguaje</value>
+		<value>1. Idioma</value>
 	</string>
 	<string>
 		<id>301</id>
@@ -939,7 +939,7 @@
 	</string>
 	<string>
 		<id>304</id>
-		<value>Lenguaje</value>
+		<value>Idioma</value>
 	</string>
 	<string>
 		<id>305</id>
@@ -1107,7 +1107,7 @@
 	</string>
 	<string>
 		<id>346</id>
-		<value>Poner el cola</value>
+		<value>Poner en cola</value>
 	</string>
 	<string>
 		<id>347</id>
@@ -1159,7 +1159,7 @@
 	</string>
 	<string>
 		<id>359</id>
-		<value>Álbumes Recientes</value>
+		<value>Álbumes recientes</value>
 	</string>
 	<string>
 		<id>360</id>
@@ -1291,7 +1291,7 @@
 	</string>
 	<string>
 		<id>392</id>
-		<value>Lovizna</value>
+		<value>Llovizna</value>
 	</string>
 	<string>
 		<id>393</id>
@@ -1359,11 +1359,11 @@
 	</string>
 	<string>
 		<id>411</id>
-		<value>Obteniendo el Clima para:</value>
+		<value>Obteniendo el Tiempo para:</value>
 	</string>
 	<string>
 		<id>412</id>
-		<value>No se ha podido obtener los datos del clima</value>
+		<value>No se ha podido obtener los datos del tiempo</value>
 	</string>
 	<string>
 		<id>413</id>
@@ -1503,7 +1503,7 @@
 	</string>
 	<string>
 		<id>447</id>
-		<value>Autorun</value>
+		<value>Autoarranque</value>
 	</string>
 	<string>
 		<id>448</id>
@@ -1619,7 +1619,7 @@
 	</string>
 	<string>
 		<id>476</id>
-		<value>Música Y Vídeo</value>
+		<value>Música y Vídeo</value>
 	</string>
 	<string>
 		<id>477</id>
@@ -1631,7 +1631,7 @@
 	</string>
 	<string>
 		<id>479</id>
-		<value>Piel y Lenguaje</value>
+		<value>Piel e Idioma</value>
 	</string>
 	<string>
 		<id>480</id>
@@ -1683,7 +1683,7 @@
 	</string>
 	<string>
 		<id>492</id>
-		<value>Lenguaje de audio</value>
+		<value>Idioma de audio</value>
 	</string>
 	<string>
 		<id>493</id>
@@ -1911,7 +1911,7 @@
 	</string>
 	<string>
 		<id>632</id>
-		<value>Objectos</value>
+		<value>Objetos</value>
 	</string>
 	<string>
 		<id>633</id>
@@ -2219,7 +2219,7 @@
 	</string>
 	<string>
 		<id>717</id>
-		<value>Clima</value>
+		<value>Tiempo</value>
 	</string>
 	<string>
 		<id>718</id>
@@ -2319,7 +2319,7 @@
 	</string>
 	<string>
 		<id>742</id>
-		<value>Vee: Precipitación</value>
+		<value>Ver: Precipitación</value>
 	</string>
 	<string>
 		<id>743</id>
@@ -2348,6 +2348,10 @@
 	<string>
 		<id>750</id>
 		<value>Imágenes</value>
+	</string>
+	<string>
+		<id>751</id>
+		<value>Mostrar todas las canciones de este artista</value>
 	</string>
 	<string>
 		<id>800</id>
@@ -2419,7 +2423,7 @@
 	</string>
 	<string>
 		<id>856</id>
-		<value>Sleep Timer on</value>
+		<value>Temporizador Apagado Activo</value>
 	</string>
 	<string>
 		<id>857</id>
@@ -2431,7 +2435,7 @@
 	</string>
 	<string>
 		<id>859</id>
-		<value>Tiempo de Sleep</value>
+		<value>Tiempo de Apagado</value>
 	</string>
 	<string>
 		<id>860</id>
@@ -2479,7 +2483,7 @@
 	</string>
 	<string>
 		<id>871</id>
-		<value>Activar pc para esta alarma</value>
+		<value>Activar PC para esta alarma</value>
 	</string>
 	<string>
 		<id>872</id>
@@ -2567,7 +2571,7 @@
 	</string>
 	<string>
 		<id>893</id>
-		<value>Portatil</value>
+		<value>Portátil</value>
 	</string>
 	<string>
 		<id>894</id>
@@ -3015,7 +3019,7 @@
 	</string>
 	<string>
 		<id>1013</id>
-		<value>¿Quieres grabar tambén la segunda parte?</value>
+		<value>¿Quieres grabar también la segunda parte?</value>
 	</string>
 	<string>
 		<id>1014</id>
@@ -3071,7 +3075,7 @@
 	</string>
 	<string>
 		<id>1029</id>
-		<value>Lenguaje de subtítulo</value>
+		<value>Idioma de subtítulo</value>
 	</string>
 	<string>
 		<id>1030</id>
@@ -3111,7 +3115,7 @@
 	</string>
 	<string>
 		<id>1039</id>
-		<value>No se ha grabado</value>
+		<value>No grabar</value>
 	</string>
 	<string>
 		<id>1040</id>
@@ -3160,6 +3164,10 @@
 	<string>
 		<id>1051</id>
 		<value>Grabar Sab-Dom</value>
+	</string>
+	<string>
+		<id>1052</id>
+		<value>Canciones</value>
 	</string>
 	<string>
 		<id>1100</id>
@@ -3595,7 +3603,7 @@
 	</string>
 	<string>
 		<id>2112</id>
-		<value>Esperando por CD/DVD</value>
+		<value>Esperando al CD/DVD</value>
 	</string>
 	<string>
 		<id>2113</id>
@@ -3955,7 +3963,7 @@
 	</string>
 	<string>
 		<id>5909</id>
-		<value>¡No se pueder reproducir la película!</value>
+		<value>¡No se puede reproducir la película!</value>
 	</string>
 	<string>
 		<id>5910</id>
@@ -4127,7 +4135,7 @@
 	</string>
 	<string>
 		<id>9005</id>
-		<value>Velocidad de obtruración:</value>
+		<value>Velocidad de obturación:</value>
 	</string>
 	<string>
 		<id>9006</id>
@@ -4339,7 +4347,7 @@
 	</string>
 	<string>
 		<id>100010</id>
-		<value>Configuración-&gt;Pantalla-&gt;Calibración UI</value>
+		<value>Configuración-&gt;Pantalla-&gt;Calibración IU</value>
 	</string>
 	<string>
 		<id>100011</id>
@@ -4367,7 +4375,7 @@
 	</string>
 	<string>
 		<id>100017</id>
-		<value>Configuración-&gt;Clima</value>
+		<value>Configuración-&gt;Tiempo</value>
 	</string>
 	<string>
 		<id>100020</id>
@@ -4635,7 +4643,7 @@
 	</string>
 	<string>
 		<id>100705</id>
-		<value>Configuración Skin</value>
+		<value>Configuración Pieles</value>
 	</string>
 	<string>
 		<id>100748</id>
@@ -4751,7 +4759,7 @@
 	</string>
 	<string>
 		<id>102600</id>
-		<value>Clima</value>
+		<value>Tiempo</value>
 	</string>
 	<string>
 		<id>102700</id>
@@ -4787,7 +4795,7 @@
 	</string>
 	<string>
 		<id>200000</id>
-		<value>Selecciona tu EPG. Ten en cuenta que si tu pais</value>
+		<value>Selecciona tu EPG. Ten en cuenta que si tu país</value>
 	</string>
 	<string>
 		<id>200001</id>
@@ -4907,7 +4915,7 @@
 	</string>
 	<string>
 		<id>200031</id>
-		<value>Si</value>
+		<value>Sí</value>
 	</string>
 	<string>
 		<id>200032</id>

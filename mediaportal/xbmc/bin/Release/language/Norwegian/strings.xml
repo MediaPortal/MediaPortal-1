@@ -4798,10 +4798,6 @@
 		<value>Denne wizarden lar deg sette opp MediaPortal raskt of enkelt. Vennligst gå gjennom trinnene.</value>
 	</string>
 	<string>
-		<id>200016</id>
-		<value>Trykk "neste" for å begynne</value>
-	</string>
-	<string>
 		<id>200017</id>
 		<value>Velkommen til MediaPortal</value>
 	</string>
@@ -4832,6 +4828,26 @@
 	<string>
 		<id>200024</id>
 		<value>TV-oppsett</value>
+	</string>
+	<string>
+		<id>200025</id>
+		<value>Språk</value>
+	</string>
+	<string>
+		<id>200026</id>
+		<value>Land</value>
+	</string>
+	<string>
+		<id>200027</id>
+		<value>Oppsett - Generelt</value>
+	</string>
+	<string>
+		<id>200031</id>
+		<value>Ja</value>
+	</string>
+	<string>
+		<id>200032</id>
+		<value>Nei</value>
 	</string>
 	<string>
 		<id>4000</id>
