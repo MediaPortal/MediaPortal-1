@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="iso-8859-14"?>
+<?xml version="1.0" encoding="iso-8859-1"?>
 <strings>
 	<characters></characters>
 	<string>
@@ -115,7 +115,7 @@
 	</string>
 	<string>
 		<id>31</id>
-		<value>Tachwee</value>
+		<value>Tachwedd</value>
 	</string>
 	<string>
 		<id>32</id>
@@ -207,7 +207,7 @@
 	</string>
 	<string>
 		<id>120</id>
-		<value>Cadarnhau copïo ffeil</value>
+		<value>Cadarnhau copio ffeil</value>
 	</string>
 	<string>
 		<id>121</id>
@@ -419,7 +419,7 @@
 	</string>
 	<string>
 		<id>173</id>
-		<value>Pobplgrwydd:</value>
+		<value>Poblogrwydd:</value>
 	</string>
 	<string>
 		<id>174</id>
@@ -427,7 +427,7 @@
 	</string>
 	<string>
 		<id>175</id>
-		<value>Tôn:</value>
+		<value>Ton:</value>
 	</string>
 	<string>
 		<id>176</id>
@@ -443,7 +443,7 @@
 	</string>
 	<string>
 		<id>179</id>
-		<value>Cân</value>
+		<value>Can</value>
 	</string>
 	<string>
 		<id>180</id>
@@ -575,7 +575,7 @@
 	</string>
 	<string>
 		<id>212</id>
-		<value>rhaglen wedi canfod</value>
+		<value>wedi canfod rhaglen</value>
 	</string>
 	<string>
 		<id>213</id>
@@ -867,7 +867,7 @@
 	</string>
 	<string>
 		<id>286</id>
-		<value>Hidl ôlbrosesu</value>
+		<value>Hidl olbrosesu</value>
 	</string>
 	<string>
 		<id>287</id>
@@ -1291,7 +1291,7 @@
 	</string>
 	<string>
 		<id>392</id>
-		<value>Glaw Mân</value>
+		<value>Glaw Man</value>
 	</string>
 	<string>
 		<id>393</id>
@@ -1447,7 +1447,7 @@
 	</string>
 	<string>
 		<id>433</id>
-		<value>Ydych chi&apos;n siðr eich bod</value>
+		<value>Ydych chi&apos;n siwr eich bod</value>
 	</string>
 	<string>
 		<id>434</id>
@@ -1715,7 +1715,7 @@
 	</string>
 	<string>
 		<id>506</id>
-		<value>Ydych chi&apos;n siðr?</value>
+		<value>Ydych chi&apos;n siwr?</value>
 	</string>
 	<string>
 		<id>507</id>
@@ -1875,7 +1875,7 @@
 	</string>
 	<string>
 		<id>623</id>
-		<value>Trefn: Math</value>
+		<value>Trefnu: Math</value>
 	</string>
 	<string>
 		<id>624</id>
@@ -2119,7 +2119,7 @@
 	</string>
 	<string>
 		<id>684</id>
-		<value>Dilëwyd</value>
+		<value>Dilewyd</value>
 	</string>
 	<string>
 		<id>685</id>
@@ -2279,7 +2279,7 @@
 	</string>
 	<string>
 		<id>732</id>
-		<value>Ydych chi&apos;n siðr?</value>
+		<value>Ydych chi&apos;n siwr?</value>
 	</string>
 	<string>
 		<id>733</id>
@@ -2348,6 +2348,10 @@
 	<string>
 		<id>750</id>
 		<value>Delweddau</value>
+	</string>
+	<string>
+		<id>751</id>
+		<value>Dangos pob can gan yr artist yma</value>
 	</string>
 	<string>
 		<id>800</id>
@@ -2795,7 +2799,7 @@
 	</string>
 	<string>
 		<id>950</id>
-		<value>Nôl Mewn Munud</value>
+		<value>Nol Mewn Munud</value>
 	</string>
 	<string>
 		<id>951</id>
@@ -2847,11 +2851,15 @@
 	</string>
 	<string>
 		<id>971</id>
-		<value>Grðp</value>
+		<value>Grwp</value>
 	</string>
 	<string>
 		<id>972</id>
 		<value>Pob Sianel</value>
+	</string>
+	<string>
+		<id>973</id>
+		<value>Lleiafswm FPS</value>
 	</string>
 	<string>
 		<id>974</id>
@@ -3146,6 +3154,42 @@
 		<value>Gosodiadau</value>
 	</string>
 	<string>
+		<id>1049</id>
+		<value>Cysgu</value>
+	</string>
+	<string>
+		<id>1050</id>
+		<value>Sad-Sul</value>
+	</string>
+	<string>
+		<id>1051</id>
+		<value>Recordio Sad-Sul</value>
+	</string>
+	<string>
+		<id>1100</id>
+		<value>Mewnforio CD</value>
+	</string>
+	<string>
+		<id>1101</id>
+		<value>Mewnforio&apos;r trac yma</value>
+	</string>
+	<string>
+		<id>1102</id>
+		<value>Diddymu mewnforio&apos;r trac</value>
+	</string>
+	<string>
+		<id>1103</id>
+		<value>Mewnforio Trac</value>
+	</string>
+	<string>
+		<id>1104</id>
+		<value>chwith</value>
+	</string>
+	<string>
+		<id>1105</id>
+		<value>Mewnforio Traciau</value>
+	</string>
+	<string>
 		<id>1440</id>
 		<value>TeleTestun</value>
 	</string>
@@ -3167,7 +3211,7 @@
 	</string>
 	<string>
 		<id>1445</id>
-		<value>Ôl-recordio</value>
+		<value>Ol-recordio</value>
 	</string>
 	<string>
 		<id>1446</id>
@@ -3176,6 +3220,18 @@
 	<string>
 		<id>1447</id>
 		<value>Atal recordio:</value>
+	</string>
+	<string>
+		<id>1448</id>
+		<value>Dewis Dim</value>
+	</string>
+	<string>
+		<id>1449</id>
+		<value>Atal recordio</value>
+	</string>
+	<string>
+		<id>1450</id>
+		<value>Ydych chi&apos;n siwr o stopio&apos;r recordio</value>
 	</string>
 	<string>
 		<id>1950</id>
@@ -3751,7 +3807,7 @@
 	</string>
 	<string>
 		<id>2220</id>
-		<value>Copïo&apos;r ffeil?</value>
+		<value>Copio&apos;r ffeil?</value>
 	</string>
 	<string>
 		<id>2221</id>
@@ -3799,15 +3855,15 @@
 	</string>
 	<string>
 		<id>3006</id>
-		<value>Awr yn ôl</value>
+		<value>Awr yn ol</value>
 	</string>
 	<string>
 		<id>3007</id>
-		<value>Munud yn ôl</value>
+		<value>Munud yn ol</value>
 	</string>
 	<string>
 		<id>3008</id>
-		<value>Munud yn ôl</value>
+		<value>Munud yn ol</value>
 	</string>
 	<string>
 		<id>3009</id>
@@ -4039,7 +4095,7 @@
 	</string>
 	<string>
 		<id>8030</id>
-		<value>Cysylltwyd â&apos;r gweinydd</value>
+		<value>Cysylltwyd a&apos;r gweinydd</value>
 	</string>
 	<string>
 		<id>8031</id>
@@ -4079,7 +4135,7 @@
 	</string>
 	<string>
 		<id>9006</id>
-		<value>Dyddiad crëwyd</value>
+		<value>Dyddiad crewyd</value>
 	</string>
 	<string>
 		<id>9007</id>
@@ -4211,7 +4267,7 @@
 	</string>
 	<string>
 		<id>19005</id>
-		<value>Sgôr</value>
+		<value>Sgor</value>
 	</string>
 	<string>
 		<id>19006</id>
@@ -4239,7 +4295,7 @@
 	</string>
 	<string>
 		<id>19012</id>
-		<value>Gêm Drosodd</value>
+		<value>Gem Drosodd</value>
 	</string>
 	<string>
 		<id>19100</id>
@@ -4847,11 +4903,11 @@
 	</string>
 	<string>
 		<id>200029</id>
-		<value>Cychwyn MediaPortal ym modd Sgrin Lawn?</value>
+		<value>Cychwyn Media Portal ym modd Sgrin Lawn?</value>
 	</string>
 	<string>
 		<id>200030</id>
-		<value>Cychwyn MediaPortal wrth gychwyn y cyfrifiadur?</value>
+		<value>Cychwyn Media Portal wrth gychwyn y cyfrifiadur?</value>
 	</string>
 	<string>
 		<id>200031</id>
@@ -4879,7 +4935,7 @@
 	</string>
 	<string>
 		<id>200037</id>
-		<value>Hepgor &gt;</value>
+		<value>Hepgor&gt;</value>
 	</string>
 	<string>
 		<id>4000</id>
