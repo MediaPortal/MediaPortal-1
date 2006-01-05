@@ -1,15 +1,5 @@
 <?xml version="1.0" ?>
 <project name="MediaPortal" default="debug">
-  <target name="checkout">
-  <cvspass cvsroot=":pserver:anonymous@mediaportal.sourceforge.net:/cvsroot/mediaportal" 
-     password="anonymous"
-     passfile=".cvspass" />
-  <cvs-checkout 
-    destination="mediaportal" 
-    cvsroot=":pserver:anonymous@mediaportal.sourceforge.net:/cvsroot/mediaportal" 
-    password="" 
-    module="nant" />
-   </target>
   <target name="debug" depends="build,test" />
   <target name="build">
 	<exec program="msbuild">
