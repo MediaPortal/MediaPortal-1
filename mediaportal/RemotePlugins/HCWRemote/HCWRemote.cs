@@ -135,7 +135,7 @@ namespace MediaPortal
 
       try
       {
-        connection.Connect(port);
+        connection.Start(port + 1);
         connection.ReceiveEvent += new NetHelper.Connection.ReceiveEventHandler(OnReceive);
         Thread checkThread = new Thread(new ThreadStart(CheckThread));
         checkThread.IsBackground = true;
@@ -184,7 +184,7 @@ namespace MediaPortal
             Utils.OnStopExternal -= new Utils.UtilEventHandler(OnStopExternal);
           }
           connection.ReceiveEvent -= new NetHelper.Connection.ReceiveEventHandler(OnReceive);
-          connection.Send("APP", "SHUTDOWN", DateTime.Now);
+          connection.Send(port, "APP", "SHUTDOWN", DateTime.Now);
           connection = null;
         }
         catch (Exception ex)
@@ -202,7 +202,7 @@ namespace MediaPortal
     {
       try
       {
-        connection.Send("APP", "IR_START", DateTime.Now);
+        connection.Send(port, "APP", "IR_START", DateTime.Now);
       }
       catch (Exception ex)
       {
@@ -220,7 +220,7 @@ namespace MediaPortal
       {
         if (restartIRApp)
         {
-          connection.Send("HCWAPP", "START", DateTime.Now);
+          connection.Send(port, "HCWAPP", "START", DateTime.Now);
         }
       }
       catch (Exception ex)
@@ -230,11 +230,11 @@ namespace MediaPortal
     }
 
 
-    void OnReceive(NetHelper.Connection.EventArguments e)
+    void OnReceive(string strReceive)
     {
-      if (logVerbose) Log.Write("HCW: received: {0}", e.Message);
+      if (logVerbose) Log.Write("HCW: received: {0}", strReceive);
 
-      string msg = e.Message.Split('~')[0];
+      string msg = strReceive.Split('~')[0];
       if (logVerbose) Log.Write("HCW: Accepted: {0}", msg);
       try
       {
@@ -322,7 +322,7 @@ namespace MediaPortal
       catch (Exception ex)
       {
         Log.Write("HCW: Exception: {0}", ex.Message);
-        Log.Write("HCW: Received: {0} - {1}", msg, e.Message);
+        Log.Write("HCW: Received: {0} - {1}", msg, strReceive);
       }
     }
 

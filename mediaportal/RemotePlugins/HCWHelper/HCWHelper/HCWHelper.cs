@@ -62,21 +62,18 @@ namespace HCWHelper
         logVerbose = xmlreader.GetValueAsBool("remote", "HCWVerboseLog", false);
         port = xmlreader.GetValueAsInt("remote", "HCWHelperPort", 2110);
       }
+
       connection = new NetHelper.Connection(logVerbose);
-      if (connection.Connect(port))
+      if (connection.Start(port))
       {
-        if (logVerbose) MediaPortal.GUI.Library.Log.Write("HCW Helper: connected");
         irremote.IRSetDllDirectory(GetDllPath());
-        Thread waitThread = new Thread(new ThreadStart(WaitForConnect));
-        waitThread.IsBackground = true;
-        waitThread.Priority = ThreadPriority.Highest;
-        waitThread.Start();
         Thread checkThread = new Thread(new ThreadStart(CheckThread));
         checkThread.IsBackground = true;
         checkThread.Priority = ThreadPriority.Highest;
         checkThread.Start();
         connection.ReceiveEvent += new NetHelper.Connection.ReceiveEventHandler(OnReceive);
-        connection.DisconnectEvent += new NetHelper.Connection.DisconnectHandler(OnDisconnect);
+        //connection.DisconnectEvent += new NetHelper.Connection.DisconnectHandler(OnDisconnect);
+        StartIR();
       }
       else
       {
@@ -91,24 +88,24 @@ namespace HCWHelper
       if (logVerbose) MediaPortal.GUI.Library.Log.Write("HCW Helper: OnClosing");
       notifyIcon.Icon = notifyIconRed.Icon;
       connection.ReceiveEvent -= new NetHelper.Connection.ReceiveEventHandler(OnReceive);
-      connection.DisconnectEvent -= new NetHelper.Connection.DisconnectHandler(OnDisconnect);
+      //connection.DisconnectEvent -= new NetHelper.Connection.DisconnectHandler(OnDisconnect);
       StopIR();
       base.OnClosing(e);
     }
 
 
-    private void OnDisconnect()
-    {
-      if (logVerbose) MediaPortal.GUI.Library.Log.Write("HCW Helper: remote disconnected");
-      StopIR();
-      if (!cancelWait)
-      {
-        Thread waitThread = new Thread(new ThreadStart(WaitForConnect));
-        waitThread.IsBackground = true;
-        waitThread.Priority = ThreadPriority.Highest;
-        waitThread.Start();
-      }
-    }
+    //private void OnDisconnect()
+    //{
+    //  if (logVerbose) MediaPortal.GUI.Library.Log.Write("HCW Helper: remote disconnected");
+    //  StopIR();
+    //  if (!cancelWait)
+    //  {
+    //    Thread waitThread = new Thread(new ThreadStart(WaitForConnect));
+    //    waitThread.IsBackground = true;
+    //    waitThread.Priority = ThreadPriority.Highest;
+    //    waitThread.Start();
+    //  }
+    //}
 
 
     private void CheckThread()
@@ -119,32 +116,6 @@ namespace HCWHelper
       if (logVerbose) MediaPortal.GUI.Library.Log.Write("HCW Helper: MediaPortal is not running");
       notifyIcon.Icon = notifyIconRed.Icon;
       this.Close();
-    }
-
-
-    /// <summary>
-    /// Wait for MP to connect
-    /// </summary>
-    /// <param name="winHandle"></param>
-    private void WaitForConnect()
-    {
-      Thread.Sleep(1000);
-      if (!connection.IsOnline)
-      {
-        MediaPortal.GUI.Library.Log.Write("HCW Helper: connection not online - exiting");
-        notifyIcon.Icon = notifyIconRed.Icon;
-        Application.Exit();
-      }
-      else
-      {
-        if (logVerbose) MediaPortal.GUI.Library.Log.Write("HCW Helper: waiting for connect");
-        notifyIcon.Icon = notifyIconYellow.Icon;
-        while (!cancelWait && !connection.IsConnected)
-          Thread.Sleep(200);
-
-        if (!cancelWait)
-          StartIR();
-      }
     }
 
 
@@ -200,10 +171,10 @@ namespace HCWHelper
     /// <summary>
     /// Receive Commands from MP
     /// </summary>
-    private void OnReceive(NetHelper.Connection.EventArguments e)
+    private void OnReceive(string strReceive)
     {
-      if (logVerbose) MediaPortal.GUI.Library.Log.Write("HCW Helper: received {0}", e.Message);
-      foreach (string msg in e.Message.Split('~'))
+      if (logVerbose) MediaPortal.GUI.Library.Log.Write("HCW Helper: received {0}", strReceive);
+      foreach (string msg in strReceive.Split('~'))
       {
         switch (msg.Split('|')[0])
         {
@@ -276,13 +247,13 @@ namespace HCWHelper
                   remoteCommand = ((int)keyCode) + 2000;
                   break;
               }
-              if (connection.IsConnected)
+              //if (NetHelper.Connection2.IsConnected)
               {
-                connection.Send("CMD", remoteCommand.ToString(), attackTime);
+                connection.Send(port+1, "CMD", remoteCommand.ToString(), attackTime);
                 if (logVerbose) MediaPortal.GUI.Library.Log.Write("HCW Helper: command sent: {0}", remoteCommand);
               }
-              else
-                MediaPortal.GUI.Library.Log.Write("HCW Helper: command not sent - no connection");
+              //else
+              //  MediaPortal.GUI.Library.Log.Write("HCW Helper: command not sent - no connection");
             }
           }
           catch (Exception ex)
@@ -309,23 +280,23 @@ namespace HCWHelper
     /// </summary>
     private void contextMenuStrip_Opening(object sender, CancelEventArgs e)
     {
-      if (connection != null)
-      {
-        statusOfflineToolStripMenuItem.Text = "Status: ";
-        peerStatusToolStripMenuItem.Text = "Peer   : ";
-        if (connection.IsOnline)
-          statusOfflineToolStripMenuItem.Text += "Online (";
-        else
-          statusOfflineToolStripMenuItem.Text += "Offline (";
-        if (connection.IsServer)
-          statusOfflineToolStripMenuItem.Text += "Server)";
-        else
-          statusOfflineToolStripMenuItem.Text += "Client)";
-        if (connection.IsConnected)
-          peerStatusToolStripMenuItem.Text += "Connected";
-        else
-          peerStatusToolStripMenuItem.Text += "Disconnected";
-      }
+      //if (connection != null)
+      //{
+      //  statusOfflineToolStripMenuItem.Text = "Status: ";
+      //  peerStatusToolStripMenuItem.Text = "Peer   : ";
+      //  if (NetHelper.Connection2.IsOnline)
+      //    statusOfflineToolStripMenuItem.Text += "Online (";
+      //  else
+      //    statusOfflineToolStripMenuItem.Text += "Offline (";
+      //  if (NetHelper.Connection2.IsServer)
+      //    statusOfflineToolStripMenuItem.Text += "Server)";
+      //  else
+      //    statusOfflineToolStripMenuItem.Text += "Client)";
+      //  if (NetHelper.Connection2.IsConnected)
+      //    peerStatusToolStripMenuItem.Text += "Connected";
+      //  else
+      //    peerStatusToolStripMenuItem.Text += "Disconnected";
+      //}
     }
 
 

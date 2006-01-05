@@ -24,260 +24,108 @@
 #endregion
 
 using System;
-using System.Text;
-using System.Net.Sockets;
+using System.Collections.Generic;
 using System.Net;
+using System.Net.Sockets;
 using System.Net.NetworkInformation;
-using System.Threading;
+using System.Text;
 using MediaPortal.GUI.Library;
 
 namespace NetHelper
 {
   public class Connection
   {
-    #region Locals
+    bool logVerbose;
 
-    private Socket serverSocket;
-    private Socket clientSocket;
-    private AsyncCallback callBackMethod;
-    private int tcpPort;
-    private bool isOnline;
-    private bool logVerbose = false;
+    Socket socket;
+    IPAddress hostIP = IPAddress.Parse("127.0.0.1");
 
-    #endregion
-    #region Labels
-
-    public bool IsServer { get { return (serverSocket != null); } }
-    public bool IsConnected
-    {
-      get
-      {
-        if (clientSocket != null)
-          return (clientSocket.Connected);
-        else return false;
-      }
-    }
-
-    public bool IsOnline { get { return (isOnline); } }
-
-    #endregion
-    #region Events
-
-    public delegate void ReceiveEventHandler(EventArguments e);
-    public delegate void DisconnectHandler();
+    public delegate void ReceiveEventHandler(string strReceive);
     public event ReceiveEventHandler ReceiveEvent;
-    public event DisconnectHandler DisconnectEvent;
 
 
-    public class EventArguments
-    {
-      private string message;
-      public string Message { get { return message; } }
-
-      public EventArguments(string msg)
-      {
-        message = msg;
-      }
-    }
-
-    
-    protected virtual void OnReceive(string strReceived)
+    protected virtual void OnReceive(string strReceive)
     {
       if (ReceiveEvent != null)
       {
-        ReceiveEvent(new EventArguments(strReceived));
+        ReceiveEvent(strReceive);
       }
     }
 
-    #endregion
-    #region
 
-    private class SocketPacket
+    class UdpState
     {
-      public System.Net.Sockets.Socket Socket;
-      public byte[] dataBuffer = new byte[65535];
-    }
-
-
-    ~Connection()
-    {
-      if (logVerbose) MediaPortal.GUI.Library.Log.Write("NetHelper: shutting down connection");
-      Close();
+      public IPEndPoint EndPoint;
+      public UdpClient UdpClient;
     }
 
 
     public Connection(bool log)
     {
       logVerbose = log;
+      socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
     }
 
 
-    private void OnRemoteDisconnected()
-    {
-      if (logVerbose) MediaPortal.GUI.Library.Log.Write("NetHelper: peer disconnected");
-      if (DisconnectEvent != null)
-      {
-        DisconnectEvent();
-      }
-      Close();
-      Thread.Sleep(200);
-      Connect(tcpPort);
-    }
-
-
-    private void OnClientConnect(IAsyncResult asyn)
-    {
-      if (logVerbose) MediaPortal.GUI.Library.Log.Write("NetHelper: client connected");
-      try
-      {
-        if (serverSocket != null)
-        {
-          clientSocket = serverSocket.EndAccept(asyn);
-          WaitForData(clientSocket);
-          serverSocket.Close();
-        }
-      }
-      catch (ObjectDisposedException)
-      {
-        if (logVerbose) MediaPortal.GUI.Library.Log.Write("NetHelper: OnClientConnect: socket has been closed");
-      }
-      catch (SocketException se)
-      {
-        MediaPortal.GUI.Library.Log.Write("NetHelper: OnClientConnect: {0}", se.Message);
-      }
-    }
-
-
-    private void OnDataReceived(IAsyncResult asyn)
+    public bool Send(int udpPort, string strType, string strSend, DateTime timeStamp)
     {
       try
       {
-        SocketPacket socketData = (SocketPacket)asyn.AsyncState;
-        int iRx = socketData.Socket.EndReceive(asyn);
-        OnReceive(Encoding.UTF8.GetString(socketData.dataBuffer, 0, iRx));
-        WaitForData(socketData.Socket);
-      }
-      catch (ObjectDisposedException)
-      {
-        if (logVerbose) MediaPortal.GUI.Library.Log.Write("NetHelper: OnDataReceived: socket has been closed");
-      }
-      catch (SocketException se)
-      {
-        if (se.ErrorCode == 10054)
-          OnRemoteDisconnected();
-        else
-          MediaPortal.GUI.Library.Log.Write("NetHelper: OnDataReceived: {0}", se.Message);
-      }
-    }
-
-
-    private void WaitForData(System.Net.Sockets.Socket socket)
-    {
-      try
-      {
-        if (callBackMethod == null)
-          callBackMethod = new AsyncCallback(OnDataReceived);
-        SocketPacket socketPacket = new SocketPacket();
-        socketPacket.Socket = socket;
-        socket.BeginReceive(socketPacket.dataBuffer, 0, socketPacket.dataBuffer.Length, SocketFlags.None, callBackMethod, socketPacket);
-      }
-      catch (SocketException se)
-      {
-        if (se.ErrorCode == 10054)
-          OnRemoteDisconnected();
-        else
-          MediaPortal.GUI.Library.Log.Write("NetHelper: WaitForData: {0}", se.Message);
-      }
-    }
-
-
-    public bool Connect(int port)
-    {
-      if (logVerbose) MediaPortal.GUI.Library.Log.Write("NetHelper: connecting");
-      IPGlobalProperties properties = IPGlobalProperties.GetIPGlobalProperties();
-      TcpConnectionInformation[] connections = properties.GetActiveTcpConnections();
-
-      foreach (TcpConnectionInformation c in connections)
-        if (c.RemoteEndPoint.Port == port)
-        {
-          isOnline = false;
-          return false;
-        }
-      tcpPort = port;
-      IPAddress hostIP = (Dns.GetHostEntry("localhost")).AddressList[0];
-      IPEndPoint ep = new IPEndPoint(hostIP, tcpPort);
-      try
-      {
-        clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-        clientSocket.Connect(ep);
-        if (clientSocket.Connected)
-          WaitForData(clientSocket);
-        isOnline = true;
+        byte[] sendbuf = Encoding.UTF8.GetBytes(string.Format("{0}|{1}|{2}~", strType, strSend, timeStamp.ToBinary()));
+        IPEndPoint endPoint = new IPEndPoint(hostIP, udpPort);
+        socket.SendTo(sendbuf, endPoint);
         return true;
       }
       catch (SocketException se)
       {
-        switch (se.ErrorCode)
-        {
-          case 10054:
-            OnRemoteDisconnected();
-            break;
-          case 10061:
-            break;
-          default:
-            MediaPortal.GUI.Library.Log.Write("NetHelper: Connect: {1} - {0}", se.Message, se.ErrorCode);
-            break;
-        }
-      }
-      clientSocket.Close();
-      clientSocket = null;
-      try
-      {
-        serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-        serverSocket.Bind(ep);
-        serverSocket.Listen(4);
-        serverSocket.BeginAccept(new AsyncCallback(OnClientConnect), null);
-        isOnline = true;
-        return true;
-      }
-      catch (SocketException se)
-      {
-        MediaPortal.GUI.Library.Log.Write("NetHelper: Connection failed: {0}", se.Message);
-        Close();
-        isOnline = false;
+        Log.Write("NetHelper: Send port {0}: {1} - {2}", udpPort, se.ErrorCode, se.Message);
         return false;
       }
     }
 
 
-    public void Send(string type, string send, DateTime timeStamp)
+    public bool Start(int udpPort)
     {
       try
       {
-        if (clientSocket != null)
-          clientSocket.Send(Encoding.UTF8.GetBytes(string.Format("{0}|{1}|{2}~", type, send, timeStamp.ToBinary())));
+        if (logVerbose) Log.Write("NetHelper: starting listener on port {0}", udpPort);
+
+        // Port already used?
+        IPGlobalProperties properties = IPGlobalProperties.GetIPGlobalProperties();
+        TcpConnectionInformation[] connections = properties.GetActiveTcpConnections();
+        foreach (TcpConnectionInformation c in connections)
+          if (c.RemoteEndPoint.Port == udpPort)
+          {
+            Log.Write("NetHelper: udp port {0} is already in use", udpPort);
+            return false;
+          }
+        IPAddress hostIP = IPAddress.Parse("127.0.0.1");
+        IPEndPoint endPoint = new IPEndPoint(hostIP, udpPort);
+        UdpClient udpClient = new UdpClient(endPoint);
+        UdpState state = new UdpState();
+        state.EndPoint = endPoint;
+        state.UdpClient = udpClient;
+        udpClient.BeginReceive(new AsyncCallback(ReceiveCallback), state);
+        if (logVerbose) Log.Write("NetHelper: listening for messages on port {0}", udpPort);
+        return true;
       }
       catch (SocketException se)
       {
-        MediaPortal.GUI.Library.Log.Write("NetHelper: Send: {0}", se.Message);
+        Log.Write("NetHelper: Start port {0}: {1} - {2}", udpPort, se.ErrorCode, se.Message);
+        return false;
       }
     }
 
 
-    private void Close()
+    public void ReceiveCallback(IAsyncResult ar)
     {
-      if (clientSocket != null)
-      {
-        clientSocket.Close();
-        clientSocket = null;
-      }
-      if (serverSocket != null)
-      {
-        serverSocket.Close();
-        serverSocket = null;
-      }
+      UdpClient udpClient = (UdpClient)((UdpState)(ar.AsyncState)).UdpClient;
+      IPEndPoint endPoint = (IPEndPoint)((UdpState)(ar.AsyncState)).EndPoint;
+      Byte[] bytesReceived = udpClient.EndReceive(ar, ref endPoint);
+      string strReceived = Encoding.ASCII.GetString(bytesReceived);
+      OnReceive(strReceived);
+      udpClient.BeginReceive(new AsyncCallback(ReceiveCallback), (UdpState)(ar.AsyncState));
     }
 
-    #endregion
   }
 }
