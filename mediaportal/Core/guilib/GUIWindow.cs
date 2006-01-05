@@ -146,6 +146,9 @@ namespace MediaPortal.GUI.Library
      ,
       WINDOW_MUSIC_YEARS = 507
      ,
+      WINDOW_MUSIC_COVERART_GRABBER_RESULTS = 508,
+      WINDOW_MUSIC_COVERART_GRABBER_PROGRESS = 509
+     ,
       WINDOW_TVGUIDE = 600
      ,
       WINDOW_SCHEDULER = 601
@@ -233,11 +236,12 @@ namespace MediaPortal.GUI.Library
       WINDOW_SETTINGS_DVD = 704
      ,
       WINDOW_SETTINGS_SKIN = 705
-      ,WINDOW_SETTINGS_TV_EPG = 706
+      ,
+      WINDOW_SETTINGS_TV_EPG = 706
 
 
 
-     ,
+    ,
       WINDOW_TV_PROGRAM_INFO = 748
      ,
       WINDOW_TV_NO_SIGNAL = 749
@@ -260,8 +264,8 @@ namespace MediaPortal.GUI.Library
       WINDOW_VIRTUAL_KEYBOARD = 10002
      ,
       WINDOW_VIRTUAL_SEARCH_KEYBOARD = 1001,// by Agree
-     WINDOW_VIRTUAL_WEB_KEYBOARD = 10003 // by Devo
-     ,
+      WINDOW_VIRTUAL_WEB_KEYBOARD = 10003 // by Devo
+      ,
       WINDOW_DIALOG_SELECT = 2000
      ,
       WINDOW_MUSIC_INFO = 2001
@@ -1419,19 +1423,19 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-      void TemporaryAnimationTrigger()
-      {
-          if(_children == null)
-              return;
+    void TemporaryAnimationTrigger()
+    {
+      if (_children == null)
+        return;
 
-          // this method is a temporary fix to Harley's animation not starting on subsequent selection of a page
-          foreach (UIElement element in _children)
-          {
-              if(element is GUIAnimation)
-                  ((GUIAnimation)element).Begin();
-          }
+      // this method is a temporary fix to Harley's animation not starting on subsequent selection of a page
+      foreach (UIElement element in _children)
+      {
+        if (element is GUIAnimation)
+          ((GUIAnimation)element).Begin();
       }
-    
+    }
+
     #endregion
 
     public UIElementCollection controlList
