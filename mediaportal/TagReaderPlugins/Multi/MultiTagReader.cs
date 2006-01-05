@@ -165,19 +165,58 @@ namespace MediaPortal.TagReader.MultiTagReader
                 {
                   string details = parts[1].Trim();
                   int index = details.IndexOf(SI_DETAILS_PLAYTIME);
-                  if(index != -1)
+                  ////if(index != -1)
+                  ////{
+                  ////  index += SI_DETAILS_PLAYTIME.Length + 1;
+                  ////  string duration = details.Substring(index);
+                  ////  if(duration.IndexOf(":") == duration.LastIndexOf(":")) 
+                  ////    duration = "00:" + duration;	// no hours, so add 0 hours to the duration.
+                  ////                    try									
+                  ////                    {										
+                  ////                      TimeSpan intervalVal = TimeSpan.Parse(duration);										
+                  ////                      m_tag.Duration = (int)intervalVal.TotalSeconds;
+                  ////                    }catch(Exception){}                
+                  ////              }              
+                  ////            }
+
+                  if (index != -1)
                   {
-                    index += SI_DETAILS_PLAYTIME.Length + 1;
-                    string duration = details.Substring(index);
-                    if(duration.IndexOf(":") == duration.LastIndexOf(":")) 
-                      duration = "00:" + duration;	// no hours, so add 0 hours to the duration.
-									  try									
-									  {										
-									    TimeSpan intervalVal = TimeSpan.Parse(duration);										
-									    m_tag.Duration = (int)intervalVal.TotalSeconds;
-									  }catch(Exception){}                
-							    }              
-							  }
+                      index += SI_DETAILS_PLAYTIME.Length + 1;
+                      string duration = details.Substring(index);
+
+                      string[] durationParts = duration.Split(new char[] { ':' });
+
+                      if(durationParts.Length == 2)
+                          duration = "00:" + duration;	// no hours, so add 0 hours to the duration.
+
+                      else if (durationParts.Length >= 3)    // we have hours and minutes
+                      {
+                          // Check if the hours value is erroneous...
+                          int hours = 0;
+
+                          if(durationParts[0].Length > 0)
+                              hours = int.Parse(durationParts[0]);
+
+                          if (hours > 23)
+                              durationParts[0] = "00";
+
+                          duration = string.Format("{0}:{1}:{2}", durationParts[0], durationParts[1], durationParts[2]);
+                      }
+                      
+                      //if (duration.IndexOf(":") == duration.LastIndexOf(":"))
+                      //    duration = "00:" + duration;	// no hours, so add 0 hours to the duration.
+                      
+                      try
+                      {
+                          TimeSpan intervalVal = TimeSpan.Parse(duration);
+                          m_tag.Duration = (int)intervalVal.TotalSeconds;
+                      }
+                      catch(Exception ex)
+                      {
+                      }
+                  }
+              }
+
                 break;
               case SD_GENRE:
                 m_tag.Genre = parts[1].Trim();

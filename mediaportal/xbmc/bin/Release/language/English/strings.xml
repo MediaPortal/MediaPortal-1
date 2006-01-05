@@ -5033,4 +5033,96 @@
     <id>4003</id>
     <value>Please specify a favorites folder in the setup.</value>
   </string>
+
+  <!-- Begin Cover Art Grabber Strings -->
+  <string>
+    <id>4500</id>
+    <value>Skip albums with existing cover art</value>
+  </string>
+  <string>
+    <id>4501</id>
+    <value>Save cover art in album folder</value>
+  </string>
+  <string>
+    <id>4502</id>
+    <value>Save cover art in thumbs folder</value>
+  </string>
+  <string>
+    <id>4503</id>
+    <value>Getting album count. Please wait...</value>
+  </string>
+  <string>
+    <id>4504</id>
+    <value>{0}% - {1} of {2}</value>
+  </string>
+  <string>
+    <id>4505</id>
+    <value>Searching {0}...</value>
+  </string>
+  <string>
+    <id>4506</id>
+    <value>[Blank]</value>
+  </string>
+  <string>
+    <id>4507</id>
+    <value>Cover art grabber aborted by user</value>
+  </string>
+  <string>
+    <id>4508</id>
+    <value>Cover art grab completed successfuly</value>
+  </string>
+  <string>
+    <id>4509</id>
+    <value>Cover art grab completed with errors</value>
+  </string>
+  <string>
+    <id>4510</id>
+    <value>{0} cover art images updated</value>
+  </string>
+  <string>
+    <id>4511</id>
+    <value>Cover Art Grabber Done</value>
+  </string>
+  <string>
+    <id>4512</id>
+    <value>All covers up to date</value>
+  </string>
+  <string>
+    <id>4513</id>
+    <value>Various</value>
+  </string>
+  <string>
+    <id>4514</id>
+    <value>Cover Art Grabber</value>
+  </string>
+  <string>
+    <id>4515</id>
+    <value>Cover Art Grabber Search Results</value>
+  </string>
+  <string>
+    <id>4516</id>
+    <value>No cover art found</value>
+  </string>
+  <string>
+    <id>4517</id>
+    <value>Close</value>
+  </string>
+
+  <string>
+    <id>4518</id>
+    <value>Album title not found\r\nTrying: {0}</value>
+  </string>
+
+
+  <string>
+    <id>4519</id>
+    <value>Current cover art</value>
+  </string>
+
+  <string>
+    <id>4520</id>
+    <value>Skip</value>
+  </string>
+  <!-- End Cover Art Grabber Strings -->
+
 </strings>
