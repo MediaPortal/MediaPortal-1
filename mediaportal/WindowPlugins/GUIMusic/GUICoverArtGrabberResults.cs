@@ -1,0 +1,734 @@
+/* 
+ *	Copyright (C) 2005 Team MediaPortal
+ *	http://www.team-mediaportal.com
+ *
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *   
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *   
+ *  You should have received a copy of the GNU General Public License
+ *  along with GNU Make; see the file COPYING.  If not, write to
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  http://www.gnu.org/copyleft/gpl.html
+ *
+ */
+
+using System;
+using System.Drawing;
+using System.Net;
+using System.Collections;
+using Microsoft.DirectX;
+using Microsoft.DirectX.Direct3D;
+using Direct3D = Microsoft.DirectX.Direct3D;
+using MediaPortal.GUI.Library;
+using MediaPortal.Util;
+using MediaPortal.Dialogs;
+using MediaPortal.Music.Database;
+using MediaPortal.TagReader;
+using MediaPortal.Music.Amazon;
+
+namespace MediaPortal.GUI.Music
+{
+    public class GUICoverArtGrabberResults : GUIWindow
+    {
+        public delegate void FindCoverArtProgressHandler(AmazonWebservice aws, int progressPercent);
+        public event FindCoverArtProgressHandler FindCoverArtProgress;
+
+        public delegate void FindCoverArtDoneHandler(AmazonWebservice aws, EventArgs e);
+        public event FindCoverArtDoneHandler FindCoverArtDone;
+
+        public delegate void AlbumNotFoundRetryingFilteredHandler(AmazonWebservice aws, string origAlbumName, string filteredAlbumName);
+        public event AlbumNotFoundRetryingFilteredHandler AlbumNotFoundRetryingFiltered;
+
+        public enum SearchDepthMode
+        {
+            Album = 0,
+            Share = 2,
+        };
+
+        private enum ControlIDs
+        {
+            IMG_COVERART = 10,
+            LBL_COVER = 11,
+            LBL_ARTIST_NAME = 12,
+            LBL_ALBUM_NAME = 13,
+            LBL_RELEASE_YEAR = 14,
+            LBL_NO_MATCHES_FOUND = 15,
+            BTN_SKIP = 20,
+            BTN_CANCEL = 21,
+            LIST_ALBUM = 25,
+            IMG_AMAZON = 30,
+        }
+
+        [SkinControlAttribute((int)ControlIDs.LIST_ALBUM)]
+        protected GUIListControl listView = null;   
+
+        [SkinControlAttribute((int)ControlIDs.IMG_COVERART)]
+        protected GUIImage imgCoverArt = null;          
+
+        [SkinControlAttribute((int)ControlIDs.LBL_COVER)]
+        protected GUILabelControl lblCoverLabel = null; 
+
+        [SkinControlAttribute((int)ControlIDs.LBL_ARTIST_NAME)]
+        protected GUIFadeLabel lblArtistName = null; 
+
+        [SkinControlAttribute((int)ControlIDs.LBL_ALBUM_NAME)]
+        protected GUIFadeLabel lblAlbumName = null;  
+
+        [SkinControlAttribute((int)ControlIDs.LBL_RELEASE_YEAR)]
+        protected GUILabelControl lblReleaseYear = null;
+
+        [SkinControlAttribute((int)ControlIDs.LBL_NO_MATCHES_FOUND)]
+        protected GUILabelControl lblNoMatches = null;  
+
+        [SkinControlAttribute((int)ControlIDs.BTN_SKIP)]
+        protected GUIButtonControl btnSkip = null;      
+
+        [SkinControlAttribute((int)ControlIDs.BTN_CANCEL)]
+        protected GUIButtonControl btnCancel = null;      
+
+        [SkinControlAttribute((int)ControlIDs.IMG_AMAZON)]
+        protected GUIImage imgAmazon = null;            
+
+        #region Base Dialog Variables
+
+        private bool m_bRunning = false;
+        private bool m_bRefresh = false;
+        private int m_dwParentWindowID = 0;
+        private GUIWindow m_pParentWindow = null;
+
+        #endregion
+
+        #region Variables
+
+        private const int MAX_UNFILTERED_SEARCH_ITEMS = 80;
+        private const int MAX_SEARCH_ITEMS = 12;
+        private string[] DiskSetSubstrings = new string[]
+            {
+                "-disk",
+                "- disk",
+                "(disk",
+                "( disk",
+                "-disc",
+                "- disc",
+                "(disc",
+                "( disc",
+            };
+
+
+        private string _ThumbPath = string.Empty;
+        private Texture coverArtTexture = null;
+        private bool m_bOverlay = false;
+
+        private string _Artist = string.Empty;
+        private string _Album = string.Empty;
+        private string _AlbumPath = string.Empty;
+        private AmazonWebservice amazonWS = null;
+        private AlbumInfo _SelectedAlbum = null;
+        private SearchDepthMode _SearchMode = SearchDepthMode.Album;
+        private static bool _IsCancelledByUser = false;
+        private bool IsCompilationAlbum = false;
+
+        #endregion
+
+        #region Properties
+
+        public bool NeedsRefresh
+        {
+            get { return m_bRefresh; }
+        }
+
+        public SearchDepthMode SearchMode
+        {
+            get { return _SearchMode; }
+            set { _SearchMode = value; }
+        }
+
+        public AlbumInfo SelectedAlbum
+        {
+            get { return _SelectedAlbum; }
+        }
+
+        public static bool IsCancelledByUser
+        {
+            get { return _IsCancelledByUser; }
+            set { _IsCancelledByUser = value; }
+        }
+
+        public AmazonWebservice AmazonWebService
+        {
+            get { return amazonWS; }
+        }
+
+        #endregion
+
+        public GUICoverArtGrabberResults()
+        {
+            GetID = (int)GUIWindow.Window.WINDOW_MUSIC_COVERART_GRABBER_RESULTS;
+        }
+
+        public override bool Init()
+        {
+            //return Load(GUIGraphicsContext.Skin + @"\MyMusicCoverArtGrabberResults.xml");
+
+            bool result = Load(GUIGraphicsContext.Skin + @"\MyMusicCoverArtGrabberResults.xml");
+            GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(4515));
+
+            return result;
+        }
+
+        public override void OnAction(Action action)
+        {
+            Console.WriteLine(action);
+
+            if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
+            {
+                Close();
+                return;
+            }
+
+            base.OnAction(action);
+        }
+
+        #region Base Dialog Members
+        public void RenderDlg(float timePassed)
+        {
+            // render the parent window
+            if (null != m_pParentWindow)
+                m_pParentWindow.Render(timePassed);
+
+            GUIFontManager.Present();
+            // render this dialog box
+            base.Render(timePassed);
+        }
+
+        void Close()
+        {
+            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, GetID, 0, 0, 0, 0, null);
+            OnMessage(msg);
+
+            GUIWindowManager.UnRoute();
+            m_pParentWindow = null;
+            m_bRunning = false;
+        }
+
+        public void DoModal(int dwParentId)
+        {
+            _IsCancelledByUser = false;
+            m_bRefresh = false;
+            m_dwParentWindowID = dwParentId;
+            m_pParentWindow = GUIWindowManager.GetWindow(m_dwParentWindowID);
+
+            if (null == m_pParentWindow)
+            {
+                m_dwParentWindowID = 0;
+                return;
+            }
+
+            GUIWindowManager.RouteToWindow(GetID);
+
+            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, GetID, 0, 0, 0, 0, null);
+            OnMessage(msg);
+
+            m_bRunning = true;
+            UpdateAlbumCoverList();
+            SetButtonVisibility();
+
+            while (m_bRunning && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
+            {
+                GUIWindowManager.Process();
+            }
+        }
+
+        #endregion
+
+        protected override void OnPageDestroy(int newWindowId)
+        {
+            base.OnPageDestroy(newWindowId);
+
+            if (coverArtTexture != null)
+            {
+                coverArtTexture.Dispose();
+                coverArtTexture = null;
+            }
+
+            GUIGraphicsContext.Overlay = m_bOverlay;
+        }
+
+        protected override void OnPageLoad()
+        {
+            base.OnPageLoad();
+            m_bOverlay = GUIGraphicsContext.Overlay;
+            coverArtTexture = null;
+            Reset();
+        }
+
+        protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
+        {
+            base.OnClicked(controlId, control, actionType);
+
+            switch (controlId)
+            {
+                case (int)ControlIDs.LIST_ALBUM:
+                    {
+                        int selectedItem = listView.SelectedListItemIndex;
+
+                        if (selectedItem >= amazonWS.AlbumCount)
+                        {
+                            _SelectedAlbum = null;
+                            Close();
+                            return;
+                        }
+
+                        _SelectedAlbum = (AlbumInfo)amazonWS.AlbumInfoList[selectedItem];
+                        this.Close();
+                        break;
+                    }
+
+                case (int)ControlIDs.BTN_SKIP:
+                    {
+                        _SelectedAlbum = null;
+                        Close();
+                        break;
+                    }
+
+                case (int)ControlIDs.BTN_CANCEL:
+                    {
+                        _IsCancelledByUser = true;
+                        Close();
+                        break;
+                    }
+            }
+        }
+
+        public override bool OnMessage(GUIMessage message)
+        {
+            switch (message.Message)
+            {
+                case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
+                    base.OnMessage(message);
+                    GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(4515));
+                    return true;
+                    break;
+
+                default:
+                    return base.OnMessage(message);
+            }
+
+            return base.OnMessage(message);
+        }
+        
+        private void SetButtonVisibility()
+        {
+            switch (_SearchMode)
+            {
+                case SearchDepthMode.Album:
+                    {
+                        this.btnCancel.Visible = true;
+                        this.btnSkip.Visible = false;
+                        break;
+                    }
+
+                case SearchDepthMode.Share:
+                    {
+                        this.btnCancel.Visible = true;
+                        this.btnSkip.Visible = true;
+                        break;
+                    }
+            }
+        }
+
+        public void GetAlbumCovers(string artist, string album, string strPath, int parentWindowID, bool checkForCompilationAlbum)
+        {
+            IsCompilationAlbum = false;
+
+            _Artist = artist;
+            _Album = album;
+            _AlbumPath = strPath;
+            string origAlbumName = _Album;
+            string filteredAlbumFormatString = GUILocalizeStrings.Get(4518);
+
+            if(filteredAlbumFormatString.Length == 0)
+                filteredAlbumFormatString = "Album title not found\r\nTrying: {0}";
+
+            _ThumbPath = GetCoverArtThumbPath(artist, album, strPath);
+            amazonWS = new AmazonWebservice();
+            amazonWS.MaxSearchResultItems = MAX_SEARCH_ITEMS;
+
+            amazonWS.FindCoverArtProgress += new AmazonWebservice.FindCoverArtProgressHandler(amazonWS_GetAlbumInfoProgress);
+            amazonWS.FindCoverArtDone += new AmazonWebservice.FindCoverArtDoneHandler(amazonWS_FindCoverArtDone);
+            InternalGetAlbumCovers(_Artist, _Album, string.Empty);
+
+
+            // Did we fail to find any albums?
+            if (!amazonWS.HasAlbums && !amazonWS.AbortGrab)
+            {
+                // Check if the album title includes a disk number description that might 
+                // be altering the proper album title such as: White album (Disk 2)
+
+                string cleanAlbumName = string.Empty;
+
+                if (GetCleanAlbumName(_Album, ref cleanAlbumName))
+                {
+                    amazonWS.MaxSearchResultItems = MAX_UNFILTERED_SEARCH_ITEMS;
+
+                    if (AlbumNotFoundRetryingFiltered != null)
+                        AlbumNotFoundRetryingFiltered(amazonWS, origAlbumName, cleanAlbumName);
+
+                    string filter = string.Format(filteredAlbumFormatString, cleanAlbumName);
+                    origAlbumName = _Album;
+                    InternalGetAlbumCovers(_Artist, cleanAlbumName, filter);
+                }
+
+                else if(checkForCompilationAlbum)
+                {
+                    IsCompilationAlbum = GetIsCompilationAlbum(strPath, -1);
+
+                    if (IsCompilationAlbum)
+                    {
+                        amazonWS.MaxSearchResultItems = MAX_UNFILTERED_SEARCH_ITEMS;
+                        _Artist = "";
+                        string filterString = string.Format("{0} = \"{1}\"", GUILocalizeStrings.Get(484), " ");
+                        string filter = string.Format(filteredAlbumFormatString, filterString);
+                        InternalGetAlbumCovers(_Artist, _Album, filter);
+                    }
+                }
+            }
+
+            // Still no albums?
+            if (!IsCompilationAlbum && !amazonWS.HasAlbums && !amazonWS.AbortGrab)
+            {
+                amazonWS.MaxSearchResultItems = MAX_UNFILTERED_SEARCH_ITEMS;
+
+                if (AlbumNotFoundRetryingFiltered != null)
+                    AlbumNotFoundRetryingFiltered(amazonWS, origAlbumName, GUILocalizeStrings.Get(4506));
+
+                string filterString = string.Format("{0} = \"{1}\"", GUILocalizeStrings.Get(483), " ");
+                string filter = string.Format(filteredAlbumFormatString, filterString);
+
+                // Try searching by artist only to get all albums for this artist...
+                InternalGetAlbumCovers(_Artist, "", filter);
+            }
+
+            // if we're searching for a single album the progress dialog will 
+            // be displayed so we need to close it...
+            if (SearchMode == SearchDepthMode.Album)
+            {
+                GUIDialogProgress dlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+                if (dlgProgress != null)
+                {
+                    dlgProgress.SetPercentage(100);
+                    dlgProgress.Progress();
+                    dlgProgress.Close();
+                }
+            }
+
+            amazonWS.FindCoverArtProgress -= new AmazonWebservice.FindCoverArtProgressHandler(amazonWS_GetAlbumInfoProgress);
+            amazonWS.FindCoverArtDone -= new AmazonWebservice.FindCoverArtDoneHandler(amazonWS_FindCoverArtDone);
+        }
+
+        private string GetCoverArtThumbPath(string artist, string album, string albumPath)
+        {
+            string thumbPath;
+
+            // Look for the album cover thumbnail...
+            thumbPath = GUIMusicBaseWindow.GetAlbumThumbName(artist, album);
+
+            // If it doesn't exist look for it in the album folder
+            if (!System.IO.File.Exists(thumbPath))
+                thumbPath = String.Format(@"{0}\folder.jpg", Utils.RemoveTrailingSlash(albumPath));
+
+            // If it still doesn't exist use the missing_coverart image
+            if (!System.IO.File.Exists(thumbPath))
+                thumbPath = GUIGraphicsContext.Skin + @"\media\missing_coverart.png";
+
+            return thumbPath;
+        }
+
+        private bool GetIsCompilationAlbum(string path, int numFilesToCheck)
+        {
+            MusicDatabase dbMusic = null;
+
+            System.IO.DirectoryInfo di = new System.IO.DirectoryInfo(path);
+            System.IO.FileInfo[] files = null;
+
+            if (di == null)
+                return false;
+
+            files = di.GetFiles();
+
+            if (files == null || files.Length == 0)
+                return false;
+
+            dbMusic = new MusicDatabase();
+
+            string artist = string.Empty;
+            bool IsCompilationAlbum = false;
+            int difArtistCount = 0;
+
+            int checkCount = 0;
+
+            if (numFilesToCheck == -1)
+                checkCount = files.Length;
+            
+            else
+                Math.Min(files.Length, numFilesToCheck);
+            
+            MusicTag tag = null;
+            Song song = null;
+
+            for (int i = 0; i < checkCount; i++)
+            {
+                string curTrackPath = files[i].FullName;
+
+                if (!Utils.IsAudio(curTrackPath))
+                    continue;
+
+                song = new Song();
+
+                if (dbMusic.GetSongByFileName(curTrackPath, ref song))
+                {
+                    if (artist == string.Empty)
+                    {
+                        artist = song.Artist;
+                        continue;
+                    }
+
+                    if (artist.ToLower().CompareTo(song.Artist.ToLower()) != 0)
+                        difArtistCount++;
+                }
+
+                else
+                {
+                    tag = TagReader.TagReader.ReadTag(curTrackPath);
+
+                    if (tag != null)
+                    {
+                        if (artist == string.Empty)
+                        {
+                            artist = tag.Artist;
+                            continue;
+                        }
+
+                        if (artist.ToLower().CompareTo(tag.Artist.ToLower()) != 0)
+                            difArtistCount++;
+                    }
+                }
+            }
+
+            if (difArtistCount > 0)
+                IsCompilationAlbum = true;
+
+            return IsCompilationAlbum;
+        }
+
+        private bool InternalGetAlbumCovers(string artist, string album, string filteredAlbumText)
+        {
+            if (amazonWS.AbortGrab)
+                return false;
+
+            amazonWS.ArtistName = artist;
+            amazonWS.AlbumName = album;
+            bool result = false;
+
+            if (SearchMode == SearchDepthMode.Album)
+            {
+                GUIDialogProgress dlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+                if (dlgProgress != null)
+                {
+                    dlgProgress.SetHeading(185);
+                    dlgProgress.SetLine(1, album);
+                    dlgProgress.SetLine(2, artist);
+                    dlgProgress.SetLine(3, filteredAlbumText);
+                    dlgProgress.SetPercentage(0);
+                    dlgProgress.Progress();
+//                    dlgProgress.StartModal(m_dwParentWindowID);
+                    //dlgProgress.ShowProgressBar(true);
+                    dlgProgress.ShowProgressBar(false);
+
+                    GUIWindowManager.Process();
+                    //System.Windows.Forms.Application.DoEvents();
+                }
+
+                result = amazonWS.GetAlbumInfo();
+
+                ////if (dlgProgress != null)
+                ////{
+                ////    dlgProgress.SetPercentage(100);
+                ////    dlgProgress.Progress();
+                ////    dlgProgress.Close();
+                ////}
+            }
+
+            else
+                result = amazonWS.GetAlbumInfo();
+
+            return result;
+        }
+
+        void amazonWS_GetAlbumInfoProgress(AmazonWebservice aws, int progressPercent)
+        {
+            if (SearchMode == SearchDepthMode.Album)
+            {
+                GUIDialogProgress dlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+
+                if (dlgProgress != null)
+                {
+                    dlgProgress.ShowProgressBar(true);
+                    dlgProgress.SetPercentage(progressPercent);
+                    dlgProgress.Progress();
+                }
+            }
+
+            else
+            {
+                // The GUICoverArtGrabberProgress window will manage showing cover art grabber progress
+                if (FindCoverArtProgress != null)
+                    FindCoverArtProgress(amazonWS, progressPercent);
+            }
+        }
+
+        void amazonWS_FindCoverArtDone(AmazonWebservice aws, EventArgs e)
+        {
+            if (FindCoverArtDone != null)
+                FindCoverArtDone(amazonWS, e);
+        }
+
+        private void UpdateAlbumCoverList()
+        {
+            if (listView == null)
+                return;
+
+            listView.Clear();
+            
+            imgCoverArt.SetFileName(_ThumbPath);
+
+            if (amazonWS.HasAlbums)
+            {
+                for (int i = 0; i < amazonWS.AlbumCount; i++)
+                {
+                    AlbumInfo albuminfo = (AlbumInfo)amazonWS.AlbumInfoList[i];
+                    GUIListItem item = new GUIListItem(albuminfo.Album);
+                    item.Label2 = albuminfo.Artist;
+                    item.IconImageBig = albuminfo.Image;
+                    item.IconImage = albuminfo.Image;
+                    listView.Add(item);
+                }
+            }
+        }
+
+        private bool GetCleanAlbumName(string origAlbumName, ref string cleanAlbumName)
+        {
+            string temp = origAlbumName;
+
+            bool replaced = false;
+            do
+            {
+                replaced = origAlbumName.Replace("  ", " ").CompareTo(temp) != 0;
+                temp = origAlbumName;
+                
+            } while (replaced);
+
+            string testSting = origAlbumName.ToLower();
+            bool modified = false;
+            int nPos = -1;
+
+            for (int i = 0; i < DiskSetSubstrings.Length; i++)
+            {
+                nPos = -1;
+                string s = DiskSetSubstrings[i];
+                nPos = testSting.IndexOf(s);
+
+                if (nPos > 0)
+                    break;
+            }
+
+            if (nPos != -1)
+            {
+                cleanAlbumName = origAlbumName.Substring(0, nPos).Trim();
+                modified = true;
+            }
+            
+            return modified;
+
+            //////bool modified = false;
+            //////int nPos = origAlbumName.LastIndexOf(')');
+
+            //////if (nPos == origAlbumName.Length - 1)
+            //////{
+            //////    nPos = origAlbumName.LastIndexOf('(');
+
+            //////    if (nPos != -1)
+            //////    {
+            //////        cleanAlbumName = origAlbumName.Substring(0, nPos).Trim();
+            //////        modified = true;
+            //////    }
+            //////}
+
+            //////else
+            //////{
+            //////    nPos = origAlbumName.LastIndexOf(" - ");
+
+            //////    if (nPos > 0)
+            //////    {
+            //////        cleanAlbumName = origAlbumName.Substring(0, nPos).Trim();
+            //////        modified = true;
+            //////    }
+            //////}
+
+            //////return modified;
+        }
+
+        private void Reset()
+        {
+            if (amazonWS == null)
+                return;
+
+            listView.Clear();
+            listView.KeepAspectRatio = false;
+            listView.Visible = true;
+            lblNoMatches.Visible = false;
+
+            string noMatches = GUILocalizeStrings.Get(4516);
+
+            if (noMatches.Length == 0)
+                noMatches = "No cover art found";
+
+            lblNoMatches.Label = noMatches;
+            lblAlbumName.Label = _Album;
+
+            string coverArtText = GUILocalizeStrings.Get(4519);
+
+            if (coverArtText.Length == 0)
+                coverArtText = "Current cover art";
+
+            lblCoverLabel.Label = coverArtText;
+
+            if(IsCompilationAlbum && _Artist.Length == 0)
+                lblArtistName.Label = GUILocalizeStrings.Get(340);
+
+            else
+                lblArtistName.Label = _Artist;
+
+            lblReleaseYear.Label = "";
+
+            if (!amazonWS.HasAlbums && !amazonWS.AbortGrab)
+                ShowNoMatchesText();
+
+            lblAlbumName.AllowScrolling = false;
+            lblArtistName.AllowScrolling = false;
+        }
+
+        private void ShowNoMatchesText()
+        {
+            listView.Visible = false;
+            lblNoMatches.Visible = true;
+        }
+    }
+}
