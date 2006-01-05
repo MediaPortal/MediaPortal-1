@@ -84,7 +84,7 @@ namespace MediaPortal.GUI.Music
         string[] _sortTags1 = new string[20];
         string[] _sortTags2 = new string[20];
 
-        private bool UseLegacyAlbumInfoScraper = false;
+        private bool UseLegacyAlbumInfoScraper = true;
 
         public GUIMusicBaseWindow()
         {

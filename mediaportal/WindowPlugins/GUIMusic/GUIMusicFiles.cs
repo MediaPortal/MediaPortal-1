@@ -1517,26 +1517,29 @@ namespace MediaPortal.GUI.Music
                 if (tag != null && tag.Album.Length > 0)
                 {
                     ShowAlbumInfo(true, tag.Artist, tag.Album, pItem.Path, tag, -1);
-                    //facadeView.RefreshCoverArt();
+                    facadeView.RefreshCoverArt();
                 }
 
                 // Nope, it's a artist folder or share
                 else
                 {
-                    int windowID = (int)GUIWindow.Window.WINDOW_MUSIC_COVERART_GRABBER_PROGRESS;
-                    GUICoverArtGrabberProgress guiCoverArtProgress = (GUICoverArtGrabberProgress)GUIWindowManager.GetWindow(windowID);
+                    // DISABLED FOR THE TIME BEING...
+                    ////int windowID = (int)GUIWindow.Window.WINDOW_MUSIC_COVERART_GRABBER_PROGRESS;
+                    ////GUICoverArtGrabberProgress guiCoverArtProgress = (GUICoverArtGrabberProgress)GUIWindowManager.GetWindow(windowID);
 
-                    if (guiCoverArtProgress != null)
-                    {
-                        guiCoverArtProgress.CoverArtSelected += new GUICoverArtGrabberProgress.CoverArtSelectedHandler(OnCoverArtGrabberCoverArtSelected);
-                        guiCoverArtProgress.CoverArtGrabDone += new GUICoverArtGrabberProgress.CoverArtGrabDoneHandler(OnCoverArtGrabberDone);
-                        guiCoverArtProgress.TopLevelFolderName = pItem.Path;
-                        guiCoverArtProgress.UseID3 = UseID3;
-                        guiCoverArtProgress.Show(GetID);
-                    }
+                    ////if (guiCoverArtProgress != null)
+                    ////{
+                    ////    guiCoverArtProgress.CoverArtSelected += new GUICoverArtGrabberProgress.CoverArtSelectedHandler(OnCoverArtGrabberCoverArtSelected);
+                    ////    guiCoverArtProgress.CoverArtGrabDone += new GUICoverArtGrabberProgress.CoverArtGrabDoneHandler(OnCoverArtGrabberDone);
+                    ////    guiCoverArtProgress.TopLevelFolderName = pItem.Path;
+                    ////    guiCoverArtProgress.UseID3 = UseID3;
+                    ////    guiCoverArtProgress.Show(GetID);
+                    ////}
+
+                    return;
                 }
 
-                return;
+                //return;
             }
 
             Song song = pItem.AlbumInfoTag as Song;
