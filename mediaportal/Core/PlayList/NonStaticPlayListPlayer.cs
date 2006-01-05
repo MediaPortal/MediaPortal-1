@@ -24,6 +24,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
+using MediaPortal.Profile;
 
 namespace MediaPortal.Playlists
 {
@@ -320,7 +321,7 @@ namespace MediaPortal.Playlists
             get { return _currentSong; }
             set
             {
-                if (value >= -1 && value < GetPlaylist(CurrentPlaylist).Count)
+                if (value >= -1 && value < GetPlaylist(CurrentPlaylistType).Count)
                     _currentSong = value;
             }
         }
@@ -329,7 +330,7 @@ namespace MediaPortal.Playlists
         {
             PlayList playlist = GetPlaylist(type);
             int itemRemoved = playlist.Remove(filename);
-            if (type != CurrentPlaylist)
+            if (type != CurrentPlaylistType)
             {
                 return;
             }
@@ -346,7 +347,7 @@ namespace MediaPortal.Playlists
             }
         }
 
-        public PlayListType CurrentPlaylist
+        public PlayListType CurrentPlaylistType
         {
             get { return _currentPlayList; }
             set
@@ -356,15 +357,15 @@ namespace MediaPortal.Playlists
                     _currentPlayList = value;
                     _entriesNotFound = 0;
                     _isChanged = true;
-                    using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+                    using (Xml settings = new Xml("MediaPortal.xml"))
                     {
                         if (value == PlayListType.PLAYLIST_MUSIC || value == PlayListType.PLAYLIST_MUSIC_TEMP)
                         {
-                            _repeatPlayList = xmlreader.GetValueAsBool("musicfiles", "repeat", true);
+                            _repeatPlayList = settings.GetValueAsBool("musicfiles", "repeat", true);
                         }
                         else
                         {
-                            _repeatPlayList = xmlreader.GetValueAsBool("movies", "repeat", true);
+                            _repeatPlayList = settings.GetValueAsBool("movies", "repeat", true);
                         }
                     }
                 }

@@ -93,8 +93,8 @@ namespace MediaPortal.Playlists
 
         static public PlayListType CurrentPlaylist
         {
-            get { return myPlayer.CurrentPlaylist; }
-            set { myPlayer.CurrentPlaylist = value; }
+            get { return myPlayer.CurrentPlaylistType; }
+            set { myPlayer.CurrentPlaylistType = value; }
         }
 
         static public PlayList GetPlaylist(PlayListType nPlayList)
