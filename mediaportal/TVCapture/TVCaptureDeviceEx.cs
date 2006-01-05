@@ -56,8 +56,7 @@ namespace MediaPortal.TV.Recording
   {
     public string filename;
     public FileInfo info;
-
-
+    public TVRecorded record;
     #region IComparable Members
 
     public int CompareTo(RecordingFileInfo fi)
