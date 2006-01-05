@@ -313,7 +313,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // pictureBoxUSA
       // 
-      this.pictureBoxUSA.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.pictureBoxUSA.BackColor = System.Drawing.Color.Transparent;
       this.pictureBoxUSA.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxUSA.Image")));
       this.pictureBoxUSA.Location = new System.Drawing.Point(208, 24);
@@ -360,8 +359,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.BackColor = System.Drawing.Color.Transparent;
       this.groupBox1.Controls.Add(this.checkBoxMCE);
@@ -397,7 +395,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // pictureBoxEU
       // 
-      this.pictureBoxEU.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.pictureBoxEU.BackColor = System.Drawing.Color.Transparent;
       this.pictureBoxEU.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxEU.Image")));
       this.pictureBoxEU.Location = new System.Drawing.Point(208, 24);
@@ -423,8 +420,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox3
       // 
-      this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
+      this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox3.Controls.Add(this.hScrollBarRepeatSpeed);
       this.groupBox3.Controls.Add(this.label4);
@@ -447,6 +443,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // hScrollBarRepeatSpeed
       // 
+      this.hScrollBarRepeatSpeed.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.hScrollBarRepeatSpeed.LargeChange = 1;
       this.hScrollBarRepeatSpeed.Location = new System.Drawing.Point(152, 80);
       this.hScrollBarRepeatSpeed.Maximum = 2;
@@ -490,6 +488,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // hScrollBarRepeatFilter
       // 
+      this.hScrollBarRepeatFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.hScrollBarRepeatFilter.LargeChange = 2;
       this.hScrollBarRepeatFilter.Location = new System.Drawing.Point(152, 52);
       this.hScrollBarRepeatFilter.Maximum = 11;
@@ -533,6 +533,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // hScrollBarButtonRelease
       // 
+      this.hScrollBarButtonRelease.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.hScrollBarButtonRelease.Location = new System.Drawing.Point(152, 25);
       this.hScrollBarButtonRelease.Maximum = 209;
       this.hScrollBarButtonRelease.Minimum = 20;
@@ -607,8 +609,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBoxInformation
       // 
-      this.groupBoxInformation.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
+      this.groupBoxInformation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxInformation.Controls.Add(this.buttonDefault);
       this.groupBoxInformation.Controls.Add(this.infoDriverStatus);
