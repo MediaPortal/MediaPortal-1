@@ -32,7 +32,7 @@ namespace MediaPortal.Configuration.Sections
 {
 	public class USBUIRT : MediaPortal.Configuration.SectionSettings
 	{
-        private const string USBUIRT_CONFIGVER = "1.14";
+        private const string USBUIRT_PLUGINVER = "1.15 (December 26, 2005)";
         
         private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
 		private MediaPortal.UserInterface.Controls.MPCheckBox inputCheckBox;
@@ -83,7 +83,7 @@ namespace MediaPortal.Configuration.Sections
 				return;
 
 			lblUSBUIRTVersion.Text=MediaPortal.IR.USBUIRT.Instance.GetVersions();
-            lblUSBUIRTConfigVersion.Text = USBUIRT_CONFIGVER;
+            lblUSBUIRTConfigVersion.Text = USBUIRT_PLUGINVER;
         }
 
 		/// <summary>
@@ -470,9 +470,9 @@ namespace MediaPortal.Configuration.Sections
             this.label7.AutoSize = true;
             this.label7.Location = new System.Drawing.Point(16, 60);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(159, 13);
+            this.label7.Size = new System.Drawing.Size(126, 13);
             this.label7.TabIndex = 7;
-            this.label7.Text = "USBUIRT configuration version:";
+            this.label7.Text = "USBUIRT plugin version:";
             // 
             // USBUIRT
             // 
@@ -552,18 +552,18 @@ namespace MediaPortal.Configuration.Sections
 		private bool GetUsbUirtDriverStatusOK()
 		{
 			bool driverStatusOK = MediaPortal.IR.USBUIRT.Instance.IsUsbUirtLoaded;
-
-			// Check if the driver is loaded...
+            
+            // Check if the driver is loaded...
 			if(driverStatusOK)
 			{
 				// The driver is loaded but is the USBUIRT connected?
 				driverStatusOK = MediaPortal.IR.USBUIRT.Instance.IsUsbUirtConnected;
-			}
+            }
 
 			else
 			{
-				driverStatusOK = MediaPortal.IR.USBUIRT.Instance.Reconnect();
-			}
+                driverStatusOK = MediaPortal.IR.USBUIRT.Instance.Reconnect();
+            }
 
             lblUSBUIRTVersion.Text = MediaPortal.IR.USBUIRT.Instance.GetVersions();
             return driverStatusOK;

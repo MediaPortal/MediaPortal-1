@@ -152,6 +152,8 @@ namespace MediaPortal.IR
 		static int              UUIRTDRV_IRFMT_UUIRT	= 0x0000;
 		private const string	remotefile = "UIRTUSB-remote.xml";
 		private const string	tunerfile = "UIRTUSB-tuner.xml";
+        //private const string    USBUIRT_PLUGINVER = "1.1 (December 23, 2005)";
+
 		#endregion
 
 		#region variables
@@ -408,22 +410,19 @@ namespace MediaPortal.IR
 				if(UsbUirtHandle == IntPtr.Zero || UsbUirtHandle == empty)
 					return false;
 
-				uint puConfig = 0;
+				uint puConfig = uint.MaxValue;
 
 				try
 				{
-					UUIRTGetUUIRTConfig(UsbUirtHandle, ref puConfig);
-				}
+                    isUsbUirtLoaded = UUIRTGetUUIRTConfig(UsbUirtHandle, ref puConfig);
+                }
 
-				catch
+				catch(Exception ex)
 				{
-				}
+                }
 
-				if(puConfig == 0)
-					isUsbUirtLoaded = false;
-
-				return puConfig != 0;
-			}
+                return isUsbUirtLoaded;			
+            }
 		}
 
 		public Hashtable LearnedMediaPortalCodesTable
@@ -453,15 +452,18 @@ namespace MediaPortal.IR
                 CreateJumpToCommands();
 
                 UsbUirtHandle = UUIRTOpen();
+                
                 if (UsbUirtHandle != empty)
                 {
                     isUsbUirtLoaded = true;
                     Log.Write("USBUIRT:Open success:{0}", GetVersions());
                 }
+
                 else
                 {
                     Log.Write("USBUIRT:Unable to open USBUIRT driver");
                 }
+
                 if (isUsbUirtLoaded)
                 {
                     Initialize();
@@ -848,8 +850,21 @@ namespace MediaPortal.IR
                             ThreadSafeSendMessage(WM_KEYDOWN, (int)keyVal, 0);
                         }
 
-                        else if (remoteCommandCallback != null)
+                        //else if (remoteCommandCallback != null)
+                        //        remoteCommandCallback(command);
+                        else
+                        {
+                            Action.ActionType action = (Action.ActionType)command;
+
+                            if (action == Action.ActionType.ACTION_PREVIOUS_MENU)
+                            {
+                                //GUIWindowManager.ShowPreviousWindow();
+                                ThreadSafeSendMessage(WM_KEYDOWN, (int)System.Windows.Forms.Keys.Escape, 0);
+                            }
+
+                            else if (remoteCommandCallback != null)
                                 remoteCommandCallback(command);
+                        }
 					}
 
 					else if(cmdVal > (int)JumpToActionType.JUMP_TO_INVALID && cmdVal < (int)JumpToActionType.JUMP_TO_LASTINVALID)
@@ -898,21 +913,26 @@ namespace MediaPortal.IR
 
 		public string GetVersions()
 		{
-			if(isUsbUirtLoaded)
-			{
-				UUINFO p = new UUINFO();			
-				UUIRTGetUUIRTInfo(UsbUirtHandle,ref p);	
-				DateTime firmdate = new DateTime(p.fwDateYear + 2000,p.fwDateMonth,p.fwDateDay);
-				DateTime plugdate = new DateTime(2004,4,1);
-				string firmversion = (p.fwVersion>>8) +"."+(p.fwVersion&0xff);
-				string plug = "Plugin Version: 1.1 ("+plugdate.ToString("MMMM, dd, yyyy")+")";
-				string firm = "Firmware Version: "+firmversion+" ("+firmdate.ToString("MMMM, dd, yyyy")+")";			
-				return plug+"\n"+ firm;
-			}
-			else
-			{
-				return "plugin is offline";
-			}
+            if (isUsbUirtLoaded)
+            {
+                UUINFO p = new UUINFO();
+                UUIRTGetUUIRTInfo(UsbUirtHandle, ref p);
+
+                DateTime firmdate = new DateTime(p.fwDateYear + 2000, p.fwDateMonth, p.fwDateDay);
+                DateTime plugdate = new DateTime(2004, 4, 1);
+
+                string firmversion = (p.fwVersion >> 8) + "." + (p.fwVersion & 0xff);
+                //string plug = string.Format("Plugin Version: {0}", USBUIRT_PLUGINVER);
+                //string firm = string.Format("Firmware Version: {0} ({1})", firmversion, firmdate.ToString("MMMM, dd, yyyy"));
+                //return string.Format("{0}\r\n{1}", plug, firm);
+
+                return string.Format("Firmware Version: {0} ({1})", firmversion, firmdate.ToString("MMMM, dd, yyyy"));
+            }
+
+            else
+            {
+                return "USBUIRT device not detected!";
+            }
 		}
 
 		public int GetCurrentPreferences()
