@@ -10,7 +10,7 @@ namespace MediaPortal.Tests.Plugins.RemotePlugins.HCWRemote
   public class InputHandlerTest
   {
     [Test]
-    public void GetFileDefault()
+    public void GetPathDefaultXml()
     {
       bool result = false;
       string xmlFile = "TestDefault";
@@ -19,7 +19,7 @@ namespace MediaPortal.Tests.Plugins.RemotePlugins.HCWRemote
     }
 
     [Test]
-    public void GetFileCustom()
+    public void GetPathCustomXml()
     {
       bool result = false;
       string xmlFile = "TestCustom";
@@ -28,7 +28,7 @@ namespace MediaPortal.Tests.Plugins.RemotePlugins.HCWRemote
     }
 
     [Test]
-    public void GetFileFail()
+    public void GetPathFail()
     {
       bool result = false;
       string xmlFile = "TestFail";
@@ -40,7 +40,7 @@ namespace MediaPortal.Tests.Plugins.RemotePlugins.HCWRemote
     public void LoadMapping()
     {
       bool result = false;
-      string xmlPath = "TestDefault.xml";
+      string xmlPath = "InputDeviceMappings\\defaults\\TestDefault.xml";
       InputHandler inputHandler = new InputHandler(xmlPath, out result);
       Assert.IsTrue(inputHandler.LoadMapping(xmlPath));
     }
