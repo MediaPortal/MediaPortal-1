@@ -56,38 +56,37 @@ namespace MediaPortal
     /// <summary>
     /// Condition/action class
     /// </summary>
-    class Mapping
+    public class Mapping
     {
       string condition;
       string conProperty;
-      int layer;
+      int    layer;
       string command;
       string cmdProperty;
-      int cmdKeyChar;
-      int cmdKeyCode;
+      int    cmdKeyChar;
+      int    cmdKeyCode;
       string sound;
 
-      public int Layer { get { return layer; } }
-      public string Condition { get { return condition; } }
+      public int    Layer       { get { return layer; } }
+      public string Condition   { get { return condition; } }
       public string ConProperty { get { return conProperty; } }
-      public string Command { get { return command; } }
+      public string Command     { get { return command; } }
       public string CmdProperty { get { return cmdProperty; } }
-      public int CmdKeyChar { get { return cmdKeyChar; } }
-      public int CmdKeyCode { get { return cmdKeyCode; } }
-      public string Sound { get { return sound; } }
+      public int    CmdKeyChar  { get { return cmdKeyChar; } }
+      public int    CmdKeyCode  { get { return cmdKeyCode; } }
+      public string Sound       { get { return sound; } }
 
-      public Mapping(string newLayer, string newCondition, string newConProperty, string newCommand, string newCmdProperty, string newCmdKeyChar, string newCmdKeyCode, string newSound)
+      public Mapping(int newLayer, string newCondition, string newConProperty, string newCommand,
+        string newCmdProperty, int newCmdKeyChar, int newCmdKeyCode, string newSound)
       {
-        layer = Convert.ToInt32(newLayer);
-        condition = newCondition;
+        layer       = newLayer;
+        condition   = newCondition;
         conProperty = newConProperty;
-        command = newCommand;
+        command     = newCommand;
         cmdProperty = newCmdProperty;
-        if (newCmdKeyChar != string.Empty)
-          cmdKeyChar = Convert.ToInt32(newCmdKeyChar);
-        if (newCmdKeyCode != string.Empty)
-          cmdKeyCode = Convert.ToInt32(newCmdKeyCode);
-        sound = newSound;
+        cmdKeyChar  = newCmdKeyChar;
+        cmdKeyCode  = newCmdKeyCode;
+        sound       = newSound;
       }
     }
 
@@ -101,14 +100,14 @@ namespace MediaPortal
       string name;
       ArrayList mapping = new ArrayList();
 
-      public int Code { get { return code; } }
-      public string Name { get { return name; } }
+      public int       Code    { get { return code; } }
+      public string    Name    { get { return name; } }
       public ArrayList Mapping { get { return mapping; } }
 
       public RemoteMap(int newCode, string newName, ArrayList newMapping)
       {
-        code = newCode;
-        name = newName;
+        code    = newCode;
+        name    = newName;
         mapping = newMapping;
       }
     }
@@ -119,30 +118,19 @@ namespace MediaPortal
     /// </summary>
     /// <param name="xmlFile">Filename without path or extension</param>
     /// <returns>Valid version? true/false</returns>
-    public bool CheckVersion(string xmlFile)
+    public int GetXmlVersion(string xmlFile)
     {
       XmlDocument doc = new XmlDocument();
       try
       {
         doc.Load(xmlFile);
+        return Convert.ToInt32(doc.DocumentElement.SelectSingleNode("/mappings").Attributes["version"].Value);
       }
       catch (Exception ex)
       {
         Log.Write("MAP: error while reading XML configuration file \"{0}\": {1}", xmlFile, ex.ToString());
-        return false;
       }
-
-      try
-      {
-        if (Convert.ToInt32(doc.DocumentElement.SelectSingleNode("/mappings").Attributes["version"].Value) == xmlVersion)
-          return true;
-      }
-      catch
-      {
-      }
-      Log.Write("MAP: version mismatch in {0}", xmlFile);
-      Log.Write("MAP: Run configuration.exe and reset mappings to default.");
-      return false;
+      return 0;
     }
 
 
@@ -152,19 +140,31 @@ namespace MediaPortal
       string pathCustom = "InputDeviceMappings\\custom\\" + xmlFile + ".xml";
       string pathDefault = "InputDeviceMappings\\defaults\\" + xmlFile + ".xml";
 
-      if (File.Exists(pathCustom) && CheckVersion(pathCustom))
-      {
-        path = pathCustom;
-        Log.Write("MAP: using custom mappings for {0}", xmlFile);
-      }
-      else if (File.Exists(pathDefault) && CheckVersion(pathDefault))
-      {
-        path = pathDefault;
-        Log.Write("MAP: using default mappings for {0}", xmlFile);
-      }
+      if (File.Exists(pathCustom))
+        if (GetXmlVersion(pathCustom) == xmlVersion)
+        {
+          path = pathCustom;
+          Log.Write("MAP: using custom mappings for {0}", xmlFile);
+        }
+        else
+        {
+          Log.Write("MAP: version mismatch in {0}", xmlFile);
+          Log.Write("MAP: Run configuration.exe and reset mappings to default.");
+        }
+      else if (File.Exists(pathDefault))
+        if (GetXmlVersion(pathDefault) == xmlVersion)
+        {
+          path = pathDefault;
+          Log.Write("MAP: using default mappings for {0}", xmlFile);
+        }
+        else
+        {
+          Log.Write("MAP: version mismatch in {0}", xmlFile);
+          Log.Write("MAP: Get a new XML mapping file or reinstall MediaPortal.");
+        }
       else
       {
-        Log.Write("MAP: can't load default mapping for {0}", xmlFile);
+        Log.Write("MAP: can't load default mapping for {0} - file for this device does not exist", xmlFile);
       }
       return path;
     }
@@ -187,19 +187,19 @@ namespace MediaPortal
           XmlNodeList listActions = nodeButton.SelectNodes("action");
           foreach (XmlNode nodeAction in listActions)
           {
-            string cmdKeyChar = string.Empty;
-            string cmdKeyCode = string.Empty;
+            int cmdKeyChar = 0;
+            int cmdKeyCode = 0;
             string condition = nodeAction.Attributes["condition"].Value.ToUpper();
             string conProperty = nodeAction.Attributes["conproperty"].Value.ToUpper();
             string command = nodeAction.Attributes["command"].Value.ToUpper();
             string cmdProperty = nodeAction.Attributes["cmdproperty"].Value.ToUpper();
             if ((command == "ACTION") && (cmdProperty == "93"))
             {
-              cmdKeyChar = nodeAction.Attributes["cmdkeychar"].Value;
-              cmdKeyCode = nodeAction.Attributes["cmdkeycode"].Value;
+              cmdKeyChar = Convert.ToInt32(nodeAction.Attributes["cmdkeychar"].Value);
+              cmdKeyCode = Convert.ToInt32(nodeAction.Attributes["cmdkeycode"].Value);
             }
             string sound = nodeAction.Attributes["sound"].Value;
-            string layer = nodeAction.Attributes["layer"].Value;
+            int layer = Convert.ToInt32(nodeAction.Attributes["layer"].Value);
             Mapping conditionMap = new Mapping(layer, condition, conProperty, command, cmdProperty, cmdKeyChar, cmdKeyCode, sound);
             mapping.Add(conditionMap);
           }
@@ -348,7 +348,7 @@ namespace MediaPortal
     /// </summary>
     /// <param name="btnCode">Button code (ref: XML file)</param>
     /// <returns>Mapping</returns>
-    Mapping GetMapping(int btnCode)
+    public Mapping GetMapping(int btnCode)
     {
       RemoteMap button = null;
       Mapping found = null;

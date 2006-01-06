@@ -36,6 +36,7 @@ namespace NetHelper
   public class Connection
   {
     bool logVerbose;
+    UdpClient udpClient;
 
     Socket socket;
     IPAddress hostIP = IPAddress.Parse("127.0.0.1");
@@ -64,6 +65,13 @@ namespace NetHelper
     {
       logVerbose = log;
       socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+    }
+
+
+    public void Stop()
+    {
+      //if (udpClient != null)
+        udpClient.Close();
     }
 
 
@@ -101,7 +109,7 @@ namespace NetHelper
           }
         IPAddress hostIP = IPAddress.Parse("127.0.0.1");
         IPEndPoint endPoint = new IPEndPoint(hostIP, udpPort);
-        UdpClient udpClient = new UdpClient(endPoint);
+        udpClient = new UdpClient(endPoint);
         UdpState state = new UdpState();
         state.EndPoint = endPoint;
         state.UdpClient = udpClient;
