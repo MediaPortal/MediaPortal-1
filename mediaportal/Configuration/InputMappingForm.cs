@@ -606,180 +606,188 @@ namespace MediaPortal.Configuration
 
     void LoadMapping(string xmlFile, bool defaults)
     {
-      groupBoxLayer.Enabled = false;
-      groupBoxCondition.Enabled = false;
-      groupBoxAction.Enabled = false;
-      treeMapping.Nodes.Clear();
-      XmlDocument doc = new XmlDocument();
-      string path = "InputDeviceMappings\\defaults\\" + xmlFile;
-      if (!defaults && File.Exists("InputDeviceMappings\\custom\\" + xmlFile))
-        path = "InputDeviceMappings\\custom\\" + xmlFile;
-      doc.Load(path);
-      XmlNodeList listRemotes=doc.DocumentElement.SelectNodes("/mappings/remote");
-      
-      foreach (XmlNode nodeRemote in listRemotes)
+      try
       {
-        TreeNode remoteNode = new TreeNode(nodeRemote.Attributes["family"].Value);
-        remoteNode.Tag = new Data("REMOTE", null, nodeRemote.Attributes["family"].Value);
-        XmlNodeList listButtons=nodeRemote.SelectNodes("button");
-        foreach (XmlNode nodeButton in listButtons)
+        groupBoxLayer.Enabled = false;
+        groupBoxCondition.Enabled = false;
+        groupBoxAction.Enabled = false;
+        treeMapping.Nodes.Clear();
+        XmlDocument doc = new XmlDocument();
+        string path = "InputDeviceMappings\\defaults\\" + xmlFile;
+        if (!defaults && File.Exists("InputDeviceMappings\\custom\\" + xmlFile))
+          path = "InputDeviceMappings\\custom\\" + xmlFile;
+        doc.Load(path);
+        XmlNodeList listRemotes = doc.DocumentElement.SelectNodes("/mappings/remote");
+
+        foreach (XmlNode nodeRemote in listRemotes)
         {
-          TreeNode buttonNode = new TreeNode((string)nodeButton.Attributes["name"].Value);
-          buttonNode.Tag = new Data("BUTTON", nodeButton.Attributes["name"].Value, nodeButton.Attributes["code"].Value);
-          remoteNode.Nodes.Add(buttonNode);
-
-          TreeNode layer1Node   = new TreeNode("Layer 1");
-          TreeNode layer2Node   = new TreeNode("Layer 2");
-          TreeNode layerAllNode = new TreeNode("All Layers");
-          layer1Node.Tag = new Data("LAYER", null, "1");
-          layer2Node.Tag = new Data("LAYER", null, "2");
-          layerAllNode.Tag = new Data("LAYER", null, "0");
-          layer1Node.ForeColor = Color.DimGray;
-          layer2Node.ForeColor = Color.DimGray;
-          layerAllNode.ForeColor = Color.DimGray;
-
-          XmlNodeList listActions = nodeButton.SelectNodes("action");
-        
-          foreach (XmlNode nodeAction in listActions)
+          TreeNode remoteNode = new TreeNode(nodeRemote.Attributes["family"].Value);
+          remoteNode.Tag = new Data("REMOTE", null, nodeRemote.Attributes["family"].Value);
+          XmlNodeList listButtons = nodeRemote.SelectNodes("button");
+          foreach (XmlNode nodeButton in listButtons)
           {
-            string conditionString = string.Empty;
-            string commandString = string.Empty;
+            TreeNode buttonNode = new TreeNode((string)nodeButton.Attributes["name"].Value);
+            buttonNode.Tag = new Data("BUTTON", nodeButton.Attributes["name"].Value, nodeButton.Attributes["code"].Value);
+            remoteNode.Nodes.Add(buttonNode);
 
-            string condition   = nodeAction.Attributes["condition"].Value.ToUpper();
-            string conProperty = nodeAction.Attributes["conproperty"].Value.ToUpper();
-            string command     = nodeAction.Attributes["command"].Value.ToUpper();
-            string cmdProperty = nodeAction.Attributes["cmdproperty"].Value.ToUpper();
-            string sound       = nodeAction.Attributes["sound"].Value;
-            int    layer       = Convert.ToInt32(nodeAction.Attributes["layer"].Value);
+            TreeNode layer1Node = new TreeNode("Layer 1");
+            TreeNode layer2Node = new TreeNode("Layer 2");
+            TreeNode layerAllNode = new TreeNode("All Layers");
+            layer1Node.Tag = new Data("LAYER", null, "1");
+            layer2Node.Tag = new Data("LAYER", null, "2");
+            layerAllNode.Tag = new Data("LAYER", null, "0");
+            layer1Node.ForeColor = Color.DimGray;
+            layer2Node.ForeColor = Color.DimGray;
+            layerAllNode.ForeColor = Color.DimGray;
 
-            #region Conditions
+            XmlNodeList listActions = nodeButton.SelectNodes("action");
 
-            switch (condition)
+            foreach (XmlNode nodeAction in listActions)
             {
-              case "WINDOW":
-                conditionString = Enum.GetName(typeof(GUIWindow.Window), Convert.ToInt32(conProperty));
-                break;
-              case "FULLSCREEN":
-                if (conProperty == "TRUE")
-                  conditionString = "Fullscreen";
-                else
-                  conditionString = "No Fullscreen";
-                break;
-              case "PLAYER":
-              switch (conProperty)
+              string conditionString = string.Empty;
+              string commandString = string.Empty;
+
+              string condition = nodeAction.Attributes["condition"].Value.ToUpper();
+              string conProperty = nodeAction.Attributes["conproperty"].Value.ToUpper();
+              string command = nodeAction.Attributes["command"].Value.ToUpper();
+              string cmdProperty = nodeAction.Attributes["cmdproperty"].Value.ToUpper();
+              string sound = nodeAction.Attributes["sound"].Value;
+              int layer = Convert.ToInt32(nodeAction.Attributes["layer"].Value);
+
+              #region Conditions
+
+              switch (condition)
               {
-                case "TV":
-                  conditionString = "TV Playing";
+                case "WINDOW":
+                  conditionString = Enum.GetName(typeof(GUIWindow.Window), Convert.ToInt32(conProperty));
                   break;
-                case "DVD":
-                  conditionString = "DVD Playing";
+                case "FULLSCREEN":
+                  if (conProperty == "TRUE")
+                    conditionString = "Fullscreen";
+                  else
+                    conditionString = "No Fullscreen";
                   break;
-                case "MEDIA":
-                  conditionString = "Media Playing";
+                case "PLAYER":
+                  switch (conProperty)
+                  {
+                    case "TV":
+                      conditionString = "TV Playing";
+                      break;
+                    case "DVD":
+                      conditionString = "DVD Playing";
+                      break;
+                    case "MEDIA":
+                      conditionString = "Media Playing";
+                      break;
+                  }
+                  break;
+                case "*":
+                  conditionString = "No Condition";
                   break;
               }
-                break;
-              case "*":
-                conditionString = "No Condition";
-                break;
-            }
 
-            #endregion
-            #region Commands
+              #endregion
+              #region Commands
 
-            switch (command)
-            {
-              case "ACTION":
-                commandString = Enum.GetName(typeof(Action.ActionType), Convert.ToInt32(cmdProperty));
-                break;
-              case "KEY":
-                commandString = "Key \"" + cmdProperty + "\"";
-                break;
-              case "WINDOW":
-                commandString = Enum.GetName(typeof(GUIWindow.Window), Convert.ToInt32(cmdProperty));
-                break;
-              case "TOGGLE":
-                commandString = "Toggle Layer";
-                break;
-              case "POWER":
-              switch (cmdProperty)
+              switch (command)
               {
-                case "EXIT":
-                  commandString = "Exit MediaPortal";
+                case "ACTION":
+                  commandString = Enum.GetName(typeof(Action.ActionType), Convert.ToInt32(cmdProperty));
                   break;
-                case "REBOOT":
-                  commandString = "Reboot Windows";
+                case "KEY":
+                  commandString = "Key \"" + cmdProperty + "\"";
                   break;
-                case "SHUTDOWN":
-                  commandString = "Shutdown Windows";
+                case "WINDOW":
+                  commandString = Enum.GetName(typeof(GUIWindow.Window), Convert.ToInt32(cmdProperty));
                   break;
-                case "STANDBY":
-                  commandString = "Suspend Windows (Standby)";
+                case "TOGGLE":
+                  commandString = "Toggle Layer";
                   break;
-                case "HIBERNATE":
-                  commandString = "Hibernate Windows";
+                case "POWER":
+                  switch (cmdProperty)
+                  {
+                    case "EXIT":
+                      commandString = "Exit MediaPortal";
+                      break;
+                    case "REBOOT":
+                      commandString = "Reboot Windows";
+                      break;
+                    case "SHUTDOWN":
+                      commandString = "Shutdown Windows";
+                      break;
+                    case "STANDBY":
+                      commandString = "Suspend Windows (Standby)";
+                      break;
+                    case "HIBERNATE":
+                      commandString = "Hibernate Windows";
+                      break;
+                  }
+                  break;
+                case "PROCESS":
+                  switch (cmdProperty)
+                  {
+                    case "CLOSE":
+                      commandString = "Close Process";
+                      break;
+                    case "KILL":
+                      commandString = "Kill Process";
+                      break;
+                  }
                   break;
               }
-                break;
-              case "PROCESS":
-              switch (cmdProperty)
+
+              #endregion
+
+              TreeNode conditionNode = new TreeNode(conditionString);
+              conditionNode.Tag = new Data("CONDITION", nodeAction.Attributes["condition"].Value, nodeAction.Attributes["conproperty"].Value);
+              if (commandString == "ACTION_KEY_PRESSED")
               {
-                case "CLOSE":
-                  commandString = "Close Process";
-                  break;
-                case "KILL":
-                  commandString = "Kill Process";
-                  break;
+                string cmdKeyChar = nodeAction.Attributes["cmdkeychar"].Value;
+                string cmdKeyCode = nodeAction.Attributes["cmdkeycode"].Value;
+                TreeNode commandNode = new TreeNode(string.Format("ACTION_KEY_PRESSED: {0} [{1}]", cmdKeyChar, cmdKeyCode));
+
+                Key key = new Key(Convert.ToInt32(cmdKeyChar), Convert.ToInt32(cmdKeyCode));
+
+                commandNode.Tag = new Data("COMMAND", "KEY", key);
+                commandNode.ForeColor = Color.DarkGreen;
+                conditionNode.ForeColor = Color.Blue;
+                conditionNode.Nodes.Add(commandNode);
               }
-                break;
+              else
+              {
+                TreeNode commandNode = new TreeNode(commandString);
+                commandNode.Tag = new Data("COMMAND", nodeAction.Attributes["command"].Value, nodeAction.Attributes["cmdproperty"].Value);
+                commandNode.ForeColor = Color.DarkGreen;
+                conditionNode.ForeColor = Color.Blue;
+                conditionNode.Nodes.Add(commandNode);
+              }
+
+              TreeNode soundNode = new TreeNode(sound);
+              soundNode.Tag = new Data("SOUND", null, nodeAction.Attributes["sound"].Value);
+              if (soundNode.Text == string.Empty)
+                soundNode.Text = "No Sound";
+              soundNode.ForeColor = Color.DarkRed;
+              conditionNode.Nodes.Add(soundNode);
+
+              if (layer == 1) layer1Node.Nodes.Add(conditionNode);
+              if (layer == 2) layer2Node.Nodes.Add(conditionNode);
+              if (layer == 0) layerAllNode.Nodes.Add(conditionNode);
             }
-
-            #endregion
-
-            TreeNode conditionNode = new TreeNode(conditionString);
-            conditionNode.Tag = new Data("CONDITION", nodeAction.Attributes["condition"].Value, nodeAction.Attributes["conproperty"].Value);
-            if (commandString == "ACTION_KEY_PRESSED")
-            {
-              string cmdKeyChar = nodeAction.Attributes["cmdkeychar"].Value;
-              string cmdKeyCode = nodeAction.Attributes["cmdkeycode"].Value;
-              TreeNode commandNode = new TreeNode(string.Format("ACTION_KEY_PRESSED: {0} [{1}]", cmdKeyChar, cmdKeyCode));
-
-              Key key = new Key(Convert.ToInt32(cmdKeyChar), Convert.ToInt32(cmdKeyCode));
-
-              commandNode.Tag = new Data("COMMAND", "KEY", key);
-              commandNode.ForeColor = Color.DarkGreen;
-              conditionNode.ForeColor = Color.Blue;
-              conditionNode.Nodes.Add(commandNode);
-            }
-            else
-            {
-              TreeNode commandNode = new TreeNode(commandString);
-              commandNode.Tag = new Data("COMMAND", nodeAction.Attributes["command"].Value, nodeAction.Attributes["cmdproperty"].Value);
-              commandNode.ForeColor = Color.DarkGreen;
-              conditionNode.ForeColor = Color.Blue;
-              conditionNode.Nodes.Add(commandNode);
-            }
-
-            TreeNode soundNode = new TreeNode(sound);
-            soundNode.Tag = new Data("SOUND", null, nodeAction.Attributes["sound"].Value);
-            if (soundNode.Text == string.Empty)
-              soundNode.Text = "No Sound";
-            soundNode.ForeColor = Color.DarkRed;
-            conditionNode.Nodes.Add(soundNode);
-
-            if (layer == 1) layer1Node.Nodes.Add(conditionNode);
-            if (layer == 2) layer2Node.Nodes.Add(conditionNode);
-            if (layer == 0) layerAllNode.Nodes.Add(conditionNode);
+            if (layer1Node.Nodes.Count > 0) buttonNode.Nodes.Add(layer1Node);
+            if (layer2Node.Nodes.Count > 0) buttonNode.Nodes.Add(layer2Node);
+            if (layerAllNode.Nodes.Count > 0) buttonNode.Nodes.Add(layerAllNode);
           }
-          if (layer1Node.Nodes.Count > 0) buttonNode.Nodes.Add(layer1Node);
-          if (layer2Node.Nodes.Count > 0) buttonNode.Nodes.Add(layer2Node);
-          if (layerAllNode.Nodes.Count > 0) buttonNode.Nodes.Add(layerAllNode);
+          treeMapping.Nodes.Add(remoteNode);
+          if (listRemotes.Count == 1)
+            remoteNode.Expand();
         }
-        treeMapping.Nodes.Add(remoteNode);
-        if (listRemotes.Count == 1)
-          remoteNode.Expand();
+        changedSettings = false;
       }
-      changedSettings = false;
+      catch
+      {
+        File.Delete("InputDeviceMappings\\custom\\" + xmlFile);
+        LoadMapping(xmlFile, true);
+      }
     }
 
     bool SaveMapping(string xmlFile)
