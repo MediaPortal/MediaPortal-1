@@ -38,15 +38,15 @@ namespace MediaPortal.Tests.Plugins.HCWHelper.NetHelper
   {
     int udpPort = 2110;
 
-    [Test]
-    public void ListenForIncoming()
-    {
-      Connection connection = new Connection(true);
-      Assert.IsTrue(connection.Start(udpPort));
-      connection.Stop();
-      connection = null;
-      Thread.Sleep(2000);
-    }
+    //[Test]
+    //public void ListenForIncoming()
+    //{
+    //  Connection connection = new Connection(true);
+    //  Assert.IsTrue(connection.Start(udpPort));
+    //  connection.Stop();
+    //  connection = null;
+    //  Thread.Sleep(2000);
+    //}
 
     [Test]
     public void SendMessage()
