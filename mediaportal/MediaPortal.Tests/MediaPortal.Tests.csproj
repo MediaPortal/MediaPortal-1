@@ -41,10 +41,11 @@
   <ItemGroup>
     <Compile Include="Core\Playlists\PlayListB4STest.cs" />
     <Compile Include="Core\Playlists\PlayListM3UTests.cs" />
-    <Compile Include="Core\Playlists\PlayListPlayerTest.cs" />
     <Compile Include="Core\Playlists\PlayListPLSTest.cs" />
     <Compile Include="Core\Playlists\PlayListTest.cs" />
     <Compile Include="Core\Playlists\PlayListWPLTest.cs" />
+    <Compile Include="Plugins\HCWHelper\NetHelper\NetHelperTest.cs" />
+    <Compile Include="Plugins\RemotePlugins\HCWRemote\InputHandlerTest.cs" />
     <Compile Include="TVCapture\DiskManagement\DeleteOldRecordings.cs" />
     <Compile Include="TVCapture\DiskManagement\TestEpisodeManagement.cs" />
     <Compile Include="TVCapture\Teletext\RendererTest.cs" />
@@ -63,6 +64,14 @@
     <ProjectReference Include="..\Databases\Databases.csproj">
       <Project>{C1BCEC3E-6074-4328-B5D9-391A457C8FFB}</Project>
       <Name>Databases</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RemotePlugins\HCWHelper\NetHelper\NetHelper.csproj">
+      <Project>{25048311-34C0-48F6-8352-5D6C90DADAED}</Project>
+      <Name>NetHelper</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RemotePlugins\RemotePlugins.csproj">
+      <Project>{0A234721-1F13-4DF8-9B1E-64D9E3111203}</Project>
+      <Name>RemotePlugins</Name>
     </ProjectReference>
     <ProjectReference Include="..\TVCapture\TVCapture.csproj">
       <Project>{B5886774-5D2B-4F6C-A6B6-3998F4F5E60C}</Project>
