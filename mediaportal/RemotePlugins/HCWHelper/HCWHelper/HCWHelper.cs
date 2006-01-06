@@ -110,7 +110,7 @@ namespace HCWHelper
 
     private void CheckThread()
     {
-      while (!cancelWait && (Process.GetProcessesByName("MediaPortal").Length > 0))
+      while (!cancelWait && ((Process.GetProcessesByName("MediaPortal").Length > 0) || (Process.GetProcessesByName("MediaPortal.vshost").Length > 0)))
         Thread.Sleep(1000);
 
       if (logVerbose) MediaPortal.GUI.Library.Log.Write("HCW Helper: MediaPortal is not running");

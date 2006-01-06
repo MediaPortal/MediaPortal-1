@@ -42,9 +42,12 @@ namespace HCWHelper
     {
       try
       {
-        MediaPortal.GUI.Library.Log.Write("HCW Helper: Starting up");
+        Log.Write("HCW Helper: Starting up");
         Thread.CurrentThread.Priority = ThreadPriority.Highest;
-        if ((Process.GetProcessesByName("HCWHelper").Length == 1) && (Process.GetProcessesByName("MediaPortal").Length > 0))
+
+        if ((Process.GetProcessesByName("HCWHelper").Length == 1) &&
+          ((Process.GetProcessesByName("MediaPortal").Length > 0) ||
+          (Process.GetProcessesByName("MediaPortal.vshost").Length > 0)))
         {
           Application.EnableVisualStyles();
           Application.SetCompatibleTextRenderingDefault(false);
@@ -52,11 +55,14 @@ namespace HCWHelper
           Application.Run(new HCWHelper());
         }
         else
-          MediaPortal.GUI.Library.Log.Write("HCW Helper: MediaPortal not running - exiting");
+          if (Process.GetProcessesByName("HCWHelper").Length != 1)
+            Log.Write("HCW Helper: HCWHelper already running - exiting");
+          else
+            Log.Write("HCW Helper: MediaPortal not running - exiting");
       }
       catch (Exception ex)
       {
-        MediaPortal.GUI.Library.Log.Write("HCW Helper: Main: {0}", ex.Message);
+        Log.Write("HCW Helper: Main: {0}", ex.Message);
       }
     }
   }

@@ -93,17 +93,22 @@ namespace MediaPortal
         filterDoubleKlicks = xmlreader.GetValueAsBool("remote", "HCWFilterDoubleKlicks", false);
         port = xmlreader.GetValueAsInt("remote", "HCWHelperPort", 2110);
       }
-      bool result = false;
       if (controlEnabled)
-        hcwHandler = new InputHandler("Hauppauge HCW", out result);
+        hcwHandler = new InputHandler("Hauppauge HCW", out controlEnabled);
 
-      controlEnabled = (controlEnabled && result);
       if (controlEnabled)
       {
         connection = new NetHelper.Connection(logVerbose);
-        Process.Start(System.Windows.Forms.Application.StartupPath + @"\HCWHelper.exe");
+
+        Process process = Process.GetCurrentProcess();
+        Log.Write("Process: {0}", process.ProcessName);
+
+        Process procHelper = new Process();
+        procHelper.StartInfo.FileName = string.Format("{0}\\HCWHelper.exe", System.Windows.Forms.Application.StartupPath);
+        procHelper.Start();
         if (allowExternal)
         {
+          Log.Write("HCW: AllowExternal");
           Utils.OnStartExternal += new Utils.UtilEventHandler(OnStartExternal);
           Utils.OnStopExternal += new Utils.UtilEventHandler(OnStopExternal);
         }
