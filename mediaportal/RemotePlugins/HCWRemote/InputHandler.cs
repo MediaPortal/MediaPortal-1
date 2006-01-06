@@ -146,11 +146,7 @@ namespace MediaPortal
     }
 
 
-    /// <summary>
-    /// Constructor: Initializes mappings from XML file
-    /// </summary>
-    /// <param name="xmlFile">XML mapping file</param>
-    public InputHandler(string xmlFile, out bool result)
+    public string GetXmlPath(string xmlFile)
     {
       string path = string.Empty;
       string pathCustom = "InputDeviceMappings\\custom\\" + xmlFile + ".xml";
@@ -169,15 +165,18 @@ namespace MediaPortal
       else
       {
         Log.Write("MAP: can't load default mapping for {0}", xmlFile);
-        result = false;
-        return;
       }
+      return path;
+    }
 
+
+    public bool LoadMapping(string xmlPath)
+    {
       try
       {
         remote = new ArrayList();
         XmlDocument doc = new XmlDocument();
-        doc.Load(path);
+        doc.Load(xmlPath);
         XmlNodeList listButtons = doc.DocumentElement.SelectNodes("/mappings/remote/button");
         foreach (XmlNode nodeButton in listButtons)
         {
@@ -207,14 +206,24 @@ namespace MediaPortal
           RemoteMap remoteMap = new RemoteMap(value, name, mapping);
           remote.Add(remoteMap);
         }
-        result = true;
+        return true;
       }
       catch (Exception ex)
       {
-        Log.Write("MAP: error while reading XML configuration file \"{0}\": {1}", xmlFile, ex.ToString());
-        result = false;
-        return;
+        Log.Write("MAP: error while reading XML configuration file \"{0}\": {1}", xmlPath, ex.ToString());
+        return false;
       }
+    }
+
+
+    /// <summary>
+    /// Constructor: Initializes mappings from XML file
+    /// </summary>
+    /// <param name="xmlFile">XML mapping file</param>
+    public InputHandler(string xmlFile, out bool success)
+    {
+      string xmlPath = GetXmlPath(xmlFile);
+      success = LoadMapping(xmlPath);
     }
 
 

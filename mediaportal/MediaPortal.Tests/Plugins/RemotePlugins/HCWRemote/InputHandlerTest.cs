@@ -9,31 +9,51 @@ namespace MediaPortal.Tests.Plugins.RemotePlugins.HCWRemote
   [Category("InputHandler")]
   public class InputHandlerTest
   {
-    
     [Test]
-    public void InitializeInputHandlerDefault()
+    public void GetFileDefault()
     {
       bool result = false;
-      InputHandler hcwHandler = new InputHandler("Test", out result);
-      Assert.IsTrue(result);
+      string xmlFile = "TestDefault";
+      InputHandler inputHandler = new InputHandler(xmlFile, out result);
+      Assert.AreEqual("InputDeviceMappings\\defaults\\TestDefault.xml", inputHandler.GetXmlPath(xmlFile));
     }
 
     [Test]
-    public void InitializeInputHandlerCustom()
+    public void GetFileCustom()
     {
       bool result = false;
-      InputHandler hcwHandler = new InputHandler("Test2", out result);
-      Assert.IsTrue(result);
+      string xmlFile = "TestCustom";
+      InputHandler inputHandler = new InputHandler(xmlFile, out result);
+      Assert.AreEqual("InputDeviceMappings\\custom\\TestCustom.xml", inputHandler.GetXmlPath(xmlFile));
+    }
+
+    [Test]
+    public void GetFileFail()
+    {
+      bool result = false;
+      string xmlFile = "TestFail";
+      InputHandler inputHandler = new InputHandler(xmlFile, out result);
+      Assert.AreNotEqual("InputDeviceMappings\\defaults\\TestFail.xml", inputHandler.GetXmlPath(xmlFile));
+    }
+
+    [Test]
+    public void LoadMapping()
+    {
+      bool result = false;
+      string xmlPath = "TestDefault.xml";
+      InputHandler inputHandler = new InputHandler(xmlPath, out result);
+      Assert.IsTrue(inputHandler.LoadMapping(xmlPath));
     }
 
     [Test]
     public void MapCommand()
     {
       bool result = false;
+      string xmlFile = "TestDefault";
       int newCommand = 0;
-      InputHandler hcwHandler = new InputHandler("Test", out result);
+      InputHandler inputHandler = new InputHandler(xmlFile, out result);
       Assert.IsTrue(result);
-      Assert.IsTrue(hcwHandler.MapAction(newCommand));
+      Assert.IsTrue(inputHandler.MapAction(newCommand));
     }
 
   }
