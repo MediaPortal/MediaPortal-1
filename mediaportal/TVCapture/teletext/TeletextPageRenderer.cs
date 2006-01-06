@@ -38,7 +38,7 @@ namespace MediaPortal.TV.Teletext
       Trans1,
       Trans2
     }
-    enum Attributes
+    public enum Attributes
     {
       AlphaBlack,
       AlphaRed,

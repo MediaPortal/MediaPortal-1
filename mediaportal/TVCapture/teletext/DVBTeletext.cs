@@ -254,6 +254,7 @@ namespace MediaPortal.TV.Teletext
       {
         byte[] byPage = _pageCache.GetPage(_currentPageNumber, _currentSubPageNumber);
         _fastTextDecoder.Decode(byPage);
+        
         if (_topTextDecoder.Decode(_pageCache, _currentPageNumber))
         {
           AddTopTextRow24(ref byPage);

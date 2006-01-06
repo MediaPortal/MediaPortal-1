@@ -846,7 +846,7 @@ namespace MediaPortal.TV.Recording
 
       m_graphState = State.Viewing;
       TuneChannel(channel);
-      m_mpeg2Demux.StartViewing(GUIGraphicsContext.form.Handle, Vmr9);
+      m_mpeg2Demux.StartViewing(GUIGraphicsContext.ActiveForm, Vmr9);
 
       DirectShowUtil.EnableDeInterlace(m_graphBuilder);
       using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))

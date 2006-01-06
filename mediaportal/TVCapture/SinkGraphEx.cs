@@ -221,6 +221,7 @@ namespace MediaPortal.TV.Recording
             sourceFilter.FriendlyName, ((ConnectionDefinition)mCard.TvConnectionDefinitions[i]).SourcePinName,
             sinkFilter.FriendlyName, ((ConnectionDefinition)mCard.TvConnectionDefinitions[i]).SinkPinName);
 
+
           //sourceFilter.DSFilter.FindPin(((ConnectionDefinition)mCard.ConnectionDefinitions[i]).SourcePinName, out sourcePin);
           sourcePin = DirectShowUtil.FindPin(sourceFilter.DSFilter, PinDirection.Output, ((ConnectionDefinition)mCard.TvConnectionDefinitions[i]).SourcePinName);
           if (sourcePin == null)
@@ -238,7 +239,9 @@ namespace MediaPortal.TV.Recording
           else
             Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:   Found sourcePin: <{0}> ", ((ConnectionDefinition)mCard.TvConnectionDefinitions[i]).SourcePinName);
 
-          //sinkFilter.DSFilter.FindPin(((ConnectionDefinition)mCard.ConnectionDefinitions[i]).SinkPinName, out sinkPin);
+          sinkPin=GetPin(sinkFilter.DSFilter, PinDirection.Input, ((ConnectionDefinition)mCard.TvConnectionDefinitions[i]).SinkPinName);
+          /*
+           * //sinkFilter.DSFilter.FindPin(((ConnectionDefinition)mCard.ConnectionDefinitions[i]).SinkPinName, out sinkPin);
           sinkPin = DirectShowUtil.FindPin(sinkFilter.DSFilter, PinDirection.Input, ((ConnectionDefinition)mCard.TvConnectionDefinitions[i]).SinkPinName);
           if (sinkPin == null)
           {
@@ -254,7 +257,7 @@ namespace MediaPortal.TV.Recording
           }
           else
             Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:   Found sinkPin: <{0}> ", ((ConnectionDefinition)mCard.TvConnectionDefinitions[i]).SinkPinName);
-
+          */
           if (sourcePin != null && sinkPin != null)
           {
             IPin conPin;
@@ -629,6 +632,60 @@ namespace MediaPortal.TV.Recording
       m_graphState = State.None;
       return;
     }
+
+    IPin GetPin(IBaseFilter filter, PinDirection direction, string pinName)
+    {
+      if (direction == PinDirection.Input)
+      {
+        if (String.Compare(pinName, "%tvtuner%", true) == 0)
+        {
+          IPin pin = FindCrossBarPin(filter, PhysicalConnectorType.Video_Tuner);
+          if (pin != null) return pin;
+        }
+        if (String.Compare(pinName, "%audiotuner%", true) == 0)
+        {
+          IPin pin = FindCrossBarPin(filter, PhysicalConnectorType.Audio_Tuner);
+          if (pin != null) return pin;
+        }
+      }
+
+      IPin sinkPin = DirectShowUtil.FindPin(filter, direction, pinName);
+      if (sinkPin == null)
+      {
+        if ((pinName.Length == 1) && (Char.IsDigit(pinName, 0)))
+        {
+          sinkPin = DirectShowUtil.FindPinNr(filter, PinDirection.Input, Convert.ToInt32(pinName));
+          if (sinkPin == null)
+            Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:   Unable to find pin: <{0}>", pinName);
+          else
+            Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:   Found pin: <{0}> <{1}>", pinName, sinkPin.ToString());
+        }
+      }
+      else
+        Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:   Found pin: <{0}> ", pinName);
+      return sinkPin;
+    }
+
+    IPin FindCrossBarPin(IBaseFilter filter,PhysicalConnectorType inputPinType)
+    {
+      IAMCrossbar crossbar = filter as IAMCrossbar;
+      if (crossbar == null) return null;
+      int outputPins, inputPins;
+      crossbar.get_PinCounts(out outputPins, out inputPins);
+      for (int i = 0; i < inputPins; ++i)
+      {
+        int relatedPin;
+        PhysicalConnectorType physicalTypeIn;			// type of input pin
+        crossbar.get_CrossbarPinInfo(true, i, out relatedPin, out physicalTypeIn);
+        if (physicalTypeIn == inputPinType)
+        {
+          IPin pin= DirectShowUtil.FindPinNr(filter, PinDirection.Input, i);
+          return pin;
+        }
+      }
+      return null;
+    }
+
     #endregion Overrides
 
     #region Obsolete But Probably Needed Again

@@ -20,7 +20,6 @@
  */
 using System;
 using System.Drawing;
-using System.Management;
 using System.IO;
 using System.Net;
 using System.Text.RegularExpressions;

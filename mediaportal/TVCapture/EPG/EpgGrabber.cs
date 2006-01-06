@@ -1023,7 +1023,7 @@ namespace MediaPortal.TV.Recording
 
     void UpdateChannels()
     {
-      if (_epgChannels.Count == null) return;
+      if (_epgChannels == null) return;
       if (_epgChannels.Count == 0) return;
       Log.WriteFile(Log.LogType.EPG, "epg-grab: update {0} channels",_epgChannels.Count);
 

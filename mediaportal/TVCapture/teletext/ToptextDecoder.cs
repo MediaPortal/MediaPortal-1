@@ -77,7 +77,7 @@ namespace MediaPortal.TV.Teletext
     int ConvertToHex(int number)
     {
       if (number < 0) return -1;
-      int mag = number / 100; number -= (mag*100);
+      int mag = number / 100; number -= (mag * 100);
       int tens = (number / 10);
       int units = (number % 10);
       return mag * 0x100 + tens * 0x10 + units;
@@ -95,18 +95,18 @@ namespace MediaPortal.TV.Teletext
       if (nextBlock == String.Empty) nextBlock = green.ToString();
 
       Hamming.SetPacketNumber(0, ref _row24, pageNumber, 24);
-      int spaces = 40 - (nextGroup.Length + nextBlock.Length + 3 + 3);
+      int spaces = 40 - (nextGroup.Length + nextBlock.Length + 3 + 3 + 4);
       spaces /= 3;
-      string line = red.ToString();
-      for (int x = 0; x < spaces; x++) line += " ";
-      
-      line += nextGroup;
+      string line = ((char)TeletextPageRenderer.Attributes.AlphaRed) + red.ToString();
       for (int x = 0; x < spaces; x++) line += " ";
 
-      line += nextBlock;
+      line += ((char)TeletextPageRenderer.Attributes.AlphaGreen) + nextGroup;
       for (int x = 0; x < spaces; x++) line += " ";
-      line += blue.ToString();
-      for (int i = 0; i < line.Length && i <= 40;++i )
+
+      line += ((char)TeletextPageRenderer.Attributes.AlphaYellow) + nextBlock;
+      for (int x = 0; x < spaces; x++) line += " ";
+      line += ((char)TeletextPageRenderer.Attributes.AlphaCyan) + blue.ToString();
+      for (int i = 0; i < line.Length && i <= 40; ++i)
       {
         _row24[2 + i] = (byte)line[i];
       }
@@ -128,7 +128,7 @@ namespace MediaPortal.TV.Teletext
       nextBlock = "";
       redPage = greenPage = yellowPage = bluePage = -1;
 
-      DecodeBasicPage(cache);
+      if (!DecodeBasicPage(cache)) return false;
       DecodeMultiPage(cache);
       DecodeAdditionalPages(cache);
 
@@ -243,12 +243,12 @@ namespace MediaPortal.TV.Teletext
       return false;
     }
 
-    void DecodeBasicPage(TeletextPageCache cache)
+    bool DecodeBasicPage(TeletextPageCache cache)
     {
       //basic toppage contains information which teletext pages are onair
       //and if onair if it has subpages or not
       //also contains the type for each page
-      if (!cache.PageExists(TOP_BASIC_PAGE)) return;
+      if (!cache.PageExists(TOP_BASIC_PAGE)) return false;
       byte[] basicPage = cache.GetPage(TOP_BASIC_PAGE, 0);
       for (int pageNr = 100; pageNr <= 899; pageNr++)
       {
@@ -281,6 +281,7 @@ namespace MediaPortal.TV.Teletext
           _pageSubCount[pageNr] = 0;
         }
       }
+      return true;
     }
 
     void DecodeMultiPage(TeletextPageCache cache)

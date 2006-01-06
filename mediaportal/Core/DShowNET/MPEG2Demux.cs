@@ -312,15 +312,16 @@ namespace DShowNET
 			if (useOverlay)
 			{
 				// get the interfaces of the overlay window
-				m_videoWindow = m_graphBuilder as IVideoWindow;
+				
+        m_videoWindow = m_graphBuilder as IVideoWindow;
 				m_basicVideo  = m_graphBuilder as IBasicVideo2;
 				if (m_videoWindow!=null)
 				{
 					// set window message handler
-					m_videoWindow.put_MessageDrain(GUIGraphicsContext.form.Handle);
+					m_videoWindow.put_MessageDrain(GUIGraphicsContext.ActiveForm);
 
 					// set the properties of the overlay window
-					hr = m_videoWindow.put_Owner( GUIGraphicsContext.form.Handle );
+          hr = m_videoWindow.put_Owner(GUIGraphicsContext.ActiveForm);
 					if( hr != 0 ) 
 						Log.WriteFile(Log.LogType.Capture,true,"mpeg2:FAILED:set Video window:0x{0:X}",hr);
 
