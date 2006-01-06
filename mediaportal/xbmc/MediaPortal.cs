@@ -1305,7 +1305,7 @@ public class MediaPortalApp : D3DApp, IRender
             {
               return;
             }
-            PlayListPlayer.PlayNext(true);
+            PlayListPlayer.PlayNext();
             break;
 
           case Action.ActionType.ACTION_STOP:

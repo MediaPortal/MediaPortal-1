@@ -1782,7 +1782,7 @@ namespace MediaPortal.GUI.Video
       
       if (iMovieIndex==-1)
       {
-        PlayListPlayer.PlayNext(true);
+        PlayListPlayer.PlayNext();
       }
       else
       {

@@ -175,7 +175,7 @@ namespace MediaPortal.GUI.Music
       else if (control == btnNext)
       {
         PlayListPlayer.CurrentPlaylist = PlayListType.PLAYLIST_MUSIC;
-        PlayListPlayer.PlayNext(true);
+        PlayListPlayer.PlayNext();
         SelectCurrentPlayingSong();
       }
       else if (control == btnPrevious)

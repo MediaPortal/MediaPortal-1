@@ -60,34 +60,34 @@ namespace MediaPortal
     {
       string condition;
       string conProperty;
-      int    layer;
+      int layer;
       string command;
       string cmdProperty;
-      int    cmdKeyChar;
-      int    cmdKeyCode;
+      int cmdKeyChar;
+      int cmdKeyCode;
       string sound;
 
-      public int    Layer       { get { return layer;       } }
-      public string Condition   { get { return condition;   } }
+      public int Layer { get { return layer; } }
+      public string Condition { get { return condition; } }
       public string ConProperty { get { return conProperty; } }
-      public string Command     { get { return command;     } }
+      public string Command { get { return command; } }
       public string CmdProperty { get { return cmdProperty; } }
-      public int    CmdKeyChar  { get { return cmdKeyChar;  } }
-      public int    CmdKeyCode  { get { return cmdKeyCode;  } }
-      public string Sound       { get { return sound;       } }
+      public int CmdKeyChar { get { return cmdKeyChar; } }
+      public int CmdKeyCode { get { return cmdKeyCode; } }
+      public string Sound { get { return sound; } }
 
       public Mapping(string newLayer, string newCondition, string newConProperty, string newCommand, string newCmdProperty, string newCmdKeyChar, string newCmdKeyCode, string newSound)
       {
-        layer       = Convert.ToInt32(newLayer);
-        condition   = newCondition;
+        layer = Convert.ToInt32(newLayer);
+        condition = newCondition;
         conProperty = newConProperty;
-        command     = newCommand;
+        command = newCommand;
         cmdProperty = newCmdProperty;
         if (newCmdKeyChar != string.Empty)
-          cmdKeyChar  = Convert.ToInt32(newCmdKeyChar);
+          cmdKeyChar = Convert.ToInt32(newCmdKeyChar);
         if (newCmdKeyCode != string.Empty)
-          cmdKeyCode  = Convert.ToInt32(newCmdKeyCode);
-        sound       = newSound;
+          cmdKeyCode = Convert.ToInt32(newCmdKeyCode);
+        sound = newSound;
       }
     }
 
@@ -97,18 +97,18 @@ namespace MediaPortal
     /// </summary>
     class RemoteMap
     {
-      int       code;
-      string    name;
+      int code;
+      string name;
       ArrayList mapping = new ArrayList();
 
-      public int       Code    { get { return code;    } }
-      public string    Name    { get { return name;    } }
+      public int Code { get { return code; } }
+      public string Name { get { return name; } }
       public ArrayList Mapping { get { return mapping; } }
 
       public RemoteMap(int newCode, string newName, ArrayList newMapping)
       {
-        code    = newCode;
-        name    = newName;
+        code = newCode;
+        name = newName;
         mapping = newMapping;
       }
     }
@@ -162,10 +162,10 @@ namespace MediaPortal
         Log.Write("MAP: using custom mappings for {0}", xmlFile);
       }
       else if (File.Exists(pathDefault) && CheckVersion(pathDefault))
-        {
-          path = pathDefault;
-          Log.Write("MAP: using default mappings for {0}", xmlFile);
-        }
+      {
+        path = pathDefault;
+        Log.Write("MAP: using default mappings for {0}", xmlFile);
+      }
       else
       {
         Log.Write("MAP: can't load default mapping for {0}", xmlFile);
@@ -178,11 +178,11 @@ namespace MediaPortal
         remote = new ArrayList();
         XmlDocument doc = new XmlDocument();
         doc.Load(path);
-        XmlNodeList listButtons=doc.DocumentElement.SelectNodes("/mappings/remote/button");
+        XmlNodeList listButtons = doc.DocumentElement.SelectNodes("/mappings/remote/button");
         foreach (XmlNode nodeButton in listButtons)
         {
-          string name  = nodeButton.Attributes["name"].Value;
-          int    value = Convert.ToInt32(nodeButton.Attributes["code"].Value);
+          string name = nodeButton.Attributes["name"].Value;
+          int value = Convert.ToInt32(nodeButton.Attributes["code"].Value);
 
           ArrayList mapping = new ArrayList();
           XmlNodeList listActions = nodeButton.SelectNodes("action");
@@ -190,17 +190,17 @@ namespace MediaPortal
           {
             string cmdKeyChar = string.Empty;
             string cmdKeyCode = string.Empty;
-            string condition   = nodeAction.Attributes["condition"].Value.ToUpper();
+            string condition = nodeAction.Attributes["condition"].Value.ToUpper();
             string conProperty = nodeAction.Attributes["conproperty"].Value.ToUpper();
-            string command     = nodeAction.Attributes["command"].Value.ToUpper();
+            string command = nodeAction.Attributes["command"].Value.ToUpper();
             string cmdProperty = nodeAction.Attributes["cmdproperty"].Value.ToUpper();
             if ((command == "ACTION") && (cmdProperty == "93"))
             {
               cmdKeyChar = nodeAction.Attributes["cmdkeychar"].Value;
               cmdKeyCode = nodeAction.Attributes["cmdkeycode"].Value;
             }
-            string sound       = nodeAction.Attributes["sound"].Value;
-            string layer       = nodeAction.Attributes["layer"].Value;
+            string sound = nodeAction.Attributes["sound"].Value;
+            string layer = nodeAction.Attributes["layer"].Value;
             Mapping conditionMap = new Mapping(layer, condition, conProperty, command, cmdProperty, cmdKeyChar, cmdKeyCode, sound);
             mapping.Add(conditionMap);
           }
@@ -266,7 +266,7 @@ namespace MediaPortal
             Key key = new Key(map.CmdKeyChar, map.CmdKeyCode);
             action = new Action(key, (Action.ActionType)Convert.ToInt32(map.CmdProperty), 0, 0);
           }
-          else 
+          else
             action = new Action((Action.ActionType)Convert.ToInt32(map.CmdProperty), 0, 0);
           GUIGraphicsContext.OnAction(action);
           break;
@@ -283,51 +283,51 @@ namespace MediaPortal
             currentLayer = 1;
           break;
         case "POWER": // power down commands
-        {
-          if ((map.CmdProperty == "STANDBY") || (map.CmdProperty == "HIBERNATE"))
           {
-            // Stop all media before suspending or hibernating
-            g_Player.Stop();
-            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
+            if ((map.CmdProperty == "STANDBY") || (map.CmdProperty == "HIBERNATE"))
+            {
+              // Stop all media before suspending or hibernating
+              g_Player.Stop();
+              GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
+            }
+            switch (map.CmdProperty)
+            {
+              case "EXIT":
+                action = new Action(Action.ActionType.ACTION_EXIT, 0, 0);
+                GUIGraphicsContext.OnAction(action);
+                break;
+              case "REBOOT":
+                action = new Action(Action.ActionType.ACTION_REBOOT, 0, 0);
+                GUIGraphicsContext.OnAction(action);
+                break;
+              case "SHUTDOWN":
+                action = new Action(Action.ActionType.ACTION_SHUTDOWN, 0, 0);
+                GUIGraphicsContext.OnAction(action);
+                break;
+              case "STANDBY":
+                WindowsController.ExitWindows(RestartOptions.Suspend, true);
+                break;
+              case "HIBERNATE":
+                WindowsController.ExitWindows(RestartOptions.Hibernate, true);
+                break;
+            }
           }
-          switch (map.CmdProperty)
-          {
-            case "EXIT":
-              action = new Action(Action.ActionType.ACTION_EXIT, 0, 0);
-              GUIGraphicsContext.OnAction(action);
-              break;
-            case "REBOOT":
-              action = new Action(Action.ActionType.ACTION_REBOOT, 0, 0);
-              GUIGraphicsContext.OnAction(action);
-              break;
-            case "SHUTDOWN":
-              action = new Action(Action.ActionType.ACTION_SHUTDOWN, 0, 0);
-              GUIGraphicsContext.OnAction(action);
-              break;
-            case "STANDBY":
-              WindowsController.ExitWindows(RestartOptions.Suspend, true);
-              break;
-            case "HIBERNATE":
-              WindowsController.ExitWindows(RestartOptions.Hibernate, true);
-              break;
-          }
-        }
           break;
         case "PROCESS":
-        {
-          Process proc = Process.GetProcessById(param1);
-          if (param1 <= 0) return false;
-          if (null == proc) return false;
-          switch (map.CmdProperty)
           {
-            case "CLOSE":
-              proc.CloseMainWindow();
-              break;
-            case "KILL":
-              proc.Kill();
-              break;
+            Process proc = Process.GetProcessById(param1);
+            if (param1 <= 0) return false;
+            if (null == proc) return false;
+            switch (map.CmdProperty)
+            {
+              case "CLOSE":
+                proc.CloseMainWindow();
+                break;
+              case "KILL":
+                proc.Kill();
+                break;
+            }
           }
-        }
           break;
       }
       return true;
@@ -368,21 +368,21 @@ namespace MediaPortal
                   found = map;
                 break;
               case "PLAYER":  // Playing TV/DVD/general
-              switch (map.ConProperty)
-              {
-                case "TV":
-                  if (g_Player.IsTV)
-                    found = map;
-                  break;
-                case "DVD":
-                  if (g_Player.IsDVD)
-                    found = map;
-                  break;
-                case "MEDIA":
-                  if (g_Player.Playing)
-                    found = map;
-                  break;
-              }
+                switch (map.ConProperty)
+                {
+                  case "TV":
+                    if (g_Player.IsTV)
+                      found = map;
+                    break;
+                  case "DVD":
+                    if (g_Player.IsDVD)
+                      found = map;
+                    break;
+                  case "MEDIA":
+                    if (g_Player.Playing)
+                      found = map;
+                    break;
+                }
                 break;
             }
             if (found != null)

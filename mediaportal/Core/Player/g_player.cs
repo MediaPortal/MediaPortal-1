@@ -21,10 +21,6 @@
 using System;
 using System.Windows.Forms;
 using System.Drawing;
-
-
-
-
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Subtitle;
@@ -70,7 +66,6 @@ namespace MediaPortal.Player
     static string _currentFilePlaying = "";
     static MediaType _currentMedia;
     #endregion
-
     #region events
     public delegate void StoppedHandler(MediaType type, int stoptime, string filename);
     public delegate void EndedHandler(MediaType type, string filename);

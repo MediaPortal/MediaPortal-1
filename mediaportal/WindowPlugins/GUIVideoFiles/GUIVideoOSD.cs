@@ -380,7 +380,7 @@ namespace MediaPortal.GUI.Video
 					}
 					else
 					{
-						PlayListPlayer.PlayNext(true);
+						PlayListPlayer.PlayNext();
 					}
           return true;
         }

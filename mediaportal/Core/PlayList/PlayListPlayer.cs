@@ -55,9 +55,9 @@ namespace MediaPortal.Playlists
             return myPlayer.GetNext();
         }
 
-        static public void PlayNext(bool bAutoPlay)
+        static public void PlayNext()
         {
-            myPlayer.PlayNext(bAutoPlay);
+            myPlayer.PlayNext();
         }
 
         static public void PlayPrevious()
