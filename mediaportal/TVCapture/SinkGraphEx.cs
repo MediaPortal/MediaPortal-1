@@ -151,9 +151,13 @@ namespace MediaPortal.TV.Recording
         foreach (FilterDefinition dsFilter in mCard.TvFilterDefinitions)
         {
           string catName = dsFilter.Category;
+          dsFilter.DSFilter = GetFilter(dsFilter.FriendlyName);
+          if (dsFilter.DSFilter == null)
+          {
+            dsFilter.DSFilter = Marshal.BindToMoniker(dsFilter.MonikerDisplayName) as IBaseFilter;
+          }
           //FilterDefinition dsFilter = mCard.TvFilterDefinitions[catName] as FilterDefinition;
           Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  adding filter <{0}> with moniker <{1}>", dsFilter.FriendlyName, dsFilter.MonikerDisplayName);
-          dsFilter.DSFilter = Marshal.BindToMoniker(dsFilter.MonikerDisplayName) as IBaseFilter;
           hr = m_graphBuilder.AddFilter(dsFilter.DSFilter, dsFilter.FriendlyName);
           if (hr == 0)
           {
@@ -684,6 +688,18 @@ namespace MediaPortal.TV.Recording
         }
       }
       return null;
+    }
+
+    IBaseFilter GetFilter(string filterName)
+    {
+      if (String.Compare(filterName, "%soundcard%", true) != 0) return null;
+      Filters filters = new Filters();
+      FilterCollection audioInputs = filters.AudioInputDevices;
+
+      Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  adding filter <{0}> with moniker <{1}>",audioInputs[0].Name , audioInputs[0].MonikerString);
+
+      IBaseFilter audioInputFilter = Marshal.BindToMoniker(audioInputs[0].MonikerString) as IBaseFilter;
+      return audioInputFilter ;
     }
 
     #endregion Overrides
