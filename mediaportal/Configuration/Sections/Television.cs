@@ -54,6 +54,8 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.Label label8;
 		private System.Windows.Forms.ComboBox cbDeinterlace;
 		private MediaPortal.UserInterface.Controls.MPCheckBox cbTurnOnTv;
+        private GroupBox groupBox3;
+        private MediaPortal.UserInterface.Controls.MPCheckBox byIndexCheckBox;
 
     string[] aspectRatio = { "normal", "original", "stretch", "zoom", "letterbox", "panscan" };
 
@@ -108,272 +110,303 @@ namespace MediaPortal.Configuration.Sections
 		/// </summary>
 		private void InitializeComponent()
 		{
-      this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.cbDeinterlace = new System.Windows.Forms.ComboBox();
-      this.label8 = new System.Windows.Forms.Label();
-      this.defaultZoomModeComboBox = new System.Windows.Forms.ComboBox();
-      this.label6 = new System.Windows.Forms.Label();
-      this.rendererComboBox = new System.Windows.Forms.ComboBox();
-      this.label2 = new System.Windows.Forms.Label();
-      this.videoCodecComboBox = new System.Windows.Forms.ComboBox();
-      this.label5 = new System.Windows.Forms.Label();
-      this.label3 = new System.Windows.Forms.Label();
-      this.audioCodecComboBox = new System.Windows.Forms.ComboBox();
-      this.radioButton1 = new System.Windows.Forms.RadioButton();
-      this.groupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.countryComboBox = new System.Windows.Forms.ComboBox();
-      this.label4 = new System.Windows.Forms.Label();
-      this.inputComboBox = new System.Windows.Forms.ComboBox();
-      this.label1 = new System.Windows.Forms.Label();
-      this.groupBox4 = new System.Windows.Forms.GroupBox();
-      this.textBoxTimeShiftBuffer = new System.Windows.Forms.TextBox();
-      this.label7 = new System.Windows.Forms.Label();
-      this.cbTurnOnTv = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.groupBox1.SuspendLayout();
-      this.groupBox2.SuspendLayout();
-      this.groupBox4.SuspendLayout();
-      this.SuspendLayout();
-      // 
-      // groupBox1
-      // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBox1.Controls.Add(this.cbDeinterlace);
-      this.groupBox1.Controls.Add(this.label8);
-      this.groupBox1.Controls.Add(this.defaultZoomModeComboBox);
-      this.groupBox1.Controls.Add(this.label6);
-      this.groupBox1.Controls.Add(this.rendererComboBox);
-      this.groupBox1.Controls.Add(this.label2);
-      this.groupBox1.Controls.Add(this.videoCodecComboBox);
-      this.groupBox1.Controls.Add(this.label5);
-      this.groupBox1.Controls.Add(this.label3);
-      this.groupBox1.Controls.Add(this.audioCodecComboBox);
-      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.groupBox1.Location = new System.Drawing.Point(0, 0);
-      this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(472, 152);
-      this.groupBox1.TabIndex = 0;
-      this.groupBox1.TabStop = false;
-      this.groupBox1.Text = "Settings";
-      // 
-      // cbDeinterlace
-      // 
-      this.cbDeinterlace.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.cbDeinterlace.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.cbDeinterlace.Items.AddRange(new object[] {
-                                                       "None",
-                                                       "Bob",
-                                                       "Weave",
-                                                       "Best"});
-      this.cbDeinterlace.Location = new System.Drawing.Point(168, 92);
-      this.cbDeinterlace.Name = "cbDeinterlace";
-      this.cbDeinterlace.Size = new System.Drawing.Size(288, 21);
-      this.cbDeinterlace.TabIndex = 7;
-      // 
-      // label8
-      // 
-      this.label8.Location = new System.Drawing.Point(16, 96);
-      this.label8.Name = "label8";
-      this.label8.Size = new System.Drawing.Size(96, 16);
-      this.label8.TabIndex = 6;
-      this.label8.Text = "Deinterlace mode:";
-      // 
-      // defaultZoomModeComboBox
-      // 
-      this.defaultZoomModeComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.defaultZoomModeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.defaultZoomModeComboBox.Items.AddRange(new object[] {
-                                                                 "Normal",
-                                                                 "Original Source Format",
-                                                                 "Stretch",
-                                                                 "Zoom",
-                                                                 "4:3 Letterbox",
-                                                                 "4:3 Pan and scan"});
-      this.defaultZoomModeComboBox.Location = new System.Drawing.Point(168, 116);
-      this.defaultZoomModeComboBox.Name = "defaultZoomModeComboBox";
-      this.defaultZoomModeComboBox.Size = new System.Drawing.Size(288, 21);
-      this.defaultZoomModeComboBox.TabIndex = 9;
-      // 
-      // label6
-      // 
-      this.label6.Location = new System.Drawing.Point(16, 120);
-      this.label6.Name = "label6";
-      this.label6.Size = new System.Drawing.Size(112, 16);
-      this.label6.TabIndex = 8;
-      this.label6.Text = "Default zoom mode:";
-      // 
-      // rendererComboBox
-      // 
-      this.rendererComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.rendererComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.rendererComboBox.Location = new System.Drawing.Point(168, 68);
-      this.rendererComboBox.Name = "rendererComboBox";
-      this.rendererComboBox.Size = new System.Drawing.Size(288, 21);
-      this.rendererComboBox.TabIndex = 5;
-      // 
-      // label2
-      // 
-      this.label2.Location = new System.Drawing.Point(16, 72);
-      this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(88, 16);
-      this.label2.TabIndex = 4;
-      this.label2.Text = "Video renderer:";
-      // 
-      // videoCodecComboBox
-      // 
-      this.videoCodecComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.videoCodecComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.videoCodecComboBox.Location = new System.Drawing.Point(168, 20);
-      this.videoCodecComboBox.Name = "videoCodecComboBox";
-      this.videoCodecComboBox.Size = new System.Drawing.Size(288, 21);
-      this.videoCodecComboBox.TabIndex = 1;
-      // 
-      // label5
-      // 
-      this.label5.Location = new System.Drawing.Point(16, 24);
-      this.label5.Name = "label5";
-      this.label5.Size = new System.Drawing.Size(72, 16);
-      this.label5.TabIndex = 0;
-      this.label5.Text = "Video codec:";
-      // 
-      // label3
-      // 
-      this.label3.Location = new System.Drawing.Point(16, 48);
-      this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(72, 16);
-      this.label3.TabIndex = 2;
-      this.label3.Text = "Audio codec:";
-      // 
-      // audioCodecComboBox
-      // 
-      this.audioCodecComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.audioCodecComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.audioCodecComboBox.Location = new System.Drawing.Point(168, 44);
-      this.audioCodecComboBox.Name = "audioCodecComboBox";
-      this.audioCodecComboBox.Size = new System.Drawing.Size(288, 21);
-      this.audioCodecComboBox.TabIndex = 3;
-      // 
-      // radioButton1
-      // 
-      this.radioButton1.Location = new System.Drawing.Point(0, 0);
-      this.radioButton1.Name = "radioButton1";
-      this.radioButton1.TabIndex = 0;
-      // 
-      // groupBox2
-      // 
-      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBox2.Controls.Add(this.countryComboBox);
-      this.groupBox2.Controls.Add(this.label4);
-      this.groupBox2.Controls.Add(this.inputComboBox);
-      this.groupBox2.Controls.Add(this.label1);
-      this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.groupBox2.Location = new System.Drawing.Point(0, 160);
-      this.groupBox2.Name = "groupBox2";
-      this.groupBox2.Size = new System.Drawing.Size(472, 80);
-      this.groupBox2.TabIndex = 1;
-      this.groupBox2.TabStop = false;
-      this.groupBox2.Text = "TV Tuner";
-      // 
-      // countryComboBox
-      // 
-      this.countryComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.countryComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.countryComboBox.Location = new System.Drawing.Point(168, 44);
-      this.countryComboBox.MaxDropDownItems = 16;
-      this.countryComboBox.Name = "countryComboBox";
-      this.countryComboBox.Size = new System.Drawing.Size(288, 21);
-      this.countryComboBox.Sorted = true;
-      this.countryComboBox.TabIndex = 3;
-      // 
-      // label4
-      // 
-      this.label4.Location = new System.Drawing.Point(16, 48);
-      this.label4.Name = "label4";
-      this.label4.Size = new System.Drawing.Size(48, 16);
-      this.label4.TabIndex = 2;
-      this.label4.Text = "Country:";
-      // 
-      // inputComboBox
-      // 
-      this.inputComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.inputComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.inputComboBox.Items.AddRange(new object[] {
-                                                       "Antenna",
-                                                       "Cable"});
-      this.inputComboBox.Location = new System.Drawing.Point(168, 20);
-      this.inputComboBox.Name = "inputComboBox";
-      this.inputComboBox.Size = new System.Drawing.Size(288, 21);
-      this.inputComboBox.TabIndex = 1;
-      // 
-      // label1
-      // 
-      this.label1.Location = new System.Drawing.Point(16, 24);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(72, 16);
-      this.label1.TabIndex = 0;
-      this.label1.Text = "Input source:";
-      // 
-      // groupBox4
-      // 
-      this.groupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBox4.Controls.Add(this.textBoxTimeShiftBuffer);
-      this.groupBox4.Controls.Add(this.label7);
-      this.groupBox4.Controls.Add(this.cbTurnOnTv);
-      this.groupBox4.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.groupBox4.Location = new System.Drawing.Point(0, 248);
-      this.groupBox4.Name = "groupBox4";
-      this.groupBox4.Size = new System.Drawing.Size(472, 88);
-      this.groupBox4.TabIndex = 2;
-      this.groupBox4.TabStop = false;
-      this.groupBox4.Text = "Timeshifting";
-      // 
-      // textBoxTimeShiftBuffer
-      // 
-      this.textBoxTimeShiftBuffer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.textBoxTimeShiftBuffer.Location = new System.Drawing.Point(168, 52);
-      this.textBoxTimeShiftBuffer.Name = "textBoxTimeShiftBuffer";
-      this.textBoxTimeShiftBuffer.Size = new System.Drawing.Size(288, 20);
-      this.textBoxTimeShiftBuffer.TabIndex = 2;
-      this.textBoxTimeShiftBuffer.Text = "30";
-      // 
-      // label7
-      // 
-      this.label7.Location = new System.Drawing.Point(16, 56);
-      this.label7.Name = "label7";
-      this.label7.Size = new System.Drawing.Size(136, 16);
-      this.label7.TabIndex = 1;
-      this.label7.Text = "Timeshift buffer (minutes):";
-      // 
-      // cbTurnOnTv
-      // 
-      this.cbTurnOnTv.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.cbTurnOnTv.Location = new System.Drawing.Point(16, 24);
-      this.cbTurnOnTv.Name = "cbTurnOnTv";
-      this.cbTurnOnTv.Size = new System.Drawing.Size(200, 16);
-      this.cbTurnOnTv.TabIndex = 0;
-      this.cbTurnOnTv.Text = "Auto turn TV on when entering My TV ";
-      // 
-      // Television
-      // 
-      this.Controls.Add(this.groupBox4);
-      this.Controls.Add(this.groupBox2);
-      this.Controls.Add(this.groupBox1);
-      this.Name = "Television";
-      this.Size = new System.Drawing.Size(472, 408);
-      this.groupBox1.ResumeLayout(false);
-      this.groupBox2.ResumeLayout(false);
-      this.groupBox4.ResumeLayout(false);
-      this.ResumeLayout(false);
+            this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+            this.cbDeinterlace = new System.Windows.Forms.ComboBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.defaultZoomModeComboBox = new System.Windows.Forms.ComboBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.rendererComboBox = new System.Windows.Forms.ComboBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.videoCodecComboBox = new System.Windows.Forms.ComboBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.audioCodecComboBox = new System.Windows.Forms.ComboBox();
+            this.radioButton1 = new System.Windows.Forms.RadioButton();
+            this.groupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+            this.countryComboBox = new System.Windows.Forms.ComboBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.inputComboBox = new System.Windows.Forms.ComboBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.textBoxTimeShiftBuffer = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.cbTurnOnTv = new MediaPortal.UserInterface.Controls.MPCheckBox();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.byIndexCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
+            this.groupBox1.SuspendLayout();
+            this.groupBox2.SuspendLayout();
+            this.groupBox4.SuspendLayout();
+            this.groupBox3.SuspendLayout();
+            this.SuspendLayout();
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.cbDeinterlace);
+            this.groupBox1.Controls.Add(this.label8);
+            this.groupBox1.Controls.Add(this.defaultZoomModeComboBox);
+            this.groupBox1.Controls.Add(this.label6);
+            this.groupBox1.Controls.Add(this.rendererComboBox);
+            this.groupBox1.Controls.Add(this.label2);
+            this.groupBox1.Controls.Add(this.videoCodecComboBox);
+            this.groupBox1.Controls.Add(this.label5);
+            this.groupBox1.Controls.Add(this.label3);
+            this.groupBox1.Controls.Add(this.audioCodecComboBox);
+            this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.groupBox1.Location = new System.Drawing.Point(0, 0);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(472, 152);
+            this.groupBox1.TabIndex = 0;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Settings";
+            // 
+            // cbDeinterlace
+            // 
+            this.cbDeinterlace.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbDeinterlace.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbDeinterlace.Items.AddRange(new object[] {
+            "None",
+            "Bob",
+            "Weave",
+            "Best"});
+            this.cbDeinterlace.Location = new System.Drawing.Point(168, 92);
+            this.cbDeinterlace.Name = "cbDeinterlace";
+            this.cbDeinterlace.Size = new System.Drawing.Size(288, 21);
+            this.cbDeinterlace.TabIndex = 7;
+            // 
+            // label8
+            // 
+            this.label8.Location = new System.Drawing.Point(16, 96);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(96, 16);
+            this.label8.TabIndex = 6;
+            this.label8.Text = "Deinterlace mode:";
+            // 
+            // defaultZoomModeComboBox
+            // 
+            this.defaultZoomModeComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.defaultZoomModeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.defaultZoomModeComboBox.Items.AddRange(new object[] {
+            "Normal",
+            "Original Source Format",
+            "Stretch",
+            "Zoom",
+            "4:3 Letterbox",
+            "4:3 Pan and scan"});
+            this.defaultZoomModeComboBox.Location = new System.Drawing.Point(168, 116);
+            this.defaultZoomModeComboBox.Name = "defaultZoomModeComboBox";
+            this.defaultZoomModeComboBox.Size = new System.Drawing.Size(288, 21);
+            this.defaultZoomModeComboBox.TabIndex = 9;
+            // 
+            // label6
+            // 
+            this.label6.Location = new System.Drawing.Point(16, 120);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(112, 16);
+            this.label6.TabIndex = 8;
+            this.label6.Text = "Default zoom mode:";
+            // 
+            // rendererComboBox
+            // 
+            this.rendererComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.rendererComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.rendererComboBox.Location = new System.Drawing.Point(168, 68);
+            this.rendererComboBox.Name = "rendererComboBox";
+            this.rendererComboBox.Size = new System.Drawing.Size(288, 21);
+            this.rendererComboBox.TabIndex = 5;
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(16, 72);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(88, 16);
+            this.label2.TabIndex = 4;
+            this.label2.Text = "Video renderer:";
+            // 
+            // videoCodecComboBox
+            // 
+            this.videoCodecComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.videoCodecComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.videoCodecComboBox.Location = new System.Drawing.Point(168, 20);
+            this.videoCodecComboBox.Name = "videoCodecComboBox";
+            this.videoCodecComboBox.Size = new System.Drawing.Size(288, 21);
+            this.videoCodecComboBox.TabIndex = 1;
+            // 
+            // label5
+            // 
+            this.label5.Location = new System.Drawing.Point(16, 24);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(72, 16);
+            this.label5.TabIndex = 0;
+            this.label5.Text = "Video codec:";
+            // 
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(16, 48);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(72, 16);
+            this.label3.TabIndex = 2;
+            this.label3.Text = "Audio codec:";
+            // 
+            // audioCodecComboBox
+            // 
+            this.audioCodecComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.audioCodecComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.audioCodecComboBox.Location = new System.Drawing.Point(168, 44);
+            this.audioCodecComboBox.Name = "audioCodecComboBox";
+            this.audioCodecComboBox.Size = new System.Drawing.Size(288, 21);
+            this.audioCodecComboBox.TabIndex = 3;
+            // 
+            // radioButton1
+            // 
+            this.radioButton1.Location = new System.Drawing.Point(0, 0);
+            this.radioButton1.Name = "radioButton1";
+            this.radioButton1.Size = new System.Drawing.Size(104, 24);
+            this.radioButton1.TabIndex = 0;
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox2.Controls.Add(this.countryComboBox);
+            this.groupBox2.Controls.Add(this.label4);
+            this.groupBox2.Controls.Add(this.inputComboBox);
+            this.groupBox2.Controls.Add(this.label1);
+            this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.groupBox2.Location = new System.Drawing.Point(0, 160);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(472, 82);
+            this.groupBox2.TabIndex = 1;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "TV Tuner";
+            // 
+            // countryComboBox
+            // 
+            this.countryComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.countryComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.countryComboBox.Location = new System.Drawing.Point(168, 44);
+            this.countryComboBox.MaxDropDownItems = 16;
+            this.countryComboBox.Name = "countryComboBox";
+            this.countryComboBox.Size = new System.Drawing.Size(288, 21);
+            this.countryComboBox.Sorted = true;
+            this.countryComboBox.TabIndex = 3;
+            // 
+            // label4
+            // 
+            this.label4.Location = new System.Drawing.Point(16, 48);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(48, 16);
+            this.label4.TabIndex = 2;
+            this.label4.Text = "Country:";
+            // 
+            // inputComboBox
+            // 
+            this.inputComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.inputComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.inputComboBox.Items.AddRange(new object[] {
+            "Antenna",
+            "Cable"});
+            this.inputComboBox.Location = new System.Drawing.Point(168, 20);
+            this.inputComboBox.Name = "inputComboBox";
+            this.inputComboBox.Size = new System.Drawing.Size(288, 21);
+            this.inputComboBox.TabIndex = 1;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(16, 24);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(72, 16);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "Input source:";
+            // 
+            // groupBox4
+            // 
+            this.groupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox4.Controls.Add(this.textBoxTimeShiftBuffer);
+            this.groupBox4.Controls.Add(this.label7);
+            this.groupBox4.Controls.Add(this.cbTurnOnTv);
+            this.groupBox4.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.groupBox4.Location = new System.Drawing.Point(0, 248);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(472, 88);
+            this.groupBox4.TabIndex = 2;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "Timeshifting";
+            // 
+            // textBoxTimeShiftBuffer
+            // 
+            this.textBoxTimeShiftBuffer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBoxTimeShiftBuffer.Location = new System.Drawing.Point(168, 52);
+            this.textBoxTimeShiftBuffer.Name = "textBoxTimeShiftBuffer";
+            this.textBoxTimeShiftBuffer.Size = new System.Drawing.Size(288, 20);
+            this.textBoxTimeShiftBuffer.TabIndex = 2;
+            this.textBoxTimeShiftBuffer.Text = "30";
+            // 
+            // label7
+            // 
+            this.label7.Location = new System.Drawing.Point(16, 56);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(136, 16);
+            this.label7.TabIndex = 1;
+            this.label7.Text = "Timeshift buffer (minutes):";
+            // 
+            // cbTurnOnTv
+            // 
+            this.cbTurnOnTv.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.cbTurnOnTv.Location = new System.Drawing.Point(16, 24);
+            this.cbTurnOnTv.Name = "cbTurnOnTv";
+            this.cbTurnOnTv.Size = new System.Drawing.Size(200, 16);
+            this.cbTurnOnTv.TabIndex = 0;
+            this.cbTurnOnTv.Text = "Auto turn TV on when entering My TV ";
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox3.Controls.Add(this.byIndexCheckBox);
+            this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.groupBox3.Location = new System.Drawing.Point(0, 342);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(472, 53);
+            this.groupBox3.TabIndex = 3;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Channel Numeric Selection";
+            this.groupBox3.Enter += new System.EventHandler(this.groupBox3_Enter);
+            // 
+            // byIndexCheckBox
+            // 
+            this.byIndexCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.byIndexCheckBox.Location = new System.Drawing.Point(16, 19);
+            this.byIndexCheckBox.Name = "byIndexCheckBox";
+            this.byIndexCheckBox.Size = new System.Drawing.Size(200, 37);
+            this.byIndexCheckBox.TabIndex = 0;
+            this.byIndexCheckBox.Text = "Select chennel by index (non-US)";
+            this.byIndexCheckBox.CheckedChanged += new System.EventHandler(this.mpCheckBox1_CheckedChanged);
+            // 
+            // Television
+            // 
+            this.Controls.Add(this.groupBox3);
+            this.Controls.Add(this.groupBox4);
+            this.Controls.Add(this.groupBox2);
+            this.Controls.Add(this.groupBox1);
+            this.Name = "Television";
+            this.Size = new System.Drawing.Size(472, 408);
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox4.ResumeLayout(false);
+            this.groupBox4.PerformLayout();
+            this.groupBox3.ResumeLayout(false);
+            this.ResumeLayout(false);
 
     }
 		#endregion
@@ -385,6 +418,7 @@ namespace MediaPortal.Configuration.Sections
 				cbTurnOnTv.Checked = xmlreader.GetValueAsBool("mytv", "autoturnontv", false);
 				inputComboBox.SelectedItem = xmlreader.GetValueAsString("capture", "tuner", "Antenna");
 				textBoxTimeShiftBuffer.Text= xmlreader.GetValueAsInt("capture", "timeshiftbuffer", 30).ToString();
+                byIndexCheckBox.Checked = xmlreader.GetValueAsBool("mytv", "byindex", true);
 				int DeInterlaceMode= xmlreader.GetValueAsInt("mytv", "deinterlace", 0);
 				if (DeInterlaceMode<0 || DeInterlaceMode>3)
 					DeInterlaceMode=3;
@@ -484,6 +518,7 @@ namespace MediaPortal.Configuration.Sections
 
 				xmlwriter.SetValueAsBool("mytv", "autoturnontv", cbTurnOnTv.Checked);
 				xmlwriter.SetValue("capture", "tuner", inputComboBox.Text);
+                xmlwriter.SetValueAsBool("mytv", "byindex", byIndexCheckBox.Checked);
 				try
 				{
 					int buffer=Int32.Parse(textBoxTimeShiftBuffer.Text);
@@ -544,6 +579,26 @@ namespace MediaPortal.Configuration.Sections
     {
      
     }
+
+        private void groupBox3_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void mpCheckBox1_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label9_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
 	}
 }
 

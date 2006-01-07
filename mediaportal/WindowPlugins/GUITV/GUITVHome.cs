@@ -1095,6 +1095,33 @@ namespace MediaPortal.GUI.TV
 				m_zaptime = DateTime.Now;
 		}
 
+        /// <summary>
+        /// Changes the current channel (based on channel number) after a specified delay.
+        /// </summary>
+        /// <param name="channelNr">The nr of the channel to change to.</param>
+        /// <param name="useZapDelay">If true, the configured zap delay is used. Otherwise it zaps immediately.</param>
+        public void ZapToChannelNumber(int channelNr, bool useZapDelay)
+        {
+            List<TVChannel> channels = CurrentGroup.TvChannels;
+            if (channelNr >= 0)
+            {
+                bool found = false;
+                int ChannelCnt = 0;
+                TVChannel chan;
+                while (found == false && ChannelCnt < channels.Count)
+                {
+                    chan = (TVChannel)channels[ChannelCnt];
+                    if (chan.Number == channelNr)
+                    {
+                        ZapToChannel(chan.Name, useZapDelay);
+                        found = true;
+                    }
+                    else
+                        ChannelCnt++;
+                }
+            }
+        }
+
 		/// <summary>
 		/// Changes the current channel after a specified delay.
 		/// </summary>

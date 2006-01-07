@@ -76,6 +76,7 @@ namespace MediaPortal.GUI.TV
 		bool				_stepSeekVisible=false;
 		bool				_statusVisible=false;
 		bool				_groupVisible=false;
+        bool                _byIndex = false;
 		DateTime		_statusTimeOutTimer=DateTime.Now;
 		GUITVZAPOSD	_zapWindow=null;
 		GUITVOSD		_osdWindow=null;
@@ -174,6 +175,7 @@ namespace MediaPortal.GUI.TV
 				_timeOsdOnscreen=1000*xmlreader.GetValueAsInt("movieplayer","osdtimeout",5);
 //				m_iZapDelay = 1000*xmlreader.GetValueAsInt("movieplayer","zapdelay",2);
 				_zapTimeOutValue = 1000*xmlreader.GetValueAsInt("movieplayer","zaptimeout",5);
+                _byIndex = xmlreader.GetValueAsBool("mytv", "byindex", true);
 				string strValue=xmlreader.GetValueAsString("mytv","defaultar","normal");
 				if (strValue.Equals("zoom")) GUIGraphicsContext.ARType=MediaPortal.GUI.Library.Geometry.Type.Zoom;
 				if (strValue.Equals("stretch")) GUIGraphicsContext.ARType=MediaPortal.GUI.Library.Geometry.Type.Stretch;
@@ -1830,7 +1832,15 @@ namespace MediaPortal.GUI.TV
 		{
 
       Log.Write("ChangeChannelNr()");
-			GUITVHome.Navigator.ZapToChannel(channelNr, false);
+            if (_byIndex == true)
+            {
+                GUITVHome.Navigator.ZapToChannel(channelNr, false);
+            }
+            else
+            {
+                GUITVHome.Navigator.ZapToChannelNumber(channelNr, false);
+            }
+
 			UpdateOSD();
 			_zapTimeOutTimer=DateTime.Now;
 			
