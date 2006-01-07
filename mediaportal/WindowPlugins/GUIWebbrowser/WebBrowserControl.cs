@@ -188,6 +188,10 @@ namespace MediaPortal.GUI.WebBrowser
                             GUIWindowManager.ActivateWindow(GUIFavorites.WINDOW_FAVORITES); 
                             handled = true;
                             break;
+                        case Keys.Escape: //Return to previous screen.
+                            GUIWindowManager.ShowPreviousWindow();
+                            handled = true;
+                            break;
                     }
                 }
 

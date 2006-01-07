@@ -73,10 +73,10 @@ namespace MediaPortal.GUI.WebBrowser
 
     #region Overrides
 
-    public override bool SupportsDelayedLoad
-    {
-      get { return true; }
-    }
+            public override bool SupportsDelayedLoad
+            {
+                get { return true; }
+            }
     /// <summary>
     /// Inits this instance.
     /// </summary>
@@ -89,9 +89,9 @@ namespace MediaPortal.GUI.WebBrowser
         wb = WebBrowserControl.Instance;
         GUIGraphicsContext.form.Controls.Add(wb);
         wb.Visible = false;
-        wb.Enabled = false;
-        //set focus back to the form after loading web browser
-        GUIGraphicsContext.form.Focus();
+                    wb.Enabled = false;
+                    //set focus back to the form after loading web browser
+                    GUIGraphicsContext.form.Focus();
         wb.Browser.NavigateComplete2 += new AxMOZILLACONTROLLib.DWebBrowserEvents2_NavigateComplete2EventHandler(Browser_NavigateComplete2);
         wb.Browser.DownloadBegin += new EventHandler(Browser_DownloadBegin);
         wb.Browser.DownloadComplete += new EventHandler(Browser_DownloadComplete);
@@ -122,15 +122,20 @@ namespace MediaPortal.GUI.WebBrowser
     {
       switch (action.wID)
       {
-        case Action.ActionType.ACTION_SHOW_INFO:
+          case Action.ActionType.ACTION_SHOW_INFO:
           {
             GUIWindowManager.ActivateWindow(GUIFavorites.WINDOW_FAVORITES);
             break;
           }
-        case Action.ActionType.ACTION_CONTEXT_MENU:
+          case Action.ActionType.ACTION_CONTEXT_MENU:
           {
             wb.ToggleMenu();
             break;
+          }
+          case Action.ActionType.ACTION_PREVIOUS_MENU:
+          {
+              GUIWindowManager.ShowPreviousWindow();
+              return;
           }
       }
       base.OnAction(action);
@@ -152,7 +157,7 @@ namespace MediaPortal.GUI.WebBrowser
             GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(4000));
             //make web browser visible			
             wb.Visible = true;
-            wb.Enabled = true;
+                        wb.Enabled = true;
             wb.Focus();
             return true;
           }
