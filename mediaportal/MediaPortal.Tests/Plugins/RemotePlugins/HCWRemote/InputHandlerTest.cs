@@ -53,6 +53,25 @@ namespace MediaPortal.Tests.Plugins.RemotePlugins.HCWRemote
     }
 
     [Test]
+    public void GetPathCustomFail()
+    {
+      bool result = false;
+      string xmlFile = "TestFallbackVersion";
+      InputHandler inputHandler = new InputHandler(xmlFile, out result);
+      Assert.AreEqual("InputDeviceMappings\\defaults\\TestFallbackVersion.xml", inputHandler.GetXmlPath(xmlFile));
+    }
+
+    [Test]
+    [ExpectedException(typeof(System.Xml.XmlException))]
+    public void CorruptXml()
+    {
+      bool result = false;
+      string xmlFile = "TestCorrupt";
+      InputHandler inputHandler = new InputHandler(xmlFile, out result);
+      Assert.AreEqual("InputDeviceMappings\\defaults\\TestCorrupt.xml", inputHandler.GetXmlPath(xmlFile));
+    }
+
+    [Test]
     [ExpectedException(typeof(System.IO.FileNotFoundException))]
     public void GetPathFail()
     {
@@ -60,6 +79,15 @@ namespace MediaPortal.Tests.Plugins.RemotePlugins.HCWRemote
       string xmlFile = "TestFail";
       InputHandler inputHandler = new InputHandler(xmlFile, out result);
       Assert.AreNotEqual("InputDeviceMappings\\defaults\\TestFail.xml", inputHandler.GetXmlPath(xmlFile));
+    }
+
+    [Test]
+    public void GetPathFallbackVersion()
+    {
+      bool result = false;
+      string xmlFile = "TestFallbackVersion";
+      InputHandler inputHandler = new InputHandler(xmlFile, out result);
+      Assert.AreEqual("InputDeviceMappings\\defaults\\TestFallbackVersion.xml", inputHandler.GetXmlPath(xmlFile));
     }
 
     [Test]
@@ -100,22 +128,36 @@ namespace MediaPortal.Tests.Plugins.RemotePlugins.HCWRemote
 
     [Test]
     [ExpectedException(typeof(System.ApplicationException), "XML version mismatch")]
-    public void CheckXmlVersionCustomDefaultFail()
-    {
-      bool result = false;
-      string xmlFile = "TestVersion";
-      InputHandler inputHandler = new InputHandler(xmlFile, out result);
-      inputHandler.CheckXmlFile("InputDeviceMappings\\custom\\TestVersion.xml");
-    }
-
-    [Test]
-    [ExpectedException(typeof(System.ApplicationException), "XML version mismatch")]
     public void CheckXmlVersionCustomFail()
     {
       bool result = false;
-      string xmlFile = "TestVersionFail";
+      string xmlFile = "TestVersion2";
       InputHandler inputHandler = new InputHandler(xmlFile, out result);
-      inputHandler.CheckXmlFile("InputDeviceMappings\\custom\\TestVersionFail.xml");
+      inputHandler.CheckXmlFile("InputDeviceMappings\\custom\\TestVersion2.xml");
+    }
+
+    [Test]
+    public void MappingConstructor()
+    {
+      int layer = 0;
+      string condition = "*";
+      string conProperty = "-1";
+      string command = "ACTION";
+      string cmdProperty = "93";
+      int cmdKeyChar = 48;
+      int cmdKeyCode = 0;
+      string sound = "cursor.wav";
+
+      InputHandler.Mapping mapTest = new InputHandler.Mapping(layer, condition, conProperty, command, cmdProperty, cmdKeyChar, cmdKeyCode, sound);
+
+      Assert.AreEqual(layer, mapTest.Layer);
+      Assert.AreEqual(condition, mapTest.Condition);
+      Assert.AreEqual(conProperty, mapTest.ConProperty);
+      Assert.AreEqual(command, mapTest.Command);
+      Assert.AreEqual(cmdProperty, mapTest.CmdProperty);
+      Assert.AreEqual(cmdKeyChar, mapTest.CmdKeyChar);
+      Assert.AreEqual(cmdKeyCode, mapTest.CmdKeyCode);
+      Assert.AreEqual(sound, mapTest.Sound);
     }
 
     [Test]

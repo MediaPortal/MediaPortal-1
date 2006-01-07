@@ -117,7 +117,10 @@
     <Content Include="InputDeviceMappings\custom\TestCustom.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="InputDeviceMappings\custom\TestVersionFail.xml">
+    <Content Include="InputDeviceMappings\custom\TestFallbackVersion.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="InputDeviceMappings\custom\TestVersion2.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="InputDeviceMappings\defaults\TestCorrupt.xml">
@@ -126,10 +129,10 @@
     <Content Include="InputDeviceMappings\defaults\TestDefault.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="InputDeviceMappings\defaults\TestVersion.xml">
+    <Content Include="InputDeviceMappings\defaults\TestFallbackVersion.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="InputDeviceMappings\defaults\TestVersionFail.xml">
+    <Content Include="InputDeviceMappings\defaults\TestVersion.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

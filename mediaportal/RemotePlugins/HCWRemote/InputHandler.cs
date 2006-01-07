@@ -121,16 +121,8 @@ namespace MediaPortal
     public int GetXmlVersion(string xmlFile)
     {
       XmlDocument doc = new XmlDocument();
-      try
-      {
-        doc.Load(xmlFile);
-        return Convert.ToInt32(doc.DocumentElement.SelectSingleNode("/mappings").Attributes["version"].Value);
-      }
-      catch (Exception ex)
-      {
-        Log.Write("MAP: error while reading XML configuration file \"{0}\": {1}", xmlFile, ex.ToString());
-      }
-      return 0;
+      doc.Load(xmlFile);
+      return Convert.ToInt32(doc.DocumentElement.SelectSingleNode("/mappings").Attributes["version"].Value);
     }
 
 
@@ -157,9 +149,17 @@ namespace MediaPortal
       }
       catch
       {
-        CheckXmlFile(pathDefault);
-        path = pathDefault;
-        Log.Write("MAP: using default mappings for {0}", xmlFile);
+        try
+        {
+          CheckXmlFile(pathDefault);
+          path = pathDefault;
+          Log.Write("MAP: using default mappings for {0}", xmlFile);
+        }
+        catch (System.Xml.XmlException)
+        {
+          Log.Write("MAP: default XML file for device {0} is damaged - reinstall MediaPortal", xmlFile);
+          throw new System.Xml.XmlException();
+        }
       }
       return path;
     }
@@ -215,9 +215,9 @@ namespace MediaPortal
     /// <param name="xmlFile">XML mapping file</param>
     public InputHandler(string xmlFile, out bool success)
     {
-      string xmlPath = GetXmlPath(xmlFile);
       try
       {
+        string xmlPath = GetXmlPath(xmlFile);
         LoadMapping(xmlPath);
         success = true;
       }
