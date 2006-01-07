@@ -624,15 +624,64 @@ namespace MediaPortal.TV.Recording
         Log.WriteFile(Log.LogType.Capture, " captureDeviceDeviceName:{0}", captureDeviceDeviceName);
 
 
+        
         Instance = FindInstanceForDevice(captureDeviceDeviceName);
         Log.WriteFile(Log.LogType.Capture, " Using card#{0}", Instance);
         //for each tv filter we need for building the graph
         foreach (FilterDefinition fd in _captureCardDefinition.Tv.FilterDefinitions)
         {
+          //Hauppauge WinTV PVR PCI II TvTuner
+          //pvr 150:  ven_4444&amp;dev_0016&amp;subsys_88010070&amp;rev_01
+          //pvr 350:  ven_4444&amp;dev_0803&amp;subsys_40000070&amp;rev_01
+          //pvr 250:  ven_4444&amp;dev_0803&amp;subsys_40010070&amp;rev_01
+
           string friendlyName = fd.Category;
           bool filterFound = false;
-          Log.WriteFile(Log.LogType.Capture, "  filter {0}={1} check:{2}", friendlyName, fd.FriendlyName, fd.CheckDevice);
+          Log.WriteFile(Log.LogType.Capture, "  filter {0}='{1}' check:{2}", friendlyName, fd.FriendlyName, fd.CheckDevice);
 
+          //for each directshow filter
+          foreach (string key in AvailableFilters.Filters.Keys)
+          {
+            // check if this filter has the correct friendly name
+            Filter tmpFilter;
+            ArrayList al = AvailableFilters.Filters[key] as System.Collections.ArrayList;
+            tmpFilter = (Filter)al[0];
+            if (String.Compare(tmpFilter.Name, fd.FriendlyName, true) != 0) continue;
+            if (fd.CheckDevice)
+            {
+              //yes, then check all instances of this filter
+              foreach (Filter directShowFilter in al)
+              {
+                if (String.Compare(directShowFilter.Name, fd.FriendlyName, true) != 0) continue;
+
+                //next check if the moniker is the same as the capturedevice moniker 
+                //we got a direct show filter with the correct name.
+                string filterMoniker = directShowFilter.MonikerString;
+                int posTmp = filterMoniker.LastIndexOf("#");
+                if (posTmp >= 0) filterMoniker = filterMoniker.Substring(0, posTmp);
+                if (captureDeviceDeviceName.ToLower().IndexOf(filterMoniker.ToLower()) >= 0)
+                {
+                  //yes, filter found
+                  filterFound = true;
+                  fd.MonikerDisplayName = directShowFilter.MonikerString;
+                  break;
+                }
+              }//foreach (Filter directShowFilter in al)
+            }
+            else
+            {
+              //yes, filter found
+              filterFound = true;
+              fd.MonikerDisplayName = tmpFilter.MonikerString;
+            }
+            if (filterFound) break;
+          }//foreach (string key in AvailableFilters.Filters.Keys)
+
+          if (filterFound) continue;
+
+          //filter not found
+          //could be that filter has completly different moniker then the
+          //moniker of the capture device filter
           //for each directshow filter available under windows
           foreach (string key in AvailableFilters.Filters.Keys)
           {
@@ -644,7 +693,7 @@ namespace MediaPortal.TV.Recording
             if (filter.Name.Equals(fd.FriendlyName))
             {
               // FriendlyName found. Now check if this name should be checked against a (PnP) device
-              // to make sure that we found the right filter...
+              // to make sure that we found the right filter...z
               if (fd.CheckDevice)
               {
                 filter = al[0] as Filter;
