@@ -97,14 +97,7 @@ namespace MediaPortal.Tests.Plugins.RemotePlugins.HCWRemote
       string xmlFile = "TestDefault";
       string xmlPath = "InputDeviceMappings\\defaults\\TestDefault.xml";
       InputHandler inputHandler = new InputHandler(xmlFile, out result);
-      try
-      {
-        inputHandler.LoadMapping(xmlPath);
-      }
-      catch
-      {
-        Assert.Fail();
-      }
+      inputHandler.LoadMapping(xmlPath);
     }
 
     [Test]

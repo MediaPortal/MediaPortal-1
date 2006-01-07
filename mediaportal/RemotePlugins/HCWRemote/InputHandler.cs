@@ -158,7 +158,7 @@ namespace MediaPortal
         catch (System.Xml.XmlException)
         {
           Log.Write("MAP: default XML file for device {0} is damaged - reinstall MediaPortal", xmlFile);
-          throw new System.Xml.XmlException();
+          throw;
         }
       }
       return path;
@@ -215,15 +215,18 @@ namespace MediaPortal
     /// <param name="xmlFile">XML mapping file</param>
     public InputHandler(string xmlFile, out bool success)
     {
+      success = false;
       try
       {
         string xmlPath = GetXmlPath(xmlFile);
         LoadMapping(xmlPath);
         success = true;
       }
-      catch
+      catch (System.Xml.XmlException)
       {
-        success = false;
+      }
+      catch (System.IO.FileNotFoundException)
+      {
       }
     }
 
