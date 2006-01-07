@@ -117,7 +117,13 @@
     <Content Include="InputDeviceMappings\custom\TestCustom.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="InputDeviceMappings\defaults\TestCorrupt.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="InputDeviceMappings\defaults\TestDefault.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="InputDeviceMappings\defaults\TestVersion.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

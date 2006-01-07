@@ -53,6 +53,7 @@ namespace MediaPortal.Tests.Plugins.RemotePlugins.HCWRemote
     }
 
     [Test]
+    [ExpectedException(typeof(System.IO.FileNotFoundException))]
     public void GetPathFail()
     {
       bool result = false;
@@ -65,18 +66,36 @@ namespace MediaPortal.Tests.Plugins.RemotePlugins.HCWRemote
     public void LoadMapping()
     {
       bool result = false;
+      string xmlFile = "TestDefault";
       string xmlPath = "InputDeviceMappings\\defaults\\TestDefault.xml";
-      InputHandler inputHandler = new InputHandler(xmlPath, out result);
-      Assert.IsTrue(inputHandler.LoadMapping(xmlPath));
+      InputHandler inputHandler = new InputHandler(xmlFile, out result);
+      try
+      {
+        inputHandler.LoadMapping(xmlPath);
+      }
+      catch
+      {
+        Assert.Fail();
+      }
     }
 
     [Test]
     public void GetXmlVersion()
     {
       bool result = false;
-      string xmlFile = "TestCustom";
+      string xmlFile = "TestDefault";
       InputHandler inputHandler = new InputHandler(xmlFile, out result);
       Assert.AreEqual(3, inputHandler.GetXmlVersion("InputDeviceMappings\\defaults\\TestDefault.xml"));
+    }
+
+    [Test]
+    [ExpectedException(typeof(System.ApplicationException), "XML version mismatch")]
+    public void CheckXmlVersion()
+    {
+      bool result = false;
+      string xmlFile = "TestVersion";
+      InputHandler inputHandler = new InputHandler(xmlFile, out result);
+      inputHandler.CheckXmlFile("InputDeviceMappings\\defaults\\TestVersion.xml");
     }
 
     [Test]

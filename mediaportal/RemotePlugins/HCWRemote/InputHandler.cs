@@ -60,33 +60,33 @@ namespace MediaPortal
     {
       string condition;
       string conProperty;
-      int    layer;
+      int layer;
       string command;
       string cmdProperty;
-      int    cmdKeyChar;
-      int    cmdKeyCode;
+      int cmdKeyChar;
+      int cmdKeyCode;
       string sound;
 
-      public int    Layer       { get { return layer; } }
-      public string Condition   { get { return condition; } }
+      public int Layer { get { return layer; } }
+      public string Condition { get { return condition; } }
       public string ConProperty { get { return conProperty; } }
-      public string Command     { get { return command; } }
+      public string Command { get { return command; } }
       public string CmdProperty { get { return cmdProperty; } }
-      public int    CmdKeyChar  { get { return cmdKeyChar; } }
-      public int    CmdKeyCode  { get { return cmdKeyCode; } }
-      public string Sound       { get { return sound; } }
+      public int CmdKeyChar { get { return cmdKeyChar; } }
+      public int CmdKeyCode { get { return cmdKeyCode; } }
+      public string Sound { get { return sound; } }
 
       public Mapping(int newLayer, string newCondition, string newConProperty, string newCommand,
         string newCmdProperty, int newCmdKeyChar, int newCmdKeyCode, string newSound)
       {
-        layer       = newLayer;
-        condition   = newCondition;
+        layer = newLayer;
+        condition = newCondition;
         conProperty = newConProperty;
-        command     = newCommand;
+        command = newCommand;
         cmdProperty = newCmdProperty;
-        cmdKeyChar  = newCmdKeyChar;
-        cmdKeyCode  = newCmdKeyCode;
-        sound       = newSound;
+        cmdKeyChar = newCmdKeyChar;
+        cmdKeyCode = newCmdKeyCode;
+        sound = newSound;
       }
     }
 
@@ -100,14 +100,14 @@ namespace MediaPortal
       string name;
       ArrayList mapping = new ArrayList();
 
-      public int       Code    { get { return code; } }
-      public string    Name    { get { return name; } }
+      public int Code { get { return code; } }
+      public string Name { get { return name; } }
       public ArrayList Mapping { get { return mapping; } }
 
       public RemoteMap(int newCode, string newName, ArrayList newMapping)
       {
-        code    = newCode;
-        name    = newName;
+        code = newCode;
+        name = newName;
         mapping = newMapping;
       }
     }
@@ -134,43 +134,38 @@ namespace MediaPortal
     }
 
 
+    public void CheckXmlFile(string xmlPath)
+    {
+      if (!File.Exists(xmlPath))
+        throw new System.IO.FileNotFoundException();
+      if (GetXmlVersion(xmlPath) != xmlVersion)
+        throw new ApplicationException("XML version mismatch");
+    }
+
+
     public string GetXmlPath(string xmlFile)
     {
       string path = string.Empty;
       string pathCustom = "InputDeviceMappings\\custom\\" + xmlFile + ".xml";
       string pathDefault = "InputDeviceMappings\\defaults\\" + xmlFile + ".xml";
 
-      if (File.Exists(pathCustom))
-        if (GetXmlVersion(pathCustom) == xmlVersion)
-        {
-          path = pathCustom;
-          Log.Write("MAP: using custom mappings for {0}", xmlFile);
-        }
-        else
-        {
-          Log.Write("MAP: version mismatch in {0}", xmlFile);
-          Log.Write("MAP: Run configuration.exe and reset mappings to default.");
-        }
-      else if (File.Exists(pathDefault))
-        if (GetXmlVersion(pathDefault) == xmlVersion)
-        {
-          path = pathDefault;
-          Log.Write("MAP: using default mappings for {0}", xmlFile);
-        }
-        else
-        {
-          Log.Write("MAP: version mismatch in {0}", xmlFile);
-          Log.Write("MAP: Get a new XML mapping file or reinstall MediaPortal.");
-        }
-      else
+      try
       {
-        Log.Write("MAP: can't load default mapping for {0} - file for this device does not exist", xmlFile);
+        CheckXmlFile(pathCustom);
+        path = pathCustom;
+        Log.Write("MAP: using custom mappings for {0}", xmlFile);
+      }
+      catch
+      {
+        CheckXmlFile(pathDefault);
+        path = pathDefault;
+        Log.Write("MAP: using default mappings for {0}", xmlFile);
       }
       return path;
     }
 
 
-    public bool LoadMapping(string xmlPath)
+    public void LoadMapping(string xmlPath)
     {
       try
       {
@@ -206,12 +201,10 @@ namespace MediaPortal
           RemoteMap remoteMap = new RemoteMap(value, name, mapping);
           remote.Add(remoteMap);
         }
-        return true;
       }
-      catch (Exception ex)
+      catch
       {
-        Log.Write("MAP: error while reading XML configuration file \"{0}\": {1}", xmlPath, ex.ToString());
-        return false;
+        throw new ApplicationException("Error reading XML file");
       }
     }
 
@@ -223,7 +216,15 @@ namespace MediaPortal
     public InputHandler(string xmlFile, out bool success)
     {
       string xmlPath = GetXmlPath(xmlFile);
-      success = LoadMapping(xmlPath);
+      try
+      {
+        LoadMapping(xmlPath);
+        success = true;
+      }
+      catch
+      {
+        success = false;
+      }
     }
 
 
