@@ -90,12 +90,32 @@ namespace MediaPortal.Tests.Plugins.RemotePlugins.HCWRemote
 
     [Test]
     [ExpectedException(typeof(System.ApplicationException), "XML version mismatch")]
-    public void CheckXmlVersion()
+    public void CheckXmlVersionDefaultFail()
     {
       bool result = false;
       string xmlFile = "TestVersion";
       InputHandler inputHandler = new InputHandler(xmlFile, out result);
       inputHandler.CheckXmlFile("InputDeviceMappings\\defaults\\TestVersion.xml");
+    }
+
+    [Test]
+    [ExpectedException(typeof(System.ApplicationException), "XML version mismatch")]
+    public void CheckXmlVersionCustomDefaultFail()
+    {
+      bool result = false;
+      string xmlFile = "TestVersion";
+      InputHandler inputHandler = new InputHandler(xmlFile, out result);
+      inputHandler.CheckXmlFile("InputDeviceMappings\\custom\\TestVersion.xml");
+    }
+
+    [Test]
+    [ExpectedException(typeof(System.ApplicationException), "XML version mismatch")]
+    public void CheckXmlVersionCustomFail()
+    {
+      bool result = false;
+      string xmlFile = "TestVersionFail";
+      InputHandler inputHandler = new InputHandler(xmlFile, out result);
+      inputHandler.CheckXmlFile("InputDeviceMappings\\custom\\TestVersionFail.xml");
     }
 
     [Test]
