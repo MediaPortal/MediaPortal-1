@@ -141,9 +141,9 @@
 	<control>
 			<type>image</type>
 			<id>1</id>
-			<posX>60</posX>
-			<posY>500</posY>
-			<texture>MPlogo.png</texture>
+			<posX>144</posX>
+		    <posY>416</posY>
+			<texture>-</texture>
 	</control>
 	<control>
 			<type>image</type>
