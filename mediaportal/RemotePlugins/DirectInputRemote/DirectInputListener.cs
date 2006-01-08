@@ -97,7 +97,13 @@ namespace MediaPortal
     {
       if (null != device)
       {
-        device.Unacquire();
+        try
+        {
+          device.Unacquire();
+        }
+        catch (System.NullReferenceException)
+        {
+        }
         device.Dispose();
         device = null;
       }
