@@ -683,8 +683,16 @@ namespace MediaPortal
 
     void CreateMapper()
     {
-      bool result;
-      diMapper = new InputHandler("DirectInput", out result);
+      try
+      {
+        diMapper = new InputHandler("DirectInput");
+      }
+      catch (System.IO.FileNotFoundException)
+      {
+      }
+      catch (System.Xml.XmlException)
+      {
+      }
     }
 
     void AttachHandlers()

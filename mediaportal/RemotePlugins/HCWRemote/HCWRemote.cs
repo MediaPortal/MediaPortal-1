@@ -94,7 +94,18 @@ namespace MediaPortal
         port = xmlreader.GetValueAsInt("remote", "HCWHelperPort", 2110);
       }
       if (controlEnabled)
-        hcwHandler = new InputHandler("Hauppauge HCW", out controlEnabled);
+        try
+        {
+          hcwHandler = new InputHandler("Hauppauge HCW");
+        }
+        catch (System.IO.FileNotFoundException)
+        {
+          controlEnabled = false;
+        }
+        catch (System.Xml.XmlException)
+        {
+          controlEnabled = false;
+        }
 
       if (controlEnabled)
       {
@@ -118,7 +129,7 @@ namespace MediaPortal
         if (Process.GetProcessesByName("Ir").Length != 0)
           restartIRApp = true;
       }
-      catch
+      catch (System.InvalidOperationException)
       {
       }
     }

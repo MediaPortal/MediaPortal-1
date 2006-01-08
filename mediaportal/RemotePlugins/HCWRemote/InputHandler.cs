@@ -213,21 +213,10 @@ namespace MediaPortal
     /// Constructor: Initializes mappings from XML file
     /// </summary>
     /// <param name="xmlFile">XML mapping file</param>
-    public InputHandler(string xmlFile, out bool success)
+    public InputHandler(string xmlFile)
     {
-      success = false;
-      try
-      {
-        string xmlPath = GetXmlPath(xmlFile);
-        LoadMapping(xmlPath);
-        success = true;
-      }
-      catch (System.Xml.XmlException)
-      {
-      }
-      catch (System.IO.FileNotFoundException)
-      {
-      }
+      string xmlPath = GetXmlPath(xmlFile);
+      LoadMapping(xmlPath);
     }
 
 

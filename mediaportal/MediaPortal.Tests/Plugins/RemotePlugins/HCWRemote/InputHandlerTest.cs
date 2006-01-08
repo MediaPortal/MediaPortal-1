@@ -37,27 +37,24 @@ namespace MediaPortal.Tests.Plugins.RemotePlugins.HCWRemote
     [Test]
     public void GetPathDefaultXml()
     {
-      bool result = false;
       string xmlFile = "TestDefault";
-      InputHandler inputHandler = new InputHandler(xmlFile, out result);
+      InputHandler inputHandler = new InputHandler(xmlFile);
       Assert.AreEqual("InputDeviceMappings\\defaults\\TestDefault.xml", inputHandler.GetXmlPath(xmlFile));
     }
 
     [Test]
     public void GetPathCustomXml()
     {
-      bool result = false;
       string xmlFile = "TestCustom";
-      InputHandler inputHandler = new InputHandler(xmlFile, out result);
+      InputHandler inputHandler = new InputHandler(xmlFile);
       Assert.AreEqual("InputDeviceMappings\\custom\\TestCustom.xml", inputHandler.GetXmlPath(xmlFile));
     }
 
     [Test]
     public void GetPathCustomFail()
     {
-      bool result = false;
       string xmlFile = "TestFallbackVersion";
-      InputHandler inputHandler = new InputHandler(xmlFile, out result);
+      InputHandler inputHandler = new InputHandler(xmlFile);
       Assert.AreEqual("InputDeviceMappings\\defaults\\TestFallbackVersion.xml", inputHandler.GetXmlPath(xmlFile));
     }
 
@@ -65,9 +62,8 @@ namespace MediaPortal.Tests.Plugins.RemotePlugins.HCWRemote
     [ExpectedException(typeof(System.Xml.XmlException))]
     public void CorruptXml()
     {
-      bool result = false;
       string xmlFile = "TestCorrupt";
-      InputHandler inputHandler = new InputHandler(xmlFile, out result);
+      InputHandler inputHandler = new InputHandler(xmlFile);
       Assert.AreEqual("InputDeviceMappings\\defaults\\TestCorrupt.xml", inputHandler.GetXmlPath(xmlFile));
     }
 
@@ -75,37 +71,33 @@ namespace MediaPortal.Tests.Plugins.RemotePlugins.HCWRemote
     [ExpectedException(typeof(System.IO.FileNotFoundException))]
     public void GetPathFail()
     {
-      bool result = false;
       string xmlFile = "TestFail";
-      InputHandler inputHandler = new InputHandler(xmlFile, out result);
+      InputHandler inputHandler = new InputHandler(xmlFile);
       Assert.AreNotEqual("InputDeviceMappings\\defaults\\TestFail.xml", inputHandler.GetXmlPath(xmlFile));
     }
 
     [Test]
     public void GetPathFallbackVersion()
     {
-      bool result = false;
       string xmlFile = "TestFallbackVersion";
-      InputHandler inputHandler = new InputHandler(xmlFile, out result);
+      InputHandler inputHandler = new InputHandler(xmlFile);
       Assert.AreEqual("InputDeviceMappings\\defaults\\TestFallbackVersion.xml", inputHandler.GetXmlPath(xmlFile));
     }
 
     [Test]
     public void LoadMapping()
     {
-      bool result = false;
       string xmlFile = "TestDefault";
       string xmlPath = "InputDeviceMappings\\defaults\\TestDefault.xml";
-      InputHandler inputHandler = new InputHandler(xmlFile, out result);
+      InputHandler inputHandler = new InputHandler(xmlFile);
       inputHandler.LoadMapping(xmlPath);
     }
 
     [Test]
     public void GetXmlVersion()
     {
-      bool result = false;
       string xmlFile = "TestDefault";
-      InputHandler inputHandler = new InputHandler(xmlFile, out result);
+      InputHandler inputHandler = new InputHandler(xmlFile);
       Assert.AreEqual(3, inputHandler.GetXmlVersion("InputDeviceMappings\\defaults\\TestDefault.xml"));
     }
 
@@ -113,9 +105,8 @@ namespace MediaPortal.Tests.Plugins.RemotePlugins.HCWRemote
     [ExpectedException(typeof(System.ApplicationException), "XML version mismatch")]
     public void CheckXmlVersionDefaultFail()
     {
-      bool result = false;
       string xmlFile = "TestVersion";
-      InputHandler inputHandler = new InputHandler(xmlFile, out result);
+      InputHandler inputHandler = new InputHandler(xmlFile);
       inputHandler.CheckXmlFile("InputDeviceMappings\\defaults\\TestVersion.xml");
     }
 
@@ -123,9 +114,8 @@ namespace MediaPortal.Tests.Plugins.RemotePlugins.HCWRemote
     [ExpectedException(typeof(System.ApplicationException), "XML version mismatch")]
     public void CheckXmlVersionCustomFail()
     {
-      bool result = false;
       string xmlFile = "TestVersion2";
-      InputHandler inputHandler = new InputHandler(xmlFile, out result);
+      InputHandler inputHandler = new InputHandler(xmlFile);
       inputHandler.CheckXmlFile("InputDeviceMappings\\custom\\TestVersion2.xml");
     }
 
@@ -156,9 +146,8 @@ namespace MediaPortal.Tests.Plugins.RemotePlugins.HCWRemote
     [Test]
     public void GetMapping()
     {
-      bool result = false;
       string xmlFile = "TestDefault";
-      InputHandler inputHandler = new InputHandler(xmlFile, out result);
+      InputHandler inputHandler = new InputHandler(xmlFile);
 
       int    layer       = 0;
       string condition   = "*";
@@ -185,11 +174,9 @@ namespace MediaPortal.Tests.Plugins.RemotePlugins.HCWRemote
     [Test]
     public void MapCommand()
     {
-      bool result = false;
       string xmlFile = "TestDefault";
       int newCommand = 0;
-      InputHandler inputHandler = new InputHandler(xmlFile, out result);
-      Assert.IsTrue(result);
+      InputHandler inputHandler = new InputHandler(xmlFile);
       Assert.IsTrue(inputHandler.MapAction(newCommand));
     }
 
