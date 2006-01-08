@@ -7000,4 +7000,63 @@
 	  </connections>
     </tv>
   </capturecard>
+
+  <capturecard commercialname="Dvico Fusion HDTV Plus" capturename="FusionHDTV, WDM Video Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_db1018ac&amp;rev_05">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="true" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"  name="FusionHDTV, NTSC/ATSC WDM TvTuner" 		checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="FusionHDTV, TvAudio"		checkdevice="true"></filter>
+        <filter cat="crossbar" name="FusionHDTV, Crossbar"		checkdevice="true"></filter>
+        <filter cat="videocapture"  name="FusionHDTV, WDM Video Capture"	checkdevice="true"></filter>
+        <filter cat="audiocapture"  name="%Soundcard%"	checkdevice="false"></filter>
+        <filter cat="videoencoder"  name="InterVideo Video Encoder"		checkdevice="false"></filter>
+        <filter cat="audioencoder"  name="InterVideo Audio Encoder"		checkdevice="false"></filter>
+        <filter cat="mux"  name="InterVideo Multiplexer"		checkdevice="false"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar"	sinkpin="%tvtuner%"></connection>
+        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar"	sinkpin="%audiotuner%"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="videocapture"	sinkpin="0"></connection>
+        <connection sourcefilter="videocapture"	sourcepin="0" sinkfilter="videoencoder"	sinkpin="0"></connection>
+        <connection sourcefilter="audiocapture"	sourcepin="0" sinkfilter="audioencoder"	sinkpin="0"></connection>
+        <connection sourcefilter="videoencoder"	sourcepin="0" sinkfilter="mux"	sinkpin="0"></connection>
+        <connection sourcefilter="audioencoder"	sourcepin="0" sinkfilter="mux"	sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Terratec Cinergy 2400i DT Tuner 1" capturename="Cinergy 2400i DT Capture 1" devid="ven_18c3&amp;dev_0720&amp;subsys_1167153b&amp;rev_00">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"	checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="Cinergy 2400i DT Tuner 1"			checkdevice="true"></filter>
+        <filter cat="capture"         name="Cinergy 2400i DT Capture 1"			checkdevice="true"></filter>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Terratec Cinergy 2400i DT Tuner 2" capturename="Cinergy 2400i DT Capture 2" devid="ven_18c3&amp;dev_0720&amp;subsys_1167153b&amp;rev_00">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"	checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="Cinergy 2400i DT Tuner 2"			checkdevice="true"></filter>
+        <filter cat="capture"         name="Cinergy 2400i DT Capture 2"			checkdevice="true"></filter>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
+      </connections>
+    </tv>
+  </capturecard>
 </capturecards>
