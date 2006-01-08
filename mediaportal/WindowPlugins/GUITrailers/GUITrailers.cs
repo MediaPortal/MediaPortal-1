@@ -415,7 +415,7 @@ namespace MediaPortal.GUI.Video
 					YahooTrailers.GetMovieInfo(YahooTrailers.JAMovieUrl[itemindex-1], YahooTrailers.JAMovieName[itemindex-1]);
 					ShowListView(YahooTrailers.TrailersClipsMore, false);
 					YahooTrailers.GetMovieDetails(YahooTrailers.JAMovieUrl[itemindex-1], YahooTrailers.JAMovieName[itemindex-1]);
-					ShowMovieInfo(YahooTrailers.JAMovieName[itemindex], YahooTrailers.PosterUrl);
+					ShowMovieInfo(YahooTrailers.JAMovieName[itemindex-1], YahooTrailers.PosterUrl);
 				}
 			}
 				// MostWatchedview
@@ -435,7 +435,7 @@ namespace MediaPortal.GUI.Video
 					YahooTrailers.GetMovieInfo(YahooTrailers.MWMovieUrl[itemindex-1], YahooTrailers.MWMovieName[itemindex-1]);
 					ShowListView(YahooTrailers.TrailersClipsMore, false);
 					YahooTrailers.GetMovieDetails(YahooTrailers.MWMovieUrl[itemindex-1], YahooTrailers.MWMovieName[itemindex-1]);
-					ShowMovieInfo(YahooTrailers.MWMovieName[itemindex], YahooTrailers.PosterUrl);
+					ShowMovieInfo(YahooTrailers.MWMovieName[itemindex-1], YahooTrailers.PosterUrl);
 				}
 			}
 				// Letterbutton view
@@ -475,7 +475,7 @@ namespace MediaPortal.GUI.Video
 					YahooTrailers.GetMovieInfo(YahooTrailers.MovieURL[itemindex-1], YahooTrailers.MovieName[itemindex-1]);
 					ShowListView(YahooTrailers.TrailersClipsMore, false);
 					YahooTrailers.GetMovieDetails(YahooTrailers.MovieURL[itemindex-1], YahooTrailers.MovieName[itemindex-1]);
-					ShowMovieInfo(YahooTrailers.MovieName[itemindex], YahooTrailers.PosterUrl);
+					ShowMovieInfo(YahooTrailers.MovieName[itemindex-1], YahooTrailers.PosterUrl);
 				}
 			}
 				// Main selection view
@@ -667,6 +667,8 @@ namespace MediaPortal.GUI.Video
                     if (GermanTrailers.GermanTrailerURL[GermanTrailers.GermanSelected] != null)
                         Prev_SelectedItem = listview.SelectedListItemIndex;
                     GermanTrailers.PlayGermanTrailer(GermanTrailers.GermanTrailerURL[GermanTrailers.GermanSelected]);
+                    ShowListViewAndInfo(GermanTrailers.GermanMovieName[GermanTrailers.GermanSelected], GermanTrailers.GermanTrailerURL[GermanTrailers.GermanSelected]);
+                    label2.Visible = false; //runtime info not available
                 }
             }
             //else if(GameTrailers.newgameview==true)
@@ -1078,7 +1080,7 @@ namespace MediaPortal.GUI.Video
         //}
 		public void ShowPoster(string downloadurl, string moviename)
 		{
-			if(downloadurl ==null)
+			if(downloadurl ==null| downloadurl ==string.Empty)
 				return;
 			else
 			{
@@ -1098,8 +1100,7 @@ namespace MediaPortal.GUI.Video
 			int j = 0;
 			string letter;
 			listview.Clear();
-//			string[] LMovieUrl = new string[200]; // strings for letterbutton movies
-//			string[] LMovieName = new string[200];
+            ShowLabelsFalse();
 			Array.Clear(LMovieName,0,200);
             Array.Clear(LMovieUrl,0,200);
 
