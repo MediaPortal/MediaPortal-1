@@ -23,7 +23,7 @@ using System.IO;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Runtime.InteropServices;
-using DirectX.Capture;
+//using DirectX.Capture;
 using MediaPortal.Util;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;

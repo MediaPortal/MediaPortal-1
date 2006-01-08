@@ -30,7 +30,7 @@ using System.Windows.Forms;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Soap;
 using DShowNET;
-using DirectX.Capture;
+using DShowNET.Helper;
 using MediaPortal.Player;
 using SQLite.NET;
 using MediaPortal.GUI.Library;

@@ -22,7 +22,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Collections;
 using DShowNET;
-using DirectX.Capture;
+//using DirectX.Capture;
 using MediaPortal.GUI.Library;
 
 namespace MediaPortal.TV.Recording

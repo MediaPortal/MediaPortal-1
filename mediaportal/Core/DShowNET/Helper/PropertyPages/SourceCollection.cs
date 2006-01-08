@@ -25,7 +25,7 @@ using System.Collections;
 using System.Runtime.InteropServices;
 using DShowNET;
 
-namespace DirectX.Capture
+namespace DShowNET.Helper
 {
 	/// <summary>
 	///  A collection of sources (or physical connectors) on an 

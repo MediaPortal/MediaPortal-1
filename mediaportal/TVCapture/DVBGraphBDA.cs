@@ -33,13 +33,14 @@ using Microsoft.Win32;
 using DShowNET;
 using DShowNET.Device;
 using DShowNET.BDA;
+using DShowNET.Helper;
 using MediaPortal.Util;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.TV.Database;
 using TVCapture;
 using System.Xml;
-using DirectX.Capture;
+//using DirectX.Capture;
 using MediaPortal.Radio.Database;
 using Toub.MediaCenter.Dvrms.Metadata;
 

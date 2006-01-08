@@ -30,13 +30,14 @@ using System.Collections;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using DShowNET;
+using DShowNET.Helper;
 using MediaPortal.Util;
 using MediaPortal.Player;
 using MediaPortal.GUI.Library;
 using Microsoft.Win32;
 using System.Xml;
 using TVCapture;
-using DirectX.Capture;
+//using DirectX.Capture;
 using MediaPortal.TV.Teletext;
 
 

@@ -25,7 +25,7 @@ using DShowNET;
 using MediaPortal;
 using MediaPortal.Util;
 using MediaPortal.GUI.Library;
-using DirectX.Capture;
+//using DirectX.Capture;
 using MediaPortal.TV.Database;
 using MediaPortal.Player;
 using MediaPortal.Radio.Database;

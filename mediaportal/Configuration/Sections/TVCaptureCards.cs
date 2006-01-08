@@ -27,7 +27,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using DShowNET;
 using DShowNET.Device;
-using DirectX.Capture;
+using DShowNET.Helper;
 using MediaPortal.GUI.Library;
 using TVCapture;
 

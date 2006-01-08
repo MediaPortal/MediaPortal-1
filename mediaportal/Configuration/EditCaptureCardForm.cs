@@ -31,7 +31,7 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Soap;
 using DShowNET;
 using DShowNET.Device;
-using DirectX.Capture;
+using DShowNET.Helper;
 using MediaPortal.TV.Recording;
 using MediaPortal.GUI.Library;
 using TVCapture;

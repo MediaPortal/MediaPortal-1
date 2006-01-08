@@ -23,7 +23,7 @@ using System;
 using System.Runtime.InteropServices; 
 using DShowNET;
 
-namespace DirectX.Capture
+namespace DShowNET.Helper
 {
 	/// <summary>
 	///  Represents a physical connector or source on an audio/video device.

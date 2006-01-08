@@ -23,7 +23,8 @@ using System.Drawing;
 using System.Collections;
 using System.Windows.Forms;
 using DShowNET;
-using DirectX.Capture;
+using DShowNET.Helper;
+//using DirectX.Capture;
 using MediaPortal.TV.Database;
 using MediaPortal.Radio.Database;
 

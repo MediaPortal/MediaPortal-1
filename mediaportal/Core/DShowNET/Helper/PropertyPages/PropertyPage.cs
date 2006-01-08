@@ -20,32 +20,30 @@
  */
 
 using System;
-using System.Runtime.InteropServices; 
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using DShowNET;
 
-namespace DirectX.Capture
+namespace DShowNET.Helper
 {
 	/// <summary>
-	///  The property page to configure a Video for Windows compliant
-	///  compression codec. Most compressors support this property page
-	///  rather than a DirectShow property page. Also, most compressors
-	///  do not support the IAMVideoCompression interface so this
-	///  property page is the only method to configure a compressor. 
+	///  A base class for representing property pages exposed by filters. 
 	/// </summary>
-	public class VfwCompressorPropertyPage : PropertyPage
+	public class PropertyPage : IDisposable
 	{
 
 		// ---------------- Properties --------------------
 
-		/// <summary> Video for Windows compression dialog interface </summary>
-		protected IAMVfwCompressDialogs vfwCompressDialogs = null;
+		/// <summary> Name of property page. This name may not be unique </summary>
+    public string Name;
+    protected string m_strFilterName="";
+
+		/// <summary> Does this property page support saving and loading the user's choices. </summary>
+		public bool SupportsPersisting = false;
 
 		/// <summary> 
 		///  Get or set the state of the property page. This is used to save
-		///  and restore the user's choices without redisplaying the property page.
-		///  This property will be null if unable to retrieve the property page's
-		///  state.
+		///  and restore the user's choices without redisplaying the property page. 
 		/// </summary>
 		/// <remarks>
 		///  After showing this property page, read and store the value of 
@@ -53,40 +51,38 @@ namespace DirectX.Capture
 		///  reloaded by setting this property with the value stored earlier. 
 		///  Note that some property pages, after setting this property, 
 		///  will not reflect the new state. However, the filter will use the
-		///  new settings.
+		///  new settings. 
+		///  
+		/// <para>
+		///  When reading this property, copy the entire array at once then manipulate
+		///  your local copy (e..g byte[] myState = propertyPage.State). When
+		///  setting this property set the entire array at once (e.g. propertyPage = myState).
+		/// </para>
+		///  
+		/// <para>
+		///  Not all property pages support saving/loading state. Check the 
+		///  <see cref="SupportsPersisting"/> property to determine if this 
+		///  property page supports it.
+		/// </para>
 		/// </remarks>
-		public override byte[] State
+		public virtual byte[] State
 		{
-			get 
-			{ 
-				byte[] data = null;
-				int size = 0;
+			get { throw new NotSupportedException( "This property page does not support persisting state." ); }
+			set { throw new NotSupportedException( "This property page does not support persisting state." ); }
+    }
+    public string FilterName
+    {
+      get { return m_strFilterName;}
+      set {m_strFilterName=value;}
+    }
 
-				int hr = vfwCompressDialogs.GetState( null, ref size );
-				if ( ( hr == 0 ) && ( size > 0 ) )
-				{
-					data = new byte[size];
-					hr = vfwCompressDialogs.GetState( data, ref size );
-					if ( hr != 0 ) data = null;
-				}
-				return( data );
-			}
-			set 
-			{  
-				int hr = vfwCompressDialogs.SetState( value, value.Length );
-				if ( hr != 0 ) Marshal.ThrowExceptionForHR( hr );
-			}
-		}
 
 
 		// ---------------- Constructors --------------------
 
 		/// <summary> Constructor </summary>
-		public VfwCompressorPropertyPage(string name, IAMVfwCompressDialogs compressDialogs)
+		public PropertyPage()
 		{
-			Name = name;
-			SupportsPersisting = true;
-			this.vfwCompressDialogs = compressDialogs;
 		}
 
 
@@ -95,11 +91,17 @@ namespace DirectX.Capture
 
 		/// <summary> 
 		///  Show the property page. Some property pages cannot be displayed 
-		///  while previewing and/or capturing. 
+		///  while previewing and/or capturing. This method will block until
+		///  the property page is closed by the user.
 		/// </summary>
-		public override void Show(Control owner)
+		public virtual void Show(Control owner)
 		{
-			vfwCompressDialogs.ShowDialog( VfwCompressDialogs.Config, owner.Handle );
+			throw new NotSupportedException( "Not implemented. Use a derived class. " );
+		}
+
+		/// <summary> Release unmanaged resources </summary>
+		public void Dispose()
+		{
 		}
 
 	}

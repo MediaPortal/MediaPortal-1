@@ -22,7 +22,7 @@ using System;
 using System.IO;
 using DShowNET;
 
-namespace DirectX.Capture
+namespace DShowNET.Helper
 {
 	/// <summary>
 	/// 

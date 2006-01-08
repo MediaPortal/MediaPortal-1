@@ -264,51 +264,6 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DirectX.Capture\AudioCapabilities.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DirectX.Capture\AudioSource.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DirectX.Capture\Capture.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DirectX.Capture\CrossbarSource.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DirectX.Capture\DeviceInUseException.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DirectX.Capture\DirectShowPropertyPage.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DirectX.Capture\FilterPersist.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DirectX.Capture\PropertyPage.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DirectX.Capture\PropertyPageCollection.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DirectX.Capture\Source.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DirectX.Capture\SourceCollection.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DirectX.Capture\Tuner.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DirectX.Capture\VfwCompressorPropertyPage.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DirectX.Capture\VideoCapabilities.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DirectX.Capture\VideoProcAmp.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Dispatcher\Job.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -585,6 +540,16 @@
     <Compile Include="DShowNET\hauppauge.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="DShowNET\Helper\PropertyPages\AudioSource.cs" />
+    <Compile Include="DShowNET\Helper\PropertyPages\CrossbarSource.cs" />
+    <Compile Include="DShowNET\Helper\PropertyPages\DirectShowPropertyPage.cs" />
+    <Compile Include="DShowNET\Helper\PropertyPages\FilterPersist.cs" />
+    <Compile Include="DShowNET\Helper\PropertyPages\PropertyPage.cs" />
+    <Compile Include="DShowNET\Helper\PropertyPages\PropertyPageCollection.cs" />
+    <Compile Include="DShowNET\Helper\PropertyPages\Source.cs" />
+    <Compile Include="DShowNET\Helper\PropertyPages\SourceCollection.cs" />
+    <Compile Include="DShowNET\Helper\PropertyPages\VfwCompressorPropertyPage.cs" />
+    <Compile Include="DShowNET\Helper\VideoProcAmp.cs" />
     <Compile Include="DShowNET\IksPropertyUtils.cs">
       <SubType>Code</SubType>
     </Compile>

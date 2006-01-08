@@ -29,7 +29,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Text;
 using MediaPortal.GUI.Library;
-using DirectX.Capture;
+//using DirectX.Capture;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Direct3D = Microsoft.DirectX.Direct3D;

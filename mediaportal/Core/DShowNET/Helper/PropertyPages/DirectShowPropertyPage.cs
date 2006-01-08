@@ -24,7 +24,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using DShowNET;
 
-namespace DirectX.Capture
+namespace DShowNET.Helper
 {
 	/// <summary>
 	///  Property pages for a DirectShow filter (e.g. hardware device). These

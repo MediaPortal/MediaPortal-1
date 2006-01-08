@@ -24,7 +24,9 @@ using System.Drawing;
 using System.Collections;
 using System.Runtime.InteropServices;
 using DShowNET;
-using DirectX.Capture;
+using DShowNET.Helper;
+//using DirectX.Captur
+//using DirectX.Capture;
 using MediaPortal.Util;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
@@ -672,7 +674,7 @@ namespace MediaPortal.TV.Recording
           }
         }
       }
-      DirectX.Capture.FilterPersist persist = new DirectX.Capture.FilterPersist(m_captureGraphBuilder, m_filterCompressorVideo, m_filterCompressorAudio);
+      DShowNET.Helper.FilterPersist persist = new DShowNET.Helper.FilterPersist(m_captureGraphBuilder, m_filterCompressorVideo, m_filterCompressorAudio);
       persist.LoadSettings(m_cardID);
       return true;
     }

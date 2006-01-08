@@ -25,7 +25,7 @@ using System.Collections;
 using System.Runtime.InteropServices;
 using DShowNET;
 
-namespace DirectX.Capture
+namespace DShowNET.Helper
 {
 	/// <summary>
 	///  A collection of available PropertyPages in a DirectShow
