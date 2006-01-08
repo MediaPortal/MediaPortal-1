@@ -22,7 +22,7 @@ using System;
 using System.Text;
 using System.Runtime.InteropServices;
 
-namespace DShowNET
+namespace DShowNET.Helper
 {
   [StructLayout(LayoutKind.Sequential), ComVisible(false)]
   public struct NORMALIZEDRECT

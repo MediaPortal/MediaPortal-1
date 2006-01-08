@@ -495,7 +495,7 @@
     <Compile Include="DShowNET\DirectShowVolume.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DShowNET\DirectVobSub.cs">
+    <Compile Include="DShowNET\Helper\DirectVobSub.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DShowNET\DsBugWO.cs">
