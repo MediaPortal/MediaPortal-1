@@ -59,7 +59,6 @@ namespace MediaPortal.InputDevices.HCWHelper
       this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
       this.statusOfflineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.peerStatusToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-      this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
       this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.notifyIconGreen = new System.Windows.Forms.NotifyIcon(this.components);
       this.notifyIconRed = new System.Windows.Forms.NotifyIcon(this.components);
@@ -78,34 +77,30 @@ namespace MediaPortal.InputDevices.HCWHelper
       this.contextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.statusOfflineToolStripMenuItem,
             this.peerStatusToolStripMenuItem,
-            this.toolStripSeparator1,
             this.exitToolStripMenuItem});
       this.contextMenuStrip.Name = "contextMenuStrip";
       this.contextMenuStrip.ShowImageMargin = false;
-      this.contextMenuStrip.Size = new System.Drawing.Size(96, 76);
+      this.contextMenuStrip.Size = new System.Drawing.Size(128, 92);
       this.contextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip_Opening);
       // 
       // statusOfflineToolStripMenuItem
       // 
       this.statusOfflineToolStripMenuItem.Name = "statusOfflineToolStripMenuItem";
-      this.statusOfflineToolStripMenuItem.Size = new System.Drawing.Size(95, 22);
+      this.statusOfflineToolStripMenuItem.Size = new System.Drawing.Size(127, 22);
       this.statusOfflineToolStripMenuItem.Text = "Status:";
+      this.statusOfflineToolStripMenuItem.Visible = false;
       // 
       // peerStatusToolStripMenuItem
       // 
       this.peerStatusToolStripMenuItem.Name = "peerStatusToolStripMenuItem";
-      this.peerStatusToolStripMenuItem.Size = new System.Drawing.Size(95, 22);
+      this.peerStatusToolStripMenuItem.Size = new System.Drawing.Size(127, 22);
       this.peerStatusToolStripMenuItem.Text = "Peer   :";
-      // 
-      // toolStripSeparator1
-      // 
-      this.toolStripSeparator1.Name = "toolStripSeparator1";
-      this.toolStripSeparator1.Size = new System.Drawing.Size(92, 6);
+      this.peerStatusToolStripMenuItem.Visible = false;
       // 
       // exitToolStripMenuItem
       // 
       this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-      this.exitToolStripMenuItem.Size = new System.Drawing.Size(95, 22);
+      this.exitToolStripMenuItem.Size = new System.Drawing.Size(127, 22);
       this.exitToolStripMenuItem.Text = "Exit";
       this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
       // 
@@ -148,7 +143,6 @@ namespace MediaPortal.InputDevices.HCWHelper
     private System.Windows.Forms.ContextMenuStrip contextMenuStrip;
     private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
     private System.Windows.Forms.ToolStripMenuItem statusOfflineToolStripMenuItem;
-    private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
     private System.Windows.Forms.ToolStripMenuItem peerStatusToolStripMenuItem;
     private System.Windows.Forms.NotifyIcon notifyIconGreen;
     private System.Windows.Forms.NotifyIcon notifyIconRed;

@@ -156,6 +156,7 @@ namespace MediaPortal.InputDevices
       if (!controlEnabled)
         return;
 
+      StartHCW();
       connection.Start(port + 1);
       connection.ReceiveEvent += new UdpHelper.Connection.ReceiveEventHandler(OnReceive);
       Thread checkThread = new Thread(new ThreadStart(CheckThread));
@@ -362,6 +363,7 @@ namespace MediaPortal.InputDevices
               switch ((int)msg.WParam)
               {
                 case WA_INACTIVE:
+                  Log.Write("HCW: WA_INACTIVE");
                   StopHCW();
                   break;
                 case WA_ACTIVE:

@@ -48,6 +48,7 @@ namespace MediaPortal.InputDevices.HCWHelper
     private bool logVerbose = false;
     private UdpHelper.Connection connection;
     private int port = 2110;
+    private bool registered = false;
 
 
     /// <summary>
@@ -123,6 +124,8 @@ namespace MediaPortal.InputDevices.HCWHelper
     /// </summary>
     private void StartIR()
     {
+      if (registered)
+        StopIR();
       if (Process.GetProcessesByName("Ir").Length != 0)
       {
         int i = 0;
@@ -137,11 +140,16 @@ namespace MediaPortal.InputDevices.HCWHelper
           }
         }
         if (Process.GetProcessesByName("Ir").Length != 0)
+        {
+          notifyIcon.Icon = notifyIconRed.Icon;
           Log.Write("HCW Helper: external control could not be terminated!");
+          System.Windows.Forms.Application.Exit();
+        }
       }
       try
       {
         irremote.IROpen(this.Handle, 0, false, 0);
+        registered = true;
         notifyIcon.Icon = notifyIconGreen.Icon;
       }
       catch (irremote.IRFailedException ex)
@@ -162,6 +170,7 @@ namespace MediaPortal.InputDevices.HCWHelper
       try
       {
         irremote.IRClose(this.Handle, 0);
+        registered = false;
         if (logVerbose) Log.Write("HCW Helper: closing driver successful");
       }
       catch
