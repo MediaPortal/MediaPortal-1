@@ -36,7 +36,7 @@ using System.Diagnostics;
 using Microsoft.Win32;
 using MediaPortal.GUI.Library;
 
-namespace HCWHelper
+namespace MediaPortal.InputDevices.HCWHelper
 {
   public partial class HCWHelper : Form
   {
@@ -46,7 +46,7 @@ namespace HCWHelper
 
     private bool cancelWait = false;
     private bool logVerbose = false;
-    private NetHelper.Connection connection;
+    private UdpHelper.Connection connection;
     private int port = 2110;
 
 
@@ -63,7 +63,7 @@ namespace HCWHelper
         port = xmlreader.GetValueAsInt("remote", "HCWHelperPort", 2110);
       }
 
-      connection = new NetHelper.Connection(logVerbose);
+      connection = new UdpHelper.Connection(logVerbose);
       if (connection.Start(port))
       {
         irremote.IRSetDllDirectory(GetDllPath());
@@ -71,7 +71,7 @@ namespace HCWHelper
         checkThread.IsBackground = true;
         checkThread.Priority = ThreadPriority.Highest;
         checkThread.Start();
-        connection.ReceiveEvent += new NetHelper.Connection.ReceiveEventHandler(OnReceive);
+        connection.ReceiveEvent += new UdpHelper.Connection.ReceiveEventHandler(OnReceive);
         //connection.DisconnectEvent += new NetHelper.Connection.DisconnectHandler(OnDisconnect);
         StartIR();
       }
@@ -87,7 +87,7 @@ namespace HCWHelper
     {
       if (logVerbose) MediaPortal.GUI.Library.Log.Write("HCW Helper: OnClosing");
       notifyIcon.Icon = notifyIconRed.Icon;
-      connection.ReceiveEvent -= new NetHelper.Connection.ReceiveEventHandler(OnReceive);
+      connection.ReceiveEvent -= new UdpHelper.Connection.ReceiveEventHandler(OnReceive);
       //connection.DisconnectEvent -= new NetHelper.Connection.DisconnectHandler(OnDisconnect);
       StopIR();
       base.OnClosing(e);
@@ -144,7 +144,7 @@ namespace HCWHelper
       {
         notifyIcon.Icon = notifyIconRed.Icon;
         MediaPortal.GUI.Library.Log.Write("HCW Helper: connect to IR failed");
-        Application.Exit();
+        System.Windows.Forms.Application.Exit();
       }
       else
         notifyIcon.Icon = notifyIconGreen.Icon;

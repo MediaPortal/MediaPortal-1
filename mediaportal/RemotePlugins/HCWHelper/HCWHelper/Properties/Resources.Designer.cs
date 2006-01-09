@@ -8,7 +8,8 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace HCWHelper.Properties {
+namespace MediaPortal.InputDevices.Properties
+{
     using System;
     
     

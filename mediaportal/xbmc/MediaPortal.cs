@@ -58,7 +58,7 @@ using MediaPortal.RedEyeIR;//PB00//
 using MediaPortal.Ripper;
 using MediaPortal.TV.Database;
 using MediaPortal.Core.Transcoding;
-using MediaPortal.Remotes;
+using MediaPortal.InputDevices;
 using MediaPortal.Dispatcher;
 #endregion
 

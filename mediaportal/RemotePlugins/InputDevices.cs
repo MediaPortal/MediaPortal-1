@@ -24,7 +24,7 @@ using System.Windows.Forms;
 
 using MediaPortal.GUI.Library;
 
-namespace MediaPortal.Remotes
+namespace MediaPortal.InputDevices
 {
 	public sealed class InputDevices
 	{

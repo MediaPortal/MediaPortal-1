@@ -22,6 +22,7 @@
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
+using MediaPortal.InputDevices;
 
 namespace MediaPortal.Configuration.Sections
 {

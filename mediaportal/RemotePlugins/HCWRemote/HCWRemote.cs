@@ -32,7 +32,7 @@ using System.Threading;
 using System.Collections;
 
 
-namespace MediaPortal
+namespace MediaPortal.InputDevices
 {
   /// <summary>
   /// Hauppauge HCW remote control class / by mPod
@@ -50,7 +50,7 @@ namespace MediaPortal
     int lastExecutedCommandCount = 0;
     int lastCommand;                   // Last executed command
     InputHandler hcwHandler;
-    NetHelper.Connection connection;
+    UdpHelper.Connection connection;
     bool exit = false;
     int port = 2110;
 
@@ -116,7 +116,7 @@ namespace MediaPortal
 
       if (controlEnabled)
       {
-        connection = new NetHelper.Connection(logVerbose);
+        connection = new UdpHelper.Connection(logVerbose);
 
         Process process = Process.GetCurrentProcess();
         Log.Write("Process: {0}", process.ProcessName);
@@ -159,7 +159,7 @@ namespace MediaPortal
       try
       {
         connection.Start(port + 1);
-        connection.ReceiveEvent += new NetHelper.Connection.ReceiveEventHandler(OnReceive);
+        connection.ReceiveEvent += new UdpHelper.Connection.ReceiveEventHandler(OnReceive);
         Thread checkThread = new Thread(new ThreadStart(CheckThread));
         checkThread.IsBackground = true;
         checkThread.Priority = ThreadPriority.Highest;
@@ -206,7 +206,7 @@ namespace MediaPortal
             Utils.OnStartExternal -= new Utils.UtilEventHandler(OnStartExternal);
             Utils.OnStopExternal -= new Utils.UtilEventHandler(OnStopExternal);
           }
-          connection.ReceiveEvent -= new NetHelper.Connection.ReceiveEventHandler(OnReceive);
+          connection.ReceiveEvent -= new UdpHelper.Connection.ReceiveEventHandler(OnReceive);
           connection.Send(port, "APP", "SHUTDOWN", DateTime.Now);
           connection = null;
         }

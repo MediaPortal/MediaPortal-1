@@ -28,7 +28,7 @@ using System.Xml;
 using System.IO;
 using MediaPortal.GUI.Library;
 
-namespace MediaPortal.MameDevice
+namespace MediaPortal.InputDevices
 {
   /// <summary>
   /// Summary description for HCWMappingForm.

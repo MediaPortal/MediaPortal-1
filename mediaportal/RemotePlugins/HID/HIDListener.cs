@@ -23,9 +23,8 @@ using System;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
-using MediaPortal.Remotes;
 
-namespace MediaPortal
+namespace MediaPortal.InputDevices
 {
 	public class HIDListener
 	{

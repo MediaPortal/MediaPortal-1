@@ -23,7 +23,7 @@
 
 #endregion
 
-namespace HCWHelper
+namespace MediaPortal.InputDevices.HCWHelper
 {
   partial class HCWHelper
   {

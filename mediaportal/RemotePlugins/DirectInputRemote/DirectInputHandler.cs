@@ -27,7 +27,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using Microsoft.DirectX.DirectInput;
 
-namespace MediaPortal
+namespace MediaPortal.InputDevices
 {
   /// <summary>
   /// Summary description for DirectInputHandler.

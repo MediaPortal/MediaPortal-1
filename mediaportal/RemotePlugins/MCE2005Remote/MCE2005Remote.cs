@@ -28,9 +28,8 @@ using System.Windows.Forms;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Devices;
-using MediaPortal.Remotes;
 
-namespace MediaPortal
+namespace MediaPortal.InputDevices
 {
 	/// </summary>
 	public class MCE2005Remote

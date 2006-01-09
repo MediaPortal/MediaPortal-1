@@ -53,7 +53,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="irremote.cs" />
     <Compile Include="HCWHelper.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -93,10 +92,6 @@
     <ProjectReference Include="..\..\..\Core\Core.csproj">
       <Project>{02FFFC1F-2555-4B99-8B01-3432D0673855}</Project>
       <Name>Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NetHelper\NetHelper.csproj">
-      <Project>{25048311-34C0-48F6-8352-5D6C90DADAED}</Project>
-      <Name>NetHelper</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

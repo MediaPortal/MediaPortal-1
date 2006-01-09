@@ -123,10 +123,6 @@
       <Project>{B5886774-5D2B-4F6C-A6B6-3998F4F5E60C}</Project>
       <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
     </ProjectReference>
-    <ProjectReference Include="HCWHelper\NetHelper\NetHelper.csproj">
-      <Project>{25048311-34C0-48F6-8352-5D6C90DADAED}</Project>
-      <Name>NetHelper</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppCommands.cs">
@@ -154,9 +150,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="HCWRemote\HCWRemote.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="HCWRemote\InputHandler.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="HID\HIDListener.cs">

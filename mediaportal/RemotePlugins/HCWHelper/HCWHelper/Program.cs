@@ -30,7 +30,7 @@ using System.Diagnostics;
 using System.Threading;
 using MediaPortal.GUI.Library;
 
-namespace HCWHelper
+namespace MediaPortal.InputDevices.HCWHelper
 {
   static class Program
   {
@@ -49,10 +49,10 @@ namespace HCWHelper
           ((Process.GetProcessesByName("MediaPortal").Length > 0) ||
           (Process.GetProcessesByName("MediaPortal.vshost").Length > 0)))
         {
-          Application.EnableVisualStyles();
-          Application.SetCompatibleTextRenderingDefault(false);
+          System.Windows.Forms.Application.EnableVisualStyles();
+          System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
           Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.RealTime;
-          Application.Run(new HCWHelper());
+          System.Windows.Forms.Application.Run(new HCWHelper());
         }
         else
           if (Process.GetProcessesByName("HCWHelper").Length != 1)

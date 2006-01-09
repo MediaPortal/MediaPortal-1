@@ -22,7 +22,7 @@
 using System;
 using MediaPortal.GUI.Library;
 
-namespace MediaPortal.MameDevice
+namespace MediaPortal.InputDevices
 {
 	/// <summary>
 	/// Summary description for MameDevice.
