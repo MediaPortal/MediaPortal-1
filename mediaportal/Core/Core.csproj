@@ -856,6 +856,8 @@
     <Compile Include="id3\TagsException.cs" />
     <Compile Include="id3\TagUtil.cs" />
     <Compile Include="id3\TemporaryFile.cs" />
+    <Compile Include="InputDevices\InputHandler.cs" />
+    <Compile Include="InputDevices\irremote.cs" />
     <Compile Include="Mixer\Mixer.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -1845,6 +1847,7 @@
     <Compile Include="Transcoding\WMVEncoder.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="UdpHelper\UdpHelper.cs" />
     <Compile Include="USBUIRT\USBUIRT.cs">
       <SubType>Code</SubType>
     </Compile>

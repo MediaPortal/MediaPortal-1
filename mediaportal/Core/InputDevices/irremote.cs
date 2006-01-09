@@ -28,9 +28,9 @@ using System.Collections.Generic;
 using System.Text;
 using System.Runtime.InteropServices;
 
-namespace HCWHelper
+namespace MediaPortal.InputDevices
 {
-  static class irremote
+  public static class irremote
   {
     #region DLL-Imports
 

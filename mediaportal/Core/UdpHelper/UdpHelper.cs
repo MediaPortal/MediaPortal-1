@@ -31,7 +31,7 @@ using System.Net.NetworkInformation;
 using System.Text;
 using MediaPortal.GUI.Library;
 
-namespace NetHelper
+namespace UdpHelper
 {
   public class Connection
   {
@@ -70,8 +70,7 @@ namespace NetHelper
 
     public void Stop()
     {
-      //if (udpClient != null)
-        udpClient.Close();
+      udpClient.Close();
     }
 
 
