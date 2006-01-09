@@ -298,6 +298,8 @@ namespace MediaPortal.Player
       // this is triggered only if movie has ended
       // ifso, stop the movie which will trigger MovieStopped
 
+      if (!Utils.IsAudio(_currentFile))
+        GUIGraphicsContext.IsFullScreenVideo = false;
       Log.Write("Audioplayer:ended {0} {1}", _currentFile, bManualStop);
       _currentFile = "";
       if (_wmp10Player != null)
@@ -709,18 +711,5 @@ namespace MediaPortal.Player
       }
     }
 
-    public override bool IsRadio
-    {
-      get
-      {
-        if (_currentFile == null) return false;
-        //TODO: this has to be changed if we are gonna support video streams in the future
-        if (_currentFile.ToLower().IndexOf("http:") >= 0) return true;
-        if (_currentFile.ToLower().IndexOf("https:") >= 0) return true;
-        if (_currentFile.ToLower().IndexOf("mms:") >= 0) return true;
-        if (_currentFile.ToLower().IndexOf("rtsp:") >= 0) return true;
-        return false;
-      }
-    }
   }
 }
