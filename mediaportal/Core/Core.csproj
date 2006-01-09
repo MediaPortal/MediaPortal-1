@@ -857,7 +857,6 @@
     <Compile Include="id3\TagUtil.cs" />
     <Compile Include="id3\TemporaryFile.cs" />
     <Compile Include="InputDevices\InputHandler.cs" />
-    <Compile Include="InputDevices\irremote.cs" />
     <Compile Include="Mixer\Mixer.cs">
       <SubType>Code</SubType>
     </Compile>
