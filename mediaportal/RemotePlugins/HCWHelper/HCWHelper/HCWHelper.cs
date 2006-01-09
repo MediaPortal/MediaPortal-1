@@ -73,7 +73,6 @@ namespace MediaPortal.InputDevices.HCWHelper
         checkThread.Start();
         connection.ReceiveEvent += new UdpHelper.Connection.ReceiveEventHandler(OnReceive);
         //connection.DisconnectEvent += new NetHelper.Connection.DisconnectHandler(OnDisconnect);
-        StartIR();
       }
       else
       {
@@ -143,14 +142,15 @@ namespace MediaPortal.InputDevices.HCWHelper
       try
       {
         irremote.IROpen(this.Handle, 0, false, 0);
+        notifyIcon.Icon = notifyIconGreen.Icon;
       }
-      catch (irremote.IRFailedException)
+      catch (irremote.IRFailedException ex)
       {
         notifyIcon.Icon = notifyIconRed.Icon;
-        Log.Write("HCW Helper: connect to IR failed");
+        Log.Write("HCW Helper: {0}", ex.Message);
         System.Windows.Forms.Application.Exit();
       }
-      notifyIcon.Icon = notifyIconGreen.Icon;
+      
     }
 
 
