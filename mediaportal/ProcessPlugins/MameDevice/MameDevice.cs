@@ -123,8 +123,16 @@ namespace MediaPortal.MameDevice
 
     public void Start()
     {
-      bool result = false;
-      MameMapper = new InputHandler("MameDevice", out result);
+      try
+      {
+        MameMapper = new InputHandler("MameDevice");
+      }
+      catch (System.IO.FileNotFoundException)
+      {
+      }
+      catch (System.Xml.XmlException)
+      {
+      }
     }
 
     public void Stop()
