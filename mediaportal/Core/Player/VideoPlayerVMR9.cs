@@ -30,7 +30,7 @@ using MediaPortal.Util;
 
 
 using MediaPortal.GUI.Library;
-using DShowNET;
+using DirectShowLib;
 using DShowNET.Helper;
 namespace MediaPortal.Player 
 {
@@ -63,29 +63,17 @@ namespace MediaPortal.Player
 
 			Type comtype = null;
 			object comobj = null;
-			RGB color;
-			color.red = 0;
-			color.green = 0;
-			color.blu = 0;
 
-			DsRECT rect = new DsRECT();
-			rect.Top = 0;
-			rect.Bottom =GUIGraphicsContext.form.Height;
-			rect.Left = 0;
-			rect.Right = GUIGraphicsContext.form.Width;
+      DsRect rect = new DsRect();
+			rect.top = 0;
+			rect.bottom =GUIGraphicsContext.form.Height;
+			rect.left = 0;
+			rect.right = GUIGraphicsContext.form.Width;
 				
 
 			try 
 			{
-				comtype = Type.GetTypeFromCLSID( Clsid.FilterGraph );
-				if( comtype == null )
-				{
-          Error.SetError("Unable to play movie","Directx9 is not installed");
-					Log.WriteFile(Log.LogType.Log,true,"VideoPlayer9:DirectX 9 not installed");
-					return false;
-				}
-				comobj = Activator.CreateInstance( comtype );
-				graphBuilder = (IGraphBuilder) comobj; comobj = null;
+        graphBuilder = (IGraphBuilder)new FilterGraph();
 			
 				Vmr9.AddVMR9(graphBuilder);
 				Vmr9.Enable(false);
@@ -125,7 +113,7 @@ namespace MediaPortal.Player
 				mediaSeek	= (IMediaSeeking)  graphBuilder;
 				mediaPos	= (IMediaPosition) graphBuilder;
 				basicAudio	= graphBuilder as IBasicAudio;
-				//DirectShowUtil.SetARMode(graphBuilder,AmAspectRatioMode.AM_ARMODE_STRETCHED);
+				//DirectShowUtil.SetARMode(graphBuilder,AspectRatioMode.Stretched);
 				DirectShowUtil.EnableDeInterlace(graphBuilder);
         m_iVideoWidth=Vmr9.VideoWidth;
         m_iVideoHeight=Vmr9.VideoHeight;
@@ -137,7 +125,7 @@ namespace MediaPortal.Player
         }
         Guid classID=new Guid(0x9852a670,b,0x491b,0x9b,0xe6,0xeb,0xd8,0x41,0xb8,0xa6,0x13);
         IBaseFilter filter;
-        DsUtils.FindFilterByClassID(graphBuilder,  classID, out filter);
+        DirectShowUtil.FindFilterByClassID(graphBuilder, classID, out filter);
         vobSub = null;
         vobSub = filter as IDirectVobSub;
         if (vobSub!=null)
@@ -230,7 +218,7 @@ namespace MediaPortal.Player
       {
 				videoWin	= graphBuilder as IVideoWindow;
 				if (videoWin!=null)
-					videoWin.put_Visible(DsHlp.OAFALSE );
+					videoWin.put_Visible(OABool.False );
 				if (Vmr9!=null)
 				{
 					Vmr9.Enable(false);
@@ -279,9 +267,11 @@ namespace MediaPortal.Player
 				}
 			//	DsUtils.RemoveFilters(graphBuilder);
 
-        if( rotCookie != 0 )
-          DsROT.RemoveGraphFromRot( ref rotCookie );
-        rotCookie=0;
+        if (_rotEntry != null)
+        {
+          _rotEntry.Dispose();
+        }
+        _rotEntry = null;
 
 				if( graphBuilder != null )
 				{

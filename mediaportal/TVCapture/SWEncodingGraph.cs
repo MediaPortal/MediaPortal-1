@@ -25,6 +25,8 @@ using System.Collections;
 using System.Runtime.InteropServices;
 using DShowNET;
 using DShowNET.Helper;
+using DirectShowLib;
+using DirectShowLib.SBE;
 //using DirectX.Captur
 //using DirectX.Capture;
 using MediaPortal.Util;
@@ -90,7 +92,7 @@ namespace MediaPortal.TV.Recording
     IBaseFilter m_filterCompressorAudio = null;
     IAMTVTuner m_TVTuner = null;
     IAMAnalogVideoDecoder m_IAMAnalogVideoDecoder = null;
-    int m_rotCookie = 0; // Cookie into the Running Object Table
+    protected DsROTEntry _rotEntry = null;			// Cookie into the Running Object Table
     VideoCaptureDevice m_videoCaptureDevice = null;
     IVideoWindow m_videoWindow = null;
     IBasicVideo2 m_basicVideo = null;
@@ -169,7 +171,7 @@ namespace MediaPortal.TV.Recording
       Filter filterAudioCompressor;
       GetCompressors(out filterVideoCompressor, out filterAudioCompressor);
 
-      DirectShowUtil.DebugWrite("SWGraph:CreateGraph()");
+      Log.Write("SWGraph:CreateGraph()");
 
       // find the video capture device
       m_iPrevChannel = -1;
@@ -201,46 +203,44 @@ namespace MediaPortal.TV.Recording
       //no video capture device? then fail
       if (filterVideoCaptureDevice == null)
       {
-        DirectShowUtil.DebugWrite("SWGraph:CreateGraph() FAILED couldnt find capture device:{0}", m_strVideoCaptureFilter);
+        Log.Write("SWGraph:CreateGraph() FAILED couldnt find capture device:{0}", m_strVideoCaptureFilter);
         return false;
       }
 
       //no audio capture device? then fail if there should be one
       if (filterAudioCaptureDevice == null && m_strAudioCaptureFilter.Length > 0)
       {
-        DirectShowUtil.DebugWrite("SWGraph:CreateGraph() FAILED couldnt find capture device:{0}", m_strAudioCaptureFilter);
+        Log.Write("SWGraph:CreateGraph() FAILED couldnt find capture device:{0}", m_strAudioCaptureFilter);
         return false;
       }
 
       // Make a new filter graph
-      DirectShowUtil.DebugWrite("SWGraph:create new filter graph (IGraphBuilder)");
-      m_graphBuilder = (IGraphBuilder)Activator.CreateInstance(Type.GetTypeFromCLSID(Clsid.FilterGraph, true));
+      Log.Write("SWGraph:create new filter graph (IGraphBuilder)");
+      m_graphBuilder = (IGraphBuilder)new FilterGraph();
 
       // Get the Capture Graph Builder
-      DirectShowUtil.DebugWrite("SWGraph:Get the Capture Graph Builder (ICaptureGraphBuilder2)");
-      Guid clsid = Clsid.CaptureGraphBuilder2;
-      Guid riid = typeof(ICaptureGraphBuilder2).GUID;
-      m_captureGraphBuilder = (ICaptureGraphBuilder2)DsBugWO.CreateDsInstance(ref clsid, ref riid);
+      Log.Write("SWGraph:Get the Capture Graph Builder (ICaptureGraphBuilder2)");
+      m_captureGraphBuilder = (ICaptureGraphBuilder2)new CaptureGraphBuilder2();
 
-      DirectShowUtil.DebugWrite("SWGraph:Link the CaptureGraphBuilder to the filter graph (SetFiltergraph)");
+      Log.Write("SWGraph:Link the CaptureGraphBuilder to the filter graph (SetFiltergraph)");
       int hr = m_captureGraphBuilder.SetFiltergraph(m_graphBuilder);
       if (hr != 0)
       {
-        DirectShowUtil.DebugWrite("SWGraph:link FAILED:0x{0:X}", hr);
+        Log.Write("SWGraph:link FAILED:0x{0:X}", hr);
         return false;
       }
-      DirectShowUtil.DebugWrite("SWGraph:Add graph to ROT table");
-      DsROT.AddGraphToRot(m_graphBuilder, out m_rotCookie);
+      Log.Write("SWGraph:Add graph to ROT table");
+      _rotEntry = new DsROTEntry( (IFilterGraph)m_graphBuilder);
 
       // Get the video capture device and add it to the filter graph
-      DirectShowUtil.DebugWrite("SWGraph:CreateGraph() add capture device {0}", m_strVideoCaptureFilter);
+      Log.Write("SWGraph:CreateGraph() add capture device {0}", m_strVideoCaptureFilter);
       m_filterCaptureVideo = Marshal.BindToMoniker(filterVideoCaptureDevice.MonikerString) as IBaseFilter;
       if (m_filterCaptureVideo != null)
       {
         hr = m_graphBuilder.AddFilter(m_filterCaptureVideo, filterVideoCaptureDevice.Name);
         if (hr != 0)
         {
-          DirectShowUtil.DebugWrite("SWGraph:FAILED:Add Videodevice to filtergraph:0x{0:X}", hr);
+          Log.Write("SWGraph:FAILED:Add Videodevice to filtergraph:0x{0:X}", hr);
           return false;
         }
       }
@@ -248,34 +248,34 @@ namespace MediaPortal.TV.Recording
       // Get the audio capture device and add it to the filter graph
       if (filterAudioCaptureDevice != null)
       {
-        DirectShowUtil.DebugWrite("SWGraph:CreateGraph() add capture device {0}", m_strAudioCaptureFilter);
+        Log.Write("SWGraph:CreateGraph() add capture device {0}", m_strAudioCaptureFilter);
         m_filterCaptureAudio = Marshal.BindToMoniker(filterAudioCaptureDevice.MonikerString) as IBaseFilter;
         if (m_filterCaptureAudio != null)
         {
           hr = m_graphBuilder.AddFilter(m_filterCaptureAudio, filterAudioCaptureDevice.Name);
           if (hr != 0)
           {
-            DirectShowUtil.DebugWrite("SWGraph:FAILED:Add audiodevice to filtergraph:0x{0:X}", hr);
+            Log.Write("SWGraph:FAILED:Add audiodevice to filtergraph:0x{0:X}", hr);
             return false;
           }
         }
       }
 
       // Retrieve TV Tuner if available
-      DirectShowUtil.DebugWrite("SWGraph:Find TV Tuner");
+      Log.Write("SWGraph:Find TV Tuner");
       object o = null;
-      Guid cat = FindDirection.UpstreamOnly;
+      DsGuid cat = new DsGuid(FindDirection.UpstreamOnly);
       Guid iid = typeof(IAMTVTuner).GUID;
-      hr = m_captureGraphBuilder.FindInterface(new Guid[1] { cat }, null, m_filterCaptureVideo, ref iid, out o);
+      hr = m_captureGraphBuilder.FindInterface( cat , null, m_filterCaptureVideo,  iid, out o);
       if (hr == 0)
       {
         m_TVTuner = o as IAMTVTuner;
       }
       if (m_TVTuner == null)
       {
-        DirectShowUtil.DebugWrite("SWGraph:CreateGraph() FAILED:no tuner found");
+        Log.Write("SWGraph:CreateGraph() FAILED:no tuner found");
         iid = typeof(IAMTuner).GUID;
-        hr = m_captureGraphBuilder.FindInterface(new Guid[1] { cat }, null, m_filterCaptureVideo, ref iid, out o);
+        hr = m_captureGraphBuilder.FindInterface( cat , null, m_filterCaptureVideo,  iid, out o);
       }
 
       // For some reason, it happens alot that the capture card can NOT be connected (pin 656 for the
@@ -304,7 +304,7 @@ namespace MediaPortal.TV.Recording
         int notConnected = 0;
         for (int ipin = 0; ipin < 10; ipin++)
         {
-          IPin pin = DirectShowUtil.FindPinNr((IBaseFilter)m_TVTuner, PinDirection.Output, ipin);
+          IPin pin = DsFindPin.ByDirection((IBaseFilter)m_TVTuner, PinDirection.Output, ipin);
           if (pin != null)
           {
             IPin pConnectPin = null;
@@ -387,7 +387,7 @@ namespace MediaPortal.TV.Recording
       if (m_graphState < State.Created) return;
       m_iPrevChannel = -1;
 
-      DirectShowUtil.DebugWrite("SWGraph:DeleteGraph()");
+      Log.Write("SWGraph:DeleteGraph()");
       StopRecording();
       StopViewing();
 
@@ -437,7 +437,7 @@ namespace MediaPortal.TV.Recording
       if (m_videoWindow != null)
       {
         m_bOverlayVisible = false;
-        m_videoWindow.put_Visible(DsHlp.OAFALSE);
+        m_videoWindow.put_Visible(OABool.False);
         m_videoWindow.put_Owner(IntPtr.Zero);
         m_videoWindow = null;
       }
@@ -490,11 +490,13 @@ namespace MediaPortal.TV.Recording
         Marshal.ReleaseComObject(m_filterCaptureVideo); m_filterCaptureVideo = null;
 
       if (m_graphBuilder != null)
-        DsUtils.RemoveFilters(m_graphBuilder);
+        DirectShowUtil.RemoveFilters(m_graphBuilder);
 
-      if (m_rotCookie != 0)
-        DsROT.RemoveGraphFromRot(ref m_rotCookie);
-      m_rotCookie = 0;
+      if (_rotEntry != null)
+      {
+        _rotEntry.Dispose();
+      }
+      _rotEntry = null;
 
 
 
@@ -517,7 +519,7 @@ namespace MediaPortal.TV.Recording
       Filters filters = new Filters();
       filterVideoCompressor = null;
       filterAudioCompressor = null;
-      DirectShowUtil.DebugWrite("SWGraph:GetCompressors() find video compressor filter {0}...", m_strVideoCompressor);
+      Log.Write("SWGraph:GetCompressors() find video compressor filter {0}...", m_strVideoCompressor);
 
       // find video compressor filter
       foreach (Filter filter in filters.VideoCompressors)
@@ -561,7 +563,7 @@ namespace MediaPortal.TV.Recording
       }
 
       //find audio compressor filter
-      DirectShowUtil.DebugWrite("SWGraph:GetCompressors() find audio compressor filter {0}...", m_strAudioCompressor);
+      Log.Write("SWGraph:GetCompressors() find audio compressor filter {0}...", m_strAudioCompressor);
       foreach (Filter filter in filters.AudioCompressors)
       {
         if (filter.Name.Equals(m_strAudioCompressor))
@@ -587,19 +589,19 @@ namespace MediaPortal.TV.Recording
       //no video compressor? then fail
       if (filterVideoCompressor == null)
       {
-        DirectShowUtil.DebugWrite("SWGraph:GetCompressors() FAILED couldnt find video compressor:{0}", m_strVideoCompressor);
+        Log.Write("SWGraph:GetCompressors() FAILED couldnt find video compressor:{0}", m_strVideoCompressor);
         return;
       }
 
       //no audio compressor? then fail
       if (filterAudioCompressor == null)
       {
-        DirectShowUtil.DebugWrite("SWGraph:GetCompressors() FAILED couldnt find audio compressor:{0}", m_strAudioCompressor);
+        Log.Write("SWGraph:GetCompressors() FAILED couldnt find audio compressor:{0}", m_strAudioCompressor);
         return;
       }
 
       m_bIsUsingMPEG = IsUsingMPEGCompressors(filterVideoCompressor.MonikerString, filterAudioCompressor.MonikerString);
-      DirectShowUtil.DebugWrite("SWGraph:GetCompressors() using mpeg2 compressors:{0}", m_bIsUsingMPEG);
+      Log.Write("SWGraph:GetCompressors() using mpeg2 compressors:{0}", m_bIsUsingMPEG);
     }
 
     bool AddCompressors()
@@ -610,42 +612,42 @@ namespace MediaPortal.TV.Recording
       Filter filterVideoCompressor;
       Filter filterAudioCompressor;
       GetCompressors(out filterVideoCompressor, out filterAudioCompressor);
-      DirectShowUtil.DebugWrite("SWGraph:AddCompressors()");
+      Log.Write("SWGraph:AddCompressors()");
       if (filterVideoCompressor == null || filterAudioCompressor == null) return false;
 
       // add the video compressor filters to the graph
-      DirectShowUtil.DebugWrite("SWGraph:CreateGraph() add video compressor {0}", m_strVideoCompressor);
+      Log.Write("SWGraph:CreateGraph() add video compressor {0}", m_strVideoCompressor);
       m_filterCompressorVideo = Marshal.BindToMoniker(filterVideoCompressor.MonikerString) as IBaseFilter;
       if (m_filterCompressorVideo != null)
       {
         hr = m_graphBuilder.AddFilter(m_filterCompressorVideo, filterVideoCompressor.Name);
         if (hr != 0)
         {
-          DirectShowUtil.DebugWrite("SWGraph:AddCompressors() FAILED:Add video compressor to filtergraph:0x{0:X}", hr);
+          Log.Write("SWGraph:AddCompressors() FAILED:Add video compressor to filtergraph:0x{0:X}", hr);
           return false;
         }
       }
       else
       {
-        DirectShowUtil.DebugWrite("SWGraph:FAILED:AddCompressors() Add video compressor to filtergraph");
+        Log.Write("SWGraph:FAILED:AddCompressors() Add video compressor to filtergraph");
         return false;
       }
 
       // add the audio compressor filters to the graph
-      DirectShowUtil.DebugWrite("SWGraph:CreateGraph() add audio compressor {0}", m_strAudioCompressor);
+      Log.Write("SWGraph:CreateGraph() add audio compressor {0}", m_strAudioCompressor);
       m_filterCompressorAudio = Marshal.BindToMoniker(filterAudioCompressor.MonikerString) as IBaseFilter;
       if (m_filterCompressorAudio != null)
       {
         hr = m_graphBuilder.AddFilter(m_filterCompressorAudio, filterAudioCompressor.Name);
         if (hr != 0)
         {
-          DirectShowUtil.DebugWrite("SWGraph:FAILED:Add audio compressor to filtergraph");
+          Log.Write("SWGraph:FAILED:Add audio compressor to filtergraph");
           return false;
         }
       }
       else
       {
-        DirectShowUtil.DebugWrite("SWGraph:FAILED:Add audio compressor to filtergraph:0x{0:X}", hr);
+        Log.Write("SWGraph:FAILED:Add audio compressor to filtergraph:0x{0:X}", hr);
         return false;
       }
 
@@ -654,11 +656,11 @@ namespace MediaPortal.TV.Recording
       {
         if (m_strAudioInputPin.Length > 0)
         {
-          DirectShowUtil.DebugWrite("SWGraph:set audio input pin:{0}", m_strAudioInputPin);
-          IPin pinInput = DirectShowUtil.FindPin(m_filterCaptureAudio, PinDirection.Input, m_strAudioInputPin);
+          Log.Write("SWGraph:set audio input pin:{0}", m_strAudioInputPin);
+          IPin pinInput = DsFindPin.ByName(m_filterCaptureAudio,  m_strAudioInputPin);
           if (pinInput == null)
           {
-            DirectShowUtil.DebugWrite("SWGraph:FAILED audio input pin:{0} not found", m_strAudioInputPin);
+            Log.Write("SWGraph:FAILED audio input pin:{0} not found", m_strAudioInputPin);
           }
           else
           {
@@ -669,7 +671,7 @@ namespace MediaPortal.TV.Recording
             }
             else
             {
-              DirectShowUtil.DebugWrite("SWGraph:FAILED audio input pin:{0} does not expose an IAMAudioInputMixer", m_strAudioInputPin);
+              Log.Write("SWGraph:FAILED audio input pin:{0} does not expose an IAMAudioInputMixer", m_strAudioInputPin);
             }
           }
         }
@@ -689,14 +691,14 @@ namespace MediaPortal.TV.Recording
     public void StopRecording()
     {
       if (m_graphState != State.Recording) return;
-      DirectShowUtil.DebugWrite("SWGraph:stop recording...");
+      Log.Write("SWGraph:stop recording...");
 
       if (m_recControl != null)
       {
         int hr = m_recControl.Stop(0);
         if (hr != 0)
         {
-          DirectShowUtil.DebugWrite("mpeg2: FAILED to stop recording:0x{0:x}", hr);
+          Log.Write("mpeg2: FAILED to stop recording:0x{0:x}", hr);
           return;
         }
         if (m_recControl != null) Marshal.ReleaseComObject(m_recControl); m_recControl = null;
@@ -706,7 +708,7 @@ namespace MediaPortal.TV.Recording
       m_mediaControl.Stop();
       m_graphState = State.Created;
       DeleteGraph();
-      DirectShowUtil.DebugWrite("SWGraph:stopped recording...");
+      Log.Write("SWGraph:stopped recording...");
     }
 
 
@@ -725,7 +727,7 @@ namespace MediaPortal.TV.Recording
       m_iCountryCode = channel.Country;
       AnalogVideoStandard standard = channel.TVStandard;
 
-      DirectShowUtil.DebugWrite("SWGraph:TuneChannel() tune to channel:{0}", m_iCurrentChannel);
+      Log.Write("SWGraph:TuneChannel() tune to channel:{0}", m_iCurrentChannel);
       if (channel.Number < 10000)
       {
         if (m_TVTuner == null) return;
@@ -740,19 +742,20 @@ namespace MediaPortal.TV.Recording
         }
         try
         {
-          int iCurrentChannel, iVideoSubChannel, iAudioSubChannel;
+          AMTunerSubChannel iVideoSubChannel, iAudioSubChannel;
+          int iCurrentChannel;
           SetVideoStandard(standard);
           m_TVTuner.get_TVFormat(out standard);
           m_TVTuner.get_Channel(out iCurrentChannel, out iVideoSubChannel, out iAudioSubChannel);
           if (iCurrentChannel != channel.Number)
           {
-            m_TVTuner.put_Channel(channel.Number, DShowNET.AMTunerSubChannel.Default, DShowNET.AMTunerSubChannel.Default);
+            m_TVTuner.put_Channel(channel.Number, AMTunerSubChannel.Default, AMTunerSubChannel.Default);
           }
           int iFreq;
           double dFreq;
           m_TVTuner.get_VideoFrequency(out iFreq);
           dFreq = iFreq / 1000000d;
-          DirectShowUtil.DebugWrite("SWGraph:TuneChannel() tuned to {0} MHz. tvformat:{1}", dFreq, standard.ToString());
+          Log.Write("SWGraph:TuneChannel() tuned to {0} MHz. tvformat:{1}", dFreq, standard.ToString());
         }
         catch (Exception) { }
       }
@@ -760,7 +763,7 @@ namespace MediaPortal.TV.Recording
       {
         SetVideoStandard(standard);
       }
-      DirectShowUtil.DebugWrite("SWGraph:TuneChannel() tuningspace:0 country:{0} tv standard:{1} cable:{2}",
+      Log.Write("SWGraph:TuneChannel() tuningspace:0 country:{0} tv standard:{1} cable:{2}",
                                   m_iCountryCode, standard.ToString(),
                                   m_bUseCable);
 
@@ -775,7 +778,7 @@ namespace MediaPortal.TV.Recording
       }
       if (bFixCrossbar)
       {
-        DsUtils.FixCrossbarRoutingEx(m_graphBuilder,
+        CrossBar.RouteEx(m_graphBuilder,
                                      m_captureGraphBuilder,
                                       m_filterCaptureVideo,
                                       channel.Number < (int)ExternalInputs.svhs,
@@ -893,21 +896,21 @@ namespace MediaPortal.TV.Recording
         }
         int hr = m_videoWindow.put_Owner(GUIGraphicsContext.form.Handle);
         if (hr != 0)
-          DirectShowUtil.DebugWrite("SWGraph:FAILED:set Video window:0x{0:X}", hr);
+          Log.Write("SWGraph:FAILED:set Video window:0x{0:X}", hr);
 
-        hr = m_videoWindow.put_WindowStyle(WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS);
+        hr = m_videoWindow.put_WindowStyle((WindowStyle)((int)WindowStyle.ClipSiblings + (int)WindowStyle.Child + (int)WindowStyle.ClipChildren));
         if (hr != 0)
-          DirectShowUtil.DebugWrite("SWGraph:FAILED:set Video window style:0x{0:X}", hr);
+          Log.Write("SWGraph:FAILED:set Video window style:0x{0:X}", hr);
 
 
         Log.WriteFile(Log.LogType.Capture, "SWGraph:Show overlay");
         m_bOverlayVisible = true;
-        hr = m_videoWindow.put_Visible(DsHlp.OATRUE);
+        hr = m_videoWindow.put_Visible(OABool.True);
         if (hr != 0)
-          DirectShowUtil.DebugWrite("SWGraph:FAILED:put_Visible:0x{0:X}", hr);
+          Log.Write("SWGraph:FAILED:put_Visible:0x{0:X}", hr);
       }
 
-      DirectShowUtil.DebugWrite("SWGraph:enable deinterlace");
+      Log.Write("SWGraph:enable deinterlace");
       DirectShowUtil.EnableDeInterlace(m_graphBuilder);
 
 
@@ -944,9 +947,9 @@ namespace MediaPortal.TV.Recording
       if (m_graphState != State.Viewing) return false;
 
       GUIGraphicsContext.OnVideoWindowChanged -= new VideoWindowChangedHandler(GUIGraphicsContext_OnVideoWindowChanged);
-      DirectShowUtil.DebugWrite("SWGraph:StopViewing()");
+      Log.Write("SWGraph:StopViewing()");
       if (m_videoWindow != null)
-        m_videoWindow.put_Visible(DsHlp.OAFALSE);
+        m_videoWindow.put_Visible(OABool.False);
       if (Vmr9 != null)
       {
         Vmr9.Enable(false);
@@ -975,14 +978,14 @@ namespace MediaPortal.TV.Recording
         {
           Log.WriteFile(Log.LogType.Capture, "SWGraph: hide overlay window");
           if (m_videoWindow != null)
-            m_videoWindow.put_Visible(DsHlp.OAFALSE);
+            m_videoWindow.put_Visible(OABool.False);
 
         }
         else
         {
           Log.WriteFile(Log.LogType.Capture, "SWGraph: show overlay window");
           if (m_videoWindow != null)
-            m_videoWindow.put_Visible(DsHlp.OATRUE);
+            m_videoWindow.put_Visible(OABool.True);
 
         }
       }
@@ -1038,9 +1041,9 @@ namespace MediaPortal.TV.Recording
         m_basicVideo.SetSourcePosition(rSource.Left, rSource.Top, rSource.Width, rSource.Height);
         m_basicVideo.SetDestinationPosition(0, 0, rDest.Width, rDest.Height);
         m_videoWindow.SetWindowPosition(rDest.Left, rDest.Top, rDest.Width, rDest.Height);
-        DirectShowUtil.DebugWrite("SWGraph: capture size:{0}x{1}", iVideoWidth, iVideoHeight);
-        DirectShowUtil.DebugWrite("SWGraph: source position:({0},{1})-({2},{3})", rSource.Left, rSource.Top, rSource.Right, rSource.Bottom);
-        DirectShowUtil.DebugWrite("SWGraph: dest   position:({0},{1})-({2},{3})", rDest.Left, rDest.Top, rDest.Right, rDest.Bottom);
+        Log.Write("SWGraph: capture size:{0}x{1}", iVideoWidth, iVideoHeight);
+        Log.Write("SWGraph: source position:({0},{1})-({2},{3})", rSource.Left, rSource.Top, rSource.Right, rSource.Bottom);
+        Log.Write("SWGraph: dest   position:({0},{1})-({2},{3})", rDest.Left, rDest.Top, rDest.Right, rDest.Bottom);
       }
       else
       {
@@ -1050,9 +1053,9 @@ namespace MediaPortal.TV.Recording
         m_basicVideo.SetSourcePosition(0, 0, iVideoWidth, iVideoHeight);
         m_basicVideo.SetDestinationPosition(0, 0, GUIGraphicsContext.VideoWindow.Width, GUIGraphicsContext.VideoWindow.Height);
         m_videoWindow.SetWindowPosition(GUIGraphicsContext.VideoWindow.Left, GUIGraphicsContext.VideoWindow.Top, GUIGraphicsContext.VideoWindow.Width, GUIGraphicsContext.VideoWindow.Height);
-        DirectShowUtil.DebugWrite("SWGraph: capture size:{0}x{1}", iVideoWidth, iVideoHeight);
-        DirectShowUtil.DebugWrite("SWGraph: source position:({0},{1})-({2},{3})", 0, 0, iVideoWidth, iVideoHeight);
-        DirectShowUtil.DebugWrite("SWGraph: dest   position:({0},{1})-({2},{3})", GUIGraphicsContext.VideoWindow.Left, GUIGraphicsContext.VideoWindow.Top, GUIGraphicsContext.VideoWindow.Right, GUIGraphicsContext.VideoWindow.Bottom);
+        Log.Write("SWGraph: capture size:{0}x{1}", iVideoWidth, iVideoHeight);
+        Log.Write("SWGraph: source position:({0},{1})-({2},{3})", 0, 0, iVideoWidth, iVideoHeight);
+        Log.Write("SWGraph: dest   position:({0},{1})-({2},{3})", GUIGraphicsContext.VideoWindow.Left, GUIGraphicsContext.VideoWindow.Top, GUIGraphicsContext.VideoWindow.Right, GUIGraphicsContext.VideoWindow.Bottom);
       }
     }
 
@@ -1150,36 +1153,29 @@ namespace MediaPortal.TV.Recording
     public void Record(string strFilename, bool bContentRecording, DateTime timeProgStart, DateTime timeFirstMoment)
     {
       //      strFilename=@"C:\media\movies\test.dvr-ms";
-      DirectShowUtil.DebugWrite("mpeg2: Record : {0} {1}", strFilename, bContentRecording);
-      IntPtr recorderObj;
+      Log.Write("mpeg2: Record : {0} {1}", strFilename, bContentRecording);
+      object objRecord;
       if (m_bSink == null)
       {
-        DirectShowUtil.DebugWrite("mpeg2: CreateRecorder : no sink!");
+        Log.Write("mpeg2: CreateRecorder : no sink!");
         return;
       }
-      uint iRecordingType = 0;
-      if (bContentRecording) iRecordingType = 0;
-      else iRecordingType = 1;
+      RecordingType recordingType = RecordingType.Content;
+      if (bContentRecording) recordingType = RecordingType.Content;
+      else recordingType=RecordingType.Reference;
 
-      int hr = m_bSink.CreateRecorder(strFilename, iRecordingType, out recorderObj);
+      int hr = m_bSink.CreateRecorder(strFilename, recordingType, out objRecord);
       if (hr != 0)
       {
-        DirectShowUtil.DebugWrite("mpeg2: CreateRecorder FAILED:0x{0:x}", hr);
-        return;
-      }
-      object objRecord = Marshal.GetObjectForIUnknown(recorderObj);
-      if (objRecord == null)
-      {
-        DirectShowUtil.DebugWrite("mpeg2: FAILED getting Inknown of recorder");
+        Log.Write("mpeg2: CreateRecorder FAILED:0x{0:x}", hr);
         return;
       }
 
-      Marshal.Release(recorderObj);
 
       m_recControl = objRecord as IStreamBufferRecordControl;
       if (m_recControl == null)
       {
-        DirectShowUtil.DebugWrite("mpeg2: FAILED getting IStreamBufferRecordControl");
+        Log.Write("mpeg2: FAILED getting IStreamBufferRecordControl");
         return;
       }
 
@@ -1190,8 +1186,8 @@ namespace MediaPortal.TV.Recording
       if (!bContentRecording)
       {
         // so set the startttime...
-        uint uiSecondsPerFile;
-        uint uiMinFiles, uiMaxFiles;
+        int uiSecondsPerFile;
+        int uiMinFiles, uiMaxFiles;
         m_pConfig.GetBackingFileCount(out uiMinFiles, out uiMaxFiles);
         m_pConfig.GetBackingFileDuration(out uiSecondsPerFile);
         lStartTime = uiSecondsPerFile;
@@ -1201,13 +1197,13 @@ namespace MediaPortal.TV.Recording
         if (timeProgStart.Year > 2000)
         {
           TimeSpan ts = DateTime.Now - timeProgStart;
-          DirectShowUtil.DebugWrite("mpeg2:Start recording from {0}:{1:00}:{2:00} which is {3:00}:{4:00}:{5:00} in the past",
+          Log.Write("mpeg2:Start recording from {0}:{1:00}:{2:00} which is {3:00}:{4:00}:{5:00} in the past",
             timeProgStart.Hour, timeProgStart.Minute, timeProgStart.Second,
             ts.TotalHours, ts.TotalMinutes, ts.TotalSeconds);
 
           lStartTime = (long)ts.TotalSeconds;
         }
-        else DirectShowUtil.DebugWrite("mpeg2:record entire timeshift buffer");
+        else Log.Write("mpeg2:record entire timeshift buffer");
 
         TimeSpan tsMaxTimeBack = DateTime.Now - timeFirstMoment;
         if (lStartTime > tsMaxTimeBack.TotalSeconds)
@@ -1223,7 +1219,7 @@ namespace MediaPortal.TV.Recording
       if (hr != 0)
       {
         //could not start recording...
-        DirectShowUtil.DebugWrite("mpeg2: FAILED to start recording:0x{0:x}", hr);
+        Log.Write("mpeg2: FAILED to start recording:0x{0:x}", hr);
         if (lStartTime != 0)
         {
           // try recording from livepoint instead from the past
@@ -1232,13 +1228,13 @@ namespace MediaPortal.TV.Recording
           if (hr != 0)
           {
             //still fails
-            DirectShowUtil.DebugWrite("mpeg2: FAILED to start recording now:0x{0:x}", hr);
+            Log.Write("mpeg2: FAILED to start recording now:0x{0:x}", hr);
             return;
           }
           else
           {
             //that worked!
-            DirectShowUtil.DebugWrite("mpeg2: FAILED to record now succeeded");
+            Log.Write("mpeg2: FAILED to record now succeeded");
           }
         }
         else
@@ -1253,18 +1249,18 @@ namespace MediaPortal.TV.Recording
       long iMin = lStartTime / 60;
       lStartTime -= (iMin * 60);
       long iSec = lStartTime;
-      DirectShowUtil.DebugWrite("mpeg2: recording started from {0:00}:{1:00}:{2:00} ago", iHour, iMin, iSec);
+      Log.Write("mpeg2: recording started from {0:00}:{1:00}:{2:00} ago", iHour, iMin, iSec);
 
     }
 
     void CreateSBESink()
     {
-      DirectShowUtil.DebugWrite("mpeg2:add streambuffersink");
+      Log.Write("mpeg2:add streambuffersink");
       m_StreamBufferSink = new StreamBufferSink();
       m_streamBuffer = (IBaseFilter)m_StreamBufferSink;
       if (m_streamBuffer == null)
       {
-        DirectShowUtil.DebugWrite("mpeg2:FAILED to add streambuffer");
+        Log.Write("mpeg2:FAILED to add streambuffer");
         return;
       }
 
@@ -1278,11 +1274,11 @@ namespace MediaPortal.TV.Recording
       //  int result = pConfig.SetSIDs(1, sids);
       RegOpenKeyEx(HKEY, "SOFTWARE\\MediaPortal", 0, 0x3f, out subKey);
       int hr = pConfig.SetHKEY(subKey);
-      if (hr != 0) DirectShowUtil.DebugWrite("mpeg2: FAILED to set hkey:0x{0:X}", hr);
+      if (hr != 0) Log.Write("mpeg2: FAILED to set hkey:0x{0:X}", hr);
 
 
-      m_pinStreamBufferIn0 = DirectShowUtil.FindPinNr(m_streamBuffer, PinDirection.Input, 0);
-      if (m_pinStreamBufferIn0 == null) DirectShowUtil.DebugWrite("mpeg2: FAILED to find input pin#0 of streambuffersink");
+      m_pinStreamBufferIn0 = DsFindPin.ByDirection(m_streamBuffer, PinDirection.Input, 0);
+      if (m_pinStreamBufferIn0 == null) Log.Write("mpeg2: FAILED to find input pin#0 of streambuffersink");
     }
 
 
@@ -1313,7 +1309,7 @@ namespace MediaPortal.TV.Recording
 
       SetRegistryThings();
       int hr;
-      DirectShowUtil.DebugWrite("SWGraph:Start recording...");
+      Log.Write("SWGraph:Start recording...");
 
       m_bRecordWMV = false;
       strFileName = System.IO.Path.ChangeExtension(strFileName, ".avi");
@@ -1344,36 +1340,36 @@ namespace MediaPortal.TV.Recording
       }
 
       // set filename
-      DirectShowUtil.DebugWrite("SWGraph:record to :{0} ", strFileName);
+      Log.Write("SWGraph:record to :{0} ", strFileName);
 
       Guid mediaSubTypeAvi = MediaSubType.Avi;
       if (m_bRecordWMV)
         mediaSubTypeAvi = MediaSubType.Asf;
 
-      hr = m_captureGraphBuilder.SetOutputFileName(ref mediaSubTypeAvi, strFileName, out m_muxFilter, out m_fileWriterFilter);
+      hr = m_captureGraphBuilder.SetOutputFileName( mediaSubTypeAvi, strFileName, out m_muxFilter, out m_fileWriterFilter);
       if (hr != 0)
       {
-        DirectShowUtil.DebugWrite("SWGraph:FAILED:to set output filename to :{0} :0x{1:X}", strFileName, hr);
+        Log.Write("SWGraph:FAILED:to set output filename to :{0} :0x{1:X}", strFileName, hr);
         return false;
       }
 
       // if we record to wmv, then set the wmv profile
       if (m_bRecordWMV)
       {
-        DirectShowUtil.DebugWrite("SWGraph:get IConfigAsfWriter");
+        Log.Write("SWGraph:get IConfigAsfWriter");
         IConfigAsfWriter asfwriter = m_fileWriterFilter as IConfigAsfWriter;
         if (asfwriter != null)
         {
-          DirectShowUtil.DebugWrite("SWGraph:IConfigAsfWriter.SetProfile(BestVBRVideo)");
+          Log.Write("SWGraph:IConfigAsfWriter.SetProfile(BestVBRVideo)");
           //Guid WMProfile_V80_HIGHVBRVideo = new Guid( 0xf10d9d3,0x3b04,0x4fb0,0xa3, 0xd3, 0x88, 0xd4, 0xac, 0x85, 0x4a, 0xcc);
           Guid WMProfile_V80_BESTVBRVideo = new Guid(0x48439ba, 0x309c, 0x440e, 0x9c, 0xb4, 0x3d, 0xcc, 0xa3, 0x75, 0x64, 0x23);
           hr = asfwriter.ConfigureFilterUsingProfileGuid(WMProfile_V80_BESTVBRVideo);
           if (hr != 0)
           {
-            DirectShowUtil.DebugWrite("SWGraph:FAILED IConfigAsfWriter.SetProfile() :0x{0:X}", hr);
+            Log.Write("SWGraph:FAILED IConfigAsfWriter.SetProfile() :0x{0:X}", hr);
           }
         }
-        else DirectShowUtil.DebugWrite("SWGraph:FAILED:to get IConfigAsfWriter");
+        else Log.Write("SWGraph:FAILED:to get IConfigAsfWriter");
       }
 
       ConnectCompressors(m_muxFilter);
@@ -1384,32 +1380,32 @@ namespace MediaPortal.TV.Recording
         IConfigAviMux ConfigMux = m_muxFilter as IConfigAviMux;
         if (ConfigMux != null)
         {
-          DirectShowUtil.DebugWrite("SWGraph:set audio as masterstream");
+          Log.Write("SWGraph:set audio as masterstream");
           hr = ConfigMux.SetMasterStream(1);
           if (hr != 0)
           {
-            DirectShowUtil.DebugWrite("SWGraph:FAILED:to set audio as masterstream:0x{0:X}", hr);
+            Log.Write("SWGraph:FAILED:to set audio as masterstream:0x{0:X}", hr);
           }
         }
         else
         {
-          DirectShowUtil.DebugWrite("SWGraph:FAILED:to get IConfigAviMux");
+          Log.Write("SWGraph:FAILED:to get IConfigAviMux");
         }
 
         // Set the avi interleaving mode
         IConfigInterleaving InterleaveMode = m_muxFilter as IConfigInterleaving;
         if (InterleaveMode != null)
         {
-          DirectShowUtil.DebugWrite("SWGraph:set avi interleave mode");
-          hr = InterleaveMode.put_Mode(AviInterleaveMode.INTERLEAVE_CAPTURE);
+          Log.Write("SWGraph:set avi interleave mode");
+          hr = InterleaveMode.put_Mode(InterleavingMode.Capture);
           if (hr != 0)
           {
-            DirectShowUtil.DebugWrite("SWGraph:FAILED:to set avi interleave mode:0x{0:X}", hr);
+            Log.Write("SWGraph:FAILED:to set avi interleave mode:0x{0:X}", hr);
           }
         }
         else
         {
-          DirectShowUtil.DebugWrite("SWGraph:FAILED:to get IConfigInterleaving");
+          Log.Write("SWGraph:FAILED:to get IConfigInterleaving");
         }
       }//if (!bRecordWMV)
 
@@ -1421,7 +1417,7 @@ namespace MediaPortal.TV.Recording
       m_mediaControl.Run();
       m_graphState = State.Recording;
 
-      DirectShowUtil.DebugWrite("SWGraph:recording...");
+      Log.Write("SWGraph:recording...");
       return true;
     }
 
@@ -1452,60 +1448,60 @@ namespace MediaPortal.TV.Recording
         CreateSBESink();
       }
       strFileName = System.IO.Path.ChangeExtension(strFileName, ".tv");
-      DirectShowUtil.DebugWrite("mpeg2:StartTimeshifting({0})", strFileName);
+      Log.Write("mpeg2:StartTimeshifting({0})", strFileName);
       int ipos = strFileName.LastIndexOf(@"\");
       string strDir = strFileName.Substring(0, ipos);
       //if (!m_bRendered) 
       {
         //DeleteOldTimeShiftFiles(strDir);
-        DirectShowUtil.DebugWrite("mpeg2:render graph");
+        Log.Write("mpeg2:render graph");
         /// [                 ]        [                ]
         /// [mpeg2 video comp ] ->     [#0              ]
         /// [                 ]        [  streambuffer  ]
         /// [mpeg2 audio comp ] -------[#1              ]
 
 
-        DirectShowUtil.DebugWrite("mpeg2:render to :{0}", strFileName);
+        Log.Write("mpeg2:render to :{0}", strFileName);
 
-        m_pinVideoOut = DirectShowUtil.FindPinNr(m_filterCompressorVideo, PinDirection.Output, 0);
-        m_pinAudioOut = DirectShowUtil.FindPinNr(m_filterCompressorAudio, PinDirection.Output, 0);
+        m_pinVideoOut = DsFindPin.ByDirection(m_filterCompressorVideo, PinDirection.Output, 0);
+        m_pinAudioOut = DsFindPin.ByDirection(m_filterCompressorAudio, PinDirection.Output, 0);
 
         if (m_pinVideoOut == null) return false;
         if (m_pinAudioOut == null) return false;
         if (m_pinStreamBufferIn0 == null) return false;
 
         //mpeg2 video compressor out ->streambuffer in#0
-        DirectShowUtil.DebugWrite("mpeg2:video compressor out->stream buffer");
+        Log.Write("mpeg2:video compressor out->stream buffer");
         hr = m_graphBuilder.Connect(m_pinVideoOut, m_pinStreamBufferIn0);
         if (hr == 0)
-          DirectShowUtil.DebugWrite("mpeg2:connected to streambuffer");
+          Log.Write("mpeg2:connected to streambuffer");
         else
-          DirectShowUtil.DebugWrite("mpeg2:FAILED to connect video compressor  output to streambuffer:0x{0:X}", hr);
+          Log.Write("mpeg2:FAILED to connect video compressor  output to streambuffer:0x{0:X}", hr);
 
 
         //find streambuffer in#1 pin
-        m_pinStreamBufferIn1 = DirectShowUtil.FindPinNr(m_streamBuffer, PinDirection.Input, 1);
+        m_pinStreamBufferIn1 = DsFindPin.ByDirection(m_streamBuffer, PinDirection.Input, 1);
         if (m_pinStreamBufferIn1 == null)
         {
-          DirectShowUtil.DebugWrite("mpeg2: FAILED to find input pin#1 of streambuffersink");
+          Log.Write("mpeg2: FAILED to find input pin#1 of streambuffersink");
           return false;
         }
         //mpeg2 demux audio out->streambuffer in#1
-        DirectShowUtil.DebugWrite("mpeg2:demux audio out->stream buffer");
+        Log.Write("mpeg2:demux audio out->stream buffer");
         hr = m_graphBuilder.Connect(m_pinAudioOut, m_pinStreamBufferIn1);
         if (hr == 0)
-          DirectShowUtil.DebugWrite("mpeg2:audio out connected to streambuffer");
+          Log.Write("mpeg2:audio out connected to streambuffer");
         else
-          DirectShowUtil.DebugWrite("mpeg2:FAILED to connect audio out to streambuffer:0x{0:X}", hr);
+          Log.Write("mpeg2:FAILED to connect audio out to streambuffer:0x{0:X}", hr);
 
         //set mpeg2 demux as reference clock 
         //(m_graphBuilder as IMediaFilter).SetSyncSource(m_mpeg2Multiplexer as IReferenceClock);
 
         //set filename
         m_bSink = m_streamBuffer as IStreamBufferSink;
-        if (m_bSink == null) DirectShowUtil.DebugWrite("mpeg2:FAILED to get IStreamBufferSink interface");
+        if (m_bSink == null) Log.Write("mpeg2:FAILED to get IStreamBufferSink interface");
 
-        DirectShowUtil.DebugWrite("mpeg2:Set folder:{0} filecount 10-20, fileduration:10mins", strDir);
+        Log.Write("mpeg2:Set folder:{0} filecount 10-20, fileduration:10mins", strDir);
 
 
         // set streambuffer backing file configuration
@@ -1518,16 +1514,16 @@ namespace MediaPortal.TV.Recording
 
         RegOpenKeyEx(HKEY, "SOFTWARE\\MediaPortal", 0, 0x3f, out subKey);
         hr = pTemp.SetHKEY(subKey);
-        if (hr != 0) DirectShowUtil.DebugWrite("mpeg2: FAILED to set hkey:0x{0:X}", hr);
+        if (hr != 0) Log.Write("mpeg2: FAILED to set hkey:0x{0:X}", hr);
 
         hr = m_pConfig.SetDirectory(strDir);
-        if (hr != 0) DirectShowUtil.DebugWrite("mpeg2: FAILED to set backingfile folder:0x{0:X}", hr);
+        if (hr != 0) Log.Write("mpeg2: FAILED to set backingfile folder:0x{0:X}", hr);
 
         hr = m_pConfig.SetBackingFileCount(6, 8);    //6-8 files
-        if (hr != 0) DirectShowUtil.DebugWrite("mpeg2: FAILED to set backingfile count:0x{0:X}", hr);
+        if (hr != 0) Log.Write("mpeg2: FAILED to set backingfile count:0x{0:X}", hr);
 
         hr = m_pConfig.SetBackingFileDuration(30 * 60); // 60sec*30min= 0.5 hours/file
-        if (hr != 0) DirectShowUtil.DebugWrite("mpeg2: FAILED to set backingfile duration:0x{0:X}", hr);
+        if (hr != 0) Log.Write("mpeg2: FAILED to set backingfile duration:0x{0:X}", hr);
 
         IStreamBufferConfigure2 streamConfig2 = m_StreamBufferConfig as IStreamBufferConfigure2;
         if (streamConfig2 != null)
@@ -1536,9 +1532,9 @@ namespace MediaPortal.TV.Recording
       }
 
       // lock profile
-      DirectShowUtil.DebugWrite("mpeg2:lock profile");
+      Log.Write("mpeg2:lock profile");
       hr = m_bSink.LockProfile(strFileName);
-      if (hr != 0) DirectShowUtil.DebugWrite("mpeg2:FAILED to set streambuffer filename:0x{0:X}", hr);
+      if (hr != 0) Log.Write("mpeg2:FAILED to set streambuffer filename:0x{0:X}", hr);
 
       TuneChannel(channel);
 
@@ -1546,7 +1542,7 @@ namespace MediaPortal.TV.Recording
       if (m_mediaControl != null)
       {
         hr = m_mediaControl.Run();
-        DirectShowUtil.DebugWrite("mpeg2:StartTimeshifting() started mediactl:{0}", hr);
+        Log.Write("mpeg2:StartTimeshifting() started mediactl:{0}", hr);
       }
       m_graphState = State.TimeShifting;
       return true;
@@ -1566,28 +1562,28 @@ namespace MediaPortal.TV.Recording
       try
       {
         int hr;
-        DirectShowUtil.DebugWrite("mpeg2:StopTimeShifting()");
+        Log.Write("mpeg2:StopTimeShifting()");
         if (m_bSink != null)
         {
           IStreamBufferSink3 sink3 = m_bSink as IStreamBufferSink3;
           if (sink3 != null)
           {
-            DirectShowUtil.DebugWrite("mpeg2:unlock profile");
+            Log.Write("mpeg2:unlock profile");
             hr = sink3.UnlockProfile();
-            if (hr != 0) DirectShowUtil.DebugWrite("mpeg2:FAILED to set unlock profile:0x{0:X}", hr);
+            if (hr != 0) Log.Write("mpeg2:FAILED to set unlock profile:0x{0:X}", hr);
           }
         }
         if (m_mediaControl != null)
         {
-          DirectShowUtil.DebugWrite("mpeg2:StopTimeShifting()  stop mediactl");
+          Log.Write("mpeg2:StopTimeShifting()  stop mediactl");
           m_mediaControl.Stop();
-          DirectShowUtil.DebugWrite("mpeg2:StopTimeShifting()  mediactl stopped");
+          Log.Write("mpeg2:StopTimeShifting()  mediactl stopped");
         }
-        DirectShowUtil.DebugWrite("mpeg2:StopTimeShifting() stopped");
+        Log.Write("mpeg2:StopTimeShifting() stopped");
       }
       catch (Exception ex)
       {
-        DirectShowUtil.DebugWrite("mpeg2:StopTimeShifting() exception:" + ex.ToString());
+        Log.Write("mpeg2:StopTimeShifting() exception:" + ex.ToString());
       }
 
       return true;
@@ -1595,23 +1591,23 @@ namespace MediaPortal.TV.Recording
 
     bool ConnectCompressors(IBaseFilter muxer)
     {
-      Guid cat, med;
+      DsGuid cat, med;
       int hr;
 
-      DirectShowUtil.DebugWrite("SWGraph:ConnectCompressors()");
+      Log.Write("SWGraph:ConnectCompressors()");
       if (muxer == null)
       {
         // connect video capture->compressor
-        IPin videoIn = DirectShowUtil.FindPinNr(m_filterCompressorVideo, PinDirection.Input, 0);
-        IPin audioIn = DirectShowUtil.FindPinNr(m_filterCompressorAudio, PinDirection.Input, 0);
+        IPin videoIn = DsFindPin.ByDirection(m_filterCompressorVideo, PinDirection.Input, 0);
+        IPin audioIn = DsFindPin.ByDirection(m_filterCompressorAudio, PinDirection.Input, 0);
         if (videoIn == null)
         {
-          DirectShowUtil.DebugWrite("SWGraph:FAILED unable to find video compressor input");
+          Log.Write("SWGraph:FAILED unable to find video compressor input");
           return false;
         }
         if (audioIn == null)
         {
-          DirectShowUtil.DebugWrite("SWGraph:FAILED unable to find audio compressor input");
+          Log.Write("SWGraph:FAILED unable to find audio compressor input");
           return false;
         }
         if (m_videoCaptureDevice.CapturePin != null)
@@ -1619,7 +1615,7 @@ namespace MediaPortal.TV.Recording
           hr = m_graphBuilder.Connect(m_videoCaptureDevice.CapturePin, videoIn);
           if (hr != 0)
           {
-            DirectShowUtil.DebugWrite("SWGraph:FAILED unable to connect videocap:capture->video compressor");
+            Log.Write("SWGraph:FAILED unable to connect videocap:capture->video compressor");
             return false;
           }
         }
@@ -1628,7 +1624,7 @@ namespace MediaPortal.TV.Recording
           hr = m_graphBuilder.Connect(m_videoCaptureDevice.PreviewVideoPin, videoIn);
           if (hr != 0)
           {
-            DirectShowUtil.DebugWrite("SWGraph:FAILED unable to connect videocap:preview->video compressor");
+            Log.Write("SWGraph:FAILED unable to connect videocap:preview->video compressor");
             return false;
           }
         }
@@ -1637,7 +1633,7 @@ namespace MediaPortal.TV.Recording
           hr = m_graphBuilder.Connect(m_videoCaptureDevice.VideoPort, videoIn);
           if (hr != 0)
           {
-            DirectShowUtil.DebugWrite("SWGraph:FAILED unable to connect videocap:vport->video compressor");
+            Log.Write("SWGraph:FAILED unable to connect videocap:vport->video compressor");
             return false;
           }
         }
@@ -1645,16 +1641,16 @@ namespace MediaPortal.TV.Recording
         // connect audio capture->compressor->muxer
         if (m_filterCaptureAudio != null)
         {
-          IPin audioOut = DirectShowUtil.FindPinNr(m_filterCaptureAudio, PinDirection.Output, 0);
+          IPin audioOut = DsFindPin.ByDirection(m_filterCaptureAudio, PinDirection.Output, 0);
           if (audioOut == null)
           {
-            DirectShowUtil.DebugWrite("SWGraph:FAILED unable to find audiocap:output ");
+            Log.Write("SWGraph:FAILED unable to find audiocap:output ");
             return false;
           }
           hr = m_graphBuilder.Connect(audioOut, audioIn);
           if (hr != 0)
           {
-            DirectShowUtil.DebugWrite("SWGraph:FAILED unable to connect audiocap:output->audio compressor");
+            Log.Write("SWGraph:FAILED unable to connect audiocap:output->audio compressor");
             return false;
           }
         }
@@ -1669,19 +1665,19 @@ namespace MediaPortal.TV.Recording
         // if BOTH exist, it's a DV filter and the only way to get the audio is to use
         // the interleaved pin.  Using the Video pin on a DV filter is only useful if
         // you don't want the audio.
-        DirectShowUtil.DebugWrite("SWGraph:videocap:connect video capture->compressor (interleaved)");
-        cat = PinCategory.Capture;
-        med = MediaType.Interleaved;
-        hr = m_captureGraphBuilder.RenderStream(new Guid[1] { cat }, new Guid[1] { med }, m_filterCaptureVideo, m_filterCompressorVideo, muxer);
+        Log.Write("SWGraph:videocap:connect video capture->compressor (interleaved)");
+        cat = new DsGuid(PinCategory.Capture);
+        med = new DsGuid(MediaType.Interleaved);
+        hr = m_captureGraphBuilder.RenderStream(cat,  med , m_filterCaptureVideo, m_filterCompressorVideo, muxer);
         if (hr != 0)
         {
-          DirectShowUtil.DebugWrite("SWGraph:videocap:connect video capture->compressor (video)");
-          cat = PinCategory.Capture;
-          med = MediaType.Video;
-          hr = m_captureGraphBuilder.RenderStream(new Guid[1] { cat }, new Guid[1] { med }, m_filterCaptureVideo, m_filterCompressorVideo, muxer);
+          Log.Write("SWGraph:videocap:connect video capture->compressor (video)");
+          cat = new DsGuid(PinCategory.Capture);
+          med = new DsGuid(MediaType.Video);
+          hr = m_captureGraphBuilder.RenderStream(cat,  med , m_filterCaptureVideo, m_filterCompressorVideo, muxer);
           if (hr != 0)
           {
-            DirectShowUtil.DebugWrite("SWGraph:FAILED:videocap:to connect video capture->compressor :0x{0:X}", hr);
+            Log.Write("SWGraph:FAILED:videocap:to connect video capture->compressor :0x{0:X}", hr);
             return false;
           }
         }
@@ -1689,13 +1685,13 @@ namespace MediaPortal.TV.Recording
         // connect audio capture->compressor->muxer
         if (m_filterCaptureAudio == null)
         {
-          DirectShowUtil.DebugWrite("SWGraph:videocap:connect audio capture->compressor ");
-          cat = PinCategory.Capture;
-          med = MediaType.Audio;
-          hr = m_captureGraphBuilder.RenderStream(new Guid[1] { cat }, new Guid[1] { med }, m_filterCaptureVideo, m_filterCompressorAudio, muxer);
+          Log.Write("SWGraph:videocap:connect audio capture->compressor ");
+          cat = new DsGuid(PinCategory.Capture);
+          med = new DsGuid(MediaType.Audio);
+          hr = m_captureGraphBuilder.RenderStream(cat,  med , m_filterCaptureVideo, m_filterCompressorAudio, muxer);
           if (hr == 0)
           {
-            DirectShowUtil.DebugWrite("SWGraph:videocap:connect audio capture->compressor :succeeded");
+            Log.Write("SWGraph:videocap:connect audio capture->compressor :succeeded");
           }
         }
       }
@@ -1704,13 +1700,13 @@ namespace MediaPortal.TV.Recording
       // connect audio capture->compressor->muxer
       if (m_filterCaptureAudio != null)
       {
-        DirectShowUtil.DebugWrite("SWGraph:audiocap:connect audio capture->compressor ");
-        cat = PinCategory.Capture;
-        med = MediaType.Audio;
-        hr = m_captureGraphBuilder.RenderStream(new Guid[1] { cat }, new Guid[1] { med }, m_filterCaptureAudio, m_filterCompressorAudio, muxer);
+        Log.Write("SWGraph:audiocap:connect audio capture->compressor ");
+        cat = new DsGuid(PinCategory.Capture);
+        med = new DsGuid(MediaType.Audio);
+        hr = m_captureGraphBuilder.RenderStream(cat,  med , m_filterCaptureAudio, m_filterCompressorAudio, muxer);
         if (hr != 0)
         {
-          DirectShowUtil.DebugWrite("SWGraph:FAILED:audiocap:to connect audio capture->compressor :0x{0:X}", hr);
+          Log.Write("SWGraph:FAILED:audiocap:to connect audio capture->compressor :0x{0:X}", hr);
           return false;
         }
       }
@@ -1808,32 +1804,31 @@ namespace MediaPortal.TV.Recording
       // AverMedia MCE card has a bug. It will only connect the TV Tuner->crossbar if
       // the crossbar outputs are disconnected
       // same for the winfast pvr 2000
-      DirectShowUtil.DebugWrite("SWGraph:ConnectTVTunerOutputs()");
+      Log.Write("SWGraph:ConnectTVTunerOutputs()");
 
       //find crossbar
       int hr;
-      Guid cat;
       Guid iid;
       object o = null;
-      cat = FindDirection.UpstreamOnly;
+      DsGuid cat = new DsGuid(FindDirection.UpstreamOnly);
       iid = typeof(IAMCrossbar).GUID;
-      hr = m_captureGraphBuilder.FindInterface(new Guid[1] { cat }, null, m_filterCaptureVideo, ref iid, out o);
+      hr = m_captureGraphBuilder.FindInterface( cat , null, m_filterCaptureVideo,  iid, out o);
       if (hr != 0 || o == null)
       {
-        DirectShowUtil.DebugWrite("SWGraph:no crossbar found");
+        Log.Write("SWGraph:no crossbar found");
         return; // no crossbar found?
       }
 
       IAMCrossbar crossbar = o as IAMCrossbar;
       if (crossbar == null)
       {
-        DirectShowUtil.DebugWrite("SWGraph:no crossbar found");
+        Log.Write("SWGraph:no crossbar found");
         return;
       }
 
 
       //disconnect the output pins of the crossbar->video capture filter
-      DirectShowUtil.DebugWrite("SWGraph:disconnect crossbar outputs");
+      Log.Write("SWGraph:disconnect crossbar outputs");
       DirectShowUtil.DisconnectOutputPins(m_graphBuilder, (IBaseFilter)crossbar);
 
 
@@ -1849,12 +1844,12 @@ namespace MediaPortal.TV.Recording
         if (PhysicalTypeIn == PhysicalConnectorType.Audio_Tuner)
         {
           Log.WriteFile(Log.LogType.Capture, "SWGraph:got crossbar audio tuner input");
-          crossBarAudioTunerIn = DirectShowUtil.FindPinNr((IBaseFilter)crossbar, PinDirection.Input, i);
+          crossBarAudioTunerIn = DsFindPin.ByDirection((IBaseFilter)crossbar, PinDirection.Input, i);
         }
         if (PhysicalTypeIn == PhysicalConnectorType.Video_Tuner)
         {
           Log.WriteFile(Log.LogType.Capture, "SWGraph:got crossbar video tuner input");
-          crossBarVideoTunerIn = DirectShowUtil.FindPinNr((IBaseFilter)crossbar, PinDirection.Input, i);
+          crossBarVideoTunerIn = DsFindPin.ByDirection((IBaseFilter)crossbar, PinDirection.Input, i);
         }
       }
 
@@ -1862,7 +1857,7 @@ namespace MediaPortal.TV.Recording
       //connect the output pins of the tvtuner
       for (int iPinTuner = 0; iPinTuner < 10; iPinTuner++)
       {
-        IPin pin = DirectShowUtil.FindPinNr((IBaseFilter)m_TVTuner, PinDirection.Output, iPinTuner);
+        IPin pin = DsFindPin.ByDirection((IBaseFilter)m_TVTuner, PinDirection.Output, iPinTuner);
         if (pin != null)
         {
           IPin pConnectPin = null;
@@ -1900,11 +1895,11 @@ namespace MediaPortal.TV.Recording
       crossBarVideoTunerIn = null;
 
       //reconnect the output pins of the crossbar
-      IPin crossbarOut1 = DirectShowUtil.FindPinNr((IBaseFilter)crossbar, PinDirection.Output, 0);
-      IPin crossbarOut2 = DirectShowUtil.FindPinNr((IBaseFilter)crossbar, PinDirection.Output, 1);
+      IPin crossbarOut1 = DsFindPin.ByDirection((IBaseFilter)crossbar, PinDirection.Output, 0);
+      IPin crossbarOut2 = DsFindPin.ByDirection((IBaseFilter)crossbar, PinDirection.Output, 1);
 
-      IPin videoCaptureIn1 = DirectShowUtil.FindPinNr((IBaseFilter)m_filterCaptureVideo, PinDirection.Input, 0);
-      IPin videoCaptureIn2 = DirectShowUtil.FindPinNr((IBaseFilter)m_filterCaptureVideo, PinDirection.Input, 1);
+      IPin videoCaptureIn1 = DsFindPin.ByDirection((IBaseFilter)m_filterCaptureVideo, PinDirection.Input, 0);
+      IPin videoCaptureIn2 = DsFindPin.ByDirection((IBaseFilter)m_filterCaptureVideo, PinDirection.Input, 1);
       if (crossbarOut1 != null && videoCaptureIn1 != null)
       {
         hr = m_graphBuilder.Connect(crossbarOut1, videoCaptureIn1);
@@ -1942,16 +1937,16 @@ namespace MediaPortal.TV.Recording
       if (currentStandard == standard) return;
 
       if (standard == AnalogVideoStandard.None) standard = AnalogVideoStandard.PAL_B;
-      DirectShowUtil.DebugWrite("SinkGraph:Select tvformat:{0}", standard.ToString());
+      Log.Write("SinkGraph:Select tvformat:{0}", standard.ToString());
       hr = m_IAMAnalogVideoDecoder.put_TVFormat(standard);
-      if (hr != 0) DirectShowUtil.DebugWrite("SinkGraph:Unable to select tvformat:{0}", standard.ToString());
+      if (hr != 0) Log.Write("SinkGraph:Unable to select tvformat:{0}", standard.ToString());
     }
 
     protected void InitializeTuner()
     {
       if (m_TVTuner == null) return;
       int iTuningSpace, iCountry;
-      DShowNET.AMTunerModeType mode;
+      AMTunerModeType mode;
 
       m_TVTuner.get_TuningSpace(out iTuningSpace);
       if (iTuningSpace != 0) m_TVTuner.put_TuningSpace(0);
@@ -1961,20 +1956,20 @@ namespace MediaPortal.TV.Recording
         m_TVTuner.put_CountryCode(m_iCountryCode);
 
       m_TVTuner.get_Mode(out mode);
-      if (mode != DShowNET.AMTunerModeType.TV)
-        m_TVTuner.put_Mode(DShowNET.AMTunerModeType.TV);
+      if (mode != AMTunerModeType.TV)
+        m_TVTuner.put_Mode(AMTunerModeType.TV);
 
-      DShowNET.TunerInputType inputType;
+      TunerInputType inputType;
       m_TVTuner.get_InputType(0, out inputType);
       if (m_bUseCable)
       {
-        if (inputType != DShowNET.TunerInputType.Cable)
-          m_TVTuner.put_InputType(0, DShowNET.TunerInputType.Cable);
+        if (inputType != TunerInputType.Cable)
+          m_TVTuner.put_InputType(0, TunerInputType.Cable);
       }
       else
       {
-        if (inputType != DShowNET.TunerInputType.Antenna)
-          m_TVTuner.put_InputType(0, DShowNET.TunerInputType.Antenna);
+        if (inputType != TunerInputType.Antenna)
+          m_TVTuner.put_InputType(0, TunerInputType.Antenna);
       }
     }
 
@@ -2049,16 +2044,16 @@ namespace MediaPortal.TV.Recording
 
       m_TVTuner.put_TuningSpace(0);
       m_TVTuner.put_CountryCode(m_iCountryCode);
-      m_TVTuner.put_Mode(DShowNET.AMTunerModeType.FMRadio);
+      m_TVTuner.put_Mode(AMTunerModeType.FMRadio);
       if (m_bUseCable)
       {
-        m_TVTuner.put_InputType(0, DShowNET.TunerInputType.Cable);
+        m_TVTuner.put_InputType(0, TunerInputType.Cable);
       }
       else
       {
-        m_TVTuner.put_InputType(0, DShowNET.TunerInputType.Antenna);
+        m_TVTuner.put_InputType(0, TunerInputType.Antenna);
       }
-      m_TVTuner.put_Channel((int)station.Frequency, DShowNET.AMTunerSubChannel.Default, DShowNET.AMTunerSubChannel.Default);
+      m_TVTuner.put_Channel((int)station.Frequency, AMTunerSubChannel.Default, AMTunerSubChannel.Default);
       int frequency;
       m_TVTuner.get_AudioFrequency(out frequency);
       SetRecordingLevel(true, _RecordingLevel);
@@ -2090,12 +2085,12 @@ namespace MediaPortal.TV.Recording
         if (m_videoWindow != null)
         {
           m_videoWindow.put_Owner(GUIGraphicsContext.form.Handle);
-          m_videoWindow.put_WindowStyle(WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS);
-          m_videoWindow.put_Visible(DsHlp.OAFALSE);
+          m_videoWindow.put_WindowStyle((WindowStyle)((int)WindowStyle.ClipSiblings + (int)WindowStyle.Child + (int)WindowStyle.ClipChildren));
+          m_videoWindow.put_Visible(OABool.False);
           m_videoWindow.SetWindowPosition(0, 0, 1, 1);
         }
 
-        DsUtils.FixCrossbarRoutingEx(m_graphBuilder,
+        CrossBar.RouteEx(m_graphBuilder,
                                       m_captureGraphBuilder,
                                       m_filterCaptureVideo,
                                       true,
@@ -2133,16 +2128,16 @@ namespace MediaPortal.TV.Recording
       SetRecordingLevel(true, 0);
       m_TVTuner.put_TuningSpace(0);
       m_TVTuner.put_CountryCode(m_iCountryCode);
-      m_TVTuner.put_Mode(DShowNET.AMTunerModeType.FMRadio);
+      m_TVTuner.put_Mode(AMTunerModeType.FMRadio);
       if (m_bUseCable)
       {
-        m_TVTuner.put_InputType(0, DShowNET.TunerInputType.Cable);
+        m_TVTuner.put_InputType(0, TunerInputType.Cable);
       }
       else
       {
-        m_TVTuner.put_InputType(0, DShowNET.TunerInputType.Antenna);
+        m_TVTuner.put_InputType(0, TunerInputType.Antenna);
       }
-      m_TVTuner.put_Channel(frequency, DShowNET.AMTunerSubChannel.Default, DShowNET.AMTunerSubChannel.Default);
+      m_TVTuner.put_Channel(frequency, AMTunerSubChannel.Default, AMTunerSubChannel.Default);
       m_TVTuner.get_AudioFrequency(out frequency);
       Log.WriteFile(Log.LogType.Capture, "SWGraph:  tuned to {0} hz", frequency);
       SetRecordingLevel(true, _RecordingLevel);

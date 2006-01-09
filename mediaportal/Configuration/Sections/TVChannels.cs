@@ -38,6 +38,7 @@ using SQLite.NET;
 using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
 using DShowNET;
+using DirectShowLib;
 
 namespace MediaPortal.Configuration.Sections
 {

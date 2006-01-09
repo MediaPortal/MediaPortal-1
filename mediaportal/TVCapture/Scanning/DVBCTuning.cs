@@ -27,6 +27,8 @@ using MediaPortal.TV.Database;
 using MediaPortal.GUI.Library;
 using MediaPortal.TV.Recording;
 using System.Xml;
+using DirectShowLib;
+using DirectShowLib.BDA;
 
 
 namespace MediaPortal.TV.Recording
@@ -123,7 +125,7 @@ namespace MediaPortal.TV.Recording
               {
                 dvbcChannels[count].frequency = Int32.Parse(tpdata[0]);
                 string mod = tpdata[1].ToUpper();
-                dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_NOT_SET;
+                dvbcChannels[count].modulation = (int)ModulationType.ModNotSet;
                 if (mod == "1024QAM") dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_1024QAM;
                 if (mod == "112QAM") dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_112QAM;
                 if (mod == "128QAM") dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_128QAM;
@@ -300,7 +302,7 @@ namespace MediaPortal.TV.Recording
 
       newchan.Modulation = dvbcChannels[currentIndex].modulation;
       newchan.Symbolrate = (dvbcChannels[currentIndex].symbolrate) / 1000;
-      newchan.FEC = (int)TunerLib.FECMethod.BDA_FEC_METHOD_NOT_SET;
+      newchan.FEC = (int)FECMethod.MethodNotSet;
       newchan.Frequency = dvbcChannels[currentIndex].frequency;
       captureCard.Tune(newchan, 0);
       captureCard.Process();

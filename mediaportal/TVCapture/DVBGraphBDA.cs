@@ -31,9 +31,12 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using Microsoft.Win32;
 using DShowNET;
-using DShowNET.Device;
-using DShowNET.BDA;
 using DShowNET.Helper;
+using DShowNET.MPSA;
+using DShowNET.MPTSWriter;
+using DirectShowLib;
+using DirectShowLib.BDA;
+using DirectShowLib.SBE;
 using MediaPortal.Util;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
@@ -43,7 +46,7 @@ using System.Xml;
 //using DirectX.Capture;
 using MediaPortal.Radio.Database;
 using Toub.MediaCenter.Dvrms.Metadata;
-
+using MediaPortal.TV.BDA;
 namespace MediaPortal.TV.Recording
 {
   /// <summary>
@@ -172,7 +175,7 @@ namespace MediaPortal.TV.Recording
 
 
     [DllImport("dvblib.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern bool GetPidMap(DShowNET.IPin filter, ref uint pid, ref uint mediasampletype);
+    private static extern bool GetPidMap(DirectShowLib.IPin filter, ref uint pid, ref uint mediasampletype);
     [DllImport("dvblib.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall)]
     public static extern int SetupDemuxer(IPin pin, int pid, IPin pin1, int pid1, IPin pin2, int pid2);
     [DllImport("dvblib.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall)]
@@ -202,7 +205,7 @@ namespace MediaPortal.TV.Recording
     int _lastPMTVersion = -1;
     int _cardId = -1;
     int _currentChannelNumber = 28;
-    int _rotCookie = 0;			// Cookie into the Running Object Table
+    protected DsROTEntry _rotEntry = null;			// Cookie into the Running Object Table
 
     State _graphState = State.None;
     DateTime _startTimer = DateTime.Now;
@@ -371,14 +374,11 @@ namespace MediaPortal.TV.Recording
 
         // Make a new filter graph
         //Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:create new filter graph (IGraphBuilder)");
-        _graphBuilder = (IGraphBuilder)Activator.CreateInstance(Type.GetTypeFromCLSID(Clsid.FilterGraph, true));
+        _graphBuilder = (IGraphBuilder)new FilterGraph();
 
 
         // Get the Capture Graph Builder
-        //Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Get the Capture Graph Builder (ICaptureGraphBuilder2)");
-        Guid clsid = Clsid.CaptureGraphBuilder2;
-        Guid riid = typeof(ICaptureGraphBuilder2).GUID;
-        _captureGraphBuilderInterface = (ICaptureGraphBuilder2)DsBugWO.CreateDsInstance(ref clsid, ref riid);
+        _captureGraphBuilderInterface = (ICaptureGraphBuilder2)new CaptureGraphBuilder2();
 
         //Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Link the CaptureGraphBuilder to the filter graph (SetFiltergraph)");
         int hr = _captureGraphBuilderInterface.SetFiltergraph(_graphBuilder);
@@ -388,7 +388,7 @@ namespace MediaPortal.TV.Recording
           return false;
         }
         //Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:Add graph to ROT table");
-        DsROT.AddGraphToRot(_graphBuilder, out _rotCookie);
+        _rotEntry = new DsROTEntry((IFilterGraph)_graphBuilder);
 
 
         //dont use samplegrabber in configuration.exe
@@ -396,7 +396,7 @@ namespace MediaPortal.TV.Recording
         _sampleInterface = null;
         if (GUIGraphicsContext.DX9Device != null)
         {
-          _filterSampleGrabber = (IBaseFilter)Activator.CreateInstance(Type.GetTypeFromCLSID(Clsid.SampleGrabber, true));
+          _filterSampleGrabber = (IBaseFilter)new SampleGrabber();
           _sampleInterface = (ISampleGrabber)_filterSampleGrabber;
           _graphBuilder.AddFilter(_filterSampleGrabber, "Sample Grabber");
         }
@@ -500,7 +500,7 @@ namespace MediaPortal.TV.Recording
             String strPinName = ((ConnectionDefinition)_card.TvConnectionDefinitions[i]).SourcePinName;
             if ((strPinName.Length == 1) && (Char.IsDigit(strPinName, 0)))
             {
-              sourcePin = DirectShowUtil.FindPinNr(sourceFilter.DSFilter, PinDirection.Output, Convert.ToInt32(strPinName));
+              sourcePin = DsFindPin.ByDirection(sourceFilter.DSFilter, PinDirection.Output, Convert.ToInt32(strPinName));
               if (sourcePin == null)
                 Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA:FAILED   Unable to find sourcePin: <{0}>", strPinName);
               else
@@ -517,7 +517,7 @@ namespace MediaPortal.TV.Recording
             String strPinName = ((ConnectionDefinition)_card.TvConnectionDefinitions[i]).SinkPinName;
             if ((strPinName.Length == 1) && (Char.IsDigit(strPinName, 0)))
             {
-              sinkPin = DirectShowUtil.FindPinNr(sinkFilter.DSFilter, PinDirection.Input, Convert.ToInt32(strPinName));
+              sinkPin = DsFindPin.ByDirection(sinkFilter.DSFilter, PinDirection.Input, Convert.ToInt32(strPinName));
               if (sinkPin == null)
                 Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA:   Unable to find sinkPin: <{0}>", strPinName);
               else
@@ -592,7 +592,7 @@ namespace MediaPortal.TV.Recording
                       String strPinName = ((ConnectionDefinition)_card.TvConnectionDefinitions[i]).SinkPinName;
                       if ((strPinName.Length == 1) && (Char.IsDigit(strPinName, 0)))
                       {
-                        sinkPin = DirectShowUtil.FindPinNr(sinkFilter.DSFilter, PinDirection.Input, Convert.ToInt32(strPinName));
+                        sinkPin = DsFindPin.ByDirection(sinkFilter.DSFilter, PinDirection.Input, Convert.ToInt32(strPinName));
                         if (sinkPin == null)
                           Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA:FAILED   Unable to find sinkPin: <{0}>", strPinName);
                         else
@@ -691,7 +691,7 @@ namespace MediaPortal.TV.Recording
         //=========================================================================================================
         // Use CLSID_filterMpeg2Demultiplexer to create the filter
         //Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:CreateGraph() create MPEG2-Demultiplexer");
-        _filterMpeg2Demultiplexer = (IBaseFilter)Activator.CreateInstance(Type.GetTypeFromCLSID(Clsid.Mpeg2Demultiplexer, true));
+        _filterMpeg2Demultiplexer = (IBaseFilter)new MPEG2Demultiplexer();
         if (_filterMpeg2Demultiplexer == null)
         {
           Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA:Failed to create Mpeg2 Demultiplexer");
@@ -778,7 +778,7 @@ namespace MediaPortal.TV.Recording
 
 
         //Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:CreateGraph() add stream analyzer");
-        _filterDvbAnalyzer = (IBaseFilter)Activator.CreateInstance(Type.GetTypeFromCLSID(Clsid.MPStreamAnalyzer, true));
+        _filterDvbAnalyzer = (IBaseFilter)Activator.CreateInstance(Type.GetTypeFromCLSID(ClassId.MPStreamAnalyzer, true));
         _analyzerInterface = (IStreamAnalyzer)_filterDvbAnalyzer;
         _epgGrabberInterface = _filterDvbAnalyzer as IEPGGrabber;
         _mhwGrabberInterface = _filterDvbAnalyzer as IMHWGrabber;
@@ -793,7 +793,7 @@ namespace MediaPortal.TV.Recording
 
         //        Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:CreateGraph() find audio/video pins");
         bool connected = false;
-        IPin pinAnalyzerIn = DirectShowUtil.FindPinNr(_filterDvbAnalyzer, PinDirection.Input, 0);
+        IPin pinAnalyzerIn = DsFindPin.ByDirection(_filterDvbAnalyzer, PinDirection.Input, 0);
         IEnumPins pinEnum;
         _filterMpeg2Demultiplexer.EnumPins(out pinEnum);
         pinEnum.Reset();
@@ -806,25 +806,25 @@ namespace MediaPortal.TV.Recording
             IEnumMediaTypes enumMedia;
             pin[0].EnumMediaTypes(out enumMedia);
             enumMedia.Reset();
-            AMMediaTypeClass pinMediaType;
-            uint fetchedm = 0;
-            while (enumMedia.Next(1, out pinMediaType, out fetchedm) == 0)
+            DirectShowLib.AMMediaType[] pinMediaType = new DirectShowLib.AMMediaType[2];
+            int fetchedm = 0;
+            while (enumMedia.Next(1, pinMediaType, out fetchedm) == 0)
             {
               if (fetchedm == 1)
               {
-                if (pinMediaType.majorType == MediaType.Audio)
+                if (pinMediaType[0].majorType == MediaType.Audio)
                 {
                   //Log.Write("DVBGraphBDA: found audio pin");
                   _pinDemuxerAudio = pin[0];
                   break;
                 }
-                if (pinMediaType.majorType == MediaType.Video)
+                if (pinMediaType[0].majorType == MediaType.Video)
                 {
                   //Log.Write("DVBGraphBDA: found video pin");
                   _pinDemuxerVideo = pin[0];
                   break;
                 }
-                if (pinMediaType.majorType == MEDIATYPE_MPEG2_SECTIONS && !connected)
+                if (pinMediaType[0].majorType == MEDIATYPE_MPEG2_SECTIONS && !connected)
                 {
                   IPin pinConnectedTo = null;
                   pin[0].ConnectedTo(out pinConnectedTo);
@@ -875,7 +875,7 @@ namespace MediaPortal.TV.Recording
         {
           AMMediaType mpegVideoOut = new AMMediaType();
           mpegVideoOut.majorType = MediaType.Video;
-          mpegVideoOut.subType = MediaSubType.MPEG2_Video;
+          mpegVideoOut.subType = MediaSubType.Mpeg2Video;
 
           Size FrameSize = new Size(100, 100);
           mpegVideoOut.unkPtr = IntPtr.Zero;
@@ -891,7 +891,7 @@ namespace MediaPortal.TV.Recording
 
           AMMediaType mpegAudioOut = new AMMediaType();
           mpegAudioOut.majorType = MediaType.Audio;
-          mpegAudioOut.subType = MediaSubType.MPEG2_Audio;
+          mpegAudioOut.subType = MediaSubType.Mpeg2Audio;
           mpegAudioOut.sampleSize = 0;
           mpegAudioOut.temporalCompression = false;
           mpegAudioOut.fixedSizeSamples = true;
@@ -900,14 +900,14 @@ namespace MediaPortal.TV.Recording
           mpegAudioOut.formatSize = MPEG1AudioFormat.GetLength(0);
           mpegAudioOut.formatPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(mpegAudioOut.formatSize);
           System.Runtime.InteropServices.Marshal.Copy(MPEG1AudioFormat, 0, mpegAudioOut.formatPtr, mpegAudioOut.formatSize);
-          hr = demuxer.CreateOutputPin(ref mpegAudioOut, "audio", out _pinDemuxerAudio);
+          hr = demuxer.CreateOutputPin( mpegAudioOut, "audio", out _pinDemuxerAudio);
           if (hr != 0)
           {
             Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA: FAILED to create audio output pin on demuxer");
             return false;
           }
 
-          hr = demuxer.CreateOutputPin(ref mpegVideoOut/*vidOut*/, "video", out _pinDemuxerVideo);
+          hr = demuxer.CreateOutputPin( mpegVideoOut/*vidOut*/, "video", out _pinDemuxerVideo);
           if (hr != 0)
           {
             Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA: FAILED to create video output pin on demuxer");
@@ -927,7 +927,7 @@ namespace MediaPortal.TV.Recording
           mediaAC3.formatPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(mediaAC3.formatSize);
           System.Runtime.InteropServices.Marshal.Copy(MPEG1AudioFormat, 0, mediaAC3.formatPtr, mediaAC3.formatSize);
 
-          hr = demuxer.CreateOutputPin(ref mediaAC3/*vidOut*/, "AC3", out _pinAC3Out);
+          hr = demuxer.CreateOutputPin( mediaAC3/*vidOut*/, "AC3", out _pinAC3Out);
           if (hr != 0 || _pinAC3Out == null)
           {
             Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA:FAILED to create AC3 pin:0x{0:X}", hr);
@@ -946,7 +946,7 @@ namespace MediaPortal.TV.Recording
           mediaMPG1.formatPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(mediaMPG1.formatSize);
           System.Runtime.InteropServices.Marshal.Copy(MPEG1AudioFormat, 0, mediaMPG1.formatPtr, mediaMPG1.formatSize);
 
-          hr = demuxer.CreateOutputPin(ref mediaMPG1/*vidOut*/, "audioMpg1", out _pinMPG1Out);
+          hr = demuxer.CreateOutputPin( mediaMPG1/*vidOut*/, "audioMpg1", out _pinMPG1Out);
           if (hr != 0 || _pinMPG1Out == null)
           {
             Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA:FAILED to create MPG1 pin:0x{0:X}", hr);
@@ -960,19 +960,19 @@ namespace MediaPortal.TV.Recording
           mtEPG.formatType = FormatType.None;
 
           IPin pinEPGout, pinMHW1Out, pinMHW2Out;
-          hr = demuxer.CreateOutputPin(ref mtEPG, "EPG", out pinEPGout);
+          hr = demuxer.CreateOutputPin( mtEPG, "EPG", out pinEPGout);
           if (hr != 0 || pinEPGout == null)
           {
             Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA:FAILED to create EPG pin:0x{0:X}", hr);
             return false;
           }
-          hr = demuxer.CreateOutputPin(ref mtEPG, "MHW1", out pinMHW1Out);
+          hr = demuxer.CreateOutputPin( mtEPG, "MHW1", out pinMHW1Out);
           if (hr != 0 || pinMHW1Out == null)
           {
             Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA:FAILED to create MHW1 pin:0x{0:X}", hr);
             return false;
           }
-          hr = demuxer.CreateOutputPin(ref mtEPG, "MHW2", out pinMHW2Out);
+          hr = demuxer.CreateOutputPin( mtEPG, "MHW2", out pinMHW2Out);
           if (hr != 0 || pinMHW2Out == null)
           {
             Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA:FAILED to create MHW2 pin:0x{0:X}", hr);
@@ -980,19 +980,19 @@ namespace MediaPortal.TV.Recording
           }
 
           //Log.Write("DVBGraphBDA:Get EPGs pin of analyzer");
-          IPin pinMHW1In = DirectShowUtil.FindPinNr(_filterDvbAnalyzer, PinDirection.Input, 1);
+          IPin pinMHW1In = DsFindPin.ByDirection(_filterDvbAnalyzer, PinDirection.Input, 1);
           if (pinMHW1In == null)
           {
             Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA:FAILED to get MHW1 pin on MSPA");
             return false;
           }
-          IPin pinMHW2In = DirectShowUtil.FindPinNr(_filterDvbAnalyzer, PinDirection.Input, 2);
+          IPin pinMHW2In = DsFindPin.ByDirection(_filterDvbAnalyzer, PinDirection.Input, 2);
           if (pinMHW2In == null)
           {
             Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA:FAILED to get MHW2 pin on MSPA");
             return false;
           }
-          IPin pinEPGIn = DirectShowUtil.FindPinNr(_filterDvbAnalyzer, PinDirection.Input, 3);
+          IPin pinEPGIn = DsFindPin.ByDirection(_filterDvbAnalyzer, PinDirection.Input, 3);
           if (pinEPGIn == null)
           {
             Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA:FAILED to get EPG pin on MSPA");
@@ -1055,10 +1055,10 @@ namespace MediaPortal.TV.Recording
         if (_sampleInterface != null)
         {
           AMMediaType mt = new AMMediaType();
-          mt.majorType = DShowNET.MediaType.Stream;
-          mt.subType = DShowNET.MediaSubType.MPEG2Transport;
+          mt.majorType = MediaType.Stream;
+          mt.subType = MediaSubTypeEx.MPEG2Transport;
           _sampleInterface.SetCallback(_streamDemuxer, 1);
-          _sampleInterface.SetMediaType(ref mt);
+          _sampleInterface.SetMediaType( mt);
           _sampleInterface.SetBufferSamples(false);
         }
 
@@ -1217,7 +1217,7 @@ namespace MediaPortal.TV.Recording
         {
           //Log.Write("DVBGraphBDA:hide window");
           //Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: hide video window");
-          _videoWindowInterface.put_Visible(DsHlp.OAFALSE);
+          _videoWindowInterface.put_Visible(OABool.False);
           //_videoWindowInterface.put_Owner(IntPtr.Zero);
           _videoWindowInterface = null;
         }
@@ -1297,7 +1297,7 @@ namespace MediaPortal.TV.Recording
 
         //Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: remove filters");
         if (_graphBuilder != null)
-          DsUtils.RemoveFilters(_graphBuilder);
+          DirectShowUtil.RemoveFilters(_graphBuilder);
 
 
         //Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: clean filters");
@@ -1309,10 +1309,11 @@ namespace MediaPortal.TV.Recording
 
 
         //Log.Write("DVBGraphBDA:free remove graph");
-        if (_rotCookie != 0)
-          DsROT.RemoveGraphFromRot(ref _rotCookie);
-        _rotCookie = 0;
-
+        if (_rotEntry != null)
+        {
+          _rotEntry.Dispose();
+        }
+        _rotEntry = null;
         //Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: remove graph");
         if (_captureGraphBuilderInterface != null)
         {
@@ -1463,8 +1464,8 @@ namespace MediaPortal.TV.Recording
         if (!bContentRecording)
         {
           // so set the startttime...
-          uint uiSecondsPerFile;
-          uint uiMinFiles, uiMaxFiles;
+          int uiSecondsPerFile;
+          int uiMinFiles, uiMaxFiles;
           m_IStreamBufferConfig.GetBackingFileCount(out uiMinFiles, out uiMaxFiles);
           m_IStreamBufferConfig.GetBackingFileDuration(out uiSecondsPerFile);
           lStartTime = uiSecondsPerFile;
@@ -1669,12 +1670,12 @@ namespace MediaPortal.TV.Recording
         if (hr != 0)
           Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA: FAILED:set Video window:0x{0:X}", hr);
 
-        hr = _videoWindowInterface.put_WindowStyle(WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS);
+        hr = _videoWindowInterface.put_WindowStyle((WindowStyle)((int)WindowStyle.ClipSiblings + (int)WindowStyle.Child + (int)WindowStyle.ClipChildren));
         if (hr != 0)
           Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA: FAILED:set Video window style:0x{0:X}", hr);
 
         //show overlay window
-        hr = _videoWindowInterface.put_Visible(DsHlp.OATRUE);
+        hr = _videoWindowInterface.put_Visible(OABool.True);
         if (hr != 0)
           Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA: FAILED:put_Visible:0x{0:X}", hr);
       }
@@ -1729,7 +1730,7 @@ namespace MediaPortal.TV.Recording
       GUIGraphicsContext.OnVideoWindowChanged -= new VideoWindowChangedHandler(GUIGraphicsContext_OnVideoWindowChanged);
       Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA: StopViewing()");
       if (_videoWindowInterface != null)
-        _videoWindowInterface.put_Visible(DsHlp.OAFALSE);
+        _videoWindowInterface.put_Visible(OABool.False);
 
       //Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA: stop vmr9");
       if (_vmr9 != null)
@@ -1847,13 +1848,13 @@ namespace MediaPortal.TV.Recording
         if (!_isOverlayVisible)
         {
           if (_videoWindowInterface != null)
-            _videoWindowInterface.put_Visible(DsHlp.OAFALSE);
+            _videoWindowInterface.put_Visible(OABool.False);
 
         }
         else
         {
           if (_videoWindowInterface != null)
-            _videoWindowInterface.put_Visible(DsHlp.OATRUE);
+            _videoWindowInterface.put_Visible(OABool.True);
 
         }
       }
@@ -2113,12 +2114,12 @@ namespace MediaPortal.TV.Recording
         IBDA_SignalStatistics stat = (IBDA_SignalStatistics)_tunerStatistics[i];
         bool isLocked = false;
         bool isPresent = false;
-        uint quality = 0;
-        uint strength = 0;
+        int quality = 0;
+        int strength = 0;
         try
         {
           //is the tuner locked?
-          stat.get_SignalLocked(ref isLocked);
+          stat.get_SignalLocked(out isLocked);
           isTunerLocked |= isLocked;
         }
         catch (COMException )
@@ -2132,7 +2133,7 @@ namespace MediaPortal.TV.Recording
         try
         {
           //is a signal present?
-          stat.get_SignalPresent(ref isPresent);
+          stat.get_SignalPresent(out isPresent);
           isSignalPresent |= isPresent;
         }
         catch (COMException )
@@ -2146,7 +2147,7 @@ namespace MediaPortal.TV.Recording
         try
         {
           //is a signal quality ok?
-          stat.get_SignalQuality(ref quality); //1-100
+          stat.get_SignalQuality(out quality); //1-100
           if (quality > 0) signalQuality += quality;
         }
         catch (COMException )
@@ -2160,7 +2161,7 @@ namespace MediaPortal.TV.Recording
         try
         {
           //is a signal strength ok?
-          stat.get_SignalStrength(ref strength); //1-100
+          stat.get_SignalStrength(out strength); //1-100
           if (strength > 0) signalStrength += strength;
         }
         catch (COMException )
@@ -2337,7 +2338,7 @@ namespace MediaPortal.TV.Recording
       int[] nodeTypes = new int[33];
       Guid[] guidInterfaces = new Guid[33];
 
-      int hr = topology.GetNodeTypes(ref nodeTypeCount, 32, nodeTypes);
+      int hr = topology.GetNodeTypes(out nodeTypeCount, 32, nodeTypes);
       if (hr != 0)
       {
         Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA: FAILED could not get node types from tuner:0x{0:X}", hr);
@@ -2354,7 +2355,7 @@ namespace MediaPortal.TV.Recording
       {
         object objectNode;
         int numberOfInterfaces = 32;
-        hr = topology.GetNodeInterfaces(nodeTypes[i], ref numberOfInterfaces, 32, guidInterfaces);
+        hr = topology.GetNodeInterfaces(nodeTypes[i], out numberOfInterfaces, 32, guidInterfaces);
         if (hr != 0)
         {
           Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA: FAILED could not GetNodeInterfaces for node:{0} 0x:{1:X}", i, hr);
@@ -2403,7 +2404,7 @@ namespace MediaPortal.TV.Recording
       int[] nodeTypes = new int[33];
       Guid[] guidInterfaces = new Guid[33];
 
-      int hr = topology.GetNodeTypes(ref nodeTypeCount, 32, nodeTypes);
+      int hr = topology.GetNodeTypes(out nodeTypeCount, 32, nodeTypes);
       if (hr != 0)
       {
         Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA: FAILED could not get node types from tuner");
@@ -2567,7 +2568,7 @@ namespace MediaPortal.TV.Recording
         //connect mpeg2 demuxer video out->mpeg2 analyzer input pin
         //get input pin of MPEG2 Analyzer filter
         //				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:find mpeg2 analyzer input pin()");
-        pinObj0 = DirectShowUtil.FindPinNr((IBaseFilter)m_mpeg2Analyzer, PinDirection.Input, 0);
+        pinObj0 = DsFindPin.ByDirection((IBaseFilter)m_mpeg2Analyzer, PinDirection.Input, 0);
         if (pinObj0 == null)
         {
           Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA:FAILED cannot find mpeg2 analyzer input pin");
@@ -2585,7 +2586,7 @@ namespace MediaPortal.TV.Recording
         //connect MPEG2 analyzer Filter->stream buffer sink pin 0
         //get output pin #0 from MPEG2 analyzer Filter
         //				Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:mpeg2 analyzer output->streambuffersink in");
-        pinObj1 = DirectShowUtil.FindPinNr((IBaseFilter)m_mpeg2Analyzer, PinDirection.Output, 0);
+        pinObj1 = DsFindPin.ByDirection((IBaseFilter)m_mpeg2Analyzer, PinDirection.Output, 0);
         if (hr != 0)
         {
           Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA:FAILED cannot find mpeg2 analyzer output pin:{0:X}", hr);
@@ -2593,7 +2594,7 @@ namespace MediaPortal.TV.Recording
         }
 
         //get input pin #0 from StreamBufferSink Filter
-        pinObj2 = DirectShowUtil.FindPinNr((IBaseFilter)m_StreamBufferSink, PinDirection.Input, 0);
+        pinObj2 = DsFindPin.ByDirection((IBaseFilter)m_StreamBufferSink, PinDirection.Input, 0);
         if (hr != 0)
         {
           Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA:FAILED cannot find SBE input pin:{0:X}", hr);
@@ -2612,7 +2613,7 @@ namespace MediaPortal.TV.Recording
           //Log.WriteFile(Log.LogType.Capture, false, "DVBGraphBDA:connect MP2 audio pin->SBE");
           //connect MPEG2 demuxer audio output ->StreamBufferSink Input #1
           //Get StreamBufferSink InputPin #1
-          pinObj3 = DirectShowUtil.FindPinNr((IBaseFilter)m_StreamBufferSink, PinDirection.Input, 1);
+          pinObj3 = DsFindPin.ByDirection((IBaseFilter)m_StreamBufferSink, PinDirection.Input, 1);
           if (hr != 0)
           {
             Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA:FAILED cannot find SBE input pin#2");
@@ -2631,7 +2632,7 @@ namespace MediaPortal.TV.Recording
           //Log.WriteFile(Log.LogType.Capture, false, "DVBGraphBDA:connect AC3 audio pin->SBE");
           if (_pinAC3Out != null)
           {
-            pinObj3 = DirectShowUtil.FindPinNr((IBaseFilter)m_StreamBufferSink, PinDirection.Input, 1);
+            pinObj3 = DsFindPin.ByDirection((IBaseFilter)m_StreamBufferSink, PinDirection.Input, 1);
             if (hr != 0)
             {
               Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA:FAILED cannot find SBE input pin#2");
@@ -2680,7 +2681,7 @@ namespace MediaPortal.TV.Recording
         }
 
         //set duration of each timeshift file
-        hr = m_IStreamBufferConfig.SetBackingFileDuration((uint)iFileDuration); // 60sec * 4 files= 4 mins
+        hr = m_IStreamBufferConfig.SetBackingFileDuration((int)iFileDuration); // 60sec * 4 files= 4 mins
         if (hr != 0)
         {
           Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA:FAILED to set timeshifting filesduration to {0} {1:X}", iFileDuration, hr);
@@ -2970,7 +2971,7 @@ namespace MediaPortal.TV.Recording
       {
         case NetworkType.ATSC:
           {
-            TuningSpace = (TunerLib.ITuningSpace)Activator.CreateInstance(Type.GetTypeFromCLSID(TuningSpaces.CLSID_ATSCTuningSpace, true));
+            TuningSpace = (TunerLib.ITuningSpace)new ATSCTuningSpace();
             TunerLib.IATSCTuningSpace myTuningSpace = (TunerLib.IATSCTuningSpace)TuningSpace;
             myTuningSpace.set__NetworkType(ref NetworkProviders.CLSID_ATSCNetworkProvider);
             myTuningSpace.InputType = TunerLib.tagTunerInputType.TunerInputAntenna;
@@ -2983,15 +2984,15 @@ namespace MediaPortal.TV.Recording
             myTuningSpace.FriendlyName = uniqueName;
             myTuningSpace.UniqueName = uniqueName;
 
-            TunerLib.Locator DefaultLocator = (TunerLib.Locator)Activator.CreateInstance(Type.GetTypeFromCLSID(Locators.CLSID_ATSCLocator, true));
+            TunerLib.Locator DefaultLocator = (TunerLib.Locator)new ATSCLocator();
             TunerLib.IATSCLocator myLocator = (TunerLib.IATSCLocator)DefaultLocator;
 
             myLocator.CarrierFrequency = -1;
-            myLocator.InnerFEC = (TunerLib.FECMethod)FECMethod.BDA_FEC_METHOD_NOT_SET;
-            myLocator.InnerFECRate = (TunerLib.BinaryConvolutionCodeRate)BinaryConvolutionCodeRate.BDA_BCC_RATE_NOT_SET;
-            myLocator.Modulation = (TunerLib.ModulationType)ModulationType.BDA_MOD_NOT_SET;
-            myLocator.OuterFEC = (TunerLib.FECMethod)FECMethod.BDA_FEC_METHOD_NOT_SET;
-            myLocator.OuterFECRate = (TunerLib.BinaryConvolutionCodeRate)BinaryConvolutionCodeRate.BDA_BCC_RATE_NOT_SET;
+            myLocator.InnerFEC = (TunerLib.FECMethod)FECMethod.MethodNotSet;
+            myLocator.InnerFECRate = (TunerLib.BinaryConvolutionCodeRate)BinaryConvolutionCodeRate.RateNotSet;
+            myLocator.Modulation = (TunerLib.ModulationType)ModulationType.ModNotSet;
+            myLocator.OuterFEC = (TunerLib.FECMethod)FECMethod.MethodNotSet;
+            myLocator.OuterFECRate = (TunerLib.BinaryConvolutionCodeRate)BinaryConvolutionCodeRate.RateNotSet;
             myLocator.PhysicalChannel = -1;
             myLocator.SymbolRate = -1;
             myLocator.TSID = -1;
@@ -3003,22 +3004,22 @@ namespace MediaPortal.TV.Recording
 
         case NetworkType.DVBC:
           {
-            TuningSpace = (TunerLib.ITuningSpace)Activator.CreateInstance(Type.GetTypeFromCLSID(TuningSpaces.CLSID_DVBTuningSpace, true));
+            TuningSpace = (TunerLib.ITuningSpace)new DVBTuningSpace();
             TunerLib.IDVBTuningSpace2 myTuningSpace = (TunerLib.IDVBTuningSpace2)TuningSpace;
             myTuningSpace.SystemType = TunerLib.DVBSystemType.DVB_Cable;
             myTuningSpace.set__NetworkType(ref NetworkProviders.CLSID_DVBCNetworkProvider);
 
             myTuningSpace.FriendlyName = uniqueName;
             myTuningSpace.UniqueName = uniqueName;
-            TunerLib.Locator DefaultLocator = (TunerLib.Locator)Activator.CreateInstance(Type.GetTypeFromCLSID(Locators.CLSID_DVBCLocator, true));
+            TunerLib.Locator DefaultLocator = (TunerLib.Locator)new DVBCLocator();
             TunerLib.IDVBCLocator myLocator = (TunerLib.IDVBCLocator)DefaultLocator;
 
             myLocator.CarrierFrequency = -1;
-            myLocator.InnerFEC = (TunerLib.FECMethod)FECMethod.BDA_FEC_METHOD_NOT_SET;
-            myLocator.InnerFECRate = (TunerLib.BinaryConvolutionCodeRate)BinaryConvolutionCodeRate.BDA_BCC_RATE_NOT_SET;
-            myLocator.Modulation = (TunerLib.ModulationType)ModulationType.BDA_MOD_NOT_SET;
-            myLocator.OuterFEC = (TunerLib.FECMethod)FECMethod.BDA_FEC_METHOD_NOT_SET;
-            myLocator.OuterFECRate = (TunerLib.BinaryConvolutionCodeRate)BinaryConvolutionCodeRate.BDA_BCC_RATE_NOT_SET;
+            myLocator.InnerFEC = (TunerLib.FECMethod)FECMethod.MethodNotSet;
+            myLocator.InnerFECRate = (TunerLib.BinaryConvolutionCodeRate)BinaryConvolutionCodeRate.RateNotSet;
+            myLocator.Modulation = (TunerLib.ModulationType)ModulationType.ModNotSet;
+            myLocator.OuterFEC = (TunerLib.FECMethod)FECMethod.MethodNotSet;
+            myLocator.OuterFECRate = (TunerLib.BinaryConvolutionCodeRate)BinaryConvolutionCodeRate.RateNotSet;
             myLocator.SymbolRate = -1;
 
             myTuningSpace.DefaultLocator = DefaultLocator;
@@ -3028,7 +3029,7 @@ namespace MediaPortal.TV.Recording
 
         case NetworkType.DVBS:
           {
-            TuningSpace = (TunerLib.ITuningSpace)Activator.CreateInstance(Type.GetTypeFromCLSID(TuningSpaces.CLSID_DVBSTuningSpace, true));
+            TuningSpace = (TunerLib.ITuningSpace)new DVBSTuningSpace();
             TunerLib.IDVBSTuningSpace myTuningSpace = (TunerLib.IDVBSTuningSpace)TuningSpace;
             myTuningSpace.SystemType = TunerLib.DVBSystemType.DVB_Satellite;
             myTuningSpace.set__NetworkType(ref NetworkProviders.CLSID_DVBSNetworkProvider);
@@ -3038,20 +3039,20 @@ namespace MediaPortal.TV.Recording
             myTuningSpace.FriendlyName = uniqueName;
             myTuningSpace.UniqueName = uniqueName;
 
-            TunerLib.Locator DefaultLocator = (TunerLib.Locator)Activator.CreateInstance(Type.GetTypeFromCLSID(Locators.CLSID_DVBSLocator, true));
+            TunerLib.Locator DefaultLocator = (TunerLib.Locator)new DVBSLocator();
             TunerLib.IDVBSLocator myLocator = (TunerLib.IDVBSLocator)DefaultLocator;
 
             myLocator.CarrierFrequency = -1;
-            myLocator.InnerFEC = (TunerLib.FECMethod)FECMethod.BDA_FEC_METHOD_NOT_SET;
-            myLocator.InnerFECRate = (TunerLib.BinaryConvolutionCodeRate)BinaryConvolutionCodeRate.BDA_BCC_RATE_NOT_SET;
-            myLocator.OuterFEC = (TunerLib.FECMethod)FECMethod.BDA_FEC_METHOD_NOT_SET;
-            myLocator.OuterFECRate = (TunerLib.BinaryConvolutionCodeRate)BinaryConvolutionCodeRate.BDA_BCC_RATE_NOT_SET;
-            myLocator.Modulation = (TunerLib.ModulationType)ModulationType.BDA_MOD_NOT_SET;
+            myLocator.InnerFEC = (TunerLib.FECMethod)FECMethod.MethodNotSet;
+            myLocator.InnerFECRate = (TunerLib.BinaryConvolutionCodeRate)BinaryConvolutionCodeRate.RateNotSet;
+            myLocator.OuterFEC = (TunerLib.FECMethod)FECMethod.MethodNotSet;
+            myLocator.OuterFECRate = (TunerLib.BinaryConvolutionCodeRate)BinaryConvolutionCodeRate.RateNotSet;
+            myLocator.Modulation = (TunerLib.ModulationType)ModulationType.ModNotSet;
             myLocator.SymbolRate = -1;
             myLocator.Azimuth = -1;
             myLocator.Elevation = -1;
             myLocator.OrbitalPosition = -1;
-            myLocator.SignalPolarisation = (TunerLib.Polarisation)Polarisation.BDA_POLARISATION_NOT_SET;
+            myLocator.SignalPolarisation = (TunerLib.Polarisation)Polarisation.NotSet;
             myLocator.WestPosition = false;
 
             myTuningSpace.DefaultLocator = DefaultLocator;
@@ -3061,29 +3062,29 @@ namespace MediaPortal.TV.Recording
 
         case NetworkType.DVBT:
           {
-            TuningSpace = (TunerLib.ITuningSpace)Activator.CreateInstance(Type.GetTypeFromCLSID(TuningSpaces.CLSID_DVBTuningSpace, true));
+            TuningSpace = (TunerLib.ITuningSpace)new DVBTuningSpace();
             TunerLib.IDVBTuningSpace2 myTuningSpace = (TunerLib.IDVBTuningSpace2)TuningSpace;
             myTuningSpace.SystemType = TunerLib.DVBSystemType.DVB_Terrestrial;
             myTuningSpace.set__NetworkType(ref NetworkProviders.CLSID_DVBTNetworkProvider);
             myTuningSpace.FriendlyName = uniqueName;
             myTuningSpace.UniqueName = uniqueName;
 
-            TunerLib.Locator DefaultLocator = (TunerLib.Locator)Activator.CreateInstance(Type.GetTypeFromCLSID(Locators.CLSID_DVBTLocator, true));
+            TunerLib.Locator DefaultLocator = (TunerLib.Locator)new DVBTLocator();
             TunerLib.IDVBTLocator myLocator = (TunerLib.IDVBTLocator)DefaultLocator;
 
             myLocator.CarrierFrequency = -1;
             myLocator.Bandwidth = -1;
-            myLocator.Guard = (TunerLib.GuardInterval)GuardInterval.BDA_GUARD_NOT_SET;
-            myLocator.HAlpha = (TunerLib.HierarchyAlpha)HierarchyAlpha.BDA_HALPHA_NOT_SET;
-            myLocator.InnerFEC = (TunerLib.FECMethod)FECMethod.BDA_FEC_METHOD_NOT_SET;
-            myLocator.InnerFECRate = (TunerLib.BinaryConvolutionCodeRate)BinaryConvolutionCodeRate.BDA_BCC_RATE_NOT_SET;
-            myLocator.LPInnerFEC = (TunerLib.FECMethod)FECMethod.BDA_FEC_METHOD_NOT_SET;
-            myLocator.LPInnerFECRate = (TunerLib.BinaryConvolutionCodeRate)BinaryConvolutionCodeRate.BDA_BCC_RATE_NOT_SET;
-            myLocator.Mode = (TunerLib.TransmissionMode)TransmissionMode.BDA_XMIT_MODE_NOT_SET;
-            myLocator.Modulation = (TunerLib.ModulationType)ModulationType.BDA_MOD_NOT_SET;
+            myLocator.Guard = (TunerLib.GuardInterval)GuardInterval.GuardNotSet;
+            myLocator.HAlpha = (TunerLib.HierarchyAlpha)HierarchyAlpha.HAlphaNotSet;
+            myLocator.InnerFEC = (TunerLib.FECMethod)FECMethod.MethodNotSet;
+            myLocator.InnerFECRate = (TunerLib.BinaryConvolutionCodeRate)BinaryConvolutionCodeRate.RateNotSet;
+            myLocator.LPInnerFEC = (TunerLib.FECMethod)FECMethod.MethodNotSet;
+            myLocator.LPInnerFECRate = (TunerLib.BinaryConvolutionCodeRate)BinaryConvolutionCodeRate.RateNotSet;
+            myLocator.Mode = (TunerLib.TransmissionMode)TransmissionMode.ModeNotSet;
+            myLocator.Modulation = (TunerLib.ModulationType)ModulationType.ModNotSet;
             myLocator.OtherFrequencyInUse = false;
-            myLocator.OuterFEC = (TunerLib.FECMethod)FECMethod.BDA_FEC_METHOD_NOT_SET;
-            myLocator.OuterFECRate = (TunerLib.BinaryConvolutionCodeRate)BinaryConvolutionCodeRate.BDA_BCC_RATE_NOT_SET;
+            myLocator.OuterFEC = (TunerLib.FECMethod)FECMethod.MethodNotSet;
+            myLocator.OuterFECRate = (TunerLib.BinaryConvolutionCodeRate)BinaryConvolutionCodeRate.RateNotSet;
             myLocator.SymbolRate = -1;
 
             myTuningSpace.DefaultLocator = DefaultLocator;
@@ -3106,24 +3107,24 @@ namespace MediaPortal.TV.Recording
     {
       int hr;
       ICreateDevEnum sysDevEnum = null;
-      System.Runtime.InteropServices.ComTypes.IEnumMoniker enumMoniker = null;
+      UCOMIEnumMoniker enumMoniker = null;
 
-      sysDevEnum = (ICreateDevEnum)Activator.CreateInstance(Type.GetTypeFromCLSID(Clsid.SystemDeviceEnum, true));
+      sysDevEnum = (ICreateDevEnum)Activator.CreateInstance(Type.GetTypeFromCLSID(ClassId.SystemDeviceEnum, true));
       // Enumerate the filter category
-      hr = sysDevEnum.CreateClassEnumerator(ref ClassID, out enumMoniker, 0);
+      hr = sysDevEnum.CreateClassEnumerator( ClassID, out enumMoniker, 0);
       if (hr != 0)
         throw new NotSupportedException("No devices in this category");
 
-      IntPtr ulFetched = Marshal.AllocCoTaskMem(sizeof(int));
-      System.Runtime.InteropServices.ComTypes.IMoniker[] deviceMoniker = new System.Runtime.InteropServices.ComTypes.IMoniker[1];
-      while (enumMoniker.Next(1, deviceMoniker, ulFetched) == 0) // while == S_OK
+      int fetched;
+      UCOMIMoniker[] deviceMoniker = new UCOMIMoniker[1];
+      while (enumMoniker.Next(1, deviceMoniker, out fetched) == 0) // while == S_OK
       {
         object bagObj = null;
         Guid bagId = typeof(IPropertyBag).GUID;
         deviceMoniker[0].BindToStorage(null, null, ref bagId, out bagObj);
         IPropertyBag propBag = (IPropertyBag)bagObj;
         object val = "";
-        propBag.Read("FriendlyName", ref val, IntPtr.Zero);
+        propBag.Read("FriendlyName", out val, null);
         string Name = val as string;
         val = "";
         Marshal.ReleaseComObject(propBag);
@@ -3139,14 +3140,12 @@ namespace MediaPortal.TV.Recording
           {
             Marshal.ReleaseComObject(deviceMoniker[0]);
             Marshal.ReleaseComObject(enumMoniker);
-            Marshal.FreeCoTaskMem(ulFetched);
             return true;
           }
         }//if(String.Compare(Name.ToLower(), FriendlyName.ToLower()) == 0) // If found
         Marshal.ReleaseComObject(deviceMoniker[0]);
       }//while(enumMoniker.Next(1, deviceMoniker, out ulFetched) == 0) // while == S_OK
       Marshal.ReleaseComObject(enumMoniker);
-      Marshal.FreeCoTaskMem(ulFetched); ;
       device = null;
       return false;
     }//private bool findNamedFilter(System.Guid ClassID, string FriendlyName, out object device) 
@@ -4140,7 +4139,7 @@ namespace MediaPortal.TV.Recording
               myLocator.SymbolRate = -1;
               myLocator.TSID = -1;//ch.TransportStreamID;
 
-              myLocator.InnerFEC = TunerLib.FECMethod.BDA_FEC_METHOD_NOT_SET;
+              myLocator.InnerFEC = (TunerLib.FECMethod)FECMethod.MethodNotSet;
               myLocator.Modulation = (TunerLib.ModulationType)ch.Modulation;
               myATSCTuneRequest.MinorChannel = ch.MinorChannel;
               myATSCTuneRequest.Channel = ch.MajorChannel;

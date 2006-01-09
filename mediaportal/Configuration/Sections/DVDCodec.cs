@@ -28,8 +28,8 @@ using System.Windows.Forms;
 using System.Runtime.InteropServices;
 
 using DShowNET;
-using DShowNET.Device;
 using DShowNET.Helper;
+using DirectShowLib;
 namespace MediaPortal.Configuration.Sections
 {
 
@@ -65,8 +65,8 @@ namespace MediaPortal.Configuration.Sections
 			//
 			// Fetch available DirectShow filters
 			//
-			ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.MPEG2);
-			ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.MPEG2_Audio);
+      ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
+			ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
 
 			//
 			// Fetch available DVD navigators
@@ -105,7 +105,7 @@ namespace MediaPortal.Configuration.Sections
 
         if (audioCodec==String.Empty)
         {
-          ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.MPEG2_Audio);
+          ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
 					if (availableAudioFilters.Count>0)
 					{
 						bool Mpeg2DecFilterFound=true;
@@ -129,7 +129,7 @@ namespace MediaPortal.Configuration.Sections
 				
 				if (videoCodec==String.Empty)
 				{
-					ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.MPEG2);
+					ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
 					bool Mpeg2DecFilterFound=true;
 					bool DScalerFilterFound=true;
 					if (availableVideoFilters.Count>0)

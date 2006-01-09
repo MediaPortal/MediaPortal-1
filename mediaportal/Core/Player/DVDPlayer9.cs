@@ -33,10 +33,9 @@ using MediaPortal.GUI.Library;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Direct3D = Microsoft.DirectX.Direct3D;
-
-
-using DShowNET;
-using DShowNET.Dvd;
+using DShowNET.Helper;
+using DirectShowLib;
+using DirectShowLib.Dvd;
 
 
 namespace MediaPortal.Player
@@ -67,16 +66,16 @@ namespace MediaPortal.Player
       {
 				dvdDNavigator=xmlreader.GetValueAsString("dvdplayer","navigator","DVD Navigator");
 				aspectRatio=xmlreader.GetValueAsString("dvdplayer","armode","").ToLower();
-        if ( aspectRatio=="crop") arMode=AmAspectRatioMode.AM_ARMODE_CROP;
-        if ( aspectRatio=="letterbox") arMode=AmAspectRatioMode.AM_ARMODE_LETTER_BOX;
-        if ( aspectRatio=="stretch") arMode=AmAspectRatioMode.AM_ARMODE_STRETCHED;
-        if ( aspectRatio=="follow stream") arMode=AmAspectRatioMode.AM_ARMODE_STRETCHED_AS_PRIMARY;
+        if ( aspectRatio=="crop") arMode=AspectRatioMode.Crop;
+        if ( aspectRatio=="letterbox") arMode=AspectRatioMode.LetterBox;
+        if ( aspectRatio=="stretch") arMode=AspectRatioMode.Stretched;
+        if ( aspectRatio=="follow stream") arMode=AspectRatioMode.StretchedAsPrimary;
 
         displayMode=xmlreader.GetValueAsString("dvdplayer","displaymode","").ToLower();
-        if (displayMode=="default") _videoPref=0;
-        if (displayMode=="16:9") _videoPref=1;
-        if (displayMode=="4:3 pan scan") _videoPref=2;
-        if (displayMode=="4:3 letterbox") _videoPref=3;
+        if (displayMode=="default") _videoPref=DvdPreferredDisplayMode.DisplayContentDefault;
+        if (displayMode == "16:9") _videoPref = DvdPreferredDisplayMode.Display16x9;
+        if (displayMode == "4:3 pan scan") _videoPref = DvdPreferredDisplayMode.Display4x3PanScanPreferred;
+        if (displayMode == "4:3 letterbox") _videoPref = DvdPreferredDisplayMode.Display4x3LetterBoxPreferred;
       }
 
       Log.Write("DVD:enable dx9 exclusive mode");
@@ -87,17 +86,13 @@ namespace MediaPortal.Player
       {
 
         _vmr9=new VMR9Util("dvdplayer");
-        comtype = Type.GetTypeFromCLSID( Clsid.DvdGraphBuilder );
-        if( comtype == null )
-          throw new NotSupportedException( "DirectX (8.1 or higher) not installed?" );
-        comobj = Activator.CreateInstance( comtype );
-        _dvdGraph = (IDvdGraphBuilder) comobj; comobj = null;
+        _dvdGraph = (IDvdGraphBuilder)new DvdGraphBuilder();
 
         hr = _dvdGraph.GetFiltergraph( out _graphBuilder );
         if( hr != 0 )
           Marshal.ThrowExceptionForHR( hr );
 
-				DsROT.AddGraphToRot( _graphBuilder, out _rotCookie );		// _graphBuilder capGraph
+        _rotEntry = new DsROTEntry((IFilterGraph)_graphBuilder);
 				_vmr9.AddVMR9(_graphBuilder);
 				try
 				{
@@ -116,7 +111,7 @@ namespace MediaPortal.Player
 									hr=_dvdCtrl.SetDVDDirectory(path);
 								
 							}
-							_dvdCtrl.SetOption( DvdOptionFlag.HmsfTimeCodeEvt, true );	// use new HMSF timecode format
+							_dvdCtrl.SetOption( DvdOptionFlag.HMSFTimeCodeEvents, true );	// use new HMSF timecode format
 							_dvdCtrl.SetOption( DvdOptionFlag.ResetOnStop, false );
 							DirectShowUtil.RenderOutputPins(_graphBuilder,_dvdbasefilter);
 								
@@ -136,7 +131,7 @@ namespace MediaPortal.Player
 				{
 					Log.Write("Dvdplayer9:volume rendered, get interfaces");
           riid = typeof( IDvdInfo2 ).GUID;
-          hr = _dvdGraph.GetDvdInterface( ref riid, out comobj );
+          hr = _dvdGraph.GetDvdInterface(  riid, out comobj );
           if( hr < 0 )
             Marshal.ThrowExceptionForHR( hr );
           _dvdInfo = (IDvdInfo2) comobj; comobj = null;
@@ -146,7 +141,7 @@ namespace MediaPortal.Player
         {
 					Log.Write("Dvdplayer9: get IDvdControl2");
           riid = typeof( IDvdControl2 ).GUID;
-          hr = _dvdGraph.GetDvdInterface( ref riid, out comobj );
+          hr = _dvdGraph.GetDvdInterface(  riid, out comobj );
           if( hr < 0 )
             Marshal.ThrowExceptionForHR( hr );
           _dvdCtrl = (IDvdControl2) comobj; comobj = null;
@@ -177,7 +172,7 @@ namespace MediaPortal.Player
           if (_line21Decoder!=null)
           {
             AMLine21CCState state=AMLine21CCState.Off;
-            hr=_line21Decoder.SetServiceState(ref state);
+            hr=_line21Decoder.SetServiceState( state);
             if (hr==0)
             {
               Log.Write("DVDPlayer9:Closed Captions disabled");
@@ -283,9 +278,9 @@ namespace MediaPortal.Player
 				}
 
     		
-        if( _cmdOption.dvdCmd != null )
-          Marshal.ReleaseComObject( _cmdOption.dvdCmd ); 
-				_cmdOption.dvdCmd = null;
+        if( _cmdOption!= null )
+          Marshal.ReleaseComObject( _cmdOption ); 
+				_cmdOption= null;
         _pendingCmd = false;
 
 				if( _dvdbasefilter != null )
@@ -306,13 +301,15 @@ namespace MediaPortal.Player
 				}
 
 
-				if (_rotCookie !=0) 
-					DsROT.RemoveGraphFromRot( ref _rotCookie );		// _graphBuilder capGraph
-				_rotCookie=0;
+        if (_rotEntry != null)
+        {
+          _rotEntry.Dispose();
+        }
+        _rotEntry = null;
 
 				if( _graphBuilder != null )
 				{
-					DsUtils.RemoveFilters(_graphBuilder);
+					DirectShowUtil.RemoveFilters(_graphBuilder);
 					while ((hr=Marshal.ReleaseComObject( _graphBuilder ))>0); 
 					_graphBuilder = null;
 				}

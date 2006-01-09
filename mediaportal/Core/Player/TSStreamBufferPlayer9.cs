@@ -28,7 +28,8 @@ using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Direct3D = Microsoft.DirectX.Direct3D;
 using MediaPortal.GUI.Library;
-using DShowNET;
+using DirectShowLib;
+using DShowNET.Helper;
 
 namespace MediaPortal.Player 
 {
@@ -86,14 +87,7 @@ namespace MediaPortal.Player
 
       try 
       {
-        comtype = Type.GetTypeFromCLSID( Clsid.FilterGraph );
-        if( comtype == null )
-        {
-          Log.WriteFile(Log.LogType.Log,true,"TStreamBufferPlayer9:DirectX 9 not installed");
-          return false;
-        }
-        comobj = Activator.CreateInstance( comtype );
-        _graphBuilder = (IGraphBuilder) comobj; comobj = null;
+        _graphBuilder = (IGraphBuilder) new FilterGraph();
 				_vmr9= new VMR9Util("mytv");
 				_vmr9.AddVMR9(_graphBuilder);			
 				_vmr9.Enable(false);	
@@ -129,7 +123,7 @@ namespace MediaPortal.Player
 		
 				Log.WriteFile(Log.LogType.Capture,"TStreamBufferPlayer9:open file");
 				_fileSource = (IFileSourceFilter) _bufferSource;
-				 hr = _fileSource.Load(filename, IntPtr.Zero);
+				 hr = _fileSource.Load(filename, null);
 
 				Log.WriteFile(Log.LogType.Capture,"TStreamBufferPlayer9:add codecs");
 
@@ -163,7 +157,7 @@ namespace MediaPortal.Player
 
 				_audioRendererFilter=DirectShowUtil.AddAudioRendererToGraph(_graphBuilder,strAudioRenderer,false);
 				// render output pins of SBE
-				IPin pin=DirectShowUtil.FindPinNr(_filter,PinDirection.Output,0);
+				IPin pin=DsFindPin.ByDirection(_filter,PinDirection.Output,0);
 				_graphBuilder.Render(pin);
 				Marshal.ReleaseComObject(pin);
 
@@ -268,11 +262,13 @@ namespace MediaPortal.Player
 					_bufferSource=null;
 					_videoWin=null;
 
-					DsUtils.RemoveFilters(_graphBuilder);
+					DirectShowUtil.RemoveFilters(_graphBuilder);
 
-					if( _rotCookie != 0 )
-						DsROT.RemoveGraphFromRot( ref _rotCookie );
-					_rotCookie=0;
+          if (_rotEntry != null)
+          {
+            _rotEntry.Dispose();
+          }
+          _rotEntry = null;
 
 					if( _graphBuilder != null )
 					{

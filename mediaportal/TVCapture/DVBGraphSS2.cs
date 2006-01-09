@@ -28,6 +28,10 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using DShowNET;
 using DShowNET.Helper;
+using DShowNET.MPSA;
+using DShowNET.MPTSWriter;
+using DirectShowLib;
+using DirectShowLib.SBE;
 using MediaPortal;
 using MediaPortal.Util;
 using MediaPortal.GUI.Library;
@@ -183,7 +187,7 @@ namespace MediaPortal.TV.Recording
     public static extern int SetupDemuxer(IPin pin, int pid, IPin pin1, int pid1, IPin pin2, int pid2);
 
     [DllImport("dvblib.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern bool GetSectionData(DShowNET.IBaseFilter filter, int pid, int tid, ref int secCount, int tabSec, int timeout);
+    private static extern bool GetSectionData(DirectShowLib.IBaseFilter filter, int pid, int tid, ref int secCount, int tabSec, int timeout);
 
     [DllImport("dvblib.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     public static extern int SetPidToPin(DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3 dataCtrl, UInt16 pin, UInt16 pid);
@@ -263,7 +267,7 @@ namespace MediaPortal.TV.Recording
     // player graph
     protected IGraphBuilder _graphBuilder = null;
     protected bool _timeshifting = true;
-    protected int _cookie = 0; // for the rot
+    protected DsROTEntry _rotEntry = null;			// Cookie into the Running Object Table
     protected DateTime _startTime = DateTime.Now;
     protected int _channelNumber = -1;
     protected bool _channelFound = false;
@@ -369,14 +373,14 @@ namespace MediaPortal.TV.Recording
       //SetAppHandle((int)GUIGraphicsContext.form.Handle);
       if (_graphState != State.None) return false;
       Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2:creategraph()");
-      _cookie = 0;
+      
       if (_dvbDemuxer != null)
         _dvbDemuxer.GrabTeletext(false);
       // create graphs
       _vmr9 = new VMR9Util("mytv");
       _vmr7 = new VMR7Util();
       Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2:creategraph() create graph");
-      _graphBuilder = (IGraphBuilder)Activator.CreateInstance(Type.GetTypeFromCLSID(Clsid.FilterGraph, true));
+      _graphBuilder = (IGraphBuilder)new FilterGraph();
       _isUsingAc3 = false;
 
       int n = 0;
@@ -396,16 +400,16 @@ namespace MediaPortal.TV.Recording
         _interfaceStreamBufferSink = (IStreamBufferSink3)_filterStreamBuffer;
 
         Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2:CreateGraph() create MPEG2 demultiplexer");
-        _filterMpeg2Demuxer = (IBaseFilter)Activator.CreateInstance(Type.GetTypeFromCLSID(Clsid.Mpeg2Demultiplexer, true));
+        _filterMpeg2Demuxer = (IBaseFilter)new MPEG2Demultiplexer();
         _filterMpeg2DemuxerInterface = (IMpeg2Demultiplexer)_filterMpeg2Demuxer;
 
         Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2:CreateGraph() create sample grabber");
-        _filterSampleGrabber = (IBaseFilter)Activator.CreateInstance(Type.GetTypeFromCLSID(Clsid.SampleGrabber, true));
+        _filterSampleGrabber = (IBaseFilter)new SampleGrabber();
         m_sampleInterface = (ISampleGrabber)_filterSampleGrabber;
 
 
         Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2:CreateGraph() create dvbanalyzer");
-        _filterDvbAnalyzer = (IBaseFilter)Activator.CreateInstance(Type.GetTypeFromCLSID(Clsid.MPStreamAnalyzer, true));
+        _filterDvbAnalyzer = (IBaseFilter)Activator.CreateInstance(Type.GetTypeFromCLSID(ClassId.MPStreamAnalyzer, true));
         _interfaceStreamAnalyser = (IStreamAnalyzer)_filterDvbAnalyzer;
         _interfaceEpg = _filterDvbAnalyzer as IEPGGrabber;
         _interfaceMHW = _filterDvbAnalyzer as IMHWGrabber;
@@ -544,25 +548,25 @@ namespace MediaPortal.TV.Recording
 
 
         IPin pinEPGout, pinMHW1Out, pinMHW2Out, pinSectionsOut;
-        hr = _filterMpeg2DemuxerInterface.CreateOutputPin(ref mtSections, "sections", out pinSectionsOut);
+        hr = _filterMpeg2DemuxerInterface.CreateOutputPin( mtSections, "sections", out pinSectionsOut);
         if (hr != 0 || pinSectionsOut == null)
         {
           Log.WriteFile(Log.LogType.Capture, true, "DVBGraphSS2:FAILED to create sections pin:0x{0:X}", hr);
           return false;
         }
-        hr = _filterMpeg2DemuxerInterface.CreateOutputPin(ref mtEPG, "EPG", out pinEPGout);
+        hr = _filterMpeg2DemuxerInterface.CreateOutputPin( mtEPG, "EPG", out pinEPGout);
         if (hr != 0 || pinEPGout == null)
         {
           Log.WriteFile(Log.LogType.Capture, true, "DVBGraphSS2:FAILED to create EPG pin:0x{0:X}", hr);
           return false;
         }
-        hr = _filterMpeg2DemuxerInterface.CreateOutputPin(ref mtEPG, "MHW1", out pinMHW1Out);
+        hr = _filterMpeg2DemuxerInterface.CreateOutputPin( mtEPG, "MHW1", out pinMHW1Out);
         if (hr != 0 || pinMHW1Out == null)
         {
           Log.WriteFile(Log.LogType.Capture, true, "DVBGraphSS2:FAILED to create MHW1 pin:0x{0:X}", hr);
           return false;
         }
-        hr = _filterMpeg2DemuxerInterface.CreateOutputPin(ref mtEPG, "MHW2", out pinMHW2Out);
+        hr = _filterMpeg2DemuxerInterface.CreateOutputPin( mtEPG, "MHW2", out pinMHW2Out);
         if (hr != 0 || pinMHW2Out == null)
         {
           Log.WriteFile(Log.LogType.Capture, true, "DVBGraphSS2:FAILED to create MHW2 pin:0x{0:X}", hr);
@@ -570,26 +574,26 @@ namespace MediaPortal.TV.Recording
         }
 
         Log.Write("DVBGraphSS2:Get EPGs pin of analyzer");
-        IPin pinSectionsIn = DirectShowUtil.FindPinNr(_filterDvbAnalyzer, PinDirection.Input, 0);
+        IPin pinSectionsIn = DsFindPin.ByDirection(_filterDvbAnalyzer, PinDirection.Input, 0);
         if (pinSectionsIn == null)
         {
           Log.WriteFile(Log.LogType.Capture, true, "DVBGraphSS2:FAILED to get sections pin on MSPA");
           return false;
         }
 
-        IPin pinMHW1In = DirectShowUtil.FindPinNr(_filterDvbAnalyzer, PinDirection.Input, 1);
+        IPin pinMHW1In = DsFindPin.ByDirection(_filterDvbAnalyzer, PinDirection.Input, 1);
         if (pinMHW1In == null)
         {
           Log.WriteFile(Log.LogType.Capture, true, "DVBGraphSS2:FAILED to get MHW1 pin on MSPA");
           return false;
         }
-        IPin pinMHW2In = DirectShowUtil.FindPinNr(_filterDvbAnalyzer, PinDirection.Input, 2);
+        IPin pinMHW2In = DsFindPin.ByDirection(_filterDvbAnalyzer, PinDirection.Input, 2);
         if (pinMHW2In == null)
         {
           Log.WriteFile(Log.LogType.Capture, true, "DVBGraphSS2:FAILED to get MHW2 pin on MSPA");
           return false;
         }
-        IPin pinEPGIn = DirectShowUtil.FindPinNr(_filterDvbAnalyzer, PinDirection.Input, 3);
+        IPin pinEPGIn = DsFindPin.ByDirection(_filterDvbAnalyzer, PinDirection.Input, 3);
         if (pinEPGIn == null)
         {
           Log.WriteFile(Log.LogType.Capture, true, "DVBGraphSS2:FAILED to get EPG pin on MSPA");
@@ -629,11 +633,11 @@ namespace MediaPortal.TV.Recording
         {
           Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2: add sample grabber");
           AMMediaType mt = new AMMediaType();
-          mt.majorType = DShowNET.MediaType.Stream;
-          mt.subType = DShowNET.MediaSubType.MPEG2Transport;
+          mt.majorType = MediaType.Stream;
+          mt.subType = MediaSubTypeEx.MPEG2Transport;
           //m_sampleInterface.SetOneShot(true);
           m_sampleInterface.SetCallback(_dvbDemuxer, 1);
-          m_sampleInterface.SetMediaType(ref mt);
+          m_sampleInterface.SetMediaType( mt);
           m_sampleInterface.SetBufferSamples(false);
         }
         else
@@ -652,7 +656,7 @@ namespace MediaPortal.TV.Recording
         return false;
       }
 
-      DsROT.AddGraphToRot(_graphBuilder, out _cookie);
+      _rotEntry = new DsROTEntry((IFilterGraph)_graphBuilder);
       _graphState = State.Created;
       return true;
     }
@@ -812,13 +816,13 @@ namespace MediaPortal.TV.Recording
         if (!m_bOverlayVisible)
         {
           if (_interfaceVideoWindow != null)
-            _interfaceVideoWindow.put_Visible(DsHlp.OAFALSE);
+            _interfaceVideoWindow.put_Visible(OABool.False);
 
         }
         else
         {
           if (_interfaceVideoWindow != null)
-            _interfaceVideoWindow.put_Visible(DsHlp.OATRUE);
+            _interfaceVideoWindow.put_Visible(OABool.True);
 
         }
       }
@@ -924,7 +928,7 @@ namespace MediaPortal.TV.Recording
     {
       if (_graphState < State.Created) return;
       int hr;
-      DirectShowUtil.DebugWrite("DVBGraphSS2:DeleteGraph()");
+      Log.Write("DVBGraphSS2:DeleteGraph()");
       _isUsingAc3 = false;
       _channelNumber = -1;
       //m_fileWriter.Close();
@@ -1018,7 +1022,7 @@ namespace MediaPortal.TV.Recording
       if (_interfaceVideoWindow != null)
       {
         m_bOverlayVisible = false;
-        _interfaceVideoWindow.put_Visible(DsHlp.OAFALSE);
+        _interfaceVideoWindow.put_Visible(OABool.False);
         _interfaceVideoWindow = null;
       }
       if (_streamBufferConfig != null)
@@ -1061,12 +1065,14 @@ namespace MediaPortal.TV.Recording
         if (hr != 0) Log.Write("ReleaseComObject(_filterB2C2Adapter):{0}", hr);
         _filterB2C2Adapter = null;
       }
-      DsUtils.RemoveFilters(_graphBuilder);
+      DirectShowUtil.RemoveFilters(_graphBuilder);
 
-      if (_cookie != 0)
-        DsROT.RemoveGraphFromRot(ref _cookie);
-      _cookie = 0;
 
+      if (_rotEntry != null)
+      {
+        _rotEntry.Dispose();
+      }
+      _rotEntry = null;
       if (_graphBuilder != null)
       {
         while ((hr = Marshal.ReleaseComObject(_graphBuilder)) > 0) ;
@@ -1123,14 +1129,14 @@ namespace MediaPortal.TV.Recording
       PinInfo pInfo = new PinInfo();
 
       // video pin
-      hr = DsUtils.GetPin(_filterB2C2Adapter, PinDirection.Output, 0, out _pinVideo);
-      if (hr != 0)
+      _pinVideo = DsFindPin.ByDirection(_filterB2C2Adapter, PinDirection.Output, 0);
+      if (_pinVideo ==null)
         return false;
 
       _pinVideo.QueryPinInfo(out pInfo);
       // audio pin
-      hr = DsUtils.GetPin(_filterB2C2Adapter, PinDirection.Output, 1, out _pinAudio);
-      if (hr != 0)
+      _pinAudio = DsFindPin.ByDirection(_filterB2C2Adapter, PinDirection.Output, 1);
+      if (hr ==null)
         return false;
 
       if (_pinVideo == null || _pinAudio == null)
@@ -1141,17 +1147,17 @@ namespace MediaPortal.TV.Recording
       _pinAudio.QueryPinInfo(out pInfo);
 
       // data pins
-      hr = DsUtils.GetPin(_filterB2C2Adapter, PinDirection.Output, 2, out _pinData0);
-      if (hr != 0)
+      _pinData0 = DsFindPin.ByDirection(_filterB2C2Adapter, PinDirection.Output, 2);
+      if (_pinData0 == null)
         return false;
-      hr = DsUtils.GetPin(_filterB2C2Adapter, PinDirection.Output, 3, out _pinData1);
-      if (hr != 0)
+      _pinData1 = DsFindPin.ByDirection(_filterB2C2Adapter, PinDirection.Output, 3);
+      if (_pinData1 == null)
         return false;
-      hr = DsUtils.GetPin(_filterB2C2Adapter, PinDirection.Output, 4, out _pinData2);
-      if (hr != 0)
+      _pinData2 = DsFindPin.ByDirection(_filterB2C2Adapter, PinDirection.Output, 4);
+      if (_pinData2 == null)
         return false;
-      hr = DsUtils.GetPin(_filterB2C2Adapter, PinDirection.Output, 5, out _pinData3);
-      if (hr != 0)
+      _pinData3 = DsFindPin.ByDirection(_filterB2C2Adapter, PinDirection.Output, 5);
+      if (_pinData3 == null)
         return false;
 
 
@@ -1171,7 +1177,7 @@ namespace MediaPortal.TV.Recording
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:CreateMTSWriter()");
 			//connect capture->sample grabber
 			IPin grabberIn;
-			grabberIn=DirectShowUtil.FindPinNr(_filterSampleGrabber,PinDirection.Input,0);
+			grabberIn=DsFindPin.ByDirection(_filterSampleGrabber,PinDirection.Input,0);
 			if (grabberIn==null)
 			{
 				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:Failed cannot find input pin of sample grabber");
@@ -1194,8 +1200,8 @@ namespace MediaPortal.TV.Recording
 			
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:connect sample grabber->inf tee");
 			IPin grabberOut, smartTeeIn;
-			grabberOut=DirectShowUtil.FindPinNr(_filterSampleGrabber,PinDirection.Output,0);
-			smartTeeIn=DirectShowUtil.FindPinNr(_filterKernelTee,PinDirection.Input,0);	
+			grabberOut=DsFindPin.ByDirection(_filterSampleGrabber,PinDirection.Output,0);
+			smartTeeIn=DsFindPin.ByDirection(_filterKernelTee,PinDirection.Input,0);	
 			if (grabberOut==null)
 			{
 				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot find output pin of samplegrabber");
@@ -1222,8 +1228,8 @@ namespace MediaPortal.TV.Recording
 			//connect inftee->demuxer
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:connect inftee->demuxer");
 			IPin smartTeeOut, demuxerIn;
-			smartTeeOut = DirectShowUtil.FindPinNr(_filterKernelTee,PinDirection.Output,0);
-			demuxerIn   = DirectShowUtil.FindPinNr(_filterMpeg2Demuxer,PinDirection.Input,0);	
+			smartTeeOut = DsFindPin.ByDirection(_filterKernelTee,PinDirection.Output,0);
+			demuxerIn   = DsFindPin.ByDirection(_filterMpeg2Demuxer,PinDirection.Input,0);	
 			if (smartTeeOut==null)
 			{
 				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot find output pin#0 of inftee");
@@ -1277,8 +1283,8 @@ namespace MediaPortal.TV.Recording
 			// connect inftee->mpts writer
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:connect inftee->mpts writer");
 			IPin tsWriterIn;
-			smartTeeOut=DirectShowUtil.FindPinNr(_filterKernelTee,PinDirection.Output,1);
-			tsWriterIn=DirectShowUtil.FindPinNr(_filterTsWriter,PinDirection.Input,0);	
+			smartTeeOut=DsFindPin.ByDirection(_filterKernelTee,PinDirection.Output,1);
+			tsWriterIn=DsFindPin.ByDirection(_filterTsWriter,PinDirection.Input,0);	
 			if (smartTeeOut==null)
 			{
 				Log.WriteFile(Log.LogType.Capture,true,"DVBGraphBDA:FAILED cannot find output pin#1 of inftee");
@@ -1365,13 +1371,13 @@ namespace MediaPortal.TV.Recording
       hr = _graphBuilder.AddFilter(_filterMpeg2Analyzer, "Stream-Analyzer");
 
       // setup sampleGrabber and demuxer
-      IPin samplePin = DirectShowUtil.FindPinNr(_filterSampleGrabber, PinDirection.Input, 0);
-      IPin demuxInPin = DirectShowUtil.FindPinNr(_filterMpeg2Demuxer, PinDirection.Input, 0);
+      IPin samplePin = DsFindPin.ByDirection(_filterSampleGrabber, PinDirection.Input, 0);
+      IPin demuxInPin = DsFindPin.ByDirection(_filterMpeg2Demuxer, PinDirection.Input, 0);
       hr = _graphBuilder.Connect(_pinData0, samplePin);
       if (hr != 0)
         return false;
 
-      samplePin = DirectShowUtil.FindPinNr(_filterSampleGrabber, PinDirection.Output, 0);
+      samplePin = DsFindPin.ByDirection(_filterSampleGrabber, PinDirection.Output, 0);
       hr = _graphBuilder.Connect(demuxInPin, samplePin);
       if (hr != 0)
         return false;
@@ -1382,7 +1388,7 @@ namespace MediaPortal.TV.Recording
       if (_filterMpeg2DemuxerVideoPin == null || _filterMpeg2DemuxerAudioPin == null)
         return false;
 
-      pinObj0 = DirectShowUtil.FindPinNr(_filterMpeg2Analyzer, PinDirection.Input, 0);
+      pinObj0 = DsFindPin.ByDirection(_filterMpeg2Analyzer, PinDirection.Input, 0);
       if (pinObj0 != null)
       {
 
@@ -1390,7 +1396,7 @@ namespace MediaPortal.TV.Recording
         if (hr == 0)
         {
           // render all out pins
-          pinObj1 = DirectShowUtil.FindPinNr(_filterMpeg2Analyzer, PinDirection.Output, 0);
+          pinObj1 = DsFindPin.ByDirection(_filterMpeg2Analyzer, PinDirection.Output, 0);
           hr = _graphBuilder.Render(pinObj1);
           if (hr != 0)
             return false;
@@ -1558,7 +1564,7 @@ namespace MediaPortal.TV.Recording
     public bool StopTimeShifting()
     {
       if (_graphState != State.TimeShifting) return false;
-      DirectShowUtil.DebugWrite("DVBGraphSS2:StopTimeShifting()");
+      Log.Write("DVBGraphSS2:StopTimeShifting()");
       if (_interfaceMediaControl != null)
         _interfaceMediaControl.Stop();
       _isGraphRunning = false; 
@@ -1678,8 +1684,8 @@ namespace MediaPortal.TV.Recording
         if (!bContentRecording)
         {
           // so set the startttime...
-          uint uiSecondsPerFile;
-          uint uiMinFiles, uiMaxFiles;
+          int uiSecondsPerFile;
+          int uiMinFiles, uiMaxFiles;
           _interfaceStreamBufferConfig.GetBackingFileCount(out uiMinFiles, out uiMaxFiles);
           _interfaceStreamBufferConfig.GetBackingFileDuration(out uiSecondsPerFile);
           lStartTime = uiSecondsPerFile;
@@ -1689,13 +1695,13 @@ namespace MediaPortal.TV.Recording
           if (timeProgStart.Year > 2000)
           {
             TimeSpan ts = DateTime.Now - timeProgStart;
-            DirectShowUtil.DebugWrite("mpeg2:Start recording from {0}:{1:00}:{2:00} which is {3:00}:{4:00}:{5:00} in the past",
+            Log.Write("mpeg2:Start recording from {0}:{1:00}:{2:00} which is {3:00}:{4:00}:{5:00} in the past",
               timeProgStart.Hour, timeProgStart.Minute, timeProgStart.Second,
               ts.TotalHours, ts.TotalMinutes, ts.TotalSeconds);
 
             lStartTime = (long)ts.TotalSeconds;
           }
-          else DirectShowUtil.DebugWrite("mpeg2:record entire timeshift buffer");
+          else Log.Write("mpeg2:record entire timeshift buffer");
 
           TimeSpan tsMaxTimeBack = DateTime.Now - _startTime;
           if (lStartTime > tsMaxTimeBack.TotalSeconds)
@@ -1890,7 +1896,7 @@ namespace MediaPortal.TV.Recording
       Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2:SetDemux() audio pid:0x{0:X} video pid:0x{1:X}", audioPid, videoPid);
       AMMediaType mpegVideoOut = new AMMediaType();
       mpegVideoOut.majorType = MediaType.Video;
-      mpegVideoOut.subType = MediaSubType.MPEG2_Video;
+      mpegVideoOut.subType = MediaSubType.Mpeg2Video;
 
       Size FrameSize = new Size(100, 100);
       mpegVideoOut.unkPtr = IntPtr.Zero;
@@ -1906,7 +1912,7 @@ namespace MediaPortal.TV.Recording
 
       AMMediaType mpegAudioOut = new AMMediaType();
       mpegAudioOut.majorType = MediaType.Audio;
-      mpegAudioOut.subType = MediaSubType.MPEG2_Audio;
+      mpegAudioOut.subType = MediaSubType.Mpeg2Audio;
       mpegAudioOut.sampleSize = 0;
       mpegAudioOut.temporalCompression = false;
       mpegAudioOut.fixedSizeSamples = true;
@@ -1928,19 +1934,19 @@ namespace MediaPortal.TV.Recording
       mediaAC3.formatPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(mediaAC3.formatSize);
       System.Runtime.InteropServices.Marshal.Copy(MPEG1AudioFormat, 0, mediaAC3.formatPtr, mediaAC3.formatSize);
 
-      hr = _filterMpeg2DemuxerInterface.CreateOutputPin(ref mediaAC3/*vidOut*/, "AC3", out _pinAc3Audio);
+      hr = _filterMpeg2DemuxerInterface.CreateOutputPin( mediaAC3/*vidOut*/, "AC3", out _pinAc3Audio);
       if (hr != 0 || _pinAc3Audio == null)
       {
         Log.WriteFile(Log.LogType.Capture, true, "mpeg2:FAILED to create AC3 pin:0x{0:X}", hr);
       }
 
-      hr = _filterMpeg2DemuxerInterface.CreateOutputPin(ref mpegVideoOut/*vidOut*/, "video", out _filterMpeg2DemuxerVideoPin);
+      hr = _filterMpeg2DemuxerInterface.CreateOutputPin( mpegVideoOut/*vidOut*/, "video", out _filterMpeg2DemuxerVideoPin);
       if (hr != 0)
       {
         Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2:StartViewing() FAILED to create video output pin on demuxer");
         return;
       }
-      hr = _filterMpeg2DemuxerInterface.CreateOutputPin(ref mpegAudioOut, "audio", out _filterMpeg2DemuxerAudioPin);
+      hr = _filterMpeg2DemuxerInterface.CreateOutputPin( mpegAudioOut, "audio", out _filterMpeg2DemuxerAudioPin);
       if (hr != 0)
       {
         Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2:StartViewing() FAILED to create audio output pin on demuxer");
@@ -2026,7 +2032,7 @@ namespace MediaPortal.TV.Recording
 
       Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2:StartViewing() ");
       //connect capture->sample grabber
-      IPin samplePin = DirectShowUtil.FindPinNr(_filterSampleGrabber, PinDirection.Input, 0);
+      IPin samplePin = DsFindPin.ByDirection(_filterSampleGrabber, PinDirection.Input, 0);
       if (samplePin == null)
       {
         Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2:StartViewing() FAILED: cannot find samplePin");
@@ -2041,7 +2047,7 @@ namespace MediaPortal.TV.Recording
       }
 
       //connect sample grabber->demuxer
-      IPin demuxInPin = DirectShowUtil.FindPinNr(_filterMpeg2Demuxer, PinDirection.Input, 0);
+      IPin demuxInPin = DsFindPin.ByDirection(_filterMpeg2Demuxer, PinDirection.Input, 0);
       if (demuxInPin == null)
       {
         Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2:StartViewing() FAILED: cannot find demuxInPin");
@@ -2049,7 +2055,7 @@ namespace MediaPortal.TV.Recording
       }
 
       samplePin = null;
-      samplePin = DirectShowUtil.FindPinNr(_filterSampleGrabber, PinDirection.Output, 0);
+      samplePin = DsFindPin.ByDirection(_filterSampleGrabber, PinDirection.Output, 0);
       if (samplePin == null)
       {
         Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2:StartViewing() FAILED: cannot find sampleGrabber output pin");
@@ -2150,12 +2156,12 @@ namespace MediaPortal.TV.Recording
         hr = _interfaceVideoWindow.put_Owner(GUIGraphicsContext.form.Handle);
         if (hr != 0)
         {
-          DirectShowUtil.DebugWrite("DVBGraphSS2:FAILED:set Video window:0x{0:X}", hr);
+          Log.Write("DVBGraphSS2:FAILED:set Video window:0x{0:X}", hr);
         }
-        hr = _interfaceVideoWindow.put_WindowStyle(WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS);
+        hr = _interfaceVideoWindow.put_WindowStyle((WindowStyle)((int)WindowStyle.ClipSiblings + (int)WindowStyle.Child + (int)WindowStyle.ClipChildren));
         if (hr != 0)
         {
-          DirectShowUtil.DebugWrite("DVBGraphSS2:FAILED:set Video window style:0x{0:X}", hr);
+          Log.Write("DVBGraphSS2:FAILED:set Video window style:0x{0:X}", hr);
         }
         setVisFlag = true;
 
@@ -2186,10 +2192,10 @@ namespace MediaPortal.TV.Recording
       if (setVisFlag)
       {
         Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2:StartViewing() show video window");
-        hr = _interfaceVideoWindow.put_Visible(DsHlp.OATRUE);
+        hr = _interfaceVideoWindow.put_Visible(OABool.True);
         if (hr != 0)
         {
-          DirectShowUtil.DebugWrite("DVBGraphSS2:FAILED:put_Visible:0x{0:X}", hr);
+          Log.Write("DVBGraphSS2:FAILED:put_Visible:0x{0:X}", hr);
         }
 
       }
@@ -2258,9 +2264,9 @@ namespace MediaPortal.TV.Recording
         return false;
 
       GUIGraphicsContext.OnVideoWindowChanged -= new VideoWindowChangedHandler(GUIGraphicsContext_OnVideoWindowChanged);
-      DirectShowUtil.DebugWrite("DVBGraphSS2:StopViewing()");
+      Log.Write("DVBGraphSS2:StopViewing()");
       if (_interfaceVideoWindow != null)
-        _interfaceVideoWindow.put_Visible(DsHlp.OAFALSE);
+        _interfaceVideoWindow.put_Visible(OABool.False);
       m_bOverlayVisible = false;
 
       if (_vmr9 != null)
@@ -3187,8 +3193,8 @@ namespace MediaPortal.TV.Recording
         AddPreferredCodecs(true, false);
 
         Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2:StartRadio() Using plugins");
-        IPin samplePin = DirectShowUtil.FindPinNr(_filterSampleGrabber, PinDirection.Input, 0);
-        IPin demuxInPin = DirectShowUtil.FindPinNr(_filterMpeg2Demuxer, PinDirection.Input, 0);
+        IPin samplePin = DsFindPin.ByDirection(_filterSampleGrabber, PinDirection.Input, 0);
+        IPin demuxInPin = DsFindPin.ByDirection(_filterMpeg2Demuxer, PinDirection.Input, 0);
 
         if (samplePin == null)
         {
@@ -3208,7 +3214,7 @@ namespace MediaPortal.TV.Recording
           return;
         }
         samplePin = null;
-        samplePin = DirectShowUtil.FindPinNr(_filterSampleGrabber, PinDirection.Output, 0);
+        samplePin = DsFindPin.ByDirection(_filterSampleGrabber, PinDirection.Output, 0);
         if (samplePin == null)
         {
           Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2:StartRadio() FAILED: cannot find sampleGrabber output pin");
@@ -3427,7 +3433,7 @@ namespace MediaPortal.TV.Recording
 
       // setup sampleGrabber and demuxer
       //connect capture->sample grabber
-      IPin samplePin = DirectShowUtil.FindPinNr(_filterSampleGrabber, PinDirection.Input, 0);
+      IPin samplePin = DsFindPin.ByDirection(_filterSampleGrabber, PinDirection.Input, 0);
       if (samplePin == null)
       {
         Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2:GrabEpg() FAILED: cannot find samplePin");
@@ -3442,7 +3448,7 @@ namespace MediaPortal.TV.Recording
       }
 
       //connect sample grabber->demuxer
-      IPin demuxInPin = DirectShowUtil.FindPinNr(_filterMpeg2Demuxer, PinDirection.Input, 0);
+      IPin demuxInPin = DsFindPin.ByDirection(_filterMpeg2Demuxer, PinDirection.Input, 0);
       if (demuxInPin == null)
       {
         Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2:GrabEpg() FAILED: cannot find demuxInPin");
@@ -3450,7 +3456,7 @@ namespace MediaPortal.TV.Recording
       }
 
       samplePin = null;
-      samplePin = DirectShowUtil.FindPinNr(_filterSampleGrabber, PinDirection.Output, 0);
+      samplePin = DsFindPin.ByDirection(_filterSampleGrabber, PinDirection.Output, 0);
       if (samplePin == null)
       {
         Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2:GrabEpg() FAILED: cannot find sampleGrabber output pin");

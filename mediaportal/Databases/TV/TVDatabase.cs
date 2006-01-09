@@ -25,6 +25,7 @@ using System.Collections;
 using System.Collections.Generic;
 using SQLite.NET;
 using DShowNET;
+using DirectShowLib;
 using MediaPortal.Database;
 
 namespace MediaPortal.TV.Database

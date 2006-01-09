@@ -594,7 +594,7 @@ namespace MediaPortal.TV.Recording
       }
       return eventsCount;
 
-    }//public int GetEPG(DShowNET.IBaseFilter filter,int serviceID)
+    }//public int GetEPG(DirectShowLib.IBaseFilter filter,int serviceID)
 
     //
     //

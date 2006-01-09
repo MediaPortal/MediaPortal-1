@@ -75,7 +75,7 @@ namespace MediaPortal.GUI.Library
         {
           unsafe
           {
-            IntPtr ptr = DShowNET.DsUtils.GetUnmanagedTexture(_image);
+            IntPtr ptr = DShowNET.Helper.DirectShowUtil.GetUnmanagedTexture(_image);
             _textureNumber = FontEngineAddTexture(ptr.ToInt32(), true, (void*)ptr.ToPointer());
             if (logTextures) Log.Write("Frame:ctor() fontengine: added texture:{0} {1}", _textureNumber.ToString(), _imageName);
           }
@@ -115,7 +115,7 @@ namespace MediaPortal.GUI.Library
           {
             unsafe
             {
-              IntPtr ptr = DShowNET.DsUtils.GetUnmanagedTexture(_image);
+              IntPtr ptr = DShowNET.Helper.DirectShowUtil.GetUnmanagedTexture(_image);
               _textureNumber = FontEngineAddTexture(ptr.ToInt32(), true, (void*)ptr.ToPointer());
               if (logTextures) Log.Write("Frame:Image fontengine: added texture:{0} {1}", _textureNumber.ToString(), _imageName);
             }

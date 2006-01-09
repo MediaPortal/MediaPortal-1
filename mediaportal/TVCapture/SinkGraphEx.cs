@@ -31,6 +31,7 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using DShowNET;
 using DShowNET.Helper;
+using DirectShowLib;
 using MediaPortal.Util;
 using MediaPortal.Player;
 using MediaPortal.GUI.Library;
@@ -125,13 +126,11 @@ namespace MediaPortal.TV.Recording
 
         // Make a new filter graph
         Log.WriteFile(Log.LogType.Capture, "SinkGraphEx: Create new filter graph (IGraphBuilder)");
-        m_graphBuilder = (IGraphBuilder)Activator.CreateInstance(Type.GetTypeFromCLSID(Clsid.FilterGraph, true));
+        m_graphBuilder = (IGraphBuilder)new FilterGraph();
 
         // Get the Capture Graph Builder...
         Log.WriteFile(Log.LogType.Capture, "SinkGraphEx: Get the Capture Graph Builder (ICaptureGraphBuilder2)");
-        Guid clsid = Clsid.CaptureGraphBuilder2;
-        Guid riid = typeof(ICaptureGraphBuilder2).GUID;
-        m_captureGraphBuilder = (ICaptureGraphBuilder2)DsBugWO.CreateDsInstance(ref clsid, ref riid);
+        m_captureGraphBuilder = (ICaptureGraphBuilder2)new CaptureGraphBuilder2();
 
         // ...and link the Capture Graph Builder to the Graph Builder
         Log.WriteFile(Log.LogType.Capture, "SinkGraphEx: Link the CaptureGraphBuilder to the filter graph (SetFiltergraph)");
@@ -144,7 +143,7 @@ namespace MediaPortal.TV.Recording
         }
         // Add graph to Running Object Table (ROT), so we can connect to the graph using GraphEdit ;)
         Log.WriteFile(Log.LogType.Capture, "SinkGraphEx: Add graph to ROT table");
-        DsROT.AddGraphToRot(m_graphBuilder, out m_rotCookie);
+        _rotEntry = new DsROTEntry((IFilterGraph)m_graphBuilder);
 
         // Loop through configured filters for this card, bind them and add them to the graph
         // Note that while adding filters to a graph, some connections may already be created...
@@ -234,7 +233,7 @@ namespace MediaPortal.TV.Recording
             String strPinName = ((ConnectionDefinition)mCard.TvConnectionDefinitions[i]).SourcePinName;
             if ((strPinName.Length == 1) && (Char.IsDigit(strPinName, 0)))
             {
-              sourcePin = DirectShowUtil.FindPinNr(sourceFilter.DSFilter, PinDirection.Output, Convert.ToInt32(strPinName));
+              sourcePin = DsFindPin.ByDirection(sourceFilter.DSFilter, PinDirection.Output, Convert.ToInt32(strPinName));
               if (sourcePin == null)
                 Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:   Unable to find sourcePin: <{0}>", strPinName);
               else
@@ -253,7 +252,7 @@ namespace MediaPortal.TV.Recording
             String strPinName = ((ConnectionDefinition)mCard.TvConnectionDefinitions[i]).SinkPinName;
             if ((strPinName.Length == 1) && (Char.IsDigit(strPinName, 0)))
             {
-              sinkPin = DirectShowUtil.FindPinNr(sinkFilter.DSFilter, PinDirection.Input, Convert.ToInt32(strPinName));
+              sinkPin = DsFindPin.ByDirection(sinkFilter.DSFilter, PinDirection.Input, Convert.ToInt32(strPinName));
               if (sinkPin == null)
                 Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:   Unable to find sinkPin: <{0}>", strPinName);
               else
@@ -395,7 +394,7 @@ namespace MediaPortal.TV.Recording
         return;
       }
 
-      int hr = m_captureGraphBuilder.RenderStream(new Guid[] { Clsid.PinCategoryVBI }, null, m_captureFilter, teesink, wstCodec);
+      int hr = m_captureGraphBuilder.RenderStream(new DsGuid( ClassId.PinCategoryVBI ), null, m_captureFilter, teesink, wstCodec);
       if (hr != 0)
       {
         m_graphBuilder.RemoveFilter(teesink);
@@ -406,15 +405,15 @@ namespace MediaPortal.TV.Recording
       }
 
 
-      m_sampleGrabber = (IBaseFilter)Activator.CreateInstance(Type.GetTypeFromCLSID(Clsid.SampleGrabber, true));
+      m_sampleGrabber = (IBaseFilter)new SampleGrabber();
       m_sampleInterface = (ISampleGrabber)m_sampleGrabber;
       m_graphBuilder.AddFilter(m_sampleGrabber, "Sample Grabber");
 
       AMMediaType mt = new AMMediaType();
-      mt.majorType = DShowNET.MediaType.VBI;
-      mt.subType = DShowNET.MediaSubType.Teletext;
+      mt.majorType = MediaType.VBI;
+      mt.subType = MediaSubTypeEx.Teletext;
       m_sampleInterface.SetCallback(this, 1);
-      m_sampleInterface.SetMediaType(ref mt);
+      m_sampleInterface.SetMediaType( mt);
       m_sampleInterface.SetBufferSamples(false);
       hr = m_captureGraphBuilder.RenderStream(null, null, wstCodec, null, m_sampleGrabber);
       if (hr != 0)
@@ -477,7 +476,7 @@ namespace MediaPortal.TV.Recording
               String strPinName = ((ConnectionDefinition)mCard.TvConnectionDefinitions[instance]).SourcePinName;
               if ((strPinName.Length == 1) && (Char.IsDigit(strPinName, 0)))
               {
-                sourcePin = DirectShowUtil.FindPinNr(sourceFilter.DSFilter, PinDirection.Output, Convert.ToInt32(strPinName));
+                sourcePin = DsFindPin.ByDirection(sourceFilter.DSFilter, PinDirection.Output, Convert.ToInt32(strPinName));
                 if (sourcePin == null)
                   Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:   Unable to find sourcePin: <{0}>", strPinName);
                 else
@@ -493,7 +492,7 @@ namespace MediaPortal.TV.Recording
               String strPinName = ((ConnectionDefinition)mCard.TvConnectionDefinitions[instance]).SinkPinName;
               if ((strPinName.Length == 1) && (Char.IsDigit(strPinName, 0)))
               {
-                sinkPin = DirectShowUtil.FindPinNr(sinkFilter.DSFilter, PinDirection.Input, Convert.ToInt32(strPinName));
+                sinkPin = DsFindPin.ByDirection(sinkFilter.DSFilter, PinDirection.Input, Convert.ToInt32(strPinName));
                 if (sinkPin == null)
                   Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:   Unable to find sinkPin: <{0}>", strPinName);
                 else
@@ -608,14 +607,17 @@ namespace MediaPortal.TV.Recording
 
 
       if (m_graphBuilder != null)
-        DsUtils.RemoveFilters(m_graphBuilder);
+        DirectShowUtil.RemoveFilters(m_graphBuilder);
 
       if (m_captureFilter != null)
         Marshal.ReleaseComObject(m_captureFilter); m_captureFilter = null;
 
-      if (m_rotCookie != 0)
-        DsROT.RemoveGraphFromRot(ref m_rotCookie); m_rotCookie = 0;
 
+      if (_rotEntry != null)
+      {
+        _rotEntry.Dispose();
+      }
+      _rotEntry = null;
 
       foreach (FilterDefinition dsFilter in mCard.TvFilterDefinitions)
       {
@@ -659,7 +661,7 @@ namespace MediaPortal.TV.Recording
       {
         if ((pinName.Length == 1) && (Char.IsDigit(pinName, 0)))
         {
-          sinkPin = DirectShowUtil.FindPinNr(filter, PinDirection.Input, Convert.ToInt32(pinName));
+          sinkPin = DsFindPin.ByDirection(filter, PinDirection.Input, Convert.ToInt32(pinName));
           if (sinkPin == null)
             Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:   Unable to find pin: <{0}>", pinName);
           else
@@ -684,7 +686,7 @@ namespace MediaPortal.TV.Recording
         crossbar.get_CrossbarPinInfo(true, i, out relatedPin, out physicalTypeIn);
         if (physicalTypeIn == inputPinType)
         {
-          IPin pin= DirectShowUtil.FindPinNr(filter, PinDirection.Input, i);
+          IPin pin= DsFindPin.ByDirection(filter, PinDirection.Input, i);
           return pin;
         }
       }
@@ -724,12 +726,12 @@ namespace MediaPortal.TV.Recording
 
       //find crossbar
       int hr;
-      Guid cat;
+      DsGuid cat;
       Guid iid;
       object o = null;
-      cat = FindDirection.UpstreamOnly;
+      cat = new DsGuid(FindDirection.UpstreamOnly);
       iid = typeof(IAMCrossbar).GUID;
-      hr = m_captureGraphBuilder.FindInterface(new Guid[1] { cat }, null, m_captureFilter, ref iid, out o);
+      hr = m_captureGraphBuilder.FindInterface(cat, null, m_captureFilter,  iid, out o);
       if (hr != 0 || o == null)
       {
         Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:no crossbar found");

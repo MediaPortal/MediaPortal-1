@@ -22,6 +22,7 @@ using System;
 using System.Collections;
 using System.Runtime.InteropServices;
 using MediaPortal.GUI.Library;
+using DirectShowLib;
 
 namespace DShowNET
 {

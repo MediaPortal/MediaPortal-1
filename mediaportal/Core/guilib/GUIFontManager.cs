@@ -193,6 +193,12 @@ namespace MediaPortal.GUI.Library
 		static public void InitializeDeviceObjects()
 		{
 			Log.Write("  fonts.InitializeDeviceObjects()");
+      IntPtr upDevice = DShowNET.Helper.DirectShowUtil.GetUnmanagedDevice(GUIGraphicsContext.DX9Device);
+
+      unsafe
+      {
+        FontEngineSetDevice(upDevice.ToPointer());
+      }
 			foreach (GUIFont font in m_fonts)
 			{
 				font.InitializeDeviceObjects();
@@ -204,7 +210,7 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		static public void RestoreDeviceObjects()
 		{
-			IntPtr upDevice = DShowNET.DsUtils.GetUnmanagedDevice(GUIGraphicsContext.DX9Device);
+			IntPtr upDevice = DShowNET.Helper.DirectShowUtil.GetUnmanagedDevice(GUIGraphicsContext.DX9Device);
 
 			unsafe
 			{

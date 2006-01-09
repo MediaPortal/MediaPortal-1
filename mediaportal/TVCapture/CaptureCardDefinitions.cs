@@ -44,7 +44,7 @@ namespace TVCapture
     public string FriendlyName;
     public bool CheckDevice;
     public string MonikerDisplayName;
-    public DShowNET.IBaseFilter DSFilter;
+    public DirectShowLib.IBaseFilter DSFilter;
   };
 
   public class ConnectionDefinition
@@ -257,13 +257,13 @@ namespace TVCapture
     /// </summary>
     private CaptureCardDefinitions()
     {
-      //			DirectShowUtil.DebugWrite("CaptureCardDefinitions:ctor IN");
+      //			Log.Write("CaptureCardDefinitions:ctor IN");
 
       XmlDocument doc = new XmlDocument();
       if (!System.IO.File.Exists(@"CaptureCardDefinitions.xml"))
       {
-        DirectShowUtil.DebugWrite(" Error: CaptureCardDefinitions.xml file not found!");
-        DirectShowUtil.DebugWrite("CaptureCardDefinitions:ctor OUT");
+        Log.Write(" Error: CaptureCardDefinitions.xml file not found!");
+        Log.Write("CaptureCardDefinitions:ctor OUT");
         return;
       }
 
@@ -273,9 +273,9 @@ namespace TVCapture
       }
       catch (XmlException e)
       {
-        DirectShowUtil.DebugWrite(" Error: Unable to load CaptureCardDefinitions.xml, probably contains xml errors!");
-        DirectShowUtil.DebugWrite(" Error: {0} in {1} at line {2}", e.Message, e.Source, e.LineNumber);
-        DirectShowUtil.DebugWrite("CaptureCardDefinitions:ctor OUT");
+        Log.Write(" Error: Unable to load CaptureCardDefinitions.xml, probably contains xml errors!");
+        Log.Write(" Error: {0} in {1} at line {2}", e.Message, e.Source, e.LineNumber);
+        Log.Write("CaptureCardDefinitions:ctor OUT");
         return;
       }
 
@@ -286,7 +286,7 @@ namespace TVCapture
       {
         if (nodeList != null)
         {
-          //DirectShowUtil.DebugWrite(" Loading: capturecards...");
+          //Log.Write(" Loading: capturecards...");
 
           foreach (XmlNode cc in nodeList)
           {
@@ -320,13 +320,13 @@ namespace TVCapture
             cardConfig.CommercialName = cc.Attributes.GetNamedItem(@"commercialname").InnerText;
             cardConfig.CaptureName = cc.Attributes.GetNamedItem(@"capturename").InnerText;
             _mCaptureCardDefinitions.Add(cardConfig);
-            //DirectShowUtil.DebugWrite("device:{0}", cardConfig.CommercialName);
+            //Log.Write("device:{0}", cardConfig.CommercialName);
 
             // Get the cards capabilities...
             XmlNode capNode = cc.SelectSingleNode(@"capabilities");
             if (capNode != null)
             {
-              //DirectShowUtil.DebugWrite("  Getting capabilities...");
+              //Log.Write("  Getting capabilities...");
               cardConfig.Capabilities.HasTv = XmlConvert.ToBoolean(capNode.Attributes.GetNamedItem(@"tv").InnerText);
               cardConfig.Capabilities.HasRadio = XmlConvert.ToBoolean(capNode.Attributes.GetNamedItem(@"radio").InnerText);
               cardConfig.Capabilities.IsBDADevice = XmlConvert.ToBoolean(capNode.Attributes.GetNamedItem(@"bda").InnerText);
@@ -334,22 +334,20 @@ namespace TVCapture
               cardConfig.Capabilities.IsMpeg2Device = XmlConvert.ToBoolean(capNode.Attributes.GetNamedItem(@"mpeg2").InnerText);
               cardConfig.Capabilities.IsSoftwareDevice = XmlConvert.ToBoolean(capNode.Attributes.GetNamedItem(@"sw").InnerText);
 
-              //DirectShowUtil.DebugWrite("    TV:{0} radio:{1} bda:{2} mce:{3} mpeg2:{4} s/w:{5}",
+              //Log.Write("    TV:{0} radio:{1} bda:{2} mce:{3} mpeg2:{4} s/w:{5}",
               //					cardConfig.Capabilities.HasTv,cardConfig.Capabilities.HasRadio,cardConfig.Capabilities.IsBDADevice,
               //					cardConfig.Capabilities.IsMceDevice,	cardConfig.Capabilities.IsMpeg2Device,cardConfig.Capabilities.IsSoftwareDevice);																																																																
 
             }
             else
             {
-              //DirectShowUtil.DebugWrite("  Failed getting capabilities...");
+              //Log.Write("  Failed getting capabilities...");
             }
 
             // First do the tv part, then the (optional) radio part...
             XmlNode tvNode = cc.SelectSingleNode(@"tv");
             if (tvNode != null)
             {
-              //							DirectShowUtil.DebugWrite("  Getting tv...");
-
               XmlNode filterNodes = tvNode.SelectSingleNode(@"filters");
               FilterDefinition dsfilter;
               string strstr;
@@ -400,7 +398,7 @@ namespace TVCapture
             XmlNode radioNode = cc.SelectSingleNode(@"radio");
             if (radioNode != null)
             {
-              //DirectShowUtil.DebugWrite("  Getting radio...");
+              //Log.Write("  Getting radio...");
 
               XmlNode filterNodes = radioNode.SelectSingleNode(@"filters");
               FilterDefinition dsfilter;
@@ -446,16 +444,16 @@ namespace TVCapture
 
 
             }
-            //DirectShowUtil.DebugWrite("  Loaded: DeviceId {0}, CommercialName {1}, CaptureName {2}",
+            //Log.Write("  Loaded: DeviceId {0}, CommercialName {1}, CaptureName {2}",
             //	cardConfig.DeviceId, cardConfig.CommercialName, cardConfig.CaptureName);
           }
         }
       }
       catch (System.Exception e)
       {
-        DirectShowUtil.DebugWrite(" Error: Error while getting values from CaptureCardDefinitions.xml");
-        DirectShowUtil.DebugWrite(" Error: {0} in {1} at {2}", e.Message, e.Source, e.StackTrace);
-        DirectShowUtil.DebugWrite("CaptureCardDefinitions:ctor OUT");
+        Log.Write(" Error: Error while getting values from CaptureCardDefinitions.xml");
+        Log.Write(" Error: {0} in {1} at {2}", e.Message, e.Source, e.StackTrace);
+        Log.Write("CaptureCardDefinitions:ctor OUT");
       }
     }
 

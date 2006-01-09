@@ -29,7 +29,7 @@ using Microsoft.Win32;
 using System.Runtime.InteropServices;
 
 using DShowNET;
-using DShowNET.Device;
+using DirectShowLib;
 
 namespace MediaPortal.Configuration.Sections
 {

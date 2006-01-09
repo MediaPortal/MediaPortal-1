@@ -19,7 +19,7 @@
  *
  */
 using System;
-using DShowNET;
+using DirectShowLib;
 
 namespace MediaPortal.GUI.Library
 {

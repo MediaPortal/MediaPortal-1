@@ -24,7 +24,7 @@ using System.Drawing.Imaging;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using DShowNET;
+using DirectShowLib;
 using MediaPortal.Player;
 using MediaPortal.GUI.Library;
 using Microsoft.DirectX;
@@ -78,9 +78,7 @@ namespace MediaPortal.Player
 			Log.Write("VMR7Helper:AddVMR7");
 			if (vmr7intialized) return;
 
-			Type comtype = Type.GetTypeFromCLSID(Clsid.VideoMixingRenderer);
-			object comobj = Activator.CreateInstance(comtype);
-			VMR7Filter = (IBaseFilter)comobj; comobj = null;
+      VMR7Filter = (IBaseFilter)new VideoMixingRenderer();
 			if (VMR7Filter == null)
 			{
 				Error.SetError("Unable to play movie", "VMR7 is not installed");
@@ -198,7 +196,7 @@ namespace MediaPortal.Player
 
 				//get the VMR7 input pin#0 is connected
 				IPin pinIn, pinConnected;
-				DsUtils.GetPin(VMR7Filter, PinDirection.Input, 0, out pinIn);
+        pinIn=DsFindPin.ByDirection(VMR7Filter, PinDirection.Input, 0);
 				if (pinIn == null)
 				{
 					//no input pin found, VMR7 is not possible
@@ -257,17 +255,15 @@ namespace MediaPortal.Player
 								IntPtr handle1=g.GetHdc();
 								IntPtr hdc=Util.Win32API.CreateCompatibleDC(handle1);
 								IntPtr oldBitmap=Util.Win32API.SelectObject(hdc,n.GetHbitmap());
-								bmp.dwFlags=(int)VMRAlphaBitmapFlags.HDC | 8 ;
-								bmp.color.blu=0;
-								bmp.color.green=0;
-								bmp.color.red=0;
+                bmp.dwFlags = (VMRBitmap)((int)VMRBitmap.Hdc + (int)VMRBitmap.SRCColorKey);
+                bmp.clrSrcKey = 0;
 								bmp.pDDS=IntPtr.Zero;
-								bmp.HDC=hdc;
-								bmp.rSrc = new DsRECT();
-								bmp.rSrc.Top=0;
-								bmp.rSrc.Left=0;
-								bmp.rSrc.Right=bitmap.Width;
-								bmp.rSrc.Bottom=bitmap.Height;
+								bmp.hdc=hdc;
+								bmp.rSrc = new DsRect();
+								bmp.rSrc.top=0;
+								bmp.rSrc.left=0;
+								bmp.rSrc.right=bitmap.Width;
+								bmp.rSrc.bottom=bitmap.Height;
 								bmp.rDest=new NormalizedRect();
 								bmp.rDest.top=0.0f;
 								bmp.rDest.left=0.0f;
@@ -276,7 +272,7 @@ namespace MediaPortal.Player
 								bmp.fAlpha=alphaValue;
 								//Log.Write("SaveVMR7Bitmap() called");
 							
-								hr=VMR7Util.g_vmr7.MixerBitmapInterface.SetAlphaBitmap(bmp);
+								hr=VMR7Util.g_vmr7.MixerBitmapInterface.SetAlphaBitmap(ref bmp);
 								//g.ReleaseHdc(ptrSrc);
 								Util.Win32API.DeleteDC(hdc);
 								g.ReleaseHdc(handle1);
@@ -291,11 +287,9 @@ namespace MediaPortal.Player
 				}
 				else
 				{
-					bmp.dwFlags=(int)VMRAlphaBitmapFlags.Disable;
-					bmp.color.blu=0;
-					bmp.color.green=0;
-					bmp.color.red=0;
-					bmp.HDC=IntPtr.Zero;
+					bmp.dwFlags=VMRBitmap.Disable;
+          bmp.clrSrcKey = 0;
+					bmp.hdc=IntPtr.Zero;
 					bmp.rDest=new NormalizedRect();
 					bmp.rDest.top=0.0f;
 					bmp.rDest.left=0.0f;
@@ -303,7 +297,7 @@ namespace MediaPortal.Player
 					bmp.rDest.right=1.0f;
 					bmp.fAlpha=alphaValue;
 					//Log.Write("SaveVMR7Bitmap() called");
-					hr=VMR7Util.g_vmr7.MixerBitmapInterface.SetAlphaBitmap(bmp);
+					hr=VMR7Util.g_vmr7.MixerBitmapInterface.SetAlphaBitmap(ref bmp);
 					if(hr!=0)
 					{
 						Log.Write("SaveVMR7Bitmap() failed: error {0:X} on SetAlphaBitmap()",hr);

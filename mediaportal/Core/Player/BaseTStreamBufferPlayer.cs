@@ -29,7 +29,8 @@ using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Direct3D = Microsoft.DirectX.Direct3D;
 using MediaPortal.GUI.Library;
-using DShowNET;
+using DirectShowLib;
+using DShowNET.Helper;
 
 namespace MediaPortal.Player 
 {
@@ -74,7 +75,7 @@ namespace MediaPortal.Player
     protected bool          										_isLive=false;
     protected double                            _lastPosition=0;
 		protected bool                              _windowVisible=false;
-		protected int												_rotCookie = 0;
+		protected DsROTEntry												_rotEntry = null;
 		protected int                       _aspectX=1;
 		protected int                       _aspectY=1;
 		protected long                      _speedRate = 10000;
@@ -152,7 +153,7 @@ namespace MediaPortal.Player
 				_currentFile="";
 				return false;
 			}
-			DsROT.AddGraphToRot( _graphBuilder, out _rotCookie );		// _graphBuilder capGraph
+      _rotEntry = new DsROTEntry((IFilterGraph)_graphBuilder);
        
 			int hr = _mediaEvt.SetNotifyWindow( GUIGraphicsContext.ActiveForm, WM_GRAPHNOTIFY, IntPtr.Zero );
 			if (hr < 0)
@@ -170,7 +171,7 @@ namespace MediaPortal.Player
 					if (_videoWin!=null)
 					{
 						_videoWin.put_Owner( GUIGraphicsContext.ActiveForm );
-						_videoWin.put_WindowStyle( WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN );
+            _videoWin.put_WindowStyle((WindowStyle)((int)WindowStyle.Child + (int)WindowStyle.ClipSiblings + (int)WindowStyle.ClipChildren));
 						_videoWin.put_MessageDrain(GUIGraphicsContext.form.Handle);
 
 					}
@@ -196,7 +197,7 @@ namespace MediaPortal.Player
       _updateNeeded=true;
       SetVideoWindow();
 
-			DirectShowUtil.EnableDeInterlace(_graphBuilder);
+			//DirectShowUtil.EnableDeInterlace(_graphBuilder);
 			hr = _mediaCtrl.Run();
 			_mediaSeeking = _graphBuilder as IMediaSeeking;
 			if (hr < 0)
@@ -402,13 +403,13 @@ namespace MediaPortal.Player
 				{
 					_windowVisible=false;
 					//Log.Write("TStreamBufferPlayer:hide window");
-					if (_videoWin!=null) _videoWin.put_Visible( DsHlp.OAFALSE );
+					if (_videoWin!=null) _videoWin.put_Visible( OABool.False);
 				}
 				else if (!_windowVisible && m_bIsVisible)
 				{
 					_windowVisible=true;
 					//Log.Write("TStreamBufferPlayer:show window");
-					if (_videoWin!=null) _videoWin.put_Visible( DsHlp.OATRUE );
+          if (_videoWin != null) _videoWin.put_Visible(OABool.True);
 				}      
 			}
 			
@@ -703,7 +704,7 @@ namespace MediaPortal.Player
 					dTime=Math.Floor(dTime);
           Log.Write("seekabs: {0} duration:{1} current pos:{2}", dTime,Duration, CurrentPosition);
           dTime*=10000000d;
-					long pStop=0;
+					DsLong pStop=new DsLong(0);
 
 					//long lContentStart,lContentEnd,dmp;
 					//double fContentStart,fContentEnd;
@@ -713,12 +714,12 @@ namespace MediaPortal.Player
           //fContentEnd=lContentEnd;
 
           //dTime+=fContentStart;
-          long lTime=(long)dTime;
-          
-					int hr=_mediaSeeking.SetPositions(ref lTime, ((int)SeekingFlags.AbsolutePositioning+(int)SeekingFlags.SeekToKeyFrame),ref pStop, SeekingFlags.NoPositioning);
+          DsLong lTime=new DsLong((long)dTime);
+
+          int hr = _mediaSeeking.SetPositions(lTime, ((AMSeekingSeekingFlags)((int)AMSeekingSeekingFlags.AbsolutePositioning + (int)AMSeekingSeekingFlags.SeekToKeyFrame)), pStop, AMSeekingSeekingFlags.NoPositioning);
           if (hr !=0)
           {
-						hr=_mediaSeeking.SetPositions(ref lTime, (int)SeekingFlags.AbsolutePositioning,ref pStop, SeekingFlags.NoPositioning);
+            hr = _mediaSeeking.SetPositions( lTime, AMSeekingSeekingFlags.AbsolutePositioning,  pStop, AMSeekingSeekingFlags.NoPositioning);
 						if (hr !=0)
 						{
 							Log.WriteFile(Log.LogType.Log,true,"seek failed->seek to 0 0x:{0:X}",hr);
@@ -814,14 +815,7 @@ namespace MediaPortal.Player
 			object comobj = null;
 			try 
 			{
-				comtype = Type.GetTypeFromCLSID( Clsid.FilterGraph );
-				if( comtype == null )
-				{
-					Log.WriteFile(Log.LogType.Log,true,"TStreamBufferPlayer:DirectX 9 not installed");
-					return false;
-				}
-				comobj = Activator.CreateInstance( comtype );
-				_graphBuilder = (IGraphBuilder) comobj; comobj = null;
+        _graphBuilder = (IGraphBuilder)new FilterGraph();
 
 				if (_hasVideo)
 				{
@@ -859,7 +853,7 @@ namespace MediaPortal.Player
 				_graphBuilder.AddFilter(filter, "TsFileSource");
 		
 				IFileSourceFilter fileSource = (IFileSourceFilter) _bufferSource;
-				hr = fileSource.Load(filename, IntPtr.Zero);
+				hr = fileSource.Load(filename, null);
 
 				// add preferred video & audio codecs
 				string strVideoCodec="";
@@ -909,7 +903,7 @@ namespace MediaPortal.Player
 					_videoWin	= _graphBuilder as IVideoWindow;
 					_basicVideo	= _graphBuilder as IBasicVideo2;
 					//Log.Write("TStreamBufferPlayer:SetARMode");
-					DirectShowUtil.SetARMode(_graphBuilder,AmAspectRatioMode.AM_ARMODE_STRETCHED);
+					DirectShowUtil.SetARMode(_graphBuilder,AspectRatioMode.Stretched);
 
 					hr = _basicVideo.GetVideoSize( out _videoWidth, out _videoHeight );
 					if (hr!=0)
@@ -987,11 +981,13 @@ namespace MediaPortal.Player
 					Marshal.ReleaseComObject( _audioRendererFilter );
 				_audioRendererFilter	= null;
 
-        DsUtils.RemoveFilters(_graphBuilder);
+        DirectShowUtil.RemoveFilters(_graphBuilder);
 
-        if( _rotCookie != 0 )
-          DsROT.RemoveGraphFromRot( ref _rotCookie );
-        _rotCookie=0;
+        if (_rotEntry != null)
+        {
+          _rotEntry.Dispose();
+        }
+        _rotEntry = null;
 
 				if( _graphBuilder != null )
 				{
@@ -1024,7 +1020,7 @@ namespace MediaPortal.Player
 		void OnGraphNotify()
 		{
 			int p1, p2, hr = 0;
-			DsEvCode code;
+      EventCode code;
 			int counter=0;
 			do
 			{
@@ -1035,7 +1031,7 @@ namespace MediaPortal.Player
           if( hr < 0 )
             break;
           hr = _mediaEvt.FreeEventParams( code, p1, p2 );
-          if( code == DsEvCode.Complete || code== DsEvCode.ErrorAbort)
+          if (code == EventCode.Complete || code == EventCode.ErrorAbort)
           {
             //Log.Write("TStreamBufferPlayer:on notify complete");
             MovieEnded();
@@ -1231,7 +1227,7 @@ namespace MediaPortal.Player
 				_speedRate = 10000;
 				rewind = earliest;
 				//Log.Write(" seek back:{0}",rewind/10000000);
-				hr = _mediaSeeking.SetPositions(ref rewind, (int)SeekingFlags.AbsolutePositioning	,ref pStop, SeekingFlags.NoPositioning);
+				hr = _mediaSeeking.SetPositions(new DsLong(rewind), AMSeekingSeekingFlags.AbsolutePositioning	,new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
 				_mediaCtrl.Run();
 				return;
 			}
@@ -1242,14 +1238,14 @@ namespace MediaPortal.Player
 				_speedRate = 10000;
 				rewind = latest-100000;
 				//Log.Write(" seek ff:{0}",rewind/10000000);
-				hr = _mediaSeeking.SetPositions(ref rewind, (int)SeekingFlags.AbsolutePositioning,ref pStop, SeekingFlags.NoPositioning);
+				hr = _mediaSeeking.SetPositions(new DsLong( rewind), AMSeekingSeekingFlags.AbsolutePositioning,new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
 				_mediaCtrl.Run();
 				return;
 			}
 
 			//seek to new moment in time
 			//Log.Write(" seek :{0}",rewind/10000000);
-			hr = _mediaSeeking.SetPositions(ref rewind, (int)SeekingFlags.AbsolutePositioning		,ref pStop, SeekingFlags.NoPositioning);
+			hr = _mediaSeeking.SetPositions(new DsLong( rewind), AMSeekingSeekingFlags.AbsolutePositioning		,new DsLong( pStop), AMSeekingSeekingFlags.NoPositioning);
 			_mediaCtrl.Pause();
 
 			elapsedTimer=DateTime.Now;

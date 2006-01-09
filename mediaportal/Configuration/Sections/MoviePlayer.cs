@@ -27,6 +27,7 @@ using System.Windows.Forms;
 
 using DShowNET;
 using DShowNET.Helper;
+using DirectShowLib;
 
 namespace MediaPortal.Configuration.Sections
 {
@@ -75,8 +76,8 @@ namespace MediaPortal.Configuration.Sections
       //
       // Populate video and audio codecs
       //
-      ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.MPEG2);
-      ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.MPEG2_Audio);
+      ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
+      ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
 
       videoCodecComboBox.Items.AddRange(availableVideoFilters.ToArray());
       audioCodecComboBox.Items.AddRange(availableAudioFilters.ToArray());

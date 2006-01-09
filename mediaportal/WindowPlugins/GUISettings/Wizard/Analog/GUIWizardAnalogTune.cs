@@ -8,6 +8,7 @@ using MediaPortal.TV.Recording;
 using MediaPortal.Util;
 using MediaPortal.GUI.Settings.Wizard;
 using DShowNET;
+using DirectShowLib;
 namespace WindowPlugins.GUISettings.Wizard.Analog
 {
   /// <summary>

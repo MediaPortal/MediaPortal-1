@@ -23,12 +23,12 @@ using System.Windows.Forms;
 using System.Drawing;
 using System.Runtime.InteropServices;
 
-
+using DShowNET.Helper;
 
 
 using MediaPortal.GUI.Library;
-using DShowNET;
-namespace MediaPortal.Player 
+using DirectShowLib;
+namespace MediaPortal.Player
 {
   public class AudioPlayerVMR7 : IPlayer
   {
@@ -39,32 +39,32 @@ namespace MediaPortal.Player
       Paused,
       Ended
     }
-    string                    m_strCurrentFile="";
-    PlayState								  m_state=PlayState.Init;
-    int                       m_iVolume=100;
-    bool                      m_bNotifyPlaying=true;
-    private IGraphBuilder			graphBuilder;
+    string m_strCurrentFile = "";
+    PlayState m_state = PlayState.Init;
+    int m_iVolume = 100;
+    bool m_bNotifyPlaying = true;
+    private IGraphBuilder graphBuilder;
 
-    private int		rotCookie = 0;
+    private DsROTEntry _rotEntry = null;
     /// <summary> control interface. </summary>
-    private IMediaControl			mediaCtrl;
+    private IMediaControl mediaCtrl;
 
     /// <summary> graph event interface. </summary>
-    private IMediaEventEx			mediaEvt;
+    private IMediaEventEx mediaEvt;
 
     /// <summary> seek interface for positioning in stream. </summary>
-    private IMediaSeeking			mediaSeek;
+    private IMediaSeeking mediaSeek;
     /// <summary> seek interface to set position in stream. </summary>
-    private IMediaPosition			mediaPos;
+    private IMediaPosition mediaPos;
     /// <summary> video preview window interface. </summary>
 
     /// <summary> audio interface used to control volume. </summary>
-    private IBasicAudio				basicAudio;
-    private const int WM_GRAPHNOTIFY	= 0x00008001;	// message from graph
+    private IBasicAudio basicAudio;
+    private const int WM_GRAPHNOTIFY = 0x00008001;	// message from graph
 
-    private const int WS_CHILD			= 0x40000000;	// attributes for video window
-    private const int WS_CLIPCHILDREN	= 0x02000000;
-    private const int WS_CLIPSIBLINGS	= 0x04000000;
+    private const int WS_CHILD = 0x40000000;	// attributes for video window
+    private const int WS_CLIPCHILDREN = 0x02000000;
+    private const int WS_CLIPSIBLINGS = 0x04000000;
 
     public AudioPlayerVMR7()
     {
@@ -73,46 +73,47 @@ namespace MediaPortal.Player
 
     public override bool Play(string strFile)
     {
-      m_iVolume=100;
-      m_bNotifyPlaying=true;
-      m_state=PlayState.Init;
-      m_strCurrentFile=strFile;
+      m_iVolume = 100;
+      m_bNotifyPlaying = true;
+      m_state = PlayState.Init;
+      m_strCurrentFile = strFile;
 
       Log.Write("AudioPlayerVMR7.play {0}", strFile);
-      lock ( typeof(AudioPlayerVMR7) )
+      lock (typeof(AudioPlayerVMR7))
       {
         CloseInterfaces();
-        if( ! GetInterfaces() )
+        if (!GetInterfaces())
         {
-          m_strCurrentFile="";
+          m_strCurrentFile = "";
           return false;
         }
-        int hr = mediaEvt.SetNotifyWindow( GUIGraphicsContext.ActiveForm, WM_GRAPHNOTIFY, IntPtr.Zero );
+        int hr = mediaEvt.SetNotifyWindow(GUIGraphicsContext.ActiveForm, WM_GRAPHNOTIFY, IntPtr.Zero);
         if (hr < 0)
         {
-          m_strCurrentFile="";
+          m_strCurrentFile = "";
           CloseInterfaces();
           return false;
         }
 
         GetFrameStepInterface();
 
-        DsROT.AddGraphToRot( graphBuilder, out rotCookie );		// graphBuilder capGraph
+        _rotEntry = new DsROTEntry((IFilterGraph)graphBuilder);
+
 
 
         hr = mediaCtrl.Run();
         if (hr < 0)
         {
-          m_strCurrentFile="";
+          m_strCurrentFile = "";
           CloseInterfaces();
           return false;
         }
-//        mediaPos.put_CurrentPosition(4*60);
-        GUIMessage msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED,0,0,0,0,0,null);
-        msg.Label=strFile;
+        //        mediaPos.put_CurrentPosition(4*60);
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED, 0, 0, 0, 0, 0, null);
+        msg.Label = strFile;
         GUIWindowManager.SendThreadMessage(msg);
       }
-      m_state=PlayState.Playing;
+      m_state = PlayState.Playing;
       return true;
     }
 
@@ -121,17 +122,17 @@ namespace MediaPortal.Player
     {
       // this is triggered only if movie has ended
       // ifso, stop the movie which will trigger MovieStopped
-      if (null!=mediaCtrl) 
+      if (null != mediaCtrl)
       {
         Log.Write("AudioPlayerVMR7.ended {0}", m_strCurrentFile);
-        m_strCurrentFile="";
+        m_strCurrentFile = "";
         if (!bManualStop)
         {
-          m_state=PlayState.Ended;
+          m_state = PlayState.Ended;
         }
         else
         {
-          m_state=PlayState.Init;
+          m_state = PlayState.Init;
         }
       }
     }
@@ -140,9 +141,9 @@ namespace MediaPortal.Player
 
     public override double Duration
     {
-      get 
+      get
       {
-        if (m_state!=PlayState.Init) 
+        if (m_state != PlayState.Init)
         {
           double m_dDuration;
           mediaPos.get_Duration(out m_dDuration);
@@ -154,9 +155,9 @@ namespace MediaPortal.Player
 
     public override double CurrentPosition
     {
-      get 
+      get
       {
-        if (m_state!=PlayState.Init) 
+        if (m_state != PlayState.Init)
         {
           double dTime;
           mediaPos.get_CurrentPosition(out dTime);
@@ -169,79 +170,79 @@ namespace MediaPortal.Player
 
     public override void Pause()
     {
-      if (m_state==PlayState.Paused) 
+      if (m_state == PlayState.Paused)
       {
         mediaCtrl.Run();
-        m_state=PlayState.Playing;
+        m_state = PlayState.Playing;
       }
-      else if (m_state==PlayState.Playing) 
+      else if (m_state == PlayState.Playing)
       {
-        m_state=PlayState.Paused;
+        m_state = PlayState.Paused;
         mediaCtrl.Pause();
       }
     }
 
     public override bool Paused
     {
-      get 
+      get
       {
-        return (m_state==PlayState.Paused);
+        return (m_state == PlayState.Paused);
       }
     }
 
     public override bool Playing
     {
-      get 
-      { 
-        return (m_state==PlayState.Playing||m_state==PlayState.Paused);
+      get
+      {
+        return (m_state == PlayState.Playing || m_state == PlayState.Paused);
       }
     }
 
     public override bool Stopped
     {
-      get 
-      { 
-        return (m_state==PlayState.Init);
+      get
+      {
+        return (m_state == PlayState.Init);
       }
     }
 
     public override string CurrentFile
     {
-      get { return m_strCurrentFile;}
+      get { return m_strCurrentFile; }
     }
 
     public override void Stop()
     {
-      if (m_state!=PlayState.Init)
+      if (m_state != PlayState.Init)
       {
         mediaCtrl.StopWhenReady();
 
-        MovieEnded(true);        
+        MovieEnded(true);
       }
     }
     public override int Speed
     {
-      get { return 1;}
-      set {}
+      get { return 1; }
+      set { }
     }
 
     public override int Volume
     {
-      get { return m_iVolume;}
-      set 
+      get { return m_iVolume; }
+      set
       {
-        if (m_iVolume!=value)
+        if (m_iVolume != value)
         {
-          m_iVolume=value;
-          if (m_state!=PlayState.Init)
+          m_iVolume = value;
+          if (m_state != PlayState.Init)
           {
-            if (basicAudio!=null)
+            if (basicAudio != null)
             {
-              
+
               // Divide by 100 to get equivalent decibel value. For example, –10,000 is –100 dB. 
-              float fPercent=(float)m_iVolume/100.0f;
-              int iVolume=(int)( (DirectShowVolume.VOLUME_MAX-DirectShowVolume.VOLUME_MIN) *fPercent);
-              basicAudio.put_Volume( (iVolume-DirectShowVolume.VOLUME_MIN));
+              float fPercent = (float)m_iVolume / 100.0f;
+              int iVolume = (int)((DirectShowVolume.VOLUME_MAX - DirectShowVolume.VOLUME_MIN) * fPercent);
+              basicAudio.put_Volume((iVolume - DirectShowVolume.VOLUME_MIN));
             }
           }
         }
@@ -250,16 +251,16 @@ namespace MediaPortal.Player
 
     public override void SeekRelative(double dTime)
     {
-      if (m_state!=PlayState.Init)
+      if (m_state != PlayState.Init)
       {
-        if (mediaCtrl!=null && mediaPos!=null)
+        if (mediaCtrl != null && mediaPos != null)
         {
-          
+
           double dCurTime;
           mediaPos.get_CurrentPosition(out dCurTime);
-          
-          dTime=dCurTime+dTime;
-          if (dTime<0.0d) dTime=0.0d;
+
+          dTime = dCurTime + dTime;
+          if (dTime < 0.0d) dTime = 0.0d;
           if (dTime < Duration)
           {
             mediaPos.put_CurrentPosition(dTime);
@@ -270,11 +271,11 @@ namespace MediaPortal.Player
 
     public override void SeekAbsolute(double dTime)
     {
-      if (m_state!=PlayState.Init)
+      if (m_state != PlayState.Init)
       {
-        if (mediaCtrl!=null && mediaPos!=null)
+        if (mediaCtrl != null && mediaPos != null)
         {
-          if (dTime<0.0d) dTime=0.0d;
+          if (dTime < 0.0d) dTime = 0.0d;
           if (dTime < Duration)
           {
             mediaPos.put_CurrentPosition(dTime);
@@ -285,20 +286,20 @@ namespace MediaPortal.Player
 
     public override void SeekRelativePercentage(int iPercentage)
     {
-      if (m_state!=PlayState.Init)
+      if (m_state != PlayState.Init)
       {
-        if (mediaCtrl!=null && mediaPos!=null)
+        if (mediaCtrl != null && mediaPos != null)
         {
           double dCurrentPos;
           mediaPos.get_CurrentPosition(out dCurrentPos);
-          double dDuration=Duration;
+          double dDuration = Duration;
 
-          double fCurPercent=(dCurrentPos/Duration)*100.0d;
-          double fOnePercent=Duration/100.0d;
-          fCurPercent=fCurPercent + (double)iPercentage;
-          fCurPercent*=fOnePercent;
-          if (fCurPercent<0.0d) fCurPercent=0.0d;
-          if (fCurPercent<Duration)
+          double fCurPercent = (dCurrentPos / Duration) * 100.0d;
+          double fOnePercent = Duration / 100.0d;
+          fCurPercent = fCurPercent + (double)iPercentage;
+          fCurPercent *= fOnePercent;
+          if (fCurPercent < 0.0d) fCurPercent = 0.0d;
+          if (fCurPercent < Duration)
           {
             mediaPos.put_CurrentPosition(fCurPercent);
           }
@@ -309,77 +310,67 @@ namespace MediaPortal.Player
 
     public override void SeekAsolutePercentage(int iPercentage)
     {
-      if (m_state!=PlayState.Init)
+      if (m_state != PlayState.Init)
       {
-        if (mediaCtrl!=null && mediaPos!=null)
+        if (mediaCtrl != null && mediaPos != null)
         {
-          if (iPercentage<0) iPercentage=0;
-          if (iPercentage>=100) iPercentage=100;
-          double fPercent=Duration/100.0f;
-          fPercent*=(double)iPercentage;
+          if (iPercentage < 0) iPercentage = 0;
+          if (iPercentage >= 100) iPercentage = 100;
+          double fPercent = Duration / 100.0f;
+          fPercent *= (double)iPercentage;
           mediaPos.put_CurrentPosition(fPercent);
         }
       }
     }
 
-    
+
     public override bool HasVideo
     {
-      get { return false;}
+      get { return false; }
     }
 
     /// <summary> create the used COM components and get the interfaces. </summary>
     bool GetInterfaces()
     {
-      int iStage=1;
+      int iStage = 1;
       Type comtype = null;
       object comobj = null;
-      try 
+      try
       {
-        iStage=2;
-        comtype = Type.GetTypeFromCLSID( Clsid.FilterGraph );
-        if (comtype==null)
+        graphBuilder = (IGraphBuilder)new FilterGraph();
+        iStage = 5;
+        int hr = graphBuilder.RenderFile(m_strCurrentFile, null);
+        if (hr != 0)
         {
-          Error.SetError("Unable to play file","DirectX 9.0c is not installed");
+          Error.SetError("Unable to play file", "Missing codecs to play this file");
           return false;
         }
-        iStage=3;
-        comobj = Activator.CreateInstance( comtype );
-        iStage=4;
-        graphBuilder = (IGraphBuilder) comobj; comobj = null;
-			  iStage=5;
-        int hr = graphBuilder.RenderFile( m_strCurrentFile, null );
-        if( hr != 0 )
-        {
-            Error.SetError("Unable to play file","Missing codecs to play this file");
-            return false;
-        }
-        iStage=6;
-        mediaCtrl	= (IMediaControl)  graphBuilder;
-        
-        iStage=7;
-        mediaEvt	= (IMediaEventEx)  graphBuilder;
-        iStage=8;
-        mediaSeek	= (IMediaSeeking)  graphBuilder;
-        iStage=9;        
-        mediaPos	= (IMediaPosition) graphBuilder;
-        iStage=10;        
-        basicAudio	= graphBuilder as IBasicAudio;
-        iStage=11;        
+        iStage = 6;
+        mediaCtrl = (IMediaControl)graphBuilder;
+
+        iStage = 7;
+        mediaEvt = (IMediaEventEx)graphBuilder;
+        iStage = 8;
+        mediaSeek = (IMediaSeeking)graphBuilder;
+        iStage = 9;
+        mediaPos = (IMediaPosition)graphBuilder;
+        iStage = 10;
+        basicAudio = graphBuilder as IBasicAudio;
+        iStage = 11;
         return true;
       }
-      catch( Exception ex )
+      catch (Exception ex)
       {
-        Log.Write( "Can not start {0} stage:{1} err:{2} stack:{3}",
-                          m_strCurrentFile,iStage,
-                          ex.Message, 
+        Log.Write("Can not start {0} stage:{1} err:{2} stack:{3}",
+                          m_strCurrentFile, iStage,
+                          ex.Message,
                           ex.StackTrace);
         return false;
       }
       finally
       {
-        if( comobj != null )
-          Marshal.ReleaseComObject( comobj ); comobj = null;
+        if (comobj != null)
+          Marshal.ReleaseComObject(comobj); comobj = null;
       }
     }
 
@@ -395,13 +386,16 @@ namespace MediaPortal.Player
     void CloseInterfaces()
     {
       int hr;
-      try 
+      try
       {
-        if( rotCookie != 0 )
-          DsROT.RemoveGraphFromRot( ref rotCookie );
+        if (_rotEntry != null)
+        {
+          _rotEntry.Dispose();
+        }
+        _rotEntry = null;
 
 
-        if( mediaCtrl != null )
+        if (mediaCtrl != null)
         {
           hr = mediaCtrl.StopWhenReady();
           mediaCtrl = null;
@@ -409,68 +403,68 @@ namespace MediaPortal.Player
 
         m_state = PlayState.Init;
 
-        if( mediaEvt != null )
+        if (mediaEvt != null)
         {
-          hr = mediaEvt.SetNotifyWindow( IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero );
+          hr = mediaEvt.SetNotifyWindow(IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero);
           mediaEvt = null;
         }
 
-        mediaSeek	= null;
-        mediaPos	= null;
-        basicAudio	= null;
+        mediaSeek = null;
+        mediaPos = null;
+        basicAudio = null;
 
-        if( graphBuilder != null )
-          Marshal.ReleaseComObject( graphBuilder ); graphBuilder = null;
+        if (graphBuilder != null)
+          Marshal.ReleaseComObject(graphBuilder); graphBuilder = null;
 
         m_state = PlayState.Init;
       }
-      catch( Exception )
-      {}
+      catch (Exception)
+      { }
     }
-    public override void WndProc( ref Message m )
+    public override void WndProc(ref Message m)
     {
-      if( m.Msg == WM_GRAPHNOTIFY )
+      if (m.Msg == WM_GRAPHNOTIFY)
       {
-        if( mediaEvt != null )
+        if (mediaEvt != null)
           OnGraphNotify();
         return;
       }
-      base.WndProc( ref m );
+      base.WndProc(ref m);
     }
 
     public override bool Ended
     {
-      get { return m_state==PlayState.Ended;}
+      get { return m_state == PlayState.Ended; }
     }
 
     void OnGraphNotify()
     {
       int p1, p2, hr = 0;
-      DsEvCode code;
+      EventCode code;
       do
       {
-        hr = mediaEvt.GetEvent( out code, out p1, out p2, 0 );
-        if( hr < 0 )
+        hr = mediaEvt.GetEvent(out code, out p1, out p2, 0);
+        if (hr < 0)
           break;
-        hr = mediaEvt.FreeEventParams( code, p1, p2 );
-        if( code == DsEvCode.Complete || code== DsEvCode.ErrorAbort)
+        hr = mediaEvt.FreeEventParams(code, p1, p2);
+        if (code == EventCode.Complete || code == EventCode.ErrorAbort)
         {
           MovieEnded(false);
         }
       }
-      while( hr == 0 );
+      while (hr == 0);
     }
 
     public override void Process()
     {
-      if ( !Playing) return;
-      if (CurrentPosition>=10.0)
+      if (!Playing) return;
+      if (CurrentPosition >= 10.0)
       {
         if (m_bNotifyPlaying)
         {
-          m_bNotifyPlaying=false;
-          GUIMessage msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYING_10SEC,0,0,0,0,0,null);
-          msg.Label=CurrentFile;	
+          m_bNotifyPlaying = false;
+          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYING_10SEC, 0, 0, 0, 0, 0, null);
+          msg.Label = CurrentFile;
           GUIWindowManager.SendThreadMessage(msg);
         }
       }
@@ -482,6 +476,6 @@ namespace MediaPortal.Player
     {
       CloseInterfaces();
     }
-    #endregion 
+    #endregion
   }
 }

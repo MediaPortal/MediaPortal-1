@@ -22,7 +22,8 @@ using System;
 using System.Runtime.InteropServices;
 using System.Collections;
 using DShowNET;
-//using DirectX.Capture;
+using DShowNET.Helper;
+using DirectShowLib;
 using MediaPortal.GUI.Library;
 
 namespace MediaPortal.TV.Recording
@@ -468,7 +469,7 @@ namespace MediaPortal.TV.Recording
     DVBSections m_dvbSections;
     ArrayList m_eitList;
     System.Windows.Forms.TextBox m_textBox = null;
-    DShowNET.IBaseFilter m_mpeg2Data = null;
+    DirectShowLib.IBaseFilter m_mpeg2Data = null;
     DVBSections.TPList[] m_transponder;
     IGraphBuilder m_sourceGraph = null;
     IBaseFilter m_b2c2Adapter = null;
@@ -486,7 +487,7 @@ namespace MediaPortal.TV.Recording
       if (m_graphState != State.None)
         return false;
 
-      m_sourceGraph = (IGraphBuilder)Activator.CreateInstance(Type.GetTypeFromCLSID(Clsid.FilterGraph, true));
+      m_sourceGraph = (IGraphBuilder)new FilterGraph();
 
       int n = 0;
       m_b2c2Adapter = null;
@@ -495,7 +496,7 @@ namespace MediaPortal.TV.Recording
       {
         m_b2c2Adapter = (IBaseFilter)Activator.CreateInstance(Type.GetTypeFromCLSID(DVBSkyStar2Helper.CLSID_B2C2Adapter, false));
         m_mpeg2Data = (IBaseFilter)Activator.CreateInstance(Type.GetTypeFromCLSID(DVBSkyStar2Helper.CLSID_Mpeg2Data, true));
-        m_demux = (IBaseFilter)Activator.CreateInstance(Type.GetTypeFromCLSID(Clsid.Mpeg2Demultiplexer, true));
+        m_demux = (IBaseFilter)new MPEG2Demultiplexer();
         m_demuxInterface = (IMpeg2Demultiplexer)m_demux;
       }
 
@@ -566,7 +567,7 @@ namespace MediaPortal.TV.Recording
         m_mediaControl = null;
       }
 
-      DsUtils.RemoveFilters(m_sourceGraph);
+      DirectShowUtil.RemoveFilters(m_sourceGraph);
 
       if (m_demux != null)
       {
@@ -613,9 +614,9 @@ namespace MediaPortal.TV.Recording
       if (m_b2c2Adapter == null || m_demux == null || m_mpeg2Data == null)
         return false;
 
-      IPin demuxIn = DirectShowUtil.FindPinNr(m_demux, PinDirection.Input, 0);
-      IPin mpeg2DataIn = DirectShowUtil.FindPinNr(m_mpeg2Data, PinDirection.Input, 0);
-      IPin dataPin0Out = DirectShowUtil.FindPinNr(m_b2c2Adapter, PinDirection.Output, 2);
+      IPin demuxIn = DsFindPin.ByDirection(m_demux, PinDirection.Input, 0);
+      IPin mpeg2DataIn = DsFindPin.ByDirection(m_mpeg2Data, PinDirection.Input, 0);
+      IPin dataPin0Out = DsFindPin.ByDirection(m_b2c2Adapter, PinDirection.Output, 2);
       IPin demuxOut = null;
 
       if (demuxIn == null || mpeg2DataIn == null || dataPin0Out == null)
@@ -628,7 +629,7 @@ namespace MediaPortal.TV.Recording
       if (m_demuxInterface == null)
         return false;
 
-      hr = m_demuxInterface.CreateOutputPin(ref mt, "SectionsData", out demuxOut);
+      hr = m_demuxInterface.CreateOutputPin( mt, "SectionsData", out demuxOut);
       if (hr != 0)
         return false;
 
@@ -659,7 +660,7 @@ namespace MediaPortal.TV.Recording
       get { return m_graphState; }
     }
 
-    public DShowNET.IBaseFilter Mpeg2DataFilter
+    public DirectShowLib.IBaseFilter Mpeg2DataFilter
     {
       get { return m_mpeg2Data; }
     }

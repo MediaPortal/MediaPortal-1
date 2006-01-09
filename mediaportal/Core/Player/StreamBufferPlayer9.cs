@@ -28,7 +28,9 @@ using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Direct3D = Microsoft.DirectX.Direct3D;
 using MediaPortal.GUI.Library;
-using DShowNET;
+using DirectShowLib;
+using DirectShowLib.SBE;
+using DShowNET.Helper;
 
 namespace MediaPortal.Player 
 {
@@ -69,8 +71,6 @@ namespace MediaPortal.Player
     {
 		  Speed=1;	
 			//Log.Write("StreamBufferPlayer9: GetInterfaces()");
-      Type comtype = null;
-      object comobj = null;
       
       //switch back to directx fullscreen mode
 			
@@ -81,14 +81,7 @@ namespace MediaPortal.Player
 
       try 
       {
-        comtype = Type.GetTypeFromCLSID( Clsid.FilterGraph );
-        if( comtype == null )
-        {
-          Log.WriteFile(Log.LogType.Log,true,"StreamBufferPlayer9:DirectX 9 not installed");
-          return false;
-        }
-        comobj = Activator.CreateInstance( comtype );
-        _graphBuilder = (IGraphBuilder) comobj; comobj = null;
+        _graphBuilder = (IGraphBuilder)new FilterGraph();
 //Log.Write("StreamBufferPlayer9: add _vmr9");
 
 				_vmr9= new VMR9Util("mytv");
@@ -111,7 +104,7 @@ namespace MediaPortal.Player
 					hr=streamConfig2.SetFFTransitionRates(8,32);	
 					//Log.Write("set FFTransitionRates:{0:X}",hr);
 					
-					uint max,maxnon;
+					int max,maxnon;
 					hr=streamConfig2.GetFFTransitionRates(out max,out maxnon);	
 
 					streamConfig2.GetBackingFileCount(out _minBackingFiles, out _maxBackingFiles);
@@ -121,10 +114,7 @@ namespace MediaPortal.Player
 				//Log.Write("StreamBufferPlayer9: add sbe");
 
 				// create SBE source
-        Guid clsid = Clsid.StreamBufferSource;
-        Guid riid = typeof(IStreamBufferSource).GUID;
-        Object comObj = DsBugWO.CreateDsInstance( ref clsid, ref riid );
-        _bufferSource = (IStreamBufferSource) comObj; comObj = null;
+        _bufferSource = (IStreamBufferSource)new StreamBufferSource();
         if (_bufferSource==null) 
         {
           Log.WriteFile(Log.LogType.Log,true,"StreamBufferPlayer9:Failed to create instance of SBE (do you have WinXp SP1?)");
@@ -149,7 +139,7 @@ namespace MediaPortal.Player
 
 
 //Log.Write("StreamBufferPlayer9: open file:{0}",filename);
-				hr = fileSource.Load(filename, IntPtr.Zero);
+				hr = fileSource.Load(filename, null);
         if (hr!=0) 
         {
           Log.WriteFile(Log.LogType.Log,true,"StreamBufferPlayer9:Failed to open file:{0} :0x{1:x}",filename,hr);
@@ -207,7 +197,7 @@ namespace MediaPortal.Player
 
         
 //        Log.Write("StreamBufferPlayer9:SetARMode");
-//        DirectShowUtil.SetARMode(_graphBuilder,AmAspectRatioMode.AM_ARMODE_STRETCHED);
+//        DirectShowUtil.SetARMode(_graphBuilder,AspectRatioMode.Stretched);
 
         //Log.Write("StreamBufferPlayer9: set Deinterlace");
 
@@ -308,11 +298,13 @@ namespace MediaPortal.Player
 						_ffdShowFilter=null;
 					}
 
-					DsUtils.RemoveFilters(_graphBuilder);
+					DirectShowUtil.RemoveFilters(_graphBuilder);
 
-					if( _rotCookie != 0 )
-						DsROT.RemoveGraphFromRot( ref _rotCookie );
-					_rotCookie=0;
+          if (_rotEntry != null)
+          {
+            _rotEntry.Dispose();
+          }
+          _rotEntry = null;
 					if( _graphBuilder != null )
 					{
 						while((hr=Marshal.ReleaseComObject( _graphBuilder ))>0); 
@@ -388,7 +380,7 @@ namespace MediaPortal.Player
 
           dTimeInSecs += fContentStart;
           long lTime = (long)dTimeInSecs;
-          int hr = _mediaSeeking.SetPositions(ref lTime, SeekingFlags.AbsolutePositioning, ref pStop, SeekingFlags.NoPositioning);
+          int hr = _mediaSeeking.SetPositions(new DsLong( lTime), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong( pStop), AMSeekingSeekingFlags.NoPositioning);
           if (hr != 0)
           {
             Log.WriteFile(Log.LogType.Log, true, "seek failed->seek to 0 0x:{0:X}", hr);

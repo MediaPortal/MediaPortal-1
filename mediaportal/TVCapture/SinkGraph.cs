@@ -24,6 +24,7 @@ using System.Collections;
 using System.Runtime.InteropServices;
 using DShowNET;
 using DShowNET.Helper;
+using DirectShowLib;
 using MediaPortal.Util;
 using MediaPortal.Player;
 using MediaPortal.GUI.Library;
@@ -66,7 +67,7 @@ namespace MediaPortal.TV.Recording
     protected IAMAnalogVideoDecoder m_IAMAnalogVideoDecoder = null;
     protected VideoCaptureDevice m_videoCaptureDevice = null;
     protected MPEG2Demux m_mpeg2Demux = null;
-    protected int m_rotCookie = 0;						// Cookie into the Running Object Table
+    protected DsROTEntry _rotEntry = null;			// Cookie into the Running Object Table
     protected State m_graphState = State.None;
     protected int m_iChannelNr = -1;
     protected int m_iCountryCode = 31;
@@ -220,13 +221,9 @@ namespace MediaPortal.TV.Recording
 
       // Make a new filter graph
       //      Log.WriteFile(Log.LogType.Capture,"SinkGraph:create new filter graph (IGraphBuilder)");
-      m_graphBuilder = (IGraphBuilder)Activator.CreateInstance(Type.GetTypeFromCLSID(Clsid.FilterGraph, true));
+      m_graphBuilder = (IGraphBuilder)new FilterGraph();
 
-      // Get the Capture Graph Builder
-      //      Log.WriteFile(Log.LogType.Capture,"SinkGraph:Get the Capture Graph Builder (ICaptureGraphBuilder2)");
-      Guid clsid = Clsid.CaptureGraphBuilder2;
-      Guid riid = typeof(ICaptureGraphBuilder2).GUID;
-      m_captureGraphBuilder = (ICaptureGraphBuilder2)DsBugWO.CreateDsInstance(ref clsid, ref riid);
+      m_captureGraphBuilder = (ICaptureGraphBuilder2)new CaptureGraphBuilder2();
 
       //      Log.WriteFile(Log.LogType.Capture,"SinkGraph:Link the CaptureGraphBuilder to the filter graph (SetFiltergraph)");
       hr = m_captureGraphBuilder.SetFiltergraph(m_graphBuilder);
@@ -236,7 +233,7 @@ namespace MediaPortal.TV.Recording
         return false;
       }
       //      Log.WriteFile(Log.LogType.Capture,"SinkGraph:Add graph to ROT table");
-      DsROT.AddGraphToRot(m_graphBuilder, out m_rotCookie);
+      _rotEntry = new DsROTEntry((IFilterGraph)m_graphBuilder);
 
       // Get the video device and add it to the filter graph
       //			Log.WriteFile(Log.LogType.Capture,"SinkGraph:CreateGraph() add capture device {0}",m_strVideoCaptureFilter);
@@ -270,15 +267,15 @@ namespace MediaPortal.TV.Recording
       // upstream filters to function).
       //      Log.WriteFile(Log.LogType.Capture,"SinkGraph:get Video stream control interface (IAMStreamConfig)");
       object o;
-      Guid cat;
+      DsGuid cat;
       Guid iid;
 
       // Retrieve TV Tuner if available
       //      Log.WriteFile(Log.LogType.Capture,"SinkGraph:Find TV Tuner");
       o = null;
-      cat = FindDirection.UpstreamOnly;
+      cat = new DsGuid(FindDirection.UpstreamOnly);
       iid = typeof(IAMTVTuner).GUID;
-      hr = m_captureGraphBuilder.FindInterface(new Guid[1] { cat }, null, m_captureFilter, ref iid, out o);
+      hr = m_captureGraphBuilder.FindInterface(cat, null, m_captureFilter,  iid, out o);
       if (hr == 0)
       {
         m_TVTuner = o as IAMTVTuner;
@@ -408,11 +405,13 @@ namespace MediaPortal.TV.Recording
         m_captureFilter = null;
       }
       if (m_graphBuilder != null)
-        DsUtils.RemoveFilters(m_graphBuilder);
+        DirectShowUtil.RemoveFilters(m_graphBuilder);
 
-      if (m_rotCookie != 0)
-        DsROT.RemoveGraphFromRot(ref m_rotCookie);
-      m_rotCookie = 0;
+      if (_rotEntry != null)
+      {
+        _rotEntry.Dispose();
+      }
+      _rotEntry = null;
 
 
       if (m_captureGraphBuilder != null)
@@ -507,7 +506,7 @@ namespace MediaPortal.TV.Recording
       if (!m_videoCaptureDevice.IsMCEDevice && m_mpeg2Demux != null)
       {
         Guid cat = PinCategory.Capture;
-        int hr = m_captureGraphBuilder.RenderStream(new Guid[1] { cat }, null/*new Guid[1]{ med}*/, m_captureFilter, null, m_mpeg2Demux.BaseFilter);
+        int hr = m_captureGraphBuilder.RenderStream(cat, null/*new Guid[1]{ med}*/, m_captureFilter, null, m_mpeg2Demux.BaseFilter);
         if (hr == 0)
         {
           return;
@@ -517,7 +516,7 @@ namespace MediaPortal.TV.Recording
       if (m_mpeg2Demux != null)
       {
         //				Log.WriteFile(Log.LogType.Capture,"SinkGraph:find MPEG2 demuxer input pin");
-        IPin pinIn = DirectShowUtil.FindPinNr(m_mpeg2Demux.BaseFilter, PinDirection.Input, 0);
+        IPin pinIn = DsFindPin.ByDirection(m_mpeg2Demux.BaseFilter, PinDirection.Input, 0);
         if (pinIn != null)
         {
           //					Log.WriteFile(Log.LogType.Capture,"SinkGraph:found MPEG2 demuxer input pin");
@@ -710,14 +709,15 @@ namespace MediaPortal.TV.Recording
             Log.WriteFile(Log.LogType.Capture, "SinkGraph:TuneChannel() tuningspace:0 country:{0} tv standard:{1} cable:{2}",
               m_iCountryCode, standard.ToString(),
               m_bUseCable);
-            int currentCountry, iCurrentChannel, iVideoSubChannel, iAudioSubChannel;
+            AMTunerSubChannel iVideoSubChannel, iAudioSubChannel;
+            int currentCountry, iCurrentChannel ;
 
             m_TVTuner.get_TVFormat(out standard);
             m_TVTuner.get_Channel(out iCurrentChannel, out iVideoSubChannel, out iAudioSubChannel);
             m_TVTuner.get_CountryCode(out currentCountry);
             if (iCurrentChannel != m_iChannelNr)
             {
-              m_TVTuner.put_Channel(channel.Number, DShowNET.AMTunerSubChannel.Default, DShowNET.AMTunerSubChannel.Default);
+              m_TVTuner.put_Channel(channel.Number, AMTunerSubChannel.Default, AMTunerSubChannel.Default);
               DirectShowUtil.EnableDeInterlace(m_graphBuilder);
             }
             int iFreq;
@@ -752,7 +752,7 @@ namespace MediaPortal.TV.Recording
         }
         if (bFixCrossbar)
         {
-          DsUtils.FixCrossbarRoutingEx(m_graphBuilder,
+          CrossBar.RouteEx(m_graphBuilder,
             m_captureGraphBuilder,
             m_captureFilter,
             channel.Number < (int)ExternalInputs.svhs,
@@ -1174,7 +1174,7 @@ namespace MediaPortal.TV.Recording
     {
       if (m_TVTuner == null) return;
       int iTuningSpace, iCountry;
-      DShowNET.AMTunerModeType mode;
+      AMTunerModeType mode;
 
       m_TVTuner.get_TuningSpace(out iTuningSpace);
       if (iTuningSpace != 0) m_TVTuner.put_TuningSpace(0);
@@ -1184,20 +1184,20 @@ namespace MediaPortal.TV.Recording
         m_TVTuner.put_CountryCode(m_iCountryCode);
 
       m_TVTuner.get_Mode(out mode);
-      if (mode != DShowNET.AMTunerModeType.TV)
-        m_TVTuner.put_Mode(DShowNET.AMTunerModeType.TV);
+      if (mode != AMTunerModeType.TV)
+        m_TVTuner.put_Mode(AMTunerModeType.TV);
 
-      DShowNET.TunerInputType inputType;
+      TunerInputType inputType;
       m_TVTuner.get_InputType(0, out inputType);
       if (m_bUseCable)
       {
-        if (inputType != DShowNET.TunerInputType.Cable)
-          m_TVTuner.put_InputType(0, DShowNET.TunerInputType.Cable);
+        if (inputType != TunerInputType.Cable)
+          m_TVTuner.put_InputType(0, TunerInputType.Cable);
       }
       else
       {
-        if (inputType != DShowNET.TunerInputType.Antenna)
-          m_TVTuner.put_InputType(0, DShowNET.TunerInputType.Antenna);
+        if (inputType != TunerInputType.Antenna)
+          m_TVTuner.put_InputType(0, TunerInputType.Antenna);
       }
     }
 
@@ -1302,16 +1302,16 @@ namespace MediaPortal.TV.Recording
 
       m_TVTuner.put_TuningSpace(0);
       m_TVTuner.put_CountryCode(m_iCountryCode);
-      m_TVTuner.put_Mode(DShowNET.AMTunerModeType.FMRadio);
+      m_TVTuner.put_Mode(AMTunerModeType.FMRadio);
       if (m_bUseCable)
       {
-        m_TVTuner.put_InputType(0, DShowNET.TunerInputType.Cable);
+        m_TVTuner.put_InputType(0, TunerInputType.Cable);
       }
       else
       {
-        m_TVTuner.put_InputType(0, DShowNET.TunerInputType.Antenna);
+        m_TVTuner.put_InputType(0, TunerInputType.Antenna);
       }
-      m_TVTuner.put_Channel((int)station.Frequency, DShowNET.AMTunerSubChannel.Default, DShowNET.AMTunerSubChannel.Default);
+      m_TVTuner.put_Channel((int)station.Frequency, AMTunerSubChannel.Default, AMTunerSubChannel.Default);
       int frequency;
       m_TVTuner.get_AudioFrequency(out frequency);
       Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  tuned to {0} hz", frequency);
@@ -1337,7 +1337,7 @@ namespace MediaPortal.TV.Recording
 
         AddPreferredCodecs(true, false);
 
-        DsUtils.FixCrossbarRoutingEx(m_graphBuilder,
+        CrossBar.RouteEx(m_graphBuilder,
           m_captureGraphBuilder,
           m_captureFilter,
           true,
@@ -1362,16 +1362,16 @@ namespace MediaPortal.TV.Recording
       Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:tune to {0} hz", frequency);
       m_TVTuner.put_TuningSpace(0);
       m_TVTuner.put_CountryCode(m_iCountryCode);
-      m_TVTuner.put_Mode(DShowNET.AMTunerModeType.FMRadio);
+      m_TVTuner.put_Mode(AMTunerModeType.FMRadio);
       if (m_bUseCable)
       {
-        m_TVTuner.put_InputType(0, DShowNET.TunerInputType.Cable);
+        m_TVTuner.put_InputType(0, TunerInputType.Cable);
       }
       else
       {
-        m_TVTuner.put_InputType(0, DShowNET.TunerInputType.Antenna);
+        m_TVTuner.put_InputType(0, TunerInputType.Antenna);
       }
-      m_TVTuner.put_Channel(frequency, DShowNET.AMTunerSubChannel.Default, DShowNET.AMTunerSubChannel.Default);
+      m_TVTuner.put_Channel(frequency, AMTunerSubChannel.Default, AMTunerSubChannel.Default);
       m_TVTuner.get_AudioFrequency(out frequency);
       Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  tuned to {0} hz", frequency);
     }

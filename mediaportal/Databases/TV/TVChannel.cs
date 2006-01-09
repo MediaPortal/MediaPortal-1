@@ -25,6 +25,7 @@ using System.Collections;
 using System.Collections.Generic;
 using SQLite.NET;
 using DShowNET;
+using DirectShowLib;
 namespace MediaPortal.TV.Database
 {
   #region TVNotify class

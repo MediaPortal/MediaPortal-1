@@ -28,6 +28,7 @@ using System.Runtime.InteropServices;
 using System.Xml;
 using DShowNET;
 using DShowNET.Helper;
+using DirectShowLib;
 using Microsoft.Win32;
 
 namespace MediaPortal
@@ -292,8 +293,8 @@ namespace MediaPortal
       bool MPEG2CodecsInstalled=false;
       bool FFDShowInstalled=false;
       bool VobSubInstalled=false;
-      ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.MPEG2);
-      ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.MPEG2_Audio);
+      ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
+      ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
 
       if (availableVideoFilters.Count>0 && availableAudioFilters.Count>0)
         MPEG2CodecsInstalled=true;

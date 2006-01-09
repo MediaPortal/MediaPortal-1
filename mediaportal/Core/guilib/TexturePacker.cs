@@ -29,6 +29,7 @@ using Direct3D=Microsoft.DirectX.Direct3D;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Soap;
+using DShowNET.Helper;
 namespace MediaPortal.GUI.Library
 {
 	/// <summary>
@@ -324,8 +325,8 @@ namespace MediaPortal.GUI.Library
 					0,//Usage.Dynamic,
 					useFormat,
 					Pool.Managed,
-					Filter.None,
-					Filter.None,
+					Direct3D.Filter.None,
+          Direct3D.Filter.None,
 					(int)0,
 					ref info2);
 				bigOne.texture=tex;
@@ -397,7 +398,7 @@ namespace MediaPortal.GUI.Library
 					{	
 						unsafe
 						{
-							IntPtr ptr=DShowNET.DsUtils.GetUnmanagedTexture(bigOne.texture);
+              IntPtr ptr = DirectShowUtil.GetUnmanagedTexture(bigOne.texture);
 							bigOne.textureNo=FontEngineAddTexture(ptr.ToInt32(),true,(void*) ptr.ToPointer());
 							Log.Write("TexturePacker: fontengine add texure:{0}",bigOne.textureNo);
 						}

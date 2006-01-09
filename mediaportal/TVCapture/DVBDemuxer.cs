@@ -22,6 +22,8 @@
 using System;
 using System.Text;
 using DShowNET;
+using DShowNET.Helper;
+using DirectShowLib;
 using MediaPortal;
 using MediaPortal.Util;
 using MediaPortal.GUI.Library;

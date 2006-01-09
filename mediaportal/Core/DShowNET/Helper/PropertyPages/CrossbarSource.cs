@@ -21,7 +21,7 @@
 
 using System;
 using System.Runtime.InteropServices; 
-using DShowNET;
+using DirectShowLib;
 
 namespace DShowNET.Helper
 {

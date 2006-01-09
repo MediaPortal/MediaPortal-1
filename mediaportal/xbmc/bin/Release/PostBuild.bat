@@ -73,6 +73,7 @@ copy ..\..\..\Configuration\bin\Release\Configuration.exe .
 copy ..\..\..\Configuration\bin\Release\Configuration.exe.config .
 copy ..\..\..\TVGuideScheduler\bin\Release\TVGuideScheduler.exe .
 
+copy ..\..\..\DirectShowLib\bin\Release\DirectShowLib.dll .
 copy ..\..\..\core\bin\Release\Core.dll .
 copy ..\..\..\tvcapture\bin\release\tvcapture.dll .
 copy ..\..\..\databases\bin\release\databases.dll .

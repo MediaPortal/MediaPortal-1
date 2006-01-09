@@ -21,7 +21,9 @@
 using System;
 using System.Drawing;
 using Microsoft.Win32;
-using DShowNET;
+using DShowNET.Helper;
+using DirectShowLib;
+using DirectShowLib.SBE;
 using MediaPortal.GUI.Library;
 
 using System.Runtime.InteropServices;
@@ -32,7 +34,7 @@ namespace MediaPortal.Core.Transcoding
 	/// </summary>
 	public class Dvrms2XVID : ITranscode
 	{
-		protected int												rotCookie = 0;
+    protected DsROTEntry _rotEntry = null;
 		protected  IGraphBuilder			  			      graphBuilder =null;
 		protected  IStreamBufferSource 			        bufferSource=null ;
 		protected IFileSinkFilter2										fileWriterFilter = null;			// DShow Filter: file writer
@@ -104,30 +106,19 @@ namespace MediaPortal.Core.Transcoding
 			object comobj = null;
 			try 
 			{
-				Log.Write("DVR2XVID: create graph");
-				comtype = Type.GetTypeFromCLSID( Clsid.FilterGraph );
-				if( comtype == null )
-				{
-					Log.WriteFile(Log.LogType.Log,true,"StreamBufferPlayer9:DirectX 9 not installed");
-					return false;
-				}
-				comobj = Activator.CreateInstance( comtype );
-				graphBuilder = (IGraphBuilder) comobj; comobj = null;
-			
-				DsROT.AddGraphToRot( graphBuilder, out rotCookie );		// graphBuilder capGraph
+        graphBuilder = (IGraphBuilder)new FilterGraph();
+
+        _rotEntry = new DsROTEntry((IFilterGraph)graphBuilder);
 
 				Log.Write("DVR2XVID: add streambuffersource");
-				Guid clsid = Clsid.StreamBufferSource;
-				Guid riid = typeof(IStreamBufferSource).GUID;
-				Object comObj = DsBugWO.CreateDsInstance( ref clsid, ref riid );
-				bufferSource = (IStreamBufferSource) comObj; comObj = null;
+        bufferSource = (IStreamBufferSource)new StreamBufferSource();
 
 		
 				IBaseFilter filter = (IBaseFilter) bufferSource;
 				graphBuilder.AddFilter(filter, "SBE SOURCE");		
 				IFileSourceFilter fileSource = (IFileSourceFilter) bufferSource;
 				Log.Write("DVR2XVID: load file:{0}",info.file);
-				int hr = fileSource.Load(info.file, IntPtr.Zero);
+				int hr = fileSource.Load(info.file, null);
 
 
 
@@ -164,8 +155,8 @@ namespace MediaPortal.Core.Transcoding
 				Log.Write("DVR2XVID: connect streambufer source->mpeg audio/video decoders");				
 				IPin pinOut0, pinOut1;
 				IPin pinIn0, pinIn1;
-				DsUtils.GetPin((IBaseFilter)bufferSource,PinDirection.Output,0,out pinOut0);//audio
-				DsUtils.GetPin((IBaseFilter)bufferSource,PinDirection.Output,1,out pinOut1);//video
+        pinOut0=DsFindPin.ByDirection((IBaseFilter)bufferSource, PinDirection.Output, 0);//audio
+        pinOut1=DsFindPin.ByDirection((IBaseFilter)bufferSource, PinDirection.Output, 1);//video
 				if (pinOut0==null || pinOut1==null)
 				{
 					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:unable to get pins of source");
@@ -173,8 +164,8 @@ namespace MediaPortal.Core.Transcoding
 					return false;
 				}
 
-				DsUtils.GetPin(Mpeg2VideoCodec,PinDirection.Input,0,out pinIn0);//video
-				DsUtils.GetPin(Mpeg2AudioCodec,PinDirection.Input,0,out pinIn1);//audio
+        pinIn0=DsFindPin.ByDirection(Mpeg2VideoCodec, PinDirection.Input, 0);//video
+        pinIn1=DsFindPin.ByDirection(Mpeg2AudioCodec, PinDirection.Input, 0);//audio
 				if (pinIn0==null || pinIn1==null)
 				{
 					Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:unable to get pins of mpeg2 video/audio codec");
@@ -213,14 +204,14 @@ namespace MediaPortal.Core.Transcoding
 				long lTime=5*60*60;
 				lTime*=10000000;
 				long pStop=0;
-				hr=mediaSeeking.SetPositions(ref lTime, SeekingFlags.AbsolutePositioning,ref pStop, SeekingFlags.NoPositioning);
+				hr=mediaSeeking.SetPositions(new DsLong( lTime), AMSeekingSeekingFlags.AbsolutePositioning,new DsLong( pStop), AMSeekingSeekingFlags.NoPositioning);
 				if (hr==0)
 				{
 					long lStreamPos;
 					mediaSeeking.GetCurrentPosition(out lStreamPos); // stream position
 					m_dDuration=lStreamPos;
 					lTime=0;
-					mediaSeeking.SetPositions(ref lTime, SeekingFlags.AbsolutePositioning,ref pStop, SeekingFlags.NoPositioning);
+					mediaSeeking.SetPositions(new DsLong( lTime), AMSeekingSeekingFlags.AbsolutePositioning,new DsLong( pStop), AMSeekingSeekingFlags.NoPositioning);
 				}
 				double duration=m_dDuration/10000000d;
 				Log.Write("DVR2XVID: movie duration:{0}",Util.Utils.SecondsToHMSString((int)duration));				
@@ -292,10 +283,10 @@ namespace MediaPortal.Core.Transcoding
 				return true;
 			}
 			int p1, p2, hr = 0;
-			DsEvCode code;
+			EventCode code;
 			hr = mediaEvt.GetEvent( out code, out p1, out p2, 0 );
 			hr = mediaEvt.FreeEventParams( code, p1, p2 );
-			if( code == DsEvCode.Complete || code== DsEvCode.ErrorAbort)
+			if( code == EventCode.Complete || code== EventCode.ErrorAbort)
 			{
 				Cleanup();
 				return true;
@@ -322,9 +313,12 @@ namespace MediaPortal.Core.Transcoding
 
 		void Cleanup()
 		{
-			Log.Write("DVR2XVID: cleanup");				
-			if( rotCookie != 0 )
-				DsROT.RemoveGraphFromRot( ref rotCookie );
+			Log.Write("DVR2XVID: cleanup");
+      if (_rotEntry != null)
+      {
+        _rotEntry.Dispose();
+      }
+      _rotEntry = null;
 
 			if( mediaControl != null )
 			{
@@ -362,7 +356,7 @@ namespace MediaPortal.Core.Transcoding
 				Marshal.ReleaseComObject( bufferSource );
 			bufferSource = null;
 
-			DsUtils.RemoveFilters(graphBuilder);
+			DirectShowUtil.RemoveFilters(graphBuilder);
 
 			if( graphBuilder != null )
 				Marshal.ReleaseComObject( graphBuilder ); graphBuilder = null;
@@ -446,7 +440,7 @@ namespace MediaPortal.Core.Transcoding
 			//AMMediaType mt = new AMMediaType();
 			string outputFileName=System.IO.Path.ChangeExtension(info.file,".avi");
 			Log.Write("DVR2XVID: set output file to :{0}",outputFileName);				
-			hr=fileWriterFilter.SetFileName(outputFileName, IntPtr.Zero);
+			hr=fileWriterFilter.SetFileName(outputFileName, null);
 			if (hr!=0 )
 			{
 				Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:unable to set filename for filewriter :0x{0:X}",hr);
@@ -478,15 +472,15 @@ namespace MediaPortal.Core.Transcoding
 			//connect output of mpeg2 codec to xvid codec
 			Log.Write("DVR2XVID: connect mpeg2 video codec->xvid codec");				
 			IPin pinOut, pinIn;
-			hr=DsUtils.GetPin(xvidCodec,PinDirection.Input,0,out pinIn);
-			if (hr!=0 || pinIn==null)
+      pinIn = DsFindPin.ByDirection(xvidCodec, PinDirection.Input, 0);
+			if ( pinIn==null)
 			{
 				Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:cannot get input pin of xvid codec:0x{0:X}",hr);
 				Cleanup();
 				return false;
 			}
-			hr=DsUtils.GetPin(Mpeg2VideoCodec,PinDirection.Output,0,out pinOut);
-			if (hr!=0 || pinOut==null)
+      pinOut = DsFindPin.ByDirection(Mpeg2VideoCodec, PinDirection.Output, 0);
+			if ( pinOut==null)
 			{
 				Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:cannot get output pin of mpeg2 video codec :0x{0:X}",hr);
 				Cleanup();
@@ -502,16 +496,16 @@ namespace MediaPortal.Core.Transcoding
 			}
 
 			//connect output of mpeg2 audio codec to mpeg3 codec
-			Log.Write("DVR2XVID: connect mpeg2 audio codec->mp3 codec");				
-			hr=DsUtils.GetPin(mp3Codec,PinDirection.Input,0,out pinIn);
-			if (hr!=0 || pinIn==null)
+			Log.Write("DVR2XVID: connect mpeg2 audio codec->mp3 codec");
+      pinIn = DsFindPin.ByDirection(mp3Codec, PinDirection.Input, 0);
+			if ( pinIn==null)
 			{
 				Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:cannot get input pin of mp3 codec:0x{0:X}",hr);
 				Cleanup();
 				return false;
 			}
-			hr=DsUtils.GetPin(Mpeg2AudioCodec,PinDirection.Output,0,out pinOut);
-			if (hr!=0 || pinOut==null)
+      pinOut = DsFindPin.ByDirection(Mpeg2AudioCodec, PinDirection.Output, 0);
+			if ( pinOut==null)
 			{
 				Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:cannot get output pin of mpeg2 audio codec :0x{0:X}",hr);
 				Cleanup();
@@ -529,16 +523,16 @@ namespace MediaPortal.Core.Transcoding
 
 
 			//connect output of mpeg3 codec to pin#0 of avimux
-			Log.Write("DVR2XVID: connect mp3 codec->avimux");				
-			hr=DsUtils.GetPin(mp3Codec,PinDirection.Output,0,out pinOut);
-			if (hr!=0 || pinOut==null)
+			Log.Write("DVR2XVID: connect mp3 codec->avimux");
+      pinOut = DsFindPin.ByDirection(mp3Codec, PinDirection.Output, 0);
+			if ( pinOut==null)
 			{
 				Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:cannot get input pin of mp3 codec:0x{0:X}",hr);
 				Cleanup();
 				return false;
 			}
-			hr=DsUtils.GetPin(aviMuxer,PinDirection.Input,0,out pinIn);
-			if (hr!=0 || pinIn==null)
+      pinIn = DsFindPin.ByDirection(aviMuxer, PinDirection.Input, 0);
+			if ( pinIn==null)
 			{
 				Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:cannot get output pin of mpeg2 audio codec :0x{0:X}",hr);
 				Cleanup();
@@ -554,16 +548,16 @@ namespace MediaPortal.Core.Transcoding
 			}
 
 			//connect output of xvid codec to pin#1 of avimux
-			Log.Write("DVR2XVID: connect xvid codec->avimux");				
-			hr=DsUtils.GetPin(xvidCodec,PinDirection.Output,0,out pinOut);
-			if (hr!=0 || pinOut==null)
+			Log.Write("DVR2XVID: connect xvid codec->avimux");
+      pinOut = DsFindPin.ByDirection(xvidCodec, PinDirection.Output, 0);
+			if ( pinOut==null)
 			{
 				Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:cannot get input pin of mp3 codec:0x{0:X}",hr);
 				Cleanup();
 				return false;
 			}
-			hr=DsUtils.GetPin(aviMuxer,PinDirection.Input,1,out pinIn);
-			if (hr!=0 || pinIn==null)
+      pinIn = DsFindPin.ByDirection(aviMuxer, PinDirection.Input, 1);
+			if ( pinIn==null)
 			{
 				Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:cannot get output#1 pin of avimux :0x{0:X}",hr);
 				Cleanup();
@@ -580,17 +574,17 @@ namespace MediaPortal.Core.Transcoding
 
 
 			//connect avi mux out->filewriter in
-			Log.Write("DVR2XVID: connect avimux->filewriter");				
-			hr=DsUtils.GetPin(aviMuxer,PinDirection.Output,0,out pinOut);
-			if (hr!=0 || pinOut==null)
+			Log.Write("DVR2XVID: connect avimux->filewriter");
+      pinOut = DsFindPin.ByDirection(aviMuxer, PinDirection.Output, 0);
+			if ( pinOut==null)
 			{
 				Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:cannot get output pin of avimux:0x{0:X}",hr);
 				Cleanup();
 				return false;
 			}
 
-			hr=DsUtils.GetPin(fileWriterbase,PinDirection.Input,0,out pinIn);
-			if (hr!=0 || pinIn==null)
+      pinIn = DsFindPin.ByDirection(fileWriterbase, PinDirection.Input, 0);
+			if ( pinIn==null)
 			{
 				Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:FAILED:cannot get input pin of Filewriter :0x{0:X}",hr);
 				Cleanup();

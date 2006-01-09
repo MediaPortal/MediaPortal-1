@@ -21,7 +21,7 @@
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
-using DShowNET;
+using DirectShowLib;
 using DShowNET.Helper;
 using MediaPortal.GUI.Library;
 namespace MediaPortal.Player
@@ -43,7 +43,7 @@ namespace MediaPortal.Player
     ICaptureGraphBuilder2   m_captureGraphBuilder = null;
     IBaseFilter             m_filterCaptureVideo = null;
     IAMTVTuner              m_TVTuner = null;
-    int				              m_rotCookie = 0; // Cookie into the Running Object Table
+    DsROTEntry              _rotEntry = null; // Cookie into the Running Object Table
     VideoCaptureDevice      m_videoCaptureDevice = null;
     IMediaControl					  m_mediaControl = null;
     string                  m_strVideoCaptureFilter = "";
@@ -68,7 +68,7 @@ namespace MediaPortal.Player
     {
       int hr=0;
       if (m_graphState != State.None) return false;
-      DirectShowUtil.DebugWrite("RadioGraph:CreateGraph()");
+      Log.Write("RadioGraph:CreateGraph()");
       m_bUseCable = cable;
       m_iTuningSpace=tuningspace;
       m_iCountryCode = country;
@@ -106,38 +106,35 @@ namespace MediaPortal.Player
       
       if (filterVideoCaptureDevice == null) 
       {
-        DirectShowUtil.DebugWrite("RadioGraph:CreateGraph() FAILED couldnt find capture device:{0}",m_strVideoCaptureFilter);
+        Log.Write("RadioGraph:CreateGraph() FAILED couldnt find capture device:{0}",m_strVideoCaptureFilter);
         return false;
       }
       // Make a new filter graph
-      DirectShowUtil.DebugWrite("RadioGraph:create new filter graph (IGraphBuilder)");
-      m_graphBuilder = (IGraphBuilder) Activator.CreateInstance(Type.GetTypeFromCLSID(Clsid.FilterGraph, true));
+      Log.Write("RadioGraph:create new filter graph (IGraphBuilder)");
+      m_graphBuilder = (IGraphBuilder)new FilterGraph();
 
       // Get the Capture Graph Builder
-      DirectShowUtil.DebugWrite("RadioGraph:Get the Capture Graph Builder (ICaptureGraphBuilder2)");
-      Guid clsid = Clsid.CaptureGraphBuilder2;
-      Guid riid = typeof(ICaptureGraphBuilder2).GUID;
-      m_captureGraphBuilder = (ICaptureGraphBuilder2) DsBugWO.CreateDsInstance(ref clsid, ref riid);
-
-      DirectShowUtil.DebugWrite("RadioGraph:Link the CaptureGraphBuilder to the filter graph (SetFiltergraph)");
+      Log.Write("RadioGraph:Get the Capture Graph Builder (ICaptureGraphBuilder2)");
+      m_captureGraphBuilder = (ICaptureGraphBuilder2)new CaptureGraphBuilder2();
+      Log.Write("RadioGraph:Link the CaptureGraphBuilder to the filter graph (SetFiltergraph)");
       hr = m_captureGraphBuilder.SetFiltergraph(m_graphBuilder);
       if (hr < 0) 
       {
-        DirectShowUtil.DebugWrite("RadioGraph:link FAILED:0x{0:X}",hr);
+        Log.Write("RadioGraph:link FAILED:0x{0:X}",hr);
         return false;
       }
-      DirectShowUtil.DebugWrite("RadioGraph:Add graph to ROT table");
-      DsROT.AddGraphToRot(m_graphBuilder, out m_rotCookie);
+      Log.Write("RadioGraph:Add graph to ROT table");
+      _rotEntry = new DsROTEntry((IFilterGraph)m_graphBuilder);
 
       // Get the Video device and add it to the filter graph
-      DirectShowUtil.DebugWrite("RadioGraph:CreateGraph() add capture device {0}",m_strVideoCaptureFilter);
+      Log.Write("RadioGraph:CreateGraph() add capture device {0}",m_strVideoCaptureFilter);
       m_filterCaptureVideo = Marshal.BindToMoniker(filterVideoCaptureDevice.MonikerString) as IBaseFilter;
       if (m_filterCaptureVideo != null)
       {
         hr = m_graphBuilder.AddFilter(m_filterCaptureVideo, filterVideoCaptureDevice.Name);
         if (hr < 0) 
         {
-          DirectShowUtil.DebugWrite("RadioGraph:FAILED:Add Videodevice to filtergraph:0x{0:X}",hr);
+          Log.Write("RadioGraph:FAILED:Add Videodevice to filtergraph:0x{0:X}",hr);
           return false;
         }
       }
@@ -147,14 +144,14 @@ namespace MediaPortal.Player
       if (filterAudioCaptureDevice != null)
       {
         // Get the audio device and add it to the filter graph
-        DirectShowUtil.DebugWrite("RadioGraph:CreateGraph() add capture device {0}",m_strAudioDevice);
+        Log.Write("RadioGraph:CreateGraph() add capture device {0}",m_strAudioDevice);
         m_filterCaptureAudio = Marshal.BindToMoniker(filterAudioCaptureDevice.MonikerString) as IBaseFilter;
         if (m_filterCaptureAudio != null)
         {
           hr = m_graphBuilder.AddFilter(m_filterCaptureAudio, filterAudioCaptureDevice.Name);
           if (hr < 0) 
           {
-            DirectShowUtil.DebugWrite("RadioGraph:FAILED:Add audiodevice to filtergraph:0x{0:X}",hr);
+            Log.Write("RadioGraph:FAILED:Add audiodevice to filtergraph:0x{0:X}",hr);
             return false;
           }
         }
@@ -162,18 +159,19 @@ namespace MediaPortal.Player
 */
 
       // Retrieve TV Tuner if available
-      DirectShowUtil.DebugWrite("RadioGraph:Find TV Tuner");
+      Log.Write("RadioGraph:Find TV Tuner");
       object o = null;
-      Guid cat = FindDirection.UpstreamOnly;
       Guid iid = typeof(IAMTVTuner).GUID;
-      hr = m_captureGraphBuilder.FindInterface(new Guid[1] { cat}, null, m_filterCaptureVideo, ref iid, out o);
+      DsGuid cat = new DsGuid(FindDirection.UpstreamOnly);
+
+      hr = m_captureGraphBuilder.FindInterface(cat, null, m_filterCaptureVideo,  iid, out o);
       if (hr == 0) 
       {
         m_TVTuner = o as IAMTVTuner;
       }
       if (m_TVTuner == null)
       {
-        DirectShowUtil.DebugWrite("RadioGraph:CreateGraph() FAILED:no tuner found");
+        Log.Write("RadioGraph:CreateGraph() FAILED:no tuner found");
       }
 
       bool bAdded=false;
@@ -186,7 +184,7 @@ namespace MediaPortal.Player
         {
           if (filters.AudioRenderers[i].MonikerString.IndexOf(strDefault)>=0)
           {
-            DirectShowUtil.DebugWrite("RadioGraph:adding {0} to graph",filters.AudioRenderers[i].Name);
+            Log.Write("RadioGraph:adding {0} to graph",filters.AudioRenderers[i].Name);
 						try
 						{
 							m_audioFilter=DirectShowUtil.AddAudioRendererToGraph( m_graphBuilder, filters.AudioRenderers[i].Name,false);
@@ -202,18 +200,18 @@ namespace MediaPortal.Player
         }
         if (!bAdded)
         {
-          DirectShowUtil.DebugWrite("RadioGraph:FAILED could not find default directsound device");
+          Log.Write("RadioGraph:FAILED could not find default directsound device");
           return false;
         }
 
-        DirectShowUtil.DebugWrite("RadioGraph:Render audio preview pin");
+        Log.Write("RadioGraph:Render audio preview pin");
         hr=m_graphBuilder.Render(m_videoCaptureDevice.PreviewAudioPin);
         if (hr!=0)
         {
-          DirectShowUtil.DebugWrite("RadioGraph:FAILED could not render preview audio pin:0x{0:x}",hr);
+          Log.Write("RadioGraph:FAILED could not render preview audio pin:0x{0:x}",hr);
           return false;
         }
-        DirectShowUtil.DebugWrite("RadioGraph:starting graph");
+        Log.Write("RadioGraph:starting graph");
       }
 /*
       // select the correct audio input pin to capture
@@ -221,11 +219,11 @@ namespace MediaPortal.Player
       {
         if (m_strAudioInputPin.Length > 0)
         {
-          DirectShowUtil.DebugWrite("SWGraph:set audio input pin:{0}", m_strAudioInputPin);
+          Log.Write("SWGraph:set audio input pin:{0}", m_strAudioInputPin);
           IPin pinInput = DirectShowUtil.FindPin(m_filterCaptureAudio, PinDirection.Input, m_strAudioInputPin);
           if (pinInput == null)
           {
-            DirectShowUtil.DebugWrite("SWGraph:FAILED audio input pin:{0} not found", m_strAudioInputPin);
+            Log.Write("SWGraph:FAILED audio input pin:{0} not found", m_strAudioInputPin);
           }
           else
           {
@@ -235,11 +233,11 @@ namespace MediaPortal.Player
               hr = mixer.put_Enable(true);
               if (hr != 0)
               {
-                DirectShowUtil.DebugWrite("SWGraph:FAILED:to enable audio input pin:0x{0:X}",hr);
+                Log.Write("SWGraph:FAILED:to enable audio input pin:0x{0:X}",hr);
               }
               else
               {
-                DirectShowUtil.DebugWrite("SWGraph:enabled audio input pin:{0}",m_strAudioInputPin);
+                Log.Write("SWGraph:enabled audio input pin:{0}",m_strAudioInputPin);
               }
 
               double fLevel=((double)_RecordingLevel);
@@ -247,17 +245,17 @@ namespace MediaPortal.Player
               hr = mixer.put_MixLevel(fLevel);
               if (hr != 0)
               {
-                DirectShowUtil.DebugWrite("SWGraph:FAILED:to set mixing level to {0}%:0x{1:X}",_RecordingLevel,hr);
+                Log.Write("SWGraph:FAILED:to set mixing level to {0}%:0x{1:X}",_RecordingLevel,hr);
               }
               else
               {
-                DirectShowUtil.DebugWrite("SWGraph:set mixing level to {0}% of pin:{1}",_RecordingLevel,m_strAudioInputPin);
+                Log.Write("SWGraph:set mixing level to {0}% of pin:{1}",_RecordingLevel,m_strAudioInputPin);
               }
 
             }
             else
             {
-              DirectShowUtil.DebugWrite("SWGraph:FAILED audio input pin:{0} does not expose an IAMAudioInputMixer", m_strAudioInputPin);
+              Log.Write("SWGraph:FAILED audio input pin:{0} does not expose an IAMAudioInputMixer", m_strAudioInputPin);
             }
           }
         }
@@ -272,39 +270,39 @@ namespace MediaPortal.Player
     {
       if (m_graphState < State.Created) return;
       if (m_TVTuner == null) return;
-      DirectShowUtil.DebugWrite("RadioGraph:Tune:{0} Hz country:{1}",channel,m_iCountryCode);
+      Log.Write("RadioGraph:Tune:{0} Hz country:{1}",channel,m_iCountryCode);
       if (m_graphState == State.Created)
       {
         m_TVTuner.put_TuningSpace(0);
         m_TVTuner.put_CountryCode(m_iCountryCode);
-        m_TVTuner.put_Mode(DShowNET.AMTunerModeType.FMRadio);
+        m_TVTuner.put_Mode(AMTunerModeType.FMRadio);
         if (m_bUseCable)
         {
-          DirectShowUtil.DebugWrite("RadioGraph:Cable");
-          m_TVTuner.put_InputType(0, DShowNET.TunerInputType.Cable);
+          Log.Write("RadioGraph:Cable");
+          m_TVTuner.put_InputType(0, TunerInputType.Cable);
         }
         else
         {
-          DirectShowUtil.DebugWrite("RadioGraph:Antenna");
-          m_TVTuner.put_InputType(0, DShowNET.TunerInputType.Antenna);
+          Log.Write("RadioGraph:Antenna");
+          m_TVTuner.put_InputType(0, TunerInputType.Antenna);
         }
 
-        m_TVTuner.put_Channel(channel, DShowNET.AMTunerSubChannel.Default, DShowNET.AMTunerSubChannel.Default);
+        m_TVTuner.put_Channel(channel, AMTunerSubChannel.Default, AMTunerSubChannel.Default);
 
         m_iCurrentChannel=channel;
 
         int chanmin,chanmax;
         m_TVTuner.ChannelMinMax(out chanmin, out chanmax);
-        DirectShowUtil.DebugWrite("RadioGraph:minimal :{0} Hz, maximal:{1} Hz",chanmin,chanmax);
+        Log.Write("RadioGraph:minimal :{0} Hz, maximal:{1} Hz",chanmin,chanmax);
 		    if (m_strAudioDevice.Length>0)
-          DsUtils.FixCrossbarRouting(m_graphBuilder,m_captureGraphBuilder, m_filterCaptureVideo, true, false,false,false,false,true);
-        DirectShowUtil.DebugWrite("RadioGraph:start listening");
+          CrossBar.Route(m_graphBuilder, m_captureGraphBuilder, m_filterCaptureVideo, true, false, false, false, false, true);
+        Log.Write("RadioGraph:start listening");
         int hr=m_mediaControl.Run();
-        if (hr!=0) DirectShowUtil.DebugWrite("RadioGraph:start listening returned :0x{0:X}",hr);
+        if (hr!=0) Log.Write("RadioGraph:start listening returned :0x{0:X}",hr);
       }
       else
       { 
-          m_TVTuner.put_Channel(channel, DShowNET.AMTunerSubChannel.Default, DShowNET.AMTunerSubChannel.Default);
+          m_TVTuner.put_Channel(channel, AMTunerSubChannel.Default, AMTunerSubChannel.Default);
           m_iCurrentChannel=channel;
       }
       m_graphState = State.Listening;
@@ -312,7 +310,7 @@ namespace MediaPortal.Player
 
     public void DeleteGraph()
     {
-      DirectShowUtil.DebugWrite("RadioGraph:DeleteGraph");
+      Log.Write("RadioGraph:DeleteGraph");
       if (m_mediaControl != null)
       {
         m_mediaControl.Stop();
@@ -339,11 +337,13 @@ namespace MediaPortal.Player
         Marshal.ReleaseComObject(m_filterCaptureAudio ); m_filterCaptureAudio = null;
       
       if (m_graphBuilder!=null)
-        DsUtils.RemoveFilters(m_graphBuilder);
+        DirectShowUtil.RemoveFilters(m_graphBuilder);
 
-      if (m_rotCookie != 0)
-        DsROT.RemoveGraphFromRot(ref m_rotCookie);
-      m_rotCookie = 0;
+      if (_rotEntry != null)
+      {
+        _rotEntry.Dispose();
+      }
+      _rotEntry = null;
 
       if (m_captureGraphBuilder != null)
         Marshal.ReleaseComObject(m_captureGraphBuilder); m_captureGraphBuilder = null;

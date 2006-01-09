@@ -23,6 +23,8 @@ using System.IO;
 using System.Collections;
 using System.Windows.Forms;
 using DShowNET;
+using DirectShowLib;
+using DirectShowLib.BDA;
 using MediaPortal.TV.Database;
 using MediaPortal.GUI.Library;
 using MediaPortal.TV.Recording;
@@ -215,8 +217,8 @@ namespace MediaPortal.TV.Recording
       newchan.PhysicalChannel = currentIndex;
       newchan.Frequency = -1;
       newchan.Symbolrate = -1;
-      newchan.Modulation = (int)TunerLib.ModulationType.BDA_MOD_NOT_SET;
-      newchan.FEC = (int)TunerLib.FECMethod.BDA_FEC_METHOD_NOT_SET;
+      newchan.Modulation = (int)ModulationType.ModNotSet;
+      newchan.FEC = (int)FECMethod.MethodNotSet;
       captureCard.Tune(newchan, 0);
       System.Threading.Thread.Sleep(400);
 

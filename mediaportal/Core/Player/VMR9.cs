@@ -26,6 +26,8 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using DShowNET;
+using DShowNET.Helper;
+using DirectShowLib;
 using MediaPortal.Player;
 using MediaPortal.GUI.Library;
 using Microsoft.DirectX;
@@ -144,9 +146,7 @@ namespace MediaPortal.Player
 				throw new Exception("VMR9Helper:Multiple instances of VMR9 running!!!");
 			}
 
-      Type comtype = Type.GetTypeFromCLSID(Clsid.VideoMixingRenderer9);
-      object comobj = Activator.CreateInstance(comtype);
-      VMR9Filter = (IBaseFilter)comobj; comobj = null;
+      VMR9Filter = (IBaseFilter)new VideoMixingRenderer9();
       if (VMR9Filter == null)
       {
         Error.SetError("Unable to play movie", "VMR9 is not installed");
@@ -157,7 +157,7 @@ namespace MediaPortal.Player
       IntPtr hMonitor;
       AdapterInformation ai = Manager.Adapters.Default;
       hMonitor = Manager.GetAdapterMonitor(ai.Adapter);
-      IntPtr upDevice = DShowNET.DsUtils.GetUnmanagedDevice(GUIGraphicsContext.DX9Device);
+      IntPtr upDevice = DirectShowUtil.GetUnmanagedDevice(GUIGraphicsContext.DX9Device);
 
       m_scene = new PlaneScene(m_renderFrame, this);
       m_scene.Init();
@@ -195,10 +195,10 @@ namespace MediaPortal.Player
 					if (mixer!=null)
 					{
             //Log.Write("VMR9: enable YUV mixing");
-						uint dwPrefs;
+						VMR9MixerPrefs dwPrefs;
 						mixer.GetMixingPrefs(out dwPrefs);
-						dwPrefs  &= ~MixerPref_RenderTargetMask; 
-						dwPrefs |= MixerPref_RenderTargetYUV;
+						dwPrefs  &= ~VMR9MixerPrefs.RenderTargetMask; 
+						dwPrefs |= VMR9MixerPrefs.RenderTargetYUV;
 						mixer.SetMixingPrefs(dwPrefs);
 					}
 				}
@@ -426,15 +426,16 @@ namespace MediaPortal.Player
           return false;
         }
 
+        int hr = 0;
         //get the VMR9 input pin#0 is connected
 				for (int i=0; i < 3; ++i)
 				{
 					IPin pinIn, pinConnected;
-					int hr= DsUtils.GetPin(VMR9Filter, PinDirection.Input, i, out pinIn);
+          pinIn = DsFindPin.ByDirection(VMR9Filter, PinDirection.Input, i);
 					if (pinIn == null)
 					{
 						//no input pin found, vmr9 is not possible
-						Log.Write("vmr9: no input pin {0} found:{1:x}",i,hr);
+						Log.Write("vmr9: no input pin {0} found",i);
 						continue;
 					}
 
@@ -550,22 +551,20 @@ namespace MediaPortal.Player
 					using (Microsoft.DirectX.Direct3D.Surface surface=GUIGraphicsContext.DX9Device.CreateOffscreenPlainSurface(GUIGraphicsContext.Width,GUIGraphicsContext.Height,Microsoft.DirectX.Direct3D.Format.X8R8G8B8,Microsoft.DirectX.Direct3D.Pool.SystemMemory))
 					{
 						Microsoft.DirectX.Direct3D.SurfaceLoader.FromStream(surface,mStr,Microsoft.DirectX.Direct3D.Filter.None,0);
-						bmp.dwFlags=4|8;
-						bmp.color.blu=0;
-						bmp.color.green=0;
-						bmp.color.red=0;
+						bmp.dwFlags=(VMR9AlphaBitmapFlags)(4|8);
+            bmp.clrSrcKey = 0;
 						unsafe
 						{
 							bmp.pDDS=(System.IntPtr)surface.UnmanagedComPointer;
 						}
-						bmp.rDest=new VMR9NormalizedRect();
+						bmp.rDest=new NormalizedRect();
 						bmp.rDest.top=yy;
 						bmp.rDest.left=xx;
 						bmp.rDest.bottom=fy;
 						bmp.rDest.right=fx;
 						bmp.fAlpha=alphaValue;
 						//Log.Write("SaveVMR9Bitmap() called");
-						hr=VMR9Util.g_vmr9.MixerBitmapInterface.SetAlphaBitmap(bmp);
+						hr=VMR9Util.g_vmr9.MixerBitmapInterface.SetAlphaBitmap( ref bmp);
 						if(hr!=0)
 						{
 							//Log.Write("SaveVMR9Bitmap() failed: error {0:X} on SetAlphaBitmap()",hr);
@@ -575,17 +574,15 @@ namespace MediaPortal.Player
 				}
 				else
 				{
-					bmp.dwFlags=1;
-					bmp.color.blu=0;
-					bmp.color.green=0;
-					bmp.color.red=0;
-					bmp.rDest=new VMR9NormalizedRect();
+          bmp.dwFlags = (VMR9AlphaBitmapFlags)1;
+					bmp.clrSrcKey=0;
+					bmp.rDest=new NormalizedRect();
 					bmp.rDest.top=0.0f;
 					bmp.rDest.left=0.0f;
 					bmp.rDest.bottom=1.0f;
 					bmp.rDest.right=1.0f;
 					bmp.fAlpha=alphaValue;
-					hr=VMR9Util.g_vmr9.MixerBitmapInterface.UpdateAlphaBitmapParameters(bmp);
+          hr = VMR9Util.g_vmr9.MixerBitmapInterface.UpdateAlphaBitmapParameters(ref bmp);
 					if(hr!=0)
 					{
 						return false;

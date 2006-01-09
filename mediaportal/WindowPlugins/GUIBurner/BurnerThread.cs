@@ -31,6 +31,9 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Dialogs;
 using Core.Util;
 using DShowNET;
+using DShowNET.Helper;
+using DirectShowLib;
+using DirectShowLib.SBE;
 using System.Runtime.InteropServices;
 
 #endregion
@@ -277,21 +280,15 @@ namespace MediaPortal.GUI.GUIBurner
 			object comobj = null;
 			try 
 			{
-				comtype = Type.GetTypeFromCLSID( Clsid.FilterGraph );
-				comobj = Activator.CreateInstance( comtype );
-				graphBuilder = (IGraphBuilder) comobj; comobj = null;
+        graphBuilder = (IGraphBuilder)new FilterGraph();
 			
-				DsROT.AddGraphToRot( graphBuilder, out rotCookie );		// graphBuilder capGraph
-				Guid clsid = Clsid.StreamBufferSource;
-				Guid riid = typeof(IStreamBufferSource).GUID;
-				Object comObj = DsBugWO.CreateDsInstance( ref clsid, ref riid );
-				bufferSource = (IStreamBufferSource) comObj; comObj = null;
+        bufferSource = (IStreamBufferSource)new StreamBufferSource();
 		
 				IBaseFilter filter = (IBaseFilter) bufferSource;
 				graphBuilder.AddFilter(filter, "SBE SOURCE");
 		
 				IFileSourceFilter fileSource = (IFileSourceFilter) bufferSource;
-				int hr = fileSource.Load(file, IntPtr.Zero);
+				int hr = fileSource.Load(file, null);
 				string monikerPowerDvdMuxer=@"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{BC650178-0DE4-47DF-AF50-BBD9C7AEF5A9}";
 				powerDvdMuxer = Marshal.BindToMoniker( monikerPowerDvdMuxer ) as IBaseFilter;
 
@@ -306,33 +303,33 @@ namespace MediaPortal.GUI.GUIBurner
 				IPin pinOut0, pinOut1;
 				IPin pinIn0, pinIn1;
 
-				DsUtils.GetPin((IBaseFilter)bufferSource,PinDirection.Output,0,out pinOut0);
-				DsUtils.GetPin((IBaseFilter)bufferSource,PinDirection.Output,1,out pinOut1);
+        pinOut0=DsFindPin.ByDirection((IBaseFilter)bufferSource, PinDirection.Output, 0);
+        pinOut1=DsFindPin.ByDirection((IBaseFilter)bufferSource, PinDirection.Output, 1);
 
-				DsUtils.GetPin(powerDvdMuxer,PinDirection.Input,0,out pinIn0);
-				DsUtils.GetPin(powerDvdMuxer,PinDirection.Input,1,out pinIn1);
+        pinIn0=DsFindPin.ByDirection(powerDvdMuxer, PinDirection.Input, 0);
+        pinIn1=DsFindPin.ByDirection(powerDvdMuxer, PinDirection.Input, 1);
 				AMMediaType amAudio= new AMMediaType();
 				amAudio.majorType = MediaType.Audio;
-				amAudio.subType = MediaSubType.MPEG2_Audio;
-				pinOut0.Connect(pinIn1,ref amAudio);
+				amAudio.subType = MediaSubType.Mpeg2Audio;
+				pinOut0.Connect(pinIn1, amAudio);
 
 				AMMediaType amVideo= new AMMediaType();
 				amVideo.majorType = MediaType.Video;
-				amVideo.subType = MediaSubType.MPEG2_Video;
-				pinOut1.Connect(pinIn0,ref amVideo);
+				amVideo.subType = MediaSubType.Mpeg2Video;
+				pinOut1.Connect(pinIn0, amVideo);
 
 				IPin pinOut, pinIn;
-				hr=DsUtils.GetPin(powerDvdMuxer,PinDirection.Output,0,out pinOut);
-				hr=DsUtils.GetPin(fileWriterbase,PinDirection.Input,0,out pinIn);
+        pinOut = DsFindPin.ByDirection(powerDvdMuxer, PinDirection.Output, 0);
+        pinIn = DsFindPin.ByDirection(fileWriterbase, PinDirection.Input, 0);
 
 				AMMediaType mt = new AMMediaType(); 
-				hr=pinOut.Connect(pinIn,ref mt);
+				hr=pinOut.Connect(pinIn, mt);
 
 				string outputFileName=System.IO.Path.ChangeExtension(file,".mpg");
 				mt.majorType=MediaType.Stream;
-				mt.subType=MediaSubType.MPEG2;
+				mt.subType=MediaSubTypeEx.MPEG2;
 
-				hr=fileWriterFilter.SetFileName(outputFileName, ref mt);
+				hr=fileWriterFilter.SetFileName(outputFileName,  mt);
 
 				mediaControl= graphBuilder as IMediaControl;
 				hr=mediaControl.Run();
@@ -369,8 +366,6 @@ namespace MediaPortal.GUI.GUIBurner
 
 		private void Cleanup()
 		{
-			if( rotCookie != 0 )
-				DsROT.RemoveGraphFromRot( ref rotCookie );
 
 			if( mediaControl != null )
 			{
@@ -390,7 +385,7 @@ namespace MediaPortal.GUI.GUIBurner
 				Marshal.ReleaseComObject( bufferSource );
 			bufferSource = null;
 
-			DsUtils.RemoveFilters(graphBuilder);
+			DirectShowUtil.RemoveFilters(graphBuilder);
 
 			if( graphBuilder != null )
 				Marshal.ReleaseComObject( graphBuilder ); graphBuilder = null;

@@ -21,7 +21,9 @@
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
-using DShowNET;
+using DirectShowLib;
+using DirectShowLib.SBE;
+using DShowNET.Helper;
 using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Core.Transcoding
@@ -34,7 +36,7 @@ namespace MediaPortal.Core.Transcoding
 		#region imports
 
 		[DllImport("dvblib.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
-		private static extern int SetWmvProfile(DShowNET.IBaseFilter filter, int bitrate, int fps, int screenX, int screenY);
+		private static extern int SetWmvProfile(DirectShowLib.IBaseFilter filter, int bitrate, int fps, int screenX, int screenY);
 		#endregion
 
 		[ComVisible(true), ComImport,
@@ -171,7 +173,7 @@ namespace MediaPortal.Core.Transcoding
 		
 		Guid IID_IWMWriterAdvanced2 = new Guid(0x962dc1ec,0xc046,0x4db8,0x9c,0xc7,0x26,0xce,0xae,0x50,0x08,0x17 );
 
-		protected int												rotCookie = 0;
+    protected DsROTEntry _rotEntry = null;
 		protected  IGraphBuilder			  			      graphBuilder =null;
 		protected  IStreamBufferSource 			        bufferSource=null ;
 		protected IMediaControl											mediaControl=null;
@@ -217,25 +219,13 @@ namespace MediaPortal.Core.Transcoding
 
 				
 				Log.Write("DVR2WMV: create graph");
-				Type comtype = null;
-				object comobj = null;
-				comtype = Type.GetTypeFromCLSID( Clsid.FilterGraph );
-				if( comtype == null )
-				{
-					Log.WriteFile(Log.LogType.Log,true,"DVR2WMV:DirectX 9 not installed");
-					return false;
-				}
-				comobj = Activator.CreateInstance( comtype );
-				graphBuilder = (IGraphBuilder) comobj; comobj = null;
-		
-				DsROT.AddGraphToRot( graphBuilder, out rotCookie );		// graphBuilder capGraph
+        graphBuilder = (IGraphBuilder)new FilterGraph();
+
+        _rotEntry = new DsROTEntry((IFilterGraph)graphBuilder);
 
 				
 				Log.Write("DVR2WMV: add streambuffersource");
-				Guid clsid = Clsid.StreamBufferSource;
-				Guid riid = typeof(IStreamBufferSource).GUID;
-				Object comObj = DsBugWO.CreateDsInstance( ref clsid, ref riid );
-				bufferSource = (IStreamBufferSource) comObj; comObj = null;
+				bufferSource = (IStreamBufferSource) new StreamBufferSource();
 
 	
 				IBaseFilter filter = (IBaseFilter) bufferSource;
@@ -243,7 +233,7 @@ namespace MediaPortal.Core.Transcoding
 	
 				Log.Write("DVR2WMV: load file:{0}",info.file);
 				IFileSourceFilter fileSource = (IFileSourceFilter) bufferSource;
-				int hr = fileSource.Load(info.file, IntPtr.Zero);
+				int hr = fileSource.Load(info.file, null);
 
 				//add mpeg2 audio/video codecs
 				string strVideoCodec=@"DScaler Mpeg2 Video Decoder";
@@ -276,8 +266,8 @@ namespace MediaPortal.Core.Transcoding
 				//connect output #1 of streambuffer source->mpeg2 video codec pin 1
 				IPin pinOut0, pinOut1;
 				IPin pinIn0, pinIn1;
-				DsUtils.GetPin((IBaseFilter)bufferSource,PinDirection.Output,0,out pinOut0);//audio
-				DsUtils.GetPin((IBaseFilter)bufferSource,PinDirection.Output,1,out pinOut1);//video
+				pinOut0=DsFindPin.ByDirection((IBaseFilter)bufferSource,PinDirection.Output,0 );//audio
+				pinOut1=DsFindPin.ByDirection((IBaseFilter)bufferSource,PinDirection.Output,1 );//video
 				if (pinOut0==null || pinOut1==null)
 				{
 					Log.WriteFile(Log.LogType.Log,true,"DVR2WMV:FAILED:unable to get pins of source");
@@ -285,8 +275,8 @@ namespace MediaPortal.Core.Transcoding
 					return false;
 				}
 
-				DsUtils.GetPin(Mpeg2VideoCodec,PinDirection.Input,0,out pinIn0);//video
-				DsUtils.GetPin(Mpeg2AudioCodec,PinDirection.Input,0,out pinIn1);//audio
+				 pinIn0=DsFindPin.ByDirection(Mpeg2VideoCodec,PinDirection.Input,0);//video
+				 pinIn1=DsFindPin.ByDirection(Mpeg2AudioCodec,PinDirection.Input,0);//audio
 				if (pinIn0==null || pinIn1==null)
 				{
 					Log.WriteFile(Log.LogType.Log,true,"DVR2WMV:FAILED:unable to get pins of mpeg2 video/audio codec");
@@ -326,14 +316,14 @@ namespace MediaPortal.Core.Transcoding
 				long lTime=5*60*60;
 				lTime*=10000000;
 				long pStop=0;
-				hr=mediaSeeking.SetPositions(ref lTime, SeekingFlags.AbsolutePositioning,ref pStop, SeekingFlags.NoPositioning);
+				hr=mediaSeeking.SetPositions(new DsLong( lTime), AMSeekingSeekingFlags.AbsolutePositioning,new DsLong( pStop), AMSeekingSeekingFlags.NoPositioning);
 				if (hr==0)
 				{
 					long lStreamPos;
 					mediaSeeking.GetCurrentPosition(out lStreamPos); // stream position
 					m_dDuration=lStreamPos;
 					lTime=0;
-					mediaSeeking.SetPositions(ref lTime, SeekingFlags.AbsolutePositioning,ref pStop, SeekingFlags.NoPositioning);
+					mediaSeeking.SetPositions(new DsLong( lTime), AMSeekingSeekingFlags.AbsolutePositioning,new DsLong( pStop), AMSeekingSeekingFlags.NoPositioning);
 				}
 				double duration=m_dDuration/10000000d;
 				Log.Write("DVR2WMV: movie duration:{0}",Util.Utils.SecondsToHMSString((int)duration));				
@@ -408,10 +398,10 @@ namespace MediaPortal.Core.Transcoding
 				return true;
 			}
 			int p1, p2, hr = 0;
-			DsEvCode code;
+			EventCode code;
 			hr = mediaEvt.GetEvent( out code, out p1, out p2, 0 );
 			hr = mediaEvt.FreeEventParams( code, p1, p2 );
-			if( code == DsEvCode.Complete || code== DsEvCode.ErrorAbort)
+			if( code == EventCode.Complete || code== EventCode.ErrorAbort)
 			{
 				Cleanup();
 				return true;
@@ -463,9 +453,12 @@ namespace MediaPortal.Core.Transcoding
 				Marshal.ReleaseComObject( bufferSource );
 			bufferSource = null;
 
-			DsUtils.RemoveFilters(graphBuilder);
-			if( rotCookie != 0 )
-				DsROT.RemoveGraphFromRot( ref rotCookie );
+			DirectShowUtil.RemoveFilters(graphBuilder);
+      if (_rotEntry != null)
+      {
+        _rotEntry.Dispose();
+      }
+      _rotEntry = null;
 
 			if( graphBuilder != null )
 				Marshal.ReleaseComObject( graphBuilder ); graphBuilder = null;
@@ -517,15 +510,15 @@ namespace MediaPortal.Core.Transcoding
 				Cleanup();
 				return false;
 			}
-			hr=fileWriterFilter.SetFileName(fileName,IntPtr.Zero);
-			hr=fileWriterFilter.SetMode(1);
+			hr=fileWriterFilter.SetFileName(fileName,null);
+			hr=fileWriterFilter.SetMode(AMFileSinkFlags.OverWrite);
 
 
 			Log.Write("DVR2WMV: connect audio/video codecs outputs -> ASF WM Writer");
 			//connect output #0 of videocodec->asf writer pin 1
 			//connect output #0 of audiocodec->asf writer pin 0
-			DsUtils.GetPin((IBaseFilter)Mpeg2AudioCodec,PinDirection.Output,0,out pinOut0);
-			DsUtils.GetPin((IBaseFilter)Mpeg2VideoCodec,PinDirection.Output,0,out pinOut1);
+      pinOut0=DsFindPin.ByDirection((IBaseFilter)Mpeg2AudioCodec, PinDirection.Output, 0);
+      pinOut1=DsFindPin.ByDirection((IBaseFilter)Mpeg2VideoCodec, PinDirection.Output, 0);
 			if (pinOut0==null || pinOut1==null)
 			{
 				Log.WriteFile(Log.LogType.Log,true,"DVR2WMV:FAILED:unable to get outpins of video codec");
@@ -533,7 +526,7 @@ namespace MediaPortal.Core.Transcoding
 				return false;
 			}
 
-			DsUtils.GetPin(fileWriterbase,PinDirection.Input,0,out pinIn0);
+      pinIn0=DsFindPin.ByDirection(fileWriterbase, PinDirection.Input, 0);
 			if (pinIn0==null)
 			{
 				Log.WriteFile(Log.LogType.Log,true,"DVR2WMV:FAILED:unable to get pins of asf wm writer");
@@ -549,8 +542,8 @@ namespace MediaPortal.Core.Transcoding
 				return false;
 			}
 
-			
-			DsUtils.GetPin(fileWriterbase,PinDirection.Input,1,out pinIn1);
+
+      pinIn1=DsFindPin.ByDirection(fileWriterbase, PinDirection.Input, 1);
 			if (pinIn1==null)
 			{
 				Log.WriteFile(Log.LogType.Log,true,"DVR2WMV:FAILED:unable to get pins of asf wm writer");

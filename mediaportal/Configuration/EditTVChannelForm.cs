@@ -26,6 +26,7 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using MediaPortal.TV.Database;
 using DShowNET;
+using DirectShowLib;
 
 using System.Globalization;
 

@@ -477,57 +477,21 @@
     <Compile Include="Drawing\VerticalAlignment.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="DShowNET\BitMapInfoHeader.cs" />
     <Compile Include="DShowNET\Helper\AudioMixerHelper.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DShowNET\BDAInterfaces.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DShowNET\BDAMedia.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DShowNET\BDATypes.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DShowNET\DirectShowUtil.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DShowNET\DirectShowVolume.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="DShowNET\Helper\ClassId.cs" />
+    <Compile Include="DShowNET\Helper\CrossBar.cs" />
+    <Compile Include="DShowNET\Helper\DirectShowUtil.cs" />
+    <Compile Include="DShowNET\Helper\DirectShowVolume.cs" />
     <Compile Include="DShowNET\Helper\DirectVobSub.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DShowNET\DsBugWO.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DShowNET\DsControl.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DShowNET\DsCore.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DShowNET\DsDevice.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DShowNET\DsDVD.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DShowNET\DsExtend.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DShowNET\DsUtils.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DShowNET\DsUuids.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DShowNET\DsVmRender.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DShowNET\Helper\Filters\Filter.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="DShowNET\Helper\Filters\FilterCategory.cs" />
     <Compile Include="DShowNET\Helper\Filters\FilterCollection.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -556,6 +520,8 @@
     <Compile Include="DShowNET\Helper\cards\ivac.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="DShowNET\IPersistMemory.cs" />
+    <Compile Include="DShowNET\MediaSubTypeEx.cs" />
     <Compile Include="DShowNET\MetaData\AsfMetadataEditor.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -571,9 +537,6 @@
     <Compile Include="DShowNET\Helper\cards\DigitalEveryWhere.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DShowNET\QEdit.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="DShowNET\Helper\TunerCountry.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -586,6 +549,13 @@
     <Compile Include="DShowNET\Helper\cards\VideoCaptureProperties.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="DShowNET\Mpeg2VideoInfo.cs" />
+    <Compile Include="DShowNET\MPSA\IATSCGrabber.cs" />
+    <Compile Include="DShowNET\MPSA\IEPGGrabber.cs" />
+    <Compile Include="DShowNET\MPSA\IMHWGrabber.cs" />
+    <Compile Include="DShowNET\MPSA\IStreamAnalyzer.cs" />
+    <Compile Include="DShowNET\MPTSWriter\IMPTSRecord.cs" />
+    <Compile Include="DShowNET\MPTSWriter\IPMTSWriter.cs" />
     <Compile Include="FreeDB\CDInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -1046,9 +1016,7 @@
     <Compile Include="Player\IPlayer.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Player\PlaneScene.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Player\PlaneScene.cs" />
     <Compile Include="Player\PlayerFactory.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -1998,6 +1966,12 @@
       <DependentUpon>USBUIRTLearnForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DirectShowLib\DirectShowLib.csproj">
+      <Project>{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}</Project>
+      <Name>DirectShowLib</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

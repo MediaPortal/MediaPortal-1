@@ -36,6 +36,7 @@ using MediaPortal.Video.Database;
 using MediaPortal.Player;
 using DShowNET;
 using DShowNET.Helper;
+using DirectShowLib;
 using TVCapture;
 //using DirectX.Capture;
 using Toub.MediaCenter.Dvrms.Metadata;

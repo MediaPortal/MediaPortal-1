@@ -34,7 +34,7 @@ using Direct3D = Microsoft.DirectX.Direct3D;
 
 
 using MediaPortal.GUI.Library;
-using DShowNET;
+using DirectShowLib;
 namespace MediaPortal.Player
 {
   public class AudioPlayerWMP9 : IPlayer  

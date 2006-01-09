@@ -24,6 +24,8 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using DShowNET;
 using DShowNET.Helper;
+using DirectShowLib;
+using DirectShowLib.SBE;
 using MediaPortal.Util;
 using MediaPortal.Player;
 using MediaPortal.GUI.Library;
@@ -60,7 +62,7 @@ namespace MediaPortal.TV.Recording
       Vmr9 = new VMR9Util("mytv");
 
       m_iPrevChannel = -1;
-      DirectShowUtil.DebugWrite("MCESinkGraph:CreateGraph()");
+      Log.Write("MCESinkGraph:CreateGraph()");
       int hr = 0;
       Filters filters = new Filters();
       Filter videoCaptureDeviceFilter = null;
@@ -75,32 +77,30 @@ namespace MediaPortal.TV.Recording
 
       if (videoCaptureDeviceFilter == null)
       {
-        DirectShowUtil.DebugWrite("MCESinkGraph:CreateGraph() FAILED couldnt find capture device:{0}", m_strVideoCaptureFilter);
+        Log.Write("MCESinkGraph:CreateGraph() FAILED couldnt find capture device:{0}", m_strVideoCaptureFilter);
         return false;
       }
 
       // Make a new filter graph
-      DirectShowUtil.DebugWrite("MCESinkGraph:create new filter graph (IGraphBuilder)");
-      m_graphBuilder = (IGraphBuilder)Activator.CreateInstance(Type.GetTypeFromCLSID(Clsid.FilterGraph, true));
+      Log.Write("MCESinkGraph:create new filter graph (IGraphBuilder)");
+      m_graphBuilder = (IGraphBuilder)new FilterGraph();
 
       // Get the Capture Graph Builder
-      DirectShowUtil.DebugWrite("MCESinkGraph:Get the Capture Graph Builder (ICaptureGraphBuilder2)");
-      Guid clsid = Clsid.CaptureGraphBuilder2;
-      Guid riid = typeof(ICaptureGraphBuilder2).GUID;
-      m_captureGraphBuilder = (ICaptureGraphBuilder2)DsBugWO.CreateDsInstance(ref clsid, ref riid);
+      Log.Write("MCESinkGraph:Get the Capture Graph Builder (ICaptureGraphBuilder2)");
+      m_captureGraphBuilder = (ICaptureGraphBuilder2)new CaptureGraphBuilder2();
 
-      DirectShowUtil.DebugWrite("MCESinkGraph:Link the CaptureGraphBuilder to the filter graph (SetFiltergraph)");
+      Log.Write("MCESinkGraph:Link the CaptureGraphBuilder to the filter graph (SetFiltergraph)");
       hr = m_captureGraphBuilder.SetFiltergraph(m_graphBuilder);
       if (hr < 0)
       {
-        DirectShowUtil.DebugWrite("MCESinkGraph:link FAILED");
+        Log.Write("MCESinkGraph:link FAILED");
         return false;
       }
-      DirectShowUtil.DebugWrite("MCESinkGraph:Add graph to ROT table");
-      DsROT.AddGraphToRot(m_graphBuilder, out m_rotCookie);
+      Log.Write("MCESinkGraph:Add graph to ROT table");
+      _rotEntry = new DsROTEntry((IFilterGraph)m_graphBuilder);
 
       // Get the video device and add it to the filter graph
-      DirectShowUtil.DebugWrite("MCESinkGraph:CreateGraph() add capture device {0}", m_strVideoCaptureFilter);
+      Log.Write("MCESinkGraph:CreateGraph() add capture device {0}", m_strVideoCaptureFilter);
       try
       {
         m_captureFilter = Marshal.BindToMoniker(videoCaptureDeviceFilter.MonikerString) as IBaseFilter;
@@ -109,14 +109,14 @@ namespace MediaPortal.TV.Recording
           hr = m_graphBuilder.AddFilter(m_captureFilter, "Video Capture Device");
           if (hr < 0)
           {
-            DirectShowUtil.DebugWrite("MCESinkGraph:FAILED:Add Videodevice to filtergraph");
+            Log.Write("MCESinkGraph:FAILED:Add Videodevice to filtergraph");
             return false;
           }
         }
       }
       catch (Exception)
       {
-        DirectShowUtil.DebugWrite("MCESinkGraph:FAILED:Add Videodevice to filtergraph");
+        Log.Write("MCESinkGraph:FAILED:Add Videodevice to filtergraph");
         return false;
       }
 
@@ -124,24 +124,24 @@ namespace MediaPortal.TV.Recording
       // FindInterface will also add any required filters
       // (WDM devices in particular may need additional
       // upstream filters to function).
-      DirectShowUtil.DebugWrite("MCESinkGraph:get Video stream control interface (IAMStreamConfig)");
+      Log.Write("MCESinkGraph:get Video stream control interface (IAMStreamConfig)");
       object o;
-      Guid cat;
+      DsGuid cat;
       Guid iid;
 
       // Retrieve TV Tuner if available
-      DirectShowUtil.DebugWrite("MCESinkGraph:Find TV Tuner");
+      Log.Write("MCESinkGraph:Find TV Tuner");
       o = null;
-      cat = FindDirection.UpstreamOnly;
+      cat = new DsGuid(FindDirection.UpstreamOnly);
       iid = typeof(IAMTVTuner).GUID;
-      hr = m_captureGraphBuilder.FindInterface(new Guid[1] { cat }, null, m_captureFilter, ref iid, out o);
+      hr = m_captureGraphBuilder.FindInterface(cat, null, m_captureFilter,  iid, out o);
       if (hr == 0)
       {
         m_TVTuner = o as IAMTVTuner;
       }
       if (m_TVTuner == null)
       {
-        DirectShowUtil.DebugWrite("MCESinkGraph:CreateGraph() FAILED:no tuner found");
+        Log.Write("MCESinkGraph:CreateGraph() FAILED:no tuner found");
       }
 
 
@@ -167,7 +167,7 @@ namespace MediaPortal.TV.Recording
       {
         for (int ipin = 0; ipin < 10; ipin++)
         {
-          IPin pin = DirectShowUtil.FindPinNr((IBaseFilter)m_TVTuner, PinDirection.Output, ipin);
+          IPin pin = DsFindPin.ByDirection((IBaseFilter)m_TVTuner, PinDirection.Output, ipin);
           if (pin != null)
           {
             IPin pConnectPin = null;
@@ -190,7 +190,7 @@ namespace MediaPortal.TV.Recording
 
       m_FrameSize = m_videoCaptureDevice.GetFrameSize();
 
-      DirectShowUtil.DebugWrite("MCESinkGraph:capturing:{0}x{1}", m_FrameSize.Width, m_FrameSize.Height);
+      Log.Write("MCESinkGraph:capturing:{0}x{1}", m_FrameSize.Width, m_FrameSize.Height);
 
       if (m_videoCaptureDevice.MPEG2)
       {
@@ -211,50 +211,50 @@ namespace MediaPortal.TV.Recording
       // AverMedia MCE card has a bug. It will only connect the TV Tuner->crossbar if
       // the crossbar outputs are disconnected
       // same for the winfast pvr 2000
-      DirectShowUtil.DebugWrite("MCESinkGraph:ConnectTVTunerOutputs()");
+      Log.Write("MCESinkGraph:ConnectTVTunerOutputs()");
 
       //find crossbar
       int hr;
-      Guid cat;
+      DsGuid cat;
       Guid iid;
       object o = null;
-      cat = FindDirection.UpstreamOnly;
+      cat = new DsGuid(FindDirection.UpstreamOnly);
       iid = typeof(IAMCrossbar).GUID;
-      hr = m_captureGraphBuilder.FindInterface(new Guid[1] { cat }, null, m_captureFilter, ref iid, out o);
+      hr = m_captureGraphBuilder.FindInterface(cat, null, m_captureFilter, iid, out o);
       if (hr != 0 || o == null)
       {
-        DirectShowUtil.DebugWrite("MCESinkGraph:no crossbar found");
+        Log.Write("MCESinkGraph:no crossbar found");
         return; // no crossbar found?
       }
 
       IAMCrossbar crossbar = o as IAMCrossbar;
       if (crossbar == null)
       {
-        DirectShowUtil.DebugWrite("MCESinkGraph:no crossbar found");
+        Log.Write("MCESinkGraph:no crossbar found");
         return;
       }
 
 
       //disconnect the output pins of the crossbar->video capture filter
-      DirectShowUtil.DebugWrite("MCESinkGraph:disconnect crossbar outputs");
+      Log.Write("MCESinkGraph:disconnect crossbar outputs");
       DirectShowUtil.DisconnectOutputPins(m_graphBuilder, (IBaseFilter)crossbar);
 
       //connect the output pins of the tvtuner
-      DirectShowUtil.DebugWrite("MCESinkGraph:connect tvtuner outputs");
+      Log.Write("MCESinkGraph:connect tvtuner outputs");
       bool bAllConnected = DirectShowUtil.RenderOutputPins(m_graphBuilder, (IBaseFilter)m_TVTuner);
       if (bAllConnected)
-        DirectShowUtil.DebugWrite("MCESinkGraph:all connected");
+        Log.Write("MCESinkGraph:all connected");
       else
-        DirectShowUtil.DebugWrite("MCESinkGraph:FAILED, not all pins connected");
+        Log.Write("MCESinkGraph:FAILED, not all pins connected");
 
       //reconnect the output pins of the crossbar
-      DirectShowUtil.DebugWrite("MCESinkGraph:reconnect crossbar output pins");
+      Log.Write("MCESinkGraph:reconnect crossbar output pins");
 
       bAllConnected = DirectShowUtil.RenderOutputPins(m_graphBuilder, (IBaseFilter)crossbar);
       if (bAllConnected)
-        DirectShowUtil.DebugWrite("MCESinkGraph:all connected");
+        Log.Write("MCESinkGraph:all connected");
       else
-        DirectShowUtil.DebugWrite("MCESinkGraph:FAILED, not all pins connected");
+        Log.Write("MCESinkGraph:FAILED, not all pins connected");
     }
 
   }

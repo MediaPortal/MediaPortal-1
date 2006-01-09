@@ -22,7 +22,7 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using DShowNET;
+using DirectShowLib;
 
 namespace DShowNET.Helper
 {

@@ -27,6 +27,9 @@ using MediaPortal.GUI.Library;
 using MediaPortal.TV.Database;
 using System.Threading;
 
+using DShowNET;
+using DShowNET.Helper;
+using DirectShowLib;
 namespace MediaPortal.TV.Recording
 {
   /// <summary>
@@ -41,7 +44,7 @@ namespace MediaPortal.TV.Recording
     [DllImport("dvblib.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern bool ReleaseSectionsBuffer();
     [DllImport("dvblib.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern bool GetSectionData(DShowNET.IBaseFilter filter, int pid, int tid, ref int sectionCount, int tableSection, int timeout);
+    private static extern bool GetSectionData(DirectShowLib.IBaseFilter filter, int pid, int tid, ref int sectionCount, int tableSection, int timeout);
     // globals
     #endregion
 
@@ -674,7 +677,7 @@ namespace MediaPortal.TV.Recording
     //
     //
     // iso 639 language codes
-    private bool MsGetStreamData(DShowNET.IBaseFilter filter, int pid, int tid, int tableSection, int timeout)
+    private bool MsGetStreamData(DirectShowLib.IBaseFilter filter, int pid, int tid, int tableSection, int timeout)
     {
       bool flag;
       int dataLen = 0;

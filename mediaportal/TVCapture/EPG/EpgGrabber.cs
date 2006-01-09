@@ -3,7 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
+using DirectShowLib;
 using DShowNET;
+using DShowNET.Helper;
+using DShowNET.MPSA;
+using DShowNET.MPTSWriter;
 using MediaPortal.GUI.Library;
 using MediaPortal.TV.Database;
 

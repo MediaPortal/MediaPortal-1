@@ -78,6 +78,8 @@ copy ..\..\..\Interop.iTunesLib.dll .
 copy ..\..\..\Microsoft.Office.Interop.Outlook.dll .
 copy ..\..\..\XPBurnComponent.dll .
 
+copy ..\..\..\core\bin\debug\DirectShowLib.dll .
+copy ..\..\..\core\bin\debug\DirectShowLib.pdb .
 copy ..\..\..\core\bin\debug\Core.dll .
 copy ..\..\..\core\bin\debug\Core.pdb .
 copy ..\..\..\tvcapture\bin\debug\tvcapture.dll .

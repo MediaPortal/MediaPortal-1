@@ -268,6 +268,10 @@
       <Project>{396C5208-5D46-4A11-92C1-FD0F2F42D7DD}</Project>
       <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
     </ProjectReference>
+    <ProjectReference Include="..\DirectShowLib\DirectShowLib.csproj">
+      <Project>{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}</Project>
+      <Name>DirectShowLib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TVCapture\TVCapture.csproj">
       <Name>TVCapture</Name>
       <Project>{B5886774-5D2B-4F6C-A6B6-3998F4F5E60C}</Project>

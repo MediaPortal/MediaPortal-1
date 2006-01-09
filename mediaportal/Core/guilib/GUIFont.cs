@@ -292,7 +292,7 @@ namespace MediaPortal.GUI.Library
 		/// <param name="flags">Font render flags.</param>
 		protected void DrawText(float xpos, float ypos, Color color, string text, RenderFlags flags, int maxWidth)
 		{
-			if (!FontAdded) ReloadFont();
+      if (!FontAdded) return;
 			if (text==null) return;
 			if (text==String.Empty) return;
 			if (xpos <=0) return ;
@@ -368,10 +368,9 @@ namespace MediaPortal.GUI.Library
 		/// <returns>The size of the rendered text.</returns>
 		public void GetTextExtent(string text, ref float textwidth, ref float textheight)
 		{
-			if (!FontAdded) ReloadFont();
       textwidth  = 0.0f;
       textheight = 0.0f;
-
+      if (!FontAdded) return;
 			if (null == text || text == String.Empty) return;
 
 			float fRowWidth  = 0.0f;
@@ -438,6 +437,7 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public void InitializeDeviceObjects()
 		{
+      ReloadFont();
 		}
 
 		void ReloadFont()
@@ -626,9 +626,9 @@ namespace MediaPortal.GUI.Library
 			SetFontEgine();
 		}
 
-		public void RestoreDeviceObjects()
-		{
-		}
+    public void RestoreDeviceObjects()
+    {
+    }
 		/// <summary>
 		/// Restore the font after a device has been reset.
 		/// </summary>
@@ -639,7 +639,7 @@ namespace MediaPortal.GUI.Library
 			Surface surf = GUIGraphicsContext.DX9Device.GetRenderTarget( 0 );
 			
 			if (logfonts) Log.Write("GUIFont:RestoreDeviceObjects() fontengine: add font:"+ID.ToString());
-			IntPtr upTexture = DShowNET.DsUtils.GetUnmanagedTexture(fontTexture);
+			IntPtr upTexture = DShowNET.Helper.DirectShowUtil.GetUnmanagedTexture(fontTexture);
 			unsafe
 			{
 				FontEngineAddFont(ID,upTexture.ToPointer(), _StartCharacter, _EndCharacter, textureScale, textureWidth, textureHeight, spacingPerChar,MaxNumfontVertices);

@@ -22,7 +22,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using DShowNET;
+using DirectShowLib;
 using MediaPortal.TV.Database;
 
 namespace MediaPortal.TV.Recording

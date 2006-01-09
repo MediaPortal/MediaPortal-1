@@ -40,7 +40,7 @@ namespace MediaPortal.TV.Recording
 		[DllImport("dvblib.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
 		private static extern bool ReleaseSectionsBuffer();
 		[DllImport("dvblib.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
-		private static extern bool GetSectionData(DShowNET.IBaseFilter filter,int pid,int tid,ref int sectionCount,int tableSection,int timeout);
+		private static extern bool GetSectionData(DirectShowLib.IBaseFilter filter,int pid,int tid,ref int sectionCount,int tableSection,int timeout);
 		// globals
 		#endregion
 
@@ -62,7 +62,7 @@ namespace MediaPortal.TV.Recording
 			set{m_timeoutMS=value;}
 		}
 
-		public DVBSections.Transponder Scan(DShowNET.IBaseFilter filter)
+		public DVBSections.Transponder Scan(DirectShowLib.IBaseFilter filter)
 		{
 			Log.Write("ATSC-scan:");
 			m_sectionsList=new ArrayList();	
@@ -525,7 +525,7 @@ namespace MediaPortal.TV.Recording
 #endif
 		}
 
-		private bool MsGetStreamData(DShowNET.IBaseFilter filter,int pid, int tid,int tableSection,int timeout)
+		private bool MsGetStreamData(DirectShowLib.IBaseFilter filter,int pid, int tid,int tableSection,int timeout)
 		{
 			bool flag;
 			int dataLen=0;

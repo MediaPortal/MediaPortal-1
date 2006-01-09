@@ -24,7 +24,7 @@ using System.Collections;
 using System.Windows.Forms;
 using DShowNET;
 using DShowNET.Helper;
-//using DirectX.Capture;
+using DirectShowLib;
 using MediaPortal.TV.Database;
 using MediaPortal.Radio.Database;
 

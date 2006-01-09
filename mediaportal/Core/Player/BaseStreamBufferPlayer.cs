@@ -29,7 +29,9 @@ using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Direct3D = Microsoft.DirectX.Direct3D;
 using MediaPortal.GUI.Library;
-using DShowNET;
+using DShowNET.Helper;
+using DirectShowLib;
+using DirectShowLib.SBE;
 
 namespace MediaPortal.Player 
 {
@@ -80,7 +82,7 @@ namespace MediaPortal.Player
     protected bool          										_isLive=false;
     protected double                            _lastPosition=0;
 		protected bool                              _isWindowVisible=false;
-		protected int												_rotCookie = 0;
+    protected DsROTEntry _rotEntry = null;
 		protected int                       _aspectX=1;
 		protected int                       _aspectY=1;
 		protected long                      _speedRate = 10000;
@@ -104,7 +106,7 @@ namespace MediaPortal.Player
 
 		/// <summary> audio interface used to control volume. </summary>
 		protected IBasicAudio								_basicAudio=null;
-		protected uint _minBackingFiles, _maxBackingFiles,_backingFileDuration;
+		protected int _minBackingFiles, _maxBackingFiles,_backingFileDuration;
 		VMR7Util  _vmr7 = null;
 		DateTime  _elapsedTimer=DateTime.Now;
 
@@ -148,7 +150,7 @@ namespace MediaPortal.Player
 				if (iTimeShiftBuffer<5) iTimeShiftBuffer=5;
 			}
 			iTimeShiftBuffer*=60; //in seconds
-			_backingFileDuration = (uint)(iTimeShiftBuffer/6);
+			_backingFileDuration = (int)(iTimeShiftBuffer/6);
 
 			m_bIsVisible=false;
       _isWindowVisible=false;
@@ -170,7 +172,7 @@ namespace MediaPortal.Player
 				_currentFile="";
 				return false;
 			}
-			DsROT.AddGraphToRot( _graphBuilder, out _rotCookie );		// _graphBuilder capGraph
+      _rotEntry = new DsROTEntry((IFilterGraph)_graphBuilder);
        
 			int hr = _mediaEvt.SetNotifyWindow( GUIGraphicsContext.ActiveForm, WM_GRAPHNOTIFY, IntPtr.Zero );
 			if (hr < 0)
@@ -183,7 +185,7 @@ namespace MediaPortal.Player
 			if (_videoWin!=null)
 			{
 				_videoWin.put_Owner( GUIGraphicsContext.ActiveForm );
-				_videoWin.put_WindowStyle( WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN );
+				_videoWin.put_WindowStyle( (WindowStyle)( (int)WindowStyle.Child+(int)WindowStyle.ClipSiblings+(int)WindowStyle.ClipChildren) );
         _videoWin.put_MessageDrain(GUIGraphicsContext.form.Handle);
 
 			}
@@ -260,7 +262,7 @@ namespace MediaPortal.Player
 				long lTime=5*60*60;
 				lTime*=10000000;
 				long pStop=0;
-				hr=_mediaSeeking.SetPositions(ref lTime, SeekingFlags.AbsolutePositioning,ref pStop, SeekingFlags.NoPositioning);
+				hr=_mediaSeeking.SetPositions(new DsLong(lTime), AMSeekingSeekingFlags.AbsolutePositioning,new DsLong( pStop), AMSeekingSeekingFlags.NoPositioning);
 				if (hr==0)
 				{
 					long lStreamPos;
@@ -427,13 +429,13 @@ namespace MediaPortal.Player
 			{
 				_isWindowVisible=false;
 				//Log.Write("StreamBufferPlayer:hide window");
-				if (_videoWin!=null) _videoWin.put_Visible( DsHlp.OAFALSE );
+				if (_videoWin!=null) _videoWin.put_Visible( OABool.False );
 			}
 			else if (!_isWindowVisible && m_bIsVisible)
 			{
 				_isWindowVisible=true;
 				//Log.Write("StreamBufferPlayer:show window");
-				if (_videoWin!=null) _videoWin.put_Visible( DsHlp.OATRUE );
+				if (_videoWin!=null) _videoWin.put_Visible( OABool.True);
 			}      
 			
 			OnProcess();
@@ -877,7 +879,7 @@ namespace MediaPortal.Player
 
 					dTimeInSecs+=fContentStart;
 					long lTime=(long)dTimeInSecs;
-					int hr=_mediaSeeking.SetPositions(ref lTime, SeekingFlags.AbsolutePositioning,ref pStop, SeekingFlags.NoPositioning);
+					int hr=_mediaSeeking.SetPositions(new DsLong( lTime), AMSeekingSeekingFlags.AbsolutePositioning,new DsLong( pStop), AMSeekingSeekingFlags.NoPositioning);
 					if (hr !=0)
 					{
 						Log.WriteFile(Log.LogType.Log,true,"seek failed->seek to 0 0x:{0:X}",hr);
@@ -1071,22 +1073,12 @@ namespace MediaPortal.Player
 			object comobj = null;
 			try 
 			{
-				comtype = Type.GetTypeFromCLSID( Clsid.FilterGraph );
-				if( comtype == null )
-				{
-					Log.WriteFile(Log.LogType.Log,true,"StreamBufferPlayer:DirectX 9 not installed");
-					return false;
-				}
-				comobj = Activator.CreateInstance( comtype );
-				_graphBuilder = (IGraphBuilder) comobj; comobj = null;
+        _graphBuilder = (IGraphBuilder)new FilterGraph();
 
 				_vmr7=new VMR7Util();
 				_vmr7.AddVMR7(_graphBuilder);
 
-				Guid clsid = Clsid.StreamBufferSource;
-				Guid riid = typeof(IStreamBufferSource).GUID;
-				Object comObj = DsBugWO.CreateDsInstance( ref clsid, ref riid );
-				_bufferSource = (IStreamBufferSource) comObj; comObj = null;
+        _bufferSource = (IStreamBufferSource)new StreamBufferSource();
 
 				int hr;
 				m_StreamBufferConfig	= new StreamBufferConfig();
@@ -1103,7 +1095,7 @@ namespace MediaPortal.Player
 					hr=streamConfig2.SetFFTransitionRates(8,32);	
 					//Log.Write("set FFTransitionRates:{0:X}",hr);
 					
-					uint max,maxnon;
+					int max,maxnon;
 					hr=streamConfig2.GetFFTransitionRates(out max,out maxnon);	
 					//Log.Write("get FFTransitionRates:{0} {1} {2:X}",max,maxnon,hr);
 					streamConfig2.GetBackingFileCount(out _minBackingFiles, out _maxBackingFiles);
@@ -1117,7 +1109,7 @@ namespace MediaPortal.Player
 				_graphBuilder.AddFilter(filter, "SBE SOURCE");
 		
 				IFileSourceFilter fileSource = (IFileSourceFilter) _bufferSource;
-				hr = fileSource.Load(filename, IntPtr.Zero);
+				hr = fileSource.Load(filename, null);
 
 				// add preferred video & audio codecs
 				string strVideoCodec="";
@@ -1173,7 +1165,7 @@ namespace MediaPortal.Player
 				_basicAudio	= _graphBuilder as IBasicAudio;
 				
 				//Log.Write("StreamBufferPlayer:SetARMode");
-				DirectShowUtil.SetARMode(_graphBuilder,AmAspectRatioMode.AM_ARMODE_STRETCHED);
+				DirectShowUtil.SetARMode(_graphBuilder,AspectRatioMode.Stretched);
 
 				_graphBuilder.SetDefaultSyncSource();
 				//Log.Write("StreamBufferPlayer: set Deinterlace");
@@ -1258,11 +1250,13 @@ namespace MediaPortal.Player
 					_vmr7.RemoveVMR7();
 				_vmr7=null;
 
-        DsUtils.RemoveFilters(_graphBuilder);
+        DirectShowUtil.RemoveFilters(_graphBuilder);
 
-        if( _rotCookie != 0 )
-          DsROT.RemoveGraphFromRot( ref _rotCookie );
-        _rotCookie=0;
+        if (_rotEntry != null)
+        {
+          _rotEntry.Dispose();
+        }
+        _rotEntry = null;
 
 				if( _graphBuilder != null )
 				{
@@ -1284,7 +1278,7 @@ namespace MediaPortal.Player
 		void OnGraphNotify()
 		{
 			int p1, p2, hr = 0;
-			DsEvCode code;
+			EventCode code;
 			int counter=0;
 			do
 			{
@@ -1296,7 +1290,7 @@ namespace MediaPortal.Player
 					{
 						hr = _mediaEvt.FreeEventParams( code, p1, p2 );
 /*
-						if (code>=DsEvCode.StreamBufferTimeHole && code <= DsEvCode.StreamBufferRateChanged)
+						if (code>=EventCode.StreamBufferTimeHole && code <= EventCode.StreamBufferRateChanged)
 						{
 							Log.Write("StreamBufferPlayer: event:{0} param1:{1} param2:{2} param1:0x{3:X} param2:0x{4:X}",code.ToString(),p1,p2,p1,p2);
 							long contentStart,contentStop,streamPosition,segmentstop;
@@ -1315,7 +1309,7 @@ namespace MediaPortal.Player
 							fsegmentstop/=10000000d;
 							Log.Write("StreamBufferPlayer:  content start   :{0} content stop :{1}", fcontentStart.ToString("f2"), fcontentStop.ToString("f2"));
 							Log.Write("StreamBufferPlayer:  streamPosition  :{0} segment stop :{1}", fstreamPosition.ToString("f2"), fsegmentstop.ToString("f2"));
-							if (code==DsEvCode.StreamBufferTimeHole)
+							if (code==EventCode.StreamBufferTimeHole)
 							{
 								//The Stream Buffer Source filter has reached a gap in the content. 
 								//p1 = Time of the start of the gap, in milliseconds, relative to the content start.
@@ -1328,7 +1322,7 @@ namespace MediaPortal.Player
 									SeekAbsolute(1d+newpos);
 								}
 							}
-							if (code==DsEvCode.StreamBufferContentBecomingStale)
+							if (code==EventCode.StreamBufferContentBecomingStale)
 							{
 								if (Paused)
 								{
@@ -1338,7 +1332,7 @@ namespace MediaPortal.Player
 							}
 						}
 						else */
-						if( code == DsEvCode.Complete || code== DsEvCode.ErrorAbort)
+            if (code == EventCode.Complete || code == EventCode.ErrorAbort)
 						{
 							//Log.Write("StreamBufferPlayer: event:{0} param1:{1} param2:{2} param1:0x{3:X} param2:0x{4:X}",code.ToString(),p1,p2,p1,p2);
 							MovieEnded();
@@ -1393,7 +1387,7 @@ namespace MediaPortal.Player
 				_speedRate = 10000;
 				rewind = earliest;
 				//Log.Write(" seek back:{0}",rewind/10000000);
-				hr = _mediaSeeking.SetPositions(ref rewind, SeekingFlags.AbsolutePositioning	,ref pStop, SeekingFlags.NoPositioning);
+				hr = _mediaSeeking.SetPositions(new DsLong( rewind), AMSeekingSeekingFlags.AbsolutePositioning	,new DsLong( pStop), AMSeekingSeekingFlags.NoPositioning);
 				_mediaCtrl.Run();
 				return;
 			}
@@ -1404,14 +1398,14 @@ namespace MediaPortal.Player
 				_speedRate = 10000;
 				rewind = latest-100000;
 				//Log.Write(" seek ff:{0}",rewind/10000000);
-				hr = _mediaSeeking.SetPositions(ref rewind, SeekingFlags.AbsolutePositioning,ref pStop, SeekingFlags.NoPositioning);
+				hr = _mediaSeeking.SetPositions(new DsLong( rewind), AMSeekingSeekingFlags.AbsolutePositioning,new DsLong( pStop), AMSeekingSeekingFlags.NoPositioning);
 				_mediaCtrl.Run();
 				return;
 			}
 
 			//seek to new moment in time
 			//Log.Write(" seek :{0}",rewind/10000000);
-			hr = _mediaSeeking.SetPositions(ref rewind, SeekingFlags.AbsolutePositioning		,ref pStop, SeekingFlags.NoPositioning);
+			hr = _mediaSeeking.SetPositions(new DsLong( rewind), AMSeekingSeekingFlags.AbsolutePositioning		,new DsLong( pStop), AMSeekingSeekingFlags.NoPositioning);
 			_mediaCtrl.Pause();
 
 			_elapsedTimer=DateTime.Now;

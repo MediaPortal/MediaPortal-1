@@ -4,6 +4,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Dialogs;
 using DShowNET;
 using DShowNET.Helper;
+using DirectShowLib;
 namespace WindowPlugins.GUISettings.TV
 {
 	/// <summary>
@@ -41,7 +42,7 @@ namespace WindowPlugins.GUISettings.TV
 			{
 				strVideoCodec=xmlreader.GetValueAsString("movieplayer","videocodec","");
 			}
-			ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.MPEG2);
+			ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
 
 			GUIDialogMenu dlg=(GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
 			if (dlg!=null)
@@ -74,7 +75,7 @@ namespace WindowPlugins.GUISettings.TV
 			{
 				strAudioCodec=xmlreader.GetValueAsString("movieplayer","audiocodec","");
 			}
-			ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.MPEG2_Audio);
+			ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
 
 			GUIDialogMenu dlg=(GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
 			if (dlg!=null)
