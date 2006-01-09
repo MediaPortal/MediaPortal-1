@@ -23,6 +23,7 @@ using System.IO;
 using System.Runtime.InteropServices; 
 using MediaPortal.GUI.Library;
 using DShowNET;
+using DShowNET.Helper;
 namespace DShowNET
 {
 	/// <summary>

@@ -25,7 +25,7 @@ using System.Runtime.InteropServices;
 using DShowNET;
 using DShowNET.Device;
 
-namespace DShowNET
+namespace DShowNET.Helper
 {
 	/// <summary>
 	///	 A collection of Filter objects (DirectShow filters).

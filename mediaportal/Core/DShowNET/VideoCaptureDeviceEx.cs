@@ -26,6 +26,7 @@ using System.IO;
 using System.Runtime.InteropServices; 
 using System.Reflection;
 using DShowNET;
+using DShowNET.Helper;
 using MediaPortal.GUI.Library;
 
 namespace DShowNET

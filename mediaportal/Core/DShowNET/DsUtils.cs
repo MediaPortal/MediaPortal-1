@@ -24,6 +24,7 @@ using System.IO;
 using System.Text;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
+using DShowNET.Helper;
 
 namespace DShowNET
 {

@@ -21,6 +21,7 @@
 using System;
 using System.Xml;
 using DShowNET;
+using DShowNET.Helper;
 using System.Collections;
 using MediaPortal.GUI.Library;
 namespace TVCapture

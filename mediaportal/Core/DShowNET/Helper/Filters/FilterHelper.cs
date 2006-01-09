@@ -26,7 +26,7 @@ using System.Runtime.InteropServices;
 using DShowNET;
 using DShowNET.Device;
 
-namespace DShowNET
+namespace DShowNET.Helper
 {
 	public class FilterHelper
 	{

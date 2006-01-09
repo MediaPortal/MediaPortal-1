@@ -22,7 +22,7 @@
 using System;
 using DShowNET;
 
-namespace DShowNET
+namespace DShowNET.Helper
 {
 	/// <summary>
 	///  Provides collections of devices and compression codecs

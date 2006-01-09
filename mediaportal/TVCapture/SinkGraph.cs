@@ -202,8 +202,8 @@ namespace MediaPortal.TV.Recording
       //      Log.WriteFile(Log.LogType.Capture,"SinkGraph:CreateGraph()");
       int hr = 0;
       Filters filters = new Filters();
-      DShowNET.Filter videoCaptureDeviceFilter = null;
-      foreach (DShowNET.Filter filter in filters.VideoInputDevices)
+      DShowNET.Helper.Filter videoCaptureDeviceFilter = null;
+      foreach (DShowNET.Helper.Filter filter in filters.VideoInputDevices)
       {
         if (filter.Name.Equals(m_strVideoCaptureFilter))
         {

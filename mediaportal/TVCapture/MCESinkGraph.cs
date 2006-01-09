@@ -23,6 +23,7 @@ using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using DShowNET;
+using DShowNET.Helper;
 using MediaPortal.Util;
 using MediaPortal.Player;
 using MediaPortal.GUI.Library;

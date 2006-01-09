@@ -477,7 +477,7 @@
     <Compile Include="Drawing\VerticalAlignment.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DShowNET\AudioMixerHelper.cs">
+    <Compile Include="DShowNET\Helper\AudioMixerHelper.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DShowNET\BDAInterfaces.cs">
@@ -525,19 +525,19 @@
     <Compile Include="DShowNET\DsVmRender.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DShowNET\Filter.cs">
+    <Compile Include="DShowNET\Helper\Filters\Filter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DShowNET\FilterCollection.cs">
+    <Compile Include="DShowNET\Helper\Filters\FilterCollection.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DShowNET\FilterHelper.cs">
+    <Compile Include="DShowNET\Helper\Filters\FilterHelper.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DShowNET\Filters.cs">
+    <Compile Include="DShowNET\Helper\Filters\Filters.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DShowNET\hauppauge.cs">
+    <Compile Include="DShowNET\Helper\cards\hauppauge.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DShowNET\Helper\PropertyPages\AudioSource.cs" />
@@ -550,10 +550,10 @@
     <Compile Include="DShowNET\Helper\PropertyPages\SourceCollection.cs" />
     <Compile Include="DShowNET\Helper\PropertyPages\VfwCompressorPropertyPage.cs" />
     <Compile Include="DShowNET\Helper\VideoProcAmp.cs" />
-    <Compile Include="DShowNET\IksPropertyUtils.cs">
+    <Compile Include="DShowNET\Helper\IksPropertyUtils.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DShowNET\ivac.cs">
+    <Compile Include="DShowNET\Helper\cards\ivac.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DShowNET\MetaData\AsfMetadataEditor.cs">
@@ -568,16 +568,16 @@
     <Compile Include="DShowNET\MPEG2Demux.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DShowNET\PropertySet.cs">
+    <Compile Include="DShowNET\Helper\PropertySet.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DShowNET\QEdit.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DShowNET\TunerCountry.cs">
+    <Compile Include="DShowNET\Helper\TunerCountry.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DShowNET\Twinhan.cs">
+    <Compile Include="DShowNET\Helper\cards\Twinhan.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DShowNET\VideoCaptureDevice.cs">

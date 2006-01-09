@@ -22,6 +22,7 @@ using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using DShowNET;
+using DShowNET.Helper;
 using MediaPortal.GUI.Library;
 namespace MediaPortal.Player
 {

@@ -25,7 +25,7 @@ using System.Runtime.InteropServices;
 using DShowNET;
 using DShowNET.Device;
 
-namespace DShowNET
+namespace DShowNET.Helper
 {
 	/// <summary>
 	///  Represents a DirectShow filter (e.g. video capture device, 
