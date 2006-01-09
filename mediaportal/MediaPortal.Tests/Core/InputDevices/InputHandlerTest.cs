@@ -26,9 +26,10 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using MediaPortal.InputDevices;
 using NUnit.Framework;
 
-namespace MediaPortal.Tests.Plugins.RemotePlugins.HCWRemote
+namespace MediaPortal.Tests.Core.InputDevices
 {
   [TestFixture]
   [Category("InputHandler")]

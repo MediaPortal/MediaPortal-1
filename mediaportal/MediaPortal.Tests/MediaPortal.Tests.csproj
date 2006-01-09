@@ -46,7 +46,7 @@
     <Compile Include="Core\Playlists\PlayListTest.cs" />
     <Compile Include="Core\Playlists\PlayListWPLTest.cs" />
     <Compile Include="Plugins\HCWHelper\NetHelper\NetHelperTest.cs" />
-    <Compile Include="Plugins\RemotePlugins\HCWRemote\InputHandlerTest.cs" />
+    <Compile Include="Core\InputDevices\InputHandlerTest.cs" />
     <Compile Include="TVCapture\DiskManagement\DeleteOldRecordings.cs" />
     <Compile Include="TVCapture\DiskManagement\TestEpisodeManagement.cs" />
     <Compile Include="TVCapture\Teletext\RendererTest.cs" />
