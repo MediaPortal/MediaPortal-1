@@ -45,21 +45,6 @@ namespace MediaPortal.InputDevices
       string PathName);
 
     /// <summary>
-    /// The GetLongPathName function converts the specified path to its long form.
-    /// If no long path is found, this function simply returns the specified name.
-    /// http://msdn.microsoft.com/library/en-us/fileio/fs/getlongpathname.asp
-    /// </summary>
-    /// <param name="ShortPath">Pointer to a null-terminated path to be converted.</param>
-    /// <param name="LongPath">Pointer to the buffer to receive the long path.</param>
-    /// <param name="Buffer">Size of the buffer.</param>
-    /// <returns></returns>
-    [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-    static extern uint GetLongPathName(
-      string ShortPath,
-      [Out] StringBuilder LongPath,
-      uint Buffer);
-
-    /// <summary>
     /// Registers window handle with Hauppauge IR driver
     /// </summary>
     /// <param name="WindowHandle"></param>
@@ -100,64 +85,45 @@ namespace MediaPortal.InputDevices
 
     #endregion
 
-    public static uint IRGetLongPathName(string ShortPath, [Out] StringBuilder LongPath, uint Buffer)
+
+    public class IRFailedException : Exception
     {
-      try
-      {
-        return GetLongPathName(ShortPath, LongPath, Buffer);
-      }
-      catch
-      {
-        return 0;
-      }
+      const string message = "Can't open IR device - IR in use?";
+      public IRFailedException()
+        : base(message)
+      { }
     }
 
-    public static bool IRClose(IntPtr WindowHandle, uint Msg)
+    public class IRNoMessage : Exception
     {
-      try
-      {
-        return IR_Close(WindowHandle, Msg);
-      }
-      catch
-      {
-        return false;
-      }
+      const string message = "No IR command queued.";
+      public IRNoMessage()
+        : base(message)
+      { }
     }
 
-    public static bool IRGetSystemKeyCode(ref IntPtr RepeatCount, ref IntPtr RemoteCode, ref IntPtr KeyCode)
+    public static void IRClose(IntPtr WindowHandle, uint Msg)
     {
-      try
-      {
-        return IR_GetSystemKeyCode(ref RepeatCount, ref RemoteCode, ref KeyCode);
-      }
-      catch
-      {
-        return false;
-      }
+      bool result = IR_Close(WindowHandle, Msg);
     }
 
-    public static bool IROpen(IntPtr WindowHandle, uint Msg, bool Verbose, uint IRPort)
+    public static void IRGetSystemKeyCode(ref IntPtr RepeatCount, ref IntPtr RemoteCode, ref IntPtr KeyCode)
     {
-      try
-      {
-        return IR_Open(WindowHandle, Msg, Verbose, IRPort);
-      }
-      catch
-      {
-        return false;
-      }
+      bool result = IR_GetSystemKeyCode(ref RepeatCount, ref RemoteCode, ref KeyCode);
+      if (!result)
+        throw new IRNoMessage();
     }
 
-    public static bool IRSetDllDirectory(string PathName)
+    public static void IROpen(IntPtr WindowHandle, uint Msg, bool Verbose, uint IRPort)
     {
-      try
-      {
-        return SetDllDirectory(PathName);
-      }
-      catch
-      {
-        return false;
-      }
+      bool result = IR_Open(WindowHandle, Msg, Verbose, IRPort);
+      if (!result)
+        throw new IRFailedException();
+    }
+
+    public static void IRSetDllDirectory(string PathName)
+    {
+      bool result = SetDllDirectory(PathName);
     }
   }
 }

@@ -156,20 +156,12 @@ namespace MediaPortal.InputDevices
       if (!controlEnabled)
         return;
 
-      try
-      {
-        connection.Start(port + 1);
-        connection.ReceiveEvent += new UdpHelper.Connection.ReceiveEventHandler(OnReceive);
-        Thread checkThread = new Thread(new ThreadStart(CheckThread));
-        checkThread.IsBackground = true;
-        checkThread.Priority = ThreadPriority.Highest;
-        checkThread.Start();
-      }
-      catch (Exception ex)
-      {
-        Log.Write("HCW: Failed to start driver components! (Not installed?)");
-        if (logVerbose) Log.Write("HCW Exception: StartHCW: " + ex.Message);
-      }
+      connection.Start(port + 1);
+      connection.ReceiveEvent += new UdpHelper.Connection.ReceiveEventHandler(OnReceive);
+      Thread checkThread = new Thread(new ThreadStart(CheckThread));
+      checkThread.IsBackground = true;
+      checkThread.Priority = ThreadPriority.Highest;
+      checkThread.Start();
     }
 
 
@@ -199,21 +191,14 @@ namespace MediaPortal.InputDevices
       if (controlEnabled)
       {
         exit = true;
-        try
+        if (allowExternal)
         {
-          if (allowExternal)
-          {
-            Utils.OnStartExternal -= new Utils.UtilEventHandler(OnStartExternal);
-            Utils.OnStopExternal -= new Utils.UtilEventHandler(OnStopExternal);
-          }
-          connection.ReceiveEvent -= new UdpHelper.Connection.ReceiveEventHandler(OnReceive);
-          connection.Send(port, "APP", "SHUTDOWN", DateTime.Now);
-          connection = null;
+          Utils.OnStartExternal -= new Utils.UtilEventHandler(OnStartExternal);
+          Utils.OnStopExternal -= new Utils.UtilEventHandler(OnStopExternal);
         }
-        catch (Exception ex)
-        {
-          Log.Write("HCW: Exception: {0}", ex.Message);
-        }
+        connection.ReceiveEvent -= new UdpHelper.Connection.ReceiveEventHandler(OnReceive);
+        connection.Send(port, "APP", "SHUTDOWN", DateTime.Now);
+        connection = null;
       }
     }
 
@@ -223,14 +208,7 @@ namespace MediaPortal.InputDevices
     /// </summary>
     public void StartHCW()
     {
-      try
-      {
-        connection.Send(port, "APP", "IR_START", DateTime.Now);
-      }
-      catch (Exception ex)
-      {
-        Log.Write("HCW: Exception: {0}", ex.Message);
-      }
+      connection.Send(port, "APP", "IR_START", DateTime.Now);
     }
 
 
@@ -239,16 +217,9 @@ namespace MediaPortal.InputDevices
     /// </summary>
     public void StopHCW()
     {
-      try
+      if (restartIRApp)
       {
-        if (restartIRApp)
-        {
-          connection.Send(port, "HCWAPP", "START", DateTime.Now);
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Write("HCW: Exception: {0}", ex.Message);
+        connection.Send(port, "HCWAPP", "START", DateTime.Now);
       }
     }
 
@@ -259,100 +230,92 @@ namespace MediaPortal.InputDevices
 
       string msg = strReceive.Split('~')[0];
       if (logVerbose) Log.Write("HCW: Accepted: {0}", msg);
-      try
+      switch (msg.Split('|')[0])
       {
-        switch (msg.Split('|')[0])
-        {
-          case "CMD":
+        case "CMD":
+          {
+            // Time of button press - Use this for repeat delay calculations
+            DateTime sentTime = DateTime.FromBinary(Convert.ToInt64(msg.Split('|')[2]));
+            int newCommand = Convert.ToInt16(msg.Split('|')[1]);
+
+            if (logVerbose) Log.Write("HCW: elapsed time: {0}", ((TimeSpan)(sentTime - lastTime)).Milliseconds);
+            if (logVerbose) Log.Write("HCW: sameCommandCount: {0}", sameCommandCount.ToString());
+
+            if (lastCommand == newCommand)
             {
-              // Time of button press - Use this for repeat delay calculations
-              DateTime sentTime = DateTime.FromBinary(Convert.ToInt64(msg.Split('|')[2]));
-              int newCommand = Convert.ToInt16(msg.Split('|')[1]);
-
-              if (logVerbose) Log.Write("HCW: elapsed time: {0}", ((TimeSpan)(sentTime - lastTime)).Milliseconds);
-              if (logVerbose) Log.Write("HCW: sameCommandCount: {0}", sameCommandCount.ToString());
-
-              if (lastCommand == newCommand)
+              // button release time elapsed since last identical command
+              // if so, reset counter & start new session
+              if ((sentTime - lastTime) > buttonRelease)
               {
-                // button release time elapsed since last identical command
-                // if so, reset counter & start new session
-                if ((sentTime - lastTime) > buttonRelease)
-                {
-                  sameCommandCount = 0;   // new session with this button
-                  if (logVerbose) Log.Write("HCW: same command, timeout true");
-                }
-                else
-                {
-                  if (logVerbose) Log.Write("HCW: same command, timeout false");
-                  sameCommandCount++;   // button release time not elapsed
-                }
+                sameCommandCount = 0;   // new session with this button
+                if (logVerbose) Log.Write("HCW: same command, timeout true");
               }
               else
-                sameCommandCount = 0;   // we got a new button
-
-              bool executeKey = false;
-
-              // new button / session
-              if (sameCommandCount == 0)
-                executeKey = true;
-
-              //// we got the identical button often enough to accept it
-              if (sameCommandCount == repeatFilter)
-                executeKey = true;
-
-              // we got the identical button accepted and still pressed, repeat with repeatSpeed
-              if ((sameCommandCount > repeatFilter) && (sameCommandCount > lastExecutedCommandCount + repeatSpeed))
-                executeKey = true;
-
-              // double click filter
-              if (executeKey && filterDoubleKlicks)
               {
-                int keyCode = newCommand;
-
-                // strip remote type
-                if (keyCode > 2000)
-                  keyCode = keyCode - 2000;
-                else if (keyCode > 1000)
-                  keyCode = keyCode - 1000;
-
-                if ((sameCommandCount > 0) &&
-                  (keyCode == 46 || //46 = fullscreen/green button
-                  keyCode == 37 ||  //37 = OK button
-                  keyCode == 56 ||  //56 = yellow button
-                  keyCode == 11 ||  //11 = red button
-                  keyCode == 41 ||  //41 = blue button
-                  keyCode == 13 ||  //13 = menu button
-                  keyCode == 15 ||  //15 = mute button
-                  keyCode == 48))   //48 = pause button
-                {
-                  executeKey = false;
-                  if (logVerbose) Log.Write("HCW: doubleclick supressed: {0}", newCommand.ToString());
-                }
+                if (logVerbose) Log.Write("HCW: same command, timeout false");
+                sameCommandCount++;   // button release time not elapsed
               }
-
-              if (executeKey)
-              {
-                lastExecutedCommandCount = sameCommandCount;
-                lastCommand = newCommand;
-                try
-                {
-                  hcwHandler.MapAction(newCommand);    //Send command to application...
-                }
-                catch (ApplicationException ex)
-                {
-                  Log.Write("HCW: Exception: ", ex.Message);
-                }
-                if (logVerbose) Log.Write("HCW: repeat filter accepted: {0}", newCommand.ToString());
-              }
-              lastTime = sentTime;
             }
-            break;
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Write("HCW: Exception: {0}", ex.Message);
-        Log.Write("HCW: Received: {0} - {1}", msg, strReceive);
+            else
+              sameCommandCount = 0;   // we got a new button
+
+            bool executeKey = false;
+
+            // new button / session
+            if (sameCommandCount == 0)
+              executeKey = true;
+
+            //// we got the identical button often enough to accept it
+            if (sameCommandCount == repeatFilter)
+              executeKey = true;
+
+            // we got the identical button accepted and still pressed, repeat with repeatSpeed
+            if ((sameCommandCount > repeatFilter) && (sameCommandCount > lastExecutedCommandCount + repeatSpeed))
+              executeKey = true;
+
+            // double click filter
+            if (executeKey && filterDoubleKlicks)
+            {
+              int keyCode = newCommand;
+
+              // strip remote type
+              if (keyCode > 2000)
+                keyCode = keyCode - 2000;
+              else if (keyCode > 1000)
+                keyCode = keyCode - 1000;
+
+              if ((sameCommandCount > 0) &&
+                (keyCode == 46 || //46 = fullscreen/green button
+                keyCode == 37 ||  //37 = OK button
+                keyCode == 56 ||  //56 = yellow button
+                keyCode == 11 ||  //11 = red button
+                keyCode == 41 ||  //41 = blue button
+                keyCode == 13 ||  //13 = menu button
+                keyCode == 15 ||  //15 = mute button
+                keyCode == 48))   //48 = pause button
+              {
+                executeKey = false;
+                if (logVerbose) Log.Write("HCW: doubleclick supressed: {0}", newCommand.ToString());
+              }
+            }
+
+            if (executeKey)
+            {
+              lastExecutedCommandCount = sameCommandCount;
+              lastCommand = newCommand;
+              try
+              {
+                hcwHandler.MapAction(newCommand);    //Send command to application...
+              }
+              catch (ApplicationException ex)
+              {
+                Log.Write("HCW: Exception: ", ex.Message);
+              }
+              if (logVerbose) Log.Write("HCW: repeat filter accepted: {0}", newCommand.ToString());
+            }
+            lastTime = sentTime;
+          }
+          break;
       }
     }
 
