@@ -26,6 +26,7 @@ using System.Drawing;
 using System.Windows.Forms;
 
 using DShowNET;
+using DShowNET.Helper;
 
 namespace MediaPortal.Configuration.Sections
 {

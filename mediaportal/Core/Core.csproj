@@ -565,10 +565,10 @@
     <Compile Include="DShowNET\MetaData\MetadataEditor.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DShowNET\MPEG2Demux.cs">
+    <Compile Include="DShowNET\Helper\Capture\MPEG2Demux.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DShowNET\Helper\PropertySet.cs">
+    <Compile Include="DShowNET\Helper\cards\DigitalEveryWhere.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DShowNET\QEdit.cs">
@@ -580,13 +580,10 @@
     <Compile Include="DShowNET\Helper\cards\Twinhan.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DShowNET\VideoCaptureDevice.cs">
+    <Compile Include="DShowNET\Helper\Capture\VideoCaptureDeviceEx.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DShowNET\VideoCaptureDeviceEx.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DShowNET\VideoCaptureProperties.cs">
+    <Compile Include="DShowNET\Helper\cards\VideoCaptureProperties.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="FreeDB\CDInfo.cs">

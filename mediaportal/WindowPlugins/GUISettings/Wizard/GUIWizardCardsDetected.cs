@@ -5,6 +5,7 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Soap;
 
 using DShowNET;
+using DShowNET.Helper;
 using MediaPortal.GUI.Library;
 using MediaPortal.TV.Recording;
 using TVCapture;

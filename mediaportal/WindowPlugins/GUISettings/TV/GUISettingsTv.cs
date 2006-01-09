@@ -3,6 +3,7 @@ using System.Collections;
 using MediaPortal.GUI.Library;
 using MediaPortal.Dialogs;
 using DShowNET;
+using DShowNET.Helper;
 namespace WindowPlugins.GUISettings.TV
 {
 	/// <summary>

@@ -27,6 +27,7 @@ using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Xml;
 using DShowNET;
+using DShowNET.Helper;
 using Microsoft.Win32;
 
 namespace MediaPortal
