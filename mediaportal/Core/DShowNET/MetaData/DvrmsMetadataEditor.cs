@@ -7,7 +7,8 @@ using System.Data;
 using System.Text;
 using System.Collections;
 using System.Runtime.InteropServices;
-using DShowNET;
+using DirectShowLib;
+using DShowNET.Helper;
 using MediaPortal.GUI.Library;
 
 namespace Toub.MediaCenter.Dvrms.Metadata

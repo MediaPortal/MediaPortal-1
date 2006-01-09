@@ -24,7 +24,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.InteropServices; 
 using MediaPortal.GUI.Library;
-
+using DirectShowLib;
 namespace DShowNET.Helper
 {
 	/// <summary>

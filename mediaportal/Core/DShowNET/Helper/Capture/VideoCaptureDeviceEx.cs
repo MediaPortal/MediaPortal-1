@@ -25,7 +25,7 @@ using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices; 
 using System.Reflection;
-using DShowNET;
+using DirectShowLib;
 using DShowNET.Helper;
 using MediaPortal.GUI.Library;
 
@@ -94,40 +94,40 @@ namespace DShowNET.Helper
 			_mPreviewAudioPin = null;
 			_mPreviewVideoPin = null;
 			_mVideoPortPin    = null;
-			_mCapturePin      = DirectShowUtil.FindPinNr(pEncoderFilter, PinDirection.Output, 0);
+			_mCapturePin      = DsFindPin.ByDirection(pEncoderFilter, PinDirection.Output, 0);
 			if (_mCapturePin!=null)
-				DirectShowUtil.DebugWrite("VideoCaptureDevice: found output pin");
-			DirectShowUtil.DebugWrite("VideoCaptureDevice:HW MPEG2 encoder:{0} MCE device:{1}", _mIsMpeg2Card, _mIsMceCard);
+				Log.Write("VideoCaptureDevice: found output pin");
+			Log.Write("VideoCaptureDevice:HW MPEG2 encoder:{0} MCE device:{1}", _mIsMpeg2Card, _mIsMceCard);
 
 			// get video stream interfaces
-			DirectShowUtil.DebugWrite("VideoCaptureDevice:get Video stream control interface (IAMStreamConfig)");
-			Guid cat = PinCategory.Capture;
+			Log.Write("VideoCaptureDevice:get Video stream control interface (IAMStreamConfig)");
+			DsGuid cat = new DsGuid(PinCategory.Capture);
 			Guid iid = typeof(IAMStreamConfig).GUID;
-			hr = _mCaptureGraphBuilder.FindInterface(new Guid[1]{cat}, null, _mCaptureFilter, ref iid, out o);
+      hr = _mCaptureGraphBuilder.FindInterface(cat, null, _mCaptureFilter,  iid, out o);
 			if ( hr == 0 )
 			{
 				_mVideoCaptureStreamConfig = o as IAMStreamConfig;
-				DirectShowUtil.DebugWrite("VideoCaptureDevice:got IAMStreamConfig for Capture");
+				Log.Write("VideoCaptureDevice:got IAMStreamConfig for Capture");
 			}
     
 			o   = null;
-			cat = PinCategory.Preview;
+      cat = new DsGuid(PinCategory.Preview);
 			iid = typeof(IAMStreamConfig).GUID;
-			hr  = _mCaptureGraphBuilder.FindInterface(new Guid[1]{cat}, null, _mCaptureFilter, ref iid, out o);
+      hr = _mCaptureGraphBuilder.FindInterface(cat, null, _mCaptureFilter,  iid, out o);
 			if ( hr == 0 )
 			{
 				_mVideoPreviewStreamConfig = o as IAMStreamConfig;
-				DirectShowUtil.DebugWrite("VideoCaptureDevice:got IAMStreamConfig for Preview");
+				Log.Write("VideoCaptureDevice:got IAMStreamConfig for Preview");
 			}
 
 			o   = null;
-			cat = PinCategory.VideoPort;
+			cat = new DsGuid(PinCategory.VideoPort);
 			iid = typeof(IAMStreamConfig).GUID;
-			hr  = _mCaptureGraphBuilder.FindInterface(new Guid[1]{cat}, null, _mCaptureFilter, ref iid, out o );
+      hr = _mCaptureGraphBuilder.FindInterface(cat, null, _mCaptureFilter,  iid, out o);
 			if ( hr == 0 )
 			{
 				_mVideoVPortStreamConfig = o as IAMStreamConfig;
-				DirectShowUtil.DebugWrite("VideoCaptureDevice:got IAMStreamConfig for VPort");
+				Log.Write("VideoCaptureDevice:got IAMStreamConfig for VPort");
 			}
 		}
 
@@ -141,7 +141,7 @@ namespace DShowNET.Helper
 			_mCaptureGraphBuilder = pCaptureGraphBuilder;
 			_mCaptureFilter				= pCaptureFilter;
 
-			DirectShowUtil.DebugWrite("VideoCaptureDevice:ctor");
+			Log.Write("VideoCaptureDevice:ctor");
 			int    hr;
 			object o = null;
 			Guid[] medVideoTypes = new Guid[]{MediaType.Stream,
@@ -171,11 +171,11 @@ namespace DShowNET.Helper
 				}
 			}
 			if (_mPreviewVideoPin!=null) 
-				DirectShowUtil.DebugWrite("capture:found video preview pin");
+				Log.Write("capture:found video preview pin");
 			if (_mVideoPortPin!=null) 
-				DirectShowUtil.DebugWrite("capture:found videoport pin");
+				Log.Write("capture:found videoport pin");
 			if (_mCapturePin!=null) 
-				DirectShowUtil.DebugWrite("capture:found video capture pin");
+				Log.Write("capture:found video capture pin");
 
 			//for (int i=0; i < medAudioTypes.Length;++i)
 			//{
@@ -185,16 +185,16 @@ namespace DShowNET.Helper
       
 			//@@@TODO: replace hardcoded pin name
 			if (_mPreviewAudioPin==null)
-				_mPreviewAudioPin=DirectShowUtil.FindPin(_mCaptureFilter,PinDirection.Output,"Preview Audio");
+				_mPreviewAudioPin=DsFindPin.ByName(_mCaptureFilter,"Preview Audio");
 			if (_mPreviewAudioPin==null)
-				_mPreviewAudioPin=DirectShowUtil.FindPin(_mCaptureFilter,PinDirection.Output,"Audio");
+				_mPreviewAudioPin=DsFindPin.ByName(_mCaptureFilter,"Audio");
 
 			if (_mPreviewAudioPin!=null) 
-				DirectShowUtil.DebugWrite("capture:found audio preview pin");
+				Log.Write("capture:found audio preview pin");
 
 			//make sure the analog video&audio outputs of the crossbar are connected
 			//to the video&audio inputs of the video capture device
-			DsUtils.FixCrossbarRouting(_mGraphBuilder,_mCaptureGraphBuilder,_mCaptureFilter, true, false, false, false,false,false );
+			DShowNET.Helper.CrossBar.Route(_mGraphBuilder,_mCaptureGraphBuilder,_mCaptureFilter, true, false, false, false,false,false );
 
 			if (!_mIsMpeg2Card)
 			{
@@ -209,13 +209,13 @@ namespace DShowNET.Helper
 				if (_mPreviewAudioPin==null && _mPreviewVideoPin==null)
 				{
 					//@@@TODO: replace hardcoded pin names
-					DirectShowUtil.DebugWrite("capture:look for the MPEG Video and MPEG Audio pins");
-					_mPreviewVideoPin=DirectShowUtil.FindPin(_mCaptureFilter, PinDirection.Output, "MPEG Video");
-					_mPreviewAudioPin=DirectShowUtil.FindPin(_mCaptureFilter, PinDirection.Output, "MPEG Audio");
+					Log.Write("capture:look for the MPEG Video and MPEG Audio pins");
+					_mPreviewVideoPin=DsFindPin.ByName(_mCaptureFilter,  "MPEG Video");
+          _mPreviewAudioPin = DsFindPin.ByName(_mCaptureFilter,  "MPEG Audio");
 					if (_mPreviewVideoPin!=null && _mPreviewAudioPin!=null)
 					{
 
-						DirectShowUtil.DebugWrite("capture:found the MPEG Video and MPEG Audio pins");
+						Log.Write("capture:found the MPEG Video and MPEG Audio pins");
 						// looks like an MCE device
 						_mIsMceCard   = true;
 						_mIsMpeg2Card = true;
@@ -226,47 +226,47 @@ namespace DShowNET.Helper
 							if (filters.Count!=0)
 							{
 								// add the first encoder device to the graph
-								DirectShowUtil.DebugWrite("capture:Add filter:{0}", filters[0].Name);
+								Log.Write("capture:Add filter:{0}", filters[0].Name);
 								IBaseFilter NewFilter = (IBaseFilter) Marshal.BindToMoniker( filters[0].MonikerString );
 								hr = _mGraphBuilder.AddFilter( NewFilter, filters[0].Name );
 								if( hr < 0 ) 
 								{
-									DirectShowUtil.DebugWrite("capture:failed:unable to add filter:{0} to graph", filters[0].Name);
+									Log.Write("capture:failed:unable to add filter:{0} to graph", filters[0].Name);
 								}
 								else
 								{
 									// filter added. now connect video capture device->encoder device
-									IPin pinIn1 = DirectShowUtil.FindPinNr(NewFilter, PinDirection.Input,0);
-									IPin pinIn2 = DirectShowUtil.FindPinNr(NewFilter, PinDirection.Input,1);
+									IPin pinIn1 = DsFindPin.ByDirection(NewFilter, PinDirection.Input,0);
+									IPin pinIn2 = DsFindPin.ByDirection(NewFilter, PinDirection.Input,1);
 									if (pinIn1!=null)
 									{
 										hr=_mGraphBuilder.Connect(_mPreviewVideoPin,   pinIn1);
-										if (hr==0) DirectShowUtil.DebugWrite("connected mpegvideo->mpegvideo");
-										else DirectShowUtil.DebugWrite("capture: failed to connect mpegvideo->mpegvideo:{0:x}",hr);
+										if (hr==0) Log.Write("connected mpegvideo->mpegvideo");
+										else Log.Write("capture: failed to connect mpegvideo->mpegvideo:{0:x}",hr);
 									}
-									else DirectShowUtil.DebugWrite("capture: could not find pin1:{0:x}",hr);
+									else Log.Write("capture: could not find pin1:{0:x}",hr);
 									if (pinIn2!=null)
 									{
 										hr=_mGraphBuilder.Connect(_mPreviewAudioPin,   pinIn2);
-										if (hr==0) DirectShowUtil.DebugWrite("connected mpegaudio->mpegaudio");
-										else DirectShowUtil.DebugWrite("capture: failed to connect mpegaudio->mpegaudio:{0:x}",hr);
+										if (hr==0) Log.Write("connected mpegaudio->mpegaudio");
+										else Log.Write("capture: failed to connect mpegaudio->mpegaudio:{0:x}",hr);
 									}
-									else DirectShowUtil.DebugWrite("capture: could not find pin2:{0:x}",hr);
+									else Log.Write("capture: could not find pin2:{0:x}",hr);
 
 									// done. Now get the output of the encoder device
 									// and use that....
 									_mPreviewAudioPin=null;
 									_mPreviewVideoPin=null;
 									_mVideoPortPin=null;
-									_mCapturePin=DirectShowUtil.FindPinNr(NewFilter,PinDirection.Output,0);
+									_mCapturePin=DsFindPin.ByDirection(NewFilter,PinDirection.Output,0);
 									if (_mCapturePin!=null)
-										DirectShowUtil.DebugWrite("capture: found output pin");
-									else DirectShowUtil.DebugWrite("capture: could not find output pin");
+										Log.Write("capture: found output pin");
+									else Log.Write("capture: could not find output pin");
 								}
 							}
-							else DirectShowUtil.DebugWrite("capture:No WDM Streaming Encoder devices");
+							else Log.Write("capture:No WDM Streaming Encoder devices");
 						}
-						else DirectShowUtil.DebugWrite("capture:No WDM Streaming Encoder devices");
+						else Log.Write("capture:No WDM Streaming Encoder devices");
 					}
 				}
 			}
@@ -292,19 +292,19 @@ namespace DShowNET.Helper
 				// [         pin656]---->[pin656              mpeg2 ] --->
 				// [          i2s  ]---->[i2s                       ]
  
-				DirectShowUtil.DebugWrite("capture:look for pin 656 (PVR150)");
-				DirectShowUtil.DebugWrite("capture:look for pin I2S (WinFast PVR2000)");
+				Log.Write("capture:look for pin 656 (PVR150)");
+				Log.Write("capture:look for pin I2S (WinFast PVR2000)");
         
-				IPin pin656=DirectShowUtil.FindPin(_mCaptureFilter, PinDirection.Output, "656");
-				IPin pinI2S=DirectShowUtil.FindPin(_mCaptureFilter, PinDirection.Output, "i2s");
+				IPin pin656=DsFindPin.ByName(_mCaptureFilter,  "656");
+        IPin pinI2S = DsFindPin.ByName(_mCaptureFilter,  "i2s");
 				if (pinI2S==null)
-					pinI2S=DirectShowUtil.FindPin(_mCaptureFilter, PinDirection.Output, "I2S");
+          pinI2S = DsFindPin.ByName(_mCaptureFilter,  "I2S");
 
 				if (pin656!=null)
 				{
 					_mIsMceCard=true;
-					DirectShowUtil.DebugWrite("capture:found output pin 656 (PVR150)");
-					DirectShowUtil.DebugWrite("capture:adding Encoder filter");
+					Log.Write("capture:found output pin 656 (PVR150)");
+					Log.Write("capture:adding Encoder filter");
 
 					// hauppauge PVR II encoder
 					string HaupPaugeMonikerString1 =@"@device:pnp:\\?\pci#ven_4444&dev_0016&subsys_80030070&rev_01#3&61aaa01&0&50#{19689bf6-c384-48fd-ad51-90e58c79f70b}\{03688831-8667-4c61-b5d6-4a361f025d2d}";
@@ -348,28 +348,28 @@ namespace DShowNET.Helper
 					}
 					if (NewFilter==null)
 					{
-						DirectShowUtil.DebugWrite("capture:failed:unable to create Encoder ");
+						Log.Write("capture:failed:unable to create Encoder ");
 						return;
 					}
 
-					DirectShowUtil.DebugWrite("capture:adding {0} to graph",name);
+					Log.Write("capture:adding {0} to graph",name);
 					hr = _mGraphBuilder.AddFilter( NewFilter, name );
 					if( hr != 0 ) 
 					{
-						DirectShowUtil.DebugWrite("capture:failed:unable to add Encoder filter to graph:{0:X}",hr);
+						Log.Write("capture:failed:unable to add Encoder filter to graph:{0:X}",hr);
 						return;
 					}        
 					else
 					{
 						//now render the videocapture pin656 outpin pin -> hauppauge pvrII encoder pin656 input pin
-						IPin pinIn=DirectShowUtil.FindPinNr(NewFilter,PinDirection.Input,0);
+						IPin pinIn=DsFindPin.ByDirection(NewFilter,PinDirection.Input,0);
 						if (pinIn!=null)
 						{
-							DirectShowUtil.DebugWrite("capture:found input pin 656 (PVR150)");
+							Log.Write("capture:found input pin 656 (PVR150)");
 							hr=_mGraphBuilder.Connect(pin656,pinIn);
 							if( hr != 0 ) 
 							{
-								DirectShowUtil.DebugWrite("capture:failed:unable to connect pin656->pin656:0x{0:X}",hr);
+								Log.Write("capture:failed:unable to connect pin656->pin656:0x{0:X}",hr);
 							} 
 							else
 							{
@@ -395,33 +395,33 @@ namespace DShowNET.Helper
 									}
 								}
 								if (_mPreviewVideoPin!=null) 
-									DirectShowUtil.DebugWrite("capture:found video preview pin");
+									Log.Write("capture:found video preview pin");
 								if (_mVideoPortPin!=null) 
-									DirectShowUtil.DebugWrite("capture:found videoport pin");
+									Log.Write("capture:found videoport pin");
 								if (_mCapturePin!=null) 
-									DirectShowUtil.DebugWrite("capture:found video capture pin");
+									Log.Write("capture:found video capture pin");
 							}
 						}
             
 						if (pinI2S!=null)
 						{
-							DirectShowUtil.DebugWrite("capture:found input pin pinI2S");
+							Log.Write("capture:found input pin pinI2S");
 							_mIsMceCard=true;
 							//now render the videocapture i2s outpin pin -> WinFast PVR2000 encoder i2s input pin
-							pinIn=DirectShowUtil.FindPinNr(NewFilter,PinDirection.Input, 1);
+							pinIn=DsFindPin.ByDirection(NewFilter,PinDirection.Input, 1);
 							if (pinIn!=null)
 							{
-								DirectShowUtil.DebugWrite("capture:found input pin pinI2S on encoder(WinFast PVR 2000)");
+								Log.Write("capture:found input pin pinI2S on encoder(WinFast PVR 2000)");
 								hr=_mGraphBuilder.Connect(pinI2S, pinIn);
 								if( hr != 0 ) 
 								{
-									DirectShowUtil.DebugWrite("capture:failed:unable to connect pinI2S->pinI2S:0x{0:X}",hr);
+									Log.Write("capture:failed:unable to connect pinI2S->pinI2S:0x{0:X}",hr);
 								} 
 							}
 
 							else
 							{
-								DirectShowUtil.DebugWrite("capture:FAILED unable to find pin656 on hauppauge encoder filter");
+								Log.Write("capture:FAILED unable to find pin656 on hauppauge encoder filter");
 							}
 						}
 					}
@@ -429,41 +429,41 @@ namespace DShowNET.Helper
       
 				if (!_mIsMpeg2Card)
 				{
-					DirectShowUtil.DebugWrite("capture:No MPEG Video or MPEG Audio outputs found");
+					Log.Write("capture:No MPEG Video or MPEG Audio outputs found");
 				}
 
 			}
-			DirectShowUtil.DebugWrite("capture:HW MPEG2 encoder:{0} MCE device:{1}", _mIsMpeg2Card, _mIsMceCard);
+			Log.Write("capture:HW MPEG2 encoder:{0} MCE device:{1}", _mIsMpeg2Card, _mIsMceCard);
 
 			// get video stream interfaces
-			DirectShowUtil.DebugWrite("capture:get Video stream control interface (IAMStreamConfig)");
-			Guid cat = PinCategory.Capture;
+			Log.Write("capture:get Video stream control interface (IAMStreamConfig)");
+			DsGuid cat = new DsGuid(PinCategory.Capture);
 			Guid iid = typeof(IAMStreamConfig).GUID;
-			hr = _mCaptureGraphBuilder.FindInterface(new Guid[1]{cat}, null, _mCaptureFilter, ref iid, out o );
+			hr = _mCaptureGraphBuilder.FindInterface(cat, null, _mCaptureFilter,  iid, out o );
 			if ( hr == 0 )
 			{
 				_mVideoCaptureStreamConfig = o as IAMStreamConfig;
-				DirectShowUtil.DebugWrite("capture:got IAMStreamConfig for Capture");
+				Log.Write("capture:got IAMStreamConfig for Capture");
 			}
     
 			o=null;
-			cat = PinCategory.Preview;
+			cat = new DsGuid(PinCategory.Preview);
 			iid = typeof(IAMStreamConfig).GUID;
-			hr = _mCaptureGraphBuilder.FindInterface(new Guid[1]{cat}, null, _mCaptureFilter, ref iid, out o );
+			hr = _mCaptureGraphBuilder.FindInterface(cat, null, _mCaptureFilter,  iid, out o );
 			if ( hr == 0 )
 			{
 				_mVideoPreviewStreamConfig = o as IAMStreamConfig;
-				DirectShowUtil.DebugWrite("capture:got IAMStreamConfig for Preview");
+				Log.Write("capture:got IAMStreamConfig for Preview");
 			}
 
 			o=null;
-			cat = PinCategory.VideoPort;
+			cat = new DsGuid(PinCategory.VideoPort);
 			iid = typeof(IAMStreamConfig).GUID;
-			hr = _mCaptureGraphBuilder.FindInterface(new Guid[1]{cat}, null, _mCaptureFilter, ref iid, out o );
+      hr = _mCaptureGraphBuilder.FindInterface(cat, null, _mCaptureFilter,  iid, out o);
 			if ( hr == 0 )
 			{
 				_mVideoVPortStreamConfig = o as IAMStreamConfig;
-				DirectShowUtil.DebugWrite("capture:got IAMStreamConfig for VPort");
+				Log.Write("capture:got IAMStreamConfig for VPort");
 			}
 		}
 
@@ -495,29 +495,29 @@ namespace DShowNET.Helper
 
 		public bool RenderPreview()
 		{
-			DirectShowUtil.DebugWrite("VideoCaptureDevice:render preview");
+			Log.Write("VideoCaptureDevice:render preview");
 			int hr;
 			if (null!=_mVideoPortPin)
 			{
-				DirectShowUtil.DebugWrite("VideoCaptureDevice:render videoport pin");
+				Log.Write("VideoCaptureDevice:render videoport pin");
 				hr=_mGraphBuilder.Render(_mVideoPortPin);
 				if (hr==0) return true;
-				DirectShowUtil.DebugWrite("VideoCaptureDevice:FAILED render videoport pin:0x{0:X}",hr);
+				Log.Write("VideoCaptureDevice:FAILED render videoport pin:0x{0:X}",hr);
 
 			}
 			if (null!=_mPreviewVideoPin)
 			{
-				DirectShowUtil.DebugWrite("VideoCaptureDevice:render preview pin");
+				Log.Write("VideoCaptureDevice:render preview pin");
 				hr=_mGraphBuilder.Render(_mPreviewVideoPin);
 				if (hr==0) return true;
-				DirectShowUtil.DebugWrite("VideoCaptureDevice:FAILED render preview pin:0x{0:X}",hr);
+				Log.Write("VideoCaptureDevice:FAILED render preview pin:0x{0:X}",hr);
 			}
 			if (null!=_mCapturePin)
 			{
-				DirectShowUtil.DebugWrite("VideoCaptureDevice:render capture pin");
+				Log.Write("VideoCaptureDevice:render capture pin");
 				hr=_mGraphBuilder.Render(_mCapturePin);
 				if (hr==0) return true;
-				DirectShowUtil.DebugWrite("VideoCaptureDevice:FAILED render capture pin:0x{0:X}",hr);
+				Log.Write("VideoCaptureDevice:FAILED render capture pin:0x{0:X}",hr);
 			}
 			return false;
 		}
@@ -526,30 +526,30 @@ namespace DShowNET.Helper
 		IPin FindVideoPort(IBaseFilter filter,ref Guid mediaType)
 		{
 			IPin pPin;
-			Guid cat = PinCategory.VideoPort;
-			int hr = _mCaptureGraphBuilder.FindPin(filter,(int)PinDirection.Output,ref cat,ref mediaType,false,0,out pPin);
+      DsGuid cat = new DsGuid(PinCategory.VideoPort);
+      int hr = _mCaptureGraphBuilder.FindPin(filter, PinDirection.Output, cat, new DsGuid(mediaType), false, 0, out pPin);
 			if (hr>=0 && pPin!=null)
-				DirectShowUtil.DebugWrite("VideoCaptureDevice:Found videoport pin");
+				Log.Write("VideoCaptureDevice:Found videoport pin");
 			return pPin;
 		}
 
 		IPin FindPreviewPin(IBaseFilter filter,ref Guid mediaType)
 		{
 			IPin pPin;
-			Guid cat = PinCategory.Preview;
-			int hr = _mCaptureGraphBuilder.FindPin(filter,(int)PinDirection.Output,ref cat,ref mediaType,false,0,out pPin);
+      DsGuid cat = new DsGuid(PinCategory.Preview);
+      int hr = _mCaptureGraphBuilder.FindPin(filter, PinDirection.Output, cat, new DsGuid(mediaType), false, 0, out pPin);
 			if (hr>=0 && pPin!=null)
-				DirectShowUtil.DebugWrite("VideoCaptureDevice:Found preview pin");
+				Log.Write("VideoCaptureDevice:Found preview pin");
 			return pPin;
 		}
 
 		IPin FindCapturePin(IBaseFilter filter,ref Guid mediaType)
 		{
 			IPin pPin=null;
-			Guid cat = PinCategory.Capture;
-			int hr = _mCaptureGraphBuilder.FindPin(filter,(int)PinDirection.Output,ref cat,ref mediaType,false,0,out pPin);
+      DsGuid cat = new DsGuid(PinCategory.Capture);
+			int hr = _mCaptureGraphBuilder.FindPin(filter,PinDirection.Output, cat,new DsGuid( mediaType),false,0,out pPin);
 			if (hr>=0 && pPin!=null)
-				DirectShowUtil.DebugWrite("VideoCaptureDevice:Found capture pin");
+				Log.Write("VideoCaptureDevice:Found capture pin");
 			return pPin;
 		}
 
@@ -678,7 +678,7 @@ namespace DShowNET.Helper
 						if (obj!=null)
 						{
 							bmiHeader = (DsBITMAPINFOHEADER)obj;
-							DirectShowUtil.DebugWrite("VideoCaptureDevice:change capture Framesize :{0}x{1} ->{2}x{3}",bmiHeader.Width,bmiHeader.Height, FrameSize.Width,FrameSize.Height);
+							Log.Write("VideoCaptureDevice:change capture Framesize :{0}x{1} ->{2}x{3}",bmiHeader.Width,bmiHeader.Height, FrameSize.Width,FrameSize.Height);
 							bmiHeader.Width   = FrameSize.Width;
 							bmiHeader.Height = FrameSize.Height;
 							setStreamConfigSetting( _mVideoCaptureStreamConfig, "BmiHeader", bmiHeader );
@@ -686,7 +686,7 @@ namespace DShowNET.Helper
 					}
 					catch(Exception)
 					{
-						DirectShowUtil.DebugWrite("VideoCaptureDevice:FAILED:could not set capture  Framesize to {0}x{1}!",FrameSize.Width,FrameSize.Height);
+						Log.Write("VideoCaptureDevice:FAILED:could not set capture  Framesize to {0}x{1}!",FrameSize.Width,FrameSize.Height);
 					} 
 				}
 
@@ -699,7 +699,7 @@ namespace DShowNET.Helper
 						if (obj!=null)
 						{
 							bmiHeader = (DsBITMAPINFOHEADER)obj;
-							DirectShowUtil.DebugWrite("VideoCaptureDevice:change preview Framesize :{0}x{1} ->{2}x{3}",bmiHeader.Width,bmiHeader.Height, FrameSize.Width,FrameSize.Height);
+							Log.Write("VideoCaptureDevice:change preview Framesize :{0}x{1} ->{2}x{3}",bmiHeader.Width,bmiHeader.Height, FrameSize.Width,FrameSize.Height);
 							bmiHeader.Width   = FrameSize.Width;
 							bmiHeader.Height = FrameSize.Height;
 							setStreamConfigSetting( _mVideoPreviewStreamConfig, "BmiHeader", bmiHeader );
@@ -707,7 +707,7 @@ namespace DShowNET.Helper
 					}
 					catch(Exception)
 					{
-						DirectShowUtil.DebugWrite("VideoCaptureDevice:FAILED:could not set preview Framesize to {0}x{1}!",FrameSize.Width,FrameSize.Height);
+						Log.Write("VideoCaptureDevice:FAILED:could not set preview Framesize to {0}x{1}!",FrameSize.Width,FrameSize.Height);
 					} 
 				}
 
@@ -720,7 +720,7 @@ namespace DShowNET.Helper
 						if (obj!=null)
 						{
 							bmiHeader = (DsBITMAPINFOHEADER)obj;
-							DirectShowUtil.DebugWrite("SWGraph:change vport Framesize :{0}x{1} ->{2}x{3}",bmiHeader.Width,bmiHeader.Height, FrameSize.Width,FrameSize.Height);
+							Log.Write("SWGraph:change vport Framesize :{0}x{1} ->{2}x{3}",bmiHeader.Width,bmiHeader.Height, FrameSize.Width,FrameSize.Height);
 							bmiHeader.Width   = FrameSize.Width;
 							bmiHeader.Height = FrameSize.Height;
 							setStreamConfigSetting( _mVideoVPortStreamConfig, "BmiHeader", bmiHeader );
@@ -728,7 +728,7 @@ namespace DShowNET.Helper
 					}
 					catch(Exception)
 					{
-						DirectShowUtil.DebugWrite("VideoCaptureDevice:FAILED:could not set vport Framesize to {0}x{1}!",FrameSize.Width,FrameSize.Height);
+						Log.Write("VideoCaptureDevice:FAILED:could not set vport Framesize to {0}x{1}!",FrameSize.Width,FrameSize.Height);
 					} 
 				}
 			}
@@ -743,14 +743,14 @@ namespace DShowNET.Helper
 				{
 					try
 					{
-						DirectShowUtil.DebugWrite("SWGraph:capture FrameRate set to {0}",FrameRate);
+						Log.Write("SWGraph:capture FrameRate set to {0}",FrameRate);
 						long avgTimePerFrame = (long) ( 10000000d / FrameRate );
 						setStreamConfigSetting( _mVideoCaptureStreamConfig, "AvgTimePerFrame", avgTimePerFrame );
-						DirectShowUtil.DebugWrite("VideoCaptureDevice: capture FrameRate done :{0}", FrameRate);
+						Log.Write("VideoCaptureDevice: capture FrameRate done :{0}", FrameRate);
 					}
 					catch(Exception)
 					{
-						DirectShowUtil.DebugWrite("VideoCaptureDevice:captureFAILED:could not set FrameRate to {0}!",FrameRate);
+						Log.Write("VideoCaptureDevice:captureFAILED:could not set FrameRate to {0}!",FrameRate);
 					}
 				}
 
@@ -758,14 +758,14 @@ namespace DShowNET.Helper
 				{
 					try
 					{
-						DirectShowUtil.DebugWrite("VideoCaptureDevice:preview FrameRate set to {0}",FrameRate);
+						Log.Write("VideoCaptureDevice:preview FrameRate set to {0}",FrameRate);
 						long avgTimePerFrame = (long) ( 10000000d / FrameRate );
 						setStreamConfigSetting( _mVideoPreviewStreamConfig, "AvgTimePerFrame", avgTimePerFrame );
-						DirectShowUtil.DebugWrite("VideoCaptureDevice: preview FrameRate done :{0}", FrameRate);
+						Log.Write("VideoCaptureDevice: preview FrameRate done :{0}", FrameRate);
 					}
 					catch(Exception)
 					{
-						DirectShowUtil.DebugWrite("VideoCaptureDevice:preview FAILED:could not set FrameRate to {0}!",FrameRate);
+						Log.Write("VideoCaptureDevice:preview FAILED:could not set FrameRate to {0}!",FrameRate);
 					}
 				}
 
@@ -773,14 +773,14 @@ namespace DShowNET.Helper
 				{
 					try
 					{
-						DirectShowUtil.DebugWrite("VideoCaptureDevice:vport FrameRate set to {0}",FrameRate);
+						Log.Write("VideoCaptureDevice:vport FrameRate set to {0}",FrameRate);
 						long avgTimePerFrame = (long) ( 10000000d / FrameRate );
 						setStreamConfigSetting( _mVideoVPortStreamConfig, "AvgTimePerFrame", avgTimePerFrame );
-						DirectShowUtil.DebugWrite("VideoCaptureDevice: vport FrameRate done :{0}", FrameRate);
+						Log.Write("VideoCaptureDevice: vport FrameRate done :{0}", FrameRate);
 					}
 					catch(Exception)
 					{
-						DirectShowUtil.DebugWrite("VideoCaptureDevice:vport FAILED:could not set FrameRate to {0}!",FrameRate);
+						Log.Write("VideoCaptureDevice:vport FAILED:could not set FrameRate to {0}!",FrameRate);
 					}
 				}
 			}
@@ -796,7 +796,7 @@ namespace DShowNET.Helper
 					throw new NotSupportedException();
 
 				IntPtr pmt = IntPtr.Zero;
-				AMMediaTypeClass mediaType = new AMMediaTypeClass();
+        AMMediaType mediaType = new AMMediaType();
 
 				try 
 				{
@@ -805,13 +805,13 @@ namespace DShowNET.Helper
 					int hr = streamConfig.GetFormat(  out mediaType);
 					if ( hr != 0 )
 					{
-						DirectShowUtil.DebugWrite("VideoCaptureDevice:getStreamConfigSetting() FAILED to get:{0} (not supported)",fieldName);
+						Log.Write("VideoCaptureDevice:getStreamConfigSetting() FAILED to get:{0} (not supported)",fieldName);
 						Marshal.ThrowExceptionForHR( hr );
 					}
 					// The formatPtr member points to different structures
 					// dependingon the formatType
 					object formatStruct;
-					//DirectShowUtil.DebugWrite("  VideoCaptureDevice.getStreamConfigSetting() find formattype"); 
+					//Log.Write("  VideoCaptureDevice.getStreamConfigSetting() find formattype"); 
 					if ( mediaType.formatType == FormatType.WaveEx )
 						formatStruct = new WaveFormatEx();
 					else if ( mediaType.formatType == FormatType.VideoInfo )
@@ -822,33 +822,33 @@ namespace DShowNET.Helper
 						formatStruct = new MPEG2VideoInfo();
 					else if ( mediaType.formatType == FormatType.None)
 					{
-						DirectShowUtil.DebugWrite("VideoCaptureDevice:getStreamConfigSetting() FAILED no format returned");
+						Log.Write("VideoCaptureDevice:getStreamConfigSetting() FAILED no format returned");
 						throw new NotSupportedException( "This device does not support a recognized format block." );
 					}
 					else
 					{
-						DirectShowUtil.DebugWrite("VideoCaptureDevice:getStreamConfigSetting() FAILED unknown fmt:{0} {1} {2}",mediaType.formatType,mediaType.majorType,mediaType.subType);
+						Log.Write("VideoCaptureDevice:getStreamConfigSetting() FAILED unknown fmt:{0} {1} {2}",mediaType.formatType,mediaType.majorType,mediaType.subType);
 						throw new NotSupportedException( "This device does not support a recognized format block." );
 					}
             
-					//DirectShowUtil.DebugWrite("  VideoCaptureDevice.getStreamConfigSetting() get formatptr");
+					//Log.Write("  VideoCaptureDevice.getStreamConfigSetting() get formatptr");
 					// Retrieve the nested structure
 					Marshal.PtrToStructure( mediaType.formatPtr, formatStruct );
 
 					// Find the required field
-					//DirectShowUtil.DebugWrite("  VideoCaptureDevice.getStreamConfigSetting() get field");
+					//Log.Write("  VideoCaptureDevice.getStreamConfigSetting() get field");
 					Type structType = formatStruct.GetType();
 					FieldInfo fieldInfo = structType.GetField( fieldName );
 					if ( fieldInfo == null )
 					{
-						DirectShowUtil.DebugWrite("VideoCaptureDevice.getStreamConfigSetting() FAILED to to find member:{0}", fieldName);
+						Log.Write("VideoCaptureDevice.getStreamConfigSetting() FAILED to to find member:{0}", fieldName);
 						throw new NotSupportedException( "VideoCaptureDevice:FAILED to find the member '" + fieldName + "' in the format block." );
 					}
             
 					// Extract the field's current value
-					//DirectShowUtil.DebugWrite("  VideoCaptureDevice.getStreamConfigSetting() get value");
+					//Log.Write("  VideoCaptureDevice.getStreamConfigSetting() get value");
 					returnValue = fieldInfo.GetValue( formatStruct ); 
-					//DirectShowUtil.DebugWrite("  VideoCaptureDevice.getStreamConfigSetting() done");	
+					//Log.Write("  VideoCaptureDevice.getStreamConfigSetting() done");	
 				}
 				finally
 				{
@@ -857,7 +857,7 @@ namespace DShowNET.Helper
 			}
 			catch(Exception)
 			{
-				DirectShowUtil.DebugWrite("  VideoCaptureDevice.getStreamConfigSetting() FAILED ");
+				Log.Write("  VideoCaptureDevice.getStreamConfigSetting() FAILED ");
 			}
 			return( returnValue );
 		}
@@ -868,7 +868,7 @@ namespace DShowNET.Helper
 			{
 				object returnValue = null;
 				IntPtr pmt = IntPtr.Zero;
-				AMMediaTypeClass mediaType = new AMMediaTypeClass();
+        AMMediaType mediaType = new AMMediaType();
 
 				try 
 				{
@@ -876,10 +876,10 @@ namespace DShowNET.Helper
 					int hr = streamConfig.GetFormat(out mediaType);
 					if ( hr != 0 )
 					{
-						DirectShowUtil.DebugWrite("  VideoCaptureDevice:setStreamConfigSetting() FAILED to set:{0} (getformat) hr:{1}",fieldName,hr);
+						Log.Write("  VideoCaptureDevice:setStreamConfigSetting() FAILED to set:{0} (getformat) hr:{1}",fieldName,hr);
 						Marshal.ThrowExceptionForHR( hr );
 					}
-					//DirectShowUtil.DebugWrite("  VideoCaptureDevice:setStreamConfigSetting() get formattype");
+					//Log.Write("  VideoCaptureDevice:setStreamConfigSetting() get formattype");
 					// The formatPtr member points to different structures
 					// dependingon the formatType
 					object formatStruct;
@@ -893,44 +893,44 @@ namespace DShowNET.Helper
 						formatStruct = new MPEG2VideoInfo();
 					else if ( mediaType.formatType == FormatType.None)
 					{
-						DirectShowUtil.DebugWrite("  VideoCaptureDevice:setStreamConfigSetting() FAILED no format returned");
+						Log.Write("  VideoCaptureDevice:setStreamConfigSetting() FAILED no format returned");
 						throw new NotSupportedException( "This device does not support a recognized format block." );
 					}
 					else
 					{
-						DirectShowUtil.DebugWrite("  VideoCaptureDevice:setStreamConfigSetting() FAILED unknown fmt");
+						Log.Write("  VideoCaptureDevice:setStreamConfigSetting() FAILED unknown fmt");
 						throw new NotSupportedException( "This device does not support a recognized format block." );
 					}
-					//DirectShowUtil.DebugWrite("  VideoCaptureDevice.setStreamConfigSetting() get formatptr");
+					//Log.Write("  VideoCaptureDevice.setStreamConfigSetting() get formatptr");
 					// Retrieve the nested structure
 					Marshal.PtrToStructure( mediaType.formatPtr, formatStruct );
 
 					// Find the required field
-					//DirectShowUtil.DebugWrite("  VideoCaptureDevice.setStreamConfigSetting() get field");
+					//Log.Write("  VideoCaptureDevice.setStreamConfigSetting() get field");
 					Type structType = formatStruct.GetType();
 					FieldInfo fieldInfo = structType.GetField( fieldName );
 					if ( fieldInfo == null )
 					{
-						DirectShowUtil.DebugWrite("  VideoCaptureDevice:setStreamConfigSetting() FAILED to to find member:{0}", fieldName);
+						Log.Write("  VideoCaptureDevice:setStreamConfigSetting() FAILED to to find member:{0}", fieldName);
 						throw new NotSupportedException( "FAILED to find the member '" + fieldName + "' in the format block." );
 					}
-					//DirectShowUtil.DebugWrite("  VideoCaptureDevice.setStreamConfigSetting() set value");
+					//Log.Write("  VideoCaptureDevice.setStreamConfigSetting() set value");
 					// Update the value of the field
 					fieldInfo.SetValue( formatStruct, newValue );
 
 					// PtrToStructure copies the data so we need to copy it back
 					Marshal.StructureToPtr( formatStruct, mediaType.formatPtr, false ); 
 
-					//DirectShowUtil.DebugWrite("  VideoCaptureDevice.setStreamConfigSetting() set format");
+					//Log.Write("  VideoCaptureDevice.setStreamConfigSetting() set format");
 					// Save the changes
 					hr = streamConfig.SetFormat( mediaType );
 					if ( hr != 0 )
 					{
-						DirectShowUtil.DebugWrite("  VideoCaptureDevice:setStreamConfigSetting() FAILED to set:{0} {1}",fieldName,hr);
+						Log.Write("  VideoCaptureDevice:setStreamConfigSetting() FAILED to set:{0} {1}",fieldName,hr);
 						Marshal.ThrowExceptionForHR( hr );
 					}
-					//else DirectShowUtil.DebugWrite("  VideoCaptureDevice.setStreamConfigSetting() set:{0}",fieldName);
-					//DirectShowUtil.DebugWrite("  VideoCaptureDevice.setStreamConfigSetting() done");
+					//else Log.Write("  VideoCaptureDevice.setStreamConfigSetting() set:{0}",fieldName);
+					//Log.Write("  VideoCaptureDevice.setStreamConfigSetting() done");
 				}
 				finally
 				{
@@ -940,7 +940,7 @@ namespace DShowNET.Helper
 			}
 			catch (Exception)
 			{
-				DirectShowUtil.DebugWrite("  VideoCaptureDevice.:setStreamConfigSetting() FAILED ");
+				Log.Write("  VideoCaptureDevice.:setStreamConfigSetting() FAILED ");
 			}
 			return null;
 		}

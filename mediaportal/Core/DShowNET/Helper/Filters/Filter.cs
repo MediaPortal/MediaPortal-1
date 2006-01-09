@@ -22,8 +22,7 @@
 using System;
 using System.Collections;
 using System.Runtime.InteropServices;
-using DShowNET;
-using DShowNET.Device;
+using DirectShowLib;
 
 namespace DShowNET.Helper
 {
@@ -60,14 +59,14 @@ namespace DShowNET.Helper
 		}
 
 		/// <summary> Create a new filter from its moniker </summary>
-    internal Filter(System.Runtime.InteropServices.ComTypes.IMoniker moniker)
+    internal Filter(UCOMIMoniker moniker)
 		{
 			Name = getName( moniker );
 			MonikerString = getMonikerString( moniker );
 		}
 
 		/// <summary> Retrieve the a moniker's display name (i.e. it's unique string) </summary>
-    protected string getMonikerString(System.Runtime.InteropServices.ComTypes.IMoniker moniker)
+    protected string getMonikerString(UCOMIMoniker moniker)
 		{
 			string s;
 			moniker.GetDisplayName( null, null, out s );
@@ -75,7 +74,7 @@ namespace DShowNET.Helper
 		}
 
 		/// <summary> Retrieve the human-readable name of the filter </summary>
-    protected string getName(System.Runtime.InteropServices.ComTypes.IMoniker moniker)
+    protected string getName(UCOMIMoniker moniker)
 		{
 			object bagObj = null;
 			IPropertyBag bag = null;
@@ -85,7 +84,7 @@ namespace DShowNET.Helper
 				moniker.BindToStorage( null, null, ref bagId, out bagObj );
 				bag = (IPropertyBag) bagObj;
 				object val = "";
-				int hr = bag.Read( "FriendlyName", ref val, IntPtr.Zero );
+				int hr = bag.Read( "FriendlyName", out val, null );
 				if( hr != 0 )
 					Marshal.ThrowExceptionForHR( hr );
 				string ret = val as string;
@@ -108,8 +107,8 @@ namespace DShowNET.Helper
 		/// <summary> Get a moniker's human-readable name based on a moniker string. </summary>
 		protected string getName(string monikerString)
 		{
-			System.Runtime.InteropServices.ComTypes.IMoniker parser = null; 
-			System.Runtime.InteropServices.ComTypes.IMoniker moniker = null;
+			UCOMIMoniker parser = null;
+      UCOMIMoniker moniker = null;
 			try
 			{
 				parser = getAnyMoniker();
@@ -137,36 +136,35 @@ namespace DShowNET.Helper
 		///  This assumes there is at least one video compressor filter
 		///  installed on the system.
 		/// </summary>
-    protected System.Runtime.InteropServices.ComTypes.IMoniker getAnyMoniker()
+    protected UCOMIMoniker getAnyMoniker()
 		{
 			Guid				category = FilterCategory.VideoCompressorCategory;
 			int					hr;
 			object				comObj = null;
 			ICreateDevEnum		enumDev = null;
-      System.Runtime.InteropServices.ComTypes.IEnumMoniker enumMon = null;
-			System.Runtime.InteropServices.ComTypes.IMoniker[]		mon = new System.Runtime.InteropServices.ComTypes.IMoniker[1];
+      UCOMIEnumMoniker enumMon = null;
+      UCOMIMoniker[] mon = new UCOMIMoniker[1];
 
 			try 
 			{
 				// Get the system device enumerator
-				Type srvType = Type.GetTypeFromCLSID( Clsid.SystemDeviceEnum );
+				Type srvType = Type.GetTypeFromCLSID( ClassId.SystemDeviceEnum );
 				if( srvType == null )
 					throw new NotImplementedException( "System Device Enumerator" );
 				comObj = Activator.CreateInstance( srvType );
 				enumDev = (ICreateDevEnum) comObj;
 
 				// Create an enumerator to find filters in category
-				hr = enumDev.CreateClassEnumerator( ref category, out enumMon, 0 );
+				hr = enumDev.CreateClassEnumerator(  category, out enumMon, 0 );
 				if( hr != 0 )
 					throw new NotSupportedException( "No devices of the category" );
 
 				// Get first filter
-				IntPtr f=Marshal.AllocCoTaskMem(sizeof(int));
-				hr = enumMon.Next( 1, mon,  f );
+        int f;
+				hr = enumMon.Next( 1, mon,  out f );
 				if( (hr != 0) )
 					mon[0] = null;
 
-        Marshal.FreeCoTaskMem(f);
         return (mon[0]);
 			}
 			finally

@@ -19,8 +19,9 @@
  *
  */
 using System;
-using System.Runtime.InteropServices; 
+using System.Runtime.InteropServices;
 using MediaPortal.GUI.Library;
+using DirectShowLib;
 namespace DShowNET
 {
 	/// <summary>

@@ -23,7 +23,7 @@ using System;
 using System.Diagnostics;
 using System.Collections;
 using System.Runtime.InteropServices;
-using DShowNET;
+using DirectShowLib;
 
 namespace DShowNET.Helper
 {
@@ -113,8 +113,8 @@ namespace DShowNET.Helper
       SourceCollection videoSources, SourceCollection audioSources, IBaseFilter tuner)
     {
       object filter = null;
-      Guid cat;
-      Guid med;
+      DsGuid cat;
+      DsGuid med;
       Guid iid;
       int hr;
 
@@ -126,9 +126,9 @@ namespace DShowNET.Helper
         addIfSupported( videoDeviceFilter, "Video Capture Device" );
 
         // 2. the video capture pin
-        cat = PinCategory.Capture;
+        cat = new DsGuid(PinCategory.Capture);
         iid = typeof(IAMStreamConfig).GUID;
-        hr = graphBuilder.FindInterface( new Guid[1]{cat}, null, videoDeviceFilter, ref iid, out filter );
+        hr = graphBuilder.FindInterface( cat, null, videoDeviceFilter,  iid, out filter );
         if ( hr != 0 )
         {
           filter = null;
@@ -136,9 +136,9 @@ namespace DShowNET.Helper
         addIfSupported( filter, "Video Capture Pin" );
 
         // 3. the video preview pin
-        cat = PinCategory.Preview;
+        cat = new DsGuid(PinCategory.Preview);
         iid = typeof(IAMStreamConfig).GUID;
-        hr = graphBuilder.FindInterface( new Guid[1]{ cat}, null, videoDeviceFilter, ref iid, out filter );
+        hr = graphBuilder.FindInterface(cat, null, videoDeviceFilter,  iid, out filter);
         if ( hr != 0 )
         {
           filter = null;
@@ -200,10 +200,10 @@ namespace DShowNET.Helper
         addIfSupported( audioDeviceFilter, "Audio Capture Device" );
 
         // 9. the audio capture pin
-        cat = PinCategory.Capture;
-        med = MediaType.Audio; 
+        cat = new DsGuid(PinCategory.Capture);
+        med = new DsGuid(MediaType.Audio); 
         iid = typeof(IAMStreamConfig).GUID;
-        hr = graphBuilder.FindInterface( new Guid[1]{cat}, new Guid[1]{med}, audioDeviceFilter, ref iid, out filter );
+        hr = graphBuilder.FindInterface( cat, med, audioDeviceFilter,  iid, out filter );
         if ( hr != 0 )
         {
           filter = null;
@@ -212,9 +212,9 @@ namespace DShowNET.Helper
 
         // 9. the audio preview pin
         cat = PinCategory.Preview;
-        med = MediaType.Audio; 
+        med = new DsGuid(MediaType.Audio); 
         iid = typeof(IAMStreamConfig).GUID;
-        hr = graphBuilder.FindInterface( new Guid[1]{cat}, new Guid[1]{ med}, audioDeviceFilter, ref iid, out filter );
+        hr = graphBuilder.FindInterface(cat, med, audioDeviceFilter, iid, out filter);
         if ( hr != 0 )
         {
           filter = null;
@@ -263,9 +263,9 @@ namespace DShowNET.Helper
         int iCrossBar=0;
         while (true)
         {
-          cat = FindDirection.UpstreamOnly;
+          cat = new DsGuid(FindDirection.UpstreamOnly);
           iid = typeof(IAMCrossbar).GUID;
-          hr=graphBuilder.FindInterface(new Guid[1]{cat},null,cfilter, ref iid, out o);
+          hr=graphBuilder.FindInterface(cat,null,cfilter,  iid, out o);
           if (hr ==0)
           {
             iCrossBar++;

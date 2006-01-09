@@ -20,7 +20,7 @@
  */
 
 using System;
-using DShowNET;
+using DirectShowLib;
 
 namespace DShowNET.Helper
 {

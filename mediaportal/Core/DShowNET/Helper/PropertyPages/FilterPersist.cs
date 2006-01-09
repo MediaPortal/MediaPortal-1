@@ -20,8 +20,8 @@
  */
 using System;
 using System.IO;
-using DShowNET;
-
+using DirectShowLib;
+using MediaPortal.GUI.Library;
 namespace DShowNET.Helper
 {
 	/// <summary>
@@ -45,7 +45,7 @@ namespace DShowNET.Helper
 
     public void LoadSettings(int ID)
     {
-      DirectShowUtil.DebugWrite("Load settings card:{0}",ID);
+      Log.Write("Load settings card:{0}",ID);
       try
       {
         PropertyPageCollection propertyPages = new PropertyPageCollection( m_captureGraphBuilder, m_videoCompressorFilter, m_audioCompressorFilter);
@@ -66,7 +66,7 @@ namespace DShowNET.Helper
       }
       catch(Exception ex)
       {
-        DirectShowUtil.DebugWrite("ex:{0} {1} {2}", ex.Source, ex.StackTrace, ex.Message);
+        Log.Write("ex:{0} {1} {2}", ex.Source, ex.StackTrace, ex.Message);
       }
     }
 
@@ -75,7 +75,7 @@ namespace DShowNET.Helper
     {
       try
       {
-        DirectShowUtil.DebugWrite("Save settings card:{0}",ID);
+        Log.Write("Save settings card:{0}",ID);
         System.IO.Directory.CreateDirectory("filters");
         PropertyPageCollection  propertyPages = new PropertyPageCollection( m_captureGraphBuilder, m_videoCompressorFilter, m_audioCompressorFilter);
         foreach ( PropertyPage p in propertyPages )
@@ -93,7 +93,7 @@ namespace DShowNET.Helper
       }
       catch(Exception ex)
       {
-        DirectShowUtil.DebugWrite("ex:{0} {1} {2}", ex.Source, ex.StackTrace, ex.Message);
+        Log.Write("ex:{0} {1} {2}", ex.Source, ex.StackTrace, ex.Message);
       }
     }
 	}

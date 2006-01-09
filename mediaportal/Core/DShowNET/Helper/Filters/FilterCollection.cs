@@ -22,8 +22,7 @@
 using System;
 using System.Collections;
 using System.Runtime.InteropServices;
-using DShowNET;
-using DShowNET.Device;
+using DirectShowLib;
 
 namespace DShowNET.Helper
 {
@@ -47,30 +46,30 @@ namespace DShowNET.Helper
 			int					hr;
 			object				comObj = null;
 			ICreateDevEnum		enumDev = null;
-      System.Runtime.InteropServices.ComTypes.IEnumMoniker enumMon = null;
-      System.Runtime.InteropServices.ComTypes.IMoniker[] mon = new System.Runtime.InteropServices.ComTypes.IMoniker[1];
+      UCOMIEnumMoniker enumMon = null;
+      UCOMIMoniker[] mon = new UCOMIMoniker[1];
 
 			try 
 			{
 				// Get the system device enumerator
-				Type srvType = Type.GetTypeFromCLSID( Clsid.SystemDeviceEnum );
+				Type srvType = Type.GetTypeFromCLSID( ClassId.SystemDeviceEnum );
 				if( srvType == null )
 					throw new NotImplementedException( "System Device Enumerator" );
 				comObj = Activator.CreateInstance( srvType );
 				enumDev = (ICreateDevEnum) comObj;
 
 				// Create an enumerator to find filters in category
-				hr = enumDev.CreateClassEnumerator( ref category, out enumMon, 0 );
+				hr = enumDev.CreateClassEnumerator(  category, out enumMon, 0 );
         if( hr != 0 )
         {
           return;//throw new NotSupportedException( "No devices of the category" );
         }
 				// Loop through the enumerator
-				IntPtr f = Marshal.AllocCoTaskMem(sizeof(int));
+        int f;
 				do
 				{
 					// Next filter
-					hr = enumMon.Next( 1, mon,  f );
+					hr = enumMon.Next( 1, mon, out f );
 					if( (hr != 0) || (mon[0] == null) )
 						break;
 					
@@ -83,7 +82,6 @@ namespace DShowNET.Helper
 					mon[0] = null;
 				}
 				while(true);
-        Marshal.FreeCoTaskMem(f);
 
 				// Sort
 				//InnerList.Sort();

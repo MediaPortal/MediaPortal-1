@@ -20,7 +20,7 @@
  */
 using System;
 
-namespace DShowNET
+namespace DShowNET.Helper
 {
 	/// <summary>
 	/// 

@@ -22,6 +22,7 @@ using System;
 using System.Runtime.InteropServices;
 using MediaPortal.GUI.Library;
 
+using DirectShowLib;
 namespace DShowNET
 {
   /// <summary>
@@ -160,7 +161,7 @@ namespace DShowNET
       Marshal.WriteInt32(thbdaBuf, 32, 0);
       Marshal.WriteInt32(thbdaBuf, 36, (int)ptrDwBytesReturned);
 
-      IPin pin = DirectShowUtil.FindPinNr(captureFilter, PinDirection.Input, 0);
+      IPin pin = DsFindPin.ByDirection(captureFilter, PinDirection.Input, 0);
       if (pin != null)
       {
         IKsPropertySet propertySet = pin as IKsPropertySet;
@@ -255,7 +256,7 @@ namespace DShowNET
       Marshal.WriteInt32(thbdaBuf, 32, 0);
       Marshal.WriteInt32(thbdaBuf, 36, (int)ptrDwBytesReturned);
 
-      IPin pin = DirectShowUtil.FindPinNr(captureFilter, PinDirection.Input, 0);
+      IPin pin = DsFindPin.ByDirection(captureFilter, PinDirection.Input, 0);
       if (pin != null)
       {
         IKsPropertySet propertySet = pin as IKsPropertySet;
@@ -289,7 +290,7 @@ namespace DShowNET
     protected override void SetStructure(Guid guidPropSet, uint propId, System.Type structureType, object structValue)
     {
       Guid propertyGuid = guidPropSet;
-      IPin pin = DirectShowUtil.FindPinNr(captureFilter, PinDirection.Input, 0);
+      IPin pin = DsFindPin.ByDirection(captureFilter, PinDirection.Input, 0);
       if (pin == null) return;
       IKsPropertySet propertySet = pin as IKsPropertySet;
       if (propertySet == null)

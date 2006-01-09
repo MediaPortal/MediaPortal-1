@@ -23,7 +23,7 @@ using System;
 using System.Diagnostics; 
 using System.Collections;
 using System.Runtime.InteropServices;
-using DShowNET;
+using DirectShowLib;
 
 namespace DShowNET.Helper
 {
@@ -169,7 +169,7 @@ namespace DShowNET.Helper
 		{
 			ArrayList crossbars = new ArrayList();
 
-			Guid category = FindDirection.UpstreamOnly;
+			DsGuid category = new DsGuid(FindDirection.UpstreamOnly);
 			//Guid type = new Guid();
 			Guid riid = typeof(IAMCrossbar).GUID;
 			int hr;
@@ -178,7 +178,7 @@ namespace DShowNET.Helper
 			object comObjNext = null;
 
 			// Find the first interface, look upstream from the selected device
-      hr = graphBuilder.FindInterface( new Guid[1]{category}, null, deviceFilter, ref riid, out comObj );
+      hr = graphBuilder.FindInterface( category, null, deviceFilter,  riid, out comObj );
 			while ( (hr == 0) && (comObj != null) )
 			{
 				// If found, add to the list
@@ -187,7 +187,7 @@ namespace DShowNET.Helper
 					crossbars.Add( comObj as IAMCrossbar );
 
 					// Find the second interface, look upstream from the next found crossbar
-          hr = graphBuilder.FindInterface( new Guid[1]{ category}, null, comObj as IBaseFilter, ref riid, out comObjNext );
+          hr = graphBuilder.FindInterface(  category, null, comObj as IBaseFilter,  riid, out comObjNext );
 					comObj = comObjNext;
 				}
 				else

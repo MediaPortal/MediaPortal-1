@@ -23,8 +23,7 @@ using System.Collections;
 
 using System.Runtime.InteropServices;
 
-using DShowNET;
-using DShowNET.Device;
+using DirectShowLib;
 
 namespace DShowNET.Helper
 {
@@ -211,55 +210,46 @@ namespace DShowNET.Helper
 		{
 			ArrayList filters = new ArrayList();
 
-			Type filterMapperType = Type.GetTypeFromCLSID(Clsid.Clsid_FilterMapper2);
-			if(filterMapperType != null)
-			{
-				int hResult;
-				object comObject = null;
+			UCOMIEnumMoniker enumMoniker = null;
+      UCOMIMoniker[] moniker = new UCOMIMoniker[1];
 
-				System.Runtime.InteropServices.ComTypes.IEnumMoniker enumMoniker = null;
-				System.Runtime.InteropServices.ComTypes.IMoniker[] moniker = new System.Runtime.InteropServices.ComTypes.IMoniker[1];
+      IFilterMapper2 mapper = (IFilterMapper2) new FilterMapper2();
 
-				comObject = Activator.CreateInstance(filterMapperType);
-				IFilterMapper2 mapper = comObject as IFilterMapper2;
+			if(mapper != null)
+			{						
+				int hResult = mapper.EnumMatchingFilters(
+					 out enumMoniker,
+					0,
+					true,
+					(Merit)0x080001,
+					true,
+					1,
+					new Guid[] {mediaType, mediaSubType},
+					null,
+          null,
+					false,
+					true,
+					0,
+					new Guid[0],
+          null,
+          null);
 
-				if(mapper != null)
-				{						
-					hResult = mapper.EnumMatchingFilters(
-						out enumMoniker,
-						0,
-						true,
-						0x080001,
-						true,
-						1,
-						new Guid[] {mediaType, mediaSubType},
-						IntPtr.Zero,
-						IntPtr.Zero,
-						false,
-						true,
-						0,
-						new Guid[0],
-						IntPtr.Zero,
-						IntPtr.Zero);
+        int fetched=-1;
+				do
+				{
+          hResult = enumMoniker.Next(1, moniker, out fetched);
 
-          IntPtr dummy = Marshal.AllocCoTaskMem(sizeof(int));
-					do
+					if((moniker[0] == null))
 					{
-						hResult = enumMoniker.Next(1, moniker,  dummy);
-
-						if((moniker[0] == null))
-						{
-							break;
-						}
-						
-						string filterName = DShowNET.DsUtils.GetFriendlyName(moniker[0]);
-						filters.Add(filterName);
-						
-						moniker[0] = null;
+						break;
 					}
-					while(true);
-          Marshal.FreeCoTaskMem(dummy);
+					
+					string filterName = DirectShowUtil.GetFriendlyName(moniker[0]);
+					filters.Add(filterName);
+					
+					moniker[0] = null;
 				}
+				while(true);
 			}
 
 			return filters;

@@ -27,6 +27,8 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using Toub.MediaCenter.Dvrms.Metadata;
 
+using DirectShowLib;
+using DirectShowLib.SBE;
 namespace DShowNET.Helper
 {
   /// <summary>
@@ -213,7 +215,7 @@ namespace DShowNET.Helper
         m_bOverlayVisible=false;
 				if (m_videoWindow!=null)
 				{
-					m_videoWindow.put_Visible( DsHlp.OAFALSE );
+					m_videoWindow.put_Visible( OABool.False );
 					m_videoWindow.put_MessageDrain(IntPtr.Zero);
 				}
         if (m_mediaControl!=null)
@@ -325,13 +327,13 @@ namespace DShowNET.Helper
 					if( hr != 0 ) 
 						Log.WriteFile(Log.LogType.Capture,true,"mpeg2:FAILED:set Video window:0x{0:X}",hr);
 
-					hr = m_videoWindow.put_WindowStyle( WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS);
+					hr = m_videoWindow.put_WindowStyle( (WindowStyle)((int)WindowStyle.Child+(int)WindowStyle.ClipChildren+(int)WindowStyle.ClipSiblings) );
 					if( hr != 0 ) 
 						Log.WriteFile(Log.LogType.Capture,true,"mpeg2:FAILED:set Video window style:0x{0:X}",hr);
 
 					// make the overlay window visible
 					//    m_bOverlayVisible=true;
-					hr = m_videoWindow.put_Visible( DsHlp.OAFALSE );
+					hr = m_videoWindow.put_Visible( OABool.False );
 					//    if( hr != 0 ) 
 					//      Log.WriteFile(Log.LogType.Capture,"mpeg2:FAILED:put_Visible:0x{0:X}",hr);
 				}
@@ -541,7 +543,8 @@ namespace DShowNET.Helper
           Log.WriteFile(Log.LogType.Capture,true,"mpeg2:FAILED to connect video out to analyzer:0x{0:X}",hr);
 	      
         //find analyzer out pin
-        m_pinAnalyserOutput=DirectShowUtil.FindPinNr(m_VidAnalyzer,PinDirection.Output,0);
+        
+        m_pinAnalyserOutput=DsFindPin.ByDirection(m_VidAnalyzer,PinDirection.Output,0);
         if (m_pinAnalyserOutput==null) 
         {
           Log.WriteFile(Log.LogType.Capture,true,"mpeg2:FAILED to find analyser output pin");
@@ -558,7 +561,7 @@ namespace DShowNET.Helper
 
 
         //find streambuffer in#1 pin
-        m_pinStreamBufferIn1=DirectShowUtil.FindPinNr(m_streamBuffer,PinDirection.Input,1);
+        m_pinStreamBufferIn1=DsFindPin.ByDirection(m_streamBuffer,PinDirection.Input,1);
         if (m_pinStreamBufferIn1==null) 
         {
           Log.WriteFile(Log.LogType.Capture,true,"mpeg2: FAILED to find input pin#1 of streambuffersink");
@@ -616,7 +619,7 @@ namespace DShowNET.Helper
         hr=m_pConfig.SetBackingFileCount(6, 8);    //6-8 files
         if (hr!=0) Log.WriteFile(Log.LogType.Capture,true,"mpeg2: FAILED to set backingfile count:0x{0:X}",hr);
 
-        hr=m_pConfig.SetBackingFileDuration( (uint)iFileDuration); 
+        hr=m_pConfig.SetBackingFileDuration( (int)iFileDuration); 
         if (hr!=0) Log.WriteFile(Log.LogType.Capture,true,"mpeg2: FAILED to set backingfile duration:0x{0:X}",hr);
 #endif
 				IStreamBufferConfigure2 streamConfig2	= m_StreamBufferConfig as IStreamBufferConfigure2;
@@ -672,7 +675,7 @@ namespace DShowNET.Helper
 
       AMMediaType mpegVideoOut = new AMMediaType();
       mpegVideoOut.majorType = MediaType.Video;
-      mpegVideoOut.subType = MediaSubType.MPEG2_Video;
+      mpegVideoOut.subType = MediaSubType.Mpeg2Video;
 
       mpegVideoOut.unkPtr = IntPtr.Zero;
       mpegVideoOut.sampleSize = 0;
@@ -711,7 +714,7 @@ namespace DShowNET.Helper
 
       AMMediaType mpegAudioOut = new AMMediaType();
       mpegAudioOut.majorType = MediaType.Audio;
-      mpegAudioOut.subType = MediaSubType.MPEG2_Audio;
+      mpegAudioOut.subType = MediaSubType.Mpeg2Audio;
       mpegAudioOut.sampleSize = 0;
       mpegAudioOut.temporalCompression = false;
       mpegAudioOut.fixedSizeSamples = true;
@@ -722,7 +725,7 @@ namespace DShowNET.Helper
       System.Runtime.InteropServices.Marshal.Copy(MPEG1AudioFormat,0,mpegAudioOut.formatPtr,mpegAudioOut.formatSize) ;
       
 			Log.WriteFile(Log.LogType.Capture,"mpeg2:create video out pin on MPEG2 demuxer");
-			hr = m_demuxer.CreateOutputPin(ref mpegVideoOut/*vidOut*/, "video", out m_pinVideoOut);
+			hr = m_demuxer.CreateOutputPin( mpegVideoOut/*vidOut*/, "video", out m_pinVideoOut);
       if (hr!=0)
       {
         Log.WriteFile(Log.LogType.Capture,true,"mpeg2:FAILED to create videout pin:0x{0:X}",hr);
@@ -730,7 +733,7 @@ namespace DShowNET.Helper
       }
 
       Log.WriteFile(Log.LogType.Capture,"mpeg2:create audio out pin on MPEG2 demuxer");
-      hr = m_demuxer.CreateOutputPin(ref mpegAudioOut, "audio", out m_pinAudioOut);
+      hr = m_demuxer.CreateOutputPin( mpegAudioOut, "audio", out m_pinAudioOut);
       if (hr!=0)
       {
         Log.WriteFile(Log.LogType.Capture,true,"mpeg2:FAILED to create audioout pin:0x{0:X}",hr);
@@ -742,7 +745,7 @@ namespace DShowNET.Helper
 
 
       Log.WriteFile(Log.LogType.Capture,"mpeg2:find MPEG2 demuxer input pin");
-      m_pinInput=DirectShowUtil.FindPinNr(m_mpeg2Multiplexer,PinDirection.Input,0);
+      m_pinInput=DsFindPin.ByDirection(m_mpeg2Multiplexer,PinDirection.Input,0);
       if (m_pinInput!=null)
         Log.WriteFile(Log.LogType.Capture,"mpeg2:found MPEG2 demuxer input pin");
       else
@@ -761,7 +764,7 @@ namespace DShowNET.Helper
       IMPEG2StreamIdMap pStreamId;
       Log.WriteFile(Log.LogType.Capture,"mpeg2:MPEG2 demuxer map MPG stream 0xe0->video output pin");
       pStreamId = (IMPEG2StreamIdMap) m_pinVideoOut;
-      int hr = pStreamId.MapStreamId(224, 1 ,0,0); // hr := pStreamId.MapStreamId( 224, MPEG2_PROGRAM_ELEMENTARY_STREAM, 0, 0 );
+      int hr = pStreamId.MapStreamId(224, MPEG2Program.ElementaryStream ,0,0); // hr := pStreamId.MapStreamId( 224, MPEG2_PROGRAM_ELEMENTARY_STREAM, 0, 0 );
       if (hr!=0)
         Log.WriteFile(Log.LogType.Capture,true,"mpeg2:FAILED to map stream 0xe0->video:0x{0:X}",hr);
       else
@@ -769,7 +772,7 @@ namespace DShowNET.Helper
 
 			Log.WriteFile(Log.LogType.Capture,"mpeg2:MPEG2 demuxer map MPG stream 0xc0->audio output pin");
       pStreamId = (IMPEG2StreamIdMap) m_pinAudioOut;
-      hr = pStreamId.MapStreamId(0xC0, 1 ,0,0); // hr := pStreamId.MapStreamId( 0xC0, MPEG2_PROGRAM_ELEMENTARY_STREAM, 0, 0 );
+      hr = pStreamId.MapStreamId(0xC0, MPEG2Program.ElementaryStream, 0, 0); // hr := pStreamId.MapStreamId( 0xC0, MPEG2_PROGRAM_ELEMENTARY_STREAM, 0, 0 );
       if (hr!=0)
         Log.WriteFile(Log.LogType.Capture,true,"mpeg2:FAILED to map stream 0xc0->audio:0x{0:X}",hr);
       else
@@ -793,7 +796,7 @@ namespace DShowNET.Helper
       }
       m_graphBuilder.AddFilter(m_VidAnalyzer, "MPEG-2 Video Analyzer");
       
-      m_pinAnalyserInput=DirectShowUtil.FindPinNr(m_VidAnalyzer,PinDirection.Input,0);
+      m_pinAnalyserInput=DsFindPin.ByDirection(m_VidAnalyzer,PinDirection.Input,0);
       if (m_pinAnalyserInput==null) Log.WriteFile(Log.LogType.Capture,"mpeg2:FAILED to find analyser input pin");
 
       Log.WriteFile(Log.LogType.Capture,"mpeg2:add streambuffersink");
@@ -818,7 +821,7 @@ namespace DShowNET.Helper
       if (hr!=0) Log.WriteFile(Log.LogType.Capture,true,"mpeg2: FAILED to set hkey:0x{0:X}",hr);
       
 
-      m_pinStreamBufferIn0=DirectShowUtil.FindPinNr(m_streamBuffer,PinDirection.Input,0);
+      m_pinStreamBufferIn0=DsFindPin.ByDirection(m_streamBuffer,PinDirection.Input,0);
       if (m_pinStreamBufferIn0==null) Log.WriteFile(Log.LogType.Capture,true,"mpeg2: FAILED to find input pin#0 of streambuffersink");
     }
 
@@ -855,8 +858,8 @@ namespace DShowNET.Helper
       if (!bContentRecording)
       {
         // so set the startttime...
-        uint uiSecondsPerFile;
-        uint uiMinFiles, uiMaxFiles;
+        int uiSecondsPerFile;
+        int uiMinFiles, uiMaxFiles;
         m_pConfig.GetBackingFileCount(out uiMinFiles, out uiMaxFiles);
         m_pConfig.GetBackingFileDuration(out uiSecondsPerFile);
         lStartTime = uiSecondsPerFile;
@@ -971,7 +974,7 @@ namespace DShowNET.Helper
       
 			if (m_videoWindow!=null)
 			{
-				m_videoWindow.put_Visible( DsHlp.OAFALSE );
+				m_videoWindow.put_Visible( OABool.False );
 			}
       m_videoWindow = null;
 
@@ -1018,13 +1021,13 @@ namespace DShowNET.Helper
         if (!m_bOverlayVisible)
         {
           if (m_videoWindow!=null)
-            m_videoWindow.put_Visible( DsHlp.OAFALSE );
+            m_videoWindow.put_Visible( OABool.False );
 
         }
         else
         {
           if (m_videoWindow!=null)
-            m_videoWindow.put_Visible( DsHlp.OATRUE );
+            m_videoWindow.put_Visible( OABool.True );
 
         }
       }
