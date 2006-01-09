@@ -488,7 +488,13 @@ namespace MediaPortal
       if (VerifyAction(actionCode, curAxisValue))
       {
         Log.Write("mapping action {0}", actionCode);
-        diMapper.MapAction(actionCode, actionParam);
+        try
+        {
+          diMapper.MapAction(actionCode, actionParam);
+        }
+        catch (ApplicationException)
+        {
+        }
       }
     }
 

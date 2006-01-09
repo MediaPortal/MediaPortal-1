@@ -172,12 +172,21 @@ namespace MediaPortal.Tests.Plugins.RemotePlugins.HCWRemote
     }
 
     [Test]
+    [ExpectedException(typeof(System.ApplicationException), "No button mapping found")]
+    public void GetMappingNotFound()
+    {
+      string xmlFile = "TestDefault";
+      InputHandler inputHandler = new InputHandler(xmlFile);
+      InputHandler.Mapping mapTest = inputHandler.GetMapping(1);
+    }
+
+    [Test]
     public void MapCommand()
     {
       string xmlFile = "TestDefault";
       int newCommand = 0;
       InputHandler inputHandler = new InputHandler(xmlFile);
-      Assert.IsTrue(inputHandler.MapAction(newCommand));
+      inputHandler.MapAction(newCommand);
     }
 
   }

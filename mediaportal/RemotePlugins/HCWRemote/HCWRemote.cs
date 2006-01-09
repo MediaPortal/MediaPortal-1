@@ -101,10 +101,17 @@ namespace MediaPortal
         catch (System.IO.FileNotFoundException)
         {
           controlEnabled = false;
+          Log.Write("HCW: can't find default mapping file - reinstall MediaPortal");
         }
         catch (System.Xml.XmlException)
         {
           controlEnabled = false;
+          Log.Write("HCW: error in default mapping file - reinstall MediaPortal");
+        }
+        catch (System.ApplicationException)
+        {
+          controlEnabled = false;
+          Log.Write("HCW: version mismatch in default mapping file - reinstall MediaPortal");
         }
 
       if (controlEnabled)
@@ -327,7 +334,14 @@ namespace MediaPortal
               {
                 lastExecutedCommandCount = sameCommandCount;
                 lastCommand = newCommand;
-                hcwHandler.MapAction(newCommand);    //Send command to application...
+                try
+                {
+                  hcwHandler.MapAction(newCommand);    //Send command to application...
+                }
+                catch (ApplicationException ex)
+                {
+                  Log.Write("HCW: Exception: ", ex.Message);
+                }
                 if (logVerbose) Log.Write("HCW: repeat filter accepted: {0}", newCommand.ToString());
               }
               lastTime = sentTime;

@@ -103,16 +103,17 @@ namespace MediaPortal.MameDevice
 				//when i start MP and simply press the cursor up arrow
 
         Log.Write("WM_KEYDOWN: wParam {0}", (int)msg.WParam);
-        bool res = MameMapper.MapAction((int)msg.WParam);
-        if (res)
+        try
         {
-          msg.Result = IntPtr.Zero;
-          return true;
+          MameMapper.MapAction((int)msg.WParam);
         }
-        else
+        catch (ApplicationException)
         {
           return false;
         }
+        msg.Result = IntPtr.Zero;
+        return true;
+
       }
       return false;
     }
