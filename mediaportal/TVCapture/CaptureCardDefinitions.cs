@@ -27,15 +27,19 @@ using MediaPortal.GUI.Library;
 namespace TVCapture
 {
   #region Data Classes
-
+  public enum CardTypes
+  {
+    Digital_SS2,
+    Digital_BDA,
+    Analog,
+    Analog_MCE,
+  }
   public class CapabilityDefinition
   {
     public bool HasTv;
     public bool HasRadio;
-    public bool IsBDADevice;
-    public bool IsMceDevice;
-    public bool IsMpeg2Device;
-    public bool IsSoftwareDevice;
+    public CardTypes CardType;
+
   }
 
   public class FilterDefinition
@@ -329,10 +333,15 @@ namespace TVCapture
               //Log.Write("  Getting capabilities...");
               cardConfig.Capabilities.HasTv = XmlConvert.ToBoolean(capNode.Attributes.GetNamedItem(@"tv").InnerText);
               cardConfig.Capabilities.HasRadio = XmlConvert.ToBoolean(capNode.Attributes.GetNamedItem(@"radio").InnerText);
-              cardConfig.Capabilities.IsBDADevice = XmlConvert.ToBoolean(capNode.Attributes.GetNamedItem(@"bda").InnerText);
-              cardConfig.Capabilities.IsMceDevice = XmlConvert.ToBoolean(capNode.Attributes.GetNamedItem(@"mce").InnerText);
-              cardConfig.Capabilities.IsMpeg2Device = XmlConvert.ToBoolean(capNode.Attributes.GetNamedItem(@"mpeg2").InnerText);
-              cardConfig.Capabilities.IsSoftwareDevice = XmlConvert.ToBoolean(capNode.Attributes.GetNamedItem(@"sw").InnerText);
+              bool isBda = XmlConvert.ToBoolean(capNode.Attributes.GetNamedItem(@"bda").InnerText);
+              bool isMce = XmlConvert.ToBoolean(capNode.Attributes.GetNamedItem(@"mce").InnerText);
+              bool isMpeg2 = XmlConvert.ToBoolean(capNode.Attributes.GetNamedItem(@"mpeg2").InnerText);
+              if (isBda)
+                cardConfig.Capabilities.CardType=CardTypes.Digital_BDA;
+              else if (isMce)
+                cardConfig.Capabilities.CardType = CardTypes.Analog;
+              else if (isMpeg2)
+                cardConfig.Capabilities.CardType = CardTypes.Analog;
 
               //Log.Write("    TV:{0} radio:{1} bda:{2} mce:{3} mpeg2:{4} s/w:{5}",
               //					cardConfig.Capabilities.HasTv,cardConfig.Capabilities.HasRadio,cardConfig.Capabilities.IsBDADevice,

@@ -306,7 +306,7 @@ namespace MediaPortal.TV.Recording
     #endregion
 
 
-    public DVBGraphSS2(int cardId, int iCountryCode, bool bCable, string strVideoCaptureFilter, string strAudioCaptureFilter, string strVideoCompressor, string strAudioCompressor, Size frameSize, double frameRate, string strAudioInputPin, int RecordingLevel)
+    public DVBGraphSS2(int cardId )
     {
       _cardId = cardId;
 
@@ -2407,6 +2407,14 @@ namespace MediaPortal.TV.Recording
     public void Process()
     {
       if (_graphState == State.None) return;
+
+      if (_graphState == State.Viewing)
+      {
+        if (GUIGraphicsContext.Vmr9Active && _vmr9 != null)
+        {
+          _vmr9.Process();
+        }
+      }
       UpdateSignalQuality();
 
       _epgGrabber.Process();

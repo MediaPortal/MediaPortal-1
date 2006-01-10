@@ -26,14 +26,14 @@ namespace MediaPortal.TV.Teletext
       _teletextDecoder.ClearBuffer();
       device.GrabTeletext(true);
       _device = device;
-      Log.Write("teletext: grab teletext for card:{0}", device.CommercialName);
+      Log.Write("teletext: grab teletext for card:{0}", device.Graph.CommercialName);
     }
 
     static private void OnTvViewingStopped(int card, TVCaptureDevice device)
     {
       _teletextDecoder.ClearBuffer();
       device.GrabTeletext(false);
-      Log.Write("teletext: stop grabbing teletext for card:{0}", device.CommercialName);
+      Log.Write("teletext: stop grabbing teletext for card:{0}", device.Graph.CommercialName);
     }
 
     static private void OnTvChannelChanged(string tvChannelName)

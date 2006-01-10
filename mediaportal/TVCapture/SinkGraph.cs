@@ -137,10 +137,6 @@ namespace MediaPortal.TV.Recording
       m_iCountryCode = mCard.DefaultCountryCode;
       m_strVideoCaptureFilter = mCard.VideoDevice;
       m_strVideoCaptureMoniker = mCard.VideoDeviceMoniker;
-      m_FrameSize = mCard.FrameSize;
-      m_FrameRate = mCard.FrameRate;
-
-      if (m_FrameSize.Width == 0 || m_FrameSize.Height == 0)
         m_FrameSize = new Size(720, 576);
 
       try
@@ -1242,7 +1238,13 @@ namespace MediaPortal.TV.Recording
       {
         Vmr7.Process();
       }
-
+      if (m_graphState == State.Viewing)
+      {
+        if (GUIGraphicsContext.Vmr9Active && Vmr9 != null)
+        {
+          Vmr9.Process();
+        }
+      }
       UpdateVideoState();
     }
 
@@ -1400,7 +1402,7 @@ namespace MediaPortal.TV.Recording
         int highMaxKbps = xmlreader.GetValueAsInt("quality", "HighMax", 12000);
         bool highVBR = xmlreader.GetValueAsBool("quality", "HighVBR", true);
 
-        string comName = this.mCard.CommercialName;
+        string comName = this.mCard.Graph.CommercialName;
         if (comName.IndexOf("usb") >= 0)
         {
           highMinKbps = xmlreader.GetValueAsInt("quality", "HighLow", 768);

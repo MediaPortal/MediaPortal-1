@@ -21,6 +21,7 @@
 //#define USEMTSWRITER
 #if (UseCaptureCardDefinitions)
 
+#region usings
 using System;
 using System.IO;
 using System.Management;
@@ -41,6 +42,7 @@ using TVCapture;
 //using DirectX.Capture;
 using Toub.MediaCenter.Dvrms.Metadata;
 using System.Threading;
+#endregion
 
 namespace MediaPortal.TV.Recording
 {
@@ -54,6 +56,8 @@ namespace MediaPortal.TV.Recording
   /// * IAMLine21Decoder - Used to control the display of closed captioning. 
   /// * IAMWstDecoder - Used to control the dislay of World Standard Teletext (WST).
   /// </summary>
+
+  #region RecordingFileInfo class
   public class RecordingFileInfo : IComparable<RecordingFileInfo>
   {
     public string filename;
@@ -70,39 +74,36 @@ namespace MediaPortal.TV.Recording
 
     #endregion
   }
+  #endregion
 
   [Serializable]
   public class TVCaptureDevice
   {
+
+    #region consts
     const string recEngineExt = ".dvr-ms";  // Change extension here when switching to TS enginge!!!
 
     class RecordingFinished
     {
       public string fileName = String.Empty;
     }
-    string m_strVideoDevice = String.Empty;
-    string m_strVideoDeviceMoniker = String.Empty;//@"@device:pnp:\\?\pci#ven_4444&dev_0016&subsys_88010070&rev_01#3&267a616a&0&60#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\{9b365890-165f-11d0-a195-0020afd156e4}";
-    string m_strAudioDevice = String.Empty;
-    string m_strVideoCompressor = String.Empty;
-    string m_strAudioCompressor = String.Empty;
-    string m_strCommercialName = String.Empty;
-    bool m_bUseForRecording = false;
-    bool m_bUseForTV = false;
-    bool m_bSupportsMPEG2 = false;							// #MW# Should be part of card definition??
-    bool m_bIsMCECard = false;							// #MW# Should be part of card definition??
-    bool m_bIsBDACard = false;
-    Size m_FrameSize;
-    double m_FrameRate = 0;
-    string m_strAudioInputPin = String.Empty;
-    int _RecordingLevel = 100;
-    string m_strFriendlyName = String.Empty;
-    string deviceType = String.Empty;
-    int priority = 1;
-    string m_strRecordingPath = String.Empty;
-    int m_iMaxSizeLimit = 50;
-    bool m_bDeleteOnLowDiskspace = false;
-    int m_iQuality = -1;
-    DateTime lastChannelChange = DateTime.Now;
+    #endregion
+
+    #region variables
+    string _videoCaptureDevice = String.Empty;
+    string _videoCaptureMoniker = String.Empty;//@"@device:pnp:\\?\pci#ven_4444&dev_0016&subsys_88010070&rev_01#3&267a616a&0&60#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\{9b365890-165f-11d0-a195-0020afd156e4}";
+    string _commercialName = String.Empty;
+    string _deviceId = String.Empty;
+    string _captureName = String.Empty;
+    bool _useForRecording = false;
+    bool _useForTv = false;
+    string _friendlyName = String.Empty;
+    int _cardPriority = 1;
+    string _recordingPath = String.Empty;
+    CardTypes _cardType;
+    
+    int _defaultRecordingQuality = -1;
+    DateTime _lastChannelChange = DateTime.Now;
     enum State
     {
       None,
@@ -147,57 +148,93 @@ namespace MediaPortal.TV.Recording
     [NonSerialized]
     private string _currentRadioStationName = String.Empty;
     [NonSerialized]
-    DateTime _epgTimeOutTimer=DateTime.Now;
+    DateTime _epgTimeOutTimer = DateTime.Now;
+    [NonSerialized]
+    GraphHelper _graphHelper = new GraphHelper();
 
     /// <summary>
     /// #MW#
     /// </summary>
-    [NonSerialized]
-    private TVCapture.CaptureCardDefinition _captureCardDefinition = new CaptureCardDefinition();
-    [NonSerialized]
-    private bool _definitionLoaded = false;
 
+    #endregion
+
+    #region events
     public delegate void OnTvRecordingHandler(string recordingFilename, TVRecording recording, TVProgram program);
     public event OnTvRecordingHandler OnTvRecordingEnded = null;
     public event OnTvRecordingHandler OnTvRecordingStarted = null;
+    #endregion
 
+    #region ctor
     /// <summary>
     /// Default constructor
     /// </summary>
     public TVCaptureDevice()
     {
+      _graphHelper = new GraphHelper();
     }
+    #endregion
 
-    /// <summary>
-    /// #MW#
-    /// </summary>
+    #region properties
+    public GraphHelper Graph
+    {
+      get {
+        if (_graphHelper == null)
+          LoadDefinitions();
+        return _graphHelper; 
+      }
+    }
+    public CardTypes CardType
+    {
+      get { return _cardType; }
+      set { _cardType = value; }
+    }
+    public string CommercialName
+    {
+      get
+      {
+        return _commercialName;
+      }
+      set
+      {
+        _commercialName = value;
+      }
+    }
     public string DeviceId
     {
       get
       {
-        if (_captureCardDefinition == null) return String.Empty;
-        return _captureCardDefinition.DeviceId;
+        return _deviceId;
       }
       set
       {
-        if (_captureCardDefinition == null) return;
-        _captureCardDefinition.DeviceId = value;
+        _deviceId = value;
       }
-    }
+    }/*
+    public string CaptureName
+    {
+      get
+      {
+        return _captureName;
+      }
+      set
+      {
+        _captureName = value;
+      }
+    }*/
 
     public string RecordingPath
     {
       get
       {
-        m_strRecordingPath = Utils.RemoveTrailingSlash(m_strRecordingPath);
-        if (m_strRecordingPath == null || m_strRecordingPath.Length == 0)
+        _recordingPath = Utils.RemoveTrailingSlash(_recordingPath);
+        if (_recordingPath == null || _recordingPath.Length == 0)
         {
-          m_strRecordingPath = System.IO.Directory.GetCurrentDirectory();
-          m_strRecordingPath = Utils.RemoveTrailingSlash(m_strRecordingPath);
+          _recordingPath = System.IO.Directory.GetCurrentDirectory();
+          _recordingPath = Utils.RemoveTrailingSlash(_recordingPath);
         }
-        return m_strRecordingPath;
+        return _recordingPath;
       }
-      set { m_strRecordingPath = value; }
+      set { _recordingPath = value; }
     }
 
     public int SignalQuality
@@ -219,554 +256,21 @@ namespace MediaPortal.TV.Recording
     }
     public int Quality
     {
-      get { return m_iQuality; }
-      set { m_iQuality = value; }
-    }
-    public int MaxSizeLimit
-    {
-      get { return m_iMaxSizeLimit; }
-      set { m_iMaxSizeLimit = value; }
+      get { return _defaultRecordingQuality; }
+      set { _defaultRecordingQuality = value; }
     }
 
-    public bool DeleteOnLowDiskspace
-    {
-      get { return m_bDeleteOnLowDiskspace; }
-      set { m_bDeleteOnLowDiskspace = value; }
-    }
 
     public int Priority
     {
-      get { return priority; }
-      set { priority = value; }
-    }
-
-    public string DeviceType
-    {
-      get { return deviceType; }
-      set { deviceType = value; }
-    }
-
-    /// <summary>
-    /// #MW#
-    /// </summary>
-    public string CaptureName
-    {
-      get { return _captureCardDefinition.CaptureName; }
-      set { _captureCardDefinition.CaptureName = value; }
-    }
-    /// <summary>
-    /// #MW#
-    /// </summary>
-    public string CommercialName
-    {
-      get
-      {
-        if (_captureCardDefinition != null && _captureCardDefinition.CommercialName != null)
-        {
-          m_strCommercialName = _captureCardDefinition.CommercialName;
-          return _captureCardDefinition.CommercialName;
-        }
-        return m_strCommercialName;
-      }
-      set
-      {
-        _captureCardDefinition.CommercialName = value;
-        m_strCommercialName = value;
-      }
-    }
-    /// <summary>
-    /// #MW#
-    /// </summary>
-    public CapabilityDefinition Capabilities
-    {
-      get { return _captureCardDefinition.Capabilities; }
-    }
-
-    public FilterDefinition GetTvFilterDefinition(string filterCategory)
-    {
-      foreach (FilterDefinition fd in TvFilterDefinitions)
-      {
-        if (String.Compare(fd.Category, filterCategory, true) == 0) return fd;
-      }
-      return null;
-    }
-    /// <summary>
-    /// #MW#
-    /// </summary>
-
-    public ArrayList TvFilterDefinitions
-    {
-      get
-      {
-        if (_captureCardDefinition == null) return null;
-        if (_captureCardDefinition.Tv == null) return null;
-        return _captureCardDefinition.Tv.FilterDefinitions;
-      }
-    }
-
-    /// <summary>
-    /// #MW#
-    /// </summary>
-    public ArrayList TvConnectionDefinitions
-    {
-      get
-      {
-        if (_captureCardDefinition == null) return null;
-        if (_captureCardDefinition.Tv == null) return null;
-        return _captureCardDefinition.Tv.ConnectionDefinitions;
-      }
-    }
-    /// <summary>
-    /// #MW#
-    /// </summary>
-    public InterfaceDefinition TvInterfaceDefinition
-    {
-      get
-      {
-        if (_captureCardDefinition.Tv == null) return null;
-        return _captureCardDefinition.Tv.InterfaceDefinition;
-      }
-    }
-
-    /// <summary>
-    /// #MW#
-    /// </summary>
-    public ArrayList RadioFilterDefinitions
-    {
-      get
-      {
-        if (_captureCardDefinition.Radio == null) return null;
-        return _captureCardDefinition.Radio.FilterDefinitions;
-      }
-    }
-
-    /// <summary>
-    /// #MW#
-    /// </summary>
-    public ArrayList RadioConnectionDefinitions
-    {
-      get
-      {
-        if (_captureCardDefinition.Radio == null) return null;
-        return _captureCardDefinition.Radio.ConnectionDefinitions;
-      }
-    }
-
-    /// <summary>
-    /// #MW#
-    /// </summary>
-    public InterfaceDefinition RadioInterfaceDefinition
-    {
-      get
-      {
-        if (_captureCardDefinition.Radio == null) return null;
-        return _captureCardDefinition.Radio.InterfaceDefinition;
-      }
-    }
-
-    /// <summary>
-    /// This method:
-    /// 1. finds the device entry  in the registry key : SYSTEM\CurrentControlSet\Enum\[DEVICE moniker]
-    /// 2. looks at the 'Service' subkey which points to the service for this device.
-    /// 3. then looks at SYSTEM\CurrentControlSet\Services\[ServiceName]\Enum
-    /// 4. reads the 'Count' subkey which indicates how many instances there are of this device
-    /// 5. checks each instance in SYSTEM\CurrentControlSet\Services\[ServiceName]\Enum\
-    ///    to find the correct instance...
-    /// </summary>
-    /// <param name="monikerName">device moniker</param>
-    /// <example>ven_4444&dev_0016&subsys_40090070&rev_01#4&2e98101c&0&68f0</example>
-    /// <returns>instance for this device moniker (0-count)</returns>
-    /// 
-    /// Registry layout:
-    /// SYSTEM\CurrentControlSet\Enum\[DEVICE moniker]
-    ///     Service=[ServiceName]
-    ///     
-    /// SYSTEM\CurrentControlSet\Services\[ServiceName]\Enum\
-    ///     Count=[number of instances]
-    ///     0=[moniker of instance 0]
-    ///     1=[moniker of instance 1]
-    ///     ...
-    public int FindInstanceForDevice(string monikerName)
-    {
-      Log.Write("    FindInstance:{0}", monikerName);
-
-      // find the device entry in SYSTEM\CurrentControlSet\Enum\[device moniker]
-      int pos1 = monikerName.IndexOf("#");
-      int pos2 = monikerName.LastIndexOf("#");
-      string left = monikerName.Substring(0, pos1);
-      string mid = monikerName.Substring(pos1 + 1, (pos2 - pos1) - 1);
-      mid = mid.Replace("#", "/");
-      string right = monikerName.Substring(pos2 + 1);
-      string registryKeyName = left + @"\" + mid + @"\" + right;
-
-      if (registryKeyName.StartsWith(@"@device:pnp:\\?\"))
-        registryKeyName = registryKeyName.Substring(@"@device:pnp:\\?\".Length);
-      registryKeyName = @"SYSTEM\CurrentControlSet\Enum\" + registryKeyName;
-      Log.Write("      key:{0}", registryKeyName);
-      RegistryKey hklm = Registry.LocalMachine;
-      RegistryKey subkey = hklm.OpenSubKey(registryKeyName, false);
-      if (subkey != null)
-      {
-        //Get the name of the service which handles this device
-        string serviceName = (string)subkey.GetValue("Service");
-
-        //next open the service entry in SYSTEM\CurrentControlSet\Services\[Service name\enum
-        Log.Write("        serviceName:{0}", serviceName);
-        registryKeyName = @"SYSTEM\CurrentControlSet\Services\" + serviceName + @"\Enum";
-        Log.Write("        key:{0}", registryKeyName);
-        subkey = hklm.OpenSubKey(registryKeyName, false);
-        if (subkey != null)
-        {
-          // get the number of instances for the device
-          Int32 count = (Int32)subkey.GetValue("Count");
-
-          Log.Write("        Number of cards:{0}", count);
-          for (int i = 0; i < count; i++)
-          {
-            string moniker = (string)subkey.GetValue(i.ToString());
-            moniker = moniker.Replace(@"\", "#");
-            moniker = moniker.Replace(@"/", "#");
-            Log.Write("          card#{0}={1}", i, moniker);
-          }
-
-          // for each instance
-          for (int i = 0; i < count; i++)
-          {
-            //get the moniker
-            string moniker = (string)subkey.GetValue(i.ToString());
-            moniker = moniker.Replace(@"\", "#");
-            moniker = moniker.Replace(@"/", "#");
-
-            // and check if its the same as the device moniker
-            if (monikerName.ToLower().IndexOf(moniker.ToLower()) >= 0)
-            {
-              //yes then return this instance
-              Log.Write("        using card:#{0}", i);
-              subkey.Close();
-              hklm.Close();
-              return i;
-            }
-          }
-        }
-        else
-        {
-          Log.Write("        using default card:0 (subkey not found)");
-          hklm.Close();
-          return 0;
-        }
-        subkey.Close();
-      }
-      hklm.Close();
-      return -1;
-    }
-    /// <summary>
-    /// This method:
-    /// 1. finds the device entry  in the registry key : SYSTEM\CurrentControlSet\Enum\[DEVICE moniker]
-    /// 2. looks at the 'Service' subkey which points to the service for this device.
-    /// 3. then looks at SYSTEM\CurrentControlSet\Services\[ServiceName]\Enum
-    /// 4. reads the 'Count' subkey which indicates how many instances there are of this device
-    /// 5. returns the moniker for the instance requested.
-    /// </summary>
-    /// <param name="monikerName">device moniker</param>
-    /// <example>ven_4444&dev_0016&subsys_40090070&rev_01#4&2e98101c&0&68f0</example>
-    /// <param name="monikerName">instance instance for this device moniker (0-count)</param>
-    /// <returns>moniker for this instance</returns>
-    /// 
-    /// Registry layout:
-    /// SYSTEM\CurrentControlSet\Enum\[DEVICE moniker]
-    ///     Service=[ServiceName]
-    ///     
-    /// SYSTEM\CurrentControlSet\Services\[ServiceName]\Enum\
-    ///     Count=[number of instances]
-    ///     0=[moniker of instance 0]
-    ///     1=[moniker of instance 1]
-    ///     ...
-    public string FindUniqueFilter(string monikerName, int instance)
-    {
-      Log.Write("    FindUniqueFilter:card#{0} filter:{1}", instance, monikerName);
-
-      int pos1 = monikerName.IndexOf("#");
-      int pos2 = monikerName.LastIndexOf("#");
-      string left = monikerName.Substring(0, pos1);
-      string mid = monikerName.Substring(pos1 + 1, (pos2 - pos1) - 1);
-      mid = mid.Replace("#", "/");
-      string right = monikerName.Substring(pos2 + 1);
-      string registryKeyName = left + @"\" + mid + @"\" + right;
-
-      if (registryKeyName.StartsWith(@"@device:pnp:\\?\"))
-        registryKeyName = registryKeyName.Substring(@"@device:pnp:\\?\".Length);
-
-      registryKeyName = @"SYSTEM\CurrentControlSet\Enum\" + registryKeyName;
-      Log.Write("        key:{0}", registryKeyName);
-      RegistryKey hklm = Registry.LocalMachine;
-      RegistryKey subkey = hklm.OpenSubKey(registryKeyName, false);
-      if (subkey != null)
-      {
-        string serviceName = (string)subkey.GetValue("Service");
-        Log.Write("        serviceName:{0}", serviceName);
-        registryKeyName = @"SYSTEM\CurrentControlSet\Services\" + serviceName + @"\Enum";
-        Log.Write("        key:{0}", registryKeyName);
-        subkey = hklm.OpenSubKey(registryKeyName, false);
-        if (subkey != null)
-        {
-          Int32 count = (Int32)subkey.GetValue("Count");
-          Log.Write("        filters available:{0}", count);
-          for (int i = 0; i < count; ++i)
-          {
-            string moniker = (string)subkey.GetValue(i.ToString());
-            moniker = moniker.Replace(@"\", "#");
-            moniker = moniker.Replace(@"/", "#");
-            Log.Write("          filter#:{0}={1}", i, moniker);
-          }
-          string monikerToUse = (string)subkey.GetValue(instance.ToString());
-          monikerToUse = monikerToUse.Replace(@"\", "#");
-          monikerToUse = monikerToUse.Replace(@"/", "#");
-          Log.Write("        using filter #:{0}={1}", instance, monikerToUse);
-          subkey.Close();
-          hklm.Close();
-          return monikerToUse;
-        }
-        else
-        {
-          hklm.Close();
-          return String.Empty;
-        }
-      }
-      hklm.Close();
-      return String.Empty;
+      get { return _cardPriority; }
+      set { _cardPriority = value; }
     }
 
 
     /// <summary>
     /// #MW#
     /// </summary>
-    /// <returns></returns>
-    public bool LoadDefinitions()
-    {
-      try
-      {
-        if (_definitionLoaded) return (true);
-        _definitionLoaded = true;
-
-        Log.WriteFile(Log.LogType.Capture, "LoadDefinitions() card:{0} {1}", ID, this.FriendlyName);
-        CaptureCardDefinitions captureCardDefinitions = CaptureCardDefinitions.Instance;
-        if (CaptureCardDefinitions.CaptureCards.Count == 0)
-        {
-          // Load failed!!!
-          Log.WriteFile(Log.LogType.Capture, " No capturecards defined, or load failed");
-          return (false);
-        }
-
-        if (m_strVideoDeviceMoniker == null)
-        {
-          Log.WriteFile(Log.LogType.Capture, " No video device moniker specified");
-          return true;
-        }
-
-        // Determine the deviceid "hidden" in the moniker of the capture device and use that to load
-        // the definitions of the card... The id is between the first and second "#" character
-        // example:
-        //                     <------------------ ID ---------------->
-        // @device:pnp:\\?\pci#ven_4444&dev_0016&subsys_40090070&rev_01#4&2e98101c&0&68f0#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\hauppauge wintv pvr pci ii capture
-        string deviceId = m_strVideoDeviceMoniker;
-        string[] tmp1 = m_strVideoDeviceMoniker.Split((char[])"#".ToCharArray());
-        if (tmp1.Length >= 2)
-          deviceId = tmp1[1].ToLower();
-
-        CaptureCardDefinition ccd = null;
-        foreach (CaptureCardDefinition cd in CaptureCardDefinitions.CaptureCards)
-        {
-          if (cd.DeviceId.IndexOf(deviceId) == 0 && cd.CaptureName == VideoDevice && cd.CommercialName == CommercialName)
-          {
-            ccd = cd;
-            break;
-          }
-        }
-        //
-        // If card is unsupported, simply return
-        if (_captureCardDefinition == null)
-          _captureCardDefinition = new CaptureCardDefinition();
-        if (ccd == null)
-        {
-          Log.WriteFile(Log.LogType.Capture, true, " CaptureCard {0} NOT supported, no definitions found", m_strVideoDevice);
-          return (false);
-        }
-        _captureCardDefinition.CaptureName = ccd.CaptureName;
-        _captureCardDefinition.CommercialName = ccd.CommercialName;
-        _captureCardDefinition.DeviceId = ccd.DeviceId.ToLower();
-
-        _captureCardDefinition.Capabilities = ccd.Capabilities;
-        this.IsMCECard = _captureCardDefinition.Capabilities.IsMceDevice;
-        this.IsBDACard = _captureCardDefinition.Capabilities.IsBDADevice;
-        this.SupportsMPEG2 = _captureCardDefinition.Capabilities.IsMpeg2Device;
-        _captureCardDefinition.Capabilities = ccd.Capabilities;
-
-        _captureCardDefinition.Tv = new DeviceDefinition();
-        _captureCardDefinition.Tv.FilterDefinitions = new ArrayList();
-        foreach (FilterDefinition fd in ccd.Tv.FilterDefinitions)
-        {
-          fd.DSFilter = null;
-          fd.MonikerDisplayName = String.Empty;
-          _captureCardDefinition.Tv.FilterDefinitions.Add(fd);
-        }
-        _captureCardDefinition.Tv.ConnectionDefinitions = ccd.Tv.ConnectionDefinitions;
-        _captureCardDefinition.Tv.InterfaceDefinition = ccd.Tv.InterfaceDefinition;
-        int Instance = -1;
-
-        AvailableFilters af = AvailableFilters.Instance;
-
-        // Determine what PnP device the capture device is. This is done very, very simple by extracting
-        // the first part of the moniker display name, which contains device specific information
-        // <-------------GET THIS PART-------------------------------------------------->        
-        // @device:pnp:\\?\pci#ven_4444&dev_0016&subsys_40090070&rev_01#4&2e98101c&0&68f0#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\hauppauge wintv pvr pci ii capture
-        string captureDeviceDeviceName = m_strVideoDeviceMoniker;
-        int pos = captureDeviceDeviceName.LastIndexOf("#");
-        if (pos >= 0) captureDeviceDeviceName = captureDeviceDeviceName.Substring(0, pos);
-        Log.WriteFile(Log.LogType.Capture, " video device moniker   :{0}", m_strVideoDeviceMoniker);
-        Log.WriteFile(Log.LogType.Capture, " captureDeviceDeviceName:{0}", captureDeviceDeviceName);
-
-
-        
-        Instance = FindInstanceForDevice(captureDeviceDeviceName);
-        Log.WriteFile(Log.LogType.Capture, " Using card#{0}", Instance);
-        //for each tv filter we need for building the graph
-        foreach (FilterDefinition fd in _captureCardDefinition.Tv.FilterDefinitions)
-        {
-          //Hauppauge WinTV PVR PCI II TvTuner
-          //pvr 150:  ven_4444&amp;dev_0016&amp;subsys_88010070&amp;rev_01
-          //pvr 350:  ven_4444&amp;dev_0803&amp;subsys_40000070&amp;rev_01
-          //pvr 250:  ven_4444&amp;dev_0803&amp;subsys_40010070&amp;rev_01
-
-          string friendlyName = fd.Category;
-          bool filterFound = false;
-          Log.WriteFile(Log.LogType.Capture, "  filter {0}='{1}' check:{2}", friendlyName, fd.FriendlyName, fd.CheckDevice);
-
-          //for each directshow filter
-          foreach (string key in AvailableFilters.Filters.Keys)
-          {
-            // check if this filter has the correct friendly name
-            Filter tmpFilter;
-            ArrayList al = AvailableFilters.Filters[key] as System.Collections.ArrayList;
-            tmpFilter = (Filter)al[0];
-            if (String.Compare(tmpFilter.Name, fd.FriendlyName, true) != 0) continue;
-            if (fd.CheckDevice)
-            {
-              //yes, then check all instances of this filter
-              foreach (Filter directShowFilter in al)
-              {
-                if (String.Compare(directShowFilter.Name, fd.FriendlyName, true) != 0) continue;
-
-                //next check if the moniker is the same as the capturedevice moniker 
-                //we got a direct show filter with the correct name.
-                string filterMoniker = directShowFilter.MonikerString;
-                int posTmp = filterMoniker.LastIndexOf("#");
-                if (posTmp >= 0) filterMoniker = filterMoniker.Substring(0, posTmp);
-                if (captureDeviceDeviceName.ToLower().IndexOf(filterMoniker.ToLower()) >= 0)
-                {
-                  //yes, filter found
-                  filterFound = true;
-                  fd.MonikerDisplayName = directShowFilter.MonikerString;
-                  break;
-                }
-              }//foreach (Filter directShowFilter in al)
-            }
-            else
-            {
-              //yes, filter found
-              filterFound = true;
-              fd.MonikerDisplayName = tmpFilter.MonikerString;
-            }
-            if (filterFound) break;
-          }//foreach (string key in AvailableFilters.Filters.Keys)
-
-          if (filterFound) continue;
-
-          //filter not found
-          //could be that filter has completly different moniker then the
-          //moniker of the capture device filter
-          //for each directshow filter available under windows
-          foreach (string key in AvailableFilters.Filters.Keys)
-          {
-            Filter filter;
-            ArrayList al = AvailableFilters.Filters[key] as System.Collections.ArrayList;
-            filter = (Filter)al[0];
-
-            // if directshow filter name == video filter name
-            if (filter.Name.Equals(fd.FriendlyName))
-            {
-              // FriendlyName found. Now check if this name should be checked against a (PnP) device
-              // to make sure that we found the right filter...z
-              if (fd.CheckDevice)
-              {
-                filter = al[0] as Filter;
-                string filterMoniker = filter.MonikerString;
-                int posTmp = filterMoniker.LastIndexOf("#");
-                if (posTmp >= 0) filterMoniker = filterMoniker.Substring(0, posTmp);
-
-                Log.WriteFile(Log.LogType.Capture, "  CheckDevice:{0}", filterMoniker);
-                if (!filterFound)
-                {
-                  string moniker = FindUniqueFilter(filterMoniker, Instance);
-                  for (int filterInst = 0; filterInst < al.Count; ++filterInst)
-                  {
-                    filter = al[filterInst] as Filter;
-                    string tmpMoniker = filter.MonikerString.Replace(@"\", "#");
-                    tmpMoniker = tmpMoniker.Replace(@"/", "#");
-                    if (tmpMoniker.ToLower().IndexOf(moniker.ToLower()) >= 0)
-                    {
-                      Log.Write("use unique filter moniker:{0}", filter.MonikerString);
-                      filterFound = true;
-                      break;
-                    }
-                  }
-                }
-
-                if (!filterFound)
-                {
-                  if (al.Count > 0)
-                  {
-                    Log.Write("use global filter moniker");
-                    filter = al[0] as Filter;
-                    filterFound = true;
-                  }
-                }
-                if (!filterFound)
-                {
-                  Log.WriteFile(Log.LogType.Capture, true, "  ERROR Cannot find unique filter for filter:{0}", filter.Name);
-                }
-                else
-                {
-                  Log.WriteFile(Log.LogType.Capture, "    Found {0}={1}", filter.Name, filter.MonikerString);
-                }
-              }
-              else filterFound = true;
-
-              // For found filter, get the unique name, the moniker display name which contains not only
-              // things like the type of device, but also a reference (in case of PnP hardware devices)
-              // to the actual device number which makes it possible to distinqiush two identical cards!
-              if (filterFound)
-              {
-                fd.MonikerDisplayName = filter.MonikerString;
-                break;
-              }
-            }//if (filter.Name.Equals(fd.FriendlyName))
-          }//foreach (string key in AvailableFilters.Filters.Keys)
-          // If no filter found thats in the definitions file, we obviously made a mistake defining it
-          // Log the error and return false...
-          if (!filterFound)
-          {
-            Log.WriteFile(Log.LogType.Capture, true, "  Filter {0} not found in definitions file", friendlyName);
-            return (false);
-          }
-        }//foreach (string friendlyName in _captureCardDefinition.Tv.FilterDefinitions.Keys)
-      }
-      catch (Exception ex)
-      {
-        Log.WriteFile(Log.LogType.Capture, true, "  ex:{0} {1} {2}", ex.Message,ex.Source,ex.StackTrace);
-        return (false);
-      }
-      return (true);
-    }
 
     /// <summary>
     /// Will return the filtername of the capture device
@@ -774,7 +278,7 @@ namespace MediaPortal.TV.Recording
     /// <returns>filtername of the capture device</returns>
     public override string ToString()
     {
-      return m_strVideoDevice;
+      return _videoCaptureDevice;
     }
 
     /// <summary>
@@ -795,62 +299,11 @@ namespace MediaPortal.TV.Recording
       set { _defaultCountryCode = value; }
     }
 
-    public bool IsMCECard
-    {
-      get { return m_bIsMCECard; }
-      set { m_bIsMCECard = value; }
-    }
-    public bool IsBDACard
-    {
-      get { return m_bIsBDACard; }
-      set { m_bIsBDACard = value; }
-    }
-    /// <summary>
-    /// Property which indicates if this card has an onboard mpeg2 encoder or not
-    /// </summary>
-    public bool SupportsMPEG2
-    {
-      get { return m_bSupportsMPEG2; }
-      set { m_bSupportsMPEG2 = value; }
-    }
 
     public string FriendlyName
     {
-      get { return m_strFriendlyName; }
-      set { m_strFriendlyName = value; }
-    }
-
-    /// <summary>
-    /// Property to set the frame size
-    /// </summary>
-    public Size FrameSize
-    {
-      get { return m_FrameSize; }
-      set { m_FrameSize = value; }
-    }
-
-    /// <summary>
-    /// Property to set the frame size
-    /// </summary>
-    public double FrameRate
-    {
-      get { return m_FrameRate; }
-      set { m_FrameRate = value; }
-    }
-
-    /// <summary>
-    /// Property to get/set the recording level
-    /// </summary>
-    public int RecordingLevel
-    {
-      get { return _RecordingLevel; }
-      set { _RecordingLevel = value; }
-    }
-
-    public string AudioInputPin
-    {
-      get { return m_strAudioInputPin; }
-      set { m_strAudioInputPin = value; }
+      get { return _friendlyName; }
+      set { _friendlyName = value; }
     }
 
     /// <summary>
@@ -874,43 +327,16 @@ namespace MediaPortal.TV.Recording
     /// </summary>
     public string VideoDevice
     {
-      get { return m_strVideoDevice; }
-      set { m_strVideoDevice = value; }
+      get { return _videoCaptureDevice; }
+      set { _videoCaptureDevice = value; }
     }
     /// <summary>
     /// Property to get/set the (graphedit) monikername name of the TV capture card 
     /// </summary>
     public string VideoDeviceMoniker
     {
-      get { return m_strVideoDeviceMoniker; }
-      set { m_strVideoDeviceMoniker = value; }
-    }
-
-    /// <summary>
-    /// Property to get/set the (graphedit) filtername name of the audio capture device 
-    /// </summary>
-    public string AudioDevice
-    {
-      get { return m_strAudioDevice; }
-      set { m_strAudioDevice = value; }
-    }
-
-    /// <summary>
-    /// Property to get/set the (graphedit) filtername name of the video compressor
-    /// </summary>
-    public string VideoCompressor
-    {
-      get { return m_strVideoCompressor; }
-      set { m_strVideoCompressor = value; }
-    }
-
-    /// <summary>
-    /// Property to get/set the (graphedit) filtername name of the audio compressor
-    /// </summary>
-    public string AudioCompressor
-    {
-      get { return m_strAudioCompressor; }
-      set { m_strAudioCompressor = value; }
+      get { return _videoCaptureMoniker; }
+      set { _videoCaptureMoniker = value; }
     }
 
 
@@ -922,9 +348,9 @@ namespace MediaPortal.TV.Recording
       get
       {
         if (Allocated) return false;
-        return m_bUseForTV;
+        return _useForTv;
       }
-      set { m_bUseForTV = value; }
+      set { _useForTv = value; }
     }
 
     /// <summary>
@@ -948,9 +374,9 @@ namespace MediaPortal.TV.Recording
       get
       {
         if (Allocated) return false;
-        return m_bUseForRecording;
+        return _useForRecording;
       }
-      set { m_bUseForRecording = value; }
+      set { _useForRecording = value; }
     }
 
     /// <summary>
@@ -993,32 +419,6 @@ namespace MediaPortal.TV.Recording
       }
     }
 
-    /// <summary>
-    /// Property which returns the available audio languages
-    /// </summary>
-    public ArrayList GetAudioLanguageList()
-    {
-      if (_currentGraph == null) return null;
-      return _currentGraph.GetAudioLanguageList();
-    }
-
-    /// <summary>
-    /// Property which gets the current audio language
-    /// </summary>
-    public int GetAudioLanguage()
-    {
-      if (_currentGraph == null) return -1;
-      return _currentGraph.GetAudioLanguage();
-    }
-
-    /// <summary>
-    /// Property which sets the new audio language
-    /// </summary>
-    public void SetAudioLanguage(int audioPid)
-    {
-      if (_currentGraph == null) return;
-      _currentGraph.SetAudioLanguage(audioPid);
-    }
 
     public bool IsEpgGrabbing
     {
@@ -1047,14 +447,6 @@ namespace MediaPortal.TV.Recording
       }
     }
 
-    public void GrabEpg(TVChannel channel)
-    {
-      if (CreateGraph())
-      {
-        _currentGraph.GrabEpg(channel);
-        _epgTimeOutTimer = DateTime.Now;
-      }
-    }
     /// <summary>
     /// Property which returns true if this card is currently timeshifting
     /// </summary>
@@ -1144,9 +536,9 @@ namespace MediaPortal.TV.Recording
             {
               RebuildGraph();
               // for ss2: restore full screen
-              //if (m_strVideoDevice == "B2C2 MPEG-2 Source")
+              //if (_videoCaptureDevice == "B2C2 MPEG-2 Source")
               GUIGraphicsContext.IsFullScreenVideo = isFullScreen;
-              lastChannelChange = DateTime.Now;
+              _lastChannelChange = DateTime.Now;
               return;
             }
 #if USEMTSWRITER
@@ -1162,7 +554,7 @@ namespace MediaPortal.TV.Recording
 						}
 #endif
             _currentGraph.TuneChannel(channel);
-            lastChannelChange = DateTime.Now;
+            _lastChannelChange = DateTime.Now;
             _timeTimeshiftingStarted = DateTime.Now;
 #if !USEMTSWRITER
             if (IsTimeShifting && !View)
@@ -1177,101 +569,203 @@ namespace MediaPortal.TV.Recording
     }
 
 
-    void RebuildGraph()
+    /// <summary>
+    /// Property to turn on/off tv viewing
+    /// </summary>
+    public bool View
     {
-      Log.WriteFile(Log.LogType.Capture, "TvCaptureDevice:RebuildGraph() Card:{0} chan:{1}", ID, _currentTvChannelName);
-
-      //stop playback of this channel
-      if (g_Player.Playing && g_Player.CurrentFile == Recorder.GetTimeShiftFileName(ID - 1))
+      get
       {
-        //Log.WriteFile(Log.LogType.Capture, "TVCaptureDevice.Rebuildgraph() stop media");
-
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_STOP_FILE, 0, 0, 0, 0, 0, null);
-        GUIGraphicsContext.SendMessage(msg);
-
-        //wait till max 500msec until player has stopped...
-        int counter = 0;
-        while (g_Player.Playing && counter < 20)
+        return (_currentGraphState == State.Viewing);
+      }
+      set
+      {
+        if (IsEpgGrabbing)
         {
-          System.Threading.Thread.Sleep(100);
-          counter++;
+          DeleteGraph();
         }
-        //Log.WriteFile(Log.LogType.Capture, "TvCaptureDevice:RebuildGraph() player stopped:{0}",
-        //g_Player.Playing);
-      }
+        if (value == false)
+        {
+          if (_currentGraphState == State.Viewing)
+          {
+            Log.WriteFile(Log.LogType.Capture, "TVCapture.Stop Viewing() Card:{0} {1}", ID, _currentTvChannelName);
+            _currentGraph.StopViewing();
+            DeleteGraph();
+          }
+        }
+        else
+        {
+          if (_currentGraphState == State.Viewing) return;
+          if (IsRecording) return;
+          DeleteGraph();
 
-      if (_currentGraph != null)
+          if (CreateGraph())
+          {
+            Log.WriteFile(Log.LogType.Capture, "TVCapture.Start Viewing() Card:{0} :{1}", ID, _currentTvChannelName);
+            TVChannel chan = GetChannel(_currentTvChannelName);
+            _currentGraph.StartViewing(chan);
+            SetTvSettings();
+            _currentGraphState = State.Viewing;
+            _lastChannelChange = DateTime.Now;
+          }
+        }
+      }
+    }
+    public PropertyPageCollection PropertyPages
+    {
+      get
       {
-
-        //Log.WriteFile(Log.LogType.Capture, "TvCaptureDevice:RebuildGraph() delete graph");
-        _currentGraph.DeleteGraph();
-        _currentGraph = null;
-        //Log.WriteFile(Log.LogType.Capture, "TvCaptureDevice:RebuildGraph() graph deleted");
+        if (_currentGraph == null) return null;
+        return _currentGraph.PropertyPages();
       }
-
-      TVChannel channel = GetChannel(_currentTvChannelName);
-      if (_currentGraphState == State.Timeshifting)
-      {
-        //Log.WriteFile(Log.LogType.Capture, "TvCaptureDevice:RebuildGraph() recreate timeshifting graph");
-        _currentGraph = GraphFactory.CreateGraph(this);
-        _currentGraph.CreateGraph(Quality);
-        //Log.WriteFile(Log.LogType.Capture, "TvCaptureDevice:RebuildGraph() start timeshifting");
-        _currentGraph.StartTimeShifting(channel, Recorder.GetTimeShiftFileName(ID - 1));
-        lastChannelChange = DateTime.Now;
-
-        //play timeshift file again
-        //Log.WriteFile(Log.LogType.Capture, "TvCaptureDevice:RebuildGraph() start playing timeshift file");
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAY_FILE, 0, 0, 0, 0, 0, null);
-        msg.Label = Recorder.GetTimeShiftFileName(ID - 1);
-        GUIGraphicsContext.SendMessage(msg);
-
-      }
-      else
-      {
-        // Log.WriteFile(Log.LogType.Capture, "TvCaptureDevice:RebuildGraph() recreate viewing graph");
-        _currentGraph = GraphFactory.CreateGraph(this);
-        _currentGraph.CreateGraph(Quality);
-        _currentGraph.StartViewing(channel);
-        lastChannelChange = DateTime.Now;
-      }
-      // Log.WriteFile(Log.LogType.Capture, "Card:{0} rebuild graph done", ID);
     }
 
-    string StripIllegalChars(string recordingAttribute)
+    public NetworkType Network
     {
-      if (recordingAttribute == null) return String.Empty;
-      if (recordingAttribute.Length == 0) return String.Empty;
-      recordingAttribute = recordingAttribute.Replace(":", " ");
-      recordingAttribute = recordingAttribute.Replace(";", " ");
-      return recordingAttribute;
+      get
+      {
+        if (_currentGraph == null)
+        {
+          _currentGraph = GraphFactory.CreateGraph(this);
+          NetworkType netType = _currentGraph.Network();
+          _currentGraph = null;
+          return netType;
+        }
+        return _currentGraph.Network();
+      }
     }
-    Hashtable GetRecordingAttributes()
+    /// <summary>
+    /// Property indiciating if the card supports timeshifting
+    /// </summary>
+    /// <returns>boolean indiciating if the graph supports timeshifting</returns>
+    public bool SupportsTimeShifting
     {
-      // set the meta data in the dvr-ms or .wmv file
-      TimeSpan ts = (_recordedTvObject.EndTime - _recordedTvObject.StartTime);
-      Hashtable propsToSet = new Hashtable();
+      get
+      {
+        bool result = false;
+        if (_currentGraph == null)
+        {
+          _currentGraph = GraphFactory.CreateGraph(this);
+          if (_currentGraph == null) return false;
+          result = _currentGraph.SupportsTimeshifting();
+          _currentGraph = null;
+        }
+        else
+        {
+          result = _currentGraph.SupportsTimeshifting();
+        }
 
-      propsToSet.Add("channel", new MetadataItem("channel", StripIllegalChars(_recordedTvObject.Channel), MetadataItemType.String));
+        return result;
+      }
+    }
 
-      propsToSet.Add("recordedby", new MetadataItem("recordedby", "Mediaportal", MetadataItemType.String));
 
-      if (_recordedTvObject.Title != null && _recordedTvObject.Title.Length > 0)
-        propsToSet.Add("title", new MetadataItem("title", StripIllegalChars(_recordedTvObject.Title), MetadataItemType.String));
+    public string RecordingFileName
+    {
+      get
+      {
+        if (!IsRecording)
+          return String.Empty;
+        if (_recordedTvObject == null)
+          return String.Empty;
+        return _recordedTvObject.FileName;
+      }
+    }
 
-      if (_recordedTvObject.Genre != null && _recordedTvObject.Genre.Length > 0)
-        propsToSet.Add("genre", new MetadataItem("genre", StripIllegalChars(_recordedTvObject.Genre), MetadataItemType.String));
+    public string RadioStation
+    {
+      get { return _currentRadioStationName; }
+    }
+    public string TimeShiftFileName
+    {
+      get
+      {
+        if (_currentGraph != null)
+        {
+          if (IsRadio)
+            return _currentGraph.RadioTimeshiftFileName();
+          else
+            return _currentGraph.TvTimeshiftFileName();
+        }
+        else
+        {
+          IGraph g = GraphFactory.CreateGraph(this);
+          if (IsRadio)
+            return g.RadioTimeshiftFileName();
+          else
+            return g.TvTimeshiftFileName();
+        }
+      }
+    }
+    public IBaseFilter AudiodeviceFilter
+    {
+      get
+      {
+        if (_currentGraph == null) return null;
+        return _currentGraph.AudiodeviceFilter();
+      }
+    }
+    #endregion
 
-      if (_recordedTvObject.Description != null && _recordedTvObject.Description.Length > 0)
-        propsToSet.Add("description", new MetadataItem("details", StripIllegalChars(_recordedTvObject.Description), MetadataItemType.String));
+    #region public members
 
-      propsToSet.Add("id", new MetadataItem("id", (uint)_recordedTvObject.ID, MetadataItemType.Dword));
-      propsToSet.Add("cardno", new MetadataItem("cardno", (uint)this.ID, MetadataItemType.Dword));
-      propsToSet.Add("duration", new MetadataItem("seconds", (uint)ts.TotalSeconds, MetadataItemType.Dword));
-      propsToSet.Add("start", new MetadataItem("start", _recordedTvObject.Start.ToString(), MetadataItemType.String));
-      propsToSet.Add("end", new MetadataItem("end", _recordedTvObject.End.ToString(), MetadataItemType.String));
+    public bool LoadDefinitions()
+    {
+      if (_graphHelper == null)
+      {
+        _graphHelper = new GraphHelper();
+      }
+      _graphHelper.DeviceId = DeviceId;
+      _graphHelper.CommercialName = CommercialName;
+      //_graphHelper.CaptureName = CaptureName;
+      return _graphHelper.LoadDefinitions(VideoDevice, VideoDeviceMoniker);
+    }
 
-      return propsToSet;
-    }//void GetRecordingAttributes()
+
+    /// <summary>
+    /// Property which returns the available audio languages
+    /// </summary>
+    public ArrayList GetAudioLanguageList()
+    {
+      if (_currentGraph == null) return null;
+      return _currentGraph.GetAudioLanguageList();
+    }
+
+    /// <summary>
+    /// Property which gets the current audio language
+    /// </summary>
+    public int GetAudioLanguage()
+    {
+      if (_currentGraph == null) return -1;
+      return _currentGraph.GetAudioLanguage();
+    }
+
+    /// <summary>
+    /// Property which sets the new audio language
+    /// </summary>
+    public void SetAudioLanguage(int audioPid)
+    {
+      if (_currentGraph == null) return;
+      _currentGraph.SetAudioLanguage(audioPid);
+    }
+
+   
+    public FilterDefinition GetTvFilterDefinition(string filterCategory)
+    {
+      foreach (FilterDefinition fd in Graph.TvFilterDefinitions)
+      {
+        if (String.Compare(fd.Category, filterCategory, true) == 0) return fd;
+      }
+      return null;
+    }
+    public void GrabEpg(TVChannel channel)
+    {
+      if (CreateGraph())
+      {
+        _currentGraph.GrabEpg(channel);
+        _epgTimeOutTimer = DateTime.Now;
+      }
+    }
 
     /// <summary>
     /// This method can be used to stop the current recording.
@@ -1428,7 +922,7 @@ namespace MediaPortal.TV.Recording
           else
           {
             //recording ended
-            Log.WriteFile(Log.LogType.Capture, "TVCapture.Proces() Card:{0} recording has ended '{1}' on channel:{2} from {3}-{4} id:{5} priority:{6} quality:{7}",
+            Log.WriteFile(Log.LogType.Capture, "TVCapture.Proces() Card:{0} recording has ended '{1}' on channel:{2} from {3}-{4} id:{5} _cardPriority:{6} quality:{7}",
               ID,
               _currentTvRecording.Title, _currentTvRecording.Channel,
               _currentTvRecording.StartTime.ToLongTimeString(), _currentTvRecording.EndTime.ToLongTimeString(),
@@ -1519,7 +1013,7 @@ namespace MediaPortal.TV.Recording
           {
             _timeTimeshiftingStarted = DateTime.Now;
             _currentGraph.TuneChannel(channel);
-            lastChannelChange = DateTime.Now;
+            _lastChannelChange = DateTime.Now;
             return true;
           }
         }
@@ -1546,7 +1040,7 @@ namespace MediaPortal.TV.Recording
         _currentGraphState = State.Timeshifting;
       }
       SetTvSettings();
-      lastChannelChange = DateTime.Now;
+      _lastChannelChange = DateTime.Now;
       return bResult;
     }
 
@@ -1570,17 +1064,217 @@ namespace MediaPortal.TV.Recording
       return true;
     }
 
-    public string RecordingFileName
+    public void Tune(TVChannel channel)
     {
-      get
+      if (_currentGraphState != State.Viewing) return;
+      Log.Write("TVCapture.Tune({0}", channel.Name);
+      _currentGraph.TuneChannel(channel);
+      _lastChannelChange = DateTime.Now;
+    }
+
+
+    public long VideoFrequency()
+    {
+      if (_currentGraph == null) return 0;
+      return _currentGraph.VideoFrequency();
+    }
+
+    public bool SignalPresent()
+    {
+      if (_currentGraph == null) return false;
+      return _currentGraph.SignalPresent();
+    }
+
+    public bool ViewChannel(TVChannel channel)
+    {
+      if (IsEpgGrabbing)
       {
-        if (!IsRecording)
-          return String.Empty;
-        if (_recordedTvObject == null)
-          return String.Empty;
-        return _recordedTvObject.FileName;
+        DeleteGraph();
+      }
+      if (_currentGraph == null)
+      {
+        if (!CreateGraph()) return false;
+      }
+      _currentGraph.StartViewing(channel);
+      SetTvSettings();
+
+      return true;
+    }
+
+    public bool SupportsFrameSize(Size framesize)
+    {
+      if (_currentGraph == null) return false;
+      return _currentGraph.SupportsFrameSize(framesize);
+    }
+
+
+    public void Tune(object tuningObject, int disecqNo)
+    {
+      if (_currentGraph == null) return;
+      _currentGraph.Tune(tuningObject, disecqNo);
+    }
+    public void StoreTunedChannels(bool radio, bool tv, ref int newTvChannels, ref int updatedTvChannels, ref int newRadioChannels, ref int updatedRadioChannels)
+    {
+      if (_currentGraph == null) return;
+      _currentGraph.StoreChannels(ID, radio, tv, ref newTvChannels, ref updatedTvChannels, ref newRadioChannels, ref updatedRadioChannels);
+    }
+
+    public void StartRadio(RadioStation station)
+    {
+      if (_currentGraphState != State.Radio)
+      {
+        DeleteGraph();
+        CreateGraph();
+        _currentGraphState = State.Radio;
+        _currentGraph.StartRadio(station);
+        if (_currentGraph.IsTimeShifting())
+        {
+          _currentGraphState = State.RadioTimeshifting;
+        }
+      }
+      else
+      {
+        _currentGraph.TuneRadioChannel(station);
+      }
+      _currentRadioStationName = station.Name;
+    }
+    public void TuneRadioChannel(RadioStation station)
+    {
+      if (_currentGraphState != State.Radio)
+      {
+        DeleteGraph();
+        CreateGraph();
+        _currentGraph.StartRadio(station);
+        _currentGraphState = State.Radio;
+      }
+      else
+      {
+        _currentGraph.TuneRadioChannel(station);
+      }
+      _currentRadioStationName = station.Name;
+    }
+    public void TuneRadioFrequency(int frequency)
+    {
+      if (_currentGraphState != State.Radio)
+      {
+        DeleteGraph();
+        CreateGraph();
+        RadioStation station = new RadioStation();
+        _currentGraph.StartRadio(station);
+        _currentGraphState = State.Radio;
+      }
+      else
+      {
+        _currentGraph.TuneRadioFrequency(frequency);
       }
     }
+
+    public void GrabTeletext(bool yesNo)
+    {
+      if (_currentGraph == null) return;
+      _currentGraph.GrabTeletext(yesNo);
+    }
+
+    #endregion
+
+    #region private members
+    void RebuildGraph()
+    {
+      Log.WriteFile(Log.LogType.Capture, "TvCaptureDevice:RebuildGraph() Card:{0} chan:{1}", ID, _currentTvChannelName);
+
+      //stop playback of this channel
+      if (g_Player.Playing && g_Player.CurrentFile == Recorder.GetTimeShiftFileName(ID - 1))
+      {
+        //Log.WriteFile(Log.LogType.Capture, "TVCaptureDevice.Rebuildgraph() stop media");
+
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_STOP_FILE, 0, 0, 0, 0, 0, null);
+        GUIGraphicsContext.SendMessage(msg);
+
+        //wait till max 500msec until player has stopped...
+        int counter = 0;
+        while (g_Player.Playing && counter < 20)
+        {
+          System.Threading.Thread.Sleep(100);
+          counter++;
+        }
+        //Log.WriteFile(Log.LogType.Capture, "TvCaptureDevice:RebuildGraph() player stopped:{0}",
+        //g_Player.Playing);
+      }
+
+      if (_currentGraph != null)
+      {
+
+        //Log.WriteFile(Log.LogType.Capture, "TvCaptureDevice:RebuildGraph() delete graph");
+        _currentGraph.DeleteGraph();
+        _currentGraph = null;
+        //Log.WriteFile(Log.LogType.Capture, "TvCaptureDevice:RebuildGraph() graph deleted");
+      }
+
+      TVChannel channel = GetChannel(_currentTvChannelName);
+      if (_currentGraphState == State.Timeshifting)
+      {
+        //Log.WriteFile(Log.LogType.Capture, "TvCaptureDevice:RebuildGraph() recreate timeshifting graph");
+        _currentGraph = GraphFactory.CreateGraph(this);
+        _currentGraph.CreateGraph(Quality);
+        //Log.WriteFile(Log.LogType.Capture, "TvCaptureDevice:RebuildGraph() start timeshifting");
+        _currentGraph.StartTimeShifting(channel, Recorder.GetTimeShiftFileName(ID - 1));
+        _lastChannelChange = DateTime.Now;
+
+        //play timeshift file again
+        //Log.WriteFile(Log.LogType.Capture, "TvCaptureDevice:RebuildGraph() start playing timeshift file");
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAY_FILE, 0, 0, 0, 0, 0, null);
+        msg.Label = Recorder.GetTimeShiftFileName(ID - 1);
+        GUIGraphicsContext.SendMessage(msg);
+
+      }
+      else
+      {
+        // Log.WriteFile(Log.LogType.Capture, "TvCaptureDevice:RebuildGraph() recreate viewing graph");
+        _currentGraph = GraphFactory.CreateGraph(this);
+        _currentGraph.CreateGraph(Quality);
+        _currentGraph.StartViewing(channel);
+        _lastChannelChange = DateTime.Now;
+      }
+      // Log.WriteFile(Log.LogType.Capture, "Card:{0} rebuild graph done", ID);
+    }
+
+    string StripIllegalChars(string recordingAttribute)
+    {
+      if (recordingAttribute == null) return String.Empty;
+      if (recordingAttribute.Length == 0) return String.Empty;
+      recordingAttribute = recordingAttribute.Replace(":", " ");
+      recordingAttribute = recordingAttribute.Replace(";", " ");
+      return recordingAttribute;
+    }
+    Hashtable GetRecordingAttributes()
+    {
+      // set the meta data in the dvr-ms or .wmv file
+      TimeSpan ts = (_recordedTvObject.EndTime - _recordedTvObject.StartTime);
+      Hashtable propsToSet = new Hashtable();
+
+      propsToSet.Add("channel", new MetadataItem("channel", StripIllegalChars(_recordedTvObject.Channel), MetadataItemType.String));
+
+      propsToSet.Add("recordedby", new MetadataItem("recordedby", "Mediaportal", MetadataItemType.String));
+
+      if (_recordedTvObject.Title != null && _recordedTvObject.Title.Length > 0)
+        propsToSet.Add("title", new MetadataItem("title", StripIllegalChars(_recordedTvObject.Title), MetadataItemType.String));
+
+      if (_recordedTvObject.Genre != null && _recordedTvObject.Genre.Length > 0)
+        propsToSet.Add("genre", new MetadataItem("genre", StripIllegalChars(_recordedTvObject.Genre), MetadataItemType.String));
+
+      if (_recordedTvObject.Description != null && _recordedTvObject.Description.Length > 0)
+        propsToSet.Add("description", new MetadataItem("details", StripIllegalChars(_recordedTvObject.Description), MetadataItemType.String));
+
+      propsToSet.Add("id", new MetadataItem("id", (uint)_recordedTvObject.ID, MetadataItemType.Dword));
+      propsToSet.Add("cardno", new MetadataItem("cardno", (uint)this.ID, MetadataItemType.Dword));
+      propsToSet.Add("duration", new MetadataItem("seconds", (uint)ts.TotalSeconds, MetadataItemType.Dword));
+      propsToSet.Add("start", new MetadataItem("start", _recordedTvObject.Start.ToString(), MetadataItemType.String));
+      propsToSet.Add("end", new MetadataItem("end", _recordedTvObject.End.ToString(), MetadataItemType.String));
+
+      return propsToSet;
+    }//void GetRecordingAttributes()
+
+
     /// <summary>
     /// Starts recording live TV to a file
     /// <param name="bContentRecording">Specifies whether a content or reference recording should be made</param>
@@ -1739,7 +1433,7 @@ namespace MediaPortal.TV.Recording
       }
 
       Hashtable attribtutes = GetRecordingAttributes();
-      if (timeProgStart < lastChannelChange) timeProgStart = lastChannelChange;
+      if (timeProgStart < _lastChannelChange) timeProgStart = _lastChannelChange;
       bool bResult = _currentGraph.StartRecording(attribtutes, recording, channel, ref strFileName, recording.IsContentRecording, timeProgStart);
       _recordedTvObject.FileName = strFileName;
 
@@ -1798,153 +1492,6 @@ namespace MediaPortal.TV.Recording
       }
       return retChannel;
     }
-
-
-    /// <summary>
-    /// Property indiciating if the card supports timeshifting
-    /// </summary>
-    /// <returns>boolean indiciating if the graph supports timeshifting</returns>
-    public bool SupportsTimeShifting
-    {
-      get
-      {
-        bool result = false;
-        if (_currentGraph == null)
-        {
-          _currentGraph = GraphFactory.CreateGraph(this);
-          if (_currentGraph == null) return false;
-          result = _currentGraph.SupportsTimeshifting();
-          _currentGraph = null;
-        }
-        else
-        {
-          result = _currentGraph.SupportsTimeshifting();
-        }
-
-        return result;
-      }
-    }
-
-    public void Tune(TVChannel channel)
-    {
-      if (_currentGraphState != State.Viewing) return;
-      Log.Write("TVCapture.Tune({0}", channel.Name);
-      _currentGraph.TuneChannel(channel);
-      lastChannelChange = DateTime.Now;
-    }
-
-    /// <summary>
-    /// Property to turn on/off tv viewing
-    /// </summary>
-    public bool View
-    {
-      get
-      {
-        return (_currentGraphState == State.Viewing);
-      }
-      set
-      {
-        if (IsEpgGrabbing)
-        {
-          DeleteGraph();
-        }
-        if (value == false)
-        {
-          if (_currentGraphState == State.Viewing)
-          {
-            Log.WriteFile(Log.LogType.Capture, "TVCapture.Stop Viewing() Card:{0} {1}", ID, _currentTvChannelName);
-            _currentGraph.StopViewing();
-            DeleteGraph();
-          }
-        }
-        else
-        {
-          if (_currentGraphState == State.Viewing) return;
-          if (IsRecording) return;
-          DeleteGraph();
-
-          if (CreateGraph())
-          {
-            Log.WriteFile(Log.LogType.Capture, "TVCapture.Start Viewing() Card:{0} :{1}", ID, _currentTvChannelName);
-            TVChannel chan = GetChannel(_currentTvChannelName);
-            _currentGraph.StartViewing(chan);
-            SetTvSettings();
-            _currentGraphState = State.Viewing;
-            lastChannelChange = DateTime.Now;
-          }
-        }
-      }
-    }
-
-    public long VideoFrequency()
-    {
-      if (_currentGraph == null) return 0;
-      return _currentGraph.VideoFrequency();
-    }
-
-    public bool SignalPresent()
-    {
-      if (_currentGraph == null) return false;
-      return _currentGraph.SignalPresent();
-    }
-
-    public bool ViewChannel(TVChannel channel)
-    {
-      if (IsEpgGrabbing)
-      {
-        DeleteGraph();
-      }
-      if (_currentGraph == null)
-      {
-        if (!CreateGraph()) return false;
-      }
-      _currentGraph.StartViewing(channel);
-      SetTvSettings();
-
-      return true;
-    }
-
-    public PropertyPageCollection PropertyPages
-    {
-      get
-      {
-        if (_currentGraph == null) return null;
-        return _currentGraph.PropertyPages();
-      }
-    }
-
-    public bool SupportsFrameSize(Size framesize)
-    {
-      if (_currentGraph == null) return false;
-      return _currentGraph.SupportsFrameSize(framesize);
-    }
-
-
-    public NetworkType Network
-    {
-      get
-      {
-        if (_currentGraph == null)
-        {
-          _currentGraph = GraphFactory.CreateGraph(this);
-          NetworkType netType = _currentGraph.Network();
-          _currentGraph = null;
-          return netType;
-        }
-        return _currentGraph.Network();
-      }
-    }
-    public void Tune(object tuningObject, int disecqNo)
-    {
-      if (_currentGraph == null) return;
-      _currentGraph.Tune(tuningObject, disecqNo);
-    }
-    public void StoreTunedChannels(bool radio, bool tv, ref int newTvChannels, ref int updatedTvChannels, ref int newRadioChannels, ref int updatedRadioChannels)
-    {
-      if (_currentGraph == null) return;
-      _currentGraph.StoreChannels(ID, radio, tv, ref newTvChannels, ref updatedTvChannels, ref newRadioChannels, ref updatedRadioChannels);
-    }
-
     void SetTvSettings()
     {
       int gamma = GUIGraphicsContext.Gamma;
@@ -1958,7 +1505,7 @@ namespace MediaPortal.TV.Recording
     {
       try
       {
-        string filename = String.Format(@"database\card_{0}.xml", m_strFriendlyName);
+        string filename = String.Format(@"database\card_{0}.xml", _friendlyName);
         using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml(filename))
         {
           int contrast = xmlreader.GetValueAsInt("tv", "contrast", -1);
@@ -1978,9 +1525,9 @@ namespace MediaPortal.TV.Recording
     }
     void SaveContrastGammaBrightnessSettings()
     {
-      if (m_strFriendlyName != null && m_strFriendlyName != String.Empty)
+      if (_friendlyName != null && _friendlyName != String.Empty)
       {
-        string filename = String.Format(@"database\card_{0}.xml", m_strFriendlyName);
+        string filename = String.Format(@"database\card_{0}.xml", _friendlyName);
         using (MediaPortal.Profile.Xml xmlWriter = new MediaPortal.Profile.Xml(filename))
         {
           xmlWriter.SetValue("tv", "contrast", GUIGraphicsContext.Contrast);
@@ -1992,136 +1539,9 @@ namespace MediaPortal.TV.Recording
       }
     }
 
-    public void StartRadio(RadioStation station)
-    {
-      if (_currentGraphState != State.Radio)
-      {
-        DeleteGraph();
-        CreateGraph();
-        _currentGraphState = State.Radio;
-        _currentGraph.StartRadio(station);
-        if (_currentGraph.IsTimeShifting())
-        {
-          _currentGraphState = State.RadioTimeshifting;
-        }
-      }
-      else
-      {
-        _currentGraph.TuneRadioChannel(station);
-      }
-      _currentRadioStationName = station.Name;
-    }
-    public void TuneRadioChannel(RadioStation station)
-    {
-      if (_currentGraphState != State.Radio)
-      {
-        DeleteGraph();
-        CreateGraph();
-        _currentGraph.StartRadio(station);
-        _currentGraphState = State.Radio;
-      }
-      else
-      {
-        _currentGraph.TuneRadioChannel(station);
-      }
-      _currentRadioStationName = station.Name;
-    }
-    public void TuneRadioFrequency(int frequency)
-    {
-      if (_currentGraphState != State.Radio)
-      {
-        DeleteGraph();
-        CreateGraph();
-        RadioStation station = new RadioStation();
-        _currentGraph.StartRadio(station);
-        _currentGraphState = State.Radio;
-      }
-      else
-      {
-        _currentGraph.TuneRadioFrequency(frequency);
-      }
-    }
 
-    public string RadioStation
-    {
-      get { return _currentRadioStationName; }
-    }
+    #endregion
 
-    public void GetRecordings(string drive, ref List<RecordingFileInfo> recordings)
-    {
-      if (!DeleteOnLowDiskspace) return;
-      if (RecordingPath.ToLower()[0] != drive.ToLower()[0]) return;
-      try
-      {
-        string[] directories = System.IO.Directory.GetDirectories(RecordingPath, "*", SearchOption.AllDirectories);
-        foreach (string directory in directories)
-        {
-          int index = directory.IndexOf("card");
-          if ((index == -1) || ((index != -1) && ((directory.Substring(index - 1, 1) != "\\"))))
-          {
-            string[] fileNames = System.IO.Directory.GetFiles(directory, "*" + recEngineExt);
-            for (int i = 0; i < fileNames.Length; ++i)
-            {
-              bool add = true;
-              foreach (RecordingFileInfo fi in recordings)
-              {
-                if (fi.filename.ToLower() == fileNames[i].ToLower())
-                {
-                  add = false;
-                }
-              }
-              if (add)
-              {
-                FileInfo info = new FileInfo(fileNames[i]);
-                RecordingFileInfo fi = new RecordingFileInfo();
-                fi.info = info;
-                fi.filename = fileNames[i];
-                recordings.Add(fi);
-              }
-              Log.Write("found: {0}", fileNames[i]);
-            }
-          }
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Write("GetRecordings: {0}", ex.Message);
-      }
-    }
-    public string TimeShiftFileName
-    {
-      get
-      {
-        if (_currentGraph != null)
-        {
-          if (IsRadio)
-            return _currentGraph.RadioTimeshiftFileName();
-          else
-            return _currentGraph.TvTimeshiftFileName();
-        }
-        else
-        {
-          IGraph g = GraphFactory.CreateGraph(this);
-          if (IsRadio)
-            return g.RadioTimeshiftFileName();
-          else
-            return g.TvTimeshiftFileName();
-        }
-      }
-    }
-    public void GrabTeletext(bool yesNo)
-    {
-      if (_currentGraph == null) return;
-      _currentGraph.GrabTeletext(yesNo);
-    }
-    public IBaseFilter AudiodeviceFilter
-    {
-      get
-      {
-        if (_currentGraph == null) return null;
-        return _currentGraph.AudiodeviceFilter();
-      }
-    }
 
   }
 }

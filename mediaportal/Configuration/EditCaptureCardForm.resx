@@ -117,9 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="label8.Text" xml:space="preserve">
-    <value>To configure properties that are specific for your capture device, select the property in the dropdown list below and press the 'Setup' button. [Note: it depends on your TV-card if these settings are saved!!]</value>
-  </data>
   <data name="label18.Text" xml:space="preserve">
     <value>Here you can specify the default quality for tv recordings. Note this is only supported for hauppauge PVR cards like the PVR 150,250,350,500. When scheduling a new recording in Mediaportal you can always overwrite the default setting and choose another quality.</value>
   </data>

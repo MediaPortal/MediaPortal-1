@@ -67,34 +67,24 @@ namespace MediaPortal.TV.Recording
       card.IsCableInput = isCableInput;
       card.DefaultCountryCode  = countryCode;
 
-      if(card.IsBDACard)
+      if (card.CardType == TVCapture.CardTypes.Digital_BDA)
 				return new DVBGraphBDA(card);
 
-			if (card.ToString() == "B2C2 MPEG-2 Source")
+      if (card.CardType == TVCapture.CardTypes.Digital_SS2)
 			{
-				return new DVBGraphSS2(card.ID,countryCode,isCableInput,card.VideoDevice,card.AudioDevice,card.VideoCompressor,card.AudioCompressor,card.FrameSize,card.FrameRate,card.AudioInputPin,card.RecordingLevel);
+				return new DVBGraphSS2(card.ID);
 			}
 
-			// Special graph building for the ATI AIW cards
-//			if (card.ToString() == "ATI Rage Theater Video Capture")
-//			{
-//				return new AIWGraph(countryCode,isCableInput,card.VideoDevice,card.AudioDevice,card.VideoCompressor,card.AudioCompressor,card.FrameSize,card.FrameRate,card.AudioInputPin,card.RecordingLevel,card.FriendlyName);
-//			}
-			
-			if (card.DeviceType!=null)
-			{
-				if (card.DeviceType.ToLower()=="hw") return new SinkGraph(card);
-				if (card.DeviceType.ToLower()=="mce") return new MCESinkGraph(card.ID,card.DefaultCountryCode,card.IsCableInput,card.VideoDevice,card.FrameSize,card.FrameRate,card.FriendlyName);
-				if (card.DeviceType.ToLower()=="s/w") return new SWEncodingGraph(card.ID,card.DefaultCountryCode,card.IsCableInput,card.VideoDevice,card.AudioDevice,card.VideoCompressor,card.AudioCompressor,card.FrameSize,card.FrameRate,card.AudioInputPin,card.RecordingLevel,card.FriendlyName);
-			}
-
-			if (card.SupportsMPEG2)
+      if (card.CardType == TVCapture.CardTypes.Analog)
+      {
+        return new SinkGraphEx(card);
+      }
+			if (card.CardType== TVCapture.CardTypes.Analog_MCE)
       {
         return new SinkGraphEx(card);
       }
 
-      // Standard call for all other software based cards.
-      return new SWEncodingGraph(card.ID,countryCode,isCableInput, card.VideoDevice,card.AudioDevice,card.VideoCompressor,card.AudioCompressor, card.FrameSize,card.FrameRate, card.AudioInputPin, card.RecordingLevel,card.FriendlyName);
+      return null;
     }
 	}
 }

@@ -2178,7 +2178,7 @@ namespace MediaPortal.TV.Recording
       TVChannelName = channel;
       dev = _tvcards[_currentCardIndex];
 
-      Log.WriteFile(Log.LogType.Recorder, "Recorder:  found free card {0} prio:{1} name:{2}", dev.ID, dev.Priority, dev.CommercialName);
+      Log.WriteFile(Log.LogType.Recorder, "Recorder:  found free card {0} prio:{1} name:{2}", dev.ID, dev.Priority, dev.Graph.CommercialName);
 
       //do we want to use timeshifting ?
       if (timeshift)

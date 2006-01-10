@@ -99,8 +99,7 @@ namespace MediaPortal.GUI.Library
 
 		static public void Update(IQualProp quality)
 		{
-      try // QI for get_AvgFrameRate crashes in GUIDialogNotify.cs when Video is being played,
-          // that's why we're working around it for now: NEEDS FURTHER INVESTIGATION!
+      try 
       {
         if (quality!=null)
         {

@@ -22,6 +22,7 @@ using System;
 using System.Drawing.Text;
 using System.Drawing.Imaging;
 using System.Drawing;
+using System.Threading;
 
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -92,6 +93,8 @@ namespace MediaPortal.Player
 	  IVMRMixerBitmap9 m_mixerBitmap=null;
 		IGraphBuilder m_graphBuilder=null;
 		bool vmr9Initialized=false;
+    int _threadId;
+
     enum Vmr9PlayState
     {
       Playing,
@@ -203,6 +206,7 @@ namespace MediaPortal.Player
 					}
 				}
 			}
+      _threadId=Thread.CurrentThread.ManagedThreadId;
       GUIGraphicsContext.Vmr9Active = true;
       g_vmr9 = this;
       //Log.Write("VMR9Helper:Vmr9 Added");
@@ -219,6 +223,10 @@ namespace MediaPortal.Player
     {
 			if (vmr9Initialized)
 			{
+        if (_threadId != Thread.CurrentThread.ManagedThreadId)
+        {
+          Log.WriteFile(Log.LogType.Error, "VMR9:RemoveVmr9() from wrong thread");
+        }
         //Log.Write("VMR9Helper:RemoveVMR9");
         //Log.Write("VMR9Helper:stop vmr9 helper");
 				if (VMR9Filter != null)
@@ -355,11 +363,14 @@ namespace MediaPortal.Player
       if (currentVmr9State == Vmr9PlayState.Playing) return;
       m_scene.Repaint();
     }
-
+    /*
 		public IQualProp Quality
 		{
-			get { return quality;}
-		}
+			get 
+      { 
+        return quality;
+      }
+		}*/
 		public void SetRepaint()
 		{
 			if (!vmr9Initialized) return;
@@ -374,6 +385,7 @@ namespace MediaPortal.Player
 		{
 			if (!vmr9Initialized) return;
 			if( !GUIGraphicsContext.Vmr9Active) return;
+      
 			TimeSpan ts = DateTime.Now - repaintTimer;
 			int frames = FrameCounter;
       if (ts.TotalMilliseconds >= 1000)
@@ -381,7 +393,11 @@ namespace MediaPortal.Player
         GUIGraphicsContext.Vmr9FPS = ((float)(frames*1000)) / ((float)ts.TotalMilliseconds);
        // Log.Write("VMR9Helper:frames:{0} fps:{1} time:{2}", frames, GUIGraphicsContext.Vmr9FPS,ts.TotalMilliseconds);
         FrameCounter = 0;
-        VideoRendererStatistics.Update(quality);
+
+        if (_threadId == Thread.CurrentThread.ManagedThreadId)
+        {
+          VideoRendererStatistics.Update(quality);
+        }
         repaintTimer = DateTime.Now;
       }
       if (currentVmr9State == Vmr9PlayState.Repaint && frames>0 )
