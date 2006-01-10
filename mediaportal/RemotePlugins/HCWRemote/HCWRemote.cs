@@ -156,7 +156,6 @@ namespace MediaPortal.InputDevices
       if (!controlEnabled)
         return;
 
-      StartHCW();
       connection.Start(port + 1);
       connection.ReceiveEvent += new UdpHelper.Connection.ReceiveEventHandler(OnReceive);
       Thread checkThread = new Thread(new ThreadStart(CheckThread));

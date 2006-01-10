@@ -80,6 +80,7 @@ namespace MediaPortal.InputDevices.HCWHelper
         notifyIcon.Icon = notifyIconRed.Icon;
         this.Close();
       }
+      StartIR();
     }
 
 
@@ -143,7 +144,7 @@ namespace MediaPortal.InputDevices.HCWHelper
         {
           notifyIcon.Icon = notifyIconRed.Icon;
           Log.Write("HCW Helper: external control could not be terminated!");
-          System.Windows.Forms.Application.Exit();
+          this.Close();
         }
       }
       try
@@ -156,7 +157,7 @@ namespace MediaPortal.InputDevices.HCWHelper
       {
         notifyIcon.Icon = notifyIconRed.Icon;
         Log.Write("HCW Helper: {0}", ex.Message);
-        System.Windows.Forms.Application.Exit();
+        this.Close();
       }
       
     }
