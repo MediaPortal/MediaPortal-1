@@ -35,11 +35,6 @@ namespace MediaPortal.Playlists
             myPlayer.Init();
         }
 
-        static public void OnMessage(GUIMessage message)
-        {
-            myPlayer.OnMessage(message);
-        }
-
         static public string Get(int iSong)
         {
             return myPlayer.Get(iSong);
@@ -84,11 +79,6 @@ namespace MediaPortal.Playlists
         static public void Remove(PlayListType type, string filename)
         {
             myPlayer.Remove(type, filename);
-        }
-
-        static public bool HasChanged
-        {
-            get { return myPlayer.HasChanged; }
         }
 
         static public PlayListType CurrentPlaylist

@@ -26,7 +26,7 @@ using System.Collections;
 
 namespace MediaPortal.Playlists
 {
-	public abstract class PlayList 
+	public class PlayList : IEnumerable<PlayListItem>
 	{
     protected string _playListName="";
     protected List<PlayListItem> _listPlayListItems = new List<PlayListItem>();
@@ -115,9 +115,17 @@ namespace MediaPortal.Playlists
         _listPlayListItems[item] = anItem;
       }
     }
-    
-    public abstract bool Load(string filename);
 
-    public abstract void Save( string filename );
+    public IEnumerator<PlayListItem> GetEnumerator()
+    {
+      return _listPlayListItems.GetEnumerator();
+
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+      IEnumerable enumerable = (IEnumerable)_listPlayListItems;
+      return enumerable.GetEnumerator();
+    }
   }
 }

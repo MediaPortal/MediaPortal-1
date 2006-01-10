@@ -668,7 +668,7 @@ namespace MediaPortal.GUI.Music
         {
           strPath = strPlayListPath + @"\" + strPath;
         }
-        PlayListM3U playlist = new PlayListM3U();
+        PlayList playlist = new PlayList();
         for (int i = 0; i < facadeView.Count; ++i)
         {
           GUIListItem pItem = facadeView[i];
@@ -679,7 +679,8 @@ namespace MediaPortal.GUI.Music
           newItem.Type = PlayListItem.PlayListItemType.Audio;
           playlist.Add(newItem);
         }
-        playlist.Save(strPath);
+        IPlayListIO saver = new PlayListM3uIO();
+        saver.Save(playlist, strPath);
       }
     }
 

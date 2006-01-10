@@ -125,6 +125,12 @@
     <None Include="Core\Playlists\TestData\testSave.b4s">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Core\Playlists\TestData\testSave.m3u">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Core\Playlists\TestData\testSave.pls">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Content Include="InputDeviceMappings\custom\TestCustom.xml">

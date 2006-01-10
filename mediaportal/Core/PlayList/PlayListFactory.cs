@@ -28,31 +28,54 @@ namespace MediaPortal.Playlists
 	/// </summary>
 	public class PlayListFactory
 	{
-		public PlayListFactory()
-		{
-		}
-		static public PlayList Create(string fileName)
-		{
-			string extension=Path.GetExtension(fileName);
-			extension.ToLower();
-			if (extension==".m3u")
-			{
-				return new PlayListM3U();
-			}
-			if (extension==".pls")
-			{
-				return new PlayListPLS();
-			}
-			if (extension==".b4s")
-			{
-				return new PlayListB4S();
-			}
-			if (extension==".wpl")
-			{
-				return new PlayListWPL();
-			}
-			return null;
-		}
+    //public PlayListFactory()
+    //{
+    //}
+    //static public PlayList Create(string fileName)
+    //{
+    //  string extension = Path.GetExtension(fileName);
+    //  extension.ToLower();
+    //  if (extension == ".m3u")
+    //  {
+    //    return new PlayListM3U();
+    //  }
+    //  if (extension == ".pls")
+    //  {
+    //    return new PlayListPLS();
+    //  }
+    //  if (extension == ".b4s")
+    //  {
+    //    return new PlayListB4S();
+    //  }
+    //  if (extension == ".wpl")
+    //  {
+    //    return new PlayListWPL();
+    //  }
+    //  return null;
+    //}
+
+    static public IPlayListIO CreateIO(string fileName)
+    {
+      string extension = Path.GetExtension(fileName);
+      extension.ToLower();
+      if (extension == ".m3u")
+      {
+        return new PlayListM3uIO();
+      }
+      if (extension == ".pls")
+      {
+        return new PlayListPLSIO();
+      }
+      if (extension == ".b4s")
+      {
+        return new PlayListB4sIO();
+      }
+      if (extension == ".wpl")
+      {
+        return new PlayListWPLIO();
+      }
+      return null;
+    }
 
 		static public bool IsPlayList(string fileName)
 		{

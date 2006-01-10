@@ -495,7 +495,7 @@ namespace MediaPortal.GUI.Video
         {
           fullPlayListPath = playListPath + @"\" + fullPlayListPath;
         }
-				PlayListM3U playlist = new PlayListM3U();
+				PlayList playlist = new PlayList();
 				for (int i = 0; i < facadeView.Count; ++i)
 				{
 					GUIListItem listItem = facadeView[i];
@@ -506,7 +506,8 @@ namespace MediaPortal.GUI.Video
           playListItem.Type = Playlists.PlayListItem.PlayListItemType.Video;
 					playlist.Add(playListItem);
 				}
-				playlist.Save(fullPlayListPath);
+        PlayListM3uIO saver = new PlayListM3uIO();
+        saver.Save(playlist, fullPlayListPath);
 			}
 		}
     void SelectCurrentVideo()

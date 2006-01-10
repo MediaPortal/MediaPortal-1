@@ -40,9 +40,9 @@ using System.Security.Permissions;
 [assembly : AssemblyCopyright("GNU Lesser General Public License v2.1")]
 [assembly : AssemblyTrademark("")]
 [assembly : AssemblyCulture("")]
-[assembly : AssemblyDelaySign(false)]
+[assembly : AssemblyDelaySign(true)]
 // Path is relative to the resulting executable (\Bin\Debug)
-[assembly : AssemblyKeyFile("..\\..\\DShowNET.snk")]
+//[assembly : AssemblyKeyFile("..\\..\\DShowNET.snk")]
 [assembly : AssemblyKeyName("")]
 [assembly : ComVisible(false)]
 [assembly : CLSCompliant(true)]

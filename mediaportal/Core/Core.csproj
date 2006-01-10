@@ -1056,31 +1056,23 @@
     <Compile Include="Player\VolumeHandlerCustom.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="PlayList\IPlayListIO.cs" />
     <Compile Include="PlayList\NonStaticPlayListPlayer.cs" />
     <Compile Include="PlayList\PlayList.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="PlayList\PlayListb4S.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="PlayList\PlayListB4sIO.cs" />
     <Compile Include="PlayList\PlayListFactory.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="PlayList\PlayListItem.cs" />
-    <Compile Include="PlayList\PlayListM3U.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="PlayList\PlayListNoIO.cs" />
+    <Compile Include="PlayList\PlayListM3uIO.cs" />
     <Compile Include="PlayList\PlayListPlayer.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="PlayList\PlayListPLS.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="PlayList\PlayListPLSIO.cs" />
     <Compile Include="PlayList\PlayListType.cs" />
-    <Compile Include="PlayList\PlayListWPL.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="PlayList\PlayListWPLIO.cs" />
     <Compile Include="RedEye\RedEye.cs">
       <SubType>Code</SubType>
     </Compile>

@@ -801,9 +801,10 @@ namespace MediaPortal.GUI.Video
 
 		void LoadPlayList(string playListFileName)
 		{
-			PlayList playlist = PlayListFactory.Create(playListFileName);
-			if (playlist == null) return;
-			if (!playlist.Load(playListFileName))
+      IPlayListIO loader = PlayListFactory.CreateIO(playListFileName);
+      PlayList playlist = new PlayList();
+			
+			if (!loader.Load(playlist, playListFileName))
 			{
         GUIDialogOK dlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
         if (dlgOK != null)

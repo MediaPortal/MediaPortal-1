@@ -388,9 +388,11 @@ namespace MediaPortal.GUI.Alarm
 				case MediaType.PlayList:
 					if(PlayListFactory.IsPlayList(_Sound))
 					{
-						PlayList playlist = PlayListFactory.Create(Alarm.PlayListPath + "\\" + _Sound);
-						if(playlist==null) return;
-						if(!playlist.Load(Alarm.PlayListPath + "\\" +  _Sound))
+            string soundName = Alarm.PlayListPath + "\\" + _Sound;
+            IPlayListIO loader = PlayListFactory.CreateIO(soundName);
+            PlayList playlist = new PlayList();
+						  
+						if(!loader.Load(playlist,soundName))
 						{
 							ShowErrorDialog();
 							return;

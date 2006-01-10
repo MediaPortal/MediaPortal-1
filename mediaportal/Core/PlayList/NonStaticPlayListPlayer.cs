@@ -30,6 +30,7 @@ namespace MediaPortal.Playlists
 {
   public class NonStaticPlayListPlayer
   {
+    #region g_Player decoupling in work
     public interface IPlayer
     {
       bool Playing { get; }
@@ -92,16 +93,27 @@ namespace MediaPortal.Playlists
     }
 
     public IPlayer g_Player = new FakePlayer();
+    #endregion
+
     int _entriesNotFound = 0;
-    bool _isChanged = false;
     int _currentSong = -1;
     PlayListType _currentPlayList = PlayListType.PLAYLIST_NONE;
-    PlayList _musicPlayList = new PlayListNoIO();
-    PlayList _tempMusicPlayList = new PlayListNoIO();
-    PlayList _videoPlayList = new PlayListNoIO();
-    PlayList _tempVideoPlayList = new PlayListNoIO();
-    PlayList _emptyPlayList = new PlayListNoIO();
+    PlayList _musicPlayList = new PlayList();
+    PlayList _tempMusicPlayList = new PlayList();
+    PlayList _videoPlayList = new PlayList();
+    PlayList _tempVideoPlayList = new PlayList();
+    PlayList _emptyPlayList = new PlayList();
     bool _repeatPlayList = true;
+
+    static private NonStaticPlayListPlayer singletonPlayer = new NonStaticPlayListPlayer();
+
+    public static NonStaticPlayListPlayer SingletonPlayer
+    {
+      get
+      {
+        return singletonPlayer;
+      }
+    }
 
     public void Init()
     {
@@ -307,7 +319,6 @@ namespace MediaPortal.Playlists
         return;
 
       PlayList playlist = GetPlaylist(_currentPlayList);
-      if (playlist.Count <= 0) return;
       for (int i = 0; i < playlist.Count; ++i)
       {
         PlayListItem item = playlist[i];
@@ -329,7 +340,6 @@ namespace MediaPortal.Playlists
       if (iSong < 0) iSong = 0;
       if (iSong >= playlist.Count) iSong = playlist.Count - 1;
 
-      _isChanged = true;
       int iPreviousSong = _currentSong;
       _currentSong = iSong;
       PlayListItem item = playlist[_currentSong];
@@ -390,16 +400,6 @@ namespace MediaPortal.Playlists
       if (_currentSong >= itemRemoved) _currentSong--;
     }
 
-    public bool HasChanged
-    {
-      get
-      {
-        bool result = _isChanged;
-        _isChanged = false;
-        return result;
-      }
-    }
-
     public PlayListType CurrentPlaylistType
     {
       get { return _currentPlayList; }
@@ -409,7 +409,6 @@ namespace MediaPortal.Playlists
         {
           _currentPlayList = value;
           _entriesNotFound = 0;
-          _isChanged = true;
           using (Xml settings = new Xml("MediaPortal.xml"))
           {
             if (value == PlayListType.PLAYLIST_MUSIC || value == PlayListType.PLAYLIST_MUSIC_TEMP)
