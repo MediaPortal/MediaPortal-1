@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
 <capturecards>
-  <capturecard commercialname="General S/W encoding card" capturename="" devid="S/W">
+<!--    <capturecard commercialname="General S/W encoding card" capturename="" devid="S/W">
       <capabilities tv="true" radio="true" mpeg2="false" mce="false" sw="true" bda="false"/>
-  </capturecard> 
-<!--  <capturecard commercialname="General MCE card" capturename="" devid="MCE"> -->
-<!--    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"/> -->
-<!--  </capturecard> -->
+  </capturecard>
+  <capturecard commercialname="General MCE card" capturename="" devid="MCE">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"/>
+  </capturecard>
   <capturecard commercialname="General H/W encoding card" capturename="" devid="HW"> 
     <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"/> 
-  </capturecard> 
+  </capturecard> -->
 
   <capturecard commercialname="Hauppauge PVR500MCE (a)" capturename="Hauppauge WinTV PVR PCI II Capture" devid="ven_4444&amp;dev_0016&amp;subsys_e8070070&amp;rev_01">
     <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"/>
@@ -7069,7 +7069,7 @@
         <filter cat="tunerdevice"     name="DTV-DVB UDST7020BDA DVB-S Receiver"      checkdevice="true"/>
       </filters>
       <connections>
-	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"/>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"/>
       </connections>
     </tv>
   </capturecard>
@@ -7083,7 +7083,7 @@
         <filter cat="tunerdevice"     name="DTV-DVB UDST7020BDA DVB-S Receiver"      checkdevice="true"/>
       </filters>
       <connections>
-	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"/>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"/>
       </connections>
     </tv>
   </capturecard>
@@ -7097,10 +7097,118 @@
         <filter cat="tunerdevice" 		name="AVerMedia BDA DVBT Tuner" 		checkdevice="true"/> 
         <filter cat="capture" 			name="AVerMedia BDA Digital Capture" 	checkdevice="true"/> 
       </filters> 
-    <connections> 
-      <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"/> 
-      <connection sourcefilter="tunerdevice" sourcepin="0" sinkfilter="capture" sinkpin="0"/> 
-    </connections> 
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"/>
+		<connection sourcefilter="tunerdevice" sourcepin="0" sinkfilter="capture" sinkpin="0"/> 
+      </connections> 
     </tv> 
+  </capturecard>
+
+  <capturecard commercialname="Compro VideoMate DVB-T200" capturename="VideoMate BDA Digital Capture" devid="ven_1131&amp;dev_7130&amp;subsys_c900185b&amp;rev_01">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"	checkdevice="false"/>
+        <filter cat="tunerdevice"     name="VideoMate BDA DVBT Tuner"		checkdevice="true"/>
+        <filter cat="capture"         name="VideoMate BDA Digital Capture"	checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture" sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Conexant Raptor" capturename="Conexant Raptor Video Capture" devid="ven_14f1&amp;dev_5b79&amp;subsys_14f15b79&amp;rev_05">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"/>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"  name="Conexant Raptor Tuner"			checkdevice="true"/>
+        <filter cat="tvaudio"  name="Conexant Raptor TvAudio"		checkdevice="true"/>
+        <filter cat="crossbar" name="Conexant Raptor Crossbar"		checkdevice="true"/>
+        <filter cat="capture"  name="Conexant Raptor Video Capture"	checkdevice="true"/>
+        <filter cat="encoder"  name="Conexant Raptor Encoder"		checkdevice="true"/>
+      </filters>
+      <connections>
+		<connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio" sinkpin="0"/>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture" sinkpin="0"/>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture" sinkpin="1"/>
+        <connection sourcefilter="capture"  sourcepin="2" sinkfilter="encoder" sinkpin="0"/>
+        <connection sourcefilter="capture"  sourcepin="3" sinkfilter="encoder" sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Conexant Raptor" capturename="VideoMate H900 Video Capture" devid="ven_14f1&amp;dev_5b79&amp;subsys_5b7914f1&amp;rev_05">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"/>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"/>
+      <filters>
+		<filter cat="tvtuner"  name="Conexant Raptor Tuner"			checkdevice="true"/>
+		<filter cat="tvaudio"  name="Conexant Raptor TvAudio"		checkdevice="true"/>
+		<filter cat="crossbar" name="Conexant Raptor Crossbar"		checkdevice="true"/>
+		<filter cat="capture"  name="Conexant Raptor Video Capture"	checkdevice="true"/>
+		<filter cat="encoder"  name="Conexant Raptor Encoder"		checkdevice="true"/>
+	  </filters>
+      <connections>
+		<connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio" sinkpin="0"/>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture" sinkpin="0"/>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture" sinkpin="1"/>
+        <connection sourcefilter="capture"  sourcepin="2" sinkfilter="encoder" sinkpin="0"/>
+        <connection sourcefilter="capture"  sourcepin="3" sinkfilter="encoder" sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Compro VideoMate H900" capturename="VideoMate H900 Video Capture" devid="ven_14f1&amp;dev_5b7a&amp;subsys_185be100&amp;rev_05">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"/>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"  name="VideoMate H900 Tuner"			checkdevice="true"/>
+        <filter cat="tvaudio"  name="VideoMate H900 TvAudio"		checkdevice="true"/>
+        <filter cat="crossbar" name="VideoMate H900 Crossbar"		checkdevice="true"/>
+        <filter cat="capture"  name="VideoMate H900 Video Capture"	checkdevice="true"/>
+        <filter cat="encoder"  name="VideoMate H900 Encoder"		checkdevice="true"/>
+      </filters>
+      <connections>
+		<connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio" sinkpin="0"/>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture" sinkpin="0"/>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture" sinkpin="1"/>
+        <connection sourcefilter="capture"  sourcepin="2" sinkfilter="encoder" sinkpin="0"/>
+        <connection sourcefilter="capture"  sourcepin="3" sinkfilter="encoder" sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Conexant Raptor" capturename="VideoMate H900 Video Capture" devid="ven_14f1&amp;dev_5b7a&amp;subsys_5b7914f1&amp;rev_05">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"/>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"/>
+      <filters>
+		<filter cat="tvtuner"  name="Conexant Raptor Tuner"			checkdevice="true"/>
+		<filter cat="tvaudio"  name="Conexant Raptor TvAudio"		checkdevice="true"/>
+		<filter cat="crossbar" name="Conexant Raptor Crossbar"		checkdevice="true"/>
+		<filter cat="capture"  name="Conexant Raptor Video Capture"	checkdevice="true"/>
+		<filter cat="encoder"  name="Conexant Raptor Encoder"		checkdevice="true"/>
+	  </filters>
+      <connections>
+		<connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio" sinkpin="0"/>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture" sinkpin="0"/>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture" sinkpin="1"/>
+        <connection sourcefilter="capture"  sourcepin="2" sinkfilter="encoder" sinkpin="0"/>
+        <connection sourcefilter="capture"  sourcepin="3" sinkfilter="encoder" sinkpin="1"/>
+      </connections>
+    </tv>
   </capturecard>
 </capturecards>
