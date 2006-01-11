@@ -904,6 +904,12 @@ namespace MediaPortal.GUI.Music
 
         void AddItemToPlayList(GUIListItem pItem)
         {
+            //Tfro71 6-1-2006 added a check to see if m_database exists. Otherwise is has to be initiated.
+            //Because when the autoplay detects a CD and the current screen is not from the Music Gui the musicdatabase 
+            //does not have an instance
+            if (m_database == null)
+                m_database = new MusicDatabase();
+
             if (pItem.IsFolder)
             {
                 // recursive
@@ -1100,6 +1106,12 @@ namespace MediaPortal.GUI.Music
         void OnRetrieveMusicInfo(ref List<GUIListItem> items)
         {
             int nFolderCount = 0;
+            //Tfro71 6-1-2006 added a check to see if m_database exists. Otherwise is has to be initiated.
+            //Because when the autoplay detects a CD and the current screen is not from the Music Gui the musicdatabase 
+            //does not have an instance
+            if (m_database == null)
+                m_database = new MusicDatabase();
+
             foreach (GUIListItem item in items)
             {
                 if (item.IsFolder) nFolderCount++;

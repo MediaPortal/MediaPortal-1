@@ -97,6 +97,11 @@ namespace MediaPortal.Ripper
     
     private static void LoadSettings()
     {
+        using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+        {
+            m_dvd = xmlreader.GetValueAsString("dvdplayer", "autoplay", "Ask");
+            m_audiocd = xmlreader.GetValueAsString("audioplayer", "autoplay", "No");
+        }
     }
 
     private static void StartListeningForEvents()
@@ -245,7 +250,7 @@ namespace MediaPortal.Ripper
       switch(DetectMediaType(strDrive))       
       {         
         case MediaType.DVD:
-          Log.Write("DVD inserted into drive {0}",strDrive);
+            Log.Write("ExamineCD: DVD inserted into drive {0}", strDrive);
 
           bool PlayDVD = false;
           if (m_dvd == "Yes")
@@ -279,8 +284,9 @@ namespace MediaPortal.Ripper
           break;                  
 
         case MediaType.AUDIO_CD:
-          Log.Write("Audio CD inserted into drive {0}",strDrive);
+            Log.Write("ExamineCD: Audio CD inserted into drive {0}", strDrive);
 		  //m_audiocd tells us if we want to autoplay or not.
+          Log.Write("CD Autoplay = {0}",m_audiocd);
 		  bool PlayAudioCd = false;
 			if (m_audiocd=="Yes") 
 			{
@@ -333,7 +339,7 @@ namespace MediaPortal.Ripper
         break;
 
         default:
-          Log.Write("Unknown media type inserted into drive {0}",strDrive);  
+            Log.Write("ExamineCD: Unknown media type inserted into drive {0}", strDrive);  
         break;      
       }
       StartListening();
@@ -412,7 +418,7 @@ namespace MediaPortal.Ripper
 					break;                 
 
 				default:
-					Log.Write("Unknown media type inserted into drive {0}",strDrive);  
+                    Log.Write("ExamineVolume: Unknown media type inserted into drive {0}", strDrive);  
 					break;      
 			}
 		}
