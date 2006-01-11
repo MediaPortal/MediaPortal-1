@@ -2858,14 +2858,14 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="YUAN DVB PG700" capturename="PG700 BDA Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_370012ab&amp;rev_05">
+  <capturecard commercialname="YUAN DVB PG700" capturename="PG700 AVStream TS Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_370012ab&amp;rev_05">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
     <tv>
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"/>
       <filters>
         <filter cat="networkprovider"	name="Microsoft DVBT Network Provider"		checkdevice="false"/>
         <filter cat="tunerdevice"		name="PG700 BDA DVB-T Tuner/Demod"			checkdevice="true"/>
-        <filter cat="capture"			name="PG700 BDA Transport Stream Capture"	checkdevice="true"/>
+        <filter cat="capture"			name="PG700 AVStream TS Capture"	checkdevice="true"/>
       </filters>
       <connections>
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"/>
@@ -7058,5 +7058,49 @@
 		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
       </connections>
     </tv>
+  </capturecard>
+
+  <capturecard commercialname="Twinhan StarBox" capturename="DTV-DVB UDST7020BDA DVB-S Receiver" devid="vid_13d3&amp;pid_3207">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="tunerdevice" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBS Network Provider"  checkdevice="false"/>
+        <filter cat="tunerdevice"     name="DTV-DVB UDST7020BDA DVB-S Receiver"      checkdevice="true"/>
+      </filters>
+      <connections>
+	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Twinhan StarBox" capturename="DTV-DVB UDST7020BDA DVB-S Receiver" devid="vid_13d3&amp;pid_3208">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="tunerdevice" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBS Network Provider"  checkdevice="false"/>
+        <filter cat="tunerdevice"     name="DTV-DVB UDST7020BDA DVB-S Receiver"      checkdevice="true"/>
+      </filters>
+      <connections>
+	<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="AVerMedia A16AR DVB-T" capturename="AVerMedia BDA Digital Capture" devid="ven_1131&amp;dev_7134&amp;subsys_2c001461&amp;rev_d1"> 
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/> 
+    <tv> 
+      <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"/> 
+      <filters> 
+        <filter cat="networkprovider" 	name="Microsoft DVBT Network Provider" 	checkdevice="false"/> 
+        <filter cat="tunerdevice" 		name="AVerMedia BDA DVBT Tuner" 		checkdevice="true"/> 
+        <filter cat="capture" 			name="AVerMedia BDA Digital Capture" 	checkdevice="true"/> 
+      </filters> 
+    <connections> 
+      <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"/> 
+      <connection sourcefilter="tunerdevice" sourcepin="0" sinkfilter="capture" sinkpin="0"/> 
+    </connections> 
+    </tv> 
   </capturecard>
 </capturecards>
