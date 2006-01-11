@@ -230,6 +230,14 @@ namespace MediaPortal.TV.Database
     #endregion
 
     #region ctor/dtor
+    public TVChannel()
+    {
+    }
+    public TVChannel(string channelname)
+    {
+      _channelName = channelname;
+    }
+
     public TVChannel Clone()
 		{
 			TVChannel newChan=new TVChannel();

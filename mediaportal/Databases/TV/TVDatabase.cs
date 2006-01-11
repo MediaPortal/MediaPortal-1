@@ -42,7 +42,16 @@ namespace MediaPortal.TV.Database
     {
       public int idGenre = 0;
       public string strGenre = "";
+      public CGenreCache()
+      {
+      }
+      public CGenreCache(int id, string genre)
+      {
+        idGenre = id;
+        strGenre = genre;
+      }
     };
+
     class CChannelCache
     {
       public int idChannel = 0;
@@ -86,6 +95,7 @@ namespace MediaPortal.TV.Database
     /// </summary>
     static TVDatabase()
     {
+      
       Open();
     }
     static void Open()
@@ -1015,9 +1025,8 @@ namespace MediaPortal.TV.Database
               strGenre);
             m_db.Execute(strSQL);
             int iNewId = m_db.LastInsertID();
-            CGenreCache genre = new CGenreCache();
-            genre.idGenre = iNewId;
-            genre.strGenre = strGenre1;
+
+            CGenreCache genre = new CGenreCache(iNewId,strGenre1);
             m_genreCache.Add(genre);
             return iNewId;
 
@@ -1349,6 +1358,7 @@ namespace MediaPortal.TV.Database
     {
       lock (typeof(TVDatabase))
       {
+        m_genreCache.Clear();
         genres.Clear();
         try
         {
@@ -1360,7 +1370,10 @@ namespace MediaPortal.TV.Database
           if (results.Rows.Count == 0) return false;
           for (int i = 0; i < results.Rows.Count; ++i)
           {
-            genres.Add(DatabaseUtility.Get(results, i, "strGenre"));
+            string genre=DatabaseUtility.Get(results, i, "strGenre");
+            int idGenre=DatabaseUtility.GetAsInt(results, i, "idGenre");
+            genres.Add(genres);
+            m_genreCache.Add(new CGenreCache(idGenre, genre));
           }
 
           return true;
@@ -1882,8 +1895,8 @@ namespace MediaPortal.TV.Database
           return -1;
 
       }
-
     }
+
     static public bool GetPrograms(long iStartTime, long iEndTime, ref ArrayList progs)
     {
       return SearchPrograms(iStartTime, iEndTime, ref progs, -1, String.Empty, String.Empty);
@@ -4305,6 +4318,8 @@ namespace MediaPortal.TV.Database
       if (m_db == null) return false;
       lock (typeof(TVDatabase))
       {
+
+        m_channelCache.Clear();
         channels.Clear();
         try
         {
@@ -4359,6 +4374,7 @@ namespace MediaPortal.TV.Database
             chan.TVStandard = (AnalogVideoStandard)DatabaseUtility.GetAsInt(results, i, "standard");
             chan.Country = DatabaseUtility.GetAsInt(results, i, "Country");
             channels.Add(chan);
+            m_channelCache.Add(chan);
           }
 
           return true;
@@ -4986,6 +5002,77 @@ namespace MediaPortal.TV.Database
     }
 
     #endregion
+    static string GetGenreById(int idGenre)
+    {
+      lock (typeof(TVDatabase))
+      {
+        try
+        {
+          if (null == m_db) return String.Empty;
+          foreach (CGenreCache genre in m_genreCache)
+          {
+            if (genre.idGenre == idGenre)
+              return genre.strGenre;
+          }
+          string strSQL;
+          strSQL = String.Format("select * from genre where idGenre={0}",idGenre);
+          SQLiteResultSet results;
+          results = m_db.Execute(strSQL);
+          if (results.Rows.Count == 0) return String.Empty;
+          string genreLabel=DatabaseUtility.Get(results, 0, "strGenre");
+
+          m_genreCache.Add(new CGenreCache(idGenre, genreLabel));
+          return genreLabel;
+        }
+        catch (Exception ex)
+        {
+          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          Open();
+        }
+        return String.Empty;
+      }
+    }
+
+    static public TVProgram GetProgramByTime(string channelName, DateTime dtTime)
+    {
+      lock (typeof(TVDatabase))
+      {
+        int idChannel = GetChannelId(channelName);
+        if (idChannel < 0) return null;
+        string strSQL;
+        if (null == m_db) return null;
+        strSQL = String.Format("select * from tblPrograms where tblPrograms.idChannel={0} and '{1}' >= tblPrograms.iStartTime and '{2}' < tblPrograms.iEndTime ",
+                                idChannel, Utils.datetolong(dtTime), Utils.datetolong(dtTime) );
+        SQLiteResultSet results;
+        results = m_db.Execute(strSQL);
+        if (results.Rows.Count >= 1)
+        {
+          TVProgram prog = new TVProgram();
+
+
+          long iStart = DatabaseUtility.GetAsInt64(results, 0, "tblPrograms.iStartTime");
+          long iEnd = DatabaseUtility.GetAsInt64(results, 0, "tblPrograms.iEndTime");
+          prog.Channel = channelName;
+          prog.Start = iStart;
+          prog.End = iEnd;
+          prog.Genre = GetGenreById(DatabaseUtility.GetAsInt(results, 0, "tblPrograms.idGenre"));
+          prog.Title = DatabaseUtility.Get(results, 0, "tblPrograms.strTitle");
+          prog.Description = DatabaseUtility.Get(results, 0, "tblPrograms.strDescription");
+          prog.Episode = DatabaseUtility.Get(results, 0, "tblPrograms.strEpisodeName");
+          prog.Repeat = DatabaseUtility.Get(results, 0, "tblPrograms.strRepeat");
+          prog.ID = DatabaseUtility.GetAsInt(results, 0, "tblPrograms.idProgram");
+          prog.SeriesNum = DatabaseUtility.Get(results, 0, "tblPrograms.strSeriesNum");
+          prog.EpisodeNum = DatabaseUtility.Get(results, 0, "tblPrograms.strEpisodeNum");
+          prog.EpisodePart = DatabaseUtility.Get(results, 0, "tblPrograms.strEpisodePart");
+          prog.Date = DatabaseUtility.Get(results, 0, "tblPrograms.strDate");
+          prog.StarRating = DatabaseUtility.Get(results, 0, "tblPrograms.strStarRating");
+          prog.Classification = DatabaseUtility.Get(results, 0, "tblPrograms.strClassification");
+          return prog;
+        }
+        else
+          return null;
+      }
+    }
 
     public static void DeleteAllRecordedTv()
     {

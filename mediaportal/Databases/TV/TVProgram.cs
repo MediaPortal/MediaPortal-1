@@ -54,6 +54,30 @@ namespace MediaPortal.TV.Database
     public TVProgram()
     {
     }
+    public TVProgram(string channelName, DateTime start, DateTime end, string title)
+    {
+      _channelName = channelName;
+      _startTime = Util.Utils.datetolong(start);
+      _endTime = Util.Utils.datetolong(end);
+      _title = title;
+    }
+    public TVProgram(string channelName, DateTime start, DateTime end, string title, string description)
+    {
+      _channelName = channelName;
+      _startTime = Util.Utils.datetolong(start);
+      _endTime = Util.Utils.datetolong(end);
+      _description = description;
+      _title = title;
+    }
+    public TVProgram(string channelName, DateTime start, DateTime end, string title, string description, string genre)
+    {
+      _channelName = channelName;
+      _startTime = Util.Utils.datetolong(start);
+      _endTime = Util.Utils.datetolong(end);
+      _description = description;
+      _genre = genre;
+      _title = title;
+    }
 
     /// <summary>
     /// Returns a new TVProgram instance which contains the same values

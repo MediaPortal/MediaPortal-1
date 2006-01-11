@@ -702,7 +702,7 @@ namespace MediaPortal.GUI.TV
 			}
 			rec=pItem.TVTag as TVRecording;
 			if (rec==null) return;
-			TVProgram prog=util.GetProgramAt(rec.Channel,rec.StartTime.AddMinutes(1));
+      TVProgram prog = TVDatabase.GetProgramByTime(rec.Channel, rec.StartTime.AddMinutes(1));
 			rec.SetProperties(prog);
 		}
 
