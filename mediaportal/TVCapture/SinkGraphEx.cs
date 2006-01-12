@@ -338,7 +338,10 @@ namespace MediaPortal.TV.Recording
 
         // Connect video capture->mpeg2 demuxer
         ConnectVideoCaptureToMPEG2Demuxer(); // can be done using config, or just leave it this way ;-)
-        m_mpeg2Demux.CreateMappings();
+        if (m_mpeg2Demux != null)
+        {
+          m_mpeg2Demux.CreateMappings();
+        }
 
         // For just MPEG2 cards, set the videoprocamp...
         //if (((mCard.CardType == TVCaptureDevice.CardTypes.Analog_MCE || 
