@@ -38,26 +38,41 @@ namespace MediaPortal.TV.Database
 
   public class TVDatabase
   {
-    class CGenreCache
+    #region genre cache
+    class CachedGenre
     {
       public int idGenre = 0;
       public string strGenre = "";
-      public CGenreCache()
+      public CachedGenre()
       {
       }
-      public CGenreCache(int id, string genre)
+      public CachedGenre(int id, string genre)
       {
         idGenre = id;
         strGenre = genre;
       }
     };
+    #endregion
 
-    class CChannelCache
+    #region
+    class CachedChannel
     {
       public int idChannel = 0;
       public int iChannelNr = 0;
       public string strChannel = "";
+
+      public CachedChannel()
+      {
+      }
+      public CachedChannel(int id, int number, string name)
+      {
+        idChannel = id;
+        iChannelNr = number;
+        strChannel=name;
+      }
     };
+    #endregion
+
 
     public enum RecordingChange
     {
@@ -758,7 +773,7 @@ namespace MediaPortal.TV.Database
         {
           if (null == m_db) return -1;
 
-          foreach (CChannelCache cache in m_channelCache)
+          foreach (CachedChannel cache in m_channelCache)
           {
             if (cache.strChannel == strChannel) return cache.idChannel;
           }
@@ -769,7 +784,8 @@ namespace MediaPortal.TV.Database
           results = m_db.Execute(strSQL);
           if (results.Rows.Count == 0) return -1;
           int iNewID = DatabaseUtility.GetAsInt(results, 0, "idChannel");
-          CChannelCache chan = new CChannelCache();
+
+          CachedChannel chan = new CachedChannel();
           chan.idChannel = iNewID;
           chan.strChannel = DatabaseUtility.Get(results, 0, "strChannel");
           chan.iChannelNr = DatabaseUtility.GetAsInt(results, 0, "iChannelNr");
@@ -795,7 +811,7 @@ namespace MediaPortal.TV.Database
         {
           if (null == m_db) return -1;
 
-          foreach (CChannelCache cache in m_channelCache)
+          foreach (CachedChannel cache in m_channelCache)
           {
             if (cache.iChannelNr == iChannelNr) return cache.idChannel;
           }
@@ -804,7 +820,8 @@ namespace MediaPortal.TV.Database
           results = m_db.Execute(strSQL);
           if (results.Rows.Count == 0) return -1;
           int iNewID = DatabaseUtility.GetAsInt(results, 0, "idChannel");
-          CChannelCache chan = new CChannelCache();
+
+          CachedChannel chan = new CachedChannel();
           chan.idChannel = iNewID;
           chan.strChannel = DatabaseUtility.Get(results, 0, "strChannel");
           chan.iChannelNr = iChannelNr;
@@ -937,7 +954,7 @@ namespace MediaPortal.TV.Database
 
           if (null == m_db) return -1;
 
-          foreach (CChannelCache cache in m_channelCache)
+          foreach (CachedChannel cache in m_channelCache)
           {
             if (cache.strChannel == strChannel) return cache.idChannel;
           }
@@ -968,10 +985,8 @@ namespace MediaPortal.TV.Database
               Utils.datetolong(channel.LastDateTimeEpgGrabbed) );
             m_db.Execute(strSQL);
             int iNewID = m_db.LastInsertID();
-            CChannelCache chan = new CChannelCache();
-            chan.idChannel = iNewID;
-            chan.strChannel = strChannel;
-            chan.iChannelNr = channel.Number;
+
+            CachedChannel chan = new CachedChannel(iNewID,channel.Number,strChannel);
             m_channelCache.Add(chan);
             channel.ID = iNewID;
             if (OnChannelsChanged != null) OnChannelsChanged();
@@ -980,10 +995,8 @@ namespace MediaPortal.TV.Database
           else
           {
             int iNewID = DatabaseUtility.GetAsInt(results, 0, "idChannel");
-            CChannelCache chan = new CChannelCache();
-            chan.idChannel = iNewID;
-            chan.strChannel = strChannel;
-            chan.iChannelNr = channel.Number;
+
+            CachedChannel chan = new CachedChannel(iNewID,channel.Number,strChannel);
             m_channelCache.Add(chan);
             channel.ID = iNewID;
             return iNewID;
@@ -1006,7 +1019,7 @@ namespace MediaPortal.TV.Database
         string strSQL;
         try
         {
-          foreach (CGenreCache genre in m_genreCache)
+          foreach (CachedGenre genre in m_genreCache)
           {
             if (genre.strGenre == strGenre1)
               return genre.idGenre;
@@ -1026,7 +1039,7 @@ namespace MediaPortal.TV.Database
             m_db.Execute(strSQL);
             int iNewId = m_db.LastInsertID();
 
-            CGenreCache genre = new CGenreCache(iNewId,strGenre1);
+            CachedGenre genre = new CachedGenre(iNewId,strGenre1);
             m_genreCache.Add(genre);
             return iNewId;
 
@@ -1034,9 +1047,7 @@ namespace MediaPortal.TV.Database
           else
           {
             int iID = DatabaseUtility.GetAsInt(results, 0, "idGenre");
-            CGenreCache genre = new CGenreCache();
-            genre.idGenre = iID;
-            genre.strGenre = strGenre1;
+            CachedGenre genre = new CachedGenre(iID,strGenre1);
             m_genreCache.Add(genre);
             return iID;
           }
@@ -1289,6 +1300,7 @@ namespace MediaPortal.TV.Database
         try
         {
           if (null == m_db) return false;
+          m_channelCache.Clear();
           string strSQL;
           strSQL = String.Format("select * from channel order by iSort");
           SQLiteResultSet results;
@@ -1341,6 +1353,8 @@ namespace MediaPortal.TV.Database
             chan.Country = DatabaseUtility.GetAsInt(results, i, "Country");
 
             channels.Add(chan);
+
+            m_channelCache.Add(new CachedChannel(chan.ID, chan.Number, chan.Name));
           }
 
           return true;
@@ -1373,7 +1387,7 @@ namespace MediaPortal.TV.Database
             string genre=DatabaseUtility.Get(results, i, "strGenre");
             int idGenre=DatabaseUtility.GetAsInt(results, i, "idGenre");
             genres.Add(genres);
-            m_genreCache.Add(new CGenreCache(idGenre, genre));
+            m_genreCache.Add(new CachedGenre(idGenre, genre));
           }
 
           return true;
@@ -1395,6 +1409,7 @@ namespace MediaPortal.TV.Database
         int iChannelId = GetChannelId(strChannel);
         if (iChannelId < 0) return;
 
+        m_channelCache.Clear();
         try
         {
           if (null == m_db) return;
@@ -4374,6 +4389,8 @@ namespace MediaPortal.TV.Database
             chan.TVStandard = (AnalogVideoStandard)DatabaseUtility.GetAsInt(results, i, "standard");
             chan.Country = DatabaseUtility.GetAsInt(results, i, "Country");
             channels.Add(chan);
+
+            CachedChannel ch = new CachedChannel(chan.ID,chan.Number,chan.Name);
             m_channelCache.Add(chan);
           }
 
@@ -4712,6 +4729,7 @@ namespace MediaPortal.TV.Database
       lock (typeof(TVDatabase))
       {
         genres.Clear();
+        m_genreCache.Clear();
         try
         {
           if (null == m_db) return false;
@@ -4722,7 +4740,10 @@ namespace MediaPortal.TV.Database
           if (results.Rows.Count == 0) return false;
           for (int i = 0; i < results.Rows.Count; ++i)
           {
-            genres.Add(DatabaseUtility.Get(results, i, "strGenre"));
+            int id = DatabaseUtility.GetAsInt(results, i, "idGenre");
+            string genre = DatabaseUtility.Get(results, i, "strGenre");
+            genres.Add(genre);
+            m_genreCache.Add(new CachedGenre(id, genre));
           }
 
           return true;
@@ -5009,7 +5030,7 @@ namespace MediaPortal.TV.Database
         try
         {
           if (null == m_db) return String.Empty;
-          foreach (CGenreCache genre in m_genreCache)
+          foreach (CachedGenre genre in m_genreCache)
           {
             if (genre.idGenre == idGenre)
               return genre.strGenre;
@@ -5021,7 +5042,7 @@ namespace MediaPortal.TV.Database
           if (results.Rows.Count == 0) return String.Empty;
           string genreLabel=DatabaseUtility.Get(results, 0, "strGenre");
 
-          m_genreCache.Add(new CGenreCache(idGenre, genreLabel));
+          m_genreCache.Add(new CachedGenre(idGenre, genreLabel));
           return genreLabel;
         }
         catch (Exception ex)

@@ -228,11 +228,19 @@ namespace MediaPortal.Configuration
       ArrayList availableVideoCompressors = FilterHelper.GetVideoCompressors();
       ArrayList availableAudioCompressors = FilterHelper.GetAudioCompressors();
 
-      /* below is used for testing only
-
+      /* below is used for testing only */
+      /*
       availableVideoDevices.Add("Hauppauge WinTV PVR PCI II Capture");
       availableVideoDeviceMonikers.Add(@"@device:pnp:\\?\pci#ven_4444&dev_0803&subsys_40000070&rev_01#3&267a616a&0&48#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\hauppauge wintv pvr pci ii capture");
-    */
+    
+
+      //test for SS2
+      availableVideoDevices.Add("B2C2 MPEG-2 Source");
+      availableVideoDeviceMonikers.Add("B2C2 MPEG-2 Source");
+      */
+
+      /* below is used for testing only */
+
       FilterHelper.GetMPEG2VideoEncoders(availableVideoCompressors);
       FilterHelper.GetMPEG2AudioEncoders(availableAudioCompressors);
       for (int i = 0; i < availableVideoDevices.Count; ++i)
@@ -268,6 +276,7 @@ namespace MediaPortal.Configuration
           ((string)(availableVideoDevices[i])),
           ((string)(availableVideoDeviceMonikers[i])));
       }
+      bool ss2Added = false;
       //enum all cards known in capturedefinitions.xml
       foreach (CaptureCardDefinition ccd in CaptureCardDefinitions.CaptureCards)
       {
@@ -277,6 +286,31 @@ namespace MediaPortal.Configuration
           //treat the SSE2 DVB-S card as a general H/W card
           if (((string)(availableVideoDevices[i])) == "B2C2 MPEG-2 Source")
           {
+            if (ss2Added) continue;
+            if (addNewCard || (!addNewCard && deviceToEdit.VideoDevice == "B2C2 MPEG-2 Source") )
+            {
+              ss2Added = true;
+              TVCaptureDevice cd = new TVCaptureDevice();
+              cd.VideoDeviceMoniker = availableVideoDeviceMonikers[i].ToString();
+              cd.VideoDevice = (string)availableVideoDevices[i];
+              cd.CommercialName = "Skystar 2";
+              cd.CardType = TVCapture.CardTypes.Digital_SS2;
+              cd.DeviceId = (string)availableVideoDevices[i];
+              cd.FriendlyName = String.Format("card{0}", captureCards.Count + 1);
+              ComboBoxCaptureCard cbcc = new ComboBoxCaptureCard(cd);
+              bool alreadyAdded = false;
+              if (addNewCard)
+              {
+                foreach (TVCaptureDevice dev in captureCards)
+                {
+                  if (dev.CardType==cd.CardType)
+                     alreadyAdded = true;
+                }
+              }
+              if (!alreadyAdded)
+                cardComboBox.Items.Add(cbcc);
+            }
+            break;
           }
 
           bool add = false;
