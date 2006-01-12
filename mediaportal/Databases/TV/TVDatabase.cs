@@ -5074,6 +5074,22 @@ namespace MediaPortal.TV.Database
       }
     }
 
+    public static void ReMapDigitalMapping(int fromChannelId, int toChannelId)
+    {
+      string sql;
+      sql = String.Format("update tblATSCMapping set iLCN={0} where tblATSCMapping.iLCN={1}", toChannelId, fromChannelId);
+      m_db.Execute(sql);
+
+      sql = String.Format("update tblDVBTMapping set iLCN={0} where tblDVBTMapping.iLCN={1}", toChannelId, fromChannelId);
+      m_db.Execute(sql);
+
+      sql = String.Format("update tblDVBCMapping set iLCN={0} where tblDVBCMapping.iLCN={1}", toChannelId, fromChannelId);
+      m_db.Execute(sql);
+
+      sql = String.Format("update tblDVBSMapping set idChannel={0} where tblDVBSMapping.idChannel={1}", toChannelId, fromChannelId);
+      m_db.Execute(sql);
+    }
+
     public static void DeleteAllRecordedTv()
     {
       m_db.Execute("delete from recorded");
