@@ -4391,7 +4391,7 @@ namespace MediaPortal.TV.Database
             channels.Add(chan);
 
             CachedChannel ch = new CachedChannel(chan.ID,chan.Number,chan.Name);
-            m_channelCache.Add(chan);
+            m_channelCache.Add(ch);
           }
 
           return true;
