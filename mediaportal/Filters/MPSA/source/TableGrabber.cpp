@@ -1,3 +1,4 @@
+#pragma warning(disable: 4786)
 #include <streams.h>
 #include <bdatypes.h>
 #include <time.h>

@@ -8,6 +8,7 @@
 #ifndef __MPSA_
 #define __MPSA_
 #pragma warning(disable: 4511 4512 4995)
+#undef INITGUID
 
 #include "Section.h"
 #include "SplitterSetup.h"
@@ -19,6 +20,8 @@ class CStreamAnalyzerFilter;
 class CMHWInputPin1;
 class CMHWInputPin2;
 class CEPGInputPin;
+#define EC_PROGRAM_CHANGED EC_USER + 100
+#define EC_GUIDE_CHANGED EC_USER + 101
 
 // {B4F1F9BF-9ECA-41b8-883B-9C7FC0DD7047}
 DEFINE_GUID(CLSID_StreamAnalyzerPropPage, 0xb4f1f9bf, 0x9eca, 0x41b8, 0x88, 0x3b, 0x9c, 0x7f, 0xc0, 0xdd, 0x70, 0x47);
@@ -243,6 +246,7 @@ public:
 	STDMETHODIMP GetATSCTitle(WORD no, WORD* source_id, ULONG* starttime, WORD* length_in_secs, char** title, char** description);
 
 public:
+	HRESULT NotifyFinished(int EVENT);
 	Sections*				m_pSections;
 	SplitterSetup*			m_pDemuxer;
 	ChannelInfo				m_patTable[255];

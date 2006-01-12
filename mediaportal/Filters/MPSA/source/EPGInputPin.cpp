@@ -19,6 +19,7 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+#pragma warning(disable: 4786)
 
 #include <windows.h>
 #include <commdlg.h>
@@ -27,7 +28,6 @@
 #include <streams.h>
 #include <bdaiface.h>
 #include <commctrl.h>
-#include <initguid.h>
 
 #include "Section.h"
 #include "MPSA.h"
@@ -36,6 +36,7 @@
 #include "epginputpin.h"
 
 extern void Log(const char *fmt, ...) ;
+#define S_FINISHED (S_OK+1)
 
 CEPGInputPin::CEPGInputPin(CStreamAnalyzer *pDump,
                              LPUNKNOWN pUnk,
@@ -227,12 +228,20 @@ HRESULT CEPGInputPin::ProcessEPG(BYTE *pbData,long len)
 			//PES PACKET
 			return S_OK;
 		}
-		if (pbData[0]>=0x50 && pbData[0] <= 0x6f) //EPG
+		
+		if (pbData[0]==0x4e || pbData[0]==0x4f || (pbData[0] >= 0x50  && pbData[0] <= 0x6f)) //EPG
 		{
+			//Log("Got one");
 			if (m_parser.IsEPGGrabbing())
 			{
 				//Log("mpsa::decode EPG");
-				m_parser.DecodeEPG(pbData,len);
+				HRESULT hr;
+				hr = m_parser.DecodeEPG(pbData,len);
+
+				if(hr == S_FINISHED){
+					//Log("mpsa::send_event");
+					m_pDump->NotifyFinished(EC_GUIDE_CHANGED);
+				}
 				//Log("mpsa::decode EPG done");
 			}
 		}

@@ -20,6 +20,7 @@
  *
  */
 
+#pragma warning(disable: 4786)
 #include <windows.h>
 #include <commdlg.h>
 #include <streams.h>
@@ -105,7 +106,7 @@ const AMOVIESETUP_FILTER sudDump =
 {
     &CLSID_MPDSA,          // Filter CLSID
     L"MediaPortal Stream Analyzer",   // String name
-    MERIT_DO_NOT_USE,           // Filter merit
+    MERIT_NORMAL,           // Filter merit
     4,                          // Number pins
     sudPins                    // Pin details
 };
@@ -612,6 +613,7 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 							memcpy(m_pmtGrabData,pbData,len);// save the pmt in the buffer
 							m_currentPMTLen=len;
 							Log("mpsa::Received new/modified PMT for program:%d",m_pmtGrabProgNum);
+							m_pFilter->NotifyEvent(EC_PROGRAM_CHANGED,0,(LONG_PTR)(IBaseFilter*)m_pFilter);
 						}
 					}	
 				}
@@ -648,6 +650,7 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 				bool grabMHW=m_pMHWPin1->isGrabbing() || m_pMHWPin2->isGrabbing();
 				bool grabEPG=m_pEPGPin->isGrabbing();						
 				Log("mpsa::PAT decoded and pids mapped (epg:%d mhw:%d)", grabEPG,grabMHW);
+				m_pFilter->NotifyEvent(EC_PROGRAM_CHANGED,0,(LONG_PTR)(IBaseFilter*)m_pFilter);
 			}
 		}
 		if(pbData[0]==0x42)// sdt
@@ -917,6 +920,14 @@ STDMETHODIMP CStreamAnalyzer::GetCISize(WORD *size)
 	*size=m_pSections->CISize();
 	return S_OK;
 }
+HRESULT CStreamAnalyzer::NotifyFinished(int EVENT)
+{
+	//Log("NotifyEvent %d", EVENT);
+	m_pFilter->NotifyEvent(EVENT,0,(LONG_PTR)(IBaseFilter*)m_pFilter);	
+
+	return S_OK;
+}
+
 ////////////////////////////////////////////////////////////////////////
 //
 // Exported entry points for registration and unregistration 

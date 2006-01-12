@@ -19,6 +19,7 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+#pragma warning(disable: 4786)
 
 #include <windows.h>
 

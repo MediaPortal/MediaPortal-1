@@ -55,7 +55,7 @@ public:
 	void	GetEPGChannel( ULONG channel,  WORD* networkId,  WORD* transportid, WORD* service_id  );
 	void	GetEPGEvent( ULONG channel,  ULONG event,ULONG* language, ULONG* dateMJD, ULONG* timeUTC, ULONG* duration, char** strgenre    );
 	void    GetEPGLanguage(ULONG channel, ULONG eventid,ULONG languageIndex,ULONG* language, char** eventText, char** eventDescription    );
-	void	DecodeEPG(byte* pbData,int len);
+	HRESULT	DecodeEPG(byte* pbData,int len);
 
 private:
 	bool GetChannelByindex(ULONG channel, EPGChannel& epgChannel);

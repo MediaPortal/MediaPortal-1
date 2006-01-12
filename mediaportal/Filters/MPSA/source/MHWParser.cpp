@@ -18,6 +18,7 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+#pragma warning(disable: 4786)
 #include <windows.h>
 #include ".\mhwparser.h"
 extern void Log(const char *fmt, ...) ;

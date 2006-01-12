@@ -1,3 +1,4 @@
+#pragma warning(disable: 4786)
 #include <streams.h>
 #include <bdatypes.h>
 #include <time.h>
@@ -8,6 +9,7 @@
 
 extern void Log(const char *fmt, ...) ;
 
+#define S_FINISHED (S_OK+1)
 CEPGParser::CEPGParser()
 {
 	m_bParseEPG=false;
@@ -19,27 +21,27 @@ CEPGParser::~CEPGParser()
 {
 }
 
-void CEPGParser::DecodeEPG(byte* buf,int len)
+HRESULT CEPGParser::DecodeEPG(byte* buf,int len)
 {
 	//30-08-2005 19:54:38 DecodeEPG() check section 0 (50 f0 0f 2e e3 c9 d32ff20)
 	//Log("DecodeEPG():%d",len);
-	if (!m_bParseEPG) return;
-	if (m_bEpgDone) return;
-	if (buf==NULL) return;
+	if (!m_bParseEPG) return E_FAIL;
+	if (m_bEpgDone) return E_FAIL;
+	if (buf==NULL) return E_FAIL;
 
 	time_t currentTime=time(NULL);
 	time_t timespan=currentTime-m_epgTimeout;
 	if (timespan>10)
 	{
-		//		Log("EPG:timeout ch:%d",m_mapEPG.size());
+		Log("EPG:timeout ch:%d",m_mapEPG.size());
 		m_bParseEPG=false;
 		m_bEpgDone=true;
-		return;
+		return S_FINISHED;
 	}
-	if (len<=14) return;
+	if (len<=14) return E_FAIL;
 	int tableid = buf[0];
 
-	if (tableid < 0x50 || tableid > 0x6f) return;
+	if((tableid < 0x50 || tableid > 0x6f) && tableid != 0x4e && tableid != 0x4f) return E_FAIL;
 	int section_length = ((buf[1]& 0xF)<<8) + buf[2];
 
 	int service_id = (buf[3]<<8)+buf[4];
@@ -67,9 +69,9 @@ void CEPGParser::DecodeEPG(byte* buf,int len)
 		newChannel.allSectionsReceived=false;
 		m_mapEPG[key]=newChannel;
 		it=m_mapEPG.find(key);
-		//		Log("epg:add new channel table:0x%x onid:0x%x tsid:0x%x sid:0x%x",tableid,network_id,transport_id,service_id);
+				Log("epg:add new channel table:0x%x onid:0x%x tsid:0x%x sid:0x%x",tableid,network_id,transport_id,service_id);
 	}
-	if (it==m_mapEPG.end()) return;
+	if (it==m_mapEPG.end()) return E_FAIL;
 	EPGChannel& channel=it->second; 
 
 	//did we already receive this section ?
@@ -77,7 +79,7 @@ void CEPGParser::DecodeEPG(byte* buf,int len)
 	//Log("DecodeEPG() check section %x (%02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x %02.2x)",
 	//									key, buf[0],buf[1],buf[2],buf[3],buf[4],buf[5],buf[6],buf[7],buf[8],buf[9],buf[10],buf[11],buf[12],buf[13]);
 	EPGChannel::imapSectionsReceived itSec=channel.mapSectionsReceived.find(key);
-	if (itSec!=channel.mapSectionsReceived.end()) return; //yes
+	if (itSec!=channel.mapSectionsReceived.end()) return S_FINISHED; //yes
 	channel.mapSectionsReceived[key]=true;
 
 	//	Log("epg: tid:0x%x len:%d %d (%d/%d) sid:0x%x tsid:0x%x onid:0x%x slsn:%d last table id:0x%x cn:%d version:%d", 
@@ -117,15 +119,15 @@ void CEPGParser::DecodeEPG(byte* buf,int len)
 		//		Log("epg:    onid:0x%x tsid:0x%x sid:0x%x event:0x%x date:0x%x time:0x%x duration:0x%x running:%d free:%d start:%d desclen:%d",network_id,transport_id,service_id, event_id,dateMJD,timeUTC,duration,running_status,free_CA_mode,start,descriptors_len);
 		while (off < descriptors_len)
 		{
-			if (start+off+1>len) return;
+			if (start+off+1>len) return  E_FAIL;
 			int descriptor_tag = buf[start+off];
 			int descriptor_len = buf[start+off+1];
 			if (descriptor_len>0) 
 			{
 				if (start+off+descriptor_len+2>len) 
 				{
-					Log("epg:     DecodeEPG check1 %d %d %d %d",start,off,descriptor_len,len);
-					return;
+					//Log("epg:     DecodeEPG check1 %d %d %d %d",start,off,descriptor_len,len);
+					return E_FAIL;
 				}
 				if (descriptor_tag ==0x4d)
 				{
@@ -160,6 +162,7 @@ void CEPGParser::DecodeEPG(byte* buf,int len)
 		}
 		start +=descriptors_len;
 	}
+	return S_OK;
 }
 
 void CEPGParser::DecodeExtendedEvent(byte* data, EPGEvent& epgEvent)
@@ -255,11 +258,12 @@ void CEPGParser::DecodeExtendedEvent(byte* data, EPGEvent& epgEvent)
 		text = buffer.GetBuffer();
 	}
 
-	//	Log("  2: %d [%s]",pointer,text.c_str());
+		Log("  2: %d [%s]",pointer,text.c_str());
 
+	//BUG HERE?
 	//find language...
 	EPGEvent::ivecLanguages it = epgEvent.vecLanguages.begin();
-	for (it != epgEvent.vecLanguages.begin(); it != epgEvent.vecLanguages.end();++it)
+	for (it = epgEvent.vecLanguages.begin(); it != epgEvent.vecLanguages.end();++it)
 	{
 		EPGLanguage& lang=*it;
 		if (lang.language==language)
@@ -545,7 +549,7 @@ void CEPGParser::ResetEPG()
 	m_prevEventIndex=0;
 
 	m_mapEPG.clear();
-	m_bParseEPG=false;
+	//m_bParseEPG=false;
 	m_bEpgDone=false;
 	m_epgTimeout=time(NULL)+60;
 }
@@ -688,6 +692,7 @@ void CEPGParser::GetEPGLanguage(ULONG channel, ULONG eventid,ULONG languageIndex
 		m_prevEvent=epgEvent;
 	}
 	
+	//Log("Lang %d %d", languageIndex, m_prevEvent.vecLanguages.size());
 	if (languageIndex >=0 && languageIndex < m_prevEvent.vecLanguages.size())
 	{
 		EPGLanguage& lang= m_prevEvent.vecLanguages[languageIndex];

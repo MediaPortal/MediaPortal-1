@@ -19,7 +19,7 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-
+#pragma warning(disable: 4786)
 #pragma warning(disable: 4511 4512)
 
 #include <streams.h>

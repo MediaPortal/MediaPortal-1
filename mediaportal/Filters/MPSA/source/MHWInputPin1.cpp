@@ -19,6 +19,7 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+#pragma warning(disable: 4786)
 
 #include <windows.h>
 #include <commdlg.h>
@@ -27,7 +28,6 @@
 #include <streams.h>
 #include <bdaiface.h>
 #include <commctrl.h>
-#include <initguid.h>
 #include <time.h>
 
 #include "Section.h"
