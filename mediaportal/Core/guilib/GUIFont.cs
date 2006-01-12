@@ -674,7 +674,7 @@ namespace MediaPortal.GUI.Library
 			// Calculate the spacing between characters based on line height
 			size = g.MeasureString(" ", systemFont).ToSize();
 			//x = spacingPerChar = (int) Math.Ceiling(size.Height * 0.3);
-			spacingPerChar=1;
+			spacingPerChar=2;
 			x=0;
 
 			for (char c = (char)_StartCharacter; c < (char)_EndCharacter; c++)
