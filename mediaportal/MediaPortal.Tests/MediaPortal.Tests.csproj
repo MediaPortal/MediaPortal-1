@@ -56,6 +56,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Databases\TV\TestTvDatabase.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="Core\Playlists\PlayListB4STest.cs" />
     <Compile Include="Core\Playlists\PlayListM3UTests.cs" />
     <Compile Include="Core\Playlists\PlayListPlayerTest.cs" />

@@ -11,7 +11,7 @@ using MediaPortal.Util;
 using MediaPortal.TV.Recording;
 using MediaPortal.TV.Database;
 using MediaPortal.TV.DiskSpace;
-
+/*
 namespace MediaPortal.Tests.Disk
 {
   [TestFixture]
@@ -170,3 +170,4 @@ namespace MediaPortal.Tests.Disk
     }
   }
 }
+*/
