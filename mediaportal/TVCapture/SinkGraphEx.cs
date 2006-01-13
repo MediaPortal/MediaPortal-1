@@ -62,8 +62,10 @@ namespace MediaPortal.TV.Recording
     unsafe private static extern void AddWstCodecToGraph(IGraphBuilder graph);
     #endregion
 
-    IBaseFilter m_sampleGrabber = null;
-    ISampleGrabber m_sampleInterface = null;
+    #region variables
+    IBaseFilter _filterSampleGrabber = null;
+    ISampleGrabber _sampleGrabberInterface = null;
+    #endregion
 
     #region Constructors
 
@@ -89,28 +91,28 @@ namespace MediaPortal.TV.Recording
       {
         _hasTeletext = false;
         _grabTeletext = false;
-        Vmr9 = new VMR9Util("mytv");
-        Vmr7 = new VMR7Util();
+        _vmr9 = new VMR9Util("mytv");
+        _vmr7 = new VMR7Util();
 
         Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:CreateGraph() IN");
-        if (m_graphState != State.None) return false;		// If doing something already, return...
-        if (mCard == null)
+        if (_graphState != State.None) return false;		// If doing something already, return...
+        if (_card == null)
         {
           Log.WriteFile(Log.LogType.Capture, true, "SinkGraphEx:card is not defined");
           return false;
         }
 
-        if (!mCard.LoadDefinitions())											// Load configuration for this card
+        if (!_card.LoadDefinitions())											// Load configuration for this card
         {
-          Log.WriteFile(Log.LogType.Capture, "SinkGraphEx: Loading card definitions for card {0} failed", mCard.Graph.CommercialName);
+          Log.WriteFile(Log.LogType.Capture, "SinkGraphEx: Loading card definitions for card {0} failed", _card.Graph.CommercialName);
           return false;
         }
-        if (mCard.Graph.TvFilterDefinitions == null)
+        if (_card.Graph.TvFilterDefinitions == null)
         {
           Log.WriteFile(Log.LogType.Capture, true, "SinkGraphEx:card does not contain filters?");
           return false;
         }
-        if (mCard.Graph.TvConnectionDefinitions == null)
+        if (_card.Graph.TvConnectionDefinitions == null)
         {
           Log.WriteFile(Log.LogType.Capture, true, "SinkGraphEx:card does not contain connections for tv?");
           return false;
@@ -120,21 +122,21 @@ namespace MediaPortal.TV.Recording
 
 
         // Initialize settings. No channel tuned yet...
-        m_iPrevChannel = -1;
+        _previousChannel = -1;
 
         int hr = 0;
 
         // Make a new filter graph
         Log.WriteFile(Log.LogType.Capture, "SinkGraphEx: Create new filter graph (IGraphBuilder)");
-        m_graphBuilder = (IGraphBuilder)new FilterGraph();
+        _graphBuilderInterface = (IGraphBuilder)new FilterGraph();
 
         // Get the Capture Graph Builder...
         Log.WriteFile(Log.LogType.Capture, "SinkGraphEx: Get the Capture Graph Builder (ICaptureGraphBuilder2)");
-        m_captureGraphBuilder = (ICaptureGraphBuilder2)new CaptureGraphBuilder2();
+        _captureGraphBuilderInterface = (ICaptureGraphBuilder2)new CaptureGraphBuilder2();
 
         // ...and link the Capture Graph Builder to the Graph Builder
         Log.WriteFile(Log.LogType.Capture, "SinkGraphEx: Link the CaptureGraphBuilder to the filter graph (SetFiltergraph)");
-        hr = m_captureGraphBuilder.SetFiltergraph(m_graphBuilder);
+        hr = _captureGraphBuilderInterface.SetFiltergraph(_graphBuilderInterface);
         if (hr < 0)
         {
           Log.WriteFile(Log.LogType.Capture, "SinkGraphEx: Error: link FAILED");
@@ -143,12 +145,12 @@ namespace MediaPortal.TV.Recording
         }
         // Add graph to Running Object Table (ROT), so we can connect to the graph using GraphEdit ;)
         Log.WriteFile(Log.LogType.Capture, "SinkGraphEx: Add graph to ROT table");
-        _rotEntry = new DsROTEntry((IFilterGraph)m_graphBuilder);
+        _rotEntry = new DsROTEntry((IFilterGraph)_graphBuilderInterface);
 
         // Loop through configured filters for this card, bind them and add them to the graph
         // Note that while adding filters to a graph, some connections may already be created...
         Log.WriteFile(Log.LogType.Capture, "SinkGraphEx: Adding configured filters...");
-        foreach (FilterDefinition dsFilter in mCard.Graph.TvFilterDefinitions)
+        foreach (FilterDefinition dsFilter in _card.Graph.TvFilterDefinitions)
         {
           string catName = dsFilter.Category;
           dsFilter.DSFilter = GetFilter(dsFilter.FriendlyName);
@@ -156,9 +158,9 @@ namespace MediaPortal.TV.Recording
           {
             dsFilter.DSFilter = Marshal.BindToMoniker(dsFilter.MonikerDisplayName) as IBaseFilter;
           }
-          //FilterDefinition dsFilter = mCard.TvFilterDefinitions[catName] as FilterDefinition;
+          //FilterDefinition dsFilter = _card.TvFilterDefinitions[catName] as FilterDefinition;
           Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  adding filter <{0}> with moniker <{1}>", dsFilter.FriendlyName, dsFilter.MonikerDisplayName);
-          hr = m_graphBuilder.AddFilter(dsFilter.DSFilter, dsFilter.FriendlyName);
+          hr = _graphBuilderInterface.AddFilter(dsFilter.DSFilter, dsFilter.FriendlyName);
           if (hr == 0)
           {
             Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  Added filter <{0}> with moniker <{1}>", dsFilter.FriendlyName, dsFilter.MonikerDisplayName);
@@ -171,12 +173,12 @@ namespace MediaPortal.TV.Recording
 
           // Support the "legacy" member variables. This could be done different using properties
           // through which the filters are accessable. More implementation independent...
-          if (dsFilter.Category == "tvtuner") m_TVTuner = dsFilter.DSFilter as IAMTVTuner;
-          if (dsFilter.Category == "capture") m_captureFilter = dsFilter.DSFilter;
+          if (dsFilter.Category == "tvtuner") _tvTunerInterface = dsFilter.DSFilter as IAMTVTuner;
+          if (dsFilter.Category == "capture") _filterCapture = dsFilter.DSFilter;
         }
         Log.WriteFile(Log.LogType.Capture, "SinkGraphEx: Adding configured filters...DONE");
 
-        m_IAMAnalogVideoDecoder = m_captureFilter as IAMAnalogVideoDecoder;
+        _analogVideoDecoderInterface = _filterCapture as IAMAnalogVideoDecoder;
         InitializeTuner();
         // All filters, up-to and including the encoder filter have been added using a configuration file.
         // The rest of the filters depends on the fact if we are just viewing TV, or Timeshifting or even
@@ -186,7 +188,7 @@ namespace MediaPortal.TV.Recording
         // even (again, pretentions...) the Sigma Designs XCard could be "coupled" to the capture card...
 
         // Set crossbar routing, default to Tv Tuner + Audio Tuner...
-        //	DsUtils.FixCrossbarRouting(m_graphBuilder, m_captureGraphBuilder, m_captureFilter, true, false, false, false,cardName);
+        //	DsUtils.FixCrossbarRouting(_graphBuilderInterface, _captureGraphBuilderInterface, _filterCapture, true, false, false, false,_cardName);
 
         FilterDefinition sourceFilter;
         FilterDefinition sinkFilter;
@@ -207,10 +209,10 @@ namespace MediaPortal.TV.Recording
         // The code assumes method 1 is used. If that fails, method 2 is tried...
 
         Log.WriteFile(Log.LogType.Capture, "SinkGraphEx: Adding configured pin connections...");
-        for (int i = 0; i < mCard.Graph.TvConnectionDefinitions.Count; i++)
+        for (int i = 0; i < _card.Graph.TvConnectionDefinitions.Count; i++)
         {
-          sourceFilter = mCard.GetTvFilterDefinition(((ConnectionDefinition)mCard.Graph.TvConnectionDefinitions[i]).SourceCategory);
-          sinkFilter = mCard.GetTvFilterDefinition(((ConnectionDefinition)mCard.Graph.TvConnectionDefinitions[i]).SinkCategory);
+          sourceFilter = _card.GetTvFilterDefinition(((ConnectionDefinition)_card.Graph.TvConnectionDefinitions[i]).SourceCategory);
+          sinkFilter = _card.GetTvFilterDefinition(((ConnectionDefinition)_card.Graph.TvConnectionDefinitions[i]).SinkCategory);
           if (sourceFilter == null)
           {
             Log.WriteFile(Log.LogType.Capture, true, "SinkGraphEx: Cannot find source filter for connection:{0}", i);
@@ -222,15 +224,15 @@ namespace MediaPortal.TV.Recording
             continue;
           }
           Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  Connecting <{0}>:{1} with <{2}>:{3}",
-            sourceFilter.FriendlyName, ((ConnectionDefinition)mCard.Graph.TvConnectionDefinitions[i]).SourcePinName,
-            sinkFilter.FriendlyName, ((ConnectionDefinition)mCard.Graph.TvConnectionDefinitions[i]).SinkPinName);
+            sourceFilter.FriendlyName, ((ConnectionDefinition)_card.Graph.TvConnectionDefinitions[i]).SourcePinName,
+            sinkFilter.FriendlyName, ((ConnectionDefinition)_card.Graph.TvConnectionDefinitions[i]).SinkPinName);
 
 
-          //sourceFilter.DSFilter.FindPin(((ConnectionDefinition)mCard.ConnectionDefinitions[i]).SourcePinName, out sourcePin);
-          sourcePin = DirectShowUtil.FindPin(sourceFilter.DSFilter, PinDirection.Output, ((ConnectionDefinition)mCard.Graph.TvConnectionDefinitions[i]).SourcePinName);
+          //sourceFilter.DSFilter.FindPin(((ConnectionDefinition)_card.ConnectionDefinitions[i]).SourcePinName, out sourcePin);
+          sourcePin = DirectShowUtil.FindPin(sourceFilter.DSFilter, PinDirection.Output, ((ConnectionDefinition)_card.Graph.TvConnectionDefinitions[i]).SourcePinName);
           if (sourcePin == null)
           {
-            String strPinName = ((ConnectionDefinition)mCard.Graph.TvConnectionDefinitions[i]).SourcePinName;
+            String strPinName = ((ConnectionDefinition)_card.Graph.TvConnectionDefinitions[i]).SourcePinName;
             if ((strPinName.Length == 1) && (Char.IsDigit(strPinName, 0)))
             {
               sourcePin = DsFindPin.ByDirection(sourceFilter.DSFilter, PinDirection.Output, Convert.ToInt32(strPinName));
@@ -241,15 +243,15 @@ namespace MediaPortal.TV.Recording
             }
           }
           else
-            Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:   Found sourcePin: <{0}> ", ((ConnectionDefinition)mCard.Graph.TvConnectionDefinitions[i]).SourcePinName);
+            Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:   Found sourcePin: <{0}> ", ((ConnectionDefinition)_card.Graph.TvConnectionDefinitions[i]).SourcePinName);
 
-          sinkPin = GetPin(sinkFilter.DSFilter, PinDirection.Input, ((ConnectionDefinition)mCard.Graph.TvConnectionDefinitions[i]).SinkPinName);
+          sinkPin = GetPin(sinkFilter.DSFilter, PinDirection.Input, ((ConnectionDefinition)_card.Graph.TvConnectionDefinitions[i]).SinkPinName);
           /*
-           * //sinkFilter.DSFilter.FindPin(((ConnectionDefinition)mCard.ConnectionDefinitions[i]).SinkPinName, out sinkPin);
-          sinkPin = DirectShowUtil.FindPin(sinkFilter.DSFilter, PinDirection.Input, ((ConnectionDefinition)mCard.TvConnectionDefinitions[i]).SinkPinName);
+           * //sinkFilter.DSFilter.FindPin(((ConnectionDefinition)_card.ConnectionDefinitions[i]).SinkPinName, out sinkPin);
+          sinkPin = DirectShowUtil.FindPin(sinkFilter.DSFilter, PinDirection.Input, ((ConnectionDefinition)_card.TvConnectionDefinitions[i]).SinkPinName);
           if (sinkPin == null)
           {
-            String strPinName = ((ConnectionDefinition)mCard.TvConnectionDefinitions[i]).SinkPinName;
+            String strPinName = ((ConnectionDefinition)_card.TvConnectionDefinitions[i]).SinkPinName;
             if ((strPinName.Length == 1) && (Char.IsDigit(strPinName, 0)))
             {
               sinkPin = DsFindPin.ByDirection(sinkFilter.DSFilter, PinDirection.Input, Convert.ToInt32(strPinName));
@@ -260,14 +262,14 @@ namespace MediaPortal.TV.Recording
             }
           }
           else
-            Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:   Found sinkPin: <{0}> ", ((ConnectionDefinition)mCard.TvConnectionDefinitions[i]).SinkPinName);
+            Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:   Found sinkPin: <{0}> ", ((ConnectionDefinition)_card.TvConnectionDefinitions[i]).SinkPinName);
           */
           if (sourcePin != null && sinkPin != null)
           {
             IPin conPin;
             hr = sourcePin.ConnectedTo(out conPin);
             if (hr != 0)
-              hr = m_graphBuilder.Connect(sourcePin, sinkPin);
+              hr = _graphBuilderInterface.Connect(sourcePin, sinkPin);
             if (hr == 0)
               Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:   Pins connected...");
 
@@ -294,13 +296,13 @@ namespace MediaPortal.TV.Recording
             if (sourceFilter.DSFilter != null)
             {
               Log.WriteFile(Log.LogType.Capture, "SinkGraphEx: remove {0}", sourceFilter.FriendlyName);
-              m_graphBuilder.RemoveFilter(sourceFilter.DSFilter);
+              _graphBuilderInterface.RemoveFilter(sourceFilter.DSFilter);
               Marshal.ReleaseComObject(sourceFilter.DSFilter); sourceFilter.DSFilter = null;
             }
             RetryOtherInstances(i);
             Log.WriteFile(Log.LogType.Capture, "SinkGraphEx: RetryOtherInstances done");
           }//if (hr != 0)
-        }//for (int i = 0; i < mCard.TvConnectionDefinitions.Count; i++)
+        }//for (int i = 0; i < _card.TvConnectionDefinitions.Count; i++)
 
         if (sinkPin != null)
           Marshal.ReleaseComObject(sinkPin);
@@ -316,50 +318,31 @@ namespace MediaPortal.TV.Recording
         // This should be changed in the future, to allow custom graph endings (mux/no mux) using the
         // video and audio pins to connect to the rest of the graph (SBE, overlay etc.)
         // This might be needed by the ATI AIW cards (waiting for ob2 to release...)
-        FilterDefinition lastFilter = mCard.GetTvFilterDefinition(mCard.Graph.TvInterfaceDefinition.FilterCategory);
+        FilterDefinition lastFilter = _card.GetTvFilterDefinition(_card.Graph.TvInterfaceDefinition.FilterCategory);
 
 
 
 
         // All filters and connections have been made.
         // Now fix the rest of the graph, add MUX etc.
-        m_videoCaptureDevice = new VideoCaptureDevice(m_graphBuilder, m_captureGraphBuilder, m_captureFilter, lastFilter.DSFilter, (mCard.CardType == TVCapture.CardTypes.Analog_MCE), (mCard.CardType == TVCapture.CardTypes.Analog_MCE || mCard.CardType == TVCapture.CardTypes.Analog));
+        _videoCaptureHelper = new VideoCaptureDevice(_graphBuilderInterface, _captureGraphBuilderInterface, _filterCapture, lastFilter.DSFilter);
 
-        m_FrameSize = m_videoCaptureDevice.GetFrameSize();
+        _sizeFrame = _videoCaptureHelper.GetFrameSize();
 
-        Log.WriteFile(Log.LogType.Capture, "SinkGraphEx: Capturing:{0}x{1}", m_FrameSize.Width, m_FrameSize.Height);
-        m_mpeg2Demux = null;
-        if (m_videoCaptureDevice.MPEG2)
-        {
-          // creates the last part of the graph. Depending on timeshifting etc.
-          // it will eventually connect to the lastFilter, so this object only does the last part of the graph
-          m_mpeg2Demux = new MPEG2Demux(ref m_graphBuilder, m_FrameSize);
-        }
+        Log.WriteFile(Log.LogType.Capture, "SinkGraphEx: Capturing:{0}x{1}", _sizeFrame.Width, _sizeFrame.Height);
+        _mpeg2DemuxHelper = null;
+
+        // creates the last part of the graph. Depending on timeshifting etc.
+        // it will eventually connect to the lastFilter, so this object only does the last part of the graph
+        _mpeg2DemuxHelper = new MPEG2Demux(ref _graphBuilderInterface, _sizeFrame);
 
         // Connect video capture->mpeg2 demuxer
-        ConnectVideoCaptureToMPEG2Demuxer(); // can be done using config, or just leave it this way ;-)
-        if (m_mpeg2Demux != null)
-        {
-          m_mpeg2Demux.CreateMappings();
-        }
+        ConnectVideoCaptureToMPEG2Demuxer();
+        _mpeg2DemuxHelper.CreateMappings();
 
-        // For just MPEG2 cards, set the videoprocamp...
-        //if (((mCard.CardType == TVCaptureDevice.CardTypes.Analog_MCE || 
-        //     mCard.CardType == TVCaptureDevice.CardTypes.Analog)) && (!mCard.IsMCECard))
-        {
-          m_videoprocamp = m_captureFilter as IAMVideoProcAmp;
-          if (m_videoprocamp != null)
-          {
-            m_videoAmp = new VideoProcAmp(m_videoprocamp);
-            m_videoAmp.Contrast = m_videoAmp.ContrastDefault;
-            m_videoAmp.Brightness = m_videoAmp.BrightnessDefault;
-            m_videoAmp.Gamma = m_videoAmp.GammaDefault;
-            m_videoAmp.Saturation = m_videoAmp.SaturationDefault;
-            m_videoAmp.Sharpness = m_videoAmp.SharpnessDefault;
-          }
-        }
+        _videoProcAmpHelper = new VideoProcAmp(_filterCapture as IAMVideoProcAmp);
 
-        m_graphState = State.Created;
+        _graphState = State.Created;
         Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:CreateGraph() OUT");
 
         SetQuality(3);
@@ -384,49 +367,49 @@ namespace MediaPortal.TV.Recording
       if (GUIGraphicsContext.DX9Device == null) return;
 
 
-      AddTeeSinkToGraph(m_graphBuilder); //Tee/Sink-to-Sink Converter
-      IBaseFilter teesink = DirectShowUtil.GetFilterByName(m_graphBuilder, "Kernel Tee");
+      AddTeeSinkToGraph(_graphBuilderInterface); //Tee/Sink-to-Sink Converter
+      IBaseFilter teesink = DirectShowUtil.GetFilterByName(_graphBuilderInterface, "Kernel Tee");
       if (teesink == null) return;
 
-      AddWstCodecToGraph(m_graphBuilder);//WST Codec
-      IBaseFilter wstCodec = DirectShowUtil.GetFilterByName(m_graphBuilder, "WST Codec");
+      AddWstCodecToGraph(_graphBuilderInterface);//WST Codec
+      IBaseFilter wstCodec = DirectShowUtil.GetFilterByName(_graphBuilderInterface, "WST Codec");
       if (wstCodec == null)
       {
-        m_graphBuilder.RemoveFilter(teesink);
+        _graphBuilderInterface.RemoveFilter(teesink);
         Marshal.ReleaseComObject(teesink);
         return;
       }
 
-      int hr = m_captureGraphBuilder.RenderStream(new DsGuid( ClassId.PinCategoryVBI ), null, m_captureFilter, teesink, wstCodec);
+      int hr = _captureGraphBuilderInterface.RenderStream(new DsGuid( ClassId.PinCategoryVBI ), null, _filterCapture, teesink, wstCodec);
       if (hr != 0)
       {
-        m_graphBuilder.RemoveFilter(teesink);
-        m_graphBuilder.RemoveFilter(wstCodec);
+        _graphBuilderInterface.RemoveFilter(teesink);
+        _graphBuilderInterface.RemoveFilter(wstCodec);
         Marshal.ReleaseComObject(teesink);
         Marshal.ReleaseComObject(wstCodec);
         return;
       }
 
 
-      m_sampleGrabber = (IBaseFilter)new SampleGrabber();
-      m_sampleInterface = (ISampleGrabber)m_sampleGrabber;
-      m_graphBuilder.AddFilter(m_sampleGrabber, "Sample Grabber");
+      _filterSampleGrabber = (IBaseFilter)new SampleGrabber();
+      _sampleGrabberInterface = (ISampleGrabber)_filterSampleGrabber;
+      _graphBuilderInterface.AddFilter(_filterSampleGrabber, "Sample Grabber");
 
       AMMediaType mt = new AMMediaType();
       mt.majorType = MediaType.VBI;
       mt.subType = MediaSubTypeEx.Teletext;
-      m_sampleInterface.SetCallback(this, 1);
-      m_sampleInterface.SetMediaType( mt);
-      m_sampleInterface.SetBufferSamples(false);
-      hr = m_captureGraphBuilder.RenderStream(null, null, wstCodec, null, m_sampleGrabber);
+      _sampleGrabberInterface.SetCallback(this, 1);
+      _sampleGrabberInterface.SetMediaType( mt);
+      _sampleGrabberInterface.SetBufferSamples(false);
+      hr = _captureGraphBuilderInterface.RenderStream(null, null, wstCodec, null, _filterSampleGrabber);
       if (hr != 0)
       {
-        m_graphBuilder.RemoveFilter(teesink);
-        m_graphBuilder.RemoveFilter(wstCodec);
-        m_graphBuilder.RemoveFilter(m_sampleGrabber);
+        _graphBuilderInterface.RemoveFilter(teesink);
+        _graphBuilderInterface.RemoveFilter(wstCodec);
+        _graphBuilderInterface.RemoveFilter(_filterSampleGrabber);
         Marshal.ReleaseComObject(teesink);
         Marshal.ReleaseComObject(wstCodec);
-        Marshal.ReleaseComObject(m_sampleGrabber);
+        Marshal.ReleaseComObject(_filterSampleGrabber);
         return;
       }
       Marshal.ReleaseComObject(teesink);
@@ -443,8 +426,8 @@ namespace MediaPortal.TV.Recording
       IPin sourcePin = null;
       IPin sinkPin = null;
 
-      sourceFilter = mCard.GetTvFilterDefinition(((ConnectionDefinition)mCard.Graph.TvConnectionDefinitions[instance]).SourceCategory);
-      sinkFilter = mCard.GetTvFilterDefinition(((ConnectionDefinition)mCard.Graph.TvConnectionDefinitions[instance]).SinkCategory);
+      sourceFilter = _card.GetTvFilterDefinition(((ConnectionDefinition)_card.Graph.TvConnectionDefinitions[instance]).SourceCategory);
+      sinkFilter = _card.GetTvFilterDefinition(((ConnectionDefinition)_card.Graph.TvConnectionDefinitions[instance]).SinkCategory);
       if (sourceFilter == null)
       {
         Log.WriteFile(Log.LogType.Capture, true, "SinkGraphEx: Cannot find source filter for connection:{0}", instance);
@@ -472,11 +455,11 @@ namespace MediaPortal.TV.Recording
             Log.WriteFile(Log.LogType.Capture, true, "SinkGraphEx: try instance :{0} {1}", filterInstance, filter.MonikerString);
             sourceFilter.MonikerDisplayName = filter.MonikerString;
             sourceFilter.DSFilter = Marshal.BindToMoniker(sinkFilter.MonikerDisplayName) as IBaseFilter;
-            hr = m_graphBuilder.AddFilter(sourceFilter.DSFilter, sourceFilter.FriendlyName);
-            sourcePin = DirectShowUtil.FindPin(sourceFilter.DSFilter, PinDirection.Output, ((ConnectionDefinition)mCard.Graph.TvConnectionDefinitions[instance]).SourcePinName);
+            hr = _graphBuilderInterface.AddFilter(sourceFilter.DSFilter, sourceFilter.FriendlyName);
+            sourcePin = DirectShowUtil.FindPin(sourceFilter.DSFilter, PinDirection.Output, ((ConnectionDefinition)_card.Graph.TvConnectionDefinitions[instance]).SourcePinName);
             if (sourcePin == null)
             {
-              String strPinName = ((ConnectionDefinition)mCard.Graph.TvConnectionDefinitions[instance]).SourcePinName;
+              String strPinName = ((ConnectionDefinition)_card.Graph.TvConnectionDefinitions[instance]).SourcePinName;
               if ((strPinName.Length == 1) && (Char.IsDigit(strPinName, 0)))
               {
                 sourcePin = DsFindPin.ByDirection(sourceFilter.DSFilter, PinDirection.Output, Convert.ToInt32(strPinName));
@@ -487,12 +470,12 @@ namespace MediaPortal.TV.Recording
               }
             }
             else
-              Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:   Found sourcePin: <{0}> ", ((ConnectionDefinition)mCard.Graph.TvConnectionDefinitions[instance]).SourcePinName);
+              Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:   Found sourcePin: <{0}> ", ((ConnectionDefinition)_card.Graph.TvConnectionDefinitions[instance]).SourcePinName);
 
-            sinkPin = DirectShowUtil.FindPin(sinkFilter.DSFilter, PinDirection.Input, ((ConnectionDefinition)mCard.Graph.TvConnectionDefinitions[instance]).SinkPinName);
+            sinkPin = DirectShowUtil.FindPin(sinkFilter.DSFilter, PinDirection.Input, ((ConnectionDefinition)_card.Graph.TvConnectionDefinitions[instance]).SinkPinName);
             if (sinkPin == null)
             {
-              String strPinName = ((ConnectionDefinition)mCard.Graph.TvConnectionDefinitions[instance]).SinkPinName;
+              String strPinName = ((ConnectionDefinition)_card.Graph.TvConnectionDefinitions[instance]).SinkPinName;
               if ((strPinName.Length == 1) && (Char.IsDigit(strPinName, 0)))
               {
                 sinkPin = DsFindPin.ByDirection(sinkFilter.DSFilter, PinDirection.Input, Convert.ToInt32(strPinName));
@@ -503,14 +486,14 @@ namespace MediaPortal.TV.Recording
               }
             }
             else
-              Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:   Found sinkPin: <{0}> ", ((ConnectionDefinition)mCard.Graph.TvConnectionDefinitions[instance]).SinkPinName);
+              Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:   Found sinkPin: <{0}> ", ((ConnectionDefinition)_card.Graph.TvConnectionDefinitions[instance]).SinkPinName);
 
             if (sourcePin != null && sinkPin != null)
             {
               IPin conPin;
               hr = sourcePin.ConnectedTo(out conPin);
               if (hr != 0)
-                hr = m_graphBuilder.Connect(sourcePin, sinkPin);
+                hr = _graphBuilderInterface.Connect(sourcePin, sinkPin);
               if (hr == 0)
                 Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:   Pins connected...");
 
@@ -532,7 +515,7 @@ namespace MediaPortal.TV.Recording
               if (sinkPin != null) Marshal.ReleaseComObject(sinkPin); sinkPin = null;
               if (sourceFilter.DSFilter != null)
               {
-                m_graphBuilder.RemoveFilter(sourceFilter.DSFilter);
+                _graphBuilderInterface.RemoveFilter(sourceFilter.DSFilter);
                 Marshal.ReleaseComObject(sourceFilter.DSFilter);
                 sourceFilter.DSFilter = null;
               }
@@ -555,66 +538,67 @@ namespace MediaPortal.TV.Recording
 
     public override void DeleteGraph()
     {
-      if (m_graphState < State.Created) return;
+      if (_graphState < State.Created) return;
       int hr;
 
 
       _grabTeletext = false;
-      m_iPrevChannel = -1;
+      _previousChannel = -1;
       Log.WriteFile(Log.LogType.Capture, "SinkGraph:DeleteGraph()");
       StopRecording();
       StopTimeShifting();
       StopViewing();
 
       GUIGraphicsContext.OnGammaContrastBrightnessChanged -= new VideoGammaContrastBrightnessHandler(OnGammaContrastBrightnessChanged);
-      if (Vmr9 != null)
+      if (_vmr9 != null)
       {
-        Vmr9.RemoveVMR9();
-        Vmr9.Release();
-        Vmr9 = null;
+        _vmr9.RemoveVMR9();
+        _vmr9.Release();
+        _vmr9 = null;
       }
-      if (Vmr7 != null)
+      if (_vmr7 != null)
       {
-        Vmr7.RemoveVMR7();
-        Vmr7 = null;
+        _vmr7.RemoveVMR7();
+        _vmr7 = null;
       }
-      m_IAMAnalogVideoDecoder = null;
-
-
-      if (m_videoprocamp != null)
+      _analogVideoDecoderInterface = null;
+      if (_videoProcAmpHelper != null)
       {
-        m_videoAmp = null;
-        m_videoprocamp = null;
+        _videoProcAmpHelper.Dispose();
+        _videoProcAmpHelper = null;
       }
-      if (m_mpeg2Demux != null)
+      if (_mpeg2DemuxHelper != null)
       {
-        m_mpeg2Demux.CloseInterfaces();
-        m_mpeg2Demux = null;
+        _mpeg2DemuxHelper.Dispose();
+        _mpeg2DemuxHelper = null;
       }
 
-      if (m_videoCaptureDevice != null)
+      if (_videoCaptureHelper != null)
       {
-        m_videoCaptureDevice.CloseInterfaces();
-        m_videoCaptureDevice = null;
+        _videoCaptureHelper.Dispose();
+        _videoCaptureHelper = null;
       }
 
-      if (m_TVTuner != null)
-        Marshal.ReleaseComObject(m_TVTuner); m_TVTuner = null;
+//      if (_tvTunerInterface != null)
+//        Marshal.ReleaseComObject(_tvTunerInterface); _tvTunerInterface = null;
 
-      m_sampleInterface = null;
-      if (m_sampleGrabber != null)
+      _sampleGrabberInterface = null;
+      if (_filterSampleGrabber != null)
       {
-        while ((hr = Marshal.ReleaseComObject(m_sampleGrabber)) > 0) ;
-        m_sampleGrabber = null;
+        while ((hr = Marshal.ReleaseComObject(_filterSampleGrabber)) > 0) ;
+        _filterSampleGrabber = null;
       }
 
 
-      if (m_graphBuilder != null)
-        DirectShowUtil.RemoveFilters(m_graphBuilder);
+      if (_graphBuilderInterface != null)
+      {
+        DirectShowUtil.RemoveFilters(_graphBuilderInterface);
+      }
 
-      if (m_captureFilter != null)
-        Marshal.ReleaseComObject(m_captureFilter); m_captureFilter = null;
-
+      //if (_filterCapture != null)
+      //{
+      //  Marshal.ReleaseComObject(_filterCapture); _filterCapture = null;
+      //}
 
       if (_rotEntry != null)
       {
@@ -622,27 +606,31 @@ namespace MediaPortal.TV.Recording
       }
       _rotEntry = null;
 
-      foreach (FilterDefinition dsFilter in mCard.Graph.TvFilterDefinitions)
+      foreach (FilterDefinition dsFilter in _card.Graph.TvFilterDefinitions)
       {
-        //string strfName = dsFilter.Category;
-        //FilterDefinition dsFilter = mCard.TvFilterDefinitions[strfName] as FilterDefinition;
         if (dsFilter.DSFilter != null)
-          Marshal.ReleaseComObject(dsFilter.DSFilter);
-        //((FilterDefinition)mCard.TvFilterDefinitions[strfName]).DSFilter = null;
-        //dsFilter = null;
+        {
+          while ((hr = Marshal.ReleaseComObject(dsFilter.DSFilter)) > 0);
+        }
+        dsFilter.DSFilter = null;
       }
 
-      if (m_captureGraphBuilder != null)
-        Marshal.ReleaseComObject(m_captureGraphBuilder); m_captureGraphBuilder = null;
+      if (_captureGraphBuilderInterface != null)
+      {
+        while ((hr = Marshal.ReleaseComObject(_captureGraphBuilderInterface)) > 0); 
+        _captureGraphBuilderInterface = null;
+      }
 
-      if (m_graphBuilder != null)
-        Marshal.ReleaseComObject(m_graphBuilder); m_graphBuilder = null;
-
+      if (_graphBuilderInterface != null)
+      {
+        while ((hr = Marshal.ReleaseComObject(_graphBuilderInterface)) > 0) ; 
+        _graphBuilderInterface = null;
+      }
       _hasTeletext = false;
-      m_graphState = State.None;
-      return;
+      _graphState = State.None;
     }
 
+    #region graph builder helpers
     IPin GetPin(IBaseFilter filter, PinDirection direction, string pinName)
     {
       if (direction == PinDirection.Input)
@@ -707,6 +695,7 @@ namespace MediaPortal.TV.Recording
       IBaseFilter audioInputFilter = Marshal.BindToMoniker(audioInputs[0].MonikerString) as IBaseFilter;
       return audioInputFilter ;
     }
+    #endregion
 
     #endregion Overrides
 
@@ -734,7 +723,7 @@ namespace MediaPortal.TV.Recording
       object o = null;
       cat = new DsGuid(FindDirection.UpstreamOnly);
       iid = typeof(IAMCrossbar).GUID;
-      hr = m_captureGraphBuilder.FindInterface(cat, null, m_captureFilter,  iid, out o);
+      hr = _captureGraphBuilderInterface.FindInterface(cat, null, _filterCapture,  iid, out o);
       if (hr != 0 || o == null)
       {
         Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:no crossbar found");
@@ -750,18 +739,18 @@ namespace MediaPortal.TV.Recording
 
       //disconnect the output pins of the crossbar->video capture filter
       //			Log.WriteFile(Log.LogType.Capture,"SinkGraphEx:disconnect crossbar outputs");
-      DirectShowUtil.DisconnectOutputPins(m_graphBuilder, (IBaseFilter)crossbar);
+      DirectShowUtil.DisconnectOutputPins(_graphBuilderInterface, (IBaseFilter)crossbar);
 
       //connect the output pins of the tvtuner
       //			Log.WriteFile(Log.LogType.Capture,"SinkGraphEx:connect tvtuner outputs");
-      bool bAllConnected = DirectShowUtil.RenderOutputPins(m_graphBuilder, (IBaseFilter)m_TVTuner);
+      bool bAllConnected = DirectShowUtil.RenderOutputPins(_graphBuilderInterface, (IBaseFilter)_tvTunerInterface);
       if (!bAllConnected)
         Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:FAILED, not all pins connected");
 
       //reconnect the output pins of the crossbar
       //			Log.WriteFile(Log.LogType.Capture,"SinkGraphEx:reconnect crossbar output pins");
 
-      bAllConnected = DirectShowUtil.RenderOutputPins(m_graphBuilder, (IBaseFilter)crossbar);
+      bAllConnected = DirectShowUtil.RenderOutputPins(_graphBuilderInterface, (IBaseFilter)crossbar);
       if (!bAllConnected)
         Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:FAILED, not all pins connected");
 

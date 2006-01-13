@@ -175,7 +175,7 @@ namespace MediaPortal.Player
       }
 
       bool bAdded=false;
-      m_videoCaptureDevice = new VideoCaptureDevice(m_graphBuilder, m_captureGraphBuilder, m_filterCaptureVideo);
+      m_videoCaptureDevice = new VideoCaptureDevice(m_graphBuilder, m_captureGraphBuilder, m_filterCaptureVideo, m_filterCaptureVideo);
       if (m_videoCaptureDevice.PreviewAudioPin!=null)
       {
         // add default directsound renderer
@@ -317,7 +317,7 @@ namespace MediaPortal.Player
       }
       if (m_videoCaptureDevice != null)
       {
-        m_videoCaptureDevice.CloseInterfaces();
+        m_videoCaptureDevice.Dispose();
         m_videoCaptureDevice = null;
       }
 
