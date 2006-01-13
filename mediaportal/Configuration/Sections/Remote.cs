@@ -152,7 +152,7 @@ namespace MediaPortal.Configuration.Sections
         checkBoxAllowExternal.Checked      = xmlreader.GetValueAsBool("remote", "HCWAllowExternal", false);
         checkBoxKeepControl.Checked        = xmlreader.GetValueAsBool("remote", "HCWKeepControl", false);
         checkBoxVerboseLog.Checked         = xmlreader.GetValueAsBool("remote", "HCWVerboseLog", false);
-        hScrollBarButtonRelease.Value      = xmlreader.GetValueAsInt ("remote", "HCWButtonRelease", 100);
+        hScrollBarButtonRelease.Value      = xmlreader.GetValueAsInt ("remote", "HCWButtonRelease", 500);
         hScrollBarRepeatFilter.Value       = xmlreader.GetValueAsInt ("remote", "HCWRepeatFilter", 2);
         hScrollBarRepeatSpeed.Value        = xmlreader.GetValueAsInt ("remote", "HCWRepeatSpeed", 1);
         checkBoxFilterDoubleKlicks.Checked = xmlreader.GetValueAsBool("remote", "HCWFilterDoubleKlicks", false);
@@ -536,12 +536,12 @@ namespace MediaPortal.Configuration.Sections
       this.hScrollBarButtonRelease.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.hScrollBarButtonRelease.Location = new System.Drawing.Point(152, 25);
-      this.hScrollBarButtonRelease.Maximum = 209;
+      this.hScrollBarButtonRelease.Maximum = 1009;
       this.hScrollBarButtonRelease.Minimum = 20;
       this.hScrollBarButtonRelease.Name = "hScrollBarButtonRelease";
       this.hScrollBarButtonRelease.Size = new System.Drawing.Size(213, 17);
       this.hScrollBarButtonRelease.TabIndex = 2;
-      this.hScrollBarButtonRelease.Value = 100;
+      this.hScrollBarButtonRelease.Value = 500;
       // 
       // label2sec
       // 
@@ -550,9 +550,9 @@ namespace MediaPortal.Configuration.Sections
       this.label2sec.BackColor = System.Drawing.Color.Transparent;
       this.label2sec.Location = new System.Drawing.Point(368, 27);
       this.label2sec.Name = "label2sec";
-      this.label2sec.Size = new System.Drawing.Size(56, 13);
+      this.label2sec.Size = new System.Drawing.Size(62, 13);
       this.label2sec.TabIndex = 3;
-      this.label2sec.Text = "200 msec.";
+      this.label2sec.Text = "1000 msec.";
       // 
       // labelDelay
       // 
@@ -793,7 +793,7 @@ namespace MediaPortal.Configuration.Sections
       checkBoxAllowExternal.Checked = false;
       checkBoxKeepControl.Checked = false;
       checkBoxVerboseLog.Checked = false;
-      hScrollBarButtonRelease.Value = 100;
+      hScrollBarButtonRelease.Value = 500;
       hScrollBarRepeatFilter.Value = 2;
       hScrollBarRepeatSpeed.Value = 1;
       checkBoxFilterDoubleKlicks.Checked = false;

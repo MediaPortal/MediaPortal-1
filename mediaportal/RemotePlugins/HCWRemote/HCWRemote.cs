@@ -87,7 +87,7 @@ namespace MediaPortal.InputDevices
         allowExternal = xmlreader.GetValueAsBool("remote", "HCWAllowExternal", false);
         keepControl = xmlreader.GetValueAsBool("remote", "HCWKeepControl", false);
         logVerbose = xmlreader.GetValueAsBool("remote", "HCWVerboseLog", false);
-        buttonRelease = TimeSpan.FromMilliseconds(xmlreader.GetValueAsInt("remote", "HCWButtonRelease", 100));
+        buttonRelease = TimeSpan.FromMilliseconds(xmlreader.GetValueAsInt("remote", "HCWButtonRelease", 500));
         repeatFilter = xmlreader.GetValueAsInt("remote", "HCWRepeatFilter", 2);
         repeatSpeed = xmlreader.GetValueAsInt("remote", "HCWRepeatSpeed", 1);
         filterDoubleKlicks = xmlreader.GetValueAsBool("remote", "HCWFilterDoubleKlicks", false);
