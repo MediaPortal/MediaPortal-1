@@ -14,3 +14,16 @@ ExternalDisplay.xml
 *.DLL
 *.log
 config.ini
+scripts
+log
+temp
+capturecards.xml
+Configuration.exe.config
+FireDTVKeyMap.XML
+FireDTVKeyMap.XML.Schema
+MediaPortal.vshost.exe.config
+MPSA.ax
+MPTSWriter.ax
+programViews2.xml
+register.bat
+TSFileSource.ax
