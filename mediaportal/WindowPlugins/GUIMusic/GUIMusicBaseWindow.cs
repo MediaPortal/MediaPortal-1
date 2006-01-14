@@ -803,6 +803,10 @@ namespace MediaPortal.GUI.Music
 
     }
 
+    protected virtual void OnFindCoverArt(int iItem)
+    {
+    }
+
     protected virtual void OnInfo(int iItem)
     {
       GUIListItem pItem = facadeView[iItem];
@@ -1066,550 +1070,900 @@ namespace MediaPortal.GUI.Music
       }
     }
 
-    ////protected void ShowAlbumInfo(bool isFolder, string artistName, string strAlbumName, string strPath, MusicTag tag, int albumId)
+    //////////protected void ShowAlbumInfo(bool isFolder, string artistName, string strAlbumName, string strPath, MusicTag tag, int albumId)
+    //////////{
+    //////////  // check cache
+    //////////  GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+    //////////  GUIDialogProgress dlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+    //////////  AlbumInfo albuminfo = new AlbumInfo();
+    //////////  if (m_database.GetAlbumInfo(albumId, ref albuminfo))
+    //////////  {
+    //////////    List<Song> songs = new List<Song>();
+    //////////    MusicAlbumInfo album = new MusicAlbumInfo();
+    //////////    album.Set(albuminfo);
+
+    //////////    GUIMusicInfo pDlgAlbumInfo = (GUIMusicInfo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_MUSIC_INFO);
+    //////////    if (null != pDlgAlbumInfo)
+    //////////    {
+    //////////      pDlgAlbumInfo.Album = album;
+    //////////      pDlgAlbumInfo.Tag = tag;
+
+    //////////      pDlgAlbumInfo.DoModal(GetID);
+    //////////      if (pDlgAlbumInfo.NeedsRefresh)
+    //////////      {
+    //////////        m_database.DeleteAlbumInfo(strAlbumName);
+    //////////        ShowAlbumInfo(isFolder, artistName, strAlbumName, strPath, tag, albumId);
+    //////////      }
+    //////////      return;
+    //////////    }
+    //////////  }
+
+    //////////  // show dialog box indicating we're searching the album
+    //////////  if (dlgProgress != null)
+    //////////  {
+    //////////    dlgProgress.SetHeading(185);
+    //////////    dlgProgress.SetLine(1, strAlbumName);
+    //////////    dlgProgress.SetLine(2, artistName);
+    //////////    dlgProgress.SetLine(3, tag.Year.ToString());
+    //////////    dlgProgress.SetPercentage(0);
+    //////////    dlgProgress.StartModal(GetID);
+    //////////    dlgProgress.ShowProgressBar(true);
+    //////////    dlgProgress.Progress();
+    //////////  }
+    //////////  bool bDisplayErr = false;
+
+    //////////  // find album info
+    //////////  MusicInfoScraper scraper = new MusicInfoScraper();
+    //////////  if (scraper.FindAlbuminfo(strAlbumName))
+    //////////  {
+    //////////    if (dlgProgress != null)
+    //////////    {
+    //////////      dlgProgress.SetPercentage(30);
+    //////////      dlgProgress.Progress();
+    //////////      dlgProgress.Close();
+    //////////    }
+    //////////    // did we found at least 1 album?
+    //////////    int iAlbumCount = scraper.Count;
+    //////////    if (iAlbumCount >= 1)
+    //////////    {
+    //////////      //yes
+    //////////      // if we found more then 1 album, let user choose one
+    //////////      int iSelectedAlbum = 0;
+    //////////      if (iAlbumCount > 1)
+    //////////      {
+    //////////        //show dialog with all albums found
+    //////////        string szText = GUILocalizeStrings.Get(181);
+    //////////        GUIDialogSelect pDlg = (GUIDialogSelect)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_SELECT);
+    //////////        if (null != pDlg)
+    //////////        {
+    //////////          pDlg.Reset();
+    //////////          pDlg.SetHeading(szText);
+    //////////          for (int i = 0; i < iAlbumCount; ++i)
+    //////////          {
+    //////////            MusicAlbumInfo info = scraper[i];
+    //////////            pDlg.Add(info.Title2);
+    //////////          }
+    //////////          pDlg.DoModal(GetID);
+
+    //////////          // and wait till user selects one
+    //////////          iSelectedAlbum = pDlg.SelectedLabel;
+    //////////          if (iSelectedAlbum < 0) return;
+    //////////        }
+    //////////      }
+
+    //////////      // ok, now show dialog we're downloading the album info
+    //////////      MusicAlbumInfo album = scraper[iSelectedAlbum];
+    //////////      if (null != dlgProgress)
+    //////////      {
+    //////////        dlgProgress.SetHeading(185);
+    //////////        dlgProgress.SetLine(1, album.Title2);
+    //////////        dlgProgress.SetLine(2, album.Artist);
+    //////////        dlgProgress.StartModal(GetID);
+    //////////        dlgProgress.ShowProgressBar(true);
+    //////////        dlgProgress.SetPercentage(40);
+    //////////        dlgProgress.Progress();
+    //////////      }
+
+    //////////      // download the album info
+    //////////      bool bLoaded = album.Loaded;
+    //////////      if (!bLoaded)
+    //////////        bLoaded = album.Load();
+    //////////      if (null != dlgProgress)
+    //////////      {
+    //////////        dlgProgress.SetPercentage(70);
+    //////////        dlgProgress.Progress();
+    //////////      }
+    //////////      if (bLoaded)
+    //////////      {
+    //////////        // set album title from musicinfotag, not the one we got from allmusic.com
+    //////////        album.Title = strAlbumName;
+    //////////        // set path, needed to store album in database
+    //////////        album.AlbumPath = strPath;
+    //////////        albuminfo = new AlbumInfo();
+    //////////        albuminfo.Album = album.Title;
+    //////////        albuminfo.Artist = album.Artist;
+    //////////        albuminfo.Genre = album.Genre;
+    //////////        albuminfo.Tones = album.Tones;
+    //////////        albuminfo.Styles = album.Styles;
+    //////////        albuminfo.Review = album.Review;
+    //////////        albuminfo.Image = album.ImageURL;
+    //////////        albuminfo.Rating = album.Rating;
+    //////////        albuminfo.Tracks = album.Tracks;
+    //////////        try
+    //////////        {
+    //////////          albuminfo.Year = Int32.Parse(album.DateOfRelease);
+    //////////        }
+    //////////        catch (Exception)
+    //////////        {
+    //////////        }
+    //////////        //albuminfo.Path   = album.AlbumPath;
+    //////////        // save to database
+    //////////        m_database.AddAlbumInfo(albuminfo);
+    //////////        if (null != dlgProgress)
+    //////////        {
+    //////////          dlgProgress.SetPercentage(100);
+    //////////          dlgProgress.Progress();
+    //////////          dlgProgress.Close();
+    //////////        }
+
+    //////////        // ok, show album info
+    //////////        GUIMusicInfo pDlgAlbumInfo = (GUIMusicInfo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_MUSIC_INFO);
+    //////////        if (null != pDlgAlbumInfo)
+    //////////        {
+    //////////          pDlgAlbumInfo.Album = album;
+    //////////          pDlgAlbumInfo.Tag = tag;
+
+    //////////          pDlgAlbumInfo.DoModal(GetID);
+    //////////          if (pDlgAlbumInfo.NeedsRefresh)
+    //////////          {
+    //////////            m_database.DeleteAlbumInfo(album.Title);
+    //////////            ShowAlbumInfo(isFolder, artistName, strAlbumName, strPath, tag, albumId);
+    //////////            return;
+    //////////          }
+    //////////          if (isFolder)
+    //////////          {
+    //////////            string thumb = GetAlbumThumbName(album.Artist, album.Title);
+    //////////            if (System.IO.File.Exists(thumb))
+    //////////            {
+    //////////              try
+    //////////              {
+    //////////                string folderjpg = String.Format(@"{0}\folder.jpg", Utils.RemoveTrailingSlash(strPath));
+    //////////                Utils.FileDelete(folderjpg);
+    //////////                System.IO.File.Copy(thumb, folderjpg);
+    //////////              }
+    //////////              catch (Exception)
+    //////////              {
+    //////////              }
+    //////////            }
+    //////////          }
+    //////////        }
+    //////////      }
+    //////////      else
+    //////////      {
+    //////////        // failed 2 download album info
+    //////////        bDisplayErr = true;
+    //////////      }
+    //////////    }
+    //////////    else
+    //////////    {
+    //////////      // no albums found
+    //////////      bDisplayErr = true;
+    //////////    }
+    //////////  }
+    //////////  else
+    //////////  {
+    //////////    // unable 2 connect to www.allmusic.com
+    //////////    bDisplayErr = true;
+    //////////  }
+    //////////  // if an error occured, then notice the user
+    //////////  if (bDisplayErr)
+    //////////  {
+    //////////    if (null != dlgProgress)
+    //////////      dlgProgress.Close();
+    //////////    if (null != dlgOk)
+    //////////    {
+    //////////      dlgOk.SetHeading(187);
+    //////////      dlgOk.SetLine(1, 187);
+    //////////      dlgOk.SetLine(2, String.Empty);
+    //////////      dlgOk.DoModal(GetID);
+    //////////    }
+    //////////  }
+    //////////}
+
+    //////protected void ShowAlbumInfo(bool isFolder, string artistName, string strAlbumName, string strPath, MusicTag tag, int albumId)
+    //////{
+    //////  if (this.UseLegacyAlbumInfoScraper)
+    //////  {
+    //////    DoLegacyShowAlbumInfo(isFolder, artistName, strAlbumName, strPath, tag, albumId);
+    //////  }
+
+    //////  else
+    //////  {
+    //////    DoShowAlbumInfo(isFolder, artistName, strAlbumName, strPath, tag, albumId);
+    //////  }
+    //////}
+
+    //////protected void DoShowAlbumInfo(bool isFolder, string artistName, string strAlbumName, string strPath, MusicTag tag, int albumId)
+    //////{
+    //////  bool bDisplayErr = false;
+    //////  GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+    //////  AlbumInfo albuminfo = new AlbumInfo();
+    //////  MusicAlbumInfo album = new MusicAlbumInfo();
+    //////  GUICoverArtGrabberResults guiCoverGrabberResults = (GUICoverArtGrabberResults)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_MUSIC_COVERART_GRABBER_RESULTS);
+
+    //////  if (null != guiCoverGrabberResults)
+    //////  {
+    //////    guiCoverGrabberResults.SearchMode = GUICoverArtGrabberResults.SearchDepthMode.Album;
+    //////    GUIDialogProgress dlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+
+    //////    if (dlgProgress != null)
+    //////    {
+    //////      dlgProgress.SetHeading(185);
+    //////      dlgProgress.SetLine(1, strAlbumName);
+    //////      dlgProgress.SetLine(2, artistName);
+    //////      dlgProgress.SetLine(3, string.Empty);
+    //////      dlgProgress.StartModal(GetID);
+    //////    }
+
+    //////    guiCoverGrabberResults.GetAlbumCovers(artistName, strAlbumName, strPath, GetID, true);
+    //////    guiCoverGrabberResults.DoModal(GetID);
+
+    //////    if (GUICoverArtGrabberResults.IsCancelledByUser)
+    //////      return;
+
+    //////    albuminfo = guiCoverGrabberResults.SelectedAlbum;
+
+    //////    if (albuminfo != null)
+    //////    {
+    //////      SaveCoverArtImage(albuminfo, strPath, true, true);
+    //////      SaveAlbumInfoToDatabase(strPath, albuminfo, tag);
+    //////      facadeView.RefreshCoverArt();
+    //////    }
+
+    //////    else
+    //////      bDisplayErr = true;
+    //////  }
+
+    //////  if (bDisplayErr)
+    //////  {
+    //////    if (null != dlgOk)
+    //////    {
+    //////      dlgOk.SetHeading(187);
+    //////      dlgOk.SetLine(1, 187);
+    //////      dlgOk.SetLine(2, String.Empty);
+    //////      dlgOk.DoModal(GetID);
+    //////    }
+    //////  }
+    //////}
+
+    ////////protected void ShowAlbumInfo(bool isFolder, string artistName, string strAlbumName, string strPath, MusicTag tag, int albumId)
+    //////protected void DoLegacyShowAlbumInfo(bool isFolder, string artistName, string strAlbumName, string strPath, MusicTag tag, int albumId)
+    //////{
+    //////  // check cache
+    //////  GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+    //////  GUIDialogProgress dlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+    //////  AlbumInfo albuminfo = new AlbumInfo();
+    //////  if (m_database.GetAlbumInfo(albumId, ref albuminfo))
+    //////  {
+    //////    List<Song> songs = new List<Song>();
+    //////    MusicAlbumInfo album = new MusicAlbumInfo();
+    //////    album.Set(albuminfo);
+
+    //////    GUIMusicInfo pDlgAlbumInfo = (GUIMusicInfo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_MUSIC_INFO);
+    //////    if (null != pDlgAlbumInfo)
+    //////    {
+    //////      pDlgAlbumInfo.Album = album;
+    //////      pDlgAlbumInfo.Tag = tag;
+
+    //////      pDlgAlbumInfo.DoModal(GetID);
+    //////      if (pDlgAlbumInfo.NeedsRefresh)
+    //////      {
+    //////        m_database.DeleteAlbumInfo(strAlbumName);
+    //////        ShowAlbumInfo(isFolder, artistName, strAlbumName, strPath, tag, albumId);
+    //////      }
+    //////      return;
+    //////    }
+    //////  }
+
+    //////  // show dialog box indicating we're searching the album
+    //////  if (dlgProgress != null)
+    //////  {
+    //////    dlgProgress.SetHeading(185);
+    //////    dlgProgress.SetLine(1, strAlbumName);
+    //////    dlgProgress.SetLine(2, artistName);
+    //////    dlgProgress.SetLine(3, tag.Year.ToString());
+    //////    dlgProgress.SetPercentage(0);
+    //////    dlgProgress.StartModal(GetID);
+    //////    dlgProgress.ShowProgressBar(true);
+    //////    dlgProgress.Progress();
+    //////  }
+    //////  bool bDisplayErr = false;
+
+    //////  // find album info
+    //////  MusicInfoScraper scraper = new MusicInfoScraper();
+    //////  if (scraper.FindAlbuminfo(strAlbumName))
+    //////  {
+    //////    if (dlgProgress != null)
+    //////    {
+    //////      dlgProgress.SetPercentage(30);
+    //////      dlgProgress.Progress();
+    //////      dlgProgress.Close();
+    //////    }
+    //////    // did we found at least 1 album?
+    //////    int iAlbumCount = scraper.Count;
+    //////    if (iAlbumCount >= 1)
+    //////    {
+    //////      //yes
+    //////      // if we found more then 1 album, let user choose one
+    //////      int iSelectedAlbum = 0;
+    //////      if (iAlbumCount > 1)
+    //////      {
+    //////        //show dialog with all albums found
+    //////        string szText = GUILocalizeStrings.Get(181);
+    //////        GUIDialogSelect pDlg = (GUIDialogSelect)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_SELECT);
+    //////        if (null != pDlg)
+    //////        {
+    //////          pDlg.Reset();
+    //////          pDlg.SetHeading(szText);
+    //////          for (int i = 0; i < iAlbumCount; ++i)
+    //////          {
+    //////            MusicAlbumInfo info = scraper[i];
+    //////            pDlg.Add(info.Title2);
+    //////          }
+    //////          pDlg.DoModal(GetID);
+
+    //////          // and wait till user selects one
+    //////          iSelectedAlbum = pDlg.SelectedLabel;
+    //////          if (iSelectedAlbum < 0) return;
+    //////        }
+    //////      }
+
+    //////      // ok, now show dialog we're downloading the album info
+    //////      MusicAlbumInfo album = scraper[iSelectedAlbum];
+    //////      if (null != dlgProgress)
+    //////      {
+    //////        dlgProgress.SetHeading(185);
+    //////        dlgProgress.SetLine(1, album.Title2);
+    //////        dlgProgress.SetLine(2, album.Artist);
+    //////        dlgProgress.StartModal(GetID);
+    //////        dlgProgress.ShowProgressBar(true);
+    //////        dlgProgress.SetPercentage(40);
+    //////        dlgProgress.Progress();
+    //////      }
+
+    //////      // download the album info
+    //////      bool bLoaded = album.Loaded;
+    //////      if (!bLoaded)
+    //////        bLoaded = album.Load();
+    //////      if (null != dlgProgress)
+    //////      {
+    //////        dlgProgress.SetPercentage(70);
+    //////        dlgProgress.Progress();
+    //////      }
+    //////      if (bLoaded)
+    //////      {
+    //////        // set album title from musicinfotag, not the one we got from allmusic.com
+    //////        album.Title = strAlbumName;
+    //////        // set path, needed to store album in database
+    //////        album.AlbumPath = strPath;
+    //////        albuminfo = new AlbumInfo();
+    //////        albuminfo.Album = album.Title;
+    //////        albuminfo.Artist = album.Artist;
+    //////        albuminfo.Genre = album.Genre;
+    //////        albuminfo.Tones = album.Tones;
+    //////        albuminfo.Styles = album.Styles;
+    //////        albuminfo.Review = album.Review;
+    //////        albuminfo.Image = album.ImageURL;
+    //////        albuminfo.Rating = album.Rating;
+    //////        albuminfo.Tracks = album.Tracks;
+    //////        try
+    //////        {
+    //////          albuminfo.Year = Int32.Parse(album.DateOfRelease);
+    //////        }
+    //////        catch (Exception)
+    //////        {
+    //////        }
+    //////        //albuminfo.Path   = album.AlbumPath;
+    //////        // save to database
+    //////        m_database.AddAlbumInfo(albuminfo);
+    //////        if (null != dlgProgress)
+    //////        {
+    //////          dlgProgress.SetPercentage(100);
+    //////          dlgProgress.Progress();
+    //////          dlgProgress.Close();
+    //////        }
+
+    //////        // ok, show album info
+    //////        GUIMusicInfo pDlgAlbumInfo = (GUIMusicInfo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_MUSIC_INFO);
+    //////        if (null != pDlgAlbumInfo)
+    //////        {
+    //////          pDlgAlbumInfo.Album = album;
+    //////          pDlgAlbumInfo.Tag = tag;
+
+    //////          pDlgAlbumInfo.DoModal(GetID);
+    //////          if (pDlgAlbumInfo.NeedsRefresh)
+    //////          {
+    //////            m_database.DeleteAlbumInfo(album.Title);
+    //////            ShowAlbumInfo(isFolder, artistName, strAlbumName, strPath, tag, albumId);
+    //////            return;
+    //////          }
+    //////          if (isFolder)
+    //////          {
+    //////            string thumb = GetAlbumThumbName(album.Artist, album.Title);
+    //////            if (System.IO.File.Exists(thumb))
+    //////            {
+    //////              try
+    //////              {
+    //////                string folderjpg = String.Format(@"{0}\folder.jpg", Utils.RemoveTrailingSlash(strPath));
+    //////                Utils.FileDelete(folderjpg);
+    //////                System.IO.File.Copy(thumb, folderjpg);
+    //////              }
+    //////              catch (Exception)
+    //////              {
+    //////              }
+    //////            }
+    //////          }
+    //////        }
+    //////      }
+    //////      else
+    //////      {
+    //////        // failed 2 download album info
+    //////        bDisplayErr = true;
+    //////      }
+    //////    }
+    //////    else
+    //////    {
+    //////      // no albums found
+    //////      bDisplayErr = true;
+    //////    }
+    //////  }
+    //////  else
+    //////  {
+    //////    // unable 2 connect to www.allmusic.com
+    //////    bDisplayErr = true;
+    //////  }
+    //////  // if an error occured, then notice the user
+    //////  if (bDisplayErr)
+    //////  {
+    //////    if (null != dlgProgress)
+    //////      dlgProgress.Close();
+    //////    if (null != dlgOk)
+    //////    {
+    //////      dlgOk.SetHeading(187);
+    //////      dlgOk.SetLine(1, 187);
+    //////      dlgOk.SetLine(2, String.Empty);
+    //////      dlgOk.DoModal(GetID);
+    //////    }
+    //////  }
+    //////}
+
+
+    //////protected void SaveAlbumInfoToDatabase(string albumPath, AlbumInfo albuminfo, MusicTag tag)
+    //////{
+    //////  //if (tag == null)
+    //////  //    tag = TagReader.TagReader.ReadTag(albumPath);
+
+    //////  //albuminfo.Artist = tag.Artist;
+
+    //////  //// If the tag has a year value use it.  Otherwise, 
+    //////  //// use the year value from the cover grab
+    //////  //if(tag.Year > 0)
+    //////  //    albuminfo.Year = tag.Year;
+
+    //////  //albuminfo.Rating = tag.Rating;
+    //////  //albuminfo.Genre = tag.Genre;
+
+    //////  //// save to database
+    //////  m_database.AddAlbumInfo(albuminfo);
+    //////}
+
+
+
+    ////protected bool SaveCoverArtImage(AlbumInfo albumInfo, string albumPath, bool bSaveToAlbumFolder, bool bSaveToThumbsFolder)
     ////{
-    ////  // check cache
-    ////  GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
-    ////  GUIDialogProgress dlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
-    ////  AlbumInfo albuminfo = new AlbumInfo();
-    ////  if (m_database.GetAlbumInfo(albumId, ref albuminfo))
+    ////  bool result = false;
+
+    ////  try
     ////  {
-    ////    List<Song> songs = new List<Song>();
-    ////    MusicAlbumInfo album = new MusicAlbumInfo();
-    ////    album.Set(albuminfo);
+    ////    System.Drawing.Image coverImg = MediaPortal.Music.Amazon.AmazonWebservice.GetImageFromURL(albumInfo.Image);
+    ////    string thumbPath = GetAlbumThumbName(albumInfo.Artist, albumInfo.Album);
 
-    ////    GUIMusicInfo pDlgAlbumInfo = (GUIMusicInfo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_MUSIC_INFO);
-    ////    if (null != pDlgAlbumInfo)
+    ////    if (thumbPath.Length == 0 || coverImg == null)
+    ////      return false;
+
+    ////    if (bSaveToThumbsFolder)
     ////    {
-    ////      pDlgAlbumInfo.Album = album;
-    ////      pDlgAlbumInfo.Tag = tag;
+    ////      string folderjpg = String.Format(@"{0}\folder.jpg", Utils.RemoveTrailingSlash(albumPath));
 
-    ////      pDlgAlbumInfo.DoModal(GetID);
-    ////      if (pDlgAlbumInfo.NeedsRefresh)
-    ////      {
-    ////        m_database.DeleteAlbumInfo(strAlbumName);
-    ////        ShowAlbumInfo(isFolder, artistName, strAlbumName, strPath, tag, albumId);
-    ////      }
-    ////      return;
+    ////      if (System.IO.File.Exists(folderjpg))
+    ////        System.IO.File.Delete(folderjpg);
+
+    ////      coverImg.Save(folderjpg);
+    ////      result = true;
+    ////    }
+
+    ////    if (bSaveToThumbsFolder)
+    ////    {
+    ////      if (System.IO.File.Exists(thumbPath))
+    ////        System.IO.File.Delete(thumbPath);
+
+    ////      coverImg.Save(thumbPath);
+    ////      result = true;
     ////    }
     ////  }
 
-    ////  // show dialog box indicating we're searching the album
-    ////  if (dlgProgress != null)
+    ////  catch
     ////  {
-    ////    dlgProgress.SetHeading(185);
-    ////    dlgProgress.SetLine(1, strAlbumName);
-    ////    dlgProgress.SetLine(2, artistName);
-    ////    dlgProgress.SetLine(3, tag.Year.ToString());
-    ////    dlgProgress.SetPercentage(0);
-    ////    dlgProgress.StartModal(GetID);
-    ////    dlgProgress.ShowProgressBar(true);
-    ////    dlgProgress.Progress();
+    ////    result = false;
     ////  }
-    ////  bool bDisplayErr = false;
 
-    ////  // find album info
-    ////  MusicInfoScraper scraper = new MusicInfoScraper();
-    ////  if (scraper.FindAlbuminfo(strAlbumName))
-    ////  {
-    ////    if (dlgProgress != null)
-    ////    {
-    ////      dlgProgress.SetPercentage(30);
-    ////      dlgProgress.Progress();
-    ////      dlgProgress.Close();
-    ////    }
-    ////    // did we found at least 1 album?
-    ////    int iAlbumCount = scraper.Count;
-    ////    if (iAlbumCount >= 1)
-    ////    {
-    ////      //yes
-    ////      // if we found more then 1 album, let user choose one
-    ////      int iSelectedAlbum = 0;
-    ////      if (iAlbumCount > 1)
-    ////      {
-    ////        //show dialog with all albums found
-    ////        string szText = GUILocalizeStrings.Get(181);
-    ////        GUIDialogSelect pDlg = (GUIDialogSelect)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_SELECT);
-    ////        if (null != pDlg)
-    ////        {
-    ////          pDlg.Reset();
-    ////          pDlg.SetHeading(szText);
-    ////          for (int i = 0; i < iAlbumCount; ++i)
-    ////          {
-    ////            MusicAlbumInfo info = scraper[i];
-    ////            pDlg.Add(info.Title2);
-    ////          }
-    ////          pDlg.DoModal(GetID);
-
-    ////          // and wait till user selects one
-    ////          iSelectedAlbum = pDlg.SelectedLabel;
-    ////          if (iSelectedAlbum < 0) return;
-    ////        }
-    ////      }
-
-    ////      // ok, now show dialog we're downloading the album info
-    ////      MusicAlbumInfo album = scraper[iSelectedAlbum];
-    ////      if (null != dlgProgress)
-    ////      {
-    ////        dlgProgress.SetHeading(185);
-    ////        dlgProgress.SetLine(1, album.Title2);
-    ////        dlgProgress.SetLine(2, album.Artist);
-    ////        dlgProgress.StartModal(GetID);
-    ////        dlgProgress.ShowProgressBar(true);
-    ////        dlgProgress.SetPercentage(40);
-    ////        dlgProgress.Progress();
-    ////      }
-
-    ////      // download the album info
-    ////      bool bLoaded = album.Loaded;
-    ////      if (!bLoaded)
-    ////        bLoaded = album.Load();
-    ////      if (null != dlgProgress)
-    ////      {
-    ////        dlgProgress.SetPercentage(70);
-    ////        dlgProgress.Progress();
-    ////      }
-    ////      if (bLoaded)
-    ////      {
-    ////        // set album title from musicinfotag, not the one we got from allmusic.com
-    ////        album.Title = strAlbumName;
-    ////        // set path, needed to store album in database
-    ////        album.AlbumPath = strPath;
-    ////        albuminfo = new AlbumInfo();
-    ////        albuminfo.Album = album.Title;
-    ////        albuminfo.Artist = album.Artist;
-    ////        albuminfo.Genre = album.Genre;
-    ////        albuminfo.Tones = album.Tones;
-    ////        albuminfo.Styles = album.Styles;
-    ////        albuminfo.Review = album.Review;
-    ////        albuminfo.Image = album.ImageURL;
-    ////        albuminfo.Rating = album.Rating;
-    ////        albuminfo.Tracks = album.Tracks;
-    ////        try
-    ////        {
-    ////          albuminfo.Year = Int32.Parse(album.DateOfRelease);
-    ////        }
-    ////        catch (Exception)
-    ////        {
-    ////        }
-    ////        //albuminfo.Path   = album.AlbumPath;
-    ////        // save to database
-    ////        m_database.AddAlbumInfo(albuminfo);
-    ////        if (null != dlgProgress)
-    ////        {
-    ////          dlgProgress.SetPercentage(100);
-    ////          dlgProgress.Progress();
-    ////          dlgProgress.Close();
-    ////        }
-
-    ////        // ok, show album info
-    ////        GUIMusicInfo pDlgAlbumInfo = (GUIMusicInfo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_MUSIC_INFO);
-    ////        if (null != pDlgAlbumInfo)
-    ////        {
-    ////          pDlgAlbumInfo.Album = album;
-    ////          pDlgAlbumInfo.Tag = tag;
-
-    ////          pDlgAlbumInfo.DoModal(GetID);
-    ////          if (pDlgAlbumInfo.NeedsRefresh)
-    ////          {
-    ////            m_database.DeleteAlbumInfo(album.Title);
-    ////            ShowAlbumInfo(isFolder, artistName, strAlbumName, strPath, tag, albumId);
-    ////            return;
-    ////          }
-    ////          if (isFolder)
-    ////          {
-    ////            string thumb = GetAlbumThumbName(album.Artist, album.Title);
-    ////            if (System.IO.File.Exists(thumb))
-    ////            {
-    ////              try
-    ////              {
-    ////                string folderjpg = String.Format(@"{0}\folder.jpg", Utils.RemoveTrailingSlash(strPath));
-    ////                Utils.FileDelete(folderjpg);
-    ////                System.IO.File.Copy(thumb, folderjpg);
-    ////              }
-    ////              catch (Exception)
-    ////              {
-    ////              }
-    ////            }
-    ////          }
-    ////        }
-    ////      }
-    ////      else
-    ////      {
-    ////        // failed 2 download album info
-    ////        bDisplayErr = true;
-    ////      }
-    ////    }
-    ////    else
-    ////    {
-    ////      // no albums found
-    ////      bDisplayErr = true;
-    ////    }
-    ////  }
-    ////  else
-    ////  {
-    ////    // unable 2 connect to www.allmusic.com
-    ////    bDisplayErr = true;
-    ////  }
-    ////  // if an error occured, then notice the user
-    ////  if (bDisplayErr)
-    ////  {
-    ////    if (null != dlgProgress)
-    ////      dlgProgress.Close();
-    ////    if (null != dlgOk)
-    ////    {
-    ////      dlgOk.SetHeading(187);
-    ////      dlgOk.SetLine(1, 187);
-    ////      dlgOk.SetLine(2, String.Empty);
-    ////      dlgOk.DoModal(GetID);
-    ////    }
-    ////  }
+    ////  return result;
     ////}
+
+
+    protected void FindCoverArt(bool isFolder, string artistName, string strAlbumName, string strPath, MusicTag tag, int albumId)
+    {
+        GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+
+        if (null != pDlgOK && !Util.Win32API.IsConnectedToInternet())
+        {
+            pDlgOK.SetHeading(703);
+            pDlgOK.SetLine(1, 703);
+            pDlgOK.SetLine(2, String.Empty);
+            pDlgOK.DoModal(GetID);
+            throw new Exception("no internet");
+        }
+
+        else if (!Util.Win32API.IsConnectedToInternet())
+        {
+            throw new Exception("no internet");
+        }
+
+        bool bDisplayErr = false;
+        GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+        AlbumInfo albuminfo = new AlbumInfo();
+        MusicAlbumInfo album = new MusicAlbumInfo();
+
+        GUICoverArtGrabberResults guiCoverGrabberResults = (GUICoverArtGrabberResults)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_MUSIC_COVERART_GRABBER_RESULTS);
+
+        if (null != guiCoverGrabberResults)
+        {
+            guiCoverGrabberResults.SearchMode = GUICoverArtGrabberResults.SearchDepthMode.Album;
+            GUIDialogProgress dlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+
+            if (dlgProgress != null)
+            {
+                dlgProgress.SetHeading(185);
+                dlgProgress.SetLine(1, strAlbumName);
+                dlgProgress.SetLine(2, artistName);
+                dlgProgress.SetLine(3, string.Empty);
+                dlgProgress.StartModal(GetID);
+            }
+
+            guiCoverGrabberResults.GetAlbumCovers(artistName, strAlbumName, strPath, GetID, true);
+            guiCoverGrabberResults.DoModal(GetID);
+            albuminfo = guiCoverGrabberResults.SelectedAlbum;
+
+            if (GUICoverArtGrabberResults.CancelledByUser)
+            {
+                string line1Text = GUILocalizeStrings.Get(4507);
+
+                if (line1Text.Length == 0)
+                    line1Text = "Cover art grabber aborted by user";
+
+                string caption = GUILocalizeStrings.Get(4511);
+
+                if (caption.Length == 0)
+                    caption = "Cover Art Grabber Done";
+
+                if (null != dlgOk)
+                {
+                    dlgOk.SetHeading(caption);
+                    dlgOk.SetLine(1, line1Text);
+                    dlgOk.SetLine(2, String.Empty);
+                    dlgOk.DoModal(GetID);
+                }
+            }
+
+            else if (albuminfo != null)
+            {
+                // the GUICoverArtGrabberResults::SelectedAlbum AlbumInfo object contains 
+                // the Artist and Album name returned by the Amazon Webservice which may not
+                // match our original artist and album.  We want to use the original artist
+                // and album name...
+
+                albuminfo.Artist = artistName;
+                albuminfo.Album = strAlbumName;
+                SaveCoverArtImage(albuminfo, strPath, true, true);
+                facadeView.RefreshCoverArt();
+            }
+
+            else
+                bDisplayErr = true;
+        }
+
+        if (bDisplayErr)
+        {
+            if (null != dlgOk)
+            {
+                dlgOk.SetHeading(187);
+                dlgOk.SetLine(1, 187);
+                dlgOk.SetLine(2, String.Empty);
+                dlgOk.DoModal(GetID);
+            }
+        }
+    }
 
     protected void ShowAlbumInfo(bool isFolder, string artistName, string strAlbumName, string strPath, MusicTag tag, int albumId)
     {
-      if (this.UseLegacyAlbumInfoScraper)
-      {
-        DoLegacyShowAlbumInfo(isFolder, artistName, strAlbumName, strPath, tag, albumId);
-      }
-
-      else
-      {
-        DoShowAlbumInfo(isFolder, artistName, strAlbumName, strPath, tag, albumId);
-      }
-    }
-
-    protected void DoShowAlbumInfo(bool isFolder, string artistName, string strAlbumName, string strPath, MusicTag tag, int albumId)
-    {
-      bool bDisplayErr = false;
-      GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
-      AlbumInfo albuminfo = new AlbumInfo();
-      MusicAlbumInfo album = new MusicAlbumInfo();
-      GUICoverArtGrabberResults guiCoverGrabberResults = (GUICoverArtGrabberResults)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_MUSIC_COVERART_GRABBER_RESULTS);
-
-      if (null != guiCoverGrabberResults)
-      {
-        guiCoverGrabberResults.SearchMode = GUICoverArtGrabberResults.SearchDepthMode.Album;
+        // check cache
+        GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
         GUIDialogProgress dlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
-
-        if (dlgProgress != null)
+        AlbumInfo albuminfo = new AlbumInfo();
+        if (m_database.GetAlbumInfo(albumId, ref albuminfo))
         {
-          dlgProgress.SetHeading(185);
-          dlgProgress.SetLine(1, strAlbumName);
-          dlgProgress.SetLine(2, artistName);
-          dlgProgress.SetLine(3, string.Empty);
-          dlgProgress.StartModal(GetID);
-        }
+            List<Song> songs = new List<Song>();
+            MusicAlbumInfo album = new MusicAlbumInfo();
+            album.Set(albuminfo);
 
-        guiCoverGrabberResults.GetAlbumCovers(artistName, strAlbumName, strPath, GetID, true);
-        guiCoverGrabberResults.DoModal(GetID);
-
-        if (GUICoverArtGrabberResults.IsCancelledByUser)
-          return;
-
-        albuminfo = guiCoverGrabberResults.SelectedAlbum;
-
-        if (albuminfo != null)
-        {
-          SaveCoverArtImage(albuminfo, strPath, true, true);
-          SaveAlbumInfoToDatabase(strPath, albuminfo, tag);
-          facadeView.RefreshCoverArt();
-        }
-
-        else
-          bDisplayErr = true;
-      }
-
-      if (bDisplayErr)
-      {
-        if (null != dlgOk)
-        {
-          dlgOk.SetHeading(187);
-          dlgOk.SetLine(1, 187);
-          dlgOk.SetLine(2, String.Empty);
-          dlgOk.DoModal(GetID);
-        }
-      }
-    }
-
-    //protected void ShowAlbumInfo(bool isFolder, string artistName, string strAlbumName, string strPath, MusicTag tag, int albumId)
-    protected void DoLegacyShowAlbumInfo(bool isFolder, string artistName, string strAlbumName, string strPath, MusicTag tag, int albumId)
-    {
-      // check cache
-      GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
-      GUIDialogProgress dlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
-      AlbumInfo albuminfo = new AlbumInfo();
-      if (m_database.GetAlbumInfo(albumId, ref albuminfo))
-      {
-        List<Song> songs = new List<Song>();
-        MusicAlbumInfo album = new MusicAlbumInfo();
-        album.Set(albuminfo);
-
-        GUIMusicInfo pDlgAlbumInfo = (GUIMusicInfo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_MUSIC_INFO);
-        if (null != pDlgAlbumInfo)
-        {
-          pDlgAlbumInfo.Album = album;
-          pDlgAlbumInfo.Tag = tag;
-
-          pDlgAlbumInfo.DoModal(GetID);
-          if (pDlgAlbumInfo.NeedsRefresh)
-          {
-            m_database.DeleteAlbumInfo(strAlbumName);
-            ShowAlbumInfo(isFolder, artistName, strAlbumName, strPath, tag, albumId);
-          }
-          return;
-        }
-      }
-
-      // show dialog box indicating we're searching the album
-      if (dlgProgress != null)
-      {
-        dlgProgress.SetHeading(185);
-        dlgProgress.SetLine(1, strAlbumName);
-        dlgProgress.SetLine(2, artistName);
-        dlgProgress.SetLine(3, tag.Year.ToString());
-        dlgProgress.SetPercentage(0);
-        dlgProgress.StartModal(GetID);
-        dlgProgress.ShowProgressBar(true);
-        dlgProgress.Progress();
-      }
-      bool bDisplayErr = false;
-
-      // find album info
-      MusicInfoScraper scraper = new MusicInfoScraper();
-      if (scraper.FindAlbuminfo(strAlbumName))
-      {
-        if (dlgProgress != null)
-        {
-          dlgProgress.SetPercentage(30);
-          dlgProgress.Progress();
-          dlgProgress.Close();
-        }
-        // did we found at least 1 album?
-        int iAlbumCount = scraper.Count;
-        if (iAlbumCount >= 1)
-        {
-          //yes
-          // if we found more then 1 album, let user choose one
-          int iSelectedAlbum = 0;
-          if (iAlbumCount > 1)
-          {
-            //show dialog with all albums found
-            string szText = GUILocalizeStrings.Get(181);
-            GUIDialogSelect pDlg = (GUIDialogSelect)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_SELECT);
-            if (null != pDlg)
-            {
-              pDlg.Reset();
-              pDlg.SetHeading(szText);
-              for (int i = 0; i < iAlbumCount; ++i)
-              {
-                MusicAlbumInfo info = scraper[i];
-                pDlg.Add(info.Title2);
-              }
-              pDlg.DoModal(GetID);
-
-              // and wait till user selects one
-              iSelectedAlbum = pDlg.SelectedLabel;
-              if (iSelectedAlbum < 0) return;
-            }
-          }
-
-          // ok, now show dialog we're downloading the album info
-          MusicAlbumInfo album = scraper[iSelectedAlbum];
-          if (null != dlgProgress)
-          {
-            dlgProgress.SetHeading(185);
-            dlgProgress.SetLine(1, album.Title2);
-            dlgProgress.SetLine(2, album.Artist);
-            dlgProgress.StartModal(GetID);
-            dlgProgress.ShowProgressBar(true);
-            dlgProgress.SetPercentage(40);
-            dlgProgress.Progress();
-          }
-
-          // download the album info
-          bool bLoaded = album.Loaded;
-          if (!bLoaded)
-            bLoaded = album.Load();
-          if (null != dlgProgress)
-          {
-            dlgProgress.SetPercentage(70);
-            dlgProgress.Progress();
-          }
-          if (bLoaded)
-          {
-            // set album title from musicinfotag, not the one we got from allmusic.com
-            album.Title = strAlbumName;
-            // set path, needed to store album in database
-            album.AlbumPath = strPath;
-            albuminfo = new AlbumInfo();
-            albuminfo.Album = album.Title;
-            albuminfo.Artist = album.Artist;
-            albuminfo.Genre = album.Genre;
-            albuminfo.Tones = album.Tones;
-            albuminfo.Styles = album.Styles;
-            albuminfo.Review = album.Review;
-            albuminfo.Image = album.ImageURL;
-            albuminfo.Rating = album.Rating;
-            albuminfo.Tracks = album.Tracks;
-            try
-            {
-              albuminfo.Year = Int32.Parse(album.DateOfRelease);
-            }
-            catch (Exception)
-            {
-            }
-            //albuminfo.Path   = album.AlbumPath;
-            // save to database
-            m_database.AddAlbumInfo(albuminfo);
-            if (null != dlgProgress)
-            {
-              dlgProgress.SetPercentage(100);
-              dlgProgress.Progress();
-              dlgProgress.Close();
-            }
-
-            // ok, show album info
             GUIMusicInfo pDlgAlbumInfo = (GUIMusicInfo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_MUSIC_INFO);
             if (null != pDlgAlbumInfo)
             {
-              pDlgAlbumInfo.Album = album;
-              pDlgAlbumInfo.Tag = tag;
+                pDlgAlbumInfo.Album = album;
+                pDlgAlbumInfo.Tag = tag;
 
-              pDlgAlbumInfo.DoModal(GetID);
-              if (pDlgAlbumInfo.NeedsRefresh)
-              {
-                m_database.DeleteAlbumInfo(album.Title);
-                ShowAlbumInfo(isFolder, artistName, strAlbumName, strPath, tag, albumId);
-                return;
-              }
-              if (isFolder)
-              {
-                string thumb = GetAlbumThumbName(album.Artist, album.Title);
-                if (System.IO.File.Exists(thumb))
+                pDlgAlbumInfo.DoModal(GetID);
+                if (pDlgAlbumInfo.NeedsRefresh)
                 {
-                  try
-                  {
-                    string folderjpg = String.Format(@"{0}\folder.jpg", Utils.RemoveTrailingSlash(strPath));
-                    Utils.FileDelete(folderjpg);
-                    System.IO.File.Copy(thumb, folderjpg);
-                  }
-                  catch (Exception)
-                  {
-                  }
+                    m_database.DeleteAlbumInfo(strAlbumName);
+                    ShowAlbumInfo(isFolder, artistName, strAlbumName, strPath, tag, albumId);
                 }
-              }
+                return;
             }
-          }
-          else
-          {
-            // failed 2 download album info
-            bDisplayErr = true;
-          }
+        }
+
+        // show dialog box indicating we're searching the album
+        if (dlgProgress != null)
+        {
+            dlgProgress.SetHeading(185);
+            dlgProgress.SetLine(1, strAlbumName);
+            dlgProgress.SetLine(2, artistName);
+            dlgProgress.SetLine(3, tag.Year.ToString());
+            dlgProgress.SetPercentage(0);
+            dlgProgress.StartModal(GetID);
+            dlgProgress.ShowProgressBar(true);
+            dlgProgress.Progress();
+        }
+        bool bDisplayErr = false;
+
+        // find album info
+        MusicInfoScraper scraper = new MusicInfoScraper();
+        if (scraper.FindAlbuminfo(strAlbumName))
+        {
+            if (dlgProgress != null)
+            {
+                dlgProgress.SetPercentage(30);
+                dlgProgress.Progress();
+                dlgProgress.Close();
+            }
+            // did we found at least 1 album?
+            int iAlbumCount = scraper.Count;
+            if (iAlbumCount >= 1)
+            {
+                //yes
+                // if we found more then 1 album, let user choose one
+                int iSelectedAlbum = 0;
+                if (iAlbumCount > 1)
+                {
+                    //show dialog with all albums found
+                    string szText = GUILocalizeStrings.Get(181);
+                    GUIDialogSelect pDlg = (GUIDialogSelect)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_SELECT);
+                    if (null != pDlg)
+                    {
+                        pDlg.Reset();
+                        pDlg.SetHeading(szText);
+                        for (int i = 0; i < iAlbumCount; ++i)
+                        {
+                            MusicAlbumInfo info = scraper[i];
+                            pDlg.Add(info.Title2);
+                        }
+                        pDlg.DoModal(GetID);
+
+                        // and wait till user selects one
+                        iSelectedAlbum = pDlg.SelectedLabel;
+                        if (iSelectedAlbum < 0) return;
+                    }
+                }
+
+                // ok, now show dialog we're downloading the album info
+                MusicAlbumInfo album = scraper[iSelectedAlbum];
+                if (null != dlgProgress)
+                {
+                    dlgProgress.SetHeading(185);
+                    dlgProgress.SetLine(1, album.Title2);
+                    dlgProgress.SetLine(2, album.Artist);
+                    dlgProgress.StartModal(GetID);
+                    dlgProgress.ShowProgressBar(true);
+                    dlgProgress.SetPercentage(40);
+                    dlgProgress.Progress();
+                }
+
+                // download the album info
+                bool bLoaded = album.Loaded;
+                if (!bLoaded)
+                    bLoaded = album.Load();
+                if (null != dlgProgress)
+                {
+                    dlgProgress.SetPercentage(70);
+                    dlgProgress.Progress();
+                }
+                if (bLoaded)
+                {
+                    // set album title from musicinfotag, not the one we got from allmusic.com
+                    album.Title = strAlbumName;
+                    // set path, needed to store album in database
+                    album.AlbumPath = strPath;
+                    albuminfo = new AlbumInfo();
+                    albuminfo.Album = album.Title;
+                    albuminfo.Artist = album.Artist;
+                    albuminfo.Genre = album.Genre;
+                    albuminfo.Tones = album.Tones;
+                    albuminfo.Styles = album.Styles;
+                    albuminfo.Review = album.Review;
+                    albuminfo.Image = album.ImageURL;
+                    albuminfo.Rating = album.Rating;
+                    albuminfo.Tracks = album.Tracks;
+                    try
+                    {
+                        albuminfo.Year = Int32.Parse(album.DateOfRelease);
+                    }
+                    catch (Exception)
+                    {
+                    }
+                    //albuminfo.Path   = album.AlbumPath;
+                    // save to database
+                    m_database.AddAlbumInfo(albuminfo);
+                    if (null != dlgProgress)
+                    {
+                        dlgProgress.SetPercentage(100);
+                        dlgProgress.Progress();
+                        dlgProgress.Close();
+                    }
+
+                    // ok, show album info
+                    GUIMusicInfo pDlgAlbumInfo = (GUIMusicInfo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_MUSIC_INFO);
+                    if (null != pDlgAlbumInfo)
+                    {
+                        pDlgAlbumInfo.Album = album;
+                        pDlgAlbumInfo.Tag = tag;
+
+                        pDlgAlbumInfo.DoModal(GetID);
+                        if (pDlgAlbumInfo.NeedsRefresh)
+                        {
+                            m_database.DeleteAlbumInfo(album.Title);
+                            ShowAlbumInfo(isFolder, artistName, strAlbumName, strPath, tag, albumId);
+                            return;
+                        }
+                        if (isFolder)
+                        {
+                            string thumb = GetAlbumThumbName(album.Artist, album.Title);
+                            if (System.IO.File.Exists(thumb))
+                            {
+                                try
+                                {
+                                    string folderjpg = String.Format(@"{0}\folder.jpg", Utils.RemoveTrailingSlash(strPath));
+                                    Utils.FileDelete(folderjpg);
+                                    System.IO.File.Copy(thumb, folderjpg);
+                                }
+                                catch (Exception)
+                                {
+                                }
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    // failed 2 download album info
+                    bDisplayErr = true;
+                }
+            }
+            else
+            {
+                // no albums found
+                bDisplayErr = true;
+            }
         }
         else
         {
-          // no albums found
-          bDisplayErr = true;
+            // unable 2 connect to www.allmusic.com
+            bDisplayErr = true;
         }
-      }
-      else
-      {
-        // unable 2 connect to www.allmusic.com
-        bDisplayErr = true;
-      }
-      // if an error occured, then notice the user
-      if (bDisplayErr)
-      {
-        if (null != dlgProgress)
-          dlgProgress.Close();
-        if (null != dlgOk)
+        // if an error occured, then notice the user
+        if (bDisplayErr)
         {
-          dlgOk.SetHeading(187);
-          dlgOk.SetLine(1, 187);
-          dlgOk.SetLine(2, String.Empty);
-          dlgOk.DoModal(GetID);
+            if (null != dlgProgress)
+                dlgProgress.Close();
+            if (null != dlgOk)
+            {
+                dlgOk.SetHeading(187);
+                dlgOk.SetLine(1, 187);
+                dlgOk.SetLine(2, String.Empty);
+                dlgOk.DoModal(GetID);
+            }
         }
-      }
-    }
-
-
-    protected void SaveAlbumInfoToDatabase(string albumPath, AlbumInfo albuminfo, MusicTag tag)
-    {
-      //if (tag == null)
-      //    tag = TagReader.TagReader.ReadTag(albumPath);
-
-      //albuminfo.Artist = tag.Artist;
-
-      //// If the tag has a year value use it.  Otherwise, 
-      //// use the year value from the cover grab
-      //if(tag.Year > 0)
-      //    albuminfo.Year = tag.Year;
-
-      //albuminfo.Rating = tag.Rating;
-      //albuminfo.Genre = tag.Genre;
-
-      //// save to database
-      m_database.AddAlbumInfo(albuminfo);
     }
 
     protected bool SaveCoverArtImage(AlbumInfo albumInfo, string albumPath, bool bSaveToAlbumFolder, bool bSaveToThumbsFolder)
     {
-      bool result = false;
+        bool result = false;
 
-      try
-      {
-        System.Drawing.Image coverImg = MediaPortal.Music.Amazon.AmazonWebservice.GetImageFromURL(albumInfo.Image);
-        string thumbPath = GetAlbumThumbName(albumInfo.Artist, albumInfo.Album);
-
-        if (thumbPath.Length == 0 || coverImg == null)
-          return false;
-
-        if (bSaveToThumbsFolder)
+        try
         {
-          string folderjpg = String.Format(@"{0}\folder.jpg", Utils.RemoveTrailingSlash(albumPath));
+            System.Drawing.Image coverImg = MediaPortal.Music.Amazon.AmazonWebservice.GetImageFromURL(albumInfo.Image);
+            string thumbPath = GetAlbumThumbName(albumInfo.Artist, albumInfo.Album);
 
-          if (System.IO.File.Exists(folderjpg))
-            System.IO.File.Delete(folderjpg);
+            if (thumbPath.Length == 0 || coverImg == null)
+                return false;
 
-          coverImg.Save(folderjpg);
-          result = true;
+            if (bSaveToThumbsFolder)
+            {
+                string folderjpg = String.Format(@"{0}\folder.jpg", Utils.RemoveTrailingSlash(albumPath));
+
+                if (System.IO.File.Exists(folderjpg))
+                    System.IO.File.Delete(folderjpg);
+
+                coverImg.Save(folderjpg);
+                result = true;
+            }
+
+            if (bSaveToThumbsFolder)
+            {
+                if (System.IO.File.Exists(thumbPath))
+                    System.IO.File.Delete(thumbPath);
+
+                coverImg.Save(thumbPath);
+                result = true;
+            }
         }
 
-        if (bSaveToThumbsFolder)
+        catch
         {
-          if (System.IO.File.Exists(thumbPath))
-            System.IO.File.Delete(thumbPath);
-
-          coverImg.Save(thumbPath);
-          result = true;
+            result = false;
         }
-      }
 
-      catch
-      {
-        result = false;
-      }
-
-      return result;
+        return result;
     }
 
-    public static bool CoverArtExists(string ArtistName, string AlbumName, string albumPath, bool useAlbumAndThumbsFolders)
+    public static bool CoverArtExists(string ArtistName, string AlbumName, string albumPath, bool checkAlbumFolder)
     {
-      if (ArtistName.Length == 0 || AlbumName.Length == 0)
-        return false;
+      //if (ArtistName.Length == 0 || AlbumName.Length == 0)
+      //  return false;
 
-      if (System.IO.File.Exists(GUIMusicBaseWindow.GetAlbumThumbName(ArtistName, AlbumName)))
-        return true;
+      //if (System.IO.File.Exists(GUIMusicBaseWindow.GetAlbumThumbName(ArtistName, AlbumName)))
+      //  return true;
 
-      else if (useAlbumAndThumbsFolders)
-      {
+      //else if (useAlbumAndThumbsFolders)
+      //{
+      //  string path = System.IO.Path.GetDirectoryName(albumPath);
+      //  return System.IO.File.Exists(System.IO.Path.Combine(path, "folder.jpg"));
+      //}
+
+      //else
+      //  return false;
+
+        if (ArtistName.Length == 0 || AlbumName.Length == 0)
+            return false;
+
+        bool bHasThumbnailImage = System.IO.File.Exists(GUIMusicBaseWindow.GetAlbumThumbName(ArtistName, AlbumName));
+
+        if(!checkAlbumFolder)
+            return bHasThumbnailImage;
+
         string path = System.IO.Path.GetDirectoryName(albumPath);
-        return System.IO.File.Exists(System.IO.Path.Combine(path, "folder.jpg"));
-      }
+        bool bHasAlbumFolderImage = System.IO.File.Exists(System.IO.Path.Combine(path, "folder.jpg"));
 
-      else
-        return false;
+        return bHasThumbnailImage && bHasAlbumFolderImage;
     }
 
     static public string GetAlbumThumbName(string ArtistName, string AlbumName)

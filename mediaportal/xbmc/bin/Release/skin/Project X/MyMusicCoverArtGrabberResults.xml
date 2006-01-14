@@ -101,10 +101,10 @@
          <posX>288</posX>
          <posY>232</posY>
          <height>339</height>
-         <onleft>2</onleft>
-         <onright>52</onright>
-         <onup>2</onup>
-         <ondown>2</ondown>
+         <onleft>20</onleft>
+         <onright>25</onright>
+         <onup>25</onup>
+         <ondown>25</ondown>
          <textcolor>FFFFFFFF</textcolor>
          <subtype>album</subtype>
          <downloadColor>ff80ff80</downloadColor>
@@ -147,10 +147,10 @@
          <id>20</id>
          <posX>64</posX>
          <posY>416</posY>
-         <onleft>4</onleft>
-         <onright>4</onright>
-         <onup>6</onup>
-         <ondown>6</ondown>
+         <onleft>20</onleft>
+         <onright>25</onright>
+         <onup>20</onup>
+         <ondown>21</ondown>
          <label>4520</label>
          <width>126</width>
          <height>32</height>
@@ -161,6 +161,10 @@
          <id>21</id>
          <posX>64</posX>
          <posY>448</posY>
+         <onleft>21</onleft>
+         <onright>25</onright>
+         <onup>20</onup>
+         <ondown>21</ondown>
          <label>222</label>
          <width>126</width>
          <height>32</height>

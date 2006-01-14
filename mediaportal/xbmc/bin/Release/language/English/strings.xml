@@ -5123,6 +5123,10 @@
     <id>4520</id>
     <value>Skip</value>
   </string>
+  <string>
+    <id>4521</id>
+    <value>Show album info</value>
+  </string>
   <!-- End Cover Art Grabber Strings -->
 
 </strings>

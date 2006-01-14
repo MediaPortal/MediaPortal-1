@@ -302,7 +302,7 @@ namespace MediaPortal.GUI.Music
             ShowTotalProgressBar(false);
             ShowCurrentProgressBar(false);
 
-            GUICoverArtGrabberResults.IsCancelledByUser = false;
+            GUICoverArtGrabberResults.CancelledByUser = false;
 
             SearchFolderProgressFormatString = GUILocalizeStrings.Get(4504);
 
@@ -339,15 +339,20 @@ namespace MediaPortal.GUI.Music
         {
             checkSkipExisting.Disabled = !enabled;
             checkSaveInAlbumFolder.Disabled = !enabled;
-            checkSaveInThumbsFolder.Disabled = !enabled;
+            
+            // At a minumum the cover art needs to be saved to the thumbs folder
+            // so we'll make sure the user can't uncheck this option...
+            checkSaveInThumbsFolder.Disabled = true;
+            //checkSaveInThumbsFolder.Disabled = !enabled;
 
             btnStart.Disabled = !enabled;
+            checkSaveInThumbsFolder.DisabledColor = ControlColorDisabled;
 
             if (enabled)
             {
                 checkSkipExisting.DisabledColor = ControlColorUnfocused;
                 checkSaveInAlbumFolder.DisabledColor = ControlColorUnfocused;
-                checkSaveInThumbsFolder.DisabledColor = ControlColorUnfocused;
+                //checkSaveInThumbsFolder.DisabledColor = ControlColorUnfocused;
 
                 string cancelBtnText = GUILocalizeStrings.Get(4517);
 
@@ -361,7 +366,7 @@ namespace MediaPortal.GUI.Music
             {
                 checkSkipExisting.DisabledColor = ControlColorDisabled;
                 checkSaveInAlbumFolder.DisabledColor = ControlColorDisabled;
-                checkSaveInThumbsFolder.DisabledColor = ControlColorDisabled;
+                //checkSaveInThumbsFolder.DisabledColor = ControlColorDisabled;
 
                 btnCancel.Label = GUILocalizeStrings.Get(222);
             }
@@ -410,6 +415,7 @@ namespace MediaPortal.GUI.Music
 
             ControlColorDisabled = btnStart.DisabledColor;
             ControlColorUnfocused = checkSaveInAlbumFolder.DisabledColor;
+            EnableControls(true);
         }
 
         public override bool OnMessage(GUIMessage message)
@@ -575,7 +581,7 @@ namespace MediaPortal.GUI.Music
                 {
                     CheckForAppShutdown();
 
-                    if (_Abort || _AbortedByUser || GUICoverArtGrabberResults.IsCancelledByUser)
+                    if (_Abort || _AbortedByUser || GUICoverArtGrabberResults.CancelledByUser)
                         break;
 
                     System.IO.FileInfo[] files = di.GetFiles();
@@ -605,7 +611,16 @@ namespace MediaPortal.GUI.Music
 
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.Message);
+                    //// Are we getting an exception because we're trying to access 
+                    //// "System Volume Information"?
+                    //if (ex is System.UnauthorizedAccessException)
+                    //{
+                    //    // Yup.  It's probably safe to ignore it
+                    //}
+
+                    //else
+                        Log.Write("Cover art grabber exception:{0}", ex.ToString());
+
                     continue;
                 }
 
@@ -626,7 +641,7 @@ namespace MediaPortal.GUI.Music
                 {
                     CheckForAppShutdown();
 
-                    if (_Abort || _AbortedByUser || GUICoverArtGrabberResults.IsCancelledByUser)
+                    if (_Abort || _AbortedByUser || GUICoverArtGrabberResults.CancelledByUser)
                         break;
 
                     // Is it a DirectoryInfo object...
@@ -657,7 +672,8 @@ namespace MediaPortal.GUI.Music
                         string artist = string.Empty;
                         bool isCompilation = false;
                         int difArtistCount = 0;
-                        int checkCount = Math.Min(files.Length, 3);
+                        //int checkCount = Math.Min(files.Length, 3);
+                        int checkCount = Math.Min(files.Length, 1);
 
                         MusicTag tag = null;
                         Song song = null;
@@ -675,6 +691,10 @@ namespace MediaPortal.GUI.Music
                             song = new Song();
                             if (_MusicDatabase.GetSongByFileName(curTrackPath, ref song) && UseID3)
                             {
+                                // Make sure the the returned song has a valid file path
+                                if (song.FileName.Length == 0)
+                                    song.FileName = curTrackPath;
+
                                 if (artist == string.Empty)
                                 {
                                     artist = song.Artist;
@@ -730,7 +750,7 @@ namespace MediaPortal.GUI.Music
                             UpdateAlbumScanProgress(song.Album, albumCount, curCount);
                             foundTrackForThisDir = true;
 
-                            if (_SkipIfCoverArtExists && GUIMusicBaseWindow.CoverArtExists(song.Artist, song.Album, song.FileName, true))
+                            if (_SkipIfCoverArtExists && GUIMusicBaseWindow.CoverArtExists(song.Artist, song.Album, song.FileName, _SaveImageToAlbumFolder))
                             {
                                 continue;
                             }
@@ -745,7 +765,16 @@ namespace MediaPortal.GUI.Music
 
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.Message);
+                    //// Are we getting an exception because we're trying to access 
+                    //// "System Volume Information"?
+                    //if (ex is System.UnauthorizedAccessException)
+                    //{
+                    //    // Yup.  It's probably safe to ignore it
+                    //}
+
+                    //else
+                        Log.Write("Cover art grabber exception:{0}", ex.ToString());
+
                     continue;
                 }
             }
@@ -834,8 +863,11 @@ namespace MediaPortal.GUI.Music
 
         private void GetCoverArt()
         {
+            if (!Util.Win32API.IsConnectedToInternet())
+                return;
+
             GrabInProgress = true;
-            GUICoverArtGrabberResults.IsCancelledByUser = false;
+            GUICoverArtGrabberResults.CancelledByUser = false;
             _AbortedByUser = false;
             _Abort = false;
 
@@ -865,7 +897,9 @@ namespace MediaPortal.GUI.Music
 
                 GUIWindowManager.Process();
 
+                Log.Write("Cover art grabber:getting folder count for {0}...", _TopLevelFolderName);
                 GetAlbumCount(_TopLevelFolderName, ref albumCount);
+                Log.Write("Cover art grabber:{0} folders found", albumCount);
             }
 
             finally
@@ -879,7 +913,9 @@ namespace MediaPortal.GUI.Music
             ShowTotalProgressBar(true);
             GUIWindowManager.Process();
 
+            Log.Write("Cover art grabber:getting pending cover count...");
             GetCoverArtList(_TopLevelFolderName, ref albumCount, ref curCount, _SkipIfCoverArtExists, ref songs);
+            Log.Write("Cover art grabber:{0} covers queued for update", albumCount);
 
             if (_Abort)
             {
@@ -933,11 +969,17 @@ namespace MediaPortal.GUI.Music
                         SetCurrentCoverArtProgressLabel(progressText, 0);
                         GUIWindowManager.Process();
 
-                        string albumPath = System.IO.Path.GetDirectoryName(curSong.FileName);
-                        GuiCoverArtResults.GetAlbumCovers(curSong.Artist, curSong.Album, albumPath, GetID, false);
+                        if (curSong.FileName.Length == 0)
+                            continue;
 
-                        if (GUICoverArtGrabberResults.IsCancelledByUser || GuiCoverArtResults.AmazonWebService.AbortGrab)
+                        string albumPath = System.IO.Path.GetDirectoryName(curSong.FileName);
+                        //GuiCoverArtResults.GetAlbumCovers(curSong.Artist, curSong.Album, albumPath, GetID, false);
+                        GuiCoverArtResults.GetAlbumCovers(curSong.Artist, curSong.Album, albumPath, GetID, true);
+
+                        if (GUICoverArtGrabberResults.CancelledByUser || GuiCoverArtResults.AmazonWebService.AbortGrab)
                         {
+                            Log.Write("Cover art grabber:user aborted grab");
+
                             _AbortedByUser = true;
                             break;
                         }
@@ -950,6 +992,8 @@ namespace MediaPortal.GUI.Music
 
                             if (CoverArtSelected != null)
                             {
+                                GuiCoverArtResults.SelectedAlbum.Artist = curSong.Artist;
+                                GuiCoverArtResults.SelectedAlbum.Album = curSong.Album;
                                 CoverArtSelected(GuiCoverArtResults.SelectedAlbum, albumPath, _SaveImageToAlbumFolder, _SaveImageToThumbsFolder);
                             }
                         }
@@ -959,7 +1003,7 @@ namespace MediaPortal.GUI.Music
 
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Log.Write("Cover art grabber exception:{0}", ex.ToString());
                 _GrabCompletedSuccessfully = false;
             }
 

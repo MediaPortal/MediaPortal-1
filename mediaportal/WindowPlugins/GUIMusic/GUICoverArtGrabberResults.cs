@@ -107,7 +107,7 @@ namespace MediaPortal.GUI.Music
 
         #region Variables
 
-        private const int MAX_UNFILTERED_SEARCH_ITEMS = 80;
+        private const int MAX_UNFILTERED_SEARCH_ITEMS = 40;
         private const int MAX_SEARCH_ITEMS = 12;
         private string[] DiskSetSubstrings = new string[]
             {
@@ -119,6 +119,8 @@ namespace MediaPortal.GUI.Music
                 "- disc",
                 "(disc",
                 "( disc",
+                "-vol",
+                "- vol",
             };
 
 
@@ -132,7 +134,7 @@ namespace MediaPortal.GUI.Music
         private AmazonWebservice amazonWS = null;
         private AlbumInfo _SelectedAlbum = null;
         private SearchDepthMode _SearchMode = SearchDepthMode.Album;
-        private static bool _IsCancelledByUser = false;
+        private static bool _CancelledByUser = false;
         private bool IsCompilationAlbum = false;
 
         #endregion
@@ -155,10 +157,10 @@ namespace MediaPortal.GUI.Music
             get { return _SelectedAlbum; }
         }
 
-        public static bool IsCancelledByUser
+        public static bool CancelledByUser
         {
-            get { return _IsCancelledByUser; }
-            set { _IsCancelledByUser = value; }
+            get { return _CancelledByUser; }
+            set { _CancelledByUser = value; }
         }
 
         public AmazonWebservice AmazonWebService
@@ -185,10 +187,11 @@ namespace MediaPortal.GUI.Music
 
         public override void OnAction(Action action)
         {
-            Console.WriteLine(action);
+            Console.WriteLine(action.wID);
 
             if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
             {
+                CancelledByUser = true;
                 Close();
                 return;
             }
@@ -220,7 +223,7 @@ namespace MediaPortal.GUI.Music
 
         public void DoModal(int dwParentId)
         {
-            _IsCancelledByUser = false;
+            _CancelledByUser = false;
             m_bRefresh = false;
             m_dwParentWindowID = dwParentId;
             m_pParentWindow = GUIWindowManager.GetWindow(m_dwParentWindowID);
@@ -281,6 +284,9 @@ namespace MediaPortal.GUI.Music
 
                         if (selectedItem >= amazonWS.AlbumCount)
                         {
+                            Log.Write("Cover art grabber:user selected item #{0}", listView.SelectedListItemIndex);
+
+                            _CancelledByUser = false;
                             _SelectedAlbum = null;
                             Close();
                             return;
@@ -293,6 +299,9 @@ namespace MediaPortal.GUI.Music
 
                 case (int)ControlIDs.BTN_SKIP:
                     {
+                        Log.Write("Cover art grabber:[{0}-{1}] skipped by user", _Artist, _Album);
+
+                        _CancelledByUser = false;
                         _SelectedAlbum = null;
                         Close();
                         break;
@@ -300,7 +309,9 @@ namespace MediaPortal.GUI.Music
 
                 case (int)ControlIDs.BTN_CANCEL:
                     {
-                        _IsCancelledByUser = true;
+                        Log.Write("Cover art grabber:user cancelled out of grab results");
+
+                        _CancelledByUser = true;
                         Close();
                         break;
                     }
@@ -346,7 +357,11 @@ namespace MediaPortal.GUI.Music
 
         public void GetAlbumCovers(string artist, string album, string strPath, int parentWindowID, bool checkForCompilationAlbum)
         {
+            _SelectedAlbum = null;
             IsCompilationAlbum = false;
+            
+            if(checkForCompilationAlbum)
+                IsCompilationAlbum = GetIsCompilationAlbum(strPath, -1);
 
             _Artist = artist;
             _Album = album;
@@ -363,8 +378,24 @@ namespace MediaPortal.GUI.Music
 
             amazonWS.FindCoverArtProgress += new AmazonWebservice.FindCoverArtProgressHandler(amazonWS_GetAlbumInfoProgress);
             amazonWS.FindCoverArtDone += new AmazonWebservice.FindCoverArtDoneHandler(amazonWS_FindCoverArtDone);
-            InternalGetAlbumCovers(_Artist, _Album, string.Empty);
 
+            Log.Write("Cover art grabber:getting cover art for [{0}-{1}]...", _Artist, _Album);
+
+            if (IsCompilationAlbum)
+            {
+                Log.Write("Cover art grabber:compilation album found", _Artist, _Album);
+
+                amazonWS.MaxSearchResultItems = MAX_UNFILTERED_SEARCH_ITEMS;
+                _Artist = "";
+                string filterString = string.Format("{0} = \"{1}\"", GUILocalizeStrings.Get(484), " ");
+                string filter = string.Format(filteredAlbumFormatString, filterString);
+
+                Log.Write("Cover art grabber:trying again with blank artist name...");
+                InternalGetAlbumCovers(_Artist, _Album, filter);
+            }
+
+            else
+                InternalGetAlbumCovers(_Artist, _Album, string.Empty);
 
             // Did we fail to find any albums?
             if (!amazonWS.HasAlbums && !amazonWS.AbortGrab)
@@ -374,31 +405,54 @@ namespace MediaPortal.GUI.Music
 
                 string cleanAlbumName = string.Empty;
 
-                if (GetCleanAlbumName(_Album, ref cleanAlbumName))
+                if (StripDiskNumberFromAlbumName(_Album, ref cleanAlbumName))
                 {
                     amazonWS.MaxSearchResultItems = MAX_UNFILTERED_SEARCH_ITEMS;
 
                     if (AlbumNotFoundRetryingFiltered != null)
                         AlbumNotFoundRetryingFiltered(amazonWS, origAlbumName, cleanAlbumName);
 
+                    Log.Write("Cover art grabber:[{0}-{1}] not found. Trying [{0}-{2}]...", _Artist, _Album, cleanAlbumName);
+
                     string filter = string.Format(filteredAlbumFormatString, cleanAlbumName);
                     origAlbumName = _Album;
                     InternalGetAlbumCovers(_Artist, cleanAlbumName, filter);
                 }
 
-                else if(checkForCompilationAlbum)
+                else if (GetProperAlbumName(_Album, ref cleanAlbumName))
                 {
-                    IsCompilationAlbum = GetIsCompilationAlbum(strPath, -1);
+                    amazonWS.MaxSearchResultItems = MAX_UNFILTERED_SEARCH_ITEMS;
 
-                    if (IsCompilationAlbum)
-                    {
-                        amazonWS.MaxSearchResultItems = MAX_UNFILTERED_SEARCH_ITEMS;
-                        _Artist = "";
-                        string filterString = string.Format("{0} = \"{1}\"", GUILocalizeStrings.Get(484), " ");
-                        string filter = string.Format(filteredAlbumFormatString, filterString);
-                        InternalGetAlbumCovers(_Artist, _Album, filter);
-                    }
+                    if (AlbumNotFoundRetryingFiltered != null)
+                        AlbumNotFoundRetryingFiltered(amazonWS, origAlbumName, cleanAlbumName);
+
+                    Log.Write("Cover art grabber:[{0}-{1}] not found. Trying album name without sub-title [{0}-{2}]...", _Artist, _Album, cleanAlbumName);
+
+                    string filter = string.Format(filteredAlbumFormatString, cleanAlbumName);
+                    origAlbumName = _Album;
+                    InternalGetAlbumCovers(_Artist, cleanAlbumName, filter);
                 }
+
+                ////else if (checkForCompilationAlbum)
+                ////{
+                ////    Log.Write("Cover art grabber:[{0}-{1}] not found. Checking if it's a compilation album...", _Artist, _Album);
+
+                ////    IsCompilationAlbum = GetIsCompilationAlbum(strPath, -1);
+
+                ////    if (IsCompilationAlbum)
+                ////    {
+                ////        Log.Write("Cover art grabber:compilation album found", _Artist, _Album);
+
+                ////        amazonWS.MaxSearchResultItems = MAX_UNFILTERED_SEARCH_ITEMS;
+                ////        _Artist = "";
+                ////        string filterString = string.Format("{0} = \"{1}\"", GUILocalizeStrings.Get(484), " ");
+                ////        string filter = string.Format(filteredAlbumFormatString, filterString);
+
+                ////        Log.Write("Cover art grabber:trying again with blank artist name...");
+                ////        InternalGetAlbumCovers(_Artist, _Album, filter);
+                ////    }
+                ////}
+
             }
 
             // Still no albums?
@@ -413,6 +467,7 @@ namespace MediaPortal.GUI.Music
                 string filter = string.Format(filteredAlbumFormatString, filterString);
 
                 // Try searching by artist only to get all albums for this artist...
+                Log.Write("Cover art grabber:[{0}-{1}] not found. Trying again with blank album name...", _Artist, _Album);
                 InternalGetAlbumCovers(_Artist, "", filter);
             }
 
@@ -548,22 +603,12 @@ namespace MediaPortal.GUI.Music
                     dlgProgress.SetLine(3, filteredAlbumText);
                     dlgProgress.SetPercentage(0);
                     dlgProgress.Progress();
-//                    dlgProgress.StartModal(m_dwParentWindowID);
-                    //dlgProgress.ShowProgressBar(true);
                     dlgProgress.ShowProgressBar(false);
 
                     GUIWindowManager.Process();
-                    //System.Windows.Forms.Application.DoEvents();
                 }
 
                 result = amazonWS.GetAlbumInfo();
-
-                ////if (dlgProgress != null)
-                ////{
-                ////    dlgProgress.SetPercentage(100);
-                ////    dlgProgress.Progress();
-                ////    dlgProgress.Close();
-                ////}
             }
 
             else
@@ -606,8 +651,11 @@ namespace MediaPortal.GUI.Music
                 return;
 
             listView.Clear();
-            
+
+            Console.WriteLine("Current cover art image: " + imgCoverArt.FileName);
+            imgCoverArt.SetFileName("");
             imgCoverArt.SetFileName(_ThumbPath);
+            Console.WriteLine("New cover art image: " + imgCoverArt.FileName);
 
             if (amazonWS.HasAlbums)
             {
@@ -623,14 +671,26 @@ namespace MediaPortal.GUI.Music
             }
         }
 
-        private bool GetCleanAlbumName(string origAlbumName, ref string cleanAlbumName)
+        private bool GetProperAlbumName(string origAlbumName, ref string cleanAlbumName)
+        {
+            string temp = origAlbumName;
+            int pos = temp.IndexOf("(");
+
+            if (pos > 0)
+                cleanAlbumName = temp.Substring(0, pos).Trim();
+
+            return pos > 0;
+        }
+
+        private bool StripDiskNumberFromAlbumName(string origAlbumName, ref string cleanAlbumName)
         {
             string temp = origAlbumName;
 
             bool replaced = false;
             do
             {
-                replaced = origAlbumName.Replace("  ", " ").CompareTo(temp) != 0;
+                origAlbumName = origAlbumName.Replace("  ", " ");
+                replaced = origAlbumName.CompareTo(temp) != 0;
                 temp = origAlbumName;
                 
             } while (replaced);
@@ -656,33 +716,6 @@ namespace MediaPortal.GUI.Music
             }
             
             return modified;
-
-            //////bool modified = false;
-            //////int nPos = origAlbumName.LastIndexOf(')');
-
-            //////if (nPos == origAlbumName.Length - 1)
-            //////{
-            //////    nPos = origAlbumName.LastIndexOf('(');
-
-            //////    if (nPos != -1)
-            //////    {
-            //////        cleanAlbumName = origAlbumName.Substring(0, nPos).Trim();
-            //////        modified = true;
-            //////    }
-            //////}
-
-            //////else
-            //////{
-            //////    nPos = origAlbumName.LastIndexOf(" - ");
-
-            //////    if (nPos > 0)
-            //////    {
-            //////        cleanAlbumName = origAlbumName.Substring(0, nPos).Trim();
-            //////        modified = true;
-            //////    }
-            //////}
-
-            //////return modified;
         }
 
         private void Reset()

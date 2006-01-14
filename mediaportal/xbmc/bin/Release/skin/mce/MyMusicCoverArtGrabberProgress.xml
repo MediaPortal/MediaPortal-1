@@ -155,7 +155,7 @@
          <posY>140</posY>
          <onleft>31</onleft>
          <onright>31</onright>
-         <onup>31</onup>
+         <onup>40</onup>
          <ondown>41</ondown>
          <shadow>no</shadow>
          <align>right</align>

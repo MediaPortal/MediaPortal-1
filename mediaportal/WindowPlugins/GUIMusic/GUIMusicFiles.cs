@@ -393,6 +393,179 @@ namespace MediaPortal.GUI.Music
             return base.OnMessage(message);
         }
 
+        //protected override void OnShowContextMenu()
+        //{
+        //    GUIListItem item = facadeView.SelectedListItem;
+        //    m_itemItemSelected = item;
+        //    int itemNo = facadeView.SelectedListItemIndex;
+        //    if (item == null) return;
+
+
+        //    GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+        //    if (dlg == null) return;
+        //    dlg.Reset();
+        //    dlg.SetHeading(924); // menu
+
+        //    if ((!item.IsFolder) && (Utils.getDriveType(item.Path.Substring(0, 2)) == 5))
+        //    {
+        //        dlg.AddLocalizedString(1100); //Import CD
+        //        dlg.AddLocalizedString(1101); //Import Track
+        //        if (MusicImport.MusicImport.Ripping)
+        //            dlg.AddLocalizedString(1102); //Cancel Import
+        //    }
+
+        //    if (!m_directory.IsRemote(m_strDirectory)) dlg.AddLocalizedString(102); //Scan
+        //    //dlg.AddLocalizedString(654); //Eject
+
+        //    if (!facadeView.Focus)
+        //    {
+        //        // control view has no focus
+        //        dlg.AddLocalizedString(368); //IMDB
+        //    }
+        //    else
+        //    {
+        //        if ((System.IO.Path.GetFileName(item.Path) != String.Empty) || Utils.IsDVD(item.Path))
+        //        {
+        //            dlg.AddLocalizedString(928); //find coverart
+        //            dlg.AddLocalizedString(926); //Queue     
+        //            if (!item.IsFolder && !item.IsRemote)
+        //            {
+        //                dlg.AddLocalizedString(930); //Add to favorites
+        //                dlg.AddLocalizedString(931); //Rating
+        //            }
+        //        }
+
+        //        if (!item.IsFolder || Utils.IsDVD(item.Path))
+        //            dlg.AddLocalizedString(208); //play
+
+        //        if (Utils.getDriveType(item.Path) == 5)
+        //            dlg.AddLocalizedString(654); //Eject
+
+        //        int iPincodeCorrect;
+        //        if (!m_directory.IsProtectedShare(item.Path, out iPincodeCorrect) && !item.IsRemote && m_bFileMenuEnabled)
+        //            dlg.AddLocalizedString(500); // FileMenu
+        //    }
+
+        //    if (g_Player.Playing && g_Player.IsMusic)
+        //    {
+        //        string artist = GUIPropertyManager.GetProperty("#Play.Current.Artist");
+        //        if (artist.Length > 0)
+        //        {
+        //            dlg.AddLocalizedString(751); // Show all songs of this artist
+        //        }
+        //    }
+
+        //    dlg.DoModal(GetID);
+        //    if (dlg.SelectedId == -1) return;
+        //    switch (dlg.SelectedId)
+        //    {
+        //        case 928: // find coverart
+        //            OnInfo(itemNo);
+        //            break;
+
+        //        case 208: // play
+        //            if (Utils.getDriveType(item.Path) != 5)
+        //                OnClick(itemNo);
+        //            else
+        //                //Playing the CD from the context menu
+        //                OnPlayCD(item.Path, false);
+        //            break;
+
+        //        case 926: // add to playlist
+        //            OnQueueItem(itemNo);
+        //            break;
+
+        //        case 136: // show playlist
+        //            m_iItemSelected = facadeView.SelectedListItemIndex;
+        //            SaveFolderSettings(m_strDirectory);
+        //            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MUSIC_PLAYLIST);
+        //            break;
+
+        //        case 654: // Eject
+        //            if (Utils.getDriveType(item.Path) != 5) Utils.EjectCDROM();
+        //            else Utils.EjectCDROM(System.IO.Path.GetPathRoot(item.Path));
+        //            LoadDirectory(String.Empty);
+        //            break;
+
+        //        case 930: // add to favorites
+        //            AddSongToFavorites(item);
+        //            break;
+
+        //        case 931:// Rating
+        //            OnSetRating(facadeView.SelectedListItemIndex);
+        //            break;
+
+        //        case 102:
+        //            OnScan();
+        //            break;
+
+        //        case 500: // File menu
+        //            {
+        //                // get pincode
+        //                if (m_strFileMenuPinCode != String.Empty)
+        //                {
+        //                    string strUserCode = String.Empty;
+        //                    if (GetUserInputString(ref strUserCode) && strUserCode == m_strFileMenuPinCode)
+        //                    {
+        //                        OnShowFileMenu();
+        //                    }
+        //                }
+        //                else
+        //                    OnShowFileMenu();
+        //            }
+        //            break;
+
+        //        case 1100: // Import CD
+        //            OnAction(new Action(Action.ActionType.ACTION_IMPORT_DISC, 0, 0));
+        //            break;
+
+        //        case 1101: // Import seltected track
+        //            OnAction(new Action(Action.ActionType.ACTION_IMPORT_TRACK, 0, 0));
+        //            break;
+
+        //        case 1102: // Cancel CD import
+        //            OnAction(new Action(Action.ActionType.ACTION_CANCEL_IMPORT, 0, 0));
+        //            break;
+
+        //        case 751:
+        //            {
+        //                string artist = GUIPropertyManager.GetProperty("#Play.Current.Artist");
+        //                int viewNr = -1;
+        //                for (int x = 0; x < handler.Views.Count; ++x)
+        //                {
+        //                    ViewDefinition view = (ViewDefinition)handler.Views[x];
+        //                    if (view.Name.ToLower().IndexOf("artist") >= 0)
+        //                    {
+        //                        viewNr = x;
+        //                    }
+        //                }
+        //                if (viewNr < 0) return;
+        //                ViewDefinition selectedView = (ViewDefinition)handler.Views[viewNr];
+        //                handler.CurrentView = selectedView.Name;
+        //                MusicState.View = selectedView.Name;
+        //                GUIMusicGenres.SelectArtist(artist);
+        //                int nNewWindow = (int)GUIWindow.Window.WINDOW_MUSIC_GENRE;
+        //                if (GetID != nNewWindow)
+        //                {
+        //                    MusicState.StartWindow = nNewWindow;
+        //                    if (nNewWindow != GetID)
+        //                    {
+        //                        GUIWindowManager.ReplaceWindow(nNewWindow);
+        //                    }
+        //                }
+        //                else
+        //                {
+        //                    LoadDirectory(String.Empty);
+        //                    if (facadeView.Count <= 0)
+        //                    {
+        //                        GUIControl.FocusControl(GetID, btnViewAs.GetID);
+        //                    }
+        //                }
+        //            }
+        //            break;
+        //    }
+        //}
+
         protected override void OnShowContextMenu()
         {
             GUIListItem item = facadeView.SelectedListItem;
@@ -427,6 +600,7 @@ namespace MediaPortal.GUI.Music
                 if ((System.IO.Path.GetFileName(item.Path) != String.Empty) || Utils.IsDVD(item.Path))
                 {
                     dlg.AddLocalizedString(928); //find coverart
+                    dlg.AddLocalizedString(4521); //Show Album Info
                     dlg.AddLocalizedString(926); //Queue     
                     if (!item.IsFolder && !item.IsRemote)
                     {
@@ -460,6 +634,10 @@ namespace MediaPortal.GUI.Music
             switch (dlg.SelectedId)
             {
                 case 928: // find coverart
+                    OnFindCoverArt(itemNo);
+                    break;
+
+                case 4521: // Show album info
                     OnInfo(itemNo);
                     break;
 
@@ -527,7 +705,7 @@ namespace MediaPortal.GUI.Music
                     OnAction(new Action(Action.ActionType.ACTION_CANCEL_IMPORT, 0, 0));
                     break;
 
-                case 751:
+                case 751: // Show all songs from this artist
                     {
                         string artist = GUIPropertyManager.GetProperty("#Play.Current.Artist");
                         int viewNr = -1;
@@ -1503,6 +1681,70 @@ namespace MediaPortal.GUI.Music
             LoadDirectory(m_strDirectory);
         }
 
+        protected override void OnFindCoverArt(int iItem)
+        {
+            GUIListItem pItem = facadeView[iItem];
+
+            if (pItem.IsFolder && pItem.Label != "..")
+            {
+                GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+                
+                if (null != pDlgOK && !Util.Win32API.IsConnectedToInternet())
+                {
+                    pDlgOK.SetHeading(703);
+                    pDlgOK.SetLine(1, 703);
+                    pDlgOK.SetLine(2, String.Empty);
+                    pDlgOK.DoModal(GetID);
+                    throw new Exception("no internet");
+                }
+
+                else if (!Util.Win32API.IsConnectedToInternet())
+                {
+                    throw new Exception("no internet");
+                }
+
+                string oldFolder = m_strDirectory;
+                VirtualDirectory dir = new VirtualDirectory();
+                dir.SetExtensions(Utils.AudioExtensions);
+                List<GUIListItem> items = dir.GetDirectoryUnProtectedExt(pItem.Path, true);
+
+                if (items.Count < 2)
+                    return;
+
+                m_bScan = true;
+                m_strDirectory = pItem.Path;
+                OnRetrieveMusicInfo(ref items);
+                m_strDirectory = oldFolder;
+                m_bScan = false;
+                GUIListItem item = items[1] as GUIListItem;
+                MusicTag tag = item.MusicTag as MusicTag;
+
+                // Is this an album?
+                if (tag != null && tag.Album.Length > 0)
+                {
+                    FindCoverArt(true, tag.Artist, tag.Album, pItem.Path, tag, -1);
+                }
+
+                // Nope, it's a artist folder or share
+                else
+                {
+                    int windowID = (int)GUIWindow.Window.WINDOW_MUSIC_COVERART_GRABBER_PROGRESS;
+                    GUICoverArtGrabberProgress guiCoverArtProgress = (GUICoverArtGrabberProgress)GUIWindowManager.GetWindow(windowID);
+
+                    if (guiCoverArtProgress != null)
+                    {
+                        guiCoverArtProgress.CoverArtSelected += new GUICoverArtGrabberProgress.CoverArtSelectedHandler(OnCoverArtGrabberCoverArtSelected);
+                        guiCoverArtProgress.CoverArtGrabDone += new GUICoverArtGrabberProgress.CoverArtGrabDoneHandler(OnCoverArtGrabberDone);
+                        guiCoverArtProgress.TopLevelFolderName = pItem.Path;
+                        guiCoverArtProgress.UseID3 = UseID3;
+                        guiCoverArtProgress.Show(GetID);
+                    }
+                }
+            }
+
+            base.OnFindCoverArt(iItem);
+        }
+
         protected override void OnInfo(int iItem)
         {
             GUIListItem pItem = facadeView[iItem];
@@ -1535,23 +1777,8 @@ namespace MediaPortal.GUI.Music
                 // Nope, it's a artist folder or share
                 else
                 {
-                    // DISABLED FOR THE TIME BEING...
-                    ////int windowID = (int)GUIWindow.Window.WINDOW_MUSIC_COVERART_GRABBER_PROGRESS;
-                    ////GUICoverArtGrabberProgress guiCoverArtProgress = (GUICoverArtGrabberProgress)GUIWindowManager.GetWindow(windowID);
-
-                    ////if (guiCoverArtProgress != null)
-                    ////{
-                    ////    guiCoverArtProgress.CoverArtSelected += new GUICoverArtGrabberProgress.CoverArtSelectedHandler(OnCoverArtGrabberCoverArtSelected);
-                    ////    guiCoverArtProgress.CoverArtGrabDone += new GUICoverArtGrabberProgress.CoverArtGrabDoneHandler(OnCoverArtGrabberDone);
-                    ////    guiCoverArtProgress.TopLevelFolderName = pItem.Path;
-                    ////    guiCoverArtProgress.UseID3 = UseID3;
-                    ////    guiCoverArtProgress.Show(GetID);
-                    ////}
-
                     return;
                 }
-
-                //return;
             }
 
             Song song = pItem.AlbumInfoTag as Song;
@@ -1571,7 +1798,6 @@ namespace MediaPortal.GUI.Music
 
         void OnCoverArtGrabberCoverArtSelected(AlbumInfo albumInfo, string albumPath, bool bSaveToAlbumFolder, bool bSaveToThumbsFolder)
         {
-            SaveAlbumInfoToDatabase(albumPath, albumInfo, null);
             SaveCoverArtImage(albumInfo, albumPath, bSaveToAlbumFolder, bSaveToThumbsFolder);
         }
 

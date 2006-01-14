@@ -36,7 +36,6 @@ namespace MediaPortal.Music.Amazon
 
         public delegate void FindCoverArtDoneHandler(AmazonWebservice aws, EventArgs e);
         public event FindCoverArtDoneHandler FindCoverArtDone;
-
         private const string _AWSAccessKeyID = "0XCDYPB7YGRYE8T6G302";
 
         private int _MaxSearchResultItems = 8;  // The max number of matching results we want to grab (-1 = unlimited)
@@ -80,7 +79,10 @@ namespace MediaPortal.Music.Amazon
         public string ArtistName
         {
             get { return _ArtistName; }
-            set { _ArtistName = value; }
+            set 
+            {
+                _ArtistName = value; 
+            }
         }
 
         public string AlbumName
@@ -170,14 +172,14 @@ namespace MediaPortal.Music.Amazon
                     totResults = int.Parse(response.Items[0].TotalResults);
                     totPages = int.Parse(response.Items[0].TotalPages);
 
-                    Log.Write("AWS Response Returned {0} total pages with {1} total results.", totPages, totResults);
+                    Log.Write("Cover art grabber:AWS Response Returned {0} total pages with {1} total results.", totPages, totResults);
                 }
 
                 int grabPass = 0;
-                string recordsFound = string.Format("{0} matching records found.  Retrieving records...", totResults);
+                string recordsFound = string.Format("Cover art grabber:{0} matching records found.  Retrieving records...", totResults);
 
                 if (_MaxSearchResultItems > 0)
-                    recordsFound = string.Format("{0} matching records found.  Retrieving first {1} records.", totResults, _MaxSearchResultItems);
+                    recordsFound = string.Format("Cover art grabber:{0} matching records found.  Retrieving first {1} records.", totResults, _MaxSearchResultItems);
 
                 for (int curPage = 1; curPage <= totPages; )
                 {
@@ -223,9 +225,10 @@ namespace MediaPortal.Music.Amazon
                                 item = response.Items[y].Item[i];
                             }
 
-                            catch
+                            catch(Exception ex)
                             {
-                                Console.WriteLine("response.Items[y].Item[i] caused an exception");
+                                //Console.WriteLine("response.Items[y].Item[i] caused an exception");
+                                Log.Write("Cover art grabber exception:{0}", ex.ToString());
                             }
 
                             if (item == null || item.ImageSets == null || item.ImageSets.Length == 0)
@@ -282,7 +285,7 @@ namespace MediaPortal.Music.Amazon
                             albumInfo.Album = item.ItemAttributes.Title;
                             albumInfo.Image = imgURL;
                             albumInfo.Tracks = GetTracks(item);
-                            albumInfo.Styles = GetStyles(item);
+                            musicStyles = GetStyles(item);
 
                             albumInfo.Styles = musicStyles.Trim(new char[] { ',', ' ' }).Trim(); ;
 
@@ -322,13 +325,13 @@ namespace MediaPortal.Music.Amazon
                 string resultsText = "";
 
                 if (_AbortGrab)
-                    resultsText = string.Format("Album cover art grabbing aborted by user before completetion. Retreived {0}/{1} records", imgCount, totResults);
+                    resultsText = string.Format("AWS album cover art grab aborted by user before completetion. Retreived {0}/{1} records", imgCount, totResults);
 
                 else if (resultsLimitExceeded)
-                    resultsText = string.Format("Retreived {0}/{1} records (search limit set to {2} images)", imgCount, totResults, _MaxSearchResultItems);
+                    resultsText = string.Format("AWS retreived {0}/{1} records (max search limit set to {2} images)", imgCount, totResults, _MaxSearchResultItems);
 
                 else
-                    resultsText = string.Format("{0} records found", imgCount);
+                    resultsText = string.Format("{0} records retrieved", imgCount);
 
                 DateTime stopTime = DateTime.Now;
                 TimeSpan elapsedTime = stopTime - startTime;
@@ -339,16 +342,19 @@ namespace MediaPortal.Music.Amazon
                 if (imgCount > 0)
                 {
                     if (_AbortGrab)
-                        et = string.Format("{0:d2}:{1:d2}:{2:d2} ({3:f3} seconds per image)", elapsedTime.Hours, elapsedTime.Minutes, elapsedTime.Seconds, secondsPerImage);
+                        et = string.Format("{0:d2}:{1:d2}:{2:d2}.{3:d3} ({4:f3} seconds per image)", elapsedTime.Hours, elapsedTime.Minutes, elapsedTime.Seconds, elapsedTime.Milliseconds, secondsPerImage);
 
                     else
-                        et = string.Format("in {0:d2}:{1:d2}:{2:d2} ({3:f3} seconds per image)", elapsedTime.Hours, elapsedTime.Minutes, elapsedTime.Seconds, secondsPerImage);
+                        et = string.Format("in {0:d2}:{1:d2}:{2:d2}.{3:d3} ({4:f3} seconds per image)", elapsedTime.Hours, elapsedTime.Minutes, elapsedTime.Seconds, elapsedTime.Milliseconds, secondsPerImage);
+
+                    Log.Write("Cover art grabber:{0} {1}", resultsText, et);
                 }
             }
 
             catch (Exception ex)
             {
-                string errMsg = string.Format("GetAlbumInfoAsync caused an exception: {0}\r\n{1}\r\n", ex.Message, ex.StackTrace);
+                //string errMsg = string.Format("GetAlbumInfoAsync caused an exception: {0}\r\n{1}\r\n", ex.Message, ex.StackTrace);
+                Log.Write("Cover art grabber exception:{0}", ex.ToString());
                 result = false;
             }
 
@@ -404,9 +410,12 @@ namespace MediaPortal.Music.Amazon
             if (item.EditorialReviews.Length > 0)
                 review = item.EditorialReviews[0].Content;
 
-            review = review.Replace("<I>", "");
-            review = review.Replace("</I>", "");
-            return review.Trim();
+            //for(int i = 0; i < HtmlTags.Length; i++)
+            //    review = review.Replace(HtmlTags[i], "");
+
+            //return review.Trim();
+
+            return Utils.stripHTMLtags(review);
         }
 
         private string GetTracks(AWS.Item item)
@@ -439,7 +448,7 @@ namespace MediaPortal.Music.Amazon
             for (int i = 0; i < stylesList.Count; i++)
             {
                 if (stylesList.ContainsKey(i))
-                    musicStyles += string.Format("{0}\r\n", (string)stylesList[i]);
+                    musicStyles += string.Format("{0}, ", (string)stylesList[i]);
             }
 
             return musicStyles.Trim(new char[] { ',', ' ' }).Trim();

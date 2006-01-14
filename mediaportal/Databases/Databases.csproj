@@ -211,7 +211,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Music\AWSECommerceService.cs" />
-    <Compile Include="Music\AWSMusicAlbumInfo.cs" />
     <Compile Include="Music\Database.cs">
       <SubType>Code</SubType>
     </Compile>
