@@ -45,7 +45,7 @@ namespace MediaPortal.Music.Database
     {
       get { return (MusicAlbumInfo)m_albums[index];}
     }
-    public bool FindAlbuminfo(string strAlbum)
+    public bool FindAlbuminfo(string strAlbum, string artistName, int releaseYear)
     {
       m_albums.Clear();
 
@@ -126,6 +126,8 @@ namespace MediaPortal.Music.Database
         }
       }
 	
+      // now sort
+      m_albums.Sort(new AlbumSort(strAlbum,  artistName,  releaseYear));
       return true;
     }
     

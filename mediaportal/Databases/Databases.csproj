@@ -203,6 +203,7 @@
     <Compile Include="Music\AlbumInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Music\AlbumSort.cs" />
     <Compile Include="Music\AllmusicSiteScraper.cs">
       <SubType>Code</SubType>
     </Compile>

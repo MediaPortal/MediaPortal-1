@@ -1738,7 +1738,7 @@ namespace MediaPortal.GUI.Music
 
         // find album info
         MusicInfoScraper scraper = new MusicInfoScraper();
-        if (scraper.FindAlbuminfo(strAlbumName))
+        if (scraper.FindAlbuminfo(strAlbumName, artistName,tag.Year))
         {
             if (dlgProgress != null)
             {
