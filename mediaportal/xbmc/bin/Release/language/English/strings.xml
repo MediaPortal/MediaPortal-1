@@ -5127,6 +5127,10 @@
     <id>4521</id>
     <value>Show album info</value>
   </string>
+  <string>
+    <id>4522</id>
+    <value>Grabbing: {0}...</value>
+  </string>
   <!-- End Cover Art Grabber Strings -->
 
 </strings>

@@ -127,6 +127,7 @@ namespace MediaPortal.GUI.Music
         private string _TopLevelFolderName = string.Empty;
         private string SearchFolderProgressFormatString = string.Empty;
         private string SearchFolderNameFormatString = string.Empty;
+        private string GrabbingAlbumNameFormatString = string.Empty;
 
         private int _TotalAlbumCount = 0;
         private List<Song> songs = new List<Song>();
@@ -322,6 +323,14 @@ namespace MediaPortal.GUI.Music
                 SearchFolderNameFormatString = "Searching {0}...";
             }
 
+            GrabbingAlbumNameFormatString = GUILocalizeStrings.Get(4522);
+
+            if (GrabbingAlbumNameFormatString.Length == 0
+                || GrabbingAlbumNameFormatString.IndexOf("{0}") == -1)
+            {
+                GrabbingAlbumNameFormatString = "Grabbing {0}...";
+            }
+
             string cancelBtnText = GUILocalizeStrings.Get(4517);
 
             if (cancelBtnText.Length == 0)
@@ -473,7 +482,8 @@ namespace MediaPortal.GUI.Music
 
         void OnAlbumNotFoundRetryingFiltered(AmazonWebservice aws, string origAlbumName, string filteredAlbumName)
         {
-            lblCurrentAlbum.Label = string.Format("Searching for {0}...", filteredAlbumName);
+            //lblCurrentAlbum.Label = string.Format("Searching for {0}...", filteredAlbumName);
+            lblCurrentAlbum.Label = string.Format(GrabbingAlbumNameFormatString, filteredAlbumName);
             lblFilteredSearch.Label = string.Format("{0} not found", origAlbumName);
             lblFilteredSearch.Visible = true;
             string progressText = GetCurrentProgressString(0, filteredAlbumName);
@@ -707,6 +717,7 @@ namespace MediaPortal.GUI.Music
 
                             else
                             {
+                                song = null;
                                 tag = TagReader.TagReader.ReadTag(curTrackPath);
 
                                 if (tag != null)
@@ -747,6 +758,7 @@ namespace MediaPortal.GUI.Music
                         {
                             curCount++;
 
+                            //Log.Write("Cover art grabber:updating status for {0}", song.Album);
                             UpdateAlbumScanProgress(song.Album, albumCount, curCount);
                             foundTrackForThisDir = true;
 
@@ -963,7 +975,7 @@ namespace MediaPortal.GUI.Music
                         SetCurrentCoverArtProgressLabel(curSong.Album, 0);
                         System.Windows.Forms.Application.DoEvents();
 
-                        lblCurrentAlbum.Label = string.Format("Searching for {0}...", curSong.Album);
+                        lblCurrentAlbum.Label = string.Format(GrabbingAlbumNameFormatString, curSong.Album);
                         string progressText = GetCurrentProgressString(0, curSong.Album);
                         SetCurrentProgressPercentage(0);
                         SetCurrentCoverArtProgressLabel(progressText, 0);
@@ -973,18 +985,15 @@ namespace MediaPortal.GUI.Music
                             continue;
 
                         string albumPath = System.IO.Path.GetDirectoryName(curSong.FileName);
-                        //GuiCoverArtResults.GetAlbumCovers(curSong.Artist, curSong.Album, albumPath, GetID, false);
                         GuiCoverArtResults.GetAlbumCovers(curSong.Artist, curSong.Album, albumPath, GetID, true);
 
-                        if (GUICoverArtGrabberResults.CancelledByUser || GuiCoverArtResults.AmazonWebService.AbortGrab)
-                        {
-                            Log.Write("Cover art grabber:user aborted grab");
-
-                            _AbortedByUser = true;
+                        if (IsAbortedByUser())
                             break;
-                        }
 
                         GuiCoverArtResults.DoModal(GetID);
+
+                        if (IsAbortedByUser())
+                            break;
 
                         if (GuiCoverArtResults.SelectedAlbum != null)
                         {
@@ -1016,6 +1025,19 @@ namespace MediaPortal.GUI.Music
                 CoverArtGrabDone(this);
 
             ShowResultsDialog(_AbortedByUser, _GrabCompletedSuccessfully, _CoversGrabbed, GetID);
+        }
+
+        private bool IsAbortedByUser()
+        {
+            if (GUICoverArtGrabberResults.CancelledByUser || GuiCoverArtResults.AmazonWebService.AbortGrab)
+            {
+                Log.Write("Cover art grabber:user aborted grab");
+
+                _AbortedByUser = true;
+                return true;
+            }
+
+            return false;
         }
 
         public void Cleanup()
