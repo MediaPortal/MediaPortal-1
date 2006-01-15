@@ -4,7 +4,7 @@ using System.Text;
 
 namespace MediaPortal.GUI.Library
 {
-  interface IRenderLayer
+  public interface IRenderLayer
   {
     void RenderLayer(float timePassed);
   }
