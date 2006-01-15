@@ -169,17 +169,17 @@ namespace MediaPortal.GUI.Music
           }
 
         case SortMethod.Artist:
-          string strArtist1 = "";
-          string strArtist2 = "";
-          if (item1.MusicTag != null) strArtist1 = ((MusicTag)item1.MusicTag).Artist;
-          if (item2.MusicTag != null) strArtist2 = ((MusicTag)item2.MusicTag).Artist;
+          string artist1 = "";
+          string artist2 = "";
+          if (item1.MusicTag != null) artist1 = ((MusicTag)item1.MusicTag).Artist;
+          if (item2.MusicTag != null) artist2 = ((MusicTag)item2.MusicTag).Artist;
           if (bAscending)
           {
-            return String.Compare(strArtist1, strArtist2, true);
+            return String.Compare(artist1, artist2, true);
           }
           else
           {
-            return String.Compare(strArtist2, strArtist1, true);
+            return String.Compare(artist2, artist1, true);
           }
 
         case SortMethod.Album:

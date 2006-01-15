@@ -1070,7 +1070,7 @@ namespace MediaPortal.GUI.Music
       }
     }
 
-    //////////protected void ShowAlbumInfo(bool isFolder, string artistName, string strAlbumName, string strPath, MusicTag tag, int albumId)
+    //////////protected void ShowAlbumInfo(bool isFolder, string artistName, string albumName, string strPath, MusicTag tag, int albumId)
     //////////{
     //////////  // check cache
     //////////  GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
@@ -1091,8 +1091,8 @@ namespace MediaPortal.GUI.Music
     //////////      pDlgAlbumInfo.DoModal(GetID);
     //////////      if (pDlgAlbumInfo.NeedsRefresh)
     //////////      {
-    //////////        m_database.DeleteAlbumInfo(strAlbumName);
-    //////////        ShowAlbumInfo(isFolder, artistName, strAlbumName, strPath, tag, albumId);
+    //////////        m_database.DeleteAlbumInfo(albumName);
+    //////////        ShowAlbumInfo(isFolder, artistName, albumName, strPath, tag, albumId);
     //////////      }
     //////////      return;
     //////////    }
@@ -1102,7 +1102,7 @@ namespace MediaPortal.GUI.Music
     //////////  if (dlgProgress != null)
     //////////  {
     //////////    dlgProgress.SetHeading(185);
-    //////////    dlgProgress.SetLine(1, strAlbumName);
+    //////////    dlgProgress.SetLine(1, albumName);
     //////////    dlgProgress.SetLine(2, artistName);
     //////////    dlgProgress.SetLine(3, tag.Year.ToString());
     //////////    dlgProgress.SetPercentage(0);
@@ -1114,7 +1114,7 @@ namespace MediaPortal.GUI.Music
 
     //////////  // find album info
     //////////  MusicInfoScraper scraper = new MusicInfoScraper();
-    //////////  if (scraper.FindAlbuminfo(strAlbumName))
+    //////////  if (scraper.FindAlbuminfo(albumName))
     //////////  {
     //////////    if (dlgProgress != null)
     //////////    {
@@ -1176,7 +1176,7 @@ namespace MediaPortal.GUI.Music
     //////////      if (bLoaded)
     //////////      {
     //////////        // set album title from musicinfotag, not the one we got from allmusic.com
-    //////////        album.Title = strAlbumName;
+    //////////        album.Title = albumName;
     //////////        // set path, needed to store album in database
     //////////        album.AlbumPath = strPath;
     //////////        albuminfo = new AlbumInfo();
@@ -1217,7 +1217,7 @@ namespace MediaPortal.GUI.Music
     //////////          if (pDlgAlbumInfo.NeedsRefresh)
     //////////          {
     //////////            m_database.DeleteAlbumInfo(album.Title);
-    //////////            ShowAlbumInfo(isFolder, artistName, strAlbumName, strPath, tag, albumId);
+    //////////            ShowAlbumInfo(isFolder, artistName, albumName, strPath, tag, albumId);
     //////////            return;
     //////////          }
     //////////          if (isFolder)
@@ -1270,20 +1270,20 @@ namespace MediaPortal.GUI.Music
     //////////  }
     //////////}
 
-    //////protected void ShowAlbumInfo(bool isFolder, string artistName, string strAlbumName, string strPath, MusicTag tag, int albumId)
+    //////protected void ShowAlbumInfo(bool isFolder, string artistName, string albumName, string strPath, MusicTag tag, int albumId)
     //////{
     //////  if (this.UseLegacyAlbumInfoScraper)
     //////  {
-    //////    DoLegacyShowAlbumInfo(isFolder, artistName, strAlbumName, strPath, tag, albumId);
+    //////    DoLegacyShowAlbumInfo(isFolder, artistName, albumName, strPath, tag, albumId);
     //////  }
 
     //////  else
     //////  {
-    //////    DoShowAlbumInfo(isFolder, artistName, strAlbumName, strPath, tag, albumId);
+    //////    DoShowAlbumInfo(isFolder, artistName, albumName, strPath, tag, albumId);
     //////  }
     //////}
 
-    //////protected void DoShowAlbumInfo(bool isFolder, string artistName, string strAlbumName, string strPath, MusicTag tag, int albumId)
+    //////protected void DoShowAlbumInfo(bool isFolder, string artistName, string albumName, string strPath, MusicTag tag, int albumId)
     //////{
     //////  bool bDisplayErr = false;
     //////  GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
@@ -1299,13 +1299,13 @@ namespace MediaPortal.GUI.Music
     //////    if (dlgProgress != null)
     //////    {
     //////      dlgProgress.SetHeading(185);
-    //////      dlgProgress.SetLine(1, strAlbumName);
+    //////      dlgProgress.SetLine(1, albumName);
     //////      dlgProgress.SetLine(2, artistName);
     //////      dlgProgress.SetLine(3, string.Empty);
     //////      dlgProgress.StartModal(GetID);
     //////    }
 
-    //////    guiCoverGrabberResults.GetAlbumCovers(artistName, strAlbumName, strPath, GetID, true);
+    //////    guiCoverGrabberResults.GetAlbumCovers(artistName, albumName, strPath, GetID, true);
     //////    guiCoverGrabberResults.DoModal(GetID);
 
     //////    if (GUICoverArtGrabberResults.IsCancelledByUser)
@@ -1336,8 +1336,8 @@ namespace MediaPortal.GUI.Music
     //////  }
     //////}
 
-    ////////protected void ShowAlbumInfo(bool isFolder, string artistName, string strAlbumName, string strPath, MusicTag tag, int albumId)
-    //////protected void DoLegacyShowAlbumInfo(bool isFolder, string artistName, string strAlbumName, string strPath, MusicTag tag, int albumId)
+    ////////protected void ShowAlbumInfo(bool isFolder, string artistName, string albumName, string strPath, MusicTag tag, int albumId)
+    //////protected void DoLegacyShowAlbumInfo(bool isFolder, string artistName, string albumName, string strPath, MusicTag tag, int albumId)
     //////{
     //////  // check cache
     //////  GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
@@ -1358,8 +1358,8 @@ namespace MediaPortal.GUI.Music
     //////      pDlgAlbumInfo.DoModal(GetID);
     //////      if (pDlgAlbumInfo.NeedsRefresh)
     //////      {
-    //////        m_database.DeleteAlbumInfo(strAlbumName);
-    //////        ShowAlbumInfo(isFolder, artistName, strAlbumName, strPath, tag, albumId);
+    //////        m_database.DeleteAlbumInfo(albumName);
+    //////        ShowAlbumInfo(isFolder, artistName, albumName, strPath, tag, albumId);
     //////      }
     //////      return;
     //////    }
@@ -1369,7 +1369,7 @@ namespace MediaPortal.GUI.Music
     //////  if (dlgProgress != null)
     //////  {
     //////    dlgProgress.SetHeading(185);
-    //////    dlgProgress.SetLine(1, strAlbumName);
+    //////    dlgProgress.SetLine(1, albumName);
     //////    dlgProgress.SetLine(2, artistName);
     //////    dlgProgress.SetLine(3, tag.Year.ToString());
     //////    dlgProgress.SetPercentage(0);
@@ -1381,7 +1381,7 @@ namespace MediaPortal.GUI.Music
 
     //////  // find album info
     //////  MusicInfoScraper scraper = new MusicInfoScraper();
-    //////  if (scraper.FindAlbuminfo(strAlbumName))
+    //////  if (scraper.FindAlbuminfo(albumName))
     //////  {
     //////    if (dlgProgress != null)
     //////    {
@@ -1443,7 +1443,7 @@ namespace MediaPortal.GUI.Music
     //////      if (bLoaded)
     //////      {
     //////        // set album title from musicinfotag, not the one we got from allmusic.com
-    //////        album.Title = strAlbumName;
+    //////        album.Title = albumName;
     //////        // set path, needed to store album in database
     //////        album.AlbumPath = strPath;
     //////        albuminfo = new AlbumInfo();
@@ -1484,7 +1484,7 @@ namespace MediaPortal.GUI.Music
     //////          if (pDlgAlbumInfo.NeedsRefresh)
     //////          {
     //////            m_database.DeleteAlbumInfo(album.Title);
-    //////            ShowAlbumInfo(isFolder, artistName, strAlbumName, strPath, tag, albumId);
+    //////            ShowAlbumInfo(isFolder, artistName, albumName, strPath, tag, albumId);
     //////            return;
     //////          }
     //////          if (isFolder)
@@ -1601,7 +1601,7 @@ namespace MediaPortal.GUI.Music
     ////}
 
 
-    protected void FindCoverArt(bool isFolder, string artistName, string strAlbumName, string strPath, MusicTag tag, int albumId)
+    protected void FindCoverArt(bool isFolder, string artistName, string albumName, string strPath, MusicTag tag, int albumId)
     {
         GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
 
@@ -1634,13 +1634,13 @@ namespace MediaPortal.GUI.Music
             if (dlgProgress != null)
             {
                 dlgProgress.SetHeading(185);
-                dlgProgress.SetLine(1, strAlbumName);
+                dlgProgress.SetLine(1, albumName);
                 dlgProgress.SetLine(2, artistName);
                 dlgProgress.SetLine(3, string.Empty);
                 dlgProgress.StartModal(GetID);
             }
 
-            guiCoverGrabberResults.GetAlbumCovers(artistName, strAlbumName, strPath, GetID, true);
+            guiCoverGrabberResults.GetAlbumCovers(artistName, albumName, strPath, GetID, true);
             guiCoverGrabberResults.DoModal(GetID);
             albuminfo = guiCoverGrabberResults.SelectedAlbum;
 
@@ -1673,7 +1673,7 @@ namespace MediaPortal.GUI.Music
                 // and album name...
 
                 albuminfo.Artist = artistName;
-                albuminfo.Album = strAlbumName;
+                albuminfo.Album = albumName;
                 SaveCoverArtImage(albuminfo, strPath, true, true);
                 facadeView.RefreshCoverArt();
             }
@@ -1694,7 +1694,7 @@ namespace MediaPortal.GUI.Music
         }
     }
 
-    protected void ShowAlbumInfo(bool isFolder, string artistName, string strAlbumName, string strPath, MusicTag tag, int albumId)
+    protected void ShowAlbumInfo(bool isFolder, string artistName, string albumName, string strPath, MusicTag tag, int albumId)
     {
         // check cache
         GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
@@ -1715,8 +1715,8 @@ namespace MediaPortal.GUI.Music
                 pDlgAlbumInfo.DoModal(GetID);
                 if (pDlgAlbumInfo.NeedsRefresh)
                 {
-                    m_database.DeleteAlbumInfo(strAlbumName);
-                    ShowAlbumInfo(isFolder, artistName, strAlbumName, strPath, tag, albumId);
+                    m_database.DeleteAlbumInfo(albumName);
+                    ShowAlbumInfo(isFolder, artistName, albumName, strPath, tag, albumId);
                 }
                 return;
             }
@@ -1726,7 +1726,7 @@ namespace MediaPortal.GUI.Music
         if (dlgProgress != null)
         {
             dlgProgress.SetHeading(185);
-            dlgProgress.SetLine(1, strAlbumName);
+            dlgProgress.SetLine(1, albumName);
             dlgProgress.SetLine(2, artistName);
             dlgProgress.SetLine(3, tag.Year.ToString());
             dlgProgress.SetPercentage(0);
@@ -1738,7 +1738,7 @@ namespace MediaPortal.GUI.Music
 
         // find album info
         MusicInfoScraper scraper = new MusicInfoScraper();
-        if (scraper.FindAlbuminfo(strAlbumName, artistName,tag.Year))
+        if (scraper.FindAlbuminfo(albumName, artistName,tag.Year))
         {
             if (dlgProgress != null)
             {
@@ -1800,7 +1800,7 @@ namespace MediaPortal.GUI.Music
                 if (bLoaded)
                 {
                     // set album title from musicinfotag, not the one we got from allmusic.com
-                    album.Title = strAlbumName;
+                    album.Title = albumName;
                     // set path, needed to store album in database
                     album.AlbumPath = strPath;
                     albuminfo = new AlbumInfo();
@@ -1841,7 +1841,7 @@ namespace MediaPortal.GUI.Music
                         if (pDlgAlbumInfo.NeedsRefresh)
                         {
                             m_database.DeleteAlbumInfo(album.Title);
-                            ShowAlbumInfo(isFolder, artistName, strAlbumName, strPath, tag, albumId);
+                            ShowAlbumInfo(isFolder, artistName, albumName, strPath, tag, albumId);
                             return;
                         }
                         if (isFolder)

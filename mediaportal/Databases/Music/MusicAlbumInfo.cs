@@ -34,7 +34,7 @@ namespace MediaPortal.Music.Database
   public class MusicAlbumInfo
   {
     
-    string		m_strArtist="";
+    string		m_artist="";
     string		m_strTitle="";
     string		m_strTitle2="";
     string		m_strDateOfRelease="";
@@ -43,7 +43,7 @@ namespace MediaPortal.Music.Database
     string		m_strStyles="";
     string    m_strReview="";
     string	  m_strImageURL="";
-    string    m_strAlbumURL="";
+    string    m_albumUrl="";
     string		m_strAlbumPath="";
     int				m_iRating=0;
     ArrayList m_songs=new ArrayList();
@@ -56,8 +56,8 @@ namespace MediaPortal.Music.Database
     
     public string Artist
     {
-      get { return m_strArtist;}
-      set {m_strArtist=value.Trim();}
+      get { return m_artist;}
+      set {m_artist=value.Trim();}
     }
     public string Title
     {
@@ -113,8 +113,8 @@ namespace MediaPortal.Music.Database
     }
     public string AlbumURL
     {
-      get { return m_strAlbumURL;}
-      set {m_strAlbumURL=value.Trim();}
+      get { return m_albumUrl;}
+      set {m_albumUrl=value.Trim();}
     }
     public string AlbumPath
     {
@@ -141,14 +141,14 @@ namespace MediaPortal.Music.Database
     {
       try
       {
-        string strBody;
-        WebRequest req = WebRequest.Create(m_strAlbumURL);
+        string body;
+        WebRequest req = WebRequest.Create(m_albumUrl);
         WebResponse result = req.GetResponse();
         Stream ReceiveStream = result.GetResponseStream();
         Encoding encode = System.Text.Encoding.GetEncoding("utf-8");
         StreamReader sr = new StreamReader( ReceiveStream, encode );
-        strBody=sr.ReadToEnd();
-        return Parse(strBody);
+        body=sr.ReadToEnd();
+        return Parse(body);
       }
       catch(Exception)
       {
@@ -156,22 +156,22 @@ namespace MediaPortal.Music.Database
       return false;
     }
 
-    public bool Parse(string strHTML)
+    public bool Parse(string html)
     {
       m_songs.Clear();
       HTMLTable table ;
       string strTable;
       HTMLUtil  util = new HTMLUtil();
-      string strHTMLLow=strHTML.ToLower();
-      string strHTMLOrg=strHTML;
+      string htmlLow=html.ToLower();
+      string htmlOrg=html;
 	
       //	Extract Cover URL
-      int iStartOfCover=strHTMLLow.IndexOf("image.allmusic.com");
+      int iStartOfCover=htmlLow.IndexOf("image.allmusic.com");
       if (iStartOfCover>=0)
       {
-        iStartOfCover=strHTMLLow.LastIndexOf("<img", iStartOfCover);
-        int iEndOfCover=strHTMLLow.IndexOf(">", iStartOfCover);
-        string strCover=strHTMLLow.Substring(iStartOfCover, iEndOfCover-iStartOfCover);
+        iStartOfCover=htmlLow.LastIndexOf("<img", iStartOfCover);
+        int iEndOfCover=htmlLow.IndexOf(">", iStartOfCover);
+        string strCover=htmlLow.Substring(iStartOfCover, iEndOfCover-iStartOfCover);
         util.getAttributeOfTag(strCover, "src=", ref m_strImageURL);
         if (m_strImageURL.Length>0)
         {
@@ -181,14 +181,14 @@ namespace MediaPortal.Music.Database
       }
 
       //	Extract Review
-      int iStartOfReview=strHTMLLow.IndexOf("id=\"bio\"");
+      int iStartOfReview=htmlLow.IndexOf("id=\"bio\"");
       if (iStartOfReview>=0)
       {
-        iStartOfReview=strHTMLLow.IndexOf("<table", iStartOfReview);
+        iStartOfReview=htmlLow.IndexOf("<table", iStartOfReview);
         if (iStartOfReview>=0)
         {
           table = new HTMLTable();
-          strTable=strHTML.Substring(iStartOfReview);
+          strTable=html.Substring(iStartOfReview);
           table.Parse(strTable);
 
           if (table.Rows>0)
@@ -206,41 +206,41 @@ namespace MediaPortal.Music.Database
         m_strReview=GUILocalizeStrings.Get(414);
 	
       //	Extract album, artist...
-      int iStartOfTable=strHTMLLow.IndexOf("<table cellpadding=\"0\" cellspacing=\"0\">");
-      if (iStartOfTable< 0) return false;
+      int startOfTable=htmlLow.IndexOf("<table cellpadding=\"0\" cellspacing=\"0\">");
+      if (startOfTable< 0) return false;
 
       table=new HTMLTable();
-      strTable=strHTML.Substring(iStartOfTable);
+      strTable=html.Substring(startOfTable);
       table.Parse(strTable);
 
       //	Check if page has the album browser
       int iStartRow=2;
-      if (strHTMLLow.IndexOf("class=\"album-browser\"")==-1)
+      if (htmlLow.IndexOf("class=\"album-browser\"")==-1)
         iStartRow=1;
 
       for (int iRow=iStartRow; iRow < table.Rows; iRow++)
       {
         HTMLTable.HTMLRow row=table.GetRow(iRow);
 
-        string strColumn=row.GetColumValue(0);
+        string columnn=row.GetColumValue(0);
         HTMLTable valueTable =new HTMLTable();
-        valueTable.Parse(strColumn);
-        strColumn=valueTable.GetRow(0).GetColumValue(0);
-        util.RemoveTags(ref strColumn);
+        valueTable.Parse(columnn);
+        columnn=valueTable.GetRow(0).GetColumValue(0);
+        util.RemoveTags(ref columnn);
 
-        if (strColumn.IndexOf("Artist") >=0 && valueTable.Rows>=2)
+        if (columnn.IndexOf("Artist") >=0 && valueTable.Rows>=2)
         {
           string strValue=valueTable.GetRow(2).GetColumValue(0);
-          m_strArtist=strValue;
-          util.RemoveTags(ref m_strArtist);
+          m_artist=strValue;
+          util.RemoveTags(ref m_artist);
         }
-        if (strColumn.IndexOf("Album") >=0 && valueTable.Rows>=2)
+        if (columnn.IndexOf("Album") >=0 && valueTable.Rows>=2)
         {
           string strValue=valueTable.GetRow(2).GetColumValue(0);
           m_strTitle=strValue;
           util.RemoveTags(ref m_strTitle);
         }
-        if (strColumn.IndexOf("Release Date") >=0 && valueTable.Rows>=2)
+        if (columnn.IndexOf("Release Date") >=0 && valueTable.Rows>=2)
         {
           string strValue=valueTable.GetRow(2).GetColumValue(0);
           m_strDateOfRelease=strValue;
@@ -291,45 +291,45 @@ namespace MediaPortal.Music.Database
           }
           }
         }
-        if (strColumn.IndexOf("Genre") >=0 && valueTable.Rows>=1)
+        if (columnn.IndexOf("Genre") >=0 && valueTable.Rows>=1)
         {
-          strHTML=valueTable.GetRow(1).GetColumValue(0);
+          html=valueTable.GetRow(1).GetColumValue(0);
           string strTag="";
-          int iStartOfGenre=util.FindTag(strHTML,"<li",ref strTag,0);
+          int iStartOfGenre=util.FindTag(html,"<li",ref strTag,0);
           if (iStartOfGenre>=0)
           {
             iStartOfGenre+=(int)strTag.Length;
-            int iEndOfGenre=util.FindClosingTag(strHTML,"li",ref  strTag,iStartOfGenre)-1;
+            int iEndOfGenre=util.FindClosingTag(html,"li",ref  strTag,iStartOfGenre)-1;
             if (iEndOfGenre < 0)
             {
-              iEndOfGenre=(int)strHTML.Length;
+              iEndOfGenre=(int)html.Length;
             }
 				
-            string strValue=strHTML.Substring(iStartOfGenre,1+iEndOfGenre-iStartOfGenre);
+            string strValue=html.Substring(iStartOfGenre,1+iEndOfGenre-iStartOfGenre);
             m_strGenre=strValue;
             util.RemoveTags(ref m_strGenre);
           }
 
           if (valueTable.GetRow(0).Columns>=2)
           {
-            strColumn=valueTable.GetRow(0).GetColumValue(2);
-            util.RemoveTags(ref strColumn);
+            columnn=valueTable.GetRow(0).GetColumValue(2);
+            util.RemoveTags(ref columnn);
 
-            if (strColumn.IndexOf("Styles") >=0)
+            if (columnn.IndexOf("Styles") >=0)
             {
-              strHTML=valueTable.GetRow(1).GetColumValue(1);
+              html=valueTable.GetRow(1).GetColumValue(1);
               
               int iStartOfStyle=0;
               while (iStartOfStyle>=0)
               {
-                iStartOfStyle=util.FindTag(strHTML, "<li", ref strTag, iStartOfStyle);
+                iStartOfStyle=util.FindTag(html, "<li", ref strTag, iStartOfStyle);
                 if (iStartOfStyle < 0) break;
                 iStartOfStyle+=(int)strTag.Length;
-                int iEndOfStyle=util.FindClosingTag(strHTML, "li",ref  strTag, iStartOfStyle)-1;
+                int iEndOfStyle=util.FindClosingTag(html, "li",ref  strTag, iStartOfStyle)-1;
                 if (iEndOfStyle < 0)
                   break;
 						
-                string strValue=strHTML.Substring(iStartOfStyle, 1+iEndOfStyle-iStartOfStyle);
+                string strValue=html.Substring(iStartOfStyle, 1+iEndOfStyle-iStartOfStyle);
                 util.RemoveTags(ref strValue);
                 m_strStyles+=strValue + ", ";
               }
@@ -338,28 +338,28 @@ namespace MediaPortal.Music.Database
             }
           }
         }
-        if (strColumn.IndexOf("Moods") >=0)
+        if (columnn.IndexOf("Moods") >=0)
         {
-          strHTML=valueTable.GetRow(1).GetColumValue(0);
+          html=valueTable.GetRow(1).GetColumValue(0);
           string strTag="";
           int iStartOfMoods=0;
           while (iStartOfMoods>=0)
           {
-            iStartOfMoods=util.FindTag(strHTML, "<li", ref strTag, iStartOfMoods);
+            iStartOfMoods=util.FindTag(html, "<li", ref strTag, iStartOfMoods);
             if (iStartOfMoods<0) break;
             iStartOfMoods+=(int)strTag.Length;
-            int iEndOfMoods=util.FindClosingTag(strHTML, "li", ref strTag, iStartOfMoods)-1;
+            int iEndOfMoods=util.FindClosingTag(html, "li", ref strTag, iStartOfMoods)-1;
             if (iEndOfMoods < 0)
               break;
 					
-            string strValue=strHTML.Substring(iStartOfMoods, 1+iEndOfMoods-iStartOfMoods);
+            string strValue=html.Substring(iStartOfMoods, 1+iEndOfMoods-iStartOfMoods);
             util.RemoveTags(ref strValue);
             m_strTones+=strValue + ", ";
           }
 
           TrimRight(ref m_strTones,", ");
         }
-        if (strColumn.IndexOf("Rating") >=0)
+        if (columnn.IndexOf("Rating") >=0)
         {
           string strValue=valueTable.GetRow(1).GetColumValue(0);
           string strRating="";
@@ -374,8 +374,8 @@ namespace MediaPortal.Music.Database
       }
 
       //	Set to "Not available" if no value from web
-      if (m_strArtist.Length==0)
-        m_strArtist=GUILocalizeStrings.Get(416);
+      if (m_artist.Length==0)
+        m_artist=GUILocalizeStrings.Get(416);
       if (m_strDateOfRelease.Length==0)
         m_strDateOfRelease=GUILocalizeStrings.Get(416);
       if (m_strGenre.Length==0)
@@ -389,14 +389,14 @@ namespace MediaPortal.Music.Database
 
 
       // parse songs...
-      strHTML=strHTMLOrg;
-      iStartOfTable=strHTMLLow.IndexOf("id=\"expansiontable1\"",0);
-      if (iStartOfTable >= 0)
+      html=htmlOrg;
+      startOfTable=htmlLow.IndexOf("id=\"expansiontable1\"",0);
+      if (startOfTable >= 0)
       {
-        iStartOfTable=strHTMLLow.LastIndexOf("<table",iStartOfTable);
-        if (iStartOfTable >= 0)
+        startOfTable=htmlLow.LastIndexOf("<table",startOfTable);
+        if (startOfTable >= 0)
         {
-          strTable=strHTML.Substring(iStartOfTable);
+          strTable=html.Substring(startOfTable);
           table.Parse(strTable);
           for (int iRow=1; iRow < table.Rows; iRow++)
           {
