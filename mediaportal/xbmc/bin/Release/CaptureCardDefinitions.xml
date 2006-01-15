@@ -5375,7 +5375,7 @@
 <!--  Cards added after 0.1.3.0  -->
 
   <capturecard commercialname="Hauppauge HVR-1300 Analogue" capturename="Hauppauge WinTV 88x Video Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_96000070&amp;rev_05">
-    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"/>
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"/>
       <filters>
