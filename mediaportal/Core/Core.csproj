@@ -760,6 +760,7 @@
     <Compile Include="guilib\IRender.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="guilib\IRenderLayer.cs" />
     <Compile Include="guilib\ISetupForm.cs">
       <SubType>Code</SubType>
     </Compile>
