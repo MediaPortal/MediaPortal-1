@@ -83,11 +83,13 @@ namespace MediaPortal.GUI.Music
 
     string[] _sortTags1 = new string[20];
     string[] _sortTags2 = new string[20];
+    protected PlayListPlayer playlistPlayer;
 
     private bool UseLegacyAlbumInfoScraper = true;
 
     public GUIMusicBaseWindow()
     {
+      playlistPlayer = PlayListPlayer.SingletonPlayer;
     }
     protected bool UseID3
     {
@@ -533,27 +535,27 @@ namespace MediaPortal.GUI.Music
       }
 
       // clear current playlist
-      PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Clear();
+      playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Clear();
 
       // add each item of the playlist to the playlistplayer
       for (int i = 0; i < playlist.Count; ++i)
       {
         PlayListItem playListItem = playlist[i];
-        PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Add(playListItem);
+        playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Add(playListItem);
       }
 
 
       // if we got a playlist
-      if (PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Count > 0)
+      if (playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Count > 0)
       {
         // then get 1st song
-        playlist = PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
+        playlist = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
         PlayListItem item = playlist[0];
 
         // and start playing it
-        PlayListPlayer.CurrentPlaylist = PlayListType.PLAYLIST_MUSIC;
-        PlayListPlayer.Reset();
-        PlayListPlayer.Play(0);
+        playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC;
+        playlistPlayer.Reset();
+        playlistPlayer.Play(0);
 
         // and activate the playlist window if its not activated yet
         if (GetID == GUIWindowManager.ActiveWindow)

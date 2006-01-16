@@ -203,6 +203,8 @@ namespace MediaPortal
     private System.Windows.Forms.Timer timer1;
     protected Rectangle oldBounds;
 
+    protected PlayListPlayer playlistPlayer;
+
     // Overridable functions for the 3D scene created by the app
     protected virtual bool ConfirmDevice(Caps caps, VertexProcessingType vertexProcessingType,
       Format adapterFormat, Format backBufferFormat) { return true; }
@@ -291,6 +293,8 @@ namespace MediaPortal
       clipCursorWhenFullscreen = false;
       InitializeComponent();
       this.TopMost = alwaysOnTop;
+
+      playlistPlayer = PlayListPlayer.SingletonPlayer;
 
     }
 
@@ -1327,9 +1331,9 @@ namespace MediaPortal
             }
             else
             {
-              PlayListPlayer.Init();
-              PlayListPlayer.CurrentPlaylist = m_currentPlayList;
-              PlayListPlayer.Play(m_strCurrentFile);
+              playlistPlayer.Init();
+              playlistPlayer.CurrentPlaylistType = m_currentPlayList;
+              playlistPlayer.Play(m_strCurrentFile);
             }
             Log.Write("App.Render3dEnvironment() play:{0}", m_strCurrentFile);
             if (g_Player.Playing)
@@ -2013,8 +2017,8 @@ namespace MediaPortal
         m_bRestoreTmp = true;
         m_bWasPlaying = g_Player.Playing;
         m_dCurrentPos = g_Player.CurrentPosition;
-        m_currentPlayList = PlayListPlayer.CurrentPlaylist;
-        m_strCurrentFile = PlayListPlayer.Get(PlayListPlayer.CurrentSong);
+        m_currentPlayList = playlistPlayer.CurrentPlaylistType;
+        m_strCurrentFile = playlistPlayer.Get(playlistPlayer.CurrentSong);
         m_iActiveWindow = GUIWindowManager.ActiveWindow;
         try
         {

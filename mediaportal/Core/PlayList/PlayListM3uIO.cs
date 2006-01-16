@@ -17,10 +17,11 @@ namespace MediaPortal.Playlists
 
     public bool Load(PlayList incomingPlaylist, string playlistFileName)
     {
-      if (playlistFileName == null) return false;
+      if (playlistFileName == null) 
+        return false;
       playlist = incomingPlaylist;
-
       playlist.Clear();
+      
       try
       {
         playlist.Name = Path.GetFileName(playlistFileName);
@@ -39,18 +40,9 @@ namespace MediaPortal.Playlists
 
           if (trimmedLine != M3U_START_MARKER)
           {
-            string fileName = line;
-            //CUtil::RemoveCRLF(fileName);
-            if (fileName.Length > 1)
-            {
-              Utils.GetQualifiedFilename(basePath, ref fileName);
-              PlayListItem newItem = new PlayListItem(fileName, fileName, 0);
-              newItem.Type = PlayListItem.PlayListItemType.Audio;
-              string strDescription;
-              strDescription = Path.GetFileName(fileName);
-              newItem.Description = strDescription;
-              playlist.Add(newItem);
-            }
+            string fileName = trimmedLine;
+            if (!AddItem("", 0, fileName))
+              return false;
           }
 
           line = file.ReadLine();
@@ -60,17 +52,11 @@ namespace MediaPortal.Playlists
 
             if (trimmedLine.StartsWith(M3U_INFO_MARKER))
             {
-              // start of info 
-              int iColon = (int)trimmedLine.IndexOf(":");
-              int iComma = (int)trimmedLine.IndexOf(",");
-              if (iColon >= 0 && iComma >= 0 && iComma > iColon)
+              string songName = null;
+              int lDuration = 0;
+              
+              if (ExtractM3uInfo(trimmedLine, ref songName, ref lDuration))
               {
-                iColon++;
-                string duration = trimmedLine.Substring(iColon, iComma - iColon);
-                iComma++;
-                string songName = trimmedLine.Substring(iComma);
-                int lDuration = System.Int32.Parse(duration);
-
                 line = file.ReadLine();
                 if (!AddItem(songName, lDuration, line))
                   break;
@@ -85,11 +71,29 @@ namespace MediaPortal.Playlists
           }
         }
       }
-      catch (Exception)
+      catch (Exception ex )
       {
+        Log.Write("exception loading playlist {0} err:{1} stack:{2}", playlistFileName, ex.Message, ex.StackTrace);
         return false;
       }
       return true;
+    }
+
+    private static bool ExtractM3uInfo(string trimmedLine, ref string songName, ref int lDuration)
+    {
+      bool successfull;
+      int iColon = (int)trimmedLine.IndexOf(":");
+      int iComma = (int)trimmedLine.IndexOf(",");
+      if (iColon >= 0 && iComma >= 0 && iComma > iColon)
+      {
+        iColon++;
+        string duration = trimmedLine.Substring(iColon, iComma - iColon);
+        iComma++;
+        songName = trimmedLine.Substring(iComma);
+        lDuration = System.Int32.Parse(duration);
+        return true;
+      }
+       return false; 
     }
 
 

@@ -1297,7 +1297,7 @@ public class MediaPortalApp : D3DApp, IRender
             {
               return;
             }
-            PlayListPlayer.PlayPrevious();
+            playlistPlayer.PlayPrevious();
             break;
 
           case Action.ActionType.ACTION_NEXT_ITEM:
@@ -1305,7 +1305,7 @@ public class MediaPortalApp : D3DApp, IRender
             {
               return;
             }
-            PlayListPlayer.PlayNext();
+            playlistPlayer.PlayNext();
             break;
 
           case Action.ActionType.ACTION_STOP:
@@ -2197,7 +2197,7 @@ public class MediaPortalApp : D3DApp, IRender
 
     //register the playlistplayer for thread messages (like playback stopped,ended)
     Log.Write("  Init playlist player");
-    PlayListPlayer.Init();
+    playlistPlayer.Init();
 
     //
     // Only load the USBUIRT device if it has been enabled in the configuration

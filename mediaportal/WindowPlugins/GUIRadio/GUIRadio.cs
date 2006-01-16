@@ -58,7 +58,7 @@ namespace MediaPortal.GUI.Radio
     [SkinControlAttribute(51)]
     protected GUIThumbnailPanel thumbnailView = null;
 
-    #region Base variabeles
+    
     enum SortMethod
     {
       Name = 0,
@@ -74,6 +74,8 @@ namespace MediaPortal.GUI.Radio
       Icons = 1,
       BigIcons = 2,
     }
+
+    #region Base variabeles
     View currentView = View.List;
     SortMethod currentSortMethod = SortMethod.Name;
     bool sortAscending = true;
@@ -84,6 +86,7 @@ namespace MediaPortal.GUI.Radio
     string currentRadioFolder = String.Empty;
     int selectedItemIndex = -1;
     PlayList currentPlayList = null;
+    PlayListPlayer playlistPlayer;
     #endregion
 
     public GUIRadio()
@@ -277,8 +280,8 @@ namespace MediaPortal.GUI.Radio
 
         case GUIMessage.MessageType.GUI_MSG_PLAY_RADIO_STATION:
           if (message.Label.Length == 0) return true;
-          PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC_TEMP).Clear();
-          PlayListPlayer.Reset();
+          playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC_TEMP).Clear();
+          playlistPlayer.Reset();
 
           ArrayList stations = new ArrayList();
           RadioDatabase.GetStations(ref stations);
@@ -292,14 +295,14 @@ namespace MediaPortal.GUI.Radio
             playlistItem.FileName = GetPlayPath(station);
             playlistItem.Description = station.Name;
             playlistItem.Duration = 0;
-            PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC_TEMP).Add(playlistItem);
+            playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC_TEMP).Add(playlistItem);
           }
-          PlayListPlayer.CurrentPlaylist = PlayListType.PLAYLIST_MUSIC_TEMP;
+          playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC_TEMP;
           foreach (RadioStation station in stations)
           {
             if (station.Name.Equals(message.Label))
             {
-              PlayListPlayer.Play(GetPlayPath(station));
+              playlistPlayer.Play(GetPlayPath(station));
               return true;
             }
           }
@@ -736,8 +739,8 @@ namespace MediaPortal.GUI.Radio
 
     void FillPlayList()
     {
-      PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC_TEMP).Clear();
-      PlayListPlayer.Reset();
+      playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC_TEMP).Clear();
+      playlistPlayer.Reset();
 
       // are we looking @ a playlist
       if (currentPlayList != null)
@@ -750,7 +753,7 @@ namespace MediaPortal.GUI.Radio
           playlistItem.FileName = currentPlayList[i].FileName;
           playlistItem.Description = currentPlayList[i].Description;
           playlistItem.Duration = currentPlayList[i].Duration;
-          PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC_TEMP).Add(playlistItem);
+          playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC_TEMP).Add(playlistItem);
         }
       }
       else
@@ -778,7 +781,7 @@ namespace MediaPortal.GUI.Radio
               playlistItem.Description = playlist[0].Description;
               playlistItem.Duration = playlist[0].Duration;
               playlistItem.Type = playlist[0].Type;
-              PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC_TEMP).Add(playlistItem);
+              playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC_TEMP).Add(playlistItem);
             }
           }
           else
@@ -800,11 +803,11 @@ namespace MediaPortal.GUI.Radio
             }
             playlistItem.Description = item.Label;
             playlistItem.Duration = 0;
-            PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC_TEMP).Add(playlistItem);
+            playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC_TEMP).Add(playlistItem);
           }
         }
       }
-      PlayListPlayer.CurrentPlaylist = PlayListType.PLAYLIST_MUSIC_TEMP;
+      playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC_TEMP;
     }
 
     void Play(GUIListItem item)
@@ -820,7 +823,7 @@ namespace MediaPortal.GUI.Radio
           string strURL = currentPlayList[0].FileName;
           currentPlayList = null;
           FillPlayList();
-          PlayListPlayer.Play(strURL);
+          playlistPlayer.Play(strURL);
           return;
         }
         if (currentPlayList.Count == 0)
@@ -836,7 +839,7 @@ namespace MediaPortal.GUI.Radio
           // add current playlist->playlist and play selected item
           string strURL = item.Path;
           FillPlayList();
-          PlayListPlayer.Play(strURL);
+          playlistPlayer.Play(strURL);
           return;
         }
 
@@ -844,13 +847,13 @@ namespace MediaPortal.GUI.Radio
         RadioStation station = item.MusicTag as RadioStation;
         FillPlayList();
 
-        PlayList playlist = PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC_TEMP);
+        PlayList playlist = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC_TEMP);
         for (int i = 0; i < playlist.Count; ++i)
         {
           PlayListItem playItem = playlist[i];
           if (playItem.Description.Equals(item.Label))
           {
-            PlayListPlayer.Play(i);
+            playlistPlayer.Play(i);
             break;
           }
         }

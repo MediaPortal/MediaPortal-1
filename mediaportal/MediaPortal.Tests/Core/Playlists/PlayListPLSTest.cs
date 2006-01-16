@@ -6,17 +6,18 @@ using MediaPortal.Playlists;
 
 namespace MediaPortal.Tests.Core.Playlists
 {
-    [TestFixture]
-    public class PlayListPLSTest
+  [TestFixture]
+  public class PlayListPLSTest
+  {
+    [Test]
+    public void LoadPLS()
     {
-        [Test]
-        public void LoadPLS()
-        {
-            PlayListPLS playlist = new PlayListPLS();
-            Assert.IsTrue(playlist.Load("Core\\Playlists\\TestData\\exampleList.pls"));
-            Assert.AreEqual(@"E:\Program Files\Winamp3\demo.mp3", playlist[0].FileName);
-            Assert.AreEqual(@"E:\Program Files\Winamp3\demo2.mp3", playlist[1].FileName);
-            Assert.AreEqual(2, playlist.Count);
-        }
+      PlayList playlist = new PlayList();
+      IPlayListIO loader = new PlayListPLSIO();
+      Assert.IsTrue(loader.Load(playlist, "Core\\Playlists\\TestData\\exampleList.pls"));
+      Assert.AreEqual(@"E:\Program Files\Winamp3\demo.mp3", playlist[0].FileName);
+      Assert.AreEqual(@"E:\Program Files\Winamp3\demo2.mp3", playlist[1].FileName);
+      Assert.AreEqual(2, playlist.Count);
     }
+  }
 }

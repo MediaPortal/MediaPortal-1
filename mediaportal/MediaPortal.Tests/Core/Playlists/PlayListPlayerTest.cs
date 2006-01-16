@@ -7,12 +7,12 @@ using MediaPortal.Playlists;
 namespace MediaPortal.Tests.Core.Playlists
 {
   [TestFixture]
-  public class PlayListPlayerTest : NonStaticPlayListPlayer.IPlayer
+  public class PlayListPlayerTest : PlayListPlayer.IPlayer
   {
     [Test]
     public void InsertItemButNotStartPlayingGivesNull()
     {
-      NonStaticPlayListPlayer player = new NonStaticPlayListPlayer();
+      PlayListPlayer player = new PlayListPlayer();
       player.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC;
       PlayList playlist = player.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
       PlayListItem item1 = new PlayListItem();
@@ -23,7 +23,7 @@ namespace MediaPortal.Tests.Core.Playlists
     [Test]
     public void PlayMovesCurrentToItem()
     {
-      NonStaticPlayListPlayer player = new NonStaticPlayListPlayer();
+      PlayListPlayer player = new PlayListPlayer();
       player.g_Player = this; //fake g_Player
       player.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC;
       PlayList playlist = player.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
@@ -37,7 +37,7 @@ namespace MediaPortal.Tests.Core.Playlists
     [Test]
     public void GetNextReturnsFileName()
     {
-      NonStaticPlayListPlayer player = new NonStaticPlayListPlayer();
+      PlayListPlayer player = new PlayListPlayer();
       player.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC;
       PlayList playlist = player.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
       PlayListItem item1 = new PlayListItem("apa", "c:\\apa.mp3");

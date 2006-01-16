@@ -106,6 +106,12 @@ namespace MediaPortal.GUI.Video
 		string										destinationFolder=String.Empty;
 		bool											fileMenuEnabled=false;
 		string										fileMenuPinCode=String.Empty;
+    static PlayListPlayer playlistPlayer;
+
+    static GUIVideoFiles()
+    {
+      playlistPlayer = PlayListPlayer.SingletonPlayer;
+    }
 
 		public GUIVideoFiles()
 		{
@@ -707,9 +713,9 @@ namespace MediaPortal.GUI.Video
 					{
 						AddFileToDatabase((string)movies[0]);
 					}
-					PlayListPlayer.Reset();
-					PlayListPlayer.CurrentPlaylist = PlayListType.PLAYLIST_VIDEO_TEMP;
-					PlayList playlist = PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO_TEMP);
+          playlistPlayer.Reset();
+          playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_VIDEO_TEMP;
+          PlayList playlist = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO_TEMP);
 					playlist.Clear();
 					for (int i = 0; i < (int)movies.Count; ++i)
 					{
@@ -728,9 +734,9 @@ namespace MediaPortal.GUI.Video
 				// play movie...
 				AddFileToDatabase(movieFileName);
 
-        PlayListPlayer.Reset();
-        PlayListPlayer.CurrentPlaylist = PlayListType.PLAYLIST_VIDEO_TEMP;
-        PlayList newPlayList = PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO_TEMP);
+        playlistPlayer.Reset();
+        playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_VIDEO_TEMP;
+        PlayList newPlayList = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO_TEMP);
         newPlayList.Clear();
         PlayListItem NewItem = new PlayListItem();
         NewItem.FileName = movieFileName;
@@ -794,7 +800,7 @@ namespace MediaPortal.GUI.Video
 					playlistItem.Description = listItem.Label;
 					playlistItem.Duration = listItem.Duration;
           playlistItem.Type = Playlists.PlayListItem.PlayListItemType.Video;
-					PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO).Add(playlistItem);
+          playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO).Add(playlistItem);
 				}
 			}
 		}
@@ -833,27 +839,27 @@ namespace MediaPortal.GUI.Video
 			}
 
 			// clear current playlist
-			PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO).Clear();
+      playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO).Clear();
 
 			// add each item of the playlist to the playlistplayer
 			for (int i = 0; i < playlist.Count; ++i)
 			{
 				PlayListItem playListItem = playlist[i];
-				PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO).Add(playListItem);
+        playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO).Add(playListItem);
 			}
 
 			
 			// if we got a playlist
-			if (PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO).Count > 0)
+      if (playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO).Count > 0)
 			{
 				// then get 1st song
-				playlist = PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO);
+        playlist = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO);
 				PlayListItem item = playlist[0];
 
 				// and start playing it
-				PlayListPlayer.CurrentPlaylist = PlayListType.PLAYLIST_VIDEO;
-				PlayListPlayer.Reset();
-				PlayListPlayer.Play(0);
+        playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_VIDEO;
+        playlistPlayer.Reset();
+        playlistPlayer.Play(0);
 
 				// and activate the playlist window if its not activated yet
 				if (GetID == GUIWindowManager.ActiveWindow)
@@ -1746,9 +1752,9 @@ namespace MediaPortal.GUI.Video
     {
       string filename;
       if (iMovieIndex == -1)
-        filename=PlayListPlayer.GetNext();
+        filename = playlistPlayer.GetNext();
       else
-        filename=PlayListPlayer.Get(iMovieIndex);
+        filename = playlistPlayer.Get(iMovieIndex);
 
       IMDBMovie movieDetails = new IMDBMovie();
       VideoDatabase.GetMovieInfo(filename, ref movieDetails);
@@ -1783,11 +1789,11 @@ namespace MediaPortal.GUI.Video
       
       if (iMovieIndex==-1)
       {
-        PlayListPlayer.PlayNext();
+        playlistPlayer.PlayNext();
       }
       else
       {
-        PlayListPlayer.Play(iMovieIndex);
+        playlistPlayer.Play(iMovieIndex);
       }
 
       if (g_Player.Playing && timeMovieStopped > 0)
@@ -1827,9 +1833,9 @@ namespace MediaPortal.GUI.Video
 				// autoplay to play the DVD without user intervention
 				if (System.IO.File.Exists(strDir + @"\VIDEO_TS\VIDEO_TS.IFO"))
 				{
-					PlayListPlayer.Reset();
-					PlayListPlayer.CurrentPlaylist = PlayListType.PLAYLIST_VIDEO_TEMP;
-					PlayList playlist = PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO_TEMP);
+          playlistPlayer.Reset();
+          playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_VIDEO_TEMP;
+          PlayList playlist = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO_TEMP);
 					playlist.Clear();
 
 					PlayListItem newitem = new PlayListItem();
@@ -2433,10 +2439,10 @@ namespace MediaPortal.GUI.Video
 					}
 				}
 			}
-    
-			PlayListPlayer.Reset();
-			PlayListPlayer.CurrentPlaylist = PlayListType.PLAYLIST_VIDEO_TEMP;
-			PlayList playlist = PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO_TEMP);
+
+      playlistPlayer.Reset();
+      playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_VIDEO_TEMP;
+      PlayList playlist = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO_TEMP);
 			playlist.Clear();
 			for (int i = selectedFileIndex - 1; i < movies.Count; ++i)
 			{

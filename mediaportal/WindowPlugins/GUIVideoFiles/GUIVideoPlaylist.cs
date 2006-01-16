@@ -46,6 +46,7 @@ namespace MediaPortal.GUI.Video
 		int								m_nTempPlayListWindow = 0;
 		string						m_strTempPlayListDirectory = String.Empty;
 		VirtualDirectory	m_directory = new VirtualDirectory();
+    PlayListPlayer playlistPlayer;
 		#endregion
 
 		[SkinControlAttribute(20)]			protected GUIButtonControl btnShuffle=null;
@@ -58,6 +59,7 @@ namespace MediaPortal.GUI.Video
 		public GUIVideoPlayList()
 		{
 			GetID = (int)GUIWindow.Window.WINDOW_VIDEO_PLAYLIST;
+      playlistPlayer = PlayListPlayer.SingletonPlayer;
     }
 
 		public override bool Init()
@@ -101,9 +103,9 @@ namespace MediaPortal.GUI.Video
 				previousControlId = btnViewAs.GetID;
 				GUIControl.FocusControl(GetID, previousControlId);
 			}
-			if (g_Player.Playing && PlayListPlayer.CurrentPlaylist == PlayListType.PLAYLIST_VIDEO)
+      if (g_Player.Playing && playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_VIDEO)
 			{
-				int iSong = PlayListPlayer.CurrentSong;
+        int iSong = playlistPlayer.CurrentSong;
 				if (iSong >= 0 && iSong <= facadeView.Count)
 				{
 					GUIControl.SelectItemControl(GetID, facadeView.GetID, iSong);
@@ -134,20 +136,20 @@ namespace MediaPortal.GUI.Video
 			}
 			else if (control==btnPlay)
 			{
-				PlayListPlayer.CurrentPlaylist = PlayListType.PLAYLIST_VIDEO;
-				PlayListPlayer.Reset();
-				PlayListPlayer.Play(facadeView.SelectedListItemIndex);
+        playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_VIDEO;
+        playlistPlayer.Reset();
+        playlistPlayer.Play(facadeView.SelectedListItemIndex);
 				UpdateButtonStates();
 			}
 			else if (control==btnNext)
 			{
-				PlayListPlayer.CurrentPlaylist = PlayListType.PLAYLIST_VIDEO;
+        playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_VIDEO;
 				GUIVideoFiles.PlayMovieFromPlayList(true);
 			}
 			else if (control==btnPrevious)
 			{
-				PlayListPlayer.CurrentPlaylist = PlayListType.PLAYLIST_VIDEO;
-				PlayListPlayer.PlayPrevious();
+        playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_VIDEO;
+        playlistPlayer.PlayPrevious();
 			}
 		}
 
@@ -197,7 +199,7 @@ namespace MediaPortal.GUI.Video
 			{
 				btnClear.Disabled=false;
 				btnPlay.Disabled=false;
-				if (g_Player.Playing && PlayListPlayer.CurrentPlaylist == PlayListType.PLAYLIST_VIDEO)
+        if (g_Player.Playing && playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_VIDEO)
 				{
 					btnNext.Disabled=false;
 					btnPrevious.Disabled=false;
@@ -234,11 +236,11 @@ namespace MediaPortal.GUI.Video
 
 			ArrayList itemlist = new ArrayList();
 
-			PlayList playlist = PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO);
+      PlayList playlist = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO);
 			/* copy playlist from general playlist*/
 			int iCurrentSong = -1;
-			if (PlayListPlayer.CurrentPlaylist == PlayListType.PLAYLIST_VIDEO)
-				iCurrentSong = PlayListPlayer.CurrentSong;
+      if (playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_VIDEO)
+        iCurrentSong = playlistPlayer.CurrentSong;
 
 			string strFileName;
 			for (int i = 0; i < playlist.Count; ++i)
@@ -270,15 +272,15 @@ namespace MediaPortal.GUI.Video
 			iCurrentSong = 0;
 			strFileName = String.Empty;
 			//	Search current playlist item
-			if ((m_nTempPlayListWindow == GetID && m_strTempPlayListDirectory.IndexOf(currentFolder) >= 0 && g_Player.Playing 
-				&& PlayListPlayer.CurrentPlaylist == PlayListType.PLAYLIST_VIDEO_TEMP) 
-				|| (GetID == (int)GUIWindow.Window.WINDOW_VIDEO_PLAYLIST && PlayListPlayer.CurrentPlaylist == PlayListType.PLAYLIST_VIDEO 
+			if ((m_nTempPlayListWindow == GetID && m_strTempPlayListDirectory.IndexOf(currentFolder) >= 0 && g_Player.Playing
+        && playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_VIDEO_TEMP)
+        || (GetID == (int)GUIWindow.Window.WINDOW_VIDEO_PLAYLIST && playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_VIDEO 
 				&& g_Player.Playing))
 			{
-				iCurrentSong = PlayListPlayer.CurrentSong;
+        iCurrentSong = playlistPlayer.CurrentSong;
 				if (iCurrentSong >= 0)
 				{
-					playlist = PlayListPlayer.GetPlaylist(PlayListPlayer.CurrentPlaylist);
+          playlist = playlistPlayer.GetPlaylist(playlistPlayer.CurrentPlaylistType);
 					if (iCurrentSong < playlist.Count)
 					{
 						PlayListItem item = playlist[iCurrentSong];
@@ -338,9 +340,9 @@ namespace MediaPortal.GUI.Video
 		{
       currentSelectedItem = -1;
 			ClearFileItems();
-			PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO).Clear();
-			if (PlayListPlayer.CurrentPlaylist == PlayListType.PLAYLIST_VIDEO)
-				PlayListPlayer.Reset();
+      playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO).Clear();
+      if (playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_VIDEO)
+        playlistPlayer.Reset();
 			LoadDirectory(String.Empty);
 			UpdateButtonStates();
 			GUIControl.FocusControl(GetID, btnViewAs.GetID);
@@ -417,10 +419,10 @@ namespace MediaPortal.GUI.Video
 			GUIListItem item = facadeView.SelectedListItem;
 			if (item == null) return;
 			if (item.IsFolder) return;
-      
-			PlayListPlayer.CurrentPlaylist = PlayListType.PLAYLIST_VIDEO;
-			PlayListPlayer.Reset();
-			PlayListPlayer.Play(itemIndex);
+
+      playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_VIDEO;
+      playlistPlayer.Reset();
+      playlistPlayer.Play(itemIndex);
 		}
     
 		protected override void OnQueueItem(int itemIndex)
@@ -433,8 +435,8 @@ namespace MediaPortal.GUI.Video
 			GUIListItem listItem = facadeView[itemIndex];
       if (listItem==null) return;
 			string songFileName = listItem.Path;
-			
-      PlayListPlayer.Remove(PlayListType.PLAYLIST_VIDEO,songFileName);
+
+      playlistPlayer.Remove(PlayListType.PLAYLIST_VIDEO, songFileName);
 
 			LoadDirectory(currentFolder);
 			UpdateButtonStates();
@@ -446,21 +448,21 @@ namespace MediaPortal.GUI.Video
 		{
       currentSelectedItem = facadeView.SelectedListItemIndex;
 			ClearFileItems();
-			PlayList playlist = PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO);
+      PlayList playlist = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO);
 	
       if (playlist.Count <= 0) return;
       string currentSongFileName = String.Empty;
-      if (PlayListPlayer.CurrentSong >= 0)
+      if (playlistPlayer.CurrentSong >= 0)
       {
-        if (g_Player.Playing && PlayListPlayer.CurrentPlaylist == PlayListType.PLAYLIST_VIDEO)
+        if (g_Player.Playing && playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_VIDEO)
         {
-          PlayListItem item = playlist[PlayListPlayer.CurrentSong];
+          PlayListItem item = playlist[playlistPlayer.CurrentSong];
           currentSongFileName = item.FileName;
         }
       }
 			playlist.Shuffle();
-			if (PlayListPlayer.CurrentPlaylist == PlayListType.PLAYLIST_VIDEO)
-				PlayListPlayer.Reset();
+      if (playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_VIDEO)
+        playlistPlayer.Reset();
 
 			if (currentSongFileName.Length > 0) 
 			{
@@ -468,7 +470,7 @@ namespace MediaPortal.GUI.Video
 				{
 					PlayListItem playListItem = playlist[i];
 					if (playListItem.FileName == currentSongFileName)
-						PlayListPlayer.CurrentSong = i;
+            playlistPlayer.CurrentSong = i;
 				}
 			}
 
@@ -512,9 +514,9 @@ namespace MediaPortal.GUI.Video
 		}
     void SelectCurrentVideo()
     {
-      if (g_Player.Playing && PlayListPlayer.CurrentPlaylist == PlayListType.PLAYLIST_VIDEO)
+      if (g_Player.Playing && playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_VIDEO)
       {
-        int currentSongIndex = PlayListPlayer.CurrentSong;
+        int currentSongIndex = playlistPlayer.CurrentSong;
         if (currentSongIndex >= 0 && currentSongIndex <= facadeView.Count)
         {
           GUIControl.SelectItemControl(GetID, facadeView.GetID, currentSongIndex);

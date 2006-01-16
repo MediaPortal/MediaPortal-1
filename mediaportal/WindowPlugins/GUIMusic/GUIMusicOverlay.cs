@@ -69,9 +69,12 @@ namespace MediaPortal.GUI.Music
       , CONTROL_RW_LOGO  =8
     }
 
+    PlayListPlayer playlistPlayer;
+
     public GUIMusicOverlay()
 		{
 			GetID=(int)GUIWindow.Window.WINDOW_MUSIC_OVERLAY;
+      playlistPlayer = PlayListPlayer.SingletonPlayer;
     }
 
     public override bool Init()
@@ -507,7 +510,7 @@ namespace MediaPortal.GUI.Music
       }
 
       //--------- next file ---------------------
-      strFile=Playlists.PlayListPlayer.GetNext();
+      strFile = playlistPlayer.GetNext();
       if (strFile==String.Empty) 
       {
         return;
@@ -628,7 +631,7 @@ namespace MediaPortal.GUI.Music
         // if all fail check playlist for information
         if (tag==null)
         {
-          PlayListItem item = PlayListPlayer.GetCurrentItem();
+          PlayListItem item = playlistPlayer.GetCurrentItem();
           if (item != null) tag = (MusicTag)item.MusicTag;
         }        
       }// if (!bFound )

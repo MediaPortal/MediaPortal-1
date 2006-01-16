@@ -132,13 +132,14 @@ namespace MediaPortal.GUI.Video
     bool NotifyDialogVisible = false;
     DateTime _volumeTimer = DateTime.MinValue;
     VMR9OSD m_vmr9OSD = new VMR9OSD();
+    PlayListPlayer playlistPlayer;
 
     FullScreenState screenState = new FullScreenState();
 
     public GUIVideoFullscreen()
     {
       GetID = (int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO;
-
+      playlistPlayer = PlayListPlayer.SingletonPlayer;
     }
 
     public override bool Init()
@@ -1178,8 +1179,8 @@ namespace MediaPortal.GUI.Video
       }
       if (!g_Player.Playing)
       {
-        if (PlayListPlayer.CurrentPlaylist == PlayListType.PLAYLIST_MUSIC ||
-          PlayListPlayer.CurrentPlaylist == PlayListType.PLAYLIST_MUSIC_TEMP)
+        if (playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC ||
+          playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC_TEMP)
         {
           return;
         }

@@ -154,34 +154,34 @@ namespace MediaPortal.GUI.Music
       }
       else if (control == btnPlay)
       {
-        PlayListPlayer.CurrentPlaylist = PlayListType.PLAYLIST_MUSIC;
-        PlayListPlayer.Reset();
+        playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC;
+        playlistPlayer.Reset();
         if (PShuffleOn == true)
         {
           for (int i = 0; i < facadeView.SelectedListItemIndex; i++)
           {
-            PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Remove(facadeView[i].Path);
+            playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Remove(facadeView[i].Path);
           }
           UpdatePartyShuffle();
           //LoadDirectory(String.Empty);
-          PlayListPlayer.Play(0);
+          playlistPlayer.Play(0);
         }
         else
         {
-          PlayListPlayer.Play(facadeView.SelectedListItemIndex);
+          playlistPlayer.Play(facadeView.SelectedListItemIndex);
         }
         UpdateButtonStates();
       }
       else if (control == btnNext)
       {
-        PlayListPlayer.CurrentPlaylist = PlayListType.PLAYLIST_MUSIC;
-        PlayListPlayer.PlayNext();
+        playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC;
+        playlistPlayer.PlayNext();
         SelectCurrentPlayingSong();
       }
       else if (control == btnPrevious)
       {
-        PlayListPlayer.CurrentPlaylist = PlayListType.PLAYLIST_MUSIC;
-        PlayListPlayer.PlayPrevious();
+        playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC;
+        playlistPlayer.PlayPrevious();
         SelectCurrentPlayingSong();
       }
       else if (control == btnPartyShuffle)
@@ -194,9 +194,9 @@ namespace MediaPortal.GUI.Music
           LoadDirectory(String.Empty);
           GUIListItem item = facadeView[0];
           if (item != null) item.Shaded = false;
-          PlayListPlayer.CurrentPlaylist = PlayListType.PLAYLIST_MUSIC;
-          PlayListPlayer.Reset();
-          PlayListPlayer.Play(0);
+          playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC;
+          playlistPlayer.Reset();
+          playlistPlayer.Play(0);
         }
         else PShuffleOn = false;
 
@@ -259,7 +259,7 @@ namespace MediaPortal.GUI.Music
       {
         btnClear.Disabled = false;
         btnPlay.Disabled = false;
-        if (g_Player.Playing && PlayListPlayer.CurrentPlaylist == PlayListType.PLAYLIST_MUSIC)
+        if (g_Player.Playing && playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC)
         {
           btnNext.Disabled = false;
           btnPrevious.Disabled = false;
@@ -303,11 +303,11 @@ namespace MediaPortal.GUI.Music
       //check if party shuffle is on
       if (PShuffleOn == true)
       {
-        if (g_Player.Playing && PlayListPlayer.CurrentPlaylist == PlayListType.PLAYLIST_MUSIC)
+        if (g_Player.Playing && playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC)
         {
           for (int i = 1; i < facadeView.SelectedListItemIndex; i++)
           {
-            PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Remove(facadeView[i].Path);
+            playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Remove(facadeView[i].Path);
           }
           //LoadDirectory(String.Empty);
           UpdatePartyShuffle();
@@ -317,23 +317,23 @@ namespace MediaPortal.GUI.Music
         {
           for (int i = 0; i < facadeView.SelectedListItemIndex; i++)
           {
-            PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Remove(facadeView[i].Path);
+            playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Remove(facadeView[i].Path);
           }
           //LoadDirectory(String.Empty);
           UpdatePartyShuffle();
           //LoadDirectory(String.Empty);
-          PlayListPlayer.CurrentPlaylist = PlayListType.PLAYLIST_MUSIC;
-          PlayListPlayer.Reset();
-          PlayListPlayer.Play(0);
+          playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC;
+          playlistPlayer.Reset();
+          playlistPlayer.Play(0);
         }
       }
       //otherwise if party shuffle is not on, do this...
       else
       {
         string strPath = item.Path;
-        PlayListPlayer.CurrentPlaylist = PlayListType.PLAYLIST_MUSIC;
-        PlayListPlayer.Reset();
-        PlayListPlayer.Play(iItem);
+        playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC;
+        playlistPlayer.Reset();
+        playlistPlayer.Play(iItem);
         SelectCurrentPlayingSong();
       }
       //ended changes
@@ -368,23 +368,23 @@ namespace MediaPortal.GUI.Music
       switch (message.Message)
       {
         case GUIMessage.MessageType.GUI_MSG_PLAYBACK_ENDED:
-          if (PlayListPlayer.CurrentPlaylist == PlayListType.PLAYLIST_MUSIC && PShuffleOn == true)
+          if (playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC && PShuffleOn == true)
           {
-            PlayList pl = PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
+            PlayList pl = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
             pl.Remove(pl[0].FileName);
             UpdatePartyShuffle();
-            PlayListPlayer.CurrentSong = 0;
+            playlistPlayer.CurrentSong = 0;
           }
           break;
 
         //special case for when the next button is pressed - stopping the prev song does not cause a Playback_Ended event
         case GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED:
-          if (PlayListPlayer.CurrentPlaylist == PlayListType.PLAYLIST_MUSIC && PShuffleOn == true && PlayListPlayer.CurrentSong != 0)
+          if (playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC && PShuffleOn == true && playlistPlayer.CurrentSong != 0)
           {
-            PlayList pl = PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
+            PlayList pl = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
             pl.Remove(pl[0].FileName);
             UpdatePartyShuffle();
-            PlayListPlayer.CurrentSong = 0;
+            playlistPlayer.CurrentSong = 0;
             LoadDirectory(String.Empty);
           }
           break;
@@ -438,11 +438,11 @@ namespace MediaPortal.GUI.Music
 
       List<GUIListItem> itemlist = new List<GUIListItem>();
 
-      PlayList playlist = PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
+      PlayList playlist = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
       /* copy playlist from general playlist*/
       int iCurrentSong = -1;
-      if (PlayListPlayer.CurrentPlaylist == PlayListType.PLAYLIST_MUSIC)
-        iCurrentSong = PlayListPlayer.CurrentSong;
+      if (playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC)
+        iCurrentSong = playlistPlayer.CurrentSong;
 
       string strFileName;
       for (int i = 0; i < playlist.Count; ++i)
@@ -481,14 +481,14 @@ namespace MediaPortal.GUI.Music
       strFileName = String.Empty;
       //	Search current playlist item
       if ((m_nTempPlayListWindow == GetID && m_strTempPlayListDirectory.IndexOf(m_strDirectory) >= 0 && g_Player.Playing
-        && PlayListPlayer.CurrentPlaylist == PlayListType.PLAYLIST_MUSIC_TEMP)
-        || (GetID == (int)GUIWindow.Window.WINDOW_MUSIC_PLAYLIST && PlayListPlayer.CurrentPlaylist == PlayListType.PLAYLIST_MUSIC
+        && playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC_TEMP)
+        || (GetID == (int)GUIWindow.Window.WINDOW_MUSIC_PLAYLIST && playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC
         && g_Player.Playing))
       {
-        iCurrentSong = PlayListPlayer.CurrentSong;
+        iCurrentSong = playlistPlayer.CurrentSong;
         if (iCurrentSong >= 0)
         {
-          playlist = PlayListPlayer.GetPlaylist(PlayListPlayer.CurrentPlaylist);
+          playlist = playlistPlayer.GetPlaylist(playlistPlayer.CurrentPlaylistType);
           if (iCurrentSong < playlist.Count)
           {
             PlayListItem item = playlist[iCurrentSong];
@@ -555,18 +555,18 @@ namespace MediaPortal.GUI.Music
       //if party shuffle
       if (PShuffleOn == true)
       {
-        if (g_Player.Playing && PlayListPlayer.CurrentPlaylist == PlayListType.PLAYLIST_MUSIC)
+        if (g_Player.Playing && playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC)
         {
           for (int i = 1; i < facadeView.Count; i++)
           {
-            PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Remove(facadeView[i].Path);
+            playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Remove(facadeView[i].Path);
           }
         }
         else
         {
           for (int i = 0; i < facadeView.Count; i++)
           {
-            PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Remove(facadeView[i].Path);
+            playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Remove(facadeView[i].Path);
           }
         }
         //LoadDirectory(String.Empty);
@@ -577,9 +577,9 @@ namespace MediaPortal.GUI.Music
       else
       {
         ClearFileItems();
-        PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Clear();
-        if (PlayListPlayer.CurrentPlaylist == PlayListType.PLAYLIST_MUSIC)
-          PlayListPlayer.Reset();
+        playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Clear();
+        if (playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC)
+          playlistPlayer.Reset();
         LoadDirectory(String.Empty);
         UpdateButtonStates();
         GUIControl.FocusControl(GetID, btnViewAs.GetID);
@@ -591,7 +591,7 @@ namespace MediaPortal.GUI.Music
     void RemovePlayListItem(int iItem)
     {
       //added by Sam
-      if (PShuffleOn == true && g_Player.Playing && PlayListPlayer.CurrentPlaylist == PlayListType.PLAYLIST_MUSIC)
+      if (PShuffleOn == true && g_Player.Playing && playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC)
       {
         if (iItem == 0) return;
       }
@@ -600,7 +600,7 @@ namespace MediaPortal.GUI.Music
       if (pItem == null) return;
       string strFileName = pItem.Path;
 
-      PlayListPlayer.Remove(PlayListType.PLAYLIST_MUSIC, strFileName);
+      playlistPlayer.Remove(PlayListType.PLAYLIST_MUSIC, strFileName);
 
       //added by Sam
       //check if party shuffle is on
@@ -616,21 +616,21 @@ namespace MediaPortal.GUI.Music
     {
 
       ClearFileItems();
-      PlayList playlist = PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
+      PlayList playlist = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
 
       if (playlist.Count <= 0) return;
       string strFileName = String.Empty;
-      if (PlayListPlayer.CurrentSong >= 0)
+      if (playlistPlayer.CurrentSong >= 0)
       {
-        if (g_Player.Playing && PlayListPlayer.CurrentPlaylist == PlayListType.PLAYLIST_MUSIC)
+        if (g_Player.Playing && playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC)
         {
-          PlayListItem item = playlist[PlayListPlayer.CurrentSong];
+          PlayListItem item = playlist[playlistPlayer.CurrentSong];
           strFileName = item.FileName;
         }
       }
       playlist.Shuffle();
-      if (PlayListPlayer.CurrentPlaylist == PlayListType.PLAYLIST_MUSIC)
-        PlayListPlayer.Reset();
+      if (playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC)
+        playlistPlayer.Reset();
 
       if (strFileName.Length > 0)
       {
@@ -638,7 +638,7 @@ namespace MediaPortal.GUI.Music
         {
           PlayListItem item = playlist[i];
           if (item.FileName == strFileName)
-            PlayListPlayer.CurrentSong = i;
+            playlistPlayer.CurrentSong = i;
         }
       }
 
@@ -686,7 +686,7 @@ namespace MediaPortal.GUI.Music
 
     void SelectCurrentPlayingSong()
     {
-      if (g_Player.Playing && PlayListPlayer.CurrentPlaylist == PlayListType.PLAYLIST_MUSIC)
+      if (g_Player.Playing && playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC)
       {
         // delete prev. selected item
         for (int i = 0; i < facadeView.Count; ++i)
@@ -700,7 +700,7 @@ namespace MediaPortal.GUI.Music
         }
 
         // set current item selected
-        int iSong = PlayListPlayer.CurrentSong;
+        int iSong = playlistPlayer.CurrentSong;
         if (iSong >= 0 && iSong <= facadeView.Count)
         {
           GUIControl.SelectItemControl(GetID, facadeView.GetID, iSong);
@@ -714,7 +714,7 @@ namespace MediaPortal.GUI.Music
     void AddRandomSongToPlaylist(ref Song song)
     {
       //check duplication
-      PlayList playlist = PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
+      PlayList playlist = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
       for (int i = 0; i < playlist.Count; i++)
       {
         PlayListItem item = playlist[i];
@@ -740,7 +740,7 @@ namespace MediaPortal.GUI.Music
 
       playlistItem.MusicTag = tag;
 
-      PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Add(playlistItem);
+      playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Add(playlistItem);
 
     }
 
@@ -749,7 +749,7 @@ namespace MediaPortal.GUI.Music
     {
       MusicDatabase dbs = new MusicDatabase();
 
-      PlayList list = PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
+      PlayList list = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
       if (list.Count >= MaxNumPShuffleSongPredict) return;
 
       int i;

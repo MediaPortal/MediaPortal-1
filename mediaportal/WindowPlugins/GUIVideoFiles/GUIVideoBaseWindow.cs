@@ -65,10 +65,12 @@ namespace MediaPortal.GUI.Video
     protected GUIButtonControl btnViews = null;
     [SkinControlAttribute(6)]
     protected GUIButtonControl btnPlayDVD = null;
+    protected PlayListPlayer playlistPlayer;
 
     public GUIVideoBaseWindow()
     {
       handler = new VideoViewHandler();
+      playlistPlayer = PlayListPlayer.SingletonPlayer;
     }
 
     protected virtual bool AllowView(View view)
@@ -591,7 +593,7 @@ namespace MediaPortal.GUI.Video
           playlistItem.FileName = pItem.Path;
           playlistItem.Description = pItem.Label;
           playlistItem.Duration = pItem.Duration;
-          PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO).Add(playlistItem);
+          playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO).Add(playlistItem);
         }
       }
     }

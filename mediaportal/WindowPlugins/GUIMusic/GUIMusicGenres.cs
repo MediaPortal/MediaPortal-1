@@ -63,6 +63,7 @@ namespace MediaPortal.GUI.Music
 
     [SkinControlAttribute(9)]
     protected GUIButtonControl btnSearch = null;
+    PlayListPlayer playlistPlayer;
     #endregion
 
     public GUIMusicGenres()
@@ -73,6 +74,7 @@ namespace MediaPortal.GUI.Music
 
       m_directory.AddDrives();
       m_directory.SetExtensions(Utils.AudioExtensions);
+      playlistPlayer = PlayListPlayer.SingletonPlayer;
     }
 
     #region overrides
@@ -364,8 +366,8 @@ namespace MediaPortal.GUI.Music
         // play item
         //play and add current directory to temporary playlist
         int nFolderCount = 0;
-        PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC_TEMP).Clear();
-        PlayListPlayer.Reset();
+        playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC_TEMP).Clear();
+        playlistPlayer.Reset();
         for (int i = 0; i < (int)facadeView.Count; i++)
         {
           GUIListItem pItem = facadeView[i];
@@ -383,15 +385,15 @@ namespace MediaPortal.GUI.Music
           if (tag != null) iDuration = tag.Duration;
           playlistItem.Duration = iDuration;
           playlistItem.MusicTag = tag;
-          PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC_TEMP).Add(playlistItem);
+          playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC_TEMP).Add(playlistItem);
         }
 
         //	Save current window and directory to know where the selected item was
         MusicState.TempPlaylistWindow = GetID;
         MusicState.TempPlaylistDirectory = m_strDirectory;
 
-        PlayListPlayer.CurrentPlaylist = PlayListType.PLAYLIST_MUSIC_TEMP;
-        PlayListPlayer.Play(iItem - nFolderCount);
+        playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC_TEMP;
+        playlistPlayer.Play(iItem - nFolderCount);
       }
     }
 
@@ -459,11 +461,11 @@ namespace MediaPortal.GUI.Music
 
       //move to next item and start playing
       GUIControl.SelectItemControl(GetID, facadeView.GetID, iItem + 1);
-      if (PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Count > 0 && !g_Player.Playing)
+      if (playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Count > 0 && !g_Player.Playing)
       {
-        PlayListPlayer.Reset();
-        PlayListPlayer.CurrentPlaylist = PlayListType.PLAYLIST_MUSIC;
-        PlayListPlayer.Play(0);
+        playlistPlayer.Reset();
+        playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC;
+        playlistPlayer.Play(0);
       }
     }
 
@@ -523,7 +525,7 @@ namespace MediaPortal.GUI.Music
         tag.Year = song.Year;
         playlistItem.MusicTag = tag;
 
-        PlayListPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Add(playlistItem);
+        playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Add(playlistItem);
       }
     }
 
