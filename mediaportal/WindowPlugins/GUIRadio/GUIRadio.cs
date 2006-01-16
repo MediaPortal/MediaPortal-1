@@ -93,6 +93,7 @@ namespace MediaPortal.GUI.Radio
     {
       GetID = (int)GUIWindow.Window.WINDOW_RADIO;
 
+      playlistPlayer = PlayListPlayer.SingletonPlayer;
       LoadSettings();
     }
 
