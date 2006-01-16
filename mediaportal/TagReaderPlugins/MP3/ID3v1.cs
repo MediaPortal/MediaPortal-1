@@ -131,7 +131,7 @@ namespace id3
 			BinaryReader reader = new BinaryReader(src);
 
 			// check for ID3v1 tag
-			Encoding encoding = Encoding.GetEncoding(1252); // Should be ASCII
+      Encoding encoding = Encoding.Default;// Encoding.GetEncoding(1252); // Should be ASCII
 			reader.BaseStream.Seek(-128, SeekOrigin.End);
 
 			byte[] idTag = new byte[3];

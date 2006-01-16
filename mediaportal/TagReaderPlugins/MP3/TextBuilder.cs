@@ -98,7 +98,7 @@ namespace id3
 			}
 			if(count > 0)
 			{
-				Encoding encoding = Encoding.GetEncoding(1252); // Should be ASCII
+        Encoding encoding = Encoding.Default;// Encoding.GetEncoding(1252); // Should be ASCII
 				text = encoding.GetString(frame,index,count);
 				index += count; // add the readed bytes
 			}
@@ -185,7 +185,7 @@ namespace id3
 
 		public static string ReadASCIIEnd(byte[] frame, int index)
 		{
-			Encoding encoding = Encoding.GetEncoding(1252); // Should be ASCII
+      Encoding encoding = Encoding.Default;// Encoding.GetEncoding(1252); // Should be ASCII
 			return encoding.GetString(frame,index,frame.Length-index);
 		}
 
@@ -282,7 +282,7 @@ namespace id3
 		{
 			MemoryStream buffer = new MemoryStream();
 			BinaryWriter writer = new BinaryWriter(buffer);
-			Encoding encoding = Encoding.GetEncoding(1252); // Should be ASCII
+      Encoding encoding = Encoding.Default;//Encoding.GetEncoding(1252); // Should be ASCII
 			writer.Write(encoding.GetBytes(text));
 			writer.Write((byte)0); //EOL
 			byte[] frame = new byte[buffer.Length];
@@ -350,7 +350,7 @@ namespace id3
 			{
 				return buffer.GetBuffer();
 			}
-			Encoding encoding = Encoding.GetEncoding(1252); // Should be ASCII
+      Encoding encoding = Encoding.Default;//Encoding.GetEncoding(1252); // Should be ASCII
 			writer.Write(encoding.GetBytes(text));
 			byte[] frame = new byte[buffer.Length];
 			Memory.Copy(buffer.GetBuffer(),frame,(int)buffer.Length);

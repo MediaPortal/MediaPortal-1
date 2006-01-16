@@ -686,7 +686,8 @@ namespace MediaPortal.TV.Recording
 
     IBaseFilter GetFilter(string filterName)
     {
-      if (String.Compare(filterName, "%soundcard%", true) != 0) return null;
+      if (String.Compare(filterName, "%soundcard%", true) !=0) return null;
+      Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  Find audio sound card filter");
       Filters filters = new Filters();
       FilterCollection audioInputs = filters.AudioInputDevices;
 
