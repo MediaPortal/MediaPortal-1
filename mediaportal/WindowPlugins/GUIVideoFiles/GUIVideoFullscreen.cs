@@ -39,7 +39,7 @@ namespace MediaPortal.GUI.Video
   /// <summary>
   /// Summary description for Class1.
   /// </summary>
-  public class GUIVideoFullscreen : GUIWindow
+  public class GUIVideoFullscreen : GUIWindow, IRenderLayer
   {
 
     class FullScreenState
@@ -744,6 +744,7 @@ namespace MediaPortal.GUI.Video
             ScreenStateChanged();
             UpdateGUI();
             needToClearScreen = false;
+            GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Osd);
 
             return true;
           }
@@ -782,6 +783,7 @@ namespace MediaPortal.GUI.Video
               //              m_form.Dispose();
               //            }
               //            m_form=null;
+              GUILayerManager.UnRegisterLayer(this);
             }
             return true;
           }
@@ -1385,6 +1387,19 @@ namespace MediaPortal.GUI.Video
       }
 
       return base.GetControl(iControlId);
+    }
+    #endregion
+
+
+    #region IRenderLayer
+    public bool ShouldRenderLayer()
+    {
+      return true;
+    }
+
+    public void RenderLayer(float timePassed)
+    {
+      Render(timePassed);
     }
     #endregion
   }

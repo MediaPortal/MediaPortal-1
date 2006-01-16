@@ -674,6 +674,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="guilib\GUILayerManager.cs" />
+    <Compile Include="guilib\GUILayerRenderer.cs" />
     <Compile Include="guilib\GUIListControl.cs">
       <SubType>Code</SubType>
     </Compile>

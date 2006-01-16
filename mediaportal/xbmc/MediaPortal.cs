@@ -127,6 +127,7 @@ public class MediaPortalApp : D3DApp, IRender
   DateTime m_updateTimer = DateTime.MinValue;
   int m_iDateLayout;
   static SplashScreen splashScreen;
+  GUILayerRenderer _layerRenderer;
   #endregion
 
   #region imports
@@ -572,7 +573,7 @@ public class MediaPortalApp : D3DApp, IRender
     try
     {
       CreateStateBlock();
-      GUIWindowManager.Render(timePassed);
+      GUILayerManager.Render(timePassed);
       RenderStats();
     }
     catch (Exception ex)
@@ -776,6 +777,7 @@ public class MediaPortalApp : D3DApp, IRender
       Usage.RenderTarget | Usage.QueryPostPixelShaderBlending, ResourceType.Surface,
       Format.A8R8G8B8);
 
+    _layerRenderer = new GUILayerRenderer();
 
   }
 
@@ -856,14 +858,12 @@ public class MediaPortalApp : D3DApp, IRender
       CreateStateBlock();
       GUIGraphicsContext.DX9Device.BeginScene();
 
-      if (!GUIGraphicsContext.BlankScreen)
-      {
-        // ask the window manager to render the current active window
-        GUIWindowManager.Render(timePassed);
-        RenderStats();
+      // ask the layer manager to render all layers
+      GUILayerManager.Render(timePassed);
+      RenderStats();
 
-        GUIFontManager.Present();
-      }
+      GUIFontManager.Present();
+      
       GUIGraphicsContext.DX9Device.EndScene();
       try
       {

@@ -41,7 +41,7 @@ namespace MediaPortal.GUI.Music
   /// <summary>
   /// Summary description for Class1. 
   /// </summary>
-  public class GUIMusicOverlay: GUIOverlayWindow
+  public class GUIMusicOverlay: GUIOverlayWindow, IRenderLayer    
   {
     string m_strFile=String.Empty;
     int                 m_iFrames=0;
@@ -80,6 +80,8 @@ namespace MediaPortal.GUI.Music
     public override bool Init()
     {
       bool bResult=Load (GUIGraphicsContext.Skin+@"\musicOverlay.xml");
+
+      GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.MusicOverlay);
       return bResult;
     }
 
@@ -660,5 +662,17 @@ namespace MediaPortal.GUI.Music
       }
       return tag;
     }
+
+    #region IRenderLayer
+    public bool ShouldRenderLayer()
+    {
+      return DoesPostRender();
+    }
+    public void RenderLayer(float timePassed)
+    {
+      PostRender(timePassed, 2);
+    }
+    #endregion
+
   }
 }
