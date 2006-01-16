@@ -1070,6 +1070,7 @@
     </Compile>
     <Compile Include="PlayList\PlayListItem.cs" />
     <Compile Include="PlayList\PlayListM3uIO.cs" />
+    <Compile Include="PlayList\PlayListPlayer.cs" />
     <Compile Include="PlayList\PlayListPLSIO.cs" />
     <Compile Include="PlayList\PlayListType.cs" />
     <Compile Include="PlayList\PlayListWPLIO.cs" />
