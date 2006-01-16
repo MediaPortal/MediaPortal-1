@@ -701,7 +701,7 @@ namespace MediaPortal.TV.Recording
       if (String.Compare(filterName, "%audioencoder%", true) == 0)
       {
         Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  preferred filter %audioencoder%");
-        string[] audioEncoders = new string[] {"Intervideo Audio Encoder" };
+        string[] audioEncoders = new string[] {"InterVideo Audio Encoder" };
         Filters filters = new Filters();
         FilterCollection audioCodecs = filters.AudioCompressors;
         for (int i = 0; i < audioEncoders.Length; ++i)
@@ -721,7 +721,7 @@ namespace MediaPortal.TV.Recording
       if (String.Compare(filterName, "%videoencoder%", true) == 0)
       {
         Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  preferred filter %videoencoder%");
-        string[] videoEncoders = new string[] {"Intervideo Video Encoder" };
+        string[] videoEncoders = new string[] {"InterVideo Video Encoder" };
         Filters filters = new Filters();
         FilterCollection videoCodecs = filters.VideoCompressors;
         for (int i = 0; i < videoEncoders.Length; ++i)
