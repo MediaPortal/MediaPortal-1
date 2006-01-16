@@ -686,15 +686,75 @@ namespace MediaPortal.TV.Recording
 
     IBaseFilter GetFilter(string filterName)
     {
-      if (String.Compare(filterName, "%soundcard%", true) !=0) return null;
-      Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  Find audio sound card filter");
-      Filters filters = new Filters();
-      FilterCollection audioInputs = filters.AudioInputDevices;
+      if (String.Compare(filterName, "%soundcard%", true) == 0)
+      {
+        Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  Find audio sound card filter");
+        Filters filters = new Filters();
+        FilterCollection audioInputs = filters.AudioInputDevices;
 
-      Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  adding filter <{0}> with moniker <{1}>",audioInputs[0].Name , audioInputs[0].MonikerString);
+        Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  adding filter <{0}> with moniker <{1}>", audioInputs[0].Name, audioInputs[0].MonikerString);
 
-      IBaseFilter audioInputFilter = Marshal.BindToMoniker(audioInputs[0].MonikerString) as IBaseFilter;
-      return audioInputFilter ;
+        IBaseFilter audioInputFilter = Marshal.BindToMoniker(audioInputs[0].MonikerString) as IBaseFilter;
+        return audioInputFilter;
+      }
+
+      if (String.Compare(filterName, "%audioencoder%", true) == 0)
+      {
+        string[] audioEncoders = new string[] {"Intervideo Audio Encoder" };
+        Filters filters = new Filters();
+        FilterCollection audioCodecs = filters.AudioCompressors;
+        for (int i = 0; i < audioEncoders.Length; ++i)
+        {
+          foreach (Filter audioCodec in audioCodecs)
+          {
+            if (String.Compare(audioCodec.Name,audioEncoders[i],true)==0)
+            {
+              Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  adding filter <{0}> with moniker <{1}>", audioCodec.Name, audioCodec.MonikerString);
+              IBaseFilter audioCodecFilter = Marshal.BindToMoniker(audioCodec.MonikerString) as IBaseFilter;
+              return audioCodecFilter;
+            }
+          }
+        }
+      }
+
+      if (String.Compare(filterName, "%videoencoder%", true) == 0)
+      {
+        string[] videoEncoders = new string[] {"Intervideo Video Encoder" };
+        Filters filters = new Filters();
+        FilterCollection videoCodecs = filters.VideoCompressors;
+        for (int i = 0; i < videoEncoders.Length; ++i)
+        {
+          foreach (Filter videoCodec in videoCodecs)
+          {
+            if (String.Compare(videoCodec.Name, videoEncoders[i], true) == 0)
+            {
+              Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  adding filter <{0}> with moniker <{1}>", videoCodec.Name, videoCodec.MonikerString);
+              IBaseFilter videoCodecFilter = Marshal.BindToMoniker(videoCodec.MonikerString) as IBaseFilter;
+              return videoCodecFilter;
+            }
+          }
+        }
+      }
+
+      if (String.Compare(filterName, "%mpegmux%", true) == 0)
+      {
+        string[] multiplexers = new string[] { "InterVideo Multiplexer" };
+        Filters filters = new Filters();
+        FilterCollection legacyFilters = filters.LegacyFilters;
+        for (int i = 0; i < multiplexers.Length; ++i)
+        {
+          foreach (Filter filter in legacyFilters)
+          {
+            if (String.Compare(filter.Name, multiplexers[i], true) == 0)
+            {
+              Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  adding filter <{0}> with moniker <{1}>", filter.Name, filter.MonikerString);
+              IBaseFilter multiplexerFilter = Marshal.BindToMoniker(filter.MonikerString) as IBaseFilter;
+              return multiplexerFilter;
+            }
+          }
+        }
+      }
+      return null;
     }
     #endregion
 
