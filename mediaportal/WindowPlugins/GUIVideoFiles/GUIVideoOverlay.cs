@@ -31,26 +31,32 @@ namespace MediaPortal.GUI.Video
 	/// <summary>
 	/// Summary description for Class1.
 	/// </summary>
-	public class GUIVideoOverlay : GUIOverlayWindow
+  public class GUIVideoOverlay : GUIOverlayWindow, IRenderLayer
 	{
-		bool m_bFocused=false; 
-    string m_strFile = "";
-		string m_strProgram = "";
-    enum Controls
-    {
-			CONTROL_VIDEO_RECTANGLE = 0
-			,CONTROL_VIDEO_WINDOW=1
-		  ,CONTROL_PLAYTIME = 2
-      , CONTROL_PLAY_LOGO = 3
-      , CONTROL_PAUSE_LOGO = 4
-      , CONTROL_INFO = 5
-      , CONTROL_BIG_PLAYTIME = 6
-      , CONTROL_FF_LOGO = 7
-      , CONTROL_RW_LOGO = 8
-    };
+		bool _isFocused=false; 
+    string _fileName = "";
+		string _program = "";
 
+    [SkinControlAttribute(0)]
+    protected GUIImage _videoRectangle = null;
+    [SkinControlAttribute(1)]
+    protected GUIVideoControl _videoWindow = null;
+    [SkinControlAttribute(2)]
+    protected GUILabelControl _labelPlayTime = null;
+    [SkinControlAttribute(3)]
+    protected GUIImage _imagePlayLogo = null;
+    [SkinControlAttribute(4)]
+    protected GUIImage _imagePauseLogo = null;
+    [SkinControlAttribute(5)]
+    protected GUIFadeLabel _labelInfo= null;
+    [SkinControlAttribute(6)]
+    protected GUIImage _labelBigPlayTime = null;
+    [SkinControlAttribute(7)]
+    protected GUIImage _imageFastForward = null;
+    [SkinControlAttribute(8)]
+    protected GUIImage _imageRewind = null;
     
-		string m_strThumb="";
+		string _thumbLogo="";
 		public GUIVideoOverlay()
 		{
 			GetID = (int)GUIWindow.Window.WINDOW_VIDEO_OVERLAY;
@@ -58,9 +64,10 @@ namespace MediaPortal.GUI.Video
 
     public override bool Init()
     {
-      bool bResult = Load(GUIGraphicsContext.Skin + @"\videoOverlay.xml");
+      bool result = Load(GUIGraphicsContext.Skin + @"\videoOverlay.xml");
       GetID = (int)GUIWindow.Window.WINDOW_VIDEO_OVERLAY;
-      return bResult;
+      GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.VideoOverlay);
+      return result;
     }
 
     public override bool SupportsDelayedLoad
@@ -81,31 +88,31 @@ namespace MediaPortal.GUI.Video
     {
       if (!g_Player.Playing) 
       {
-        m_strFile = String.Empty;
+        _fileName = String.Empty;
         return false;
       }
 			if ( (g_Player.IsRadio || g_Player.IsMusic))
       {
-        m_strFile = String.Empty;
+        _fileName = String.Empty;
         return false;
       }
 			if (!g_Player.IsVideo && !g_Player.IsDVD && !g_Player.IsTVRecording && !g_Player.IsTV)       
 			{
-				m_strFile = String.Empty;
+				_fileName = String.Empty;
 				return false;
 			}
 
-      if (g_Player.CurrentFile != m_strFile)
+      if (g_Player.CurrentFile != _fileName)
       {
-        m_strFile = g_Player.CurrentFile;
-        SetCurrentFile(m_strFile);
+        _fileName = g_Player.CurrentFile;
+        SetCurrentFile(_fileName);
       }
 
-			if ( g_Player.IsTV && (m_strProgram!=GUIPropertyManager.GetProperty("#TV.View.title")) && g_Player.IsTimeShifting )
+			if ( g_Player.IsTV && (_program!=GUIPropertyManager.GetProperty("#TV.View.title")) && g_Player.IsTimeShifting )
 			{
-				m_strProgram = GUIPropertyManager.GetProperty("#TV.View.title");
+				_program = GUIPropertyManager.GetProperty("#TV.View.title");
 				GUIPropertyManager.SetProperty("#Play.Current.Title", GUIPropertyManager.GetProperty("#TV.View.channel"));
-				GUIPropertyManager.SetProperty("#Play.Current.Genre", m_strProgram);
+				GUIPropertyManager.SetProperty("#Play.Current.Genre", _program);
 				GUIPropertyManager.SetProperty("#Play.Current.Year", GUIPropertyManager.GetProperty("#TV.View.genre"));
 				GUIPropertyManager.SetProperty("#Play.Current.Director", GUIPropertyManager.GetProperty("#TV.View.start")+" - "+GUIPropertyManager.GetProperty("#TV.View.stop"));
 			}
@@ -120,80 +127,51 @@ namespace MediaPortal.GUI.Video
     public override void PostRender(float timePassed,int iLayer)
     {
       if (iLayer != 2) return;
-			if (GUIPropertyManager.GetProperty("#Play.Current.Thumb") != m_strThumb)
+			if (GUIPropertyManager.GetProperty("#Play.Current.Thumb") != _thumbLogo)
 			{
-				m_strFile=g_Player.CurrentFile ;
-				SetCurrentFile(m_strFile);
+				_fileName=g_Player.CurrentFile ;
+				SetCurrentFile(_fileName);
 			}
 
-      int iSpeed = g_Player.Speed;
-			double dPos = g_Player.CurrentPosition;
-      if (dPos < 5d)
+      int speed = g_Player.Speed;
+			double pos = g_Player.CurrentPosition;
+      if (pos < 5d)
       {
-        if (iSpeed < 1)
+        if (speed < 1)
         {
-          iSpeed = 1;
-          g_Player.Speed = iSpeed;
+          speed = 1;
+          g_Player.Speed = speed;
           g_Player.SeekAbsolute(0.0d);
         }
       }
+      if (_imagePlayLogo != null)
+        _imagePlayLogo.Visible = (g_Player.Paused == false);
 
-      HideControl((int)Controls.CONTROL_PLAY_LOGO);
-      HideControl((int)Controls.CONTROL_PAUSE_LOGO);
-      HideControl((int)Controls.CONTROL_FF_LOGO);
-      HideControl((int)Controls.CONTROL_RW_LOGO);
-      if (g_Player.Paused)
-      {
-        ShowControl((int)Controls.CONTROL_PAUSE_LOGO);
-      }
-      else
-      {
-        iSpeed = g_Player.Speed;
-        if (iSpeed > 1)
-        {
-          ShowControl((int)Controls.CONTROL_FF_LOGO);
-        }
-        else if (iSpeed < 0)
-        {
-          ShowControl((int)Controls.CONTROL_RW_LOGO);
-        }
-        else
-        {
-          ShowControl((int)Controls.CONTROL_PLAY_LOGO);
-        }
-      }
+      if (_imagePauseLogo != null)
+        _imagePauseLogo.Visible = false;// (g_Player.Paused == true);
 
-			if (GUIGraphicsContext.ShowBackground)
-			{
-				ShowControl((int)Controls.CONTROL_VIDEO_RECTANGLE);
-			}
-			else
-			{
-				HideControl((int)Controls.CONTROL_VIDEO_RECTANGLE);
-			}
+      if (_imageFastForward != null)
+        _imageFastForward.Visible = false; // (g_Player.Speed>1);
+
+      if (_imageRewind != null)
+        _imageRewind.Visible = false; // (g_Player.Speed<0);
+      
+     
+
+      if (_videoRectangle != null)
+        _videoRectangle.Visible = GUIGraphicsContext.ShowBackground;
       base.Render(timePassed);
     }
 
     
   
-    void ShowControl(int iControl)
-    {
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VISIBLE, GetID, 0, iControl, 0, 0, null);
-      OnMessage(msg);
-    }
-
-    void HideControl(int iControl)
-    {
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_HIDDEN, GetID, 0, iControl, 0, 0, null);
-      OnMessage(msg);
-    }
 
     /// <summary>
     /// Examines the current playing movie and fills in all the #tags for the skin.
     /// For movies it will look in the video database for any IMDB info
     /// For record TV programs it will look in the TVDatabase for recording info 
     /// </summary>
-    /// <param name="strFile">Filename of the current playing movie</param>
+    /// <param name="fileName">Filename of the current playing movie</param>
     /// <remarks>
     /// Function will fill in the following tags for TV programs
     /// #Play.Current.Title, #Play.Current.Plot, #Play.Current.PlotOutline #Play.Current.File, #Play.Current.Thumb, #Play.Current.Year, #Play.Current.Channel,
@@ -202,63 +180,63 @@ namespace MediaPortal.GUI.Video
     /// #Play.Current.Title, #Play.Current.Plot, #Play.Current.PlotOutline #Play.Current.File, #Play.Current.Thumb, #Play.Current.Year
     /// #Play.Current.Director, #cast, #dvdlabel, #imdbnumber, #Play.Current.Plot, #Play.Current.PlotOutline, #rating, #tagline, #votes, #credits
     /// </remarks>
-    void SetCurrentFile(string strFile)
+    void SetCurrentFile(string fileName)
     {
       GUIPropertyManager.RemovePlayerProperties();
-      GUIPropertyManager.SetProperty("#Play.Current.Title", System.IO.Path.GetFileName(strFile));
-      GUIPropertyManager.SetProperty("#Play.Current.File",System.IO.Path.GetFileName(strFile));
+      GUIPropertyManager.SetProperty("#Play.Current.Title", System.IO.Path.GetFileName(fileName));
+      GUIPropertyManager.SetProperty("#Play.Current.File",System.IO.Path.GetFileName(fileName));
       GUIPropertyManager.SetProperty("#Play.Current.Thumb","");
 
       if (g_Player.IsDVD)
       {
         // for dvd's the file is in the form c:\media\movies\the matrix\video_ts\video_ts.ifo
         // first strip the \video_ts\video_ts.ifo
-        string lowPath=strFile.ToLower();
+        string lowPath=fileName.ToLower();
         int index=lowPath.IndexOf("video_ts/");
         if (index < 0) index=lowPath.IndexOf(@"video_ts\");
         if (index >=0)
         {
-          strFile=strFile.Substring(0,index);
-          strFile=Utils.RemoveTrailingSlash(strFile);
+          fileName=fileName.Substring(0,index);
+          fileName=Utils.RemoveTrailingSlash(fileName);
 
           // get the name by stripping the first part : c:\media\movies
-          string strName=strFile;
-          int pos=strFile.LastIndexOfAny( new char[] {'\\','/'} );
-          if (pos>=0 && pos+1 < strFile.Length-1) strName=strFile.Substring(pos+1);
+          string strName=fileName;
+          int pos=fileName.LastIndexOfAny( new char[] {'\\','/'} );
+          if (pos>=0 && pos+1 < fileName.Length-1) strName=fileName.Substring(pos+1);
           GUIPropertyManager.SetProperty("#Play.Current.Title", strName);
           GUIPropertyManager.SetProperty("#Play.Current.File", strName);
 
           // construct full filename as imdb info is stored...
-          strFile+=@"\VIDEO_TS\VIDEO_TS.IFO";
+          fileName+=@"\VIDEO_TS\VIDEO_TS.IFO";
         }
       }
       
 			bool isLive=g_Player.IsTimeShifting;
-      string strExt = System.IO.Path.GetExtension(strFile).ToLower();
-      if (strExt.Equals(".sbe") || strExt.Equals(".dvr-ms") || (strExt.Equals(".ts") && !isLive) )
+      string extension = System.IO.Path.GetExtension(fileName).ToLower();
+      if (extension.Equals(".sbe") || extension.Equals(".dvr-ms") || (extension.Equals(".ts") && !isLive) )
       {
         // this is a recorded movie.
         // check the TVDatabase for the description,genre,title,...
         TVRecorded recording = new TVRecorded();
-        if (TVDatabase.GetRecordedTVByFilename(strFile, ref recording))
+        if (TVDatabase.GetRecordedTVByFilename(fileName, ref recording))
         {
           TimeSpan ts = recording.EndTime - recording.StartTime;
-          string strTime = String.Format("{0} {1} ", 
+          string time = String.Format("{0} {1} ", 
                                 Utils.GetShortDayString(recording.StartTime) , 
                                 Utils.SecondsToHMString((int)ts.TotalSeconds));
           GUIPropertyManager.SetProperty("#Play.Current.Title",recording.Title);
           GUIPropertyManager.SetProperty("#Play.Current.Plot",recording.Title+"\n"+recording.Description);
           GUIPropertyManager.SetProperty("#Play.Current.PlotOutline",recording.Description);
           GUIPropertyManager.SetProperty("#Play.Current.Genre", recording.Genre);
-          GUIPropertyManager.SetProperty("#Play.Current.Year",strTime);
+          GUIPropertyManager.SetProperty("#Play.Current.Year",time);
           GUIPropertyManager.SetProperty("#Play.Current.Channel",recording.Channel);
-          string strLogo = Utils.GetCoverArt(Thumbs.TVChannel,recording.Channel);
-          if (!System.IO.File.Exists(strLogo))
+          string logo = Utils.GetCoverArt(Thumbs.TVChannel,recording.Channel);
+          if (!System.IO.File.Exists(logo))
           {
-            strLogo = "defaultVideoBig.png";
+            logo = "defaultVideoBig.png";
           }
-					GUIPropertyManager.SetProperty("#Play.Current.Thumb", strLogo);
-					m_strThumb=strLogo;
+					GUIPropertyManager.SetProperty("#Play.Current.Thumb", logo);
+					_thumbLogo=logo;
 					return;
         }
       }
@@ -266,9 +244,9 @@ namespace MediaPortal.GUI.Video
 			IMDBMovie movieDetails = new IMDBMovie();
       bool bMovieInfoFound = false;
       
-      if (VideoDatabase.HasMovieInfo(strFile))
+      if (VideoDatabase.HasMovieInfo(fileName))
       {
-        VideoDatabase.GetMovieInfo(strFile, ref movieDetails);
+        VideoDatabase.GetMovieInfo(fileName, ref movieDetails);
         bMovieInfoFound = true;
       }
 		 if (bMovieInfoFound)
@@ -284,25 +262,28 @@ namespace MediaPortal.GUI.Video
 		 {
 			 GUIListItem item = new GUIListItem();
 			 item.IsFolder = false;
-			 item.Path = strFile;
+			 item.Path = fileName;
 			 Utils.SetThumbnails(ref item);
 			 GUIPropertyManager.SetProperty("#Play.Current.Thumb",item.ThumbnailImage);
 		 }
-		 m_strThumb=GUIPropertyManager.GetProperty("#Play.Current.Thumb");
+		 _thumbLogo=GUIPropertyManager.GetProperty("#Play.Current.Thumb");
     }
 		public override bool Focused
 		{
 			get 
 			{ 
-				return m_bFocused;
+				return _isFocused;
 			}
 			set 
 			{
-				m_bFocused=value;
-				if (m_bFocused)
+				_isFocused=value;
+				if (_isFocused)
 				{
-					GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS,GetID, 0,(int)Controls.CONTROL_VIDEO_WINDOW,0,0,null);
-					OnMessage(msg);
+          if (_videoWindow != null)
+          {
+            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, (int)_videoWindow.GetID, 0, 0, null);
+            OnMessage(msg);
+          }
 				}
         else
         {
@@ -326,6 +307,16 @@ namespace MediaPortal.GUI.Video
 			{
 				Focused=false;
 			}
-		}
+    }
+    #region IRenderLayer
+    public bool ShouldRenderLayer()
+    {
+      return DoesPostRender();
+    }
+    public void RenderLayer(float timePassed)
+    {
+      PostRender(timePassed, 2);
+    }
+    #endregion
 	}
 }

@@ -33,7 +33,7 @@ namespace MediaPortal.Dialogs
   /// <summary>
   /// 
   /// </summary>
-  public class GUIDialogSelect : GUIWindow, System.Collections.Generic.IComparer<GUIListItem>
+  public class GUIDialogSelect : GUIWindow, IRenderLayer, System.Collections.Generic.IComparer<GUIListItem>
   {
     enum Controls
     {
@@ -93,19 +93,6 @@ namespace MediaPortal.Dialogs
     }
 
     #region Base Dialog Members
-    public void RenderDlg(float timePassed)
-    {
-
-      lock (this)
-      {
-        // render the parent window
-        //      if (null!=m_pParentWindow) 
-        //        m_pParentWindow.Render();
-
-        // render this dialog box
-        base.Render(timePassed);
-      }
-    }
 
     void Close()
     {
@@ -162,6 +149,7 @@ namespace MediaPortal.Dialogs
             GUIGraphicsContext.Overlay = m_bPrevOverlay;
             FreeResources();
             DeInitControls();
+            GUILayerManager.UnRegisterLayer(this);
 
             return true;
           }
@@ -193,6 +181,7 @@ namespace MediaPortal.Dialogs
             {
               DisableControl(GetID, (int)Controls.CONTROL_BUTTON);
             }
+            GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Dialog);
           }
           return true;
 
@@ -345,32 +334,18 @@ namespace MediaPortal.Dialogs
       return msg.Param1;
     }
 
-    public override void Render(float timePassed)
-    {
-      GUIControl cntlBtn = GetControl((int)Controls.CONTROL_BUTTON);
-      if (m_bButtonEnabled)
-      {
-        cntlBtn.IsVisible = true;
-      }
-      else
-      {
-        cntlBtn.IsVisible = false;
-      }
-      RenderDlg(timePassed);
-    }
-
     void ClearControl(int iWindowId, int iControlId)
     {
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_RESET, iWindowId, 0, iControlId, 0, 0, null);
       OnMessage(msg);
     }
 
-    void AddListItemControl(int iWindowId, int iControlId,GUIListItem item)
+    void AddListItemControl(int iWindowId, int iControlId, GUIListItem item)
     {
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_ADD, iWindowId, 0, iControlId, 0, 0, item);
       OnMessage(msg);
     }
-    void SetControlLabel(int iWindowId, int iControlId,string strText)
+    void SetControlLabel(int iWindowId, int iControlId, string strText)
     {
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, iWindowId, 0, iControlId, 0, 0, null);
       msg.Label = strText;
@@ -397,5 +372,26 @@ namespace MediaPortal.Dialogs
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ENABLED, iWindowId, 0, iControlId, 0, 0, null);
       OnMessage(msg);
     }
+
+    #region IRenderLayer
+    public bool ShouldRenderLayer()
+    {
+      return true;
+    }
+
+    public void RenderLayer(float timePassed)
+    {
+      GUIControl cntlBtn = GetControl((int)Controls.CONTROL_BUTTON);
+      if (m_bButtonEnabled)
+      {
+        cntlBtn.IsVisible = true;
+      }
+      else
+      {
+        cntlBtn.IsVisible = false;
+      }
+      Render(timePassed);
+    }
+    #endregion
   }
 }

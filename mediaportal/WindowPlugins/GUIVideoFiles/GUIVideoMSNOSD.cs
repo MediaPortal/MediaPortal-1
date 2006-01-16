@@ -38,7 +38,7 @@ namespace MediaPortal.GUI.Video
   /// </summary>
   /// 
 
-  public class GUIVideoMSNOSD: GUIWindow
+  public class GUIVideoMSNOSD : GUIWindow, IRenderLayer
   {
     enum Controls 
     {
@@ -75,11 +75,7 @@ namespace MediaPortal.GUI.Video
     {
       get { return false;}
     }    
-
-    public override void Render(float timePassed)
-    {
-			RenderDlg(timePassed);
-    }
+ 
 
     void HideControl (int dwSenderId, int dwControlID) 
     {
@@ -98,19 +94,7 @@ namespace MediaPortal.GUI.Video
       OnMessage(msg); 
     }
 
-		#region Base Dialog Members
-		public void RenderDlg(float timePassed)
-		{
-			// render the parent window
-			if (null!=m_pParentWindow) 
-				m_pParentWindow.Render(timePassed);
-			
-
-			//GUIFontManager.Present();
-			// render this dialog box
-		
-			base.Render(timePassed);
-		}
+		#region Base Dialog Members 
 
 		void Close()
 		{
@@ -141,6 +125,7 @@ namespace MediaPortal.GUI.Video
 			if (TriggerMsg != null)
 				OnMessage(TriggerMsg);
 
+      GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Dialog);
 			m_bRunning=true;
 			while (m_bRunning && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
 			{
@@ -151,7 +136,8 @@ namespace MediaPortal.GUI.Video
         {
           Close();
         }
-			}
+      }
+      GUILayerManager.UnRegisterLayer(this);
 		}
 		#endregion
 
@@ -334,7 +320,19 @@ namespace MediaPortal.GUI.Video
 				string FormattedText=String.Format("{0}: {1}", GUILocalizeStrings.Get(958), GUIMSNPlugin.ContactName);
 				GUIControl.SetControlLabel(GetID,(int)Controls.NrOfUsers, FormattedText);
 			}
-		}
+    }
+
+    #region IRenderLayer
+    public bool ShouldRenderLayer()
+    {
+      return true;
+    }
+
+    public void RenderLayer(float timePassed)
+    {
+      Render(timePassed);
+    }
+    #endregion
   }
 }
   

@@ -828,6 +828,7 @@ namespace MediaPortal.GUI.Library
 		#endregion
 
 		#region rendering
+    /*
 		/// <summary>
     /// PostRender() gives the windows the oppertunity to overlay itself ontop of
     /// the other window(s)
@@ -853,7 +854,7 @@ namespace MediaPortal.GUI.Library
 			}
       GUIPropertyManager.Changed=false;
     }
-
+    */
 		/// <summary>
 		/// This method will call the process() method on the currently active window
 		/// This method gets calle on a regular basis and allows the window todo some stuff
@@ -886,6 +887,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     static public void Render(float timePassed)
     {
+      /*
       // if there's a dialog, then render that
 			if (null!=_routedWindow)
 			{
@@ -893,7 +895,7 @@ namespace MediaPortal.GUI.Library
         // and call postrender
         PostRender(timePassed);
 				return;
-			}
+			}*/
 
       // else render the current active window
       if (_activeWindowIndex >=0 && _activeWindowIndex < _windowCount) 
@@ -907,7 +909,7 @@ namespace MediaPortal.GUI.Library
       }
 
       // and call postrender
-      PostRender(timePassed);
+     // PostRender(timePassed);
     }
 
     /// <summary>

@@ -27,7 +27,7 @@ namespace MediaPortal.Topbar
   /// <summary>
 	/// Summary description for Class1.
 	/// </summary>
-	public class GUITopbarHome : GUIOverlayWindow
+  public class GUITopbarHome : GUIOverlayWindow, IRenderLayer
   {
     const int HIDE_SPEED = 8;
 
@@ -84,6 +84,7 @@ namespace MediaPortal.Topbar
         if ((pos.YPos+pos.control.Height) > m_iTopbarRegion) m_iTopbarRegion=pos.YPos+pos.control.Height;
       }
 
+      GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Topbar1);
       return bResult;
     }
     public override bool SupportsDelayedLoad
@@ -280,5 +281,18 @@ namespace MediaPortal.Topbar
       }
     }
 
-	}
+    #region IRenderLayer
+    public bool ShouldRenderLayer()
+    {
+      return DoesPostRender();
+    }
+    public void RenderLayer(float timePassed)
+    {
+      if (DoesPostRender())
+      {
+        PostRender(timePassed, 1);
+      }
+    }
+    #endregion
+  }
 }

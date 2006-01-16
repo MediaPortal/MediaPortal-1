@@ -33,7 +33,7 @@ namespace MediaPortal.Dialogs
 	/// <summary>
 	/// 
 	/// </summary>
-	public class GUIDialogFile : GUIWindow
+  public class GUIDialogFile : GUIWindow, IRenderLayer
 	{
 		#region Base Dialog Variables
 		bool m_bRunning=false;
@@ -100,20 +100,7 @@ namespace MediaPortal.Dialogs
 			base.OnAction(action);
 		}
 
-		#region Base Dialog Members
-		public void RenderDlg(float timePassed)
-		{
-			lock (this)
-			{
-				// render the parent window
-				if (null!=m_pParentWindow) 
-					m_pParentWindow.Render(timePassed);
-
-				GUIFontManager.Present();
-				// render this dialog box
-				base.Render(timePassed);
-			}
-		}
+		#region Base Dialog Members 
 
 		public void Close()
 		{
@@ -181,7 +168,8 @@ namespace MediaPortal.Dialogs
 					GUIGraphicsContext.Overlay=m_bOverlay;
 					//base.OnMessage(message);
 					FreeResources();
-					DeInitControls();
+          DeInitControls();
+          GUILayerManager.UnRegisterLayer(this);
 					return true;
 				}
 				case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
@@ -189,7 +177,8 @@ namespace MediaPortal.Dialogs
 					m_bDialogActive = true;
 					base.OnMessage(message);
 					GUIGraphicsContext.Overlay=false;
-					m_pParentWindow=GUIWindowManager.GetWindow(m_dwParentWindowID);
+          m_pParentWindow = GUIWindowManager.GetWindow(m_dwParentWindowID);
+          GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Dialog);
 				}
 					return true;
 
@@ -323,12 +312,7 @@ namespace MediaPortal.Dialogs
 		{
 			SetLine (iLine, GUILocalizeStrings.Get(iString) );
 		}
-
-		public override void Render(float timePassed)
-		{
-			RenderDlg(timePassed);
-		}
-    
+ 
 		public void SetPercentage(int iPercentage)
 		{
 			if (prgProgressBar != null) prgProgressBar.Percentage = iPercentage;
@@ -873,6 +857,17 @@ namespace MediaPortal.Dialogs
 			return m_bReload;
 		}
 
+    #region IRenderLayer
+    public bool ShouldRenderLayer()
+    {
+      return true;
+    }
+
+    public void RenderLayer(float timePassed)
+    {
+      Render(timePassed);
+    }
+    #endregion
 	}
 }
 

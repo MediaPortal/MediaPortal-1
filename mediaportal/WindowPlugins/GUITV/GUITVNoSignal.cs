@@ -7,7 +7,7 @@ namespace WindowPlugins.GUITV
 	/// <summary>
 	/// Summary description for GUITVNoSignal.
 	/// </summary>
-	public class GUITVNoSignal : GUIWindow
+	public class GUITVNoSignal : GUIWindow, IRenderLayer
 	{
 		[SkinControlAttribute(102)]			  protected GUILabelControl lblNotify=null;
 		[SkinControlAttribute(1)]			  protected GUIProgressControl progressControl=null;
@@ -51,10 +51,16 @@ namespace WindowPlugins.GUITV
 				notify=value;
 			}
 		}
+    protected override void OnPageDestroy(int new_windowId)
+    {
+      GUILayerManager.UnRegisterLayer(this);
+      base.OnPageDestroy(new_windowId);
+    }
 		protected override void OnPageLoad()
 		{
 			GUIGraphicsContext.IsFullScreenVideo=true;
 
+      GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Osd);
 			base.OnPageLoad ();
 		}
 		public override void OnAction(Action action)
@@ -73,5 +79,16 @@ namespace WindowPlugins.GUITV
 			base.OnAction (action);
 		}
 
+    #region IRenderLayer
+    public bool ShouldRenderLayer()
+    {
+      return true;
+    }
+
+    public void RenderLayer(float timePassed)
+    {
+      Render(timePassed);
+    }
+    #endregion
 	}
 }

@@ -24,39 +24,39 @@ using System.Windows.Forms;
 using MediaPortal.GUI.Library;
 namespace MediaPortal.Dialogs
 {
-	/// <summary>
-	/// 
-	/// </summary>
-	public class GUIDialogProgress : GUIWindow
-	{
-    const int CONTROL_PROGRESS_BAR =20;
+  /// <summary>
+  /// 
+  /// </summary>
+  public class GUIDialogProgress : GUIWindow, IRenderLayer
+  {
+    const int CONTROL_PROGRESS_BAR = 20;
 
     #region Base Dialog Variables
-    bool m_bRunning=false;
-    int m_dwParentWindowID=0;
-    GUIWindow m_pParentWindow=null;
+    bool m_bRunning = false;
+    int m_dwParentWindowID = 0;
+    GUIWindow m_pParentWindow = null;
     #endregion
-    
-    bool m_bCanceled=false;
-    bool m_bOverlay=false;
-    bool m_bShowWaitCursor=false;
+
+    bool m_bCanceled = false;
+    bool m_bOverlay = false;
+    bool m_bShowWaitCursor = false;
     WaitCursor cursor = null;
 
-    
+
     public GUIDialogProgress()
     {
-      GetID=(int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS;
+      GetID = (int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS;
     }
 
     public override bool Init()
     {
-      return Load (GUIGraphicsContext.Skin+@"\dialogProgress.xml");
+      return Load(GUIGraphicsContext.Skin + @"\dialogProgress.xml");
     }
 
     public override bool SupportsDelayedLoad
     {
-      get { return true;}
-    }    
+      get { return true; }
+    }
 
     public override void PreInit()
     {
@@ -65,13 +65,13 @@ namespace MediaPortal.Dialogs
     public bool ShowWaitCursor
     {
       get { return m_bShowWaitCursor; }
-      set { m_bShowWaitCursor = value;}
+      set { m_bShowWaitCursor = value; }
     }
 
 
     public override void OnAction(Action action)
     {
-      if (action.wID == Action.ActionType.ACTION_CLOSE_DIALOG ||action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
+      if (action.wID == Action.ActionType.ACTION_CLOSE_DIALOG || action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
       {
         Close();
         return;
@@ -79,63 +79,50 @@ namespace MediaPortal.Dialogs
       base.OnAction(action);
     }
 
-    #region Base Dialog Members
-    public void RenderDlg(float timePassed)
-		{
-			lock (this)
-			{
-				// render the parent window
-				if (null!=m_pParentWindow) 
-					m_pParentWindow.Render(timePassed);
-
-				GUIFontManager.Present();
-				// render this dialog box
-				base.Render(timePassed);
-			}
-    }
+    #region Base Dialog Members 
 
     public void Close()
-		{
-			GUIWindowManager.IsSwitchingToNewWindow=true;
-			lock (this)
-			{
-				GUIMessage msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,GetID,0,0,0,0,null);
-				OnMessage(msg);
+    {
+      GUIWindowManager.IsSwitchingToNewWindow = true;
+      lock (this)
+      {
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, GetID, 0, 0, 0, 0, null);
+        OnMessage(msg);
 
-				GUIWindowManager.UnRoute();
-				m_pParentWindow=null;
-				m_bRunning=false;
-				GUIGraphicsContext.Overlay=m_bOverlay;
+        GUIWindowManager.UnRoute();
+        m_pParentWindow = null;
+        m_bRunning = false;
+        GUIGraphicsContext.Overlay = m_bOverlay;
         if (m_bShowWaitCursor && (null != cursor))
         {
           cursor.Dispose();
           cursor = null;
         }
       }
-			GUIWindowManager.IsSwitchingToNewWindow=false;
+      GUIWindowManager.IsSwitchingToNewWindow = false;
     }
-    
+
     public void StartModal(int dwParentId)
-		{
-      m_bCanceled=false;
-      m_dwParentWindowID=dwParentId;
-      m_pParentWindow=GUIWindowManager.GetWindow( m_dwParentWindowID);
-      if (null==m_pParentWindow)
+    {
+      m_bCanceled = false;
+      m_dwParentWindowID = dwParentId;
+      m_pParentWindow = GUIWindowManager.GetWindow(m_dwParentWindowID);
+      if (null == m_pParentWindow)
       {
-        m_dwParentWindowID=0;
+        m_dwParentWindowID = 0;
         return;
       }
-			GUIWindowManager.IsSwitchingToNewWindow=true;
+      GUIWindowManager.IsSwitchingToNewWindow = true;
 
-      GUIWindowManager.RouteToWindow( GetID );
+      GUIWindowManager.RouteToWindow(GetID);
 
       // active this window...
-      GUIMessage msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT,GetID,0,0,m_dwParentWindowID,0,null);
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, GetID, 0, 0, m_dwParentWindowID, 0, null);
       OnMessage(msg);
       ShowProgressBar(false);
       SetPercentage(0);
-			m_bRunning=true;
-			GUIWindowManager.IsSwitchingToNewWindow=false;
+      m_bRunning = true;
+      GUIWindowManager.IsSwitchingToNewWindow = false;
       if (m_bShowWaitCursor)
       {
         cursor = new WaitCursor();
@@ -143,19 +130,19 @@ namespace MediaPortal.Dialogs
       }
     }
 
-		public void ContinueModal()
-		{
-			if (m_bCanceled) return;
-			GUIWindowManager.RouteToWindow( GetID );
+    public void ContinueModal()
+    {
+      if (m_bCanceled) return;
+      GUIWindowManager.RouteToWindow(GetID);
 
-			GUIMessage msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT,GetID,0,0,m_dwParentWindowID,0,null);
-			OnMessage(msg);
-			m_bRunning=true;
-		}
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, GetID, 0, 0, m_dwParentWindowID, 0, null);
+      OnMessage(msg);
+      m_bRunning = true;
+    }
 
     public void Progress()
     {
-      if  (m_bRunning)
+      if (m_bRunning)
       {
         GUIWindowManager.Process();
       }
@@ -163,7 +150,7 @@ namespace MediaPortal.Dialogs
 
     public void ProgressKeys()
     {
-      if  (m_bRunning)
+      if (m_bRunning)
       {
         //TODO
         //g_application.FrameMove();
@@ -173,70 +160,71 @@ namespace MediaPortal.Dialogs
 
     public void DoModal(int dwParentId)
     {
-      m_dwParentWindowID=dwParentId;
-      m_pParentWindow=GUIWindowManager.GetWindow( m_dwParentWindowID);
-      if (null==m_pParentWindow)
+      m_dwParentWindowID = dwParentId;
+      m_pParentWindow = GUIWindowManager.GetWindow(m_dwParentWindowID);
+      if (null == m_pParentWindow)
       {
-        m_dwParentWindowID=0;
+        m_dwParentWindowID = 0;
         return;
       }
 
-      GUIWindowManager.RouteToWindow( GetID );
+      GUIWindowManager.RouteToWindow(GetID);
 
       // active this window...
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT,GetID,0,0,m_dwParentWindowID,0,null);
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, GetID, 0, 0, m_dwParentWindowID, 0, null);
       OnMessage(msg);
 
-      m_bRunning=true;
+      m_bRunning = true;
       while (m_bRunning && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
       {
         GUIWindowManager.Process();
       }
     }
     #endregion
-	
+
     public override bool OnMessage(GUIMessage message)
     {
-      switch ( message.Message )
+      switch (message.Message)
       {
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
-        {
-					m_pParentWindow=null;
-					m_bRunning=false;
-          GUIGraphicsContext.Overlay=m_bOverlay;
-				  base.OnMessage(message);
-          FreeResources();
-          DeInitControls();
+          {
+            m_pParentWindow = null;
+            m_bRunning = false;
+            GUIGraphicsContext.Overlay = m_bOverlay;
+            base.OnMessage(message);
+            FreeResources();
+            DeInitControls();
 
-          return true;
-        }
+            GUILayerManager.UnRegisterLayer(this);
+            return true;
+          }
         case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
-
-        {
-          m_bOverlay=GUIGraphicsContext.Overlay;
-          m_bCanceled = false;
-          base.OnMessage(message);
-          GUIGraphicsContext.Overlay=false;
-          m_pParentWindow=GUIWindowManager.GetWindow(m_dwParentWindowID);
-        }
+          {
+            m_bOverlay = GUIGraphicsContext.Overlay;
+            m_bCanceled = false;
+            base.OnMessage(message);
+            GUIGraphicsContext.Overlay = false;
+            m_pParentWindow = GUIWindowManager.GetWindow(m_dwParentWindowID);
+            GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Dialog);
+          }
           return true;
 
         case GUIMessage.MessageType.GUI_MSG_CLICKED:
-        {
-          int iAction=message.Param1;
-          int iControl=message.SenderControlId;
-          if (iControl==10)
           {
-            m_bCanceled=true;
-            return true;
+            int iAction = message.Param1;
+            int iControl = message.SenderControlId;
+            if (iControl == 10)
+            {
+              m_bCanceled = true;
+              return true;
+            }
           }
-        }
-        break;
+          break;
       }
 
-      if (m_pParentWindow!=null)
+      if (m_pParentWindow != null)
       {
-        if (message.TargetWindowId==m_pParentWindow.GetID)
+        if (message.TargetWindowId == m_pParentWindow.GetID)
         {
           return m_pParentWindow.OnMessage(message);
         }
@@ -247,20 +235,20 @@ namespace MediaPortal.Dialogs
 
     public bool IsCanceled
     {
-      get { return m_bCanceled;}
+      get { return m_bCanceled; }
     }
 
-    public void  SetHeading( string strLine)
+    public void SetHeading(string strLine)
     {
-			LoadSkin();
-			AllocResources();
-			InitControls();
+      LoadSkin();
+      AllocResources();
+      InitControls();
 
-      SetLine(1,"");
-      SetLine(2,"");
-      SetLine(3,"");
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0,2,0,0,null);
-      msg.Label=strLine; 
+      SetLine(1, "");
+      SetLine(2, "");
+      SetLine(3, "");
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, 2, 0, 0, null);
+      msg.Label = strLine;
       OnMessage(msg);
 
     }
@@ -268,48 +256,56 @@ namespace MediaPortal.Dialogs
     public void SetHeading(int iString)
     {
 
-      SetHeading (GUILocalizeStrings.Get(iString) );
+      SetHeading(GUILocalizeStrings.Get(iString));
     }
 
     public void SetLine(int iLine, string strLine)
     {
-      if (iLine<1) return;
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0,2+iLine,0,0,null);
-      msg.Label=strLine; 
+      if (iLine < 1) return;
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, 2 + iLine, 0, 0, null);
+      msg.Label = strLine;
       OnMessage(msg);
     }
 
-    public void SetLine(int iLine,int iString)
+    public void SetLine(int iLine, int iString)
     {
-      SetLine (iLine, GUILocalizeStrings.Get(iString) );
+      SetLine(iLine, GUILocalizeStrings.Get(iString));
     }
 
-    public override void Render(float timePassed)
-    {
-      RenderDlg(timePassed);
-    }
-    
+
     public void SetPercentage(int iPercentage)
     {
       //TODO
       GUIProgressControl pControl = (GUIProgressControl)GetControl(CONTROL_PROGRESS_BAR);
-      if (pControl!=null) pControl.Percentage=iPercentage;
+      if (pControl != null) pControl.Percentage = iPercentage;
     }
 
     public void ShowProgressBar(bool bOnOff)
     {
       if (bOnOff)
       {
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VISIBLE,GetID,0, CONTROL_PROGRESS_BAR,0,0,null); 
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VISIBLE, GetID, 0, CONTROL_PROGRESS_BAR, 0, 0, null);
         OnMessage(msg);
-    
+
       }
       else
       {
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_HIDDEN,GetID,0, CONTROL_PROGRESS_BAR,0,0,null); 
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_HIDDEN, GetID, 0, CONTROL_PROGRESS_BAR, 0, 0, null);
         OnMessage(msg);
       }
     }
+
+    #region IRenderLayer
+    public bool ShouldRenderLayer()
+    {
+      return true;
+    }
+
+    public void RenderLayer(float timePassed)
+    {
+      Render(timePassed);
+    }
+    #endregion
   }
 }
 

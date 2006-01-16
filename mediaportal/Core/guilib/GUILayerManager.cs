@@ -6,19 +6,29 @@ namespace MediaPortal.GUI.Library
 {
   public class GUILayerManager
   {
+    public enum LayerType:int
+    {
+      Gui=0,
+      MusicOverlay,
+      VideoOverlay,
+      TvOverlay,
+      Video,
+      TopOverlay,
+      Osd,
+      Topbar1,
+      Topbar2,
+      Dialog
+    }
     // layers:
-    // when in GUI
-    //      [GUI] - [PREVIEW] - [TOPBAR] - [DIALOG] 
-    // when in fullscreen tv
-    //      [VIDEO] - [OSD] - - [TOPBAR] - [DIALOG]
+    //      [GUI] - [PREVIEW] - [VIDEO] - [OSD] - [TOPBAR1] - [TOPBAR2] - [DIALOG]
 
-    const int MAX_LAYERS = 10;
+    const int MAX_LAYERS = 15;
 
     static IRenderLayer[] _layers = new IRenderLayer[MAX_LAYERS];
 
-    static public void RegisterLayer(IRenderLayer renderer, int zOrder)
+    static public void RegisterLayer(IRenderLayer renderer, LayerType zOrder)
     {
-      _layers[zOrder] = renderer;
+      _layers[(int)zOrder] = renderer;
     }
 
     static public void UnRegisterLayer(IRenderLayer renderer)
@@ -33,12 +43,17 @@ namespace MediaPortal.GUI.Library
     }
     static public void Render(float timePassed)
     {
+      if (GUIGraphicsContext.BlankScreen) return;
 
       for (int i = 0; i < MAX_LAYERS; ++i)
       {
         if (_layers[i] !=null)
         {
-          _layers[i].RenderLayer(timePassed);
+          if (_layers[i].ShouldRenderLayer())
+          {
+            _layers[i].RenderLayer(timePassed);
+            GUIFontManager.Present();
+          }
         }
       }
     }

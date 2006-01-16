@@ -223,22 +223,18 @@ namespace MediaPortal.Player
     /// </summary>
     public void Deinit()
     {
-      //lock(this) 
+      GUILayerManager.UnRegisterLayer(this);
+      if (_renderTarget != null)
       {
-        //Log.Write("PlaneScene: deinit()");
-
-        if (_renderTarget != null)
-        {
-          //VMR9 changes the directx 9 render target. Thats why we set it back to what it was
-          GUIGraphicsContext.DX9Device.SetRenderTarget(0, _renderTarget);
-          _renderTarget.Dispose();
-          _renderTarget = null;
-        }
-        if (_vertexBuffer != null)
-        {
-          _vertexBuffer.Dispose();
-          _vertexBuffer = null;
-        }
+        //VMR9 changes the directx 9 render target. Thats why we set it back to what it was
+        GUIGraphicsContext.DX9Device.SetRenderTarget(0, _renderTarget);
+        _renderTarget.Dispose();
+        _renderTarget = null;
+      }
+      if (_vertexBuffer != null)
+      {
+        _vertexBuffer.Dispose();
+        _vertexBuffer = null;
       }
     }
 
@@ -252,6 +248,7 @@ namespace MediaPortal.Player
     {
       //Log.Write("PlaneScene: init()");
       _renderTarget = GUIGraphicsContext.DX9Device.GetRenderTarget(0);
+      GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Video);
     }
 
     /// <summary>
@@ -583,7 +580,6 @@ namespace MediaPortal.Player
         }
         else _renderTexture = false;
 
-        _debugStep = 4;
         //clear screen
         GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, Color.Black, 1.0f, 0);
 
@@ -591,83 +587,10 @@ namespace MediaPortal.Player
         GUIGraphicsContext.DX9Device.BeginScene();
         if (!GUIGraphicsContext.BlankScreen)
         {
-
-          _debugStep = 6;
-          //check if we should render the GUI first and then the video or
-          //first the video and then the GUI
-          bool bRenderGUIFirst = false;
-          if (!GUIGraphicsContext.IsFullScreenVideo)
-          {
-            if (GUIGraphicsContext.ShowBackground)
-            {
-              //when we're looking at the GUI and the video is presented in a video preview window
-              //then first render the GUI
-              //In the other case the video is presented fullscreen. Then we first draw the video
-              //and after that we draw the GUI (like the OSD)
-              bRenderGUIFirst = true;
-            }
-          }
-
-          _debugStep = 7;
-          //render GUI if needed
-          if (bRenderGUIFirst)
-          {
-            if (_renderFrame != null)
-            {
-              _debugStep = 8;
-              _renderFrame.RenderFrame(timePassed);
-              _debugStep = 9;
-            }
-          }
-
-          _debugStep = 10;
-          //Render video texture
-          if (_renderTexture)
-          {
-            _debugStep = 11;
-            GUIFontManager.Present();
-
-            _debugStep = 12;
-            unsafe
-            {
-              if (_textureAddress != 0)
-              {
-                DrawTexture(_textureAddress, _fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, _diffuseColor);
-              }
-            }
-
-            _debugStep = 13;
-          }
-
-          _debugStep = 14;
-          //render GUI if needed
-          if (!bRenderGUIFirst)
-          {
-            if (_renderFrame != null)
-            {
-              _debugStep = 15;
-              _renderFrame.RenderFrame(timePassed);
-              _debugStep = 16;
-            }
-          }
-          _debugStep = 17;
+          _renderFrame.RenderFrame(timePassed);
           GUIFontManager.Present();
-          _debugStep = 18;
-
-          //and present it onscreen
         }
         GUIGraphicsContext.DX9Device.EndScene();
-        _debugStep = 19;
-        /*if (GUIGraphicsContext.DirectXPresentParameters.Windowed)
-        {
-          if (GUIGraphicsContext.DirectXPresentParameters.PresentFlag == PresentFlag.LockableBackBuffer)
-          {
-            using (GraphicsStream strm=backBuffer.LockRectangle(LockFlags.None))
-            {
-            }
-            backBuffer.UnlockRectangle();
-          }
-        }*/
         GUIGraphicsContext.DX9Device.Present();
         _debugStep = 20;
       }
@@ -770,75 +693,14 @@ namespace MediaPortal.Player
 
         if (!GUIGraphicsContext.BlankScreen)
         {
-          //check if we should render the GUI first and then the video or
-          //first the video and then the GUI
-          bool bRenderGUIFirst = false;
-          if (!GUIGraphicsContext.IsFullScreenVideo)
+          if (_renderFrame != null)
           {
-            if (GUIGraphicsContext.ShowBackground)
-            {
-              //when we're looking at the GUI and the video is presented in a video preview window
-              //then first render the GUI
-              //In the other case the video is presented fullscreen. Then we first draw the video
-              //and after that we draw the GUI (like the OSD)
-              bRenderGUIFirst = true;
-            }
+            _debugStep = 8;
+            _renderFrame.RenderFrame(timePassed);
           }
-
-          //render GUI if needed
-          if (bRenderGUIFirst)
-          {
-            if (_renderFrame != null)
-            {
-              _debugStep = 8;
-              _renderFrame.RenderFrame(timePassed);
-            }
-          }
-          _debugStep = 9;
-
-          //Render video texture
-          if (_renderTexture)
-          {
-            _debugStep = 10;
-            GUIFontManager.Present();
-            _debugStep = 11;
-            unsafe
-            {
-              if (_surfaceAdress != 0)
-              {
-                DrawSurface(_surfaceAdress, _fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, _diffuseColor);
-              }
-            }
-          }
-
-          _debugStep = 12;
-          //render GUI if needed
-          if (!bRenderGUIFirst)
-          {
-            if (_renderFrame != null)
-            {
-
-              _debugStep = 13;
-              _renderFrame.RenderFrame(timePassed);
-            }
-          }
-          _debugStep = 14;
           GUIFontManager.Present();
-          //and present it onscreen
         }
-        _debugStep = 15;
         GUIGraphicsContext.DX9Device.EndScene();
-        _debugStep = 16;
-        /*if (GUIGraphicsContext.DirectXPresentParameters.Windowed)
-        {
-          if (GUIGraphicsContext.DirectXPresentParameters.PresentFlag == PresentFlag.LockableBackBuffer)
-          {
-            using (GraphicsStream strm=backBuffer.LockRectangle(LockFlags.None))
-            {
-            }
-            backBuffer.UnlockRectangle();
-          }
-        }*/
         GUIGraphicsContext.DX9Device.Present();
         _debugStep = 17;
       }
@@ -921,6 +783,20 @@ namespace MediaPortal.Player
     #region IRenderLayer members
     public void RenderLayer(float timePassed)
     {
+      //Render video texture
+      if (_renderTexture == false) return;
+      if (_surfaceAdress != 0)
+      {
+        DrawSurface(_surfaceAdress, _fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, _diffuseColor);
+      }
+      if (_textureAddress != 0)
+      {
+        DrawTexture(_textureAddress, _fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, _diffuseColor);
+      }
+    }
+    public bool ShouldRenderLayer()
+    {
+      return true;
     }
     #endregion
   }//public class PlaneScene 

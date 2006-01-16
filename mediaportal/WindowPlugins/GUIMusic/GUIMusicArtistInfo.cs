@@ -36,7 +36,7 @@ namespace MediaPortal.GUI.Music
   /// <summary>
   /// 
   /// </summary>
-  public class GUIMusicArtistInfo : GUIWindow
+  public class GUIMusicArtistInfo : GUIWindow, IRenderLayer
   { 
 		[SkinControlAttribute(20)]		protected GUILabelControl lblArtist=null;
 		[SkinControlAttribute(21)]		protected GUILabelControl lblArtistName=null;
@@ -91,12 +91,6 @@ namespace MediaPortal.GUI.Music
     #region Base Dialog Members
     public void RenderDlg(float timePassed)
     {
-      // render the parent window
-      if (null!=m_pParentWindow) 
-        m_pParentWindow.Render(timePassed);
-
-			GUIFontManager.Present();
-      // render this dialog box
       base.Render(timePassed);
     }
 
@@ -127,11 +121,13 @@ namespace MediaPortal.GUI.Music
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT,GetID,0,0,0,0,null);
       OnMessage(msg);
 
+      GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Dialog);
       m_bRunning=true;
       while (m_bRunning && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
       {
         GUIWindowManager.Process();
       }
+      GUILayerManager.UnRegisterLayer(this);
     }
     #endregion
 	
@@ -392,5 +388,17 @@ namespace MediaPortal.GUI.Music
     {
       get {return m_bRefresh;}
     }
+
+    #region IRenderLayer
+    public bool ShouldRenderLayer()
+    {
+      return true;
+    }
+
+    public void RenderLayer(float timePassed)
+    {
+      Render(timePassed);
+    }
+    #endregion
   }
 }

@@ -11,7 +11,7 @@ namespace MediaPortal.Dialogs
 	/// <summary>
 	/// 
 	/// </summary>
-	public class GUIDialogText: GUIWindow
+  public class GUIDialogText : GUIWindow, IRenderLayer
 	{
 
 		#region Base Dialog Variables
@@ -66,43 +66,6 @@ namespace MediaPortal.Dialogs
 		}
 
 		#region Base Dialog Members
-		public void RenderDlg(float timePassed)
-		{
-			if (GUIGraphicsContext.IsFullScreenVideo)
-			{
-				if (VMR7Util.g_vmr7!=null)
-				{
-					using (Bitmap bmp = new Bitmap(GUIGraphicsContext.Width,GUIGraphicsContext.Height))
-					{
-						using (Graphics g = Graphics.FromImage(bmp))
-						{
-							GUIGraphicsContext.graphics=g;
-
-							// render the parent window
-							if (null!=m_pParentWindow) 
-								m_pParentWindow.Render(timePassed);
-
-							GUIFontManager.Present();
-							// render this dialog box
-							base.Render(timePassed);
-
-							GUIGraphicsContext.graphics=null;
-							VMR7Util.g_vmr7.SaveBitmap(bmp,true,true,1.0f);
-							g.Dispose();
-							bmp.Dispose();
-						}
-					}
-					return;
-				}
-			}
-			// render the parent window
-			if (null!=m_pParentWindow) 
-				m_pParentWindow.Render(timePassed);
-
-			GUIFontManager.Present();
-			// render this dialog box
-			base.Render(timePassed);
-		}
 
 		void Close()
 		{
@@ -166,7 +129,8 @@ namespace MediaPortal.Dialogs
 				{
 					GUIGraphicsContext.Overlay=m_bPrevOverlay;
 					FreeResources();
-					DeInitControls();
+          DeInitControls();
+          GUILayerManager.UnRegisterLayer(this);
 					return true;
 				}
 
@@ -174,7 +138,8 @@ namespace MediaPortal.Dialogs
 				{        
 					m_bPrevOverlay=GUIGraphicsContext.Overlay;
 					base.OnMessage(message);
-					GUIGraphicsContext.Overlay=false;
+          GUIGraphicsContext.Overlay = false;
+          GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Dialog);
 				}
 					return true;
 
@@ -224,10 +189,19 @@ namespace MediaPortal.Dialogs
       imgLogo.Height = size.Height;
       imgLogo.KeepAspectRatio = keepAspectRatio;
       imgLogo.Centered = centered;
+    } 
+
+    #region IRenderLayer
+    public bool ShouldRenderLayer()
+    {
+      return true;
     }
-		public override void Render(float timePassed)
-		{
-			RenderDlg(timePassed);
-		}
+
+    public void RenderLayer(float timePassed)
+    {
+      Render(timePassed);
+    }
+    #endregion
+
 	}
 }

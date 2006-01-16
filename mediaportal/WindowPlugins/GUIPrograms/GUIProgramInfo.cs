@@ -32,7 +32,7 @@ namespace WindowPlugins.GUIPrograms
   /// <summary>
   /// 
   /// </summary>
-  public class GUIFileInfo: GUIWindow
+  public class GUIFileInfo : GUIWindow, IRenderLayer
   {
     #region SkinControls
 
@@ -363,12 +363,14 @@ namespace WindowPlugins.GUIPrograms
       // activate this window...
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, GetID, 0, 0, 0, 0, null);
       OnMessage(msg);
+      GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Dialog);
 
       isRunning = true;
       while (isRunning && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
       {
         GUIWindowManager.Process();
       }
+      GUILayerManager.UnRegisterLayer(this);
     }
 
     void RefreshPicture()
@@ -496,14 +498,21 @@ namespace WindowPlugins.GUIPrograms
 
     public void RenderDlg(float timePassed)
     {
-      // render the parent window
-      if (null != parentWindow)
-        parentWindow.Render(timePassed);
-      GUIFontManager.Present();
-      // render this dialog box
       base.Render(timePassed);
     }
 
-    #endregion 
+    #endregion
+
+    #region IRenderLayer
+    public bool ShouldRenderLayer()
+    {
+      return true;
+    }
+
+    public void RenderLayer(float timePassed)
+    {
+      Render(timePassed);
+    }
+    #endregion
   }
 }

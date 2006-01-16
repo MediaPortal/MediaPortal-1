@@ -929,6 +929,7 @@
     <Compile Include="GUIVideoFiles\GUIVideoTitle.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="GUIVideoFiles\GUIVideoTopOverlay.cs" />
     <Compile Include="GUIVideoFiles\tvDotComParser.cs">
       <SubType>Code</SubType>
     </Compile>

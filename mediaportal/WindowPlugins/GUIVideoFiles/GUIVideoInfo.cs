@@ -35,7 +35,7 @@ namespace MediaPortal.GUI.Video
 	/// <summary>
 	/// 
 	/// </summary>
-	public class GUIVideoInfo : GUIWindow
+  public class GUIVideoInfo : GUIWindow, IRenderLayer
 	{
 		[SkinControlAttribute(2)]		protected GUIButtonControl btnPlay=null;
 		[SkinControlAttribute(3)]		protected GUIToggleButtonControl btnPlot=null;
@@ -92,20 +92,7 @@ namespace MediaPortal.GUI.Video
       base.OnAction(action);
     }
 
-    #region Base Dialog Members
-    public void RenderDlg(float timePassed)
-    {
-      // render the parent window
-			lock (this)
-			{
-				if (null != m_pParentWindow) 
-					m_pParentWindow.Render(timePassed);
-
-				GUIFontManager.Present();
-				// render this dialog box
-				base.Render(timePassed);
-			}
-    }
+    #region Base Dialog Members 
 
     void Close()
 		{
@@ -139,13 +126,14 @@ namespace MediaPortal.GUI.Video
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, GetID, 0, 0, 0, 0, null);
       OnMessage(msg);
 
-
+      GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Dialog);
 			GUIWindowManager.IsSwitchingToNewWindow=false;
       m_bRunning = true;
       while (m_bRunning && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
       {
         GUIWindowManager.Process();
       }
+      GUILayerManager.UnRegisterLayer(this);
     }
     #endregion
 
@@ -387,14 +375,7 @@ namespace MediaPortal.GUI.Video
 			}
 			
     }
-
-    
-    public override void Render(float timePassed)
-    {
-			if (!m_bRunning) return;
-      RenderDlg(timePassed);
-    }
-
+ 
     
     void Refresh()
     {
@@ -490,5 +471,17 @@ namespace MediaPortal.GUI.Video
 				pictureIndex++;
 			}
 		}
+
+    #region IRenderLayer
+    public bool ShouldRenderLayer()
+    {
+      return true;
+    }
+
+    public void RenderLayer(float timePassed)
+    {
+      Render(timePassed);
+    }
+    #endregion
   }
 }

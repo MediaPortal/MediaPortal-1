@@ -32,7 +32,7 @@ namespace MediaPortal.Dialogs
 	/// <summary>
 	/// This Class is a copy of VirtualKeyboard.cs modified by Agree for search music
 	/// </summary>
-	public class VirtualSearchKeyboard: GUIWindow
+	public class VirtualSearchKeyboard: GUIWindow, IRenderLayer
 	{
 		const int GAP_WIDTH     = 0;
 		const int GAP2_WIDTH    = 4;
@@ -771,7 +771,8 @@ namespace MediaPortal.Dialogs
 				return;
 			}
 			GUIWindowManager.IsSwitchingToNewWindow=true;
-			GUIWindowManager.RouteToWindow( GetID );
+      GUIWindowManager.RouteToWindow(GetID);
+      GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Dialog);
 
 			// active this window... (with its own OnPageLoad)
 			PageLoad();
@@ -782,24 +783,11 @@ namespace MediaPortal.Dialogs
 			while (m_bRunning && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
 			{
 				GUIWindowManager.Process();
-			}
+      }
+      GUILayerManager.UnRegisterLayer(this);
 		}
   
     #region Base Dialog Members
-    public void RenderDlg(float timePassed)
-    {
-			lock (this)
-			{
-				// render the parent window
-				if (null!=m_pParentWindow) 
-					m_pParentWindow.Render(timePassed);
-
-				GUIFontManager.Present();
-				// render this dialog box
-				base.Render(timePassed);
-				GUIFontManager.Present();
-			}
-    }
 
     public void StartModal(int dwParentId)
     {
@@ -831,11 +819,6 @@ namespace MediaPortal.Dialogs
 
 		public override void Render(float timePassed)
 		{
-			// render the parent window
-			if (null!=m_pParentWindow) 
-        m_pParentWindow.Render(timePassed);
-
-			GUIFontManager.Present();
 			RenderKeyboardLatin(timePassed);    
 		}
 
@@ -1768,5 +1751,19 @@ namespace MediaPortal.Dialogs
 				}
 			}
 		}
+
+    #region IRenderLayer
+    public bool ShouldRenderLayer()
+    {
+      return true;
+    }
+
+    public void RenderLayer(float timePassed)
+    {
+
+      Render(timePassed);
+    }
+    #endregion
+
 	} 
 }

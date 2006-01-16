@@ -28,7 +28,7 @@ namespace MediaPortal.Dialogs
   /// <summary>
   /// Shows a dialog box with an OK button  
   /// </summary>
-  public class GUIDialogOK: GUIWindow
+  public class GUIDialogOK : GUIWindow, IRenderLayer
   {
 
     #region Base Dialog Variables
@@ -72,19 +72,6 @@ namespace MediaPortal.Dialogs
     }
 
     #region Base Dialog Members
-    public void RenderDlg(float timePassed)
-		{
-			lock (this)
-			{
-				// render the parent window
-				if (null!=m_pParentWindow) 
-					m_pParentWindow.Render(timePassed);
-
-				GUIFontManager.Present();
-				// render this dialog box
-				base.Render(timePassed);
-			}
-    }
 
     void Close()
 		{
@@ -139,6 +126,7 @@ namespace MediaPortal.Dialogs
           GUIGraphicsContext.Overlay=m_bPrevOverlay;		
           FreeResources();
           DeInitControls();
+          GUILayerManager.UnRegisterLayer(this);
 
           return true;
         }
@@ -148,7 +136,8 @@ namespace MediaPortal.Dialogs
           m_bPrevOverlay=GUIGraphicsContext.Overlay;
           m_bConfirmed = false;
           base.OnMessage(message);
-          GUIGraphicsContext.Overlay=false;
+          GUIGraphicsContext.Overlay = false;
+          GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Dialog);
         }
         return true;
 
@@ -223,9 +212,18 @@ namespace MediaPortal.Dialogs
       SetLine (iLine, GUILocalizeStrings.Get(iString) );
     }
 
-    public override void Render(float timePassed)
+
+
+    #region IRenderLayer
+    public bool ShouldRenderLayer()
     {
-      RenderDlg(timePassed);
+      return true;
     }
+
+    public void RenderLayer(float timePassed)
+    {
+      Render(timePassed);
+    }
+    #endregion
   }
 }

@@ -32,7 +32,7 @@ namespace MediaPortal.Dialogs
 	/// <summary>
 	/// 
 	/// </summary>
-  public class VirtualWebKeyboard: GUIWindow
+  public class VirtualWebKeyboard: GUIWindow, IRenderLayer
   {
     const int GAP_WIDTH     = 0;
     const int GAP2_WIDTH    = 4;
@@ -751,6 +751,7 @@ namespace MediaPortal.Dialogs
 
       GUIWindowManager.RouteToWindow( GetID );
 
+      GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Dialog);
 			// active this window... (with its own OnPageLoad)
 			PageLoad();
 			
@@ -761,6 +762,7 @@ namespace MediaPortal.Dialogs
       {
         GUIWindowManager.Process();
       }
+      GUILayerManager.UnRegisterLayer(this);
     }
 
     public override void Render(float timePassed)
@@ -768,11 +770,7 @@ namespace MediaPortal.Dialogs
 			
 			lock (this)
 			{
-				if (null!=m_pParentWindow) 
-					m_pParentWindow.Render(timePassed);
-		
-				GUIFontManager.Present();
-				// render the parent window
+
 				RenderKeyboardLatin(timePassed);    
 			}
     }
@@ -1660,6 +1658,19 @@ namespace MediaPortal.Dialogs
         }
       }
     }
+
+    #region IRenderLayer
+    public bool ShouldRenderLayer()
+    {
+      return true;
+    }
+
+    public void RenderLayer(float timePassed)
+    {
+      Render(timePassed);
+    }
+    #endregion
+
   } 
 }
 

@@ -49,7 +49,7 @@ namespace MediaPortal.GUI.TV
 	/// <summary>
 	/// 
 	/// </summary>
-	public class GUIFullScreenTV : GUIWindow
+  public class GUIFullScreenTV : GUIWindow, IRenderLayer
 	{
 		class FullScreenState
 		{
@@ -985,6 +985,7 @@ namespace MediaPortal.GUI.TV
 					{	
 						VMR9Util.g_vmr9.SaveBitmap(null,false,false,0.8f);
 					}*/
+          GUILayerManager.UnRegisterLayer(this);
 					return true;
 				}
 
@@ -1032,7 +1033,8 @@ namespace MediaPortal.GUI.TV
 					}
 					catch(Exception)
 					{
-					}
+          }
+          GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Osd);
 
 
 					return true;
@@ -1946,5 +1948,17 @@ namespace MediaPortal.GUI.TV
 				
 			}
 		}
+
+    #region IRenderLayer
+    public bool ShouldRenderLayer()
+    {
+      return true;
+    }
+
+    public void RenderLayer(float timePassed)
+    {
+      Render(timePassed);
+    }
+    #endregion
 	}
 }

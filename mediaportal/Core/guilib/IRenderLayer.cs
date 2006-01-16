@@ -6,6 +6,7 @@ namespace MediaPortal.GUI.Library
 {
   public interface IRenderLayer
   {
+    bool ShouldRenderLayer();
     void RenderLayer(float timePassed);
   }
 }

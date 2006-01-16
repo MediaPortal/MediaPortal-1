@@ -28,7 +28,7 @@ namespace MediaPortal.Dialogs
 	/// <summary>
 	/// 
 	/// </summary>
-	public class GUIDialogSetRating: GUIWindow
+  public class GUIDialogSetRating : GUIWindow, IRenderLayer
 	{
 		public enum ResultCode
 		{
@@ -92,21 +92,6 @@ namespace MediaPortal.Dialogs
 		}
 
 		#region Base Dialog Members
-		public void RenderDlg(float timePassed)
-		{
-			
-			lock (this)
-			{
-				// render the parent window
-				if (null!=m_pParentWindow) 
-					m_pParentWindow.Render(timePassed);
-
-				GUIFontManager.Present();
-				// render this dialog box
-				base.Render(timePassed);
-			}
-		}
-
 		void Close()
 		{
 			
@@ -202,7 +187,8 @@ namespace MediaPortal.Dialogs
 					m_bRunning=false;
 					GUIGraphicsContext.Overlay=m_bPrevOverlay;				
 					FreeResources();
-					DeInitControls();
+          DeInitControls();
+          GUILayerManager.UnRegisterLayer(this);
 					return true;
 				}
 
@@ -212,7 +198,8 @@ namespace MediaPortal.Dialogs
 					m_bPrevOverlay=GUIGraphicsContext.Overlay;
 					base.OnMessage(message);
 					GUIGraphicsContext.Overlay=false;
-					UpdateRating();
+          UpdateRating();
+          GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Dialog);
 				}
 					return true;
 			}
@@ -254,10 +241,6 @@ namespace MediaPortal.Dialogs
 			}
 		}
 
-		public override void Render(float timePassed)
-		{
-			RenderDlg(timePassed);
-		}
 		public int Rating
 		{
 			get { return rating;}
@@ -273,5 +256,18 @@ namespace MediaPortal.Dialogs
 		{
 			get { return resultCode;}
 		}
+
+    #region IRenderLayer
+    public bool ShouldRenderLayer()
+    {
+      return true;
+    }
+
+    public void RenderLayer(float timePassed)
+    {
+      Render(timePassed);
+    }
+    #endregion
+
 	}
 }

@@ -32,7 +32,7 @@ namespace MediaPortal.GUI.TV
 	/// <summary>
 	/// 
 	/// </summary>
-	public class GUITVOverlay:GUIOverlayWindow
+	public class GUITVOverlay:GUIOverlayWindow, IRenderLayer
 	{
     public GUITVOverlay()
 		{
@@ -43,6 +43,7 @@ namespace MediaPortal.GUI.TV
     {
       bool bResult=Load (GUIGraphicsContext.Skin+@"\tvOverlay.xml");
       GetID=(int)GUIWindow.Window.WINDOW_TV_OVERLAY;
+      GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.TvOverlay);
       return bResult;
     }
 
@@ -58,20 +59,18 @@ namespace MediaPortal.GUI.TV
     
     }
 
-    public override void Render(float timePassed)
+    #region IRenderLayer
+    public bool ShouldRenderLayer()
     {
+      if (GUIGraphicsContext.IsFullScreenVideo) return false;
+      if (Recorder.IsAnyCardRecording()) return true;
+      return false;
     }
-    public override bool DoesPostRender()
-    {
-			if (GUIGraphicsContext.IsFullScreenVideo) return false;
-			if (Recorder.IsAnyCardRecording()) return true;
-			return false;
-	  }
 
-    public override void PostRender(float timePassed,int iLayer)
+    public void RenderLayer(float timePassed)
     {
-      if (iLayer!=2) return;
-      base.Render(timePassed);
+      Render(timePassed);
     }
+    #endregion
 	}
 }

@@ -325,6 +325,8 @@ namespace MediaPortal.GUI.Library
      ,
       WINDOW_TVZAPOSD = 3007
      ,
+      WINDOW_VIDEO_OVERLAY_TOP = 3008
+     ,
       WINDOW_TELETEXT = 7700
      ,
       WINDOW_FULLSCREEN_TELETEXT = 7701
