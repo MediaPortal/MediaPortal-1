@@ -688,7 +688,7 @@ namespace MediaPortal.TV.Recording
     {
       if (String.Compare(filterName, "%soundcard%", true) == 0)
       {
-        Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  Find audio sound card filter");
+        Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  preferred filter %soundcard%");
         Filters filters = new Filters();
         FilterCollection audioInputs = filters.AudioInputDevices;
 
@@ -700,6 +700,7 @@ namespace MediaPortal.TV.Recording
 
       if (String.Compare(filterName, "%audioencoder%", true) == 0)
       {
+        Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  preferred filter %audioencoder%");
         string[] audioEncoders = new string[] {"Intervideo Audio Encoder" };
         Filters filters = new Filters();
         FilterCollection audioCodecs = filters.AudioCompressors;
@@ -719,6 +720,7 @@ namespace MediaPortal.TV.Recording
 
       if (String.Compare(filterName, "%videoencoder%", true) == 0)
       {
+        Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  preferred filter %videoencoder%");
         string[] videoEncoders = new string[] {"Intervideo Video Encoder" };
         Filters filters = new Filters();
         FilterCollection videoCodecs = filters.VideoCompressors;
@@ -738,6 +740,7 @@ namespace MediaPortal.TV.Recording
 
       if (String.Compare(filterName, "%mpegmux%", true) == 0)
       {
+        Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  preferred filter %mpegmux%");
         string[] multiplexers = new string[] { "InterVideo Multiplexer" };
         Filters filters = new Filters();
         FilterCollection legacyFilters = filters.LegacyFilters;
