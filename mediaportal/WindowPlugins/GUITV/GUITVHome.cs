@@ -339,6 +339,13 @@ namespace MediaPortal.GUI.TV
       dlg.DoModal(this.GetID);
       if (dlg.SelectedLabel<0) return;
       Navigator.SetCurrentGroup(dlg.SelectedLabelText);
+      if (Navigator.CurrentGroup != null)
+      {
+        if (Navigator.CurrentGroup.TvChannels.Count > 0)
+        {
+          ViewChannelAndCheck(Navigator.CurrentGroup.TvChannels[0].Name);
+        }
+      }
     }
 
     void OnSelectChannel()
@@ -359,9 +366,7 @@ namespace MediaPortal.GUI.TV
       dlg.SelectedLabel = selected;
       dlg.DoModal(this.GetID);
       if (dlg.SelectedLabel < 0) return;
-      Navigator.ZapToChannel(dlg.SelectedLabelText, false);
-      Navigator.ZapNow();
-      Navigator.CheckChannelChange();
+      ViewChannelAndCheck(dlg.SelectedLabelText);
     }
 
     protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
