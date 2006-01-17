@@ -5107,18 +5107,14 @@
     <id>4517</id>
     <value>Close</value>
   </string>
-
   <string>
     <id>4518</id>
     <value>Album title not found\r\nTrying: {0}</value>
   </string>
-
-
   <string>
     <id>4519</id>
     <value>Current cover art</value>
   </string>
-
   <string>
     <id>4520</id>
     <value>Skip</value>
@@ -5133,4 +5129,22 @@
   </string>
   <!-- End Cover Art Grabber Strings -->
 
+  <!-- Begin Minesweeper Strings -->
+  <string>
+    <id>10100</id>
+    <value>Hidden mines</value>
+  </string>
+  <string>
+    <id>10101</id>
+    <value>Play time</value>
+  </string>
+  <string>
+    <id>10102</id>
+    <value>Fastest time</value>
+  </string>
+  <string Prefix="My ">
+    <id>10103</id>
+    <value>Minesweeper</value>
+  </string>    
+  <!-- End Minesweeper Strings -->
 </strings>
