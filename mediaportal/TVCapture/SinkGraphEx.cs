@@ -327,6 +327,9 @@ namespace MediaPortal.TV.Recording
         // Now fix the rest of the graph, add MUX etc.
         _videoCaptureHelper = new VideoCaptureDevice(_graphBuilderInterface, _captureGraphBuilderInterface, _filterCapture, lastFilter.DSFilter);
 
+        _videoCaptureHelper.SetFrameRate(25.0d);
+        _videoCaptureHelper.SetFrameSize(new Size(720, 576));
+
         _sizeFrame = _videoCaptureHelper.GetFrameSize();
 
         Log.WriteFile(Log.LogType.Capture, "SinkGraphEx: Capturing:{0}x{1}", _sizeFrame.Width, _sizeFrame.Height);
