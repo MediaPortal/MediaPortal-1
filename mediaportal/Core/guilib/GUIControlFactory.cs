@@ -245,8 +245,12 @@ namespace MediaPortal.GUI.Library
 				if (type == typeof (int))
 				{
 					if (valueText.CompareTo("-")==0) return 0;
-					return System.Int32.Parse(valueText);
-				}
+          int res;
+					if (int.TryParse(valueText, out res))
+            return res;
+          if (int.TryParse(valueText, NumberStyles.HexNumber,null,out res))
+            return res;
+   			}
 				if (type == typeof (long))
 				{
 					if (valueText.CompareTo("-")==0) return 0;
