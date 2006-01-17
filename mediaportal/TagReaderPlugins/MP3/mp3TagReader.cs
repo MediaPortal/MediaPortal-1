@@ -292,32 +292,32 @@ namespace MediaPortal.TagReader.ID3
           //Log.Write (" read id3tagv1");
           ID3v1 id3v1 = new ID3v1();
           try
-					{
-						//ParseFileName(filename);
+          {
+            //ParseFileName(filename);
             id3v1.Deserialize(s);
             idtag = id3v1.Tags;
-            m_containsID3Information=true;
-            if (m_tag.Genre.Length==0) m_tag.Genre=GetGenre((int)id3v1.Genre);
-            if (m_tag.Title.Length==0) m_tag.Title=Strip(id3v1.Song).Trim();
-            if (m_tag.Album.Length==0) m_tag.Album=Strip(id3v1.Album).Trim();
-            if (m_tag.Artist.Length==0) m_tag.Artist=Strip(id3v1.Artist).Trim();  
-            if (m_tag.Duration==0) m_tag.Duration=ReadDuration(s);
-            try{
-              m_tag.Track=Int32.Parse(id3v1.Track);
+            m_containsID3Information = true;
+            if (m_tag.Genre.Length == 0) m_tag.Genre = GetGenre((int)id3v1.Genre);
+            if (m_tag.Title.Length == 0) m_tag.Title = Strip(id3v1.Song).Trim();
+            if (m_tag.Album.Length == 0) m_tag.Album = Strip(id3v1.Album).Trim();
+            if (m_tag.Artist.Length == 0) m_tag.Artist = Strip(id3v1.Artist).Trim();
+            if (m_tag.Duration == 0) m_tag.Duration = ReadDuration(s);
+            try
+            {
+              m_tag.Track = Int32.Parse(id3v1.Track);
             }
-            catch(Exception )
+            catch (Exception)
             {
               //Log.Write (" error reading id3tagv1");
             }
-            try{
-              if (m_tag.Year==0)m_tag.Year=Int32.Parse(id3v1.Year);
-            }
-            catch(Exception )
+            if (m_tag.Year == 0)
             {
-              //Log.Write (" error reading id3tagv1");
+              int year = 0;
+              if (int.TryParse(id3v1.Year, out year))
+                m_tag.Year = year;
             }
           }
-          catch(Exception )
+          catch (Exception)
           {
             //Log.Write (" error reading id3tagv1");
           }
