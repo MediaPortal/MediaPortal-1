@@ -4723,6 +4723,8 @@
 	</string>
 	<string>
 		<id>102008</id>
+		<value>Dateg>
+		<id>102008</id>
 		<value>Dateikomprimierung</value>
 	</string>
 	<string>
@@ -4811,7 +4813,7 @@
 	</string>
 	<string>
 		<id>200004</id>
-		<value>Manuell eingerichtete tvguide.xml</value>
+		<value>Manuell eingerichtete TVGuide.xml</value>
 	</string>
 	<string>
 		<id>200005</id>
@@ -4956,5 +4958,113 @@
 	<string>
 		<id>4003</id>
 		<value>Bitte legen sie in den Einstellungen einen Ordner für die Lesezeichen fest.</value>
+	</string>
+	<string>
+		<id>4500</id>
+		<value>Alben mit vorhandenem Cover überspringen</value>
+	</string>
+	<string>
+		<id>4501</id>
+		<value>Cover im Album-Ordner speichern</value>
+	</string>
+	<string>
+		<id>4502</id>
+		<value>Cover im "Thumbs" Ordner speichern</value>
+	</string>
+	<string>
+		<id>4503</id>
+		<value>Zähle Alben</value>
+	</string>
+	<string>
+		<id>4504</id>
+		<value>{0}% - {1} von {2}</value>
+	</string>
+	<string>
+		<id>4505</id>
+		<value>Suche {0}...</value>
+	</string>
+	<string>
+		<id>4506</id>
+		<value>[Blank]</value>
+	</string>
+	<string>
+		<id>4507</id>
+		<value>Cover-Suche vom Benutzer abgebrochen</value>
+	</string>
+	<string>
+		<id>4508</id>
+		<value>Cover-Suche erfolgreich abgeschlossen</value>
+	</string>
+	<string>
+		<id>4509</id>
+		<value>Cover-Suche mit Fehlern abgeschlossen</value>
+	</string>
+	<string>
+		<id>4510</id>
+		<value>{0} Cover aktualisiert</value>
+	</string>
+	<string>
+		<id>4511</id>
+		<value>Cover-Suche beendet</value>
+	</string>
+	<string>
+		<id>4512</id>
+		<value>Alle Cover sind aktuell</value>
+	</string>
+	<string>
+		<id>4513</id>
+		<value>Diverse</value>
+	</string>
+	<string>
+		<id>4514</id>
+		<value>Cover-Suche</value>
+	</string>
+	<string>
+		<id>4515</id>
+		<value>Cover-Such-Ergebnisse</value>
+	</string>
+	<string>
+		<id>4516</id>
+		<value>Kein Cover gefunden</value>
+	</string>
+	<string>
+		<id>4517</id>
+		<value>Schließen</value>
+	</string>
+	<string>
+		<id>4518</id>
+		<value>Album Name nicht  gefunden\r\nVersuche: {0}</value>
+	</string>
+	<string>
+		<id>4519</id>
+		<value>Aktuelles Cover</value>
+	</string>
+	<string>
+		<id>4520</id>
+		<value>Überspringen</value>
+	</string>
+	<string>
+		<id>4521</id>
+		<value>Zeige Infos zum Album</value>
+	</string>
+	<string>
+		<id>4522</id>
+		<value>Lade {0}...</value>
+	</string>
+	<string>
+		<id>10100</id>
+		<value>Versteckte Minen</value>
+	</string>
+	<string>
+		<id>10101</id>
+		<value>Spielzeit</value>
+	</string>
+	<string>
+		<id>10102</id>
+		<value>Rekordzeit</value>
+	</string>
+	<string>
+		<id>10103</id>
+		<value>Minesweeper</value>
 	</string>
 </strings>
