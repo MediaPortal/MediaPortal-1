@@ -34,7 +34,8 @@ namespace ProcessPlugins.ExternalDisplay
     private int maxColumns = 16;
     private string[] textLines;
     private GirderEvent girder;
-    private bool girderInstalled = false; //is Girder Module DLL installed and registered?
+    private bool isDisabled = true;
+    private string errorMessage;
 
     public Girder()
     {
@@ -43,13 +44,29 @@ namespace ProcessPlugins.ExternalDisplay
         //this will throw a COMException if Girder is not installed or the girder.dll is not registered.
         //If it does, the girderInstalled variable will not be set to true
         girder = new GirderEvent();
-        girderInstalled = true;
+        isDisabled = false;
       }
       catch (COMException)
-      {}
+      {
+        errorMessage = "Girder is not installed";
+      }
+      catch (Exception ex)
+      {
+        errorMessage = ex.Message;
+      }
     }
 
     #region IDisplay Members
+
+    public bool IsDisabled
+    {
+      get { return isDisabled; }
+    }
+
+    public string ErrorMessage
+    {
+      get { return errorMessage; }
+    }
 
     /// <summary>
     /// Puts the passed message in the buffer for the given line
@@ -80,11 +97,12 @@ namespace ProcessPlugins.ExternalDisplay
     {
       get
       {
-        if (girderInstalled)
+        string description = "Girder Module V1.0";
+        if (isDisabled)
         {
-          return "Girder Module V1.0";
+          return description + " (disabled)";
         }
-        return "Girder Module V1.0 (not detected...)";
+        return description;
       }
     }
 
@@ -161,7 +179,7 @@ namespace ProcessPlugins.ExternalDisplay
     /// </summary>
     private void SendToGirder()
     {
-      if (!girderInstalled)
+      if (isDisabled)
       {
         return;
       }

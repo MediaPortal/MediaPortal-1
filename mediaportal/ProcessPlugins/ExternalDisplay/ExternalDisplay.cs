@@ -282,13 +282,13 @@ namespace ProcessPlugins.ExternalDisplay
           {
             status = Status.PlayingDVD;
           }
-          else if (g_Player.IsMusic)
-          {
-            status = Status.PlayingMusic;
-          }
           else if (g_Player.IsRadio)
           {
             status = Status.PlayingRadio;
+          }
+          else if (g_Player.IsMusic)
+          {
+            status = Status.PlayingMusic;
           }
           else if (g_Player.IsTimeShifting)
           {

@@ -36,15 +36,36 @@ namespace ProcessPlugins.ExternalDisplay
     private int maxLines;
     private string[] lines;
     private Thread th; //pointer to the thread that does the copying
+    private bool isDisabled = false;
+    private string errorMessage = "";
 
     /// <summary>
     /// Constructor
     /// </summary>
     public Clipboard()
     {
-      lines = new string[Settings.Instance.TextHeight];
-      Clear();
+      try
+      {
+        lines = new string[Settings.Instance.TextHeight];
+        Clear();
+      }
+      catch (Exception ex)
+      {
+        isDisabled = true;
+        errorMessage = ex.Message;
+      }
     }
+
+    public bool IsDisabled
+    {
+      get { return isDisabled; }
+    }
+
+    public string ErrorMessage
+    {
+      get { return ErrorMessage; }
+    }
+
 
     /// <summary>
     /// Stops the display.

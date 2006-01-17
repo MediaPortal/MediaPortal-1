@@ -34,8 +34,21 @@ namespace ProcessPlugins.ExternalDisplay
     private Rs232 commPort = null;
     private int lines = 2;
     private int cols = 40;
+    private bool isDisabled = false;
+    private string errorMessage = "";
 
     #region IDisplay Members
+
+    public bool IsDisabled
+    {
+      get { return isDisabled; }
+    }
+
+    public string ErrorMessage
+    {
+      get { return ErrorMessage; }
+    }
+
 
     /// <summary>
     /// Displays the message on the indicated line

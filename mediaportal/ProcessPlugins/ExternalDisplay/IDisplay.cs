@@ -73,5 +73,8 @@ namespace ProcessPlugins.ExternalDisplay
     /// </summary>
     void Clear();
 
+    bool IsDisabled { get; }
+    string ErrorMessage { get; }
+
   }
 }

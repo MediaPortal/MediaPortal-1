@@ -32,11 +32,39 @@ namespace ProcessPlugins.ExternalDisplay
   {
     private double mediaPadId; //Unique ID of the Mediapad
     private double mediaPadLcdId; //Unique ID of the Mediapad LCD display
+    private bool isDisabled = false;
+    private string errorMessage;
 
     public MediaPad()
-    {}
+    {
+      try
+      {
+        mediaPadId = GetMediapadUID(out mediaPadLcdId);
+        if (mediaPadId == 0)
+        {
+          isDisabled = true;
+          errorMessage = "Could not find a Logitech diNovo Mediapad";
+        }
+      }
+      catch (Exception ex)
+      {
+        isDisabled = true;
+        errorMessage = ex.Message;
+      }
+    }
 
     #region IDisplay Members
+
+    public bool IsDisabled
+    {
+      get { return isDisabled; }
+    }
+
+    public string ErrorMessage
+    {
+      get { return ErrorMessage; }
+    }
+
 
     /// <summary>
     /// Sends a line of text to the display
@@ -108,16 +136,11 @@ namespace ProcessPlugins.ExternalDisplay
     /// <param name="contrast">ignored</param>
     public void Initialize(string port, int lines, int cols, int delay, int linesG, int colsG, int timeG, bool backLight, int contrast)
     {
-      mediaPadId = GetMediapadUID(out mediaPadLcdId);
-      if (mediaPadId != 0)
-      {
-        Log.Write("ExternalDisplay: Found Logitech diNovo Mediapad with ID {0} and LCD ID {1}", mediaPadId, mediaPadLcdId);
-        SetDisplayMode(ScreenMode.Normal);
-        Clear();
-        Beep();
-        return;
-      }
-      Log.Write("ExternalDisplay: Could not find a Logitech diNovo Mediapad");
+      Log.Write("ExternalDisplay: Found Logitech diNovo Mediapad with ID {0} and LCD ID {1}", mediaPadId, mediaPadLcdId);
+      SetDisplayMode(ScreenMode.Normal);
+      Clear();
+      Beep();
+      return;
     }
 
     /// <summary>

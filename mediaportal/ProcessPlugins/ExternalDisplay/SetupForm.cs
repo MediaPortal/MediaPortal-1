@@ -451,9 +451,16 @@ namespace ProcessPlugins.ExternalDisplay
     private void VerifyLCDType()
     {
       lcd = cmbType.SelectedItem as IDisplay;
-      if (lcd is LCDHypeWrapper && !ExternalDisplay.VerifyDriverLynxDriver())
+      if (lcd.IsDisabled)
       {
-        errorProvider.SetError(cmbType,"This driver needs the DriverLYNX Port I/O Driver installed on your system\nYou can download it here: http://www.driverlinx.com/DownLoad/DlPortIO.htm");
+        if (!ExternalDisplay.VerifyDriverLynxDriver())
+        {
+          errorProvider.SetError(cmbType, "This driver needs the DriverLYNX Port I/O Driver installed on your system\nYou can download it here: http://www.driverlinx.com/DownLoad/DlPortIO.htm");
+        }
+        else
+        {
+          errorProvider.SetError(cmbType, "This driver is disabled because it is missing an unknown required DLL");
+        }
         btnOK.Enabled = false;
       }
       else

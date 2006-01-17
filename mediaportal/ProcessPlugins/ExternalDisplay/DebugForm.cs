@@ -22,6 +22,7 @@
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
+using System;
 
 namespace ProcessPlugins.ExternalDisplay
 {
@@ -38,31 +39,40 @@ namespace ProcessPlugins.ExternalDisplay
     private Container components = null;
     private TextBox[] textLines = null;
     private delegate void SetLineDelegate(int _line, string _message);
-    
+    private bool isDisabled = false;
+    private string errorMessage = "";
+
     public DebugForm()
     {
-      //
-      // Required for Windows Form Designer support
-      //
-      InitializeComponent();
-      this.SuspendLayout();
-      //Dynamically create textboxes for the number of configured display lines
-      textLines = new TextBox[Settings.Instance.TextHeight];
-      for(int i=0; i< Settings.Instance.TextHeight; i++)
-      {
-        TextBox line = new TextBox();
-        line.Anchor = (AnchorStyles.Top | AnchorStyles.Left) | AnchorStyles.Right;
-        line.Enabled = false;
-        line.Location = new Point(8, 8+(24*i));
-        line.Name = "txtLine"+i;
-        line.Size = new Size(320, 20);
-        line.TabIndex = 0;
-        line.Text = "";
-        textLines[i]=line;
-        this.Controls.Add(line);
+      try
+      {//
+        // Required for Windows Form Designer support
+        //
+        InitializeComponent();
+        this.SuspendLayout();
+        //Dynamically create textboxes for the number of configured display lines
+        textLines = new TextBox[Settings.Instance.TextHeight];
+        for (int i = 0; i < Settings.Instance.TextHeight; i++)
+        {
+          TextBox line = new TextBox();
+          line.Anchor = (AnchorStyles.Top | AnchorStyles.Left) | AnchorStyles.Right;
+          line.Enabled = false;
+          line.Location = new Point(8, 8 + (24 * i));
+          line.Name = "txtLine" + i;
+          line.Size = new Size(320, 20);
+          line.TabIndex = 0;
+          line.Text = "";
+          textLines[i] = line;
+          this.Controls.Add(line);
+        }
+        this.Height = Settings.Instance.TextHeight * 24 + 50;
+        this.ResumeLayout(false);
       }
-      this.Height = Settings.Instance.TextHeight * 24 + 50;
-      this.ResumeLayout(false);
+      catch (Exception ex)
+      {
+        isDisabled = true;
+        errorMessage = ex.Message;
+      }
     }
 
     /// <summary>
@@ -104,6 +114,16 @@ namespace ProcessPlugins.ExternalDisplay
     #endregion
 
     #region IDisplay Members
+
+    public bool IsDisabled
+    {
+      get { return isDisabled; }
+    }
+
+    public string ErrorMessage
+    {
+      get { return errorMessage; }
+    }
 
     /// <summary>
     /// Start the display

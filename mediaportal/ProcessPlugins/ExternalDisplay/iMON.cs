@@ -21,6 +21,7 @@
 
 using System.Runtime.InteropServices;
 using MediaPortal.GUI.Library;
+using System;
 
 namespace ProcessPlugins.ExternalDisplay
 {
@@ -31,9 +32,37 @@ namespace ProcessPlugins.ExternalDisplay
   {
     private const int VfdType = 4;
     private string[] lines = new string[2];
+    private bool isDisabled = false;
+    private string errorMessage = "";
+
 
     public iMON()
-    {}
+    {
+      try
+      {
+        if (!Open(VfdType, 0))
+        {
+          isDisabled = true;
+          errorMessage = "Could not find an iMON display";
+        }
+      }
+      catch (Exception ex)
+      {
+        isDisabled = true;
+        errorMessage = ex.Message;
+      }
+    }
+
+    public bool IsDisabled
+    {
+      get { return isDisabled; }
+    }
+
+    public string ErrorMessage
+    {
+      get { return ErrorMessage; }
+    }
+
 
      /// <summary>
     /// Shows the given message on the indicated line.

@@ -23,6 +23,7 @@ using System;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.InteropServices;
+using System.Diagnostics;
 
 namespace ProcessPlugins.ExternalDisplay
 {
@@ -36,16 +37,44 @@ namespace ProcessPlugins.ExternalDisplay
     private Type m_tDllReg;
     private DLLInfo info;
     private string name;
+    private bool isDisabled = false;
+    private string errorMessage = "";
 
     public LCDHypeWrapper(string dllFile)
     {
-      this.dllFile = dllFile;
-      string[] tmp = dllFile.Split('/','.','\\');
-      name = tmp[tmp.Length-2];
-      if (!ExternalDisplay.VerifyDriverLynxDriver())
-          return;
-      CreateLCDHypeWrapper();
-      GetDllInfo();
+      try
+      {
+        this.dllFile = dllFile;
+        string[] tmp = dllFile.Split('/', '.', '\\');
+        name = tmp[tmp.Length - 2];
+        //if (!ExternalDisplay.VerifyDriverLynxDriver())
+        //    return;
+        CreateLCDHypeWrapper();
+        GetDllInfo();
+      }
+      catch (Exception ex)
+      {
+        if (ex is TargetInvocationException)
+        {
+          Exception innerException = ex.InnerException;
+          if (innerException != null && innerException is DllNotFoundException)
+          {
+            errorMessage = "Driverlynx Port I/O Driver not installed";
+            return;
+          }
+        }
+        errorMessage = ex.Message;
+      }
+    }
+
+    public bool IsDisabled
+    {
+      get { return isDisabled; }
+    }
+
+    public string ErrorMessage
+    {
+      get { return ErrorMessage; }
     }
 
     public void Configure()
@@ -77,7 +106,7 @@ namespace ProcessPlugins.ExternalDisplay
           {
               if (m_Description == null)
               {
-                  if (info.IDArray == null)
+                  if (info.IDArray==null || isDisabled)
                       return Name + " (disabled)";
                   int i = 0;
                   for (; i < 256 && info.IDArray[i] != 0; i++) ;
@@ -146,7 +175,7 @@ namespace ProcessPlugins.ExternalDisplay
     public void GetDllInfo()
     {
       object[] p = new object[1];
-      m_tDllReg.InvokeMember("DLL_GetInfo",BINDING_FLAGS, null, null, p);
+      m_tDllReg.InvokeMember("DLL_GetInfo", BINDING_FLAGS, null, null, p);
       info = (DLLInfo)p[0];
     }
 
