@@ -3497,5 +3497,17 @@ namespace MediaPortal.TV.Recording
       _graphState = State.Epg;
       _isGraphRunning = true; 
     }
+
+    public void RadioChannelMinMax(out int chanmin, out int chanmax)
+    {
+        chanmin = -1;
+        chanmax = -1;
+    }
+
+    public void TVChannelMinMax(out int chanmin, out int chanmax)
+    {
+        chanmin = -1;
+        chanmax = -1;
+    }
   }// class
 }// namespace

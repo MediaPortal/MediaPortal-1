@@ -2194,19 +2194,21 @@ namespace MediaPortal.Configuration
 
     private void btnRadio_Click(object sender, System.EventArgs e)
     {
-      TVCaptureDevice dev = CaptureCard;
-      if (dev == null) return;
-      if (dev.CreateGraph())
-      {
-        if (dev.Network == NetworkType.DVBC ||
-          dev.Network == NetworkType.DVBS ||
-          dev.Network == NetworkType.DVBT ||
-          dev.Network == NetworkType.ATSC) return;
-        dev.DeleteGraph();
-      }
-
-      RadioAutoTuningForm dialog = new RadioAutoTuningForm(dev);
-      dialog.ShowDialog(this);
+        if (CaptureCard.Network == NetworkType.Analog)
+        {
+            AnalogRadioTuningForm dialog = new AnalogRadioTuningForm();
+            ITuning tuning = new AnalogRadioTuning();
+            if (tuning != null)
+            {
+                dialog.Tuning = tuning;
+                dialog.Card = CaptureCard;
+                dialog.ShowDialog(this);
+            }
+            else
+            {
+                MessageBox.Show("This device does not support auto tuning", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
     }
 
 

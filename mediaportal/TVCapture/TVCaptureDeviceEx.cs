@@ -148,6 +148,8 @@ namespace MediaPortal.TV.Recording
     [NonSerialized]
     private string _currentRadioStationName = String.Empty;
     [NonSerialized]
+    private int _radioSensitivity = 1;
+    [NonSerialized]
     DateTime _epgTimeOutTimer = DateTime.Now;
     [NonSerialized]
     GraphHelper _graphHelper = new GraphHelper();
@@ -171,6 +173,19 @@ namespace MediaPortal.TV.Recording
     public TVCaptureDevice()
     {
       _graphHelper = new GraphHelper();
+      int countryCode = 31;
+      string tunerInput = "Antenna";
+      using (MediaPortal.Profile.Xml xmlReader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      {
+          tunerInput = xmlReader.GetValueAsString("capture", "tuner", "Antenna");
+          countryCode = xmlReader.GetValueAsInt("capture", "country", 31);
+      }
+
+      bool isCableInput = false;
+      if (!tunerInput.Equals("Antenna")) isCableInput = true;
+
+      this.IsCableInput = isCableInput;
+      this.DefaultCountryCode = countryCode;
     }
     #endregion
 
@@ -676,6 +691,21 @@ namespace MediaPortal.TV.Recording
     {
       get { return _currentRadioStationName; }
     }
+    /// <summary>
+    /// Property to set Radio tuning sensitivity.
+    /// sensitivity range from 1MHz for value 1 to 0.1MHZ for value 10
+    /// </summary>
+    public int RadioSensitivity
+    {
+        get
+        {
+            return _radioSensitivity;
+        }
+        set
+        {
+            _radioSensitivity = value;
+        }
+    }
     public string TimeShiftFileName
     {
       get
@@ -1169,6 +1199,35 @@ namespace MediaPortal.TV.Recording
       }
     }
 
+    public void RadioChannelMinMax(out int chanmin, out int chanmax)
+      {
+          bool deleteGraph = false;
+          if (_currentGraph == null) {
+              CreateGraph();
+              deleteGraph = true;
+          }
+          _currentGraph.RadioChannelMinMax(out chanmin, out chanmax);
+
+          if (deleteGraph)
+          {
+              DeleteGraph();
+          }
+      }
+    public void TVChannelMinMax(out int chanmin, out int chanmax)
+      {
+          bool deleteGraph = false;
+          if (_currentGraph == null)
+          {
+              CreateGraph();
+              deleteGraph = true;
+          }
+          _currentGraph.TVChannelMinMax(out chanmin, out chanmax);
+
+          if (deleteGraph)
+          {
+              DeleteGraph();
+          }
+      }
     public void GrabTeletext(bool yesNo)
     {
       if (_currentGraph == null) return;

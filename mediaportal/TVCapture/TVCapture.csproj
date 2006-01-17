@@ -230,6 +230,7 @@
     <Compile Include="DiskManagement\RecordingImporterWorker.cs" />
     <Compile Include="DiskManagement\RecordingManagement.cs" />
     <Compile Include="GraphHelper.cs" />
+    <Compile Include="Scanning\AnalogRadioTuning.cs" />
     <Compile Include="Scanning\AnalogTVTuning.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -334,9 +335,11 @@
     </Compile>
     <EmbeddedResource Include="Scanning\DVBSSelectTPLForm.resx">
       <DependentUpon>DVBSSelectTPLForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Scanning\FormCountry.resx">
       <DependentUpon>FormCountry.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

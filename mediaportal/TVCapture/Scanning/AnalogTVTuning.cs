@@ -33,12 +33,12 @@ namespace MediaPortal.TV.Recording
 	public class AnalogTVTuning : ITuning
 	{
 		const int MaxChannelNo=400;
-		int																	currentChannel=0;
-		AutoTuneCallback										callback = null;
+		int	currentChannel=0,maxChannel=0,minChannel=0;
+		AutoTuneCallback callback = null;
 		private System.Windows.Forms.Timer  timer1;
-		TVCaptureDevice											captureCard;
-		float                               lastFrequency=-1f;
-
+		TVCaptureDevice	captureCard;
+		float lastFrequency=-1f;
+        bool stopped = true;
 		public AnalogTVTuning()
 		{
 		}
@@ -55,12 +55,16 @@ namespace MediaPortal.TV.Recording
 		}
 		public void Stop()
 		{
+            stopped = true;
 			timer1.Enabled=false;
 			if (captureCard!=null)
 			{
 				captureCard.DeleteGraph();
 			}
-		}
+            callback.OnSignal(0, 0);
+            callback.OnProgress(100);
+            callback.OnEnded();
+        }
 		public void AutoTuneRadio(TVCaptureDevice card, AutoTuneCallback statusCallback)
 		{
 			callback.OnEnded();
@@ -70,58 +74,67 @@ namespace MediaPortal.TV.Recording
 		{
 			lastFrequency=-1f;
 			captureCard=card;
+            card.TVChannelMinMax(out minChannel, out maxChannel);
+            if (minChannel == -1)
+            {
+                minChannel = 1;
+            }
+            if (maxChannel == -1)
+            {
+                maxChannel = MaxChannelNo;
+            }
+            currentChannel = minChannel;
 			callback=statusCallback;
+            stopped = false;
 			this.timer1 = new System.Windows.Forms.Timer();
 			this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
 			timer1.Interval=100;
 			timer1.Enabled=true;
-			callback.OnProgress(0);
+            callback.OnSignal(0, 0);
+            callback.OnProgress(0);
 		}
 		public void Continue()
 		{
-			timer1.Enabled=true;
-			NextChannel();
+            if (!stopped)
+            {
+                timer1.Enabled = true;
+            }
+            currentChannel++;
 		}
 
 		private void timer1_Tick(object sender, System.EventArgs e)
 		{
 			timer1.Enabled=false;
-			float percent = ((float)currentChannel) / ((float)MaxChannelNo);
-			percent *= 100.0f;
-			callback.OnProgress((int)percent);
-			float frequency=(float)captureCard.VideoFrequency();
-			frequency/=1000000f;
-			string description=String.Format("channel:{0} frequency:{1:###.##} MHz.", currentChannel, frequency);
-			callback.OnStatus(description);
-
-			if (captureCard.SignalPresent())
-			{
-				callback.OnNewChannel();
-				return;
-			}
-			NextChannel();
-			float freq=captureCard.VideoFrequency();
-			if ((int)freq == (int)lastFrequency && freq >100f) 
-			{
-				callback.OnProgress(100);
-				callback.OnEnded();
-				captureCard.DeleteGraph();
-				return;
-			}
-			lastFrequency=freq;
-			timer1.Enabled=true;
+            if (currentChannel <= maxChannel)
+            {
+                float percent = (((float)currentChannel)-(float)minChannel) / ((float)maxChannel-(float)minChannel);
+                percent *= 100.0f;
+                callback.OnProgress((int)percent);
+                float frequency = (float)captureCard.VideoFrequency();
+                frequency /= 1000000f;
+                string description = String.Format("channel:{0} frequency:{1:###.##} MHz.", currentChannel, frequency);
+                callback.OnStatus(description);
+                TuneChannel();
+                callback.OnSignal(captureCard.SignalQuality, captureCard.SignalStrength);
+                if (captureCard.SignalPresent())
+                {
+                    callback.OnNewChannel();
+                    return;
+                }
+                Continue();
+            }
+            else
+            {
+                callback.OnSignal(0, 0);
+                callback.OnProgress(100);
+                callback.OnEnded();
+                captureCard.DeleteGraph();
+                stopped = true;
+                return;
+            }
 		}
-		void NextChannel()
+		void TuneChannel()
 		{
-			
-			currentChannel++;
-			if (currentChannel>=MaxChannelNo)
-			{
-				callback.OnProgress(100);
-				callback.OnEnded();
-				captureCard.DeleteGraph();
-				return;
-			}
 
 			TVChannel chan = new TVChannel();
 			chan.Number=currentChannel;
@@ -129,9 +142,11 @@ namespace MediaPortal.TV.Recording
 			chan.TVStandard=AnalogVideoStandard.None;
 			if (!captureCard.ViewChannel(chan) )
 			{
-				callback.OnProgress(100);
+                callback.OnSignal(0, 0);
+                callback.OnProgress(100);
 				callback.OnEnded();
 				captureCard.DeleteGraph();
+                stopped = true;
 				return;
 			}
 		}
@@ -145,9 +160,12 @@ namespace MediaPortal.TV.Recording
 				TVChannel chan = channels[i];
 				if (chan.Name == channelName)
 				{
-					TVDatabase.SetChannelNumber(chan.Name,currentChannel);
-					TVDatabase.SetChannelFrequency(chan.Name,captureCard.VideoFrequency().ToString());
-					TVDatabase.MapChannelToCard(chan.ID,captureCard.ID);
+                    chan.Number = currentChannel;
+                    chan.Frequency = captureCard.VideoFrequency();
+                    chan.Country = captureCard.DefaultCountryCode;
+                    TVDatabase.UpdateChannel(chan, chan.Sort);
+
+                    TVDatabase.MapChannelToCard(chan.ID,captureCard.ID);
 
 					TVGroup group = new TVGroup();
 					group.GroupName="Analog";

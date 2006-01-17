@@ -231,6 +231,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AnalogRadioTuningForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="AnalogTVTuningForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -542,6 +545,10 @@
     <Compile Include="WizardForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <EmbeddedResource Include="AnalogRadioTuningForm.resx">
+      <DependentUpon>AnalogRadioTuningForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="AnalogTVTuningForm.resx">
       <DependentUpon>AnalogTVTuningForm.cs</DependentUpon>
       <SubType>Designer</SubType>

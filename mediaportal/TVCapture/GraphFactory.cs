@@ -53,19 +53,6 @@ namespace MediaPortal.TV.Recording
     /// <seealso>MediaPortal.TV.Recording.TVCaptureDevice</seealso>
     static public IGraph CreateGraph(TVCaptureDevice card)
     {
-      int    countryCode = 31;
-      string tunerInput  = "Antenna";
-      using (MediaPortal.Profile.Xml xmlReader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
-      {
-        tunerInput  = xmlReader.GetValueAsString("capture", "tuner", "Antenna");
-        countryCode = xmlReader.GetValueAsInt("capture", "country", 31);
-      }
-
-      bool isCableInput = false;
-      if (!tunerInput.Equals("Antenna")) isCableInput = true;
-
-      card.IsCableInput = isCableInput;
-      card.DefaultCountryCode  = countryCode;
 
       if (card.CardType == TVCapture.CardTypes.Digital_BDA)
 				return new DVBGraphBDA(card);

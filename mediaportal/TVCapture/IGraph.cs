@@ -293,6 +293,11 @@ namespace MediaPortal.TV.Recording
 		//tell capture card to grab & decode teletext and give it to the TeletextGrabber class
 		void GrabTeletext(bool yesNo);
 
+        //Get the Maximum and Minimun channel for radio stations
+        void RadioChannelMinMax(out int chanmin, out int chanmax);
+
+        //Get the Maximum and Minimun channel for TV stations
+        void TVChannelMinMax(out int chanmin, out int chanmax);
 
 		IBaseFilter AudiodeviceFilter();
 		bool				IsTimeShifting();

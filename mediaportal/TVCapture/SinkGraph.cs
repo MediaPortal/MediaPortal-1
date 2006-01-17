@@ -802,7 +802,7 @@ namespace MediaPortal.TV.Recording
     public bool SignalPresent()
     {
       if (_graphState != State.Radio && _graphState != State.Recording && _graphState != State.TimeShifting && _graphState != State.Viewing) return false;
-      if (_tvTunerInterface == null) return true;
+      if (_tvTunerInterface == null) return false;
       if (_channelNumber >= (int)ExternalInputs.svhs) return true;
       AMTunerSignalStrength strength;
       _tvTunerInterface.SignalPresent(out strength);
@@ -1293,5 +1293,33 @@ namespace MediaPortal.TV.Recording
     public void GrabEpg(TVChannel chan)
     {
     }
+
+      public void RadioChannelMinMax(out int chanmin, out int chanmax)
+      {
+          Log.WriteFile(Log.LogType.Capture, "SinkGraph:Getting Min and Max Radio channels");
+          _tvTunerInterface.put_TuningSpace(0);
+          _tvTunerInterface.put_CountryCode(_countryCode);
+          _tvTunerInterface.put_Mode(AMTunerModeType.FMRadio);
+          if (_isUsingCable)
+          {
+              _tvTunerInterface.put_InputType(0, TunerInputType.Cable);
+          }
+          else
+          {
+              _tvTunerInterface.put_InputType(0, TunerInputType.Antenna);
+          }
+          _tvTunerInterface.ChannelMinMax(out chanmin, out chanmax);
+          Log.WriteFile(Log.LogType.Capture, "SinkGraph:  Radio Channel Min {0} hz - Radio Channel Max {1}", chanmin, chanmax);
+
+      }
+
+      public void TVChannelMinMax(out int chanmin, out int chanmax)
+      {
+          Log.WriteFile(Log.LogType.Capture, "SinkGraph:Getting Min and Max TV channels");
+          InitializeTuner();
+          _tvTunerInterface.ChannelMinMax(out chanmin, out chanmax);
+          Log.WriteFile(Log.LogType.Capture, "SinkGraph:  TV Channel Min {0} hz - Radio Channel Max {1}", chanmin, chanmax);
+
+      }
   }
 }
