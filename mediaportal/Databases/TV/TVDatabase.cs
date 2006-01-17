@@ -989,6 +989,7 @@ namespace MediaPortal.TV.Database
             CachedChannel chan = new CachedChannel(iNewID,channel.Number,strChannel);
             m_channelCache.Add(chan);
             channel.ID = iNewID;
+            channel.Sort = totalchannels + 1;
             if (OnChannelsChanged != null) OnChannelsChanged();
             return iNewID;
           }
@@ -1367,6 +1368,75 @@ namespace MediaPortal.TV.Database
         return false;
       }
     }
+    static public TVChannel GetChannelById(int channelId)
+    {
+      if (m_db == null) return null;
+      lock (typeof(TVDatabase))
+      {
+        try
+        {
+          if (null == m_db) return null;
+          string strSQL;
+          strSQL = String.Format("select * from channel where idChannel={0}", channelId);
+          SQLiteResultSet results;
+          results = m_db.Execute(strSQL);
+          if (results.Rows.Count == 0) return null;
+          
+          TVChannel chan = new TVChannel();
+          chan.ID = DatabaseUtility.GetAsInt(results, 0, "idChannel");
+          chan.Number = DatabaseUtility.GetAsInt(results, 0, "iChannelNr");
+          decimal dFreq = 0;
+          try
+          {
+            dFreq = (decimal)DatabaseUtility.GetAsInt64(results, 0, "frequency");
+
+          }
+          catch (Exception)
+          {
+            chan.Frequency = 0;
+          }
+          dFreq /= 1000000M;
+          dFreq = Math.Round(dFreq, 3);
+          dFreq *= 1000000M;
+          chan.Frequency = (long)Math.Round(dFreq, 0);
+          chan.Name = DatabaseUtility.Get(results, 0, "strChannel");
+          int iExternal = DatabaseUtility.GetAsInt(results, 0, "bExternal");
+          if (iExternal != 0) chan.External = true;
+          else chan.External = false;
+
+          int iVisible = DatabaseUtility.GetAsInt(results, 0, "Visible");
+          if (iVisible != 0) chan.VisibleInGuide = true;
+          else chan.VisibleInGuide = false;
+
+
+          int scrambled = DatabaseUtility.GetAsInt(results, 0, "scrambled");
+          if (scrambled != 0) chan.Scrambled = true;
+          else chan.Scrambled = false;
+
+          int grabepg = DatabaseUtility.GetAsInt(results, 0, "grabEpg");
+          if (grabepg != 0) chan.AutoGrabEpg = true;
+          else chan.AutoGrabEpg = false;
+
+          chan.EpgHours = DatabaseUtility.GetAsInt(results, 0, "epgHours");
+          chan.LastDateTimeEpgGrabbed = Utils.longtodate(DatabaseUtility.GetAsInt64(results, 0, "epgLastUpdate"));
+
+          chan.Sort = DatabaseUtility.GetAsInt(results, 0, "iSort");
+
+          chan.ExternalTunerChannel = DatabaseUtility.Get(results, 0, "ExternalChannel");
+          chan.TVStandard = (AnalogVideoStandard)DatabaseUtility.GetAsInt(results, 0, "standard");
+          chan.Country = DatabaseUtility.GetAsInt(results, 0, "Country");
+
+          return chan;
+        }
+        catch (Exception ex)
+        {
+          Log.WriteFile(Log.LogType.Log, true, "TVDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          Open();
+        }
+        return null;
+      }
+    }
+
 
     static public bool GetGenres(ref ArrayList genres)
     {

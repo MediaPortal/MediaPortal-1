@@ -41,7 +41,7 @@ namespace MediaPortal.Tests.Databases.TV
     }
     
     [Test]
-    public void GetChannels()
+    public void TestGetChannels()
     {
       List<TVChannel> listChannels = new List<TVChannel>();
       TVDatabase.GetChannels(ref listChannels);
@@ -50,7 +50,6 @@ namespace MediaPortal.Tests.Databases.TV
       Assert.AreEqual(listChannels[1].Name, "RTL 5");
       Assert.AreEqual(listChannels[2].Name, "SBS 6");
     }
-
     
     [Test]
     public void GetProgramByTime()
@@ -84,7 +83,91 @@ namespace MediaPortal.Tests.Databases.TV
       Assert.AreEqual(genres[1], "movie");
       Assert.AreEqual(genres[2], "soap");
       Assert.AreEqual(genres[3], "news");
+    }
+    [Test]
+    public void TestQuoteInGenre()
+    {
+      TVDatabase.AddGenre("mo'v'ie");
 
+      List<string> genres = new List<string>();
+      TVDatabase.GetGenres(ref genres);
+      Assert.AreEqual(genres.Count, 2);
+      Assert.AreEqual(genres[0], "unknown");
+      Assert.AreEqual(genres[1], "mo'v'ie");
+    }
+    [Test]
+    public void TestAddChannel()
+    {
+      TVChannel chan = new TVChannel();
+      chan.Name = "bla";
+      chan.Number = 55;
+      chan.Frequency = 123456000;
+      chan.External = true;
+      chan.ExternalTunerChannel = "external";
+      chan.AutoGrabEpg = true;
+      chan.EpgHours = 12;
+      chan.Country = 22;
+      chan.LastDateTimeEpgGrabbed = new DateTime(2006, 1, 2, 20, 21, 22, 0);
+      chan.TVStandard = DirectShowLib.AnalogVideoStandard.PAL_60;
+      chan.Scrambled = true;
+      chan.VisibleInGuide = true;
+      chan.Sort = 123;
+      chan.ID= TVDatabase.AddChannel(chan);
+
+      TVChannel chanReturn = TVDatabase.GetChannelById(chan.ID);
+      Assert.IsNotNull(chanReturn);
+      Assert.AreEqual(chan, chanReturn);
+    }
+
+    [Test]
+    public void TestQuotesInChannel()
+    {
+      TVChannel ch = new TVChannel("te'st'");
+      ch.ExternalTunerChannel = "exte'r'nal";
+      ch.XMLId = "xml'i''d'";
+      int channelId=TVDatabase.AddChannel(ch);
+
+      TVChannel addedChannel = TVDatabase.GetChannelById(channelId);
+      Assert.AreEqual(addedChannel.Name, ch.Name);
+      Assert.AreEqual(addedChannel.ExternalTunerChannel, ch.ExternalTunerChannel);
+    }
+
+    [Test]
+    public void DontAddIdenticalGenres()
+    {
+      TVDatabase.AddGenre("movie");
+      TVDatabase.AddGenre("movie");
+      TVDatabase.AddGenre("movie");
+
+      List<string> genres = new List<string>();
+      TVDatabase.GetGenres(ref genres);
+      Assert.AreEqual(genres.Count, 2);
+    }
+
+    [Test]
+    public void TestUpdateChannel()
+    {
+      List<TVChannel> listChannels = new List<TVChannel>();
+      TVDatabase.GetChannels(ref listChannels);
+      TVChannel chan=listChannels[0];
+      chan.Name = "bla";
+      chan.Number = 55;
+      chan.Frequency = 123456000;
+      chan.External = true;
+      chan.ExternalTunerChannel = "external";
+      chan.AutoGrabEpg = true;
+      chan.EpgHours = 12;
+      chan.Country = 22;
+      chan.LastDateTimeEpgGrabbed = new DateTime(2006, 1, 2, 20, 21, 22,0);
+      chan.TVStandard = DirectShowLib.AnalogVideoStandard.PAL_60;
+      chan.Scrambled = true;
+      chan.VisibleInGuide = true;
+      chan.Sort = 123;
+      TVDatabase.UpdateChannel(chan, chan.Sort);
+
+      TVChannel chanReturn = TVDatabase.GetChannelById(chan.ID);
+      Assert.IsNotNull(chanReturn);
+      Assert.AreEqual(chan, chanReturn);
 
     }
   }

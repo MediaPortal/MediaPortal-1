@@ -95,7 +95,7 @@ namespace MediaPortal.TV.Database
   /// <summary>
 	/// Class which holds all information about a tv channel
 	/// </summary>
-	public class TVChannel
+	public class TVChannel 
   {
     #region special channels
     public static SpecialChannelsStruct[] SpecialChannels = 
@@ -260,6 +260,32 @@ namespace MediaPortal.TV.Database
     }
     #endregion
 
+    public override bool Equals(object obj)
+    {
+      if ((obj as TVChannel)==null) return false;
+      TVChannel chan = (TVChannel)obj;
+
+      if (chan.ID != ID) return false;
+      if (chan.Frequency != Frequency) return false;
+      if (chan.Number != Number) return false;
+      if (chan.Name != Name) return false;
+      if (chan.XMLId != XMLId) return false;
+      if (chan.External != External) return false;
+      if (chan.ExternalTunerChannel != ExternalTunerChannel) return false;
+      if (chan.VisibleInGuide != VisibleInGuide) return false;
+      if (chan.Country != Country) return false;
+      if (chan.ProviderName != ProviderName) return false;
+      if (chan.Scrambled != Scrambled) return false;
+      if (chan.Sort != Sort) return false;
+      if (chan.EpgHours != EpgHours) return false;
+      if (chan.AutoGrabEpg != AutoGrabEpg) return false;
+      if (chan.LastDateTimeEpgGrabbed.Year != LastDateTimeEpgGrabbed.Year) return false;
+      if (chan.LastDateTimeEpgGrabbed.Month != LastDateTimeEpgGrabbed.Month) return false;
+      if (chan.LastDateTimeEpgGrabbed.Day != LastDateTimeEpgGrabbed.Day) return false;
+      if (chan.LastDateTimeEpgGrabbed.Hour != LastDateTimeEpgGrabbed.Hour) return false;
+      if (chan.LastDateTimeEpgGrabbed.Minute != LastDateTimeEpgGrabbed.Minute) return false;
+      return true;
+    }
     #region properties
     public DateTime LastDateTimeEpgGrabbed
     {

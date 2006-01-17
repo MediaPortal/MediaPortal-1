@@ -1317,8 +1317,9 @@ namespace MediaPortal.TV.Recording
 
 
       DateTime timeProgStart = new DateTime(1971, 11, 6, 20, 0, 0, 0);
-      string strName = string.Empty;
-      string strDirectory = string.Empty;
+      string fileName = string.Empty;
+      string subDirectory = string.Empty;
+      string fullPath = RecordingPath;
       if (currentRunningProgram != null)
       {
         string strInput = string.Empty;
@@ -1360,42 +1361,45 @@ namespace MediaPortal.TV.Recording
         int index = strInput.LastIndexOf('\\');
         if (index != -1)
         {
-          strDirectory = strInput.Substring(0, index);
-          strName = strInput.Substring(index + 1);
+          subDirectory = strInput.Substring(0, index).Trim();
+          fileName = strInput.Substring(index + 1).Trim();
         }
         else
-          strName = strInput;
+          fileName = strInput.Trim();
 
-        if (strDirectory != string.Empty)
+        
+        if (subDirectory != string.Empty)
         {
-          strDirectory = Utils.MakeDirectoryPath(strDirectory);
-          if (!Directory.Exists(RecordingPath + "\\" + strDirectory))
-            Directory.CreateDirectory(RecordingPath + "\\" + strDirectory);
+          subDirectory = Utils.RemoveTrailingSlash(subDirectory);
+          subDirectory = Utils.MakeDirectoryPath(subDirectory);
+          fullPath = RecordingPath + "\\" + subDirectory;
+          if (!Directory.Exists(fullPath))
+            Directory.CreateDirectory(fullPath);
         }
-        if (strName == string.Empty)
+        if (fileName == string.Empty)
         {
           DateTime dt = currentRunningProgram.StartTime;
-          strName = String.Format("{0}_{1}_{2}{3:00}{4:00}{5:00}{6:00}p{7}{8}",
+          fileName = String.Format("{0}_{1}_{2}{3:00}{4:00}{5:00}{6:00}p{7}{8}",
                                     currentRunningProgram.Channel, currentRunningProgram.Title,
                                     dt.Year, dt.Month, dt.Day,
                                     dt.Hour,
                                     dt.Minute,
                                     DateTime.Now.Minute, DateTime.Now.Second);
         }
-        strName = Utils.MakeFileName(strName);
-        if (File.Exists(RecordingPath + "\\" + strDirectory + "\\" + strName + recEngineExt))
+        fileName = Utils.MakeFileName(fileName);
+        if (File.Exists(fullPath + "\\" + fileName + recEngineExt))
         {
           int i = 1;
-          while (File.Exists(RecordingPath + "\\" + strDirectory + "\\" + strName + "_" + i.ToString() + recEngineExt))
+          while (File.Exists(fullPath + "\\" + fileName + "_" + i.ToString() + recEngineExt))
             ++i;
-          strName += "_" + i.ToString();
+          fileName += "_" + i.ToString();
         }
-        strName += recEngineExt;
+        fileName += recEngineExt;
       }
       else
       {
         DateTime dt = DateTime.Now;
-        strName = String.Format("{0}_{1}_{2}{3:00}{4:00}{5:00}{6:00}p{7}{8}{9}",
+        fileName = String.Format("{0}_{1}_{2}{3:00}{4:00}{5:00}{6:00}p{7}{8}{9}",
           _currentTvChannelName, _currentTvRecording.Title,
           dt.Year, dt.Month, dt.Day,
           dt.Hour,
@@ -1404,17 +1408,15 @@ namespace MediaPortal.TV.Recording
           recEngineExt);
       }
 
-      Log.Write("Recorder: recording to {0}\\{1}", RecordingPath + "\\" + strDirectory, strName);
-
-      string strFileName = String.Format(@"{0}\{1}", RecordingPath + "\\" + strDirectory, Utils.MakeFileName(strName));
-      //Log.WriteFile(Log.LogType.Capture, "Card:{0} recording to file:{1}", ID, strFileName);
+      string fullFileName = String.Format(@"{0}\{1}", fullPath, Utils.MakeFileName(fileName));
+      Log.Write("Recorder: recording to {0}", fullFileName);
 
       TVChannel channel = GetChannel(_currentTvChannelName);
 
       _recordedTvObject = new TVRecorded();
       _recordedTvObject.Start = Utils.datetolong(DateTime.Now);
       _recordedTvObject.Channel = _currentTvChannelName;
-      _recordedTvObject.FileName = strFileName;
+      _recordedTvObject.FileName = fullFileName;
       _recordedTvObject.KeepRecordingMethod = recording.KeepRecordingMethod;
       _recordedTvObject.KeepRecordingTill = recording.KeepRecordingTill;
       if (currentRunningProgram != null)
@@ -1434,8 +1436,8 @@ namespace MediaPortal.TV.Recording
 
       Hashtable attribtutes = GetRecordingAttributes();
       if (timeProgStart < _lastChannelChange) timeProgStart = _lastChannelChange;
-      bool bResult = _currentGraph.StartRecording(attribtutes, recording, channel, ref strFileName, recording.IsContentRecording, timeProgStart);
-      _recordedTvObject.FileName = strFileName;
+      bool bResult = _currentGraph.StartRecording(attribtutes, recording, channel, ref fullFileName, recording.IsContentRecording, timeProgStart);
+      _recordedTvObject.FileName = fullFileName;
 
       _timeRecordingStarted = DateTime.Now;
       _currentGraphState = State.Recording;
