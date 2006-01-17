@@ -1,27 +1,23 @@
 <?xml version="1.0" ?>
 <project name="MediaPortal" default="debug">
-
-  <target name="release">
-    <solution configuration="release" solutionfile="MediaPortal.sln">
-      <assemblyfolders>
-        <!-- Reference to System.* assemblies -->
-        <includes name="C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322" />
-        <!-- Reference to Microsoft.DirectX* assemblies -->
-        <includes name="C:\MediaPortal" />
-         <includes name="C:\WINDOWS\Microsoft.NET\Managed DirectX\v4.09.00.0900" />
-      </assemblyfolders>
-    </solution>
+  <target name="debug" depends="remove,checkout,build,test" />
+  <target name="build">
+	<exec program="msbuild">
+		<arg value="mediaportal\mediaportal.sln" />
+	</exec>
   </target>
-  <target name="debug">
-    <solution configuration="debug" solutionfile="MediaPortal.sln">
-      <assemblyfolders>
-        <!-- Reference to System.* assemblies -->
-        <includes name="C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322" />
-        <!-- Reference to Microsoft.DirectX* assemblies -->
-        <includes name="C:\MediaPortal" />
-        <includes name="C:\WINDOWS\Microsoft.NET\Managed DirectX\v4.09.00.0900" />
-      </assemblyfolders>
-    </solution>
+  <target name="test">
+	<nunit2>
+		<formatter type="Plain" />
+		<test assemblyname="MediaPortal.Tests\bin\Debug\MediaPortal.Tests.dll"
+			  appconfig="test.config" />
+	</nunit2>
   </target>
-
-</project>
+  <target name="remove">
+	<delete dir="mediaportal" failonerror="false" />
+  </target>
+  <target name="checkout">
+	<exec program="cvs" commandline="-d :ssh;username=systay;password=ergi8idag;hostname=cvs.sourceforge.net:/cvsroot/mediaportal checkout -P -- mediaportal">
+	</exec>
+  </target>
+</project> 

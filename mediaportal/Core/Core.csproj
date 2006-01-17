@@ -1060,7 +1060,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="PlayList\IPlayListIO.cs" />
-    <Compile Include="PlayList\NonStaticPlayListPlayer.cs" />
     <Compile Include="PlayList\PlayList.cs">
       <SubType>Code</SubType>
     </Compile>
