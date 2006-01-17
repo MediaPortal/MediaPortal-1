@@ -407,7 +407,7 @@ namespace MediaPortal.Configuration.Sections
       this.setupButton.Name = "setupButton";
       this.setupButton.Size = new System.Drawing.Size(72, 22);
       this.setupButton.TabIndex = 1;
-      this.setupButton.Text = "Setup";
+      this.setupButton.Text = "&Setup";
       this.setupButton.Click += new System.EventHandler(this.setupButton_Click);
       // 
       // Plugins

@@ -344,7 +344,7 @@ namespace MediaPortal.Configuration
 			this.cancelButton.Location = new System.Drawing.Point(621, 479);
 			this.cancelButton.Name = "cancelButton";
 			this.cancelButton.TabIndex = 1;
-			this.cancelButton.Text = "Cancel";
+			this.cancelButton.Text = "&Cancel";
 			this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
 			// 
 			// okButton
@@ -354,7 +354,7 @@ namespace MediaPortal.Configuration
 			this.okButton.Location = new System.Drawing.Point(542, 479);
 			this.okButton.Name = "okButton";
 			this.okButton.TabIndex = 0;
-			this.okButton.Text = "OK";
+			this.okButton.Text = "&OK";
 			this.okButton.Click += new System.EventHandler(this.okButton_Click);
 			// 
 			// headerLabel
@@ -404,7 +404,7 @@ namespace MediaPortal.Configuration
 			this.applyButton.Name = "applyButton";
 			this.applyButton.TabIndex = 6;
 			this.applyButton.TabStop = false;
-			this.applyButton.Text = "Apply";
+			this.applyButton.Text = "&Apply";
 			this.applyButton.Visible = false;
 			this.applyButton.Click += new System.EventHandler(this.applyButton_Click);
 			// 
@@ -420,6 +420,8 @@ namespace MediaPortal.Configuration
 			this.Controls.Add(this.okButton);
 			this.Controls.Add(this.cancelButton);
 			this.Controls.Add(this.sectionTree);
+      this.CancelButton = cancelButton;
+      this.AcceptButton = okButton;
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "SettingsForm";
 			this.Text = "Settings";
