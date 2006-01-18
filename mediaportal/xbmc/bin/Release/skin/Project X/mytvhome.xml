@@ -210,7 +210,7 @@
 				<posY>233</posY>
 				<width>150</width>
 				<height>32</height>
-				<label>Teletext</label>
+				<label>1441</label>
 				<onup>9</onup>
 				<ondown>3</ondown>
 				<onright>99</onright>
@@ -271,7 +271,7 @@
 			<id>13</id>
 			<posX>666</posX>
 			<posY>430</posY>
-			<label>Channel</label>
+			<label>602</label>
 			<font>font14</font>
 			<align>right</align>
 			<textcolor>FFFFFFFF</textcolor>

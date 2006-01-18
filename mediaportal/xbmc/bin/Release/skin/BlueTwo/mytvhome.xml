@@ -128,7 +128,7 @@
 				<description>Teletext</description>
 				<type>button</type>
 				<id>13</id>
-				<label>Teletext</label>
+				<label>1441</label>
 				<onup>12</onup>
 				<ondown>2</ondown>
 				<onright>99</onright>
@@ -177,7 +177,7 @@
 			<id>13</id>
 			<posX>660</posX>
 			<posY>415</posY>
-			<label>Channel</label>
+			<label>602</label>
 			<font>font13</font>
 			<align>right</align>
 			<textcolor>FFFFFFFF</textcolor>
