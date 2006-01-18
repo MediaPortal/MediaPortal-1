@@ -95,9 +95,9 @@ namespace MediaPortal.GUI.Library
 		protected override void AllocButtons()
 		{
 			currentSelection=Selection.Button;
-			for (int i=0; i < m_iItemsPerPage;++i)
+			for (int i=0; i < _itemsPerPage;++i)
 			{
-				GUIUpDownButton cntl = new GUIUpDownButton(_controlId, 0, _spinControlPositionX, _spinControlPositionY, _width, m_iItemHeight, m_strButtonFocused, m_strButtonUnfocused,
+				GUIUpDownButton cntl = new GUIUpDownButton(_controlId, 0, _spinControlPositionX, _spinControlPositionY, _width, _itemHeight, _buttonFocusName, _buttonNonFocusName,
 																										_spinControlWidth, _spinControlHeight, 
 																										_upTextureName, _downTextureName, 
 																										_upTextureNameFocus, _downTextureNameFocus, 
@@ -114,17 +114,17 @@ namespace MediaPortal.GUI.Library
 			focused=Focus;
 			int id;
 			bool focus;
-			if (m_vertScrollbar.HitTest(x, y,out id, out focus)) return true;
+			if (_verticalScrollbar.HitTest(x, y,out id, out focus)) return true;
 
-			if (m_upDown.HitTest(x, y,out id, out focus))
+			if (_upDownControl.HitTest(x, y,out id, out focus))
 			{
-				if (m_upDown.GetMaximum() > 1)
+				if (_upDownControl.GetMaximum() > 1)
 				{
-					m_iSelect = ListType.CONTROL_UPDOWN;
-					m_upDown.Focus = true;
-					if (!m_upDown.Focus) 
+					_listType = ListType.CONTROL_UPDOWN;
+					_upDownControl.Focus = true;
+					if (!_upDownControl.Focus) 
 					{
-						m_iSelect = ListType.CONTROL_LIST;
+						_listType = ListType.CONTROL_LIST;
 					}
 					return true;
 				}
@@ -134,24 +134,24 @@ namespace MediaPortal.GUI.Library
 			{
 				return false;
 			}
-			m_iSelect = ListType.CONTROL_LIST;
+			_listType = ListType.CONTROL_LIST;
 			int posy =y- (int)_positionY;
-			m_iCursorY = (posy / (m_iItemHeight + m_iSpaceBetweenItems));
-			while (m_iOffset + m_iCursorY >= m__itemList.Count) m_iCursorY--;
-			if (m_iCursorY >= m_iItemsPerPage)
-				m_iCursorY = m_iItemsPerPage - 1;
+			_cursorX = (posy / (_itemHeight + _spaceBetweenItems));
+			while (_offset + _cursorX >= _listItems.Count) _cursorX--;
+			if (_cursorX >= _itemsPerPage)
+				_cursorX = _itemsPerPage - 1;
 			OnSelectionChanged();
-			m_bRefresh = true;
+			_refresh = true;
 
 			if (_listButtons!=null)
 			{
 				int cntlId;
 				bool gotFocus;
-				for (int i=0; i < m_iItemsPerPage;++i)
+				for (int i=0; i < _itemsPerPage;++i)
 				{
 					GUIUpDownButton btn = (GUIUpDownButton)_listButtons[i];
 					btn.HitTest(x,y,out cntlId, out gotFocus);
-					if (i==m_iCursorY)
+					if (i==_cursorX)
 					{
 						currentSelection=Selection.Button;
 						if (btn.UpDownControl.Focus)
@@ -174,7 +174,7 @@ namespace MediaPortal.GUI.Library
 			{
 				case Selection.PageCounter:
 					base.OnLeft();
-					if (m_iSelect == ListType.CONTROL_LIST)
+					if (_listType == ListType.CONTROL_LIST)
 						currentSelection=Selection.Button;
 					break;
 
@@ -216,7 +216,7 @@ namespace MediaPortal.GUI.Library
 					break;
 				case Selection.PageCounter:
 					base.OnRight ();
-					if (m_iSelect == ListType.CONTROL_LIST)
+					if (_listType == ListType.CONTROL_LIST)
 						currentSelection=Selection.Button;
 					break;
 			}
@@ -238,10 +238,10 @@ namespace MediaPortal.GUI.Library
 		}
 		void UpdateUpDownControls()
 		{
-			for (int i=0; i < m_iItemsPerPage;++i)
+			for (int i=0; i < _itemsPerPage;++i)
 			{
 				GUIUpDownButton btn = (GUIUpDownButton)_listButtons[i];
-				if (i==m_iCursorY)
+				if (i==_cursorX)
 				{
 					switch (currentSelection)
 					{

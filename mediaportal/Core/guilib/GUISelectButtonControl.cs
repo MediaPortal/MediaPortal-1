@@ -32,26 +32,26 @@ namespace MediaPortal.GUI.Library
 		[XMLSkinElement("disabledcolor")]	protected long  _disabledColor=0xFF606060;
 		[XMLSkinElement("label")]			protected string	_label="";
 		[XMLSkinElement("font")]			protected string	_fontName;
-		[XMLSkinElement("textureFocus")]	protected string	m_strFocusTexture="";
-		[XMLSkinElement("textureNoFocus")]	protected string	m_strNoFocusTexture="";
-		[XMLSkinElement("texturebg")]		protected string    m_strBackground="";
-		[XMLSkinElement("textureLeft")]		protected string	m_strLeft="";
-		[XMLSkinElement("textureRight")]	protected string	m_strRight="";
-		[XMLSkinElement("textureLeftFocus")]	protected string	m_strLeftFocus="";
-		[XMLSkinElement("textureRightFocus")]	protected string	m_strRightFocus="";
+		[XMLSkinElement("textureFocus")]	protected string	_textureFocusName="";
+		[XMLSkinElement("textureNoFocus")]	protected string	_textureNoFocusName="";
+		[XMLSkinElement("texturebg")]		protected string    _backgroundTextureName="";
+		[XMLSkinElement("textureLeft")]		protected string	_leftTextureName="";
+		[XMLSkinElement("textureRight")]	protected string	_rightTextureName="";
+		[XMLSkinElement("textureLeftFocus")]	protected string	_leftFocusName="";
+		[XMLSkinElement("textureRightFocus")]	protected string	_rightFocusName="";
 		[XMLSkinElement("textXOff")]		protected int       _textOffsetX=0;
 		[XMLSkinElement("textYOff")]		protected int       _textOffsetY=0;
 		[XMLSkinElement("textXOff2")]		protected int       _textOffsetX2=0;
 		[XMLSkinElement("textYOff2")]		protected int       _textOffsetY2=0;
-											protected GUIImage	m_imgBackground=null;
-											protected GUIImage	m_imgLeft=null;
-											protected GUIImage	m_imgLeftFocus=null;
-											protected GUIImage	m_imgRight=null;
-											protected GUIImage	m_imgRightFocus=null;
+											protected GUIImage	_imageBackground=null;
+											protected GUIImage	_imageLeft=null;
+											protected GUIImage	_imageLeftFocus=null;
+											protected GUIImage	_imageRight=null;
+											protected GUIImage	_imageRightFocus=null;
 											protected GUIImage	_imageFocused=null;
 											protected GUIImage	_imageNonFocused=null;  
 											protected GUIFont	_font=null;
-											protected bool		m_bShowSelect=false;
+											protected bool		_showSelect=false;
 
     
 		protected int                     _frameCounter=0;
@@ -60,15 +60,15 @@ namespace MediaPortal.GUI.Library
 
 		protected int                     _hyperLinkWindowId=-1;
 		protected string									_scriptAction="";
-		protected int											m_iDefaultItem=-1;
-		protected int											m_iStartFrame=0;
-		protected bool										m_bLeftSelected=false;
-		protected bool										m_bRightSelected=false;
-		protected long										m_dwTicks=0;
-		protected bool                    m_bUpdateNeeded=false;
-		protected bool                    m_bAutoHide=true;
+		protected int											_defaultItem=-1;
+		protected int											_startFrame=0;
+		protected bool										_leftSelected=false;
+		protected bool										_rightSelected=false;
+		protected long										_ticks=0;
+		protected bool                    _updateNeeded=false;
+		protected bool                    _autoHide=true;
     protected GUILabelControl         _labelControl=null;
-		protected bool										resetSelectionAfterFocusLost=true;
+		protected bool										_resetSelectionAfterFocusLost=true;
 		
 	
 
@@ -100,14 +100,14 @@ namespace MediaPortal.GUI.Library
                                   string strSelectArrowRight,  string strSelectArrowRightFocus)
           :base(dwParentID, dwControlId, dwPosX, dwPosY,dwWidth, dwHeight)
     {
-		m_strFocusTexture = strButtonFocus;
-		m_strNoFocusTexture = strButton;
-		m_strBackground = strSelectBackground;
-		m_strRight = strSelectArrowRight;
-		m_strRightFocus = strSelectArrowRightFocus;
-		m_strLeft = strSelectArrowLeft;
-		m_strLeftFocus = strSelectArrowLeftFocus;
-		m_bUpdateNeeded=false;
+		_textureFocusName = strButtonFocus;
+		_textureNoFocusName = strButton;
+		_backgroundTextureName = strSelectBackground;
+		_rightTextureName = strSelectArrowRight;
+		_rightFocusName = strSelectArrowRightFocus;
+		_leftTextureName = strSelectArrowLeft;
+		_leftFocusName = strSelectArrowLeftFocus;
+		_updateNeeded=false;
 		_isSelected=false;
 		FinalizeConstruction();
     }
@@ -117,37 +117,37 @@ namespace MediaPortal.GUI.Library
 		  int x1=16;
 		  int y1=16;
 		  GUIGraphicsContext.ScalePosToScreenResolution(ref x1,ref y1);
-		  _imageFocused		= new GUIImage(_parentControlId, _controlId, _positionX, _positionY,_width, _height, m_strFocusTexture,0);
+		  _imageFocused		= new GUIImage(_parentControlId, _controlId, _positionX, _positionY,_width, _height, _textureFocusName,0);
       _imageFocused.ParentControl = this;
 
-		  _imageNonFocused		= new GUIImage(_parentControlId, _controlId, _positionX, _positionY,_width, _height, m_strNoFocusTexture,0);
+		  _imageNonFocused		= new GUIImage(_parentControlId, _controlId, _positionX, _positionY,_width, _height, _textureNoFocusName,0);
       _imageNonFocused.ParentControl = this;
 
-		  m_imgBackground	= new GUIImage(_parentControlId, _controlId, _positionX, _positionY,_width, _height, m_strBackground,0);
-      m_imgBackground.ParentControl = this;
+		  _imageBackground	= new GUIImage(_parentControlId, _controlId, _positionX, _positionY,_width, _height, _backgroundTextureName,0);
+      _imageBackground.ParentControl = this;
 
-		  m_imgLeft			= new GUIImage(_parentControlId, _controlId, _positionX, _positionY, x1, y1,m_strLeft,0);
-      m_imgLeft.ParentControl = this;
+		  _imageLeft			= new GUIImage(_parentControlId, _controlId, _positionX, _positionY, x1, y1,_leftTextureName,0);
+      _imageLeft.ParentControl = this;
 
-		  m_imgLeftFocus	= new GUIImage(_parentControlId, _controlId, _positionX, _positionY, x1, y1,m_strLeftFocus,0);
-      m_imgLeftFocus.ParentControl = this;
+		  _imageLeftFocus	= new GUIImage(_parentControlId, _controlId, _positionX, _positionY, x1, y1,_leftFocusName,0);
+      _imageLeftFocus.ParentControl = this;
 
-		  m_imgRight		= new GUIImage(_parentControlId, _controlId, _positionX, _positionY, x1, y1,m_strRight,0);
-      m_imgRight.ParentControl = this;
+		  _imageRight		= new GUIImage(_parentControlId, _controlId, _positionX, _positionY, x1, y1,_rightTextureName,0);
+      _imageRight.ParentControl = this;
 
-		  m_imgRightFocus	= new GUIImage(_parentControlId, _controlId, _positionX, _positionY, x1, y1,m_strRightFocus,0);
-      m_imgRightFocus.ParentControl = this;
+		  _imageRightFocus	= new GUIImage(_parentControlId, _controlId, _positionX, _positionY, x1, y1,_rightFocusName,0);
+      _imageRightFocus.ParentControl = this;
 
 		  if (_fontName!="" && _fontName!="-")
 			  _font=GUIFontManager.GetFont(_fontName);
 		  GUILocalizeStrings.LocalizeLabel(ref _label);
       _imageFocused.Filtering=false;
       _imageNonFocused.Filtering=false;
-      m_imgBackground.Filtering=false;
-      m_imgLeft.Filtering=false;
-      m_imgLeftFocus.Filtering=false;
-      m_imgRight.Filtering=false;
-      m_imgRightFocus.Filtering=false;
+      _imageBackground.Filtering=false;
+      _imageLeft.Filtering=false;
+      _imageLeftFocus.Filtering=false;
+      _imageRight.Filtering=false;
+      _imageRightFocus.Filtering=false;
       _labelControl=new GUILabelControl(_parentControlId);
       _labelControl.CacheFont=true;
       _labelControl.ParentControl = this;
@@ -168,10 +168,10 @@ namespace MediaPortal.GUI.Library
 		/// <returns>true or false</returns>
 		public override bool  NeedRefresh()
 		{
-			if (m_bShowSelect) return true;
-			if (m_bUpdateNeeded)
+			if (_showSelect) return true;
+			if (_updateNeeded)
 			{
-				m_bUpdateNeeded=false;
+				_updateNeeded=false;
 				return true;
 			}
 			return false;
@@ -188,34 +188,34 @@ namespace MediaPortal.GUI.Library
       }
 
 
-			if (Focus) m_bShowSelect=true;
-			else m_bShowSelect=false;
+			if (Focus) _showSelect=true;
+			else _showSelect=false;
 
       //	Are we in selection mode
-      if (m_bShowSelect)
+      if (_showSelect)
       {
         //	Yes, render the select control
 
         //	render background, left and right arrow
 
-        m_imgBackground.Render(timePassed);
+        _imageBackground.Render(timePassed);
 
         long dwTextColor=_textColor;
 
         //	User has moved left...
-        if(m_bLeftSelected)
+        if(_leftSelected)
         {
           //	...render focused arrow
-          m_iStartFrame++;
-          if(m_bAutoHide && m_iStartFrame>=25)
+          _startFrame++;
+          if(_autoHide && _startFrame>=25)
           {
-            m_iStartFrame=0;
-            m_bLeftSelected=false;
+            _startFrame=0;
+            _leftSelected=false;
 						GUIMessage message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED,WindowId,GetID, ParentID ,0,0,null);
 						GUIWindowManager.SendThreadMessage(message);
-						m_bUpdateNeeded=true;
+						_updateNeeded=true;
 					}
-          m_imgLeftFocus.Render(timePassed);
+          _imageLeftFocus.Render(timePassed);
 
           //	If we are moving left
           //	render item text as disabled
@@ -224,24 +224,24 @@ namespace MediaPortal.GUI.Library
         else
         {
           //	Render none focused arrow
-          m_imgLeft.Render(timePassed);
+          _imageLeft.Render(timePassed);
         }
 
 
         //	User has moved right...
-        if(m_bRightSelected)
+        if(_rightSelected)
         {
           //	...render focused arrow
-          m_iStartFrame++;
-          if(m_bAutoHide && m_iStartFrame>=25)
+          _startFrame++;
+          if(_autoHide && _startFrame>=25)
           {
-            m_iStartFrame=0;
-            m_bRightSelected=false;
+            _startFrame=0;
+            _rightSelected=false;
 						GUIMessage message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED,WindowId,GetID, ParentID ,0,0,null);
 						GUIWindowManager.SendThreadMessage(message);
-						m_bUpdateNeeded=true;
+						_updateNeeded=true;
 					}
-          m_imgRightFocus.Render(timePassed);
+          _imageRightFocus.Render(timePassed);
 
           //	If we are moving right
           //	render item text as disabled
@@ -250,7 +250,7 @@ namespace MediaPortal.GUI.Library
         else
         {
           //	Render none focused arrow
-          m_imgRight.Render(timePassed);
+          _imageRight.Render(timePassed);
         }
 
 
@@ -258,32 +258,32 @@ namespace MediaPortal.GUI.Library
         if (SelectedItem>=0 && null!=_font && SelectedItem < _subItemList.Count)
         {
           _labelControl.FontName=_font.FontName;
-          _labelControl.SetPosition(_positionX+m_imgLeft.Width+_textOffsetX,_textOffsetY+_positionY);
+          _labelControl.SetPosition(_positionX+_imageLeft.Width+_textOffsetX,_textOffsetY+_positionY);
           _labelControl.TextColor=dwTextColor;
           _labelControl.Label=(string)_subItemList[SelectedItem];
-					_labelControl.Width=_width - (m_imgRight.Width+m_imgLeft.Width+_textOffsetX);
+					_labelControl.Width=_width - (_imageRight.Width+_imageLeft.Width+_textOffsetX);
           _labelControl.Render(timePassed);
         }
 /*
         //	Select current item, if user doesn't 
         //	move left or right for 1.5 sec.
-        long dwTicksSpan=DateTime.Now.Ticks-m_dwTicks;
+        long dwTicksSpan=DateTime.Now.Ticks-_ticks;
 				dwTicksSpan/=10000;
         if ((float)(dwTicksSpan/1000)>0.8f)
         {
           //	User hasn't moved disable selection mode...
-          m_bShowSelect=false;
+          _showSelect=false;
 
           //	...and send a thread message.
           //	(Sending a message with SendMessage 
           //	can result in a GPF.)
           GUIMessage message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED,WindowId,GetID, ParentID ,0,0,null);
           GUIWindowManager.SendThreadMessage(message);
-          m_bUpdateNeeded=true;
+          _updateNeeded=true;
         }
 */					
         
-      }	//	if (m_bShowSelect)
+      }	//	if (_showSelect)
       else
       {
         //	No, render a normal button
@@ -335,19 +335,19 @@ namespace MediaPortal.GUI.Library
     public override void OnAction( Action action) 
     {
       GUIMessage message;
-      if (!m_bShowSelect)
+      if (!_showSelect)
       {
         if (Focus)
         {
           if (action.wID == Action.ActionType.ACTION_MOUSE_CLICK||action.wID == Action.ActionType.ACTION_SELECT_ITEM)
           {
             //	Enter selection mode
-            m_bShowSelect=true;
+            _showSelect=true;
 
             //	Start timer, if user doesn't select an item
             //	or moves left/right. The control will 
             //	automatically select the current item.
-            m_dwTicks=DateTime.Now.Ticks;
+            _ticks=DateTime.Now.Ticks;
             return;
           }
         }
@@ -362,28 +362,28 @@ namespace MediaPortal.GUI.Library
 				}
         if (action.wID==Action.ActionType.ACTION_MOUSE_CLICK)
         {
-          if (m_bRightSelected)
+          if (_rightSelected)
           {
             action.wID=Action.ActionType.ACTION_MOVE_RIGHT;
             OnAction(action);
 						GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED,WindowId,GetID, ParentID ,0,0,null);
 						GUIWindowManager.SendThreadMessage(msg);
-						m_bUpdateNeeded=true;
+						_updateNeeded=true;
 						return;
           }
-          else if (m_bLeftSelected)
+          else if (_leftSelected)
           {
 						action.wID=Action.ActionType.ACTION_MOVE_LEFT;
 						OnAction(action);
 						GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED,WindowId,GetID, ParentID ,0,0,null);
 						GUIWindowManager.SendThreadMessage(msg);
-						m_bUpdateNeeded=true;
+						_updateNeeded=true;
 						return;
           }
           else
           {
             //	User has selected an item, disable selection mode...
-            m_bShowSelect=false;
+            _showSelect=false;
 
             // ...and send a message.
             message=new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED,WindowId,GetID, ParentID ,0,0,null);
@@ -394,13 +394,13 @@ namespace MediaPortal.GUI.Library
         else if (action.wID == Action.ActionType.ACTION_MOVE_LEFT)
         {
           //	Set for visual feedback
-          m_bLeftSelected=true;
-          m_bRightSelected=false;
-          m_iStartFrame=0;
+          _leftSelected=true;
+          _rightSelected=false;
+          _startFrame=0;
 
           //	Reset timer for automatically selecting
           //	the current item.
-          m_dwTicks=DateTime.Now.Ticks;
+          _ticks=DateTime.Now.Ticks;
 
           //	Switch to previous item
           if (_subItemList.Count>0)
@@ -414,13 +414,13 @@ namespace MediaPortal.GUI.Library
         else if (action.wID == Action.ActionType.ACTION_MOVE_RIGHT)
         {
           //	Set for visual feedback
-          m_bRightSelected=true;
-          m_bLeftSelected=false;
-          m_iStartFrame=0;
+          _rightSelected=true;
+          _leftSelected=false;
+          _startFrame=0;
 
           //	Reset timer for automatically selecting
           //	the current item.
-          m_dwTicks=DateTime.Now.Ticks;
+          _ticks=DateTime.Now.Ticks;
 
           //	Switch to next item
           if (_subItemList.Count>0)
@@ -434,10 +434,10 @@ namespace MediaPortal.GUI.Library
         if (action.wID == Action.ActionType.ACTION_MOVE_UP || action.wID == Action.ActionType.ACTION_MOVE_DOWN )
         {
           //	Disable selection mode when moving up or down
-          m_bShowSelect=false;
-					if (resetSelectionAfterFocusLost)
+          _showSelect=false;
+					if (_resetSelectionAfterFocusLost)
 					{
-						SelectedItem=m_iDefaultItem;
+						SelectedItem=_defaultItem;
 					}
         }
 
@@ -507,7 +507,7 @@ namespace MediaPortal.GUI.Library
 					// Selects an item.
         else if (message.Message==GUIMessage.MessageType.GUI_MSG_ITEM_SELECT)
         {
-          m_iDefaultItem=SelectedItem=(int)message.Param1;
+          _defaultItem=SelectedItem=(int)message.Param1;
         }
       }
 				// Sets the label of the control.
@@ -533,17 +533,17 @@ namespace MediaPortal.GUI.Library
 			base.FreeResources();
 			_imageFocused.FreeResources();
 			_imageNonFocused.FreeResources();
-			m_imgBackground.FreeResources();
+			_imageBackground.FreeResources();
 
-			m_imgLeft.FreeResources();
-			m_imgLeftFocus.FreeResources();
+			_imageLeft.FreeResources();
+			_imageLeftFocus.FreeResources();
 
-			m_imgRight.FreeResources();
-			m_imgRightFocus.FreeResources();
+			_imageRight.FreeResources();
+			_imageRightFocus.FreeResources();
 
       
       _labelControl.FreeResources();
-			m_bShowSelect=false;
+			_showSelect=false;
 		}
 
     public override bool CanFocus()
@@ -562,13 +562,13 @@ namespace MediaPortal.GUI.Library
       base.PreAllocResources();
       _imageFocused.PreAllocResources();
       _imageNonFocused.PreAllocResources();
-      m_imgBackground.PreAllocResources();
+      _imageBackground.PreAllocResources();
 
-      m_imgLeft.PreAllocResources();
-      m_imgLeftFocus.PreAllocResources();
+      _imageLeft.PreAllocResources();
+      _imageLeftFocus.PreAllocResources();
 
-      m_imgRight.PreAllocResources();
-      m_imgRightFocus.PreAllocResources();
+      _imageRight.PreAllocResources();
+      _imageRightFocus.PreAllocResources();
     }
 
 		/// <summary>
@@ -582,13 +582,13 @@ namespace MediaPortal.GUI.Library
       _imageNonFocused.AllocResources();
       _width=_imageFocused.Width;
       _height=_imageFocused.Height;
-      m_imgBackground.AllocResources();
+      _imageBackground.AllocResources();
 	
-      m_imgLeft.AllocResources();
-      m_imgLeftFocus.AllocResources();
+      _imageLeft.AllocResources();
+      _imageLeftFocus.AllocResources();
 
-      m_imgRight.AllocResources();
-      m_imgRightFocus.AllocResources();
+      _imageRight.AllocResources();
+      _imageRightFocus.AllocResources();
 
       _font=GUIFontManager.GetFont(_fontName);
 
@@ -602,13 +602,13 @@ namespace MediaPortal.GUI.Library
 			int y1=16;
 			GUIGraphicsContext.ScaleVertical(ref y1);
       int dwPosY=_positionY+(_height-y1)/2;
-      m_imgRight.SetPosition(dwPosX,dwPosY);
-      m_imgRightFocus.SetPosition(dwPosX,dwPosY);
+      _imageRight.SetPosition(dwPosX,dwPosY);
+      _imageRightFocus.SetPosition(dwPosX,dwPosY);
 
       //	Position left arrow
       dwPosX=_positionX+x1;
-      m_imgLeft.SetPosition(dwPosX, dwPosY);
-      m_imgLeftFocus.SetPosition(dwPosX, dwPosY);
+      _imageLeft.SetPosition(dwPosX, dwPosY);
+      _imageLeftFocus.SetPosition(dwPosX, dwPosY);
 
       _labelControl.AllocResources();
     }
@@ -742,13 +742,13 @@ namespace MediaPortal.GUI.Library
 
       _imageNonFocused.Width=_width;
       _imageNonFocused.Height=_height;
-      m_imgBackground.Width=_width;
-      m_imgBackground.Height=_height;
+      _imageBackground.Width=_width;
+      _imageBackground.Height=_height;
 
 
       _imageFocused.SetPosition(_positionX, _positionY);
       _imageNonFocused.SetPosition(_positionX, _positionY);
-      m_imgBackground.SetPosition(_positionX, _positionY);
+      _imageBackground.SetPosition(_positionX, _positionY);
 
     }
 
@@ -757,7 +757,7 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
     public string TextureLeft
     { 
-      get { return m_imgLeft.FileName;}
+      get { return _imageLeft.FileName;}
     }
 
 		/// <summary>
@@ -765,7 +765,7 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
     public string TextureLeftFocus  
     { 
-      get { return m_imgLeftFocus.FileName;}
+      get { return _imageLeftFocus.FileName;}
     }
 
 		/// <summary>
@@ -773,7 +773,7 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
     public string TextureRight
     { 
-      get { return m_imgRight.FileName;}
+      get { return _imageRight.FileName;}
     }
 
 		/// <summary>
@@ -781,7 +781,7 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
     public string TextureRightFocus  
     { 
-      get { return m_imgRightFocus.FileName;}
+      get { return _imageRightFocus.FileName;}
     }
 
 		/// <summary>
@@ -789,7 +789,7 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
     public string TextureBackground
     { 
-      get {return m_imgBackground.FileName;}
+      get {return _imageBackground.FileName;}
     }
 
 		/// <summary>
@@ -802,10 +802,10 @@ namespace MediaPortal.GUI.Library
     {
       controlID=GetID;
       focused=Focus;
-      m_bAutoHide=true;
+      _autoHide=true;
       // first check if mouse is within bounds of button
-			if (x < m_imgBackground.XPosition || x > m_imgBackground.XPosition+m_imgBackground.RenderWidth ||
-				  y < m_imgBackground.YPosition || y > m_imgBackground.YPosition+m_imgBackground.RenderHeight ) 
+			if (x < _imageBackground.XPosition || x > _imageBackground.XPosition+_imageBackground.RenderWidth ||
+				  y < _imageBackground.YPosition || y > _imageBackground.YPosition+_imageBackground.RenderHeight ) 
 			{
 				return false;
 			}
@@ -813,45 +813,45 @@ namespace MediaPortal.GUI.Library
       //yes it is
       // check if control is selected
 
-      m_bAutoHide=false;
+      _autoHide=false;
       // control is selected
       // first check left button
 
-			if (x >= m_imgLeftFocus.XPosition && x <= m_imgLeftFocus.XPosition+m_imgLeftFocus.RenderWidth)
+			if (x >= _imageLeftFocus.XPosition && x <= _imageLeftFocus.XPosition+_imageLeftFocus.RenderWidth)
 			{
-				if (y >= m_imgLeftFocus.YPosition && y <= m_imgLeftFocus.YPosition+m_imgLeftFocus.RenderHeight)
+				if (y >= _imageLeftFocus.YPosition && y <= _imageLeftFocus.YPosition+_imageLeftFocus.RenderHeight)
 				{
-          if (!m_bLeftSelected)
+          if (!_leftSelected)
           {
-            m_bLeftSelected=true;
-            m_bRightSelected=false;
-            m_dwTicks=DateTime.Now.Ticks;
-            m_iStartFrame=0;
+            _leftSelected=true;
+            _rightSelected=false;
+            _ticks=DateTime.Now.Ticks;
+            _startFrame=0;
           }
 					return true;
 				}
-        else m_bLeftSelected=false;
+        else _leftSelected=false;
       }
-      else m_bLeftSelected=false;
+      else _leftSelected=false;
 
       // check right button
-			if (x >= m_imgRightFocus.XPosition && x <= m_imgRightFocus.XPosition+m_imgRightFocus.RenderWidth)
+			if (x >= _imageRightFocus.XPosition && x <= _imageRightFocus.XPosition+_imageRightFocus.RenderWidth)
 			{
-				if (y >= m_imgRightFocus.YPosition && y <= m_imgRightFocus.YPosition+m_imgRightFocus.RenderHeight)
+				if (y >= _imageRightFocus.YPosition && y <= _imageRightFocus.YPosition+_imageRightFocus.RenderHeight)
 				{
-          if (!m_bRightSelected)
+          if (!_rightSelected)
           {
-            m_bRightSelected=true;
-            m_bLeftSelected=false;
-            m_dwTicks=DateTime.Now.Ticks;
-            m_iStartFrame=0;
+            _rightSelected=true;
+            _leftSelected=false;
+            _ticks=DateTime.Now.Ticks;
+            _startFrame=0;
             return true;
           }
           return true;
         }
-        else m_bRightSelected=false;
+        else _rightSelected=false;
 			}
-			else m_bRightSelected=false;
+			else _rightSelected=false;
 			return true;
 		}
     /// <summary>
@@ -916,14 +916,14 @@ namespace MediaPortal.GUI.Library
 		{
 			_subItemList.Clear();
 			SelectedItem=-1;
-			m_iDefaultItem=-1;
+			_defaultItem=-1;
 		}
 		public void Add(string line)
 		{
 			if (_subItemList.Count<=0)
 			{
 				SelectedItem=0;
-				m_iDefaultItem=0;
+				_defaultItem=0;
 			}
 			_subItemList.Add( line);
 		}
@@ -931,11 +931,11 @@ namespace MediaPortal.GUI.Library
 		{
 			get
 			{
-				return resetSelectionAfterFocusLost;
+				return _resetSelectionAfterFocusLost;
 			}
 			set
 			{
-				resetSelectionAfterFocusLost=value;
+				_resetSelectionAfterFocusLost=value;
 			}
 		}
 	}

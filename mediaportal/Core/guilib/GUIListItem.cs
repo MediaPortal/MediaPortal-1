@@ -41,31 +41,31 @@ namespace MediaPortal.GUI.Library
     protected string _label = String.Empty;							// text of column1
     protected string _label2 = String.Empty;							// text of column2
     protected string _label3 = String.Empty;							// text of column3
-    protected string m_strThumbnailImage = String.Empty;			// filename of thumbnail 
-    protected string m_strIcon = String.Empty;								// filename of icon
-    protected string m_strIconBig = String.Empty;						// filename of icon
-    protected GUIImage m_pThumbnailImage = null;			// pointer to CImage containing the thumbnail
-    protected GUIImage m_pIconImage = null;					// pointer to CImage containing the icon
-    protected GUIImage m_pIconImageBig = null;				// pointer to CImage containing the icon
+    protected string _thumbNailName = String.Empty;			// filename of thumbnail 
+    protected string _smallIconName = String.Empty;								// filename of icon
+    protected string _bigIconName = String.Empty;						// filename of icon
+    protected GUIImage _thumbnailImage = null;			// pointer to CImage containing the thumbnail
+    protected GUIImage _imageIcon = null;					// pointer to CImage containing the icon
+    protected GUIImage _imageBigPinIcon = null;				// pointer to CImage containing the icon
     protected bool _isSelected = false;					// item is selected or not
-    protected bool m_bFolder = false;						// indicated if the item is a folder or a path
-    protected string m_strPath = String.Empty;								// path + filename of the item
-    protected string m_strDVDLabel = String.Empty;						// indicates the disc number of movie
-    protected int m_iDuration = 0;							// duration (in seconds) of the movie or song
-    FileInformation m_info = null;								// file info (size, date/time etc.) of the file
-    bool m_bShaded = false;						// indicates if the item needs to be rendered shaded
-    float m_fRating = 0;								// rating of a movie
-    int m_iYear = 0;									// release year of the movie/song
-    object m_musicTag;									// object containing the tag info of a music file (e.g., id3 tag)
-    object m_TVTag;										// object containing the tag info of a tv-recording
-    object m_AlbumInfoTag;							// object tag info of a music album
-    bool isCoverArtRetrieved = false;
-    string m_PinIcon = String.Empty;
-    protected GUIImage m_PinIconImage = null;
-    protected bool m_isRemote = false;           // indicating if this is a local or remote file
-    protected bool m_isDownloading = false;            // indicating if this file is being downloaded
-    int m_iItemId = 0;                // General item id
-    bool retrieveCoverArtAllowed = true;
+    protected bool _isFolder = false;						// indicated if the item is a folder or a path
+    protected string _folder = String.Empty;								// path + filename of the item
+    protected string _dvdLabel = String.Empty;						// indicates the disc number of movie
+    protected int _duration = 0;							// duration (in seconds) of the movie or song
+    FileInformation _fileInfo = null;								// file info (size, date/time etc.) of the file
+    bool _shaded = false;						// indicates if the item needs to be rendered shaded
+    float _rating = 0;								// rating of a movie
+    int _year = 0;									// release year of the movie/song
+    object _tagMusic;									// object containing the tag info of a music file (e.g., id3 tag)
+    object _tagTv;										// object containing the tag info of a tv-recording
+    object _tagAlbumInfo;							// object tag info of a music album
+    bool _isCoverArtRetrieved = false;
+    string _pinIconName = String.Empty;
+    protected GUIImage _imagePinIcon = null;
+    protected bool _isRemote = false;           // indicating if this is a local or remote file
+    protected bool _isDownloading = false;            // indicating if this file is being downloaded
+    int _idItem = 0;                // General item id
+    bool _retrieveCoverArtAllowed = true;
 
     /// <summary>
     /// The (empty) constructor of the GUIListItem.
@@ -84,22 +84,22 @@ namespace MediaPortal.GUI.Library
       _label = item._label;
       _label2 = item._label2;
       _label3 = item._label3;
-      m_strThumbnailImage = item.m_strThumbnailImage;
-      m_strIcon = item.m_strIcon;
-      m_strIconBig = item.m_strIconBig;
-      m_PinIcon = item.m_PinIcon;
+      _thumbNailName = item._thumbNailName;
+      _smallIconName = item._smallIconName;
+      _bigIconName = item._bigIconName;
+      _pinIconName = item._pinIconName;
       _isSelected = item._isSelected;
-      m_bFolder = item.m_bFolder;
-      m_strPath = item.m_strPath;
-      m_strDVDLabel = item.m_strDVDLabel;
-      m_iDuration = item.m_iDuration;
-      m_info = item.m_info;
-      m_fRating = item.m_fRating;
-      m_iYear = item.m_iYear;
-      m_iItemId = item.m_iItemId;
-      m_musicTag = item.m_musicTag;
-      m_TVTag = item.m_TVTag;
-      m_AlbumInfoTag = item.m_AlbumInfoTag;
+      _isFolder = item._isFolder;
+      _folder = item._folder;
+      _dvdLabel = item._dvdLabel;
+      _duration = item._duration;
+      _fileInfo = item._fileInfo;
+      _rating = item._rating;
+      _year = item._year;
+      _idItem = item._idItem;
+      _tagMusic = item._tagMusic;
+      _tagTv = item._tagTv;
+      _tagAlbumInfo = item._tagAlbumInfo;
     }
 
     /// <summary>
@@ -160,12 +160,12 @@ namespace MediaPortal.GUI.Library
       {
 
         DoRetrieveArt();
-        return m_strThumbnailImage;
+        return _thumbNailName;
       }
       set
       {
         if (value == null) return;
-        m_strThumbnailImage = value;
+        _thumbNailName = value;
       }
     }
 
@@ -178,12 +178,12 @@ namespace MediaPortal.GUI.Library
       {
 
         DoRetrieveArt();
-        return m_strIcon;
+        return _smallIconName;
       }
       set
       {
         if (value == null) return;
-        m_strIcon = value;
+        _smallIconName = value;
       }
     }
 
@@ -193,12 +193,12 @@ namespace MediaPortal.GUI.Library
       {
 
         DoRetrieveArt();
-        return m_PinIcon;
+        return _pinIconName;
       }
       set
       {
         if (value == null) return;
-        m_PinIcon = value;
+        _pinIconName = value;
       }
     }
 
@@ -212,12 +212,12 @@ namespace MediaPortal.GUI.Library
       {
 
         DoRetrieveArt();
-        return m_strIconBig;
+        return _bigIconName;
       }
       set
       {
         if (value == null) return;
-        m_strIconBig = value;
+        _bigIconName = value;
       }
     }
 
@@ -235,7 +235,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public bool HasThumbnail
     {
-      get { return m_strThumbnailImage.Length > 0; }
+      get { return _thumbNailName.Length > 0; }
     }
 
     /// <summary>
@@ -246,7 +246,7 @@ namespace MediaPortal.GUI.Library
       get
       {
         DoRetrieveArt();
-        return m_strIcon.Length > 0;
+        return _smallIconName.Length > 0;
       }
     }
 
@@ -259,7 +259,7 @@ namespace MediaPortal.GUI.Library
       get
       {
         DoRetrieveArt();
-        return m_PinIcon.Length > 0;
+        return _pinIconName.Length > 0;
       }
     }
 
@@ -272,7 +272,7 @@ namespace MediaPortal.GUI.Library
       {
 
         DoRetrieveArt();
-        return m_strIconBig.Length > 0;
+        return _bigIconName.Length > 0;
       }
     }
 
@@ -281,8 +281,8 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public GUIImage Thumbnail
     {
-      get { return m_pThumbnailImage; }
-      set { m_pThumbnailImage = value; }
+      get { return _thumbnailImage; }
+      set { _thumbnailImage = value; }
     }
 
     /// <summary>
@@ -290,8 +290,8 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public GUIImage Icon
     {
-      get { return m_pIconImage; }
-      set { m_pIconImage = value; }
+      get { return _imageIcon; }
+      set { _imageIcon = value; }
     }
 
     /// <summary>
@@ -299,8 +299,8 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public GUIImage PinIcon
     {
-      get { return m_PinIconImage; }
-      set { m_PinIconImage = value; }
+      get { return _imagePinIcon; }
+      set { _imagePinIcon = value; }
     }
 
     /// <summary>
@@ -308,8 +308,8 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public GUIImage IconBig
     {
-      get { return m_pIconImageBig; }
-      set { m_pIconImageBig = value; }
+      get { return _imageBigPinIcon; }
+      set { _imageBigPinIcon = value; }
     }
 
     /// <summary>
@@ -317,8 +317,8 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public bool IsFolder
     {
-      get { return m_bFolder; }
-      set { m_bFolder = value; }
+      get { return _isFolder; }
+      set { _isFolder = value; }
     }
 
     /// <summary>
@@ -326,11 +326,11 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public string Path
     {
-      get { return m_strPath; }
+      get { return _folder; }
       set
       {
         if (value == null) return;
-        m_strPath = value;
+        _folder = value;
       }
     }
 
@@ -339,11 +339,11 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public string DVDLabel
     {
-      get { return m_strDVDLabel; }
+      get { return _dvdLabel; }
       set
       {
         if (value == null) return;
-        m_strDVDLabel = value;
+        _dvdLabel = value;
       }
     }
 
@@ -354,8 +354,8 @@ namespace MediaPortal.GUI.Library
     {
       get
       {
-        if (m_info != null)
-          return m_info.Length;
+        if (_fileInfo != null)
+          return _fileInfo.Length;
         else
           return 0L;
       }
@@ -366,12 +366,12 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public FileInformation FileInfo
     {
-      get { return m_info; }
+      get { return _fileInfo; }
       set
       {
         try
         {
-          m_info = value;
+          _fileInfo = value;
         }
         catch (Exception) { }
       }
@@ -382,8 +382,8 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public int Duration
     {
-      get { return m_iDuration; }
-      set { m_iDuration = value; }
+      get { return _duration; }
+      set { _duration = value; }
     }
 
     /// <summary>
@@ -391,8 +391,8 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public int Year
     {
-      get { return m_iYear; }
-      set { m_iYear = value; }
+      get { return _year; }
+      set { _year = value; }
     }
 
     /// <summary>
@@ -400,8 +400,8 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public int ItemId
     {
-      get { return m_iItemId; }
-      set { m_iItemId = value; }
+      get { return _idItem; }
+      set { _idItem = value; }
     }
 
     /// <summary>
@@ -409,8 +409,8 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public float Rating
     {
-      get { return m_fRating; }
-      set { m_fRating = value; }
+      get { return _rating; }
+      set { _rating = value; }
     }
 
     /// <summary>
@@ -418,8 +418,8 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public object TVTag
     {
-      get { return m_TVTag; }
-      set { m_TVTag = value; }
+      get { return _tagTv; }
+      set { _tagTv = value; }
     }
 
     /// <summary>
@@ -427,8 +427,8 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public object AlbumInfoTag
     {
-      get { return m_AlbumInfoTag; }
-      set { m_AlbumInfoTag = value; }
+      get { return _tagAlbumInfo; }
+      set { _tagAlbumInfo = value; }
     }
 
     /// <summary>
@@ -436,8 +436,8 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public object MusicTag
     {
-      get { return m_musicTag; }
-      set { m_musicTag = value; }
+      get { return _tagMusic; }
+      set { _tagMusic = value; }
     }
 
     /// <summary>
@@ -445,8 +445,8 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public bool Shaded
     {
-      get { return m_bShaded; }
-      set { m_bShaded = value; }
+      get { return _shaded; }
+      set { _shaded = value; }
     }
 
     /// <summary>
@@ -454,22 +454,22 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public void FreeMemory()
     {
-      isCoverArtRetrieved = false;
+      _isCoverArtRetrieved = false;
 
-      if (null != m_pThumbnailImage)
+      if (null != _thumbnailImage)
       {
-        m_pThumbnailImage.FreeResources();
-        m_pThumbnailImage = null;
+        _thumbnailImage.FreeResources();
+        _thumbnailImage = null;
       }
-      if (null != m_pIconImage)
+      if (null != _imageIcon)
       {
-        m_pIconImage.FreeResources();
-        m_pIconImage = null;
+        _imageIcon.FreeResources();
+        _imageIcon = null;
       }
-      if (null != m_PinIconImage)
+      if (null != _imagePinIcon)
       {
-        m_PinIconImage.FreeResources();
-        m_PinIconImage = null;
+        _imagePinIcon.FreeResources();
+        _imagePinIcon = null;
       }
     }
 
@@ -481,9 +481,9 @@ namespace MediaPortal.GUI.Library
       FreeMemory();
       if (OnRetrieveArt != null)
       {
-        m_strThumbnailImage = String.Empty;
-        m_strIcon = String.Empty;
-        m_PinIcon = String.Empty;
+        _thumbNailName = String.Empty;
+        _smallIconName = String.Empty;
+        _pinIconName = String.Empty;
       }
     }
 
@@ -493,15 +493,15 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     void DoRetrieveArt()
     {
-      if (!retrieveCoverArtAllowed) return;
-      if (isCoverArtRetrieved) return;
-      isCoverArtRetrieved = true;
+      if (!_retrieveCoverArtAllowed) return;
+      if (_isCoverArtRetrieved) return;
+      _isCoverArtRetrieved = true;
       if (OnRetrieveArt != null) OnRetrieveArt(this);
     }
     public void RefreshCoverArt()
     {
       FreeIcons();
-      isCoverArtRetrieved = false;
+      _isCoverArtRetrieved = false;
     }
 
 
@@ -526,18 +526,18 @@ namespace MediaPortal.GUI.Library
     }
     public bool IsRemote
     {
-      get { return m_isRemote; }
-      set { m_isRemote = value; }
+      get { return _isRemote; }
+      set { _isRemote = value; }
     }
     public bool IsDownloading
     {
-      get { return m_isDownloading; }
-      set { m_isDownloading = value; }
+      get { return _isDownloading; }
+      set { _isDownloading = value; }
     }
     public bool RetrieveArt
     {
-      get { return retrieveCoverArtAllowed; }
-      set { retrieveCoverArtAllowed = value; }
+      get { return _retrieveCoverArtAllowed; }
+      set { _retrieveCoverArtAllowed = value; }
     }
   }
 }

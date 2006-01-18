@@ -39,7 +39,7 @@ namespace MediaPortal.GUI.Library
 		GUIImage image;
 		[XMLSkinElement("textureFocus")]	protected string	_focusedTextureName="";
 		[XMLSkinElement("action")]			protected int		_actionId=-1;
-		protected GUIImage FocusImage=null;
+		protected GUIImage _imageFocusRectangle=null;
 		
 		protected Rectangle[] _videoWindows= new Rectangle[1];
 	
@@ -55,10 +55,10 @@ namespace MediaPortal.GUI.Library
 		public override void FinalizeConstruction()
 		{
 			base.FinalizeConstruction ();
-			FocusImage = new GUIImage(_parentControlId, _controlId, _positionX, _positionY,_width, _height, _focusedTextureName ,0);
+			_imageFocusRectangle = new GUIImage(_parentControlId, _controlId, _positionX, _positionY,_width, _height, _focusedTextureName ,0);
 			image = new GUIImage(_parentControlId, _controlId, _positionX, _positionY,_width, _height, "black.bmp" ,1);
 
-      FocusImage.ParentControl = this;
+      _imageFocusRectangle.ParentControl = this;
       image.ParentControl = this;
 		}
 
@@ -66,20 +66,20 @@ namespace MediaPortal.GUI.Library
     public override void AllocResources()
     {
       base.AllocResources ();
-      FocusImage.AllocResources();
+      _imageFocusRectangle.AllocResources();
 			image.AllocResources();
     }
     public override void FreeResources()
     {
       base.FreeResources ();
-      FocusImage.FreeResources();
+      _imageFocusRectangle.FreeResources();
 			image.FreeResources();
     }
 
 
     public override bool CanFocus()
     {
-      if (FocusImage.FileName==String.Empty) return false;
+      if (_imageFocusRectangle.FileName==String.Empty) return false;
       return true;
     }
 
@@ -112,10 +112,10 @@ namespace MediaPortal.GUI.Library
             GUIGraphicsContext.ScalePosToScreenResolution(ref w, ref h);
             xoff += GUIGraphicsContext.OffsetX;
             yoff += GUIGraphicsContext.OffsetY;
-            FocusImage.SetPosition((int)x-xoff,(int)y-yoff);
-            FocusImage.Width=base.Width+w;
-            FocusImage.Height=base.Height+h;
-            FocusImage.Render(timePassed);
+            _imageFocusRectangle.SetPosition((int)x-xoff,(int)y-yoff);
+            _imageFocusRectangle.Width=base.Width+w;
+            _imageFocusRectangle.Height=base.Height+h;
+            _imageFocusRectangle.Render(timePassed);
           }
 
 					if (GUIGraphicsContext.graphics!=null)

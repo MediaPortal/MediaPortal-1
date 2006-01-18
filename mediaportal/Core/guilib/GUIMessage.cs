@@ -116,17 +116,17 @@ namespace MediaPortal.GUI.Library
 		private string 				_label2="";
 		private string 				_label3="";
 		private string 				_label4="";
-		private int 					m_dwSenderControlID=0;
-		private int 					m_dwTargetControlID=0;
-		private MessageType 	m_dwMessage=0;
-		private object 			  m_object=null;
-		private object 			  m_object2=null;
-		private int 					m_dwParam1=0;
-    private int 					m_dwParam2=0;
-    private int 					m_dwParam3=0;
-    private int 					m_dwParam4=0;
-    private int           m_dwTargetWindowId=0;
-    private bool          m_bSendTargetWindow=false;
+		private int 					_senderControlId=0;
+		private int 					_targetControlId=0;
+		private MessageType 	_messageType=0;
+		private object 			  _object=null;
+		private object 			  _object2=null;
+		private int 					_parameter1=0;
+    private int 					_parameter2=0;
+    private int 					_parameter3=0;
+    private int 					_parameter4=0;
+    private int           _targetWindowId=0;
+    private bool          _sendToTargetWindow=false;
 
 
 		/// <summary>
@@ -134,8 +134,8 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public int 	TargetControlId
 		{
-			get { return m_dwTargetControlID;}
-			set { m_dwTargetControlID=value;}
+			get { return _targetControlId;}
+			set { _targetControlId=value;}
 		}
 
     /// <summary>
@@ -143,8 +143,8 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public bool 	SendToTargetWindow
     {
-      get { return m_bSendTargetWindow;}
-      set { m_bSendTargetWindow=value;}
+      get { return _sendToTargetWindow;}
+      set { _sendToTargetWindow=value;}
     }
 
 		/// <summary>
@@ -152,8 +152,8 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public MessageType Message
 		{
-			get { return m_dwMessage;}
-			set { m_dwMessage=value;}
+			get { return _messageType;}
+			set { _messageType=value;}
 		}
 		
 		/// <summary>
@@ -161,13 +161,13 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public object Object
 		{
-			get { return m_object;}
-			set { m_object=value;}
+			get { return _object;}
+			set { _object=value;}
 		}
 		public object Object2
 		{
-			get { return m_object2;}
-			set { m_object2=value;}
+			get { return _object2;}
+			set { _object2=value;}
 		}
 
 		/// <summary>
@@ -175,8 +175,8 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public int  Param1
 		{
-			get { return m_dwParam1;}
-			set { m_dwParam1=value;}
+			get { return _parameter1;}
+			set { _parameter1=value;}
 		}
 
 		/// <summary>
@@ -184,18 +184,18 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public int  Param2
 		{
-			get { return m_dwParam2;}
-			set { m_dwParam2=value;}
+			get { return _parameter2;}
+			set { _parameter2=value;}
 		}
     public int  Param3
     {
-      get { return m_dwParam3;}
-      set { m_dwParam3=value;}
+      get { return _parameter3;}
+      set { _parameter3=value;}
     }
     public int  Param4
     {
-      get { return m_dwParam4;}
-      set { m_dwParam4=value;}
+      get { return _parameter4;}
+      set { _parameter4=value;}
     }
 
 		/// <summary>
@@ -203,8 +203,8 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public int  SenderControlId
 		{
-			get { return m_dwSenderControlID;}
-			set { m_dwSenderControlID=value;}
+			get { return _senderControlId;}
+			set { _senderControlId=value;}
 		}
 
     /// <summary>
@@ -212,8 +212,8 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public int  TargetWindowId
     {
-      get { return m_dwTargetWindowId;}
-      set { m_dwTargetWindowId=value;}
+      get { return _targetWindowId;}
+      set { _targetWindowId=value;}
     }
 
 		/// <summary>
@@ -274,13 +274,13 @@ namespace MediaPortal.GUI.Library
 		/// <param name="lpVoid">An object containing data that is carried in the message.</param>
 		public GUIMessage(MessageType dwMsg, int iWindowId, int dwSenderId, int dwControlID, int dwParam1, int dwParam2, object lpVoid)
 		{
-      m_dwTargetWindowId=iWindowId;
-			m_dwMessage=dwMsg;
-			m_dwSenderControlID=dwSenderId;
-			m_dwTargetControlID=dwControlID;
-			m_dwParam1=dwParam1;
-			m_dwParam2=dwParam2;
-			m_object=lpVoid;
+      _targetWindowId=iWindowId;
+			_messageType=dwMsg;
+			_senderControlId=dwSenderId;
+			_targetControlId=dwControlID;
+			_parameter1=dwParam1;
+			_parameter2=dwParam2;
+			_object=lpVoid;
 		}
 	}
 }

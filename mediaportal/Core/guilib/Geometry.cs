@@ -37,8 +37,8 @@ namespace MediaPortal.GUI.Library
       LetterBox43, // Letterbox 4:3
       PanScan43 // Pan&Scan 4:3
     }
-    int   m_iImageWidth=100;				// width of the video window or image
-    int   m_iImageHeight=100;				// height of the height window or image
+    int   _imageWidth=100;				// width of the video window or image
+    int   _imageHeight=100;				// height of the height window or image
     int   m_ScreenWidth=100;				// width of the screen
     int   m_ScreenHeight=100;				// height of the screen
     Type  m_eType=Type.Normal;			// type of transformation used
@@ -57,8 +57,8 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
     public int ImageWidth
     {
-      get { return m_iImageWidth;}
-      set { m_iImageWidth=value;}
+      get { return _imageWidth;}
+      set { _imageWidth=value;}
     }
     
 		/// <summary>
@@ -66,8 +66,8 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
     public int ImageHeight
     {
-      get { return m_iImageHeight;}
-      set { m_iImageHeight=value;}
+      get { return _imageHeight;}
+      set { _imageHeight=value;}
     }
 
 		/// <summary>

@@ -277,7 +277,7 @@ namespace MediaPortal.GUI.Library
           if (message.Label!=null)
           {
             _label1=message.Label;
-            containsProperty1=ContainsProperty(_label1);
+            containsProperty1=_containsProperty(_label1);
           }
 					return true;
 				}
@@ -491,7 +491,7 @@ namespace MediaPortal.GUI.Library
 			_label1=strLabel;
 			_textColor1=dwColor;
       fontName1=strFontName;
-      containsProperty1=ContainsProperty(_label1);
+      containsProperty1=_containsProperty(_label1);
 		}
     public void SetLabel2( string strFontName,string strLabel,long dwColor)
     {
@@ -500,7 +500,7 @@ namespace MediaPortal.GUI.Library
       _label2=strLabel;
       _textColor2=dwColor;
       fontName2=strFontName;
-      containsProperty2=ContainsProperty(_label2);
+      containsProperty2=_containsProperty(_label2);
     }
 
 		/// <summary>
@@ -513,7 +513,7 @@ namespace MediaPortal.GUI.Library
       { 
         if (value==null) return;
         _label1=value;
-        containsProperty1=ContainsProperty(_label1);
+        containsProperty1=_containsProperty(_label1);
       }
     }
     public string Label2
@@ -523,7 +523,7 @@ namespace MediaPortal.GUI.Library
       { 
         if (value==null) return;
         _label2=value;
-        containsProperty2=ContainsProperty(_label2);
+        containsProperty2=_containsProperty(_label2);
       }
     }
 
@@ -801,7 +801,7 @@ namespace MediaPortal.GUI.Library
         if (_imageIcon!=null) _imageIcon.Height=_iconHeight;
       }
     }
-    bool ContainsProperty(string text)
+    bool _containsProperty(string text)
     {
       if (text==null) return false;
       if (text.IndexOf("#")>=0) return true;

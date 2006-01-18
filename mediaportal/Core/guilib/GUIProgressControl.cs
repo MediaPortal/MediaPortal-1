@@ -22,57 +22,63 @@ using System;
 
 namespace MediaPortal.GUI.Library
 {
-	/// <summary>
-	/// The implementation of a progress bar used by the OSD.
-	/// The progress bar uses the following images 
-	/// -) a background image 
-	/// -) a left texture which presents the left part of the progress bar
-	/// -) a mid texture which presents the middle part of the progress bar
-	/// -) a right texture which presents the right part of the progress bar
-	/// -) a label which is drawn inside the progressbar control
-	/// </summary>
-	public class GUIProgressControl : GUIControl
-	{
+  /// <summary>
+  /// The implementation of a progress bar used by the OSD.
+  /// The progress bar uses the following images 
+  /// -) a background image 
+  /// -) a left texture which presents the left part of the progress bar
+  /// -) a mid texture which presents the middle part of the progress bar
+  /// -) a right texture which presents the right part of the progress bar
+  /// -) a label which is drawn inside the progressbar control
+  /// </summary>
+  public class GUIProgressControl : GUIControl
+  {
 
-		[XMLSkinElement("label")]			string   m_strProperty="";
-		[XMLSkinElement("texturebg")]		string   m_strBackground;
-		[XMLSkinElement("lefttexture")]		string   m_strLeft;
-		[XMLSkinElement("midtexture")]		string   m_strMid;
-		[XMLSkinElement("righttexture")]	string	 m_strRight;
-											GUIImage m_guiBackground=null;
-											GUIImage m_guiLeft=null;
-											GUIImage m_guiMid=null;
-											GUIImage m_guiRight=null;
-    int      m_iPercent=0;
-    bool                          ContainsProperty=false;
-		
-		
-		public GUIProgressControl (int dwParentID) : base(dwParentID)
-		{
-		}
+    [XMLSkinElement("label")]
+    string _property = "";
+    [XMLSkinElement("texturebg")]
+    string _backgroundTextureName;
+    [XMLSkinElement("lefttexture")]
+    string _leftTextureName;
+    [XMLSkinElement("midtexture")]
+    string _midTextureName;
+    [XMLSkinElement("righttexture")]
+    string _rightTextureName;
+    GUIImage _imageBackGround = null;
+    GUIImage _imageLeft = null;
+    GUIImage _imageMid = null;
+    GUIImage _imageRight = null;
+    int _percentage = 0;
+    bool _containsProperty = false;
 
-		/// <summary>
-		/// Creates a GUIProgressControl.
-		/// </summary>
-		/// <param name="dwParentID">The parent of this control.</param>
-		/// <param name="dwControlId">The ID of this control.</param>
-		/// <param name="dwPosX">The X position of this control.</param>
-		/// <param name="dwPosY">The Y position of this control.</param>
-		/// <param name="dwWidth">The width of this control.</param>
-		/// <param name="dwHeight">The height of this control.</param>
-		/// <param name="strBackGroundTexture">The background texture.</param>
-		/// <param name="strLeftTexture">The left side texture.</param>
-		/// <param name="strMidTexture">The middle texture.</param>
-		/// <param name="strRightTexture">The right side texture.</param>
-		public GUIProgressControl(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight, string strBackGroundTexture,string strLeftTexture,string strMidTexture,string strRightTexture)
-			:base(dwParentID, dwControlId, dwPosX, dwPosY,dwWidth, dwHeight)
-		{
-			m_strBackground = strBackGroundTexture;
-			m_strLeft = strLeftTexture;
-			m_strMid = strMidTexture;
-			m_strRight = strRightTexture;
-			FinalizeConstruction();
-		}
+
+    public GUIProgressControl(int dwParentID)
+      : base(dwParentID)
+    {
+    }
+
+    /// <summary>
+    /// Creates a GUIProgressControl.
+    /// </summary>
+    /// <param name="dwParentID">The parent of this control.</param>
+    /// <param name="dwControlId">The ID of this control.</param>
+    /// <param name="dwPosX">The X position of this control.</param>
+    /// <param name="dwPosY">The Y position of this control.</param>
+    /// <param name="dwWidth">The width of this control.</param>
+    /// <param name="dwHeight">The height of this control.</param>
+    /// <param name="strBackGroundTexture">The background texture.</param>
+    /// <param name="strLeftTexture">The left side texture.</param>
+    /// <param name="strMidTexture">The middle texture.</param>
+    /// <param name="strRightTexture">The right side texture.</param>
+    public GUIProgressControl(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight, string strBackGroundTexture, string strLeftTexture, string strMidTexture, string strRightTexture)
+      : base(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight)
+    {
+      _backgroundTextureName = strBackGroundTexture;
+      _leftTextureName = strLeftTexture;
+      _midTextureName = strMidTexture;
+      _rightTextureName = strRightTexture;
+      FinalizeConstruction();
+    }
 
     /// <summary> 
     /// This function is called after all of the XmlSkinnable fields have been filled
@@ -80,229 +86,230 @@ namespace MediaPortal.GUI.Library
     /// Use this to do any construction work other than simple data member assignments,
     /// for example, initializing new reference types, extra calculations, etc..
     /// </summary>
-		public override void FinalizeConstruction()
-		{
-			base.FinalizeConstruction ();
-			m_guiBackground = new GUIImage(_parentControlId, _controlId, _positionX, _positionY,_width, _height,m_strBackground,0);
-      m_guiBackground.ParentControl = this;
+    public override void FinalizeConstruction()
+    {
+      base.FinalizeConstruction();
+      _imageBackGround = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _backgroundTextureName, 0);
+      _imageBackGround.ParentControl = this;
 
-			m_guiLeft		= new GUIImage(_parentControlId, _controlId, _positionX, _positionY,0, 0,m_strLeft,0);
-      m_guiLeft.ParentControl = this;
+      _imageLeft = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, 0, 0, _leftTextureName, 0);
+      _imageLeft.ParentControl = this;
 
-			m_guiMid		= new GUIImage(_parentControlId, _controlId, _positionX, _positionY,0, 0,m_strMid,0);
-      m_guiMid.ParentControl = this;
+      _imageMid = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, 0, 0, _midTextureName, 0);
+      _imageMid.ParentControl = this;
 
-			m_guiRight		= new GUIImage(_parentControlId, _controlId, _positionX, _positionY,0, 0,m_strRight,0);
-      m_guiRight.ParentControl = this;
-			
-			m_guiBackground.KeepAspectRatio=false;
-			m_guiMid.KeepAspectRatio=false;
-			m_guiRight.KeepAspectRatio=false;
-      if (m_strProperty==null) m_strProperty=String.Empty;
-      if (m_strProperty.IndexOf("#")>=0) ContainsProperty=true;
-		}
+      _imageRight = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, 0, 0, _rightTextureName, 0);
+      _imageRight.ParentControl = this;
+
+      _imageBackGround.KeepAspectRatio = false;
+      _imageMid.KeepAspectRatio = false;
+      _imageRight.KeepAspectRatio = false;
+      if (_property == null) _property = String.Empty;
+      if (_property.IndexOf("#") >= 0) _containsProperty = true;
+    }
 
     /// <summary>
     /// Update the subcontrols with the current position of the progress control
     /// </summary>
-		protected override void Update()
-		{
-			base.Update ();
-			m_guiBackground.SetPosition(_positionX,_positionY);
-			m_guiLeft.SetPosition(_positionX,_positionY);
-			m_guiMid.SetPosition(_positionX,_positionY);
-			m_guiRight.SetPosition(_positionX,_positionY);
-		}
+    protected override void Update()
+    {
+      base.Update();
+      _imageBackGround.SetPosition(_positionX, _positionY);
+      _imageLeft.SetPosition(_positionX, _positionY);
+      _imageMid.SetPosition(_positionX, _positionY);
+      _imageRight.SetPosition(_positionX, _positionY);
+    }
 
-		/// <summary>
-		/// Renders the progress control.
-		/// </summary>
-		public override void Render(float timePassed)
-		{
-			if (GUIGraphicsContext.EditMode==false)
-			{
-				if (!IsVisible) return;
-				if (Disabled) return;
-			}
-			
-			if (ContainsProperty)
-			{
-				string m_strText=GUIPropertyManager.Parse(m_strProperty);
-				if(m_strText!=String.Empty)
-				{
-					try
-					{
-						Percentage=Int32.Parse(m_strText);
-					}
-					catch(Exception){}
-				}
-			}
-			
-			// Render the background
-			int iBkgHeight=_height;
-			m_guiBackground.Height=iBkgHeight;
-			m_guiBackground.SetPosition(m_guiBackground.XPosition,m_guiBackground.YPosition);
-			m_guiBackground.Render(timePassed);
+    /// <summary>
+    /// Renders the progress control.
+    /// </summary>
+    public override void Render(float timePassed)
+    {
+      if (GUIGraphicsContext.EditMode == false)
+      {
+        if (!IsVisible) return;
+        if (Disabled) return;
+      }
+
+      if (_containsProperty)
+      {
+        string m_strText = GUIPropertyManager.Parse(_property);
+        if (m_strText != String.Empty)
+        {
+          try
+          {
+            Percentage = Int32.Parse(m_strText);
+          }
+          catch (Exception) { }
+        }
+      }
+
+      // Render the background
+      int iBkgHeight = _height;
+      _imageBackGround.Height = iBkgHeight;
+      _imageBackGround.SetPosition(_imageBackGround.XPosition, _imageBackGround.YPosition);
+      _imageBackGround.Render(timePassed);
 
       GUIFontManager.Present();
 
-			int iWidthLeft=m_guiLeft.TextureWidth;
-			int iHeightLeft=m_guiLeft.TextureHeight;
-			int iWidthRight=m_guiRight.TextureWidth;
-			int iHeightRight=m_guiRight.TextureHeight;
-			GUIGraphicsContext.ScaleHorizontal(ref iWidthLeft);
-			GUIGraphicsContext.ScaleHorizontal(ref iWidthRight);
-			GUIGraphicsContext.ScaleVertical(ref iHeightLeft);
-			GUIGraphicsContext.ScaleVertical(ref iHeightRight);
-			//iHeight=20;
-			int percent=m_iPercent;
-			if (percent>100) percent=100;
-			float fWidth = (float)percent;
-			fWidth/=100.0f;
-			fWidth *= (float) (m_guiBackground.Width-24-iWidthLeft-iWidthRight);
+      int iWidthLeft = _imageLeft.TextureWidth;
+      int iHeightLeft = _imageLeft.TextureHeight;
+      int iWidthRight = _imageRight.TextureWidth;
+      int iHeightRight = _imageRight.TextureHeight;
+      GUIGraphicsContext.ScaleHorizontal(ref iWidthLeft);
+      GUIGraphicsContext.ScaleHorizontal(ref iWidthRight);
+      GUIGraphicsContext.ScaleVertical(ref iHeightLeft);
+      GUIGraphicsContext.ScaleVertical(ref iHeightRight);
+      //iHeight=20;
+      int percent = _percentage;
+      if (percent > 100) percent = 100;
+      float fWidth = (float)percent;
+      fWidth /= 100.0f;
+      fWidth *= (float)(_imageBackGround.Width - 24 - iWidthLeft - iWidthRight);
 
-			int off=12;
-			GUIGraphicsContext.ScaleHorizontal(ref off);
-			int iXPos=off+m_guiBackground.XPosition;
+      int off = 12;
+      GUIGraphicsContext.ScaleHorizontal(ref off);
+      int iXPos = off + _imageBackGround.XPosition;
 
-			int iYPos= m_guiBackground.YPosition + (iBkgHeight  - iHeightLeft ) / 2;
-			//m_guiLeft.SetHeight(iHeight);
-			m_guiLeft.SetPosition(iXPos,iYPos);
-			m_guiLeft.Height=iHeightLeft;
-			m_guiLeft.Width=iWidthLeft;
-      m_guiLeft.SetPosition(iXPos,iYPos);
-			m_guiLeft.Render(timePassed);
+      int iYPos = _imageBackGround.YPosition + (iBkgHeight - iHeightLeft) / 2;
+      //_imageLeft.SetHeight(iHeight);
+      _imageLeft.SetPosition(iXPos, iYPos);
+      _imageLeft.Height = iHeightLeft;
+      _imageLeft.Width = iWidthLeft;
+      _imageLeft.SetPosition(iXPos, iYPos);
+      _imageLeft.Render(timePassed);
 
-			iXPos += iWidthLeft;
-			if (percent>0 && (int)fWidth > 1)
-			{
-				m_guiMid.SetPosition(iXPos,iYPos);
-				m_guiMid.Height=iHeightLeft;//m_guiMid.TextureHeight;
-				m_guiMid.Width=(int)fWidth;
-				m_guiMid.SetPosition(iXPos,iYPos);
-				m_guiMid.Render(timePassed);
-				iXPos += (int)fWidth;
-			}
-			//m_guiRight.SetHeight(iHeight);
-			m_guiRight.SetPosition(iXPos,iYPos);
-			m_guiRight.Height=iHeightRight;
-			m_guiRight.Width=iWidthRight;
-      m_guiRight.SetPosition(iXPos,iYPos);
-			m_guiRight.Render(timePassed);
-		}
+      iXPos += iWidthLeft;
+      if (percent > 0 && (int)fWidth > 1)
+      {
+        _imageMid.SetPosition(iXPos, iYPos);
+        _imageMid.Height = iHeightLeft;//_imageMid.TextureHeight;
+        _imageMid.Width = (int)fWidth;
+        _imageMid.SetPosition(iXPos, iYPos);
+        _imageMid.Render(timePassed);
+        iXPos += (int)fWidth;
+      }
+      //_imageRight.SetHeight(iHeight);
+      _imageRight.SetPosition(iXPos, iYPos);
+      _imageRight.Height = iHeightRight;
+      _imageRight.Width = iWidthRight;
+      _imageRight.SetPosition(iXPos, iYPos);
+      _imageRight.Render(timePassed);
+    }
 
-		/// <summary>
-		/// Returns if the control can have the focus.
-		/// </summary>
-		/// <returns>False</returns>
-		public override bool  CanFocus()
-		{
-			return false;
-		}
+    /// <summary>
+    /// Returns if the control can have the focus.
+    /// </summary>
+    /// <returns>False</returns>
+    public override bool CanFocus()
+    {
+      return false;
+    }
 
-		/// <summary>
-		/// Get/set the percentage the progressbar indicates.
-		/// </summary>
-		public int Percentage
-		{
-			get { return m_iPercent;}
-			set { m_iPercent=value;}
-		}
+    /// <summary>
+    /// Get/set the percentage the progressbar indicates.
+    /// </summary>
+    public int Percentage
+    {
+      get { return _percentage; }
+      set { _percentage = value; }
+    }
 
-		/// <summary>
-		/// Frees the control its DirectX resources.
-		/// </summary>
-		public override void FreeResources()
-		{
-			base.FreeResources();
-			m_guiBackground.FreeResources();
-			m_guiMid.FreeResources();
-			m_guiRight.FreeResources();
-			m_guiLeft.FreeResources();
-		}
+    /// <summary>
+    /// Frees the control its DirectX resources.
+    /// </summary>
+    public override void FreeResources()
+    {
+      base.FreeResources();
+      _imageBackGround.FreeResources();
+      _imageMid.FreeResources();
+      _imageRight.FreeResources();
+      _imageLeft.FreeResources();
+    }
 
-		/// <summary>
-		/// Preallocates the control its DirectX resources.
-		/// </summary>
-		public override void PreAllocResources()
-		{
-			base.PreAllocResources();
-			m_guiBackground.PreAllocResources();
-			m_guiMid.PreAllocResources();
-			m_guiRight.PreAllocResources();
-			m_guiLeft.PreAllocResources();
-		}
+    /// <summary>
+    /// Preallocates the control its DirectX resources.
+    /// </summary>
+    public override void PreAllocResources()
+    {
+      base.PreAllocResources();
+      _imageBackGround.PreAllocResources();
+      _imageMid.PreAllocResources();
+      _imageRight.PreAllocResources();
+      _imageLeft.PreAllocResources();
+    }
 
-		/// <summary>
-		/// Allocates the control its DirectX resources.
-		/// </summary>
-		public override void AllocResources()
+    /// <summary>
+    /// Allocates the control its DirectX resources.
+    /// </summary>
+    public override void AllocResources()
 		{
 			base.AllocResources();
-			m_guiBackground.AllocResources();
-			m_guiMid.AllocResources();
-			m_guiRight.AllocResources();
-			m_guiLeft.AllocResources();
+			_imageBackGround.AllocResources();
+			_imageMid.AllocResources();
+			_imageRight.AllocResources();
+			_imageLeft.AllocResources();
 
-			m_guiBackground.Filtering=false;
-			m_guiMid.Filtering=false;
-			m_guiRight.Filtering=false;
-			m_guiLeft.Filtering=false;
+			_imageBackGround.Filtering=false;
+			_imageMid.Filtering=false;
+			_imageRight.Filtering=false;
+			_imageLeft.Filtering=false;
 
-			m_guiBackground.Height=25;
-			m_guiRight.Height=20;
-			m_guiLeft.Height=20;
-			m_guiMid.Height=20;
+			_imageBackGround.Height=25;
+			_imageRight.Height=20;
+			_imageLeft.Height=20;
+			_imageMid.Height=20;
 		}
 
-		/// <summary>
-		/// Gets the filename of the background texture.
-		/// </summary>
-		public string BackGroundTextureName
-		{
-			get { return m_guiBackground.FileName;}
-		}
+    /// <summary>
+    /// Gets the filename of the background texture.
+    /// </summary>
+    public string BackGroundTextureName
+    {
+      get { return _imageBackGround.FileName; }
+    }
 
-		/// <summary>
-		/// Gets the filename of the left texture.
-		/// </summary>
-		public string BackTextureLeftName
-		{
-			get { return m_guiLeft.FileName;}
-		}
+    /// <summary>
+    /// Gets the filename of the left texture.
+    /// </summary>
+    public string BackTextureLeftName
+    {
+      get { return _imageLeft.FileName; }
+    }
 
-		/// <summary>
-		/// Gets the filename of the middle texture.
-		/// </summary>
-		public string BackTextureMidName
-		{
-			get { return m_guiMid.FileName;}
-		}
+    /// <summary>
+    /// Gets the filename of the middle texture.
+    /// </summary>
+    public string BackTextureMidName
+    {
+      get { return _imageMid.FileName; }
+    }
 
-		/// <summary>
-		/// Gets the filename of the right texture.
-		/// </summary>
-		public string BackTextureRightName
-		{
-			get { return m_guiRight.FileName;}
-		}
+    /// <summary>
+    /// Gets the filename of the right texture.
+    /// </summary>
+    public string BackTextureRightName
+    {
+      get { return _imageRight.FileName; }
+    }
 
-		/// <summary>
-		/// Get/set the property.
-		/// The property contains text which is shown in the progress control
-		/// normally this is a percentage (0%-100%)
-		/// </summary>
-		public string Property
-		{
-			get { return m_strProperty; }
-			set {
-        if (value!=null)
+    /// <summary>
+    /// Get/set the property.
+    /// The property contains text which is shown in the progress control
+    /// normally this is a percentage (0%-100%)
+    /// </summary>
+    public string Property
+    {
+      get { return _property; }
+      set
+      {
+        if (value != null)
         {
-          m_strProperty=value;
-          if (m_strProperty.IndexOf("#")>=0) ContainsProperty=true;
-          else ContainsProperty=false;
+          _property = value;
+          if (_property.IndexOf("#") >= 0) _containsProperty = true;
+          else _containsProperty = false;
         }
       }
-		}
-	}
+    }
+  }
 }

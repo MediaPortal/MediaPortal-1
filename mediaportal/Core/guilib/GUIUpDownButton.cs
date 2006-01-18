@@ -41,7 +41,7 @@ namespace MediaPortal.GUI.Library
 		[XMLSkinElement("textureUpFocus")]	protected string	_upTextureNameFocus=""; 
 		[XMLSkinElement("textureDownFocus")]protected string	_downTextureNameFocus="";
 
-		GUISpinControl spinControl;
+		GUISpinControl _spinControl;
 		public GUIUpDownButton(int dwParentID) : base(dwParentID)
 		{
 		}
@@ -78,22 +78,22 @@ namespace MediaPortal.GUI.Library
 		public override void FinalizeConstruction()
 		{
 				base.FinalizeConstruction();
-				spinControl= new GUISpinControl(_controlId, 0, _spinControlPositionX, _spinControlPositionY, _spinControlWidth, _spinControlHeight, _upTextureName, _downTextureName, _upTextureNameFocus, _downTextureNameFocus, _fontName, _colorSpinColor, GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT, GUIControl.Alignment.ALIGN_RIGHT);
-				spinControl.WindowId=WindowId;
-				spinControl.AutoCheck=false;
-        spinControl.ParentControl = this;
+				_spinControl= new GUISpinControl(_controlId, 0, _spinControlPositionX, _spinControlPositionY, _spinControlWidth, _spinControlHeight, _upTextureName, _downTextureName, _upTextureNameFocus, _downTextureNameFocus, _fontName, _colorSpinColor, GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT, GUIControl.Alignment.ALIGN_RIGHT);
+				_spinControl.WindowId=WindowId;
+				_spinControl.AutoCheck=false;
+        _spinControl.ParentControl = this;
 		}
 		
 		public override void AllocResources()
 		{
 			base.AllocResources ();
-			spinControl.AllocResources();
+			_spinControl.AllocResources();
 		}
 
 		public override void FreeResources()
 		{
 			base.FreeResources ();
-			spinControl.FreeResources();
+			_spinControl.FreeResources();
 		}
 
 
@@ -137,32 +137,32 @@ namespace MediaPortal.GUI.Library
 				_labelControl.SetPosition(_textOffsetX+_positionX, _textOffsetY+_positionY);
 				_labelControl.Render(timePassed);
 			}
-			if (spinControl!=null)
+			if (_spinControl!=null)
 			{
 				int off=5;
 				GUIGraphicsContext.ScaleHorizontal(ref off);
-				spinControl.SetPosition(_imageNonFocused.XPosition+_imageNonFocused.Width-off-2*_spinControlWidth, 
+				_spinControl.SetPosition(_imageNonFocused.XPosition+_imageNonFocused.Width-off-2*_spinControlWidth, 
 																_imageNonFocused.YPosition+ (_imageNonFocused.Height-_spinControlHeight)/2 );
-				spinControl.Render(timePassed);
+				_spinControl.Render(timePassed);
 			}
 		}
 		public override bool HitTest(int x, int y, out int controlID, out bool focused)
 		{
-			if (spinControl.HitTest(x,y,out controlID, out focused)) 
+			if (_spinControl.HitTest(x,y,out controlID, out focused)) 
 			{
-				spinControl.Focus=true;
+				_spinControl.Focus=true;
 				return true;
 			}
 			else
 			{
-				spinControl.Focus=false;
+				_spinControl.Focus=false;
 			}
 			return base.HitTest (x, y, out controlID, out focused);
 		}
 
 		public GUISpinControl UpDownControl
 		{
-			get { return spinControl;}
+			get { return _spinControl;}
 		}
 	}
 }

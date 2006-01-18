@@ -33,18 +33,18 @@ namespace MediaPortal.GUI.Library
   /// </summary>
   public class GUIStatusbarControl : GUIControl
   {
-		[XMLSkinElement("label")]			string   m_strProperty="";
-		[XMLSkinElement("texturebg")]		string   m_strBackground;
-		[XMLSkinElement("lefttexture")]		string   m_strLeft;
-		[XMLSkinElement("midtexture")]		string   m_strMid;
-		[XMLSkinElement("righttexture")]	string	 m_strRight;
-		[XMLSkinElement("posYTop")]			string	 m_strTop;
-		GUIImage m_guiBackground=null;
-		GUIImage m_guiLeft=null;
-		GUIImage m_guiMid=null;
-		GUIImage m_guiRight=null;
-		int      m_iPercent=0;
-		bool                          ContainsProperty=false;
+		[XMLSkinElement("label")]			string   _property="";
+		[XMLSkinElement("texturebg")]		string   _backgroundTextureName;
+		[XMLSkinElement("lefttexture")]		string   _leftTextureName;
+		[XMLSkinElement("midtexture")]		string   _midTextureName;
+		[XMLSkinElement("righttexture")]	string	 _rightTextureName;
+		[XMLSkinElement("posYTop")]			string	 _top;
+		GUIImage _imageBackground=null;
+		GUIImage _imageLeft=null;
+		GUIImage _imageMid=null;
+		GUIImage _imageRight=null;
+		int      _percentage=0;
+		bool                          _containsProperty=false;
 			
 		public GUIStatusbarControl (int dwParentID) : base(dwParentID)
 		{
@@ -66,10 +66,10 @@ namespace MediaPortal.GUI.Library
 		public GUIStatusbarControl(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight, string strBackGroundTexture,string strLeftTexture,string strMidTexture,string strRightTexture)
 			:base(dwParentID, dwControlId, dwPosX, dwPosY,dwWidth, dwHeight)
 		{
-			m_strBackground = strBackGroundTexture;
-			m_strLeft = strLeftTexture;
-			m_strMid = strMidTexture;
-			m_strRight = strRightTexture;
+			_backgroundTextureName = strBackGroundTexture;
+			_leftTextureName = strLeftTexture;
+			_midTextureName = strMidTexture;
+			_rightTextureName = strRightTexture;
 			FinalizeConstruction();
 		}
 
@@ -82,23 +82,23 @@ namespace MediaPortal.GUI.Library
 		public override void FinalizeConstruction()
 		{
 			base.FinalizeConstruction ();
-			m_guiBackground = new GUIImage(_parentControlId, _controlId, _positionX, _positionY,_width, _height,m_strBackground,0);
-			m_guiLeft		  = new GUIImage(_parentControlId, _controlId, _positionX, _positionY,0, 0,m_strLeft,0);
-			m_guiMid		  = new GUIImage(_parentControlId, _controlId, _positionX, _positionY,0, 0,m_strMid,0);
-			m_guiRight	  = new GUIImage(_parentControlId, _controlId, _positionX, _positionY,0, 0,m_strRight,0);
+			_imageBackground = new GUIImage(_parentControlId, _controlId, _positionX, _positionY,_width, _height,_backgroundTextureName,0);
+			_imageLeft		  = new GUIImage(_parentControlId, _controlId, _positionX, _positionY,0, 0,_leftTextureName,0);
+			_imageMid		  = new GUIImage(_parentControlId, _controlId, _positionX, _positionY,0, 0,_midTextureName,0);
+			_imageRight	  = new GUIImage(_parentControlId, _controlId, _positionX, _positionY,0, 0,_rightTextureName,0);
 
 
-      m_guiBackground.ParentControl = this;
-      m_guiLeft.ParentControl = this;
-      m_guiMid.ParentControl = this;
-      m_guiRight.ParentControl = this;
+      _imageBackground.ParentControl = this;
+      _imageLeft.ParentControl = this;
+      _imageMid.ParentControl = this;
+      _imageRight.ParentControl = this;
 
-			m_guiBackground.KeepAspectRatio=false;
-			m_guiMid.KeepAspectRatio=false;
-			m_guiRight.KeepAspectRatio=false;
-			if (m_strProperty==null) m_strProperty=String.Empty;
-			if (m_strProperty.IndexOf("#")>=0) ContainsProperty=true;
-			if (m_strTop==null) m_strTop="20";
+			_imageBackground.KeepAspectRatio=false;
+			_imageMid.KeepAspectRatio=false;
+			_imageRight.KeepAspectRatio=false;
+			if (_property==null) _property=String.Empty;
+			if (_property.IndexOf("#")>=0) _containsProperty=true;
+			if (_top==null) _top="20";
 		}
 
 		/// <summary>
@@ -107,10 +107,10 @@ namespace MediaPortal.GUI.Library
 		protected override void Update()
 		{
 			base.Update ();
-			m_guiBackground.SetPosition(_positionX,_positionY);
-			m_guiLeft.SetPosition(_positionX,_positionY);
-			m_guiMid.SetPosition(_positionX,_positionY);
-			m_guiRight.SetPosition(_positionX,_positionY);
+			_imageBackground.SetPosition(_positionX,_positionY);
+			_imageLeft.SetPosition(_positionX,_positionY);
+			_imageMid.SetPosition(_positionX,_positionY);
+			_imageRight.SetPosition(_positionX,_positionY);
 		}
 
 		/// <summary>
@@ -130,9 +130,9 @@ namespace MediaPortal.GUI.Library
 			}
 			catch(Exception){}
 
-			if (ContainsProperty)
+			if (_containsProperty)
 			{
-				string m_strText=GUIPropertyManager.Parse(m_strProperty);
+				string m_strText=GUIPropertyManager.Parse(_property);
 				if(m_strText!=String.Empty)
 				{
 					try
@@ -148,39 +148,39 @@ namespace MediaPortal.GUI.Library
 			int yPosTop=0;
 			try
 			{
-				yPosTop=Convert.ToInt16(m_strTop);
+				yPosTop=Convert.ToInt16(_top);
 			}
 			catch(Exception){}
 
 			// Render the background
 			int iBkgHeight=_height;
-			m_guiBackground.Height=iBkgHeight;
+			_imageBackground.Height=iBkgHeight;
 			if (tb==1) 
 			{
-				m_guiBackground.SetPosition(m_guiBackground.XPosition,yPosTop);
+				_imageBackground.SetPosition(_imageBackground.XPosition,yPosTop);
 			} 
 			else 
 			{
-				m_guiBackground.SetPosition(m_guiBackground.XPosition,m_guiBackground.YPosition);
+				_imageBackground.SetPosition(_imageBackground.XPosition,_imageBackground.YPosition);
 			}
-			m_guiBackground.Render(timePassed);
+			_imageBackground.Render(timePassed);
 
-			int iWidthLeft=m_guiLeft.TextureWidth;
-			int iHeightLeft=m_guiLeft.TextureHeight;
-			int iWidthRight=m_guiRight.TextureWidth;
-			int iHeightRight=m_guiRight.TextureHeight;
+			int iWidthLeft=_imageLeft.TextureWidth;
+			int iHeightLeft=_imageLeft.TextureHeight;
+			int iWidthRight=_imageRight.TextureWidth;
+			int iHeightRight=_imageRight.TextureHeight;
 			GUIGraphicsContext.ScaleHorizontal(ref iWidthLeft);
 			GUIGraphicsContext.ScaleHorizontal(ref iWidthRight);
 			GUIGraphicsContext.ScaleVertical(ref iHeightLeft);
 			GUIGraphicsContext.ScaleVertical(ref iHeightRight);
 			//iHeight=20;
-			float fWidth = (float)m_iPercent;
+			float fWidth = (float)_percentage;
 			fWidth/=100.0f;
-			fWidth *= (float) (m_guiBackground.Width-24-iWidthLeft-iWidthRight);
+			fWidth *= (float) (_imageBackground.Width-24-iWidthLeft-iWidthRight);
 
 			int off=12;
 			GUIGraphicsContext.ScaleHorizontal(ref off);
-			int iXPos=off+m_guiBackground.XPosition;
+			int iXPos=off+_imageBackground.XPosition;
 
 			int iYPos=0;
 			if (tb==1) 
@@ -189,31 +189,31 @@ namespace MediaPortal.GUI.Library
 			} 
 			else 
 			{  // bottom
-				iYPos= m_guiBackground.YPosition + (iBkgHeight  - iHeightLeft ) / 2;
+				iYPos= _imageBackground.YPosition + (iBkgHeight  - iHeightLeft ) / 2;
 			}
-			//m_guiLeft.SetHeight(iHeight);
-			m_guiLeft.SetPosition(iXPos,iYPos);
-			m_guiLeft.Height=iHeightLeft;
-			m_guiLeft.Width=iWidthLeft;
-			m_guiLeft.SetPosition(iXPos,iYPos);
-			m_guiLeft.Render(timePassed);
+			//_imageLeft.SetHeight(iHeight);
+			_imageLeft.SetPosition(iXPos,iYPos);
+			_imageLeft.Height=iHeightLeft;
+			_imageLeft.Width=iWidthLeft;
+			_imageLeft.SetPosition(iXPos,iYPos);
+			_imageLeft.Render(timePassed);
 
 			iXPos += iWidthLeft;
-			if (m_iPercent>0 && (int)fWidth > 1)
+			if (_percentage>0 && (int)fWidth > 1)
 			{
-				m_guiMid.SetPosition(iXPos,iYPos);
-				m_guiMid.Height=iHeightLeft;//m_guiMid.TextureHeight;
-				m_guiMid.Width=(int)fWidth;
-				m_guiMid.SetPosition(iXPos,iYPos);
-				m_guiMid.Render(timePassed);
+				_imageMid.SetPosition(iXPos,iYPos);
+				_imageMid.Height=iHeightLeft;//_imageMid.TextureHeight;
+				_imageMid.Width=(int)fWidth;
+				_imageMid.SetPosition(iXPos,iYPos);
+				_imageMid.Render(timePassed);
 				iXPos += (int)fWidth;
 			}
-			//m_guiRight.SetHeight(iHeight);
-			m_guiRight.SetPosition(iXPos,iYPos);
-			m_guiRight.Height=iHeightRight;
-			m_guiRight.Width=iWidthRight;
-			m_guiRight.SetPosition(iXPos,iYPos);
-			m_guiRight.Render(timePassed);
+			//_imageRight.SetHeight(iHeight);
+			_imageRight.SetPosition(iXPos,iYPos);
+			_imageRight.Height=iHeightRight;
+			_imageRight.Width=iWidthRight;
+			_imageRight.SetPosition(iXPos,iYPos);
+			_imageRight.Render(timePassed);
 		}
 
 		/// <summary>
@@ -230,11 +230,11 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public int Percentage
 		{
-			get { return m_iPercent;}
+			get { return _percentage;}
 			set { 
-				m_iPercent=value;
-				if (m_iPercent<0) m_iPercent=0;
-				if (m_iPercent>100) m_iPercent=100;
+				_percentage=value;
+				if (_percentage<0) _percentage=0;
+				if (_percentage>100) _percentage=100;
 			}
 		}
 
@@ -244,10 +244,10 @@ namespace MediaPortal.GUI.Library
 		public override void FreeResources()
 		{
 			base.FreeResources();
-			m_guiBackground.FreeResources();
-			m_guiMid.FreeResources();
-			m_guiRight.FreeResources();
-			m_guiLeft.FreeResources();
+			_imageBackground.FreeResources();
+			_imageMid.FreeResources();
+			_imageRight.FreeResources();
+			_imageLeft.FreeResources();
 		}
 
 		/// <summary>
@@ -256,10 +256,10 @@ namespace MediaPortal.GUI.Library
 		public override void PreAllocResources()
 		{
 			base.PreAllocResources();
-			m_guiBackground.PreAllocResources();
-			m_guiMid.PreAllocResources();
-			m_guiRight.PreAllocResources();
-			m_guiLeft.PreAllocResources();
+			_imageBackground.PreAllocResources();
+			_imageMid.PreAllocResources();
+			_imageRight.PreAllocResources();
+			_imageLeft.PreAllocResources();
 		}
 
 		/// <summary>
@@ -268,20 +268,20 @@ namespace MediaPortal.GUI.Library
 		public override void AllocResources()
 		{
 			base.AllocResources();
-			m_guiBackground.AllocResources();
-			m_guiMid.AllocResources();
-			m_guiRight.AllocResources();
-			m_guiLeft.AllocResources();
+			_imageBackground.AllocResources();
+			_imageMid.AllocResources();
+			_imageRight.AllocResources();
+			_imageLeft.AllocResources();
 
-			m_guiBackground.Filtering=false;
-			m_guiMid.Filtering=false;
-			m_guiRight.Filtering=false;
-			m_guiLeft.Filtering=false;
+			_imageBackground.Filtering=false;
+			_imageMid.Filtering=false;
+			_imageRight.Filtering=false;
+			_imageLeft.Filtering=false;
 
-			m_guiBackground.Height=25;
-			m_guiRight.Height=20;
-			m_guiLeft.Height=20;
-			m_guiMid.Height=20;
+			_imageBackground.Height=25;
+			_imageRight.Height=20;
+			_imageLeft.Height=20;
+			_imageMid.Height=20;
 		}
 
 		/// <summary>
@@ -289,7 +289,7 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public string BackGroundTextureName
 		{
-			get { return m_guiBackground.FileName;}
+			get { return _imageBackground.FileName;}
 		}
 
 		/// <summary>
@@ -297,7 +297,7 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public string BackTextureLeftName
 		{
-			get { return m_guiLeft.FileName;}
+			get { return _imageLeft.FileName;}
 		}
 
 		/// <summary>
@@ -305,7 +305,7 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public string BackTextureMidName
 		{
-			get { return m_guiMid.FileName;}
+			get { return _imageMid.FileName;}
 		}
 
 		/// <summary>
@@ -313,7 +313,7 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public string BackTextureRightName
 		{
-			get { return m_guiRight.FileName;}
+			get { return _imageRight.FileName;}
 		}
 
 		/// <summary>
@@ -323,14 +323,14 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public string Property
 		{
-			get { return m_strProperty; }
+			get { return _property; }
 			set 
 			{
 				if (value!=null)
 				{
-					m_strProperty=value;
-					if (m_strProperty.IndexOf("#")>=0) ContainsProperty=true;
-					else ContainsProperty=false;
+					_property=value;
+					if (_property.IndexOf("#")>=0) _containsProperty=true;
+					else _containsProperty=false;
 				}
 			}
 		}

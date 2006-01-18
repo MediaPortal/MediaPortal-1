@@ -51,7 +51,7 @@ namespace MediaPortal.GUI.Library
 
     bool _allowScrolling = true;
     bool _isScrolling = false;
-    bool ContainsProperty = false;
+    bool _containsProperty = false;
 
     string _previousText = "";
     GUILabelControl _labelControl = null;
@@ -97,7 +97,7 @@ namespace MediaPortal.GUI.Library
       _labelControl.ParentControl = this;
       if (_fontName != "" && _fontName != "-")
         _font = GUIFontManager.GetFont(_fontName);
-      if (_label.IndexOf("#") >= 0) ContainsProperty = true;
+      if (_label.IndexOf("#") >= 0) _containsProperty = true;
     }
 
     /// <summary>
@@ -113,7 +113,7 @@ namespace MediaPortal.GUI.Library
       if (_label != null && _label.Length > 0)
       {
         string strText = _label;
-        if (ContainsProperty) strText = GUIPropertyManager.Parse(_label);
+        if (_containsProperty) strText = GUIPropertyManager.Parse(_label);
 
         if (_previousText != strText)
         {
@@ -583,8 +583,8 @@ namespace MediaPortal.GUI.Library
       {
         if (value == null) return;
         _label = value;
-        if (_label.IndexOf("#") >= 0) ContainsProperty = true;
-        else ContainsProperty = false;
+        if (_label.IndexOf("#") >= 0) _containsProperty = true;
+        else _containsProperty = false;
       }
     }
 

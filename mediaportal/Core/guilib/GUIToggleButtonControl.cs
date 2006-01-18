@@ -25,129 +25,140 @@ namespace MediaPortal.GUI.Library
   /// <summary>
   /// 
   /// </summary>
-	public class GUIToggleButtonControl : GUIControl
-	{
-		[XMLSkinElement("textureFocus")]	protected string	_focusedTextureName="";
-		[XMLSkinElement("textureNoFocus")]	protected string	_nonFocusedTextureName="";
-		[XMLSkinElement("AltTextureFocus")]	protected string	m_strImgAltFocusTexture="";
-		[XMLSkinElement("AltTextureNoFocus")]	
-											protected string m_strImgAltNoFocusTexture="";
-		protected GUIImage                _imageFocused=null;
-		protected GUIImage                _imageNonFocused=null;  
-		protected GUIImage                m_imgAltFocus=null;
-		protected GUIImage                m_imgAltNoFocus=null;  
-		protected int                    _frameCounter=0;
-		[XMLSkinElement("font")]			protected string	_fontName;
-		[XMLSkinElement("label")]			protected string	_label="";
-		protected GUIFont 								_font=null;
-		[XMLSkinElement("textcolor")]		protected long  	_textColor=0xFFFFFFFF;
-		[XMLSkinElement("disabledcolor")]	protected long		_disabledColor=0xFF606060;
-		[XMLSkinElement("hyperlink")]		protected int       _hyperLinkWindowId=-1;
-		
-		protected string										_scriptAction="";
-		[XMLSkinElement("textXOff")]		protected int       _textOffsetX=0;
-		[XMLSkinElement("textYOff")]		protected int       _textOffsetY=0;
-	
-		public GUIToggleButtonControl(int dwParentID) : base(dwParentID)
-		{
-		}
-		public GUIToggleButtonControl(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight,  string strTextureFocus, string strTextureNoFocus,  string strAltTextureFocus, string strAltTextureNoFocus)
-			:base(dwParentID, dwControlId, dwPosX, dwPosY,dwWidth, dwHeight)
-		{
-			_focusedTextureName = strTextureFocus;
-			_nonFocusedTextureName = strTextureNoFocus;
-			m_strImgAltFocusTexture = strAltTextureFocus;
-			m_strImgAltNoFocusTexture = strAltTextureNoFocus;
-			_isSelected=false;
-			FinalizeConstruction();
-		}
-		public override void FinalizeConstruction()
-		{
-			base.FinalizeConstruction ();
-			
-			_imageFocused     =new GUIImage(_parentControlId, _controlId, _positionX, _positionY,_width, _height, _focusedTextureName ,0);
+  public class GUIToggleButtonControl : GUIControl
+  {
+    [XMLSkinElement("textureFocus")]
+    protected string _focusedTextureName = "";
+    [XMLSkinElement("textureNoFocus")]
+    protected string _nonFocusedTextureName = "";
+    [XMLSkinElement("AltTextureFocus")]
+    protected string _alternativeFocusTextureName = "";
+    [XMLSkinElement("AltTextureNoFocus")]
+    protected string _alternativeNonFocusTextureName = "";
+    protected GUIImage _imageFocused = null;
+    protected GUIImage _imageNonFocused = null;
+    protected GUIImage _imageAlternativeFocused = null;
+    protected GUIImage _imageAlternativeNonFocused = null;
+    protected int _frameCounter = 0;
+    [XMLSkinElement("font")]
+    protected string _fontName;
+    [XMLSkinElement("label")]
+    protected string _label = "";
+    protected GUIFont _font = null;
+    [XMLSkinElement("textcolor")]
+    protected long _textColor = 0xFFFFFFFF;
+    [XMLSkinElement("disabledcolor")]
+    protected long _disabledColor = 0xFF606060;
+    [XMLSkinElement("hyperlink")]
+    protected int _hyperLinkWindowId = -1;
+
+    protected string _scriptAction = "";
+    [XMLSkinElement("textXOff")]
+    protected int _textOffsetX = 0;
+    [XMLSkinElement("textYOff")]
+    protected int _textOffsetY = 0;
+
+    public GUIToggleButtonControl(int dwParentID)
+      : base(dwParentID)
+    {
+    }
+    public GUIToggleButtonControl(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight, string strTextureFocus, string strTextureNoFocus, string strAltTextureFocus, string strAltTextureNoFocus)
+      : base(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight)
+    {
+      _focusedTextureName = strTextureFocus;
+      _nonFocusedTextureName = strTextureNoFocus;
+      _alternativeFocusTextureName = strAltTextureFocus;
+      _alternativeNonFocusTextureName = strAltTextureNoFocus;
+      _isSelected = false;
+      FinalizeConstruction();
+    }
+    public override void FinalizeConstruction()
+    {
+      base.FinalizeConstruction();
+
+      _imageFocused = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _focusedTextureName, 0);
       _imageFocused.ParentControl = this;
 
-			_imageNonFocused   =new GUIImage(_parentControlId, _controlId, _positionX, _positionY,_width, _height, _nonFocusedTextureName,0);
+      _imageNonFocused = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _nonFocusedTextureName, 0);
       _imageNonFocused.ParentControl = this;
 
-			m_imgAltFocus  =new GUIImage(_parentControlId, _controlId, _positionX, _positionY,_width, _height, m_strImgAltFocusTexture,0);
-      m_imgAltFocus.ParentControl = this;
+      _imageAlternativeFocused = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _alternativeFocusTextureName, 0);
+      _imageAlternativeFocused.ParentControl = this;
 
-			m_imgAltNoFocus=new GUIImage(_parentControlId, _controlId, _positionX, _positionY,_width, _height, m_strImgAltNoFocusTexture,0);
-      m_imgAltNoFocus.ParentControl = this;
-			if (_fontName!="" && _fontName!="-")
-				_font=GUIFontManager.GetFont(_fontName);
-			GUILocalizeStrings.LocalizeLabel(ref _label);
-		}
+      _imageAlternativeNonFocused = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _alternativeNonFocusTextureName, 0);
+      _imageAlternativeNonFocused.ParentControl = this;
+      if (_fontName != "" && _fontName != "-")
+        _font = GUIFontManager.GetFont(_fontName);
+      GUILocalizeStrings.LocalizeLabel(ref _label);
+    }
 
-		public override void ScaleToScreenResolution()
-		{
-			base.ScaleToScreenResolution ();
-			GUIGraphicsContext.ScalePosToScreenResolution(ref _textOffsetX, ref _textOffsetY);
-		}
+    public override void ScaleToScreenResolution()
+    {
+      base.ScaleToScreenResolution();
+      GUIGraphicsContext.ScalePosToScreenResolution(ref _textOffsetX, ref _textOffsetY);
+    }
 
     public override void Render(float timePassed)
     {
-      if (GUIGraphicsContext.EditMode==false)
+      if (GUIGraphicsContext.EditMode == false)
       {
-        if (!IsVisible ) return;
+        if (!IsVisible) return;
       }
 
       if (Focus)
       {
-        int dwAlphaCounter = _frameCounter+2;
+        int dwAlphaCounter = _frameCounter + 2;
         int dwAlphaChannel;
-        if ((dwAlphaCounter%128)>=64)
-          dwAlphaChannel = dwAlphaCounter%64;
+        if ((dwAlphaCounter % 128) >= 64)
+          dwAlphaChannel = dwAlphaCounter % 64;
         else
-          dwAlphaChannel = 63-(dwAlphaCounter%64);
+          dwAlphaChannel = 63 - (dwAlphaCounter % 64);
 
         dwAlphaChannel += 192;
-        SetAlpha(dwAlphaChannel );
+        SetAlpha(dwAlphaChannel);
         if (_isSelected)
           _imageFocused.Render(timePassed);
         else
-          m_imgAltFocus.Render(timePassed);
+          _imageAlternativeFocused.Render(timePassed);
         _frameCounter++;
       }
-      else 
+      else
       {
         SetAlpha(0xff);
         if (_isSelected)
           _imageNonFocused.Render(timePassed);
         else
-          m_imgAltNoFocus.Render(timePassed);  
+          _imageAlternativeNonFocused.Render(timePassed);
       }
 
-      if (_label.Length > 0 && _font!=null)
+      if (_label.Length > 0 && _font != null)
       {
-        if (Disabled )
-          _font.DrawText((float)_textOffsetX+_positionX, (float)_textOffsetY+_positionY,_disabledColor,_label,GUIControl.Alignment.ALIGN_LEFT,-1);
+        if (Disabled)
+          _font.DrawText((float)_textOffsetX + _positionX, (float)_textOffsetY + _positionY, _disabledColor, _label, GUIControl.Alignment.ALIGN_LEFT, -1);
         else
-          _font.DrawText((float)_textOffsetX+_positionX, (float)_textOffsetY+_positionY,_textColor,_label,GUIControl.Alignment.ALIGN_LEFT,-1);
+          _font.DrawText((float)_textOffsetX + _positionX, (float)_textOffsetY + _positionY, _textColor, _label, GUIControl.Alignment.ALIGN_LEFT, -1);
       }
     }
 
-    public override void OnAction( Action action) 
+    public override void OnAction(Action action)
     {
       base.OnAction(action);
       GUIMessage message;
       if (Focus)
       {
-        if (action.wID == Action.ActionType.ACTION_MOUSE_CLICK||action.wID == Action.ActionType.ACTION_SELECT_ITEM)
+        if (action.wID == Action.ActionType.ACTION_MOUSE_CLICK || action.wID == Action.ActionType.ACTION_SELECT_ITEM)
         {
-          _isSelected=!_isSelected;
-          if (_hyperLinkWindowId >=0)
+          _isSelected = !_isSelected;
+          if (_hyperLinkWindowId >= 0)
           {
             GUIWindowManager.ActivateWindow(_hyperLinkWindowId);
             return;
           }
           // button selected.
           // send a message
-          int iParam=1;
-          if (!_isSelected) iParam=0;
-          message=new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED,WindowId,GetID, ParentID,iParam,0,null );
+          int iParam = 1;
+          if (!_isSelected) iParam = 0;
+          message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, WindowId, GetID, ParentID, iParam, 0, null);
           GUIGraphicsContext.SendMessage(message);
         }
       }
@@ -155,11 +166,11 @@ namespace MediaPortal.GUI.Library
 
     public override bool OnMessage(GUIMessage message)
     {
-      if ( message.TargetControlId==GetID )
+      if (message.TargetControlId == GetID)
       {
         if (message.Message == GUIMessage.MessageType.GUI_MSG_LABEL_SET)
         {
-          _label=message.Label ;
+          _label = message.Label;
 
           return true;
         }
@@ -173,154 +184,155 @@ namespace MediaPortal.GUI.Library
       base.PreAllocResources();
       _imageFocused.PreAllocResources();
       _imageNonFocused.PreAllocResources();
-      m_imgAltFocus.PreAllocResources();
-      m_imgAltNoFocus.PreAllocResources();
+      _imageAlternativeFocused.PreAllocResources();
+      _imageAlternativeNonFocused.PreAllocResources();
     }
     public override void AllocResources()
     {
       base.AllocResources();
-      _font=GUIFontManager.GetFont(_fontName);
-      _frameCounter=0;
+      _font = GUIFontManager.GetFont(_fontName);
+      _frameCounter = 0;
       _imageFocused.AllocResources();
       _imageNonFocused.AllocResources();
-      m_imgAltFocus.AllocResources();
-      m_imgAltNoFocus.AllocResources();
-      _width=_imageFocused.Width;
-      _height=_imageFocused.Height;
+      _imageAlternativeFocused.AllocResources();
+      _imageAlternativeNonFocused.AllocResources();
+      _width = _imageFocused.Width;
+      _height = _imageFocused.Height;
     }
     public override void FreeResources()
     {
       base.FreeResources();
       _imageFocused.FreeResources();
       _imageNonFocused.FreeResources();
-      m_imgAltFocus.FreeResources();
-      m_imgAltNoFocus.FreeResources();
+      _imageAlternativeFocused.FreeResources();
+      _imageAlternativeNonFocused.FreeResources();
     }
     public override void SetPosition(int dwPosX, int dwPosY)
     {
       base.SetPosition(dwPosX, dwPosY);
       _imageFocused.SetPosition(dwPosX, dwPosY);
       _imageNonFocused.SetPosition(dwPosX, dwPosY);
-      m_imgAltFocus.SetPosition(dwPosX, dwPosY);
-      m_imgAltNoFocus.SetPosition(dwPosX, dwPosY);
+      _imageAlternativeFocused.SetPosition(dwPosX, dwPosY);
+      _imageAlternativeNonFocused.SetPosition(dwPosX, dwPosY);
     }
     public override void SetAlpha(int dwAlpha)
     {
       base.SetAlpha(dwAlpha);
       _imageFocused.SetAlpha(dwAlpha);
       _imageNonFocused.SetAlpha(dwAlpha);
-      m_imgAltFocus.SetAlpha(dwAlpha);
-      m_imgAltNoFocus.SetAlpha(dwAlpha);
+      _imageAlternativeFocused.SetAlpha(dwAlpha);
+      _imageAlternativeNonFocused.SetAlpha(dwAlpha);
     }
 
     public long DisabledColor
     {
-      get { return _disabledColor;}
-      set {_disabledColor=value;}
+      get { return _disabledColor; }
+      set { _disabledColor = value; }
     }
     public string TexutureNoFocusName
-    { 
-      get { return _imageNonFocused.FileName;} 
+    {
+      get { return _imageNonFocused.FileName; }
     }
 
     public string TexutureFocusName
-    { 
-      get {return _imageFocused.FileName;} 
+    {
+      get { return _imageFocused.FileName; }
     }
     public string AltTexutureNoFocusName
-    { 
-      get { return m_imgAltNoFocus.FileName;} 
+    {
+      get { return _imageAlternativeNonFocused.FileName; }
     }
 
     public string AltTexutureFocusName
-    { 
-      get {return m_imgAltFocus.FileName;} 
+    {
+      get { return _imageAlternativeFocused.FileName; }
     }
-		
-    public long	TextColor 
-    { 
-      get { return _textColor;}
-      set { _textColor=value;}
+
+    public long TextColor
+    {
+      get { return _textColor; }
+      set { _textColor = value; }
     }
 
     public string FontName
-    { 
+    {
       get { return _fontName; }
-      set { 
-        if (value==null) return;
-        _fontName=value;
-        _font=GUIFontManager.GetFont(_fontName);
+      set
+      {
+        if (value == null) return;
+        _fontName = value;
+        _font = GUIFontManager.GetFont(_fontName);
       }
     }
 
-    public void SetLabel( string strFontName,string strLabel,long dwColor)
+    public void SetLabel(string strFontName, string strLabel, long dwColor)
     {
-      if (strFontName==null) return;
-      if (strLabel==null) return;
-      _label=strLabel;
-      _textColor=dwColor;
-      if (strFontName!="" && strFontName!="-")
+      if (strFontName == null) return;
+      if (strLabel == null) return;
+      _label = strLabel;
+      _textColor = dwColor;
+      if (strFontName != "" && strFontName != "-")
       {
-        _fontName=strFontName;
-        _font=GUIFontManager.GetFont(_fontName);
+        _fontName = strFontName;
+        _font = GUIFontManager.GetFont(_fontName);
       }
     }
 
     public string Label
-    { 
+    {
       get { return _label; }
-      set { _label=value;}
+      set { _label = value; }
     }
 
     public int HyperLink
-    { 
-      get { return _hyperLinkWindowId;}
-      set {_hyperLinkWindowId=value;}
+    {
+      get { return _hyperLinkWindowId; }
+      set { _hyperLinkWindowId = value; }
     }
-    public string ScriptAction  
-    { 
+    public string ScriptAction
+    {
       get { return _scriptAction; }
-      set { _scriptAction=value; }
+      set { _scriptAction = value; }
     }
 
-    protected override void  Update() 
+    protected override void Update()
     {
       base.Update();
-  
-      _imageFocused.Width=_width;
-      _imageFocused.Height=_height;
 
-      _imageNonFocused.Width=_width;
-      _imageNonFocused.Height=_height;
-      
-      m_imgAltFocus.Width=_width;
-      m_imgAltFocus.Height=_height;
+      _imageFocused.Width = _width;
+      _imageFocused.Height = _height;
 
-      m_imgAltNoFocus.Width=_width;
-      m_imgAltNoFocus.Height=_height;
+      _imageNonFocused.Width = _width;
+      _imageNonFocused.Height = _height;
+
+      _imageAlternativeFocused.Width = _width;
+      _imageAlternativeFocused.Height = _height;
+
+      _imageAlternativeNonFocused.Width = _width;
+      _imageAlternativeNonFocused.Height = _height;
 
       _imageFocused.SetPosition(_positionX, _positionY);
       _imageNonFocused.SetPosition(_positionX, _positionY);
-      m_imgAltFocus.SetPosition(_positionX, _positionY);
-      m_imgAltNoFocus.SetPosition(_positionX, _positionY);
+      _imageAlternativeFocused.SetPosition(_positionX, _positionY);
+      _imageAlternativeNonFocused.SetPosition(_positionX, _positionY);
 
     }
-		/// <summary>
-		/// Get/set the X-offset of the label.
-		/// </summary>
-		public int TextOffsetX
-		{
-			get { return _textOffsetX;}
-			set { _textOffsetX=value;}
-		}
-		/// <summary>
-		/// Get/set the Y-offset of the label.
-		/// </summary>
-		public int TextOffsetY
-		{
-			get { return _textOffsetY;}
-			set { _textOffsetY=value;}
-		}
+    /// <summary>
+    /// Get/set the X-offset of the label.
+    /// </summary>
+    public int TextOffsetX
+    {
+      get { return _textOffsetX; }
+      set { _textOffsetX = value; }
+    }
+    /// <summary>
+    /// Get/set the Y-offset of the label.
+    /// </summary>
+    public int TextOffsetY
+    {
+      get { return _textOffsetY; }
+      set { _textOffsetY = value; }
+    }
 
 
   }

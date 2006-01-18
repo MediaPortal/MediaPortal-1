@@ -49,7 +49,7 @@ namespace MediaPortal.Player
 			if (Vmr9!=null)
 			{
 				Vmr9.Enable(true);
-				m_bUpdateNeeded=true;
+				_updateNeeded=true;
 				SetVideoWindow();
 			}
 		}

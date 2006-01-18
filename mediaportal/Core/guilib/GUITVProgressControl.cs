@@ -22,667 +22,692 @@ using System;
 
 namespace MediaPortal.GUI.Library
 {
-	/// <summary>
-	/// todo : 
-	/// - specify fill colors 2,3,4
-	/// - seperate graphic for big-tick displaying current position
-	/// - specify x/y position for fill color start
-	/// </summary>
-	public class GUITVProgressControl : GUIControl
-	{
-		GUIImage 							m_guiTop=null;
-		GUIImage 							m_guiLogo=null;
-		GUIImage 							m_guiBottom=null;
-		GUIImage 							m_guiTick=null;
-		GUIImage 							m_guiFillBackground=null;
-		GUIImage 							m_guiFill1=null;
-		GUIImage 							m_guiFill2=null;
-		GUIImage 							m_guiFill3=null;
-		GUIImage 							m_guiLeft=null;
-		GUIImage 							m_guiMid=null;
-		GUIImage 							m_guiRight=null;
-		int      							m_iPercent1=0;
-		int      							m_iPercent2=0;
-		int      							m_iPercent3=0;
+  /// <summary>
+  /// todo : 
+  /// - specify fill colors 2,3,4
+  /// - seperate graphic for big-tick displaying current position
+  /// - specify x/y position for fill color start
+  /// </summary>
+  public class GUITVProgressControl : GUIControl
+  {
+    GUIImage _imageTop = null;
+    GUIImage _imageLogo = null;
+    GUIImage _imageBottom = null;
+    GUIImage _imageTick = null;
+    GUIImage _imageFillBackground = null;
+    GUIImage _imageFill1 = null;
+    GUIImage _imageFill2 = null;
+    GUIImage _imageFill3 = null;
+    GUIImage _imageLeft = null;
+    GUIImage _imageMid = null;
+    GUIImage _imageRight = null;
+    int _percentage1 = 0;
+    int _percentage2 = 0;
+    int _percentage3 = 0;
 
-		
-		[XMLSkinElement("label")] string	 			m_strProperty="";
-		[XMLSkinElement("textcolor")]		protected long  	_textColor=0xFFFFFFFF;
-		[XMLSkinElement("font")]			protected string	_fontName="";
-		GUIFont						_font=null;
-		[XMLSkinElement("startlabel")]	string                _labelLeft="";
-		[XMLSkinElement("endlabel")]	string                _labelRight="";
-		[XMLSkinElement("toplabel")]	string                _labelTop="";
-		[XMLSkinElement("fillbgxoff")]		protected int			m_iFillX;
-		[XMLSkinElement("fillbgyoff")]		protected int			m_iFillY;
-		[XMLSkinElement("fillheight")]		protected int			m_iFillHeight;
-		
-		
-		[XMLSkinElement("label")]		string                _label1="";
-		[XMLSkinElement("label1")]		string                _label2="";
-		[XMLSkinElement("label2")]		string                _label3="";
-		[XMLSkinElement("TextureOffsetY")]		protected int    m_iTopTextureYOffset=0;
-		[XMLSkinElement("toptexture")]			protected string m_strTextureTop;
-		[XMLSkinElement("bottomtexture")]		protected string m_strTextureBottom;
-		[XMLSkinElement("fillbackgroundtexture")]protected string m_strFillBG;
-		[XMLSkinElement("lefttexture")]			protected string m_strLeft;
-		[XMLSkinElement("midtexture")]			protected string m_strMid;
-		[XMLSkinElement("righttexture")]		protected string m_strRight;
-		[XMLSkinElement("texturetick")]			protected string m_strTickTexture;
-		[XMLSkinElement("filltexture1")]		protected string m_strTickFill1;
-		[XMLSkinElement("filltexture2")]		protected string m_strTickFill2;
-		[XMLSkinElement("filltexture3")]		protected string m_strTickFill3;
-		[XMLSkinElement("logotexture")]			protected string m_strLogo;
+
+    [XMLSkinElement("label")]
+    string _propertyLabel = "";
+    [XMLSkinElement("textcolor")]
+    protected long _textColor = 0xFFFFFFFF;
+    [XMLSkinElement("font")]
+    protected string _fontName = "";
+    GUIFont _font = null;
+    [XMLSkinElement("startlabel")]
+    string _labelLeft = "";
+    [XMLSkinElement("endlabel")]
+    string _labelRight = "";
+    [XMLSkinElement("toplabel")]
+    string _labelTop = "";
+    [XMLSkinElement("fillbgxoff")]
+    protected int _fillBackgroundOffsetX;
+    [XMLSkinElement("fillbgyoff")]
+    protected int _fillBackgroundOffsetY;
+    [XMLSkinElement("fillheight")]
+    protected int _fillBackgroundHeight;
+
+
+    [XMLSkinElement("label")]
+    string _label1 = "";
+    [XMLSkinElement("label1")]
+    string _label2 = "";
+    [XMLSkinElement("label2")]
+    string _label3 = "";
+    [XMLSkinElement("TextureOffsetY")]
+    protected int _topTextureOffsetY = 0;
+    [XMLSkinElement("toptexture")]
+    protected string _topTextureName;
+    [XMLSkinElement("bottomtexture")]
+    protected string _bottomTextureName;
+    [XMLSkinElement("fillbackgroundtexture")]
+    protected string _fillBackGroundTextureName;
+    [XMLSkinElement("lefttexture")]
+    protected string _leftTextureName;
+    [XMLSkinElement("midtexture")]
+    protected string _midTextureName;
+    [XMLSkinElement("righttexture")]
+    protected string _rightTextureName;
+    [XMLSkinElement("texturetick")]
+    protected string _tickTextureName;
+    [XMLSkinElement("filltexture1")]
+    protected string _tickFill1TextureName;
+    [XMLSkinElement("filltexture2")]
+    protected string _tickFill2TextureName;
+    [XMLSkinElement("filltexture3")]
+    protected string _tickFill3TextureName;
+    [XMLSkinElement("logotexture")]
+    protected string _logoTextureName;
     public GUITVProgressControl(int dwParentID)
-      :base(dwParentID)
+      : base(dwParentID)
     {
     }
 
-		public GUITVProgressControl(int dwParentID, int dwControlId, int dwPosX, 
-			int dwPosY, int dwWidth, int dwHeight, 
-			string strBackGroundTexture,string strBackBottomTexture,
-			string strTextureFillBackground,
-			string strLeftTexture,string strMidTexture,
-			string strRightTexture,string strTickTexure,
-			string strTextureFill1,string strTextureFill2,string strTextureFill3,
-			string strLogoTextureName)
-			:base(dwParentID, dwControlId, dwPosX, dwPosY,dwWidth, dwHeight)
-		{
-			m_strTextureTop = strBackGroundTexture;
-			m_strTextureBottom = strBackBottomTexture;
-			m_strFillBG = strTextureFillBackground;
-			m_strLeft = strLeftTexture;
-			m_strRight = strRightTexture;
-			m_strTickTexture = strTickTexure;
-			m_strTickFill1 = strTextureFill1;
-			m_strTickFill2 = strTextureFill2;
-			m_strTickFill3 = strTextureFill3;
-			m_strLogo = strLogoTextureName;
-			FinalizeConstruction();
-		}
-		public override void FinalizeConstruction()
-		{
-			base.FinalizeConstruction ();
-      if (m_strTextureTop==null) m_strTextureTop=String.Empty;
-      if (m_strTextureBottom==null) m_strTextureBottom=String.Empty;
-      if (m_strLeft==null) m_strLeft=String.Empty;
-      if (m_strMid==null) m_strMid=String.Empty;
-      if (m_strRight==null) m_strRight=String.Empty;
-      if (m_strTickTexture==null) m_strTickTexture=String.Empty;
-      if (m_strTickFill1==null) m_strTickFill1=String.Empty;
-      if (m_strTickFill2==null) m_strTickFill2=String.Empty;
-      if (m_strTickFill3==null) m_strTickFill3=String.Empty;
-      if (m_strFillBG==null) m_strFillBG=String.Empty;
-      if (m_strLogo==null) m_strLogo=String.Empty;
-			m_guiTop	= new GUIImage(_parentControlId, _controlId, 0, 0,0, 0,m_strTextureTop,0);
-			m_guiBottom	= new GUIImage(_parentControlId, _controlId, 0, 0,0, 0,m_strTextureBottom,0);
-			m_guiLeft	= new GUIImage(_parentControlId, _controlId, _positionX, _positionY,0, 0,m_strLeft,0);
-			m_guiMid	= new GUIImage(_parentControlId, _controlId, _positionX, _positionY,0, 0,m_strMid,0);
-			m_guiRight	= new GUIImage(_parentControlId, _controlId, _positionX, _positionY,0, 0,m_strRight,0);
-			m_guiTick	= new GUIImage(_parentControlId, _controlId, _positionX, _positionY,0, 0,m_strTickTexture,0);
-			m_guiFill1	= new GUIImage(_parentControlId, _controlId, _positionX, _positionY,0, 0,m_strTickFill1,0);
-			m_guiFill2	= new GUIImage(_parentControlId, _controlId, _positionX, _positionY,0, 0,m_strTickFill2,0);
-			m_guiFill3	= new GUIImage(_parentControlId, _controlId, _positionX, _positionY,0, 0,m_strTickFill3,0);
-			m_guiFillBackground= new GUIImage(_parentControlId, _controlId, 0, 0,0, 0,m_strFillBG,0);
-			m_guiTop.KeepAspectRatio=false;
-			m_guiBottom.KeepAspectRatio=false;
-			m_guiMid.KeepAspectRatio=false;
-			m_guiRight.KeepAspectRatio=false;
-			m_guiTick.KeepAspectRatio=false;
-			m_guiFill1.KeepAspectRatio=false;
-			m_guiFill2.KeepAspectRatio=false;
-			m_guiFill3.KeepAspectRatio=false;
-			m_guiFillBackground.KeepAspectRatio=false;
+    public GUITVProgressControl(int dwParentID, int dwControlId, int dwPosX,
+      int dwPosY, int dwWidth, int dwHeight,
+      string strBackGroundTexture, string strBackBottomTexture,
+      string strTextureFillBackground,
+      string strLeftTexture, string strMidTexture,
+      string strRightTexture, string strTickTexure,
+      string strTextureFill1, string strTextureFill2, string strTextureFill3,
+      string strLogoTextureName)
+      : base(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight)
+    {
+      _topTextureName = strBackGroundTexture;
+      _bottomTextureName = strBackBottomTexture;
+      _fillBackGroundTextureName = strTextureFillBackground;
+      _leftTextureName = strLeftTexture;
+      _rightTextureName = strRightTexture;
+      _tickTextureName = strTickTexure;
+      _tickFill1TextureName = strTextureFill1;
+      _tickFill2TextureName = strTextureFill2;
+      _tickFill3TextureName = strTextureFill3;
+      _logoTextureName = strLogoTextureName;
+      FinalizeConstruction();
+    }
+    public override void FinalizeConstruction()
+    {
+      base.FinalizeConstruction();
+      if (_topTextureName == null) _topTextureName = String.Empty;
+      if (_bottomTextureName == null) _bottomTextureName = String.Empty;
+      if (_leftTextureName == null) _leftTextureName = String.Empty;
+      if (_midTextureName == null) _midTextureName = String.Empty;
+      if (_rightTextureName == null) _rightTextureName = String.Empty;
+      if (_tickTextureName == null) _tickTextureName = String.Empty;
+      if (_tickFill1TextureName == null) _tickFill1TextureName = String.Empty;
+      if (_tickFill2TextureName == null) _tickFill2TextureName = String.Empty;
+      if (_tickFill3TextureName == null) _tickFill3TextureName = String.Empty;
+      if (_fillBackGroundTextureName == null) _fillBackGroundTextureName = String.Empty;
+      if (_logoTextureName == null) _logoTextureName = String.Empty;
+      _imageTop = new GUIImage(_parentControlId, _controlId, 0, 0, 0, 0, _topTextureName, 0);
+      _imageBottom = new GUIImage(_parentControlId, _controlId, 0, 0, 0, 0, _bottomTextureName, 0);
+      _imageLeft = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, 0, 0, _leftTextureName, 0);
+      _imageMid = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, 0, 0, _midTextureName, 0);
+      _imageRight = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, 0, 0, _rightTextureName, 0);
+      _imageTick = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, 0, 0, _tickTextureName, 0);
+      _imageFill1 = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, 0, 0, _tickFill1TextureName, 0);
+      _imageFill2 = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, 0, 0, _tickFill2TextureName, 0);
+      _imageFill3 = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, 0, 0, _tickFill3TextureName, 0);
+      _imageFillBackground = new GUIImage(_parentControlId, _controlId, 0, 0, 0, 0, _fillBackGroundTextureName, 0);
+      _imageTop.KeepAspectRatio = false;
+      _imageBottom.KeepAspectRatio = false;
+      _imageMid.KeepAspectRatio = false;
+      _imageRight.KeepAspectRatio = false;
+      _imageTick.KeepAspectRatio = false;
+      _imageFill1.KeepAspectRatio = false;
+      _imageFill2.KeepAspectRatio = false;
+      _imageFill3.KeepAspectRatio = false;
+      _imageFillBackground.KeepAspectRatio = false;
 
-      m_guiTop.ParentControl = this;
-      m_guiBottom.ParentControl = this;
-      m_guiMid.ParentControl = this;
-      m_guiRight.ParentControl = this;
-      m_guiTick.ParentControl = this;
-      m_guiFill1.ParentControl = this;
-      m_guiFill2.ParentControl = this;
-      m_guiFill3.ParentControl = this;
-      m_guiFillBackground.ParentControl = this;
-      m_guiLogo = new GUIImage(_parentControlId, _controlId, 0, 0, 0, 0, m_strLogo, 0);
-      m_guiLogo.ParentControl = this;
-			FontName = _fontName;
-		}
+      _imageTop.ParentControl = this;
+      _imageBottom.ParentControl = this;
+      _imageMid.ParentControl = this;
+      _imageRight.ParentControl = this;
+      _imageTick.ParentControl = this;
+      _imageFill1.ParentControl = this;
+      _imageFill2.ParentControl = this;
+      _imageFill3.ParentControl = this;
+      _imageFillBackground.ParentControl = this;
+      _imageLogo = new GUIImage(_parentControlId, _controlId, 0, 0, 0, 0, _logoTextureName, 0);
+      _imageLogo.ParentControl = this;
+      FontName = _fontName;
+    }
 
-		public override void ScaleToScreenResolution()
-		{
+    public override void ScaleToScreenResolution()
+    {
 
-			base.ScaleToScreenResolution ();
-			GUIGraphicsContext.ScalePosToScreenResolution(ref m_iFillX, ref m_iFillY);
-			GUIGraphicsContext.ScaleVertical(ref m_iFillHeight);
-			GUIGraphicsContext.ScaleVertical(ref m_iTopTextureYOffset);
-		}
+      base.ScaleToScreenResolution();
+      GUIGraphicsContext.ScalePosToScreenResolution(ref _fillBackgroundOffsetX, ref _fillBackgroundOffsetY);
+      GUIGraphicsContext.ScaleVertical(ref _fillBackgroundHeight);
+      GUIGraphicsContext.ScaleVertical(ref _topTextureOffsetY);
+    }
 
     public override void Render(float timePassed)
     {
-      if (GUIGraphicsContext.EditMode==false)
+      if (GUIGraphicsContext.EditMode == false)
       {
         if (!IsVisible) return;
         if (Disabled) return;
       }
-			if (m_strProperty.Length>0)
-			{
-				string m_strText=GUIPropertyManager.Parse(m_strProperty);
-				if(m_strText.Length>0)
-				{
-					try
-					{
-						Percentage1=Int32.Parse(m_strText);
-					}
-					catch(Exception)
-          {
-          }
-          if (Percentage1<0 || Percentage1>100) Percentage1=0;
-				}
-			}
-      if (Label1.Length>0)
+      if (_propertyLabel.Length > 0)
       {
-        string strText=GUIPropertyManager.Parse(Label1);
-        if(strText.Length>0)
+        string m_strText = GUIPropertyManager.Parse(_propertyLabel);
+        if (m_strText.Length > 0)
         {
           try
           {
-            Percentage1=Int32.Parse(strText);
+            Percentage1 = Int32.Parse(m_strText);
           }
-          catch(Exception){}
-          if (Percentage1<0 || Percentage1>100) Percentage1=0;
+          catch (Exception)
+          {
+          }
+          if (Percentage1 < 0 || Percentage1 > 100) Percentage1 = 0;
         }
       }
-
-      if (Label2.Length>0)
+      if (Label1.Length > 0)
       {
-        string strText=GUIPropertyManager.Parse(Label2);
-        if(strText.Length>0)
+        string strText = GUIPropertyManager.Parse(Label1);
+        if (strText.Length > 0)
         {
           try
           {
-            Percentage2=Int32.Parse(strText);
+            Percentage1 = Int32.Parse(strText);
           }
-          catch(Exception){}
-          if (Percentage2<0 || Percentage2>100) Percentage2=0;
+          catch (Exception) { }
+          if (Percentage1 < 0 || Percentage1 > 100) Percentage1 = 0;
         }
       }
-      if (Label3.Length>0)
+
+      if (Label2.Length > 0)
       {
-        string strText=GUIPropertyManager.Parse(Label3);
-        if(strText.Length>0)
+        string strText = GUIPropertyManager.Parse(Label2);
+        if (strText.Length > 0)
         {
           try
           {
-            Percentage3=Int32.Parse(strText);
+            Percentage2 = Int32.Parse(strText);
           }
-          catch(Exception){}
-          if (Percentage3<0 || Percentage3>100) Percentage3=0;
+          catch (Exception) { }
+          if (Percentage2 < 0 || Percentage2 > 100) Percentage2 = 0;
+        }
+      }
+      if (Label3.Length > 0)
+      {
+        string strText = GUIPropertyManager.Parse(Label3);
+        if (strText.Length > 0)
+        {
+          try
+          {
+            Percentage3 = Int32.Parse(strText);
+          }
+          catch (Exception) { }
+          if (Percentage3 < 0 || Percentage3 > 100) Percentage3 = 0;
         }
       }
 
-			int xPos=_positionX;
-			m_guiLeft.SetPosition(xPos,_positionY);
-			
-			xPos=_positionX+m_guiLeft.TextureWidth;
-			m_guiMid.SetPosition(xPos,_positionY);
-			
-			int iWidth=_width-(m_guiLeft.TextureWidth+m_guiRight.TextureWidth);
-			m_guiMid.Width=iWidth;
-      
-			xPos=iWidth+_positionX+m_guiLeft.TextureWidth;
-			m_guiRight.SetPosition(xPos,_positionY);
+      int xPos = _positionX;
+      _imageLeft.SetPosition(xPos, _positionY);
 
-			m_guiLeft.Render(timePassed);
-			m_guiRight.Render(timePassed);
-			m_guiMid.Render(timePassed);
+      xPos = _positionX + _imageLeft.TextureWidth;
+      _imageMid.SetPosition(xPos, _positionY);
 
-      int iWidth1=0,iWidth2=0,iWidth3=0;
+      int iWidth = _width - (_imageLeft.TextureWidth + _imageRight.TextureWidth);
+      _imageMid.Width = iWidth;
 
-      iWidth -= 2*m_iFillX;
-      float fWidth=iWidth;
-      int iCurPos=0;
+      xPos = iWidth + _positionX + _imageLeft.TextureWidth;
+      _imageRight.SetPosition(xPos, _positionY);
+
+      _imageLeft.Render(timePassed);
+      _imageRight.Render(timePassed);
+      _imageMid.Render(timePassed);
+
+      int iWidth1 = 0, iWidth2 = 0, iWidth3 = 0;
+
+      iWidth -= 2 * _fillBackgroundOffsetX;
+      float fWidth = iWidth;
+      int iCurPos = 0;
       // render fillbkg
 
-      xPos=_positionX+m_guiLeft.TextureWidth+m_iFillX;
-      m_guiFillBackground.Width=iWidth;
-      m_guiFillBackground.Height=m_guiMid.TextureHeight-m_iFillY*2;
-      m_guiFillBackground.SetPosition(xPos,_positionY+m_iFillY);
-      m_guiFillBackground.Render(timePassed);
+      xPos = _positionX + _imageLeft.TextureWidth + _fillBackgroundOffsetX;
+      _imageFillBackground.Width = iWidth;
+      _imageFillBackground.Height = _imageMid.TextureHeight - _fillBackgroundOffsetY * 2;
+      _imageFillBackground.SetPosition(xPos, _positionY + _fillBackgroundOffsetY);
+      _imageFillBackground.Render(timePassed);
 
       // render first color
-      int xoff=5;
+      int xoff = 5;
       GUIGraphicsContext.ScaleHorizontal(ref xoff);
-      xPos=_positionX+m_guiLeft.TextureWidth+m_iFillX+xoff;
-      int yPos=m_guiFillBackground.YPosition+(m_guiFillBackground.Height/2)-(m_iFillHeight/2);
-      if (yPos < _positionY) yPos=_positionY;
-      fWidth=(float)iWidth;
-      fWidth/=100.0f;
-      fWidth*=(float)Percentage1;
-      iWidth1=(int)Math.Floor(fWidth);
-      if (iWidth1>0)
+      xPos = _positionX + _imageLeft.TextureWidth + _fillBackgroundOffsetX + xoff;
+      int yPos = _imageFillBackground.YPosition + (_imageFillBackground.Height / 2) - (_fillBackgroundHeight / 2);
+      if (yPos < _positionY) yPos = _positionY;
+      fWidth = (float)iWidth;
+      fWidth /= 100.0f;
+      fWidth *= (float)Percentage1;
+      iWidth1 = (int)Math.Floor(fWidth);
+      if (iWidth1 > 0)
       {
-        m_guiFill1.Height=m_iFillHeight;
-        m_guiFill1.Width=iWidth1;
-        m_guiFill1.SetPosition(xPos,yPos);
-        m_guiFill1.Render(timePassed);// red
+        _imageFill1.Height = _fillBackgroundHeight;
+        _imageFill1.Width = iWidth1;
+        _imageFill1.SetPosition(xPos, yPos);
+        _imageFill1.Render(timePassed);// red
       }
-      iCurPos=iWidth1+xPos;
+      iCurPos = iWidth1 + xPos;
 
-			//render 2nd color
+      //render 2nd color
       int iPercent;
-      if (Percentage2>=Percentage1)
+      if (Percentage2 >= Percentage1)
       {
-        iPercent=Percentage2-Percentage1;
+        iPercent = Percentage2 - Percentage1;
       }
-      else iPercent=0;
-      fWidth=(float)iWidth;
-      fWidth/=100.0f;
-      fWidth*=(float)iPercent;
-      iWidth2=(int)Math.Floor(fWidth);
-      if (iWidth2>0)
+      else iPercent = 0;
+      fWidth = (float)iWidth;
+      fWidth /= 100.0f;
+      fWidth *= (float)iPercent;
+      iWidth2 = (int)Math.Floor(fWidth);
+      if (iWidth2 > 0)
       {
-        m_guiFill2.Width=iWidth2;
-        m_guiFill2.Height=m_guiFill1.Height;
-        m_guiFill2.SetPosition(iCurPos,m_guiFill1.YPosition);
-        m_guiFill2.Render(timePassed);
+        _imageFill2.Width = iWidth2;
+        _imageFill2.Height = _imageFill1.Height;
+        _imageFill2.SetPosition(iCurPos, _imageFill1.YPosition);
+        _imageFill2.Render(timePassed);
       }
-      iCurPos=iWidth1+iWidth2+xPos;
+      iCurPos = iWidth1 + iWidth2 + xPos;
 
       if (Percentage3 >= Percentage2)
       {
         //render 3th color
-        iPercent=Percentage3-Percentage2;
+        iPercent = Percentage3 - Percentage2;
       }
-      else iPercent=0;
-      fWidth=(float)iWidth;
-      fWidth/=100.0f;
-      fWidth*=(float)iPercent;
-      iWidth3=(int)Math.Floor(fWidth);
-      if (iWidth3>0)
+      else iPercent = 0;
+      fWidth = (float)iWidth;
+      fWidth /= 100.0f;
+      fWidth *= (float)iPercent;
+      iWidth3 = (int)Math.Floor(fWidth);
+      if (iWidth3 > 0)
       {
-        m_guiFill3.Width=iWidth3;
-        m_guiFill3.Height=m_guiFill2.Height;
-        m_guiFill3.SetPosition(iCurPos,m_guiFill2.YPosition);
-        m_guiFill3.Render(timePassed);
+        _imageFill3.Width = iWidth3;
+        _imageFill3.Height = _imageFill2.Height;
+        _imageFill3.SetPosition(iCurPos, _imageFill2.YPosition);
+        _imageFill3.Render(timePassed);
       }
 
-			// render ticks
-      m_guiTick.Height=m_guiTick.TextureHeight;
-      m_guiTick.Width=m_guiTick.TextureWidth;
-      int posx1=10;
-      int posx2=20;
-      int posy1=3;
+      // render ticks
+      _imageTick.Height = _imageTick.TextureHeight;
+      _imageTick.Width = _imageTick.TextureWidth;
+      int posx1 = 10;
+      int posx2 = 20;
+      int posy1 = 3;
       GUIGraphicsContext.ScaleHorizontal(ref posx1);
       GUIGraphicsContext.ScaleHorizontal(ref posx2);
       GUIGraphicsContext.ScaleVertical(ref posy1);
-      for (int i=0; i <= 100; i+=10)
+      for (int i = 0; i <= 100; i += 10)
       {
-        float fpos=(float)_positionX+m_guiLeft.TextureWidth+posx1;
-        fWidth=(float)(iWidth-posx2);	
-        fWidth/=100.0f;
-        fWidth*= (float)i;
-        m_guiTick.SetPosition( (int)(fpos+fWidth),(int)_positionY+posy1);
-        m_guiTick.Render(timePassed);
+        float fpos = (float)_positionX + _imageLeft.TextureWidth + posx1;
+        fWidth = (float)(iWidth - posx2);
+        fWidth /= 100.0f;
+        fWidth *= (float)i;
+        _imageTick.SetPosition((int)(fpos + fWidth), (int)_positionY + posy1);
+        _imageTick.Render(timePassed);
       }
 
-			// render top
-      xPos=iCurPos - (m_guiTop.TextureWidth/2);
-      m_guiTop.SetPosition(xPos, _positionY - m_guiTop.TextureHeight+m_iTopTextureYOffset);
-      m_guiTop.Render(timePassed);
+      // render top
+      xPos = iCurPos - (_imageTop.TextureWidth / 2);
+      _imageTop.SetPosition(xPos, _positionY - _imageTop.TextureHeight + _topTextureOffsetY);
+      _imageTop.Render(timePassed);
 
       //render tick @ current position
-      m_guiTick.Height=m_guiFillBackground.TextureHeight;
-      m_guiTick.Width=m_guiTick.TextureWidth*2;
-      m_guiTick.SetPosition( (int)(m_guiTop.XPosition+(m_guiTop.TextureWidth/2)-(m_guiTick.Width/2)),(int)m_guiFillBackground.YPosition);
-      m_guiTick.Render(timePassed);
-      
+      _imageTick.Height = _imageFillBackground.TextureHeight;
+      _imageTick.Width = _imageTick.TextureWidth * 2;
+      _imageTick.SetPosition((int)(_imageTop.XPosition + (_imageTop.TextureWidth / 2) - (_imageTick.Width / 2)), (int)_imageFillBackground.YPosition);
+      _imageTick.Render(timePassed);
+
       // render bottom
-      xPos=m_guiTop.XPosition + (m_guiTop.TextureWidth/2) - (m_guiBottom.TextureWidth/2);
-      m_guiBottom.SetPosition(xPos, _positionY+m_guiMid.TextureHeight);
-      m_guiBottom.Render(timePassed);
+      xPos = _imageTop.XPosition + (_imageTop.TextureWidth / 2) - (_imageBottom.TextureWidth / 2);
+      _imageBottom.SetPosition(xPos, _positionY + _imageMid.TextureHeight);
+      _imageBottom.Render(timePassed);
 
 
       //render logo
-      float fx=(float)m_guiBottom.XPosition;
-      fx += ( ( (float)m_guiBottom.TextureWidth)/2f);
-      fx -= ( ( (float)m_guiLogo.TextureWidth)/2f);
+      float fx = (float)_imageBottom.XPosition;
+      fx += (((float)_imageBottom.TextureWidth) / 2f);
+      fx -= (((float)_imageLogo.TextureWidth) / 2f);
 
-      float fy=(float)m_guiBottom.YPosition;
-      fy += ( ( (float)m_guiBottom.TextureHeight)/2f);
-      fy -= ( ( (float)m_guiLogo.TextureHeight)/2f);
-      m_guiLogo.SetPosition((int)fx, (int)fy);
-      m_guiLogo.Render(timePassed);
-      
-			if (_font!=null)
-			{
-				float fW=0,fH=0;
-				float fHeight=0;
-				string strText="";
+      float fy = (float)_imageBottom.YPosition;
+      fy += (((float)_imageBottom.TextureHeight) / 2f);
+      fy -= (((float)_imageLogo.TextureHeight) / 2f);
+      _imageLogo.SetPosition((int)fx, (int)fy);
+      _imageLogo.Render(timePassed);
 
-				// render top text
-				if (_labelTop.Length>0)
-				{
-					strText=GUIPropertyManager.Parse(_labelTop);
-					_font.GetTextExtent(strText,ref  fW,ref fH);
-					fW /= 2.0f;
-					fH /= 2.0f;
-					fWidth = ((float)m_guiTop.TextureWidth)/2.0f;
-					fHeight= ((float)m_guiTop.TextureHeight)/2.0f;
-					fWidth  -= fW;
-					fHeight -= fH;
-					_font.DrawText((float)m_guiTop.XPosition+fWidth,(float)2+m_guiTop.YPosition+fHeight,_textColor,strText,GUIControl.Alignment.ALIGN_LEFT,-1);
-				}
+      if (_font != null)
+      {
+        float fW = 0, fH = 0;
+        float fHeight = 0;
+        string strText = "";
+
+        // render top text
+        if (_labelTop.Length > 0)
+        {
+          strText = GUIPropertyManager.Parse(_labelTop);
+          _font.GetTextExtent(strText, ref  fW, ref fH);
+          fW /= 2.0f;
+          fH /= 2.0f;
+          fWidth = ((float)_imageTop.TextureWidth) / 2.0f;
+          fHeight = ((float)_imageTop.TextureHeight) / 2.0f;
+          fWidth -= fW;
+          fHeight -= fH;
+          _font.DrawText((float)_imageTop.XPosition + fWidth, (float)2 + _imageTop.YPosition + fHeight, _textColor, strText, GUIControl.Alignment.ALIGN_LEFT, -1);
+        }
 
 
-				// render left text
-				if (_labelLeft.Length>0)
-				{
-					strText=GUIPropertyManager.Parse(_labelLeft);
-					_font.GetTextExtent(strText,ref  fW,ref fH);
-					fW /= 2.0f;
-					fH /= 2.0f;
-					fWidth = ((float)m_guiLeft.TextureWidth)/2.0f;
-					fHeight= ((float)m_guiLeft.TextureHeight)/2.0f;
-					fWidth  -= fW;
-					fHeight -= fH;
-					_font.DrawText((float)_positionX+fWidth,(float)_positionY+fHeight,_textColor,strText,GUIControl.Alignment.ALIGN_LEFT,-1);
-				}
+        // render left text
+        if (_labelLeft.Length > 0)
+        {
+          strText = GUIPropertyManager.Parse(_labelLeft);
+          _font.GetTextExtent(strText, ref  fW, ref fH);
+          fW /= 2.0f;
+          fH /= 2.0f;
+          fWidth = ((float)_imageLeft.TextureWidth) / 2.0f;
+          fHeight = ((float)_imageLeft.TextureHeight) / 2.0f;
+          fWidth -= fW;
+          fHeight -= fH;
+          _font.DrawText((float)_positionX + fWidth, (float)_positionY + fHeight, _textColor, strText, GUIControl.Alignment.ALIGN_LEFT, -1);
+        }
 
-				// render right text
-				if (_labelRight.Length>0)
-				{
-					strText=GUIPropertyManager.Parse(_labelRight);
-					_font.GetTextExtent(strText,ref  fW,ref fH);
-					fW /= 2.0f;
-					fH /= 2.0f;
-					fWidth = ((float)m_guiRight.TextureWidth)/2.0f;
-					fHeight= ((float)m_guiRight.TextureHeight)/2.0f;
-					fWidth  -= fW;
-					fHeight -= fH;
-					_font.DrawText((float)m_guiRight.XPosition+fWidth,(float)m_guiRight.YPosition+fHeight,_textColor,strText,GUIControl.Alignment.ALIGN_LEFT,-1);
-				}
-			}
+        // render right text
+        if (_labelRight.Length > 0)
+        {
+          strText = GUIPropertyManager.Parse(_labelRight);
+          _font.GetTextExtent(strText, ref  fW, ref fH);
+          fW /= 2.0f;
+          fH /= 2.0f;
+          fWidth = ((float)_imageRight.TextureWidth) / 2.0f;
+          fHeight = ((float)_imageRight.TextureHeight) / 2.0f;
+          fWidth -= fW;
+          fHeight -= fH;
+          _font.DrawText((float)_imageRight.XPosition + fWidth, (float)_imageRight.YPosition + fHeight, _textColor, strText, GUIControl.Alignment.ALIGN_LEFT, -1);
+        }
+      }
     }
 
-    public override bool  CanFocus()
+    public override bool CanFocus()
     {
       return false;
     }
 
     public int Percentage1
     {
-      get { return m_iPercent1;}
-      set 
-      {  
-        m_iPercent1=value;
-        if (m_iPercent1<0) m_iPercent1=0;
-        if (m_iPercent1>100) m_iPercent1=100;
+      get { return _percentage1; }
+      set
+      {
+        _percentage1 = value;
+        if (_percentage1 < 0) _percentage1 = 0;
+        if (_percentage1 > 100) _percentage1 = 100;
       }
     }
-		public int Percentage2
-		{
-			get { return m_iPercent2;}
-      set 
-      {  
-        m_iPercent2=value;
-        if (m_iPercent2<0) m_iPercent2=0;
-        if (m_iPercent2>100) m_iPercent2=100;
-      }		
-    }
-		public int Percentage3
-		{
-			get { return m_iPercent3;}
-      set 
-      {  
-        m_iPercent3=value;
-        if (m_iPercent3<0) m_iPercent3=0;
-        if (m_iPercent3>100) m_iPercent3=100;
+    public int Percentage2
+    {
+      get { return _percentage2; }
+      set
+      {
+        _percentage2 = value;
+        if (_percentage2 < 0) _percentage2 = 0;
+        if (_percentage2 > 100) _percentage2 = 100;
       }
-		}
+    }
+    public int Percentage3
+    {
+      get { return _percentage3; }
+      set
+      {
+        _percentage3 = value;
+        if (_percentage3 < 0) _percentage3 = 0;
+        if (_percentage3 > 100) _percentage3 = 100;
+      }
+    }
 
     public override void FreeResources()
     {
       base.FreeResources();
-      m_guiTop.FreeResources();
-      m_guiMid.FreeResources();
-      m_guiRight.FreeResources();
-      m_guiLeft.FreeResources();
-			m_guiFill1.FreeResources();
-			m_guiFill2.FreeResources();
-			m_guiFill3.FreeResources();
-      m_guiFillBackground.FreeResources();
-			m_guiTick.FreeResources();
-			m_guiBottom.FreeResources();
-			m_guiLogo.FreeResources();
+      _imageTop.FreeResources();
+      _imageMid.FreeResources();
+      _imageRight.FreeResources();
+      _imageLeft.FreeResources();
+      _imageFill1.FreeResources();
+      _imageFill2.FreeResources();
+      _imageFill3.FreeResources();
+      _imageFillBackground.FreeResources();
+      _imageTick.FreeResources();
+      _imageBottom.FreeResources();
+      _imageLogo.FreeResources();
     }
 
     public override void PreAllocResources()
     {
       base.PreAllocResources();
-      m_guiTop.PreAllocResources();
-			m_guiBottom.PreAllocResources();
-      m_guiMid.PreAllocResources();
-      m_guiRight.PreAllocResources();
-			m_guiLeft.PreAllocResources();
-      m_guiFillBackground.PreAllocResources();
-			m_guiFill1.PreAllocResources();
-			m_guiFill2.PreAllocResources();
-			m_guiFill3.PreAllocResources();
-			m_guiTick.PreAllocResources();
-			m_guiLogo.PreAllocResources();
+      _imageTop.PreAllocResources();
+      _imageBottom.PreAllocResources();
+      _imageMid.PreAllocResources();
+      _imageRight.PreAllocResources();
+      _imageLeft.PreAllocResources();
+      _imageFillBackground.PreAllocResources();
+      _imageFill1.PreAllocResources();
+      _imageFill2.PreAllocResources();
+      _imageFill3.PreAllocResources();
+      _imageTick.PreAllocResources();
+      _imageLogo.PreAllocResources();
     }
 
     public override void AllocResources()
     {
       base.AllocResources();
-      _font=GUIFontManager.GetFont(_fontName);
-      m_guiTop.AllocResources();
-			m_guiBottom.AllocResources();
-      m_guiMid.AllocResources();
-      m_guiRight.AllocResources();
-      m_guiLeft.AllocResources();
-      m_guiFillBackground.AllocResources();
-			m_guiFill1.AllocResources();
-			m_guiFill2.AllocResources();
-			m_guiFill3.AllocResources();
-			m_guiTick.AllocResources();
-			m_guiLogo.AllocResources();
+      _font = GUIFontManager.GetFont(_fontName);
+      _imageTop.AllocResources();
+      _imageBottom.AllocResources();
+      _imageMid.AllocResources();
+      _imageRight.AllocResources();
+      _imageLeft.AllocResources();
+      _imageFillBackground.AllocResources();
+      _imageFill1.AllocResources();
+      _imageFill2.AllocResources();
+      _imageFill3.AllocResources();
+      _imageTick.AllocResources();
+      _imageLogo.AllocResources();
 
-			m_guiTop.Filtering=false;
-			m_guiBottom.Filtering=false;
-			m_guiMid.Filtering=false;
-			m_guiRight.Filtering=false;
-			m_guiLeft.Filtering=false;
-			m_guiFill1.Filtering=false;
-			m_guiFill2.Filtering=false;
-			m_guiFill3.Filtering=false;
-			m_guiTick.Filtering=false;
-			if (_height==0)
-			{
-				_height=m_guiRight.TextureHeight;
-			}
-//      m_guiTop.Height=_height;
-      m_guiRight.Height=_height;
-      m_guiLeft.Height=_height;
-      m_guiMid.Height=_height;
-			m_guiFill1.Height=_height-6;
-			m_guiFill2.Height=_height-6;
-			m_guiFill3.Height=_height-6;
-			//m_guiTick.Height=_height;
+      _imageTop.Filtering = false;
+      _imageBottom.Filtering = false;
+      _imageMid.Filtering = false;
+      _imageRight.Filtering = false;
+      _imageLeft.Filtering = false;
+      _imageFill1.Filtering = false;
+      _imageFill2.Filtering = false;
+      _imageFill3.Filtering = false;
+      _imageTick.Filtering = false;
+      if (_height == 0)
+      {
+        _height = _imageRight.TextureHeight;
+      }
+      //      _imageTop.Height=_height;
+      _imageRight.Height = _height;
+      _imageLeft.Height = _height;
+      _imageMid.Height = _height;
+      _imageFill1.Height = _height - 6;
+      _imageFill2.Height = _height - 6;
+      _imageFill3.Height = _height - 6;
+      //_imageTick.Height=_height;
     }
     public string FillBackGroundName
     {
-      get { return m_guiFillBackground.FileName;}
+      get { return _imageFillBackground.FileName; }
     }
 
     public string Fill1TextureName
     {
-      get { return m_guiFill1.FileName;}
-		}
-		public string Fill2TextureName
-		{
-			get { return m_guiFill2.FileName;}
-		}
-		public string Fill3TextureName
-		{
-			get { return m_guiFill3.FileName;}
-		}
+      get { return _imageFill1.FileName; }
+    }
+    public string Fill2TextureName
+    {
+      get { return _imageFill2.FileName; }
+    }
+    public string Fill3TextureName
+    {
+      get { return _imageFill3.FileName; }
+    }
 
-		public string TickTextureName
-		{
-			get { return m_guiTick.FileName;}
-		}
-		public string TopTextureName
-		{
-			get { return m_guiTop.FileName;}
-		}
-		public string BottomTextureName
-		{
-			get { return m_guiBottom.FileName;}
-		}
+    public string TickTextureName
+    {
+      get { return _imageTick.FileName; }
+    }
+    public string TopTextureName
+    {
+      get { return _imageTop.FileName; }
+    }
+    public string BottomTextureName
+    {
+      get { return _imageBottom.FileName; }
+    }
     public string BackTextureLeftName
     {
-      get { return m_guiLeft.FileName;}
+      get { return _imageLeft.FileName; }
     }
     public string BackTextureMidName
     {
-      get { return m_guiMid.FileName;}
+      get { return _imageMid.FileName; }
     }
     public string BackTextureRightName
     {
-      get { return m_guiRight.FileName;}
+      get { return _imageRight.FileName; }
     }
     public string LogoTextureName
     {
-      get { return m_guiLogo.FileName;}
+      get { return _imageLogo.FileName; }
     }
 
-		/// <summary>
-		/// Get/set the text of the label.
-		/// </summary>
-		public string Property
-		{
-			get { return m_strProperty; }
-      set 
-      { 
-        if (value==null) return;
-        m_strProperty=value;
-      }
-		}
-		public string LabelLeft
-		{
-			get { return _labelLeft; }
-      set 
-      { 
-        if (value==null) return;
-        _labelLeft=value;
-      }
-		}
-		
-		public string LabelTop
-		{
-			get { return _labelTop; }
-      set 
-      { 
-        if (value==null) return;
-        _labelTop=value;
-      }
-		}
-		public string LabelRight
-		{
-			get { return _labelRight; }
-      set 
-      { 
-        if (value==null) return;
-        _labelRight=value;
-      }
-		}
-
-		/// <summary>
-		/// Get/set the color of the text
-		/// </summary>
-		public long	TextColor
-		{ 
-			get { return _textColor;}
-			set { _textColor=value;}
-		}
-
-		/// <summary>
-		/// Get/set the name of the font.
-		/// </summary>
-		public string FontName
-		{
-			get { return _fontName; }
-      set 
-      {  
-        if (value==null) return;
-        _fontName=value;
-        _font=GUIFontManager.GetFont(_fontName);
-      }
-		}
-
-    public int	FillX
-    { 
-      get { return m_iFillX;}
-      set 
-      {  
-        if (value<0) return;
-        m_iFillX=value;
+    /// <summary>
+    /// Get/set the text of the label.
+    /// </summary>
+    public string Property
+    {
+      get { return _propertyLabel; }
+      set
+      {
+        if (value == null) return;
+        _propertyLabel = value;
       }
     }
-    public int	FillY
-    { 
-      get { return m_iFillY;}
-      set 
-      {  
-        if (value<0) return;
-        m_iFillY=value;
+    public string LabelLeft
+    {
+      get { return _labelLeft; }
+      set
+      {
+        if (value == null) return;
+        _labelLeft = value;
       }
     }
-    public int	FillHeight
-    { 
-      get { return m_iFillHeight;}
-      set 
-      {  
-        if (value<0) return;
-        m_iFillHeight=value;
+
+    public string LabelTop
+    {
+      get { return _labelTop; }
+      set
+      {
+        if (value == null) return;
+        _labelTop = value;
+      }
+    }
+    public string LabelRight
+    {
+      get { return _labelRight; }
+      set
+      {
+        if (value == null) return;
+        _labelRight = value;
+      }
+    }
+
+    /// <summary>
+    /// Get/set the color of the text
+    /// </summary>
+    public long TextColor
+    {
+      get { return _textColor; }
+      set { _textColor = value; }
+    }
+
+    /// <summary>
+    /// Get/set the name of the font.
+    /// </summary>
+    public string FontName
+    {
+      get { return _fontName; }
+      set
+      {
+        if (value == null) return;
+        _fontName = value;
+        _font = GUIFontManager.GetFont(_fontName);
+      }
+    }
+
+    public int FillX
+    {
+      get { return _fillBackgroundOffsetX; }
+      set
+      {
+        if (value < 0) return;
+        _fillBackgroundOffsetX = value;
+      }
+    }
+    public int FillY
+    {
+      get { return _fillBackgroundOffsetY; }
+      set
+      {
+        if (value < 0) return;
+        _fillBackgroundOffsetY = value;
+      }
+    }
+    public int FillHeight
+    {
+      get { return _fillBackgroundHeight; }
+      set
+      {
+        if (value < 0) return;
+        _fillBackgroundHeight = value;
       }
     }
     public string Label1
     {
-      get {return _label1;}
-      set 
-      { 
-        if (value==null) return;
-        _label1=value;
+      get { return _label1; }
+      set
+      {
+        if (value == null) return;
+        _label1 = value;
       }
     }
     public string Label2
     {
-      get {return _label2;}
-      set 
-      { 
-        if (value==null) return;
-        _label2=value;
+      get { return _label2; }
+      set
+      {
+        if (value == null) return;
+        _label2 = value;
       }
     }
     public string Label3
     {
-      get {return _label3;}
-      set 
-      { 
-        if (value==null) return;
-        _label3=value;
+      get { return _label3; }
+      set
+      {
+        if (value == null) return;
+        _label3 = value;
       }
     }
     public int TopTextureYOffset
     {
-      get { return m_iTopTextureYOffset;}
-      set { 
-        if (value<0) return;
-        m_iTopTextureYOffset=value;
+      get { return _topTextureOffsetY; }
+      set
+      {
+        if (value < 0) return;
+        _topTextureOffsetY = value;
       }
     }
-    
+
   }
 }

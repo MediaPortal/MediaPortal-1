@@ -38,7 +38,7 @@ namespace MediaPortal.GUI.Library
 		[DllImport("fontEngine.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
 		unsafe private static extern void FontEngineSetDevice(void* device);
 
-    static protected List<GUIFont> m_fonts = new List<GUIFont>();
+    static protected List<GUIFont> _listFonts = new List<GUIFont>();
 
 		// singleton. Dont allow any instance of this class
 		private GUIFontManager()
@@ -47,7 +47,7 @@ namespace MediaPortal.GUI.Library
 
 		static public int Count
 		{
-			get { return m_fonts.Count;}
+			get { return _listFonts.Count;}
 		}
 		/// <summary>
 		/// Loads the fonts from a file.
@@ -60,13 +60,13 @@ namespace MediaPortal.GUI.Library
 			Dispose();
 			int counter=0;
 			Log.Write("  Load fonts from {0}", strFilename);
-			m_fonts.Clear();
+			_listFonts.Clear();
 
 			// Load the debug font
 			GUIFont fontDebug = new GUIFont("debug","Arial",12);
 			fontDebug.ID=counter++;
 			fontDebug.Load();
-			m_fonts.Add(fontDebug);			
+			_listFonts.Add(fontDebug);			
 
 
 			try
@@ -125,7 +125,7 @@ namespace MediaPortal.GUI.Library
 						}
 
 						font.Load();
-						m_fonts.Add(font);
+						_listFonts.Add(font);
 					}
 				}
 				return true;
@@ -145,7 +145,7 @@ namespace MediaPortal.GUI.Library
 		/// <returns>A GUIFont instance representing the fontnumber or a default GUIFont if the number does not exists.</returns>
 		static public GUIFont GetFont( int iFont)
 		{
-			if (iFont>=0 && iFont < m_fonts.Count) return  m_fonts[ iFont];
+			if (iFont>=0 && iFont < _listFonts.Count) return  _listFonts[ iFont];
 			return GetFont("debug");
 		}
 
@@ -156,9 +156,9 @@ namespace MediaPortal.GUI.Library
 		/// <returns>A GUIFont instance representing the strFontName or a default GUIFont if the strFontName does not exists.</returns>
 		static public GUIFont GetFont( string strFontName)
 		{
-			for (int i=0; i < m_fonts.Count;++i)
+			for (int i=0; i < _listFonts.Count;++i)
 			{
-				GUIFont font=m_fonts[i];
+				GUIFont font=_listFonts[i];
 				if (font.FontName==strFontName) return font;
 			}
 
@@ -170,9 +170,9 @@ namespace MediaPortal.GUI.Library
 		{
 
 			FontEnginePresentTextures();
-			for (int i=0; i < m_fonts.Count;++i)
+			for (int i=0; i < _listFonts.Count;++i)
 			{
-				GUIFont font=m_fonts[i];
+				GUIFont font=_listFonts[i];
 				font.Present();
 			}
 		}
@@ -181,7 +181,7 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		static public void	Dispose()
 		{
-			foreach (GUIFont font in m_fonts)
+			foreach (GUIFont font in _listFonts)
 			{
 				font.Dispose(null,null);
 			}
@@ -199,7 +199,7 @@ namespace MediaPortal.GUI.Library
       {
         FontEngineSetDevice(upDevice.ToPointer());
       }
-			foreach (GUIFont font in m_fonts)
+			foreach (GUIFont font in _listFonts)
 			{
 				font.InitializeDeviceObjects();
 			}
@@ -218,7 +218,7 @@ namespace MediaPortal.GUI.Library
 			}
 			if (GUIGraphicsContext.CurrentState==GUIGraphicsContext.State.STOPPING) return;
 
-			foreach (GUIFont font in m_fonts)
+			foreach (GUIFont font in _listFonts)
 			{
 				font.RestoreDeviceObjects();
 			}

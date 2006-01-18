@@ -119,7 +119,7 @@ namespace MediaPortal.Player
     protected int                       m_iVideoWidth=100;
     protected int                       m_iVideoHeight=100;
     protected string                    m_strCurrentFile="";
-    protected bool											m_bUpdateNeeded=false;
+    protected bool											_updateNeeded=false;
     protected MediaPortal.GUI.Library.Geometry.Type             m_ar=MediaPortal.GUI.Library.Geometry.Type.Normal;
     protected bool											m_bFullScreen=true;
     protected PlayState								  m_state=PlayState.Init;
@@ -185,7 +185,7 @@ namespace MediaPortal.Player
       m_bFullScreen=true;
       m_ar=GUIGraphicsContext.ARType;
 
-      m_bUpdateNeeded=true;
+      _updateNeeded=true;
       Log.Write("VideoPlayer:play {0}", strFile);
       //lock ( typeof(VideoPlayerVMR7) )
       {
@@ -257,7 +257,7 @@ namespace MediaPortal.Player
         m_iWidth    =GUIGraphicsContext.VideoWindow.Width;
         m_iHeight   =GUIGraphicsContext.VideoWindow.Height;
         m_ar        =GUIGraphicsContext.ARType;
-        m_bUpdateNeeded=true;
+        _updateNeeded=true;
         SetVideoWindow();
         mediaPos.get_Duration(out m_dDuration);
         Log.Write("VideoPlayer:Duration:{0}",m_dDuration);
@@ -273,18 +273,18 @@ namespace MediaPortal.Player
     {
 			if (GUIGraphicsContext.Vmr9Active) 
 			{
-				m_bUpdateNeeded=false;
+				_updateNeeded=false;
 				m_bStarted=true;
 				return;
 			}
       if (GUIGraphicsContext.IsFullScreenVideo!= m_bFullScreen)
       {
         m_bFullScreen=GUIGraphicsContext.IsFullScreenVideo;
-        m_bUpdateNeeded=true;
+        _updateNeeded=true;
       }
 
-      if (!m_bUpdateNeeded) return;
-      m_bUpdateNeeded=false;
+      if (!_updateNeeded) return;
+      _updateNeeded=false;
       m_bStarted=true;
       float x=m_iPositionX;
       float y=m_iPositionY;
@@ -444,7 +444,7 @@ namespace MediaPortal.Player
 			if (videoHeight!=m_iVideoHeight || videoWidth != m_iVideoWidth ||
 				aspectX != m_aspectX || aspectY != m_aspectY)
 			{
-				m_bUpdateNeeded=true;
+				_updateNeeded=true;
 				SetVideoWindow();
 			}
 		}
@@ -467,7 +467,7 @@ namespace MediaPortal.Player
         if (value != m_iPositionX)
         {
           m_iPositionX=value;
-          m_bUpdateNeeded=true;
+          _updateNeeded=true;
         }
       }
     }
@@ -480,7 +480,7 @@ namespace MediaPortal.Player
         if (value != m_iPositionY)
         {
           m_iPositionY=value;
-          m_bUpdateNeeded=true;
+          _updateNeeded=true;
         }
       }
     }
@@ -493,7 +493,7 @@ namespace MediaPortal.Player
         if (value !=m_iWidth)
         {
           m_iWidth=value;
-          m_bUpdateNeeded=true;
+          _updateNeeded=true;
         }
       }
     }
@@ -505,7 +505,7 @@ namespace MediaPortal.Player
         if (value != m_iHeight)
         {
           m_iHeight=value;
-          m_bUpdateNeeded=true;
+          _updateNeeded=true;
         }
       }
     }
@@ -544,7 +544,7 @@ namespace MediaPortal.Player
         if (value != m_bFullScreen )
         {
           m_bFullScreen=value;
-          m_bUpdateNeeded=true;          
+          _updateNeeded=true;          
         }
       }
     }
@@ -718,7 +718,7 @@ namespace MediaPortal.Player
         if (m_ar != value)
         {
           m_ar=value;
-          m_bUpdateNeeded=true;
+          _updateNeeded=true;
         }
       }
     }

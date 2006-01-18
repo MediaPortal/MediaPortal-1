@@ -28,18 +28,18 @@ namespace MediaPortal.GUI.Library
   /// </summary>
   public class GUIverticalScrollbar : GUIControl
   {
-	  [XMLSkinElement("buddycontrol")]		protected int      m_iBuddyControl=-1;
-	  [XMLSkinElement("scrollbarbg")]		protected string   m_strBackground;
-	  [XMLSkinElement("scrollbartop")]		protected string   m_strTopTexture;
-	  [XMLSkinElement("scrollbarbottom")]	protected string	 m_strBottomTexture;
-    GUIImage m_guiBackground=null;
-    GUIImage m_guiTop=null;
-    GUIImage m_guiBottom=null;
-    float    m_fPercent=0;
-    int      m_iStartY=0;
-    int      m_iEndY=0;
-    int      m_iYStartKnob=0;
-    bool     m_bSendNotifies=true;
+	  [XMLSkinElement("buddycontrol")]		protected int      _buddyControlId=-1;
+	  [XMLSkinElement("scrollbarbg")]		protected string   _scrollbarBackgroundName;
+	  [XMLSkinElement("scrollbartop")]		protected string   _scrollbarTopTextureName;
+	  [XMLSkinElement("scrollbarbottom")]	protected string	 _scrollbarBottomTextureName;
+    GUIImage _imageBackground=null;
+    GUIImage _imageTop=null;
+    GUIImage _imageBottom=null;
+    float    _percentage=0;
+    int      _startPositionY=0;
+    int      _endPositionY=0;
+    int      _knobPositionY=0;
+    bool     _sendNotifies=true;
 
     public GUIverticalScrollbar(int dwParentID) : base(dwParentID)
     {
@@ -60,21 +60,21 @@ namespace MediaPortal.GUI.Library
 	  public GUIverticalScrollbar(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight, string strBackGroundTexture,string strTopTexture,string strBottomTexture)
 		  :base(dwParentID, dwControlId, dwPosX, dwPosY,dwWidth, dwHeight)
 	  {
-		  m_strBackground =strBackGroundTexture;
-		  m_strTopTexture =strTopTexture;
-		  m_strBottomTexture = strBottomTexture;
+		  _scrollbarBackgroundName =strBackGroundTexture;
+		  _scrollbarTopTextureName =strTopTexture;
+		  _scrollbarBottomTextureName = strBottomTexture;
 		  FinalizeConstruction();
 	  }
 	  public override void FinalizeConstruction()
 	  {
 		  base.FinalizeConstruction();
-		  m_guiBackground = new GUIImage(_parentControlId, _controlId, _positionX, _positionY,_width, _height,m_strBackground,0);
-		  m_guiTop = new GUIImage(_parentControlId, _controlId, _positionX, _positionY,_width, _height,m_strTopTexture,0);
-		  m_guiBottom = new GUIImage(_parentControlId, _controlId, _positionX, _positionY,_width, _height,m_strBottomTexture,0);
+		  _imageBackground = new GUIImage(_parentControlId, _controlId, _positionX, _positionY,_width, _height,_scrollbarBackgroundName,0);
+		  _imageTop = new GUIImage(_parentControlId, _controlId, _positionX, _positionY,_width, _height,_scrollbarTopTextureName,0);
+		  _imageBottom = new GUIImage(_parentControlId, _controlId, _positionX, _positionY,_width, _height,_scrollbarBottomTextureName,0);
 
-      m_guiBackground.ParentControl = this;
-      m_guiTop.ParentControl = this;
-      m_guiBottom.ParentControl = this;
+      _imageBackground.ParentControl = this;
+      _imageTop.ParentControl = this;
+      _imageBottom.ParentControl = this;
 	  }
 
 
@@ -95,32 +95,32 @@ namespace MediaPortal.GUI.Library
       }
 
       int iHeight=_height;
-      m_guiBackground.Height=iHeight;
-      m_guiBackground.Render(timePassed);
+      _imageBackground.Height=iHeight;
+      _imageBackground.Render(timePassed);
 
-      float fPercent= (float)m_fPercent;
+      float fPercent= (float)_percentage;
       float fPosYOff= (fPercent/100.0f);
 
-			m_iStartY    =m_guiBackground.YPosition;
-			m_iEndY      =m_iStartY+m_guiBackground.Height;
+			_startPositionY    =_imageBackground.YPosition;
+			_endPositionY      =_startPositionY+_imageBackground.Height;
 
-      int iKnobHeight = (int)(m_guiTop.TextureHeight);
-			fPosYOff    *= (float) (m_iEndY-m_iStartY-iKnobHeight);
+      int iKnobHeight = (int)(_imageTop.TextureHeight);
+			fPosYOff    *= (float) (_endPositionY-_startPositionY-iKnobHeight);
       
-      m_iYStartKnob=m_iStartY+(int)fPosYOff;
-      int iXPos=m_guiBackground.XPosition+ ((m_guiBackground.Width / 2) - (m_guiTop.TextureWidth ));
-      int iYPos=m_iYStartKnob;
+      _knobPositionY=_startPositionY+(int)fPosYOff;
+      int iXPos=_imageBackground.XPosition+ ((_imageBackground.Width / 2) - (_imageTop.TextureWidth ));
+      int iYPos=_knobPositionY;
 
-      m_guiTop.SetPosition(iXPos,iYPos);
-      m_guiTop.Height=m_guiTop.TextureHeight;
-      m_guiTop.Width=m_guiTop.TextureWidth;
-      m_guiTop.Render(timePassed);
+      _imageTop.SetPosition(iXPos,iYPos);
+      _imageTop.Height=_imageTop.TextureHeight;
+      _imageTop.Width=_imageTop.TextureWidth;
+      _imageTop.Render(timePassed);
 
-      iXPos += m_guiTop.TextureWidth;
-      m_guiBottom.SetPosition(iXPos,iYPos);
-      m_guiBottom.Height=m_guiBottom.TextureHeight;
-      m_guiBottom.Width=m_guiTop.TextureWidth;
-      m_guiBottom.Render(timePassed);
+      iXPos += _imageTop.TextureWidth;
+      _imageBottom.SetPosition(iXPos,iYPos);
+      _imageBottom.Height=_imageBottom.TextureHeight;
+      _imageBottom.Width=_imageTop.TextureWidth;
+      _imageBottom.Render(timePassed);
 
     }
 
@@ -139,11 +139,11 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
     public float Percentage
     {
-      get { return m_fPercent;}
+      get { return _percentage;}
       set { 
-        m_fPercent=value;
-        if (m_fPercent<0) m_fPercent=0;
-        if (m_fPercent>100) m_fPercent=100;
+        _percentage=value;
+        if (_percentage<0) _percentage=0;
+        if (_percentage>100) _percentage=100;
       }
     }
 
@@ -153,9 +153,9 @@ namespace MediaPortal.GUI.Library
     public override void FreeResources()
     {
       base.FreeResources();
-      m_guiBackground.FreeResources();
-      m_guiBottom.FreeResources();
-      m_guiTop.FreeResources();
+      _imageBackground.FreeResources();
+      _imageBottom.FreeResources();
+      _imageTop.FreeResources();
     }
 
 		/// <summary>
@@ -164,9 +164,9 @@ namespace MediaPortal.GUI.Library
 		public override void PreAllocResources()
     {
       base.PreAllocResources();
-      m_guiBackground.PreAllocResources();
-      m_guiBottom.PreAllocResources();
-      m_guiTop.PreAllocResources();
+      _imageBackground.PreAllocResources();
+      _imageBottom.PreAllocResources();
+      _imageTop.PreAllocResources();
     }
 
 		/// <summary>
@@ -175,9 +175,9 @@ namespace MediaPortal.GUI.Library
     public override void AllocResources()
     {
       base.AllocResources();
-      m_guiBackground.AllocResources();
-      m_guiBottom.AllocResources();
-      m_guiTop.AllocResources();
+      _imageBackground.AllocResources();
+      _imageBottom.AllocResources();
+      _imageTop.AllocResources();
 
     }
 
@@ -186,7 +186,7 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
     public string BackGroundTextureName
     {
-      get { return m_guiBackground.FileName;}
+      get { return _imageBackground.FileName;}
     }
 
 		/// <summary>
@@ -194,7 +194,7 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
     public string BackTextureTopName
     {
-      get { return m_guiTop.FileName;}
+      get { return _imageTop.FileName;}
     }
 
 		/// <summary>
@@ -202,7 +202,7 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
     public string BackTextureBottomName
     {
-      get { return m_guiBottom.FileName;}
+      get { return _imageBottom.FileName;}
     }
 
 		/// <summary>
@@ -210,8 +210,8 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
     public int BuddyControl
     {
-      get { return m_iBuddyControl;}
-      set { m_iBuddyControl=value;}
+      get { return _buddyControlId;}
+      set { _buddyControlId=value;}
     }
 
 		/// <summary>
@@ -235,14 +235,14 @@ namespace MediaPortal.GUI.Library
         {
           if (action.MouseButton == MouseButtons.Left)
           {
-            float fHeight=(float)(m_iEndY-m_iStartY);
-            m_fPercent=(action.fAmount2 - (float)m_iStartY);
-            m_fPercent /= fHeight;
-            m_fPercent *=100.0f;
+            float fHeight=(float)(_endPositionY-_startPositionY);
+            _percentage=(action.fAmount2 - (float)_startPositionY);
+            _percentage /= fHeight;
+            _percentage *=100.0f;
 
-            if (m_bSendNotifies)
+            if (_sendNotifies)
             {
-              GUIMessage message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PERCENTAGE_CHANGED,WindowId,GetID, GetID,(int)m_fPercent,0,null );
+              GUIMessage message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PERCENTAGE_CHANGED,WindowId,GetID, GetID,(int)_percentage,0,null );
               GUIGraphicsContext.SendMessage(message);
             }
           }
@@ -253,13 +253,13 @@ namespace MediaPortal.GUI.Library
       {
         if (action.MouseButton == MouseButtons.Left)
         {
-          float fHeight=(float)(m_iEndY-m_iStartY);
-          m_fPercent=(action.fAmount2 - (float)m_iStartY);
-          m_fPercent /= fHeight;
-          m_fPercent *=100.0f;
-          if (m_bSendNotifies)
+          float fHeight=(float)(_endPositionY-_startPositionY);
+          _percentage=(action.fAmount2 - (float)_startPositionY);
+          _percentage /= fHeight;
+          _percentage *=100.0f;
+          if (_sendNotifies)
           {
-            GUIMessage message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PERCENTAGE_CHANGED,WindowId,GetID, GetID,(int)m_fPercent,0,null );
+            GUIMessage message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PERCENTAGE_CHANGED,WindowId,GetID, GetID,(int)_percentage,0,null );
             GUIGraphicsContext.SendMessage(message);
           }
         }
@@ -280,7 +280,7 @@ namespace MediaPortal.GUI.Library
       if (!IsVisible) return false;
       if (x>=XPosition && x < XPosition+Width)
       {
-        if (y>=m_iStartY && y < m_iEndY)
+        if (y>=_startPositionY && y < _endPositionY)
         {
           return true;
         }
@@ -293,13 +293,13 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
     public bool SendNotifies
     {
-      get { return m_bSendNotifies;}
-      set { m_bSendNotifies=false;}
+      get { return _sendNotifies;}
+      set { _sendNotifies=false;}
     }
     public override void DoUpdate()
     {
-      m_guiBackground.Height=_height;
-      m_guiBackground.DoUpdate();
+      _imageBackground.Height=_height;
+      _imageBackground.DoUpdate();
       base.DoUpdate ();
     }
 

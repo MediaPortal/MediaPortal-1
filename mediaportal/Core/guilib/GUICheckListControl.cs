@@ -93,9 +93,9 @@ namespace MediaPortal.GUI.Library
 
 		protected override void AllocButtons()
 		{
-			for (int i=0; i < m_iItemsPerPage;++i)
+			for (int i=0; i < _itemsPerPage;++i)
 			{
-				GUICheckButton cntl = new GUICheckButton(_controlId, 0, _spinControlPositionX, _spinControlPositionY, _width, m_iItemHeight, m_strButtonFocused, m_strButtonUnfocused,_checkMarkFocusTextureName,_checkMarkNoFocusTextureName,_checkMarkWidth,_checkMarkHeight);
+				GUICheckButton cntl = new GUICheckButton(_controlId, 0, _spinControlPositionX, _spinControlPositionY, _width, _itemHeight, _buttonFocusName, _buttonNonFocusName,_checkMarkFocusTextureName,_checkMarkNoFocusTextureName,_checkMarkWidth,_checkMarkHeight);
         cntl.ParentControl = this;
 				cntl.AllocResources();
 				cntl.CheckOffsetX=markOffsetX;
@@ -128,18 +128,18 @@ namespace MediaPortal.GUI.Library
 		}
 		void UpdateUpDownControls()
 		{
-			for (int i=0; i < m_iItemsPerPage;++i)
+			for (int i=0; i < _itemsPerPage;++i)
 			{
 				bool selected=false;
-				if (i < m__itemList.Count)
+				if (i < _listItems.Count)
 				{
-					GUIListItem item = (GUIListItem)m__itemList[i+m_iOffset];
+					GUIListItem item = (GUIListItem)_listItems[i+_offset];
 					if (item.Selected) selected=true;
 				}
 				GUIControl btn = (GUIControl)_listButtons[i];
 				btn.Focus=false;
 				btn.Selected=selected;
-				if (i==m_iCursorY)
+				if (i==_cursorX)
 				{
 					btn.Focus=true;
 				}
@@ -148,9 +148,9 @@ namespace MediaPortal.GUI.Library
 
 		protected override void RenderButton(float timePassed, int buttonNr, int x, int y, bool gotFocus)
 		{
-			if (buttonNr + m_iOffset>=0 && buttonNr + m_iOffset < m__itemList.Count)
+			if (buttonNr + _offset>=0 && buttonNr + _offset < _listItems.Count)
 			{
-				GUIListItem item=(GUIListItem )m__itemList[buttonNr + m_iOffset];
+				GUIListItem item=(GUIListItem )_listItems[buttonNr + _offset];
 				GUICheckButton cntl = (GUICheckButton)_listButtons[buttonNr];
 				cntl.Selected=item.Selected;
 				

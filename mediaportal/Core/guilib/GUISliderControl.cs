@@ -24,431 +24,436 @@ using System.Collections;
 
 namespace MediaPortal.GUI.Library
 {
-	/// <summary>
-	/// Implementation of a slider control.
-	/// </summary>
-	public class GUISliderControl : GUIControl
-	{
-		public enum SpinSelect
-		{
-			SPIN_BUTTON_DOWN,
-			SPIN_BUTTON_UP
-		};
-	
-		
-		
-		[XMLSkinElement("textureSliderBar")]		protected string	m_strBackground;
-		[XMLSkinElement("textureSliderNib")]protected string	m_strSliderTexture;
-		[XMLSkinElement("textureSliderNibFocus")]
-											protected string  m_strSliderTextureFocus;
-	
-		protected int       m_iPercent=0;
-		protected int       m_iStart=0;
-		protected int       m_iEnd=100;
-		protected float     m_fStart=0.0f;
-		protected float     m_fEnd=1.0f;
-		protected int       m_iValue=0;
-		protected float     m_fValue=0.0f;
-		[XMLSkinElement("subtype")]
-		protected GUISpinControl.SpinType   m_iType=GUISpinControl.SpinType.SPIN_CONTROL_TYPE_TEXT;
-		protected bool			m_bReverse=false;
-		protected float     m_fInterval=0.1f;
-		protected ArrayList _listLabels = new ArrayList ();
-		protected ArrayList m_vecValues= new ArrayList ();
-		protected GUIImage m_guiBackground=null;
-		protected GUIImage m_guiMid=null;
-		protected GUIImage m_guiMidFocus=null;
-
-	  
-    
-		protected bool     m_bShowRange=false;
-	
-		public GUISliderControl (int dwParentID) : base(dwParentID)
-		{
-		}
-		/// <summary>
-		/// The constructor of the GUISliderControl.
-		/// </summary>
-		/// <param name="dwParentID">The parent of this control.</param>
-		/// <param name="dwControlId">The ID of this control.</param>
-		/// <param name="dwPosX">The X position of this control.</param>
-		/// <param name="dwPosY">The Y position of this control.</param>
-		/// <param name="dwWidth">The width of this control.</param>
-		/// <param name="dwHeight">The height of this control.</param>
-		/// <param name="strBackGroundTexture">The background texture of the </param>
-		/// <param name="strMidTexture">The unfocused texture.</param>
-		/// <param name="strMidTextureFocus">The focused texture</param>
-		/// <param name="iType">The type of control.</param>
-    public GUISliderControl(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight, string strBackGroundTexture,string strMidTexture,string strMidTextureFocus,GUISpinControl.SpinType iType)
-      :base(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight)
+  /// <summary>
+  /// Implementation of a slider control.
+  /// </summary>
+  public class GUISliderControl : GUIControl
+  {
+    public enum SpinSelect
     {
-		m_strBackground = strBackGroundTexture;
-		m_strSliderTexture = strMidTexture;
-		m_strSliderTextureFocus = strMidTextureFocus;
-		m_iType=iType;
-		FinalizeConstruction();
+      SPIN_BUTTON_DOWN,
+      SPIN_BUTTON_UP
+    };
+
+
+
+    [XMLSkinElement("textureSliderBar")]
+    protected string _backgroundTextureName;
+    [XMLSkinElement("textureSliderNib")]
+    protected string _sliderTextureName;
+    [XMLSkinElement("textureSliderNibFocus")]
+    protected string _sliderFocusTextureName;
+
+    protected int _percentage = 0;
+    protected int _intStartValue = 0;
+    protected int _intEndValue = 100;
+    protected float _floatStartValue = 0.0f;
+    protected float _floatEndValue = 1.0f;
+    protected int _intValue = 0;
+    protected float _floatValue = 0.0f;
+    [XMLSkinElement("subtype")]
+    protected GUISpinControl.SpinType _subType = GUISpinControl.SpinType.SPIN_CONTROL_TYPE_TEXT;
+    protected bool _reverse = false;
+    protected float _floatInterval = 0.1f;
+    protected ArrayList _listLabels = new ArrayList();
+    protected ArrayList _listValues = new ArrayList();
+    protected GUIImage _imageBackGround = null;
+    protected GUIImage _imageMid = null;
+    protected GUIImage _imageMidFocus = null;
+
+
+
+    protected bool m_bShowRange = false;
+
+    public GUISliderControl(int dwParentID)
+      : base(dwParentID)
+    {
     }
-		public override void FinalizeConstruction()
-		{
-			base.FinalizeConstruction ();
-      m_guiBackground = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, _width, _height, m_strBackground, 0);
-      m_guiBackground.ParentControl = this;
-
-      m_guiMid = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, _width, _height, m_strSliderTexture, 0);
-      m_guiMid.ParentControl = this;
-
-      m_guiMidFocus = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, _width, _height, m_strSliderTextureFocus, 0);
-      m_guiMidFocus.ParentControl = this;
-		}
-
-
-		/// <summary>
-		/// Renders the control.
-		/// </summary>
-    public override void 	Render(float timePassed)
+    /// <summary>
+    /// The constructor of the GUISliderControl.
+    /// </summary>
+    /// <param name="dwParentID">The parent of this control.</param>
+    /// <param name="dwControlId">The ID of this control.</param>
+    /// <param name="dwPosX">The X position of this control.</param>
+    /// <param name="dwPosY">The Y position of this control.</param>
+    /// <param name="dwWidth">The width of this control.</param>
+    /// <param name="dwHeight">The height of this control.</param>
+    /// <param name="strBackGroundTexture">The background texture of the </param>
+    /// <param name="strMidTexture">The unfocused texture.</param>
+    /// <param name="strMidTextureFocus">The focused texture</param>
+    /// <param name="iType">The type of control.</param>
+    public GUISliderControl(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight, string strBackGroundTexture, string strMidTexture, string strMidTextureFocus, GUISpinControl.SpinType iType)
+      : base(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight)
     {
-      if (GUIGraphicsContext.EditMode==false)
+      _backgroundTextureName = strBackGroundTexture;
+      _sliderTextureName = strMidTexture;
+      _sliderFocusTextureName = strMidTextureFocus;
+      _subType = iType;
+      FinalizeConstruction();
+    }
+    public override void FinalizeConstruction()
+    {
+      base.FinalizeConstruction();
+      _imageBackGround = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _backgroundTextureName, 0);
+      _imageBackGround.ParentControl = this;
+
+      _imageMid = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _sliderTextureName, 0);
+      _imageMid.ParentControl = this;
+
+      _imageMidFocus = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _sliderFocusTextureName, 0);
+      _imageMidFocus.ParentControl = this;
+    }
+
+
+    /// <summary>
+    /// Renders the control.
+    /// </summary>
+    public override void Render(float timePassed)
+    {
+      if (GUIGraphicsContext.EditMode == false)
       {
         if (!IsVisible) return;
       }
-      string strValue="";
-      float fRange=0.0f;
-      float fPos=0.0f;
-      float fPercent=0.0f;
+      string strValue = "";
+      float fRange = 0.0f;
+      float fPos = 0.0f;
+      float fPercent = 0.0f;
       GUIFont _font13 = GUIFontManager.GetFont("font13");
-      switch (m_iType)
+      switch (_subType)
       {
-					// Float based slider
+        // Float based slider
         case GUISpinControl.SpinType.SPIN_CONTROL_TYPE_FLOAT:
-          strValue=String.Format("{0}",m_fValue);
-          if (null!=_font13)
+          strValue = String.Format("{0}", _floatValue);
+          if (null != _font13)
           {
-              _font13.DrawShadowText( (float)_positionX,(float)_positionY, 0xffffffff,
-                                        strValue, 
-                                        GUIControl.Alignment.ALIGN_LEFT, 
-                                        2, 
-                                        2,
-                                        0xFF020202);
+            _font13.DrawShadowText((float)_positionX, (float)_positionY, 0xffffffff,
+                                      strValue,
+                                      GUIControl.Alignment.ALIGN_LEFT,
+                                      2,
+                                      2,
+                                      0xFF020202);
           }
-          m_guiBackground.SetPosition(_positionX + 60, _positionY);
+          _imageBackGround.SetPosition(_positionX + 60, _positionY);
 
-          fRange=(float)(m_fEnd-m_fStart);
-          fPos  =(float)(m_fValue-m_fStart);
-          fPercent = (fPos/fRange)*100.0f;
-          m_iPercent = (int) fPercent;
-        break;
+          fRange = (float)(_floatEndValue - _floatStartValue);
+          fPos = (float)(_floatValue - _floatStartValue);
+          fPercent = (fPos / fRange) * 100.0f;
+          _percentage = (int)fPercent;
+          break;
 
-					// Integer based slider
+        // Integer based slider
         case GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT:
-          strValue=String.Format("{0}/{1}",m_iValue, m_iEnd);
-          if (null!=_font13)
+          strValue = String.Format("{0}/{1}", _intValue, _intEndValue);
+          if (null != _font13)
           {
-            _font13.DrawShadowText( (float)_positionX,(float)_positionY, 0xffffffff,
+            _font13.DrawShadowText((float)_positionX, (float)_positionY, 0xffffffff,
                                             strValue,
-                                            GUIControl.Alignment.ALIGN_LEFT, 
-                                            2, 
+                                            GUIControl.Alignment.ALIGN_LEFT,
+                                            2,
                                             2,
                                             0xFF020202);
           }
-          m_guiBackground.SetPosition(_positionX + 60, _positionY);
+          _imageBackGround.SetPosition(_positionX + 60, _positionY);
 
-          fRange= (float)(m_iEnd-m_iStart);
-          fPos  = (float)(m_iValue-m_iStart);
-          m_iPercent = (int) ((fPos/fRange)*100.0f);
+          fRange = (float)(_intEndValue - _intStartValue);
+          fPos = (float)(_intValue - _intStartValue);
+          _percentage = (int)((fPos / fRange) * 100.0f);
           break;
       }
 
       //int iHeight=25;
-      m_guiBackground.Render(timePassed);
-      //m_guiBackground.SetHeight(iHeight);
-      _height = m_guiBackground.Height;
-      _width = m_guiBackground.Width + 60;
+      _imageBackGround.Render(timePassed);
+      //_imageBackGround.SetHeight(iHeight);
+      _height = _imageBackGround.Height;
+      _width = _imageBackGround.Width + 60;
 
-      float fWidth=(float)(m_guiBackground.TextureWidth - m_guiMid.Width); //-20.0f;
+      float fWidth = (float)(_imageBackGround.TextureWidth - _imageMid.Width); //-20.0f;
 
-      fPos = (float)m_iPercent;
-      fPos /=100.0f;
+      fPos = (float)_percentage;
+      fPos /= 100.0f;
       fPos *= fWidth;
-      fPos += (float) m_guiBackground.XPosition;
+      fPos += (float)_imageBackGround.XPosition;
       //fPos += 10.0f;
       if ((int)fWidth > 1)
       {
         if (IsFocused)
         {
-          m_guiMidFocus.SetPosition((int)fPos, m_guiBackground.YPosition );
-          m_guiMidFocus.Render(timePassed);
+          _imageMidFocus.SetPosition((int)fPos, _imageBackGround.YPosition);
+          _imageMidFocus.Render(timePassed);
         }
         else
         {
-          m_guiMid.SetPosition((int)fPos, m_guiBackground.YPosition );
-          m_guiMid.Render(timePassed);
+          _imageMid.SetPosition((int)fPos, _imageBackGround.YPosition);
+          _imageMid.Render(timePassed);
         }
       }
     }
 
-		/// <summary>
-		/// OnAction() method. This method gets called when there's a new action like a 
-		/// keypress or mousemove or... By overriding this method, the control can respond
-		/// to any action
-		/// </summary>
-		/// <param name="action">action : contains the action</param>
-    public override void 	OnAction(Action action)
+    /// <summary>
+    /// OnAction() method. This method gets called when there's a new action like a 
+    /// keypress or mousemove or... By overriding this method, the control can respond
+    /// to any action
+    /// </summary>
+    /// <param name="action">action : contains the action</param>
+    public override void OnAction(Action action)
     {
-        GUIMessage message;
-        switch ( action.wID )
-	      {
-          case Action.ActionType.ACTION_MOUSE_CLICK:
-            float x=(float)action.fAmount1-m_guiBackground.XPosition;
-            if (x <0) x=0;
-            if (x >m_guiBackground.RenderWidth) x=m_guiBackground.RenderWidth;
-            x/= (float)m_guiBackground.RenderWidth;
-            float total,pos;
-            switch (m_iType)
-            {
-              case GUISpinControl.SpinType.SPIN_CONTROL_TYPE_FLOAT:
-                total=m_fEnd-m_fStart;
-                pos= (x*total) ;
-                m_fValue=m_fStart+pos;
-                m_fValue=(float)Math.Round(m_fValue,1);
-                break;
+      GUIMessage message;
+      switch (action.wID)
+      {
+        case Action.ActionType.ACTION_MOUSE_CLICK:
+          float x = (float)action.fAmount1 - _imageBackGround.XPosition;
+          if (x < 0) x = 0;
+          if (x > _imageBackGround.RenderWidth) x = _imageBackGround.RenderWidth;
+          x /= (float)_imageBackGround.RenderWidth;
+          float total, pos;
+          switch (_subType)
+          {
+            case GUISpinControl.SpinType.SPIN_CONTROL_TYPE_FLOAT:
+              total = _floatEndValue - _floatStartValue;
+              pos = (x * total);
+              _floatValue = _floatStartValue + pos;
+              _floatValue = (float)Math.Round(_floatValue, 1);
+              break;
 
-              case GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT:
-                float start=m_iStart;
-                float end  =m_iEnd;
-                total=end-start;
-                pos= (x* total);
-                m_iValue=m_iStart+(int)pos;
-                break;
+            case GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT:
+              float start = _intStartValue;
+              float end = _intEndValue;
+              total = end - start;
+              pos = (x * total);
+              _intValue = _intStartValue + (int)pos;
+              break;
 
-              default:
-                m_iPercent = (int) ( 100f *  x);
-                break;
-            }
-						m_fValue=(float)Math.Round(m_fValue,1);
-						message=new GUIMessage (GUIMessage.MessageType.GUI_MSG_CLICKED,WindowId,GetID, ParentID ,0,0,null);
-						GUIGraphicsContext.SendMessage(message);
+            default:
+              _percentage = (int)(100f * x);
+              break;
+          }
+          _floatValue = (float)Math.Round(_floatValue, 1);
+          message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, WindowId, GetID, ParentID, 0, 0, null);
+          GUIGraphicsContext.SendMessage(message);
           break;
-           
-						// decrease the slider value
-		      case Action.ActionType.ACTION_MOVE_LEFT:
-			      switch (m_iType)
-			      {
-				      case GUISpinControl.SpinType.SPIN_CONTROL_TYPE_FLOAT:
-					      if (m_fValue > m_fStart) m_fValue -= m_fInterval;
-					      break;
 
-				      case GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT:
-					      if (m_iValue > m_iStart) m_iValue --;
-					      break;
+        // decrease the slider value
+        case Action.ActionType.ACTION_MOVE_LEFT:
+          switch (_subType)
+          {
+            case GUISpinControl.SpinType.SPIN_CONTROL_TYPE_FLOAT:
+              if (_floatValue > _floatStartValue) _floatValue -= _floatInterval;
+              break;
 
-				      default:
-					      if ( m_iPercent >0) m_iPercent --;
-					      break;
-			      }
-						m_fValue=(float)Math.Round(m_fValue,1);
-            message=new GUIMessage (GUIMessage.MessageType.GUI_MSG_CLICKED,WindowId,GetID, ParentID ,0,0,null);
-			      GUIGraphicsContext.SendMessage(message);
-			    break;
+            case GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT:
+              if (_intValue > _intStartValue) _intValue--;
+              break;
 
-						// increase the slider value
-		      case Action.ActionType.ACTION_MOVE_RIGHT:
-			      switch (m_iType)
-			      {
-				      case GUISpinControl.SpinType.SPIN_CONTROL_TYPE_FLOAT:
-					      if (m_fValue < m_fEnd) m_fValue += m_fInterval;
-					      break;
-
-				      case GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT:
-					      if (m_iValue < m_iEnd) m_iValue ++;
-					      break;
-
-				      default:
-					      if ( m_iPercent < 100 ) m_iPercent ++;
-					      break;
-			      }
-						m_fValue=(float)Math.Round(m_fValue,1);
-            message=new GUIMessage (GUIMessage.MessageType.GUI_MSG_CLICKED,WindowId,GetID, ParentID ,0,0,null);
-			      GUIGraphicsContext.SendMessage(message);
-			    break;
-
-		      default:
-			      base.OnAction(action);
+            default:
+              if (_percentage > 0) _percentage--;
+              break;
+          }
+          _floatValue = (float)Math.Round(_floatValue, 1);
+          message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, WindowId, GetID, ParentID, 0, 0, null);
+          GUIGraphicsContext.SendMessage(message);
           break;
-	      }
+
+        // increase the slider value
+        case Action.ActionType.ACTION_MOVE_RIGHT:
+          switch (_subType)
+          {
+            case GUISpinControl.SpinType.SPIN_CONTROL_TYPE_FLOAT:
+              if (_floatValue < _floatEndValue) _floatValue += _floatInterval;
+              break;
+
+            case GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT:
+              if (_intValue < _intEndValue) _intValue++;
+              break;
+
+            default:
+              if (_percentage < 100) _percentage++;
+              break;
+          }
+          _floatValue = (float)Math.Round(_floatValue, 1);
+          message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, WindowId, GetID, ParentID, 0, 0, null);
+          GUIGraphicsContext.SendMessage(message);
+          break;
+
+        default:
+          base.OnAction(action);
+          break;
+      }
     }
 
-		/// <summary>
-		/// OnMessage() This method gets called when there's a new message. 
-		/// Controls send messages to notify their parents about their state (changes)
-		/// By overriding this method a control can respond to the messages of its controls
-		/// </summary>
-		/// <param name="message">message : contains the message</param>
-		/// <returns>true if the message was handled, false if it wasnt</returns>
-    public override bool 	OnMessage(GUIMessage message)
+    /// <summary>
+    /// OnMessage() This method gets called when there's a new message. 
+    /// Controls send messages to notify their parents about their state (changes)
+    /// By overriding this method a control can respond to the messages of its controls
+    /// </summary>
+    /// <param name="message">message : contains the message</param>
+    /// <returns>true if the message was handled, false if it wasnt</returns>
+    public override bool OnMessage(GUIMessage message)
     {
-	    if (message.TargetControlId == GetID )
-	    {
-		    switch (message.Message)
-		    {
-						// Move the slider to a certain position
-			    case GUIMessage.MessageType.GUI_MSG_ITEM_SELECT:
-				    Percentage= message.Param1 ;
-				    return true;
-			    
-    				// Reset the slider
-			    case GUIMessage.MessageType.GUI_MSG_LABEL_RESET:
-			    {
-				    Percentage=0;
-				    return true;
-			    }
-		    }
-	    }
+      if (message.TargetControlId == GetID)
+      {
+        switch (message.Message)
+        {
+          // Move the slider to a certain position
+          case GUIMessage.MessageType.GUI_MSG_ITEM_SELECT:
+            Percentage = message.Param1;
+            return true;
+
+          // Reset the slider
+          case GUIMessage.MessageType.GUI_MSG_LABEL_RESET:
+            {
+              Percentage = 0;
+              return true;
+            }
+        }
+      }
 
       return base.OnMessage(message);
     }
 
-		/// <summary>
-		/// Get/set the percentage the slider indicates.
-		/// </summary>
+    /// <summary>
+    /// Get/set the percentage the slider indicates.
+    /// </summary>
     public int Percentage
     {
-      get { return m_iPercent;}
-      set { 
-        if (value >=0 && value <=100) m_iPercent=value;
+      get { return _percentage; }
+      set
+      {
+        if (value >= 0 && value <= 100) _percentage = value;
       }
     }
 
-		/// <summary>
-		/// Get/set the integer value of the slider.
-		/// </summary>
+    /// <summary>
+    /// Get/set the integer value of the slider.
+    /// </summary>
     public int IntValue
     {
-      get { return m_iValue;}
-      set { 
-        if (value >= m_iStart && value <=m_iEnd)
+      get { return _intValue; }
+      set
+      {
+        if (value >= _intStartValue && value <= _intEndValue)
         {
-          m_iValue=value;
+          _intValue = value;
         }
       }
     }
 
-		/// <summary>
-		/// Get/set the float value of the slider.
-		/// </summary>
+    /// <summary>
+    /// Get/set the float value of the slider.
+    /// </summary>
     public float FloatValue
     {
-      get { return m_fInterval;}
-      set 
+      get { return _floatInterval; }
+      set
       {
-        if (value >= m_fStart && value <=m_fEnd)
+        if (value >= _floatStartValue && value <= _floatEndValue)
         {
-          m_fInterval=value;
+          _floatInterval = value;
         }
       }
     }
 
-		/// <summary>
-		/// Get/Set the spintype of the control.
-		/// </summary>
+    /// <summary>
+    /// Get/Set the spintype of the control.
+    /// </summary>
     public GUISpinControl.SpinType SpinType
     {
-      get { return m_iType;}
-      set { m_iType=value;}
+      get { return _subType; }
+      set { _subType = value; }
     }
 
-		/// <summary>
-		/// Preallocates the control its DirectX resources.
-		/// </summary>
+    /// <summary>
+    /// Preallocates the control its DirectX resources.
+    /// </summary>
     public override void PreAllocResources()
     {
       base.PreAllocResources();
-      m_guiBackground.PreAllocResources();
-      m_guiMid.PreAllocResources();
-      m_guiMidFocus.PreAllocResources();
+      _imageBackGround.PreAllocResources();
+      _imageMid.PreAllocResources();
+      _imageMidFocus.PreAllocResources();
 
     }
 
-		/// <summary>
-		/// Allocates the control its DirectX resources.
-		/// </summary>
-    public override void 	AllocResources()
+    /// <summary>
+    /// Allocates the control its DirectX resources.
+    /// </summary>
+    public override void AllocResources()
     {
       base.AllocResources();
-      m_guiBackground.AllocResources();
-      m_guiMid.AllocResources();
-      m_guiMidFocus.AllocResources();
+      _imageBackGround.AllocResources();
+      _imageMid.AllocResources();
+      _imageMidFocus.AllocResources();
     }
 
-		/// <summary>
-		/// Frees the control its DirectX resources.
-		/// </summary>
-    public override void 	FreeResources()
+    /// <summary>
+    /// Frees the control its DirectX resources.
+    /// </summary>
+    public override void FreeResources()
     {
       base.FreeResources();
-      m_guiBackground.FreeResources();
-      m_guiMid.FreeResources();
-      m_guiMidFocus.FreeResources();
+      _imageBackGround.FreeResources();
+      _imageMid.FreeResources();
+      _imageMidFocus.FreeResources();
     }
 
-		/// <summary>
-		/// Sets the integer range of the slider.
-		/// </summary>
-		/// <param name="iStart">Start point</param>
-		/// <param name="iEnd">End point</param>
+    /// <summary>
+    /// Sets the integer range of the slider.
+    /// </summary>
+    /// <param name="iStart">Start point</param>
+    /// <param name="iEnd">End point</param>
     public void SetRange(int iStart, int iEnd)
     {
-      if (iEnd>iStart && iStart>=0)
+      if (iEnd > iStart && iStart >= 0)
       {
-        m_iStart=iStart;
-        m_iEnd=iEnd;
+        _intStartValue = iStart;
+        _intEndValue = iEnd;
       }
     }
 
-		/// <summary>
-		/// Sets the float range of the slider.
-		/// </summary>
-		/// <param name="fStart">Start point</param>
-		/// <param name="fEnd">End point</param>
+    /// <summary>
+    /// Sets the float range of the slider.
+    /// </summary>
+    /// <param name="fStart">Start point</param>
+    /// <param name="fEnd">End point</param>
     public void SetFloatRange(float fStart, float fEnd)
     {
-      if (fEnd>m_fStart && m_fStart>=0)
+      if (fEnd > _floatStartValue && _floatStartValue >= 0)
       {
-        m_fStart=fStart;
-        m_fEnd=fEnd;
+        _floatStartValue = fStart;
+        _floatEndValue = fEnd;
       }
     }
-		
-		/// <summary>
-		/// Get/set the interval for the float. 
-		/// </summary>
+
+    /// <summary>
+    /// Get/set the interval for the float. 
+    /// </summary>
     public float FloatInterval
     {
-      get {return m_fInterval;}
-      set {m_fInterval=value;}
-    }
-  
-		/// <summary>
-		/// Get the name of the background texture.
-		/// </summary>
-    public string BackGroundTextureName
-    {
-      get { return m_guiBackground.FileName;}
+      get { return _floatInterval; }
+      set { _floatInterval = value; }
     }
 
-		/// <summary>
-		/// Get the name of the middle texture.
-		/// </summary>
+    /// <summary>
+    /// Get the name of the background texture.
+    /// </summary>
+    public string BackGroundTextureName
+    {
+      get { return _imageBackGround.FileName; }
+    }
+
+    /// <summary>
+    /// Get the name of the middle texture.
+    /// </summary>
     public string BackTextureMidName
     {
-      get { return m_guiMid.FileName;}
+      get { return _imageMid.FileName; }
     }
- 
-		/// <summary>
-		/// Perform an update after a change has occured. E.g. change to a new position.
-		/// </summary>		
+
+    /// <summary>
+    /// Perform an update after a change has occured. E.g. change to a new position.
+    /// </summary>		
     protected override void Update()
     {
-      m_guiBackground.SetPosition( XPosition, YPosition);
+      _imageBackGround.SetPosition(XPosition, YPosition);
     }
-	}
+  }
 }

@@ -58,17 +58,17 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("texture")]
     private string m_strFileName = "";
     /// <summary>The width of the current texture.</summary>
-    private int m_iTextureWidth = 0;
-    private int m_iTextureHeight = 0;
+    private int _textureWidth = 0;
+    private int _textureHeight = 0;
     /// <summary>The width of the image containing the textures.</summary>
-    private int m_iImageWidth = 0;
-    private int m_iImageHeight = 0;
+    private int _imageWidth = 0;
+    private int _imageHeight = 0;
     private int m_iBitmap = 0;
     private int m_dwItems = 0;
     private int m_iCurrentLoop = 0;
     private int m_iCurrentImage = 0;
     [XMLSkinElement("keepaspectratio")]
-    private bool m_bKeepAspectRatio = false;
+    private bool _keepAspectRatio = false;
     [XMLSkinElement("zoom")]
     private bool m_bZoom = false;
     [XMLSkinElement("zoomfromtop")]
@@ -93,7 +93,7 @@ namespace MediaPortal.GUI.Library
     bool m_bCentered = false;
     string m_strTxt;
     DateTime m_AnimationTime = DateTime.MinValue;
-    bool ContainsProperty = false;
+    bool _containsProperty = false;
     //    StateBlock                      savedStateBlock;
     Rectangle sourceRect;
     Rectangle destinationRect;
@@ -135,17 +135,17 @@ namespace MediaPortal.GUI.Library
     {
       _diffuseColor = 0xFFFFFFFF;
       m_strFileName = strTexture;
-      m_iTextureWidth = 0;
-      m_iTextureHeight = 0;
+      _textureWidth = 0;
+      _textureHeight = 0;
       m_dwColorKey = dwColorKey;
       m_iBitmap = 0;
 
       m_iCurrentImage = 0;
-      m_bKeepAspectRatio = false;
+      _keepAspectRatio = false;
       m_bZoom = false;
       m_iCurrentLoop = 0;
-      m_iImageWidth = 0;
-      m_iImageHeight = 0;
+      _imageWidth = 0;
+      _imageHeight = 0;
       FinalizeConstruction();
 
     }
@@ -205,7 +205,7 @@ namespace MediaPortal.GUI.Library
 
       m_iRenderWidth = _width;
       m_iRenderHeight = _height;
-      if (m_strFileName.IndexOf("#") >= 0) ContainsProperty = true;
+      if (m_strFileName.IndexOf("#") >= 0) _containsProperty = true;
     }
 
     /// <summary>
@@ -213,11 +213,11 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public int TextureWidth
     {
-      get { return m_iTextureWidth; }
+      get { return _textureWidth; }
       set
       {
-        if (m_iTextureWidth < 0) return;
-        m_iTextureWidth = value; Update();
+        if (_textureWidth < 0) return;
+        _textureWidth = value; Update();
       }
     }
 
@@ -226,11 +226,11 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public int TextureHeight
     {
-      get { return m_iTextureHeight; }
+      get { return _textureHeight; }
       set
       {
-        if (m_iTextureHeight < 0) return;
-        m_iTextureHeight = value; Update();
+        if (_textureHeight < 0) return;
+        _textureHeight = value; Update();
       }
     }
 
@@ -257,8 +257,8 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public bool KeepAspectRatio
     {
-      get { return m_bKeepAspectRatio; }
-      set { m_bKeepAspectRatio = value; }
+      get { return _keepAspectRatio; }
+      set { _keepAspectRatio = value; }
     }
 
     /// <summary>
@@ -389,13 +389,13 @@ namespace MediaPortal.GUI.Library
 
       //get the filename of the texture
       string strFile = m_strFileName;
-      if (ContainsProperty)
+      if (_containsProperty)
         strFile = GUIPropertyManager.Parse(m_strFileName);
       if (m_strFileName == "-") return;
       if (m_strFileName == "") return;
 
       if (logtextures) Log.Write("GUIImage:AllocResources:{0}", strFile);
-      if (GUITextureManager.GetPackedTexture(strFile, out _texUoff, out _texVoff, out _texUmax, out _texVmax, out m_iTextureWidth, out m_iTextureHeight, out _packedTexture, out _packedTextureNo))
+      if (GUITextureManager.GetPackedTexture(strFile, out _texUoff, out _texVoff, out _texUmax, out _texVmax, out _textureWidth, out _textureHeight, out _packedTexture, out _packedTextureNo))
       {
         Update();
         return;
@@ -405,7 +405,7 @@ namespace MediaPortal.GUI.Library
       int iImages = 0;
       if (strFile == "#useMemoryImage")
       {
-        iImages = GUITextureManager.LoadFromMemory(memoryImage, m_dwColorKey, m_iRenderWidth, m_iTextureHeight);
+        iImages = GUITextureManager.LoadFromMemory(memoryImage, m_dwColorKey, m_iRenderWidth, _textureHeight);
         if (0 == iImages)
         {
           return;// unable to load texture
@@ -414,7 +414,7 @@ namespace MediaPortal.GUI.Library
       }
       else
       {
-        iImages = GUITextureManager.Load(strFile, m_dwColorKey, m_iRenderWidth, m_iTextureHeight);
+        iImages = GUITextureManager.Load(strFile, m_dwColorKey, m_iRenderWidth, _textureHeight);
         if (0 == iImages)
         {
           return;// unable to load texture
@@ -424,7 +424,7 @@ namespace MediaPortal.GUI.Library
       m_vecTextures = new CachedTexture.Frame[iImages];
       for (int i = 0; i < iImages; i++)
       {
-        m_vecTextures[i] = GUITextureManager.GetTexture(strFile, i, out m_iTextureWidth, out m_iTextureHeight);//,m_pPalette);
+        m_vecTextures[i] = GUITextureManager.GetTexture(strFile, i, out _textureWidth, out _textureHeight);//,m_pPalette);
       }
 
       // Set state to render the image
@@ -441,7 +441,7 @@ namespace MediaPortal.GUI.Library
       {
         string file = m_strFileName;
         _packedTexture = null;
-        if (ContainsProperty)
+        if (_containsProperty)
         {
           file = GUIPropertyManager.Parse(m_strFileName);
         }
@@ -470,10 +470,10 @@ namespace MediaPortal.GUI.Library
       m_vecTextures = null;
       m_iCurrentImage = 0;
       m_iCurrentLoop = 0;
-      m_iImageWidth = 0;
-      m_iImageHeight = 0;
-      m_iTextureWidth = 0;
-      m_iTextureHeight = 0;
+      _imageWidth = 0;
+      _imageHeight = 0;
+      _textureWidth = 0;
+      _textureHeight = 0;
       //if (savedStateBlock!=null) savedStateBlock.Dispose();
       //savedStateBlock=null;
     }
@@ -487,10 +487,10 @@ namespace MediaPortal.GUI.Library
       float y = (float)_positionY;
       if (_packedTexture != null)
       {
-        if (0 == m_iImageWidth || 0 == m_iImageHeight)
+        if (0 == _imageWidth || 0 == _imageHeight)
         {
-          m_iImageWidth = m_iTextureWidth;
-          m_iImageHeight = m_iTextureHeight;
+          _imageWidth = _textureWidth;
+          _imageHeight = _textureHeight;
         }
       }
       else
@@ -519,43 +519,43 @@ namespace MediaPortal.GUI.Library
         }
 
         // on first run, get the image width/height of the texture
-        if (0 == m_iImageWidth || 0 == m_iImageHeight)
+        if (0 == _imageWidth || 0 == _imageHeight)
         {
           Direct3D.SurfaceDescription desc;
           desc = texture.GetLevelDescription(0);
-          m_iImageWidth = desc.Width;
-          m_iImageHeight = desc.Height;
+          _imageWidth = desc.Width;
+          _imageHeight = desc.Height;
         }
         texture = null;
       }
 
-      // Calculate the m_iTextureWidth and m_iTextureHeight 
-      // based on the m_iImageWidth and m_iImageHeight
-      if (0 == m_iTextureWidth || 0 == m_iTextureHeight)
+      // Calculate the _textureWidth and _textureHeight 
+      // based on the _imageWidth and _imageHeight
+      if (0 == _textureWidth || 0 == _textureHeight)
       {
-        m_iTextureWidth = (int)Math.Round(((float)m_iImageWidth) / ((float)m_dwItems));
-        m_iTextureHeight = m_iImageHeight;
+        _textureWidth = (int)Math.Round(((float)_imageWidth) / ((float)m_dwItems));
+        _textureHeight = _imageHeight;
 
-        if (m_iTextureHeight > (int)GUIGraphicsContext.Height)
-          m_iTextureHeight = (int)GUIGraphicsContext.Height;
+        if (_textureHeight > (int)GUIGraphicsContext.Height)
+          _textureHeight = (int)GUIGraphicsContext.Height;
 
-        if (m_iTextureWidth > (int)GUIGraphicsContext.Width)
-          m_iTextureWidth = (int)GUIGraphicsContext.Width;
+        if (_textureWidth > (int)GUIGraphicsContext.Width)
+          _textureWidth = (int)GUIGraphicsContext.Width;
       }
 
-      // If there are multiple frames in the GUIImage thne the e m_iTextureWidth is equal to the _width
+      // If there are multiple frames in the GUIImage thne the e _textureWidth is equal to the _width
       if (_width > 0 && m_dwItems > 1)
       {
-        m_iTextureWidth = (int)_width;
+        _textureWidth = (int)_width;
       }
 
       // Initialize the with of the control based on the texture width
       if (_width == 0)
-        _width = m_iTextureWidth;
+        _width = _textureWidth;
 
       // Initialize the height of the control based on the texture height
       if (_height == 0)
-        _height = m_iTextureHeight;
+        _height = _textureHeight;
 
 
       float nw = (float)_width;
@@ -564,11 +564,11 @@ namespace MediaPortal.GUI.Library
       //adjust image based on current aspect ratio setting
       float fSourceFrameRatio = 1;
       float fOutputFrameRatio = 1;
-      if (!m_bZoom && !m_bZoomFromTop && m_bKeepAspectRatio && m_iTextureWidth != 0 && m_iTextureHeight != 0)
+      if (!m_bZoom && !m_bZoomFromTop && _keepAspectRatio && _textureWidth != 0 && _textureHeight != 0)
       {
         // TODO: remove or complete HDTV_1080i code
         //int iResolution=g_stSettings.m_ScreenResolution;
-        fSourceFrameRatio = ((float)m_iTextureWidth) / ((float)m_iTextureHeight);
+        fSourceFrameRatio = ((float)_textureWidth) / ((float)_textureHeight);
         fOutputFrameRatio = fSourceFrameRatio / GUIGraphicsContext.PixelRatio;
         //if (iResolution == HDTV_1080i) fOutputFrameRatio *= 2;
 
@@ -614,10 +614,10 @@ namespace MediaPortal.GUI.Library
       // Calculate source Texture
       int iSourceX = 0;
       int iSourceY = 0;
-      int iSourceWidth = m_iTextureWidth;
-      int iSourceHeight = m_iTextureHeight;
+      int iSourceWidth = _textureWidth;
+      int iSourceHeight = _textureHeight;
 
-      if ((m_bZoom || m_bZoomFromTop) && m_bKeepAspectRatio)
+      if ((m_bZoom || m_bZoomFromTop) && _keepAspectRatio)
       {
         fSourceFrameRatio = ((float)nw) / ((float)nh);
         fOutputFrameRatio = fSourceFrameRatio * GUIGraphicsContext.PixelRatio;
@@ -626,9 +626,9 @@ namespace MediaPortal.GUI.Library
         {
           //Calc height
           iSourceHeight = (int)((float)iSourceWidth / fOutputFrameRatio);
-          if (iSourceHeight > m_iTextureHeight)
+          if (iSourceHeight > _textureHeight)
           {
-            iSourceHeight = m_iTextureHeight;
+            iSourceHeight = _textureHeight;
             iSourceWidth = (int)((float)iSourceHeight * fOutputFrameRatio);
           }
         }
@@ -636,15 +636,15 @@ namespace MediaPortal.GUI.Library
         {
           //Calc width
           iSourceWidth = (int)((float)iSourceHeight * fOutputFrameRatio);
-          if (iSourceWidth > m_iTextureWidth)
+          if (iSourceWidth > _textureWidth)
           {
-            iSourceWidth = m_iTextureWidth;
+            iSourceWidth = _textureWidth;
             iSourceHeight = (int)((float)iSourceWidth / fOutputFrameRatio);
           }
         }
 
-        if (!m_bZoomFromTop) iSourceY = (m_iTextureHeight - iSourceHeight) / 2;
-        iSourceX = (m_iTextureWidth - iSourceWidth) / 2;
+        if (!m_bZoomFromTop) iSourceY = (_textureHeight - iSourceHeight) / 2;
+        iSourceX = (_textureWidth - iSourceWidth) / 2;
       }
 
       if (m_bFixedHeight)
@@ -657,8 +657,8 @@ namespace MediaPortal.GUI.Library
       if (x < GUIGraphicsContext.OffsetX)
       {
         // calc percentage offset
-        iSourceX -= (int)((float)m_iTextureWidth * ((x - GUIGraphicsContext.OffsetX) / nw));
-        iSourceWidth += (int)((float)m_iTextureWidth * ((x - GUIGraphicsContext.OffsetX) / nw));
+        iSourceX -= (int)((float)_textureWidth * ((x - GUIGraphicsContext.OffsetX) / nw));
+        iSourceWidth += (int)((float)_textureWidth * ((x - GUIGraphicsContext.OffsetX) / nw));
 
         nw += x;
         nw -= GUIGraphicsContext.OffsetX;
@@ -666,8 +666,8 @@ namespace MediaPortal.GUI.Library
       }
       if (y < GUIGraphicsContext.OffsetY)
       {
-        iSourceY -= (int)((float)m_iTextureHeight * ((y - GUIGraphicsContext.OffsetY) / nh));
-        iSourceHeight += (int)((float)m_iTextureHeight * ((y - GUIGraphicsContext.OffsetY) / nh));
+        iSourceY -= (int)((float)_textureHeight * ((y - GUIGraphicsContext.OffsetY) / nh));
+        iSourceHeight += (int)((float)_textureHeight * ((y - GUIGraphicsContext.OffsetY) / nh));
 
         nh += y;
         nh -= GUIGraphicsContext.OffsetY;
@@ -680,27 +680,27 @@ namespace MediaPortal.GUI.Library
       if (nh < 0) nh = 0;
       if (x + nw > GUIGraphicsContext.Width)
       {
-        iSourceWidth = (int)((float)m_iTextureWidth * (((float)GUIGraphicsContext.Width - x) / nw));
+        iSourceWidth = (int)((float)_textureWidth * (((float)GUIGraphicsContext.Width - x) / nw));
         nw = GUIGraphicsContext.Width - x;
       }
       if (y + nh > GUIGraphicsContext.Height)
       {
-        iSourceHeight = (int)((float)m_iTextureHeight * (((float)GUIGraphicsContext.Height - y) / nh));
+        iSourceHeight = (int)((float)_textureHeight * (((float)GUIGraphicsContext.Height - y) / nh));
         nh = GUIGraphicsContext.Height - y;
       }
 
       // copy all coordinates to the vertex buffer
       // x-offset in texture
-      float uoffs = ((float)(m_iBitmap * _width + iSourceX)) / ((float)m_iImageWidth);
+      float uoffs = ((float)(m_iBitmap * _width + iSourceX)) / ((float)_imageWidth);
 
       // y-offset in texture
-      float voffs = ((float)iSourceY) / ((float)m_iImageHeight);
+      float voffs = ((float)iSourceY) / ((float)_imageHeight);
 
       // width copied from texture
-      float u = ((float)iSourceWidth) / ((float)m_iImageWidth);
+      float u = ((float)iSourceWidth) / ((float)_imageWidth);
 
       // height copied from texture
-      float v = ((float)iSourceHeight) / ((float)m_iImageHeight);
+      float v = ((float)iSourceHeight) / ((float)_imageHeight);
 
 
       if (uoffs < 0 || uoffs > 1) uoffs = 0;
@@ -777,7 +777,7 @@ namespace MediaPortal.GUI.Library
       }
 
       // if filename contains a property, then get the value of the property
-      if (ContainsProperty)
+      if (_containsProperty)
       {
         m_strTxt = GUIPropertyManager.Parse(m_strFileName);
 
@@ -825,7 +825,7 @@ namespace MediaPortal.GUI.Library
         if (m_image == null)
         {
           string strFileName = m_strFileName;
-          if (ContainsProperty)
+          if (_containsProperty)
             strFileName = GUIPropertyManager.Parse(m_strFileName);
           if (strFileName != "-")
           {
@@ -891,10 +891,10 @@ namespace MediaPortal.GUI.Library
         m_vecTextures = null;
         m_iCurrentImage = 0;
         m_iCurrentLoop = 0;
-        m_iImageWidth = 0;
-        m_iImageHeight = 0;
-        m_iTextureWidth = 0;
-        m_iTextureHeight = 0;
+        _imageWidth = 0;
+        _imageHeight = 0;
+        _textureWidth = 0;
+        _textureHeight = 0;
         frame = null;
         AllocResources();
         return false;
@@ -908,10 +908,10 @@ namespace MediaPortal.GUI.Library
         m_vecTextures = null;
         m_iCurrentImage = 0;
         m_iCurrentLoop = 0;
-        m_iImageWidth = 0;
-        m_iImageHeight = 0;
-        m_iTextureWidth = 0;
-        m_iTextureHeight = 0;
+        _imageWidth = 0;
+        _imageHeight = 0;
+        _textureWidth = 0;
+        _textureHeight = 0;
         frame = null;
         texture = null;
         AllocResources();
@@ -945,10 +945,10 @@ namespace MediaPortal.GUI.Library
       _fy = rectDst.Top;
       _nw = rectDst.Width;
       _nh = rectDst.Height;
-      float uoffs = ((float)(rectSrc.Left)) / ((float)(m_iTextureWidth));
-      float voffs = ((float)(rectSrc.Top)) / ((float)(m_iTextureHeight));
-      _umax = ((float)(rectSrc.Width)) / ((float)(m_iTextureWidth));
-      _vmax = ((float)(rectSrc.Height)) / ((float)(m_iTextureHeight));
+      float uoffs = ((float)(rectSrc.Left)) / ((float)(_textureWidth));
+      float voffs = ((float)(rectSrc.Top)) / ((float)(_textureHeight));
+      _umax = ((float)(rectSrc.Width)) / ((float)(_textureWidth));
+      _vmax = ((float)(rectSrc.Height)) / ((float)(_textureHeight));
 
 
       if (_packedTexture != null)
@@ -997,8 +997,8 @@ namespace MediaPortal.GUI.Library
 
       if (logtextures) Log.Write("GUIImage:SetFileName() {0", strFileName);
       m_strFileName = strFileName;
-      if (m_strFileName.IndexOf("#") >= 0) ContainsProperty = true;
-      else ContainsProperty = false;
+      if (m_strFileName.IndexOf("#") >= 0) _containsProperty = true;
+      else _containsProperty = false;
 
       //reallocate & load then new image
       Cleanup();
