@@ -83,7 +83,7 @@
 	</control>
 	<control>
 		<description>Group button</description>
-		<type>selectbutton</type>
+		<type>button</type>
 		<id>6</id>
 		<posX>55</posX>
  		<posY>189</posY>
@@ -95,7 +95,7 @@
 	</control>
 	<control>
 		<description>Channel button</description>
-		<type>selectbutton</type>
+		<type>button</type>
 		<id>7</id>
 		<posX>55</posX>
  		<posY>217</posY>
