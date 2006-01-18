@@ -136,7 +136,7 @@ namespace MediaPortal.Dialogs
           m_bPrevOverlay=GUIGraphicsContext.Overlay;
           m_bConfirmed = false;
           base.OnMessage(message);
-          GUIGraphicsContext.Overlay = false;
+          GUIGraphicsContext.Overlay = base.IsOverlayAllowed;
           GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Dialog);
         }
         return true;

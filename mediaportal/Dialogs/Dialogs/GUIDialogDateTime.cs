@@ -222,7 +222,7 @@ namespace MediaPortal.Dialogs
             m_bPrevOverlay = GUIGraphicsContext.Overlay;
             base.OnMessage(message);
             m_bConfirmed = false;
-            GUIGraphicsContext.Overlay = false;
+            GUIGraphicsContext.Overlay = base.IsOverlayAllowed;
             spinStartHour.SetRange(0, 23);
             spinStartHour.Value = startDateTime.Hour;
 

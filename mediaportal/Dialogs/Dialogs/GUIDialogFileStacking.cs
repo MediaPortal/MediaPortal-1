@@ -130,7 +130,7 @@ namespace MediaPortal.Dialogs
           {
             m_bPrevOverlay = GUIGraphicsContext.Overlay;
             base.OnMessage(message);
-            GUIGraphicsContext.Overlay = false;
+            GUIGraphicsContext.Overlay = base.IsOverlayAllowed;
             m_iSelectedFile = -1;
             m_iFrames = 0;
 

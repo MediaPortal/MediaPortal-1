@@ -203,7 +203,7 @@ namespace MediaPortal.Dialogs
             m_bOverlay = GUIGraphicsContext.Overlay;
             m_bCanceled = false;
             base.OnMessage(message);
-            GUIGraphicsContext.Overlay = false;
+            GUIGraphicsContext.Overlay = base.IsOverlayAllowed;
             m_pParentWindow = GUIWindowManager.GetWindow(m_dwParentWindowID);
             GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Dialog);
           }

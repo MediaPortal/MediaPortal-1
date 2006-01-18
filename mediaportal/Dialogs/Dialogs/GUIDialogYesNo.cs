@@ -175,7 +175,7 @@ namespace MediaPortal.Dialogs
             m_bPrevOverlay = GUIGraphicsContext.Overlay;
             m_bConfirmed = false;
             base.OnMessage(message);
-            GUIGraphicsContext.Overlay = false;
+            GUIGraphicsContext.Overlay = base.IsOverlayAllowed;
             if (m_DefaultYes)
             {
               GUIControl.FocusControl(GetID, btnYes.GetID);

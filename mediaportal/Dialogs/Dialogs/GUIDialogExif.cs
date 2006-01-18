@@ -172,7 +172,7 @@ namespace MediaPortal.Dialogs
           {
             m_bPrevOverlay = GUIGraphicsContext.Overlay;
             base.OnMessage(message);
-            GUIGraphicsContext.Overlay = false;
+            GUIGraphicsContext.Overlay = base.IsOverlayAllowed;
             Update();
             GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Dialog);
           }

@@ -153,7 +153,7 @@ namespace MediaPortal.Dialogs
 
             m_bPrevOverlay = GUIGraphicsContext.Overlay;
             base.OnMessage(message);
-            GUIGraphicsContext.Overlay = false;
+            GUIGraphicsContext.Overlay = base.IsOverlayAllowed;
             ClearControl(GetID, (int)Controls.CONTROL_LIST);
 
             for (int i = 0; i < m_vecList.Count; i++)

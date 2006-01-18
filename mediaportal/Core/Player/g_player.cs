@@ -188,6 +188,10 @@ namespace MediaPortal.Player
         _currentStep = Steps.Sec0;
         _seekTimer = DateTime.MinValue;
         _player.Pause();
+        if (VMR9Util.g_vmr9 != null)
+        {
+          if (_player.Paused) VMR9Util.g_vmr9.SetRepaint();
+        }
       }
     }
     public static bool OnAction(Action action)
@@ -532,660 +536,660 @@ namespace MediaPortal.Player
       }
     }
 
-      public static bool IsRadio
+    public static bool IsRadio
+    {
+      get
       {
-        get
-        {
-          if (_player == null) return false;
-          return (_currentMedia == MediaType.Radio);
-        }
+        if (_player == null) return false;
+        return (_currentMedia == MediaType.Radio);
       }
+    }
 
-      public static bool IsMusic
+    public static bool IsMusic
+    {
+      get
       {
-        get
-        {
-          if (_player == null) return false;
-          return (_currentMedia == MediaType.Music);
-        }
+        if (_player == null) return false;
+        return (_currentMedia == MediaType.Music);
       }
+    }
 
-      public static bool Playing
+    public static bool Playing
+    {
+      get
       {
-        get
+        if (_player == null)
         {
-          if (_player == null)
-          {
-            return false;
-          }
-          if (_isInitalized)
-          {
-            return false;
-          }
-          bool bResult = _player.Playing;
-          return bResult;
+          return false;
         }
+        if (_isInitalized)
+        {
+          return false;
+        }
+        bool bResult = _player.Playing;
+        return bResult;
       }
+    }
 
-      public static bool Paused
+    public static bool Paused
+    {
+      get
       {
-        get
-        {
-          if (_player == null) return false;
-          return _player.Paused;
-        }
+        if (_player == null) return false;
+        return _player.Paused;
       }
-      public static bool Stopped
+    }
+    public static bool Stopped
+    {
+      get
       {
-        get
-        {
-          if (_isInitalized) return false;
-          if (_player == null) return false;
-          bool bResult = _player.Stopped;
-          return bResult;
-        }
+        if (_isInitalized) return false;
+        if (_player == null) return false;
+        bool bResult = _player.Stopped;
+        return bResult;
       }
+    }
 
-      public static int Speed
+    public static int Speed
+    {
+      get
       {
-        get
-        {
-          if (_player == null) return 1;
-          return _player.Speed;
-        }
-        set
-        {
-          if (_player == null) return;
-          _player.Speed = value;
-          _currentStep = Steps.Sec0;
-          _seekTimer = DateTime.MinValue;
-        }
+        if (_player == null) return 1;
+        return _player.Speed;
       }
-
-
-      public static string CurrentFile
-      {
-        get
-        {
-          if (_player == null) return "";
-          return _player.CurrentFile;
-        }
-      }
-
-      static public int Volume
-      {
-        get
-        {
-          if (_player == null) return 0;
-          return _player.Volume;
-        }
-        set
-        {
-          if (_player != null)
-          {
-            _player.Volume = value;
-          }
-        }
-      }
-
-      public static Geometry.Type ARType
-      {
-        get { return GUIGraphicsContext.ARType; }
-        set
-        {
-          if (_player != null)
-          {
-            _player.ARType = value;
-          }
-        }
-      }
-
-      static public int PositionX
-      {
-        get
-        {
-          if (_player == null) return 0;
-          return _player.PositionX;
-        }
-        set
-        {
-          if (_player != null)
-          {
-            _player.PositionX = value;
-          }
-        }
-      }
-
-      static public int PositionY
-      {
-        get
-        {
-          if (_player == null) return 0;
-          return _player.PositionY;
-        }
-        set
-        {
-          if (_player != null)
-          {
-            _player.PositionY = value;
-          }
-        }
-      }
-
-      static public int RenderWidth
-      {
-        get
-        {
-          if (_player == null) return 0;
-          return _player.RenderWidth;
-        }
-        set
-        {
-          if (_player != null)
-          {
-            _player.RenderWidth = value;
-          }
-        }
-      }
-      static public bool Visible
-      {
-        get
-        {
-          if (_player == null) return false;
-          return _player.Visible;
-        }
-        set
-        {
-          if (_player != null)
-          {
-            _player.Visible = value;
-          }
-        }
-      }
-      static public int RenderHeight
-      {
-        get
-        {
-          if (_player == null) return 0;
-          return _player.RenderHeight;
-        }
-        set
-        {
-          if (_player != null)
-          {
-            _player.RenderHeight = value;
-          }
-        }
-      }
-
-      static public double Duration
-      {
-        get
-        {
-          if (_player == null) return 0;
-          return _player.Duration;
-        }
-      }
-
-      static public double CurrentPosition
-      {
-        get
-        {
-          if (_player == null) return 0;
-          return _player.CurrentPosition;
-        }
-      }
-      static public double ContentStart
-      {
-        get
-        {
-          if (_player == null) return 0;
-          return _player.ContentStart;
-        }
-      }
-
-      static public bool FullScreen
-      {
-        get
-        {
-          if (_player == null) return GUIGraphicsContext.IsFullScreenVideo;
-          return _player.FullScreen;
-        }
-        set
-        {
-          if (_player != null)
-          {
-            _player.FullScreen = value;
-          }
-        }
-      }
-      static public int Width
-      {
-        get
-        {
-          if (_player == null) return 0;
-          return _player.Width;
-        }
-      }
-
-      static public int Height
-      {
-        get
-        {
-          if (_player == null) return 0;
-          return _player.Height;
-        }
-      }
-      static public void SeekRelative(double dTime)
+      set
       {
         if (_player == null) return;
-        _player.SeekRelative(dTime);
+        _player.Speed = value;
         _currentStep = Steps.Sec0;
         _seekTimer = DateTime.MinValue;
-        GUIMessage msgUpdate = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYER_POSITION_CHANGED, 0, 0, 0, 0, 0, null);
-        GUIGraphicsContext.SendMessage(msgUpdate);
-
       }
+    }
 
-      static public void StepNow()
-      {
-        if (_currentStep != Steps.Sec0 && _player != null)
-        {
-          double dTime = (int)_currentStep + _player.CurrentPosition;
-          if (dTime < 0) dTime = 0d;
-          if (dTime > _player.Duration) dTime = _player.Duration - 5;
-          _player.SeekAbsolute(dTime);
-          GUIMessage msgUpdate = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYER_POSITION_CHANGED, 0, 0, 0, 0, 0, null);
-          GUIGraphicsContext.SendMessage(msgUpdate);
-        }
-        _currentStep = Steps.Sec0;
-        _seekTimer = DateTime.MinValue;
 
-      }
-      static public string GetStepDescription()
+    public static string CurrentFile
+    {
+      get
       {
         if (_player == null) return "";
-        int m_iTimeToStep = (int)_currentStep;
-        if (m_iTimeToStep == 0) return "";
-        _player.Process();
-        if (_player.CurrentPosition + m_iTimeToStep <= 0) return "START";//start
-        if (_player.CurrentPosition + m_iTimeToStep >= _player.Duration) return "END";
-        switch (_currentStep)
-        {
-          case Steps.Hourm2: return "-2hrs";
-          case Steps.Hourm1: return "-1hr";
-          case Steps.Minm30: return "-30min";
-          case Steps.Minm15: return "-15min";
-          case Steps.Minm10: return "-10min";
-          case Steps.Minm5: return "-5min";
-          case Steps.Minm3: return "-3min";
-          case Steps.Minm1: return "-1min";
-          case Steps.Secm30: return "-30sec";
-          case Steps.Secm15: return "-15sec";
-          case Steps.Sec0: return "0 sec";
-          case Steps.Sec15: return "+15sec";
-          case Steps.Sec30: return "+30sec";
-          case Steps.Min1: return "+1min";
-          case Steps.Min3: return "+3min";
-          case Steps.Min5: return "+5min";
-          case Steps.Min10: return "+10min";
-          case Steps.Min15: return "+15min";
-          case Steps.Min30: return "+30min";
-          case Steps.Hour1: return "+1hr";
-          case Steps.Hour2: return "+2hrs";
-        }
-        return "";
+        return _player.CurrentFile;
       }
-      static public int GetSeekStep(out bool bStart, out bool bEnd)
+    }
+
+    static public int Volume
+    {
+      get
       {
-        bStart = false;
-        bEnd = false;
         if (_player == null) return 0;
-        int m_iTimeToStep = (int)_currentStep;
-        if (_player.CurrentPosition + m_iTimeToStep <= 0) bStart = true;//start
-        if (_player.CurrentPosition + m_iTimeToStep >= _player.Duration) bEnd = true;
-        return m_iTimeToStep;
+        return _player.Volume;
       }
-
-      static public void SeekStep(bool bFF)
+      set
       {
-        if (bFF)
+        if (_player != null)
         {
-          switch (_currentStep)
-          {
-            case Steps.Hourm2: _currentStep = Steps.Hourm1; break;
-            case Steps.Hourm1: _currentStep = Steps.Minm30; break;
-            case Steps.Minm30: _currentStep = Steps.Minm15; break;
-            case Steps.Minm15: _currentStep = Steps.Minm10; break;
-            case Steps.Minm10: _currentStep = Steps.Minm5; break;
-            case Steps.Minm5: _currentStep = Steps.Minm3; break;
-            case Steps.Minm3: _currentStep = Steps.Minm1; break;
-            case Steps.Minm1: _currentStep = Steps.Secm30; break;
-            case Steps.Secm30: _currentStep = Steps.Secm15; break;
-            case Steps.Secm15: _currentStep = Steps.Sec0; break;
-
-            case Steps.Sec0: _currentStep = Steps.Sec15; break;
-
-            case Steps.Sec15: _currentStep = Steps.Sec30; break;
-            case Steps.Sec30: _currentStep = Steps.Min1; break;
-            case Steps.Min1: _currentStep = Steps.Min3; break;
-            case Steps.Min3: _currentStep = Steps.Min5; break;
-            case Steps.Min5: _currentStep = Steps.Min10; break;
-            case Steps.Min10: _currentStep = Steps.Min15; break;
-            case Steps.Min15: _currentStep = Steps.Min30; break;
-            case Steps.Min30: _currentStep = Steps.Hour1; break;
-            case Steps.Hour1: _currentStep = Steps.Hour2; break;
-            case Steps.Hour2: break;
-          }
+          _player.Volume = value;
         }
-        else
+      }
+    }
+
+    public static Geometry.Type ARType
+    {
+      get { return GUIGraphicsContext.ARType; }
+      set
+      {
+        if (_player != null)
         {
-          switch (_currentStep)
-          {
-            case Steps.Hourm2: break;
-            case Steps.Hourm1: _currentStep = Steps.Hourm2; break;
-            case Steps.Minm30: _currentStep = Steps.Hourm1; break;
-            case Steps.Minm15: _currentStep = Steps.Minm30; break;
-            case Steps.Minm10: _currentStep = Steps.Minm15; break;
-            case Steps.Minm5: _currentStep = Steps.Minm10; break;
-            case Steps.Minm3: _currentStep = Steps.Minm5; break;
-            case Steps.Minm1: _currentStep = Steps.Minm3; break;
-            case Steps.Secm30: _currentStep = Steps.Minm1; break;
-            case Steps.Secm15: _currentStep = Steps.Secm30; break;
-
-            case Steps.Sec0: _currentStep = Steps.Secm15; break;
-
-            case Steps.Sec15: _currentStep = Steps.Sec0; break;
-            case Steps.Sec30: _currentStep = Steps.Sec15; break;
-            case Steps.Min1: _currentStep = Steps.Sec30; break;
-            case Steps.Min3: _currentStep = Steps.Min1; break;
-            case Steps.Min5: _currentStep = Steps.Min3; break;
-            case Steps.Min10: _currentStep = Steps.Min5; break;
-            case Steps.Min15: _currentStep = Steps.Min10; break;
-            case Steps.Min30: _currentStep = Steps.Min15; break;
-            case Steps.Hour1: _currentStep = Steps.Min30; break;
-            case Steps.Hour2: _currentStep = Steps.Hour1; break;
-          }
+          _player.ARType = value;
         }
-        _seekTimer = DateTime.Now;
       }
+    }
 
-      static public void SeekRelativePercentage(int iPercentage)
+    static public int PositionX
+    {
+      get
       {
-        if (_player == null) return;
-        _player.SeekRelativePercentage(iPercentage);
-        GUIMessage msgUpdate = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYER_POSITION_CHANGED, 0, 0, 0, 0, 0, null);
-        GUIGraphicsContext.SendMessage(msgUpdate);
-
-        _currentStep = Steps.Sec0;
-        _seekTimer = DateTime.MinValue;
+        if (_player == null) return 0;
+        return _player.PositionX;
       }
-
-      static public void SeekAbsolute(double dTime)
+      set
       {
-        if (_player == null) return;
+        if (_player != null)
+        {
+          _player.PositionX = value;
+        }
+      }
+    }
+
+    static public int PositionY
+    {
+      get
+      {
+        if (_player == null) return 0;
+        return _player.PositionY;
+      }
+      set
+      {
+        if (_player != null)
+        {
+          _player.PositionY = value;
+        }
+      }
+    }
+
+    static public int RenderWidth
+    {
+      get
+      {
+        if (_player == null) return 0;
+        return _player.RenderWidth;
+      }
+      set
+      {
+        if (_player != null)
+        {
+          _player.RenderWidth = value;
+        }
+      }
+    }
+    static public bool Visible
+    {
+      get
+      {
+        if (_player == null) return false;
+        return _player.Visible;
+      }
+      set
+      {
+        if (_player != null)
+        {
+          _player.Visible = value;
+        }
+      }
+    }
+    static public int RenderHeight
+    {
+      get
+      {
+        if (_player == null) return 0;
+        return _player.RenderHeight;
+      }
+      set
+      {
+        if (_player != null)
+        {
+          _player.RenderHeight = value;
+        }
+      }
+    }
+
+    static public double Duration
+    {
+      get
+      {
+        if (_player == null) return 0;
+        return _player.Duration;
+      }
+    }
+
+    static public double CurrentPosition
+    {
+      get
+      {
+        if (_player == null) return 0;
+        return _player.CurrentPosition;
+      }
+    }
+    static public double ContentStart
+    {
+      get
+      {
+        if (_player == null) return 0;
+        return _player.ContentStart;
+      }
+    }
+
+    static public bool FullScreen
+    {
+      get
+      {
+        if (_player == null) return GUIGraphicsContext.IsFullScreenVideo;
+        return _player.FullScreen;
+      }
+      set
+      {
+        if (_player != null)
+        {
+          _player.FullScreen = value;
+        }
+      }
+    }
+    static public int Width
+    {
+      get
+      {
+        if (_player == null) return 0;
+        return _player.Width;
+      }
+    }
+
+    static public int Height
+    {
+      get
+      {
+        if (_player == null) return 0;
+        return _player.Height;
+      }
+    }
+    static public void SeekRelative(double dTime)
+    {
+      if (_player == null) return;
+      _player.SeekRelative(dTime);
+      _currentStep = Steps.Sec0;
+      _seekTimer = DateTime.MinValue;
+      GUIMessage msgUpdate = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYER_POSITION_CHANGED, 0, 0, 0, 0, 0, null);
+      GUIGraphicsContext.SendMessage(msgUpdate);
+
+    }
+
+    static public void StepNow()
+    {
+      if (_currentStep != Steps.Sec0 && _player != null)
+      {
+        double dTime = (int)_currentStep + _player.CurrentPosition;
+        if (dTime < 0) dTime = 0d;
+        if (dTime > _player.Duration) dTime = _player.Duration - 5;
         _player.SeekAbsolute(dTime);
         GUIMessage msgUpdate = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYER_POSITION_CHANGED, 0, 0, 0, 0, 0, null);
         GUIGraphicsContext.SendMessage(msgUpdate);
-
-        _currentStep = Steps.Sec0;
-        _seekTimer = DateTime.MinValue;
       }
+      _currentStep = Steps.Sec0;
+      _seekTimer = DateTime.MinValue;
 
-      static public void SeekAsolutePercentage(int iPercentage)
+    }
+    static public string GetStepDescription()
+    {
+      if (_player == null) return "";
+      int m_iTimeToStep = (int)_currentStep;
+      if (m_iTimeToStep == 0) return "";
+      _player.Process();
+      if (_player.CurrentPosition + m_iTimeToStep <= 0) return "START";//start
+      if (_player.CurrentPosition + m_iTimeToStep >= _player.Duration) return "END";
+      switch (_currentStep)
       {
-        if (_player == null) return;
-        _player.SeekAsolutePercentage(iPercentage);
-        GUIMessage msgUpdate = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYER_POSITION_CHANGED, 0, 0, 0, 0, 0, null);
-        GUIGraphicsContext.SendMessage(msgUpdate);
-
-        _currentStep = Steps.Sec0;
-        _seekTimer = DateTime.MinValue;
+        case Steps.Hourm2: return "-2hrs";
+        case Steps.Hourm1: return "-1hr";
+        case Steps.Minm30: return "-30min";
+        case Steps.Minm15: return "-15min";
+        case Steps.Minm10: return "-10min";
+        case Steps.Minm5: return "-5min";
+        case Steps.Minm3: return "-3min";
+        case Steps.Minm1: return "-1min";
+        case Steps.Secm30: return "-30sec";
+        case Steps.Secm15: return "-15sec";
+        case Steps.Sec0: return "0 sec";
+        case Steps.Sec15: return "+15sec";
+        case Steps.Sec30: return "+30sec";
+        case Steps.Min1: return "+1min";
+        case Steps.Min3: return "+3min";
+        case Steps.Min5: return "+5min";
+        case Steps.Min10: return "+10min";
+        case Steps.Min15: return "+15min";
+        case Steps.Min30: return "+30min";
+        case Steps.Hour1: return "+1hr";
+        case Steps.Hour2: return "+2hrs";
       }
-      static public bool HasVideo
+      return "";
+    }
+    static public int GetSeekStep(out bool bStart, out bool bEnd)
+    {
+      bStart = false;
+      bEnd = false;
+      if (_player == null) return 0;
+      int m_iTimeToStep = (int)_currentStep;
+      if (_player.CurrentPosition + m_iTimeToStep <= 0) bStart = true;//start
+      if (_player.CurrentPosition + m_iTimeToStep >= _player.Duration) bEnd = true;
+      return m_iTimeToStep;
+    }
+
+    static public void SeekStep(bool bFF)
+    {
+      if (bFF)
       {
-        get
+        switch (_currentStep)
         {
-          if (_player == null) return false;
-          return _player.HasVideo;
+          case Steps.Hourm2: _currentStep = Steps.Hourm1; break;
+          case Steps.Hourm1: _currentStep = Steps.Minm30; break;
+          case Steps.Minm30: _currentStep = Steps.Minm15; break;
+          case Steps.Minm15: _currentStep = Steps.Minm10; break;
+          case Steps.Minm10: _currentStep = Steps.Minm5; break;
+          case Steps.Minm5: _currentStep = Steps.Minm3; break;
+          case Steps.Minm3: _currentStep = Steps.Minm1; break;
+          case Steps.Minm1: _currentStep = Steps.Secm30; break;
+          case Steps.Secm30: _currentStep = Steps.Secm15; break;
+          case Steps.Secm15: _currentStep = Steps.Sec0; break;
+
+          case Steps.Sec0: _currentStep = Steps.Sec15; break;
+
+          case Steps.Sec15: _currentStep = Steps.Sec30; break;
+          case Steps.Sec30: _currentStep = Steps.Min1; break;
+          case Steps.Min1: _currentStep = Steps.Min3; break;
+          case Steps.Min3: _currentStep = Steps.Min5; break;
+          case Steps.Min5: _currentStep = Steps.Min10; break;
+          case Steps.Min10: _currentStep = Steps.Min15; break;
+          case Steps.Min15: _currentStep = Steps.Min30; break;
+          case Steps.Min30: _currentStep = Steps.Hour1; break;
+          case Steps.Hour1: _currentStep = Steps.Hour2; break;
+          case Steps.Hour2: break;
         }
       }
-      static public bool IsVideo
+      else
       {
-        get
+        switch (_currentStep)
         {
-          if (_player == null) return false;
-          if (_currentMedia == MediaType.Video) return true;
-          return false;
-        }
-      }
+          case Steps.Hourm2: break;
+          case Steps.Hourm1: _currentStep = Steps.Hourm2; break;
+          case Steps.Minm30: _currentStep = Steps.Hourm1; break;
+          case Steps.Minm15: _currentStep = Steps.Minm30; break;
+          case Steps.Minm10: _currentStep = Steps.Minm15; break;
+          case Steps.Minm5: _currentStep = Steps.Minm10; break;
+          case Steps.Minm3: _currentStep = Steps.Minm5; break;
+          case Steps.Minm1: _currentStep = Steps.Minm3; break;
+          case Steps.Secm30: _currentStep = Steps.Minm1; break;
+          case Steps.Secm15: _currentStep = Steps.Secm30; break;
 
-      static public bool HasSubs
-      {
-        get
-        {
-          if (_player == null) return false;
-          return (_subs != null);
+          case Steps.Sec0: _currentStep = Steps.Secm15; break;
+
+          case Steps.Sec15: _currentStep = Steps.Sec0; break;
+          case Steps.Sec30: _currentStep = Steps.Sec15; break;
+          case Steps.Min1: _currentStep = Steps.Sec30; break;
+          case Steps.Min3: _currentStep = Steps.Min1; break;
+          case Steps.Min5: _currentStep = Steps.Min3; break;
+          case Steps.Min10: _currentStep = Steps.Min5; break;
+          case Steps.Min15: _currentStep = Steps.Min10; break;
+          case Steps.Min30: _currentStep = Steps.Min15; break;
+          case Steps.Hour1: _currentStep = Steps.Min30; break;
+          case Steps.Hour2: _currentStep = Steps.Hour1; break;
         }
       }
-      static public void RenderSubtitles()
+      _seekTimer = DateTime.Now;
+    }
+
+    static public void SeekRelativePercentage(int iPercentage)
+    {
+      if (_player == null) return;
+      _player.SeekRelativePercentage(iPercentage);
+      GUIMessage msgUpdate = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYER_POSITION_CHANGED, 0, 0, 0, 0, 0, null);
+      GUIGraphicsContext.SendMessage(msgUpdate);
+
+      _currentStep = Steps.Sec0;
+      _seekTimer = DateTime.MinValue;
+    }
+
+    static public void SeekAbsolute(double dTime)
+    {
+      if (_player == null) return;
+      _player.SeekAbsolute(dTime);
+      GUIMessage msgUpdate = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYER_POSITION_CHANGED, 0, 0, 0, 0, 0, null);
+      GUIGraphicsContext.SendMessage(msgUpdate);
+
+      _currentStep = Steps.Sec0;
+      _seekTimer = DateTime.MinValue;
+    }
+
+    static public void SeekAsolutePercentage(int iPercentage)
+    {
+      if (_player == null) return;
+      _player.SeekAsolutePercentage(iPercentage);
+      GUIMessage msgUpdate = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYER_POSITION_CHANGED, 0, 0, 0, 0, 0, null);
+      GUIGraphicsContext.SendMessage(msgUpdate);
+
+      _currentStep = Steps.Sec0;
+      _seekTimer = DateTime.MinValue;
+    }
+    static public bool HasVideo
+    {
+      get
       {
-        if (_player == null) return;
-        if (_subs == null) return;
-        if (HasSubs)
-        {
-          _subs.Render(_player.CurrentPosition);
-        }
+        if (_player == null) return false;
+        return _player.HasVideo;
       }
-      static public void WndProc(ref Message m)
+    }
+    static public bool IsVideo
+    {
+      get
       {
-        if (_player == null) return;
-        _player.WndProc(ref m);
+        if (_player == null) return false;
+        if (_currentMedia == MediaType.Video) return true;
+        return false;
       }
+    }
+
+    static public bool HasSubs
+    {
+      get
+      {
+        if (_player == null) return false;
+        return (_subs != null);
+      }
+    }
+    static public void RenderSubtitles()
+    {
+      if (_player == null) return;
+      if (_subs == null) return;
+      if (HasSubs)
+      {
+        _subs.Render(_player.CurrentPosition);
+      }
+    }
+    static public void WndProc(ref Message m)
+    {
+      if (_player == null) return;
+      _player.WndProc(ref m);
+    }
 
 
-      static public void Process()
+    static public void Process()
+    {
+      if (GUIGraphicsContext.InVmr9Render) return;
+      if (GUIGraphicsContext.Vmr9Active && VMR9Util.g_vmr9 != null)
       {
-        if (GUIGraphicsContext.InVmr9Render) return;
-        if ( GUIGraphicsContext.Vmr9Active && VMR9Util.g_vmr9 != null )
+        VMR9Util.g_vmr9.Process();
+        VMR9Util.g_vmr9.Repaint();
+
+      }
+      if (_player == null) return;
+      _player.Process();
+      if (!_player.Playing)
+      {
+        Log.Write("g_Player.Process() player stopped...");
+        if (_player.Ended)
         {
-          VMR9Util.g_vmr9.Process();
-          VMR9Util.g_vmr9.Repaint();
-          
+          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_ENDED, 0, 0, 0, 0, 0, null);
+          GUIWindowManager.SendThreadMessage(msg);
+          OnEnded();
+          return;
         }
-        if (_player == null) return;
-        _player.Process();
-        if (!_player.Playing)
+        Stop();
+      }
+      else
+      {
+
+        if (_currentStep != Steps.Sec0)
         {
-          Log.Write("g_Player.Process() player stopped...");
-          if (_player.Ended)
+          TimeSpan ts = DateTime.Now - _seekTimer;
+          if (ts.TotalMilliseconds > 1500)
           {
-            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_ENDED, 0, 0, 0, 0, 0, null);
-            GUIWindowManager.SendThreadMessage(msg);
-            OnEnded();
-            return;
-          }
-          Stop();
-        }
-        else
-        {
-
-          if (_currentStep != Steps.Sec0)
-          {
-            TimeSpan ts = DateTime.Now - _seekTimer;
-            if (ts.TotalMilliseconds > 1500)
-            {
-              StepNow();
-            }
+            StepNow();
           }
         }
       }
+    }
 
-      static public int AudioStreams
-      {
-        get
-        {
-          if (_player == null) return 0;
-          return _player.AudioStreams;
-        }
-      }
-      static public int CurrentAudioStream
-      {
-        get
-        {
-          if (_player == null) return 0;
-          return _player.CurrentAudioStream;
-        }
-        set
-        {
-          if (_player != null)
-          {
-            _player.CurrentAudioStream = value;
-          }
-        }
-      }
-      static public string AudioLanguage(int iStream)
-      {
-        if (_player == null) return Strings.Unknown;
-        return _player.AudioLanguage(iStream);
-      }
-
-      static public int SubtitleStreams
-      {
-        get
-        {
-          if (_player == null) return 0;
-          return _player.SubtitleStreams;
-        }
-      }
-      static public int CurrentSubtitleStream
-      {
-        get
-        {
-          if (_player == null) return 0;
-          return _player.CurrentSubtitleStream;
-        }
-        set
-        {
-          if (_player != null)
-          {
-            _player.CurrentSubtitleStream = value;
-          }
-        }
-      }
-      static public void SetVideoWindow()
-      {
-        if (_player == null) return;
-        _player.SetVideoWindow();
-      }
-
-      static public string SubtitleLanguage(int iStream)
-      {
-        if (_player == null) return Strings.Unknown;
-        return _player.SubtitleLanguage(iStream);
-      }
-      static public bool EnableSubtitle
-      {
-        get
-        {
-          if (_player == null) return false;
-          return _player.EnableSubtitle;
-        }
-        set
-        {
-          if (_player == null) return;
-          _player.EnableSubtitle = value;
-        }
-      }
-
-      public static void Init()
-      {
-        GUIGraphicsContext.OnVideoWindowChanged += new VideoWindowChangedHandler(g_Player.OnVideoWindowChanged);
-        GUIGraphicsContext.OnGammaContrastBrightnessChanged += new VideoGammaContrastBrightnessHandler(g_Player.OnGammaContrastBrightnessChanged);
-      }
-
-      static void OnGammaContrastBrightnessChanged()
-      {
-        if (!Playing) return;
-        if (!HasVideo) return;
-        if (_player == null) return;
-        _player.Contrast = GUIGraphicsContext.Contrast;
-        _player.Brightness = GUIGraphicsContext.Brightness;
-        _player.Gamma = GUIGraphicsContext.Gamma;
-      }
-
-      static void OnVideoWindowChanged()
-      {
-        if (!Playing) return;
-        if (!HasVideo) return;
-
-        FullScreen = GUIGraphicsContext.IsFullScreenVideo;
-        ARType = GUIGraphicsContext.ARType;
-        if (!FullScreen)
-        {
-          PositionX = GUIGraphicsContext.VideoWindow.Left;
-          PositionY = GUIGraphicsContext.VideoWindow.Top;
-          RenderWidth = GUIGraphicsContext.VideoWindow.Width;
-          RenderHeight = GUIGraphicsContext.VideoWindow.Height;
-        }
-        bool inTV = false;
-        int windowId = GUIWindowManager.ActiveWindow;
-        if (windowId == (int)GUIWindow.Window.WINDOW_TV ||
-            windowId == (int)GUIWindow.Window.WINDOW_TVGUIDE ||
-            windowId == (int)GUIWindow.Window.WINDOW_SEARCHTV ||
-            windowId == (int)GUIWindow.Window.WINDOW_SCHEDULER ||
-            windowId == (int)GUIWindow.Window.WINDOW_RECORDEDTV)
-          inTV = true;
-        Visible = (FullScreen || GUIGraphicsContext.Overlay ||
-            windowId == (int)GUIWindow.Window.WINDOW_SCHEDULER || inTV);
-        SetVideoWindow();
-      }
-
-      /// <summary>
-      /// returns video window rectangle
-      /// </summary>
-      static public Rectangle VideoWindow
-      {
-        get
-        {
-          if (_player == null) return new Rectangle(0, 0, 0, 0);
-          return _player.VideoWindow;
-        }
-      }
-
-      /// <summary>
-      /// returns video source rectangle displayed
-      /// </summary>
-      static public Rectangle SourceWindow
-      {
-        get
-        {
-          if (_player == null) return new Rectangle(0, 0, 0, 0);
-          return _player.SourceWindow;
-        }
-      }
-      static public int GetHDC()
+    static public int AudioStreams
+    {
+      get
       {
         if (_player == null) return 0;
-        return _player.GetHDC();
+        return _player.AudioStreams;
       }
-
-      static public void ReleaseHDC(int HDC)
+    }
+    static public int CurrentAudioStream
+    {
+      get
       {
-        if (_player == null) return;
-        _player.ReleaseHDC(HDC);
+        if (_player == null) return 0;
+        return _player.CurrentAudioStream;
       }
-
-      static public bool CanSeek
+      set
       {
-        get
+        if (_player != null)
         {
-          if (_player == null) return false;
-          return _player.CanSeek();
+          _player.CurrentAudioStream = value;
         }
       }
+    }
+    static public string AudioLanguage(int iStream)
+    {
+      if (_player == null) return Strings.Unknown;
+      return _player.AudioLanguage(iStream);
+    }
+
+    static public int SubtitleStreams
+    {
+      get
+      {
+        if (_player == null) return 0;
+        return _player.SubtitleStreams;
+      }
+    }
+    static public int CurrentSubtitleStream
+    {
+      get
+      {
+        if (_player == null) return 0;
+        return _player.CurrentSubtitleStream;
+      }
+      set
+      {
+        if (_player != null)
+        {
+          _player.CurrentSubtitleStream = value;
+        }
+      }
+    }
+    static public void SetVideoWindow()
+    {
+      if (_player == null) return;
+      _player.SetVideoWindow();
+    }
+
+    static public string SubtitleLanguage(int iStream)
+    {
+      if (_player == null) return Strings.Unknown;
+      return _player.SubtitleLanguage(iStream);
+    }
+    static public bool EnableSubtitle
+    {
+      get
+      {
+        if (_player == null) return false;
+        return _player.EnableSubtitle;
+      }
+      set
+      {
+        if (_player == null) return;
+        _player.EnableSubtitle = value;
+      }
+    }
+
+    public static void Init()
+    {
+      GUIGraphicsContext.OnVideoWindowChanged += new VideoWindowChangedHandler(g_Player.OnVideoWindowChanged);
+      GUIGraphicsContext.OnGammaContrastBrightnessChanged += new VideoGammaContrastBrightnessHandler(g_Player.OnGammaContrastBrightnessChanged);
+    }
+
+    static void OnGammaContrastBrightnessChanged()
+    {
+      if (!Playing) return;
+      if (!HasVideo) return;
+      if (_player == null) return;
+      _player.Contrast = GUIGraphicsContext.Contrast;
+      _player.Brightness = GUIGraphicsContext.Brightness;
+      _player.Gamma = GUIGraphicsContext.Gamma;
+    }
+
+    static void OnVideoWindowChanged()
+    {
+      if (!Playing) return;
+      if (!HasVideo) return;
+
+      FullScreen = GUIGraphicsContext.IsFullScreenVideo;
+      ARType = GUIGraphicsContext.ARType;
+      if (!FullScreen)
+      {
+        PositionX = GUIGraphicsContext.VideoWindow.Left;
+        PositionY = GUIGraphicsContext.VideoWindow.Top;
+        RenderWidth = GUIGraphicsContext.VideoWindow.Width;
+        RenderHeight = GUIGraphicsContext.VideoWindow.Height;
+      }
+      bool inTV = false;
+      int windowId = GUIWindowManager.ActiveWindow;
+      if (windowId == (int)GUIWindow.Window.WINDOW_TV ||
+          windowId == (int)GUIWindow.Window.WINDOW_TVGUIDE ||
+          windowId == (int)GUIWindow.Window.WINDOW_SEARCHTV ||
+          windowId == (int)GUIWindow.Window.WINDOW_SCHEDULER ||
+          windowId == (int)GUIWindow.Window.WINDOW_RECORDEDTV)
+        inTV = true;
+      Visible = (FullScreen || GUIGraphicsContext.Overlay ||
+          windowId == (int)GUIWindow.Window.WINDOW_SCHEDULER || inTV);
+      SetVideoWindow();
+    }
+
+    /// <summary>
+    /// returns video window rectangle
+    /// </summary>
+    static public Rectangle VideoWindow
+    {
+      get
+      {
+        if (_player == null) return new Rectangle(0, 0, 0, 0);
+        return _player.VideoWindow;
+      }
+    }
+
+    /// <summary>
+    /// returns video source rectangle displayed
+    /// </summary>
+    static public Rectangle SourceWindow
+    {
+      get
+      {
+        if (_player == null) return new Rectangle(0, 0, 0, 0);
+        return _player.SourceWindow;
+      }
+    }
+    static public int GetHDC()
+    {
+      if (_player == null) return 0;
+      return _player.GetHDC();
+    }
+
+    static public void ReleaseHDC(int HDC)
+    {
+      if (_player == null) return;
+      _player.ReleaseHDC(HDC);
+    }
+
+    static public bool CanSeek
+    {
+      get
+      {
+        if (_player == null) return false;
+        return _player.CanSeek();
+      }
+    }
 
     #endregion
 
-    }
   }
+}
