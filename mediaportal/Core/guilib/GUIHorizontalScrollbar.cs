@@ -70,10 +70,15 @@ namespace MediaPortal.GUI.Library
       if (m_strBackground==null) m_strBackground="";
       if (m_strRight==null) m_strRight="";
       if (m_strLeft==null) m_strLeft="";
-			m_guiBackground	= new GUIImage(m_dwParentID, m_dwControlID, m_dwPosX, m_dwPosY,m_dwWidth, m_dwHeight,m_strBackground,0);
-			m_guiLeft		= new GUIImage(m_dwParentID, m_dwControlID, m_dwPosX, m_dwPosY,m_dwWidth, m_dwHeight,m_strLeft,0);
-			m_guiRight		= new GUIImage(m_dwParentID, m_dwControlID, m_dwPosX, m_dwPosY,m_dwWidth, m_dwHeight,m_strRight,0);
-		}
+			m_guiBackground	= new GUIImage(_parentControlId, _controlId, _positionX, _positionY,_width, _height,m_strBackground,0);
+      m_guiBackground.ParentControl = this;
+			
+      m_guiLeft		= new GUIImage(_parentControlId, _controlId, _positionX, _positionY,_width, _height,m_strLeft,0);
+      m_guiLeft.ParentControl = this;
+      
+      m_guiRight = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, _width, _height, m_strRight, 0);
+      m_guiRight.ParentControl = this;
+    }
 
 		/// <summary>
 		/// Renders the control.

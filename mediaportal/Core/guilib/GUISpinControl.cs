@@ -54,14 +54,14 @@ namespace MediaPortal.GUI.Library
 		[XMLSkinElement("showrange")]		protected bool			m_bShowRange=true;
 		[XMLSkinElement("digits")]			protected int			m_iDigits=-1;
 		[XMLSkinElement("reverse")]			protected bool			m_bReverse=false;
-		[XMLSkinElement("textcolor")]		protected long  		m_dwTextColor=0xFFFFFFFF;
-		[XMLSkinElement("font")]			protected string		m_strFont="";
-		[XMLSkinElement("textureUp")]		protected string		m_strUp;
-		[XMLSkinElement("textureDown")]		protected string		m_strDown;
-		[XMLSkinElement("textureUpFocus")]	protected string		m_strUpFocus; 
-		[XMLSkinElement("textureDownFocus")]protected string		m_strDownFocus;
+		[XMLSkinElement("textcolor")]		protected long  		_textColor=0xFFFFFFFF;
+		[XMLSkinElement("font")]			protected string		_fontName="";
+		[XMLSkinElement("textureUp")]		protected string		_upTextureName;
+		[XMLSkinElement("textureDown")]		protected string		_downTextureName;
+		[XMLSkinElement("textureUpFocus")]	protected string		_upTextureNameFocus; 
+		[XMLSkinElement("textureDownFocus")]protected string		_downTextureNameFocus;
 
-		[XMLSkinElement("align")]					protected Alignment		m_dwAlign = Alignment.ALIGN_LEFT;
+		[XMLSkinElement("align")]					protected Alignment		_alignment = Alignment.ALIGN_LEFT;
 		[XMLSkinElement("spintype")]				protected GUISpinControl.SpinType		m_iType = SpinType.SPIN_CONTROL_TYPE_TEXT;
 		[XMLSkinElement("orientation")]		protected eOrientation	m_orientation = eOrientation.Horizontal;
 
@@ -75,7 +75,7 @@ namespace MediaPortal.GUI.Library
 		
 		protected SpinSelect m_iSelect=SpinSelect.SPIN_BUTTON_DOWN;
 		protected float     m_fInterval=0.1f;
-		protected ArrayList m_vecLabels = new ArrayList ();
+		protected ArrayList _listLabels = new ArrayList ();
 		protected ArrayList m_vecValues= new ArrayList ();
 		protected GUIImage m_imgspinUp=null;
 		protected GUIImage m_imgspinDown=null;
@@ -83,9 +83,9 @@ namespace MediaPortal.GUI.Library
 		protected GUIImage m_imgspinDownFocus=null;
 	  
     
-		protected GUIFont  m_pFont=null;
+		protected GUIFont  _font=null;
 		protected string   m_szTyped="";
-    GUILabelControl      m_label=null;
+    GUILabelControl      _labelControl=null;
 	
 		public GUISpinControl (int dwParentID) : base(dwParentID)
 		{
@@ -94,32 +94,40 @@ namespace MediaPortal.GUI.Library
       :base(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight)
     {
       
-      m_dwTextColor=dwTextColor;
-      m_strFont=strFont;
-      m_dwAlign=dwAlign;
+      _textColor=dwTextColor;
+      _fontName=strFont;
+      _alignment=dwAlign;
       m_iType=iType;
 	  
-	  m_strDown = strDown;
-	  m_strUp = strUp;
-	  m_strUpFocus = strUpFocus;
-	  m_strDownFocus = strDownFocus;
+	  _downTextureName = strDown;
+	  _upTextureName = strUp;
+	  _upTextureNameFocus = strUpFocus;
+	  _downTextureNameFocus = strDownFocus;
 
 	  FinalizeConstruction();
     }
 	  public override void FinalizeConstruction()
 	  {
 		  base.FinalizeConstruction();
-		  m_imgspinUp		= new GUIImage(m_dwParentID, m_dwControlID, m_dwPosX, m_dwPosY,m_dwWidth, m_dwHeight,m_strUp,0);
-		  m_imgspinDown		= new GUIImage(m_dwParentID, m_dwControlID, m_dwPosX, m_dwPosY,m_dwWidth, m_dwHeight,m_strDown,0);
-		  m_imgspinUpFocus	= new GUIImage(m_dwParentID, m_dwControlID, m_dwPosX, m_dwPosY,m_dwWidth, m_dwHeight,m_strUpFocus,0);
-		  m_imgspinDownFocus= new GUIImage(m_dwParentID, m_dwControlID, m_dwPosX, m_dwPosY,m_dwWidth, m_dwHeight,m_strDownFocus,0);
+		  m_imgspinUp		= new GUIImage(_parentControlId, _controlId, _positionX, _positionY,_width, _height,_upTextureName,0);
+      m_imgspinUp.ParentControl = this;
+
+		  m_imgspinDown		= new GUIImage(_parentControlId, _controlId, _positionX, _positionY,_width, _height,_downTextureName,0);
+      m_imgspinDown.ParentControl = this;
+
+      m_imgspinUpFocus = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _upTextureNameFocus, 0);
+      m_imgspinUpFocus.ParentControl = this;
       
+      m_imgspinDownFocus = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _downTextureNameFocus, 0);
+      m_imgspinDownFocus.ParentControl = this;
+
       m_imgspinUp.Filtering=false;
       m_imgspinDown.Filtering=false;
       m_imgspinUpFocus.Filtering=false;
       m_imgspinDownFocus.Filtering=false;
-      m_label = new GUILabelControl(m_dwParentID);
-      m_label.CacheFont=true;
+      _labelControl = new GUILabelControl(_parentControlId);
+      _labelControl.CacheFont=true;
+      _labelControl.ParentControl = this;
 	  }
 
     public override void 	Render(float timePassed)
@@ -136,7 +144,7 @@ namespace MediaPortal.GUI.Library
       {
         m_szTyped=String.Empty;
       }
-      int dwPosX=m_dwPosX;
+      int dwPosX=_positionX;
       string wszText;
 
       if (m_iType == SpinType.SPIN_CONTROL_TYPE_INT)
@@ -156,68 +164,68 @@ namespace MediaPortal.GUI.Library
       else
       {
         wszText="";
-        if (m_iValue>=0 && m_iValue < m_vecLabels.Count )
+        if (m_iValue>=0 && m_iValue < _listLabels.Count )
         {
           if (m_bShowRange)
           {
-            wszText=String.Format("({0}/{1}) {2}", m_iValue+1,(int)m_vecLabels.Count,m_vecLabels[m_iValue] );
+            wszText=String.Format("({0}/{1}) {2}", m_iValue+1,(int)_listLabels.Count,_listLabels[m_iValue] );
           }
           else
           {
-            wszText=(string) m_vecLabels[m_iValue] ;
+            wszText=(string) _listLabels[m_iValue] ;
           }
         }
         else String.Format("?{0}?",m_iValue);
           
       }
 
-			int iTextXPos=m_dwPosX;
-			int iTextYPos=m_dwPosY;
-      if ( m_dwAlign== GUIControl.Alignment.ALIGN_LEFT)
+			int iTextXPos=_positionX;
+			int iTextYPos=_positionY;
+      if ( _alignment== GUIControl.Alignment.ALIGN_LEFT)
       {
-          if (m_pFont!=null)
+          if (_font!=null)
           {
 						if (wszText!=null && wszText.Length>0)
 						{
 							float fTextHeight=0,fTextWidth=0;
-							m_pFont.GetTextExtent( wszText, ref fTextWidth, ref fTextHeight);
+							_font.GetTextExtent( wszText, ref fTextWidth, ref fTextHeight);
               if (Orientation==eOrientation.Horizontal)
               {
-                m_imgspinUpFocus.SetPosition((int)fTextWidth + 5+dwPosX+ m_imgspinDown.Width, m_dwPosY);
-                m_imgspinUp.SetPosition((int)fTextWidth + 5+dwPosX+ m_imgspinDown.Width, m_dwPosY);
-                m_imgspinDownFocus.SetPosition((int)fTextWidth + 5+dwPosX, m_dwPosY);
-                m_imgspinDown.SetPosition((int)fTextWidth + 5+dwPosX, m_dwPosY);
+                m_imgspinUpFocus.SetPosition((int)fTextWidth + 5+dwPosX+ m_imgspinDown.Width, _positionY);
+                m_imgspinUp.SetPosition((int)fTextWidth + 5+dwPosX+ m_imgspinDown.Width, _positionY);
+                m_imgspinDownFocus.SetPosition((int)fTextWidth + 5+dwPosX, _positionY);
+                m_imgspinDown.SetPosition((int)fTextWidth + 5+dwPosX, _positionY);
               }
               else
               {
-                m_imgspinUpFocus.SetPosition((int)fTextWidth + 5+dwPosX, m_dwPosY-(Height/2));
-                m_imgspinUp.SetPosition((int)fTextWidth + 5+dwPosX, m_dwPosY-(Height/2));
-                m_imgspinDownFocus.SetPosition((int)fTextWidth + 5+dwPosX, m_dwPosY+(Height/2));
-                m_imgspinDown.SetPosition((int)fTextWidth + 5+dwPosX, m_dwPosY+(Height/2));
+                m_imgspinUpFocus.SetPosition((int)fTextWidth + 5+dwPosX, _positionY-(Height/2));
+                m_imgspinUp.SetPosition((int)fTextWidth + 5+dwPosX, _positionY-(Height/2));
+                m_imgspinDownFocus.SetPosition((int)fTextWidth + 5+dwPosX, _positionY+(Height/2));
+                m_imgspinDown.SetPosition((int)fTextWidth + 5+dwPosX, _positionY+(Height/2));
               }
 						}
           }
       }
-			if ( m_dwAlign== GUIControl.Alignment.ALIGN_CENTER)
+			if ( _alignment== GUIControl.Alignment.ALIGN_CENTER)
 			{
-				if (m_pFont!=null)
+				if (_font!=null)
 				{
 					float fTextHeight=1,fTextWidth=1;
 					if (wszText!=null && wszText.Length>0)
 					{
-						m_pFont.GetTextExtent( wszText, ref fTextWidth, ref fTextHeight);
+						_font.GetTextExtent( wszText, ref fTextWidth, ref fTextHeight);
 					}
 					if (Orientation==eOrientation.Horizontal)
 					{
 						iTextXPos=dwPosX+m_imgspinUp.Width;
-						iTextYPos=m_dwPosY;
-						m_imgspinDownFocus.SetPosition((int)dwPosX, m_dwPosY);
-						m_imgspinDown.SetPosition((int)dwPosX, m_dwPosY);
-						m_imgspinUpFocus.SetPosition((int)fTextWidth+m_imgspinUp.Width + dwPosX, m_dwPosY);
-						m_imgspinUp.SetPosition((int)fTextWidth +m_imgspinUp.Width+ dwPosX, m_dwPosY);
+						iTextYPos=_positionY;
+						m_imgspinDownFocus.SetPosition((int)dwPosX, _positionY);
+						m_imgspinDown.SetPosition((int)dwPosX, _positionY);
+						m_imgspinUpFocus.SetPosition((int)fTextWidth+m_imgspinUp.Width + dwPosX, _positionY);
+						m_imgspinUp.SetPosition((int)fTextWidth +m_imgspinUp.Width+ dwPosX, _positionY);
 
 						fTextHeight/=2.0f;
-						float fPosY = ((float)m_dwHeight)/2.0f;
+						float fPosY = ((float)_height)/2.0f;
 						fPosY-=fTextHeight;
 						fPosY+=(float)iTextYPos;
 						iTextYPos=(int)fPosY;
@@ -226,11 +234,11 @@ namespace MediaPortal.GUI.Library
 					else
 					{
 						iTextXPos=dwPosX;
-						iTextYPos=m_dwPosY+Height;
-						m_imgspinUpFocus.SetPosition((int)+dwPosX		, m_dwPosY-(Height+(int)fTextHeight)/2);
-						m_imgspinUp.SetPosition((int)dwPosX					, m_dwPosY-(Height+(int)fTextHeight)/2);
-						m_imgspinDownFocus.SetPosition((int)dwPosX	, m_dwPosY+(Height+(int)fTextHeight)/2);
-						m_imgspinDown.SetPosition((int)dwPosX				, m_dwPosY+(Height+(int)fTextHeight)/2);
+						iTextYPos=_positionY+Height;
+						m_imgspinUpFocus.SetPosition((int)+dwPosX		, _positionY-(Height+(int)fTextHeight)/2);
+						m_imgspinUp.SetPosition((int)dwPosX					, _positionY-(Height+(int)fTextHeight)/2);
+						m_imgspinDownFocus.SetPosition((int)dwPosX	, _positionY+(Height+(int)fTextHeight)/2);
+						m_imgspinDown.SetPosition((int)dwPosX				, _positionY+(Height+(int)fTextHeight)/2);
 					}
 				}
 			}
@@ -288,35 +296,35 @@ namespace MediaPortal.GUI.Library
           m_imgspinDown.Render(timePassed);
       }
 
-			if (m_pFont!=null)
+			if (_font!=null)
 			{
 
-        m_label.FontName=m_strFont;
-        m_label.TextColor=m_dwTextColor;
-        m_label.Label=wszText;
+        _labelControl.FontName=_fontName;
+        _labelControl.TextColor=_textColor;
+        _labelControl.Label=wszText;
 	  
 				if (Disabled)
-					m_label.TextColor &= 0x80ffffff;
-        if ( m_dwAlign!= GUIControl.Alignment.ALIGN_CENTER)
+					_labelControl.TextColor &= 0x80ffffff;
+        if ( _alignment!= GUIControl.Alignment.ALIGN_CENTER)
 				{
 					if (wszText!=null && wszText.Length>0)
 					{
-            m_label.TextAlignment=m_dwAlign;
-            float fHeight=(float)m_label.TextHeight;
+            _labelControl.TextAlignment=_alignment;
+            float fHeight=(float)_labelControl.TextHeight;
 						fHeight/=2.0f;
-						float fPosY = ((float)m_dwHeight)/2.0f;
+						float fPosY = ((float)_height)/2.0f;
 						fPosY-=fHeight;
-						fPosY+=(float)m_dwPosY;
+						fPosY+=(float)_positionY;
 
-						m_label.SetPosition(m_dwPosX-3,(int)fPosY);
+						_labelControl.SetPosition(_positionX-3,(int)fPosY);
           }
 				}
 				else
 				{
-          m_label.SetPosition(iTextXPos,iTextYPos);
-          m_label.TextAlignment=GUIControl.Alignment.ALIGN_LEFT;
+          _labelControl.SetPosition(iTextXPos,iTextYPos);
+          _labelControl.TextAlignment=GUIControl.Alignment.ALIGN_LEFT;
 				}
-        m_label.Render(timePassed);
+        _labelControl.Render(timePassed);
       }
     }
 
@@ -376,16 +384,16 @@ namespace MediaPortal.GUI.Library
 
             case SpinType.SPIN_CONTROL_TYPE_TEXT:
             {
-              if (iValue < 0|| iValue >= m_vecLabels.Count)
+              if (iValue < 0|| iValue >= _listLabels.Count)
               {
                 iValue = 0;
               }
 
               m_iValue=iValue;
-              if (m_iValue >= 0 && m_iValue < m_vecLabels.Count)
+              if (m_iValue >= 0 && m_iValue < _listLabels.Count)
               {
                 GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED,WindowId, GetID, ParentID,0,0,null);
-                msg.Label = (string)m_vecLabels[m_iValue];
+                msg.Label = (string)_listLabels[m_iValue];
                 GUIGraphicsContext.SendMessage(msg);
               }
             }  
@@ -518,7 +526,7 @@ namespace MediaPortal.GUI.Library
               case GUIMessage.MessageType.GUI_MSG_LABEL_RESET:
               {
 									
-                  m_vecLabels.Clear();
+                  _listLabels.Clear();
                   m_vecValues.Clear();
                   Value=0;
                   return true;
@@ -544,8 +552,8 @@ namespace MediaPortal.GUI.Library
 
                   if (m_iType==SpinType.SPIN_CONTROL_TYPE_TEXT)
                   {
-                      if ( m_iValue>= 0 && m_iValue < m_vecLabels.Count )
-                          message.Label=(string)m_vecLabels[m_iValue];
+                      if ( m_iValue>= 0 && m_iValue < _listLabels.Count )
+                          message.Label=(string)_listLabels[m_iValue];
 
                       if ( m_iValue>= 0 && m_iValue < m_vecValues.Count )
                           message.Param1=(int)m_vecValues[m_iValue];
@@ -574,19 +582,19 @@ namespace MediaPortal.GUI.Library
       m_imgspinDown.AllocResources();
       m_imgspinDownFocus.AllocResources();
 
-      m_pFont=GUIFontManager.GetFont(m_strFont);
-      SetPosition(m_dwPosX, m_dwPosY);
+      _font=GUIFontManager.GetFont(_fontName);
+      SetPosition(_positionX, _positionY);
 
 			if (SubItemCount>0)
 			{
 				m_iType = SpinType.SPIN_CONTROL_TYPE_TEXT;
-				m_vecLabels.Clear();
+				_listLabels.Clear();
 				m_vecValues.Clear();
 				for (int i=0; i < SubItemCount;++i)
 				{
 					string subitem= (string)GetSubItem(i);
 					
-					m_vecLabels.Add(subitem);
+					_listLabels.Add(subitem);
 					m_vecValues.Add(i);
 				}
 			}
@@ -612,13 +620,13 @@ namespace MediaPortal.GUI.Library
         m_imgspinDownFocus.SetPosition(dwPosX, dwPosY);
         m_imgspinDown.SetPosition(dwPosX, dwPosY);
 
-        m_imgspinUp.SetPosition(m_dwPosX + m_imgspinDown.Width,m_dwPosY);
-        m_imgspinUpFocus.SetPosition(m_dwPosX + m_imgspinDownFocus.Width,m_dwPosY);
+        m_imgspinUp.SetPosition(_positionX + m_imgspinDown.Width,_positionY);
+        m_imgspinUpFocus.SetPosition(_positionX + m_imgspinDownFocus.Width,_positionY);
       }
       else
       {
-        m_imgspinUp.SetPosition(m_dwPosX ,m_dwPosY+Height/2);
-        m_imgspinUpFocus.SetPosition(m_dwPosX ,m_dwPosY+Height/2);
+        m_imgspinUp.SetPosition(_positionX ,_positionY+Height/2);
+        m_imgspinUpFocus.SetPosition(_positionX ,_positionY+Height/2);
 
         m_imgspinDownFocus.SetPosition(dwPosX, dwPosY-Height/2);
         m_imgspinDown.SetPosition(dwPosX, dwPosY-Height/2);
@@ -672,19 +680,19 @@ namespace MediaPortal.GUI.Library
     public void AddLabel(string strLabel, int  iValue)
     {
       if (strLabel==null) return;
-      m_vecLabels.Add(strLabel);
+      _listLabels.Add(strLabel);
       m_vecValues.Add(iValue);
     }
 		public void Reset()
 		{
-			m_vecLabels.Clear();
+			_listLabels.Clear();
 			m_vecValues.Clear();
 			Value=0;
 		}
     public string GetLabel()
     {
-      if (m_iValue <0 || m_iValue >= m_vecLabels.Count) return "";
-      string strLabel=(string)m_vecLabels[ m_iValue];
+      if (m_iValue <0 || m_iValue >= _listLabels.Count) return "";
+      string strLabel=(string)_listLabels[ m_iValue];
       return strLabel;    
     }
     public override bool Focus
@@ -703,7 +711,7 @@ namespace MediaPortal.GUI.Library
               break;          
     
             case SpinType.SPIN_CONTROL_TYPE_TEXT:
-              if (m_iValue <0 || m_iValue >= m_vecLabels.Count) m_iValue = 0;
+              if (m_iValue <0 || m_iValue >= _listLabels.Count) m_iValue = 0;
               break;
           
             case SpinType.SPIN_CONTROL_TYPE_FLOAT:
@@ -727,7 +735,7 @@ namespace MediaPortal.GUI.Library
           
     
         case SpinType.SPIN_CONTROL_TYPE_TEXT:
-          return (int)m_vecLabels.Count;
+          return (int)_listLabels.Count;
           
         case SpinType.SPIN_CONTROL_TYPE_FLOAT:
           return (int)(m_fEnd*10.0f);
@@ -771,15 +779,15 @@ namespace MediaPortal.GUI.Library
     }
     public long TextColor 
     { 
-      get {return m_dwTextColor;}
+      get {return _textColor;}
     }
     public string FontName
     { 
-      get {return m_strFont; }
+      get {return _fontName; }
     }
     public GUIControl.Alignment TextAlignment 
     { 
-      get { return m_dwAlign;}
+      get { return _alignment;}
     }
     public GUISpinControl.SpinType UpDownType 
     { 
@@ -849,7 +857,7 @@ namespace MediaPortal.GUI.Library
           }
           case SpinType.SPIN_CONTROL_TYPE_TEXT:
           {
-              if (m_iValue+10 < (int)m_vecLabels.Count )
+              if (m_iValue+10 < (int)_listLabels.Count )
                   m_iValue+=10;
               GUIMessage msg=new GUIMessage (GUIMessage.MessageType.GUI_MSG_CLICKED,WindowId, GetID, ParentID,0,0,null);
               GUIGraphicsContext.SendMessage(msg);
@@ -879,7 +887,7 @@ namespace MediaPortal.GUI.Library
 
         case SpinType.SPIN_CONTROL_TYPE_TEXT:
         {
-          if (m_iValue+1 < (int)m_vecLabels.Count)
+          if (m_iValue+1 < (int)_listLabels.Count)
             return true;
           return false;
         }
@@ -944,10 +952,10 @@ namespace MediaPortal.GUI.Library
               if (m_iValue-1 >= 0)
                   m_iValue--;
           
-              if (m_iValue< m_vecLabels.Count)
+              if (m_iValue< _listLabels.Count)
               {
                 GUIMessage msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED,WindowId, GetID, ParentID,0,0,null);
-                msg.Label=(string)m_vecLabels[m_iValue];
+                msg.Label=(string)_listLabels[m_iValue];
                 GUIGraphicsContext.SendMessage(msg);
               }
               return;
@@ -981,12 +989,12 @@ namespace MediaPortal.GUI.Library
 
           case SpinType.SPIN_CONTROL_TYPE_TEXT:
           {
-              if (m_iValue+1 < (int)m_vecLabels.Count)
+              if (m_iValue+1 < (int)_listLabels.Count)
                   m_iValue++;
-              if (m_iValue < (int)m_vecLabels.Count)
+              if (m_iValue < (int)_listLabels.Count)
               {
                 GUIMessage msg=new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED,WindowId, GetID, ParentID,0,0,null);
-                msg.Label=(string)m_vecLabels[m_iValue];
+                msg.Label=(string)_listLabels[m_iValue];
                 GUIGraphicsContext.SendMessage(msg);
               }
               return;
@@ -1083,7 +1091,7 @@ namespace MediaPortal.GUI.Library
       
       if (m_iType==SpinType.SPIN_CONTROL_TYPE_TEXT)
       {
-        if (m_vecLabels.Count < 2) return false;
+        if (_listLabels.Count < 2) return false;
       }
       return true;
     }

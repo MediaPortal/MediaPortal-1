@@ -37,11 +37,11 @@ namespace MediaPortal.GUI.Library
 	public class GUIVideoControl : GUIControl
 	{
 		GUIImage image;
-		[XMLSkinElement("textureFocus")]	protected string	m_strImgFocusTexture="";
-		[XMLSkinElement("action")]			protected int		m_iAction=-1;
+		[XMLSkinElement("textureFocus")]	protected string	_focusedTextureName="";
+		[XMLSkinElement("action")]			protected int		_actionId=-1;
 		protected GUIImage FocusImage=null;
 		
-		protected Rectangle[] m_vidWindow= new Rectangle[1];
+		protected Rectangle[] _videoWindows= new Rectangle[1];
 	
 		public GUIVideoControl(int dwParentID) : base(dwParentID)
 		{
@@ -49,14 +49,17 @@ namespace MediaPortal.GUI.Library
 		public GUIVideoControl(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight, string texturename)
 			:base(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight)
 		{
-			m_strImgFocusTexture = texturename;
+			_focusedTextureName = texturename;
 			FinalizeConstruction();
 		}
 		public override void FinalizeConstruction()
 		{
 			base.FinalizeConstruction ();
-			FocusImage = new GUIImage(m_dwParentID, m_dwControlID, m_dwPosX, m_dwPosY,m_dwWidth, m_dwHeight, m_strImgFocusTexture ,0);
-			image = new GUIImage(m_dwParentID, m_dwControlID, m_dwPosX, m_dwPosY,m_dwWidth, m_dwHeight, "black.bmp" ,1);
+			FocusImage = new GUIImage(_parentControlId, _controlId, _positionX, _positionY,_width, _height, _focusedTextureName ,0);
+			image = new GUIImage(_parentControlId, _controlId, _positionX, _positionY,_width, _height, "black.bmp" ,1);
+
+      FocusImage.ParentControl = this;
+      image.ParentControl = this;
 		}
 
 
@@ -92,13 +95,13 @@ namespace MediaPortal.GUI.Library
       float y=base.YPosition;
       GUIGraphicsContext.Correct(ref x,ref y);
 
-      m_vidWindow[0].X=(int)x;
-      m_vidWindow[0].Y=(int)y;
-      m_vidWindow[0].Width=base.Width;
-      m_vidWindow[0].Height=base.Height;
+      _videoWindows[0].X=(int)x;
+      _videoWindows[0].Y=(int)y;
+      _videoWindows[0].Width=base.Width;
+      _videoWindows[0].Height=base.Height;
       if (!GUIGraphicsContext.Calibrating )
       {
-        GUIGraphicsContext.VideoWindow=m_vidWindow[0];
+        GUIGraphicsContext.VideoWindow=_videoWindows[0];
 				if (GUIGraphicsContext.ShowBackground)
 				{
           if (Focus)
@@ -117,22 +120,22 @@ namespace MediaPortal.GUI.Library
 
 					if (GUIGraphicsContext.graphics!=null)
           {
-						GUIGraphicsContext.graphics.FillRectangle(Brushes.Black , m_vidWindow[0].X,m_vidWindow[0].Y,base.Width,base.Height);
+						GUIGraphicsContext.graphics.FillRectangle(Brushes.Black , _videoWindows[0].X,_videoWindows[0].Y,base.Width,base.Height);
 					}
 					else
 					{
-						//image.SetPosition(m_vidWindow[0].X,m_vidWindow[0].Y);
-						//image.Width=m_vidWindow[0].Width;
-						//image.Height=m_vidWindow[0].Height;
+						//image.SetPosition(_videoWindows[0].X,_videoWindows[0].Y);
+						//image.Width=_videoWindows[0].Width;
+						//image.Height=_videoWindows[0].Height;
 						image.Render(timePassed);
-						//GUIGraphicsContext.DX9Device.Clear( ClearFlags.Target|ClearFlags.Target, Color.FromArgb(255,1,1,1), 1.0f, 0,m_vidWindow);
+						//GUIGraphicsContext.DX9Device.Clear( ClearFlags.Target|ClearFlags.Target, Color.FromArgb(255,1,1,1), 1.0f, 0,_videoWindows);
 					}
 				}
 				else
 				{
 					if (GUIGraphicsContext.graphics!=null)
 					{
-						GUIGraphicsContext.graphics.FillRectangle(Brushes.Black , m_vidWindow[0].X,m_vidWindow[0].Y,base.Width,base.Height);
+						GUIGraphicsContext.graphics.FillRectangle(Brushes.Black , _videoWindows[0].X,_videoWindows[0].Y,base.Width,base.Height);
 					}
 				}
       }
@@ -165,8 +168,8 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public int ActionID
     {
-      get { return m_iAction;}
-      set { m_iAction=value;}
+      get { return _actionId;}
+      set { _actionId=value;}
 
     }
 

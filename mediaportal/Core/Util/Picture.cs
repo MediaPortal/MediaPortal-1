@@ -307,7 +307,7 @@ namespace MediaPortal.Util
         float voffs = ((float)iTextureTop)    / ((float)desc.Height);
         float umax  = ((float)iTextureWidth)  / ((float)desc.Width);
         float vmax  = ((float)iTextureHeight) / ((float)desc.Height);
-        long m_colDiffuse=0xffffffff;
+        long _diffuseColor=0xffffffff;
 
         if (uoffs<0 || uoffs >1) return;
         if (voffs<0 || voffs >1) return;
@@ -332,22 +332,22 @@ namespace MediaPortal.Util
 	      
         CustomVertex.TransformedColoredTextured[] verts = (CustomVertex.TransformedColoredTextured[])m_vbBuffer.Lock(0,0); // Lock the buffer (which will return our structs)
         verts[0].X=x- 0.5f; verts[0].Y=y+nh- 0.5f;verts[0].Z= 0.0f;verts[0].Rhw=1.0f ;
-        verts[0].Color = (int)m_colDiffuse;
+        verts[0].Color = (int)_diffuseColor;
         verts[0].Tu = uoffs;
         verts[0].Tv = voffs+vmax;
 
         verts[1].X= x- 0.5f; verts[1].Y=y- 0.5f;verts[1].Z= 0.0f; verts[1].Rhw=1.0f ;
-        verts[1].Color = (int)m_colDiffuse;
+        verts[1].Color = (int)_diffuseColor;
         verts[1].Tu = uoffs;
         verts[1].Tv = voffs;
 
         verts[2].X= x+nw- 0.5f; verts[2].Y=y+nh- 0.5f;verts[2].Z= 0.0f;verts[2].Rhw=1.0f;
-        verts[2].Color = (int)m_colDiffuse;
+        verts[2].Color = (int)_diffuseColor;
         verts[2].Tu = uoffs+umax;
         verts[2].Tv = voffs+vmax;
 
         verts[3].X=  x+nw- 0.5f;verts[3].Y=  y- 0.5f;verts[3].Z=   0.0f;verts[3].Rhw=  1.0f ;
-        verts[3].Color = (int)m_colDiffuse;
+        verts[3].Color = (int)_diffuseColor;
         verts[3].Tu = uoffs+umax;
         verts[3].Tv = voffs;
 
@@ -448,7 +448,7 @@ namespace MediaPortal.Util
 				float voffs = ((float)iTextureTop)    / ((float)desc.Height);
 				float umax  = ((float)iTextureWidth)  / ((float)desc.Width);
 				float vmax  = ((float)iTextureHeight) / ((float)desc.Height);
-				long m_colDiffuse=0xffffffff;
+				long _diffuseColor=0xffffffff;
 
 				if (uoffs<0 || uoffs >1) return;
 				if (voffs<0 || voffs >1) return;
@@ -473,22 +473,22 @@ namespace MediaPortal.Util
 	      
 				CustomVertex.TransformedColoredTextured[] verts = (CustomVertex.TransformedColoredTextured[])m_vbBuffer.Lock(0,0); // Lock the buffer (which will return our structs)
 				verts[0].X=x- 0.5f; verts[0].Y=y+nh- 0.5f;verts[0].Z= 0.0f;verts[0].Rhw=1.0f ;
-				verts[0].Color = (int)m_colDiffuse;
+				verts[0].Color = (int)_diffuseColor;
 				verts[0].Tu = uoffs;
 				verts[0].Tv = voffs+vmax;
 
 				verts[1].X= x- 0.5f; verts[1].Y=y- 0.5f;verts[1].Z= 0.0f; verts[1].Rhw=1.0f ;
-				verts[1].Color = (int)m_colDiffuse;
+				verts[1].Color = (int)_diffuseColor;
 				verts[1].Tu = uoffs;
 				verts[1].Tv = voffs;
 
 				verts[2].X= x+nw- 0.5f; verts[2].Y=y+nh- 0.5f;verts[2].Z= 0.0f;verts[2].Rhw=1.0f;
-				verts[2].Color = (int)m_colDiffuse;
+				verts[2].Color = (int)_diffuseColor;
 				verts[2].Tu = uoffs+umax;
 				verts[2].Tv = voffs+vmax;
 
 				verts[3].X=  x+nw- 0.5f;verts[3].Y=  y- 0.5f;verts[3].Z=   0.0f;verts[3].Rhw=  1.0f ;
-				verts[3].Color = (int)m_colDiffuse;
+				verts[3].Color = (int)_diffuseColor;
 				verts[3].Tu = uoffs+umax;
 				verts[3].Tv = voffs;
 

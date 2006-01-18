@@ -58,7 +58,8 @@ namespace MediaPortal.GUI.Library
 			for (int i=0; i < SubItemCount;++i)
 			{
 				string strTexture = (string)GetSubItem(i);
-				GUIImage img= new GUIImage(m_dwParentID, m_dwControlID, m_dwPosX, m_dwPosY,m_textureWidth, m_textureHeight,strTexture,0);
+				GUIImage img= new GUIImage(_parentControlId, _controlId, _positionX, _positionY,m_textureWidth, m_textureHeight,strTexture,0);
+        img.ParentControl = this;
 				m_items.Add(img);
 			}
 		}
@@ -103,8 +104,8 @@ namespace MediaPortal.GUI.Library
 
 		void RenderHorizontal(float timePassed)
 		{
-			int startx =m_dwPosX;
-			int imagesToDraw=m_dwWidth/m_textureWidth;
+			int startx =_positionX;
+			int imagesToDraw=_width/m_textureWidth;
 			for (int i=0; i < imagesToDraw;++i)
 			{
 				int texture=0;
@@ -126,7 +127,7 @@ namespace MediaPortal.GUI.Library
 				}
 
 				GUIImage img = (GUIImage)m_items[texture];
-				img.SetPosition(startx, m_dwPosY);
+				img.SetPosition(startx, _positionY);
 				img.Render(timePassed);
 				if (m_alignment==Alignment.ALIGN_LEFT)
 					startx += m_textureWidth;

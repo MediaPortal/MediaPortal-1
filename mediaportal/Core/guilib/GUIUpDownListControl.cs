@@ -97,14 +97,15 @@ namespace MediaPortal.GUI.Library
 			currentSelection=Selection.Button;
 			for (int i=0; i < m_iItemsPerPage;++i)
 			{
-				GUIUpDownButton cntl = new GUIUpDownButton(m_dwControlID, 0, m_dwSpinX, m_dwSpinY, m_dwWidth, m_iItemHeight, m_strButtonFocused, m_strButtonUnfocused,
-																										m_dwSpinWidth, m_dwSpinHeight, 
-																										m_strUp, m_strDown, 
-																										m_strUpFocus, m_strDownFocus, 
-																										m_dwSpinColor, m_dwSpinX, m_dwSpinY);
+				GUIUpDownButton cntl = new GUIUpDownButton(_controlId, 0, _spinControlPositionX, _spinControlPositionY, _width, m_iItemHeight, m_strButtonFocused, m_strButtonUnfocused,
+																										_spinControlWidth, _spinControlHeight, 
+																										_upTextureName, _downTextureName, 
+																										_upTextureNameFocus, _downTextureNameFocus, 
+																										_colorSpinColor, _spinControlPositionX, _spinControlPositionY);
 
+        cntl.ParentControl = this;
 				cntl.AllocResources();
-				m_imgButton.Add(cntl);
+				_listButtons.Add(cntl);
 			}
 		}
 		public override bool HitTest(int x,int y,out int controlID, out bool focused)
@@ -134,21 +135,21 @@ namespace MediaPortal.GUI.Library
 				return false;
 			}
 			m_iSelect = ListType.CONTROL_LIST;
-			int posy =y- (int)m_dwPosY;
+			int posy =y- (int)_positionY;
 			m_iCursorY = (posy / (m_iItemHeight + m_iSpaceBetweenItems));
-			while (m_iOffset + m_iCursorY >= m_vecItems.Count) m_iCursorY--;
+			while (m_iOffset + m_iCursorY >= m__itemList.Count) m_iCursorY--;
 			if (m_iCursorY >= m_iItemsPerPage)
 				m_iCursorY = m_iItemsPerPage - 1;
 			OnSelectionChanged();
 			m_bRefresh = true;
 
-			if (m_imgButton!=null)
+			if (_listButtons!=null)
 			{
 				int cntlId;
 				bool gotFocus;
 				for (int i=0; i < m_iItemsPerPage;++i)
 				{
-					GUIUpDownButton btn = (GUIUpDownButton)m_imgButton[i];
+					GUIUpDownButton btn = (GUIUpDownButton)_listButtons[i];
 					btn.HitTest(x,y,out cntlId, out gotFocus);
 					if (i==m_iCursorY)
 					{
@@ -239,7 +240,7 @@ namespace MediaPortal.GUI.Library
 		{
 			for (int i=0; i < m_iItemsPerPage;++i)
 			{
-				GUIUpDownButton btn = (GUIUpDownButton)m_imgButton[i];
+				GUIUpDownButton btn = (GUIUpDownButton)_listButtons[i];
 				if (i==m_iCursorY)
 				{
 					switch (currentSelection)

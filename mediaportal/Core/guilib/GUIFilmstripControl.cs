@@ -49,25 +49,25 @@ namespace MediaPortal.GUI.Library
 			SEARCH_NEXT
 		} ;
 
-		[XMLSkinElement("remoteColor")] protected long m_dwRemoteColor = 0xffff0000;
-		[XMLSkinElement("downloadColor")] protected long m_dwDownloadColor = 0xff00ff00;
-		[XMLSkinElement("thumbPosXBig")] protected int m_iThumbXPosBig = 0;
-		[XMLSkinElement("thumbPosYBig")] protected int m_iThumbYPosBig = 0;
-		[XMLSkinElement("thumbWidthBig")] protected int m_iThumbWidthBig = 0;
-		[XMLSkinElement("thumbHeightBig")] protected int m_iThumbHeightBig = 0;
+		[XMLSkinElement("remoteColor")] protected long _remoteColor = 0xffff0000;
+		[XMLSkinElement("downloadColor")] protected long _downloadColor = 0xff00ff00;
+		[XMLSkinElement("thumbPosXBig")] protected int _positionXThumbBig = 0;
+		[XMLSkinElement("thumbPosYBig")] protected int _positionYThumbBig = 0;
+		[XMLSkinElement("thumbWidthBig")] protected int _widthThumbBig = 0;
+		[XMLSkinElement("thumbHeightBig")] protected int _heightThumbBig = 0;
 
-		[XMLSkinElement("imageFolder")] protected string m_strImageFolder = "";
-		[XMLSkinElement("imageFolderFocus")] protected string m_strImageFolderFocus = "";
+		[XMLSkinElement("imageFolder")] protected string _imageFolderName = "";
+		[XMLSkinElement("imageFolderFocus")] protected string _imageFolderNameFocus = "";
 
-		[XMLSkinElement("textureUp")] protected string m_strUp = "";
-		[XMLSkinElement("textureDown")] protected string m_strDown = "";
-		[XMLSkinElement("textureUpFocus")] protected string m_strUpFocus = "";
-		[XMLSkinElement("textureDownFocus")] protected string m_strDownFocus = "";
-		[XMLSkinElement("spinColor")] protected long m_dwSpinColor;
-		[XMLSkinElement("spinHeight")] protected int m_dwSpinHeight;
-		[XMLSkinElement("spinWidth")] protected int m_dwSpinWidth;
-		[XMLSkinElement("spinPosX")] protected int m_dwSpinX;
-		[XMLSkinElement("spinPosY")] protected int m_dwSpinY;
+		[XMLSkinElement("textureUp")] protected string _upTextureName = "";
+		[XMLSkinElement("textureDown")] protected string _downTextureName = "";
+		[XMLSkinElement("textureUpFocus")] protected string _upTextureNameFocus = "";
+		[XMLSkinElement("textureDownFocus")] protected string _downTextureNameFocus = "";
+		[XMLSkinElement("spinColor")] protected long _colorSpinColor;
+		[XMLSkinElement("spinHeight")] protected int _spinControlHeight;
+		[XMLSkinElement("spinWidth")] protected int _spinControlWidth;
+		[XMLSkinElement("spinPosX")] protected int _spinControlPositionX;
+		[XMLSkinElement("spinPosY")] protected int _spinControlPositionY;
 		[XMLSkinElement("itemHeight")] protected int m_iItemHeight;
 		[XMLSkinElement("itemWidth")] protected int m_iItemWidth;
 		[XMLSkinElement("textureHeight")] protected int m_iTextureHeightLow;
@@ -76,8 +76,8 @@ namespace MediaPortal.GUI.Library
 		[XMLSkinElement("thumbHeightBig")] protected int m_iTextureHeight = 80;
 		[XMLSkinElement("thumbPosX")] protected int m_iThumbXPos = 8;
 		[XMLSkinElement("thumbPosY")] protected int m_iThumbYPos = 8;
-		[XMLSkinElement("font")] protected string m_strFontName = "";
-		[XMLSkinElement("textcolor")] protected long m_dwTextColor = 0xFFFFFFFF;
+		[XMLSkinElement("font")] protected string _fontName = "";
+		[XMLSkinElement("textcolor")] protected long _textColor = 0xFFFFFFFF;
 		[XMLSkinElement("selectedColor")] protected long m_dwSelectedColor = 0xFFFFFFFF;
 
 		[XMLSkinElement("scrollbarbg")] protected string m_strScrollBarBG = "";
@@ -110,7 +110,7 @@ namespace MediaPortal.GUI.Library
 		int m_iTextureWidthBig;
 		bool m_bShowTexture = true;
 		int m_iOffset = 0;
-		GUIFont m_pFont = null;
+		GUIFont _font = null;
 		GUISpinControl m_upDown = null;
 		GUIImage m_imgFolder = null;
 		GUIImage m_imgFolderFocus = null;
@@ -131,9 +131,9 @@ namespace MediaPortal.GUI.Library
 		int m_iThumbWidthLow = 0;
 		int m_iThumbHeightLow = 0;
 
-    List<GUIListItem> m_vecItems = new List<GUIListItem>();
-		int scroll_pos = 0;
-		int iScrollX = 0;
+    List<GUIListItem> m__itemList = new List<GUIListItem>();
+		int _scrollPosition = 0;
+		int _scrollPosititionX = 0;
 		int iLastItem = -1;
 		int iFrames = 0;
 		bool m_bRefresh = false;
@@ -146,7 +146,7 @@ namespace MediaPortal.GUI.Library
 		bool m_bInfoChanged = false;
 		string m_strNewInfoImage = "";
 
-		protected double iScrollOffset = 0.0f;
+		protected double _scrollOffset = 0.0f;
 		protected int iCurrentFrame = 0;
 		protected double timeElapsed = 0.0f;
 		protected bool scrollContinuosly = false;
@@ -192,22 +192,29 @@ namespace MediaPortal.GUI.Library
 		public override void FinalizeConstruction()
 		{
 			base.FinalizeConstruction();
-			if (m_dwPosY > m_dwPosY && m_dwSpinY < m_dwPosY + m_dwHeight) m_dwSpinY = m_dwPosY + m_dwHeight;
-			m_imgFolder = new GUIImage(m_dwParentID, m_dwControlID, m_dwPosX, m_dwPosY, m_iItemWidth, m_iItemHeight, m_strImageFolder, 0);
-			m_imgFolderFocus = new GUIImage(m_dwParentID, m_dwControlID, m_dwPosX, m_dwPosY, m_iItemWidth, m_iItemHeight, m_strImageFolderFocus, 0);
-			m_upDown = new GUISpinControl(m_dwControlID, 0, m_dwSpinX, m_dwSpinY, m_dwSpinWidth, m_dwSpinHeight, m_strUp, m_strDown, m_strUpFocus, m_strDownFocus, m_strFontName, m_dwSpinColor, GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT, GUIControl.Alignment.ALIGN_LEFT);
-			m_pFont = GUIFontManager.GetFont(m_strFontName);
-			int xpos = 5 + m_dwPosX + m_dwWidth;
+			if (_positionY > _positionY && _spinControlPositionY < _positionY + _height) _spinControlPositionY = _positionY + _height;
+			m_imgFolder = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, m_iItemWidth, m_iItemHeight, _imageFolderName, 0);
+      m_imgFolder.ParentControl = this;
+
+      m_imgFolderFocus = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, m_iItemWidth, m_iItemHeight, _imageFolderNameFocus, 0);
+      m_imgFolderFocus.ParentControl = this;
+      
+      m_upDown = new GUISpinControl(_controlId, 0, _spinControlPositionX, _spinControlPositionY, _spinControlWidth, _spinControlHeight, _upTextureName, _downTextureName, _upTextureNameFocus, _downTextureNameFocus, _fontName, _colorSpinColor, GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT, GUIControl.Alignment.ALIGN_LEFT);
+      m_upDown.ParentControl = this;
+      _font = GUIFontManager.GetFont(_fontName);
+			int xpos = 5 + _positionX + _width;
 			if (xpos + 15 > GUIGraphicsContext.Width) xpos = GUIGraphicsContext.Width - 15;
-			m_horzScrollbar = new GUIverticalScrollbar(m_dwControlID, 0, 5 + m_dwPosX + m_dwWidth, m_dwPosY, 15, m_dwHeight, m_strScrollBarBG, m_strScrollBarTop, m_strScrollBarBottom);
+			m_horzScrollbar = new GUIverticalScrollbar(_controlId, 0, 5 + _positionX + _width, _positionY, 15, _height, m_strScrollBarBG, m_strScrollBarTop, m_strScrollBarBottom);
+      m_horzScrollbar.ParentControl = this;
+
 			m_horzScrollbar.SendNotifies = false;
 			m_upDown.Orientation = GUISpinControl.eOrientation.Horizontal;
 			m_upDown.SetReverse(true);
-			m_backgroundImage = new GUIImage(0, 0, m_iBackgroundX, m_iBackgroundY,
-				m_iBackgroundWidth, m_iBackgroundHeight, m_strBackground, 0);
-			m_infoImage = new GUIImage(0, 0, m_iInfoImageX, m_iInfoImageY,
-				m_iInfoImageWidth, m_iInfoImageHeight, m_strInfoImage, 0);
-			m_infoImage.Filtering = true;
+			m_backgroundImage = new GUIImage(0, 0, m_iBackgroundX, m_iBackgroundY,m_iBackgroundWidth, m_iBackgroundHeight, m_strBackground, 0);
+      m_backgroundImage.ParentControl = this;
+      m_infoImage = new GUIImage(0, 0, m_iInfoImageX, m_iInfoImageY,m_iInfoImageWidth, m_iInfoImageHeight, m_strInfoImage, 0);
+      m_infoImage.ParentControl = this;
+      m_infoImage.Filtering = true;
 			m_infoImage.KeepAspectRatio = true;
 			m_infoImage.Centered = true;
 
@@ -220,11 +227,11 @@ namespace MediaPortal.GUI.Library
 		{
 			base.ScaleToScreenResolution();
 
-			GUIGraphicsContext.ScaleRectToScreenResolution(ref m_dwSpinX, ref m_dwSpinY, ref m_dwSpinWidth, ref m_dwSpinHeight);
+			GUIGraphicsContext.ScaleRectToScreenResolution(ref _spinControlPositionX, ref _spinControlPositionY, ref _spinControlWidth, ref _spinControlHeight);
 			GUIGraphicsContext.ScalePosToScreenResolution(ref m_iTextureWidth, ref m_iTextureHeight);
 			GUIGraphicsContext.ScaleRectToScreenResolution(ref m_iThumbXPos, ref m_iThumbYPos, ref m_iThumbWidth, ref m_iThumbHeight);
 			GUIGraphicsContext.ScalePosToScreenResolution(ref m_iTextureWidthBig, ref m_iTextureHeightBig);
-			GUIGraphicsContext.ScaleRectToScreenResolution(ref m_iThumbXPosBig, ref m_iThumbYPosBig, ref m_iThumbWidthBig, ref m_iThumbHeightBig);
+			GUIGraphicsContext.ScaleRectToScreenResolution(ref _positionXThumbBig, ref _positionYThumbBig, ref _widthThumbBig, ref _heightThumbBig);
 			GUIGraphicsContext.ScalePosToScreenResolution(ref m_iItemWidthBig, ref m_iItemHeightBig);
 			GUIGraphicsContext.ScalePosToScreenResolution(ref m_iItemWidth, ref m_iItemHeight);
 
@@ -265,9 +272,9 @@ namespace MediaPortal.GUI.Library
         GUIPropertyManager.SetProperty("#selectedthumb", strThumb);
       }
 			if (!IsVisible) return;
-			if (item >= 0 && item < m_vecItems.Count)
+			if (item >= 0 && item < m__itemList.Count)
 			{
-				GUIListItem listitem = m_vecItems[item] ;
+				GUIListItem listitem = m__itemList[item] ;
 				if (listitem != null) listitem.ItemSelected(this);
 			}
 
@@ -286,23 +293,23 @@ namespace MediaPortal.GUI.Library
 		/// <param name="pItem">item itself</param>
 		void RenderItem(float timePassed, bool bFocus, int dwPosX, int dwPosY, GUIListItem pItem)
 		{
-			if (m_pFont == null) return;
+			if (_font == null) return;
 			if (pItem == null) return;
 			if (dwPosY < 0) return;
 			if (m_imgFolderFocus == null) return;
 			if (m_imgFolder == null) return;
 
 			float fTextHeight = 0, fTextWidth = 0;
-			m_pFont.GetTextExtent("W", ref fTextWidth, ref fTextHeight);
+			_font.GetTextExtent("W", ref fTextWidth, ref fTextHeight);
 
 			float fTextPosY = (float) dwPosY + (float) m_iTextureHeight;
 
-			long dwColor = m_dwTextColor;
+			long dwColor = _textColor;
 			if (pItem.Selected) dwColor = m_dwSelectedColor;
 			if (pItem.IsRemote)
 			{
-				dwColor = m_dwRemoteColor;
-				if (pItem.IsDownloading) dwColor = m_dwDownloadColor;
+				dwColor = _remoteColor;
+				if (pItem.IsDownloading) dwColor = _downloadColor;
 			}
 
 			if (bFocus == true && Focus && m_iSelect == GUIListControl.ListType.CONTROL_LIST)
@@ -334,7 +341,8 @@ namespace MediaPortal.GUI.Library
 				if (null == pImage && m_iSleeper == 0 && !IsAnimating)
 				{
 					pImage = new GUIImage(0, 0, m_iThumbXPos - iOverSized + dwPosX, m_iThumbYPos - iOverSized + dwPosY, m_iThumbWidth + 2*iOverSized, m_iThumbHeight + 2*iOverSized, pItem.ThumbnailImage, 0x0);
-					pImage.KeepAspectRatio = true;
+          pImage.ParentControl = this;
+          pImage.KeepAspectRatio = true;
 					pImage.ZoomFromTop = !pItem.IsFolder;
 					pImage.AllocResources();
 					pItem.Thumbnail = pImage;
@@ -368,7 +376,8 @@ namespace MediaPortal.GUI.Library
 					if (null == pImage && m_iSleeper == 0 && !IsAnimating)
 					{
 						pImage = new GUIImage(0, 0, m_iThumbXPos - iOverSized + dwPosX, m_iThumbYPos - iOverSized + dwPosY, m_iThumbWidth + 2*iOverSized, m_iThumbHeight + 2*iOverSized, pItem.IconImageBig, 0x0);
-						pImage.KeepAspectRatio = true;
+            pImage.ParentControl = this;
+            pImage.KeepAspectRatio = true;
 						pImage.ZoomFromTop = !pItem.IsFolder;
 						pImage.AllocResources();
 						pItem.IconBig = pImage;
@@ -401,7 +410,7 @@ namespace MediaPortal.GUI.Library
 			timeElapsed += timePassed;
 			iCurrentFrame = (int) (timeElapsed/TimeSlice);
 
-			if (null == m_pFont) return;
+			if (null == _font) return;
 			if (GUIGraphicsContext.EditMode == false)
 			{
 				if (!IsVisible) return;
@@ -425,7 +434,7 @@ namespace MediaPortal.GUI.Library
 			if (m_horzScrollbar != null)
 			{
 				float fPercent = (float) m_iOffset + m_iCursorX;
-				fPercent /= (float) (m_vecItems.Count);
+				fPercent /= (float) (m__itemList.Count);
 				fPercent *= 100.0f;
 				if ((int) fPercent != (int) m_horzScrollbar.Percentage)
 				{
@@ -433,20 +442,20 @@ namespace MediaPortal.GUI.Library
 				}
 			}
 
-			int iScrollXOffset = 0;
+			int _scrollPosititionXOffset = 0;
 			if (true == m_bScrollRight)
 			{
-				iScrollXOffset = - (m_iItemWidth - m_iScrollCounter);
+				_scrollPosititionXOffset = - (m_iItemWidth - m_iScrollCounter);
 			}
 			if (true == m_bScrollLeft)
 			{
-				iScrollXOffset = m_iItemWidth - m_iScrollCounter;
+				_scrollPosititionXOffset = m_iItemWidth - m_iScrollCounter;
 			}
 
 			Viewport oldview = GUIGraphicsContext.DX9Device.Viewport;
 			Viewport view = new Viewport();
-			float fx = (float) m_dwPosX;
-			float fy = (float) m_dwPosY;
+			float fx = (float) _positionX;
+			float fy = (float) _positionY;
 			GUIGraphicsContext.Correct(ref fx, ref fy);
 
 			if (fx <= 0) fx = 0;
@@ -461,21 +470,21 @@ namespace MediaPortal.GUI.Library
 
 			int iStartItem = 30000;
 			int iEndItem = -1;
-			dwPosY = m_dwPosY;
+			dwPosY = _positionY;
 			int dwPosX;
 
 			//are we scrolling towards the left?
 			if (m_bScrollLeft)
 			{
 				// yes, then render item on right
-				dwPosX = m_dwPosX - m_iItemWidth + iScrollXOffset;
+				dwPosX = _positionX - m_iItemWidth + _scrollPosititionXOffset;
 				int iItem = m_iOffset - 1;
-				if (iItem >= 0 && iItem < m_vecItems.Count)
+				if (iItem >= 0 && iItem < m__itemList.Count)
 				{
 					if (iItem < iStartItem) iStartItem = iItem;
 					if (iItem > iEndItem) iEndItem = iItem;
 
-					GUIListItem pItem = m_vecItems[iItem];
+					GUIListItem pItem = m__itemList[iItem];
 					RenderItem(timePassed, false, dwPosX, dwPosY, pItem);
 				}
 			}
@@ -483,14 +492,14 @@ namespace MediaPortal.GUI.Library
 			// render main panel
 			for (int iCol = 0; iCol < m_iColumns; iCol++)
 			{
-				dwPosX = m_dwPosX + iCol*m_iItemWidth + iScrollXOffset;
+				dwPosX = _positionX + iCol*m_iItemWidth + _scrollPosititionXOffset;
 				int iItem = iCol + m_iOffset;
-				if (iItem >= 0 && iItem < m_vecItems.Count)
+				if (iItem >= 0 && iItem < m__itemList.Count)
 				{
 					if (iItem < iStartItem) iStartItem = iItem;
 					if (iItem > iEndItem) iEndItem = iItem;
 
-					GUIListItem pItem = m_vecItems[iItem];
+					GUIListItem pItem = m__itemList[iItem];
 					bool bFocus = (m_iCursorX == iCol);
 					RenderItem(timePassed, bFocus, dwPosX, dwPosY, pItem);
 				}
@@ -501,15 +510,15 @@ namespace MediaPortal.GUI.Library
 			if (m_bScrollRight)
 			{
 				// yes, then render the new left item
-				dwPosX = m_dwPosX + m_iColumns*m_iItemWidth + iScrollXOffset;
+				dwPosX = _positionX + m_iColumns*m_iItemWidth + _scrollPosititionXOffset;
 				m_iOffset ++;
 				int iItem = m_iColumns + m_iOffset - 1;
-				if (iItem >= 0 && iItem < m_vecItems.Count)
+				if (iItem >= 0 && iItem < m__itemList.Count)
 				{
 					if (iItem < iStartItem) iStartItem = iItem;
 					if (iItem > iEndItem) iEndItem = iItem;
 
-					GUIListItem pItem = m_vecItems[iItem];
+					GUIListItem pItem = m__itemList[iItem];
 					RenderItem(timePassed, false, dwPosX, dwPosY, pItem);
 				}
 				m_iOffset --;
@@ -559,9 +568,9 @@ namespace MediaPortal.GUI.Library
 			{
 				for (int i = 0; i < iStartItem; ++i)
 				{
-					if (i >= 0 && i < m_vecItems.Count)
+					if (i >= 0 && i < m__itemList.Count)
 					{
-						GUIListItem pItem = m_vecItems[i] ;
+						GUIListItem pItem = m__itemList[i] ;
 						if (null != pItem)
 						{
 							pItem.FreeMemory();
@@ -570,11 +579,11 @@ namespace MediaPortal.GUI.Library
 				}
 			}
 
-			for (int i = iEndItem + 1; i < m_vecItems.Count; ++i)
+			for (int i = iEndItem + 1; i < m__itemList.Count; ++i)
 			{
-				if (i >= 0 && i < m_vecItems.Count)
+				if (i >= 0 && i < m__itemList.Count)
 				{
-					GUIListItem pItem = m_vecItems[i] ;
+					GUIListItem pItem = m__itemList[i] ;
 					if (null != pItem)
 					{
 						pItem.FreeMemory();
@@ -582,7 +591,7 @@ namespace MediaPortal.GUI.Library
 				}
 			}
 
-			dwPosY = m_dwPosY + (m_iItemHeight);
+			dwPosY = _positionY + (m_iItemHeight);
 
 			if (m_upDown != null) m_upDown.Render(timePassed);
 			if (m_bScrollLeft || m_bScrollRight)
@@ -590,7 +599,7 @@ namespace MediaPortal.GUI.Library
 				m_bRefresh = true;
 			}
 			int iItemsPerPage = m_iColumns;
-			if (m_vecItems.Count > iItemsPerPage && m_horzScrollbar != null)
+			if (m__itemList.Count > iItemsPerPage && m_horzScrollbar != null)
 			{
 				m_horzScrollbar.Render(timePassed);
 			}
@@ -626,7 +635,7 @@ namespace MediaPortal.GUI.Library
 
 				case Action.ActionType.ACTION_END:
 				{
-					int iItem = m_vecItems.Count - 1;
+					int iItem = m__itemList.Count - 1;
 					if (iItem >= 0)
 					{
 						int iPage = 1;
@@ -789,9 +798,9 @@ namespace MediaPortal.GUI.Library
 				if (message.Message == GUIMessage.MessageType.GUI_MSG_GET_SELECTED_ITEM)
 				{
 					int iItem = m_iOffset + m_iCursorX;
-					if (iItem >= 0 && iItem < m_vecItems.Count)
+					if (iItem >= 0 && iItem < m__itemList.Count)
 					{
-						message.Object = m_vecItems[iItem];
+						message.Object = m__itemList[iItem];
 					}
 					else
 					{
@@ -804,7 +813,7 @@ namespace MediaPortal.GUI.Library
 				if (message.Message == GUIMessage.MessageType.GUI_MSG_REFRESH)
 				{
 					GUITextureManager.CleanupThumbs();
-					foreach (GUIListItem item in m_vecItems)
+					foreach (GUIListItem item in m__itemList)
 					{
 						item.FreeMemory();
 					}
@@ -821,9 +830,9 @@ namespace MediaPortal.GUI.Library
 				if (message.Message == GUIMessage.MessageType.GUI_MSG_GET_ITEM)
 				{
 					int iItem = message.Param1;
-					if (iItem >= 0 && iItem < m_vecItems.Count)
+					if (iItem >= 0 && iItem < m__itemList.Count)
 					{
-						message.Object = m_vecItems[iItem];
+						message.Object = m__itemList[iItem];
 					}
 					else
 					{
@@ -848,10 +857,10 @@ namespace MediaPortal.GUI.Library
 					GUIListItem newItem = message.Object as GUIListItem;
 					if (newItem != null)
 					{
-						m_vecItems.Add(newItem);
+						m__itemList.Add(newItem);
 						int iItemsPerPage = m_iColumns;
-						int iPages = m_vecItems.Count/iItemsPerPage;
-						if ((m_vecItems.Count%iItemsPerPage) != 0) iPages++;
+						int iPages = m__itemList.Count/iItemsPerPage;
+						if ((m__itemList.Count%iItemsPerPage) != 0) iPages++;
 						if (m_upDown != null)
 						{
 							m_upDown.SetRange(1, iPages);
@@ -869,7 +878,7 @@ namespace MediaPortal.GUI.Library
 
 				if (message.Message == GUIMessage.MessageType.GUI_MSG_ITEMS)
 				{
-					message.Param1 = m_vecItems.Count;
+					message.Param1 = m__itemList.Count;
 				}
 
 				if (message.Message == GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED)
@@ -879,7 +888,7 @@ namespace MediaPortal.GUI.Library
 				if (message.Message == GUIMessage.MessageType.GUI_MSG_ITEM_SELECT)
 				{
 					int iItem = message.Param1;
-					if (iItem >= 0 && iItem < m_vecItems.Count)
+					if (iItem >= 0 && iItem < m__itemList.Count)
 					{
 						int iPage = 1;
 						m_iCursorX = 0;
@@ -900,7 +909,7 @@ namespace MediaPortal.GUI.Library
 
 			if (message.Message == GUIMessage.MessageType.GUI_MSG_FILE_DOWNLOADING)
 			{
-				foreach (GUIListItem item in m_vecItems)
+				foreach (GUIListItem item in m__itemList)
 				{
 					if (item.IsRemote)
 					{
@@ -914,7 +923,7 @@ namespace MediaPortal.GUI.Library
 
 			if (message.Message == GUIMessage.MessageType.GUI_MSG_FILE_DOWNLOADED)
 			{
-				foreach (GUIListItem item in m_vecItems)
+				foreach (GUIListItem item in m__itemList)
 				{
 					if (item.IsRemote)
 					{
@@ -949,15 +958,15 @@ namespace MediaPortal.GUI.Library
 				if (iSearchMethode == SearchType.SEARCH_NEXT)
 				{
 					iItem++;
-					if (iItem >= m_vecItems.Count) iItem = 0;
+					if (iItem >= m__itemList.Count) iItem = 0;
 				}
-				if (iSearchMethode == SearchType.SEARCH_PREV && m_vecItems.Count > 0)
+				if (iSearchMethode == SearchType.SEARCH_PREV && m__itemList.Count > 0)
 				{
 					iItem--;
-					if (iItem < 0) iItem = m_vecItems.Count - 1;
+					if (iItem < 0) iItem = m__itemList.Count - 1;
 				}
 
-				GUIListItem pItem = m_vecItems[iItem];
+				GUIListItem pItem = m__itemList[iItem];
 				if (pItem.Label.ToUpper().StartsWith(SearchKey.ToUpper()) == true)
 				{
 					bItemFound = true;
@@ -966,11 +975,11 @@ namespace MediaPortal.GUI.Library
 				if (iSearchMethode == SearchType.SEARCH_FIRST)
 				{
 					iItem++;
-					if (iItem >= m_vecItems.Count) iItem = 0;
+					if (iItem >= m__itemList.Count) iItem = 0;
 				}
 			} while (iItem != iCurrentItem);
 
-			if ((bItemFound) && (iItem >= 0 && iItem < m_vecItems.Count))
+			if ((bItemFound) && (iItem >= 0 && iItem < m__itemList.Count))
 			{
 				// update spin controls
 				int iPage = 1;
@@ -1157,20 +1166,20 @@ namespace MediaPortal.GUI.Library
 			}
 
 			float fWidth = 0, fHeight = 0;
-			if (m_pFont != null)
+			if (_font != null)
 			{
 				// height of 1 item = folder image height + text row height + space in between
-				m_pFont.GetTextExtent("y", ref fWidth, ref fHeight);
+				_font.GetTextExtent("y", ref fWidth, ref fHeight);
 			}
 
 			fWidth = (float) m_iItemWidth;
 			fHeight = (float) m_iItemHeight;
 
-			m_iColumns = (int) (m_dwWidth/fWidth);
+			m_iColumns = (int) (_width/fWidth);
 
 			int iItemsPerPage = m_iColumns;
-			int iPages = m_vecItems.Count/iItemsPerPage;
-			if ((m_vecItems.Count%iItemsPerPage) != 0) iPages++;
+			int iPages = m__itemList.Count/iItemsPerPage;
+			if ((m__itemList.Count%iItemsPerPage) != 0) iPages++;
 			if (m_upDown != null)
 			{
 				m_upDown.SetRange(1, iPages);
@@ -1183,7 +1192,7 @@ namespace MediaPortal.GUI.Library
 			m_iSleeper = 0;
 
 			base.AllocResources();
-			m_pFont = GUIFontManager.GetFont(m_strFontName);
+			_font = GUIFontManager.GetFont(_fontName);
 			if (m_backgroundImage != null) m_backgroundImage.AllocResources();
 			if (m_infoImage != null) m_infoImage.AllocResources();
 			if (m_upDown != null) m_upDown.AllocResources();
@@ -1197,11 +1206,11 @@ namespace MediaPortal.GUI.Library
 
 		public override void FreeResources()
 		{
-			foreach (GUIListItem item in m_vecItems)
+			foreach (GUIListItem item in m__itemList)
 			{
 				item.FreeIcons();
 			}
-			m_vecItems.Clear();
+			m__itemList.Clear();
 			base.FreeResources();
 			if (m_backgroundImage != null) m_backgroundImage.FreeResources();
 			if (m_infoImage != null) m_infoImage.FreeResources();
@@ -1215,7 +1224,7 @@ namespace MediaPortal.GUI.Library
 		bool ValidItem(int iX)
 		{
 			if (iX >= m_iColumns) return false;
-			if (m_iOffset + iX < m_vecItems.Count) return true;
+			if (m_iOffset + iX < m__itemList.Count) return true;
 			return false;
 		}
 
@@ -1355,13 +1364,13 @@ namespace MediaPortal.GUI.Library
 
 		void RenderText(float fPosX, float fPosY, long dwTextColor, string wszText, bool bScroll)
 		{
-			if (m_pFont == null) return;
+			if (_font == null) return;
 			if (wszText == null) return;
 			if (wszText == String.Empty) return;
 
 			float fTextHeight = 0, fTextWidth = 0;
 			float fwidth, fWidth = 0, fHeight = 0;
-			m_pFont.GetTextExtent(wszText, ref fTextWidth, ref fTextHeight);
+			_font.GetTextExtent(wszText, ref fTextWidth, ref fTextHeight);
 			float fMaxWidth = m_iItemWidth - m_iItemWidth/10.0f;
 			float fPosCX = fPosX;
 			float fPosCY = fPosY;
@@ -1379,9 +1388,9 @@ namespace MediaPortal.GUI.Library
 			if (fPosCX < 0) fPosCX = 0.0f;
 			if (fPosCY < 0) fPosCY = 0.0f;
 
-			int minX = m_dwPosX;
+			int minX = _positionX;
 			if (fPosCX < minX) fPosCX = minX;
-			int maxX = m_dwPosX + m_iColumns*m_iItemWidth;
+			int maxX = _positionX + m_iColumns*m_iItemWidth;
 			if (fwidth + fPosCX > maxX)
 				fwidth = ((float) maxX) - fPosCX;
 			Viewport newviewport = new Viewport();
@@ -1396,7 +1405,7 @@ namespace MediaPortal.GUI.Library
 
 			if (!bScroll || fTextWidth <= fMaxWidth)
 			{
-				m_pFont.DrawText(fPosX, fPosY, dwTextColor, wszText, GUIControl.Alignment.ALIGN_LEFT, (int) fMaxWidth);
+				_font.DrawText(fPosX, fPosY, dwTextColor, wszText, GUIControl.Alignment.ALIGN_LEFT, (int) fMaxWidth);
 
 				GUIGraphicsContext.DX9Device.Viewport = oldviewport;
 				return;
@@ -1406,7 +1415,7 @@ namespace MediaPortal.GUI.Library
 				// scroll
 				m_strBrackedText = wszText;
 				m_strBrackedText += (" " + m_strSuffix + " ");
-				m_pFont.GetTextExtent(m_strBrackedText, ref fTextWidth, ref fTextHeight);
+				_font.GetTextExtent(m_strBrackedText, ref fTextWidth, ref fTextHeight);
 
 				int iItem = m_iCursorX + m_iOffset;
 				if (fTextWidth > fMaxWidth)
@@ -1415,10 +1424,10 @@ namespace MediaPortal.GUI.Library
 					m_strScrollText = "";
 					if (iLastItem != iItem)
 					{
-						scroll_pos = 0;
+						_scrollPosition = 0;
 						iLastItem = iItem;
-						iScrollX = 0;
-						iScrollOffset = 0.0f;
+						_scrollPosititionX = 0;
+						_scrollOffset = 0.0f;
 						iCurrentFrame = 0;
 						timeElapsed = 0.0f;
 						scrollContinuosly = false;
@@ -1428,41 +1437,41 @@ namespace MediaPortal.GUI.Library
 					{
 						if (scrollContinuosly)
 						{
-							iScrollX = iCurrentFrame;
+							_scrollPosititionX = iCurrentFrame;
 						}
 						else
 						{
-							iScrollX = iCurrentFrame - (25 + 12);
+							_scrollPosititionX = iCurrentFrame - (25 + 12);
 						}
 						char wTmp;
-						if (scroll_pos >= m_strBrackedText.Length)
+						if (_scrollPosition >= m_strBrackedText.Length)
 							wTmp = ' ';
 						else
-							wTmp = m_strBrackedText[scroll_pos];
+							wTmp = m_strBrackedText[_scrollPosition];
 
-						m_pFont.GetTextExtent(wTmp.ToString(), ref fWidth, ref fHeight);
-						if (iScrollX - iScrollOffset >= fWidth)
+						_font.GetTextExtent(wTmp.ToString(), ref fWidth, ref fHeight);
+						if (_scrollPosititionX - _scrollOffset >= fWidth)
 						{
-							++scroll_pos;
-							if (scroll_pos > m_strBrackedText.Length)
+							++_scrollPosition;
+							if (_scrollPosition > m_strBrackedText.Length)
 							{
-								scroll_pos = 0;
-								iScrollX = 0;
-								iScrollOffset = 0.0f;
+								_scrollPosition = 0;
+								_scrollPosititionX = 0;
+								_scrollOffset = 0.0f;
 								iCurrentFrame = 0;
 								timeElapsed = 0.0f;
 								scrollContinuosly = true;
 							}
 							else
 							{
-								iScrollOffset += fWidth;
+								_scrollOffset += fWidth;
 							}
 						}
 						int ipos = 0;
 						for (int i = 0; i < m_strBrackedText.Length; i++)
 						{
-							if (i + scroll_pos < m_strBrackedText.Length)
-								m_strScrollText += m_strBrackedText[i + scroll_pos];
+							if (i + _scrollPosition < m_strBrackedText.Length)
+								m_strScrollText += m_strBrackedText[i + _scrollPosition];
 							else
 							{
 								if (ipos == 0) m_strScrollText += ' ';
@@ -1472,14 +1481,14 @@ namespace MediaPortal.GUI.Library
 						}
 						if (fPosY >= 0.0)
 						{
-							//              m_pFont.DrawText((int) (fPosX - iScrollX + iScrollOffset), fPosY, dwTextColor, m_strScrollText, GUIControl.Alignment.ALIGN_LEFT, (int) (fMaxWidth - 50f));
-							m_pFont.DrawText((int) (fPosX - iScrollX + iScrollOffset), fPosY, dwTextColor, m_strScrollText, GUIControl.Alignment.ALIGN_LEFT, (int) (fMaxWidth - 50f + iScrollX - iScrollOffset));
+							//              _font.DrawText((int) (fPosX - _scrollPosititionX + _scrollOffset), fPosY, dwTextColor, m_strScrollText, GUIControl.Alignment.ALIGN_LEFT, (int) (fMaxWidth - 50f));
+							_font.DrawText((int) (fPosX - _scrollPosititionX + _scrollOffset), fPosY, dwTextColor, m_strScrollText, GUIControl.Alignment.ALIGN_LEFT, (int) (fMaxWidth - 50f + _scrollPosititionX - _scrollOffset));
 						}
 					}
 					else
 					{
 						if (fPosY >= 0.0)
-							m_pFont.DrawText(fPosX, fPosY, dwTextColor, wszText, GUIControl.Alignment.ALIGN_LEFT, (int) (fMaxWidth - 50f));
+							_font.DrawText(fPosX, fPosY, dwTextColor, wszText, GUIControl.Alignment.ALIGN_LEFT, (int) (fMaxWidth - 50f));
 					}
 				}
 
@@ -1517,8 +1526,8 @@ namespace MediaPortal.GUI.Library
 		{
 			if (m_upDown == null) return;
 			int iItemsPerPage = m_iColumns;
-			int iPages = m_vecItems.Count/iItemsPerPage;
-			if ((m_vecItems.Count%iItemsPerPage) != 0) iPages++;
+			int iPages = m__itemList.Count/iItemsPerPage;
+			if ((m__itemList.Count%iItemsPerPage) != 0) iPages++;
 
 			int iPage = m_upDown.Value;
 			if (iPage + 1 <= iPages)
@@ -1527,7 +1536,7 @@ namespace MediaPortal.GUI.Library
 				m_upDown.Value = iPage;
 				m_iOffset = (m_upDown.Value - 1)*iItemsPerPage;
 			}
-			while (m_iCursorX > 0 && m_iOffset + m_iCursorX >= m_vecItems.Count)
+			while (m_iCursorX > 0 && m_iOffset + m_iCursorX >= m__itemList.Count)
 			{
 				m_iCursorX--;
 			}
@@ -1620,9 +1629,9 @@ namespace MediaPortal.GUI.Library
 			strLabel2 = "";
 			strThumbnail = "";
 			int iItem = m_iOffset + m_iCursorX;
-			if (iItem >= 0 && iItem < m_vecItems.Count)
+			if (iItem >= 0 && iItem < m__itemList.Count)
 			{
-				GUIListItem pItem = m_vecItems[iItem] ;
+				GUIListItem pItem = m__itemList[iItem] ;
 				if (pItem != null)
 				{
 					strLabel = pItem.Label;
@@ -1646,7 +1655,7 @@ namespace MediaPortal.GUI.Library
 				m_iItemHeight = m_iItemHeightBig;
 				m_iTextureWidth = m_iTextureWidthBig;
 				m_iTextureHeight = m_iTextureHeightBig;
-				SetThumbDimensions(m_iThumbXPosBig, m_iThumbYPosBig, m_iThumbWidthBig, m_iThumbHeightBig);
+				SetThumbDimensions(_positionXThumbBig, _positionYThumbBig, _widthThumbBig, _heightThumbBig);
 				SetTextureDimensions(m_iTextureWidth, m_iTextureHeight);
 			}
 			else
@@ -1665,10 +1674,10 @@ namespace MediaPortal.GUI.Library
 
 		public void GetThumbDimensionsBig(ref int iXpos, ref int iYpos, ref int iWidth, ref int iHeight)
 		{
-			iXpos = m_iThumbXPosBig;
-			iYpos = m_iThumbYPosBig;
-			iWidth = m_iThumbWidthBig;
-			iHeight = m_iThumbHeightBig;
+			iXpos = _positionXThumbBig;
+			iYpos = _positionYThumbBig;
+			iWidth = _widthThumbBig;
+			iHeight = _heightThumbBig;
 		}
 
 		public void GetThumbDimensionsLow(ref int iXpos, ref int iYpos, ref int iWidth, ref int iHeight)
@@ -1681,7 +1690,7 @@ namespace MediaPortal.GUI.Library
 
 		public long TextColor
 		{
-			get { return m_dwTextColor; }
+			get { return _textColor; }
 		}
 
 		public long SelectedColor
@@ -1691,7 +1700,7 @@ namespace MediaPortal.GUI.Library
 
 		public string FontName
 		{
-			get { return m_strFontName; }
+			get { return _fontName; }
 		}
 
 		public int SpinWidth
@@ -1910,10 +1919,10 @@ namespace MediaPortal.GUI.Library
 			if (iYpos < 0) return;
 			if (iWidth < 0) return;
 			if (iHeight < 0) return;
-			m_iThumbXPosBig = iXpos;
-			m_iThumbYPosBig = iYpos;
-			m_iThumbWidthBig = iWidth;
-			m_iThumbHeightBig = iHeight;
+			_positionXThumbBig = iXpos;
+			_positionYThumbBig = iYpos;
+			_widthThumbBig = iWidth;
+			_heightThumbBig = iHeight;
 		}
 
 		public override bool HitTest(int x, int y, out int controlID, out bool focused)
@@ -1955,11 +1964,11 @@ namespace MediaPortal.GUI.Library
 			}
 
 			m_iSelect = GUIListControl.ListType.CONTROL_LIST;
-			y -= m_dwPosY;
-			x -= m_dwPosX;
+			y -= _positionY;
+			x -= _positionX;
 			m_iCursorX = (x/m_iItemWidth);
 
-			while (m_iCursorX > 0 && m_iOffset + m_iCursorX >= m_vecItems.Count)
+			while (m_iCursorX > 0 && m_iOffset + m_iCursorX >= m__itemList.Count)
 			{
 				m_iCursorX--;
 			}
@@ -1972,7 +1981,7 @@ namespace MediaPortal.GUI.Library
 		{
 			try
 			{
-				m_vecItems.Sort(comparer);
+				m__itemList.Sort(comparer);
 			}
 			catch (Exception)
 			{
@@ -2007,10 +2016,10 @@ namespace MediaPortal.GUI.Library
 		public void Add(GUIListItem item)
 		{
 			if (item == null) return;
-			m_vecItems.Add(item);
+			m__itemList.Add(item);
 			int iItemsPerPage = m_iColumns;
-			int iPages = m_vecItems.Count/iItemsPerPage;
-			if ((m_vecItems.Count%iItemsPerPage) != 0) iPages++;
+			int iPages = m__itemList.Count/iItemsPerPage;
+			if ((m__itemList.Count%iItemsPerPage) != 0) iPages++;
 			if (m_upDown != null)
 			{
 				m_upDown.SetRange(1, iPages);
@@ -2205,7 +2214,7 @@ namespace MediaPortal.GUI.Library
 
 			if (m_infoImage != null) m_infoImage.GetRect(out m_iInfoImageX, out m_iInfoImageY, out m_iInfoImageWidth, out m_iInfoImageHeight);
 			if (m_backgroundImage != null) m_backgroundImage.GetRect(out m_iBackgroundX, out m_iBackgroundY, out m_iBackgroundWidth, out m_iBackgroundHeight);
-			if (m_upDown != null) m_upDown.GetRect(out m_dwSpinX, out m_dwSpinY, out m_dwSpinWidth, out m_dwSpinHeight);
+			if (m_upDown != null) m_upDown.GetRect(out _spinControlPositionX, out _spinControlPositionY, out _spinControlWidth, out _spinControlHeight);
 
 			base.ReStorePosition();
 		}
@@ -2228,25 +2237,25 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public override int GetID
 		{
-			get { return m_dwControlID; }
+			get { return _controlId; }
 			set
 			{
-				m_dwControlID = value;
+				_controlId = value;
 				if (m_upDown != null) m_upDown.ParentID = value;
 			}
 		}
 
 		public int Count
 		{
-			get { return m_vecItems.Count; }
+			get { return m__itemList.Count; }
 		}
 
 		public GUIListItem this[int index]
 		{
 			get
 			{
-				if (index < 0 || index >= m_vecItems.Count) return null;
-				return m_vecItems[index];
+				if (index < 0 || index >= m__itemList.Count) return null;
+				return m__itemList[index];
 			}
 		}
 
@@ -2255,9 +2264,9 @@ namespace MediaPortal.GUI.Library
 			get
 			{
 				int iItem = m_iOffset + m_iCursorX;
-				if (iItem >= 0 && iItem < m_vecItems.Count)
+				if (iItem >= 0 && iItem < m__itemList.Count)
 				{
-					GUIListItem pItem = m_vecItems[iItem];
+					GUIListItem pItem = m__itemList[iItem];
 					return pItem;
 				}
 				return null;
@@ -2269,7 +2278,7 @@ namespace MediaPortal.GUI.Library
 			get
 			{
 				int iItem = m_iOffset + m_iCursorX;
-				if (iItem >= 0 && iItem < m_vecItems.Count)
+				if (iItem >= 0 && iItem < m__itemList.Count)
 				{
 					return iItem;
 				}
@@ -2279,7 +2288,7 @@ namespace MediaPortal.GUI.Library
 
 		public void Clear()
 		{
-			m_vecItems.Clear();
+			m__itemList.Clear();
 			//GUITextureManager.CleanupThumbs();
 			m_upDown.SetRange(1, 1);
 			m_upDown.Value = 1;

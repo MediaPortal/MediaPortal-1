@@ -85,6 +85,7 @@ namespace MediaPortal.GUI.Library
 			{
 				_imageId++;
 				_images[index] = new GUIImage(ParentID, _imageId + index, 0, 0, 0, 0, (string)_filenames[index], Color.White);
+        _images[index].ParentControl = this;
 				_images[index].AllocResources();
 
 				w = Math.Max(w, _images[index].Width);
@@ -93,8 +94,8 @@ namespace MediaPortal.GUI.Library
 
 			for(int index = 0; index < _images.Length; index++)
 			{
-				int x = m_dwPosX;
-				int y = m_dwPosY;
+				int x = _positionX;
+				int y = _positionY;
 
 				if(_horizontalAlignment == HorizontalAlignment.Center)
 				{

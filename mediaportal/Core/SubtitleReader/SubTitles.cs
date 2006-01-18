@@ -63,7 +63,7 @@ namespace MediaPortal.Subtitle
     };
 
     ArrayList m_subs =new ArrayList();
-    string    m_strFont="Arial";
+    string    _fontName="Arial";
     int       m_iFontSize=14;
     bool      m_bBold=true;
     long      m_iColor=0xffffffff;
@@ -124,7 +124,7 @@ namespace MediaPortal.Subtitle
       using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
       {
         string strTmp="";
-        m_strFont=xmlreader.GetValueAsString("subtitles","fontface","Arial");
+        _fontName=xmlreader.GetValueAsString("subtitles","fontface","Arial");
         m_iFontSize=xmlreader.GetValueAsInt("subtitles","fontsize",18);
         m_bBold=xmlreader.GetValueAsBool("subtitles","bold",true);
         strTmp=xmlreader.GetValueAsString("subtitles","color","ffffff");
@@ -135,7 +135,7 @@ namespace MediaPortal.Subtitle
         FontStyle style=FontStyle.Regular;
         if (m_bBold)
           style=FontStyle.Bold;
-        m_font=new GUIFont("subFont",m_strFont,m_iFontSize,style);
+        m_font=new GUIFont("subFont",_fontName,m_iFontSize,style);
         m_font.Load();
         m_font.InitializeDeviceObjects();
         m_font.RestoreDeviceObjects();

@@ -81,7 +81,7 @@ namespace MediaPortal.GUI.Library
     private FontStyle						m_FontStyle=FontStyle.Regular;
 		int													m_ID=-1;
 		bool												FontAdded=false;
-		private string							m_strFontName;
+		private string							_fontName;
 		private string							m_strFileName;
 		public const int						MaxNumfontVertices = 100*6;
 		private int									_StartCharacter=32;
@@ -97,7 +97,7 @@ namespace MediaPortal.GUI.Library
 		{
 			if (logfonts) Log.Write("GUIFont:ctor({0}) fontengine: Initialize()",strName);
 			FontEngineInitialize(GUIGraphicsContext.Width, GUIGraphicsContext.Height);
-			m_strFontName=strName;
+			_fontName=strName;
 			m_strFileName=strFileName;
 			m_iFontHeight=iHeight;
     }
@@ -119,7 +119,7 @@ namespace MediaPortal.GUI.Library
     {
 			if (logfonts) Log.Write("GUIFont:ctor({0}) fontengine: Initialize()",strName);
 			FontEngineInitialize(GUIGraphicsContext.Width, GUIGraphicsContext.Height);
-      m_strFontName=strName;
+      _fontName=strName;
       m_strFileName=strFileName;
       m_FontStyle=style;
       m_iFontHeight=iHeight;
@@ -137,8 +137,8 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public string FontName
 		{
-			get { return m_strFontName;}
-			set { m_strFontName=value;}
+			get { return _fontName;}
+			set { _fontName=value;}
 		}
 
 		/// <summary>
@@ -416,7 +416,7 @@ namespace MediaPortal.GUI.Library
 			systemFont = null;
 			if (FontAdded)
 			{
-				if (logfonts) Log.Write("GUIFont:Dispose({0}) fontengine: Remove font:{1}",m_strFontName,ID.ToString());
+				if (logfonts) Log.Write("GUIFont:Dispose({0}) fontengine: Remove font:{1}",_fontName,ID.ToString());
 				if (ID>=0) FontEngineRemoveFont(ID);	
 			}
 			FontAdded=false;
@@ -451,7 +451,7 @@ namespace MediaPortal.GUI.Library
       System.IO.Directory.CreateDirectory(strCache);
 			}
 			catch(Exception){}
-      strCache=String.Format(@"{0}\fonts\{1}_{2}.png",GUIGraphicsContext.Skin, m_strFontName, m_iFontHeight);
+      strCache=String.Format(@"{0}\fonts\{1}_{2}.png",GUIGraphicsContext.Skin, _fontName, m_iFontHeight);
      
 			// If the cached bitmap file exists load from file.
 			if (System.IO.File.Exists(strCache))
@@ -511,7 +511,7 @@ namespace MediaPortal.GUI.Library
           textureWidth=info.Width;
           RestoreDeviceObjects();
           Log.Write("  Loaded font:{0} height:{1} texture:{2}x{3} chars:[{4}-{5}] miplevels:{6}",
-						m_strFontName, m_iFontHeight,textureWidth,textureWidth, _StartCharacter,_EndCharacter,fontTexture.LevelCount);
+						_fontName, m_iFontHeight,textureWidth,textureWidth, _StartCharacter,_EndCharacter,fontTexture.LevelCount);
 					SetFontEgine();
           return;
         }
@@ -584,7 +584,7 @@ namespace MediaPortal.GUI.Library
 			}
       bmp.Dispose();
 
-      Trace.WriteLine("font:"+ m_strFontName + " "+ m_strFileName+ " height:" + m_iFontHeight.ToString() +" "+textureWidth.ToString() + "x"+textureHeight.ToString());
+      Trace.WriteLine("font:"+ _fontName + " "+ m_strFileName+ " height:" + m_iFontHeight.ToString() +" "+textureWidth.ToString() + "x"+textureHeight.ToString());
 			// Release the bitmap used for measuring and create one for drawing
       
       using (bmp = new Bitmap(textureWidth, textureHeight, System.Drawing.Imaging.PixelFormat.Format32bppArgb))

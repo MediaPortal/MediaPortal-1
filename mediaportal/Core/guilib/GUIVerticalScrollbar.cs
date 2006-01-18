@@ -68,9 +68,13 @@ namespace MediaPortal.GUI.Library
 	  public override void FinalizeConstruction()
 	  {
 		  base.FinalizeConstruction();
-		  m_guiBackground = new GUIImage(m_dwParentID, m_dwControlID, m_dwPosX, m_dwPosY,m_dwWidth, m_dwHeight,m_strBackground,0);
-		  m_guiTop = new GUIImage(m_dwParentID, m_dwControlID, m_dwPosX, m_dwPosY,m_dwWidth, m_dwHeight,m_strTopTexture,0);
-		  m_guiBottom = new GUIImage(m_dwParentID, m_dwControlID, m_dwPosX, m_dwPosY,m_dwWidth, m_dwHeight,m_strBottomTexture,0);
+		  m_guiBackground = new GUIImage(_parentControlId, _controlId, _positionX, _positionY,_width, _height,m_strBackground,0);
+		  m_guiTop = new GUIImage(_parentControlId, _controlId, _positionX, _positionY,_width, _height,m_strTopTexture,0);
+		  m_guiBottom = new GUIImage(_parentControlId, _controlId, _positionX, _positionY,_width, _height,m_strBottomTexture,0);
+
+      m_guiBackground.ParentControl = this;
+      m_guiTop.ParentControl = this;
+      m_guiBottom.ParentControl = this;
 	  }
 
 
@@ -90,7 +94,7 @@ namespace MediaPortal.GUI.Library
         return;
       }
 
-      int iHeight=m_dwHeight;
+      int iHeight=_height;
       m_guiBackground.Height=iHeight;
       m_guiBackground.Render(timePassed);
 
@@ -294,7 +298,7 @@ namespace MediaPortal.GUI.Library
     }
     public override void DoUpdate()
     {
-      m_guiBackground.Height=m_dwHeight;
+      m_guiBackground.Height=_height;
       m_guiBackground.DoUpdate();
       base.DoUpdate ();
     }

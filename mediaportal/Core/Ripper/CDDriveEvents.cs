@@ -27,25 +27,25 @@ namespace MediaPortal.Ripper
 {
   public class DataReadEventArgs : EventArgs
   {
-    private byte[] m_Data;
-    private uint m_DataSize;
+    private byte[] _data;
+    private uint _dataSize;
     public DataReadEventArgs(byte[] data, uint size)
     {
-      m_Data = data;
-      m_DataSize = size;
+      _data = data;
+      _dataSize = size;
     }
     public byte[] Data
     {
       get 
       {
-        return m_Data;
+        return _data;
       }
     }
     public uint DataSize
     {
       get
       {
-        return m_DataSize;
+        return _dataSize;
       }
     }
   }

@@ -30,19 +30,19 @@ namespace MediaPortal.GUI.Library
 	/// </summary>
 	public class GUILabelControl :GUIControl
 	{
-		[XMLSkinElement("font")]			protected string	m_strFontName="";
-		[XMLSkinElement("label")]			protected string	m_strLabel="";
-		[XMLSkinElement("textcolor")]	protected long  	m_dwTextColor=0xFFFFFFFF;
-		[XMLSkinElement("align")]			Alignment         m_dwTextAlign=Alignment.ALIGN_LEFT;
+		[XMLSkinElement("font")]			protected string	_fontName="";
+		[XMLSkinElement("label")]			protected string	_labelText="";
+		[XMLSkinElement("textcolor")]	protected long  	_textColor=0xFFFFFFFF;
+		[XMLSkinElement("align")]			Alignment         _textAlignment=Alignment.ALIGN_LEFT;
 		
-    string                        m_strText;
-    bool                          ContainsProperty=false;
-    int                           textwidth=0;
-    int                           textheight=0;
-    bool                          m_bUseFontCache=false;
+    string                        _text;
+    bool                          _containsProperty=false;
+    int                           _textwidth=0;
+    int                           _textheight=0;
+    bool                          _useFontCache=false;
     
-    GUIFont								        m_pFont=null;
-		bool													useViewport=true;
+    GUIFont								        _font=null;
+		bool													_useViewPort=true;
 		/// <summary>
 		/// The constructor of the GUILabelControl class.
 		/// </summary>
@@ -60,10 +60,10 @@ namespace MediaPortal.GUI.Library
 		public GUILabelControl(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight, string strFont,string strLabel, long dwTextColor,GUIControl.Alignment dwTextAlign, bool bHasPath)
 			:base(dwParentID, dwControlId, dwPosX, dwPosY,dwWidth, dwHeight)
 		{
-			m_strLabel = strLabel;
-			m_strFontName = strFont;
-			m_dwTextColor = dwTextColor;
-			m_dwTextAlign = dwTextAlign;
+			_labelText = strLabel;
+			_fontName = strFont;
+			_textColor = dwTextColor;
+			_textAlignment = dwTextAlign;
 			
 			FinalizeConstruction();
 		}
@@ -79,12 +79,12 @@ namespace MediaPortal.GUI.Library
 		public override void FinalizeConstruction()
 		{
 			base.FinalizeConstruction ();
-			if (m_strFontName==null) m_strFontName=String.Empty;
-      if (m_strFontName!="" && m_strFontName!="-")
-				m_pFont=GUIFontManager.GetFont(m_strFontName);
-			GUILocalizeStrings.LocalizeLabel(ref m_strLabel);
-      if (m_strLabel==null) m_strLabel=String.Empty;
-      if (m_strLabel.IndexOf("#")>=0) ContainsProperty=true;
+			if (_fontName==null) _fontName=String.Empty;
+      if (_fontName!="" && _fontName!="-")
+				_font=GUIFontManager.GetFont(_fontName);
+			GUILocalizeStrings.LocalizeLabel(ref _labelText);
+      if (_labelText==null) _labelText=String.Empty;
+      if (_labelText.IndexOf("#")>=0) _containsProperty=true;
 		}
 
 		/// <summary>
@@ -97,155 +97,159 @@ namespace MediaPortal.GUI.Library
       {
         if (!IsVisible ) return;
       }
-      if (ContainsProperty) 
+      if (_containsProperty) 
       {
-        string text=GUIPropertyManager.Parse(m_strLabel);
-        if (m_strText!=text)
+        string text=GUIPropertyManager.Parse(_labelText);
+        if (_text!=text)
         {
-          m_strText=text;
+          _text=text;
 					text=null;
-          textwidth=0;
-          textheight=0;
+          _textwidth=0;
+          _textheight=0;
           
           ClearFontCache();     
         }
       }
-      else m_strText=m_strLabel;
+      else _text=_labelText;
       
-      if (m_strText.Length==0) return;
+      if (_text.Length==0) return;
 
-      if (null!=m_pFont)
+      long color = _textColor;
+      if (Dimmed)
+        color &= (DimColor);
+
+      if (null!=_font)
 			{
         
         if (GUIGraphicsContext.graphics!=null)
         {
-          if (m_dwWidth>0)
-            m_pFont.DrawTextWidth(m_dwPosX,m_dwPosY,m_dwTextColor, m_strText, m_dwWidth,m_dwTextAlign);
+          if (_width>0)
+            _font.DrawTextWidth(_positionX, _positionY, color, _text, _width, _textAlignment);
           else
-            m_pFont.DrawText(m_dwPosX,m_dwPosY,m_dwTextColor, m_strText, m_dwTextAlign,-1);
+            _font.DrawText(_positionX, _positionY, color, _text, _textAlignment, -1);
           return;
         }
 
-        if (textwidth==0 || textheight==0)
+        if (_textwidth==0 || _textheight==0)
         {
-          float fW=textwidth;
-          float fH=textheight;
-          m_pFont.GetTextExtent(m_strText,ref fW, ref fH);
-          textwidth=(int)fW;
-          textheight=(int)fH;
+          float width=_textwidth;
+          float height=_textheight;
+          _font.GetTextExtent(_text,ref width, ref height);
+          _textwidth=(int)width;
+          _textheight=(int)height;
         }
 
-			  /*string renderText=m_strText;
-        if (m_dwWidth>0)
+			  /*string renderText=_text;
+        if (_width>0)
         {
-          while (textwidth > m_dwWidth && renderText.Length>0)
+          while (_textwidth > _width && renderText.Length>0)
           {
             renderText=renderText.Substring(0,renderText.Length-1);
-            float fW=textwidth;
-            float fH=textheight;
-            m_pFont.GetTextExtent(renderText,ref fW, ref fH);
-            textwidth=(int)fW;
-            textheight=(int)fH;
+            float width=_textwidth;
+            float height=_textheight;
+            _font.GetTextExtent(renderText,ref width, ref height);
+            _textwidth=(int)width;
+            _textheight=(int)height;
             
           }
         }*/
 
-        if (m_dwTextAlign==GUIControl.Alignment.ALIGN_CENTER)
+        if (_textAlignment==GUIControl.Alignment.ALIGN_CENTER)
         {
          
-          int xoff= (int)((m_dwWidth-textwidth)/2);
-          int yoff= (int)((m_dwHeight-textheight)/2);
-          m_pFont.DrawText((float)m_dwPosX+xoff, (float)m_dwPosY+yoff,m_dwTextColor,m_strText,GUIControl.Alignment.ALIGN_LEFT,m_dwWidth); 
+          int xoff= (int)((_width-_textwidth)/2);
+          int yoff= (int)((_height-_textheight)/2);
+          _font.DrawText((float)_positionX + xoff, (float)_positionY + yoff, color, _text, GUIControl.Alignment.ALIGN_LEFT, _width); 
         }
         else
         {
 
-          if (m_dwTextAlign== GUIControl.Alignment.ALIGN_RIGHT)
+          if (_textAlignment== GUIControl.Alignment.ALIGN_RIGHT)
           {
-            if (m_dwWidth==0 || textwidth < m_dwWidth)
+            if (_width==0 || _textwidth < _width)
             {
-							m_pFont.DrawText((float)m_dwPosX-textwidth, (float)m_dwPosY,m_dwTextColor,m_strText,GUIControl.Alignment.ALIGN_LEFT,-1); 
+              _font.DrawText((float)_positionX - _textwidth, (float)_positionY, color, _text, GUIControl.Alignment.ALIGN_LEFT, -1); 
             }
             else
             {
-              float fPosCX = (float)m_dwPosX;
-              float fPosCY = (float)m_dwPosY;
+              float fPosCX = (float)_positionX;
+              float fPosCY = (float)_positionY;
               GUIGraphicsContext.Correct(ref fPosCX, ref fPosCY);
               if (fPosCX < 0) fPosCX = 0.0f;
               if (fPosCY < 0) fPosCY = 0.0f;
               if (fPosCY > GUIGraphicsContext.Height) fPosCY = (float)GUIGraphicsContext.Height;
-              float fHeight = 60.0f;
-              if (fHeight + fPosCY >= GUIGraphicsContext.Height)
-                fHeight = GUIGraphicsContext.Height - fPosCY - 1;
-              if (fHeight <= 0) return;
+              float heighteight = 60.0f;
+              if (heighteight + fPosCY >= GUIGraphicsContext.Height)
+                heighteight = GUIGraphicsContext.Height - fPosCY - 1;
+              if (heighteight <= 0) return;
 
-              float fwidth = m_dwWidth - 5.0f;
+              float fwidth = _width - 5.0f;
 
               if (fPosCX<=0) fPosCX=0;
               if (fPosCY<=0) fPosCY=0;
 							if (fwidth<1) return;
-							if (fHeight<1) return;
+							if (heighteight<1) return;
 
 							/*Viewport newviewport, oldviewport;
 							oldviewport = GUIGraphicsContext.DX9Device.Viewport;
-							if (useViewport)
+							if (_useViewPort)
 							{
 								newviewport = new Viewport();
 								newviewport.X = (int)fPosCX;
 								newviewport.Y = (int)fPosCY;
 								newviewport.Width = (int)(fwidth);
-								newviewport.Height = (int)(fHeight);
+								newviewport.Height = (int)(heighteight);
 								newviewport.MinZ = 0.0f;
 								newviewport.MaxZ = 1.0f;
 								GUIGraphicsContext.DX9Device.Viewport = newviewport;
 							}*/
 
-              m_pFont.DrawText((float)m_dwPosX-textwidth, (float)m_dwPosY,m_dwTextColor,m_strText,GUIControl.Alignment.ALIGN_LEFT,(int)fwidth); 
-              //if (useViewport)
+              _font.DrawText((float)_positionX - _textwidth, (float)_positionY, color, _text, GUIControl.Alignment.ALIGN_LEFT, (int)fwidth); 
+              //if (_useViewPort)
 	            //  GUIGraphicsContext.DX9Device.Viewport = oldviewport;
             }
             return;
           }
 
-          if (m_dwWidth==0 || textwidth < m_dwWidth)
+          if (_width==0 || _textwidth < _width)
           {
-            m_pFont.DrawText((float)m_dwPosX, (float)m_dwPosY,m_dwTextColor,m_strText,m_dwTextAlign,m_dwWidth); 
+            _font.DrawText((float)_positionX, (float)_positionY, color, _text, _textAlignment, _width); 
           }
           else
           {
-            float fPosCX = (float)m_dwPosX;
-            float fPosCY = (float)m_dwPosY;
+            float fPosCX = (float)_positionX;
+            float fPosCY = (float)_positionY;
             GUIGraphicsContext.Correct(ref fPosCX, ref fPosCY);
             if (fPosCX < 0) fPosCX = 0.0f;
             if (fPosCY < 0) fPosCY = 0.0f;
             if (fPosCY > GUIGraphicsContext.Height) fPosCY = (float)GUIGraphicsContext.Height;
-            float fHeight = 60.0f;
-            if (fHeight + fPosCY >= GUIGraphicsContext.Height)
-              fHeight = GUIGraphicsContext.Height - fPosCY - 1;
-            if (fHeight <= 0) return;
+            float heighteight = 60.0f;
+            if (heighteight + fPosCY >= GUIGraphicsContext.Height)
+              heighteight = GUIGraphicsContext.Height - fPosCY - 1;
+            if (heighteight <= 0) return;
 
-            float fwidth = m_dwWidth - 5.0f;
+            float fwidth = _width - 5.0f;
 						if (fwidth<1) return;
-						if (fHeight<1) return;
+						if (heighteight<1) return;
 
             if (fPosCX<=0) fPosCX=0;
             if (fPosCY<=0) fPosCY=0;
 						/*Viewport newviewport, oldviewport;
 						oldviewport = GUIGraphicsContext.DX9Device.Viewport;
-						if (useViewport)
+						if (_useViewPort)
 						{
 							newviewport = new Viewport();
 							newviewport.X = (int)fPosCX;
 							newviewport.Y = (int)fPosCY;
 							newviewport.Width = (int)(fwidth);
-							newviewport.Height = (int)(fHeight);
+							newviewport.Height = (int)(heighteight);
 							newviewport.MinZ = 0.0f;
 							newviewport.MaxZ = 1.0f;
 							GUIGraphicsContext.DX9Device.Viewport = newviewport;
 						}*/
 
-            m_pFont.DrawText((float)m_dwPosX, (float)m_dwPosY,m_dwTextColor,m_strText,m_dwTextAlign,(int)fwidth); 
-            //if (useViewport)
+            _font.DrawText((float)_positionX, (float)_positionY, color, _text, _textAlignment, (int)fwidth); 
+            //if (_useViewPort)
 						//	GUIGraphicsContext.DX9Device.Viewport = oldviewport;
           }
         }		
@@ -254,8 +258,8 @@ namespace MediaPortal.GUI.Library
 
 		public bool UseViewPort
 		{
-			get { return useViewport;}
-			set { useViewport=value;}
+			get { return _useViewPort;}
+			set { _useViewPort=value;}
 		}
 		/// <summary>
 		/// Checks if the control can focus.
@@ -295,11 +299,11 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public long	TextColor
 		{ 
-			get { return m_dwTextColor;}
+			get { return _textColor;}
 			set { 
-        if (m_dwTextColor!=value)
+        if (_textColor!=value)
         {
-          m_dwTextColor=value;
+          _textColor=value;
           
           ClearFontCache();
         }
@@ -311,11 +315,11 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public GUIControl.Alignment TextAlignment
 		{
-			get { return m_dwTextAlign;}
+			get { return _textAlignment;}
 			set { 
-        if (m_dwTextAlign!=value)
+        if (_textAlignment!=value)
         {
-          m_dwTextAlign=value;
+          _textAlignment=value;
           
           ClearFontCache();
         }
@@ -328,22 +332,22 @@ namespace MediaPortal.GUI.Library
 		public string FontName
 		{
 			get { 
-        return m_strFontName;
+        return _fontName;
       }
       set 
       { 
         if (value==null) return;
         if (value==String.Empty) return;
-        if (m_pFont==null)
+        if (_font==null)
         {
-          m_pFont=GUIFontManager.GetFont(value);
-          m_strFontName=value;
+          _font=GUIFontManager.GetFont(value);
+          _fontName=value;
           ClearFontCache();
         }
-        else if (value != m_pFont.FontName)
+        else if (value != _font.FontName)
         {
-          m_pFont=GUIFontManager.GetFont(value);
-          m_strFontName=value;
+          _font=GUIFontManager.GetFont(value);
+          _fontName=value;
           ClearFontCache();
         }
       }
@@ -354,15 +358,15 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public string Label
 		{
-			get { return m_strLabel; }
+			get { return _labelText; }
 			set {
         if (value==null) return;
-        if (value.Equals(m_strLabel)) return;
-        m_strLabel=value;
-        if (m_strLabel.IndexOf("#")>=0) ContainsProperty=true;
-        else ContainsProperty=false;
-        textwidth=0;
-        textheight=0;
+        if (value.Equals(_labelText)) return;
+        _labelText=value;
+        if (_labelText.IndexOf("#")>=0) _containsProperty=true;
+        else _containsProperty=false;
+        _textwidth=0;
+        _textheight=0;
         ClearFontCache();
       }
 		}
@@ -372,9 +376,9 @@ namespace MediaPortal.GUI.Library
     /// Property which returns true if the label contains a property
     /// or false when it doenst
     /// </summary>
-    public bool ContainsPropertyKey
+    public bool _containsPropertyKey
     {
-      get { return ContainsProperty;}
+      get { return _containsProperty;}
     }
 
     /// <summary>
@@ -382,7 +386,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public override void AllocResources()
     {
-      m_pFont=GUIFontManager.GetFont(m_strFontName);
+      _font=GUIFontManager.GetFont(_fontName);
       Update();
     }
 
@@ -401,8 +405,8 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public bool CacheFont
     {
-      get { return m_bUseFontCache;}
-      set { m_bUseFontCache=false;}
+      get { return _useFontCache;}
+      set { _useFontCache=false;}
     }
 
     /// <summary>
@@ -420,17 +424,17 @@ namespace MediaPortal.GUI.Library
     {
       get 
       {
-        if (textwidth==0 || textheight==0)
+        if (_textwidth==0 || _textheight==0)
         {
-          if (m_pFont==null) return 0;
-          m_strText=GUIPropertyManager.Parse(m_strLabel);
-          float fW=textwidth;
-          float fH=textheight;
-          m_pFont.GetTextExtent(m_strText,ref fW, ref fH);
-          textwidth=(int)fW;
-          textheight=(int)fH;
+          if (_font==null) return 0;
+          _text=GUIPropertyManager.Parse(_labelText);
+          float width=_textwidth;
+          float height=_textheight;
+          _font.GetTextExtent(_text,ref width, ref height);
+          _textwidth=(int)width;
+          _textheight=(int)height;
         }
-        return textwidth;
+        return _textwidth;
       }
     }
 
@@ -441,17 +445,17 @@ namespace MediaPortal.GUI.Library
     {
       get 
       {
-        if (textwidth==0 || textheight==0)
+        if (_textwidth==0 || _textheight==0)
         {
-          if (m_pFont==null) return 0;
-          m_strText=GUIPropertyManager.Parse(m_strLabel);
-          float fW=textwidth;
-          float fH=textheight;
-          m_pFont.GetTextExtent(m_strText,ref fW, ref fH);
-          textwidth=(int)fW;
-          textheight=(int)fH;
+          if (_font==null) return 0;
+          _text=GUIPropertyManager.Parse(_labelText);
+          float width=_textwidth;
+          float height=_textheight;
+          _font.GetTextExtent(_text,ref width, ref height);
+          _textwidth=(int)width;
+          _textheight=(int)height;
         }
-        return textheight;
+        return _textheight;
       }
     }
     void ClearFontCache()

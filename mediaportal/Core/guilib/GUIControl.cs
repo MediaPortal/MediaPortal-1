@@ -40,25 +40,29 @@ namespace MediaPortal.GUI.Library
 	/// </summary>
 	public abstract class GUIControl : Control
 	{
-		[XMLSkinElement("subtype")]			protected string  m_strSubType = "";
-		[XMLSkinElement("onleft")]			protected int			m_dwControlLeft = 0;
-		[XMLSkinElement("onright")]			protected int			m_dwControlRight = 0;
-		[XMLSkinElement("onup")]			protected int			m_dwControlUp = 0;
-		[XMLSkinElement("ondown")]			protected int			m_dwControlDown = 0;
-		[XMLSkinElement("colordiffuse")]	protected long			m_colDiffuse = 0xFFFFFFFF;
-		[XMLSkinElement("id")]				protected int			m_dwControlID = 0;
-		[XMLSkinElement("type")]			protected string		m_strControlType = "";
-		[XMLSkinElement("description")]		protected string		m_Description="";
-		protected int			m_dwParentID = 0;
-		protected bool			m_bSelected = false;
-		protected bool			m_bCalibration = true;
-		protected object		m_Data;
-		protected int			m_iWindowID;
-		protected int			m_SelectedItem=0;
-		protected ArrayList m_SubItems = new ArrayList();
-		protected System.Drawing.Rectangle m_originalRect;
-		protected bool m_bAnimating=false;
-		protected long m_lOriginalColorDiffuse;
+		[XMLSkinElement("subtype")]			protected string  _subType = "";
+		[XMLSkinElement("onleft")]			protected int			_leftControlId = 0;
+		[XMLSkinElement("onright")]			protected int			_rightControlId = 0;
+		[XMLSkinElement("onup")]			protected int			_upControlId = 0;
+		[XMLSkinElement("ondown")]			protected int			_downControlId = 0;
+		[XMLSkinElement("colordiffuse")]	protected long			_diffuseColor = 0xFFFFFFFF;
+		[XMLSkinElement("id")]				protected int			_controlId = 0;
+		[XMLSkinElement("type")]			protected string		_controlType = "";
+		[XMLSkinElement("description")]		protected string		_description="";
+		protected int			_parentControlId = 0;
+		protected bool			_isSelected = false;
+		protected bool			_calibration = true;
+		protected object		_data;
+		protected int			_windowId;
+		protected int			_selectedItem=0;
+		protected ArrayList _subItemList = new ArrayList();
+		protected System.Drawing.Rectangle _originalRectangle;
+		protected bool _isAnimating=false;
+		protected long _originalDiffuseColor;
+    protected GUIControl _parentControl = null;
+    protected bool _isDimmed = false;
+
+    protected const int DimColor = 0x60ffffff;
 
 		/// <summary>
 		/// enum to specify the alignment of the control
@@ -94,7 +98,7 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public GUIControl(int dwParentID)
 		{
-			m_dwParentID = dwParentID;
+			_parentControlId = dwParentID;
 		}
 		
 	
@@ -109,14 +113,34 @@ namespace MediaPortal.GUI.Library
 		/// <param name="dwHeight">The height of this control.</param>
 		public GUIControl(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight)
 		{
-			m_dwParentID = dwParentID;
-			m_dwControlID = dwControlId;
-			m_dwPosX = dwPosX;
-			m_dwPosY = dwPosY;
+			_parentControlId = dwParentID;
+			_controlId = dwControlId;
+			_positionX = dwPosX;
+			_positionY = dwPosY;
 
 			base.Width = dwWidth;
 			base.Height = dwHeight;
 		}
+
+    public GUIControl ParentControl
+    {
+      get { return _parentControl; }
+      set { _parentControl = value; }
+    }
+    public virtual bool Dimmed
+    {
+      get
+      {
+        if (_parentControl != null)
+          return _parentControl.Dimmed;
+        return _isDimmed;
+      }
+      set
+      {
+        _isDimmed = value;
+      }
+
+    }
 
 		/// <summary> 
 		/// This function is called after all of the XmlSkinnable fields have been filled
@@ -126,10 +150,10 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public virtual void FinalizeConstruction()
 		{
-			//			if (m_dwControlUp == 0) m_dwControlUp		= m_dwControlID - 1; 
-			//			if (m_dwControlDown == 0) m_dwControlDown	= m_dwControlID + 1; 
-			//			if (m_dwControlLeft == 0) m_dwControlLeft	= m_dwControlID; 
-			//			if (m_dwControlRight == 0) m_dwControlRight = m_dwControlID; 
+			//			if (_upControlId == 0) _upControlId		= _controlId - 1; 
+			//			if (_downControlId == 0) _downControlId	= _controlId + 1; 
+			//			if (_leftControlId == 0) _leftControlId	= _controlId; 
+			//			if (_rightControlId == 0) _rightControlId = _controlId; 
 		}
 			
 		/// <summary>
@@ -138,15 +162,15 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public virtual void ScaleToScreenResolution()
 		{
-			int x = m_dwPosX;
-			int y = m_dwPosY;
+			int x = _positionX;
+			int y = _positionY;
 			int w = base.Width;
 			int h = base.Height;
 
 			GUIGraphicsContext.ScaleRectToScreenResolution(ref x, ref y, ref w, ref h);
 
-			m_dwPosX = x;
-			m_dwPosY = y;
+			_positionX = x;
+			_positionY = y;
 			base.Width = w;
 			base.Height = h;
 		}
@@ -163,8 +187,8 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public virtual int WindowId
 		{
-			get { return m_iWindowID; }
-			set { m_iWindowID = value; }
+			get { return _windowId; }
+			set { _windowId = value; }
 		}
 
 		/// <summary>
@@ -190,16 +214,16 @@ namespace MediaPortal.GUI.Library
 					switch(action.wID)
 					{
 						case Action.ActionType.ACTION_MOVE_DOWN:
-							controlId = m_dwControlDown;
+							controlId = _downControlId;
 							break;
 						case Action.ActionType.ACTION_MOVE_UP:
-							controlId = m_dwControlUp;
+							controlId = _upControlId;
 							break;
 						case Action.ActionType.ACTION_MOVE_LEFT:
-							controlId = m_dwControlLeft;
+							controlId = _leftControlId;
 							break;
 						case Action.ActionType.ACTION_MOVE_RIGHT:
-							controlId = m_dwControlRight;
+							controlId = _rightControlId;
 							break;
 					}
 
@@ -360,16 +384,16 @@ namespace MediaPortal.GUI.Library
 							switch((Action.ActionType)message.Param1)
 							{
 								case Action.ActionType.ACTION_MOVE_DOWN:
-									controlId = m_dwControlDown;
+									controlId = _downControlId;
 									break;
 								case Action.ActionType.ACTION_MOVE_UP: 
-									controlId = m_dwControlUp;
+									controlId = _upControlId;
 									break;
 								case Action.ActionType.ACTION_MOVE_LEFT: 
-									controlId = m_dwControlLeft;
+									controlId = _leftControlId;
 									break;
 								case Action.ActionType.ACTION_MOVE_RIGHT: 
-									controlId = m_dwControlRight;
+									controlId = _rightControlId;
 									break;
 							}
 
@@ -409,12 +433,12 @@ namespace MediaPortal.GUI.Library
 						return true;
 					
 					case GUIMessage.MessageType.GUI_MSG_SELECTED : 
-						m_bSelected = true;
+						_isSelected = true;
 						return true;
 					
 
 					case GUIMessage.MessageType.GUI_MSG_DESELECTED : 
-						m_bSelected = false;
+						_isSelected = false;
 						return true;
 					
 				}    
@@ -427,8 +451,8 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public virtual int GetID
 		{
-			get { return m_dwControlID; }
-			set { m_dwControlID=value;}
+			get { return _controlId; }
+			set { _controlId=value;}
 		}
 
 		/// <summary>
@@ -436,8 +460,8 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public int ParentID
 		{
-			get { return m_dwParentID; }
-			set { m_dwParentID=value; }
+			get { return _parentControlId; }
+			set { _parentControlId=value; }
 		}
 
 		/// <summary>
@@ -504,8 +528,8 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public virtual bool Selected
 		{
-			get { return m_bSelected; }
-			set { m_bSelected = value; }
+			get { return _isSelected; }
+			set { _isSelected = value; }
 		}
 		
 		/// <summary>
@@ -515,9 +539,9 @@ namespace MediaPortal.GUI.Library
 		/// <param name="dwPosY">The Y position.</param>
 		public virtual void SetPosition(int dwPosX, int dwPosY)
 		{
-			if(m_dwPosX == dwPosX && m_dwPosY == dwPosY) return;
-			m_dwPosX = dwPosX;
-			m_dwPosY = dwPosY;
+			if(_positionX == dwPosX && _positionY == dwPosY) return;
+			_positionX = dwPosX;
+			_positionY = dwPosY;
 			Update();
 		}
 
@@ -536,12 +560,12 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public virtual long ColourDiffuse
 		{
-			get { return m_colDiffuse; }
+			get { return _diffuseColor; }
 			set 
 			{
-				if (value != m_colDiffuse)
+				if (value != _diffuseColor)
 				{
-					m_colDiffuse = value;
+					_diffuseColor = value;
 					Update();
 				}
 			}
@@ -552,8 +576,8 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public virtual int XPosition
 		{
-			get { return m_dwPosX; }
-			set { if(m_dwPosX != value) { m_dwPosX = Math.Max(0, value); Update(); } }
+			get { return _positionX; }
+			set { if(_positionX != value) { _positionX = Math.Max(0, value); Update(); } }
 		}
 
 		/// <summary>
@@ -561,8 +585,8 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public virtual int YPosition
 		{
-			get { return m_dwPosY; }
-			set { if(m_dwPosY != value) { m_dwPosY = Math.Max(0, value); Update(); } }
+			get { return _positionY; }
+			set { if(_positionY != value) { _positionY = Math.Max(0, value); Update(); } }
 		}
 
 		public bool Visible
@@ -580,31 +604,31 @@ namespace MediaPortal.GUI.Library
 		/// <param name="dwRight">The control right to this control.</param>
 		public virtual void SetNavigation(int dwUp, int dwDown, int dwLeft, int dwRight)
 		{
-			m_dwControlLeft = dwLeft;
-			m_dwControlRight = dwRight;
-			m_dwControlUp = dwUp;
-			m_dwControlDown = dwDown;
+			_leftControlId = dwLeft;
+			_rightControlId = dwRight;
+			_upControlId = dwUp;
+			_downControlId = dwDown;
 		}
 
 		public virtual int NavigateUp
 		{
-			get { return m_dwControlUp; }
-			set { m_dwControlUp = value; }
+			get { return _upControlId; }
+			set { _upControlId = value; }
 		}
 		public virtual int NavigateDown
 		{
-			get { return m_dwControlDown; }
-			set { m_dwControlDown = value; }
+			get { return _downControlId; }
+			set { _downControlId = value; }
 		}
 		public virtual int NavigateLeft
 		{
-			get { return m_dwControlLeft; }
-			set { m_dwControlLeft = value; }
+			get { return _leftControlId; }
+			set { _leftControlId = value; }
 		}
 		public virtual int NavigateRight
 		{
-			get { return m_dwControlRight; }
-			set { m_dwControlRight = value; }
+			get { return _rightControlId; }
+			set { _rightControlId = value; }
 		}
 
 		/// <summary>
@@ -612,8 +636,8 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public bool CalibrationEnabled
 		{
-			get { return m_bCalibration; }
-			set { m_bCalibration = value; }
+			get { return _calibration; }
+			set { _calibration = value; }
 		}
 
 		/// <summary>
@@ -621,11 +645,11 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public string Type
 		{
-			get { return m_strControlType; }
+			get { return _controlType; }
 			set 
 			{ 
-				if (m_strControlType ==null) return;
-				m_strControlType = value; 
+				if (_controlType ==null) return;
+				_controlType = value; 
 			}
 		}
 
@@ -634,8 +658,8 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public object Data
 		{
-			get { return m_Data; }
-			set { m_Data = value; }
+			get { return _data; }
+			set { _data = value; }
 		}
 
 		/// <summary>
@@ -945,7 +969,7 @@ namespace MediaPortal.GUI.Library
 		/// <param name="obj">subitem</param>
 		public void AddSubItem(object obj)
 		{
-			m_SubItems.Add(obj);
+			_subItemList.Add(obj);
 		}
 		/// <summary>
 		/// Remove an subitem from an control
@@ -953,7 +977,7 @@ namespace MediaPortal.GUI.Library
 		/// <param name="obj">subitem</param>
 		public void RemoveSubItem(object obj)
 		{
-			m_SubItems.Remove(obj);
+			_subItemList.Remove(obj);
 		}
 
 		/// <summary>
@@ -962,8 +986,8 @@ namespace MediaPortal.GUI.Library
 		/// <param name="obj">index</param>
 		public void RemoveSubItem(int index)
 		{
-			if (index<=0 || index>= m_SubItems.Count) return;
-			m_SubItems.RemoveAt(index);
+			if (index<=0 || index>= _subItemList.Count) return;
+			_subItemList.RemoveAt(index);
 		}
 
 		/// <summary>
@@ -971,7 +995,7 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public int SubItemCount
 		{
-			get { return m_SubItems.Count;}
+			get { return _subItemList.Count;}
 		}
 
 		/// <summary>
@@ -981,8 +1005,8 @@ namespace MediaPortal.GUI.Library
 		/// <returns>subitem object</returns>
 		public object GetSubItem(int index)
 		{
-			if (index<0 || index>= m_SubItems.Count) return null;
-			return m_SubItems[index];
+			if (index<0 || index>= _subItemList.Count) return null;
+			return _subItemList[index];
 		}
 		/// <summary>
 		/// Property to set an subitem
@@ -991,8 +1015,8 @@ namespace MediaPortal.GUI.Library
 		/// <param name="o">subitem</param>
 		public void SetSubItem(int index, object o)
 		{ 
-			if (index < 0 || index >= m_SubItems.Count) return;
-			m_SubItems[index]=o;
+			if (index < 0 || index >= _subItemList.Count) return;
+			_subItemList[index]=o;
 		}
 
 		/// <summary>
@@ -1000,8 +1024,8 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public virtual int SelectedItem
 		{
-			get { return m_SelectedItem;}
-			set { m_SelectedItem=value;}
+			get { return _selectedItem;}
+			set { _selectedItem=value;}
 		}
 
 		/// <summary>
@@ -1038,11 +1062,11 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public string Description
 		{
-			get { return m_Description;}
+			get { return _description;}
 			set 
 			{ 
 				if (value==null) return;
-				m_Description=value;
+				_description=value;
 			}
 		}
 
@@ -1051,9 +1075,9 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public virtual void StorePosition()
 		{
-			m_bAnimating=false;
-			m_originalRect=new System.Drawing.Rectangle(m_dwPosX, m_dwPosY, base.Width, base.Height);
-			m_lOriginalColorDiffuse=m_colDiffuse;
+			_isAnimating=false;
+			_originalRectangle=new System.Drawing.Rectangle(_positionX, _positionY, base.Width, base.Height);
+			_originalDiffuseColor=_diffuseColor;
 		}
 
 		/// <summary>
@@ -1061,7 +1085,7 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public bool IsAnimating
 		{
-			get { return m_bAnimating;}
+			get { return _isAnimating;}
 		}
 
 		/// <summary>
@@ -1069,13 +1093,13 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public virtual void ReStorePosition()
 		{
-			m_dwPosX=m_originalRect.X;
-			m_dwPosY=m_originalRect.Y;
-			base.Width = m_originalRect.Width;
-			base.Height = m_originalRect.Height;
-			m_colDiffuse=m_lOriginalColorDiffuse;
+			_positionX=_originalRectangle.X;
+			_positionY=_originalRectangle.Y;
+			base.Width = _originalRectangle.Width;
+			base.Height = _originalRectangle.Height;
+			_diffuseColor=_originalDiffuseColor;
 			Update();
-			m_bAnimating=false;
+			_isAnimating=false;
 		}
 		
 		/// <summary>
@@ -1083,8 +1107,8 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public virtual void GetRect(out int x, out int y, out int width, out int height)
 		{
-			x=m_dwPosX;
-			y=m_dwPosY;
+			x=_positionX;
+			y=_positionY;
 			width=base.Width;
 			height=base.Height;
 		}
@@ -1094,17 +1118,17 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public virtual void Animate(float timePassed,Animator animator)
 		{
-			m_bAnimating=true;
-			int x=m_originalRect.X;
-			int y=m_originalRect.Y;
-			int w=m_originalRect.Width;
-			int h=m_originalRect.Height;
-			long color=m_colDiffuse;
+			_isAnimating=true;
+			int x=_originalRectangle.X;
+			int y=_originalRectangle.Y;
+			int w=_originalRectangle.Width;
+			int h=_originalRectangle.Height;
+			long color=_diffuseColor;
 			animator.Animate( timePassed, ref x, ref y, ref w, ref h, ref color);
 
-			m_colDiffuse=color;
-			m_dwPosX=x;
-			m_dwPosY=y;
+			_diffuseColor=color;
+			_positionX=x;
+			_positionY=y;
 			base.Width=w;
 			base.Height=h;
 			DoUpdate();
@@ -1114,33 +1138,33 @@ namespace MediaPortal.GUI.Library
 		{
 			get
 			{
-				return m_strSubType;
+				return _subType;
 			}
 		}
 
 		[XMLSkinElement("width")]
-		public int m_dwWidth
+		public int _width
 		{
 			get { return base.Width; }
 			set { base.Width = value; }
 		}
 
 		[XMLSkinElement("height")]
-		public int m_dwHeight
+		public int _height
 		{
 			get { return base.Height; }
 			set { base.Height = value; }
 		}
 
 		[XMLSkinElement("posX")]
-		public int m_dwPosX
+		public int _positionX
 		{
 			get { return (int)base.Location.X; }
 			set { base.Location = new Point(value, base.Location.Y); }
 		}
 
 		[XMLSkinElement("posY")]
-		public int m_dwPosY
+		public int _positionY
 		{
 			get { return (int)base.Location.Y; }
 			set { base.Location = new Point(base.Location.X, value); }
@@ -1190,8 +1214,8 @@ namespace MediaPortal.GUI.Library
 
 		public override double Opacity
 		{
-			get { return 255.0 / System.Drawing.Color.FromArgb((int)m_colDiffuse).A; }
-			set { m_colDiffuse = System.Drawing.Color.FromArgb((int)(255 * value), System.Drawing.Color.FromArgb((int)m_colDiffuse)).ToArgb(); }
+			get { return 255.0 / System.Drawing.Color.FromArgb((int)_diffuseColor).A; }
+			set { _diffuseColor = System.Drawing.Color.FromArgb((int)(255 * value), System.Drawing.Color.FromArgb((int)_diffuseColor)).ToArgb(); }
 		}
 
 		public Size Size

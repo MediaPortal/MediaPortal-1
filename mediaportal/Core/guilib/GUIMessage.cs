@@ -112,10 +112,10 @@ namespace MediaPortal.GUI.Library
 
 		};
 
-		private string 				m_strLabel="";
-		private string 				m_strLabel2="";
-		private string 				m_strLabel3="";
-		private string 				m_strLabel4="";
+		private string 				_label="";
+		private string 				_label2="";
+		private string 				_label3="";
+		private string 				_label4="";
 		private int 					m_dwSenderControlID=0;
 		private int 					m_dwTargetControlID=0;
 		private MessageType 	m_dwMessage=0;
@@ -221,8 +221,8 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public string Label
 		{
-			get { return m_strLabel;}
-			set { m_strLabel=value;}
+			get { return _label;}
+			set { _label=value;}
 		}
 
 
@@ -231,8 +231,8 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public string Label2
     {
-      get { return m_strLabel2;}
-      set { m_strLabel2=value;}
+      get { return _label2;}
+      set { _label2=value;}
 		}
 
 
@@ -241,8 +241,8 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public string Label3
 		{
-			get { return m_strLabel3;}
-			set { m_strLabel3=value;}
+			get { return _label3;}
+			set { _label3=value;}
 		}
 
 
@@ -251,8 +251,8 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public string Label4
 		{
-			get { return m_strLabel4;}
-			set { m_strLabel4=value;}
+			get { return _label4;}
+			set { _label4=value;}
 		}
 
 		/// <summary>

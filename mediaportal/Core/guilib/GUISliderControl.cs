@@ -53,7 +53,7 @@ namespace MediaPortal.GUI.Library
 		protected GUISpinControl.SpinType   m_iType=GUISpinControl.SpinType.SPIN_CONTROL_TYPE_TEXT;
 		protected bool			m_bReverse=false;
 		protected float     m_fInterval=0.1f;
-		protected ArrayList m_vecLabels = new ArrayList ();
+		protected ArrayList _listLabels = new ArrayList ();
 		protected ArrayList m_vecValues= new ArrayList ();
 		protected GUIImage m_guiBackground=null;
 		protected GUIImage m_guiMid=null;
@@ -91,9 +91,14 @@ namespace MediaPortal.GUI.Library
 		public override void FinalizeConstruction()
 		{
 			base.FinalizeConstruction ();
-			m_guiBackground = new GUIImage(m_dwParentID, m_dwControlID, m_dwPosX, m_dwPosY,m_dwWidth, m_dwHeight,m_strBackground,0);
-			m_guiMid= new GUIImage(m_dwParentID, m_dwControlID, m_dwPosX, m_dwPosY,m_dwWidth, m_dwHeight,m_strSliderTexture,0);
-			m_guiMidFocus= new GUIImage(m_dwParentID, m_dwControlID, m_dwPosX, m_dwPosY,m_dwWidth, m_dwHeight,m_strSliderTextureFocus,0);
+      m_guiBackground = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, _width, _height, m_strBackground, 0);
+      m_guiBackground.ParentControl = this;
+
+      m_guiMid = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, _width, _height, m_strSliderTexture, 0);
+      m_guiMid.ParentControl = this;
+
+      m_guiMidFocus = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, _width, _height, m_strSliderTextureFocus, 0);
+      m_guiMidFocus.ParentControl = this;
 		}
 
 
@@ -110,22 +115,22 @@ namespace MediaPortal.GUI.Library
       float fRange=0.0f;
       float fPos=0.0f;
       float fPercent=0.0f;
-      GUIFont m_pFont13 = GUIFontManager.GetFont("font13");
+      GUIFont _font13 = GUIFontManager.GetFont("font13");
       switch (m_iType)
       {
 					// Float based slider
         case GUISpinControl.SpinType.SPIN_CONTROL_TYPE_FLOAT:
           strValue=String.Format("{0}",m_fValue);
-          if (null!=m_pFont13)
+          if (null!=_font13)
           {
-              m_pFont13.DrawShadowText( (float)m_dwPosX,(float)m_dwPosY, 0xffffffff,
+              _font13.DrawShadowText( (float)_positionX,(float)_positionY, 0xffffffff,
                                         strValue, 
                                         GUIControl.Alignment.ALIGN_LEFT, 
                                         2, 
                                         2,
                                         0xFF020202);
           }
-          m_guiBackground.SetPosition(m_dwPosX + 60, m_dwPosY);
+          m_guiBackground.SetPosition(_positionX + 60, _positionY);
 
           fRange=(float)(m_fEnd-m_fStart);
           fPos  =(float)(m_fValue-m_fStart);
@@ -136,16 +141,16 @@ namespace MediaPortal.GUI.Library
 					// Integer based slider
         case GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT:
           strValue=String.Format("{0}/{1}",m_iValue, m_iEnd);
-          if (null!=m_pFont13)
+          if (null!=_font13)
           {
-            m_pFont13.DrawShadowText( (float)m_dwPosX,(float)m_dwPosY, 0xffffffff,
+            _font13.DrawShadowText( (float)_positionX,(float)_positionY, 0xffffffff,
                                             strValue,
                                             GUIControl.Alignment.ALIGN_LEFT, 
                                             2, 
                                             2,
                                             0xFF020202);
           }
-          m_guiBackground.SetPosition(m_dwPosX + 60, m_dwPosY);
+          m_guiBackground.SetPosition(_positionX + 60, _positionY);
 
           fRange= (float)(m_iEnd-m_iStart);
           fPos  = (float)(m_iValue-m_iStart);
@@ -156,8 +161,8 @@ namespace MediaPortal.GUI.Library
       //int iHeight=25;
       m_guiBackground.Render(timePassed);
       //m_guiBackground.SetHeight(iHeight);
-      m_dwHeight = m_guiBackground.Height;
-      m_dwWidth = m_guiBackground.Width + 60;
+      _height = m_guiBackground.Height;
+      _width = m_guiBackground.Width + 60;
 
       float fWidth=(float)(m_guiBackground.TextureWidth - m_guiMid.Width); //-20.0f;
 

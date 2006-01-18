@@ -23,13 +23,15 @@ namespace MediaPortal.GUI.Library
 
 		public GUIVolumeBar(int dwParentID) : base(dwParentID)
 		{
-			imgBar   =new GUIImage(dwParentID, 0, 0, 0,0, 0, "",0);
+      imgBar = new GUIImage(dwParentID, 0, 0, 0, 0, 0, "", 0);
+      imgBar.ParentControl = this;
 		}
 		
 		public GUIVolumeBar(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight)
 			: base(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight)
 		{
-			imgBar   =new GUIImage(dwParentID, dwControlId, dwPosX, dwPosY,0, 0, _textureName,0);
+      imgBar = new GUIImage(dwParentID, dwControlId, dwPosX, dwPosY, 0, 0, _textureName, 0);
+      imgBar.ParentControl = this;
 		}
 
 		public override void Render(float timePassed)
@@ -46,19 +48,19 @@ namespace MediaPortal.GUI.Library
 				switch(_alignment)
 				{
 					case Alignment.ALIGN_LEFT:
-						rectDest.X = m_dwPosX;
+						rectDest.X = _positionX;
 						break;
 					case Alignment.ALIGN_CENTER:
-						rectDest.X = m_dwPosX - (((_maximum * imgBar.TextureWidth) - imgBar.TextureWidth) / 2);
+						rectDest.X = _positionX - (((_maximum * imgBar.TextureWidth) - imgBar.TextureWidth) / 2);
 						break;
 					case Alignment.ALIGN_RIGHT:
-						rectDest.X = imgBar.TextureWidth + m_dwPosX - (_maximum * imgBar.TextureWidth);
+						rectDest.X = imgBar.TextureWidth + _positionX - (_maximum * imgBar.TextureWidth);
 						break;
 				}
 
-				rectDest.Y=m_dwPosY;
+				rectDest.Y=_positionY;
 				rectDest.Width=imgBar.TextureWidth;
-				rectDest.Height=m_dwHeight;
+				rectDest.Height=_height;
 
 				for (int index = 0; index < _current; ++index)
 				{

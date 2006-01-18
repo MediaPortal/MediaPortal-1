@@ -27,584 +27,603 @@ using System.Windows.Controls;
 
 namespace MediaPortal.GUI.Library
 {
-	/// <summary>
-	/// The class implementing a GUIButton.
-	/// </summary>
-	public class GUIButtonControl : GUIControl
-	{
-		[XMLSkinElement("textureFocus")]	protected string	m_strImgFocusTexture="";
-		[XMLSkinElement("textureNoFocus")]	protected string	m_strImgNoFocusTexture="";
-		[XMLSkinElement("font")]			protected string	m_strFontName;
-		[XMLSkinElement("label")]			protected string	m_strLabel="";
-		[XMLSkinElement("textcolor")]		protected long  	m_dwTextColor=0xFFFFFFFF;
-		[XMLSkinElement("disabledcolor")]	protected long  m_dwDisabledColor=0xFF606060;
-		[XMLSkinElement("hyperlink")]		protected int       m_lHyperLinkWindowID=-1;
-		[XMLSkinElement("action")]			protected int       m_iAction=-1;
-		[XMLSkinElement("script")]			protected string	m_strScriptAction="";
-		[XMLSkinElement("textXOff")]		protected int       m_iTextOffsetX=0;
-		[XMLSkinElement("textYOff")]		protected int       m_iTextOffsetY=0;
-		[XMLSkinElement("textalign")]		protected GUIControl.Alignment       _textAlignment=GUIControl.Alignment.ALIGN_LEFT;
-		[XMLSkinElement("application")]		protected string    m_strApplication="";
-		[XMLSkinElement("arguments")]		protected string    m_strArguments="";
+  /// <summary>
+  /// The class implementing a GUIButton.
+  /// </summary>
+  public class GUIButtonControl : GUIControl
+  {
+    [XMLSkinElement("textureFocus")]
+    protected string _focusedTextureName = "";
+    [XMLSkinElement("textureNoFocus")]
+    protected string _nonFocusedTextureName = "";
+    [XMLSkinElement("font")]
+    protected string _fontName;
+    [XMLSkinElement("label")]
+    protected string _label = "";
+    [XMLSkinElement("textcolor")]
+    protected long _textColor = 0xFFFFFFFF;
+    [XMLSkinElement("disabledcolor")]
+    protected long _disabledColor = 0xFF606060;
+    [XMLSkinElement("hyperlink")]
+    protected int _hyperLinkWindowId = -1;
+    [XMLSkinElement("action")]
+    protected int _actionId = -1;
+    [XMLSkinElement("script")]
+    protected string _scriptAction = "";
+    [XMLSkinElement("textXOff")]
+    protected int _textOffsetX = 0;
+    [XMLSkinElement("textYOff")]
+    protected int _textOffsetY = 0;
+    [XMLSkinElement("textalign")]
+    protected GUIControl.Alignment _textAlignment = GUIControl.Alignment.ALIGN_LEFT;
+    [XMLSkinElement("application")]
+    protected string _application = "";
+    [XMLSkinElement("arguments")]
+    protected string _arguments = "";
 
-		[XMLSkinElement("hover")]			
-		protected string					_hoverFilename = string.Empty;
+    [XMLSkinElement("hover")]
+    protected string _hoverFilename = string.Empty;
 
-		[XMLSkinElement("hoverX")]			
-		protected int						_hoverX;
+    [XMLSkinElement("hoverX")]
+    protected int _hoverX;
 
-		[XMLSkinElement("hoverY")]
-		protected int						_hoverY;
+    [XMLSkinElement("hoverY")]
+    protected int _hoverY;
 
-		[XMLSkinElement("hoverWidth")]
-		protected int						_hoverWidth;
+    [XMLSkinElement("hoverWidth")]
+    protected int _hoverWidth;
 
-		[XMLSkinElement("hoverHeight")]
-		protected int						_hoverHeight;
+    [XMLSkinElement("hoverHeight")]
+    protected int _hoverHeight;
 
-		protected GUIImage					_hoverImage; 
+    protected GUIImage _hoverImage;
 
-		protected int       m_dwFrameCounter=0;
-		protected GUIImage	m_imgFocus=null;
-		protected GUIImage  m_imgNoFocus=null; 
-		protected GUILabelControl     m_label=null;
+    protected int _frameCounter = 0;
+    protected GUIImage _imageFocused = null;
+    protected GUIImage _imageNonFocused = null;
+    protected GUILabelControl _labelControl = null;
 
-		public GUIButtonControl(int dwParentID) : base(dwParentID)
-		{
-		}
-		
-		/// <summary>
-		/// The constructor of the GUIButtonControl class.
-		/// </summary>
-		/// <param name="dwParentID">The parent of this control.</param>
-		/// <param name="dwControlId">The ID of this control.</param>
-		/// <param name="dwPosX">The X position of this control.</param>
-		/// <param name="dwPosY">The Y position of this control.</param>
-		/// <param name="dwWidth">The width of this control.</param>
-		/// <param name="dwHeight">The height of this control.</param>
-		/// <param name="strTextureFocus">The filename containing the texture of the butten, when the button has the focus.</param>
-		/// <param name="strTextureNoFocus">The filename containing the texture of the butten, when the button does not have the focus.</param>
-		public GUIButtonControl(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight,  string strTextureFocus, string strTextureNoFocus)
-			:base(dwParentID, dwControlId, dwPosX, dwPosY,dwWidth, dwHeight)
-		{
-			m_strImgFocusTexture = strTextureFocus;
-			m_strImgNoFocusTexture = strTextureNoFocus;
-			FinalizeConstruction();
-		}
+    public GUIButtonControl(int dwParentID)
+      : base(dwParentID)
+    {
+    }
 
-		/// <summary>
-		/// This method gets called when the control is created and all properties has been set
-		/// It allows the control todo any initialization
-		/// </summary>
-		public override void FinalizeConstruction()
-		{
-			base.FinalizeConstruction();
-			m_imgFocus  = new GUIImage(m_dwParentID, m_dwControlID, m_dwPosX, m_dwPosY,
-				m_dwWidth, m_dwHeight, m_strImgFocusTexture,0);
-			
-			m_imgNoFocus= new GUIImage(m_dwParentID, m_dwControlID, m_dwPosX, m_dwPosY,
-				m_dwWidth, m_dwHeight, m_strImgNoFocusTexture,0);
+    /// <summary>
+    /// The constructor of the GUIButtonControl class.
+    /// </summary>
+    /// <param name="dwParentID">The parent of this control.</param>
+    /// <param name="dwControlId">The ID of this control.</param>
+    /// <param name="dwPosX">The X position of this control.</param>
+    /// <param name="dwPosY">The Y position of this control.</param>
+    /// <param name="dwWidth">The width of this control.</param>
+    /// <param name="dwHeight">The height of this control.</param>
+    /// <param name="strTextureFocus">The filename containing the texture of the butten, when the button has the focus.</param>
+    /// <param name="strTextureNoFocus">The filename containing the texture of the butten, when the button does not have the focus.</param>
+    public GUIButtonControl(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight, string strTextureFocus, string strTextureNoFocus)
+      : base(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight)
+    {
+      _focusedTextureName = strTextureFocus;
+      _nonFocusedTextureName = strTextureNoFocus;
+      FinalizeConstruction();
+    }
 
-			if(_hoverFilename != string.Empty)
-			{
-				_hoverImage = new GUIImage(m_dwParentID, m_dwControlID, _hoverX, _hoverY, _hoverWidth, _hoverHeight, _hoverFilename, 0);
-				_hoverImage.Filtering = false;	
-			}
-			
-			m_imgFocus.Filtering=false;
-			m_imgNoFocus.Filtering=false;
-			GUILocalizeStrings.LocalizeLabel(ref m_strLabel);
-			m_label = new GUILabelControl(m_dwParentID,0,m_dwPosX,m_dwPosY,m_dwWidth, m_dwHeight,m_strFontName,m_strLabel,m_dwTextColor,GUIControl.Alignment.ALIGN_LEFT,false);
-			m_label.TextAlignment = _textAlignment;
-		}
+    /// <summary>
+    /// This method gets called when the control is created and all properties has been set
+    /// It allows the control todo any initialization
+    /// </summary>
+    public override void FinalizeConstruction()
+    {
+      base.FinalizeConstruction();
+      _imageFocused = new GUIImage(_parentControlId, _controlId, _positionX, _positionY,
+        _width, _height, _focusedTextureName, 0);
+      _imageFocused.ParentControl = this;
 
-		/// <summary>
-		/// This method gets called when the control is created and all properties has been set
-		/// It allows the control to scale itself to the current screen resolution
-		/// </summary>
-		public override void ScaleToScreenResolution()
-		{
-			base.ScaleToScreenResolution();
-			GUIGraphicsContext.ScalePosToScreenResolution(ref m_iTextOffsetX, ref m_iTextOffsetY);
-		}
+      _imageNonFocused = new GUIImage(_parentControlId, _controlId, _positionX, _positionY,
+        _width, _height, _nonFocusedTextureName, 0);
+      _imageNonFocused.ParentControl = this;
 
-		public override bool Focus
-		{
-			get
-			{
-				return IsFocused;
-			}
-			set
-			{
-				if (value != base.Focus && value)
-				{
-					GUIPropertyManager.SetProperty("#highlightedbutton", Label);
-				}
+      if (_hoverFilename != string.Empty)
+      {
+        _hoverImage = new GUIImage(_parentControlId, _controlId, _hoverX, _hoverY, _hoverWidth, _hoverHeight, _hoverFilename, 0);
+        _hoverImage.Filtering = false;
+        _hoverImage.ParentControl = this;
+      }
 
-				base.Focus = value;
-			}
-		}
+      _imageFocused.Filtering = false;
+      _imageNonFocused.Filtering = false;
+      GUILocalizeStrings.LocalizeLabel(ref _label);
+      _labelControl = new GUILabelControl(_parentControlId, 0, _positionX, _positionY, _width, _height, _fontName, _label, _textColor, GUIControl.Alignment.ALIGN_LEFT, false);
+      _labelControl.TextAlignment = _textAlignment;
+      _labelControl.ParentControl = this;
+    }
 
-		/// <summary>
-		/// Renders the GUIButtonControl.
-		/// </summary>
-		public override void Render(float timePassed)
-		{
-			// Do not render if not visible.
-			if (GUIGraphicsContext.EditMode==false)
-			{
-				if (!IsVisible ) return;
-			}
+    /// <summary>
+    /// This method gets called when the control is created and all properties has been set
+    /// It allows the control to scale itself to the current screen resolution
+    /// </summary>
+    public override void ScaleToScreenResolution()
+    {
+      base.ScaleToScreenResolution();
+      GUIGraphicsContext.ScalePosToScreenResolution(ref _textOffsetX, ref _textOffsetY);
+    }
 
-			// The GUIButtonControl has the focus
-			if (Focus)
-			{
-				//render the focused image
-				m_imgFocus.Render(timePassed);
+    public override bool Focus
+    {
+      get
+      {
+        return IsFocused;
+      }
+      set
+      {
+        if (value != base.Focus && value)
+        {
+          GUIPropertyManager.SetProperty("#highlightedbutton", Label);
+        }
 
-				if(_hoverImage != null)
-					_hoverImage.Render(timePassed);
-			}
-			else 
-			{
-				//render the non-focused image
-				m_imgNoFocus.Render(timePassed);  		
-			}
+        base.Focus = value;
+      }
+    }
 
-			m_label.TextAlignment = _textAlignment;
-			m_label.Label=m_strLabel;
-			m_label.TextColor= Disabled ? m_dwDisabledColor : m_dwTextColor;
+    /// <summary>
+    /// Renders the GUIButtonControl.
+    /// </summary>
+    public override void Render(float timePassed)
+    {
+      // Do not render if not visible.
+      if (GUIGraphicsContext.EditMode == false)
+      {
+        if (!IsVisible) return;
+      }
 
-			// render the text on the button
-			int x = 0;
+      // The GUIButtonControl has the focus
+      if (Focus)
+      {
+        //render the focused image
+        _imageFocused.Render(timePassed);
 
-			switch(_textAlignment)
-			{
-				case Alignment.ALIGN_LEFT:
-					x = m_iTextOffsetX + m_dwPosX;
-					break;
+        if (_hoverImage != null)
+          _hoverImage.Render(timePassed);
+      }
+      else
+      {
+        //render the non-focused image
+        _imageNonFocused.Render(timePassed);
+      }
 
-				case Alignment.ALIGN_RIGHT:
-					x = m_dwPosX + m_dwWidth - m_iTextOffsetY;
-					break;
-			}
+      _labelControl.TextAlignment = _textAlignment;
+      _labelControl.Label = _label;
+      _labelControl.TextColor = Disabled ? _disabledColor : _textColor;
 
-			m_label.SetPosition(x, m_iTextOffsetY + m_dwPosY);
-			m_label.Render(timePassed);
-		}
+      // render the text on the button
+      int x = 0;
 
-		/// <summary>
-		/// OnAction() method. This method gets called when there's a new action like a 
-		/// keypress or mousemove or... By overriding this method, the control can respond
-		/// to any action
-		/// </summary>
-		/// <param name="action">action : contains the action</param>
-		public override void OnAction( Action action) 
-		{
-			base.OnAction(action);
-			GUIMessage message ;
-			if (Focus)
-			{
-				if (action.wID == Action.ActionType.ACTION_MOUSE_CLICK||action.wID == Action.ActionType.ACTION_SELECT_ITEM)
-				{
-					if(ContextMenu != null)
-					{
-						DoContextMenu();
-						return;
-					}
+      switch (_textAlignment)
+      {
+        case Alignment.ALIGN_LEFT:
+          x = _textOffsetX + _positionX;
+          break;
 
-					// If this button contains scriptactions call the scriptactions.
-					if (m_strApplication.Length!=0)
-					{
-						//button should start an external application, so start it
-						Process proc = new Process();
+        case Alignment.ALIGN_RIGHT:
+          x = _positionX + _width - _textOffsetY;
+          break;
+      }
 
-						string strWorkingDir=System.IO.Path.GetFullPath(m_strApplication);
-						string strFileName=System.IO.Path.GetFileName(m_strApplication);
-						strWorkingDir=strWorkingDir.Substring(0, strWorkingDir.Length - (strFileName.Length+1) );
-						proc.StartInfo.FileName=strFileName;
-						proc.StartInfo.WorkingDirectory=strWorkingDir;
-						proc.StartInfo.Arguments=m_strArguments;
-						proc.StartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Minimized;
-						proc.StartInfo.CreateNoWindow=true;
-						proc.Start();
-						//proc.WaitForExit();
-					}
+      _labelControl.SetPosition(x, _textOffsetY + _positionY);
+      _labelControl.Render(timePassed);
+    }
 
-					// If this links to another window go to the window.
-					if (m_lHyperLinkWindowID >=0)
-					{
-						GUIWindowManager.ActivateWindow((int)m_lHyperLinkWindowID);
-						return;
-					}
-					// If this button corresponds to an action generate that action.
-					if (ActionID >=0)
-					{
-						Action newaction = new Action((Action.ActionType)ActionID,0,0);
-						GUIGraphicsContext.OnAction(newaction);
-						return;
-					}
-          
-					// button selected.
-					if (SubItemCount>0)
-					{
-						// if we got subitems, then change the label of the control to the next
-						//subitem
-						SelectedItem++;
-						if (SelectedItem >= SubItemCount) SelectedItem=0;
-						Label=(string)GetSubItem(SelectedItem);
-					}
+    /// <summary>
+    /// OnAction() method. This method gets called when there's a new action like a 
+    /// keypress or mousemove or... By overriding this method, the control can respond
+    /// to any action
+    /// </summary>
+    /// <param name="action">action : contains the action</param>
+    public override void OnAction(Action action)
+    {
+      base.OnAction(action);
+      GUIMessage message;
+      if (Focus)
+      {
+        if (action.wID == Action.ActionType.ACTION_MOUSE_CLICK || action.wID == Action.ActionType.ACTION_SELECT_ITEM)
+        {
+          if (ContextMenu != null)
+          {
+            DoContextMenu();
+            return;
+          }
 
-					// send a message to anyone interested 
-					message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED,WindowId,GetID, ParentID,0,0,null );
-					GUIGraphicsContext.SendMessage(message);
-				}
-			}
-		}
-		
-		/// <summary>
-		/// OnMessage() This method gets called when there's a new message. 
-		/// Controls send messages to notify their parents about their state (changes)
-		/// By overriding this method a control can respond to the messages of its controls
-		/// </summary>
-		/// <param name="message">message : contains the message</param>
-		/// <returns>true if the message was handled, false if it wasnt</returns>
-		public override bool OnMessage(GUIMessage message)
-		{
-			// Handle the GUI_MSG_LABEL_SET message
-			if ( message.TargetControlId==GetID )
-			{
-				if (message.Message == GUIMessage.MessageType.GUI_MSG_LABEL_SET)
-				{
-					if (message.Label!=null)
-						Label=message.Label;
-					return true;
-				}
-			}
-			// Let the base class handle the other messages
-			if (base.OnMessage(message)) return true;
-			return false;
-		}
+          // If this button contains scriptactions call the scriptactions.
+          if (_application.Length != 0)
+          {
+            //button should start an external application, so start it
+            Process proc = new Process();
 
-		/// <summary>
-		/// Preallocates the control its DirectX resources.
-		/// </summary>
-		public override void PreAllocResources()
-		{
-			base.PreAllocResources();
-			m_imgFocus.PreAllocResources();
-			m_imgNoFocus.PreAllocResources();
+            string workingFolder = System.IO.Path.GetFullPath(_application);
+            string fileName = System.IO.Path.GetFileName(_application);
+            workingFolder = workingFolder.Substring(0, workingFolder.Length - (fileName.Length + 1));
+            proc.StartInfo.FileName = fileName;
+            proc.StartInfo.WorkingDirectory = workingFolder;
+            proc.StartInfo.Arguments = _arguments;
+            proc.StartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Minimized;
+            proc.StartInfo.CreateNoWindow = true;
+            proc.Start();
+            //proc.WaitForExit();
+          }
 
-			if(_hoverImage != null)
-				_hoverImage.PreAllocResources();
-      
-		}
-		
-		/// <summary>
-		/// Allocates the control its DirectX resources.
-		/// </summary>
-		public override void AllocResources()
-		{
-			base.AllocResources();
-			m_dwFrameCounter=0;
-			m_imgFocus.AllocResources();
-			m_imgNoFocus.AllocResources();
+          // If this links to another window go to the window.
+          if (_hyperLinkWindowId >= 0)
+          {
+            GUIWindowManager.ActivateWindow((int)_hyperLinkWindowId);
+            return;
+          }
+          // If this button corresponds to an action generate that action.
+          if (ActionID >= 0)
+          {
+            Action newaction = new Action((Action.ActionType)ActionID, 0, 0);
+            GUIGraphicsContext.OnAction(newaction);
+            return;
+          }
 
-			if(_hoverImage != null)
-				_hoverImage.AllocResources();
+          // button selected.
+          if (SubItemCount > 0)
+          {
+            // if we got subitems, then change the label of the control to the next
+            //subitem
+            SelectedItem++;
+            if (SelectedItem >= SubItemCount) SelectedItem = 0;
+            Label = (string)GetSubItem(SelectedItem);
+          }
 
-			m_dwWidth=m_imgFocus.Width;
-			m_dwHeight=m_imgFocus.Height;
-      
-			if (SubItemCount>0)
-			{
-				Label=(string)GetSubItem(SelectedItem);
-			}
-			m_label.Width=m_dwWidth;
-			m_label.Height=m_dwHeight;
-			m_label.AllocResources();
-		}
+          // send a message to anyone interested 
+          message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, WindowId, GetID, ParentID, 0, 0, null);
+          GUIGraphicsContext.SendMessage(message);
+        }
+      }
+    }
 
-		/// <summary>
-		/// Frees the control its DirectX resources.
-		/// </summary>
-		public override void FreeResources()
-		{
-			base.FreeResources();
-			m_imgFocus.FreeResources();
-			m_imgNoFocus.FreeResources();
-			m_label.FreeResources();
+    /// <summary>
+    /// OnMessage() This method gets called when there's a new message. 
+    /// Controls send messages to notify their parents about their state (changes)
+    /// By overriding this method a control can respond to the messages of its controls
+    /// </summary>
+    /// <param name="message">message : contains the message</param>
+    /// <returns>true if the message was handled, false if it wasnt</returns>
+    public override bool OnMessage(GUIMessage message)
+    {
+      // Handle the GUI_MSG_LABEL_SET message
+      if (message.TargetControlId == GetID)
+      {
+        if (message.Message == GUIMessage.MessageType.GUI_MSG_LABEL_SET)
+        {
+          if (message.Label != null)
+            Label = message.Label;
+          return true;
+        }
+      }
+      // Let the base class handle the other messages
+      if (base.OnMessage(message)) return true;
+      return false;
+    }
 
-			if(_hoverImage != null)
-				_hoverImage.FreeResources();
-		}
+    /// <summary>
+    /// Preallocates the control its DirectX resources.
+    /// </summary>
+    public override void PreAllocResources()
+    {
+      base.PreAllocResources();
+      _imageFocused.PreAllocResources();
+      _imageNonFocused.PreAllocResources();
 
-		/// <summary>
-		/// Sets the position of the control.
-		/// </summary>
-		/// <param name="dwPosX">The X position.</param>
-		/// <param name="dwPosY">The Y position.</param>		
-		public override void SetPosition(int dwPosX, int dwPosY)
-		{
-			base.SetPosition(dwPosX, dwPosY);
-			m_imgFocus.SetPosition(dwPosX, dwPosY);
-			m_imgNoFocus.SetPosition(dwPosX, dwPosY);
-		}
+      if (_hoverImage != null)
+        _hoverImage.PreAllocResources();
 
-		/// <summary>
-		/// Changes the alpha transparency component of the colordiffuse.
-		/// </summary>
-		/// <param name="dwAlpha">The new value of the colordiffuse.</param>
-		public override void SetAlpha(int dwAlpha)
-		{
-			base.SetAlpha(dwAlpha);
-			m_imgFocus.SetAlpha(dwAlpha);
-			m_imgNoFocus.SetAlpha(dwAlpha);
+    }
 
-			if(_hoverImage != null)
-				_hoverImage.SetAlpha(dwAlpha);
-		}
+    /// <summary>
+    /// Allocates the control its DirectX resources.
+    /// </summary>
+    public override void AllocResources()
+    {
+      base.AllocResources();
+      _frameCounter = 0;
+      _imageFocused.AllocResources();
+      _imageNonFocused.AllocResources();
 
-		/// <summary>
-		/// Get/set the color of the text when the GUIButtonControl is disabled.
-		/// </summary>
-		public long DisabledColor
-		{
-			get { return m_dwDisabledColor;}
-			set {m_dwDisabledColor=value;}
-		}
-		
-		/// <summary>
-		/// Get the filename of the texture when the GUIButtonControl does not have the focus.
-		/// </summary>
-		public string TexutureNoFocusName
-		{ 
-			get { return m_imgNoFocus.FileName;} 
-		}
+      if (_hoverImage != null)
+        _hoverImage.AllocResources();
 
-		/// <summary>
-		/// Get the filename of the texture when the GUIButtonControl has the focus.
-		/// </summary>
-		public string TexutureFocusName
-		{ 
-			get {return m_imgFocus.FileName;} 
-		}
-		
-		/// <summary>
-		/// Set the color of the text on the GUIButtonControl. 
-		/// </summary>
-		public long	TextColor 
-		{ 
-			get { return m_dwTextColor;}
-			set { m_dwTextColor=value;}
-		}
+      _width = _imageFocused.Width;
+      _height = _imageFocused.Height;
 
-		/// <summary>
-		/// Get/set the name of the font of the text of the GUIButtonControl.
-		/// </summary>
-		public string FontName
-		{ 
-			get { return m_strFontName; }
-			set 
-			{ 
-				if (value==null) return;
-				m_strFontName=value;
-				m_label.FontName=m_strFontName;
-			}
-		}
+      if (SubItemCount > 0)
+      {
+        Label = (string)GetSubItem(SelectedItem);
+      }
+      _labelControl.Width = _width;
+      _labelControl.Height = _height;
+      _labelControl.AllocResources();
+    }
 
-		/// <summary>
-		/// Set the text of the GUIButtonControl. 
-		/// </summary>
-		/// <param name="strFontName">The font name.</param>
-		/// <param name="strLabel">The text.</param>
-		/// <param name="dwColor">The font color.</param>
-		public void SetLabel( string strFontName,string strLabel,long dwColor)
-		{
-			if (strFontName==null) return;
-			if (strLabel==null) return;
-			Label=strLabel;
-			m_dwTextColor=dwColor;
-			m_strFontName=strFontName;
-      
-			m_label.FontName=m_strFontName;
-			m_label.TextColor=dwColor;
-			m_label.Label=strLabel;
-		}
+    /// <summary>
+    /// Frees the control its DirectX resources.
+    /// </summary>
+    public override void FreeResources()
+    {
+      base.FreeResources();
+      _imageFocused.FreeResources();
+      _imageNonFocused.FreeResources();
+      _labelControl.FreeResources();
 
-		/// <summary>
-		/// Get/set the text of the GUIButtonControl.
-		/// </summary>
-		public string Label
-		{ 
-			get { return m_strLabel; }
-			set 
-			{
-				if (value==null) return;
-             
-				m_strLabel=value;
-				m_label.Label=m_strLabel;
-			}
-		}
+      if (_hoverImage != null)
+        _hoverImage.FreeResources();
+    }
 
-		/// <summary>
-		/// Get/set the window ID to which the GUIButtonControl links.
-		/// </summary>
-		public int HyperLink
-		{ 
-			get { return m_lHyperLinkWindowID;}
-			set {m_lHyperLinkWindowID=value;}
-		}
+    /// <summary>
+    /// Sets the position of the control.
+    /// </summary>
+    /// <param name="dwPosX">The X position.</param>
+    /// <param name="dwPosY">The Y position.</param>		
+    public override void SetPosition(int dwPosX, int dwPosY)
+    {
+      base.SetPosition(dwPosX, dwPosY);
+      _imageFocused.SetPosition(dwPosX, dwPosY);
+      _imageNonFocused.SetPosition(dwPosX, dwPosY);
+    }
 
-		/// <summary>
-		/// Get/set the scriptaction that needs to be performed when the button is clicked.
-		/// </summary>
-		public string ScriptAction  
-		{ 
-			get { return m_strScriptAction; }
-			set 
-			{ 
-				if (value==null) return;
-				m_strScriptAction=value; 
-			}
-		}
+    /// <summary>
+    /// Changes the alpha transparency component of the colordiffuse.
+    /// </summary>
+    /// <param name="dwAlpha">The new value of the colordiffuse.</param>
+    public override void SetAlpha(int dwAlpha)
+    {
+      base.SetAlpha(dwAlpha);
+      _imageFocused.SetAlpha(dwAlpha);
+      _imageNonFocused.SetAlpha(dwAlpha);
 
-		/// <summary>
-		/// Get/set the action ID that corresponds to this button.
-		/// </summary>
-		public int ActionID
-		{
-			get { return m_iAction;}
-			set { m_iAction=value;}
+      if (_hoverImage != null)
+        _hoverImage.SetAlpha(dwAlpha);
+    }
 
-		}
+    /// <summary>
+    /// Get/set the color of the text when the GUIButtonControl is disabled.
+    /// </summary>
+    public long DisabledColor
+    {
+      get { return _disabledColor; }
+      set { _disabledColor = value; }
+    }
 
-		/// <summary>
-		/// Get/set the X-offset of the label.
-		/// </summary>
-		public int TextOffsetX
-		{
-			get { return m_iTextOffsetX;}
-			set 
-			{ 
-				if (value<0) return;
-				m_iTextOffsetX=value;
-			}
-		}
-		/// <summary>
-		/// Get/set the Y-offset of the label.
-		/// </summary>
-		public int TextOffsetY
-		{
-			get { return m_iTextOffsetY;}
-			set 
-			{ 
-				if (value<0) return;
-				m_iTextOffsetY=value;
-			}
-		}
+    /// <summary>
+    /// Get the filename of the texture when the GUIButtonControl does not have the focus.
+    /// </summary>
+    public string TexutureNoFocusName
+    {
+      get { return _imageNonFocused.FileName; }
+    }
 
-		public GUIControl.Alignment TextAlignment
-		{
-			get { return _textAlignment; }
-			set { _textAlignment = value; }
-		}
+    /// <summary>
+    /// Get the filename of the texture when the GUIButtonControl has the focus.
+    /// </summary>
+    public string TexutureFocusName
+    {
+      get { return _imageFocused.FileName; }
+    }
 
-		/// <summary>
-		/// Perform an update after a change has occured. E.g. change to a new position.
-		/// </summary>
-		protected override void  Update() 
-		{
-			base.Update();
-  
-			m_imgFocus.ColourDiffuse=ColourDiffuse;
-			m_imgFocus.Width=m_dwWidth;
-			m_imgFocus.Height=m_dwHeight;
+    /// <summary>
+    /// Set the color of the text on the GUIButtonControl. 
+    /// </summary>
+    public long TextColor
+    {
+      get { return _textColor; }
+      set { _textColor = value; }
+    }
 
-			m_imgNoFocus.ColourDiffuse=ColourDiffuse;
-			m_imgNoFocus.Width=m_dwWidth;
-			m_imgNoFocus.Height=m_dwHeight;
-      
-			m_imgFocus.SetPosition(m_dwPosX, m_dwPosY);
-			m_imgNoFocus.SetPosition(m_dwPosX, m_dwPosY);
-		}
+    /// <summary>
+    /// Get/set the name of the font of the text of the GUIButtonControl.
+    /// </summary>
+    public string FontName
+    {
+      get { return _fontName; }
+      set
+      {
+        if (value == null) return;
+        _fontName = value;
+        _labelControl.FontName = _fontName;
+      }
+    }
 
-		public void Refresh()
-		{
-			Update();
-		}
+    /// <summary>
+    /// Set the text of the GUIButtonControl. 
+    /// </summary>
+    /// <param name="strFontName">The font name.</param>
+    /// <param name="strLabel">The text.</param>
+    /// <param name="dwColor">The font color.</param>
+    public void SetLabel(string strFontName, string strLabel, long dwColor)
+    {
+      if (strFontName == null) return;
+      if (strLabel == null) return;
+      Label = strLabel;
+      _textColor = dwColor;
+      _fontName = strFontName;
 
-		/// <summary>
-		/// Get/Set the the application filename
-		/// which should be launched when this button gets clicked
-		/// </summary>
-		public string Application
-		{
-			get { return m_strApplication; }
-			set 
-			{ 
-				if (value==null) return;
-				m_strApplication = value; 
-			}
-		}
+      _labelControl.FontName = _fontName;
+      _labelControl.TextColor = dwColor;
+      _labelControl.Label = strLabel;
+    }
 
-		/// <summary>
-		/// Get/Set the arguments for the application
-		/// which should be launched when this button gets clicked
-		/// </summary>
-		public string Arguments
-		{
-			get { return m_strArguments; }
-			set 
-			{ 
-				if (value==null) return;
-				m_strArguments = value; 
-			}
-		}
+    /// <summary>
+    /// Get/set the text of the GUIButtonControl.
+    /// </summary>
+    public string Label
+    {
+      get { return _label; }
+      set
+      {
+        if (value == null) return;
 
-		/// <summary>
-		/// get/set the current selected item
-		/// A button can have 1 or more subitems
-		/// each subitem has its own text to render on the button
-		/// When the user presses the button, the next item will be selected
-		/// and shown on the button
-		/// </summary>
-		public override int SelectedItem
-		{
-			get { return m_SelectedItem;}
-			set 
-			{
-				if (value<0) return;
-				if (SubItemCount>0)
-				{
-					m_SelectedItem=value;
-					if (m_SelectedItem<0 || m_SelectedItem >= SubItemCount) m_SelectedItem=0;
-					Label=(string)GetSubItem(m_SelectedItem);
-				}
-				else m_SelectedItem=0;
-			}
-		}
+        _label = value;
+        _labelControl.Label = _label;
+      }
+    }
 
-		void DoContextMenu()
-		{
-			IDialogbox dialog = (IDialogbox)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+    /// <summary>
+    /// Get/set the window ID to which the GUIButtonControl links.
+    /// </summary>
+    public int HyperLink
+    {
+      get { return _hyperLinkWindowId; }
+      set { _hyperLinkWindowId = value; }
+    }
 
-			if(dialog == null)
-				return;
+    /// <summary>
+    /// Get/set the scriptaction that needs to be performed when the button is clicked.
+    /// </summary>
+    public string ScriptAction
+    {
+      get { return _scriptAction; }
+      set
+      {
+        if (value == null) return;
+        _scriptAction = value;
+      }
+    }
 
-			dialog.Reset();
-			dialog.SetHeading(924); // menu
+    /// <summary>
+    /// Get/set the action ID that corresponds to this button.
+    /// </summary>
+    public int ActionID
+    {
+      get { return _actionId; }
+      set { _actionId = value; }
 
-			foreach(object item in ContextMenu.Items)
-			{
-				if(item is MenuItem)
-					dialog.Add(((MenuItem)item).Header as string);
-			}
+    }
 
-			dialog.DoModal(ParentID);
+    /// <summary>
+    /// Get/set the X-offset of the label.
+    /// </summary>
+    public int TextOffsetX
+    {
+      get { return _textOffsetX; }
+      set
+      {
+        if (value < 0) return;
+        _textOffsetX = value;
+      }
+    }
+    /// <summary>
+    /// Get/set the Y-offset of the label.
+    /// </summary>
+    public int TextOffsetY
+    {
+      get { return _textOffsetY; }
+      set
+      {
+        if (value < 0) return;
+        _textOffsetY = value;
+      }
+    }
 
-			if(dialog.SelectedId==-1)
-				return;
-		}
-	}
+    public GUIControl.Alignment TextAlignment
+    {
+      get { return _textAlignment; }
+      set { _textAlignment = value; }
+    }
+
+    /// <summary>
+    /// Perform an update after a change has occured. E.g. change to a new position.
+    /// </summary>
+    protected override void Update()
+    {
+      base.Update();
+
+      _imageFocused.ColourDiffuse = ColourDiffuse;
+      _imageFocused.Width = _width;
+      _imageFocused.Height = _height;
+
+      _imageNonFocused.ColourDiffuse = ColourDiffuse;
+      _imageNonFocused.Width = _width;
+      _imageNonFocused.Height = _height;
+
+      _imageFocused.SetPosition(_positionX, _positionY);
+      _imageNonFocused.SetPosition(_positionX, _positionY);
+    }
+
+    public void Refresh()
+    {
+      Update();
+    }
+
+    /// <summary>
+    /// Get/Set the the application filename
+    /// which should be launched when this button gets clicked
+    /// </summary>
+    public string Application
+    {
+      get { return _application; }
+      set
+      {
+        if (value == null) return;
+        _application = value;
+      }
+    }
+
+    /// <summary>
+    /// Get/Set the arguments for the application
+    /// which should be launched when this button gets clicked
+    /// </summary>
+    public string Arguments
+    {
+      get { return _arguments; }
+      set
+      {
+        if (value == null) return;
+        _arguments = value;
+      }
+    }
+
+    /// <summary>
+    /// get/set the current selected item
+    /// A button can have 1 or more subitems
+    /// each subitem has its own text to render on the button
+    /// When the user presses the button, the next item will be selected
+    /// and shown on the button
+    /// </summary>
+    public override int SelectedItem
+    {
+      get { return _selectedItem; }
+      set
+      {
+        if (value < 0) return;
+        if (SubItemCount > 0)
+        {
+          _selectedItem = value;
+          if (_selectedItem < 0 || _selectedItem >= SubItemCount) _selectedItem = 0;
+          Label = (string)GetSubItem(_selectedItem);
+        }
+        else _selectedItem = 0;
+      }
+    }
+
+    void DoContextMenu()
+    {
+      IDialogbox dialog = (IDialogbox)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+
+      if (dialog == null)
+        return;
+
+      dialog.Reset();
+      dialog.SetHeading(924); // menu
+
+      foreach (object item in ContextMenu.Items)
+      {
+        if (item is MenuItem)
+          dialog.Add(((MenuItem)item).Header as string);
+      }
+
+      dialog.DoModal(ParentID);
+
+      if (dialog.SelectedId == -1)
+        return;
+    }
+  }
 }

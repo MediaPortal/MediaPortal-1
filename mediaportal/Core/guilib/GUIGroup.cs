@@ -58,6 +58,17 @@ namespace MediaPortal.GUI.Library
 			Children.Add(control);
 		}
 
+    public override bool Dimmed
+    {
+      get
+      {
+        return (GetFocusControlId() == -1);
+      }
+      set
+      {
+      }
+    }
+
 		public override void Render(float timePassed)
 		{
 			if(GUIGraphicsContext.Animations)
@@ -80,8 +91,10 @@ namespace MediaPortal.GUI.Library
 				}
 			}
 
-			foreach(GUIControl control in Children)
-				control.Render(timePassed);
+      foreach (GUIControl control in Children)
+      {
+        control.Render(timePassed);
+      }
 			
 			if(_animator != null && _animator.IsDone())
 			{
@@ -104,8 +117,11 @@ namespace MediaPortal.GUI.Library
 
 		public override void AllocResources()
 		{
-			foreach(GUIControl control in Children)
-				control.AllocResources();
+      foreach (GUIControl control in Children)
+      {
+        control.ParentControl = this;
+        control.AllocResources();
+      }
 		}
 
 		public override void PreAllocResources()

@@ -36,7 +36,7 @@ namespace WaveLib
 
 		private Stream m_Stream;
 
-		private long m_DataPos;
+		private long _dataPos;
 
 		private long m_Length;
 
@@ -144,7 +144,7 @@ namespace WaveLib
 
 			m_Length = Reader.ReadInt32();
 
-			m_DataPos = m_Stream.Position;
+			_dataPos = m_Stream.Position;
 
 
 
@@ -226,7 +226,7 @@ namespace WaveLib
 
 		{
 
-			get { return m_Stream.Position - m_DataPos; }
+			get { return m_Stream.Position - _dataPos; }
 
 			set { Seek(value, SeekOrigin.Begin); }
 
@@ -264,7 +264,7 @@ namespace WaveLib
 
 				case SeekOrigin.Begin:
 
-					m_Stream.Position = pos + m_DataPos;
+					m_Stream.Position = pos + _dataPos;
 
 					break;
 
@@ -276,7 +276,7 @@ namespace WaveLib
 
 				case SeekOrigin.End:
 
-					m_Stream.Position = m_DataPos + m_Length - pos;
+					m_Stream.Position = _dataPos + m_Length - pos;
 
 					break;
 

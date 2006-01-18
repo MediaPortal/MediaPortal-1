@@ -38,16 +38,16 @@ namespace MediaPortal.GUI.Library
     //even which gets fired if the list,thumbnail or filmstrip few needs the
     //coverart for the specified item
     public event RetrieveCoverArtHandler OnRetrieveArt = null;
-    protected string m_strLabel = String.Empty;							// text of column1
-    protected string m_strLabel2 = String.Empty;							// text of column2
-    protected string m_strLabel3 = String.Empty;							// text of column3
+    protected string _label = String.Empty;							// text of column1
+    protected string _label2 = String.Empty;							// text of column2
+    protected string _label3 = String.Empty;							// text of column3
     protected string m_strThumbnailImage = String.Empty;			// filename of thumbnail 
     protected string m_strIcon = String.Empty;								// filename of icon
     protected string m_strIconBig = String.Empty;						// filename of icon
     protected GUIImage m_pThumbnailImage = null;			// pointer to CImage containing the thumbnail
     protected GUIImage m_pIconImage = null;					// pointer to CImage containing the icon
     protected GUIImage m_pIconImageBig = null;				// pointer to CImage containing the icon
-    protected bool m_bSelected = false;					// item is selected or not
+    protected bool _isSelected = false;					// item is selected or not
     protected bool m_bFolder = false;						// indicated if the item is a folder or a path
     protected string m_strPath = String.Empty;								// path + filename of the item
     protected string m_strDVDLabel = String.Empty;						// indicates the disc number of movie
@@ -81,14 +81,14 @@ namespace MediaPortal.GUI.Library
     /// <param name="item">The item on which the new item is based.</param>
     public GUIListItem(GUIListItem item)
     {
-      m_strLabel = item.m_strLabel;
-      m_strLabel2 = item.m_strLabel2;
-      m_strLabel3 = item.m_strLabel3;
+      _label = item._label;
+      _label2 = item._label2;
+      _label3 = item._label3;
       m_strThumbnailImage = item.m_strThumbnailImage;
       m_strIcon = item.m_strIcon;
       m_strIconBig = item.m_strIconBig;
       m_PinIcon = item.m_PinIcon;
-      m_bSelected = item.m_bSelected;
+      _isSelected = item._isSelected;
       m_bFolder = item.m_bFolder;
       m_strPath = item.m_strPath;
       m_strDVDLabel = item.m_strDVDLabel;
@@ -109,7 +109,7 @@ namespace MediaPortal.GUI.Library
     public GUIListItem(string strLabel)
     {
       if (strLabel == null) return;
-      m_strLabel = strLabel;
+      _label = strLabel;
     }
 
     /// <summary>
@@ -117,11 +117,11 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public string Label
     {
-      get { return m_strLabel; }
+      get { return _label; }
       set
       {
         if (value == null) return;
-        m_strLabel = value;
+        _label = value;
       }
     }
 
@@ -130,11 +130,11 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public string Label2
     {
-      get { return m_strLabel2; }
+      get { return _label2; }
       set
       {
         if (value == null) return;
-        m_strLabel2 = value;
+        _label2 = value;
       }
     }
 
@@ -143,11 +143,11 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public string Label3
     {
-      get { return m_strLabel3; }
+      get { return _label3; }
       set
       {
         if (value == null) return;
-        m_strLabel3 = value;
+        _label3 = value;
       }
     }
 
@@ -226,8 +226,8 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public bool Selected
     {
-      get { return m_bSelected; }
-      set { m_bSelected = value; }
+      get { return _isSelected; }
+      set { _isSelected = value; }
     }
 
     /// <summary>

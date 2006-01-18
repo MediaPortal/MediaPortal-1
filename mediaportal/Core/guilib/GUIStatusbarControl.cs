@@ -82,11 +82,17 @@ namespace MediaPortal.GUI.Library
 		public override void FinalizeConstruction()
 		{
 			base.FinalizeConstruction ();
-			m_guiBackground = new GUIImage(m_dwParentID, m_dwControlID, m_dwPosX, m_dwPosY,m_dwWidth, m_dwHeight,m_strBackground,0);
-			m_guiLeft		  = new GUIImage(m_dwParentID, m_dwControlID, m_dwPosX, m_dwPosY,0, 0,m_strLeft,0);
-			m_guiMid		  = new GUIImage(m_dwParentID, m_dwControlID, m_dwPosX, m_dwPosY,0, 0,m_strMid,0);
-			m_guiRight	  = new GUIImage(m_dwParentID, m_dwControlID, m_dwPosX, m_dwPosY,0, 0,m_strRight,0);
-				
+			m_guiBackground = new GUIImage(_parentControlId, _controlId, _positionX, _positionY,_width, _height,m_strBackground,0);
+			m_guiLeft		  = new GUIImage(_parentControlId, _controlId, _positionX, _positionY,0, 0,m_strLeft,0);
+			m_guiMid		  = new GUIImage(_parentControlId, _controlId, _positionX, _positionY,0, 0,m_strMid,0);
+			m_guiRight	  = new GUIImage(_parentControlId, _controlId, _positionX, _positionY,0, 0,m_strRight,0);
+
+
+      m_guiBackground.ParentControl = this;
+      m_guiLeft.ParentControl = this;
+      m_guiMid.ParentControl = this;
+      m_guiRight.ParentControl = this;
+
 			m_guiBackground.KeepAspectRatio=false;
 			m_guiMid.KeepAspectRatio=false;
 			m_guiRight.KeepAspectRatio=false;
@@ -101,10 +107,10 @@ namespace MediaPortal.GUI.Library
 		protected override void Update()
 		{
 			base.Update ();
-			m_guiBackground.SetPosition(m_dwPosX,m_dwPosY);
-			m_guiLeft.SetPosition(m_dwPosX,m_dwPosY);
-			m_guiMid.SetPosition(m_dwPosX,m_dwPosY);
-			m_guiRight.SetPosition(m_dwPosX,m_dwPosY);
+			m_guiBackground.SetPosition(_positionX,_positionY);
+			m_guiLeft.SetPosition(_positionX,_positionY);
+			m_guiMid.SetPosition(_positionX,_positionY);
+			m_guiRight.SetPosition(_positionX,_positionY);
 		}
 
 		/// <summary>
@@ -147,7 +153,7 @@ namespace MediaPortal.GUI.Library
 			catch(Exception){}
 
 			// Render the background
-			int iBkgHeight=m_dwHeight;
+			int iBkgHeight=_height;
 			m_guiBackground.Height=iBkgHeight;
 			if (tb==1) 
 			{

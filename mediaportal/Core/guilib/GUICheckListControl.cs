@@ -33,10 +33,10 @@ namespace MediaPortal.GUI.Library
 	/// </summary>
 	public class GUICheckListControl : GUIListControl
 	{
-		[XMLSkinElement("textureCheckmarkNoFocus")] protected string	m_strCheckMarkNoFocus;
-		[XMLSkinElement("textureCheckmark")]	protected string	m_strCheckMark;
-		[XMLSkinElement("MarkWidth")]			protected int		m_iCheckMarkWidth;
-		[XMLSkinElement("MarkHeight")]			protected int		m_iCheckMarkHeight;
+		[XMLSkinElement("textureCheckmarkNoFocus")] protected string	_checkMarkNoFocusTextureName;
+		[XMLSkinElement("textureCheckmark")]	protected string	_checkMarkFocusTextureName;
+		[XMLSkinElement("MarkWidth")]			protected int		_checkMarkWidth;
+		[XMLSkinElement("MarkHeight")]			protected int		_checkMarkHeight;
 		[XMLSkinElement("MarkOffsetX")]			protected int		markOffsetX;
 		[XMLSkinElement("MarkOffsetY")]			protected int		markOffsetY;
 				
@@ -95,11 +95,12 @@ namespace MediaPortal.GUI.Library
 		{
 			for (int i=0; i < m_iItemsPerPage;++i)
 			{
-				GUICheckButton cntl = new GUICheckButton(m_dwControlID, 0, m_dwSpinX, m_dwSpinY, m_dwWidth, m_iItemHeight, m_strButtonFocused, m_strButtonUnfocused,m_strCheckMark,m_strCheckMarkNoFocus,m_iCheckMarkWidth,m_iCheckMarkHeight);
+				GUICheckButton cntl = new GUICheckButton(_controlId, 0, _spinControlPositionX, _spinControlPositionY, _width, m_iItemHeight, m_strButtonFocused, m_strButtonUnfocused,_checkMarkFocusTextureName,_checkMarkNoFocusTextureName,_checkMarkWidth,_checkMarkHeight);
+        cntl.ParentControl = this;
 				cntl.AllocResources();
 				cntl.CheckOffsetX=markOffsetX;
 				cntl.CheckOffsetY=markOffsetY;
-				m_imgButton.Add(cntl);
+				_listButtons.Add(cntl);
 			}
 		}
 		protected override void OnLeft()
@@ -130,12 +131,12 @@ namespace MediaPortal.GUI.Library
 			for (int i=0; i < m_iItemsPerPage;++i)
 			{
 				bool selected=false;
-				if (i < m_vecItems.Count)
+				if (i < m__itemList.Count)
 				{
-					GUIListItem item = (GUIListItem)m_vecItems[i+m_iOffset];
+					GUIListItem item = (GUIListItem)m__itemList[i+m_iOffset];
 					if (item.Selected) selected=true;
 				}
-				GUIControl btn = (GUIControl)m_imgButton[i];
+				GUIControl btn = (GUIControl)_listButtons[i];
 				btn.Focus=false;
 				btn.Selected=selected;
 				if (i==m_iCursorY)
@@ -147,10 +148,10 @@ namespace MediaPortal.GUI.Library
 
 		protected override void RenderButton(float timePassed, int buttonNr, int x, int y, bool gotFocus)
 		{
-			if (buttonNr + m_iOffset>=0 && buttonNr + m_iOffset < m_vecItems.Count)
+			if (buttonNr + m_iOffset>=0 && buttonNr + m_iOffset < m__itemList.Count)
 			{
-				GUIListItem item=(GUIListItem )m_vecItems[buttonNr + m_iOffset];
-				GUICheckButton cntl = (GUICheckButton)m_imgButton[buttonNr];
+				GUIListItem item=(GUIListItem )m__itemList[buttonNr + m_iOffset];
+				GUICheckButton cntl = (GUICheckButton)_listButtons[buttonNr];
 				cntl.Selected=item.Selected;
 				
 			}

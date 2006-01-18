@@ -55,8 +55,8 @@ namespace MediaPortal.GUI.Library
 		{
 			base.FinalizeConstruction();
 
-			int x = m_dwPosX + _sortButtonOffsetX;
-			int y = m_dwPosY + _sortButtonOffsetY;
+			int x = _positionX + _sortButtonOffsetX;
+			int y = _positionY + _sortButtonOffsetY;
 			int w = _sortButtonWidth;
 			int h = _sortButtonHeight;
 
@@ -64,6 +64,10 @@ namespace MediaPortal.GUI.Library
 			_sortImages[1] = new GUIImage(this.GetID, this.GetID + 25001, x, y, w, h, _ascendingTextureFocusedFilename, 0xFFFFFFFF);
 			_sortImages[2] = new GUIImage(this.GetID, this.GetID + 25002, x, y, w, h, _descendingTextureFilename, 0xFFFFFFFF);
 			_sortImages[3] = new GUIImage(this.GetID, this.GetID + 25003, x, y, w, h, _descendingTextureFocusedFilename, 0xFFFFFFFF);
+      _sortImages[0].ParentControl = this;
+      _sortImages[1].ParentControl = this;
+      _sortImages[2].ParentControl = this;
+      _sortImages[3].ParentControl = this;
 		}
 		public override void ScaleToScreenResolution()
 		{
@@ -101,8 +105,8 @@ namespace MediaPortal.GUI.Library
 
 			base.Render(timePassed);
 
-			int x = m_dwPosX + _sortButtonOffsetX;
-			int y = m_dwPosY + _sortButtonOffsetY;
+			int x = _positionX + _sortButtonOffsetX;
+			int y = _positionY + _sortButtonOffsetY;
 
 			if(_sortImages[0].XPosition != x || _sortImages[0].YPosition != y)
 			{
@@ -154,8 +158,8 @@ namespace MediaPortal.GUI.Library
 		{
 			base.Update();
 
-			int x = m_dwPosX + _sortButtonOffsetX;
-			int y = m_dwPosY + _sortButtonOffsetY;
+			int x = _positionX + _sortButtonOffsetX;
+			int y = _positionY + _sortButtonOffsetY;
 
 			_sortImages[0].SetPosition(x, y);
 			_sortImages[1].SetPosition(x, y);

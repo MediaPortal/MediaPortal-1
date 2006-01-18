@@ -47,20 +47,20 @@ namespace MediaPortal.GUI.Library
 
 		
 		[XMLSkinElement("label")] string	 			m_strProperty="";
-		[XMLSkinElement("textcolor")]		protected long  	m_dwTextColor=0xFFFFFFFF;
-		[XMLSkinElement("font")]			protected string	m_strFontName="";
-		GUIFont						m_pFont=null;
-		[XMLSkinElement("startlabel")]	string                m_strLabelLeft="";
-		[XMLSkinElement("endlabel")]	string                m_strLabelRight="";
-		[XMLSkinElement("toplabel")]	string                m_strLabelTop="";
+		[XMLSkinElement("textcolor")]		protected long  	_textColor=0xFFFFFFFF;
+		[XMLSkinElement("font")]			protected string	_fontName="";
+		GUIFont						_font=null;
+		[XMLSkinElement("startlabel")]	string                _labelLeft="";
+		[XMLSkinElement("endlabel")]	string                _labelRight="";
+		[XMLSkinElement("toplabel")]	string                _labelTop="";
 		[XMLSkinElement("fillbgxoff")]		protected int			m_iFillX;
 		[XMLSkinElement("fillbgyoff")]		protected int			m_iFillY;
 		[XMLSkinElement("fillheight")]		protected int			m_iFillHeight;
 		
 		
-		[XMLSkinElement("label")]		string                m_strLabel1="";
-		[XMLSkinElement("label1")]		string                m_strLabel2="";
-		[XMLSkinElement("label2")]		string                m_strLabel3="";
+		[XMLSkinElement("label")]		string                _label1="";
+		[XMLSkinElement("label1")]		string                _label2="";
+		[XMLSkinElement("label2")]		string                _label3="";
 		[XMLSkinElement("TextureOffsetY")]		protected int    m_iTopTextureYOffset=0;
 		[XMLSkinElement("toptexture")]			protected string m_strTextureTop;
 		[XMLSkinElement("bottomtexture")]		protected string m_strTextureBottom;
@@ -114,16 +114,16 @@ namespace MediaPortal.GUI.Library
       if (m_strTickFill3==null) m_strTickFill3=String.Empty;
       if (m_strFillBG==null) m_strFillBG=String.Empty;
       if (m_strLogo==null) m_strLogo=String.Empty;
-			m_guiTop	= new GUIImage(m_dwParentID, m_dwControlID, 0, 0,0, 0,m_strTextureTop,0);
-			m_guiBottom	= new GUIImage(m_dwParentID, m_dwControlID, 0, 0,0, 0,m_strTextureBottom,0);
-			m_guiLeft	= new GUIImage(m_dwParentID, m_dwControlID, m_dwPosX, m_dwPosY,0, 0,m_strLeft,0);
-			m_guiMid	= new GUIImage(m_dwParentID, m_dwControlID, m_dwPosX, m_dwPosY,0, 0,m_strMid,0);
-			m_guiRight	= new GUIImage(m_dwParentID, m_dwControlID, m_dwPosX, m_dwPosY,0, 0,m_strRight,0);
-			m_guiTick	= new GUIImage(m_dwParentID, m_dwControlID, m_dwPosX, m_dwPosY,0, 0,m_strTickTexture,0);
-			m_guiFill1	= new GUIImage(m_dwParentID, m_dwControlID, m_dwPosX, m_dwPosY,0, 0,m_strTickFill1,0);
-			m_guiFill2	= new GUIImage(m_dwParentID, m_dwControlID, m_dwPosX, m_dwPosY,0, 0,m_strTickFill2,0);
-			m_guiFill3	= new GUIImage(m_dwParentID, m_dwControlID, m_dwPosX, m_dwPosY,0, 0,m_strTickFill3,0);
-			m_guiFillBackground= new GUIImage(m_dwParentID, m_dwControlID, 0, 0,0, 0,m_strFillBG,0);
+			m_guiTop	= new GUIImage(_parentControlId, _controlId, 0, 0,0, 0,m_strTextureTop,0);
+			m_guiBottom	= new GUIImage(_parentControlId, _controlId, 0, 0,0, 0,m_strTextureBottom,0);
+			m_guiLeft	= new GUIImage(_parentControlId, _controlId, _positionX, _positionY,0, 0,m_strLeft,0);
+			m_guiMid	= new GUIImage(_parentControlId, _controlId, _positionX, _positionY,0, 0,m_strMid,0);
+			m_guiRight	= new GUIImage(_parentControlId, _controlId, _positionX, _positionY,0, 0,m_strRight,0);
+			m_guiTick	= new GUIImage(_parentControlId, _controlId, _positionX, _positionY,0, 0,m_strTickTexture,0);
+			m_guiFill1	= new GUIImage(_parentControlId, _controlId, _positionX, _positionY,0, 0,m_strTickFill1,0);
+			m_guiFill2	= new GUIImage(_parentControlId, _controlId, _positionX, _positionY,0, 0,m_strTickFill2,0);
+			m_guiFill3	= new GUIImage(_parentControlId, _controlId, _positionX, _positionY,0, 0,m_strTickFill3,0);
+			m_guiFillBackground= new GUIImage(_parentControlId, _controlId, 0, 0,0, 0,m_strFillBG,0);
 			m_guiTop.KeepAspectRatio=false;
 			m_guiBottom.KeepAspectRatio=false;
 			m_guiMid.KeepAspectRatio=false;
@@ -133,8 +133,19 @@ namespace MediaPortal.GUI.Library
 			m_guiFill2.KeepAspectRatio=false;
 			m_guiFill3.KeepAspectRatio=false;
 			m_guiFillBackground.KeepAspectRatio=false;
-			m_guiLogo = new GUIImage(m_dwParentID, m_dwControlID, 0, 0,0, 0,m_strLogo,0);
-			FontName = m_strFontName;
+
+      m_guiTop.ParentControl = this;
+      m_guiBottom.ParentControl = this;
+      m_guiMid.ParentControl = this;
+      m_guiRight.ParentControl = this;
+      m_guiTick.ParentControl = this;
+      m_guiFill1.ParentControl = this;
+      m_guiFill2.ParentControl = this;
+      m_guiFill3.ParentControl = this;
+      m_guiFillBackground.ParentControl = this;
+      m_guiLogo = new GUIImage(_parentControlId, _controlId, 0, 0, 0, 0, m_strLogo, 0);
+      m_guiLogo.ParentControl = this;
+			FontName = _fontName;
 		}
 
 		public override void ScaleToScreenResolution()
@@ -209,17 +220,17 @@ namespace MediaPortal.GUI.Library
         }
       }
 
-			int xPos=m_dwPosX;
-			m_guiLeft.SetPosition(xPos,m_dwPosY);
+			int xPos=_positionX;
+			m_guiLeft.SetPosition(xPos,_positionY);
 			
-			xPos=m_dwPosX+m_guiLeft.TextureWidth;
-			m_guiMid.SetPosition(xPos,m_dwPosY);
+			xPos=_positionX+m_guiLeft.TextureWidth;
+			m_guiMid.SetPosition(xPos,_positionY);
 			
-			int iWidth=m_dwWidth-(m_guiLeft.TextureWidth+m_guiRight.TextureWidth);
+			int iWidth=_width-(m_guiLeft.TextureWidth+m_guiRight.TextureWidth);
 			m_guiMid.Width=iWidth;
       
-			xPos=iWidth+m_dwPosX+m_guiLeft.TextureWidth;
-			m_guiRight.SetPosition(xPos,m_dwPosY);
+			xPos=iWidth+_positionX+m_guiLeft.TextureWidth;
+			m_guiRight.SetPosition(xPos,_positionY);
 
 			m_guiLeft.Render(timePassed);
 			m_guiRight.Render(timePassed);
@@ -232,18 +243,18 @@ namespace MediaPortal.GUI.Library
       int iCurPos=0;
       // render fillbkg
 
-      xPos=m_dwPosX+m_guiLeft.TextureWidth+m_iFillX;
+      xPos=_positionX+m_guiLeft.TextureWidth+m_iFillX;
       m_guiFillBackground.Width=iWidth;
       m_guiFillBackground.Height=m_guiMid.TextureHeight-m_iFillY*2;
-      m_guiFillBackground.SetPosition(xPos,m_dwPosY+m_iFillY);
+      m_guiFillBackground.SetPosition(xPos,_positionY+m_iFillY);
       m_guiFillBackground.Render(timePassed);
 
       // render first color
       int xoff=5;
       GUIGraphicsContext.ScaleHorizontal(ref xoff);
-      xPos=m_dwPosX+m_guiLeft.TextureWidth+m_iFillX+xoff;
+      xPos=_positionX+m_guiLeft.TextureWidth+m_iFillX+xoff;
       int yPos=m_guiFillBackground.YPosition+(m_guiFillBackground.Height/2)-(m_iFillHeight/2);
-      if (yPos < m_dwPosY) yPos=m_dwPosY;
+      if (yPos < _positionY) yPos=_positionY;
       fWidth=(float)iWidth;
       fWidth/=100.0f;
       fWidth*=(float)Percentage1;
@@ -306,17 +317,17 @@ namespace MediaPortal.GUI.Library
       GUIGraphicsContext.ScaleVertical(ref posy1);
       for (int i=0; i <= 100; i+=10)
       {
-        float fpos=(float)m_dwPosX+m_guiLeft.TextureWidth+posx1;
+        float fpos=(float)_positionX+m_guiLeft.TextureWidth+posx1;
         fWidth=(float)(iWidth-posx2);	
         fWidth/=100.0f;
         fWidth*= (float)i;
-        m_guiTick.SetPosition( (int)(fpos+fWidth),(int)m_dwPosY+posy1);
+        m_guiTick.SetPosition( (int)(fpos+fWidth),(int)_positionY+posy1);
         m_guiTick.Render(timePassed);
       }
 
 			// render top
       xPos=iCurPos - (m_guiTop.TextureWidth/2);
-      m_guiTop.SetPosition(xPos, m_dwPosY - m_guiTop.TextureHeight+m_iTopTextureYOffset);
+      m_guiTop.SetPosition(xPos, _positionY - m_guiTop.TextureHeight+m_iTopTextureYOffset);
       m_guiTop.Render(timePassed);
 
       //render tick @ current position
@@ -327,7 +338,7 @@ namespace MediaPortal.GUI.Library
       
       // render bottom
       xPos=m_guiTop.XPosition + (m_guiTop.TextureWidth/2) - (m_guiBottom.TextureWidth/2);
-      m_guiBottom.SetPosition(xPos, m_dwPosY+m_guiMid.TextureHeight);
+      m_guiBottom.SetPosition(xPos, _positionY+m_guiMid.TextureHeight);
       m_guiBottom.Render(timePassed);
 
 
@@ -342,53 +353,53 @@ namespace MediaPortal.GUI.Library
       m_guiLogo.SetPosition((int)fx, (int)fy);
       m_guiLogo.Render(timePassed);
       
-			if (m_pFont!=null)
+			if (_font!=null)
 			{
 				float fW=0,fH=0;
 				float fHeight=0;
 				string strText="";
 
 				// render top text
-				if (m_strLabelTop.Length>0)
+				if (_labelTop.Length>0)
 				{
-					strText=GUIPropertyManager.Parse(m_strLabelTop);
-					m_pFont.GetTextExtent(strText,ref  fW,ref fH);
+					strText=GUIPropertyManager.Parse(_labelTop);
+					_font.GetTextExtent(strText,ref  fW,ref fH);
 					fW /= 2.0f;
 					fH /= 2.0f;
 					fWidth = ((float)m_guiTop.TextureWidth)/2.0f;
 					fHeight= ((float)m_guiTop.TextureHeight)/2.0f;
 					fWidth  -= fW;
 					fHeight -= fH;
-					m_pFont.DrawText((float)m_guiTop.XPosition+fWidth,(float)2+m_guiTop.YPosition+fHeight,m_dwTextColor,strText,GUIControl.Alignment.ALIGN_LEFT,-1);
+					_font.DrawText((float)m_guiTop.XPosition+fWidth,(float)2+m_guiTop.YPosition+fHeight,_textColor,strText,GUIControl.Alignment.ALIGN_LEFT,-1);
 				}
 
 
 				// render left text
-				if (m_strLabelLeft.Length>0)
+				if (_labelLeft.Length>0)
 				{
-					strText=GUIPropertyManager.Parse(m_strLabelLeft);
-					m_pFont.GetTextExtent(strText,ref  fW,ref fH);
+					strText=GUIPropertyManager.Parse(_labelLeft);
+					_font.GetTextExtent(strText,ref  fW,ref fH);
 					fW /= 2.0f;
 					fH /= 2.0f;
 					fWidth = ((float)m_guiLeft.TextureWidth)/2.0f;
 					fHeight= ((float)m_guiLeft.TextureHeight)/2.0f;
 					fWidth  -= fW;
 					fHeight -= fH;
-					m_pFont.DrawText((float)m_dwPosX+fWidth,(float)m_dwPosY+fHeight,m_dwTextColor,strText,GUIControl.Alignment.ALIGN_LEFT,-1);
+					_font.DrawText((float)_positionX+fWidth,(float)_positionY+fHeight,_textColor,strText,GUIControl.Alignment.ALIGN_LEFT,-1);
 				}
 
 				// render right text
-				if (m_strLabelRight.Length>0)
+				if (_labelRight.Length>0)
 				{
-					strText=GUIPropertyManager.Parse(m_strLabelRight);
-					m_pFont.GetTextExtent(strText,ref  fW,ref fH);
+					strText=GUIPropertyManager.Parse(_labelRight);
+					_font.GetTextExtent(strText,ref  fW,ref fH);
 					fW /= 2.0f;
 					fH /= 2.0f;
 					fWidth = ((float)m_guiRight.TextureWidth)/2.0f;
 					fHeight= ((float)m_guiRight.TextureHeight)/2.0f;
 					fWidth  -= fW;
 					fHeight -= fH;
-					m_pFont.DrawText((float)m_guiRight.XPosition+fWidth,(float)m_guiRight.YPosition+fHeight,m_dwTextColor,strText,GUIControl.Alignment.ALIGN_LEFT,-1);
+					_font.DrawText((float)m_guiRight.XPosition+fWidth,(float)m_guiRight.YPosition+fHeight,_textColor,strText,GUIControl.Alignment.ALIGN_LEFT,-1);
 				}
 			}
     }
@@ -464,7 +475,7 @@ namespace MediaPortal.GUI.Library
     public override void AllocResources()
     {
       base.AllocResources();
-      m_pFont=GUIFontManager.GetFont(m_strFontName);
+      _font=GUIFontManager.GetFont(_fontName);
       m_guiTop.AllocResources();
 			m_guiBottom.AllocResources();
       m_guiMid.AllocResources();
@@ -486,18 +497,18 @@ namespace MediaPortal.GUI.Library
 			m_guiFill2.Filtering=false;
 			m_guiFill3.Filtering=false;
 			m_guiTick.Filtering=false;
-			if (m_dwHeight==0)
+			if (_height==0)
 			{
-				m_dwHeight=m_guiRight.TextureHeight;
+				_height=m_guiRight.TextureHeight;
 			}
-//      m_guiTop.Height=m_dwHeight;
-      m_guiRight.Height=m_dwHeight;
-      m_guiLeft.Height=m_dwHeight;
-      m_guiMid.Height=m_dwHeight;
-			m_guiFill1.Height=m_dwHeight-6;
-			m_guiFill2.Height=m_dwHeight-6;
-			m_guiFill3.Height=m_dwHeight-6;
-			//m_guiTick.Height=m_dwHeight;
+//      m_guiTop.Height=_height;
+      m_guiRight.Height=_height;
+      m_guiLeft.Height=_height;
+      m_guiMid.Height=_height;
+			m_guiFill1.Height=_height-6;
+			m_guiFill2.Height=_height-6;
+			m_guiFill3.Height=_height-6;
+			//m_guiTick.Height=_height;
     }
     public string FillBackGroundName
     {
@@ -560,30 +571,30 @@ namespace MediaPortal.GUI.Library
 		}
 		public string LabelLeft
 		{
-			get { return m_strLabelLeft; }
+			get { return _labelLeft; }
       set 
       { 
         if (value==null) return;
-        m_strLabelLeft=value;
+        _labelLeft=value;
       }
 		}
 		
 		public string LabelTop
 		{
-			get { return m_strLabelTop; }
+			get { return _labelTop; }
       set 
       { 
         if (value==null) return;
-        m_strLabelTop=value;
+        _labelTop=value;
       }
 		}
 		public string LabelRight
 		{
-			get { return m_strLabelRight; }
+			get { return _labelRight; }
       set 
       { 
         if (value==null) return;
-        m_strLabelRight=value;
+        _labelRight=value;
       }
 		}
 
@@ -592,8 +603,8 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public long	TextColor
 		{ 
-			get { return m_dwTextColor;}
-			set { m_dwTextColor=value;}
+			get { return _textColor;}
+			set { _textColor=value;}
 		}
 
 		/// <summary>
@@ -601,12 +612,12 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		public string FontName
 		{
-			get { return m_strFontName; }
+			get { return _fontName; }
       set 
       {  
         if (value==null) return;
-        m_strFontName=value;
-        m_pFont=GUIFontManager.GetFont(m_strFontName);
+        _fontName=value;
+        _font=GUIFontManager.GetFont(_fontName);
       }
 		}
 
@@ -639,29 +650,29 @@ namespace MediaPortal.GUI.Library
     }
     public string Label1
     {
-      get {return m_strLabel1;}
+      get {return _label1;}
       set 
       { 
         if (value==null) return;
-        m_strLabel1=value;
+        _label1=value;
       }
     }
     public string Label2
     {
-      get {return m_strLabel2;}
+      get {return _label2;}
       set 
       { 
         if (value==null) return;
-        m_strLabel2=value;
+        _label2=value;
       }
     }
     public string Label3
     {
-      get {return m_strLabel3;}
+      get {return _label3;}
       set 
       { 
         if (value==null) return;
-        m_strLabel3=value;
+        _label3=value;
       }
     }
     public int TopTextureYOffset

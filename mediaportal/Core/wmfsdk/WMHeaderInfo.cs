@@ -161,7 +161,7 @@ namespace Yeti.WMFSdk
 
   {
 
-    private WMT_ATTR_DATATYPE m_DataType;
+    private WMT_ATTR_DATATYPE _dataType;
 
     private object m_Value;
 
@@ -189,7 +189,7 @@ namespace Yeti.WMFSdk
 
      m_Name = name;
 
-      this.m_DataType = type;
+      this._dataType = type;
 
       switch(type)
 
@@ -291,7 +291,7 @@ namespace Yeti.WMFSdk
 
     {
 
-      get { return m_DataType; }
+      get { return _dataType; }
 
     }
 
@@ -321,7 +321,7 @@ namespace Yeti.WMFSdk
 
       {
 
-        switch ( m_DataType )
+        switch ( _dataType )
 
         {
 
@@ -385,7 +385,7 @@ namespace Yeti.WMFSdk
 
     {
 
-      if (attr.m_DataType == WMT_ATTR_DATATYPE.WMT_TYPE_STRING)
+      if (attr._dataType == WMT_ATTR_DATATYPE.WMT_TYPE_STRING)
 
       {
 
@@ -409,7 +409,7 @@ namespace Yeti.WMFSdk
 
     {
 
-      if (attr.m_DataType == WMT_ATTR_DATATYPE.WMT_TYPE_BOOL)
+      if (attr._dataType == WMT_ATTR_DATATYPE.WMT_TYPE_BOOL)
 
       {
 
@@ -433,7 +433,7 @@ namespace Yeti.WMFSdk
 
     {
 
-      if (attr.m_DataType == WMT_ATTR_DATATYPE.WMT_TYPE_GUID)
+      if (attr._dataType == WMT_ATTR_DATATYPE.WMT_TYPE_GUID)
 
       {
 
@@ -457,7 +457,7 @@ namespace Yeti.WMFSdk
 
     {
 
-      if (attr.m_DataType == WMT_ATTR_DATATYPE.WMT_TYPE_BINARY)
+      if (attr._dataType == WMT_ATTR_DATATYPE.WMT_TYPE_BINARY)
 
       {
 
@@ -481,7 +481,7 @@ namespace Yeti.WMFSdk
 
     {
 
-      switch(attr.m_DataType)
+      switch(attr._dataType)
 
       {
 

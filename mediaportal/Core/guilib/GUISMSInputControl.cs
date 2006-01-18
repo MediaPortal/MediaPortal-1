@@ -42,17 +42,17 @@ namespace MediaPortal.GUI.Library
     // half the time, 0.75 equals 3/4ths of the time, etc.
     const float fCARET_ON_RATIO = 0.75f;
 
-    GUIFont m_pFont = null;
-    GUIFont m_pFont2 = null;
+    GUIFont _font = null;
+    GUIFont _font2 = null;
     GUIFont m_pTextBoxFont = null;
     [XMLSkinElement("font")]
-    protected string m_strFontName = "font14";
+    protected string _fontName = "font14";
     [XMLSkinElement("font2")]
-    protected string m_strFontName2 = "font13";
+    protected string _fontName2 = "font13";
     [XMLSkinElement("textcolor")]
-    protected long m_dwTextColor = 0xFFFFFFFF;
+    protected long _textColor = 0xFFFFFFFF;
     [XMLSkinElement("textcolor2")]
-    protected long m_dwTextColor2 = 0xFFFFFFFF;
+    protected long _textColor2 = 0xFFFFFFFF;
 
     [XMLSkinElement("textboxFont")]
     protected string m_strTextBoxFontName = "font13";
@@ -86,11 +86,11 @@ namespace MediaPortal.GUI.Library
     public override void FinalizeConstruction()
     {
       base.FinalizeConstruction();
-      if (m_strFontName != "" && m_strFontName != "-")
-        m_pFont = GUIFontManager.GetFont(m_strFontName);
+      if (_fontName != "" && _fontName != "-")
+        _font = GUIFontManager.GetFont(_fontName);
 
-      if (m_strFontName2 != "" && m_strFontName2 != "-")
-        m_pFont2 = GUIFontManager.GetFont(m_strFontName2);
+      if (_fontName2 != "" && _fontName2 != "-")
+        _font2 = GUIFontManager.GetFont(_fontName2);
 
       if (m_strTextBoxFontName != "" && m_strTextBoxFontName != "-")
         m_pTextBoxFont = GUIFontManager.GetFont(m_strTextBoxFontName);
@@ -113,16 +113,17 @@ namespace MediaPortal.GUI.Library
       m_keyTimer = DateTime.Now;
       m_strData = "";
       m_iPos = 0;
-      if (m_strFontName != "" && m_strFontName != "-")
-        m_pFont = GUIFontManager.GetFont(m_strFontName);
+      if (_fontName != "" && _fontName != "-")
+        _font = GUIFontManager.GetFont(_fontName);
 
-      if (m_strFontName2 != "" && m_strFontName2 != "-")
-        m_pFont2 = GUIFontManager.GetFont(m_strFontName2);
+      if (_fontName2 != "" && _fontName2 != "-")
+        _font2 = GUIFontManager.GetFont(_fontName2);
 
       if (m_strTextBoxFontName != "" && m_strTextBoxFontName != "-")
         m_pTextBoxFont = GUIFontManager.GetFont(m_strTextBoxFontName);
 
       image = new GUIImage(this.GetID, 1, 0, 0, m_dwTextBoxWidth, 10, "bar_hor.png", 1);
+      image.ParentControl = this;
       image.AllocResources();
     }
 
@@ -420,19 +421,19 @@ namespace MediaPortal.GUI.Library
 
     void DrawInput()
     {
-      int posY = m_dwPosY;
+      int posY = _positionY;
       int step = 20;
       GUIGraphicsContext.ScaleVertical(ref step);
-      m_pFont.DrawText(m_dwPosX, posY, m_dwTextColor, " 1     2       3", GUIControl.Alignment.ALIGN_LEFT, -1); posY += step;
-      m_pFont2.DrawText(m_dwPosX, posY, m_dwTextColor2, " _    abc    def", GUIControl.Alignment.ALIGN_LEFT, -1); posY += step;
+      _font.DrawText(_positionX, posY, _textColor, " 1     2       3", GUIControl.Alignment.ALIGN_LEFT, -1); posY += step;
+      _font2.DrawText(_positionX, posY, _textColor2, " _    abc    def", GUIControl.Alignment.ALIGN_LEFT, -1); posY += step;
 
       posY += step;
-      m_pFont.DrawText(m_dwPosX, posY, m_dwTextColor, " 4     5      6", GUIControl.Alignment.ALIGN_LEFT, -1); posY += step;
-      m_pFont2.DrawText(m_dwPosX, posY, m_dwTextColor2, "ghi   jkl    mno", GUIControl.Alignment.ALIGN_LEFT, -1); posY += step;
+      _font.DrawText(_positionX, posY, _textColor, " 4     5      6", GUIControl.Alignment.ALIGN_LEFT, -1); posY += step;
+      _font2.DrawText(_positionX, posY, _textColor2, "ghi   jkl    mno", GUIControl.Alignment.ALIGN_LEFT, -1); posY += step;
 
       posY += step;
-      m_pFont.DrawText(m_dwPosX, posY, m_dwTextColor, " 7     8      9", GUIControl.Alignment.ALIGN_LEFT, -1); posY += step;
-      m_pFont2.DrawText(m_dwPosX, posY, m_dwTextColor2, "pqrs tuv wxyz", GUIControl.Alignment.ALIGN_LEFT, -1); posY += step;
+      _font.DrawText(_positionX, posY, _textColor, " 7     8      9", GUIControl.Alignment.ALIGN_LEFT, -1); posY += step;
+      _font2.DrawText(_positionX, posY, _textColor2, "pqrs tuv wxyz", GUIControl.Alignment.ALIGN_LEFT, -1); posY += step;
     }
 
     void DrawTextBox(float timePassed)
@@ -503,13 +504,13 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public string FontName
     {
-      get { return m_strFontName; }
+      get { return _fontName; }
       set
       {
         if (value == null) return;
         if (value == String.Empty) return;
-        m_pFont = GUIFontManager.GetFont(value);
-        m_strFontName = value;
+        _font = GUIFontManager.GetFont(value);
+        _fontName = value;
       }
     }
 
@@ -518,13 +519,13 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public string FontName2
     {
-      get { return m_strFontName2; }
+      get { return _fontName2; }
       set
       {
         if (value == null) return;
         if (value == String.Empty) return;
-        m_pFont2 = GUIFontManager.GetFont(value);
-        m_strFontName2 = value;
+        _font2 = GUIFontManager.GetFont(value);
+        _fontName2 = value;
       }
     }
 
@@ -549,10 +550,10 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public long TextColor
     {
-      get { return m_dwTextColor; }
+      get { return _textColor; }
       set
       {
-        m_dwTextColor = value;
+        _textColor = value;
       }
     }
     /// <summary>
@@ -560,10 +561,10 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public long TextColor2
     {
-      get { return m_dwTextColor2; }
+      get { return _textColor2; }
       set
       {
-        m_dwTextColor2 = value;
+        _textColor2 = value;
       }
     }
     /// <summary>
