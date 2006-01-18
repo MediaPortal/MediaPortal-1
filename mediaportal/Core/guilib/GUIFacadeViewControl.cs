@@ -78,6 +78,7 @@ namespace MediaPortal.GUI.Library
         {
           _viewList.GetID = GetID;
           _viewList.WindowId = WindowId;
+          _viewList.ParentControl = this;
         }
       }
     }
@@ -95,6 +96,7 @@ namespace MediaPortal.GUI.Library
         {
           _viewAlbum.GetID = GetID;
           _viewAlbum.WindowId = WindowId;
+          _viewAlbum.ParentControl = this;
         }
       }
     }
@@ -112,6 +114,7 @@ namespace MediaPortal.GUI.Library
         {
           _viewFilmStrip.GetID = GetID;
           _viewFilmStrip.WindowId = WindowId;
+          _viewFilmStrip.ParentControl = this;
         }
       }
     }
@@ -129,6 +132,7 @@ namespace MediaPortal.GUI.Library
         {
           _viewThumbnail.GetID = GetID;
           _viewThumbnail.WindowId = WindowId;
+          _viewThumbnail.ParentControl = this;
         }
       }
     }
@@ -167,12 +171,14 @@ namespace MediaPortal.GUI.Library
         AlbumListView.AllocResources();
         AlbumListView.GetID = GetID;
         AlbumListView.WindowId = WindowId;
+        AlbumListView.ParentControl = this;
       }
       if (_viewList != null)
       {
         _viewList.AllocResources();
         _viewList.GetID = GetID;
         _viewList.WindowId = WindowId;
+        _viewList.ParentControl = this;
       }
 
       if (_viewThumbnail != null)
@@ -180,6 +186,7 @@ namespace MediaPortal.GUI.Library
         _viewThumbnail.AllocResources();
         _viewThumbnail.GetID = GetID;
         _viewThumbnail.WindowId = WindowId;
+        _viewThumbnail.ParentControl = this;
       }
 
       if (_viewFilmStrip != null)
@@ -187,6 +194,7 @@ namespace MediaPortal.GUI.Library
         _viewFilmStrip.AllocResources();
         _viewFilmStrip.GetID = GetID;
         _viewFilmStrip.WindowId = WindowId;
+        _viewFilmStrip.ParentControl = this;
       }
     }
     public override int WindowId
