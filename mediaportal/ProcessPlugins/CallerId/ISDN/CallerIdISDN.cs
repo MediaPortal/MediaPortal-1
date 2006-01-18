@@ -54,6 +54,7 @@ namespace ProcessPlugins.CallerId
     static Hashtable countryTranslator;
     static string myCountryCode;
     static string myAreaCode;
+    bool useOutlook = true;
     bool ISDNdisabled = false;
     bool stopMedia    = true;
     bool autoResume   = false;
@@ -259,7 +260,10 @@ namespace ProcessPlugins.CallerId
     {
       if (ISDNWatch.CapiInstalled)
       {
-        OutlookHelper.Caller dummy = OutlookHelper.OutlookLookup("dummy");  // First Outlook-lookup might take some time, so let's do this here
+        if (useOutlook)
+        {
+          OutlookHelper.Caller dummy = OutlookHelper.OutlookLookup("dummy");  // First Outlook-lookup might take some time, so let's do this here
+        }
 
         ISDNWatch.LocationInfo locationInfo = ISDNWatch.GetLocationInfo();
         myCountryCode = "+" + locationInfo.CountryCode;
@@ -286,6 +290,7 @@ namespace ProcessPlugins.CallerId
 
       using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
       {
+        useOutlook    = xmlreader.GetValueAsBool("isdn", "useoutlook", false);
         stopMedia     = xmlreader.GetValueAsBool("isdn", "stopmedia", true);
         autoResume    = xmlreader.GetValueAsBool("isdn", "autoresume", false);
         resumeTimeOut = xmlreader.GetValueAsInt ("isdn", "timeout", -1);
@@ -348,9 +353,11 @@ namespace ProcessPlugins.CallerId
           outlookQuery = countryCode + " (" + areaCode + ") " + phoneNumber;
         else
           outlookQuery = countryCode + "  (I) " + phoneNumber;
-        OutlookHelper.Caller caller = OutlookHelper.OutlookLookup(outlookQuery);
+        OutlookHelper.Caller caller = new OutlookHelper.Caller();
+        if (useOutlook)
+          caller = OutlookHelper.OutlookLookup(outlookQuery);
 
-        if (caller.Name != null)
+        if (caller.Name != string.Empty)
           Log.Write("ISDN: Incoming call from {0} ({1}, {2} / {3})", caller.Name, location, (string)CountryTranslator[country], outlookQuery);
         else
           Log.Write("ISDN: Incoming call ({0}, {1} / {2})", location, (string)CountryTranslator[country], outlookQuery);
