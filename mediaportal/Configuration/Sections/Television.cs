@@ -35,8 +35,6 @@ namespace MediaPortal.Configuration.Sections
 	{
 		private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
 		private System.Windows.Forms.RadioButton radioButton1;
-		private System.Windows.Forms.ComboBox rendererComboBox;
-		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.ComboBox audioCodecComboBox;
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.ComboBox videoCodecComboBox;
@@ -69,10 +67,6 @@ namespace MediaPortal.Configuration.Sections
 			// This call is required by the Windows Form Designer.
 			InitializeComponent();
 
-			//
-			// Populate the video renderer combobox
-			//
-			rendererComboBox.Items.AddRange(VideoRenderers.List);
 
 			//
 			// Populate the country combobox
@@ -116,8 +110,6 @@ namespace MediaPortal.Configuration.Sections
             this.label8 = new System.Windows.Forms.Label();
             this.defaultZoomModeComboBox = new System.Windows.Forms.ComboBox();
             this.label6 = new System.Windows.Forms.Label();
-            this.rendererComboBox = new System.Windows.Forms.ComboBox();
-            this.label2 = new System.Windows.Forms.Label();
             this.videoCodecComboBox = new System.Windows.Forms.ComboBox();
             this.label5 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
@@ -148,8 +140,6 @@ namespace MediaPortal.Configuration.Sections
             this.groupBox1.Controls.Add(this.label8);
             this.groupBox1.Controls.Add(this.defaultZoomModeComboBox);
             this.groupBox1.Controls.Add(this.label6);
-            this.groupBox1.Controls.Add(this.rendererComboBox);
-            this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.videoCodecComboBox);
             this.groupBox1.Controls.Add(this.label5);
             this.groupBox1.Controls.Add(this.label3);
@@ -208,25 +198,7 @@ namespace MediaPortal.Configuration.Sections
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(112, 16);
             this.label6.TabIndex = 8;
-            this.label6.Text = "Default zoom mode:";
-            // 
-            // rendererComboBox
-            // 
-            this.rendererComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.rendererComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.rendererComboBox.Location = new System.Drawing.Point(168, 68);
-            this.rendererComboBox.Name = "rendererComboBox";
-            this.rendererComboBox.Size = new System.Drawing.Size(288, 21);
-            this.rendererComboBox.TabIndex = 5;
-            // 
-            // label2
-            // 
-            this.label2.Location = new System.Drawing.Point(16, 72);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(88, 16);
-            this.label2.TabIndex = 4;
-            this.label2.Text = "Video renderer:";
+            this.label6.Text = "Default zoom mode:"; 
             // 
             // videoCodecComboBox
             // 
@@ -424,14 +396,7 @@ namespace MediaPortal.Configuration.Sections
 				if (DeInterlaceMode<0 || DeInterlaceMode>3)
 					DeInterlaceMode=3;
 				cbDeinterlace.SelectedIndex=DeInterlaceMode;
-
-				//
-				// Set video renderer
-				//
-				int videoRenderer = xmlreader.GetValueAsInt("mytv", "vmr9", 0);
-
-				if(videoRenderer >= 0 && videoRenderer < VideoRenderers.List.Length)
-					rendererComboBox.SelectedItem = VideoRenderers.List[videoRenderer];
+ 
 
 
 				//
@@ -528,13 +493,7 @@ namespace MediaPortal.Configuration.Sections
 				catch(Exception){}
         xmlwriter.SetValue("mytv","defaultar", aspectRatio[defaultZoomModeComboBox.SelectedIndex]);
 
-				for(int index = 0; index < VideoRenderers.List.Length; index++)
-				{
-					if(VideoRenderers.List[index].Equals(rendererComboBox.Text))
-					{
-						xmlwriter.SetValue("mytv", "vmr9", index);
-					}
-				}
+ 
 
         if(countryComboBox.Text.Length > 0)
         {

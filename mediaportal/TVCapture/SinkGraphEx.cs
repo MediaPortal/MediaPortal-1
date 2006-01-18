@@ -91,8 +91,7 @@ namespace MediaPortal.TV.Recording
       {
         _hasTeletext = false;
         _grabTeletext = false;
-        _vmr9 = new VMR9Util("mytv");
-        _vmr7 = new VMR7Util();
+        _vmr9 = new VMR9Util("mytv"); 
 
         Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:CreateGraph() IN");
         if (_graphState != State.None) return false;		// If doing something already, return...
@@ -558,12 +557,7 @@ namespace MediaPortal.TV.Recording
         _vmr9.RemoveVMR9();
         _vmr9.Release();
         _vmr9 = null;
-      }
-      if (_vmr7 != null)
-      {
-        _vmr7.RemoveVMR7();
-        _vmr7 = null;
-      }
+      } 
       _analogVideoDecoderInterface = null;
       if (_videoProcAmpHelper != null)
       {

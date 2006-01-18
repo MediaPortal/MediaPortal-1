@@ -272,8 +272,7 @@ namespace MediaPortal.TV.Recording
     protected int _channelNumber = -1;
     protected bool _channelFound = false;
     StreamBufferConfig _streamBufferConfig = null;
-    protected VMR9Util _vmr9 = null;
-    protected VMR7Util _vmr7 = null;
+    protected VMR9Util _vmr9 = null; 
 
     protected string _fileName = "";
     protected DVBSections _dvbSections = new DVBSections();
@@ -377,8 +376,7 @@ namespace MediaPortal.TV.Recording
       if (_dvbDemuxer != null)
         _dvbDemuxer.GrabTeletext(false);
       // create graphs
-      _vmr9 = new VMR9Util("mytv");
-      _vmr7 = new VMR7Util();
+      _vmr9 = new VMR9Util("mytv"); 
       Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2:creategraph() create graph");
       _graphBuilder = (IGraphBuilder)new FilterGraph();
       _isUsingAc3 = false;
@@ -953,13 +951,7 @@ namespace MediaPortal.TV.Recording
         _vmr9.RemoveVMR9();
         _vmr9.Release();
         _vmr9 = null;
-      }
-      if (_vmr7 != null)
-      {
-        Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2: free vmr7");
-        _vmr7.RemoveVMR7();
-        _vmr7 = null;
-      }
+      } 
       if (_recordedId >= 0)
       {
         DvrMsStop(_recordedId);
@@ -1510,12 +1502,7 @@ namespace MediaPortal.TV.Recording
         _vmr9.RemoveVMR9();
         _vmr9.Release();
         _vmr9 = null;
-      }
-      if (_vmr7 != null)
-      {
-        _vmr7.RemoveVMR7();
-        _vmr7 = null;
-      }
+      } 
       if (channel != null)
         TuneChannel(channel);
 
@@ -2008,26 +1995,18 @@ namespace MediaPortal.TV.Recording
       }
       AddPreferredCodecs(true, true);
       if (_vmr9 == null)
-        _vmr9 = new VMR9Util("mytv");
-      if (_vmr7 == null)
-        _vmr7 = new VMR7Util();
+        _vmr9 = new VMR9Util("mytv"); 
 
       if (_vmr9 != null)
       {
-        if (_vmr9.UseVMR9inMYTV)
+        _vmr9.AddVMR9(_graphBuilder);
+        if (_vmr9.VMR9Filter == null)
         {
-          _vmr9.AddVMR9(_graphBuilder);
-          if (_vmr9.VMR9Filter == null)
-          {
-            _vmr9.RemoveVMR9();
-            _vmr9.Release();
-            _vmr9 = null;
-            _vmr7.AddVMR7(_graphBuilder);
-          }
+          _vmr9.RemoveVMR9();
+          _vmr9.Release();
+          _vmr9 = null;
         }
-        else _vmr7.AddVMR7(_graphBuilder);
       }
-      else _vmr7.AddVMR7(_graphBuilder);
 
 
       Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2:StartViewing() ");
@@ -2430,11 +2409,7 @@ namespace MediaPortal.TV.Recording
           return;
         }
       }
-
-      if (!GUIGraphicsContext.Vmr9Active && _vmr7 != null && _graphState == State.Viewing)
-      {
-        _vmr7.Process();
-      }
+ 
       //_epgGrabber.GrabEPG(_currentChannel.HasEITSchedule==true);
       if (_dvbDemuxer != null) _dvbDemuxer.Process();
       CheckVideoResolutionChanges();
@@ -3427,13 +3402,7 @@ namespace MediaPortal.TV.Recording
         _vmr9.RemoveVMR9();
         _vmr9.Release();
         _vmr9 = null;
-      }
-      if (_vmr7 != null)
-      {
-        _vmr7.RemoveVMR7();
-        _vmr7 = null;
-      }
-
+      } 
       // tune to the correct channel
       Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2:Grab epg for :{0}", channel.Name);
       TuneChannel(channel);

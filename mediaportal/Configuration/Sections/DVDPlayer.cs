@@ -40,9 +40,7 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.TextBox parametersTextBox;
 		private MediaPortal.UserInterface.Controls.MPCheckBox internalPlayerCheckBox;
 		private System.Windows.Forms.OpenFileDialog openFileDialog;
-    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox3;
-    private System.Windows.Forms.ComboBox videoRendererComboBox;
-    private System.Windows.Forms.Label label4;
+    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox3; 
     private System.Windows.Forms.ComboBox defaultZoomModeComboBox;
     private System.Windows.Forms.Label label6;
 		private System.ComponentModel.IContainer components = null;
@@ -57,11 +55,7 @@ namespace MediaPortal.Configuration.Sections
 		{
 			// This call is required by the Windows Form Designer.
 			InitializeComponent();
-
-      //
-      // Populate combobox
-      // 
-      videoRendererComboBox.Items.AddRange(VideoRenderersShort.List);
+ 
     }
 
 		/// <summary>
@@ -73,11 +67,7 @@ namespace MediaPortal.Configuration.Sections
 			{
 				fileNameTextBox.Text = xmlreader.GetValueAsString("dvdplayer", "path", @"");
 				parametersTextBox.Text = xmlreader.GetValueAsString("dvdplayer","arguments", "");
-
-        int videoRenderer = xmlreader.GetValueAsInt("dvdplayer", "vmr9", 0);
-
-        if(videoRenderer >= 0 && videoRenderer <= VideoRenderersShort.List.Length)				
-          videoRendererComboBox.SelectedItem = VideoRenderersShort.List[videoRenderer];        
+    
 
 				//
 				// Fake a check changed to force a CheckChanged event
@@ -115,15 +105,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("dvdplayer", "internal", !internalPlayerCheckBox.Checked);
 
         xmlwriter.SetValue("dvdplayer","defaultar", aspectRatio[defaultZoomModeComboBox.SelectedIndex]);
-
-        for(int index = 0; index < VideoRenderersShort.List.Length; index++)
-        {
-          if(VideoRenderersShort.List[index].Equals(videoRendererComboBox.Text))
-          {
-						xmlwriter.SetValue("dvdplayer", "vmr9", index);
-						break;
-          }
-        }
+ 
       }
     }
 
@@ -172,9 +154,7 @@ namespace MediaPortal.Configuration.Sections
       this.button2 = new System.Windows.Forms.Button();
       this.textBox1 = new System.Windows.Forms.TextBox();
       this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
-      this.mpGroupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.videoRendererComboBox = new System.Windows.Forms.ComboBox();
-      this.label4 = new System.Windows.Forms.Label();
+      this.mpGroupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();  
       this.mpGroupBox1.SuspendLayout();
       this.mpGroupBox3.SuspendLayout();
       this.SuspendLayout();
@@ -307,9 +287,7 @@ namespace MediaPortal.Configuration.Sections
       // mpGroupBox3
       // 
       this.mpGroupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpGroupBox3.Controls.Add(this.videoRendererComboBox);
-      this.mpGroupBox3.Controls.Add(this.label4);
+        | System.Windows.Forms.AnchorStyles.Right)));  
       this.mpGroupBox3.Controls.Add(this.label6);
       this.mpGroupBox3.Controls.Add(this.defaultZoomModeComboBox);
       this.mpGroupBox3.FlatStyle = System.Windows.Forms.FlatStyle.System;
@@ -318,25 +296,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox3.Size = new System.Drawing.Size(472, 80);
       this.mpGroupBox3.TabIndex = 0;
       this.mpGroupBox3.TabStop = false;
-      this.mpGroupBox3.Text = "Settings";
-      // 
-      // videoRendererComboBox
-      // 
-      this.videoRendererComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.videoRendererComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.videoRendererComboBox.Location = new System.Drawing.Point(168, 20);
-      this.videoRendererComboBox.Name = "videoRendererComboBox";
-      this.videoRendererComboBox.Size = new System.Drawing.Size(288, 21);
-      this.videoRendererComboBox.TabIndex = 1;
-      // 
-      // label4
-      // 
-      this.label4.Location = new System.Drawing.Point(16, 24);
-      this.label4.Name = "label4";
-      this.label4.Size = new System.Drawing.Size(88, 16);
-      this.label4.TabIndex = 0;
-      this.label4.Text = "Video renderer:";
+      this.mpGroupBox3.Text = "Settings";  
       // 
       // DVDPlayer
       // 

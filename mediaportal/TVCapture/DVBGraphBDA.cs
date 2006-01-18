@@ -248,8 +248,7 @@ namespace MediaPortal.TV.Recording
 
     StreamBufferSink m_StreamBufferSink = null;
     StreamBufferConfig m_StreamBufferConfig = null;
-    VMR9Util _vmr9 = null;
-    VMR7Util _vmr7 = null;
+    VMR9Util _vmr9 = null; 
     ArrayList _tunerStatistics = new ArrayList();
     NetworkType _networkType = NetworkType.Unknown;
     TVCaptureDevice _card;
@@ -369,8 +368,7 @@ namespace MediaPortal.TV.Recording
         }
 
         //create new instance of VMR9 helper utility
-        _vmr9 = new VMR9Util("mytv");
-        _vmr7 = new VMR7Util();
+        _vmr9 = new VMR9Util("mytv"); 
 
         // Make a new filter graph
         //Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:create new filter graph (IGraphBuilder)");
@@ -1137,13 +1135,7 @@ namespace MediaPortal.TV.Recording
           _vmr9.Release();
           _vmr9 = null;
         }
-
-        if (_vmr7 != null)
-        {
-          //Log.Write("DVBGraphBDA:remove vmr7");
-          _vmr7.RemoveVMR7();
-          _vmr7 = null;
-        }
+ 
 
         if (m_recorderId >= 0)
         {
@@ -1383,13 +1375,7 @@ namespace MediaPortal.TV.Recording
         _vmr9.RemoveVMR9();
         _vmr9.Release();
         _vmr9 = null;
-      }
-
-      if (_vmr7 != null)
-      {
-        _vmr7.RemoveVMR7();
-        _vmr7 = null;
-      }
+      } 
 #if USEMTSWRITER
 			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:StartRecording()");
 			strFileName=System.IO.Path.ChangeExtension(strFileName,".ts");
@@ -1569,26 +1555,18 @@ namespace MediaPortal.TV.Recording
       _isOverlayVisible = true;
       // add VMR9 renderer to graph
       if (_vmr9 == null)
-        _vmr9 = new VMR9Util("mytv");
-      if (_vmr7 == null)
-        _vmr7 = new VMR7Util();
+        _vmr9 = new VMR9Util("mytv"); 
 
       if (_vmr9 != null)
       {
-        if (_vmr9.UseVMR9inMYTV)
+        _vmr9.AddVMR9(_graphBuilder);
+        if (_vmr9.VMR9Filter == null)
         {
-          _vmr9.AddVMR9(_graphBuilder);
-          if (_vmr9.VMR9Filter == null)
-          {
-            _vmr9.RemoveVMR9();
-            _vmr9.Release();
-            _vmr9 = null;
-            _vmr7.AddVMR7(_graphBuilder);
-          }
+          _vmr9.RemoveVMR9();
+          _vmr9.Release();
+          _vmr9 = null; 
         }
-        else _vmr7.AddVMR7(_graphBuilder);
       }
-      else _vmr7.AddVMR7(_graphBuilder);
 
       // add the preferred video/audio codecs
       AddPreferredCodecs(true, true);
@@ -1768,12 +1746,7 @@ namespace MediaPortal.TV.Recording
         _vmr9.RemoveVMR9();
         _vmr9.Release();
         _vmr9 = null;
-      }
-      if (_vmr7 != null)
-      {
-        _vmr7.RemoveVMR7();
-        _vmr7 = null;
-      }
+      } 
       Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:StartTimeShifting() {0}", channel.Name);
 
       _isUsingAC3 = false;
@@ -3634,11 +3607,7 @@ namespace MediaPortal.TV.Recording
           if (!GUIGraphicsContext.Vmr9Active && !g_Player.Playing)
           {
             CheckVideoResolutionChanges();
-          }
-          if (!GUIGraphicsContext.Vmr9Active && _vmr7 != null && _graphState == State.Viewing)
-          {
-            _vmr7.Process();
-          }
+          } 
           _updateTimer = DateTime.Now;
         }
       }
@@ -5111,13 +5080,7 @@ namespace MediaPortal.TV.Recording
         {
           _vmr9.RemoveVMR9();
           _vmr9 = null;
-        }
-        if (_vmr7 != null)
-        {
-          _vmr7.RemoveVMR7();
-          _vmr7 = null;
-        }
-
+        } 
         Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:StartRadio()");
 
 

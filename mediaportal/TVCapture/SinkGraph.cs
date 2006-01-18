@@ -78,7 +78,6 @@ namespace MediaPortal.TV.Recording
     protected double _frameRate;
     protected VideoProcAmp _videoProcAmpHelper = null;
     protected VMR9Util _vmr9 = null;
-    protected VMR7Util _vmr7 = null;
     DateTime _signalLostTimer;
     DateTime _signalLostTimer2;
     protected string _cardName;
@@ -236,12 +235,7 @@ namespace MediaPortal.TV.Recording
         _vmr9.Release();
         _vmr9 = null;
       }
-
-      if (_vmr7 != null)
-      {
-        _vmr7.RemoveVMR7();
-        _vmr7 = null;
-      }
+ 
       Log.WriteFile(Log.LogType.Capture, "SinkGraph:StartTimeShifting()");
       _graphState = State.TimeShifting;
       TuneChannel(channel);
@@ -362,11 +356,7 @@ namespace MediaPortal.TV.Recording
         _vmr9 = null;
       }
 
-      if (_vmr7 != null)
-      {
-        _vmr7.RemoveVMR7();
-        _vmr7 = null;
-      }
+ 
       Log.WriteFile(Log.LogType.Capture, "SinkGraph:StartRecording({0} {1} {2})", strFileName, bContentRecording, recording.Quality);
       if (recording.Quality != TVRecording.QualityType.NotSet)
       {
@@ -603,20 +593,14 @@ namespace MediaPortal.TV.Recording
       // add VMR9 renderer to graph
       if (_vmr9 != null)
       {
-        if (_vmr9.UseVMR9inMYTV)
+       _vmr9.AddVMR9(_graphBuilderInterface);
+        if (_vmr9.VMR9Filter == null)
         {
-          _vmr9.AddVMR9(_graphBuilderInterface);
-          if (_vmr9.VMR9Filter == null)
-          {
-            _vmr9.RemoveVMR9();
-            _vmr9.Release();
-            _vmr9 = null;
-            _vmr7.AddVMR7(_graphBuilderInterface);
-          }
+          _vmr9.RemoveVMR9();
+          _vmr9.Release();
+          _vmr9 = null;
         }
-        else _vmr7.AddVMR7(_graphBuilderInterface);
       }
-      else _vmr7.AddVMR7(_graphBuilderInterface);
 
 
       AddPreferredCodecs(true, true);
@@ -999,7 +983,6 @@ namespace MediaPortal.TV.Recording
         }
         else
         {
-          // todo: check for vmr7 is we are receiving video 
           VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
         }
       }
@@ -1013,10 +996,7 @@ namespace MediaPortal.TV.Recording
       if (_captureGraphBuilderInterface == null) return;
       if (_filterCapture == null) return;
 
-      if (!GUIGraphicsContext.Vmr9Active && _vmr7 != null && _graphState == State.Viewing)
-      {
-        _vmr7.Process();
-      }
+ 
       if (_graphState == State.Viewing)
       {
         if (GUIGraphicsContext.Vmr9Active && _vmr9 != null)
@@ -1110,12 +1090,7 @@ namespace MediaPortal.TV.Recording
           _vmr9.RemoveVMR9();
           _vmr9 = null;
         }
-        if (_vmr7 != null)
-        {
-          _vmr7.RemoveVMR7();
-          _vmr7 = null;
-        }
-
+ 
         AddPreferredCodecs(true, false);
 
         CrossBar.RouteEx(_graphBuilderInterface,

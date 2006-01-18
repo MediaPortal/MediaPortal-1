@@ -15,7 +15,7 @@ namespace WindowPlugins.GUISettings.TV
 	{
 		[SkinControlAttribute(24)]			protected GUIButtonControl btnVideoCodec=null;
 		[SkinControlAttribute(25)]			protected GUIButtonControl btnAudioCodec=null;
-		[SkinControlAttribute(26)]			protected GUIButtonControl btnVideoRenderer=null;
+		//[SkinControlAttribute(26)]			protected GUIButtonControl btnVideoRenderer=null;
 		[SkinControlAttribute(27)]			protected GUIButtonControl btnAudioRenderer=null;
 		[SkinControlAttribute(28)]			protected GUIButtonControl btnAspectRatio=null;
 		[SkinControlAttribute(29)]			protected GUIButtonControl btnSubtitle=null;
@@ -50,7 +50,7 @@ namespace WindowPlugins.GUISettings.TV
 		{
 			if (control==btnVideoCodec) OnVideoCodec();
 			if (control==btnAudioCodec) OnAudioCodec();
-			if (control==btnVideoRenderer) OnVideoRenderer();
+			//if (control==btnVideoRenderer) OnVideoRenderer();
 			if (control==btnAspectRatio) OnAspectRatio();
 			if (control==btnAudioRenderer) OnAudioRenderer();
 			if (control==btnSubtitle) OnSubtitle();
@@ -121,7 +121,7 @@ namespace WindowPlugins.GUISettings.TV
 			{
 				xmlwriter.SetValue("dvdplayer","audiocodec",(string)availableAudioFilters[dlg.SelectedLabel]);
 			}
-		}
+		}/*
 		void OnVideoRenderer()
 		{
 			int vmr9Index=0;
@@ -145,7 +145,7 @@ namespace WindowPlugins.GUISettings.TV
 					xmlwriter.SetValue("dvdplayer", "vmr9", dlg.SelectedLabel.ToString());
 				}
 			}
-		}
+		}*/
 		void OnAspectRatio()
 		{
 			string[] aspectRatio = { "normal", "original", "stretch", "zoom", "letterbox", "panscan" };

@@ -45,8 +45,6 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.Label label3;
 		private MediaPortal.UserInterface.Controls.MPCheckBox externalPlayerCheckBox;
 		private System.Windows.Forms.OpenFileDialog openFileDialog;
-		private System.Windows.Forms.Label label4;
-		private System.Windows.Forms.ComboBox videoRendererComboBox;
     private System.Windows.Forms.ComboBox audioCodecComboBox;
     private System.Windows.Forms.Label label5;
     private System.Windows.Forms.ComboBox videoCodecComboBox;
@@ -65,14 +63,7 @@ namespace MediaPortal.Configuration.Sections
 			// 
 			// Fetch available audio and video renderers
 			//
-			ArrayList availableAudioRenderers = FilterHelper.GetAudioRenderers();
-
-			//
-			// Populate combobox
-			// 
-			audioRendererComboBox.Items.AddRange(availableAudioRenderers.ToArray());
-			videoRendererComboBox.Items.AddRange(VideoRenderers.List);
-
+			ArrayList availableAudioRenderers = FilterHelper.GetAudioRenderers(); 
       //
       // Populate video and audio codecs
       //
@@ -97,10 +88,7 @@ namespace MediaPortal.Configuration.Sections
 				externalPlayerCheckBox.Checked = !externalPlayerCheckBox.Checked;
 
 				audioRendererComboBox.SelectedItem = xmlreader.GetValueAsString("movieplayer", "audiorenderer", "Default DirectSound Device");
-				
-				int videoRenderer = xmlreader.GetValueAsInt("movieplayer", "vmr9", 0);
-				if(videoRenderer >= 0 && videoRenderer < VideoRenderers.List.Length)				
-					videoRendererComboBox.SelectedItem = VideoRenderers.List[videoRenderer];
+				 
 
         //
         // Set codecs
@@ -124,14 +112,7 @@ namespace MediaPortal.Configuration.Sections
 				
 				xmlwriter.SetValue("movieplayer", "audiorenderer", audioRendererComboBox.Text);
 
-				for(int index = 0; index < VideoRenderers.List.Length; index++)
-				{
-					if(VideoRenderers.List[index].Equals(videoRendererComboBox.Text))
-					{
-						xmlwriter.SetValue("movieplayer", "vmr9", index);
-					}
-				}
-
+	 
         //
         // Set codecs
         //
@@ -170,9 +151,7 @@ namespace MediaPortal.Configuration.Sections
       this.fileNameButton = new System.Windows.Forms.Button();
       this.fileNameTextBox = new System.Windows.Forms.TextBox();
       this.label1 = new System.Windows.Forms.Label();
-      this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.videoRendererComboBox = new System.Windows.Forms.ComboBox();
-      this.label4 = new System.Windows.Forms.Label();
+      this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox(); 
       this.audioRendererComboBox = new System.Windows.Forms.ComboBox();
       this.label3 = new System.Windows.Forms.Label();
       this.label6 = new System.Windows.Forms.Label();
@@ -274,9 +253,7 @@ namespace MediaPortal.Configuration.Sections
       // mpGroupBox1
       // 
       this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpGroupBox1.Controls.Add(this.videoRendererComboBox);
-      this.mpGroupBox1.Controls.Add(this.label4);
+        | System.Windows.Forms.AnchorStyles.Right))); 
       this.mpGroupBox1.Controls.Add(this.audioRendererComboBox);
       this.mpGroupBox1.Controls.Add(this.label3);
       this.mpGroupBox1.Controls.Add(this.label6);
@@ -289,25 +266,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.Size = new System.Drawing.Size(472, 128);
       this.mpGroupBox1.TabIndex = 0;
       this.mpGroupBox1.TabStop = false;
-      this.mpGroupBox1.Text = "Settings";
-      // 
-      // videoRendererComboBox
-      // 
-      this.videoRendererComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.videoRendererComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.videoRendererComboBox.Location = new System.Drawing.Point(168, 68);
-      this.videoRendererComboBox.Name = "videoRendererComboBox";
-      this.videoRendererComboBox.Size = new System.Drawing.Size(288, 21);
-      this.videoRendererComboBox.TabIndex = 5;
-      // 
-      // label4
-      // 
-      this.label4.Location = new System.Drawing.Point(16, 72);
-      this.label4.Name = "label4";
-      this.label4.Size = new System.Drawing.Size(88, 16);
-      this.label4.TabIndex = 4;
-      this.label4.Text = "Video renderer:";
+      this.mpGroupBox1.Text = "Settings";  
       // 
       // audioRendererComboBox
       // 

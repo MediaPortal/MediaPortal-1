@@ -27,212 +27,203 @@ using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Player
 {
-    /// <summary>
-    /// 
-    /// </summary>
-    public class PlayerFactory
+  /// <summary>
+  /// 
+  /// </summary>
+  public class PlayerFactory
+  {
+    static ArrayList m_externalPlayers = new ArrayList();
+    static bool m_loadedExternalPlayers = false;
+
+    static private void LoadExternalPlayers()
     {
-        static ArrayList m_externalPlayers = new ArrayList();
-        static bool m_loadedExternalPlayers = false;
 
-        static private void LoadExternalPlayers()
+      Log.Write("Loading external players plugins");
+
+      string[] strFiles = System.IO.Directory.GetFiles(@"plugins\ExternalPlayers", "*.dll");
+
+      foreach (string strFile in strFiles)
+      {
+
+        try
         {
 
-            Log.Write("Loading external players plugins");
+          Assembly assem = Assembly.LoadFrom(strFile);
 
-            string[] strFiles = System.IO.Directory.GetFiles(@"plugins\ExternalPlayers", "*.dll");
+          if (assem != null)
+          {
 
-            foreach (string strFile in strFiles)
+            Type[] types = assem.GetExportedTypes();
+
+
+
+            foreach (Type t in types)
             {
 
-                try
+              try
+              {
+
+                if (t.IsClass)
                 {
 
-                    Assembly assem = Assembly.LoadFrom(strFile);
+                  if (t.IsSubclassOf(typeof(IExternalPlayer)))
+                  {
 
-                    if (assem != null)
-                    {
+                    object newObj = (object)Activator.CreateInstance(t);
 
-                        Type[] types = assem.GetExportedTypes();
+                    Log.Write("  found plugin:{0} in {1}", t.ToString(), strFile);
 
+                    IExternalPlayer player = (IExternalPlayer)newObj;
 
+                    Log.Write("  player:{0}.  author: {1}", player.PlayerName, player.AuthorName);
 
-                        foreach (Type t in types)
-                        {
+                    m_externalPlayers.Add(player);
 
-                            try
-                            {
-
-                                if (t.IsClass)
-                                {
-
-                                    if (t.IsSubclassOf(typeof(IExternalPlayer)))
-                                    {
-
-                                        object newObj = (object)Activator.CreateInstance(t);
-
-                                        Log.Write("  found plugin:{0} in {1}", t.ToString(), strFile);
-
-                                        IExternalPlayer player = (IExternalPlayer)newObj;
-
-                                        Log.Write("  player:{0}.  author: {1}", player.PlayerName, player.AuthorName);
-
-                                        m_externalPlayers.Add(player);
-
-                                    }
-
-                                }
-
-                            }
-
-                            catch (Exception e)
-                            {
-
-                                Log.Write("Error loading external player: {0}", t.ToString());
-
-                                Log.Write("Error: {0}", e.StackTrace);
-
-                            }
-
-                        }
-
-                    }
+                  }
 
                 }
 
-                catch (Exception e)
-                {
+              }
 
-                    Log.Write("Error loading external player: {0}", e);
+              catch (Exception e)
+              {
 
-                }
+                Log.Write("Error loading external player: {0}", t.ToString());
+
+                Log.Write("Error: {0}", e.StackTrace);
+
+              }
 
             }
 
-            m_loadedExternalPlayers = true;
+          }
 
         }
 
-        static public IExternalPlayer GetExternalPlayer(string strFile)
+        catch (Exception e)
         {
 
-            if (!m_loadedExternalPlayers)
-            {
-                LoadExternalPlayers();
-            }
-
-            foreach (IExternalPlayer player in m_externalPlayers)
-            {
-
-                using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
-                {
-
-                    bool enabled = xmlreader.GetValueAsBool("plugins", player.PlayerName, false);
-
-                    player.Enabled = enabled;
-
-                }
-
-                if (player.Enabled && player.SupportsFile(strFile))
-                {
-
-                    return player;
-
-                }
-
-            }
-
-            return null;
+          Log.Write("Error loading external player: {0}", e);
 
         }
 
-        static public IPlayer Create(string strFileName)
+      }
+
+      m_loadedExternalPlayers = true;
+
+    }
+
+    static public IExternalPlayer GetExternalPlayer(string strFile)
+    {
+
+      if (!m_loadedExternalPlayers)
+      {
+        LoadExternalPlayers();
+      }
+
+      foreach (IExternalPlayer player in m_externalPlayers)
+      {
+
+        using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
         {
-            IPlayer newPlayer = null;
 
-            string strExt = System.IO.Path.GetExtension(strFileName).ToLower();
-            if (strExt != ".tv" && strExt != ".sbe" && strExt != ".dvr-ms"
-                    && strFileName.ToLower().IndexOf("live.ts") < 0
-                    && strFileName.ToLower().IndexOf("radio.ts") < 0)
-            {
-                newPlayer = GetExternalPlayer(strFileName);
-                if (newPlayer != null)
-                {
-                    return newPlayer;
-                }
-            }
+          bool enabled = xmlreader.GetValueAsBool("plugins", player.PlayerName, false);
 
-            int iUseVMR9inMYTV = 0;
-            int iUseVMR9inMYMovies = 0;
-            using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
-            {
-                iUseVMR9inMYTV = xmlreader.GetValueAsInt("mytv", "vmr9", 0);
-                iUseVMR9inMYMovies = xmlreader.GetValueAsInt("movieplayer", "vmr9", 0);
-            }
+          player.Enabled = enabled;
 
-            if (Utils.IsVideo(strFileName))
-            {
-                if (strExt == ".tv" || strExt == ".sbe" || strExt == ".dvr-ms")
-                {
-                    if (strExt == ".sbe" || strExt == ".dvr-ms")
-                    {
-                        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_TIMESHIFT, 0, 0, 0, 0, 0, null);
-                        GUIWindowManager.SendMessage(msg);
-                    }
-                    if (iUseVMR9inMYTV == 0) newPlayer = new Player.BaseStreamBufferPlayer();
-                    if (iUseVMR9inMYTV == 1) newPlayer = new Player.StreamBufferPlayer9();
-                    if (iUseVMR9inMYTV == 2) newPlayer = new Player.StreamBufferPlayer9();
-                    return newPlayer;
-                }
-            }
-            if (strExt == ".ts")
-            {
-                if (strFileName.ToLower().IndexOf("radio.ts") >= 0)
-                    return new Player.BaseTStreamBufferPlayer();
+        }
 
-                if (iUseVMR9inMYTV == 0) newPlayer = new Player.BaseTStreamBufferPlayer();
-                else newPlayer = new Player.TStreamBufferPlayer9();
-                return newPlayer;
-            }
-            if (Utils.IsVideo(strFileName))
-            {
-                if (iUseVMR9inMYMovies == 0) newPlayer = new Player.VideoPlayerVMR7();
-                else newPlayer = new Player.VideoPlayerVMR9();
-                return newPlayer;
-            }
+        if (player.Enabled && player.SupportsFile(strFile))
+        {
 
-            if (strExt == ".radio")
-            {
-                newPlayer = new Player.RadioTuner();
-                return newPlayer;
-            }
+          return player;
 
-            if (Utils.IsCDDA(strFileName))
-            {
-                newPlayer = new Player.AudioPlayerWMP9();
+        }
 
-                return newPlayer;
-            }
+      }
 
-            if (Utils.IsAudio(strFileName))
-            {
-                using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
-                {
-                    string strAudioPlayer = xmlreader.GetValueAsString("audioplayer", "player", "Windows Media Player 9");
-                    if (String.Compare(strAudioPlayer, "Windows Media Player 9", true) == 0)
-                    {
-                        newPlayer = new Player.AudioPlayerWMP9();
-                        return newPlayer;
-                    }
-                    newPlayer = new Player.AudioPlayerVMR7();
-                    return newPlayer;
-                }
-            }
+      return null;
+
+    }
+
+    static public IPlayer Create(string strFileName)
+    {
+      IPlayer newPlayer = null;
+
+      string strExt = System.IO.Path.GetExtension(strFileName).ToLower();
+      if (strExt != ".tv" && strExt != ".sbe" && strExt != ".dvr-ms"
+              && strFileName.ToLower().IndexOf("live.ts") < 0
+              && strFileName.ToLower().IndexOf("radio.ts") < 0)
+      {
+        newPlayer = GetExternalPlayer(strFileName);
+        if (newPlayer != null)
+        {
+          return newPlayer;
+        }
+      }
 
 
+
+      if (Utils.IsVideo(strFileName))
+      {
+        if (strExt == ".tv" || strExt == ".sbe" || strExt == ".dvr-ms")
+        {
+          if (strExt == ".sbe" || strExt == ".dvr-ms")
+          {
+            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_TIMESHIFT, 0, 0, 0, 0, 0, null);
+            GUIWindowManager.SendMessage(msg);
+          }
+         
+          newPlayer = new Player.StreamBufferPlayer9();
+          return newPlayer;
+        }
+      }
+      if (strExt == ".ts")
+      {
+        if (strFileName.ToLower().IndexOf("radio.ts") >= 0)
+          return new Player.BaseTStreamBufferPlayer();
+
+        newPlayer = new Player.TStreamBufferPlayer9();
+        return newPlayer;
+      }
+      if (Utils.IsVideo(strFileName))
+      {
+        newPlayer = new Player.VideoPlayerVMR9();
+        return newPlayer;
+      }
+
+      if (strExt == ".radio")
+      {
+        newPlayer = new Player.RadioTuner();
+        return newPlayer;
+      }
+
+      if (Utils.IsCDDA(strFileName))
+      {
+        newPlayer = new Player.AudioPlayerWMP9();
+
+        return newPlayer;
+      }
+
+      if (Utils.IsAudio(strFileName))
+      {
+        using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+        {
+          string strAudioPlayer = xmlreader.GetValueAsString("audioplayer", "player", "Windows Media Player 9");
+          if (String.Compare(strAudioPlayer, "Windows Media Player 9", true) == 0)
+          {
             newPlayer = new Player.AudioPlayerWMP9();
             return newPlayer;
-
+          }
+          newPlayer = new Player.AudioPlayerVMR7();
+          return newPlayer;
         }
+      }
+
+
+      newPlayer = new Player.AudioPlayerWMP9();
+      return newPlayer;
+
     }
+  }
 }

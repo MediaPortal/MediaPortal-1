@@ -21,11 +21,6 @@
 			</control>
 			<control>
 				<type>button</type>
-				<id>26</id>
-				<label>Video Renderer</label>
-			</control>
-			<control>
-				<type>button</type>
 				<id>25</id>
 				<label>Audio Codec</label>
 			</control>

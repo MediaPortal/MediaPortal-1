@@ -28,11 +28,6 @@
 			</control>
 			<control>
 				<type>button</type>
-				<id>26</id>
-				<label>Video Renderer</label>
-			</control>
-			<control>
-				<type>button</type>
 				<id>27</id>
 				<label>Deinterlacing</label>
 			</control>

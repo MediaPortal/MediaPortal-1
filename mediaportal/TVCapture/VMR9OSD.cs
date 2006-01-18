@@ -1081,39 +1081,7 @@ namespace MediaPortal.TV.Recording
       }
 
 
-      if (VMR7Util.g_vmr7 != null)
-      {
-        // transparent image?
-        if (bitmap != null)
-        {
-          if (transparent == true)
-            bitmap.MakeTransparent(Color.Black);
-        }
-        if (show == true)
-        {
-          VMR7Util.g_vmr7.SaveBitmap(bitmap, show, transparent, alphaValue);
-          m_timeDisplayed = DateTime.Now;
-          return true;
-        }
-        else
-        {
-          if (m_bitmapIsVisible == true)
-          {
-            if (m_muteState == true)
-            {
-              //							RenderVolumeOSD();
-            }
-            else
-            {
-              VMR7Util.g_vmr7.SaveBitmap(bitmap, show, transparent, alphaValue);
-              m_bitmapIsVisible = false;
-              m_osdRendered = OSD.None;
-            }
-          }
-        }
-        // dispose
-        return true;
-      }
+      
 
       return false;
     }// savevmr9bitmap
