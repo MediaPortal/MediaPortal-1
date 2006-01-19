@@ -4042,6 +4042,10 @@
     <id>5917</id>
     <value>German Trailers</value>
   </string>
+  <string>
+   <id>5918</id>
+   <value>Télévision Suisse Romande VOD</value>
+ </string>
 
   <!-- End of My Trailers Strings -->
   <string Prefix="My ">
