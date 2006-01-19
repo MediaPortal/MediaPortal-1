@@ -55,7 +55,7 @@ namespace MediaPortal.GUI.Video
 		// Returns the author of the plugin which is shown in the plugin menu
 		public string Author()      
 		{
-			return "Zipperzip";
+			return "Zipperzip/sur_uix";
 		}	
 		
 		// show the setup dialog

@@ -22,6 +22,10 @@ namespace MediaPortal.GUI.Video
         private RadioButton bitrate450;
         private RadioButton bitrate160;
         private RadioButton bitrate80;
+        private NumericUpDown upDowNmbOfResults;
+        private GroupBox TsrVodnbrOfResultGrpBox;
+        private RadioButton radioButton2;
+        private RadioButton rbnmbOfResultsDef;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -72,7 +76,13 @@ namespace MediaPortal.GUI.Video
             this.bitrate450 = new System.Windows.Forms.RadioButton();
             this.bitrate160 = new System.Windows.Forms.RadioButton();
             this.bitrate80 = new System.Windows.Forms.RadioButton();
+            this.upDowNmbOfResults = new System.Windows.Forms.NumericUpDown();
+            this.TsrVodnbrOfResultGrpBox = new System.Windows.Forms.GroupBox();
+            this.rbnmbOfResultsDef = new System.Windows.Forms.RadioButton();
+            this.radioButton2 = new System.Windows.Forms.RadioButton();
             this.TsrVodBitrateStreamGrpBox.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.upDowNmbOfResults)).BeginInit();
+            this.TsrVodnbrOfResultGrpBox.SuspendLayout();
             this.SuspendLayout();
             // 
             // checkBox300
@@ -86,7 +96,7 @@ namespace MediaPortal.GUI.Video
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(361, 218);
+            this.button1.Location = new System.Drawing.Point(361, 248);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 32);
             this.button1.TabIndex = 2;
@@ -195,10 +205,53 @@ namespace MediaPortal.GUI.Video
             this.bitrate80.UseVisualStyleBackColor = true;
             this.bitrate80.Visible = false;
             // 
+            // upDowNmbOfResults
+            // 
+            this.upDowNmbOfResults.Enabled = false;
+            this.upDowNmbOfResults.Location = new System.Drawing.Point(41, 42);
+            this.upDowNmbOfResults.Name = "upDowNmbOfResults";
+            this.upDowNmbOfResults.Size = new System.Drawing.Size(68, 20);
+            this.upDowNmbOfResults.TabIndex = 8;
+            // 
+            // TsrVodnbrOfResultGrpBox
+            // 
+            this.TsrVodnbrOfResultGrpBox.Controls.Add(this.radioButton2);
+            this.TsrVodnbrOfResultGrpBox.Controls.Add(this.rbnmbOfResultsDef);
+            this.TsrVodnbrOfResultGrpBox.Controls.Add(this.upDowNmbOfResults);
+            this.TsrVodnbrOfResultGrpBox.Location = new System.Drawing.Point(250, 156);
+            this.TsrVodnbrOfResultGrpBox.Name = "TsrVodnbrOfResultGrpBox";
+            this.TsrVodnbrOfResultGrpBox.Size = new System.Drawing.Size(126, 73);
+            this.TsrVodnbrOfResultGrpBox.TabIndex = 9;
+            this.TsrVodnbrOfResultGrpBox.TabStop = false;
+            this.TsrVodnbrOfResultGrpBox.Text = "Number of Result";
+            // 
+            // rbnmbOfResultsDef
+            // 
+            this.rbnmbOfResultsDef.AutoSize = true;
+            this.rbnmbOfResultsDef.Checked = true;
+            this.rbnmbOfResultsDef.Location = new System.Drawing.Point(21, 23);
+            this.rbnmbOfResultsDef.Name = "rbnmbOfResultsDef";
+            this.rbnmbOfResultsDef.Size = new System.Drawing.Size(57, 17);
+            this.rbnmbOfResultsDef.TabIndex = 9;
+            this.rbnmbOfResultsDef.TabStop = true;
+            this.rbnmbOfResultsDef.Text = "default";
+            this.rbnmbOfResultsDef.UseVisualStyleBackColor = true;
+            // 
+            // radioButton2
+            // 
+            this.radioButton2.AutoSize = true;
+            this.radioButton2.Location = new System.Drawing.Point(21, 46);
+            this.radioButton2.Name = "radioButton2";
+            this.radioButton2.Size = new System.Drawing.Size(14, 13);
+            this.radioButton2.TabIndex = 10;
+            this.radioButton2.UseVisualStyleBackColor = true;
+            this.radioButton2.CheckedChanged += new System.EventHandler(this.radioButton2_CheckedChanged);
+            // 
             // GUITrailersSetupForm
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-            this.ClientSize = new System.Drawing.Size(448, 262);
+            this.ClientSize = new System.Drawing.Size(448, 292);
+            this.Controls.Add(this.TsrVodnbrOfResultGrpBox);
             this.Controls.Add(this.TsrVodBitrateStreamGrpBox);
             this.Controls.Add(this.TsrVodCheckBox);
             this.Controls.Add(this.label1);
@@ -211,6 +264,9 @@ namespace MediaPortal.GUI.Video
             this.Load += new System.EventHandler(this.GUITrailersSetupForm_Load);
             this.TsrVodBitrateStreamGrpBox.ResumeLayout(false);
             this.TsrVodBitrateStreamGrpBox.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.upDowNmbOfResults)).EndInit();
+            this.TsrVodnbrOfResultGrpBox.ResumeLayout(false);
+            this.TsrVodnbrOfResultGrpBox.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -243,6 +299,15 @@ namespace MediaPortal.GUI.Video
                     bitrate160.Checked = true;
                 else
                     bitrate80.Checked = true;
+
+                if (xmlreader.GetValue("mytrailers", "TSR nmbOfResults") == "-1")
+                    rbnmbOfResultsDef.Checked = true;
+                else
+                {
+                    radioButton2.Checked = true;
+                    upDowNmbOfResults.Value = xmlreader.GetValueAsInt("mytrailers", "TSR nmbOfResults",6);
+                }
+
                 //if (xmlreader.GetValue("mytrailers", "YahooServer") == YahooServerListBox.Items[0].ToString)
                 //    YahooServerListBox.SetItemChecked(0, true);
                 //else if (xmlreader.GetValue("mytrailers", "YahooServer") == YahooServerListBox.Items[1].ToString)
@@ -266,6 +331,11 @@ namespace MediaPortal.GUI.Video
                   xmlwriter.SetValue("mytrailers", "TSR speed", "160".ToString());
                 else 
                   xmlwriter.SetValue("mytrailers", "TSR speed", "80".ToString());
+                if (rbnmbOfResultsDef.Checked == true)
+                    xmlwriter.SetValue("mytrailers", "TSR nmbOfResults", "-1".ToString());
+                else
+                    xmlwriter.SetValue("mytrailers", "TSR nmbOfResults", upDowNmbOfResults.Value);
+
               //if(GermanTrailerCheckBox.Checked==true)
                 xmlwriter.SetValueAsBool("mytrailers", "Show german trailers", GermanTrailerCheckBox.Checked);
                 xmlwriter.SetValueAsBool("mytrailers", "Show tsr vod", TsrVodCheckBox.Checked);
@@ -286,6 +356,12 @@ namespace MediaPortal.GUI.Video
         private void TsrVodCheckBox_CheckedChanged(object sender, EventArgs e)
         {
             TsrVodBitrateStreamGrpBox.Enabled = TsrVodCheckBox.Checked;
+            TsrVodnbrOfResultGrpBox.Enabled = TsrVodCheckBox.Checked;
+        }
+
+        private void radioButton2_CheckedChanged(object sender, EventArgs e)
+        {
+            upDowNmbOfResults.Enabled = radioButton2.Checked;
         }
 
 

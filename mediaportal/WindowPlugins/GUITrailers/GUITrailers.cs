@@ -98,7 +98,7 @@ namespace MediaPortal.GUI.Video
 		bool Show_GT = false;
         bool Show_TSR = false;
         public static string TSRbitrate = string.Empty;
-        
+        public static string TSRnmbOfResults = string.Empty;
 
 		// BackGroundworker
 		string _downloadedText		= string.Empty;
@@ -537,11 +537,13 @@ namespace MediaPortal.GUI.Video
                     if (MainListMenu[itemindex] == "TSRVOD") // TSR VOD
                     {
                         mainview = false;
+                        btnletter.Visible = false;
+                        //poster.Visible = false;
                         TSRVodTrailers.menuview = true;
                         SelectedItem[0] = listview.SelectedListItemIndex;
                         if (TSRVodTrailers.MenuName[0] == null)
                         { TSRVodTrailers.GetMenu(); }
-                        ShowListView(TSRVodTrailers.MenuName, "TSR VOD",false);
+                        ShowListView(TSRVodTrailers.MenuName, 5918);
                     }
 				}
 
@@ -562,6 +564,8 @@ namespace MediaPortal.GUI.Video
                 {
                     TSRVodTrailers.menuview = false;
                     mainview = true;
+                    btnletter.Visible = true;
+                    //poster.Visible = true;
                     ShowMainListView();
                     listview.SelectedListItemIndex = SelectedItem[0];
                 }
@@ -569,7 +573,7 @@ namespace MediaPortal.GUI.Video
                 {
                     TSRVodTrailers.menuview = false;
                     TSRVodTrailers.submenuview = true;
-                    TSRVodTrailers.GetSubMenu(TSRVodTrailers.MenuURL[itemindex - 1],TSRbitrate);
+                    TSRVodTrailers.GetSubMenu(TSRVodTrailers.MenuURL[itemindex - 1], TSRbitrate, TSRnmbOfResults);
                     listview.SelectedListItemIndex = itemindex;
                     ShowListView(TSRVodTrailers.SubMenuName, TSRVodTrailers.MenuName[itemindex - 1], false);
                 }
@@ -580,7 +584,7 @@ namespace MediaPortal.GUI.Video
                 {
                     TSRVodTrailers.submenuview = false;
                     TSRVodTrailers.menuview = true;
-                    ShowListView(TSRVodTrailers.MenuName, 5903);
+                    ShowListView(TSRVodTrailers.MenuName, 5918);
                     listview.SelectedListItemIndex = SelectedItem[0];
                 }
                 else
@@ -723,7 +727,7 @@ namespace MediaPortal.GUI.Video
             }
             if (Show_TSR == true)
             {
-                MainListOptions[iNextItem] = "TSR VOD";//GUILocalizeStrings.Get(5917);
+                MainListOptions[iNextItem] = GUILocalizeStrings.Get(5918);
                 MainListMenu[iNextItem] = "TSRVOD";
                 iNextItem++;
             }
@@ -877,6 +881,9 @@ namespace MediaPortal.GUI.Video
 				Show_GT = xmlreader.GetValueAsBool("mytrailers","Show german trailers",false);
                 Show_TSR = xmlreader.GetValueAsBool("mytrailers", "Show tsr vod", false);
                 TSRbitrate = xmlreader.GetValue("mytrailers", "TSR speed");
+                TSRnmbOfResults = xmlreader.GetValue("mytrailers", "TSR nmbOfResults");
+                if (TSRnmbOfResults != "-1")
+                    TSRnmbOfResults = "&nmbOfResults=" + TSRnmbOfResults;
                 YahooTrailers.server = xmlreader.GetValue("mytrailers", "YahooServer");
 			}
 
