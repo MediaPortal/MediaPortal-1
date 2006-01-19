@@ -56,7 +56,7 @@ namespace MediaPortal.Player
 		/// <summary> create the used COM components and get the interfaces. </summary>
 		protected override bool GetInterfaces()
 		{
-			Vmr9 = new VMR9Util("movieplayer");
+			Vmr9 = new VMR9Util();
       //switch back to directx fullscreen mode
       GUIMessage msg =new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED,0,0,0,1,0,null);
       GUIWindowManager.SendMessage(msg);

@@ -376,7 +376,7 @@ namespace MediaPortal.TV.Recording
       if (_dvbDemuxer != null)
         _dvbDemuxer.GrabTeletext(false);
       // create graphs
-      _vmr9 = new VMR9Util("mytv"); 
+      _vmr9 = new VMR9Util(); 
       Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2:creategraph() create graph");
       _graphBuilder = (IGraphBuilder)new FilterGraph();
       _isUsingAc3 = false;
@@ -1995,7 +1995,7 @@ namespace MediaPortal.TV.Recording
       }
       AddPreferredCodecs(true, true);
       if (_vmr9 == null)
-        _vmr9 = new VMR9Util("mytv"); 
+        _vmr9 = new VMR9Util(); 
 
       if (_vmr9 != null)
       {

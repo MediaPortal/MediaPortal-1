@@ -91,7 +91,7 @@ namespace MediaPortal.TV.Recording
       {
         _hasTeletext = false;
         _grabTeletext = false;
-        _vmr9 = new VMR9Util("mytv"); 
+        _vmr9 = new VMR9Util(); 
 
         Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:CreateGraph() IN");
         if (_graphState != State.None) return false;		// If doing something already, return...

@@ -368,7 +368,7 @@ namespace MediaPortal.TV.Recording
         }
 
         //create new instance of VMR9 helper utility
-        _vmr9 = new VMR9Util("mytv"); 
+        _vmr9 = new VMR9Util(); 
 
         // Make a new filter graph
         //Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:create new filter graph (IGraphBuilder)");
@@ -1555,7 +1555,7 @@ namespace MediaPortal.TV.Recording
       _isOverlayVisible = true;
       // add VMR9 renderer to graph
       if (_vmr9 == null)
-        _vmr9 = new VMR9Util("mytv"); 
+        _vmr9 = new VMR9Util(); 
 
       if (_vmr9 != null)
       {

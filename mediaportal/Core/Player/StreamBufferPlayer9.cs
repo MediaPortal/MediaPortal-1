@@ -84,7 +84,7 @@ namespace MediaPortal.Player
         _graphBuilder = (IGraphBuilder)new FilterGraph();
 //Log.Write("StreamBufferPlayer9: add _vmr9");
 
-				_vmr9= new VMR9Util("mytv");
+				_vmr9= new VMR9Util();
 				_vmr9.AddVMR9(_graphBuilder);			
 				_vmr9.Enable(false);	
 

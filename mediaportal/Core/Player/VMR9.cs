@@ -104,25 +104,14 @@ namespace MediaPortal.Player
     /// <summary>
     /// Constructor
     /// </summary>
-    /// <param name="key">
-    /// key in mediaportal.xml to check if vmr9 should be enabled or not
-    /// </param>
-    public VMR9Util(string key)
+    public VMR9Util()
     {
 			if (!GUIGraphicsContext.VMR9Allowed)
 			{
 				UseVMR9inMYTV = false;
 				return;
 			}
-      // add vmr9 if necessary
-      using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
-      {
-        int iUseVMR9inMYTV = xmlreader.GetValueAsInt(key, "vmr9", 0);
-        if (iUseVMR9inMYTV != 0) UseVMR9inMYTV = true;
-        else UseVMR9inMYTV = false;
-
-        m_renderFrame = GUIGraphicsContext.RenderGUI;
-      }
+      m_renderFrame = GUIGraphicsContext.RenderGUI;
       if (GUIGraphicsContext.DX9Device == null) UseVMR9inMYTV = false;
       if (m_renderFrame == null) UseVMR9inMYTV = false;
 			if (g_vmr9!=null || GUIGraphicsContext.Vmr9Active) 

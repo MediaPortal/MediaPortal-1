@@ -252,7 +252,7 @@ namespace MediaPortal.Configuration
       if (availableVideoDevices.Count == 0)
       {
         MessageBox.Show("No video device was found, you won't be able to configure a capture card", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        useRecordingCheckBox.Enabled = useWatchingCheckBox.Enabled = cardComboBox.Enabled = okButton.Enabled =  false;
+        useRecordingCheckBox.Enabled = useWatchingCheckBox.Enabled = cardComboBox.Enabled = okButton.Enabled = false;
         acceptuserinput = false;
       }
       else
@@ -287,7 +287,7 @@ namespace MediaPortal.Configuration
           if (((string)(availableVideoDevices[i])) == "B2C2 MPEG-2 Source")
           {
             if (ss2Added) continue;
-            if (addNewCard || (!addNewCard && deviceToEdit.VideoDevice == "B2C2 MPEG-2 Source") )
+            if (addNewCard || (!addNewCard && deviceToEdit.VideoDevice == "B2C2 MPEG-2 Source"))
             {
               ss2Added = true;
               TVCaptureDevice cd = new TVCaptureDevice();
@@ -303,8 +303,8 @@ namespace MediaPortal.Configuration
               {
                 foreach (TVCaptureDevice dev in captureCards)
                 {
-                  if (dev.CardType==cd.CardType)
-                     alreadyAdded = true;
+                  if (dev.CardType == cd.CardType)
+                    alreadyAdded = true;
                 }
               }
               if (!alreadyAdded)
@@ -398,7 +398,7 @@ namespace MediaPortal.Configuration
       if (cardComboBox.Items.Count == 0)
       {
         MessageBox.Show("No video capture card(s) were found, you won't be able to configure a capture card", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        useRecordingCheckBox.Enabled = useWatchingCheckBox.Enabled =  cardComboBox.Enabled = okButton.Enabled = false;
+        useRecordingCheckBox.Enabled = useWatchingCheckBox.Enabled = cardComboBox.Enabled = okButton.Enabled = false;
         acceptuserinput = false;
       }
       else
@@ -1599,7 +1599,7 @@ namespace MediaPortal.Configuration
     private void cardComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
     {
       if (!acceptuserinput) return;
-      
+
       if (!FillInAll())
       {
         MessageBox.Show("Unable to create graph for this device!!", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -2062,7 +2062,7 @@ namespace MediaPortal.Configuration
       // save settings for card
       if (CaptureCard != null)
       {
-        if (CaptureCard.CardType==TVCapture.CardTypes.Digital_SS2)
+        if (CaptureCard.CardType == TVCapture.CardTypes.Digital_SS2)
         {
           string filename = String.Format(@"database\card_{0}.xml", CaptureCard.FriendlyName);
           // save settings for get the filename in mp.xml
@@ -2194,21 +2194,21 @@ namespace MediaPortal.Configuration
 
     private void btnRadio_Click(object sender, System.EventArgs e)
     {
-        if (CaptureCard.Network == NetworkType.Analog)
+      if (CaptureCard.Network == NetworkType.Analog)
+      {
+        AnalogRadioTuningForm dialog = new AnalogRadioTuningForm();
+        ITuning tuning = new AnalogRadioTuning();
+        if (tuning != null)
         {
-            AnalogRadioTuningForm dialog = new AnalogRadioTuningForm();
-            ITuning tuning = new AnalogRadioTuning();
-            if (tuning != null)
-            {
-                dialog.Tuning = tuning;
-                dialog.Card = CaptureCard;
-                dialog.ShowDialog(this);
-            }
-            else
-            {
-                MessageBox.Show("This device does not support auto tuning", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
+          dialog.Tuning = tuning;
+          dialog.Card = CaptureCard;
+          dialog.ShowDialog(this);
         }
+        else
+        {
+          MessageBox.Show("This device does not support auto tuning", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+      }
     }
 
 

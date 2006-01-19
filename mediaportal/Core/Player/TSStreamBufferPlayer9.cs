@@ -88,7 +88,7 @@ namespace MediaPortal.Player
       try 
       {
         _graphBuilder = (IGraphBuilder) new FilterGraph();
-				_vmr9= new VMR9Util("mytv");
+				_vmr9= new VMR9Util();
 				_vmr9.AddVMR9(_graphBuilder);			
 				_vmr9.Enable(false);	
 				int hr;

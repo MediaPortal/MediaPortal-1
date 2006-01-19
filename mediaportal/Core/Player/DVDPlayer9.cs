@@ -85,7 +85,7 @@ namespace MediaPortal.Player
       try 
       {
 
-        _vmr9=new VMR9Util("dvdplayer");
+        _vmr9=new VMR9Util();
         _dvdGraph = (IDvdGraphBuilder)new DvdGraphBuilder();
 
         hr = _dvdGraph.GetFiltergraph( out _graphBuilder );
