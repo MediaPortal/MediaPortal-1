@@ -28,7 +28,7 @@ using MediaPortal.TV.Recording;
 using MediaPortal.GUI.Library;
 using System.Xml;
 
-namespace MediaPortal.TV.Recording
+namespace MediaPortal.TV.Scanning
 {
 
   /// <summary>

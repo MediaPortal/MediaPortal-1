@@ -32,6 +32,7 @@ using System.Runtime.Serialization.Formatters.Soap;
 using MediaPortal.GUI.Library;
 using MediaPortal.Radio.Database;
 using MediaPortal.TV.Recording;
+using MediaPortal.TV.Scanning;
 using TVCapture;
 using MediaPortal.Configuration.Sections;
 

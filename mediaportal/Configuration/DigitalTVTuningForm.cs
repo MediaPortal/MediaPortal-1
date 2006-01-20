@@ -34,6 +34,7 @@ using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
 using TVCapture;
 using MediaPortal.Configuration.Sections;
+using MediaPortal.TV.Scanning;
 
 namespace MediaPortal
 {

@@ -31,7 +31,7 @@ using DirectShowLib;
 using DirectShowLib.BDA;
 
 
-namespace MediaPortal.TV.Recording
+namespace MediaPortal.TV.Scanning
 {
 
   /// <summary>

@@ -24,7 +24,8 @@ using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
 
-namespace MediaPortal.TV.Recording
+using MediaPortal.TV.Recording;
+namespace MediaPortal.TV.Scanning
 {
 	/// <summary>
 	/// Summary description for DVBSSelectTPLForm.

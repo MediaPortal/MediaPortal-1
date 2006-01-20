@@ -19,8 +19,8 @@
  *
  */
 using System;
-
-namespace MediaPortal.TV.Recording
+using MediaPortal.TV.Recording;
+namespace MediaPortal.TV.Scanning
 {
   /// <summary>
   /// Interface definition for auto-tuning

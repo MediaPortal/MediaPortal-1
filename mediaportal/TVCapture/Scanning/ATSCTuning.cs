@@ -31,7 +31,7 @@ using MediaPortal.TV.Recording;
 using System.Xml;
 
 
-namespace MediaPortal.TV.Recording
+namespace MediaPortal.TV.Scanning
 {
 
   /// <summary>

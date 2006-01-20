@@ -19,7 +19,7 @@
  *
  */
 using System;
-
+using MediaPortal.TV.Scanning;
 namespace MediaPortal.TV.Recording
 {
 	/// <summary>

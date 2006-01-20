@@ -33,6 +33,7 @@ using DShowNET;
 using DShowNET.Helper;
 using DirectShowLib;
 using MediaPortal.TV.Recording;
+using MediaPortal.TV.Scanning;
 using MediaPortal.GUI.Library;
 using TVCapture;
 using MediaPortal.TV.Database;

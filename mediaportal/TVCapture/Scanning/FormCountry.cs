@@ -23,8 +23,9 @@ using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
+using MediaPortal.TV.Recording;
 
-namespace MediaPortal.TV.Recording
+namespace MediaPortal.TV.Scanning
 {
 	/// <summary>
 	/// Summary description for FormCountry.

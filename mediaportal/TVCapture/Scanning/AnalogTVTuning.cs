@@ -24,8 +24,8 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using DirectShowLib;
 using MediaPortal.TV.Database;
-
-namespace MediaPortal.TV.Recording
+using MediaPortal.TV.Recording;
+namespace MediaPortal.TV.Scanning
 {
 	/// <summary>
 	/// Class which can search & find all tv channels for an analog capture card

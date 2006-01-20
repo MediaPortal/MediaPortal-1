@@ -28,6 +28,7 @@ using System.Windows.Forms;
 using MediaPortal.TV.Database;
 using MediaPortal.Radio.Database;
 using MediaPortal.TV.Recording;
+using MediaPortal.TV.Scanning;
 using DShowNET;
 namespace MediaPortal.Configuration.Sections
 {
