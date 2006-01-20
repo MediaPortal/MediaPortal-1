@@ -80,7 +80,7 @@ namespace MediaPortal.Utils
             if( m_TimeZoneList == null )
                LoadRegistryTimeZones();
 
-           if( !m_TimeZoneList.Contains(m_TimeZone) )
+            if( !m_TimeZoneList.Contains(TimeZoneName) )
                throw new ArgumentException("TimeZone Not valid"); 
 
             m_TimeZone = (TimeZoneInfo) m_TimeZoneList[ TimeZoneName ];        
