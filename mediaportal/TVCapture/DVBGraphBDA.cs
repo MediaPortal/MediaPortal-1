@@ -1131,7 +1131,7 @@ namespace MediaPortal.TV.Recording
         if (_vmr9 != null)
         {
           //Log.Write("DVBGraphBDA:remove vmr9");
-          _vmr9.RemoveVMR9();
+          _vmr9.Dispose();
           _vmr9 = null;
         }
  
@@ -1371,7 +1371,7 @@ namespace MediaPortal.TV.Recording
 
       if (_vmr9 != null)
       {
-        _vmr9.RemoveVMR9();
+        _vmr9.Dispose();
         _vmr9 = null;
       } 
 #if USEMTSWRITER
@@ -1559,7 +1559,7 @@ namespace MediaPortal.TV.Recording
       {
         if (false==_vmr9.AddVMR9(_graphBuilder))
         {
-          _vmr9.RemoveVMR9();
+          _vmr9.Dispose();
           _vmr9 = null; 
         }
       }
@@ -1616,7 +1616,7 @@ namespace MediaPortal.TV.Recording
         }
         else
         {
-          _vmr9.RemoveVMR9();
+          _vmr9.Dispose();
           _vmr9 = null;
         }
       }
@@ -1738,7 +1738,7 @@ namespace MediaPortal.TV.Recording
         return false;
       if (_vmr9 != null)
       {
-        _vmr9.RemoveVMR9();
+        _vmr9.Dispose();
         _vmr9 = null;
       } 
       Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:StartTimeShifting() {0}", channel.Name);
@@ -5072,7 +5072,7 @@ namespace MediaPortal.TV.Recording
         if (_graphState != State.Created) return;
         if (_vmr9 != null)
         {
-          _vmr9.RemoveVMR9();
+          _vmr9.Dispose();
           _vmr9 = null;
         } 
         Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:StartRadio()");

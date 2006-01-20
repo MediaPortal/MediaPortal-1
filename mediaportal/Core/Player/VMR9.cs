@@ -48,9 +48,10 @@ namespace MediaPortal.Player
   ///                           IVMRSurfaceAllocator9 and IVMRImagePresenter9
   ///  PlaneScene.cs          : class which draws the video texture onscreen and mixes it with the GUI, OSD,...                          
   /// </summary>
-	/// // {324FAA1F-7DA6-4778-833B-3993D8FF4151}
+  /// // {324FAA1F-7DA6-4778-833B-3993D8FF4151}
 
-	[ComVisible(true), ComImport,
+  #region IVMR9PresentCallback interface
+  [ComVisible(true), ComImport,
 	Guid("324FAA1F-7DA6-4778-833B-3993D8FF4151"),
 	InterfaceType( ComInterfaceType.InterfaceIsIUnknown )]
 	public interface IVMR9PresentCallback
@@ -59,14 +60,20 @@ namespace MediaPortal.Player
 		int PresentImage(Int16 cx, Int16 cy, Int16 arx, Int16 ary, uint dwImg);
 		[PreserveSig]
 		int PresentSurface(Int16 cx, Int16 cy, Int16 arx, Int16 ary, uint dwImg);
-	}
-  public class VMR9Util
-  {
+  }
 
-		const uint MixerPref_RenderTargetMask=0x000FF000;
+  #endregion
+
+
+  public class VMR9Util : IDisposable 
+  {
+    #region constants
+    const uint MixerPref_RenderTargetMask=0x000FF000;
 		const uint MixerPref_RenderTargetYUV=0x00002000;
-		#region imports
-		[DllImport("dshowhelper.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
+    #endregion
+
+    #region imports
+    [DllImport("dshowhelper.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
 		unsafe private static extern bool Vmr9Init(IVMR9PresentCallback callback, uint dwD3DDevice, IBaseFilter vmr9Filter,uint monitor);
 		[DllImport("dshowhelper.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
 		unsafe private static extern void Vmr9Deinit();
@@ -76,13 +83,24 @@ namespace MediaPortal.Player
 		unsafe private static extern void Vmr9SetDeinterlacePrefs(uint dwMethod);
 		#endregion
 
-		static public VMR9Util g_vmr9=null;
+    #region static vars
+    static public VMR9Util g_vmr9=null;
 		static int _instanceCounter = 0;
+    #endregion
 
-    public PlaneScene _scene = null;
-    public bool _useVmr9 = false;
+
+    #region enums
+    enum Vmr9PlayState
+    {
+      Playing,
+      Repaint
+    }
+    #endregion
+    #region vars
+    PlaneScene _scene = null;
+    bool _useVmr9 = false;
     IRender _renderFrame;
-    public IBaseFilter _vmr9Filter = null;
+    IBaseFilter _vmr9Filter = null;
 		int _videoHeight, _videoWidth;
 		int _videoAspectRatioX, _videoAspectRatioY;
     
@@ -93,13 +111,9 @@ namespace MediaPortal.Player
 		IGraphBuilder _graphBuilderInterface=null;
 		bool _isVmr9Initialized=false;
     int _threadId;
-
-    enum Vmr9PlayState
-    {
-      Playing,
-      Repaint
-    }
     Vmr9PlayState currentVmr9State = Vmr9PlayState.Playing;
+    #endregion
+
     /// <summary>
     /// Constructor
     /// </summary>
@@ -118,160 +132,12 @@ namespace MediaPortal.Player
         _useVmr9 = false;
     }
 
+    #region properties
+
     public bool UseVmr9
     {
       get { return _useVmr9; }
     }
-    /// <summary>
-    /// Add VMR9 filter to graph and configure it
-    /// </summary>
-    /// <param name="graphBuilder"></param>
-    public bool AddVMR9(IGraphBuilder graphBuilder)
-    {
-      if (!_useVmr9)
-      {
-        Log.Write("vmr9:addvmr9: dont use vmr9");
-        return false;
-      }
-      if (_isVmr9Initialized)
-      {
-        Log.Write("vmr9:addvmr9: vmr9 already initialized");
-        return false;
-      }
-			//Log.Write("VMR9Helper:AddVmr9");
-			if (_instanceCounter != 0)
-			{
-				Log.WriteFile(Log.LogType.Log, true, "VMR9Helper:Multiple instances of VMR9 running!!!");
-				throw new Exception("VMR9Helper:Multiple instances of VMR9 running!!!");
-			}
-
-      _vmr9Filter = (IBaseFilter)new VideoMixingRenderer9();
-      if (_vmr9Filter == null)
-      {
-        Error.SetError("Unable to play movie", "VMR9 is not installed");
-        Log.WriteFile(Log.LogType.Log, true, "VMR9Helper:Failed to get instance of VMR9 ");
-        return false;
-      }
-
-      IntPtr hMonitor;
-      AdapterInformation ai = Manager.Adapters.Default;
-      hMonitor = Manager.GetAdapterMonitor(ai.Adapter);
-      IntPtr upDevice = DirectShowUtil.GetUnmanagedDevice(GUIGraphicsContext.DX9Device);
-
-      _scene = new PlaneScene(_renderFrame, this);
-      _scene.Init();
-      
-      Vmr9Init(_scene, (uint)upDevice.ToInt32(), _vmr9Filter, (uint)hMonitor.ToInt32());
-
-      int hr = graphBuilder.AddFilter(_vmr9Filter, "Video Mixing Renderer 9");
-      if (hr != 0)
-      {
-				Vmr9Deinit();
-				_scene.Stop();
-				_scene.Deinit();
-				_scene=null;
-				
-				Marshal.ReleaseComObject(_vmr9Filter);
-				_vmr9Filter=null;
-        Error.SetError("Unable to play movie", "Unable to initialize VMR9");
-        Log.WriteFile(Log.LogType.Log, true, "vmr9:Failed to add vmr9 to filtergraph");
-        return false;
-      }
-
-			_qualityInterface = _vmr9Filter as IQualProp ;
-			_vmr9MixerBitmapInterface=_vmr9Filter as IVMRMixerBitmap9;
-			_graphBuilderInterface=graphBuilder;			
-			_instanceCounter++;
-			_isVmr9Initialized=true;
-			SetDeinterlacePrefs();
-			System.OperatingSystem os=Environment.OSVersion;
-			if (os.Platform==System.PlatformID.Win32NT)
-			{
-				long version=os.Version.Major*10000000 + os.Version.Minor*10000 + os.Version.Build;
-				if (version >= 50012600) // we need at least win xp sp2 for VMR9 YUV mixing mode
-				{
-					IVMRMixerControl9 mixer = _vmr9Filter as IVMRMixerControl9;
-					if (mixer!=null)
-					{
-            //Log.Write("VMR9: enable YUV mixing");
-						VMR9MixerPrefs dwPrefs;
-						mixer.GetMixingPrefs(out dwPrefs);
-						dwPrefs  &= ~VMR9MixerPrefs.RenderTargetMask; 
-						dwPrefs |= VMR9MixerPrefs.RenderTargetYUV;
-						mixer.SetMixingPrefs(dwPrefs);
-					}
-				}
-			}
-      _threadId=Thread.CurrentThread.ManagedThreadId;
-      GUIGraphicsContext.Vmr9Active = true;
-      g_vmr9 = this;
-      Log.Write("VMR9Helper:Vmr9 Added");
-      return true;
-		}
-
-    
-    /// <summary>
-    /// removes the vmr9 filter from the graph and free up all unmanaged resources
-    /// </summary>
-    public void RemoveVMR9()
-    {
-      if (false == _isVmr9Initialized) return;
-      if (_threadId != Thread.CurrentThread.ManagedThreadId)
-      {
-        Log.WriteFile(Log.LogType.Error, "VMR9:RemoveVmr9() from wrong thread");
-      }
-      //Log.Write("VMR9Helper:RemoveVMR9");
-      //Log.Write("VMR9Helper:stop vmr9 helper");
-			if (_vmr9Filter != null)
-			{
-			
-				if (_scene != null)
-				{
-          //Log.Write("VMR9Helper:stop planescene");
-					_scene.Stop();
-					_instanceCounter--;
-					_scene.Deinit();
-					GUIGraphicsContext.Vmr9Active = false;
-					GUIGraphicsContext.Vmr9FPS=0f;
-					GUIGraphicsContext.InVmr9Render=false;
-					currentVmr9State = Vmr9PlayState.Playing;
-				}
-				int result;
-				
-				//if (_vmr9MixerBitmapInterface!= null)
-				//	while ( (result=Marshal.ReleaseComObject(_vmr9MixerBitmapInterface))>0); 
-				//result=Marshal.ReleaseComObject(_vmr9MixerBitmapInterface);
-				_vmr9MixerBitmapInterface = null;
-
-//				if (_qualityInterface != null)
-//					while ( (result=Marshal.ReleaseComObject(_qualityInterface))>0); 
-				//Marshal.ReleaseComObject(_qualityInterface);
-				_qualityInterface = null;
-				
-				try
-				{
-					result=_graphBuilderInterface.RemoveFilter(_vmr9Filter);
-					if (result!=0) Log.Write("VMR9:RemoveFilter():{0}",result);
-				}
-				catch(Exception )
-				{
-				}
-				Vmr9Deinit();
-				
-				try
-				{
-					result=Marshal.ReleaseComObject(_vmr9Filter);
-					if (result!=0) Log.Write("VMR9:ReleaseComObject():{0}",result);
-				}
-				catch(Exception )
-				{
-				}
-				_vmr9Filter = null;
-				_graphBuilderInterface=null;
-				_scene = null;
-			}
-			g_vmr9=null;
-		}
 
     public int FrameCounter
     {
@@ -344,7 +210,152 @@ namespace MediaPortal.Player
 			{
 				_videoAspectRatioY = value;
 			}
-		}
+    }
+    /// <summary>
+    /// This method returns true if VMR9 is enabled AND WORKING!
+    /// this allows players to check if if VMR9 is working after setting up the playing graph
+    /// by checking if VMR9 is possible they can for example fallback to the overlay device
+    /// </summary>
+    public bool IsVMR9Connected
+    {
+      get
+      {
+
+        if (!_isVmr9Initialized) return false;
+        // check if vmr9 is enabled and if initialized
+        if (_vmr9Filter == null || !_useVmr9)
+        {
+          Log.Write("vmr9: not used or no filter:{0} {1:x}", _useVmr9, _vmr9Filter);
+          return false;
+        }
+
+        int hr = 0;
+        //get the VMR9 input pin#0 is connected
+        for (int i = 0; i < 3; ++i)
+        {
+          IPin pinIn, pinConnected;
+          pinIn = DsFindPin.ByDirection(_vmr9Filter, PinDirection.Input, i);
+          if (pinIn == null)
+          {
+            //no input pin found, vmr9 is not possible
+            Log.Write("vmr9: no input pin {0} found", i);
+            continue;
+          }
+
+          //check if the input is connected to a video decoder
+          hr = pinIn.ConnectedTo(out pinConnected);
+          if (pinConnected == null)
+          {
+            //no pin is not connected so vmr9 is not possible
+            Log.Write("vmr9: pin:{0} not connected:{1:x}", i, hr);
+          }
+          else
+          {
+            //Log.Write("vmr9: pin:{0} is connected",i);
+            if (pinIn != null)
+              hr = Marshal.ReleaseComObject(pinIn);
+            if (pinConnected != null)
+              hr = Marshal.ReleaseComObject(pinConnected);
+            return true;
+          }
+          if (pinIn != null)
+            hr = Marshal.ReleaseComObject(pinIn);
+          if (pinConnected != null)
+            hr = Marshal.ReleaseComObject(pinConnected);
+        }
+        return false;
+      }//get {
+    }//public bool IsVMR9Connected
+
+    #endregion
+
+    #region public members
+    /// <summary>
+    /// Add VMR9 filter to graph and configure it
+    /// </summary>
+    /// <param name="graphBuilder"></param>
+    public bool AddVMR9(IGraphBuilder graphBuilder)
+    {
+      if (!_useVmr9)
+      {
+        Log.Write("vmr9:addvmr9: dont use vmr9");
+        return false;
+      }
+      if (_isVmr9Initialized)
+      {
+        Log.Write("vmr9:addvmr9: vmr9 already initialized");
+        return false;
+      }
+      //Log.Write("VMR9Helper:AddVmr9");
+      if (_instanceCounter != 0)
+      {
+        Log.WriteFile(Log.LogType.Log, true, "VMR9Helper:Multiple instances of VMR9 running!!!");
+        throw new Exception("VMR9Helper:Multiple instances of VMR9 running!!!");
+      }
+
+      _vmr9Filter = (IBaseFilter)new VideoMixingRenderer9();
+      if (_vmr9Filter == null)
+      {
+        Error.SetError("Unable to play movie", "VMR9 is not installed");
+        Log.WriteFile(Log.LogType.Log, true, "VMR9Helper:Failed to get instance of VMR9 ");
+        return false;
+      }
+
+      IntPtr hMonitor;
+      AdapterInformation ai = Manager.Adapters.Default;
+      hMonitor = Manager.GetAdapterMonitor(ai.Adapter);
+      IntPtr upDevice = DirectShowUtil.GetUnmanagedDevice(GUIGraphicsContext.DX9Device);
+
+      _scene = new PlaneScene(_renderFrame, this);
+      _scene.Init();
+
+      Vmr9Init(_scene, (uint)upDevice.ToInt32(), _vmr9Filter, (uint)hMonitor.ToInt32());
+
+      int hr = graphBuilder.AddFilter(_vmr9Filter, "Video Mixing Renderer 9");
+      if (hr != 0)
+      {
+        Vmr9Deinit();
+        _scene.Stop();
+        _scene.Deinit();
+        _scene = null;
+
+        Marshal.ReleaseComObject(_vmr9Filter);
+        _vmr9Filter = null;
+        Error.SetError("Unable to play movie", "Unable to initialize VMR9");
+        Log.WriteFile(Log.LogType.Log, true, "vmr9:Failed to add vmr9 to filtergraph");
+        return false;
+      }
+
+      _qualityInterface = _vmr9Filter as IQualProp;
+      _vmr9MixerBitmapInterface = _vmr9Filter as IVMRMixerBitmap9;
+      _graphBuilderInterface = graphBuilder;
+      _instanceCounter++;
+      _isVmr9Initialized = true;
+      SetDeinterlacePrefs();
+      System.OperatingSystem os = Environment.OSVersion;
+      if (os.Platform == System.PlatformID.Win32NT)
+      {
+        long version = os.Version.Major * 10000000 + os.Version.Minor * 10000 + os.Version.Build;
+        if (version >= 50012600) // we need at least win xp sp2 for VMR9 YUV mixing mode
+        {
+          IVMRMixerControl9 mixer = _vmr9Filter as IVMRMixerControl9;
+          if (mixer != null)
+          {
+            //Log.Write("VMR9: enable YUV mixing");
+            VMR9MixerPrefs dwPrefs;
+            mixer.GetMixingPrefs(out dwPrefs);
+            dwPrefs &= ~VMR9MixerPrefs.RenderTargetMask;
+            dwPrefs |= VMR9MixerPrefs.RenderTargetYUV;
+            mixer.SetMixingPrefs(dwPrefs);
+          }
+        }
+      }
+      _threadId = Thread.CurrentThread.ManagedThreadId;
+      GUIGraphicsContext.Vmr9Active = true;
+      g_vmr9 = this;
+      Log.Write("VMR9Helper:Vmr9 Added");
+      return true;
+    }
 
     /// <summary>
     /// repaints the last frame
@@ -355,14 +366,7 @@ namespace MediaPortal.Player
       if (currentVmr9State == Vmr9PlayState.Playing) return;
       _scene.Repaint();
     }
-    /*
-		public IQualProp Quality
-		{
-			get 
-      { 
-        return _qualityInterface;
-      }
-		}*/
+
 		public void SetRepaint()
 		{
 			if (!_isVmr9Initialized) return;
@@ -414,63 +418,7 @@ namespace MediaPortal.Player
 	  public IVMRMixerBitmap9 MixerBitmapInterface
 	  {
 		  get{return _vmr9MixerBitmapInterface;}
-	  }
-
-    /// <summary>
-    /// This method returns true if VMR9 is enabled AND WORKING!
-    /// this allows players to check if if VMR9 is working after setting up the playing graph
-    /// by checking if VMR9 is possible they can for example fallback to the overlay device
-    /// </summary>
-    public bool IsVMR9Connected
-    {
-      get
-      {
-				
-				if (!_isVmr9Initialized) return false;
-        // check if vmr9 is enabled and if initialized
-        if (_vmr9Filter == null || !_useVmr9)
-        {
-					Log.Write("vmr9: not used or no filter:{0} {1:x}",_useVmr9,_vmr9Filter);
-          return false;
-        }
-
-        int hr = 0;
-        //get the VMR9 input pin#0 is connected
-				for (int i=0; i < 3; ++i)
-				{
-					IPin pinIn, pinConnected;
-          pinIn = DsFindPin.ByDirection(_vmr9Filter, PinDirection.Input, i);
-					if (pinIn == null)
-					{
-						//no input pin found, vmr9 is not possible
-						Log.Write("vmr9: no input pin {0} found",i);
-						continue;
-					}
-
-					//check if the input is connected to a video decoder
-					hr=pinIn.ConnectedTo(out pinConnected);
-					if (pinConnected == null)
-					{
-						//no pin is not connected so vmr9 is not possible
-						Log.Write("vmr9: pin:{0} not connected:{1:x}",i, hr);
-					}
-					else
-					{
-            //Log.Write("vmr9: pin:{0} is connected",i);
-						if (pinIn!=null)
-							hr=Marshal.ReleaseComObject(pinIn);
-						if (pinConnected!=null)
-							hr=Marshal.ReleaseComObject(pinConnected);
-						return true;
-					}
-					if (pinIn!=null)
-						hr=Marshal.ReleaseComObject(pinIn);
-					if (pinConnected!=null)
-						hr=Marshal.ReleaseComObject(pinConnected);
-				}
-				return false;
-      }//get {
-    }//public bool IsVMR9Connected
+    }
 
     public void SetDeinterlacePrefs()
 		{
@@ -639,6 +587,74 @@ namespace MediaPortal.Player
 			rDest.X += (int)x;
 			rDest.Y += (int)y;
 			m_geometry=null;
-		}
+    }
+    #endregion
+
+
+    #region IDisposeable
+    /// <summary>
+    /// removes the vmr9 filter from the graph and free up all unmanaged resources
+    /// </summary>
+    public void Dispose()
+    {
+      if (false == _isVmr9Initialized) return;
+      if (_threadId != Thread.CurrentThread.ManagedThreadId)
+      {
+        Log.WriteFile(Log.LogType.Error, "VMR9:RemoveVmr9() from wrong thread");
+      }
+      //Log.Write("VMR9Helper:RemoveVMR9");
+      //Log.Write("VMR9Helper:stop vmr9 helper");
+      if (_vmr9Filter != null)
+      {
+
+        if (_scene != null)
+        {
+          //Log.Write("VMR9Helper:stop planescene");
+          _scene.Stop();
+          _instanceCounter--;
+          _scene.Deinit();
+          GUIGraphicsContext.Vmr9Active = false;
+          GUIGraphicsContext.Vmr9FPS = 0f;
+          GUIGraphicsContext.InVmr9Render = false;
+          currentVmr9State = Vmr9PlayState.Playing;
+        }
+        int result;
+
+        //if (_vmr9MixerBitmapInterface!= null)
+        //	while ( (result=Marshal.ReleaseComObject(_vmr9MixerBitmapInterface))>0); 
+        //result=Marshal.ReleaseComObject(_vmr9MixerBitmapInterface);
+        _vmr9MixerBitmapInterface = null;
+
+        //				if (_qualityInterface != null)
+        //					while ( (result=Marshal.ReleaseComObject(_qualityInterface))>0); 
+        //Marshal.ReleaseComObject(_qualityInterface);
+        _qualityInterface = null;
+
+        try
+        {
+          result = _graphBuilderInterface.RemoveFilter(_vmr9Filter);
+          if (result != 0) Log.Write("VMR9:RemoveFilter():{0}", result);
+        }
+        catch (Exception)
+        {
+        }
+        Vmr9Deinit();
+
+        try
+        {
+          result = Marshal.ReleaseComObject(_vmr9Filter);
+          if (result != 0) Log.Write("VMR9:ReleaseComObject():{0}", result);
+        }
+        catch (Exception)
+        {
+        }
+        _vmr9Filter = null;
+        _graphBuilderInterface = null;
+        _scene = null;
+      }
+      g_vmr9 = null;
+    }
+    #endregion
+
   }//public class VMR9Util
 }//namespace MediaPortal.Player 

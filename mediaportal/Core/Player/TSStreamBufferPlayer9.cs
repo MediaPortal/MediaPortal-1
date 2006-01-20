@@ -179,7 +179,7 @@ namespace MediaPortal.Player
 					if (videoCodec!=null)
 						_graphBuilder.RemoveFilter(videoCodec);
 					if (_vmr9!=null)
-						_vmr9.RemoveVMR9();
+						_vmr9.Dispose();
 					_vmr9=null;
 				}
 
@@ -235,7 +235,7 @@ namespace MediaPortal.Player
 
 					if(_vmr9!=null)
 					{
-						_vmr9.RemoveVMR9();
+						_vmr9.Dispose();
 						_vmr9=null;
 					}
 

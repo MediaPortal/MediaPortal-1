@@ -231,7 +231,7 @@ namespace MediaPortal.TV.Recording
 
       if (_vmr9 != null)
       {
-        _vmr9.RemoveVMR9();
+        _vmr9.Dispose();
         _vmr9 = null;
       }
 
@@ -350,7 +350,7 @@ namespace MediaPortal.TV.Recording
 
       if (_vmr9 != null)
       {
-        _vmr9.RemoveVMR9();
+        _vmr9.Dispose();
         _vmr9 = null;
       }
 
@@ -593,7 +593,7 @@ namespace MediaPortal.TV.Recording
       {
         if (false == _vmr9.AddVMR9(_graphBuilderInterface))
         {
-          _vmr9.RemoveVMR9();
+          _vmr9.Dispose();
           _vmr9 = null;
         }
       }
@@ -628,7 +628,7 @@ namespace MediaPortal.TV.Recording
         }
         else
         {
-          _vmr9.RemoveVMR9();
+          _vmr9.Dispose();
           _vmr9 = null;
         }
       }
@@ -1081,7 +1081,7 @@ namespace MediaPortal.TV.Recording
         if (_videoCaptureHelper == null) return;
         if (_vmr9 != null)
         {
-          _vmr9.RemoveVMR9();
+          _vmr9.Dispose();
           _vmr9 = null;
         }
 

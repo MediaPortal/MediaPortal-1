@@ -248,7 +248,7 @@ namespace MediaPortal.Player
 
 				if (_vmr9!=null) 
 				{
-					_vmr9.RemoveVMR9();
+          _vmr9.Dispose();
 				}
 				_vmr9=null;
 
