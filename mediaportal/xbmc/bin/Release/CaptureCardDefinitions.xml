@@ -6907,9 +6907,9 @@
         <filter cat="tvaudio"		name="Hauppauge WinTV 88x TvAudio"					checkdevice="true"></filter>
         <filter cat="crossbar"		name="Hauppauge WinTV 88x Crossbar"					checkdevice="true"></filter>
         <filter cat="capture"		name="Hauppauge WinTV 88x Video Capture"			checkdevice="true"></filter>
-		<filter cat="videoencoder"  name="MainConcept (Hauppauge) MPEG Video Encoder"	checkdevice="false"></filter>
-		<filter cat="audiocapture"  name="Hauppauge WinTV 88x Audio Capture"			checkdevice="false"></filter>
-		<filter cat="audioencoder"  name="MainConcept (Hauppauge) MPEG Audio Encoder"	checkdevice="false"></filter>
+		<filter cat="videncode"		name="MainConcept (Hauppauge) MPEG Video Encoder"	checkdevice="false"></filter>
+		<filter cat="audcapture"	name="Hauppauge WinTV 88x Audio Capture"			checkdevice="false"></filter>
+		<filter cat="audencode"		name="MainConcept (Hauppauge) MPEG Audio Encoder"	checkdevice="false"></filter>
 		<filter cat="mux"			name="MainConcept (Hauppauge) MPEG Multiplexer"		checkdevice="false"></filter>
       </filters>
       <connections>
@@ -6918,11 +6918,11 @@
         <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"></connection>
         <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"></connection>
         <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"		sinkpin="1"></connection>
-        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videoencoder" sinkpin="0"></connection>
-        <connection sourcefilter="capture"		sourcepin="4" sinkfilter="audiocapture" sinkpin="0"></connection>
-        <connection sourcefilter="audiocapture"	sourcepin="0" sinkfilter="audioencoder" sinkpin="0"></connection>
-        <connection sourcefilter="videoencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="0"></connection>
-        <connection sourcefilter="audioencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="1"></connection>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncode"	sinkpin="0"></connection>
+        <connection sourcefilter="capture"		sourcepin="4" sinkfilter="audcapture"	sinkpin="0"></connection>
+        <connection sourcefilter="audcapture"	sourcepin="0" sinkfilter="audencode"	sinkpin="0"></connection>
+        <connection sourcefilter="videncode"	sourcepin="0" sinkfilter="mux"			sinkpin="0"></connection>
+        <connection sourcefilter="audencode"	sourcepin="0" sinkfilter="mux"			sinkpin="1"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -6936,9 +6936,9 @@
 		<filter cat="tvaudio"		name="Hauppauge WinTV 88x TvAudio"					checkdevice="true"></filter>
 		<filter cat="crossbar"		name="Hauppauge WinTV 88x Crossbar"					checkdevice="true"></filter>
 		<filter cat="capture"		name="Hauppauge WinTV 88x Video Capture"			checkdevice="true"></filter>
-		<filter cat="videoencoder"  name="MainConcept (Hauppauge) MPEG Video Encoder"	checkdevice="false"></filter>
-		<filter cat="audiocapture"  name="Hauppauge WinTV 88x Audio Capture"			checkdevice="false"></filter>
-		<filter cat="audioencoder"  name="MainConcept (Hauppauge) MPEG Audio Encoder"	checkdevice="false"></filter>
+		<filter cat="videncode"		name="MainConcept (Hauppauge) MPEG Video Encoder"	checkdevice="false"></filter>
+		<filter cat="audcapture"	name="Hauppauge WinTV 88x Audio Capture"			checkdevice="false"></filter>
+		<filter cat="audencode"		name="MainConcept (Hauppauge) MPEG Audio Encoder"	checkdevice="false"></filter>
 		<filter cat="mux"			name="MainConcept (Hauppauge) MPEG Multiplexer"		checkdevice="false"></filter>
 	  </filters>
 	  <connections>
@@ -6947,11 +6947,11 @@
 		<connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"></connection>
 		<connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"></connection>
 		<connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"		sinkpin="1"></connection>
-		<connection sourcefilter="capture"		sourcepin="0" sinkfilter="videoencoder" sinkpin="0"></connection>
-		<connection sourcefilter="capture"		sourcepin="4" sinkfilter="audiocapture" sinkpin="0"></connection>
-		<connection sourcefilter="audiocapture"	sourcepin="0" sinkfilter="audioencoder" sinkpin="0"></connection>
-		<connection sourcefilter="videoencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="0"></connection>
-		<connection sourcefilter="audioencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="1"></connection>
+		<connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncode"	sinkpin="0"></connection>
+		<connection sourcefilter="capture"		sourcepin="4" sinkfilter="audcapture"	sinkpin="0"></connection>
+		<connection sourcefilter="audcapture"	sourcepin="0" sinkfilter="audencode"	sinkpin="0"></connection>
+		<connection sourcefilter="videncode"	sourcepin="0" sinkfilter="mux"			sinkpin="0"></connection>
+		<connection sourcefilter="audencode"	sourcepin="0" sinkfilter="mux"			sinkpin="1"></connection>
 	  </connections>
 	</tv>
   </capturecard>
@@ -6965,9 +6965,9 @@
 		<filter cat="tvaudio"		name="Hauppauge WinTV 88x TvAudio"					checkdevice="true"></filter>
 		<filter cat="crossbar"		name="Hauppauge WinTV 88x Crossbar"					checkdevice="true"></filter>
 		<filter cat="capture"		name="Hauppauge WinTV 88x Video Capture"			checkdevice="true"></filter>
-		<filter cat="videoencoder"  name="MainConcept (Hauppauge) MPEG Video Encoder"	checkdevice="false"></filter>
-		<filter cat="audiocapture"  name="Hauppauge WinTV 88x Audio Capture"			checkdevice="false"></filter>
-		<filter cat="audioencoder"  name="MainConcept (Hauppauge) MPEG Audio Encoder"	checkdevice="false"></filter>
+		<filter cat="videncode"		name="MainConcept (Hauppauge) MPEG Video Encoder"	checkdevice="false"></filter>
+		<filter cat="audcapture"	name="Hauppauge WinTV 88x Audio Capture"			checkdevice="false"></filter>
+		<filter cat="audencode"		name="MainConcept (Hauppauge) MPEG Audio Encoder"	checkdevice="false"></filter>
 		<filter cat="mux"			name="MainConcept (Hauppauge) MPEG Multiplexer"		checkdevice="false"></filter>
 	  </filters>
 	  <connections>
@@ -6976,11 +6976,11 @@
 		<connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"></connection>
 		<connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"></connection>
 		<connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"		sinkpin="1"></connection>
-		<connection sourcefilter="capture"		sourcepin="0" sinkfilter="videoencoder" sinkpin="0"></connection>
-		<connection sourcefilter="capture"		sourcepin="4" sinkfilter="audiocapture" sinkpin="0"></connection>
-		<connection sourcefilter="audiocapture"	sourcepin="0" sinkfilter="audioencoder" sinkpin="0"></connection>
-		<connection sourcefilter="videoencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="0"></connection>
-		<connection sourcefilter="audioencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="1"></connection>
+		<connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncode"	sinkpin="0"></connection>
+		<connection sourcefilter="capture"		sourcepin="4" sinkfilter="audcapture"	sinkpin="0"></connection>
+		<connection sourcefilter="audcapture"	sourcepin="0" sinkfilter="audencode"	sinkpin="0"></connection>
+		<connection sourcefilter="videncode"	sourcepin="0" sinkfilter="mux"			sinkpin="0"></connection>
+		<connection sourcefilter="audencode"	sourcepin="0" sinkfilter="mux"			sinkpin="1"></connection>
 	  </connections>
 	</tv>
   </capturecard>
@@ -7307,6 +7307,22 @@
       </filters>
       <connections>
         <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="MSI TV @nywhere Duo" capturename="713x BDA Digital Capture" devid="ven_1131&amp;dev_7133&amp;subsys_03064e42&amp;rev_f0">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"  checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="713x BDA DVBT Tuner"              checkdevice="true"></filter>
+        <filter cat="capture"         name="713x BDA Digital Capture"         checkdevice="true"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection>
       </connections>
     </tv>
   </capturecard>
