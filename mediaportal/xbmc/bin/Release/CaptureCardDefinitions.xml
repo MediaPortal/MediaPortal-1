@@ -7252,7 +7252,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="eMPIA Hybrid USB-Stick Receiver" capturename="BDA 2880 Capture" devid="vid_eb1a&amp;pid_2880">
+  <capturecard commercialname="eMPIA Hybrid USB-Stick Receiver" capturename="BDA 2880 Capture" devid="vid_eb1a&amp;pid_2880&amp;mi_00">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
@@ -7268,7 +7268,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="eMPIA Hybrid USB-Stick Receiver" capturename="BDA 2870 Capture" devid="vid_eb1a&amp;pid_2870">
+  <capturecard commercialname="eMPIA Hybrid USB-Stick Receiver" capturename="BDA 2870 Capture" devid="vid_eb1a&amp;pid_2870&amp;mi_00">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
