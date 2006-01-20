@@ -949,7 +949,6 @@ namespace MediaPortal.TV.Recording
       if (_vmr9 != null)
       {
         _vmr9.RemoveVMR9();
-        _vmr9.Release();
         _vmr9 = null;
       } 
       if (_recordedId >= 0)
@@ -1500,7 +1499,6 @@ namespace MediaPortal.TV.Recording
       if (_vmr9 != null)
       {
         _vmr9.RemoveVMR9();
-        _vmr9.Release();
         _vmr9 = null;
       } 
       if (channel != null)
@@ -1649,7 +1647,6 @@ namespace MediaPortal.TV.Recording
       if (_vmr9 != null)
       {
         _vmr9.RemoveVMR9();
-        _vmr9.Release();
         _vmr9 = null;
       }
       try
@@ -1999,11 +1996,9 @@ namespace MediaPortal.TV.Recording
 
       if (_vmr9 != null)
       {
-        _vmr9.AddVMR9(_graphBuilder);
-        if (_vmr9.VMR9Filter == null)
+        if (false == _vmr9.AddVMR9(_graphBuilder))
         {
           _vmr9.RemoveVMR9();
-          _vmr9.Release();
           _vmr9 = null;
         }
       }
@@ -2109,7 +2104,6 @@ namespace MediaPortal.TV.Recording
         else
         {
           _vmr9.RemoveVMR9();
-          _vmr9.Release();
           _vmr9 = null;
         }
       }
@@ -3400,7 +3394,6 @@ namespace MediaPortal.TV.Recording
       if (_vmr9 != null)
       {
         _vmr9.RemoveVMR9();
-        _vmr9.Release();
         _vmr9 = null;
       } 
       // tune to the correct channel

@@ -232,10 +232,9 @@ namespace MediaPortal.TV.Recording
       if (_vmr9 != null)
       {
         _vmr9.RemoveVMR9();
-        _vmr9.Release();
         _vmr9 = null;
       }
- 
+
       Log.WriteFile(Log.LogType.Capture, "SinkGraph:StartTimeShifting()");
       _graphState = State.TimeShifting;
       TuneChannel(channel);
@@ -352,11 +351,10 @@ namespace MediaPortal.TV.Recording
       if (_vmr9 != null)
       {
         _vmr9.RemoveVMR9();
-        _vmr9.Release();
         _vmr9 = null;
       }
 
- 
+
       Log.WriteFile(Log.LogType.Capture, "SinkGraph:StartRecording({0} {1} {2})", strFileName, bContentRecording, recording.Quality);
       if (recording.Quality != TVRecording.QualityType.NotSet)
       {
@@ -593,15 +591,12 @@ namespace MediaPortal.TV.Recording
       // add VMR9 renderer to graph
       if (_vmr9 != null)
       {
-       _vmr9.AddVMR9(_graphBuilderInterface);
-        if (_vmr9.VMR9Filter == null)
+        if (false == _vmr9.AddVMR9(_graphBuilderInterface))
         {
           _vmr9.RemoveVMR9();
-          _vmr9.Release();
           _vmr9 = null;
         }
       }
-
 
       AddPreferredCodecs(true, true);
 
@@ -634,7 +629,6 @@ namespace MediaPortal.TV.Recording
         else
         {
           _vmr9.RemoveVMR9();
-          _vmr9.Release();
           _vmr9 = null;
         }
       }
@@ -996,7 +990,7 @@ namespace MediaPortal.TV.Recording
       if (_captureGraphBuilderInterface == null) return;
       if (_filterCapture == null) return;
 
- 
+
       if (_graphState == State.Viewing)
       {
         if (GUIGraphicsContext.Vmr9Active && _vmr9 != null)
@@ -1090,7 +1084,7 @@ namespace MediaPortal.TV.Recording
           _vmr9.RemoveVMR9();
           _vmr9 = null;
         }
- 
+
         AddPreferredCodecs(true, false);
 
         CrossBar.RouteEx(_graphBuilderInterface,
@@ -1269,32 +1263,32 @@ namespace MediaPortal.TV.Recording
     {
     }
 
-      public void RadioChannelMinMax(out int chanmin, out int chanmax)
+    public void RadioChannelMinMax(out int chanmin, out int chanmax)
+    {
+      Log.WriteFile(Log.LogType.Capture, "SinkGraph:Getting Min and Max Radio channels");
+      _tvTunerInterface.put_TuningSpace(0);
+      _tvTunerInterface.put_CountryCode(_countryCode);
+      _tvTunerInterface.put_Mode(AMTunerModeType.FMRadio);
+      if (_isUsingCable)
       {
-          Log.WriteFile(Log.LogType.Capture, "SinkGraph:Getting Min and Max Radio channels");
-          _tvTunerInterface.put_TuningSpace(0);
-          _tvTunerInterface.put_CountryCode(_countryCode);
-          _tvTunerInterface.put_Mode(AMTunerModeType.FMRadio);
-          if (_isUsingCable)
-          {
-              _tvTunerInterface.put_InputType(0, TunerInputType.Cable);
-          }
-          else
-          {
-              _tvTunerInterface.put_InputType(0, TunerInputType.Antenna);
-          }
-          _tvTunerInterface.ChannelMinMax(out chanmin, out chanmax);
-          Log.WriteFile(Log.LogType.Capture, "SinkGraph:  Radio Channel Min {0} hz - Radio Channel Max {1}", chanmin, chanmax);
-
+        _tvTunerInterface.put_InputType(0, TunerInputType.Cable);
       }
-
-      public void TVChannelMinMax(out int chanmin, out int chanmax)
+      else
       {
-          Log.WriteFile(Log.LogType.Capture, "SinkGraph:Getting Min and Max TV channels");
-          InitializeTuner();
-          _tvTunerInterface.ChannelMinMax(out chanmin, out chanmax);
-          Log.WriteFile(Log.LogType.Capture, "SinkGraph:  TV Channel Min {0} hz - Radio Channel Max {1}", chanmin, chanmax);
-
+        _tvTunerInterface.put_InputType(0, TunerInputType.Antenna);
       }
+      _tvTunerInterface.ChannelMinMax(out chanmin, out chanmax);
+      Log.WriteFile(Log.LogType.Capture, "SinkGraph:  Radio Channel Min {0} hz - Radio Channel Max {1}", chanmin, chanmax);
+
+    }
+
+    public void TVChannelMinMax(out int chanmin, out int chanmax)
+    {
+      Log.WriteFile(Log.LogType.Capture, "SinkGraph:Getting Min and Max TV channels");
+      InitializeTuner();
+      _tvTunerInterface.ChannelMinMax(out chanmin, out chanmax);
+      Log.WriteFile(Log.LogType.Capture, "SinkGraph:  TV Channel Min {0} hz - Radio Channel Max {1}", chanmin, chanmax);
+
+    }
   }
 }

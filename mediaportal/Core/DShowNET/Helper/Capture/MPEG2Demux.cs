@@ -303,7 +303,7 @@ namespace DShowNET.Helper
       Log.WriteFile(Log.LogType.Capture, "mpeg2:demux audio out connected ");
 
       bool useOverlay = true;
-      if (vmr9 != null && vmr9.IsVMR9Connected && vmr9.UseVMR9inMYTV)
+      if (vmr9 != null && vmr9.IsVMR9Connected && vmr9.UseVmr9)
         useOverlay = false;
       if (useOverlay)
       {
