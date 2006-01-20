@@ -152,7 +152,7 @@ namespace MediaPortal.Player
 			iTimeShiftBuffer*=60; //in seconds
 			_backingFileDuration = (int)(iTimeShiftBuffer/6);
 
-			m_bIsVisible=false;
+			_isVisible=false;
       _isWindowVisible=false;
 			_volume=100;
 			_state=PlayState.Init;
@@ -367,8 +367,8 @@ namespace MediaPortal.Player
 			}
 			SetSourceDestRectangles(rSource,rDest);
 			SetVideoPosition(rDest);
-			m_SourceRect=rSource;
-			m_VideoRect=rDest;
+			_sourceRectangle=rSource;
+			_videoRectangle=rDest;
 		}
 
 		public override bool Ended
@@ -419,19 +419,19 @@ namespace MediaPortal.Player
 
 			if (GUIGraphicsContext.VideoWindow.Width<=10&& GUIGraphicsContext.IsFullScreenVideo==false)
 			{
-				m_bIsVisible=false;
+				_isVisible=false;
 			}
 			if (GUIGraphicsContext.BlankScreen)
 			{
-				m_bIsVisible=false;
+				_isVisible=false;
 			}
-			if (_isWindowVisible && !m_bIsVisible)
+			if (_isWindowVisible && !_isVisible)
 			{
 				_isWindowVisible=false;
 				//Log.Write("StreamBufferPlayer:hide window");
 				if (_videoWin!=null) _videoWin.put_Visible( OABool.False );
 			}
-			else if (!_isWindowVisible && m_bIsVisible)
+			else if (!_isWindowVisible && _isVisible)
 			{
 				_isWindowVisible=true;
 				//Log.Write("StreamBufferPlayer:show window");
@@ -459,11 +459,11 @@ namespace MediaPortal.Player
 
 		public override bool Visible
 		{
-			get {return m_bIsVisible;}
+			get {return _isVisible;}
 			set
 			{ 
-				if (value==m_bIsVisible) return;
-				m_bIsVisible=value;
+				if (value==_isVisible) return;
+				_isVisible=value;
 				_updateNeeded=true;
 			}
 		}
@@ -1208,7 +1208,7 @@ namespace MediaPortal.Player
 
 				_mediaEvt = null;			
         _isWindowVisible=false;
-				m_bIsVisible=false;
+				_isVisible=false;
 				_videoWin = null;
 				_mediaSeeking= null;
 				_mediaSeeking2= null;

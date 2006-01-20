@@ -333,8 +333,8 @@ namespace MediaPortal.Player
 
     protected override void OnProcess()
     {
-      //m_SourceRect=m_scene.SourceRect;
-      //m_VideoRect=m_scene.DestRect;
+      //_sourceRectangle=m_scene.SourceRect;
+      //_videoRectangle=m_scene.DestRect;
     }
   }
 }

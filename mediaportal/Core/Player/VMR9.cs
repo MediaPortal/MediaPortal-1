@@ -88,7 +88,6 @@ namespace MediaPortal.Player
 		static int _instanceCounter = 0;
     #endregion
 
-
     #region enums
     enum Vmr9PlayState
     {
@@ -96,6 +95,7 @@ namespace MediaPortal.Player
       Repaint
     }
     #endregion
+
     #region vars
     PlaneScene _scene = null;
     bool _useVmr9 = false;
@@ -114,6 +114,7 @@ namespace MediaPortal.Player
     Vmr9PlayState currentVmr9State = Vmr9PlayState.Playing;
     #endregion
 
+    #region ctor
     /// <summary>
     /// Constructor
     /// </summary>
@@ -131,6 +132,7 @@ namespace MediaPortal.Player
       if (g_vmr9!=null || GUIGraphicsContext.Vmr9Active) 
         _useVmr9 = false;
     }
+    #endregion
 
     #region properties
 

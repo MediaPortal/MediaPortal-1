@@ -34,9 +34,9 @@ namespace MediaPortal.Player
   /// </summary>
   public class IPlayer
   {
-    protected Rectangle m_VideoRect = new Rectangle(0, 0, 0, 0);
-    protected Rectangle m_SourceRect = new Rectangle(0, 0, 0, 0);
-    protected bool m_bIsVisible = false;
+    protected Rectangle _videoRectangle = new Rectangle(0, 0, 0, 0);
+    protected Rectangle _sourceRectangle = new Rectangle(0, 0, 0, 0);
+    protected bool _isVisible = false;
 
     /// <summary>
     /// Default ctor
@@ -152,11 +152,11 @@ namespace MediaPortal.Player
     /// </summary>
     public virtual bool Visible
     {
-      get { return m_bIsVisible; }
+      get { return _isVisible; }
       set
       {
-        if (value == m_bIsVisible) return;
-        m_bIsVisible = value;
+        if (value == _isVisible) return;
+        _isVisible = value;
       }
     }
 
@@ -462,11 +462,11 @@ namespace MediaPortal.Player
     /// </summary>
     public Rectangle VideoWindow
     {
-      get { return m_VideoRect; }
+      get { return _videoRectangle; }
     }
     public Rectangle SourceWindow
     {
-      get { return m_SourceRect; }
+      get { return _sourceRectangle; }
     }
 
     /// <summary>

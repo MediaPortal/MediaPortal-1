@@ -351,8 +351,8 @@ namespace MediaPortal.Player
 				SetVideoPosition(rDest);
    
 
-        m_SourceRect=rSource;
-        m_VideoRect=rDest;
+        _sourceRectangle=rSource;
+        _videoRectangle=rDest;
       }
     }
 		protected virtual void SetVideoPosition(System.Drawing.Rectangle rDest)

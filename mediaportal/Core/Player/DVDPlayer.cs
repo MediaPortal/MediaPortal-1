@@ -1577,8 +1577,8 @@ namespace MediaPortal.Player
         //hr=_dvdCtrl.SelectVideoModePreference(_videoPref);        
         DirectShowUtil.SetARMode(_graphBuilder,arMode);
 
-        m_SourceRect=source;
-        m_VideoRect=destination;
+        _sourceRectangle=source;
+        _videoRectangle=destination;
         
       }
     }

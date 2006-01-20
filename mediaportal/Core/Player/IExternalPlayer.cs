@@ -34,7 +34,7 @@ namespace MediaPortal.Player
   /// </summary>
   public abstract class IExternalPlayer : IPlayer, MediaPortal.GUI.Library.ISetupForm
   {
-    private bool m_enabled = false;
+    private bool _isEneabled = false;
 
     public override bool IsExternal
     {
@@ -50,11 +50,11 @@ namespace MediaPortal.Player
     {
       get
       {
-        return m_enabled;
+        return _isEneabled;
       }
       set
       {
-        m_enabled = value;
+        _isEneabled = value;
       }
     }
 

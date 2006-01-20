@@ -586,8 +586,8 @@ namespace MediaPortal.Player
         _wmp10Player.ClientSize = new System.Drawing.Size(GUIGraphicsContext.Width, GUIGraphicsContext.Height);
         _wmp10Player.Size = new System.Drawing.Size(GUIGraphicsContext.Width, GUIGraphicsContext.Height);
 
-        m_VideoRect = new Rectangle(0, 0, _wmp10Player.ClientSize.Width, _wmp10Player.ClientSize.Height);
-        m_SourceRect = m_VideoRect;
+        _videoRectangle = new Rectangle(0, 0, _wmp10Player.ClientSize.Width, _wmp10Player.ClientSize.Height);
+        _sourceRectangle = _videoRectangle;
 
         //_wmp10Player.fullScreen=true;
         _wmp10Player.stretchToFit = true;
@@ -600,8 +600,8 @@ namespace MediaPortal.Player
         _wmp10Player.ClientSize = new System.Drawing.Size(_videoWidth, _videoHeight);
         _wmp10Player.Location = new Point(_positionX, _positionY);
 
-        m_VideoRect = new Rectangle(_positionX, _positionY, _wmp10Player.ClientSize.Width, _wmp10Player.ClientSize.Height);
-        m_SourceRect = m_VideoRect;
+        _videoRectangle = new Rectangle(_positionX, _positionY, _wmp10Player.ClientSize.Width, _wmp10Player.ClientSize.Height);
+        _sourceRectangle = _videoRectangle;
         //Log.Write("AudioPlayer:set window:({0},{1})-({2},{3})",_positionX,_positionY,_positionX+_wmp10Player.ClientSize.Width,_positionY+_wmp10Player.ClientSize.Height);
       }
       //_wmp10Player.uiMode = "none";
