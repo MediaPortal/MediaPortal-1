@@ -37,6 +37,7 @@ using MediaPortal.Util;
 using MediaPortal.GUI.Library;
 //using DirectX.Capture;
 using MediaPortal.TV.Database;
+using MediaPortal.TV.Epg;
 using MediaPortal.Player;
 using MediaPortal.Radio.Database;
 using Toub.MediaCenter.Dvrms.Metadata;

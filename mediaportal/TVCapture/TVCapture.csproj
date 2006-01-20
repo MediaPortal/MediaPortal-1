@@ -229,6 +229,12 @@
     <Compile Include="DiskManagement\EpisodeManagement.cs" />
     <Compile Include="DiskManagement\RecordingImporterWorker.cs" />
     <Compile Include="DiskManagement\RecordingManagement.cs" />
+    <Compile Include="EPG\AtscEvent.cs" />
+    <Compile Include="EPG\EpgChannel.cs" />
+    <Compile Include="EPG\EpgChannelUpdate.cs" />
+    <Compile Include="EPG\EpgEvent.cs" />
+    <Compile Include="EPG\EpgLanguage.cs" />
+    <Compile Include="EPG\MhwEvent.cs" />
     <Compile Include="GraphHelper.cs" />
     <Compile Include="Scanning\AnalogRadioTuning.cs" />
     <Compile Include="Scanning\AnalogTVTuning.cs">

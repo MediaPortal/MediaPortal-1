@@ -10,8 +10,9 @@ using DShowNET.MPSA;
 using DShowNET.MPTSWriter;
 using MediaPortal.GUI.Library;
 using MediaPortal.TV.Database;
+using MediaPortal.TV.Recording;
 
-namespace MediaPortal.TV.Recording
+namespace MediaPortal.TV.Epg
 {
   /// <summary>
   /// EPG Grabber
@@ -20,323 +21,6 @@ namespace MediaPortal.TV.Recording
   /// </summary>
   public class EpgGrabber
   {
-    #region EPGEvent class
-    class EPGLanguage
-    {
-      private string _title;
-      private string _description;
-      private string _language;
-      public EPGLanguage(string language, string title, string description)
-      {
-        _title = title;
-        _description = description;
-        _language = language;
-      }
-      public string Language
-      {
-        get { return _language; }
-      }
-      public string Title
-      {
-        get { return _title; }
-      }
-      public string Description
-      {
-        get { return _description; }
-      }
-    }
-    class EPGEvent
-    {
-      private string _genre;
-      private DateTime _startTime;
-      private DateTime _endTime;
-      List<EPGLanguage> _listLanguages = new List<EPGLanguage>();
-      public EPGEvent(string genre, DateTime startTime, DateTime endTime)
-      {
-        _genre = genre;
-        _startTime = startTime;
-        _endTime = endTime;
-      }
-      public string Genre
-      {
-        get { return _genre; }
-      }
-      public DateTime StartTime
-      {
-        get { return _startTime; }
-      }
-      public DateTime EndTime
-      {
-        get { return _endTime; }
-      }
-      public List<EPGLanguage> Languages
-      {
-        get { return _listLanguages; }
-      }
-    }
-
-    #endregion
-
-    #region EPGChannel class
-    class EPGChannel : IComparer<EPGEvent>
-    {
-      private TVChannel _tvChannel = null;
-      private int _networkId;
-      private int _serviceId;
-      private int _transportId;
-      private NetworkType _networkType;
-      List<EPGEvent> _listEvents = new List<EPGEvent>();
-
-      public EPGChannel(NetworkType networkType, int networkId, int serviceId, int transportId)
-      {
-        _networkType = networkType;
-        _networkId = networkId;
-        _serviceId = serviceId;
-        _transportId = transportId;
-      }
-      public NetworkType Network
-      {
-        get { return _networkType; }
-      }
-      public int NetworkId
-      {
-        get { return _networkId; }
-      }
-      public int ServiceId
-      {
-        get { return _serviceId; }
-      }
-      public int TransportId
-      {
-        get { return _transportId; }
-      }
-      public TVChannel TvChannel
-      {
-        get
-        {
-          if (_tvChannel == null)
-          {
-            string provider;
-            _tvChannel = TVDatabase.GetTVChannelByStream(Network == NetworkType.ATSC, Network == NetworkType.DVBT, Network == NetworkType.DVBC, Network == NetworkType.DVBS, _networkId, _transportId, _serviceId, out provider);
-            if (_tvChannel == null)
-              Log.WriteFile(Log.LogType.EPG, "epg-grab: unknown channel: network id:{0} service id:{1} transport id:{2}", NetworkId, ServiceId, TransportId);
-            else
-              Log.WriteFile(Log.LogType.EPG, "epg-grab: channel:{0} events:{1}", _tvChannel.Name, _listEvents.Count);
-          }
-          return _tvChannel;
-        }
-      }
-      public void Sort()
-      {
-        _listEvents.Sort(this);
-      }
-      public void AddEvent(EPGEvent epgEvent)
-      {
-        _listEvents.Add(epgEvent);
-      }
-      public List<EPGEvent> EpgEvents
-      {
-        get
-        {
-          return _listEvents;
-        }
-      }
-
-      public int Compare(EPGEvent show1, EPGEvent show2)
-      {
-        if (show1.StartTime < show2.StartTime) return -1;
-        if (show1.StartTime > show2.StartTime) return 1;
-        return 0;
-      }
-    }
-    #endregion
-
-    #region MHWEvent class
-    class MHWEvent : EPGEvent
-    {
-      private TVChannel _tvChannel = null;
-      private int _networkId;
-      private int _serviceId;
-      private int _transportId;
-      private NetworkType _networkType;
-
-      public MHWEvent(NetworkType networkType, int networkId, int serviceId, int transportId, string title, string description, string genre, DateTime startTime, DateTime endTime)
-        : base(genre, startTime, endTime)
-      {
-        _networkType = networkType;
-        _networkId = networkId;
-        _serviceId = serviceId;
-        _transportId = transportId;
-        Languages.Add(new EPGLanguage(String.Empty, title, description));
-      }
-      public NetworkType Network
-      {
-        get { return _networkType; }
-      }
-      public int NetworkId
-      {
-        get { return _networkId; }
-      }
-      public int ServiceId
-      {
-        get { return _serviceId; }
-      }
-      public int TransportId
-      {
-        get { return _transportId; }
-      }
-      public TVChannel TvChannel
-      {
-        get
-        {
-          if (_tvChannel == null)
-          {
-            string provider;
-            _tvChannel = TVDatabase.GetTVChannelByStream(Network == NetworkType.ATSC, Network == NetworkType.DVBT, Network == NetworkType.DVBC, Network == NetworkType.DVBS, _networkId, _transportId, _serviceId, out provider);
-          }
-          return _tvChannel;
-        }
-      }
-    }
-
-    class MHWEventComparer : IComparer<MediaPortal.TV.Recording.EpgGrabber.MHWEvent>
-    {
-      public int Compare(MediaPortal.TV.Recording.EpgGrabber.MHWEvent show1, MediaPortal.TV.Recording.EpgGrabber.MHWEvent show2)
-      {
-        if (show1.NetworkId < show2.NetworkId) return -1;
-        if (show1.NetworkId > show2.NetworkId) return 1;
-
-        if (show1.ServiceId < show2.ServiceId) return -1;
-        if (show1.ServiceId > show2.ServiceId) return 1;
-
-        if (show1.TransportId < show2.TransportId) return -1;
-        if (show1.TransportId > show2.TransportId) return 1;
-
-        if (show1.StartTime < show2.StartTime) return -1;
-        if (show1.StartTime > show2.StartTime) return 1;
-        return 0;
-      }
-    }
-    #endregion
-
-    #region ATSCEvent class
-    class ATSCEvent : EPGEvent
-    {
-      private TVChannel _tvChannel = null;
-      private int _majorChannel;
-      private int _minorChannel;
-      private NetworkType _networkType;
-
-      public ATSCEvent(NetworkType networkType, int majorChannel, int minorChannel, string title, string description, string genre, DateTime startTime, DateTime endTime)
-        : base(genre, startTime, endTime)
-      {
-        _networkType = networkType;
-        _majorChannel = majorChannel;
-        _minorChannel = minorChannel;
-        Languages.Add(new EPGLanguage("", title, description));
-      }
-      public NetworkType Network
-      {
-        get { return _networkType; }
-      }
-      public int MajorChannel
-      {
-        get { return _majorChannel; }
-      }
-      public int MinorChannel
-      {
-        get { return _minorChannel; }
-      }
-
-      public TVChannel TvChannel
-      {
-        get
-        {
-          if (_tvChannel == null)
-          {
-            List<TVChannel> channels = new List<TVChannel>();
-            TVDatabase.GetChannels(ref channels);
-            foreach (TVChannel ch in channels)
-            {
-              int symbolrate = 0, innerFec = 0, modulation = 0, physicalChannel = 0;
-              int minorChannel = 0, majorChannel = 0;
-              int frequency = -1, ONID = -1, TSID = -1, SID = -1;
-              int audioPid = -1, videoPid = -1, teletextPid = -1, pmtPid = -1, pcrPid = -1;
-              string providerName;
-              int audio1, audio2, audio3, ac3Pid;
-              string audioLanguage, audioLanguage1, audioLanguage2, audioLanguage3;
-              bool HasEITPresentFollow, HasEITSchedule;
-              TVDatabase.GetATSCTuneRequest(ch.ID, out physicalChannel, out providerName, out frequency, out symbolrate, out innerFec, out modulation, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out audio1, out audio2, out audio3, out ac3Pid, out audioLanguage, out audioLanguage1, out audioLanguage2, out audioLanguage3, out minorChannel, out majorChannel, out HasEITPresentFollow, out HasEITSchedule, out pcrPid);
-              if (MajorChannel == majorChannel && MinorChannel == minorChannel)
-              {
-                _tvChannel = ch;
-                return _tvChannel;
-              }
-            }
-          }
-          return _tvChannel;
-        }
-      }
-    }
-    #endregion
-
-    #region TvChannelEpg class
-    class TvChannelEpg
-    {
-      string _channelName;
-      DateTime _firstEvent;
-      DateTime _lastEvent;
-
-      public TvChannelEpg(string channelName)
-      {
-        _channelName = channelName;
-        _firstEvent = DateTime.MinValue;
-        _lastEvent = DateTime.MinValue;
-      }
-      public string ChannelName
-      {
-        get { return _channelName; }
-      }
-      public void NewEvent(DateTime time)
-      {
-        if (_firstEvent == DateTime.MinValue)
-          _firstEvent = time;
-        if (_lastEvent == DateTime.MinValue)
-          _lastEvent = time;
-        if (time < _firstEvent)
-          _firstEvent = time;
-        if (time > _lastEvent)
-          _lastEvent = time;
-      }
-
-      public void Update(ref List<TVChannel> listChannels)
-      {
-        int hours = -1;
-        if (_firstEvent != DateTime.MinValue && _lastEvent != DateTime.MinValue)
-        {
-          TimeSpan ts = _lastEvent - _firstEvent;
-          hours = (int)(ts.TotalHours - 2f);
-        }
-        foreach (TVChannel ch in listChannels)
-        {
-          if (String.Compare(ch.Name ,_channelName,true)==0)
-          {
-            if (ch.LastDateTimeEpgGrabbed < DateTime.Now.AddHours(-2))
-            {
-              Log.WriteFile(Log.LogType.EPG, "epg: channel:{0} received epg for : {1} hours", _channelName, hours);
-              if (hours > 0)
-              {
-                ch.EpgHours = hours;
-              }
-              ch.LastDateTimeEpgGrabbed = DateTime.Now;
-              TVDatabase.UpdateChannel(ch, ch.Sort);
-            }
-            return;
-          }
-        }
-      }
-    }
-    #endregion
 
     #region enums
     enum State
@@ -362,7 +46,7 @@ namespace MediaPortal.TV.Recording
     List<EPGChannel> _listChannels;
     List<MHWEvent> _listMhwEvents;
     List<ATSCEvent> _listAtscEvents;
-    List<TvChannelEpg> _epgChannels;
+    List<EpgChannelUpdate> _epgChannels;
     string _epgTvChannelName = String.Empty;
     #endregion
 
@@ -797,11 +481,12 @@ namespace MediaPortal.TV.Recording
       Log.WriteFile(Log.LogType.EPG, "epg: update database");
       try
       {
-        _epgChannels = new List<TvChannelEpg>();
         System.Threading.Thread.CurrentThread.Priority = System.Threading.ThreadPriority.BelowNormal;
         Log.WriteFile(Log.LogType.EPG, "epg: remove old programs");
         TVDatabase.RemoveOldPrograms();
         Log.WriteFile(Log.LogType.EPG, "epg: old programs removed");
+
+        _epgChannels = new List<EpgChannelUpdate>();
         List<EPGChannel> events = _listChannels;
         _listChannels = null;
         Log.WriteFile(Log.LogType.EPG, "epg-grab: updating tv database:{0}", events.Count);
@@ -889,7 +574,7 @@ namespace MediaPortal.TV.Recording
       try
       {
         Log.WriteFile(Log.LogType.EPG, "mhw-grab: updating tv database");
-        _epgChannels = new List<TvChannelEpg>();
+        _epgChannels = new List<EpgChannelUpdate>();
         System.Threading.Thread.CurrentThread.Priority = System.Threading.ThreadPriority.Normal;
         TVDatabase.RemoveOldPrograms();
         List<MHWEvent> events = _listMhwEvents;
@@ -962,7 +647,7 @@ namespace MediaPortal.TV.Recording
       try
       {
         Log.WriteFile(Log.LogType.EPG, "atsc-grab: updating tv database");
-        _epgChannels = new List<TvChannelEpg>();
+        _epgChannels = new List<EpgChannelUpdate>();
         System.Threading.Thread.CurrentThread.Priority = System.Threading.ThreadPriority.BelowNormal;
         TVDatabase.RemoveOldPrograms();
         List<ATSCEvent> events = _listAtscEvents;
@@ -1005,7 +690,7 @@ namespace MediaPortal.TV.Recording
 
     void OnChannelEvent(string channelName, DateTime timeStart, DateTime timeEnd)
     {
-      foreach (TvChannelEpg ch in _epgChannels)
+      foreach (EpgChannelUpdate ch in _epgChannels)
       {
         if (ch.ChannelName == channelName)
         {
@@ -1016,7 +701,7 @@ namespace MediaPortal.TV.Recording
         }
       }
 
-      TvChannelEpg newChan = new TvChannelEpg(channelName);
+      EpgChannelUpdate newChan = new EpgChannelUpdate(channelName);
       if (timeEnd > DateTime.Now)
       {
         newChan.NewEvent(timeStart);
@@ -1033,7 +718,7 @@ namespace MediaPortal.TV.Recording
 
       List<TVChannel> listChannels = new List<TVChannel>();
       TVDatabase.GetChannels(ref listChannels);
-      foreach (TvChannelEpg ch in _epgChannels)
+      foreach (EpgChannelUpdate ch in _epgChannels)
       {
         ch.Update(ref listChannels);
       }

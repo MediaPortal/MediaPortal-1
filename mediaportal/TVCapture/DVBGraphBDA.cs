@@ -23,6 +23,7 @@
 //#define USEMTSWRITER
 #define COMPARE_PMT
 #if (UseCaptureCardDefinitions)
+#region usings
 using System;
 using System.IO;
 using System.Collections;
@@ -41,12 +42,15 @@ using MediaPortal.Util;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.TV.Database;
+using MediaPortal.TV.Epg;
 using TVCapture;
 using System.Xml;
 //using DirectX.Capture;
 using MediaPortal.Radio.Database;
 using Toub.MediaCenter.Dvrms.Metadata;
 using MediaPortal.TV.BDA;
+#endregion
+
 namespace MediaPortal.TV.Recording
 {
   /// <summary>

@@ -4372,7 +4372,7 @@ namespace MediaPortal.TV.Database
       provider = "";
 
       DVBChannel ch = new DVBChannel();
-      ArrayList channels = new ArrayList();
+      List<TVChannel> channels = new List<TVChannel>();
       TVDatabase.GetChannels(ref channels);
       foreach (TVChannel chan in channels)
       {
