@@ -58,17 +58,17 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("textYOff")]
     protected int _textOffsetY = 0;
 
-    public GUIToggleButtonControl(int dwParentID)
-      : base(dwParentID)
+    public GUIToggleButtonControl(int parentId)
+      : base(parentId)
     {
     }
-    public GUIToggleButtonControl(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight, string strTextureFocus, string strTextureNoFocus, string strAltTextureFocus, string strAltTextureNoFocus)
-      : base(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight)
+    public GUIToggleButtonControl(int parentId, int controlid, int posX, int posY, int width, int height, string textureFocusName, string textureNoFocusName, string textureAltFocusName, string textureAltNoFocusName)
+      : base(parentId, controlid, posX, posY, width, height)
     {
-      _focusedTextureName = strTextureFocus;
-      _nonFocusedTextureName = strTextureNoFocus;
-      _alternativeFocusTextureName = strAltTextureFocus;
-      _alternativeNonFocusTextureName = strAltTextureNoFocus;
+      _focusedTextureName = textureFocusName;
+      _nonFocusedTextureName = textureNoFocusName;
+      _alternativeFocusTextureName = textureAltFocusName;
+      _alternativeNonFocusTextureName = textureAltNoFocusName;
       _isSelected = false;
       FinalizeConstruction();
     }
@@ -133,10 +133,13 @@ namespace MediaPortal.GUI.Library
 
       if (_label.Length > 0 && _font != null)
       {
+        long color = _textColor;
         if (Disabled)
-          _font.DrawText((float)_textOffsetX + _positionX, (float)_textOffsetY + _positionY, _disabledColor, _label, GUIControl.Alignment.ALIGN_LEFT, -1);
-        else
-          _font.DrawText((float)_textOffsetX + _positionX, (float)_textOffsetY + _positionY, _textColor, _label, GUIControl.Alignment.ALIGN_LEFT, -1);
+          color = _disabledColor;
+        if (Dimmed)
+          color &= (DimColor);
+
+        _font.DrawText((float)_textOffsetX + _positionX, (float)_textOffsetY + _positionY, color, _label, GUIControl.Alignment.ALIGN_LEFT, -1);
       }
     }
 
@@ -207,13 +210,13 @@ namespace MediaPortal.GUI.Library
       _imageAlternativeFocused.FreeResources();
       _imageAlternativeNonFocused.FreeResources();
     }
-    public override void SetPosition(int dwPosX, int dwPosY)
+    public override void SetPosition(int posX, int posY)
     {
-      base.SetPosition(dwPosX, dwPosY);
-      _imageFocused.SetPosition(dwPosX, dwPosY);
-      _imageNonFocused.SetPosition(dwPosX, dwPosY);
-      _imageAlternativeFocused.SetPosition(dwPosX, dwPosY);
-      _imageAlternativeNonFocused.SetPosition(dwPosX, dwPosY);
+      base.SetPosition(posX, posY);
+      _imageFocused.SetPosition(posX, posY);
+      _imageNonFocused.SetPosition(posX, posY);
+      _imageAlternativeFocused.SetPosition(posX, posY);
+      _imageAlternativeNonFocused.SetPosition(posX, posY);
     }
     public override void SetAlpha(int dwAlpha)
     {
