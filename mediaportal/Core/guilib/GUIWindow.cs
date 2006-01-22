@@ -150,6 +150,8 @@ namespace MediaPortal.GUI.Library
      ,
       WINDOW_MUSIC_COVERART_GRABBER_PROGRESS = 509
      ,
+      WINDOW_MUSIC_PLAYING_NOW = 510
+     ,
       WINDOW_TVGUIDE = 600
      ,
       WINDOW_SCHEDULER = 601

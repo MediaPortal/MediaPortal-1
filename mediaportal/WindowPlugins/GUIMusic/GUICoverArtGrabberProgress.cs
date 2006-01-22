@@ -1065,7 +1065,8 @@ namespace MediaPortal.GUI.Music
 
         public static void ShowResultsDialog(bool abortedByUser, bool completedSuccessfully, int coversGrabbed, int parentWindowID)
         {
-            GUIDialogText dlg = (GUIDialogText)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_TEXT);
+            //GUIDialogText dlg = (GUIDialogText)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_TEXT);
+            GUIDialogOK dlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
 
             if (dlg != null)
             {
@@ -1124,10 +1125,12 @@ namespace MediaPortal.GUI.Music
                 if (caption.Length == 0)
                     caption = "Cover Art Grabber Done";
 
-                dlg.Reset();
-                dlg.ResetAllControls();
+                //dlg.Reset();
+                //dlg.ResetAllControls();
                 dlg.SetHeading(caption);
-                dlg.SetText(string.Format("\r\n{0}\r\n{1}", line1Text, line2Text));
+                dlg.SetLine(1, line1Text);
+                dlg.SetLine(2, line2Text);
+                //dlg.SetText(string.Format("\r\n{0}\r\n{1}", line1Text, line2Text));
                 dlg.DoModal(parentWindowID);
             }
         }

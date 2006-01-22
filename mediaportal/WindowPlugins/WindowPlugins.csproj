@@ -334,6 +334,7 @@
     </Compile>
     <Compile Include="GUIMusic\GUICoverArtGrabberProgress.cs" />
     <Compile Include="GUIMusic\GUICoverArtGrabberResults.cs" />
+    <Compile Include="GUIMusic\GUIMusicPlayingNow.cs" />
     <Compile Include="GUIMusic\MusicImport.cs" />
     <Compile Include="GUIMusic\GUIMusicArtistInfo.cs">
       <SubType>Code</SubType>

@@ -709,7 +709,9 @@ namespace MediaPortal.GUI.Music
           facadeView.View = GUIFacadeControl.ViewMode.Filmstrip;
           break;
       }
-    }
+  
+        UpdateButtonStates(); // Ensure "View: xxxx" button label is updated to suit
+  }
 
 
     protected bool GetKeyboard(ref string strLine)
@@ -752,6 +754,18 @@ namespace MediaPortal.GUI.Music
       {
         dlg.Add(view.Name); //play
       }
+
+        // SV
+      string playingNow = GUILocalizeStrings.Get(4540);
+
+      if (playingNow.Length == 0)
+          playingNow = "Now playing";
+
+      dlg.Add(playingNow);
+
+      int PLAYING_NOW_INDEX = handler.Views.Count + 1; // "Shares" + total view count + "Playing Now"
+        // \SV
+
       dlg.DoModal(GetID);
       if (dlg.SelectedLabel == -1) return;
       if (dlg.SelectedLabel == 0)
@@ -763,28 +777,41 @@ namespace MediaPortal.GUI.Music
           GUIWindowManager.ReplaceWindow(nNewWindow);
         }
       }
+
+      else if (dlg.SelectedLabel == PLAYING_NOW_INDEX)
+      {
+          int nPlayingNowWindow = (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW;
+
+          GUIMusicPlayingNow guiPlayingNow = (GUIMusicPlayingNow)GUIWindowManager.GetWindow(nPlayingNowWindow);
+
+          if (guiPlayingNow != null)
+              guiPlayingNow.MusicWindow = this;
+
+          GUIWindowManager.ActivateWindow(nPlayingNowWindow);
+      }
+      
       else
       {
-        ViewDefinition selectedView = (ViewDefinition)handler.Views[dlg.SelectedLabel - 1];
-        handler.CurrentView = selectedView.Name;
-        MusicState.View = selectedView.Name;
-        int nNewWindow = (int)GUIWindow.Window.WINDOW_MUSIC_GENRE;
-        if (GetID != nNewWindow)
-        {
-          MusicState.StartWindow = nNewWindow;
-          if (nNewWindow != GetID)
+          ViewDefinition selectedView = (ViewDefinition)handler.Views[dlg.SelectedLabel - 1];
+          handler.CurrentView = selectedView.Name;
+          MusicState.View = selectedView.Name;
+          int nNewWindow = (int)GUIWindow.Window.WINDOW_MUSIC_GENRE;
+          if (GetID != nNewWindow)
           {
-            GUIWindowManager.ReplaceWindow(nNewWindow);
+              MusicState.StartWindow = nNewWindow;
+              if (nNewWindow != GetID)
+              {
+                  GUIWindowManager.ReplaceWindow(nNewWindow);
+              }
           }
-        }
-        else
-        {
-          LoadDirectory(String.Empty);
-          if (facadeView.Count <= 0)
+          else
           {
-            GUIControl.FocusControl(GetID, btnViewAs.GetID);
+              LoadDirectory(String.Empty);
+              if (facadeView.Count <= 0)
+              {
+                  GUIControl.FocusControl(GetID, btnViewAs.GetID);
+              }
           }
-        }
       }
     }
     protected virtual void LoadDirectory(string path)
@@ -1603,7 +1630,7 @@ namespace MediaPortal.GUI.Music
     ////}
 
 
-    protected void FindCoverArt(bool isFolder, string artistName, string albumName, string strPath, MusicTag tag, int albumId)
+    public void FindCoverArt(bool isFolder, string artistName, string albumName, string strPath, MusicTag tag, int albumId)
     {
         GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
 
@@ -1698,6 +1725,11 @@ namespace MediaPortal.GUI.Music
 
     protected void ShowAlbumInfo(bool isFolder, string artistName, string albumName, string strPath, MusicTag tag, int albumId)
     {
+        ShowAlbumInfo(GetID, isFolder, artistName, albumName, strPath, tag, albumId);
+    }
+
+    public void ShowAlbumInfo(int parentWindowID, bool isFolder, string artistName, string albumName, string strPath, MusicTag tag, int albumId)
+    {
         // check cache
         GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
         GUIDialogProgress dlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
@@ -1714,7 +1746,8 @@ namespace MediaPortal.GUI.Music
                 pDlgAlbumInfo.Album = album;
                 pDlgAlbumInfo.Tag = tag;
 
-                pDlgAlbumInfo.DoModal(GetID);
+                //pDlgAlbumInfo.DoModal(GetID);
+                pDlgAlbumInfo.DoModal(parentWindowID);
                 if (pDlgAlbumInfo.NeedsRefresh)
                 {
                     m_database.DeleteAlbumInfo(albumName);
@@ -1732,7 +1765,8 @@ namespace MediaPortal.GUI.Music
             dlgProgress.SetLine(2, artistName);
             dlgProgress.SetLine(3, tag.Year.ToString());
             dlgProgress.SetPercentage(0);
-            dlgProgress.StartModal(GetID);
+            //dlgProgress.StartModal(GetID);
+            dlgProgress.StartModal(parentWindowID);
             dlgProgress.ShowProgressBar(true);
             dlgProgress.Progress();
         }
@@ -1769,7 +1803,8 @@ namespace MediaPortal.GUI.Music
                             MusicAlbumInfo info = scraper[i];
                             pDlg.Add(info.Title2);
                         }
-                        pDlg.DoModal(GetID);
+                        //pDlg.DoModal(GetID);
+                        pDlg.DoModal(parentWindowID);
 
                         // and wait till user selects one
                         iSelectedAlbum = pDlg.SelectedLabel;
@@ -1784,7 +1819,8 @@ namespace MediaPortal.GUI.Music
                     dlgProgress.SetHeading(185);
                     dlgProgress.SetLine(1, album.Title2);
                     dlgProgress.SetLine(2, album.Artist);
-                    dlgProgress.StartModal(GetID);
+                    //dlgProgress.StartModal(GetID);
+                    dlgProgress.StartModal(parentWindowID);
                     dlgProgress.ShowProgressBar(true);
                     dlgProgress.SetPercentage(40);
                     dlgProgress.Progress();
@@ -1839,7 +1875,8 @@ namespace MediaPortal.GUI.Music
                         pDlgAlbumInfo.Album = album;
                         pDlgAlbumInfo.Tag = tag;
 
-                        pDlgAlbumInfo.DoModal(GetID);
+                        //pDlgAlbumInfo.DoModal(GetID);
+                        pDlgAlbumInfo.DoModal(parentWindowID);
                         if (pDlgAlbumInfo.NeedsRefresh)
                         {
                             m_database.DeleteAlbumInfo(album.Title);
@@ -1891,12 +1928,13 @@ namespace MediaPortal.GUI.Music
                 dlgOk.SetHeading(187);
                 dlgOk.SetLine(1, 187);
                 dlgOk.SetLine(2, String.Empty);
-                dlgOk.DoModal(GetID);
+                //dlgOk.DoModal(GetID);
+                dlgOk.DoModal(parentWindowID);
             }
         }
     }
 
-    protected bool SaveCoverArtImage(AlbumInfo albumInfo, string albumPath, bool bSaveToAlbumFolder, bool bSaveToThumbsFolder)
+    protected bool SaveCoverArtImage(AlbumInfo albumInfo, string albumFolderPath, bool bSaveToAlbumFolder, bool bSaveToThumbsFolder)
     {
         bool result = false;
 
@@ -1910,7 +1948,7 @@ namespace MediaPortal.GUI.Music
 
             if (bSaveToThumbsFolder)
             {
-                string folderjpg = String.Format(@"{0}\folder.jpg", Utils.RemoveTrailingSlash(albumPath));
+                string folderjpg = String.Format(@"{0}\folder.jpg", Utils.RemoveTrailingSlash(albumFolderPath));
 
                 if (System.IO.File.Exists(folderjpg))
                     System.IO.File.Delete(folderjpg);
