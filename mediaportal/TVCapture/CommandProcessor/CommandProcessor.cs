@@ -43,25 +43,32 @@ using MediaPortal.TV.DiskSpace;
 namespace MediaPortal.TV.Recording
 {
 
-  public class CommandProcessor : MultiCardBase,IDisposable
+  public class CommandProcessor : MultiCardBase, IDisposable
   {
-    
+    #region variables
     // recorder state
     BackgroundWorker _processThread;
 
 
     // list of all recorder commands which the processthread should process
     List<CardCommand> _listCommands = new List<CardCommand>();
-    EPGProcessor _epgProcessor = new EPGProcessor();
+    EPGProcessor _epgProcessor ;
+    Scheduler _scheduler ;
     bool _isRunning;
     bool _isStopped;
     bool _isPaused;
     TvCardCollection _tvcards;
+    #endregion
 
-    public CommandProcessor() : base()
+    #region ctor
+    public CommandProcessor()
+      : base()
     {
       //load tv cards
       _tvcards = new TvCardCollection();
+
+      _epgProcessor = new EPGProcessor();
+      _scheduler = new Scheduler();
 
       //start the processing thread
       _isRunning = true;
@@ -69,8 +76,12 @@ namespace MediaPortal.TV.Recording
       _processThread = new BackgroundWorker();
       _processThread.DoWork += new DoWorkEventHandler(ProcessThread);
       _processThread.RunWorkerAsync();
+
     }
 
+    #endregion
+
+    #region public members
     public void AddCommand(CardCommand command)
     {
       //Log.WriteFile(Log.LogType.Recorder, "add cmd:{0}", command.ToString());
@@ -79,66 +90,6 @@ namespace MediaPortal.TV.Recording
         _listCommands.Add(command);
       }
     }
-    
-    
-    void ProcessThread(object sender, DoWorkEventArgs e)
-    {
-      System.Threading.Thread.CurrentThread.Priority = System.Threading.ThreadPriority.BelowNormal;
-      while (_isRunning)
-      {
-        if (_listCommands.Count == 0) 
-          System.Threading.Thread.Sleep(500);
-        if (_isPaused) continue;
-
-        lock (_listCommands)
-        {
-          if (_listCommands.Count > 0)
-          {
-            foreach (CardCommand cmd in _listCommands)
-            {
-              cmd.Execute(this);
-            }
-            _listCommands.Clear();
-          }
-        }
-        ProcessCards();
-
-        _epgProcessor.Process(this);
-      }
-      StopAllCards();
-      _isStopped = true;
-    }
-
-    void StopAllCards()
-    {
-      for (int i = 0; i < TVCards.Count; ++i)
-      {
-        TVCards[i].Stop();
-      }
-    }
-
-    #region IDisposable
-    public void Dispose()
-    {
-      if (_processThread != null)
-      {
-        _isRunning = false;
-        while (_isStopped == false)
-        {
-          System.Threading.Thread.Sleep(100);
-        }
-        _processThread.Dispose();
-        _processThread = null;
-      }
-    }
-    #endregion
-
-    public TvCardCollection TVCards
-    {
-      get { return _tvcards; }
-    }
-
-   
 
     /// <summary>
     /// Property which returns the timeshifting filename for a specific card
@@ -194,7 +145,71 @@ namespace MediaPortal.TV.Recording
     {
       get
       {
-        return (_listCommands.Count>0);
+        return (_listCommands.Count > 0);
+      }
+    }
+
+    public bool Paused
+    {
+      get { return _isPaused; }
+      set
+      {
+        if (_isPaused == value) return;
+        _isPaused = value;
+
+      }
+    }
+
+    public Scheduler scheduler
+    {
+      get
+      {
+        return scheduler;
+      }
+    }
+    public TvCardCollection TVCards
+    {
+      get { return _tvcards; }
+    }
+
+
+#endregion
+
+    #region private members
+    void ProcessThread(object sender, DoWorkEventArgs e)
+    {
+      System.Threading.Thread.CurrentThread.Priority = System.Threading.ThreadPriority.BelowNormal;
+      while (_isRunning)
+      {
+        if (_listCommands.Count == 0)
+          System.Threading.Thread.Sleep(500);
+        if (_isPaused) continue;
+
+        lock (_listCommands)
+        {
+          if (_listCommands.Count > 0)
+          {
+            foreach (CardCommand cmd in _listCommands)
+            {
+              cmd.Execute(this);
+            }
+            _listCommands.Clear();
+          }
+        }
+        ProcessCards();
+
+        _epgProcessor.Process(this);
+        _scheduler.Process(this);
+      }
+      StopAllCards();
+      _isStopped = true;
+    }
+
+    void StopAllCards()
+    {
+      for (int i = 0; i < TVCards.Count; ++i)
+      {
+        TVCards[i].Stop();
       }
     }
 
@@ -237,16 +252,22 @@ namespace MediaPortal.TV.Recording
         }
       }
     }//void ProcessCards()
+    #endregion
 
-    public bool Paused
+    #region IDisposable
+    public void Dispose()
     {
-      get { return _isPaused; }
-      set
+      if (_processThread != null)
       {
-        if (_isPaused == value) return;
-        _isPaused = value;
-
+        _isRunning = false;
+        while (_isStopped == false)
+        {
+          System.Threading.Thread.Sleep(100);
+        }
+        _processThread.Dispose();
+        _processThread = null;
       }
     }
+    #endregion
   }
 }
