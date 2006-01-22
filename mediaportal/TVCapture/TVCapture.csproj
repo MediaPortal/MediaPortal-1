@@ -226,6 +226,20 @@
     <Compile Include="BDA\BdaFilterCategories.cs" />
     <Compile Include="BDA\BdaNetworkProviders.cs" />
     <Compile Include="BDA\BdaTuningSpaces.cs" />
+    <Compile Include="CommandProcessor\Commands\CancelRecordingCommand.cs" />
+    <Compile Include="CommandProcessor\Commands\CardCommand.cs" />
+    <Compile Include="CommandProcessor\Commands\CheckRecordingsCommand.cs" />
+    <Compile Include="CommandProcessor\Commands\PauseCommand.cs" />
+    <Compile Include="CommandProcessor\Commands\StopTimeShiftingCommand.cs" />
+    <Compile Include="CommandProcessor\EPGProcessor.cs" />
+    <Compile Include="CommandProcessor\MultiCardBase.cs" />
+    <Compile Include="CommandProcessor\Commands\StartRadioCommand.cs" />
+    <Compile Include="CommandProcessor\Commands\StopRadioCommand.cs" />
+    <Compile Include="CommandProcessor\Commands\StopRecording.cs" />
+    <Compile Include="CommandProcessor\Commands\StopTvCommand.cs" />
+    <Compile Include="CommandProcessor\Commands\TimeShiftTvCommand.cs" />
+    <Compile Include="CommandProcessor\TvCardCollection.cs" />
+    <Compile Include="CommandProcessor\Commands\ViewTvCommand.cs" />
     <Compile Include="DiskManagement\RecordingImporterWorker.cs" />
     <Compile Include="EPG\AtscEvent.cs" />
     <Compile Include="EPG\EpgChannel.cs" />
@@ -234,6 +248,7 @@
     <Compile Include="EPG\EpgLanguage.cs" />
     <Compile Include="EPG\MhwEvent.cs" />
     <Compile Include="GraphHelper.cs" />
+    <Compile Include="CommandProcessor\CommandProcessor.cs" />
     <Compile Include="Scanning\AnalogRadioTuning.cs" />
     <Compile Include="Scanning\AnalogTVTuning.cs">
       <SubType>Code</SubType>
@@ -280,6 +295,7 @@
     <Compile Include="Scanning\DVBSTuning.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Scheduler\Scheduler.cs" />
     <Compile Include="teletext\DVBTeletext.cs">
       <SubType>Code</SubType>
     </Compile>
