@@ -1261,24 +1261,24 @@ namespace MediaPortal.TV.Recording
         if (_filterNetworkProvider != null)
         {
           //Log.Write("DVBGraphBDA:free networkprovider");
-          while ((hr = Marshal.ReleaseComObject(_filterNetworkProvider)) > 0) ;
-          if (hr != 0) Log.Write("DVBGraphBDA:ReleaseComObject(_filterNetworkProvider):{0}", hr);
+          //while ((hr = Marshal.ReleaseComObject(_filterNetworkProvider)) > 0) ;
+          //if (hr != 0) Log.Write("DVBGraphBDA:ReleaseComObject(_filterNetworkProvider):{0}", hr);
           _filterNetworkProvider = null;
         }
 
         if (_filterTunerDevice != null)
         {
           //Log.Write("DVBGraphBDA:free tunerdevice");
-          while ((hr = Marshal.ReleaseComObject(_filterTunerDevice)) > 0) ;
-          if (hr != 0) Log.Write("DVBGraphBDA:ReleaseComObject(_filterTunerDevice):{0}", hr);
+          //while ((hr = Marshal.ReleaseComObject(_filterTunerDevice)) > 0) ;
+          //if (hr != 0) Log.Write("DVBGraphBDA:ReleaseComObject(_filterTunerDevice):{0}", hr);
           _filterTunerDevice = null;
         }
 
         if (_filterCaptureDevice != null)
         {
           //Log.Write("DVBGraphBDA:free capturedevice");
-          while ((hr = Marshal.ReleaseComObject(_filterCaptureDevice)) > 0) ;
-          if (hr != 0) Log.Write("DVBGraphBDA:ReleaseComObject(_filterCaptureDevice):{0}", hr);
+          //while ((hr = Marshal.ReleaseComObject(_filterCaptureDevice)) > 0) ;
+          //if (hr != 0) Log.Write("DVBGraphBDA:ReleaseComObject(_filterCaptureDevice):{0}", hr);
           _filterCaptureDevice = null;
         }
 
@@ -1291,16 +1291,20 @@ namespace MediaPortal.TV.Recording
         }
 
         //Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: remove filters");
-        if (_graphBuilder != null)
-          DirectShowUtil.RemoveFilters(_graphBuilder);
-
+        
 
         //Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: clean filters");
         foreach (FilterDefinition dsFilter in _card.Graph.TvFilterDefinitions)
         {
           string strfileName = dsFilter.Category;
+          if (dsFilter.DSFilter != null)
+          {
+            while ((hr = Marshal.ReleaseComObject(dsFilter.DSFilter)) > 0) ;
+          }
           dsFilter.DSFilter = null;
         }
+        if (_graphBuilder != null)
+          DirectShowUtil.RemoveFilters(_graphBuilder);
 
 
         //Log.Write("DVBGraphBDA:free remove graph");
