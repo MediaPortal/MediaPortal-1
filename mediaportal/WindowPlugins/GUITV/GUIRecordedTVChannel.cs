@@ -774,10 +774,7 @@ namespace MediaPortal.GUI.TV
       dlgYesNo.DoModal(GetID);
 
       if (!dlgYesNo.IsConfirmed) return;
-      TVDatabase.RemoveRecordedTV(rec);
-      VideoDatabase.DeleteMovieInfo(rec.FileName);
-      VideoDatabase.DeleteMovie(rec.FileName);
-      DiskManagement.DeleteRecording(rec.FileName);
+      Recorder.DeleteRecording(rec);
       LoadDirectory();
     }
 
@@ -799,16 +796,11 @@ namespace MediaPortal.GUI.TV
       {
         if (rec.Played > 0)
         {
-          DiskManagement.DeleteRecording(rec.FileName);
-          TVDatabase.RemoveRecordedTV(rec);
-          VideoDatabase.DeleteMovieInfo(rec.FileName);
-          VideoDatabase.DeleteMovie(rec.FileName);
+          Recorder.DeleteRecording(rec);
         }
         else if (!System.IO.File.Exists(rec.FileName))
         {
-          TVDatabase.RemoveRecordedTV(rec);
-          VideoDatabase.DeleteMovieInfo(rec.FileName);
-          VideoDatabase.DeleteMovie(rec.FileName);
+          Recorder.DeleteRecording(rec);
         }
 
       }

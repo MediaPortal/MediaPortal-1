@@ -29,11 +29,23 @@ using MediaPortal.TV.Database;
 using MediaPortal.Video.Database;
 using MediaPortal.TV.Recording;
 
-namespace MediaPortal.TV.DiskSpace
+namespace ProcessPlugins.DiskSpace
 {
   public class RecordingManagement
   {
-    static DateTime _deleteOldRecordingTimer = DateTime.MinValue;
+    System.Windows.Forms.Timer _timer;
+    public RecordingManagement()
+    {
+      _timer = new System.Windows.Forms.Timer();
+      _timer.Interval = 4*60*60*1000;
+      _timer.Enabled = false;
+      _timer.Tick += new EventHandler(OnTimerElapsed);
+    }
+
+    void OnTimerElapsed(object sender, EventArgs e)
+    {
+      DeleteOldRecordings();
+    }
 
     /// <summary>
     /// This method will get all the tv-recordings present in the tv database
@@ -43,34 +55,90 @@ namespace MediaPortal.TV.DiskSpace
     /// </summary>
     /// <remarks>Note, this method will only work after a day-change has occured(and at startup)
     /// </remarks>
-    static public void DeleteOldRecordings()
+    void DeleteOldRecordings()
     {
-      if (!TimeToDeleteOldRecordings(DateTime.Now)) return;
       List<TVRecorded> recordings = new List<TVRecorded>();
       TVDatabase.GetRecordedTV(ref recordings);
       foreach (TVRecorded rec in recordings)
       {
-        if (!ShouldDeleteRecording(rec)) continue;
+        if (!rec.ShouldBeDeleted) continue;
 
         Log.WriteFile(Log.LogType.Recorder, "Recorder: delete old recording:{0} date:{1}",
                           rec.FileName,
                           rec.StartTime.ToShortDateString());
-        DiskManagement.DeleteRecording(rec);
+        Recorder.DeleteRecording(rec);
       }
     }
 
-    static public bool TimeToDeleteOldRecordings(DateTime dateTime)
+
+    #region IPlugin Members
+
+    public void Start()
     {
-      if (dateTime.Date == _deleteOldRecordingTimer.Date) return false;
-      _deleteOldRecordingTimer = dateTime;
+      _timer.Enabled = true;
+    }
+
+    public void Stop()
+    {
+      _timer.Enabled = false;
+    }
+
+    #endregion
+
+    #region ISetupForm Members
+
+    public bool CanEnable()
+    {
       return true;
     }
 
-    static public bool ShouldDeleteRecording(TVRecorded rec)
+    public string Description()
     {
-      if (rec.KeepRecordingMethod != TVRecorded.KeepMethod.TillDate) return false;
-      if (rec.KeepRecordingTill.Date > DateTime.Now.Date) return false;
+      return "Plugin which deletes old tv recordings by data";
+    }
+
+    public bool DefaultEnabled()
+    {
       return true;
     }
+
+    public int GetWindowId()
+    {
+      // TODO:  Add CallerIdPlugin.GetWindowId implementation
+      return -1;
+    }
+
+    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
+    {
+      // TODO:  Add CallerIdPlugin.GetHome implementation
+      strButtonText = null;
+      strButtonImage = null;
+      strButtonImageFocus = null;
+      strPictureImage = null;
+      return false;
+    }
+
+    public string Author()
+    {
+      return "Frodo";
+    }
+
+    public string PluginName()
+    {
+      return "RecordingCleanup plugin";
+    }
+
+    public bool HasSetup()
+    {
+      // TODO:  Add CallerIdPlugin.HasSetup implementation
+      return false;
+    }
+
+    public void ShowPlugin()
+    {
+      // TODO:  Add CallerIdPlugin.ShowPlugin implementation
+    }
+
+    #endregion
   }
 }

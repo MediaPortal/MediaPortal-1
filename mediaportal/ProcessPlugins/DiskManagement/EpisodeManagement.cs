@@ -29,23 +29,15 @@ using MediaPortal.TV.Database;
 using MediaPortal.Video.Database;
 using MediaPortal.TV.Recording;
 
-namespace MediaPortal.TV.DiskSpace
+namespace ProcessPlugins.DiskSpace
 {
   public class EpisodeManagement
   {
-    static EpisodeManagement()
+    public EpisodeManagement()
     {
-      Recorder.OnTvRecordingEnded += new MediaPortal.TV.Recording.Recorder.OnTvRecordingHandler(EpisodeManagement.Recorder_OnTvRecordingEnded);
-    }
-    static public bool DoesUseEpisodeManagement(TVRecording recording)
-    {
-      if (recording.RecType == TVRecording.RecordingType.Once) return false;
-      if (recording.EpisodesToKeep == Int32.MaxValue) return false;
-      if (recording.EpisodesToKeep < 1) return false;
-      return true;
     }
 
-    static public List<TVRecorded> GetEpisodes(string title, List<TVRecorded> recordings)
+    public List<TVRecorded> GetEpisodes(string title, List<TVRecorded> recordings)
     {
       List<TVRecorded> episodes = new List<TVRecorded>();
       foreach (TVRecorded recording in recordings)
@@ -58,7 +50,7 @@ namespace MediaPortal.TV.DiskSpace
       return episodes;
     }
 
-    static public TVRecorded GetOldestEpisode(List<TVRecorded> episodes)
+    public TVRecorded GetOldestEpisode(List<TVRecorded> episodes)
     {
       TVRecorded oldestEpisode = null;
       DateTime oldestDateTime = DateTime.MaxValue;
@@ -74,12 +66,17 @@ namespace MediaPortal.TV.DiskSpace
     }
 
     #region episode disk management
-    static private void Recorder_OnTvRecordingEnded(string recordingFilename, TVRecording recording, TVProgram program)
+    private void OnTvRecordingEnded(string recordingFilename, TVRecording recording, TVProgram program)
     {
       Log.WriteFile(Log.LogType.Recorder, "diskmanagement: recording {0} ended. type:{1} max episodes:{2}",
           recording.Title, recording.RecType.ToString(), recording.EpisodesToKeep);
 
-      if (!DoesUseEpisodeManagement(recording)) return;
+
+      CheckEpsiodesForRecording(recording);
+    }
+    void CheckEpsiodesForRecording(TVRecording recording)
+    {
+      if (!recording.DoesUseEpisodeManagement) return;
 
       //check how many episodes we got
       while (true)
@@ -98,9 +95,81 @@ namespace MediaPortal.TV.DiskSpace
                              oldestEpisode.StartTime.ToLongDateString(),
                              oldestEpisode.StartTime.ToLongTimeString());
 
-        DiskManagement.DeleteRecording(oldestEpisode);
+        Recorder.DeleteRecording(oldestEpisode);
       }
     }
+    #endregion
+
+
+
+    #region IPlugin Members
+
+    public void Start()
+    {
+      Recorder.OnTvRecordingEnded += new MediaPortal.TV.Recording.Recorder.OnTvRecordingHandler(OnTvRecordingEnded);
+    }
+
+    public void Stop()
+    {
+      Recorder.OnTvRecordingEnded -= new MediaPortal.TV.Recording.Recorder.OnTvRecordingHandler(OnTvRecordingEnded);
+    }
+
+    #endregion
+
+    #region ISetupForm Members
+
+    public bool CanEnable()
+    {
+      return true;
+    }
+
+    public string Description()
+    {
+      return "Plugin which deletes old tv-episodes";
+    }
+
+    public bool DefaultEnabled()
+    {
+      return true;
+    }
+
+    public int GetWindowId()
+    {
+      // TODO:  Add CallerIdPlugin.GetWindowId implementation
+      return -1;
+    }
+
+    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
+    {
+      // TODO:  Add CallerIdPlugin.GetHome implementation
+      strButtonText = null;
+      strButtonImage = null;
+      strButtonImageFocus = null;
+      strPictureImage = null;
+      return false;
+    }
+
+    public string Author()
+    {
+      return "Frodo";
+    }
+
+    public string PluginName()
+    {
+      return "Episode management plugin";
+    }
+
+    public bool HasSetup()
+    {
+      // TODO:  Add CallerIdPlugin.HasSetup implementation
+      return false;
+    }
+
+    public void ShowPlugin()
+    {
+      // TODO:  Add CallerIdPlugin.ShowPlugin implementation
+    }
+
     #endregion
   }
 }

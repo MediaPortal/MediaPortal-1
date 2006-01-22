@@ -67,7 +67,7 @@ namespace MediaPortal.GUI.TV
     ViewAs currentViewMethod = ViewAs.Album;
     SortMethod currentSortMethod = SortMethod.Date;
     bool m_bSortAscending = true;
-    bool m_bDeleteWatchedShow = false;
+    bool _deleteWatchedShows = false;
     int m_iSelectedItem = 0;
     string currentShow = String.Empty;
 
@@ -115,7 +115,7 @@ namespace MediaPortal.GUI.TV
         }
 
         m_bSortAscending = xmlreader.GetValueAsBool("tvrecorded", "sortascending", true);
-        m_bDeleteWatchedShow = xmlreader.GetValueAsBool("capture", "deletewatchedshows", false);
+        _deleteWatchedShows = xmlreader.GetValueAsBool("capture", "deletewatchedshows", false);
       }
     }
 
@@ -689,7 +689,7 @@ namespace MediaPortal.GUI.TV
       TVDatabase.RemoveRecordedTV(rec);
       VideoDatabase.DeleteMovieInfo(rec.FileName);
       VideoDatabase.DeleteMovie(rec.FileName);
-      DiskManagement.DeleteRecording(rec.FileName);
+      Utils.DeleteRecording(rec.FileName);
 
       LoadDirectory();
       while (m_iSelectedItem >= GetItemCount() && m_iSelectedItem > 0) m_iSelectedItem--;
@@ -716,16 +716,11 @@ namespace MediaPortal.GUI.TV
       {
         if (rec.Played > 0)
         {
-          DiskManagement.DeleteRecording(rec.FileName);
-          TVDatabase.RemoveRecordedTV(rec);
-          VideoDatabase.DeleteMovieInfo(rec.FileName);
-          VideoDatabase.DeleteMovie(rec.FileName);
+          Recorder.DeleteRecording(rec);
         }
         else if (!System.IO.File.Exists(rec.FileName))
         {
-          TVDatabase.RemoveRecordedTV(rec);
-          VideoDatabase.DeleteMovieInfo(rec.FileName);
-          VideoDatabase.DeleteMovie(rec.FileName);
+          Recorder.DeleteRecording(rec);
         }
       }
 
@@ -971,14 +966,11 @@ namespace MediaPortal.GUI.TV
       TVDatabase.GetRecordedTV(ref itemlist);
       foreach (TVRecorded rec in itemlist)
       {
-        if (m_bDeleteWatchedShow || rec.KeepRecordingMethod == TVRecorded.KeepMethod.UntilWatched)
+        if (_deleteWatchedShows || rec.KeepRecordingMethod == TVRecorded.KeepMethod.UntilWatched)
         {
-          if (rec.FileName.ToLower().Equals(filename.ToLower()))
+          if (String.Compare(rec.FileName,filename,true)==0)
           {
-            TVDatabase.RemoveRecordedTV(rec);
-            DiskManagement.DeleteRecording(rec.FileName);
-            VideoDatabase.DeleteMovieInfo(rec.FileName);
-            VideoDatabase.DeleteMovie(rec.FileName);
+            Recorder.DeleteRecording(rec);
             return;
           }
         }

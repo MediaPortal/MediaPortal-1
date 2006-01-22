@@ -29,123 +29,23 @@ using MediaPortal.TV.Database;
 using MediaPortal.Video.Database;
 using MediaPortal.TV.Recording;
 
-namespace MediaPortal.TV.DiskSpace
+namespace ProcessPlugins.DiskSpace
 {
   /// <summary>
   /// Summary description for DiskManagement.
   /// </summary>
   public class DiskManagement
   {
-    static DateTime _diskSpaceCheckTimer = DateTime.MinValue;
-    static DiskManagement()
+    System.Windows.Forms.Timer _timer;
+    public DiskManagement()
     {
+      _timer = new System.Windows.Forms.Timer();
+      _timer.Interval = 15*60*1000;
+      _timer.Enabled = false;
+      _timer.Tick += new EventHandler(OnTimerElapsed);
     }
 
-    #region recording/timeshift file delete methods
-
-    static public void DeleteRecording(TVRecorded rec)
-    {
-      DiskManagement.DeleteRecording(rec.FileName);
-      TVDatabase.RemoveRecordedTV(rec);
-      VideoDatabase.DeleteMovie(rec.FileName);
-      VideoDatabase.DeleteMovieInfo(rec.FileName);
-    }
-
-    static public void DeleteRecording(string recordingFilename)
-    {
-      Utils.FileDelete(recordingFilename);
-
-      int pos = recordingFilename.LastIndexOf(@"\");
-      if (pos < 0) return;
-      string path = recordingFilename.Substring(0, pos);
-      string filename = recordingFilename.Substring(pos + 1);
-      pos = filename.LastIndexOf(".");
-      if (pos >= 0)
-        filename = filename.Substring(0, pos);
-      filename = filename.ToLower();
-      string[] files;
-      try
-      {
-        files = System.IO.Directory.GetFiles(path);
-        foreach (string fileName in files)
-        {
-          try
-          {
-            if (fileName.ToLower().IndexOf(filename) >= 0)
-            {
-              if (fileName.ToLower().IndexOf(".sbe") >= 0)
-              {
-                System.IO.File.Delete(fileName);
-              }
-            }
-          }
-          catch (Exception) { }
-        }
-      }
-      catch (Exception) { }
-    }
-    static public void DeleteOldTimeShiftFiles(string path)
-    {
-      if (path == null) return;
-      if (path == String.Empty) return;
-      // Remove any trailing slashes
-      path = Utils.RemoveTrailingSlash(path);
-
-
-      // clean the TempDVR\ folder
-      string directory = String.Empty;
-      string[] files;
-      try
-      {
-        directory = String.Format(@"{0}\TempDVR", path);
-        files = System.IO.Directory.GetFiles(directory, "*.tmp");
-        foreach (string fileName in files)
-        {
-          try
-          {
-            System.IO.File.Delete(fileName);
-          }
-          catch (Exception) { }
-        }
-      }
-      catch (Exception) { }
-
-      // clean the TempSBE\ folder
-      try
-      {
-        directory = String.Format(@"{0}\TempSBE", path);
-        files = System.IO.Directory.GetFiles(directory, "*.tmp");
-        foreach (string fileName in files)
-        {
-          try
-          {
-            System.IO.File.Delete(fileName);
-          }
-          catch (Exception) { }
-        }
-      }
-      catch (Exception) { }
-
-      // delete *.tv
-      try
-      {
-        directory = String.Format(@"{0}", path);
-        files = System.IO.Directory.GetFiles(directory, "*.tv");
-        foreach (string fileName in files)
-        {
-          try
-          {
-            System.IO.File.Delete(fileName);
-          }
-          catch (Exception) { }
-        }
-      }
-      catch (Exception) { }
-    }//static void DeleteOldTimeShiftFiles(string path)
-    #endregion
-
-
-    static List<string> GetDisks()
+    List<string> GetDisks()
     {
       List<string> drives = new List<string>();
       for (char drive = 'a'; drive <= 'z'; drive++)
@@ -168,20 +68,10 @@ namespace MediaPortal.TV.DiskSpace
       return drives;
     }
 
-    static public void ResetTimer()
+    void OnTimerElapsed(object sender, EventArgs e)
     {
-      _diskSpaceCheckTimer = DateTime.MinValue;
+      CheckFreeDiskSpace();
     }
-
-    static public bool TimeToDeleteOldRecordings(DateTime dateTime)
-    {
-      //check diskspace every 15 minutes...
-      TimeSpan ts = dateTime - _diskSpaceCheckTimer;
-      if (ts.TotalMinutes < 15) return false;
-      _diskSpaceCheckTimer = dateTime;
-      return true;
-    }
-
     /// <summary>
     /// This method checks the diskspace on each harddisk
     /// if the diskspace used by recordings exceeds the disk quota set on the drive
@@ -189,10 +79,9 @@ namespace MediaPortal.TV.DiskSpace
     /// </summary>
     /// <remarks>Note, this method will run once every 15 minutes
     /// </remarks>
-    static public void CheckFreeDiskSpace()
+    void CheckFreeDiskSpace()
     {
       //check diskspace every 15 minutes...
-      if (!TimeToDeleteOldRecordings(DateTime.Now)) return;
 
       //first get all drives..
       List<string> drives = GetDisks();
@@ -204,7 +93,7 @@ namespace MediaPortal.TV.DiskSpace
       }
     }
 
-    static bool OutOfDiskSpace(string drive)
+    bool OutOfDiskSpace(string drive)
     {
       ulong minimiumFreeDiskSpace = 0;
       using (MediaPortal.Profile.Xml xmlReader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
@@ -220,7 +109,7 @@ namespace MediaPortal.TV.DiskSpace
       return true;
     }
 
-    static List<RecordingFileInfo> GetRecordingsOnDrive(string drive)
+    List<RecordingFileInfo> GetRecordingsOnDrive(string drive)
     {
       List<RecordingFileInfo> recordings = new List<RecordingFileInfo>();
       List<TVRecorded> recordedTvShows = new List<TVRecorded>();
@@ -251,7 +140,7 @@ namespace MediaPortal.TV.DiskSpace
       return recordings;
     }
 
-    static void CheckDriveFreeDiskSpace(string drive)
+    void CheckDriveFreeDiskSpace(string drive)
     {
       //get disk quota to use
       if (!OutOfDiskSpace(drive)) return;
@@ -275,10 +164,82 @@ namespace MediaPortal.TV.DiskSpace
                                               fi.filename,
                                               Utils.GetSize(fi.info.Length),
                                               fi.info.CreationTime.ToShortDateString(), fi.info.CreationTime.ToShortTimeString());
-          DeleteRecording(fi.record);
+          Recorder.DeleteRecording(fi.record);
         }
         recordings.RemoveAt(0);
       }//while ( OutOfDiskSpace(drive) && recordings.Count > 0)
     }
+
+  
+
+    #region IPlugin Members
+
+    public void Start()
+    {
+      _timer.Enabled = true;
+    }
+
+    public void Stop()
+    {
+      _timer.Enabled = false;
+    }
+
+    #endregion
+
+    #region ISetupForm Members
+
+    public bool CanEnable()
+    {
+      return true;
+    }
+
+    public string Description()
+    {
+      return "Plugin which deletes old tv recordings when there is not enough freedisk space";
+    }
+
+    public bool DefaultEnabled()
+    {
+      return true;
+    }
+
+    public int GetWindowId()
+    {
+      // TODO:  Add CallerIdPlugin.GetWindowId implementation
+      return -1;
+    }
+
+    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
+    {
+      // TODO:  Add CallerIdPlugin.GetHome implementation
+      strButtonText = null;
+      strButtonImage = null;
+      strButtonImageFocus = null;
+      strPictureImage = null;
+      return false;
+    }
+
+    public string Author()
+    {
+      return "Frodo";
+    }
+
+    public string PluginName()
+    {
+      return "FreeDiskSpace plugin";
+    }
+
+    public bool HasSetup()
+    {
+      // TODO:  Add CallerIdPlugin.HasSetup implementation
+      return false;
+    }
+
+    public void ShowPlugin()
+    {
+      // TODO:  Add CallerIdPlugin.ShowPlugin implementation
+    }
+
+    #endregion
   }
 }
