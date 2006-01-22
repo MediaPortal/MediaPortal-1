@@ -976,6 +976,17 @@ namespace MediaPortal.TV.Database
       }
     }
 
+
+    public bool DoesUseEpisodeManagement
+    {
+      get
+      {
+        if (RecType == TVRecording.RecordingType.Once) return false;
+        if (EpisodesToKeep == Int32.MaxValue) return false;
+        if (EpisodesToKeep < 1) return false;
+        return true;
+      }
+    }
     #endregion
   }
 }

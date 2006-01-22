@@ -226,9 +226,7 @@
     <Compile Include="BDA\BdaFilterCategories.cs" />
     <Compile Include="BDA\BdaNetworkProviders.cs" />
     <Compile Include="BDA\BdaTuningSpaces.cs" />
-    <Compile Include="DiskManagement\EpisodeManagement.cs" />
     <Compile Include="DiskManagement\RecordingImporterWorker.cs" />
-    <Compile Include="DiskManagement\RecordingManagement.cs" />
     <Compile Include="EPG\AtscEvent.cs" />
     <Compile Include="EPG\EpgChannel.cs" />
     <Compile Include="EPG\EpgChannelUpdate.cs" />
@@ -253,9 +251,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Scheduler\Conflictmanager.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DiskManagement\DiskManagement.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Scanning\DVBCTuning.cs">

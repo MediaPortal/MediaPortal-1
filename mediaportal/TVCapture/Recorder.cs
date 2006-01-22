@@ -284,7 +284,7 @@ namespace MediaPortal.TV.Recording
           TVCaptureDevice dev = _tvcards[i];
           string dir = String.Format(@"{0}\card{1}", dev.RecordingPath, i + 1);
           System.IO.Directory.CreateDirectory(dir);
-          DiskManagement.DeleteOldTimeShiftFiles(dir);
+          Utils.DeleteOldTimeShiftFiles(dir);
         }
         catch (Exception) { }
       }
@@ -2345,8 +2345,6 @@ namespace MediaPortal.TV.Recording
             recTimer = DateTime.Now;
           }
 
-          RecordingManagement.DeleteOldRecordings();
-          DiskManagement.CheckFreeDiskSpace();
 
 
           //process any recorder commands from the GUI
@@ -2752,6 +2750,16 @@ namespace MediaPortal.TV.Recording
       if (OnTvRecordingChanged != null)
         OnTvRecordingChanged();
     }
+
+
+    static public void DeleteRecording(TVRecorded rec)
+    {
+      Utils.DeleteRecording(rec.FileName);
+      TVDatabase.RemoveRecordedTV(rec);
+      VideoDatabase.DeleteMovie(rec.FileName);
+      VideoDatabase.DeleteMovieInfo(rec.FileName);
+    }
+
 
   }//public class Recorder
 }//namespace MediaPortal.TV.Recording

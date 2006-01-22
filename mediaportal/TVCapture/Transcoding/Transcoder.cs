@@ -431,7 +431,7 @@ namespace MediaPortal.TV.Recording
       }
       if (tinfo.deleteOriginal)
       {
-        DiskManagement.DeleteRecording(info.file);
+        Utils.DeleteRecording(info.file);
         tinfo.recorded.FileName = System.IO.Path.ChangeExtension(info.file, ".wmv");
         TVDatabase.SetRecordedFileName(tinfo.recorded);
       }
@@ -462,7 +462,7 @@ namespace MediaPortal.TV.Recording
       }
       if (tinfo.deleteOriginal)
       {
-        DiskManagement.DeleteRecording(info.file);
+        Utils.DeleteRecording(info.file);
         tinfo.recorded.FileName = System.IO.Path.ChangeExtension(info.file, ".mpg");
         TVDatabase.SetRecordedFileName(tinfo.recorded);
       }
@@ -494,7 +494,7 @@ namespace MediaPortal.TV.Recording
       }
       if (tinfo.deleteOriginal)
       {
-        DiskManagement.DeleteRecording(info.file);
+        Utils.DeleteRecording(info.file);
         tinfo.recorded.FileName = System.IO.Path.ChangeExtension(info.file, ".avi");
         TVDatabase.SetRecordedFileName(tinfo.recorded);
       }

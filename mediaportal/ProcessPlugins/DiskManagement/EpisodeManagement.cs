@@ -31,7 +31,7 @@ using MediaPortal.TV.Recording;
 
 namespace ProcessPlugins.DiskSpace
 {
-  public class EpisodeManagement
+  public class EpisodeManagement : IPlugin, ISetupForm 
   {
     public EpisodeManagement()
     {
@@ -125,7 +125,7 @@ namespace ProcessPlugins.DiskSpace
 
     public string Description()
     {
-      return "Plugin which deletes old tv-episodes";
+      return "Plugin which handles tv-episodes management";
     }
 
     public bool DefaultEnabled()
@@ -156,7 +156,7 @@ namespace ProcessPlugins.DiskSpace
 
     public string PluginName()
     {
-      return "Episode management plugin";
+      return "Tv Cleanup episodes";
     }
 
     public bool HasSetup()

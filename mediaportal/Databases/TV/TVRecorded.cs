@@ -185,5 +185,15 @@ namespace MediaPortal.TV.Database
 				GUIPropertyManager.SetProperty("#TV.RecordedTV.thumb","defaultVideoBig.png");
 			}
 		}
+
+    public bool ShouldBeDeleted
+    {
+      get
+      {
+        if (KeepRecordingMethod != TVRecorded.KeepMethod.TillDate) return false;
+        if (KeepRecordingTill.Date > DateTime.Now.Date) return false;
+        return true;
+      }
+    }
 	}
 }

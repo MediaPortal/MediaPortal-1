@@ -34,7 +34,7 @@ namespace ProcessPlugins.DiskSpace
   /// <summary>
   /// Summary description for DiskManagement.
   /// </summary>
-  public class DiskManagement
+  public class DiskManagement : IPlugin, ISetupForm 
   {
     System.Windows.Forms.Timer _timer;
     public DiskManagement()
@@ -226,7 +226,7 @@ namespace ProcessPlugins.DiskSpace
 
     public string PluginName()
     {
-      return "FreeDiskSpace plugin";
+      return "Tv diskspace plugin";
     }
 
     public bool HasSetup()

@@ -31,7 +31,7 @@ using MediaPortal.TV.Recording;
 
 namespace ProcessPlugins.DiskSpace
 {
-  public class RecordingManagement
+  public class RecordingManagement : IPlugin, ISetupForm 
   {
     System.Windows.Forms.Timer _timer;
     public RecordingManagement()
@@ -94,7 +94,7 @@ namespace ProcessPlugins.DiskSpace
 
     public string Description()
     {
-      return "Plugin which deletes old tv recordings by data";
+      return "Plugin which deletes old tv recordings by date";
     }
 
     public bool DefaultEnabled()
@@ -125,7 +125,7 @@ namespace ProcessPlugins.DiskSpace
 
     public string PluginName()
     {
-      return "RecordingCleanup plugin";
+      return "Tv Cleanup Recording";
     }
 
     public bool HasSetup()

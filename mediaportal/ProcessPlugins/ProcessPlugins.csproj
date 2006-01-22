@@ -333,6 +333,9 @@
     <Compile Include="ExternalDisplay\VLSYSLis2.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="DiskManagement\DiskManagement.cs" />
+    <Compile Include="DiskManagement\EpisodeManagement.cs" />
+    <Compile Include="DiskManagement\RecordingManagement.cs" />
     <Compile Include="HCWBlaster\HCWBlaster.cs">
       <SubType>Code</SubType>
     </Compile>
