@@ -45,7 +45,7 @@ namespace MediaPortal.TV.Recording
   public class Scheduler
   {
     // flag indicating that recordings have been added/changed/removed
-    static bool _recordingsListChanged ;
+    bool _recordingsListChanged ;
 
     //list of all scheduled recordings
     List<TVRecording> _recordingsList;
@@ -92,6 +92,45 @@ namespace MediaPortal.TV.Recording
     {
       _scheduleTimer = DateTime.MinValue;
     }
+    void ReloadRecordingList(CommandProcessor handler)
+    {
+      // then get (refresh) all recordings from the database
+      List<TVRecording> oldRecs = new List<TVRecording>();
+      oldRecs = _recordingsList;
+      _recordingsList = new List<TVRecording>();
+      _tvChannelsList.Clear();
+      TVDatabase.GetRecordings(ref _recordingsList);
+      TVDatabase.GetChannels(ref _tvChannelsList);
+
+      //remember if we already send a notification for this recording
+      foreach (TVRecording recording in _recordingsList)
+      {
+        foreach (TVRecording oldrec in oldRecs)
+        {
+          if (oldrec.ID == recording.ID)
+          {
+            recording.IsAnnouncementSend = oldrec.IsAnnouncementSend;
+            break;
+          }
+        }
+
+        //if any card is busy recording a changed recording, then let the card know
+        //about the changes
+        for (int i = 0; i < handler.TVCards.Count; ++i)
+        {
+          TVCaptureDevice dev = handler.TVCards[i];
+          if (dev.IsRecording)
+          {
+            if (dev.CurrentTVRecording.ID == recording.ID)
+            {
+              dev.CurrentTVRecording = recording;
+            }//if (dev.CurrentTVRecording.ID==recording.ID)
+          }//if (dev.IsRecording)
+        }//for (int i=0; i < handler.TVCards.Count;++i)
+      }//foreach (TVRecording recording in _recordingsList)
+      oldRecs = null;
+    }
+
     public void Process(CommandProcessor handler)
     {
       TimeSpan ts = DateTime.Now - _scheduleTimer;
@@ -103,42 +142,8 @@ namespace MediaPortal.TV.Recording
       // then we need to re-load the recordings from the database
       if (_recordingsListChanged)
       {
-        // then get (refresh) all recordings from the database
-        List<TVRecording> oldRecs = new List<TVRecording>();
-        oldRecs = _recordingsList;
-        _recordingsList = new List<TVRecording>();
-        _tvChannelsList.Clear();
-        TVDatabase.GetRecordings(ref _recordingsList);
-        TVDatabase.GetChannels(ref _tvChannelsList);
+        ReloadRecordingList(handler);
         _recordingsListChanged = false;
-
-        //remember if we already send a notification for this recording
-        foreach (TVRecording recording in _recordingsList)
-        {
-          foreach (TVRecording oldrec in oldRecs)
-          {
-            if (oldrec.ID == recording.ID)
-            {
-              recording.IsAnnouncementSend = oldrec.IsAnnouncementSend;
-              break;
-            }
-          }
-
-          //if any card is busy recording a changed recording, then let the card know
-          //about the changes
-          for (int i = 0; i < handler.TVCards.Count; ++i)
-          {
-            TVCaptureDevice dev = handler.TVCards[i];
-            if (dev.IsRecording)
-            {
-              if (dev.CurrentTVRecording.ID == recording.ID)
-              {
-                dev.CurrentTVRecording = recording;
-              }//if (dev.CurrentTVRecording.ID==recording.ID)
-            }//if (dev.IsRecording)
-          }//for (int i=0; i < handler.TVCards.Count;++i)
-        }//foreach (TVRecording recording in _recordingsList)
-        oldRecs = null;
       }//if (_recordingsListChanged)
 
       //for each tv channel
@@ -299,7 +304,7 @@ namespace MediaPortal.TV.Recording
     ///	is watching channel A, and then when the recording starts on channel B the user suddenly 
     ///	sees channel B
     /// </remarks>
-    static private int FindFreeCardForRecording(CommandProcessor handler,string recordingChannel, bool stopRecordingsWithLowerPriority, int recordingPrio)
+    private int FindFreeCardForRecording(CommandProcessor handler,string recordingChannel, bool stopRecordingsWithLowerPriority, int recordingPrio)
     {
       // if we are viewing a tv channel, and we want to record the program on this channel
       // then just use the same card 
@@ -577,7 +582,7 @@ namespace MediaPortal.TV.Recording
         cmd.Execute(handler);
       }
       return true;
-    }//static bool Record(DateTime currentTime,TVRecording rec, TVProgram currentProgram,int iPreRecordInterval, int iPostRecordInterval)
+    }//bool Record(DateTime currentTime,TVRecording rec, TVProgram currentProgram,int iPreRecordInterval, int iPostRecordInterval)
 
     void StopRecording(CommandProcessor handler,TVRecording rec)
     {
