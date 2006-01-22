@@ -123,14 +123,27 @@ namespace MediaPortal.Player
       _useVmr9 = true;
 			if (!GUIGraphicsContext.VMR9Allowed)
 			{
+        Log.Write("vmr9:ctor() not allowed");
 				_useVmr9 = false;
         return;
 			}
       _renderFrame = GUIGraphicsContext.RenderGUI;
-      if (GUIGraphicsContext.DX9Device == null) _useVmr9 = false;
-      if (_renderFrame == null) _useVmr9 = false;
-      if (g_vmr9!=null || GUIGraphicsContext.Vmr9Active) 
+      if (GUIGraphicsContext.DX9Device == null)
+      {
         _useVmr9 = false;
+        Log.Write("vmr9:ctor() DX9Device=null");
+      }
+      if (_renderFrame == null)
+      {
+        _useVmr9 = false;
+        Log.Write("vmr9:ctor() _renderFrame=null");
+      }
+      if (g_vmr9 != null || GUIGraphicsContext.Vmr9Active)
+      {
+        _useVmr9 = false;
+        Log.Write("vmr9:ctor() already active");
+      }
+      Log.Write("vmr9:ctor() done:{0}", _useVmr9);
     }
     #endregion
 
@@ -222,7 +235,6 @@ namespace MediaPortal.Player
     {
       get
       {
-
         if (!_isVmr9Initialized) return false;
         // check if vmr9 is enabled and if initialized
         if (_vmr9Filter == null || !_useVmr9)
@@ -278,6 +290,7 @@ namespace MediaPortal.Player
     /// <param name="graphBuilder"></param>
     public bool AddVMR9(IGraphBuilder graphBuilder)
     {
+      Log.Write("vmr9:addvmr9");
       if (!_useVmr9)
       {
         Log.Write("vmr9:addvmr9: dont use vmr9");
@@ -599,61 +612,63 @@ namespace MediaPortal.Player
     /// </summary>
     public void Dispose()
     {
+      Log.Write("vmr9:Dispose");
       if (false == _isVmr9Initialized) return;
       if (_threadId != Thread.CurrentThread.ManagedThreadId)
       {
-        Log.WriteFile(Log.LogType.Error, "VMR9:RemoveVmr9() from wrong thread");
+        Log.WriteFile(Log.LogType.Error, "VMR9:Dispose() from wrong thread");
+        return;
       }
-      //Log.Write("VMR9Helper:RemoveVMR9");
-      //Log.Write("VMR9Helper:stop vmr9 helper");
-      if (_vmr9Filter != null)
+      if (_vmr9Filter == null)
       {
-
-        if (_scene != null)
-        {
-          //Log.Write("VMR9Helper:stop planescene");
-          _scene.Stop();
-          _instanceCounter--;
-          _scene.Deinit();
-          GUIGraphicsContext.Vmr9Active = false;
-          GUIGraphicsContext.Vmr9FPS = 0f;
-          GUIGraphicsContext.InVmr9Render = false;
-          currentVmr9State = Vmr9PlayState.Playing;
-        }
-        int result;
-
-        //if (_vmr9MixerBitmapInterface!= null)
-        //	while ( (result=Marshal.ReleaseComObject(_vmr9MixerBitmapInterface))>0); 
-        //result=Marshal.ReleaseComObject(_vmr9MixerBitmapInterface);
-        _vmr9MixerBitmapInterface = null;
-
-        //				if (_qualityInterface != null)
-        //					while ( (result=Marshal.ReleaseComObject(_qualityInterface))>0); 
-        //Marshal.ReleaseComObject(_qualityInterface);
-        _qualityInterface = null;
-
-        try
-        {
-          result = _graphBuilderInterface.RemoveFilter(_vmr9Filter);
-          if (result != 0) Log.Write("VMR9:RemoveFilter():{0}", result);
-        }
-        catch (Exception)
-        {
-        }
-        Vmr9Deinit();
-
-        try
-        {
-          result = Marshal.ReleaseComObject(_vmr9Filter);
-          if (result != 0) Log.Write("VMR9:ReleaseComObject():{0}", result);
-        }
-        catch (Exception)
-        {
-        }
-        _vmr9Filter = null;
-        _graphBuilderInterface = null;
-        _scene = null;
+        Log.WriteFile(Log.LogType.Error, "VMR9:Dispose() no filter");
+        return;
       }
+
+      if (_scene != null)
+      {
+        //Log.Write("VMR9Helper:stop planescene");
+        _scene.Stop();
+        _instanceCounter--;
+        _scene.Deinit();
+        GUIGraphicsContext.Vmr9Active = false;
+        GUIGraphicsContext.Vmr9FPS = 0f;
+        GUIGraphicsContext.InVmr9Render = false;
+        currentVmr9State = Vmr9PlayState.Playing;
+      }
+      int result;
+
+      //if (_vmr9MixerBitmapInterface!= null)
+      //	while ( (result=Marshal.ReleaseComObject(_vmr9MixerBitmapInterface))>0); 
+      //result=Marshal.ReleaseComObject(_vmr9MixerBitmapInterface);
+      _vmr9MixerBitmapInterface = null;
+
+      //				if (_qualityInterface != null)
+      //					while ( (result=Marshal.ReleaseComObject(_qualityInterface))>0); 
+      //Marshal.ReleaseComObject(_qualityInterface);
+      _qualityInterface = null;
+
+      try
+      {
+        result = _graphBuilderInterface.RemoveFilter(_vmr9Filter);
+        if (result != 0) Log.Write("VMR9:RemoveFilter():{0}", result);
+      }
+      catch (Exception)
+      {
+      }
+      Vmr9Deinit();
+
+      try
+      {
+        result = Marshal.ReleaseComObject(_vmr9Filter);
+        if (result != 0) Log.Write("VMR9:ReleaseComObject():{0}", result);
+      }
+      catch (Exception)
+      {
+      }
+      _vmr9Filter = null;
+      _graphBuilderInterface = null;
+      _scene = null;
       g_vmr9 = null;
     }
     #endregion
