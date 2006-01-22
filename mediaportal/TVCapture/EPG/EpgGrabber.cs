@@ -522,8 +522,18 @@ namespace MediaPortal.TV.Epg
         {
           _timeoutTimer = DateTime.Now;
           if (channel.TvChannel == null) continue;
-          if (channel.TvChannel.LastDateTimeEpgGrabbed >= DateTime.Now.AddHours(-2)) continue;
-          Log.WriteFile(Log.LogType.EPG, "epg-grab: add:'{0}' ", channel.TvChannel.Name);
+          if (channel.TvChannel.LastDateTimeEpgGrabbed >= DateTime.Now.AddHours(-2))
+          {
+            if (String.Compare(channel.TvChannel.Name, _epgTvChannelName, true) != 0)
+            {
+              Log.WriteFile(Log.LogType.EPG, "epg-grab: skip channel:{0} last update was:{1} {2} ",
+                    channel.TvChannel.Name,
+                    channel.TvChannel.LastDateTimeEpgGrabbed.ToShortDateString(),
+                    channel.TvChannel.LastDateTimeEpgGrabbed.ToShortTimeString());
+              continue;
+            }
+          }
+          Log.WriteFile(Log.LogType.EPG, "epg-grab: process:'{0}' ", channel.TvChannel.Name);
           channel.Sort();
           foreach (EPGEvent epgEvent in channel.EpgEvents)
           {
@@ -624,7 +634,18 @@ namespace MediaPortal.TV.Epg
             channelCache.Add(mhwEvent);
           }
           if (tvChannel == null) continue;
-          if (tvChannel.LastDateTimeEpgGrabbed >= DateTime.Now.AddHours(-2)) continue;
+          if (tvChannel.LastDateTimeEpgGrabbed >= DateTime.Now.AddHours(-2))
+          {
+            if (String.Compare(tvChannel.Name, _epgTvChannelName, true) != 0)
+            {
+              Log.WriteFile(Log.LogType.EPG, "epg-grab: skip channel:{0} last update was:{1} {2} ",
+                    tvChannel.Name,
+                    tvChannel.LastDateTimeEpgGrabbed.ToShortDateString(),
+                    tvChannel.LastDateTimeEpgGrabbed.ToShortTimeString());
+              continue;
+            }
+          }
+
 
           _timeoutTimer = DateTime.Now;
           TVProgram tv = new TVProgram();
