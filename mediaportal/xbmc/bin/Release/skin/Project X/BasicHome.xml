@@ -36,13 +36,14 @@
 			<height>-</height>
 			<textureFocus>BM_Radio_focus.png</textureFocus>
 			<textureNoFocus>BM_Radio_nofocus.png</textureNoFocus>
+			 <thumbZoom>yes</thumbZoom>
 			<hyperlink>30</hyperlink>
 			<label>665</label>
   		<textcolor>00ffffff</textcolor>
 			<onleft>5</onleft>
 			<onright>3</onright>
 			<onup>21</onup>
-			<ondown></ondown>
+			<ondown>2</ondown>
 		</control>
 		<control>
 			<description>home BM Video</description>
@@ -60,7 +61,7 @@
 			<onleft>2</onleft>
 			<onright>4</onright>
 			<onup>21</onup>
-			<ondown></ondown>
+			<ondown>3</ondown>
 		</control>
 		<control>
 			<description>home BM FFS</description>
@@ -78,7 +79,7 @@
 			<onleft>3</onleft>
 			<onright>5</onright>
 			<onup>21</onup>
-			<ondown></ondown>
+			<ondown>4</ondown>
 		</control>
 		<control>
 			<description>home BM Music</description>
@@ -96,7 +97,7 @@
 			<onleft>4</onleft>
 			<onright>6</onright>
 			<onup>21</onup>
-			<ondown></ondown>
+			<ondown>5</ondown>
 		</control>
 		<control>
 			<description>home BM Pictures</description>
@@ -114,7 +115,7 @@
 			<onleft>5</onleft>
 			<onright>2</onright>
 			<onup>21</onup>
-			<ondown></ondown>
+			<ondown>6</ondown>
 		</control>
 		<control>
 		<description>Date</description>
@@ -139,11 +140,11 @@
 		<textcolor>22ffffff</textcolor>
 	</control>
 	<control>
-			<type>image</type>
-			<id>1</id>
-			<posX>144</posX>
-		    <posY>416</posY>
-			<texture>-</texture>
+		<type>image</type>
+		<id>1</id>
+		<posX>144</posX>
+		<posY>416</posY>
+		<texture>-</texture>
 	</control>
 	<control>
 			<type>image</type>
