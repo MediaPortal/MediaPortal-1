@@ -122,8 +122,6 @@ namespace MediaPortal.TV.Recording
 
     // flag indicating that recordings have been added/changed/removed
     static bool _recordingsListChanged = false;  
-    // flag indicating that notifies have been added/changed/removed
-    static bool _notifiesListChanged = false;  
     // number of minutes we should start recording before the program starts
     static int _preRecordInterval = 0;  
     // number of minutes we keeprecording after the program starts
@@ -143,8 +141,6 @@ namespace MediaPortal.TV.Recording
     //list of all scheduled recordings
     static List<TVRecording> _recordingsList = new List<TVRecording>();
 
-    //list of all notifies (alert me 2 minutes before program starts)
-    static List<TVNotify> _notifiesList = new List<TVNotify>();
 
     static DateTime _progressBarTimer = DateTime.Now;
 
@@ -305,10 +301,6 @@ namespace MediaPortal.TV.Recording
       TVDatabase.GetRecordings(ref _recordingsList);
       TVDatabase.OnRecordingsChanged += new TVDatabase.OnRecordingChangedHandler(Recorder.OnRecordingsChanged);
 
-      //get all the notifies
-      _notifiesList.Clear();
-      TVDatabase.GetNotifies(_notifiesList, true);
-      TVDatabase.OnNotifiesChanged += new MediaPortal.TV.Database.TVDatabase.OnChangedHandler(Recorder.OnNotifiesChanged);
 
       //subscribe to window messages.
       GUIWindowManager.Receivers += new SendMessageHandler(Recorder.OnMessage);
@@ -2356,8 +2348,6 @@ namespace MediaPortal.TV.Recording
           RecordingManagement.DeleteOldRecordings();
           DiskManagement.CheckFreeDiskSpace();
 
-          //handle the notifies
-          Recorder.HandleNotifies();
 
           //process any recorder commands from the GUI
           lock (_listCommands)
@@ -2763,34 +2753,5 @@ namespace MediaPortal.TV.Recording
         OnTvRecordingChanged();
     }
 
-    #region notification handling
-    private static void OnNotifiesChanged()
-    {
-      _notifiesListChanged = true;
-    }
-
-    static void HandleNotifies()
-    {
-      if (_notifiesListChanged)
-      {
-        _notifiesList.Clear();
-        TVDatabase.GetNotifies(_notifiesList, true);
-        _notifiesListChanged = false;
-      }
-      DateTime dt5Mins = DateTime.Now.AddMinutes(5);
-      for (int i = 0; i < _notifiesList.Count; ++i)
-      {
-        TVNotify notify = _notifiesList[i];
-        if (dt5Mins > notify.Program.StartTime)
-        {
-          TVDatabase.DeleteNotify(notify);
-          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_NOTIFY_TV_PROGRAM, 0, 0, 0, 0, 0, null);
-          msg.Object = notify.Program;
-          GUIGraphicsContext.SendMessage(msg);
-          msg = null;
-        }
-      }
-    }
-    #endregion
   }//public class Recorder
 }//namespace MediaPortal.TV.Recording

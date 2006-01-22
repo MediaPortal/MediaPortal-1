@@ -375,6 +375,7 @@
     <Compile Include="NVPPowerScheduler\WaitableTimer.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="TvNotifies\NotifyManager.cs" />
     <EmbeddedResource Include="CallerId\ISDN\ISDNSetupForm.resx">
       <DependentUpon>ISDNSetupForm.cs</DependentUpon>
     </EmbeddedResource>
