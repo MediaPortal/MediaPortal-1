@@ -4823,6 +4823,10 @@
 	</string>
 	<string>
 		<id>200007</id>
+		<valu die Einrichtung fortzusetzen:</value>
+	</string>
+	<string>
+		<id>200007</id>
 		<value>&lt;Zurück</value>
 	</string>
 	<string>
@@ -5048,6 +5052,22 @@
 	<string>
 		<id>4522</id>
 		<value>Lade {0}...</value>
+	</string>
+	<string>
+		<id>4540</id>
+		<value>Aktueller Titel</value>
+	</string>
+	<string>
+		<id>4541</id>
+		<value>Nächster Titel</value>
+	</string>
+	<string>
+		<id>4542</id>
+		<value>Keine Wiedergabe-Liste geladen</value>
+	</string>
+	<string>
+		<id>4543</id>
+		<value>Keine Titel-Informationen verfügbar</value>
 	</string>
 	<string>
 		<id>10100</id>
