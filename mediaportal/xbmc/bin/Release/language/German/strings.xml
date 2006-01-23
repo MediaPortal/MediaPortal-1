@@ -4723,8 +4723,6 @@
 	</string>
 	<string>
 		<id>102008</id>
-		<value>Dateg>
-		<id>102008</id>
 		<value>Dateikomprimierung</value>
 	</string>
 	<string>
@@ -4825,7 +4823,7 @@
 	</string>
 	<string>
 		<id>200007</id>
-		<valuken sie "Weiter" um die Einrichtung fortzusetzen:</value>
+		<value>Drücken sie "Weiter" um die Einrichtung fortzusetzen:</value>
 	</string>
 	<string>
 		<id>200007</id>
