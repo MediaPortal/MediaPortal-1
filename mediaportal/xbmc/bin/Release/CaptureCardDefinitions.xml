@@ -5535,7 +5535,7 @@
     </tv> 
   </capturecard>
 
-  <capturecard commercialname="DNTV Live! Tiny USB2 BDA" capturename="DNTV Live! Tiny USB2 BDA" devid="vid_13d3&amp;pid_3223">
+  <capturecard commercialname="DNTV Live! Tiny USB2" capturename="DNTV Live! Tiny USB2 BDA" devid="vid_13d3&amp;pid_3223">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
     <tv>
       <interface cat="tunerdevice" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
@@ -5636,7 +5636,7 @@
     </tv> 
   </capturecard>
   
-  <capturecard commercialname="WinTV Nova-S Plus" capturename="Hauppauge WinTV 88x TS Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_92020070&amp;rev_05"> 
+  <capturecard commercialname="Hauppauge Nova-S Plus" capturename="Hauppauge WinTV 88x TS Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_92020070&amp;rev_05"> 
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/> 
     <tv> 
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
@@ -5739,7 +5739,7 @@
     </tv>
   </capturecard>
   
-  <capturecard commercialname="WinTV Nova-SE2" capturename="Hauppauge WinTV 88x TS Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_92000070&amp;rev_05">
+  <capturecard commercialname="Hauppauge Nova-SE2" capturename="Hauppauge WinTV 88x TS Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_92000070&amp;rev_05">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
@@ -6812,7 +6812,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="Winfast DTV 1000T" capturename="WinFast DTV 1000T BDA Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_665f107d&amp;rev_05">
+  <capturecard commercialname="LeadTek Winfast DTV 1000T" capturename="WinFast DTV 1000T BDA Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_665f107d&amp;rev_05">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
@@ -6828,7 +6828,7 @@
       </tv>
   </capturecard>
 
-  <capturecard commercialname="Winfast DTV 2000H" capturename="WinFast DTV 2000 BDA Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_6651107d&amp;rev_05">
+  <capturecard commercialname="LeadTek Winfast DTV 2000H" capturename="WinFast DTV 2000 BDA Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_6651107d&amp;rev_05">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities>
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
@@ -6998,21 +6998,21 @@
         <filter cat="tvtuner"  name="FusionHDTV, NTSC/ATSC WDM TvTuner" 		checkdevice="true"></filter>
         <filter cat="tvaudio"  name="FusionHDTV, TvAudio"		checkdevice="true"></filter>
         <filter cat="crossbar" name="FusionHDTV, Crossbar"		checkdevice="true"></filter>
-        <filter cat="videocapture"  name="FusionHDTV, WDM Video Capture"	checkdevice="true"></filter>
-        <filter cat="audiocapture"  name="%Soundcard%"	checkdevice="false"></filter>
-        <filter cat="videoencoder"  name="InterVideo Video Encoder"		checkdevice="false"></filter>
-        <filter cat="audioencoder"  name="InterVideo Audio Encoder"		checkdevice="false"></filter>
-        <filter cat="mux"  name="InterVideo Multiplexer"		checkdevice="false"></filter>
+        <filter cat="capture"  name="FusionHDTV, WDM Video Capture"	checkdevice="true"></filter>
+        <filter cat="audcapture"  name="%Soundcard%"	checkdevice="false"></filter>
+        <filter cat="videncoder"  name="%videoencoder%"		checkdevice="false"></filter>
+        <filter cat="audencoder"  name="%audioencoder%"		checkdevice="false"></filter>
+        <filter cat="mux"  name="%mpegmux%"		checkdevice="false"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar"	sinkpin="%tvtuner%"></connection>
         <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"	sinkpin="0"></connection>
         <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar"	sinkpin="%audiotuner%"></connection>
-        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="videocapture"	sinkpin="0"></connection>
-        <connection sourcefilter="videocapture"	sourcepin="0" sinkfilter="videoencoder"	sinkpin="0"></connection>
-        <connection sourcefilter="audiocapture"	sourcepin="0" sinkfilter="audioencoder"	sinkpin="0"></connection>
-        <connection sourcefilter="videoencoder"	sourcepin="0" sinkfilter="mux"	sinkpin="0"></connection>
-        <connection sourcefilter="audioencoder"	sourcepin="0" sinkfilter="mux"	sinkpin="1"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"	sinkpin="0"></connection>
+        <connection sourcefilter="capture"	sourcepin="0" sinkfilter="videncoder"	sinkpin="0"></connection>
+        <connection sourcefilter="audcapture"	sourcepin="0" sinkfilter="audencoder"	sinkpin="0"></connection>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"	sinkpin="0"></connection>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"	sinkpin="1"></connection>
       </connections>
     </tv>
   </capturecard> -->
