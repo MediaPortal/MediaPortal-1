@@ -65,7 +65,7 @@ namespace MediaPortal.Configuration.Sections
     private System.Windows.Forms.PictureBox pictureBoxEU;
     private System.Windows.Forms.GroupBox groupBox1;
     private System.Windows.Forms.GroupBox groupBox2;
-    private GroupBox groupBox3;
+    private GroupBox groupBoxRepeatDelay;
     private HScrollBar hScrollBarButtonRelease;
     private HScrollBar hScrollBarRepeatSpeed;
     private Label label4;
@@ -76,9 +76,11 @@ namespace MediaPortal.Configuration.Sections
     private Label label2;
     private Label label3;
     private CheckBox checkBoxFilterDoubleKlicks;
+    private ToolTip hcwToolTip;
     private System.ComponentModel.IContainer components = null;
+    private enum hcwRepeatSpeed { slow, medium, fast };
 
-    public struct RAWINPUTDEVICE 
+    public struct RAWINPUTDEVICE
     {
       public ushort usUsagePage;
       public ushort usUsage;
@@ -86,18 +88,20 @@ namespace MediaPortal.Configuration.Sections
       public IntPtr hwndTarget;
     }
 
-    [DllImport("User32.dll", EntryPoint="RegisterRawInputDevices", SetLastError=true)]
+    [DllImport("User32.dll", EntryPoint = "RegisterRawInputDevices", SetLastError = true)]
     public extern static bool RegisterRawInputDevices(
       [In] RAWINPUTDEVICE[] pRawInputDevices,
       [In] uint uiNumDevices,
       [In] uint cbSize);
 
 
-    public Remote() : this("Remote")
+    public Remote()
+      : this("Remote")
     {
     }
 
-    public Remote(string name) : base(name)
+    public Remote(string name)
+      : base(name)
     {
       // This call is required by the Windows Form Designer.
       InitializeComponent();
@@ -105,34 +109,34 @@ namespace MediaPortal.Configuration.Sections
 
     static public bool IsMceRemoteInstalled(IntPtr hwnd)
     {
-		try
-		{
-			RAWINPUTDEVICE[] rid1 = new RAWINPUTDEVICE[1];
+      try
+      {
+        RAWINPUTDEVICE[] rid1 = new RAWINPUTDEVICE[1];
 
-			rid1[0].usUsagePage = 0xFFBC;
-			rid1[0].usUsage = 0x88;
-			rid1[0].dwFlags = 0;
-			rid1[0].hwndTarget = hwnd;
-			bool Success = RegisterRawInputDevices(rid1, (uint)rid1.Length, (uint)Marshal.SizeOf(rid1[0]));
-			if (Success) 
-			{
-				return true;
-			}
+        rid1[0].usUsagePage = 0xFFBC;
+        rid1[0].usUsage = 0x88;
+        rid1[0].dwFlags = 0;
+        rid1[0].hwndTarget = hwnd;
+        bool Success = RegisterRawInputDevices(rid1, (uint)rid1.Length, (uint)Marshal.SizeOf(rid1[0]));
+        if (Success)
+        {
+          return true;
+        }
 
-			rid1[0].usUsagePage = 0x0C;
-			rid1[0].usUsage = 0x01;
-			rid1[0].dwFlags = 0;
-			rid1[0].hwndTarget = hwnd;
-			Success = RegisterRawInputDevices(rid1, (uint)rid1.Length, (uint)Marshal.SizeOf(rid1[0]));
-			if (Success) 
-			{
-				return true;
-			}
-		}
-		catch(Exception)
-		{ }
-		
-		return false;
+        rid1[0].usUsagePage = 0x0C;
+        rid1[0].usUsage = 0x01;
+        rid1[0].dwFlags = 0;
+        rid1[0].hwndTarget = hwnd;
+        Success = RegisterRawInputDevices(rid1, (uint)rid1.Length, (uint)Marshal.SizeOf(rid1[0]));
+        if (Success)
+        {
+          return true;
+        }
+      }
+      catch (Exception)
+      { }
+
+      return false;
     }
 
     /// <summary>
@@ -140,21 +144,21 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     public override void LoadSettings()
     {
-      string errNotInstalled       = "The Hauppauge IR components have not been found.\n\nYou should download and install the latest Hauppauge IR drivers and use XPSP2.";
-      string errOutOfDate          = "The driver components are not up to date.\n\nYou should update your Hauppauge IR drivers to the current version.";
-      string errMissingExe         = "IR application not found. You might want to use it to control external applications.\n\nReinstall the Hauppauge IR drivers to fix this problem.";
+      string errHCWNotInstalled = "The Hauppauge IR components have not been found.\n\nInstall the latest Hauppauge IR drivers and use XPSP2.";
+      string errHCWOutOfDate = "The driver components are not up to date.\n\nUpdate your Hauppauge IR drivers to the current version.";
+      string errHCWMissingExe = "IR application not found. You might want to use it to control external applications.\n\nReinstall the Hauppauge IR drivers to fix this problem.";
 
       using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
       {
-        checkBoxMCE.Checked                = xmlreader.GetValueAsBool("remote", "mce2005", false);
-        radioButtonUSA.Checked             = xmlreader.GetValueAsBool("remote", "USAModel", false);
-        checkBoxHCW.Checked                = xmlreader.GetValueAsBool("remote", "HCW", false);
-        checkBoxAllowExternal.Checked      = xmlreader.GetValueAsBool("remote", "HCWAllowExternal", false);
-        checkBoxKeepControl.Checked        = xmlreader.GetValueAsBool("remote", "HCWKeepControl", false);
-        checkBoxVerboseLog.Checked         = xmlreader.GetValueAsBool("remote", "HCWVerboseLog", false);
-        hScrollBarButtonRelease.Value      = xmlreader.GetValueAsInt ("remote", "HCWButtonRelease", 500);
-        hScrollBarRepeatFilter.Value       = xmlreader.GetValueAsInt ("remote", "HCWRepeatFilter", 2);
-        hScrollBarRepeatSpeed.Value        = xmlreader.GetValueAsInt ("remote", "HCWRepeatSpeed", 1);
+        checkBoxMCE.Checked = xmlreader.GetValueAsBool("remote", "mce2005", false);
+        radioButtonUSA.Checked = xmlreader.GetValueAsBool("remote", "USAModel", false);
+        checkBoxHCW.Checked = xmlreader.GetValueAsBool("remote", "HCW", false);
+        checkBoxAllowExternal.Checked = xmlreader.GetValueAsBool("remote", "HCWAllowExternal", false);
+        checkBoxKeepControl.Checked = xmlreader.GetValueAsBool("remote", "HCWKeepControl", false);
+        checkBoxVerboseLog.Checked = xmlreader.GetValueAsBool("remote", "HCWVerboseLog", false);
+        hScrollBarButtonRelease.Value = xmlreader.GetValueAsInt("remote", "HCWButtonRelease", 500);
+        hScrollBarRepeatFilter.Value = xmlreader.GetValueAsInt("remote", "HCWRepeatFilter", 2);
+        hScrollBarRepeatSpeed.Value = xmlreader.GetValueAsInt("remote", "HCWRepeatSpeed", 1);
         checkBoxFilterDoubleKlicks.Checked = xmlreader.GetValueAsBool("remote", "HCWFilterDoubleKlicks", false);
       }
 
@@ -181,43 +185,54 @@ namespace MediaPortal.Configuration.Sections
         pictureBoxEU.Visible = true;
         pictureBoxUSA.Visible = false;
       }
-      
+
       if (checkBoxAllowExternal.Checked)
         checkBoxKeepControl.Enabled = true;
       else
         checkBoxKeepControl.Enabled = false;
-      
-      if (checkBoxHCW.Checked)
-        groupBoxSettings.Enabled = true;
-      else
+
+      if (!checkBoxHCW.Checked)
+      {
         groupBoxSettings.Enabled = false;
+        groupBoxRepeatDelay.Enabled = false;
+      }
 
       string exePath = GetHCWPath();
       string dllPath = GetDllPath();
-      
+
       if (File.Exists(exePath + "Ir.exe"))
       {
         FileVersionInfo exeVersionInfo = FileVersionInfo.GetVersionInfo(exePath + "Ir.exe");
         if (exeVersionInfo.FileVersion.CompareTo("2.45.22350") < 0)
-          infoDriverStatus.Text = errOutOfDate;
+          infoDriverStatus.Text = errHCWOutOfDate;
       }
       else
-        infoDriverStatus.Text = errMissingExe;
+      {
+        infoDriverStatus.Text = errHCWMissingExe;
+        checkBoxAllowExternal.Enabled = false;
+        checkBoxKeepControl.Enabled = false;
+      }
 
       if (File.Exists(dllPath + "irremote.DLL"))
       {
         FileVersionInfo dllVersionInfo = FileVersionInfo.GetVersionInfo(dllPath + "irremote.DLL");
         if (dllVersionInfo.FileVersion.CompareTo("2.45.22350") < 0)
-          infoDriverStatus.Text = errOutOfDate;
+          infoDriverStatus.Text = errHCWOutOfDate;
       }
       else
       {
-        infoDriverStatus.Text = errNotInstalled;
+        infoDriverStatus.Text = errHCWNotInstalled;
         checkBoxHCW.Enabled = false;
         groupBoxSettings.Enabled = false;
+        groupBoxRepeatDelay.Enabled = false;
       }
 
       fireDTVRemote.LoadSettings();
+
+      hcwToolTip.SetToolTip(this.hScrollBarButtonRelease, string.Format("{0} msec.", hScrollBarButtonRelease.Value));
+      hcwToolTip.SetToolTip(this.hScrollBarRepeatFilter, hScrollBarRepeatFilter.Value.ToString());
+      Type repeatSpeed = typeof(hcwRepeatSpeed);
+      hcwToolTip.SetToolTip(this.hScrollBarRepeatSpeed, Enum.GetName(repeatSpeed, 2 - hScrollBarRepeatSpeed.Value));
     }
 
     public override void SaveSettings()
@@ -230,9 +245,9 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("remote", "HCWAllowExternal", checkBoxAllowExternal.Checked);
         xmlwriter.SetValueAsBool("remote", "HCWKeepControl", checkBoxKeepControl.Checked);
         xmlwriter.SetValueAsBool("remote", "HCWVerboseLog", checkBoxVerboseLog.Checked);
-        xmlwriter.SetValue      ("remote", "HCWButtonRelease", hScrollBarButtonRelease.Value);
-        xmlwriter.SetValue      ("remote", "HCWRepeatFilter", hScrollBarRepeatFilter.Value);
-        xmlwriter.SetValue      ("remote", "HCWRepeatSpeed", hScrollBarRepeatSpeed.Value);
+        xmlwriter.SetValue("remote", "HCWButtonRelease", hScrollBarButtonRelease.Value);
+        xmlwriter.SetValue("remote", "HCWRepeatFilter", hScrollBarRepeatFilter.Value);
+        xmlwriter.SetValue("remote", "HCWRepeatSpeed", hScrollBarRepeatSpeed.Value);
         xmlwriter.SetValueAsBool("remote", "HCWFilterDoubleKlicks", checkBoxFilterDoubleKlicks.Checked);
       }
 
@@ -242,11 +257,11 @@ namespace MediaPortal.Configuration.Sections
     /// <summary>
     /// Clean up any resources being used.
     /// </summary>
-    protected override void Dispose( bool disposing )
+    protected override void Dispose(bool disposing)
     {
       if (disposing)
       {
-        if (components != null) 
+        if (components != null)
         {
           components.Dispose();
         }
@@ -261,6 +276,7 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     private void InitializeComponent()
     {
+      this.components = new System.ComponentModel.Container();
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Remote));
       this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
       this.pictureBoxUSA = new System.Windows.Forms.PictureBox();
@@ -272,7 +288,7 @@ namespace MediaPortal.Configuration.Sections
       this.radioButtonUSA = new System.Windows.Forms.RadioButton();
       this.pictureBoxEU = new System.Windows.Forms.PictureBox();
       this.tabPageHCW = new System.Windows.Forms.TabPage();
-      this.groupBox3 = new System.Windows.Forms.GroupBox();
+      this.groupBoxRepeatDelay = new System.Windows.Forms.GroupBox();
       this.hScrollBarRepeatSpeed = new System.Windows.Forms.HScrollBar();
       this.label4 = new System.Windows.Forms.Label();
       this.label5 = new System.Windows.Forms.Label();
@@ -298,13 +314,14 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxVerboseLog = new System.Windows.Forms.CheckBox();
       this.tabPageFireDTV = new System.Windows.Forms.TabPage();
       this.fireDTVRemote = new MediaPortal.Configuration.Sections.FireDTVRemote();
+      this.hcwToolTip = new System.Windows.Forms.ToolTip(this.components);
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxUSA)).BeginInit();
       this.tabControlRemotes.SuspendLayout();
       this.tabPageMCE.SuspendLayout();
       this.groupBox1.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxEU)).BeginInit();
       this.tabPageHCW.SuspendLayout();
-      this.groupBox3.SuspendLayout();
+      this.groupBoxRepeatDelay.SuspendLayout();
       this.groupBox2.SuspendLayout();
       this.groupBoxInformation.SuspendLayout();
       this.groupBoxSettings.SuspendLayout();
@@ -407,7 +424,7 @@ namespace MediaPortal.Configuration.Sections
       // tabPageHCW
       // 
       this.tabPageHCW.BackColor = System.Drawing.Color.Transparent;
-      this.tabPageHCW.Controls.Add(this.groupBox3);
+      this.tabPageHCW.Controls.Add(this.groupBoxRepeatDelay);
       this.tabPageHCW.Controls.Add(this.groupBox2);
       this.tabPageHCW.Controls.Add(this.groupBoxInformation);
       this.tabPageHCW.Controls.Add(this.groupBoxSettings);
@@ -418,28 +435,28 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageHCW.Text = "Hauppauge Remote";
       this.tabPageHCW.UseVisualStyleBackColor = true;
       // 
-      // groupBox3
+      // groupBoxRepeatDelay
       // 
-      this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+      this.groupBoxRepeatDelay.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBox3.Controls.Add(this.hScrollBarRepeatSpeed);
-      this.groupBox3.Controls.Add(this.label4);
-      this.groupBox3.Controls.Add(this.label5);
-      this.groupBox3.Controls.Add(this.label6);
-      this.groupBox3.Controls.Add(this.hScrollBarRepeatFilter);
-      this.groupBox3.Controls.Add(this.label1);
-      this.groupBox3.Controls.Add(this.label2);
-      this.groupBox3.Controls.Add(this.label3);
-      this.groupBox3.Controls.Add(this.hScrollBarButtonRelease);
-      this.groupBox3.Controls.Add(this.label2sec);
-      this.groupBox3.Controls.Add(this.labelDelay);
-      this.groupBox3.Controls.Add(this.label0sec);
-      this.groupBox3.Location = new System.Drawing.Point(12, 160);
-      this.groupBox3.Name = "groupBox3";
-      this.groupBox3.Size = new System.Drawing.Size(440, 112);
-      this.groupBox3.TabIndex = 2;
-      this.groupBox3.TabStop = false;
-      this.groupBox3.Text = "Repeat Delay";
+      this.groupBoxRepeatDelay.Controls.Add(this.hScrollBarRepeatSpeed);
+      this.groupBoxRepeatDelay.Controls.Add(this.label4);
+      this.groupBoxRepeatDelay.Controls.Add(this.label5);
+      this.groupBoxRepeatDelay.Controls.Add(this.label6);
+      this.groupBoxRepeatDelay.Controls.Add(this.hScrollBarRepeatFilter);
+      this.groupBoxRepeatDelay.Controls.Add(this.label1);
+      this.groupBoxRepeatDelay.Controls.Add(this.label2);
+      this.groupBoxRepeatDelay.Controls.Add(this.label3);
+      this.groupBoxRepeatDelay.Controls.Add(this.hScrollBarButtonRelease);
+      this.groupBoxRepeatDelay.Controls.Add(this.label2sec);
+      this.groupBoxRepeatDelay.Controls.Add(this.labelDelay);
+      this.groupBoxRepeatDelay.Controls.Add(this.label0sec);
+      this.groupBoxRepeatDelay.Location = new System.Drawing.Point(12, 160);
+      this.groupBoxRepeatDelay.Name = "groupBoxRepeatDelay";
+      this.groupBoxRepeatDelay.Size = new System.Drawing.Size(440, 112);
+      this.groupBoxRepeatDelay.TabIndex = 2;
+      this.groupBoxRepeatDelay.TabStop = false;
+      this.groupBoxRepeatDelay.Text = "Repeat Delay";
       // 
       // hScrollBarRepeatSpeed
       // 
@@ -453,6 +470,7 @@ namespace MediaPortal.Configuration.Sections
       this.hScrollBarRepeatSpeed.Size = new System.Drawing.Size(213, 17);
       this.hScrollBarRepeatSpeed.TabIndex = 10;
       this.hScrollBarRepeatSpeed.Value = 1;
+      this.hScrollBarRepeatSpeed.ValueChanged += new System.EventHandler(this.hScrollBarRepeatSpeed_ValueChanged);
       // 
       // label4
       // 
@@ -498,6 +516,7 @@ namespace MediaPortal.Configuration.Sections
       this.hScrollBarRepeatFilter.Size = new System.Drawing.Size(213, 17);
       this.hScrollBarRepeatFilter.TabIndex = 6;
       this.hScrollBarRepeatFilter.Value = 2;
+      this.hScrollBarRepeatFilter.ValueChanged += new System.EventHandler(this.hScrollBarRepeatFilter_ValueChanged);
       // 
       // label1
       // 
@@ -507,9 +526,9 @@ namespace MediaPortal.Configuration.Sections
       this.label1.Location = new System.Drawing.Point(368, 54);
       this.label1.Name = "label1";
       this.label1.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-      this.label1.Size = new System.Drawing.Size(19, 13);
+      this.label1.Size = new System.Drawing.Size(29, 13);
       this.label1.TabIndex = 7;
-      this.label1.Text = "10";
+      this.label1.Text = "max.";
       // 
       // label2
       // 
@@ -524,11 +543,11 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.label3.AutoSize = true;
       this.label3.BackColor = System.Drawing.Color.Transparent;
-      this.label3.Location = new System.Drawing.Point(137, 54);
+      this.label3.Location = new System.Drawing.Point(128, 54);
       this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(13, 13);
+      this.label3.Size = new System.Drawing.Size(26, 13);
       this.label3.TabIndex = 5;
-      this.label3.Text = "2";
+      this.label3.Text = "min.";
       this.label3.TextAlign = System.Drawing.ContentAlignment.TopRight;
       // 
       // hScrollBarButtonRelease
@@ -542,6 +561,7 @@ namespace MediaPortal.Configuration.Sections
       this.hScrollBarButtonRelease.Size = new System.Drawing.Size(213, 17);
       this.hScrollBarButtonRelease.TabIndex = 2;
       this.hScrollBarButtonRelease.Value = 500;
+      this.hScrollBarButtonRelease.ValueChanged += new System.EventHandler(this.hScrollBarButtonRelease_ValueChanged);
       // 
       // label2sec
       // 
@@ -618,7 +638,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxInformation.Size = new System.Drawing.Size(440, 80);
       this.groupBoxInformation.TabIndex = 3;
       this.groupBoxInformation.TabStop = false;
-      this.groupBoxInformation.Text = "Information";
+      this.groupBoxInformation.Text = "Status";
       // 
       // buttonDefault
       // 
@@ -628,7 +648,7 @@ namespace MediaPortal.Configuration.Sections
       this.buttonDefault.Name = "buttonDefault";
       this.buttonDefault.Size = new System.Drawing.Size(72, 22);
       this.buttonDefault.TabIndex = 1;
-      this.buttonDefault.Text = "&Reset";
+      this.buttonDefault.Text = "&Defaults";
       this.buttonDefault.Click += new System.EventHandler(this.buttonDefault_Click);
       // 
       // infoDriverStatus
@@ -637,12 +657,11 @@ namespace MediaPortal.Configuration.Sections
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.infoDriverStatus.ForeColor = System.Drawing.SystemColors.ControlText;
-      this.infoDriverStatus.Location = new System.Drawing.Point(12, 16);
+      this.infoDriverStatus.Location = new System.Drawing.Point(12, 24);
       this.infoDriverStatus.Name = "infoDriverStatus";
-      this.infoDriverStatus.Size = new System.Drawing.Size(414, 56);
+      this.infoDriverStatus.Size = new System.Drawing.Size(414, 48);
       this.infoDriverStatus.TabIndex = 0;
       this.infoDriverStatus.Text = "No problems found.";
-      this.infoDriverStatus.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
       // 
       // groupBoxSettings
       // 
@@ -714,6 +733,10 @@ namespace MediaPortal.Configuration.Sections
       this.fireDTVRemote.Size = new System.Drawing.Size(520, 368);
       this.fireDTVRemote.TabIndex = 0;
       // 
+      // toolTip
+      // 
+      this.hcwToolTip.ShowAlways = true;
+      // 
       // Remote
       // 
       this.Controls.Add(this.tabControlRemotes);
@@ -726,8 +749,8 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxEU)).EndInit();
       this.tabPageHCW.ResumeLayout(false);
-      this.groupBox3.ResumeLayout(false);
-      this.groupBox3.PerformLayout();
+      this.groupBoxRepeatDelay.ResumeLayout(false);
+      this.groupBoxRepeatDelay.PerformLayout();
       this.groupBox2.ResumeLayout(false);
       this.groupBox2.PerformLayout();
       this.groupBoxInformation.ResumeLayout(false);
@@ -783,6 +806,7 @@ namespace MediaPortal.Configuration.Sections
     private void checkBoxHCW_CheckedChanged(object sender, System.EventArgs e)
     {
       groupBoxSettings.Enabled = checkBoxHCW.Checked;
+      groupBoxRepeatDelay.Enabled = checkBoxHCW.Checked;
     }
 
     //
@@ -842,5 +866,22 @@ namespace MediaPortal.Configuration.Sections
       }
       return dllPath;
     }
+
+    private void hScrollBarButtonRelease_ValueChanged(object sender, EventArgs e)
+    {
+      hcwToolTip.SetToolTip(this.hScrollBarButtonRelease, string.Format("{0} msec.", hScrollBarButtonRelease.Value));
+    }
+
+    private void hScrollBarRepeatFilter_ValueChanged(object sender, EventArgs e)
+    {
+      hcwToolTip.SetToolTip(this.hScrollBarRepeatFilter, hScrollBarRepeatFilter.Value.ToString());
+    }
+
+    private void hScrollBarRepeatSpeed_ValueChanged(object sender, EventArgs e)
+    {
+      Type repeatSpeed = typeof(hcwRepeatSpeed);
+      hcwToolTip.SetToolTip(this.hScrollBarRepeatSpeed, Enum.GetName(repeatSpeed, 2 - hScrollBarRepeatSpeed.Value));
+    }
+
   }
 }
