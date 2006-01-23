@@ -81,7 +81,7 @@ namespace MediaPortal.Playlists
 
     private static bool ExtractM3uInfo(string trimmedLine, ref string songName, ref int lDuration)
     {
-      bool successfull;
+      //bool successfull;
       int iColon = (int)trimmedLine.IndexOf(":");
       int iComma = (int)trimmedLine.IndexOf(",");
       if (iColon >= 0 && iComma >= 0 && iComma > iColon)

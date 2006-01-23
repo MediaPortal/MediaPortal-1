@@ -417,7 +417,7 @@ namespace MediaPortal.IR
                     isUsbUirtLoaded = UUIRTGetUUIRTConfig(UsbUirtHandle, ref puConfig);
                 }
 
-				catch(Exception ex)
+				catch(Exception )
 				{
                 }
 

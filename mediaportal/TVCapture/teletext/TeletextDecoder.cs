@@ -66,7 +66,7 @@ namespace MediaPortal.TV.Teletext
     public void Decode(byte[] rowData, int rows)
     {
       int line = 0;
-      int b = 0, byte1 = 0, byte2 = 0, byte3 = 0, byte4 = 0;
+      int b = 0, byte1 = 0, byte2 = 0;
       int packetNumber;
       byte magazine;
       for (line = 0; line < rows; line++)

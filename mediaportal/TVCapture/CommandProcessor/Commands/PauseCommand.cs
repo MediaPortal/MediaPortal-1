@@ -45,7 +45,7 @@ namespace MediaPortal.TV.Recording
 {
   public class PauseCommand:CardCommand
   {
-    public virtual void Execute(CommandProcessor handler)
+    public override void Execute(CommandProcessor handler)
     {
     }
 

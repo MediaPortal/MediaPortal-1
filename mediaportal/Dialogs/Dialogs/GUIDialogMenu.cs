@@ -51,7 +51,7 @@ namespace MediaPortal.Dialogs
     string selectedItemLabel = String.Empty;
     ArrayList listItems = new ArrayList();
     bool m_bPrevOverlay = false;
-    bool needRefresh = false;
+    //bool needRefresh = false;
     DateTime vmr7UpdateTimer = DateTime.Now;
 
     public GUIDialogMenu()
@@ -75,7 +75,7 @@ namespace MediaPortal.Dialogs
 
     public override void OnAction(Action action)
     {
-      needRefresh = true;
+      //      needRefresh = true;
       int iSelection;
       if (action.wID == Action.ActionType.ACTION_CLOSE_DIALOG || action.wID == Action.ActionType.ACTION_PREVIOUS_MENU || action.wID == Action.ActionType.ACTION_CONTEXT_MENU)
       {
@@ -185,7 +185,7 @@ namespace MediaPortal.Dialogs
 
     public override bool OnMessage(GUIMessage message)
     {
-      needRefresh = true;
+      //      needRefresh = true;
       switch (message.Message)
       {
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:

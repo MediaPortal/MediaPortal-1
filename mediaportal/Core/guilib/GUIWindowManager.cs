@@ -46,7 +46,7 @@ namespace MediaPortal.GUI.Library
 		static public event  OnActionHandler	  OnNewAction;
 		static public event  OnCallBackHandler  Callbacks;
 		static public event  PostRenderActionHandler  OnPostRenderAction;
-		static public event  PostRendererHandler  OnPostRender;
+		//static public event  PostRendererHandler  OnPostRender;
     static public event WindowActivationHandler OnActivateWindow;
     static public event WindowActivationHandler OnDeActivateWindow;
 

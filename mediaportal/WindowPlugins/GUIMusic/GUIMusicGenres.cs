@@ -63,7 +63,7 @@ namespace MediaPortal.GUI.Music
 
     [SkinControlAttribute(9)]
     protected GUIButtonControl btnSearch = null;
-    PlayListPlayer playlistPlayer;
+    //PlayListPlayer playlistPlayer;
     #endregion
 
     public GUIMusicGenres()

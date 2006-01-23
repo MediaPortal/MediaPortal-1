@@ -810,9 +810,9 @@ namespace MediaPortal.Player
 		/// <summary> create the used COM components and get the interfaces. </summary>
 		protected virtual bool GetInterfaces(string filename)
 		{
-      
-			Type comtype = null;
-			object comobj = null;
+
+      //Type comtype = null;
+      //object comobj = null;
 			try 
 			{
         _graphBuilder = (IGraphBuilder)new FilterGraph();
@@ -934,11 +934,6 @@ namespace MediaPortal.Player
 			{
 				Log.WriteFile(Log.LogType.Log,true,"TStreamBufferPlayer:exception while creating DShow graph {0} {1}",ex.Message, ex.StackTrace);
 				return false;
-			}
-			finally
-			{
-				if( comobj != null )
-					Marshal.ReleaseComObject( comobj ); comobj = null;
 			}
 		}
 

@@ -66,7 +66,7 @@ namespace MediaPortal.TV.Recording
     static DateTime _progressBarTimer = DateTime.Now;
     // vmr9 osd class 
     static VMR9OSD _vmr9Osd = new VMR9OSD();
-    static bool _useVmr9Zap = false;
+    //static bool _useVmr9Zap = false;
     // last duration of timeshifting buffer
     static double _duration = 0;
     // last position in timeshifting buffer

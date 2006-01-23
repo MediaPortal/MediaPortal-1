@@ -53,7 +53,7 @@ namespace MediaPortal.GUI.Library
 		public void Begin()
 		{
 			_startTick = AnimationTimer.TickCount;
-			_isAnimating = true;
+			_animating = true;
 		}
 
 		public override void AllocResources()
@@ -141,7 +141,7 @@ namespace MediaPortal.GUI.Library
 			if(_isFirstRender)
 			{
 				_startTick = AnimationTimer.TickCount;
-				_isAnimating = true;
+				_animating = true;
 				_isFirstRender = false;
 			}
 
@@ -149,31 +149,31 @@ namespace MediaPortal.GUI.Library
 			double progress = Math.Min(1, TweenHelper.Interpolate(_easing, 0, 1, _startTick, _duration));
 
 			// determine whether we are repeating
-			if(_isAnimating && _duration < elapsedTicks)
+			if(_animating && _duration < elapsedTicks)
 			{
 				// keep track of iterations regardless of the repeat behaviour
 				_iterationCount++;
 
 				if(_repeatBehavior.IsIterationCount && _repeatBehavior.IterationCount <= _iterationCount)
 				{
-					_isAnimating = false;
+					_animating = false;
 
 					// XAML: fire event
 				}
 				else if(_repeatBehavior.IsRepeatDuration && _repeatBehavior.RepeatDuration <= elapsedTicks)
 				{
-					_isAnimating = false;
+					_animating = false;
 
 					// XAML: fire event
 				}
 
-				if(_isAnimating)
+				if(_animating)
 					_startTick = AnimationTimer.TickCount;
 			}
 
 			int index = _fillBehavior == FillBehavior.Stop ? 0 : _images.Length - 1;
 
-			if(_isAnimating && progress <= 1)
+			if(_animating && progress <= 1)
 				index = (int)(progress * _images.Length);
 
 			if(index >= _images.Length)
@@ -256,7 +256,7 @@ namespace MediaPortal.GUI.Library
 
 		ArrayList						_filenames;
 		GUIImage[]						_images;
-		bool							_isAnimating = false;
+		bool							_animating = false;
 		bool							_isFirstRender = true;
 		int								_iterationCount = 0;
 		static int						_imageId = 200000;

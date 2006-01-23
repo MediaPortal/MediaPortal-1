@@ -53,7 +53,7 @@ namespace MediaPortal.Player
     protected override bool GetInterfaces(string path)
     {
       int		            hr;
-      Type	            comtype = null;
+      //Type	            comtype = null;
       object	          comobj = null;
       _freeNavigator=true;
       _dvdInfo=null;

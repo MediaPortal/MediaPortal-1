@@ -40,7 +40,7 @@ namespace MediaPortal.Music.Amazon
 
         private int _MaxSearchResultItems = 8;  // The max number of matching results we want to grab (-1 = unlimited)
         private bool _AbortGrab = false;
-        private bool _GrabberRunning = false;
+        //private bool _GrabberRunning = false;
 
         private string _ArtistName = string.Empty;
         private string _AlbumName = string.Empty;
@@ -111,7 +111,7 @@ namespace MediaPortal.Music.Amazon
 
         public void GetAlbumInfoAsync()
         {
-            _GrabberRunning = true;
+          //_GrabberRunning = true;
             _AbortGrab = false;
 
             System.Threading.ThreadStart threadStart = new ThreadStart(InternalGetAlbumInfo);
@@ -140,7 +140,7 @@ namespace MediaPortal.Music.Amazon
 
             try
             {
-                bool validateFailed = false;
+              //bool validateFailed = false;
 
                 if (_ArtistName.Length == 0 && _AlbumName.Length == 0)
                     return false; ;
@@ -175,7 +175,7 @@ namespace MediaPortal.Music.Amazon
                     Log.Write("Cover art grabber:AWS Response Returned {0} total pages with {1} total results.", totPages, totResults);
                 }
 
-                int grabPass = 0;
+                //int grabPass = 0;
                 string recordsFound = string.Format("Cover art grabber:{0} matching records found.  Retrieving records...", totResults);
 
                 if (_MaxSearchResultItems > 0)
@@ -358,7 +358,7 @@ namespace MediaPortal.Music.Amazon
                 result = false;
             }
 
-            _GrabberRunning = false;
+            //_GrabberRunning = false;
 
             if (FindCoverArtDone != null)
                 FindCoverArtDone(this, EventArgs.Empty);

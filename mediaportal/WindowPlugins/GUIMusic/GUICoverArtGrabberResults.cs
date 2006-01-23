@@ -318,13 +318,13 @@ namespace MediaPortal.GUI.Music
           base.OnMessage(message);
           GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(4515));
           return true;
-          break;
+        //break;
 
         default:
           return base.OnMessage(message);
       }
 
-      return base.OnMessage(message);
+      //return base.OnMessage(message);
     }
 
     private void SetButtonVisibility()

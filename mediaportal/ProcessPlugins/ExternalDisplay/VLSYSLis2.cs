@@ -35,7 +35,7 @@ namespace ProcessPlugins.ExternalDisplay
     private int lines = 2;
     private int cols = 40;
     private bool isDisabled = false;
-    private string errorMessage = "";
+    //private string errorMessage = "";
 
     #region IDisplay Members
 

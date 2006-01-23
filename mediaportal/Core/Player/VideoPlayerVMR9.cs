@@ -61,8 +61,8 @@ namespace MediaPortal.Player
       GUIMessage msg =new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED,0,0,0,1,0,null);
       GUIWindowManager.SendMessage(msg);
 
-			Type comtype = null;
-			object comobj = null;
+      //Type comtype = null;
+      //object comobj = null;
 
       DsRect rect = new DsRect();
 			rect.top = 0;

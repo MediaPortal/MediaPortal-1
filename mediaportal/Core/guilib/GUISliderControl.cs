@@ -52,7 +52,7 @@ namespace MediaPortal.GUI.Library
     protected int _intValue = 0;
     protected float _floatValue = 0.0f;
     [XMLSkinElement("subtype")]
-    protected GUISpinControl.SpinType _subType = GUISpinControl.SpinType.SPIN_CONTROL_TYPE_TEXT;
+    protected GUISpinControl.SpinType _spinType = GUISpinControl.SpinType.SPIN_CONTROL_TYPE_TEXT;
     protected bool _reverse = false;
     protected float _floatInterval = 0.1f;
     protected ArrayList _listLabels = new ArrayList();
@@ -88,7 +88,7 @@ namespace MediaPortal.GUI.Library
       _backgroundTextureName = strBackGroundTexture;
       _sliderTextureName = strMidTexture;
       _sliderFocusTextureName = strMidTextureFocus;
-      _subType = iType;
+      _spinType = iType;
       FinalizeConstruction();
     }
     public override void FinalizeConstruction()
@@ -119,7 +119,7 @@ namespace MediaPortal.GUI.Library
       float fPos = 0.0f;
       float fPercent = 0.0f;
       GUIFont _font13 = GUIFontManager.GetFont("font13");
-      switch (_subType)
+      switch (_spinType)
       {
         // Float based slider
         case GUISpinControl.SpinType.SPIN_CONTROL_TYPE_FLOAT:
@@ -206,7 +206,7 @@ namespace MediaPortal.GUI.Library
           if (x > _imageBackGround.RenderWidth) x = _imageBackGround.RenderWidth;
           x /= (float)_imageBackGround.RenderWidth;
           float total, pos;
-          switch (_subType)
+          switch (_spinType)
           {
             case GUISpinControl.SpinType.SPIN_CONTROL_TYPE_FLOAT:
               total = _floatEndValue - _floatStartValue;
@@ -234,7 +234,7 @@ namespace MediaPortal.GUI.Library
 
         // decrease the slider value
         case Action.ActionType.ACTION_MOVE_LEFT:
-          switch (_subType)
+          switch (_spinType)
           {
             case GUISpinControl.SpinType.SPIN_CONTROL_TYPE_FLOAT:
               if (_floatValue > _floatStartValue) _floatValue -= _floatInterval;
@@ -255,7 +255,7 @@ namespace MediaPortal.GUI.Library
 
         // increase the slider value
         case Action.ActionType.ACTION_MOVE_RIGHT:
-          switch (_subType)
+          switch (_spinType)
           {
             case GUISpinControl.SpinType.SPIN_CONTROL_TYPE_FLOAT:
               if (_floatValue < _floatEndValue) _floatValue += _floatInterval;
@@ -357,8 +357,8 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public GUISpinControl.SpinType SpinType
     {
-      get { return _subType; }
-      set { _subType = value; }
+      get { return _spinType; }
+      set { _spinType = value; }
     }
 
     /// <summary>

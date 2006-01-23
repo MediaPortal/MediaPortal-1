@@ -46,7 +46,7 @@ namespace MediaPortal.GUI.Video
 		int								m_nTempPlayListWindow = 0;
 		string						m_strTempPlayListDirectory = String.Empty;
 		VirtualDirectory	m_directory = new VirtualDirectory();
-    PlayListPlayer playlistPlayer;
+    //PlayListPlayer playlistPlayer;
 		#endregion
 
 		[SkinControlAttribute(20)]			protected GUIButtonControl btnShuffle=null;

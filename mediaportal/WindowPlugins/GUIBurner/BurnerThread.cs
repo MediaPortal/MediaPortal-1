@@ -276,8 +276,8 @@ namespace MediaPortal.GUI.GUIBurner
 
 		private bool Transcode(string file)
 		{
-			Type comtype = null;
-			object comobj = null;
+			//Type comtype = null;
+      //object comobj = null;
 			try 
 			{
         graphBuilder = (IGraphBuilder)new FilterGraph();

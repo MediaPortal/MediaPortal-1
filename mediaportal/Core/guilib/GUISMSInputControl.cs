@@ -68,7 +68,7 @@ namespace MediaPortal.GUI.Library
     protected long _textBoxColor = 0xFFFFFFFF;
     [XMLSkinElement("textboxBgColor")]
     protected long _textBoxBackgroundColor = 0xFFFFFFFF;
-    protected string _data = "";
+    protected string _lineData = "";
     protected int _position = 0;
     DateTime _timerCaret = DateTime.Now;
     DateTime _timerKey = DateTime.Now;
@@ -111,7 +111,7 @@ namespace MediaPortal.GUI.Library
       base.AllocResources();
       _timerCaret = DateTime.Now;
       _timerKey = DateTime.Now;
-      _data = "";
+      _lineData = "";
       _position = 0;
       if (_fontName != "" && _fontName != "-")
         _font = GUIFontManager.GetFont(_fontName);
@@ -164,7 +164,7 @@ namespace MediaPortal.GUI.Library
           }
         case Action.ActionType.ACTION_MOVE_RIGHT:
           {
-            if (_position < _data.Length)
+            if (_position < _lineData.Length)
             {
               _position++;
               _needRefresh = true;
@@ -186,15 +186,15 @@ namespace MediaPortal.GUI.Library
             {
               if (_currentKey != (char)0)
               {
-                _data = _data.Insert(_position, _currentKey.ToString());
+                _lineData = _lineData.Insert(_position, _currentKey.ToString());
               }
               _previousKey = (char)0;
               _currentKey = (char)0;
               _timerKey = DateTime.Now;
               _position = 0;
               GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_NEW_LINE_ENTERED, WindowId, GetID, ParentID, 0, 0, null);
-              msg.Label = _data;
-              _data = "";
+              msg.Label = _lineData;
+              _lineData = "";
               GUIGraphicsContext.SendMessage(msg);
               return;
             }
@@ -217,10 +217,10 @@ namespace MediaPortal.GUI.Library
       {
         if (_currentKey != (char)0)
         {
-          if (_position == _data.Length)
-            _data += _currentKey;
+          if (_position == _lineData.Length)
+            _lineData += _currentKey;
           else
-            _data = _data.Insert(_position, _currentKey.ToString());
+            _lineData = _lineData.Insert(_position, _currentKey.ToString());
           _position++;
           _needRefresh = true;
         }
@@ -254,10 +254,10 @@ namespace MediaPortal.GUI.Library
         // Check different key pressed
         if (Key != _previousKey && _currentKey != (char)0)
         {
-          if (_position == _data.Length)
-            _data += _currentKey;
+          if (_position == _lineData.Length)
+            _lineData += _currentKey;
           else
-            _data = _data.Insert(_position, _currentKey.ToString());
+            _lineData = _lineData.Insert(_position, _currentKey.ToString());
 
           _previousKey = (char)0;
           _currentKey = (char)0;
@@ -275,7 +275,7 @@ namespace MediaPortal.GUI.Library
           _timerKey = DateTime.Now;
           if (_position > 0)
           {
-            _data = _data.Remove(_position - 1, 1);
+            _lineData = _lineData.Remove(_position - 1, 1);
             _position--;
           }
           _timerKey = DateTime.Now;
@@ -373,10 +373,10 @@ namespace MediaPortal.GUI.Library
         if (Key < '0' || Key > '9')
         {
           _usingKeyboard = true;
-          if (_position == _data.Length)
-            _data += _currentKey;
+          if (_position == _lineData.Length)
+            _lineData += _currentKey;
           else
-            _data = _data.Insert(_position, _currentKey.ToString());
+            _lineData = _lineData.Insert(_position, _currentKey.ToString());
 
           _previousKey = (char)0;
           _currentKey = (char)0;
@@ -390,16 +390,16 @@ namespace MediaPortal.GUI.Library
         {
           if (_position > 0)
           {
-            _data = _data.Remove(_position - 1, 1);
+            _lineData = _lineData.Remove(_position - 1, 1);
             _position--;
           }
         }
         else
         {
-          if (_position >= _data.Length)
-            _data += Key;
+          if (_position >= _lineData.Length)
+            _lineData += Key;
           else
-            _data = _data.Insert(_position, Key.ToString());
+            _lineData = _lineData.Insert(_position, Key.ToString());
           _position++;
         }
 
@@ -457,7 +457,7 @@ namespace MediaPortal.GUI.Library
 
     void DrawText()
     {
-      string line = _data;
+      string line = _lineData;
 
       if (_currentKey != (char)0)
       {
@@ -487,7 +487,7 @@ namespace MediaPortal.GUI.Library
             TimeSpan ts=DateTime.Now-_timerCaret;
             if(  (ts.TotalSeconds % fCARET_BLINK_RATE ) < fCARET_ON_RATIO )
             {
-              string strLine=_data.Substring( 0, _position );
+              string strLine=_lineData.Substring( 0, _position );
 
               float fCaretWidth = 0.0f;
               float fCaretHeight=0.0f;

@@ -47,7 +47,7 @@ namespace MediaPortal.Dialogs
     bool m_DefaultYes = false;
     int iYesKey = -1;
     int iNoKey = -1;
-    bool needRefresh = false;
+    //bool needRefresh = false;
     DateTime vmr7UpdateTimer = DateTime.Now;
 
     public GUIDialogYesNo()
@@ -72,7 +72,7 @@ namespace MediaPortal.Dialogs
 
     public override void OnAction(Action action)
     {
-      needRefresh = true;
+      //needRefresh = true;
       if (action.wID == Action.ActionType.ACTION_CLOSE_DIALOG || action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
       {
         Close();
@@ -156,7 +156,7 @@ namespace MediaPortal.Dialogs
 
     public override bool OnMessage(GUIMessage message)
     {
-      needRefresh = true;
+      //needRefresh = true;
       switch (message.Message)
       {
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:

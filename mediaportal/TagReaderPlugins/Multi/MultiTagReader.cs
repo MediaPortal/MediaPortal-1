@@ -211,7 +211,7 @@ namespace MediaPortal.TagReader.MultiTagReader
                           TimeSpan intervalVal = TimeSpan.Parse(duration);
                           m_tag.Duration = (int)intervalVal.TotalSeconds;
                       }
-                      catch(Exception ex)
+                      catch(Exception )
                       {
                       }
                   }

@@ -62,8 +62,8 @@ namespace MediaPortal.Core.Transcoding
       string ext = System.IO.Path.GetExtension(info.file);
       if (ext.ToLower() != ".dvr-ms" && ext.ToLower() != ".sbe") return false;
 
-      Type comtype = null;
-      object comobj = null;
+      //Type comtype = null;
+      //object comobj = null;
       try
       {
         Log.Write("DVR2MPG: create graph");

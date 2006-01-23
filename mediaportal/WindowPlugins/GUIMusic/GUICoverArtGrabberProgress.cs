@@ -106,7 +106,7 @@ namespace MediaPortal.GUI.Music
 
         #region Base Dialog Variables
 
-        private bool m_bRunning = false;
+        //private bool m_bRunning = false;
         private bool m_bRefresh = false;
         private int m_dwParentWindowID = 0;
         private GUIWindow m_pParentWindow = null;
@@ -122,7 +122,7 @@ namespace MediaPortal.GUI.Music
         private int _AlbumCount = 0;
         private int _CurrentCoverArtIndex = 0;
         private int _OverallProgressPercent = 0;
-        private int _CurrentCoverArtProgress = 0;
+        //private int _CurrentCoverArtProgress = 0;
 
         private string _TopLevelFolderName = string.Empty;
         private string SearchFolderProgressFormatString = string.Empty;
@@ -435,13 +435,13 @@ namespace MediaPortal.GUI.Music
                     base.OnMessage(message);
                     GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(4514));
                     return true;
-                    break;
+                  //break;
 
                 default:
                     return base.OnMessage(message);
             }
 
-            return base.OnMessage(message);
+            //return base.OnMessage(message);
         }
 
         private void CheckForAppShutdown()

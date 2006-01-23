@@ -75,8 +75,8 @@ namespace MediaPortal.Player
     {
 		  Speed=1;	
 			Log.Write("TStreamBufferPlayer9: GetInterfaces()");
-      Type comtype = null;
-      object comobj = null;
+      //Type comtype = null;
+      //object comobj = null;
       
       //switch back to directx fullscreen mode
 			
@@ -189,11 +189,6 @@ namespace MediaPortal.Player
       {
         Log.WriteFile(Log.LogType.Log,true,"TStreamBufferPlayer9:exception while creating DShow graph {0} {1}",ex.Message, ex.StackTrace);
         return false;
-      }
-      finally
-      {
-        if( comobj != null )
-          Marshal.ReleaseComObject( comobj ); comobj = null;
       }
     }
 

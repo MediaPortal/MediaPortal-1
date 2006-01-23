@@ -102,8 +102,8 @@ namespace MediaPortal.Core.Transcoding
 			catch(Exception)
 			{
 			}
-			Type comtype = null;
-			object comobj = null;
+      //Type comtype = null;
+      //object comobj = null;
 			try 
 			{
         graphBuilder = (IGraphBuilder)new FilterGraph();

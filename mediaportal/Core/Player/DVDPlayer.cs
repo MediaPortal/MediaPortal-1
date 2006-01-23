@@ -579,7 +579,7 @@ namespace MediaPortal.Player
     protected virtual bool GetInterfaces(string path)
     {
       int		            hr;
-      Type	            comtype = null;
+      //Type	            comtype = null;
       object	          comobj = null;
       _freeNavigator=true;
       _dvdInfo=null;

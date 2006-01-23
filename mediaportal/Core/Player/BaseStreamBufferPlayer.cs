@@ -1069,7 +1069,7 @@ namespace MediaPortal.Player
 		protected virtual bool GetInterfaces(string filename)
 		{
       
-			Type comtype = null;
+			//Type comtype = null;
 			object comobj = null;
 			try 
 			{

@@ -37,7 +37,7 @@ namespace MediaPortal.TV.Scanning
 		AutoTuneCallback callback = null;
 		private System.Windows.Forms.Timer  timer1;
 		TVCaptureDevice	captureCard;
-		float lastFrequency=-1f;
+		//float lastFrequency=-1f;
         bool stopped = true;
 		public AnalogTVTuning()
 		{
@@ -72,7 +72,7 @@ namespace MediaPortal.TV.Scanning
 
 		public void AutoTuneTV(TVCaptureDevice card, AutoTuneCallback statusCallback)
 		{
-			lastFrequency=-1f;
+			//lastFrequency=-1f;
 			captureCard=card;
             card.TVChannelMinMax(out minChannel, out maxChannel);
             if (minChannel == -1)

@@ -31,7 +31,7 @@ namespace MediaPortal.GUI.Library
 		public override void PreInit()
 		{
 			base.PreInit ();
-			GUIWindowManager.OnPostRender+=new MediaPortal.GUI.Library.GUIWindowManager.PostRendererHandler(OnPostRender);
+			//GUIWindowManager.OnPostRender+=new MediaPortal.GUI.Library.GUIWindowManager.PostRendererHandler(OnPostRender);
 			GUIWindowManager.OnPostRenderAction+=new MediaPortal.GUI.Library.GUIWindowManager.PostRenderActionHandler(OnPostRenderAction);
 		}
 

@@ -333,8 +333,8 @@ namespace MediaPortal.Player
     bool GetInterfaces()
     {
       int iStage = 1;
-      Type comtype = null;
-      object comobj = null;
+      //Type comtype = null;
+      //object comobj = null;
       try
       {
         graphBuilder = (IGraphBuilder)new FilterGraph();
@@ -366,11 +366,6 @@ namespace MediaPortal.Player
                           ex.Message,
                           ex.StackTrace);
         return false;
-      }
-      finally
-      {
-        if (comobj != null)
-          Marshal.ReleaseComObject(comobj); comobj = null;
       }
     }
 

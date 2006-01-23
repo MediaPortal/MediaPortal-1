@@ -45,7 +45,7 @@ namespace MediaPortal.TV.Recording
 {
   public class StopTimeShiftingCommand : CardCommand
   {
-    public virtual void Execute(CommandProcessor handler)
+    public override void Execute(CommandProcessor handler)
     {
       Log.WriteFile(Log.LogType.Recorder, "Command:Stop timeshifting");
       for (int i=0; i < handler.TVCards.Count;++i)

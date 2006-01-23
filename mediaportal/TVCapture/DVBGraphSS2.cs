@@ -1117,7 +1117,7 @@ namespace MediaPortal.TV.Recording
     /// 
     private bool SetVideoAudioPins()
     {
-      int hr = 0;
+      //int hr = 0;
       PinInfo pInfo = new PinInfo();
 
       // video pin
@@ -1128,8 +1128,8 @@ namespace MediaPortal.TV.Recording
       _pinVideo.QueryPinInfo(out pInfo);
       // audio pin
       _pinAudio = DsFindPin.ByDirection(_filterB2C2Adapter, PinDirection.Output, 1);
-      if (hr ==null)
-        return false;
+      //if (hr ==null)
+      //  return false;
 
       if (_pinVideo == null || _pinAudio == null)
       {
