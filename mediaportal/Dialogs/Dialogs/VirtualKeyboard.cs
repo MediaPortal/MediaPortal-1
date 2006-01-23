@@ -34,6 +34,7 @@ namespace MediaPortal.Dialogs
   /// </summary>
   public class VirtualKeyboard : GUIWindow, IRenderLayer
   {
+    #region constants
     const int GAP_WIDTH = 0;
     const int GAP2_WIDTH = 4;
     const int MODEKEY_WIDTH = 110;
@@ -113,6 +114,9 @@ namespace MediaPortal.Dialogs
       "Space",
       "Trigger buttons move cursor",
     };
+    #endregion
+
+    #region enums
     enum KeyboardTypes
     {
       TYPE_ALPHABET = 0,
@@ -380,13 +384,14 @@ namespace MediaPortal.Dialogs
 
       STR_MAX,
     };
+    #endregion
 
 
     class Key
     {
       public Xkey xKey;       // virtual key code
       public int dwWidth = KEY_WIDTH;    // width of the key
-      public string strName = "";    // name of key when vKey >= 0x10000
+      public string name = "";    // name of key when vKey >= 0x10000
       public Key(Xkey key)
       {
         xKey = key;
@@ -400,83 +405,82 @@ namespace MediaPortal.Dialogs
         switch (xKey)
         {
           case Xkey.XK_SPACE:
-            strName = "SPACE";
+            name = "SPACE";
             break;
           case Xkey.XK_BACKSPACE:
-            strName = "BKSP";
+            name = "BKSP";
             break;
           case Xkey.XK_SHIFT:
-            strName = "SHIFT";
+            name = "SHIFT";
             break;
           case Xkey.XK_CAPSLOCK:
-            strName = "CAPS";
+            name = "CAPS";
             break;
           case Xkey.XK_ALPHABET:
-            strName = "ALPHABET";
+            name = "ALPHABET";
             break;
           case Xkey.XK_SYMBOLS:
-            strName = "SYMB";
+            name = "SYMB";
             break;
           case Xkey.XK_ACCENTS:
-            strName = "ACCENTS";
+            name = "ACCENTS";
             break;
           case Xkey.XK_OK:
-            strName = "DONE";
+            name = "DONE";
             break;
         }
       }
     };
 
-    string m_strData = "";
-    bool m_bIsCapsLockOn = false;
-    bool m_bIsShiftOn = false;
-    State m_State;
-    int m_iPos;
-    KeyboardTypes m_iCurrBoard;
-    int m_iCurrRow;
-    int m_iCurrKey;
-    int m_iLastColumn;
+    #region variables
+    string _textEntered = "";
+    bool _capsLockTurnedOn = false;
+    bool _shiftTurnedOn = false;
+    State _state;
+    int _position;
+    KeyboardTypes _currentKeyboard;
+    int _currentRow;
+    int _currentKey;
+    int _lastColumn;
     //float         m_fRepeatDelay;
-    CachedTexture.Frame m_pKeyTexture;
-    float m_fKeyHeight;
-    int m_dwMaxRows;
-    bool m_bConfirmed;
-    GUIFont m_Font18;
-    GUIFont m_Font12;
-    GUIFont m_FontButtons;
-    GUIFont m_FontSearchText;
-    DateTime m_CaretTimer = DateTime.Now;
-    bool m_bPrevOverlay = true;
-    bool _Password = false;
+    CachedTexture.Frame _keyTexture;
+    float _keyHeight;
+    int _maxRows;
+    bool _pressedEnter;
+    GUIFont _font18;
+    GUIFont _font12;
+    GUIFont _fontButtons;
+    GUIFont _fontSearchText;
+    DateTime _caretTimer = DateTime.Now;
+    bool _previousOverlayVisible = true;
+    bool _password = false;
     GUIImage image;
 
-    ArrayList m_KeyboardList = new ArrayList();         // list of rows = keyboard
+    ArrayList _keyboardList = new ArrayList();         // list of rows = keyboard
 
-
-    #region Base Dialog Variables
-    bool m_bRunning = false;
-    int m_dwParentWindowID = 0;
-    GUIWindow m_pParentWindow = null;
+    bool _isVisible = false;
+    int _parentWindowId = 0;
+    GUIWindow _parentWindow = null;
     #endregion
 
     public VirtualKeyboard()
     {
       GetID = (int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD;
-      m_bIsCapsLockOn = false;
-      m_bIsShiftOn = false;
-      m_State = State.STATE_KEYBOARD;
-      m_iPos = 0;
-      m_iCurrBoard = KeyboardTypes.TYPE_ALPHABET;
-      m_iCurrRow = 0;
-      m_iCurrKey = 0;
-      m_iLastColumn = 0;
+      _capsLockTurnedOn = false;
+      _shiftTurnedOn = false;
+      _state = State.STATE_KEYBOARD;
+      _position = 0;
+      _currentKeyboard = KeyboardTypes.TYPE_ALPHABET;
+      _currentRow = 0;
+      _currentKey = 0;
+      _lastColumn = 0;
       //m_fRepeatDelay   = fINITIAL_REPEAT;
-      m_pKeyTexture = null;
+      _keyTexture = null;
 
-      m_fKeyHeight = 42.0f;
-      m_dwMaxRows = 5;
-      m_bConfirmed = false;
-      m_CaretTimer = DateTime.Now;
+      _keyHeight = 42.0f;
+      _maxRows = 5;
+      _pressedEnter = false;
+      _caretTimer = DateTime.Now;
 
 
       if (GUIGraphicsContext.DX9Device != null)
@@ -490,21 +494,21 @@ namespace MediaPortal.Dialogs
 
     public bool IsConfirmed
     {
-      get { return m_bConfirmed; }
+      get { return _pressedEnter; }
     }
 
     void Initialize()
     {
-      m_Font12 = GUIFontManager.GetFont("font12");
-      m_Font18 = GUIFontManager.GetFont("font18");
-      m_FontButtons = GUIFontManager.GetFont("dingbats");
-      m_FontSearchText = GUIFontManager.GetFont("font14");
+      _font12 = GUIFontManager.GetFont("font12");
+      _font18 = GUIFontManager.GetFont("font18");
+      _fontButtons = GUIFontManager.GetFont("dingbats");
+      _fontSearchText = GUIFontManager.GetFont("font14");
 
       int iTextureWidth, iTextureHeight;
       int iImages = GUITextureManager.Load("keyNF.bmp", 0, 0, 0);
       if (iImages == 1)
       {
-        m_pKeyTexture = GUITextureManager.GetTexture("keyNF.bmp", 0, out iTextureWidth, out iTextureHeight);
+        _keyTexture = GUITextureManager.GetTexture("keyNF.bmp", 0, out iTextureWidth, out iTextureHeight);
       }
       image = new GUIImage(this.GetID, 1, 0, 0, 10, 10, "white.bmp", 1);
       image.AllocResources();
@@ -518,22 +522,22 @@ namespace MediaPortal.Dialogs
 
     public void Reset()
     {
-      _Password = false;
-      m_bConfirmed = false;
-      m_bIsCapsLockOn = false;
-      m_bIsShiftOn = false;
-      m_State = State.STATE_KEYBOARD;
-      m_iPos = 0;
-      m_iCurrBoard = KeyboardTypes.TYPE_ALPHABET;
-      m_iCurrRow = 0;
-      m_iCurrKey = 0;
-      m_iLastColumn = 0;
+      _password = false;
+      _pressedEnter = false;
+      _capsLockTurnedOn = false;
+      _shiftTurnedOn = false;
+      _state = State.STATE_KEYBOARD;
+      _position = 0;
+      _currentKeyboard = KeyboardTypes.TYPE_ALPHABET;
+      _currentRow = 0;
+      _currentKey = 0;
+      _lastColumn = 0;
       //m_fRepeatDelay   = fINITIAL_REPEAT;
-      m_fKeyHeight = 42.0f;
-      m_dwMaxRows = 5;
-      m_iPos = 0;
-      m_strData = "";
-      m_CaretTimer = DateTime.Now;
+      _keyHeight = 42.0f;
+      _maxRows = 5;
+      _position = 0;
+      _textEntered = "";
+      _caretTimer = DateTime.Now;
 
 
       int y = 411;
@@ -544,7 +548,7 @@ namespace MediaPortal.Dialogs
 
       int width = 42;
       GUIGraphicsContext.ScaleHorizontal(ref width);
-      m_fKeyHeight = width;
+      _keyHeight = width;
 
       width = (int)(576.0f - 64.0f - 4.0f - 4.0f - 10.0f);
       GUIGraphicsContext.ScaleHorizontal(ref width);
@@ -555,14 +559,14 @@ namespace MediaPortal.Dialogs
 
     public bool Password
     {
-      get { return _Password; }
-      set { _Password = value; }
+      get { return _password; }
+      set { _password = value; }
     }
 
     protected void PageLoad()
     {
-      m_bPrevOverlay = GUIGraphicsContext.Overlay;
-      m_bConfirmed = false;
+      _previousOverlayVisible = GUIGraphicsContext.Overlay;
+      _pressedEnter = false;
       GUIGraphicsContext.Overlay = false;
       GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(100000 + (int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD));
       Log.Write("window:{0} init", this.ToString());
@@ -571,7 +575,7 @@ namespace MediaPortal.Dialogs
 
     protected void PageDestroy()
     {
-      GUIGraphicsContext.Overlay = m_bPrevOverlay;
+      GUIGraphicsContext.Overlay = _previousOverlayVisible;
       DeInitialize();
 
       Log.Write("window:{0} deinit", this.ToString());
@@ -580,8 +584,8 @@ namespace MediaPortal.Dialogs
 
     public string Text
     {
-      get { return m_strData; }
-      set { m_strData = value; }
+      get { return _textEntered; }
+      set { _textEntered = value; }
     }
 
     public void SelectActiveButton(float x, float y)
@@ -590,11 +594,11 @@ namespace MediaPortal.Dialogs
       int y1 = 250, x1 = 64;
       GUIGraphicsContext.ScalePosToScreenResolution(ref x1, ref y1);
       float fY = y1;
-      ArrayList keyBoard = (ArrayList)m_KeyboardList[(int)m_iCurrBoard];
-      for (int row = 0; row < m_dwMaxRows; ++row, fY += m_fKeyHeight)
+      ArrayList keyBoard = (ArrayList)_keyboardList[(int)_currentKeyboard];
+      for (int row = 0; row < _maxRows; ++row, fY += _keyHeight)
       {
         float fX = x1;
-        float fWidthSum = 0.0f;
+        float widthidthSum = 0.0f;
         ArrayList keyRow = (ArrayList)keyBoard[row];
         int dwIndex = 0;
         for (int i = 0; i < keyRow.Count; i++)
@@ -602,29 +606,29 @@ namespace MediaPortal.Dialogs
           Key key = (Key)keyRow[i];
           int width = key.dwWidth;
           GUIGraphicsContext.ScaleHorizontal(ref width);
-          if (x >= fX + fWidthSum && x <= fX + fWidthSum + key.dwWidth)
+          if (x >= fX + widthidthSum && x <= fX + widthidthSum + key.dwWidth)
           {
-            if (y >= fY && y < fY + m_fKeyHeight)
+            if (y >= fY && y < fY + _keyHeight)
             {
-              m_iCurrRow = row;
-              m_iCurrKey = dwIndex;
+              _currentRow = row;
+              _currentKey = dwIndex;
               return;
             }
           }
-          fWidthSum += width;
+          widthidthSum += width;
           // There's a slightly larger gap between the leftmost keys (mode
           // keys) and the main keyboard
           if (dwIndex == 0)
           {
             width = GAP2_WIDTH;
             GUIGraphicsContext.ScaleHorizontal(ref width);
-            fWidthSum += width;
+            widthidthSum += width;
           }
           else
           {
             width = GAP_WIDTH;
             GUIGraphicsContext.ScaleHorizontal(ref width);
-            fWidthSum += width;
+            widthidthSum += width;
           }
           ++dwIndex;
 
@@ -632,8 +636,8 @@ namespace MediaPortal.Dialogs
       }
 
       // Default no key found no key highlighted
-      if (m_iCurrKey != -1) m_iLastColumn = m_iCurrKey;
-      m_iCurrKey = -1;
+      if (_currentKey != -1) _lastColumn = _currentKey;
+      _currentKey = -1;
     }
 
     public override void OnAction(Action action)
@@ -656,10 +660,10 @@ namespace MediaPortal.Dialogs
           break;
 
         case Action.ActionType.ACTION_SELECT_ITEM:
-          if (m_iCurrKey == -1)
+          if (_currentKey == -1)
           {
             Close();
-            m_bConfirmed = true;
+            _pressedEnter = true;
           }
           ev = Event.EV_A_BUTTON;
           UpdateState(ev);
@@ -705,29 +709,17 @@ namespace MediaPortal.Dialogs
     }
     void Close()
     {
-
-      GUIWindowManager.IsSwitchingToNewWindow = true;
-      lock (this)
-      {
-        // deactive this window... (with its own OnPageDestroy)
-        PageDestroy();
-
-        GUIWindowManager.UnRoute();
-        m_pParentWindow = null;
-        m_bRunning = false;
-      }
-
-      GUIWindowManager.IsSwitchingToNewWindow = false;
+        _isVisible = false;
     }
 
     public void DoModal(int dwParentId)
     {
 
-      m_dwParentWindowID = dwParentId;
-      m_pParentWindow = GUIWindowManager.GetWindow(m_dwParentWindowID);
-      if (null == m_pParentWindow)
+      _parentWindowId = dwParentId;
+      _parentWindow = GUIWindowManager.GetWindow(_parentWindowId);
+      if (null == _parentWindow)
       {
-        m_dwParentWindowID = 0;
+        _parentWindowId = 0;
         return;
       }
       GUIWindowManager.IsSwitchingToNewWindow = true;
@@ -739,12 +731,22 @@ namespace MediaPortal.Dialogs
       PageLoad();
 
       GUIWindowManager.IsSwitchingToNewWindow = false;
-      m_bRunning = true;
-      m_iPos = m_strData.Length;
-      while (m_bRunning && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
+      _isVisible = true;
+      _position = _textEntered.Length;
+      while (_isVisible && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
       {
         GUIWindowManager.Process();
       }
+      // deactive this window... (with its own OnPageDestroy)
+      PageDestroy();
+
+      GUIWindowManager.IsSwitchingToNewWindow = true;
+      GUIWindowManager.UnRoute();
+      _parentWindow = null;
+      _isVisible = false;
+
+      GUIWindowManager.IsSwitchingToNewWindow = false;
+
       GUILayerManager.UnRegisterLayer(this);
     }
 
@@ -762,21 +764,21 @@ namespace MediaPortal.Dialogs
     void InitBoard()
     {
       // Restore keyboard to default state
-      m_iCurrRow = 0;
-      m_iCurrKey = 0;
-      m_iLastColumn = 1;
-      m_iCurrBoard = KeyboardTypes.TYPE_ALPHABET;
-      m_bIsCapsLockOn = false;
-      m_bIsShiftOn = false;
-      m_strData = "";
-      m_iPos = 0;
+      _currentRow = 0;
+      _currentKey = 0;
+      _lastColumn = 1;
+      _currentKeyboard = KeyboardTypes.TYPE_ALPHABET;
+      _capsLockTurnedOn = false;
+      _shiftTurnedOn = false;
+      _textEntered = "";
+      _position = 0;
       int height = 42;
       GUIGraphicsContext.ScaleVertical(ref height);
-      m_fKeyHeight = height;
-      m_dwMaxRows = 5;
+      _keyHeight = height;
+      _maxRows = 5;
 
       // Destroy old keyboard
-      m_KeyboardList.Clear();
+      _keyboardList.Clear();
 
 
       //-------------------------------------------------------------------------
@@ -851,7 +853,7 @@ namespace MediaPortal.Dialogs
       keyBoard.Add(keyRow);
 
       // Add the alpha keyboard to the list
-      m_KeyboardList.Add(keyBoard);
+      _keyboardList.Add(keyBoard);
 
       //-------------------------------------------------------------------------
       // Symbol keyboard
@@ -925,7 +927,7 @@ namespace MediaPortal.Dialogs
       keyBoard.Add(keyRow);
 
       // Add the symbol keyboard to the list
-      m_KeyboardList.Add(keyBoard);
+      _keyboardList.Add(keyBoard);
 
       //-------------------------------------------------------------------------
       // Accents keyboard
@@ -999,13 +1001,13 @@ namespace MediaPortal.Dialogs
       keyBoard.Add(keyRow);
 
       // Add the accents keyboard to the list
-      m_KeyboardList.Add(keyBoard);
+      _keyboardList.Add(keyBoard);
 
     }
 
     void UpdateState(Event ev)
     {
-      switch (m_State)
+      switch (_state)
       {
         case State.STATE_KEYBOARD:
           switch (ev)
@@ -1017,19 +1019,19 @@ namespace MediaPortal.Dialogs
 
             case Event.EV_B_BUTTON:           // Shift mode
             case Event.EV_BACK_BUTTON:        // Back
-              m_State = State.STATE_BACK;
+              _state = State.STATE_BACK;
               Close();	//Added by JM to close automatically
               break;
 
             case Event.EV_X_BUTTON:           // Toggle keyboard
-              Press(m_iCurrBoard == KeyboardTypes.TYPE_SYMBOLS ? Xkey.XK_ALPHABET : Xkey.XK_SYMBOLS);
+              Press(_currentKeyboard == KeyboardTypes.TYPE_SYMBOLS ? Xkey.XK_ALPHABET : Xkey.XK_SYMBOLS);
               /*if( m_iKeyboard == KEYBOARD_ENGLISH )
               {
-                Press( m_iCurrBoard == KeyboardTypes.TYPE_SYMBOLS ?Xkey.XK_ALPHABET : Xkey.XK_SYMBOLS );
+                Press( _currentKeyboard == KeyboardTypes.TYPE_SYMBOLS ?Xkey.XK_ALPHABET : Xkey.XK_SYMBOLS );
               }
               else
               {
-                switch( m_iCurrBoard )
+                switch( _currentKeyboard )
                 {
                   case KeyboardTypes.TYPE_ALPHABET: Press( Xkey.XK_SYMBOLS  ); break;
                   case KeyboardTypes.TYPE_SYMBOLS:  Press( Xkey.XK_ACCENTS  ); break;
@@ -1065,18 +1067,18 @@ namespace MediaPortal.Dialogs
 
     void ChangeKey(int iBoard, int iRow, int iKey, Key newkey)
     {
-      ArrayList board = (ArrayList)m_KeyboardList[iBoard];
+      ArrayList board = (ArrayList)_keyboardList[iBoard];
       ArrayList row = (ArrayList)board[iRow];
       row[iKey] = newkey;
     }
 
     void PressCurrent()
     {
-      if (m_iCurrKey == -1) return;
+      if (_currentKey == -1) return;
 
-      ArrayList board = (ArrayList)m_KeyboardList[(int)m_iCurrBoard];
-      ArrayList row = (ArrayList)board[m_iCurrRow];
-      Key key = (Key)row[m_iCurrKey];
+      ArrayList board = (ArrayList)_keyboardList[(int)_currentKeyboard];
+      ArrayList row = (ArrayList)board[_currentRow];
+      Key key = (Key)row[_currentKey];
 
       // Press it
       Press(key.xKey);
@@ -1086,23 +1088,23 @@ namespace MediaPortal.Dialogs
     {
       // Don't add more than the maximum characters, and don't allow 
       // text to exceed the width of the text entry field
-      if (m_strData.Length < MAX_CHARS)
+      if (_textEntered.Length < MAX_CHARS)
       {
-        float fWidth = 0, fHeight = 0;
-        m_Font18.GetTextExtent(m_strData, ref fWidth, ref fHeight);
+        float widthidth = 0, heighteight = 0;
+        _font18.GetTextExtent(_textEntered, ref widthidth, ref heighteight);
 
-        if (fWidth < fTEXTBOX_WIDTH)
+        if (widthidth < fTEXTBOX_WIDTH)
         {
-          if (m_iPos >= m_strData.Length)
-            m_strData += k.ToString();
+          if (_position >= _textEntered.Length)
+            _textEntered += k.ToString();
           else
-            m_strData = m_strData.Insert(m_iPos, k.ToString());
-          ++m_iPos; // move the caret
+            _textEntered = _textEntered.Insert(_position, k.ToString());
+          ++_position; // move the caret
         }
       }
 
       // Unstick the shift key
-      m_bIsShiftOn = false;
+      _shiftTurnedOn = false;
     }
 
     void Press(Xkey xk)
@@ -1115,193 +1117,193 @@ namespace MediaPortal.Dialogs
       {
         // Don't add more than the maximum characters, and don't allow 
         // text to exceed the width of the text entry field
-        if (m_strData.Length < MAX_CHARS)
+        if (_textEntered.Length < MAX_CHARS)
         {
-          float fWidth = 0, fHeight = 0;
-          m_Font18.GetTextExtent(m_strData, ref fWidth, ref fHeight);
+          float widthidth = 0, heighteight = 0;
+          _font18.GetTextExtent(_textEntered, ref widthidth, ref heighteight);
 
-          if (fWidth < fTEXTBOX_WIDTH)
+          if (widthidth < fTEXTBOX_WIDTH)
           {
-            if (m_iPos >= m_strData.Length)
-              m_strData += GetChar(xk).ToString();
+            if (_position >= _textEntered.Length)
+              _textEntered += GetChar(xk).ToString();
             else
-              m_strData = m_strData.Insert(m_iPos, GetChar(xk).ToString());
-            ++m_iPos; // move the caret
+              _textEntered = _textEntered.Insert(_position, GetChar(xk).ToString());
+            ++_position; // move the caret
           }
         }
 
         // Unstick the shift key
-        m_bIsShiftOn = false;
+        _shiftTurnedOn = false;
       }
 
         // Special cases
       else switch (xk)
         {
           case Xkey.XK_BACKSPACE:
-            if (m_iPos > 0)
+            if (_position > 0)
             {
-              --m_iPos; // move the caret
-              m_strData = m_strData.Remove(m_iPos, 1);
+              --_position; // move the caret
+              _textEntered = _textEntered.Remove(_position, 1);
             }
             break;
           case Xkey.XK_DELETE: // Used for Japanese only
-            if (m_strData.Length > 0)
-              m_strData = m_strData.Remove(m_iPos, 1);
+            if (_textEntered.Length > 0)
+              _textEntered = _textEntered.Remove(_position, 1);
             break;
           case Xkey.XK_SHIFT:
-            m_bIsShiftOn = !m_bIsShiftOn;
+            _shiftTurnedOn = !_shiftTurnedOn;
             break;
           case Xkey.XK_CAPSLOCK:
-            m_bIsCapsLockOn = !m_bIsCapsLockOn;
+            _capsLockTurnedOn = !_capsLockTurnedOn;
             break;
           case Xkey.XK_ALPHABET:
-            m_iCurrBoard = KeyboardTypes.TYPE_ALPHABET;
+            _currentKeyboard = KeyboardTypes.TYPE_ALPHABET;
 
             // Adjust mode keys
-            ChangeKey((int)m_iCurrBoard, 3, 0, new Key(Xkey.XK_SYMBOLS, MODEKEY_WIDTH));
-            ChangeKey((int)m_iCurrBoard, 4, 0, new Key(Xkey.XK_ACCENTS, MODEKEY_WIDTH));
+            ChangeKey((int)_currentKeyboard, 3, 0, new Key(Xkey.XK_SYMBOLS, MODEKEY_WIDTH));
+            ChangeKey((int)_currentKeyboard, 4, 0, new Key(Xkey.XK_ACCENTS, MODEKEY_WIDTH));
 
             break;
           case Xkey.XK_SYMBOLS:
-            m_iCurrBoard = KeyboardTypes.TYPE_SYMBOLS;
+            _currentKeyboard = KeyboardTypes.TYPE_SYMBOLS;
 
             // Adjust mode keys
-            ChangeKey((int)m_iCurrBoard, 3, 0, new Key(Xkey.XK_ALPHABET, MODEKEY_WIDTH));
-            ChangeKey((int)m_iCurrBoard, 4, 0, new Key(Xkey.XK_ACCENTS, MODEKEY_WIDTH));
+            ChangeKey((int)_currentKeyboard, 3, 0, new Key(Xkey.XK_ALPHABET, MODEKEY_WIDTH));
+            ChangeKey((int)_currentKeyboard, 4, 0, new Key(Xkey.XK_ACCENTS, MODEKEY_WIDTH));
 
             break;
           case Xkey.XK_ACCENTS:
-            m_iCurrBoard = KeyboardTypes.TYPE_ACCENTS;
+            _currentKeyboard = KeyboardTypes.TYPE_ACCENTS;
 
             // Adjust mode keys
-            ChangeKey((int)m_iCurrBoard, 3, 0, new Key(Xkey.XK_ALPHABET, MODEKEY_WIDTH));
-            ChangeKey((int)m_iCurrBoard, 4, 0, new Key(Xkey.XK_SYMBOLS, MODEKEY_WIDTH));
+            ChangeKey((int)_currentKeyboard, 3, 0, new Key(Xkey.XK_ALPHABET, MODEKEY_WIDTH));
+            ChangeKey((int)_currentKeyboard, 4, 0, new Key(Xkey.XK_SYMBOLS, MODEKEY_WIDTH));
             break;
           case Xkey.XK_ARROWLEFT:
-            if (m_iPos > 0)
-              --m_iPos;
+            if (_position > 0)
+              --_position;
             break;
           case Xkey.XK_ARROWRIGHT:
-            if (m_iPos < m_strData.Length)
-              ++m_iPos;
+            if (_position < _textEntered.Length)
+              ++_position;
             break;
           case Xkey.XK_OK:
             Close();
-            m_bConfirmed = true;
+            _pressedEnter = true;
             break;
         }
     }
 
     void MoveUp()
     {
-      if (m_iCurrKey == -1) m_iCurrKey = m_iLastColumn;
+      if (_currentKey == -1) _currentKey = _lastColumn;
 
       do
       {
         // Update key index for special cases
-        switch (m_iCurrRow)
+        switch (_currentRow)
         {
           case 0:
-            if (1 < m_iCurrKey && m_iCurrKey < 7)      // 2 - 6
+            if (1 < _currentKey && _currentKey < 7)      // 2 - 6
             {
-              m_iLastColumn = m_iCurrKey;             // remember column
-              m_iCurrKey = 1;                         // move to spacebar
+              _lastColumn = _currentKey;             // remember column
+              _currentKey = 1;                         // move to spacebar
             }
-            else if (6 < m_iCurrKey && m_iCurrKey < 9) // 7 - 8
+            else if (6 < _currentKey && _currentKey < 9) // 7 - 8
             {
-              m_iLastColumn = m_iCurrKey;             // remember column
-              m_iCurrKey = 2;                         // move to left arrow
+              _lastColumn = _currentKey;             // remember column
+              _currentKey = 2;                         // move to left arrow
             }
-            else if (m_iCurrKey > 8)                   // 9 - 0
+            else if (_currentKey > 8)                   // 9 - 0
             {
-              m_iLastColumn = m_iCurrKey;             // remember column
-              m_iCurrKey = 3;                         // move to right arrow
+              _lastColumn = _currentKey;             // remember column
+              _currentKey = 3;                         // move to right arrow
             }
             break;
           case 3:
-            if (m_iCurrKey == 7)                       // backspace
-              m_iCurrKey = Math.Max(7, m_iLastColumn);   // restore column
+            if (_currentKey == 7)                       // backspace
+              _currentKey = Math.Max(7, _lastColumn);   // restore column
             break;
           case 4:
-            if (m_iCurrKey == 1)                       // spacebar
-              m_iCurrKey = Math.Min(6, m_iLastColumn);   // restore column
-            else if (m_iCurrKey > 1)                   // left and right
-              m_iCurrKey = 7;                         // backspace
+            if (_currentKey == 1)                       // spacebar
+              _currentKey = Math.Min(6, _lastColumn);   // restore column
+            else if (_currentKey > 1)                   // left and right
+              _currentKey = 7;                         // backspace
             break;
         }
 
         // Update row
-        m_iCurrRow = (m_iCurrRow == 0) ? m_dwMaxRows - 1 : m_iCurrRow - 1;
+        _currentRow = (_currentRow == 0) ? _maxRows - 1 : _currentRow - 1;
 
       } while (IsKeyDisabled());
     }
 
     void MoveDown()
     {
-      if (m_iCurrKey == -1) m_iCurrKey = m_iLastColumn;
+      if (_currentKey == -1) _currentKey = _lastColumn;
 
       do
       {
         // Update key index for special cases
-        switch (m_iCurrRow)
+        switch (_currentRow)
         {
           case 2:
-            if (m_iCurrKey > 7)                    // q - t
+            if (_currentKey > 7)                    // q - t
             {
-              m_iLastColumn = m_iCurrKey;         // remember column
-              m_iCurrKey = 7;                     // move to backspace
+              _lastColumn = _currentKey;         // remember column
+              _currentKey = 7;                     // move to backspace
             }
             break;
           case 3:
-            if (0 < m_iCurrKey && m_iCurrKey < 7)  // u - z
+            if (0 < _currentKey && _currentKey < 7)  // u - z
             {
-              m_iLastColumn = m_iCurrKey;         // remember column
-              m_iCurrKey = 1;                     // move to spacebar
+              _lastColumn = _currentKey;         // remember column
+              _currentKey = 1;                     // move to spacebar
             }
-            else if (m_iCurrKey > 6)               // backspace
+            else if (_currentKey > 6)               // backspace
             {
-              if (m_iLastColumn > 8)
-                m_iCurrKey = 3;                 // move to right arrow
+              if (_lastColumn > 8)
+                _currentKey = 3;                 // move to right arrow
               else
-                m_iCurrKey = 2;                 // move to left arrow
+                _currentKey = 2;                 // move to left arrow
             }
             break;
           case 4:
-            switch (m_iCurrKey)
+            switch (_currentKey)
             {
               case 1:                             // spacebar
-                m_iCurrKey = Math.Min(6, m_iLastColumn);
+                _currentKey = Math.Min(6, _lastColumn);
                 break;
               case 2:                             // left arrow
-                m_iCurrKey = Math.Max(Math.Min(8, m_iLastColumn), 7);
+                _currentKey = Math.Max(Math.Min(8, _lastColumn), 7);
                 break;
               case 3:                             // right arrow
-                m_iCurrKey = Math.Max(9, m_iLastColumn);
+                _currentKey = Math.Max(9, _lastColumn);
                 break;
             }
             break;
         }
 
         // Update row
-        m_iCurrRow = (m_iCurrRow == m_dwMaxRows - 1) ? 0 : m_iCurrRow + 1;
+        _currentRow = (_currentRow == _maxRows - 1) ? 0 : _currentRow + 1;
 
       } while (IsKeyDisabled());
     }
 
     void MoveLeft()
     {
-      if (m_iCurrKey == -1) m_iCurrKey = m_iLastColumn;
+      if (_currentKey == -1) _currentKey = _lastColumn;
       do
       {
-        if (m_iCurrKey <= 0)
+        if (_currentKey <= 0)
         {
-          ArrayList board = (ArrayList)m_KeyboardList[(int)m_iCurrBoard];
-          ArrayList row = (ArrayList)board[m_iCurrRow];
-          m_iCurrKey = row.Count - 1;
+          ArrayList board = (ArrayList)_keyboardList[(int)_currentKeyboard];
+          ArrayList row = (ArrayList)board[_currentRow];
+          _currentKey = row.Count - 1;
 
         }
         else
-          --m_iCurrKey;
+          --_currentKey;
 
       } while (IsKeyDisabled());
 
@@ -1310,16 +1312,16 @@ namespace MediaPortal.Dialogs
 
     void MoveRight()
     {
-      if (m_iCurrKey == -1) m_iCurrKey = m_iLastColumn;
+      if (_currentKey == -1) _currentKey = _lastColumn;
       do
       {
-        ArrayList board = (ArrayList)m_KeyboardList[(int)m_iCurrBoard];
-        ArrayList row = (ArrayList)board[m_iCurrRow];
+        ArrayList board = (ArrayList)_keyboardList[(int)_currentKeyboard];
+        ArrayList row = (ArrayList)board[_currentRow];
 
-        if (m_iCurrKey == row.Count - 1)
-          m_iCurrKey = 0;
+        if (_currentKey == row.Count - 1)
+          _currentKey = 0;
         else
-          ++m_iCurrKey;
+          ++_currentKey;
 
       } while (IsKeyDisabled());
 
@@ -1328,39 +1330,39 @@ namespace MediaPortal.Dialogs
 
     void SetLastColumn()
     {
-      if (m_iCurrKey == -1) return;
+      if (_currentKey == -1) return;
       // If the new key is a single character, remember it for later
-      ArrayList board = (ArrayList)m_KeyboardList[(int)m_iCurrBoard];
-      ArrayList row = (ArrayList)board[m_iCurrRow];
-      Key key = (Key)row[m_iCurrKey];
-      if (key.strName == "")
+      ArrayList board = (ArrayList)_keyboardList[(int)_currentKeyboard];
+      ArrayList row = (ArrayList)board[_currentRow];
+      Key key = (Key)row[_currentKey];
+      if (key.name == "")
       {
         switch (key.xKey)
         {
           // Adjust the last column for the arrow keys to confine it
           // within the range of the key width
           case Xkey.XK_ARROWLEFT:
-            m_iLastColumn = (m_iLastColumn <= 7) ? 7 : 8; break;
+            _lastColumn = (_lastColumn <= 7) ? 7 : 8; break;
           case Xkey.XK_ARROWRIGHT:
-            m_iLastColumn = (m_iLastColumn <= 9) ? 9 : 10; break;
+            _lastColumn = (_lastColumn <= 9) ? 9 : 10; break;
 
           // Single char, non-arrow
           default:
-            m_iLastColumn = m_iCurrKey; break;
+            _lastColumn = _currentKey; break;
         }
       }
     }
 
     bool IsKeyDisabled()
     {
-      if (m_iCurrKey == -1) return true;
+      if (_currentKey == -1) return true;
 
-      ArrayList board = (ArrayList)m_KeyboardList[(int)m_iCurrBoard];
-      ArrayList row = (ArrayList)board[m_iCurrRow];
-      Key key = (Key)row[m_iCurrKey];
+      ArrayList board = (ArrayList)_keyboardList[(int)_currentKeyboard];
+      ArrayList row = (ArrayList)board[_currentRow];
+      Key key = (Key)row[_currentKey];
 
       // On the symbols keyboard, Shift and Caps Lock are disabled
-      if (m_iCurrBoard == KeyboardTypes.TYPE_SYMBOLS)
+      if (_currentKeyboard == KeyboardTypes.TYPE_SYMBOLS)
       {
         if (key.xKey == Xkey.XK_SHIFT || key.xKey == Xkey.XK_CAPSLOCK)
           return true;
@@ -1381,7 +1383,7 @@ namespace MediaPortal.Dialogs
       // Handle case conversion
       char wc = (char)(((uint)xk) & 0xffff);
 
-      if ((m_bIsCapsLockOn && !m_bIsShiftOn) || (!m_bIsCapsLockOn && m_bIsShiftOn))
+      if ((_capsLockTurnedOn && !_shiftTurnedOn) || (!_capsLockTurnedOn && _shiftTurnedOn))
         wc = Char.ToUpper(wc);
       else
         wc = Char.ToLower(wc);
@@ -1395,7 +1397,7 @@ namespace MediaPortal.Dialogs
 
 
       string strKey = GetChar(key.xKey).ToString();
-      string strName = (key.strName.Length == 0) ? strKey : key.strName;
+      string name = (key.name.Length == 0) ? strKey : key.name;
 
       int width = key.dwWidth - KEY_INSET + 2;
       int height = (int)(KEY_INSET + 2);
@@ -1405,16 +1407,16 @@ namespace MediaPortal.Dialogs
       float x = fX + KEY_INSET;
       float y = fY + KEY_INSET;
       float z = fX + width;//z
-      float w = fY + m_fKeyHeight - height;//w
+      float w = fY + _keyHeight - height;//w
 
       float nw = width;
-      float nh = m_fKeyHeight - height;
+      float nh = _keyHeight - height;
 
       float uoffs = 0;
       float v = 1.0f;
       float u = 1.0f;
 
-      m_pKeyTexture.Draw(x, y, nw, nh, uoffs, 0.0f, u, v, (int)KeyColor);
+      _keyTexture.Draw(x, y, nw, nh, uoffs, 0.0f, u, v, (int)KeyColor);
       /*
             VertexBuffer m_vbBuffer = new VertexBuffer(typeof(CustomVertex.TransformedColoredTextured),
                                               4, GUIGraphicsContext.DX9Device, 
@@ -1445,7 +1447,7 @@ namespace MediaPortal.Dialogs
 
             m_vbBuffer.Unlock();
 
-            GUIGraphicsContext.DX9Device.SetTexture( 0, m_pKeyTexture);
+            GUIGraphicsContext.DX9Device.SetTexture( 0, _keyTexture);
 
             // Render the image
             GUIGraphicsContext.DX9Device.SetStreamSource( 0, m_vbBuffer, 0);
@@ -1458,25 +1460,25 @@ namespace MediaPortal.Dialogs
             m_vbBuffer.Dispose();
       */
       // Draw the key text. If key name is, use a slightly smaller font.
-      float fW = 0;
-      float fH = 0;
-      float fposX = (x + z) / 2.0f;
-      float fposY = (y + w) / 2.0f;
-      fposX -= GUIGraphicsContext.OffsetX;
-      fposY -= GUIGraphicsContext.OffsetY;
-      if (key.strName.Length > 1 && Char.IsUpper(key.strName[1]))
+      float width = 0;
+      float height = 0;
+      float posX = (x + z) / 2.0f;
+      float posY = (y + w) / 2.0f;
+      posX -= GUIGraphicsContext.OffsetX;
+      posY -= GUIGraphicsContext.OffsetY;
+      if (key.name.Length > 1 && Char.IsUpper(key.name[1]))
       {
-        m_Font12.GetTextExtent(strName, ref fW, ref fH);
-        fposX -= (fW / 2);
-        fposY -= (fH / 2);
-        m_Font12.DrawText(fposX, fposY, TextColor, strName, GUIControl.Alignment.ALIGN_LEFT, -1);
+        _font12.GetTextExtent(name, ref width, ref height);
+        posX -= (width / 2);
+        posY -= (height / 2);
+        _font12.DrawText(posX, posY, TextColor, name, GUIControl.Alignment.ALIGN_LEFT, -1);
       }
       else
       {
-        m_Font18.GetTextExtent(strName, ref fW, ref fH);
-        fposX -= (fW / 2);
-        fposY -= (fH / 2);
-        m_Font18.DrawText(fposX, fposY, TextColor, strName, GUIControl.Alignment.ALIGN_LEFT, -1);
+        _font18.GetTextExtent(name, ref width, ref height);
+        posX -= (width / 2);
+        posY -= (height / 2);
+        _font18.DrawText(posX, posY, TextColor, name, GUIControl.Alignment.ALIGN_LEFT, -1);
       }
     }
 
@@ -1511,27 +1513,27 @@ namespace MediaPortal.Dialogs
       GUIGraphicsContext.ScalePosToScreenResolution(ref x, ref y);
       x += GUIGraphicsContext.OffsetX;
       y += GUIGraphicsContext.OffsetY;
-      string strTxt = m_strData;
-      if (_Password)
+      string text = _textEntered;
+      if (_password)
       {
-        strTxt = "";
-        for (int i = 0; i < m_strData.Length; ++i) strTxt += "*";
+        text = "";
+        for (int i = 0; i < _textEntered.Length; ++i) text += "*";
       }
 
-      m_FontSearchText.DrawText((float)x, (float)y, COLOR_SEARCHTEXT, strTxt, GUIControl.Alignment.ALIGN_LEFT, -1);
+      _fontSearchText.DrawText((float)x, (float)y, COLOR_SEARCHTEXT, text, GUIControl.Alignment.ALIGN_LEFT, -1);
 
 
       // Draw blinking caret using line primitives.
-      TimeSpan ts = DateTime.Now - m_CaretTimer;
+      TimeSpan ts = DateTime.Now - _caretTimer;
       if ((ts.TotalSeconds % fCARET_BLINK_RATE) < fCARET_ON_RATIO)
       {
-        string strLine = strTxt.Substring(0, m_iPos);
+        string line = text.Substring(0, _position);
 
-        float fCaretWidth = 0.0f;
-        float fCaretHeight = 0.0f;
-        m_FontSearchText.GetTextExtent(strLine, ref fCaretWidth, ref fCaretHeight);
-        x += (int)fCaretWidth;
-        m_FontSearchText.DrawText((float)x, (float)y, 0xff202020, "|", GUIControl.Alignment.ALIGN_LEFT, -1);
+        float caretWidth = 0.0f;
+        float caretHeight = 0.0f;
+        _fontSearchText.GetTextExtent(line, ref caretWidth, ref caretHeight);
+        x += (int)caretWidth;
+        _fontSearchText.DrawText((float)x, (float)y, 0xff202020, "|", GUIControl.Alignment.ALIGN_LEFT, -1);
 
       }
     }
@@ -1550,11 +1552,11 @@ namespace MediaPortal.Dialogs
       y1 += GUIGraphicsContext.OffsetY;
       // Draw each row
       float fY = y1;
-      ArrayList keyBoard = (ArrayList)m_KeyboardList[(int)m_iCurrBoard];
-      for (int row = 0; row < m_dwMaxRows; ++row, fY += m_fKeyHeight)
+      ArrayList keyBoard = (ArrayList)_keyboardList[(int)_currentKeyboard];
+      for (int row = 0; row < _maxRows; ++row, fY += _keyHeight)
       {
         float fX = x1;
-        float fWidthSum = 0.0f;
+        float widthidthSum = 0.0f;
         ArrayList keyRow = (ArrayList)keyBoard[row];
         int dwIndex = 0;
         for (int i = 0; i < keyRow.Count; i++)
@@ -1568,11 +1570,11 @@ namespace MediaPortal.Dialogs
           switch (key.xKey)
           {
             case Xkey.XK_SHIFT:
-              switch (m_iCurrBoard)
+              switch (_currentKeyboard)
               {
                 case KeyboardTypes.TYPE_ALPHABET:
                 case KeyboardTypes.TYPE_ACCENTS:
-                  if (m_bIsShiftOn)
+                  if (_shiftTurnedOn)
                     selKeyColor = COLOR_PRESSED;
                   break;
                 case KeyboardTypes.TYPE_SYMBOLS:
@@ -1582,11 +1584,11 @@ namespace MediaPortal.Dialogs
               }
               break;
             case Xkey.XK_CAPSLOCK:
-              switch (m_iCurrBoard)
+              switch (_currentKeyboard)
               {
                 case KeyboardTypes.TYPE_ALPHABET:
                 case KeyboardTypes.TYPE_ACCENTS:
-                  if (m_bIsCapsLockOn)
+                  if (_capsLockTurnedOn)
                     selKeyColor = COLOR_PRESSED;
                   break;
                 case KeyboardTypes.TYPE_SYMBOLS:
@@ -1602,14 +1604,14 @@ namespace MediaPortal.Dialogs
           }
 
           // Highlight the current key
-          if (row == m_iCurrRow && dwIndex == m_iCurrKey)
+          if (row == _currentRow && dwIndex == _currentKey)
             selKeyColor = COLOR_HIGHLIGHT;
 
-          RenderKey(fX + fWidthSum, fY, key, selKeyColor, selTextColor);
+          RenderKey(fX + widthidthSum, fY, key, selKeyColor, selTextColor);
 
           int width = key.dwWidth;
           GUIGraphicsContext.ScaleHorizontal(ref width);
-          fWidthSum += width;
+          widthidthSum += width;
 
           // There's a slightly larger gap between the leftmost keys (mode
           // keys) and the main keyboard
@@ -1618,7 +1620,7 @@ namespace MediaPortal.Dialogs
           else
             width = GAP_WIDTH;
           GUIGraphicsContext.ScaleHorizontal(ref width);
-          fWidthSum += width;
+          widthidthSum += width;
 
           ++dwIndex;
         }
