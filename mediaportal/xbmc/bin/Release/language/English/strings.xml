@@ -1,4 +1,4 @@
-<strings>
+﻿<strings>
   <characters>512</characters>
   <string Prefix="My ">
     <id>0</id>
@@ -5132,7 +5132,23 @@
     <value>Grabbing: {0}...</value>
   </string>
   <!-- End Cover Art Grabber Strings -->
-
+  <!-- Begin Playing Now Strings -->
+  <string>
+    <id>4540</id>
+    <value>Now playing</value>
+  </string>  <string>
+    <id>4541</id>
+    <value>Playing next</value>
+  </string>
+  <string>
+    <id>4542</id>
+    <value>No playlists loaded</value>
+  </string>
+  <string>
+    <id>4543</id>
+    <value>Track information not available</value>
+  </string>  
+  <!-- End Playing Now Strings -->
   <!-- Begin Minesweeper Strings -->
   <string>
     <id>10100</id>
