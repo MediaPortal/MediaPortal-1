@@ -4998,6 +4998,22 @@
 		<value>Montrer l&apos;info de l&apos;album</value>
 	</string>
 	<string>
+		<id>4540</id>
+		<value>Titre joué</value>
+	</string>
+	<string>
+		<id>4541</id>
+		<value>Prochain titre</value>
+	</string>
+	<string>
+		<id>4542</id>
+		<value>Aucunes playlists chargés</value>
+	</string>
+	<string>
+		<id>4543</id>
+		<value>Information non disponible</value>
+	</string>
+	<string>
 		<id>10100</id>
 		<value>Mines cachées</value>
 	</string>
