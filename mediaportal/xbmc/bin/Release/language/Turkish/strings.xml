@@ -4719,15 +4719,7 @@
 	</string>
 	<string>
 		<id>102007</id>
-		<value>Resim / Slayt Gösterisi</value>
-	</string>
-	<string>
-		<id>102008</id>
-		<value>Yýðýn diyaloðu</value>
-	</string>
-	<string>
-		<id>102009</id>
-		<value>Seçme diyaloðu</value>
+		<value>Resim / Slayt Göstlue>
 	</string>
 	<string>
 		<id>102010</id>
@@ -4743,7 +4735,7 @@
 	</string>
 	<string>
 		<id>102013</id>
-		<value>Reytin ayarla</value>
+		<value>Reyting ayarla</value>
 	</string>
 	<string>
 		<id>102014</id>
@@ -4956,5 +4948,105 @@
 	<string>
 		<id>4003</id>
 		<value>Lütfen favori dosyanýzý ayar bölümüne giriniz.</value>
+	</string>
+	<string>
+		<id>4500</id>
+		<value>Mevcut kapaklý albümleri atla</value>
+	</string>
+	<string>
+		<id>4501</id>
+		<value>Albüm kapaklarýný albüm dosyasýna kaydet</value>
+	</string>
+	<string>
+		<id>4502</id>
+		<value>Albüm kapaklarýný iþaretciler dosyasýna kaydet</value>
+	</string>
+	<string>
+		<id>4503</id>
+		<value>Albüm hesaplamasý yapýlýyor. Bekleyiniz...</value>
+	</string>
+	<string>
+		<id>4504</id>
+		<value>{0}% - {1} of {2}</value>
+	</string>
+	<string>
+		<id>4505</id>
+		<value>Aranýyor  {0}...</value>
+	</string>
+	<string>
+		<id>4506</id>
+		<value>[Blank]</value>
+	</string>
+	<string>
+		<id>4507</id>
+		<value>Kapak tarayýcýsý kullanýcý tarafýndan durduruldu</value>
+	</string>
+	<string>
+		<id>4508</id>
+		<value>Kapak tarama baþarýyla tamamlandý.</value>
+	</string>
+	<string>
+		<id>4509</id>
+		<value>Kapak tarama hatalý tamamlandý</value>
+	</string>
+	<string>
+		<id>4510</id>
+		<value>{0} kapak resmi güncellendi</value>
+	</string>
+	<string>
+		<id>4511</id>
+		<value>Kapak tarayýcý tamam</value>
+	</string>
+	<string>
+		<id>4512</id>
+		<value>Tüm kapaklar güncellendi</value>
+	</string>
+	<string>
+		<id>4513</id>
+		<value>Muhtelif</value>
+	</string>
+	<string>
+		<id>4514</id>
+		<value>Kapak Tarayýcý</value>
+	</string>
+	<string>
+		<id>4515</id>
+		<value>Kapak Tarayýcý Arama Sonuçlarý</value>
+	</string>
+	<string>
+		<id>4516</id>
+		<value>Hiç Kapak bulunamadý</value>
+	</string>
+	<string>
+		<id>4517</id>
+		<value>Kapat</value>
+	</string>
+	<string>
+		<id>4518</id>
+		<value>Albüm adý bulanamadý \r\nTrying: {0}</value>
+	</string>
+	<string>
+		<id>4519</id>
+		<value>Þimdiki Kapak</value>
+	</string>
+	<string>
+		<id>4520</id>
+		<value>Atla</value>
+	</string>
+	<string>
+		<id>10100</id>
+		<value>Sakli Mayinlar</value>
+	</string>
+	<string>
+		<id>10101</id>
+		<value>Oyun Suresi</value>
+	</string>
+	<string>
+		<id>10102</id>
+		<value>En Hizli Zaman</value>
+	</string>
+	<string>
+		<id>10103</id>
+		<value>Mayin Tarlasi</value>
 	</string>
 </strings>

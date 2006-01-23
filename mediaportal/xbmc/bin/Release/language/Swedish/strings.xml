@@ -4803,7 +4803,7 @@
 	</string>
 	<string>
 		<id>200002</id>
-		<value>Nu kan du mappa EPG-kanalerna till dina TV-kanaler</value>
+		<value>Nu kan du mappa EPG-kanalerna till dina TV-kanaleler</value>
 	</string>
 	<string>
 		<id>200003</id>
@@ -5040,5 +5040,29 @@
 	<string>
 		<id>4520</id>
 		<value>Hoppa över</value>
+	</string>
+	<string>
+		<id>4521</id>
+		<value>Visa albuminformation</value>
+	</string>
+	<string>
+		<id>4522</id>
+		<value>Fångar: {0}...</value>
+	</string>
+	<string>
+		<id>10100</id>
+		<value>Gömda minor</value>
+	</string>
+	<string>
+		<id>10101</id>
+		<value>Speltid</value>
+	</string>
+	<string>
+		<id>10102</id>
+		<value>Snabbast tid</value>
+	</string>
+	<string>
+		<id>10103</id>
+		<value>Minesweeper</value>
 	</string>
 </strings>

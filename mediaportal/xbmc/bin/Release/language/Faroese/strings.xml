@@ -218,7 +218,151 @@
 		<value>Leita</value>
 	</string>
 	<string>
+		<id>139</id>
+		<value>Hitastig</value>
+	</string>
+	<string>
 		<id>142</id>
 		<value>Tíð:</value>
+	</string>
+	<string>
+		<id>188</id>
+		<value>Vel alt</value>
+	</string>
+	<string>
+		<id>190</id>
+		<value>Goym</value>
+	</string>
+	<string>
+		<id>191</id>
+		<value>Blanda</value>
+	</string>
+	<string>
+		<id>194</id>
+		<value>Leitar...</value>
+	</string>
+	<string>
+		<id>201</id>
+		<value>Ár</value>
+	</string>
+	<string>
+		<id>248</id>
+		<value>Mál</value>
+	</string>
+	<string>
+		<id>249</id>
+		<value>Tónleik</value>
+	</string>
+	<string>
+		<id>257</id>
+		<value>Feil</value>
+	</string>
+	<string>
+		<id>259</id>
+		<value>Opnar</value>
+	</string>
+	<string>
+		<id>283</id>
+		<value>Leitingar úrslit</value>
+	</string>
+	<string>
+		<id>284</id>
+		<value>Einki funnið</value>
+	</string>
+	<string>
+		<id>289</id>
+		<value>Stødd</value>
+	</string>
+	<string>
+		<id>292</id>
+		<value>Ljóð</value>
+	</string>
+	<string>
+		<id>304</id>
+		<value>Mál</value>
+	</string>
+	<string>
+		<id>314</id>
+		<value>Fyrireikar...</value>
+	</string>
+	<string>
+		<id>316</id>
+		<value>Leitar í songum</value>
+	</string>
+	<string>
+		<id>328</id>
+		<value>Goymir broytingar</value>
+	</string>
+	<string>
+		<id>335</id>
+		<value>Byrja</value>
+	</string>
+	<string>
+		<id>344</id>
+		<value>Leikarar</value>
+	</string>
+	<string>
+		<id>345</id>
+		<value>Ár</value>
+	</string>
+	<string>
+		<id>351</id>
+		<value>Sløkk</value>
+	</string>
+	<string>
+		<id>353</id>
+		<value>Svart</value>
+	</string>
+	<string>
+		<id>363</id>
+		<value>Sortera eftir: Fílir</value>
+	</string>
+	<string>
+		<id>365</id>
+		<value>Sortera eftir: Navn</value>
+	</string>
+	<string>
+		<id>366</id>
+		<value>Sortera eftir: Ár</value>
+	</string>
+	<string>
+		<id>374</id>
+		<value>Skýggja</value>
+	</string>
+	<string>
+		<id>375</id>
+		<value>Kavi</value>
+	</string>
+	<string>
+		<id>376</id>
+		<value>Regn</value>
+	</string>
+	<string>
+		<id>380</id>
+		<value>Ælaveður</value>
+	</string>
+	<string>
+		<id>383</id>
+		<value>Vindur</value>
+	</string>
+	<string>
+		<id>388</id>
+		<value>og</value>
+	</string>
+	<string>
+		<id>389</id>
+		<value>Mjørki</value>
+	</string>
+	<string>
+		<id>392</id>
+		<value>Sirm</value>
+	</string>
+	<string>
+		<id>4513</id>
+		<value>Ymisk</value>
+	</string>
+	<string>
+		<id>10102</id>
+		<value>Skjótasta tíð</value>
 	</string>
 </strings>

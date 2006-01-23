@@ -131,11 +131,11 @@
 	</string>
 	<string>
 		<id>101</id>
-		<value>Lista</value>
+		<value>Listã</value>
 	</string>
 	<string>
 		<id>102</id>
-		<value>Scan</value>
+		<value>Scanare</value>
 	</string>
 	<string>
 		<id>103</id>
@@ -163,15 +163,15 @@
 	</string>
 	<string>
 		<id>109</id>
-		<value>Creazã Miniaturi</value>
+		<value>Creazã miniaturi</value>
 	</string>
 	<string>
 		<id>110</id>
-		<value>Creazã Miniaturi</value>
+		<value>Creazã miniaturi</value>
 	</string>
 	<string>
 		<id>111</id>
-		<value>Acces Direct</value>
+		<value>Acces direct</value>
 	</string>
 	<string>
 		<id>112</id>
@@ -199,7 +199,7 @@
 	</string>
 	<string>
 		<id>118</id>
-		<value>Re-denumire</value>
+		<value>Redenumire</value>
 	</string>
 	<string>
 		<id>119</id>
@@ -247,7 +247,7 @@
 	</string>
 	<string>
 		<id>130</id>
-		<value>Informatii Sistem</value>
+		<value>Informatii sistem</value>
 	</string>
 	<string>
 		<id>131</id>
@@ -263,7 +263,7 @@
 	</string>
 	<string>
 		<id>134</id>
-		<value>Locatii Comune</value>
+		<value>Locatii comune</value>
 	</string>
 	<string>
 		<id>135</id>
@@ -271,7 +271,7 @@
 	</string>
 	<string>
 		<id>136</id>
-		<value>Listã Redare</value>
+		<value>Listã redare</value>
 	</string>
 	<string>
 		<id>137</id>
@@ -343,7 +343,7 @@
 	</string>
 	<string>
 		<id>154</id>
-		<value>Unitate Stocare</value>
+		<value>Unitate stocare</value>
 	</string>
 	<string>
 		<id>155</id>
@@ -359,7 +359,7 @@
 	</string>
 	<string>
 		<id>158</id>
-		<value>Memorie Liberã</value>
+		<value>Memorie liberã</value>
 	</string>
 	<string>
 		<id>159</id>
@@ -375,19 +375,19 @@
 	</string>
 	<string>
 		<id>162</id>
-		<value>CD Deschis</value>
+		<value>Tavitã CD deschisã</value>
 	</string>
 	<string>
 		<id>163</id>
-		<value>Acces disc</value>
+		<value>Accesez discul</value>
 	</string>
 	<string>
 		<id>164</id>
-		<value>Disc Absent</value>
+		<value>Disc absent</value>
 	</string>
 	<string>
 		<id>165</id>
-		<value>Disc Prezent</value>
+		<value>Disc prezent</value>
 	</string>
 	<string>
 		<id>166</id>
@@ -399,11 +399,11 @@
 	</string>
 	<string>
 		<id>168</id>
-		<value>Sincronizare Orã:</value>
+		<value>Sincronizare orã:</value>
 	</string>
 	<string>
 		<id>169</id>
-		<value>Rezoluþie Ecran:</value>
+		<value>Rezoluþie ecran:</value>
 	</string>
 	<string>
 		<id>170</id>
@@ -415,7 +415,7 @@
 	</string>
 	<string>
 		<id>172</id>
-		<value>Data Apariþiei:</value>
+		<value>Data apariþiei:</value>
 	</string>
 	<string>
 		<id>173</id>
@@ -483,7 +483,7 @@
 	</string>
 	<string>
 		<id>189</id>
-		<value>Interogare Informaþii</value>
+		<value>Caut informaþii</value>
 	</string>
 	<string>
 		<id>190</id>
@@ -507,7 +507,7 @@
 	</string>
 	<string>
 		<id>195</id>
-		<value>Informaþie IMDB nedisponibilã!</value>
+		<value>Informaþie IMDB indisponibilã!</value>
 	</string>
 	<string>
 		<id>196</id>
@@ -515,11 +515,11 @@
 	</string>
 	<string>
 		<id>197</id>
-		<value>Interogare informaþie IMDB</value>
+		<value>Cãutare informaþie IMDB</value>
 	</string>
 	<string>
 		<id>198</id>
-		<value>Se cautã informaþii film</value>
+		<value>Se descarcã informaþiile filmului</value>
 	</string>
 	<string>
 		<id>199</id>
@@ -535,11 +535,11 @@
 	</string>
 	<string>
 		<id>202</id>
-		<value>Tagline:</value>
+		<value>Pe scurt:</value>
 	</string>
 	<string>
 		<id>203</id>
-		<value>Plot outline:</value>
+		<value>Intriga pe scurt:</value>
 	</string>
 	<string>
 		<id>204</id>
@@ -555,7 +555,7 @@
 	</string>
 	<string>
 		<id>207</id>
-		<value>Plot</value>
+		<value>Intrigã</value>
 	</string>
 	<string>
 		<id>208</id>
@@ -579,11 +579,11 @@
 	</string>
 	<string>
 		<id>213</id>
-		<value>Calibrare</value>
+		<value>Calibrare IU</value>
 	</string>
 	<string>
 		<id>214</id>
-		<value>Calib. Ecran</value>
+		<value>Calibrare Ecran</value>
 	</string>
 	<string>
 		<id>215</id>
@@ -595,7 +595,7 @@
 	</string>
 	<string>
 		<id>217</id>
-		<value>Extindere la ecran</value>
+		<value>Pe tot ecranul</value>
 	</string>
 	<string>
 		<id>218</id>
@@ -639,7 +639,7 @@
 	</string>
 	<string>
 		<id>228</id>
-		<value>Se încarcã Playlist - Aleator</value>
+		<value>Mod aleator la încãrcarea listei</value>
 	</string>
 	<string>
 		<id>229</id>
@@ -747,7 +747,7 @@
 	</string>
 	<string>
 		<id>256</id>
-		<value>Interogare Internet pentru CDDB</value>
+		<value>Interogare Internet pentru informaþii CDDB</value>
 	</string>
 	<string>
 		<id>257</id>
@@ -755,7 +755,7 @@
 	</string>
 	<string>
 		<id>258</id>
-		<value>Activare ID3</value>
+		<value>Activare taguri ID3</value>
 	</string>
 	<string>
 		<id>259</id>
@@ -763,7 +763,7 @@
 	</string>
 	<string>
 		<id>260</id>
-		<value>Radio Internet (Shoutcast)</value>
+		<value>Radio Internet</value>
 	</string>
 	<string>
 		<id>261</id>
@@ -839,11 +839,11 @@
 	</string>
 	<string>
 		<id>279</id>
-		<value>Nu se pot încarca setarile</value>
+		<value>Nu se pot încãrca setãrile</value>
 	</string>
 	<string>
 		<id>280</id>
-		<value>folosind setãri implicite (sigure)</value>
+		<value>folosesc setãrile implicite</value>
 	</string>
 	<string>
 		<id>281</id>
@@ -855,7 +855,7 @@
 	</string>
 	<string>
 		<id>283</id>
-		<value>Rezultatul Cãutãrii</value>
+		<value>Rezultatul cãutãrii</value>
 	</string>
 	<string>
 		<id>284</id>
@@ -883,7 +883,7 @@
 	</string>
 	<string>
 		<id>290</id>
-		<value>Amplificare Volum(dB)</value>
+		<value>Amplificare Volum (dB)</value>
 	</string>
 	<string>
 		<id>291</id>
@@ -907,11 +907,11 @@
 	</string>
 	<string>
 		<id>296</id>
-		<value>Stergere Semne Capitol</value>
+		<value>ªtergere Semne Capitol</value>
 	</string>
 	<string>
 		<id>297</id>
-		<value>Intarziere AV</value>
+		<value>Întârziere AV</value>
 	</string>
 	<string>
 		<id>298</id>
@@ -923,7 +923,7 @@
 	</string>
 	<string>
 		<id>300</id>
-		<value>1. Limba</value>
+		<value>1. Limbã</value>
 	</string>
 	<string>
 		<id>301</id>
@@ -1059,7 +1059,7 @@
 	</string>
 	<string>
 		<id>334</id>
-		<value>Reorganizare informati muzicã</value>
+		<value>Reorganizare informaþii muzicã</value>
 	</string>
 	<string>
 		<id>335</id>
@@ -1139,7 +1139,7 @@
 	</string>
 	<string>
 		<id>354</id>
-		<value>Matrix Trails</value>
+		<value>Urme tip Matrix</value>
 	</string>
 	<string>
 		<id>355</id>
@@ -1151,7 +1151,7 @@
 	</string>
 	<string>
 		<id>357</id>
-		<value>Timp Închidere Automatã</value>
+		<value>Timp închidere automatã</value>
 	</string>
 	<string>
 		<id>358</id>
@@ -1167,7 +1167,7 @@
 	</string>
 	<string>
 		<id>361</id>
-		<value>SlideShow Recursiv</value>
+		<value>Auto diapozitive</value>
 	</string>
 	<string>
 		<id>362</id>
@@ -1211,7 +1211,7 @@
 	</string>
 	<string>
 		<id>372</id>
-		<value>În Cea Mai Mare Parte</value>
+		<value>În general</value>
 	</string>
 	<string>
 		<id>373</id>
@@ -1243,7 +1243,7 @@
 	</string>
 	<string>
 		<id>380</id>
-		<value>Ploaie Torenþialã</value>
+		<value>Ploaie torenþialã</value>
 	</string>
 	<string>
 		<id>381</id>
@@ -1283,7 +1283,7 @@
 	</string>
 	<string>
 		<id>390</id>
-		<value>Ceatþã uºoarã</value>
+		<value>Ceaþã uºoarã</value>
 	</string>
 	<string>
 		<id>391</id>
@@ -1303,15 +1303,15 @@
 	</string>
 	<string>
 		<id>396</id>
-		<value>Selectare Localitate</value>
+		<value>Selectare localitate</value>
 	</string>
 	<string>
 		<id>397</id>
-		<value>Actualizare Info Meteo</value>
+		<value>Timp de actualizare</value>
 	</string>
 	<string>
 		<id>398</id>
-		<value>Temperatura (Unitãþi)</value>
+		<value>Temperaturã (Unitãþi)</value>
 	</string>
 	<string>
 		<id>399</id>
@@ -1323,11 +1323,11 @@
 	</string>
 	<string>
 		<id>401</id>
-		<value>Temp</value>
+		<value>Temperaturã</value>
 	</string>
 	<string>
 		<id>402</id>
-		<value>Temp. Aparentã</value>
+		<value>Temp. aparentã</value>
 	</string>
 	<string>
 		<id>403</id>
@@ -1355,11 +1355,11 @@
 	</string>
 	<string>
 		<id>410</id>
-		<value>Interogare Weather.com</value>
+		<value>Accesez Weather.com</value>
 	</string>
 	<string>
 		<id>411</id>
-		<value>Actualizare Vreme Pentru:</value>
+		<value>Actualizare Meteo pentru:</value>
 	</string>
 	<string>
 		<id>412</id>
@@ -1379,7 +1379,7 @@
 	</string>
 	<string>
 		<id>416</id>
-		<value>Nedisponibil</value>
+		<value>Indisponibil</value>
 	</string>
 	<string>
 		<id>417</id>
@@ -1403,11 +1403,11 @@
 	</string>
 	<string>
 		<id>422</id>
-		<value>ªtergere Info Album</value>
+		<value>ªtergere informaþii album</value>
 	</string>
 	<string>
 		<id>423</id>
-		<value>ªtergere Info CDDB</value>
+		<value>ªtergere informaþii CDDB</value>
 	</string>
 	<string>
 		<id>424</id>
@@ -1415,7 +1415,7 @@
 	</string>
 	<string>
 		<id>425</id>
-		<value>Informaþie Indisponibilã</value>
+		<value>Informaþie album indisponibilã</value>
 	</string>
 	<string>
 		<id>426</id>
@@ -1447,7 +1447,7 @@
 	</string>
 	<string>
 		<id>433</id>
-		<value>Sunteþi sigur de ºtergerea</value>
+		<value>Sigur doriþi ºtergerea</value>
 	</string>
 	<string>
 		<id>434</id>
@@ -1623,7 +1623,7 @@
 	</string>
 	<string>
 		<id>477</id>
-		<value>Nu se poate încãrca playlist-ul</value>
+		<value>Nu se poate încãrca lista</value>
 	</string>
 	<string>
 		<id>478</id>
@@ -1663,15 +1663,15 @@
 	</string>
 	<string>
 		<id>487</id>
-		<value>Repetã Odatã</value>
+		<value>Repetã odatã</value>
 	</string>
 	<string>
 		<id>488</id>
-		<value>Repetã playlist-ul directorului</value>
+		<value>Repetã lista directorului</value>
 	</string>
 	<string>
 		<id>489</id>
-		<value>Foloseºte playlist în cântece</value>
+		<value>Foloseºte lista în cântece</value>
 	</string>
 	<string>
 		<id>490</id>
@@ -1687,11 +1687,11 @@
 	</string>
 	<string>
 		<id>493</id>
-		<value>Actor</value>
+		<value>Actor:</value>
 	</string>
 	<string>
 		<id>500</id>
-		<value>Menu Fisiere</value>
+		<value>Meniu fiºiere</value>
 	</string>
 	<string>
 		<id>501</id>
@@ -1703,11 +1703,11 @@
 	</string>
 	<string>
 		<id>503</id>
-		<value>Stergere director</value>
+		<value>ªterge acest director</value>
 	</string>
 	<string>
 		<id>504</id>
-		<value>Selectare destinaþie</value>
+		<value>Mergi la destinaþie</value>
 	</string>
 	<string>
 		<id>505</id>
@@ -1727,7 +1727,7 @@
 	</string>
 	<string>
 		<id>509</id>
-		<value>Fiºierul Destinaþie existã. Suprascrieþi?</value>
+		<value>Fiºierul destinaþie existã. Suprascrieþi?</value>
 	</string>
 	<string>
 		<id>510</id>
@@ -1739,7 +1739,7 @@
 	</string>
 	<string>
 		<id>512</id>
-		<value>Nici odatã</value>
+		<value>Niciodatã</value>
 	</string>
 	<string>
 		<id>513</id>
@@ -1763,7 +1763,7 @@
 	</string>
 	<string>
 		<id>518</id>
-		<value>Stergeþi acest cântec?</value>
+		<value>ªtergeþi acest cântec?</value>
 	</string>
 	<string>
 		<id>530</id>
@@ -1787,7 +1787,7 @@
 	</string>
 	<string>
 		<id>601</id>
-		<value>Înregistreazã Acum</value>
+		<value>Înregistreazã acum</value>
 	</string>
 	<string>
 		<id>602</id>
@@ -1799,7 +1799,7 @@
 	</string>
 	<string>
 		<id>604</id>
-		<value>Programe TV Înregistrate</value>
+		<value>Programe TV înregistrate</value>
 	</string>
 	<string>
 		<id>605</id>
@@ -1807,11 +1807,11 @@
 	</string>
 	<string>
 		<id>606</id>
-		<value>Actualizare Ghid TV</value>
+		<value>Actualizare ghid TV</value>
 	</string>
 	<string>
 		<id>607</id>
-		<value>Încarcare</value>
+		<value>Încãrcare</value>
 	</string>
 	<string>
 		<id>608</id>
@@ -1819,7 +1819,7 @@
 	</string>
 	<string>
 		<id>609</id>
-		<value>Ghidul TV s-a actualizat</value>
+		<value>Ghidul TV a fost actualizat</value>
 	</string>
 	<string>
 		<id>610</id>
@@ -1847,7 +1847,7 @@
 	</string>
 	<string>
 		<id>616</id>
-		<value>Selectaþi Tipul de Înregistrare</value>
+		<value>Selectaþi tipul de înregistrare</value>
 	</string>
 	<string>
 		<id>617</id>
@@ -1879,7 +1879,7 @@
 	</string>
 	<string>
 		<id>624</id>
-		<value>Curãþare (Cleanup)</value>
+		<value>Curãþare</value>
 	</string>
 	<string>
 		<id>625</id>
@@ -1903,11 +1903,11 @@
 	</string>
 	<string>
 		<id>630</id>
-		<value>Doriþi repornirea Sistemului HomeTheater PC?</value>
+		<value>Doriþi repornirea sistemului?</value>
 	</string>
 	<string>
 		<id>631</id>
-		<value>Doriþi oprirea Sistemului HomeTheater PC?</value>
+		<value>Doriþi oprirea sistemului?</value>
 	</string>
 	<string>
 		<id>632</id>
@@ -1931,11 +1931,11 @@
 	</string>
 	<string>
 		<id>637</id>
-		<value>Editare Înregistrare</value>
+		<value>Editare înregistrare</value>
 	</string>
 	<string>
 		<id>638</id>
-		<value>Înregistrare Nouã</value>
+		<value>Înregistrare nouã</value>
 	</string>
 	<string>
 		<id>639</id>
@@ -1967,7 +1967,7 @@
 	</string>
 	<string>
 		<id>646</id>
-		<value>Înregistrãri Programate</value>
+		<value>Înregistrãri programate</value>
 	</string>
 	<string>
 		<id>647</id>
@@ -1979,7 +1979,7 @@
 	</string>
 	<string>
 		<id>649</id>
-		<value>În Fiecare</value>
+		<value>În fiecare</value>
 	</string>
 	<string>
 		<id>650</id>
@@ -1991,7 +1991,7 @@
 	</string>
 	<string>
 		<id>652</id>
-		<value>Programe TV Înregistrate</value>
+		<value>Programe TV înregistrate</value>
 	</string>
 	<string>
 		<id>653</id>
@@ -1999,7 +1999,7 @@
 	</string>
 	<string>
 		<id>654</id>
-		<value>Deschide CD</value>
+		<value>Scoate CD</value>
 	</string>
 	<string>
 		<id>655</id>
@@ -2011,31 +2011,31 @@
 	</string>
 	<string>
 		<id>657</id>
-		<value>Luni</value>
+		<value>Lu.</value>
 	</string>
 	<string>
 		<id>658</id>
-		<value>Mar</value>
+		<value>Ma.</value>
 	</string>
 	<string>
 		<id>659</id>
-		<value>Mie</value>
+		<value>Mi.</value>
 	</string>
 	<string>
 		<id>660</id>
-		<value>Joi</value>
+		<value>Jo.</value>
 	</string>
 	<string>
 		<id>661</id>
-		<value>Vin</value>
+		<value>Vi.</value>
 	</string>
 	<string>
 		<id>662</id>
-		<value>Sâm</value>
+		<value>Sâ.</value>
 	</string>
 	<string>
 		<id>663</id>
-		<value>Dum</value>
+		<value>Du.</value>
 	</string>
 	<string>
 		<id>664</id>
@@ -2051,7 +2051,7 @@
 	</string>
 	<string>
 		<id>667</id>
-		<value>Auto Tune</value>
+		<value>Cautare automatã</value>
 	</string>
 	<string>
 		<id>668</id>
@@ -2071,19 +2071,19 @@
 	</string>
 	<string>
 		<id>672</id>
-		<value>Înregistrare Lun-Vin</value>
+		<value>Înregistrare Lu - Vi</value>
 	</string>
 	<string>
 		<id>673</id>
-		<value>Vitezã scroll</value>
+		<value>Vitezã derulare</value>
 	</string>
 	<string>
 		<id>674</id>
-		<value>Setãri Interfaþã</value>
+		<value>Setãri interfaþã</value>
 	</string>
 	<string>
 		<id>675</id>
-		<value>Exemple:</value>
+		<value>Exemplu:</value>
 	</string>
 	<string>
 		<id>676</id>
@@ -2103,7 +2103,7 @@
 	</string>
 	<string>
 		<id>680</id>
-		<value>Lun-Vin</value>
+		<value>Lu - Vi</value>
 	</string>
 	<string>
 		<id>681</id>
@@ -2131,7 +2131,7 @@
 	</string>
 	<string>
 		<id>687</id>
-		<value>Ani de Activitate</value>
+		<value>Ani de activitate</value>
 	</string>
 	<string>
 		<id>688</id>
@@ -2167,7 +2167,7 @@
 	</string>
 	<string>
 		<id>704</id>
-		<value>Cãutare ªtiri</value>
+		<value>Cãutare ºtiri</value>
 	</string>
 	<string>
 		<id>705</id>
@@ -2243,7 +2243,7 @@
 	</string>
 	<string>
 		<id>723</id>
-		<value>Aþi introdus un Disc?</value>
+		<value>Aþi introdus un disc?</value>
 	</string>
 	<string>
 		<id>724</id>
@@ -2267,7 +2267,7 @@
 	</string>
 	<string>
 		<id>729</id>
-		<value>Fiþi sigur cã folosiþi VMR9 ºi se ruleazã Video/TV</value>
+		<value>Fiþi sigur cã folosiþi VMR9 ºi cã se ruleazã Video/TV</value>
 	</string>
 	<string>
 		<id>730</id>
@@ -2295,7 +2295,7 @@
 	</string>
 	<string>
 		<id>736</id>
-		<value>Ghid TV nedisponibil</value>
+		<value>Ghid TV indisponibil</value>
 	</string>
 	<string>
 		<id>737</id>
@@ -2350,6 +2350,10 @@
 		<value>Imagini</value>
 	</string>
 	<string>
+		<id>751</id>
+		<value>Aratã toate cântecele acestui artist</value>
+	</string>
+	<string>
 		<id>800</id>
 		<value>Începe cu</value>
 	</string>
@@ -2371,7 +2375,7 @@
 	</string>
 	<string>
 		<id>805</id>
-		<value>Senin (Clear)</value>
+		<value>Curata</value>
 	</string>
 	<string>
 		<id>806</id>
@@ -2379,7 +2383,7 @@
 	</string>
 	<string>
 		<id>807</id>
-		<value>Produs (Yield)</value>
+		<value>Produs</value>
 	</string>
 	<string>
 		<id>808</id>
@@ -2395,15 +2399,15 @@
 	</string>
 	<string>
 		<id>850</id>
-		<value>Alarme</value>
+		<value>Alarma</value>
 	</string>
 	<string>
 		<id>851</id>
-		<value>Playlist</value>
+		<value>Lista</value>
 	</string>
 	<string>
 		<id>852</id>
-		<value>Alarmã Pornit/Oprit</value>
+		<value>Pornire alarma</value>
 	</string>
 	<string>
 		<id>853</id>
@@ -2415,31 +2419,31 @@
 	</string>
 	<string>
 		<id>855</id>
-		<value>Orã Alarmã</value>
+		<value>Orã alarmã</value>
 	</string>
 	<string>
 		<id>856</id>
-		<value>Sleep Timer Pornit</value>
+		<value>Cronometru sleep pornit</value>
 	</string>
 	<string>
 		<id>857</id>
-		<value>Snooze</value>
+		<value>Amânã alarma</value>
 	</string>
 	<string>
 		<id>858</id>
-		<value>Timp Snooze</value>
+		<value>Timp amânare alarma</value>
 	</string>
 	<string>
 		<id>859</id>
-		<value>Sleep Timer</value>
+		<value>Cronometru sleep</value>
 	</string>
 	<string>
 		<id>860</id>
-		<value>Creºtere Volum</value>
+		<value>Creºtere volum</value>
 	</string>
 	<string>
 		<id>861</id>
-		<value>Detalii Alarmã</value>
+		<value>Detalii alarmã</value>
 	</string>
 	<string>
 		<id>862</id>
@@ -2471,7 +2475,7 @@
 	</string>
 	<string>
 		<id>869</id>
-		<value>Alarmã Nouã</value>
+		<value>Alarmã nouã</value>
 	</string>
 	<string>
 		<id>870</id>
@@ -2507,11 +2511,11 @@
 	</string>
 	<string>
 		<id>878</id>
-		<value>Storage</value>
+		<value>Stocare</value>
 	</string>
 	<string>
 		<id>879</id>
-		<value>Conflict Înregistrãri</value>
+		<value>Conflict înregistrãri</value>
 	</string>
 	<string>
 		<id>880</id>
@@ -2539,7 +2543,7 @@
 	</string>
 	<string>
 		<id>886</id>
-		<value>Implicitã</value>
+		<value>Implicit</value>
 	</string>
 	<string>
 		<id>887</id>
@@ -2547,7 +2551,7 @@
 	</string>
 	<string>
 		<id>888</id>
-		<value>Administrarea Episoadelor</value>
+		<value>Administrarea episoadelor</value>
 	</string>
 	<string>
 		<id>889</id>
@@ -2571,7 +2575,7 @@
 	</string>
 	<string>
 		<id>894</id>
-		<value>Compactaþi Înregistrãrile TV</value>
+		<value>Compactaþi înregistrãrile TV</value>
 	</string>
 	<string>
 		<id>895</id>
@@ -2603,7 +2607,7 @@
 	</string>
 	<string>
 		<id>902</id>
-		<value>Contacte Online</value>
+		<value>Contacte online</value>
 	</string>
 	<string>
 		<id>903</id>
@@ -2635,7 +2639,7 @@
 	</string>
 	<string>
 		<id>910</id>
-		<value>Signing in...</value>
+		<value>Intrare in retea...</value>
 	</string>
 	<string>
 		<id>911</id>
@@ -2659,7 +2663,7 @@
 	</string>
 	<string>
 		<id>916</id>
-		<value>Fisiere la distanþã</value>
+		<value>Fiºiere la distanþã</value>
 	</string>
 	<string>
 		<id>917</id>
@@ -2667,7 +2671,7 @@
 	</string>
 	<string>
 		<id>918</id>
-		<value>Doriþi sã-l descarcaþi într-un</value>
+		<value>Doriþi sã-l descarcaþi într-un director</value>
 	</string>
 	<string>
 		<id>919</id>
@@ -2699,7 +2703,7 @@
 	</string>
 	<string>
 		<id>926</id>
-		<value>Adaugã la playlist</value>
+		<value>Adaugã la lista</value>
 	</string>
 	<string>
 		<id>927</id>
@@ -2843,7 +2847,7 @@
 	</string>
 	<string>
 		<id>970</id>
-		<value>Ecran Precedent</value>
+		<value>Ecran precedent</value>
 	</string>
 	<string>
 		<id>971</id>
@@ -2851,27 +2855,27 @@
 	</string>
 	<string>
 		<id>972</id>
-		<value>Toate Canalele</value>
+		<value>Toate canalele</value>
 	</string>
 	<string>
 		<id>973</id>
-		<value>FPS Maxim</value>
+		<value>Cadre/sec maxime</value>
 	</string>
 	<string>
 		<id>974</id>
-		<value>Menu Principal</value>
+		<value>Meniu principal</value>
 	</string>
 	<string>
 		<id>975</id>
-		<value>Capitolul Precedent</value>
+		<value>Capitolul precedent</value>
 	</string>
 	<string>
 		<id>976</id>
-		<value>Capitolul Urmãtor</value>
+		<value>Capitolul urmãtor</value>
 	</string>
 	<string>
 		<id>977</id>
-		<value>Nu existã un free card disponibil</value>
+		<value>Nu existã un tuner TV disponibil</value>
 	</string>
 	<string>
 		<id>978</id>
@@ -2895,7 +2899,7 @@
 	</string>
 	<string>
 		<id>983</id>
-		<value>Playlist</value>
+		<value>Lista</value>
 	</string>
 	<string>
 		<id>984</id>
@@ -2939,7 +2943,7 @@
 	</string>
 	<string>
 		<id>994</id>
-		<value>Activare Auto-compactare</value>
+		<value>Activare auto-compactare</value>
 	</string>
 	<string>
 		<id>995</id>
@@ -2951,7 +2955,7 @@
 	</string>
 	<string>
 		<id>997</id>
-		<value>Complet</value>
+		<value>Actiune reusita</value>
 	</string>
 	<string>
 		<id>998</id>
@@ -2963,7 +2967,7 @@
 	</string>
 	<string>
 		<id>1000</id>
-		<value>Înregistrãrile TV de la formatul dvr-ms la mpg, xvid sau wmv</value>
+		<value>înregistrãrile TV de la formatul dvr-ms la mpg, xvid sau wmv</value>
 	</string>
 	<string>
 		<id>1001</id>
@@ -2999,11 +3003,11 @@
 	</string>
 	<string>
 		<id>1009</id>
-		<value>Se descarcã imagini</value>
+		<value>Se descarcã imagini coperþi</value>
 	</string>
 	<string>
 		<id>1010</id>
-		<value>Vizualizat</value>
+		<value>Vazut</value>
 	</string>
 	<string>
 		<id>1011</id>
@@ -3047,11 +3051,11 @@
 	</string>
 	<string>
 		<id>1023</id>
-		<value>Apel Primit</value>
+		<value>Sunteþi sunat</value>
 	</string>
 	<string>
 		<id>1024</id>
-		<value>de la</value>
+		<value>de</value>
 	</string>
 	<string>
 		<id>1025</id>
@@ -3059,7 +3063,7 @@
 	</string>
 	<string>
 		<id>1026</id>
-		<value>Vedeþi logfile pentru detalii</value>
+		<value>Vedeþi fiserele jurnal pentru detalii</value>
 	</string>
 	<string>
 		<id>1027</id>
@@ -3071,15 +3075,15 @@
 	</string>
 	<string>
 		<id>1029</id>
-		<value>Limbã Subtitrare</value>
+		<value>Limbã subtitrare</value>
 	</string>
 	<string>
 		<id>1030</id>
-		<value>Oprire PC</value>
+		<value>Oprire sistem</value>
 	</string>
 	<string>
 		<id>1031</id>
-		<value>Restart PC</value>
+		<value>Repornire sistem</value>
 	</string>
 	<string>
 		<id>1032</id>
@@ -3091,15 +3095,15 @@
 	</string>
 	<string>
 		<id>1034</id>
-		<value>Semnal Absent!</value>
+		<value>Semnal nedetectat!</value>
 	</string>
 	<string>
 		<id>1035</id>
-		<value>Canalul TV este codificat!</value>
+		<value>Canalul TV este codat!</value>
 	</string>
 	<string>
 		<id>1036</id>
-		<value>Video nedisponibil</value>
+		<value>Video indisponibil</value>
 	</string>
 	<string>
 		<id>1037</id>
@@ -3143,11 +3147,51 @@
 	</string>
 	<string>
 		<id>1047</id>
-		<value>Porneºte mod Full-Screen</value>
+		<value>Porneste pe tot ecranul</value>
 	</string>
 	<string>
 		<id>1048</id>
-		<value>Setari</value>
+		<value>Setãri</value>
+	</string>
+	<string>
+		<id>1049</id>
+		<value>Hinernare</value>
+	</string>
+	<string>
+		<id>1050</id>
+		<value>Sâ - Du</value>
+	</string>
+	<string>
+		<id>1051</id>
+		<value>Inregistrare Sâ - Du</value>
+	</string>
+	<string>
+		<id>1052</id>
+		<value>Cântece</value>
+	</string>
+	<string>
+		<id>1100</id>
+		<value>Importã CD</value>
+	</string>
+	<string>
+		<id>1101</id>
+		<value>Importã pistele selectate</value>
+	</string>
+	<string>
+		<id>1102</id>
+		<value>Anulare import CD</value>
+	</string>
+	<string>
+		<id>1103</id>
+		<value>Import pista</value>
+	</string>
+	<string>
+		<id>1104</id>
+		<value>rãmas</value>
+	</string>
+	<string>
+		<id>1105</id>
+		<value>Import piesele</value>
 	</string>
 	<string>
 		<id>1440</id>
@@ -3159,11 +3203,11 @@
 	</string>
 	<string>
 		<id>1442</id>
-		<value>Vitezã defilare (orizontalã)</value>
+		<value>Vitezã derulare (orizontalã)</value>
 	</string>
 	<string>
 		<id>1443</id>
-		<value>Vitezã defilare (verticalã)</value>
+		<value>Vitezã derulare (verticalã)</value>
 	</string>
 	<string>
 		<id>1444</id>
@@ -3180,6 +3224,18 @@
 	<string>
 		<id>1447</id>
 		<value>Înregistrare opritã:</value>
+	</string>
+	<string>
+		<id>1448</id>
+		<value>Nu selecta nimic</value>
+	</string>
+	<string>
+		<id>1449</id>
+		<value>Opreºte înregistrarea</value>
+	</string>
+	<string>
+		<id>1450</id>
+		<value>Sunteþi sigur ca vreti sã opriþi înregistrarea</value>
 	</string>
 	<string>
 		<id>1950</id>
@@ -3215,7 +3271,7 @@
 	</string>
 	<string>
 		<id>1958</id>
-		<value>Utilizare Procesor</value>
+		<value>Utilizare procesor</value>
 	</string>
 	<string>
 		<id>1959</id>
@@ -3223,11 +3279,11 @@
 	</string>
 	<string>
 		<id>1960</id>
-		<value>Volt</value>
+		<value>Volti</value>
 	</string>
 	<string>
 		<id>1961</id>
-		<value>Frecvenþã Ceas</value>
+		<value>Frecvenþã ceas</value>
 	</string>
 	<string>
 		<id>1962</id>
@@ -3235,19 +3291,19 @@
 	</string>
 	<string>
 		<id>1963</id>
-		<value>Detalii Senzor</value>
+		<value>Detalii senzor</value>
 	</string>
 	<string>
 		<id>1964</id>
-		<value>Alarmã Senzor</value>
+		<value>Alarmã senzor</value>
 	</string>
 	<string>
 		<id>1965</id>
-		<value>Valoare Maximã</value>
+		<value>Valoare maximã</value>
 	</string>
 	<string>
 		<id>1966</id>
-		<value>Valoare Minimã</value>
+		<value>Valoare minimã</value>
 	</string>
 	<string>
 		<id>1967</id>
@@ -3263,7 +3319,7 @@
 	</string>
 	<string>
 		<id>1970</id>
-		<value>Interval Alarmã (în secunde)</value>
+		<value>Interval alarmã (în secunde)</value>
 	</string>
 	<string>
 		<id>1971</id>
@@ -3271,11 +3327,11 @@
 	</string>
 	<string>
 		<id>1972</id>
-		<value>Detalii Stare</value>
+		<value>Detalii stare</value>
 	</string>
 	<string>
 		<id>1973</id>
-		<value>(of)</value>
+		<value>(de)</value>
 	</string>
 	<string>
 		<id>1974</id>
@@ -3283,23 +3339,23 @@
 	</string>
 	<string>
 		<id>1975</id>
-		<value>Pagina Urmãtoare</value>
+		<value>Pagina urmãtoare</value>
 	</string>
 	<string>
 		<id>1976</id>
-		<value>rpm</value>
+		<value>rot/min</value>
 	</string>
 	<string>
 		<id>1977</id>
-		<value>Sistem Fisiere</value>
+		<value>Sistem fisiere</value>
 	</string>
 	<string>
 		<id>1978</id>
-		<value>VirtualMem</value>
+		<value>Memorie virtuala</value>
 	</string>
 	<string>
 		<id>2005</id>
-		<value>Sterge</value>
+		<value>ªterge</value>
 	</string>
 	<string>
 		<id>2006</id>
@@ -3307,7 +3363,7 @@
 	</string>
 	<string>
 		<id>2007</id>
-		<value>(Yield)</value>
+		<value>(Produs)</value>
 	</string>
 	<string>
 		<id>2008</id>
@@ -3315,7 +3371,7 @@
 	</string>
 	<string>
 		<id>2009</id>
-		<value>Directii</value>
+		<value>Direcþii</value>
 	</string>
 	<string>
 		<id>2010</id>
@@ -3339,7 +3395,7 @@
 	</string>
 	<string>
 		<id>2015</id>
-		<value>pe Porþie</value>
+		<value>per porþie</value>
 	</string>
 	<string>
 		<id>2016</id>
@@ -3375,7 +3431,7 @@
 	</string>
 	<string>
 		<id>2024</id>
-		<value>pinch (cât se poate lua cu degetele)</value>
+		<value>un varf de cutit</value>
 	</string>
 	<string>
 		<id>2025</id>
@@ -3419,7 +3475,7 @@
 	</string>
 	<string>
 		<id>2035</id>
-		<value>quart (un sfert de galon - 1,136 l)</value>
+		<value>sfert (un sfert de galon - 1,136 l)</value>
 	</string>
 	<string>
 		<id>2036</id>
@@ -3435,19 +3491,19 @@
 	</string>
 	<string>
 		<id>2039</id>
-		<value>mili-litru</value>
+		<value>mililitru</value>
 	</string>
 	<string>
 		<id>2040</id>
-		<value>mili-litru</value>
+		<value>mililitru</value>
 	</string>
 	<string>
 		<id>2041</id>
-		<value>centi-litru</value>
+		<value>centilitru</value>
 	</string>
 	<string>
 		<id>2042</id>
-		<value>deci-litru</value>
+		<value>decilitru</value>
 	</string>
 	<string>
 		<id>2043</id>
@@ -3479,15 +3535,15 @@
 	</string>
 	<string>
 		<id>2050</id>
-		<value>ªtergeþi acestã Categorie?</value>
+		<value>ªtergeþi acestã categorie?</value>
 	</string>
 	<string>
 		<id>2051</id>
-		<value>Cãutare în Titluri</value>
+		<value>Cãutare în titluri</value>
 	</string>
 	<string>
 		<id>2052</id>
-		<value>Cãutare în Reþete</value>
+		<value>Cãutare în reþete</value>
 	</string>
 	<string>
 		<id>2053</id>
@@ -3499,7 +3555,7 @@
 	</string>
 	<string>
 		<id>2100</id>
-		<value>Burner</value>
+		<value>Inscriptor</value>
 	</string>
 	<string>
 		<id>2101</id>
@@ -3587,7 +3643,7 @@
 	</string>
 	<string>
 		<id>2122</id>
-		<value>start!</value>
+		<value>porneste!</value>
 	</string>
 	<string>
 		<id>2123</id>
@@ -3623,7 +3679,7 @@
 	</string>
 	<string>
 		<id>2131</id>
-		<value>of</value>
+		<value>de</value>
 	</string>
 	<string>
 		<id>2132</id>
@@ -3683,7 +3739,7 @@
 	</string>
 	<string>
 		<id>2202</id>
-		<value>Selectaþi destinatia</value>
+		<value>Selectaþi destinaþia</value>
 	</string>
 	<string>
 		<id>2203</id>
@@ -3695,7 +3751,7 @@
 	</string>
 	<string>
 		<id>2205</id>
-		<value>Refacere selectie</value>
+		<value>Refacere selecþie</value>
 	</string>
 	<string>
 		<id>2206</id>
@@ -3771,7 +3827,7 @@
 	</string>
 	<string>
 		<id>2224</id>
-		<value>Directorii existã!</value>
+		<value>Directorul existã!</value>
 	</string>
 	<string>
 		<id>2225</id>
@@ -3819,15 +3875,15 @@
 	</string>
 	<string>
 		<id>3010</id>
-		<value>Minute Rãmase</value>
+		<value>Minute rãmase</value>
 	</string>
 	<string>
 		<id>3011</id>
-		<value>Orã Rãmasã</value>
+		<value>Orã rãmasã</value>
 	</string>
 	<string>
 		<id>3012</id>
-		<value>Ore Rãmase</value>
+		<value>Ore rãmase</value>
 	</string>
 	<string>
 		<id>3013</id>
@@ -3843,7 +3899,7 @@
 	</string>
 	<string>
 		<id>3016</id>
-		<value>Terminat Deja</value>
+		<value>Terminat deja</value>
 	</string>
 	<string>
 		<id>3017</id>
@@ -3867,7 +3923,7 @@
 	</string>
 	<string>
 		<id>3022</id>
-		<value>(of)</value>
+		<value>(de)</value>
 	</string>
 	<string>
 		<id>5900</id>
@@ -3875,7 +3931,7 @@
 	</string>
 	<string>
 		<id>5901</id>
-		<value>Aratã Filme</value>
+		<value>Aratã filme</value>
 	</string>
 	<string>
 		<id>5902</id>
@@ -3907,11 +3963,11 @@
 	</string>
 	<string>
 		<id>5909</id>
-		<value>Nu pot transcoda filmul ptr. streaming</value>
+		<value>Nu pot accesa fluxul</value>
 	</string>
 	<string>
 		<id>5910</id>
-		<value>Actializare Informaþii Film</value>
+		<value>Actializare informaþii film</value>
 	</string>
 	<string>
 		<id>5911</id>
@@ -3947,7 +4003,7 @@
 	</string>
 	<string>
 		<id>8001</id>
-		<value>Verificare Mesaje</value>
+		<value>Verificare mesaje</value>
 	</string>
 	<string>
 		<id>8002</id>
@@ -3975,7 +4031,7 @@
 	</string>
 	<string>
 		<id>8009</id>
-		<value>Marcheazã toate ca ne-citite</value>
+		<value>Marcheazã toate ca necitite</value>
 	</string>
 	<string>
 		<id>8010</id>
@@ -3983,7 +4039,7 @@
 	</string>
 	<string>
 		<id>8011</id>
-		<value>Mergeþi la Setup ºi creaþi</value>
+		<value>Mergeþi in setãri ºi creaþi</value>
 	</string>
 	<string>
 		<id>8012</id>
@@ -4027,19 +4083,19 @@
 	</string>
 	<string>
 		<id>8022</id>
-		<value>Aratã Documente Ataºate</value>
+		<value>Aratã documentele ataºate</value>
 	</string>
 	<string>
 		<id>8023</id>
-		<value>Aveþi Mesaje Noi</value>
+		<value>Aveþi mesaje noi</value>
 	</string>
 	<string>
 		<id>8024</id>
-		<value>Aratã Mesaj</value>
+		<value>Aratã mesaj</value>
 	</string>
 	<string>
 		<id>8025</id>
-		<value>Prelucrare Mesaj</value>
+		<value>Prelucrare mesaj</value>
 	</string>
 	<string>
 		<id>8030</id>
@@ -4059,7 +4115,7 @@
 	</string>
 	<string>
 		<id>9000</id>
-		<value>Dimensiuni Imagine:</value>
+		<value>Dimensiuni imagine:</value>
 	</string>
 	<string>
 		<id>9001</id>
@@ -4071,7 +4127,7 @@
 	</string>
 	<string>
 		<id>9003</id>
-		<value>Mod Metering:</value>
+		<value>Mod metering:</value>
 	</string>
 	<string>
 		<id>9004</id>
@@ -4079,11 +4135,11 @@
 	</string>
 	<string>
 		<id>9005</id>
-		<value>Vitezã Shutter:</value>
+		<value>Vitezã obiectiv:</value>
 	</string>
 	<string>
 		<id>9006</id>
-		<value>Fotografiat în Data:</value>
+		<value>Fotografiat în data:</value>
 	</string>
 	<string>
 		<id>9007</id>
@@ -4091,11 +4147,11 @@
 	</string>
 	<string>
 		<id>9008</id>
-		<value>Timp Expunere:</value>
+		<value>Timp expunere:</value>
 	</string>
 	<string>
 		<id>9009</id>
-		<value>Model Camera Foto:</value>
+		<value>Model camera foto:</value>
 	</string>
 	<string>
 		<id>9010</id>
@@ -4139,11 +4195,11 @@
 	</string>
 	<string>
 		<id>13006</id>
-		<value>Imagini Mici</value>
+		<value>Imagini mici</value>
 	</string>
 	<string>
 		<id>13007</id>
-		<value>Imagini Mari</value>
+		<value>Imagini mari</value>
 	</string>
 	<string>
 		<id>13008</id>
@@ -4171,11 +4227,11 @@
 	</string>
 	<string>
 		<id>13014</id>
-		<value>Cãutare in director</value>
+		<value>Cãutare în director</value>
 	</string>
 	<string>
 		<id>13015</id>
-		<value>Se importã fisierul (gamebase)</value>
+		<value>Se importã fiºierul (gamebase)</value>
 	</string>
 	<string>
 		<id>13016</id>
@@ -4191,7 +4247,7 @@
 	</string>
 	<string>
 		<id>16001</id>
-		<value>Petrecere: Shuffle</value>
+		<value>Mod party</value>
 	</string>
 	<string>
 		<id>25001</id>
@@ -4203,7 +4259,7 @@
 	</string>
 	<string>
 		<id>19002</id>
-		<value>Joc Nou</value>
+		<value>Joc nou</value>
 	</string>
 	<string>
 		<id>19003</id>
@@ -4227,7 +4283,7 @@
 	</string>
 	<string>
 		<id>19008</id>
-		<value>Score Maxim</value>
+		<value>Scor maxim</value>
 	</string>
 	<string>
 		<id>19009</id>
@@ -4243,11 +4299,11 @@
 	</string>
 	<string>
 		<id>19012</id>
-		<value>Sfârºit Joc</value>
+		<value>Joc terminat</value>
 	</string>
 	<string>
 		<id>19100</id>
-		<value>GeoClock</value>
+		<value>Ceas geografic</value>
 	</string>
 	<string>
 		<id>100000</id>
@@ -4299,7 +4355,7 @@
 	</string>
 	<string>
 		<id>100012</id>
-		<value>Setãri-&gt;SlideShow</value>
+		<value>Setãri-&gt;Diapozitive</value>
 	</string>
 	<string>
 		<id>100013</id>
@@ -4367,7 +4423,7 @@
 	</string>
 	<string>
 		<id>100031</id>
-		<value>Setãri-&gt;Ecran-&gt;scroll speed</value>
+		<value>Setãri-&gt;Ecran-&gt;viteza derulare</value>
 	</string>
 	<string>
 		<id>100032</id>
@@ -4379,19 +4435,19 @@
 	</string>
 	<string>
 		<id>100034</id>
-		<value>My Plugins</value>
+		<value>Module</value>
 	</string>
 	<string>
 		<id>100100</id>
-		<value>Yes/no dialog</value>
+		<value>Dialog da/nu</value>
 	</string>
 	<string>
 		<id>100101</id>
-		<value>Progress dialog</value>
+		<value>Dialog progres</value>
 	</string>
 	<string>
 		<id>100500</id>
-		<value>Muzicã/playlist</value>
+		<value>Muzicã/listã</value>
 	</string>
 	<string>
 		<id>100501</id>
@@ -4483,7 +4539,7 @@
 	</string>
 	<string>
 		<id>100616</id>
-		<value>Ghid/Carduri detectate</value>
+		<value>Ghid/TV tunere detectate</value>
 	</string>
 	<string>
 		<id>100617</id>
@@ -4551,15 +4607,15 @@
 	</string>
 	<string>
 		<id>100633</id>
-		<value>Ghid/Analog/Redenumeste Radio</value>
+		<value>Ghid/Analog/Redenumeste radio</value>
 	</string>
 	<string>
 		<id>100634</id>
-		<value>Ghid/De la distanta</value>
+		<value>Ghid/Telecomanda</value>
 	</string>
 	<string>
 		<id>100635</id>
-		<value>Ghid/EPG</value>
+		<value>Ghid/Ghid TV</value>
 	</string>
 	<string>
 		<id>100699</id>
@@ -4587,15 +4643,15 @@
 	</string>
 	<string>
 		<id>100705</id>
-		<value>Setari interfata</value>
+		<value>Setari interfaþã</value>
 	</string>
 	<string>
 		<id>100748</id>
-		<value>Informatie programe</value>
+		<value>Informaþie programe</value>
 	</string>
 	<string>
 		<id>100749</id>
-		<value>TV/Fara semnal</value>
+		<value>TV/Fãrã semnal</value>
 	</string>
 	<string>
 		<id>100750</id>
@@ -4615,11 +4671,11 @@
 	</string>
 	<string>
 		<id>100758</id>
-		<value>File dialog</value>
+		<value>Dialog fiºer</value>
 	</string>
 	<string>
 		<id>100759</id>
-		<value>Informatie TV inregistrata</value>
+		<value>Informaþie TV inregistratã</value>
 	</string>
 	<string>
 		<id>100760</id>
@@ -4635,7 +4691,7 @@
 	</string>
 	<string>
 		<id>102000</id>
-		<value>Select dialog</value>
+		<value>Dialog selectare</value>
 	</string>
 	<string>
 		<id>102001</id>
@@ -4655,15 +4711,15 @@
 	</string>
 	<string>
 		<id>102005</id>
-		<value>Video Fullscreen</value>
+		<value>Video pe tot ecranul</value>
 	</string>
 	<string>
 		<id>102006</id>
-		<value>Vizualizare Audio</value>
+		<value>Vizualizare audio</value>
 	</string>
 	<string>
 		<id>102007</id>
-		<value>Fotografii/slideshow</value>
+		<value>Fotografii/diapozitive</value>
 	</string>
 	<string>
 		<id>102008</id>
@@ -4671,23 +4727,23 @@
 	</string>
 	<string>
 		<id>102009</id>
-		<value>Selection dialog</value>
+		<value>Dialog selectie</value>
 	</string>
 	<string>
 		<id>102010</id>
-		<value>Date/Time</value>
+		<value>Data/Timp</value>
 	</string>
 	<string>
 		<id>102011</id>
-		<value>Artis info</value>
+		<value>Info artist</value>
 	</string>
 	<string>
 		<id>102012</id>
-		<value>Context menu</value>
+		<value>Meniu contextual</value>
 	</string>
 	<string>
 		<id>102013</id>
-		<value>Set Rating</value>
+		<value>Setare rating</value>
 	</string>
 	<string>
 		<id>102014</id>
@@ -4695,7 +4751,7 @@
 	</string>
 	<string>
 		<id>102015</id>
-		<value>Mini Menu</value>
+		<value>Mini meniu</value>
 	</string>
 	<string>
 		<id>102016</id>
@@ -4751,7 +4807,7 @@
 	</string>
 	<string>
 		<id>200003</id>
-		<value>selectaþi un canal ºi apasaþi Enter pentru a schimba legãtura</value>
+		<value>selectaþi un canal ºi apãsaþi Enter pentru a schimba legãtura</value>
 	</string>
 	<string>
 		<id>200004</id>
@@ -4763,7 +4819,7 @@
 	</string>
 	<string>
 		<id>200006</id>
-		<value>Apãsaþi Înainte ptr. a continua configurarea</value>
+		<value>Apãsaþi Înainte pentru a continua configurarea</value>
 	</string>
 	<string>
 		<id>200007</id>
@@ -4783,27 +4839,27 @@
 	</string>
 	<string>
 		<id>200011</id>
-		<value>Cu MediaPortal, vã puteþi bucura de muzica favoritã ºi posturile de radio preferate</value>
+		<value>Cu MediaPortal, vã puteþi bucura de muzica, de posturile radio favorite, de filme, DVD-uri</value>
+	</string>
+	<string>
+		<id>200012</id>
+		<value>ºi albume foto precum ºi sã urmãriþi ºi sã înregistraþi programele TV preferate</value>
 	</string>
 	<string>
 		<id>200013</id>
-		<value>Vã permite sã ascultaþi muzica si radio preferate, sã vedeþi filme is DVD-uri,</value>
+		<value>Acest ghid vã ajuta sa configuraþi rapid ºi uºor MediaPortal. Vã rog continuaþi cu paºii urmãtori</value>
 	</string>
 	<string>
 		<id>200014</id>
-		<value>albume foto, ºi sã urmãriþi ºi sã înregistraþi programele TV preferate, ºi multe altele.</value>
+		<value>ºi începeþi prin a seta limba si locatia dumneavoastrã:</value>
 	</string>
 	<string>
 		<id>200015</id>
-		<value>Acest program vã va ajuta sã configuraþi MediaPortal uºor. Vã rog continuaþi cu paºii urmãtori</value>
-	</string>
-	<string>
-		<id>200016</id>
-		<value>Apãsaþi butonul Next ptr. a începe</value>
+		<value>Acum apãsaþi butonul Înainte pentru a continua</value>
 	</string>
 	<string>
 		<id>200017</id>
-		<value>Fiþi bineveniþi in MediaPortal</value>
+		<value>Bine aþi venit in MediaPortal</value>
 	</string>
 	<string>
 		<id>200018</id>
@@ -4811,15 +4867,15 @@
 	</string>
 	<string>
 		<id>200019</id>
-		<value>Apãsaþi butonul Finish pentru a termina configurarea</value>
+		<value>Apãsaþi butonul Terminã pentru a completa configurarea</value>
 	</string>
 	<string>
 		<id>200020</id>
-		<value>Finish</value>
+		<value>Terminã</value>
 	</string>
 	<string>
 		<id>200021</id>
-		<value>Configurare TV - EPG</value>
+		<value>Configurare Ghid TV - EPG</value>
 	</string>
 	<string>
 		<id>200022</id>
@@ -4827,11 +4883,63 @@
 	</string>
 	<string>
 		<id>200023</id>
-		<value>Apãsaþi butonul Next ptr. a configura aceste tunere</value>
+		<value>Apãsaþi butonul Înainte pentru a configura aceste tunere</value>
 	</string>
 	<string>
 		<id>200024</id>
 		<value>Configurare TV</value>
+	</string>
+	<string>
+		<id>200025</id>
+		<value>Limbã</value>
+	</string>
+	<string>
+		<id>200026</id>
+		<value>Þarã</value>
+	</string>
+	<string>
+		<id>200027</id>
+		<value>Setãri - General</value>
+	</string>
+	<string>
+		<id>200028</id>
+		<value>Are acest sistem acces la Internet?</value>
+	</string>
+	<string>
+		<id>200029</id>
+		<value>Pornesc Mediaportal pe tot ecranul?</value>
+	</string>
+	<string>
+		<id>200030</id>
+		<value>Pornesc automat Mediaportal când porneºte sistemul?</value>
+	</string>
+	<string>
+		<id>200031</id>
+		<value>Da</value>
+	</string>
+	<string>
+		<id>200032</id>
+		<value>Nu</value>
+	</string>
+	<string>
+		<id>200033</id>
+		<value>Setari TV - TV analog</value>
+	</string>
+	<string>
+		<id>200034</id>
+		<value>Vã rog alegeti oraºul dumneavoastrã din urmatoarea listã</value>
+	</string>
+	<string>
+		<id>200035</id>
+		<value>Dãcã orasul dumneavoastra nu este listat cãuarea va fi facutã manual</value>
+	</string>
+	<string>
+		<id>200036</id>
+		<value>Cãutare manualã</value>
+	</string>
+	<string>
+		<id>200037</id>
+		<value>Sari&gt;</value>
 	</string>
 	<string>
 		<id>4000</id>
@@ -4840,5 +4948,105 @@
 	<string>
 		<id>4001</id>
 		<value>Favorite</value>
+	</string>
+	<string>
+		<id>4002</id>
+		<value>Nu pot accesa adresa</value>
+	</string>
+	<string>
+		<id>4003</id>
+		<value>Vã rog sã specificaþi un director al favoritelor în setãri</value>
+	</string>
+	<string>
+		<id>4500</id>
+		<value>Sari peste albumele care au deja coperþi</value>
+	</string>
+	<string>
+		<id>4501</id>
+		<value>Salveazã coperþile in directorul albumului</value>
+	</string>
+	<string>
+		<id>4502</id>
+		<value>Salveazã coperþile in directorul Thumbs</value>
+	</string>
+	<string>
+		<id>4503</id>
+		<value>Numãr albumele. Aºteptaþi vã rog...</value>
+	</string>
+	<string>
+		<id>4504</id>
+		<value>0}% - {1} din {2}</value>
+	</string>
+	<string>
+		<id>4505</id>
+		<value>Caut {0}...</value>
+	</string>
+	<string>
+		<id>4506</id>
+		<value>[Gol]</value>
+	</string>
+	<string>
+		<id>4507</id>
+		<value>Descãrcarea coperþilor anulatã</value>
+	</string>
+	<string>
+		<id>4508</id>
+		<value>Descãrcarea coperþilor încheiatã cu succes</value>
+	</string>
+	<string>
+		<id>4509</id>
+		<value>Descãrcarea coperþilor încheiatã cu erori</value>
+	</string>
+	<string>
+		<id>4510</id>
+		<value>{0} coperþi revizuite</value>
+	</string>
+	<string>
+		<id>4511</id>
+		<value>Descãrcarea coperþilor terminatã</value>
+	</string>
+	<string>
+		<id>4512</id>
+		<value>Toate coperþile sunt aduse la zi</value>
+	</string>
+	<string>
+		<id>4513</id>
+		<value>Diverse</value>
+	</string>
+	<string>
+		<id>4514</id>
+		<value>Descãrcare coperþi</value>
+	</string>
+	<string>
+		<id>4515</id>
+		<value>Rezultate cãutare coperþi</value>
+	</string>
+	<string>
+		<id>4516</id>
+		<value>Nu am gãsit coperþi</value>
+	</string>
+	<string>
+		<id>4517</id>
+		<value>Închide</value>
+	</string>
+	<string>
+		<id>4518</id>
+		<value>Titlul albumului nu a fost gãsit\r\nreincerc: {0}</value>
+	</string>
+	<string>
+		<id>4519</id>
+		<value>Copertã curentã</value>
+	</string>
+	<string>
+		<id>4520</id>
+		<value>Sari</value>
+	</string>
+	<string>
+		<id>4521</id>
+		<value>Aratã info album</value>
+	</string>
+	<string>
+		<id>4522</id>
+		<value>Descãrcare: {0}...</value>
 	</string>
 </strings>

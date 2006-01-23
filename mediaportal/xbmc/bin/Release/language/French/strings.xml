@@ -463,7 +463,7 @@
 	</string>
 	<string>
 		<id>184</id>
-		<value>Miseàjour</value>
+		<value>Mise à jour</value>
 	</string>
 	<string>
 		<id>185</id>
@@ -611,7 +611,7 @@
 	</string>
 	<string>
 		<id>221</id>
-		<value>Déconnectédu réseau</value>
+		<value>Déconnecté du réseau</value>
 	</string>
 	<string>
 		<id>222</id>
@@ -1743,7 +1743,7 @@
 	</string>
 	<string>
 		<id>513</id>
-		<value>Cetélément est protégé, l&apos;action ne peut aboutir</value>
+		<value>Cet élément est protégé, l&apos;action ne peut aboutir</value>
 	</string>
 	<string>
 		<id>514</id>
@@ -1831,11 +1831,11 @@
 	</string>
 	<string>
 		<id>612</id>
-		<value>Enregistreràchaque fois sur cette chaîne</value>
+		<value>Enregistrer à chaque fois sur cette chaîne</value>
 	</string>
 	<string>
 		<id>613</id>
-		<value>Enregistreràchaque fois sur toutes les chaînes</value>
+		<value>Enregistrer à chaque fois sur toutes les chaînes</value>
 	</string>
 	<string>
 		<id>614</id>
@@ -2263,7 +2263,7 @@
 	</string>
 	<string>
 		<id>728</id>
-		<value>Impossibilitéde démarrer</value>
+		<value>Impossibilité de démarrer</value>
 	</string>
 	<string>
 		<id>729</id>
@@ -2327,11 +2327,11 @@
 	</string>
 	<string>
 		<id>744</id>
-		<value>LevéSoleil</value>
+		<value>Levé Soleil</value>
 	</string>
 	<string>
 		<id>745</id>
-		<value>CouchéSoleil</value>
+		<value>Couché Soleil</value>
 	</string>
 	<string>
 		<id>746</id>
@@ -2348,6 +2348,10 @@
 	<string>
 		<id>750</id>
 		<value>Images</value>
+	</string>
+	<string>
+		<id>751</id>
+		<value>Montrez toutes les chansons de cet artiste</value>
 	</string>
 	<string>
 		<id>800</id>
@@ -2499,7 +2503,7 @@
 	</string>
 	<string>
 		<id>876</id>
-		<value>J&apos;usqu&apos;àl&apos;arrêt manuel</value>
+		<value>J&apos;usqu&apos;à l&apos;arrêt manuel</value>
 	</string>
 	<string>
 		<id>877</id>
@@ -2519,7 +2523,7 @@
 	</string>
 	<string>
 		<id>881</id>
-		<value>Choisissez l&apos;enregistrementàarrêter :</value>
+		<value>Choisissez l&apos;enregistrement à arrêter :</value>
 	</string>
 	<string>
 		<id>882</id>
@@ -2543,15 +2547,15 @@
 	</string>
 	<string>
 		<id>887</id>
-		<value>Indiquez le nombre d&apos;épisodeàconserver</value>
+		<value>Indiquez le nombre d&apos;épisode à conserver</value>
 	</string>
 	<string>
 		<id>888</id>
-		<value>Gestion desépisodes</value>
+		<value>Gestion des épisodes</value>
 	</string>
 	<string>
 		<id>889</id>
-		<value>Tous lesépisodes</value>
+		<value>Tous les épisodes</value>
 	</string>
 	<string>
 		<id>890</id>
@@ -2595,7 +2599,7 @@
 	</string>
 	<string>
 		<id>900</id>
-		<value>Reprendre le filmàl&apos;endroit laissé?</value>
+		<value>Reprendre le film à l&apos;endroit laissé?</value>
 	</string>
 	<string>
 		<id>901</id>
@@ -2663,7 +2667,7 @@
 	</string>
 	<string>
 		<id>917</id>
-		<value>Ce fichier est situésur un partage distant</value>
+		<value>Ce fichier est situé sur un partage distant</value>
 	</string>
 	<string>
 		<id>918</id>
@@ -2699,7 +2703,7 @@
 	</string>
 	<string>
 		<id>926</id>
-		<value>Ajouteràla liste</value>
+		<value>Ajouter à la liste</value>
 	</string>
 	<string>
 		<id>927</id>
@@ -2827,7 +2831,7 @@
 	</string>
 	<string>
 		<id>958</id>
-		<value>Parleà</value>
+		<value>Parle à</value>
 	</string>
 	<string>
 		<id>959</id>
@@ -2835,7 +2839,7 @@
 	</string>
 	<string>
 		<id>960</id>
-		<value>a quittéla conversation</value>
+		<value>a quitté la conversation</value>
 	</string>
 	<string>
 		<id>961</id>
@@ -2891,7 +2895,7 @@
 	</string>
 	<string>
 		<id>982</id>
-		<value>Supprimer la totalitéde cet enregistrement</value>
+		<value>Supprimer la totalité de cet enregistrement</value>
 	</string>
 	<string>
 		<id>983</id>
@@ -2987,7 +2991,7 @@
 	</string>
 	<string>
 		<id>1006</id>
-		<value>Permettreàl&apos;enregistrement de démarrer</value>
+		<value>Permettre à l&apos;enregistrement de démarrer</value>
 	</string>
 	<string>
 		<id>1007</id>
@@ -3150,6 +3154,42 @@
 		<value>Paramètres</value>
 	</string>
 	<string>
+		<id>1049</id>
+		<value>Hibernation</value>
+	</string>
+	<string>
+		<id>1050</id>
+		<value>Sam-Dim</value>
+	</string>
+	<string>
+		<id>1051</id>
+		<value>enregistrement Sam-Dim</value>
+	</string>
+	<string>
+		<id>1052</id>
+		<value>Chansons</value>
+	</string>
+	<string>
+		<id>1100</id>
+		<value>Importé le CD</value>
+	</string>
+	<string>
+		<id>1101</id>
+		<value>Importé la chanson choisie</value>
+	</string>
+	<string>
+		<id>1102</id>
+		<value>Annuler l&apos;importation du CD</value>
+	</string>
+	<string>
+		<id>1103</id>
+		<value>Importe la chanson</value>
+	</string>
+	<string>
+		<id>1105</id>
+		<value>Importations des chansons</value>
+	</string>
+	<string>
 		<id>1440</id>
 		<value>Télétexte</value>
 	</string>
@@ -3180,6 +3220,18 @@
 	<string>
 		<id>1447</id>
 		<value>Fin de l&apos;enregistrement</value>
+	</string>
+	<string>
+		<id>1448</id>
+		<value>Sélectionner Aucun</value>
+	</string>
+	<string>
+		<id>1449</id>
+		<value>Arrêté l&apos;enregistrement</value>
+	</string>
+	<string>
+		<id>1450</id>
+		<value>Etes-vous sûr d&apos;arrêté l&apos;enregistrement</value>
 	</string>
 	<string>
 		<id>1950</id>
@@ -3635,11 +3687,11 @@
 	</string>
 	<string>
 		<id>2134</id>
-		<value>Filtres DirectShow requis</value>
+		<value>Video</value>
 	</string>
 	<string>
 		<id>2135</id>
-		<value>non installé</value>
+		<value>Audio</value>
 	</string>
 	<string>
 		<id>2136</id>
@@ -4047,7 +4099,7 @@
 	</string>
 	<string>
 		<id>8030</id>
-		<value>Connectéau serveur</value>
+		<value>Connecté au serveur</value>
 	</string>
 	<string>
 		<id>8031</id>
@@ -4615,7 +4667,7 @@
 	</string>
 	<string>
 		<id>100757</id>
-		<value>Préférences deétat</value>
+		<value>Préférences de statut</value>
 	</string>
 	<string>
 		<id>100758</id>
@@ -4790,6 +4842,10 @@
 		<value>Avec MediaPortal vous profitez de vos musiques et radios favorites.</value>
 	</string>
 	<string>
+		<id>200012</id>
+		<value>Regarder des Videos, des DVD et la TV en direct et beaucoup plus.</value>
+	</string>
+	<string>
 		<id>200013</id>
 		<value>Cela vous permet d&apos;écouter vos chansons favorites, de regarder vos vidéos et DVD.</value>
 	</string>
@@ -4800,10 +4856,6 @@
 	<string>
 		<id>200015</id>
 		<value>Ce configurateur va vous aider à configurer rapidement et facilement MediaPortal. Suivez les étapes...</value>
-	</string>
-	<string>
-		<id>200016</id>
-		<value>Appuyer sur le bouton Suivant pour commercer.</value>
 	</string>
 	<string>
 		<id>200017</id>
@@ -4838,11 +4890,127 @@
 		<value>Configuration TV</value>
 	</string>
 	<string>
+		<id>200025</id>
+		<value>Langue</value>
+	</string>
+	<string>
+		<id>200026</id>
+		<value>Pays</value>
+	</string>
+	<string>
+		<id>200027</id>
+		<value>Installation - Général</value>
+	</string>
+	<string>
+		<id>200028</id>
+		<value>Ce PC a-t-il accès à Internet?</value>
+	</string>
+	<string>
+		<id>200029</id>
+		<value>Démarrer MediaPortal en plein écran</value>
+	</string>
+	<string>
+		<id>200030</id>
+		<value>Démarrer MediaPortal automatiquement au démarrage du PC?</value>
+	</string>
+	<string>
+		<id>200031</id>
+		<value>Oui</value>
+	</string>
+	<string>
+		<id>200032</id>
+		<value>Non</value>
+	</string>
+	<string>
+		<id>200033</id>
+		<value>Configuration TV - TV analogique</value>
+	</string>
+	<string>
+		<id>200034</id>
+		<value>Veuillez choisir votre ville à partir de la liste suivante.</value>
+	</string>
+	<string>
+		<id>200035</id>
+		<value>Note: si votre ville n&apos;est pas listée alors vous devez rechercher manuellement.</value>
+	</string>
+	<string>
+		<id>200036</id>
+		<value>Recherche manuelle</value>
+	</string>
+	<string>
 		<id>4000</id>
 		<value>Navigateur Web</value>
 	</string>
 	<string>
 		<id>4001</id>
 		<value>Favoris</value>
+	</string>
+	<string>
+		<id>4002</id>
+		<value>Incapable de charger l&apos;URL</value>
+	</string>
+	<string>
+		<id>4003</id>
+		<value>Veuillez indiquer le dossier de vos favoris dans l&apos;installation.</value>
+	</string>
+	<string>
+		<id>4504</id>
+		<value>{0}% - {1} de {2}</value>
+	</string>
+	<string>
+		<id>4505</id>
+		<value>Recherche {0}...</value>
+	</string>
+	<string>
+		<id>4506</id>
+		<value>[Vide]</value>
+	</string>
+	<string>
+		<id>4512</id>
+		<value>Toutes les jaquettes sont à jour</value>
+	</string>
+	<string>
+		<id>4513</id>
+		<value>Divers</value>
+	</string>
+	<string>
+		<id>4516</id>
+		<value>Aucune jaquette trouvée</value>
+	</string>
+	<string>
+		<id>4517</id>
+		<value>Fermer</value>
+	</string>
+	<string>
+		<id>4518</id>
+		<value>Titre de l&apos;album introuvable\r\nEssai: {0}</value>
+	</string>
+	<string>
+		<id>4519</id>
+		<value>Jaquette courante</value>
+	</string>
+	<string>
+		<id>4520</id>
+		<value>Passer</value>
+	</string>
+	<string>
+		<id>4521</id>
+		<value>Montrer l&apos;info de l&apos;album</value>
+	</string>
+	<string>
+		<id>10100</id>
+		<value>Mines cachées</value>
+	</string>
+	<string>
+		<id>10101</id>
+		<value>Temps de jeu</value>
+	</string>
+	<string>
+		<id>10102</id>
+		<value>Le temps le plus rapide</value>
+	</string>
+	<string>
+		<id>10103</id>
+		<value>Démineur</value>
 	</string>
 </strings>

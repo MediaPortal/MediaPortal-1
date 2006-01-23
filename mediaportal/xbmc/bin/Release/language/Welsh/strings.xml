@@ -4712,6 +4712,9 @@
 	<string>
 		<id>102006</id>
 		<value>Delweddu Sain</value>
+	</stringng>
+		<id>102006</id>
+		<value>Delweddu Sain</value>
 	</string>
 	<string>
 		<id>102007</id>
@@ -4952,5 +4955,49 @@
 	<string>
 		<id>4003</id>
 		<value>Enwch ffolder ffefrynnau wrth osod</value>
+	</string>
+	<string>
+		<id>4500</id>
+		<value>Hepgor album gyda chelf clawr</value>
+	</string>
+	<string>
+		<id>4501</id>
+		<value>Cadw celf clawr mewn ffolder album</value>
+	</string>
+	<string>
+		<id>4502</id>
+		<value>Cadw celf clawr mewn ffolder bach</value>
+	</string>
+	<string>
+		<id>4503</id>
+		<value>Estyn cyfrif ffolder. Arhoswch...</value>
+	</string>
+	<string>
+		<id>4504</id>
+		<value>{0}% - {1} o {2}</value>
+	</string>
+	<string>
+		<id>4505</id>
+		<value>Chwilio {0}...</value>
+	</string>
+	<string>
+		<id>4506</id>
+		<value>[Gwag]</value>
+	</string>
+	<string>
+		<id>4513</id>
+		<value>Amrywiol</value>
+	</string>
+	<string>
+		<id>4517</id>
+		<value>Cau</value>
+	</string>
+	<string>
+		<id>4520</id>
+		<value>Hepgor</value>
+	</string>
+	<string>
+		<id>4522</id>
+		<value>Cipio: {0}...</value>
 	</string>
 </strings>

@@ -4711,6 +4711,9 @@
 	</string>
 	<string>
 		<id>102007</id>
+		<value>Afbeel</string>
+	<string>
+		<id>102007</id>
 		<value>Afbeeldingen/Diavoorstelling</value>
 	</string>
 	<string>
@@ -4799,7 +4802,7 @@
 	</string>
 	<string>
 		<id>200003</id>
-		<value>Om koppeling te wijzigen selecteert u een kanaal en drukt op ENTER</value>
+		<value>selecteer een kanaal en druk op Enter om een koppeling te wijzigen</value>
 	</string>
 	<string>
 		<id>200004</id>
@@ -4819,7 +4822,7 @@
 	</string>
 	<string>
 		<id>200008</id>
-		<value>Stel in: de afstandsbediening</value>
+		<value>Instellen: de afstandsbediening</value>
 	</string>
 	<string>
 		<id>200009</id>
@@ -4831,11 +4834,11 @@
 	</string>
 	<string>
 		<id>200011</id>
-		<value>Met MediaPortal kunt u genieten van uw favoriete muziek, radio</value>
+		<value>Met MediaPortal kunt u genieten van uw favoriete muziek, radio, het bekijken van digitale fotos,</value>
 	</string>
 	<string>
 		<id>200012</id>
-		<value>video-opnamen, DVD&apos;, televisie en nog veel meer.</value>
+		<value>video-opnamen, DVDs, televisie en nog veel meer.</value>
 	</string>
 	<string>
 		<id>200013</id>
@@ -4899,11 +4902,11 @@
 	</string>
 	<string>
 		<id>200029</id>
-		<value>Wilt u Mediaportal beeldvulend starten?</value>
+		<value>Wilt u MediaPortal beeldvullend starten?</value>
 	</string>
 	<string>
 		<id>200030</id>
-		<value>Moet Mediaportal automatisch beginnen als de PC wordt aangezet?</value>
+		<value>Moet MediaPortal automatisch beginnen als de PC wordt aangezet?</value>
 	</string>
 	<string>
 		<id>200031</id>
@@ -4919,7 +4922,7 @@
 	</string>
 	<string>
 		<id>200034</id>
-		<value>Selecteer uw woonplaats in onderstaande lijst.</value>
+		<value>Selecteer uw woonplaats in de onderstaande lijst.</value>
 	</string>
 	<string>
 		<id>200035</id>
@@ -4947,6 +4950,106 @@
 	</string>
 	<string>
 		<id>4003</id>
-		<value>Selecteer a.u.b. map voor favorieten in setup</value>
+		<value>Selecteer a.u.b. een map voor favorieten in setup</value>
+	</string>
+	<string>
+		<id>4500</id>
+		<value>Albums met bestaande cover-art overslaan</value>
+	</string>
+	<string>
+		<id>4501</id>
+		<value>Bewaar cover-art in de album-map</value>
+	</string>
+	<string>
+		<id>4502</id>
+		<value>Bewaar cover-art in de miniaturen map</value>
+	</string>
+	<string>
+		<id>4503</id>
+		<value>Tellen albums. Wachten a.u.b...</value>
+	</string>
+	<string>
+		<id>4504</id>
+		<value>{0}% - {1} of {2}</value>
+	</string>
+	<string>
+		<id>4505</id>
+		<value>Zoeken {0}...</value>
+	</string>
+	<string>
+		<id>4506</id>
+		<value>Leeg</value>
+	</string>
+	<string>
+		<id>4507</id>
+		<value>Cover-art zoeker stopgezet door gebruiker</value>
+	</string>
+	<string>
+		<id>4508</id>
+		<value>Cover-art zoektocht met succes beëindigd</value>
+	</string>
+	<string>
+		<id>4509</id>
+		<value>Cover-art zoektocht geëindigd met fouten</value>
+	</string>
+	<string>
+		<id>4510</id>
+		<value>{0} cover-art afbeeldingen bijgewerkt</value>
+	</string>
+	<string>
+		<id>4511</id>
+		<value>Cover-art zoeker klaar</value>
+	</string>
+	<string>
+		<id>4512</id>
+		<value>Alle covers bijgewerkt</value>
+	</string>
+	<string>
+		<id>4513</id>
+		<value>Diversen</value>
+	</string>
+	<string>
+		<id>4514</id>
+		<value>Cover-art zoeker</value>
+	</string>
+	<string>
+		<id>4515</id>
+		<value>Cover-art zoeker resultaten</value>
+	</string>
+	<string>
+		<id>4516</id>
+		<value>Geen cover-art gevonden</value>
+	</string>
+	<string>
+		<id>4517</id>
+		<value>Sluiten</value>
+	</string>
+	<string>
+		<id>4518</id>
+		<value>Album titel niet gevonden\r\nProberen: {0}</value>
+	</string>
+	<string>
+		<id>4519</id>
+		<value>Huidige cover-art</value>
+	</string>
+	<string>
+		<id>4520</id>
+		<value>Overslaan</value>
+	</string>
+	<string>
+		<id>10100</id>
+		<value>Mijnen</value>
+	</string>
+	<string>
+		<id>10101</id>
+		<value>Speeltijd</value>
+	</string>
+	<string>
+		<id>10102</id>
+		<value>Snelste tijd</value>
+	</string>
+	<string>
+		<id>10103</id>
+		<value>Mijnenveger</value>
 	</string>
 </strings>

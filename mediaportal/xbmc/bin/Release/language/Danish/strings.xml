@@ -4586,6 +4586,133 @@
 		<value>Scripts/Information</value>
 	</string>
 	<string>
+		<id>102005<rd/Analog/By</value>
+	</string>
+	<string>
+		<id>100628</id>
+		<value>Wizard/Analog/Importeret</value>
+	</string>
+	<string>
+		<id>100629</id>
+		<value>Wizard/Analog/Manuel</value>
+	</string>
+	<string>
+		<id>100630</id>
+		<value>Wizard/Analog/Søg</value>
+	</string>
+	<string>
+		<id>100631</id>
+		<value>Wizard/Analog/Omdøb</value>
+	</string>
+	<string>
+		<id>100632</id>
+		<value>Wizard/Analog/Radio</value>
+	</string>
+	<string>
+		<id>100633</id>
+		<value>Wizard/Analog/Omdøb Radio</value>
+	</string>
+	<string>
+		<id>100634</id>
+		<value>Wizard/Fjernbetjening</value>
+	</string>
+	<string>
+		<id>100635</id>
+		<value>Wizard/EPG</value>
+	</string>
+	<string>
+		<id>100699</id>
+		<value>Wizard/Slut</value>
+	</string>
+	<string>
+		<id>100700</id>
+		<value>TV Indstillinger</value>
+	</string>
+	<string>
+		<id>100701</id>
+		<value>Indstillinger for TV optagelser</value>
+	</string>
+	<string>
+		<id>100702</id>
+		<value>Sorter TV kanaler</value>
+	</string>
+	<string>
+		<id>100703</id>
+		<value>Indstilliner for TV Film</value>
+	</string>
+	<string>
+		<id>100704</id>
+		<value>DVD indstillinger</value>
+	</string>
+	<string>
+		<id>100705</id>
+		<value>Skin indstillinger</value>
+	</string>
+	<string>
+		<id>100748</id>
+		<value>Program info</value>
+	</string>
+	<string>
+		<id>100749</id>
+		<value>TV/Intet signal</value>
+	</string>
+	<string>
+		<id>100750</id>
+		<value>Opskrifter</value>
+	</string>
+	<string>
+		<id>100755</id>
+		<value>Status</value>
+	</string>
+	<string>
+		<id>100756</id>
+		<value>Statusdetaljer</value>
+	</string>
+	<string>
+		<id>100757</id>
+		<value>Statusindstillinger</value>
+	</string>
+	<string>
+		<id>100758</id>
+		<value>Fil dialog</value>
+	</string>
+	<string>
+		<id>100759</id>
+		<value>Optaget TV info</value>
+	</string>
+	<string>
+		<id>100760</id>
+		<value>Brænder</value>
+	</string>
+	<string>
+		<id>100770</id>
+		<value>Explorer</value>
+	</string>
+	<string>
+		<id>101000</id>
+		<value>Tastatur</value>
+	</string>
+	<string>
+		<id>102000</id>
+		<value>Valg dialog</value>
+	</string>
+	<string>
+		<id>102001</id>
+		<value>Musik/Info</value>
+	</string>
+	<string>
+		<id>102002</id>
+		<value>Dialog OK</value>
+	</string>
+	<string>
+		<id>102003</id>
+		<value>Film/Info</value>
+	</string>
+	<string>
+		<id>102004</id>
+		<value>Scripts/Info</value>
+	</string>
+	<string>
 		<id>102005</id>
 		<value>Fuldskærmsvideo</value>
 	</string>
@@ -4651,7 +4778,7 @@
 	</string>
 	<string>
 		<id>103003</id>
-		<value>Importerer *.mlf fil</value>
+		<value>TV/OSD</value>
 	</string>
 	<string>
 		<id>103006</id>
@@ -4687,7 +4814,7 @@
 	</string>
 	<string>
 		<id>200004</id>
-		<value>Manuelt leveret tvguide.xml</value>
+		<value>Manuelt tilført tvguide.xml</value>
 	</string>
 	<string>
 		<id>200005</id>
@@ -4711,7 +4838,7 @@
 	</string>
 	<string>
 		<id>200010</id>
-		<value>MediaPortal laver din PC om til et højt avanceret Multi-Media Center - en HTPC.</value>
+		<value>MediaPortal omdanner din PC til meget avanceret Multi-Media Center - en HTPC.</value>
 	</string>
 	<string>
 		<id>200011</id>
@@ -4719,7 +4846,7 @@
 	</string>
 	<string>
 		<id>200012</id>
-		<value>videoer, DVDer og direkte TV samet meget mere</value>
+		<value>videoer, DVDer og se direkte TV samt meget mere.</value>
 	</string>
 	<string>
 		<id>200013</id>
@@ -4727,7 +4854,7 @@
 	</string>
 	<string>
 		<id>200014</id>
-		<value>start med at sætte dit sprog og din placering herunder:</value>
+		<value>start med at vælge dit sprog og din placering herunder:</value>
 	</string>
 	<string>
 		<id>200015</id>
@@ -4775,7 +4902,7 @@
 	</string>
 	<string>
 		<id>200027</id>
-		<value>Setup - generel</value>
+		<value>Setup - generelt</value>
 	</string>
 	<string>
 		<id>200028</id>
@@ -4787,7 +4914,7 @@
 	</string>
 	<string>
 		<id>200030</id>
-		<value>Start MediaPortal når PCen tændes?</value>
+		<value>Start MediaPortal når PC´en tændes?</value>
 	</string>
 	<string>
 		<id>200031</id>
@@ -4803,11 +4930,11 @@
 	</string>
 	<string>
 		<id>200034</id>
-		<value>Vælg venligst by fra listen:</value>
+		<value>Vælg venligst din by fra listen:</value>
 	</string>
 	<string>
 		<id>200035</id>
-		<value>Hvis din by ikke findes på listen skal du manuelt indstille kanaler</value>
+		<value>Hvis din by ikke findes på listen skal du manuelt indstille kanaler.</value>
 	</string>
 	<string>
 		<id>200036</id>
@@ -4831,6 +4958,114 @@
 	</string>
 	<string>
 		<id>4003</id>
-		<value>Angiv venligst en favorit folder i opsætningen.</value>
+		<value>Angiv mappen til dine favoritter i opsætningen.</value>
+	</string>
+	<string>
+		<id>4500</id>
+		<value>Spring over albums med eksisterende coverart</value>
+	</string>
+	<string>
+		<id>4501</id>
+		<value>Gem coverart in albummets mappe</value>
+	</string>
+	<string>
+		<id>4502</id>
+		<value>Gem coverart i miniature mappen</value>
+	</string>
+	<string>
+		<id>4503</id>
+		<value>Tæller album´s, vent venligst...</value>
+	</string>
+	<string>
+		<id>4504</id>
+		<value>{0}% - {1} af {2}</value>
+	</string>
+	<string>
+		<id>4505</id>
+		<value>Søger {0}...</value>
+	</string>
+	<string>
+		<id>4506</id>
+		<value>[Tom]</value>
+	</string>
+	<string>
+		<id>4507</id>
+		<value>Coverart hentning afbrudt af brugeren</value>
+	</string>
+	<string>
+		<id>4508</id>
+		<value>Hentning af coverart afsluttet ok.</value>
+	</string>
+	<string>
+		<id>4509</id>
+		<value>Hentning af coverart afsluttet med fejl</value>
+	</string>
+	<string>
+		<id>4510</id>
+		<value>{0} coverart billeder opdateret</value>
+	</string>
+	<string>
+		<id>4511</id>
+		<value>Coverart hentning færdig</value>
+	</string>
+	<string>
+		<id>4512</id>
+		<value>Alle covers er opdateret</value>
+	</string>
+	<string>
+		<id>4513</id>
+		<value>Forskellige</value>
+	</string>
+	<string>
+		<id>4514</id>
+		<value>Coverart hentning</value>
+	</string>
+	<string>
+		<id>4515</id>
+		<value>Coverart hentning søgeresultater</value>
+	</string>
+	<string>
+		<id>4516</id>
+		<value>Intet coverart fundet</value>
+	</string>
+	<string>
+		<id>4517</id>
+		<value>Luk</value>
+	</string>
+	<string>
+		<id>4518</id>
+		<value>Album titel ikke fundet\r\nProver: {0}</value>
+	</string>
+	<string>
+		<id>4519</id>
+		<value>Dette coverart</value>
+	</string>
+	<string>
+		<id>4520</id>
+		<value>Spring over</value>
+	</string>
+	<string>
+		<id>4521</id>
+		<value>Vis album info</value>
+	</string>
+	<string>
+		<id>4522</id>
+		<value>Henter: {0}...</value>
+	</string>
+	<string>
+		<id>10100</id>
+		<value>Gemte miner</value>
+	</string>
+	<string>
+		<id>10101</id>
+		<value>Spilletid</value>
+	</string>
+	<string>
+		<id>10102</id>
+		<value>Hurtigste tid</value>
+	</string>
+	<string>
+		<id>10103</id>
+		<value>Minestryger</value>
 	</string>
 </strings>

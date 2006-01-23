@@ -441,36 +441,7 @@
 		<id>178</id>
 		<value>트랙</value>
 	</string>
-	<string>
-		<id>179</id>
-		<value>노래</value>
-	</string>
-	<string>
-		<id>180</id>
-		<value>기간</value>
-	</string>
-	<string>
-		<id>181</id>
-		<value>앨범 선택</value>
-	</string>
-	<string>
-		<id>182</id>
-		<value>트랙</value>
-	</string>
-	<string>
-		<id>183</id>
-		<value>리뷰</value>
-	</string>
-	<string>
-		<id>184</id>
-		<value>새로고침</value>
-	</string>
-	<string>
-		<id>185</id>
-		<value>앨범 검색 중</value>
-	</string>
-	<string>
-		<id>186</id>
+	<d>
 		<value>확인</value>
 	</string>
 	<string>
@@ -740,5 +711,101 @@
 	<string>
 		<id>263</id>
 		<value>HTTP 서버</value>
+	</string>
+	<string>
+		<id>266</id>
+		<value>정렬: 트랙순</value>
+	</string>
+	<string>
+		<id>267</id>
+		<value>정렬: 시간순</value>
+	</string>
+	<string>
+		<id>268</id>
+		<value>정렬: 재목순</value>
+	</string>
+	<string>
+		<id>269</id>
+		<value>정력: 음악가순</value>
+	</string>
+	<string>
+		<id>270</id>
+		<value>정렬: 앨범순</value>
+	</string>
+	<string>
+		<id>272</id>
+		<value>왼쪽 위 초과주사 보정</value>
+	</string>
+	<string>
+		<id>273</id>
+		<value>오른쪽 아래 초과주사 보정</value>
+	</string>
+	<string>
+		<id>274</id>
+		<value>자막 위치</value>
+	</string>
+	<string>
+		<id>276</id>
+		<value>- 주의! - 최상의 화질을 위해서는 0,0으로 놓으십시요,줄어든 화면을 맞출때 변경하십시요.</value>
+	</string>
+	<string>
+		<id>277</id>
+		<value>자막위치를 변경하려면 막대를 이동하십시요</value>
+	</string>
+	<string>
+		<id>279</id>
+		<value>설정을 불러올 수 없음</value>
+	</string>
+	<string>
+		<id>281</id>
+		<value>.xml 파일을 확인하십시요.</value>
+	</string>
+	<string>
+		<id>282</id>
+		<value>%i개 항목 검색됨</value>
+	</string>
+	<string>
+		<id>283</id>
+		<value>검색 결과</value>
+	</string>
+	<string>
+		<id>284</id>
+		<value>검색된 결과 없음</value>
+	</string>
+	<string>
+		<id>287</id>
+		<value>자막</value>
+	</string>
+	<string>
+		<id>288</id>
+		<value>글꼴</value>
+	</string>
+	<string>
+		<id>289</id>
+		<value>크기</value>
+	</string>
+	<string>
+		<id>291</id>
+		<value>화면</value>
+	</string>
+	<string>
+		<id>292</id>
+		<value>소리</value>
+	</string>
+	<string>
+		<id>293</id>
+		<value>자막</value>
+	</string>
+	<string>
+		<id>294</id>
+		<value>책갈피 생성</value>
+	</string>
+	<string>
+		<id>295</id>
+		<value>책갈피 반족</value>
+	</string>
+	<string>
+		<id>296</id>
+		<value>책갈피 삭제</value>
 	</string>
 </strings>
