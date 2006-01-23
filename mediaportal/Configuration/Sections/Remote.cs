@@ -225,6 +225,10 @@ namespace MediaPortal.Configuration.Sections
         checkBoxHCW.Enabled = false;
         groupBoxSettings.Enabled = false;
         groupBoxRepeatDelay.Enabled = false;
+        using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+        {
+          xmlwriter.SetValueAsBool("remote", "HCW", false);
+        }
       }
 
       fireDTVRemote.LoadSettings();
