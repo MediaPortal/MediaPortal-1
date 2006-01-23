@@ -2074,6 +2074,14 @@ namespace MediaPortal.Configuration
         }
       }
 
+      SectionSettings televisionSettings = SectionSettings.GetSection("Television");
+      int countryCode = (int)televisionSettings.GetSetting("television.country");
+      bool isCable = (bool)televisionSettings.GetSetting("television.isCable");
+      CaptureCard.DefaultCountryCode = countryCode;
+      CaptureCard.IsCableInput = isCable;
+      Log.WriteFile(Log.LogType.Log, "EditCaptureCardForm:AutoTuneTV() countryCode:{0} input:{1}",
+          countryCode, isCable ? "Cable" : "Antenna");
+
       if (CaptureCard.Network == NetworkType.Analog)
       {
         AnalogTVTuningForm dialog = new AnalogTVTuningForm();

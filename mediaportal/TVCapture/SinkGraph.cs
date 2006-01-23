@@ -474,8 +474,9 @@ namespace MediaPortal.TV.Recording
               _countryCode, standard.ToString(),
               _isUsingCable);
             AMTunerSubChannel iVideoSubChannel, iAudioSubChannel;
-            int currentCountry, iCurrentChannel;
+            int currentCountry, iCurrentChannel, currentFreq;
 
+            _tvTunerInterface.get_VideoFrequency(out currentFreq);
             _tvTunerInterface.get_TVFormat(out standard);
             _tvTunerInterface.get_Channel(out iCurrentChannel, out iVideoSubChannel, out iAudioSubChannel);
             _tvTunerInterface.get_CountryCode(out currentCountry);
@@ -484,14 +485,18 @@ namespace MediaPortal.TV.Recording
               _tvTunerInterface.put_Channel(channel.Number, AMTunerSubChannel.Default, AMTunerSubChannel.Default);
               DirectShowUtil.EnableDeInterlace(_graphBuilderInterface);
             }
-            int iFreq;
+            int iFreq, iChannel;
             double dFreq;
             AMTunerSignalStrength signalStrength;
             _tvTunerInterface.SignalPresent(out signalStrength);
             _tvTunerInterface.get_VideoFrequency(out iFreq);
-            _tvTunerInterface.get_Channel(out iCurrentChannel, out iVideoSubChannel, out iAudioSubChannel);
+            _tvTunerInterface.get_Channel(out iChannel, out iVideoSubChannel, out iAudioSubChannel);
             _tvTunerInterface.get_CountryCode(out currentCountry);
             _tvTunerInterface.get_TVFormat(out standard);
+            if ((iChannel != iCurrentChannel) && (iFreq == currentFreq))
+            {
+                return;
+            }
             dFreq = iFreq / 1000000d;
             Log.WriteFile(Log.LogType.Capture, "SinkGraph:TuneChannel() tuned to channel:{0} county:{1} freq:{2} MHz. tvformat:{3} signal:{4}",
               iCurrentChannel, currentCountry, dFreq, standard.ToString(), signalStrength.ToString());

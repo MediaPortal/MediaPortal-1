@@ -37,7 +37,7 @@ namespace MediaPortal.TV.Scanning
 		AutoTuneCallback callback = null;
 		private System.Windows.Forms.Timer  timer1;
 		TVCaptureDevice	captureCard;
-		//float lastFrequency=-1f;
+		float lastFrequency=-1f;
         bool stopped = true;
 		public AnalogTVTuning()
 		{
@@ -72,7 +72,7 @@ namespace MediaPortal.TV.Scanning
 
 		public void AutoTuneTV(TVCaptureDevice card, AutoTuneCallback statusCallback)
 		{
-			//lastFrequency=-1f;
+			lastFrequency=-1f;
 			captureCard=card;
             card.TVChannelMinMax(out minChannel, out maxChannel);
             if (minChannel == -1)
@@ -110,16 +110,24 @@ namespace MediaPortal.TV.Scanning
                 float percent = (((float)currentChannel)-(float)minChannel) / ((float)maxChannel-(float)minChannel);
                 percent *= 100.0f;
                 callback.OnProgress((int)percent);
-                float frequency = (float)captureCard.VideoFrequency();
-                frequency /= 1000000f;
-                string description = String.Format("channel:{0} frequency:{1:###.##} MHz.", currentChannel, frequency);
-                callback.OnStatus(description);
                 TuneChannel();
-                callback.OnSignal(captureCard.SignalQuality, captureCard.SignalStrength);
-                if (captureCard.SignalPresent())
+                float frequency = (float)captureCard.VideoFrequency();
+                if (frequency != lastFrequency)
                 {
-                    callback.OnNewChannel();
-                    return;
+                    lastFrequency = frequency;
+                    frequency /= 1000000f;
+                    string description = String.Format("channel:{0} frequency:{1:###.##} MHz.", currentChannel, frequency);
+                    callback.OnStatus(description);
+                    callback.OnSignal(captureCard.SignalQuality, captureCard.SignalStrength);
+                    if (captureCard.SignalPresent())
+                    {
+                        callback.OnNewChannel();
+                        return;
+                    }
+                }
+                else
+                {
+                    callback.OnSignal(0, 0);
                 }
                 Continue();
             }

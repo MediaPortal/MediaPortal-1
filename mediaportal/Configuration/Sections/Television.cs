@@ -530,6 +530,11 @@ namespace MediaPortal.Configuration.Sections
 
         case "television.countryname" :
           return countryComboBox.Text;
+        case "television.isCable":
+          {
+              return (inputComboBox.Text == "Cable");
+          }
+
       }
 
 			return null;
