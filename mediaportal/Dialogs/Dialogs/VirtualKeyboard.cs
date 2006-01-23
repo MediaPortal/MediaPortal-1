@@ -598,7 +598,7 @@ namespace MediaPortal.Dialogs
       for (int row = 0; row < _maxRows; ++row, fY += _keyHeight)
       {
         float fX = x1;
-        float widthidthSum = 0.0f;
+        float fWidthSum = 0.0f;
         ArrayList keyRow = (ArrayList)keyBoard[row];
         int dwIndex = 0;
         for (int i = 0; i < keyRow.Count; i++)
@@ -606,7 +606,7 @@ namespace MediaPortal.Dialogs
           Key key = (Key)keyRow[i];
           int width = key.dwWidth;
           GUIGraphicsContext.ScaleHorizontal(ref width);
-          if (x >= fX + widthidthSum && x <= fX + widthidthSum + key.dwWidth)
+          if (x >= fX + fWidthSum && x <= fX + fWidthSum + key.dwWidth)
           {
             if (y >= fY && y < fY + _keyHeight)
             {
@@ -615,20 +615,20 @@ namespace MediaPortal.Dialogs
               return;
             }
           }
-          widthidthSum += width;
+          fWidthSum += width;
           // There's a slightly larger gap between the leftmost keys (mode
           // keys) and the main keyboard
           if (dwIndex == 0)
           {
             width = GAP2_WIDTH;
             GUIGraphicsContext.ScaleHorizontal(ref width);
-            widthidthSum += width;
+            fWidthSum += width;
           }
           else
           {
             width = GAP_WIDTH;
             GUIGraphicsContext.ScaleHorizontal(ref width);
-            widthidthSum += width;
+            fWidthSum += width;
           }
           ++dwIndex;
 
@@ -1090,10 +1090,10 @@ namespace MediaPortal.Dialogs
       // text to exceed the width of the text entry field
       if (_textEntered.Length < MAX_CHARS)
       {
-        float widthidth = 0, heighteight = 0;
-        _font18.GetTextExtent(_textEntered, ref widthidth, ref heighteight);
+        float fWidth = 0, fHeight = 0;
+        _font18.GetTextExtent(_textEntered, ref fWidth, ref fHeight);
 
-        if (widthidth < fTEXTBOX_WIDTH)
+        if (fWidth < fTEXTBOX_WIDTH)
         {
           if (_position >= _textEntered.Length)
             _textEntered += k.ToString();
@@ -1119,10 +1119,10 @@ namespace MediaPortal.Dialogs
         // text to exceed the width of the text entry field
         if (_textEntered.Length < MAX_CHARS)
         {
-          float widthidth = 0, heighteight = 0;
-          _font18.GetTextExtent(_textEntered, ref widthidth, ref heighteight);
+          float fWidth = 0, fHeight = 0;
+          _font18.GetTextExtent(_textEntered, ref fWidth, ref fHeight);
 
-          if (widthidth < fTEXTBOX_WIDTH)
+          if (fWidth < fTEXTBOX_WIDTH)
           {
             if (_position >= _textEntered.Length)
               _textEntered += GetChar(xk).ToString();
@@ -1391,9 +1391,9 @@ namespace MediaPortal.Dialogs
       return wc;
     }
 
-    void RenderKey(float fX, float fY, Key key, long KeyColor, long TextColor)
+    void RenderKey(float fX, float fY, Key key, long keyColor, long textColor)
     {
-      if (KeyColor == COLOR_INVISIBLE || key.xKey == Xkey.XK_NULL) return;
+      if (keyColor == COLOR_INVISIBLE || key.xKey == Xkey.XK_NULL) return;
 
 
       string strKey = GetChar(key.xKey).ToString();
@@ -1416,7 +1416,7 @@ namespace MediaPortal.Dialogs
       float v = 1.0f;
       float u = 1.0f;
 
-      _keyTexture.Draw(x, y, nw, nh, uoffs, 0.0f, u, v, (int)KeyColor);
+      _keyTexture.Draw(x, y, nw, nh, uoffs, 0.0f, u, v, (int)keyColor);
       /*
             VertexBuffer m_vbBuffer = new VertexBuffer(typeof(CustomVertex.TransformedColoredTextured),
                                               4, GUIGraphicsContext.DX9Device, 
@@ -1460,25 +1460,25 @@ namespace MediaPortal.Dialogs
             m_vbBuffer.Dispose();
       */
       // Draw the key text. If key name is, use a slightly smaller font.
-      float width = 0;
-      float height = 0;
-      float posX = (x + z) / 2.0f;
-      float posY = (y + w) / 2.0f;
-      posX -= GUIGraphicsContext.OffsetX;
-      posY -= GUIGraphicsContext.OffsetY;
+      float textWidth = 0;
+      float textHeight = 0;
+      float positionX = (x + z) / 2.0f;
+      float positionY = (y + w) / 2.0f;
+      positionX -= GUIGraphicsContext.OffsetX;
+      positionY -= GUIGraphicsContext.OffsetY;
       if (key.name.Length > 1 && Char.IsUpper(key.name[1]))
       {
-        _font12.GetTextExtent(name, ref width, ref height);
-        posX -= (width / 2);
-        posY -= (height / 2);
-        _font12.DrawText(posX, posY, TextColor, name, GUIControl.Alignment.ALIGN_LEFT, -1);
+        _font12.GetTextExtent(name, ref textWidth, ref textHeight);
+        positionX -= (textWidth / 2);
+        positionY -= (textHeight / 2);
+        _font12.DrawText(positionX, positionY, textColor, name, GUIControl.Alignment.ALIGN_LEFT, -1);
       }
       else
       {
-        _font18.GetTextExtent(name, ref width, ref height);
-        posX -= (width / 2);
-        posY -= (height / 2);
-        _font18.DrawText(posX, posY, TextColor, name, GUIControl.Alignment.ALIGN_LEFT, -1);
+        _font18.GetTextExtent(name, ref textWidth, ref textHeight);
+        positionX -= (textWidth / 2);
+        positionY -= (textHeight / 2);
+        _font18.DrawText(positionX, positionY, textColor, name, GUIControl.Alignment.ALIGN_LEFT, -1);
       }
     }
 
@@ -1513,21 +1513,21 @@ namespace MediaPortal.Dialogs
       GUIGraphicsContext.ScalePosToScreenResolution(ref x, ref y);
       x += GUIGraphicsContext.OffsetX;
       y += GUIGraphicsContext.OffsetY;
-      string text = _textEntered;
+      string textLine = _textEntered;
       if (_password)
       {
-        text = "";
-        for (int i = 0; i < _textEntered.Length; ++i) text += "*";
+        textLine = "";
+        for (int i = 0; i < _textEntered.Length; ++i) textLine += "*";
       }
 
-      _fontSearchText.DrawText((float)x, (float)y, COLOR_SEARCHTEXT, text, GUIControl.Alignment.ALIGN_LEFT, -1);
+      _fontSearchText.DrawText((float)x, (float)y, COLOR_SEARCHTEXT, textLine, GUIControl.Alignment.ALIGN_LEFT, -1);
 
 
       // Draw blinking caret using line primitives.
       TimeSpan ts = DateTime.Now - _caretTimer;
       if ((ts.TotalSeconds % fCARET_BLINK_RATE) < fCARET_ON_RATIO)
       {
-        string line = text.Substring(0, _position);
+        string line = textLine.Substring(0, _position);
 
         float caretWidth = 0.0f;
         float caretHeight = 0.0f;
@@ -1556,7 +1556,7 @@ namespace MediaPortal.Dialogs
       for (int row = 0; row < _maxRows; ++row, fY += _keyHeight)
       {
         float fX = x1;
-        float widthidthSum = 0.0f;
+        float fWidthSum = 0.0f;
         ArrayList keyRow = (ArrayList)keyBoard[row];
         int dwIndex = 0;
         for (int i = 0; i < keyRow.Count; i++)
@@ -1607,11 +1607,11 @@ namespace MediaPortal.Dialogs
           if (row == _currentRow && dwIndex == _currentKey)
             selKeyColor = COLOR_HIGHLIGHT;
 
-          RenderKey(fX + widthidthSum, fY, key, selKeyColor, selTextColor);
+          RenderKey(fX + fWidthSum, fY, key, selKeyColor, selTextColor);
 
           int width = key.dwWidth;
           GUIGraphicsContext.ScaleHorizontal(ref width);
-          widthidthSum += width;
+          fWidthSum += width;
 
           // There's a slightly larger gap between the leftmost keys (mode
           // keys) and the main keyboard
@@ -1620,7 +1620,7 @@ namespace MediaPortal.Dialogs
           else
             width = GAP_WIDTH;
           GUIGraphicsContext.ScaleHorizontal(ref width);
-          widthidthSum += width;
+          fWidthSum += width;
 
           ++dwIndex;
         }
