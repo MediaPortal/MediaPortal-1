@@ -327,11 +327,11 @@ namespace MediaPortal.TV.Recording
         _videoCaptureHelper = new VideoCaptureDevice(_graphBuilderInterface, _captureGraphBuilderInterface, _filterCapture, lastFilter.DSFilter);
 
         _videoCaptureHelper.SetFrameRate(25.0d);
-        if (!SetFrameSize(768, 576))
+        if (!SetFrameSize(720, 576))
         {
-          if (!SetFrameSize(720, 576))
+            if (!SetFrameSize(720, 480))
           {
-            if (!SetFrameSize(720,480))
+              if (!SetFrameSize(768, 576))
             {
               if (!SetFrameSize(640,480))
               {
